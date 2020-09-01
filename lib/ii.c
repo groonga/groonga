@@ -766,8 +766,8 @@ pack_1(uint32_t *p, uint8_t *rp)
   *rp++ = v + *p++;
   return rp;
 }
-static uint8_t *
-unpack_1(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_1(uint32_t *p, const uint8_t *dp)
 {
   *p++ = (*dp >> 7);
   *p++ = ((*dp >> 6) & 0x1);
@@ -793,8 +793,8 @@ pack_2(uint32_t *p, uint8_t *rp)
   *rp++ = v + *p++;
   return rp;
 }
-static uint8_t *
-unpack_2(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_2(uint32_t *p, const uint8_t *dp)
 {
   *p++ = (*dp >> 6);
   *p++ = ((*dp >> 4) & 0x3);
@@ -820,8 +820,8 @@ pack_3(uint32_t *p, uint8_t *rp)
   *rp++ = v + *p++;
   return rp;
 }
-static uint8_t *
-unpack_3(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_3(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   *p++ = (*dp >> 5);
@@ -848,8 +848,8 @@ pack_4(uint32_t *p, uint8_t *rp)
   *rp++ = v + *p++;
   return rp;
 }
-static uint8_t *
-unpack_4(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_4(uint32_t *p, const uint8_t *dp)
 {
   *p++ = (*dp >> 4);
   *p++ = (*dp++ & 0xf);
@@ -875,8 +875,8 @@ pack_5(uint32_t *p, uint8_t *rp)
   *rp++ = v + *p++;
   return rp;
 }
-static uint8_t *
-unpack_5(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_5(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   *p++ = (*dp >> 3);
@@ -903,8 +903,8 @@ pack_6(uint32_t *p, uint8_t *rp)
   *rp++ = v + *p++;
   return rp;
 }
-static uint8_t *
-unpack_6(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_6(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   *p++ = (*dp >> 2);
@@ -931,8 +931,8 @@ pack_7(uint32_t *p, uint8_t *rp)
   *rp++ = v + *p++;
   return rp;
 }
-static uint8_t *
-unpack_7(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_7(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   *p++ = (*dp >> 1);
@@ -958,8 +958,8 @@ pack_8(uint32_t *p, uint8_t *rp)
   *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_8(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_8(uint32_t *p, const uint8_t *dp)
 {
   *p++ = *dp++;
   *p++ = *dp++;
@@ -985,8 +985,8 @@ pack_9(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_9(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_9(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 1; *p++ = v + (*dp >> 7);
@@ -1013,8 +1013,8 @@ pack_10(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_10(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_10(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 2; *p++ = v + (*dp >> 6);
@@ -1041,8 +1041,8 @@ pack_11(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_11(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_11(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 3; *p++ = v + (*dp >> 5);
@@ -1069,8 +1069,8 @@ pack_12(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_12(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_12(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 4; *p++ = v + (*dp >> 4);
@@ -1097,8 +1097,8 @@ pack_13(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_13(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_13(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 5; *p++ = v + (*dp >> 3);
@@ -1125,8 +1125,8 @@ pack_14(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_14(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_14(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 6; *p++ = v + (*dp >> 2);
@@ -1153,8 +1153,8 @@ pack_15(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_15(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_15(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 7; *p++ = v + (*dp >> 1);
@@ -1180,8 +1180,8 @@ pack_16(uint32_t *p, uint8_t *rp)
   *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_16(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_16(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 8; *p++ = v + *dp++;
@@ -1208,8 +1208,8 @@ pack_17(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_17(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_17(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 9; v += *dp++ << 1; *p++ = v + (*dp >> 7);
@@ -1236,8 +1236,8 @@ pack_18(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_18(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_18(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
@@ -1264,8 +1264,8 @@ pack_19(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_19(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_19(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 11; v += *dp++ << 3; *p++ = v + (*dp >> 5);
@@ -1294,8 +1294,8 @@ pack_20(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_20(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_20(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
@@ -1322,8 +1322,8 @@ pack_21(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_21(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_21(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 13; v += *dp++ << 5; *p++ = v + (*dp >> 3);
@@ -1354,8 +1354,8 @@ pack_22(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_22(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_22(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 14; v += *dp++ << 6; *p++ = v + (*dp >> 2);
@@ -1386,8 +1386,8 @@ pack_23(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_23(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_23(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 15; v += *dp++ << 7; *p++ = v + (*dp >> 1);
@@ -1419,8 +1419,8 @@ pack_24(uint32_t *p, uint8_t *rp)
   *rp++ = (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_24(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_24(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
@@ -1447,8 +1447,8 @@ pack_25(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 24); *rp++ = (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_25(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_25(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 17; v += *dp++ << 9; v += *dp++ << 1; *p++ = v + (*dp >> 7);
@@ -1482,8 +1482,8 @@ pack_26(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 24); *rp++ = (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_26(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_26(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 18; v += *dp++ << 10; v += *dp++ << 2; *p++ = v + (*dp >> 6);
@@ -1518,8 +1518,8 @@ pack_27(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 24); *rp++ = (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_27(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_27(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 19; v += *dp++ << 11; v += *dp++ << 3; *p++ = v + (*dp >> 5);
@@ -1553,8 +1553,8 @@ pack_28(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 24); *rp++ = (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_28(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_28(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 20; v += *dp++ << 12; v += *dp++ << 4; *p++ = v + (*dp >> 4);
@@ -1589,8 +1589,8 @@ pack_29(uint32_t *p, uint8_t *rp)
   *rp++ = v + (*p >> 24); *rp++ = (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_29(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_29(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 21; v += *dp++ << 13; v += *dp++ << 5; *p++ = v + (*dp >> 3);
@@ -1629,8 +1629,8 @@ pack_30(uint32_t *p, uint8_t *rp)
   *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_30(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_30(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 22; v += *dp++ << 14; v += *dp++ << 6; *p++ = v + (*dp >> 2);
@@ -1670,8 +1670,8 @@ pack_31(uint32_t *p, uint8_t *rp)
   *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_31(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_31(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 23; v += *dp++ << 15; v += *dp++ << 7; *p++ = v + (*dp >> 1);
@@ -1704,8 +1704,8 @@ pack_32(uint32_t *p, uint8_t *rp)
   *rp++ = (*p >> 24); *rp++ = (*p >> 16); *rp++ = (*p >> 8); *rp++ = *p++;
   return rp;
 }
-static uint8_t *
-unpack_32(uint32_t *p, uint8_t *dp)
+static const uint8_t *
+unpack_32(uint32_t *p, const uint8_t *dp)
 {
   uint32_t v;
   v = *dp++ << 24; v += *dp++ << 16; v += *dp++ << 8; *p++ = v + *dp++;
@@ -2032,8 +2032,8 @@ grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
   p = _p; \
 } while (0)
 
-static uint8_t *
-unpack(uint8_t *dp, uint8_t *dpe, int i, uint32_t *rp)
+static const uint8_t *
+unpack(const uint8_t *dp, const uint8_t *dpe, int i, uint32_t *rp)
 {
   uint8_t ne = 0, k = 0, w = *dp++;
   uint32_t m, *p = rp;
@@ -2129,11 +2129,12 @@ unpack(uint8_t *dp, uint8_t *dpe, int i, uint32_t *rp)
 
 static int
 grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
-           uint8_t *data, uint32_t data_size, datavec *dv, uint32_t dvlen)
+           const uint8_t *data, uint32_t data_size, datavec *dv, uint32_t dvlen)
 {
   size_t size;
   uint32_t df, l, i, *rp;
-  uint8_t *dp = data, *dpe = data + data_size;
+  const uint8_t *dp = data;
+  const uint8_t *dpe = data + data_size;
   if (!data_size) {
     dv[0].data_size = 0;
     return 0;
