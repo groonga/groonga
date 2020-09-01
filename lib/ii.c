@@ -3313,6 +3313,66 @@ merge_dump_source(grn_ctx *ctx,
 }
 
 typedef struct {
+  grn_ii *ii;
+  bool succeeded;
+  grn_obj source_chunks;
+  grn_obj dest_chunks;
+} grn_merging_data;
+
+static void
+grn_merging_data_init(grn_ctx *ctx,
+                      grn_merging_data *data,
+                      grn_ii *ii)
+{
+  data->ii = ii;
+  data->succeeded = false;
+  GRN_UINT32_INIT(&(data->source_chunks), GRN_OBJ_VECTOR);
+  GRN_UINT32_INIT(&(data->dest_chunks), GRN_OBJ_VECTOR);
+}
+
+static void
+grn_merging_data_fin(grn_ctx *ctx,
+                     grn_merging_data *data)
+{
+  grn_obj *target_chunks;
+  if (data->succeeded) {
+    target_chunks = &(data->source_chunks);
+  } else {
+    target_chunks = &(data->dest_chunks);
+  }
+  const size_t n_target_chunks = GRN_UINT32_VECTOR_SIZE(target_chunks) / 2;
+  size_t i;
+  for (i = 0; i < n_target_chunks; i++) {
+    const uint32_t segno = GRN_UINT32_VALUE_AT(target_chunks, i * 2);
+    const uint32_t size = GRN_UINT32_VALUE_AT(target_chunks, i * 2 + 1);
+    chunk_free(ctx, data->ii, segno, size);
+  }
+  GRN_OBJ_FIN(ctx, &(data->source_chunks));
+  GRN_OBJ_FIN(ctx, &(data->dest_chunks));
+}
+
+static void
+grn_merging_data_add_source_chunk(grn_ctx *ctx,
+                                  grn_merging_data *data,
+                                  uint32_t segno,
+                                  uint32_t size)
+{
+  GRN_UINT32_PUT(ctx, &(data->source_chunks), segno);
+  GRN_UINT32_PUT(ctx, &(data->source_chunks), size);
+}
+
+static void
+grn_merging_data_add_dest_chunk(grn_ctx *ctx,
+                                grn_merging_data *data,
+                                uint32_t segno,
+                                uint32_t size)
+{
+  GRN_UINT32_PUT(ctx, &(data->dest_chunks), segno);
+  GRN_UINT32_PUT(ctx, &(data->dest_chunks), size);
+}
+
+
+typedef struct {
   buffer *buffer;
   const uint8_t *data;
   docinfo id;
@@ -3338,6 +3398,7 @@ typedef struct {
   grn_id term_id;
   docinfo last_id;
   uint64_t position;
+  grn_merging_data *merging_data;
   struct {
     merger_buffer_data buffer;
     merger_chunk_data chunk;
@@ -3990,12 +4051,18 @@ chunk_merge(grn_ctx *ctx,
         goto exit;
       }
       chunk_flush(ctx, ii, cinfo, enc, encsize);
+      if (ctx->rc == GRN_SUCCESS) {
+        grn_merging_data_add_dest_chunk(ctx,
+                                        data->merging_data,
+                                        cinfo->segno,
+                                        cinfo->size);
+      }
       GRN_FREE(enc);
     }
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
-    chunk_free(ctx, ii, segno, size);
+    grn_merging_data_add_source_chunk(ctx, data->merging_data, segno, size);
   }
   *balance += (ndf - chunk_data->n_documents);
 
@@ -4106,8 +4173,15 @@ buffer_merge_ensure_dc(grn_ctx *ctx,
 }
 
 static grn_rc
-buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
-             buffer *sb, const uint8_t *sc, buffer *db, uint8_t **dc_output)
+buffer_merge(grn_ctx *ctx,
+             grn_ii *ii,
+             uint32_t seg,
+             grn_hash *h,
+             buffer *sb,
+             const uint8_t *sc,
+             buffer *db,
+             uint8_t **dc_output,
+             grn_merging_data *merging_data)
 {
   buffer_term *bt;
   uint8_t *dc = NULL;
@@ -4174,15 +4248,16 @@ buffer_merge(grn_ctx *ctx, grn_ii *ii, uint32_t seg, grn_hash *h,
     chunk_info *cinfo = NULL;
     grn_id crid = GRN_ID_NIL;
 
-    data.ii = ii;
-    data.term_id = bt->tid;
-    buffer_data->buffer = sb;
-    chunk_data->data_start = sc;
-
     if (!bt->tid) {
       nterms_void++;
       continue;
     }
+
+    data.ii = ii;
+    data.term_id = bt->tid;
+    data.merging_data = merging_data;
+    buffer_data->buffer = sb;
+    chunk_data->data_start = sc;
 
     if (bt->pos_in_buffer == 0) {
       if (bt->size_in_buffer > 0) {
@@ -4674,7 +4749,9 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
         grn_memcpy(db->terms, sb->terms, n * sizeof(buffer_term));
         db->header.nterms = n;
         uint8_t *dc = NULL;
-        buffer_merge(ctx, ii, lseg, h, sb, sc, db, &dc);
+        grn_merging_data merging_data;
+        grn_merging_data_init(ctx, &merging_data, ii);
+        buffer_merge(ctx, ii, lseg, h, sb, sc, db, &dc, &merging_data);
         if (ctx->rc == GRN_SUCCESS) {
           const uint32_t actual_chunk_size = db->header.chunk_size;
           bool need_chunk_free = true;
@@ -4695,6 +4772,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
               buffer_segment_update(ii, lseg, ds);
               ii->header.common->total_chunk_size += actual_chunk_size;
               need_chunk_free = false;
+              merging_data.succeeded = true;
               if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
                 chunk_free(ctx, ii, scn, sb->header.chunk_size);
                 ii->header.common->total_chunk_size -= sb->header.chunk_size;
@@ -4718,6 +4796,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
             GRN_FREE(dc);
           }
         }
+        grn_merging_data_fin(ctx, &merging_data);
         if (scn != GRN_II_PSEG_NOT_ASSIGNED) { grn_io_win_unmap(&sw); }
       } else {
         DEFINE_NAME(ii);
@@ -5072,7 +5151,9 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
                           sb->header.chunk_size, GRN_IO_RDONLY))) {
           term_split(ctx, ii->lexicon, sb, db0, db1);
           uint8_t *dc0 = NULL;
-          buffer_merge(ctx, ii, lseg, h, sb, sc, db0, &dc0);
+          grn_merging_data merging_data;
+          grn_merging_data_init(ctx, &merging_data, ii);
+          buffer_merge(ctx, ii, lseg, h, sb, sc, db0, &dc0, &merging_data);
           if (ctx->rc == GRN_SUCCESS) {
             const uint32_t actual_db0_chunk_size = db0->header.chunk_size;
             bool need_db0_chunk_free = false;
@@ -5091,7 +5172,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
               if (rc == GRN_SUCCESS) {
                 dc0 = NULL;
                 uint8_t *dc1 = NULL;
-                buffer_merge(ctx, ii, lseg, h, sb, sc, db1, &dc1);
+                buffer_merge(ctx, ii, lseg, h, sb, sc, db1, &dc1, &merging_data);
                 if (ctx->rc == GRN_SUCCESS) {
                   const uint32_t actual_db1_chunk_size = db1->header.chunk_size;
                   bool need_db1_chunk_free = false;
@@ -5121,6 +5202,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
                         actual_db1_chunk_size;
                       need_db0_chunk_free = false;
                       need_db1_chunk_free = false;
+                      merging_data.succeeded = true;
                       if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
                         chunk_free(ctx, ii, scn, sb->header.chunk_size);
                         ii->header.common->total_chunk_size -=
@@ -5174,6 +5256,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
               GRN_FREE(dc0);
             }
           }
+          grn_merging_data_fin(ctx, &merging_data);
           if (scn != GRN_II_PSEG_NOT_ASSIGNED) {
             grn_io_win_unmap(&sw);
           }
