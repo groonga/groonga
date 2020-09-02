@@ -2546,7 +2546,7 @@ grn_table_truncate_reference_objects(grn_ctx *ctx, grn_obj *table)
       if (grn_obj_get_range(ctx, object) == table_id) {
         grn_column_truncate(ctx, object);
       }
-    } else if (grn_obj_is_lexicon(ctx, object)) {
+    } else if (grn_obj_is_table_with_key(ctx, object)) {
       if (object->header.domain == table_id) {
         grn_table_truncate(ctx, object);
       }
@@ -10796,7 +10796,7 @@ grn_obj_traverse_recursive_dependent_table(
   const bool is_top_level = data->is_top_level;
   data->is_top_level = false;
 
-  if (grn_obj_is_lexicon(ctx, table)) {
+  if (grn_obj_is_table_with_key(ctx, table)) {
     grn_id domain_id = table->header.domain;
     if (grn_obj_traverse_recursive_dependent_need_traverse(ctx,
                                                            data,
@@ -13556,7 +13556,7 @@ grn_table_parse_load_columns(grn_ctx *ctx,
         column_name.value = current;
         column_name.length = next_start - current;
         if (column_name.value[0] == '_') {
-          if (grn_obj_is_lexicon(ctx, table) &&
+          if (grn_obj_is_table_with_key(ctx, table) &&
               GRN_RAW_STRING_EQUAL_CSTRING(column_name, GRN_COLUMN_NAME_KEY)) {
             grn_accessor *key_accessor = grn_accessor_new_key(ctx, table);
             if (key_accessor) {

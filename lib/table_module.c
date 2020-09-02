@@ -116,7 +116,7 @@ grn_table_set_module_options(grn_ctx *ctx,
 {
   GRN_API_ENTER;
 
-  if (!grn_obj_is_lexicon(ctx, table)) {
+  if (!grn_obj_is_table_with_key(ctx, table)) {
     ERR(GRN_INVALID_ARGUMENT,
         "[table][%s][options][set] table must be key table: %s",
         context_tag,
@@ -167,7 +167,7 @@ grn_table_get_module_options(grn_ctx *ctx,
 {
   GRN_API_ENTER;
 
-  if (!grn_obj_is_lexicon(ctx, table)) {
+  if (!grn_obj_is_table_with_key(ctx, table)) {
     ERR(GRN_INVALID_ARGUMENT,
         "[table][%s][options][get] table must be key table: %s",
         context_tag,
@@ -206,7 +206,7 @@ grn_table_cache_module_options(grn_ctx *ctx,
 
   GRN_API_ENTER;
 
-  if (!grn_obj_is_lexicon(ctx, table)) {
+  if (!grn_obj_is_table_with_key(ctx, table)) {
     ERR(GRN_INVALID_ARGUMENT,
         "[table][%s][options][cache] table must be key table: %s",
         data->context_tag,
@@ -370,7 +370,7 @@ grn_table_get_module_string(grn_ctx *ctx,
 
   GRN_API_ENTER;
 
-  if (!grn_obj_is_lexicon(ctx, table)) {
+  if (!grn_obj_is_table_with_key(ctx, table)) {
     ERR(GRN_INVALID_ARGUMENT,
         "[table][%s][options][string] table must be key table: %s",
         context_tag,
@@ -401,7 +401,7 @@ grn_table_get_modules_string(grn_ctx *ctx,
 
   GRN_API_ENTER;
 
-  if (!grn_obj_is_lexicon(ctx, table)) {
+  if (!grn_obj_is_table_with_key(ctx, table)) {
     ERR(GRN_INVALID_ARGUMENT,
         "[table][%s][options][string] table must be key table: %s",
         context_tag,

@@ -780,7 +780,7 @@ grn_table_sort_value(grn_ctx *ctx,
 
   /* Need key -> ID conversion feature by table to use pre ID
    * resolution optimization. */
-  const bool is_lexicon = grn_obj_is_lexicon(ctx, table);
+  const bool is_table_with_key = grn_obj_is_table_with_key(ctx, table);
 
   int i;
   uint32_t index_refer = 0;
@@ -791,7 +791,7 @@ grn_table_sort_value(grn_ctx *ctx,
     grn_obj *key = raw_keys[i].key;
 
     bool need_resolved_id_key = false;
-    if (is_lexicon && grn_obj_is_accessor(ctx, key)) {
+    if (is_table_with_key && grn_obj_is_accessor(ctx, key)) {
       grn_accessor *accessor = (grn_accessor *)key;
       if (accessor->action == GRN_ACCESSOR_GET_KEY && accessor->next) {
         need_resolved_id_key = true;

@@ -163,7 +163,7 @@ namespace grn {
     if (document.HasParseError()) {
       auto domain = grn_ctx_at(ctx, dest->header.domain);
       grn_rc rc = GRN_INVALID_ARGUMENT;
-      if (grn_obj_is_lexicon(ctx, domain)) {
+      if (grn_obj_is_table_with_key(ctx, domain)) {
         grn_obj dest_record;
         GRN_RECORD_INIT(&dest_record, GRN_BULK, dest->header.domain);
         rc = grn_obj_cast(ctx, src, &dest_record, add_record_if_not_exist);
@@ -186,7 +186,7 @@ namespace grn {
       {
         grn_rc rc = GRN_INVALID_ARGUMENT;
         auto domain = grn_ctx_at(ctx, dest->header.domain);
-        if (grn_obj_is_lexicon(ctx, domain)) {
+        if (grn_obj_is_table_with_key(ctx, domain)) {
           rc = json_to_uvector<TableHandler>(ctx,
                                              &document,
                                              dest,

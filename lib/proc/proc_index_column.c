@@ -64,7 +64,7 @@ index_column_data_init(grn_ctx *ctx, index_column_data *data)
                      data->table_name.value);
     return false;
   }
-  if (!grn_obj_is_lexicon(ctx, data->table)) {
+  if (!grn_obj_is_table_with_key(ctx, data->table)) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
                      "[index-column]%s table must be lexicon: <%.*s>: %s",

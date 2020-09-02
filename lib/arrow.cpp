@@ -195,7 +195,7 @@ namespace grnarrow {
         auto arrow_type = grn_type_id_to_arrow_type(ctx, range_id);
         if (!arrow_type) {
           auto range = object_cache[range_id];
-          if (grn_obj_is_lexicon(ctx, range)) {
+          if (grn_obj_is_table_with_key(ctx, range)) {
             // TODO: We can't return reference value as dictionary
             // because arrow::ipc::RecordBatchWriter doesn't support
             // dictionary delta for now.
@@ -1954,7 +1954,7 @@ namespace grnarrow {
         auto element_size = grn_uvector_element_size(ctx_, uvector);
         auto n = GRN_BULK_VSIZE(uvector) / element_size;
         auto raw_value_builder = column_builder->value_builder();
-        if (grn_obj_is_lexicon(ctx_, domain)) {
+        if (grn_obj_is_table_with_key(ctx_, domain)) {
           auto value_builder =
             static_cast<arrow::StringBuilder *>(raw_value_builder);
           for (long i = 0; i < n; ++i) {

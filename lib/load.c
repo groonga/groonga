@@ -87,7 +87,7 @@ grn_loader_on_column_set(grn_ctx *ctx,
     } else {
       table = grn_ctx_at(ctx, column->header.domain);
     }
-    if (grn_obj_is_lexicon(ctx, table)) {
+    if (grn_obj_is_table_with_key(ctx, table)) {
       grn_obj key_value;
       GRN_OBJ_INIT(&key_value, GRN_BULK, 0, table->header.domain);
       grn_table_get_key2(ctx, table, id, &key_value);

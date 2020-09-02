@@ -2756,7 +2756,7 @@ grn_ja_cast_value_vector_fixed_bulk(grn_ctx *ctx,
   }
 
   bool need_tokenize = false;
-  if (grn_obj_is_lexicon(ctx, range)) {
+  if (grn_obj_is_table_with_key(ctx, range)) {
     grn_obj *tokenizer;
     grn_table_get_info(ctx, range, NULL, NULL, &tokenizer, NULL, NULL);
     if (tokenizer) {
