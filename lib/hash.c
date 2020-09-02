@@ -2181,6 +2181,29 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
     new_index_size *= 2;
   }
 
+  {
+    grn_log_level log_level;
+    if (grn_hash_is_io_hash(hash)) {
+      log_level = GRN_LOG_INFO;
+    } else {
+      log_level = GRN_LOG_DEBUG;
+    }
+    if (grn_logger_pass(ctx, log_level)) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      GRN_LOG(ctx, log_level,
+              "[hash][reset][%.*s] <%u> -> <%u>: "
+              "max-offset:<%u> "
+              "n-garbages:<%u>",
+              name_size, name,
+              n_entries,
+              new_index_size,
+              max_offset,
+              *hash->n_garbages);
+    }
+  }
+
   if (grn_hash_is_io_hash(hash)) {
     uint32_t i;
     src_offset = hash->header.common->idx_offset;
