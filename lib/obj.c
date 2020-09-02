@@ -240,27 +240,63 @@ grn_obj_is_lexicon(grn_ctx *ctx, grn_obj *obj)
     return false;
   }
   grn_table_columns(ctx, obj, "", 0, (grn_obj *)columns);
-  bool is_lexicon;
-  if (grn_hash_size(ctx, columns) == 0) {
-    is_lexicon = false;
-  } else {
-    is_lexicon = true;
+  bool is_lexicon = false;
+  if (grn_hash_size(ctx, columns) > 0) {
     GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
       void *key;
       grn_hash_cursor_get_key(ctx, cursor, &key);
       grn_id column_id = *((grn_id *)key);
       grn_obj *column = grn_ctx_at(ctx, column_id);
-      if (!grn_obj_is_index_column(ctx, column)) {
-        is_lexicon = false;
+      if (grn_obj_is_index_column(ctx, column)) {
+        is_lexicon = true;
       }
       grn_obj_unref(ctx, column);
-      if (!is_lexicon) {
+      if (is_lexicon) {
         break;
       }
     } GRN_HASH_EACH_END(ctx, cursor);
   }
   grn_hash_close(ctx, columns);
   return is_lexicon;
+}
+
+bool
+grn_obj_is_lexicon_without_data_column(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_table_with_key(ctx, obj)) {
+    return false;
+  }
+
+  grn_hash *columns = grn_hash_create(ctx,
+                                      NULL,
+                                      sizeof(grn_id),
+                                      0,
+                                      GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
+  if (!columns) {
+    return false;
+  }
+  grn_table_columns(ctx, obj, "", 0, (grn_obj *)columns);
+  bool is_lexicon_without_data_column;
+  if (grn_hash_size(ctx, columns) == 0) {
+    is_lexicon_without_data_column = false;
+  } else {
+    is_lexicon_without_data_column = true;
+    GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
+      void *key;
+      grn_hash_cursor_get_key(ctx, cursor, &key);
+      grn_id column_id = *((grn_id *)key);
+      grn_obj *column = grn_ctx_at(ctx, column_id);
+      if (!grn_obj_is_index_column(ctx, column)) {
+        is_lexicon_without_data_column = false;
+      }
+      grn_obj_unref(ctx, column);
+      if (!is_lexicon_without_data_column) {
+        break;
+      }
+    } GRN_HASH_EACH_END(ctx, cursor);
+  }
+  grn_hash_close(ctx, columns);
+  return is_lexicon_without_data_column;
 }
 
 grn_bool
