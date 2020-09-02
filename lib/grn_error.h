@@ -203,7 +203,7 @@ GRN_API void grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
     break;\
   case WSAECONNRESET :\
     rc = GRN_CONNECTION_RESET;\
-    m = "connection reset by peer"\
+    m = "connection reset by peer";\
     break;\
   default:\
     rc = GRN_UNKNOWN_ERROR;\
