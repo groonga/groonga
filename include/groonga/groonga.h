@@ -130,7 +130,8 @@ typedef enum {
   GRN_SCORER_ERROR = -76,
   GRN_CANCEL = -77,
   GRN_WINDOW_FUNCTION_ERROR = -78,
-  GRN_ZSTD_ERROR = -79
+  GRN_ZSTD_ERROR = -79,
+  GRN_CONNECTION_RESET = -80
 } grn_rc;
 
 GRN_API grn_rc grn_init(void);

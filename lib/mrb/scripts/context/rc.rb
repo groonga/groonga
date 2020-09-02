@@ -198,6 +198,8 @@ module Groonga
         register(:window_function_error, -78, WindowFunctionError)
       ZSTD_ERROR =
         register(:zstd_error, -79, ZstdError)
+      CONNECTION_RESET =
+        register(:connection_reset, -80, ConnectionReset)
 
       GroongaError.rc = UNKNOWN_ERROR
     end

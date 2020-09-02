@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2016 Brazil
+  Copyright(C) 2013-2016  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -200,6 +201,10 @@ GRN_API void grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
     rc = GRN_INTERRUPTED_FUNCTION_CALL;\
     m = "interrupted function call";\
     break;\
+  case WSAECONNRESET :\
+    rc = GRN_CONNECTION_RESET;\
+    m = "connection reset by peer"\
+    break;\
   default:\
     rc = GRN_UNKNOWN_ERROR;\
     m = "unknown error";\
@@ -252,6 +257,7 @@ GRN_API void grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
   case EDEADLOCK : rc = GRN_RESOURCE_DEADLOCK_AVOIDED; break;\
   case ENAMETOOLONG : rc = GRN_FILENAME_TOO_LONG; break;\
   case EILSEQ : rc = GRN_ILLEGAL_BYTE_SEQUENCE; break;\
+  case ECONNRESET : rc = GRN_CONNECTION_RESET; break;\
   /* case STRUNCATE : */\
   default :\
     rc = GRN_UNKNOWN_ERROR;\
@@ -324,6 +330,7 @@ GRN_API void grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
   case ETIMEDOUT : rc = GRN_OPERATION_TIMEOUT; break;\
   case ECONNREFUSED: rc = GRN_CONNECTION_REFUSED; break;\
   case EAGAIN: rc = GRN_OPERATION_WOULD_BLOCK; break;\
+  case ECONNRESET: rc = GRN_CONNECTION_RESET; break;\
   default :\
     rc = GRN_UNKNOWN_ERROR;\
     show_errno = GRN_TRUE;\

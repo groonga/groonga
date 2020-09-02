@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2017 Brazil
+  Copyright(C) 2013-2017  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -447,6 +448,9 @@ grn_rc_to_string(grn_rc rc)
     break;
   case GRN_ZSTD_ERROR :
     message = "Zstandard error";
+    break;
+  case GRN_CONNECTION_RESET :
+    message = "connection reset";
     break;
   }
 

@@ -812,6 +812,12 @@ grn_mrb_ctx_to_exception(mrb_state *mrb)
                  "Zstandard error: <%s>(%d)",
                  utf8_error_message, ctx->rc);
     break;
+  case GRN_CONNECTION_RESET:
+    error_class = mrb_class_get_under(mrb, module, "ConnectionReset");
+    grn_snprintf(message, MESSAGE_SIZE, MESSAGE_SIZE,
+                 "Connection reset: <%s>(%d)",
+                 utf8_error_message, ctx->rc);
+    break;
   }
 
   if (!error_class) {
