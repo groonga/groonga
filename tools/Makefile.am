@@ -14,3 +14,20 @@ dist_tools_DATA =				\
 	object-inspect-all.sh			\
 	prepare-sphinx-html.rb			\
 	ucd-symbol-list.rb
+
+NONEXISTENT_CXX_SOURCE = nonexistent.cpp
+
+DEFAULT_INCLUDES =				\
+	-I$(top_builddir)			\
+	-I$(top_builddir)/include		\
+	-I$(top_srcdir)/include			\
+	-I$(top_srcdir)/lib			\
+	$(GROONGA_INCLUDEDIR)
+
+noinst_PROGRAMS = create-hash-table-with-duplicated-key
+create_hash_table_with_duplicated_key_SOURCES =	\
+	create-hash-table-with-duplicated-key.c
+nodist_EXTRA_create_hash_table_with_duplicated_key_SOURCES =	\
+	$(NONEXISTENT_CXX_SOURCE)
+create_hash_table_with_duplicated_key_LDADD =	\
+	$(top_builddir)/lib/libgroonga.la
