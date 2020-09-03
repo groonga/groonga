@@ -779,8 +779,6 @@ grn_obj_is_dirty(grn_ctx *ctx, grn_obj *obj)
   switch (obj->header.type) {
   case GRN_DB :
     return grn_db_is_dirty(ctx, obj);
-  case GRN_TABLE_HASH_KEY :
-    return grn_hash_is_dirty(ctx, (grn_hash *)obj);
   case GRN_TABLE_PAT_KEY :
     return grn_pat_is_dirty(ctx, (grn_pat *)obj);
   case GRN_TABLE_DAT_KEY :

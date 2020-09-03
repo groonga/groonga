@@ -246,8 +246,6 @@ struct _grn_hash {
   // int limit;
   // void *userdata;
   // grn_id subrec_id;
-  bool is_dirty;
-  grn_critical_section dirty_lock;
 
   /* For grn_tiny_hash. */
   uint32_t max_offset_;
@@ -276,8 +274,7 @@ struct _grn_hash {
   grn_id normalizer;\
   uint32_t truncated;\
   uint64_t curr_key_large;\
-  uint32_t n_dirty_opens;\
-  uint32_t reserved[11]
+  uint32_t reserved[12]
 
 struct _grn_hash_header_common {
   GRN_HASH_HEADER_COMMON_FIELDS;
@@ -387,11 +384,6 @@ grn_bool grn_hash_is_large_total_key_size(grn_ctx *ctx, grn_hash *hash);
 
 uint64_t grn_hash_total_key_size(grn_ctx *ctx, grn_hash *hash);
 uint64_t grn_hash_max_total_key_size(grn_ctx *ctx, grn_hash *hash);
-
-grn_rc grn_hash_dirty(grn_ctx *ctx, grn_hash *hash);
-bool grn_hash_is_dirty(grn_ctx *ctx, grn_hash *hash);
-grn_rc grn_hash_clean(grn_ctx *ctx, grn_hash *hash);
-grn_rc grn_hash_clear_dirty(grn_ctx *ctx, grn_hash *hash);
 
 #ifdef __cplusplus
 }

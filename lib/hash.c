@@ -1800,7 +1800,6 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
     header->normalizer = GRN_ID_NIL;
   }
   header->truncated = GRN_FALSE;
-  header->n_dirty_opens = 0;
   GRN_TEXT_INIT(&(hash->token_filters), 0);
   GRN_PTR_INIT(&(hash->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
 
@@ -1815,8 +1814,6 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   hash->io = io;
   hash->header.common = header;
   hash->lock = &header->lock;
-  hash->is_dirty = false;
-  CRITICAL_SECTION_INIT(hash->dirty_lock);
   grn_table_module_init(ctx, &(hash->tokenizer), GRN_ID_NIL);
   grn_table_module_init(ctx, &(hash->normalizer), header->normalizer);
   return GRN_SUCCESS;
@@ -2015,13 +2012,6 @@ static grn_rc
 grn_io_hash_fin(grn_ctx *ctx, grn_hash *hash)
 {
   grn_rc rc;
-
-  CRITICAL_SECTION_FIN(hash->dirty_lock);
-
-  if (hash->is_dirty) {
-    uint32_t n_dirty_opens;
-    GRN_ATOMIC_ADD_EX(&(hash->header.common->n_dirty_opens), -1, n_dirty_opens);
-  }
 
   rc = grn_io_close(ctx, hash->io);
   grn_table_module_fin(ctx, &(hash->tokenizer));
@@ -3982,74 +3972,4 @@ grn_hash_max_total_key_size(grn_ctx *ctx, grn_hash *hash)
   } else {
     return GRN_HASH_KEY_MAX_TOTAL_SIZE_NORMAL;
   }
-}
-
-grn_rc
-grn_hash_dirty(grn_ctx *ctx, grn_hash *hash)
-{
-  grn_rc rc = GRN_SUCCESS;
-
-  if (!grn_hash_is_io_hash(hash)) {
-    return rc;
-  }
-
-  CRITICAL_SECTION_ENTER(hash->dirty_lock);
-  if (!hash->is_dirty) {
-    uint32_t n_dirty_opens;
-    hash->is_dirty = true;
-    GRN_ATOMIC_ADD_EX(&(hash->header.common->n_dirty_opens), 1, n_dirty_opens);
-    rc = grn_io_flush(ctx, hash->io);
-  }
-  CRITICAL_SECTION_LEAVE(hash->dirty_lock);
-
-  return rc;
-}
-
-bool
-grn_hash_is_dirty(grn_ctx *ctx, grn_hash *hash)
-{
-  if (grn_hash_is_io_hash(hash)) {
-    return hash->header.common->n_dirty_opens > 0;
-  } else {
-    return false;
-  }
-}
-
-grn_rc
-grn_hash_clean(grn_ctx *ctx, grn_hash *hash)
-{
-  grn_rc rc = GRN_SUCCESS;
-
-  if (!grn_hash_is_io_hash(hash)) {
-    return rc;
-  }
-
-  CRITICAL_SECTION_ENTER(hash->dirty_lock);
-  if (hash->is_dirty) {
-    uint32_t n_dirty_opens;
-    hash->is_dirty = GRN_FALSE;
-    GRN_ATOMIC_ADD_EX(&(hash->header.common->n_dirty_opens), -1, n_dirty_opens);
-    rc = grn_io_flush(ctx, hash->io);
-  }
-  CRITICAL_SECTION_LEAVE(hash->dirty_lock);
-
-  return rc;
-}
-
-grn_rc
-grn_hash_clear_dirty(grn_ctx *ctx, grn_hash *hash)
-{
-  grn_rc rc = GRN_SUCCESS;
-
-  if (!grn_hash_is_io_hash(hash)) {
-    return rc;
-  }
-
-  CRITICAL_SECTION_ENTER(hash->dirty_lock);
-  hash->is_dirty = false;
-  hash->header.common->n_dirty_opens = 0;
-  rc = grn_io_flush(ctx, hash->io);
-  CRITICAL_SECTION_LEAVE(hash->dirty_lock);
-
-  return rc;
 }
