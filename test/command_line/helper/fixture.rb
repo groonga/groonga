@@ -47,6 +47,9 @@ module Fixture
   end
 
   def use_fixture(name)
+    if windows?
+      omit("Can't use pre-created fixture DB on Windows")
+    end
     tar_gz = File.join(__dir__, "..", "fixture", "#{name}.tar.gz")
     extract_database_tar_gz(tar_gz, @database_path.to_s)
   end
