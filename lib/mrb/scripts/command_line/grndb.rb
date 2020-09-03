@@ -320,10 +320,6 @@ module Groonga
 
           check_object_locked(object)
           check_object_corrupt(object)
-          case object
-          when TableWithKey
-            check_table_with_key(object)
-          end
         end
 
         def check_object_locked(object)
@@ -393,6 +389,9 @@ module Groonga
           when Table
             unless object.corrupt?
               logger.log(:info, "[#{object.name}] Table is not corrupted")
+              if object.is_a?(TableWithKey)
+                check_table_with_key(object)
+              end
               return
             end
             name = object.name
