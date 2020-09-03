@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -44,16 +44,14 @@ mrb_grn_vector_initialize(mrb_state *mrb, mrb_value self)
   return self;
 }
 
-static mrb_value
-mrb_grn_vector_get_value(mrb_state *mrb, mrb_value self)
+mrb_value
+grn_mrb_value_from_vector(mrb_state *mrb, grn_obj *vector)
 {
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  grn_obj *vector = DATA_PTR(self);
-
   if (!vector) {
     return mrb_nil_value();
   }
 
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
   unsigned int n = grn_vector_size(ctx, vector);
   mrb_value mrb_vector = mrb_ary_new_capa(mrb, n);
   grn_obj element;
@@ -74,6 +72,12 @@ mrb_grn_vector_get_value(mrb_state *mrb, mrb_value self)
   GRN_OBJ_FIN(ctx, &element);
 
   return mrb_vector;
+}
+
+static mrb_value
+mrb_grn_vector_get_value(mrb_state *mrb, mrb_value self)
+{
+  return grn_mrb_value_from_vector(mrb, DATA_PTR(self));
 }
 
 static mrb_value

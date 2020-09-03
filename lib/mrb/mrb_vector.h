@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,8 @@ extern "C" {
 #endif
 
 void grn_mrb_vector_init(grn_ctx *ctx);
+
+mrb_value grn_mrb_value_from_vector(mrb_state *mrb, grn_obj *vector);
 
 #ifdef __cplusplus
 }

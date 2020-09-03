@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2018 Brazil
+  Copyright(C) 2013-2018  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,10 +25,12 @@
 #include <mruby/class.h>
 #include <mruby/data.h>
 
-#include "mrb_ctx.h"
-#include "mrb_column.h"
 #include "mrb_bulk.h"
+#include "mrb_column.h"
 #include "mrb_converter.h"
+#include "mrb_ctx.h"
+#include "mrb_uvector.h"
+#include "mrb_vector.h"
 
 static mrb_value
 mrb_grn_column_class_parse_flags(mrb_state *mrb, mrb_value self)
@@ -55,14 +58,32 @@ mrb_grn_column_array_reference(mrb_state *mrb, mrb_value self)
   mrb_int record_id;
   grn_obj column_value;
   mrb_value rb_column_value;
+  mrb_value rb_inspected_unsupported_value = mrb_nil_value();
 
   column = DATA_PTR(self);
   mrb_get_args(mrb, "i", &record_id);
 
   GRN_VOID_INIT(&column_value);
   grn_obj_get_value(ctx, column, record_id, &column_value);
-  rb_column_value = grn_mrb_value_from_bulk(mrb, &column_value);
+  if (grn_obj_is_bulk(ctx, &column_value)) {
+    rb_column_value = grn_mrb_value_from_bulk(mrb, &column_value);
+  } else if (grn_obj_is_vector(ctx, &column_value)) {
+    rb_column_value = grn_mrb_value_from_vector(mrb, &column_value);
+  } else if (grn_obj_is_uvector(ctx, &column_value)) {
+    rb_column_value = grn_mrb_value_from_uvector(mrb, &column_value);
+  } else {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, &column_value);
+    rb_inspected_unsupported_value = grn_mrb_value_from_bulk(mrb, &inspected);
+    GRN_OBJ_FIN(ctx, &inspected);
+  }
   GRN_OBJ_FIN(ctx, &column_value);
+  if (!mrb_nil_p(rb_inspected_unsupported_value)) {
+    mrb_raisef(mrb, E_NOTIMP_ERROR,
+               "unsupported object to convert to mrb_value: %S",
+               rb_inspected_unsupported_value);
+  }
   return rb_column_value;
 }
 
