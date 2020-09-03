@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2013-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2013-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -43,6 +43,7 @@
 # include "mrb/mrb_database.h"
 # include "mrb/mrb_indexable.h"
 # include "mrb/mrb_table.h"
+# include "mrb/mrb_table_with_key.h"
 # include "mrb/mrb_array.h"
 # include "mrb/mrb_hash_table.h"
 # include "mrb/mrb_patricia_trie.h"
@@ -181,6 +182,7 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
   grn_mrb_database_init(ctx);
   grn_mrb_indexable_init(ctx);
   grn_mrb_table_init(ctx);
+  grn_mrb_table_with_key_init(ctx);
   grn_mrb_array_init(ctx);
   grn_mrb_hash_table_init(ctx);
   grn_mrb_patricia_trie_init(ctx);

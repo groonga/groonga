@@ -83,6 +83,8 @@ libgrnmrb_la_SOURCES =				\
 	mrb_table_sort_flags.h			\
 	mrb_table_sort_key.c			\
 	mrb_table_sort_key.h			\
+	mrb_table_with_key.c			\
+	mrb_table_with_key.h			\
 	mrb_thread.c				\
 	mrb_thread.h				\
 	mrb_type.c				\

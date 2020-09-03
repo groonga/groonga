@@ -47,11 +47,14 @@ grn_mrb_double_array_trie_init(grn_ctx *ctx)
   grn_mrb_data *data = &(ctx->impl->mrb);
   mrb_state *mrb = data->state;
   struct RClass *module = data->module;
-  struct RClass *table_class;
+  struct RClass *table_with_key_class;
   struct RClass *klass;
 
-  table_class = mrb_class_get_under(mrb, module, "Table");
-  klass = mrb_define_class_under(mrb, module, "DoubleArrayTrie", table_class);
+  table_with_key_class = mrb_class_get_under(mrb, module, "TableWithKey");
+  klass = mrb_define_class_under(mrb,
+                                 module,
+                                 "DoubleArrayTrie",
+                                 table_with_key_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
   mrb_define_method(mrb, klass, "initialize",

@@ -34,40 +34,6 @@
 #include "mrb_options.h"
 
 static mrb_value
-mrb_grn_table_array_reference(mrb_state *mrb, mrb_value self)
-{
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  grn_obj *table;
-  grn_id key_domain_id;
-  mrb_value mrb_key;
-  grn_id record_id;
-  grn_mrb_value_to_raw_data_buffer buffer;
-  void *key;
-  unsigned int key_size;
-
-  mrb_get_args(mrb, "o", &mrb_key);
-
-  table = DATA_PTR(self);
-  if (table->header.type == GRN_DB) {
-    key_domain_id = GRN_DB_SHORT_TEXT;
-  } else {
-    key_domain_id = table->header.domain;
-  }
-
-  grn_mrb_value_to_raw_data_buffer_init(mrb, &buffer);
-  grn_mrb_value_to_raw_data(mrb, "key", mrb_key, key_domain_id,
-                            &buffer, &key, &key_size);
-  record_id = grn_table_get(ctx, table, key, key_size);
-  grn_mrb_value_to_raw_data_buffer_fin(mrb, &buffer);
-
-  if (record_id == GRN_ID_NIL) {
-    return mrb_nil_value();
-  } else {
-    return mrb_fixnum_value(record_id);
-  }
-}
-
-static mrb_value
 mrb_grn_table_is_id(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -506,8 +472,6 @@ grn_mrb_table_init(grn_ctx *ctx)
   klass = mrb_define_class_under(mrb, module, "Table", object_class);
   MRB_SET_INSTANCE_TT(klass, MRB_TT_DATA);
 
-  mrb_define_method(mrb, klass, "[]",
-                    mrb_grn_table_array_reference, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "id?",
                     mrb_grn_table_is_id, MRB_ARGS_REQ(1));
 
