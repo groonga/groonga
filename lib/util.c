@@ -595,6 +595,33 @@ grn_ja_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
   GRN_TEXT_PUTS(ctx, buf, "#<column:var_size ");
   grn_store_inspect_body(ctx, buf, obj);
+
+  grn_obj source_ids;
+  GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_obj_get_info(ctx, obj, GRN_INFO_SOURCE, &source_ids);
+  int n = GRN_UINT32_VECTOR_SIZE(&source_ids);
+  if (n > 0) {
+    GRN_TEXT_PUTS(ctx, buf, " sources:[");
+    int i;
+    for (i = 0; i < n; i++) {
+      grn_id source_id;
+      grn_obj *source;
+      if (i) { GRN_TEXT_PUTS(ctx, buf, ", "); }
+      source_id = GRN_RECORD_VALUE_AT(&source_ids, i);
+      source = grn_ctx_at(ctx, source_id);
+      if (source) {
+        grn_inspect_name(ctx, buf, source);
+        if (grn_enable_reference_count) {
+          grn_obj_unlink(ctx, source);
+        }
+      } else {
+        grn_text_lltoa(ctx, buf, source_id);
+      }
+    }
+  }
+  GRN_TEXT_PUTS(ctx, buf, "]");
+  GRN_OBJ_FIN(ctx, &source_ids);
+
   GRN_TEXT_PUTS(ctx, buf, ">");
   return GRN_SUCCESS;
 }
