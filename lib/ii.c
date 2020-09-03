@@ -11264,7 +11264,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
           }
           if (need_check) {
             for (;;) {
-              data.token_info = bt->min;
+              token_info *token_info_min = bt->min;
+              data.token_info = token_info_min;
               int min = data.token_info->pos;
               int max = bt->max->pos;
               if (min > max) {
@@ -11320,6 +11321,10 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                 }
               }
               bt_pop(bt);
+              if (data.mode == GRN_OP_NEAR_PHRASE &&
+                  bt->min == token_info_min) {
+                break;
+              }
             }
           }
         } else {
