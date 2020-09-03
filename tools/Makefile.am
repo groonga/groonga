@@ -24,6 +24,7 @@ DEFAULT_INCLUDES =				\
 	-I$(top_srcdir)/lib			\
 	$(GROONGA_INCLUDEDIR)
 
+if !PLATFORM_WIN32
 noinst_PROGRAMS = create-hash-table-with-duplicated-key
 create_hash_table_with_duplicated_key_SOURCES =	\
 	create-hash-table-with-duplicated-key.c
@@ -31,3 +32,4 @@ nodist_EXTRA_create_hash_table_with_duplicated_key_SOURCES =	\
 	$(NONEXISTENT_CXX_SOURCE)
 create_hash_table_with_duplicated_key_LDADD =	\
 	$(top_builddir)/lib/libgroonga.la
+endif
