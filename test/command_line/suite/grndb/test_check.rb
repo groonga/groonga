@@ -998,6 +998,7 @@ Empty file exists: <#{empty_file_path_no_object}>
 #{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
 |i| [Users] Table is not locked
 |i| [Users] Table is not corrupted
+|i| [Users] Table doesn't have duplicated keys
 |i| Checked database: <#{@database_path}>
                      MESSAGES
                    ],
