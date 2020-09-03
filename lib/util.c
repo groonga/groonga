@@ -629,23 +629,20 @@ grn_ja_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 static grn_rc
 grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  grn_obj sources;
-  int i, n, have_flags = 0;
-  grn_id *source_ids;
-
   GRN_TEXT_PUTS(ctx, buf, "#<column:index ");
   grn_column_inspect_common(ctx, buf, obj);
 
-  GRN_TEXT_INIT(&sources, 0);
-  grn_obj_get_info(ctx, obj, GRN_INFO_SOURCE, &sources);
-  source_ids = (grn_id *)GRN_BULK_HEAD(&sources);
-  n = GRN_BULK_VSIZE(&sources) / sizeof(grn_id);
+  grn_obj source_ids;
+  GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_obj_get_info(ctx, obj, GRN_INFO_SOURCE, &source_ids);
+  int n = GRN_UINT32_VECTOR_SIZE(&source_ids);
   GRN_TEXT_PUTS(ctx, buf, " sources:[");
+  int i;
   for (i = 0; i < n; i++) {
     grn_id source_id;
     grn_obj *source;
     if (i) { GRN_TEXT_PUTS(ctx, buf, ", "); }
-    source_id = source_ids[i];
+    source_id = GRN_RECORD_VALUE_AT(&source_ids, i);
     source = grn_ctx_at(ctx, source_id);
     if (source) {
       grn_inspect_name(ctx, buf, source);
@@ -657,8 +654,9 @@ grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     }
   }
   GRN_TEXT_PUTS(ctx, buf, "]");
-  GRN_OBJ_FIN(ctx, &sources);
+  GRN_OBJ_FIN(ctx, &source_ids);
 
+  int have_flags = 0;
   GRN_TEXT_PUTS(ctx, buf, " flags:");
   grn_column_flags flags = grn_column_get_flags(ctx, obj);
   if (flags & GRN_OBJ_WITH_SECTION) {
