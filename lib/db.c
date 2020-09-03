@@ -13834,14 +13834,32 @@ grn_db_recover_database(grn_ctx *ctx, grn_obj *db)
   grn_db_recover_database_remove_orphan_inspect(ctx, db);
 }
 
+static bool
+grn_db_recover_table_is_broken(grn_ctx *ctx, grn_obj *table)
+{
+  if (grn_obj_is_locked(ctx, table)) {
+    return true;
+  }
+
+  if (grn_obj_is_table_with_key(ctx, table) &&
+      grn_table_have_duplicated_keys(ctx, table)) {
+    return true;
+  }
+
+  return false;
+}
+
 static void
 grn_db_recover_table(grn_ctx *ctx, grn_obj *table)
 {
-  if (!grn_obj_is_locked(ctx, table)) {
+  if (!grn_db_recover_table_is_broken(ctx, table)) {
     return;
   }
 
-  {
+  if (grn_obj_is_lexicon_without_data_column(ctx, table)) {
+    grn_table_truncate(ctx, table);
+    grn_obj_reindex(ctx, table);
+  } else {
     char name[GRN_TABLE_MAX_KEY_SIZE];
     unsigned int name_size;
     name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
