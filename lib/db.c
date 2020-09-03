@@ -9327,6 +9327,7 @@ _grn_obj_remove_ja(grn_ctx *ctx, grn_obj *obj, grn_obj *db, grn_id id,
 
   type = obj->header.type;
 
+  delete_source_hook(ctx, obj);
   rc = remove_index(ctx, obj, GRN_HOOK_SET);
   if (rc != GRN_SUCCESS) { return rc; }
   rc = grn_obj_close(ctx, obj);
