@@ -387,6 +387,33 @@ load --table Users
                  ])
   end
 
+  def test_table_with_duplicated_key
+    use_fixture("db-with-duplicated-key")
+    groonga("status")
+    remove_groonga_log
+    error = assert_raise(CommandRunner::Error) do
+      grndb("check")
+    end
+    error_message = <<-MESSAGE
+[TableWithDuplicatedKey] Table has duplicated keys:
+  <a>:
+    1
+    2
+(1) Truncate the table (truncate TableWithDuplicatedKey or '#{real_grndb_path} recover --force-truncate #{@database_path}') and (2) load data again.
+    MESSAGE
+    assert_equal([
+                   "",
+                   error_message,
+                   expected_groonga_log("notice",
+                                        prepend_tag("|e| ",error_message)),
+                 ],
+                 [
+                   error.output,
+                   error.error_output,
+                   normalized_groonga_log_content,
+                 ])
+  end
+
   def test_corrupt_data_column
     use_large_tmp_dir
     groonga("table_create", "Data", "TABLE_NO_KEY")

@@ -547,4 +547,82 @@ invalid format: <[table][array] file type must be 0x33: <0000>>(-54)
                    normalized_groonga_log_content,
                  ])
   end
+
+  sub_test_case("duplicated key") do
+    def setup
+      use_fixture("db-with-duplicated-key")
+      groonga("status")
+      remove_groonga_log
+    end
+
+    def test_default
+      error = assert_raise(CommandRunner::Error) do
+        grndb("recover")
+      end
+      error_message = <<-MESSAGE
+Failed to recover database: <#{@database_path}>
+object corrupt: <[db][recover] table may be broken: <TableWithDuplicatedKey>: please truncate the table (or clear lock of the table) and load da>(-55)
+      MESSAGE
+      assert_equal([
+                     "",
+                     error_message,
+                     expected_groonga_log("notice", <<-MESSAGES)
+|e| [db][recover] table may be broken: <TableWithDuplicatedKey>: please truncate the table (or clear lock of the table) and load data again
+#{prepend_tag("|e| ", error_message).chomp}
+                     MESSAGES
+                   ],
+                   [
+                     error.output,
+                     error.error_output,
+                     normalized_groonga_log_content,
+                   ])
+    end
+
+    def test_force_truncate
+      _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+
+      remove_groonga_log
+      result = grndb("recover", "--force-truncate")
+      message = <<-MESSAGE
+[TableWithDuplicatedKey] Truncated broken object: <#{path}>
+      MESSAGE
+      assert_equal([
+                     "",
+                     message,
+                     expected_groonga_log("notice", ""),
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content,
+                   ])
+    end
+
+    def test_lexicon_without_data_column
+      groonga("table_create", "Data", "TABLE_HASH_KEY", "ShortText")
+      groonga("column_create",
+              "TableWithDuplicatedKey",
+              "index",
+              "COLUMN_INDEX",
+              "Data",
+              "_key")
+
+      remove_groonga_log
+      result = grndb("recover")
+      assert_equal([
+                     "",
+                     "",
+                     expected_groonga_log("notice", ""),
+                   ],
+                   [
+                     result.output,
+                     result.error_output,
+                     normalized_groonga_log_content,
+                   ])
+
+      select_result = groonga("select", "TableWithDuplicatedKey").output
+      records = JSON.parse(select_result)[1][0][2..-1]
+      assert_equal([], records)
+    end
+  end
 end

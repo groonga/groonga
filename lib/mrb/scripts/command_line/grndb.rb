@@ -320,6 +320,10 @@ module Groonga
 
           check_object_locked(object)
           check_object_corrupt(object)
+          case object
+          when TableWithKey
+            check_table_with_key(object)
+          end
         end
 
         def check_object_locked(object)
@@ -398,6 +402,40 @@ module Groonga
               "'#{@program_path} recover --force-truncate #{@database_path}') " +
               "and (2) load data again."
             failed(message)
+          end
+        end
+
+        def check_table_with_key(table_with_key)
+          name = table_with_key.name
+
+          duplicated_keys = table_with_key.duplicated_keys
+          begin
+            if duplicated_keys.empty?
+              logger.log(:info, "[#{name}] Table doesn't have duplicated keys")
+              return
+            end
+
+            message = "[#{name}] Table has duplicated keys:\n"
+            duplicated_keys.each do |id|
+              record = Record.new(duplicated_keys, id)
+              message << "  <#{record.key}>:\n"
+              record.records.each do |duplicated_record|
+                message << "    #{duplicated_record.id}\n"
+              end
+            end
+            if table_with_key.lexicon_without_data_column?
+              message <<
+                "Re-create lexicon by " +
+                "'#{@program_path} recover #{@database_path}'."
+            else
+              message <<
+                "(1) Truncate the table (truncate #{name} or " +
+                "'#{@program_path} recover --force-truncate #{@database_path}'" +
+                ") and (2) load data again."
+            end
+            failed(message)
+          ensure
+            duplicated_keys.close
           end
         end
 
@@ -586,6 +624,15 @@ module Groonga
           when IndexColumn
             # It'll be recovered later.
             false
+          when TableWithKey
+            if object.lexicon_without_data_column?
+              # It'll be recovered later.
+              false
+            else
+              return true if object.locked?
+              return true if object.have_duplicated_keys?
+              false
+            end
           when Column, Table
             object.locked?
           else
