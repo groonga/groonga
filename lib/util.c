@@ -618,8 +618,8 @@ grn_ja_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
         grn_text_lltoa(ctx, buf, source_id);
       }
     }
+    GRN_TEXT_PUTS(ctx, buf, "]");
   }
-  GRN_TEXT_PUTS(ctx, buf, "]");
   GRN_OBJ_FIN(ctx, &source_ids);
 
   GRN_TEXT_PUTS(ctx, buf, ">");
