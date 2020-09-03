@@ -656,27 +656,27 @@ grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   GRN_TEXT_PUTS(ctx, buf, "]");
   GRN_OBJ_FIN(ctx, &source_ids);
 
-  int have_flags = 0;
+  bool have_flags = false;
   GRN_TEXT_PUTS(ctx, buf, " flags:");
   grn_column_flags flags = grn_column_get_flags(ctx, obj);
   if (flags & GRN_OBJ_WITH_SECTION) {
     GRN_TEXT_PUTS(ctx, buf, "SECTION");
-    have_flags = 1;
+    have_flags = true;
   }
   if (flags & GRN_OBJ_WITH_WEIGHT) {
     if (have_flags) { GRN_TEXT_PUTS(ctx, buf, "|"); }
     GRN_TEXT_PUTS(ctx, buf, "WEIGHT");
-    have_flags = 1;
+    have_flags = true;
   }
   if (flags & GRN_OBJ_WITH_POSITION) {
     if (have_flags) { GRN_TEXT_PUTS(ctx, buf, "|"); }
     GRN_TEXT_PUTS(ctx, buf, "POSITION");
-    have_flags = 1;
+    have_flags = true;
   }
   if (flags & GRN_OBJ_WEIGHT_FLOAT32) {
     if (have_flags) { GRN_TEXT_PUTS(ctx, buf, "|"); }
     GRN_TEXT_PUTS(ctx, buf, "WEIGHT_FLOAT32");
-    have_flags = 1;
+    have_flags = true;
   }
   if (!have_flags) {
     GRN_TEXT_PUTS(ctx, buf, "NONE");
