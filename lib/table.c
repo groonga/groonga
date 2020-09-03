@@ -365,3 +365,279 @@ grn_table_get_score(grn_ctx *ctx, grn_obj *table, grn_id id)
 
   return score;
 }
+
+grn_rc
+grn_table_get_duplicated_keys(grn_ctx *ctx,
+                              grn_obj *table,
+                              grn_obj **duplicated_keys)
+{
+  GRN_API_ENTER;
+
+  *duplicated_keys = NULL;
+
+  const char *tag = "[table][get-duplicated-keys]";
+
+  if (!grn_obj_is_table_with_key(ctx, table)) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s must be a table that has key: <%.*s>",
+        tag,
+        name_size,
+        name);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  grn_obj *keys;
+  {
+    grn_obj *domain = grn_ctx_at(ctx, table->header.domain);
+    keys = grn_table_create(ctx,
+                            NULL, 0,
+                            NULL,
+                            GRN_TABLE_HASH_KEY,
+                            domain,
+                            NULL);
+    grn_obj_unref(ctx, domain);
+  }
+  if (!keys) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s failed to create output table: <%.*s>: %s",
+        tag,
+        name_size,
+        name,
+        message);
+    goto exit;
+  }
+
+  const char *records_name = "records";
+  grn_obj *records = grn_column_create(ctx,
+                                       keys,
+                                       records_name, strlen(records_name),
+                                       NULL,
+                                       GRN_OBJ_COLUMN_VECTOR,
+                                       table);
+  if (!records) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s failed to create output column: <%.*s>: %s",
+        tag,
+        name_size,
+        name,
+        message);
+    goto exit;
+  }
+
+  grn_obj record_buffer;
+  GRN_RECORD_INIT(&record_buffer, 0, DB_OBJ(table)->id);
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
+                             table,
+                             cursor,
+                             id,
+                             GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_ID) {
+    void *key;
+    int key_size;
+    key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+    grn_id keys_id = grn_table_add(ctx, keys, key, key_size, NULL);
+    if (keys_id == GRN_ID_NIL) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
+      char message[GRN_CTX_MSGSIZE];
+      grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+      grn_obj key_buffer;
+      GRN_OBJ_INIT(&key_buffer,
+                   GRN_BULK,
+                   GRN_OBJ_DO_SHALLOW_COPY,
+                   table->header.domain);
+      GRN_TEXT_SET(ctx, &key_buffer, key, key_size);
+      grn_obj inspected;
+      grn_inspect(ctx, &inspected, &key_buffer);
+      grn_rc rc = ctx->rc;
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_INVALID_ARGUMENT;
+      }
+      ERR(rc,
+          "%s failed to add key: <%.*s>: %.*s: %s",
+          tag,
+          name_size,
+          name,
+          (int)GRN_TEXT_LEN(&key_buffer),
+          GRN_TEXT_VALUE(&key_buffer),
+          message);
+      GRN_OBJ_FIN(ctx, &inspected);
+      GRN_OBJ_FIN(ctx, &key_buffer);
+      break;
+    }
+
+    GRN_RECORD_SET(ctx, &record_buffer, id);
+    grn_obj_set_value(ctx, records, keys_id, &record_buffer, GRN_OBJ_APPEND);
+    if (ctx->rc != GRN_SUCCESS) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
+      char message[GRN_CTX_MSGSIZE];
+      grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+      ERR(ctx->rc,
+          "%s failed to add a record: <%.*s>: <%u>: <%u>: %s",
+          tag,
+          name_size,
+          name,
+          id,
+          keys_id,
+          message);
+      break;
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  GRN_OBJ_FIN(ctx, &record_buffer);
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
+  }
+
+  grn_obj records_buffer;
+  GRN_RECORD_INIT(&records_buffer, GRN_OBJ_VECTOR, DB_OBJ(table)->id);
+  GRN_TABLE_EACH_BEGIN(ctx, keys, cursor, id) {
+    GRN_BULK_REWIND(&records_buffer);
+    grn_obj_get_value(ctx, records, id, &records_buffer);
+    if (ctx->rc != GRN_SUCCESS) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
+      char message[GRN_CTX_MSGSIZE];
+      grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+      ERR(ctx->rc,
+          "%s failed to get records: <%.*s>: <%u>: %s",
+          tag,
+          name_size,
+          name,
+          id,
+          message);
+      break;
+    }
+    if (GRN_RECORD_VECTOR_SIZE(&records_buffer) == 1) {
+      grn_table_cursor_delete(ctx, cursor);
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  GRN_OBJ_FIN(ctx, &records_buffer);
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
+  }
+
+  *duplicated_keys = keys;
+  keys = NULL;
+
+exit :
+  if (keys) {
+    grn_obj_close(ctx, keys);
+  }
+  GRN_API_RETURN(ctx->rc);
+}
+
+bool
+grn_table_have_duplicated_keys(grn_ctx *ctx, grn_obj *table)
+{
+  GRN_API_ENTER;
+
+  bool have_duplicated_keys = false;
+
+  const char *tag = "[table][have-duplicated-keys]";
+
+  if (!grn_obj_is_table_with_key(ctx, table)) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s must be a table that has key: <%.*s>",
+        tag,
+        name_size,
+        name);
+    GRN_API_RETURN(have_duplicated_keys);
+  }
+
+  grn_obj *keys;
+  {
+    grn_obj *domain = grn_ctx_at(ctx, table->header.domain);
+    keys = grn_table_create(ctx,
+                            NULL, 0,
+                            NULL,
+                            GRN_TABLE_HASH_KEY,
+                            domain,
+                            NULL);
+    grn_obj_unref(ctx, domain);
+  }
+  if (!keys) {
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size;
+    name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s failed to create internal table: <%.*s>: %s",
+        tag,
+        name_size,
+        name,
+        message);
+    goto exit;
+  }
+
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
+                             table,
+                             cursor,
+                             id,
+                             GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_ID) {
+    void *key;
+    int key_size;
+    key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+    int added = 0;
+    grn_id keys_id = grn_table_add(ctx, keys, key, key_size, &added);
+    if (keys_id == GRN_ID_NIL) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
+      char message[GRN_CTX_MSGSIZE];
+      grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+      grn_obj key_buffer;
+      GRN_OBJ_INIT(&key_buffer,
+                   GRN_BULK,
+                   GRN_OBJ_DO_SHALLOW_COPY,
+                   table->header.domain);
+      GRN_TEXT_SET(ctx, &key_buffer, key, key_size);
+      grn_obj inspected;
+      grn_inspect(ctx, &inspected, &key_buffer);
+      grn_rc rc = ctx->rc;
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_INVALID_ARGUMENT;
+      }
+      ERR(rc,
+          "%s failed to add key: <%.*s>: %.*s: %s",
+          tag,
+          name_size,
+          name,
+          (int)GRN_TEXT_LEN(&key_buffer),
+          GRN_TEXT_VALUE(&key_buffer),
+          message);
+      GRN_OBJ_FIN(ctx, &inspected);
+      GRN_OBJ_FIN(ctx, &key_buffer);
+      break;
+    }
+    if (!added) {
+      have_duplicated_keys = true;
+      break;
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+
+exit :
+  if (keys) {
+    grn_obj_close(ctx, keys);
+  }
+  GRN_API_RETURN(have_duplicated_keys);
+}

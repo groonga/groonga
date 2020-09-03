@@ -308,6 +308,14 @@ GRN_API grn_id grn_table_find_reference_object(grn_ctx *ctx, grn_obj *table);
 GRN_API grn_rc
 grn_table_copy(grn_ctx *ctx, grn_obj *from, grn_obj *to);
 
+GRN_API grn_rc
+grn_table_get_duplicated_keys(grn_ctx *ctx,
+                              grn_obj *table,
+                              grn_obj **duplicated_keys);
+GRN_API bool
+grn_table_have_duplicated_keys(grn_ctx *ctx,
+                               grn_obj *table);
+
 #ifdef __cplusplus
 }
 #endif
