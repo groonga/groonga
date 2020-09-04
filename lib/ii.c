@@ -1896,11 +1896,11 @@ datavec_fin(grn_ctx *ctx, datavec *dv)
 }
 
 /* p is for PForDelta */
-static size_t
+static ssize_t
 grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
 {
   uint8_t *rp = res, freq[33];
-  size_t estimated = 0;
+  ssize_t estimated = 0;
   /* f in df is for frequency */
   uint32_t pgap, usep, l, df, data_size, *dp, *dpe;
   if (!dvlen || !(df = dv[0].data_size)) { return 0; }
@@ -1908,7 +1908,7 @@ grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
     uint32_t dl = dv[l].data_size;
     if (dl < df || ((dl > df) && (l != dvlen - 1))) {
       /* invalid argument */
-      return (size_t)-1;
+      return -1;
     }
     usep += (dv[l].flags & USE_P_ENC) << l;
     data_size += dl;
@@ -3977,8 +3977,8 @@ chunk_merge(grn_ctx *ctx,
       }
       dv[j].data_size = np; dv[j].flags = f_p|ODD;
     }
-    const size_t encsize_estimated = grn_p_encv(ctx, dv, ii->n_elements, NULL);
-    if (encsize_estimated == (size_t)-1) {
+    const ssize_t encsize_estimated = grn_p_encv(ctx, dv, ii->n_elements, NULL);
+    if (encsize_estimated == -1) {
       grn_obj term;
       DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
@@ -3989,7 +3989,7 @@ chunk_merge(grn_ctx *ctx,
            "record:<%u>, "
            "segment:<%u>, "
            "size:<%u>, "
-           "estimated-buffer-size: <%" GRN_FMT_SIZE ">",
+           "estimated-buffer-size: <%" GRN_FMT_SSIZE ">",
            name_size, name,
            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
            data->term_id,
@@ -4015,7 +4015,7 @@ chunk_merge(grn_ctx *ctx,
              "record:<%u>, "
              "segment:<%u>, "
              "size:<%u>, "
-             "estimated-buffer-size: <%" GRN_FMT_SIZE ">",
+             "estimated-buffer-size: <%" GRN_FMT_SSIZE ">",
              name_size, name,
              (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
              data->term_id,
@@ -4026,8 +4026,8 @@ chunk_merge(grn_ctx *ctx,
         GRN_OBJ_FIN(ctx, &term);
         goto exit;
       }
-      const size_t encsize = grn_p_encv(ctx, dv, ii->n_elements, enc);
-      if (encsize == (size_t)-1) {
+      const ssize_t encsize = grn_p_encv(ctx, dv, ii->n_elements, enc);
+      if (encsize == -1) {
         grn_obj term;
         DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
@@ -4038,7 +4038,7 @@ chunk_merge(grn_ctx *ctx,
              "record:<%u>, "
              "segment:<%u>, "
              "size:<%u>, "
-             "estimated-buffer-size: <%" GRN_FMT_SIZE ">",
+             "estimated-buffer-size: <%" GRN_FMT_SSIZE ">",
              name_size, name,
              (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
              data->term_id,
@@ -4523,7 +4523,6 @@ buffer_merge(grn_ctx *ctx,
           nterms_void++;
         } else {
           int j = 0;
-          uint32_t encsize;
           uint32_t f_s = (ndf < 3) ? 0 : USE_P_ENC;
           uint32_t f_d = ((ndf < 16) || (ndf <= (data.last_id.rid >> 8))) ? 0 : USE_P_ENC;
           dv[j].data_size = ndf; dv[j++].flags = f_d;
@@ -4572,11 +4571,11 @@ buffer_merge(grn_ctx *ctx,
               }
             }
           }
-          const size_t estimated_encsize = grn_p_encv(ctx,
-                                                      dv,
-                                                      ii->n_elements,
-                                                      NULL);
-          if (estimated_encsize == (size_t)-1) {
+          const ssize_t estimated_encsize = grn_p_encv(ctx,
+                                                       dv,
+                                                       ii->n_elements,
+                                                       NULL);
+          if (estimated_encsize == -1) {
             grn_obj term;
             DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
@@ -4608,8 +4607,8 @@ buffer_merge(grn_ctx *ctx,
             goto exit;
           }
 
-          encsize = grn_p_encv(ctx, dv, ii->n_elements, dcp);
-          if (encsize == (size_t)-1) {
+          const ssize_t encsize = grn_p_encv(ctx, dv, ii->n_elements, dcp);
+          if (encsize == -1) {
             grn_obj term;
             DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
@@ -4618,7 +4617,7 @@ buffer_merge(grn_ctx *ctx,
                 "[ii][buffer][merge] failed to encode: "
                 "<%.*s>: "
                 "<%.*s>(%u): "
-                "<%" GRN_FMT_SIZE ">",
+                "<%" GRN_FMT_SSIZE ">",
                 name_size, name,
                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                 bt->tid,
@@ -4646,7 +4645,10 @@ buffer_merge(grn_ctx *ctx,
               }
             }
             /* TODO: format */
-            GRN_LOG(ctx, GRN_LOG_DEBUG, "split (%d) encsize=%d", tid, encsize);
+            GRN_LOG(ctx,
+                    GRN_LOG_DEBUG,
+                    "split (%d) encsize=%" GRN_FMT_SSIZE,
+                    tid, encsize);
             bt->tid |= CHUNK_SPLIT;
           } else {
             dcp += encsize;
@@ -12735,7 +12737,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     {
       /* Pack postings into the current buffer. */
       uint16_t nterm;
-      size_t packed_len;
+      ssize_t packed_len;
       buffer_term *bt;
       uint32_t *a;
       buffer *term_buffer;
