@@ -15,7 +15,11 @@ Copyright: 2011 Kouhei Sutou <kou@clear-code.com>
 	   orangain <orangain@gmail.com>
 License: LGPL-2.1
 
-Files: data/html/admin/css/redmond/* examples/dictionary/html/css/smoothness/jquery-ui-1.8.12.custom.css data/html/admin/css/redmond/jquery-ui-1.8.18.custom.css data/html/admin/js/jquery-ui-1.8.18.custom.js
+Files: data/html/admin/assets/jquery-ui-1.12.1/*
+Copyright: jQuery Foundation and other contributors, https://jquery.org/
+License: MIT
+
+Files: examples/dictionary/html/css/smoothness/jquery-ui-1.8.12.custom.css
 Copyright: 2011, Brandon Aaron
 	   Paul Bakaus (paulbakaus.com)
 	   David Bolter
@@ -42,13 +46,13 @@ Copyright: 2011, Brandon Aaron
 	   Jörn Zaefferer (bassistance.de)
 License: MIT or GPL-2
 
-Files: data/html/admin/js/jquery.flot*
+Files: data/html/admin/assets/flot-4.2.1/*
 Copyright: 2007-2014 IOLA and Ole Laursen
 License: MIT
 
-Files: data/html/admin/js/jquery-1.7.2.js
-Copyright: 2011, John Resig
-License: MIT or GPL-2
+Files: data/html/admin/assets/jquery-*.js
+Copyright: OpenJS Foundation and other contributors, https://openjsf.org/
+License: MIT
 
 Files: doc/locale/*/jquery*.js
 Copyright: 2005, 2014 jQuery Foundation, Inc. and other contributors

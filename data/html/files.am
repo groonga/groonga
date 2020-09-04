@@ -1,34 +1,60 @@
 nobase_dist_html_DATA = \
-	admin/css/groonga-admin.css \
-	admin/css/redmond/images/ui-bg_flat_0_aaaaaa_40x100.png \
-	admin/css/redmond/images/ui-bg_flat_55_fbec88_40x100.png \
-	admin/css/redmond/images/ui-bg_glass_75_d0e5f5_1x400.png \
-	admin/css/redmond/images/ui-bg_glass_85_dfeffc_1x400.png \
-	admin/css/redmond/images/ui-bg_glass_95_fef1ec_1x400.png \
-	admin/css/redmond/images/ui-bg_gloss-wave_55_5c9ccc_500x100.png \
-	admin/css/redmond/images/ui-bg_inset-hard_100_f5f8f9_1x100.png \
-	admin/css/redmond/images/ui-bg_inset-hard_100_fcfdfd_1x100.png \
-	admin/css/redmond/images/ui-icons_217bc0_256x240.png \
-	admin/css/redmond/images/ui-icons_2e83ff_256x240.png \
-	admin/css/redmond/images/ui-icons_469bdd_256x240.png \
-	admin/css/redmond/images/ui-icons_6da8d5_256x240.png \
-	admin/css/redmond/images/ui-icons_cd0a0a_256x240.png \
-	admin/css/redmond/images/ui-icons_d8e7f3_256x240.png \
-	admin/css/redmond/images/ui-icons_f9bd01_256x240.png \
-	admin/css/redmond/jquery-ui-1.8.18.custom.css \
+	admin/assets/flot-4.2.1/CHANGELOG.md \
+	admin/assets/flot-4.2.1/LICENSE.txt \
+	admin/assets/flot-4.2.1/README.md \
+	admin/assets/flot-4.2.1/source/jquery.canvaswrapper.js \
+	admin/assets/flot-4.2.1/source/jquery.colorhelpers.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.axislabels.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.browser.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.categories.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.composeImages.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.crosshair.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.drawSeries.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.errorbars.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.fillbetween.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.flatdata.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.hover.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.image.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.legend.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.logaxis.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.navigate.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.pie.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.resize.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.saturated.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.selection.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.stack.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.symbol.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.threshold.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.time.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.touch.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.touchNavigate.js \
+	admin/assets/flot-4.2.1/source/jquery.flot.uiConstants.js \
+	admin/assets/flot-4.2.1/source/jquery.js \
+	admin/assets/groonga-admin.css \
+	admin/assets/groonga-admin.ja.js \
+	admin/assets/groonga-admin.js \
+	admin/assets/groonga.png \
+	admin/assets/groonga.svg \
+	admin/assets/jquery-3.5.1.js \
+	admin/assets/jquery-ui-1.12.1/AUTHORS.txt \
+	admin/assets/jquery-ui-1.12.1/LICENSE.txt \
+	admin/assets/jquery-ui-1.12.1/images/ui-icons_444444_256x240.png \
+	admin/assets/jquery-ui-1.12.1/images/ui-icons_555555_256x240.png \
+	admin/assets/jquery-ui-1.12.1/images/ui-icons_777620_256x240.png \
+	admin/assets/jquery-ui-1.12.1/images/ui-icons_777777_256x240.png \
+	admin/assets/jquery-ui-1.12.1/images/ui-icons_cc0000_256x240.png \
+	admin/assets/jquery-ui-1.12.1/images/ui-icons_ffffff_256x240.png \
+	admin/assets/jquery-ui-1.12.1/jquery-ui.css \
+	admin/assets/jquery-ui-1.12.1/jquery-ui.js \
+	admin/assets/jquery-ui-1.12.1/jquery-ui.structure.css \
+	admin/assets/jquery-ui-1.12.1/jquery-ui.theme.css \
+	admin/assets/jquery-ui-1.12.1/package.json \
+	admin/assets/loading.gif \
 	admin/favicon.ico \
 	admin/favicon.png \
 	admin/favicon.svg \
-	admin/images/groonga.png \
-	admin/images/groonga.svg \
-	admin/images/loading.gif \
 	admin/index.html \
 	admin/index.ja.html \
-	admin/js/groonga-admin.ja.js \
-	admin/js/groonga-admin.js \
-	admin/js/jquery-1.7.2.js \
-	admin/js/jquery-ui-1.8.18.custom.js \
-	admin/js/jquery.flot-0.8.3.js \
-	admin/js/jquery.flot.license.txt \
 	$(NULL)
 
