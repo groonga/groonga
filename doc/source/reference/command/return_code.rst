@@ -105,6 +105,7 @@ only C API. It is not showen in query API.
 * -77: ``GRN_CANCEL``
 * -78: ``GRN_WINDOW_FUNCTION_ERROR``
 * -79: ``GRN_ZSTD_ERROR``
+* -80: ``GRN_CONNECTION_RESET``
 
 See also
 --------

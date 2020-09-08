@@ -4045,6 +4045,9 @@ msgstr ""
 msgid "-79: ``GRN_ZSTD_ERROR``"
 msgstr ""
 
+msgid "-80: ``GRN_CONNECTION_RESET``"
+msgstr ""
+
 msgid ""
 ":doc:`output_format` shows where return code is appeared in query API "
 "response."
