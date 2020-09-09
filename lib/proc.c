@@ -309,6 +309,36 @@ grn_proc_options_parsev(grn_ctx *ctx,
         }
       }
       break;
+    case GRN_PROC_OPTION_VALUE_TOKENIZE_MODE :
+      {
+        grn_tokenize_mode *mode = va_arg(args, grn_tokenize_mode *);
+        if (id != GRN_ID_NIL) {
+          GRN_RECORD_PUT(ctx, &used_ids, id);
+          *mode = grn_proc_get_value_tokenize_mode(ctx,
+                                                   value,
+                                                   *mode,
+                                                   func_tag);
+          if (ctx->rc != GRN_SUCCESS) {
+            goto exit;
+          }
+        }
+      }
+      break;
+    case GRN_PROC_OPTION_VALUE_TOKEN_CURSOR_FLAGS :
+      {
+        uint32_t *flags = va_arg(args, uint32_t *);
+        if (id != GRN_ID_NIL) {
+          GRN_RECORD_PUT(ctx, &used_ids, id);
+          *flags = grn_proc_get_value_token_cursor_flags(ctx,
+                                                         value,
+                                                         *flags,
+                                                         func_tag);
+          if (ctx->rc != GRN_SUCCESS) {
+            goto exit;
+          }
+        }
+      }
+      break;
     default :
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
