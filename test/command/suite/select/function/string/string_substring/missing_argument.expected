@@ -15,7 +15,7 @@ select Memos   --output_columns '_key, string_substring(_key)'
       0.0,
       0.0
     ],
-    "string_substring(): wrong number of arguments (1 for 2..3)"
+    "[string_substring] wrong number of arguments (1 for 2..3)"
   ],
   [
     [
@@ -34,9 +34,9 @@ select Memos   --output_columns '_key, string_substring(_key)'
       ],
       [
         "Groonga",
-        "string_substring(): wrong number of arguments (1 for 2..3)"
+        "[string_substring] wrong number of arguments (1 for 2..3)"
       ]
     ]
   ]
 ]
-#|e| string_substring(): wrong number of arguments (1 for 2..3)
+#|e| [string_substring] wrong number of arguments (1 for 2..3)

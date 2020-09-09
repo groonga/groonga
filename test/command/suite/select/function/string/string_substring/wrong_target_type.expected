@@ -15,7 +15,7 @@ select Memos   --output_columns '_key, string_substring(_id, 5)'
       0.0,
       0.0
     ],
-    "string_substring(): target object must be a text bulk: <1>"
+    "[string_substring][target] must be a text bulk: <1>"
   ],
   [
     [
@@ -34,9 +34,9 @@ select Memos   --output_columns '_key, string_substring(_id, 5)'
       ],
       [
         "Groonga",
-        "string_substring(): target object must be a text bulk: <1>"
+        "[string_substring][target] must be a text bulk: <1>"
       ]
     ]
   ]
 ]
-#|e| string_substring(): target object must be a text bulk: <1>
+#|e| [string_substring][target] must be a text bulk: <1>
