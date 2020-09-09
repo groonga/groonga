@@ -1,0 +1,13 @@
+table_create Data TABLE_NO_KEY --path nonexistent/directory/data
+[
+  [
+    [
+      -3,
+      0.0,
+      0.0
+    ],
+    "system error[3]: The system cannot find the path specified.: CreateFile(<nonexistent/directory/data>, <O_RDWR|O_CREAT|O_EXCL>) "
+  ],
+  false
+]
+#|e| system error[3]: The system cannot find the path specified.: CreateFile(<nonexistent/directory/data>, <O_RDWR|O_CREAT|O_EXCL>) failed

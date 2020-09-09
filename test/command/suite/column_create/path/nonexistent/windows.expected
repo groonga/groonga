@@ -1,0 +1,15 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data number COLUMN_SCALAR Int64   --path nonexistent/directory/data/number
+[
+  [
+    [
+      -3,
+      0.0,
+      0.0
+    ],
+    "system error[3]: The system cannot find the path specified.: CreateFile(<nonexistent/directory/data/number>, <O_RDWR|O_CREAT|O_"
+  ],
+  false
+]
+#|e| system error[3]: The system cannot find the path specified.: CreateFile(<nonexistent/directory/data/number>, <O_RDWR|O_CREAT|O_EXCL>) failed

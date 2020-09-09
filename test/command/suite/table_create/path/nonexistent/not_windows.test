@@ -1,1 +1,3 @@
+#@require-platform !windows
+
 table_create Data TABLE_NO_KEY --path nonexistent/directory/data
