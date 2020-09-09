@@ -306,7 +306,7 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
   grn_raw_string table_raw;
   grn_raw_string string_raw;
   grn_raw_string flags_raw;
-  grn_raw_string mode_raw;
+  grn_obj *mode_raw;
   grn_raw_string index_column_raw;
 
 #define GET_VALUE(name)                                         \
@@ -320,7 +320,7 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
   GET_VALUE(table);
   GET_VALUE(string);
   GET_VALUE(flags);
-  GET_VALUE(mode);
+  mode_raw = grn_plugin_proc_get_var(ctx, user_data, "mode", strlen("mode"));
   GET_VALUE(index_column);
 
 #undef GET_VALUE
@@ -382,18 +382,14 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
     {
       grn_obj tokens;
       init_tokens(ctx, &tokens);
-      if (mode_raw.length == 0 ||
-          GRN_RAW_STRING_EQUAL_CSTRING(mode_raw, "GET")) {
-        tokenize(ctx, lexicon, &string_raw, GRN_TOKEN_GET, flags, &tokens);
+      grn_tokenize_mode mode =
+        grn_proc_get_value_tokenize_mode(ctx,
+                                         mode_raw,
+                                         GRN_TOKENIZE_GET,
+                                         "[table_tokenize][mode]");
+      if (ctx->rc == GRN_SUCCESS) {
+        tokenize(ctx, lexicon, &string_raw, mode, flags, &tokens);
         output_tokens(ctx, &tokens, lexicon, index_column);
-      } else if (GRN_RAW_STRING_EQUAL_CSTRING(mode_raw, "ADD")) {
-        tokenize(ctx, lexicon, &string_raw, GRN_TOKEN_ADD, flags, &tokens);
-        output_tokens(ctx, &tokens, lexicon, index_column);
-      } else {
-        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                         "[table_tokenize] invalid mode: <%.*s>",
-                         (int)mode_raw.length,
-                         mode_raw.value);
       }
       fin_tokens(ctx, &tokens);
     }
@@ -434,7 +430,7 @@ command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
   grn_raw_string string_raw;
   grn_raw_string normalizer_raw;
   grn_raw_string flags_raw;
-  grn_raw_string mode_raw;
+  grn_obj *mode_raw;
   grn_raw_string token_filters_raw;
 
 #define GET_VALUE(name)                                         \
@@ -449,7 +445,7 @@ command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
   GET_VALUE(string);
   GET_VALUE(normalizer);
   GET_VALUE(flags);
-  GET_VALUE(mode);
+  mode_raw = grn_plugin_proc_get_var(ctx, user_data, "mode", strlen("mode"));
   GET_VALUE(token_filters);
 
 #undef GET_VALUE
@@ -491,22 +487,18 @@ command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
     {
       grn_obj tokens;
       init_tokens(ctx, &tokens);
-      fin_tokens(ctx, &tokens);
-      if (mode_raw.length == 0 ||
-          GRN_RAW_STRING_EQUAL_CSTRING(mode_raw, "ADD")) {
-        tokenize(ctx, lexicon, &string_raw, GRN_TOKEN_ADD, flags, &tokens);
+      grn_tokenize_mode mode =
+        grn_proc_get_value_tokenize_mode(ctx,
+                                         mode_raw,
+                                         GRN_TOKENIZE_ADD,
+                                         "[tokenize][mode]");
+      if (ctx->rc == GRN_SUCCESS) {
+        tokenize(ctx, lexicon, &string_raw, GRN_TOKENIZE_ADD, flags, &tokens);
+        if (mode != GRN_TOKENIZE_ADD) {
+          GRN_BULK_REWIND(&tokens);
+          tokenize(ctx, lexicon, &string_raw, mode, flags, &tokens);
+        }
         output_tokens(ctx, &tokens, lexicon, NULL);
-      } else if (GRN_RAW_STRING_EQUAL_CSTRING(mode_raw, "GET")) {
-        tokenize(ctx, lexicon, &string_raw, GRN_TOKEN_ADD, flags, &tokens);
-        GRN_BULK_REWIND(&tokens);
-        tokenize(ctx, lexicon, &string_raw, GRN_TOKEN_GET, flags, &tokens);
-        output_tokens(ctx, &tokens, lexicon, NULL);
-      } else {
-        GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                         "%s invalid mode: <%.*s>",
-                         context_tag,
-                         (int)mode_raw.length,
-                         mode_raw.value);
       }
       fin_tokens(ctx, &tokens);
     }

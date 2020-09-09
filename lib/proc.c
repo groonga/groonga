@@ -1346,6 +1346,59 @@ grn_proc_get_value_operator(grn_ctx *ctx,
   }
 }
 
+grn_tokenize_mode
+grn_proc_get_value_tokenize_mode(grn_ctx *ctx,
+                                 grn_obj *value,
+                                 grn_tokenize_mode default_mode,
+                                 const char *tag)
+{
+  if (!value) {
+    return default_mode;
+  }
+
+  if (!grn_obj_is_text_family_bulk(ctx, value)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, value);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s tokenize mode must be text bulk: <%.*s>",
+                     tag,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return default_mode;
+  }
+
+  if (GRN_TEXT_LEN(value) == 0) {
+    return default_mode;
+  }
+
+#define EQUAL_MODE(name)                                        \
+  (GRN_TEXT_LEN(value) == strlen(name) &&                       \
+   memcmp(GRN_TEXT_VALUE(value), name, strlen(name)) == 0)
+
+  if (EQUAL_MODE("GET")) {
+    return GRN_TOKENIZE_GET;
+  } else if (EQUAL_MODE("ADD")) {
+    return GRN_TOKENIZE_ADD;
+  } else if (EQUAL_MODE("ONLY")) {
+    return GRN_TOKENIZE_ONLY;
+  } else {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s tokenize mode must be one of them: "
+                     "["
+                     "\"GET\", "
+                     "\"ADD\", "
+                     "\"ONLY\""
+                     "]: <%.*s>",
+                     tag,
+                     (int)GRN_TEXT_LEN(value),
+                     GRN_TEXT_VALUE(value));
+    return default_mode;
+  }
+
+#undef EQUAL_MODE
+}
 
 static grn_obj *
 proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)

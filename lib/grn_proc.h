@@ -108,6 +108,11 @@ grn_operator grn_proc_get_value_operator(grn_ctx *ctx,
                                          grn_obj *value,
                                          grn_operator default_operator,
                                          const char *context);
+grn_tokenize_mode
+grn_proc_get_value_tokenize_mode(grn_ctx *ctx,
+                                 grn_obj *value,
+                                 grn_tokenize_mode default_mode,
+                                 const char *context);
 
 void grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
 void grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);

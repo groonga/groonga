@@ -1,3 +1,12 @@
 tokenize TokenBigram "あいabアイ" NormalizerAuto NONE UNKNOWN
-[[[-22,0.0,0.0],"[tokenize] invalid mode: <UNKNOWN>"]]
-#|e| [tokenize] invalid mode: <UNKNOWN>
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[tokenize][mode] tokenize mode must be one of them: [\"GET\", \"ADD\", \"ONLY\"]: <UNKNOWN>"
+  ]
+]
+#|e| [tokenize][mode] tokenize mode must be one of them: ["GET", "ADD", "ONLY"]: <UNKNOWN>
