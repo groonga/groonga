@@ -87,13 +87,13 @@ typedef struct {
   grn_id range;
 } grn_obj_spec;
 
-grn_bool grn_db_spec_unpack(grn_ctx *ctx,
-                            grn_id id,
-                            void *encoded_spec,
-                            uint32_t encoded_spec_size,
-                            grn_obj_spec **spec,
-                            grn_obj *decoded_spec,
-                            const char *error_message_tag);
+bool grn_obj_spec_unpack(grn_ctx *ctx,
+                         grn_id id,
+                         void *encoded_spec,
+                         uint32_t encoded_spec_size,
+                         grn_obj_spec **spec,
+                         grn_obj *decoded_spec,
+                         const char *error_message_tag);
 
 #define GRN_DB_SPEC_EACH_BEGIN(ctx, cursor, id, spec) do {              \
   grn_obj *db = grn_ctx_db((ctx));                                      \
@@ -105,7 +105,7 @@ grn_bool grn_db_spec_unpack(grn_ctx *ctx,
   GRN_TABLE_EACH_BEGIN((ctx), db, cursor, id) {                         \
     void *encoded_spec;                                                 \
     uint32_t encoded_spec_size;                                         \
-    grn_bool success;                                                   \
+    bool success;                                                       \
     grn_obj_spec *spec;                                                 \
                                                                         \
     if (iw_need_unref) {                                                \
@@ -123,13 +123,13 @@ grn_bool grn_db_spec_unpack(grn_ctx *ctx,
     iw_need_unref = GRN_TRUE;                                           \
                                                                         \
     GRN_BULK_REWIND(&decoded_spec);                                     \
-    success = grn_db_spec_unpack(ctx,                                   \
-                                 id,                                    \
-                                 encoded_spec,                          \
-                                 encoded_spec_size,                     \
-                                 &spec,                                 \
-                                 &decoded_spec,                         \
-                                 __FUNCTION__);                         \
+    success = grn_obj_spec_unpack(ctx,                                  \
+                                  id,                                   \
+                                  encoded_spec,                         \
+                                  encoded_spec_size,                    \
+                                  &spec,                                \
+                                  &decoded_spec,                        \
+                                  __FUNCTION__);                        \
    if (!success) {                                                      \
      continue;                                                          \
    }                                                                    \

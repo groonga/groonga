@@ -9990,14 +9990,14 @@ grn_token_filters_unpack(grn_ctx *ctx,
   }
 }
 
-grn_bool
-grn_db_spec_unpack(grn_ctx *ctx,
-                   grn_id id,
-                   void *encoded_spec,
-                   uint32_t encoded_spec_size,
-                   grn_obj_spec **spec,
-                   grn_obj *decoded_spec,
-                   const char *error_message_tag)
+bool
+grn_obj_spec_unpack(grn_ctx *ctx,
+                    grn_id id,
+                    void *encoded_spec,
+                    uint32_t encoded_spec_size,
+                    grn_obj_spec **spec,
+                    grn_obj *decoded_spec,
+                    const char *error_message_tag)
 {
   grn_obj *db;
   grn_db *db_raw;
@@ -10023,7 +10023,7 @@ grn_db_spec_unpack(grn_ctx *ctx,
             name_size, name,
             encoded_spec_size,
             grn_rc_to_string(rc));
-    return GRN_FALSE;
+    return false;
   }
 
   spec_size = grn_vector_get_element(ctx,
@@ -10041,10 +10041,10 @@ grn_db_spec_unpack(grn_ctx *ctx,
             error_message_tag,
             id,
             name_size, name);
-    return GRN_FALSE;
+    return false;
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static inline bool
@@ -10221,18 +10221,18 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
 
           encoded_spec = grn_ja_ref(ctx, s->specs, id, &iw, &encoded_spec_size);
           if (encoded_spec) {
-            grn_bool success;
+            bool success;
             grn_obj_spec *spec;
             grn_obj decoded_spec;
 
             GRN_OBJ_INIT(&decoded_spec, GRN_VECTOR, 0, GRN_DB_TEXT);
-            success = grn_db_spec_unpack(ctx,
-                                         id,
-                                         encoded_spec,
-                                         encoded_spec_size,
-                                         &spec,
-                                         &decoded_spec,
-                                         "grn_ctx_at");
+            success = grn_obj_spec_unpack(ctx,
+                                          id,
+                                          encoded_spec,
+                                          encoded_spec_size,
+                                          &spec,
+                                          &decoded_spec,
+                                          "grn_ctx_at");
             if (success) {
               char buffer[PATH_MAX];
               switch (spec->header.type) {
