@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2016 Brazil
+  Copyright(C) 2016  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -192,6 +193,104 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
   return substring;
 }
 
+static grn_obj *
+func_string_tokenize(grn_ctx *ctx, int n_args, grn_obj **args,
+                     grn_user_data *user_data)
+{
+  grn_obj *target;
+  grn_obj *lexicon;
+  grn_obj *options = NULL;
+
+  if (!(n_args == 2 || n_args == 3)) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "[string_tokenize] wrong number of arguments (%d for 2..3)",
+                     n_args);
+    return NULL;
+  }
+
+  target = args[0];
+  lexicon = args[1];
+  if (n_args == 3) {
+    options = args[2];
+  }
+
+  if (!grn_obj_is_text_family_bulk(ctx, target)) {
+    grn_obj inspected;
+
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, target);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "[string_tokenize][target] must be a text bulk: %.*s",
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
+  }
+
+  if (!grn_obj_is_table_with_key(ctx, lexicon)) {
+    grn_obj inspected;
+
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, lexicon);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "[string_tokenize][lexicon] must be a table with key: %.*s",
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
+  }
+
+  grn_tokenize_mode mode = GRN_TOKEN_GET;
+  uint32_t flags = 0;
+  if (options) {
+    grn_rc rc = grn_proc_options_parse(ctx,
+                                       options,
+                                       "[string_tokenize]",
+                                       "mode",
+                                       GRN_PROC_OPTION_VALUE_TOKENIZE_MODE,
+                                       &mode,
+                                       "flags",
+                                       GRN_PROC_OPTION_VALUE_TOKEN_CURSOR_FLAGS,
+                                       &flags,
+                                       NULL);
+    if (rc != GRN_SUCCESS) {
+      return NULL;
+    }
+  }
+
+  grn_obj *tokens = grn_plugin_proc_alloc(ctx,
+                                          user_data,
+                                          grn_obj_id(ctx, lexicon),
+                                          GRN_OBJ_VECTOR);
+  if (!tokens) {
+    return NULL;
+  }
+
+  grn_token_cursor *token_cursor;
+  token_cursor = grn_token_cursor_open(ctx,
+                                       lexicon,
+                                       GRN_TEXT_VALUE(target),
+                                       GRN_TEXT_LEN(target),
+                                       mode,
+                                       flags);
+  if (!token_cursor) {
+    return tokens;
+  }
+  while (grn_token_cursor_get_status(ctx, token_cursor) ==
+         GRN_TOKEN_CURSOR_DOING) {
+    grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
+
+    if (token_id == GRN_ID_NIL) {
+      continue;
+    }
+
+    grn_uvector_add_element_record(ctx, tokens, token_id, 0.0);
+  }
+  grn_token_cursor_close(ctx, token_cursor);
+
+  return tokens;
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -211,6 +310,11 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   grn_proc_create(ctx, "string_substring", -1,
                   GRN_PROC_FUNCTION,
                   func_string_substring,
+                  NULL, NULL, 0, NULL);
+
+  grn_proc_create(ctx, "string_tokenize", -1,
+                  GRN_PROC_FUNCTION,
+                  func_string_tokenize,
                   NULL, NULL, 0, NULL);
 
   return rc;
