@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2014-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -179,6 +179,13 @@ GRN_API grn_rc
 grn_token_set_position(grn_ctx *ctx,
                        grn_token *token,
                        uint32_t position);
+GRN_API float
+grn_token_get_weight(grn_ctx *ctx,
+                     grn_token *token);
+GRN_API grn_rc
+grn_token_set_weight(grn_ctx *ctx,
+                     grn_token *token,
+                     float weight);
 
 #ifdef __cplusplus
 }  /* extern "C" */

@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -35,6 +35,7 @@ struct _grn_token {
   grn_obj metadata;
   grn_bool force_prefix_search;
   uint32_t position;
+  float weight;
 };
 
 grn_rc grn_token_init(grn_ctx *ctx, grn_token *token);

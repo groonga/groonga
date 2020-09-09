@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2012-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -33,6 +33,7 @@ grn_token_init(grn_ctx *ctx, grn_token *token)
   grn_token_metadata_init(ctx, &(token->metadata));
   token->force_prefix_search = GRN_FALSE;
   token->position = 0;
+  token->weight = 0;
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -297,6 +298,31 @@ grn_token_set_position(grn_ctx *ctx, grn_token *token, uint32_t position)
   GRN_API_RETURN(ctx->rc);
 }
 
+float
+grn_token_get_weight(grn_ctx *ctx, grn_token *token)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][weight][get] token must not be NULL");
+    GRN_API_RETURN(0.0);
+  }
+  GRN_API_RETURN(token->weight);
+}
+
+grn_rc
+grn_token_set_weight(grn_ctx *ctx, grn_token *token, float weight)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][float][set] token must not be NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+  token->weight = weight;
+  GRN_API_RETURN(ctx->rc);
+}
+
 grn_rc
 grn_token_reset(grn_ctx *ctx, grn_token *token)
 {
@@ -314,6 +340,7 @@ grn_token_reset(grn_ctx *ctx, grn_token *token)
   grn_token_metadata_reset(ctx, &(token->metadata));
   token->force_prefix_search = GRN_FALSE;
   token->position = 0;
+  token->weight = 0.0;
 exit:
   GRN_API_RETURN(ctx->rc);
 }
@@ -341,6 +368,7 @@ grn_token_copy(grn_ctx *ctx,
   grn_token_metadata_copy(ctx, &(token->metadata), &(source->metadata));
   token->force_prefix_search = source->force_prefix_search;
   token->position = source->position;
+  token->weight = source->weight;
 exit:
   GRN_API_RETURN(ctx->rc);
 }
