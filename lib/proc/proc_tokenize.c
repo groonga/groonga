@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -22,44 +22,6 @@
 #include "../grn_token_cursor.h"
 
 #include <groonga/plugin.h>
-
-static unsigned int
-parse_tokenize_flags(grn_ctx *ctx, grn_raw_string *flags_raw)
-{
-  unsigned int flags = 0;
-  const char *names, *names_end;
-
-  names = flags_raw->value;
-  names_end = names + flags_raw->length;
-  while (names < names_end) {
-    if (*names == '|' || *names == ' ') {
-      names += 1;
-      continue;
-    }
-
-#define CHECK_FLAG(name)\
-    if (((names_end - names) >= (sizeof(#name) - 1)) &&\
-        (!memcmp(names, #name, sizeof(#name) - 1))) {\
-      flags |= GRN_TOKEN_CURSOR_ ## name;\
-      names += sizeof(#name) - 1;\
-      continue;\
-    }
-
-    CHECK_FLAG(ENABLE_TOKENIZED_DELIMITER);
-
-#define GRN_TOKEN_CURSOR_NONE 0
-    CHECK_FLAG(NONE);
-#undef GRN_TOKEN_CURSOR_NONE
-
-    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "[tokenize] invalid flag: <%.*s>",
-                     (int)(names_end - names), names);
-    return 0;
-#undef CHECK_FLAG
-  }
-
-  return flags;
-}
 
 typedef struct {
   grn_id id;
@@ -305,7 +267,7 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
 {
   grn_raw_string table_raw;
   grn_raw_string string_raw;
-  grn_raw_string flags_raw;
+  grn_obj *flags_raw;
   grn_obj *mode_raw;
   grn_raw_string index_column_raw;
 
@@ -319,7 +281,7 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
 
   GET_VALUE(table);
   GET_VALUE(string);
-  GET_VALUE(flags);
+  flags_raw = grn_plugin_proc_get_var(ctx, user_data, "flags", strlen("flags"));
   mode_raw = grn_plugin_proc_get_var(ctx, user_data, "mode", strlen("mode"));
   GET_VALUE(index_column);
 
@@ -338,11 +300,14 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
   }
 
   {
-    unsigned int flags;
+    uint32_t flags;
     grn_obj *lexicon;
     grn_obj *index_column = NULL;
 
-    flags = parse_tokenize_flags(ctx, &flags_raw);
+    flags = grn_proc_get_value_token_cursor_flags(ctx,
+                                                  flags_raw,
+                                                  0,
+                                                  "[table_tokenize][flags]");
     if (ctx->rc != GRN_SUCCESS) {
       return NULL;
     }
@@ -429,7 +394,7 @@ command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
   grn_raw_string tokenizer_raw;
   grn_raw_string string_raw;
   grn_raw_string normalizer_raw;
-  grn_raw_string flags_raw;
+  grn_obj *flags_raw;
   grn_obj *mode_raw;
   grn_raw_string token_filters_raw;
 
@@ -444,7 +409,7 @@ command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
   GET_VALUE(tokenizer);
   GET_VALUE(string);
   GET_VALUE(normalizer);
-  GET_VALUE(flags);
+  flags_raw = grn_plugin_proc_get_var(ctx, user_data, "flags", strlen("flags"));
   mode_raw = grn_plugin_proc_get_var(ctx, user_data, "mode", strlen("mode"));
   GET_VALUE(token_filters);
 
@@ -467,10 +432,13 @@ command_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_da
   }
 
   {
-    unsigned int flags;
+    uint32_t flags;
     grn_obj *lexicon;
 
-    flags = parse_tokenize_flags(ctx, &flags_raw);
+    flags = grn_proc_get_value_token_cursor_flags(ctx,
+                                                  flags_raw,
+                                                  0,
+                                                  "[tokenize][flags]");
     if (ctx->rc != GRN_SUCCESS) {
       return NULL;
     }

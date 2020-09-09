@@ -113,6 +113,11 @@ grn_proc_get_value_tokenize_mode(grn_ctx *ctx,
                                  grn_obj *value,
                                  grn_tokenize_mode default_mode,
                                  const char *context);
+uint32_t
+grn_proc_get_value_token_cursor_flags(grn_ctx *ctx,
+                                      grn_obj *value,
+                                      uint32_t default_flags,
+                                      const char *context);
 
 void grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
 void grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);

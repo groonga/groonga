@@ -1400,6 +1400,72 @@ grn_proc_get_value_tokenize_mode(grn_ctx *ctx,
 #undef EQUAL_MODE
 }
 
+uint32_t
+grn_proc_get_value_token_cursor_flags(grn_ctx *ctx,
+                                      grn_obj *value,
+                                      uint32_t default_flags,
+                                      const char *tag)
+{
+  if (!value) {
+    return default_flags;
+  }
+
+  if (!grn_obj_is_text_family_bulk(ctx, value)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, value);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s token cursor flags must be text bulk: <%.*s>",
+                     tag,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return default_flags;
+  }
+
+  if (GRN_TEXT_LEN(value) == 0) {
+    return default_flags;
+  }
+
+  uint32_t flags = 0;
+  const char *names, *names_end;
+  names = GRN_TEXT_VALUE(value);
+  names_end = names + GRN_TEXT_LEN(value);
+  while (names < names_end) {
+    if (*names == '|' || *names == ' ') {
+      names += 1;
+      continue;
+    }
+
+#define CHECK_FLAG(name)                                \
+    if (((names_end - names) >= (sizeof(#name) - 1)) && \
+        (!memcmp(names, #name, sizeof(#name) - 1))) {   \
+      flags |= GRN_TOKEN_CURSOR_ ## name;               \
+      names += sizeof(#name) - 1;                       \
+      continue;                                         \
+    }
+
+    CHECK_FLAG(ENABLE_TOKENIZED_DELIMITER);
+
+#define GRN_TOKEN_CURSOR_NONE 0
+    CHECK_FLAG(NONE);
+#undef GRN_TOKEN_CURSOR_NONE
+
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s token cursor flag must be on of them: "
+                     "["
+                     "\"ENABLE_TOKENIZED_DELIMITER\", "
+                     "\"NONE\""
+                     "]: <%.*s>",
+                     tag,
+                     (int)(names_end - names), names);
+    return default_flags;
+#undef CHECK_FLAG
+  }
+
+  return flags;
+}
+
 static grn_obj *
 proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
