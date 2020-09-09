@@ -223,35 +223,13 @@ command_object_list(grn_ctx *ctx,
         grn_ctx_output_map_close(ctx);
 
         grn_ctx_output_cstr(ctx, "path");
-        if (spec->header.flags & GRN_OBJ_CUSTOM_NAME) {
-          const char *path;
-          uint32_t path_size;
-          path_size = grn_vector_get_element(ctx,
-                                             &vector,
-                                             GRN_SERIALIZED_SPEC_INDEX_PATH,
-                                             &path,
-                                             NULL,
-                                             NULL);
-          grn_ctx_output_str(ctx, path, path_size);
+        char path[PATH_MAX];
+        grn_obj_spec_get_path(ctx, spec, id, path, db, &vector);
+        size_t path_size = strlen(path);
+        if (path_size == 0) {
+          grn_ctx_output_null(ctx);
         } else {
-          switch (spec->header.type) {
-          case GRN_TABLE_HASH_KEY :
-          case GRN_TABLE_PAT_KEY :
-          case GRN_TABLE_DAT_KEY :
-          case GRN_TABLE_NO_KEY :
-          case GRN_COLUMN_VAR_SIZE :
-          case GRN_COLUMN_FIX_SIZE :
-          case GRN_COLUMN_INDEX :
-            {
-              char path[PATH_MAX];
-              grn_db_generate_pathname(ctx, (grn_obj *)db, id, path);
-              grn_ctx_output_cstr(ctx, path);
-            }
-            break;
-          default :
-            grn_ctx_output_null(ctx);
-            break;
-          }
+          grn_ctx_output_str(ctx, path, path_size);
         }
 
         switch (spec->header.type) {

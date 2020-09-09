@@ -9904,22 +9904,39 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
   return rc;
 }
 
-#define GET_PATH(spec,decoded_spec,buffer,s,id) do {\
-  if (spec->header.flags & GRN_OBJ_CUSTOM_NAME) {\
-    const char *path;\
-    unsigned int size = grn_vector_get_element(ctx,\
-                                               decoded_spec,\
-                                               GRN_SERIALIZED_SPEC_INDEX_PATH,\
-                                               &path,\
-                                               NULL,\
-                                               NULL);\
-    if (size > PATH_MAX) { ERR(GRN_FILENAME_TOO_LONG, "too long path"); }\
-    grn_memcpy(buffer, path, size);\
-    buffer[size] = '\0';\
-  } else {\
-    grn_db_generate_pathname(ctx, (grn_obj *)s, id, buffer);\
-  }\
-} while (0)
+/* The size of buffer's must be PATH_MAX */
+void
+grn_obj_spec_get_path(grn_ctx *ctx,
+                      grn_obj_spec *spec,
+                      grn_id id,
+                      char *buffer,
+                      grn_db *db,
+                      grn_obj *decoded_spec)
+{
+  if (spec->header.flags & GRN_OBJ_CUSTOM_NAME) {
+    const char *path;
+    unsigned int size = grn_vector_get_element(ctx,
+                                               decoded_spec,
+                                               GRN_SERIALIZED_SPEC_INDEX_PATH,
+                                               &path,
+                                               NULL,
+                                               NULL);
+    if (size >= PATH_MAX) {
+      ERR(GRN_FILENAME_TOO_LONG,
+          "[spec][path] too long path: %u >= %u: <%.*s>",
+          size,
+          PATH_MAX,
+          (int)size,
+          path);
+    }
+    grn_memcpy(buffer, path, size);
+    buffer[size] = '\0';
+  } else if (spec->header.flags & GRN_OBJ_PERSISTENT) {
+    grn_db_generate_pathname(ctx, (grn_obj *)db, id, buffer);
+  } else {
+    buffer[0] = '\0';
+  }
+}
 
 #define UNPACK_INFO(spec,decoded_spec) do {\
   if (vp->ptr) {\
@@ -10241,7 +10258,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 UNPACK_INFO(spec, &decoded_spec);
                 break;
               case GRN_TABLE_HASH_KEY :
-                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                grn_obj_spec_get_path(ctx, spec, id, buffer, s, &decoded_spec);
                 vp->ptr = (grn_obj *)grn_hash_open(ctx, buffer);
                 if (vp->ptr) {
                   grn_hash *hash = (grn_hash *)(vp->ptr);
@@ -10255,7 +10272,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 }
                 break;
               case GRN_TABLE_PAT_KEY :
-                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                grn_obj_spec_get_path(ctx, spec, id, buffer, s, &decoded_spec);
                 vp->ptr = (grn_obj *)grn_pat_open(ctx, buffer);
                 if (vp->ptr) {
                   grn_pat *pat = (grn_pat *)(vp->ptr);
@@ -10274,7 +10291,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 }
                 break;
               case GRN_TABLE_DAT_KEY :
-                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                grn_obj_spec_get_path(ctx, spec, id, buffer, s, &decoded_spec);
                 vp->ptr = (grn_obj *)grn_dat_open(ctx, buffer);
                 if (vp->ptr) {
                   grn_dat *dat = (grn_dat *)(vp->ptr);
@@ -10288,22 +10305,22 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 }
                 break;
               case GRN_TABLE_NO_KEY :
-                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                grn_obj_spec_get_path(ctx, spec, id, buffer, s, &decoded_spec);
                 vp->ptr = (grn_obj *)grn_array_open(ctx, buffer);
                 UNPACK_INFO(spec, &decoded_spec);
                 break;
               case GRN_COLUMN_VAR_SIZE :
-                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                grn_obj_spec_get_path(ctx, spec, id, buffer, s, &decoded_spec);
                 vp->ptr = (grn_obj *)grn_ja_open(ctx, buffer);
                 UNPACK_INFO(spec, &decoded_spec);
                 break;
               case GRN_COLUMN_FIX_SIZE :
-                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                grn_obj_spec_get_path(ctx, spec, id, buffer, s, &decoded_spec);
                 vp->ptr = (grn_obj *)grn_ra_open(ctx, buffer);
                 UNPACK_INFO(spec, &decoded_spec);
                 break;
               case GRN_COLUMN_INDEX :
-                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                grn_obj_spec_get_path(ctx, spec, id, buffer, s, &decoded_spec);
                 {
                   grn_obj *table = grn_ctx_at(ctx, spec->header.domain);
                   vp->ptr = (grn_obj *)grn_ii_open(ctx, buffer, table);
@@ -10312,7 +10329,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 UNPACK_INFO(spec, &decoded_spec);
                 break;
               case GRN_PROC :
-                GET_PATH(spec, &decoded_spec, buffer, s, id);
+                grn_obj_spec_get_path(ctx, spec, id, buffer, s, &decoded_spec);
                 grn_plugin_register(ctx, buffer);
                 if (grn_enable_reference_count && vp->ptr) {
                   /* Registered proc by plugin must not be freed by

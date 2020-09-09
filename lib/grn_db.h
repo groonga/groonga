@@ -95,6 +95,13 @@ bool grn_obj_spec_unpack(grn_ctx *ctx,
                          grn_obj *decoded_spec,
                          const char *error_message_tag);
 
+void grn_obj_spec_get_path(grn_ctx *ctx,
+                           grn_obj_spec *spec,
+                           grn_id id,
+                           char *buffer,
+                           grn_db *db,
+                           grn_obj *decoded_spec);
+
 #define GRN_DB_EACH_SPEC_BEGIN(ctx, cursor, id, spec) do {              \
   grn_obj *db = grn_ctx_db((ctx));                                      \
   grn_db *db_raw = (grn_db *)db;                                        \
