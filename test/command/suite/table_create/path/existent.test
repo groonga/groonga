@@ -1,3 +1,5 @@
+#$GRN_ENABLE_REFERENCE_COUNT=no
+
 table_create Data TABLE_NO_KEY --path data
 
 object_list
