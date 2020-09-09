@@ -1,0 +1,3 @@
+table_create Data TABLE_NO_KEY
+column_create Data number COLUMN_SCALAR Int64 \
+  --path nonexistent/directory/data/number

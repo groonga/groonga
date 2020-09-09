@@ -1,0 +1,13 @@
+table_create Data TABLE_NO_KEY --path nonexistent/directory/data
+[
+  [
+    [
+      -3,
+      0.0,
+      0.0
+    ],
+    "system call error: No such file or directory: failed to open file info path: <nonexistent/directory/data>"
+  ],
+  false
+]
+#|e| system call error: No such file or directory: failed to open file info path: <nonexistent/directory/data>

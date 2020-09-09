@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -103,6 +103,7 @@ command_table_create(grn_ctx *ctx,
   grn_obj *default_tokenizer_raw;
   grn_obj *normalizer_raw;
   grn_raw_string token_filters_raw;
+  grn_obj *path_raw;
   grn_obj *key_type = NULL;
   grn_obj *value_type = NULL;
   grn_obj *table = NULL;
@@ -125,6 +126,7 @@ command_table_create(grn_ctx *ctx,
                                                   "default_tokenizer", -1);
   normalizer_raw = grn_plugin_proc_get_var(ctx, user_data, "normalizer", -1);
   GET_VALUE(token_filters);
+  path_raw = grn_plugin_proc_get_var(ctx, user_data, "path", -1);
 
 #undef GET_VALUE
 
@@ -180,11 +182,17 @@ command_table_create(grn_ctx *ctx,
       }
     }
 
+    const char *path = NULL;
+    if (GRN_TEXT_LEN(path_raw) > 0) {
+      GRN_TEXT_PUTC(ctx, path_raw, '\0');
+      path = GRN_TEXT_VALUE(path_raw);
+    }
     flags |= GRN_OBJ_PERSISTENT;
     table = grn_table_create(ctx,
                              name_raw.value,
                              name_raw.length,
-                             NULL, flags,
+                             path,
+                             flags,
                              key_type,
                              value_type);
     if (!table) {
@@ -256,7 +264,7 @@ exit :
 void
 grn_proc_init_table_create(grn_ctx *ctx)
 {
-  grn_expr_var vars[7];
+  grn_expr_var vars[8];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "flags", -1);
@@ -265,10 +273,11 @@ grn_proc_init_table_create(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[4]), "default_tokenizer", -1);
   grn_plugin_expr_var_init(ctx, &(vars[5]), "normalizer", -1);
   grn_plugin_expr_var_init(ctx, &(vars[6]), "token_filters", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[7]), "path", -1);
   grn_plugin_command_create(ctx,
                             "table_create", -1,
                             command_table_create,
-                            7,
+                            8,
                             vars);
 }
 

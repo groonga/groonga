@@ -1,0 +1,15 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data number COLUMN_SCALAR Int64   --path nonexistent/directory/data/number
+[
+  [
+    [
+      -3,
+      0.0,
+      0.0
+    ],
+    "system call error: No such file or directory: failed to open file info path: <nonexistent/directory/data/number>"
+  ],
+  false
+]
+#|e| system call error: No such file or directory: failed to open file info path: <nonexistent/directory/data/number>

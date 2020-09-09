@@ -1,0 +1,392 @@
+table_create Data TABLE_NO_KEY --path data
+[[0,0.0,0.0],true]
+object_list
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "Object": {
+      "id": 2,
+      "name": "Object",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 0,
+        "names": "KEY_UINT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "Bool": {
+      "id": 3,
+      "name": "Bool",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 0,
+        "names": "KEY_UINT"
+      },
+      "path": null,
+      "size": 1
+    },
+    "Int8": {
+      "id": 4,
+      "name": "Int8",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 8,
+        "names": "KEY_INT"
+      },
+      "path": null,
+      "size": 1
+    },
+    "UInt8": {
+      "id": 5,
+      "name": "UInt8",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 0,
+        "names": "KEY_UINT"
+      },
+      "path": null,
+      "size": 1
+    },
+    "Int16": {
+      "id": 6,
+      "name": "Int16",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 8,
+        "names": "KEY_INT"
+      },
+      "path": null,
+      "size": 2
+    },
+    "UInt16": {
+      "id": 7,
+      "name": "UInt16",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 0,
+        "names": "KEY_UINT"
+      },
+      "path": null,
+      "size": 2
+    },
+    "Int32": {
+      "id": 8,
+      "name": "Int32",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 8,
+        "names": "KEY_INT"
+      },
+      "path": null,
+      "size": 4
+    },
+    "UInt32": {
+      "id": 9,
+      "name": "UInt32",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 0,
+        "names": "KEY_UINT"
+      },
+      "path": null,
+      "size": 4
+    },
+    "Int64": {
+      "id": 10,
+      "name": "Int64",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 8,
+        "names": "KEY_INT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "UInt64": {
+      "id": 11,
+      "name": "UInt64",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 0,
+        "names": "KEY_UINT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "Float": {
+      "id": 12,
+      "name": "Float",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16,
+        "names": "KEY_FLOAT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "Time": {
+      "id": 13,
+      "name": "Time",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 8,
+        "names": "KEY_INT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "ShortText": {
+      "id": 14,
+      "name": "ShortText",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 4096
+    },
+    "Text": {
+      "id": 15,
+      "name": "Text",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 65536
+    },
+    "LongText": {
+      "id": 16,
+      "name": "LongText",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16384,
+        "names": "KEY_VAR_SIZE"
+      },
+      "path": null,
+      "size": 2147483648
+    },
+    "TokyoGeoPoint": {
+      "id": 17,
+      "name": "TokyoGeoPoint",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 24,
+        "names": "KEY_GEO_POINT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "WGS84GeoPoint": {
+      "id": 18,
+      "name": "WGS84GeoPoint",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 24,
+        "names": "KEY_GEO_POINT"
+      },
+      "path": null,
+      "size": 8
+    },
+    "Float32": {
+      "id": 19,
+      "name": "Float32",
+      "opened": false,
+      "n_elements": 4,
+      "type": {
+        "id": 32,
+        "name": "type"
+      },
+      "flags": {
+        "value": 16,
+        "names": "KEY_FLOAT"
+      },
+      "path": null,
+      "size": 4
+    },
+    "TokenMecab": {
+      "id": 64,
+      "name": "TokenMecab",
+      "opened": true,
+      "n_elements": 4,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 4096,
+        "names": "CUSTOM_NAME"
+      },
+      "path": "tokenizers/mecab.so",
+      "plugin_id": 1
+    },
+    "Data": {
+      "id": 256,
+      "name": "Data",
+      "opened": true,
+      "n_elements": 4,
+      "type": {
+        "id": 51,
+        "name": "table:no_key"
+      },
+      "flags": {
+        "value": 36867,
+        "names": "TABLE_NO_KEY|PERSISTENT|CUSTOM_NAME"
+      },
+      "path": "data",
+      "range": {
+        "id": 0,
+        "name": null
+      },
+      "token_filters": [
+
+      ]
+    }
+  }
+]
+table_list
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "id",
+        "UInt32"
+      ],
+      [
+        "name",
+        "ShortText"
+      ],
+      [
+        "path",
+        "ShortText"
+      ],
+      [
+        "flags",
+        "ShortText"
+      ],
+      [
+        "domain",
+        "ShortText"
+      ],
+      [
+        "range",
+        "ShortText"
+      ],
+      [
+        "default_tokenizer",
+        "ShortText"
+      ],
+      [
+        "normalizer",
+        "ShortText"
+      ]
+    ],
+    [
+      256,
+      "Data",
+      "data",
+      "TABLE_NO_KEY|PERSISTENT",
+      null,
+      null,
+      null,
+      null
+    ]
+  ]
+]

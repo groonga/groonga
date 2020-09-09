@@ -181,6 +181,7 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_obj *flags_raw;
   grn_obj *type_raw;
   grn_obj *source_raw;
+  grn_obj *path_raw;
   grn_column_flags flags;
   grn_obj *type = NULL;
 
@@ -189,6 +190,7 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
   flags_raw  = grn_plugin_proc_get_var(ctx, user_data, "flags", -1);
   type_raw   = grn_plugin_proc_get_var(ctx, user_data, "type", -1);
   source_raw = grn_plugin_proc_get_var(ctx, user_data, "source", -1);
+  path_raw   = grn_plugin_proc_get_var(ctx, user_data, "path", -1);
 
   table = grn_ctx_get(ctx, GRN_TEXT_VALUE(table_raw), GRN_TEXT_LEN(table_raw));
   if (!table) {
@@ -238,12 +240,20 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
     succeeded = GRN_FALSE;
     goto exit;
   }
-  flags |= GRN_OBJ_PERSISTENT;
 
-  column = grn_column_create(ctx, table,
+  const char *path = NULL;
+  if (GRN_TEXT_LEN(path_raw) > 0) {
+    GRN_TEXT_PUTC(ctx, path_raw, '\0');
+    path = GRN_TEXT_VALUE(path_raw);
+  }
+  flags |= GRN_OBJ_PERSISTENT;
+  column = grn_column_create(ctx,
+                             table,
                              GRN_TEXT_VALUE(name),
                              GRN_TEXT_LEN(name),
-                             NULL, flags, type);
+                             path,
+                             flags,
+                             type);
   if (!column) {
     succeeded = GRN_FALSE;
     goto exit;
@@ -287,17 +297,18 @@ exit :
 void
 grn_proc_init_column_create(grn_ctx *ctx)
 {
-  grn_expr_var vars[5];
+  grn_expr_var vars[6];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "table", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "name", -1);
   grn_plugin_expr_var_init(ctx, &(vars[2]), "flags", -1);
   grn_plugin_expr_var_init(ctx, &(vars[3]), "type", -1);
   grn_plugin_expr_var_init(ctx, &(vars[4]), "source", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[5]), "path", -1);
   grn_plugin_command_create(ctx,
                             "column_create", -1,
                             command_column_create,
-                            5,
+                            6,
                             vars);
 }
 
