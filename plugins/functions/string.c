@@ -265,6 +265,7 @@ func_string_tokenize(grn_ctx *ctx, int n_args, grn_obj **args,
   if (!tokens) {
     return NULL;
   }
+  tokens->header.flags |= GRN_OBJ_WITH_WEIGHT;
 
   grn_token_cursor *token_cursor;
   token_cursor = grn_token_cursor_open(ctx,
@@ -284,7 +285,9 @@ func_string_tokenize(grn_ctx *ctx, int n_args, grn_obj **args,
       continue;
     }
 
-    grn_uvector_add_element_record(ctx, tokens, token_id, 0.0);
+    grn_token *token = grn_token_cursor_get_token(ctx, token_cursor);
+    float weight = grn_token_get_weight(ctx, token);
+    grn_uvector_add_element_record(ctx, tokens, token_id, weight);
   }
   grn_token_cursor_close(ctx, token_cursor);
 
