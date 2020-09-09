@@ -1,0 +1,130 @@
+plugin_register functions/string
+[[0,0.0,0.0],true]
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC121   --default_tokenizer TokenNgram
+[[0,0.0,0.0],true]
+table_create Logs TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Logs message COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Logs message_tokens COLUMN_VECTOR Lexicon
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{
+  "_key": "2015-02-03:1",
+  "message": "Hello World",
+  "message_tokens": ["Hello", "World"]
+},
+{
+  "_key": "2015-02-03:2",
+  "message": "Hello World"
+},
+{
+  "_key": "2015-02-04:1",
+  "message": "Good bye World"
+}
+]
+[[0,0.0,0.0],3]
+select   Logs   --filter "vector_size(message_tokens) == 0"   --load_table Logs   --load_columns "_key, message_tokens"   --load_values "_key, string_tokenize(message, Lexicon, {\"mode\": \"ADD\"})"   --limit 0
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "message",
+          "ShortText"
+        ],
+        [
+          "message_tokens",
+          "Lexicon"
+        ]
+      ]
+    ]
+  ]
+]
+#>select --filter "vector_size(message_tokens) == 0" --limit "0" --load_columns "_key, message_tokens" --load_table "Logs" --load_values "_key, string_tokenize(message, Lexicon, {\"mode\": \"ADD\"})" --table "Logs"
+#:000000000000000 filter(2): equal(vector_size(Logs.message_tokens), 0)
+#:000000000000000 select(2)
+#:000000000000000 load(2): [Logs][3]
+#:000000000000000 output(0)
+#:000000000000000 send(0)
+#<000000000000000 rc=0
+select --table Logs
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "message",
+          "ShortText"
+        ],
+        [
+          "message_tokens",
+          "Lexicon"
+        ]
+      ],
+      [
+        1,
+        "2015-02-03:1",
+        "Hello World",
+        [
+          "hello",
+          "world"
+        ]
+      ],
+      [
+        2,
+        "2015-02-03:2",
+        "Hello World",
+        [
+          "hello",
+          "world"
+        ]
+      ],
+      [
+        3,
+        "2015-02-04:1",
+        "Good bye World",
+        [
+          "good",
+          "bye",
+          "world"
+        ]
+      ]
+    ]
+  ]
+]

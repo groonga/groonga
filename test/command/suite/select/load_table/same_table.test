@@ -1,0 +1,39 @@
+plugin_register functions/string
+plugin_register functions/vector
+
+table_create Lexicon TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC121 \
+  --default_tokenizer TokenNgram
+
+table_create Logs TABLE_HASH_KEY ShortText
+column_create Logs message COLUMN_SCALAR ShortText
+column_create Logs message_tokens COLUMN_VECTOR Lexicon
+
+load --table Logs
+[
+{
+  "_key": "2015-02-03:1",
+  "message": "Hello World",
+  "message_tokens": ["Hello", "World"]
+},
+{
+  "_key": "2015-02-03:2",
+  "message": "Hello World"
+},
+{
+  "_key": "2015-02-04:1",
+  "message": "Good bye World"
+}
+]
+
+#@collect-query-log true
+select \
+  Logs \
+  --filter "vector_size(message_tokens) == 0" \
+  --load_table Logs \
+  --load_columns "_key, message_tokens" \
+  --load_values "_key, string_tokenize(message, Lexicon, {\"mode\": \"ADD\"})" \
+  --limit 0
+#@collect-query-log false
+
+select --table Logs
