@@ -95,7 +95,7 @@ bool grn_obj_spec_unpack(grn_ctx *ctx,
                          grn_obj *decoded_spec,
                          const char *error_message_tag);
 
-#define GRN_DB_SPEC_EACH_BEGIN(ctx, cursor, id, spec) do {              \
+#define GRN_DB_EACH_SPEC_BEGIN(ctx, cursor, id, spec) do {              \
   grn_obj *db = grn_ctx_db((ctx));                                      \
   grn_db *db_raw = (grn_db *)db;                                        \
   grn_obj decoded_spec;                                                 \
@@ -134,7 +134,7 @@ bool grn_obj_spec_unpack(grn_ctx *ctx,
      continue;                                                          \
    }                                                                    \
 
-#define GRN_DB_SPEC_EACH_END(ctx, cursor)         \
+#define GRN_DB_EACH_SPEC_END(ctx, cursor)         \
   } GRN_TABLE_EACH_END(ctx, cursor);              \
   if (iw_need_unref) {                            \
     grn_ja_unref(ctx, &iw);                       \

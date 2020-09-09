@@ -88,7 +88,7 @@ grn_table_find_reference_object(grn_ctx *ctx, grn_obj *table)
 
   table_id = DB_OBJ(table)->id;
 
-  GRN_DB_SPEC_EACH_BEGIN(ctx, cursor, id, spec) {
+  GRN_DB_EACH_SPEC_BEGIN(ctx, cursor, id, spec) {
     if (id == table_id) {
       continue;
     }
@@ -117,7 +117,7 @@ grn_table_find_reference_object(grn_ctx *ctx, grn_obj *table)
     if (reference_object_id != GRN_ID_NIL) {
       break;
     }
-  } GRN_DB_SPEC_EACH_END(ctx, cursor);
+  } GRN_DB_EACH_SPEC_END(ctx, cursor);
 
   GRN_API_RETURN(reference_object_id);
 }
