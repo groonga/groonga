@@ -35,6 +35,7 @@ Most parameters are required::
                 flags
                 type
                 [source=null]
+		[path=null]
 
 Usage
 -----
@@ -847,6 +848,22 @@ for specifying the table key as index target.
 
 If you specify multiple columns to the ``source`` parameter, separate
 columns with ``,`` (comma) such as ``_key,roles``.
+
+``path``
+""""""""
+
+.. versionadded:: 10.0.7
+
+Specifies a path for storing a column.
+
+This option is useful if you want to store a column that
+you often use to fast storage (e.g. SSD) and store it that you don't often
+use to slow storage (e.g. HDD).
+
+You can use a relative path or an absolute path in this option.
+If you specify a relative path, it is resolved from the current directory for the ``groonga`` process.
+
+The default value is none.
 
 Return value
 ------------

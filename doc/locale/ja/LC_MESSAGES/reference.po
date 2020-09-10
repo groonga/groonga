@@ -5842,6 +5842,31 @@ msgstr ""
 "``source`` パラメーターに複数のカラムを指定するときは ``_key,roles`` というよ"
 "うに ``,`` （コンマ）で区切ります。"
 
+msgid "``path``"
+msgstr ""
+
+msgid "Specifies a path for storing a column."
+msgstr "カラムを格納するパスを指定します。"
+
+msgid ""
+"This option is useful if you want to store a column that you often use to "
+"fast storage (e.g. SSD) and store it that you don't often use to slow "
+"storage (e.g. HDD)."
+msgstr ""
+"このオプションは、高速なストレージ(SSDなど)によく使うカラムを格納し、低速なス"
+"トレージ(HDDなど)にあまり使わないカラムを格納したいときに有用です。"
+
+msgid ""
+"You can use a relative path or an absolute path in this option. If you "
+"specify a relative path, it is resolved from the current directory for the "
+"``groonga`` process."
+msgstr ""
+"このオプションでは、絶対パスまたは相対パスを使えます。相対パスを指定した場合"
+"は、 ``groonga`` プロセスのカレントディレクトリーからパスを解決します。"
+
+msgid "The default value is none."
+msgstr "デフォルト値はありません。"
+
 msgid "``column_create`` returns ``true`` as body on success such as::"
 msgstr ""
 "``column_create`` が成功したときは以下のようにボディは ``true`` になります::"
@@ -11247,9 +11272,6 @@ msgid ""
 msgstr ""
 "このオブジェクトのフラグ。詳細は :ref:`object-list-return-value-flags` を参照"
 "してください。"
-
-msgid "``path``"
-msgstr ""
 
 msgid ""
 "The path that contains data of the object. It's ``null`` for objects that "
@@ -16660,9 +16682,6 @@ msgstr ""
 msgid "See :doc:`/reference/types` for all types."
 msgstr "型の一覧は :doc:`/reference/types` にあります。"
 
-msgid "The default value is none."
-msgstr "デフォルト値はありません。"
-
 msgid "Specifies value type."
 msgstr "値の型を指定します。"
 
@@ -16761,6 +16780,17 @@ msgstr ""
 msgid "See :doc:`/reference/token_filters` for all token filters."
 msgstr ""
 "トークンフィルターの一覧は :doc:`/reference/token_filters` にあります。"
+
+msgid "Specifies a path for storing a table."
+msgstr "テーブルを格納するパスを指定します。"
+
+msgid ""
+"This option is useful if you want to store a table that you often use to "
+"fast storage (e.g. SSD) and store it that you don't often use to slow "
+"storage (e.g. HDD)."
+msgstr ""
+"このオプションは、高速なストレージ(SSDなど)によく使うテーブルを格納し、低速な"
+"ストレージ(HDDなど)にあまり使わないテーブルを格納したいときに有用です。"
 
 msgid "``table_create`` returns ``true`` as body on success such as::"
 msgstr ""

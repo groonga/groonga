@@ -30,6 +30,7 @@ The required parameter is only ``name`` and otehrs are optional::
                [default_tokenizer=null]
                [normalizer=null]
                [token_filters=null]
+               [path=null]
 
 Usage
 -----
@@ -357,6 +358,21 @@ You cannot use ``token_filters`` with ``TABLE_NO_KEY`` because
 ``TABLE_NO_KEY`` doesn't support key.
 
 See :doc:`/reference/token_filters` for all token filters.
+
+The default value is none.
+
+``path``
+""""""""
+
+.. versionadded:: 10.0.7
+
+Specifies a path for storing a table.
+
+This option is useful if you want to store a table that you often use to fast
+storage (e.g. SSD) and store it that you don't often use to slow storage (e.g. HDD).
+
+You can use a relative path or an absolute path in this option.
+If you specify a relative path, it is resolved from the current directory for the ``groonga`` process.
 
 The default value is none.
 
