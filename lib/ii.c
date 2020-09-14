@@ -1788,6 +1788,14 @@ pack_(uint32_t *p, uint32_t i, int w, uint8_t *rp)
 /* TODO: This is too rough. I hope that this is large enough. */
 #define PACK_MAX_SIZE ((UNIT_SIZE / 8) * 32 + (UNIT_SIZE * GRN_B_ENC_MAX_SIZE))
 
+/*
+ * PForDelta encode: M. Zukowski , S. Heman , N. Nes , P. Boncz,
+ * Super-Scalar RAM-CPU Cache Compression, Proceedings of the 22nd
+ * International Conference on Data Engineering, 2006
+ *
+ * w: b on the paper.
+ * ebuf, ep: exception values on the paper.
+ */
 static uint8_t *
 pack(uint32_t *p, uint32_t i, uint8_t *freq, uint8_t *rp)
 {
@@ -2033,6 +2041,14 @@ grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
   p = _p; \
 } while (0)
 
+/*
+ * PForDelta decode: M. Zukowski , S. Heman , N. Nes , P. Boncz,
+ * Super-Scalar RAM-CPU Cache Compression, Proceedings of the 22nd
+ * International Conference on Data Engineering, 2006
+ *
+ * w: b on the paper.
+ * ne: the number of exception values on the paper.
+ */
 static const uint8_t *
 unpack(const uint8_t *dp, const uint8_t *dpe, int i, uint32_t *rp)
 {
