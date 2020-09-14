@@ -2220,7 +2220,7 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
     for (l = 0; l < dvlen; l++) {
       dv[l].data = rp;
       dv[l].data_size = n = (l < dvlen - 1) ? df : df + rest;
-      if (usep & (1 << l)) {
+      if (usep & (USE_P_ENC << l)) {
         for (; n >= UNIT_SIZE; n -= UNIT_SIZE) {
           const uint8_t *next_dp = unpack(dp, dpe, UNIT_SIZE, rp);
           if (!next_dp) {
