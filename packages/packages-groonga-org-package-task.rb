@@ -18,18 +18,15 @@
 require_relative "../vendor/apache-arrow-source/dev/tasks/linux-packages/package-task"
 require_relative "launchpad-helper"
 require_relative "repository-helper"
-require_relative "github-release-helper"
 
 class PackagesGroongaOrgPackageTask < PackageTask
   include LaunchpadHelper
   include RepositoryHelper
-  include GitHubReleaseHelper
 
   def define
     super
     define_release_tasks
     define_ubuntu_tasks
-    define_upload_task
   end
 
   private
@@ -64,6 +61,36 @@ class PackagesGroongaOrgPackageTask < PackageTask
     super
   end
 
+  def use_built_package?
+    false
+  end
+
+  def built_package_url(target_namespace, target)
+    raise NotImplementedError
+  end
+
+  def built_package_n_split_components
+    0
+  end
+
+  def download_packages(target_namespace)
+    base_dir = __send__("#{target_namespace}_dir")
+    repositories_dir = "#{base_dir}/repositories"
+    mkdir_p(repositories_dir)
+    __send__("#{target_namespace}_targets").each do |target|
+      url = built_package_url(target_namespace, target)
+      archive = File.expand_path(url.split("/").last)
+      rm_f(archive)
+      sh("wget", url)
+      cd(repositories_dir) do
+        sh("tar",
+           "xf", archive,
+           "--strip-components=#{built_package_n_split_components}")
+      end
+      rm_f(archive)
+    end
+  end
+
   def release(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
@@ -75,65 +102,26 @@ class PackagesGroongaOrgPackageTask < PackageTask
 
   def define_release_tasks
     [:apt, :yum].each do |target_namespace|
+      tasks = []
       namespace target_namespace do
+        enabled = __send__("enable_#{target_namespace}?")
+        if use_built_package?
+          target_task = Rake.application[target_namespace]
+          target_task.prerequisites.delete("#{target_namespace}:build")
+          desc "Download #{target_namespace} packages"
+          task :download do
+            download_packages(target_namespace) if enabled
+          end
+          tasks << ["#{target_namespace}:download"]
+        end
+
         desc "Release #{target_namespace} packages"
         task :release do
-          release(target_namespace) if __send__("enable_#{target_namespace}?")
+          release(target_namespace) if enabled
         end
+        tasks << ["#{target_namespace}:release"]
       end
-      task target_namespace => ["#{target_namespace}:release"]
-    end
-  end
-
-  def download_packages(target_namespace)
-    package_archives = []
-    if target_namespace.equal?(:yum)
-      yum_targets_default.each do |target|
-        download_url = "#{release_base_url}/#{release_version}/#{target}.tar.gz"
-        package_archives << "#{target}.tar.gz"
-        sh("wget", "#{download_url}")
-      end
-    elsif target_namespace.equal?(:apt)
-      apt_targets_default.each do |target|
-        if target.end_with?("i386")
-          download_url = "#{release_base_url}/#{release_version}/#{target}.tar.gz"
-          package_archives << "#{target}.tar.gz"
-        else
-          download_url = "#{release_base_url}/#{release_version}/#{target}-amd64.tar.gz"
-          package_archives << "#{target}-amd64.tar.gz"
-        end
-        sh("wget", "#{download_url}")
-      end
-    end
-    unless package_archives.empty?
-      package_archives.each do |archive|
-        sh("tar", "-zxvf", "#{archive}")
-      end
-    end
-  end
-
-  def upload_packages(target_namespace)
-    sh("rync",
-       "-av",
-       "packages/#{target_namespace.to_s}/repositories/",
-       "#{repository_rsync_base_path}/")
-  end
-
-  def upload(target_namespace)
-    download_packages(target_namespace)
-    upload_packages(target_namespace)
-    sh("rm", "-rf", "packages")
-  end
-
-  def define_upload_task
-    [:apt, :yum].each do |target_namespace|
-      namespace target_namespace do
-        desc "Upload #{target_namespace} packages"
-        task :upload_packages do
-          upload(target_namespace) if __send__("enable_#{target_namespace}?")
-        end
-      end
-      task target_namespace => ["#{target_namespace}:release"]
+      task target_namespace => tasks
     end
   end
 
