@@ -41,6 +41,24 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       "centos-8",
     ]
   end
+
+  def use_built_package?
+    true
+  end
+
+  def built_package_url(target_namespace, target)
+    url = "https://github.com/groonga/groonga/releases/download/v#{@version}/"
+    if target_namespace == :apt and !target.end_with?("-i386")
+      url << "#{target}-amd64.tar.gz"
+    else
+      url << "#{target}.tar.gz"
+    end
+    url
+  end
+
+  def built_package_n_split_components
+    3
+  end
 end
 
 task = GroongaPackageTask.new
