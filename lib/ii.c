@@ -1899,7 +1899,7 @@ datavec_fin(grn_ctx *ctx, datavec *dv)
 static ssize_t
 grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
 {
-  uint8_t *rp = res, freq[33];
+  uint8_t *rp = res;
   ssize_t estimated = 0;
   /* f in df is for frequency */
   uint32_t pgap, usep, l, df, data_size, *dp, *dpe;
@@ -1930,7 +1930,6 @@ grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
       }
     }
   } else {
-    uint32_t buf[UNIT_SIZE];
     if (rp) {
       GRN_B_ENC((usep << 1), rp);
       GRN_B_ENC(df, rp);
@@ -1950,6 +1949,8 @@ grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
       dp = dv[l].data;
       dpe = dp + dv[l].data_size;
       if ((dv[l].flags & USE_P_ENC)) {
+        uint32_t buf[UNIT_SIZE];
+        uint8_t freq[33];
         uint32_t j = 0, d;
         memset(freq, 0, 33);
         while (dp < dpe) {
