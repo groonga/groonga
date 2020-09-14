@@ -8396,6 +8396,7 @@ token_info_open(grn_ctx *ctx, grn_obj *lexicon, grn_ii *ii,
   ti->size = 0;
   ti->ntoken = 0;
   ti->offset = offset;
+  ti->phrase_id = 0;
   ti->must_last = false;
   switch (mode) {
   case EX_BOTH :
