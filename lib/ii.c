@@ -2146,7 +2146,27 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
     size = data_size;
     if (dv[dvlen].data < dv[0].data + size) {
       if (dv[0].data) { GRN_FREE(dv[0].data); }
-      if (!(rp = GRN_MALLOC(size * sizeof(uint32_t)))) { return 0; }
+      if (!(rp = GRN_MALLOC(size * sizeof(uint32_t)))) {
+        grn_obj term;
+        DEFINE_NAME(ii);
+        GRN_TEXT_INIT(&term, 0);
+        if (id != GRN_ID_NIL) {
+          grn_ii_get_term(ctx, ii, id, &term);
+        }
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "[ii][p-decv] failed to extend buffer for data vector: "
+            "<%.*s>: "
+            "<%.*s>(%u): "
+            "%" GRN_FMT_SIZE " -> %" GRN_FMT_SIZE ": "
+            "PForDelta(nothing)",
+            name_size, name,
+            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+            id,
+            dv[dvlen].data - dv[0].data,
+            size);
+        GRN_OBJ_FIN(ctx, &term);
+        return 0;
+      }
       dv[dvlen].data = rp + size;
     } else {
       rp = dv[0].data;
@@ -2171,7 +2191,28 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
     size = df * dvlen + rest;
     if (dv[dvlen].data < dv[0].data + size) {
       if (dv[0].data) { GRN_FREE(dv[0].data); }
-      if (!(rp = GRN_MALLOC(size * sizeof(uint32_t)))) { return 0; }
+      if (!(rp = GRN_MALLOC(size * sizeof(uint32_t)))) {
+        grn_obj term;
+        DEFINE_NAME(ii);
+        GRN_TEXT_INIT(&term, 0);
+        if (id != GRN_ID_NIL) {
+          grn_ii_get_term(ctx, ii, id, &term);
+        }
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "[ii][p-decv] failed to extend buffer for data vector: "
+            "<%.*s>: "
+            "<%.*s>(%u): "
+            "%" GRN_FMT_SIZE " -> %" GRN_FMT_SIZE ": "
+            "PForDelta(%s)",
+            name_size, name,
+            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+            id,
+            dv[dvlen].data - dv[0].data,
+            size,
+            usep ? "true" : "false");
+        GRN_OBJ_FIN(ctx, &term);
+        return 0;
+      }
       dv[dvlen].data = rp + size;
     } else {
       rp = dv[0].data;
@@ -2181,11 +2222,72 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
       dv[l].data_size = n = (l < dvlen - 1) ? df : df + rest;
       if (usep & (1 << l)) {
         for (; n >= UNIT_SIZE; n -= UNIT_SIZE) {
-          if (!(dp = unpack(dp, dpe, UNIT_SIZE, rp))) { return 0; }
+          const uint8_t *next_dp = unpack(dp, dpe, UNIT_SIZE, rp);
+          if (!next_dp) {
+            grn_obj term;
+            DEFINE_NAME(ii);
+            GRN_TEXT_INIT(&term, 0);
+            if (id != GRN_ID_NIL) {
+              grn_ii_get_term(ctx, ii, id, &term);
+            }
+            ERR(GRN_FILE_CORRUPT,
+                "[ii][p-decv] "
+                "failed to unpack PForDelta encoded fixed size data: "
+                "<%.*s>: "
+                "<%.*s>(%u): "
+                "df(%u): "
+                "rest(%u): "
+                "dv[%u/%u](%u/%u): "
+                "data(%u/%u)",
+                name_size, name,
+                (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+                id,
+                df,
+                rest,
+                l,
+                dvlen,
+                dv[l].data_size - n,
+                dv[l].data_size,
+                (uint32_t)(dp - data),
+                data_size);
+            GRN_OBJ_FIN(ctx, &term);
+            return 0;
+          }
+          dp = next_dp;
           rp += UNIT_SIZE;
         }
         if (n) {
-          if (!(dp = unpack(dp, dpe, n, rp))) { return 0; }
+          const uint8_t *next_dp = unpack(dp, dpe, n, rp);
+          if (!next_dp) {
+            grn_obj term;
+            DEFINE_NAME(ii);
+            GRN_TEXT_INIT(&term, 0);
+            if (id != GRN_ID_NIL) {
+              grn_ii_get_term(ctx, ii, id, &term);
+            }
+            ERR(GRN_FILE_CORRUPT,
+                "[ii][p-decv] failed to unpack PForDelta encoded rest data: "
+                "<%.*s>: "
+                "<%.*s>(%u): "
+                "df(%u): "
+                "rest(%u): "
+                "dv[%u/%u](%u/%u): "
+                "data(%u/%u)",
+                name_size, name,
+                (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+                id,
+                df,
+                rest,
+                l,
+                dvlen,
+                dv[l].data_size - n,
+                dv[l].data_size,
+                (uint32_t)(dp - data),
+                data_size);
+            GRN_OBJ_FIN(ctx, &term);
+            return 0;
+          }
+          dp = next_dp;
           rp += n;
         }
         dv[l].flags |= USE_P_ENC;
@@ -2206,22 +2308,22 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
       if (df == 0) {
         GRN_LOG(ctx, GRN_LOG_WARNING,
                 "[ii][p-decv] encoded data frequency is unexpectedly 0: "
-                "<%.*s>: <%.*s>(%u): <%u(%u)>",
+                "<%.*s>: <%.*s>(%u): data(%u/%u)",
                 name_size, name,
                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                 id,
-                data_size,
-                (uint32_t)(dp - data));
+                (uint32_t)(dp - data),
+                data_size);
       } else {
         GRN_LOG(ctx, GRN_LOG_DEBUG,
                 "[ii][p-decv] failed to decode: "
-                "<%.*s>: <%.*s>(%u): <%u>: <%u(%u)>",
+                "<%.*s>: <%.*s>(%u): <%u>: data(%u/%u)",
                 name_size, name,
                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                 id,
-                data_size,
                 df,
-                (uint32_t)(dp - data));
+                (uint32_t)(dp - data),
+                data_size);
       }
       GRN_OBJ_FIN(ctx, &term);
     }
