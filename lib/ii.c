@@ -2145,7 +2145,10 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
     df >>= 1;
     size = data_size;
     if (dv[dvlen].data < dv[0].data + size) {
-      if (dv[0].data) { GRN_FREE(dv[0].data); }
+      if (dv[0].data) {
+        GRN_FREE(dv[0].data);
+        dv[0].data = NULL;
+      }
       if (!(rp = GRN_MALLOC(size * sizeof(uint32_t)))) {
         grn_obj term;
         DEFINE_NAME(ii);
