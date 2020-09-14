@@ -4059,7 +4059,6 @@ chunk_merge(grn_ctx *ctx,
   {
     int j = 0;
     uint8_t *enc;
-    uint32_t np = data->dest.position_gaps - dv[ii->n_elements - 1].data;
     uint32_t f_s = (ndf < 3) ? 0 : USE_P_ENC;
     uint32_t f_d = ((ndf < 16) || (ndf <= (data->last_id.rid >> 8))) ? 0 : USE_P_ENC;
     dv[j].data_size = ndf; dv[j++].flags = f_d;
@@ -4071,13 +4070,15 @@ chunk_merge(grn_ctx *ctx,
       dv[j].data_size = ndf; dv[j++].flags = f_s;
     }
     if ((ii->header.common->flags & GRN_OBJ_WITH_POSITION)) {
+      const uint32_t n_positions =
+        data->dest.position_gaps - dv[j].data;
       uint32_t f_p;
-      if ((np < 32) || (np <= (data->position >> 13))) {
+      if ((n_positions < 32) || (n_positions <= (data->position >> 13))) {
         f_p = 0;
       } else {
         f_p = USE_P_ENC;
       }
-      dv[j].data_size = np; dv[j].flags = f_p|ODD;
+      dv[j].data_size = n_positions; dv[j].flags = f_p|ODD;
     }
     const ssize_t encsize_estimated = grn_p_encv(ctx, dv, ii->n_elements, NULL);
     if (encsize_estimated == -1) {
@@ -4636,14 +4637,14 @@ buffer_merge(grn_ctx *ctx,
             dv[j].data_size = ndf; dv[j++].flags = f_s;
           }
           if ((ii->header.common->flags & GRN_OBJ_WITH_POSITION)) {
-            uint32_t np = data.dest.position_gaps - dv[ii->n_elements - 1].data;
+            const uint32_t n_positions = data.dest.position_gaps - dv[j].data;
             uint32_t f_p;
-            if ((np < 32) || (np <= (data.position >> 13))) {
+            if ((n_positions < 32) || (n_positions <= (data.position >> 13))) {
               f_p = 0;
             } else {
               f_p = USE_P_ENC;
             }
-            dv[j].data_size = np; dv[j].flags = f_p|ODD;
+            dv[j].data_size = n_positions; dv[j].flags = f_p|ODD;
           }
 
           const size_t dc_offset = dcp - dc;
