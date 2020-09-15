@@ -179,8 +179,9 @@ jobs:
           matrix.architecture == 'x86'
         run: |
           Remove-Item test\command\suite\ruby\eval\convert\string_to_time\over_int32.test
-          Remove-Item test\command\suite\select\tokenizers\document_vector_tfidf\alphabet.test
-          Remove-Item test\command\suite\select\tokenizers\document_vector_tfidf\reindex.test
+          # Float32 value format is different.
+          Remove-Item test\command\suite\tokenizers\document_vector_tfidf\alphabet.test
+          Remove-Item test\command\suite\tokenizers\document_vector_tfidf\reindex.test
       - name: "Test: command line"
         run: |
           ruby test\command_line\run-test.rb `
