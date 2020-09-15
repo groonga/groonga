@@ -36,7 +36,7 @@ typedef void * grn_option_revision;
   unsigned int i_, n_;                                          \
                                                                 \
   n_ = grn_vector_size(ctx_, option_values_);                   \
-  for (i_ = 0; i_ < n_; i_++) {                                 \
+  for (i_ = 0; i_ < n_; i_ += 2) {                              \
     unsigned int i = i_ + 1;                                    \
     const char *name;                                           \
     unsigned int name_size;                                     \
