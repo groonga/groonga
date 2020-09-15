@@ -41,6 +41,8 @@ namespace grn {
               grn_obj *column)
         : ctx_(ctx),
           column_(column),
+          with_weight_(grn_column_get_flags(ctx_, column_) &
+                       GRN_OBJ_WITH_WEIGHT),
           table_(grn_ctx_at(ctx, column->header.domain)),
           lexicon_(grn_ctx_at(ctx, DB_OBJ(column)->range)),
           source_(NULL) {
@@ -90,6 +92,9 @@ namespace grn {
           grn_obj tokens;
           grn_obj value;
           GRN_RECORD_INIT(&tokens, GRN_OBJ_VECTOR, DB_OBJ(lexicon_)->id);
+          if (with_weight_) {
+            tokens.header.flags |= GRN_OBJ_WITH_WEIGHT;
+          }
           GRN_VOID_INIT(&value);
           for (auto id : ids) {
             GRN_BULK_REWIND(&tokens);
@@ -108,7 +113,17 @@ namespace grn {
                   if (token_id == GRN_ID_NIL) {
                     break;
                   }
-                  GRN_RECORD_PUT(&ctx, &tokens, token_id);
+                  if (with_weight_) {
+                    grn_token *token =
+                      grn_token_cursor_get_token(&ctx, token_cursor);
+                    float weight = grn_token_get_weight(&ctx, token);
+                    grn_uvector_add_element_record(&ctx,
+                                                   &tokens,
+                                                   token_id,
+                                                   weight);
+                  } else {
+                    GRN_RECORD_PUT(&ctx, &tokens, token_id);
+                  }
                 }
                 grn_token_cursor_close(&ctx, token_cursor);
               }
@@ -176,6 +191,9 @@ namespace grn {
         grn_obj tokens;
         grn_obj value;
         GRN_RECORD_INIT(&tokens, GRN_OBJ_VECTOR, DB_OBJ(lexicon_)->id);
+        if (with_weight_) {
+          tokens.header.flags |= GRN_OBJ_WITH_WEIGHT;
+        }
         GRN_VOID_INIT(&value);
         unsigned int token_flags = 0;
         GRN_TABLE_EACH_BEGIN_FLAGS(ctx_, table_, cursor, id, GRN_CURSOR_BY_ID) {
@@ -196,7 +214,17 @@ namespace grn {
                 if (token_id == GRN_ID_NIL) {
                   break;
                 }
-                GRN_RECORD_PUT(ctx_, &tokens, token_id);
+                if (with_weight_) {
+                  grn_token *token =
+                    grn_token_cursor_get_token(ctx_, token_cursor);
+                  float weight = grn_token_get_weight(ctx_, token);
+                  grn_uvector_add_element_record(ctx_,
+                                                 &tokens,
+                                                 token_id,
+                                                 weight);
+                } else {
+                  GRN_RECORD_PUT(ctx_, &tokens, token_id);
+                }
               }
               grn_token_cursor_close(ctx_, token_cursor);
             }
@@ -212,6 +240,7 @@ namespace grn {
 
       grn_ctx *ctx_;
       grn_obj *column_;
+      bool with_weight_;
       grn_obj *table_;
       grn_obj *lexicon_;
       grn_obj *source_;
