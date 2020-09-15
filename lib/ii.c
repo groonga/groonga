@@ -8639,7 +8639,7 @@ token_info_skip(grn_ctx *ctx, token_info *ti, uint32_t rid, uint32_t sid)
 }
 
 static grn_inline grn_rc
-token_info_skip_pos(grn_ctx *ctx, token_info *ti, uint32_t rid, uint32_t sid, uint32_t pos)
+token_info_skip_pos(grn_ctx *ctx, token_info *ti, uint32_t rid, uint32_t sid, int32_t pos)
 {
   grn_ii_cursor *c;
   grn_posting *p;
@@ -11435,8 +11435,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                   }
                 }
               } else {
-                int next_pos = max - max_interval;
                 if (data.mode == GRN_OP_NEAR_PHRASE) {
+                  int next_pos = min + 1;
                   if (!grn_ii_select_data_find_phrase(ctx,
                                                       &data,
                                                       data.token_info->phrase_id,
@@ -11444,6 +11444,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                     break;
                   }
                 } else {
+                  int next_pos = max - max_interval;
                   if (!grn_ii_select_skip_pos(ctx, &data, next_pos)) {
                     break;
                   }

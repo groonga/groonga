@@ -1,0 +1,18 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC121
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+load --table Entries
+[
+{"content": ". a b . c ."},
+{"content": "x x x x x x x x x x x . a b . c ."}
+]
+
+select Entries \
+  --match_columns content \
+  --query '*NP"a b .$"' \
+  --output_columns '_score, content'
