@@ -26,6 +26,7 @@
 #include "grn_index_column.h"
 #include "grn_pat.h"
 #include "grn_store.h"
+#include "grn_token_column.h"
 
 grn_bool
 grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
@@ -969,6 +970,10 @@ static void
 grn_data_column_reindex(grn_ctx *ctx, grn_obj *data_column)
 {
   grn_hook *hooks;
+
+  if (grn_obj_is_token_column(ctx, data_column)) {
+    grn_token_column_build(ctx, data_column);
+  }
 
   for (hooks = DB_OBJ(data_column)->hooks[GRN_HOOK_SET];
        hooks;

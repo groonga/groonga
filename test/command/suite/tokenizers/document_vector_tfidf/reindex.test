@@ -1,0 +1,33 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+load --table Memos
+[
+{"content": "a b c a"},
+{"content": "c b c"},
+{"content": "b b a"},
+{"content": "a c c"},
+{"content": "a"}
+]
+
+table_create Tokens TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC121 \
+  --default_tokenizer TokenNgram
+column_create Tokens memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+table_create DocumentVectorTFIDF TABLE_HASH_KEY Tokens \
+  --default_tokenizer \
+    'TokenDocumentVectorTFIDF("index_column", "memos_content", \
+                              "df_column", "df")'
+column_create DocumentVectorTFIDF df COLUMN_SCALAR UInt32
+
+column_create Memos feature_vector COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 \
+  DocumentVectorTFIDF content
+
+truncate DocumentVectorTFIDF
+truncate Memos.feature_vector
+reindex Memos.feature_vector
+
+select Memos
+
+select DocumentVectorTFIDF --output_columns _id,_key,df
