@@ -1,0 +1,136 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "a b c a"},
+{"content": "c b c"},
+{"content": "b b a"},
+{"content": "a c c"},
+{"content": "a"}
+]
+[[0,0.0,0.0],5]
+table_create Tokens TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC121   --default_tokenizer TokenNgram
+[[0,0.0,0.0],true]
+column_create Tokens memos_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+table_create DocumentVectorTFIDF TABLE_HASH_KEY Tokens   --default_tokenizer     'TokenDocumentVectorTFIDF("index_column", "memos_content",                               "df_column", "df",                               "normalize", false)'
+[[0,0.0,0.0],true]
+column_create DocumentVectorTFIDF df COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+column_create Memos feature_vector COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32   DocumentVectorTFIDF content
+[[0,0.0,0.0],true]
+select Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "feature_vector",
+          "DocumentVectorTFIDF"
+        ]
+      ],
+      [
+        1,
+        "a b c a",
+        {
+          "a": 0.6438562,
+          "b": 0.7369655,
+          "c": 0.7369655
+        }
+      ],
+      [
+        2,
+        "c b c",
+        {
+          "c": 1.473931,
+          "b": 0.7369655
+        }
+      ],
+      [
+        3,
+        "b b a",
+        {
+          "b": 1.473931,
+          "a": 0.3219281
+        }
+      ],
+      [
+        4,
+        "a c c",
+        {
+          "a": 0.3219281,
+          "c": 1.473931
+        }
+      ],
+      [
+        5,
+        "a",
+        {
+          "a": 0.3219281
+        }
+      ]
+    ]
+  ]
+]
+select DocumentVectorTFIDF --output_columns _id,_key,df
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "df",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        "a",
+        4
+      ],
+      [
+        2,
+        "b",
+        3
+      ],
+      [
+        3,
+        "c",
+        3
+      ]
+    ]
+  ]
+]
