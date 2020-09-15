@@ -2241,6 +2241,7 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
   grn_obj *lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
   grn_document_vector_tf_idf_options *options;
   grn_document_vector_tf_idf_tokenizer *tokenizer;
+  const char *n_documents_option_name = "n_documents";
 
   options = grn_table_cache_default_tokenizer_options(
     ctx,
@@ -2268,6 +2269,7 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
                   GRN_OBJ_VECTOR,
                   tokenizer->options->index_column->header.domain);
   tokenizer->token_ids.header.flags |= GRN_OBJ_WITH_WEIGHT;
+  tokenizer->n_token_ids = 0;
   GRN_RECORD_INIT(&(tokenizer->normalized_token_ids),
                   GRN_OBJ_VECTOR,
                   tokenizer->options->index_column->header.domain);
@@ -2276,6 +2278,28 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
 
   if (grn_table_size(ctx, lexicon) == 0) {
     grn_ii *ii = (grn_ii *)(options->index_column);
+    {
+      const grn_id source_id = grn_obj_get_range(ctx, options->index_column);
+      grn_obj *source = grn_ctx_at(ctx, source_id);
+      uint32_t n_documents = grn_table_size(ctx, source);
+      grn_obj_unref(ctx, source);
+
+      grn_obj n_documents_vector;
+      GRN_VOID_INIT(&n_documents_vector);
+      grn_obj_ensure_vector(ctx, &n_documents_vector);
+      grn_vector_add_element(ctx,
+                             &n_documents_vector,
+                             (const char *)&n_documents,
+                             sizeof(uint32_t),
+                             0,
+                             GRN_DB_UINT32);
+      grn_obj_set_option_values(ctx,
+                                lexicon,
+                                n_documents_option_name,
+                                -1,
+                                &n_documents_vector);
+      GRN_OBJ_FIN(ctx, &n_documents_vector);
+    }
     grn_obj df_value;
     GRN_UINT32_INIT(&df_value, 0);
     GRN_TABLE_EACH_BEGIN(ctx, source_lexicon, cursor, source_id) {
@@ -2304,6 +2328,29 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
     GRN_OBJ_FIN(ctx, &df_value);
   }
 
+  uint32_t n_documents = 0;
+  {
+    grn_obj n_documents_vector;
+    GRN_VOID_INIT(&n_documents_vector);
+    grn_obj_get_option_values(ctx,
+                              lexicon,
+                              n_documents_option_name,
+                              -1,
+                              GRN_OPTION_REVISION_NONE,
+                              &n_documents_vector);
+    if (grn_vector_size(ctx, &n_documents_vector) > 0) {
+      n_documents = grn_vector_get_element_uint32(ctx,
+                                                  &n_documents_vector,
+                                                  0,
+                                                  0);
+    }
+    GRN_OBJ_FIN(ctx, &n_documents_vector);
+  }
+  if (n_documents == 0) {
+    grn_obj_unref(ctx, source_lexicon);
+    return tokenizer;
+  }
+
   const char *raw_string;
   size_t raw_string_length;
   raw_string = grn_tokenizer_query_get_raw_string(ctx,
@@ -2316,12 +2363,12 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
                           raw_string_length,
                           GRN_TOKENIZE_ADD,
                           0);
+  grn_obj_unref(ctx, source_lexicon);
   if (!token_cursor) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[tokenizer][document-vector-tf-idf] "
         "failed to create token cursor");
     document_vector_tf_idf_fin(ctx, tokenizer);
-    grn_obj_unref(ctx, source_lexicon);
     return NULL;
   }
 
@@ -2336,7 +2383,6 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
         "[tokenizer][document-vector-tf-idf] "
         "failed to create token histogram");
     document_vector_tf_idf_fin(ctx, tokenizer);
-    grn_obj_unref(ctx, source_lexicon);
     grn_token_cursor_close(ctx, token_cursor);
     return NULL;
   }
@@ -2344,7 +2390,6 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
   while (grn_token_cursor_get_status(ctx, token_cursor) ==
          GRN_TOKEN_CURSOR_DOING) {
     grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
-
     if (token_id == GRN_ID_NIL) {
       continue;
     }
@@ -2365,10 +2410,6 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
   grn_token_cursor_close(ctx, token_cursor);
 
   {
-    const grn_id source_id = grn_obj_get_range(ctx, options->index_column);
-    grn_obj *source = grn_ctx_at(ctx, source_id);
-    uint32_t n_documents = grn_table_size(ctx, source);
-    grn_obj_unref(ctx, source);
     grn_obj df_value;
     GRN_UINT32_INIT(&df_value, 0);
     GRN_HASH_EACH_BEGIN(ctx, token_histogram, cursor, token_histogram_id) {
@@ -2384,11 +2425,6 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
       uint32_t df = 0;
       if (GRN_BULK_VSIZE(&df_value) > 0) {
         df = GRN_UINT32_VALUE(&df_value);
-      }
-      /* For the case that documents are deleted after constructing
-       * this lexicon. */
-      if (df > n_documents) {
-        df = n_documents;
       }
       if (df == 0) {
         continue;
