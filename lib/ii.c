@@ -11170,6 +11170,57 @@ grn_ii_select_data_find_phrase(grn_ctx *ctx,
   return false;
 }
 
+grn_inline static bool
+grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
+                                          grn_ii_select_data *data,
+                                          int interval,
+                                          int max_interval,
+                                          int additional_last_interval)
+{
+  if (max_interval < 0) {
+    return true;
+  }
+  if (additional_last_interval == 0) {
+    return (interval <= max_interval);
+  }
+
+  token_info **tip;
+  token_info **tis = data->token_infos;
+  token_info **tie = tis + data->n_token_infos;
+  token_info *max_token_info = NULL;
+  int min_without_last_token = -1;
+  int max_without_last_token = -1;
+  for (tip = tis; tip < tie; tip++) {
+    token_info *ti = *tip;
+    if (ti->phrase_id == data->last_token_info->phrase_id) {
+      continue;
+    }
+    if (min_without_last_token == -1 ||
+        ti->pos < min_without_last_token) {
+      min_without_last_token = ti->pos;
+    }
+    if (max_without_last_token == -1 ||
+        ti->pos > max_without_last_token) {
+      max_without_last_token = ti->pos;
+      max_token_info = ti;
+    }
+  }
+  if (!max_token_info) {
+    return true;
+  }
+
+  int interval_without_last_token =
+    max_without_last_token -
+    min_without_last_token -
+    (max_token_info->n_tokens_in_phrase - 1);
+  if (additional_last_interval < 0) {
+    return (interval_without_last_token <= max_interval);
+  } else {
+    return ((interval <= (max_interval + additional_last_interval)) &&
+            (interval_without_last_token <= max_interval));
+  }
+}
+
 grn_rc
 grn_ii_select(grn_ctx *ctx, grn_ii *ii,
               const char *string, unsigned int string_len,
@@ -11177,7 +11228,9 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
 {
   btr *bt = NULL;
   grn_rc rc = GRN_SUCCESS;
-  int rep, orp, weight, max_interval = 0;
+  int rep, orp, weight;
+  int max_interval = 0;
+  int additional_last_interval = 0;
   token_info *ti, **tis = NULL, **tip, **tie;
   uint32_t n = 0;
   grn_obj *lexicon;
@@ -11254,6 +11307,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   case GRN_OP_NEAR_PHRASE :
     if (!(bt = bt_open(ctx, n))) { rc = GRN_NO_MEMORY_AVAILABLE; goto exit; }
     max_interval = optarg->max_interval;
+    additional_last_interval = optarg->additional_last_interval;
     break;
   default :
     break;
@@ -11417,8 +11471,23 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
               if (data.mode == GRN_OP_NEAR_PHRASE) {
                 interval -= (data.token_info->n_tokens_in_phrase - 1);
               }
-              if ((!data.last_token_info || data.last_token_info == bt->max) &&
-                  ((max_interval < 0) || (interval <= max_interval))) {
+              bool matched;
+              if (data.last_token_info) {
+                if (data.last_token_info == bt->max) {
+                  matched =
+                    grn_ii_select_data_is_matched_near_phrase(
+                      ctx,
+                      &data,
+                      interval,
+                      max_interval,
+                      additional_last_interval);
+                } else {
+                  matched = false;
+                }
+              } else {
+                matched = ((max_interval < 0) || (interval <= max_interval));
+              }
+              if (matched) {
                 if (rep) { pi.pos = min; res_add(ctx, s, &pi, weight, op); }
                 noccur++;
                 int next_pos = max + 1;
@@ -11762,9 +11831,13 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
       switch (optarg->mode) {
       case GRN_OP_NEAR :
       case GRN_OP_NEAR2 :
+        arg.mode = optarg->mode;
+        arg.max_interval = optarg->max_interval;
+        break;
       case GRN_OP_NEAR_PHRASE :
         arg.mode = optarg->mode;
         arg.max_interval = optarg->max_interval;
+        arg.additional_last_interval = optarg->additional_last_interval;
         break;
       case GRN_OP_SIMILAR :
         arg.mode = optarg->mode;

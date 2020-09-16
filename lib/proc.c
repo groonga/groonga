@@ -3934,6 +3934,7 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     search_options.mode = GRN_OP_EXACT;
     search_options.similarity_threshold = 0;
     search_options.max_interval = 0;
+    search_options.additional_last_interval = 0;
     search_options.weight_vector = NULL;
     search_options.vector_size = 0;
     search_options.proc = NULL;

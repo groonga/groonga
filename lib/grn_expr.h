@@ -103,6 +103,9 @@ void grn_scan_info_set_end(scan_info *si, uint32_t end);
 void grn_scan_info_set_query(scan_info *si, grn_obj *query);
 int grn_scan_info_get_max_interval(scan_info *si);
 void grn_scan_info_set_max_interval(scan_info *si, int max_interval);
+int grn_scan_info_get_additional_last_interval(scan_info *si);
+void grn_scan_info_set_additional_last_interval(scan_info *si,
+                                                int additional_last_interval);
 int grn_scan_info_get_similarity_threshold(scan_info *si);
 void grn_scan_info_set_similarity_threshold(scan_info *si, int similarity_threshold);
 int grn_scan_info_get_quorum_threshold(scan_info *si);

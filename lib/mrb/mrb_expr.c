@@ -260,6 +260,29 @@ mrb_grn_scan_info_get_max_interval(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_scan_info_set_additional_last_interval(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  mrb_int additional_last_interval;
+
+  mrb_get_args(mrb, "i", &additional_last_interval);
+  si = DATA_PTR(self);
+  grn_scan_info_set_additional_last_interval(si, additional_last_interval);
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_get_additional_last_interval(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  int additional_last_interval;
+
+  si = DATA_PTR(self);
+  additional_last_interval = grn_scan_info_get_additional_last_interval(si);
+  return mrb_fixnum_value(additional_last_interval);
+}
+
+static mrb_value
 mrb_grn_scan_info_set_similarity_threshold(mrb_state *mrb, mrb_value self)
 {
   scan_info *si;
@@ -911,6 +934,12 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_get_max_interval, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "max_interval=",
                     mrb_grn_scan_info_set_max_interval, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "additional_last_interval",
+                    mrb_grn_scan_info_get_additional_last_interval,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "additional_last_interval=",
+                    mrb_grn_scan_info_set_additional_last_interval,
+                    MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "similarity_threshold",
                     mrb_grn_scan_info_get_similarity_threshold, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "similarity_threshold=",

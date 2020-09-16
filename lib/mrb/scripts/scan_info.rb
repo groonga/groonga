@@ -16,6 +16,9 @@ module Groonga
       if data.max_interval
         self.max_interval = data.max_interval
       end
+      if data.additional_last_interval
+        self.additional_last_interval = data.additional_last_interval
+      end
       if data.similarity_threshold
         self.similarity_threshold = data.similarity_threshold
       end

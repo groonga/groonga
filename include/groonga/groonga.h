@@ -845,6 +845,7 @@ struct _grn_search_optarg {
   grn_fuzzy_search_optarg fuzzy;
   grn_match_info match_info;
   int quorum_threshold;
+  int additional_last_interval;
 };
 
 GRN_API grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,

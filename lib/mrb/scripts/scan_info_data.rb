@@ -11,6 +11,7 @@ module Groonga
     attr_accessor :search_indexes
     attr_accessor :flags
     attr_accessor :max_interval
+    attr_accessor :additional_last_interval
     attr_accessor :similarity_threshold
     attr_accessor :quorum_threshold
     attr_accessor :start_position
@@ -25,6 +26,7 @@ module Groonga
       @search_indexes = []
       @flags = ScanInfo::Flags::PUSH
       @max_interval = nil
+      @additional_last_interval = nil
       @similarity_threshold = nil
       @quorum_threshold = nil
       @start_position = nil
@@ -59,10 +61,12 @@ module Groonga
 
     private
     def near_search?
-      (@op == Operator::NEAR or
-       @op == Operator::NEAR2 or
-       @op == Operator::NEAR_PHRASE) and
-        @args.size == 3
+      return true if ((@op == Operator::NEAR or
+                       @op == Operator::NEAR2) and
+                      (@args.size == 3))
+      return true if ((@op == Operator::NEAR_PHRASE) and
+                      (@args.size == 4))
+      false
     end
 
     def match_near_resolve_index
@@ -83,6 +87,9 @@ module Groonga
 
       self.query = @args[1]
       self.max_interval = @args[2].value
+      if @op == Operator::NEAR_PHRASE
+        self.additional_last_interval = @args[3].value
+      end
     end
 
     def similar_search?

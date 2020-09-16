@@ -2133,6 +2133,7 @@ grn_select_apply_adjuster_execute_adjust(grn_ctx *ctx,
     options.mode = GRN_OP_EXACT;
     options.similarity_threshold = 0;
     options.max_interval = 0;
+    options.additional_last_interval = 0;
     options.weight_vector = NULL;
     options.vector_size = factor_value;
     options.proc = NULL;

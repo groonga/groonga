@@ -1679,6 +1679,7 @@ grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset)
 #define DEFAULT_WEIGHT 5
 #define DEFAULT_DECAYSTEP 2
 #define DEFAULT_MAX_INTERVAL 10
+#define DEFAULT_ADDITIONAL_LAST_INTERVAL 0
 #define DEFAULT_SIMILARITY_THRESHOLD 0
 #define DEFAULT_QUORUM_THRESHOLD 1
 #define DEFAULT_TERM_EXTRACT_POLICY 0
@@ -1699,6 +1700,7 @@ struct _grn_scan_info {
   grn_obj **args;
   grn_obj *initial_args[GRN_SCAN_INFO_INITIAL_MAX_N_ARGS];
   int max_interval;
+  int additional_last_interval;
   int similarity_threshold;
   int quorum_threshold;
   grn_obj scorers;
@@ -1746,6 +1748,7 @@ grn_scan_info_free(grn_ctx *ctx,
     (si)->max_nargs = GRN_SCAN_INFO_INITIAL_MAX_N_ARGS;\
     (si)->args = (si)->initial_args;\
     (si)->max_interval = DEFAULT_MAX_INTERVAL;\
+    (si)->additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;\
     (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
     (si)->quorum_threshold = DEFAULT_QUORUM_THRESHOLD;\
     (si)->start = (st);\
@@ -2075,6 +2078,7 @@ grn_scan_info_open(grn_ctx *ctx, int start)
   si->max_nargs = GRN_SCAN_INFO_INITIAL_MAX_N_ARGS;
   si->args = si->initial_args;
   si->max_interval = DEFAULT_MAX_INTERVAL;
+  si->additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;
   si->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;
   si->quorum_threshold = DEFAULT_QUORUM_THRESHOLD;
   si->start = start;
@@ -2177,6 +2181,19 @@ void
 grn_scan_info_set_max_interval(scan_info *si, int max_interval)
 {
   si->max_interval = max_interval;
+}
+
+int
+grn_scan_info_get_additional_last_interval(scan_info *si)
+{
+  return si->additional_last_interval;
+}
+
+void
+grn_scan_info_set_additional_last_interval(scan_info *si,
+                                           int additional_last_interval)
+{
+  si->additional_last_interval = additional_last_interval;
 }
 
 int
@@ -2606,11 +2623,24 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, int32_t weight)
       switch (si->op) {
       case GRN_OP_NEAR :
       case GRN_OP_NEAR2 :
-      case GRN_OP_NEAR_PHRASE :
         if (si->nargs == 3 &&
             *p == si->args[2] &&
             (*p)->header.domain == GRN_DB_INT32) {
           si->max_interval = GRN_INT32_VALUE(*p);
+        } else {
+          si->query = *p;
+        }
+        break;
+      case GRN_OP_NEAR_PHRASE :
+        if (si->nargs >= 3 &&
+            *p == si->args[2] &&
+            (*p)->header.domain == GRN_DB_INT32) {
+          si->max_interval = GRN_INT32_VALUE(*p);
+          si->additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;
+        } else if (si->nargs == 4 &&
+                   *p == si->args[3] &&
+                   (*p)->header.domain == GRN_DB_INT32) {
+          si->additional_last_interval = GRN_INT32_VALUE(*p);
         } else {
           si->query = *p;
         }
@@ -4682,6 +4712,7 @@ grn_table_select_index(grn_ctx *ctx,
       }
       options->match_info.flags = GRN_MATCH_INFO_GET_MIN_RECORD_ID;
       options->max_interval = si->max_interval;
+      options->additional_last_interval = si->additional_last_interval;
       options->similarity_threshold = si->similarity_threshold;
       options->quorum_threshold = si->quorum_threshold;
 
@@ -5233,6 +5264,7 @@ typedef struct {
   grn_obj op_stack;
   grn_obj mode_stack;
   grn_obj max_interval_stack;
+  grn_obj additional_last_interval_stack;
   grn_obj similarity_threshold_stack;
   grn_obj quorum_threshold_stack;
   grn_obj weight_stack;
@@ -5277,7 +5309,11 @@ skip_space(grn_ctx *ctx, efs_info *q)
 }
 
 static grn_bool
-parse_query_op(efs_info *q, efs_op *op, grn_operator *mode, int *option)
+parse_query_op(efs_info *q,
+               efs_op *op,
+               grn_operator *mode,
+               int *option1,
+               int *option2)
 {
   grn_bool found = GRN_TRUE;
   const char *start, *end = q->cur;
@@ -5285,8 +5321,8 @@ parse_query_op(efs_info *q, efs_op *op, grn_operator *mode, int *option)
   case 'S' :
     *mode = GRN_OP_SIMILAR;
     start = ++end;
-    *option = grn_atoi(start, q->str_end, (const char **)&end);
-    if (start == end) { *option = DEFAULT_SIMILARITY_THRESHOLD; }
+    *option1 = grn_atoi(start, q->str_end, (const char **)&end);
+    if (start == end) { *option1 = DEFAULT_SIMILARITY_THRESHOLD; }
     q->cur = end;
     break;
   case 'N' :
@@ -5296,36 +5332,49 @@ parse_query_op(efs_info *q, efs_op *op, grn_operator *mode, int *option)
       *mode = GRN_OP_NEAR_PHRASE;
       start++;
     }
-    *option = grn_atoi(start, q->str_end, (const char **)&end);
-    if (start == end) { *option = DEFAULT_MAX_INTERVAL; }
+    *option1 = grn_atoi(start, q->str_end, (const char **)&end);
+    if (start == end) {
+      *option1 = DEFAULT_MAX_INTERVAL;
+      *option2 = DEFAULT_ADDITIONAL_LAST_INTERVAL;
+    } else {
+      if (end < q->str_end && end[0] == ',') {
+        const char *option2_start = end + 1;
+        *option2 = grn_atoi(option2_start, q->str_end, (const char **)&end);
+        if (option2_start == end) {
+          *option2 = DEFAULT_ADDITIONAL_LAST_INTERVAL;
+        }
+      } else {
+        *option2 = DEFAULT_ADDITIONAL_LAST_INTERVAL;
+      }
+    }
     q->cur = end;
     break;
   case 'n' :
     *mode = GRN_OP_NEAR2;
     start = ++end;
-    *option = grn_atoi(start, q->str_end, (const char **)&end);
-    if (start == end) { *option = DEFAULT_MAX_INTERVAL; }
+    *option1 = grn_atoi(start, q->str_end, (const char **)&end);
+    if (start == end) { *option1 = DEFAULT_MAX_INTERVAL; }
     q->cur = end;
     break;
   case 'T' :
     *mode = GRN_OP_TERM_EXTRACT;
     start = ++end;
-    *option = grn_atoi(start, q->str_end, (const char **)&end);
-    if (start == end) { *option = DEFAULT_TERM_EXTRACT_POLICY; }
+    *option1 = grn_atoi(start, q->str_end, (const char **)&end);
+    if (start == end) { *option1 = DEFAULT_TERM_EXTRACT_POLICY; }
     q->cur = end;
     break;
   case 'X' : /* force exact mode */
     op->op = GRN_OP_AND;
     *mode = GRN_OP_EXACT;
-    *option = 0;
+    *option1 = 0;
     start = ++end;
     q->cur = end;
     break;
   case 'Q' :
     *mode = GRN_OP_QUORUM;
     start = ++end;
-    *option = grn_atoi(start, q->str_end, (const char **)&end);
-    if (start == end) { *option = DEFAULT_QUORUM_THRESHOLD; }
+    *option1 = grn_atoi(start, q->str_end, (const char **)&end);
+    if (start == end) { *option1 = DEFAULT_QUORUM_THRESHOLD; }
     q->cur = end;
     break;
   default :
@@ -5491,7 +5540,6 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
     break;
   case GRN_OP_NEAR :
   case GRN_OP_NEAR2 :
-  case GRN_OP_NEAR_PHRASE :
     {
       int max_interval;
       max_interval = grn_int32_value_at(&efsi->max_interval_stack, -1);
@@ -5501,6 +5549,24 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
         grn_expr_append_op(efsi->ctx, efsi->e, mode, 3);
       } else {
         grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 3);
+      }
+    }
+    break;
+  case GRN_OP_NEAR_PHRASE :
+    {
+      int max_interval;
+      max_interval = grn_int32_value_at(&efsi->max_interval_stack, -1);
+      int additional_last_interval;
+      additional_last_interval =
+        grn_int32_value_at(&efsi->additional_last_interval_stack, -1);
+      grn_expr_append_const_int(efsi->ctx, efsi->e, max_interval,
+                                GRN_OP_PUSH, 1);
+      grn_expr_append_const_int(efsi->ctx, efsi->e, additional_last_interval,
+                                GRN_OP_PUSH, 1);
+      if (weight == 0) {
+        grn_expr_append_op(efsi->ctx, efsi->e, mode, 4);
+      } else {
+        grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 4);
       }
     }
     break;
@@ -5741,7 +5807,6 @@ parse_query_word(grn_ctx *ctx, efs_info *q)
 static grn_rc
 parse_query(grn_ctx *ctx, efs_info *q)
 {
-  int option = 0;
   grn_operator mode;
   efs_op op_, *op = &op_;
   grn_bool first_token = GRN_TRUE;
@@ -5833,28 +5898,35 @@ parse_query(grn_ctx *ctx, efs_info *q)
       break;
     case GRN_QUERY_PREFIX :
       q->cur++;
-      if (parse_query_op(q, op, &mode, &option)) {
-        switch (mode) {
-        case GRN_OP_NEAR :
-        case GRN_OP_NEAR2 :
-        case GRN_OP_NEAR_PHRASE :
-          GRN_INT32_PUT(ctx, &q->max_interval_stack, option);
-          break;
-        case GRN_OP_SIMILAR :
-          GRN_INT32_PUT(ctx, &q->similarity_threshold_stack, option);
-          break;
-        case GRN_OP_QUORUM :
-          GRN_INT32_PUT(ctx, &q->quorum_threshold_stack, option);
-          break;
-        default :
-          break;
+      {
+        int option1 = 0;
+        int option2 = 0;
+        if (parse_query_op(q, op, &mode, &option1, &option2)) {
+          switch (mode) {
+          case GRN_OP_NEAR :
+          case GRN_OP_NEAR2 :
+            GRN_INT32_PUT(ctx, &q->max_interval_stack, option1);
+            break;
+          case GRN_OP_NEAR_PHRASE :
+            GRN_INT32_PUT(ctx, &q->max_interval_stack, option1);
+            GRN_INT32_PUT(ctx, &q->additional_last_interval_stack, option2);
+            break;
+          case GRN_OP_SIMILAR :
+            GRN_INT32_PUT(ctx, &q->similarity_threshold_stack, option1);
+            break;
+          case GRN_OP_QUORUM :
+            GRN_INT32_PUT(ctx, &q->quorum_threshold_stack, option1);
+            break;
+          default :
+            break;
+          }
+          GRN_INT32_PUT(ctx, &q->mode_stack, mode);
+          parse_query_flush_pending_token(ctx, q);
+          PARSE(GRN_EXPR_TOKEN_RELATIVE_OP);
+        } else {
+          q->cur--;
+          parse_query_word(ctx, q);
         }
-        GRN_INT32_PUT(ctx, &q->mode_stack, mode);
-        parse_query_flush_pending_token(ctx, q);
-        PARSE(GRN_EXPR_TOKEN_RELATIVE_OP);
-      } else {
-        q->cur--;
-        parse_query_word(ctx, q);
       }
       break;
     case GRN_QUERY_AND :
@@ -6319,6 +6391,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
           const char *next_start = q->cur + 2;
           const char *end;
           int max_interval;
+          int additional_last_interval;
           int token = GRN_EXPR_TOKEN_NEAR;
           if (next_start < q->str_end && next_start[0] == 'P') {
             token = GRN_EXPR_TOKEN_NEAR_PHRASE;
@@ -6327,10 +6400,25 @@ parse_script(grn_ctx *ctx, efs_info *q)
           max_interval = grn_atoi(next_start, q->str_end, &end);
           if (end == next_start) {
             max_interval = DEFAULT_MAX_INTERVAL;
+            additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;
           } else {
+            if (end < q->str_end && end[0] == ',') {
+              const char *additional_last_interval_start = end + 1;
+              additional_last_interval = grn_atoi(additional_last_interval_start,
+                                                  q->str_end,
+                                                  &end);
+              if (end == additional_last_interval_start) {
+                additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;
+              }
+            } else {
+              additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;
+            }
             next_start = end;
           }
           GRN_INT32_PUT(ctx, &q->max_interval_stack, max_interval);
+          GRN_INT32_PUT(ctx,
+                        &q->additional_last_interval_stack,
+                        additional_last_interval);
           PARSE(token);
           q->cur = next_start;
         }
@@ -6735,6 +6823,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_INT32_INIT(&efsi.op_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.mode_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.max_interval_stack, GRN_OBJ_VECTOR);
+    GRN_INT32_INIT(&efsi.additional_last_interval_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.similarity_threshold_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.quorum_threshold_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.weight_stack, GRN_OBJ_VECTOR);
@@ -6795,6 +6884,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_OBJ_FIN(ctx, &efsi.op_stack);
     GRN_OBJ_FIN(ctx, &efsi.mode_stack);
     GRN_OBJ_FIN(ctx, &efsi.max_interval_stack);
+    GRN_OBJ_FIN(ctx, &efsi.additional_last_interval_stack);
     GRN_OBJ_FIN(ctx, &efsi.similarity_threshold_stack);
     GRN_OBJ_FIN(ctx, &efsi.quorum_threshold_stack);
     GRN_OBJ_FIN(ctx, &efsi.weight_stack);

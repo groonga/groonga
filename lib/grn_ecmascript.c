@@ -1843,10 +1843,18 @@ static YYACTIONTYPE yy_reduce(
   switch (mode) {
   case GRN_OP_NEAR :
   case GRN_OP_NEAR2 :
+    {
+      int max_interval;
+      GRN_INT32_POP(&efsi->max_interval_stack, max_interval);
+    }
+    break;
   case GRN_OP_NEAR_PHRASE :
     {
       int max_interval;
       GRN_INT32_POP(&efsi->max_interval_stack, max_interval);
+      int additional_last_interval;
+      GRN_INT32_POP(&efsi->additional_last_interval_stack,
+                    additional_last_interval);
     }
     break;
   case GRN_OP_SIMILAR :
@@ -1865,196 +1873,196 @@ static YYACTIONTYPE yy_reduce(
     break;
   }
 }
-#line 1869 "../../groonga/lib/grn_ecmascript.c"
+#line 1877 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 8: /* query_element ::= BRACEL expression BRACER */
       case 9: /* query_element ::= EVAL primary_expression */ yytestcase(yyruleno==9);
-#line 156 "../../groonga/lib/grn_ecmascript.lemon"
+#line 164 "../../groonga/lib/grn_ecmascript.lemon"
 {
   efsi->flags = efsi->default_flags;
 }
-#line 1877 "../../groonga/lib/grn_ecmascript.c"
+#line 1885 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 10: /* expression ::= expression COMMA assignment_expression */
-#line 164 "../../groonga/lib/grn_ecmascript.lemon"
+#line 172 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_COMMA, 2);
 }
-#line 1884 "../../groonga/lib/grn_ecmascript.c"
+#line 1892 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 11: /* assignment_expression ::= lefthand_side_expression ASSIGN assignment_expression */
-#line 169 "../../groonga/lib/grn_ecmascript.lemon"
+#line 177 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ASSIGN, 2);
 }
-#line 1891 "../../groonga/lib/grn_ecmascript.c"
+#line 1899 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 12: /* assignment_expression ::= lefthand_side_expression STAR_ASSIGN assignment_expression */
-#line 172 "../../groonga/lib/grn_ecmascript.lemon"
+#line 180 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_STAR_ASSIGN, 2);
 }
-#line 1898 "../../groonga/lib/grn_ecmascript.c"
+#line 1906 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 13: /* assignment_expression ::= lefthand_side_expression SLASH_ASSIGN assignment_expression */
-#line 175 "../../groonga/lib/grn_ecmascript.lemon"
+#line 183 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SLASH_ASSIGN, 2);
 }
-#line 1905 "../../groonga/lib/grn_ecmascript.c"
+#line 1913 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 14: /* assignment_expression ::= lefthand_side_expression MOD_ASSIGN assignment_expression */
-#line 178 "../../groonga/lib/grn_ecmascript.lemon"
+#line 186 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MOD_ASSIGN, 2);
 }
-#line 1912 "../../groonga/lib/grn_ecmascript.c"
+#line 1920 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 15: /* assignment_expression ::= lefthand_side_expression PLUS_ASSIGN assignment_expression */
-#line 181 "../../groonga/lib/grn_ecmascript.lemon"
+#line 189 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS_ASSIGN, 2);
 }
-#line 1919 "../../groonga/lib/grn_ecmascript.c"
+#line 1927 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 16: /* assignment_expression ::= lefthand_side_expression MINUS_ASSIGN assignment_expression */
-#line 184 "../../groonga/lib/grn_ecmascript.lemon"
+#line 192 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS_ASSIGN, 2);
 }
-#line 1926 "../../groonga/lib/grn_ecmascript.c"
+#line 1934 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 17: /* assignment_expression ::= lefthand_side_expression SHIFTL_ASSIGN assignment_expression */
-#line 187 "../../groonga/lib/grn_ecmascript.lemon"
+#line 195 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTL_ASSIGN, 2);
 }
-#line 1933 "../../groonga/lib/grn_ecmascript.c"
+#line 1941 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 18: /* assignment_expression ::= lefthand_side_expression SHIFTR_ASSIGN assignment_expression */
-#line 190 "../../groonga/lib/grn_ecmascript.lemon"
+#line 198 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTR_ASSIGN, 2);
 }
-#line 1940 "../../groonga/lib/grn_ecmascript.c"
+#line 1948 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 19: /* assignment_expression ::= lefthand_side_expression SHIFTRR_ASSIGN assignment_expression */
-#line 193 "../../groonga/lib/grn_ecmascript.lemon"
+#line 201 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTRR_ASSIGN, 2);
 }
-#line 1947 "../../groonga/lib/grn_ecmascript.c"
+#line 1955 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 20: /* assignment_expression ::= lefthand_side_expression AND_ASSIGN assignment_expression */
-#line 196 "../../groonga/lib/grn_ecmascript.lemon"
+#line 204 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND_ASSIGN, 2);
 }
-#line 1954 "../../groonga/lib/grn_ecmascript.c"
+#line 1962 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 21: /* assignment_expression ::= lefthand_side_expression XOR_ASSIGN assignment_expression */
-#line 199 "../../groonga/lib/grn_ecmascript.lemon"
+#line 207 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_XOR_ASSIGN, 2);
 }
-#line 1961 "../../groonga/lib/grn_ecmascript.c"
+#line 1969 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 22: /* assignment_expression ::= lefthand_side_expression OR_ASSIGN assignment_expression */
-#line 202 "../../groonga/lib/grn_ecmascript.lemon"
+#line 210 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR_ASSIGN, 2);
 }
-#line 1968 "../../groonga/lib/grn_ecmascript.c"
+#line 1976 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 23: /* conditional_expression ::= logical_or_expression QUESTION assignment_expression COLON assignment_expression */
-#line 207 "../../groonga/lib/grn_ecmascript.lemon"
+#line 215 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr *e = (grn_expr *)efsi->e;
   e->codes[yymsp[-3].minor.yy0].nargs = yymsp[-1].minor.yy0 - yymsp[-3].minor.yy0;
   e->codes[yymsp[-1].minor.yy0].nargs = e->codes_curr - yymsp[-1].minor.yy0 - 1;
 }
-#line 1977 "../../groonga/lib/grn_ecmascript.c"
+#line 1985 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 27: /* bitwise_or_expression ::= bitwise_or_expression BITWISE_OR bitwise_xor_expression */
-#line 227 "../../groonga/lib/grn_ecmascript.lemon"
+#line 235 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_OR, 2);
 }
-#line 1984 "../../groonga/lib/grn_ecmascript.c"
+#line 1992 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 28: /* bitwise_xor_expression ::= bitwise_xor_expression BITWISE_XOR bitwise_and_expression */
-#line 232 "../../groonga/lib/grn_ecmascript.lemon"
+#line 240 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_XOR, 2);
 }
-#line 1991 "../../groonga/lib/grn_ecmascript.c"
+#line 1999 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 29: /* bitwise_and_expression ::= bitwise_and_expression BITWISE_AND equality_expression */
-#line 237 "../../groonga/lib/grn_ecmascript.lemon"
+#line 245 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_AND, 2);
 }
-#line 1998 "../../groonga/lib/grn_ecmascript.c"
+#line 2006 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 30: /* equality_expression ::= equality_expression EQUAL relational_expression */
-#line 242 "../../groonga/lib/grn_ecmascript.lemon"
+#line 250 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_EQUAL, 2);
 }
-#line 2005 "../../groonga/lib/grn_ecmascript.c"
+#line 2013 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 31: /* equality_expression ::= equality_expression NOT_EQUAL relational_expression */
-#line 245 "../../groonga/lib/grn_ecmascript.lemon"
+#line 253 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NOT_EQUAL, 2);
 }
-#line 2012 "../../groonga/lib/grn_ecmascript.c"
+#line 2020 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 32: /* relational_expression ::= relational_expression LESS shift_expression */
-#line 250 "../../groonga/lib/grn_ecmascript.lemon"
+#line 258 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LESS, 2);
 }
-#line 2019 "../../groonga/lib/grn_ecmascript.c"
+#line 2027 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 33: /* relational_expression ::= relational_expression GREATER shift_expression */
-#line 253 "../../groonga/lib/grn_ecmascript.lemon"
+#line 261 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GREATER, 2);
 }
-#line 2026 "../../groonga/lib/grn_ecmascript.c"
+#line 2034 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 34: /* relational_expression ::= relational_expression LESS_EQUAL shift_expression */
-#line 256 "../../groonga/lib/grn_ecmascript.lemon"
+#line 264 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LESS_EQUAL, 2);
 }
-#line 2033 "../../groonga/lib/grn_ecmascript.c"
+#line 2041 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 35: /* relational_expression ::= relational_expression GREATER_EQUAL shift_expression */
-#line 259 "../../groonga/lib/grn_ecmascript.lemon"
+#line 267 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GREATER_EQUAL, 2);
 }
-#line 2040 "../../groonga/lib/grn_ecmascript.c"
+#line 2048 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 36: /* relational_expression ::= relational_expression IN shift_expression */
-#line 262 "../../groonga/lib/grn_ecmascript.lemon"
+#line 270 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_IN, 2);
 }
-#line 2047 "../../groonga/lib/grn_ecmascript.c"
+#line 2055 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 37: /* relational_expression ::= relational_expression MATCH shift_expression */
       case 91: /* adjust_match_expression ::= IDENTIFIER MATCH STRING */ yytestcase(yyruleno==91);
-#line 265 "../../groonga/lib/grn_ecmascript.lemon"
+#line 273 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
 }
-#line 2055 "../../groonga/lib/grn_ecmascript.c"
+#line 2063 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 38: /* relational_expression ::= relational_expression NEAR shift_expression */
-#line 268 "../../groonga/lib/grn_ecmascript.lemon"
+#line 276 "../../groonga/lib/grn_ecmascript.lemon"
 {
   {
     int max_interval;
@@ -2064,30 +2072,35 @@ static YYACTIONTYPE yy_reduce(
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR, 3);
 }
-#line 2068 "../../groonga/lib/grn_ecmascript.c"
+#line 2076 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 39: /* relational_expression ::= relational_expression NEAR2 shift_expression */
-#line 277 "../../groonga/lib/grn_ecmascript.lemon"
+#line 285 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR2, 2);
 }
-#line 2075 "../../groonga/lib/grn_ecmascript.c"
+#line 2083 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 40: /* relational_expression ::= relational_expression NEAR_PHRASE shift_expression */
-#line 280 "../../groonga/lib/grn_ecmascript.lemon"
+#line 288 "../../groonga/lib/grn_ecmascript.lemon"
 {
   {
     int max_interval;
     GRN_INT32_POP(&efsi->max_interval_stack, max_interval);
     grn_expr_append_const_int(efsi->ctx, efsi->e, max_interval,
                               GRN_OP_PUSH, 1);
+    int additional_last_interval;
+    GRN_INT32_POP(&efsi->additional_last_interval_stack,
+                  additional_last_interval);
+    grn_expr_append_const_int(efsi->ctx, efsi->e, additional_last_interval,
+                              GRN_OP_PUSH, 1);
   }
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR_PHRASE, 3);
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR_PHRASE, 4);
 }
-#line 2088 "../../groonga/lib/grn_ecmascript.c"
+#line 2101 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 41: /* relational_expression ::= relational_expression SIMILAR shift_expression */
-#line 289 "../../groonga/lib/grn_ecmascript.lemon"
+#line 302 "../../groonga/lib/grn_ecmascript.lemon"
 {
   {
     int similarity_threshold;
@@ -2097,17 +2110,17 @@ static YYACTIONTYPE yy_reduce(
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SIMILAR, 3);
 }
-#line 2101 "../../groonga/lib/grn_ecmascript.c"
+#line 2114 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 42: /* relational_expression ::= relational_expression TERM_EXTRACT shift_expression */
-#line 298 "../../groonga/lib/grn_ecmascript.lemon"
+#line 311 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_TERM_EXTRACT, 2);
 }
-#line 2108 "../../groonga/lib/grn_ecmascript.c"
+#line 2121 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 43: /* relational_expression ::= relational_expression QUORUM shift_expression */
-#line 301 "../../groonga/lib/grn_ecmascript.lemon"
+#line 314 "../../groonga/lib/grn_ecmascript.lemon"
 {
   {
     int quorum_threshold;
@@ -2117,103 +2130,103 @@ static YYACTIONTYPE yy_reduce(
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_QUORUM, 3);
 }
-#line 2121 "../../groonga/lib/grn_ecmascript.c"
+#line 2134 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 44: /* relational_expression ::= relational_expression LCP shift_expression */
-#line 310 "../../groonga/lib/grn_ecmascript.lemon"
+#line 323 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LCP, 2);
 }
-#line 2128 "../../groonga/lib/grn_ecmascript.c"
+#line 2141 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 45: /* relational_expression ::= relational_expression PREFIX shift_expression */
-#line 313 "../../groonga/lib/grn_ecmascript.lemon"
+#line 326 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PREFIX, 2);
 }
-#line 2135 "../../groonga/lib/grn_ecmascript.c"
+#line 2148 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 46: /* relational_expression ::= relational_expression SUFFIX shift_expression */
-#line 316 "../../groonga/lib/grn_ecmascript.lemon"
+#line 329 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SUFFIX, 2);
 }
-#line 2142 "../../groonga/lib/grn_ecmascript.c"
+#line 2155 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 47: /* relational_expression ::= relational_expression REGEXP shift_expression */
-#line 319 "../../groonga/lib/grn_ecmascript.lemon"
+#line 332 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_REGEXP, 2);
 }
-#line 2149 "../../groonga/lib/grn_ecmascript.c"
+#line 2162 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 48: /* shift_expression ::= shift_expression SHIFTL additive_expression */
-#line 324 "../../groonga/lib/grn_ecmascript.lemon"
+#line 337 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTL, 2);
 }
-#line 2156 "../../groonga/lib/grn_ecmascript.c"
+#line 2169 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 49: /* shift_expression ::= shift_expression SHIFTR additive_expression */
-#line 327 "../../groonga/lib/grn_ecmascript.lemon"
+#line 340 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTR, 2);
 }
-#line 2163 "../../groonga/lib/grn_ecmascript.c"
+#line 2176 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 50: /* shift_expression ::= shift_expression SHIFTRR additive_expression */
-#line 330 "../../groonga/lib/grn_ecmascript.lemon"
+#line 343 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTRR, 2);
 }
-#line 2170 "../../groonga/lib/grn_ecmascript.c"
+#line 2183 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 51: /* additive_expression ::= additive_expression PLUS multiplicative_expression */
       case 89: /* adjuster ::= adjuster PLUS adjust_expression */ yytestcase(yyruleno==89);
-#line 335 "../../groonga/lib/grn_ecmascript.lemon"
+#line 348 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS, 2);
 }
-#line 2178 "../../groonga/lib/grn_ecmascript.c"
+#line 2191 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 52: /* additive_expression ::= additive_expression MINUS multiplicative_expression */
-#line 338 "../../groonga/lib/grn_ecmascript.lemon"
+#line 351 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS, 2);
 }
-#line 2185 "../../groonga/lib/grn_ecmascript.c"
+#line 2198 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 53: /* multiplicative_expression ::= multiplicative_expression STAR unary_expression */
       case 90: /* adjust_expression ::= adjust_match_expression STAR DECIMAL */ yytestcase(yyruleno==90);
-#line 343 "../../groonga/lib/grn_ecmascript.lemon"
+#line 356 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_STAR, 2);
 }
-#line 2193 "../../groonga/lib/grn_ecmascript.c"
+#line 2206 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 54: /* multiplicative_expression ::= multiplicative_expression SLASH unary_expression */
-#line 346 "../../groonga/lib/grn_ecmascript.lemon"
+#line 359 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SLASH, 2);
 }
-#line 2200 "../../groonga/lib/grn_ecmascript.c"
+#line 2213 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 55: /* multiplicative_expression ::= multiplicative_expression MOD unary_expression */
-#line 349 "../../groonga/lib/grn_ecmascript.lemon"
+#line 362 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MOD, 2);
 }
-#line 2207 "../../groonga/lib/grn_ecmascript.c"
+#line 2220 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 56: /* unary_expression ::= DELETE unary_expression */
-#line 354 "../../groonga/lib/grn_ecmascript.lemon"
+#line 367 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DELETE, 1);
 }
-#line 2214 "../../groonga/lib/grn_ecmascript.c"
+#line 2227 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 57: /* unary_expression ::= INCR unary_expression */
-#line 357 "../../groonga/lib/grn_ecmascript.lemon"
+#line 370 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -2231,10 +2244,10 @@ static YYACTIONTYPE yy_reduce(
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR, 1);
   }
 }
-#line 2235 "../../groonga/lib/grn_ecmascript.c"
+#line 2248 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 58: /* unary_expression ::= DECR unary_expression */
-#line 374 "../../groonga/lib/grn_ecmascript.lemon"
+#line 387 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -2252,66 +2265,66 @@ static YYACTIONTYPE yy_reduce(
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR, 1);
   }
 }
-#line 2256 "../../groonga/lib/grn_ecmascript.c"
+#line 2269 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 59: /* unary_expression ::= PLUS unary_expression */
-#line 391 "../../groonga/lib/grn_ecmascript.lemon"
+#line 404 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS, 1);
 }
-#line 2263 "../../groonga/lib/grn_ecmascript.c"
+#line 2276 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 60: /* unary_expression ::= MINUS unary_expression */
-#line 394 "../../groonga/lib/grn_ecmascript.lemon"
+#line 407 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS, 1);
 }
-#line 2270 "../../groonga/lib/grn_ecmascript.c"
+#line 2283 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 61: /* unary_expression ::= NOT unary_expression */
-#line 397 "../../groonga/lib/grn_ecmascript.lemon"
+#line 410 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NOT, 1);
 }
-#line 2277 "../../groonga/lib/grn_ecmascript.c"
+#line 2290 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 62: /* unary_expression ::= BITWISE_NOT unary_expression */
-#line 400 "../../groonga/lib/grn_ecmascript.lemon"
+#line 413 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_NOT, 1);
 }
-#line 2284 "../../groonga/lib/grn_ecmascript.c"
+#line 2297 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 63: /* unary_expression ::= ADJUST unary_expression */
-#line 403 "../../groonga/lib/grn_ecmascript.lemon"
+#line 416 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ADJUST, 1);
 }
-#line 2291 "../../groonga/lib/grn_ecmascript.c"
+#line 2304 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 64: /* unary_expression ::= EXACT unary_expression */
-#line 406 "../../groonga/lib/grn_ecmascript.lemon"
+#line 419 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_EXACT, 1);
 }
-#line 2298 "../../groonga/lib/grn_ecmascript.c"
+#line 2311 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 65: /* unary_expression ::= PARTIAL unary_expression */
-#line 409 "../../groonga/lib/grn_ecmascript.lemon"
+#line 422 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PARTIAL, 1);
 }
-#line 2305 "../../groonga/lib/grn_ecmascript.c"
+#line 2318 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 66: /* unary_expression ::= UNSPLIT unary_expression */
-#line 412 "../../groonga/lib/grn_ecmascript.lemon"
+#line 425 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_UNSPLIT, 1);
 }
-#line 2312 "../../groonga/lib/grn_ecmascript.c"
+#line 2325 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 67: /* postfix_expression ::= lefthand_side_expression INCR */
-#line 417 "../../groonga/lib/grn_ecmascript.lemon"
+#line 430 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -2329,10 +2342,10 @@ static YYACTIONTYPE yy_reduce(
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR_POST, 1);
   }
 }
-#line 2333 "../../groonga/lib/grn_ecmascript.c"
+#line 2346 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 68: /* postfix_expression ::= lefthand_side_expression DECR */
-#line 434 "../../groonga/lib/grn_ecmascript.lemon"
+#line 447 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -2350,17 +2363,17 @@ static YYACTIONTYPE yy_reduce(
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR_POST, 1);
   }
 }
-#line 2354 "../../groonga/lib/grn_ecmascript.c"
+#line 2367 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 69: /* call_expression ::= member_expression arguments */
-#line 455 "../../groonga/lib/grn_ecmascript.lemon"
+#line 468 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, yymsp[0].minor.yy0);
 }
-#line 2361 "../../groonga/lib/grn_ecmascript.c"
+#line 2374 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 70: /* array_literal ::= BRACKETL element_list BRACKETR */
-#line 472 "../../groonga/lib/grn_ecmascript.lemon"
+#line 485 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   if (efsi->array_literal) {
@@ -2370,10 +2383,10 @@ static YYACTIONTYPE yy_reduce(
     efsi->array_literal = NULL;
   }
 }
-#line 2374 "../../groonga/lib/grn_ecmascript.c"
+#line 2387 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 71: /* element_list ::= */
-#line 482 "../../groonga/lib/grn_ecmascript.lemon"
+#line 495 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
 
@@ -2384,18 +2397,18 @@ static YYACTIONTYPE yy_reduce(
         (int)(efsi->str_end - efsi->str), efsi->str);
   }
 }
-#line 2388 "../../groonga/lib/grn_ecmascript.c"
+#line 2401 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 72: /* element_list ::= assignment_expression */
       case 73: /* element_list ::= element_list COMMA assignment_expression */ yytestcase(yyruleno==73);
-#line 493 "../../groonga/lib/grn_ecmascript.lemon"
+#line 506 "../../groonga/lib/grn_ecmascript.lemon"
 {
   array_literal_add_element(efsi);
 }
-#line 2396 "../../groonga/lib/grn_ecmascript.c"
+#line 2409 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 74: /* object_literal ::= BRACEL property_name_and_value_list BRACER */
-#line 501 "../../groonga/lib/grn_ecmascript.lemon"
+#line 514 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr_take_obj(ctx, efsi->e, (grn_obj *)(efsi->object_literal));
@@ -2403,10 +2416,10 @@ static YYACTIONTYPE yy_reduce(
                       GRN_OP_PUSH, 1);
   efsi->object_literal = NULL;
 }
-#line 2407 "../../groonga/lib/grn_ecmascript.c"
+#line 2420 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 75: /* property_name_and_value_list ::= */
-#line 509 "../../groonga/lib/grn_ecmascript.lemon"
+#line 522 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
 
@@ -2419,10 +2432,10 @@ static YYACTIONTYPE yy_reduce(
         (int)(efsi->str_end - efsi->str), efsi->str);
   }
 }
-#line 2423 "../../groonga/lib/grn_ecmascript.c"
+#line 2436 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 76: /* property_name_and_value ::= property_name COLON assignment_expression */
-#line 524 "../../groonga/lib/grn_ecmascript.lemon"
+#line 537 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -2479,61 +2492,61 @@ static YYACTIONTYPE yy_reduce(
     }
   }
 }
-#line 2483 "../../groonga/lib/grn_ecmascript.c"
+#line 2496 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 77: /* member_expression_part ::= BRACKETL expression BRACKETR */
-#line 583 "../../groonga/lib/grn_ecmascript.lemon"
+#line 596 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GET_MEMBER, 2);
 }
-#line 2490 "../../groonga/lib/grn_ecmascript.c"
+#line 2503 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 78: /* arguments ::= PARENL argument_list PARENR */
-#line 588 "../../groonga/lib/grn_ecmascript.lemon"
+#line 601 "../../groonga/lib/grn_ecmascript.lemon"
 { yymsp[-2].minor.yy0 = yymsp[-1].minor.yy0; }
-#line 2495 "../../groonga/lib/grn_ecmascript.c"
+#line 2508 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 79: /* argument_list ::= */
-#line 589 "../../groonga/lib/grn_ecmascript.lemon"
+#line 602 "../../groonga/lib/grn_ecmascript.lemon"
 { yymsp[1].minor.yy0 = 0; }
-#line 2500 "../../groonga/lib/grn_ecmascript.c"
+#line 2513 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 80: /* argument_list ::= assignment_expression */
-#line 590 "../../groonga/lib/grn_ecmascript.lemon"
+#line 603 "../../groonga/lib/grn_ecmascript.lemon"
 { yymsp[0].minor.yy0 = 1; }
-#line 2505 "../../groonga/lib/grn_ecmascript.c"
+#line 2518 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 81: /* argument_list ::= argument_list COMMA assignment_expression */
-#line 591 "../../groonga/lib/grn_ecmascript.lemon"
+#line 604 "../../groonga/lib/grn_ecmascript.lemon"
 { yylhsminor.yy0 = yymsp[-2].minor.yy0 + 1; }
-#line 2510 "../../groonga/lib/grn_ecmascript.c"
+#line 2523 "../../groonga/lib/grn_ecmascript.c"
   yymsp[-2].minor.yy0 = yylhsminor.yy0;
         break;
       case 82: /* output_columns ::= */
-#line 593 "../../groonga/lib/grn_ecmascript.lemon"
+#line 606 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[1].minor.yy0 = 0;
 }
-#line 2518 "../../groonga/lib/grn_ecmascript.c"
+#line 2531 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 83: /* output_columns ::= output_column */
-#line 596 "../../groonga/lib/grn_ecmascript.lemon"
+#line 609 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yylhsminor.yy0 = yymsp[0].minor.yy0;
 }
-#line 2525 "../../groonga/lib/grn_ecmascript.c"
+#line 2538 "../../groonga/lib/grn_ecmascript.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
       case 84: /* output_columns ::= output_columns COMMA */
-#line 601 "../../groonga/lib/grn_ecmascript.lemon"
+#line 614 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yylhsminor.yy0 = yymsp[-1].minor.yy0;
 }
-#line 2533 "../../groonga/lib/grn_ecmascript.c"
+#line 2546 "../../groonga/lib/grn_ecmascript.c"
   yymsp[-1].minor.yy0 = yylhsminor.yy0;
         break;
       case 85: /* output_columns ::= output_columns COMMA output_column */
-#line 606 "../../groonga/lib/grn_ecmascript.lemon"
+#line 619 "../../groonga/lib/grn_ecmascript.lemon"
 {
   if (yymsp[-2].minor.yy0 == 0) {
     yylhsminor.yy0 = yymsp[0].minor.yy0;
@@ -2546,11 +2559,11 @@ static YYACTIONTYPE yy_reduce(
     yylhsminor.yy0 = 1;
   }
 }
-#line 2550 "../../groonga/lib/grn_ecmascript.c"
+#line 2563 "../../groonga/lib/grn_ecmascript.c"
   yymsp[-2].minor.yy0 = yylhsminor.yy0;
         break;
       case 86: /* output_column ::= STAR */
-#line 619 "../../groonga/lib/grn_ecmascript.lemon"
+#line 632 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_obj *expr = efsi->e;
@@ -2600,21 +2613,21 @@ static YYACTIONTYPE yy_reduce(
     yymsp[0].minor.yy0 = 0;
   }
 }
-#line 2604 "../../groonga/lib/grn_ecmascript.c"
+#line 2617 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 87: /* output_column ::= NONEXISTENT_COLUMN */
-#line 668 "../../groonga/lib/grn_ecmascript.lemon"
+#line 681 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 0;
 }
-#line 2611 "../../groonga/lib/grn_ecmascript.c"
+#line 2624 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 88: /* output_column ::= assignment_expression */
-#line 671 "../../groonga/lib/grn_ecmascript.lemon"
+#line 684 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 1;
 }
-#line 2618 "../../groonga/lib/grn_ecmascript.c"
+#line 2631 "../../groonga/lib/grn_ecmascript.c"
         break;
       default:
       /* (92) input ::= query */ yytestcase(yyruleno==92);
@@ -2746,7 +2759,7 @@ static void yy_syntax_error(
     }
     GRN_OBJ_FIN(ctx, &message);
   }
-#line 2750 "../../groonga/lib/grn_ecmascript.c"
+#line 2763 "../../groonga/lib/grn_ecmascript.c"
 /************ End %syntax_error code ******************************************/
   grn_expr_parserARG_STORE /* Suppress warning about unused %extra_argument variable */
   grn_expr_parserCTX_STORE

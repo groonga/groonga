@@ -191,6 +191,7 @@ struct _grn_select_optarg {
   grn_fuzzy_search_optarg fuzzy;
   grn_match_info *match_info;
   int quorum_threshold;
+  int additional_last_interval;
 };
 
 GRN_API grn_rc grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id id,
