@@ -182,6 +182,8 @@ jobs:
           # Float32 value format is different.
           Remove-Item test\command\suite\tokenizers\document_vector_tf_idf\alphabet.test
           Remove-Item test\command\suite\tokenizers\document_vector_tf_idf\reindex.test
+          Remove-Item test\command\suite\tokenizers\document_vector_bm25\alphabet.test
+          Remove-Item test\command\suite\tokenizers\document_vector_bm25\reindex.test
       - name: "Test: command line"
         run: |
           ruby test\command_line\run-test.rb `

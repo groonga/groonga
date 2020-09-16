@@ -23,6 +23,8 @@ if [ "${architecture}" = "i386" ]; then
   # Float32 value format is different.
   rm command/suite/tokenizers/document_vector_tf_idf/alphabet.test
   rm command/suite/tokenizers/document_vector_tf_idf/reindex.test
+  rm command/suite/tokenizers/document_vector_bm25/alphabet.test
+  rm command/suite/tokenizers/document_vector_bm25/reindex.test
 fi
 
 apt install -V -y \
