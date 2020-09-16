@@ -2487,9 +2487,13 @@ document_vector_idf_base_tokenizer_init_token_ids(
       }
       float weight;
       if (metadata->algorithm == DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_TF_IDF) {
+        /* Use the same formula as gensim:
+         * https://radimrehurek.com/gensim/models/tfidfmodel.html */
         const float tf_idf = tf * log2f(metadata->n_documents / (float)df);
         weight = tf_idf;
       } else {
+        /* Use the formula in Wikipedia:
+         * https://en.wikipedia.org/wiki/Okapi_BM25 */
         const float idf =
           logf(((metadata->n_documents - df + 0.5) / (df + 0.5)) + 1);
         const float k1 = tokenizer->options->k1;
