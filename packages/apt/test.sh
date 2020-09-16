@@ -21,8 +21,8 @@ if [ "${architecture}" = "i386" ]; then
   # TODO: debug this
   rm command/suite/select/filter/geo_in_circle/no_index/north_east.test
   # Float32 value format is different.
-  rm command/suite/tokenizers/document_vector_tfidf/alphabet.test
-  rm command/suite/tokenizers/document_vector_tfidf/reindex.test
+  rm command/suite/tokenizers/document_vector_tf_idf/alphabet.test
+  rm command/suite/tokenizers/document_vector_tf_idf/reindex.test
 fi
 
 apt install -V -y \

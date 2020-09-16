@@ -180,8 +180,8 @@ jobs:
         run: |
           Remove-Item test\command\suite\ruby\eval\convert\string_to_time\over_int32.test
           # Float32 value format is different.
-          Remove-Item test\command\suite\tokenizers\document_vector_tfidf\alphabet.test
-          Remove-Item test\command\suite\tokenizers\document_vector_tfidf\reindex.test
+          Remove-Item test\command\suite\tokenizers\document_vector_tf_idf\alphabet.test
+          Remove-Item test\command\suite\tokenizers\document_vector_tf_idf\reindex.test
       - name: "Test: command line"
         run: |
           ruby test\command_line\run-test.rb `
