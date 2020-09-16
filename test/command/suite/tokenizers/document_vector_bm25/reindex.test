@@ -21,12 +21,12 @@ table_create DocumentVectorBM25 TABLE_HASH_KEY Tokens \
                              "df_column", "df")'
 column_create DocumentVectorBM25 df COLUMN_SCALAR UInt32
 
-column_create Memos feature_vector COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 \
+column_create Memos content_feature COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 \
   DocumentVectorBM25 content
 
 truncate DocumentVectorBM25
-truncate Memos.feature_vector
-reindex Memos.feature_vector
+truncate Memos.content_feature
+reindex Memos.content_feature
 
 select Memos
 

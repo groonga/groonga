@@ -19,13 +19,13 @@ table_create DocumentVectorTFIDF TABLE_HASH_KEY Tokens   --default_tokenizer    
 [[0,0.0,0.0],true]
 column_create DocumentVectorTFIDF df COLUMN_SCALAR UInt32
 [[0,0.0,0.0],true]
-column_create Memos feature_vector COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32   DocumentVectorTFIDF content
+column_create Memos content_feature COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32   DocumentVectorTFIDF content
 [[0,0.0,0.0],true]
 truncate DocumentVectorTFIDF
 [[0,0.0,0.0],true]
-truncate Memos.feature_vector
+truncate Memos.content_feature
 [[0,0.0,0.0],true]
-reindex Memos.feature_vector
+reindex Memos.content_feature
 [[0,0.0,0.0],true]
 select Memos
 [
@@ -49,7 +49,7 @@ select Memos
           "Text"
         ],
         [
-          "feature_vector",
+          "content_feature",
           "DocumentVectorTFIDF"
         ]
       ],

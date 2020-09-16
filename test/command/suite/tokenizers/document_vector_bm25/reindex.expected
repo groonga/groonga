@@ -19,13 +19,7 @@ table_create DocumentVectorBM25 TABLE_HASH_KEY Tokens   --default_tokenizer     
 [[0,0.0,0.0],true]
 column_create DocumentVectorBM25 df COLUMN_SCALAR UInt32
 [[0,0.0,0.0],true]
-column_create Memos feature_vector COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32   DocumentVectorBM25 content
-[[0,0.0,0.0],true]
-truncate DocumentVectorBM25
-[[0,0.0,0.0],true]
-truncate Memos.feature_vector
-[[0,0.0,0.0],true]
-reindex Memos.feature_vector
+column_create Memos content_feature COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32   DocumentVectorBM25 content
 [[0,0.0,0.0],true]
 select Memos
 [
