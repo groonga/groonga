@@ -1096,7 +1096,7 @@ grn_inline static grn_id
 grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
 {
   grn_id id;
-  void *entry;
+  void *entry = NULL;
   struct grn_array_header *header;
   if (grn_array_error_if_truncated(ctx, array) != GRN_SUCCESS) {
     return GRN_ID_NIL;
@@ -1112,8 +1112,27 @@ grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
       }
       header->garbages = *(grn_id *)entry;
       memset(entry, 0, header->value_size);
+      (*array->n_garbages)--;
+      if (!grn_io_array_bit_on(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id)) {
+        /* Actually, it is difficult to recover from this error. */
+        *(grn_id *)entry = header->garbages;
+        header->garbages = id;
+        (*array->n_garbages)++;
+        return GRN_ID_NIL;
+      }
     } else {
+      entry = grn_array_io_entry_at(ctx, array, id, GRN_TABLE_ADD);
+      if (!entry) {
+        return GRN_ID_NIL;
+      }
       header->garbages = GRN_ID_NIL;
+      (*array->n_garbages)--;
+      if (!grn_io_array_bit_on(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id)) {
+        /* Actually, it is difficult to recover from this error. */
+        header->garbages = id;
+        (*array->n_garbages)++;
+        return GRN_ID_NIL;
+      }
       if ((*array->n_garbages) > 0 &&
           header->n_garbages_in_buffer > 0) {
         int i;
@@ -1126,14 +1145,6 @@ grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
           }
         }
       }
-    }
-    (*array->n_garbages)--;
-    if (!grn_io_array_bit_on(ctx, array->io, GRN_ARRAY_BITMAP_SEGMENT, id)) {
-      /* Actually, it is difficult to recover from this error. */
-      *(grn_id *)entry = array->garbages;
-      array->garbages = id;
-      (*array->n_garbages)++;
-      return GRN_ID_NIL;
     }
   } else {
     if (header->curr_rec >= GRN_ARRAY_MAX) { return GRN_ID_NIL; }
