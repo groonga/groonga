@@ -179,12 +179,15 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
       break;
 #ifdef MSGPACK_HAVE_FLOAT32
     case MSGPACK_OBJECT_FLOAT32 :
-      grn_vector_add_element(ctx,
-                             vector,
-                             (const char *)&(MSGPACK_OBJECT_FLOAT32_VALUE(element)),
-                             sizeof(float),
-                             0,
-                             GRN_DB_FLOAT32);
+      {
+        float value = MSGPACK_OBJECT_FLOAT32_VALUE(element);
+        grn_vector_add_element(ctx,
+                               vector,
+                               (const char *)&value,
+                               sizeof(float),
+                               0,
+                               GRN_DB_FLOAT32);
+      }
       break;
 #endif
     case MSGPACK_OBJECT_FLOAT64 :
