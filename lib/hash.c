@@ -2203,6 +2203,10 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
       char name[GRN_TABLE_MAX_KEY_SIZE];
       int name_size;
       name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      if (name_size == 0) {
+        grn_strcpy(name, GRN_TABLE_MAX_KEY_SIZE, "(anonymous)");
+        name_size = strlen(name);
+      }
       GRN_LOG(ctx, log_level,
               "[hash][reset][%.*s] <%u> -> <%u>: "
               "max-offset:<%u> "
