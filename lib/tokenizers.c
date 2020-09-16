@@ -2183,7 +2183,7 @@ document_vector_tf_idf_open_options(grn_ctx *ctx,
               options->df_column->header.domain != GRN_DB_UINT32)) {
           grn_obj inspected;
           GRN_TEXT_INIT(&inspected, 0);
-          grn_inspect(ctx, &inspected, options->index_column);
+          grn_inspect(ctx, &inspected, options->df_column);
           ERR(GRN_INVALID_ARGUMENT,
               "[tokenizer][document-vector-tf-idf][df_column] "
               "must be an UInt32 scalar column: <%.*s>: <%.*s>",
