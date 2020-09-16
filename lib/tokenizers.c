@@ -2317,7 +2317,7 @@ document_vector_idf_base_tokenizer_init_metadata(
   }
 
   grn_ii *ii = (grn_ii *)(tokenizer->options->index_column);
-  uint64_t total_dl = 0;
+  uint64_t total_tf = 0;
   grn_obj *lexicon = metadata->lexicon;
   grn_obj *df_column = tokenizer->options->df_column;
   grn_obj df_value;
@@ -2341,7 +2341,7 @@ document_vector_idf_base_tokenizer_init_metadata(
         df++;
         if (metadata->algorithm == DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_BM25) {
           while (grn_ii_cursor_next_pos(ctx, ii_cursor)) {
-            total_dl++;
+            total_tf++;
           }
         }
       }
@@ -2371,7 +2371,7 @@ document_vector_idf_base_tokenizer_init_metadata(
     if (metadata->algorithm == DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_BM25) {
       metadata->average_dl = 0.0;
       if (metadata->n_documents > 0) {
-        metadata->average_dl = total_dl / (float)(metadata->n_documents);
+        metadata->average_dl = total_tf / (float)(metadata->n_documents);
       }
       grn_vector_add_element(ctx,
                              &metadata_vector,
