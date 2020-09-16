@@ -193,6 +193,24 @@ extern "C" {
     return grn::vector_get_element<uint64_t>(ctx, vector, offset, default_value);
   }
 
+  float
+  grn_vector_get_element_float32(grn_ctx *ctx,
+                                 grn_obj *vector,
+                                 uint32_t offset,
+                                 float default_value)
+  {
+    return grn::vector_get_element<float>(ctx, vector, offset, default_value);
+  }
+
+  double
+  grn_vector_get_element_float64(grn_ctx *ctx,
+                                 grn_obj *vector,
+                                 uint32_t offset,
+                                 double default_value)
+  {
+    return grn::vector_get_element<double>(ctx, vector, offset, default_value);
+  }
+
   static uint32_t
   grn_uvector_element_size_internal(grn_ctx *ctx, grn_obj *uvector)
   {

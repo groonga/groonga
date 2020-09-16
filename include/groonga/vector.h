@@ -54,40 +54,48 @@ GRN_API uint32_t grn_vector_get_element_float(grn_ctx *ctx,
                                               grn_id *domain);
 GRN_API bool grn_vector_get_element_bool(grn_ctx *ctx,
                                          grn_obj *vector,
-                                         unsigned int offset,
+                                         uint32_t offset,
                                          bool default_value);
 GRN_API int8_t grn_vector_get_element_int8(grn_ctx *ctx,
                                            grn_obj *vector,
-                                           unsigned int offset,
+                                           uint32_t offset,
                                            int8_t default_value);
 GRN_API uint8_t grn_vector_get_element_uint8(grn_ctx *ctx,
                                              grn_obj *vector,
-                                             unsigned int offset,
+                                             uint32_t offset,
                                              uint8_t default_value);
 GRN_API int16_t grn_vector_get_element_int16(grn_ctx *ctx,
                                              grn_obj *vector,
-                                             unsigned int offset,
+                                             uint32_t offset,
                                              int16_t default_value);
 GRN_API uint16_t grn_vector_get_element_uint16(grn_ctx *ctx,
                                                grn_obj *vector,
-                                               unsigned int offset,
+                                               uint32_t offset,
                                                uint16_t default_value);
 GRN_API int32_t grn_vector_get_element_int32(grn_ctx *ctx,
                                              grn_obj *vector,
-                                             unsigned int offset,
+                                             uint32_t offset,
                                              int32_t default_value);
 GRN_API uint32_t grn_vector_get_element_uint32(grn_ctx *ctx,
                                                grn_obj *vector,
-                                               unsigned int offset,
+                                               uint32_t offset,
                                                uint32_t default_value);
 GRN_API int64_t grn_vector_get_element_int64(grn_ctx *ctx,
                                              grn_obj *vector,
-                                             unsigned int offset,
+                                             uint32_t offset,
                                              int64_t default_value);
 GRN_API uint64_t grn_vector_get_element_uint64(grn_ctx *ctx,
                                                grn_obj *vector,
-                                               unsigned int offset,
+                                               uint32_t offset,
                                                uint64_t default_value);
+GRN_API float grn_vector_get_element_float32(grn_ctx *ctx,
+                                             grn_obj *vector,
+                                             uint32_t offset,
+                                             float default_value);
+GRN_API double grn_vector_get_element_float64(grn_ctx *ctx,
+                                              grn_obj *vector,
+                                              uint32_t offset,
+                                              double default_value);
 
 GRN_API uint32_t grn_vector_pop_element(grn_ctx *ctx,
                                         grn_obj *vector,
