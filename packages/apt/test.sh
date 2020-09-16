@@ -24,6 +24,7 @@ if [ "${architecture}" = "i386" ]; then
   rm command/suite/tokenizers/document_vector_tf_idf/alphabet.test
   rm command/suite/tokenizers/document_vector_tf_idf/reindex.test
   rm command/suite/tokenizers/document_vector_bm25/alphabet.test
+  rm command/suite/tokenizers/document_vector_bm25/normalize_false.test
   rm command/suite/tokenizers/document_vector_bm25/reindex.test
 fi
 
