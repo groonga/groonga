@@ -2036,60 +2036,69 @@ table_fin(grn_ctx *ctx, void *user_data)
   GRN_FREE(tokenizer);
 }
 
-/* document vector TF/IDF tokenizer */
+/* Common code for IDF based document vector tokenizers */
 
 typedef struct {
   grn_obj *index_column;
   grn_obj *df_column;
   bool normalize;
-} grn_document_vector_tf_idf_options;
+  float k1;
+  float b;
+} grn_document_vector_idf_base_options;
 
 typedef struct {
   grn_tokenizer_token token;
-  grn_tokenizer_query *query;
-  grn_document_vector_tf_idf_options *options;
+  grn_document_vector_idf_base_options *options;
   grn_obj token_ids;
   grn_obj normalized_token_ids;
   size_t n_token_ids;
   size_t token_id_offset;
   grn_id current_token_id;
-} grn_document_vector_tf_idf_tokenizer;
+} grn_document_vector_idf_base_tokenizer;
+
+typedef enum {
+  DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_TF_IDF,
+  DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_BM25,
+} grn_document_vector_idf_base_algorithm;
+
+typedef struct {
+  grn_document_vector_idf_base_algorithm algorithm;
+  grn_tokenizer_query *query;
+  grn_obj *lexicon;
+  grn_obj *token_table;
+  uint32_t n_documents;
+  float average_dl;
+} grn_document_vector_idf_base_metadata;
 
 static void
-document_vector_tf_idf_options_init(grn_document_vector_tf_idf_options *options)
+document_vector_idf_base_options_init(grn_ctx *ctx,
+                                      grn_document_vector_idf_base_options *options)
 {
   options->index_column = NULL;
   options->df_column = NULL;
   options->normalize = true;
+  options->k1 = 2.0;
+  options->b = 0.75;
 }
 
 static void
-document_vector_tf_idf_close_options(grn_ctx *ctx, void *data)
+document_vector_idf_base_options_fin(
+  grn_ctx *ctx,
+  grn_document_vector_idf_base_options *options)
 {
-  grn_document_vector_tf_idf_options *options = data;
   grn_obj_unref(ctx, options->index_column);
   grn_obj_unref(ctx, options->df_column);
-  GRN_FREE(options);
 }
 
-static void *
-document_vector_tf_idf_open_options(grn_ctx *ctx,
-                                    grn_obj *tokenizer,
-                                    grn_obj *raw_options,
-                                    void *user_data)
+static void
+document_vector_idf_base_options_parse(
+  grn_ctx *ctx,
+  grn_document_vector_idf_base_options *options,
+  grn_obj *raw_options,
+  grn_obj *lexicon,
+  grn_document_vector_idf_base_algorithm algorithm,
+  const char *tag)
 {
-  grn_document_vector_tf_idf_options *options;
-  grn_obj *lexicon = user_data;
-
-  options = GRN_MALLOC(sizeof(grn_document_vector_tf_idf_options));
-  if (!options) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[tokenizer][document-vector-tf-idf] "
-        "failed to allocate memory for options");
-    return NULL;
-  }
-
-  document_vector_tf_idf_options_init(options);
   GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
     grn_raw_string name_raw;
     name_raw.value = name;
@@ -2119,8 +2128,8 @@ document_vector_tf_idf_open_options(grn_ctx *ctx,
           GRN_TEXT_INIT(&inspected, 0);
           grn_inspect(ctx, &inspected, source_lexicon);
           ERR(GRN_INVALID_ARGUMENT,
-              "[tokenizer][document-vector-tf-idf] "
-              "table's key must be a table with key: <%.*s>",
+              "%s table's key must be a table with key: <%.*s>",
+              tag,
               (int)GRN_TEXT_LEN(&inspected),
               GRN_TEXT_VALUE(&inspected));
           GRN_OBJ_FIN(ctx, &inspected);
@@ -2134,8 +2143,8 @@ document_vector_tf_idf_open_options(grn_ctx *ctx,
         grn_obj_unref(ctx, source_lexicon);
         if (!options->index_column) {
           ERR(GRN_INVALID_ARGUMENT,
-              "[tokenizer][document-vector-tf-idf][index_column] "
-              "nonexistent index column: <%.*s.%.*s>",
+              "%s[index_column] nonexistent index column: <%.*s.%.*s>",
+              tag,
               source_lexicon_name_length, source_lexicon_name,
               (int)name_length, name);
           break;
@@ -2145,8 +2154,8 @@ document_vector_tf_idf_open_options(grn_ctx *ctx,
           GRN_TEXT_INIT(&inspected, 0);
           grn_inspect(ctx, &inspected, options->index_column);
           ERR(GRN_INVALID_ARGUMENT,
-              "[tokenizer][document-vector-tf-idf][index_column] "
-              "must be an index column: <%.*s.%.*s>: <%.*s>",
+              "%s[index_column] must be an index column: <%.*s.%.*s>: <%.*s>",
+              tag,
               source_lexicon_name_length,
               source_lexicon_name,
               (int)name_length,
@@ -2174,8 +2183,8 @@ document_vector_tf_idf_open_options(grn_ctx *ctx,
                                             name_length);
         if (!options->df_column) {
           ERR(GRN_INVALID_ARGUMENT,
-              "[tokenizer][document-vector-tf-idf][df_column] "
-              "nonexistent document frequency column: <%.*s>",
+              "%s[df_column] nonexistent document frequency column: <%.*s>",
+              tag,
               (int)name_length, name);
           break;
         }
@@ -2185,8 +2194,8 @@ document_vector_tf_idf_open_options(grn_ctx *ctx,
           GRN_TEXT_INIT(&inspected, 0);
           grn_inspect(ctx, &inspected, options->df_column);
           ERR(GRN_INVALID_ARGUMENT,
-              "[tokenizer][document-vector-tf-idf][df_column] "
-              "must be an UInt32 scalar column: <%.*s>: <%.*s>",
+              "%s[df_column] must be an UInt32 scalar column: <%.*s>: <%.*s>",
+              tag,
               (int)name_length,
               name,
               (int)GRN_TEXT_LEN(&inspected),
@@ -2200,176 +2209,219 @@ document_vector_tf_idf_open_options(grn_ctx *ctx,
                                                        raw_options,
                                                        i,
                                                        options->normalize);
+    } else {
+      if (algorithm == DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_BM25) {
+        if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "k1")) {
+          options->k1 = grn_vector_get_element_float32(ctx,
+                                                       raw_options,
+                                                       i,
+                                                       options->k1);
+        } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "b")) {
+          options->b = grn_vector_get_element_float32(ctx,
+                                                      raw_options,
+                                                      i,
+                                                      options->b);
+        }
+      }
     }
   } GRN_OPTION_VALUES_EACH_END();
 
   if (ctx->rc == GRN_SUCCESS) {
     if (!options->index_column) {
       ERR(GRN_INVALID_ARGUMENT,
-          "[tokenizer][document-vector-tf-idf][index_column] missing");
+          "%s[index_column] missing",
+          tag);
     } else if (!options->df_column) {
       ERR(GRN_INVALID_ARGUMENT,
-          "[tokenizer][document-vector-tf-idf][df_column] missing");
+          "%s[df_column] missing",
+          tag);
     }
   }
-
-  if (ctx->rc != GRN_SUCCESS) {
-    document_vector_tf_idf_close_options(ctx, options);
-    options = NULL;
-  }
-
-  return options;
 }
 
 static void
-document_vector_tf_idf_fin(grn_ctx *ctx, void *user_data)
+document_vector_idf_base_tokenizer_init(
+  grn_ctx *ctx,
+  grn_document_vector_idf_base_tokenizer *tokenizer,
+  grn_document_vector_idf_base_options *options)
 {
-  grn_document_vector_tf_idf_tokenizer *tokenizer = user_data;
-
-  if (!tokenizer) {
-    return;
-  }
-
-  GRN_OBJ_FIN(ctx, &(tokenizer->token_ids));
-  GRN_OBJ_FIN(ctx, &(tokenizer->normalized_token_ids));
-  GRN_FREE(tokenizer);
-}
-
-static void *
-document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
-{
-  grn_obj *lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
-  grn_document_vector_tf_idf_options *options;
-  grn_document_vector_tf_idf_tokenizer *tokenizer;
-  const char *n_documents_option_name = "n_documents";
-
-  options = grn_table_cache_default_tokenizer_options(
-    ctx,
-    lexicon,
-    document_vector_tf_idf_open_options,
-    document_vector_tf_idf_close_options,
-    lexicon);
-  if (ctx->rc != GRN_SUCCESS) {
-    return NULL;
-  }
-
-  if (!(tokenizer = GRN_MALLOC(sizeof(grn_document_vector_tf_idf_tokenizer)))) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[tokenizer][document-vector-tf-idf] "
-        "failed to allocate grn_document_vector_tf_idf_tokenizer");
-    return NULL;
-  }
-
-  tokenizer->query = query;
   tokenizer->options = options;
 
-  grn_obj *source_lexicon =
-    grn_ctx_at(ctx, tokenizer->options->index_column->header.domain);
   GRN_RECORD_INIT(&(tokenizer->token_ids),
                   GRN_OBJ_VECTOR,
                   tokenizer->options->index_column->header.domain);
   tokenizer->token_ids.header.flags |= GRN_OBJ_WITH_WEIGHT;
-  tokenizer->n_token_ids = 0;
+
   GRN_RECORD_INIT(&(tokenizer->normalized_token_ids),
                   GRN_OBJ_VECTOR,
                   tokenizer->options->index_column->header.domain);
   tokenizer->normalized_token_ids.header.flags |= GRN_OBJ_WITH_WEIGHT;
+
+  tokenizer->n_token_ids = 0;
   tokenizer->token_id_offset = 0;
+  tokenizer->current_token_id = GRN_ID_NIL;
+}
 
-  if (grn_table_size(ctx, lexicon) == 0) {
-    grn_ii *ii = (grn_ii *)(options->index_column);
-    {
-      const grn_id source_id = grn_obj_get_range(ctx, options->index_column);
-      grn_obj *source = grn_ctx_at(ctx, source_id);
-      uint32_t n_documents = grn_table_size(ctx, source);
-      grn_obj_unref(ctx, source);
+static void
+document_vector_idf_base_tokenizer_fin(
+  grn_ctx *ctx,
+  grn_document_vector_idf_base_tokenizer *tokenizer)
+{
+  GRN_OBJ_FIN(ctx, &(tokenizer->token_ids));
+  GRN_OBJ_FIN(ctx, &(tokenizer->normalized_token_ids));
+}
 
-      grn_obj n_documents_vector;
-      GRN_VOID_INIT(&n_documents_vector);
-      grn_obj_ensure_vector(ctx, &n_documents_vector);
-      grn_vector_add_element(ctx,
-                             &n_documents_vector,
-                             (const char *)&n_documents,
-                             sizeof(uint32_t),
-                             0,
-                             GRN_DB_UINT32);
-      grn_obj_set_option_values(ctx,
-                                lexicon,
-                                n_documents_option_name,
-                                -1,
-                                &n_documents_vector);
-      GRN_OBJ_FIN(ctx, &n_documents_vector);
-    }
-    grn_obj df_value;
-    GRN_UINT32_INIT(&df_value, 0);
-    GRN_TABLE_EACH_BEGIN(ctx, source_lexicon, cursor, source_id) {
-      grn_id id = grn_table_add(ctx,
-                                lexicon,
-                                (const char *)&source_id,
-                                sizeof(grn_id),
-                                NULL);
-      uint32_t df = 0;
-      grn_ii_cursor *ii_cursor = grn_ii_cursor_open(ctx,
-                                                    ii,
-                                                    source_id,
-                                                    GRN_ID_NIL,
-                                                    GRN_ID_MAX,
-                                                    ii->n_elements,
-                                                    0);
-      if (ii_cursor) {
-        while (grn_ii_cursor_next(ctx, ii_cursor)) {
-          df++;
-        }
-        grn_ii_cursor_close(ctx, ii_cursor);
-      }
-      GRN_UINT32_SET(ctx, &df_value, df);
-      grn_obj_set_value(ctx, options->df_column, id, &df_value, GRN_OBJ_SET);
-    } GRN_TABLE_EACH_END(ctx, cursor);
-    GRN_OBJ_FIN(ctx, &df_value);
-  }
+static void
+document_vector_idf_base_tokenizer_init_metadata(
+  grn_ctx *ctx,
+  grn_document_vector_idf_base_tokenizer *tokenizer,
+  grn_document_vector_idf_base_metadata *metadata)
+{
+  const char *metadata_option_name = "metadata";
 
-  uint32_t n_documents = 0;
-  {
-    grn_obj n_documents_vector;
-    GRN_VOID_INIT(&n_documents_vector);
+  metadata->token_table =
+    grn_ctx_at(ctx, tokenizer->options->index_column->header.domain);
+
+  if (grn_table_size(ctx, metadata->lexicon) > 0) {
+    grn_obj metadata_vector;
+    GRN_VOID_INIT(&metadata_vector);
     grn_obj_get_option_values(ctx,
-                              lexicon,
-                              n_documents_option_name,
+                              metadata->lexicon,
+                              metadata_option_name,
                               -1,
                               GRN_OPTION_REVISION_NONE,
-                              &n_documents_vector);
-    if (grn_vector_size(ctx, &n_documents_vector) > 0) {
-      n_documents = grn_vector_get_element_uint32(ctx,
-                                                  &n_documents_vector,
-                                                  0,
-                                                  0);
+                              &metadata_vector);
+    size_t n_metadata = grn_vector_size(ctx, &metadata_vector);
+
+    metadata->n_documents = 0;
+    if (n_metadata > 0) {
+      metadata->n_documents = grn_vector_get_element_uint32(ctx,
+                                                            &metadata_vector,
+                                                            0,
+                                                            0);
     }
-    GRN_OBJ_FIN(ctx, &n_documents_vector);
-  }
-  if (n_documents == 0) {
-    grn_obj_unref(ctx, source_lexicon);
-    return tokenizer;
+
+    if (metadata->algorithm == DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_BM25) {
+      metadata->average_dl = 0;
+      if (n_metadata > 1) {
+        metadata->average_dl = grn_vector_get_element_float32(ctx,
+                                                              &metadata_vector,
+                                                              1,
+                                                              0);
+      }
+    }
+
+    GRN_OBJ_FIN(ctx, &metadata_vector);
+
+    return;
   }
 
+  grn_ii *ii = (grn_ii *)(tokenizer->options->index_column);
+  uint64_t total_dl = 0;
+  grn_obj *lexicon = metadata->lexicon;
+  grn_obj *df_column = tokenizer->options->df_column;
+  grn_obj df_value;
+  GRN_UINT32_INIT(&df_value, 0);
+  GRN_TABLE_EACH_BEGIN(ctx, metadata->token_table, cursor, source_id) {
+    grn_id id = grn_table_add(ctx,
+                              lexicon,
+                              (const char *)&source_id,
+                              sizeof(grn_id),
+                              NULL);
+    uint32_t df = 0;
+    grn_ii_cursor *ii_cursor = grn_ii_cursor_open(ctx,
+                                                  ii,
+                                                  source_id,
+                                                  GRN_ID_NIL,
+                                                  GRN_ID_MAX,
+                                                  ii->n_elements,
+                                                  0);
+    if (ii_cursor) {
+      while (grn_ii_cursor_next(ctx, ii_cursor)) {
+        df++;
+        if (metadata->algorithm == DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_BM25) {
+          while (grn_ii_cursor_next_pos(ctx, ii_cursor)) {
+            total_dl++;
+          }
+        }
+      }
+      grn_ii_cursor_close(ctx, ii_cursor);
+    }
+    GRN_UINT32_SET(ctx, &df_value, df);
+    grn_obj_set_value(ctx, df_column, id, &df_value, GRN_OBJ_SET);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  GRN_OBJ_FIN(ctx, &df_value);
+
+  {
+    const grn_id source_id =
+      grn_obj_get_range(ctx, tokenizer->options->index_column);
+    grn_obj *source = grn_ctx_at(ctx, source_id);
+    metadata->n_documents = grn_table_size(ctx, source);
+    grn_obj_unref(ctx, source);
+
+    grn_obj metadata_vector;
+    GRN_VOID_INIT(&metadata_vector);
+    grn_obj_ensure_vector(ctx, &metadata_vector);
+    grn_vector_add_element(ctx,
+                           &metadata_vector,
+                           (const char *)&(metadata->n_documents),
+                           sizeof(uint32_t),
+                           0,
+                           GRN_DB_UINT32);
+    if (metadata->algorithm == DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_BM25) {
+      metadata->average_dl = 0.0;
+      if (metadata->n_documents > 0) {
+        metadata->average_dl = total_dl / (float)(metadata->n_documents);
+      }
+      grn_vector_add_element(ctx,
+                             &metadata_vector,
+                             (const char *)&(metadata->average_dl),
+                             sizeof(float),
+                             0,
+                             GRN_DB_FLOAT32);
+    }
+    grn_obj_set_option_values(ctx,
+                              lexicon,
+                              metadata_option_name,
+                              -1,
+                              &metadata_vector);
+    GRN_OBJ_FIN(ctx, &metadata_vector);
+  }
+}
+
+static void
+document_vector_idf_base_tokenizer_fin_metadata(
+  grn_ctx *ctx,
+  grn_document_vector_idf_base_tokenizer *tokenizer,
+  grn_document_vector_idf_base_metadata *metadata)
+{
+  grn_obj_unref(ctx, metadata->token_table);
+}
+
+static void
+document_vector_idf_base_tokenizer_init_token_ids(
+  grn_ctx *ctx,
+  grn_document_vector_idf_base_tokenizer *tokenizer,
+  grn_document_vector_idf_base_metadata *metadata,
+  const char *tag)
+{
   const char *raw_string;
   size_t raw_string_length;
   raw_string = grn_tokenizer_query_get_raw_string(ctx,
-                                                  tokenizer->query,
+                                                  metadata->query,
                                                   &raw_string_length);
   grn_token_cursor *token_cursor =
     grn_token_cursor_open(ctx,
-                          source_lexicon,
+                          metadata->token_table,
                           raw_string,
                           raw_string_length,
                           GRN_TOKENIZE_ADD,
                           0);
-  grn_obj_unref(ctx, source_lexicon);
   if (!token_cursor) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[tokenizer][document-vector-tf-idf] "
-        "failed to create token cursor");
-    document_vector_tf_idf_fin(ctx, tokenizer);
-    return NULL;
+        "%s failed to create token cursor",
+        tag);
+    return;
   }
 
   grn_hash *token_histogram =
@@ -2380,19 +2432,21 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
                     GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
   if (!token_histogram) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[tokenizer][document-vector-tf-idf] "
-        "failed to create token histogram");
-    document_vector_tf_idf_fin(ctx, tokenizer);
+        "%s failed to create token histogram",
+        tag);
     grn_token_cursor_close(ctx, token_cursor);
-    return NULL;
+    return;
   }
 
+  uint32_t dl = 0;
   while (grn_token_cursor_get_status(ctx, token_cursor) ==
          GRN_TOKEN_CURSOR_DOING) {
     grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
     if (token_id == GRN_ID_NIL) {
       continue;
     }
+
+    dl++;
 
     void *value;
     grn_id id = grn_hash_add(ctx,
@@ -2410,6 +2464,8 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
   grn_token_cursor_close(ctx, token_cursor);
 
   {
+    grn_obj *lexicon = metadata->lexicon;
+    grn_obj *df_column = tokenizer->options->df_column;
     grn_obj df_value;
     GRN_UINT32_INIT(&df_value, 0);
     GRN_HASH_EACH_BEGIN(ctx, token_histogram, cursor, token_histogram_id) {
@@ -2421,7 +2477,7 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
       const uint32_t tf = *((uint32_t *)value);
       const grn_id id = grn_table_get(ctx, lexicon, &token_id, sizeof(grn_id));
       GRN_BULK_REWIND(&df_value);
-      grn_obj_get_value(ctx, options->df_column, id, &df_value);
+      grn_obj_get_value(ctx, df_column, id, &df_value);
       uint32_t df = 0;
       if (GRN_BULK_VSIZE(&df_value) > 0) {
         df = GRN_UINT32_VALUE(&df_value);
@@ -2429,11 +2485,24 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
       if (df == 0) {
         continue;
       }
-      const float tf_idf = tf * log2f(n_documents / (float)df);
+      float weight;
+      if (metadata->algorithm == DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_TF_IDF) {
+        const float tf_idf = tf * log2f(metadata->n_documents / (float)df);
+        weight = tf_idf;
+      } else {
+        const float idf =
+          logf(((metadata->n_documents - df + 0.5) / (df + 0.5)) + 1);
+        const float k1 = tokenizer->options->k1;
+        const float b = tokenizer->options->b;
+        const float bm25 =
+          idf * ((tf * (k1 + 1)) /
+                 (tf + k1 * (1 - b + b * (dl / metadata->average_dl))));
+        weight = bm25;
+      }
       grn_uvector_add_element_record(ctx,
                                      &(tokenizer->token_ids),
                                      id,
-                                     tf_idf);
+                                     weight);
     } GRN_HASH_EACH_END(ctx, cursor);
     GRN_OBJ_FIN(ctx, &df_value);
   }
@@ -2441,7 +2510,7 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
 
   tokenizer->n_token_ids = grn_uvector_size(ctx, &(tokenizer->token_ids));
 
-  if (options->normalize && tokenizer->n_token_ids > 0) {
+  if (tokenizer->options->normalize && tokenizer->n_token_ids > 0) {
     float l2_norm = 0.0;
     size_t i;
     for (i = 0; i < tokenizer->n_token_ids; i++) {
@@ -2465,18 +2534,14 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
                                      weight / l2_norm);
     }
   }
-
-  return tokenizer;
 }
 
 static void
-document_vector_tf_idf_next(grn_ctx *ctx,
-                            grn_tokenizer_query *query,
-                            grn_token *token,
-                            void *user_data)
+document_vector_idf_base_tokenizer_next(
+  grn_ctx *ctx,
+  grn_document_vector_idf_base_tokenizer *tokenizer,
+  grn_token *token)
 {
-  grn_document_vector_tf_idf_tokenizer *tokenizer = user_data;
-
   if (tokenizer->n_token_ids == 0) {
     grn_token_set_data(ctx, token, NULL, 0);
     grn_token_set_status(ctx, token, GRN_TOKEN_LAST);
@@ -2508,6 +2573,256 @@ document_vector_tf_idf_next(grn_ctx *ctx,
   }
 
   tokenizer->token_id_offset++;
+}
+
+/* document vector TF/IDF tokenizer */
+
+static void
+document_vector_tf_idf_close_options(grn_ctx *ctx, void *data)
+{
+  grn_document_vector_idf_base_options *options = data;
+  document_vector_idf_base_options_fin(ctx, options);
+  GRN_FREE(options);
+}
+
+static void *
+document_vector_tf_idf_open_options(grn_ctx *ctx,
+                                    grn_obj *tokenizer,
+                                    grn_obj *raw_options,
+                                    void *user_data)
+{
+  const char *tag = "[tokenizer][document-vector-tf-idf]";
+  grn_obj *lexicon = user_data;
+  grn_document_vector_idf_base_options *options;
+
+  options = GRN_MALLOC(sizeof(grn_document_vector_idf_base_options));
+  if (!options) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "%s failed to allocate memory for options",
+        tag);
+    return NULL;
+  }
+
+  document_vector_idf_base_options_init(ctx, options);
+  document_vector_idf_base_options_parse(
+    ctx,
+    options,
+    raw_options,
+    lexicon,
+    DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_TF_IDF,
+    tag);
+
+  if (ctx->rc != GRN_SUCCESS) {
+    document_vector_tf_idf_close_options(ctx, options);
+    options = NULL;
+  }
+
+  return options;
+}
+
+static void
+document_vector_tf_idf_fin(grn_ctx *ctx, void *user_data)
+{
+  grn_document_vector_idf_base_tokenizer *tokenizer = user_data;
+
+  if (!tokenizer) {
+    return;
+  }
+
+  document_vector_idf_base_tokenizer_fin(ctx, tokenizer);
+  GRN_FREE(tokenizer);
+}
+
+static void *
+document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  const char *tag = "[tokenizer][document-vector-tf-idf]";
+  grn_obj *lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
+  grn_document_vector_idf_base_options *options;
+  grn_document_vector_idf_base_tokenizer *tokenizer;
+
+  options = grn_table_cache_default_tokenizer_options(
+    ctx,
+    lexicon,
+    document_vector_tf_idf_open_options,
+    document_vector_tf_idf_close_options,
+    lexicon);
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
+
+  tokenizer = GRN_MALLOC(sizeof(grn_document_vector_idf_base_tokenizer));
+  if (!tokenizer) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "%s failed to allocate tokenizer",
+        tag);
+    return NULL;
+  }
+
+  document_vector_idf_base_tokenizer_init(ctx, tokenizer, options);
+
+  grn_document_vector_idf_base_metadata metadata;
+  metadata.algorithm = DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_TF_IDF;
+  metadata.query = query;
+  metadata.lexicon = lexicon;
+  document_vector_idf_base_tokenizer_init_metadata(ctx, tokenizer, &metadata);
+  if (ctx->rc != GRN_SUCCESS) {
+    document_vector_idf_base_tokenizer_fin_metadata(ctx, tokenizer, &metadata);
+    document_vector_tf_idf_fin(ctx, tokenizer);
+    return NULL;
+  }
+
+  if (metadata.n_documents == 0) {
+    document_vector_idf_base_tokenizer_fin_metadata(ctx, tokenizer, &metadata);
+    return tokenizer;
+  }
+
+  document_vector_idf_base_tokenizer_init_token_ids(ctx,
+                                                    tokenizer,
+                                                    &metadata,
+                                                    tag);
+  document_vector_idf_base_tokenizer_fin_metadata(ctx, tokenizer, &metadata);
+  if (ctx->rc != GRN_SUCCESS) {
+    document_vector_tf_idf_fin(ctx, tokenizer);
+    return NULL;
+  }
+
+  return tokenizer;
+}
+
+static void
+document_vector_tf_idf_next(grn_ctx *ctx,
+                            grn_tokenizer_query *query,
+                            grn_token *token,
+                            void *user_data)
+{
+  grn_document_vector_idf_base_tokenizer *tokenizer = user_data;
+  document_vector_idf_base_tokenizer_next(ctx, tokenizer, token);
+}
+
+/* document vector BM25 tokenizer */
+
+static void
+document_vector_bm25_close_options(grn_ctx *ctx, void *data)
+{
+  grn_document_vector_idf_base_options *options = data;
+  document_vector_idf_base_options_fin(ctx, options);
+  GRN_FREE(options);
+}
+
+static void *
+document_vector_bm25_open_options(grn_ctx *ctx,
+                                  grn_obj *tokenizer,
+                                  grn_obj *raw_options,
+                                  void *user_data)
+{
+  const char *tag = "[tokenizer][document-vector-bm25]";
+  grn_obj *lexicon = user_data;
+  grn_document_vector_idf_base_options *options;
+
+  options = GRN_MALLOC(sizeof(grn_document_vector_idf_base_options));
+  if (!options) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "%s failed to allocate memory for options",
+        tag);
+    return NULL;
+  }
+
+  document_vector_idf_base_options_init(ctx, options);
+  document_vector_idf_base_options_parse(
+    ctx,
+    options,
+    raw_options,
+    lexicon,
+    DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_BM25,
+    tag);
+
+  if (ctx->rc != GRN_SUCCESS) {
+    document_vector_tf_idf_close_options(ctx, options);
+    options = NULL;
+  }
+
+  return options;
+}
+
+static void
+document_vector_bm25_fin(grn_ctx *ctx, void *user_data)
+{
+  grn_document_vector_idf_base_tokenizer *tokenizer = user_data;
+
+  if (!tokenizer) {
+    return;
+  }
+
+  document_vector_idf_base_tokenizer_fin(ctx, tokenizer);
+  GRN_FREE(tokenizer);
+}
+
+static void *
+document_vector_bm25_init(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  const char *tag = "[tokenizer][document-vector-tf-idf]";
+  grn_obj *lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
+  grn_document_vector_idf_base_options *options;
+  grn_document_vector_idf_base_tokenizer *tokenizer;
+
+  options = grn_table_cache_default_tokenizer_options(
+    ctx,
+    lexicon,
+    document_vector_bm25_open_options,
+    document_vector_bm25_close_options,
+    lexicon);
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
+
+  tokenizer = GRN_MALLOC(sizeof(grn_document_vector_idf_base_tokenizer));
+  if (!tokenizer) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "%s failed to allocate tokenizer",
+        tag);
+    return NULL;
+  }
+
+  document_vector_idf_base_tokenizer_init(ctx, tokenizer, options);
+
+  grn_document_vector_idf_base_metadata metadata;
+  metadata.algorithm = DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_BM25;
+  metadata.query = query;
+  metadata.lexicon = lexicon;
+  document_vector_idf_base_tokenizer_init_metadata(ctx, tokenizer, &metadata);
+  if (ctx->rc != GRN_SUCCESS) {
+    document_vector_idf_base_tokenizer_fin_metadata(ctx, tokenizer, &metadata);
+    document_vector_bm25_fin(ctx, tokenizer);
+    return NULL;
+  }
+
+  if (metadata.n_documents == 0) {
+    document_vector_idf_base_tokenizer_fin_metadata(ctx, tokenizer, &metadata);
+    return tokenizer;
+  }
+
+  document_vector_idf_base_tokenizer_init_token_ids(ctx,
+                                                    tokenizer,
+                                                    &metadata,
+                                                    tag);
+  document_vector_idf_base_tokenizer_fin_metadata(ctx, tokenizer, &metadata);
+  if (ctx->rc != GRN_SUCCESS) {
+    document_vector_bm25_fin(ctx, tokenizer);
+    return NULL;
+  }
+
+  return tokenizer;
+}
+
+static void
+document_vector_bm25_next(grn_ctx *ctx,
+                          grn_tokenizer_query *query,
+                          grn_token *token,
+                          void *user_data)
+{
+  grn_document_vector_idf_base_tokenizer *tokenizer = user_data;
+  document_vector_idf_base_tokenizer_next(ctx, tokenizer, token);
 }
 
 /* external */
@@ -2717,6 +3032,13 @@ grn_db_init_builtin_tokenizers(grn_ctx *ctx)
     grn_tokenizer_set_init_func(ctx, tokenizer, document_vector_tf_idf_init);
     grn_tokenizer_set_next_func(ctx, tokenizer, document_vector_tf_idf_next);
     grn_tokenizer_set_fin_func(ctx, tokenizer, document_vector_tf_idf_fin);
+  }
+  {
+    grn_obj *tokenizer;
+    tokenizer = grn_tokenizer_create(ctx, "TokenDocumentVectorBM25", -1);
+    grn_tokenizer_set_init_func(ctx, tokenizer, document_vector_bm25_init);
+    grn_tokenizer_set_next_func(ctx, tokenizer, document_vector_bm25_next);
+    grn_tokenizer_set_fin_func(ctx, tokenizer, document_vector_bm25_fin);
   }
 
   return GRN_SUCCESS;

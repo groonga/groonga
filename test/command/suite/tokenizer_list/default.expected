@@ -59,6 +59,9 @@ tokenizer_list
     },
     {
       "name": "TokenDocumentVectorTFIDF"
+    },
+    {
+      "name": "TokenDocumentVectorBM25"
     }
   ]
 ]

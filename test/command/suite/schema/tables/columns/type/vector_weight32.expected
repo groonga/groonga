@@ -183,6 +183,10 @@ schema
         "id": 76,
         "name": "TokenDelimitNull"
       },
+      "TokenDocumentVectorBM25": {
+        "id": 82,
+        "name": "TokenDocumentVectorBM25"
+      },
       "TokenDocumentVectorTFIDF": {
         "id": 81,
         "name": "TokenDocumentVectorTFIDF"
@@ -218,19 +222,19 @@ schema
     },
     "normalizers": {
       "NormalizerAuto": {
-        "id": 82,
+        "id": 83,
         "name": "NormalizerAuto"
       },
       "NormalizerNFKC100": {
-        "id": 84,
+        "id": 85,
         "name": "NormalizerNFKC100"
       },
       "NormalizerNFKC121": {
-        "id": 85,
+        "id": 86,
         "name": "NormalizerNFKC121"
       },
       "NormalizerNFKC51": {
-        "id": 83,
+        "id": 84,
         "name": "NormalizerNFKC51"
       }
     },
@@ -320,7 +324,7 @@ schema
         "value_type": null,
         "tokenizer": null,
         "normalizer": {
-          "id": 82,
+          "id": 83,
           "name": "NormalizerAuto",
           "options": null
         },
