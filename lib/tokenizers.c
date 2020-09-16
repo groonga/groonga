@@ -2429,11 +2429,11 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
       if (df == 0) {
         continue;
       }
-      const float tfidf = tf * log2f(n_documents / (float)df);
+      const float tf_idf = tf * log2f(n_documents / (float)df);
       grn_uvector_add_element_record(ctx,
                                      &(tokenizer->token_ids),
                                      id,
-                                     tfidf);
+                                     tf_idf);
     } GRN_HASH_EACH_END(ctx, cursor);
     GRN_OBJ_FIN(ctx, &df_value);
   }
