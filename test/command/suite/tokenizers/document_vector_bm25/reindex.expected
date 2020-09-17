@@ -21,6 +21,12 @@ column_create DocumentVectorBM25 df COLUMN_SCALAR UInt32
 [[0,0.0,0.0],true]
 column_create Memos content_feature COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32   DocumentVectorBM25 content
 [[0,0.0,0.0],true]
+truncate DocumentVectorBM25
+[[0,0.0,0.0],true]
+truncate Memos.content_feature
+[[0,0.0,0.0],true]
+reindex Memos.content_feature
+[[0,0.0,0.0],true]
 select Memos
 [
   [
