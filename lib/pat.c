@@ -2043,7 +2043,7 @@ grn_pat_get_key2(grn_ctx *ctx, grn_pat *pat, grn_id id, grn_obj *bulk)
     if (!grn_bulk_reserve(ctx, bulk, len)) {
       char *curr = GRN_BULK_CURR(bulk);
       KEY_DEC(pat, curr, key, len);
-      grn_bulk_truncate(ctx, bulk, GRN_BULK_VSIZE(bulk) + len);
+      GRN_BULK_INCR_LEN(bulk, len);
     }
   } else {
     if (bulk->header.impl_flags & GRN_OBJ_REFER) {
