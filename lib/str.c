@@ -2056,12 +2056,18 @@ grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, size_t len)
     if ((bulk->u.b.tail - bulk->u.b.head) < len) {
       return grn_bulk_space_clear(ctx, bulk, len - GRN_BULK_VSIZE(bulk));
     } else {
+      if (GRN_BULK_VSIZE(bulk) < len) {
+        memset(GRN_BULK_CURR(bulk), 0, len - GRN_BULK_VSIZE(bulk));
+      }
       bulk->u.b.curr = bulk->u.b.head + len;
     }
   } else {
     if (GRN_BULK_BUFSIZE < len) {
       return grn_bulk_space_clear(ctx, bulk, len - GRN_BULK_VSIZE(bulk));
     } else {
+      if (GRN_BULK_VSIZE(bulk) < len) {
+        memset(GRN_BULK_CURR(bulk), 0, len - GRN_BULK_VSIZE(bulk));
+      }
       bulk->header.flags &= ~GRN_BULK_BUFSIZE_MAX;
       bulk->header.flags += len;
     }
