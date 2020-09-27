@@ -2755,6 +2755,11 @@ grn_ja_cast_value_vector_fixed_bulk(grn_ctx *ctx,
     return buffer;
   }
 
+  if (value->header.domain == ja->obj.range) {
+    grn_uvector_add_element_record(ctx, buffer, GRN_RECORD_VALUE(value), 0);
+    return buffer;
+  }
+
   bool need_tokenize = false;
   if (grn_obj_is_table_with_key(ctx, range)) {
     grn_obj *tokenizer;
@@ -2788,6 +2793,7 @@ grn_ja_cast_value_vector_fixed_bulk(grn_ctx *ctx,
       return NULL;
     }
   }
+
   return buffer;
 }
 
