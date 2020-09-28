@@ -28,10 +28,11 @@ static const size_t DUMP_FLUSH_THRESHOLD_SIZE = 256 * 1024;
 
 typedef struct {
   grn_obj *output;
-  grn_bool is_close_opened_object_mode;
-  grn_bool have_reference_column;
-  grn_bool have_index_column;
-  grn_bool is_sort_hash_table;
+  bool is_close_opened_object_mode;
+  bool have_reference_column;
+  bool have_index_column;
+  bool is_sort_hash_table;
+  bool is_dump_paths;
   grn_obj column_name_buffer;
 } grn_dumper;
 
@@ -286,6 +287,21 @@ dump_column_sources(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
 }
 
 static void
+dump_string(grn_ctx *ctx,
+            grn_dumper *dumper,
+            grn_obj *string)
+{
+  const char *value = GRN_TEXT_VALUE(string);
+  size_t length = GRN_TEXT_LEN(string);
+
+  if (grn_proc_text_include_special_character(ctx, value, length)) {
+    grn_text_otoj(ctx, dumper->output, string, NULL);
+  } else {
+    GRN_TEXT_PUT(ctx, dumper->output, value, length);
+  }
+}
+
+static void
 dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
 {
   grn_id type_id;
@@ -322,6 +338,15 @@ dump_column(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table, grn_obj *column)
   case GRN_COLUMN_INDEX :
     dump_column_sources(ctx, dumper, column);
     break;
+  }
+  if ((flags & GRN_OBJ_CUSTOM_NAME) && dumper->is_dump_paths) {
+    grn_obj sub_output;
+    GRN_TEXT_PUTS(ctx, dumper->output, " --path ");
+    GRN_TEXT_INIT(&sub_output, GRN_OBJ_DO_SHALLOW_COPY);
+    const char *path = grn_obj_path(ctx, column);
+    GRN_TEXT_SETS(ctx, &sub_output, path);
+    dump_string(ctx, dumper, &sub_output);
+    GRN_OBJ_FIN(ctx, &sub_output);
   }
   GRN_TEXT_PUTC(ctx, dumper->output, '\n');
 
@@ -714,21 +739,6 @@ exit :
 }
 
 static void
-dump_optionable_obj_string(grn_ctx *ctx,
-                           grn_dumper *dumper,
-                           grn_obj *string)
-{
-  const char *value = GRN_TEXT_VALUE(string);
-  size_t length = GRN_TEXT_LEN(string);
-
-  if (grn_proc_text_include_special_character(ctx, value, length)) {
-    grn_text_otoj(ctx, dumper->output, string, NULL);
-  } else {
-    GRN_TEXT_PUT(ctx, dumper->output, value, length);
-  }
-}
-
-static void
 dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
 {
   grn_obj *domain = NULL;
@@ -792,7 +802,7 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     GRN_TEXT_PUTS(ctx, dumper->output, " --default_tokenizer ");
     GRN_TEXT_INIT(&sub_output, 0);
     grn_table_get_default_tokenizer_string(ctx, table, &sub_output);
-    dump_optionable_obj_string(ctx, dumper, &sub_output);
+    dump_string(ctx, dumper, &sub_output);
     GRN_OBJ_FIN(ctx, &sub_output);
   }
   if (normalizer) {
@@ -800,7 +810,7 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     GRN_TEXT_PUTS(ctx, dumper->output, " --normalizer ");
     GRN_TEXT_INIT(&sub_output, 0);
     grn_table_get_normalizer_string(ctx, table, &sub_output);
-    dump_optionable_obj_string(ctx, dumper, &sub_output);
+    dump_string(ctx, dumper, &sub_output);
     GRN_OBJ_FIN(ctx, &sub_output);
   }
   if (token_filters && GRN_BULK_VSIZE(token_filters) > 0) {
@@ -808,7 +818,16 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     GRN_TEXT_PUTS(ctx, dumper->output, " --token_filters ");
     GRN_TEXT_INIT(&sub_output, 0);
     grn_table_get_token_filters_string(ctx, table, &sub_output);
-    dump_optionable_obj_string(ctx, dumper, &sub_output);
+    dump_string(ctx, dumper, &sub_output);
+    GRN_OBJ_FIN(ctx, &sub_output);
+  }
+  if ((flags & GRN_OBJ_CUSTOM_NAME) && dumper->is_dump_paths) {
+    grn_obj sub_output;
+    GRN_TEXT_PUTS(ctx, dumper->output, " --path ");
+    GRN_TEXT_INIT(&sub_output, GRN_OBJ_DO_SHALLOW_COPY);
+    const char *path = grn_obj_path(ctx, table);
+    GRN_TEXT_SETS(ctx, &sub_output, path);
+    dump_string(ctx, dumper, &sub_output);
     GRN_OBJ_FIN(ctx, &sub_output);
   }
 
@@ -1068,11 +1087,11 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn_dumper dumper;
   grn_obj *tables;
-  grn_bool is_dump_plugins;
-  grn_bool is_dump_schema;
-  grn_bool is_dump_records;
-  grn_bool is_dump_indexes;
-  grn_bool is_dump_configs;
+  bool is_dump_plugins;
+  bool is_dump_schema;
+  bool is_dump_records;
+  bool is_dump_indexes;
+  bool is_dump_configs;
 
   dumper.output = ctx->impl->output.buf;
   if (grn_thread_get_limit() == 1) {
@@ -1086,23 +1105,26 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   tables = grn_plugin_proc_get_var(ctx, user_data, "tables", -1);
   is_dump_plugins = grn_plugin_proc_get_var_bool(ctx, user_data,
                                                  "dump_plugins", -1,
-                                                 GRN_TRUE);
+                                                 true);
   is_dump_schema = grn_plugin_proc_get_var_bool(ctx, user_data,
                                                 "dump_schema", -1,
-                                                GRN_TRUE);
+                                                true);
   is_dump_records = grn_plugin_proc_get_var_bool(ctx, user_data,
                                                  "dump_records", -1,
-                                                 GRN_TRUE);
+                                                 true);
   is_dump_indexes = grn_plugin_proc_get_var_bool(ctx, user_data,
                                                  "dump_indexes", -1,
-                                                 GRN_TRUE);
+                                                 true);
   is_dump_configs = grn_plugin_proc_get_var_bool(ctx, user_data,
                                                  "dump_configs", -1,
-                                                 GRN_TRUE);
+                                                 true);
   dumper.is_sort_hash_table =
     grn_plugin_proc_get_var_bool(ctx, user_data,
                                  "sort_hash_table", -1,
                                  GRN_FALSE);
+  dumper.is_dump_paths = grn_plugin_proc_get_var_bool(ctx, user_data,
+                                                      "dump_paths", -1,
+                                                      true);
   GRN_TEXT_INIT(&(dumper.column_name_buffer), 0);
 
   grn_ctx_set_output_type(ctx, GRN_CONTENT_GROONGA_COMMAND_LIST);
@@ -1146,7 +1168,7 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 void
 grn_proc_init_dump(grn_ctx *ctx)
 {
-  grn_expr_var vars[7];
+  grn_expr_var vars[8];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "tables", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "dump_plugins", -1);
@@ -1155,6 +1177,7 @@ grn_proc_init_dump(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[4]), "dump_indexes", -1);
   grn_plugin_expr_var_init(ctx, &(vars[5]), "dump_configs", -1);
   grn_plugin_expr_var_init(ctx, &(vars[6]), "sort_hash_table", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[7]), "dump_paths", -1);
   grn_plugin_command_create(ctx,
                             "dump", -1,
                             command_dump,

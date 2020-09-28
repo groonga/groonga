@@ -1,0 +1,4 @@
+table_create Data TABLE_NO_KEY --path data
+[[0,0.0,0.0],true]
+dump --dump_paths no
+table_create Data TABLE_NO_KEY
