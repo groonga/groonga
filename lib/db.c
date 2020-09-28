@@ -5685,7 +5685,11 @@ grn_obj_cast_record(grn_ctx *ctx,
   grn_id dest_id;
 
   if (src->header.domain == dest->header.domain) {
-    GRN_RECORD_SET(ctx, dest, GRN_RECORD_VALUE(src));
+    if (grn_obj_is_uvector(ctx, dest)) {
+      grn_uvector_add_element_record(ctx, dest, GRN_RECORD_VALUE(src), 0.0);
+    } else {
+      GRN_RECORD_PUT(ctx, dest, GRN_RECORD_VALUE(src));
+    }
     return GRN_SUCCESS;
   }
 
@@ -5711,7 +5715,11 @@ grn_obj_cast_record(grn_ctx *ctx,
   }
 
   if (GRN_RECORD_VALUE(src) == GRN_ID_NIL) {
-    GRN_RECORD_SET(ctx, dest, GRN_RECORD_VALUE(src));
+    if (grn_obj_is_uvector(ctx, dest)) {
+      grn_uvector_add_element_record(ctx, dest, GRN_RECORD_VALUE(src), 0.0);
+    } else {
+      GRN_RECORD_PUT(ctx, dest, GRN_RECORD_VALUE(src));
+    }
     return GRN_SUCCESS;
   }
 
@@ -5721,7 +5729,11 @@ grn_obj_cast_record(grn_ctx *ctx,
   } else {
     dest_id = grn_table_get(ctx, dest_table, key, key_size);
   }
-  GRN_RECORD_SET(ctx, dest, dest_id);
+    if (grn_obj_is_uvector(ctx, dest)) {
+      grn_uvector_add_element_record(ctx, dest, dest_id, 0.0);
+    } else {
+      GRN_RECORD_PUT(ctx, dest, dest_id);
+    }
   return GRN_SUCCESS;
 }
 

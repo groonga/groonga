@@ -2771,6 +2771,7 @@ grn_ja_cast_value_vector_fixed_bulk(grn_ctx *ctx,
   }
 
   if (need_tokenize) {
+    /* TODO: Should we move this logic to grn_obj_cast()? */
     unsigned int token_flags = 0;
     grn_token_cursor *token_cursor;
     token_cursor = grn_token_cursor_open(ctx,
