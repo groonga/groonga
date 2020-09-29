@@ -33,11 +33,230 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 10.0.6 - 2020-08-29"
-msgstr "10.0.6リリース - 2020-08-29"
+msgid "Release 10.0.7 - 2020-09-29"
+msgstr "10.0.7リリース - 2020-09-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[highlight], [:doc:`/reference/functions/highlight_full`] Added support for "
+"normalizer options."
+msgstr ""
+"[highlight], [:doc:`/reference/functions/highlight_full`] ノーマライザーにオ"
+"プションを指定できるようになりました。"
+
+msgid ""
+"[:doc:`/reference/command/return_code`] Added a new return code "
+"``GRN_CONNECTION_RESET`` for resetting connection."
+msgstr ""
+"[:doc:`/reference/command/return_code`] 新しいリターンコード "
+"``GRN_CONNECTION_RESET`` を追加しました。"
+
+msgid ""
+"it is returned when an existing connection was forcibly close by the remote "
+"host."
+msgstr ""
+"このリターンコードは、リモートホストから強制的に接続を切断されたときに返され"
+"ます。"
+
+msgid "Dropped Ubuntu 19.10 (Eoan Ermine)."
+msgstr "Ubuntu 19.10(Eoan Ermine)のサポートをやめました。"
+
+msgid "Because this version has been EOL."
+msgstr "このバージョンはEOLになっているためです。"
+
+msgid "[httpd] Updated bundled nginx to 1.19.2."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.19.2に更新しました。"
+
+msgid ""
+"[:doc:`/reference/executables/grndb`] Added support for detecting duplicate "
+"keys."
+msgstr ""
+"[:doc:`/reference/executables/grndb`] キーの重複を検出できるようになりまし"
+"た。"
+
+msgid ""
+"``grndb check`` is also able to detect duplicate keys since this release."
+msgstr ""
+"今回のリリースから、　``grndb check`` でキーの重複も検出できるようになりまし"
+"た。"
+
+msgid "This check valid except a table of ``TABLE_NO_KEY``."
+msgstr "このチェックは、 ``TABLE_NO_KEY`` のテーブル以外で有効です。"
+
+msgid ""
+"If the table that was detected duplicate keys by ``grndb check`` has only "
+"index columns, we can recover by ``grndb recover``."
+msgstr ""
+"``grndb check`` で重複が検出されたテーブルにインデックスカラムしかない場合"
+"は、 ``grndb recover`` で復旧できます。"
+
+msgid ""
+"[:doc:`/reference/commands/table_create`], [:doc:`/reference/commands/"
+"column_create`] Added a new option ``--path``"
+msgstr ""
+"[:doc:`/reference/commands/table_create`], [:doc:`/reference/commands/"
+"column_create`] 新しいオプション ``--path`` を追加しました。"
+
+msgid ""
+"We can store specified a table or a column to any path using this option."
+msgstr ""
+"このオプションによって指定したテーブルまたは、カラムを任意のパスに格納できま"
+"す。"
+
+msgid ""
+"This option is useful if we want to store a table or a column that we often "
+"use to fast storage (e.g. SSD) and store them that we don't often use to "
+"slow storage (e.g. HDD)."
+msgstr ""
+"このオプションは、高速なストレージ(SSDなど)によく使うテーブルやカラムを格納"
+"し、低速なストレージ(HDDなど)にあまり使わないテーブルやカラムを格納したいとき"
+"に有用です。"
+
+msgid "We can specify both relative path and absolute path in this option."
+msgstr "このオプションは、相対パス、絶対パスの両方が指定できます。"
+
+msgid ""
+"If we specify relative path in this option, the path is resolved the path of "
+"``groonga`` process as the origin."
+msgstr ""
+"相対パスを指定した場合は、 ``groonga`` プロセスのパスを起点に指定したパスが解"
+"決されます。"
+
+msgid ""
+"However, if we specify ``--path``, the result of ``dump`` command includes "
+"``--path`` informations."
+msgstr ""
+"``--path`` を指定した場合、 ``dump`` コマンドの結果に ``--path`` の情報が含ま"
+"れます。"
+
+msgid ""
+"Therefore, if we specify ``--path``, we can't restore to host in different "
+"enviroment."
+msgstr ""
+"したがって、 ``--path`` を指定した場合、 異なる環境のホストではリストアできな"
+"くなります。"
+
+msgid ""
+"Because the directory configuration and the location of ``groonga`` process "
+"in different by each enviroment."
+msgstr ""
+"これは、ディレクトリ構成や ``groonga`` プロセスの場所が環境ごとに異なるためで"
+"す。"
+
+msgid ""
+"If we don't want include ``--path`` informations to a dump, we need specify "
+"``--dump_paths no`` in ``dump`` command."
+msgstr ""
+"``--path`` の情報を ``dump`` に含みたくない場合は、 ``dump`` コマンド実行時"
+"に ``--dump_paths no`` を指定する必要があります。"
+
+msgid "[:doc:`reference/commands/dump`] Added a new option ``--dump_paths``."
+msgstr ""
+"[:doc:`reference/commands/dump`] 新しいオプション ``--dump_paths`` を追加しま"
+"した。"
+
+msgid "``--dump_paths`` option control whether ``--path`` is dumped or not."
+msgstr ""
+"``--dump_paths`` オプションは、 ``--path`` をダンプするかどうかを制御します。"
+
+msgid "The default value of it is ``yes``."
+msgstr "デフォルト値は ``yes`` です。"
+
+msgid ""
+"If we specify ``--path`` when we create tables or columns and we don't want "
+"include ``--path`` informations to a dump, we specify ``no`` into ``--"
+"dump_paths`` when we execute ``dump`` command."
+msgstr ""
+"もし、テーブルやカラム作成時に ``--path`` を指定していて、 ``--path`` の情報"
+"を ``dump`` に含みたくない場合は、 ``dump`` コマンド実行時に ``--"
+"dump_paths`` に ``no`` を指定してください。"
+
+msgid "[functions] Added a new function ``string_toknize()``."
+msgstr "新しい関数 ``string_toknize()`` を追加しました。"
+
+msgid ""
+"It tokenizes the column value that is specified in the second argument with "
+"the tokenizer that is specified in the first argument."
+msgstr ""
+"この関数は、第二引数に指定されたカラムの値を、第一引数に指定されたトークナイ"
+"ザーでトークナイズします。"
+
+msgid ""
+"[tokenizers] Added a new tokenizer ``TokenDocumentVectorTFIDF`` "
+"(experimental)."
+msgstr ""
+"[tokenizers] 新しいトークナイザー ``TokenDocumentVectorTFIDF`` を追加しまし"
+"た。(実験的) "
+
+msgid "It generates automatically document vector by TF-IDF."
+msgstr "このトークナイザーは、TF-IDFで文書ベクトルを自動で生成します。"
+
+msgid ""
+"[tokenizers] Added a new tokenizer ``TokenDocumentVectorBM25`` "
+"(experimental)."
+msgstr ""
+"[tokenizers] 新しいトークナイザー ``TokenDocumentVectorBM25`` を追加しまし"
+"た。(実験的) "
+
+msgid "It generates automatically document vector by BM25."
+msgstr "このトークナイザーは、BM25で文書ベクトルを自動で生成します。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added support for near search in same "
+"sentence."
+msgstr ""
+"[:doc:`/reference/commands/select`] 同一センテンス内での、フレーズ近傍検索を"
+"サポートしました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"[:doc:`/reference/commands/load`] Fixed a bug that ``load`` didn't a return "
+"response when we executed it against 257 columns."
+msgstr ""
+"[:doc:`/reference/commands/load`] 257個のカラムに対して ``load`` を実行する"
+"と ``load`` の応答が返らなくなる問題を修正しました。"
+
+msgid "This bug may occur from 10.0.4 or later."
+msgstr "この問題は、10.0.4以降で発生する可能性があります。"
+
+msgid ""
+"This bug only occur when we load data by using ``[a, b, c, ...]`` format."
+msgstr ""
+"この問題は、 ``[a, b, c, ...]`` の形式でデータをロードした時にのみ発生しま"
+"す。"
+
+msgid "If we load data by using ``[{...}]``, this bug doesn't occur."
+msgstr "``[{...}]`` を使ってデータをロードした場合は発生しません。"
+
+msgid "[MessagePack] Fixed a bug that float32 value wasn't unpacked correctly."
+msgstr ""
+"[MessagePack] float32の値を正しくアンパックできない問題を修正しました。"
+
+msgid "Fixed the following bugs related multi column index."
+msgstr "マルチカラムインデックス関連の問題を修正しました。"
+
+msgid "``_score`` may be broken with full text search."
+msgstr "``_score`` の値が壊れることがあります。"
+
+msgid "The records that couldn't hit might hit."
+msgstr "ヒットしないはずのレコードがヒットすることがあります。"
+
+msgid ""
+"Please refer to the following URL for the details about occurrence "
+"conditionin of this bug."
+msgstr "この問題の発生条件については、以下のURLを参照してください。"
+
+msgid ""
+"https://groonga.org/en/blog/2020/09/29/groonga-10.0.7.html#multi-column-index"
+msgstr ""
+"https://groonga.org/ja/blog/2020/09/29/groonga-10.0.7.html#multi-column-index"
+
+msgid "Release 10.0.6 - 2020-08-29"
+msgstr "10.0.6リリース - 2020-08-29"
 
 msgid ""
 "[:doc:`reference/commands/logical_range_filter`] Improved search plan for "
@@ -184,9 +403,6 @@ msgid ""
 msgstr ""
 "``_score`` の値が ``\"_score = func(...)\"`` のように関数によってのみ算出され"
 "る場合のパフォーマンスを改善しました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid ""
 "Fixed a bug that garbage may be included in response after response send "
@@ -1684,9 +1900,6 @@ msgstr "Ubuntu 20.04 (Focal Fossa)をサポートしました。"
 
 msgid "Dropped Ubuntu 19.04 (Disco Dingo)."
 msgstr "Ubuntu 19.04 (Disco Dingo)のサポートをやめました。"
-
-msgid "Because this version has been EOL."
-msgstr "このバージョンはEOLになっているためです。"
 
 msgid "Release 9.1.2 - 2020-01-29"
 msgstr "9.1.2リリース - 2020-01-29"

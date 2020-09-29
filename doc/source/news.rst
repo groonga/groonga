@@ -7,6 +7,90 @@
 News
 ====
 
+.. _release-10-0-7:
+
+Release 10.0.7 - 2020-09-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [highlight], [:doc:`/reference/functions/highlight_full`] Added support for normalizer options.
+
+* [:doc:`/reference/command/return_code`] Added a new return code ``GRN_CONNECTION_RESET`` for resetting connection.
+
+  * it is returned when an existing connection was forcibly close by the remote host.
+
+* Dropped Ubuntu 19.10 (Eoan Ermine).
+
+  * Because this version has been EOL.
+
+* [httpd] Updated bundled nginx to 1.19.2.
+
+* [:doc:`/reference/executables/grndb`] Added support for detecting duplicate keys.
+
+  * ``grndb check`` is also able to detect duplicate keys since this release.
+  * This check valid except a table of ``TABLE_NO_KEY``.
+  * If the table that was detected duplicate keys by ``grndb check`` has only index columns, we can recover by ``grndb recover``.
+
+* [:doc:`/reference/commands/table_create`], [:doc:`/reference/commands/column_create`] Added a new option ``--path``
+
+  * We can store specified a table or a column to any path using this option.
+  * This option is useful if we want to store a table or a column that
+    we often use to fast storage (e.g. SSD) and store them that we don't often
+    use to slow storage (e.g. HDD).
+  * We can specify both relative path and absolute path in this option.
+
+    * If we specify relative path in this option, the path is resolved the path of ``groonga`` process as the origin.
+
+  * However, if we specify ``--path``, the result of ``dump`` command includes ``--path`` informations.
+
+    * Therefore, if we specify ``--path``, we can't restore to host in different enviroment.
+
+      * Because the directory configuration and the location of ``groonga`` process in different by each enviroment.
+
+    * If we don't want include ``--path`` informations to a dump, we need specify ``--dump_paths no`` in ``dump`` command.
+
+* [:doc:`reference/commands/dump`] Added a new option ``--dump_paths``.
+
+  * ``--dump_paths`` option control whether ``--path`` is dumped or not.
+  * The default value of it is ``yes``.
+  * If we specify ``--path`` when we create tables or columns and we don't want include ``--path`` informations to a dump, we specify ``no`` into ``--dump_paths`` when we execute ``dump`` command.
+
+* [functions] Added a new function ``string_toknize()``.
+
+  * It tokenizes the column value that is specified in the second argument with the tokenizer that is specified in the first argument.
+
+* [tokenizers] Added a new tokenizer ``TokenDocumentVectorTFIDF`` (experimental).
+
+  * It generates automatically document vector by TF-IDF.
+
+* [tokenizers] Added a new tokenizer ``TokenDocumentVectorBM25`` (experimental).
+
+  * It generates automatically document vector by BM25.
+
+* [:doc:`reference/commands/select`] Added support for near search in same sentence.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/commands/load`] Fixed a bug that ``load`` didn't a return response when we executed it against 257 columns.
+
+  * This bug may occur from 10.0.4 or later.
+  * This bug only occur when we load data by using ``[a, b, c, ...]`` format.
+
+    * If we load data by using ``[{...}]``, this bug doesn't occur.
+
+* [MessagePack] Fixed a bug that float32 value wasn't unpacked correctly.
+
+* Fixed the following bugs related multi column index.
+
+  * ``_score`` may be broken with full text search.
+  * The records that couldn't hit might hit.
+  * Please refer to the following URL for the details about occurrence conditionin of this bug.
+
+    * https://groonga.org/en/blog/2020/09/29/groonga-10.0.7.html#multi-column-index
+
 .. _release-10-0-6:
 
 Release 10.0.6 - 2020-08-29
