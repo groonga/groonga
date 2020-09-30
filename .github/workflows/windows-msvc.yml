@@ -235,7 +235,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.result }}
-          asset_path: ${{ steps.env.outputs.install-folder }}.zip
+          asset_path: ${Env:FULL_INSTALL_FOLDER}.zip
           asset_name: ${{ steps.env.outputs.install-folder }}.zip
           asset_content_type: application/zip
       - name: Compress the artifact with VC++ runtime
@@ -255,7 +255,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.result }}
-          asset_path: ${{ steps.env.outputs.install-folder-with-vcruntime }}.zip
+          asset_path: ${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}.zip
           asset_name: ${{ steps.env.outputs.install-folder-with-vcruntime }}.zip
           asset_content_type: application/zip
 
