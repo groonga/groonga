@@ -4,7 +4,7 @@ notifications:
 
 language: cpp
 
-dist: bionic
+dist: focal
 
 cache:
   - ccache
@@ -23,6 +23,7 @@ addons_linux_build: &addons_linux_build
       - libluajit-5.1-dev
       - libmecab-dev
       - libmsgpack-dev
+      - libxxhash-dev
       - lsb-release
       - mecab-naist-jdic
       - rapidjson-dev
