@@ -1004,6 +1004,32 @@ else
 fi
 AC_SUBST(RAPIDJSON_CFLAGS)
 
+# xxHash
+AC_ARG_WITH(xxhash,
+  [AS_HELP_STRING([--with-xxhash],
+    [Support drilldown by hashed key with xxHash. [default=auto]])],
+  [with_xxhash="$withval"],
+  [with_xxhash="auto"])
+if test "x$with_xxhash" != "xno"; then
+  m4_ifdef([PKG_CHECK_MODULES], [
+    PKG_CHECK_MODULES([LIBXXHASH],
+                      [libxxhash],
+                      [GRN_WITH_XXHASH=yes],
+                      [GRN_WITH_XXHASH=no])
+  ],
+  [GRN_WITH_XXHASH=no])
+  if test "$GRN_WITH_XXHASH" = "yes"; then
+    AC_DEFINE(GRN_WITH_XXHASH, [1],
+              [Support drilldown by hashed key with xxHash.])
+  else
+    if test "x$with_xxhash" != "xauto"; then
+      AC_MSG_ERROR("No libxxhash found")
+    fi
+  fi
+else
+  GRN_WITH_XXHASH=no
+fi
+
 # MeCab
 # NOTE: MUST be checked last
 
@@ -1954,6 +1980,11 @@ echo "  Apache Arrow:          $GRN_WITH_APACHE_ARROW"
 if test "x$GRN_WITH_APACHE_ARROW" = "xyes"; then
   echo "    CFLAGS:              ${APACHE_ARROW_CFLAGS}"
   echo "    LIBS:                ${APACHE_ARROW_LIBS}"
+fi
+echo "  xxHash:                $GRN_WITH_XXHASH"
+if test "x$GRN_WITH_XXHASH" = "xyes"; then
+  echo "    CFLAGS:              ${LIBXXHASH_CFLAGS}"
+  echo "    LIBS:                ${LIBXXHASH_LIBS}"
 fi
 echo "  mruby:                 $enable_mruby"
 echo "  jemalloc:              $jemalloc_available"

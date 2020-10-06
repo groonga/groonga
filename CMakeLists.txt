@@ -737,6 +737,62 @@ if(GRN_WITH_APACHE_ARROW)
   find_package(Arrow "1.0.0" REQUIRED)
 endif()
 
+
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_xxhash_version"
+  GRN_BUNDLED_XXHASH_VERSION)
+string(STRIP
+  "${GRN_BUNDLED_XXHASH_VERSION}"
+  GRN_BUNDLED_XXHASH_VERSION)
+
+set(GRN_WITH_BUNDLED_XXHASH FALSE)
+set(GRN_WITH_XXHASH "auto"
+  CACHE STRING "Support drilldown by hashed key with xxHash.")
+if(NOT ${GRN_WITH_XXHASH} STREQUAL "no")
+  set(LIBXXHASH_DEFINITIONS)
+  if(NOT DEFINED LIBXXHASH_FOUND)
+    pkg_check_modules(LIBXXHASH libxxhash)
+    unset(LIBXXHASH_LIBS)
+    unset(LIBXXHASH_LIBS CACHE)
+  endif()
+  if(LIBXXHASH_FOUND)
+    if(${LIBXXHASH_LIBRARY_DIRS})
+      find_library(LIBXXHASH_LIBS
+        NAMES ${LIBXXHASH_LIBRARIES}
+        PATHS ${LIBXXHASH_LIBRARY_DIRS}
+        NO_DEFAULT_PATH)
+    else()
+      find_library(LIBXXHASH_LIBS
+        NAMES ${LIBXXHASH_LIBRARIES})
+    endif()
+    set(GRN_WITH_XXHASH TRUE)
+    message(STATUS "xxHash: ${LIBXXHASH_LIBS}")
+  else()
+    set(GRN_BUNDLED_XXHASH_DIR
+      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/xxHash-${GRN_BUNDLED_XXHASH_VERSION}")
+    if(EXISTS ${GRN_BUNDLED_XXHASH_DIR})
+      set(LIBXXHASH_INCLUDE_DIRS ${GRN_BUNDLED_XXHASH_DIR})
+      set(LIBXXHASH_LIBS)
+      set(LIBXXHASH_DEFINITIONS -DXXH_INLINE_ALL)
+      set(GRN_WITH_BUNDLED_XXHASH TRUE)
+      set(GRN_WITH_XXHASH TRUE)
+      message(STATUS "xxHash: ${LIBXXHASH_INCLUDE_DIRS} (bundled)")
+      install(FILES
+	"${GRN_BUNDLED_XXHASH_DIR}/LICENSE"
+	"${GRN_BUNDLED_XXHASH_DIR}/README.md"
+	DESTINATION "${GRN_DATA_DIR}/xxhash")
+    else()
+      if(${GRN_WITH_XXHASH} STREQUAL "yes")
+        message(FATAL_ERROR "No xxHash found")
+      endif()
+      set(GRN_WITH_XXHASH FALSE)
+      message(STATUS "No xxHash")
+    endif()
+  endif()
+else()
+  set(GRN_WITH_XXHASH FALSE)
+endif()
+
+
 find_program(RUBY NAMES
   "ruby2.7" "ruby27"
   "ruby2.6" "ruby26"

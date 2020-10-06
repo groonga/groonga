@@ -89,6 +89,7 @@
 #cmakedefine GRN_WITH_MRUBY
 #cmakedefine GRN_WITH_NFKC
 #cmakedefine GRN_WITH_ONIGMO
+#cmakedefine GRN_WITH_XXHASH
 #cmakedefine GRN_WITH_ZEROMQ
 #cmakedefine GRN_WITH_ZLIB
 

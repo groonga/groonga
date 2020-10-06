@@ -40,6 +40,7 @@
 #include "grn_expr.h"
 #include "grn_token_column.h"
 #include "grn_windows.h"
+#include "grn_group.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
@@ -122,6 +123,7 @@ grn_init_from_env(void)
   grn_proc_init_from_env();
   grn_plugin_init_from_env();
   grn_token_column_init_from_env();
+  grn_group_init_from_env();
 }
 
 static void

@@ -68,6 +68,7 @@ jobs:
           ruby download_mecab.rb
           ruby download_message_pack.rb
           ruby download_rapidjson.rb
+          ruby download_xxhash.rb
       - name: Set environments
         id: env
         run: |

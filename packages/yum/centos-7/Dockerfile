@@ -28,6 +28,7 @@ RUN \
     rapidjson-devel \
     ruby \
     tar \
+    xxhash-devel \
     zeromq3-devel \
     zlib-devel && \
   yum clean ${quiet} all

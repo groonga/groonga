@@ -27,6 +27,7 @@ RUN \
     ruby \
     scl-utils \
     tar \
+    xxhash-devel \
     zeromq3-devel \
     zlib-devel && \
   yum clean ${quiet} all

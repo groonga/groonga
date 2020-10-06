@@ -16,6 +16,7 @@
 
 add_definitions(
   -DGRN_DAT_EXPORT
+  ${LIBXXHASH_DEFINITIONS}
   )
 
 include_directories(
@@ -25,7 +26,8 @@ include_directories(
   ${LIBLZ4_INCLUDE_DIRS}
   ${LIBZSTD_INCLUDE_DIRS}
   ${MESSAGE_PACK_INCLUDE_DIRS}
-  ${RAPIDJSON_INCLUDE_DIRS})
+  ${RAPIDJSON_INCLUDE_DIRS}
+  ${LIBXXHASH_INCLUDE_DIRS})
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/c_sources.am LIBGROONGA_C_SOURCES)
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/cpp_sources.am LIBGROONGA_CPP_SOURCES)
@@ -105,7 +107,8 @@ set(GRN_ALL_LIBRARIES
     ${DBGHELP_LIBS}
     ${PSAPI_LIBS}
     ${MRUBY_LIBS}
-    ${ONIGMO_LIBS})
+    ${ONIGMO_LIBS}
+    ${LIBXXHASH_LIBS})
 if(GRN_WITH_APACHE_ARROW)
   list(APPEND GRN_ALL_LIBRARIES arrow_shared)
 endif()

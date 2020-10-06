@@ -3847,6 +3847,9 @@ show_version(void)
 #ifdef GRN_WITH_APACHE_ARROW
   printf(",apache-arrow");
 #endif
+#ifdef GRN_WITH_XXHASH
+  printf(",xxhash");
+#endif
   printf("]\n");
 
 #ifdef CONFIGURE_OPTIONS

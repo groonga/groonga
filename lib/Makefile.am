@@ -30,7 +30,8 @@ AM_CFLAGS =					\
 	$(ZLIB_CFLAGS)				\
 	$(LIBLZ4_CFLAGS)			\
 	$(LIBZSTD_CFLAGS)                       \
-	$(LUAJIT_CFLAGS)
+	$(LUAJIT_CFLAGS)			\
+	$(LIBXXHASH_CFLAGS)
 
 AM_CXXFLAGS =					\
 	$(NO_STRICT_ALIASING_CFLAGS)		\
@@ -84,7 +85,8 @@ libgroonga_la_LIBADD +=				\
 	$(ATOMIC_LIBS)				\
 	$(APACHE_ARROW_LIBS)			\
 	$(WINDOWS_LIBS)				\
-	$(LUAJIT_LIBS)
+	$(LUAJIT_LIBS)				\
+	$(LIBXXHASH_LIBS)
 
 nfkc_dump_SOURCES =				\
 	nfkc_dump.c

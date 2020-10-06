@@ -29,5 +29,6 @@ RUN \
     python2-devel \
     ruby \
     tar \
+    xxhash-devel \
     zlib-devel && \
   dnf clean ${quiet} all

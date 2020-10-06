@@ -25,12 +25,49 @@
 #include "grn_table.h"
 #include "grn_vector.h"
 
+#ifdef GRN_WITH_XXHASH
+# include <xxhash.h>
+#endif
+
 #define GRN_TABLE_GROUP_BY_KEY           0
 #define GRN_TABLE_GROUP_BY_VALUE         1
 #define GRN_TABLE_GROUP_BY_COLUMN_VALUE  2
 
 #define GRN_TABLE_GROUP_FILTER_PREFIX    0
 #define GRN_TABLE_GROUP_FILTER_SUFFIX    (1L<<2)
+
+static bool grn_table_group_fallback_hash_value_enable = false;
+static bool grn_table_group_all_hash_value_enable = false;
+
+void
+grn_group_init_from_env(void)
+{
+#ifdef GRN_WITH_XXHASH
+  {
+    char grn_table_group_fallback_hash_value_enable_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_TABLE_GROUP_FALLBACK_HASH_VALUE_ENABLE",
+               grn_table_group_fallback_hash_value_enable_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (strcmp(grn_table_group_fallback_hash_value_enable_env, "no") == 0) {
+      grn_table_group_fallback_hash_value_enable = false;
+    } else {
+      grn_table_group_fallback_hash_value_enable = true;
+    }
+  }
+
+  {
+    char grn_table_group_all_hash_value_enable_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_TABLE_GROUP_ALL_HASH_VALUE_ENABLE",
+               grn_table_group_all_hash_value_enable_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (strcmp(grn_table_group_all_hash_value_enable_env, "yes") == 0) {
+      grn_table_group_all_hash_value_enable = true;
+    } else {
+      grn_table_group_all_hash_value_enable = false;
+    }
+  }
+#endif
+}
 
 grn_rc
 grn_table_group_aggregator_init(grn_ctx *ctx,
@@ -1048,6 +1085,25 @@ grn_table_group_multi_keys_add_record(grn_ctx *ctx,
                                     vector_pack_header,
                                     vector_pack_footer);
     GRN_BULK_REWIND(bulk);
+#define VECTOR_VALUE_MARK 0
+#define HASH_VALUE_MARK 1
+#ifdef GRN_WITH_XXHASH
+    bool need_hash_value = false;
+    if (grn_table_group_all_hash_value_enable) {
+      need_hash_value = true;
+    } else if (grn_table_group_fallback_hash_value_enable) {
+      const size_t total_size =
+        sizeof(uint8_t) +
+        GRN_TEXT_LEN(vector_pack_header) +
+        GRN_TEXT_LEN(body) +
+        GRN_TEXT_LEN(vector_pack_footer);
+      if (total_size >= GRN_TABLE_MAX_KEY_SIZE) {
+        need_hash_value = true;
+      } else {
+        GRN_UINT8_PUT(ctx, bulk, VECTOR_VALUE_MARK);
+      }
+    }
+#endif
     GRN_TEXT_PUT(ctx,
                  bulk,
                  GRN_TEXT_VALUE(vector_pack_header),
@@ -1057,6 +1113,18 @@ grn_table_group_multi_keys_add_record(grn_ctx *ctx,
                  bulk,
                  GRN_TEXT_VALUE(vector_pack_footer),
                  GRN_TEXT_LEN(vector_pack_footer));
+#ifdef GRN_WITH_XXHASH
+    if (need_hash_value) {
+      XXH128_hash_t hash_value = XXH3_128bits(GRN_TEXT_VALUE(bulk),
+                                              GRN_TEXT_LEN(bulk));
+      GRN_BULK_REWIND(bulk);
+      GRN_UINT8_PUT(ctx, bulk, HASH_VALUE_MARK);
+      GRN_UINT64_PUT(ctx, bulk, hash_value.low64);
+      GRN_UINT64_PUT(ctx, bulk, hash_value.high64);
+    }
+#endif
+#undef VECTOR_VALUE_MARK
+#undef HASH_VALUE_MARK
 
     grn_id group_id = grn_table_add_v(ctx, rp->table,
                                       GRN_BULK_HEAD(bulk), GRN_BULK_VSIZE(bulk),
@@ -1270,7 +1338,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
                 grn_table_group_result *results, int n_results)
 {
   grn_rc rc = GRN_SUCCESS;
-  grn_bool group_by_all_records = GRN_FALSE;
+  bool group_by_all_records = false;
   if (n_keys == 0 && n_results == 1) {
     group_by_all_records = GRN_TRUE;
   } else if (!table || !n_keys || !n_results) {

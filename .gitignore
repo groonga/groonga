@@ -63,6 +63,7 @@ cmake_install.cmake
 /vendor/rapidjson-*
 /vendor/lz4-*
 /vendor/plugins/*/
+/vendor/xxHash-*
 /stamp-h1
 /CMakeCache.txt
 /install_manifest.txt

@@ -58,6 +58,7 @@ jobs:
             libluajit-5.1-dev \
             libmecab-dev \
             libmsgpack-dev \
+            libxxhash-dev \
             mecab-naist-jdic \
             rapidjson-dev \
             ruby-dev \

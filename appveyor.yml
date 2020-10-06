@@ -126,6 +126,7 @@ build_script:
   - ruby download_mecab.rb
   - ruby download_message_pack.rb
   - ruby download_rapidjson.rb
+  - ruby download_xxhash.rb
   - cd ..
   - set CMAKE_GENERATOR_NAME=Visual Studio %VS_VERSION%
   - if "%VS_VERSION%" == "14"

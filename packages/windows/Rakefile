@@ -408,6 +408,7 @@ namespace :build do
         "--enable-mruby",
         "--enable-shared-onigmo",
         "--disable-groonga-httpd",
+        "--without-xxhash",
       ]
       if mecab_config.exist?
         options << "--with-mecab-config=#{mecab_config}"

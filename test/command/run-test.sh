@@ -46,10 +46,12 @@ export GRN_RUBY_SCRIPTS_DIR
 case `uname` in
   Linux|*BSD)
     LD_LIBRARY_PATH="$build_top_dir/lib/.libs:$LD_LIBRARY_PATH"
+    LD_LIBRARY_PATH="$build_top_dir/lib:$LD_LIBRARY_PATH"
     export LD_LIBRARY_PATH
     ;;
   Darwin)
     DYLD_LIBRARY_PATH="$build_top_dir/lib/.libs:$DYLD_LIBRARY_PATH"
+    DYLD_LIBRARY_PATH="$build_top_dir/lib:$DYLD_LIBRARY_PATH"
     export DYLD_LIBRARY_PATH
     ;;
   *)

@@ -37,6 +37,7 @@ jobs:
             mingw-w64-x86_64-gcc ^
             mingw-w64-x86_64-python3-pip ^
             mingw-w64-x86_64-ruby ^
+            mingw-w64-x86_64-xxhash ^
             mingw-w64-x86_64-zlib
             pip3 install -U Sphinx
       - name: Generate configure

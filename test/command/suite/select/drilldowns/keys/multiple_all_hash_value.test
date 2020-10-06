@@ -1,0 +1,10 @@
+#$GRN_TABLE_GROUP_ALL_HASH_VALUE_ENABLE=yes
+
+table_create Data TABLE_NO_KEY
+column_create Data text COLUMN_SCALAR ShortText
+
+#@generate-series 0 1 Data '{"text" => "x"}'
+
+select Data \
+  --drilldowns[texts].keys text,text \
+  --drilldowns[texts].output_columns _value.text,_nsubrecs

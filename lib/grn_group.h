@@ -24,6 +24,8 @@
 extern "C" {
 #endif
 
+void grn_group_init_from_env(void);
+
 struct _grn_aggregator_data {
   grn_id group_id;
   grn_id source_id;
