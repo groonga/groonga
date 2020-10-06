@@ -17,10 +17,12 @@
 
 require_relative "../vendor/apache-arrow-source/dev/tasks/linux-packages/package-task"
 require_relative "launchpad-helper"
+require_relative "windows-helper"
 require_relative "repository-helper"
 
 class PackagesGroongaOrgPackageTask < PackageTask
   include LaunchpadHelper
+  include WindowsHelper
   include RepositoryHelper
 
   def define
