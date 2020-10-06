@@ -1004,124 +1004,125 @@ grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
   return 0;
 }
 
+typedef struct {
+  grn_obj *table;
+  grn_table_sort_key *keys;
+  int n_keys;
+  grn_table_group_result *results;
+  int n_results;
+  grn_obj bulk;
+  grn_obj vector;
+  grn_obj vector_pack_header;
+  grn_obj vector_pack_footer;
+  grn_id id;
+  grn_rset_recinfo *ri;
+} grn_table_group_multi_keys_data;
+
 static grn_inline void
 grn_table_group_multi_keys_add_record(grn_ctx *ctx,
-                                      grn_table_sort_key *keys,
-                                      int n_keys,
-                                      grn_table_group_result *results,
-                                      int n_results,
-                                      grn_id id,
-                                      grn_rset_recinfo *ri,
-                                      grn_obj *vector,
-                                      grn_obj *bulk)
+                                      grn_table_group_multi_keys_data *data)
 {
+  grn_obj *bulk = &(data->bulk);
+  grn_obj *vector = &(data->vector);
+  grn_obj *vector_pack_header = &(data->vector_pack_header);
+  grn_obj *vector_pack_footer = &(data->vector_pack_footer);
   int r;
   grn_table_group_result *rp;
 
-  grn_obj header;
-  grn_obj footer;
-  GRN_TEXT_INIT(&header, 0);
-  GRN_TEXT_INIT(&footer, 0);
-  for (r = 0, rp = results; r < n_results; r++, rp++) {
+  for (r = 0, rp = data->results; r < data->n_results; r++, rp++) {
     void *value;
     int end;
 
-    if (rp->key_end > n_keys) {
-      end = n_keys;
+    if (rp->key_end > data->n_keys) {
+      end = data->n_keys;
     } else {
       end = rp->key_end + 1;
     }
+    GRN_BULK_REWIND(vector_pack_header);
+    GRN_BULK_REWIND(vector_pack_footer);
     grn_obj *body = grn_vector_pack(ctx,
                                     vector,
                                     rp->key_begin,
                                     end - rp->key_begin,
                                     0,
-                                    &header,
-                                    &footer);
+                                    vector_pack_header,
+                                    vector_pack_footer);
     GRN_BULK_REWIND(bulk);
-    GRN_TEXT_PUT(ctx, bulk, GRN_TEXT_VALUE(&header), GRN_TEXT_LEN(&header));
+    GRN_TEXT_PUT(ctx,
+                 bulk,
+                 GRN_TEXT_VALUE(vector_pack_header),
+                 GRN_TEXT_LEN(vector_pack_header));
     GRN_TEXT_PUT(ctx, bulk, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
-    GRN_TEXT_PUT(ctx, bulk, GRN_TEXT_VALUE(&footer), GRN_TEXT_LEN(&footer));
+    GRN_TEXT_PUT(ctx,
+                 bulk,
+                 GRN_TEXT_VALUE(vector_pack_footer),
+                 GRN_TEXT_LEN(vector_pack_footer));
 
-    // todo : cut off GRN_ID_NIL
     grn_id group_id = grn_table_add_v(ctx, rp->table,
                                       GRN_BULK_HEAD(bulk), GRN_BULK_VSIZE(bulk),
                                       &value, NULL);
     if (group_id != GRN_ID_NIL) {
       grn_table_group_add_subrec(ctx, rp->table, group_id, value,
-                                 ri ? ri->score : 0,
-                                 (grn_rset_posinfo *)&id, 0,
+                                 data->ri ? data->ri->score : 0,
+                                 (grn_rset_posinfo *)&(data->id), 0,
                                  bulk);
     }
   }
-  GRN_OBJ_FIN(ctx, &header);
-  GRN_OBJ_FIN(ctx, &footer);
 }
 
 static void
 grn_table_group_multi_keys_scalar_records(grn_ctx *ctx,
-                                          grn_obj *table,
-                                          grn_table_sort_key *keys,
-                                          int n_keys,
-                                          grn_table_group_result *results,
-                                          int n_results)
+                                          grn_table_group_multi_keys_data *data)
 {
-  grn_id id;
-  grn_table_cursor *tc;
-  grn_obj bulk;
-  grn_obj vector;
-
-  tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0);
+  grn_table_cursor *tc = grn_table_cursor_open(ctx,
+                                               data->table,
+                                               NULL, 0,
+                                               NULL, 0,
+                                               0, -1, 0);
   if (!tc) {
     return;
   }
 
-  GRN_TEXT_INIT(&bulk, 0);
-  GRN_OBJ_INIT(&vector, GRN_VECTOR, 0, GRN_DB_VOID);
-  while ((id = grn_table_cursor_next(ctx, tc))) {
+  grn_obj *bulk = &(data->bulk);
+  grn_obj *vector = &(data->vector);
+  const grn_obj_flags flags = DB_OBJ(data->table)->header.flags;
+  const bool with_subrec = (flags & GRN_OBJ_WITH_SUBREC);
+  while ((data->id = grn_table_cursor_next(ctx, tc))) {
     int k;
     grn_table_sort_key *kp;
-    grn_rset_recinfo *ri = NULL;
 
-    if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
-      grn_table_cursor_get_value(ctx, tc, (void **)&ri);
+    if (with_subrec) {
+      grn_table_cursor_get_value(ctx, tc, (void **)&(data->ri));
     }
 
-    GRN_BULK_REWIND(&vector);
-    for (k = 0, kp = keys; k < n_keys; k++, kp++) {
-      GRN_BULK_REWIND(&bulk);
-      grn_obj_get_value(ctx, kp->key, id, &bulk);
-      grn_vector_add_element(ctx, &vector,
-                             GRN_BULK_HEAD(&bulk), GRN_BULK_VSIZE(&bulk),
+    GRN_BULK_REWIND(vector);
+    for (k = 0, kp = data->keys; k < data->n_keys; k++, kp++) {
+      GRN_BULK_REWIND(bulk);
+      grn_obj_get_value(ctx, kp->key, data->id, bulk);
+      grn_vector_add_element(ctx, vector,
+                             GRN_BULK_HEAD(bulk), GRN_BULK_VSIZE(bulk),
                              0,
-                             bulk.header.domain);
+                             bulk->header.domain);
     }
 
-    grn_table_group_multi_keys_add_record(ctx, keys, n_keys, results, n_results,
-                                          id, ri, &vector, &bulk);
+    grn_table_group_multi_keys_add_record(ctx, data);
   }
-  GRN_OBJ_FIN(ctx, &vector);
-  GRN_OBJ_FIN(ctx, &bulk);
   grn_table_cursor_close(ctx, tc);
 }
 
 static grn_inline void
 grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
-                                         grn_table_sort_key *keys,
+                                         grn_table_group_multi_keys_data *data,
                                          grn_obj *key_buffers,
-                                         int nth_key,
-                                         int n_keys,
-                                         grn_table_group_result *results,
-                                         int n_results,
-                                         grn_id id,
-                                         grn_rset_recinfo *ri,
-                                         grn_obj *vector,
-                                         grn_obj *bulk)
+                                         int nth_key)
 {
+  grn_obj *vector = &(data->vector);
+
   int k;
   grn_table_sort_key *kp;
-
-  for (k = nth_key, kp = &(keys[nth_key]); k < n_keys; k++, kp++) {
+  for (k = nth_key, kp = &(data->keys[nth_key]);
+       k < data->n_keys;
+       k++, kp++) {
     grn_obj *key_buffer = &(key_buffers[k]);
     switch (key_buffer->header.type) {
     case GRN_UVECTOR :
@@ -1144,10 +1145,9 @@ grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
                                  0,
                                  domain);
           grn_table_group_multi_keys_vector_record(ctx,
-                                                   keys, key_buffers,
-                                                   k + 1, n_keys,
-                                                   results, n_results,
-                                                   id, ri, vector, bulk);
+                                                   data,
+                                                   key_buffers,
+                                                   k + 1);
           while (grn_vector_size(ctx, vector) != n_vector_elements) {
             const char *content;
             grn_vector_pop_element(ctx, vector, &content, NULL, NULL);
@@ -1174,10 +1174,9 @@ grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
                                  0,
                                  domain);
           grn_table_group_multi_keys_vector_record(ctx,
-                                                   keys, key_buffers,
-                                                   k + 1, n_keys,
-                                                   results, n_results,
-                                                   id, ri, vector, bulk);
+                                                   data,
+                                                   key_buffers,
+                                                   k + 1);
           while (grn_vector_size(ctx, vector) != n_vector_elements) {
             grn_vector_pop_element(ctx, vector, &content, NULL, NULL);
           }
@@ -1194,71 +1193,56 @@ grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
     }
   }
 
-  if (k == n_keys) {
-    grn_table_group_multi_keys_add_record(ctx,
-                                          keys, n_keys,
-                                          results, n_results,
-                                          id, ri, vector, bulk);
+  if (k == data->n_keys) {
+    grn_table_group_multi_keys_add_record(ctx, data);
   }
 }
 
 static void
 grn_table_group_multi_keys_vector_records(grn_ctx *ctx,
-                                          grn_obj *table,
-                                          grn_table_sort_key *keys,
-                                          int n_keys,
-                                          grn_table_group_result *results,
-                                          int n_results)
+                                          grn_table_group_multi_keys_data *data)
 {
-  grn_id id;
-  grn_table_cursor *tc;
-  grn_obj bulk;
-  grn_obj vector;
-  grn_obj *key_buffers;
-  int k;
-
-  tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0);
+  grn_table_cursor *tc = grn_table_cursor_open(ctx,
+                                               data->table,
+                                               NULL, 0,
+                                               NULL, 0,
+                                               0, -1, 0);
   if (!tc) {
     return;
   }
 
-  key_buffers = GRN_MALLOCN(grn_obj, n_keys);
+  grn_obj *key_buffers = GRN_MALLOCN(grn_obj, data->n_keys);
   if (!key_buffers) {
     grn_table_cursor_close(ctx, tc);
     return;
   }
-
-  GRN_TEXT_INIT(&bulk, 0);
-  GRN_OBJ_INIT(&vector, GRN_VECTOR, 0, GRN_DB_VOID);
-  for (k = 0; k < n_keys; k++) {
+  int k;
+  for (k = 0; k < data->n_keys; k++) {
     GRN_VOID_INIT(&(key_buffers[k]));
   }
-  while ((id = grn_table_cursor_next(ctx, tc))) {
-    grn_table_sort_key *kp;
-    grn_rset_recinfo *ri = NULL;
 
-    if (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC) {
-      grn_table_cursor_get_value(ctx, tc, (void **)&ri);
+  grn_obj *vector = &(data->vector);
+  const grn_obj_flags flags = (DB_OBJ(data->table)->header.flags);
+  const bool with_subrec = (flags & GRN_OBJ_WITH_SUBREC);
+  while ((data->id = grn_table_cursor_next(ctx, tc))) {
+    if (with_subrec) {
+      grn_table_cursor_get_value(ctx, tc, (void **)&(data->ri));
     }
 
-    for (k = 0, kp = keys; k < n_keys; k++, kp++) {
+    grn_table_sort_key *kp;
+    for (k = 0, kp = data->keys; k < data->n_keys; k++, kp++) {
       grn_obj *key_buffer = &(key_buffers[k]);
       GRN_BULK_REWIND(key_buffer);
-      grn_obj_get_value(ctx, kp->key, id, key_buffer);
+      grn_obj_get_value(ctx, kp->key, data->id, key_buffer);
     }
 
-    GRN_BULK_REWIND(&vector);
-    grn_table_group_multi_keys_vector_record(ctx,
-                                             keys, key_buffers, 0, n_keys,
-                                             results, n_results,
-                                             id, ri, &vector, &bulk);
+    GRN_BULK_REWIND(vector);
+    grn_table_group_multi_keys_vector_record(ctx, data, key_buffers, 0);
   }
-  for (k = 0; k < n_keys; k++) {
+  for (k = 0; k < data->n_keys; k++) {
     GRN_OBJ_FIN(ctx, &(key_buffers[k]));
   }
   GRN_FREE(key_buffers);
-  GRN_OBJ_FIN(ctx, &vector);
-  GRN_OBJ_FIN(ctx, &bulk);
   grn_table_cursor_close(ctx, tc);
 }
 
@@ -1368,15 +1352,27 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
           break;
         }
       }
+      grn_table_group_multi_keys_data data;
+      data.table = table;
+      data.keys = keys;
+      data.n_keys = n_keys;
+      data.results = results;
+      data.n_results = n_results;
+      GRN_TEXT_INIT(&(data.bulk), 0);
+      GRN_OBJ_INIT(&(data.vector), GRN_VECTOR, 0, GRN_DB_VOID);
+      GRN_TEXT_INIT(&(data.vector_pack_header), 0);
+      GRN_TEXT_INIT(&(data.vector_pack_footer), 0);
+      data.id = GRN_ID_NIL;
+      data.ri = NULL;
       if (have_vector) {
-        grn_table_group_multi_keys_vector_records(ctx, table,
-                                                  keys, n_keys,
-                                                  results, n_results);
+        grn_table_group_multi_keys_vector_records(ctx, &data);
       } else {
-        grn_table_group_multi_keys_scalar_records(ctx, table,
-                                                  keys, n_keys,
-                                                  results, n_results);
+        grn_table_group_multi_keys_scalar_records(ctx, &data);
       }
+      GRN_OBJ_FIN(ctx, &(data.vector_pack_footer));
+      GRN_OBJ_FIN(ctx, &(data.vector_pack_header));
+      GRN_OBJ_FIN(ctx, &(data.vector));
+      GRN_OBJ_FIN(ctx, &(data.bulk));
     }
     for (r = 0, rp = results; r < n_results; r++, rp++) {
       GRN_TABLE_GROUPED_ON(rp->table);
