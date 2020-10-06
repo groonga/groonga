@@ -945,19 +945,21 @@ if test "x$enable_apache_arrow" != "xno"; then
   m4_ifdef([PKG_CHECK_MODULES], [
     PKG_CHECK_MODULES([APACHE_ARROW],
                       [arrow >= 0.17.0],
-                      [apache_arrow_available=yes],
-                      [apache_arrow_available=no])
+                      [GRN_WITH_APACHE_ARROW=yes],
+                      [GRN_WITH_APACHE_ARROW=no])
   ],
-  [apache_arrow_available=no])
-  if test "x$apache_arrow_available" = "xyes"; then
+  [GRN_WITH_APACHE_ARROW=no])
+  if test "x$GRN_WITH_APACHE_ARROW" = "xyes"; then
     AC_DEFINE(GRN_WITH_APACHE_ARROW, [1], [Enable Apache Arrow support.])
   else
     if test "x$enable_apache_arrow" = "xyes"; then
       AC_MSG_ERROR("No Apache Arrow found")
     fi
   fi
+else
+  GRN_WITH_APACHE_ARROW=no
 fi
-AM_CONDITIONAL([GRN_WITH_APACHE_ARROW], [test "$apache_arrow_available" = "yes"])
+AM_CONDITIONAL([GRN_WITH_APACHE_ARROW], [test "$GRN_WITH_APACHE_ARROW" = "yes"])
 
 # RapidJSON
 BUNDLED_RAPIDJSON_VERSION=m4_include([bundled_rapidjson_version])
@@ -1947,6 +1949,11 @@ fi
 echo "  RapidJSON:             $GRN_WITH_RAPIDJSON"
 if test "x$GRN_WITH_RAPIDJSON" = "xyes"; then
   echo "    CFLAGS:              ${RAPIDJSON_CFLAGS}"
+fi
+echo "  Apache Arrow:          $GRN_WITH_APACHE_ARROW"
+if test "x$GRN_WITH_APACHE_ARROW" = "xyes"; then
+  echo "    CFLAGS:              ${APACHE_ARROW_CFLAGS}"
+  echo "    LIBS:                ${APACHE_ARROW_LIBS}"
 fi
 echo "  mruby:                 $enable_mruby"
 echo "  jemalloc:              $jemalloc_available"
