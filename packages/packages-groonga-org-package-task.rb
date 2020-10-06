@@ -82,10 +82,17 @@ class PackagesGroongaOrgPackageTask < PackageTask
       archive = File.expand_path(url.split("/").last)
       rm_f(archive)
       sh("wget", url)
-      cd(repositories_dir) do
-        sh("tar",
-           "xf", archive,
-           "--strip-components=#{built_package_n_split_components}")
+      if target_namespace == :windows
+        mkdir_p("#{repositories_dir}/windows/groonga/#{archive}")
+        cd("#{repositories_dir}/windows/groonga/#{archive}") do
+          sh("unzip", archive)
+        end
+      else
+        cd(repositories_dir) do
+          sh("tar",
+             "xf", archive,
+             "--strip-components=#{built_package_n_split_components}")
+        end
       end
       rm_f(archive)
     end
@@ -101,7 +108,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
   end
 
   def define_release_tasks
-    [:apt, :yum].each do |target_namespace|
+    [:apt, :yum, :windows].each do |target_namespace|
       tasks = []
       namespace target_namespace do
         enabled = __send__("enable_#{target_namespace}?")
