@@ -1013,9 +1013,16 @@ AC_ARG_WITH(xxhash,
 if test "x$with_xxhash" != "xno"; then
   m4_ifdef([PKG_CHECK_MODULES], [
     PKG_CHECK_MODULES([LIBXXHASH],
-                      [libxxhash],
+                      [libxxhash >= 0.8.0],
                       [GRN_WITH_XXHASH=yes],
                       [GRN_WITH_XXHASH=no])
+    if test "$GRN_WITH_XXHASH" = "no"; then
+      PKG_CHECK_MODULES([LIBXXHASH],
+                        [libxxhash],
+                        [GRN_WITH_XXHASH=yes
+                         LIBXXHASH_CFLAGS="${LIBXXHASH_CFLAGS} -DXXH_INLINE_ALL"],
+                        [GRN_WITH_XXHASH=no])
+    fi
   ],
   [GRN_WITH_XXHASH=no])
   if test "$GRN_WITH_XXHASH" = "yes"; then
