@@ -193,6 +193,9 @@ jobs:
           Remove-Item test\command\suite\tokenizers\document_vector_bm25\alphabet.test
           Remove-Item test\command\suite\tokenizers\document_vector_bm25\normalize_false.test
           Remove-Item test\command\suite\tokenizers\document_vector_bm25\reindex.test
+      - name: Disable tests that require xxHash
+        run: |
+          Remove-Item test\command\suite\select\drilldowns\keys\multiple_large.test
       - name: "Test: command line"
         run: |
           ruby test\command_line\run-test.rb `
