@@ -1,5 +1,5 @@
-# Copyright(C) 2012-2018 Brazil
-# Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2012-2018  Brazil
+# Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -23,11 +23,13 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/dat
   ${ONIGMO_INCLUDE_DIRS}
   ${MRUBY_INCLUDE_DIRS}
+  # We need to put LIBXXHASH_INCLUDE_DIRS before LIBLZ4_INCLUDE_DIRS
+  # because bundled LZ4 includes its xxhash.h.
+  ${LIBXXHASH_INCLUDE_DIRS}
   ${LIBLZ4_INCLUDE_DIRS}
   ${LIBZSTD_INCLUDE_DIRS}
   ${MESSAGE_PACK_INCLUDE_DIRS}
-  ${RAPIDJSON_INCLUDE_DIRS}
-  ${LIBXXHASH_INCLUDE_DIRS})
+  ${RAPIDJSON_INCLUDE_DIRS})
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/c_sources.am LIBGROONGA_C_SOURCES)
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/cpp_sources.am LIBGROONGA_CPP_SOURCES)
