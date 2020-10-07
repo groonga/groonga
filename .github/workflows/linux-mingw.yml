@@ -156,11 +156,13 @@ jobs:
         run: |
           # https://www.msys2.org/news/#2020-06-29-new-packagers
           $baseURL = "https://repo.msys2.org/msys"
-          # mirror
+          # mirror. sf.net requires downloader related user-agent such
+          # as wget or curl.
           $baseURL = "https://sourceforge.net/projects/msys2/files/REPOS/MSYS2"
           Invoke-WebRequest `
             -Uri "${baseURL}/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz" `
-            -OutFile msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
+            -OutFile msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz `
+            -UserAgent wget
           ridk exec pacman `
             --noconfirm `
             --upgrade `
