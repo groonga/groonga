@@ -16,6 +16,7 @@ jobs:
           update: true
           install: >-
             autoconf
+            automake-wrapper
             git
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-libtool
