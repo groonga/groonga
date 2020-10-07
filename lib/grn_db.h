@@ -73,6 +73,7 @@ struct _grn_db {
   grn_critical_section lock;
   grn_cache *cache;
   grn_options *options;
+  bool is_closing;
 };
 
 #define GRN_SERIALIZED_SPEC_INDEX_SPEC   0

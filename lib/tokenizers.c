@@ -23,6 +23,8 @@
 #include "grn_token.h"
 #include "grn_token_cursor.h"
 
+#include "grn_ctx_impl.h"
+#include "grn_db.h"
 #include "grn_ii.h"
 #include "grn_onigmo.h"
 #include "grn_plugin.h"
@@ -2086,6 +2088,9 @@ document_vector_idf_base_options_fin(
   grn_ctx *ctx,
   grn_document_vector_idf_base_options *options)
 {
+  if (ctx->impl->db && ((grn_db *)(ctx->impl->db))->is_closing) {
+    return;
+  }
   grn_obj_unref(ctx, options->index_column);
   grn_obj_unref(ctx, options->df_column);
 }
