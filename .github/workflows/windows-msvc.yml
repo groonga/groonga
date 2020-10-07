@@ -72,13 +72,15 @@ jobs:
       - name: Set environments
         id: env
         run: |
-          Write-Output "::set-env name=CMAKE_BUILD_PARALLEL_LEVEL::${Env:NUMBER_OF_PROCESSORS}"
+          Write-Output "CMAKE_BUILD_PARALLEL_LEVEL=${Env:NUMBER_OF_PROCESSORS}" | `
+            Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
           $GROONGA_VERSION = (Get-Content base_version)
           if (!("${Env:GITHUB_REF}".StartsWith("refs/tags/"))) {
             $GROONGA_VERSION += "-$(${Env:GITHUB_SHA}.Substring(0, 7))"
           }
-          Write-Output "::set-env name=GROONGA_VERSION::${GROONGA_VERSION}"
+          Write-Output "GROONGA_VERSION=${GROONGA_VERSION}" | `
+            Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
           $INSTALL_FOLDER = "groonga-${GROONGA_VERSION}-${{ matrix.architecture }}-vs${{ matrix.vs-version }}"
           $INSTALL_FOLDER_WITH_VCRUNTIME = "${INSTALL_FOLDER}-with-vcruntime"
@@ -94,12 +96,16 @@ jobs:
             "${Env:GITHUB_WORKSPACE}\${RELATIVE_INSTALL_FOLDER}"
           $FULL_INSTALL_FOLDER_WITH_VCRUNTIME = `
             "${Env:GITHUB_WORKSPACE}\${RELATIVE_INSTALL_FOLDER_WITH_VCRUNTIME}"
-          Write-Output "::set-env name=INSTALL_FOLDER::${INSTALL_FOLDER}"
-          Write-Output "::set-env name=INSTALL_FOLDER_WITH_VCRUNTIME::${INSTALL_FOLDER_WITH_VCRUNTIME}"
-          Write-Output "::set-env name=FULL_INSTALL_FOLDER::${FULL_INSTALL_FOLDER}"
+          Write-Output "INSTALL_FOLDER=${INSTALL_FOLDER}" | `
+            Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Output "INSTALL_FOLDER_WITH_VCRUNTIME=${INSTALL_FOLDER_WITH_VCRUNTIME}" | `
+            Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Output "FULL_INSTALL_FOLDER=${FULL_INSTALL_FOLDER}" | `
+            Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
           $VC_PREFIX = "C:\Program Files (x86)\Microsoft Visual Studio\${{ matrix.vs-version }}\Enterprise\VC"
-          Write-Output "::set-env name=VC_PREFIX::${VC_PREFIX}"
+          Write-Output "VC_PREFIX=${VC_PREFIX}" | `
+            Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
           Write-Output "::set-output name=install-folder::${INSTALL_FOLDER}"
           Write-Output "::set-output name=relative-install-folder::${RELATIVE_INSTALL_FOLDER}"

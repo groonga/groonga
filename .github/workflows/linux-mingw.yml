@@ -146,9 +146,11 @@ jobs:
           Expand-Archive ${ZIP_ITEM} .
           $INSTALL_FOLDER = "groonga"
           Move-Item groonga-* ${INSTALL_FOLDER}
-          Write-Output "::set-env name=INSTALL_FOLDER::${INSTALL_FOLDER}"
+          Write-Output "INSTALL_FOLDER=${INSTALL_FOLDER}" | `
+            Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           $FULL_INSTALL_FOLDER = "$(Get-Location)\${INSTALL_FOLDER}"
-          Write-Output "::set-env name=FULL_INSTALL_FOLDER::${FULL_INSTALL_FOLDER}"
+          Write-Output "FULL_INSTALL_FOLDER=${FULL_INSTALL_FOLDER}" | `
+            Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - uses: actions/setup-ruby@v1
       - name: Update MSYS2 keyring
         run: |

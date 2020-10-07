@@ -69,7 +69,7 @@ jobs:
             red-arrow
       - name: Set environment variables
         run: |
-          echo "::set-env name=COLUMNS::79"
+          echo "COLUMNS=79" >> ${GITHUB_ENV}
       - name: "Test: stdio"
         run: |
           cd ../groonga.build
