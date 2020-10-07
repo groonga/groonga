@@ -112,14 +112,14 @@ class PackagesGroongaOrgPackageTask < PackageTask
           task :download do
             download_packages(target_namespace) if enabled
           end
-          tasks << ["#{target_namespace}:download"]
+          tasks << "#{target_namespace}:download"
         end
 
         desc "Release #{target_namespace} packages"
         task :release do
           release(target_namespace) if enabled
         end
-        tasks << ["#{target_namespace}:release"]
+        tasks << "#{target_namespace}:release"
       end
       task target_namespace => tasks
     end
