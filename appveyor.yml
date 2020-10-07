@@ -78,7 +78,7 @@ install:
   - set BASE_URL=ttps://repo.msys2.org/msys
   # mirror
   - set BASE_URL=https://sourceforge.net/projects/msys2/files/REPOS/MSYS2
-  - curl --remote-name %BASE_URL%/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
+  - curl --location --remote-name %BASE_URL%/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
   - pacman --noconfirm --upgrade msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
   - pacman --sync --refresh --sysupgrade --sysupgrade --noconfirm
   - taskkill /F /FI "MODULES eq msys-2.0.dll"
