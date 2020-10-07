@@ -28,9 +28,8 @@ if [ "${architecture}" = "i386" ]; then
   rm command/suite/tokenizers/document_vector_bm25/reindex.test
 fi
 
-if ! apt info libxxhash-dev; then
-  rm command/suite/select/drilldowns/keys/multiple_large.test
-fi
+# libxxhash-dev 0.8.0 or later is required.
+rm command/suite/select/drilldowns/keys/multiple_large.test
 
 apt install -V -y \
   gcc \

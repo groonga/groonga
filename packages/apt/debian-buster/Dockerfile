@@ -24,7 +24,6 @@ RUN \
     libpcre3-dev \
     libssl-dev \
     libstemmer-dev \
-    libxxhash-dev \
     libzmq3-dev \
     libzstd-dev \
     pkg-config \
