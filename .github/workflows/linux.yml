@@ -110,7 +110,6 @@ jobs:
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
-          echo "::set-env name=COLUMNS::79"
           if [ "${{ matrix.optimize }}" = "true" ]; then
             echo "GRN_EXPR_OPTIMIZE=yes" >> ${GITHUB_ENV}
           fi
