@@ -21,7 +21,6 @@ jobs:
             make
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-libtool
-            mingw-w64-x86_64-openssl
             mingw-w64-x86_64-pkg-config
             mingw-w64-x86_64-python3-pip
             mingw-w64-x86_64-ruby
@@ -42,6 +41,7 @@ jobs:
             --enable-document \
             --enable-mruby \
             --with-ruby \
+            --without-ssl \
             --without-zlib
       - name: Show config.log
         shell: msys2 {0}
@@ -61,7 +61,8 @@ jobs:
             --disable-groonga-httpd \
             --enable-mruby \
             --enable-shared-onigmo \
-            --with-ruby
+            --with-ruby \
+            --without-ssl
       - name: Show config.log
         shell: msys2 {0}
         if: always()
