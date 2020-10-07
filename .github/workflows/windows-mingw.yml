@@ -36,10 +36,10 @@ jobs:
       - name: Configure for archive
         shell: msys2 {0}
         run: |
-          ./configure ^
-            --enable-document ^
-            --enable-mruby ^
-            --with-ruby ^
+          ./configure \
+            --enable-document \
+            --enable-mruby \
+            --with-ruby \
             --without-zlib
       - name: Build archive
         shell: msys2 {0}
