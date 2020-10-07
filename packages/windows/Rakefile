@@ -146,8 +146,6 @@ namespace :build do
       sh("tar", "xzf", lz4_tar_gz.to_s) or exit(false)
     end
     Dir.chdir(tmp_dir + lz4_base) do
-      # TODO: Remove me when https://github.com/lz4/lz4/pull/556 is merged.
-      sh("curl https://github.com/kou/lz4/commit/9c457ccb7aed26edda7a3299207a4f329057866d.patch | patch -p1")
       parameters = [
         "CC=#{host}-gcc",
         "EXT=.exe",
