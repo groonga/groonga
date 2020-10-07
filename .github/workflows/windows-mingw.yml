@@ -42,6 +42,11 @@ jobs:
             --enable-mruby \
             --with-ruby \
             --without-zlib
+      - name: Show config.log
+        shell: msys2 {0}
+        if: always()
+        run: |
+          cat config.log
       - name: Build archive
         shell: msys2 {0}
         run: |
@@ -56,6 +61,11 @@ jobs:
             --enable-mruby \
             --enable-shared-onigmo \
             --with-ruby
+      - name: Show config.log
+        shell: msys2 {0}
+        if: always()
+        run: |
+          cat ../groonba.build/config.log
       - name: Build
         shell: msys2 {0}
         run: |
