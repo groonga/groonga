@@ -56,9 +56,12 @@ jobs:
             libarrow-dev \
             libevent-dev \
             libluajit-5.1-dev \
+            liblz4-dev \
             libmecab-dev \
             libmsgpack-dev \
+            libstemmer-dev \
             libxxhash-dev \
+            libzstd-dev \
             mecab-naist-jdic \
             rapidjson-dev \
             ruby-dev \
