@@ -19,6 +19,7 @@ jobs:
             automake-wrapper
             git
             make
+            mingw-w64-x86_64-arrow
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-libtool
             mingw-w64-x86_64-pkg-config
@@ -26,55 +27,78 @@ jobs:
             mingw-w64-x86_64-ruby
             mingw-w64-x86_64-xxhash
             mingw-w64-x86_64-zlib
-      - name: Install Sphinx
-        shell: msys2 {0}
-        run: |
-          pip3 install -U Sphinx
       - name: Generate configure
         shell: msys2 {0}
         run: |
-          bash autogen.sh
-      - name: Configure for archive
-        shell: msys2 {0}
-        run: |
-          ./configure \
-            --enable-document \
-            --enable-mruby \
-            --with-ruby \
-            --without-ssl \
-            --without-zlib
-      - name: Show config.log
-        shell: msys2 {0}
-        if: always()
-        run: |
-          cat config.log
-      - name: Build archive
-        shell: msys2 {0}
-        run: |
-          make dist
+          ./autogen.sh
       - name: Configure
         shell: msys2 {0}
         run: |
           mkdir ../groonga.build
-          cd ../groonba.build
+          cd ../groonga.build
           ../groonga/configure \
             --disable-groonga-httpd \
             --enable-mruby \
             --enable-shared-onigmo \
-            --with-ruby \
-            --without-ssl
+            --prefix=/tmp/local \
+            --with-ruby
       - name: Show config.log
         shell: msys2 {0}
         if: always()
         run: |
-          cat ../groonba.build/config.log
+          cat ../groonga.build/config.log
       - name: Build
         shell: msys2 {0}
         run: |
-          cd ../groonba.build
+          cd ../groonga.build
           make -j${NUMBER_OF_PROCESSORS}
       - name: Install
         shell: msys2 {0}
         run: |
-          cd ../groonba.build
+          cd ../groonga.build
           make install
+      - name: Install grntest
+        shell: msys2 {0}
+        run: |
+          git clone --depth 1 \
+            https://github.com/groonga/grntest.git \
+            ..\grntest
+          cd ..\grntest
+          /mingw64/bin/bundle.cmd install
+          /mingw64/bin/bundle.cmd exec rake install
+      - name: Install red-arrow
+        shell: msys2 {0}
+        run: |
+          gem install red-arrow
+      - name: "Test: command line"
+        shell: msys2 {0}
+        run: |
+          ruby test/command_line/run-test.rb \
+            --groonga-install-prefix=/tmp/local
+      - name: "Test: HTTP: reference count"
+        shell: msys2 {0}
+        run: |
+          export GRN_ENABLE_REFERENCE_COUNT=yes
+          grntest \
+            --base-directory test\command \
+            --groonga "/tmp/local/bin/groonga.exe" \
+            --interface http \
+            --n-retries 2 \
+            --n-workers ${NUMBER_OF_PROCESSORS} \
+            --read-timeout=30 \
+            --timeout 60 \
+            test\command\suite
+      - name: "Test: HTTP: Apache Arrow: chunked"
+        shell: msys2 {0}
+        run: |
+          grntest \
+            --base-directory test\command \
+            --groonga "/tmp/local/bin/groonga.exe" \
+            --input-type apache-arrow \
+            --interface http \
+            --n-retries 2 \
+            --n-workers ${NUMBER_OF_PROCESSORS} \
+            --read-timeout=30 \
+            --timeout 360 \
+            --use-http-chunked \
+            test\command\suite
