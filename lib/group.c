@@ -36,8 +36,10 @@
 #define GRN_TABLE_GROUP_FILTER_PREFIX    0
 #define GRN_TABLE_GROUP_FILTER_SUFFIX    (1L<<2)
 
+#ifdef GRN_WITH_XXHASH
 static bool grn_table_group_fallback_hash_value_enable = false;
 static bool grn_table_group_all_hash_value_enable = false;
+#endif
 
 void
 grn_group_init_from_env(void)
