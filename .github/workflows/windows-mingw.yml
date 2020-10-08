@@ -76,7 +76,7 @@ jobs:
         shell: msys2 {0}
         run: |
           ruby test/command_line/run-test.rb \
-            --groonga-install-prefix=/tmp/local
+            --groonga-install-prefix="$(cygpath --windows /tmp/local)"
       - name: "Test: HTTP: reference count"
         shell: msys2 {0}
         run: |
