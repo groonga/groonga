@@ -7,6 +7,105 @@
 News
 ====
 
+.. _release-10-0-8:
+
+Release 10.0.8 - 2020-10-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/select`] Added support for large drilldown keys.
+
+  * The maximum on the key size of Groonga's tables are 4KiB.
+    However, if we specify multiple keys in drilldown, the size of drilldown keys may be larger than 4KiB.
+
+    * For example, if the total size for ``tag`` key and ``n_like`` key is lager than 4KiB in the following case,
+      the drilldown had failed.
+
+    .. code-block::
+
+      select Entries \
+        --limit -1 \
+        --output_columns tag,n_likes \
+        --drilldowns[tag.n_likes].keys tag,n_likes \
+        --drilldowns[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
+
+    * Because the drilldown packes specifying all keys for drilldown. So, if each the size of drilldown key is large,
+      the size of the packed drilldown keys is larger than 4KiB.
+
+  * This feature requires `xxHash <https://github.com/Cyan4973/xxHash>`_ .
+
+    * However, if we install Groonga from package, we can use this feature without doing anything special.
+      Because Groonga's package already include `xxHash <https://github.com/Cyan4973/xxHash>`_ .
+
+* [:doc:`reference/commands/select`] Added support for handling as the same dynamic column even if columns refer to different tables.
+
+  * We can't have handled the same dynamic column if columns refer to different tables until now.
+    Because the type of columns is different.
+
+  * However, from this version, we can handle the same dynamic column even if columns refer to different tables by casting to built-in types as below.
+
+    .. code-block::
+
+      table_create Store_A TABLE_HASH_KEY ShortText
+      table_create Store_B TABLE_HASH_KEY ShortText
+
+      table_create Customers TABLE_HASH_KEY Int32
+      column_create Customers customers_A COLUMN_VECTOR Store_A
+      column_create Customers customers_B COLUMN_VECTOR Store_B
+
+      load --table Customers
+      [
+        {"_key": 1604020694, "customers_A": ["A", "B", "C"]},
+        {"_key": 1602724694, "customers_B": ["Z", "V", "Y", "T"]},
+      ]
+
+      select Customers \
+        --filter '_key == 1604020694' \
+        --columns[customers].stage output \
+        --columns[customers].flags COLUMN_VECTOR \
+        --columns[customers].type ShortText \
+        --columns[customers].value 'customers_A' \
+        --output_columns '_key, customers'
+
+  * We have needed to set ``Store_A`` or ``Store_B`` in the ``type`` of ``customers`` column until now.
+  * The type of ``customers_A`` column cast to ``ShortText`` in the above example.
+  * By this, we can also set the value of ``customers_B`` in the value of ``customers`` column.
+    Because both the key of ``customers_A`` and ``customers_B`` are ``ShortText`` type.
+
+* [:doc:`reference/commands/select`] Improved performance when the number of records for search result are huge.
+
+  * This optimization works when below cases.
+
+    * ``--filter 'column <= "value"'`` or ``--filter 'column >= "value"'``
+    * ``--filter 'column == "value"'``
+    * ``--filter 'between(...)'`` or ``--filter 'between(_key, ...)'``
+    * ``--filter 'sub_filter(reference_column, ...)'``
+    * Comparing against ``_key`` such as ``--filter '_key > "value"'``.
+    * ``--filter 'geo_in_circle(...)'``
+
+* Updated bundled LZ4 to 1.9.2 from 1.8.2.
+
+* Added support xxHash 0.8
+
+* [httpd] Updated bundled nginx to 1.19.4.
+
+Fixes
+^^^^^
+
+* Fixed the following bugs related the browser based administration tool. [GitHub#1139][Reported by sutamin]
+
+  * The problem that Groonga's logo had not been displayed.
+  * The problem that the throughput chart had not been displayed on the index page for Japanese.
+
+* [:doc:`/reference/functions/between`] Fixed a bug that ``between(_key, ...)`` is always evaluated by sequential search.
+
+Thanks
+^^^^^^
+
+* sutamin
+
 .. _release-10-0-7:
 
 Release 10.0.7 - 2020-09-29
