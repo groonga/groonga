@@ -3,8 +3,8 @@ on:
   - push
   - pull_request
 jobs:
-  build:
-    name: Build
+  test:
+    name: Test
     runs-on: windows-2019
     steps:
       - uses: actions/checkout@v2
