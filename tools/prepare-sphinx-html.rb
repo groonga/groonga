@@ -129,6 +129,24 @@ def insert_facebook_html(html, language)
   html
 end
 
+def insert_google_analytics_html(html, language)
+  html.gsub(/<head>/) do
+    <<-HTML
+<head>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-7532323-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-7532323-1');
+    </script>
+    HTML
+  end
+end
+
 source_dir, dest_dir = ARGV
 
 source_dir = Pathname.new(source_dir)
@@ -156,6 +174,7 @@ language_dirs.each do |language_dir|
         content = fix_link(content, extension, language)
         if extension == "html"
           content = insert_facebook_html(content, language)
+          content = insert_google_analytics_html(content)
           content = add_language_annotation_to_source_label(content, language)
         end
         dest_path.open("wb") do |dest|
