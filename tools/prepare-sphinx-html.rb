@@ -129,7 +129,7 @@ def insert_facebook_html(html, language)
   html
 end
 
-def insert_google_analytics_html(html, language)
+def insert_google_analytics_html(html)
   html.gsub(/<head>/) do
     <<-HTML
 <head>
