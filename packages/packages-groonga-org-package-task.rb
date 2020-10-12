@@ -99,19 +99,19 @@ class PackagesGroongaOrgPackageTask < PackageTask
       archive = File.expand_path(url.split("/").last)
       rm_f(archive)
       sh("wget", url)
-      if target_namespace == :windows
-        mkdir_p("#{repositories_dir}/windows/groonga/#{archive}")
-        cd("#{repositories_dir}/windows/groonga/#{archive}") do
-          sh("unzip", archive)
-        end
-      else
+      case target_namespace
+      when :apt, :yum
         cd(repositories_dir) do
           sh("tar",
              "xf", archive,
              "--strip-components=#{built_package_n_split_components}")
         end
+        rm_f(archive)
+      else
+        download_dir = "#{repositories_dir}/#{target_namespace}/#{@package}"
+        mkdir_p(download_dir)
+        mv(archive, download_dir)
       end
-      rm_f(archive)
     end
   end
 
