@@ -17,12 +17,10 @@
 
 require_relative "../vendor/apache-arrow-source/dev/tasks/linux-packages/package-task"
 require_relative "launchpad-helper"
-require_relative "windows-helper"
 require_relative "repository-helper"
 
 class PackagesGroongaOrgPackageTask < PackageTask
   include LaunchpadHelper
-  include WindowsHelper
   include RepositoryHelper
 
   def define
@@ -61,6 +59,23 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
     task yum: ["yum:clean"]
     super
+  end
+
+  def enable_windows?
+    true
+  end
+
+  def windows_dir
+    "windows"
+  end
+
+  def windows_targets
+    return [] unless enable_windows?
+
+    targets = (ENV["WINDOWS_TARGETS"] || "").split(",")
+    return targets unless targets.empty?
+
+    windows_targets_default
   end
 
   def use_built_package?
