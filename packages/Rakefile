@@ -44,14 +44,18 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
 
   def windows_targets_default
     [
-      "x86-vs2019",
-      "x86-vs2019-with-vcruntime",
-      "x64-vs2019",
-      "x64-vs2019-with-vcruntime",
-      "x86-vs2017",
-      "x86-vs2017-with-vcruntime",
-      "x64-vs2017",
-      "x64-vs2017-with-vcruntime",
+      "#{@package}-#{@version}-x64-vs2019.zip",
+      "#{@package}-#{@version}-x64-vs2019-with-vcruntime.zip",
+      "#{@package}-#{@version}-x86-vs2019.zip",
+      "#{@package}-#{@version}-x86-vs2019-with-vcruntime.zip",
+      "#{@package}-#{@version}-x64-vs2017.zip",
+      "#{@package}-#{@version}-x64-vs2017-with-vcruntime.zip",
+      "#{@package}-#{@version}-x86-vs2017.zip",
+      "#{@package}-#{@version}-x86-vs2017-with-vcruntime.zip",
+      "#{@package}-#{@version}-x64.exe",
+      "#{@package}-#{@version}-x64.zip",
+      "#{@package}-#{@version}-x86.exe",
+      "#{@package}-#{@version}-x86.zip",
     ]
   end
 
@@ -64,9 +68,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     if target_namespace == :apt and !target.end_with?("-i386")
       url << "#{target}-amd64.tar.gz"
     elsif target_namespace == :windows
-      url << "groonga-#{@version}-#{target}"
-    else
-      url << "#{target}.tar.gz"
+      url << "#{target}"
     end
     url
   end
