@@ -69,6 +69,8 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       url << "#{target}-amd64.tar.gz"
     elsif target_namespace == :windows
       url << "#{target}"
+    else
+      url << "#{target}.tar.gz"
     end
     url
   end
