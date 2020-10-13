@@ -1292,7 +1292,7 @@ jQuery.extend(GroongaAdmin.prototype, {
     $("<div />")
       .attr("id", "loadingdialog")
       .attr("style", "text-align: center;")
-      .append($("<img />").attr("src", "images/loading.gif"))
+      .append($("<img />").attr("src", "assets/loading.gif"))
       .append(" Loading...")
       .dialog({
         title: "",
