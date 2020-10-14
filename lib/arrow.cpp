@@ -1135,7 +1135,11 @@ namespace grnarrow {
 
       auto schema = std::make_shared<arrow::Schema>(fields);
 
+#if ARROW_VERSION_MAJOR >= 2
+      auto writer_result = arrow::ipc::MakeFileWriter(output, schema);
+#else
       auto writer_result = arrow::ipc::NewFileWriter(output, schema);
+#endif
       if (!check(ctx_,
                  writer_result,
                  "[arrow][dump] failed to create file format writer")) {
@@ -1770,7 +1774,11 @@ namespace grnarrow {
       schema_builder_.Reset();
       schema_ = *schema;
 
+#if ARROW_VERSION_MAJOR >= 2
+      auto writer = arrow::ipc::MakeStreamWriter(&output_, schema_);
+#else
       auto writer = arrow::ipc::NewStreamWriter(&output_, schema_);
+#endif
       if (!check(ctx_,
                  writer,
                  "[arrow][stream-writer][write-schema] "
