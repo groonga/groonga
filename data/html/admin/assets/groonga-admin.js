@@ -585,7 +585,7 @@ jQuery.extend(GroongaAdmin.prototype, {
     return table;
   },
   show_edit_record: function(id) {
-    $('#table-tabs').tabs('select', 2);
+    $('#table-tabs').tabs("option", "active", 2);
     this.update_createrecord(this.current_table, id);
   },
   format_unix_time: function(unix_time) {
