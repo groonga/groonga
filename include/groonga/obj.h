@@ -31,7 +31,7 @@ extern "C" {
   result = grn_obj_is_true(ctx, obj);           \
 } while (0)
 
-GRN_API grn_bool grn_obj_is_true(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool grn_obj_is_true(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API bool grn_obj_is_temporary(grn_ctx *ctx, grn_obj *obj);
 

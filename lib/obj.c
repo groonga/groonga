@@ -28,11 +28,11 @@
 #include "grn_store.h"
 #include "grn_token_column.h"
 
-grn_bool
+bool
 grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) {
-    return GRN_FALSE;
+    return false;
   }
 
   switch (obj->header.type) {
@@ -40,41 +40,34 @@ grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
     switch (obj->header.domain) {
     case GRN_DB_BOOL :
       return GRN_BOOL_VALUE(obj);
-      break;
     case GRN_DB_INT32 :
       return GRN_INT32_VALUE(obj) != 0;
-      break;
     case GRN_DB_UINT32 :
       return GRN_UINT32_VALUE(obj) != 0;
-      break;
     case GRN_DB_FLOAT32 : {
       float float_value;
       float_value = GRN_FLOAT32_VALUE(obj);
       return grn_float32_is_zero(float_value);
-      break;
     }
     case GRN_DB_FLOAT : {
       double float_value;
       float_value = GRN_FLOAT_VALUE(obj);
       return grn_float_is_zero(float_value);
-      break;
     }
     case GRN_DB_SHORT_TEXT :
     case GRN_DB_TEXT :
     case GRN_DB_LONG_TEXT :
       return GRN_TEXT_LEN(obj) != 0;
-      break;
     default :
-      return GRN_FALSE;
-      break;
+      return false;
     }
     break;
   case GRN_VECTOR :
-    return GRN_TRUE;
-    break;
+    return true;
+  case GRN_UVECTOR :
+    return true;
   default :
-    return  GRN_FALSE;
-    break;
+    return false;
   }
 }
 

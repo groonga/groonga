@@ -1,0 +1,55 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "groonga is very fast", "tags": ["groonga"]},
+{"_key": "no tag"}
+]
+[[0,0.0,0.0],2]
+select Memos --filter 'tags || false'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "groonga is very fast",
+        [
+          "groonga"
+        ]
+      ],
+      [
+        2,
+        "no tag",
+        [
+
+        ]
+      ]
+    ]
+  ]
+]
