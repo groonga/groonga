@@ -1,0 +1,17 @@
+table_create Numbers TABLE_HASH_KEY UInt8
+
+table_create Items TABLE_NO_KEY
+column_create Items numbers COLUMN_VECTOR Numbers
+
+load --table Items
+[
+{"numbers": [1, 0, 2]},
+{"numbers": []},
+{"numbers": [255]}
+]
+
+select Items \
+  --columns[vector].stage initial \
+  --columns[vector].flags COLUMN_VECTOR \
+  --columns[vector].type UInt64 \
+  --columns[vector].value 'numbers'

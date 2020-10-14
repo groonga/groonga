@@ -1,0 +1,73 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Items TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Items tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"tags": ["A", "B", "C"]},
+{"tags": []},
+{"tags": ["X"]}
+]
+[[0,0.0,0.0],3]
+select Items   --columns[vector].stage initial   --columns[vector].flags COLUMN_VECTOR   --columns[vector].type ShortText   --columns[vector].value 'tags'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "vector",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        [
+          "A",
+          "B",
+          "C"
+        ],
+        [
+          "A",
+          "B",
+          "C"
+        ]
+      ],
+      [
+        2,
+        [
+
+        ],
+        [
+
+        ]
+      ],
+      [
+        3,
+        [
+          "X"
+        ],
+        [
+          "X"
+        ]
+      ]
+    ]
+  ]
+]

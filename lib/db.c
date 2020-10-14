@@ -5677,47 +5677,73 @@ grn_obj_cast_text(grn_ctx *ctx,
 }
 
 static grn_rc
-grn_obj_cast_record(grn_ctx *ctx,
-                    grn_obj *src,
-                    grn_obj *dest,
-                    grn_bool add_record_if_not_exist)
+grn_obj_cast_record_data(grn_ctx *ctx,
+                         grn_obj *src,
+                         grn_obj *src_table,
+                         grn_obj *dest)
 {
-  grn_obj *src_table;
-  grn_obj *dest_table;
-  const char *key;
-  uint32_t key_size;
-  grn_id dest_id;
+  grn_obj *key_accessor = grn_obj_column(ctx,
+                                         src_table,
+                                         GRN_COLUMN_NAME_KEY,
+                                         GRN_COLUMN_NAME_KEY_LEN);
+  if (!key_accessor) {
+    return ctx->rc;
+  }
 
-  if (src->header.domain == dest->header.domain) {
-    if (grn_obj_is_uvector(ctx, dest)) {
-      grn_uvector_add_element_record(ctx, dest, GRN_RECORD_VALUE(src), 0.0);
+  grn_rc rc = GRN_SUCCESS;
+  grn_obj key;
+  GRN_VOID_INIT(&key);
+  if (grn_obj_is_vector(ctx, dest)) {
+    if (grn_obj_is_uvector(ctx, src)) {
+      uint32_t i;
+      uint32_t n = grn_uvector_size(ctx, src);
+      for (i = 0; i < n; i++) {
+        GRN_BULK_REWIND(&key);
+        grn_id src_id = grn_uvector_get_element_record(ctx, src, i, NULL);
+        grn_obj_get_value(ctx, key_accessor, src_id, &key);
+        if (ctx->rc != GRN_SUCCESS) {
+          rc = ctx->rc;
+          break;
+        }
+        rc = grn_obj_cast(ctx, &key, dest, false);
+        if (rc != GRN_SUCCESS) {
+          break;
+        }
+      }
     } else {
-      GRN_RECORD_PUT(ctx, dest, GRN_RECORD_VALUE(src));
+      if (GRN_BULK_VSIZE(src) > 0) {
+        grn_obj_get_value(ctx, key_accessor, GRN_RECORD_VALUE(src), &key);
+        if (ctx->rc == GRN_SUCCESS) {
+          rc = grn_obj_cast(ctx, &key, dest, false);
+        } else {
+          rc = ctx->rc;
+        }
+      }
     }
-    return GRN_SUCCESS;
+  } else {
+    if (GRN_BULK_VSIZE(src) > 0) {
+      grn_obj_get_value(ctx, key_accessor, GRN_RECORD_VALUE(src), &key);
+      if (ctx->rc == GRN_SUCCESS) {
+        rc = grn_obj_cast(ctx, &key, dest, false);
+      } else {
+        rc = ctx->rc;
+      }
+    }
   }
+  GRN_OBJ_FIN(ctx, &key);
 
-  src_table = grn_ctx_at(ctx, src->header.domain);
-  if (!src_table) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  if (src_table->header.type == GRN_TABLE_NO_KEY) {
-    return GRN_INVALID_ARGUMENT;
-  }
+  grn_obj_unlink(ctx, key_accessor);
+  return rc;
+}
 
-  dest_table = grn_ctx_at(ctx, dest->header.domain);
-  if (!dest_table) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  switch (dest_table->header.type) {
-  case GRN_TABLE_HASH_KEY :
-  case GRN_TABLE_PAT_KEY :
-  case GRN_TABLE_DAT_KEY :
-    break;
-  default :
-    return GRN_INVALID_ARGUMENT;
-  }
-
+static grn_rc
+grn_obj_cast_record_record(grn_ctx *ctx,
+                           grn_obj *src,
+                           grn_obj *src_table,
+                           grn_obj *dest,
+                           grn_obj *dest_table,
+                           bool add_record_if_not_exist)
+{
   if (GRN_RECORD_VALUE(src) == GRN_ID_NIL) {
     if (grn_obj_is_uvector(ctx, dest)) {
       grn_uvector_add_element_record(ctx, dest, GRN_RECORD_VALUE(src), 0.0);
@@ -5727,18 +5753,84 @@ grn_obj_cast_record(grn_ctx *ctx,
     return GRN_SUCCESS;
   }
 
-  key = _grn_table_key(ctx, src_table, GRN_RECORD_VALUE(src), &key_size);
+  uint32_t key_size;
+  const char *key = _grn_table_key(ctx,
+                                   src_table,
+                                   GRN_RECORD_VALUE(src),
+                                   &key_size);
+  grn_id dest_id;
   if (add_record_if_not_exist) {
     dest_id = grn_table_add(ctx, dest_table, key, key_size, NULL);
   } else {
     dest_id = grn_table_get(ctx, dest_table, key, key_size);
   }
-    if (grn_obj_is_uvector(ctx, dest)) {
-      grn_uvector_add_element_record(ctx, dest, dest_id, 0.0);
-    } else {
-      GRN_RECORD_PUT(ctx, dest, dest_id);
-    }
+  if (grn_obj_is_uvector(ctx, dest)) {
+    grn_uvector_add_element_record(ctx, dest, dest_id, 0.0);
+  } else {
+    GRN_RECORD_PUT(ctx, dest, dest_id);
+  }
   return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_obj_cast_record(grn_ctx *ctx,
+                    grn_obj *src,
+                    grn_obj *dest,
+                    bool add_record_if_not_exist)
+{
+  grn_rc rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+  grn_obj *src_table = NULL;
+  grn_obj *dest_table = NULL;
+
+  if (src->header.domain == dest->header.domain) {
+    if (grn_obj_is_uvector(ctx, dest)) {
+      grn_uvector_add_element_record(ctx, dest, GRN_RECORD_VALUE(src), 0.0);
+    } else {
+      GRN_RECORD_PUT(ctx, dest, GRN_RECORD_VALUE(src));
+    }
+    rc = GRN_SUCCESS;
+    goto exit;
+  }
+
+  src_table = grn_ctx_at(ctx, src->header.domain);
+  if (!src_table) {
+    rc = GRN_INVALID_ARGUMENT;
+    goto exit;
+  }
+  if (src_table->header.type == GRN_TABLE_NO_KEY) {
+    rc = GRN_INVALID_ARGUMENT;
+    goto exit;
+  }
+
+  if (grn_type_id_is_builtin(ctx, dest->header.domain)) {
+    rc = grn_obj_cast_record_data(ctx,
+                                  src,
+                                  src_table,
+                                  dest);
+  } else {
+    dest_table = grn_ctx_at(ctx, dest->header.domain);
+    if (!dest_table) {
+      rc = GRN_INVALID_ARGUMENT;
+      goto exit;
+    }
+    if (!grn_obj_is_table_with_key(ctx, dest_table)) {
+      rc = GRN_INVALID_ARGUMENT;
+      goto exit;
+    }
+
+    rc = grn_obj_cast_record_record(ctx,
+                                    src,
+                                    src_table,
+                                    dest,
+                                    dest_table,
+                                    add_record_if_not_exist);
+  }
+
+exit :
+  grn_obj_unref(ctx, src_table);
+  grn_obj_unref(ctx, dest_table);
+
+  return rc;
 }
 
 grn_rc

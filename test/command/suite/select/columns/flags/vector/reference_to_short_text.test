@@ -1,0 +1,17 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Items TABLE_NO_KEY
+column_create Items tags COLUMN_VECTOR Tags
+
+load --table Items
+[
+{"tags": ["A", "B", "C"]},
+{"tags": []},
+{"tags": ["X"]}
+]
+
+select Items \
+  --columns[vector].stage initial \
+  --columns[vector].flags COLUMN_VECTOR \
+  --columns[vector].type ShortText \
+  --columns[vector].value 'tags'

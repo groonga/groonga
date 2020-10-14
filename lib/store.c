@@ -2620,7 +2620,7 @@ grn_ja_cast_value_vector_var_uvector(grn_ctx *ctx,
   GRN_VALUE_FIX_SIZE_INIT(&element,
                           GRN_OBJ_DO_SHALLOW_COPY,
                           value->header.domain);
-  GRN_VALUE_FIX_SIZE_INIT(&casted_element, 0, ja->obj.range);
+  GRN_VALUE_VAR_SIZE_INIT(&casted_element, 0, ja->obj.range);
   const char *value_raw = GRN_BULK_HEAD(value);
   uint32_t i;
   for (i = 0; i < n; i++) {
