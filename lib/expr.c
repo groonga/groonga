@@ -25,6 +25,7 @@
 #include "grn_ctx_impl_mrb.h"
 #include <string.h>
 #include "grn_ii.h"
+#include "grn_index_cursor.h"
 #include "grn_geo.h"
 #include "grn_expr.h"
 #include "grn_expr_code.h"
@@ -4488,51 +4489,36 @@ grn_table_select_index_range_column(grn_ctx *ctx,
                                    min, min_size, max, max_size,
                                    offset, limit, flags);
     if (cursor) {
-      grn_id tid;
-      uint32_t sid;
-      int32_t weight;
-      grn_ii *ii = (grn_ii *)index;
-
-      sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
-      weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
-      while ((tid = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
-        grn_ii_cursor *ii_cursor;
-
-        ii_cursor = grn_ii_cursor_open(ctx, ii, tid,
-                                       GRN_ID_NIL, GRN_ID_MAX,
-                                       ii->n_elements, 0);
-        if (ii_cursor) {
-          grn_posting *posting;
-          while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
-            grn_posting_internal new_posting;
-
-            if (!(sid == 0 || posting->sid == sid)) {
-              continue;
-            }
-
-            if (si->position.specified) {
-              while ((posting = grn_ii_cursor_next_pos(ctx, ii_cursor))) {
-                if (posting->pos == si->position.start) {
-                  break;
-                }
-              }
-              if (!posting) {
-                continue;
-              }
-            }
-
-            new_posting = *((grn_posting_internal *)posting);
-            new_posting.weight_float += 1;
-            new_posting.weight_float *= weight;
-            grn_ii_posting_add_float(ctx,
-                                     (grn_posting *)(&new_posting),
-                                     (grn_hash *)res,
-                                     logical_op);
-          }
+      uint32_t sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
+      int32_t weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
+      grn_obj *index_cursor = grn_index_cursor_open(ctx,
+                                                    cursor,
+                                                    index,
+                                                    GRN_ID_NIL,
+                                                    GRN_ID_MAX,
+                                                    0);
+      if (index_cursor) {
+        grn_index_cursor_set_section_id(ctx, index_cursor, sid);
+        if (si->position.specified) {
+          grn_index_cursor_set_start_position(ctx,
+                                              index_cursor,
+                                              si->position.start);
         }
-        grn_ii_cursor_close(ctx, ii_cursor);
+        grn_posting *posting;
+        while ((posting = grn_index_cursor_next_internal(ctx,
+                                                         index_cursor,
+                                                         NULL))) {
+          grn_posting_internal new_posting = *((grn_posting_internal *)posting);
+          new_posting.weight_float += 1;
+          new_posting.weight_float *= weight;
+          grn_ii_posting_add_float(ctx,
+                                   (grn_posting *)(&new_posting),
+                                   (grn_hash *)res,
+                                   logical_op);
+        }
+        grn_obj_close(ctx, index_cursor);
+        rc = GRN_SUCCESS;
       }
-      rc = GRN_SUCCESS;
       grn_table_cursor_close(ctx, cursor);
     }
 

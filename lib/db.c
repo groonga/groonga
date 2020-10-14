@@ -51,6 +51,7 @@
 #include "grn_type.h"
 #include "grn_posting.h"
 #include "grn_vector.h"
+#include "grn_index_cursor.h"
 #include <string.h>
 #include <math.h>
 
@@ -3259,80 +3260,6 @@ grn_table_cursor_get_max_n_records(grn_ctx *ctx, grn_table_cursor *cursor)
     }
   }
   GRN_API_RETURN(max_n_records);
-}
-
-typedef struct {
-  grn_db_obj obj;
-  grn_obj *index;
-  grn_table_cursor *tc;
-  grn_ii_cursor *iic;
-  grn_id tid;
-  grn_id rid_min;
-  grn_id rid_max;
-  int flags;
-} grn_index_cursor;
-
-grn_obj *
-grn_index_cursor_open(grn_ctx *ctx, grn_table_cursor *tc,
-                      grn_obj *index, grn_id rid_min, grn_id rid_max, int flags)
-{
-  grn_index_cursor *ic = NULL;
-  GRN_API_ENTER;
-  if (tc && (ic = GRN_MALLOCN(grn_index_cursor, 1))) {
-    ic->tc = tc;
-    ic->index = index;
-    ic->iic = NULL;
-    ic->tid = GRN_ID_NIL;
-    ic->rid_min = rid_min;
-    ic->rid_max = rid_max;
-    ic->flags = flags;
-    GRN_DB_OBJ_SET_TYPE(ic, GRN_CURSOR_COLUMN_INDEX);
-    {
-      grn_id id = grn_obj_register(ctx, ctx->impl->db, NULL, 0);
-      DB_OBJ(ic)->header.domain = GRN_ID_NIL;
-      DB_OBJ(ic)->range = GRN_ID_NIL;
-      grn_db_obj_init(ctx, ctx->impl->db, id, DB_OBJ(ic));
-    }
-  }
-  GRN_API_RETURN((grn_obj *)ic);
-}
-
-grn_posting *
-grn_index_cursor_next(grn_ctx *ctx, grn_obj *c, grn_id *tid)
-{
-  grn_posting *ip = NULL;
-  grn_index_cursor *ic = (grn_index_cursor *)c;
-  GRN_API_ENTER;
-  if (ic->iic) {
-    if (ic->flags & GRN_OBJ_WITH_POSITION) {
-      ip = grn_ii_cursor_next_pos(ctx, ic->iic);
-      while (!ip && grn_ii_cursor_next(ctx, ic->iic)) {
-        ip = grn_ii_cursor_next_pos(ctx, ic->iic);
-        break;
-      }
-    } else {
-      ip = grn_ii_cursor_next(ctx, ic->iic);
-    }
-  }
-  if (!ip) {
-    while ((ic->tid = grn_table_cursor_next_inline(ctx, ic->tc))) {
-      grn_ii *ii = (grn_ii *)ic->index;
-      if (ic->iic) { grn_ii_cursor_close(ctx, ic->iic); }
-      if ((ic->iic = grn_ii_cursor_open(ctx, ii, ic->tid,
-                                        ic->rid_min, ic->rid_max,
-                                        ii->n_elements, ic->flags))) {
-        ip = grn_ii_cursor_next(ctx, ic->iic);
-        if (ip && ic->flags & GRN_OBJ_WITH_POSITION) {
-          ip = grn_ii_cursor_next_pos(ctx, ic->iic);
-        }
-        if (ip) {
-          break;
-        }
-      }
-    }
-  }
-  if (tid) { *tid = ic->tid; }
-  GRN_API_RETURN((grn_posting *)ip);
 }
 
 grn_rc
@@ -11432,11 +11359,7 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       grn_array_cursor_close(ctx, (grn_array_cursor *)obj);
       break;
     case GRN_CURSOR_COLUMN_INDEX :
-      {
-        grn_index_cursor *ic = (grn_index_cursor *)obj;
-        if (ic->iic) { grn_ii_cursor_close(ctx, ic->iic); }
-        GRN_FREE(ic);
-      }
+      grn_index_cursor_close(ctx, obj);
       break;
     case GRN_CURSOR_COLUMN_GEO_INDEX :
       grn_geo_cursor_close(ctx, obj);

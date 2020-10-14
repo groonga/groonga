@@ -46,6 +46,7 @@ libgroonga_c_sources =				\
 	grn_hash.h				\
 	grn_ii.h				\
 	grn_index_column.h			\
+	grn_index_cursor.h			\
 	grn_io.h				\
 	grn_load.h				\
 	grn_logger.h				\
@@ -97,6 +98,7 @@ libgroonga_c_sources =				\
 	id.c					\
 	ii.c					\
 	index_column.c				\
+	index_cursor.c				\
 	io.c					\
 	load.c					\
 	logger.c				\

@@ -82,9 +82,34 @@ GRN_API size_t
 grn_table_cursor_get_max_n_records(grn_ctx *ctx, grn_table_cursor *cursor);
 GRN_API grn_obj *grn_table_cursor_table(grn_ctx *ctx, grn_table_cursor *tc);
 
-GRN_API grn_obj *grn_index_cursor_open(grn_ctx *ctx, grn_table_cursor *tc, grn_obj *index,
-                                       grn_id rid_min, grn_id rid_max, int flags);
-GRN_API grn_posting *grn_index_cursor_next(grn_ctx *ctx, grn_obj *ic, grn_id *tid);
+GRN_API grn_obj *
+grn_index_cursor_open(grn_ctx *ctx,
+                      grn_table_cursor *tc,
+                      grn_obj *index,
+                      grn_id rid_min,
+                      grn_id rid_max,
+                      int flags);
+GRN_API grn_rc
+grn_index_cursor_set_section_id(grn_ctx *ctx,
+                                grn_obj *index_cursor,
+                                uint32_t section_id);
+GRN_API uint32_t
+grn_index_cursor_get_section_id(grn_ctx *ctx,
+                                grn_obj *index_cursor);
+GRN_API grn_rc
+grn_index_cursor_set_start_position(grn_ctx *ctx,
+                                    grn_obj *index_cursor,
+                                    uint32_t position);
+GRN_API grn_rc
+grn_index_cursor_reset_start_position(grn_ctx *ctx,
+                                      grn_obj *index_cursor);
+GRN_API uint32_t
+grn_index_cursor_get_start_position(grn_ctx *ctx,
+                                    grn_obj *index_cursor);
+GRN_API grn_posting *
+grn_index_cursor_next(grn_ctx *ctx,
+                      grn_obj *index_cursor,
+                      grn_id *term_id);
 
 typedef grn_rc (*grn_table_cursor_foreach_func)(grn_ctx *ctx,
                                                 grn_table_cursor *cursor,
