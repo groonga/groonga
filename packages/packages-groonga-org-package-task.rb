@@ -90,6 +90,12 @@ class PackagesGroongaOrgPackageTask < PackageTask
     0
   end
 
+  def create_latest_link(archive)
+    archive_base_name = File.basename(archive)
+    latest_link_base_name = archive_base_name.gsub("#{@version}", "latest")
+    File.symlink(archive_base_name, latest_link_base_name)
+  end
+
   def download_packages(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
@@ -108,6 +114,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
         end
         rm_f(archive)
       else
+        create_latest_link(archive)
         download_dir = "#{repositories_dir}/#{target_namespace}/#{@package}"
         mkdir_p(download_dir)
         mv(archive, download_dir)
