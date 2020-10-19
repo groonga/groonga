@@ -97,6 +97,32 @@ class PackagesGroongaOrgPackageTask < PackageTask
     latest_link_base_name
   end
 
+  def bundle_packages
+    [
+      "groonga-normalizer-mysql",
+      "lz4",
+      "mecab",
+      "msgpack",
+      "rapidjson",
+      "xxHash",
+    ]
+  end
+
+  def download_bundle_packages(download_dir)
+    Dir.glob("../vendor/download_*") do |download_script|
+      require "#{download_script}"
+    end
+    source_archive_dir = "#{download_dir}/groonga-#{@version}"
+    mkdir_p("#{source_archive_dir}")
+    bundle_packages.each do |bundle_package|
+      Dir.glob("./#{bundle_package}-*") do |package_dir|
+        sh("tar", "zcf", "#{package_dir}.tar.gz", "#{package_dir}")
+        mv("#{package_dir}.tar.gz", source_archive_dir)
+        rm_rf("#{package_dir}")
+      end
+    end
+  end
+
   end
 
   def download_packages(target_namespace)
