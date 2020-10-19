@@ -123,6 +123,15 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
   end
 
+  def build_source_archive_url
+    "http://packages.groonga.org/source/groonga/groonga-#{@version}.tar.gz"
+  end
+
+  def download_source_archives(download_dir)
+    url = build_source_archive_url
+    sh("wget", url)
+    mv("groonga-#{@version}.tar.gz", download_dir)
+    download_bundle_packages(download_dir)
   end
 
   def download_packages(target_namespace)
