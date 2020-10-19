@@ -238,7 +238,7 @@ function GroongaAdmin() {
   }).change();
 
   $('#table-tab-recordlist-full-checkbox').change(function() {
-    if ($(this).attr('checked')) {
+    if ($(this).prop('checked')) {
       $('#table-tab-recordlist-form-simple').hide();
       $('#table-tab-recordlist-form-full').show();
     } else {
@@ -249,7 +249,7 @@ function GroongaAdmin() {
 
   $('#tab-recordlist-incremental').change(function() {
     $('#tab-recordlist-simplequery').unbind('keyup');
-    if ($(this).attr('checked') &&
+    if ($(this).prop('checked') &&
         $('#tab-recordlist-simplequerytype').val() != 'scorer') {
       $('#tab-recordlist-simplequery').keyup(function(e) {
         that.recordlist_simple(
