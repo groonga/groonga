@@ -138,6 +138,9 @@ class PackagesGroongaOrgPackageTask < PackageTask
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
     mkdir_p(repositories_dir)
+    download_dir = "#{repositories_dir}/#{target_namespace}/#{@package}"
+    mkdir_p(download_dir)
+
     __send__("#{target_namespace}_targets").each do |target|
       url = built_package_url(target_namespace, target)
       archive = File.expand_path(url.split("/").last)
@@ -151,10 +154,6 @@ class PackagesGroongaOrgPackageTask < PackageTask
              "--strip-components=#{built_package_n_split_components}")
         end
         rm_f(archive)
-      else
-        create_latest_link(archive)
-        download_dir = "#{repositories_dir}/#{target_namespace}/#{@package}"
-        mkdir_p(download_dir)
         mv(archive, download_dir)
       end
     end
