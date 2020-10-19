@@ -157,6 +157,8 @@ class PackagesGroongaOrgPackageTask < PackageTask
              "--strip-components=#{built_package_n_split_components}")
         end
         rm_f(archive)
+      when :windows
+        mv(create_latest_link(archive), download_dir)
         mv(archive, download_dir)
       end
     end
