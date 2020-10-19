@@ -94,6 +94,9 @@ class PackagesGroongaOrgPackageTask < PackageTask
     archive_base_name = File.basename(archive)
     latest_link_base_name = archive_base_name.gsub("#{@version}", "latest")
     File.symlink(archive_base_name, latest_link_base_name)
+    latest_link_base_name
+  end
+
   end
 
   def download_packages(target_namespace)
