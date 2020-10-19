@@ -79,6 +79,19 @@ grn_index_cursor_close(grn_ctx *ctx, grn_obj *index_cursor)
   GRN_FREE(ic);
 }
 
+grn_obj *
+grn_index_cursor_get_table(grn_ctx *ctx,
+                           grn_obj *index_cursor)
+{
+  GRN_API_ENTER;
+  grn_index_cursor *ic = (grn_index_cursor *)index_cursor;
+  grn_obj *table = NULL;
+  if (ic) {
+    table = grn_table_cursor_table(ctx, ic->tc);
+  }
+  GRN_API_RETURN(table);
+}
+
 grn_rc
 grn_index_cursor_set_section_id(grn_ctx *ctx,
                                 grn_obj *index_cursor,

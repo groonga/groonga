@@ -89,6 +89,9 @@ grn_index_cursor_open(grn_ctx *ctx,
                       grn_id rid_min,
                       grn_id rid_max,
                       int flags);
+GRN_API grn_obj *
+grn_index_cursor_get_table(grn_ctx *ctx,
+                           grn_obj *index_cursor);
 GRN_API grn_rc
 grn_index_cursor_set_section_id(grn_ctx *ctx,
                                 grn_obj *index_cursor,
