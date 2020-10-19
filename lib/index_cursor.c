@@ -23,7 +23,7 @@
 
 typedef struct {
   grn_db_obj obj;
-  grn_obj *index;
+  grn_obj *index_column;
   grn_table_cursor *tc;
   grn_ii_cursor *iic;
   grn_id tid;
@@ -40,7 +40,7 @@ typedef struct {
 grn_obj *
 grn_index_cursor_open(grn_ctx *ctx,
                       grn_table_cursor *tc,
-                      grn_obj *index,
+                      grn_obj *index_column,
                       grn_id rid_min,
                       grn_id rid_max,
                       int flags)
@@ -49,7 +49,7 @@ grn_index_cursor_open(grn_ctx *ctx,
   GRN_API_ENTER;
   if (tc && (ic = GRN_MALLOCN(grn_index_cursor, 1))) {
     ic->tc = tc;
-    ic->index = index;
+    ic->index_column = index_column;
     ic->iic = NULL;
     ic->tid = GRN_ID_NIL;
     ic->rid_min = rid_min;
@@ -90,6 +90,19 @@ grn_index_cursor_get_table(grn_ctx *ctx,
     table = grn_table_cursor_table(ctx, ic->tc);
   }
   GRN_API_RETURN(table);
+}
+
+grn_obj *
+grn_index_cursor_get_index_column(grn_ctx *ctx,
+                                    grn_obj *index_cursor)
+{
+  GRN_API_ENTER;
+  grn_index_cursor *ic = (grn_index_cursor *)index_cursor;
+  grn_obj *index_column = NULL;
+  if (ic) {
+    index_column = ic->index_column;
+  }
+  GRN_API_RETURN(index_column);
 }
 
 grn_rc
@@ -217,7 +230,7 @@ grn_index_cursor_next_internal(grn_ctx *ctx,
     if (ic->tid == GRN_ID_NIL) {
       break;
     }
-    grn_ii *ii = (grn_ii *)ic->index;
+    grn_ii *ii = (grn_ii *)ic->index_column;
     if (ic->iic) {
       grn_ii_cursor_close(ctx, ic->iic);
     }
