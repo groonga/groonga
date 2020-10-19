@@ -358,6 +358,11 @@ grn_hash_add_table_cursor(grn_ctx *ctx,
                           grn_hash *hash,
                           grn_table_cursor *cursor,
                           double score);
+grn_rc
+grn_hash_add_index_cursor(grn_ctx *ctx,
+                          grn_hash *hash,
+                          grn_obj *cursor,
+                          double weight);
 
 int grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
                            void *keybuf, int bufsize, void *valuebuf);
