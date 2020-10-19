@@ -4504,20 +4504,12 @@ grn_table_select_index_range_column(grn_ctx *ctx,
                                               index_cursor,
                                               si->position.start);
         }
-        grn_posting *posting;
-        while ((posting = grn_index_cursor_next_internal(ctx,
-                                                         index_cursor,
-                                                         NULL))) {
-          grn_posting_internal new_posting = *((grn_posting_internal *)posting);
-          new_posting.weight_float += 1;
-          new_posting.weight_float *= weight;
-          grn_ii_posting_add_float(ctx,
-                                   (grn_posting *)(&new_posting),
-                                   (grn_hash *)res,
-                                   logical_op);
-        }
+        rc = grn_result_set_add_index_cursor(ctx,
+                                             (grn_hash *)res,
+                                             index_cursor,
+                                             weight,
+                                             logical_op);
         grn_obj_close(ctx, index_cursor);
-        rc = GRN_SUCCESS;
       }
       grn_table_cursor_close(ctx, cursor);
     }
