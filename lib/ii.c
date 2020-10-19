@@ -9530,6 +9530,55 @@ grn_result_set_add_table_cursor(grn_ctx *ctx,
   }
 }
 
+grn_rc
+grn_result_set_add_index_cursor(grn_ctx *ctx,
+                                grn_hash *result_set,
+                                grn_obj *cursor,
+                                double weight,
+                                grn_operator op)
+{
+  grn_obj *index_column = grn_index_cursor_get_index_column(ctx, cursor);
+  if (result_set->obj.header.domain != DB_OBJ(index_column)->range) {
+    grn_obj result_set_inspected;
+    grn_obj index_column_inspected;
+    GRN_TEXT_INIT(&result_set_inspected, 0);
+    GRN_TEXT_INIT(&index_column_inspected, 0);
+    grn_inspect_limited(ctx, &result_set_inspected, (grn_obj *)result_set);
+    grn_inspect_limited(ctx, &index_column_inspected, index_column);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[result-set][add-index-cursor] "
+        "not an index column for the result set: %.*s: %.*s",
+        (int)GRN_TEXT_LEN(&result_set_inspected),
+        GRN_TEXT_VALUE(&result_set_inspected),
+        (int)GRN_TEXT_LEN(&index_column_inspected),
+        GRN_TEXT_VALUE(&index_column_inspected));
+    GRN_OBJ_FIN(ctx, &result_set_inspected);
+    GRN_OBJ_FIN(ctx, &index_column_inspected);
+    return ctx->rc;
+  }
+
+  if (op == GRN_OP_OR) {
+    return grn_hash_add_index_cursor(ctx, result_set, cursor, weight);
+  } else {
+    grn_id term_id;
+    grn_posting *posting;
+    while ((posting = grn_index_cursor_next(ctx, cursor, &term_id))) {
+      grn_rset_posinfo posinfo = {
+        posting->rid,
+        posting->sid,
+        posting->pos,
+      };
+      grn_posting_internal *posting_internal = (grn_posting_internal *)posting;
+      double score = (posting_internal->weight_float + 1) * weight;
+      grn_rset_add_record(ctx, result_set, &posinfo, score, op);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+    }
+    return ctx->rc;
+  }
+}
+
 grn_inline static void
 res_add(grn_ctx *ctx,
         grn_hash *s,
