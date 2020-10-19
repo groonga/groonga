@@ -141,6 +141,9 @@ class PackagesGroongaOrgPackageTask < PackageTask
     download_dir = "#{repositories_dir}/#{target_namespace}/#{@package}"
     mkdir_p(download_dir)
 
+    if target_namespace == :windows
+      download_source_archives(download_dir)
+    end
     __send__("#{target_namespace}_targets").each do |target|
       url = built_package_url(target_namespace, target)
       archive = File.expand_path(url.split("/").last)
