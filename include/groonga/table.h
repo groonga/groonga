@@ -93,6 +93,10 @@ GRN_API grn_obj *
 grn_index_cursor_get_index_column(grn_ctx *ctx,
                                   grn_obj *index_cursor);
 GRN_API grn_rc
+grn_index_cursor_set_term_id(grn_ctx *ctx,
+                             grn_obj *index_cursor,
+                             grn_id term_id);
+GRN_API grn_rc
 grn_index_cursor_set_section_id(grn_ctx *ctx,
                                 grn_obj *index_cursor,
                                 uint32_t section_id);

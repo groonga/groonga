@@ -26,7 +26,8 @@ typedef struct {
   grn_obj *index_column;
   grn_table_cursor *tc;
   grn_ii_cursor *iic;
-  grn_id tid;
+  grn_id term_id;
+  grn_id input_term_id;
   grn_id rid_min;
   grn_id rid_max;
   int flags;
@@ -45,26 +46,29 @@ grn_index_cursor_open(grn_ctx *ctx,
                       grn_id rid_max,
                       int flags)
 {
-  grn_index_cursor *ic = NULL;
   GRN_API_ENTER;
-  if (tc && (ic = GRN_MALLOCN(grn_index_cursor, 1))) {
-    ic->tc = tc;
-    ic->index_column = index_column;
-    ic->iic = NULL;
-    ic->tid = GRN_ID_NIL;
-    ic->rid_min = rid_min;
-    ic->rid_max = rid_max;
-    ic->flags = flags;
-    ic->section_id = 0;
-    ic->position.specified = false;
-    ic->position.start = 0;
-    GRN_DB_OBJ_SET_TYPE(ic, GRN_CURSOR_COLUMN_INDEX);
-    {
-      grn_id id = grn_obj_register(ctx, ctx->impl->db, NULL, 0);
-      DB_OBJ(ic)->header.domain = GRN_ID_NIL;
-      DB_OBJ(ic)->range = GRN_ID_NIL;
-      grn_db_obj_init(ctx, ctx->impl->db, id, DB_OBJ(ic));
-    }
+  grn_index_cursor *ic = GRN_MALLOCN(grn_index_cursor, 1);
+  if (!ic) {
+    GRN_API_RETURN(NULL);
+  }
+
+  ic->tc = tc;
+  ic->index_column = index_column;
+  ic->iic = NULL;
+  ic->term_id = GRN_ID_NIL;
+  ic->input_term_id = GRN_ID_NIL;
+  ic->rid_min = rid_min;
+  ic->rid_max = rid_max;
+  ic->flags = flags;
+  ic->section_id = 0;
+  ic->position.specified = false;
+  ic->position.start = 0;
+  GRN_DB_OBJ_SET_TYPE(ic, GRN_CURSOR_COLUMN_INDEX);
+  {
+    grn_id id = grn_obj_register(ctx, ctx->impl->db, NULL, 0);
+    DB_OBJ(ic)->header.domain = GRN_ID_NIL;
+    DB_OBJ(ic)->range = GRN_ID_NIL;
+    grn_db_obj_init(ctx, ctx->impl->db, id, DB_OBJ(ic));
   }
   GRN_API_RETURN((grn_obj *)ic);
 }
@@ -90,6 +94,29 @@ grn_index_cursor_get_index_column(grn_ctx *ctx,
     index_column = ic->index_column;
   }
   GRN_API_RETURN(index_column);
+}
+
+grn_rc
+grn_index_cursor_set_term_id(grn_ctx *ctx,
+                             grn_obj *index_cursor,
+                             grn_id term_id)
+{
+  grn_index_cursor *cursor = (grn_index_cursor *)index_cursor;
+  GRN_API_ENTER;
+  if (!cursor) {
+    ERR(GRN_INVALID_ARGUMENT, "[index-cursor][set-term-id] must not NULL");
+    goto exit;
+  }
+  if (cursor->tc) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[index-cursor][set-term-id] "
+        "setting term ID against index cursor with table cursor "
+        "isn't supported");
+    goto exit;
+  }
+  cursor->input_term_id = term_id;
+exit :
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc
@@ -213,8 +240,13 @@ grn_index_cursor_next_internal(grn_ctx *ctx,
       break;
     }
 
-    ic->tid = grn_table_cursor_next(ctx, ic->tc);
-    if (ic->tid == GRN_ID_NIL) {
+    if (ic->tc) {
+      ic->term_id = grn_table_cursor_next(ctx, ic->tc);
+    } else {
+      ic->term_id = ic->input_term_id;
+      ic->input_term_id = GRN_ID_NIL;
+    }
+    if (ic->term_id == GRN_ID_NIL) {
       break;
     }
     grn_ii *ii = (grn_ii *)ic->index_column;
@@ -223,14 +255,14 @@ grn_index_cursor_next_internal(grn_ctx *ctx,
     }
     ic->iic = grn_ii_cursor_open(ctx,
                                  ii,
-                                 ic->tid,
+                                 ic->term_id,
                                  ic->rid_min,
                                  ic->rid_max,
                                  ii->n_elements,
                                  ic->flags);
   }
   if (term_id) {
-    *term_id = ic->tid;
+    *term_id = ic->term_id;
   }
   return posting;
 }
