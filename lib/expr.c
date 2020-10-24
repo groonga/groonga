@@ -3868,54 +3868,42 @@ grn_table_select_index_equal(grn_ctx *ctx,
     }
 
     if (domain) {
-      grn_id tid;
-
       grn_table_select_index_report(ctx, tag, index);
 
-      tid = grn_table_select_index_resolve_key(ctx, domain, si->query);
-      if (tid != GRN_ID_NIL) {
-        uint32_t sid;
-        int32_t weight;
-        grn_ii *ii = (grn_ii *)index;
-        grn_ii_cursor *ii_cursor;
-
-        sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
-        weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
-        ii_cursor = grn_ii_cursor_open(ctx, ii, tid,
-                                       GRN_ID_NIL, GRN_ID_MAX,
-                                       ii->n_elements, 0);
-        if (ii_cursor) {
-          grn_posting *posting;
-          while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
-            grn_posting_internal new_posting;
-
-            if (!(sid == 0 || posting->sid == sid)) {
-              continue;
-            }
-
-            if (si->position.specified) {
-              while ((posting = grn_ii_cursor_next_pos(ctx, ii_cursor))) {
-                if (posting->pos == si->position.start) {
-                  break;
-                }
-              }
-              if (!posting) {
-                continue;
-              }
-            }
-
-            new_posting = *((grn_posting_internal *)posting);
-            new_posting.weight_float += 1;
-            new_posting.weight_float *= weight;
-            grn_ii_posting_add_float(ctx,
-                                     (grn_posting *)(&new_posting),
-                                     (grn_hash *)res,
-                                     logical_op);
+      grn_id tid = grn_table_select_index_resolve_key(ctx, domain, si->query);
+      if (tid == GRN_ID_NIL) {
+        rc = GRN_SUCCESS;
+      } else {
+        uint32_t sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
+        int32_t weight =GRN_INT32_VALUE_AT(&(si->wv), 1);
+        grn_obj *index_cursor = grn_index_cursor_open(ctx,
+                                                      NULL,
+                                                      index,
+                                                      GRN_ID_NIL,
+                                                      GRN_ID_MAX,
+                                                      0);
+        if (index_cursor) {
+          rc = grn_index_cursor_set_term_id(ctx, index_cursor, tid);
+          if (rc == GRN_SUCCESS) {
+            rc = grn_index_cursor_set_section_id(ctx, index_cursor, sid);
           }
-          grn_ii_cursor_close(ctx, ii_cursor);
+          if (si->position.specified) {
+            if (rc == GRN_SUCCESS) {
+              rc = grn_index_cursor_set_start_position(ctx,
+                                                       index_cursor,
+                                                       si->position.start);
+            }
+          }
+          if (rc == GRN_SUCCESS) {
+            rc = grn_result_set_add_index_cursor(ctx,
+                                                 (grn_hash *)res,
+                                                 index_cursor,
+                                                 weight,
+                                                 logical_op);
+          }
+          grn_obj_close(ctx, index_cursor);
         }
       }
-      rc = GRN_SUCCESS;
 
       if (grn_enable_reference_count) {
         grn_obj_unlink(ctx, domain);
