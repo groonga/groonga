@@ -7661,41 +7661,6 @@ grn_expr_snip(grn_ctx *ctx, grn_obj *expr, int flags,
   GRN_API_RETURN(res);
 }
 
-/*
-  So far, grn_column_filter() is nothing but a very rough prototype.
-  Although GRN_COLUMN_EACH() can accelerate many range queries,
-  the following stuff must be resolved one by one.
-
-  * support accessors as column
-  * support tables which have deleted records
-  * support various operators
-  * support various column types
-*/
-grn_rc
-grn_column_filter(grn_ctx *ctx, grn_obj *column,
-                  grn_operator operator,
-                  grn_obj *value, grn_obj *result_set,
-                  grn_operator set_operation)
-{
-  uint32_t *vp;
-  grn_posting_internal posting = {0};
-  uint32_t value_ = grn_atoui(GRN_TEXT_VALUE(value), GRN_BULK_CURR(value), NULL);
-  posting.sid = 1;
-  posting.pos = 0;
-  posting.weight_float = 1;
-  GRN_COLUMN_EACH(ctx, column, id, vp, {
-    if (*vp < value_) {
-      posting.rid = id;
-      grn_ii_posting_add_float(ctx,
-                               (grn_posting *)(&posting),
-                               (grn_hash *)result_set,
-                               set_operation);
-    }
-  });
-  grn_ii_resolve_sel_and(ctx, (grn_hash *)result_set, set_operation);
-  return ctx->rc;
-}
-
 grn_rc
 grn_expr_syntax_escape(grn_ctx *ctx, const char *string, int string_size,
                        const char *target_characters,

@@ -531,11 +531,6 @@ grn_rc grn_table_parse_load_columns(grn_ctx *ctx,
                                     size_t input_size,
                                     grn_obj *columns);
 
-GRN_API grn_rc grn_column_filter(grn_ctx *ctx, grn_obj *column,
-                                 grn_operator op,
-                                 grn_obj *value, grn_obj *result_set,
-                                 grn_operator set_op);
-
 typedef struct {
   grn_id target;
   unsigned int section;
