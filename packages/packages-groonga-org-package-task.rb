@@ -97,43 +97,6 @@ class PackagesGroongaOrgPackageTask < PackageTask
     latest_link_base_name
   end
 
-  def bundle_packages
-    [
-      "groonga-normalizer-mysql",
-      "lz4",
-      "mecab",
-      "msgpack",
-      "rapidjson",
-      "xxHash",
-    ]
-  end
-
-  def download_bundle_packages(download_dir)
-    Dir.glob("../vendor/download_*") do |download_script|
-      require "#{download_script}"
-    end
-    source_archive_dir = "#{download_dir}/groonga-#{@version}"
-    mkdir_p("#{source_archive_dir}")
-    bundle_packages.each do |bundle_package|
-      Dir.glob("./#{bundle_package}-*") do |package_dir|
-        sh("tar", "zcf", "#{package_dir}.tar.gz", "#{package_dir}")
-        mv("#{package_dir}.tar.gz", source_archive_dir)
-        rm_rf("#{package_dir}")
-      end
-    end
-  end
-
-  def build_source_archive_url
-    "http://packages.groonga.org/source/groonga/groonga-#{@version}.tar.gz"
-  end
-
-  def download_source_archives(download_dir)
-    url = build_source_archive_url
-    sh("wget", url)
-    mv("groonga-#{@version}.tar.gz", download_dir)
-    download_bundle_packages(download_dir)
-  end
-
   def download_packages(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
@@ -141,9 +104,6 @@ class PackagesGroongaOrgPackageTask < PackageTask
     download_dir = "#{repositories_dir}/#{target_namespace}/#{@package}"
     mkdir_p(download_dir)
 
-    if target_namespace == :windows
-      download_source_archives(download_dir)
-    end
     __send__("#{target_namespace}_targets").each do |target|
       url = built_package_url(target_namespace, target)
       archive = File.expand_path(url.split("/").last)

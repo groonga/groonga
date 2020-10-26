@@ -56,6 +56,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       "#{@package}-#{@version}-x64.zip",
       "#{@package}-#{@version}-x86.exe",
       "#{@package}-#{@version}-x86.zip",
+      "#{@package}-#{@version}.zip",
     ]
   end
 
