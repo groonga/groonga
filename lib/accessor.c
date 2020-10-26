@@ -311,45 +311,40 @@ grn_accessor_resolve_one_data_column_index(grn_ctx *ctx,
 
   {
     grn_rc rc = GRN_SUCCESS;
-    grn_ii *ii = (grn_ii *)(index_datum->index);
-
+    grn_obj *index_column = index_datum->index;
     GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)current_res, cursor, id) {
       void *key;
       void *value;
-      grn_id *tid;
-      grn_rset_recinfo *recinfo;
-      grn_ii_cursor *ii_cursor;
-      grn_posting *posting;
-
       grn_hash_cursor_get_key_value(ctx, cursor, &key, NULL, &value);
-      tid = key;
-      recinfo = value;
-      ii_cursor = grn_ii_cursor_open(ctx, ii, *tid,
-                                     GRN_ID_NIL, GRN_ID_MAX,
-                                     ii->n_elements,
-                                     0);
-      if (!ii_cursor) {
+
+      grn_id *term_id = key;
+      grn_rset_recinfo *recinfo = value;
+
+      grn_obj *index_cursor = grn_index_cursor_open(ctx,
+                                                    NULL,
+                                                    index_column,
+                                                    GRN_ID_NIL,
+                                                    GRN_ID_MAX,
+                                                    0);
+      if (!index_cursor) {
         continue;
       }
 
-      while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
-        grn_posting_internal add_posting;
-
-        if (index_datum->section > 0 && posting->sid != index_datum->section) {
-          continue;
-        }
-
-        add_posting = *((grn_posting_internal *)posting);
-        add_posting.weight_float += recinfo->score;
-        rc = grn_ii_posting_add_float(ctx,
-                                      (grn_posting *)(&add_posting),
-                                      (grn_hash *)*next_res,
-                                      GRN_OP_OR);
-        if (rc != GRN_SUCCESS) {
-          break;
-        }
+      rc = grn_index_cursor_set_term_id(ctx, index_cursor, *term_id);
+      if (rc == GRN_SUCCESS && index_datum->section > 0) {
+        rc = grn_index_cursor_set_section_id(ctx,
+                                             index_cursor,
+                                             index_datum->section);
       }
-      grn_ii_cursor_close(ctx, ii_cursor);
+      if (rc == GRN_SUCCESS) {
+        rc = grn_result_set_add_index_cursor(ctx,
+                                             (grn_hash *)(*next_res),
+                                             index_cursor,
+                                             recinfo->score,
+                                             1,
+                                             GRN_OP_OR);
+      }
+      grn_obj_close(ctx, index_cursor);
 
       if (rc != GRN_SUCCESS) {
         break;
