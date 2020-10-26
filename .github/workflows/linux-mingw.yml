@@ -240,10 +240,17 @@ jobs:
       - name: Asset
         id: asset
         run: |
+          sudo apt update
+          sudo apt install -y -V zip
           version=$(echo ${{ github.ref }} | sed -e 's,^refs/tags/v,,')
           echo ::set-output name=version::${version}
           base_name=groonga-${version}-${{ matrix.architecture }}
           echo ::set-output name=base_name::${base_name}
+          source_dir_name=groonga-${version}
+          source_zip_name=${source_dir_name}.zip
+          echo ::set-output name=source_zip_name::${source_zip_name}
+          mv windows-mingw-${{ matrix.architecture }}/source ${source_dir_name}
+          zip -r ${source_zip_name} ${source_dir_name}
       - name: Ensure creating release
         id: create-release
         uses: actions/github-script@0.4.0
@@ -265,6 +272,17 @@ jobs:
           upload_url: ${{ steps.create-release.outputs.result }}
           asset_path: windows-mingw-with-pdb-${{ matrix.architecture }}/${{ steps.asset.outputs.base_name }}.zip
           asset_name: ${{ steps.asset.outputs.base_name }}.zip
+          asset_content_type: application/zip
+      - name: Upload source to release
+        if: |
+          matrix.architecture == 'x64'
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.result }}
+          asset_path: ${{ steps.asset.outputs.source_zip_name }}
+          asset_name: ${{ steps.asset.outputs.source_zip_name }}
           asset_content_type: application/zip
       - name: Upload installer to release
         uses: actions/upload-release-asset@v1.0.1
