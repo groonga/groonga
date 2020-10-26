@@ -45,6 +45,12 @@ grn_result_set_add_index_cursor(grn_ctx *ctx,
                                 grn_obj *cursor,
                                 double weight,
                                 grn_operator op);
+GRN_API grn_rc
+grn_result_set_add_ii_cursor(grn_ctx *ctx,
+                             grn_hash *result_set,
+                             grn_ii_cursor *cursor,
+                             double weight,
+                             grn_operator op);
 
 #ifdef __cplusplus
 }
