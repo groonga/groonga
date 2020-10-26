@@ -12049,16 +12049,9 @@ grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_operator op)
 {
   int rep = 0;
   grn_ii_cursor *c;
-  grn_posting *pos;
   if ((c = grn_ii_cursor_open(ctx, ii, id, GRN_ID_NIL, GRN_ID_MAX,
                               rep ? ii->n_elements : ii->n_elements - 1, 0))) {
-    while ((pos = grn_ii_cursor_next(ctx, c))) {
-      res_add(ctx,
-              s,
-              (grn_rset_posinfo *)pos,
-              (1 + grn_posting_get_weight_float(ctx, pos)),
-              op);
-    }
+    grn_result_set_add_ii_cursor(ctx, s, c, 1, op);
     grn_ii_cursor_close(ctx, c);
   }
   return ctx->rc;
