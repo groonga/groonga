@@ -4391,15 +4391,13 @@ grn_table_select_index_range_key(grn_ctx *ctx,
       weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
 
       if (sid == 0) {
-        grn_posting_internal posting = {0};
-
-        posting.weight_float = weight;
-        while ((posting.rid = grn_table_cursor_next(ctx, cursor))) {
-          grn_ii_posting_add_float(ctx,
-                                   (grn_posting *)(&posting),
-                                   (grn_hash *)res,
-                                   logical_op);
-        }
+        rc = grn_result_set_add_table_cursor(ctx,
+                                             (grn_hash *)res,
+                                             cursor,
+                                             weight,
+                                             logical_op);
+      } else {
+        rc = GRN_SUCCESS;
       }
       rc = GRN_SUCCESS;
       grn_table_cursor_close(ctx, cursor);
