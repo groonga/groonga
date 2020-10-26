@@ -42,6 +42,24 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     ]
   end
 
+  def windows_targets_default
+    [
+      "#{@package}-#{@version}-x64-vs2019.zip",
+      "#{@package}-#{@version}-x64-vs2019-with-vcruntime.zip",
+      "#{@package}-#{@version}-x86-vs2019.zip",
+      "#{@package}-#{@version}-x86-vs2019-with-vcruntime.zip",
+      "#{@package}-#{@version}-x64-vs2017.zip",
+      "#{@package}-#{@version}-x64-vs2017-with-vcruntime.zip",
+      "#{@package}-#{@version}-x86-vs2017.zip",
+      "#{@package}-#{@version}-x86-vs2017-with-vcruntime.zip",
+      "#{@package}-#{@version}-x64.exe",
+      "#{@package}-#{@version}-x64.zip",
+      "#{@package}-#{@version}-x86.exe",
+      "#{@package}-#{@version}-x86.zip",
+      "#{@package}-#{@version}.zip",
+    ]
+  end
+
   def use_built_package?
     true
   end
@@ -50,6 +68,8 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     url = "https://github.com/groonga/groonga/releases/download/v#{@version}/"
     if target_namespace == :apt and !target.end_with?("-i386")
       url << "#{target}-amd64.tar.gz"
+    elsif target_namespace == :windows
+      url << "#{target}"
     else
       url << "#{target}.tar.gz"
     end

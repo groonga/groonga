@@ -61,6 +61,23 @@ class PackagesGroongaOrgPackageTask < PackageTask
     super
   end
 
+  def enable_windows?
+    true
+  end
+
+  def windows_dir
+    "windows"
+  end
+
+  def windows_targets
+    return [] unless enable_windows?
+
+    targets = (ENV["WINDOWS_TARGETS"] || "").split(",")
+    return targets unless targets.empty?
+
+    windows_targets_default
+  end
+
   def use_built_package?
     false
   end
@@ -77,17 +94,30 @@ class PackagesGroongaOrgPackageTask < PackageTask
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
     mkdir_p(repositories_dir)
+    download_dir = "#{repositories_dir}/#{target_namespace}/#{@package}"
+    mkdir_p(download_dir)
+
     __send__("#{target_namespace}_targets").each do |target|
       url = built_package_url(target_namespace, target)
       archive = File.expand_path(url.split("/").last)
       rm_f(archive)
       sh("wget", url)
-      cd(repositories_dir) do
-        sh("tar",
-           "xf", archive,
-           "--strip-components=#{built_package_n_split_components}")
+      case target_namespace
+      when :apt, :yum
+        cd(repositories_dir) do
+          sh("tar",
+             "xf", archive,
+             "--strip-components=#{built_package_n_split_components}")
+        end
+        rm_f(archive)
+      when :windows
+        mv(archive, download_dir)
+        cd(download_dir) do
+          archive_base_name = File.basename(archive)
+          latest_link_base_name = archive_base_name.gsub(@version, "latest")
+          ln_s(archive_base_name, latest_link_base_name)
+        end
       end
-      rm_f(archive)
     end
   end
 
@@ -101,7 +131,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
   end
 
   def define_release_tasks
-    [:apt, :yum].each do |target_namespace|
+    [:apt, :yum, :windows].each do |target_namespace|
       tasks = []
       namespace target_namespace do
         enabled = __send__("enable_#{target_namespace}?")
