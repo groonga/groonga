@@ -9545,6 +9545,7 @@ grn_rc
 grn_result_set_add_index_cursor(grn_ctx *ctx,
                                 grn_hash *result_set,
                                 grn_obj *cursor,
+                                double additional_score,
                                 double weight,
                                 grn_operator op)
 {
@@ -9572,7 +9573,7 @@ grn_result_set_add_index_cursor(grn_ctx *ctx,
 
   grn_rc rc;
   if (op == GRN_OP_OR) {
-    rc = grn_hash_add_index_cursor(ctx, result_set, cursor, weight);
+    rc = grn_hash_add_index_cursor(ctx, result_set, cursor, additional_score, weight);
   } else {
     grn_id term_id;
     grn_posting *posting;
@@ -9583,7 +9584,7 @@ grn_result_set_add_index_cursor(grn_ctx *ctx,
         posting->pos,
       };
       grn_posting_internal *posting_internal = (grn_posting_internal *)posting;
-      double score = (posting_internal->weight_float + 1) * weight;
+      double score = (posting_internal->weight_float + additional_score) * weight;
       grn_rset_add_record(ctx, result_set, &posinfo, score, op);
       if (ctx->rc != GRN_SUCCESS) {
         break;
@@ -9598,6 +9599,7 @@ grn_rc
 grn_result_set_add_ii_cursor(grn_ctx *ctx,
                              grn_hash *result_set,
                              grn_ii_cursor *cursor,
+                             double additional_score,
                              double weight,
                              grn_operator op)
 {
@@ -9625,7 +9627,7 @@ grn_result_set_add_ii_cursor(grn_ctx *ctx,
 
   grn_rc rc;
   if (op == GRN_OP_OR) {
-    rc = grn_hash_add_ii_cursor(ctx, result_set, cursor, weight);
+    rc = grn_hash_add_ii_cursor(ctx, result_set, cursor, additional_score, weight);
   } else {
     grn_posting *posting;
     while ((posting = grn_ii_cursor_next(ctx, cursor))) {
@@ -9635,7 +9637,7 @@ grn_result_set_add_ii_cursor(grn_ctx *ctx,
         posting->pos,
       };
       grn_posting_internal *posting_internal = (grn_posting_internal *)posting;
-      double score = (posting_internal->weight_float + 1) * weight;
+      double score = (posting_internal->weight_float + additional_score) * weight;
       grn_rset_add_record(ctx, result_set, &posinfo, score, op);
       if (ctx->rc != GRN_SUCCESS) {
         break;
@@ -12051,7 +12053,7 @@ grn_ii_at(grn_ctx *ctx, grn_ii *ii, grn_id id, grn_hash *s, grn_operator op)
   grn_ii_cursor *c;
   if ((c = grn_ii_cursor_open(ctx, ii, id, GRN_ID_NIL, GRN_ID_MAX,
                               rep ? ii->n_elements : ii->n_elements - 1, 0))) {
-    grn_result_set_add_ii_cursor(ctx, s, c, 1, op);
+    grn_result_set_add_ii_cursor(ctx, s, c, 1, 1, op);
     grn_ii_cursor_close(ctx, c);
   }
   return ctx->rc;

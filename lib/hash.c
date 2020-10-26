@@ -2815,6 +2815,7 @@ grn_rc
 grn_hash_add_index_cursor(grn_ctx *ctx,
                           grn_hash *hash,
                           grn_obj *cursor,
+                          double additional_score,
                           double weight)
 {
   const char *tag = "[hash][add-index-cursor]";
@@ -2839,7 +2840,7 @@ grn_hash_add_index_cursor(grn_ctx *ctx,
   grn_posting *posting;
   while ((posting = grn_index_cursor_next(ctx, cursor, &term_id))) {
     grn_posting_internal posting_new = *((grn_posting_internal *)posting);
-    posting_new.weight_float += 1;
+    posting_new.weight_float += additional_score;
     posting_new.weight_float *= weight;
     rc = grn_hash_add_record(ctx, hash, &posting_new, tag);
     if (rc != GRN_SUCCESS) {
@@ -2855,6 +2856,7 @@ grn_rc
 grn_hash_add_ii_cursor(grn_ctx *ctx,
                        grn_hash *hash,
                        grn_ii_cursor *cursor,
+                       double additional_score,
                        double weight)
 {
   const char *tag = "[hash][add-ii-cursor]";
@@ -2878,7 +2880,7 @@ grn_hash_add_ii_cursor(grn_ctx *ctx,
   grn_posting *posting;
   while ((posting = grn_ii_cursor_next(ctx, cursor))) {
     grn_posting_internal posting_new = *((grn_posting_internal *)posting);
-    posting_new.weight_float += 1;
+    posting_new.weight_float += additional_score;
     posting_new.weight_float *= weight;
     rc = grn_hash_add_record(ctx, hash, &posting_new, tag);
     if (rc != GRN_SUCCESS) {

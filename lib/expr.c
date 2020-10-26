@@ -3898,6 +3898,7 @@ grn_table_select_index_equal(grn_ctx *ctx,
             rc = grn_result_set_add_index_cursor(ctx,
                                                  (grn_hash *)res,
                                                  index_cursor,
+                                                 1,
                                                  weight,
                                                  logical_op);
           }
@@ -4495,6 +4496,7 @@ grn_table_select_index_range_column(grn_ctx *ctx,
         rc = grn_result_set_add_index_cursor(ctx,
                                              (grn_hash *)res,
                                              index_cursor,
+                                             1,
                                              weight,
                                              logical_op);
         grn_obj_close(ctx, index_cursor);
