@@ -1,0 +1,18 @@
+table_create Ages TABLE_PAT_KEY Int32
+
+load --table Ages
+[
+{"_key": 17},
+{"_key": 18},
+{"_key": 19},
+{"_key": 20},
+{"_key": 21}
+]
+
+#@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level info
+select Ages --filter 'between(_key, 18, "include", 20, "exclude")'
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels info

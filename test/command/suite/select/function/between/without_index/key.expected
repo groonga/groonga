@@ -1,0 +1,18 @@
+table_create Ages TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+load --table Ages
+[
+{"_key": 17},
+{"_key": 18},
+{"_key": 19},
+{"_key": 20},
+{"_key": 21}
+]
+[[0,0.0,0.0],5]
+log_level --level info
+[[0,0.0,0.0],true]
+select Ages --filter 'between(_key, 18, "include", 20, "exclude")'
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_key","Int32"]],[2,18],[3,19]]]]
+#|i| [table][select][index][selector][between] <Ages>
+log_level --level notice
+[[0,0.0,0.0],true]

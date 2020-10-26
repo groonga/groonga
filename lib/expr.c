@@ -4192,6 +4192,9 @@ grn_table_select_index_call(grn_ctx *ctx,
   if (grn_obj_is_index_column(ctx, index)) {
     index_datum.index = index;
     n_index_datum = 1;
+  } else if (grn_obj_is_key_accessor(ctx, index)) {
+    index_datum.index = ((grn_accessor *)index)->obj;
+    n_index_datum = 1;
   } else if (grn_obj_is_accessor(ctx, index)) {
     n_index_datum = grn_column_find_index_data(ctx,
                                                ((grn_accessor *)index)->obj,
@@ -4217,8 +4220,15 @@ grn_table_select_index_call(grn_ctx *ctx,
       grn_table_select_index_report(ctx, tag, index_datum.index);
     }
 
-    grn_id range = grn_obj_get_range(ctx, index_datum.index);
-    grn_obj *table = grn_ctx_at(ctx, range);
+    grn_obj *table;
+    bool table_is_referred = false;
+    if (grn_obj_is_key_accessor(ctx, index)) {
+      table = index_datum.index;
+    } else {
+      grn_id range = grn_obj_get_range(ctx, index_datum.index);
+      table = grn_ctx_at(ctx, range);
+      table_is_referred = true;
+    }
     rc = grn_selector_run(ctx,
                           selector,
                           data->expr,
@@ -4228,7 +4238,9 @@ grn_table_select_index_call(grn_ctx *ctx,
                           si->args,
                           res,
                           logical_op);
-    grn_obj_unref(ctx, table);
+    if (table_is_referred) {
+      grn_obj_unref(ctx, table);
+    }
   }
 
   return rc;
