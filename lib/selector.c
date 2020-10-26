@@ -257,7 +257,7 @@ grn_selector_data_on_token_found(grn_ctx *ctx,
                                  grn_selector_data *data,
                                  grn_obj *index,
                                  grn_id token_id,
-                                 double score)
+                                 double additional_score)
 {
   GRN_API_ENTER;
   grn_ii *ii = (grn_ii *)index;
@@ -272,15 +272,12 @@ grn_selector_data_on_token_found(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-  grn_posting *posting;
-  while ((posting = grn_ii_cursor_next(ctx, cursor))) {
-    grn_posting_internal add_posting = *((grn_posting_internal *)posting);
-    add_posting.weight_float = (add_posting.weight_float + 1) * score;
-    grn_ii_posting_add_float(ctx,
-                             (grn_posting *)&add_posting,
-                             (grn_hash *)(data->result_set),
-                             data->op);
-  }
+  grn_result_set_add_ii_cursor(ctx,
+                               (grn_hash *)(data->result_set),
+                               cursor,
+                               additional_score,
+                               1,
+                               data->op);
   grn_ii_cursor_close(ctx, cursor);
 
   GRN_API_RETURN(ctx->rc);

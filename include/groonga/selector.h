@@ -95,7 +95,7 @@ grn_selector_data_on_token_found(grn_ctx *ctx,
                                  grn_selector_data *data,
                                  grn_obj *index,
                                  grn_id token_id,
-                                 double score);
+                                 double additional_score);
 
 #ifdef __cplusplus
 }
