@@ -67,6 +67,7 @@ GRN_API void grn_ii_resolve_sel_and(grn_ctx *ctx, grn_hash *s, grn_operator op);
 typedef struct _grn_ii_cursor grn_ii_cursor;
 GRN_API grn_ii_cursor *grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
                                           grn_id min, grn_id max, int nelements, int flags);
+GRN_API grn_ii *grn_ii_cursor_get_ii(grn_ctx *ctx, grn_ii_cursor *cursor);
 GRN_API grn_posting *grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c);
 GRN_API grn_posting *grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c);
 GRN_API grn_rc grn_ii_cursor_close(grn_ctx *ctx, grn_ii_cursor *c);

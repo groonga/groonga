@@ -6773,6 +6773,12 @@ exit :
   return c;
 }
 
+grn_ii *
+grn_ii_cursor_get_ii(grn_ctx *ctx, grn_ii_cursor *cursor)
+{
+  return cursor->ii;
+}
+
 static grn_inline void
 grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
 {
