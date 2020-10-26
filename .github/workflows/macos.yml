@@ -23,7 +23,7 @@ jobs:
           submodules: recursive
       - name: Install packages
         run: |
-          brew update
+          brew update || :
           brew bundle
       - name: Generate configure
         if: |
