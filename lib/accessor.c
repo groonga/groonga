@@ -312,6 +312,27 @@ grn_accessor_resolve_one_data_column_index(grn_ctx *ctx,
   {
     grn_rc rc = GRN_SUCCESS;
     grn_obj *index_column = index_datum->index;
+    grn_obj *index_cursor = grn_index_cursor_open(ctx,
+                                                  NULL,
+                                                  index_column,
+                                                  GRN_ID_NIL,
+                                                  GRN_ID_MAX,
+                                                  0);
+    if (!index_cursor) {
+      grn_obj_unlink(ctx, *next_res);
+      return ctx->rc;
+    }
+    if (index_datum->section > 0) {
+      rc = grn_index_cursor_set_section_id(ctx,
+                                           index_cursor,
+                                           index_datum->section);
+    }
+    if (rc != GRN_SUCCESS) {
+      grn_obj_close(ctx, index_cursor);
+      grn_obj_unlink(ctx, *next_res);
+      return ctx->rc;
+    }
+
     GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)current_res, cursor, id) {
       void *key;
       void *value;
@@ -320,22 +341,7 @@ grn_accessor_resolve_one_data_column_index(grn_ctx *ctx,
       grn_id *term_id = key;
       grn_rset_recinfo *recinfo = value;
 
-      grn_obj *index_cursor = grn_index_cursor_open(ctx,
-                                                    NULL,
-                                                    index_column,
-                                                    GRN_ID_NIL,
-                                                    GRN_ID_MAX,
-                                                    0);
-      if (!index_cursor) {
-        continue;
-      }
-
       rc = grn_index_cursor_set_term_id(ctx, index_cursor, *term_id);
-      if (rc == GRN_SUCCESS && index_datum->section > 0) {
-        rc = grn_index_cursor_set_section_id(ctx,
-                                             index_cursor,
-                                             index_datum->section);
-      }
       if (rc == GRN_SUCCESS) {
         rc = grn_result_set_add_index_cursor(ctx,
                                              (grn_hash *)(*next_res),
@@ -344,12 +350,12 @@ grn_accessor_resolve_one_data_column_index(grn_ctx *ctx,
                                              1,
                                              GRN_OP_OR);
       }
-      grn_obj_close(ctx, index_cursor);
 
       if (rc != GRN_SUCCESS) {
         break;
       }
     } GRN_HASH_EACH_END(ctx, cursor);
+    grn_obj_close(ctx, index_cursor);
 
     if (rc != GRN_SUCCESS) {
       grn_obj_unlink(ctx, *next_res);
