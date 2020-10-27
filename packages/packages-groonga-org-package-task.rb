@@ -25,6 +25,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
 
   def define
     super
+    define_windows_task
     define_release_tasks
     define_ubuntu_tasks
   end
@@ -76,6 +77,17 @@ class PackagesGroongaOrgPackageTask < PackageTask
     return targets unless targets.empty?
 
     windows_targets_default
+  end
+
+  def define_windows_task
+    namespace :windows do
+      desc "Clean files for Windows"
+      task :clean do
+        rm_rf("#{windows_dir}/repositories")
+      end
+    end
+    desc "Release files for Windows"
+    task windows: ["windows:clean"]
   end
 
   def use_built_package?
