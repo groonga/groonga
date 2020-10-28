@@ -6973,6 +6973,18 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                     c->pc.rid = GRN_ID_NIL;
                     break;
                   }
+                  if (buffer_is_reused(ctx, c->ii, c)) {
+                    DEFINE_NAME(c->ii);
+                    GRN_LOG(ctx, GRN_LOG_WARNING,
+                            "[ii][cursor][next][chunk] "
+                            "buffer is reused by another thread: "
+                            "<%.*s>: <%u>: <%p>",
+                            name_size, name,
+                            c->id,
+                            c);
+                    c->pc.rid = GRN_ID_NIL;
+                    break;
+                  }
                   if (chunk_is_reused(ctx, c->ii, c,
                                       c->cinfo[c->curr_chunk].segno, size)) {
                     DEFINE_NAME(c->ii);
