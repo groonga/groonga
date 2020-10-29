@@ -301,7 +301,7 @@ jobs:
         if: |
           matrix.architecture == 'x64'
         run: |
-          gem install red-arrow
+          gem install red-arrow -v 1.0.1
       - name: "Test: command line"
         run: |
           ruby test\command_line\run-test.rb `
