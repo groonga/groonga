@@ -23,6 +23,7 @@ jobs:
           submodules: recursive
       - name: Install packages
         run: |
+          brew unlink python@3.8
           brew update || :
           brew bundle
       - name: Generate configure
