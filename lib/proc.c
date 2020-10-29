@@ -3548,6 +3548,7 @@ selector_between(grn_ctx *ctx,
   int flags = GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_KEY;
   between_data data;
   grn_bool use_sequential_search;
+  bool index_table_need_unref = false;
   grn_obj *index_table = NULL;
   grn_table_cursor *cursor;
   grn_id id;
@@ -3581,6 +3582,9 @@ selector_between(grn_ctx *ctx,
       break;
     default :
       index_table = grn_ctx_at(ctx, index->header.domain);
+      if (index_table) {
+        index_table_need_unref = true;
+      }
       break;
     }
   }
@@ -3628,8 +3632,8 @@ selector_between(grn_ctx *ctx,
 exit :
   between_data_fin(ctx, &data);
 
-  if (grn_enable_reference_count && index_table) {
-    grn_obj_unlink(ctx, index_table);
+  if (index_table_need_unref) {
+    grn_obj_unref(ctx, index_table);
   }
 
   return rc;
