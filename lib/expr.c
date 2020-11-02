@@ -1157,6 +1157,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
     case GRN_OP_NEAR_PHRASE :
+    case GRN_OP_ORDERED_NEAR_PHRASE :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -1921,6 +1922,7 @@ static const char *opstrs[] = {
   "FUZZY",
   "QUORUM",
   "NEAR_PHRASE",
+  "ORDERED_NEAR_PHRASE",
 };
 
 static void
@@ -2633,6 +2635,7 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, int32_t weight)
         }
         break;
       case GRN_OP_NEAR_PHRASE :
+      case GRN_OP_ORDERED_NEAR_PHRASE :
         if (si->nargs >= 3 &&
             *p == si->args[2] &&
             (*p)->header.domain == GRN_DB_INT32) {
@@ -2793,6 +2796,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
     case GRN_OP_NEAR_PHRASE :
+    case GRN_OP_ORDERED_NEAR_PHRASE :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -2948,6 +2952,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
     case GRN_OP_NEAR_PHRASE :
+    case GRN_OP_ORDERED_NEAR_PHRASE :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -3286,6 +3291,7 @@ grn_scan_info_build_simple_operation(grn_ctx *ctx,
   case GRN_OP_MATCH :
   case GRN_OP_NEAR :
   case GRN_OP_NEAR_PHRASE :
+  case GRN_OP_ORDERED_NEAR_PHRASE :
   case GRN_OP_SIMILAR :
   case GRN_OP_PREFIX :
   case GRN_OP_SUFFIX :
@@ -3374,6 +3380,7 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
     case GRN_OP_MATCH :
     case GRN_OP_NEAR :
     case GRN_OP_NEAR_PHRASE :
+    case GRN_OP_ORDERED_NEAR_PHRASE :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -4596,6 +4603,7 @@ grn_table_select_index_dispatch(grn_ctx *ctx,
   case GRN_OP_NEAR :
   case GRN_OP_NEAR2 :
   case GRN_OP_NEAR_PHRASE :
+  case GRN_OP_ORDERED_NEAR_PHRASE :
   case GRN_OP_SIMILAR :
   case GRN_OP_REGEXP :
   case GRN_OP_QUORUM :
@@ -5286,14 +5294,14 @@ skip_space(grn_ctx *ctx, efs_info *q)
   }
 }
 
-static grn_bool
+static bool
 parse_query_op(efs_info *q,
                efs_op *op,
                grn_operator *mode,
                int *option1,
                int *option2)
 {
-  grn_bool found = GRN_TRUE;
+  bool found = true;
   const char *start, *end = q->cur;
   switch (*end) {
   case 'S' :
@@ -5304,12 +5312,27 @@ parse_query_op(efs_info *q,
     q->cur = end;
     break;
   case 'N' :
-    *mode = GRN_OP_NEAR;
-    start = ++end;
-    if (start < q->str_end && start[0] == 'P') {
-      *mode = GRN_OP_NEAR_PHRASE;
-      start++;
+  case 'O' :
+    if (*end == 'N') {
+      *mode = GRN_OP_NEAR;
+      start = ++end;
+      if (start < q->str_end && start[0] == 'P') {
+        *mode = GRN_OP_NEAR_PHRASE;
+        start++;
+      }
+    } else {
+      if (end + 2 < q->str_end && end[1] == 'N' && end[2] == 'P') {
+        *mode = GRN_OP_ORDERED_NEAR_PHRASE;
+        start = end + 3;
+      } else {
+        found = false;
+      }
     }
+
+    if (!found) {
+      break;
+    }
+
     *option1 = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) {
       *option1 = DEFAULT_MAX_INTERVAL;
@@ -5356,7 +5379,7 @@ parse_query_op(efs_info *q,
     q->cur = end;
     break;
   default :
-    found = GRN_FALSE;
+    found = false;
     break;
   }
   return found;
@@ -5531,6 +5554,7 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
     }
     break;
   case GRN_OP_NEAR_PHRASE :
+  case GRN_OP_ORDERED_NEAR_PHRASE :
     {
       int max_interval;
       max_interval = grn_int32_value_at(&efsi->max_interval_stack, -1);
@@ -5886,6 +5910,7 @@ parse_query(grn_ctx *ctx, efs_info *q)
             GRN_INT32_PUT(ctx, &q->max_interval_stack, option1);
             break;
           case GRN_OP_NEAR_PHRASE :
+          case GRN_OP_ORDERED_NEAR_PHRASE :
             GRN_INT32_PUT(ctx, &q->max_interval_stack, option1);
             GRN_INT32_PUT(ctx, &q->additional_last_interval_stack, option2);
             break;
@@ -6363,109 +6388,135 @@ parse_script(grn_ctx *ctx, efs_info *q)
       grn_expr_append_const(ctx, q->e, &q->buf, GRN_OP_PUSH, 1);
       break;
     case '*' :
-      switch (q->cur[1]) {
-      case 'N' :
-        {
-          const char *next_start = q->cur + 2;
-          const char *end;
-          int max_interval;
-          int additional_last_interval;
-          int token = GRN_EXPR_TOKEN_NEAR;
-          if (next_start < q->str_end && next_start[0] == 'P') {
-            token = GRN_EXPR_TOKEN_NEAR_PHRASE;
-            next_start++;
-          }
-          max_interval = grn_atoi(next_start, q->str_end, &end);
-          if (end == next_start) {
-            max_interval = DEFAULT_MAX_INTERVAL;
-            additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;
-          } else {
-            if (end < q->str_end && end[0] == ',') {
-              const char *additional_last_interval_start = end + 1;
-              additional_last_interval = grn_atoi(additional_last_interval_start,
-                                                  q->str_end,
-                                                  &end);
-              if (end == additional_last_interval_start) {
-                additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;
+      {
+        bool processed = true;
+        switch (q->cur[1]) {
+        case 'N' :
+        case 'O' :
+          {
+            const char *next_start = NULL;
+            int token;
+            if (q->cur[1] == 'N') {
+              next_start = q->cur + 2;
+              token = GRN_EXPR_TOKEN_NEAR;
+              if (next_start < q->str_end && next_start[0] == 'P') {
+                token = GRN_EXPR_TOKEN_NEAR_PHRASE;
+                next_start++;
               }
             } else {
-              additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;
+              if (q->cur + 4 < q->str_end &&
+                  q->cur[2] == 'N' &&
+                  q->cur[3] == 'P') {
+                next_start = q->cur + 4;
+                token = GRN_EXPR_TOKEN_ORDERED_NEAR_PHRASE;
+              } else {
+                processed = false;
+              }
             }
-            next_start = end;
+            if (!processed) {
+              break;
+            }
+
+            const char *end;
+            int max_interval;
+            int additional_last_interval;
+            max_interval = grn_atoi(next_start, q->str_end, &end);
+            if (end == next_start) {
+              max_interval = DEFAULT_MAX_INTERVAL;
+              additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;
+            } else {
+              if (end < q->str_end && end[0] == ',') {
+                const char *additional_last_interval_start = end + 1;
+                additional_last_interval =
+                  grn_atoi(additional_last_interval_start,
+                           q->str_end,
+                           &end);
+                if (end == additional_last_interval_start) {
+                  additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;
+                }
+              } else {
+                additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;
+              }
+              next_start = end;
+            }
+            GRN_INT32_PUT(ctx, &q->max_interval_stack, max_interval);
+            GRN_INT32_PUT(ctx,
+                          &q->additional_last_interval_stack,
+                          additional_last_interval);
+            PARSE(token);
+            q->cur = next_start;
           }
-          GRN_INT32_PUT(ctx, &q->max_interval_stack, max_interval);
-          GRN_INT32_PUT(ctx,
-                        &q->additional_last_interval_stack,
-                        additional_last_interval);
-          PARSE(token);
-          q->cur = next_start;
-        }
-        break;
-      case 'S' :
-        {
-          const char *next_start = q->cur + 2;
-          const char *end;
-          int similarity_threshold;
-          similarity_threshold = grn_atoi(next_start, q->str_end, &end);
-          if (end == next_start) {
-            similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;
-          } else {
-            next_start = end;
+          break;
+        case 'S' :
+          {
+            const char *next_start = q->cur + 2;
+            const char *end;
+            int similarity_threshold;
+            similarity_threshold = grn_atoi(next_start, q->str_end, &end);
+            if (end == next_start) {
+              similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;
+            } else {
+              next_start = end;
+            }
+            GRN_INT32_PUT(ctx,
+                          &q->similarity_threshold_stack,
+                          similarity_threshold);
+            PARSE(GRN_EXPR_TOKEN_SIMILAR);
+            q->cur = next_start;
           }
-          GRN_INT32_PUT(ctx,
-                        &q->similarity_threshold_stack,
-                        similarity_threshold);
-          PARSE(GRN_EXPR_TOKEN_SIMILAR);
-          q->cur = next_start;
-        }
-        break;
-      case 'T' :
-        PARSE(GRN_EXPR_TOKEN_TERM_EXTRACT);
-        q->cur += 2;
-        break;
-      case 'Q' :
-        {
-          const char *next_start = q->cur + 2;
-          const char *end;
-          int quorum_threshold;
-          quorum_threshold = grn_atoi(next_start, q->str_end, &end);
-          if (end == next_start) {
-            quorum_threshold = DEFAULT_QUORUM_THRESHOLD;
-          } else {
-            next_start = end;
-          }
-          GRN_INT32_PUT(ctx, &q->quorum_threshold_stack, quorum_threshold);
-          PARSE(GRN_EXPR_TOKEN_QUORUM);
-          q->cur = next_start;
-        }
-        break;
-      case '>' :
-        PARSE(GRN_EXPR_TOKEN_ADJUST);
-        q->cur += 2;
-        break;
-      case '<' :
-        PARSE(GRN_EXPR_TOKEN_ADJUST);
-        q->cur += 2;
-        break;
-      case '~' :
-        PARSE(GRN_EXPR_TOKEN_ADJUST);
-        q->cur += 2;
-        break;
-      case '=' :
-        if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
-          PARSE(GRN_EXPR_TOKEN_STAR_ASSIGN);
+          break;
+        case 'T' :
+          PARSE(GRN_EXPR_TOKEN_TERM_EXTRACT);
           q->cur += 2;
-        } else {
-          ERR(GRN_UPDATE_NOT_ALLOWED,
-              "'*=' is not allowed: <%.*s>", (int)(q->str_end - q->str), q->str);
+          break;
+        case 'Q' :
+          {
+            const char *next_start = q->cur + 2;
+            const char *end;
+            int quorum_threshold;
+            quorum_threshold = grn_atoi(next_start, q->str_end, &end);
+            if (end == next_start) {
+              quorum_threshold = DEFAULT_QUORUM_THRESHOLD;
+            } else {
+              next_start = end;
+            }
+            GRN_INT32_PUT(ctx, &q->quorum_threshold_stack, quorum_threshold);
+            PARSE(GRN_EXPR_TOKEN_QUORUM);
+            q->cur = next_start;
+          }
+          break;
+        case '>' :
+          PARSE(GRN_EXPR_TOKEN_ADJUST);
+          q->cur += 2;
+          break;
+        case '<' :
+          PARSE(GRN_EXPR_TOKEN_ADJUST);
+          q->cur += 2;
+          break;
+        case '~' :
+          PARSE(GRN_EXPR_TOKEN_ADJUST);
+          q->cur += 2;
+          break;
+        case '=' :
+          if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
+            PARSE(GRN_EXPR_TOKEN_STAR_ASSIGN);
+            q->cur += 2;
+          } else {
+            ERR(GRN_UPDATE_NOT_ALLOWED,
+                "'*=' is not allowed: <%.*s>",
+                (int)(q->str_end - q->str), q->str);
+          }
+          break;
+        default :
+          processed = false;
+          break;
         }
-        break;
-      default :
-        PARSE(GRN_EXPR_TOKEN_STAR);
-        q->cur++;
+        if (!processed) {
+          PARSE(GRN_EXPR_TOKEN_STAR);
+          q->cur++;
+        }
         break;
       }
-      break;
     case '+' :
       switch (q->cur[1]) {
       case '+' :

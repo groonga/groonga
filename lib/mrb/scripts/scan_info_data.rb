@@ -64,7 +64,8 @@ module Groonga
       return true if ((@op == Operator::NEAR or
                        @op == Operator::NEAR2) and
                       (@args.size == 3))
-      return true if ((@op == Operator::NEAR_PHRASE) and
+      return true if ((@op == Operator::NEAR_PHRASE or
+                       @op == Operator::ORDERED_NEAR_PHRASE) and
                       (@args.size == 4))
       false
     end
@@ -80,14 +81,16 @@ module Groonga
         match_resolve_index_indexable(arg)
       else
         message =
-          "The first argument of NEAR/NEAR2/NEAR_PHRASE must be " +
+          "The first argument of " +
+          "NEAR/NEAR2/NEAR_PHRASE/ORDERED_NEAR_PHRASE must be " +
           "Expression, Accessor or Indexable: #{arg.class}"
         raise ErrorMessage, message
       end
 
       self.query = @args[1]
       self.max_interval = @args[2].value
-      if @op == Operator::NEAR_PHRASE
+      case @op
+      when Operator::NEAR_PHRASE, Operator::ORDERED_NEAR_PHRASE
         self.additional_last_interval = @args[3].value
       end
     end

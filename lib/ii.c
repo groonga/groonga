@@ -9352,14 +9352,16 @@ token_info_build_near_phrase(grn_ctx *ctx,
       }
     }
 
-    bool must_last = false;
-    if (phrase_len > 0 && last_char_len == 1 && *last_char == '$') {
-      phrase_len -= last_char_len;
-      must_last = true;
-    }
-
     if (phrase_len == 0) {
       continue;
+    }
+
+    bool must_last = false;
+    if (mode != GRN_OP_ORDERED_NEAR_PHRASE) {
+      if (last_char_len == 1 && *last_char == '$') {
+        phrase_len -= last_char_len;
+        must_last = true;
+      }
     }
 
     uint32_t n_before = *n;
@@ -9386,6 +9388,12 @@ token_info_build_near_phrase(grn_ctx *ctx,
       tis[i]->phrase_id = phrase_id;
     }
     phrase_id++;
+  }
+
+  if (mode == GRN_OP_ORDERED_NEAR_PHRASE) {
+    if (*n > 0) {
+      tis[*n - 1]->must_last = true;
+    }
   }
 
 exit:
@@ -11410,7 +11418,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
         !n) {
       goto exit;
     }
-  } else if (data.mode == GRN_OP_NEAR_PHRASE) {
+  } else if (data.mode == GRN_OP_NEAR_PHRASE ||
+             data.mode == GRN_OP_ORDERED_NEAR_PHRASE) {
     if (token_info_build_near_phrase(ctx, lexicon, ii, string, string_len,
                                      tis, &n, &(data.only_skip_token),
                                      data.previous_min, data.mode) ||
@@ -11435,6 +11444,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
     max_interval = optarg->max_interval;
     break;
   case GRN_OP_NEAR_PHRASE :
+  case GRN_OP_ORDERED_NEAR_PHRASE :
     if (!(bt = bt_open(ctx, n))) { rc = GRN_NO_MEMORY_AVAILABLE; goto exit; }
     max_interval = optarg->max_interval;
     additional_last_interval = optarg->additional_last_interval;
@@ -11552,10 +11562,12 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
             data.record.n_tokens = (*tis)->ntoken;
           }
         } else if (data.mode == GRN_OP_NEAR ||
-                   data.mode == GRN_OP_NEAR_PHRASE) {
+                   data.mode == GRN_OP_NEAR_PHRASE ||
+                   data.mode == GRN_OP_ORDERED_NEAR_PHRASE) {
           bt_zap(bt);
           bool need_check = false;
-          if (data.mode == GRN_OP_NEAR_PHRASE) {
+          if (data.mode == GRN_OP_NEAR_PHRASE ||
+              data.mode == GRN_OP_ORDERED_NEAR_PHRASE) {
             need_check = true;
             uint32_t phrase_id;
             for (phrase_id = 0; phrase_id <= data.phrase_id_max; phrase_id++) {
@@ -11598,12 +11610,28 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                 goto exit;
               }
               int interval = max - min;
-              if (data.mode == GRN_OP_NEAR_PHRASE) {
+              if (data.mode == GRN_OP_NEAR_PHRASE ||
+                  data.mode == GRN_OP_ORDERED_NEAR_PHRASE) {
                 interval -= (data.token_info->n_tokens_in_phrase - 1);
               }
               bool matched;
-              if (data.last_token_info) {
-                if (data.last_token_info == bt->max) {
+              if (data.mode == GRN_OP_ORDERED_NEAR_PHRASE ||
+                  data.last_token_info) {
+                if (data.mode == GRN_OP_ORDERED_NEAR_PHRASE) {
+                  matched = true;
+                  int pos = tis[0]->pos;
+                  for (tip = tis + 1; tip < tie; tip++) {
+                    token_info *ti = *tip;
+                    if (ti->pos < pos) {
+                      matched = false;
+                      break;
+                    }
+                    pos = ti->pos;
+                  }
+                } else {
+                  matched = (data.last_token_info == bt->max);
+                }
+                if (matched) {
                   matched =
                     grn_ii_select_data_is_matched_near_phrase(
                       ctx,
@@ -11611,8 +11639,6 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                       interval,
                       max_interval,
                       additional_last_interval);
-                } else {
-                  matched = false;
                 }
               } else {
                 matched = ((max_interval < 0) || (interval <= max_interval));
@@ -11621,7 +11647,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                 if (rep) { pi.pos = min; res_add(ctx, s, &pi, weight, op); }
                 noccur++;
                 int next_pos = max + 1;
-                if (data.mode == GRN_OP_NEAR_PHRASE) {
+                if (data.mode == GRN_OP_NEAR_PHRASE ||
+                    data.mode == GRN_OP_ORDERED_NEAR_PHRASE) {
                   if (!grn_ii_select_data_find_phrase(ctx,
                                                       &data,
                                                       data.token_info->phrase_id,
@@ -11634,7 +11661,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                   }
                 }
               } else {
-                if (data.mode == GRN_OP_NEAR_PHRASE) {
+                if (data.mode == GRN_OP_NEAR_PHRASE ||
+                    data.mode == GRN_OP_ORDERED_NEAR_PHRASE) {
                   int next_pos = min + 1;
                   if (!grn_ii_select_data_find_phrase(ctx,
                                                       &data,
@@ -11650,7 +11678,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
                 }
               }
               bt_pop(bt);
-              if (data.mode == GRN_OP_NEAR_PHRASE &&
+              if ((data.mode == GRN_OP_NEAR_PHRASE  ||
+                   data.mode == GRN_OP_ORDERED_NEAR_PHRASE) &&
                   bt->min == token_info_min) {
                 break;
               }
@@ -11840,6 +11869,7 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
     case GRN_OP_NEAR_PHRASE :
+    case GRN_OP_ORDERED_NEAR_PHRASE :
       mode = optarg->mode;
       break;
     case GRN_OP_SIMILAR :
@@ -11965,6 +11995,7 @@ grn_ii_sel(grn_ctx *ctx, grn_ii *ii, const char *string, unsigned int string_len
         arg.max_interval = optarg->max_interval;
         break;
       case GRN_OP_NEAR_PHRASE :
+      case GRN_OP_ORDERED_NEAR_PHRASE :
         arg.mode = optarg->mode;
         arg.max_interval = optarg->max_interval;
         arg.additional_last_interval = optarg->additional_last_interval;

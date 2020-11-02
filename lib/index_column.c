@@ -1433,6 +1433,7 @@ grn_index_column_is_usable(grn_ctx *ctx,
   case GRN_OP_NEAR :
   case GRN_OP_NEAR2 :
   case GRN_OP_NEAR_PHRASE :
+  case GRN_OP_ORDERED_NEAR_PHRASE :
   case GRN_OP_SIMILAR :
   case GRN_OP_PREFIX :
   case GRN_OP_SUFFIX :

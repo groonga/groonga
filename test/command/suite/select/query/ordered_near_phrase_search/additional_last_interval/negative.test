@@ -1,0 +1,21 @@
+table_create Memos TABLE_PAT_KEY ShortText
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"_key":"alphabets1", "content": "a c d ."},
+{"_key":"alphabets2", "content": "a b c d e f ."},
+{"_key":"alphabets3", "content": "a b x c d e f ."},
+{"_key":"alphabets4", "content": "a b x x c d e f ."}
+]
+
+select \
+  --table Memos \
+  --match_columns content \
+  --query '*ONP3,-1"a c ."' \
+  --output_columns _score,_key,content

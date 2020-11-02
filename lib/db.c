@@ -3707,6 +3707,9 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx, grn_obj *obj,
         case GRN_OP_NEAR_PHRASE :
           tag = "[key][near-phrase]";
           break;
+        case GRN_OP_ORDERED_NEAR_PHRASE :
+          tag = "[key][ordered-near-phrase]";
+          break;
         case GRN_OP_SIMILAR :
           tag = "[key][similar]";
           break;
@@ -12777,6 +12780,7 @@ grn_column_find_index_data_column_match(grn_ctx *ctx,
   case GRN_OP_NEAR :
   case GRN_OP_NEAR2 :
   case GRN_OP_NEAR_PHRASE :
+  case GRN_OP_ORDERED_NEAR_PHRASE :
   case GRN_OP_SIMILAR :
     prefer_full_text_search_index = true;
     break;
@@ -13130,6 +13134,7 @@ grn_find_index_data_dispatch(grn_ctx *ctx,
     case GRN_OP_NEAR :
     case GRN_OP_NEAR2 :
     case GRN_OP_NEAR_PHRASE :
+    case GRN_OP_ORDERED_NEAR_PHRASE :
     case GRN_OP_SIMILAR :
     case GRN_OP_REGEXP :
     case GRN_OP_FUZZY :

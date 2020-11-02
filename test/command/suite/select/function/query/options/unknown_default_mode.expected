@@ -24,4 +24,4 @@ select   --table Products   --filter 'query("name", "r", {"default_mode": "unkno
     "[query][options][parse] mode must be one of them: [\"==\", \"EQUAL\", \"!=\", \"NOT_EQUAL\", \"<\", \"LESS\", \">\", \"GREATER\", \"<=\", \"LESS_E"
   ]
 ]
-#|e| [query][options][parse] mode must be one of them: ["==", "EQUAL", "!=", "NOT_EQUAL", "<", "LESS", ">", "GREATER", "<=", "LESS_EQUAL", ">=", "GREATER_EQUAL", "@", "MATCH", "*N", "NEAR", "*NP", "NEAR_PHRASE", "*S", "SIMILAR", "^", "@^", "PREFIX", "$", "@$", "SUFFIX", "~", "@~", "REGEXP"]: <unknown>
+#|e| [query][options][parse] mode must be one of them: ["==", "EQUAL", "!=", "NOT_EQUAL", "<", "LESS", ">", "GREATER", "<=", "LESS_EQUAL", ">=", "GREATER_EQUAL", "@", "MATCH", "*N", "NEAR", "*NP", "NEAR_PHRASE", "*ONP", "ORDERED_NEAR_PHRASE", "*S", "SIMILAR", "^", "@^", "PREFIX", "$", "@$", "SUFFIX", "~", "@~", "REGEXP"]: <unknown>
