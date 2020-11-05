@@ -3230,7 +3230,7 @@ h_handler(grn_ctx *ctx, grn_obj *msg)
       }
       COND_SIGNAL(q_cond);
     }
-  CRITICAL_SECTION_LEAVE(q_critical_section);
+    CRITICAL_SECTION_LEAVE(q_critical_section);
   }
 }
 
