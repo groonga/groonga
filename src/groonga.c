@@ -1041,8 +1041,10 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
     for (i = 0; i < n_floating_threads; i++) {
       COND_SIGNAL(q_cond);
     }
-    if (n_running_threads == n_floating_threads) { break; }
     CRITICAL_SECTION_LEAVE(q_critical_section);
+    if (n_running_threads == 0) {
+      break;
+    }
     grn_nanosleep(1000000);
   }
   {
