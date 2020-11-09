@@ -26,6 +26,7 @@ typedef struct {
   grn_obj *index_column;
   grn_table_cursor *tc;
   grn_ii_cursor *iic;
+  bool next_called;
   grn_id term_id;
   grn_id input_term_id;
   grn_id rid_min;
@@ -55,6 +56,7 @@ grn_index_cursor_open(grn_ctx *ctx,
   ic->tc = tc;
   ic->index_column = index_column;
   ic->iic = NULL;
+  ic->next_called = false;
   ic->term_id = GRN_ID_NIL;
   ic->input_term_id = GRN_ID_NIL;
   ic->rid_min = rid_min;
@@ -195,14 +197,16 @@ grn_index_cursor_next_internal(grn_ctx *ctx,
     if (ic->iic) {
       if (ic->flags & GRN_OBJ_WITH_POSITION) {
         while (true) {
-          posting = grn_ii_cursor_next_pos(ctx, ic->iic);
-          if (posting) {
-            if (ic->position.specified) {
-              if (posting->pos == ic->position.start) {
+          if (ic->next_called) {
+            posting = grn_ii_cursor_next_pos(ctx, ic->iic);
+            if (posting) {
+              if (ic->position.specified) {
+                if (posting->pos == ic->position.start) {
+                  break;
+                }
+              } else {
                 break;
               }
-            } else {
-              break;
             }
           }
 
@@ -213,6 +217,7 @@ grn_index_cursor_next_internal(grn_ctx *ctx,
             }
             break;
           }
+          ic->next_called = true;
           if (!ii_posting) {
             break;
           }
@@ -260,6 +265,7 @@ grn_index_cursor_next_internal(grn_ctx *ctx,
                                  ic->rid_max,
                                  ii->n_elements,
                                  ic->flags);
+    ic->next_called = false;
   }
   if (term_id) {
     *term_id = ic->term_id;
