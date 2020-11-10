@@ -10953,7 +10953,11 @@ grn_obj_traverse_recursive_dependent_table(
         }
         grn_obj *column = grn_ctx_at(ctx, *column_id);
         if (column) {
-          grn_obj_traverse_recursive_dependent_dispatch(ctx, data, column);
+          if (!(data->for_reference &&
+                !is_top_level &&
+                grn_obj_is_index_column(ctx, column))) {
+            grn_obj_traverse_recursive_dependent_dispatch(ctx, data, column);
+          }
           grn_obj_unref(ctx, column);
         }
         if (data->is_close_opened_object_mode) {

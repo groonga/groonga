@@ -204,10 +204,10 @@ isn't specified:
 the child objects but also related objects. The related objects are:
 
 * A referenced table
-* Columns of referenced tables
+* Data columns of referenced tables
 * A related index column (There is source column in target ``TABLE_NAME``)
 * A table of related index column (There is source column in target ``TABLE_NAME``)
-* Columns of tables of related index columns
+* Data columns of tables of related index columns
 
 It is useful to keep reference for :doc:`load` and :doc:`select`.
 
