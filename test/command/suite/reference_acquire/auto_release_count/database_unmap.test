@@ -8,6 +8,10 @@ table_create Terms TABLE_PAT_KEY ShortText \
   --normalizer NormalizerAuto
 column_create Terms users_name COLUMN_INDEX|WITH_POSITION Users name
 
+#@disable-logging
+thread_limit 1
+#@enable-logging
+
 log_level --level dump
 #@add-important-log-levels dump
 #@add-ignore-log-pattern /\A\[io\]/
