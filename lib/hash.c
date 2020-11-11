@@ -988,7 +988,7 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
   } else {
     cursor->curr_rec += cursor->dir * offset;
   }
-  cursor->rest = (limit < 0) ? GRN_ARRAY_MAX : limit;
+  cursor->rest = (limit < 0) ? *(array->n_entries) : limit;
   return cursor;
 }
 
