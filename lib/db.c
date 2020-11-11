@@ -569,14 +569,6 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
       grn_obj_close(ctx, vp->ptr);
     }
   } GRN_TINY_ARRAY_EACH_END();
-
-/* grn_tiny_array_fin should be refined.. */
-#ifdef WIN32
-  {
-    grn_tiny_array *a = &s->values;
-    CRITICAL_SECTION_FIN(a->lock);
-  }
-#endif
   grn_tiny_array_fin(&s->values);
 
   switch (s->keys->header.type) {
