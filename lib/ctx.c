@@ -1611,6 +1611,9 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       }
       if (expr) { grn_expr_clear_vars(ctx, expr); }
       grn_ctx_set_command_version(ctx, command_version);
+      if (processed) {
+        grn_db_command_processed(ctx, ctx->impl->db);
+      }
       goto exit;
     }
   }

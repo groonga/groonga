@@ -64,6 +64,18 @@ extern bool grn_enable_reference_count;
 typedef struct _grn_db grn_db;
 typedef struct _grn_proc grn_proc;
 
+typedef enum {
+  GRN_DEFERRED_UNREF_RECURSIVE_NO,
+  GRN_DEFERRED_UNREF_RECURSIVE_YES,
+  GRN_DEFERRED_UNREF_RECURSIVE_DEPENDENT,
+} grn_deferred_unref_recursive;
+
+typedef struct {
+  uint32_t count;
+  grn_id id;
+  grn_deferred_unref_recursive recursive;
+} grn_deferred_unref;
+
 struct _grn_db {
   grn_db_obj obj;
   grn_obj *keys;
@@ -74,6 +86,7 @@ struct _grn_db {
   grn_cache *cache;
   grn_options *options;
   bool is_closing;
+  grn_array *deferred_unrefs;
 };
 
 #define GRN_SERIALIZED_SPEC_INDEX_SPEC   0
@@ -179,6 +192,16 @@ grn_db_get_option_values(grn_ctx *ctx,
 grn_rc grn_db_clear_option_values(grn_ctx *ctx,
                                   grn_obj *db,
                                   grn_id id);
+grn_rc
+grn_db_add_deferred_unref(grn_ctx *ctx,
+                          grn_obj *db,
+                          grn_deferred_unref *deferred_unref);
+grn_rc
+grn_db_clear_deferred_unrefs(grn_ctx *ctx,
+                             grn_obj *db);
+grn_rc
+grn_db_command_processed(grn_ctx *ctx,
+                         grn_obj *db);
 
 grn_rc _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
                                grn_table_delete_optarg *optarg);

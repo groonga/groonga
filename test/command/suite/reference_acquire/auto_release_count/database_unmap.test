@@ -1,0 +1,17 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms users_name COLUMN_INDEX|WITH_POSITION Users name
+
+log_level --level dump
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+reference_acquire --target_name Users --recursive yes --auto_release_count 2
+database_unmap
+#@sleep-after-command 1
+select Users

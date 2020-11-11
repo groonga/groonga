@@ -227,6 +227,10 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
   s->cache = NULL;
   s->options = NULL;
   s->is_closing = false;
+  s->deferred_unrefs = grn_array_create(ctx,
+                                        NULL,
+                                        sizeof(grn_deferred_unref),
+                                        GRN_TABLE_NO_KEY);
 
   {
     grn_bool use_default_db_key = GRN_TRUE;
@@ -397,6 +401,10 @@ grn_db_open(grn_ctx *ctx, const char *path)
   s->cache = NULL;
   s->options = NULL;
   s->is_closing = false;
+  s->deferred_unrefs = grn_array_create(ctx,
+                                        NULL,
+                                        sizeof(grn_deferred_unref),
+                                        GRN_TABLE_NO_KEY);
 
   {
     uint32_t type = grn_io_detect_type(ctx, path);
@@ -513,7 +521,99 @@ grn_db_curr_id(grn_ctx *ctx, grn_obj *db)
   return curr_id;
 }
 
-/* s must be validated by caller */
+grn_rc
+grn_db_add_deferred_unref(grn_ctx *ctx,
+                          grn_obj *db,
+                          grn_deferred_unref *deferred_unref)
+{
+  if (!grn_enable_reference_count) {
+    return ctx->rc;
+  }
+  if (deferred_unref->count == 0) {
+    return ctx->rc;
+  }
+  if (deferred_unref->id == GRN_ID_NIL) {
+    return ctx->rc;
+  }
+  grn_db *db_ = (grn_db *)db;
+  CRITICAL_SECTION_ENTER(db_->lock);
+  void *value;
+  grn_id id = grn_array_add(ctx, db_->deferred_unrefs, &value);
+  if (id != GRN_ID_NIL) {
+    *((grn_deferred_unref *)value) = *deferred_unref;
+  }
+  CRITICAL_SECTION_LEAVE(db_->lock);
+  return ctx->rc;
+}
+
+grn_rc
+grn_db_clear_deferred_unrefs(grn_ctx *ctx, grn_obj *db)
+{
+  if (!grn_enable_reference_count) {
+    return ctx->rc;
+  }
+
+  grn_db *db_ = (grn_db *)db;
+  CRITICAL_SECTION_ENTER(db_->lock);
+  grn_rc rc = GRN_SUCCESS;
+  if (grn_array_size(ctx, db_->deferred_unrefs) > 0) {
+    rc = grn_array_truncate(ctx, db_->deferred_unrefs);
+  }
+  CRITICAL_SECTION_LEAVE(db_->lock);
+  return rc;
+}
+
+grn_rc
+grn_db_command_processed(grn_ctx *ctx, grn_obj *db)
+{
+  if (!grn_enable_reference_count) {
+    return ctx->rc;
+  }
+
+  grn_db *db_ = (grn_db *)db;
+  CRITICAL_SECTION_ENTER(db_->lock);
+  if (grn_array_size(ctx, db_->deferred_unrefs) > 0) {
+    GRN_ARRAY_EACH_BEGIN(ctx,
+                         db_->deferred_unrefs,
+                         cursor,
+                         GRN_ID_NIL,
+                         GRN_ID_MAX,
+                         id) {
+      void *value;
+      int size = grn_array_cursor_get_value(ctx, cursor, &value);
+      if (size != sizeof(grn_deferred_unref)) {
+        grn_array_cursor_delete(ctx, cursor, NULL);
+        continue;
+      }
+      grn_deferred_unref *deferred_unref = value;
+      deferred_unref->count--;
+      if (deferred_unref->count == 0) {
+        grn_obj *object = grn_ctx_at(ctx, deferred_unref->id);
+        if (object) {
+          switch (deferred_unref->recursive) {
+          case GRN_DEFERRED_UNREF_RECURSIVE_NO :
+            grn_obj_unref(ctx, object);
+            break;
+          case GRN_DEFERRED_UNREF_RECURSIVE_YES :
+            grn_obj_unref_recursive(ctx, object);
+            break;
+          case GRN_DEFERRED_UNREF_RECURSIVE_DEPENDENT :
+            grn_obj_unref_recursive_dependent(ctx, object);
+            break;
+          default :
+            break;
+          }
+          grn_obj_unref(ctx, object);
+        }
+        grn_array_cursor_delete(ctx, cursor, NULL);
+      }
+    } GRN_ARRAY_EACH_END(ctx, cursor);
+  }
+  CRITICAL_SECTION_LEAVE(db_->lock);
+  return ctx->rc;
+}
+
+/* db must be validated by caller */
 grn_rc
 grn_db_close(grn_ctx *ctx, grn_obj *db)
 {
@@ -523,6 +623,7 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   GRN_API_ENTER;
 
   s->is_closing = true;
+  grn_array_close(ctx, s->deferred_unrefs);
 
   ctx_used_db = ctx->impl && ctx->impl->db == db;
   if (ctx_used_db) {
@@ -14053,6 +14154,8 @@ grn_db_unmap(grn_ctx *ctx, grn_obj *db)
   grn_db *s = (grn_db *)db;
 
   GRN_API_ENTER;
+
+  grn_db_clear_deferred_unrefs(ctx, db);
 
   GRN_TINY_ARRAY_EACH_BEGIN(&s->values, 1, grn_db_curr_id(ctx, db), value) {
     db_value *vp = value;
