@@ -87,6 +87,7 @@ struct _grn_db {
   grn_options *options;
   bool is_closing;
   grn_array *deferred_unrefs;
+  bool is_deferred_unrefing;
 };
 
 #define GRN_SERIALIZED_SPEC_INDEX_SPEC   0
@@ -197,8 +198,9 @@ grn_db_add_deferred_unref(grn_ctx *ctx,
                           grn_obj *db,
                           grn_deferred_unref *deferred_unref);
 grn_rc
-grn_db_clear_deferred_unrefs(grn_ctx *ctx,
-                             grn_obj *db);
+grn_db_remove_deferred_unref(grn_ctx *ctx,
+                             grn_obj *db,
+                             grn_id id);
 grn_rc
 grn_db_command_processed(grn_ctx *ctx,
                          grn_obj *db);

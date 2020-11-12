@@ -231,6 +231,7 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
                                         NULL,
                                         sizeof(grn_deferred_unref),
                                         GRN_TABLE_NO_KEY);
+  s->is_deferred_unrefing = false;
 
   {
     grn_bool use_default_db_key = GRN_TRUE;
@@ -405,6 +406,7 @@ grn_db_open(grn_ctx *ctx, const char *path)
                                         NULL,
                                         sizeof(grn_deferred_unref),
                                         GRN_TABLE_NO_KEY);
+  s->is_deferred_unrefing = false;
 
   {
     uint32_t type = grn_io_detect_type(ctx, path);
@@ -547,20 +549,45 @@ grn_db_add_deferred_unref(grn_ctx *ctx,
 }
 
 grn_rc
-grn_db_clear_deferred_unrefs(grn_ctx *ctx, grn_obj *db)
+grn_db_remove_deferred_unref(grn_ctx *ctx,
+                             grn_obj *db,
+                             grn_id id)
 {
   if (!grn_enable_reference_count) {
     return ctx->rc;
   }
-
+  if (id == GRN_ID_NIL) {
+    return ctx->rc;
+  }
   grn_db *db_ = (grn_db *)db;
+  if (db_->is_closing) {
+    return ctx->rc;
+  }
+  if (db_->is_deferred_unrefing) {
+    return ctx->rc;
+  }
   CRITICAL_SECTION_ENTER(db_->lock);
-  grn_rc rc = GRN_SUCCESS;
   if (grn_array_size(ctx, db_->deferred_unrefs) > 0) {
-    rc = grn_array_truncate(ctx, db_->deferred_unrefs);
+    GRN_ARRAY_EACH_BEGIN(ctx,
+                         db_->deferred_unrefs,
+                         cursor,
+                         GRN_ID_NIL,
+                         GRN_ID_MAX,
+                         id_) {
+      void *value;
+      int size = grn_array_cursor_get_value(ctx, cursor, &value);
+      if (size != sizeof(grn_deferred_unref)) {
+        grn_array_cursor_delete(ctx, cursor, NULL);
+        continue;
+      }
+      grn_deferred_unref *deferred_unref = value;
+      if (deferred_unref->id == id) {
+        grn_array_cursor_delete(ctx, cursor, NULL);
+      }
+    } GRN_ARRAY_EACH_END(ctx, cursor);
   }
   CRITICAL_SECTION_LEAVE(db_->lock);
-  return rc;
+  return ctx->rc;
 }
 
 grn_rc
@@ -573,6 +600,7 @@ grn_db_command_processed(grn_ctx *ctx, grn_obj *db)
   grn_db *db_ = (grn_db *)db;
   CRITICAL_SECTION_ENTER(db_->lock);
   if (grn_array_size(ctx, db_->deferred_unrefs) > 0) {
+    db_->is_deferred_unrefing = true;
     GRN_ARRAY_EACH_BEGIN(ctx,
                          db_->deferred_unrefs,
                          cursor,
@@ -608,6 +636,7 @@ grn_db_command_processed(grn_ctx *ctx, grn_obj *db)
         grn_array_cursor_delete(ctx, cursor, NULL);
       }
     } GRN_ARRAY_EACH_END(ctx, cursor);
+    db_->is_deferred_unrefing = false;
   }
   CRITICAL_SECTION_LEAVE(db_->lock);
   return ctx->rc;
@@ -11365,18 +11394,19 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
       grn_id id = DB_OBJ(obj)->id;
       grn_hook_entry entry;
 
-      if (id != GRN_ID_NIL &&
-          !(id & GRN_OBJ_TMP_OBJECT) &&
-          grn_reference_count_should_log(ctx, obj->header.type)) {
-        const char *name;
-        uint32_t name_size = 0;
-        name = _grn_table_key(ctx, DB_OBJ(obj)->db, id, &name_size);
-        GRN_LOG(ctx, GRN_LOG_REFERENCE_COUNT,
-                "[obj][close] <%u>(<%.*s>):<%u>(<%s>)",
-                id,
-                name_size, name,
-                obj->header.type,
-                grn_obj_type_to_string(obj->header.type));
+      if (id != GRN_ID_NIL && !(id & GRN_OBJ_TMP_OBJECT)) {
+        grn_db_remove_deferred_unref(ctx, ctx->impl->db, id);
+        if (grn_reference_count_should_log(ctx, obj->header.type)) {
+          const char *name;
+          uint32_t name_size = 0;
+          name = _grn_table_key(ctx, DB_OBJ(obj)->db, id, &name_size);
+          GRN_LOG(ctx, GRN_LOG_REFERENCE_COUNT,
+                  "[obj][close] <%u>(<%.*s>):<%u>(<%s>)",
+                  id,
+                  name_size, name,
+                  obj->header.type,
+                  grn_obj_type_to_string(obj->header.type));
+        }
       }
 
       if (grn_obj_is_table(ctx, obj) && (id & GRN_OBJ_TMP_OBJECT)) {
@@ -14154,8 +14184,6 @@ grn_db_unmap(grn_ctx *ctx, grn_obj *db)
   grn_db *s = (grn_db *)db;
 
   GRN_API_ENTER;
-
-  grn_db_clear_deferred_unrefs(ctx, db);
 
   GRN_TINY_ARRAY_EACH_BEGIN(&s->values, 1, grn_db_curr_id(ctx, db), value) {
     db_value *vp = value;

@@ -1,0 +1,17 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users name COLUMN_SCALAR ShortText
+
+#@disable-logging
+thread_limit 1
+#@enable-logging
+
+log_level --level dump
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+reference_acquire --target_name Users --recursive yes --auto_release_count 3
+table_remove Users
+table_create Users TABLE_HASH_KEY ShortText
+#@sleep-after-command 1
+select Users
