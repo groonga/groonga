@@ -32,6 +32,14 @@ You must call :doc:`reference_release` after you finish performance
 impact operations. If you don't call :doc:`reference_release`, the
 reference count mode doesn't work.
 
+You can use :ref:`reference-acquire-auto-release-count` instead of
+calling :doc:`reference_release`. You can release acquired references
+automatically by :ref:`reference-acquire-auto-release-count`. But you
+need to tune suitable :ref:`reference-acquire-auto-release-count`
+value. If you specify too large number, auto close isn't triggered. If
+you specify too small number, auto close is triggered before
+performance impact operations are finished.
+
 Syntax
 ------
 
@@ -41,6 +49,7 @@ All parameters are optional::
 
   reference_acquire [target_name=null]
                     [recursive=yes]
+                    [auto_release_count=0]
 
 Usage
 -----
@@ -217,6 +226,36 @@ use the following command:
 .. groonga-command
 .. include:: ../../example/reference/commands/reference_acquire/recursive_dependent.log
 .. reference_acquire --target_name Users --recursive dependent
+
+.. _reference-acquire-auto-release-count:
+
+``auto_release_count``
+""""""""""""""""""""""
+
+.. versionadded:: 10.0.9
+
+You can release acquired references automatically by
+``auto_release_count``.
+
+If ``auto_release_count`` is 1 or greater, acquired references are
+automatically after the following ``auto_release_count`` commands are
+processed. You must not call corresponding :doc:`reference_release`
+when you use ``auto_release_count``.
+
+In the following example, the acquired reference of ``Users`` is
+released automatically after the second ``status`` is processed::
+
+  reference_acquire --target_name Users --auto_release_count 2
+  status # Users is still referred.
+  status # Users' reference is released after this command is processed.
+
+The same :ref:`reference-acquire-recursive` is used when acquired
+references are released automatically. You don't need to care about
+:ref:`reference-acquire-recursive`.
+
+``auto_release_count`` is safe with :doc:`table_remove`,
+:doc:`column_remove` and :doc:`database_unmap`. If one of them are
+called, registered auto release hook is removed internally.
 
 Return value
 ------------
