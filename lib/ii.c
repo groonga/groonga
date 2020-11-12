@@ -5846,7 +5846,7 @@ grn_ii_truncate(grn_ctx *ctx, grn_ii *ii)
     rc = GRN_UNKNOWN_ERROR;
     goto exit;
   }
-  grn_obj_unlink(ctx, lexicon);
+  grn_obj_unref(ctx, lexicon);
 exit:
   if (segpath) { GRN_FREE(segpath); }
   if (chunkpath) { GRN_FREE(chunkpath); }
