@@ -329,6 +329,15 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(table_raw),
                       GRN_TEXT_LEN(table_raw));
+  if (!table) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "[column][remove] table isn't found: <%.*s>",
+                     (int)GRN_TEXT_LEN(table_raw),
+                     GRN_TEXT_VALUE(table_raw));
+    grn_ctx_output_bool(ctx, GRN_FALSE);
+    return NULL;
+  }
 
   fullname_len = grn_obj_name(ctx, table, fullname, GRN_TABLE_MAX_KEY_SIZE);
   if (fullname_len == 0) {
@@ -338,6 +347,7 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
                      (int)GRN_TEXT_LEN(table_raw),
                      GRN_TEXT_VALUE(table_raw));
     grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_obj_unref(ctx, table);
     return NULL;
   }
 
@@ -353,6 +363,7 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
                      (int)GRN_TEXT_LEN(name),
                      GRN_TEXT_VALUE(name));
     grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_obj_unref(ctx, table);
     return NULL;
   }
   grn_memcpy(fullname + fullname_len,
@@ -370,11 +381,13 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
                      (int)GRN_TEXT_LEN(name),
                      GRN_TEXT_VALUE(name));
     grn_ctx_output_bool(ctx, GRN_FALSE);
+    grn_obj_unref(ctx, table);
     return NULL;
   }
 
   grn_obj_remove(ctx, column);
   grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
+  grn_obj_unref(ctx, table);
   return NULL;
 }
 
