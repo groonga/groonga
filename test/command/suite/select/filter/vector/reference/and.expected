@@ -20,7 +20,7 @@ select Memos --filter 'tags && true'
   [
     [
       [
-        2
+        1
       ],
       [
         [
@@ -41,13 +41,6 @@ select Memos --filter 'tags && true'
         "groonga is very fast",
         [
           "groonga"
-        ]
-      ],
-      [
-        2,
-        "no tag",
-        [
-
         ]
       ]
     ]

@@ -69,9 +69,9 @@ grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
     }
     break;
   case GRN_VECTOR :
-    return true;
+    return grn_vector_size(ctx, obj) > 0;
   case GRN_UVECTOR :
-    return true;
+    return grn_uvector_size(ctx, obj) > 0;
   default :
     return false;
   }
