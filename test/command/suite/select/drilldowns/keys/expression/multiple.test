@@ -1,0 +1,17 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users first_name COLUMN_SCALAR ShortText
+column_create Users last_name COLUMN_SCALAR ShortText
+column_create Users nickname COLUMN_SCALAR ShortText
+column_create Users age COLUMN_SCALAR UInt8
+
+load --table Users
+[
+{"_key": "alice1", "nickname": "My Alice", "age": 8},
+{"_key": "alice2", "first_name": "My", "last_name": "Alice", "age": 8},
+{"_key": "alice3", "nickname": "My Alice", "age": 10},
+{"_key": "bob", "nickname": "Bob", "age": 20}
+]
+
+select Users \
+  --drilldowns[name].keys "nickname || first_name + ' ' + last_name, age" \
+  --drilldowns[name].output_columns "_key[0], _key[1], _nsubrecs"

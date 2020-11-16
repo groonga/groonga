@@ -1,0 +1,127 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users first_name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users last_name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users nickname COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users age COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice1", "nickname": "My Alice", "age": 8},
+{"_key": "alice2", "first_name": "My", "last_name": "Alice", "age": 8},
+{"_key": "alice3", "nickname": "My Alice", "age": 10},
+{"_key": "bob", "nickname": "Bob", "age": 20}
+]
+[[0,0.0,0.0],4]
+select Users   --drilldowns[name].keys "nickname || first_name + ' ' + last_name, age"   --drilldowns[name].output_columns "_key[0], _key[1], _nsubrecs"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "age",
+          "UInt8"
+        ],
+        [
+          "first_name",
+          "ShortText"
+        ],
+        [
+          "last_name",
+          "ShortText"
+        ],
+        [
+          "nickname",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "alice1",
+        8,
+        "",
+        "",
+        "My Alice"
+      ],
+      [
+        2,
+        "alice2",
+        8,
+        "My",
+        "Alice",
+        ""
+      ],
+      [
+        3,
+        "alice3",
+        10,
+        "",
+        "",
+        "My Alice"
+      ],
+      [
+        4,
+        "bob",
+        20,
+        "",
+        "",
+        "Bob"
+      ]
+    ],
+    {
+      "name": [
+        [
+          3
+        ],
+        [
+          [
+            "_key[0]",
+            null
+          ],
+          [
+            "_key[1]",
+            null
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          "My Alice",
+          8,
+          2
+        ],
+        [
+          "My Alice",
+          10,
+          1
+        ],
+        [
+          "Bob",
+          20,
+          1
+        ]
+      ]
+    }
+  ]
+]

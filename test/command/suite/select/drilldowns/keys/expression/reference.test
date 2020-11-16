@@ -1,0 +1,15 @@
+table_create Names TABLE_HASH_KEY ShortText
+
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users nickname COLUMN_SCALAR Names
+column_create Users account_name COLUMN_SCALAR Names
+
+load --table Users
+[
+{"_key": "alice1", "nickname": "alice"},
+{"_key": "alice2", "account_name": "alice"},
+{"_key": "bob", "nickname": "bob"}
+]
+
+select Users \
+  --drilldowns[name].keys "nickname || account_name"

@@ -2729,10 +2729,11 @@ grn_select_drilldown_execute(grn_ctx *ctx,
   if (drilldown->parsed_keys) {
     result->key_end = drilldown->n_parsed_keys;
   } else if (drilldown->keys.length > 0) {
-    keys = grn_table_sort_key_from_str(ctx,
-                                       drilldown->keys.value,
-                                       drilldown->keys.length,
-                                       target_table, &n_keys);
+    keys = grn_table_group_keys_parse(ctx,
+                                      target_table,
+                                      drilldown->keys.value,
+                                      drilldown->keys.length,
+                                      &n_keys);
     if (!keys) {
       GRN_PLUGIN_CLEAR_ERROR(ctx);
       success = false;

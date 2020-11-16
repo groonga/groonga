@@ -92,6 +92,7 @@ input ::= query.
 input ::= expression.
 input ::= START_OUTPUT_COLUMNS output_columns.
 input ::= START_ADJUSTER adjuster.
+input ::= START_GROUP_KEYS group_keys.
 
 query ::= query_element.
 query ::= query query_element. {
@@ -714,3 +715,6 @@ adjust_expression ::= adjust_match_expression STAR DECIMAL. {
 adjust_match_expression ::= IDENTIFIER MATCH STRING. {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
 }
+
+group_keys ::= .
+group_keys ::= expression.

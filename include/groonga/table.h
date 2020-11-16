@@ -288,6 +288,12 @@ struct _grn_table_group_result {
 GRN_API grn_rc grn_table_group(grn_ctx *ctx, grn_obj *table,
                                grn_table_sort_key *keys, int n_keys,
                                grn_table_group_result *results, int n_results);
+GRN_API grn_table_sort_key *
+grn_table_group_keys_parse(grn_ctx *ctx,
+                           grn_obj *table,
+                           const char *raw_sort_keys,
+                           ssize_t raw_sort_keys_size,
+                           int *n_keys);
 GRN_API grn_rc grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
                                       grn_obj *res, grn_operator op);
 GRN_API grn_rc grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
