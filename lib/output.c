@@ -3667,62 +3667,6 @@ grn_output_envelope_close(grn_ctx *ctx,
   }
 }
 
-static grn_inline grn_bool
-is_output_columns_format_v1(grn_ctx *ctx,
-                            const char *output_columns,
-                            unsigned int output_columns_len)
-{
-  const char *current;
-  const char *end;
-  grn_bool in_identifier = GRN_FALSE;
-
-  current = output_columns;
-  end = current + output_columns_len;
-  while (current < end) {
-    int char_length;
-
-    char_length = grn_charlen(ctx, current, end);
-    if (char_length != 1) {
-      return GRN_FALSE;
-    }
-
-    switch (current[0]) {
-    case ' ' :
-    case ',' :
-      in_identifier = GRN_FALSE;
-      break;
-    case '_' :
-      in_identifier = GRN_TRUE;
-      break;
-    case '.' :
-    case '-' :
-    case '#' :
-    case '@' :
-      if (!in_identifier) {
-        return GRN_FALSE;
-      }
-      break;
-    default :
-      if ('a' <= current[0] && current[0] <= 'z') {
-        in_identifier = GRN_TRUE;
-        break;
-      } else if ('A' <= current[0] && current[0] <= 'Z') {
-        in_identifier = GRN_TRUE;
-        break;
-      } else if ('0' <= current[0] && current[0] <= '9') {
-        in_identifier = GRN_TRUE;
-        break;
-      } else {
-        return GRN_FALSE;
-      }
-    }
-
-    current += char_length;
-  }
-
-  return GRN_TRUE;
-}
-
 grn_rc
 grn_obj_format_fin(grn_ctx *ctx, grn_obj_format *format)
 {
@@ -3753,7 +3697,7 @@ grn_obj_format_set_columns(grn_ctx *ctx,
 {
   grn_rc rc;
 
-  if (is_output_columns_format_v1(ctx, columns, columns_len)) {
+  if (grn_expr_is_v1_columns_format(ctx, columns, columns_len)) {
     rc = grn_obj_columns(ctx, table, columns, columns_len, &(format->columns));
   } else {
     format->expression = grn_output_columns_parse(ctx,

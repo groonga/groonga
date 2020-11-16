@@ -9008,3 +9008,70 @@ exit :
   GRN_OBJ_FIN(ctx, &range_flags_stack);
   return;
 }
+
+/*
+ * In command version 1:
+ *
+ *   * We accept only column name and accessor as a column.
+ *
+ *   * We accept one or more spaces and commas (",,," is OK) as a
+ *     separator.
+ */
+bool
+grn_expr_is_v1_columns_format(grn_ctx *ctx,
+                              const char *raw_text,
+                              ssize_t raw_text_len)
+{
+  const char *current;
+  const char *end;
+  bool in_identifier = false;
+
+  if (raw_text_len < 0) {
+    raw_text_len = strlen(raw_text);
+  }
+  current = raw_text;
+  end = current + raw_text_len;
+  while (current < end) {
+    int char_length;
+
+    char_length = grn_charlen(ctx, current, end);
+    if (char_length != 1) {
+      return false;
+    }
+
+    switch (current[0]) {
+    case ' ' :
+    case ',' :
+      in_identifier = false;
+      break;
+    case '_' :
+      in_identifier = true;
+      break;
+    case '.' :
+    case '-' :
+    case '#' :
+    case '@' :
+      if (!in_identifier) {
+        return false;
+      }
+      break;
+    default :
+      if ('a' <= current[0] && current[0] <= 'z') {
+        in_identifier = true;
+        break;
+      } else if ('A' <= current[0] && current[0] <= 'Z') {
+        in_identifier = true;
+        break;
+      } else if ('0' <= current[0] && current[0] <= '9') {
+        in_identifier = true;
+        break;
+      } else {
+        return false;
+      }
+    }
+
+    current += char_length;
+  }
+
+  return true;
+}

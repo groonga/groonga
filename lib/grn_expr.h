@@ -166,6 +166,11 @@ grn_expr_get_range_info(grn_ctx *ctx,
                         grn_id *range_id,
                         grn_obj_flags *range_flags);
 
+bool
+grn_expr_is_v1_columns_format(grn_ctx *ctx,
+                              const char *raw_text,
+                              ssize_t raw_text_len);
+
 
 #ifdef __cplusplus
 }
