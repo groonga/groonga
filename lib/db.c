@@ -5202,8 +5202,11 @@ void
 grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
                        grn_id *range_id, grn_obj_flags *range_flags)
 {
+  *range_flags = 0;
   if (!obj) {
     *range_id = GRN_ID_NIL;
+  } else if (grn_obj_is_expr(ctx, obj)) {
+    grn_expr_get_range_info(ctx, obj, range_id, range_flags);
   } else if (grn_obj_is_proc(ctx, obj)) {
     /* TODO */
     *range_id = GRN_ID_NIL;

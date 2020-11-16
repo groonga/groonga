@@ -155,6 +155,13 @@ grn_rc
 grn_expr_to_script_syntax(grn_ctx *ctx,
                           grn_obj *expr,
                           grn_obj *buffer);
+void
+grn_expr_get_range_info(grn_ctx *ctx,
+                        grn_obj *expr,
+                        grn_id *range_id,
+                        grn_obj_flags *range_flags);
+
+
 #ifdef __cplusplus
 }
 #endif

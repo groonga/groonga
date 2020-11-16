@@ -8592,3 +8592,324 @@ exit :
   GRN_OBJ_FIN(ctx, &push_buffer);
   return ctx->rc;
 }
+
+void
+grn_expr_get_range_info(grn_ctx *ctx,
+                        grn_obj *expr,
+                        grn_id *range_id,
+                        grn_obj_flags *range_flags)
+{
+  grn_obj range_id_stack;
+  GRN_UINT32_INIT(&range_id_stack, GRN_OBJ_VECTOR);
+  grn_obj range_flags_stack;
+  GRN_UINT16_INIT(&range_flags_stack, GRN_OBJ_VECTOR);
+  grn_expr *e = (grn_expr *)expr;
+  grn_expr_code *code = e->codes;
+  grn_expr_code *code_end = e->codes + e->codes_curr;
+
+#define PUSH(range_id_, range_flags_) do {                      \
+    GRN_UINT32_PUT(ctx, &range_id_stack, range_id_);            \
+    GRN_UINT16_PUT(ctx, &range_flags_stack, range_flags_);      \
+  } while (false)
+
+#define POP(range_id_, range_flags_) do {                       \
+    GRN_UINT32_POP(&range_id_stack, range_id_);                 \
+    GRN_UINT16_POP(&range_flags_stack, range_flags_);           \
+  } while (false)
+
+#define DROP() do {                                             \
+    grn_id unused_range_id;                                     \
+    grn_obj_flags unused_range_flags;                           \
+    POP(unused_range_id, unused_range_flags);                    \
+  } while (false)
+
+  while (code < code_end) {
+    switch (code->op) {
+    case GRN_OP_NOP :
+      code++;
+      break;
+    case GRN_OP_PUSH :
+      {
+        grn_obj_flags range_flags_ = 0;
+        if (grn_obj_is_vector(ctx, code->value) ||
+            grn_obj_is_uvector(ctx, code->value)) {
+          range_flags_ = GRN_OBJ_VECTOR;
+        }
+        PUSH(code->value->header.domain, range_flags_);
+      }
+      code++;
+      break;
+    case GRN_OP_POP :
+      DROP();
+      code++;
+      break;
+    case GRN_OP_GET_REF :
+      {
+        grn_obj *column = NULL;
+        if (code->nargs == 1) {
+          if (code->value) {
+            column = code->value;
+          } else {
+            /* TODO: can't resolve column name */
+            DROP();
+          }
+        } else {
+          if (code->value) {
+            column = code->value;
+            DROP();
+          } else {
+            /* TODO: can't resolve column name */
+            DROP();
+            DROP();
+          }
+        }
+        if (grn_obj_is_text_family_bulk(ctx, column)) {
+          /* TODO: resolve column */
+          column = NULL;
+        }
+        if (column) {
+          grn_id range_id_;
+          grn_obj_flags range_flags_;
+          grn_obj_get_range_info(ctx, column, &range_id_, &range_flags_);
+          PUSH(range_id_, range_flags_);
+        } else {
+          GRN_LOG(ctx,
+                  GRN_LOG_DEBUG,
+                  "[expr][get-range-info] failed to resolve column");
+          goto exit;
+        }
+        code++;
+      }
+      break;
+    case GRN_OP_CALL :
+      {
+        grn_obj *proc = NULL;
+        if (code->value) {
+          proc = code->value;
+        } else {
+          GRN_LOG(ctx,
+                  GRN_LOG_DEBUG,
+                  "[expr][get-range-info] unsupported operator: %s",
+                  grn_operator_to_string(code->op));
+          goto exit;
+        }
+        grn_id range_id_;
+        grn_obj_flags range_flags_;
+        grn_obj_get_range_info(ctx, proc, &range_id_, &range_flags_);
+        PUSH(range_id_, range_flags_);
+      }
+      code++;
+      break;
+    case GRN_OP_INTERN :
+    case GRN_OP_TABLE_CREATE :
+    case GRN_OP_EXPR_GET_VAR :
+    case GRN_OP_ASSIGN :
+    case GRN_OP_STAR_ASSIGN :
+    case GRN_OP_SLASH_ASSIGN :
+    case GRN_OP_MOD_ASSIGN :
+    case GRN_OP_PLUS_ASSIGN :
+    case GRN_OP_MINUS_ASSIGN :
+    case GRN_OP_SHIFTL_ASSIGN :
+    case GRN_OP_SHIFTR_ASSIGN :
+    case GRN_OP_SHIFTRR_ASSIGN :
+    case GRN_OP_AND_ASSIGN :
+    case GRN_OP_OR_ASSIGN :
+    case GRN_OP_XOR_ASSIGN :
+    case GRN_OP_JUMP :
+    case GRN_OP_CJUMP :
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "[expr][get-range-info] unsupported operator: %s",
+              grn_operator_to_string(code->op));
+      goto exit;
+      break;
+    case GRN_OP_GET_VALUE :
+      if (code->value) {
+        grn_id range_id_;
+        grn_obj_flags range_flags_;
+        grn_obj_get_range_info(ctx, code->value, &range_id_, &range_flags_);
+        PUSH(range_id_, range_flags_);
+      } else {
+        GRN_LOG(ctx,
+                GRN_LOG_DEBUG,
+                "[expr][get-range-info] unsupported operator: %s",
+                grn_operator_to_string(code->op));
+        goto exit;
+      }
+      code++;
+      break;
+    case GRN_OP_OBJ_SEARCH :
+    case GRN_OP_TABLE_SELECT :
+    case GRN_OP_TABLE_SORT :
+    case GRN_OP_TABLE_GROUP :
+    case GRN_OP_JSON_PUT :
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "[expr][get-range-info] unsupported operator: %s",
+              grn_operator_to_string(code->op));
+      goto exit;
+      break;
+    case GRN_OP_AND :
+    case GRN_OP_OR :
+      {
+        grn_id x_range_id;
+        grn_obj_flags x_range_flags;
+        grn_id y_range_id;
+        grn_obj_flags y_range_flags;
+        POP(y_range_id, y_range_flags);
+        POP(x_range_id, x_range_flags);
+        if (x_range_id != y_range_id) {
+          GRN_LOG(ctx,
+                  GRN_LOG_DEBUG,
+                  "[expr][get-range-info] can't chose range: %s %s %s",
+                  grn_obj_type_to_string(x_range_id),
+                  grn_operator_to_string(code->op),
+                  grn_obj_type_to_string(y_range_id));
+          goto exit;
+        }
+        PUSH(x_range_id, x_range_flags);
+      }
+      code++;
+      break;
+    case GRN_OP_AND_NOT :
+    case GRN_OP_ADJUST :
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "[expr][get-range-info] unsupported operator: %s",
+              grn_operator_to_string(code->op));
+      goto exit;
+      break;
+    case GRN_OP_MATCH :
+    case GRN_OP_EQUAL :
+    case GRN_OP_NOT_EQUAL :
+    case GRN_OP_PREFIX :
+    case GRN_OP_SUFFIX :
+    case GRN_OP_LESS :
+    case GRN_OP_GREATER :
+    case GRN_OP_LESS_EQUAL :
+    case GRN_OP_GREATER_EQUAL :
+      DROP();
+      DROP();
+      PUSH(GRN_DB_BOOL, 0);
+      code++;
+      break;
+    case GRN_OP_GEO_DISTANCE1 :
+    case GRN_OP_GEO_DISTANCE2 :
+    case GRN_OP_GEO_DISTANCE3 :
+    case GRN_OP_GEO_DISTANCE4 :
+      DROP();
+      DROP();
+      DROP();
+      DROP();
+      PUSH(GRN_DB_FLOAT, 0);
+      code++;
+      break;
+    case GRN_OP_GEO_WITHINP5 :
+    case GRN_OP_GEO_WITHINP6 :
+    case GRN_OP_GEO_WITHINP8 :
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "[expr][get-range-info] unsupported operator: %s",
+              grn_operator_to_string(code->op));
+      goto exit;
+      break;
+    case GRN_OP_PLUS :
+      {
+        grn_id x_range_id;
+        grn_obj_flags x_range_flags;
+        grn_id y_range_id;
+        grn_obj_flags y_range_flags;
+        POP(y_range_id, y_range_flags);
+        POP(x_range_id, x_range_flags);
+        /* TODO: Use larger range */
+        PUSH(x_range_id, x_range_flags);
+      }
+      code++;
+      break;
+    case GRN_OP_MINUS :
+      if (code->nargs == 1) {
+        /* no range change */
+      } else {
+        grn_id x_range_id;
+        grn_obj_flags x_range_flags;
+        grn_id y_range_id;
+        grn_obj_flags y_range_flags;
+        POP(y_range_id, y_range_flags);
+        POP(x_range_id, x_range_flags);
+        /* TODO: Use larger range */
+        PUSH(x_range_id, x_range_flags);
+      }
+      code++;
+      break;
+    case GRN_OP_STAR :
+    case GRN_OP_SLASH :
+    case GRN_OP_MOD :
+    case GRN_OP_BITWISE_NOT :
+    case GRN_OP_BITWISE_OR :
+    case GRN_OP_BITWISE_XOR :
+    case GRN_OP_BITWISE_AND :
+    case GRN_OP_SHIFTL :
+    case GRN_OP_SHIFTR :
+    case GRN_OP_SHIFTRR :
+      {
+        grn_id x_range_id;
+        grn_obj_flags x_range_flags;
+        grn_id y_range_id;
+        grn_obj_flags y_range_flags;
+        POP(y_range_id, y_range_flags);
+        POP(x_range_id, x_range_flags);
+        /* TODO: Use larger range */
+        PUSH(x_range_id, x_range_flags);
+      }
+      code++;
+      break;
+    case GRN_OP_INCR :
+    case GRN_OP_DECR :
+    case GRN_OP_INCR_POST :
+    case GRN_OP_DECR_POST :
+      /* no range change */
+      code++;
+      break;
+    case GRN_OP_NOT :
+      DROP();
+      PUSH(GRN_DB_BOOL, 0);
+      code++;
+      break;
+    case GRN_OP_GET_MEMBER :
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "[expr][get-range-info] unsupported operator: %s",
+              grn_operator_to_string(code->op));
+      goto exit;
+    case GRN_OP_REGEXP :
+      DROP();
+      DROP();
+      PUSH(GRN_DB_BOOL, 0);
+      code++;
+      break;
+    default :
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "[expr][get-range-info] unsupported operator: %s",
+              grn_operator_to_string(code->op));
+      goto exit;
+      break;
+    }
+  }
+  if (GRN_UINT32_VECTOR_SIZE(&range_id_stack) > 0) {
+    grn_id range_id_;
+    grn_obj_flags range_flags_;
+    POP(range_id_, range_flags_);
+    *range_id = range_id_;
+    *range_flags = range_flags_;
+  }
+
+#undef DROP
+#undef POP
+#undef PUSH
+
+exit :
+  GRN_OBJ_FIN(ctx, &range_id_stack);
+  GRN_OBJ_FIN(ctx, &range_flags_stack);
+  return;
+}
