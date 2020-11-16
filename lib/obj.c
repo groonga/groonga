@@ -18,7 +18,9 @@
 */
 
 #include "grn.h"
+#include "grn_accessor.h"
 #include "grn_ctx_impl.h"
+#include "grn_expr.h"
 #include "grn_dat.h"
 #include "grn_float.h"
 #include "grn_hash.h"
@@ -1294,4 +1296,87 @@ grn_obj_clear_option_values(grn_ctx *ctx, grn_obj *obj)
   }
 
   GRN_API_RETURN(rc);
+}
+
+grn_rc
+grn_obj_to_script_syntax(grn_ctx *ctx, grn_obj *obj, grn_obj *buffer)
+{
+  GRN_API_ENTER;
+  switch (obj->header.type) {
+  case GRN_VOID :
+    GRN_TEXT_PUTS(ctx, buffer, "null");
+    break;
+  case GRN_BULK :
+    grn_inspect(ctx, buffer, obj);
+    break;
+  case GRN_PTR :
+    if (GRN_BULK_VSIZE(obj) == 0) {
+      GRN_TEXT_PUTS(ctx, buffer, "null");
+    } else {
+      grn_obj_to_script_syntax(ctx, GRN_PTR_VALUE(obj), buffer);
+    }
+    break;
+  case GRN_UVECTOR :
+  case GRN_PVECTOR :
+  case GRN_VECTOR :
+    grn_inspect(ctx, buffer, obj);
+    break;
+  case GRN_ACCESSOR :
+    grn_accessor_to_script_syntax(ctx, obj, buffer);
+    break;
+  case GRN_TYPE :
+  case GRN_PROC :
+    {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_length = grn_obj_name(ctx, obj, name, sizeof(name));
+      GRN_TEXT_PUT(ctx, buffer, name, name_length);
+    }
+    break;
+  case GRN_EXPR :
+    grn_expr_to_script_syntax(ctx, obj, buffer);
+    break;
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+  case GRN_TABLE_NO_KEY :
+    if (grn_obj_is_tiny_hash_table(ctx, obj)) {
+      GRN_TEXT_PUTC(ctx, buffer, '{');
+      uint32_t i = 0;
+      grn_obj key;
+      GRN_TEXT_INIT(&key, GRN_OBJ_DO_SHALLOW_COPY);
+      GRN_TABLE_EACH_BEGIN_FLAGS(ctx, obj, cursor, id, GRN_CURSOR_BY_ID) {
+        if (i > 0) {
+          GRN_TEXT_PUTS(ctx, buffer, ", ");
+        }
+        void *raw_key;
+        int raw_key_size = grn_table_cursor_get_key(ctx, cursor, &raw_key);
+        GRN_TEXT_SET(ctx, &key, raw_key, raw_key_size);
+        grn_obj_to_script_syntax(ctx, &key, buffer);
+        GRN_TEXT_PUTS(ctx, buffer, ": ");
+        void *raw_value;
+        grn_table_cursor_get_value(ctx, cursor, &raw_value);
+        grn_obj *value = raw_value;
+        grn_obj_to_script_syntax(ctx, value, buffer);
+        i++;
+      } GRN_TABLE_EACH_END(ctx, cursor);
+      GRN_OBJ_FIN(ctx, &key);
+      GRN_TEXT_PUTC(ctx, buffer, '}');
+    } else {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_length = grn_obj_name(ctx, obj, name, sizeof(name));
+      GRN_TEXT_PUT(ctx, buffer, name, name_length);
+    }
+    break;
+  case GRN_COLUMN_FIX_SIZE :
+  case GRN_COLUMN_VAR_SIZE :
+  case GRN_COLUMN_INDEX :
+    grn_column_name_(ctx, obj, buffer);
+    break;
+  default :
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[obj][to-script-syntax] unsupported type: %s",
+        grn_obj_type_to_string(obj->header.type));
+    break;
+  }
+  GRN_API_RETURN(ctx->rc);
 }

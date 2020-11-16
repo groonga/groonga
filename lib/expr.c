@@ -8143,3 +8143,452 @@ grn_expr_get_condition(grn_ctx *ctx, grn_obj *expr)
   grn_expr *e = (grn_expr *)expr;
   GRN_API_RETURN(e->condition);
 }
+
+grn_rc
+grn_expr_to_script_syntax(grn_ctx *ctx,
+                          grn_obj *expr,
+                          grn_obj *buffer)
+{
+  grn_obj push_buffer;
+  GRN_TEXT_INIT(&push_buffer, 0);
+  grn_obj substring_buffer;
+  GRN_TEXT_INIT(&substring_buffer, 0);
+  grn_obj substring_stack;
+  GRN_TEXT_INIT(&substring_stack, GRN_OBJ_VECTOR);
+  grn_expr *e = (grn_expr *)expr;
+  grn_expr_code *code = e->codes;
+  grn_expr_code *code_end = e->codes + e->codes_curr;
+
+#define PUSH_SUBSTRING(substring, substring_length) do {        \
+    grn_vector_add_element(ctx,                                 \
+                           &substring_stack,                    \
+                           substring,                           \
+                           substring_length,                    \
+                           0,                                   \
+                           GRN_DB_TEXT);                        \
+  } while (false)
+
+#define PUSH_OBJECT(object) do {                                \
+    GRN_BULK_REWIND(&push_buffer);                              \
+    grn_obj_to_script_syntax(ctx, object, &push_buffer);        \
+    PUSH_SUBSTRING(GRN_TEXT_VALUE(&push_buffer),                \
+                   GRN_TEXT_LEN(&push_buffer));                 \
+  } while (false)
+
+#define POP(substring, substring_length) do {           \
+    float weight;                                       \
+    grn_id domain;                                      \
+    substring_length =                                  \
+      grn_vector_pop_element_float(ctx,                 \
+                                   &substring_stack,    \
+                                   &substring,          \
+                                   &weight,             \
+                                   &domain);            \
+  } while (false)
+
+#define DROP() do {                                     \
+    const char *substring;                              \
+    uint32_t substring_length;                          \
+    POP(substring, substring_length);                   \
+  } while (false)
+
+  while (code < code_end) {
+    switch (code->op) {
+    case GRN_OP_NOP :
+      code++;
+      break;
+    case GRN_OP_PUSH :
+      PUSH_OBJECT(code->value);
+      code++;
+      break;
+    case GRN_OP_POP :
+      DROP();
+      code++;
+      break;
+    case GRN_OP_GET_REF :
+      {
+        grn_obj *column = NULL;
+        if (code->nargs == 1) {
+          if (code->value) {
+            column = code->value;
+          } else {
+            /* TODO: can't resolve column name */
+            DROP();
+          }
+        } else {
+          if (code->value) {
+            column = code->value;
+            DROP();
+          } else {
+            /* TODO: can't resolve column name */
+            DROP();
+            DROP();
+          }
+        }
+        if (grn_obj_is_text_family_bulk(ctx, column)) {
+          PUSH_SUBSTRING(GRN_TEXT_VALUE(column),
+                         GRN_TEXT_LEN(column));
+        } else if (grn_obj_is_column(ctx, column)) {
+          PUSH_OBJECT(column);
+        } else {
+          GRN_LOG(ctx,
+                  GRN_LOG_DEBUG,
+                  "[expr][to-string] failed to resolve column");
+          goto exit;
+        }
+        code++;
+      }
+      break;
+    case GRN_OP_CALL :
+      {
+        grn_obj args;
+        GRN_TEXT_INIT(&args, GRN_OBJ_VECTOR);
+        int32_t i;
+        for (i = 0; i < code->nargs; i++) {
+          const char *arg;
+          int arg_length;
+          POP(arg, arg_length);
+          grn_vector_add_element(ctx, &args, arg, arg_length, 0, GRN_DB_TEXT);
+        }
+        const char *name;
+        char name_buffer[GRN_TABLE_MAX_KEY_SIZE];
+        int name_length;
+        if (code->value) {
+          name_length = grn_obj_name(ctx,
+                                     code->value,
+                                     name_buffer,
+                                     GRN_TABLE_MAX_KEY_SIZE);
+          name = name_buffer;
+        } else {
+          name_length = grn_vector_pop_element(ctx, &args, &name, NULL, NULL);
+        }
+        GRN_BULK_REWIND(&substring_buffer);
+        GRN_TEXT_PUT(ctx, &substring_buffer, name, name_length);
+        GRN_TEXT_PUTC(ctx, &substring_buffer, '(');
+        int32_t n_args = grn_vector_size(ctx, &args);
+        for (i = 0; i < n_args; i++) {
+          const char *arg;
+          int arg_length;
+          arg_length = grn_vector_pop_element(ctx, &args, &arg, NULL, NULL);
+          if (i > 0) {
+            GRN_TEXT_PUTS(ctx, &substring_buffer, ", ");
+          }
+          GRN_TEXT_PUT(ctx, &substring_buffer, arg, arg_length);
+        }
+        GRN_TEXT_PUTC(ctx, &substring_buffer, ')');
+        PUSH_SUBSTRING(GRN_TEXT_VALUE(&substring_buffer),
+                       GRN_TEXT_LEN(&substring_buffer));
+        GRN_OBJ_FIN(ctx, &args);
+      }
+      code++;
+      break;
+    case GRN_OP_INTERN :
+    case GRN_OP_TABLE_CREATE :
+    case GRN_OP_EXPR_GET_VAR :
+    case GRN_OP_ASSIGN :
+    case GRN_OP_STAR_ASSIGN :
+    case GRN_OP_SLASH_ASSIGN :
+    case GRN_OP_MOD_ASSIGN :
+    case GRN_OP_PLUS_ASSIGN :
+    case GRN_OP_MINUS_ASSIGN :
+    case GRN_OP_SHIFTL_ASSIGN :
+    case GRN_OP_SHIFTR_ASSIGN :
+    case GRN_OP_SHIFTRR_ASSIGN :
+    case GRN_OP_AND_ASSIGN :
+    case GRN_OP_OR_ASSIGN :
+    case GRN_OP_XOR_ASSIGN :
+    case GRN_OP_JUMP :
+    case GRN_OP_CJUMP :
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "[expr][to-string] unsupported operator: %s",
+              grn_operator_to_string(code->op));
+      goto exit;
+      break;
+    case GRN_OP_GET_VALUE :
+      if (code->value) {
+        PUSH_OBJECT(code->value);
+      } else {
+        GRN_LOG(ctx,
+                GRN_LOG_DEBUG,
+                "[expr][to-string] unsupported operator: %s",
+                grn_operator_to_string(code->op));
+        goto exit;
+      }
+      code++;
+      break;
+    case GRN_OP_OBJ_SEARCH :
+    case GRN_OP_TABLE_SELECT :
+    case GRN_OP_TABLE_SORT :
+    case GRN_OP_TABLE_GROUP :
+    case GRN_OP_JSON_PUT :
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "[expr][to-string] unsupported operator: %s",
+              grn_operator_to_string(code->op));
+      goto exit;
+      break;
+    case GRN_OP_AND :
+    case GRN_OP_OR :
+    case GRN_OP_AND_NOT :
+      {
+        const char *x_substring;
+        int x_substring_length;
+        const char *y_substring;
+        int y_substring_length;
+        POP(y_substring, y_substring_length);
+        POP(x_substring, x_substring_length);
+        GRN_BULK_REWIND(&substring_buffer);
+        grn_text_printf(ctx,
+                        &substring_buffer,
+                        "(%.*s %s %.*s)",
+                        x_substring_length, x_substring,
+                        grn_operator_to_script_syntax(code->op),
+                        y_substring_length, y_substring);
+        PUSH_SUBSTRING(GRN_TEXT_VALUE(&substring_buffer),
+                       GRN_TEXT_LEN(&substring_buffer));
+      }
+      code++;
+      break;
+    case GRN_OP_ADJUST :
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "[expr][to-string] unsupported operator: %s",
+              grn_operator_to_string(code->op));
+      goto exit;
+      break;
+    case GRN_OP_MATCH :
+    case GRN_OP_EQUAL :
+    case GRN_OP_NOT_EQUAL :
+    case GRN_OP_PREFIX :
+    case GRN_OP_SUFFIX :
+    case GRN_OP_LESS :
+    case GRN_OP_GREATER :
+    case GRN_OP_LESS_EQUAL :
+    case GRN_OP_GREATER_EQUAL :
+      {
+        const char *x_substring;
+        int x_substring_length;
+        const char *y_substring;
+        int y_substring_length;
+        POP(y_substring, y_substring_length);
+        POP(x_substring, x_substring_length);
+        GRN_BULK_REWIND(&substring_buffer);
+        grn_text_printf(ctx,
+                        &substring_buffer,
+                        "(%.*s %s %.*s)",
+                        x_substring_length, x_substring,
+                        grn_operator_to_script_syntax(code->op),
+                        y_substring_length, y_substring);
+        PUSH_SUBSTRING(GRN_TEXT_VALUE(&substring_buffer),
+                       GRN_TEXT_LEN(&substring_buffer));
+      }
+      code++;
+      break;
+    case GRN_OP_GEO_DISTANCE1 :
+    case GRN_OP_GEO_DISTANCE2 :
+    case GRN_OP_GEO_DISTANCE3 :
+    case GRN_OP_GEO_DISTANCE4 :
+    case GRN_OP_GEO_WITHINP5 :
+    case GRN_OP_GEO_WITHINP6 :
+    case GRN_OP_GEO_WITHINP8 :
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "[expr][to-string] unsupported operator: %s",
+              grn_operator_to_string(code->op));
+      goto exit;
+      break;
+    case GRN_OP_PLUS :
+      {
+        const char *x_substring;
+        int x_substring_length;
+        const char *y_substring;
+        int y_substring_length;
+        POP(y_substring, y_substring_length);
+        POP(x_substring, x_substring_length);
+        GRN_BULK_REWIND(&substring_buffer);
+        grn_text_printf(ctx,
+                        &substring_buffer,
+                        "(%.*s %s %.*s)",
+                        x_substring_length, x_substring,
+                        grn_operator_to_script_syntax(code->op),
+                        y_substring_length, y_substring);
+        PUSH_SUBSTRING(GRN_TEXT_VALUE(&substring_buffer),
+                       GRN_TEXT_LEN(&substring_buffer));
+      }
+      code++;
+      break;
+    case GRN_OP_MINUS :
+      if (code->nargs == 1) {
+        const char *substring;
+        int substring_length;
+        POP(substring, substring_length);
+        GRN_BULK_REWIND(&substring_buffer);
+        grn_text_printf(ctx,
+                        &substring_buffer,
+                        "-%.*s",
+                        substring_length, substring);
+        PUSH_SUBSTRING(GRN_TEXT_VALUE(&substring_buffer),
+                       GRN_TEXT_LEN(&substring_buffer));
+      } else {
+        const char *x_substring;
+        int x_substring_length;
+        const char *y_substring;
+        int y_substring_length;
+        POP(y_substring, y_substring_length);
+        POP(x_substring, x_substring_length);
+        GRN_BULK_REWIND(&substring_buffer);
+        grn_text_printf(ctx,
+                        &substring_buffer,
+                        "(%.*s %s %.*s)",
+                        x_substring_length, x_substring,
+                        grn_operator_to_script_syntax(code->op),
+                        y_substring_length, y_substring);
+        PUSH_SUBSTRING(GRN_TEXT_VALUE(&substring_buffer),
+                       GRN_TEXT_LEN(&substring_buffer));
+      }
+      code++;
+      break;
+    case GRN_OP_STAR :
+    case GRN_OP_SLASH :
+    case GRN_OP_MOD :
+    case GRN_OP_BITWISE_NOT :
+    case GRN_OP_BITWISE_OR :
+    case GRN_OP_BITWISE_XOR :
+    case GRN_OP_BITWISE_AND :
+    case GRN_OP_SHIFTL :
+    case GRN_OP_SHIFTR :
+    case GRN_OP_SHIFTRR :
+      {
+        const char *x_substring;
+        int x_substring_length;
+        const char *y_substring;
+        int y_substring_length;
+        POP(y_substring, y_substring_length);
+        POP(x_substring, x_substring_length);
+        GRN_BULK_REWIND(&substring_buffer);
+        grn_text_printf(ctx,
+                        &substring_buffer,
+                        "(%.*s %s %.*s)",
+                        x_substring_length, x_substring,
+                        grn_operator_to_script_syntax(code->op),
+                        y_substring_length, y_substring);
+        PUSH_SUBSTRING(GRN_TEXT_VALUE(&substring_buffer),
+                       GRN_TEXT_LEN(&substring_buffer));
+      }
+      code++;
+      break;
+    case GRN_OP_INCR :
+    case GRN_OP_DECR :
+      {
+        const char *substring;
+        int substring_length;
+        POP(substring, substring_length);
+        GRN_BULK_REWIND(&substring_buffer);
+        grn_text_printf(ctx,
+                        &substring_buffer,
+                        "%s%.*s",
+                        grn_operator_to_script_syntax(code->op),
+                        substring_length, substring);
+        PUSH_SUBSTRING(GRN_TEXT_VALUE(&substring_buffer),
+                       GRN_TEXT_LEN(&substring_buffer));
+      }
+      code++;
+      break;
+    case GRN_OP_INCR_POST :
+    case GRN_OP_DECR_POST :
+      {
+        const char *substring;
+        int substring_length;
+        POP(substring, substring_length);
+        GRN_BULK_REWIND(&substring_buffer);
+        grn_text_printf(ctx,
+                        &substring_buffer,
+                        "%.*s%s",
+                        substring_length, substring,
+                        grn_operator_to_script_syntax(code->op));
+        PUSH_SUBSTRING(GRN_TEXT_VALUE(&substring_buffer),
+                       GRN_TEXT_LEN(&substring_buffer));
+      }
+      code++;
+      break;
+    case GRN_OP_NOT :
+      {
+        const char *substring;
+        int substring_length;
+        POP(substring, substring_length);
+        GRN_BULK_REWIND(&substring_buffer);
+        grn_text_printf(ctx,
+                        &substring_buffer,
+                        "!%.*s",
+                        substring_length, substring);
+        PUSH_SUBSTRING(GRN_TEXT_VALUE(&substring_buffer),
+                       GRN_TEXT_LEN(&substring_buffer));
+      }
+      code++;
+      break;
+    case GRN_OP_GET_MEMBER :
+      {
+        const char *receiver;
+        int receiver_length;
+        const char *index;
+        int index_length;
+        POP(receiver, receiver_length);
+        POP(index, index_length);
+        GRN_BULK_REWIND(&substring_buffer);
+        grn_text_printf(ctx,
+                        &substring_buffer,
+                        "%.*s[%.*s]",
+                        receiver_length, receiver,
+                        index_length, index);
+        PUSH_SUBSTRING(GRN_TEXT_VALUE(&substring_buffer),
+                       GRN_TEXT_LEN(&substring_buffer));
+      }
+      code++;
+      goto exit;
+    case GRN_OP_REGEXP :
+      {
+        const char *x_substring;
+        int x_substring_length;
+        const char *y_substring;
+        int y_substring_length;
+        POP(y_substring, y_substring_length);
+        POP(x_substring, x_substring_length);
+        GRN_BULK_REWIND(&substring_buffer);
+        grn_text_printf(ctx,
+                        &substring_buffer,
+                        "(%.*s %s %.*s)",
+                        x_substring_length, x_substring,
+                        grn_operator_to_script_syntax(code->op),
+                        y_substring_length, y_substring);
+        PUSH_SUBSTRING(GRN_TEXT_VALUE(&substring_buffer),
+                       GRN_TEXT_LEN(&substring_buffer));
+      }
+      code++;
+      break;
+    default :
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "[expr][to-string] unsupported operator: %s",
+              grn_operator_to_string(code->op));
+      goto exit;
+      break;
+    }
+  }
+  if (grn_vector_size(ctx, &substring_stack) > 0) {
+    const char *substring;
+    uint32_t substring_length;
+    POP(substring, substring_length);
+    GRN_TEXT_PUT(ctx, buffer, substring, substring_length);
+  }
+
+#undef DROP
+#undef POP
+#undef PUSH
+
+exit :
+  GRN_OBJ_FIN(ctx, &substring_stack);
+  GRN_OBJ_FIN(ctx, &substring_buffer);
+  GRN_OBJ_FIN(ctx, &push_buffer);
+  return ctx->rc;
+}
