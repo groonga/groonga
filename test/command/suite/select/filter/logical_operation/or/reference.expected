@@ -1,0 +1,43 @@
+table_create Names TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users nickname COLUMN_SCALAR Names
+[[0,0.0,0.0],true]
+column_create Users account_name COLUMN_SCALAR Names
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice1", "nickname": "alice"},
+{"_key": "alice2", "account_name": "alice"},
+{"_key": "bob", "nickname": "bob"}
+]
+[[0,0.0,0.0],3]
+select Users   --output_columns "nickname || account_name"   --command_version 3
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": {
+    "n_hits": 3,
+    "columns": [
+      {
+        "name": "(nickname || account_name)",
+        "type": "Names"
+      }
+    ],
+    "records": [
+      [
+        "alice"
+      ],
+      [
+        "alice"
+      ],
+      [
+        "bob"
+      ]
+    ]
+  }
+}

@@ -61,7 +61,11 @@ grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
     case GRN_DB_LONG_TEXT :
       return GRN_TEXT_LEN(obj) != 0;
     default :
-      return false;
+      if (grn_id_maybe_table(ctx, obj->header.domain)) {
+        return GRN_BULK_VSIZE(obj) > 0 && GRN_PTR_VALUE(obj) != GRN_ID_NIL;
+      } else {
+        return false;
+      }
     }
     break;
   case GRN_VECTOR :
