@@ -23,7 +23,7 @@
 extern "C" {
 #endif
 
-typedef unsigned int grn_expr_flags;
+typedef uint32_t grn_expr_flags;
 
 #define GRN_EXPR_SYNTAX_QUERY          (0x00)
 #define GRN_EXPR_SYNTAX_SCRIPT         (0x01)
