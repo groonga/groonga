@@ -115,4 +115,24 @@ extern "C" {
   {
     return grn::bulk::set<double>(ctx, bulk, value);
   }
+
+  grn_rc
+  grn_bulk_copy(grn_ctx *ctx, grn_obj *bulk, grn_obj *dest)
+  {
+    unsigned char flags = 0;
+    switch (bulk->header.type) {
+    case GRN_PVECTOR :
+    case GRN_UVECTOR :
+    case GRN_VECTOR :
+      flags += GRN_OBJ_VECTOR;
+      break;
+    default :
+      break;
+    }
+    grn_obj_reinit(ctx,
+                   dest,
+                   bulk->header.domain,
+                   flags);
+    return grn_obj_cast(ctx, bulk, dest, false);
+  }
 }

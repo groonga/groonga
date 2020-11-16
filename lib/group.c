@@ -1353,14 +1353,7 @@ grn_table_group_multi_keys_vector_records(grn_ctx *ctx,
       grn_obj *key_buffer = &(key_buffers[i]);
       grn_obj *value = group_key_get_value(ctx, key, data->id, key_buffer);
       if (value != key_buffer) {
-        GRN_BULK_REWIND(key_buffer);
-        unsigned char flags = 0;
-        if (grn_obj_is_vector(ctx, value) ||
-            grn_obj_is_uvector(ctx, value)) {
-          flags |= GRN_OBJ_VECTOR;
-        }
-        grn_obj_reinit(ctx, key_buffer, value->header.domain, flags);
-        grn_obj_cast(ctx, value, key_buffer, false);
+        grn_bulk_copy(ctx, value, key_buffer);
       }
     }
 

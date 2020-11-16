@@ -28,6 +28,7 @@ int64_t grn_bulk_get_int64(grn_ctx *ctx, grn_obj *bulk);
 grn_rc grn_bulk_set_int64(grn_ctx *ctx, grn_obj *bulk, int64_t value);
 double grn_bulk_get_float(grn_ctx *ctx, grn_obj *bulk);
 grn_rc grn_bulk_set_float(grn_ctx *ctx, grn_obj *bulk, double value);
+grn_rc grn_bulk_copy(grn_ctx *ctx, grn_obj *bulk, grn_obj *dest);
 
 #ifdef __cplusplus
 }

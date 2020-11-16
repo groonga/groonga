@@ -18,6 +18,7 @@
 */
 
 #include "grn.h"
+#include "grn_bulk.h"
 #include "grn_ctx_impl.h"
 #include "grn_expr.h"
 #include "grn_expr_code.h"
@@ -1851,8 +1852,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         }
         if (result) {
           if (res != result) {
-            grn_obj_reinit(ctx, res, result->header.domain, 0);
-            grn_obj_cast(ctx, result, res, GRN_FALSE);
+            grn_bulk_copy(ctx, result, res);
           }
         } else {
           grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);
@@ -1878,8 +1878,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         }
         if (result) {
           if (res != result) {
-            grn_obj_reinit(ctx, res, result->header.domain, 0);
-            grn_obj_cast(ctx, result, res, GRN_FALSE);
+            grn_bulk_copy(ctx, result, res);
           }
         } else {
           grn_obj_reinit(ctx, res, GRN_DB_BOOL, 0);

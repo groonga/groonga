@@ -20,6 +20,7 @@
 #include "grn.h"
 #include "grn_tokenizer.h"
 
+#include "grn_bulk.h"
 #include "grn_db.h"
 #include "grn_ctx_impl.h"
 #include "grn_ctx_impl_mrb.h"
@@ -8195,21 +8196,7 @@ grn_expr_slice(grn_ctx *ctx,
                                     &value);
       grn_obj *original_value = value;
       grn_obj *copied_value = grn_expr_add_var(ctx, sliced_expr, key, key_size);
-      unsigned char flags = 0;
-      switch (original_value->header.type) {
-      case GRN_PVECTOR :
-      case GRN_UVECTOR :
-      case GRN_VECTOR :
-        flags += GRN_OBJ_VECTOR;
-        break;
-      default :
-        break;
-      }
-      grn_obj_reinit(ctx,
-                     copied_value,
-                     original_value->header.domain,
-                     flags);
-      grn_obj_cast(ctx, original_value, copied_value, false);
+      grn_bulk_copy(ctx, original_value, copied_value);
     } GRN_HASH_EACH_END(ctx, cursor);
   }
   grn_expr_code *codes_start = e->codes + code_start_offset;
