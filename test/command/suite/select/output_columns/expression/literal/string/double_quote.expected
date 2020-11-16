@@ -7,32 +7,30 @@ load --table Entries
 {"title": "groonga and MySQL"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns '_id, "double quoted" + " " + "string value"'
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        1
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "",
-          null
-        ]
-      ],
+select Entries   --output_columns '_id, "double quoted" + " " + "string value"'   --command_version 3
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": {
+    "n_hits": 1,
+    "columns": [
+      {
+        "name": "_id",
+        "type": "UInt32"
+      },
+      {
+        "name": "((\"double quoted\" + \" \") + \"string value\")",
+        "type": "Text"
+      }
+    ],
+    "records": [
       [
         1,
         "double quoted string value"
       ]
     ]
-  ]
-]
+  }
+}

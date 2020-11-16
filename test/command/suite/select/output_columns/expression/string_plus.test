@@ -7,4 +7,5 @@ load --table Entries
 ]
 
 select Entries \
-  --output_columns '_id, "<" + title + ">"'
+  --output_columns '_id, "<" + title + ">"' \
+ --command_version 3

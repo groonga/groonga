@@ -1842,46 +1842,73 @@ grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
 }
 
 static grn_inline void
-grn_output_table_column_by_expression(grn_ctx *ctx, grn_obj *outbuf,
+grn_output_table_column_by_expression(grn_ctx *ctx,
+                                      grn_obj *outbuf,
                                       grn_content_type output_type,
-                                      grn_expr_code *code,
-                                      grn_expr_code *code_end,
+                                      grn_obj *expr,
                                       grn_obj *buf)
 {
-  if (code_end <= code) {
+  grn_expr *e = (grn_expr *)expr;
+  if (e->codes_curr == 1 && e->codes[0].op == GRN_OP_GET_VALUE) {
+    grn_output_table_column(ctx, outbuf, output_type, e->codes[0].value, buf);
+    return;
+  } else if (e->codes_curr == 3 && e->codes[2].op == GRN_OP_GET_MEMBER) {
+    GRN_BULK_REWIND(buf);
+    grn_column_name_(ctx, e->codes[0].value, buf);
+    GRN_TEXT_PUTC(ctx, buf, '[');
+    grn_inspect(ctx, buf, e->codes[1].value);
+    GRN_TEXT_PUTC(ctx, buf, ']');
+    GRN_TEXT_PUTC(ctx, buf, '\0');
+
     grn_output_table_column_info(ctx,
                                  outbuf,
                                  output_type,
+                                 GRN_TEXT_VALUE(buf),
                                  NULL,
-                                 NULL,
-                                 NULL);
+                                 e->codes[0].value);
     return;
   }
 
-  switch (code_end[-1].op) {
-  case GRN_OP_GET_MEMBER :
-    if ((code_end - code) == 3) {
-      GRN_BULK_REWIND(buf);
-      grn_column_name_(ctx, code[0].value, buf);
-      GRN_TEXT_PUTC(ctx, buf, '[');
-      grn_inspect(ctx, buf, code[1].value);
-      GRN_TEXT_PUTC(ctx, buf, ']');
-      GRN_TEXT_PUTC(ctx, buf, '\0');
-
-      grn_output_table_column_info(ctx,
-                                   outbuf,
-                                   output_type,
-                                   GRN_TEXT_VALUE(buf),
-                                   NULL,
-                                   code[0].value);
-    } else {
-      grn_output_table_column(ctx, outbuf, output_type, code->value, buf);
+  if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
+    grn_obj *column = NULL;
+    if (e->codes_curr > 0) {
+      column = e->codes[0].value;
     }
-    break;
-  default :
-    grn_output_table_column(ctx, outbuf, output_type, code->value, buf);
-    break;
+    grn_output_table_column(ctx, outbuf, output_type, column, buf);
+    return;
   }
+
+  grn_id range_id = grn_obj_get_range(ctx, expr);
+  grn_obj *range_obj = NULL;
+  char type_name[GRN_TABLE_MAX_KEY_SIZE];
+  int type_name_len = 0;
+  grn_obj name_buffer;
+  GRN_TEXT_INIT(&name_buffer, 0);
+  const char *name = NULL;
+
+  if (range_id != GRN_ID_NIL) {
+    range_obj = grn_ctx_at(ctx, range_id);
+    type_name_len = grn_obj_name(ctx,
+                                 range_obj,
+                                 type_name,
+                                 GRN_TABLE_MAX_KEY_SIZE);
+    type_name[type_name_len] = '\0';
+  }
+  grn_expr_to_script_syntax(ctx, expr, &name_buffer);
+  if (GRN_TEXT_LEN(&name_buffer) > 0) {
+    GRN_TEXT_PUTC(ctx, &name_buffer, '\0');
+    name = GRN_TEXT_VALUE(&name_buffer);
+  }
+  grn_output_table_column_info(ctx,
+                               outbuf,
+                               output_type,
+                               name,
+                               type_name_len > 0 ? type_name : NULL,
+                               expr);
+  if (range_obj) {
+    grn_obj_unref(ctx, range_obj);
+  }
+  GRN_OBJ_FIN(ctx, &name_buffer);
 }
 
 static grn_inline void
@@ -1942,18 +1969,21 @@ grn_output_table_columns_by_expression(grn_ctx *ctx, grn_obj *outbuf,
 
   grn_output_table_columns_open(ctx, outbuf, output_type, n);
 
+  grn_expr_code *codes = expr->codes;
+  uint32_t codes_curr = expr->codes_curr;
   for (i = 0; i < n; i++) {
-    uint32_t code_start_offset;
-    uint32_t code_end_offset;
-
-    code_start_offset = GRN_UINT32_VALUE_AT(&offsets, i * 2);
-    code_end_offset = GRN_UINT32_VALUE_AT(&offsets, i * 2 + 1);
-
-    grn_output_table_column_by_expression(ctx, outbuf, output_type,
-                                          expr->codes + code_start_offset,
-                                          expr->codes + code_end_offset,
+    uint32_t code_start_offset = GRN_UINT32_VALUE_AT(&offsets, i * 2);
+    uint32_t code_end_offset = GRN_UINT32_VALUE_AT(&offsets, i * 2 + 1);
+    expr->codes = codes + code_start_offset;
+    expr->codes_curr = code_end_offset - code_start_offset;
+    grn_output_table_column_by_expression(ctx,
+                                          outbuf,
+                                          output_type,
+                                          (grn_obj *)expr,
                                           buf);
   }
+  expr->codes = codes;
+  expr->codes_curr = codes_curr;
 
   grn_output_table_columns_close(ctx, outbuf, output_type);
 

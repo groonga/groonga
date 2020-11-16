@@ -5,5 +5,30 @@ load --table Users
 {"_key": "alice"}
 ]
 [[0,0.0,0.0],1]
-select Users --output_columns "_key, 10 * _id * 5"
-[[0,0.0,0.0],[[[1],[["_key","ShortText"],["",null]],["alice",50]]]]
+select Users --output_columns "_key, 10 * _id * 5" --command_version 3
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": {
+    "n_hits": 1,
+    "columns": [
+      {
+        "name": "_key",
+        "type": "ShortText"
+      },
+      {
+        "name": "((10 * _id) * 5)",
+        "type": "Int32"
+      }
+    ],
+    "records": [
+      [
+        "alice",
+        50
+      ]
+    ]
+  }
+}
