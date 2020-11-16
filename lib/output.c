@@ -1837,9 +1837,7 @@ grn_output_table_column(grn_ctx *ctx, grn_obj *outbuf,
                                  GRN_TEXT_VALUE(buf),
                                  type_name,
                                  column);
-    if (grn_enable_reference_count) {
-      grn_obj_unlink(ctx, range_obj);
-    }
+    grn_obj_unref(ctx, range_obj);
   }
 }
 
