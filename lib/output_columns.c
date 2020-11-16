@@ -356,8 +356,8 @@ static void
 grn_output_columns_apply_one(grn_ctx *ctx,
                              grn_obj *output_columns,
                              grn_obj *ids,
-                             int code_start_offset,
-                             int code_end_offset,
+                             uint32_t code_start_offset,
+                             uint32_t code_end_offset,
                              grn_obj *column)
 {
   grn_expr *expr = (grn_expr *)output_columns;
