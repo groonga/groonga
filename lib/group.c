@@ -19,6 +19,7 @@
 
 #include "grn.h"
 
+#include "grn_bulk.h"
 #include "grn_db.h"
 #include "grn_expr.h"
 #include "grn_expr_executor.h"
@@ -622,10 +623,8 @@ group_key_init(grn_ctx *ctx,
   key->is_expr = grn_obj_is_expr(ctx, key->object);
   if (key->is_expr) {
     grn_expr_executor_init(ctx, &(key->expr_executor), key->object);
-    key->is_reference_column = false;
-  } else {
-    key->is_reference_column = grn_obj_is_table(ctx, key->range);
   }
+  key->is_reference_column = grn_obj_is_table(ctx, key->range);
 }
 
 static grn_inline void

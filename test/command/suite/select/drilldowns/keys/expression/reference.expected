@@ -1,19 +1,36 @@
-table_create Names TABLE_HASH_KEY ShortText
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create UserDataJP TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create UserDataJP tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+table_create UserDataUS TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create UserDataUS tags COLUMN_VECTOR Tags
 [[0,0.0,0.0],true]
 table_create Users TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
-column_create Users nickname COLUMN_SCALAR Names
+column_create Users jp COLUMN_SCALAR UserDataJP
 [[0,0.0,0.0],true]
-column_create Users account_name COLUMN_SCALAR Names
+column_create Users us COLUMN_SCALAR UserDataUS
 [[0,0.0,0.0],true]
+load --table UserDataJP
+[
+{"_key": "alice", "tags": ["A", "B"]}
+]
+[[0,0.0,0.0],1]
+load --table UserDataUS
+[
+{"_key": "bob",   "tags": ["A", "C"]}
+]
+[[0,0.0,0.0],1]
 load --table Users
 [
-{"_key": "alice1", "nickname": "alice"},
-{"_key": "alice2", "account_name": "alice"},
-{"_key": "bob", "nickname": "bob"}
+{"_key": "alice", "jp": "alice"},
+{"_key": "bob",   "us": "bob"}
 ]
-[[0,0.0,0.0],3]
-select Users   --drilldowns[name].keys "nickname || account_name"
+[[0,0.0,0.0],2]
+select Users   --drilldowns[tag].keys "jp.tags || us.tags"
 [
   [
     0,
@@ -23,7 +40,7 @@ select Users   --drilldowns[name].keys "nickname || account_name"
   [
     [
       [
-        3
+        2
       ],
       [
         [
@@ -35,37 +52,31 @@ select Users   --drilldowns[name].keys "nickname || account_name"
           "ShortText"
         ],
         [
-          "account_name",
-          "Names"
+          "jp",
+          "UserDataJP"
         ],
         [
-          "nickname",
-          "Names"
+          "us",
+          "UserDataUS"
         ]
       ],
       [
         1,
-        "alice1",
-        "",
-        "alice"
-      ],
-      [
-        2,
-        "alice2",
+        "alice",
         "alice",
         ""
       ],
       [
-        3,
+        2,
         "bob",
         "",
         "bob"
       ]
     ],
     {
-      "name": [
+      "tag": [
         [
-          2
+          3
         ],
         [
           [
@@ -78,11 +89,15 @@ select Users   --drilldowns[name].keys "nickname || account_name"
           ]
         ],
         [
-          "alice",
+          "A",
           2
         ],
         [
-          "bob",
+          "B",
+          1
+        ],
+        [
+          "C",
           1
         ]
       ]

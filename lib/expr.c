@@ -8205,18 +8205,23 @@ grn_expr_slice(grn_ctx *ctx,
   grn_expr_code *code;
   for (code = codes_start; code < codes_end; code++) {
     if (code->value) {
+      grn_obj *value = code->value;
       if (code->value->header.impl_flags & GRN_OBJ_EXPRCONST) {
         grn_expr_append_const(ctx,
                               sliced_expr,
-                              code->value,
+                              value,
                               code->op,
                               code->nargs);
       } else {
-        grn_obj_refer(ctx, code->value);
-        grn_expr_take_obj(ctx, sliced_expr, code->value);
+        if (grn_obj_is_accessor(ctx, value)) {
+          value = grn_accessor_copy(ctx, value);
+        } else {
+          grn_obj_refer(ctx, value);
+        }
+        grn_expr_take_obj(ctx, sliced_expr, value);
         grn_expr_append_obj(ctx,
                             sliced_expr,
-                            code->value,
+                            value,
                             code->op,
                             code->nargs);
       }
