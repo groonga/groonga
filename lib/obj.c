@@ -293,6 +293,20 @@ grn_obj_is_lexicon_without_data_column(grn_ctx *ctx, grn_obj *obj)
   return is_lexicon_without_data_column;
 }
 
+bool
+grn_obj_is_tiny_hash_table(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!obj) {
+    return false;
+  }
+
+  if (obj->header.type != GRN_TABLE_HASH_KEY) {
+    return false;
+  }
+
+  return obj->header.flags & GRN_HASH_TINY;
+}
+
 grn_bool
 grn_obj_is_column(grn_ctx *ctx, grn_obj *obj)
 {

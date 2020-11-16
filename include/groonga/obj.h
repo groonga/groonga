@@ -47,6 +47,7 @@ GRN_API grn_bool grn_obj_is_table(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_table_with_key(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_lexicon(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_lexicon_without_data_column(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool grn_obj_is_tiny_hash_table(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_scalar_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_text_family_scalar_column(grn_ctx *ctx, grn_obj *obj);
@@ -122,6 +123,11 @@ grn_obj_get_option_values(grn_ctx *ctx,
                           grn_option_revision revision,
                           grn_obj *values);
 GRN_API grn_rc grn_obj_clear_option_values(grn_ctx *ctx, grn_obj *obj);
+
+GRN_API grn_rc
+grn_obj_to_script_syntax(grn_ctx *ctx,
+                         grn_obj *obj,
+                         grn_obj *buffer);
 
 #ifdef __cplusplus
 }
