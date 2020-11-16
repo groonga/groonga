@@ -1592,7 +1592,7 @@ grn_table_sort_key *
 grn_table_group_keys_parse(grn_ctx *ctx,
                            grn_obj *table,
                            const char *raw_keys,
-                           ssize_t raw_keys_length,
+                           int32_t raw_keys_length,
                            int *n_keys)
 {
   GRN_API_ENTER;

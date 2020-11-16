@@ -292,7 +292,7 @@ GRN_API grn_table_sort_key *
 grn_table_group_keys_parse(grn_ctx *ctx,
                            grn_obj *table,
                            const char *raw_sort_keys,
-                           ssize_t raw_sort_keys_size,
+                           int32_t raw_sort_keys_size,
                            int *n_keys);
 GRN_API grn_rc grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
                                       grn_obj *res, grn_operator op);
