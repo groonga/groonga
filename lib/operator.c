@@ -111,6 +111,91 @@ static const char *operator_names[] = {
   "ordered_near_phrase",
 };
 
+static const char *operator_script_syntaxes[] = {
+  "(nonexistent:push)",
+  "(nonexistent:pop)",
+  "(nonexistent:nop)",
+  "(nonexistent:call)",
+  "(nonexistent:intern)",
+  "(nonexistent:get_ref)",
+  "(nonexistent:get_value)",
+  "&&",
+  "&!",
+  "||",
+  "=",
+  "*=",
+  "/=",
+  "%=",
+  "+=",
+  "-=",
+  "<<=",
+  ">>=",
+  ">>>=",
+  "&=",
+  "^=",
+  "|=",
+  "(nonexistent:jump)",
+  "(nonexistent:cjump)",
+  "(nonexistent:comma)",
+  "|",
+  "^",
+  "&",
+  "~",
+  "==",
+  "!=",
+  "<",
+  ">",
+  "<=",
+  ">=",
+  "(nonexistent:in)",
+  "@",
+  "*N",
+  "(nonexistent:near2)",
+  "*S",
+  "*T",
+  "<<",
+  ">>",
+  ">>>",
+  "+",
+  "-",
+  "*",
+  "/",
+  "%",
+  "(nonexistent:delete)",
+  "++",
+  "--",
+  "++",
+  "--",
+  "!",
+  "(nonexistent:adjust)", /* *>, *< or *~ */
+  "(nonexistent:exact)",
+  "(nonexistent:lcp)",
+  "(nonexistent:partial)",
+  "(nonexistent:unsplit)",
+  "@^",
+  "@$",
+  "(nonexistent:geo_distance1)",
+  "(nonexistent:geo_distance2)",
+  "(nonexistent:geo_distance3)",
+  "(nonexistent:geo_distance4)",
+  "(nonexistent:geo_withinp5)",
+  "(nonexistent:geo_withinp6)",
+  "(nonexistent:geo_withinp8)",
+  "(nonexistent:obj_search)",
+  "(nonexistent:expr_get_var)",
+  "(nonexistent:table_create)",
+  "(nonexistent:table_select)",
+  "(nonexistent:table_sort)",
+  "(nonexistent:table_group)",
+  "(nonexistent:json_put)",
+  "(nonexistent:get_member)",
+  "@~",
+  "(nonexistent:fuzzy)",
+  "*Q",
+  "*NP",
+  "*ONP",
+};
+
 #define GRN_OP_LAST GRN_OP_ORDERED_NEAR_PHRASE
 
 const char *
@@ -118,6 +203,16 @@ grn_operator_to_string(grn_operator op)
 {
   if (op >= 0 && op <= GRN_OP_LAST) {
     return operator_names[op];
+  } else {
+    return "unknown";
+  }
+}
+
+const char *
+grn_operator_to_script_syntax(grn_operator op)
+{
+  if (op >= 0 && op <= GRN_OP_LAST) {
+    return operator_script_syntaxes[op];
   } else {
     return "unknown";
   }

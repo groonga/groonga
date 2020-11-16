@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2017  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,6 +28,7 @@ typedef grn_bool grn_operator_exec_func(grn_ctx *ctx,
                                         grn_obj *y);
 
 GRN_API const char *grn_operator_to_string(grn_operator op);
+GRN_API const char *grn_operator_to_script_syntax(grn_operator op);
 GRN_API grn_operator_exec_func *grn_operator_to_exec_func(grn_operator op);
 GRN_API grn_bool grn_operator_exec_equal(grn_ctx *ctx, grn_obj *x, grn_obj *y);
 GRN_API grn_bool grn_operator_exec_not_equal(grn_ctx *ctx,
