@@ -151,6 +151,11 @@ grn_table_select_sequential(grn_ctx *ctx,
                             grn_obj *res,
                             grn_operator op);
 
+grn_obj *
+grn_expr_slice(grn_ctx *ctx,
+               grn_obj *expr,
+               uint32_t code_start_offset,
+               uint32_t code_end_offset);
 grn_rc
 grn_expr_to_script_syntax(grn_ctx *ctx,
                           grn_obj *expr,

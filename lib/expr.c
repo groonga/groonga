@@ -8144,6 +8144,101 @@ grn_expr_get_condition(grn_ctx *ctx, grn_obj *expr)
   GRN_API_RETURN(e->condition);
 }
 
+grn_obj *
+grn_expr_slice(grn_ctx *ctx,
+               grn_obj *expr,
+               uint32_t code_start_offset,
+               uint32_t code_end_offset)
+{
+  GRN_API_ENTER;
+  grn_expr *e = (grn_expr *)expr;
+  if (code_start_offset >= e->codes_curr) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[expr][slice] code start offset is out of range: [0..%u): <%u>",
+        e->codes_curr,
+        code_start_offset);
+    GRN_API_RETURN(NULL);
+  }
+  if (code_end_offset > e->codes_curr) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[expr][slice] code end offset is out of range: [0..%u]: <%u>",
+        e->codes_curr,
+        code_end_offset);
+    GRN_API_RETURN(NULL);
+  }
+  if (code_start_offset >= code_end_offset) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[expr][slice] code start offset must be less than code end offset: "
+        "<%u>:<%u>",
+        code_start_offset,
+        code_end_offset);
+    GRN_API_RETURN(NULL);
+  }
+  grn_obj *sliced_expr = grn_expr_create(ctx, NULL, 0);
+  if (!sliced_expr) {
+    GRN_API_RETURN(NULL);
+  }
+  uint32_t n_vars;
+  grn_hash *vars = grn_expr_get_vars(ctx, expr, &n_vars);
+  if (n_vars > 0) {
+    GRN_HASH_EACH_BEGIN(ctx, vars, cursor, id) {
+      void *key;
+      unsigned int key_size;
+      void *value;
+      grn_hash_cursor_get_key_value(ctx,
+                                    cursor,
+                                    &key,
+                                    &key_size,
+                                    &value);
+      grn_obj *original_value = value;
+      grn_obj *copied_value = grn_expr_add_var(ctx, sliced_expr, key, key_size);
+      unsigned char flags = 0;
+      switch (original_value->header.type) {
+      case GRN_PVECTOR :
+      case GRN_UVECTOR :
+      case GRN_VECTOR :
+        flags += GRN_OBJ_VECTOR;
+        break;
+      default :
+        break;
+      }
+      grn_obj_reinit(ctx,
+                     copied_value,
+                     original_value->header.domain,
+                     flags);
+      grn_obj_cast(ctx, original_value, copied_value, false);
+    } GRN_HASH_EACH_END(ctx, cursor);
+  }
+  grn_expr_code *codes_start = e->codes + code_start_offset;
+  grn_expr_code *codes_end = e->codes + code_end_offset;
+  grn_expr_code *code;
+  for (code = codes_start; code < codes_end; code++) {
+    if (code->value) {
+      if (code->value->header.impl_flags & GRN_OBJ_EXPRCONST) {
+        grn_expr_append_const(ctx,
+                              sliced_expr,
+                              code->value,
+                              code->op,
+                              code->nargs);
+      } else {
+        grn_obj_refer(ctx, code->value);
+        grn_expr_take_obj(ctx, sliced_expr, code->value);
+        grn_expr_append_obj(ctx,
+                            sliced_expr,
+                            code->value,
+                            code->op,
+                            code->nargs);
+      }
+    } else {
+      grn_expr_append_op(ctx,
+                         sliced_expr,
+                         code->op,
+                         code->nargs);
+    }
+  }
+  GRN_API_RETURN(sliced_expr);
+}
+
 grn_rc
 grn_expr_to_script_syntax(grn_ctx *ctx,
                           grn_obj *expr,
