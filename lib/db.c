@@ -5839,7 +5839,17 @@ grn_obj_cast_record(grn_ctx *ctx,
 
   if (src->header.domain == dest->header.domain) {
     if (grn_obj_is_uvector(ctx, dest)) {
-      grn_uvector_add_element_record(ctx, dest, GRN_RECORD_VALUE(src), 0.0);
+      if (grn_obj_is_uvector(ctx, src)) {
+        uint32_t i;
+        uint32_t n_elements = grn_uvector_size(ctx, src);
+        for (i = 0; i < n_elements; i++) {
+          float weight;
+          grn_id id = grn_uvector_get_element_record(ctx, src, i, &weight);
+          grn_uvector_add_element_record(ctx, dest, id, weight);
+        }
+      } else {
+        grn_uvector_add_element_record(ctx, dest, GRN_RECORD_VALUE(src), 0.0);
+      }
     } else {
       GRN_RECORD_PUT(ctx, dest, GRN_RECORD_VALUE(src));
     }
