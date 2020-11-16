@@ -24,6 +24,48 @@
 #include "grn_report.h"
 #include "grn_posting.h"
 
+grn_accessor *
+grn_accessor_new(grn_ctx *ctx)
+{
+  grn_accessor *res = GRN_MALLOCN(grn_accessor, 1);
+  if (!res) {
+    return NULL;
+  }
+
+  res->header.type = GRN_ACCESSOR;
+  res->header.impl_flags = GRN_OBJ_ALLOCATED;
+  res->header.flags = 0;
+  res->header.domain = GRN_ID_NIL;
+  res->range = GRN_ID_NIL;
+  res->action = GRN_ACCESSOR_VOID;
+  res->offset = 0;
+  res->obj = NULL;
+  res->next = NULL;
+  res->reference_count = 1;
+  grn_log_reference_count("accessor: %p: %u\n", res, res->reference_count);
+  return res;
+}
+
+grn_obj *
+grn_accessor_copy(grn_ctx *ctx, grn_obj *accessor)
+{
+  grn_accessor *new_accessor = grn_accessor_new(ctx);
+  grn_accessor *a = (grn_accessor *)accessor;
+  grn_accessor *new_a = new_accessor;
+  for (; a; a = a->next) {
+    new_a->action = a->action;
+    new_a->obj = a->obj;
+    if (new_a->obj) {
+      grn_obj_refer(ctx, new_a->obj);
+    }
+    if (a->next) {
+      new_a->next = grn_accessor_new(ctx);
+      new_a = new_a->next;
+    }
+  }
+  return (grn_obj *)new_accessor;
+}
+
 static grn_rc
 grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
                                       grn_obj *current_res, grn_obj **next_res)

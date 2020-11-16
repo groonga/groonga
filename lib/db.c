@@ -20,6 +20,7 @@
 #include "grn.h"
 #include "grn_tokenizer.h"
 
+#include "grn_accessor.h"
 #include "grn_aggregators.h"
 #include "grn_config.h"
 #include "grn_db.h"
@@ -4638,31 +4639,9 @@ exit :
 /**** accessor ****/
 
 static grn_accessor *
-accessor_new(grn_ctx *ctx)
-{
-  grn_accessor *res = GRN_MALLOCN(grn_accessor, 1);
-  if (!res) {
-    return NULL;
-  }
-
-  res->header.type = GRN_ACCESSOR;
-  res->header.impl_flags = GRN_OBJ_ALLOCATED;
-  res->header.flags = 0;
-  res->header.domain = GRN_ID_NIL;
-  res->range = GRN_ID_NIL;
-  res->action = GRN_ACCESSOR_VOID;
-  res->offset = 0;
-  res->obj = NULL;
-  res->next = NULL;
-  res->reference_count = 1;
-  grn_log_reference_count("accessor: %p: %u\n", res, res->reference_count);
-  return res;
-}
-
-static grn_accessor *
 grn_accessor_new_key(grn_ctx *ctx, grn_obj *table)
 {
-  grn_accessor *accessor = accessor_new(ctx);
+  grn_accessor *accessor = grn_accessor_new(ctx);
   if (!accessor) {
     return accessor;
   }
@@ -4688,7 +4667,7 @@ grn_obj_get_accessor_rset_value(grn_ctx *ctx,
   grn_accessor **rp;
 
   for (rp = res; GRN_TRUE; rp = &(*rp)->next) {
-    *rp = accessor_new(ctx);
+    *rp = grn_accessor_new(ctx);
     (*rp)->obj = obj;
 
 #define CHECK_GROUP_CALC_FLAG(flag) do {   \
@@ -4828,7 +4807,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
           goto exit;
         }
         for (rp = &res; !done; rp = &(*rp)->next) {
-          *rp = accessor_new(ctx);
+          *rp = grn_accessor_new(ctx);
           if (!obj_is_referred) {
             grn_obj_refer(ctx, obj);
             obj_is_referred = true;
@@ -4848,7 +4827,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
           case GRN_DB :
             (*rp)->action = GRN_ACCESSOR_GET_KEY;
             rp = &(*rp)->next;
-            *rp = accessor_new(ctx);
+            *rp = grn_accessor_new(ctx);
             (*rp)->obj = obj;
             (*rp)->action = GRN_ACCESSOR_GET_DB_OBJ;
             done++;
@@ -4882,7 +4861,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
           goto exit;
         }
         for (rp = &res; !done; rp = &(*rp)->next) {
-          *rp = accessor_new(ctx);
+          *rp = grn_accessor_new(ctx);
           if (!obj_is_referred) {
             grn_obj_refer(ctx, obj);
             obj_is_referred = true;
@@ -4924,7 +4903,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
           goto exit;
         }
         for (rp = &res; !done; rp = &(*rp)->next) {
-          *rp = accessor_new(ctx);
+          *rp = grn_accessor_new(ctx);
           if (!obj_is_referred) {
             grn_obj_refer(ctx, obj);
             obj_is_referred = true;
@@ -5086,7 +5065,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
       for (rp = &res; ; rp = &(*rp)->next) {
         grn_obj *column = grn_obj_column_(ctx, obj, name, len);
         if (column) {
-          *rp = accessor_new(ctx);
+          *rp = grn_accessor_new(ctx);
           (*rp)->obj = column;
           /*
           switch (column->header.type) {
@@ -5115,7 +5094,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
             res = NULL;
             goto exit;
           }
-          *rp = accessor_new(ctx);
+          *rp = grn_accessor_new(ctx);
           if (!obj_is_referred) {
             grn_obj_refer(ctx, obj);
             obj_is_referred = true;
@@ -13659,7 +13638,7 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
 
                       grn_accessor *a;
                       grn_accessor *ac;
-                      ac = accessor_new(ctx);
+                      ac = grn_accessor_new(ctx);
                       GRN_PTR_PUT(ctx, res, (grn_obj *)ac);
                       for (a = (grn_accessor *)ai; a; a = a->next) {
                         if (a->action != GRN_ACCESSOR_GET_ID) {
@@ -13668,7 +13647,7 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                           if (grn_enable_reference_count && ac->obj) {
                             ac->obj = grn_ctx_at(ctx, DB_OBJ(ac->obj)->id);
                           }
-                          ac->next = accessor_new(ctx);
+                          ac->next = grn_accessor_new(ctx);
                           if (!(ac = ac->next)) { break; }
                         } else {
                           ac->action = GRN_ACCESSOR_GET_COLUMN_VALUE;

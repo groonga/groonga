@@ -24,6 +24,8 @@
 extern "C" {
 #endif
 
+grn_accessor *grn_accessor_new(grn_ctx *ctx);
+grn_obj *grn_accessor_copy(grn_ctx *ctx, grn_obj *accessor);
 grn_rc grn_accessor_to_script_syntax(grn_ctx *ctx,
                                      grn_obj *obj,
                                      grn_obj *buffer);

@@ -20,6 +20,7 @@
 #include "grn.h"
 #include "grn_tokenizer.h"
 
+#include "grn_accessor.h"
 #include "grn_bulk.h"
 #include "grn_db.h"
 #include "grn_ctx_impl.h"
