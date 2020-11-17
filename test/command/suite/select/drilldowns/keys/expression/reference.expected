@@ -30,36 +30,34 @@ load --table Users
 {"_key": "bob",   "us": "bob"}
 ]
 [[0,0.0,0.0],2]
-select Users   --drilldowns[tag].keys "jp.tags || us.tags"
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        2
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ],
-        [
-          "jp",
-          "UserDataJP"
-        ],
-        [
-          "us",
-          "UserDataUS"
-        ]
-      ],
+select Users   --drilldowns[tag].keys "jp.tags || us.tags"   --command_version 3
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": {
+    "n_hits": 2,
+    "columns": [
+      {
+        "name": "_id",
+        "type": "UInt32"
+      },
+      {
+        "name": "_key",
+        "type": "ShortText"
+      },
+      {
+        "name": "jp",
+        "type": "UserDataJP"
+      },
+      {
+        "name": "us",
+        "type": "UserDataUS"
+      }
+    ],
+    "records": [
       [
         1,
         "alice",
@@ -73,34 +71,34 @@ select Users   --drilldowns[tag].keys "jp.tags || us.tags"
         "bob"
       ]
     ],
-    {
-      "tag": [
-        [
-          3
+    "drilldowns": {
+      "tag": {
+        "n_hits": 3,
+        "columns": [
+          {
+            "name": "_key",
+            "type": "ShortText"
+          },
+          {
+            "name": "_nsubrecs",
+            "type": "Int32"
+          }
         ],
-        [
+        "records": [
           [
-            "_key",
-            "ShortText"
+            "A",
+            2
           ],
           [
-            "_nsubrecs",
-            "Int32"
+            "B",
+            1
+          ],
+          [
+            "C",
+            1
           ]
-        ],
-        [
-          "A",
-          2
-        ],
-        [
-          "B",
-          1
-        ],
-        [
-          "C",
-          1
         ]
-      ]
+      }
     }
-  ]
-]
+  }
+}

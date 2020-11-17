@@ -1,0 +1,10 @@
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tags COLUMN_VECTOR ShortText
+
+load --table Memos
+[
+{"_key": "groonga is very fast", "tags": ["groonga"]},
+{"_key": "no tag"}
+]
+
+select Memos --filter 'tags && true' --command_version 3

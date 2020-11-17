@@ -69,9 +69,17 @@ grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)
     }
     break;
   case GRN_VECTOR :
-    return grn_vector_size(ctx, obj) > 0;
+    if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
+      return true;
+    } else {
+      return grn_vector_size(ctx, obj) > 0;
+    }
   case GRN_UVECTOR :
-    return grn_uvector_size(ctx, obj) > 0;
+    if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
+      return true;
+    } else {
+      return grn_uvector_size(ctx, obj) > 0;
+    }
   default :
     return false;
   }

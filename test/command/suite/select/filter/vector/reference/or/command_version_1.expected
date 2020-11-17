@@ -1,6 +1,8 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
 table_create Memos TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
-column_create Memos tags COLUMN_VECTOR ShortText
+column_create Memos tags COLUMN_VECTOR Tags
 [[0,0.0,0.0],true]
 load --table Memos
 [
@@ -8,7 +10,7 @@ load --table Memos
 {"_key": "no tag"}
 ]
 [[0,0.0,0.0],2]
-select Memos --filter 'tags && true'
+select Memos --filter 'tags || false'
 [
   [
     0,
@@ -18,7 +20,7 @@ select Memos --filter 'tags && true'
   [
     [
       [
-        1
+        2
       ],
       [
         [
@@ -31,7 +33,7 @@ select Memos --filter 'tags && true'
         ],
         [
           "tags",
-          "ShortText"
+          "Tags"
         ]
       ],
       [
@@ -39,6 +41,13 @@ select Memos --filter 'tags && true'
         "groonga is very fast",
         [
           "groonga"
+        ]
+      ],
+      [
+        2,
+        "no tag",
+        [
+
         ]
       ]
     ]

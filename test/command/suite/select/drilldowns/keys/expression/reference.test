@@ -27,4 +27,5 @@ load --table Users
 ]
 
 select Users \
-  --drilldowns[tag].keys "jp.tags || us.tags"
+  --drilldowns[tag].keys "jp.tags || us.tags" \
+  --command_version 3
