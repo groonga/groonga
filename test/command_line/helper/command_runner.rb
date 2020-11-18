@@ -185,7 +185,7 @@ module CommandRunner
       p [output.encoding, output]
       p [error_output.encoding, error_output]
       message = <<-MESSAGE.chomp
-failed to run: #{command_line.join(" ")}
+failed to run: #{command_line.join(" ").encode("UTF-8")}
 -- output start --
 #{output.chomp}
 -- output end --
