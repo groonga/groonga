@@ -141,7 +141,7 @@ module CommandRunner
   end
 
   def real_grndb_path
-    find_program("grndb", :prefer_libtool => true)
+    find_program("grndb", :prefer_libtool => true).encode("UTF-8")
   end
 
   private
@@ -178,8 +178,8 @@ module CommandRunner
       :err => @error_output_log_path.to_s,
     }
     succeeded = system(*command_line, options)
-    output = @output_log_path.read
-    error_output = @error_output_log_path.read
+    output = @output_log_path.read(encoding: "locale").encode("UTF-8")
+    error_output = @error_output_log_path.read(encoding: "locale").encode("UTF-8")
     unless succeeded
       p [command_line.join(" ").encoding, command_line.join(" ")]
       p [output.encoding, output]
