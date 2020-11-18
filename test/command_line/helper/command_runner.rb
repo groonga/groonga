@@ -181,6 +181,7 @@ module CommandRunner
     output = @output_log_path.read.encode("UTF-8", "locale")
     error_output = @error_output_log_path.read.encode("UTF-8", "locale")
     unless succeeded
+      p Encoding.find("locale")
       p [command_line.join(" ").encoding, command_line.join(" ")]
       p [output.encoding, output]
       p [error_output.encoding, error_output]
