@@ -181,6 +181,9 @@ module CommandRunner
     output = @output_log_path.read
     error_output = @error_output_log_path.read
     unless succeeded
+      p [command_line.join(" ").encoding, command_line.join(" ")]
+      p [output.encoding, output]
+      p [error_output.encoding, error_output]
       message = <<-MESSAGE.chomp
 failed to run: #{command_line.join(" ")}
 -- output start --
