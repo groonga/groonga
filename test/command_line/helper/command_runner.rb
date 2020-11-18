@@ -178,8 +178,8 @@ module CommandRunner
       :err => @error_output_log_path.to_s,
     }
     succeeded = system(*command_line, options)
-    output = @output_log_path.read(encoding: "locale").encode("UTF-8")
-    error_output = @error_output_log_path.read(encoding: "locale").encode("UTF-8")
+    output = @output_log_path.read.encode("UTF-8", "locale")
+    error_output = @error_output_log_path.read.encode("UTF-8", "locale")
     unless succeeded
       p [command_line.join(" ").encoding, command_line.join(" ")]
       p [output.encoding, output]
