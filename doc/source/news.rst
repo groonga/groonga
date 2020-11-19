@@ -7,6 +7,180 @@
 News
 ====
 
+.. _release-10-0-9:
+
+Release 10.0.9 - 2020-12-01
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Improved performance when we specified ``-1`` to ``limit``.
+
+* [:doc:`reference/commands/reference_acquire`] Added a new option ``--auto_release_count``.
+
+  * Groonga reduces a reference count automatically when a request reaching the number of value that is specified in ``--auto_release_count``.
+
+  * For example, the acquired reference of ``Users`` is released automatically after the second ``status`` is processed as below.
+
+    .. code-block::
+
+      reference_acquire --target_name Users --auto_release_count 2
+      status # Users is still referred.
+      status # Users' reference is released after this command is processed.
+
+  * We can prevent a leak of the release of acquired reference by this option.
+
+* Modify behavior when Groonga evaluated empty ``vector`` and ``uvector``.
+
+  * Empty ``vector`` and ``uvector`` are evaluated to ``false`` in command version 3.
+
+    * This behavior is valid for only command version 3.
+    * Note that the different behavior until now.
+
+* [:doc:`/reference/normalizers`] Added a new Normalizer ``NormalizerNFKC130`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 13.0.
+
+* [:doc:`/reference/token_filters`] Added a new TokenFilter ``TokenFilterNFKC130`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 13.0.
+
+* [:doc:`reference/commands/select`] Improved performance for ``"_score = column - X"``.
+
+* [:doc:`reference/commands/reference_acquire`] Improved that ``--reference_acquire`` doesn't get unnecessary reference of index column when we specify the ``--recursive dependent`` option.
+
+  * From this release, the targets of ``--recursive dependent`` are only the target table's key  and the index column that is set to data column.
+
+* [:doc:`reference/commands/select`] Add support for ordered near phrase search.
+
+  * Until now, the near phrase search have only looked for records that the distance of between specified phrases near.
+  * This feature look for satisfy the following conditions records.
+
+    * If the distance of between specified phrases is near.
+    * If the specified phrases are in line with specified order.
+
+  * This feature use ``*ONP`` as an operator. (Note that the operator isn't ``*NP``.)
+
+  * ``$`` is handled as itself in the query syntax. Note that it isn't a special character in the query syntax.
+
+  * If we use script syntax, this feature use as below.
+
+    .. code-block::
+
+      table_create Entries TABLE_NO_KEY
+      column_create Entries content COLUMN_SCALAR Text
+
+      table_create Terms TABLE_PAT_KEY ShortText \
+        --default_tokenizer 'TokenNgram("unify_alphabet", false, \
+                                        "unify_digit", false)' \
+        --normalizer NormalizerNFKC121
+      column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+      load --table Entries
+      [
+      {"content": "abcXYZdef"},
+      {"content": "abebcdXYZdef"},
+      {"content": "abcdef"},
+      {"content": "defXYZabc"},
+      {"content": "XYZabc"},
+      {"content": "abc123456789def"},
+      {"content": "abc12345678def"},
+      {"content": "abc1de2def"}
+      ]
+
+      select Entries --filter 'content *ONP "abc def"' --output_columns '_score, content'
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              4
+            ],
+            [
+              [
+                "_score",
+                "Int32"
+              ],
+              [
+                "content",
+                "Text"
+              ]
+            ],
+            [
+              1,
+              "abcXYZdef"
+            ],
+            [
+              1,
+              "abcdef"
+            ],
+            [
+              1,
+              "abc12345678def"
+            ],
+            [
+              1,
+              "abc1de2def"
+            ]
+          ]
+        ]
+      ]
+
+  * If we use query syntax, this feature use as below.
+
+    .. code-block::
+
+       select Entries --query 'content:*ONP "abc def"' --output_columns '_score, content'
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               4
+             ],
+             [
+               [
+                 "_score",
+                 "Int32"
+               ],
+               [
+                 "content",
+                 "Text"
+               ]
+             ],
+             [
+               1,
+               "abcXYZdef"
+             ],
+             [
+               1,
+               "abcdef"
+             ],
+             [
+               1,
+               "abc12345678def"
+             ],
+             [
+               1,
+               "abc1de2def"
+             ]
+           ]
+         ]
+       ]
+
+Fixes
+^^^^^
+
+* [:doc:`reference/executables/groonga-server-http`] Fixed that Groonga HTTP server finished without waiting all woker threads finished completely.
+
+  * Until now, Groonga HTTP server had started the process of finish after worker threads finished itself process.
+    However, worker threads may not finish completely at this timing. Therefore, Groonga HTTP server may crashed according to timing. Because Groonga HTTP server may free area of memory that worker threads are using them yet.
+
 .. _release-10-0-8:
 
 Release 10.0.8 - 2020-10-29
