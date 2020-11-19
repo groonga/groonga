@@ -38,7 +38,7 @@ download: ensure-rsync-path
 	rsync -avz --progress --delete $(RSYNC_PATH)/windows/groonga/ files
 
 download-windows-binary:
-	$(RUBY) $(srcdir)/download_appveyor_build.rb \
+	$(RUBY) $(srcdir)/download_github_actions_artifact.rb \
 	  v$(PACKAGE_VERSION) \
 	  files \
 	  all
