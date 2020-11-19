@@ -181,17 +181,6 @@ module CommandRunner
     output = @output_log_path.read.encode("UTF-8", "filesystem")
     error_output = @error_output_log_path.read.encode("UTF-8", "filesystem")
     unless succeeded
-      p Encoding.find("locale")
-      p Encoding.find("filesystem")
-      p [command_line.join(" ").encoding, command_line.join(" ")]
-      p [output.encoding, output]
-      p [error_output.encoding, error_output]
-      p [@output_log_path.read(encoding: "locale").encoding,
-         @output_log_path.read(encoding: "locale")]
-      p [@error_output_log_path.read(encoding: "locale").encoding,
-         @error_output_log_path.read(encoding: "locale")]
-      p [@error_output_log_path.read.encoding,
-         @error_output_log_path.read]
       message = <<-MESSAGE.chomp
 failed to run: #{command_line.join(" ").encode("UTF-8")}
 -- output start --
