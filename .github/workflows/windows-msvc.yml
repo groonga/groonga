@@ -168,7 +168,7 @@ jobs:
           Set-PSDebug -Trace 2
 
           New-Item `
-            -Path "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\.."
+            -Path "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\.." `
             -ItemType Directory
           Copy-Item -Recurse `
              "${Env:FULL_INSTALL_FOLDER}" `
