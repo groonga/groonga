@@ -167,13 +167,14 @@ jobs:
         run: |
           Set-PSDebug -Trace 2
 
-          pushd "${Env:FULL_INSTALL_FOLDER}\.."
-
+          New-Item `
+            -Path "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\.."
+            -ItemType Directory
           Copy-Item -Recurse `
-             "${Env:INSTALL_FOLDER}" `
-             "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}"
+             "${Env:FULL_INSTALL_FOLDER}" `
+             "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}"
           $GROONGA_VC_REDIST_LICENSE_DIR = `
-            "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}\share\groonga\vcruntime"
+            "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\share\groonga\vcruntime"
           New-Item `
             -Path "${GROONGA_VC_REDIST_LICENSE_DIR}" `
             -ItemType Directory
@@ -185,15 +186,15 @@ jobs:
           $VC_REDIST_MSVCP = "${VC_REDIST_DIR}\msvcp140.dll"
           Copy-Item `
             ${VC_REDIST_VCRUNTIME} `
-            "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
+            "${EnvFULL_:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
           if (Test-Path ${VC_REDIST_VCRUNTIME_1}) {
             Copy-Item `
               ${VC_REDIST_VCRUNTIME_1} `
-              "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
+              "${EnvFULL_:INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
           }
           Copy-Item `
             ${VC_REDIST_MSVCP} `
-            "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
+            "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
           Copy-Item `
             "${Env:GITHUB_WORKSPACE}\packages\windows\vcruntime\vs${{ matrix.vs-version }}\readme.txt" `
             ${Env:GROONGA_VC_REDIST_LICENSE_DIR}
@@ -201,11 +202,10 @@ jobs:
           $UCRT_REDIST_DIR = "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\${{ matrix.architecture }}"
           Copy-Item `
             "${UCRT_REDIST_DIR}\*.dll" `
-            "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
+            "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
           Copy-Item `
             "${Env:GITHUB_WORKSPACE}\packages\windows\vcruntime\ucrt-readme.txt" `
             ${Env:GROONGA_VC_REDIST_LICENSE_DIR}
-          popd
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.env.outputs.install-folder-with-vcruntime }}
