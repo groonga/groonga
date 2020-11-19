@@ -206,10 +206,8 @@ test_script:
       --read-timeout 30
       --n-retries 2
       %CD%\test\command\suite
-  # On AppVeyor, インストール directory is recognized unicode escape sequence.
-  - set GROONGA_INSTALL_SUB_FOLDER_ESCAPED=\u7E67\uFF64\u7E5D\uFF73\u7E67\uFF79\u7E5D\u533B\u30FB\u7E5D\uFF6B
   - ruby test\command_line\run-test.rb
-      --groonga-install-prefix=%APPVEYOR_BUILD_FOLDER%\\%GROONGA_INSTALL_SUB_FOLDER_ESCAPED%\\%GROONGA_INSTALL_FOLDER%
+      --groonga-install-prefix=%FULL_GROONGA_INSTALL_FOLDER%
 
 # Enable this to debug on AppVeyor
 # on_failure:
