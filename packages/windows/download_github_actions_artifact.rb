@@ -15,16 +15,12 @@ tag, output_directory, target_type = ARGV
 client = Octokit::Client.new
 client.access_token = ENV["GITHUB_ACCESS_TOKEN"]
 artifacts_response = nil
-if tag == "master"
-  artifacts_response = client.get("/repos/groonga/groonga/actions/artifacts")
-else
-  workflow_runs_response = client.workflow_runs("groonga/groonga",
-                                                "windows-msvc.yml",
-                                                branch: tag)
-  workflow_run_id = workflow_runs_response.to_a[1][1][0][:id]
-  artifacts_response =
-    client.get("/repos/groonga/groonga/actions/runs/#{workflow_run_id}/artifacts")
-end
+workflow_runs_response = client.workflow_runs("groonga/groonga",
+                                              "windows-msvc.yml",
+                                              branch: tag)
+workflow_run_id = workflow_runs_response.to_a[1][1][0][:id]
+artifacts_response =
+  client.get("/repos/groonga/groonga/actions/runs/#{workflow_run_id}/artifacts")
 
 downloaded = false
 artifacts_response.to_a[1][1].each do |artifact|
