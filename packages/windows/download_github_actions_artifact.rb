@@ -18,23 +18,27 @@ artifacts_response = nil
 workflow_runs_response = client.workflow_runs("groonga/groonga",
                                               "windows-msvc.yml",
                                               branch: tag)
-workflow_run_id = workflow_runs_response.to_a[1][1][0][:id]
-artifacts_response =
-  client.get("/repos/groonga/groonga/actions/runs/#{workflow_run_id}/artifacts")
-
 downloaded = false
-artifacts_response.to_a[1][1].each do |artifact|
-  name = artifact[:name]
-  unless target_type == "all"
-    next unless name.end_with?(target_type)
+workflow_runs_response.workflow_runs.each do |workflow_run|
+  artifacts_response =
+    client.get("/repos/groonga/groonga/actions/runs/#{workflow_run.id}/artifacts")
+  next if artifacts_response.total_count.zero?
+
+  artifacts_response.artifacts.each do |artifact|
+    name = artifact.name
+    unless target_type == "all"
+      next unless name.end_with?(target_type)
+    end
+    id = artifact.id
+    FileUtils.mkdir_p(output_directory)
+    puts("Downloading #{name}...")
+    File.open("#{output_directory}/#{name}.zip", "wb") do |output|
+      output.print(client.get("/repos/groonga/groonga/actions/artifacts/#{id}/zip"))
+    end
+    downloaded = true
+    break unless target_type == "all"
   end
-  id = artifact[:id]
-  FileUtils.mkdir_p(output_directory)
-  File.open("#{output_directory}/#{name}.zip", "wb") do |output|
-    output.print(client.get("/repos/groonga/groonga/actions/artifacts/#{id}/zip"))
-  end
-  downloaded = true
-  break unless target_type == "all"
+  break
 end
 
 unless downloaded
