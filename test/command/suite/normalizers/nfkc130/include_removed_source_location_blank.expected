@@ -1,0 +1,33 @@
+normalize   'NormalizerNFKC130("include_removed_source_location", false)'   "( あ  いうえお )"   REMOVE_BLANK|WITH_CHECKS
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "(あいうえお)",
+    "types": [
+
+    ],
+    "checks": [
+      1,
+      3,
+      0,
+      0,
+      3,
+      0,
+      0,
+      3,
+      0,
+      0,
+      3,
+      0,
+      0,
+      3,
+      0,
+      0,
+      1
+    ]
+  }
+]

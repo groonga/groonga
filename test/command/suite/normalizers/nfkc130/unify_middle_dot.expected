@@ -1,0 +1,24 @@
+normalize   'NormalizerNFKC130("unify_middle_dot", true)'   "·ᐧ•∙⋅⸱・･"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "········",
+    "types": [
+      "symbol",
+      "symbol",
+      "symbol",
+      "symbol",
+      "symbol",
+      "symbol",
+      "symbol",
+      "symbol"
+    ],
+    "checks": [
+
+    ]
+  }
+]

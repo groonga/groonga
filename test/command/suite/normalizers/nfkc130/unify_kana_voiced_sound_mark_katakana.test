@@ -1,0 +1,4 @@
+normalize \
+  'NormalizerNFKC130("unify_kana_voiced_sound_mark", true)' \
+  "カガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドハバパヒビピフブプヘベペホボポ" \
+  WITH_TYPES

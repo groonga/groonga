@@ -1,0 +1,6 @@
+#@on-error omit
+tokenize \
+  'TokenMecab("use_reading", true)' \
+  "私は林檎を食べます。" \
+  --token_filters 'TokenFilterNFKC130("unify_kana", true)'
+#@on-error default

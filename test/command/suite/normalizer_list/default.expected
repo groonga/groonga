@@ -17,6 +17,9 @@ normalizer_list
     },
     {
       "name": "NormalizerNFKC121"
+    },
+    {
+      "name": "NormalizerNFKC130"
     }
   ]
 ]

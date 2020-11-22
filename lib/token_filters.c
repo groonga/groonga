@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -208,6 +208,30 @@ nfkc121_init(grn_ctx *ctx, grn_tokenizer_query *query)
                    "[nfkc121]");
 }
 
+static void *
+nfkc130_open_options(grn_ctx *ctx,
+                     grn_obj *token_filter,
+                     grn_obj *raw_options,
+                     void *user_data)
+{
+  return nfkc_open_options(ctx,
+                           token_filter,
+                           raw_options,
+                           user_data,
+                           grn_nfkc130_normalize_options_init,
+                           "[nfkc130]");
+}
+
+static void *
+nfkc130_init(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  return nfkc_init(ctx,
+                   query,
+                   nfkc130_open_options,
+                   "NormalierNFKC130",
+                   "[nfkc130]");
+}
+
 grn_rc
 grn_db_init_builtin_token_filters(grn_ctx *ctx)
 {
@@ -223,6 +247,14 @@ grn_db_init_builtin_token_filters(grn_ctx *ctx)
     grn_obj *token_filter;
     token_filter = grn_token_filter_create(ctx, "TokenFilterNFKC121", -1);
     grn_token_filter_set_init_func(ctx, token_filter, nfkc121_init);
+    grn_token_filter_set_filter_func(ctx, token_filter, nfkc_filter);
+    grn_token_filter_set_fin_func(ctx, token_filter, nfkc_fin);
+  }
+
+  {
+    grn_obj *token_filter;
+    token_filter = grn_token_filter_create(ctx, "TokenFilterNFKC130", -1);
+    grn_token_filter_set_init_func(ctx, token_filter, nfkc130_init);
     grn_token_filter_set_filter_func(ctx, token_filter, nfkc_filter);
     grn_token_filter_set_fin_func(ctx, token_filter, nfkc_fin);
   }

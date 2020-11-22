@@ -1,0 +1,33 @@
+normalize   'NormalizerNFKC130("unify_kana", true)'   "あイｳｪおざジたチなニぱピまミヽヾ"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "あいうぇおざじたちなにぱぴまみゝゞ",
+    "types": [
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana"
+    ],
+    "checks": [
+
+    ]
+  }
+]

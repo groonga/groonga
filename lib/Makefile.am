@@ -129,7 +129,7 @@ EXTRA_DIST =					\
 CLEANFILES = *.gcno *.gcda
 
 
-ICU_VERSION_DOT = $$(echo $(ICU_VERSION) | sed -e 's/_/./g')
+ICU_VERSION_HYPHEN = $$(echo $(ICU_VERSION) | sed -e 's/_/-/g')
 
 icu4c-$(ICU_VERSION)-src.tgz:
 	if [ -z "$(ICU_VERSION)" ]; then	\
@@ -137,7 +137,7 @@ icu4c-$(ICU_VERSION)-src.tgz:
 	  false;				\
 	fi
 	wget \
-	  http://download.icu-project.org/files/icu4c/$(ICU_VERSION_DOT)/icu4c-$(ICU_VERSION)-src.tgz
+	  https://github.com/unicode-org/icu/releases/download/release-$(ICU_VERSION_HYPHEN)/icu4c-$(ICU_VERSION)-src.tgz
 	rm -rf tmp/icu/
 
 tmp/icu/: icu4c-$(ICU_VERSION)-src.tgz

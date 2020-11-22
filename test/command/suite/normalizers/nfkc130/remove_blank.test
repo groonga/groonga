@@ -1,0 +1,5 @@
+normalize \
+  'NormalizerNFKC130("remove_blank", true, \
+                     "report_source_offset", true)' \
+  "This is a pen." \
+  WITH_CHECKS|WITH_TYPES

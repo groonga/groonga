@@ -1,0 +1,33 @@
+normalize NormalizerNFKC130 "ЛИЦЕНЗИЯ лицензия" WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "лицензия лицензия",
+    "types": [
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "others",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha"
+    ],
+    "checks": [
+
+    ]
+  }
+]

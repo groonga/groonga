@@ -1,4 +1,4 @@
-tokenize   'TokenMecab("use_reading", true)'   "私は林檎を食べます。"   --token_filters 'TokenFilterNFKC100("unify_kana", true)'
+tokenize   'TokenMecab("use_reading", true)'   "私は林檎を食べます。"   --token_filters 'TokenFilterNFKC121("unify_kana", true)'
 [
   [
     0,

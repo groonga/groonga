@@ -1,0 +1,40 @@
+normalize   'NormalizerNFKC130("unify_kana_case", true)'   "ァアィイゥウェエォオッツャヤュユョヨヮワヵカヶケ"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "アアイイウウエエオオツツヤヤユユヨヨワワカカケケ",
+    "types": [
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana"
+    ],
+    "checks": [
+
+    ]
+  }
+]

@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2016  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -72,6 +72,11 @@ const char *grn_nfkc121_decompose(const unsigned char *utf8);
 const char *grn_nfkc121_compose(const unsigned char *prefix_utf8,
                                const unsigned char *suffix_utf8);
 
+GRN_API grn_char_type grn_nfkc130_char_type(const unsigned char *utf8);
+const char *grn_nfkc130_decompose(const unsigned char *utf8);
+const char *grn_nfkc130_compose(const unsigned char *prefix_utf8,
+                               const unsigned char *suffix_utf8);
+
 void grn_nfkc_normalize_options_init(grn_ctx *ctx,
                                      grn_nfkc_normalize_options *options,
                                      grn_nfkc_char_type_func char_type_func,
@@ -80,6 +85,8 @@ void grn_nfkc_normalize_options_init(grn_ctx *ctx,
 void grn_nfkc100_normalize_options_init(grn_ctx *ctx,
                                         grn_nfkc_normalize_options *options);
 void grn_nfkc121_normalize_options_init(grn_ctx *ctx,
+                                        grn_nfkc_normalize_options *options);
+void grn_nfkc130_normalize_options_init(grn_ctx *ctx,
                                         grn_nfkc_normalize_options *options);
 grn_rc grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                         grn_nfkc_normalize_options *options,

@@ -1,0 +1,23 @@
+normalize   'NormalizerNFKC130'   "㋿"   WITH_CHECKS|WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "令和",
+    "types": [
+      "kanji",
+      "kanji"
+    ],
+    "checks": [
+      3,
+      0,
+      0,
+      -1,
+      0,
+      0
+    ]
+  }
+]
