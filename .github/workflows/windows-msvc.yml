@@ -186,11 +186,11 @@ jobs:
           $VC_REDIST_MSVCP = "${VC_REDIST_DIR}\msvcp140.dll"
           Copy-Item `
             ${VC_REDIST_VCRUNTIME} `
-            "${EnvFULL_:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
+            "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
           if (Test-Path ${VC_REDIST_VCRUNTIME_1}) {
             Copy-Item `
               ${VC_REDIST_VCRUNTIME_1} `
-              "${EnvFULL_:INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
+              "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
           }
           Copy-Item `
             ${VC_REDIST_MSVCP} `
