@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,11 @@ grn_window_function_executor_open(grn_ctx *ctx);
 GRN_API grn_rc
 grn_window_function_executor_close(grn_ctx *ctx,
                                    grn_window_function_executor *executor);
+GRN_API grn_rc
+grn_window_function_executor_set_tag(grn_ctx *ctx,
+                                     grn_window_function_executor *executor,
+                                     const char *tag,
+                                     size_t tag_size);
 GRN_API grn_rc
 grn_window_function_executor_add_table(grn_ctx *ctx,
                                        grn_window_function_executor *executor,

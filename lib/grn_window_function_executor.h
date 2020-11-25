@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@ extern "C" {
 #endif
 
 struct _grn_window_function_executor {
+  grn_obj tag;
   grn_obj tables;
   grn_obj is_context_tables;
   grn_obj source;

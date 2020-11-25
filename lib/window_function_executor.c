@@ -25,6 +25,7 @@ grn_window_function_executor_init(grn_ctx *ctx,
 {
   GRN_API_ENTER;
 
+  GRN_TEXT_INIT(&(executor->tag), 0);
   GRN_PTR_INIT(&(executor->tables), GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_BOOL_INIT(&(executor->is_context_tables), 0);
   GRN_TEXT_INIT(&(executor->source), 0);
@@ -121,6 +122,7 @@ grn_window_function_executor_fin(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &(executor->source));
   GRN_OBJ_FIN(ctx, &(executor->is_context_tables));
   GRN_OBJ_FIN(ctx, &(executor->tables));
+  GRN_OBJ_FIN(ctx, &(executor->tag));
 
   GRN_API_RETURN(GRN_SUCCESS);
 }
@@ -169,6 +171,25 @@ grn_window_function_executor_close(grn_ctx *ctx,
 }
 
 grn_rc
+grn_window_function_executor_set_tag(grn_ctx *ctx,
+                                     grn_window_function_executor *executor,
+                                     const char *tag,
+                                     size_t tag_size)
+{
+  GRN_API_ENTER;
+
+  if (!executor) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[window-function-executor][tag][set] executor is NULL");
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  GRN_TEXT_SET(ctx, &(executor->tag), tag, tag_size);
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
 grn_window_function_executor_add_table(grn_ctx *ctx,
                                        grn_window_function_executor *executor,
                                        grn_obj *table)
@@ -177,7 +198,9 @@ grn_window_function_executor_add_table(grn_ctx *ctx,
 
   if (!executor) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[window-function-executor][table][add] executor is NULL");
+        "%.*s[window-function-executor][table][add] executor is NULL",
+        (int)GRN_TEXT_LEN(&(executor->tag)),
+        GRN_TEXT_VALUE(&(executor->tag)));
     GRN_API_RETURN(ctx->rc);
   }
 
@@ -198,7 +221,9 @@ grn_window_function_executor_add_context_table(grn_ctx *ctx,
 
   if (!executor) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[window-function-executor][context-table][add] executor is NULL");
+        "%.*s[window-function-executor][context-table][add] executor is NULL",
+        (int)GRN_TEXT_LEN(&(executor->tag)),
+        GRN_TEXT_VALUE(&(executor->tag)));
     GRN_API_RETURN(ctx->rc);
   }
 
@@ -220,7 +245,9 @@ grn_window_function_executor_set_source(grn_ctx *ctx,
 
   if (!executor) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[window-function-executor][source][set] executor is NULL");
+        "%.*s[window-function-executor][source][set] executor is NULL",
+        (int)GRN_TEXT_LEN(&(executor->tag)),
+        GRN_TEXT_VALUE(&(executor->tag)));
     GRN_API_RETURN(ctx->rc);
   }
 
@@ -239,7 +266,9 @@ grn_window_function_executor_set_sort_keys(grn_ctx *ctx,
 
   if (!executor) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[window-function-executor][sort-keys][set] executor is NULL");
+        "%.*s[window-function-executor][sort-keys][set] executor is NULL",
+        (int)GRN_TEXT_LEN(&(executor->tag)),
+        GRN_TEXT_VALUE(&(executor->tag)));
     GRN_API_RETURN(ctx->rc);
   }
 
@@ -258,7 +287,9 @@ grn_window_function_executor_set_group_keys(grn_ctx *ctx,
 
   if (!executor) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[window-function-executor][group-keys][set] executor is NULL");
+        "%.*s[window-function-executor][group-keys][set] executor is NULL",
+        (int)GRN_TEXT_LEN(&(executor->tag)),
+        GRN_TEXT_VALUE(&(executor->tag)));
     GRN_API_RETURN(ctx->rc);
   }
 
@@ -277,7 +308,10 @@ grn_window_function_executor_set_output_column_name(grn_ctx *ctx,
 
   if (!executor) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[window-function-executor][output-column-name][set] executor is NULL");
+        "%.*s[window-function-executor][output-column-name][set] "
+        "executor is NULL",
+        (int)GRN_TEXT_LEN(&(executor->tag)),
+        GRN_TEXT_VALUE(&(executor->tag)));
     GRN_API_RETURN(ctx->rc);
   }
 
@@ -320,7 +354,9 @@ grn_window_function_executor_execute(grn_ctx *ctx,
 
   if (!executor) {
     ERR(GRN_INVALID_ARGUMENT,
-        "%s executor is NULL",
+        "%.*s%s executor is NULL",
+        (int)GRN_TEXT_LEN(&(executor->tag)),
+        GRN_TEXT_VALUE(&(executor->tag)),
         tag);
     GRN_API_RETURN(ctx->rc);
   }
@@ -328,7 +364,9 @@ grn_window_function_executor_execute(grn_ctx *ctx,
   grn_obj *source = &(executor->source);
   if (GRN_TEXT_LEN(source) == 0) {
     ERR(GRN_INVALID_ARGUMENT,
-        "%s no source",
+        "%.*s%s no source",
+        (int)GRN_TEXT_LEN(&(executor->tag)),
+        GRN_TEXT_VALUE(&(executor->tag)),
         tag);
     GRN_API_RETURN(ctx->rc);
   }
@@ -336,7 +374,9 @@ grn_window_function_executor_execute(grn_ctx *ctx,
   grn_obj *output_column_name = &(executor->output_column_name);
   if (GRN_TEXT_LEN(output_column_name) == 0) {
     ERR(GRN_INVALID_ARGUMENT,
-        "%s no output column",
+        "%.*s%s no output column",
+        (int)GRN_TEXT_LEN(&(executor->tag)),
+        GRN_TEXT_VALUE(&(executor->tag)),
         tag);
     GRN_API_RETURN(ctx->rc);
   }
@@ -383,7 +423,9 @@ grn_window_function_executor_execute(grn_ctx *ctx,
         table_name_size = strlen(table_name);
       }
       ERR(GRN_INVALID_ARGUMENT,
-          "%s output column doesn't exist: <%.*s>: <%.*s>",
+          "%.*s%s output column doesn't exist: <%.*s>: <%.*s>",
+          (int)GRN_TEXT_LEN(&(executor->tag)),
+          GRN_TEXT_VALUE(&(executor->tag)),
           tag,
           table_name_size,
           table_name,
@@ -400,7 +442,10 @@ grn_window_function_executor_execute(grn_ctx *ctx,
       char message[GRN_CTX_MSGSIZE];
       grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
       ERR(GRN_INVALID_ARGUMENT,
-          "%s failed to create expression to compile window function call: %s",
+          "%.*s%s failed to create expression to compile window function call: "
+          "%s",
+          (int)GRN_TEXT_LEN(&(executor->tag)),
+          GRN_TEXT_VALUE(&(executor->tag)),
           tag,
           message);
       GRN_API_RETURN(ctx->rc);
@@ -418,7 +463,9 @@ grn_window_function_executor_execute(grn_ctx *ctx,
       char message[GRN_CTX_MSGSIZE];
       grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
       ERR(ctx->rc,
-          "%s failed to parse window function call: <%.*s>: %s",
+          "%.*s%s failed to parse window function call: <%.*s>: %s",
+          (int)GRN_TEXT_LEN(&(executor->tag)),
+          GRN_TEXT_VALUE(&(executor->tag)),
           tag,
           (int)GRN_TEXT_LEN(source),
           GRN_TEXT_VALUE(source),
@@ -437,7 +484,9 @@ grn_window_function_executor_execute(grn_ctx *ctx,
                                     &n_sort_keys);
       if (!sort_keys) {
         ERR(ctx->rc,
-            "%s failed to parse sort keys: <%.*s>",
+            "%.*s%s failed to parse sort keys: <%.*s>",
+            (int)GRN_TEXT_LEN(&(executor->tag)),
+            GRN_TEXT_VALUE(&(executor->tag)),
             tag,
             (int)GRN_TEXT_LEN(&(executor->sort_keys)),
             GRN_TEXT_VALUE(&(executor->sort_keys)));
@@ -463,7 +512,9 @@ grn_window_function_executor_execute(grn_ctx *ctx,
                                     &n_group_keys);
       if (!group_keys) {
         ERR(ctx->rc,
-            "%s failed to parse group keys: <%.*s>",
+            "%.*s%s failed to parse group keys: <%.*s>",
+            (int)GRN_TEXT_LEN(&(executor->tag)),
+            GRN_TEXT_VALUE(&(executor->tag)),
             tag,
             (int)GRN_TEXT_LEN(&(executor->group_keys)),
             GRN_TEXT_VALUE(&(executor->group_keys)));
@@ -493,7 +544,9 @@ grn_window_function_executor_execute(grn_ctx *ctx,
         }
         grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
         ERR(rc,
-            "%s failed to allocate internal sort keys: %s",
+            "%.*s%s failed to allocate internal sort keys: %s",
+            (int)GRN_TEXT_LEN(&(executor->tag)),
+            GRN_TEXT_VALUE(&(executor->tag)),
             tag,
             message);
         GRN_API_RETURN(ctx->rc);
@@ -521,7 +574,9 @@ grn_window_function_executor_execute(grn_ctx *ctx,
       }
       grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
       ERR(rc,
-          "%s failed to allocate table to store sorted result: %s",
+          "%.*s%s failed to allocate table to store sorted result: %s",
+          (int)GRN_TEXT_LEN(&(executor->tag)),
+          GRN_TEXT_VALUE(&(executor->tag)),
           tag,
           errbuf);
       GRN_API_RETURN(ctx->rc);
@@ -550,8 +605,10 @@ grn_window_function_executor_execute(grn_ctx *ctx,
       }
       if (n_group_keys != executor->values.n) {
         ERR(GRN_INVALID_ARGUMENT,
-            "%s the number of group keys in tables is erratic: "
+            "%.*s%s the number of group keys in tables is erratic: "
             "<%u>: <%" GRN_FMT_SIZE ">",
+            (int)GRN_TEXT_LEN(&(executor->tag)),
+            GRN_TEXT_VALUE(&(executor->tag)),
             tag,
             n_group_keys,
             executor->values.n);
