@@ -3923,6 +3923,20 @@ grn_expr_executor_scorer_plus(grn_ctx *ctx,
   return left + right;
 }
 
+static double
+grn_expr_executor_scorer_minus(grn_ctx *ctx,
+                               grn_expr_executor *executor,
+                               grn_id id,
+                               grn_obj *args,
+                               grn_expr_executor_scorer_data *data)
+{
+  double right;
+  GRN_FLOAT_POP(args, right);
+  double left;
+  GRN_FLOAT_POP(args, left);
+  return left - right;
+}
+
 static bool
 grn_expr_executor_init_scorer(grn_ctx *ctx,
                               grn_expr_executor *executor)
@@ -3991,6 +4005,11 @@ grn_expr_executor_init_scorer(grn_ctx *ctx,
         data->n_required_args = 2;
         executor->data.scorer.funcs[nth_func] =
           grn_expr_executor_scorer_plus;
+        break;
+      case GRN_OP_MINUS :
+        data->n_required_args = 2;
+        executor->data.scorer.funcs[nth_func] =
+          grn_expr_executor_scorer_minus;
         break;
       default :
         return false;

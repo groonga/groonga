@@ -1,0 +1,13 @@
+table_create Data TABLE_NO_KEY
+column_create Data number COLUMN_SCALAR UInt8
+
+load --table Data
+[
+{"number": 1},
+{"number": 2}
+]
+
+select Data \
+  --filter true \
+  --scorer '_score = number - 1' \
+  --output_columns _score
