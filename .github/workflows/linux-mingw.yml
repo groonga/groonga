@@ -44,6 +44,8 @@ jobs:
       - name: Generate configure
         run: |
           ./autogen.sh
+      - name: Apply a patch
+          patch -p1 < packages/source/patches/mruby-do-not-check-fd-for-stdin-stdout-stderr.diff
       - name: Configure
         run: |
           ./configure \
@@ -56,7 +58,6 @@ jobs:
           make dist
       - name: Build
         run: |
-          patch -p1 < packages/source/patches/mruby-do-not-check-fd-for-stdin-stdout-stderr.diff
           make \
             -C packages/windows \
             ARCHITECTURES=${{ matrix.architecture }} \
