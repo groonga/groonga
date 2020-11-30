@@ -102,6 +102,7 @@ jobs:
             ${{ matrix.configure-options }}
       - name: Build
         run: |
+          patch -p1 < packages/source/patches/mruby-do-not-check-fd-for-stdin-stdout-stderr.diff
           make -j$(nproc)
       - name: Install test dependencies
         run: |

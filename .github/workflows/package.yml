@@ -92,6 +92,9 @@ jobs:
             --with-cutter-source-path=../cutter \
             --with-groonga-org-path=../groonga.org \
             --with-ruby
+      - name: Apply a patch
+        run: |
+          patch -p1 < packages/source/patches/mruby-do-not-check-fd-for-stdin-stdout-stderr.diff
       - name: Build archive
         run: |
           make dist
