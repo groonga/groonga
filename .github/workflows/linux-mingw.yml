@@ -45,6 +45,7 @@ jobs:
         run: |
           ./autogen.sh
       - name: Apply a patch
+        run: |
           patch -p1 < packages/source/patches/mruby-do-not-check-fd-for-stdin-stdout-stderr.diff
       - name: Configure
         run: |
