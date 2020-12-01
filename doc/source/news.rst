@@ -173,6 +173,8 @@ Improvements
          ]
        ]
 
+* [httpd] Updated bundled nginx to 1.19.5.
+
 Fixes
 ^^^^^
 

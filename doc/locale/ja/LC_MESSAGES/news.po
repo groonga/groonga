@@ -169,6 +169,9 @@ msgstr "スクリプト構文の場合、この機能は以下のように使用
 msgid "If we use query syntax, this feature use as below."
 msgstr "クエリー構文の場合、この機能は以下のように使用します。"
 
+msgid "[httpd] Updated bundled nginx to 1.19.5."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.19.5に更新しました。"
+
 msgid "Fixes"
 msgstr "修正"
 
