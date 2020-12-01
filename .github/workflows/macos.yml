@@ -31,6 +31,8 @@ jobs:
           matrix.use-autotools
         run: |
           ./autogen.sh
+      - name: Apply a patch
+          patch -p1 < packages/source/patches/mruby-do-not-check-fd-for-stdin-stdout-stderr.diff
       - name: Configure
         if: |
           matrix.use-autotools

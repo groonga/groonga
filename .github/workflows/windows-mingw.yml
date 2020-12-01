@@ -28,10 +28,13 @@ jobs:
             mingw-w64-x86_64-ruby
             mingw-w64-x86_64-xxhash
             mingw-w64-x86_64-zlib
+            patch
       - name: Generate configure
         shell: msys2 {0}
         run: |
           ./autogen.sh
+      - name: Apply a patch
+          patch -p1 < packages/source/patches/mruby-do-not-check-fd-for-stdin-stdout-stderr.diff
       - name: Configure
         shell: msys2 {0}
         run: |
