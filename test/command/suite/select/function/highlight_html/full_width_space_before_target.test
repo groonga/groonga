@@ -1,0 +1,14 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries body COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+
+load --table Entries
+[
+{"body": "Groonga　高速！"}
+]
+
+select Entries --output_columns \
+  --match_columns body --query '高速' \
+  --output_columns 'highlight_html(body)'

@@ -2329,10 +2329,16 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
                first_key_char_len > 1)){
             /* Remove leading spaces. */
             const char *original_str = str + sh[n].offset;
-            while (grn_charlen(ctx, original_str, str + str_len) == 1 &&
-                   original_str[0] == ' ') {
-              original_str++;
-              sh[n].offset++;
+            while (true) {
+              int char_len = grn_charlen(ctx, original_str, str + str_len);
+              if (char_len == 0) {
+                break;
+              }
+              if (!grn_isspace(original_str, ctx->encoding)) {
+                break;
+              }
+              original_str += char_len;
+              sh[n].offset += char_len;
             }
           }
           {
