@@ -101,7 +101,7 @@ msgid ""
 msgstr ""
 "[:doc:`/reference/token_filters`] Unicode 13.0 の NFKC（Normalization Form "
 "Compatibility Composition）をベースにしたトークンフィルター "
-"``NormalizerNFKC130`` を追加しました。"
+"``TokenFilterNFKC130`` を追加しました。"
 
 msgid ""
 "[:doc:`reference/commands/select`] Improved performance for ``\"_score = "
