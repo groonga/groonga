@@ -74,3 +74,12 @@ namespace grnarrow {
     return check(ctx, result.status(), context.c_str());
   }
 }
+
+namespace grn {
+  namespace arrow {
+    grn_rc get_value(grn_ctx *ctx,
+                     const ::arrow::Array *array,
+                     int64_t index,
+                     grn_obj *value);
+  }
+}

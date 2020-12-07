@@ -2049,6 +2049,89 @@ namespace grnarrow {
     ObjectCache object_cache_;
   };
 }
+
+namespace grn {
+  namespace arrow {
+    namespace {
+      class ArrayValueGetter : public ::arrow::ArrayVisitor {
+      public:
+        ArrayValueGetter(grn_ctx *ctx,
+                         int64_t index,
+                         grn_obj *value) :
+          ctx_(ctx),
+          index_(index),
+          value_(value) {
+        }
+
+        ::arrow::Status Visit(const ::arrow::BooleanArray& array) {
+          GRN_BOOL_PUT(ctx_, value_, array.Value(index_));
+          return ::arrow::Status::OK();
+        }
+
+        ::arrow::Status Visit(const ::arrow::Int8Array& array) {
+          GRN_INT8_PUT(ctx_, value_, array.Value(index_));
+          return ::arrow::Status::OK();
+        }
+
+        ::arrow::Status Visit(const ::arrow::UInt8Array& array) {
+          GRN_UINT8_PUT(ctx_, value_, array.Value(index_));
+          return ::arrow::Status::OK();
+        }
+
+        ::arrow::Status Visit(const ::arrow::Int16Array& array) {
+          GRN_INT16_PUT(ctx_, value_, array.Value(index_));
+          return ::arrow::Status::OK();
+        }
+
+        ::arrow::Status Visit(const ::arrow::UInt16Array& array) {
+          GRN_UINT16_PUT(ctx_, value_, array.Value(index_));
+          return ::arrow::Status::OK();
+        }
+
+        ::arrow::Status Visit(const ::arrow::Int32Array& array) {
+          GRN_INT32_PUT(ctx_, value_, array.Value(index_));
+          return ::arrow::Status::OK();
+        }
+
+        ::arrow::Status Visit(const ::arrow::UInt32Array& array) {
+          GRN_UINT32_PUT(ctx_, value_, array.Value(index_));
+          return ::arrow::Status::OK();
+        }
+
+        ::arrow::Status Visit(const ::arrow::Int64Array& array) {
+          GRN_INT64_PUT(ctx_, value_, array.Value(index_));
+          return ::arrow::Status::OK();
+        }
+
+        ::arrow::Status Visit(const ::arrow::UInt64Array& array) {
+          GRN_UINT64_PUT(ctx_, value_, array.Value(index_));
+          return ::arrow::Status::OK();
+        }
+
+        ::arrow::Status Visit(const ::arrow::StringArray& array) {
+          auto raw_value = array.GetView(index_);
+          grn_bulk_write(ctx_, value_, raw_value.data(), raw_value.length());
+          return ::arrow::Status::OK();
+        }
+
+      private:
+        grn_ctx *ctx_;
+        int64_t index_;
+        grn_obj *value_;
+      };
+    }
+
+    grn_rc get_value(grn_ctx *ctx,
+                     const ::arrow::Array *array,
+                     int64_t index,
+                     grn_obj *value) {
+      ArrayValueGetter getter(ctx, index, value);
+      auto status = array->Accept(&getter);
+      grnarrow::check(ctx, status, "[arrow][value][get] failed");
+      return ctx->rc;
+    }
+  }
+}
 #endif /* GRN_WITH_APACHE_ARROW */
 
 extern "C" {
