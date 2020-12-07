@@ -301,7 +301,7 @@ grn_mrb_class_to_type(mrb_state *mrb, struct RClass *klass)
     type = GRN_DB_BOOL;
   } else if (klass == mrb->symbol_class) {
     type = GRN_DB_TEXT;
-  } else if (klass == mrb->fixnum_class) {
+  } else if (klass == mrb->integer_class) {
     type = GRN_DB_INT64;
   } else if (klass == mrb->float_class) {
     type = GRN_DB_FLOAT;
