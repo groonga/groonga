@@ -84,10 +84,16 @@ namespace grnarrow {
 
   bool check(grn_ctx *ctx,
              const arrow::Status &status,
+             const std::string &context) {
+    return check(ctx, status, context.c_str());
+  }
+
+  bool check(grn_ctx *ctx,
+             const arrow::Status &status,
              std::ostream &output) {
     return check(ctx,
                  status,
-                 static_cast<std::stringstream &>(output).str().c_str());
+                 static_cast<std::stringstream &>(output).str());
   }
 
   class ObjectCache {

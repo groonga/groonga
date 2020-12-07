@@ -32,6 +32,9 @@ namespace grnarrow {
              const char *context);
   bool check(grn_ctx *ctx,
              const arrow::Status &status,
+             const std::string &context);
+  bool check(grn_ctx *ctx,
+             const arrow::Status &status,
              std::ostream &output);
 
   template <typename TYPE>
@@ -44,7 +47,30 @@ namespace grnarrow {
   template <typename TYPE>
   bool check(grn_ctx *ctx,
              arrow::Result<TYPE> &result,
+             const std::string &context) {
+    return check(ctx, result.status(), context);
+  }
+
+  template <typename TYPE>
+  bool check(grn_ctx *ctx,
+             arrow::Result<TYPE> &result,
              std::ostream &output) {
     return check(ctx, result.status(), output);
+  }
+
+  template <typename ... ARGS>
+  bool check(grn_ctx *ctx,
+             const arrow::Status &status,
+             ARGS&&... args) {
+    auto context = ::arrow::util::StringBuilder(std::forward<ARGS>(args)...);
+    return check(ctx, status, context.c_str());
+  }
+
+  template <typename TYPE, typename ... ARGS>
+  bool check(grn_ctx *ctx,
+             arrow::Result<TYPE> &result,
+             ARGS&&... args) {
+    auto context = ::arrow::util::StringBuilder(std::forward<ARGS>(args)...);
+    return check(ctx, result.status(), context.c_str());
   }
 }
