@@ -81,7 +81,7 @@ namespace grn {
       build_parallel() {
 #ifdef GRN_WITH_APACHE_ARROW
         std::mutex mutex;
-        auto pool = arrow::internal::GetCpuThreadPool();
+        auto pool = ::arrow::internal::GetCpuThreadPool();
         uint32_t token_cursor_flags = GRN_TOKEN_CURSOR_PARALLEL;
         grn_obj *db = grn_ctx_db(ctx_);
         uint32_t chunk_size = parallel_chunk_size;
@@ -147,14 +147,14 @@ namespace grn {
             }
           }
           grn_ctx_fin(&ctx);
-          return arrow::Status::OK();
+          return ::arrow::Status::OK();
         };
 
         std::vector<grn_id> ids;
 # if ARROW_VERSION_MAJOR >= 3
-        std::vector<arrow::Future<>> futures;
+        std::vector<::arrow::Future<>> futures;
 # else
-        std::vector<arrow::Future<arrow::Status>> futures;
+        std::vector<::arrow::Future<::arrow::Status>> futures;
 # endif
         GRN_TABLE_EACH_BEGIN_FLAGS(ctx_, table_, cursor, id, GRN_CURSOR_BY_ID) {
           ids.push_back(id);
@@ -179,7 +179,7 @@ namespace grn {
             futures.push_back(*future);
           }
         }
-        auto status = arrow::Status::OK();
+        auto status = ::arrow::Status::OK();
         for (auto& future : futures) {
           status &= future.status();
         }
