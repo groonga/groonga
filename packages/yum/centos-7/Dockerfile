@@ -25,7 +25,6 @@ RUN \
     php-devel \
     pkgconfig \
     python2-devel \
-    rapidjson-devel \
     ruby \
     tar \
     xxhash-devel \

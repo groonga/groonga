@@ -12,26 +12,11 @@ jobs:
       fail-fast: false
       matrix:
         label:
-          - Debian GNU/Linux stretch amd64
-          - Debian GNU/Linux stretch i386
           - Debian GNU/Linux buster amd64
           - Debian GNU/Linux buster i386
-          - CentOS 6
           - CentOS 7
           - CentOS 8
         include:
-          - label: Debian GNU/Linux stretch amd64
-            id: debian-stretch-amd64
-            rake-arguments: apt:build APT_TARGETS=debian-stretch
-            repositories-path: packages/apt/repositories/
-            test-docker-image: debian:stretch
-            test-script: packages/apt/test.sh
-          - label: Debian GNU/Linux stretch i386
-            id: debian-stretch-i386
-            rake-arguments: apt:build APT_TARGETS=debian-stretch-i386
-            repositories-path: packages/apt/repositories/
-            test-docker-image: i386/debian:stretch
-            test-script: packages/apt/test.sh
           - label: Debian GNU/Linux buster amd64
             id: debian-buster-amd64
             rake-arguments: apt:build APT_TARGETS=debian-buster
@@ -44,12 +29,6 @@ jobs:
             repositories-path: packages/apt/repositories/
             test-docker-image: i386/debian:buster
             test-script: packages/apt/test.sh
-          - label: CentOS 6
-            id: centos-6
-            rake-arguments: yum:build YUM_TARGETS=centos-6
-            repositories-path: packages/yum/repositories/
-            test-docker-image: centos:6
-            test-script: packages/yum/test.sh
           - label: CentOS 7
             id: centos-7
             rake-arguments: yum:build YUM_TARGETS=centos-7

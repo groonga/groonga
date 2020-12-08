@@ -1,15 +1,8 @@
-%define _centos_ver   %{?centos_ver:%{centos_ver}}%{!?centos_ver:6}
+%define _centos_ver   %{?centos_ver:%{centos_ver}}%{!?centos_ver:7}
 
 %define _use_jemalloc %{?use_jemalloc:%{use_jemalloc}}%{!?use_jemalloc:0}
-%define _use_msgpack  %{?use_msgpack:%{use_msgpack}}%{!?use_msgpack:%{_centos_ver} >= 7}
-%define _use_libstemmer %{?use_libstemmer:%{use_libstemmer}}%{!?use_libstemmer:%{_centos_ver} >= 7}
-%define _use_systemd  %{?use_systemd:%{use_systemd}}%{!?use_systemd:%{_centos_ver} >= 7}
-%define _use_rapidjson %{?use_rapidjson:%{use_rapidjson}}%{!?use_rapidjson:%{_centos_ver} == 7}
-%define _use_bundled_rapidjson %{?use_bundled_rapidjson:%{use_bundled_rapidjson}}%{!?use_bundled_rapidjson:%{_centos_ver} >= 8}
 
 %define _additional_configure_options %{?additional_configure_options:%{additional_configure_options}}
-
-%global _initddir %{_sysconfdir}/init.d/
 
 Name:		groonga
 Version:	@VERSION@
@@ -29,23 +22,13 @@ BuildRequires:	libzstd-devel
 %if %{_use_jemalloc}
 BuildRequires:	jemalloc-devel
 %endif
-%if %{_use_msgpack}
 BuildRequires:	msgpack-devel
-%endif
-%if %{_use_libstemmer}
 BuildRequires:	libstemmer-devel
-%endif
-%if %{_use_rapidjson}
-BuildRequires:	rapidjson-devel
-%endif
 BuildRequires:	pcre-devel
 BuildRequires:	pkgconfig
 BuildRequires:	openssl-devel
 #BuildRequires:	zeromq-devel
 #BuildRequires:	libevent-devel
-%if %{_use_systemd}
-BuildRequires:	systemd
-%endif
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	%{name}-plugin-suggest = %{version}-%{release}
 Obsoletes:	%{name} < 1.2.2-0
@@ -66,9 +49,7 @@ Requires:	libzstd
 %if %{_use_jemalloc}
 Requires:	jemalloc
 %endif
-%if %{_use_msgpack}
 Requires:	msgpack
-%endif
 Requires(post):	/sbin/ldconfig
 Requires(postun):	/sbin/ldconfig
 
@@ -91,14 +72,7 @@ Group:		Applications/Text
 License:	LGPLv2
 Requires:	%{name}-server-common = %{version}-%{release}
 Requires(pre):	shadow-utils
-%if %{_use_systemd}
 %systemd_requires
-%else
-Requires(post):	/sbin/chkconfig
-Requires(preun):	/sbin/chkconfig
-Requires(preun):	/sbin/service
-Requires(postun):	/sbin/service
-%endif
 Obsoletes:	%{name} < 1.2.2-0
 Obsoletes:	%{name}-server < 2.0.7-0
 
@@ -113,14 +87,7 @@ Requires:	%{name}-server-common = %{version}-%{release}
 Requires:	curl
 Requires:	%{name}-httpd = %{version}-%{release}
 Requires(pre):	shadow-utils
-%if %{_use_systemd}
 %systemd_requires
-%else
-Requires(post):	/sbin/chkconfig
-Requires(preun):	/sbin/chkconfig
-Requires(preun):	/sbin/service
-Requires(postun):	/sbin/service
-%endif
 Obsoletes:	%{name} < 1.2.2-0
 Obsoletes:	%{name}-server < 2.0.7-0
 
@@ -132,14 +99,7 @@ Summary:	Groonga HTTP server
 Group:		Applications/Text
 License:	LGPLv2 and BSD
 Requires:	%{name}-server-common = %{version}-%{release}
-%if %{_use_systemd}
 %systemd_requires
-%else
-Requires(post):	/sbin/chkconfig
-Requires(preun):	/sbin/chkconfig
-Requires(preun):	/sbin/service
-Requires(postun):	/sbin/service
-%endif
 Provides:	%{name}-server-http = %{version}-%{release}
 Obsoletes:	%{name}-server-http <= 4.0.7-2
 
@@ -172,7 +132,6 @@ Requires:	mecab-ipadic
 %description tokenizer-mecab
 MeCab tokenizer for Groonga
 
-%if %{_use_libstemmer}
 %package token-filter-stem
 Summary:	Stemming token filter for Groonga
 Group:		Applications/Text
@@ -181,7 +140,6 @@ Requires:	libstemmer
 
 %description token-filter-stem
 Stemming token filter for Groonga. Name is TokenFilterStem.
-%endif
 
 %package plugin-suggest
 Summary:	Suggest plugin for Groonga
@@ -213,19 +171,7 @@ Munin plugins for Groonga
   --disable-static \
   --with-package-platform=centos%{?centos_ver} \
   --with-mecab \
-%if ! %{_use_msgpack}
-  --without-message-pack \
-%endif
-%if ! %{_use_libstemmer}
-  --without-libstemmer \
-%endif
-%if %{_use_bundled_rapidjson}
   --with-rapidjson=bundled \
-%else
-  %if ! %{_use_rapidjson}
-    --without-rapidjson \
-  %endif
-%endif
   --with-munin-plugins \
   --enable-mruby \
   %{_additional_configure_options:%{additional_configure_options}}
@@ -294,28 +240,16 @@ fi
 exit 0
 
 %post server-gqtp
-%if %{_use_systemd}
 %systemd_post groonga-server-gqtp.service
-%else
-/sbin/chkconfig --add groonga-server-gqtp
-%endif
 
 %post server-http
-%if %{_use_systemd}
 %systemd_post groonga-server-http.service
-%else
-/sbin/chkconfig --add groonga-server-http
-%endif
 
 %post httpd
 if [ $1 = 1 ] ; then
 	mkdir -p %{_localstatedir}/log/groonga/httpd
 	chown -R groonga:groonga %{_localstatedir}/log/groonga/httpd
-%if %{_use_systemd}
 %systemd_post groonga-httpd.service
-%else
-	/sbin/chkconfig --add groonga-httpd
-%endif
 elif [ $1 = 2 ] ; then
 	/usr/sbin/groonga-httpd-restart > /dev/null 2>&1 || :
 fi
@@ -329,61 +263,22 @@ fi
 :
 
 %preun server-http
-%if %{_use_systemd}
 %systemd_preun groonga-server-http.service
-%else
-if [ $1 = 0 ] ; then
-	/sbin/service groonga-server-http stop >/dev/null 2>&1 || :
-	/sbin/chkconfig --del groonga-server-http
-fi
-%endif
 
 %postun server-http
-%if %{_use_systemd}
 %systemd_postun groonga-server-http.service
-%else
-if [ $1 -ge 1 ] ; then
-	/sbin/service groonga-server-http condrestart >/dev/null 2>&1 || :
-fi
-%endif
 
 %preun server-gqtp
-%if %{_use_systemd}
 %systemd_preun groonga-server-gqtp.service
-%else
-if [ $1 = 0 ] ; then
-	/sbin/service groonga-server-http stop >/dev/null 2>&1 || :
-	/sbin/chkconfig --del groonga-server-gqtp
-fi
-%endif
 
 %postun server-gqtp
-%if %{_use_systemd}
 %systemd_postun groonga-server-gqtp.service
-%else
-if [ $1 -ge 1 ] ; then
-	/sbin/service groonga-server-gqtp condrestart >/dev/null 2>&1 || :
-fi
-%endif
 
 %preun httpd
-%if %{_use_systemd}
 %systemd_preun groonga-server-http.service
-%else
-if [ $1 = 0 ] ; then
-	/sbin/service groonga-httpd stop >/dev/null 2>&1 || :
-	/sbin/chkconfig --del groonga-httpd
-fi
-%endif
 
 %postun httpd
-%if %{_use_systemd}
 %systemd_postun groonga-server-http.service
-%else
-if [ $1 -ge 1 ] ; then
-	/sbin/service groonga-httpd condrestart >/dev/null 2>&1 || :
-fi
-%endif
 
 %postun libs -p /sbin/ldconfig
 
@@ -454,11 +349,7 @@ fi
 %config(noreplace) %{_sysconfdir}/groonga/
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga-server-gqtp
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-server-gqtp
-%if %{_use_systemd}
 %{_unitdir}/groonga-server-gqtp.service
-%else
-%{_initddir}/groonga-server-gqtp
-%endif
 %ghost %dir %{_localstatedir}/run/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
@@ -468,11 +359,7 @@ fi
 %config(noreplace) %{_sysconfdir}/groonga/
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga-server-http
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-server-http
-%if %{_use_systemd}
 %{_unitdir}/groonga-server-http.service
-%else
-%{_initddir}/groonga-server-http
-%endif
 %ghost %dir %{_localstatedir}/run/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
@@ -482,11 +369,7 @@ fi
 %config(noreplace) %{_sysconfdir}/groonga/httpd/*
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga-httpd
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-httpd
-%if %{_use_systemd}
 %{_unitdir}/groonga-httpd.service
-%else
-%{_initddir}/groonga-httpd
-%endif
 %{_sbindir}/groonga-httpd
 %{_sbindir}/groonga-httpd-restart
 %ghost %dir %{_localstatedir}/run/%{name}
@@ -514,11 +397,9 @@ fi
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/tokenizers/mecab.so
 
-%if %{_use_libstemmer}
 %files token-filter-stem
 %defattr(-,root,root,-)
 %{_libdir}/groonga/plugins/token_filters/stem.so
-%endif
 
 %files munin-plugins
 %defattr(-,root,root,-)

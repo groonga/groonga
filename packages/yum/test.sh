@@ -4,7 +4,7 @@ set -exu
 
 version=$(cut -d: -f5 /etc/system-release-cpe)
 case ${version} in
-  6|7)
+  7)
     DNF=yum
     ;;
   *)
@@ -22,7 +22,7 @@ ${DNF} install -y \
 groonga --version
 
 case ${version} in
-  6|7)
+  7)
     exit 0
     ;;
   *)

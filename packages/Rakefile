@@ -27,8 +27,6 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
 
   def apt_targets_default
     [
-      "debian-stretch",
-      "debian-stretch-i386",
       "debian-buster",
       "debian-buster-i386",
     ]
@@ -36,7 +34,6 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
 
   def yum_targets_default
     [
-      "centos-6",
       "centos-7",
       "centos-8",
     ]
