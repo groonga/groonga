@@ -612,7 +612,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     GRN_OUTPUT_BOOL(false);
 #endif
 
-    GRN_OUTPUT_CSTR("message-pack");
+    GRN_OUTPUT_CSTR("message_pack");
 #ifdef GRN_WITH_MESSAGE_PACK
     GRN_OUTPUT_BOOL(true);
 #else
@@ -682,7 +682,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     GRN_OUTPUT_BOOL(false);
 #endif
 
-    GRN_OUTPUT_CSTR("apache-arrow");
+    GRN_OUTPUT_CSTR("apache_arrow");
 #ifdef GRN_WITH_APACHE_ARROW
     GRN_OUTPUT_BOOL(true);
 #else
