@@ -31,6 +31,7 @@ AM_CFLAGS =					\
 	$(LIBLZ4_CFLAGS)			\
 	$(LIBZSTD_CFLAGS)                       \
 	$(LUAJIT_CFLAGS)			\
+	$(APACHE_ARROW_CFLAGS)			\
 	$(LIBXXHASH_CFLAGS)
 
 AM_CXXFLAGS =					\

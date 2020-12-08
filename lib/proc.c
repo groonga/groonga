@@ -43,6 +43,10 @@
 # include <share.h>
 #endif /* WIN32 */
 
+#ifdef GRN_WITH_APACHE_ARROW
+# include <arrow/util/config.h>
+#endif
+
 #ifndef O_NOFOLLOW
 #define O_NOFOLLOW 0
 #endif
@@ -551,7 +555,10 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_timeval now;
   grn_cache *cache;
   grn_cache_statistics statistics;
-  const int n_elements = 12;
+  int n_elements = 12;
+#ifdef GRN_WITH_APACHE_ARROW
+  n_elements++;
+#endif
 
   grn_timeval_now(ctx, &now);
   cache = grn_cache_current_get(ctx);
@@ -698,6 +705,27 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
     GRN_OUTPUT_MAP_CLOSE();
   }
+#ifdef GRN_WITH_APACHE_ARROW
+  GRN_OUTPUT_CSTR("apache_arrow");
+  {
+    const int n_apache_arrow_elements = 4;
+    GRN_OUTPUT_MAP_OPEN("apache_arrow", n_apache_arrow_elements);
+
+    GRN_OUTPUT_CSTR("version_major");
+    GRN_OUTPUT_INT32(ARROW_VERSION_MAJOR);
+
+    GRN_OUTPUT_CSTR("version_minor");
+    GRN_OUTPUT_INT32(ARROW_VERSION_MINOR);
+
+    GRN_OUTPUT_CSTR("version_patch");
+    GRN_OUTPUT_INT32(ARROW_VERSION_PATCH);
+
+    GRN_OUTPUT_CSTR("version");
+    GRN_OUTPUT_CSTR(ARROW_VERSION_STRING);
+
+    GRN_OUTPUT_MAP_CLOSE();
+  }
+#endif
   GRN_OUTPUT_MAP_CLOSE();
 
 #ifdef USE_MEMORY_DEBUG

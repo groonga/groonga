@@ -1,5 +1,4 @@
-#@omit "TODO: require Apache Arrow 3.0.0 or later"
-#@require-feature apache_arrow
+#@require-apache-arrow 3.0.0-SNAPSHOT
 
 #@on-error omit
 plugin_register sharding
