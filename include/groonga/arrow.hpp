@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2017 Brazil
+  Copyright(C) 2017  Brazil
+  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,3 +20,22 @@
 #pragma once
 
 #include <groonga.hpp>
+#include <arrow/array.h>
+
+namespace grn {
+  namespace arrow {
+    class ArrayBuilder {
+    public:
+      ArrayBuilder(grn_ctx *ctx);
+      ~ArrayBuilder();
+
+      ::arrow::Status add_column(grn_obj *column,
+                                 grn_table_cursor *cursor);
+      ::arrow::Result<std::shared_ptr<::arrow::Array>> finish();
+
+    private:
+      struct Impl;
+      std::unique_ptr<Impl> impl_;
+    };
+  }
+}

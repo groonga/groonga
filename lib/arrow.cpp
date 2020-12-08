@@ -2052,6 +2052,124 @@ namespace grnarrow {
 
 namespace grn {
   namespace arrow {
+    struct ArrayBuilder::Impl {
+      struct ColumnAppender : ::arrow::TypeVisitor {
+        grn_ctx *ctx_;
+        grn_obj *column_;
+        grn_table_cursor *cursor_;
+        ::arrow::ArrayBuilder *builder_;
+
+        ColumnAppender(grn_ctx *ctx,
+                       grn_obj *column,
+                       grn_table_cursor *cursor,
+                       ::arrow::ArrayBuilder *builder) :
+          ctx_(ctx),
+          column_(column),
+          cursor_(cursor),
+          builder_(builder) {
+        }
+
+#define VISIT(TYPE)                                             \
+        ::arrow::Status                                         \
+        Visit(const TYPE &type) override {                      \
+          return Append(type);                                  \
+        }
+
+        VISIT(::arrow::BooleanType)
+        VISIT(::arrow::Int8Type)
+        VISIT(::arrow::UInt8Type)
+        VISIT(::arrow::Int16Type)
+        VISIT(::arrow::UInt16Type)
+        VISIT(::arrow::Int32Type)
+        VISIT(::arrow::UInt32Type)
+        VISIT(::arrow::Int64Type)
+        VISIT(::arrow::UInt64Type)
+        VISIT(::arrow::FloatType)
+        VISIT(::arrow::DoubleType)
+        VISIT(::arrow::StringType)
+        VISIT(::arrow::TimestampType)
+
+#undef VISIT
+
+        template <typename Type>
+        ::arrow::Status Append(const Type& type) {
+          using Builder = typename ::arrow::TypeTraits<Type>::BuilderType;
+          using CType = typename ::arrow::TypeTraits<Type>::CType;
+          auto builder = static_cast<Builder *>(builder_);
+          grn_id id;
+          while ((id = grn_table_cursor_next(ctx_, cursor_)) != GRN_ID_NIL) {
+            uint32_t size;
+            auto raw_data = grn_obj_get_value_(ctx_, column_, id, &size);
+            const auto data = *reinterpret_cast<const CType *>(raw_data);
+            ARROW_RETURN_NOT_OK(builder->Append(data));
+          }
+          return ::arrow::Status::OK();
+        }
+
+        ::arrow::Status Append(const ::arrow::StringType& type) {
+          using Builder = ::arrow::StringBuilder;
+          auto builder = static_cast<Builder *>(builder_);
+          grn_id id;
+          while ((id = grn_table_cursor_next(ctx_, cursor_)) != GRN_ID_NIL) {
+            uint32_t size;
+            auto raw_data = grn_obj_get_value_(ctx_, column_, id, &size);
+            ARROW_RETURN_NOT_OK(builder->Append(raw_data, size));
+          }
+          return ::arrow::Status::OK();
+        }
+      };
+
+      grn_ctx *ctx_;
+      std::unique_ptr<::arrow::ArrayBuilder> builder_;
+      grnarrow::ObjectCache object_cache_;
+
+      Impl(grn_ctx *ctx) : ctx_(ctx),
+                           builder_(nullptr),
+                           object_cache_(ctx_) {
+      }
+
+      ::arrow::Status add_column(grn_obj *column,
+                                 grn_table_cursor *cursor) {
+        const auto arrow_type =
+          grn_column_to_arrow_type(ctx_, column, object_cache_);
+        if (!arrow_type) {
+          grn::TextBulk inspected(ctx_);
+          grn_inspect(ctx_, *inspected, column);
+          return ::arrow::Status::NotImplemented(
+            "[arrow][array-builder][add-column] "
+            "unsupported column: ", inspected.value());
+        }
+        if (!builder_) {
+          ARROW_RETURN_NOT_OK(
+            ::arrow::MakeBuilder(::arrow::default_memory_pool(),
+                                 arrow_type,
+                                 &builder_));
+        }
+        ColumnAppender appender(ctx_, column, cursor, builder_.get());
+        return arrow_type->Accept(&appender);
+      }
+
+      ::arrow::Result<std::shared_ptr<::arrow::Array>>
+      finish() {
+        return builder_->Finish();
+      }
+    };
+
+    ArrayBuilder::ArrayBuilder(grn_ctx *ctx) : impl_(new Impl(ctx)) {
+    }
+
+    ArrayBuilder::~ArrayBuilder() = default;
+
+    ::arrow::Status ArrayBuilder::add_column(grn_obj *column,
+                                             grn_table_cursor *cursor) {
+      return impl_->add_column(column, cursor);
+    }
+
+    ::arrow::Result<std::shared_ptr<::arrow::Array>>
+    ArrayBuilder::finish() {
+      return impl_->finish();
+    }
+
     namespace {
       class ArrayValueGetter : public ::arrow::ArrayVisitor {
       public:
