@@ -7,6 +7,631 @@
 News
 ====
 
+.. _release-10-1-0:
+
+Release 10.1.0 - 2020-12-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/functions/highlight_html`] Added support for removing leading full width spaces from highlight target. [PGroonga#GitHub#155][Reported by Hung Nguyen V]
+
+  * Until now, leading full width spaces had also included in the target of highlight as below.
+
+    .. code-block::
+
+      table_create Entries TABLE_NO_KEY
+      column_create Entries body COLUMN_SCALAR ShortText
+
+      table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+      column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+
+      load --table Entries
+      [
+      {"body": "Groonga　高速！"}
+      ]
+
+      select Entries --output_columns \
+        --match_columns body --query '高速' \
+        --output_columns 'highlight_html(body)'
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              1
+            ],
+            [
+              [
+                "highlight_html",
+                null
+              ]
+            ],
+            [
+              "Groonga<span class=\"keyword\">　高速</span>！"
+            ]
+          ]
+        ]
+      ]
+
+  * However, this is needless as the target of highlight.
+    Therefore, in this release, ``highlight_html()`` removes leading full width spaces.
+
+* [:doc:`reference/commands/status`] Added a new item ``features``.
+
+  * We can display which Groonga's features are enabled as below.
+
+    .. code-block::
+
+      status --output_pretty yes
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        {
+          "alloc_count": 361,
+          "starttime": 1608087311,
+          "start_time": 1608087311,
+          "uptime": 35,
+          "version": "10.1.0",
+          "n_queries": 0,
+          "cache_hit_rate": 0.0,
+          "command_version": 1,
+          "default_command_version": 1,
+          "max_command_version": 3,
+          "n_jobs": 0,
+          "features": {
+            "nfkc": true,
+            "mecab": true,
+            "message_pack": true,
+            "mruby": true,
+            "onigmo": true,
+            "zlib": true,
+            "lz4": false,
+            "zstandard": false,
+            "kqueue": false,
+            "epoll": true,
+            "poll": false,
+            "rapidjson": false,
+            "apache_arrow": false,
+            "xxhash": false
+          }
+        }
+      ]
+
+* [:doc:`reference/commands/status`] Added a new item ``apache_arrow``.
+
+  * We can display Apache Arrow version that Groonga use as below.
+
+  .. code-block::
+
+    [
+      [
+        0,
+        1608088628.440753,
+        0.0006628036499023438
+      ],
+      {
+        "alloc_count": 360,
+        "starttime": 1608088617,
+        "start_time": 1608088617,
+        "uptime": 11,
+        "version": "10.0.9-39-g5a4c6f3",
+        "n_queries": 0,
+        "cache_hit_rate": 0.0,
+        "command_version": 1,
+        "default_command_version": 1,
+        "max_command_version": 3,
+        "n_jobs": 0,
+        "features": {
+          "nfkc": true,
+          "mecab": true,
+          "message_pack": true,
+          "mruby": true,
+          "onigmo": true,
+          "zlib": true,
+          "lz4": true,
+          "zstandard": false,
+          "kqueue": false,
+          "epoll": true,
+          "poll": false,
+          "rapidjson": false,
+          "apache_arrow": true,
+          "xxhash": false
+        },
+        "apache_arrow": {
+          "version_major": 2,
+          "version_minor": 0,
+          "version_patch": 0,
+          "version": "2.0.0"
+        }
+      }
+    ]
+
+  * This item only display when Apache Arrow is valid in Groonga.
+
+* [:doc:`/reference/window_function`] Added support for processing all tables at once even if target tables straddle a shard. (experimental)
+
+  * If the target tables straddle a shard, the window function had processed each shard until now.
+
+    * Therefore, if we used multiple group keys in windows functions, the value of the group keys from the second had to be one kind of value.
+    * However, we can use multiple kind of values for it as below by this improvement.
+
+      .. code-block::
+
+        plugin_register sharding
+        plugin_register functions/time
+
+        table_create Logs_20170315 TABLE_NO_KEY
+        column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+        column_create Logs_20170315 price COLUMN_SCALAR UInt32
+        column_create Logs_20170315 item COLUMN_SCALAR ShortText
+
+        table_create Logs_20170316 TABLE_NO_KEY
+        column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+        column_create Logs_20170316 price COLUMN_SCALAR UInt32
+        column_create Logs_20170316 item COLUMN_SCALAR ShortText
+
+        table_create Logs_20170317 TABLE_NO_KEY
+        column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+        column_create Logs_20170317 price COLUMN_SCALAR UInt32
+        column_create Logs_20170317 item COLUMN_SCALAR ShortText
+
+        load --table Logs_20170315
+        [
+        {"timestamp": "2017/03/15 10:00:00", "price": 1000, "item": "A"},
+        {"timestamp": "2017/03/15 11:00:00", "price":  900, "item": "A"},
+        {"timestamp": "2017/03/15 12:00:00", "price":  300, "item": "B"},
+        {"timestamp": "2017/03/15 13:00:00", "price":  200, "item": "B"}
+        ]
+
+        load --table Logs_20170316
+        [
+        {"timestamp": "2017/03/16 10:00:00", "price":  530, "item": "A"},
+        {"timestamp": "2017/03/16 11:00:00", "price":  520, "item": "B"},
+        {"timestamp": "2017/03/16 12:00:00", "price":  110, "item": "A"},
+        {"timestamp": "2017/03/16 13:00:00", "price":  410, "item": "A"},
+        {"timestamp": "2017/03/16 14:00:00", "price":  710, "item": "B"}
+        ]
+
+        load --table Logs_20170317
+        [
+        {"timestamp": "2017/03/17 10:00:00", "price":  800, "item": "A"},
+        {"timestamp": "2017/03/17 11:00:00", "price":  400, "item": "B"},
+        {"timestamp": "2017/03/17 12:00:00", "price":  500, "item": "B"},
+        {"timestamp": "2017/03/17 13:00:00", "price":  300, "item": "A"}
+        ]
+
+        table_create Times TABLE_PAT_KEY Time
+        column_create Times logs_20170315 COLUMN_INDEX Logs_20170315 timestamp
+        column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
+        column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
+
+        logical_range_filter Logs \
+          --shard_key timestamp \
+          --filter 'price >= 300' \
+          --limit -1 \
+          --columns[offsetted_timestamp].stage filtered \
+          --columns[offsetted_timestamp].type Time \
+          --columns[offsetted_timestamp].flags COLUMN_SCALAR \
+          --columns[offsetted_timestamp].value 'timestamp - 39600000000' \
+          --columns[offsetted_day].stage filtered \
+          --columns[offsetted_day].type Time \
+          --columns[offsetted_day].flags COLUMN_SCALAR \
+          --columns[offsetted_day].value 'time_classify_day(offsetted_timestamp)' \
+          --columns[n_records_per_day_and_item].stage filtered \
+          --columns[n_records_per_day_and_item].type UInt32 \
+          --columns[n_records_per_day_and_item].flags COLUMN_SCALAR \
+          --columns[n_records_per_day_and_item].value 'window_count()' \
+          --columns[n_records_per_day_and_item].window.group_keys 'offsetted_day,item' \
+          --output_columns "_id,time_format_iso8601(offsetted_day),item,n_records_per_day_and_item"
+        [
+          [
+            0,
+            0.0,
+            0.0
+          ],
+          [
+            [
+              [
+                "_id",
+                "UInt32"
+              ],
+              [
+                "time_format_iso8601",
+                null
+              ],
+              [
+                "item",
+                "ShortText"
+              ],
+              [
+                "n_records_per_day_and_item",
+                "UInt32"
+              ]
+            ],
+            [
+              1,
+              "2017-03-14T00:00:00.000000+09:00",
+              "A",
+              1
+            ],
+            [
+              2,
+              "2017-03-15T00:00:00.000000+09:00",
+              "A",
+              2
+            ],
+            [
+              3,
+              "2017-03-15T00:00:00.000000+09:00",
+              "B",
+              1
+            ],
+            [
+              1,
+              "2017-03-15T00:00:00.000000+09:00",
+              "A",
+              2
+            ],
+            [
+              2,
+              "2017-03-16T00:00:00.000000+09:00",
+              "B",
+              2
+            ],
+            [
+              4,
+              "2017-03-16T00:00:00.000000+09:00",
+              "A",
+              2
+            ],
+            [
+              5,
+              "2017-03-16T00:00:00.000000+09:00",
+              "B",
+              2
+            ],
+            [
+              1,
+              "2017-03-16T00:00:00.000000+09:00",
+              "A",
+              2
+            ],
+            [
+              2,
+              "2017-03-17T00:00:00.000000+09:00",
+              "B",
+              2
+            ],
+            [
+              3,
+              "2017-03-17T00:00:00.000000+09:00",
+              "B",
+              2
+            ],
+            [
+              4,
+              "2017-03-17T00:00:00.000000+09:00",
+              "A",
+              1
+            ]
+          ]
+        ]
+
+  * This feature requires Apache Arrow 3.0.0 that is not released yet.
+
+* Added support for sequential search against reference column.
+
+  * This feature is only used if an index search will match many records and the current result set is enough small.
+
+    * Because the sequential search is faster than the index search in the above case.
+
+  * It is invalid by default.
+  * It is valid if we set ``GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO_REFERENCE`` environment variable.
+
+  * ``GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO_REFERENCE`` environment variable is a threshold to switch the sequential search from the index search.
+
+    * For example, if we set ``GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO_REFERENCE=0.7`` as below, if the number of records for the result set less than 70 % of total records, a search is executed by a sequential search.
+
+      .. code-block ::
+
+        $ export GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO_REFERENCE=0.7
+
+        table_create Tags TABLE_HASH_KEY ShortText
+        table_create Memos TABLE_HASH_KEY ShortText
+        column_create Memos tag COLUMN_SCALAR Tags
+
+        load --table Memos
+        [
+        {"_key": "Rroonga is fast!", "tag": "Rroonga"},
+        {"_key": "Groonga is fast!", "tag": "Groonga"},
+        {"_key": "Mroonga is fast!", "tag": "Mroonga"},
+        {"_key": "Groonga sticker!", "tag": "Groonga"},
+        {"_key": "Groonga is good!", "tag": "Groonga"}
+        ]
+
+        column_create Tags memos_tag COLUMN_INDEX Memos tag
+
+        select Memos --query '_id:>=3 tag:@Groonga' --output_columns _id,_score,_key,tag
+        [
+          [
+            0,
+            0.0,
+            0.0
+          ],
+          [
+            [
+              [
+                2
+              ],
+              [
+                [
+                  "_id",
+                  "UInt32"
+                ],
+                [
+                  "_score",
+                  "Int32"
+                ],
+                [
+                  "_key",
+                  "ShortText"
+                ],
+                [
+                  "tag",
+                  "Tags"
+                ]
+              ],
+              [
+                4,
+                2,
+                "Groonga sticker!",
+                "Groonga"
+              ],
+              [
+                5,
+                2,
+                "Groonga is good!",
+                "Groonga"
+              ]
+            ]
+          ]
+        ]
+
+* [tokenizers] Added support for the token column into ``TokenDocumentVectorTFIDF`` and ``TokenDocumentVectorBM25``.
+
+  * If there is the token column that has the same source as the index column, these tokenizer use the token id of the token column.
+
+    * The token column has already had data that has already finished tokenize.
+    * Therefore, these tokenizer are improved performance by using a token column.
+
+  * For example, we can use this feature by making a token column named ``content_tokens`` as below.
+
+    .. code-block::
+
+      table_create Memos TABLE_NO_KEY
+      column_create Memos content COLUMN_SCALAR Text
+
+      load --table Memos
+      [
+      {"content": "a b c a"},
+      {"content": "c b c"},
+      {"content": "b b a"},
+      {"content": "a c c"},
+      {"content": "a"}
+      ]
+
+      table_create Tokens TABLE_PAT_KEY ShortText \
+        --normalizer NormalizerNFKC121 \
+        --default_tokenizer TokenNgram
+      column_create Tokens memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+      column_create Memos content_tokens COLUMN_VECTOR Tokens content
+
+      table_create DocumentVectorBM25 TABLE_HASH_KEY Tokens \
+        --default_tokenizer \
+          'TokenDocumentVectorBM25("index_column", "memos_content", \
+                                   "df_column", "df")'
+      column_create DocumentVectorBM25 df COLUMN_SCALAR UInt32
+
+      column_create Memos content_feature COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 \
+        DocumentVectorBM25 content
+
+      select Memos
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              5
+            ],
+            [
+              [
+                "_id",
+                "UInt32"
+              ],
+              [
+                "content",
+                "Text"
+              ],
+              [
+                "content_feature",
+                "DocumentVectorBM25"
+              ],
+              [
+                "content_tokens",
+                "Tokens"
+              ]
+            ],
+            [
+              1,
+              "a b c a",
+              {
+                "a": 0.5095787,
+                "b": 0.6084117,
+                "c": 0.6084117
+              },
+              [
+                "a",
+                "b",
+                "c",
+                "a"
+              ]
+            ],
+            [
+              2,
+              "c b c",
+              {
+                "c": 0.8342565,
+                "b": 0.5513765
+              },
+              [
+                "c",
+                "b",
+                "c"
+              ]
+            ],
+            [
+              3,
+              "b b a",
+              {
+                "b": 0.9430448,
+                "a": 0.3326656
+              },
+              [
+                "b",
+                "b",
+                "a"
+              ]
+            ],
+            [
+              4,
+              "a c c",
+              {
+                "a": 0.3326656,
+                "c": 0.9430448
+              },
+              [
+                "a",
+                "c",
+                "c"
+              ]
+            ],
+            [
+              5,
+              "a",
+              {
+                "a": 1.0
+              },
+              [
+                "a"
+              ]
+            ]
+          ]
+        ]
+      ]
+
+  * ``TokenDocumentVectorTFIDF`` and ``TokenDocumentVectorBM25`` give a weight against each tokens.
+
+    * ``TokenDocumentVectorTFIDF`` calculate a weight for token by using TF-IDF.
+
+	* Please refer to https://radimrehurek.com/gensim/models/tfidfmodel.html about TF-IDF.
+
+    * ``TokenDocumentVectorBM25`` calculate a weight for token by using Okapi BM25.
+
+	* Please refer to https://en.wikipedia.org/wiki/Okapi_BM25 about Okapi BM25.
+
+* Improved performance when below case.
+
+  * ``(column @ "value") && (column @ "value")``
+
+* Added support for Ubuntu 20.10 (Groovy Gorilla).
+
+* [:doc:`/install/debian`] Dropped stretch support.
+
+  * It reached EOL.
+
+* [:doc:`/install/centos`] Dropped CentOS 6
+
+  * It reached EOL.
+
+Fixes
+^^^^^
+
+* Fixed a bug that Groonga crash when we use multiple keys drilldown and use multiple accessor as below. [GitHub#1153][Patched by naoa]
+
+  .. code-block::
+
+    table_create Tags TABLE_PAT_KEY ShortText
+
+    table_create Memos TABLE_HASH_KEY ShortText
+    column_create Memos tags COLUMN_VECTOR Tags
+    column_create Memos year COLUMN_SCALAR Int32
+
+    load --table Memos
+    [
+    {"_key": "Groonga is fast!", "tags": ["full-text-search"], "year": 2019},
+    {"_key": "Mroonga is fast!", "tags": ["mysql", "full-text-search"], "year": 2019},
+    {"_key": "Groonga sticker!", "tags": ["full-text-search", "sticker"], "year": 2020},
+    {"_key": "Rroonga is fast!", "tags": ["full-text-search", "ruby"], "year": 2020},
+    {"_key": "Groonga is good!", "tags": ["full-text-search"], "year": 2020}
+    ]
+
+    select Memos \
+      --filter '_id > 0' \
+      --drilldowns[tags].keys 'tags,year >= 2020' \
+      --drilldowns[tags].output_columns _key[0],_key[1],_nsubrecs
+
+    select Memos \
+      --filter '_id > 0' \
+      --drilldowns[tags].keys 'tags,year >= 2020' \
+      --drilldowns[tags].output_columns _key[1],_nsubrecs
+
+* Fixed a bug that the near phrase search did not match when the same phrase occurs multiple times as below.
+
+  .. code-block::
+
+    table_create Entries TABLE_NO_KEY
+    column_create Entries content COLUMN_SCALAR Text
+
+    table_create Terms TABLE_PAT_KEY ShortText \
+      --default_tokenizer TokenNgram \
+      --normalizer NormalizerNFKC121
+    column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+    load --table Entries
+    [
+    {"content": "a x a x b x x"},
+    {"content": "a x x b x"}
+    ]
+
+    select Entries \
+      --match_columns content \
+      --query '*NP2"a b"' \
+      --output_columns '_score, content'
+
+
+Thanks
+^^^^^^
+
+* Hung Nguyen V
+
+* naoa
+
+* timgates42 [Provided the patch at GitHub#1155]
+
 .. _release-10-0-9:
 
 Release 10.0.9 - 2020-12-01
