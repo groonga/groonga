@@ -1,0 +1,199 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+plugin_register functions/time
+[[0,0.0,0.0],true]
+table_create Logs_20170315 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170315 price COLUMN_SCALAR UInt64
+[[0,0.0,0.0],true]
+column_create Logs_20170315 item COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Logs_20170316 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170316 price COLUMN_SCALAR UInt64
+[[0,0.0,0.0],true]
+column_create Logs_20170316 item COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Logs_20170317 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20170317 price COLUMN_SCALAR UInt64
+[[0,0.0,0.0],true]
+column_create Logs_20170317 item COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 10:00:00", "price": 1000, "item": "A"},
+{"timestamp": "2017/03/15 11:00:00", "price":  900, "item": "A"},
+{"timestamp": "2017/03/15 12:00:00", "price":  300, "item": "B"},
+{"timestamp": "2017/03/15 13:00:00", "price":  200, "item": "B"}
+]
+[[0,0.0,0.0],4]
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "price":  530, "item": "A"},
+{"timestamp": "2017/03/16 11:00:00", "price":  520, "item": "B"},
+{"timestamp": "2017/03/16 12:00:00", "price":  110, "item": "A"},
+{"timestamp": "2017/03/16 13:00:00", "price":  410, "item": "A"},
+{"timestamp": "2017/03/16 14:00:00", "price":  710, "item": "B"}
+]
+[[0,0.0,0.0],5]
+load --table Logs_20170317
+[
+{"timestamp": "2017/03/17 10:00:00", "price":  800, "item": "A"},
+{"timestamp": "2017/03/17 11:00:00", "price":  400, "item": "B"},
+{"timestamp": "2017/03/17 12:00:00", "price":  500, "item": "B"},
+{"timestamp": "2017/03/17 13:00:00", "price":  300, "item": "A"}
+]
+[[0,0.0,0.0],4]
+table_create Times TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times logs_20170315 COLUMN_INDEX Logs_20170315 timestamp
+[[0,0.0,0.0],true]
+column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
+[[0,0.0,0.0],true]
+column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
+[[0,0.0,0.0],true]
+log_level --level debug
+[[0,0.0,0.0],true]
+logical_range_filter Logs   --shard_key timestamp   --filter 'price >= 300'   --limit -1   --columns[offsetted_timestamp].stage filtered   --columns[offsetted_timestamp].type Time   --columns[offsetted_timestamp].flags COLUMN_SCALAR   --columns[offsetted_timestamp].value 'timestamp - 39600000000'   --columns[offsetted_day].stage filtered   --columns[offsetted_day].type Time   --columns[offsetted_day].flags COLUMN_SCALAR   --columns[offsetted_day].value 'time_classify_day(offsetted_timestamp)'   --columns[offsetted_day_int64].stage filtered   --columns[offsetted_day_int64].type Int64   --columns[offsetted_day_int64].flags COLUMN_SCALAR   --columns[offsetted_day_int64].value 'offsetted_day'   --columns[n_records_per_day_and_item].stage filtered   --columns[n_records_per_day_and_item].type UInt32   --columns[n_records_per_day_and_item].flags COLUMN_SCALAR   --columns[n_records_per_day_and_item].value 'window_count()'   --columns[n_records_per_day_and_item].window.group_keys 'offsetted_day_int64,item'   --output_columns "_id,time_format_iso8601(offsetted_day),offsetted_day_int64,item,n_records_per_day_and_item"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "_id",
+        "UInt32"
+      ],
+      [
+        "time_format_iso8601",
+        null
+      ],
+      [
+        "offsetted_day_int64",
+        "Int64"
+      ],
+      [
+        "item",
+        "ShortText"
+      ],
+      [
+        "n_records_per_day_and_item",
+        "UInt32"
+      ]
+    ],
+    [
+      1,
+      "2017-03-14T00:00:00.000000+09:00",
+      1489417200000000,
+      "A",
+      1
+    ],
+    [
+      2,
+      "2017-03-15T00:00:00.000000+09:00",
+      1489503600000000,
+      "A",
+      2
+    ],
+    [
+      3,
+      "2017-03-15T00:00:00.000000+09:00",
+      1489503600000000,
+      "B",
+      1
+    ],
+    [
+      1,
+      "2017-03-15T00:00:00.000000+09:00",
+      1489503600000000,
+      "A",
+      2
+    ],
+    [
+      2,
+      "2017-03-16T00:00:00.000000+09:00",
+      1489590000000000,
+      "B",
+      2
+    ],
+    [
+      4,
+      "2017-03-16T00:00:00.000000+09:00",
+      1489590000000000,
+      "A",
+      2
+    ],
+    [
+      5,
+      "2017-03-16T00:00:00.000000+09:00",
+      1489590000000000,
+      "B",
+      2
+    ],
+    [
+      1,
+      "2017-03-16T00:00:00.000000+09:00",
+      1489590000000000,
+      "A",
+      2
+    ],
+    [
+      2,
+      "2017-03-17T00:00:00.000000+09:00",
+      1489676400000000,
+      "B",
+      2
+    ],
+    [
+      3,
+      "2017-03-17T00:00:00.000000+09:00",
+      1489676400000000,
+      "B",
+      2
+    ],
+    [
+      4,
+      "2017-03-17T00:00:00.000000+09:00",
+      1489676400000000,
+      "A",
+      1
+    ]
+  ]
+]
+#|d| [logical_range_filter][select] <Logs_20170315>: dynamic columns are used
+#|d| [logical_range_filter][select] <Logs_20170316>: dynamic columns are used
+#|d| [logical_range_filter][select] <Logs_20170317>: dynamic columns are used
+#>logical_range_filter --columns[n_records_per_day_and_item].flags "COLUMN_SCALAR" --columns[n_records_per_day_and_item].stage "filtered" --columns[n_records_per_day_and_item].type "UInt32" --columns[n_records_per_day_and_item].value "window_count()" --columns[n_records_per_day_and_item].window.group_keys "offsetted_day_int64,item" --columns[offsetted_day].flags "COLUMN_SCALAR" --columns[offsetted_day].stage "filtered" --columns[offsetted_day].type "Time" --columns[offsetted_day].value "time_classify_day(offsetted_timestamp)" --columns[offsetted_day_int64].flags "COLUMN_SCALAR" --columns[offsetted_day_int64].stage "filtered" --columns[offsetted_day_int64].type "Int64" --columns[offsetted_day_int64].value "offsetted_day" --columns[offsetted_timestamp].flags "COLUMN_SCALAR" --columns[offsetted_timestamp].stage "filtered" --columns[offsetted_timestamp].type "Time" --columns[offsetted_timestamp].value "timestamp - 39600000000" --filter "price >= 300" --limit "-1" --logical_table "Logs" --output_columns "_id,time_format_iso8601(offsetted_day),offsetted_day_int64,item,n_records_per_day_and_item" --shard_key "timestamp"
+#:000000000000000 filter(3): Logs_20170315.price greater_equal 300
+#:000000000000000 columns[offsetted_timestamp](3)
+#:000000000000000 columns[offsetted_day](3)
+#:000000000000000 columns[offsetted_day_int64](3)
+#:000000000000000 filter(4): Logs_20170316.price greater_equal 300
+#:000000000000000 columns[offsetted_timestamp](4)
+#:000000000000000 columns[offsetted_day](4)
+#:000000000000000 columns[offsetted_day_int64](4)
+#:000000000000000 columns[n_records_per_day_and_item](3)
+#:000000000000000 sort(3)[Logs_20170315]: timestamp
+#:000000000000000 filter(4): Logs_20170317.price greater_equal 300
+#:000000000000000 columns[offsetted_timestamp](4)
+#:000000000000000 columns[offsetted_day](4)
+#:000000000000000 columns[offsetted_day_int64](4)
+#:000000000000000 columns[n_records_per_day_and_item](4)
+#:000000000000000 sort(4)[Logs_20170316]: timestamp
+#:000000000000000 columns[n_records_per_day_and_item](4)
+#:000000000000000 sort(4)[Logs_20170317]: timestamp
+#:000000000000000 output(11)
+#:000000000000000 send(0)
+#<000000000000000 rc=0
+log_level --level notice
+[[0,0.0,0.0],true]

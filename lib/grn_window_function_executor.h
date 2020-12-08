@@ -24,6 +24,9 @@
 extern "C" {
 #endif
 
+void
+grn_window_function_executor_init_from_env(void);
+
 struct _grn_window_function_executor {
   grn_obj tag;
   grn_obj tables;

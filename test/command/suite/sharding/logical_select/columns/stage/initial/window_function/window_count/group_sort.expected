@@ -79,12 +79,12 @@ logical_select Logs   --shard_key timestamp   --columns[count].stage initial   -
       [
         2,
         300,
-        2
+        1
       ],
       [
         3,
         300,
-        1
+        2
       ]
     ]
   ]

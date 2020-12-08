@@ -151,7 +151,6 @@ libgroonga_c_sources =				\
 	type.c					\
 	util.c					\
 	window_function.c			\
-	window_function_executor.c		\
 	window_functions.c			\
 	windows.c				\
 	windows_event_logger.c

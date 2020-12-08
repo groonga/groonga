@@ -93,19 +93,19 @@ logical_select Logs   --shard_key timestamp   --columns[sum].stage initial   --c
       ],
       [
         100,
-        300
-      ],
-      [
-        200,
-        200
-      ],
-      [
-        300,
         1000
       ],
       [
-        400,
+        200,
+        900
+      ],
+      [
+        300,
         700
+      ],
+      [
+        400,
+        400
       ]
     ]
   ]

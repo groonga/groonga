@@ -1,0 +1,85 @@
+#@omit "TODO: require Apache Arrow 3.0.0 or later"
+#@require-feature apache-arrow
+
+#@on-error omit
+plugin_register sharding
+#@on-error default
+
+plugin_register functions/time
+
+table_create Logs_20170315 TABLE_NO_KEY
+column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+column_create Logs_20170315 price COLUMN_SCALAR UInt64
+column_create Logs_20170315 item COLUMN_SCALAR ShortText
+
+table_create Logs_20170316 TABLE_NO_KEY
+column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+column_create Logs_20170316 price COLUMN_SCALAR UInt64
+column_create Logs_20170316 item COLUMN_SCALAR ShortText
+
+table_create Logs_20170317 TABLE_NO_KEY
+column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+column_create Logs_20170317 price COLUMN_SCALAR UInt64
+column_create Logs_20170317 item COLUMN_SCALAR ShortText
+
+load --table Logs_20170315
+[
+{"timestamp": "2017/03/15 10:00:00", "price": 1000, "item": "A"},
+{"timestamp": "2017/03/15 11:00:00", "price":  900, "item": "A"},
+{"timestamp": "2017/03/15 12:00:00", "price":  300, "item": "B"},
+{"timestamp": "2017/03/15 13:00:00", "price":  200, "item": "B"}
+]
+
+load --table Logs_20170316
+[
+{"timestamp": "2017/03/16 10:00:00", "price":  530, "item": "A"},
+{"timestamp": "2017/03/16 11:00:00", "price":  520, "item": "B"},
+{"timestamp": "2017/03/16 12:00:00", "price":  110, "item": "A"},
+{"timestamp": "2017/03/16 13:00:00", "price":  410, "item": "A"},
+{"timestamp": "2017/03/16 14:00:00", "price":  710, "item": "B"}
+]
+
+load --table Logs_20170317
+[
+{"timestamp": "2017/03/17 10:00:00", "price":  800, "item": "A"},
+{"timestamp": "2017/03/17 11:00:00", "price":  400, "item": "B"},
+{"timestamp": "2017/03/17 12:00:00", "price":  500, "item": "B"},
+{"timestamp": "2017/03/17 13:00:00", "price":  300, "item": "A"}
+]
+
+table_create Times TABLE_PAT_KEY Time
+column_create Times logs_20170315 COLUMN_INDEX Logs_20170315 timestamp
+column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
+column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
+
+#@timeout 30
+#@add-important-log-levels debug
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level debug
+#@collect-query-log true
+logical_range_filter Logs \
+  --shard_key timestamp \
+  --filter 'price >= 300' \
+  --limit -1 \
+  --columns[offsetted_timestamp].stage filtered \
+  --columns[offsetted_timestamp].type Time \
+  --columns[offsetted_timestamp].flags COLUMN_SCALAR \
+  --columns[offsetted_timestamp].value 'timestamp - 39600000000' \
+  --columns[offsetted_day].stage filtered \
+  --columns[offsetted_day].type Time \
+  --columns[offsetted_day].flags COLUMN_SCALAR \
+  --columns[offsetted_day].value 'time_classify_day(offsetted_timestamp)' \
+  --columns[offsetted_day_int64].stage filtered \
+  --columns[offsetted_day_int64].type Int64 \
+  --columns[offsetted_day_int64].flags COLUMN_SCALAR \
+  --columns[offsetted_day_int64].value 'offsetted_day' \
+  --columns[n_records_per_day_and_item].stage filtered \
+  --columns[n_records_per_day_and_item].type UInt32 \
+  --columns[n_records_per_day_and_item].flags COLUMN_SCALAR \
+  --columns[n_records_per_day_and_item].value 'window_count()' \
+  --columns[n_records_per_day_and_item].window.group_keys 'offsetted_day_int64,item' \
+  --output_columns "_id,time_format_iso8601(offsetted_day),offsetted_day_int64,item,n_records_per_day_and_item"
+#@collect-query-log false
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels debug

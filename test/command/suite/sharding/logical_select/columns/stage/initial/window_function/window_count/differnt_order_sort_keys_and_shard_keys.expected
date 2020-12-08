@@ -59,7 +59,7 @@ logical_select Logs   --shard_key timestamp   --columns[count].stage initial   -
       [
         1,
         2,
-        2
+        4
       ],
       [
         2,
@@ -69,12 +69,12 @@ logical_select Logs   --shard_key timestamp   --columns[count].stage initial   -
       [
         3,
         2,
-        3
+        5
       ],
       [
         1,
         1,
-        4
+        2
       ],
       [
         2,
@@ -84,7 +84,7 @@ logical_select Logs   --shard_key timestamp   --columns[count].stage initial   -
       [
         3,
         1,
-        5
+        3
       ]
     ]
   ]
