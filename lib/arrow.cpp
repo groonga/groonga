@@ -2108,6 +2108,17 @@ namespace grn {
           return ::arrow::Status::OK();
         }
 
+        ::arrow::Status Visit(const ::arrow::TimestampArray& array) {
+          const auto &arrow_timestamp_type =
+            std::static_pointer_cast<::arrow::TimestampType>(array.type());
+          const auto time_unit = arrow_timestamp_type->unit();
+          grnarrow::put_time_value(ctx_,
+                                   value_,
+                                   array.Value(index_),
+                                   time_unit);
+          return ::arrow::Status::OK();
+        }
+
         ::arrow::Status Visit(const ::arrow::StringArray& array) {
           auto raw_value = array.GetView(index_);
           grn_bulk_write(ctx_, value_, raw_value.data(), raw_value.length());
