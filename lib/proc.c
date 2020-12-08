@@ -551,7 +551,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_timeval now;
   grn_cache *cache;
   grn_cache_statistics statistics;
-  const int n_elements = 11;
+  const int n_elements = 12;
 
   grn_timeval_now(ctx, &now);
   cache = grn_cache_current_get(ctx);
@@ -592,6 +592,111 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else {
       GRN_OUTPUT_UINT64(0);
     }
+  }
+  GRN_OUTPUT_CSTR("features");
+  {
+    const int n_features = 14;
+    GRN_OUTPUT_MAP_OPEN("features", n_features);
+
+    GRN_OUTPUT_CSTR("nfkc");
+#ifndef NO_NFKC
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("mecab");
+#ifdef GRN_WITH_MECAB
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("message-pack");
+#ifdef GRN_WITH_MESSAGE_PACK
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("mruby");
+#ifdef GRN_WITH_MRUBY
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("onigmo");
+#ifdef GRN_WITH_ONIGMO
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("zlib");
+#ifdef GRN_WITH_ZLIB
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("lz4");
+#ifdef GRN_WITH_LZ4
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("zstandard");
+#ifdef GRN_WITH_ZSTD
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("kqueue");
+#ifdef USE_KQUEUE
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("epoll");
+#ifdef USE_EPOLL
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("poll");
+#ifdef USE_POLL
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("rapidjson");
+#ifdef GRN_WITH_RAPIDJSON
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("apache-arrow");
+#ifdef GRN_WITH_APACHE_ARROW
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("xxhash");
+#ifdef GRN_WITH_XXHASH
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_MAP_CLOSE();
   }
   GRN_OUTPUT_MAP_CLOSE();
 
