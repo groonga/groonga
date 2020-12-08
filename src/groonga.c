@@ -3817,7 +3817,7 @@ show_version(void)
   printf(",mecab");
 #endif
 #ifdef GRN_WITH_MESSAGE_PACK
-  printf(",msgpack");
+  printf(",message-pack");
 #endif
 #ifdef GRN_WITH_MRUBY
   printf(",mruby");
@@ -3832,7 +3832,7 @@ show_version(void)
   printf(",lz4");
 #endif
 #ifdef GRN_WITH_ZSTD
-  printf(",zstd");
+  printf(",zstandard");
 #endif
 #ifdef USE_KQUEUE
   printf(",kqueue");
