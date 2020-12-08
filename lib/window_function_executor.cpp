@@ -16,11 +16,11 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "grn_arrow.hpp"
 #include "grn_ctx.h"
 #include "grn_window_function_executor.h"
 
 #ifdef GRN_WITH_APACHE_ARROW
+# include "grn_arrow.hpp"
 # include <groonga/arrow.hpp>
 # include <arrow/compute/api.h>
 # include <arrow/util/make_unique.h>
