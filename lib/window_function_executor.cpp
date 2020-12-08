@@ -20,9 +20,11 @@
 #include "grn_ctx.h"
 #include "grn_window_function_executor.h"
 
-#include <groonga/arrow.hpp>
-#include <arrow/compute/api.h>
-#include <arrow/util/make_unique.h>
+#ifdef GRN_WITH_APACHE_ARROW
+# include <groonga/arrow.hpp>
+# include <arrow/compute/api.h>
+# include <arrow/util/make_unique.h>
+#endif
 
 extern "C" {
 static grn_bool grn_window_function_executor_all_tables_at_once_enable = true;
