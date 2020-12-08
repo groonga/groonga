@@ -1,5 +1,4 @@
 /*
-  Copyright(C) 2017  Brazil
   Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -19,5 +18,28 @@
 
 #pragma once
 
-#include "groonga.h"
-#include "groonga/bulk.hpp"
+namespace grn {
+  class TextBulk {
+  public:
+    TextBulk(grn_ctx *ctx) : ctx_(ctx) {
+      GRN_TEXT_INIT(&bulk_, 0);
+    }
+
+    ~TextBulk() {
+      GRN_OBJ_FIN(ctx_, &bulk_);
+    }
+
+    grn_obj *operator*() {
+      return &bulk_;
+    }
+
+    std::string value() {
+      return std::string(GRN_TEXT_VALUE(&bulk_),
+                         GRN_TEXT_LEN(&bulk_));
+    };
+
+  private:
+    grn_ctx *ctx_;
+    grn_obj bulk_;
+  };
+}

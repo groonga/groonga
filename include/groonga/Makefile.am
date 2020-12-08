@@ -5,6 +5,7 @@ groonga_include_HEADERS =			\
 	array.h					\
 	arrow.h					\
 	arrow.hpp				\
+	bulk.hpp				\
 	cache.h					\
 	column.h				\
 	command.h				\
