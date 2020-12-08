@@ -537,6 +537,17 @@ grn_window_execute(grn_ctx *ctx, grn_window *window)
   if (window->n_shards == 0) {
     GRN_API_RETURN(ctx->rc);
   }
+  bool have_non_context_table = false;
+  size_t i;
+  for (i = 0; i < window->n_shards; i++) {
+    if (!window->shards[i].is_context_table) {
+      have_non_context_table = true;
+      break;
+    }
+  }
+  if (!have_non_context_table) {
+    GRN_API_RETURN(ctx->rc);
+  }
 
   grn_window_rewind(ctx, window);
   grn_window_shard *shard = &(window->shards[window->current_shard]);
