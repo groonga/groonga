@@ -118,7 +118,7 @@ module Groonga
       def apply(contexts, targets, options)
         window_function_contexts = []
         normal_contexts = []
-        contexts.each do |context|
+        contexts.tsort_each do |context|
           if context.window_function?
             window_function_contexts << context
           else
