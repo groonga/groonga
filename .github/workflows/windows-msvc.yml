@@ -121,8 +121,8 @@ jobs:
           matrix.architecture == 'x64'
         run: |
           pushd vendor\apache-arrow-source
-          ridk exec wget https://github.com/kou/arrow/commit/32cc0a5d180a90a98fc9ac8de42e870d9b60d154.patch
-          ridk exec patch -p1 -i 32cc0a5d180a90a98fc9ac8de42e870d9b60d154.patch
+          ridk exec wget https://github.com/kou/arrow/commit/bd06f129e300f131bd5fb285dba42f501dfa764f.patch
+          ridk exec patch -p1 -i bd06f129e300f131bd5fb285dba42f501dfa764f.patch
           popd
           New-Item ..\apache-arrow-build -ItemType Directory
           $CMAKE_ARGS = (
