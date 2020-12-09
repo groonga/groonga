@@ -11264,6 +11264,32 @@ grn_ii_select_sequential_search_text_should_use(grn_ctx *ctx,
   }
 
   {
+    int i;
+    grn_id *source_ids = DB_OBJ(data->ii)->source;
+
+    for (i = 0; i < n_sources; i++) {
+      grn_id source_id = source_ids[i];
+      grn_obj *source;
+
+      source = grn_ctx_at(ctx, source_id);
+      if (!source) {
+        return false;
+      }
+      grn_id value_type_id;
+      if (grn_obj_is_table(ctx, source)) {
+        value_type_id = source->header.domain;
+      } else {
+        value_type_id = grn_obj_get_range(ctx, source);
+      }
+      const bool is_text_family = grn_type_id_is_text_family(ctx, value_type_id);;
+      grn_obj_unref(ctx, source);
+      if (!is_text_family) {
+        return false;
+      }
+    }
+  }
+
+  {
     uint32_t n_existing_records = GRN_HASH_SIZE(data->result_set);
     uint32_t i;
     for (i = 0; i < data->n_token_infos; i++) {
