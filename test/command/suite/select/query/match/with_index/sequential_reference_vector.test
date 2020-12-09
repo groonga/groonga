@@ -1,0 +1,25 @@
+#$GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO_REFERENCE=0.7
+
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tags COLUMN_VECTOR Tags
+
+load --table Memos
+[
+{"_key": "Rroonga is fast!", "tags": ["Rroonga"]},
+{"_key": "Groonga is fast!", "tags": ["Groonga"]},
+{"_key": "Mroonga is fast!", "tags": ["Mroonga"]},
+{"_key": "Groonga sticker!", "tags": ["Groonga", "Sticker"]},
+{"_key": "Groonga is good!", "tags": ["Groonga", "Groonga"]}
+]
+
+column_create Tags memos_tags COLUMN_INDEX Memos tags
+
+log_level --level info
+#@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
+select Memos --query '_id:>=3 tags:@Groonga' --output_columns _id,_score,_key,tags
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels info
+log_level --level notice

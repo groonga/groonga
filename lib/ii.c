@@ -37,6 +37,7 @@
 #include "grn_pat.h"
 #include "grn_db.h"
 #include "grn_output.h"
+#include "grn_report.h"
 #include "grn_scorer.h"
 #include "grn_util.h"
 #include "grn_posting.h"
@@ -44,13 +45,13 @@
 #include "grn_selector.h"
 
 #ifdef GRN_SUPPORT_REGEXP
-# define GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH
-#endif /* GRN_SUPPORT_REGEXP */
+# define GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH_TEXT
+#endif
 
-#ifdef GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH
+#ifdef GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH_TEXT
 # include "grn_string.h"
 # include "grn_onigmo.h"
-#endif /* GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH */
+#endif
 
 /* P is for physical? */
 #define MAX_PSEG                 0x20000
@@ -101,7 +102,8 @@
 #endif /* S_IWUSR */
 
 static grn_bool grn_ii_cursor_set_min_enable = GRN_TRUE;
-static double grn_ii_select_too_many_index_match_ratio = -1;
+static double grn_ii_select_too_many_index_match_ratio_text = -1;
+static double grn_ii_select_too_many_index_match_ratio_reference = -1;
 static double grn_ii_estimate_size_for_query_reduce_ratio = 0.9;
 static grn_bool grn_ii_overlap_token_skip_enable = GRN_FALSE;
 static uint32_t grn_ii_builder_block_threshold_force = 0;
@@ -126,13 +128,34 @@ grn_ii_init_from_env(void)
   }
 
   {
-    char grn_ii_select_too_many_index_match_ratio_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO",
-               grn_ii_select_too_many_index_match_ratio_env,
+    char grn_ii_select_too_many_index_match_ratio_text_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO_TEXT",
+               grn_ii_select_too_many_index_match_ratio_text_env,
                GRN_ENV_BUFFER_SIZE);
-    if (grn_ii_select_too_many_index_match_ratio_env[0]) {
-      grn_ii_select_too_many_index_match_ratio =
-        atof(grn_ii_select_too_many_index_match_ratio_env);
+    if (grn_ii_select_too_many_index_match_ratio_text_env[0]) {
+      grn_ii_select_too_many_index_match_ratio_text =
+        atof(grn_ii_select_too_many_index_match_ratio_text_env);
+    } else {
+      /* For backward compatibility. */
+      char grn_ii_select_too_many_index_match_ratio_env[GRN_ENV_BUFFER_SIZE];
+      grn_getenv("GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO",
+                 grn_ii_select_too_many_index_match_ratio_env,
+                 GRN_ENV_BUFFER_SIZE);
+      if (grn_ii_select_too_many_index_match_ratio_env[0]) {
+        grn_ii_select_too_many_index_match_ratio_text =
+          atof(grn_ii_select_too_many_index_match_ratio_env);
+      }
+    }
+  }
+
+  {
+    char grn_ii_select_too_many_index_match_ratio_reference_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO_REFERENCE",
+               grn_ii_select_too_many_index_match_ratio_reference_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_ii_select_too_many_index_match_ratio_reference_env[0]) {
+      grn_ii_select_too_many_index_match_ratio_reference =
+        atof(grn_ii_select_too_many_index_match_ratio_reference_env);
     }
   }
 
@@ -11047,188 +11070,325 @@ grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
   return GRN_SUCCESS;
 }
 
-#ifdef GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH
-static grn_bool
-grn_ii_select_sequential_search_should_use(grn_ctx *ctx,
-                                           grn_ii *ii,
-                                           const char *raw_query,
-                                           unsigned int raw_query_len,
-                                           grn_hash *result,
-                                           grn_operator op,
-                                           grn_wv_mode wvm,
-                                           grn_select_optarg *optarg,
-                                           token_info **token_infos,
-                                           uint32_t n_token_infos,
-                                           double too_many_index_match_ratio)
+static bool
+grn_ii_select_sequential_search_reference_should_use(grn_ctx *ctx,
+                                                     grn_ii_select_data *data)
 {
   int n_sources;
 
-  if (too_many_index_match_ratio < 0.0) {
-    return GRN_FALSE;
+  if (grn_ii_select_too_many_index_match_ratio_reference < 0.0) {
+    return false;
   }
 
-  if (op != GRN_OP_AND) {
-    return GRN_FALSE;
+  if (data->op != GRN_OP_AND) {
+    return false;
   }
 
-  if (optarg->mode != GRN_OP_EXACT) {
-    return GRN_FALSE;
+  if (data->mode != GRN_OP_EXACT) {
+    return false;
   }
 
-  n_sources = ii->obj.source_size / sizeof(grn_id);
+  n_sources = DB_OBJ(data->ii)->source_size / sizeof(grn_id);
   if (n_sources == 0) {
-    return GRN_FALSE;
+    return false;
   }
 
   {
-    uint32_t i;
-    int n_existing_records;
+    grn_obj *tokenizer;
+    grn_table_get_info(ctx, data->lexicon, NULL, NULL, &tokenizer, NULL, NULL);
+    if (tokenizer) {
+      return false;
+    }
+  }
 
-    n_existing_records = GRN_HASH_SIZE(result);
-    for (i = 0; i < n_token_infos; i++) {
-      token_info *info = token_infos[i];
-      if (n_existing_records <= (info->size * too_many_index_match_ratio)) {
-        return GRN_TRUE;
+  {
+    int i;
+    grn_id *source_ids = DB_OBJ(data->ii)->source;
+
+    for (i = 0; i < n_sources; i++) {
+      grn_id source_id = source_ids[i];
+      grn_obj *source;
+
+      source = grn_ctx_at(ctx, source_id);
+      if (!source) {
+        return false;
+      }
+      const bool is_reference_column = grn_obj_is_reference_column(ctx, source);
+      grn_obj_unref(ctx, source);
+      if (!is_reference_column) {
+        return false;
       }
     }
-    return GRN_FALSE;
+  }
+
+  {
+    uint32_t n_existing_records = GRN_HASH_SIZE(data->result_set);
+    uint32_t i;
+    for (i = 0; i < data->n_token_infos; i++) {
+      token_info *info = data->token_infos[i];
+      if (n_existing_records <=
+          (info->size * grn_ii_select_too_many_index_match_ratio_reference)) {
+        grn_obj reason;
+        GRN_TEXT_INIT(&reason, 0);
+        grn_text_printf(ctx, &reason,
+                        "enough filtered and "
+                        "index search will match many records: "
+                        "%u <= %.2f: "
+                        "n-existing-records:%u "
+                        "estimated-size:%u "
+                        "ratio:%.2f%%",
+                        n_existing_records,
+                        info->size *
+                        grn_ii_select_too_many_index_match_ratio_reference,
+                        n_existing_records,
+                        info->size,
+                        grn_ii_select_too_many_index_match_ratio_reference * 100);
+        GRN_TEXT_PUTC(ctx, &reason, '\0');
+        grn_report_index_not_used(ctx,
+                                  "[ii][select]",
+                                  "[reference]",
+                                  (grn_obj *)(data->ii),
+                                  GRN_TEXT_VALUE(&reason));
+        GRN_OBJ_FIN(ctx, &reason);
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
+static bool
+grn_ii_select_sequential_search_reference(grn_ctx *ctx,
+                                          grn_ii_select_data *data)
+{
+  const grn_id query_id = data->token_infos[0]->cursors[0].bins[0]->id;
+  const grn_id lexicon_id = DB_OBJ(data->ii->lexicon)->id;
+  grn_id *source_ids = DB_OBJ(data->ii)->source;
+  const size_t n_sources = DB_OBJ(data->ii)->source_size / sizeof(grn_id);
+  size_t i;
+  for (i = 0; i < n_sources; i++) {
+    const grn_id source_id = source_ids[i];
+    grn_obj *source = grn_ctx_at(ctx, source_id);
+
+    grn_obj value;
+    switch (source->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+    case GRN_OBJ_COLUMN_SCALAR :
+      GRN_RECORD_INIT(&value, 0, lexicon_id);
+      break;
+    case GRN_OBJ_COLUMN_VECTOR :
+      GRN_RECORD_INIT(&value, GRN_OBJ_VECTOR, lexicon_id);
+      break;
+    default :
+      grn_obj_unref(ctx, source);
+      return false;
+    }
+
+    GRN_HASH_EACH_BEGIN(ctx, data->result_set, cursor, id) {
+      void *key;
+      grn_hash_cursor_get_key(ctx, cursor, &key);
+      grn_id source_table_id = *((grn_id *)key);
+      GRN_BULK_REWIND(&value);
+      grn_obj_get_value(ctx, source, source_table_id, &value);
+      switch (value.header.type) {
+      case GRN_BULK :
+        if (GRN_RECORD_VALUE(&value) == query_id) {
+          grn_rset_posinfo info;
+          info.rid = source_table_id;
+          info.sid = i + 1;
+          info.pos = 0;
+          double score = get_weight(ctx,
+                                    data->result_set,
+                                    info.rid,
+                                    info.sid,
+                                    data->wv_mode,
+                                    data->optarg);
+          res_add(ctx, data->result_set, &info, score, data->op);
+        }
+        break;
+      case GRN_UVECTOR :
+        {
+          uint32_t n_elements = grn_vector_size(ctx, &value);
+          uint32_t j;
+          uint32_t n_founds = 0;
+          for (j = 0; j < n_elements; j++) {
+            if (GRN_RECORD_VALUE_AT(&value, j) == query_id) {
+              n_founds++;
+            }
+          }
+          if (n_founds > 0) {
+            grn_rset_posinfo info;
+            info.rid = source_table_id;
+            info.sid = i + 1;
+            info.pos = 0;
+            double score = get_weight(ctx,
+                                      data->result_set,
+                                      info.rid,
+                                      info.sid,
+                                      data->wv_mode,
+                                      data->optarg);
+            res_add(ctx, data->result_set, &info, score * n_founds, data->op);
+          }
+        }
+        break;
+      default :
+        break;
+      }
+    } GRN_HASH_EACH_END(ctx, cursor);
+    GRN_OBJ_FIN(ctx, &value);
+    grn_obj_unref(ctx, source);
+  }
+
+  return true;
+}
+
+#ifdef GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH_TEXT
+static bool
+grn_ii_select_sequential_search_text_should_use(grn_ctx *ctx,
+                                                grn_ii_select_data *data)
+{
+  if (grn_ii_select_too_many_index_match_ratio_text < 0.0) {
+    return false;
+  }
+
+  if (data->op != GRN_OP_AND) {
+    return false;
+  }
+
+  if (data->mode != GRN_OP_EXACT) {
+    return false;
+  }
+
+  size_t n_sources = DB_OBJ(data->ii)->source_size / sizeof(grn_id);
+  if (n_sources == 0) {
+    return false;
+  }
+
+  {
+    uint32_t n_existing_records = GRN_HASH_SIZE(data->result_set);
+    uint32_t i;
+    for (i = 0; i < data->n_token_infos; i++) {
+      token_info *info = data->token_infos[i];
+      if (n_existing_records <=
+          (info->size * grn_ii_select_too_many_index_match_ratio_text)) {
+        grn_obj reason;
+        GRN_TEXT_INIT(&reason, 0);
+        grn_text_printf(ctx, &reason,
+                        "enough filtered and "
+                        "index search will match many records: "
+                        "%u <= %.2f: "
+                        "n-existing-records:%u "
+                        "estimated-size:%u "
+                        "ratio:%.2f%%",
+                        n_existing_records,
+                        info->size *
+                        grn_ii_select_too_many_index_match_ratio_text,
+                        n_existing_records,
+                        info->size,
+                        grn_ii_select_too_many_index_match_ratio_text * 100);
+        GRN_TEXT_PUTC(ctx, &reason, '\0');
+        grn_report_index_not_used(ctx,
+                                  "[ii][select]",
+                                  "[text]",
+                                  (grn_obj *)(data->ii),
+                                  GRN_TEXT_VALUE(&reason));
+        GRN_OBJ_FIN(ctx, &reason);
+        return true;
+      }
+    }
+    return false;
   }
 }
 
 static void
-grn_ii_select_sequential_search_body(grn_ctx *ctx,
-                                     grn_ii *ii,
-                                     grn_encoding encoding,
-                                     OnigRegex regex,
-                                     grn_hash *result,
-                                     grn_operator op,
-                                     grn_wv_mode wvm,
-                                     grn_select_optarg *optarg)
+grn_ii_select_sequential_search_text_body(grn_ctx *ctx,
+                                          grn_ii_select_data *data,
+                                          grn_encoding encoding,
+                                          OnigRegex regex)
 {
-  int i, n_sources;
-  grn_id *source_ids = ii->obj.source;
   grn_obj buffer;
-
   GRN_TEXT_INIT(&buffer, 0);
-  n_sources = ii->obj.source_size / sizeof(grn_id);
+  grn_id *source_ids = DB_OBJ(data->ii)->source;
+  const size_t n_sources = DB_OBJ(data->ii)->source_size / sizeof(grn_id);
+  size_t i;
   for (i = 0; i < n_sources; i++) {
-    grn_id source_id = source_ids[i];
-    grn_obj *source;
-    grn_obj *accessor;
-
-    source = grn_ctx_at(ctx, source_id);
-    switch (source->header.type) {
-    case GRN_TABLE_HASH_KEY :
-    case GRN_TABLE_PAT_KEY :
-    case GRN_TABLE_DAT_KEY :
-      accessor = grn_obj_column(ctx,
-                                (grn_obj *)result,
-                                GRN_COLUMN_NAME_KEY,
-                                GRN_COLUMN_NAME_KEY_LEN);
-      break;
-    default :
-      {
-        char column_name[GRN_TABLE_MAX_KEY_SIZE];
-        int column_name_size;
-        column_name_size = grn_column_name(ctx, source,
-                                           column_name,
-                                           GRN_TABLE_MAX_KEY_SIZE);
-        accessor = grn_obj_column(ctx, (grn_obj *)result, column_name,
-                                  column_name_size);
+    const grn_id source_id = source_ids[i];
+    grn_obj *source = grn_ctx_at(ctx, source_id);
+    const bool source_is_table = grn_obj_is_table(ctx, source);
+    GRN_HASH_EACH_BEGIN(ctx, data->result_set, cursor, id) {
+      void *key;
+      grn_hash_cursor_get_key(ctx, cursor, &key);
+      grn_id source_table_id = *((grn_id *)key);
+      GRN_BULK_REWIND(&buffer);
+      if (source_is_table) {
+        grn_table_get_key2(ctx, source, source_table_id, &buffer);
+      } else {
+        grn_obj_get_value(ctx, source, source_table_id, &buffer);
       }
-      break;
-    }
 
-    {
-      grn_hash_cursor *cursor;
-      grn_id id;
-      cursor = grn_hash_cursor_open(ctx, result, NULL, 0, NULL, 0, 0, -1, 0);
-      while ((id = grn_hash_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
-        OnigPosition position;
-        grn_obj *value;
-        const char *normalized_value;
-        unsigned int normalized_value_length;
-
-        GRN_BULK_REWIND(&buffer);
-        grn_obj_get_value(ctx, accessor, id, &buffer);
-        value = grn_string_open_(ctx,
-                                 GRN_TEXT_VALUE(&buffer),
-                                 GRN_TEXT_LEN(&buffer),
-                                 ii->lexicon,
-                                 0,
-                                 encoding);
-        grn_string_get_normalized(ctx, value,
-                                  &normalized_value, &normalized_value_length,
-                                  NULL);
-        position = onig_search(regex,
-                               normalized_value,
-                               normalized_value + normalized_value_length,
-                               normalized_value,
-                               normalized_value + normalized_value_length,
-                               NULL,
-                               0);
-        if (position != ONIG_MISMATCH) {
-          grn_id *record_id;
-          grn_rset_posinfo info;
-          double score;
-
-          grn_hash_cursor_get_key(ctx, cursor, (void **)&record_id);
-
-          info.rid = *record_id;
-          info.sid = i + 1;
-          info.pos = 0;
-          score = get_weight(ctx, result, info.rid, info.sid, wvm, optarg);
-          res_add(ctx, result, &info, score, op);
-        }
-        grn_obj_unlink(ctx, value);
+      OnigPosition position;
+      grn_obj *value;
+      const char *normalized_value;
+      unsigned int normalized_value_length;
+      value = grn_string_open_(ctx,
+                               GRN_TEXT_VALUE(&buffer),
+                               GRN_TEXT_LEN(&buffer),
+                               data->ii->lexicon,
+                               0,
+                               encoding);
+      grn_string_get_normalized(ctx, value,
+                                &normalized_value, &normalized_value_length,
+                                NULL);
+      position = onig_search(regex,
+                             normalized_value,
+                             normalized_value + normalized_value_length,
+                             normalized_value,
+                             normalized_value + normalized_value_length,
+                             NULL,
+                             0);
+      if (position != ONIG_MISMATCH) {
+        grn_rset_posinfo info;
+        info.rid = source_table_id;
+        info.sid = i + 1;
+        info.pos = 0;
+        double score = get_weight(ctx,
+                                  data->result_set,
+                                  info.rid,
+                                  info.sid,
+                                  data->wv_mode,
+                                  data->optarg);
+        res_add(ctx, data->result_set, &info, score, data->op);
       }
-      grn_hash_cursor_close(ctx, cursor);
-    }
-    grn_obj_unlink(ctx, accessor);
+      grn_obj_unlink(ctx, value);
+    } GRN_HASH_EACH_END(ctx, cursor);
+    grn_obj_unref(ctx, source);
   }
-  grn_obj_unlink(ctx, &buffer);
+  GRN_OBJ_FIN(ctx, &buffer);
 }
 
-static grn_bool
-grn_ii_select_sequential_search(grn_ctx *ctx,
-                                grn_ii *ii,
-                                const char *raw_query,
-                                unsigned int raw_query_len,
-                                grn_hash *result,
-                                grn_operator op,
-                                grn_wv_mode wvm,
-                                grn_select_optarg *optarg,
-                                token_info **token_infos,
-                                uint32_t n_token_infos)
+static bool
+grn_ii_select_sequential_search_text(grn_ctx *ctx,
+                                     grn_ii_select_data *data)
 {
-  grn_bool processed = GRN_TRUE;
-
-  {
-    if (!grn_ii_select_sequential_search_should_use(ctx,
-                                                    ii,
-                                                    raw_query,
-                                                    raw_query_len,
-                                                    result,
-                                                    op,
-                                                    wvm,
-                                                    optarg,
-                                                    token_infos,
-                                                    n_token_infos,
-                                                    grn_ii_select_too_many_index_match_ratio)) {
-      return GRN_FALSE;
-    }
-  }
+  bool processed = false;
 
   {
     grn_encoding encoding;
+    grn_table_get_info(ctx,
+                       data->ii->lexicon,
+                       NULL,
+                       &encoding,
+                       NULL,
+                       NULL,
+                       NULL);
     int nflags = 0;
-    grn_obj *query;
+    grn_obj *query = grn_string_open_(ctx,
+                                      data->query,
+                                      data->query_len,
+                                      data->ii->lexicon,
+                                      nflags,
+                                      encoding);
     const char *normalized_query;
     unsigned int normalized_query_length;
-
-    grn_table_get_info(ctx, ii->lexicon, NULL, &encoding, NULL, NULL, NULL);
-    query = grn_string_open_(ctx, raw_query, raw_query_len,
-                             ii->lexicon, nflags, encoding);
     grn_string_get_normalized(ctx, query,
                               &normalized_query, &normalized_query_length,
                               NULL);
@@ -11241,11 +11401,11 @@ grn_ii_select_sequential_search(grn_ctx *ctx,
                              ONIG_SYNTAX_ASIS,
                              "[ii][select][sequential]");
       if (regex) {
-        grn_ii_select_sequential_search_body(ctx, ii, encoding,
-                                             regex, result, op, wvm, optarg);
+        grn_ii_select_sequential_search_text_body(ctx, data, encoding, regex);
         onig_free(regex);
+        processed = true;
       } else {
-        processed = GRN_FALSE;
+        processed = false;
       }
     }
     grn_obj_unlink(ctx, query);
@@ -11254,6 +11414,22 @@ grn_ii_select_sequential_search(grn_ctx *ctx,
   return processed;
 }
 #endif
+
+static bool
+grn_ii_select_sequential_search(grn_ctx *ctx,
+                                grn_ii_select_data *data)
+{
+  if (grn_ii_select_sequential_search_reference_should_use(ctx, data)) {
+    return grn_ii_select_sequential_search_reference(ctx, data);
+  }
+#ifdef GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH_TEXT
+  else if (grn_ii_select_sequential_search_text_should_use(ctx, data)) {
+    return grn_ii_select_sequential_search_text(ctx, data);
+  }
+#endif
+
+  return false;
+}
 
 grn_inline static bool
 grn_ii_select_skip_pos(grn_ctx *ctx,
@@ -11510,12 +11686,9 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
     goto exit;
   }
   */
-#ifdef GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH
-  if (grn_ii_select_sequential_search(ctx, ii, string, string_len,
-                                      s, op, data.wv_mode, optarg, tis, n)) {
+  if (grn_ii_select_sequential_search(ctx, &data)) {
     goto exit;
   }
-#endif
 
   for (;;) {
     data.rid = (*tis)->p->rid;

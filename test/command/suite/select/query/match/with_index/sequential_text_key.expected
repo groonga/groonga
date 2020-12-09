@@ -13,6 +13,8 @@ load --table Memos
 [[0,0.0,0.0],5]
 column_create Terms memos_body COLUMN_INDEX|WITH_POSITION Memos _key
 [[0,0.0,0.0],true]
+log_level --level info
+[[0,0.0,0.0],true]
 select Memos --query '_id:>=3 _key:@"Groonga"' --output_columns _id,_score,_key
 [
   [
@@ -52,3 +54,12 @@ select Memos --query '_id:>=3 _key:@"Groonga"' --output_columns _id,_score,_key
     ]
   ]
 ]
+#|i| [table][select][index][range][id] <Memos>
+#|i| [object][search][index][key][exact] <Terms.memos_body>
+#|i| grn_ii_sel > (Groonga)
+#|i| n=6 (Groonga)
+#|i| [ii][select][index-not-used][text] <Terms.memos_body>: enough filtered and index search will match many records: 3 <= 3.50: n-existing-records:3 estimated-size:5 ratio:70.00%
+#|i| exact: 3
+#|i| hits=3
+log_level --level notice
+[[0,0.0,0.0],true]

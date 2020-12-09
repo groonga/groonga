@@ -1,4 +1,4 @@
-#$GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO=0.7
+#$GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO_TEXT=0.7
 
 table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
 
@@ -16,4 +16,10 @@ load --table Memos
 
 column_create Terms memos_body COLUMN_INDEX|WITH_POSITION Memos body
 
+log_level --level info
+#@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 select Memos --query '_id:>=3 body:@"Groonga"' --output_columns _id,_score,body
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels info
+log_level --level notice

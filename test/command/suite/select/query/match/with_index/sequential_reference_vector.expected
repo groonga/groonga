@@ -1,0 +1,79 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Rroonga is fast!", "tags": ["Rroonga"]},
+{"_key": "Groonga is fast!", "tags": ["Groonga"]},
+{"_key": "Mroonga is fast!", "tags": ["Mroonga"]},
+{"_key": "Groonga sticker!", "tags": ["Groonga", "Sticker"]},
+{"_key": "Groonga is good!", "tags": ["Groonga", "Groonga"]}
+]
+[[0,0.0,0.0],5]
+column_create Tags memos_tags COLUMN_INDEX Memos tags
+[[0,0.0,0.0],true]
+log_level --level info
+[[0,0.0,0.0],true]
+select Memos --query '_id:>=3 tags:@Groonga' --output_columns _id,_score,_key,tags
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "Tags"
+        ]
+      ],
+      [
+        4,
+        2,
+        "Groonga sticker!",
+        [
+          "Groonga",
+          "Sticker"
+        ]
+      ],
+      [
+        5,
+        3,
+        "Groonga is good!",
+        [
+          "Groonga",
+          "Groonga"
+        ]
+      ]
+    ]
+  ]
+]
+#|i| [table][select][index][range][id] <Memos>
+#|i| [object][search][index][key][exact] <Tags.memos_tags>
+#|i| grn_ii_sel > (Groonga)
+#|i| n=1 (Groonga)
+#|i| [ii][select][index-not-used][reference] <Tags.memos_tags>: enough filtered and index search will match many records: 3 <= 3.50: n-existing-records:3 estimated-size:5 ratio:70.00%
+#|i| exact: 3
+#|i| hits=3
+log_level --level notice
+[[0,0.0,0.0],true]
