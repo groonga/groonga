@@ -19,6 +19,7 @@
 
 #include "grn.h"
 
+#include "grn_accessor.h"
 #include "grn_bulk.h"
 #include "grn_db.h"
 #include "grn_expr.h"
@@ -1570,7 +1571,11 @@ grn_table_group_keys_parse_one(grn_ctx *ctx,
       expr->codes[code_start_offset].op == GRN_OP_GET_VALUE &&
       expr->codes[code_start_offset].value) {
     key->key = expr->codes[code_start_offset].value;
-    grn_obj_refer(ctx, key->key);
+    if (grn_obj_is_accessor(ctx, key->key)) {
+      key->key = grn_accessor_copy(ctx, key->key);
+    } else {
+      grn_obj_refer(ctx, key->key);
+    }
   } else {
     grn_obj *sliced_expr = grn_expr_slice(ctx,
                                           keys_expression,
@@ -1660,7 +1665,11 @@ exit :
       size_t n_offsets = GRN_UINT32_VECTOR_SIZE(&offsets) / 2;
       for (i = 0; i < n_offsets; i++) {
         if (keys[i].key) {
-          grn_obj_unref(ctx, keys[i].key);
+          if (grn_obj_is_accessor(ctx, keys[i].key)) {
+            grn_obj_close(ctx, keys[i].key);
+          } else {
+            grn_obj_unref(ctx, keys[i].key);
+          }
         }
       }
       GRN_FREE(keys);
