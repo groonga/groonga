@@ -1,3 +1,4 @@
+#$GRN_EXPR_OPTIMIZE=no
 #$GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO_TEXT=0.7
 
 table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
