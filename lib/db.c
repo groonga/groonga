@@ -13911,7 +13911,9 @@ grn_table_sort_key_close(grn_ctx *ctx, grn_table_sort_key *keys, unsigned int nk
   if (keys) {
     for (i = 0; i < nkeys; i++) {
       grn_obj *key = keys[i].key;
-      if (!grn_obj_is_column(ctx, key)) {
+      if (grn_obj_is_column(ctx, key)) {
+        grn_obj_unref(ctx, key);
+      } else {
         grn_obj_unlink(ctx, key);
       }
     }
