@@ -416,13 +416,11 @@ namespace {
       if (!record_batch) {
         return;
       }
-      ::arrow::compute::SortOptions options(arrow_sort_keys_);
       ::arrow::Datum datum(record_batch);
-      auto sort_result = ::arrow::compute::CallFunction("sort_indices",
-                                                        {datum},
-                                                        &options);
+      ::arrow::compute::SortOptions options(arrow_sort_keys_);
+      auto sorted_indices = ::arrow::compute::SortIndices(datum, options);
       if (!grnarrow::check(ctx_,
-                           sort_result,
+                           sorted_indices,
                            executor_tag_,
                            tag_,
                            " failed to sort")) {
@@ -437,7 +435,7 @@ namespace {
         std::static_pointer_cast<::arrow::UInt64Array>(record_batch->column(0));
       auto raw_source_ids = source_ids->raw_values();
       auto indices =
-        std::static_pointer_cast<::arrow::UInt64Array>((*sort_result).make_array());
+        std::static_pointer_cast<::arrow::UInt64Array>(*sorted_indices);
       auto n_rows = indices->length();
       auto raw_indices = indices->raw_values();
 
