@@ -441,9 +441,6 @@ namespace {
       auto n_rows = indices->length();
       auto raw_indices = indices->raw_values();
 
-      const auto is_ascending =
-        grn_window_function_executor_is_ascending(ctx_, executor_);
-      const auto n_tables = GRN_PTR_VECTOR_SIZE(&(executor_->tables));
       auto n_group_keys = group_keys_builders_.size();
       if (n_group_keys == 0) {
         for (int64_t i = 0; i < n_rows; ++i) {
@@ -452,14 +449,12 @@ namespace {
           const auto table_index = unpack_source_id_table_index(source_id);
           const auto record_id = unpack_source_id_record_id(source_id);
           auto table = GRN_PTR_VALUE_AT(&(executor_->tables), table_index);
-          const auto nth_table =
-            (is_ascending ? table_index : (n_tables - table_index - 1));
           const auto is_context_table =
-            GRN_BOOL_VALUE_AT(&(executor_->is_context_tables), nth_table);
+            GRN_BOOL_VALUE_AT(&(executor_->is_context_tables), table_index);
           auto window_function_call =
-            GRN_PTR_VALUE_AT(&(executor_->window_function_calls), nth_table);
+            GRN_PTR_VALUE_AT(&(executor_->window_function_calls), table_index);
           auto output_column =
-            GRN_PTR_VALUE_AT(&(executor_->output_columns), nth_table);
+            GRN_PTR_VALUE_AT(&(executor_->output_columns), table_index);
           grn_window_add_record(ctx_,
                                 &(executor_->window),
                                 table,
@@ -507,14 +502,12 @@ namespace {
         const auto record_id = unpack_source_id_record_id(source_id);
 
         auto table = GRN_PTR_VALUE_AT(&(executor_->tables), table_index);
-        const auto nth_table =
-          (is_ascending ? table_index : (n_tables - table_index - 1));
         const auto is_context_table =
-          GRN_BOOL_VALUE_AT(&(executor_->is_context_tables), nth_table);
+          GRN_BOOL_VALUE_AT(&(executor_->is_context_tables), table_index);
         auto window_function_call =
-          GRN_PTR_VALUE_AT(&(executor_->window_function_calls), nth_table);
+          GRN_PTR_VALUE_AT(&(executor_->window_function_calls), table_index);
         auto output_column =
-          GRN_PTR_VALUE_AT(&(executor_->output_columns), nth_table);
+          GRN_PTR_VALUE_AT(&(executor_->output_columns), table_index);
 
         auto is_group_key_changed = false;
         for (size_t j = 0; j < n_group_keys; j++) {
@@ -1059,11 +1052,8 @@ grn_window_function_executor_execute(grn_ctx *ctx,
 
   grn_window_function_executor_rewind(ctx, executor);
 
-  const bool is_ascending =
-    grn_window_function_executor_is_ascending(ctx, executor);
   for (size_t i = 0; i < n_tables; i++) {
-    size_t nth_table = (is_ascending ? i : (n_tables - i - 1));
-    grn_obj *table = GRN_PTR_VALUE_AT(&(executor->tables), nth_table);
+    grn_obj *table = GRN_PTR_VALUE_AT(&(executor->tables), i);
     grn_obj *output_column = grn_obj_column(ctx,
                                             table,
                                             GRN_TEXT_VALUE(output_column_name),
