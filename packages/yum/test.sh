@@ -8,7 +8,7 @@ case ${version} in
     DNF=yum
     ;;
   *)
-    DNF="dnf --enablerepo=PowerTools"
+    DNF="dnf --enablerepo=powertools"
     ;;
 esac
 
