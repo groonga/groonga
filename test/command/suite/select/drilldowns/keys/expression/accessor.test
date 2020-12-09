@@ -1,0 +1,19 @@
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tags COLUMN_VECTOR Tags
+column_create Memos year COLUMN_SCALAR Int32
+
+load --table Memos
+[
+{"_key": "Groonga is fast!", "tags": ["full-text-search"], "year": 2019},
+{"_key": "Mroonga is fast!", "tags": ["mysql", "full-text-search"], "year": 2019},
+{"_key": "Groonga sticker!", "tags": ["full-text-search", "sticker"], "year": 2020},
+{"_key": "Rroonga is fast!", "tags": ["full-text-search", "ruby"], "year": 2020},
+{"_key": "Groonga is good!", "tags": ["full-text-search"], "year": 2020}
+]
+
+select Memos \
+  --filter '_id > 0' \
+  --drilldowns[tags].keys 'tags,year >= 2020' \
+  --drilldowns[tags].output_columns _key[0],_key[1],_nsubrecs
