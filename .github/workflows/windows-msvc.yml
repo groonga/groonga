@@ -120,6 +120,10 @@ jobs:
         if: |
           matrix.architecture == 'x64'
         run: |
+          pushd vendor\apache-arrow-source
+          ridk exec wget https://github.com/kou/arrow/commit/32cc0a5d180a90a98fc9ac8de42e870d9b60d154.patch
+          ridk patch -p1 -i 32cc0a5d180a90a98fc9ac8de42e870d9b60d154.patch
+          popd
           New-Item ..\apache-arrow-build -ItemType Directory
           $CMAKE_ARGS = (
             "-S", "vendor\apache-arrow-source\cpp",
