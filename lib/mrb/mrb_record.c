@@ -69,7 +69,7 @@ mrb_grn_record_initialize(mrb_state *mrb, mrb_value self)
   if (mrb_nil_p(mrb_id)) {
     record->id = GRN_ID_NIL;
   } else {
-    record->id = mrb_fixnum(mrb_id);
+    record->id = mrb_integer(mrb_id);
   }
 
   switch (record->table->header.domain) {
@@ -102,7 +102,7 @@ mrb_grn_record_set_id(mrb_state *mrb, mrb_value self)
   if (mrb_nil_p(mrb_id)) {
     record->id = GRN_ID_NIL;
   } else {
-    record->id = mrb_fixnum(mrb_id);
+    record->id = mrb_integer(mrb_id);
   }
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@id"), mrb_id);
 

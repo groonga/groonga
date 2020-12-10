@@ -60,7 +60,7 @@ mrb_grn_command_input_array_reference(mrb_state *mrb, mrb_value self)
   switch (mrb_type(mrb_key_or_offset)) {
   case MRB_TT_FIXNUM :
     {
-      mrb_int offset = mrb_fixnum(mrb_key_or_offset);
+      mrb_int offset = mrb_integer(mrb_key_or_offset);
       argument = grn_command_input_at(ctx, input, offset);
     }
     break;

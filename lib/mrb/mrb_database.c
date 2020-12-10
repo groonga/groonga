@@ -154,13 +154,13 @@ mrb_grn_database_array_reference(mrb_state *mrb, mrb_value self)
 
   database = DATA_PTR(self);
 
-  if (mrb_fixnum_p(mrb_id_or_key)) {
+  if (mrb_integer_p(mrb_id_or_key)) {
     char name[GRN_TABLE_MAX_KEY_SIZE];
     int name_size;
 
     name_size = grn_table_get_key(ctx,
                                   grn_ctx_db(ctx),
-                                  mrb_fixnum(mrb_id_or_key),
+                                  mrb_integer(mrb_id_or_key),
                                   name,
                                   GRN_TABLE_MAX_KEY_SIZE);
     if (name_size == 0) {
@@ -185,7 +185,7 @@ mrb_grn_database_array_reference(mrb_state *mrb, mrb_value self)
     if (id == GRN_ID_NIL) {
       return mrb_nil_value();
     } else {
-      return mrb_fixnum_value(id);
+      return mrb_int_value(id);
     }
   }
 }
