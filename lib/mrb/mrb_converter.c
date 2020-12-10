@@ -150,11 +150,11 @@ grn_mrb_value_from_raw_data(mrb_state *mrb,
   switch (domain) {
   case GRN_DB_INT32 :
     if (raw_value_size == 0) {
-      mrb_value_ = mrb_int_value(0);
+      mrb_value_ = mrb_int_value(mrb, 0);
     } else {
       int32_t value;
       value = *((int32_t *)raw_value);
-      mrb_value_ = mrb_int_value(value);
+      mrb_value_ = mrb_int_value(mrb, value);
     }
     break;
   case GRN_DB_SHORT_TEXT :

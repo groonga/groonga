@@ -32,7 +32,7 @@ grn_mrb_value_from_operator(mrb_state *mrb, grn_operator op)
   mrb_value mrb_op_raw;
   mrb_value mrb_op;
 
-  mrb_op_raw = mrb_int_value(op);
+  mrb_op_raw = mrb_int_value(mrb, op);
   mrb_op = mrb_funcall(mrb, mrb_obj_value(data->groonga.operator_class),
                        "find", 1, mrb_op_raw);
   if (mrb_nil_p(mrb_op)) {
@@ -69,7 +69,7 @@ grn_mrb_operator_init(grn_ctx *ctx)
   mrb_funcall(mrb, klass_obj, "register", 1,                    \
               mrb_funcall(mrb, klass_obj, "new", 2,             \
                           mrb_str_new_lit(mrb, #name),          \
-                          mrb_int_value(GRN_OP_ ## name)))
+                          mrb_int_value(mrb, GRN_OP_ ## name)))
 
   DEFINE_OPERATOR(PUSH);
   DEFINE_OPERATOR(POP);

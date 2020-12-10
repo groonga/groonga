@@ -155,35 +155,35 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
     {
       int8_t value;
       value = GRN_INT8_VALUE(bulk);
-      mrb_value_ = mrb_int_value(value);
+      mrb_value_ = mrb_int_value(mrb, value);
     }
     break;
   case GRN_DB_UINT8 :
     {
       uint8_t value;
       value = GRN_UINT8_VALUE(bulk);
-      mrb_value_ = mrb_int_value(value);
+      mrb_value_ = mrb_int_value(mrb, value);
     }
     break;
   case GRN_DB_INT16 :
     {
       int16_t value;
       value = GRN_INT16_VALUE(bulk);
-      mrb_value_ = mrb_int_value(value);
+      mrb_value_ = mrb_int_value(mrb, value);
     }
     break;
   case GRN_DB_UINT16 :
     {
       uint16_t value;
       value = GRN_UINT16_VALUE(bulk);
-      mrb_value_ = mrb_int_value(value);
+      mrb_value_ = mrb_int_value(mrb, value);
     }
     break;
   case GRN_DB_INT32 :
     {
       int32_t value;
       value = GRN_INT32_VALUE(bulk);
-      mrb_value_ = mrb_int_value(value);
+      mrb_value_ = mrb_int_value(mrb, value);
     }
     break;
   case GRN_DB_UINT32 :
@@ -191,7 +191,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
       int64_t value;
       value = GRN_UINT32_VALUE(bulk);
       if (FIXABLE(value)) {
-        mrb_value_ = mrb_int_value(value);
+        mrb_value_ = mrb_int_value(mrb, value);
       } else {
         mrb_value_ = mrb_float_value(mrb, value);
       }
@@ -202,7 +202,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
       int64_t value;
       value = GRN_INT64_VALUE(bulk);
       if (FIXABLE(value)) {
-        mrb_value_ = mrb_int_value(value);
+        mrb_value_ = mrb_int_value(mrb, value);
       } else {
         mrb_value_ = mrb_float_value(mrb, value);
       }
@@ -213,7 +213,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
       uint64_t value;
       value = GRN_UINT64_VALUE(bulk);
       if (FIXABLE(value)) {
-        mrb_value_ = mrb_int_value(value);
+        mrb_value_ = mrb_int_value(mrb, value);
       } else {
         mrb_value_ = mrb_float_value(mrb, value);
       }
@@ -245,14 +245,14 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
       if (sec > MRB_INT_MAX) {
         mrb_sec = mrb_float_value(mrb, sec);
       } else {
-        mrb_sec = mrb_int_value(sec);
+        mrb_sec = mrb_int_value(mrb, sec);
       }
       mrb_value_ = mrb_funcall(mrb,
                                mrb_obj_value(ctx->impl->mrb.builtin.time_class),
                                "at",
                                2,
                                mrb_sec,
-                               mrb_int_value(usec));
+                               mrb_int_value(mrb, usec));
     }
     break;
   case GRN_DB_SHORT_TEXT :
@@ -288,7 +288,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
 
         mrb_record_class = mrb_class_get_under(mrb, data->module, "Record");
         mrb_new_arguments[0] = grn_mrb_value_from_grn_obj(mrb, domain);
-        mrb_new_arguments[1] = mrb_int_value(GRN_RECORD_VALUE(bulk));
+        mrb_new_arguments[1] = mrb_int_value(mrb, GRN_RECORD_VALUE(bulk));
         mrb_value_ = mrb_obj_new(mrb,
                                  mrb_record_class,
                                  2,

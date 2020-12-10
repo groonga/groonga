@@ -208,7 +208,7 @@ mrb_grn_scan_info_get_flags(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   flags = grn_scan_info_get_flags(si);
-  return mrb_int_value(flags);
+  return mrb_int_value(mrb, flags);
 }
 
 static mrb_value
@@ -256,7 +256,7 @@ mrb_grn_scan_info_get_max_interval(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   max_interval = grn_scan_info_get_max_interval(si);
-  return mrb_int_value(max_interval);
+  return mrb_int_value(mrb, max_interval);
 }
 
 static mrb_value
@@ -279,7 +279,7 @@ mrb_grn_scan_info_get_additional_last_interval(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   additional_last_interval = grn_scan_info_get_additional_last_interval(si);
-  return mrb_int_value(additional_last_interval);
+  return mrb_int_value(mrb, additional_last_interval);
 }
 
 static mrb_value
@@ -302,7 +302,7 @@ mrb_grn_scan_info_get_similarity_threshold(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   similarity_threshold = grn_scan_info_get_similarity_threshold(si);
-  return mrb_int_value(similarity_threshold);
+  return mrb_int_value(mrb, similarity_threshold);
 }
 
 static mrb_value
@@ -325,7 +325,7 @@ mrb_grn_scan_info_get_quorum_threshold(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   quorum_threshold = grn_scan_info_get_quorum_threshold(si);
-  return mrb_int_value(quorum_threshold);
+  return mrb_int_value(mrb, quorum_threshold);
 }
 
 static mrb_value
@@ -368,7 +368,7 @@ mrb_grn_scan_info_get_start_position(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   start_position = grn_scan_info_get_start_position(si);
-  return mrb_int_value(start_position);
+  return mrb_int_value(mrb, start_position);
 }
 
 static mrb_value
@@ -418,13 +418,13 @@ mrb_grn_expr_code_inspect(mrb_state *mrb, mrb_value self)
     mrb_str_cat_lit(mrb, inspected, " weight=");
     mrb_str_concat(mrb, inspected,
                    mrb_funcall(mrb,
-                               mrb_int_value(weight),
+                               mrb_int_value(mrb, weight),
                                "inspect",
                                0));
     mrb_str_cat_lit(mrb, inspected, ", offset=");
     mrb_str_concat(mrb, inspected,
                    mrb_funcall(mrb,
-                               mrb_int_value(offset),
+                               mrb_int_value(mrb, offset),
                                "inspect",
                                0));
   }
@@ -432,14 +432,14 @@ mrb_grn_expr_code_inspect(mrb_state *mrb, mrb_value self)
   mrb_str_cat_lit(mrb, inspected, ", n_args=");
   mrb_str_concat(mrb, inspected,
                  mrb_funcall(mrb,
-                             mrb_int_value(code->nargs),
+                             mrb_int_value(mrb, code->nargs),
                              "inspect",
                              0));
 
   mrb_str_cat_lit(mrb, inspected, ", modify=");
   mrb_str_concat(mrb, inspected,
                  mrb_funcall(mrb,
-                             mrb_int_value(code->modify),
+                             mrb_int_value(mrb, code->modify),
                              "inspect",
                              0));
 
@@ -453,7 +453,7 @@ mrb_grn_expr_code_inspect(mrb_state *mrb, mrb_value self)
   mrb_str_cat_lit(mrb, inspected, ", flags=");
   mrb_str_concat(mrb, inspected,
                  mrb_funcall(mrb,
-                             mrb_int_value(code->flags),
+                             mrb_int_value(mrb, code->flags),
                              "inspect",
                              0));
 
@@ -478,8 +478,8 @@ mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
   mrb_value mrb_values[2];
 
   weight = grn_expr_code_get_weight(ctx, DATA_PTR(self), &offset);
-  mrb_values[0] = mrb_int_value(weight);
-  mrb_values[1] = mrb_int_value(offset);
+  mrb_values[0] = mrb_int_value(mrb, weight);
+  mrb_values[1] = mrb_int_value(mrb, offset);
   return mrb_ary_new_from_values(mrb, 2, mrb_values);
 }
 
@@ -498,7 +498,7 @@ mrb_grn_expr_code_get_n_args(mrb_state *mrb, mrb_value self)
   grn_expr_code *expr_code;
 
   expr_code = DATA_PTR(self);
-  return mrb_int_value(expr_code->nargs);
+  return mrb_int_value(mrb, expr_code->nargs);
 }
 
 static mrb_value
@@ -516,7 +516,7 @@ mrb_grn_expr_code_get_flags(mrb_state *mrb, mrb_value self)
   grn_expr_code *expr_code;
 
   expr_code = DATA_PTR(self);
-  return mrb_int_value(expr_code->flags);
+  return mrb_int_value(mrb, expr_code->flags);
 }
 
 static mrb_value
@@ -525,7 +525,7 @@ mrb_grn_expr_code_get_modify(mrb_state *mrb, mrb_value self)
   grn_expr_code *expr_code;
 
   expr_code = DATA_PTR(self);
-  return mrb_int_value(expr_code->modify);
+  return mrb_int_value(mrb, expr_code->modify);
 }
 
 static mrb_value
@@ -984,7 +984,7 @@ grn_mrb_expr_init(grn_ctx *ctx)
     struct RClass *flags_module;
     flags_module = mrb_define_module_under(mrb, expression_code_class, "Flags");
     mrb_define_const(mrb, flags_module, "RELATIONAL_EXPRESSION",
-                     mrb_int_value(GRN_EXPR_CODE_RELATIONAL_EXPRESSION));
+                     mrb_int_value(mrb, GRN_EXPR_CODE_RELATIONAL_EXPRESSION));
   }
 
   klass = mrb_define_class_under(mrb, module, "Expression", object_class);
@@ -993,7 +993,7 @@ grn_mrb_expr_init(grn_ctx *ctx)
 #define DEFINE_FLAG(name)                               \
   mrb_define_const(mrb, klass,                          \
                    #name,                               \
-                   mrb_int_value(GRN_EXPR_ ## name))
+                   mrb_int_value(mrb, GRN_EXPR_ ## name))
 
   DEFINE_FLAG(SYNTAX_QUERY);
   DEFINE_FLAG(SYNTAX_SCRIPT);

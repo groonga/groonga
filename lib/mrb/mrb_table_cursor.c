@@ -140,7 +140,7 @@ mrb_grn_table_cursor_next(mrb_state *mrb, mrb_value self)
   id = grn_table_cursor_next(ctx, DATA_PTR(self));
   grn_mrb_ctx_check(mrb);
 
-  return mrb_int_value(id);
+  return mrb_int_value(mrb, id);
 }
 
 static mrb_value
@@ -153,7 +153,7 @@ mrb_grn_table_cursor_count(mrb_state *mrb, mrb_value self)
     n_records++;
   }
 
-  return mrb_int_value(n_records);
+  return mrb_int_value(mrb, n_records);
 }
 
 static mrb_value

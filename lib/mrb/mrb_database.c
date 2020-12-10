@@ -185,7 +185,7 @@ mrb_grn_database_array_reference(mrb_state *mrb, mrb_value self)
     if (id == GRN_ID_NIL) {
       return mrb_nil_value();
     } else {
-      return mrb_int_value(id);
+      return mrb_int_value(mrb, id);
     }
   }
 }

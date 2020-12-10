@@ -113,7 +113,7 @@ mrb_grn_table_get_column_ids(mrb_state *mrb, mrb_value self)
   {
     grn_id *key;
     GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
-      mrb_ary_push(mrb, mrb_column_ids, mrb_int_value(*key));
+        mrb_ary_push(mrb, mrb_column_ids, mrb_int_value(mrb, *key));
     });
   }
   grn_hash_close(ctx, columns);
@@ -180,7 +180,7 @@ mrb_grn_table_get_size(mrb_state *mrb, mrb_value self)
   size = grn_table_size(ctx, DATA_PTR(self));
   grn_mrb_ctx_check(mrb);
 
-  return mrb_int_value(size);
+  return mrb_int_value(mrb, size);
 }
 
 static mrb_value
