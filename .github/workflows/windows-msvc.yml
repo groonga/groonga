@@ -291,6 +291,11 @@ jobs:
           taskkill /F /FI "MODULES eq msys-2.0.dll"
       - name: Update GCC
         run: |
+          ridk exec pacman --remove --noconfirm --unneeded `
+            mingw-w64-x86_64-gcc-ada `
+            mingw-w64-x86_64-gcc-fortran `
+            mingw-w64-x86_64-gcc-libgfortran `
+            mingw-w64-x86_64-gcc-objc
           ridk exec pacman --sync --noconfirm mingw-w64-x86_64-gcc
       - name: Install grntest
         run: |
