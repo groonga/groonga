@@ -2521,6 +2521,7 @@ document_vector_idf_base_tokenizer_init_token_ids_token_column(
     uint32_t *tf = value;
     *tf += 1;
   }
+  GRN_OBJ_FIN(ctx, &tokens);
   collected = true;
 
 exit :
