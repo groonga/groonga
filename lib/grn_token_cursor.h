@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2016  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,9 @@ extern "C" {
 #endif
 
 struct _grn_token_cursor {
+  bool initialized;
   grn_obj *table;
+  grn_obj original_buffer;
   const unsigned char *orig;
   const unsigned char *curr;
   uint32_t orig_blen;

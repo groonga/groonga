@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -90,6 +90,7 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   if (!(token_cursor = GRN_MALLOC(sizeof(grn_token_cursor)))) {
     GRN_API_RETURN(NULL);
   }
+  token_cursor->initialized = false;
   token_cursor->table = table;
   token_cursor->mode = mode;
   token_cursor->encoding = encoding;
@@ -103,18 +104,49 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   grn_token_init(ctx, &(token_cursor->tokenizer.next_token));
   token_cursor->token_filter.objects = token_filters;
   token_cursor->token_filter.data = NULL;
+  GRN_VOID_INIT(&(token_cursor->original_buffer));
   token_cursor->orig = (const unsigned char *)str;
   token_cursor->orig_blen = str_len;
   token_cursor->curr = NULL;
   token_cursor->curr_size = 0;
   token_cursor->pos = -1;
   token_cursor->status = GRN_TOKEN_CURSOR_DOING;
-  if (tokenizer) {
-    grn_proc *tokenizer_proc = (grn_proc *)tokenizer;
+  GRN_API_RETURN(token_cursor);
+}
+
+static bool
+grn_token_cursor_ensure_initialize(grn_ctx *ctx,
+                                   grn_token_cursor *token_cursor)
+{
+  if (token_cursor->initialized) {
+    goto exit;
+  }
+
+  token_cursor->initialized = true;
+
+  grn_tokenizer_query *query = &(token_cursor->tokenizer.query);
+  if (token_cursor->orig_blen == 0) {
+    grn_obj *source_column = grn_tokenizer_query_get_source_column(ctx, query);
+    grn_id source_id = grn_tokenizer_query_get_source_id(ctx, query);
+    if (source_column && source_id != GRN_ID_NIL) {
+      GRN_BULK_REWIND(&(token_cursor->original_buffer));
+      grn_obj_get_value(ctx,
+                        source_column,
+                        source_id,
+                        &(token_cursor->original_buffer));
+      token_cursor->orig = GRN_BULK_HEAD(&(token_cursor->original_buffer));
+      token_cursor->orig_blen = GRN_BULK_VSIZE(&(token_cursor->original_buffer));
+    }
+  }
+
+  if (token_cursor->tokenizer.object) {
+    grn_proc *tokenizer_proc = (grn_proc *)(token_cursor->tokenizer.object);
     if (tokenizer_proc->callbacks.tokenizer.init) {
       token_cursor->tokenizer.user_data = NULL;
-      grn_tokenizer_query *query = &(token_cursor->tokenizer.query);
-      grn_tokenizer_query_set_raw_string(ctx, query, str, str_len);
+      grn_tokenizer_query_set_raw_string(ctx,
+                                         query,
+                                         token_cursor->orig,
+                                         token_cursor->orig_blen);
       if (ctx->rc != GRN_SUCCESS) {
         goto exit;
       }
@@ -123,34 +155,38 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
     } else if (tokenizer_proc->funcs[PROC_INIT]) {
       grn_obj str_, flags_, mode_;
       GRN_TEXT_INIT(&str_, GRN_OBJ_DO_SHALLOW_COPY);
-      GRN_TEXT_SET_REF(&str_, str, str_len);
+      GRN_TEXT_SET_REF(&str_,
+                       token_cursor->orig,
+                       token_cursor->orig_blen);
       GRN_UINT32_INIT(&flags_, 0);
-      GRN_UINT32_SET(ctx, &flags_, flags);
+      GRN_UINT32_SET(ctx, &flags_, token_cursor->flags);
       GRN_UINT32_INIT(&mode_, 0);
-      GRN_UINT32_SET(ctx, &mode_, mode);
+      GRN_UINT32_SET(ctx, &mode_, token_cursor->mode);
       token_cursor->tokenizer.pctx.caller = NULL;
       token_cursor->tokenizer.pctx.user_data.ptr = NULL;
-      token_cursor->tokenizer.pctx.proc = (grn_proc *)tokenizer;
+      token_cursor->tokenizer.pctx.proc = tokenizer_proc;
       token_cursor->tokenizer.pctx.hooks = NULL;
       token_cursor->tokenizer.pctx.currh = NULL;
       token_cursor->tokenizer.pctx.phase = PROC_INIT;
       grn_ctx_push(ctx, &mode_);
       grn_ctx_push(ctx, &str_);
       grn_ctx_push(ctx, &flags_);
-      ((grn_proc *)tokenizer)->funcs[PROC_INIT](ctx,
-                                                1,
-                                                &table,
-                                                &(token_cursor->tokenizer.pctx.user_data));
+      tokenizer_proc->funcs[PROC_INIT](ctx,
+                                       1,
+                                       &(token_cursor->table),
+                                       &(token_cursor->tokenizer.pctx.user_data));
       grn_obj_close(ctx, &flags_);
       grn_obj_close(ctx, &str_);
       grn_obj_close(ctx, &mode_);
     }
   } else {
-    grn_tokenizer_query *query = &(token_cursor->tokenizer.query);
     grn_obj *string;
     const char *normalized;
 
-    grn_tokenizer_query_set_raw_string(ctx, query, str, str_len);
+    grn_tokenizer_query_set_raw_string(ctx,
+                                       query,
+                                       token_cursor->orig,
+                                       token_cursor->orig_blen);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -175,11 +211,40 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   }
 
 exit :
-  if (ctx->rc) {
-    grn_token_cursor_close(ctx, token_cursor);
-    token_cursor = NULL;
-  }
-  GRN_API_RETURN(token_cursor);
+  return ctx->rc == GRN_SUCCESS;
+}
+
+grn_rc
+grn_token_cursor_set_source_column(grn_ctx *ctx,
+                                   grn_token_cursor *token_cursor,
+                                   grn_obj *column)
+{
+  GRN_API_ENTER;
+  grn_tokenizer_query *query = &(token_cursor->tokenizer.query);
+  grn_rc rc = grn_tokenizer_query_set_source_column(ctx, query, column);
+  GRN_API_RETURN(rc);
+}
+
+grn_rc
+grn_token_cursor_set_source_id(grn_ctx *ctx,
+                               grn_token_cursor *token_cursor,
+                               grn_id id)
+{
+  GRN_API_ENTER;
+  grn_tokenizer_query *query = &(token_cursor->tokenizer.query);
+  grn_rc rc = grn_tokenizer_query_set_source_id(ctx, query, id);
+  GRN_API_RETURN(rc);
+}
+
+grn_rc
+grn_token_cursor_set_index_column(grn_ctx *ctx,
+                                  grn_token_cursor *token_cursor,
+                                  grn_obj *column)
+{
+  GRN_API_ENTER;
+  grn_tokenizer_query *query = &(token_cursor->tokenizer.query);
+  grn_rc rc = grn_tokenizer_query_set_index_column(ctx, query, column);
+  GRN_API_RETURN(rc);
 }
 
 static int
@@ -236,6 +301,11 @@ grn_id
 grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
 {
   GRN_API_ENTER;
+
+  if (!grn_token_cursor_ensure_initialize(ctx, token_cursor)) {
+    token_cursor->status = GRN_TOKEN_CURSOR_DONE;
+    GRN_API_RETURN(GRN_ID_NIL);
+  }
 
   int status;
   grn_id tid = GRN_ID_NIL;
@@ -478,7 +548,7 @@ grn_token_cursor_close(grn_ctx *ctx, grn_token_cursor *token_cursor)
     GRN_API_RETURN(GRN_INVALID_ARGUMENT);
   }
 
-  if (token_cursor->tokenizer.object) {
+  if (token_cursor->tokenizer.object && token_cursor->initialized) {
     grn_proc *tokenizer_proc = (grn_proc *)(token_cursor->tokenizer.object);
     if (tokenizer_proc->callbacks.tokenizer.fin) {
       void *user_data = token_cursor->tokenizer.user_data;
@@ -496,6 +566,7 @@ grn_token_cursor_close(grn_ctx *ctx, grn_token_cursor *token_cursor)
   grn_token_fin(ctx, &(token_cursor->tokenizer.next_token));
   grn_tokenizer_query_fin(ctx, &(token_cursor->tokenizer.query));
   grn_token_cursor_close_token_filters(ctx, token_cursor);
+  GRN_OBJ_FIN(ctx, &(token_cursor->original_buffer));
   GRN_FREE(token_cursor);
   GRN_API_RETURN(GRN_SUCCESS);
 }
