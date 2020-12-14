@@ -108,6 +108,9 @@ namespace grn {
                                                         GRN_TOKEN_ADD,
                                                         token_cursor_flags);
               if (token_cursor) {
+                grn_token_cursor_set_source_column(&ctx, token_cursor, source_);
+                grn_token_cursor_set_source_id(&ctx, token_cursor, id);
+                grn_token_cursor_set_index_column(&ctx, token_cursor, column_);
                 while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
                   grn_id token_id = grn_token_cursor_next(&ctx, token_cursor);
                   if (token_id == GRN_ID_NIL) {
@@ -199,12 +202,12 @@ namespace grn {
           tokens.header.flags |= GRN_OBJ_WITH_WEIGHT;
         }
         GRN_VOID_INIT(&value);
-        unsigned int token_flags = 0;
+        const unsigned int token_flags = 0;
         GRN_TABLE_EACH_BEGIN_FLAGS(ctx_, table_, cursor, id, GRN_CURSOR_BY_ID) {
           GRN_BULK_REWIND(&tokens);
           GRN_BULK_REWIND(&value);
           grn_obj_get_value(ctx_, source_, id, &value);
-          if (GRN_TEXT_LEN(&value) > 0) {
+          if (GRN_BULK_VSIZE(&value) > 0) {
             grn_token_cursor *token_cursor =
               grn_token_cursor_open(ctx_,
                                     lexicon_,
@@ -213,6 +216,9 @@ namespace grn {
                                     GRN_TOKEN_ADD,
                                     token_flags);
             if (token_cursor) {
+              grn_token_cursor_set_source_column(ctx_, token_cursor, source_);
+              grn_token_cursor_set_source_id(ctx_, token_cursor, id);
+              grn_token_cursor_set_index_column(ctx_, token_cursor, column_);
               while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
                 grn_id token_id = grn_token_cursor_next(ctx_, token_cursor);
                 if (token_id == GRN_ID_NIL) {
