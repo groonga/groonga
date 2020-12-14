@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -45,6 +45,9 @@ typedef struct _grn_tokenizer_query {
 
   grn_obj *lexicon;
   unsigned int token_filter_index;
+  grn_obj *source_column;
+  grn_id source_id;
+  grn_obj *index_column;
   uint32_t normalize_flags;
   grn_bool need_normalize;
   grn_bool need_delimiter_check;
@@ -77,6 +80,18 @@ grn_rc
 grn_tokenizer_query_set_token_filter_index(grn_ctx *ctx,
                                            grn_tokenizer_query *query,
                                            unsigned int index);
+grn_rc
+grn_tokenizer_query_set_source_column(grn_ctx *ctx,
+                                      grn_tokenizer_query *query,
+                                      grn_obj *column);
+grn_rc
+grn_tokenizer_query_set_source_id(grn_ctx *ctx,
+                                  grn_tokenizer_query *query,
+                                  grn_id id);
+grn_rc
+grn_tokenizer_query_set_index_column(grn_ctx *ctx,
+                                     grn_tokenizer_query *query,
+                                     grn_obj *column);
 
 #ifdef __cplusplus
 }

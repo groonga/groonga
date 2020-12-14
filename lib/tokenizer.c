@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2012-2018 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2012-2018  Brazil
+  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -169,6 +169,9 @@ grn_tokenizer_query_init(grn_ctx *ctx, grn_tokenizer_query *query)
   query->lexicon = NULL;
   query->encoding = ctx->encoding;
   query->token_filter_index = 0;
+  query->source_column = NULL;
+  query->source_id = GRN_ID_NIL;
+  query->index_column = NULL;
 
   query->need_normalize = GRN_TRUE;
   query->need_delimiter_check = GRN_TRUE;
@@ -445,6 +448,60 @@ grn_tokenizer_query_get_token_filter_index(grn_ctx *ctx,
 {
   GRN_API_ENTER;
   GRN_API_RETURN(query->token_filter_index);
+}
+
+grn_rc
+grn_tokenizer_query_set_source_column(grn_ctx *ctx,
+                                      grn_tokenizer_query *query,
+                                      grn_obj *column)
+{
+  GRN_API_ENTER;
+  query->source_column = column;
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_obj *
+grn_tokenizer_query_get_source_column(grn_ctx *ctx,
+                                      grn_tokenizer_query *query)
+{
+  GRN_API_ENTER;
+  GRN_API_RETURN(query->source_column);
+}
+
+grn_rc
+grn_tokenizer_query_set_source_id(grn_ctx *ctx,
+                                  grn_tokenizer_query *query,
+                                  grn_id id)
+{
+  GRN_API_ENTER;
+  query->source_id = id;
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_id
+grn_tokenizer_query_get_source_id(grn_ctx *ctx,
+                                  grn_tokenizer_query *query)
+{
+  GRN_API_ENTER;
+  GRN_API_RETURN(query->source_id);
+}
+
+grn_obj *
+grn_tokenizer_query_get_index_column(grn_ctx *ctx,
+                                     grn_tokenizer_query *query)
+{
+  GRN_API_ENTER;
+  GRN_API_RETURN(query->index_column);
+}
+
+grn_rc
+grn_tokenizer_query_set_index_column(grn_ctx *ctx,
+                                     grn_tokenizer_query *query,
+                                     grn_obj *column)
+{
+  GRN_API_ENTER;
+  query->index_column = column;
+  GRN_API_RETURN(ctx->rc);
 }
 
 void
