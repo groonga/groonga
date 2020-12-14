@@ -13583,6 +13583,49 @@ grn_column_get_all_token_columns(grn_ctx *ctx,
 }
 
 grn_rc
+grn_column_get_all_hooked_columns(grn_ctx *ctx,
+                                  grn_obj *obj,
+                                  grn_obj *columns)
+{
+  GRN_API_ENTER;
+
+  if (!GRN_DB_OBJP(obj)) {
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  grn_hook_entry hook_entry;
+  switch (obj->header.type) {
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+  case GRN_TABLE_NO_KEY :
+    hook_entry = GRN_HOOK_INSERT;
+    break;
+  default :
+    hook_entry = GRN_HOOK_SET;
+    break;
+  }
+
+  grn_hook *hooks;
+  for (hooks = DB_OBJ(obj)->hooks[hook_entry]; hooks; hooks = hooks->next) {
+    grn_obj_default_set_value_hook_data *data = (void *)GRN_NEXT_ADDR(hooks);
+    grn_obj *target = grn_ctx_at(ctx, data->target);
+    if (!target) {
+      report_hook_has_dangling_reference_error(ctx, obj, data->target,
+                                               "[column][hooked-columns][all]");
+      continue;
+    }
+    if (!grn_obj_is_visible(ctx, target)) {
+      grn_obj_unref(ctx, target);
+      continue;
+    }
+    GRN_PTR_PUT(ctx, columns, target);
+  }
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
 grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                 const char *str, unsigned int str_size, grn_obj *res)
 {

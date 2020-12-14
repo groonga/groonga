@@ -570,6 +570,10 @@ grn_rc
 grn_column_get_all_token_columns(grn_ctx *ctx,
                                  grn_obj *obj,
                                  grn_obj *token_columns);
+grn_rc
+grn_column_get_all_hooked_columns(grn_ctx *ctx,
+                                  grn_obj *obj,
+                                  grn_obj *hooked_columns);
 
 grn_rc grn_pvector_fin(grn_ctx *ctx, grn_obj *obj);
 
