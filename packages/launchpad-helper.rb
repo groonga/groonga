@@ -89,22 +89,17 @@ allow_unsigned_uploads = 0
     ensure_dput_configuration
 
     absoulte_deb_archive_name = File.expand_path(deb_archive_name)
-    specific_debian_dir = "debian.ubuntu-#{code_name}"
-    if File.exist?(specific_debian_dir)
-      absolute_debian_dir = File.expand_path(specific_debian_dir)
-    else
-      absolute_debian_dir = File.expand_path("debian")
-    end
     tmp_dir = "#{ubuntu_dir}/tmp"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
+    apt_prepare_debian_dir(tmp_dir, "#{code_name}-#{version}")
     cd(tmp_dir) do
       deb_archive_base_name = File.basename(absoulte_deb_archive_name, ".tar.gz")
       sh("tar", "xf", absoulte_deb_archive_name)
       cp(absoulte_deb_archive_name,
          "#{@package}_#{@deb_upstream_version}.orig.tar.gz")
       cd(deb_archive_base_name) do
-        cp_r(absolute_debian_dir, "debian")
+        cp_r("../debian.#{code_name}-#{version}", "debian")
         minor_version = ENV["UBUNTU_MINOR_VERSION"] || "1"
         version_suffix = "ubuntu#{version}.#{minor_version}"
         deb_version = "#{detect_current_deb_version}.#{version_suffix}"
