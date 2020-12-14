@@ -1,0 +1,40 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+load --table Memos
+[
+{"content": "a b c a"},
+{"content": "c b c"},
+{"content": "b b a"},
+{"content": "a c c"},
+{"content": "a"}
+]
+
+table_create Tokens TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC121 \
+  --default_tokenizer TokenNgram
+column_create Tokens memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC121 \
+  --default_tokenizer TokenNgram
+column_create Memos content_tokens COLUMN_VECTOR Terms content
+
+table_create DocumentVectorBM25 TABLE_HASH_KEY Tokens \
+  --default_tokenizer \
+    'TokenDocumentVectorBM25("index_column", "memos_content", \
+                             "df_column", "df")'
+column_create DocumentVectorBM25 df COLUMN_SCALAR UInt32
+
+log_level --level debug
+#@add-important-log-levels debug
+#@add-ignore-log-pattern /\A\[io\]/
+column_create Memos content_feature COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 \
+  DocumentVectorBM25 content
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels debug
+log_level --level notice
+
+select Memos
+
+select DocumentVectorBM25 --output_columns _id,_key,df
