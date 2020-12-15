@@ -53,8 +53,8 @@ MRuby::Build.new do |conf|
            :checksum_hash => "0aa5b832315ccd1ddc55f5391f2d8a1e9d6145b0"
   conf.gem :github => "kou/mruby-tsort",
            :checksum_hash => "6d7f5a56ac7a90847f84186ce1dbc780e41928dc"
-  conf.gem :github => "ksss/mruby-file-stat",
-           :checksum_hash => "12871584f2e5e2d24f5c54325d3ba3338414e2a4"
+  conf.gem :github => "kou/mruby-file-stat",
+           :checksum_hash => "b2f542891b612c20b55f9f4211cc3c93f7208732"
   conf.gem :github => "mattn/mruby-onig-regexp",
            :checksum_hash => "0af2124b095474bd2897021df669e61eac4743ec"
 end
