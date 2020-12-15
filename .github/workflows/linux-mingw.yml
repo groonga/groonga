@@ -199,6 +199,8 @@ jobs:
           # Float32 value format is different.
           Remove-Item test\command\suite\tokenizers\document_vector_tf_idf\alphabet.test
           Remove-Item test\command\suite\tokenizers\document_vector_tf_idf\reindex.test
+          Remove-Item test\command\suite\tokenizers\document_vector_tf_idf\token_column.test
+          Remove-Item test\command\suite\tokenizers\document_vector_tf_idf\token_column_different_lexicon.test
           Remove-Item test\command\suite\tokenizers\document_vector_bm25\alphabet.test
           Remove-Item test\command\suite\tokenizers\document_vector_bm25\normalize_false.test
           Remove-Item test\command\suite\tokenizers\document_vector_bm25\reindex.test
