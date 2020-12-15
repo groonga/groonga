@@ -1,12 +1,12 @@
 EXTRA_DIST =					\
-	LEGAL					\
 	CMakeLists.txt				\
+	LEGAL					\
 	build_config.rb				\
+	mruby-dir/src/Win/dirent.c		\
+	mruby-errno/src/known_errors_def.cstub	\
 	mruby_build.rb				\
 	mruby_build.timestamp			\
-	version					\
-	mruby-dir/src/Win/dirent.c		\
-	mruby-errno/src/known_errors_def.cstub
+	version
 
 DEFAULT_INCLUDES =						\
 	-I$(builddir)/mruby-file-stat/src			\
