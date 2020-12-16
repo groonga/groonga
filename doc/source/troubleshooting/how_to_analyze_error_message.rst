@@ -17,7 +17,7 @@ This subsection describes how to analyze socket errors with an example.
 Example
 ^^^^^^^
 
-The following is an example of an error message repoted by Groonga, where xxxxx is an arbitrary number::
+The following is an example of an error message reported by Groonga, where xxxxx is an arbitrary number::
 
   socket error[xxxxx]: no buffer: accept
 
