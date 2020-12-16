@@ -247,7 +247,7 @@ mrb_grn_accessor_estimate_size_for_query(mrb_state *mrb, mrb_value self)
 
   grn_mrb_ctx_check(mrb);
 
-  return mrb_fixnum_value(size);
+  return mrb_int_value(mrb, size);
 }
 
 void

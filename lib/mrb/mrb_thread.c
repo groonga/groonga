@@ -30,7 +30,7 @@ thread_get_limit(mrb_state *mrb, mrb_value self)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   uint32_t limit;
   limit = grn_thread_get_limit_with_ctx(ctx);
-  return mrb_fixnum_value(limit);
+  return mrb_int_value(mrb, limit);
 }
 
 static mrb_value
@@ -43,7 +43,7 @@ thread_set_limit(mrb_state *mrb, mrb_value self)
   if (limit < 1) {
     mrb_raisef(mrb, E_ARGUMENT_ERROR,
                "thread limit must be 1 or larger: %S",
-               mrb_fixnum_value(limit));
+               mrb_int_value(mrb, limit));
   }
   grn_thread_set_limit_with_ctx(ctx, limit);
   return mrb_nil_value();
