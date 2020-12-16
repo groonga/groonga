@@ -625,7 +625,7 @@ mrb_grn_expression_array_reference(mrb_state *mrb, mrb_value self)
     var = grn_expr_get_var(ctx, expr,
                            RSTRING_PTR(mrb_key), RSTRING_LEN(mrb_key));
     break;
-  case MRB_TT_FIXNUM :
+  case MRB_TT_INTEGER :
     var = grn_expr_get_var_by_offset(ctx, expr, mrb_integer(mrb_key));
     break;
   default :
@@ -803,7 +803,7 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
       GRN_OBJ_FIN(ctx, &constant);
     }
     break;
-  case MRB_TT_FIXNUM :
+  case MRB_TT_INTEGER:
     grn_expr_append_const_int(ctx, expr, mrb_integer(mrb_constant), op, n_args);
     break;
   case MRB_TT_SYMBOL :

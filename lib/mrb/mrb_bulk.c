@@ -56,7 +56,7 @@ grn_mrb_value_to_bulk(mrb_state *mrb, mrb_value mrb_value_, grn_obj *bulk)
     grn_obj_reinit(ctx, bulk, GRN_DB_BOOL, 0);
     GRN_BOOL_SET(ctx, bulk, GRN_TRUE);
     break;
-  case MRB_TT_FIXNUM :
+  case MRB_TT_INTEGER :
     grn_obj_reinit(ctx, bulk, GRN_DB_INT64, 0);
     GRN_INT64_SET(ctx, bulk, mrb_integer(mrb_value_));
     break;
@@ -188,9 +188,9 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
     break;
   case GRN_DB_UINT32 :
     {
-      int64_t value;
+      uint32_t value;
       value = GRN_UINT32_VALUE(bulk);
-      if (FIXABLE(value)) {
+      if (value <= MRB_INT_MAX) {
         mrb_value_ = mrb_int_value(mrb, value);
       } else {
         mrb_value_ = mrb_float_value(mrb, value);
@@ -201,7 +201,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
     {
       int64_t value;
       value = GRN_INT64_VALUE(bulk);
-      if (FIXABLE(value)) {
+      if (MRB_INT_MIN <= value && value <= MRB_INT_MAX) {
         mrb_value_ = mrb_int_value(mrb, value);
       } else {
         mrb_value_ = mrb_float_value(mrb, value);
@@ -212,7 +212,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
     {
       uint64_t value;
       value = GRN_UINT64_VALUE(bulk);
-      if (FIXABLE(value)) {
+      if (value <= MRB_INT_MAX) {
         mrb_value_ = mrb_int_value(mrb, value);
       } else {
         mrb_value_ = mrb_float_value(mrb, value);
