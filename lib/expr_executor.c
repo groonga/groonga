@@ -24,9 +24,9 @@
 #include "grn_expr_code.h"
 #include "grn_expr_executor.h"
 #include "grn_geo.h"
+#include "grn_normalizer.h"
 
 #ifdef GRN_SUPPORT_REGEXP
-# include "grn_normalizer.h"
 # include "grn_onigmo.h"
 #endif
 
@@ -2876,9 +2876,11 @@ grn_expr_executor_is_simple_match(grn_ctx *ctx,
     return false;
   }
 
+#ifdef GRN_SUPPORT_REGEXP
   if (!grn_onigmo_is_valid_encoding(ctx)) {
     return GRN_FALSE;
   }
+#endif
 
   grn_expr_executor_init_simple_match(ctx, executor);
 
