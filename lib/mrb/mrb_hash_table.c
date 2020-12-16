@@ -62,7 +62,7 @@ mrb_grn_hash_table_class_create(mrb_state *mrb, mrb_value klass)
 
     mrb_flags = grn_mrb_options_get_lit(mrb, mrb_options, "flags");
     if (!mrb_nil_p(mrb_flags)) {
-      flags |= mrb_fixnum(mrb_flags);
+      flags |= mrb_integer(mrb_flags);
     }
 
     mrb_key_type = grn_mrb_options_get_lit(mrb, mrb_options, "key_type");

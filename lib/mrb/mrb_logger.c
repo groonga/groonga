@@ -53,7 +53,7 @@ logger_s_get_default_level(mrb_state *mrb, mrb_value self)
   mrb_value mrb_level;
 
   mrb_level_class = mrb_const_get(mrb, self, mrb_intern_lit(mrb, "Level"));
-  mrb_level = mrb_fixnum_value(grn_default_logger_get_max_level());
+  mrb_level = mrb_int_value(mrb, grn_default_logger_get_max_level());
   return mrb_funcall(mrb, mrb_level_class, "find", 1, mrb_level);
 }
 
@@ -64,7 +64,7 @@ logger_s_get_default_flags(mrb_state *mrb, mrb_value self)
   mrb_value mrb_flags;
 
   mrb_flags_class = mrb_const_get(mrb, self, mrb_intern_lit(mrb, "Flags"));
-  mrb_flags = mrb_fixnum_value(grn_default_logger_get_flags());
+  mrb_flags = mrb_int_value(mrb, grn_default_logger_get_flags());
   return mrb_funcall(mrb, mrb_flags_class, "new", 1, mrb_flags);
 }
 

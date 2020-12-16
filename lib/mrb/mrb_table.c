@@ -113,7 +113,7 @@ mrb_grn_table_get_column_ids(mrb_state *mrb, mrb_value self)
   {
     grn_id *key;
     GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
-      mrb_ary_push(mrb, mrb_column_ids, mrb_fixnum_value(*key));
+        mrb_ary_push(mrb, mrb_column_ids, mrb_int_value(mrb, *key));
     });
   }
   grn_hash_close(ctx, columns);
@@ -180,7 +180,7 @@ mrb_grn_table_get_size(mrb_state *mrb, mrb_value self)
   size = grn_table_size(ctx, DATA_PTR(self));
   grn_mrb_ctx_check(mrb);
 
-  return mrb_fixnum_value(size);
+  return mrb_int_value(mrb, size);
 }
 
 static mrb_value
@@ -222,7 +222,7 @@ mrb_grn_table_select(mrb_state *mrb, mrb_value self)
 
     mrb_operator = grn_mrb_options_get_lit(mrb, mrb_options, "operator");
     if (!mrb_nil_p(mrb_operator)) {
-      operator = mrb_fixnum(mrb_operator);
+      operator = mrb_integer(mrb_operator);
     }
   }
 
@@ -315,7 +315,7 @@ mrb_grn_table_delete(mrb_state *mrb, mrb_value self)
 
   mrb_id = grn_mrb_options_get_lit(mrb, mrb_options, "id");
   if (!mrb_nil_p(mrb_id)) {
-    grn_table_delete_by_id(ctx, table, mrb_fixnum(mrb_id));
+    grn_table_delete_by_id(ctx, table, mrb_integer(mrb_id));
     grn_mrb_ctx_check(mrb);
     return mrb_nil_value();
   }

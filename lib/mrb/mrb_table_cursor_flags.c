@@ -35,26 +35,26 @@ grn_mrb_table_cursor_flags_init(grn_ctx *ctx)
   flags_module = mrb_define_module_under(mrb, module, "TableCursorFlags");
 
   mrb_define_const(mrb, flags_module, "ASCENDING",
-                   mrb_fixnum_value(GRN_CURSOR_ASCENDING));
+                   mrb_int_value(mrb, GRN_CURSOR_ASCENDING));
   mrb_define_const(mrb, flags_module, "DESCENDING",
-                   mrb_fixnum_value(GRN_CURSOR_DESCENDING));
+                   mrb_int_value(mrb, GRN_CURSOR_DESCENDING));
   mrb_define_const(mrb, flags_module, "GE",
-                   mrb_fixnum_value(GRN_CURSOR_GE));
+                   mrb_int_value(mrb, GRN_CURSOR_GE));
   mrb_define_const(mrb, flags_module, "GT",
-                   mrb_fixnum_value(GRN_CURSOR_GT));
+                   mrb_int_value(mrb, GRN_CURSOR_GT));
   mrb_define_const(mrb, flags_module, "LE",
-                   mrb_fixnum_value(GRN_CURSOR_LE));
+                   mrb_int_value(mrb, GRN_CURSOR_LE));
   mrb_define_const(mrb, flags_module, "LT",
-                   mrb_fixnum_value(GRN_CURSOR_LT));
+                   mrb_int_value(mrb, GRN_CURSOR_LT));
   mrb_define_const(mrb, flags_module, "BY_KEY",
-                   mrb_fixnum_value(GRN_CURSOR_BY_KEY));
+                   mrb_int_value(mrb, GRN_CURSOR_BY_KEY));
   mrb_define_const(mrb, flags_module, "BY_ID",
-                   mrb_fixnum_value(GRN_CURSOR_BY_ID));
+                   mrb_int_value(mrb, GRN_CURSOR_BY_ID));
   mrb_define_const(mrb, flags_module, "PREFIX",
-                   mrb_fixnum_value(GRN_CURSOR_PREFIX));
+                   mrb_int_value(mrb, GRN_CURSOR_PREFIX));
   mrb_define_const(mrb, flags_module, "SIZE_BY_BIT",
-                   mrb_fixnum_value(GRN_CURSOR_SIZE_BY_BIT));
+                   mrb_int_value(mrb, GRN_CURSOR_SIZE_BY_BIT));
   mrb_define_const(mrb, flags_module, "RK",
-                   mrb_fixnum_value(GRN_CURSOR_RK));
+                   mrb_int_value(mrb, GRN_CURSOR_RK));
 }
 #endif

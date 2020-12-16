@@ -97,8 +97,8 @@ grn_mrb_value_to_raw_data(mrb_state *mrb,
 
         mrb_sec = mrb_funcall(mrb, mrb_value_, "to_i", 0);
         mrb_usec = mrb_funcall(mrb, mrb_value_, "usec", 0);
-        buffer->value.time_value = GRN_TIME_PACK(mrb_fixnum(mrb_sec),
-                                                 mrb_fixnum(mrb_usec));
+        buffer->value.time_value = GRN_TIME_PACK(mrb_integer(mrb_sec),
+                                                 mrb_integer(mrb_usec));
         *raw_value = &(buffer->value.time_value);
         *raw_value_size = sizeof(buffer->value.time_value);
       } else {
@@ -150,11 +150,11 @@ grn_mrb_value_from_raw_data(mrb_state *mrb,
   switch (domain) {
   case GRN_DB_INT32 :
     if (raw_value_size == 0) {
-      mrb_value_ = mrb_fixnum_value(0);
+      mrb_value_ = mrb_int_value(mrb, 0);
     } else {
       int32_t value;
       value = *((int32_t *)raw_value);
-      mrb_value_ = mrb_fixnum_value(value);
+      mrb_value_ = mrb_int_value(mrb, value);
     }
     break;
   case GRN_DB_SHORT_TEXT :
@@ -301,7 +301,7 @@ grn_mrb_class_to_type(mrb_state *mrb, struct RClass *klass)
     type = GRN_DB_BOOL;
   } else if (klass == mrb->symbol_class) {
     type = GRN_DB_TEXT;
-  } else if (klass == mrb->fixnum_class) {
+  } else if (klass == mrb->integer_class) {
     type = GRN_DB_INT64;
   } else if (klass == mrb->float_class) {
     type = GRN_DB_FLOAT;

@@ -35,8 +35,8 @@ grn_mrb_table_sort_flags_init(grn_ctx *ctx)
   flags_module = mrb_define_module_under(mrb, module, "TableSortFlags");
 
   mrb_define_const(mrb, flags_module, "ASCENDING",
-                   mrb_fixnum_value(GRN_TABLE_SORT_ASC));
+                   mrb_int_value(mrb, GRN_TABLE_SORT_ASC));
   mrb_define_const(mrb, flags_module, "DESCENDING",
-                   mrb_fixnum_value(GRN_TABLE_SORT_DESC));
+                   mrb_int_value(mrb, GRN_TABLE_SORT_DESC));
 }
 #endif

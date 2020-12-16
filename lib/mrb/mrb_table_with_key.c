@@ -57,7 +57,7 @@ mrb_grn_table_with_key_array_reference(mrb_state *mrb, mrb_value self)
   if (record_id == GRN_ID_NIL) {
     return mrb_nil_value();
   } else {
-    return mrb_fixnum_value(record_id);
+    return mrb_int_value(mrb, record_id);
   }
 }
 

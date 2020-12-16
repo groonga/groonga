@@ -66,8 +66,8 @@ ctx_array_reference(mrb_state *mrb, mrb_value self)
     return mrb_nil_value();
   }
 
-  if (mrb_fixnum_p(mrb_id_or_name)) {
-    grn_id id = mrb_fixnum(mrb_id_or_name);
+  if (mrb_integer_p(mrb_id_or_name)) {
+    grn_id id = mrb_integer(mrb_id_or_name);
     object = grn_ctx_at(ctx, id);
   } else {
     mrb_value mrb_name;
@@ -86,7 +86,7 @@ ctx_get_rc(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
 
-  return mrb_fixnum_value(ctx->rc);
+  return mrb_int_value(mrb, ctx->rc);
 }
 
 static mrb_value
@@ -98,7 +98,7 @@ ctx_set_rc(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "i", &rc);
   ctx->rc = rc;
 
-  return mrb_fixnum_value(ctx->rc);
+  return mrb_int_value(mrb, ctx->rc);
 }
 
 static mrb_value
@@ -106,7 +106,7 @@ ctx_get_error_level(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
 
-  return mrb_fixnum_value(ctx->errlvl);
+  return mrb_int_value(mrb, ctx->errlvl);
 }
 
 static mrb_value
@@ -118,7 +118,7 @@ ctx_set_error_level(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "i", &error_level);
   ctx->errlvl = error_level;
 
-  return mrb_fixnum_value(ctx->errlvl);
+  return mrb_int_value(mrb, ctx->errlvl);
 }
 
 static mrb_value
@@ -147,7 +147,7 @@ ctx_get_error_line(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
 
-  return mrb_fixnum_value(ctx->errline);
+  return mrb_int_value(mrb, ctx->errline);
 }
 
 static mrb_value
@@ -159,7 +159,7 @@ ctx_set_error_line(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "i", &error_line);
   ctx->errline = error_line;
 
-  return mrb_fixnum_value(ctx->errline);
+  return mrb_int_value(mrb, ctx->errline);
 }
 
 static mrb_value
@@ -234,7 +234,7 @@ ctx_get_command_version(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
 
-  return mrb_fixnum_value(grn_ctx_get_command_version(ctx));
+  return mrb_int_value(mrb, grn_ctx_get_command_version(ctx));
 }
 
 static mrb_value
@@ -246,7 +246,7 @@ ctx_set_command_version(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "i", &command_version);
   grn_ctx_set_command_version(ctx, command_version);
 
-  return mrb_fixnum_value(command_version);
+  return mrb_int_value(mrb, command_version);
 }
 
 static mrb_value
@@ -276,7 +276,7 @@ ctx_get_output_type(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
 
-  return mrb_fixnum_value(grn_ctx_get_output_type(ctx));
+  return mrb_int_value(mrb, grn_ctx_get_output_type(ctx));
 }
 
 static mrb_value
@@ -288,7 +288,7 @@ ctx_set_output_type(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "i", &output_type);
   grn_ctx_set_output_type(ctx, output_type);
 
-  return mrb_fixnum_value(output_type);
+  return mrb_int_value(mrb, output_type);
 }
 
 static mrb_value

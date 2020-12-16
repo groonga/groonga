@@ -54,7 +54,6 @@ libmruby_la_SOURCES = \
 	../mruby-source/mrbgems/mruby-proc-ext/test/proc.c \
 	../mruby-source/mrbgems/mruby-random/src/random.c \
 	../mruby-source/mrbgems/mruby-range-ext/src/range.c \
-	../mruby-source/mrbgems/mruby-sprintf/src/kernel.c \
 	../mruby-source/mrbgems/mruby-sprintf/src/sprintf.c \
 	../mruby-source/mrbgems/mruby-string-ext/src/string.c \
 	../mruby-source/mrbgems/mruby-struct/src/struct.c \

@@ -47,7 +47,7 @@ mrb_grn_column_class_parse_flags(mrb_state *mrb, mrb_value self)
                                       error_message_tag,
                                       flags_text,
                                       flags_text + flags_text_size);
-  return mrb_fixnum_value(flags);
+  return mrb_int_value(mrb, flags);
 }
 
 static mrb_value

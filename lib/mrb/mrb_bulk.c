@@ -56,9 +56,9 @@ grn_mrb_value_to_bulk(mrb_state *mrb, mrb_value mrb_value_, grn_obj *bulk)
     grn_obj_reinit(ctx, bulk, GRN_DB_BOOL, 0);
     GRN_BOOL_SET(ctx, bulk, GRN_TRUE);
     break;
-  case MRB_TT_FIXNUM :
+  case MRB_TT_INTEGER :
     grn_obj_reinit(ctx, bulk, GRN_DB_INT64, 0);
-    GRN_INT64_SET(ctx, bulk, mrb_fixnum(mrb_value_));
+    GRN_INT64_SET(ctx, bulk, mrb_integer(mrb_value_));
     break;
   case MRB_TT_SYMBOL :
     {
@@ -97,7 +97,7 @@ grn_mrb_value_to_bulk(mrb_state *mrb, mrb_value mrb_value_, grn_obj *bulk)
         mrb_usec = mrb_funcall(mrb, mrb_value_, "usec", 0);
         grn_obj_reinit(ctx, bulk, GRN_DB_TIME, 0);
         GRN_TIME_SET(ctx, bulk,
-                     GRN_TIME_PACK(mrb_fixnum(mrb_sec), mrb_fixnum(mrb_usec)));
+                     GRN_TIME_PACK(mrb_integer(mrb_sec), mrb_integer(mrb_usec)));
       } else if (klass == mrb_bulk_class) {
         grn_obj *source_bulk = DATA_PTR(mrb_value_);
 
@@ -119,7 +119,7 @@ grn_mrb_value_to_bulk(mrb_state *mrb, mrb_value mrb_value_, grn_obj *bulk)
         mrb_record_id = mrb_funcall(mrb, mrb_value_, "id", 0);
         grn_obj_reinit(ctx, bulk, grn_obj_id(ctx, table), 0);
         if (!mrb_nil_p(mrb_value_)) {
-          GRN_RECORD_SET(ctx, bulk, mrb_fixnum(mrb_record_id));
+          GRN_RECORD_SET(ctx, bulk, mrb_integer(mrb_record_id));
         }
       } else {
         mrb_raisef(mrb, E_ARGUMENT_ERROR,
@@ -155,43 +155,43 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
     {
       int8_t value;
       value = GRN_INT8_VALUE(bulk);
-      mrb_value_ = mrb_fixnum_value(value);
+      mrb_value_ = mrb_int_value(mrb, value);
     }
     break;
   case GRN_DB_UINT8 :
     {
       uint8_t value;
       value = GRN_UINT8_VALUE(bulk);
-      mrb_value_ = mrb_fixnum_value(value);
+      mrb_value_ = mrb_int_value(mrb, value);
     }
     break;
   case GRN_DB_INT16 :
     {
       int16_t value;
       value = GRN_INT16_VALUE(bulk);
-      mrb_value_ = mrb_fixnum_value(value);
+      mrb_value_ = mrb_int_value(mrb, value);
     }
     break;
   case GRN_DB_UINT16 :
     {
       uint16_t value;
       value = GRN_UINT16_VALUE(bulk);
-      mrb_value_ = mrb_fixnum_value(value);
+      mrb_value_ = mrb_int_value(mrb, value);
     }
     break;
   case GRN_DB_INT32 :
     {
       int32_t value;
       value = GRN_INT32_VALUE(bulk);
-      mrb_value_ = mrb_fixnum_value(value);
+      mrb_value_ = mrb_int_value(mrb, value);
     }
     break;
   case GRN_DB_UINT32 :
     {
-      int64_t value;
+      uint32_t value;
       value = GRN_UINT32_VALUE(bulk);
-      if (FIXABLE(value)) {
-        mrb_value_ = mrb_fixnum_value(value);
+      if (value <= MRB_INT_MAX) {
+        mrb_value_ = mrb_int_value(mrb, value);
       } else {
         mrb_value_ = mrb_float_value(mrb, value);
       }
@@ -201,8 +201,8 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
     {
       int64_t value;
       value = GRN_INT64_VALUE(bulk);
-      if (FIXABLE(value)) {
-        mrb_value_ = mrb_fixnum_value(value);
+      if (MRB_INT_MIN <= value && value <= MRB_INT_MAX) {
+        mrb_value_ = mrb_int_value(mrb, value);
       } else {
         mrb_value_ = mrb_float_value(mrb, value);
       }
@@ -212,8 +212,8 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
     {
       uint64_t value;
       value = GRN_UINT64_VALUE(bulk);
-      if (FIXABLE(value)) {
-        mrb_value_ = mrb_fixnum_value(value);
+      if (value <= MRB_INT_MAX) {
+        mrb_value_ = mrb_int_value(mrb, value);
       } else {
         mrb_value_ = mrb_float_value(mrb, value);
       }
@@ -245,14 +245,14 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
       if (sec > MRB_INT_MAX) {
         mrb_sec = mrb_float_value(mrb, sec);
       } else {
-        mrb_sec = mrb_fixnum_value(sec);
+        mrb_sec = mrb_int_value(mrb, sec);
       }
       mrb_value_ = mrb_funcall(mrb,
                                mrb_obj_value(ctx->impl->mrb.builtin.time_class),
                                "at",
                                2,
                                mrb_sec,
-                               mrb_fixnum_value(usec));
+                               mrb_int_value(mrb, usec));
     }
     break;
   case GRN_DB_SHORT_TEXT :
@@ -288,7 +288,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
 
         mrb_record_class = mrb_class_get_under(mrb, data->module, "Record");
         mrb_new_arguments[0] = grn_mrb_value_from_grn_obj(mrb, domain);
-        mrb_new_arguments[1] = mrb_fixnum_value(GRN_RECORD_VALUE(bulk));
+        mrb_new_arguments[1] = mrb_int_value(mrb, GRN_RECORD_VALUE(bulk));
         mrb_value_ = mrb_obj_new(mrb,
                                  mrb_record_class,
                                  2,

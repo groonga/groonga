@@ -35,17 +35,17 @@ grn_mrb_table_group_flags_init(grn_ctx *ctx)
   flags_module = mrb_define_module_under(mrb, module, "TableGroupFlags");
 
   mrb_define_const(mrb, flags_module, "CALC_COUNT",
-                   mrb_fixnum_value(GRN_TABLE_GROUP_CALC_COUNT));
+                   mrb_int_value(mrb, GRN_TABLE_GROUP_CALC_COUNT));
   mrb_define_const(mrb, flags_module, "CALC_MAX",
-                   mrb_fixnum_value(GRN_TABLE_GROUP_CALC_MAX));
+                   mrb_int_value(mrb, GRN_TABLE_GROUP_CALC_MAX));
   mrb_define_const(mrb, flags_module, "CALC_MIN",
-                   mrb_fixnum_value(GRN_TABLE_GROUP_CALC_MIN));
+                   mrb_int_value(mrb, GRN_TABLE_GROUP_CALC_MIN));
   mrb_define_const(mrb, flags_module, "CALC_SUM",
-                   mrb_fixnum_value(GRN_TABLE_GROUP_CALC_SUM));
+                   mrb_int_value(mrb, GRN_TABLE_GROUP_CALC_SUM));
   /* Deprecated since 10.0.4. Use CALC_MEAN instead. */
   mrb_define_const(mrb, flags_module, "CALC_AVG",
-                   mrb_fixnum_value(GRN_TABLE_GROUP_CALC_AVG));
+                   mrb_int_value(mrb, GRN_TABLE_GROUP_CALC_AVG));
   mrb_define_const(mrb, flags_module, "CALC_MEAN",
-                   mrb_fixnum_value(GRN_TABLE_GROUP_CALC_MEAN));
+                   mrb_int_value(mrb, GRN_TABLE_GROUP_CALC_MEAN));
 }
 #endif

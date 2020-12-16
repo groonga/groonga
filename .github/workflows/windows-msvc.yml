@@ -139,7 +139,6 @@ jobs:
       - name: Install Groonga
         shell: cmd
         run: |
-          patch -p1 < packages/source/patches/mruby-do-not-check-fd-for-stdin-stdout-stderr.diff
           call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" ${{ matrix.vc-architecture }}
           mkdir ..\groonga-build
           set CMAKE_ARGS=-S .

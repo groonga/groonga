@@ -60,8 +60,8 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
 
     new_args[0] = mrb_format(mrb,
                              "line %S:%S: %S",
-                             mrb_fixnum_value(error->lineno),
-                             mrb_fixnum_value(error->column),
+                             mrb_int_value(mrb, error->lineno),
+                             mrb_int_value(mrb, error->column),
                              mrb_str_new_cstr(mrb, error->message));
     exception = mrb_obj_new(mrb, E_SYNTAX_ERROR, 1, new_args);
     mrb_parser_free(parser);

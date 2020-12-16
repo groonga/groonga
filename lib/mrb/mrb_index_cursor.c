@@ -112,7 +112,7 @@ mrb_grn_index_cursor_count(mrb_state *mrb, mrb_value self)
     n_records++;
   }
 
-  return mrb_fixnum_value(n_records);
+  return mrb_int_value(mrb, n_records);
 }
 
 static mrb_value
@@ -158,23 +158,23 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
 
     mrb_offset = grn_mrb_options_get_lit(mrb, mrb_options, "offset");
     if (!mrb_nil_p(mrb_offset)) {
-      offset = mrb_fixnum(mrb_offset);
+      offset = mrb_integer(mrb_offset);
     }
 
     mrb_limit = grn_mrb_options_get_lit(mrb, mrb_options, "limit");
     if (!mrb_nil_p(mrb_limit)) {
-      limit = mrb_fixnum(mrb_limit);
+      limit = mrb_integer(mrb_limit);
     }
 
     mrb_max_n_unmatched_records =
       grn_mrb_options_get_lit(mrb, mrb_options, "max_n_unmatched_records");
     if (!mrb_nil_p(mrb_max_n_unmatched_records)) {
-      max_n_unmatched_records = mrb_fixnum(mrb_max_n_unmatched_records);
+      max_n_unmatched_records = mrb_integer(mrb_max_n_unmatched_records);
     }
   }
 
   if (limit <= 0) {
-    return mrb_fixnum_value(n_matched_records);
+    return mrb_int_value(mrb, n_matched_records);
   }
 
   mrb_index = mrb_iv_get(mrb, self, mrb_intern_lit(mrb, "@index"));
@@ -206,7 +206,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
         if (n_unmatched_records > max_n_unmatched_records) {
           grn_expr_executor_fin(ctx, &executor);
           grn_obj_unref(ctx, data_table);
-          return mrb_fixnum_value(-1);
+          return mrb_int_value(mrb, -1);
         }
         continue;
       }
@@ -234,7 +234,7 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
 
   grn_obj_unref(ctx, data_table);
 
-  return mrb_fixnum_value(n_matched_records);
+  return mrb_int_value(mrb, n_matched_records);
 }
 
 void

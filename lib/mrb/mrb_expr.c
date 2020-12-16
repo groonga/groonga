@@ -208,7 +208,7 @@ mrb_grn_scan_info_get_flags(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   flags = grn_scan_info_get_flags(si);
-  return mrb_fixnum_value(flags);
+  return mrb_int_value(mrb, flags);
 }
 
 static mrb_value
@@ -256,7 +256,7 @@ mrb_grn_scan_info_get_max_interval(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   max_interval = grn_scan_info_get_max_interval(si);
-  return mrb_fixnum_value(max_interval);
+  return mrb_int_value(mrb, max_interval);
 }
 
 static mrb_value
@@ -279,7 +279,7 @@ mrb_grn_scan_info_get_additional_last_interval(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   additional_last_interval = grn_scan_info_get_additional_last_interval(si);
-  return mrb_fixnum_value(additional_last_interval);
+  return mrb_int_value(mrb, additional_last_interval);
 }
 
 static mrb_value
@@ -302,7 +302,7 @@ mrb_grn_scan_info_get_similarity_threshold(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   similarity_threshold = grn_scan_info_get_similarity_threshold(si);
-  return mrb_fixnum_value(similarity_threshold);
+  return mrb_int_value(mrb, similarity_threshold);
 }
 
 static mrb_value
@@ -325,7 +325,7 @@ mrb_grn_scan_info_get_quorum_threshold(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   quorum_threshold = grn_scan_info_get_quorum_threshold(si);
-  return mrb_fixnum_value(quorum_threshold);
+  return mrb_int_value(mrb, quorum_threshold);
 }
 
 static mrb_value
@@ -368,7 +368,7 @@ mrb_grn_scan_info_get_start_position(mrb_state *mrb, mrb_value self)
 
   si = DATA_PTR(self);
   start_position = grn_scan_info_get_start_position(si);
-  return mrb_fixnum_value(start_position);
+  return mrb_int_value(mrb, start_position);
 }
 
 static mrb_value
@@ -418,13 +418,13 @@ mrb_grn_expr_code_inspect(mrb_state *mrb, mrb_value self)
     mrb_str_cat_lit(mrb, inspected, " weight=");
     mrb_str_concat(mrb, inspected,
                    mrb_funcall(mrb,
-                               mrb_fixnum_value(weight),
+                               mrb_int_value(mrb, weight),
                                "inspect",
                                0));
     mrb_str_cat_lit(mrb, inspected, ", offset=");
     mrb_str_concat(mrb, inspected,
                    mrb_funcall(mrb,
-                               mrb_fixnum_value(offset),
+                               mrb_int_value(mrb, offset),
                                "inspect",
                                0));
   }
@@ -432,14 +432,14 @@ mrb_grn_expr_code_inspect(mrb_state *mrb, mrb_value self)
   mrb_str_cat_lit(mrb, inspected, ", n_args=");
   mrb_str_concat(mrb, inspected,
                  mrb_funcall(mrb,
-                             mrb_fixnum_value(code->nargs),
+                             mrb_int_value(mrb, code->nargs),
                              "inspect",
                              0));
 
   mrb_str_cat_lit(mrb, inspected, ", modify=");
   mrb_str_concat(mrb, inspected,
                  mrb_funcall(mrb,
-                             mrb_fixnum_value(code->modify),
+                             mrb_int_value(mrb, code->modify),
                              "inspect",
                              0));
 
@@ -453,7 +453,7 @@ mrb_grn_expr_code_inspect(mrb_state *mrb, mrb_value self)
   mrb_str_cat_lit(mrb, inspected, ", flags=");
   mrb_str_concat(mrb, inspected,
                  mrb_funcall(mrb,
-                             mrb_fixnum_value(code->flags),
+                             mrb_int_value(mrb, code->flags),
                              "inspect",
                              0));
 
@@ -478,8 +478,8 @@ mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
   mrb_value mrb_values[2];
 
   weight = grn_expr_code_get_weight(ctx, DATA_PTR(self), &offset);
-  mrb_values[0] = mrb_fixnum_value(weight);
-  mrb_values[1] = mrb_fixnum_value(offset);
+  mrb_values[0] = mrb_int_value(mrb, weight);
+  mrb_values[1] = mrb_int_value(mrb, offset);
   return mrb_ary_new_from_values(mrb, 2, mrb_values);
 }
 
@@ -498,7 +498,7 @@ mrb_grn_expr_code_get_n_args(mrb_state *mrb, mrb_value self)
   grn_expr_code *expr_code;
 
   expr_code = DATA_PTR(self);
-  return mrb_fixnum_value(expr_code->nargs);
+  return mrb_int_value(mrb, expr_code->nargs);
 }
 
 static mrb_value
@@ -516,7 +516,7 @@ mrb_grn_expr_code_get_flags(mrb_state *mrb, mrb_value self)
   grn_expr_code *expr_code;
 
   expr_code = DATA_PTR(self);
-  return mrb_fixnum_value(expr_code->flags);
+  return mrb_int_value(mrb, expr_code->flags);
 }
 
 static mrb_value
@@ -525,7 +525,7 @@ mrb_grn_expr_code_get_modify(mrb_state *mrb, mrb_value self)
   grn_expr_code *expr_code;
 
   expr_code = DATA_PTR(self);
-  return mrb_fixnum_value(expr_code->modify);
+  return mrb_int_value(mrb, expr_code->modify);
 }
 
 static mrb_value
@@ -625,8 +625,8 @@ mrb_grn_expression_array_reference(mrb_state *mrb, mrb_value self)
     var = grn_expr_get_var(ctx, expr,
                            RSTRING_PTR(mrb_key), RSTRING_LEN(mrb_key));
     break;
-  case MRB_TT_FIXNUM :
-    var = grn_expr_get_var_by_offset(ctx, expr, mrb_fixnum(mrb_key));
+  case MRB_TT_INTEGER :
+    var = grn_expr_get_var_by_offset(ctx, expr, mrb_integer(mrb_key));
     break;
   default :
     mrb_raisef(mrb, E_ARGUMENT_ERROR,
@@ -732,7 +732,7 @@ mrb_grn_expression_parse(mrb_state *mrb, mrb_value self)
 
     mrb_flags = grn_mrb_options_get_lit(mrb, mrb_options, "flags");
     if (!mrb_nil_p(mrb_flags)) {
-      flags = mrb_fixnum(mrb_flags);
+      flags = mrb_integer(mrb_flags);
     }
   }
 
@@ -803,8 +803,8 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
       GRN_OBJ_FIN(ctx, &constant);
     }
     break;
-  case MRB_TT_FIXNUM :
-    grn_expr_append_const_int(ctx, expr, mrb_fixnum(mrb_constant), op, n_args);
+  case MRB_TT_INTEGER:
+    grn_expr_append_const_int(ctx, expr, mrb_integer(mrb_constant), op, n_args);
     break;
   case MRB_TT_SYMBOL :
     {
@@ -845,7 +845,7 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
         mrb_usec = mrb_funcall(mrb, mrb_constant, "usec", 0);
         GRN_TIME_INIT(&constant, 0);
         GRN_TIME_SET(ctx, &constant,
-                     GRN_TIME_PACK(mrb_fixnum(mrb_sec), mrb_fixnum(mrb_usec)));
+                     GRN_TIME_PACK(mrb_integer(mrb_sec), mrb_integer(mrb_usec)));
         grn_expr_append_const(ctx, expr, &constant, op, n_args);
         GRN_OBJ_FIN(ctx, &constant);
       } else if (klass == mrb_class_get_under(mrb, data->module, "Record")) {
@@ -854,7 +854,7 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
         mrb_value mrb_table;
         grn_obj *domain;
 
-        id = mrb_fixnum(mrb_funcall(mrb, mrb_constant, "id", 0));
+        id = mrb_integer(mrb_funcall(mrb, mrb_constant, "id", 0));
         mrb_table = mrb_funcall(mrb, mrb_constant, "table", 0);
         domain = DATA_PTR(mrb_table);
         GRN_RECORD_INIT(&constant, 0, grn_obj_id(ctx, domain));
@@ -984,7 +984,7 @@ grn_mrb_expr_init(grn_ctx *ctx)
     struct RClass *flags_module;
     flags_module = mrb_define_module_under(mrb, expression_code_class, "Flags");
     mrb_define_const(mrb, flags_module, "RELATIONAL_EXPRESSION",
-                     mrb_fixnum_value(GRN_EXPR_CODE_RELATIONAL_EXPRESSION));
+                     mrb_int_value(mrb, GRN_EXPR_CODE_RELATIONAL_EXPRESSION));
   }
 
   klass = mrb_define_class_under(mrb, module, "Expression", object_class);
@@ -993,7 +993,7 @@ grn_mrb_expr_init(grn_ctx *ctx)
 #define DEFINE_FLAG(name)                               \
   mrb_define_const(mrb, klass,                          \
                    #name,                               \
-                   mrb_fixnum_value(GRN_EXPR_ ## name))
+                   mrb_int_value(mrb, GRN_EXPR_ ## name))
 
   DEFINE_FLAG(SYNTAX_QUERY);
   DEFINE_FLAG(SYNTAX_SCRIPT);
@@ -1108,7 +1108,7 @@ grn_mrb_scan_info_build(grn_ctx *ctx,
     int start;
 
     mrb_si_data = RARRAY_PTR(mrb_sis)[i];
-    start = mrb_fixnum(mrb_funcall(mrb, mrb_si_data, "start", 0));
+    start = mrb_integer(mrb_funcall(mrb, mrb_si_data, "start", 0));
     si = grn_scan_info_open(ctx, start);
     mrb_si = mrb_grn_scan_info_new(mrb, si);
     mrb_funcall(mrb, mrb_si, "apply", 1, mrb_si_data);
@@ -1140,7 +1140,7 @@ grn_mrb_expr_estimate_size(grn_ctx *ctx, grn_obj *expr, grn_obj *table)
   if (mrb->exc) {
     size = grn_table_size(ctx, table);
   } else {
-    size = mrb_fixnum(mrb_size);
+    size = mrb_integer(mrb_size);
   }
 
   mrb_gc_arena_restore(mrb, arena_index);

@@ -78,7 +78,7 @@ mrb_grn_index_column_get_source_ids(mrb_state *mrb, mrb_value self)
   mrb_source_ids = mrb_ary_new_capa(mrb, n_ids);
   for (i = 0; i < n_ids; i++) {
     grn_id source_id = GRN_RECORD_VALUE_AT(&source_ids, i);
-    mrb_ary_push(mrb, mrb_source_ids, mrb_fixnum_value(source_id));
+    mrb_ary_push(mrb, mrb_source_ids, mrb_int_value(mrb, source_id));
   }
 
   GRN_OBJ_FIN(ctx, &source_ids);
@@ -98,7 +98,7 @@ mrb_grn_index_column_estimate_size_for_term_id(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "i", &term_id);
 
   size = grn_ii_estimate_size(ctx, (grn_ii *)index_column, term_id);
-  return mrb_fixnum_value(size);
+  return mrb_int_value(mrb, size);
 }
 
 static mrb_value
@@ -142,7 +142,7 @@ mrb_grn_index_column_estimate_size_for_query(mrb_state *mrb, mrb_value self)
 
   grn_mrb_ctx_check(mrb);
 
-  return mrb_fixnum_value(size);
+  return mrb_int_value(mrb, size);
 }
 
 static mrb_value
@@ -162,7 +162,7 @@ mrb_grn_index_column_estimate_size_for_lexicon_cursor(mrb_state *mrb,
   size = grn_ii_estimate_size_for_lexicon_cursor(ctx,
                                                  (grn_ii *)index_column,
                                                  lexicon_cursor);
-  return mrb_fixnum_value(size);
+  return mrb_int_value(mrb, size);
 }
 
 void

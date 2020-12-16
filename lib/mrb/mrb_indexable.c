@@ -57,7 +57,7 @@ indexable_find_index(mrb_state *mrb, mrb_value self)
     data = &(ctx->impl->mrb);
     klass = mrb_class_get_under(mrb, data->module, "IndexInfo");
     args[0] = grn_mrb_value_from_grn_obj(mrb, index_datum.index);
-    args[1] = mrb_fixnum_value(index_datum.section);
+    args[1] = mrb_int_value(mrb, index_datum.section);
     return mrb_obj_new(mrb, klass, 2, args);
   }
 }
@@ -97,7 +97,7 @@ indexable_indexes(mrb_state *mrb, mrb_value self)
     data = &(ctx->impl->mrb);
     klass = mrb_class_get_under(mrb, data->module, "IndexInfo");
     args[0] = grn_mrb_value_from_grn_obj(mrb, index_data[i].index);
-    args[1] = mrb_fixnum_value(index_data[i].section);
+    args[1] = mrb_int_value(mrb, index_data[i].section);
     mrb_ary_push(mrb, mrb_indexes, mrb_obj_new(mrb, klass, 2, args));
   }
 
@@ -144,7 +144,7 @@ indexable_index_ids(mrb_state *mrb, mrb_value self)
       grn_obj_default_set_value_hook_data *data;
 
       data = (grn_obj_default_set_value_hook_data *)GRN_TEXT_VALUE(&hook_data);
-      mrb_ary_push(mrb, mrb_index_ids, mrb_fixnum_value(data->target));
+      mrb_ary_push(mrb, mrb_index_ids, mrb_int_value(mrb, data->target));
     }
   }
 

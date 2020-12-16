@@ -51,7 +51,7 @@ writer_write(mrb_state *mrb, mrb_value self)
     GRN_OUTPUT_BOOL(GRN_TRUE);
     break;
   case MRB_TT_FIXNUM :
-    GRN_OUTPUT_INT64(mrb_fixnum(target));
+    GRN_OUTPUT_INT64(mrb_integer(target));
     break;
   case MRB_TT_FLOAT :
     GRN_OUTPUT_FLOAT(mrb_float(target));
@@ -204,12 +204,12 @@ writer_write_table_records_content_internal(mrb_state *mrb,
   if (!mrb_nil_p(mrb_options)) {
     mrb_value mrb_offset = grn_mrb_options_get_lit(mrb, mrb_options, "offset");
     if (!mrb_nil_p(mrb_offset)) {
-      offset = mrb_fixnum(mrb_offset);
+      offset = mrb_integer(mrb_offset);
     }
 
     mrb_value mrb_limit = grn_mrb_options_get_lit(mrb, mrb_options, "limit");
     if (!mrb_nil_p(mrb_limit)) {
-      limit = mrb_fixnum(mrb_limit);
+      limit = mrb_integer(mrb_limit);
     }
 
     mrb_value mrb_auto_flush =

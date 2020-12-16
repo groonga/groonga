@@ -104,7 +104,7 @@ object_reference_count(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   uint32_t reference_count = grn_obj_reference_count(ctx, DATA_PTR(self));
-  return mrb_fixnum_value(reference_count);
+  return mrb_int_value(mrb, reference_count);
 }
 
 static mrb_value
@@ -115,7 +115,7 @@ object_get_id(mrb_state *mrb, mrb_value self)
 
   id = grn_obj_id(ctx, DATA_PTR(self));
 
-  return mrb_fixnum_value(id);
+  return mrb_int_value(mrb, id);
 }
 
 static mrb_value
@@ -198,7 +198,7 @@ object_hash(mrb_state *mrb, mrb_value self)
   grn_obj *object;
 
   object = DATA_PTR(self);
-  return mrb_fixnum_value((mrb_int)((uint64_t)object));
+  return mrb_int_value(mrb, (mrb_int)((uint64_t)object));
 }
 
 mrb_value
@@ -267,7 +267,7 @@ grn_mrb_object_get_domain_id(mrb_state *mrb, mrb_value self)
   if (domain_id == GRN_ID_NIL) {
     return mrb_nil_value();
   } else {
-    return mrb_fixnum_value(domain_id);
+    return mrb_int_value(mrb, domain_id);
   }
 }
 
@@ -284,7 +284,7 @@ object_get_range_id(mrb_state *mrb, mrb_value self)
   if (range_id == GRN_ID_NIL) {
     return mrb_nil_value();
   } else {
-    return mrb_fixnum_value(range_id);
+    return mrb_int_value(mrb, range_id);
   }
 }
 

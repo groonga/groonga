@@ -36,6 +36,6 @@ grn_mrb_command_version_init(grn_ctx *ctx)
                                                    "CommandVersion");
 
   mrb_define_const(mrb, command_version_module, "DEFAULT",
-                   mrb_fixnum_value(GRN_COMMAND_VERSION_DEFAULT));
+                   mrb_int_value(mrb, GRN_COMMAND_VERSION_DEFAULT));
 }
 #endif

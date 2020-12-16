@@ -41,7 +41,7 @@ grn_mrb_object_flags_init(grn_ctx *ctx)
 
 #define MRB_DEFINE_FLAG(name)                           \
   mrb_define_const(mrb, flags_module, #name,            \
-                   mrb_fixnum_value(GRN_OBJ_ ## name))
+                   mrb_int_value(mrb, GRN_OBJ_ ## name))
 
   MRB_DEFINE_FLAG(TABLE_TYPE_MASK);
   MRB_DEFINE_FLAG(TABLE_HASH_KEY);

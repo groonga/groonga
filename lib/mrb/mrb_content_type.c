@@ -34,18 +34,18 @@ grn_mrb_content_type_init(grn_ctx *ctx)
   module = mrb_define_module_under(mrb, data->module, "ContentType");
 
   mrb_define_const(mrb, module, "NONE",
-                   mrb_fixnum_value(GRN_CONTENT_NONE));
+                   mrb_int_value(mrb, GRN_CONTENT_NONE));
   mrb_define_const(mrb, module, "TSV",
-                   mrb_fixnum_value(GRN_CONTENT_TSV));
+                   mrb_int_value(mrb, GRN_CONTENT_TSV));
   mrb_define_const(mrb, module, "JSON",
-                   mrb_fixnum_value(GRN_CONTENT_JSON));
+                   mrb_int_value(mrb, GRN_CONTENT_JSON));
   mrb_define_const(mrb, module, "XML",
-                   mrb_fixnum_value(GRN_CONTENT_XML));
+                   mrb_int_value(mrb, GRN_CONTENT_XML));
   mrb_define_const(mrb, module, "MSGPACK",
-                   mrb_fixnum_value(GRN_CONTENT_MSGPACK));
+                   mrb_int_value(mrb, GRN_CONTENT_MSGPACK));
   mrb_define_const(mrb, module, "GROONGA_COMMAND_LIST",
-                   mrb_fixnum_value(GRN_CONTENT_GROONGA_COMMAND_LIST));
+                   mrb_int_value(mrb, GRN_CONTENT_GROONGA_COMMAND_LIST));
   mrb_define_const(mrb, module, "APACHE_ARROW",
-                   mrb_fixnum_value(GRN_CONTENT_APACHE_ARROW));
+                   mrb_int_value(mrb, GRN_CONTENT_APACHE_ARROW));
 }
 #endif
