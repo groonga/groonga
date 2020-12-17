@@ -88,7 +88,7 @@ select Users   --filter '_id > 1'   --slices[name].filter 'fuzzy_search(name, "T
 #|i| [table][select][index][selector][no-index][fuzzy_search] <>
 #|i| [object][search][index][key][fuzzy] <Names.user>
 #|i| grn_ii_sel > (Tom)
-#|i| n=1 (Tom)
+#|i| [ii][select] n=1 (Tom)
 #|i| exact: 3
 #|i| hits=3
 #|i| [accessor][resolve][table] (temporary) -> <Users>

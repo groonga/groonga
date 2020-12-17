@@ -46,7 +46,7 @@ select Logs --filter 'message @~ "\\\\Athis"'
 ]
 #|i| [object][search][index][key][regexp] <Terms.index>
 #|i| grn_ii_sel > (\Athis)
-#|i| n=3 (￯this)
+#|i| [ii][select] n=3 (￯this)
 #|i| exact: 1
 #|i| hits=1
 log_level --level notice

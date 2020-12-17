@@ -50,7 +50,7 @@ select Memos --filter 'content @~ "(?-mix:onga)\\\\z"'
 ]
 #|i| [object][search][index][key][regexp] <RegexpTokens.memos_content>
 #|i| grn_ii_sel > ((?-mix:onga)\z)
-#|i| n=3 (onga￰)
+#|i| [ii][select] n=3 (onga￰)
 #|i| exact: 2
 #|i| hits=2
 log_level --level notice

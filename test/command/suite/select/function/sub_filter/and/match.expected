@@ -77,7 +77,7 @@ select Packages   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 1
 ]
 #|i| [object][search][index][key][exact] <Names.packages_key_index>
 #|i| grn_ii_sel > (rroonga)
-#|i| n=6 (rroonga)
+#|i| [ii][select] n=6 (rroonga)
 #|i| exact: 1
 #|i| hits=1
 #|i| [table][select][index][selector][no-index][sub_filter] <Packages>

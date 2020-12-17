@@ -59,7 +59,7 @@ select Memos --query '_id:>=3 body:@"Groonga"' --output_columns _id,_score,body
 #|i| [table][select][index][range][id] <Memos>
 #|i| [object][search][index][key][exact] <Terms.memos_body>
 #|i| grn_ii_sel > (Groonga)
-#|i| n=6 (Groonga)
+#|i| [ii][select] n=6 (Groonga)
 #|i| [ii][select][index-not-used][text] <Terms.memos_body>: enough filtered and index search will match many records: 3 <= 3.50: n-existing-records:3 estimated-size:5 ratio:70.00%
 #|i| exact: 3
 #|i| hits=3

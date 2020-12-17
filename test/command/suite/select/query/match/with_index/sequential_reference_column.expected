@@ -65,7 +65,7 @@ select Memos --query '_id:>=3 tag:@Groonga' --output_columns _id,_score,_key,tag
 #|i| [table][select][index][range][id] <Memos>
 #|i| [object][search][index][key][exact] <Tags.memos_tag>
 #|i| grn_ii_sel > (Groonga)
-#|i| n=1 (Groonga)
+#|i| [ii][select] n=1 (Groonga)
 #|i| [ii][select][index-not-used][reference] <Tags.memos_tag>: enough filtered and index search will match many records: 3 <= 3.50: n-existing-records:3 estimated-size:5 ratio:70.00%
 #|i| exact: 3
 #|i| hits=3

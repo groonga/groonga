@@ -85,7 +85,7 @@ select Files   --filter 'owners.hobby @ "programming"'   --output_columns '_key,
 ]
 #|i| [object][search][index][key][exact] <Hobbies.users_hobby>
 #|i| grn_ii_sel > (programming)
-#|i| n=1 (programming)
+#|i| [ii][select] n=1 (programming)
 #|i| exact: 2
 #|i| hits=2
 #|i| [accessor][resolve][data-column][index] <Users.files_owners>

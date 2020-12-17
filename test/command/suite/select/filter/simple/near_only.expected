@@ -50,7 +50,7 @@ select Logs --filter 'message *N "a k"'
 ]
 #|i| [object][search][index][key][near] <Terms.index>
 #|i| grn_ii_sel > (a k)
-#|i| n=2 (a k)
+#|i| [ii][select] n=2 (a k)
 #|i| exact: 2
 #|i| hits=2
 log_level --level notice

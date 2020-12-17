@@ -45,12 +45,12 @@ select Texts --filter '!(_key @ "Groonga") && (_key @ "Rroonga")'
 #|i| [table][select][index][selector][no-index][all_records] <Texts>
 #|i| [object][search][index][key][exact] <Terms.texts_key>
 #|i| grn_ii_sel > (Groonga)
-#|i| n=1 (Groonga)
+#|i| [ii][select] n=1 (Groonga)
 #|i| exact: 1
 #|i| hits=1
 #|i| [object][search][index][key][exact] <Terms.texts_key>
 #|i| grn_ii_sel > (Rroonga)
-#|i| n=1 (Rroonga)
+#|i| [ii][select] n=1 (Rroonga)
 #|i| exact: 1
 #|i| hits=1
 log_level --level notice

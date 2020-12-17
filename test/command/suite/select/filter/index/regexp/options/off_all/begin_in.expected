@@ -19,7 +19,7 @@ select Memos --filter 'content @~ "(?-mix:\\\\ARro)"'
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["content","Text"]],[2,"Rroonga"]]]]
 #|i| [object][search][index][key][regexp] <RegexpTokens.memos_content>
 #|i| grn_ii_sel > ((?-mix:\ARro))
-#|i| n=3 (￯Rro)
+#|i| [ii][select] n=3 (￯Rro)
 #|i| exact: 1
 #|i| hits=1
 log_level --level notice

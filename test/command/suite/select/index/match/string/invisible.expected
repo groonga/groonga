@@ -17,7 +17,7 @@ select Logs --filter 'message @ "Shutdown"' --cache no
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["message","ShortText"]],[1,"Shutdown"]]]]
 #|i| [object][search][index][key][exact] <Terms.logs_message>
 #|i| grn_ii_sel > (Shutdown)
-#|i| n=1 (Shutdown)
+#|i| [ii][select] n=1 (Shutdown)
 #|i| exact: 1
 #|i| hits=1
 object_set_visibility --name Terms.logs_message --visible no
