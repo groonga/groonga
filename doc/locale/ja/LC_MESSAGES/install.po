@@ -128,7 +128,7 @@ msgstr ""
 "このセクションではDebian GNU/Linux上でGroonga関連のdebパッケージをインストー"
 "ルする方法を説明します。これらのパッケージは ``apt`` でインストールできます。"
 
-msgid "stretch"
+msgid "buster"
 msgstr ""
 
 msgid "Install ``groonga-apt-source``::"
@@ -164,9 +164,6 @@ msgid "For groonga-server-gqtp:"
 msgstr "groonga-server-gtqp向け:"
 
 msgid "% sudo systemctl enable groonga-server-gqtp"
-msgstr ""
-
-msgid "buster"
 msgstr ""
 
 msgid "Install required packages to build Groonga for Debian jessie::"
