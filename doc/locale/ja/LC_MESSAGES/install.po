@@ -52,10 +52,7 @@ msgstr ""
 "このセクションではCentOS上でGroonga関連のRPMパッケージをインストールする方法"
 "を説明します。これらのパッケージは ``yum`` でインストールできます。"
 
-msgid "Since Groonga 9.0.8, we dropped 32-bit package support on CentOS 6."
-msgstr "Groonga 9.0.8からCentOS 6の32-bitパッケージのサポートをやめました。"
-
-msgid "CentOS 6"
+msgid "CentOS 7"
 msgstr ""
 
 msgid "Install::"
@@ -94,9 +91,6 @@ msgstr ""
 
 msgid "Install groonga-normalizer-mysql package::"
 msgstr "groonga-normalizer-mysqlパッケージのインストール::"
-
-msgid "CentOS 7"
-msgstr ""
 
 msgid "CentOS 8"
 msgstr ""

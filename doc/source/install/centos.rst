@@ -14,41 +14,6 @@ just only for tests or development. You will encounter an out of
 memory error with a 32-bit package even if you just process medium
 size data.
 
-.. note:: Since Groonga 9.0.8, we dropped 32-bit package support on CentOS 6.
-
-CentOS 6
---------
-
-Install::
-
-  % sudo yum install -y https://packages.groonga.org/centos/6/groonga-release-latest.noarch.rpm
-  % sudo yum install -y --enablerepo=epel groonga
-
-.. include:: server-use.inc
-
-If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
-tokenizer, install groonga-tokenizer-mecab package.
-
-Install groonga-tokenizer-mecab package::
-
-  % sudo yum install -y --enablerepo=epel groonga-tokenizer-mecab
-
-There is a package that provides `Munin
-<http://munin-monitoring.org/>`_ plugins. If you want to monitor
-Groonga status by Munin, install groonga-munin-plugins package.
-
-Install groonga-munin-plugins package::
-
-  % sudo yum install -y --enablerepo=epel groonga-munin-plugins
-
-There is a package that provides MySQL compatible normalizer as
-a Groonga plugin.
-If you want to use that one, install groonga-normalizer-mysql package.
-
-Install groonga-normalizer-mysql package::
-
-  % sudo yum install -y --enablerepo=epel groonga-normalizer-mysql
-
 CentOS 7
 --------
 
