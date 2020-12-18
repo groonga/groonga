@@ -271,7 +271,7 @@ msgid "Example"
 msgstr "例"
 
 msgid ""
-"The following is an example of an error message repoted by Groonga, where "
+"The following is an example of an error message reported by Groonga, where "
 "xxxxx is an arbitrary number::"
 msgstr ""
 "Groongaのエラーログで以下のようなエラーログがあります。(xxxxxには任意の数字が"
