@@ -21,6 +21,7 @@
 
 #include "grn.h"
 #include "grn_ctx.h"
+#include "grn_ii_select_cursor.h"
 #include "grn_table_module.h"
 
 #ifdef __cplusplus
@@ -370,6 +371,10 @@ grn_hash_add_ii_cursor(grn_ctx *ctx,
                        grn_ii_cursor *cursor,
                        double additional_score,
                        double weight);
+grn_rc
+grn_hash_add_ii_select_cursor(grn_ctx *ctx,
+                              grn_hash *hash,
+                              grn_ii_select_cursor *cursor);
 
 int grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
                            void *keybuf, int bufsize, void *valuebuf);

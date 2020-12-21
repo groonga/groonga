@@ -32,6 +32,7 @@
 #endif /* WIN32 */
 
 #include "grn_ii.h"
+#include "grn_ii_select_cursor.h"
 #include "grn_ctx_impl.h"
 #include "grn_token_cursor.h"
 #include "grn_pat.h"
@@ -9908,6 +9909,59 @@ grn_result_set_add_ii_cursor(grn_ctx *ctx,
   GRN_API_RETURN(rc);
 }
 
+grn_rc
+grn_result_set_add_ii_select_cursor(grn_ctx *ctx,
+                                    grn_hash *result_set,
+                                    grn_ii_select_cursor *cursor,
+                                    grn_operator op)
+{
+  GRN_API_ENTER;
+
+  grn_obj *index_column = (grn_obj *)grn_ii_select_cursor_get_ii(ctx, cursor);
+  if (result_set->obj.header.domain != DB_OBJ(index_column)->range) {
+    grn_obj result_set_inspected;
+    grn_obj index_column_inspected;
+    GRN_TEXT_INIT(&result_set_inspected, 0);
+    GRN_TEXT_INIT(&index_column_inspected, 0);
+    grn_inspect_limited(ctx, &result_set_inspected, (grn_obj *)result_set);
+    grn_inspect_limited(ctx, &index_column_inspected, index_column);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[result-set][add-ii-select-cursor] "
+        "not an index column for the result set: %.*s: %.*s",
+        (int)GRN_TEXT_LEN(&result_set_inspected),
+        GRN_TEXT_VALUE(&result_set_inspected),
+        (int)GRN_TEXT_LEN(&index_column_inspected),
+        GRN_TEXT_VALUE(&index_column_inspected));
+    GRN_OBJ_FIN(ctx, &result_set_inspected);
+    GRN_OBJ_FIN(ctx, &index_column_inspected);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  grn_rc rc;
+  if (op == GRN_OP_OR) {
+    rc = grn_hash_add_ii_select_cursor(ctx, result_set, cursor);
+  } else {
+    grn_ii_select_cursor_posting *posting;
+    while ((posting = grn_ii_select_cursor_next(ctx, cursor))) {
+      grn_rset_posinfo posinfo = {
+        posting->rid,
+        posting->sid,
+        posting->pos,
+      };
+      grn_rset_add_record(ctx,
+                          result_set,
+                          &posinfo,
+                          posting->score,
+                          op);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+    }
+    rc = ctx->rc;
+  }
+  GRN_API_RETURN(rc);
+}
+
 grn_inline static void
 res_add(grn_ctx *ctx,
         grn_hash *s,
@@ -9938,15 +9992,18 @@ grn_ii_posting_add_float(grn_ctx *ctx,
   return grn_result_set_add_record(ctx, s, pos, op);
 }
 
-static double
-get_weight(grn_ctx *ctx, grn_hash *s, grn_id rid, int sid,
-           grn_wv_mode wvm, grn_select_optarg *optarg)
+static int
+get_weight(grn_ctx *ctx, grn_ii_select_data *data)
 {
-  switch (wvm) {
+  switch (data->wv_mode) {
   case GRN_WV_NONE :
     return 1;
   case GRN_WV_STATIC :
-    return sid <= optarg->vector_size ? optarg->weight_vector[sid - 1] : 0;
+    if (data->sid <= data->optarg->vector_size) {
+      return data->optarg->weight_vector[data->sid - 1];
+    } else {
+      return 0;
+    }
   case GRN_WV_DYNAMIC :
     /* todo : support hash with keys
     if (s->keys) {
@@ -9957,246 +10014,16 @@ get_weight(grn_ctx *ctx, grn_hash *s, grn_id rid, int sid,
     }
     */
     /* todo : cast */
-    return optarg->func(ctx, (void *)s, (void *)(intptr_t)rid, sid,
-                        optarg->func_arg);
+    return data->optarg->func(ctx,
+                              data->result_set,
+                              (void *)(intptr_t)(data->rid),
+                              data->sid,
+                              data->optarg->func_arg);
   case GRN_WV_CONSTANT :
-    return optarg->vector_size;
+    return data->optarg->vector_size;
   default :
     return 1;
   }
-}
-
-grn_rc
-grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
-                      const char *string, unsigned int string_len,
-                      grn_hash *s, grn_operator op, grn_select_optarg *optarg)
-{
-  int *w1, limit;
-  grn_id tid, *tp, max_size;
-  grn_rc rc = GRN_SUCCESS;
-  grn_hash *h;
-  grn_token_cursor *token_cursor;
-  unsigned int token_flags = GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER;
-  grn_obj *lexicon = ii->lexicon;
-  if (!lexicon || !ii || !string || !string_len || !s || !optarg) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  if (!(h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(int), 0))) {
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-  if (!(token_cursor = grn_token_cursor_open(ctx, lexicon, string, string_len,
-                                             GRN_TOKEN_GET, token_flags))) {
-    grn_hash_close(ctx, h);
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-  if (!(max_size = optarg->max_size)) { max_size = 1048576; }
-  while (token_cursor->status != GRN_TOKEN_CURSOR_DONE &&
-         token_cursor->status != GRN_TOKEN_CURSOR_DONE_SKIP) {
-    if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
-      if (grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **)&w1, NULL)) {
-        (*w1)++;
-      }
-    }
-    if (tid && token_cursor->curr_size) {
-      if (optarg->mode == GRN_OP_UNSPLIT) {
-        grn_table_search(ctx, lexicon, token_cursor->curr,
-                         token_cursor->curr_size,
-                         GRN_OP_PREFIX, (grn_obj *)h, GRN_OP_OR);
-      }
-      if (optarg->mode == GRN_OP_PARTIAL) {
-        grn_table_search(ctx, lexicon, token_cursor->curr,
-                         token_cursor->curr_size,
-                         GRN_OP_SUFFIX, (grn_obj *)h, GRN_OP_OR);
-      }
-    }
-  }
-  grn_token_cursor_close(ctx, token_cursor);
-  {
-    grn_hash_cursor *c = grn_hash_cursor_open(ctx, h, NULL, 0, NULL, 0,
-                                              0, -1, 0);
-    if (!c) {
-      GRN_LOG(ctx, GRN_LOG_ALERT,
-              "grn_hash_cursor_open on grn_ii_similar_search failed !");
-      grn_hash_close(ctx, h);
-      return GRN_NO_MEMORY_AVAILABLE;
-    }
-    while (grn_hash_cursor_next(ctx, c)) {
-      uint32_t es;
-      grn_hash_cursor_get_key_value(ctx, c, (void **) &tp, NULL, (void **) &w1);
-      if ((es = grn_ii_estimate_size(ctx, ii, *tp))) {
-        *w1 += max_size / es;
-      } else {
-        grn_hash_cursor_delete(ctx, c, NULL);
-      }
-    }
-    grn_hash_cursor_close(ctx, c);
-  }
-  limit = optarg->similarity_threshold
-    ? (optarg->similarity_threshold > GRN_HASH_SIZE(h)
-       ? GRN_HASH_SIZE(h)
-       : optarg->similarity_threshold)
-    : (GRN_HASH_SIZE(h) >> 3) + 1;
-  if (GRN_HASH_SIZE(h)) {
-    grn_id j, id;
-    int w2, rep;
-    grn_ii_cursor *c;
-    grn_posting *pos;
-    grn_wv_mode wvm = GRN_WV_NONE;
-    grn_table_sort_optarg arg = {
-      GRN_TABLE_SORT_DESC|GRN_TABLE_SORT_BY_VALUE|GRN_TABLE_SORT_AS_NUMBER,
-      NULL,
-      NULL,
-      NULL,
-      0
-    };
-    grn_array *sorted = grn_array_create(ctx, NULL, sizeof(grn_id), 0);
-    if (!sorted) {
-      GRN_LOG(ctx, GRN_LOG_ALERT,
-              "grn_hash_sort on grn_ii_similar_search failed !");
-      grn_hash_close(ctx, h);
-      return GRN_NO_MEMORY_AVAILABLE;
-    }
-    grn_hash_sort(ctx, h, limit, sorted, &arg);
-    /* todo support subrec
-    rep = (s->record_unit == GRN_REC_POSITION || s->subrec_unit == GRN_REC_POSITION);
-    */
-    rep = 0;
-    if (optarg->func) {
-      wvm = GRN_WV_DYNAMIC;
-    } else if (optarg->vector_size > 0) {
-      wvm = optarg->weight_vector ? GRN_WV_STATIC : GRN_WV_CONSTANT;
-    }
-    for (j = 1; j <= limit; j++) {
-      grn_array_get_value(ctx, sorted, j, &id);
-      _grn_hash_get_key_value(ctx, h, id, (void **) &tp, (void **) &w1);
-      if (!*tp || !(c = grn_ii_cursor_open(ctx, ii, *tp, GRN_ID_NIL, GRN_ID_MAX,
-                                           rep
-                                           ? ii->n_elements
-                                           : ii->n_elements - 1, 0))) {
-        GRN_LOG(ctx, GRN_LOG_ERROR, "cursor open failed (%d)", *tp);
-        continue;
-      }
-      if (rep) {
-        while (grn_ii_cursor_next(ctx, c)) {
-          pos = c->post;
-          if ((w2 = get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg)) > 0) {
-            while (grn_ii_cursor_next_pos(ctx, c)) {
-              float pos_weight = grn_posting_get_weight_float(ctx, pos);
-              res_add(ctx,
-                      s,
-                      (grn_rset_posinfo *)pos,
-                      *w1 * w2 * (1 + pos_weight),
-                      op);
-            }
-          }
-        }
-      } else {
-        while (grn_ii_cursor_next(ctx, c)) {
-          pos = c->post;
-          if ((w2 = get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg)) > 0) {
-            float pos_weight = grn_posting_get_weight_float(ctx, pos);
-            res_add(ctx,
-                    s,
-                    (grn_rset_posinfo *)pos,
-                    *w1 * w2 * (pos->tf + pos_weight),
-                    op);
-          }
-        }
-      }
-      grn_ii_cursor_close(ctx, c);
-    }
-    grn_array_close(ctx, sorted);
-  }
-  grn_hash_close(ctx, h);
-  grn_ii_resolve_sel_and(ctx, s, op);
-  //  grn_hash_cursor_clear(r);
-  return rc;
-}
-
-#define TERM_EXTRACT_EACH_POST 0
-#define TERM_EXTRACT_EACH_TERM 1
-
-grn_rc
-grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
-                     unsigned int string_len, grn_hash *s,
-                     grn_operator op, grn_select_optarg *optarg)
-{
-  grn_rset_posinfo pi;
-  grn_id tid;
-  const char *p, *pe;
-  grn_obj *nstr;
-  const char *normalized;
-  unsigned int normalized_length_in_bytes;
-  grn_ii_cursor *c;
-  grn_posting *pos;
-  int skip, rep, policy;
-  grn_rc rc = GRN_SUCCESS;
-  grn_wv_mode wvm = GRN_WV_NONE;
-  if (!ii || !string || !string_len || !s || !optarg) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  if (!(nstr = grn_string_open(ctx, string, string_len, NULL, 0))) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  policy = optarg->max_interval;
-  if (optarg->func) {
-    wvm = GRN_WV_DYNAMIC;
-  } else if (optarg->vector_size) {
-    wvm = optarg->weight_vector ? GRN_WV_STATIC : GRN_WV_CONSTANT;
-  }
-  /* todo support subrec
-  if (policy == TERM_EXTRACT_EACH_POST) {
-    if ((rc = grn_records_reopen(s, GRN_REC_SECTION, GRN_REC_NONE, 0))) { goto exit; }
-  }
-  rep = (s->record_unit == GRN_REC_POSITION || s->subrec_unit == GRN_REC_POSITION);
-  */
-  rep = 0;
-  grn_string_get_normalized(ctx, nstr, &normalized, &normalized_length_in_bytes,
-                            NULL);
-  for (p = normalized, pe = p + normalized_length_in_bytes; p < pe; p += skip) {
-    if ((tid = grn_table_lcp_search(ctx, ii->lexicon, p, pe - p))) {
-      if (policy == TERM_EXTRACT_EACH_POST) {
-        if (!(skip = grn_table_get_key(ctx, ii->lexicon, tid, NULL, 0))) { break; }
-      } else {
-        if (!(skip = (int)grn_charlen(ctx, p, pe))) { break; }
-      }
-      if (!(c = grn_ii_cursor_open(ctx, ii, tid, GRN_ID_NIL, GRN_ID_MAX,
-                                   rep
-                                   ? ii->n_elements
-                                   : ii->n_elements - 1, 0))) {
-        GRN_LOG(ctx, GRN_LOG_ERROR, "cursor open failed (%d)", tid);
-        continue;
-      }
-      if (rep) {
-        while (grn_ii_cursor_next(ctx, c)) {
-          pos = c->post;
-          while (grn_ii_cursor_next_pos(ctx, c)) {
-            res_add(ctx, s, (grn_rset_posinfo *) pos,
-                    get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg), op);
-          }
-        }
-      } else {
-        while (grn_ii_cursor_next(ctx, c)) {
-          if (policy == TERM_EXTRACT_EACH_POST) {
-            pi.rid = c->post->rid;
-            pi.sid = p - normalized;
-            res_add(ctx, s, &pi, pi.sid + 1, op);
-          } else {
-            pos = c->post;
-            res_add(ctx, s, (grn_rset_posinfo *) pos,
-                    get_weight(ctx, s, pos->rid, pos->sid, wvm, optarg), op);
-          }
-        }
-      }
-      grn_ii_cursor_close(ctx, c);
-    } else {
-      if (!(skip = (int)grn_charlen(ctx, p, pe))) {
-        break;
-      }
-    }
-  }
-  grn_obj_close(ctx, nstr);
-  return rc;
 }
 
 static void
@@ -10389,23 +10216,311 @@ grn_ii_select_data_fin(grn_ctx *ctx,
   }
 }
 
+static grn_rc
+grn_ii_similar_search_internal(grn_ctx *ctx, grn_ii_select_data *data)
+{
+  int *w1, limit;
+  grn_id tid, *tp, max_size;
+  grn_rc rc = GRN_SUCCESS;
+  grn_hash *h;
+  grn_token_cursor *token_cursor;
+  unsigned int token_flags = GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER;
+  if (!data->lexicon ||
+      !data->query ||
+      !data->query_len ||
+      !data->result_set ||
+      !data->optarg) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!(h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(int), 0))) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  if (!(token_cursor = grn_token_cursor_open(ctx,
+                                             data->lexicon,
+                                             data->query,
+                                             data->query_len,
+                                             GRN_TOKEN_GET,
+                                             token_flags))) {
+    grn_hash_close(ctx, h);
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  if (!(max_size = data->optarg->max_size)) { max_size = 1048576; }
+  while (token_cursor->status != GRN_TOKEN_CURSOR_DONE &&
+         token_cursor->status != GRN_TOKEN_CURSOR_DONE_SKIP) {
+    if ((tid = grn_token_cursor_next(ctx, token_cursor))) {
+      if (grn_hash_add(ctx, h, &tid, sizeof(grn_id), (void **)&w1, NULL)) {
+        (*w1)++;
+      }
+    }
+    if (tid && token_cursor->curr_size) {
+      if (data->mode == GRN_OP_UNSPLIT) {
+        grn_table_search(ctx,
+                         data->lexicon,
+                         token_cursor->curr,
+                         token_cursor->curr_size,
+                         GRN_OP_PREFIX,
+                         (grn_obj *)h,
+                         GRN_OP_OR);
+      }
+      if (data->mode == GRN_OP_PARTIAL) {
+        grn_table_search(ctx,
+                         data->lexicon,
+                         token_cursor->curr,
+                         token_cursor->curr_size,
+                         GRN_OP_SUFFIX,
+                         (grn_obj *)h,
+                         GRN_OP_OR);
+      }
+    }
+  }
+  grn_token_cursor_close(ctx, token_cursor);
+  {
+    grn_hash_cursor *c = grn_hash_cursor_open(ctx, h, NULL, 0, NULL, 0,
+                                              0, -1, 0);
+    if (!c) {
+      GRN_LOG(ctx, GRN_LOG_ALERT,
+              "grn_hash_cursor_open on grn_ii_similar_search failed !");
+      grn_hash_close(ctx, h);
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    while (grn_hash_cursor_next(ctx, c)) {
+      uint32_t es;
+      grn_hash_cursor_get_key_value(ctx, c, (void **)&tp, NULL, (void **)&w1);
+      if ((es = grn_ii_estimate_size(ctx, data->ii, *tp))) {
+        *w1 += max_size / es;
+      } else {
+        grn_hash_cursor_delete(ctx, c, NULL);
+      }
+    }
+    grn_hash_cursor_close(ctx, c);
+  }
+  limit = data->optarg->similarity_threshold
+    ? (data->optarg->similarity_threshold > GRN_HASH_SIZE(h)
+       ? GRN_HASH_SIZE(h)
+       : data->optarg->similarity_threshold)
+    : (GRN_HASH_SIZE(h) >> 3) + 1;
+  if (GRN_HASH_SIZE(h)) {
+    grn_id j, id;
+    int w2, rep;
+    grn_ii_cursor *c;
+    grn_posting *pos;
+    grn_table_sort_optarg arg = {
+      GRN_TABLE_SORT_DESC|GRN_TABLE_SORT_BY_VALUE|GRN_TABLE_SORT_AS_NUMBER,
+      NULL,
+      NULL,
+      NULL,
+      0
+    };
+    grn_array *sorted = grn_array_create(ctx, NULL, sizeof(grn_id), 0);
+    if (!sorted) {
+      GRN_LOG(ctx, GRN_LOG_ALERT,
+              "grn_hash_sort on grn_ii_similar_search failed !");
+      grn_hash_close(ctx, h);
+      return GRN_NO_MEMORY_AVAILABLE;
+    }
+    grn_hash_sort(ctx, h, limit, sorted, &arg);
+    /* todo support subrec
+    rep = (s->record_unit == GRN_REC_POSITION || s->subrec_unit == GRN_REC_POSITION);
+    */
+    rep = 0;
+    for (j = 1; j <= limit; j++) {
+      grn_array_get_value(ctx, sorted, j, &id);
+      _grn_hash_get_key_value(ctx, h, id, (void **) &tp, (void **) &w1);
+      if (!*tp || !(c = grn_ii_cursor_open(ctx,
+                                           data->ii,
+                                           *tp,
+                                           GRN_ID_NIL,
+                                           GRN_ID_MAX,
+                                           rep
+                                           ? data->ii->n_elements
+                                           : data->ii->n_elements - 1, 0))) {
+        GRN_LOG(ctx, GRN_LOG_ERROR, "cursor open failed (%d)", *tp);
+        continue;
+      }
+      if (rep) {
+        while (grn_ii_cursor_next(ctx, c)) {
+          pos = c->post;
+          data->rid = pos->rid;
+          data->sid = pos->sid;
+          if ((w2 = get_weight(ctx, data)) > 0) {
+            while (grn_ii_cursor_next_pos(ctx, c)) {
+              float pos_weight = grn_posting_get_weight_float(ctx, pos);
+              res_add(ctx,
+                      data->result_set,
+                      (grn_rset_posinfo *)pos,
+                      *w1 * w2 * (1 + pos_weight),
+                      data->op);
+            }
+          }
+        }
+      } else {
+        while (grn_ii_cursor_next(ctx, c)) {
+          pos = c->post;
+          data->rid = pos->rid;
+          data->sid = pos->sid;
+          if ((w2 = get_weight(ctx, data)) > 0) {
+            float pos_weight = grn_posting_get_weight_float(ctx, pos);
+            res_add(ctx,
+                    data->result_set,
+                    (grn_rset_posinfo *)pos,
+                    *w1 * w2 * (pos->tf + pos_weight),
+                    data->op);
+          }
+        }
+      }
+      grn_ii_cursor_close(ctx, c);
+    }
+    grn_array_close(ctx, sorted);
+  }
+  grn_hash_close(ctx, h);
+  grn_ii_resolve_sel_and(ctx, data->result_set, data->op);
+  //  grn_hash_cursor_clear(r);
+  return rc;
+}
 
-typedef struct {
-  grn_id rid;
-  uint32_t sid;
-  uint32_t start_pos;
-  uint32_t end_pos;
-  uint32_t tf;
-  uint32_t weight;
-} grn_ii_select_cursor_posting;
-
-typedef struct {
+grn_rc
+grn_ii_similar_search(grn_ctx *ctx, grn_ii *ii,
+                      const char *string, unsigned int string_len,
+                      grn_hash *s, grn_operator op, grn_select_optarg *optarg)
+{
   grn_ii_select_data data;
+  data.ii = ii;
+  data.lexicon = data.ii->lexicon;
+  data.query = string;
+  data.query_len = string_len;
+  data.result_set = s;
+  data.op = op;
+  grn_ii_select_data_init(ctx, &data, optarg);
+  return grn_ii_similar_search_internal(ctx, &data);
+}
+
+#define TERM_EXTRACT_EACH_POST 0
+#define TERM_EXTRACT_EACH_TERM 1
+
+static grn_rc
+grn_ii_term_extract_internal(grn_ctx *ctx, grn_ii_select_data *data)
+{
+  grn_rset_posinfo pi;
+  grn_id tid;
+  const char *p, *pe;
+  grn_obj *nstr;
+  const char *normalized;
+  unsigned int normalized_length_in_bytes;
+  grn_ii_cursor *c;
+  grn_posting *pos;
+  int skip, rep, policy;
+  grn_rc rc = GRN_SUCCESS;
+  if (!data->ii ||
+      !data->query ||
+      !data->query_len ||
+      !data->result_set ||
+      !data->optarg) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!(nstr = grn_string_open(ctx, data->query, data->query_len, NULL, 0))) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  policy = data->optarg->max_interval;
+  /* todo support subrec
+  if (policy == TERM_EXTRACT_EACH_POST) {
+    if ((rc = grn_records_reopen(s, GRN_REC_SECTION, GRN_REC_NONE, 0))) { goto exit; }
+  }
+  rep = (s->record_unit == GRN_REC_POSITION || s->subrec_unit == GRN_REC_POSITION);
+  */
+  rep = 0;
+  grn_string_get_normalized(ctx, nstr, &normalized, &normalized_length_in_bytes,
+                            NULL);
+  for (p = normalized, pe = p + normalized_length_in_bytes; p < pe; p += skip) {
+    if ((tid = grn_table_lcp_search(ctx, data->ii->lexicon, p, pe - p))) {
+      if (policy == TERM_EXTRACT_EACH_POST) {
+        if (!(skip = grn_table_get_key(ctx, data->ii->lexicon, tid, NULL, 0))) {
+          break;
+        }
+      } else {
+        if (!(skip = (int)grn_charlen(ctx, p, pe))) { break; }
+      }
+      if (!(c = grn_ii_cursor_open(ctx, data->ii, tid, GRN_ID_NIL, GRN_ID_MAX,
+                                   rep
+                                   ? data->ii->n_elements
+                                   : data->ii->n_elements - 1, 0))) {
+        GRN_LOG(ctx, GRN_LOG_ERROR, "cursor open failed (%d)", tid);
+        continue;
+      }
+      if (rep) {
+        while (grn_ii_cursor_next(ctx, c)) {
+          pos = c->post;
+          data->rid = pos->rid;
+          data->sid = pos->sid;
+          while (grn_ii_cursor_next_pos(ctx, c)) {
+            res_add(ctx,
+                    data->result_set,
+                    (grn_rset_posinfo *)pos,
+                    get_weight(ctx, data),
+                    data->op);
+          }
+        }
+      } else {
+        while (grn_ii_cursor_next(ctx, c)) {
+          if (policy == TERM_EXTRACT_EACH_POST) {
+            pi.rid = c->post->rid;
+            pi.sid = p - normalized;
+            res_add(ctx, data->result_set, &pi, pi.sid + 1, data->op);
+          } else {
+            pos = c->post;
+            data->rid = pos->rid;
+            data->sid = pos->sid;
+            res_add(ctx,
+                    data->result_set,
+                    (grn_rset_posinfo *)pos,
+                    get_weight(ctx, data),
+                    data->op);
+          }
+        }
+      }
+      grn_ii_cursor_close(ctx, c);
+    } else {
+      if (!(skip = (int)grn_charlen(ctx, p, pe))) {
+        break;
+      }
+    }
+  }
+  grn_obj_close(ctx, nstr);
+  return rc;
+}
+
+grn_rc
+grn_ii_term_extract(grn_ctx *ctx, grn_ii *ii, const char *string,
+                    unsigned int string_len, grn_hash *s,
+                    grn_operator op, grn_select_optarg *optarg)
+{
+  grn_ii_select_data data;
+  data.ii = ii;
+  data.lexicon = data.ii->lexicon;
+  data.query = string;
+  data.query_len = string_len;
+  data.result_set = s;
+  data.op = op;
+  grn_ii_select_data_init(ctx, &data, optarg);
+  return grn_ii_term_extract_internal(ctx, &data);
+}
+
+struct grn_ii_select_cursor_ {
+  grn_ii_select_data data;
+  bool per_occurrence_mode;
   grn_ii_select_cursor_posting posting;
   bool done;
   grn_ii_select_cursor_posting unshifted_posting;
   bool have_unshifted_posting;
-} grn_ii_select_cursor;
+};
+
+static void
+grn_ii_select_cursor_init_internal(grn_ctx *ctx,
+                                   grn_ii_select_cursor *cursor)
+{
+  cursor->per_occurrence_mode = false;
+  cursor->done = false;
+  cursor->have_unshifted_posting = false;
+}
 
 static grn_rc
 grn_ii_select_cursor_close(grn_ctx *ctx,
@@ -10452,6 +10567,8 @@ grn_ii_select_cursor_open(grn_ctx *ctx,
   cursor->data.lexicon = cursor->data.ii->lexicon;
   cursor->data.query = string;
   cursor->data.query_len = string_len;
+  cursor->data.result_set = NULL;
+  cursor->data.op = GRN_OP_OR;
   grn_ii_select_data_init(ctx, &(cursor->data), optarg);
   switch (cursor->data.mode) {
   case GRN_OP_EXACT :
@@ -10485,27 +10602,130 @@ grn_ii_select_cursor_open(grn_ctx *ctx,
           cursor->data.n_token_infos,
           string_len, string);
 
-  cursor->done = false;
-
-  cursor->have_unshifted_posting = false;
+  grn_ii_select_cursor_init_internal(ctx, cursor);
 
   return cursor;
 }
 
-static grn_ii_select_cursor_posting *
+static void
+grn_ii_select_cursor_set_per_occurrence_mode(grn_ctx *ctx,
+                                             grn_ii_select_cursor *cursor,
+                                             bool mode)
+{
+  cursor->per_occurrence_mode = mode;
+}
+
+grn_inline static bool
+grn_ii_select_skip_pos(grn_ctx *ctx,
+                       grn_ii_select_data *data,
+                       int pos)
+{
+  if (token_info_skip_pos(ctx,
+                          data->token_info,
+                          data->rid,
+                          data->sid,
+                          pos) != GRN_SUCCESS) {
+    return false;
+  }
+  if (data->token_info->p->rid != data->rid ||
+      data->token_info->p->sid != data->sid) {
+    data->next_rid = data->token_info->p->rid;
+    data->next_sid = data->token_info->p->sid;
+    return false;
+  }
+  return true;
+}
+
+grn_inline static bool
+grn_ii_select_data_find_phrase(grn_ctx *ctx,
+                               grn_ii_select_data *data,
+                               uint32_t phrase_id,
+                               int start_pos)
+{
+  token_info **tip;
+  token_info **tis = data->token_infos;
+  token_info **tie = tis + data->n_token_infos;
+  uint32_t n_tokens_in_same_pos = 0;
+  for (tip = tis; ; tip++) {
+    if (tip == tie) { tip = tis; }
+    data->token_info = *tip;
+    if (data->token_info->phrase_id != phrase_id) {
+      continue;
+    }
+    if (!grn_ii_select_skip_pos(ctx, data, start_pos)) {
+      return false;
+    }
+    if (data->token_info->pos == start_pos) {
+      n_tokens_in_same_pos++;
+    } else {
+      n_tokens_in_same_pos = 1;
+      start_pos = data->token_info->pos;
+    }
+    if (n_tokens_in_same_pos == data->token_info->n_tokens_in_phrase) {
+      return true;
+    }
+  }
+  return false;
+}
+
+grn_inline static bool
+grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
+                                          grn_ii_select_data *data,
+                                          int interval)
+{
+  if (data->max_interval < 0) {
+    return true;
+  }
+  if (data->additional_last_interval == 0) {
+    return (interval <= data->max_interval);
+  }
+
+  token_info **tip;
+  token_info **tis = data->token_infos;
+  token_info **tie = tis + data->n_token_infos;
+  token_info *max_token_info = NULL;
+  int min_without_last_token = -1;
+  int max_without_last_token = -1;
+  for (tip = tis; tip < tie; tip++) {
+    token_info *ti = *tip;
+    if (ti->phrase_id == data->last_token_info->phrase_id) {
+      continue;
+    }
+    if (min_without_last_token == -1 ||
+        ti->pos < min_without_last_token) {
+      min_without_last_token = ti->pos;
+    }
+    if (max_without_last_token == -1 ||
+        ti->pos > max_without_last_token) {
+      max_without_last_token = ti->pos;
+      max_token_info = ti;
+    }
+  }
+  if (!max_token_info) {
+    return true;
+  }
+
+  int interval_without_last_token =
+    max_without_last_token -
+    min_without_last_token -
+    (max_token_info->n_tokens_in_phrase - 1);
+  if (data->additional_last_interval < 0) {
+    return (interval_without_last_token <= data->max_interval);
+  } else {
+    return ((interval <=
+             (data->max_interval + data->additional_last_interval)) &&
+            (interval_without_last_token <= data->max_interval));
+  }
+}
+
+grn_ii_select_cursor_posting *
 grn_ii_select_cursor_next(grn_ctx *ctx,
                           grn_ii_select_cursor *cursor)
 {
   const char *tag = "[ii][select][cursor][next]";
-  btr *bt = cursor->data.bt;
-  token_info **tis = cursor->data.token_infos;
-  token_info **tie = tis + cursor->data.n_token_infos;
-  uint32_t n_tis = cursor->data.n_token_infos;
-  int max_interval = cursor->data.max_interval;
-  grn_operator mode = cursor->data.mode;
 
   if (cursor->have_unshifted_posting) {
-    cursor->have_unshifted_posting = GRN_FALSE;
+    cursor->have_unshifted_posting = false;
     return &(cursor->unshifted_posting);
   }
 
@@ -10513,151 +10733,332 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
     return NULL;
   }
 
+  grn_ii_select_data *data = &(cursor->data);
+  token_info **tis = data->token_infos;
+  uint32_t n = data->n_token_infos;
+  token_info **tie = tis + n;
   for (;;) {
-    grn_id rid;
-    grn_id sid;
-    grn_id next_rid;
-    grn_id next_sid;
     token_info **tip;
-
-    rid = (*tis)->p->rid;
-    sid = (*tis)->p->sid;
-    for (tip = tis + 1, next_rid = rid, next_sid = sid + 1;
+    data->rid = (*tis)->p->rid;
+    data->sid = (*tis)->p->sid;
+    for (tip = tis + 1,
+           data->next_rid = data->rid,
+           data->next_sid = data->sid + 1;
          tip < tie;
          tip++) {
-      token_info *ti = *tip;
-      if (token_info_skip(ctx, ti, rid, sid)) { return NULL; }
-      if (ti->p->rid != rid || ti->p->sid != sid) {
-        next_rid = ti->p->rid;
-        next_sid = ti->p->sid;
+      data->token_info = *tip;
+      if (token_info_skip(ctx,
+                          data->token_info,
+                          data->rid,
+                          data->sid) != GRN_SUCCESS) {
+        goto exit;
+      }
+      if (data->token_info->p->rid != data->rid ||
+          data->token_info->p->sid != data->sid) {
+        data->next_rid = data->token_info->p->rid;
+        data->next_sid = data->token_info->p->sid;
         break;
       }
     }
 
-    if (tip == tie) {
-      int start_pos = 0;
-      int pos = 0;
-      int end_pos = 0;
-      int score = 0;
-      int tf = 0;
-      int tscore = 0;
-
-#define SKIP_OR_BREAK(pos) {\
-  if (token_info_skip_pos(ctx, ti, rid, sid, pos)) { break; } \
-  if (ti->p->rid != rid || ti->p->sid != sid) { \
-    next_rid = ti->p->rid; \
-    next_sid = ti->p->sid; \
-    break; \
-  } \
-}
-
-#define RETURN_POSTING() do { \
-  cursor->posting.rid = rid; \
-  cursor->posting.sid = sid; \
-  cursor->posting.start_pos = start_pos; \
-  cursor->posting.end_pos = end_pos; \
-  cursor->posting.tf = tf; \
-  cursor->posting.weight = tscore; \
-  if (token_info_skip_pos(ctx, *tis, rid, sid, pos) != GRN_SUCCESS) { \
-    if (token_info_skip(ctx, *tis, next_rid, next_sid) != GRN_SUCCESS) { \
-      cursor->done = GRN_TRUE; \
-    } \
-  } \
-  return &(cursor->posting); \
-} while (GRN_FALSE)
-
-      if (n_tis == 1) {
-        start_pos = pos = end_pos = (*tis)->p->pos;
-        pos++;
-        tf = (*tis)->p->tf;
-        tscore = (*tis)->p->weight + (*tis)->cursors->bins[0]->weight;
-        RETURN_POSTING();
-      } else if (mode == GRN_OP_NEAR) {
-        bt_zap(bt);
-        for (tip = tis; tip < tie; tip++) {
-          token_info *ti = *tip;
-          bt_push(bt, ti);
+    bool may_match = true;
+    if (tip != tie) {
+      may_match = false;
+    }
+    int weight = get_weight(ctx, data);
+    if (may_match && weight == 0) {
+      may_match = false;
+    }
+    if (may_match) {
+      if (data->op != GRN_OP_OR) {
+        if (data->result_set) {
+          grn_rset_posinfo pi = {data->rid, data->sid, 0};
+          grn_id id = grn_hash_get(ctx,
+                                   data->result_set,
+                                   &pi,
+                                   data->result_set->key_size,
+                                   NULL);
+          may_match = (id != GRN_ID_NIL);
         }
-        if (tip == tie) {
-          for (;;) {
-            token_info *ti;
-            int min;
-            int max;
+      }
+    }
+    if (!may_match) {
+      if (token_info_skip(ctx,
+                          *tis,
+                          data->next_rid,
+                          data->next_sid) != GRN_SUCCESS) {
+        goto exit;
+      }
+      continue;
+    }
 
-            ti = bt->min;
-            min = ti->pos;
-            max = bt->max->pos;
-            if (min > max) {
-              char ii_name[GRN_TABLE_MAX_KEY_SIZE];
-              int ii_name_size;
-              ii_name_size = grn_obj_name(ctx,
-                                          (grn_obj *)(cursor->data.ii),
-                                          ii_name,
-                                          GRN_TABLE_MAX_KEY_SIZE);
-              ERR(GRN_FILE_CORRUPT,
-                  "%s[near] "
-                  "max position must be larger than min position: "
-                  "min:<%d> max:<%d> ii:<%.*s> string:<%.*s>",
-                  tag,
-                  min, max,
-                  ii_name_size, ii_name,
-                  cursor->data.query_len,
-                  cursor->data.query);
-              return NULL;
-            }
-            if ((max_interval < 0) || (max - min <= max_interval)) {
-              /* TODO: Set start_pos, pos, end_pos, tf and tscore */
-              RETURN_POSTING();
-              if (ti->pos == max + 1) {
-                break;
-              }
-              SKIP_OR_BREAK(max + 1);
-            } else {
-              if (ti->pos == max - max_interval) {
-                break;
-              }
-              SKIP_OR_BREAK(max - max_interval);
-            }
-            bt_pop(bt);
+    uint32_t start_pos = 0;
+    uint32_t end_pos = 0;
+    int32_t total_score = 0;
+    uint32_t n_occurrences = 0;
+
+    data->pos = 0;
+    if (data->score_func) {
+      GRN_BULK_REWIND(&(data->record.terms));
+      GRN_BULK_REWIND(&(data->record.term_weights));
+      data->record.n_candidates = 0;
+      data->record.n_tokens = 0;
+    }
+
+    if (data->n_token_infos == 1) {
+      start_pos = end_pos = data->pos = (*tis)->p->pos;
+      if (cursor->per_occurrence_mode) {
+        n_occurrences = 1;
+      } else {
+        n_occurrences = (*tis)->p->tf;
+      }
+      total_score = (*tis)->p->weight + (*tis)->cursors->bins[0]->weight;
+      if (data->score_func) {
+        GRN_RECORD_PUT(ctx,
+                       &(data->record.terms),
+                       (*tis)->cursors->bins[0]->id);
+        GRN_UINT32_PUT(ctx, &(data->record.term_weights), total_score);
+        data->record.n_occurrences = n_occurrences;
+        data->record.n_candidates = (*tis)->size;
+        data->record.n_tokens = (*tis)->ntoken;
+      }
+    } else if (data->mode == GRN_OP_NEAR ||
+               data->mode == GRN_OP_NEAR_PHRASE ||
+               data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
+      bt_zap(data->bt);
+      bool need_check = false;
+      if (data->mode == GRN_OP_NEAR_PHRASE ||
+          data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
+        need_check = true;
+        uint32_t phrase_id;
+        for (phrase_id = 0; phrase_id <= data->phrase_id_max; phrase_id++) {
+          if (!grn_ii_select_data_find_phrase(ctx,
+                                              data,
+                                              phrase_id,
+                                              data->pos)) {
+            need_check = false;
+            break;
           }
+          bt_push(data->bt, data->token_info);
         }
       } else {
-        int count = 0;
-        for (tip = tis; ; tip++) {
-          token_info *ti;
-
-          if (tip == tie) { tip = tis; }
-          ti = *tip;
-          SKIP_OR_BREAK(pos);
-          if (ti->pos == pos) {
-            score += ti->p->weight + ti->cursors->bins[0]->weight;
-            count++;
-            if (ti->p->pos > end_pos) {
-              end_pos = ti->p->pos;
+        for (tip = tis; tip < tie; tip++) {
+          token_info *ti = *tip;
+          bt_push(data->bt, ti);
+        }
+        need_check = (tip == tie);
+      }
+      if (need_check) {
+        for (;;) {
+          data->token_info = data->bt->min;
+          int min = data->token_info->pos;
+          int max = data->bt->max->pos;
+          if (min > max) {
+            char ii_name[GRN_TABLE_MAX_KEY_SIZE];
+            int ii_name_size;
+            ii_name_size = grn_obj_name(ctx,
+                                        (grn_obj *)(data->ii),
+                                        ii_name,
+                                        GRN_TABLE_MAX_KEY_SIZE);
+            ERR(GRN_FILE_CORRUPT,
+                "%s[near] "
+                "max position must be larger than min position: "
+                "min:<%d> max:<%d> ii:<%.*s> string:<%.*s>",
+                tag,
+                min, max,
+                ii_name_size, ii_name,
+                data->query_len,
+                data->query);
+            goto exit;
+          }
+          int interval = max - min;
+          if (data->mode == GRN_OP_NEAR_PHRASE ||
+              data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
+            interval -= (data->token_info->n_tokens_in_phrase - 1);
+          }
+          bool matched;
+          if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE ||
+              data->last_token_info) {
+            if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
+              matched = true;
+              int pos = tis[0]->pos;
+              for (tip = tis + 1; tip < tie; tip++) {
+                token_info *ti = *tip;
+                if (ti->pos < pos) {
+                  matched = false;
+                  break;
+                }
+                pos = ti->pos;
+              }
+            } else {
+              matched = (data->last_token_info == data->bt->max);
+            }
+            if (matched) {
+              matched = grn_ii_select_data_is_matched_near_phrase(ctx,
+                                                                  data,
+                                                                  interval);
             }
           } else {
-            score = ti->p->weight + ti->cursors->bins[0]->weight;
-            count = 1;
-            start_pos = pos = ti->pos;
-            end_pos = ti->p->pos;
+            matched = ((data->max_interval < 0) ||
+                       (interval <= data->max_interval));
           }
-          if (count == n_tis) {
-            pos++;
-            if (ti->p->pos > end_pos) {
-              end_pos = ti->p->pos;
+          if (matched) {
+            n_occurrences++;
+            int next_pos = max + 1;
+            if (data->mode == GRN_OP_NEAR_PHRASE ||
+                data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
+              if (!grn_ii_select_data_find_phrase(ctx,
+                                                  data,
+                                                  data->token_info->phrase_id,
+                                                  next_pos)) {
+                break;
+              }
+            } else {
+              if (!grn_ii_select_skip_pos(ctx, data, next_pos)) {
+                break;
+              }
             }
-            tf = 1;
-            tscore += score;
-            RETURN_POSTING();
+          } else {
+            if (data->mode == GRN_OP_NEAR_PHRASE ||
+                data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
+              int next_pos = min + 1;
+              if (!grn_ii_select_data_find_phrase(ctx,
+                                                  data,
+                                                  data->token_info->phrase_id,
+                                                  next_pos)) {
+                break;
+              }
+            } else {
+              int next_pos = max - data->max_interval;
+              if (!grn_ii_select_skip_pos(ctx, data, next_pos)) {
+                break;
+              }
+            }
+          }
+          bt_pop(data->bt);
+          if ((data->mode == GRN_OP_NEAR_PHRASE ||
+               data->mode == GRN_OP_ORDERED_NEAR_PHRASE) &&
+              data->bt->min->pos == min) {
+            break;
           }
         }
       }
-#undef SKIP_OR_BREAK
+    } else {
+      uint32_t count = 0;
+      int32_t score = 0;
+      for (tip = tis; ; tip++) {
+        if (tip == tie) { tip = tis; }
+        data->token_info = *tip;
+        if (!grn_ii_select_skip_pos(ctx, data, data->pos)) {
+          break;
+        }
+        if (data->token_info->pos == data->pos) {
+          if (count == 0) {
+            start_pos = data->pos;
+          }
+          score +=
+            data->token_info->p->weight +
+            data->token_info->cursors->bins[0]->weight;
+          count++;
+          if (data->token_info->p->pos > end_pos) {
+            end_pos = data->token_info->p->pos;
+          }
+        } else {
+          score =
+            data->token_info->p->weight +
+            data->token_info->cursors->bins[0]->weight;
+          count = 1;
+          start_pos = data->pos = data->token_info->pos;
+          end_pos = data->token_info->p->pos;
+          if (n_occurrences == 0 && data->score_func) {
+            GRN_BULK_REWIND(&(data->record.terms));
+            GRN_BULK_REWIND(&(data->record.term_weights));
+            data->record.n_candidates = 0;
+            data->record.n_tokens = 0;
+          }
+        }
+        if (n_occurrences == 0 && data->score_func) {
+          GRN_RECORD_PUT(ctx,
+                         &(data->record.terms),
+                         data->token_info->cursors->bins[0]->id);
+          GRN_UINT32_PUT(ctx,
+                         &(data->record.term_weights),
+                         data->token_info->p->weight +
+                         data->token_info->cursors->bins[0]->weight);
+          data->record.n_candidates += data->token_info->size;
+          data->record.n_tokens += data->token_info->ntoken;
+        }
+        if (count == data->n_token_infos) {
+          if (data->token_info->p->pos > end_pos) {
+            end_pos = data->token_info->p->pos;
+          }
+          total_score += score;
+          score = 0;
+          count = 0;
+          data->pos++;
+          n_occurrences++;
+          if (cursor->per_occurrence_mode) {
+            break;
+          }
+        }
+      }
     }
-    if (token_info_skip(ctx, *tis, next_rid, next_sid)) {
-      return NULL;
+
+    if (n_occurrences == 0) {
+      if (token_info_skip(ctx,
+                          *tis,
+                          data->next_rid,
+                          data->next_sid) != GRN_SUCCESS) {
+        goto exit;
+      }
+      continue;
     }
+
+    double record_score;
+    if (data->score_func) {
+      data->record.id = data->rid;
+      data->record.weight = weight;
+      data->record.n_occurrences = n_occurrences;
+      data->record.total_term_weights = total_score;
+      record_score = data->score_func(ctx, &(data->record)) * (double)weight;
+    } else {
+      record_score = (n_occurrences + total_score) * (double)weight;
+    }
+    if (data->set_min_enable_for_and_query) {
+      if (data->current_min == GRN_ID_NIL) {
+        data->current_min = data->rid;
+      }
+    }
+
+    cursor->posting.rid = data->rid;
+    cursor->posting.sid = data->sid;
+    cursor->posting.pos = data->pos;
+    cursor->posting.start_pos = start_pos;
+    cursor->posting.end_pos = end_pos;
+    cursor->posting.tf = n_occurrences;
+    cursor->posting.score = record_score;
+    if (cursor->per_occurrence_mode) {
+      if (token_info_skip_pos(ctx,
+                              *tis,
+                              data->rid,
+                              data->sid,
+                              end_pos + 1) != GRN_SUCCESS) {
+        cursor->done = true;
+      }
+    } else {
+      if (token_info_skip(ctx,
+                          *tis,
+                          data->next_rid,
+                          data->next_sid) != GRN_SUCCESS) {
+        cursor->done = true;
+      }
+    }
+    return &(cursor->posting);
   }
+
+exit :
+  cursor->done = true;
+  return NULL;
 }
 
 static void
@@ -10667,6 +11068,12 @@ grn_ii_select_cursor_unshift(grn_ctx *ctx,
 {
   cursor->unshifted_posting = *posting;
   cursor->have_unshifted_posting = GRN_TRUE;
+}
+
+grn_ii *
+grn_ii_select_cursor_get_ii(grn_ctx *ctx, grn_ii_select_cursor *cursor)
+{
+  return cursor->data.ii;
 }
 
 static void
@@ -10906,6 +11313,9 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
         have_error = GRN_TRUE;
         break;
       }
+      grn_ii_select_cursor_set_per_occurrence_mode(ctx,
+                                                   chunks[i].cursor,
+                                                   true);
       chunks[i].n_following_characters_start =
         GRN_UINT32_VALUE_AT(&parsed_n_following_characters, i * 2);
       chunks[i].n_following_characters_end =
@@ -11108,15 +11518,11 @@ grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
                                   ii_cursor_flags);
       while (grn_ii_cursor_next(ctx, cursor)) {
         grn_ii_quorum_match_record_data *record_data;
-        double weight;
 
-        weight = get_weight(ctx,
-                            data->result_set,
-                            cursor->post->rid,
-                            cursor->post->sid,
-                            data->wv_mode,
-                            data->optarg);
-        if (weight <= DBL_EPSILON) {
+        data->rid = cursor->post->rid;
+        data->sid = cursor->post->sid;
+        int weight = get_weight(ctx, data);
+        if (weight == 0) {
           continue;
         }
         if (grn_hash_add(ctx, n_occurs,
@@ -11319,12 +11725,9 @@ grn_ii_select_sequential_search_reference(grn_ctx *ctx,
           info.rid = source_table_id;
           info.sid = i + 1;
           info.pos = 0;
-          double score = get_weight(ctx,
-                                    data->result_set,
-                                    info.rid,
-                                    info.sid,
-                                    data->wv_mode,
-                                    data->optarg);
+          data->rid = info.rid;
+          data->sid = info.sid;
+          int score = get_weight(ctx, data);
           res_add(ctx, data->result_set, &info, score, data->op);
         }
         break;
@@ -11343,12 +11746,9 @@ grn_ii_select_sequential_search_reference(grn_ctx *ctx,
             info.rid = source_table_id;
             info.sid = i + 1;
             info.pos = 0;
-            double score = get_weight(ctx,
-                                      data->result_set,
-                                      info.rid,
-                                      info.sid,
-                                      data->wv_mode,
-                                      data->optarg);
+            data->rid = info.rid;
+            data->sid = info.sid;
+            int score = get_weight(ctx, data);
             res_add(ctx, data->result_set, &info, score * n_founds, data->op);
           }
         }
@@ -11499,12 +11899,9 @@ grn_ii_select_sequential_search_text_body(grn_ctx *ctx,
         info.rid = source_table_id;
         info.sid = i + 1;
         info.pos = 0;
-        double score = get_weight(ctx,
-                                  data->result_set,
-                                  info.rid,
-                                  info.sid,
-                                  data->wv_mode,
-                                  data->optarg);
+        data->rid = info.rid;
+        data->sid = info.rid;
+        int score = get_weight(ctx, data);
         res_add(ctx, data->result_set, &info, score, data->op);
       }
       grn_obj_unlink(ctx, value);
@@ -11580,142 +11977,41 @@ grn_ii_select_sequential_search(grn_ctx *ctx,
   return false;
 }
 
-grn_inline static bool
-grn_ii_select_skip_pos(grn_ctx *ctx,
-                       grn_ii_select_data *data,
-                       int pos)
-{
-  if (token_info_skip_pos(ctx,
-                          data->token_info,
-                          data->rid,
-                          data->sid,
-                          pos) != GRN_SUCCESS) {
-    return false;
-  }
-  if (data->token_info->p->rid != data->rid ||
-      data->token_info->p->sid != data->sid) {
-    data->next_rid = data->token_info->p->rid;
-    data->next_sid = data->token_info->p->sid;
-    return false;
-  }
-  return true;
-}
-
-grn_inline static bool
-grn_ii_select_data_find_phrase(grn_ctx *ctx,
-                               grn_ii_select_data *data,
-                               uint32_t phrase_id,
-                               int start_pos)
-{
-  token_info **tip;
-  token_info **tis = data->token_infos;
-  token_info **tie = tis + data->n_token_infos;
-  uint32_t n_tokens_in_same_pos = 0;
-  for (tip = tis; ; tip++) {
-    if (tip == tie) { tip = tis; }
-    data->token_info = *tip;
-    if (data->token_info->phrase_id != phrase_id) {
-      continue;
-    }
-    if (!grn_ii_select_skip_pos(ctx, data, start_pos)) {
-      return false;
-    }
-    if (data->token_info->pos == start_pos) {
-      n_tokens_in_same_pos++;
-    } else {
-      n_tokens_in_same_pos = 1;
-      start_pos = data->token_info->pos;
-    }
-    if (n_tokens_in_same_pos == data->token_info->n_tokens_in_phrase) {
-      return true;
-    }
-  }
-  return false;
-}
-
-grn_inline static bool
-grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
-                                          grn_ii_select_data *data,
-                                          int interval)
-{
-  if (data->max_interval < 0) {
-    return true;
-  }
-  if (data->additional_last_interval == 0) {
-    return (interval <= data->max_interval);
-  }
-
-  token_info **tip;
-  token_info **tis = data->token_infos;
-  token_info **tie = tis + data->n_token_infos;
-  token_info *max_token_info = NULL;
-  int min_without_last_token = -1;
-  int max_without_last_token = -1;
-  for (tip = tis; tip < tie; tip++) {
-    token_info *ti = *tip;
-    if (ti->phrase_id == data->last_token_info->phrase_id) {
-      continue;
-    }
-    if (min_without_last_token == -1 ||
-        ti->pos < min_without_last_token) {
-      min_without_last_token = ti->pos;
-    }
-    if (max_without_last_token == -1 ||
-        ti->pos > max_without_last_token) {
-      max_without_last_token = ti->pos;
-      max_token_info = ti;
-    }
-  }
-  if (!max_token_info) {
-    return true;
-  }
-
-  int interval_without_last_token =
-    max_without_last_token -
-    min_without_last_token -
-    (max_token_info->n_tokens_in_phrase - 1);
-  if (data->additional_last_interval < 0) {
-    return (interval_without_last_token <= data->max_interval);
-  } else {
-    return ((interval <=
-             (data->max_interval + data->additional_last_interval)) &&
-            (interval_without_last_token <= data->max_interval));
-  }
-}
-
 grn_rc
 grn_ii_select(grn_ctx *ctx, grn_ii *ii,
               const char *string, unsigned int string_len,
               grn_hash *s, grn_operator op, grn_select_optarg *optarg)
 {
   const char *tag = "[ii][select]";
-  int rep, orp, weight;
-  grn_ii_select_data data;
+  int rep, orp;
 
   if (!ii) {
     return GRN_INVALID_ARGUMENT;
   }
 
-  data.ii = ii;
-  data.lexicon = data.ii->lexicon;
-  if (!data.lexicon || !s) { return GRN_INVALID_ARGUMENT; }
+  grn_ii_select_cursor cursor;
+  grn_ii_select_data *data;
+  data = &(cursor.data);
+  data->ii = ii;
+  data->lexicon = data->ii->lexicon;
+  if (!data->lexicon || !s) { return GRN_INVALID_ARGUMENT; }
 
-  data.query = string;
-  data.query_len = string_len;
-  data.result_set = s;
-  data.op = op;
-  grn_ii_select_data_init(ctx, &data, optarg);
-  if (data.mode == GRN_OP_SIMILAR) {
-    return grn_ii_similar_search(ctx, ii, string, string_len, s, op, optarg);
+  data->query = string;
+  data->query_len = string_len;
+  data->result_set = s;
+  data->op = op;
+  grn_ii_select_data_init(ctx, data, optarg);
+  if (data->mode == GRN_OP_SIMILAR) {
+    return grn_ii_similar_search_internal(ctx, data);
   }
-  if (data.mode == GRN_OP_TERM_EXTRACT) {
-    return grn_ii_term_extract(ctx, ii, string, string_len, s, op, optarg);
+  if (data->mode == GRN_OP_TERM_EXTRACT) {
+    return grn_ii_term_extract_internal(ctx, data);
   }
-  if (data.mode == GRN_OP_REGEXP) {
+  if (data->mode == GRN_OP_REGEXP) {
     return grn_ii_select_regexp(ctx, ii, string, string_len, s, op, optarg);
   }
-  if (data.mode == GRN_OP_QUORUM) {
-    return grn_ii_quorum_match(ctx, ii, &data);
+  if (data->mode == GRN_OP_QUORUM) {
+    return grn_ii_quorum_match(ctx, ii, data);
   }
   /* todo : support subrec
   rep = (s->record_unit == GRN_REC_POSITION || s->subrec_unit == GRN_REC_POSITION);
@@ -11723,7 +12019,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   */
   rep = 0;
   orp = op == GRN_OP_OR;
-  if (!grn_ii_select_data_init_token_infos(ctx, &data, tag)) {
+  if (!grn_ii_select_data_init_token_infos(ctx, data, tag)) {
     goto exit;
   }
   if (grn_logger_pass(ctx, GRN_LOG_INFO)) {
@@ -11732,7 +12028,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
               GRN_LOG_INFO,
               "%s n=%d (%.*s)",
               tag,
-              data.n_token_infos,
+              data->n_token_infos,
               string_len, string);
     } else {
       grn_obj inspected;
@@ -11741,7 +12037,7 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
       GRN_LOG(ctx, GRN_LOG_INFO,
               "%s n=%d (%.*s)",
               tag,
-              data.n_token_infos,
+              data->n_token_infos,
               (int)GRN_TEXT_LEN(&inspected),
               GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
@@ -11766,257 +12062,19 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
     goto exit;
   }
   */
-  if (grn_ii_select_sequential_search(ctx, &data)) {
+  if (grn_ii_select_sequential_search(ctx, data)) {
     goto exit;
   }
 
-  token_info **tis = data.token_infos;
-  uint32_t n = data.n_token_infos;
-  token_info **tip = tis;
-  token_info **tie = tis + n;
-  for (;;) {
-    data.rid = (*tis)->p->rid;
-    data.sid = (*tis)->p->sid;
-    for (tip = tis + 1,
-           data.next_rid = data.rid,
-           data.next_sid = data.sid + 1;
-         tip < tie;
-         tip++) {
-      data.token_info = *tip;
-      if (token_info_skip(ctx, data.token_info, data.rid, data.sid)) {
-        goto exit;
-      }
-      if (data.token_info->p->rid != data.rid ||
-          data.token_info->p->sid != data.sid) {
-        data.next_rid = data.token_info->p->rid;
-        data.next_sid = data.token_info->p->sid;
-        break;
-      }
-    }
-    weight = get_weight(ctx, s, data.rid, data.sid, data.wv_mode, optarg);
-    if (tip == tie && weight != 0) {
-      grn_rset_posinfo pi = {data.rid, data.sid, 0};
-      if (orp || grn_hash_get(ctx, s, &pi, s->key_size, NULL)) {
-        int count = 0, noccur = 0, score = 0, tscore = 0;
+  grn_ii_select_cursor_init_internal(ctx, &cursor);
+  grn_result_set_add_ii_select_cursor(ctx, s, &cursor, op);
 
-        data.pos = 0;
-        if (data.score_func) {
-          GRN_BULK_REWIND(&(data.record.terms));
-          GRN_BULK_REWIND(&(data.record.term_weights));
-          data.record.n_candidates = 0;
-          data.record.n_tokens = 0;
-        }
-
-        if (data.n_token_infos == 1 && !rep) {
-          noccur = (*tis)->p->tf;
-          tscore = (*tis)->p->weight + (*tis)->cursors->bins[0]->weight;
-          if (data.score_func) {
-            GRN_RECORD_PUT(ctx, &(data.record.terms),
-                           (*tis)->cursors->bins[0]->id);
-            GRN_UINT32_PUT(ctx, &(data.record.term_weights), tscore);
-            data.record.n_occurrences = noccur;
-            data.record.n_candidates = (*tis)->size;
-            data.record.n_tokens = (*tis)->ntoken;
-          }
-        } else if (data.mode == GRN_OP_NEAR ||
-                   data.mode == GRN_OP_NEAR_PHRASE ||
-                   data.mode == GRN_OP_ORDERED_NEAR_PHRASE) {
-          bt_zap(data.bt);
-          bool need_check = false;
-          if (data.mode == GRN_OP_NEAR_PHRASE ||
-              data.mode == GRN_OP_ORDERED_NEAR_PHRASE) {
-            need_check = true;
-            uint32_t phrase_id;
-            for (phrase_id = 0; phrase_id <= data.phrase_id_max; phrase_id++) {
-              if (!grn_ii_select_data_find_phrase(ctx,
-                                                  &data,
-                                                  phrase_id,
-                                                  data.pos)) {
-                need_check = false;
-                break;
-              }
-              bt_push(data.bt, data.token_info);
-            }
-          } else {
-            for (tip = tis; tip < tie; tip++) {
-              token_info *ti = *tip;
-              bt_push(data.bt, ti);
-            }
-            need_check = (tip == tie);
-          }
-          if (need_check) {
-            for (;;) {
-              data.token_info = data.bt->min;
-              int min = data.token_info->pos;
-              int max = data.bt->max->pos;
-              if (min > max) {
-                char ii_name[GRN_TABLE_MAX_KEY_SIZE];
-                int ii_name_size;
-                ii_name_size = grn_obj_name(ctx, (grn_obj *)ii, ii_name,
-                                            GRN_TABLE_MAX_KEY_SIZE);
-                ERR(GRN_FILE_CORRUPT,
-                    "%s[near] "
-                    "max position must be larger than min position: "
-                    "min:<%d> max:<%d> ii:<%.*s> string:<%.*s>",
-                    tag,
-                    min,
-                    max,
-                    ii_name_size, ii_name,
-                    string_len, string);
-                goto exit;
-              }
-              int interval = max - min;
-              if (data.mode == GRN_OP_NEAR_PHRASE ||
-                  data.mode == GRN_OP_ORDERED_NEAR_PHRASE) {
-                interval -= (data.token_info->n_tokens_in_phrase - 1);
-              }
-              bool matched;
-              if (data.mode == GRN_OP_ORDERED_NEAR_PHRASE ||
-                  data.last_token_info) {
-                if (data.mode == GRN_OP_ORDERED_NEAR_PHRASE) {
-                  matched = true;
-                  int pos = tis[0]->pos;
-                  for (tip = tis + 1; tip < tie; tip++) {
-                    token_info *ti = *tip;
-                    if (ti->pos < pos) {
-                      matched = false;
-                      break;
-                    }
-                    pos = ti->pos;
-                  }
-                } else {
-                  matched = (data.last_token_info == data.bt->max);
-                }
-                if (matched) {
-                  matched =
-                    grn_ii_select_data_is_matched_near_phrase(
-                      ctx,
-                      &data,
-                      interval);
-                }
-              } else {
-                matched = ((data.max_interval < 0) ||
-                           (interval <= data.max_interval));
-              }
-              if (matched) {
-                if (rep) { pi.pos = min; res_add(ctx, s, &pi, weight, op); }
-                noccur++;
-                int next_pos = max + 1;
-                if (data.mode == GRN_OP_NEAR_PHRASE ||
-                    data.mode == GRN_OP_ORDERED_NEAR_PHRASE) {
-                  if (!grn_ii_select_data_find_phrase(ctx,
-                                                      &data,
-                                                      data.token_info->phrase_id,
-                                                      next_pos)) {
-                    break;
-                  }
-                } else {
-                  if (!grn_ii_select_skip_pos(ctx, &data, next_pos)) {
-                    break;
-                  }
-                }
-              } else {
-                if (data.mode == GRN_OP_NEAR_PHRASE ||
-                    data.mode == GRN_OP_ORDERED_NEAR_PHRASE) {
-                  int next_pos = min + 1;
-                  if (!grn_ii_select_data_find_phrase(ctx,
-                                                      &data,
-                                                      data.token_info->phrase_id,
-                                                      next_pos)) {
-                    break;
-                  }
-                } else {
-                  int next_pos = max - data.max_interval;
-                  if (!grn_ii_select_skip_pos(ctx, &data, next_pos)) {
-                    break;
-                  }
-                }
-              }
-              bt_pop(data.bt);
-              if ((data.mode == GRN_OP_NEAR_PHRASE ||
-                   data.mode == GRN_OP_ORDERED_NEAR_PHRASE) &&
-                  data.bt->min->pos == min) {
-                break;
-              }
-            }
-          }
-        } else {
-          for (tip = tis; ; tip++) {
-            if (tip == tie) { tip = tis; }
-            data.token_info = *tip;
-            if (!grn_ii_select_skip_pos(ctx, &data, data.pos)) {
-              break;
-            }
-            if (data.token_info->pos == data.pos) {
-              score +=
-                data.token_info->p->weight +
-                data.token_info->cursors->bins[0]->weight;
-              count++;
-            } else {
-              score =
-                data.token_info->p->weight +
-                data.token_info->cursors->bins[0]->weight;
-              count = 1;
-              data.pos = data.token_info->pos;
-              if (noccur == 0 && data.score_func) {
-                GRN_BULK_REWIND(&(data.record.terms));
-                GRN_BULK_REWIND(&(data.record.term_weights));
-                data.record.n_candidates = 0;
-                data.record.n_tokens = 0;
-              }
-            }
-            if (noccur == 0 && data.score_func) {
-              GRN_RECORD_PUT(ctx, &(data.record.terms),
-                             data.token_info->cursors->bins[0]->id);
-              GRN_UINT32_PUT(ctx, &(data.record.term_weights),
-                             data.token_info->p->weight +
-                             data.token_info->cursors->bins[0]->weight);
-              data.record.n_candidates += data.token_info->size;
-              data.record.n_tokens += data.token_info->ntoken;
-            }
-            if (count == data.n_token_infos) {
-              if (rep) {
-                pi.pos = data.pos;
-                res_add(ctx, s, &pi, (score + 1) * weight, op);
-              }
-              tscore += score;
-              score = 0;
-              count = 0;
-              data.pos++;
-              noccur++;
-            }
-          }
-        }
-        if (noccur && !rep) {
-          double record_score;
-          if (data.score_func) {
-            data.record.id = data.rid;
-            data.record.weight = weight;
-            data.record.n_occurrences = noccur;
-            data.record.total_term_weights = tscore;
-            record_score = data.score_func(ctx, &(data.record)) * weight;
-          } else {
-            record_score = (noccur + tscore) * weight;
-          }
-          if (data.set_min_enable_for_and_query) {
-            if (data.current_min == GRN_ID_NIL) {
-              data.current_min = data.rid;
-            }
-          }
-          res_add(ctx, s, &pi, record_score, op);
-        }
-      }
-    }
-    if (token_info_skip(ctx, *tis, data.next_rid, data.next_sid) != GRN_SUCCESS) {
-      goto exit;
-    }
-  }
 exit :
-  if (!data.only_skip_token) {
+  if (!data->only_skip_token) {
     grn_ii_resolve_sel_and(ctx, s, op);
   }
 
-  grn_ii_select_data_fin(ctx, &data);
+  grn_ii_select_data_fin(ctx, data);
 
   //  grn_hash_cursor_clear(r);
 #ifdef DEBUG

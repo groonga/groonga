@@ -2892,6 +2892,46 @@ grn_hash_add_ii_cursor(grn_ctx *ctx,
   return ctx->rc;
 }
 
+grn_rc
+grn_hash_add_ii_select_cursor(grn_ctx *ctx,
+                              grn_hash *hash,
+                              grn_ii_select_cursor *cursor)
+{
+  const char *tag = "[hash][add-ii-select-cursor]";
+  grn_rc rc = grn_hash_add_records_validate(ctx, hash, tag);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+
+  /* lock */
+  {
+    grn_ii *ii = grn_ii_select_cursor_get_ii(ctx, cursor);
+    grn_obj *table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
+    const uint32_t reset_threshold = grn_table_size(ctx, table);
+    grn_obj_unref(ctx, table);
+    rc = grn_hash_ensure_reset(ctx, hash, reset_threshold, tag);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+
+  grn_ii_select_cursor_posting *posting;
+  while ((posting = grn_ii_select_cursor_next(ctx, cursor))) {
+    grn_posting_internal posting_new;
+    posting_new.rid = posting->rid;
+    posting_new.sid = posting->sid;
+    posting_new.pos = posting->pos;
+    posting_new.weight_float = posting->score;
+    rc = grn_hash_add_record(ctx, hash, &posting_new, tag);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+  /* unlock */
+
+  return ctx->rc;
+}
+
 grn_id
 grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
              unsigned int key_size, void **value)
