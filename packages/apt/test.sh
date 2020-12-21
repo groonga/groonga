@@ -11,6 +11,7 @@ architecture=$(dpkg --print-architecture)
 wget \
   https://packages.groonga.org/debian/groonga-apt-source-latest-${code_name}.deb
 apt install -V -y ./groonga-apt-source-latest-${code_name}.deb
+apt update
 
 repositories_dir=/groonga/packages/apt/repositories
 apt install -V -y \
