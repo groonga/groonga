@@ -46,6 +46,7 @@ libgroonga_c_sources =				\
 	grn_group.h				\
 	grn_hash.h				\
 	grn_ii.h				\
+	grn_ii_select_cursor.h			\
 	grn_index_column.h			\
 	grn_index_cursor.h			\
 	grn_io.h				\
