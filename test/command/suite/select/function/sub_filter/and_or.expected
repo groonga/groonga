@@ -81,8 +81,8 @@ select Packages   --filter 'sub_filter(files,                        "revision >
 #>select --filter "sub_filter(files,                        \"revision >= 10 &&                         (_key @^ \\\"ha\\\" || _key @^ \\\"include/\\\")\") &&             (_key == \"groonga\" || _key == \"rroonga\")" --output_columns "_key, _score, files, files.revision" --table "Packages"
 #:000000000000000 filter(1): #<accessor _key(Packages)> equal "groonga"
 #:000000000000000 filter(2): #<accessor _key(Packages)> equal "rroonga"
-#:000000000000000 filter(0): #<accessor _key(Files)> "ha" prefix
-#:000000000000000 filter(1): #<accessor _key(Files)> "include/" prefix
+#:000000000000000 filter(0): #<accessor _key(Files)> prefix "ha"
+#:000000000000000 filter(1): #<accessor _key(Files)> prefix "include/"
 #:000000000000000 filter(1): Files.revision greater_equal 10
 #:000000000000000 filter(1): and
 #:000000000000000 filter(1): sub_filter(Packages.files, "revision >= 10 &&                         (_key @^ \"ha\" || _key @^ \"include/\")")

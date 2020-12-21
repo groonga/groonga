@@ -10,7 +10,7 @@ load --table Users
 delete --table Users --filter '_key @^ "b"'
 [[0,0.0,0.0],true]
 #>delete --filter "_key @^ \"b\"" --table "Users"
-#:000000000000000 filter(2): #<accessor _key(Users)> "b" prefix
+#:000000000000000 filter(2): #<accessor _key(Users)> prefix "b"
 #:000000000000000 delete(2): [0][1]
 #:000000000000000 send(0)
 #<000000000000000 rc=0
