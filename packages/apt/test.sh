@@ -46,6 +46,8 @@ apt install -V -y \
 gem install grntest
 
 if groonga --version | grep -q apache-arrow; then
+  apt install -V -y \
+    g++
   gem install red-arrow
 fi
 
