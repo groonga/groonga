@@ -45,6 +45,10 @@ apt install -V -y \
   ruby-dev
 gem install grntest
 
+if groonga --version | grep -q apache-arrow; then
+  gem install red-arrow
+fi
+
 export TZ=Asia/Tokyo
 
 grntest_options=()
