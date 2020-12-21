@@ -4953,6 +4953,11 @@ grn_table_select_inspect_condition(grn_ctx *ctx,
   case GRN_OP_LESS_EQUAL :
   case GRN_OP_GREATER_EQUAL :
   case GRN_OP_MATCH :
+  case GRN_OP_NEAR :
+  case GRN_OP_NEAR2 :
+  case GRN_OP_NEAR_PHRASE :
+  case GRN_OP_ORDERED_NEAR_PHRASE :
+  case GRN_OP_PREFIX :
     if (n_codes == 3) {
       grn_expr_code *arg1 = expr->codes + si->start;
       grn_expr_code *arg2 = expr->codes + si->start + 1;
@@ -4988,9 +4993,13 @@ grn_table_select_inspect_condition(grn_ctx *ctx,
           }
         } else {
           if (code->value) {
-            grn_table_select_inspect_condition_argument(ctx,
-                                                        buffer,
-                                                        code->value);
+            if (i == si->start && code->value->header.type == GRN_EXPR) {
+              GRN_TEXT_PUTS(ctx, buffer, "(match columns)");
+            } else {
+              grn_table_select_inspect_condition_argument(ctx,
+                                                          buffer,
+                                                          code->value);
+            }
           } else {
             GRN_TEXT_PUTS(ctx, buffer, grn_operator_to_string(code->op));
           }
