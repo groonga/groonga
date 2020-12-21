@@ -13,6 +13,7 @@ RUN \
   dnf config-manager --set-enabled powertools && \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
+    arrow-devel \
     gcc-c++ \
     intltool \
     libedit-devel \

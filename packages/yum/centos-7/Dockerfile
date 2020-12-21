@@ -10,6 +10,7 @@ RUN \
   yum install -y ${quiet} epel-release && \
   yum groupinstall -y ${quiet} "Development Tools" && \
   yum install -y ${quiet} \
+    arrow-devel \
     gcc-c++ \
     intltool \
     libedit-devel \
