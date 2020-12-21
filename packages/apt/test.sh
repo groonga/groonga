@@ -3,10 +3,15 @@
 set -exu
 
 apt update
-apt install -V -y lsb-release
+apt install -V -y lsb-release wget
 
 code_name=$(lsb_release --codename --short)
 architecture=$(dpkg --print-architecture)
+
+wget \
+  https://packages.groonga.org/debian/groonga-apt-source-latest-${code_name}.deb
+apt install -V -y ./groonga-apt-source-latest-${code_name}.deb
+
 repositories_dir=/groonga/packages/apt/repositories
 apt install -V -y \
   ${repositories_dir}/debian/pool/${code_name}/main/*/*/*_{${architecture},all}.deb
