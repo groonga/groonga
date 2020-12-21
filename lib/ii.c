@@ -9787,8 +9787,8 @@ grn_result_set_add_table_cursor(grn_ctx *ctx,
   }
 
   grn_rc rc;
-  if (op == GRN_OP_OR) {
-    rc = grn_hash_add_table_cursor(ctx, result_set, cursor, score);
+  if (op == GRN_OP_OR || op == GRN_OP_AND) {
+    rc = grn_hash_add_table_cursor(ctx, result_set, cursor, score, op);
   } else {
     grn_rset_posinfo posinfo = {0};
     while ((posinfo.rid = grn_table_cursor_next(ctx, cursor))) {
@@ -9833,8 +9833,13 @@ grn_result_set_add_index_cursor(grn_ctx *ctx,
   }
 
   grn_rc rc;
-  if (op == GRN_OP_OR) {
-    rc = grn_hash_add_index_cursor(ctx, result_set, cursor, additional_score, weight);
+  if (op == GRN_OP_OR || op == GRN_OP_AND) {
+    rc = grn_hash_add_index_cursor(ctx,
+                                   result_set,
+                                   cursor,
+                                   additional_score,
+                                   weight,
+                                   op);
   } else {
     grn_id term_id;
     grn_posting *posting;
@@ -9887,8 +9892,13 @@ grn_result_set_add_ii_cursor(grn_ctx *ctx,
   }
 
   grn_rc rc;
-  if (op == GRN_OP_OR) {
-    rc = grn_hash_add_ii_cursor(ctx, result_set, cursor, additional_score, weight);
+  if (op == GRN_OP_OR || op == GRN_OP_AND) {
+    rc = grn_hash_add_ii_cursor(ctx,
+                                result_set,
+                                cursor,
+                                additional_score,
+                                weight,
+                                op);
   } else {
     grn_posting *posting;
     while ((posting = grn_ii_cursor_next(ctx, cursor))) {
@@ -9938,8 +9948,8 @@ grn_result_set_add_ii_select_cursor(grn_ctx *ctx,
   }
 
   grn_rc rc;
-  if (op == GRN_OP_OR) {
-    rc = grn_hash_add_ii_select_cursor(ctx, result_set, cursor);
+  if (op == GRN_OP_OR || op == GRN_OP_AND) {
+    rc = grn_hash_add_ii_select_cursor(ctx, result_set, cursor, op);
   } else {
     grn_ii_select_cursor_posting *posting;
     while ((posting = grn_ii_select_cursor_next(ctx, cursor))) {

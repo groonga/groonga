@@ -2697,9 +2697,72 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
   return id;
 }
 
+grn_inline static grn_id
+grn_hash_get_internal(grn_ctx *ctx,
+                      grn_hash *hash,
+                      uint32_t hash_value,
+                      const void *key,
+                      unsigned int key_size,
+                      void **value)
+{
+  uint32_t i;
+  const uint32_t step = grn_hash_calculate_step(hash_value);
+  for (i = hash_value; ; i += step) {
+    grn_id id;
+    grn_id * const index = grn_hash_idx_at(ctx, hash, i);
+    if (!index) {
+      return GRN_ID_NIL;
+    }
+    id = *index;
+    if (!id) {
+      return GRN_ID_NIL;
+    }
+    if (id != GARBAGE) {
+      grn_hash_entry * const entry = grn_hash_entry_at(ctx, hash, id, 0);
+      if (entry) {
+        if (grn_hash_entry_compare_key(ctx, hash, entry, hash_value,
+                                       key, key_size)) {
+          if (value) {
+            *value = grn_hash_entry_get_value(ctx, hash, entry);
+          }
+          return id;
+        }
+      }
+    }
+  }
+}
+
+grn_id
+grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
+             unsigned int key_size, void **value)
+{
+  uint32_t hash_value;
+  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
+  }
+  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+    if (key_size > hash->key_size) {
+      return GRN_ID_NIL;
+    }
+    hash_value = grn_hash_calculate_hash_value(key, key_size);
+  } else {
+    if (key_size != hash->key_size) {
+      return GRN_ID_NIL;
+    }
+    if (key_size == sizeof(uint32_t)) {
+      hash_value = *((uint32_t *)key);
+    } else {
+      hash_value = grn_hash_calculate_hash_value(key, key_size);
+    }
+  }
+
+  return grn_hash_get_internal(ctx, hash, hash_value, key, key_size, value);
+}
+
 static grn_rc
 grn_hash_add_records_validate(grn_ctx *ctx,
                               grn_hash *hash,
+                              grn_operator op,
                               const char *tag)
 {
   if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
@@ -2729,6 +2792,23 @@ grn_hash_add_records_validate(grn_ctx *ctx,
       return ctx->rc;
     }
   }
+  switch (op) {
+  case GRN_OP_AND :
+  case GRN_OP_OR :
+    break;
+  default :
+    {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_hash_name(ctx, hash, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[%.*s] operator must be GRN_OP_AND or GRN_OP_OR: <%s>",
+          tag,
+          name_size, name,
+          grn_operator_to_string(op));
+      return ctx->rc;
+    }
+  }
 
   return GRN_SUCCESS;
 }
@@ -2737,27 +2817,41 @@ grn_inline static grn_rc
 grn_hash_add_record(grn_ctx *ctx,
                     grn_hash *hash,
                     grn_posting_internal *posting,
+                    grn_operator op,
                     const char *tag)
 {
   const grn_id key = posting->rid;
   const size_t key_size = sizeof(grn_id);
   const uint32_t hash_value = key;
   void *value = NULL;
-  grn_id id = grn_hash_add_entry(ctx,
-                                 hash,
-                                 hash_value,
-                                 &key,
-                                 key_size,
-                                 &value,
-                                 NULL,
-                                 true,
-                                 tag);
+  grn_id id;
+  if (op == GRN_OP_OR) {
+    id = grn_hash_add_entry(ctx,
+                            hash,
+                            hash_value,
+                            &key,
+                            key_size,
+                            &value,
+                            NULL,
+                            true,
+                            tag);
+  } else {
+    id = grn_hash_get_internal(ctx,
+                               hash,
+                               hash_value,
+                               &key,
+                               key_size,
+                               &value);
+  }
   if (id == GRN_ID_NIL) {
     return ctx->rc;
   }
 
   if (hash->obj.header.flags & GRN_OBJ_WITH_SUBREC) {
     grn_rset_recinfo *recinfo = value;
+    if (op == GRN_OP_AND) {
+      recinfo->n_subrecs |= GRN_RSET_UTIL_BIT;
+    }
     grn_rset_posinfo posinfo = {
       posting->rid,
       posting->sid,
@@ -2782,26 +2876,29 @@ grn_rc
 grn_hash_add_table_cursor(grn_ctx *ctx,
                           grn_hash *hash,
                           grn_table_cursor *cursor,
-                          double score)
+                          double score,
+                          grn_operator op)
 {
   const char *tag = "[hash][add-table-cursor]";
-  grn_rc rc = grn_hash_add_records_validate(ctx, hash, tag);
+  grn_rc rc = grn_hash_add_records_validate(ctx, hash, op, tag);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
 
   /* lock */
-  grn_obj *table = grn_table_cursor_table(ctx, cursor);
-  const uint32_t reset_threshold = grn_table_size(ctx, table);
-  rc = grn_hash_ensure_reset(ctx, hash, reset_threshold, tag);
-  if (rc != GRN_SUCCESS) {
-    return rc;
+  if (op == GRN_OP_OR) {
+    grn_obj *table = grn_table_cursor_table(ctx, cursor);
+    const uint32_t reset_threshold = grn_table_size(ctx, table);
+    rc = grn_hash_ensure_reset(ctx, hash, reset_threshold, tag);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
   }
 
   grn_posting_internal posting = {0};
   posting.weight_float = score;
   while ((posting.rid = grn_table_cursor_next(ctx, cursor))) {
-    rc = grn_hash_add_record(ctx, hash, &posting, tag);
+    rc = grn_hash_add_record(ctx, hash, &posting, op, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -2816,16 +2913,17 @@ grn_hash_add_index_cursor(grn_ctx *ctx,
                           grn_hash *hash,
                           grn_obj *cursor,
                           double additional_score,
-                          double weight)
+                          double weight,
+                          grn_operator op)
 {
   const char *tag = "[hash][add-index-cursor]";
-  grn_rc rc = grn_hash_add_records_validate(ctx, hash, tag);
+  grn_rc rc = grn_hash_add_records_validate(ctx, hash, op, tag);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
 
   /* lock */
-  {
+  if (op == GRN_OP_OR) {
     grn_obj *index_column = grn_index_cursor_get_index_column(ctx, cursor);
     grn_obj *table = grn_ctx_at(ctx, DB_OBJ(index_column)->range);
     const uint32_t reset_threshold = grn_table_size(ctx, table);
@@ -2842,7 +2940,7 @@ grn_hash_add_index_cursor(grn_ctx *ctx,
     grn_posting_internal posting_new = *((grn_posting_internal *)posting);
     posting_new.weight_float += additional_score;
     posting_new.weight_float *= weight;
-    rc = grn_hash_add_record(ctx, hash, &posting_new, tag);
+    rc = grn_hash_add_record(ctx, hash, &posting_new, op, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -2857,16 +2955,17 @@ grn_hash_add_ii_cursor(grn_ctx *ctx,
                        grn_hash *hash,
                        grn_ii_cursor *cursor,
                        double additional_score,
-                       double weight)
+                       double weight,
+                       grn_operator op)
 {
   const char *tag = "[hash][add-ii-cursor]";
-  grn_rc rc = grn_hash_add_records_validate(ctx, hash, tag);
+  grn_rc rc = grn_hash_add_records_validate(ctx, hash, op, tag);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
 
   /* lock */
-  {
+  if (op == GRN_OP_OR) {
     grn_ii *ii = grn_ii_cursor_get_ii(ctx, cursor);
     grn_obj *table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
     const uint32_t reset_threshold = grn_table_size(ctx, table);
@@ -2882,7 +2981,7 @@ grn_hash_add_ii_cursor(grn_ctx *ctx,
     grn_posting_internal posting_new = *((grn_posting_internal *)posting);
     posting_new.weight_float += additional_score;
     posting_new.weight_float *= weight;
-    rc = grn_hash_add_record(ctx, hash, &posting_new, tag);
+    rc = grn_hash_add_record(ctx, hash, &posting_new, op, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -2895,16 +2994,17 @@ grn_hash_add_ii_cursor(grn_ctx *ctx,
 grn_rc
 grn_hash_add_ii_select_cursor(grn_ctx *ctx,
                               grn_hash *hash,
-                              grn_ii_select_cursor *cursor)
+                              grn_ii_select_cursor *cursor,
+                              grn_operator op)
 {
   const char *tag = "[hash][add-ii-select-cursor]";
-  grn_rc rc = grn_hash_add_records_validate(ctx, hash, tag);
+  grn_rc rc = grn_hash_add_records_validate(ctx, hash, op, tag);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
 
   /* lock */
-  {
+  if (op == GRN_OP_OR) {
     grn_ii *ii = grn_ii_select_cursor_get_ii(ctx, cursor);
     grn_obj *table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
     const uint32_t reset_threshold = grn_table_size(ctx, table);
@@ -2922,7 +3022,7 @@ grn_hash_add_ii_select_cursor(grn_ctx *ctx,
     posting_new.sid = posting->sid;
     posting_new.pos = posting->pos;
     posting_new.weight_float = posting->score;
-    rc = grn_hash_add_record(ctx, hash, &posting_new, tag);
+    rc = grn_hash_add_record(ctx, hash, &posting_new, op, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -2930,59 +3030,6 @@ grn_hash_add_ii_select_cursor(grn_ctx *ctx,
   /* unlock */
 
   return ctx->rc;
-}
-
-grn_id
-grn_hash_get(grn_ctx *ctx, grn_hash *hash, const void *key,
-             unsigned int key_size, void **value)
-{
-  uint32_t hash_value;
-  if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
-    return GRN_ID_NIL;
-  }
-  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-    if (key_size > hash->key_size) {
-      return GRN_ID_NIL;
-    }
-    hash_value = grn_hash_calculate_hash_value(key, key_size);
-  } else {
-    if (key_size != hash->key_size) {
-      return GRN_ID_NIL;
-    }
-    if (key_size == sizeof(uint32_t)) {
-      hash_value = *((uint32_t *)key);
-    } else {
-      hash_value = grn_hash_calculate_hash_value(key, key_size);
-    }
-  }
-
-  {
-    uint32_t i;
-    const uint32_t step = grn_hash_calculate_step(hash_value);
-    for (i = hash_value; ; i += step) {
-      grn_id id;
-      grn_id * const index = grn_hash_idx_at(ctx, hash, i);
-      if (!index) {
-        return GRN_ID_NIL;
-      }
-      id = *index;
-      if (!id) {
-        return GRN_ID_NIL;
-      }
-      if (id != GARBAGE) {
-        grn_hash_entry * const entry = grn_hash_entry_at(ctx, hash, id, 0);
-        if (entry) {
-          if (grn_hash_entry_compare_key(ctx, hash, entry, hash_value,
-                                         key, key_size)) {
-            if (value) {
-              *value = grn_hash_entry_get_value(ctx, hash, entry);
-            }
-            return id;
-          }
-        }
-      }
-    }
-  }
 }
 
 grn_inline static grn_hash_entry *
