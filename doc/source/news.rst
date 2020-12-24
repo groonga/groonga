@@ -557,7 +557,7 @@ Improvements
 
   * ``(column @ "value") && (column @ "value")``
 
-* Added support for Ubuntu 20.10 (Groovy Gorilla).
+* [:doc:`/install/ubuntu`] Added support for Ubuntu 20.10 (Groovy Gorilla).
 
 * [:doc:`/install/debian`] Dropped stretch support.
 

@@ -223,8 +223,10 @@ msgstr "以下のケースのパフォーマンスを改善しました。"
 msgid "``(column @ \"value\") && (column @ \"value\")``"
 msgstr ""
 
-msgid "Added support for Ubuntu 20.10 (Groovy Gorilla)."
-msgstr "Ubuntu 20.10 (Groovy Gorilla)をサポートしました。"
+msgid ""
+"[:doc:`/install/ubuntu`] Added support for Ubuntu 20.10 (Groovy Gorilla)."
+msgstr ""
+"[:doc:`/install/ubuntu`] Ubuntu 20.10 (Groovy Gorilla)をサポートしました。"
 
 msgid "[:doc:`/install/debian`] Dropped stretch support."
 msgstr "[:doc:`/install/debian`] stretchのサポートをやめました。"
