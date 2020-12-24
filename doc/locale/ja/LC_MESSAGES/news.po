@@ -235,6 +235,9 @@ msgstr "EOLになったためです。"
 msgid "[:doc:`/install/centos`] Dropped CentOS 6"
 msgstr "[:doc:`/install/centos`] CentOS 6のサポートをやめました。"
 
+msgid "[httpd] Updated bundled nginx to 1.19.6."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.19.6に更新しました。"
+
 msgid "Fixes"
 msgstr "修正"
 

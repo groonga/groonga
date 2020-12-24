@@ -567,6 +567,8 @@ Improvements
 
   * It reached EOL.
 
+* [httpd] Updated bundled nginx to 1.19.6.
+
 Fixes
 ^^^^^
 
