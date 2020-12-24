@@ -563,7 +563,7 @@ Improvements
 
   * It reached EOL.
 
-* [:doc:`/install/centos`] Dropped CentOS 6
+* [:doc:`/install/centos`] Dropped CentOS 6.
 
   * It reached EOL.
 

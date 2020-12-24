@@ -232,7 +232,7 @@ msgstr "[:doc:`/install/debian`] stretchのサポートをやめました。"
 msgid "It reached EOL."
 msgstr "EOLになったためです。"
 
-msgid "[:doc:`/install/centos`] Dropped CentOS 6"
+msgid "[:doc:`/install/centos`] Dropped CentOS 6."
 msgstr "[:doc:`/install/centos`] CentOS 6のサポートをやめました。"
 
 msgid "[httpd] Updated bundled nginx to 1.19.6."
