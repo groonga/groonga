@@ -19,5 +19,8 @@ load --table Records
 ]
 
 select Records \
+  --columns[uint64].stage initial \
+  --columns[uint64].type UInt64 \
+  --columns[uint64].value _key \
   --command_version 3 \
   --output_type apache-arrow

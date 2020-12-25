@@ -14,7 +14,7 @@ load --table Records
 {"_key": 10}
 ]
 [[0,0.0,0.0],10]
-select Records   --command_version 3   --output_type apache-arrow
+select Records   --columns[uint64].stage initial   --columns[uint64].type UInt64   --columns[uint64].value _key   --command_version 3   --output_type apache-arrow
 return_code: int32
 start_time: timestamp[ns]
 elapsed_time: double
@@ -25,14 +25,15 @@ GROONGA:data_type: metadata
 ========================================
 _id: uint32
 _key: int32
-	_id	_key
- 0	  1	   1
- 1	  2	   2
- 2	  3	   3
- 3	  4	   4
- 4	  5	   5
- 5	  6	   6
- 6	  7	   7
- 7	  8	   8
- 8	  9	   9
- 9	 10	  10
+uint64: uint64
+	_id	_key	uint64
+ 0	  1	   1	     1
+ 1	  2	   2	     2
+ 2	  3	   3	     3
+ 3	  4	   4	     4
+ 4	  5	   5	     5
+ 5	  6	   6	     6
+ 6	  7	   7	     7
+ 7	  8	   8	     8
+ 8	  9	   9	     9
+ 9	 10	  10	    10

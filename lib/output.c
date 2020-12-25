@@ -592,6 +592,12 @@ grn_output_uint64(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, u
     grn_text_ulltoa(ctx, outbuf, value);
     break;
   case GRN_CONTENT_APACHE_ARROW :
+    if (ctx->impl->output.arrow_stream_writer) {
+      grn_arrow_stream_writer_add_column_uint64(
+        ctx,
+        ctx->impl->output.arrow_stream_writer,
+        value);
+    }
     break;
   case GRN_CONTENT_NONE:
     break;
