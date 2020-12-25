@@ -92,14 +92,14 @@ allow_unsigned_uploads = 0
     tmp_dir = "#{ubuntu_dir}/tmp"
     rm_rf(tmp_dir)
     mkdir_p(tmp_dir)
-    apt_prepare_debian_dir(tmp_dir, "#{code_name}-#{version}")
+    apt_prepare_debian_dir(tmp_dir, "ubuntu-#{code_name}")
     cd(tmp_dir) do
       deb_archive_base_name = File.basename(absoulte_deb_archive_name, ".tar.gz")
       sh("tar", "xf", absoulte_deb_archive_name)
       cp(absoulte_deb_archive_name,
          "#{@package}_#{@deb_upstream_version}.orig.tar.gz")
       cd(deb_archive_base_name) do
-        cp_r("../debian.#{code_name}-#{version}", "debian")
+        cp_r("../debian.ubuntu-#{code_name}", "debian")
         minor_version = ENV["UBUNTU_MINOR_VERSION"] || "1"
         version_suffix = "ubuntu#{version}.#{minor_version}"
         deb_version = "#{detect_current_deb_version}.#{version_suffix}"
