@@ -106,14 +106,11 @@ class PackagesGroongaOrgPackageTask < PackageTask
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
     mkdir_p(repositories_dir)
-    download_dir = "#{repositories_dir}/#{target_namespace}/#{@package}"
+    download_dir = "#{base_dir}/tmp/downloads/#{@version}"
     mkdir_p(download_dir)
-
     __send__("#{target_namespace}_targets").each do |target|
       url = built_package_url(target_namespace, target)
-      archive = File.expand_path(url.split("/").last)
-      rm_f(archive)
-      sh("wget", url)
+      archive = download(url, download_dir)
       case target_namespace
       when :apt, :yum
         cd(repositories_dir) do
@@ -121,13 +118,12 @@ class PackagesGroongaOrgPackageTask < PackageTask
              "xf", archive,
              "--strip-components=#{built_package_n_split_components}")
         end
-        rm_f(archive)
       when :windows
-        mv(archive, download_dir)
-        cd(download_dir) do
+        cd(repositories_dir) do
+          cp(archive, ".")
           archive_base_name = File.basename(archive)
           latest_link_base_name = archive_base_name.gsub(@version, "latest")
-          ln_s(archive_base_name, latest_link_base_name)
+          ln_sf(archive_base_name, latest_link_base_name)
         end
       end
     end
