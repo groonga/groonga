@@ -27,6 +27,7 @@ BuildRequires:	libstemmer-devel
 BuildRequires:	pcre-devel
 BuildRequires:	pkgconfig
 BuildRequires:	openssl-devel
+BuildRequires:	ruby
 #BuildRequires:	zeromq-devel
 #BuildRequires:	libevent-devel
 Requires:	%{name}-libs = %{version}-%{release}
