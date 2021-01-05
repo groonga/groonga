@@ -354,6 +354,7 @@ fi
 %{_libdir}/groonga/scripts/ruby/initialize/*.rb
 %{_libdir}/groonga/scripts/ruby/logger/*.rb
 %{_libdir}/groonga/scripts/ruby/query_logger/*.rb
+%{_datadir}/groonga/COPYING
 %{_datadir}/groonga/groonga-log/
 %{_datadir}/groonga/html/
 %{_datadir}/groonga/mruby/
