@@ -57,6 +57,22 @@ Requires(postun):	/sbin/ldconfig
 %description libs
 This package contains the libraries for Groonga
 
+%package examples
+Summary:	Examples for Groonga
+License:	LGPLv2
+Requires:	%{name} = %{version}-%{release}
+
+%description examples
+This package contains the examples for Groonga
+
+%package tools
+Summary:	Tools for Groonga
+License:	LGPLv2
+Requires:	%{name} = %{version}-%{release}
+
+%description tools
+This package contains the tools for Groonga
+
 %package server-common
 Summary:	Common packages for the Groonga server and the Groonga HTTP server
 Group:		Applications/Text
@@ -338,8 +354,18 @@ fi
 %{_libdir}/groonga/scripts/ruby/initialize/*.rb
 %{_libdir}/groonga/scripts/ruby/logger/*.rb
 %{_libdir}/groonga/scripts/ruby/query_logger/*.rb
-%{_datadir}/groonga/
+%{_datadir}/groonga/groonga-log/
+%{_datadir}/groonga/html/
+%{_datadir}/groonga/mruby/
 %config(noreplace) %{_sysconfdir}/groonga/synonyms.tsv
+
+%files examples
+%defattr(-,root,root,-)
+%{_datadir}/groonga/examples/
+
+%files tools
+%defattr(-,root,root,-)
+%{_datadir}/groonga/tools/
 
 %files server-common
 %defattr(-,root,root,-)
