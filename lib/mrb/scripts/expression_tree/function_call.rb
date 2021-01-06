@@ -121,15 +121,23 @@ module Groonga
       end
 
       def resolve_estimated_sizes(table, estimated_sizes)
-        return 0 if estimated_sizes.empty?
-        duplicated_ratio = 0.3 # No reason :p
-        estimated_size = estimated_sizes.inject do |sum, size|
-          sum + size * (1 - duplicated_ratio)
-        end
-        if estimated_size < table.size
-          estimated_size.round
+        case estimated_sizes.size
+        when 0
+          return 0
+        when 1
+          estimated_size = estimated_sizes.first
         else
-          table.size
+          total = estimated_sizes.inject(0) do |sum, size|
+            sum + size
+          end
+          duplicated_ratio = 0.3 # No reason :p
+          estimated_size = (total * (1 - duplicated_ratio)).round
+        end
+        n_records = table.size
+        if estimated_size < n_records
+          estimated_size
+        else
+          n_records
         end
       end
     end

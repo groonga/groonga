@@ -337,7 +337,7 @@ class TestEstimateSize < QueryOptimizerTestCase
       @logs.add(:timestamp => "2015-02-19 02:20:00")
       @logs.add(:timestamp => "2015-02-19 02:21:00")
       @logs.add(:timestamp => "2015-02-19 02:21:00")
-      assert_equal(7,
+      assert_equal(6,
                    estimate_size("in_values(timestamp, " +
                                  "'2015-02-19 02:18:00', " +
                                  "'2015-02-19 02:20:00')"))
