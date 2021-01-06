@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -283,6 +283,17 @@ GRN_API grn_bool grn_ctx_get_force_match_escalation(grn_ctx *ctx);
 GRN_API grn_rc grn_ctx_set_force_match_escalation(grn_ctx *ctx, grn_bool force);
 GRN_API long long int grn_get_default_match_escalation_threshold(void);
 GRN_API grn_rc grn_set_default_match_escalation_threshold(long long int threshold);
+
+GRN_API grn_rc grn_ctx_set_variable(grn_ctx *ctx,
+                                    const char *name,
+                                    int name_size,
+                                    void *data,
+                                    grn_close_func close_func);
+GRN_API void *grn_ctx_get_variable(grn_ctx *ctx,
+                                   const char *name,
+                                   int name_size);
+GRN_API grn_rc grn_unset_variable(const char *name,
+                                  int name_size);
 
 GRN_API int grn_get_lock_timeout(void);
 GRN_API grn_rc grn_set_lock_timeout(int timeout);

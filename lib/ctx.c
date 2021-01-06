@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2019-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -265,6 +265,11 @@ grn_msgpack_buffer_write(void *data, const char *buf, msgpack_size_t len)
 }
 #endif
 
+typedef struct {
+  void *data;
+  grn_close_func close_func;
+} grn_ctx_local_variable;
+
 static grn_rc
 grn_ctx_impl_init(grn_ctx *ctx)
 {
@@ -383,8 +388,20 @@ grn_ctx_impl_init(grn_ctx *ctx)
   GRN_TEXT_INIT(&(ctx->impl->temporary_open_spaces.stack), 0);
   ctx->impl->temporary_open_spaces.current = NULL;
 
+  ctx->impl->variables = grn_hash_create(ctx,
+                                         NULL,
+                                         GRN_TABLE_MAX_KEY_SIZE,
+                                         sizeof(grn_ctx_local_variable),
+                                         GRN_OBJ_KEY_VAR_SIZE|GRN_HASH_TINY);
+  if (!ctx->impl->variables) {
+    goto exit;
+  }
+
 exit :
   if (ctx->rc != GRN_SUCCESS) {
+    if (ctx->impl->variables) {
+      grn_hash_close(ctx, ctx->impl->variables);
+    }
     GRN_OBJ_FIN(ctx, &(ctx->impl->temporary_open_spaces.stack));
     GRN_OBJ_FIN(ctx, &ctx->impl->query_log_buf);
     grn_obj_close(ctx, ctx->impl->output.buf);
@@ -508,6 +525,15 @@ grn_ctx_impl_fin(grn_ctx *ctx)
   if (ctx->impl->finalizer) {
     ctx->impl->finalizer(ctx, 0, NULL, &(ctx->user_data));
   }
+  GRN_HASH_EACH_BEGIN(ctx, ctx->impl->variables, cursor, id) {
+    void *value;
+    grn_hash_cursor_get_value(ctx, cursor, &value);
+    grn_ctx_local_variable *variable = value;
+    if (variable->close_func) {
+      variable->close_func(ctx, variable->data);
+    }
+  } GRN_HASH_EACH_END(ctx, cursor);
+  grn_hash_close(ctx, ctx->impl->variables);
   {
     grn_obj *stack;
     grn_obj *spaces;
@@ -1085,6 +1111,114 @@ grn_ctx_set_force_match_escalation(grn_ctx *ctx, grn_bool force)
   } else {
     return GRN_INVALID_ARGUMENT;
   }
+}
+
+grn_rc
+grn_ctx_set_variable(grn_ctx *ctx,
+                     const char *name,
+                     int name_size,
+                     void *data,
+                     grn_close_func close_func)
+{
+  GRN_API_ENTER;
+  if (!ctx->impl) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[ctx][variable][set] not initialized ctx");
+    goto exit;
+  }
+  if (name_size < 0) {
+    name_size = strlen(name);
+  }
+  if (data) {
+    void *value;
+    int added;
+    grn_id id = grn_hash_add(ctx,
+                             ctx->impl->variables,
+                             name,
+                             name_size,
+                             &value,
+                             &added);
+    if (id == GRN_ID_NIL) {
+      grn_rc rc = ctx->rc;
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_UNKNOWN_ERROR;
+      }
+      ERR(rc, "[ctx][variable][set] failed to add variable");
+      goto exit;
+    }
+    grn_ctx_local_variable *variable = value;
+    if (!added) {
+      if (variable->close_func) {
+        variable->close_func(ctx, variable->data);
+      }
+    }
+    variable->data = data;
+    variable->close_func = close_func;
+  } else {
+    void *value;
+    grn_id id = grn_hash_get(ctx,
+                             ctx->impl->variables,
+                             name,
+                             name_size,
+                             &value);
+    if (id != GRN_ID_NIL) {
+      grn_ctx_local_variable *variable = value;
+      if (variable->close_func) {
+        variable->close_func(ctx, variable->data);
+      }
+      grn_hash_delete_by_id(ctx, ctx->impl->variables, id, NULL);
+    }
+  }
+exit :
+  GRN_API_RETURN(ctx->rc);
+}
+
+void *
+grn_ctx_get_variable(grn_ctx *ctx,
+                     const char *name,
+                     int name_size)
+{
+  void *data = NULL;
+  GRN_API_ENTER;
+  if (!ctx->impl) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[ctx][variable][get] not initialized ctx");
+    goto exit;
+  }
+  if (name_size < 0) {
+    name_size = strlen(name);
+  }
+  void *value;
+  grn_id id = grn_hash_get(ctx,
+                           ctx->impl->variables,
+                           name,
+                           name_size,
+                           &value);
+  if (id == GRN_ID_NIL) {
+    goto exit;
+  }
+  grn_ctx_local_variable *variable = value;
+  data = variable->data;
+exit :
+  GRN_API_RETURN(data);
+}
+
+grn_rc
+grn_unset_variable(const char *name,
+                   int name_size)
+{
+  grn_rc rc = GRN_SUCCESS;
+  grn_ctx *ctx = grn_gctx.next;
+  while (ctx != &grn_gctx) {
+    rc = grn_ctx_set_variable(ctx, name, name_size, NULL, NULL);
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+    CRITICAL_SECTION_ENTER(grn_glock);
+    ctx = ctx->next;
+    CRITICAL_SECTION_LEAVE(grn_glock);
+  }
+  return rc;
 }
 
 grn_content_type

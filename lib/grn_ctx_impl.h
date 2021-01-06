@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -190,6 +190,8 @@ struct _grn_ctx_impl {
     grn_obj stack;
     grn_obj *current;
   } temporary_open_spaces;
+
+  grn_hash *variables;
 };
 
 void grn_ctx_impl_columns_cache_delete(grn_ctx *ctx, grn_id table_id);
