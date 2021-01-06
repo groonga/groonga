@@ -35,10 +35,13 @@
 #include <ctype.h>
 
 typedef struct {
+  mecab_model_t *mecab_model;
   mecab_t *mecab;
   grn_plugin_mutex *mutex;
   grn_encoding encoding;
 } grn_mecab;
+
+static const char *grn_mecab_lattice_variable_name = "TokenMecab.lattice";
 
 static grn_mecab mecab_default;
 static grn_mecab mecab_wakati;
@@ -67,6 +70,7 @@ typedef struct {
 typedef struct {
   grn_mecab_tokenizer_options *options;
   grn_mecab *mecab;
+  mecab_lattice_t *lattice;
   grn_obj buf;
   const char *next;
   const char *end;
@@ -110,6 +114,7 @@ grn_mecab_init(grn_ctx *ctx,
                grn_mecab *mecab,
                const char *tag)
 {
+  mecab->mecab_model = NULL;
   mecab->mecab = NULL;
   mecab->mutex = grn_plugin_mutex_open(ctx);
   if (!mecab->mutex) {
@@ -128,6 +133,10 @@ grn_mecab_fin(grn_ctx *ctx, grn_mecab *mecab)
   if (mecab->mecab) {
     mecab_destroy(mecab->mecab);
     mecab->mecab = NULL;
+  }
+  if (mecab->mecab_model) {
+    mecab_model_destroy(mecab->mecab_model);
+    mecab->mecab_model = NULL;
   }
   if (mecab->mutex) {
     grn_plugin_mutex_close(ctx, mecab->mutex);
@@ -358,10 +367,11 @@ chunked_tokenize_utf8_chunk(grn_ctx *ctx,
 {
   const char *tokenized_chunk;
   size_t tokenized_chunk_length;
-
-  tokenized_chunk = mecab_sparse_tostr2(tokenizer->mecab->mecab,
-                                        chunk,
-                                        chunk_bytes);
+  mecab_lattice_set_sentence2(tokenizer->lattice,
+                              chunk,
+                              chunk_bytes);
+  mecab_parse_lattice(tokenizer->mecab->mecab, tokenizer->lattice);
+  tokenized_chunk = mecab_lattice_tostr(tokenizer->lattice);
   if (!tokenized_chunk) {
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer][mecab][chunk] "
@@ -480,11 +490,11 @@ chunked_tokenize_utf8(grn_ctx *ctx,
   }
 }
 
-static mecab_t *
-mecab_create(grn_ctx *ctx,
-             grn_mecab_tokenizer_options *options)
+static mecab_model_t *
+mecab_model_create(grn_ctx *ctx,
+                   grn_mecab_tokenizer_options *options)
 {
-  mecab_t *mecab;
+  mecab_model_t *mecab_model;
   int argc = 0;
   const char *argv[4];
   const char *tag;
@@ -539,9 +549,9 @@ mecab_create(grn_ctx *ctx,
   argv[argc++] = GRN_BUNDLED_MECAB_RC_PATH;
 # endif /* WIN32 */
 #endif /* GRN_WITH_BUNDLED_MECAB */
-  mecab = mecab_new(argc, (char **)argv);
+  mecab_model = mecab_model_new(argc, (char **)argv);
 
-  if (!mecab) {
+  if (!mecab_model) {
 #ifdef GRN_WITH_BUNDLED_MECAB
     {
       const char *grn_encoding_rc_file;
@@ -550,16 +560,16 @@ mecab_create(grn_ctx *ctx,
       if (need_default_output) {
         GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                          "[tokenizer][mecab][create]%s "
-                         "failed to create mecab_t: %s: "
-                         "mecab_new(\"%s\", \"%s\", \"%s\")",
+                         "failed to create mecab_model_t: %s: "
+                         "mecab_model_new(\"%s\", \"%s\", \"%s\")",
                          tag,
                          mecab_global_error_message(),
                          argv[0], argv[1], grn_encoding_rc_file);
       } else {
         GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                          "[tokenizer][mecab][create]%s "
-                         "failed to create mecab_t: %s: "
-                         "mecab_new(\"%s\", \"%s\", \"%s\", \"%s\")",
+                         "failed to create mecab_model_t: %s: "
+                         "mecab_model_new(\"%s\", \"%s\", \"%s\", \"%s\")",
                          tag,
                          mecab_global_error_message(),
                          argv[0], argv[1], argv[2], grn_encoding_rc_file);
@@ -570,16 +580,16 @@ mecab_create(grn_ctx *ctx,
     if (need_default_output) {
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                        "[tokenizer][mecab][create]%s "
-                       "failed to create mecab_t: %s: "
-                       "mecab_new(\"%s\")",
+                       "failed to create mecab_model_t: %s: "
+                       "mecab_model_new(\"%s\")",
                        tag,
                        mecab_global_error_message(),
                        argv[0]);
     } else {
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                        "[tokenizer][mecab][create]%s "
-                       "failed to create mecab_t: %s: "
-                       "mecab_new(\"%s\", \"%s\")",
+                       "failed to create mecab_model_t: %s: "
+                       "mecab_model_new(\"%s\", \"%s\")",
                        tag,
                        mecab_global_error_message(),
                        argv[0], argv[1]);
@@ -587,7 +597,7 @@ mecab_create(grn_ctx *ctx,
 #endif /* GRN_WITH_BUNDLED_MECAB */
   }
 
-  return mecab;
+  return mecab_model;
 }
 
 static void
@@ -602,9 +612,12 @@ mecab_init_mecab(grn_ctx *ctx, grn_mecab_tokenizer *tokenizer)
   if (!tokenizer->mecab->mecab) {
     grn_plugin_mutex_lock(ctx, tokenizer->mecab->mutex);
     if (!tokenizer->mecab->mecab) {
-      tokenizer->mecab->mecab = mecab_create(ctx, tokenizer->options);
-      if (tokenizer->mecab->mecab) {
-        tokenizer->mecab->encoding = get_mecab_encoding(tokenizer->mecab->mecab);
+      tokenizer->mecab->mecab_model = mecab_model_create(ctx, tokenizer->options);
+      if (tokenizer->mecab->mecab_model) {
+        tokenizer->mecab->mecab = mecab_model_new_tagger(tokenizer->mecab->mecab_model);
+        if (tokenizer->mecab->mecab) {
+          tokenizer->mecab->encoding = get_mecab_encoding(tokenizer->mecab->mecab);
+        }
       }
     }
     grn_plugin_mutex_unlock(ctx, tokenizer->mecab->mutex);
@@ -1046,6 +1059,13 @@ mecab_next_wakati_format(grn_ctx *ctx,
   grn_token_set_status(ctx, token, status);
 }
 
+static void
+grn_mecab_lattice_close(grn_ctx *ctx, void *data)
+{
+  mecab_lattice_t *lattice = data;
+  mecab_lattice_destroy(lattice);
+}
+
 /*
   This function is called for a full text search query or a document to be
   indexed. This means that both short/long strings are given.
@@ -1082,6 +1102,21 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
   if (!tokenizer->mecab->mecab) {
     GRN_PLUGIN_FREE(ctx, tokenizer);
     return NULL;
+  }
+  tokenizer->lattice = grn_ctx_get_variable(ctx,
+                                            grn_mecab_lattice_variable_name,
+                                            -1);
+  if (!tokenizer->lattice) {
+    tokenizer->lattice = mecab_model_new_lattice(tokenizer->mecab->mecab_model);
+    if (!tokenizer->lattice) {
+      GRN_PLUGIN_FREE(ctx, tokenizer);
+      return NULL;
+    }
+    grn_ctx_set_variable(ctx,
+                         grn_mecab_lattice_variable_name,
+                         -1,
+                         tokenizer->lattice,
+                         grn_mecab_lattice_close);
   }
 
   {
@@ -1120,7 +1155,6 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
       tokenizer->end = tokenizer->next;
     } else {
       grn_bool succeeded;
-      grn_plugin_mutex_lock(ctx, tokenizer->mecab->mutex);
       if (tokenizer->options->chunked_tokenize &&
           ctx->encoding == GRN_ENC_UTF8) {
         succeeded = chunked_tokenize_utf8(ctx,
@@ -1129,9 +1163,11 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
                                           normalized_string_length);
       } else {
         const char *s;
-        s = mecab_sparse_tostr2(tokenizer->mecab->mecab,
-                                normalized_string,
-                                normalized_string_length);
+        mecab_lattice_set_sentence2(tokenizer->lattice,
+                                    normalized_string,
+                                    normalized_string_length);
+        mecab_parse_lattice(tokenizer->mecab->mecab, tokenizer->lattice);
+        s = mecab_lattice_tostr(tokenizer->lattice);
         if (!s) {
           succeeded = GRN_FALSE;
           GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
@@ -1144,7 +1180,6 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
           GRN_TEXT_PUTS(ctx, &(tokenizer->buf), s);
         }
       }
-      grn_plugin_mutex_unlock(ctx, tokenizer->mecab->mutex);
       if (!succeeded) {
         GRN_PLUGIN_FREE(ctx, tokenizer);
         return NULL;
@@ -1220,11 +1255,16 @@ static void
 check_mecab_dictionary_encoding(grn_ctx *ctx)
 {
 #ifdef HAVE_MECAB_DICTIONARY_INFO_T
+  mecab_model_t *mecab_model;
   mecab_t *mecab;
   grn_encoding encoding;
   grn_bool have_same_encoding_dictionary;
 
-  mecab = mecab_create(ctx, NULL);
+  mecab_model = mecab_model_create(ctx, NULL);
+  if (!mecab_model) {
+    return;
+  }
+  mecab = mecab_model_new_tagger(mecab_model);
   if (!mecab) {
     return;
   }
@@ -1323,6 +1363,8 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 grn_rc
 GRN_PLUGIN_FIN(grn_ctx *ctx)
 {
+  grn_unset_variable(grn_mecab_lattice_variable_name, -1);
+
   grn_mecab_fin(ctx, &mecab_default);
   grn_mecab_fin(ctx, &mecab_wakati);
 
