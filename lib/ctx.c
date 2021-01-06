@@ -1210,9 +1210,11 @@ grn_unset_variable(const char *name,
   grn_rc rc = GRN_SUCCESS;
   grn_ctx *ctx = grn_gctx.next;
   while (ctx != &grn_gctx) {
-    rc = grn_ctx_set_variable(ctx, name, name_size, NULL, NULL);
-    if (rc != GRN_SUCCESS) {
-      break;
+    if (ctx->impl) {
+      rc = grn_ctx_set_variable(ctx, name, name_size, NULL, NULL);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
     }
     CRITICAL_SECTION_ENTER(grn_glock);
     ctx = ctx->next;
