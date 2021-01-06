@@ -414,27 +414,30 @@ module Groonga
     def optimize_by_estimated_size(data_list)
       return data_list unless Groonga::ORDER_BY_ESTIMATED_SIZE
 
-      start_index = nil
+      start_index = 0
       data_list.size.times do |i|
         data = data_list[i]
-        if data.logical_op != Operator::AND
-          if start_index.nil?
-            start_index = i
-          else
-            sort_by_estimated_size!(data_list, start_index...i)
-            start_index = nil
-          end
+        start_index_before = start_index
+        if (data.flags & ScanInfo::Flags::PUSH) == ScanInfo::Flags::PUSH
+          sort_by_estimated_size!(data_list, start_index...i)
+          start_index = i
+        elsif (data.flags & ScanInfo::Flags::POP) == ScanInfo::Flags::POP
+          sort_by_estimated_size!(data_list, start_index...i)
+          start_index = i + 1
         end
       end
-      unless start_index.nil?
-        sort_by_estimated_size!(data_list, start_index...data_list.size)
-      end
+      sort_by_estimated_size!(data_list, start_index...data_list.size)
       data_list
     end
 
     def sort_by_estimated_size!(data_list, range)
       target_data_list = data_list[range]
       return if target_data_list.size < 2
+
+      is_all_and = target_data_list.all? do |data|
+        data.logical_op == Operator::AND
+      end
+      return unless is_all_and
 
       start_logical_op = target_data_list.first.logical_op
       sorted_data_list = target_data_list.sort_by do |data|
