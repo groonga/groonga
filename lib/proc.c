@@ -3687,7 +3687,6 @@ selector_between(grn_ctx *ctx,
   bool index_table_need_unref = false;
   grn_obj *index_table = NULL;
   grn_table_cursor *cursor;
-  grn_id id;
 
   between_data_init(ctx, &data);
   rc = between_parse_args(ctx, nargs - 1, args + 1, &data);
@@ -3756,8 +3755,20 @@ selector_between(grn_ctx *ctx,
   }
 
   if (index) {
-    while ((id = grn_table_cursor_next(ctx, cursor))) {
-      grn_ii_at(ctx, (grn_ii *)index, id, (grn_hash *)res, op);
+    grn_obj *index_cursor = grn_index_cursor_open(ctx,
+                                                  cursor,
+                                                  index,
+                                                  GRN_ID_NIL,
+                                                  GRN_ID_MAX,
+                                                  0);
+    if (index_cursor) {
+      grn_result_set_add_index_cursor(ctx,
+                                      (grn_hash *)res,
+                                      index_cursor,
+                                      0,
+                                      0,
+                                      op);
+      grn_obj_close(ctx, index_cursor);
     }
   } else {
     grn_result_set_add_table_cursor(ctx, (grn_hash *)res, cursor, 1, op);
