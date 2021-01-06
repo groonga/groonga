@@ -3193,6 +3193,7 @@ typedef struct {
   grn_obj *max;
   grn_obj casted_max;
   between_border_type max_border_type;
+  int cursor_flags;
 } between_data;
 
 static void
@@ -3200,6 +3201,7 @@ between_data_init(grn_ctx *ctx, between_data *data)
 {
   GRN_VOID_INIT(&(data->casted_min));
   GRN_VOID_INIT(&(data->casted_max));
+  data->cursor_flags = 0;
 }
 
 static void
@@ -3452,8 +3454,6 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
                                               grn_operator op,
                                               double too_many_index_match_ratio)
 {
-  int n_index_keys;
-
   if (too_many_index_match_ratio < 0.0) {
     return GRN_FALSE;
   }
@@ -3474,106 +3474,30 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
     return GRN_FALSE;
   }
 
-  n_index_keys = grn_table_size(ctx, index_table);
-  if (n_index_keys == 0) {
+  grn_table_cursor *cursor = grn_table_cursor_open(ctx,
+                                                   index_table,
+                                                   GRN_BULK_HEAD(data->min),
+                                                   GRN_BULK_VSIZE(data->min),
+                                                   GRN_BULK_HEAD(data->max),
+                                                   GRN_BULK_VSIZE(data->max),
+                                                   0,
+                                                   -1,
+                                                   data->cursor_flags);
+  if (!cursor) {
+    return GRN_FALSE;
+  }
+  uint32_t estimated_size =
+    grn_ii_estimate_size_for_lexicon_cursor(ctx,
+                                            (grn_ii *)index,
+                                            cursor);
+  grn_table_cursor_close(ctx, cursor);
+
+  if (estimated_size == 0) {
     return GRN_FALSE;
   }
 
-  switch (index_table->header.domain) {
-  /* TODO: */
-  /* case GRN_DB_INT8 : */
-  /* case GRN_DB_UINT8 : */
-  /* case GRN_DB_INT16 : */
-  /* case GRN_DB_UINT16 : */
-  /* case GRN_DB_INT32 : */
-  /* case GRN_DB_UINT32 : */
-  /* case GRN_DB_INT64 : */
-  /* case GRN_DB_UINT64 : */
-  /* case GRN_DB_FLOAT : */
-  case GRN_DB_TIME :
-    break;
-  default :
-    return GRN_FALSE;
-  }
-
-  {
-    grn_table_cursor *cursor;
-    long long int all_min;
-    long long int all_max;
-    cursor = grn_table_cursor_open(ctx, index_table,
-                                   NULL, -1,
-                                   NULL, -1,
-                                   0, 1,
-                                   GRN_CURSOR_BY_KEY | GRN_CURSOR_ASCENDING);
-    if (!cursor) {
-      return GRN_FALSE;
-    }
-    if (grn_table_cursor_next(ctx, cursor) == GRN_ID_NIL) {
-      grn_table_cursor_close(ctx, cursor);
-      return GRN_FALSE;
-    }
-    {
-      long long int *key;
-      grn_table_cursor_get_key(ctx, cursor, (void **)&key);
-      all_min = *key;
-    }
-    grn_table_cursor_close(ctx, cursor);
-
-    cursor = grn_table_cursor_open(ctx, index_table,
-                                   NULL, 0, NULL, 0,
-                                   0, 1,
-                                   GRN_CURSOR_BY_KEY | GRN_CURSOR_DESCENDING);
-    if (!cursor) {
-      return GRN_FALSE;
-    }
-    if (grn_table_cursor_next(ctx, cursor) == GRN_ID_NIL) {
-      grn_table_cursor_close(ctx, cursor);
-      return GRN_FALSE;
-    }
-    {
-      long long int *key;
-      grn_table_cursor_get_key(ctx, cursor, (void **)&key);
-      all_max = *key;
-    }
-    grn_table_cursor_close(ctx, cursor);
-
-    /*
-     * We assume the following:
-     *   * homogeneous index key distribution.
-     *   * each index key matches only 1 record.
-     * TODO: Improve me.
-     */
-    {
-      int n_existing_records;
-      int n_indexed_records;
-      long long int all_difference;
-      long long int argument_difference;
-
-      n_existing_records = grn_table_size(ctx, res);
-
-      all_difference = all_max - all_min;
-      if (all_difference <= 0) {
-        return GRN_FALSE;
-      }
-      argument_difference =
-        GRN_TIME_VALUE(data->max) - GRN_TIME_VALUE(data->min);
-      if (argument_difference <= 0) {
-        return GRN_FALSE;
-      }
-      n_indexed_records =
-        n_index_keys * ((double)argument_difference / (double)all_difference);
-
-      /*
-       * Same as:
-       * ((n_existing_record / n_indexed_records) > too_many_index_match_ratio)
-       */
-      if (n_existing_records > (n_indexed_records * too_many_index_match_ratio)) {
-        return GRN_FALSE;
-      }
-    }
-  }
-
-  return GRN_TRUE;
+  uint32_t n_existing_records = grn_table_size(ctx, res);
+  return (estimated_size * too_many_index_match_ratio) >= n_existing_records;
 }
 
 static grn_rc
@@ -3681,7 +3605,6 @@ selector_between(grn_ctx *ctx,
   grn_rc rc = GRN_SUCCESS;
   int offset = 0;
   int limit = -1;
-  int flags = GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_KEY;
   between_data data;
   grn_bool use_sequential_search;
   bool index_table_need_unref = false;
@@ -3689,16 +3612,17 @@ selector_between(grn_ctx *ctx,
   grn_table_cursor *cursor;
 
   between_data_init(ctx, &data);
+  data.cursor_flags = GRN_CURSOR_ASCENDING | GRN_CURSOR_BY_KEY;
   rc = between_parse_args(ctx, nargs - 1, args + 1, &data);
   if (rc != GRN_SUCCESS) {
     goto exit;
   }
 
   if (data.min_border_type == BETWEEN_BORDER_EXCLUDE) {
-    flags |= GRN_CURSOR_GT;
+    data.cursor_flags |= GRN_CURSOR_GT;
   }
   if (data.max_border_type == BETWEEN_BORDER_EXCLUDE) {
-    flags |= GRN_CURSOR_LT;
+    data.cursor_flags |= GRN_CURSOR_LT;
   }
 
   if (data.value->header.type == GRN_COLUMN_INDEX) {
@@ -3743,12 +3667,15 @@ selector_between(grn_ctx *ctx,
     goto exit;
   }
 
-  cursor = grn_table_cursor_open(ctx, index_table,
+  cursor = grn_table_cursor_open(ctx,
+                                 index_table,
                                  GRN_BULK_HEAD(data.min),
                                  GRN_BULK_VSIZE(data.min),
                                  GRN_BULK_HEAD(data.max),
                                  GRN_BULK_VSIZE(data.max),
-                                 offset, limit, flags);
+                                 offset,
+                                 limit,
+                                 data.cursor_flags);
   if (!cursor) {
     rc = ctx->rc;
     goto exit;
