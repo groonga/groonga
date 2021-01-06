@@ -7,23 +7,24 @@ module Groonga
     end
 
     def estimate
-      search_index = @data.search_indexes.first
-      return @table_size if search_index.nil?
-
-      index_column = resolve_index_column(search_index.index_column)
-      return @table_size if index_column.nil?
-
       size = nil
       case @data.op
       when Operator::CALL
-        size = estimate_call(index_column)
+        size = estimate_call
       else
+        search_index = @data.search_indexes.first
+        return @table_size if search_index.nil?
+
+        index_column = resolve_index_column(search_index.index_column)
+        return @table_size if index_column.nil?
+
         left = ExpressionTree::Variable.new(index_column)
         right = ExpressionTree::Constant.new(@data.query)
         node = ExpressionTree::BinaryOperation.new(@data.op, left, right)
         size = node.estimate_size(@table)
+
+        index_column.unref
       end
-      index_column.unref
       size || @table_size
     end
 
@@ -45,7 +46,7 @@ module Groonga
       index_column
     end
 
-    def estimate_call(index_column)
+    def estimate_call
       procedure = @data.args[0]
       arguments = @data.args[1..-1].collect do |arg|
         if arg.is_a?(::Groonga::Object)

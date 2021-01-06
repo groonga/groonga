@@ -26,6 +26,8 @@ module Groonga
           estimate_size_between(table)
         when "in_values"
           estimate_size_in_values(table)
+        when "query"
+          estimate_size_query(table)
         else
           table.size
         end
@@ -78,14 +80,54 @@ module Groonga
 
       def estimate_size_in_values(table)
         column, *values = @arguments
-        total = values.inject(0) do |sum, value|
+        estimated_sizes = values.collect do |value|
           node = BinaryOperation.new(Operator::EQUAL, column, value)
-          sum + node.estimate_size(table)
+          node.estimate_size(table)
         end
+        resolve_estimated_sizes(table, estimated_sizes)
+      end
+
+      def estimate_size_query(table)
+        match_columns, query, = @arguments
+        estimated_sizes = []
+        expression = Expression.create(table)
+        begin
+          expression.parse(match_columns.value.value)
+          expression.codes.each do |code|
+            case code.op
+            when Operator::PUSH
+              value = code.value
+              case value
+              when ::Groonga::IndexColumn
+                estimated_size = value.estimate_size(query: query.value)
+              else
+                next
+              end
+            when Operator::GET_VALUE
+              index_info = code.value.find_index(Operator::MATCH)
+              next unless index_info
+              index = index_info.index
+              estimated_size = index.estimate_size(query: query.value)
+              index.unref
+            else
+              next
+            end
+            estimated_sizes << estimated_size
+          end
+        ensure
+          expression.close
+        end
+        resolve_estimated_sizes(table, estimated_sizes)
+      end
+
+      def resolve_estimated_sizes(table, estimated_sizes)
+        return 0 if estimated_sizes.empty?
         duplicated_ratio = 0.3 # No reason :p
-        estimated_size = (total * (1 - duplicated_ratio)).round
+        estimated_size = estimated_sizes.inject do |sum, size|
+          sum + size * (1 - duplicated_ratio)
+        end
         if estimated_size < table.size
-          estimated_size
+          estimated_size.round
         else
           table.size
         end

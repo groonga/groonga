@@ -337,10 +337,73 @@ class TestEstimateSize < QueryOptimizerTestCase
       @logs.add(:timestamp => "2015-02-19 02:20:00")
       @logs.add(:timestamp => "2015-02-19 02:21:00")
       @logs.add(:timestamp => "2015-02-19 02:21:00")
-      assert_equal(6,
+      assert_equal(7,
                    estimate_size("in_values(timestamp, " +
                                  "'2015-02-19 02:18:00', " +
                                  "'2015-02-19 02:20:00')"))
+    end
+  end
+
+  class TestQuerySearch < self
+    def setup
+      Groonga::Schema.define do |schema|
+        schema.create_table("Hosts", key_type: :short_text) do |table|
+        end
+
+        schema.create_table("Logs") do |table|
+          table.text("message")
+          table.reference("host", "Hosts")
+        end
+
+        schema.create_table("Terms",
+                            :type => :patricia_trie,
+                            :default_tokenizer => "TokenBigram",
+                            :normalizer => "NormalizerAuto") do |table|
+          table.index("Logs", "message")
+          table.index("Hosts", "_key")
+        end
+
+        schema.change_table("Hosts") do |table|
+          table.index("Logs", "host")
+        end
+      end
+      super
+    end
+
+    def test_no_record
+      assert_equal(0, estimate_size("query('message', 'shutdown')"))
+    end
+
+    def test_match_columns_column
+      @logs.add(:message => "Start and shutdown")
+      @logs.add(:message => "Shutdown")
+      @logs.add(:message => "Running")
+      assert_equal(3, estimate_size("query('message', 'shutdown')"))
+    end
+
+    def test_match_columns_index
+      @logs.add(:message => "Start and shutdown")
+      @logs.add(:message => "Shutdown")
+      @logs.add(:message => "Running")
+      assert_equal(3, estimate_size("query('Terms.Logs_message', 'shutdown')"))
+    end
+
+    def test_match_columns_scorer_column
+      @logs.add(:message => "Start and shutdown")
+      @logs.add(:message => "Shutdown")
+      @logs.add(:message => "Running")
+      assert_equal(3, estimate_size("query(" +
+                                    "'scorer_tf_idf(message)', " +
+                                    "'shutdown')"))
+    end
+
+    def test_match_columns_scorer_index
+      @logs.add(:message => "Start and shutdown")
+      @logs.add(:message => "Shutdown")
+      @logs.add(:message => "Running")
+      assert_equal(3, estimate_size("query(" +
+                                    "'scorer_tf_idf(Terms.Logs_message)', " +
+                                    "'shutdown')"))
     end
   end
 
