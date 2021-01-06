@@ -1,4 +1,0 @@
-#$GRN_MECAB_LOCK_FREE=yes
-#@on-error omit
-tokenize TokenMecab '日本のエンジン'
-#@on-error default

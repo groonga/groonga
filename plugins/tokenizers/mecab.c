@@ -41,12 +41,13 @@ typedef struct {
   grn_encoding encoding;
 } grn_mecab;
 
+static const char *grn_mecab_lattice_variable_name = "TokenMecab.lattice";
+
 static grn_mecab mecab_default;
 static grn_mecab mecab_wakati;
 
 static grn_bool grn_mecab_chunked_tokenize_enabled = GRN_FALSE;
 static int32_t grn_mecab_chunk_size_threshold = 8192;
-static grn_bool grn_mecab_lock_free = GRN_FALSE;
 
 static const size_t GRN_MECAB_FEATURE_LOCATION_CLASS = 0;
 static const size_t GRN_MECAB_FEATURE_LOCATION_SUBCLASS0 = 1;
@@ -366,17 +367,11 @@ chunked_tokenize_utf8_chunk(grn_ctx *ctx,
 {
   const char *tokenized_chunk;
   size_t tokenized_chunk_length;
-  if (!grn_mecab_lock_free) {
-    tokenized_chunk = mecab_sparse_tostr2(tokenizer->mecab->mecab,
-                                          chunk,
-                                          chunk_bytes);
-  } else {
-    mecab_lattice_set_sentence2(tokenizer->lattice,
-                                chunk,
-                                chunk_bytes);
-    mecab_parse_lattice(tokenizer->mecab->mecab, tokenizer->lattice);
-    tokenized_chunk = mecab_lattice_tostr(tokenizer->lattice);
-  }
+  mecab_lattice_set_sentence2(tokenizer->lattice,
+                              chunk,
+                              chunk_bytes);
+  mecab_parse_lattice(tokenizer->mecab->mecab, tokenizer->lattice);
+  tokenized_chunk = mecab_lattice_tostr(tokenizer->lattice);
   if (!tokenized_chunk) {
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer][mecab][chunk] "
@@ -1064,6 +1059,13 @@ mecab_next_wakati_format(grn_ctx *ctx,
   grn_token_set_status(ctx, token, status);
 }
 
+static void
+grn_mecab_lattice_close(grn_ctx *ctx, void *data)
+{
+  mecab_lattice_t *lattice = data;
+  mecab_lattice_destroy(lattice);
+}
+
 /*
   This function is called for a full text search query or a document to be
   indexed. This means that both short/long strings are given.
@@ -1101,14 +1103,20 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
     GRN_PLUGIN_FREE(ctx, tokenizer);
     return NULL;
   }
-  if (grn_mecab_lock_free) {
+  tokenizer->lattice = grn_ctx_get_variable(ctx,
+                                            grn_mecab_lattice_variable_name,
+                                            -1);
+  if (!tokenizer->lattice) {
     tokenizer->lattice = mecab_model_new_lattice(tokenizer->mecab->mecab_model);
     if (!tokenizer->lattice) {
       GRN_PLUGIN_FREE(ctx, tokenizer);
       return NULL;
     }
-  } else {
-    tokenizer->lattice = NULL;
+    grn_ctx_set_variable(ctx,
+                         grn_mecab_lattice_variable_name,
+                         -1,
+                         tokenizer->lattice,
+                         grn_mecab_lattice_close);
   }
 
   {
@@ -1147,9 +1155,6 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
       tokenizer->end = tokenizer->next;
     } else {
       grn_bool succeeded;
-      if (!grn_mecab_lock_free) {
-        grn_plugin_mutex_lock(ctx, tokenizer->mecab->mutex);
-      }
       if (tokenizer->options->chunked_tokenize &&
           ctx->encoding == GRN_ENC_UTF8) {
         succeeded = chunked_tokenize_utf8(ctx,
@@ -1158,17 +1163,11 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
                                           normalized_string_length);
       } else {
         const char *s;
-        if (!grn_mecab_lock_free) {
-          s = mecab_sparse_tostr2(tokenizer->mecab->mecab,
-                                  normalized_string,
-                                  normalized_string_length);
-        } else {
-          mecab_lattice_set_sentence2(tokenizer->lattice,
-                                      normalized_string,
-                                      normalized_string_length);
-          mecab_parse_lattice(tokenizer->mecab->mecab, tokenizer->lattice);
-          s = mecab_lattice_tostr(tokenizer->lattice);
-        }
+        mecab_lattice_set_sentence2(tokenizer->lattice,
+                                    normalized_string,
+                                    normalized_string_length);
+        mecab_parse_lattice(tokenizer->mecab->mecab, tokenizer->lattice);
+        s = mecab_lattice_tostr(tokenizer->lattice);
         if (!s) {
           succeeded = GRN_FALSE;
           GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
@@ -1180,9 +1179,6 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
           succeeded = GRN_TRUE;
           GRN_TEXT_PUTS(ctx, &(tokenizer->buf), s);
         }
-      }
-      if (!grn_mecab_lock_free) {
-        grn_plugin_mutex_unlock(ctx, tokenizer->mecab->mutex);
       }
       if (!succeeded) {
         GRN_PLUGIN_FREE(ctx, tokenizer);
@@ -1249,9 +1245,6 @@ mecab_fin(grn_ctx *ctx, void *user_data)
   grn_mecab_tokenizer *tokenizer = user_data;
   if (!tokenizer) {
     return;
-  }
-  if (tokenizer->lattice) {
-    mecab_lattice_destroy(tokenizer->lattice);
   }
   GRN_OBJ_FIN(ctx, &(tokenizer->feature_locations));
   GRN_OBJ_FIN(ctx, &(tokenizer->buf));
@@ -1325,15 +1318,6 @@ GRN_PLUGIN_INIT(grn_ctx *ctx)
     }
   }
 
-  {
-    char env[GRN_ENV_BUFFER_SIZE];
-
-    grn_getenv("GRN_MECAB_LOCK_FREE",
-               env,
-               GRN_ENV_BUFFER_SIZE);
-    grn_mecab_lock_free = (env[0] && strcmp(env, "yes") == 0);
-  }
-
   grn_mecab_init(ctx, &mecab_default, "[default]");
   grn_mecab_init(ctx, &mecab_wakati, "[wakati]");
   if (ctx->rc != GRN_SUCCESS) {
@@ -1379,6 +1363,8 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
 grn_rc
 GRN_PLUGIN_FIN(grn_ctx *ctx)
 {
+  grn_unset_variable(grn_mecab_lattice_variable_name, -1);
+
   grn_mecab_fin(ctx, &mecab_default);
   grn_mecab_fin(ctx, &mecab_wakati);
 
