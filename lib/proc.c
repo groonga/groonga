@@ -3692,8 +3692,8 @@ selector_between(grn_ctx *ctx,
       grn_result_set_add_index_cursor(ctx,
                                       (grn_hash *)res,
                                       index_cursor,
-                                      0,
-                                      0,
+                                      1,
+                                      1,
                                       op);
       grn_obj_close(ctx, index_cursor);
     }
