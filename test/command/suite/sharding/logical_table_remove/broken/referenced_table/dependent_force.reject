@@ -1,0 +1,89 @@
+plugin_register sharding
+[[0,0.0,0.0],true]
+table_create Paths_20150203 TABLE_HASH_KEY|KEY_LARGE ShortText
+[[0,0.0,0.0],true]
+table_create Logs_20150203 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150203 path COLUMN_SCALAR Paths_20150203
+[[0,0.0,0.0],true]
+table_create Times_20150203 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times_20150203 timestamp_index COLUMN_INDEX Logs_20150203 timestamp
+[[0,0.0,0.0],true]
+table_create PathTerms_20150203 TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create PathTerms_20150203 index COLUMN_INDEX|WITH_POSITION   Paths_20150203 _key
+[[0,0.0,0.0],true]
+table_create NotRelated_20150204 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Paths_20150204 TABLE_HASH_KEY|KEY_LARGE ShortText
+[[0,0.0,0.0],true]
+table_create Logs_20150204 TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs_20150204 timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs_20150204 path COLUMN_SCALAR Paths_20150204
+[[0,0.0,0.0],true]
+table_create Times_20150204 TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times_20150204 timestamp_index COLUMN_INDEX Logs_20150204 timestamp
+[[0,0.0,0.0],true]
+table_create PathTerms_20150204 TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create PathTerms_20150204 index COLUMN_INDEX|WITH_POSITION   Paths_20150204 _key
+[[0,0.0,0.0],true]
+load --table Logs_20150203
+[
+{"timestamp": "2015-02-03 12:49:00", "path": "/tmp/log"},
+{"timestamp": "2015-02-03 23:59:59", "path": "/var/"}
+]
+[[0,0.0,0.0],2]
+load --table Logs_20150204
+[
+{"timestamp": "2015-02-04 00:00:00", "path": "/tmp/log"},
+{"timestamp": "2015-02-04 13:49:00", "path": "/root/"},
+{"timestamp": "2015-02-04 13:50:00", "path": "/etc/aliases"}
+]
+[[0,0.0,0.0],3]
+logical_table_remove Logs timestamp   --min "2015-02-04 00:00:00"   --min_border "include"   --dependent yes   --force yes
+[[0,0.0,0.0],true]
+#|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.000010F>
+#|e| grn_ctx_at: failed to open object: <271>(<Paths_20150204>):<48>(<table:hash_key>)
+#|e| grn_ctx_at: failed to open object: <271>(<Paths_20150204>):<48>(<table:hash_key>)
+#|e| grn_ctx_at: failed to open object: <271>(<Paths_20150204>):<48>(<table:hash_key>)
+dump
+plugin_register sharding
+
+table_create Logs_20150203 TABLE_NO_KEY
+column_create Logs_20150203 timestamp COLUMN_SCALAR Time
+
+table_create NotRelated_20150204 TABLE_NO_KEY
+
+table_create PathTerms_20150203 TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+
+table_create PathTerms_20150204 TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+
+table_create Paths_20150203 TABLE_HASH_KEY|KEY_LARGE ShortText
+
+table_create Times_20150203 TABLE_PAT_KEY Time
+
+column_create Logs_20150203 path COLUMN_SCALAR Paths_20150203
+
+load --table Logs_20150203
+[
+["_id","path","timestamp"],
+[1,"/tmp/log",1422935340.0],
+[2,"/var/",1422975599.0]
+]
+
+load --table Paths_20150203
+[
+["_key"],
+["/tmp/log"],
+["/var/"]
+]
+
+column_create PathTerms_20150203 index COLUMN_INDEX|WITH_POSITION Paths_20150203 _key
+column_create Times_20150203 timestamp_index COLUMN_INDEX Logs_20150203 timestamp
