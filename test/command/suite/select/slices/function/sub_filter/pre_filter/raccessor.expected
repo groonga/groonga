@@ -1,0 +1,104 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users age COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos user COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice", "age": 9},
+{"_key": "bob",   "age": 29},
+{"_key": "chris", "age": 30}
+]
+[[0,0.0,0.0],3]
+load --table Memos
+[
+{"user": "alice", "content": "1"},
+{"user": "bob",   "content": "1 2"},
+{"user": "chris", "content": "1 2 3"},
+{"user": "bob",   "content": "1 2 3 4"},
+{"user": "alice", "content": "1 2 3 4 5"}
+]
+[[0,0.0,0.0],5]
+log_level --level info
+[[0,0.0,0.0],true]
+select Memos   --filter 'content @ "3"'   --slices[adult].filter 'content @ "4" && sub_filter(user, "age >= 18")'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ],
+        [
+          "user",
+          "Users"
+        ]
+      ],
+      [
+        3,
+        "1 2 3",
+        "chris"
+      ],
+      [
+        4,
+        "1 2 3 4",
+        "bob"
+      ],
+      [
+        5,
+        "1 2 3 4 5",
+        "alice"
+      ]
+    ],
+    {
+      "adult": [
+        [
+          1
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "content",
+            "Text"
+          ],
+          [
+            "user",
+            "Users"
+          ]
+        ],
+        [
+          4,
+          "1 2 3 4",
+          "bob"
+        ]
+      ]
+    }
+  ]
+]
+#|i| [table][select][index][selector][no-index][sub_filter] <>
+#|i| [sub_filter][pre-filter][accessor] _key(anonymous).user(Memos) -> <Users>
+#|i| [accessor][resolve][data-column][column] <Memos.user> -> <Users>
+#|i| [accessor][resolve][table] (temporary) -> <Memos>
+log_level --level notice
+[[0,0.0,0.0],true]

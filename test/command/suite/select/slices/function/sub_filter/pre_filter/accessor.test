@@ -1,0 +1,33 @@
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users age COLUMN_SCALAR UInt8
+
+table_create Memos TABLE_NO_KEY
+column_create Memos user COLUMN_SCALAR Users
+column_create Memos content COLUMN_SCALAR Text
+
+load --table Users
+[
+{"_key": "alice", "age": 9},
+{"_key": "bob",   "age": 29},
+{"_key": "chris", "age": 30}
+]
+
+load --table Memos
+[
+{"user": "alice", "content": "1"},
+{"user": "bob",   "content": "1 2"},
+{"user": "chris", "content": "1 2 3"},
+{"user": "bob",   "content": "1 2 3 4"},
+{"user": "alice", "content": "1 2 3 4 5"}
+]
+
+
+log_level --level info
+#@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
+select Memos \
+  --filter 'content @ "3"' \
+  --slices[adult].filter 'content @ "4" && sub_filter(user, "age >= 18")'
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels info
+log_level --level notice
