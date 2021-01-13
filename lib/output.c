@@ -1730,7 +1730,7 @@ grn_output_result_set_n_hits(grn_ctx *ctx,
     GRN_TEXT_PUTC(ctx, &buffer, '\0');
     grn_arrow_stream_writer_add_metadata(ctx,
                                          ctx->impl->output.arrow_stream_writer,
-                                         "GROONGA:n-hits",
+                                         "GROONGA:n_hits",
                                          GRN_TEXT_VALUE(&buffer));
     GRN_OBJ_FIN(ctx, &buffer);
     return;
