@@ -135,7 +135,7 @@ writer_close_map(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
-writer_write_table_columns(mrb_state *mrb, mrb_value self)
+writer_open_result_set(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_value mrb_table;
@@ -143,12 +143,15 @@ writer_write_table_columns(mrb_state *mrb, mrb_value self)
   mrb_int columns_size;
   grn_obj *table;
   grn_obj_format format;
-  int n_hits = 0;
+  mrb_int n_hits = 0;
   int offset = 0;
   int limit = 0;
   int hits_offset = 0;
+  mrb_int n_additional_elements = 0;
 
-  mrb_get_args(mrb, "os", &mrb_table, &columns, &columns_size);
+  mrb_get_args(mrb, "osi|i",
+               &mrb_table, &columns, &columns_size, &n_hits,
+               &n_additional_elements);
 
   table = DATA_PTR(mrb_table);
   GRN_OBJ_FORMAT_INIT(&format, n_hits, offset, limit, hits_offset);
@@ -162,8 +165,18 @@ writer_write_table_columns(mrb_state *mrb, mrb_value self)
       grn_mrb_ctx_check(mrb);
     }
   }
-  GRN_OUTPUT_TABLE_COLUMNS(table, &format);
+  GRN_OUTPUT_RESULT_SET_OPEN(table, &format, n_additional_elements);
   grn_obj_format_fin(ctx, &format);
+
+  return mrb_nil_value();
+}
+
+static mrb_value
+writer_close_result_set(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  GRN_OUTPUT_RESULT_SET_CLOSE(NULL, NULL);
 
   return mrb_nil_value();
 }
@@ -307,8 +320,10 @@ grn_mrb_writer_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "close_map",
                     writer_close_map, MRB_ARGS_NONE());
 
-  mrb_define_method(mrb, klass, "write_table_columns",
-                    writer_write_table_columns, MRB_ARGS_REQ(2));
+  mrb_define_method(mrb, klass, "open_result_set",
+                    writer_open_result_set, MRB_ARGS_ARG(3, 1));
+  mrb_define_method(mrb, klass, "close_result_set",
+                    writer_close_result_set, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "open_table_records",
                     writer_open_table_records, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "write_table_records_content",

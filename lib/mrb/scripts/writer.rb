@@ -17,5 +17,14 @@ module Groonga
         close_map
       end
     end
+
+    def result_set(table, output_columns, n_hits, n_additional_elements=0)
+      open_result_set(table, output_columns, n_hits, n_additional_elements)
+      begin
+        yield
+      ensure
+        close_result_set
+      end
+    end
   end
 end

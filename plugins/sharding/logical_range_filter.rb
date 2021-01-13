@@ -39,12 +39,7 @@ module Groonga
             n_elements += result_set.size
 
             if is_first
-              if is_stream_output
-                writer.open_map("RESULTSET", -1)
-              else
-                writer.open_array("RESULTSET", -1)
-              end
-              writer.write_table_columns(result_set, output_columns)
+              writer.open_result_set(result_set, output_columns, -1)
               writer.open_table_records(-1)
               is_first = false
             end
@@ -63,11 +58,7 @@ module Groonga
           end
           unless is_first
             writer.close_table_records
-            if is_stream_output
-              writer.close_map
-            else
-              writer.close_array
-            end
+            writer.close_result_set
           end
           query_logger.log(:size, ":", "output(#{n_elements})")
         ensure

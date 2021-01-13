@@ -26,6 +26,8 @@ GROONGA:data_type: metadata
 _id: uint32
 _key: int32
 uint64: uint64
+-- metadata --
+GROONGA:n-hits: 10
 	_id	_key	uint64
  0	  1	   1	     1
  1	  2	   2	     2

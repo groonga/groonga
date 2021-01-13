@@ -177,18 +177,9 @@ module Groonga
           n_elements += result_set.size
         end
 
+        first_result_set = results.first[:result_set]
         output_columns = context.output_columns
-
-        writer.array("RESULTSET", n_elements) do
-          writer.array("NHITS", 1) do
-            writer.write(n_hits)
-          end
-          first_result = results.first
-          if first_result
-            first_result_set = first_result[:result_set]
-            writer.write_table_columns(first_result_set, output_columns)
-          end
-
+        writer.result_set(first_result_set, output_columns, n_hits) do
           n_outputs = 0
           current_offset = context.offset
           current_offset += n_hits if current_offset < 0
@@ -256,8 +247,6 @@ module Groonga
           offset = options[:offset]
           offset += n_records if offset < 0
           n_written = [n_records - offset, limit].min
-          n_elements = 2 # for N hits and columns
-          n_elements += n_written
           unless sort_keys.empty?
             result_set = result_set.sort(sort_keys, options)
             plain_drilldown.temporary_tables << result_set
@@ -266,12 +255,9 @@ module Groonga
             query_logger.log(:size, ":", message)
             options = {offset: 0, limit: -1}
           end
-          writer.array("RESULTSET", n_elements) do
-            writer.array("NHITS", 1) do
-              writer.write(n_records)
-            end
-            writer.write_table_columns(result_set, output_columns)
-            writer.write_table_records(result_set, output_columns,
+          writer.result_set(result_set, output_columns, n_records) do
+            writer.write_table_records(result_set,
+                                       output_columns,
                                        options.merge(condition: condition))
           end
           query_logger.log(:size, ":", "output.drilldown(#{n_written})")
@@ -290,8 +276,6 @@ module Groonga
 
             result_set = drilldown.result_set
             n_records = result_set.size
-            n_elements = 2 # for N hits and columns
-            n_elements += n_records
             output_columns = drilldown.output_columns
             options = {
               :offset => drilldown.offset,
@@ -313,11 +297,7 @@ module Groonga
               options = {offset: 0, limit: -1}
               n_written = result_set.size
             end
-            writer.array("RESULTSET", n_elements) do
-              writer.array("NHITS", 1) do
-                writer.write(n_records)
-              end
-              writer.write_table_columns(result_set, output_columns)
+            writer.result_set(result_set, output_columns, n_records) do
               write_options = options.merge(condition: drilldown.condition)
               if is_command_version1 and drilldown.need_command_version2?
                 context.with_command_version(2) do
