@@ -34,12 +34,12 @@ select Memos --match_columns _key --query '\\(groonga\\)*'
         ]
       ],
       [
-        3,
-        "(groonga) Upgraded!"
-      ],
-      [
         1,
         "(groonga) Start to try!"
+      ],
+      [
+        3,
+        "(groonga) Upgraded!"
       ]
     ]
   ]

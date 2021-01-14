@@ -37,12 +37,12 @@ select --table Users --query name:^a
         ]
       ],
       [
-        4,
-        "Ava"
-      ],
-      [
         1,
         "Alice"
+      ],
+      [
+        4,
+        "Ava"
       ]
     ]
   ]

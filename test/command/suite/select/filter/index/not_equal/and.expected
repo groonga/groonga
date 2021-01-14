@@ -40,16 +40,16 @@ select Logs --filter 'server @^ "www" && server != "www2"'
         ]
       ],
       [
-        2,
-        "www3"
+        1,
+        "www"
       ],
       [
         4,
         "www1"
       ],
       [
-        1,
-        "www"
+        2,
+        "www3"
       ]
     ]
   ]

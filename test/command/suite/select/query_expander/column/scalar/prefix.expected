@@ -47,12 +47,12 @@ select --table Memos --query_expander Synonyms.words   --match_columns content -
         ]
       ],
       [
-        3,
-        "groonga storage engine"
-      ],
-      [
         1,
         "groonga"
+      ],
+      [
+        3,
+        "groonga storage engine"
       ]
     ]
   ]

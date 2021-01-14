@@ -36,11 +36,11 @@ select Users --filter 'name @^ "T" || fuzzy_search(name, "Ke")'   --output_colum
         ]
       ],
       [
-        "Tomy",
+        "Tom",
         1
       ],
       [
-        "Tom",
+        "Tomy",
         1
       ],
       [

@@ -4042,6 +4042,129 @@ grn_table_select_index_not_equal(grn_ctx *ctx,
 }
 
 static grn_inline grn_rc
+grn_table_select_index_fix_column_prefix(grn_ctx *ctx,
+                                         grn_obj *index,
+                                         grn_operator op,
+                                         grn_obj *res,
+                                         grn_operator logical_op,
+                                         grn_table_select_data *data)
+{
+  const char *tag = "[table][select][index][fix][column][prefix]";
+  grn_obj *lexicon = grn_ctx_at(ctx, index->header.domain);
+  if (!lexicon) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, index);
+    ERR(GRN_OBJECT_CORRUPT,
+        "%s index's domain is corrupt: %.*s",
+        tag,
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return ctx->rc;
+  }
+
+  scan_info *si = data->scan_info;
+  grn_obj query_buffer;
+  grn_obj *query;
+  grn_table_cursor *table_cursor = NULL;
+  grn_obj *index_cursor = NULL;
+  if (lexicon->header.domain == si->query->header.domain ||
+      (grn_type_id_is_text_family(ctx, lexicon->header.domain) &&
+       grn_type_id_is_text_family(ctx, si->query->header.domain))) {
+    query = si->query;
+  } else {
+    GRN_OBJ_INIT(&query_buffer,
+                 GRN_BULK,
+                 0,
+                 lexicon->header.domain);
+    query = &query_buffer;
+    grn_rc rc = grn_obj_cast(ctx, si->query, query, false);
+    if (rc != GRN_SUCCESS) {
+      grn_obj query_inspected;
+      grn_obj domain_inspected;
+      GRN_TEXT_INIT(&query_inspected, 0);
+      GRN_TEXT_INIT(&domain_inspected, 0);
+      grn_inspect(ctx, &query_inspected, si->query);
+      grn_obj *domain = grn_ctx_at(ctx, query_buffer.header.domain);
+      grn_inspect(ctx, &domain_inspected, domain);
+      grn_obj_unref(ctx, domain);
+      ERR(rc,
+          "%s failed to cast query: "
+          "<%.*s> -> <%.*s>",
+          tag,
+          (int)GRN_TEXT_LEN(&query_inspected),
+          GRN_TEXT_VALUE(&query_inspected),
+          (int)GRN_TEXT_LEN(&domain_inspected),
+          GRN_TEXT_VALUE(&domain_inspected));
+      GRN_OBJ_FIN(ctx, &domain_inspected);
+      GRN_OBJ_FIN(ctx, &query_inspected);
+      goto exit;
+    }
+  }
+
+  table_cursor = grn_table_cursor_open(ctx,
+                                       lexicon,
+                                       GRN_BULK_HEAD(query),
+                                       GRN_BULK_VSIZE(query),
+                                       NULL,
+                                       0,
+                                       0,
+                                       -1,
+                                       GRN_CURSOR_PREFIX|GRN_CURSOR_GE);
+  if (!table_cursor) {
+    grn_obj query_inspected;
+    GRN_TEXT_INIT(&query_inspected, 0);
+    grn_inspect(ctx, &query_inspected, query);
+    ERR(ctx->rc,
+        "%s failed to create table cursor: <%.*s>",
+        tag,
+        (int)GRN_TEXT_LEN(&query_inspected),
+        GRN_TEXT_VALUE(&query_inspected));
+    GRN_OBJ_FIN(ctx, &query_inspected);
+    goto exit;
+  }
+
+  index_cursor = grn_index_cursor_open(ctx,
+                                       table_cursor,
+                                       index,
+                                       GRN_ID_NIL,
+                                       GRN_ID_MAX,
+                                       0);
+  if (!index_cursor) {
+    grn_obj query_inspected;
+    GRN_TEXT_INIT(&query_inspected, 0);
+    grn_inspect(ctx, &query_inspected, query);
+    ERR(ctx->rc,
+        "%s failed to create table cursor: <%.*s>",
+        tag,
+        (int)GRN_TEXT_LEN(&query_inspected),
+        GRN_TEXT_VALUE(&query_inspected));
+    GRN_OBJ_FIN(ctx, &query_inspected);
+    goto exit;
+  }
+  grn_table_select_index_report(ctx, "[prefix]", index);
+  grn_result_set_add_index_cursor(ctx,
+                                  (grn_hash *)res,
+                                  index_cursor,
+                                  1,
+                                  1,
+                                  logical_op);
+exit :
+  if (index_cursor) {
+    grn_obj_close(ctx, index_cursor);
+  }
+  if (table_cursor) {
+    grn_table_cursor_close(ctx, table_cursor);
+  }
+  if (query == &query_buffer) {
+    GRN_OBJ_FIN(ctx, &query_buffer);
+  }
+  grn_obj_unref(ctx, lexicon);
+  return ctx->rc;
+}
+
+static grn_inline grn_rc
 grn_table_select_index_fix(grn_ctx *ctx,
                            grn_obj *index,
                            grn_operator op,
@@ -4103,17 +4226,21 @@ grn_table_select_index_fix(grn_ctx *ctx,
     }
     GRN_OBJ_FIN(ctx, &dest);
   } else {
+    if (op == GRN_OP_PREFIX) {
+      return grn_table_select_index_fix_column_prefix(ctx,
+                                                      index,
+                                                      op,
+                                                      res,
+                                                      logical_op,
+                                                      data);
+    }
     grn_obj *lexicon = grn_ctx_at(ctx, index->header.domain);
     if (lexicon) {
       grn_hash *keys;
       if ((keys = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                   GRN_OBJ_TABLE_HASH_KEY))) {
         grn_id *key;
-        if (op == GRN_OP_SUFFIX) {
-          grn_table_select_index_report(ctx, "[suffix]", index);
-        } else {
-          grn_table_select_index_report(ctx, "[prefix]", index);
-        }
+        grn_table_select_index_report(ctx, "[suffix]", index);
         grn_table_search(ctx, lexicon,
                          GRN_BULK_HEAD(si->query),
                          GRN_BULK_VSIZE(si->query),
@@ -4123,7 +4250,7 @@ grn_table_select_index_fix(grn_ctx *ctx,
         });
         grn_hash_close(ctx, keys);
       }
-      grn_obj_unlink(ctx, lexicon);
+      grn_obj_unref(ctx, lexicon);
     }
     rc = GRN_SUCCESS;
   }
