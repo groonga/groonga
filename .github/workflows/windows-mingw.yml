@@ -24,7 +24,7 @@ jobs:
             mingw-w64-x86_64-libtool
             mingw-w64-x86_64-mecab
             mingw-w64-x86_64-pkg-config
-            mingw-w64-x86_64-python3-pip
+            mingw-w64-x86_64-python-pip
             mingw-w64-x86_64-ruby
             mingw-w64-x86_64-xxhash
             mingw-w64-x86_64-zlib
