@@ -18,8 +18,10 @@ if(zstd_FOUND)
   return()
 endif()
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(LIBZSTD libzstd)
+find_package(PkgConfig)
+if(PkgConfig_FOUND)
+  pkg_check_modules(LIBZSTD libzstd)
+endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(zstd
