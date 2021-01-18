@@ -1,5 +1,5 @@
 # Copyright(C) 2012-2018 Brazil
-# Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2018-2021 Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,10 +14,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# https://buildbot.askmonty.org/buildbot/builders/work-amd64-valgrind/builds/5263/steps/compile/logs/stdio
-# says CMake 2.6.2... We want to drop old software support...
-cmake_minimum_required(VERSION 2.6.2)
-# cmake_minimum_required(VERSION 2.6.4) # CentOS 5
+cmake_minimum_required(VERSION 2.8.12) # CentOS 7
 set(GRN_PROJECT_NAME "groonga")
 set(GRN_PROJECT_LABEL "Groonga")
 project("${GRN_PROJECT_NAME}")
@@ -27,6 +24,8 @@ project("${GRN_PROJECT_NAME}")
 if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
+
+list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
   set(GRN_BUNDLED FALSE)
@@ -458,6 +457,88 @@ if(NOT ${GRN_WITH_LZ4} STREQUAL "no")
   endif()
 else()
   set(GRN_WITH_LZ4 FALSE)
+endif()
+
+
+include(ExternalProject)
+set(EP_COMMON_OPTIONS
+  LOG_DOWNLOAD TRUE
+  LOG_UPDATE TRUE
+  LOG_PATCH TRUE
+  LOG_CONFIGURE TRUE
+  LOG_BUILD TRUE
+  LOG_INSTALL TRUE
+  LOG_TEST TRUE
+  LOG_MERGED_STDOUTERR TRUE
+  LOG_OUTPUT_ON_FAILURE TRUE)
+include(GNUInstallDirs)
+
+set(GRN_ZSTD_EP_VERSION "1.4.8")
+set(GRN_ZSTD_TARGET)
+set(GRN_WITH_ZSTD "auto"
+  CACHE STRING "Support data compression by Zstandard.")
+if(NOT ${GRN_WITH_ZSTD} STREQUAL "no")
+  find_package(zstd)
+  if(zstd_FOUND)
+    set(GRN_WITH_ZSTD TRUE)
+    get_target_property(ZSTD_LIBRARY zstd::libzstd_shared IMPORTED_LOCATION)
+    set(GRN_ZSTD_TARGET zstd::libzstd_shared)
+    message(STATUS "Zstandard: ${ZSTD_LIBRARY}")
+  else()
+    if(CMAKE_VERSION VERSION_GREATER 3.6)
+      set(ZSTD_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-install")
+      if(MSVC)
+	set(ZSTD_LIBRARY_BASE_NAME zstd_static)
+      else()
+	set(ZSTD_LIBRARY_BASE_NAME zstd)
+      endif()
+      set(ZSTD_STATIC_LIBRARY "${ZSTD_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+      string(APPEND ZSTD_STATIC_LIBRARY "/${CMAKE_STATIC_LIBRARY_PREFIX}")
+      string(APPEND ZSTD_STATIC_LIBRARY "${ZSTD_LIBRARY_BASE_NAME}")
+      string(APPEND ZSTD_STATIC_LIBRARY "${CMAKE_STATIC_LIBRARY_SUFFIX}")
+      set(ZSTD_CMAKE_ARGS
+	-DCMAKE_INSTALL_PREFIX=${ZSTD_PREFIX}
+	-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+	-DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}
+	-DZSTD_BUILD_PROGRAMS=OFF
+	-DZSTD_BUILD_SHARED=OFF
+	-DZSTD_BUILD_STATIC=ON)
+      set(ZSTD_SOURCE_BASE_NAME "zstd-${GRN_ZSTD_EP_VERSION}.tar.gz")
+      set(ZSTD_SOURCE_LOCAL_PATH
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/${ZSTD_SOURCE_BASE_NAME}")
+      if(EXISTS ${ZSTD_SOURCE_LOCAL_PATH})
+	set(ZSTD_SOURCE_URL ${ZSTD_SOURCE_LOCAL_PATH})
+      else()
+	set(ZSTD_SOURCE_URL
+	  "https://github.com/facebook/zstd/releases/download")
+	string(APPEND ZSTD_SOURCE_URL "/v${GRN_ZSTD_EP_VERSION}")
+	string(APPEND ZSTD_SOURCE_URL "/${ZSTD_SOURCE_BASE_NAME}")
+      endif()
+      externalproject_add(zstd-ep
+	${EP_COMMON_OPTIONS}
+	CMAKE_ARGS ${ZSTD_CMAKE_ARGS}
+	SOURCE_SUBDIR "build/cmake"
+	URL ${ZSTD_SOURCE_URL}
+	BUILD_BYPRODUCTS ${ZSTD_STATIC_LIBRARY})
+      file(MAKE_DIRECTORY "${ZSTD_PREFIX}/include")
+      add_library(zstd::libzstd_static STATIC IMPORTED)
+      set_target_properties(zstd::libzstd_static PROPERTIES
+	IMPORTED_LOCATION ${ZSTD_STATIC_LIBRARY}
+	INTERFACE_INCLUDE_DIRECTORIES "${ZSTD_PREFIX}/include")
+      add_dependencies(zstd::libzstd_static zstd-ep)
+      set(GRN_ZSTD_TARGET zstd::libzstd_static)
+      set(GRN_WITH_ZSTD TRUE)
+      message(STATUS "Zstandard: ${ZSTD_STATIC_LIBRARY} (bundled)")
+    else()
+      if(${GRN_WITH_ZSTD} STREQUAL "yes")
+	message(FATAL_ERROR "No Zstandard found")
+      endif()
+      set(GRN_WITH_ZSTD FALSE)
+      message(STATUS "No Zstandard")
+    endif()
+  endif()
+else()
+  set(GRN_WITH_ZSTD FALSE)
 endif()
 
 

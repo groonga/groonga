@@ -64,6 +64,7 @@ cmake_install.cmake
 /vendor/lz4-*
 /vendor/plugins/*/
 /vendor/xxHash-*
+/vendor/zstd-*
 /stamp-h1
 /CMakeCache.txt
 /install_manifest.txt

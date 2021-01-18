@@ -33,7 +33,8 @@ EXTRA_DIST =					\
 	download_lz4.rb				\
 	download_mecab.rb			\
 	download_message_pack.rb		\
-	download_rapidjson.rb
+	download_rapidjson.rb			\
+	download.rb
 
 dist-hook:
 	rm -rf $(distdir)/$(NGINX_DIR)/objs/

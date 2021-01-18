@@ -1,5 +1,5 @@
 # Copyright(C) 2012-2018  Brazil
-# Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,6 @@ include_directories(
   # because bundled LZ4 includes its xxhash.h.
   ${LIBXXHASH_INCLUDE_DIRS}
   ${LIBLZ4_INCLUDE_DIRS}
-  ${LIBZSTD_INCLUDE_DIRS}
   ${MESSAGE_PACK_INCLUDE_DIRS}
   ${RAPIDJSON_INCLUDE_DIRS})
 
@@ -101,7 +100,7 @@ set(GRN_ALL_LIBRARIES
     ${PTHREAD_LIBS}
     ${Z_LIBS}
     ${LIBLZ4_LIBS}
-    ${LIBZSTD_LIBS}
+    ${GRN_ZSTD_TARGET}
     ${MESSAGE_PACK_LIBS}
     ${DL_LIBS}
     ${M_LIBS}
