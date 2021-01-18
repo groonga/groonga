@@ -58,5 +58,6 @@ files/$(PACKAGE)-$(VERSION)$(SUFFIX).zip: files/$(PACKAGE)-$(VERSION)$(SUFFIX).t
 	cd $(PACKAGE)-$(VERSION)$(SUFFIX)/vendor && $(RUBY) download_mecab.rb
 	cd $(PACKAGE)-$(VERSION)$(SUFFIX)/vendor && $(RUBY) download_message_pack.rb
 	cd $(PACKAGE)-$(VERSION)$(SUFFIX)/vendor && $(RUBY) download_rapidjson.rb
+	cd $(PACKAGE)-$(VERSION)$(SUFFIX)/vendor && $(RUBY) download.rb zstd
 	zip -r $@ $(PACKAGE)-$(VERSION)$(SUFFIX)
 	rm -rf $(PACKAGE)-$(VERSION)$(SUFFIX)
