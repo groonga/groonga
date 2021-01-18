@@ -1709,6 +1709,19 @@ grn_output_result_set_n_hits_v3(grn_ctx *ctx,
                                 grn_content_type output_type,
                                 grn_obj_format *format)
 {
+  if (output_type == GRN_CONTENT_APACHE_ARROW) {
+    grn_obj buffer;
+    GRN_TEXT_INIT(&buffer, 0);
+    grn_text_itoa(ctx, &buffer, format->nhits);
+    GRN_TEXT_PUTC(ctx, &buffer, '\0');
+    grn_arrow_stream_writer_add_metadata(ctx,
+                                         ctx->impl->output.arrow_stream_writer,
+                                         "GROONGA:n_hits",
+                                         GRN_TEXT_VALUE(&buffer));
+    GRN_OBJ_FIN(ctx, &buffer);
+    return;
+  }
+
   grn_output_cstr(ctx, outbuf, output_type, "n_hits");
   grn_output_int32(ctx, outbuf, output_type, format->nhits);
 }
@@ -1720,19 +1733,6 @@ grn_output_result_set_n_hits(grn_ctx *ctx,
                              grn_obj_format *format)
 {
   if (format->nhits == -1) {
-    return;
-  }
-
-  if (output_type == GRN_CONTENT_APACHE_ARROW) {
-    grn_obj buffer;
-    GRN_TEXT_INIT(&buffer, 0);
-    grn_text_itoa(ctx, &buffer, format->nhits);
-    GRN_TEXT_PUTC(ctx, &buffer, '\0');
-    grn_arrow_stream_writer_add_metadata(ctx,
-                                         ctx->impl->output.arrow_stream_writer,
-                                         "GROONGA:n_hits",
-                                         GRN_TEXT_VALUE(&buffer));
-    GRN_OBJ_FIN(ctx, &buffer);
     return;
   }
 
@@ -1751,14 +1751,6 @@ grn_output_table_column_info(grn_ctx *ctx,
                              const char *type,
                              grn_obj *column)
 {
-  if (output_type == GRN_CONTENT_APACHE_ARROW) {
-    grn_arrow_stream_writer_add_field(ctx,
-                                      ctx->impl->output.arrow_stream_writer,
-                                      name,
-                                      column);
-    return;
-  }
-
   if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
     grn_output_array_open(ctx, outbuf, output_type, "COLUMN", 2);
     if (name) {
@@ -1773,6 +1765,14 @@ grn_output_table_column_info(grn_ctx *ctx,
     }
     grn_output_array_close(ctx, outbuf, output_type);
   } else {
+    if (output_type == GRN_CONTENT_APACHE_ARROW) {
+      grn_arrow_stream_writer_add_field(ctx,
+                                        ctx->impl->output.arrow_stream_writer,
+                                        name,
+                                        column);
+      return;
+    }
+
     grn_output_map_open(ctx, outbuf, output_type, "column", 2);
     grn_output_cstr(ctx, outbuf, output_type, "name");
     if (name) {
@@ -1953,15 +1953,15 @@ grn_output_table_columns_close(grn_ctx *ctx,
                                grn_obj *outbuf,
                                grn_content_type output_type)
 {
-  if (output_type == GRN_CONTENT_APACHE_ARROW) {
-    grn_arrow_stream_writer_write_schema(ctx,
-                                         ctx->impl->output.arrow_stream_writer);
-    return;
-  }
-
   if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
     grn_output_array_close(ctx, outbuf, output_type);
   } else {
+    if (output_type == GRN_CONTENT_APACHE_ARROW) {
+      grn_arrow_stream_writer_write_schema(
+        ctx, ctx->impl->output.arrow_stream_writer);
+      return;
+    }
+
     grn_output_array_close(ctx, outbuf, output_type);
   }
 }
@@ -2045,15 +2045,15 @@ grn_output_table_record_open(grn_ctx *ctx,
                              grn_content_type output_type,
                              int n_columns)
 {
-  if (output_type == GRN_CONTENT_APACHE_ARROW) {
-    grn_arrow_stream_writer_open_record(ctx,
-                                        ctx->impl->output.arrow_stream_writer);
-    return;
-  }
-
   if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
     grn_output_array_open(ctx, outbuf, output_type, "HIT", n_columns);
   } else {
+    if (output_type == GRN_CONTENT_APACHE_ARROW) {
+      grn_arrow_stream_writer_open_record(
+        ctx, ctx->impl->output.arrow_stream_writer);
+      return;
+    }
+
     grn_output_array_open(ctx, outbuf, output_type, "record", n_columns);
   }
 }
@@ -2063,15 +2063,15 @@ grn_output_table_record_close(grn_ctx *ctx,
                               grn_obj *outbuf,
                               grn_content_type output_type)
 {
-  if (output_type == GRN_CONTENT_APACHE_ARROW) {
-    grn_arrow_stream_writer_close_record(ctx,
-                                         ctx->impl->output.arrow_stream_writer);
-    return;
-  }
-
   if (grn_ctx_get_command_version(ctx) < GRN_COMMAND_VERSION_3) {
     grn_output_array_close(ctx, outbuf, output_type);
   } else {
+    if (output_type == GRN_CONTENT_APACHE_ARROW) {
+      grn_arrow_stream_writer_close_record(
+        ctx, ctx->impl->output.arrow_stream_writer);
+      return;
+    }
+
     grn_output_array_close(ctx, outbuf, output_type);
   }
 }

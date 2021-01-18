@@ -1311,8 +1311,13 @@ get_content_mime_type(grn_ctx *ctx, const char *p, const char *pe)
   case 'a' :
     if (GRN_RAW_STRING_EQUAL_CSTRING(type, "arrow") ||
         GRN_RAW_STRING_EQUAL_CSTRING(type, "apache-arrow")) {
-      ctx->impl->output.type = GRN_CONTENT_APACHE_ARROW;
-      ctx->impl->output.mime_type = "application/x-apache-arrow-streaming";
+      if (grn_ctx_get_command_version(ctx) >= GRN_COMMAND_VERSION_3) {
+        ctx->impl->output.type = GRN_CONTENT_APACHE_ARROW;
+        ctx->impl->output.mime_type = "application/x-apache-arrow-streaming";
+      } else {
+        ctx->impl->output.type = GRN_CONTENT_JSON;
+        ctx->impl->output.mime_type = "application/json";
+      }
     }
     break;
 #endif
