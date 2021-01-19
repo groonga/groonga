@@ -226,6 +226,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)
   check_cflag("-Wno-declaration-after-statement")
   check_cxxflag("-fexceptions")
   check_cxxflag("-fimplicit-templates")
+  check_build_flag("-Wno-implicit-fallthrough")
 endif()
 
 if(NOT DEFINED CMAKE_C_COMPILE_OPTIONS_PIC)
