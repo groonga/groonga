@@ -2287,12 +2287,16 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
     }
     *hash->max_offset = new_max_offset;
     *hash->n_garbages = 0;
-    if (GRN_HASH_IS_LARGE_KEY(hash)) {
-      grn_id *garbages = hash->header.large->garbages;
-      memset(garbages, 0, GRN_HASH_MAX_KEY_SIZE_LARGE);
+    if (grn_hash_is_io_hash(hash)) {
+      if (GRN_HASH_IS_LARGE_KEY(hash)) {
+        grn_id *garbages = hash->header.large->garbages;
+        memset(garbages, 0, GRN_HASH_MAX_KEY_SIZE_LARGE);
+      } else {
+        grn_id *garbages = hash->header.normal->garbages;
+        memset(garbages, 0, GRN_HASH_MAX_KEY_SIZE_NORMAL);
+      }
     } else {
-      grn_id *garbages = hash->header.normal->garbages;
-      memset(garbages, 0, GRN_HASH_MAX_KEY_SIZE_NORMAL);
+      hash->garbages = GRN_ID_NIL;
     }
   }
 
