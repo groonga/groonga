@@ -6895,6 +6895,9 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
               GRN_OBJ_FIN(ctx, &buf);
             }
             */
+            if (c->pc.rid < c->min) {
+              continue;
+            }
           } else {
             if (c->curr_chunk <= c->nchunks) {
               if (c->curr_chunk == c->nchunks) {
