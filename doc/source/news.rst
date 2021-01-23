@@ -7,6 +7,103 @@
 News
 ====
 
+.. _release-10-1-1:
+
+Release 10.1.1 - 2021-01-25
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/select`] Added support for outputting UInt64 value in Apache Arrow format.
+
+* [:doc:`reference/commands/select`] Added support for outputting a number of hits in Apache Arrow format as below.
+
+  .. code-block::
+
+     -- metadata --
+     GROONGA:n-hits: 10
+
+* [:doc:`reference/functions/query`] Added support for optimization of "order by estimated size".
+
+  * Normally, we can search at high speed when we first execute a condition which number of hits is a little.
+
+    * The "B (There are few) && A (There are many)" faster than "A (There are many) && B (There are few)".
+
+  * This is a known optimization. However we need reorder conditions by ourselves.
+  * Groonga executes this reorder automatically by using optimization of "order by estimated size".
+  * This optimization is valid by ``GRN_ORDER_BY_ESTIMATED_SIZE_ENABLE=yes``.
+
+* [:doc:`/reference/functions/between`] Improved performance by the following improvements.
+
+  * Improved the accuracy of a decision whether the ``between()`` use sequential search or not.
+  * Improved that we set a result of ``between()`` into a result set in bulk.
+
+* [:doc:`reference/commands/select`] Improved performance for a prefix search.
+
+  * For example, the performance of the following prefix search by using "*" improved.
+
+    .. code-block::
+
+       table_create Memos TABLE_PAT_KEY ShortText
+       table_create Contents TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto
+       column_create Contents entries_key_index COLUMN_INDEX Memos _key
+
+       load --table Memos
+       [
+       {"_key": "(groonga) Start to try!"},
+       {"_key": "(mroonga) Installed"},
+       {"_key": "(groonga) Upgraded!"}
+       ]
+
+       select \
+         --table Memos \
+         --match_columns _key \
+         --query '\\(groonga\\)*'
+
+* [:doc:`/reference/tokenizers`][TokenMecab] Improved performance for parallel construction fo token column. [GitHub#1158][Patched by naoa]
+
+Fixes
+^^^^^
+
+* [:doc:`reference/functions/sub_filter`] fixed a bug that ``sub_filter`` doesn't work in ``slices[].filter``.
+
+  * For example, the result of ``sub_filter`` was 0 records by the following query by this bug.
+
+    .. code-block::
+
+       table_create Users TABLE_HASH_KEY ShortText
+       column_create Users age COLUMN_SCALAR UInt8
+
+       table_create Memos TABLE_NO_KEY
+       column_create Memos user COLUMN_SCALAR Users
+       column_create Memos content COLUMN_SCALAR Text
+
+       load --table Users
+       [
+       {"_key": "alice", "age": 9},
+       {"_key": "bob",   "age": 29}
+       ]
+
+       load --table Memos
+       [
+       {"user": "alice", "content": "hello"},
+       {"user": "bob",   "content": "world"},
+       {"user": "alice", "content": "bye"},
+       {"user": "bob",   "content": "yay"}
+       ]
+
+       select \
+         --table Memos \
+         --slices[adult].filter '_id > 1 && sub_filter(user, "age >= 18")'
+
+* Fixed a bug that it is possible that we can't add data and Groonga crash when we repeat much addition of data and deletion of data against a hash table.
+
+Thanks
+^^^^^^
+
+* naoa
+
 .. _release-10-1-0:
 
 Release 10.1.0 - 2020-12-29
