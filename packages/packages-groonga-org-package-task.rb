@@ -1,5 +1,5 @@
 # Copyright(C) 2014-2020  Sutou Kouhei <kou@clear-code.com>
-# Copyright(C) 2020  Horimoto Yasuhiro <horimoto@clear-code.com>
+# Copyright(C) 2020-2021  Horimoto Yasuhiro <horimoto@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -104,7 +104,12 @@ class PackagesGroongaOrgPackageTask < PackageTask
 
   def download_packages(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
-    repositories_dir = "#{base_dir}/repositories"
+    case target_namespace
+    when :windows
+      repositories_dir = "#{base_dir}/repositories/windows/groonga"
+    else
+      repositories_dir = "#{base_dir}/repositories"
+    end
     mkdir_p(repositories_dir)
     download_dir = "#{base_dir}/tmp/downloads/#{@version}"
     mkdir_p(download_dir)
