@@ -106,7 +106,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
     base_dir = __send__("#{target_namespace}_dir")
     case target_namespace
     when :windows
-      repositories_dir = "#{base_dir}/repositories/windows/groonga"
+      repositories_dir = "#{base_dir}/repositories/windows/#{@package}"
     else
       repositories_dir = "#{base_dir}/repositories"
     end
