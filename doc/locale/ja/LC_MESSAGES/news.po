@@ -131,7 +131,7 @@ msgid "Fixes"
 msgstr "修正"
 
 msgid ""
-"[:doc:`reference/functions/sub_filter`] fixed a bug that ``sub_filter`` "
+"[:doc:`reference/functions/sub_filter`] Fixed a bug that ``sub_filter`` "
 "doesn't work in ``slices[].filter``."
 msgstr ""
 "[:doc:`/reference/functions/sub_filter`] ``slices[].filter`` 内で "

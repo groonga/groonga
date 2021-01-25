@@ -66,7 +66,7 @@ Improvements
 Fixes
 ^^^^^
 
-* [:doc:`reference/functions/sub_filter`] fixed a bug that ``sub_filter`` doesn't work in ``slices[].filter``.
+* [:doc:`reference/functions/sub_filter`] Fixed a bug that ``sub_filter`` doesn't work in ``slices[].filter``.
 
   * For example, the result of ``sub_filter`` was 0 records by the following query by this bug.
 
