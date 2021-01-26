@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -61,6 +61,7 @@ void grn_proc_init_object_inspect(grn_ctx *ctx);
 void grn_proc_init_object_list(grn_ctx *ctx);
 void grn_proc_init_object_remove(grn_ctx *ctx);
 void grn_proc_init_object_set_visibility(grn_ctx *ctx);
+void grn_proc_init_query(grn_ctx *ctx);
 void grn_proc_init_query_expand(grn_ctx *ctx);
 void grn_proc_init_query_log_flags_get(grn_ctx *ctx);
 void grn_proc_init_query_log_flags_set(grn_ctx *ctx);
@@ -179,6 +180,26 @@ grn_obj *grn_proc_lexicon_open(grn_ctx *ctx,
 grn_bool grn_proc_text_include_special_character(grn_ctx *ctx,
                                                  const char *text,
                                                  size_t size);
+
+typedef struct {
+  grn_obj *found;
+  grn_obj *table;
+  grn_obj *records;
+} grn_proc_selector_to_function_data;
+
+bool
+grn_proc_selector_to_function_data_init(grn_ctx *ctx,
+                                        grn_proc_selector_to_function_data *data,
+                                        grn_user_data *user_data);
+void
+grn_proc_selector_to_function_data_selected(
+  grn_ctx *ctx,
+  grn_proc_selector_to_function_data *data);
+void
+grn_proc_selector_to_function_data_fin(grn_ctx *ctx,
+                                       grn_proc_selector_to_function_data *data);
+
+
 
 #ifdef __cplusplus
 }
