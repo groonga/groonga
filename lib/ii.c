@@ -4086,10 +4086,14 @@ chunk_merge(grn_ctx *ctx,
       ERR(rc,
           "[ii][chunk][merge] failed to decode: "
           "<%.*s>: "
-          "<%.*s>(%u)",
+          "<%.*s>(%u): "
+          "<%u>: "
+          "<%u>",
           name_size, name,
           (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-          data->term_id);
+          data->term_id,
+          rid,
+          cinfo->size);
       GRN_OBJ_FIN(ctx, &term);
       goto exit;
     }
