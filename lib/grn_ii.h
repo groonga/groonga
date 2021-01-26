@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -61,9 +61,12 @@ struct _grn_ii {
 #define GRN_II_W_LSEG_LARGE       17
 #define GRN_II_W_LOFFSET_LARGE    (32 - GRN_II_W_LSEG_LARGE)
 #define GRN_II_W_TOTAL_CHUNK      40
+/* Each chunk has 2^GRN_II_W_CHUNK size: 4MiB */
 #define GRN_II_W_CHUNK            22
+/* The smallest subchunk size: 256B */
 #define GRN_II_W_LEAST_CHUNK      (GRN_II_W_TOTAL_CHUNK - 32)
 #define GRN_II_MAX_CHUNK          (1 << (GRN_II_W_TOTAL_CHUNK - GRN_II_W_CHUNK))
+/* The number of subchunk size patterns: 256B, 512B, ..., 2MiB */
 #define GRN_II_N_CHUNK_VARIATION  (GRN_II_W_CHUNK - GRN_II_W_LEAST_CHUNK)
 
 #define GRN_II_MAX_CHUNK_SMALL    (1 << (GRN_II_W_TOTAL_CHUNK - GRN_II_W_CHUNK - 8))

@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -568,10 +568,90 @@ typedef struct {
                  ((seg) >> GRN_II_N_CHUNK_VARIATION),\
                  (((seg) & ((1 << GRN_II_N_CHUNK_VARIATION) - 1)) << GRN_II_W_LEAST_CHUNK) + (pos),\
                  size, mode)
+
 /*
 static int new_histogram[32];
 static int free_histogram[32];
 */
+
+/*
+  N = grn_ii_max_n_chunks_small  for GRN_OBJ_INDEX_SMALL
+  N = GRN_II_MAX_N_CHUNKS_MEDIUM for GRN_OBJ_INDEX_MEDIUM
+  N = GRN_II_MAX_N_CHUNKS        for GRN_OBJ_INDEX_LARGE
+  N = GRN_II_MAX_N_CHUNKS        without index size flag
+
+  S_CHUNK = (1 << GRN_II_W_CHUNK(22)) = 4MiB
+
+  +------------+     +------------+
+  |   chunk0   | ... |   chunkN   |
+  +------------+     +------------+
+  |<--S_CHUNK->|
+
+  ii->header.common->chunks has flags whether the target chunk is
+  assigned or not. We can manipulate the flags by HEADER_CHUNK_AT(),
+  HEADER_CHUNK_ON() and HEADER_CHUNK_OFF(). Here is a snapshot when we
+  only assign chunk0 and chunk2:
+
+  +------------+------------+------------+     +------------+
+  |   chunk0   |   chunk1   |   chunk2   | ... |   chunkN   |
+  +------------+------------+------------+     +------------+
+        ON          OFF           ON                 OFF
+
+  If requested size is greater than S_CHUNK, continuous non-assigned
+  chunks are assigned. For example, if S_CHUNK + 100 is requested and
+  chunk1 is assigned, chunk0 isn't assigned. chunk2 and chunk3 are
+  assigned.
+
+  +------------+------------+------------+------------+     +------------+
+  |   chunk0   |   chunk1   |   chunk2   |   chunk3   | ... |   chunkN   |
+  +------------+------------+------------+------------+     +------------+
+       OFF          ON        OFF -> ON    OFF -> ON             OFF
+
+  If requested size is smaller than or equal to S_CHUNK, a subchunk is
+  assigned. Subchunks in the same chunk has the same size. The
+  smallest subchunk size is (1 << GRN_II_W_LEAST_CHUNK(8)) = 256
+  bytes. Subchunk size is power of 2. For example, chunk0 uses 512
+  bytes for subchunk size, chunk0 can have 812 (S_CHUNK / 512)
+  subchunks.
+
+  +-------------+
+  |   chunk0    |
+  +-------------+
+  <->|<->|...|<-> subchunks
+  512|512|   |512
+
+  If one of subchunk is assigned, HEADER_CHUNK_AT() of the chunk is true.
+
+  +-------------+
+  |   chunk0    |
+  +-------------+
+  <------>|<->|... subchunks
+  ASSIGNED|NOT|
+        ON
+
+  Chunks that are assigning subchunks are keeping in
+  ii->header.common.free_chunks. free_chunks keeps a chunk per
+  subchunk size. For example, chunk0 is kept for 256 subchunk size and
+  chunk1 is kept for 512 subchunk size.
+
+  chunk_new() returns the (offset >> GRN_II_W_LEAST_CHUNK(8)) of
+  subchunk not the index of chunk. For example, if the third subchunk
+  of chunk0 that uses 512 bytes for subchunk size is assigned, 4 (1024
+  >> 8) is returned.
+
+  +-------------+
+  |   chunk0    |
+  +-------------+
+  <0>|<1>|<2>|...
+  0   2   4
+
+  chunk_new() wants to reuse freed subchunks as much as possible to
+  reduce disk usage. ii->header.common.garbages keeps freed subchunks
+  to reuse later.
+
+  TODO: More description for garbages.
+*/
+
 static grn_rc
 chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
 {
@@ -686,8 +766,11 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
       *vp = i << GRN_II_N_CHUNK_VARIATION;
     }
     *res = *vp;
+    /* Next subchunk. */
     *vp += 1 << (m - GRN_II_W_LEAST_CHUNK);
+    /* (*vp % GRN_II_N_CHUNK_VARIATION) == 0 */
     if (!(*vp & ((1 << GRN_II_N_CHUNK_VARIATION) - 1))) {
+      /* All subchunks are consumed. */
       *vp = GRN_II_PSEG_NOT_ASSIGNED;
     }
     return GRN_SUCCESS;
