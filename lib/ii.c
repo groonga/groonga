@@ -733,7 +733,6 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
           ginfo->nrecs--;
           header->ngarbages[m - GRN_II_W_LEAST_CHUNK]--;
           if (!ginfo->nrecs) {
-            HEADER_CHUNK_OFF(ii, *gseg);
             *gseg = ginfo->next;
           }
           if (iw_.addr) { grn_io_win_unmap(&iw_); }
