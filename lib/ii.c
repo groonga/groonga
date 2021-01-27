@@ -543,6 +543,9 @@ static int new_histogram[32];
 static int free_histogram[32];
 */
 static grn_rc
+chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t size);
+
+static grn_rc
 chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
 {
   uint32_t n_chunks;
@@ -622,11 +625,16 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
           if (++ginfo->tail == N_GARBAGES) { ginfo->tail = 0; }
           ginfo->nrecs--;
           header->ngarbages[m - GRN_II_W_LEAST_CHUNK]--;
-          if (!ginfo->nrecs) {
+          uint32_t current_garbage_segment = *gseg;
+          bool no_garbage_info = (ginfo->nrecs == 0);
+          if (no_garbage_info) {
             *gseg = ginfo->next;
           }
           if (iw_.addr) { grn_io_win_unmap(&iw_); }
           grn_io_win_unmap(&iw);
+          if (no_garbage_info) {
+            chunk_free(ctx, ii, current_garbage_segment, S_GARBAGE);
+          }
           return GRN_SUCCESS;
         }
         if (iw_.addr) { grn_io_win_unmap(&iw_); }
