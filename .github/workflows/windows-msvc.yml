@@ -197,7 +197,7 @@ jobs:
             "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
           Copy-Item `
             "${Env:GITHUB_WORKSPACE}\packages\windows\vcruntime\vs${{ matrix.vs-version }}\readme.txt" `
-            ${Env:GROONGA_VC_REDIST_LICENSE_DIR}
+            ${GROONGA_VC_REDIST_LICENSE_DIR}
 
           $UCRT_REDIST_DIR = "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\${{ matrix.architecture }}"
           Copy-Item `
@@ -205,7 +205,7 @@ jobs:
             "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
           Copy-Item `
             "${Env:GITHUB_WORKSPACE}\packages\windows\vcruntime\ucrt-readme.txt" `
-            ${Env:GROONGA_VC_REDIST_LICENSE_DIR}
+            ${GROONGA_VC_REDIST_LICENSE_DIR}
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.env.outputs.install-folder-with-vcruntime }}
