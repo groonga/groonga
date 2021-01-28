@@ -137,7 +137,6 @@ jobs:
         run: |
           docker run \
             --rm \
-            --tty \
             --volume ${PWD}:/groonga:ro \
             ${{ matrix.test-docker-image }} \
             /groonga/${{ matrix.test-script }}
