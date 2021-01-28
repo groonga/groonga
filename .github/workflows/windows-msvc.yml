@@ -157,6 +157,21 @@ jobs:
           type ..\groonga-build\CMakeFiles\CMakeError.log
           cmake --build ..\groonga-build --config RelWithDebInfo
           cmake --build ..\groonga-build --config RelWithDebInfo --target Install
+      - name: Install Groonga Admin
+        run: |
+          cd "${Env:FULL_INSTALL_FOLDER}\share\groonga\html"
+          Move-Item admin admin.old
+          Invoke-WebRequest `
+            -Uri "https://packages.groonga.org/source/groonga-admin/groonga-admin.tar.gz" `
+            -OutFile "groonga-admin.tar.gz"
+          $Env:PATH += ";c:\msys64\usr\bin"
+          c:\msys64\usr\bin\tar ^
+            xf groonga-admin.tar.gz ^
+            --transform "s,^[^/]*,groonga-admin,"
+          Remove-Item groonga-admin.tar.gz -Force
+          Move-Item groonga-admin\html admin
+          Remove-Item groonga-admin\source -Force -Recurse
+          Move-Item groonga-admin ..\
 
       # Artifact
       - uses: actions/upload-artifact@v2
