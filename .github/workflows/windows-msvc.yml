@@ -164,10 +164,7 @@ jobs:
           Invoke-WebRequest `
             -Uri "https://packages.groonga.org/source/groonga-admin/groonga-admin.tar.gz" `
             -OutFile "groonga-admin.tar.gz"
-          $Env:PATH += ";c:\msys64\usr\bin"
-          c:\msys64\usr\bin\tar `
-            xf groonga-admin.tar.gz `
-            --transform "s,^[^/]*,groonga-admin,"
+          tar xf groonga-admin.tar.gz --transform "s,^[^/]*,groonga-admin,"
           Remove-Item groonga-admin.tar.gz -Force
           Move-Item groonga-admin\html admin
           Remove-Item groonga-admin\source -Force -Recurse
