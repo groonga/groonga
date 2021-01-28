@@ -164,11 +164,11 @@ jobs:
           Invoke-WebRequest `
             -Uri "https://packages.groonga.org/source/groonga-admin/groonga-admin.tar.gz" `
             -OutFile "groonga-admin.tar.gz"
-          tar xf groonga-admin.tar.gz --transform "s,^[^/]*,groonga-admin,"
+          tar xf groonga-admin.tar.gz
           Remove-Item groonga-admin.tar.gz -Force
-          Move-Item groonga-admin\html admin
-          Remove-Item groonga-admin\source -Force -Recurse
-          Move-Item groonga-admin ..\
+          Move-Item groonga-admin-*\html admin
+          Remove-Item groonga-admin-*\source -Force -Recurse
+          Move-Item groonga-admin-* ..\groonga-admin
 
       # Artifact
       - uses: actions/upload-artifact@v2
