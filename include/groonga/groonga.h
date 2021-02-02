@@ -1158,8 +1158,8 @@ GRN_API off_t grn_default_query_logger_get_rotate_threshold_size(void);
 
 #define GRN_BULK_BUFSIZE (sizeof(grn_obj) - sizeof(grn_obj_header))
 /* This assumes that GRN_BULK_BUFSIZE is less than 32 (= 0x20). */
-#define GRN_BULK_BUFSIZE_MAX ((size_t)0x1f)
-#define GRN_BULK_SIZE_IN_FLAGS(flags) ((size_t)((flags) & GRN_BULK_BUFSIZE_MAX))
+#define GRN_BULK_BUFSIZE_MAX 0x1f
+#define GRN_BULK_SIZE_IN_FLAGS(flags) ((flags) & GRN_BULK_BUFSIZE_MAX)
 #define GRN_BULK_OUTP(bulk) ((bulk)->header.impl_flags & GRN_OBJ_OUTPLACE)
 #define GRN_BULK_REWIND(bulk) do {\
   if ((bulk)->header.type == GRN_VECTOR) {\
