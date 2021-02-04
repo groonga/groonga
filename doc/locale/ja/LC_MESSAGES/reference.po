@@ -6712,6 +6712,112 @@ msgid ""
 "ます。output_type指定は無視されます。"
 msgstr ""
 
+msgid "``index_column_diff``"
+msgstr "``index_column_diff``"
+
+msgid "``index_column_diff`` command check where indexes are broken or not."
+msgstr ""
+"``index_column_diff`` コマンドはインデックスが破損しているかどうかをチェック"
+"します。"
+
+msgid ""
+"We can found already a broken index by this command. Normally, we don't "
+"found it unless Groonga refer, delete, or update it. However, it is possible "
+"that Groonga crashes or returns wrong search results by using it. it make us "
+"want to found it in advance. This command useful in this case."
+msgstr ""
+"このコマンドによって、既に破損したインデックスを発見できます。通常、壊れたイ"
+"ンデックスはGroongaが参照や削除、更新をしない限り発見できません。壊れたイン"
+"デックスを使うとGroongaがクラッシュしたり、誤った検索結果を返すことがありま"
+"す。そのため、事前にインデックスの破損を発見したくなります。このコマンドはこ"
+"のようなケースで有用です。"
+
+msgid ""
+"This command may use many memory and execution time depending on the size of "
+"the target index. Also, if we stop in the middle of execution of this "
+"command, the target index may break. Therefore, we suggest that we don't "
+"execute this command on active system, but execute this command on standby "
+"system."
+msgstr ""
+"このコマンドは、対象のインデックスのサイズによっては、多くのメモリーや実行時"
+"間を使うことがあります。また、このコマンドを実行中に停止した場合は、対象のイ"
+"ンデックスが壊れることがあります。そのため、現用系のシステムで実行するのでは"
+"なく、予備系のシステムで実行することをおすすめします。"
+
+msgid "This command takes two parameters. All parameters are required::"
+msgstr "このコマンドの引数は2つで必須です。::"
+
+msgid "Here is an example to check a index column in the database:"
+msgstr "以下はインデックスカラムをチェックする例です。:"
+
+msgid "Specifies the name of a table include check target of the index column."
+msgstr "チェックするインデックスカラムを含むテーブルの名前を指定します。"
+
+msgid "``index_column``"
+msgstr "``index_column``"
+
+msgid "Specifies the name of check target of the index column."
+msgstr "チェック対象のインデックスカラムの名前を指定します。"
+
+msgid "``index_column_diff`` command returns result of check indexes::"
+msgstr ""
+"``index_column_diff`` コマンドはインデックスチェックの結果を返します。::"
+
+msgid "``CHECK_RESULT``"
+msgstr ""
+
+msgid ""
+"This command returns the result of compression between the current value of "
+"the index column and the result of tokenize when this command execute as "
+"below::"
+msgstr ""
+"このコマンドは、以下のように、このコマンドを実行した時のトークナイズの結果"
+"と、現在のインデックスカラムの値を比較した結果を返します。"
+
+msgid ""
+"If there are something in ``remains``, a token that Groonga was supposed to "
+"delete is remaining in a index."
+msgstr ""
+"``remains`` になにか出力された場合、Groongaが本来削除するはずだったトークンが"
+"インデックスが残っています。"
+
+msgid ""
+"If there are something in ``missing``, a token that Groonga is supposing to "
+"remain in a index has been deleted from the index."
+msgstr ""
+"``missing`` になにか出力された場合、本来インデックス内に残っているトークンが"
+"削除されています。"
+
+msgid ""
+"``index_column_diff`` returns nothing as below When indexes haven't broken::"
+msgstr ""
+"インデックスの破損が無い時は、以下のように ``index_column_diff`` は何も返しま"
+"せん。"
+
+msgid "``TOKEN_ID``"
+msgstr ""
+
+msgid "``TOKEN_ID`` is id of a broken token."
+msgstr "``TOKEN_ID`` は壊れたトークンのIDです。"
+
+msgid "``TOKEN_VALUE``"
+msgstr ""
+
+msgid "``TOKEN_VALUE`` is value of a broken token."
+msgstr "``TOKEN_VALUE`` は壊れたトークンの値です。"
+
+msgid "``RECORD_ID``"
+msgstr ""
+
+msgid "``RECORD_ID`` is id of a record include a broken token."
+msgstr "``RECORD_ID`` は壊れたトークンを含むレコードです。"
+
+msgid "``POSITION``"
+msgstr ""
+
+msgid "``POSITION`` is appearing position of a broken token."
+msgstr "``POSITION`` 壊れたトークンの出現位置です。"
+
 msgid "``io_flush``"
 msgstr ""
 
@@ -17310,9 +17416,6 @@ msgid ""
 msgstr ""
 "詳細は、 :doc:`/reference/commands/tokenize` の :ref:`tokenize-mode` オプショ"
 "ンを参照してください。"
-
-msgid "``index_column``"
-msgstr "``index_column``"
 
 msgid "Specifies an index column."
 msgstr "インデックスカラム名を指定します。"
