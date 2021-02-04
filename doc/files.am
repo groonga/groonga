@@ -95,6 +95,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/database_unmap/usage_success.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/cascade.log \
 	$(top_srcdir)/doc/source/example/reference/commands/delete/status.log \
+	$(top_srcdir)/doc/source/example/reference/commands/index_column_diff/index_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/all.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/only_opened_yes.log \
 	$(top_srcdir)/doc/source/example/reference/commands/io_flush/recursive_default.log \
@@ -918,6 +919,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/defrag.rst \
 	$(top_srcdir)/doc/source/reference/commands/delete.rst \
 	$(top_srcdir)/doc/source/reference/commands/dump.rst \
+	$(top_srcdir)/doc/source/reference/commands/index_column_diff.rst \
 	$(top_srcdir)/doc/source/reference/commands/io_flush.rst \
 	$(top_srcdir)/doc/source/reference/commands/load.rst \
 	$(top_srcdir)/doc/source/reference/commands/lock_acquire.rst \
@@ -1206,6 +1208,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/database_unmap/usage_success.log \
 	source/example/reference/commands/delete/cascade.log \
 	source/example/reference/commands/delete/status.log \
+	source/example/reference/commands/index_column_diff/index_column.log \
 	source/example/reference/commands/io_flush/all.log \
 	source/example/reference/commands/io_flush/only_opened_yes.log \
 	source/example/reference/commands/io_flush/recursive_default.log \
@@ -2029,6 +2032,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/defrag.rst \
 	source/reference/commands/delete.rst \
 	source/reference/commands/dump.rst \
+	source/reference/commands/index_column_diff.rst \
 	source/reference/commands/io_flush.rst \
 	source/reference/commands/load.rst \
 	source/reference/commands/lock_acquire.rst \
@@ -2457,6 +2461,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/defrag.html \
 	html/reference/commands/delete.html \
 	html/reference/commands/dump.html \
+	html/reference/commands/index_column_diff.html \
 	html/reference/commands/io_flush.html \
 	html/reference/commands/load.html \
 	html/reference/commands/lock_acquire.html \

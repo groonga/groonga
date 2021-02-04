@@ -1,0 +1,86 @@
+Execution example::
+
+  table_create Data TABLE_HASH_KEY ShortText
+  # [[0,1612416118.30525,0.003424882888793945],true]
+  table_create Terms TABLE_PAT_KEY ShortText \
+    --default_tokenizer TokenNgram \
+    --normalizer NormalizerNFKC130
+  # [[0,1612416136.049046,0.003507614135742188],true]
+  load --table Data
+  [
+  {"_key": "Hello World"},
+  {"_key": "Hello Groonga"}
+  ]
+  # [[0,1612416155.418526,0.3676469326019287],2]
+  column_create \
+    --table Terms \
+    --name data_index \
+    --flags COLUMN_INDEX|WITH_POSITION \
+    --type Data \
+    --source _key
+  # [[0,1612416424.515037,0.00576472282409668],true]
+  truncate Terms.data_index
+  # [[0,1612416439.925894,0.009646892547607422],true]
+  load --table Data
+  [
+  {"_key": "Good-by World"},
+  {"_key": "Good-by Groonga"}
+  ]
+  # [[0,1612416450.429434,1.51789665222168],2]
+  index_column_diff Terms data_index
+  # [
+  #   [
+  #     0,
+  #     1612416577.921113,
+  #     0.006278038024902344
+  #   ],
+  #   [
+  #     {
+  #       "token": {
+  #         "id": 2,
+  #         "value": "hello"
+  #       },
+  #       "remains": [
+  #       ],
+  #       "missings": [
+  #         {
+  #           "record_id": 1,
+  #           "position": 0
+  #         },
+  #         {
+  #           "record_id": 2,
+  #           "position": 0
+  #         }
+  #       ]
+  #     },
+  #     {
+  #       "token": {
+  #         "id": 3,
+  #         "value": "world"
+  #       },
+  #       "remains": [
+  #       ],
+  #       "missings": [
+  #         {
+  #           "record_id": 1,
+  #           "position": 1
+  #         }
+  #       ]
+  #     },
+  #     {
+  #       "token": {
+  #         "id": 1,
+  #         "value": "groonga"
+  #       },
+  #       "remains": [
+  #       ],
+  #       "missings": [
+  #         {
+  #           "record_id": 2,
+  #           "position": 1
+  #         }
+  #       ]
+  #     }
+  #   ]
+  # ]
+
