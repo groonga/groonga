@@ -1162,7 +1162,8 @@ grn_output_table_column_value(grn_ctx *ctx,
         bulk->header.domain = GRN_DB_FLOAT;
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
-        if ((a->obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
+        switch (a->obj->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
+        case GRN_OBJ_COLUMN_VECTOR :
           if (a->next) {
             grn_obj *sub_ids = grn_output_table_data_push_sub_ids(ctx, data);
             sub_ids->header.domain = DB_OBJ(a->obj)->range;
@@ -1190,8 +1191,48 @@ grn_output_table_column_value(grn_ctx *ctx,
                                           data);
           }
           return;
-        } else {
+        case GRN_OBJ_COLUMN_INDEX :
+          if (a->next) {
+            grn_ii *ii = (grn_ii *)(a->obj);
+            grn_obj *sub_ids = grn_output_table_data_push_sub_ids(ctx, data);
+            sub_ids->header.domain = DB_OBJ(ii)->range;
+            grn_ii_cursor *cursor =
+              grn_ii_cursor_open(ctx,
+                                 ii,
+                                 id,
+                                 GRN_ID_NIL,
+                                 GRN_ID_MAX,
+                                 grn_ii_get_n_elements(ctx, ii),
+                                 0);
+            if (cursor) {
+              grn_posting *posting;
+              while ((posting = grn_ii_cursor_next(ctx, cursor))) {
+                GRN_RECORD_PUT(ctx, sub_ids, posting->rid);
+              }
+              grn_ii_cursor_close(ctx, cursor);
+            }
+            size_t n = GRN_RECORD_VECTOR_SIZE(sub_ids);
+            grn_output_array_open(ctx, outbuf, output_type, "VECTOR", n);
+            size_t i;
+            for (i = 0; i < n; i++) {
+              grn_id sub_id = GRN_RECORD_VALUE_AT(sub_ids, i);
+              grn_output_table_column_value(ctx,
+                                            outbuf,
+                                            output_type,
+                                            (grn_obj *)(a->next),
+                                            sub_id,
+                                            data);
+            }
+            grn_output_table_data_pop_sub_ids(ctx, data);
+            grn_output_array_close(ctx, outbuf, output_type);
+            return;
+          } else {
+            grn_obj_get_value(ctx, a->obj, id, bulk);
+            break;
+          }
+        default :
           grn_obj_get_value(ctx, a->obj, id, bulk);
+          break;
         }
         break;
       case GRN_ACCESSOR_GET_DB_OBJ :
