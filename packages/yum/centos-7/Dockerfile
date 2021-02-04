@@ -2,6 +2,7 @@ ARG FROM=centos:7
 FROM ${FROM}
 
 ARG DEBUG
+ARG APACHE_ARROW_VERSION
 
 RUN \
   quiet=$([ "${DEBUG}" = "yes" ] || echo "--quiet") && \
@@ -10,7 +11,7 @@ RUN \
   yum install -y ${quiet} epel-release && \
   yum groupinstall -y ${quiet} "Development Tools" && \
   yum install -y ${quiet} \
-    arrow-devel \
+    arrow-devel-${APACHE_ARROW_VERSION} \
     gcc-c++ \
     intltool \
     libedit-devel \

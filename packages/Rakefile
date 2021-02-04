@@ -18,11 +18,37 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     version = File.read(base_version_file).chomp
   end
 
+  def detect_target_apache_arrow_version
+    cmakelists = File.join(__dir__,
+                           "..",
+                           "vendor",
+                           "apache-arrow-source",
+                           "cpp",
+                           "CMakeLists.txt")
+    matched = File.read(cmakelists).match(/^set\(ARROW_VERSION "(.+?)"\)/)
+    version = matched[1]
+    matched = version.match(/-SNAPSHOT\z/)
+    if matched
+      major_version = matched.pre_match.split(".", 2)[0].to_i
+      previous_major_version = major_version - 1
+      "#{previous_major_version}.0.0"
+    else
+      version
+    end
+  end
+
   def define_archive_task
     file @original_archive_name do
       File.symlink("../#{@original_archive_name}",
                    @original_archive_name)
     end
+  end
+
+  def docker_build_options(os, architecture)
+    [
+      "--build-arg",
+      "APACHE_ARROW_VERSION=#{detect_target_apache_arrow_version}",
+    ]
   end
 
   def apt_targets_default
@@ -37,6 +63,15 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       "centos-7",
       "centos-8",
     ]
+  end
+
+  def yum_expand_variable(key)
+    case key
+    when "APACHE_ARROW_VERSION"
+      detect_target_apache_arrow_version
+    else
+      super
+    end
   end
 
   def windows_targets_default

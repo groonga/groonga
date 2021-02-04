@@ -2,6 +2,7 @@ ARG FROM=centos:8
 FROM ${FROM}
 
 ARG DEBUG
+ARG APACHE_ARROW_VERSION
 
 RUN \
   quiet=$([ "${DEBUG}" = "yes" ] || echo "--quiet") && \
@@ -13,7 +14,7 @@ RUN \
   dnf config-manager --set-enabled powertools && \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
-    arrow-devel \
+    arrow-devel-${APACHE_ARROW_VERSION} \
     gcc-c++ \
     intltool \
     libedit-devel \
