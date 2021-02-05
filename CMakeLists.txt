@@ -528,6 +528,14 @@ if(NOT ${GRN_WITH_ZSTD} STREQUAL "no")
 	IMPORTED_LOCATION ${ZSTD_STATIC_LIBRARY}
 	INTERFACE_INCLUDE_DIRECTORIES "${ZSTD_PREFIX}/include")
       add_dependencies(zstd::libzstd_static zstd-ep)
+      set(ZSTD_SOURCE_DIR
+	"${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-prefix/src/zstd-ep")
+      install(FILES
+	"${ZSTD_SOURCE_DIR}/CHANGELOG"
+	"${ZSTD_SOURCE_DIR}/COPYING"
+	"${ZSTD_SOURCE_DIR}/LICENSE"
+	"${ZSTD_SOURCE_DIR}/README.md"
+	DESTINATION "${GRN_DATA_DIR}/zstd")
       set(GRN_ZSTD_TARGET zstd::libzstd_static)
       set(GRN_WITH_ZSTD TRUE)
       message(STATUS "Zstandard: ${ZSTD_STATIC_LIBRARY} (bundled)")
