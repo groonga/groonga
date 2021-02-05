@@ -7,6 +7,176 @@
 News
 ====
 
+.. _release-11-0-0:
+
+Release 11.0.0 - 2021-02-09
+---------------------------
+
+This is a major version up! But It keeps backward compatibility. We can upgrade to 11.0.0 without rebuilding database.
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/select`] Added support for outputting values of scalar column and vector column via nested index.
+
+  * The nested index is that has structure as below.
+
+    .. code-block::
+
+      table_create Products TABLE_PAT_KEY ShortText
+
+      table_create Purchases TABLE_NO_KEY
+      column_create Purchases product COLUMN_SCALAR Products
+      column_create Purchases tag COLUMN_SCALAR ShortText
+
+      column_create Products purchases COLUMN_INDEX Purchases product
+
+  * The ``Products.purchases`` column is a index of ``Purchases.product`` column in the above example.
+    Also, ``Purchases.product`` is a reference to ``Products`` table.
+
+  * We had not got the correct search result when we search via nested index until now.
+  * The result had been as follows until now. We can see that ``{"product": "apple",  "tag": "man"}`` is not output.
+
+    .. code-block::
+
+      table_create Products TABLE_PAT_KEY ShortText
+
+      table_create Purchases TABLE_NO_KEY
+      column_create Purchases product COLUMN_SCALAR Products
+      column_create Purchases tag COLUMN_SCALAR ShortText
+
+      column_create Products purchases COLUMN_INDEX Purchases product
+
+      load --table Products
+      [
+      {"_key": "apple"},
+      {"_key": "banana"},
+      {"_key": "cacao"}
+      ]
+
+      load --table Purchases
+      [
+      {"product": "apple",  "tag": "man"},
+      {"product": "banana", "tag": "man"},
+      {"product": "cacao",  "tag": "woman"},
+      {"product": "apple",  "tag": "many"}
+      ]
+
+      select Products \
+        --output_columns _key,purchases.tag
+      [
+        [
+          0,
+          1612504193.380738,
+          0.0002026557922363281
+        ],
+        [
+          [
+            [
+              3
+            ],
+            [
+              [
+                "_key",
+                "ShortText"
+              ],
+              [
+                "purchases.tag",
+                "ShortText"
+              ]
+            ],
+            [
+              "apple",
+              "many"
+            ],
+            [
+              "banana",
+              "man"
+            ],
+            [
+              "cacao",
+              "man"
+            ]
+          ]
+        ]
+      ]
+
+  * The result will be as follows from this release. We can see that ``{"product": "apple",  "tag": "man"}`` is output.
+
+    .. code-block::
+
+      select Products \
+        --output_columns _key,purchases.tag
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              3
+            ],
+            [
+              [
+                "_key",
+                "ShortText"
+              ],
+              [
+                "purchases.tags",
+                "Tags"
+              ]
+            ],
+            [
+              "apple",
+              [
+                [
+                  "man",
+                  "one"
+                ],
+                [
+                  "child",
+                  "many"
+                ]
+              ]
+            ],
+            [
+              "banana",
+              [
+                [
+                  "man",
+                  "many"
+                ]
+              ]
+            ],
+            [
+              "cacao",
+              [
+                [
+                  "woman"
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+
+Fixes
+^^^^^
+
+* Fixed a bug that there is possible that index is corrupt when Groonga executes many additions, delete, and update information in it.
+
+  * This bug occurs when we only execute many delete information from index.
+    However, it doesn't occur when we only execute many additions information into index.
+
+  * We can repair the index that is corrupt by this bug using reconstruction of it.
+
+  * This bug doesn't detect unless we reference the broken index.
+    Therefore, the index in our indexes may has already broken.
+
+  * We can use [:doc:`reference/commands/index_column_diff`] command to confirm whether the index has already been broken or not.
+
 .. _release-10-1-1:
 
 Release 10.1.1 - 2021-01-25
