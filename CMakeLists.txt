@@ -888,6 +888,7 @@ endif()
 
 
 find_program(RUBY NAMES
+  "ruby3.0" "ruby30"
   "ruby2.7" "ruby27"
   "ruby2.6" "ruby26"
   "ruby2.5" "ruby25"
