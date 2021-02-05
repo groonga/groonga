@@ -84,11 +84,6 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       "#{@package}-#{@version}-x64-vs2017-with-vcruntime.zip",
       "#{@package}-#{@version}-x86-vs2017.zip",
       "#{@package}-#{@version}-x86-vs2017-with-vcruntime.zip",
-      "#{@package}-#{@version}-x64.exe",
-      "#{@package}-#{@version}-x64.zip",
-      "#{@package}-#{@version}-x86.exe",
-      "#{@package}-#{@version}-x86.zip",
-      "#{@package}-#{@version}.zip",
     ]
   end
 

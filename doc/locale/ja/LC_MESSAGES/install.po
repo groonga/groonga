@@ -787,44 +787,10 @@ msgstr ""
 
 msgid ""
 "This section describes how to install Groonga on Windows. You can install "
-"Groonga by extracting a zip package or running an installer."
+"Groonga by extracting a zip package."
 msgstr ""
 "このセクションではWindows上でGroongaをインストールする方法を説明します。"
-"Groongaをインストールするにはzipパッケージを展開する方法とインストーラーを実"
-"行する方法があります。"
-
-msgid "Installer"
-msgstr "インストーラー"
-
-msgid ""
-"For 32-bit environment, download x86 executable binary from packages.groonga."
-"org:"
-msgstr ""
-"32-bit環境の場合は、x86のバイナリをpackages.groonga.orgからダウンロードしてく"
-"ださい。"
-
-msgid "https://packages.groonga.org/windows/groonga/groonga-11.0.0-x86.exe"
-msgstr ""
-
-msgid "Then run it."
-msgstr "その後、バイナリを実行します。"
-
-msgid ""
-"For 64-bit environment, download x64 executable binary from packages.goronga."
-"org:"
-msgstr ""
-"64-bit環境の場合は、x64のバイナリをpackages.groonga.orgからダウンロードしてく"
-"ださい。"
-
-msgid "https://packages.groonga.org/windows/groonga/groonga-11.0.0-x64.exe"
-msgstr ""
-
-msgid ""
-"Use command prompt in start menu to run :doc:`/reference/executables/"
-"groonga`."
-msgstr ""
-"スタートメニュー内にあるコマンドプロンプトを使って :doc:`/reference/"
-"executables/groonga` を起動してください。"
+"Groongaをインストールするにはzipパッケージを展開する方法があります。"
 
 msgid "zip"
 msgstr ""
@@ -835,7 +801,20 @@ msgstr ""
 "32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "https://packages.groonga.org/windows/groonga/groonga-11.0.0-x86.zip"
+msgid ""
+"https://packages.groonga.org/windows/groonga/groonga-latest-x86-vs2019-with-"
+"vcruntime.zip"
+msgstr ""
+
+msgid ""
+"If we don't need Microsoft Visual C++ Runtime Library, we download from the "
+"following URL:"
+msgstr ""
+"Microsoft Visual C++ ランタイムライブラリーが不要な場合は、以下のURLからダウ"
+"ンロードしてください。"
+
+msgid ""
+"https://packages.groonga.org/windows/groonga/groonga-latest-x86-vs2019.zip"
 msgstr ""
 
 msgid "Then extract it."
@@ -847,7 +826,13 @@ msgstr ""
 "64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロード"
 "してください。"
 
-msgid "https://packages.groonga.org/windows/groonga/groonga-11.0.0-x64.zip"
+msgid ""
+"https://packages.groonga.org/windows/groonga/groonga-latest-x64-vs2019-with-"
+"vcruntime.zip"
+msgstr ""
+
+msgid ""
+"https://packages.groonga.org/windows/groonga/groonga-latest-x64-vs2019.zip"
 msgstr ""
 
 msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."

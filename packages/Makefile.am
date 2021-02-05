@@ -1,6 +1,5 @@
 SUBDIRS =					\
-	source					\
-	windows
+	source
 
 EXTRA_DIST =					\
 	Rakefile				\
