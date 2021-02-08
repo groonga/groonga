@@ -162,6 +162,26 @@ Improvements
         ]
       ]
 
+* [Windows] Dropped support for packages of Windows version that we had cross compiled by using MinGW on Linux.
+
+  * Because there aren't probably many people who use that.
+  * These above packages are that We had provided as below name until now.
+
+    * ``groonga-x.x.x-x86.exe``
+    * ``groonga-x.x.x-x86.zip``
+    * ``groonga-x.x.x-x64.exe``
+    * ``groonga-x.x.x-x86.zip``
+
+  * From now on, we use the following packages for Windows.
+
+    * ``groonga-latest-x86-vs2019-with-vcruntime.zip``
+    * ``groonga-latest-x64-vs2019-with-vcruntime.zip``
+
+  * If a system already has installed Microsoft Visual C++ Runtime Library, we suggest that we use the following packages.
+
+    * ``groonga-latest-x86-vs2019.zip``
+    * ``groonga-latest-x64-vs2019.zip``
+
 Fixes
 ^^^^^
 

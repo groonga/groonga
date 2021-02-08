@@ -86,6 +86,50 @@ msgstr ""
 "このリリースから、結果は以下のようになります。 ``{\"product\": \"apple\",  "
 "\"tag\": \"man\"}`` が出力されているのがわかります。"
 
+msgid ""
+"[Windows] Dropped support for packages of Windows version that we had cross "
+"compiled by using MinGW on Linux."
+msgstr ""
+"[Windows] Linux上のMinGWを使ってクロスコンパイルしていたWindows向けパッケージ"
+"の提供をやめました。"
+
+msgid "Because there aren't probably many people who use that."
+msgstr "おそらく、ほとんどの人がこのパッケージを使っていないためです。"
+
+msgid "These above packages are that We had provided as below name until now."
+msgstr "上記のパッケージはこれまで、以下のような名前で提供されていたものです。"
+
+msgid "``groonga-x.x.x-x86.exe``"
+msgstr ""
+
+msgid "``groonga-x.x.x-x86.zip``"
+msgstr ""
+
+msgid "``groonga-x.x.x-x64.exe``"
+msgstr ""
+
+msgid "From now on, we use the following packages for Windows."
+msgstr "これからは、以下のパッケージを使用してください。"
+
+msgid "``groonga-latest-x86-vs2019-with-vcruntime.zip``"
+msgstr ""
+
+msgid "``groonga-latest-x64-vs2019-with-vcruntime.zip``"
+msgstr ""
+
+msgid ""
+"If a system already has installed Microsoft Visual C++ Runtime Library, we "
+"suggest that we use the following packages."
+msgstr ""
+"既に Microsoft Visual C++ Runtime Library がインストール済みのシステムの場合"
+"は、以下のパッケージを使用してください。"
+
+msgid "``groonga-latest-x86-vs2019.zip``"
+msgstr ""
+
+msgid "``groonga-latest-x64-vs2019.zip``"
+msgstr ""
+
 msgid "Fixes"
 msgstr "修正"
 
