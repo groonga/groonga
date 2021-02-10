@@ -68,8 +68,10 @@ fi
 grntest_dir="$SOURCE_DIR/grntest"
 if ! test -d "$grntest_dir"; then
   grntest_dir="$BUILD_DIR/grntest"
-  git clone --depth 1 git://github.com/groonga/grntest.git "$grntest_dir"
-  (cd "$grntest_dir" && bundle install)
+  git clone git://github.com/groonga/grntest.git "$grntest_dir"
+  (cd "$grntest_dir" \
+       && git checkout 6724c7e76c4d3e900985f3b5a57cc9d4113b2308 \
+       && bundle install)
 fi
 (cd "$grntest_dir";
  if [ "Gemfile" -nt "Gemfile.lock" ]; then
