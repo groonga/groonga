@@ -2353,7 +2353,7 @@ html_files_relative_from_locale_dir = \
 	html/_static/plus.png \
 	html/_static/pygments.css \
 	html/_static/searchtools.js \
-	html/_static/underscore-1.3.1.js \
+	html/_static/underscore-1.12.0.js \
 	html/_static/underscore.js \
 	html/characteristic.html \
 	html/client.html \
