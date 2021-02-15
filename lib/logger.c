@@ -920,20 +920,25 @@ grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
     grn_timeval2str(ctx, &tv, timestamp, TIMESTAMP_BUFFER_SIZE);
   }
 
+  grn_ctx *target_ctx = ctx;
+  while (target_ctx->impl->parent) {
+    target_ctx = target_ctx->impl->parent;
+  }
   if (flag & (GRN_QUERY_LOG_COMMAND | GRN_QUERY_LOG_DESTINATION)) {
     grn_snprintf(info, INFO_BUFFER_SIZE, INFO_BUFFER_SIZE,
-                 "%p|%s", ctx, mark);
+                 "%p|%s", target_ctx, mark);
     info[INFO_BUFFER_SIZE - 1] = '\0';
   } else {
     grn_timeval tv;
     uint64_t elapsed_time;
     grn_timeval_now(ctx, &tv);
     elapsed_time =
-      (uint64_t)(tv.tv_sec - ctx->impl->tv.tv_sec) * GRN_TIME_NSEC_PER_SEC +
-      (tv.tv_nsec - ctx->impl->tv.tv_nsec);
+      (uint64_t)(tv.tv_sec - target_ctx->impl->tv.tv_sec) *
+      GRN_TIME_NSEC_PER_SEC +
+      (tv.tv_nsec - target_ctx->impl->tv.tv_nsec);
 
     grn_snprintf(info, INFO_BUFFER_SIZE, INFO_BUFFER_SIZE,
-                 "%p|%s%015" GRN_FMT_INT64U " ", ctx, mark, elapsed_time);
+                 "%p|%s%015" GRN_FMT_INT64U " ", target_ctx, mark, elapsed_time);
     info[INFO_BUFFER_SIZE - 1] = '\0';
   }
 

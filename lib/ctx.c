@@ -397,6 +397,12 @@ grn_ctx_impl_init(grn_ctx *ctx)
     goto exit;
   }
 
+  CRITICAL_SECTION_INIT(ctx->impl->children.lock);
+  /* grn_obj * isn't grn_ctx * but sizeof(grn_obj *) and
+   * sizeof(grn_ctx *) is same. So we reuse GRN_PVECTOR here. */
+  GRN_PTR_INIT(&(ctx->impl->children.pool), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  ctx->impl->parent = NULL;
+
 exit :
   if (ctx->rc != GRN_SUCCESS) {
     if (ctx->impl->variables) {
@@ -443,6 +449,39 @@ grn_ctx_set_keep_command(grn_ctx *ctx, grn_obj *command)
 {
   ctx->impl->command.keep.command = command;
   ctx->impl->command.keep.version = ctx->impl->command.version;
+}
+
+grn_ctx *
+grn_ctx_pull_child(grn_ctx *ctx)
+{
+  grn_ctx *child_ctx = NULL;
+  CRITICAL_SECTION_ENTER(ctx->impl->children.lock);
+  if (GRN_PTR_VECTOR_SIZE(&(ctx->impl->children.pool)) == 0) {
+    child_ctx = grn_ctx_open(0);
+  } else {
+    grn_obj *value;
+    GRN_PTR_POP(&(ctx->impl->children.pool), value);
+    child_ctx = (grn_ctx *)value;
+  }
+  grn_ctx_use(child_ctx, grn_ctx_db(ctx));
+  child_ctx->impl->parent = ctx;
+  CRITICAL_SECTION_LEAVE(ctx->impl->children.lock);
+  return child_ctx;
+}
+
+grn_rc
+grn_ctx_release_child(grn_ctx *ctx, grn_ctx *child_ctx)
+{
+  if (child_ctx->impl->parent != ctx) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  CRITICAL_SECTION_ENTER(ctx->impl->children.lock);
+  child_ctx->impl->parent = NULL;
+  grn_ctx_use(child_ctx, NULL);
+  GRN_PTR_PUT(ctx, &(ctx->impl->children.pool), child_ctx);
+  CRITICAL_SECTION_LEAVE(ctx->impl->children.lock);
+  return ctx->rc;
 }
 
 static void
@@ -525,6 +564,18 @@ grn_ctx_impl_fin(grn_ctx *ctx)
   if (ctx->impl->finalizer) {
     ctx->impl->finalizer(ctx, 0, NULL, &(ctx->user_data));
   }
+
+  {
+    while (GRN_PTR_VECTOR_SIZE(&(ctx->impl->children.pool)) > 0) {
+      grn_obj *value;
+      GRN_PTR_POP(&(ctx->impl->children.pool), value);
+      grn_ctx *child_ctx = (grn_ctx *)value;
+      grn_ctx_close(child_ctx);
+    }
+    GRN_OBJ_FIN(ctx, &(ctx->impl->children.pool));
+    CRITICAL_SECTION_FIN(ctx->impl->children.lock);
+  }
+
   GRN_HASH_EACH_BEGIN(ctx, ctx->impl->variables, cursor, id) {
     void *value;
     grn_hash_cursor_get_value(ctx, cursor, &value);

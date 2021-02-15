@@ -192,6 +192,12 @@ struct _grn_ctx_impl {
   } temporary_open_spaces;
 
   grn_hash *variables;
+
+  struct {
+    grn_critical_section lock;
+    grn_obj pool;
+  } children;
+  grn_ctx *parent;
 };
 
 void grn_ctx_impl_columns_cache_delete(grn_ctx *ctx, grn_id table_id);

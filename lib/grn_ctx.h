@@ -90,6 +90,9 @@ void grn_log_reopen(grn_ctx *ctx);
 GRN_API grn_rc grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags);
 void grn_ctx_set_keep_command(grn_ctx *ctx, grn_obj *command);
 
+grn_ctx *grn_ctx_pull_child(grn_ctx *ctx);
+grn_rc grn_ctx_release_child(grn_ctx *ctx, grn_ctx *child_ctx);
+
 grn_content_type grn_get_ctype(grn_obj *var);
 grn_content_type grn_content_type_parse(grn_ctx *ctx,
                                         grn_obj *var,
