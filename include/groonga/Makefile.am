@@ -41,6 +41,7 @@ groonga_include_HEADERS =			\
 	result_set.h				\
 	selector.h				\
 	scorer.h				\
+	smart_obj.hpp				\
 	string.h				\
 	table.h					\
 	table_module.h				\
