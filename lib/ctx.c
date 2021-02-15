@@ -477,6 +477,15 @@ grn_ctx_release_child(grn_ctx *ctx, grn_ctx *child_ctx)
   }
 
   CRITICAL_SECTION_ENTER(ctx->impl->children.lock);
+  if (ctx->rc == GRN_SUCCESS && child_ctx->rc != GRN_SUCCESS) {
+    ctx->rc = child_ctx->rc;
+    ctx->errlvl = child_ctx->errlvl;
+    ctx->errfile = child_ctx->errfile;
+    ctx->errline = child_ctx->errline;
+    ctx->errfunc = child_ctx->errfunc;
+    grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, child_ctx->errbuf);
+  }
+  ERRCLR(child_ctx);
   child_ctx->impl->parent = NULL;
   grn_ctx_use(child_ctx, NULL);
   GRN_PTR_PUT(ctx, &(ctx->impl->children.pool), child_ctx);
