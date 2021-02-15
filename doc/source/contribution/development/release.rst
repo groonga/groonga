@@ -37,11 +37,10 @@
 
     % sudo apt-get install -V debootstrap createrepo rpm mercurial python-docutils python-jinja2 ruby-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2 dh-autoreconf bison
 
-また、Sphinxは常に最新のバージョンを使う事を推奨します。 ``pip`` を使用して最新のSphinxをインストールするようにして下さい。::
+また、Sphinxは常に最新のバージョンを使う事を推奨します。 ``pip3`` を使用して最新のSphinxをインストールするようにして下さい。::
 
-    % pip install --upgrade sphinx
+    % pip3 install --upgrade sphinx
 
-Debian系（.deb）やRed Hat系（.rpm）パッケージのビルドには `Docker <https://www.docker.com/>`_ を使用するので、Dockerの公式ドキュメントの記載にしたがってインストールしてください。
 また、rubyのrakeパッケージを以下のコマンドによりインストールします。::
 
     % sudo gem install rake
