@@ -31,6 +31,8 @@
 # include <thread>
 #endif
 
+#include <vector>
+
 static int grn_query_parallel_or_n_conditions_threshold = 4;
 static int grn_query_parallel_or_n_threads_limit = -1;
 
