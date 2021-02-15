@@ -4718,4 +4718,6 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
 
   grn_proc_init_reference_acquire(ctx);
   grn_proc_init_reference_release(ctx);
+
+  grn_proc_init_query_parallel_or(ctx);
 }

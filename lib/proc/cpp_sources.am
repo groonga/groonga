@@ -1,0 +1,2 @@
+libgrnproc_cpp_sources =			\
+	proc_query.cpp

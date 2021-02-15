@@ -8221,25 +8221,45 @@ grn_expr_match_columns_split(grn_ctx *ctx,
   uint32_t match_columns_start = 0;
   uint32_t i;
   for (i = 0; i < e->codes_curr; i++) {
-    if (e->codes[i].op == GRN_OP_STAR) {
-      grn_obj *match_column = grn_expr_slice(ctx,
-                                             expr,
-                                             match_columns_start,
-                                             i + 1);
-      GRN_PTR_PUT(ctx, splitted_match_columns, match_column);
-      match_columns_start = i + 1;
-      if (i + 1 < e->codes_curr &&
-        e->codes[i + 1].op == GRN_OP_OR) {
-        match_columns_start++;
+    switch (e->codes[i].op) {
+    case GRN_OP_STAR :
+      {
+        grn_obj *match_column = grn_expr_slice(ctx,
+                                               expr,
+                                               match_columns_start,
+                                               i + 1);
+        GRN_PTR_PUT(ctx, splitted_match_columns, match_column);
+        match_columns_start = i + 1;
       }
+      break;
+    case GRN_OP_OR :
+      if (match_columns_start == i) {
+        match_columns_start++;
+      } else {
+        grn_obj *match_column = grn_expr_slice(ctx,
+                                               expr,
+                                               match_columns_start,
+                                               i);
+        GRN_PTR_PUT(ctx, splitted_match_columns, match_column);
+        match_columns_start = i + 1;
+      }
+      break;
+    default :
+      break;
     }
   }
 
   if (match_columns_start < e->codes_curr) {
+    uint32_t match_columns_end = e->codes_curr;
+    if (match_columns_start < match_columns_end - 1) {
+      if (e->codes[match_columns_end - 1].op == GRN_OP_OR) {
+        match_columns_end--;
+      }
+    }
     grn_obj *match_column = grn_expr_slice(ctx,
                                            expr,
                                            match_columns_start,
-                                           e->codes_curr);
+                                           match_columns_end);
     GRN_PTR_PUT(ctx, splitted_match_columns, match_column);
   }
 

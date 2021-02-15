@@ -1,0 +1,28 @@
+#$GRN_QUERY_PARALLEL_OR_N_CONDITIONS_THRESHOLD=1
+
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users comment COLUMN_SCALAR ShortText
+column_create Users tag COLUMN_SCALAR Tags
+
+load --table Users
+[
+{"_key": "Alice", "comment": "I'm happy!", "tag": "beginer"},
+{"_key": "Bob",   "comment": "Hey!",       "tag": "expert"},
+{"_key": "Chris", "comment": "Wow!",       "tag": "beginner"}
+]
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC130
+column_create Terms users COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Users _key,comment
+
+column_create Tags users COLUMN_INDEX Users tag
+
+select Users \
+  --output_columns _id,_key,_score \
+  --sort_keys _id \
+  --filter 'query_parallel_or("_key * 2 || comment || tag * 10", \
+                              "Alice", "Bob", "happy", "expert")'

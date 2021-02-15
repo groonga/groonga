@@ -62,6 +62,7 @@ void grn_proc_init_object_list(grn_ctx *ctx);
 void grn_proc_init_object_remove(grn_ctx *ctx);
 void grn_proc_init_object_set_visibility(grn_ctx *ctx);
 void grn_proc_init_query(grn_ctx *ctx);
+void grn_proc_init_query_parallel_or(grn_ctx *ctx);
 void grn_proc_init_query_expand(grn_ctx *ctx);
 void grn_proc_init_query_log_flags_get(grn_ctx *ctx);
 void grn_proc_init_query_log_flags_set(grn_ctx *ctx);

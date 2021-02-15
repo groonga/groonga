@@ -28,6 +28,8 @@ module Groonga
           estimate_size_in_values(table)
         when "query"
           estimate_size_query(table)
+        when "query_parallel_or"
+          estimate_size_query_parallel_or(table)
         else
           table.size
         end
@@ -87,19 +89,18 @@ module Groonga
         resolve_estimated_sizes(table, estimated_sizes)
       end
 
-      def estimate_size_query(table)
-        match_columns, query, = @arguments
+      def estimate_size_query_raw(table, match_columns, query)
         estimated_sizes = []
         expression = Expression.create(table)
         begin
-          expression.parse(match_columns.value.value)
+          expression.parse(match_columns)
           expression.codes.each do |code|
             case code.op
             when Operator::PUSH
               value = code.value
               case value
               when ::Groonga::IndexColumn
-                estimated_size = value.estimate_size(query: query.value)
+                estimated_size = value.estimate_size(query: query)
               else
                 next
               end
@@ -107,7 +108,7 @@ module Groonga
               index_info = code.value.find_index(Operator::MATCH)
               next unless index_info
               index = index_info.index
-              estimated_size = index.estimate_size(query: query.value)
+              estimated_size = index.estimate_size(query: query)
               index.unref
             else
               next
@@ -118,6 +119,24 @@ module Groonga
           expression.close
         end
         resolve_estimated_sizes(table, estimated_sizes)
+      end
+
+      def estimate_size_query(table)
+        match_columns, query, = @arguments
+        estimate_size_query_raw(table,
+                                match_columns.value.value,
+                                query.value)
+      end
+
+      def estimate_size_query_parallel_or(table)
+        match_columns, *queries = @arguments
+        queries.pop if queries.last.is_a?(HashTable)
+        separated_queries = queries.collect do |query|
+          "(#{query.value})"
+        end
+        estimate_size_query_raw(table,
+                                match_columns.value.value,
+                                separated_queries.join(" OR "))
       end
 
       def resolve_estimated_sizes(table, estimated_sizes)

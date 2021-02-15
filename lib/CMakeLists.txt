@@ -38,9 +38,14 @@ string(REGEX REPLACE "([^;]+)" "dat/\\1"
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/sources.am LIBGRNMRB_SOURCES)
 string(REGEX REPLACE "([^;]+)" "mrb/\\1"
   LIBGRNMRB_SOURCES "${LIBGRNMRB_SOURCES}")
-read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/proc/sources.am LIBGRNPROC_SOURCES)
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/proc/c_sources.am
+  LIBGRNPROC_C_SOURCES)
 string(REGEX REPLACE "([^;]+)" "proc/\\1"
-  LIBGRNPROC_SOURCES "${LIBGRNPROC_SOURCES}")
+  LIBGRNPROC_C_SOURCES "${LIBGRNPROC_C_SOURCES}")
+read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/proc/cpp_sources.am
+  LIBGRNPROC_CPP_SOURCES)
+string(REGEX REPLACE "([^;]+)" "proc/\\1"
+  LIBGRNPROC_CPP_SOURCES "${LIBGRNPROC_CPP_SOURCES}")
 
 if(WIN32)
   configure_file(
@@ -56,7 +61,7 @@ endif()
 set_source_files_properties(
   ${LIBGROONGA_C_SOURCES}
   ${LIBGRNMRB_SOURCES}
-  ${LIBGRNPROC_SOURCES}
+  ${LIBGRNPROC_C_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 set_source_files_properties(
@@ -68,6 +73,7 @@ set_source_files_properties(
 set_source_files_properties(
   ${LIBGROONGA_CPP_SOURCES}
   ${LIBGRNDAT_SOURCES}
+  ${LIBGRNPROC_CPP_SOURCES}
   PROPERTIES
   COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
 
@@ -76,7 +82,8 @@ set(GRN_ALL_SOURCES
   ${LIBGROONGA_CPP_SOURCES}
   ${LIBGRNDAT_SOURCES}
   ${LIBGRNMRB_SOURCES}
-  ${LIBGRNPROC_SOURCES}
+  ${LIBGRNPROC_C_SOURCES}
+  ${LIBGRNPROC_CPP_SOURCES}
   ${LIBGROONGA_METADATA_SOURCES})
 if(GRN_EMBED)
   add_library(libgroonga STATIC ${GRN_ALL_SOURCES})
