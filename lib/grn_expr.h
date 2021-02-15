@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -143,6 +143,11 @@ grn_rc grn_expr_module_list_get_arguments(grn_ctx *ctx,
                                           grn_obj *expr,
                                           unsigned int i,
                                           grn_obj *arguments);
+
+grn_rc
+grn_expr_match_columns_split(grn_ctx *ctx,
+                             grn_obj *expr,
+                             grn_obj *splitted_match_columns);
 
 grn_rc
 grn_table_select_sequential(grn_ctx *ctx,

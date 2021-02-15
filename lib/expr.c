@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2018 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2010-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -8207,6 +8207,40 @@ grn_expr_module_list_get_arguments(grn_ctx *ctx,
       return GRN_INVALID_ARGUMENT;
       break;
     }
+  }
+
+  return GRN_SUCCESS;
+}
+
+grn_rc
+grn_expr_match_columns_split(grn_ctx *ctx,
+                             grn_obj *expr,
+                             grn_obj *splitted_match_columns)
+{
+  grn_expr *e = (grn_expr *)expr;
+  uint32_t match_columns_start = 0;
+  uint32_t i;
+  for (i = 0; i < e->codes_curr; i++) {
+    if (e->codes[i].op == GRN_OP_STAR) {
+      grn_obj *match_column = grn_expr_slice(ctx,
+                                             expr,
+                                             match_columns_start,
+                                             i + 1);
+      GRN_PTR_PUT(ctx, splitted_match_columns, match_column);
+      match_columns_start = i + 1;
+      if (i + 1 < e->codes_curr &&
+        e->codes[i + 1].op == GRN_OP_OR) {
+        match_columns_start++;
+      }
+    }
+  }
+
+  if (match_columns_start < e->codes_curr) {
+    grn_obj *match_column = grn_expr_slice(ctx,
+                                           expr,
+                                           match_columns_start,
+                                           e->codes_curr);
+    GRN_PTR_PUT(ctx, splitted_match_columns, match_column);
   }
 
   return GRN_SUCCESS;
