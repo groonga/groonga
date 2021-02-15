@@ -400,18 +400,13 @@ namespace {
                         selector_data,
                         "[query-parallel-or]"),
       expanded_queries_(),
-      sub_match_columns_(),
-      sub_results_() {
+      sub_match_columns_() {
       GRN_PTR_INIT(&sub_match_columns_,
-                   GRN_OBJ_VECTOR | GRN_OBJ_OWN,
-                   GRN_ID_NIL);
-      GRN_PTR_INIT(&sub_results_,
                    GRN_OBJ_VECTOR | GRN_OBJ_OWN,
                    GRN_ID_NIL);
     }
 
     ~QueryParallelOrExecutor() {
-      GRN_OBJ_FIN(ctx_, &sub_results_);
       GRN_OBJ_FIN(ctx_, &sub_match_columns_);
     }
 
@@ -695,7 +690,6 @@ namespace {
 
     std::vector<std::string> expanded_queries_;
     grn_obj sub_match_columns_;
-    grn_obj sub_results_;
   };
 }
 
