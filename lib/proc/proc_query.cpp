@@ -64,7 +64,7 @@ namespace {
       match_columns_(nullptr) {
     }
 
-    ~BaseQueryExecutor() {
+    virtual ~BaseQueryExecutor() {
       if (match_columns_) {
         grn_obj_close(ctx_, match_columns_);
       }
@@ -251,7 +251,7 @@ namespace {
       condition_(nullptr) {
     }
 
-    ~QueryExecutor() {
+    ~QueryExecutor() override {
       if (condition_) {
         grn_obj_close(ctx_, condition_);
       }
@@ -406,7 +406,7 @@ namespace {
                    GRN_ID_NIL);
     }
 
-    ~QueryParallelOrExecutor() {
+    ~QueryParallelOrExecutor() override {
       GRN_OBJ_FIN(ctx_, &sub_match_columns_);
     }
 
