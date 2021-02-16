@@ -1,0 +1,21 @@
+#$GRN_QUERY_PARALLEL_OR_N_CONDITIONS_THRESHOLD=1
+
+table_create Users TABLE_HASH_KEY ShortText
+
+load --table Users
+[
+{"_key": "Alice"},
+{"_key": "Bob"},
+{"_key": "Chris"}
+]
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC130
+column_create Terms users COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Users _key
+
+select Users \
+  --output_columns _id,_key,_score \
+  --sort_keys _id \
+  --filter 'query_parallel_or("_key", "Alice", "Bob")'

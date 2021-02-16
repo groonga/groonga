@@ -8245,6 +8245,15 @@ grn_expr_match_columns_split(grn_ctx *ctx,
       }
       break;
     default :
+      if (e->codes[i].modify != 0 &&
+          e->codes[i + e->codes[i].modify].op == GRN_OP_OR) {
+        grn_obj *match_column = grn_expr_slice(ctx,
+                                               expr,
+                                               match_columns_start,
+                                               i + 1);
+        GRN_PTR_PUT(ctx, splitted_match_columns, match_column);
+        match_columns_start = i + 1;
+      }
       break;
     }
   }
