@@ -7,6 +7,437 @@
 News
 ====
 
+.. _release-11-0-1:
+
+Release 11.0.1 - 2021-03-31
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/install/debian`] Added support for a ARM64 package.
+
+* [:doc:`reference/commands/select`] Added support for customizing adjust weight every key word.
+
+  * We need to specify ``<`` or ``>`` to all keywords to adjust scores until now.
+    Because the default adjustment of weight (6 or 4) is larger than the default score (1).
+
+    * Therefore, for example, "A"'s weight is 1 and "B"'s weight is 4 in ``A <B``.
+      Decremented "B"'s weight (4) is larger than not decremented "A"'s weight (1).
+      This is not works as expected.
+      we need to specify ``>A <B`` to use smaller weight than "A" for "B".
+      "A"'s weight is 6 and "B"'s weight is 4 in ``>A <B``.
+
+  * We can customize adjustment of weight every key word by only specifying ``<${WEIGHT}`` or ``>${WEIGHT}`` to target keywords since this release.
+    For example, "A"'s weight is 1 and "B"'s weight is 0.9 in ``A <0.1B`` ("B"'s weight decrement 0.1).
+
+  * However, note that these forms ( ``>${WEIGHT}...``, ``<${WEIGHT}...``, and ``~${WEIGHT}...`` ) are incompatible.
+
+* [:doc:`reference/commands/select`] Added support for outputting ``Float`` and ``Float32`` value in Apache Arrow format.
+
+  * For example, Groonga output as below.
+
+  .. code-block::
+
+     table_create Data TABLE_NO_KEY
+     column_create Data float COLUMN_SCALAR Float
+
+     load --table Data
+     [
+     {"float": 1.1}
+     ]
+
+     select Data \
+       --command_version 3 \
+       --output_type apache-arrow
+
+       return_code: int32
+       start_time: timestamp[ns]
+       elapsed_time: double
+       -- metadata --
+       GROONGA:data_type: metadata
+       	return_code	               start_time	elapsed_time
+       0	          0	1970-01-01T09:00:00+09:00	    0.000000
+       ========================================
+       _id: uint32
+       float: double
+       -- metadata --
+       GROONGA:n_hits: 1
+       	_id	     float
+       0	  1	  1.100000
+
+* [:doc:`reference/commands/select`] Added support for getting a reference destination data via index column when we output a result.
+
+  * Until now, Groonga had returned involuntary value when we specified output value like ``index_column.xxx``.
+    For example, A value of ``--columns[tags].value purchases.tag`` was ``["apple",["many"]],["banana",["man"]],["cacao",["man"]]`` in the following example. In this case, the expected values was ``["apple",["man","many"]],["banana",["man"]],["cacao",["woman"]]``.
+    In this release, we can get a correct reference destination data via index column as below.
+
+    .. code-block::
+
+      table_create Products TABLE_PAT_KEY ShortText
+
+      table_create Purchases TABLE_NO_KEY
+      column_create Purchases product COLUMN_SCALAR Products
+      column_create Purchases tag COLUMN_SCALAR ShortText
+
+      column_create Products purchases COLUMN_INDEX Purchases product
+
+      load --table Products
+      [
+      {"_key": "apple"},
+      {"_key": "banana"},
+      {"_key": "cacao"}
+      ]
+
+      load --table Purchases
+      [
+      {"product": "apple",  "tag": "man"},
+      {"product": "banana", "tag": "man"},
+      {"product": "cacao",  "tag": "woman"},
+      {"product": "apple",  "tag": "many"}
+      ]
+
+      select Products \
+        --columns[tags].stage output \
+        --columns[tags].flags COLUMN_VECTOR \
+        --columns[tags].type ShortText \
+        --columns[tags].value purchases.tag \
+        --output_columns _key,tags
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              3
+            ],
+            [
+              [
+                "_key",
+                "ShortText"
+              ],
+              [
+                "tags",
+                "ShortText"
+              ]
+            ],
+            [
+              "apple",
+              [
+                "man",
+                "many"
+              ]
+            ],
+            [
+              "banana",
+              [
+                "man"
+              ]
+            ],
+            [
+              "cacao",
+              [
+                "woman"
+              ]
+            ]
+          ]
+        ]
+      ]
+
+* [:doc:`reference/commands/select`] Added support for specifying index column directly as a part of nested index.
+
+  * We can search source table after filtering by using ``index_column.except_source_column``.
+    For example, we specify ``comments.content`` when searching in the following example.
+    In this case, at first, this query execute full text search from ``content`` column of ``Commentts`` table, then fetch the records of Articles table which refers to already searched records of Comments table.
+
+    .. code-block::
+
+       table_create Articles TABLE_HASH_KEY ShortText
+
+       table_create Comments TABLE_NO_KEY
+       column_create Comments article COLUMN_SCALAR Articles
+       column_create Comments content COLUMN_SCALAR ShortText
+
+       column_create Articles content COLUMN_SCALAR Text
+       column_create Articles comments COLUMN_INDEX Comments article
+
+       table_create Terms TABLE_PAT_KEY ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer NormalizerNFKC130
+       column_create Terms articles_content COLUMN_INDEX|WITH_POSITION \
+         Articles content
+       column_create Terms comments_content COLUMN_INDEX|WITH_POSITION \
+         Comments content
+
+       load --table Articles
+       [
+       {"_key": "article-1", "content": "Groonga is fast!"},
+       {"_key": "article-2", "content": "Groonga is useful!"},
+       {"_key": "article-3", "content": "Mroonga is fast!"}
+       ]
+
+       load --table Comments
+       [
+       {"article": "article-1", "content": "I'm using Groonga too!"},
+       {"article": "article-3", "content": "I'm using Mroonga!"},
+       {"article": "article-1", "content": "I'm using PGroonga!"}
+       ]
+
+       select Articles --match_columns comments.content --query groonga \
+         --output_columns "_key, _score, comments.content
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "_score",
+                 "Int32"
+               ],
+               [
+                 "comments.content",
+                 "ShortText"
+               ]
+             ],
+             [
+               "article-1",
+               1,
+               [
+                 "I'm using Groonga too!",
+                 "I'm using PGroonga!"
+               ]
+             ]
+           ]
+         ]
+       ]
+
+* [:doc:`/reference/commands/load`] Added support for loading reference vector from JSON text.
+
+  * We can load data to reference vector from source table with JSON text as below.
+
+    .. code-block::
+
+      table_create Purchases TABLE_HASH_KEY ShortText
+      column_create Purchases item COLUMN_SCALAR ShortText
+      column_create Purchases price COLUMN_SCALAR UInt32
+
+      table_create Settlements TABLE_HASH_KEY ShortText
+      column_create Settlements purchases COLUMN_VECTOR Purchases
+
+      column_create Purchases settlements_purchases COLUMN_INDEX Settlements purchases
+
+      load --table Settlements
+      [
+      {
+        "_key": "super market",
+        "purchases": "[{\"_key\": \"super market-1\", \"item\": \"apple\", \"price\": 100}, {\"_key\": \"super market-2\", \"item\": \"milk\",  \"price\": 200}]"
+      },
+      {
+        "_key": "shoes shop",
+        "purchases": "[{\"_key\": \"shoes shop-1\", \"item\": \"sneakers\", \"price\": 3000}]"
+      }
+      ]
+
+      dump \
+        --dump_plugins no \
+        --dump_schema no
+      load --table Purchases
+      [
+      ["_key","item","price"],
+      ["super market-1","apple",100],
+      ["super market-2","milk",200],
+      ["shoes shop-1","sneakers",3000]
+      ]
+
+      load --table Settlements
+      [
+      ["_key","purchases"],
+      ["super market",["super market-1","super market-2"]],
+      ["shoes shop",["shoes shop-1"]]
+      ]
+
+      column_create Purchases settlements_purchases COLUMN_INDEX Settlements purchases
+
+  * Currently, this feature doesn't support nested reference record.
+
+* [:doc:`/reference/commands/load`] Added support for loading reference vector with inline object literal.
+
+  * For example, we can load data like ``"key" : "[ { "key" : "value", ..., "key" : "value" } ]"`` as below.
+
+    .. code-block::
+
+      table_create Purchases TABLE_NO_KEY
+      column_create Purchases item COLUMN_SCALAR ShortText
+      column_create Purchases price COLUMN_SCALAR UInt32
+
+      table_create Settlements TABLE_HASH_KEY ShortText
+      column_create Settlements purchases COLUMN_VECTOR Purchases
+      column_create Purchases settlements_purchases COLUMN_INDEX Settlements purchases
+
+      load --table Settlements
+      [
+      {
+        "_key": "super market",
+        "purchases": [
+           {"item": "apple", "price": 100},
+           {"item": "milk",  "price": 200}
+        ]
+      },
+      {
+        "_key": "shoes shop",
+        "purchases": [
+           {"item": "sneakers", "price": 3000}
+        ]
+      }
+      ]
+
+  * It makes easier to add JSON data into reference columns by this feature.
+  * Currently, this feature only support with JSON input.
+
+* Added support for UNIX epoch time for ``time_classify_*`` functions.
+
+  * We can use UNIX epoch time in ``time_classify_*`` functions as below.
+
+    .. code-block::
+
+       plugin_register functions/time
+
+       table_create Timestamps TABLE_PAT_KEY Time
+       load --table Timestamps
+       [
+       {"_key": 0},
+       {"_key": "2016-05-06 00:00:00.000001"},
+       {"_key": "2016-05-06 23:59:59.999999"},
+       {"_key": "2016-05-07 00:00:00.000000"},
+       {"_key": "2016-05-07 00:00:00.000001"},
+       {"_key": "2016-05-08 23:59:59.999999"},
+       {"_key": "2016-05-08 00:00:00.000000"}
+       ]
+
+       select Timestamps \
+         --sortby _id \
+         --limit -1 \
+         --output_columns '_key, time_classify_day_of_week(_key)'
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               7
+             ],
+             [
+               [
+                 "_key",
+                 "Time"
+               ],
+               [
+                 "time_classify_day_of_week",
+                 null
+               ]
+             ],
+             [
+               0.0,
+               4
+             ],
+             [
+               1462460400.000001,
+               5
+             ],
+             [
+               1462546799.999999,
+               5
+             ],
+             [
+               1462546800.0,
+               6
+             ],
+             [
+               1462546800.000001,
+               6
+             ],
+             [
+               1462719599.999999,
+               0
+             ],
+             [
+               1462633200.0,
+               0
+             ]
+           ]
+         ]
+       ]
+
+* [:doc:`reference/functions/query_parallel_or`] Added a new function for processing queries in parallel.
+
+  * ``query_parallel_or`` requires Apache Arrow for processing queries in parallel.
+    If it does not enable, ``query_parallel_or`` processes queries in sequence.
+
+  * ``query_parallel_or`` processes combination of ``match_columns`` and ``query_string`` in parallel.
+
+  * Syntax of ``query_parallel_or`` is as follow::
+
+      query_parallel_or(match_columns, query_string1,
+                                       query_string2,
+                                       .
+                                       .
+                                       .
+                                       query_stringN,
+                                       {"option": "value", ...})
+
+* [:doc:`reference/commands/select`] Added support for ignoring nonexistent sort keys.
+
+  * Groonga had been outputted error when we specified nonexistent sort keys until now.
+    However, Groonga ignore nonexistent sort keys since this release. (Groonga doesn't output error.)
+  * This feature implements for consistency.
+    Because we just ignore invalid values in ``output_columns`` and most of invalid values in ``sort_keys``.
+
+* [:doc:`reference/commands/select`] Added support for ignoring nonexistent tables in ``drilldowns[].table``. [GitHub#1169][Reported by naoa]
+
+  * Groonga had been outputted error when we specified nonexistent tables in ``drilldowns[].table`` until now.
+    However, Groonga ignore nonexistent tables in ``drilldowns[].table`` since this release. (Groonga doesn't output error.)
+  * This feature implements for consistency.
+    Because we just ignore invalid values in ``output_columns`` and most of invalid values in ``sort_keys``.
+
+* [httpd] Updated bundled nginx to 1.19.8.
+
+Fixes
+^^^^^
+
+* [:doc:`reference/commands/reference_acquire`] Fixed a bug that Groonga crash when a table's reference is acquired and a column is added to the table before auto release is happened.
+
+  * Because the added column's reference isn't acquired but it's released on auto release.
+
+* [Windows] Fixed a bug that one or more processes fail an output backtrace on SEGV when a new backtrace logging process starts when another backtrace logging process is running in another thread.
+
+
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+Thanks
+^^^^^^
+
+* naoa
+
 .. _release-11-0-0:
 
 Release 11.0.0 - 2021-02-09
