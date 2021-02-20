@@ -10984,10 +10984,10 @@ grn_obj_traverse_recursive_dependent_table(
         grn_ctx_push_temporary_open_space(ctx);
       }
       grn_obj *domain = grn_ctx_at(ctx, domain_id);
-      if (grn_obj_is_table(ctx, domain)) {
-        grn_obj_traverse_recursive_dependent_dispatch(ctx, data, domain);
-      }
       if (domain) {
+        if (grn_obj_is_table(ctx, domain)) {
+          grn_obj_traverse_recursive_dependent_dispatch(ctx, data, domain);
+        }
         grn_obj_unref(ctx, domain);
       }
       if (data->is_close_opened_object_mode) {
@@ -11138,10 +11138,10 @@ grn_obj_traverse_recursive_dependent_column_data(
       grn_ctx_push_temporary_open_space(ctx);
     }
     grn_obj *range = grn_ctx_at(ctx, range_id);
-    if (grn_obj_is_table(ctx, range)) {
-      grn_obj_traverse_recursive_dependent_dispatch(ctx, data, range);
-    }
     if (range) {
+      if (grn_obj_is_table(ctx, range)) {
+        grn_obj_traverse_recursive_dependent_dispatch(ctx, data, range);
+      }
       grn_obj_unref(ctx, range);
     }
     if (data->is_close_opened_object_mode) {
