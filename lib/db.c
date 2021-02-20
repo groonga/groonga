@@ -9956,14 +9956,14 @@ grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, grn_bool removep)
       if (ctx->impl) {
         if (id & GRN_OBJ_TMP_COLUMN) {
           if (ctx->impl->temporary_columns) {
-            grn_log_reference_count("delete: %u\n", id);
+            grn_log_reference_count("%p: delete: %u\n", ctx, id);
             rc = grn_pat_delete_by_id(ctx, ctx->impl->temporary_columns,
                                       id & ~(GRN_OBJ_TMP_COLUMN | GRN_OBJ_TMP_OBJECT),
                                       NULL);
           }
         } else {
           if (ctx->impl->values) {
-            grn_log_reference_count("delete: %u\n", id);
+            grn_log_reference_count("%p: delete: %u\n", ctx, id);
             rc = grn_array_delete_by_id(ctx, ctx->impl->values,
                                         id & ~GRN_OBJ_TMP_OBJECT, NULL);
           }
@@ -9973,7 +9973,7 @@ grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, grn_bool removep)
       db_value *vp;
       grn_db *s = (grn_db *)db;
       if ((vp = grn_tiny_array_at(&s->values, id))) {
-        grn_log_reference_count("delete: %u: %u\n", id, vp->lock);
+        grn_log_reference_count("%p: delete: %u: %u\n", ctx, id, vp->lock);
         GRN_ASSERT(!vp->lock);
         vp->lock = 0;
         vp->ptr = NULL;
@@ -10039,7 +10039,7 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
       }
       vp->lock = 1;
       vp->ptr = (grn_obj *)obj;
-      grn_log_reference_count("init: %u: %u\n", id, vp->lock);
+      grn_log_reference_count("%p: init: %u: %u\n", ctx, id, vp->lock);
     }
   }
   obj->id = id;
@@ -10247,7 +10247,7 @@ grn_db_value_lock(grn_ctx *ctx,
     GRN_ATOMIC_ADD_EX(lock_pointer, -1, current_lock);
     GRN_FUTEX_WAIT(lock_pointer);
   }
-  grn_log_reference_count("lock: %u: %u\n", id, current_lock);
+  grn_log_reference_count("%p: lock: %u: %u\n", ctx, id, current_lock);
   *current_lock_output = current_lock;
   return is_locked;
 }
@@ -10258,7 +10258,7 @@ grn_db_value_unlock(grn_ctx *ctx, grn_id id, db_value *vp)
   uint32_t current_lock = 0;
   uint32_t *lock_pointer = &(vp->lock);
   GRN_ATOMIC_ADD_EX(lock_pointer, -1, current_lock);
-  grn_log_reference_count("unlock: %u: %u\n", id, current_lock);
+  grn_log_reference_count("%p: unlock: %u: %u\n", ctx, id, current_lock);
   return current_lock;
 }
 
@@ -10267,7 +10267,7 @@ grn_db_value_wait(grn_ctx *ctx, grn_id id, db_value *vp)
 {
   bool succeeded = true;
   uint32_t n_trials;
-  grn_log_reference_count("wait: start: %u: %u\n", id, vp->lock);
+  grn_log_reference_count("%p: wait: start: %u: %u\n", ctx, id, vp->lock);
   for (n_trials = 0; !vp->ptr; n_trials++) {
     if (n_trials >= 3000) {
       GRN_LOG(ctx,
@@ -10286,7 +10286,7 @@ grn_db_value_wait(grn_ctx *ctx, grn_id id, db_value *vp)
     }
     GRN_FUTEX_WAIT(&vp->ptr);
   }
-  grn_log_reference_count("wait: done: %u: %u\n", id, vp->lock);
+  grn_log_reference_count("%p: wait: done: %u: %u\n", ctx, id, vp->lock);
   return succeeded;
 }
 
@@ -10326,6 +10326,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
     if (id & GRN_OBJ_TMP_COLUMN) {
       if (ctx->impl->temporary_columns) {
         grn_id real_id = id & ~(GRN_OBJ_TMP_COLUMN | GRN_OBJ_TMP_OBJECT);
+        grn_log_reference_count("%p: at: start: %u\n", ctx, real_id);
         grn_obj **tmp_obj;
         uint32_t size;
         tmp_obj = (grn_obj **)grn_pat_get_value_(ctx,
@@ -10338,9 +10339,10 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
       }
     } else {
       if (ctx->impl->values) {
+        grn_id real_id = id & ~GRN_OBJ_TMP_OBJECT;
+        grn_log_reference_count("%p: at: start: %u\n", ctx, real_id);
         grn_obj **tmp_obj;
-        tmp_obj = _grn_array_get_value(ctx, ctx->impl->values,
-                                       id & ~GRN_OBJ_TMP_OBJECT);
+        tmp_obj = _grn_array_get_value(ctx, ctx->impl->values, real_id);
         if (tmp_obj) {
           res = *tmp_obj;
         }
@@ -10348,10 +10350,13 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
     }
     if (res) {
       DB_OBJ(res)->reference_count++;
-      grn_log_reference_count("at: %u: %u\n",
-                              DB_OBJ(res)->id, DB_OBJ(res)->reference_count);
+      grn_log_reference_count("%p: at: done: %u: %u\n",
+                              ctx,
+                              DB_OBJ(res)->id,
+                              DB_OBJ(res)->reference_count);
     }
   } else {
+    grn_log_reference_count("%p: at: start: %u\n", ctx, id);
     grn_db *s = (grn_db *)ctx->impl->db;
     if (s) {
       db_value *vp;
@@ -10506,8 +10511,8 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                    * freed by grn_obj_unlink() in the process that
                    * does not execute plugin_register. */
                   vp->lock++;
-                  grn_log_reference_count("at: proc: increment: %u: %u\n",
-                                          id, vp->lock);
+                  grn_log_reference_count("%p: at: proc: increment: %u: %u\n",
+                                          ctx, id, vp->lock);
                 }
                 break;
               case GRN_EXPR :
@@ -10568,6 +10573,8 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
             const char *name;
             uint32_t name_size = 0;
             name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
+            grn_log_reference_count("%p: at: done: failed to wait: %u: %u: %p\n",
+                                    ctx, id, vp->lock, vp->ptr);
             ERR(GRN_NO_LOCKS_AVAILABLE,
                 "[at] failed to wait: "
                 "<%u>(<%.*s>)",
@@ -10600,6 +10607,8 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
       if (res && res->header.type == GRN_PROC) {
         grn_plugin_ensure_registered(ctx, res);
       }
+      grn_log_reference_count("%p: at: done: %u: %u: %p\n",
+                              ctx, id, vp->lock, vp->ptr);
     }
   }
 exit :
@@ -11381,10 +11390,10 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
   GRN_API_ENTER;
   if (obj) {
     if (GRN_DB_OBJP(obj)) {
-      grn_log_reference_count("close: %p\n", obj);
-
       grn_id id = DB_OBJ(obj)->id;
       grn_hook_entry entry;
+
+      grn_log_reference_count("%p: close: %u: %p\n", ctx, id, obj);
 
       if (id != GRN_ID_NIL && !(id & GRN_OBJ_TMP_OBJECT)) {
         grn_db_remove_deferred_unref(ctx, ctx->impl->db, id);
@@ -11562,15 +11571,15 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     if (grn_enable_reference_count) {
       grn_accessor *accessor = (grn_accessor *)obj;
       GRN_API_ENTER;
-      grn_log_reference_count("unlink: start: accessor: %p: %u\n",
-                              obj, accessor->reference_count);
+      grn_log_reference_count("%p: unlink: start: accessor: %p: %u\n",
+                              ctx, obj, accessor->reference_count);
       accessor->reference_count--;
       uint32_t current_reference_count = accessor->reference_count;
       if (current_reference_count == 0) {
         grn_obj_close(ctx, obj);
       }
-      grn_log_reference_count("unlink: done: accessor: %p: %u\n",
-                              obj, current_reference_count);
+      grn_log_reference_count("%p: unlink: done: accessor: %p: %u\n",
+                              ctx, obj, current_reference_count);
       GRN_API_RETURN();
     } else {
       grn_obj_close(ctx, obj);
@@ -11589,15 +11598,15 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   if (id == GRN_ID_NIL || (id & GRN_OBJ_TMP_OBJECT)) {
     if (grn_enable_reference_count) {
       GRN_API_ENTER;
-      grn_log_reference_count("unlink: start: %u: %u\n",
-                              id, db_obj->reference_count);
+      grn_log_reference_count("%p: unlink: start: %u: %p: %u\n",
+                              ctx, id, obj, db_obj->reference_count);
       db_obj->reference_count--;
       uint32_t current_reference_count = db_obj->reference_count;
       if (current_reference_count == 0) {
         grn_obj_close(ctx, obj);
       }
-      grn_log_reference_count("unlink: done: %u: %u\n",
-                              id, current_reference_count);
+      grn_log_reference_count("%p: unlink: done: %u: %p: %u\n",
+                              ctx, id, obj, current_reference_count);
       GRN_API_RETURN();
     } else {
       grn_obj_close(ctx, obj);
@@ -11613,15 +11622,20 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
   grn_db *s = (grn_db *)(db_obj->db);
   db_value *vp = grn_tiny_array_at(&s->values, id);
   if (vp) {
-    grn_log_reference_count("unlink: start: %u: %u: %p\n",
-                            id, vp->lock, vp->ptr);
+    grn_log_reference_count("%p: unlink: start: %u: %p: %u: %p\n",
+                            ctx, id, obj, vp->lock, vp->ptr);
     if (vp->lock == 0) {
+      grn_log_reference_count("%p: unlink: done: not referenced: "
+                              "%u: %p: %u: %p\n",
+                              ctx, id, obj, vp->lock, vp->ptr);
       ERR(GRN_INVALID_ARGUMENT,
           "[obj][unlink] not referenced object: "
           "id:<%u> "
+          "obj:<%p> "
           "lock:<%u> "
           "address:<%p>",
           id,
+          obj,
           vp->lock,
           vp->ptr);
       GRN_API_RETURN();
@@ -11633,30 +11647,49 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
     uint32_t current_reference_count = vp->lock;
 #endif
     if (current_lock == 1) {
-      grn_log_reference_count("unlink: lock: %u: %u: %u\n",
-                              id, current_lock, current_reference_count);
+      grn_log_reference_count("%p: unlink: lock: %u: %p: %u: %u\n",
+                              ctx,
+                              id,
+                              obj,
+                              current_lock,
+                              current_reference_count);
       GRN_ATOMIC_ADD_EX(lock_pointer, GRN_IO_MAX_REF, current_lock);
 #ifdef GRN_REFERENCE_COUNT_DEBUG
       current_reference_count = vp->lock;
 #endif
-      grn_log_reference_count("unlink: locked: %u: %u: %u\n",
-                              id, current_lock, current_reference_count);
+      grn_log_reference_count("%p: unlink: locked: %u: %p: %u: %u\n",
+                              ctx,
+                              id,
+                              obj,
+                              current_lock,
+                              current_reference_count);
       if (current_lock == 0) {
         grn_obj_close(ctx, obj);
       } else {
-        grn_log_reference_count("unlink: unlock: %u: %u: %u\n",
-                                id, current_lock, current_reference_count);
+        grn_log_reference_count("%p: unlink: unlock: %u: %p: %u: %u\n",
+                                ctx,
+                                id,
+                                obj,
+                                current_lock,
+                                current_reference_count);
         GRN_ATOMIC_ADD_EX(lock_pointer, -GRN_IO_MAX_REF, current_lock);
 #ifdef GRN_REFERENCE_COUNT_DEBUG
-      current_reference_count = vp->lock;
+        current_reference_count = vp->lock;
 #endif
-        grn_log_reference_count("unlink: unlocked: %u: %u: %u\n",
-                                id, current_lock, current_reference_count);
+        grn_log_reference_count("%p: unlink: unlocked: %u: %p: %u: %u\n",
+                                ctx,
+                                id,
+                                obj,
+                                current_lock,
+                                current_reference_count);
       }
       GRN_FUTEX_WAKE(lock_pointer);
     }
-    grn_log_reference_count("unlink: done: %u: %u\n",
-                            id, current_reference_count);
+    grn_log_reference_count("%p: unlink: done: %u: %p: %u\n",
+                            ctx,
+                            id,
+                            obj,
+                            current_reference_count);
   }
   GRN_API_RETURN();
 }

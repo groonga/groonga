@@ -24,6 +24,8 @@
 #include "grn_report.h"
 #include "grn_posting.h"
 
+#include <stdio.h>
+
 grn_accessor *
 grn_accessor_new(grn_ctx *ctx)
 {
@@ -42,7 +44,8 @@ grn_accessor_new(grn_ctx *ctx)
   res->obj = NULL;
   res->next = NULL;
   res->reference_count = 1;
-  grn_log_reference_count("accessor: %p: %u\n", res, res->reference_count);
+  grn_log_reference_count("%p: accessor: %p: %u\n",
+                          ctx, res, res->reference_count);
   return res;
 }
 
