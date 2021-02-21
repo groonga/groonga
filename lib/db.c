@@ -2659,22 +2659,26 @@ exit :
 static grn_rc
 grn_table_truncate_reference_objects(grn_ctx *ctx, grn_obj *table)
 {
-  grn_bool is_close_opened_object_mode;
-  grn_table_cursor *cursor;
-  grn_id table_id;
-  grn_id id;
+  grn_id table_id = grn_obj_id(ctx, table);
+  if (table_id & GRN_OBJ_TMP_OBJECT) {
+    /* TODO: Search ctx->impl->values and ctx->imp->temporary_columns when
+    * we need to implement this. */
+    return ctx->rc;
+  }
 
-  is_close_opened_object_mode = (grn_thread_get_limit() == 1);
+  bool is_close_opened_object_mode = (grn_thread_get_limit() == 1);
 
-  cursor = grn_table_cursor_open(ctx, grn_ctx_db(ctx),
-                                 NULL, 0, NULL, 0,
-                                 0, -1,
-                                 GRN_CURSOR_BY_ID);
+  grn_table_cursor *cursor = grn_table_cursor_open(ctx,
+                                                   grn_ctx_db(ctx),
+                                                   NULL, 0,
+                                                   NULL, 0,
+                                                   0, -1,
+                                                   GRN_CURSOR_BY_ID);
   if (!cursor) {
     return ctx->rc;
   }
 
-  table_id = grn_obj_id(ctx, table);
+  grn_id id;
   while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
     grn_obj *object;
 

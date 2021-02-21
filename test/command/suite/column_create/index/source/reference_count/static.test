@@ -1,0 +1,25 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+
+table_create NotRelated TABLE_NO_KEY
+
+table_create Users TABLE_HASH_KEY ShortText
+
+load --table Users
+[
+{"_key": "Alice"}
+]
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC130
+
+#@disable-logging
+thread_limit 1
+#@enable-logging
+
+log_level --level dump
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+column_create Terms users_key COLUMN_INDEX|WITH_SECTION|WITH_POSITION Users _key
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels dump
