@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -64,16 +64,9 @@ extern bool grn_enable_reference_count;
 typedef struct _grn_db grn_db;
 typedef struct _grn_proc grn_proc;
 
-typedef enum {
-  GRN_DEFERRED_UNREF_RECURSIVE_NO,
-  GRN_DEFERRED_UNREF_RECURSIVE_YES,
-  GRN_DEFERRED_UNREF_RECURSIVE_DEPENDENT,
-} grn_deferred_unref_recursive;
-
 typedef struct {
   uint32_t count;
-  grn_id id;
-  grn_deferred_unref_recursive recursive;
+  grn_obj ids;
 } grn_deferred_unref;
 
 struct _grn_db {
@@ -193,6 +186,15 @@ grn_db_get_option_values(grn_ctx *ctx,
 grn_rc grn_db_clear_option_values(grn_ctx *ctx,
                                   grn_obj *db,
                                   grn_id id);
+grn_rc grn_obj_refer_auto_release(grn_ctx *ctx,
+                                  grn_obj *obj,
+                                  uint32_t count);
+grn_rc grn_obj_refer_recursive_auto_release(grn_ctx *ctx,
+                                            grn_obj *obj,
+                                            uint32_t count);
+grn_rc grn_obj_refer_recursive_dependent_auto_release(grn_ctx *ctx,
+                                                      grn_obj *obj,
+                                                      uint32_t count);
 grn_rc
 grn_db_add_deferred_unref(grn_ctx *ctx,
                           grn_obj *db,

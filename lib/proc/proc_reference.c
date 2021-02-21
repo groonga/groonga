@@ -52,29 +52,30 @@ command_reference_acquire(grn_ctx *ctx,
   }
 
   if (obj) {
-    grn_deferred_unref deferred_unref;
+    int32_t auto_release_count_arg = -1;
+    if (need_unref) {
+      auto_release_count_arg =
+        grn_plugin_proc_get_var_int32(ctx,
+                                      user_data,
+                                      "auto_release_count",
+                                      -1,
+                                      auto_release_count_arg);
+    }
+    uint32_t auto_release_count = 0;
+    if (auto_release_count_arg > 0) {
+      /* Don't count this command */
+      auto_release_count = auto_release_count_arg + 1;
+    }
     if (GRN_RAW_STRING_EQUAL_CSTRING(recursive, "dependent")) {
-      grn_obj_refer_recursive_dependent(ctx, obj);
-      deferred_unref.recursive = GRN_DEFERRED_UNREF_RECURSIVE_DEPENDENT;
+      grn_obj_refer_recursive_dependent_auto_release(ctx,
+                                                     obj,
+                                                     auto_release_count);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(recursive, "no")) {
-      grn_obj_refer(ctx, obj);
-      deferred_unref.recursive = GRN_DEFERRED_UNREF_RECURSIVE_NO;
+      grn_obj_refer_auto_release(ctx, obj, auto_release_count);
     } else {
-      grn_obj_refer_recursive(ctx, obj);
-      deferred_unref.recursive = GRN_DEFERRED_UNREF_RECURSIVE_YES;
+      grn_obj_refer_recursive_auto_release(ctx, obj, auto_release_count);
     }
     if (need_unref) {
-      deferred_unref.count = grn_plugin_proc_get_var_int32(ctx,
-                                                           user_data,
-                                                           "auto_release_count",
-                                                           -1,
-                                                           0);
-      if (deferred_unref.count > 0) {
-        /* Don't count this command */
-        deferred_unref.count++;
-        deferred_unref.id = grn_obj_id(ctx, obj);
-        grn_db_add_deferred_unref(ctx, grn_ctx_db(ctx), &deferred_unref);
-      }
       grn_obj_unref(ctx, obj);
     }
   } else {

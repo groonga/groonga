@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -535,7 +535,8 @@ grn_db_add_deferred_unref(grn_ctx *ctx,
   if (deferred_unref->count == 0) {
     return ctx->rc;
   }
-  if (deferred_unref->id == GRN_ID_NIL) {
+  size_t n_ids = GRN_RECORD_VECTOR_SIZE(&(deferred_unref->ids));
+  if (n_ids == 0) {
     return ctx->rc;
   }
   grn_db *db_ = (grn_db *)db;
@@ -543,7 +544,14 @@ grn_db_add_deferred_unref(grn_ctx *ctx,
   void *value;
   grn_id id = grn_array_add(ctx, db_->deferred_unrefs, &value);
   if (id != GRN_ID_NIL) {
-    *((grn_deferred_unref *)value) = *deferred_unref;
+    grn_deferred_unref *value_deferred_unrefs = value;
+    value_deferred_unrefs->count = deferred_unref->count;
+    GRN_RECORD_INIT(&(value_deferred_unrefs->ids), GRN_OBJ_VECTOR, GRN_ID_NIL);
+    /* Copy data */
+    GRN_TEXT_SET(ctx,
+                 &(value_deferred_unrefs->ids),
+                 GRN_TEXT_VALUE(&(deferred_unref->ids)),
+                 GRN_TEXT_LEN(&(deferred_unref->ids)));
   }
   CRITICAL_SECTION_LEAVE(db_->lock);
   return ctx->rc;
@@ -576,14 +584,14 @@ grn_db_remove_deferred_unref(grn_ctx *ctx,
                          GRN_ID_MAX,
                          id_) {
       void *value;
-      int size = grn_array_cursor_get_value(ctx, cursor, &value);
-      if (size != sizeof(grn_deferred_unref)) {
-        grn_array_cursor_delete(ctx, cursor, NULL);
-        continue;
-      }
+      grn_array_cursor_get_value(ctx, cursor, &value);
       grn_deferred_unref *deferred_unref = value;
-      if (deferred_unref->id == id) {
-        grn_array_cursor_delete(ctx, cursor, NULL);
+      size_t n_ids = GRN_RECORD_VECTOR_SIZE(&(deferred_unref->ids));
+      size_t i;
+      for (i = 0; i < n_ids; i++) {
+        if (GRN_RECORD_VALUE_AT(&(deferred_unref->ids), i) == id) {
+          GRN_RECORD_VALUE_AT(&(deferred_unref->ids), i) = GRN_ID_NIL;
+        }
       }
     } GRN_ARRAY_EACH_END(ctx, cursor);
   }
@@ -609,31 +617,24 @@ grn_db_command_processed(grn_ctx *ctx, grn_obj *db)
                          GRN_ID_MAX,
                          id) {
       void *value;
-      int size = grn_array_cursor_get_value(ctx, cursor, &value);
-      if (size != sizeof(grn_deferred_unref)) {
-        grn_array_cursor_delete(ctx, cursor, NULL);
-        continue;
-      }
+      grn_array_cursor_get_value(ctx, cursor, &value);
       grn_deferred_unref *deferred_unref = value;
       deferred_unref->count--;
       if (deferred_unref->count == 0) {
-        grn_obj *object = grn_ctx_at(ctx, deferred_unref->id);
-        if (object) {
-          switch (deferred_unref->recursive) {
-          case GRN_DEFERRED_UNREF_RECURSIVE_NO :
-            grn_obj_unref(ctx, object);
-            break;
-          case GRN_DEFERRED_UNREF_RECURSIVE_YES :
-            grn_obj_unref_recursive(ctx, object);
-            break;
-          case GRN_DEFERRED_UNREF_RECURSIVE_DEPENDENT :
-            grn_obj_unref_recursive_dependent(ctx, object);
-            break;
-          default :
-            break;
+        size_t n_ids = GRN_RECORD_VECTOR_SIZE(&(deferred_unref->ids));
+        size_t i;
+        for (i = 0; i < n_ids; i++) {
+          grn_id deferred_id = GRN_RECORD_VALUE_AT(&(deferred_unref->ids), i);
+          if (deferred_id == GRN_ID_NIL) {
+            continue;
           }
-          grn_obj_unref(ctx, object);
+          grn_obj *object = grn_ctx_at(ctx, deferred_id);
+          if (object) {
+            grn_obj_unref(ctx, object);
+            grn_obj_unref(ctx, object);
+          }
         }
+        GRN_OBJ_FIN(ctx, &(deferred_unref->ids));
         grn_array_cursor_delete(ctx, cursor, NULL);
       }
     } GRN_ARRAY_EACH_END(ctx, cursor);
@@ -653,6 +654,18 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   GRN_API_ENTER;
 
   s->is_closing = true;
+
+  GRN_ARRAY_EACH_BEGIN(ctx,
+                       s->deferred_unrefs,
+                       cursor,
+                       GRN_ID_NIL,
+                       GRN_ID_MAX,
+                       id) {
+    void *value;
+    grn_array_cursor_get_value(ctx, cursor, &value);
+    grn_deferred_unref *deferred_unref = value;
+    GRN_OBJ_FIN(ctx, &(deferred_unref->ids));
+  } GRN_ARRAY_EACH_END(ctx, cursor);
   grn_array_close(ctx, s->deferred_unrefs);
 
   ctx_used_db = ctx->impl && ctx->impl->db == db;
@@ -11752,8 +11765,8 @@ grn_obj_unref_recursive_dependent(grn_ctx *ctx, grn_obj *obj)
   GRN_API_RETURN();
 }
 
-grn_rc
-grn_obj_refer(grn_ctx *ctx, grn_obj *obj)
+static grn_rc
+grn_obj_refer_record(grn_ctx *ctx, grn_obj *obj, grn_obj *ids)
 {
   if (!grn_enable_reference_count) {
     return ctx->rc;
@@ -11769,11 +11782,42 @@ grn_obj_refer(grn_ctx *ctx, grn_obj *obj)
   }
 
   if (GRN_DB_OBJP(obj)) {
-    grn_ctx_at(ctx, grn_obj_id(ctx, obj));
+    grn_id id = grn_obj_id(ctx, obj);
+    if (grn_ctx_at(ctx, id) && ids) {
+      GRN_RECORD_PUT(ctx, ids, id);
+    }
     return ctx->rc;
   }
 
   return ctx->rc;
+}
+
+grn_rc
+grn_obj_refer_auto_release(grn_ctx *ctx, grn_obj *obj, uint32_t count)
+{
+  if (!grn_enable_reference_count) {
+    return ctx->rc;
+  }
+
+  if (count > 0) {
+    grn_deferred_unref deferred_unref;
+    deferred_unref.count = count;
+    GRN_RECORD_INIT(&(deferred_unref.ids), GRN_OBJ_VECTOR, GRN_ID_NIL);
+    grn_obj_refer_record(ctx, obj, &(deferred_unref.ids));
+    if (ctx->rc == GRN_SUCCESS) {
+      grn_db_add_deferred_unref(ctx, grn_ctx_db(ctx), &deferred_unref);
+    }
+    GRN_OBJ_FIN(ctx, &(deferred_unref.ids));
+    return ctx->rc;
+  } else {
+    return grn_obj_refer_record(ctx, obj, NULL);
+  }
+}
+
+grn_rc
+grn_obj_refer(grn_ctx *ctx, grn_obj *obj)
+{
+  return grn_obj_refer_auto_release(ctx, obj, 0);
 }
 
 static void
@@ -11784,11 +11828,16 @@ grn_obj_refer_traverse(grn_ctx *ctx,
   if (obj->header.type == GRN_DB) {
     return;
   }
-  grn_obj_refer(ctx, obj);
+  grn_deferred_unref *deferred_unref = user_data;
+  if (deferred_unref->count == 0) {
+    grn_obj_refer(ctx, obj);
+  } else {
+    grn_obj_refer_record(ctx, obj, &(deferred_unref->ids));
+  }
 }
 
 grn_rc
-grn_obj_refer_recursive(grn_ctx *ctx, grn_obj *obj)
+grn_obj_refer_recursive_auto_release(grn_ctx *ctx, grn_obj *obj, uint32_t count)
 {
   if (!grn_enable_reference_count) {
     return ctx->rc;
@@ -11796,11 +11845,52 @@ grn_obj_refer_recursive(grn_ctx *ctx, grn_obj *obj)
 
   GRN_API_ENTER;
 
+  grn_deferred_unref deferred_unref;
+  deferred_unref.count = count;
+  GRN_RECORD_INIT(&(deferred_unref.ids), GRN_OBJ_VECTOR, GRN_ID_NIL);
   grn_obj_traverse_recursive_data data;
   data.tag = "[obj][refer]";
   data.traverse = grn_obj_refer_traverse;
-  data.user_data = NULL;
+  data.user_data = &deferred_unref;
   grn_obj_traverse_recursive(ctx, &data, obj);
+  if (ctx->rc == GRN_SUCCESS && deferred_unref.count > 0) {
+    grn_db_add_deferred_unref(ctx, grn_ctx_db(ctx), &deferred_unref);
+  }
+  GRN_OBJ_FIN(ctx, &(deferred_unref.ids));
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_obj_refer_recursive(grn_ctx *ctx, grn_obj *obj)
+{
+  return grn_obj_refer_recursive_auto_release(ctx, obj, 0);
+}
+
+grn_rc
+grn_obj_refer_recursive_dependent_auto_release(grn_ctx *ctx,
+                                               grn_obj *obj,
+                                               uint32_t count)
+{
+  if (!grn_enable_reference_count) {
+    return ctx->rc;
+  }
+
+  GRN_API_ENTER;
+
+  grn_deferred_unref deferred_unref;
+  deferred_unref.count = count;
+  GRN_RECORD_INIT(&(deferred_unref.ids), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  grn_obj_traverse_recursive_dependent_data data;
+  data.tag = "[obj][refer]";
+  data.traverse = grn_obj_refer_traverse;
+  data.user_data = &deferred_unref;
+  data.for_reference = true;
+  grn_obj_traverse_recursive_dependent(ctx, &data, obj);
+  if (ctx->rc == GRN_SUCCESS && deferred_unref.count > 0) {
+    grn_db_add_deferred_unref(ctx, grn_ctx_db(ctx), &deferred_unref);
+  }
+  GRN_OBJ_FIN(ctx, &(deferred_unref.ids));
 
   GRN_API_RETURN(ctx->rc);
 }
@@ -11808,20 +11898,7 @@ grn_obj_refer_recursive(grn_ctx *ctx, grn_obj *obj)
 grn_rc
 grn_obj_refer_recursive_dependent(grn_ctx *ctx, grn_obj *obj)
 {
-  if (!grn_enable_reference_count) {
-    return ctx->rc;
-  }
-
-  GRN_API_ENTER;
-
-  grn_obj_traverse_recursive_dependent_data data;
-  data.tag = "[obj][refer]";
-  data.traverse = grn_obj_refer_traverse;
-  data.user_data = NULL;
-  data.for_reference = true;
-  grn_obj_traverse_recursive_dependent(ctx, &data, obj);
-
-  GRN_API_RETURN(ctx->rc);
+  return grn_obj_refer_recursive_dependent_auto_release(ctx, obj, 0);
 }
 
 /* Internal function for debug */
