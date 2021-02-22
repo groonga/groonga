@@ -217,14 +217,17 @@ data_prefix_error(void)
 
   ADD_DATA("negative offset",
            GRN_TOO_SMALL_OFFSET,
+           "[table][cursor][open] "
            "can't use negative offset with GRN_CURSOR_PREFIX: -1",
            -1, -1);
   ADD_DATA("large offset",
            GRN_TOO_LARGE_OFFSET,
+           "[table][cursor][open] "
            "offset is not less than table size: offset:100, table_size:8",
            100, -1);
   ADD_DATA("negative limit",
            GRN_TOO_SMALL_LIMIT,
+           "[table][cursor][open] "
            "can't use smaller limit than -1 with GRN_CURSOR_PREFIX: -2",
            0, -2);
 
