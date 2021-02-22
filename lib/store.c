@@ -769,7 +769,7 @@ grn_rc
 grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
                grn_ja_einfo *ei, uint64_t *cas)
 {
-  grn_rc rc = GRN_SUCCESS;
+  const char *tag = "[ja][replace]";
   uint32_t lseg, *pseg, pos;
   grn_ja_einfo *einfo = NULL, eback;
   lseg = id >> JA_W_EINFO_IN_A_SEGMENT;
@@ -778,33 +778,56 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
   if (grn_io_lock(ctx, ja->io, grn_lock_timeout)) {
     return ctx->rc;
   }
+  uint32_t target_seg;
   if (*pseg == JA_ESEG_VOID) {
     int i = 0;
     while (SEGMENTS_AT(ja, i)) {
       if (++i >= JA_N_DSEGMENTS) {
-        ERR(GRN_NOT_ENOUGH_SPACE, "grn_ja file (%s) is full", ja->io->path);
-        rc = GRN_NOT_ENOUGH_SPACE;
+        DEFINE_NAME(ja);
+        ERR(GRN_NOT_ENOUGH_SPACE,
+            "%s[%.*s] can't find free segment: <%s>",
+            tag,
+            name_size, name,
+            ja->io->path);
         goto exit;
       }
     }
-    SEGMENTS_EINFO_ON(ja, i, lseg);
-    GRN_IO_SEG_REF(ja->io, i, einfo);
+    target_seg = i;
+    GRN_IO_SEG_REF(ja->io, target_seg, einfo);
     if (einfo) {
-      *pseg = i;
+      *pseg = target_seg;
+      SEGMENTS_EINFO_ON(ja, target_seg, lseg);
       memset(einfo, 0, JA_SEGMENT_SIZE);
     }
   } else {
-    GRN_IO_SEG_REF(ja->io, *pseg, einfo);
+    target_seg = *pseg;
+    GRN_IO_SEG_REF(ja->io, target_seg, einfo);
   }
   if (!einfo) {
-    rc = GRN_NO_MEMORY_AVAILABLE;
+    DEFINE_NAME(ja);
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "%s[%.*s] failed to refer element info segment: "
+        "segment:%u, "
+        "path:<%s>",
+        tag,
+        name_size, name,
+        target_seg,
+        ja->io->path);
     goto exit;
   }
   eback = einfo[pos];
   if (cas && *cas != *((uint64_t *)&eback)) {
-    ERR(GRN_CAS_ERROR, "cas failed (%d)", id);
+    DEFINE_NAME(ja);
+    ERR(GRN_CAS_ERROR,
+        "%s[%.*s] failed to CAS: "
+        "%" GRN_FMT_INT64U " != %" GRN_FMT_INT64U
+        ": <%s>",
+        tag,
+        name_size, name,
+        *((uint64_t *)&eback),
+        *cas,
+        ja->io->path);
     GRN_IO_SEG_UNREF(ja->io, *pseg);
-    rc = GRN_CAS_ERROR;
     goto exit;
   }
   // smb_wmb();
@@ -817,7 +840,7 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
   grn_ja_free(ctx, ja, &eback);
 exit :
   grn_io_unlock(ja->io);
-  return rc;
+  return ctx->rc;
 }
 
 #define JA_N_GARBAGES_TH 10
