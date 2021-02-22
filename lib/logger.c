@@ -291,14 +291,14 @@ default_logger_log(grn_ctx *ctx, grn_log_level level,
 static void
 default_logger_reopen(grn_ctx *ctx, void *user_data)
 {
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "log will be closed.");
+  GRN_LOG(ctx, GRN_LOG_DEBUG, "log will be closed.");
   CRITICAL_SECTION_ENTER(default_logger_lock);
   if (default_logger_file) {
     fclose(default_logger_file);
     default_logger_file = NULL;
   }
   CRITICAL_SECTION_LEAVE(default_logger_lock);
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "log opened.");
+  GRN_LOG(ctx, GRN_LOG_DEBUG, "log opened.");
 }
 
 static void
