@@ -2875,36 +2875,61 @@ grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
                       const void *max, unsigned int max_size,
                       int offset, int limit, int flags)
 {
+  const char *tag = "[table][cursor][open]";
   grn_rc rc;
   grn_table_cursor *tc = NULL;
   unsigned int table_size;
-  if (!table) { return tc; }
   GRN_API_ENTER;
+  if (!table) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s table must not be NULL",
+        tag);
+    GRN_API_RETURN(NULL);
+  }
   table_size = grn_table_size(ctx, table);
-  if (ctx->rc != GRN_SUCCESS) {
+  if (table_size == 0 && ctx->rc != GRN_SUCCESS) {
+    char message[GRN_CTX_MSGSIZE];
+    grn_strcpy(message, GRN_CTX_MSGSIZE, ctx->errbuf);
+    ERR(ctx->rc,
+        "%s failed to get table size: %s",
+        tag,
+        message);
     GRN_API_RETURN(NULL);
   }
   if (flags & GRN_CURSOR_PREFIX) {
     if (offset < 0) {
       ERR(GRN_TOO_SMALL_OFFSET,
-          "can't use negative offset with GRN_CURSOR_PREFIX: %d", offset);
+          "%s can't use negative offset with GRN_CURSOR_PREFIX: %d",
+          tag,offset);
     } else if (offset != 0 && offset >= table_size) {
       ERR(GRN_TOO_LARGE_OFFSET,
-          "offset is not less than table size: offset:%d, table_size:%d",
-          offset, table_size);
+          "%s offset is not less than table size: offset:%d, table_size:%d",
+          tag, offset, table_size);
     } else {
       if (limit < -1) {
         ERR(GRN_TOO_SMALL_LIMIT,
-            "can't use smaller limit than -1 with GRN_CURSOR_PREFIX: %d",
-            limit);
+            "%s can't use smaller limit than -1 with GRN_CURSOR_PREFIX: %d",
+            tag, limit);
       } else if (limit == -1) {
         limit = table_size;
       }
     }
   } else {
     rc = grn_output_range_normalize(ctx, table_size, &offset, &limit);
-    if (rc) {
-      ERR(rc, "grn_output_range_normalize failed");
+    if (rc != GRN_SUCCESS) {
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      int name_size;
+      name_size = grn_obj_name(ctx, table, name, GRN_TABLE_MAX_KEY_SIZE);
+      ERR(rc,
+          "%s[%.*s] failed to normalize output range: "
+          "table_size:%u, "
+          "offset:%d, "
+          "limit:%d",
+          tag,
+          name_size, name,
+          table_size,
+          offset,
+          limit);
     }
   }
   if (!ctx->rc) {
