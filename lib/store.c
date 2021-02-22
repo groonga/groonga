@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,21 @@
 
 #define GRN_RA_W_SEGMENT    22
 #define GRN_RA_SEGMENT_SIZE (1 << GRN_RA_W_SEGMENT)
+
+#define DEFINE_NAME(obj)                                                \
+  const char *name;                                                     \
+  char name_buffer[GRN_TABLE_MAX_KEY_SIZE];                             \
+  int name_size;                                                        \
+  do {                                                                  \
+    if (DB_OBJ(obj)->id == GRN_ID_NIL) {                                \
+      name = "(temporary)";                                             \
+      name_size = strlen(name);                                         \
+    } else {                                                            \
+      name_size = grn_obj_name(ctx, (grn_obj *)obj,                     \
+                               name_buffer, GRN_TABLE_MAX_KEY_SIZE);    \
+      name = name_buffer;                                               \
+    }                                                                   \
+  } while (false)
 
 static grn_ra *
 _grn_ra_create(grn_ctx *ctx, grn_ra *ra, const char *path, unsigned int element_size)
@@ -610,6 +625,7 @@ grn_ja_unref(grn_ctx *ctx, grn_io_win *iw)
 static grn_rc
 grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
 {
+  const char *tag = "[ja][free]";
   grn_ja_ginfo *ginfo = NULL;
   uint32_t seg, pos, element_size, aligned_size, m, *gseg;
   if (ETINY_P(einfo)) { return GRN_SUCCESS; }
@@ -634,8 +650,14 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
     aligned_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
     *(uint32_t *)(addr + pos - sizeof(grn_id)) = DELETED|aligned_size;
     if (SEGMENTS_AT(ja, seg) < (aligned_size + sizeof(grn_id)) + SEG_SEQ) {
-      GRN_LOG(ctx, GRN_WARN, "inconsistent ja entry detected (%d > %d)",
-              element_size, SEGMENTS_AT(ja, seg) - SEG_SEQ);
+      DEFINE_NAME(ja);
+      GRN_LOG(ctx,
+              GRN_WARN,
+              "%s[%.*s] inconsistent ja entry detected (%d > %d)",
+              tag,
+              name_size, name,
+              element_size,
+              SEGMENTS_AT(ja, seg) - SEG_SEQ);
     }
     SEGMENTS_AT(ja, seg) -= (aligned_size + sizeof(grn_id));
     if (SEGMENTS_AT(ja, seg) == SEG_SEQ) {
@@ -647,35 +669,80 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
     }
     GRN_IO_SEG_UNREF(ja->io, seg);
   } else {
-    uint32_t lseg = 0, lseg_;
+    /* The segment that is opened as ginfo. */
+    uint32_t target_seg = 0;
     gseg = &ja->header->garbages[m - JA_W_EINFO];
-    while ((lseg_ = *gseg)) {
-      if (lseg) { GRN_IO_SEG_UNREF(ja->io, lseg); }
-      GRN_IO_SEG_REF(ja->io, lseg_, ginfo);
+    const uint32_t initial_gseg = *gseg;
+    while (*gseg != 0) {
+      if (target_seg != 0) { GRN_IO_SEG_UNREF(ja->io, target_seg); }
+      GRN_IO_SEG_REF(ja->io, *gseg, ginfo);
       if (!ginfo) {
-        return GRN_NO_MEMORY_AVAILABLE;
+        DEFINE_NAME(ja);
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "%s[%.*s] failed to refer garbage segment: "
+            "segment:%u, "
+            "element_size:%u, "
+            "variation:%u, "
+            "initial_garbage:%u, "
+            "n_garbages:%u",
+            tag,
+            name_size, name,
+            *gseg,
+            element_size,
+            m - JA_W_EINFO,
+            initial_gseg,
+            ja->header->ngarbages[m - JA_W_EINFO]);
+        return ctx->rc;
       }
-      lseg = lseg_;
+      target_seg = *gseg;
       if (ginfo->nrecs < JA_N_GARBAGES_IN_A_SEGMENT) { break; }
       gseg = &ginfo->next;
     }
-    if (!lseg_) {
+    if (*gseg == 0) {
       uint32_t i = 0;
       while (SEGMENTS_AT(ja, i)) {
         if (++i >= JA_N_DSEGMENTS) {
-          if (lseg) { GRN_IO_SEG_UNREF(ja->io, lseg); }
-          return GRN_NO_MEMORY_AVAILABLE;
+          if (target_seg != 0) { GRN_IO_SEG_UNREF(ja->io, target_seg); }
+          {
+            DEFINE_NAME(ja);
+            ERR(GRN_NOT_ENOUGH_SPACE,
+                "%s[%.*s] can't find free segment for garbage segment: "
+                "element_size:%u, "
+                "variation:%u, "
+                "initial_garbage:%u, "
+                "n_garbages:%u",
+                tag,
+                name_size, name,
+                element_size,
+                m - JA_W_EINFO,
+                initial_gseg,
+                ja->header->ngarbages[m - JA_W_EINFO]);
+            return ctx->rc;
+          }
         }
       }
-      SEGMENTS_GINFO_ON(ja, i, m - JA_W_EINFO);
-      *gseg = i;
-      lseg_ = *gseg;
-      if (lseg) { GRN_IO_SEG_UNREF(ja->io, lseg); }
-      GRN_IO_SEG_REF(ja->io, lseg_, ginfo);
-      lseg = lseg_;
+      if (target_seg != 0) { GRN_IO_SEG_UNREF(ja->io, target_seg); }
+      GRN_IO_SEG_REF(ja->io, i, ginfo);
       if (!ginfo) {
-        return GRN_NO_MEMORY_AVAILABLE;
+        DEFINE_NAME(ja);
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "%s[%.*s] failed to refer newly allocated garbage segment: "
+            "segment:%u, "
+            "element_size:%u, "
+            "variation:%u, "
+            "initial_garbage:%u, "
+            "n_garbages:%u",
+            tag,
+            name_size, name,
+            i,
+            element_size,
+            m - JA_W_EINFO,
+            initial_gseg,
+            ja->header->ngarbages[m - JA_W_EINFO]);
+        return ctx->rc;
       }
+      SEGMENTS_GINFO_ON(ja, i, m - JA_W_EINFO);
+      target_seg = *gseg = i;
       ginfo->head = 0;
       ginfo->tail = 0;
       ginfo->nrecs = 0;
@@ -686,7 +753,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
     if (++ginfo->head == JA_N_GARBAGES_IN_A_SEGMENT) { ginfo->head = 0; }
     ginfo->nrecs++;
     ja->header->ngarbages[m - JA_W_EINFO]++;
-    if (lseg) { GRN_IO_SEG_UNREF(ja->io, lseg); }
+    GRN_IO_SEG_UNREF(ja->io, target_seg);
   }
   return GRN_SUCCESS;
 }
