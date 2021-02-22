@@ -653,11 +653,12 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
       DEFINE_NAME(ja);
       GRN_LOG(ctx,
               GRN_WARN,
-              "%s[%.*s] inconsistent ja entry detected (%d > %d)",
+              "%s[%.*s] inconsistent ja entry detected (%d > %d): path:<%s>",
               tag,
               name_size, name,
               element_size,
-              SEGMENTS_AT(ja, seg) - SEG_SEQ);
+              SEGMENTS_AT(ja, seg) - SEG_SEQ,
+              ja->io->path);
     }
     SEGMENTS_AT(ja, seg) -= (aligned_size + sizeof(grn_id));
     if (SEGMENTS_AT(ja, seg) == SEG_SEQ) {
@@ -684,14 +685,16 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
             "element_size:%u, "
             "variation:%u, "
             "initial_garbage:%u, "
-            "n_garbages:%u",
+            "n_garbages:%u, "
+            "path:<%s>",
             tag,
             name_size, name,
             *gseg,
             element_size,
             m - JA_W_EINFO,
             initial_gseg,
-            ja->header->ngarbages[m - JA_W_EINFO]);
+            ja->header->ngarbages[m - JA_W_EINFO],
+            ja->io->path);
         return ctx->rc;
       }
       target_seg = *gseg;
@@ -710,13 +713,15 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
                 "element_size:%u, "
                 "variation:%u, "
                 "initial_garbage:%u, "
-                "n_garbages:%u",
+                "n_garbages:%u, "
+                "path:<%s>",
                 tag,
                 name_size, name,
                 element_size,
                 m - JA_W_EINFO,
                 initial_gseg,
-                ja->header->ngarbages[m - JA_W_EINFO]);
+                ja->header->ngarbages[m - JA_W_EINFO],
+                ja->io->path);
             return ctx->rc;
           }
         }
@@ -731,14 +736,16 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
             "element_size:%u, "
             "variation:%u, "
             "initial_garbage:%u, "
-            "n_garbages:%u",
+            "n_garbages:%u, "
+            "path:<%s>",
             tag,
             name_size, name,
             i,
             element_size,
             m - JA_W_EINFO,
             initial_gseg,
-            ja->header->ngarbages[m - JA_W_EINFO]);
+            ja->header->ngarbages[m - JA_W_EINFO],
+            ja->io->path);
         return ctx->rc;
       }
       SEGMENTS_GINFO_ON(ja, i, m - JA_W_EINFO);
