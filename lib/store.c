@@ -785,9 +785,10 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
       if (++i >= JA_N_DSEGMENTS) {
         DEFINE_NAME(ja);
         ERR(GRN_NOT_ENOUGH_SPACE,
-            "%s[%.*s] can't find free segment: <%s>",
+            "%s[%.*s][%u] can't find free segment: <%s>",
             tag,
             name_size, name,
+            id,
             ja->io->path);
         goto exit;
       }
@@ -806,11 +807,12 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
   if (!einfo) {
     DEFINE_NAME(ja);
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "%s[%.*s] failed to refer element info segment: "
+        "%s[%.*s][%u] failed to refer element info segment: "
         "segment:%u, "
         "path:<%s>",
         tag,
         name_size, name,
+        id,
         target_seg,
         ja->io->path);
     goto exit;
@@ -819,11 +821,12 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
   if (cas && *cas != *((uint64_t *)&eback)) {
     DEFINE_NAME(ja);
     ERR(GRN_CAS_ERROR,
-        "%s[%.*s] failed to CAS: "
+        "%s[%.*s][%u] failed to CAS: "
         "%" GRN_FMT_INT64U " != %" GRN_FMT_INT64U
         ": <%s>",
         tag,
         name_size, name,
+        id,
         *((uint64_t *)&eback),
         *cas,
         ja->io->path);
