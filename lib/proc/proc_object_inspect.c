@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2016-2017  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -88,7 +88,9 @@ command_object_inspect_table_hash_key_key(grn_ctx *ctx, grn_hash *hash)
   grn_ctx_output_map_open(ctx, "key", 3);
   {
     grn_ctx_output_cstr(ctx, "type");
-    command_object_inspect_type(ctx, grn_ctx_at(ctx, hash->obj.header.domain));
+    grn_obj *type = grn_ctx_at(ctx, hash->obj.header.domain);
+    command_object_inspect_type(ctx, type);
+    grn_obj_unref(ctx, type);
     grn_ctx_output_cstr(ctx, "total_size");
     grn_ctx_output_uint64(ctx, grn_hash_total_key_size(ctx, hash));
     grn_ctx_output_cstr(ctx, "max_total_size");
@@ -103,7 +105,9 @@ command_object_inspect_table_pat_key_key(grn_ctx *ctx, grn_pat *pat)
   grn_ctx_output_map_open(ctx, "key", 3);
   {
     grn_ctx_output_cstr(ctx, "type");
-    command_object_inspect_type(ctx, grn_ctx_at(ctx, pat->obj.header.domain));
+    grn_obj *type = grn_ctx_at(ctx, pat->obj.header.domain);
+    command_object_inspect_type(ctx, type);
+    grn_obj_unref(ctx, type);
     grn_ctx_output_cstr(ctx, "total_size");
     grn_ctx_output_uint64(ctx, grn_pat_total_key_size(ctx, pat));
     grn_ctx_output_cstr(ctx, "max_total_size");
@@ -118,7 +122,9 @@ command_object_inspect_table_dat_key_key(grn_ctx *ctx, grn_dat *dat)
   grn_ctx_output_map_open(ctx, "key", 1);
   {
     grn_ctx_output_cstr(ctx, "type");
-    command_object_inspect_type(ctx, grn_ctx_at(ctx, dat->obj.header.domain));
+    grn_obj *type = grn_ctx_at(ctx, dat->obj.header.domain);
+    command_object_inspect_type(ctx, type);
+    grn_obj_unref(ctx, type);
   }
   grn_ctx_output_map_close(ctx);
 }
@@ -154,7 +160,9 @@ command_object_inspect_table_value(grn_ctx *ctx, grn_obj *table)
     {
       grn_id range_id = grn_obj_get_range(ctx, table);
       grn_ctx_output_cstr(ctx, "type");
-      command_object_inspect_type(ctx, grn_ctx_at(ctx, range_id));
+      grn_obj *type = grn_ctx_at(ctx, range_id);
+      command_object_inspect_type(ctx, type);
+      grn_obj_unref(ctx, type);
     }
     grn_ctx_output_map_close(ctx);
   }
@@ -415,7 +423,9 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
     range_id = grn_obj_get_range(ctx, column);
 
     grn_ctx_output_cstr(ctx, "type");
-    command_object_inspect_type(ctx, grn_ctx_at(ctx, range_id));
+    grn_obj *range = grn_ctx_at(ctx, range_id);
+    command_object_inspect_type(ctx, range);
+    grn_obj_unref(ctx, range);
     if (is_index) {
       grn_ctx_output_cstr(ctx, "section");
       grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WITH_SECTION) != 0);
@@ -503,10 +513,14 @@ command_object_inspect_column_sources(grn_ctx *ctx, grn_obj *column)
       }
     }
     grn_ctx_output_map_close(ctx);
+
+    grn_obj_unref(ctx, source);
   }
   grn_ctx_output_array_close(ctx);
 
   GRN_OBJ_FIN(ctx, &source_ids);
+
+  grn_obj_unref(ctx, source_table);
 }
 
 static void
@@ -526,7 +540,9 @@ command_object_inspect_column(grn_ctx *ctx, grn_obj *column)
     grn_ctx_output_cstr(ctx, "name");
     command_object_inspect_column_name(ctx, column);
     grn_ctx_output_cstr(ctx, "table");
-    command_object_inspect_table(ctx, grn_ctx_at(ctx, column->header.domain));
+    grn_obj *table = grn_ctx_at(ctx, column->header.domain);
+    command_object_inspect_table(ctx, table);
+    grn_obj_unref(ctx, table);
     grn_ctx_output_cstr(ctx, "full_name");
     command_object_inspect_obj_name(ctx, column);
     grn_ctx_output_cstr(ctx, "type");
@@ -602,6 +618,7 @@ command_object_inspect(grn_ctx *ctx,
 {
   grn_obj *name;
   grn_obj *target;
+  bool need_unref = false;
 
   name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
   if (GRN_TEXT_LEN(name) == 0) {
@@ -619,9 +636,13 @@ command_object_inspect(grn_ctx *ctx,
       grn_ctx_output_null(ctx);
       return NULL;
     }
+    need_unref = true;
   }
 
   command_object_inspect_dispatch(ctx, target);
+  if (need_unref) {
+    grn_obj_unref(ctx, target);
+  }
 
   return NULL;
 }

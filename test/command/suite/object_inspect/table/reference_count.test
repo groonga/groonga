@@ -1,0 +1,14 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+
+table_create Users TABLE_PAT_KEY ShortText Time
+
+load --table Users
+[
+{"_key": "alice"},
+{"_key": "bob"}
+]
+
+log_level --level dump
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+object_inspect Users

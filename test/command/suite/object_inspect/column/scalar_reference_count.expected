@@ -1,0 +1,69 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users age COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+log_level --level dump
+[[0,0.0,0.0],true]
+object_inspect Users.age
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 257,
+    "name": "age",
+    "table": {
+      "id": 256,
+      "name": "Users",
+      "type": {
+        "id": 48,
+        "name": "table:hash_key"
+      },
+      "key": {
+        "type": {
+          "id": 14,
+          "name": "ShortText",
+          "type": {
+            "id": 32,
+            "name": "type"
+          },
+          "size": 4096
+        },
+        "total_size": 0,
+        "max_total_size": 4294967295
+      },
+      "value": {
+        "type": null
+      },
+      "n_records": 0,
+      "disk_usage": 0
+    },
+    "full_name": "Users.age",
+    "type": {
+      "name": "scalar",
+      "raw": {
+        "id": 64,
+        "name": "column:fix_size"
+      }
+    },
+    "value": {
+      "type": {
+        "id": 5,
+        "name": "UInt8",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 1
+      },
+      "compress": null
+    },
+    "disk_usage": 0
+  }
+]
+#|-| [obj][open] <257>(<Users.age>):<64>(<column:fix_size>)
+#|-| [obj][open] <256>(<Users>):<48>(<table:hash_key>)
+#|-| [obj][close] <256>(<Users>):<48>(<table:hash_key>)
+#|-| [obj][close] <257>(<Users.age>):<64>(<column:fix_size>)

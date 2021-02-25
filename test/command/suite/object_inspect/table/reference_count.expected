@@ -1,0 +1,54 @@
+table_create Users TABLE_PAT_KEY ShortText Time
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice"},
+{"_key": "bob"}
+]
+[[0,0.0,0.0],2]
+log_level --level dump
+[[0,0.0,0.0],true]
+object_inspect Users
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 256,
+    "name": "Users",
+    "type": {
+      "id": 49,
+      "name": "table:pat_key"
+    },
+    "key": {
+      "type": {
+        "id": 14,
+        "name": "ShortText",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 4096
+      },
+      "total_size": 5,
+      "max_total_size": 4294967294
+    },
+    "value": {
+      "type": {
+        "id": 13,
+        "name": "Time",
+        "type": {
+          "id": 32,
+          "name": "type"
+        },
+        "size": 8
+      }
+    },
+    "n_records": 2,
+    "disk_usage": 0
+  }
+]
+#|-| [obj][open] <256>(<Users>):<49>(<table:pat_key>)
+#|-| [obj][close] <256>(<Users>):<49>(<table:pat_key>)

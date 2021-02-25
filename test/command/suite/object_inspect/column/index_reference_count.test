@@ -1,0 +1,17 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+
+table_create Memos TABLE_NO_KEY
+column_create Memos title COLUMN_SCALAR ShortText
+column_create Memos content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerAuto \
+  --default_tokenizer TokenBigram
+column_create Terms memos_title_content \
+  COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Memos title,content
+
+log_level --level dump
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+object_inspect Terms.memos_title_content

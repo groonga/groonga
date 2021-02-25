@@ -1,0 +1,9 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users age COLUMN_SCALAR UInt8
+
+log_level --level dump
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+object_inspect Users.age

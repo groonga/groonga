@@ -1,0 +1,157 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto   --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Terms memos_title_content   COLUMN_INDEX|WITH_POSITION|WITH_SECTION   Memos title,content
+[[0,0.0,0.0],true]
+log_level --level dump
+[[0,0.0,0.0],true]
+object_inspect Terms.memos_title_content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "id": 260,
+    "name": "memos_title_content",
+    "table": {
+      "id": 259,
+      "name": "Terms",
+      "type": {
+        "id": 49,
+        "name": "table:pat_key"
+      },
+      "key": {
+        "type": {
+          "id": 14,
+          "name": "ShortText",
+          "type": {
+            "id": 32,
+            "name": "type"
+          },
+          "size": 4096
+        },
+        "total_size": 0,
+        "max_total_size": 4294967294
+      },
+      "value": {
+        "type": null
+      },
+      "n_records": 0,
+      "disk_usage": 0
+    },
+    "full_name": "Terms.memos_title_content",
+    "type": {
+      "name": "index",
+      "raw": {
+        "id": 72,
+        "name": "column:index"
+      }
+    },
+    "value": {
+      "type": {
+        "id": 256,
+        "name": "Memos",
+        "type": {
+          "id": 51,
+          "name": "table:no_key"
+        },
+        "size": 4
+      },
+      "section": true,
+      "weight": false,
+      "position": true,
+      "size": "normal",
+      "statistics": {
+        "max_section_id": 0,
+        "n_garbage_segments": 0,
+        "max_array_segment_id": 0,
+        "n_array_segments": 0,
+        "max_buffer_segment_id": 0,
+        "n_buffer_segments": 0,
+        "max_in_use_physical_segment_id": 0,
+        "n_unmanaged_segments": 0,
+        "total_chunk_size": 0,
+        "max_in_use_chunk_id": 0,
+        "n_garbage_chunks": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "next_physical_segment_id": 0,
+        "max_n_physical_segments": 131072
+      }
+    },
+    "sources": [
+      {
+        "id": 257,
+        "name": "title",
+        "table": {
+          "id": 256,
+          "name": "Memos",
+          "type": {
+            "id": 51,
+            "name": "table:no_key"
+          },
+          "key": null,
+          "value": {
+            "type": null
+          },
+          "n_records": 0,
+          "disk_usage": 0
+        },
+        "full_name": "Memos.title"
+      },
+      {
+        "id": 258,
+        "name": "content",
+        "table": {
+          "id": 256,
+          "name": "Memos",
+          "type": {
+            "id": 51,
+            "name": "table:no_key"
+          },
+          "key": null,
+          "value": {
+            "type": null
+          },
+          "n_records": 0,
+          "disk_usage": 0
+        },
+        "full_name": "Memos.content"
+      }
+    ],
+    "disk_usage": 0
+  }
+]
+#|-| [obj][open] <259>(<Terms>):<49>(<table:pat_key>)
+#|-| [obj][open] <260>(<Terms.memos_title_content>):<72>(<column:index>)
+#|-| [obj][open] <256>(<Memos>):<51>(<table:no_key>)
+#|-| [obj][close] <256>(<Memos>):<51>(<table:no_key>)
+#|-| [obj][open] <256>(<Memos>):<51>(<table:no_key>)
+#|-| [obj][open] <257>(<Memos.title>):<65>(<column:var_size>)
+#|-| [obj][close] <257>(<Memos.title>):<65>(<column:var_size>)
+#|-| [obj][open] <258>(<Memos.content>):<65>(<column:var_size>)
+#|-| [obj][close] <258>(<Memos.content>):<65>(<column:var_size>)
+#|-| [obj][close] <256>(<Memos>):<51>(<table:no_key>)
+#|-| [obj][close] <260>(<Terms.memos_title_content>):<72>(<column:index>)
+#|-| [obj][close] <259>(<Terms>):<49>(<table:pat_key>)
