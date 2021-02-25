@@ -726,6 +726,8 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
           }
         }
       }
+      SEGMENTS_GINFO_ON(ja, i, m - JA_W_EINFO);
+      *gseg = i;
       if (target_seg != 0) { GRN_IO_SEG_UNREF(ja->io, target_seg); }
       GRN_IO_SEG_REF(ja->io, i, ginfo);
       if (!ginfo) {
@@ -748,8 +750,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
             ja->io->path);
         return ctx->rc;
       }
-      SEGMENTS_GINFO_ON(ja, i, m - JA_W_EINFO);
-      target_seg = *gseg = i;
+      target_seg = i;
       ginfo->head = 0;
       ginfo->tail = 0;
       ginfo->nrecs = 0;
