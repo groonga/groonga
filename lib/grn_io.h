@@ -167,14 +167,27 @@ grn_rc grn_io_write_ja_ehead(grn_io *io, grn_ctx *ctx, uint32_t key,
 
 void grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info);
 
-/* arguments must be validated by caller;
+/*
  * io mustn't be NULL;
- * segno must be in valid range;
  */
 static grn_inline void *
 grn_io_seg_ref(grn_ctx *ctx, grn_io *io, uint32_t segno)
 {
-  grn_io_mapinfo *info = &(io)->maps[segno];
+  const char *tag = "[io][seg][ref]";
+  grn_io_mapinfo *info = NULL;
+  if (segno >= io->header->max_segment) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s too large segment ID: "
+        "id:%u, "
+        "max:%u, "
+        "path:<%s>",
+        tag,
+        segno,
+        io->header->max_segment,
+        io->path);
+    return NULL;
+  }
+  info = &(io)->maps[segno];
   uint32_t nref, retry, *pnref = &info->nref;
   if (io->flags & GRN_IO_EXPIRE_SEGMENT) {
     if (io->flags & GRN_IO_EXPIRE_GTICK) {
