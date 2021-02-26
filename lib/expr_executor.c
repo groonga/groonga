@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2010-2018  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3569,7 +3569,8 @@ grn_expr_executor_fin_simple_condition_ra(grn_ctx *ctx,
                                           grn_expr_executor *executor)
 {
   GRN_OBJ_FIN(ctx, &(executor->data.simple_condition_ra.result_buffer));
-  GRN_RA_CACHE_FIN(executor->data.simple_condition_ra.ra,
+  GRN_RA_CACHE_FIN(ctx,
+                   executor->data.simple_condition_ra.ra,
                    &(executor->data.simple_condition_ra.ra_cache));
   GRN_OBJ_FIN(ctx, &(executor->data.simple_condition_ra.value_buffer));
   GRN_OBJ_FIN(ctx, &(executor->data.simple_condition_ra.constant_buffer));

@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -66,8 +66,8 @@ struct _grn_ra_cache {
   (c)->p = NULL; (c)->seg = -1;\
 } while (0)
 
-#define GRN_RA_CACHE_FIN(ra,c) do {\
-  if ((c)->seg != -1) { GRN_IO_SEG_UNREF((ra)->io, (c)->seg); }\
+#define GRN_RA_CACHE_FIN(ctx,ra,c) do {\
+  if ((c)->seg != -1) { grn_io_seg_unref(ctx, (ra)->io, (c)->seg); }\
 } while (0);
 
 void *grn_ra_ref_cache(grn_ctx *ctx, grn_ra *ra, grn_id id, grn_ra_cache *cache);

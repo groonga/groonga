@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -924,7 +924,7 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
         cursor,
         grn_table_group_single_key_records_foreach_fix_size,
         &data);
-      GRN_RA_CACHE_FIN((grn_ra *)(data.key.object), &(data.cache));
+      GRN_RA_CACHE_FIN(ctx, (grn_ra *)(data.key.object), &(data.cache));
     } else if (data.key.object->header.type == GRN_COLUMN_VAR_SIZE &&
                data.key.is_reference_column) {
       grn_table_cursor_foreach(
@@ -1040,7 +1040,7 @@ grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
                 }
               }
             }
-            GRN_RA_CACHE_FIN(ra, &cache);
+            GRN_RA_CACHE_FIN(ctx, ra, &cache);
           }
           break;
         case GRN_COLUMN_VAR_SIZE :

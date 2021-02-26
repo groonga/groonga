@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -148,7 +148,7 @@ grn_column_cache_close(grn_ctx *ctx, grn_column_cache *cache)
     GRN_API_RETURN();
   }
 
-  GRN_RA_CACHE_FIN(cache->ra, &(cache->ra_cache));
+  GRN_RA_CACHE_FIN(ctx, cache->ra, &(cache->ra_cache));
   GRN_FREE(cache);
 
   GRN_API_RETURN();

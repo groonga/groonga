@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -514,8 +514,8 @@ grn_io_segment_alloc(grn_ctx *ctx, grn_io *io, grn_io_array_info *ai,
   }
   if (*sp) {
     uint32_t pseg = *sp - 1;
-    GRN_IO_SEG_REF(io, pseg, *p);
-    if (*p) { GRN_IO_SEG_UNREF(io, pseg); };
+    *p = grn_io_seg_ref(ctx, io, pseg);
+    if (*p) { grn_io_seg_unref(ctx, io, pseg); };
   }
 }
 
@@ -1139,8 +1139,13 @@ grn_io_write_ja_ehead(grn_io *io, grn_ctx *ctx, uint32_t key,
 }
 
 void *
-grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
-               uint32_t offset, uint32_t size, grn_io_rw_mode mode)
+grn_io_win_map(grn_ctx *ctx,
+               grn_io *io,
+               grn_io_win *iw,
+               uint32_t segment,
+               uint32_t offset,
+               uint32_t size,
+               grn_io_rw_mode mode)
 {
   uint32_t nseg, segment_size = io->header->segment_size;
   if (offset >= segment_size) {
@@ -1161,8 +1166,7 @@ grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
   iw->nseg = nseg;
   iw->size = size;
   if (nseg == 1) {
-    byte *addr = NULL;
-    GRN_IO_SEG_REF(io, segment, addr);
+    byte *addr = grn_io_seg_ref(ctx, io, segment);
     if (!addr) { return NULL; }
     iw->cached = 1;
     iw->addr = addr + offset;
@@ -1176,14 +1180,14 @@ grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
         byte *p, *q = NULL;
         uint32_t s, r;
         for (p = iw->addr, r = size; r; p += s, r -= s, segment++, offset = 0) {
-          GRN_IO_SEG_REF(io, segment, q);
+          q = grn_io_seg_ref(ctx, io, segment);
           if (!q) {
             GRN_FREE(iw->addr);
             return NULL;
           }
           s = (offset + r > segment_size) ? segment_size - offset : r;
           grn_memcpy(p, q + offset, s);
-          GRN_IO_SEG_UNREF(io, segment);
+          grn_io_seg_unref(ctx, io, segment);
         }
       }
       break;
@@ -1197,11 +1201,11 @@ grn_io_win_map(grn_io *io, grn_ctx *ctx, grn_io_win *iw, uint32_t segment,
 }
 
 grn_rc
-grn_io_win_unmap(grn_io_win *iw)
+grn_io_win_unmap(grn_ctx *ctx, grn_io_win *iw)
 {
   if (!iw || !iw->io ||!iw->ctx) { return GRN_INVALID_ARGUMENT; }
   if (iw->cached) {
-    if (!iw->tiny_p) { GRN_IO_SEG_UNREF(iw->io, iw->segment); }
+    if (!iw->tiny_p) { grn_io_seg_unref(ctx, iw->io, iw->segment); }
     return GRN_SUCCESS;
   }
   {
@@ -1220,11 +1224,11 @@ grn_io_win_unmap(grn_io_win *iw)
         uint32_t s, r, offset = iw->offset, segment = iw->segment;
         for (p = iw->addr, r = iw->size; r;
              p += s, r -= s, segment++, offset = 0) {
-          GRN_IO_SEG_REF(io, segment, q);
+          q = grn_io_seg_ref(ctx, io, segment);
           if (!q) { return GRN_NO_MEMORY_AVAILABLE; }
           s = (offset + r > segment_size) ? segment_size - offset : r;
           grn_memcpy(q + offset, p, s);
-          GRN_IO_SEG_UNREF(io, segment);
+          grn_io_seg_unref(ctx, io, segment);
         }
       }
       GRN_FREE(iw->addr);

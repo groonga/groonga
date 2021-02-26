@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2016 Brazil
-  Copyright(C) 2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2016  Brazil
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,6 @@
 #define GRN_BREAK_POINT raise(SIGTRAP)
 #endif /* HAVE_SIGNAL_H */
 
-#include "grn_io.h"
 #include "grn_alloc.h"
 #include "grn_time.h"
 
