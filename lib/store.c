@@ -236,7 +236,7 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
 #define GRN_JA_W_CAPACITY              38
 #define GRN_JA_W_SEGMENT               22
 
-#define JA_ESEG_VOID                   (0xffffffffU)
+#define JA_ELEMENT_SEG_VOID            (0xffffffffU)
 #define JA_SEGMENT_SIZE                (1U << GRN_JA_W_SEGMENT)
 #define JA_W_EINFO                     3
 #define JA_W_SEGMENTS_MAX              (GRN_JA_W_CAPACITY - GRN_JA_W_SEGMENT)
@@ -247,7 +247,7 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
 #define JA_N_ELEMENT_VARIATION_V1      (GRN_JA_W_SEGREGATE_THRESH_V1 - JA_W_EINFO + 1)
 #define JA_N_ELEMENT_VARIATION_V2      (GRN_JA_W_SEGREGATE_THRESH_V2 - JA_W_EINFO + 1)
 #define JA_N_DATA_SEGMENTS             (1U << JA_W_SEGMENTS_MAX)
-#define JA_N_ESEGMENTS                 (1U << (GRN_ID_WIDTH - JA_W_EINFO_IN_A_SEGMENT))
+#define JA_N_ELEMENT_SEGMENTS          (1U << (GRN_ID_WIDTH - JA_W_EINFO_IN_A_SEGMENT))
 
 typedef struct _grn_ja_einfo grn_ja_einfo;
 
@@ -321,7 +321,7 @@ struct grn_ja_header_v1 {
   uint32_t garbages[JA_N_ELEMENT_VARIATION_V1];
   uint32_t ngarbages[JA_N_ELEMENT_VARIATION_V1];
   uint32_t data_segs[JA_N_DATA_SEGMENTS];
-  uint32_t esegs[JA_N_ESEGMENTS];
+  uint32_t element_segs[JA_N_ELEMENT_SEGMENTS];
 };
 
 struct grn_ja_header_v2 {
@@ -333,7 +333,7 @@ struct grn_ja_header_v2 {
   uint32_t garbages[JA_N_ELEMENT_VARIATION_V2];
   uint32_t ngarbages[JA_N_ELEMENT_VARIATION_V2];
   uint32_t data_segs[JA_N_DATA_SEGMENTS];
-  uint32_t esegs[JA_N_ESEGMENTS];
+  uint32_t element_segs[JA_N_ELEMENT_SEGMENTS];
   uint8_t segregate_threshold;
   uint8_t n_element_variation;
 };
@@ -347,7 +347,7 @@ struct grn_ja_header {
   uint32_t *garbages;
   uint32_t *ngarbages;
   uint32_t *data_segs;
-  uint32_t *esegs;
+  uint32_t *element_segs;
   uint8_t segregate_threshold;
   uint8_t n_element_variation;
 };
@@ -385,7 +385,9 @@ _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
   header_v2->curr_seg = 0;
   header_v2->curr_pos = JA_SEGMENT_SIZE;
   header_v2->max_element_size = max_element_size;
-  for (i = 0; i < JA_N_ESEGMENTS; i++) { header_v2->esegs[i] = JA_ESEG_VOID; }
+  for (i = 0; i < JA_N_ELEMENT_SEGMENTS; i++) {
+    header_v2->element_segs[i] = JA_ELEMENT_SEG_VOID;
+  }
   header_v2->segregate_threshold = GRN_JA_W_SEGREGATE_THRESH_V2;
   header_v2->n_element_variation = JA_N_ELEMENT_VARIATION_V2;
 
@@ -402,14 +404,14 @@ _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
   header->garbages            = header_v2->garbages;
   header->ngarbages           = header_v2->ngarbages;
   header->data_segs           = header_v2->data_segs;
-  header->esegs               = header_v2->esegs;
+  header->element_segs        = header_v2->element_segs;
   header->segregate_threshold = header_v2->segregate_threshold;
   header->n_element_variation = header_v2->n_element_variation;
 
   ja->io = io;
   ja->header = header;
   SEGMENTS_EINFO_ON(ja, 0, 0);
-  header->esegs[0] = 0;
+  header->element_segs[0] = 0;
   return ja;
 }
 
@@ -479,13 +481,13 @@ grn_ja_open(grn_ctx *ctx, const char *path)
     header->garbages      = header_v1->garbages;
     header->ngarbages     = header_v1->ngarbages;
     header->data_segs     = header_v1->data_segs;
-    header->esegs         = header_v1->esegs;
+    header->element_segs  = header_v1->element_segs;
   } else {
     header->free_elements = header_v2->free_elements;
     header->garbages      = header_v2->garbages;
     header->ngarbages     = header_v2->ngarbages;
     header->data_segs     = header_v2->data_segs;
-    header->esegs         = header_v2->esegs;
+    header->element_segs  = header_v2->element_segs;
   }
 
   ja->io = io;
@@ -573,12 +575,12 @@ exit:
 static void *
 grn_ja_ref_raw(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
-  uint32_t pseg = ja->header->esegs[id >> JA_W_EINFO_IN_A_SEGMENT];
+  uint32_t pseg = ja->header->element_segs[id >> JA_W_EINFO_IN_A_SEGMENT];
   iw->size = 0;
   iw->addr = NULL;
   iw->pseg = pseg;
   iw->uncompressed_value = NULL;
-  if (pseg != JA_ESEG_VOID) {
+  if (pseg != JA_ELEMENT_SEG_VOID) {
     grn_ja_einfo *einfo = NULL;
     einfo = grn_io_seg_ref(ctx, ja->io, pseg);
     if (einfo) {
@@ -775,12 +777,12 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
   grn_ja_einfo *einfo = NULL, eback;
   lseg = id >> JA_W_EINFO_IN_A_SEGMENT;
   pos = id & JA_M_EINFO_IN_A_SEGMENT;
-  pseg = &ja->header->esegs[lseg];
+  pseg = &ja->header->element_segs[lseg];
   if (grn_io_lock(ctx, ja->io, grn_lock_timeout)) {
     return ctx->rc;
   }
   uint32_t target_seg;
-  if (*pseg == JA_ESEG_VOID) {
+  if (*pseg == JA_ELEMENT_SEG_VOID) {
     int i = 0;
     while (SEGMENTS_AT(ja, i)) {
       if (++i >= JA_N_DATA_SEGMENTS) {
@@ -1360,8 +1362,8 @@ grn_ja_size(grn_ctx *ctx, grn_ja *ja, grn_id id)
   uint32_t lseg, *pseg, pos, size;
   lseg = id >> JA_W_EINFO_IN_A_SEGMENT;
   pos = id & JA_M_EINFO_IN_A_SEGMENT;
-  pseg = &ja->header->esegs[lseg];
-  if (*pseg == JA_ESEG_VOID) {
+  pseg = &ja->header->element_segs[lseg];
+  if (*pseg == JA_ELEMENT_SEG_VOID) {
     ctx->rc = GRN_INVALID_ARGUMENT;
     return 0;
   }
@@ -1388,8 +1390,8 @@ grn_rc
 grn_ja_element_info(grn_ctx *ctx, grn_ja *ja, grn_id id,
                     uint64_t *cas, uint32_t *pos, uint32_t *size)
 {
-  uint32_t pseg = ja->header->esegs[id >> JA_W_EINFO_IN_A_SEGMENT];
-  if (pseg == JA_ESEG_VOID) {
+  uint32_t pseg = ja->header->element_segs[id >> JA_W_EINFO_IN_A_SEGMENT];
+  if (pseg == JA_ELEMENT_SEG_VOID) {
     return GRN_INVALID_ARGUMENT;
   } else {
     grn_ja_einfo *einfo = NULL;
@@ -3492,13 +3494,13 @@ grn_rc
 grn_ja_reader_init(grn_ctx *ctx, grn_ja_reader *reader, grn_ja *ja)
 {
   reader->ja = ja;
-  reader->einfo_seg_id = JA_ESEG_VOID;
+  reader->einfo_seg_id = JA_ELEMENT_SEG_VOID;
   reader->ref_avail = GRN_FALSE;
-  reader->ref_seg_id = JA_ESEG_VOID;
+  reader->ref_seg_id = JA_ELEMENT_SEG_VOID;
   reader->ref_seg_ids = NULL;
   reader->nref_seg_ids = 0;
   reader->ref_seg_ids_size = 0;
-  reader->body_seg_id = JA_ESEG_VOID;
+  reader->body_seg_id = JA_ELEMENT_SEG_VOID;
   reader->body_seg_addr = NULL;
   reader->packed_buf = NULL;
   reader->packed_buf_size = 0;
@@ -3525,7 +3527,7 @@ grn_rc
 grn_ja_reader_fin(grn_ctx *ctx, grn_ja_reader *reader)
 {
   grn_rc rc = GRN_SUCCESS;
-  if (reader->einfo_seg_id != JA_ESEG_VOID) {
+  if (reader->einfo_seg_id != JA_ELEMENT_SEG_VOID) {
     grn_io_seg_unref(ctx, reader->ja->io, reader->einfo_seg_id);
   }
   if (reader->ref_seg_ids) {
@@ -3583,8 +3585,8 @@ grn_ja_reader_seek_compressed(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
 {
   grn_ja_einfo *einfo;
   void *seg_addr;
-  uint32_t seg_id = reader->ja->header->esegs[id >> JA_W_EINFO_IN_A_SEGMENT];
-  if (seg_id == JA_ESEG_VOID) {
+  uint32_t seg_id = reader->ja->header->element_segs[id >> JA_W_EINFO_IN_A_SEGMENT];
+  if (seg_id == JA_ELEMENT_SEG_VOID) {
     return GRN_INVALID_ARGUMENT;
   }
   if (seg_id != reader->einfo_seg_id) {
@@ -3592,7 +3594,7 @@ grn_ja_reader_seek_compressed(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
     if (!seg_addr) {
       return GRN_UNKNOWN_ERROR;
     }
-    if (reader->einfo_seg_id != JA_ESEG_VOID) {
+    if (reader->einfo_seg_id != JA_ELEMENT_SEG_VOID) {
       grn_io_seg_unref(ctx, reader->ja->io, reader->einfo_seg_id);
     }
     reader->einfo_seg_id = seg_id;
@@ -3631,8 +3633,8 @@ grn_ja_reader_seek_raw(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
 {
   grn_ja_einfo *einfo;
   void *seg_addr;
-  uint32_t seg_id = reader->ja->header->esegs[id >> JA_W_EINFO_IN_A_SEGMENT];
-  if (seg_id == JA_ESEG_VOID) {
+  uint32_t seg_id = reader->ja->header->element_segs[id >> JA_W_EINFO_IN_A_SEGMENT];
+  if (seg_id == JA_ELEMENT_SEG_VOID) {
     return GRN_INVALID_ARGUMENT;
   }
   if (seg_id != reader->einfo_seg_id) {
@@ -3640,7 +3642,7 @@ grn_ja_reader_seek_raw(grn_ctx *ctx, grn_ja_reader *reader, grn_id id)
     if (!seg_addr) {
       return GRN_UNKNOWN_ERROR;
     }
-    if (reader->einfo_seg_id != JA_ESEG_VOID) {
+    if (reader->einfo_seg_id != JA_ELEMENT_SEG_VOID) {
       grn_io_seg_unref(ctx, reader->ja->io, reader->einfo_seg_id);
     }
     reader->einfo_seg_id = seg_id;
@@ -3735,7 +3737,7 @@ grn_ja_reader_unref(grn_ctx *ctx, grn_ja_reader *reader)
   for (i = 0; i < reader->nref_seg_ids; i++) {
     grn_io_seg_unref(ctx, reader->ja->io, reader->ref_seg_ids[i]);
   }
-  reader->ref_seg_id = JA_ESEG_VOID;
+  reader->ref_seg_id = JA_ELEMENT_SEG_VOID;
   reader->nref_seg_ids = 0;
   return GRN_FUNCTION_NOT_IMPLEMENTED;
 }
