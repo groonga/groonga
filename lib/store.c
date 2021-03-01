@@ -3388,10 +3388,21 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
 {
   struct grn_ja_header *h = ja->header;
   {
-    GRN_OUTPUT_ARRAY_OPEN("result", 2);
+    GRN_OUTPUT_MAP_OPEN("result", 2);
+    uint32_t n_using_segments = 0;
+    {
+      uint32_t seg;
+      for (seg = 0; seg < JA_N_DATA_SEGMENTS; seg++) {
+        int data_seg = SEGMENTS_AT(ja, seg);
+        if (data_seg != 0) {
+          n_using_segments++;
+        }
+      }
+    }
+    GRN_OUTPUT_CSTR("summary");
     {
       char buf[8];
-      GRN_OUTPUT_MAP_OPEN("summary", 6);
+      GRN_OUTPUT_MAP_OPEN("summary", 7);
       GRN_OUTPUT_CSTR("flags");
       grn_itoh(h->flags, buf, 8);
       GRN_OUTPUT_STR(buf, 8);
@@ -3405,87 +3416,95 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
       GRN_OUTPUT_INT64(h->segregate_threshold);
       GRN_OUTPUT_CSTR("n_element_variation");
       GRN_OUTPUT_INT64(h->n_element_variation);
+      GRN_OUTPUT_CSTR("n_using_segments");
+      GRN_OUTPUT_UINT32(n_using_segments);
       GRN_OUTPUT_MAP_CLOSE();
     }
+    GRN_OUTPUT_CSTR("details");
     {
-      GRN_OUTPUT_ARRAY_OPEN("segments", -1);
-      uint32_t seg;
-      for (seg = 0; seg < JA_N_DATA_SEGMENTS; seg++) {
-        int data_seg = SEGMENTS_AT(ja, seg);
-        if (data_seg) {
-          GRN_OUTPUT_MAP_OPEN("segment", -1);
-          GRN_OUTPUT_CSTR("seg id");
-          GRN_OUTPUT_INT64(seg);
-          GRN_OUTPUT_CSTR("seg type");
-          GRN_OUTPUT_INT64((data_seg & SEG_MASK)>>28);
-          GRN_OUTPUT_CSTR("seg value");
-          GRN_OUTPUT_INT64(data_seg & ~SEG_MASK);
-          if ((data_seg & SEG_MASK) == SEG_SEQ) {
-            byte *v = NULL, *ve;
-            uint32_t element_size, cum = 0, sum = data_seg & ~SEG_MASK;
-            uint32_t n_del_elements = 0;
-            uint32_t n_elements = 0;
-            uint32_t s_del_elements = 0;
-            uint32_t s_elements = 0;
-            v = grn_io_seg_ref(ctx, ja->io, seg);
-            if (v) {
-              /*
-                GRN_OUTPUT_CSTR("seg seq");
-                GRN_OUTPUT_ARRAY_OPEN("SEQ", -1);
-              */
-              ve = v + JA_SEGMENT_SIZE;
-              while (v < ve && cum < sum) {
-                grn_id id = *((grn_id *)v);
+      GRN_OUTPUT_MAP_OPEN("details", 1);
+      GRN_OUTPUT_CSTR("segments");
+      {
+        GRN_OUTPUT_ARRAY_OPEN("segments", n_using_segments);
+        uint32_t seg;
+        for (seg = 0; seg < JA_N_DATA_SEGMENTS; seg++) {
+          uint32_t data_seg = SEGMENTS_AT(ja, seg);
+          if (data_seg != 0) {
+            GRN_OUTPUT_MAP_OPEN("segment", -1);
+            GRN_OUTPUT_CSTR("id");
+            GRN_OUTPUT_INT64(seg);
+            GRN_OUTPUT_CSTR("type");
+            GRN_OUTPUT_INT64((data_seg & SEG_MASK)>>28);
+            GRN_OUTPUT_CSTR("value");
+            GRN_OUTPUT_INT64(data_seg & ~SEG_MASK);
+            if ((data_seg & SEG_MASK) == SEG_SEQ) {
+              byte *v = NULL, *ve;
+              uint32_t element_size, cum = 0, sum = data_seg & ~SEG_MASK;
+              uint32_t n_del_elements = 0;
+              uint32_t n_elements = 0;
+              uint32_t s_del_elements = 0;
+              uint32_t s_elements = 0;
+              v = grn_io_seg_ref(ctx, ja->io, seg);
+              if (v) {
                 /*
-                  GRN_OUTPUT_MAP_OPEN("ENTRY", -1);
-                  GRN_OUTPUT_CSTR("id");
-                  GRN_OUTPUT_INT64(id);
+                  GRN_OUTPUT_CSTR("seg seq");
+                  GRN_OUTPUT_ARRAY_OPEN("SEQ", -1);
                 */
-                if (!id) { break; }
-                if (id & DELETED) {
-                  element_size = (id & ~DELETED);
-                  n_del_elements++;
-                  s_del_elements += element_size;
-                } else {
-                  element_size = grn_ja_size(ctx, ja, id);
-                  element_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
-                  cum += sizeof(uint32_t) + element_size;
-                  n_elements++;
-                  s_elements += sizeof(uint32_t) + element_size;
+                ve = v + JA_SEGMENT_SIZE;
+                while (v < ve && cum < sum) {
+                  grn_id id = *((grn_id *)v);
+                  /*
+                    GRN_OUTPUT_MAP_OPEN("ENTRY", -1);
+                    GRN_OUTPUT_CSTR("id");
+                    GRN_OUTPUT_INT64(id);
+                  */
+                  if (!id) { break; }
+                  if (id & DELETED) {
+                    element_size = (id & ~DELETED);
+                    n_del_elements++;
+                    s_del_elements += element_size;
+                  } else {
+                    element_size = grn_ja_size(ctx, ja, id);
+                    element_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
+                    cum += sizeof(uint32_t) + element_size;
+                    n_elements++;
+                    s_elements += sizeof(uint32_t) + element_size;
+                  }
+                  v += sizeof(uint32_t) + element_size;
+                  /*
+                    GRN_OUTPUT_CSTR("size");
+                    GRN_OUTPUT_INT64(element_size);
+                    GRN_OUTPUT_CSTR("cum");
+                    GRN_OUTPUT_INT64(cum);
+                    GRN_OUTPUT_MAP_CLOSE();
+                  */
                 }
-                v += sizeof(uint32_t) + element_size;
+                grn_io_seg_unref(ctx, ja->io, seg);
                 /*
-                  GRN_OUTPUT_CSTR("size");
-                  GRN_OUTPUT_INT64(element_size);
-                  GRN_OUTPUT_CSTR("cum");
-                  GRN_OUTPUT_INT64(cum);
-                  GRN_OUTPUT_MAP_CLOSE();
+                  GRN_OUTPUT_ARRAY_CLOSE();
                 */
-              }
-              grn_io_seg_unref(ctx, ja->io, seg);
-              /*
-                GRN_OUTPUT_ARRAY_CLOSE();
-              */
-              GRN_OUTPUT_CSTR("n_elements");
-              GRN_OUTPUT_INT64(n_elements);
-              GRN_OUTPUT_CSTR("s_elements");
-              GRN_OUTPUT_INT64(s_elements);
-              GRN_OUTPUT_CSTR("n_del_elements");
-              GRN_OUTPUT_INT64(n_del_elements);
-              GRN_OUTPUT_CSTR("s_del_elements");
-              GRN_OUTPUT_INT64(s_del_elements);
-              if (cum != sum) {
-                GRN_OUTPUT_CSTR("cum gap");
-                GRN_OUTPUT_INT64(cum - sum);
+                GRN_OUTPUT_CSTR("n_elements");
+                GRN_OUTPUT_INT64(n_elements);
+                GRN_OUTPUT_CSTR("s_elements");
+                GRN_OUTPUT_INT64(s_elements);
+                GRN_OUTPUT_CSTR("n_del_elements");
+                GRN_OUTPUT_INT64(n_del_elements);
+                GRN_OUTPUT_CSTR("s_del_elements");
+                GRN_OUTPUT_INT64(s_del_elements);
+                if (cum != sum) {
+                  GRN_OUTPUT_CSTR("cum gap");
+                  GRN_OUTPUT_INT64(cum - sum);
+                }
               }
             }
+            GRN_OUTPUT_MAP_CLOSE();
           }
-          GRN_OUTPUT_MAP_CLOSE();
         }
+        GRN_OUTPUT_ARRAY_CLOSE();
       }
-      GRN_OUTPUT_ARRAY_CLOSE();
+      GRN_OUTPUT_MAP_CLOSE();
     }
-    GRN_OUTPUT_ARRAY_CLOSE();
+    GRN_OUTPUT_MAP_CLOSE();
   }
 }
 
