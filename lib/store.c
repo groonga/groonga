@@ -1074,6 +1074,27 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
             ginfo->nrecs--;
             ja->header->ngarbages[m - JA_W_EINFO]--;
             if (!ginfo->nrecs) {
+              if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+                DEFINE_NAME(ja);
+                GRN_LOG(ctx,
+                        GRN_LOG_DEBUG,
+                        "%s[%.*s][%u] "
+                        "free a garbage info segment that "
+                        "has no more garbage info: "
+                        "segment:%u, "
+                        "next_segment:%u, "
+                        "element_size:%u, "
+                        "variation:%u,  "
+                        "path:<%s>",
+                        tag,
+                        name_size, name,
+                        id,
+                        *gseg,
+                        ginfo->next,
+                        element_size,
+                        m - JA_W_EINFO,
+                        ja->io->path);
+              }
               SEGMENTS_OFF(ja, *gseg);
               *gseg = ginfo->next;
             }
