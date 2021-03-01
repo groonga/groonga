@@ -358,6 +358,38 @@ struct grn_ja_header {
 #define SEG_EINFO      (0x30000000U)
 #define SEG_GINFO      (0x40000000U)
 #define SEG_MASK       (0xf0000000U)
+#define SEG_TYPE_SHIFT 28
+
+static uint32_t
+grn_ja_segment_type(grn_ctx *ctx, uint32_t seg)
+{
+  return seg & SEG_MASK;
+}
+
+static const char *
+grn_ja_segment_type_name(grn_ctx *ctx, uint32_t seg)
+{
+  switch (grn_ja_segment_type(ctx, seg)) {
+  case 0 :
+    return "chunk";
+  case SEG_SEQ :
+    return "sequential";
+  case SEG_HUGE :
+    return "huge";
+  case SEG_EINFO :
+    return "element info";
+  case SEG_GINFO :
+    return "garbage info";
+  default :
+    return "unknown";
+  }
+}
+
+static uint32_t
+grn_ja_segment_value(grn_ctx *ctx, uint32_t seg)
+{
+  return seg & ~SEG_MASK;
+}
 
 #define SEGMENTS_AT(ja,seg) ((ja)->header->data_segs[seg])
 #define SEGMENTS_SEGRE_ON(ja,seg,width) (SEGMENTS_AT(ja,seg) = width)
@@ -3434,9 +3466,11 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
             GRN_OUTPUT_CSTR("id");
             GRN_OUTPUT_INT64(seg);
             GRN_OUTPUT_CSTR("type");
-            GRN_OUTPUT_INT64((data_seg & SEG_MASK)>>28);
+            GRN_OUTPUT_INT64(grn_ja_segment_type(ctx, data_seg) >> SEG_TYPE_SHIFT);
+            GRN_OUTPUT_CSTR("type_name");
+            GRN_OUTPUT_CSTR(grn_ja_segment_type_name(ctx, data_seg));
             GRN_OUTPUT_CSTR("value");
-            GRN_OUTPUT_INT64(data_seg & ~SEG_MASK);
+            GRN_OUTPUT_INT64(grn_ja_segment_value(ctx, data_seg));
             if ((data_seg & SEG_MASK) == SEG_SEQ) {
               byte *v = NULL, *ve;
               uint32_t element_size, cum = 0, sum = data_seg & ~SEG_MASK;
