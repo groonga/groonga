@@ -238,6 +238,7 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
 
 #define JA_ELEMENT_SEG_VOID            (0xffffffffU)
 #define JA_SEGMENT_SIZE                (1U << GRN_JA_W_SEGMENT)
+/* EINFO = ELEMENT_INFO */
 #define JA_W_EINFO                     3
 #define JA_W_SEGMENTS_MAX              (GRN_JA_W_CAPACITY - GRN_JA_W_SEGMENT)
 #define JA_W_EINFO_IN_A_SEGMENT        (GRN_JA_W_SEGMENT - JA_W_EINFO)
