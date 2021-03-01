@@ -229,7 +229,68 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
   return GRN_SUCCESS;
 }
 
-/**** jagged arrays ****/
+/**** jagged arrays, ja ****/
+
+/*
+ * Summary:
+ *
+ *   * A jagged array has multiple (JA_N_DATA_SEGMENTS, 65536) segments.
+ *   * A segment can store JA_SEGMENT_SIZE (4MiB) raw data.
+ *   * Each element has metadata (element info, einfo).
+ *   * Element types:
+ *     * TINY: Element size is less than 8B. The value is embedded into
+ *       the element info.
+ *     * HUGE: Element size + sizeof(grn_id) (8B) is larger than segment size
+ *       (JA_SEGMENT_SIZE, 4MiB). The value is stored to multiple continuous
+ *       segments as is. Start segment ID and element size are stored in
+ *       metadata.
+ *     * SEQUENTIAL: Element size is larger than (1 << GRN_JA_W_CHUNK_THRESH_V2)
+ *       (65536B) and not HUGE. The value is stored to a segment. Segment ID,
+ *       start position in the stored segment and element size are stored in
+ *       metadata.
+ *       FYI: The next segment ID and position are stored in
+ *       ja->header->curr_seg and ja->header->curr_pos.
+ *       NOTE: Old DB uses GRN_JA_W_CHUNK_THRESH_V1 not _V2.
+ *     * CHUNK: Element size is less than or equals to
+ *       (1 << GRN_JA_W_CHUNK_THRESH_V2) (65536B). The value is stored to a
+ *       segment. The segment has fixed size chunks. Each fixed size is
+ *       multiple of 2. Available fixed sizes are 16B, 32B, ...,
+ *       (1 << GRN_JA_W_CHUNK_THRESH_V2). Each element uses a segment that
+ *       uses best fit fixed size. For example, 31B size element uses a
+ *       segment that uses 32B fixed size not 16B/64B fixed size.
+ *       NOTE: Old DB uses GRN_JA_W_CHUNK_THRESH_V1 not _V2.
+ *   * Each segment has metadata.
+ *   * Segment types:
+ *     * HUGE: The segment that stores element values of HUGE element.
+ *       Multiple continuous HUGE segments are used for one HUGE element value.
+ *       SEG_HUGE tag is stored in metadata.
+ *       See also: HUGE element type.
+ *     * SEQUENTIAL: The segment that stores element values of SEQUENTIAL
+ *       element. Each element value may be different size.
+ *       SEG_SEQ tag is stored in metadata.
+ *       See also: SEQUENTIAL element type.
+ *     * CHUNK: The segment that stores element values of CHUNK element.
+ *       Each segment has fixed size chunks. The size is defined for each
+ *       segment. SEG_CHUNK tag and chunk size are stored in metadata.
+ *       See also: CHUNK element type.
+ *     * EINFO: The segment that stores element metadata (element information,
+ *       einfo). Each element metadata is fixed size data. Corresponding
+ *       element metadata position in segment can be computed from record ID.
+ *       The (record_id & JA_M_EINFO_IN_A_SEGMENT)-th grn_ja_einfo is the
+ *       corresponding element metadata of the given record ID.
+ *       SEG_EINFO tag and index of ja->header->element_segs are stored in
+ *       metadata.
+ *       See also: EINFO element type and grn_ja_check_segment_einfo_validate().
+ *     * GINFO: The segment that stores garbage chunks in CHUNK segments.
+ *       This is for reusing freed chunks effectively. SEQUENTIAL element
+ *       isn't space effective for massive replace use case. It causes
+ *       fragmentation. CHUNK element isn't space effective for one-time set
+ *       use case. Because there may be spaces in chunk. If 15B size
+ *       element is stored to 16B fixed size chunk, 1B space is wasted.
+ *       But CHUNK element is space effective for massive replace use case.
+ *       We can reuse each chunk effectively by GINFO segment.
+ *   * TODO: How to update element value?
+ */
 
 #define GRN_JA_W_CHUNK_THRESH_V1       7
 #define GRN_JA_W_CHUNK_THRESH_V2       16
