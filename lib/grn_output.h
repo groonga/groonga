@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2010-2018 Brazil
-  Copyright(C) 2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2010-2018  Brazil
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -87,6 +87,8 @@ grn_rc grn_obj_format_set_columns(grn_ctx *ctx,
   (grn_ctx_output_int32(ctx, value))
 #define GRN_OUTPUT_INT64(value) \
   (grn_ctx_output_int64(ctx, value))
+#define GRN_OUTPUT_UINT32(value) \
+  (grn_ctx_output_uint32(ctx, value))
 #define GRN_OUTPUT_UINT64(value) \
   (grn_ctx_output_uint64(ctx, value))
 #define GRN_OUTPUT_FLOAT(value) \
