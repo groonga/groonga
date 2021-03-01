@@ -353,6 +353,7 @@ struct grn_ja_header {
   uint8_t n_element_variation;
 };
 
+#define SEG_CHUNK      (0x00000000U)
 #define SEG_SEQ        (0x10000000U)
 #define SEG_HUGE       (0x20000000U)
 #define SEG_EINFO      (0x30000000U)
@@ -370,7 +371,7 @@ static const char *
 grn_ja_segment_type_name(grn_ctx *ctx, uint32_t seg)
 {
   switch (grn_ja_segment_type(ctx, seg)) {
-  case 0 :
+  case SEG_CHUNK :
     return "chunk";
   case SEG_SEQ :
     return "sequential";
@@ -3512,6 +3513,119 @@ grn_ja_check_segment_seq(grn_ctx *ctx,
   GRN_OUTPUT_MAP_CLOSE();
 }
 
+static bool
+grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
+                                    grn_ja *ja,
+                                    uint32_t segment,
+                                    uint32_t element_info_index,
+                                    uint32_t referred_segment)
+{
+  const char *tag = "[ja][check][segment][einfo]";
+  if (referred_segment != segment) {
+    DEFINE_NAME(ja);
+    GRN_LOG(ctx,
+            GRN_LOG_ERROR,
+            "%s[%.*s][%u] header->element_segs[%u] refers wrong segment: "
+            "referred_segment:%u",
+            tag,
+            name_size, name,
+            segment,
+            element_info_index,
+            referred_segment);
+    return false;
+  }
+
+  grn_ja_einfo *einfo = grn_io_seg_ref(ctx, ja->io, segment);
+  if (!einfo) {
+    DEFINE_NAME(ja);
+    GRN_LOG(ctx,
+            GRN_LOG_ERROR,
+            "%s[%.*s][%u] failed to refer element info segment",
+            tag,
+            name_size, name,
+            segment);
+    return false;
+  }
+
+  bool is_valid = true;
+  uint32_t i;
+  for (i = 0; i < JA_N_EINFO_IN_A_SEGMENT; i++) {
+    grn_id record_id = (element_info_index << JA_W_EINFO_IN_A_SEGMENT) + i;
+    grn_ja_einfo *ei = &(einfo[i]);
+    if (ETINY_P(ei)) {
+      continue;
+    }
+    if (EHUGE_P(ei)) {
+      uint32_t data_start_segment;
+      uint32_t size;
+      EHUGE_DEC(ei, data_start_segment, size);
+      uint32_t n_segments = (size + JA_SEGMENT_SIZE - 1) >> GRN_JA_W_SEGMENT;
+      uint32_t j;
+      for (j = 0; j < n_segments; j++) {
+        uint32_t metadata = SEGMENTS_AT(ja, data_start_segment + j);
+        uint32_t segment_type = grn_ja_segment_type(ctx, metadata);
+        if (segment_type != SEG_HUGE) {
+          DEFINE_NAME(ja);
+          GRN_LOG(ctx,
+                  GRN_LOG_ERROR,
+                  "%s[%.*s][%u] segment must be huge type: "
+                  "record_id:%u, "
+                  "type:%u, "
+                  "type_name:<%s>, "
+                  "data_segment:%u, "
+                  "element_size:%u, "
+                  "n_segments:%u, ",
+                  tag,
+                  name_size, name,
+                  segment,
+                  record_id,
+                  segment_type,
+                  grn_ja_segment_type_name(ctx, metadata),
+                  data_start_segment + j,
+                  size,
+                  n_segments);
+          is_valid = false;
+          break;
+        }
+      }
+    } else {
+      uint32_t data_segment;
+      uint32_t pos;
+      uint32_t size;
+      EINFO_DEC(ei, data_segment, pos, size);
+      if (size == 0) {
+        continue;
+      }
+      uint32_t metadata = SEGMENTS_AT(ja, data_segment);
+      uint32_t segment_type = grn_ja_segment_type(ctx, metadata);
+      if (segment_type != SEG_CHUNK) {
+        DEFINE_NAME(ja);
+        GRN_LOG(ctx,
+                GRN_LOG_ERROR,
+                "%s[%.*s][%u] segment must be chunk type: "
+                "record_id:%u, "
+                "type:%u, "
+                "type_name:<%s>, "
+                "data_segment:%u, "
+                "position:%u, "
+                "element_size:%u",
+                tag,
+                name_size, name,
+                segment,
+                record_id,
+                segment_type,
+                grn_ja_segment_type_name(ctx, metadata),
+                data_segment,
+                pos,
+                size);
+        is_valid = false;
+      }
+    }
+  }
+  grn_io_seg_unref(ctx, ja->io, segment);
+  return is_valid;
+}
+
 static void
 grn_ja_check_segment_einfo(grn_ctx *ctx,
                            grn_ja *ja,
@@ -3532,7 +3646,12 @@ grn_ja_check_segment_einfo(grn_ctx *ctx,
   GRN_OUTPUT_CSTR("referred_segment");
   GRN_OUTPUT_UINT32(referred_segment);
   GRN_OUTPUT_CSTR("valid");
-  bool is_valid = (referred_segment == seg);
+  bool is_valid =
+    grn_ja_check_segment_einfo_validate(ctx,
+                                        ja,
+                                        seg,
+                                        element_info_index,
+                                        referred_segment);
   GRN_OUTPUT_BOOL(is_valid);
   GRN_OUTPUT_MAP_CLOSE();
 }
