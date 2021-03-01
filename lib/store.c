@@ -3383,13 +3383,13 @@ grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
 void
 grn_ja_check(grn_ctx *ctx, grn_ja *ja)
 {
-  char buf[8];
   uint32_t seg;
   struct grn_ja_header *h = ja->header;
   {
-    GRN_OUTPUT_ARRAY_OPEN("RESULT", 8);
+    GRN_OUTPUT_ARRAY_OPEN("RESULT", 2);
     {
-      GRN_OUTPUT_MAP_OPEN("SUMMARY", 8);
+      char buf[8];
+      GRN_OUTPUT_MAP_OPEN("SUMMARY", 6);
       GRN_OUTPUT_CSTR("flags");
       grn_itoh(h->flags, buf, 8);
       GRN_OUTPUT_STR(buf, 8);
