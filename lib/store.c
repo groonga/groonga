@@ -3383,13 +3383,12 @@ grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
 void
 grn_ja_check(grn_ctx *ctx, grn_ja *ja)
 {
-  uint32_t seg;
   struct grn_ja_header *h = ja->header;
   {
-    GRN_OUTPUT_ARRAY_OPEN("RESULT", 2);
+    GRN_OUTPUT_ARRAY_OPEN("result", 2);
     {
       char buf[8];
-      GRN_OUTPUT_MAP_OPEN("SUMMARY", 6);
+      GRN_OUTPUT_MAP_OPEN("summary", 6);
       GRN_OUTPUT_CSTR("flags");
       grn_itoh(h->flags, buf, 8);
       GRN_OUTPUT_STR(buf, 8);
@@ -3406,11 +3405,12 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
       GRN_OUTPUT_MAP_CLOSE();
     }
     {
-      GRN_OUTPUT_ARRAY_OPEN("DETAIL", -1);
+      GRN_OUTPUT_ARRAY_OPEN("segments", -1);
+      uint32_t seg;
       for (seg = 0; seg < JA_N_DSEGMENTS; seg++) {
         int dseg = SEGMENTS_AT(ja, seg);
         if (dseg) {
-          GRN_OUTPUT_MAP_OPEN("SEG", -1);
+          GRN_OUTPUT_MAP_OPEN("segment", -1);
           GRN_OUTPUT_CSTR("seg id");
           GRN_OUTPUT_INT64(seg);
           GRN_OUTPUT_CSTR("seg type");
