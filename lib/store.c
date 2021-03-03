@@ -3640,7 +3640,7 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
                   name_size, name,
                   segment,
                   record_id,
-                  segment_type,
+                  segment_type >> SEG_TYPE_SHIFT,
                   grn_ja_segment_info_type_name(ctx, info),
                   data_start_segment + j,
                   size,
@@ -3651,10 +3651,29 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
       }
     } else {
       uint32_t data_segment;
-      uint32_t pos;
+      uint32_t position;
       uint32_t size;
-      EINFO_DEC(ei, data_segment, pos, size);
+      EINFO_DEC(ei, data_segment, position, size);
       if (size == 0) {
+        continue;
+      }
+      if (size < 8) {
+        DEFINE_NAME(ja);
+        GRN_LOG(ctx,
+                GRN_LOG_ERROR,
+                "%s[%.*s][%u] the element must be tiny type: "
+                "record_id:%u, "
+                "data_segment:%u, "
+                "position:%u, "
+                "element_size:%u",
+                tag,
+                name_size, name,
+                segment,
+                record_id,
+                data_segment,
+                position,
+                size);
+        is_valid = false;
         continue;
       }
       uint32_t metadata = SEGMENT_INFO_AT(ja, data_segment);
@@ -3674,12 +3693,46 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
                 name_size, name,
                 segment,
                 record_id,
-                segment_type,
+                segment_type >> SEG_TYPE_SHIFT,
                 grn_ja_segment_info_type_name(ctx, metadata),
                 data_segment,
-                pos,
+                position,
                 size);
         is_valid = false;
+        continue;
+      }
+      uint32_t variation;
+      {
+        uint32_t s = size - 1;
+        GRN_BIT_SCAN_REV(s, variation);
+        variation++;
+      }
+      if (variation > ja->header->chunk_threshold) {
+        /* TODO */
+      } else {
+        uint32_t aligned_size = 1U << variation;
+        uint32_t max_position = JA_SEGMENT_SIZE - aligned_size;
+        if (position > max_position) {
+          DEFINE_NAME(ja);
+          GRN_LOG(ctx,
+                  GRN_LOG_ERROR,
+                  "%s[%.*s][%u] out of range position: "
+                  "record_id:%u, "
+                  "variation:%u, "
+                  "position:%u, "
+                  "max_position:%u, "
+                  "element_size:%u",
+                  tag,
+                  name_size, name,
+                  segment,
+                  record_id,
+                  variation,
+                  position,
+                  max_position,
+                  size);
+          is_valid = false;
+          continue;
+        }
       }
     }
   }
@@ -3691,7 +3744,7 @@ static void
 grn_ja_check_segment_einfo(grn_ctx *ctx,
                            grn_ja *ja,
                            uint32_t seg,
-                           uint32_t data_seg)
+                           uint32_t info)
 {
   GRN_OUTPUT_MAP_OPEN("segment", 6);
   GRN_OUTPUT_CSTR("id");
@@ -3699,9 +3752,9 @@ grn_ja_check_segment_einfo(grn_ctx *ctx,
   GRN_OUTPUT_CSTR("type");
   GRN_OUTPUT_UINT32(SEG_EINFO >> SEG_TYPE_SHIFT);
   GRN_OUTPUT_CSTR("type_name");
-  GRN_OUTPUT_CSTR(grn_ja_segment_info_type_name(ctx, data_seg));
+  GRN_OUTPUT_CSTR(grn_ja_segment_info_type_name(ctx, info));
   GRN_OUTPUT_CSTR("element_info_index");
-  uint32_t element_info_index = grn_ja_segment_info_value(ctx, data_seg);
+  uint32_t element_info_index = grn_ja_segment_info_value(ctx, info);
   GRN_OUTPUT_UINT32(element_info_index);
   uint32_t referred_segment = ja->header->element_segs[element_info_index];
   GRN_OUTPUT_CSTR("referred_segment");
