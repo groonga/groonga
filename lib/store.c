@@ -3770,6 +3770,166 @@ grn_ja_check_segment_einfo(grn_ctx *ctx,
   GRN_OUTPUT_MAP_CLOSE();
 }
 
+static bool
+grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
+                                    grn_ja *ja,
+                                    uint32_t segment,
+                                    uint32_t variation,
+                                    grn_ja_ginfo *ginfo,
+                                    const char *tag)
+{
+  bool is_valid = true;
+  uint32_t n_existing_records = 0;
+  uint32_t i;
+  for (i = ginfo->tail;
+       i != ginfo->head;
+       i = ((i + 1) % JA_N_GARBAGES_IN_A_SEGMENT)) {
+    n_existing_records++;
+    uint32_t garbage_segment = ginfo->recs[i].seg;
+    uint32_t garbage_position = ginfo->recs[i].pos;
+    if (garbage_segment >= JA_N_DATA_SEGMENTS) {
+      DEFINE_NAME(ja);
+      GRN_LOG(ctx,
+              GRN_LOG_ERROR,
+              "%s[%.*s][%u] out of range garbage segment: "
+              "variation:%u, "
+              "index:%u, "
+              "garbage_segment:%u",
+              tag,
+              name_size, name,
+              segment,
+              variation,
+              i,
+              garbage_segment);
+      is_valid = false;
+      continue;
+    }
+    uint32_t garbage_segment_info = SEGMENT_INFO_AT(ja, garbage_segment);
+    uint32_t garbage_segment_type =
+      grn_ja_segment_info_type(ctx, garbage_segment_info);
+    if (garbage_segment_type != SEG_CHUNK) {
+      DEFINE_NAME(ja);
+      GRN_LOG(ctx,
+              GRN_LOG_ERROR,
+              "%s[%.*s][%u] segment that has garbage must be chunk type: "
+              "variation:%u, "
+              "index:%u, "
+              "garbage_segment:%u, "
+              "garbage_segment_type:%u, "
+              "garbage_segment_type_name:<%s>",
+              tag,
+              name_size, name,
+              segment,
+              variation,
+              i,
+              garbage_segment,
+              garbage_segment_type >> SEG_TYPE_SHIFT,
+              grn_ja_segment_info_type_name(ctx, garbage_segment_info));
+      is_valid = false;
+      continue;
+    }
+    uint32_t aligned_size = 1U << (variation + JA_W_EINFO);
+    uint32_t max_position = JA_SEGMENT_SIZE - aligned_size;
+    if (garbage_position > max_position) {
+      DEFINE_NAME(ja);
+      GRN_LOG(ctx,
+              GRN_LOG_ERROR,
+              "%s[%.*s][%u] out of range garbage position: "
+              "variation:%u, "
+              "index:%u, "
+              "garbage_segment:%u, "
+              "garbage_position:%u, "
+              "max_position:%u",
+              tag,
+              name_size, name,
+              segment,
+              variation,
+              i,
+              garbage_segment,
+              garbage_position,
+              max_position);
+      is_valid = false;
+      continue;
+    }
+  }
+  if (ginfo->nrecs != n_existing_records) {
+    DEFINE_NAME(ja);
+    GRN_LOG(ctx,
+            GRN_LOG_ERROR,
+            "%s[%.*s][%u] inconsistent the number of records: "
+            "variation:%u, "
+            "n_records:%u, "
+            "real_n_records:%u",
+            tag,
+            name_size, name,
+            segment,
+            variation,
+            ginfo->nrecs,
+            n_existing_records);
+    is_valid = false;
+  }
+  return is_valid;
+}
+
+static void
+grn_ja_check_segment_ginfo(grn_ctx *ctx,
+                           grn_ja *ja,
+                           uint32_t segment,
+                           uint32_t info)
+{
+  const char *tag = "[ja][check][segment][ginfo]";
+  GRN_OUTPUT_MAP_OPEN("segment", 8);
+  GRN_OUTPUT_CSTR("id");
+  GRN_OUTPUT_UINT32(segment);
+  GRN_OUTPUT_CSTR("type");
+  GRN_OUTPUT_UINT32(SEG_GINFO >> SEG_TYPE_SHIFT);
+  GRN_OUTPUT_CSTR("type_name");
+  GRN_OUTPUT_CSTR(grn_ja_segment_info_type_name(ctx, info));
+  GRN_OUTPUT_CSTR("variation");
+  uint32_t variation = grn_ja_segment_info_value(ctx, info);
+  GRN_OUTPUT_UINT32(variation);
+
+  uint32_t head = 0;
+  uint32_t tail = 0;
+  uint32_t n_garbages = 0;
+  bool is_valid = false;
+  grn_ja_ginfo *ginfo = grn_io_seg_ref(ctx, ja->io, segment);
+  if (ginfo) {
+    head = ginfo->head;
+    tail = ginfo->tail;
+    n_garbages = ginfo->nrecs;
+    is_valid = grn_ja_check_segment_ginfo_validate(ctx,
+                                                   ja,
+                                                   segment,
+                                                   variation,
+                                                   ginfo,
+                                                   tag);
+  } else {
+    DEFINE_NAME(ja);
+    GRN_LOG(ctx,
+            GRN_LOG_ERROR,
+            "%s[%.*s][%u] failed to refer garbage info segment",
+            tag,
+            name_size, name,
+            segment);
+  }
+
+  GRN_OUTPUT_CSTR("head");
+  GRN_OUTPUT_UINT32(head);
+  GRN_OUTPUT_CSTR("tail");
+  GRN_OUTPUT_UINT32(tail);
+  GRN_OUTPUT_CSTR("n_garbages");
+  GRN_OUTPUT_UINT32(n_garbages);
+  GRN_OUTPUT_CSTR("valid");
+  GRN_OUTPUT_BOOL(is_valid);
+
+  if (ginfo) {
+    grn_io_seg_unref(ctx, ja->io, segment);
+  }
+
+  GRN_OUTPUT_MAP_CLOSE();
+}
+
 static void
 grn_ja_check_segment(grn_ctx *ctx,
                      grn_ja *ja,
@@ -3783,6 +3943,9 @@ grn_ja_check_segment(grn_ctx *ctx,
     return;
   case SEG_EINFO :
     grn_ja_check_segment_einfo(ctx, ja, seg, info);
+    return;
+  case SEG_GINFO :
+    grn_ja_check_segment_ginfo(ctx, ja, seg, info);
     return;
   default :
     break;
