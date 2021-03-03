@@ -33,21 +33,6 @@
 #define GRN_RA_W_SEGMENT    22
 #define GRN_RA_SEGMENT_SIZE (1 << GRN_RA_W_SEGMENT)
 
-#define DEFINE_NAME(obj)                                                \
-  const char *name;                                                     \
-  char name_buffer[GRN_TABLE_MAX_KEY_SIZE];                             \
-  int name_size;                                                        \
-  do {                                                                  \
-    if (DB_OBJ(obj)->id == GRN_ID_NIL) {                                \
-      name = "(temporary)";                                             \
-      name_size = strlen(name);                                         \
-    } else {                                                            \
-      name_size = grn_obj_name(ctx, (grn_obj *)obj,                     \
-                               name_buffer, GRN_TABLE_MAX_KEY_SIZE);    \
-      name = name_buffer;                                               \
-    }                                                                   \
-  } while (false)
-
 static grn_ra *
 _grn_ra_create(grn_ctx *ctx, grn_ra *ra, const char *path, unsigned int element_size)
 {
@@ -747,7 +732,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
     aligned_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
     *(uint32_t *)(addr + pos - sizeof(grn_id)) = DELETED|aligned_size;
     if (SEGMENT_INFO_AT(ja, seg) < (aligned_size + sizeof(grn_id)) + SEG_SEQ) {
-      DEFINE_NAME(ja);
+      GRN_DEFINE_NAME(ja);
       GRN_LOG(ctx,
               GRN_WARN,
               "%s[%.*s] inconsistent ja entry detected (%d > %d): path:<%s>",
@@ -775,7 +760,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
       if (target_seg != 0) { grn_io_seg_unref(ctx, ja->io, target_seg); }
       ginfo = grn_io_seg_ref(ctx, ja->io, *gseg);
       if (!ginfo) {
-        DEFINE_NAME(ja);
+        GRN_DEFINE_NAME(ja);
         ERR(GRN_NO_MEMORY_AVAILABLE,
             "%s[%.*s] failed to refer garbage segment: "
             "segment:%u, "
@@ -804,7 +789,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
         if (++i >= JA_N_DATA_SEGMENTS) {
           if (target_seg != 0) { grn_io_seg_unref(ctx, ja->io, target_seg); }
           {
-            DEFINE_NAME(ja);
+            GRN_DEFINE_NAME(ja);
             ERR(GRN_NOT_ENOUGH_SPACE,
                 "%s[%.*s] can't find free segment for garbage segment: "
                 "element_size:%u, "
@@ -828,7 +813,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
       if (target_seg != 0) { grn_io_seg_unref(ctx, ja->io, target_seg); }
       ginfo = grn_io_seg_ref(ctx, ja->io, i);
       if (!ginfo) {
-        DEFINE_NAME(ja);
+        GRN_DEFINE_NAME(ja);
         ERR(GRN_NO_MEMORY_AVAILABLE,
             "%s[%.*s] failed to refer newly allocated garbage segment: "
             "segment:%u, "
@@ -881,7 +866,7 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
     int i = 0;
     while (SEGMENT_INFO_AT(ja, i)) {
       if (++i >= JA_N_DATA_SEGMENTS) {
-        DEFINE_NAME(ja);
+        GRN_DEFINE_NAME(ja);
         ERR(GRN_NOT_ENOUGH_SPACE,
             "%s[%.*s][%u] can't find free segment: <%s>",
             tag,
@@ -903,7 +888,7 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
     einfo = grn_io_seg_ref(ctx, ja->io, target_seg);
   }
   if (!einfo) {
-    DEFINE_NAME(ja);
+    GRN_DEFINE_NAME(ja);
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "%s[%.*s][%u] failed to refer element info segment: "
         "segment:%u, "
@@ -917,7 +902,7 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
   }
   eback = einfo[pos];
   if (cas && *cas != *((uint64_t *)&eback)) {
-    DEFINE_NAME(ja);
+    GRN_DEFINE_NAME(ja);
     ERR(GRN_CAS_ERROR,
         "%s[%.*s][%u] failed to CAS: "
         "%" GRN_FMT_INT64U " != %" GRN_FMT_INT64U
@@ -974,7 +959,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
           j++;
           addr = grn_io_win_map(ctx, ja->io, iw, j, 0, element_size, GRN_IO_WRONLY);
           if (!addr) {
-            DEFINE_NAME(ja);
+            GRN_DEFINE_NAME(ja);
             ERR(GRN_NO_MEMORY_AVAILABLE,
                 "%s[%.*s][%u] failed to map new window for huge element: "
                 "n_segments:%u, "
@@ -999,7 +984,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
       }
     }
     {
-      DEFINE_NAME(ja);
+      GRN_DEFINE_NAME(ja);
       ERR(GRN_NOT_ENOUGH_SPACE,
           "%s[%.*s][%u] "
           "failed to allocate huge segment because of full: "
@@ -1025,7 +1010,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
         seg = 0;
         while (SEGMENT_INFO_AT(ja, seg)) {
           if (++seg >= JA_N_DATA_SEGMENTS) {
-            DEFINE_NAME(ja);
+            GRN_DEFINE_NAME(ja);
             ERR(GRN_NOT_ENOUGH_SPACE,
                 "%s[%*.s][%u] "
                 "failed to allocate sequential segment because of full: "
@@ -1046,7 +1031,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
       }
       addr = grn_io_seg_ref(ctx, ja->io, seg);
       if (!addr) {
-        DEFINE_NAME(ja);
+        GRN_DEFINE_NAME(ja);
         ERR(GRN_NO_MEMORY_AVAILABLE,
             "%s[%*.s][%u] failed to refer sequential segment: "
             "segment:%u, "
@@ -1086,7 +1071,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
           if (!ginfo) {
             if (lseg) { grn_io_seg_unref(ctx, ja->io, lseg); }
             {
-              DEFINE_NAME(ja);
+              GRN_DEFINE_NAME(ja);
               ERR(GRN_NO_MEMORY_AVAILABLE,
                   "%s[%.*s][%u] failed to refer garbage segment: "
                   "segment:%u, "
@@ -1108,7 +1093,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
             addr = grn_io_seg_ref(ctx, ja->io, seg);
             if (!addr) {
               {
-                DEFINE_NAME(ja);
+                GRN_DEFINE_NAME(ja);
                 ERR(GRN_NO_MEMORY_AVAILABLE,
                     "%s[%.*s][%u] "
                     "failed to refer content segment from garbage segment: "
@@ -1137,7 +1122,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
             ja->header->ngarbages[m - JA_W_EINFO]--;
             if (!ginfo->nrecs) {
               if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
-                DEFINE_NAME(ja);
+                GRN_DEFINE_NAME(ja);
                 GRN_LOG(ctx,
                         GRN_LOG_DEBUG,
                         "%s[%.*s][%u] "
@@ -1179,7 +1164,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
         int i = 0;
         while (SEGMENT_INFO_AT(ja, i)) {
           if (++i >= JA_N_DATA_SEGMENTS) {
-            DEFINE_NAME(ja);
+            GRN_DEFINE_NAME(ja);
             ERR(GRN_NO_MEMORY_AVAILABLE,
                 "%s[%.*s][%u] "
                 "failed to allocate reference segment because of full: "
@@ -1203,7 +1188,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
       EINFO_ENC(einfo, vp->seg, vp->pos, element_size);
       addr = grn_io_seg_ref(ctx, ja->io, vp->seg);
       if (!addr) {
-        DEFINE_NAME(ja);
+        GRN_DEFINE_NAME(ja);
         ERR(GRN_NO_MEMORY_AVAILABLE,
             "%s[%*.s][%u] failed to refer content segment in free elements: "
             "segment:%u, "
@@ -3583,7 +3568,7 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
 {
   const char *tag = "[ja][check][segment][einfo]";
   if (referred_segment != segment) {
-    DEFINE_NAME(ja);
+    GRN_DEFINE_NAME(ja);
     GRN_LOG(ctx,
             GRN_LOG_ERROR,
             "%s[%.*s][%u] header->element_segs[%u] refers wrong segment: "
@@ -3598,7 +3583,7 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
 
   grn_ja_einfo *einfo = grn_io_seg_ref(ctx, ja->io, segment);
   if (!einfo) {
-    DEFINE_NAME(ja);
+    GRN_DEFINE_NAME(ja);
     GRN_LOG(ctx,
             GRN_LOG_ERROR,
             "%s[%.*s][%u] failed to refer element info segment",
@@ -3626,7 +3611,7 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
         uint32_t info = SEGMENT_INFO_AT(ja, data_start_segment + j);
         uint32_t segment_type = grn_ja_segment_info_type(ctx, info);
         if (segment_type != SEG_HUGE) {
-          DEFINE_NAME(ja);
+          GRN_DEFINE_NAME(ja);
           GRN_LOG(ctx,
                   GRN_LOG_ERROR,
                   "%s[%.*s][%u] segment must be huge type: "
@@ -3658,7 +3643,7 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
         continue;
       }
       if (size < 8) {
-        DEFINE_NAME(ja);
+        GRN_DEFINE_NAME(ja);
         GRN_LOG(ctx,
                 GRN_LOG_ERROR,
                 "%s[%.*s][%u] the element must be tiny type: "
@@ -3679,7 +3664,7 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
       uint32_t metadata = SEGMENT_INFO_AT(ja, data_segment);
       uint32_t segment_type = grn_ja_segment_info_type(ctx, metadata);
       if (segment_type != SEG_CHUNK) {
-        DEFINE_NAME(ja);
+        GRN_DEFINE_NAME(ja);
         GRN_LOG(ctx,
                 GRN_LOG_ERROR,
                 "%s[%.*s][%u] segment must be chunk type: "
@@ -3713,7 +3698,7 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
         uint32_t aligned_size = 1U << variation;
         uint32_t max_position = JA_SEGMENT_SIZE - aligned_size;
         if (position > max_position) {
-          DEFINE_NAME(ja);
+          GRN_DEFINE_NAME(ja);
           GRN_LOG(ctx,
                   GRN_LOG_ERROR,
                   "%s[%.*s][%u] out of range position: "
@@ -3788,7 +3773,7 @@ grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
     uint32_t garbage_segment = ginfo->recs[i].seg;
     uint32_t garbage_position = ginfo->recs[i].pos;
     if (garbage_segment >= JA_N_DATA_SEGMENTS) {
-      DEFINE_NAME(ja);
+      GRN_DEFINE_NAME(ja);
       GRN_LOG(ctx,
               GRN_LOG_ERROR,
               "%s[%.*s][%u] out of range garbage segment: "
@@ -3808,7 +3793,7 @@ grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
     uint32_t garbage_segment_type =
       grn_ja_segment_info_type(ctx, garbage_segment_info);
     if (garbage_segment_type != SEG_CHUNK) {
-      DEFINE_NAME(ja);
+      GRN_DEFINE_NAME(ja);
       GRN_LOG(ctx,
               GRN_LOG_ERROR,
               "%s[%.*s][%u] segment that has garbage must be chunk type: "
@@ -3831,7 +3816,7 @@ grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
     uint32_t aligned_size = 1U << (variation + JA_W_EINFO);
     uint32_t max_position = JA_SEGMENT_SIZE - aligned_size;
     if (garbage_position > max_position) {
-      DEFINE_NAME(ja);
+      GRN_DEFINE_NAME(ja);
       GRN_LOG(ctx,
               GRN_LOG_ERROR,
               "%s[%.*s][%u] out of range garbage position: "
@@ -3853,7 +3838,7 @@ grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
     }
   }
   if (ginfo->nrecs != n_existing_records) {
-    DEFINE_NAME(ja);
+    GRN_DEFINE_NAME(ja);
     GRN_LOG(ctx,
             GRN_LOG_ERROR,
             "%s[%.*s][%u] inconsistent the number of records: "
@@ -3873,7 +3858,7 @@ grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
     uint32_t next_segment_type =
       grn_ja_segment_info_type(ctx, next_segment_info);
     if (next_segment_type != SEG_GINFO) {
-      DEFINE_NAME(ja);
+      GRN_DEFINE_NAME(ja);
       GRN_LOG(ctx,
               GRN_LOG_ERROR,
               "%s[%.*s][%u] next segment must be ginfo type: "
@@ -3930,7 +3915,7 @@ grn_ja_check_segment_ginfo(grn_ctx *ctx,
                                                    ginfo,
                                                    tag);
   } else {
-    DEFINE_NAME(ja);
+    GRN_DEFINE_NAME(ja);
     GRN_LOG(ctx,
             GRN_LOG_ERROR,
             "%s[%.*s][%u] failed to refer garbage info segment",

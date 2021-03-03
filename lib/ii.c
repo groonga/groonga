@@ -80,21 +80,6 @@
 
 #define MAX_N_ELEMENTS           5
 
-#define DEFINE_NAME(ii)                                                 \
-  const char *name;                                                     \
-  char name_buffer[GRN_TABLE_MAX_KEY_SIZE];                             \
-  int name_size;                                                        \
-  do {                                                                  \
-    if (DB_OBJ(ii)->id == GRN_ID_NIL) {                                 \
-      name = "(temporary)";                                             \
-      name_size = strlen(name);                                         \
-    } else {                                                            \
-      name_size = grn_obj_name(ctx, (grn_obj *)ii,                      \
-                               name_buffer, GRN_TABLE_MAX_KEY_SIZE);    \
-      name = name_buffer;                                               \
-    }                                                                   \
-  } while (GRN_FALSE)
-
 #ifndef S_IRUSR
 # define S_IRUSR 0400
 #endif /* S_IRUSR */
@@ -458,7 +443,7 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
   const uint32_t n_logical_segments = grn_ii_n_logical_segments_inline(ii);
   for (;; i++) {
     if (i == n_logical_segments) {
-      DEFINE_NAME(ii);
+      GRN_DEFINE_NAME(ii);
       MERR("[ii][buffer][segment][reserve] "
            "couldn't find a free buffer: <%.*s>: max:<%u>",
            name_size, name,
@@ -472,7 +457,7 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
   *lseg0 = i++;
   for (;; i++) {
     if (i == n_logical_segments) {
-      DEFINE_NAME(ii);
+      GRN_DEFINE_NAME(ii);
       MERR("[ii][buffer][segment][reserve] "
            "couldn't find two free buffers: "
            "<%.*s>: "
@@ -487,7 +472,7 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
   }
   *lseg1 = i;
   if ((*pseg0 = segment_get(ctx, ii)) == ii->seg->header->max_segment) {
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     MERR("[ii][buffer][segment][reserve] "
          "couldn't allocate a free segment: <%.*s>: "
          "buffer:<%u>, max:<%u>",
@@ -496,7 +481,7 @@ buffer_segment_reserve(grn_ctx *ctx, grn_ii *ii,
     return ctx->rc;
   }
   if ((*pseg1 = segment_get(ctx, ii)) == ii->seg->header->max_segment) {
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     MERR("[ii][buffer][segment][reserve] "
          "couldn't allocate two free segments: "
          "<%.*s>: "
@@ -685,7 +670,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
       }
     }
     {
-      DEFINE_NAME(ii);
+      GRN_DEFINE_NAME(ii);
       MERR("[ii][chunk][new] index is full: "
            "<%.*s>: "
            "size:<%u>, n-chunks:<%u>",
@@ -717,7 +702,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
         if (!ginfo) {
           if (iw_.addr) { grn_io_win_unmap(ctx, &iw_); }
           {
-            DEFINE_NAME(ii);
+            GRN_DEFINE_NAME(ii);
             MERR("[ii][chunk][new] failed to allocate garbage segment: "
                  "<%.*s>: "
                  "n-garbages:<%u>, size:<%u>, n-chunks:<%u>",
@@ -757,7 +742,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
       int i = 0;
       while (HEADER_CHUNK_AT(ii, i)) {
         if (++i >= n_chunks) {
-          DEFINE_NAME(ii);
+          GRN_DEFINE_NAME(ii);
           MERR("[ii][chunk][new] failed to find a free chunk: "
                "<%.*s>: "
                "index:<%u>, size:<%u>, n-chunks:<%u>",
@@ -2281,7 +2266,7 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
       }
       if (!(rp = GRN_MALLOC(size * sizeof(uint32_t)))) {
         grn_obj term;
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
         if (id != GRN_ID_NIL) {
           grn_ii_get_term(ctx, ii, id, &term);
@@ -2329,7 +2314,7 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
       }
       if (!(rp = GRN_MALLOC(size * sizeof(uint32_t)))) {
         grn_obj term;
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
         if (id != GRN_ID_NIL) {
           grn_ii_get_term(ctx, ii, id, &term);
@@ -2361,7 +2346,7 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
           const uint8_t *next_dp = unpack(dp, dpe, UNIT_SIZE, rp);
           if (!next_dp) {
             grn_obj term;
-            DEFINE_NAME(ii);
+            GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
             if (id != GRN_ID_NIL) {
               grn_ii_get_term(ctx, ii, id, &term);
@@ -2396,7 +2381,7 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
           const uint8_t *next_dp = unpack(dp, dpe, n, rp);
           if (!next_dp) {
             grn_obj term;
-            DEFINE_NAME(ii);
+            GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
             if (id != GRN_ID_NIL) {
               grn_ii_get_term(ctx, ii, id, &term);
@@ -2436,7 +2421,7 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
     GRN_ASSERT(dp == dpe);
     if (dp != dpe) {
       grn_obj term;
-      DEFINE_NAME(ii);
+      GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
       if (id != GRN_ID_NIL) {
         grn_ii_get_term(ctx, ii, id, &term);
@@ -2786,7 +2771,7 @@ buffer_put(grn_ctx *ctx, grn_ii *ii, buffer *b, buffer_term *bt,
     if (id_curr.rid < id_post.rid ||
         (id_curr.rid == id_post.rid && id_curr.sid < id_post.sid)) {
       {
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         CRIT(GRN_FILE_CORRUPT,
              "[ii][buffer][put] loop is found: "
              "<%.*s>: "
@@ -3433,7 +3418,7 @@ merge_dump_source(grn_ctx *ctx,
     data.data_vector[ii->n_elements - 1].flags = ODD;
   }
   {
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     grn_memcpy(data.name, name, name_size);
     data.name_size = name_size;
   }
@@ -3663,7 +3648,7 @@ merger_report_error(grn_ctx *ctx,
   merger_buffer_data *buffer_data = &(data->source.buffer);
   merger_chunk_data *chunk_data = &(data->source.chunk);
   grn_obj term;
-  DEFINE_NAME(data->ii);
+  GRN_DEFINE_NAME(data->ii);
   GRN_TEXT_INIT(&term, 0);
   grn_ii_get_term(ctx, data->ii, data->term_id & GRN_ID_MAX, &term);
   if (posting1 && posting2) {
@@ -3776,7 +3761,7 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
                      data->dest.position_gaps);
         if (chunk_data->id.tf > rest_n_positions) {
           grn_obj term;
-          DEFINE_NAME(data->ii);
+          GRN_DEFINE_NAME(data->ii);
           GRN_TEXT_INIT(&term, 0);
           grn_ii_get_term(ctx,
                           data->ii,
@@ -3798,7 +3783,7 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
         if (chunk_data->id.tf > rest_n_dest_positions) {
           /* TODO: Make this case error. */
           grn_obj term;
-          DEFINE_NAME(data->ii);
+          GRN_DEFINE_NAME(data->ii);
           GRN_TEXT_INIT(&term, 0);
           grn_ii_get_term(ctx,
                           data->ii,
@@ -3903,7 +3888,7 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
           /* TODO: Make this case error. */
           merger_buffer_data *buffer_data = &(data->source.buffer);
           grn_obj term;
-          DEFINE_NAME(data->ii);
+          GRN_DEFINE_NAME(data->ii);
           GRN_TEXT_INIT(&term, 0);
           grn_ii_get_term(ctx,
                           data->ii,
@@ -3999,7 +3984,7 @@ chunk_flush(grn_ctx *ctx, grn_ii *ii, chunk_info *cinfo, uint8_t *enc, uint32_t 
       } else {
         chunk_free(ctx, ii, dcn, encsize);
         {
-          DEFINE_NAME(ii);
+          GRN_DEFINE_NAME(ii);
           MERR("[ii][chunk][flush] failed to allocate a destination chunk: "
                "<%.*s>:"
                "segment:<%u>, size:<%u>",
@@ -4037,7 +4022,7 @@ chunk_merge(grn_ctx *ctx,
 
   if (!scp) {
     grn_obj term;
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
     grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
     MERR("[ii][chunk][merge] failed to allocate a source chunk: "
@@ -4062,7 +4047,7 @@ chunk_merge(grn_ctx *ctx,
   if (ctx->rc != GRN_SUCCESS) {
     grn_io_win_unmap(ctx, &sw);
     {
-      DEFINE_NAME(ii);
+      GRN_DEFINE_NAME(ii);
       ERR(ctx->rc,
           "[ii][chunk][merge] failed to initialize data vector: <%.*s>",
           name_size, name);
@@ -4081,7 +4066,7 @@ chunk_merge(grn_ctx *ctx,
     if (decoded_size == 0) {
       grn_obj term;
       grn_rc rc = ctx->rc;
-      DEFINE_NAME(ii);
+      GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
       grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
       if (rc == GRN_SUCCESS) {
@@ -4112,7 +4097,7 @@ chunk_merge(grn_ctx *ctx,
                 bufsize);
   if (ctx->rc != GRN_SUCCESS) {
     grn_obj term;
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
     grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
     ERR(ctx->rc,
@@ -4141,7 +4126,7 @@ chunk_merge(grn_ctx *ctx,
   merger_get_next_chunk(ctx, data);
   if (ctx->rc != GRN_SUCCESS) {
     grn_obj term;
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
     grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
     ERR(ctx->rc,
@@ -4162,7 +4147,7 @@ chunk_merge(grn_ctx *ctx,
   } while (buffer_data->id.rid <= rid || chunk_data->id.rid);
   if (ctx->rc != GRN_SUCCESS) {
     grn_obj term;
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
     grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
     ERR(ctx->rc,
@@ -4203,7 +4188,7 @@ chunk_merge(grn_ctx *ctx,
     const ssize_t encsize_estimated = grn_p_encv(ctx, dv, ii->n_elements, NULL);
     if (encsize_estimated == -1) {
       grn_obj term;
-      DEFINE_NAME(ii);
+      GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
       grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
       MERR("[ii][chunk][merge] failed to estimate encode buffer size: "
@@ -4229,7 +4214,7 @@ chunk_merge(grn_ctx *ctx,
       enc = GRN_MALLOC(encsize_estimated);
       if (!enc) {
         grn_obj term;
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
         grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
         MERR("[ii][chunk][merge] failed to allocate a encode buffer: "
@@ -4252,7 +4237,7 @@ chunk_merge(grn_ctx *ctx,
       const ssize_t encsize = grn_p_encv(ctx, dv, ii->n_elements, enc);
       if (encsize == -1) {
         grn_obj term;
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
         grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
         MERR("[ii][chunk][merge] failed to encode: "
@@ -4365,7 +4350,7 @@ buffer_merge_ensure_dc(grn_ctx *ctx,
   }
   uint8_t *new_dc = GRN_REALLOC(*dc, new_dc_size);
   if (new_dc) {
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     GRN_LOG(ctx,
             GRN_LOG_INFO,
             "[ii][buffer][merge]%s destination chunk is expanded: "
@@ -4383,7 +4368,7 @@ buffer_merge_ensure_dc(grn_ctx *ctx,
     if (rc == GRN_SUCCESS) {
       rc = GRN_NO_MEMORY_AVAILABLE;
     }
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     ERR(rc,
         "[ii][buffer][merge]%s failed to expand destination chunk: "
         "<%.*s>: "
@@ -4419,7 +4404,7 @@ buffer_merge(grn_ctx *ctx,
   //todo : realloc
   datavec_init(ctx, dv, ii->n_elements, unitsize, totalsize);
   if (ctx->rc != GRN_SUCCESS) {
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     ERR(ctx->rc,
         "[ii][buffer][merge] failed to initialize data vector: "
         "<%.*s>: "
@@ -4433,7 +4418,7 @@ buffer_merge(grn_ctx *ctx,
   datavec_init(ctx, rdv, ii->n_elements, 0, 0);
   if (ctx->rc != GRN_SUCCESS) {
     datavec_fin(ctx, dv);
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     ERR(ctx->rc,
         "[ii][buffer][merge] failed to initialize data vector for read: "
         "<%.*s>",
@@ -4451,7 +4436,7 @@ buffer_merge(grn_ctx *ctx,
     if (rc == GRN_SUCCESS) {
       rc = GRN_NO_MEMORY_AVAILABLE;
     }
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     ERR(rc,
         "[ii][buffer][merge] failed to allocate destination chunk: "
         "<%.*s>: <%" GRN_FMT_SIZE ">",
@@ -4485,7 +4470,7 @@ buffer_merge(grn_ctx *ctx,
     if (bt->pos_in_buffer == 0) {
       if (bt->size_in_buffer > 0) {
         grn_obj term;
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
         grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
         GRN_LOG(ctx,
@@ -4535,7 +4520,7 @@ buffer_merge(grn_ctx *ctx,
         GRN_B_DEC(nchunks, chunk_data->data);
         if (!(cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) {
           grn_obj term;
-          DEFINE_NAME(ii);
+          GRN_DEFINE_NAME(ii);
           GRN_TEXT_INIT(&term, 0);
           grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
           MERR("[ii][buffer][merge] failed to allocate chunk info: "
@@ -4567,7 +4552,7 @@ buffer_merge(grn_ctx *ctx,
               if (cinfo) { GRN_FREE(cinfo); }
               {
                 grn_obj term;
-                DEFINE_NAME(ii);
+                GRN_DEFINE_NAME(ii);
                 GRN_TEXT_INIT(&term, 0);
                 grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
                 ERR(ctx->rc,
@@ -4609,7 +4594,7 @@ buffer_merge(grn_ctx *ctx,
           {
             grn_obj term;
             grn_rc rc = ctx->rc;
-            DEFINE_NAME(ii);
+            GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
             grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
             if (rc == GRN_SUCCESS) {
@@ -4639,7 +4624,7 @@ buffer_merge(grn_ctx *ctx,
           if (cinfo) { GRN_FREE(cinfo); }
           {
             grn_obj term;
-            DEFINE_NAME(ii);
+            GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
             grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
             ERR(ctx->rc,
@@ -4685,7 +4670,7 @@ buffer_merge(grn_ctx *ctx,
       if (cinfo) { GRN_FREE(cinfo); }
       {
         grn_obj term;
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
         grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
         ERR(ctx->rc,
@@ -4800,7 +4785,7 @@ buffer_merge(grn_ctx *ctx,
                                                        NULL);
           if (estimated_encsize == -1) {
             grn_obj term;
-            DEFINE_NAME(ii);
+            GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
             grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
             ERR(ctx->rc,
@@ -4833,7 +4818,7 @@ buffer_merge(grn_ctx *ctx,
           const ssize_t encsize = grn_p_encv(ctx, dv, ii->n_elements, dcp);
           if (encsize == -1) {
             grn_obj term;
-            DEFINE_NAME(ii);
+            GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
             grn_ii_get_term(ctx, ii, bt->tid & GRN_ID_MAX, &term);
             ERR(ctx->rc,
@@ -4932,7 +4917,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
   buffer *sb, *db = NULL;
   uint32_t ds, pseg, scn, dcn = 0;
   if (grn_ii_get_buffer_pseg_inline(ii, lseg) == GRN_II_PSEG_NOT_ASSIGNED) {
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     CRIT(GRN_FILE_CORRUPT,
          "[ii][buffer][flush] invalid segment: "
          "<%.*s>: "
@@ -4942,7 +4927,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
     return ctx->rc;
   }
   if ((ds = segment_get(ctx, ii)) == ii->seg->header->max_segment) {
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     MERR("[ii][buffer][flush] segment is full: "
          "<%.*s>: "
          "request:<%u>, max:<%u>",
@@ -4952,7 +4937,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
   }
   pseg = buffer_open(ctx, ii, grn_ii_pos_pack(ii, lseg, 0), NULL, &sb);
   if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     MERR("[ii][buffer][flush] failed to open buffer: "
          "<%.*s>: "
          "segment:<%u>, position:<%u>, max:<%u>",
@@ -5003,7 +4988,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
                 ii->header.common->total_chunk_size -= sb->header.chunk_size;
               }
             } else {
-              DEFINE_NAME(ii);
+              GRN_DEFINE_NAME(ii);
               ERR(rc,
                   "[ii][buffer][flush] failed to unmap a destination chunk: "
                   "<%.*s> : "
@@ -5024,7 +5009,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
         grn_merging_data_fin(ctx, &merging_data);
         if (scn != GRN_II_PSEG_NOT_ASSIGNED) { grn_io_win_unmap(ctx, &sw); }
       } else {
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         MERR("[ii][buffer][flush] failed to map a source chunk: "
              "<%.*s>: "
              "segment:<%u>, source-segment:<%u>, chunk-size:<%u>",
@@ -5035,7 +5020,7 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
       }
       grn_io_seg_unref(ctx, ii->seg, ds);
     } else {
-      DEFINE_NAME(ii);
+      GRN_DEFINE_NAME(ii);
       MERR("[ii][buffer][flush] failed to allocate a destination segment: "
            "<%.*s>: "
            "segment:<%u>, destination-segment:<%u>",
@@ -5335,7 +5320,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
   buffer *sb, *db0 = NULL, *db1 = NULL;
   uint32_t dps0 = 0, dps1 = 0, dls0 = 0, dls1 = 0, sps, scn, dcn0 = 0, dcn1 = 0;
   if (grn_ii_get_buffer_pseg_inline(ii, lseg) == GRN_II_PSEG_NOT_ASSIGNED) {
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     CRIT(GRN_FILE_CORRUPT,
          "[ii][buffer][split] invalid segment: "
          "<%.*s> :"
@@ -5346,7 +5331,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
   }
   buffer_segment_reserve(ctx, ii, &dls0, &dps0, &dls1, &dps1);
   if (ctx->rc != GRN_SUCCESS) {
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     ERR(ctx->rc,
         "[ii][buffer][split] failed to reserve buffer segments: "
         "<%.*s> :"
@@ -5357,7 +5342,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
   }
   sps = buffer_open(ctx, ii, grn_ii_pos_pack(ii, lseg, 0), NULL, &sb);
   if (sps == GRN_II_PSEG_NOT_ASSIGNED) {
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     MERR("[ii][buffer][split] failed to open buffer: "
          "<%.*s> :"
          "segment:<%u>, position:<%u>, max-segment:<%u>",
@@ -5434,7 +5419,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
                           sb->header.chunk_size;
                       }
                     } else {
-                      DEFINE_NAME(ii);
+                      GRN_DEFINE_NAME(ii);
                       ERR(rc,
                           "[ii][buffer][merge] "
                           "failed to unmap a destination chunk2: "
@@ -5460,7 +5445,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
                   }
                 }
               } else {
-                DEFINE_NAME(ii);
+                GRN_DEFINE_NAME(ii);
                 ERR(rc,
                     "[ii][buffer][merge] "
                     "failed to unmap a destination chunk1: "
@@ -5486,7 +5471,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
             grn_io_win_unmap(ctx, &sw);
           }
         } else {
-          DEFINE_NAME(ii);
+          GRN_DEFINE_NAME(ii);
           MERR("[ii][buffer][split] failed to map a source chunk: "
                "<%.*s> :"
                "segment:<%u>, "
@@ -5499,7 +5484,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
         }
         grn_io_seg_unref(ctx, ii->seg, dps1);
       } else {
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         MERR("[ii][buffer][split] failed to allocate a destination segment2: "
              "<%.*s>: "
              "segment:<%u>, "
@@ -5512,7 +5497,7 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
       }
       grn_io_seg_unref(ctx, ii->seg, dps0);
     } else {
-      DEFINE_NAME(ii);
+      GRN_DEFINE_NAME(ii);
       MERR("[ii][buffer][split] failed to allocate a destination segment1: "
            "<%.*s>: "
            "segment:<%u>, "
@@ -5724,7 +5709,7 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
   uint16_t offset;
   uint32_t lseg = GRN_II_PSEG_NOT_ASSIGNED, pseg = GRN_II_PSEG_NOT_ASSIGNED;
   if (S_SEGMENT - sizeof(buffer_header) < size + sizeof(buffer_term)) {
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     MERR("[ii][buffer][new] requested size is too large: "
          "<%.*s> :"
          "requested:<%" GRN_FMT_SIZE ">, max:<%" GRN_FMT_SIZE ">",
@@ -6144,7 +6129,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   if (u->sid > ii->header.common->smax) { ii->header.common->smax = u->sid; }
   if (!(a = array_get(ctx, ii, tid))) {
     grn_obj term;
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
     grn_ii_get_term(ctx, ii, tid, &term);
     MERR("[ii][update][one] failed to allocate an array: "
@@ -6160,7 +6145,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   }
   if (!(bs = encode_rec(ctx, ii, u, &size, 0))) {
     grn_obj term;
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
     grn_ii_get_term(ctx, ii, tid, &term);
     MERR("[ii][update][one] failed to encode a record: "
@@ -6180,7 +6165,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         pos = a[0];
         if ((pseg = buffer_open(ctx, ii, pos, &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
           grn_obj term;
-          DEFINE_NAME(ii);
+          GRN_DEFINE_NAME(ii);
           GRN_TEXT_INIT(&term, 0);
           grn_ii_get_term(ctx, ii, tid, &term);
           MERR("[ii][update][one] failed to allocate a buffer: "
@@ -6218,7 +6203,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             if (ctx->rc != GRN_SUCCESS) {
               grn_obj term;
               char errbuf[GRN_CTX_MSGSIZE];
-              DEFINE_NAME(ii);
+              GRN_DEFINE_NAME(ii);
               GRN_TEXT_INIT(&term, 0);
               grn_ii_get_term(ctx, ii, tid, &term);
               grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
@@ -6248,7 +6233,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           if (ctx->rc != GRN_SUCCESS) {
             grn_obj term;
             char errbuf[GRN_CTX_MSGSIZE];
-            DEFINE_NAME(ii);
+            GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
             grn_ii_get_term(ctx, ii, tid, &term);
             grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
@@ -6280,7 +6265,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             GRN_LOG(ctx, GRN_LOG_CRIT, "buffer not found a[0]=%d", a[0]);
             {
               grn_obj term;
-              DEFINE_NAME(ii);
+              GRN_DEFINE_NAME(ii);
               GRN_TEXT_INIT(&term, 0);
               grn_ii_get_term(ctx, ii, tid, &term);
               MERR("[ii][update][one] failed to reallocate a buffer: "
@@ -6309,7 +6294,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                   b->header.nterms, b->header.nterms_void);
           if (b->header.buffer_free < size) {
             grn_obj term;
-            DEFINE_NAME(ii);
+            GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
             grn_ii_get_term(ctx, ii, tid, &term);
             MERR("[ii][update][one] buffer is full: "
@@ -6354,7 +6339,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           uint8_t *bs2 = encode_rec(ctx, ii, &u2, &size2, 0);
           if (!bs2) {
             grn_obj term;
-            DEFINE_NAME(ii);
+            GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
             grn_ii_get_term(ctx, ii, tid, &term);
             MERR("[ii][update][one] failed to encode a record2: "
@@ -6373,7 +6358,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             GRN_FREE(bs2);
             {
               grn_obj term;
-              DEFINE_NAME(ii);
+              GRN_DEFINE_NAME(ii);
               GRN_TEXT_INIT(&term, 0);
               grn_ii_get_term(ctx, ii, tid, &term);
               MERR("[ii][update][one] failed to create a buffer2: "
@@ -6402,7 +6387,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             {
               grn_obj term;
               char errbuf[GRN_CTX_MSGSIZE];
-              DEFINE_NAME(ii);
+              GRN_DEFINE_NAME(ii);
               GRN_TEXT_INIT(&term, 0);
               grn_ii_get_term(ctx, ii, tid, &term);
               grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
@@ -6444,7 +6429,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     pseg = buffer_new(ctx, ii, size, &pos, &bt, &br, &b, tid, h);
     if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
       grn_obj term;
-      DEFINE_NAME(ii);
+      GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
       grn_ii_get_term(ctx, ii, tid, &term);
       MERR("[ii][update][one] failed to create a buffer: "
@@ -6489,7 +6474,7 @@ exit :
     }
     {
       grn_obj term;
-      DEFINE_NAME(ii);
+      GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
       grn_ii_get_term(ctx, ii, tid, &term);
       GRN_LOG(ctx, GRN_LOG_WARNING,
@@ -6547,7 +6532,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     }
     if (!(bs = encode_rec(ctx, ii, u, &size, 1))) {
       grn_obj term;
-      DEFINE_NAME(ii);
+      GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
       grn_ii_get_term(ctx, ii, tid, &term);
       MERR("[ii][delete][one] failed to encode a record: "
@@ -6563,7 +6548,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     }
     if ((pseg = buffer_open(ctx, ii, pos, &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
       grn_obj term;
-      DEFINE_NAME(ii);
+      GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
       grn_ii_get_term(ctx, ii, tid, &term);
       MERR("[ii][delete][one] failed to allocate a buffer: "
@@ -6588,7 +6573,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       if (ctx->rc != GRN_SUCCESS) {
         grn_obj term;
         char errbuf[GRN_CTX_MSGSIZE];
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
         grn_ii_get_term(ctx, ii, tid, &term);
         grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
@@ -6615,7 +6600,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       }
       if ((pseg = buffer_open(ctx, ii, a[0], &bt, &b)) == GRN_II_PSEG_NOT_ASSIGNED) {
         grn_obj term;
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
         grn_ii_get_term(ctx, ii, tid, &term);
         MERR("[ii][delete][one] failed to reallocate a buffer: "
@@ -6635,7 +6620,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
               b, b->header.buffer_free, grn_ii_pos_lseg(ii, a[0]));
       if (b->header.buffer_free < size) {
         grn_obj term;
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
         grn_ii_get_term(ctx, ii, tid, &term);
         MERR("[ii][delete][one] buffer is full: "
@@ -6999,7 +6984,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                                c->cp, c->cpe - c->cp,
                                c->rdv, c->ii->n_elements);
                   if (decoded_size == 0) {
-                    DEFINE_NAME(c->ii);
+                    GRN_DEFINE_NAME(c->ii);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk][last] "
                             "failed to decode the last chunk. "
@@ -7015,7 +7000,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                     break;
                   }
                   if (buffer_is_reused(ctx, c->ii, c)) {
-                    DEFINE_NAME(c->ii);
+                    GRN_DEFINE_NAME(c->ii);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk][last] "
                             "buffer is reused by another thread: "
@@ -7029,7 +7014,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                   if (chunk_is_reused(ctx, c->ii, c,
                                       c->buf->header.chunk,
                                       c->buf->header.chunk_size)) {
-                    DEFINE_NAME(c->ii);
+                    GRN_DEFINE_NAME(c->ii);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk][last] "
                             "chunk is reused by another thread: "
@@ -7058,7 +7043,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                                cp, size, c->rdv, c->ii->n_elements);
                   grn_io_win_unmap(ctx, &iw);
                   if (decoded_size == 0) {
-                    DEFINE_NAME(c->ii);
+                    GRN_DEFINE_NAME(c->ii);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk] "
                             "failed to decode the next chunk. "
@@ -7074,7 +7059,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                     break;
                   }
                   if (buffer_is_reused(ctx, c->ii, c)) {
-                    DEFINE_NAME(c->ii);
+                    GRN_DEFINE_NAME(c->ii);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk] "
                             "buffer is reused by another thread: "
@@ -7087,7 +7072,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                   }
                   if (chunk_is_reused(ctx, c->ii, c,
                                       c->cinfo[c->curr_chunk].segno, size)) {
-                    DEFINE_NAME(c->ii);
+                    GRN_DEFINE_NAME(c->ii);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
                             "[ii][cursor][next][chunk] "
                             "chunk is reused by another thread: "
@@ -7138,7 +7123,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
             uint32_t lrid = c->pb.rid, lsid = c->pb.sid; /* for check */
             buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
             if (buffer_is_reused(ctx, c->ii, c)) {
-              DEFINE_NAME(c->ii);
+              GRN_DEFINE_NAME(c->ii);
               GRN_LOG(ctx, GRN_LOG_WARNING,
                       "[ii][cursor][next][buffer] "
                       "buffer is reused by another thread: "
@@ -7159,7 +7144,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
               c->pb.sid = 1;
             }
             if (lrid > c->pb.rid || (lrid == c->pb.rid && lsid >= c->pb.sid)) {
-              DEFINE_NAME(c->ii);
+              GRN_DEFINE_NAME(c->ii);
               ERR(GRN_FILE_CORRUPT,
                   "[ii][broken][cursor][next][buffer] "
                   "posting in list in buffer isn't sorted: "
@@ -7992,7 +7977,7 @@ grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
             }
             if (!*u) {
               if (!(*u = grn_ii_updspec_open(ctx, rid, section))) {
-                DEFINE_NAME(ii);
+                GRN_DEFINE_NAME(ii);
                 MERR("[ii][update][spec] failed to create an update spec: "
                      "<%.*s>: "
                      "record:<%u>:<%u>, token:<%u>:<%d>:<%f>",
@@ -8004,7 +7989,7 @@ grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
               }
             }
             if (grn_ii_updspec_add(ctx, *u, token_cursor->pos, v->weight)) {
-              DEFINE_NAME(ii);
+              GRN_DEFINE_NAME(ii);
               MERR("[ii][update][spec] failed to add to update spec: "
                    "<%.*s>: "
                    "record:<%u>:<%u>, token:<%u>:<%d>:<%f>",
@@ -8070,7 +8055,7 @@ grn_uvector2updspecs_data(grn_ctx *ctx, grn_ii *ii, grn_id rid,
                                     &casted_element_buffer,
                                     true);
       if (cast_rc != GRN_SUCCESS) {
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         {
           grn_obj *domain = grn_ctx_at(ctx,
                                        casted_element_buffer.header.domain);
@@ -8213,7 +8198,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     return ctx->rc;
   }
   if (rid == GRN_ID_NIL) {
-    DEFINE_NAME(ii);
+    GRN_DEFINE_NAME(ii);
     ERR(GRN_INVALID_ARGUMENT,
         "[ii][column][update] record ID is nil: <%.*s>",
         name_size, name);
@@ -8310,7 +8295,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                                        sizeof(grn_ii_updspec *),
                                        GRN_HASH_TINY);
       if (!new) {
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         MERR("[ii][column][update][new][vector] failed to create a hash table: "
              "<%.*s>: ",
              name_size, name);
@@ -8327,7 +8312,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                                        sizeof(grn_ii_updspec *),
                                        GRN_HASH_TINY);
       if (!new) {
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         MERR("[ii][column][update][new][uvector] failed to create a hash table: "
              "<%.*s>: ",
              name_size, name);
@@ -8357,7 +8342,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
       break;
     default :
       {
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         ERR(GRN_INVALID_ARGUMENT,
             "[ii][column][update][new] invalid object: "
             "<%.*s>: "
@@ -8427,7 +8412,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                                        sizeof(grn_ii_updspec *),
                                        GRN_HASH_TINY);
       if (!old) {
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         MERR("[ii][column][update][old][vector] failed to create a hash table: "
              "<%.*s>: ",
              name_size, name);
@@ -8444,7 +8429,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                                        sizeof(grn_ii_updspec *),
                                        GRN_HASH_TINY);
       if (!old) {
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         MERR("[ii][column][update][old][uvector] failed to create a hash table: "
              "<%.*s>: ",
              name_size, name);
@@ -8474,7 +8459,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
       break;
     default :
       {
-        DEFINE_NAME(ii);
+        GRN_DEFINE_NAME(ii);
         ERR(GRN_INVALID_ARGUMENT,
             "[ii][column][update][old] invalid object: "
             "<%.*s>: "
@@ -13367,7 +13352,7 @@ get_term_buffer(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
       if (pseg == GRN_II_PSEG_NOT_ASSIGNED) { break; }
     }
     if (lseg == n_logical_segments) {
-      DEFINE_NAME(ii_buffer->ii);
+      GRN_DEFINE_NAME(ii_buffer->ii);
       MERR("[ii][buffer][term-buffer] couldn't find a free buffer: "
            "<%.*s>",
            name_size, name);
@@ -13465,7 +13450,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       a = array_get(ctx, ii_buffer->ii, tid);
       if (!a) {
         grn_obj token;
-        DEFINE_NAME(ii_buffer->ii);
+        GRN_DEFINE_NAME(ii_buffer->ii);
         GRN_TEXT_INIT(&token, 0);
         grn_ii_get_term(ctx, ii_buffer->ii, tid, &token);
         MERR("[ii][buffer][merge] failed to allocate an array: "
@@ -13480,7 +13465,7 @@ grn_ii_buffer_merge(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       term_buffer = get_term_buffer(ctx, ii_buffer);
       if (!term_buffer) {
         grn_obj token;
-        DEFINE_NAME(ii_buffer->ii);
+        GRN_DEFINE_NAME(ii_buffer->ii);
         GRN_TEXT_INIT(&token, 0);
         grn_ii_get_term(ctx, ii_buffer->ii, tid, &token);
         MERR("[ii][buffer][merge] failed to allocate a term buffer: "
@@ -15988,7 +15973,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn_ii_builder *builder,
     a = array_get(ctx, builder->ii, chunk->tid);
     if (!a) {
       grn_obj token;
-      DEFINE_NAME(builder->ii);
+      GRN_DEFINE_NAME(builder->ii);
       GRN_TEXT_INIT(&token, 0);
       grn_ii_get_term(ctx, builder->ii, chunk->tid, &token);
       MERR("[ii][builder][chunk][pack] failed to allocate an array: "
@@ -16007,7 +15992,7 @@ grn_ii_builder_pack_chunk(grn_ctx *ctx, grn_ii_builder *builder,
     a = array_get(ctx, builder->ii, chunk->tid);
     if (!a) {
       grn_obj token;
-      DEFINE_NAME(builder->ii);
+      GRN_DEFINE_NAME(builder->ii);
       GRN_TEXT_INIT(&token, 0);
       grn_ii_get_term(ctx, builder->ii, chunk->tid, &token);
       MERR("[ii][builder][chunk][pack] failed to allocate an array: "
@@ -16179,7 +16164,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx, grn_ii_builder *builder,
         if (chunk->n >= threshold) {
           if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
             grn_obj token;
-            DEFINE_NAME(builder->ii);
+            GRN_DEFINE_NAME(builder->ii);
             GRN_TEXT_INIT(&token, 0);
             grn_ii_get_term(ctx, builder->ii, chunk->tid, &token);
             GRN_LOG(ctx, GRN_LOG_DEBUG,
@@ -16333,7 +16318,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
 
   if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
     grn_obj token;
-    DEFINE_NAME(builder->ii);
+    GRN_DEFINE_NAME(builder->ii);
     GRN_TEXT_INIT(&token, 0);
     grn_ii_get_term(ctx, builder->ii, builder->chunk.tid, &token);
     GRN_LOG(ctx, GRN_LOG_DEBUG,
@@ -16361,7 +16346,7 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
   a = array_get(ctx, builder->ii, builder->chunk.tid);
   if (!a) {
     grn_obj token;
-    DEFINE_NAME(builder->ii);
+    GRN_DEFINE_NAME(builder->ii);
     GRN_TEXT_INIT(&token, 0);
     grn_ii_get_term(ctx, builder->ii, builder->chunk.tid, &token);
     MERR("[ii][builder][register][chunks] "

@@ -59,6 +59,21 @@ extern "C" {
 
 #define DB_OBJ(obj) ((grn_db_obj *)obj)
 
+#define GRN_DEFINE_NAME(obj)                                            \
+  const char *name;                                                     \
+  char name_buffer[GRN_TABLE_MAX_KEY_SIZE];                             \
+  int name_size;                                                        \
+  do {                                                                  \
+    if (DB_OBJ(obj)->id == GRN_ID_NIL) {                                \
+      name = "(temporary)";                                             \
+      name_size = strlen(name);                                         \
+    } else {                                                            \
+      name_size = grn_obj_name(ctx, (grn_obj *)obj,                     \
+                               name_buffer, GRN_TABLE_MAX_KEY_SIZE);    \
+      name = name_buffer;                                               \
+    }                                                                   \
+  } while (false)
+
 extern bool grn_enable_reference_count;
 
 typedef struct _grn_db grn_db;
