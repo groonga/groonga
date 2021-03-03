@@ -3868,6 +3868,29 @@ grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
             n_existing_records);
     is_valid = false;
   }
+  if (ginfo->next != 0) {
+    uint32_t next_segment_info = SEGMENT_INFO_AT(ja, ginfo->next);
+    uint32_t next_segment_type =
+      grn_ja_segment_info_type(ctx, next_segment_info);
+    if (next_segment_type != SEG_GINFO) {
+      DEFINE_NAME(ja);
+      GRN_LOG(ctx,
+              GRN_LOG_ERROR,
+              "%s[%.*s][%u] next segment must be ginfo type: "
+              "variation:%u, "
+              "next_segment:%u, "
+              "next_segment_type:%u, "
+              "next_segment_type_name:<%s>",
+              tag,
+              name_size, name,
+              segment,
+              variation,
+              ginfo->next,
+              next_segment_type >> SEG_TYPE_SHIFT,
+              grn_ja_segment_info_type_name(ctx, next_segment_info));
+      is_valid = false;
+    }
+  }
   return is_valid;
 }
 
@@ -3878,7 +3901,7 @@ grn_ja_check_segment_ginfo(grn_ctx *ctx,
                            uint32_t info)
 {
   const char *tag = "[ja][check][segment][ginfo]";
-  GRN_OUTPUT_MAP_OPEN("segment", 8);
+  GRN_OUTPUT_MAP_OPEN("segment", 9);
   GRN_OUTPUT_CSTR("id");
   GRN_OUTPUT_UINT32(segment);
   GRN_OUTPUT_CSTR("type");
@@ -3892,12 +3915,14 @@ grn_ja_check_segment_ginfo(grn_ctx *ctx,
   uint32_t head = 0;
   uint32_t tail = 0;
   uint32_t n_garbages = 0;
+  uint32_t next = 0;
   bool is_valid = false;
   grn_ja_ginfo *ginfo = grn_io_seg_ref(ctx, ja->io, segment);
   if (ginfo) {
     head = ginfo->head;
     tail = ginfo->tail;
     n_garbages = ginfo->nrecs;
+    next = ginfo->next;
     is_valid = grn_ja_check_segment_ginfo_validate(ctx,
                                                    ja,
                                                    segment,
@@ -3920,6 +3945,8 @@ grn_ja_check_segment_ginfo(grn_ctx *ctx,
   GRN_OUTPUT_UINT32(tail);
   GRN_OUTPUT_CSTR("n_garbages");
   GRN_OUTPUT_UINT32(n_garbages);
+  GRN_OUTPUT_CSTR("next");
+  GRN_OUTPUT_UINT32(next);
   GRN_OUTPUT_CSTR("valid");
   GRN_OUTPUT_BOOL(is_valid);
 
