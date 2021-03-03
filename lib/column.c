@@ -195,26 +195,88 @@ grn_column_copy_same_table(grn_ctx *ctx,
                            grn_obj *from_column,
                            grn_obj *to_column)
 {
-  grn_table_cursor *cursor;
-  grn_id id;
-  grn_obj value;
-
-  cursor = grn_table_cursor_open(ctx, table,
-                                 NULL, 0,
-                                 NULL, 0,
-                                 0, -1, 0);
-  if (!cursor) {
-    return;
+  grn_id from_range_id = GRN_ID_NIL;
+  grn_obj_flags from_range_flags = 0;
+  grn_id to_range_id = GRN_ID_NIL;
+  grn_obj_flags to_range_flags = 0;
+  bool need_validate = false;
+  if (grn_obj_is_reference_column(ctx, from_column) &&
+      grn_obj_is_reference_column(ctx, to_column)) {
+    grn_obj_get_range_info(ctx, from_column, &from_range_id, &from_range_flags);
+    grn_obj_get_range_info(ctx, to_column, &to_range_id, &to_range_flags);
+    need_validate = (from_range_id == to_range_id &&
+                     from_range_flags == to_range_flags);
   }
 
+  grn_obj value;
   GRN_VOID_INIT(&value);
-  while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
-    GRN_BULK_REWIND(&value);
-    grn_obj_get_value(ctx, from_column, id, &value);
-    grn_obj_set_value(ctx, to_column, id, &value, GRN_OBJ_SET);
+  if (need_validate) {
+    grn_obj validated_value;
+    GRN_RECORD_INIT(&validated_value, to_range_flags, to_range_id);
+    bool is_uvector = grn_obj_is_uvector(ctx, &validated_value);
+    grn_obj *range = grn_ctx_at(ctx, to_range_id);
+    GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
+      GRN_BULK_REWIND(&value);
+      grn_obj_get_value(ctx, from_column, id, &value);
+      GRN_BULK_REWIND(&validated_value);
+      if (is_uvector) {
+        uint32_t n_elements = grn_uvector_size(ctx, &value);
+        uint32_t i;
+        for (i = 0; i < n_elements; i++) {
+          float weight;
+          grn_id record_id = grn_uvector_get_element_record(ctx,
+                                                            &value,
+                                                            i,
+                                                            &weight);
+          if (record_id == GRN_ID_NIL ||
+              record_id >= GRN_ID_MAX ||
+              !grn_table_at(ctx, range, record_id)) {
+            GRN_DEFINE_NAME(from_column);
+            GRN_LOG(ctx,
+                    GRN_LOG_WARNING,
+                    "[column][copy][%.*s][%u] "
+                    "ignore invalid reference value: %u",
+                    name_size, name,
+                    id,
+                    record_id);
+            continue;
+          }
+          grn_uvector_add_element_record(ctx,
+                                         &validated_value,
+                                         record_id,
+                                         weight);
+        }
+      } else {
+        if (GRN_BULK_VSIZE(&value) > 0) {
+          grn_id record_id = GRN_RECORD_VALUE(&value);
+          if (record_id == GRN_ID_NIL ||
+              record_id >= GRN_ID_MAX ||
+              !grn_table_at(ctx, range, record_id)) {
+            GRN_DEFINE_NAME(from_column);
+            GRN_LOG(ctx,
+                    GRN_LOG_WARNING,
+                    "[column][copy][%.*s][%u] "
+                    "ignore invalid reference value: %u",
+                    name_size, name,
+                    id,
+                    record_id);
+          } else {
+            GRN_RECORD_SET(ctx, &validated_value, record_id);
+          }
+        }
+      }
+      grn_obj_set_value(ctx, to_column, id, &validated_value, GRN_OBJ_SET);
+    } GRN_TABLE_EACH_END(ctx, cursor);
+    grn_obj_unref(ctx, range);
+    GRN_OBJ_FIN(ctx, &validated_value);
+  } else {
+    GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
+      GRN_BULK_REWIND(&value);
+      grn_obj_get_value(ctx, from_column, id, &value);
+      grn_obj_set_value(ctx, to_column, id, &value, GRN_OBJ_SET);
+    } GRN_TABLE_EACH_END(ctx, cursor);
   }
   GRN_OBJ_FIN(ctx, &value);
-  grn_table_cursor_close(ctx, cursor);
 }
 
 static void
