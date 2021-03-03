@@ -259,7 +259,7 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
  *       uses best fit fixed size. For example, 31B size element uses a
  *       segment that uses 32B fixed size not 16B/64B fixed size.
  *       NOTE: Old DB uses GRN_JA_W_CHUNK_THRESH_V1 not _V2.
- *   * Each segment has metadata.
+ *   * Each segment has metadata (segment info).
  *   * Segment types:
  *     * HUGE: The segment that stores element values of HUGE element.
  *       Multiple continuous HUGE segments are used for one HUGE element value.
@@ -382,7 +382,7 @@ struct grn_ja_header_v1 {
   ja_pos free_elements[JA_N_ELEMENT_VARIATION_V1];
   uint32_t garbages[JA_N_ELEMENT_VARIATION_V1];
   uint32_t ngarbages[JA_N_ELEMENT_VARIATION_V1];
-  uint32_t data_segs[JA_N_DATA_SEGMENTS];
+  uint32_t segment_infos[JA_N_DATA_SEGMENTS];
   uint32_t element_segs[JA_N_ELEMENT_SEGMENTS];
 };
 
@@ -394,7 +394,7 @@ struct grn_ja_header_v2 {
   ja_pos free_elements[JA_N_ELEMENT_VARIATION_V2];
   uint32_t garbages[JA_N_ELEMENT_VARIATION_V2];
   uint32_t ngarbages[JA_N_ELEMENT_VARIATION_V2];
-  uint32_t data_segs[JA_N_DATA_SEGMENTS];
+  uint32_t segment_infos[JA_N_DATA_SEGMENTS];
   uint32_t element_segs[JA_N_ELEMENT_SEGMENTS];
   uint8_t chunk_threshold;
   uint8_t n_element_variation;
@@ -408,7 +408,7 @@ struct grn_ja_header {
   ja_pos *free_elements;
   uint32_t *garbages;
   uint32_t *ngarbages;
-  uint32_t *data_segs;
+  uint32_t *segment_infos;
   uint32_t *element_segs;
   uint8_t chunk_threshold;
   uint8_t n_element_variation;
@@ -423,15 +423,15 @@ struct grn_ja_header {
 #define SEG_TYPE_SHIFT 28
 
 static uint32_t
-grn_ja_segment_type(grn_ctx *ctx, uint32_t metadata)
+grn_ja_segment_info_type(grn_ctx *ctx, uint32_t info)
 {
-  return metadata & SEG_MASK;
+  return info & SEG_MASK;
 }
 
 static const char *
-grn_ja_segment_type_name(grn_ctx *ctx, uint32_t metadata)
+grn_ja_segment_info_type_name(grn_ctx *ctx, uint32_t info)
 {
-  switch (grn_ja_segment_type(ctx, metadata)) {
+  switch (grn_ja_segment_info_type(ctx, info)) {
   case SEG_CHUNK :
     return "chunk";
   case SEG_SEQ :
@@ -448,18 +448,18 @@ grn_ja_segment_type_name(grn_ctx *ctx, uint32_t metadata)
 }
 
 static uint32_t
-grn_ja_segment_value(grn_ctx *ctx, uint32_t metadata)
+grn_ja_segment_info_value(grn_ctx *ctx, uint32_t info)
 {
-  return metadata & ~SEG_MASK;
+  return info & ~SEG_MASK;
 }
 
-#define SEGMENTS_AT(ja,seg) ((ja)->header->data_segs[seg])
-#define SEGMENTS_CHUNK_ON(ja,seg,width) (SEGMENTS_AT(ja,seg) = SEG_CHUNK|width)
-#define SEGMENTS_SEQ_ON(ja,seg) (SEGMENTS_AT(ja,seg) = SEG_SEQ)
-#define SEGMENTS_HUGE_ON(ja,seg) (SEGMENTS_AT(ja,seg) = SEG_HUGE)
-#define SEGMENTS_EINFO_ON(ja,seg,lseg) (SEGMENTS_AT(ja,seg) = SEG_EINFO|(lseg))
-#define SEGMENTS_GINFO_ON(ja,seg,width) (SEGMENTS_AT(ja,seg) = SEG_GINFO|(width))
-#define SEGMENTS_OFF(ja,seg) (SEGMENTS_AT(ja,seg) = 0)
+#define SEGMENT_INFO_AT(ja,seg) ((ja)->header->segment_infos[seg])
+#define SEGMENT_CHUNK_ON(ja,seg,width) (SEGMENT_INFO_AT(ja,seg) = SEG_CHUNK|width)
+#define SEGMENT_SEQ_ON(ja,seg) (SEGMENT_INFO_AT(ja,seg) = SEG_SEQ)
+#define SEGMENT_HUGE_ON(ja,seg) (SEGMENT_INFO_AT(ja,seg) = SEG_HUGE)
+#define SEGMENT_EINFO_ON(ja,seg,lseg) (SEGMENT_INFO_AT(ja,seg) = SEG_EINFO|(lseg))
+#define SEGMENT_GINFO_ON(ja,seg,width) (SEGMENT_INFO_AT(ja,seg) = SEG_GINFO|(width))
+#define SEGMENT_OFF(ja,seg) (SEGMENT_INFO_AT(ja,seg) = 0)
 
 static grn_ja *
 _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
@@ -498,14 +498,14 @@ _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
   header->free_elements       = header_v2->free_elements;
   header->garbages            = header_v2->garbages;
   header->ngarbages           = header_v2->ngarbages;
-  header->data_segs           = header_v2->data_segs;
+  header->segment_infos       = header_v2->segment_infos;
   header->element_segs        = header_v2->element_segs;
   header->chunk_threshold     = header_v2->chunk_threshold;
   header->n_element_variation = header_v2->n_element_variation;
 
   ja->io = io;
   ja->header = header;
-  SEGMENTS_EINFO_ON(ja, 0, 0);
+  SEGMENT_EINFO_ON(ja, 0, 0);
   header->element_segs[0] = 0;
   return ja;
 }
@@ -575,13 +575,13 @@ grn_ja_open(grn_ctx *ctx, const char *path)
     header->free_elements = header_v1->free_elements;
     header->garbages      = header_v1->garbages;
     header->ngarbages     = header_v1->ngarbages;
-    header->data_segs     = header_v1->data_segs;
+    header->segment_infos = header_v1->segment_infos;
     header->element_segs  = header_v1->element_segs;
   } else {
     header->free_elements = header_v2->free_elements;
     header->garbages      = header_v2->garbages;
     header->ngarbages     = header_v2->ngarbages;
-    header->data_segs     = header_v2->data_segs;
+    header->segment_infos = header_v2->segment_infos;
     header->element_segs  = header_v2->element_segs;
   }
 
@@ -730,7 +730,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
     uint32_t n;
     EHUGE_DEC(einfo, seg, element_size);
     n = ((element_size + JA_SEGMENT_SIZE - 1) >> GRN_JA_W_SEGMENT);
-    for (; n--; seg++) { SEGMENTS_OFF(ja, seg); }
+    for (; n--; seg++) { SEGMENT_OFF(ja, seg); }
     return GRN_SUCCESS;
   }
   EINFO_DEC(einfo, seg, pos, element_size);
@@ -746,7 +746,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
     if (!addr) { return GRN_NO_MEMORY_AVAILABLE; }
     aligned_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
     *(uint32_t *)(addr + pos - sizeof(grn_id)) = DELETED|aligned_size;
-    if (SEGMENTS_AT(ja, seg) < (aligned_size + sizeof(grn_id)) + SEG_SEQ) {
+    if (SEGMENT_INFO_AT(ja, seg) < (aligned_size + sizeof(grn_id)) + SEG_SEQ) {
       DEFINE_NAME(ja);
       GRN_LOG(ctx,
               GRN_WARN,
@@ -754,13 +754,13 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
               tag,
               name_size, name,
               element_size,
-              SEGMENTS_AT(ja, seg) - SEG_SEQ,
+              SEGMENT_INFO_AT(ja, seg) - SEG_SEQ,
               ja->io->path);
     }
-    SEGMENTS_AT(ja, seg) -= (aligned_size + sizeof(grn_id));
-    if (SEGMENTS_AT(ja, seg) == SEG_SEQ) {
+    SEGMENT_INFO_AT(ja, seg) -= (aligned_size + sizeof(grn_id));
+    if (SEGMENT_INFO_AT(ja, seg) == SEG_SEQ) {
       /* reuse the segment */
-      SEGMENTS_OFF(ja, seg);
+      SEGMENT_OFF(ja, seg);
       if (seg == *(ja->header->curr_seg)) {
         *(ja->header->curr_pos) = JA_SEGMENT_SIZE;
       }
@@ -800,7 +800,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
     }
     if (*gseg == 0) {
       uint32_t i = 0;
-      while (SEGMENTS_AT(ja, i)) {
+      while (SEGMENT_INFO_AT(ja, i)) {
         if (++i >= JA_N_DATA_SEGMENTS) {
           if (target_seg != 0) { grn_io_seg_unref(ctx, ja->io, target_seg); }
           {
@@ -823,7 +823,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
           }
         }
       }
-      SEGMENTS_GINFO_ON(ja, i, m - JA_W_EINFO);
+      SEGMENT_GINFO_ON(ja, i, m - JA_W_EINFO);
       *gseg = i;
       if (target_seg != 0) { grn_io_seg_unref(ctx, ja->io, target_seg); }
       ginfo = grn_io_seg_ref(ctx, ja->io, i);
@@ -879,7 +879,7 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
   uint32_t target_seg;
   if (*pseg == JA_ELEMENT_SEG_VOID) {
     int i = 0;
-    while (SEGMENTS_AT(ja, i)) {
+    while (SEGMENT_INFO_AT(ja, i)) {
       if (++i >= JA_N_DATA_SEGMENTS) {
         DEFINE_NAME(ja);
         ERR(GRN_NOT_ENOUGH_SPACE,
@@ -895,7 +895,7 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
     einfo = grn_io_seg_ref(ctx, ja->io, target_seg);
     if (einfo) {
       *pseg = target_seg;
-      SEGMENTS_EINFO_ON(ja, target_seg, lseg);
+      SEGMENT_EINFO_ON(ja, target_seg, lseg);
       memset(einfo, 0, JA_SEGMENT_SIZE);
     }
   } else {
@@ -967,7 +967,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
   if (element_size + sizeof(grn_id) > JA_SEGMENT_SIZE) {
     int i, j, n = (element_size + JA_SEGMENT_SIZE - 1) >> GRN_JA_W_SEGMENT;
     for (i = 0, j = -1; i < JA_N_DATA_SEGMENTS; i++) {
-      if (SEGMENTS_AT(ja, i)) {
+      if (SEGMENT_INFO_AT(ja, i)) {
         j = i;
       } else {
         if (i == j + n) {
@@ -992,7 +992,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
             return ctx->rc;
           }
           EHUGE_ENC(einfo, j, element_size);
-          for (; j <= i; j++) { SEGMENTS_HUGE_ON(ja, j); }
+          for (; j <= i; j++) { SEGMENT_HUGE_ON(ja, j); }
           grn_io_unlock(ja->io);
           return GRN_SUCCESS;
         }
@@ -1023,7 +1023,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
       uint32_t pos = *(ja->header->curr_pos);
       if (pos + element_size + sizeof(grn_id) > JA_SEGMENT_SIZE) {
         seg = 0;
-        while (SEGMENTS_AT(ja, seg)) {
+        while (SEGMENT_INFO_AT(ja, seg)) {
           if (++seg >= JA_N_DATA_SEGMENTS) {
             DEFINE_NAME(ja);
             ERR(GRN_NOT_ENOUGH_SPACE,
@@ -1040,7 +1040,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
             return ctx->rc;
           }
         }
-        SEGMENTS_SEQ_ON(ja, seg);
+        SEGMENT_SEQ_ON(ja, seg);
         *(ja->header->curr_seg) = seg;
         pos = 0;
       }
@@ -1066,7 +1066,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
       if (pos + aligned_size < JA_SEGMENT_SIZE) {
         *(grn_id *)(addr + pos + aligned_size) = GRN_ID_NIL;
       }
-      SEGMENTS_AT(ja, seg) += aligned_size + sizeof(grn_id);
+      SEGMENT_INFO_AT(ja, seg) += aligned_size + sizeof(grn_id);
       pos += sizeof(grn_id);
       EINFO_ENC(einfo, seg, pos, element_size);
       iw->segment = seg;
@@ -1157,7 +1157,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
                         m - JA_W_EINFO,
                         ja->io->path);
               }
-              SEGMENTS_OFF(ja, *gseg);
+              SEGMENT_OFF(ja, *gseg);
               *gseg = ginfo->next;
             }
             if (lseg) { grn_io_seg_unref(ctx, ja->io, lseg); }
@@ -1177,7 +1177,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
       vp = &ja->header->free_elements[m - JA_W_EINFO];
       if (!vp->seg) {
         int i = 0;
-        while (SEGMENTS_AT(ja, i)) {
+        while (SEGMENT_INFO_AT(ja, i)) {
           if (++i >= JA_N_DATA_SEGMENTS) {
             DEFINE_NAME(ja);
             ERR(GRN_NO_MEMORY_AVAILABLE,
@@ -1196,7 +1196,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
             return ctx->rc;
           }
         }
-        SEGMENTS_CHUNK_ON(ja, i, m);
+        SEGMENT_CHUNK_ON(ja, i, m);
         vp->seg = i;
         vp->pos = 0;
       }
@@ -3446,7 +3446,7 @@ static grn_rc
 grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
 {
   byte *v = NULL, *ve;
-  uint32_t element_size, cum = 0, *seginfo = &SEGMENTS_AT(ja,seg), sum;
+  uint32_t element_size, cum = 0, *seginfo = &SEGMENT_INFO_AT(ja,seg), sum;
   sum = (*seginfo & ~SEG_MASK);
   v = grn_io_seg_ref(ctx, ja->io, seg);
   if (!v) { return GRN_NO_MEMORY_AVAILABLE; }
@@ -3462,13 +3462,13 @@ grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
       if (grn_ja_element_info(ctx, ja, id, &cas, &pos, &element_size)) { break; }
       if (v + sizeof(uint32_t) != ve - JA_SEGMENT_SIZE + pos) {
         GRN_LOG(ctx, GRN_LOG_WARNING,
-                "data_segs[%d] = pos unmatch (%d != %" GRN_FMT_LLD ")",
+                "segment_infos[%d] = pos unmatch (%d != %" GRN_FMT_LLD ")",
                 seg, pos, (long long int)(v + sizeof(uint32_t) + JA_SEGMENT_SIZE - ve));
         break;
       }
       if (grn_ja_put(ctx, ja, id, v + sizeof(uint32_t), element_size, GRN_OBJ_SET, &cas)) {
         GRN_LOG(ctx, GRN_LOG_WARNING,
-                "data_segs[%d] = put failed (%d)", seg, id);
+                "segment_infos[%d] = put failed (%d)", seg, id);
         break;
       }
       element_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
@@ -3477,7 +3477,7 @@ grn_ja_defrag_seg(grn_ctx *ctx, grn_ja *ja, uint32_t seg)
     v += sizeof(uint32_t) + element_size;
   }
   if (*seginfo) {
-    GRN_LOG(ctx, GRN_LOG_WARNING, "data_segs[%d] = %d after defrag", seg, (*seginfo & ~SEG_MASK));
+    GRN_LOG(ctx, GRN_LOG_WARNING, "segment_infos[%d] = %d after defrag", seg, (*seginfo & ~SEG_MASK));
   }
   grn_io_seg_unref(ctx, ja->io, seg);
   return GRN_SUCCESS;
@@ -3490,8 +3490,8 @@ grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
   uint32_t seg, ts = 1U << (GRN_JA_W_SEGMENT - threshold);
   for (seg = 0; seg < JA_N_DATA_SEGMENTS; seg++) {
     if (seg == *(ja->header->curr_seg)) { continue; }
-    if (((SEGMENTS_AT(ja, seg) & SEG_MASK) == SEG_SEQ) &&
-        ((SEGMENTS_AT(ja, seg) & ~SEG_MASK) < ts)) {
+    if (((SEGMENT_INFO_AT(ja, seg) & SEG_MASK) == SEG_SEQ) &&
+        ((SEGMENT_INFO_AT(ja, seg) & ~SEG_MASK) < ts)) {
       if (!grn_ja_defrag_seg(ctx, ja, seg)) { nsegs++; }
     }
   }
@@ -3510,9 +3510,9 @@ grn_ja_check_segment_seq(grn_ctx *ctx,
   GRN_OUTPUT_CSTR("type");
   GRN_OUTPUT_UINT32(SEG_SEQ >> SEG_TYPE_SHIFT);
   GRN_OUTPUT_CSTR("type_name");
-  GRN_OUTPUT_CSTR(grn_ja_segment_type_name(ctx, data_seg));
+  GRN_OUTPUT_CSTR(grn_ja_segment_info_type_name(ctx, data_seg));
   GRN_OUTPUT_CSTR("value");
-  GRN_OUTPUT_UINT32(grn_ja_segment_value(ctx, data_seg));
+  GRN_OUTPUT_UINT32(grn_ja_segment_info_value(ctx, data_seg));
   byte *v = NULL, *ve;
   uint32_t element_size, cum = 0, sum = data_seg & ~SEG_MASK;
   uint32_t n_del_elements = 0;
@@ -3623,8 +3623,8 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
       uint32_t n_segments = (size + JA_SEGMENT_SIZE - 1) >> GRN_JA_W_SEGMENT;
       uint32_t j;
       for (j = 0; j < n_segments; j++) {
-        uint32_t metadata = SEGMENTS_AT(ja, data_start_segment + j);
-        uint32_t segment_type = grn_ja_segment_type(ctx, metadata);
+        uint32_t info = SEGMENT_INFO_AT(ja, data_start_segment + j);
+        uint32_t segment_type = grn_ja_segment_info_type(ctx, info);
         if (segment_type != SEG_HUGE) {
           DEFINE_NAME(ja);
           GRN_LOG(ctx,
@@ -3641,7 +3641,7 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
                   segment,
                   record_id,
                   segment_type,
-                  grn_ja_segment_type_name(ctx, metadata),
+                  grn_ja_segment_info_type_name(ctx, info),
                   data_start_segment + j,
                   size,
                   n_segments);
@@ -3657,8 +3657,8 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
       if (size == 0) {
         continue;
       }
-      uint32_t metadata = SEGMENTS_AT(ja, data_segment);
-      uint32_t segment_type = grn_ja_segment_type(ctx, metadata);
+      uint32_t metadata = SEGMENT_INFO_AT(ja, data_segment);
+      uint32_t segment_type = grn_ja_segment_info_type(ctx, metadata);
       if (segment_type != SEG_CHUNK) {
         DEFINE_NAME(ja);
         GRN_LOG(ctx,
@@ -3675,7 +3675,7 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
                 segment,
                 record_id,
                 segment_type,
-                grn_ja_segment_type_name(ctx, metadata),
+                grn_ja_segment_info_type_name(ctx, metadata),
                 data_segment,
                 pos,
                 size);
@@ -3699,9 +3699,9 @@ grn_ja_check_segment_einfo(grn_ctx *ctx,
   GRN_OUTPUT_CSTR("type");
   GRN_OUTPUT_UINT32(SEG_EINFO >> SEG_TYPE_SHIFT);
   GRN_OUTPUT_CSTR("type_name");
-  GRN_OUTPUT_CSTR(grn_ja_segment_type_name(ctx, data_seg));
+  GRN_OUTPUT_CSTR(grn_ja_segment_info_type_name(ctx, data_seg));
   GRN_OUTPUT_CSTR("element_info_index");
-  uint32_t element_info_index = grn_ja_segment_value(ctx, data_seg);
+  uint32_t element_info_index = grn_ja_segment_info_value(ctx, data_seg);
   GRN_OUTPUT_UINT32(element_info_index);
   uint32_t referred_segment = ja->header->element_segs[element_info_index];
   GRN_OUTPUT_CSTR("referred_segment");
@@ -3721,15 +3721,15 @@ static void
 grn_ja_check_segment(grn_ctx *ctx,
                      grn_ja *ja,
                      uint32_t seg,
-                     uint32_t data_seg)
+                     uint32_t info)
 {
-  uint32_t seg_type = grn_ja_segment_type(ctx, data_seg);
+  uint32_t seg_type = grn_ja_segment_info_type(ctx, info);
   switch (seg_type) {
   case SEG_SEQ :
-    grn_ja_check_segment_seq(ctx, ja, seg, data_seg);
+    grn_ja_check_segment_seq(ctx, ja, seg, info);
     return;
   case SEG_EINFO :
-    grn_ja_check_segment_einfo(ctx, ja, seg, data_seg);
+    grn_ja_check_segment_einfo(ctx, ja, seg, info);
     return;
   default :
     break;
@@ -3741,9 +3741,9 @@ grn_ja_check_segment(grn_ctx *ctx,
   GRN_OUTPUT_CSTR("type");
   GRN_OUTPUT_UINT32(seg_type >> SEG_TYPE_SHIFT);
   GRN_OUTPUT_CSTR("type_name");
-  GRN_OUTPUT_CSTR(grn_ja_segment_type_name(ctx, data_seg));
+  GRN_OUTPUT_CSTR(grn_ja_segment_info_type_name(ctx, info));
   GRN_OUTPUT_CSTR("value");
-  GRN_OUTPUT_UINT32(grn_ja_segment_value(ctx, data_seg));
+  GRN_OUTPUT_UINT32(grn_ja_segment_info_value(ctx, info));
   GRN_OUTPUT_MAP_CLOSE();
 }
 
@@ -3755,8 +3755,8 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
   {
     uint32_t seg;
     for (seg = 0; seg < JA_N_DATA_SEGMENTS; seg++) {
-      int data_seg = SEGMENTS_AT(ja, seg);
-      if (data_seg != 0) {
+      int info = SEGMENT_INFO_AT(ja, seg);
+      if (info != 0) {
         n_using_segments++;
       }
     }
@@ -3791,9 +3791,9 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
       GRN_OUTPUT_ARRAY_OPEN("segments", n_using_segments);
       uint32_t seg;
       for (seg = 0; seg < JA_N_DATA_SEGMENTS; seg++) {
-        uint32_t data_seg = SEGMENTS_AT(ja, seg);
-        if (data_seg != 0) {
-          grn_ja_check_segment(ctx, ja, seg, data_seg);
+        uint32_t info = SEGMENT_INFO_AT(ja, seg);
+        if (info != 0) {
+          grn_ja_check_segment(ctx, ja, seg, info);
         }
       }
       GRN_OUTPUT_ARRAY_CLOSE();
