@@ -3813,7 +3813,7 @@ grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
       is_valid = false;
       continue;
     }
-    uint32_t aligned_size = 1U << (variation + JA_W_EINFO);
+    uint32_t aligned_size = 1U << variation;
     uint32_t max_position = JA_SEGMENT_SIZE - aligned_size;
     if (garbage_position > max_position) {
       GRN_DEFINE_NAME(ja);
@@ -3894,7 +3894,7 @@ grn_ja_check_segment_ginfo(grn_ctx *ctx,
   GRN_OUTPUT_CSTR("type_name");
   GRN_OUTPUT_CSTR(grn_ja_segment_info_type_name(ctx, info));
   GRN_OUTPUT_CSTR("variation");
-  uint32_t variation = grn_ja_segment_info_value(ctx, info);
+  uint32_t variation = grn_ja_segment_info_value(ctx, info) + JA_W_EINFO;
   GRN_OUTPUT_UINT32(variation);
 
   uint32_t head = 0;
