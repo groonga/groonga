@@ -3484,6 +3484,25 @@ grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
 }
 
 static void
+grn_ja_check_segment_chunk(grn_ctx *ctx,
+                           grn_ja *ja,
+                           uint32_t segment,
+                           uint32_t info)
+{
+  GRN_OUTPUT_MAP_OPEN("segment", 4);
+  GRN_OUTPUT_CSTR("id");
+  GRN_OUTPUT_UINT32(segment);
+  GRN_OUTPUT_CSTR("type");
+  GRN_OUTPUT_UINT32(SEG_CHUNK >> SEG_TYPE_SHIFT);
+  GRN_OUTPUT_CSTR("type_name");
+  GRN_OUTPUT_CSTR(grn_ja_segment_info_type_name(ctx, info));
+  GRN_OUTPUT_CSTR("variation");
+  uint32_t variation = grn_ja_segment_info_value(ctx, info);
+  GRN_OUTPUT_UINT32(variation);
+  GRN_OUTPUT_MAP_CLOSE();
+}
+
+static void
 grn_ja_check_segment_seq(grn_ctx *ctx,
                          grn_ja *ja,
                          uint32_t seg,
@@ -3950,6 +3969,9 @@ grn_ja_check_segment(grn_ctx *ctx,
 {
   uint32_t seg_type = grn_ja_segment_info_type(ctx, info);
   switch (seg_type) {
+  case SEG_CHUNK :
+    grn_ja_check_segment_chunk(ctx, ja, seg, info);
+    return;
   case SEG_SEQ :
     grn_ja_check_segment_seq(ctx, ja, seg, info);
     return;
