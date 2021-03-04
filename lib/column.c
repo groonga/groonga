@@ -21,6 +21,7 @@
 #include "grn_column.h"
 #include "grn_db.h"
 #include "grn_ii.h"
+#include "grn_util.h"
 
 grn_column_flags
 grn_column_get_flags(grn_ctx *ctx, grn_obj *column)
@@ -190,6 +191,37 @@ grn_column_cache_ref(grn_ctx *ctx,
 }
 
 static void
+grn_column_copy_same_table_report_invalid_reference_value(grn_ctx *ctx,
+                                                          grn_obj *table,
+                                                          grn_obj *from_column,
+                                                          grn_id id,
+                                                          grn_id value)
+{
+  GRN_DEFINE_NAME(from_column);
+  char key[GRN_TABLE_MAX_KEY_SIZE];
+  int key_size = 0;
+  if (grn_obj_is_table_with_key(ctx, table)) {
+    key_size = grn_table_get_key(ctx, table, id, key, sizeof(key));
+  }
+  grn_obj inspected_key;
+  GRN_TEXT_INIT(&inspected_key, 0);
+  grn_inspect_key(ctx, &inspected_key, table, key, key_size);
+  GRN_LOG(ctx,
+          GRN_LOG_WARNING,
+          "[column][copy][%.*s] "
+          "ignore invalid reference value: "
+          "value:%u, "
+          "id:%u, "
+          "key:%.*s",
+          name_size, name,
+          value,
+          id,
+          (int)GRN_TEXT_LEN(&inspected_key),
+          GRN_TEXT_VALUE(&inspected_key));
+  GRN_OBJ_FIN(ctx, &inspected_key);
+}
+
+static void
 grn_column_copy_same_table(grn_ctx *ctx,
                            grn_obj *table,
                            grn_obj *from_column,
@@ -231,14 +263,12 @@ grn_column_copy_same_table(grn_ctx *ctx,
           if (record_id == GRN_ID_NIL ||
               record_id >= GRN_ID_MAX ||
               !grn_table_at(ctx, range, record_id)) {
-            GRN_DEFINE_NAME(from_column);
-            GRN_LOG(ctx,
-                    GRN_LOG_WARNING,
-                    "[column][copy][%.*s][%u] "
-                    "ignore invalid reference value: %u",
-                    name_size, name,
-                    id,
-                    record_id);
+            grn_column_copy_same_table_report_invalid_reference_value(
+              ctx,
+              table,
+              from_column,
+              id,
+              record_id);
             continue;
           }
           grn_uvector_add_element_record(ctx,
@@ -252,14 +282,12 @@ grn_column_copy_same_table(grn_ctx *ctx,
           if (record_id == GRN_ID_NIL ||
               record_id >= GRN_ID_MAX ||
               !grn_table_at(ctx, range, record_id)) {
-            GRN_DEFINE_NAME(from_column);
-            GRN_LOG(ctx,
-                    GRN_LOG_WARNING,
-                    "[column][copy][%.*s][%u] "
-                    "ignore invalid reference value: %u",
-                    name_size, name,
-                    id,
-                    record_id);
+            grn_column_copy_same_table_report_invalid_reference_value(
+              ctx,
+              table,
+              from_column,
+              id,
+              record_id);
           } else {
             GRN_RECORD_SET(ctx, &validated_value, record_id);
           }
