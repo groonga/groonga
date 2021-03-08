@@ -366,7 +366,7 @@ struct grn_ja_header_v1 {
   uint32_t max_element_size;
   ja_pos free_elements[JA_N_ELEMENT_VARIATIONS_V1];
   uint32_t garbages[JA_N_ELEMENT_VARIATIONS_V1];
-  uint32_t ngarbages[JA_N_ELEMENT_VARIATIONS_V1];
+  uint32_t n_garbages[JA_N_ELEMENT_VARIATIONS_V1];
   uint32_t segment_infos[JA_N_DATA_SEGMENTS];
   uint32_t element_segs[JA_N_ELEMENT_SEGMENTS];
 };
@@ -378,7 +378,7 @@ struct grn_ja_header_v2 {
   uint32_t max_element_size;
   ja_pos free_elements[JA_N_ELEMENT_VARIATIONS_V2];
   uint32_t garbages[JA_N_ELEMENT_VARIATIONS_V2];
-  uint32_t ngarbages[JA_N_ELEMENT_VARIATIONS_V2];
+  uint32_t n_garbages[JA_N_ELEMENT_VARIATIONS_V2];
   uint32_t segment_infos[JA_N_DATA_SEGMENTS];
   uint32_t element_segs[JA_N_ELEMENT_SEGMENTS];
   uint8_t chunk_threshold;
@@ -392,7 +392,7 @@ struct grn_ja_header {
   uint32_t max_element_size;
   ja_pos *free_elements;
   uint32_t *garbages;
-  uint32_t *ngarbages;
+  uint32_t *n_garbages;
   uint32_t *segment_infos;
   uint32_t *element_segs;
   uint8_t chunk_threshold;
@@ -482,7 +482,7 @@ _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
   header->max_element_size     = header_v2->max_element_size;
   header->free_elements        = header_v2->free_elements;
   header->garbages             = header_v2->garbages;
-  header->ngarbages            = header_v2->ngarbages;
+  header->n_garbages           = header_v2->n_garbages;
   header->segment_infos        = header_v2->segment_infos;
   header->element_segs         = header_v2->element_segs;
   header->chunk_threshold      = header_v2->chunk_threshold;
@@ -559,13 +559,13 @@ grn_ja_open(grn_ctx *ctx, const char *path)
     struct grn_ja_header_v1 *header_v1 = (struct grn_ja_header_v1 *)header_v2;
     header->free_elements = header_v1->free_elements;
     header->garbages      = header_v1->garbages;
-    header->ngarbages     = header_v1->ngarbages;
+    header->n_garbages    = header_v1->n_garbages;
     header->segment_infos = header_v1->segment_infos;
     header->element_segs  = header_v1->element_segs;
   } else {
     header->free_elements = header_v2->free_elements;
     header->garbages      = header_v2->garbages;
-    header->ngarbages     = header_v2->ngarbages;
+    header->n_garbages    = header_v2->n_garbages;
     header->segment_infos = header_v2->segment_infos;
     header->element_segs  = header_v2->element_segs;
   }
@@ -775,7 +775,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
             element_size,
             m - JA_W_EINFO,
             initial_gseg,
-            ja->header->ngarbages[m - JA_W_EINFO],
+            ja->header->n_garbages[m - JA_W_EINFO],
             ja->io->path);
         return ctx->rc;
       }
@@ -802,7 +802,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
                 element_size,
                 m - JA_W_EINFO,
                 initial_gseg,
-                ja->header->ngarbages[m - JA_W_EINFO],
+                ja->header->n_garbages[m - JA_W_EINFO],
                 ja->io->path);
             return ctx->rc;
           }
@@ -828,7 +828,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
             element_size,
             m - JA_W_EINFO,
             initial_gseg,
-            ja->header->ngarbages[m - JA_W_EINFO],
+            ja->header->n_garbages[m - JA_W_EINFO],
             ja->io->path);
         return ctx->rc;
       }
@@ -842,7 +842,7 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
     ginfo->recs[ginfo->head].pos = pos;
     if (++ginfo->head == JA_N_GARBAGES_IN_A_SEGMENT) { ginfo->head = 0; }
     ginfo->nrecs++;
-    ja->header->ngarbages[m - JA_W_EINFO]++;
+    ja->header->n_garbages[m - JA_W_EINFO]++;
     grn_io_seg_unref(ctx, ja->io, target_seg);
   }
   return GRN_SUCCESS;
@@ -1062,7 +1062,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
     } else {
       uint32_t lseg = 0, lseg_;
       aligned_size = 1 << m;
-      if (ja->header->ngarbages[m - JA_W_EINFO] > JA_N_GARBAGES_TH) {
+      if (ja->header->n_garbages[m - JA_W_EINFO] > JA_N_GARBAGES_TH) {
         grn_ja_ginfo *ginfo = NULL;
         uint32_t seg, pos, *gseg;
         gseg = &ja->header->garbages[m - JA_W_EINFO];
@@ -1119,7 +1119,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
             iw->addr = addr + pos;
             if (++ginfo->tail == JA_N_GARBAGES_IN_A_SEGMENT) { ginfo->tail = 0; }
             ginfo->nrecs--;
-            ja->header->ngarbages[m - JA_W_EINFO]--;
+            ja->header->n_garbages[m - JA_W_EINFO]--;
             if (!ginfo->nrecs) {
               if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
                 GRN_DEFINE_NAME(ja);
@@ -4054,7 +4054,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
       uint32_t n_variantions = 0;
       uint32_t i;
       for (i = 0; i < ja->header->n_element_variations; i++) {
-        if (ja->header->ngarbages[i] == 0) {
+        if (ja->header->n_garbages[i] == 0) {
           continue;
         }
         n_variantions++;
@@ -4062,7 +4062,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
       {
         GRN_OUTPUT_MAP_OPEN("garbage_counts", n_variantions);
         for (i = 0; i < ja->header->n_element_variations; i++) {
-          if (ja->header->ngarbages[i] == 0) {
+          if (ja->header->n_garbages[i] == 0) {
             continue;
           }
           uint32_t variation = i + JA_W_EINFO;
@@ -4071,7 +4071,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
           {
             GRN_OUTPUT_MAP_OPEN("variation", 3);
             GRN_OUTPUT_CSTR("total");
-            GRN_OUTPUT_UINT32(ja->header->ngarbages[i]);
+            GRN_OUTPUT_UINT32(ja->header->n_garbages[i]);
             uint32_t n_segments = 0;
             uint32_t segment;
             for (segment = 0; segment < JA_N_DATA_SEGMENTS; segment++) {
@@ -4106,7 +4106,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
               GRN_OUTPUT_MAP_CLOSE();
             }
             GRN_OUTPUT_CSTR("valid");
-            GRN_OUTPUT_BOOL(ja->header->ngarbages[i] == real_total);
+            GRN_OUTPUT_BOOL(ja->header->n_garbages[i] == real_total);
             GRN_OUTPUT_MAP_CLOSE();
           }
         }
