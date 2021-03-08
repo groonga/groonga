@@ -3997,6 +3997,56 @@ grn_ja_check_segment(grn_ctx *ctx,
   GRN_OUTPUT_MAP_CLOSE();
 }
 
+static bool
+grn_ja_check_free_element_validate(grn_ctx *ctx,
+                                   grn_ja *ja,
+                                   uint32_t variation,
+                                   ja_pos *start)
+{
+  const char *tag = "[ja][check][free-element]";
+  uint32_t info = SEGMENT_INFO_AT(ja, start->seg);
+  uint32_t segment_type = grn_ja_segment_info_type(ctx, info);
+  if (segment_type != SEG_CHUNK) {
+    GRN_DEFINE_NAME(ja);
+    GRN_LOG(ctx,
+            GRN_LOG_ERROR,
+            "%s[%.*s] free element segment must be chunk segment: "
+            "variation:%u, "
+            "free_segment:%u, "
+            "free_segment_type:%u, "
+            "free_segment_type_name:<%s>",
+            tag,
+            name_size, name,
+            variation,
+            start->seg,
+            segment_type >> SEG_TYPE_SHIFT,
+            grn_ja_segment_info_type_name(ctx, info));
+    return false;
+  }
+
+  uint32_t aligned_size = 1U << variation;
+  uint32_t max_position = JA_SEGMENT_SIZE - aligned_size;
+  if (start->pos > max_position) {
+    GRN_DEFINE_NAME(ja);
+    GRN_LOG(ctx,
+            GRN_LOG_ERROR,
+            "%s[%.*s] out of range free element position: "
+            "variation:%u, "
+            "free_segment:%u, "
+            "free_segment_position:%u, "
+            "max_position:%u",
+            tag,
+            name_size, name,
+            variation,
+            start->seg,
+            start->pos,
+            max_position);
+    return false;
+  }
+
+  return true;
+}
+
 void
 grn_ja_check(grn_ctx *ctx, grn_ja *ja)
 {
@@ -4035,7 +4085,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
   }
   GRN_OUTPUT_CSTR("details");
   {
-    GRN_OUTPUT_MAP_OPEN("details", 2);
+    GRN_OUTPUT_MAP_OPEN("details", 3);
     GRN_OUTPUT_CSTR("segments");
     {
       GRN_OUTPUT_ARRAY_OPEN("segments", n_using_segments);
@@ -4107,6 +4157,44 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
             }
             GRN_OUTPUT_CSTR("valid");
             GRN_OUTPUT_BOOL(ja->header->n_garbages[i] == real_total);
+            GRN_OUTPUT_MAP_CLOSE();
+          }
+        }
+        GRN_OUTPUT_MAP_CLOSE();
+      }
+    }
+
+    GRN_OUTPUT_CSTR("free_elements");
+    {
+      uint32_t n_variantions = 0;
+      uint32_t i;
+      for (i = 0; i < ja->header->n_element_variations; i++) {
+        if (ja->header->free_elements[i].seg == 0) {
+          continue;
+        }
+        n_variantions++;
+      }
+      {
+        GRN_OUTPUT_MAP_OPEN("free_elements", n_variantions);
+        for (i = 0; i < ja->header->n_element_variations; i++) {
+          ja_pos start = ja->header->free_elements[i];
+          if (start.seg == 0) {
+            continue;
+          }
+          uint32_t variation = i + JA_W_EINFO;
+          GRN_OUTPUT_UINT32(variation);
+          {
+            GRN_OUTPUT_MAP_OPEN("start", 3);
+            GRN_OUTPUT_CSTR("segment");
+            GRN_OUTPUT_UINT32(start.seg);
+            GRN_OUTPUT_CSTR("position");
+            GRN_OUTPUT_UINT32(start.pos);
+            GRN_OUTPUT_CSTR("valid");
+            bool is_valid = grn_ja_check_free_element_validate(ctx,
+                                                               ja,
+                                                               variation,
+                                                               &start);
+            GRN_OUTPUT_BOOL(is_valid);
             GRN_OUTPUT_MAP_CLOSE();
           }
         }
