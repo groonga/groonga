@@ -291,8 +291,8 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
 #define JA_N_EINFO_IN_A_SEGMENT        (1U << JA_W_EINFO_IN_A_SEGMENT)
 #define JA_M_EINFO_IN_A_SEGMENT        (JA_N_EINFO_IN_A_SEGMENT - 1)
 #define JA_N_GARBAGES_IN_A_SEGMENT     ((1U << (GRN_JA_W_SEGMENT - 3)) - 2)
-#define JA_N_ELEMENT_VARIATION_V1      (GRN_JA_W_CHUNK_THRESH_V1 - JA_W_EINFO + 1)
-#define JA_N_ELEMENT_VARIATION_V2      (GRN_JA_W_CHUNK_THRESH_V2 - JA_W_EINFO + 1)
+#define JA_N_ELEMENT_VARIATIONS_V1     (GRN_JA_W_CHUNK_THRESH_V1 - JA_W_EINFO + 1)
+#define JA_N_ELEMENT_VARIATIONS_V2     (GRN_JA_W_CHUNK_THRESH_V2 - JA_W_EINFO + 1)
 #define JA_N_DATA_SEGMENTS             (1U << JA_W_SEGMENTS_MAX)
 #define JA_N_ELEMENT_SEGMENTS          (1U << (GRN_ID_WIDTH - JA_W_EINFO_IN_A_SEGMENT))
 
@@ -364,9 +364,9 @@ struct grn_ja_header_v1 {
   uint32_t curr_seg;
   uint32_t curr_pos;
   uint32_t max_element_size;
-  ja_pos free_elements[JA_N_ELEMENT_VARIATION_V1];
-  uint32_t garbages[JA_N_ELEMENT_VARIATION_V1];
-  uint32_t ngarbages[JA_N_ELEMENT_VARIATION_V1];
+  ja_pos free_elements[JA_N_ELEMENT_VARIATIONS_V1];
+  uint32_t garbages[JA_N_ELEMENT_VARIATIONS_V1];
+  uint32_t ngarbages[JA_N_ELEMENT_VARIATIONS_V1];
   uint32_t segment_infos[JA_N_DATA_SEGMENTS];
   uint32_t element_segs[JA_N_ELEMENT_SEGMENTS];
 };
@@ -376,13 +376,13 @@ struct grn_ja_header_v2 {
   uint32_t curr_seg;
   uint32_t curr_pos;
   uint32_t max_element_size;
-  ja_pos free_elements[JA_N_ELEMENT_VARIATION_V2];
-  uint32_t garbages[JA_N_ELEMENT_VARIATION_V2];
-  uint32_t ngarbages[JA_N_ELEMENT_VARIATION_V2];
+  ja_pos free_elements[JA_N_ELEMENT_VARIATIONS_V2];
+  uint32_t garbages[JA_N_ELEMENT_VARIATIONS_V2];
+  uint32_t ngarbages[JA_N_ELEMENT_VARIATIONS_V2];
   uint32_t segment_infos[JA_N_DATA_SEGMENTS];
   uint32_t element_segs[JA_N_ELEMENT_SEGMENTS];
   uint8_t chunk_threshold;
-  uint8_t n_element_variation;
+  uint8_t n_element_variations;
 };
 
 struct grn_ja_header {
@@ -396,7 +396,7 @@ struct grn_ja_header {
   uint32_t *segment_infos;
   uint32_t *element_segs;
   uint8_t chunk_threshold;
-  uint8_t n_element_variation;
+  uint8_t n_element_variations;
 };
 
 #define SEG_CHUNK      (0x00000000U)
@@ -469,24 +469,24 @@ _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
     header_v2->element_segs[i] = JA_ELEMENT_SEG_VOID;
   }
   header_v2->chunk_threshold = GRN_JA_W_CHUNK_THRESH_V2;
-  header_v2->n_element_variation = JA_N_ELEMENT_VARIATION_V2;
+  header_v2->n_element_variations = JA_N_ELEMENT_VARIATIONS_V2;
 
   header = GRN_MALLOCN(struct grn_ja_header, 1);
   if (!header) {
     grn_io_close(ctx, io);
     return NULL;
   }
-  header->flags               = header_v2->flags;
-  header->curr_seg            = &(header_v2->curr_seg);
-  header->curr_pos            = &(header_v2->curr_pos);
-  header->max_element_size    = header_v2->max_element_size;
-  header->free_elements       = header_v2->free_elements;
-  header->garbages            = header_v2->garbages;
-  header->ngarbages           = header_v2->ngarbages;
-  header->segment_infos       = header_v2->segment_infos;
-  header->element_segs        = header_v2->element_segs;
-  header->chunk_threshold     = header_v2->chunk_threshold;
-  header->n_element_variation = header_v2->n_element_variation;
+  header->flags                = header_v2->flags;
+  header->curr_seg             = &(header_v2->curr_seg);
+  header->curr_pos             = &(header_v2->curr_pos);
+  header->max_element_size     = header_v2->max_element_size;
+  header->free_elements        = header_v2->free_elements;
+  header->garbages             = header_v2->garbages;
+  header->ngarbages            = header_v2->ngarbages;
+  header->segment_infos        = header_v2->segment_infos;
+  header->element_segs         = header_v2->element_segs;
+  header->chunk_threshold      = header_v2->chunk_threshold;
+  header->n_element_variations = header_v2->n_element_variations;
 
   ja->io = io;
   ja->header = header;
@@ -533,8 +533,8 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   if (header_v2->chunk_threshold == 0) {
     header_v2->chunk_threshold = GRN_JA_W_CHUNK_THRESH_V1;
   }
-  if (header_v2->n_element_variation == 0) {
-    header_v2->n_element_variation = JA_N_ELEMENT_VARIATION_V1;
+  if (header_v2->n_element_variations == 0) {
+    header_v2->n_element_variations = JA_N_ELEMENT_VARIATIONS_V1;
   }
   ja = GRN_MALLOCN(grn_ja, 1);
   if (!ja) {
@@ -549,12 +549,12 @@ grn_ja_open(grn_ctx *ctx, const char *path)
     return NULL;
   }
 
-  header->flags               = header_v2->flags;
-  header->curr_seg            = &(header_v2->curr_seg);
-  header->curr_pos            = &(header_v2->curr_pos);
-  header->max_element_size    = header_v2->max_element_size;
-  header->chunk_threshold     = header_v2->chunk_threshold;
-  header->n_element_variation = header_v2->n_element_variation;
+  header->flags                = header_v2->flags;
+  header->curr_seg             = &(header_v2->curr_seg);
+  header->curr_pos             = &(header_v2->curr_pos);
+  header->max_element_size     = header_v2->max_element_size;
+  header->chunk_threshold      = header_v2->chunk_threshold;
+  header->n_element_variations = header_v2->n_element_variations;
   if (header->chunk_threshold == GRN_JA_W_CHUNK_THRESH_V1) {
     struct grn_ja_header_v1 *header_v1 = (struct grn_ja_header_v1 *)header_v2;
     header->free_elements = header_v1->free_elements;
@@ -4027,8 +4027,8 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
     GRN_OUTPUT_INT64(h->max_element_size);
     GRN_OUTPUT_CSTR("chunk_threshold");
     GRN_OUTPUT_INT64(h->chunk_threshold);
-    GRN_OUTPUT_CSTR("n_element_variation");
-    GRN_OUTPUT_INT64(h->n_element_variation);
+    GRN_OUTPUT_CSTR("n_element_variations");
+    GRN_OUTPUT_INT64(h->n_element_variations);
     GRN_OUTPUT_CSTR("n_using_segments");
     GRN_OUTPUT_UINT32(n_using_segments);
     GRN_OUTPUT_MAP_CLOSE();
