@@ -4035,7 +4035,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
   }
   GRN_OUTPUT_CSTR("details");
   {
-    GRN_OUTPUT_MAP_OPEN("details", 1);
+    GRN_OUTPUT_MAP_OPEN("details", 2);
     GRN_OUTPUT_CSTR("segments");
     {
       GRN_OUTPUT_ARRAY_OPEN("segments", n_using_segments);
@@ -4047,6 +4047,71 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
         }
       }
       GRN_OUTPUT_ARRAY_CLOSE();
+    }
+
+    GRN_OUTPUT_CSTR("garbage_counts");
+    {
+      uint32_t n_variantions = 0;
+      uint32_t i;
+      for (i = 0; i < ja->header->n_element_variations; i++) {
+        if (ja->header->ngarbages[i] == 0) {
+          continue;
+        }
+        n_variantions++;
+      }
+      {
+        GRN_OUTPUT_MAP_OPEN("garbage_counts", n_variantions);
+        for (i = 0; i < ja->header->n_element_variations; i++) {
+          if (ja->header->ngarbages[i] == 0) {
+            continue;
+          }
+          uint32_t variation = i + JA_W_EINFO;
+          uint32_t real_total = 0;
+          GRN_OUTPUT_UINT32(variation);
+          {
+            GRN_OUTPUT_MAP_OPEN("variation", 3);
+            GRN_OUTPUT_CSTR("total");
+            GRN_OUTPUT_UINT32(ja->header->ngarbages[i]);
+            uint32_t n_segments = 0;
+            uint32_t segment;
+            for (segment = 0; segment < JA_N_DATA_SEGMENTS; segment++) {
+              uint32_t info = SEGMENT_INFO_AT(ja, segment);
+              if (grn_ja_segment_info_type(ctx, info) != SEG_GINFO) {
+                continue;
+              }
+              n_segments++;
+            }
+            GRN_OUTPUT_CSTR("details");
+            {
+              GRN_OUTPUT_MAP_OPEN("segment", n_segments);
+              for (segment = 0; segment < JA_N_DATA_SEGMENTS; segment++) {
+                uint32_t info = SEGMENT_INFO_AT(ja, segment);
+                if (grn_ja_segment_info_type(ctx, info) != SEG_GINFO) {
+                  continue;
+                }
+                uint32_t v = grn_ja_segment_info_value(ctx, info) + JA_W_EINFO;
+                if (v != variation) {
+                  continue;
+                }
+                GRN_OUTPUT_UINT32(segment);
+                grn_ja_ginfo *ginfo = grn_io_seg_ref(ctx, ja->io, segment);
+                if (ginfo) {
+                  real_total += ginfo->nrecs;
+                  GRN_OUTPUT_UINT32(ginfo->nrecs);
+                  grn_io_seg_unref(ctx, ja->io, segment);
+                } else {
+                  GRN_OUTPUT_INT32(-1);
+                }
+              }
+              GRN_OUTPUT_MAP_CLOSE();
+            }
+            GRN_OUTPUT_CSTR("valid");
+            GRN_OUTPUT_BOOL(ja->header->ngarbages[i] == real_total);
+            GRN_OUTPUT_MAP_CLOSE();
+          }
+        }
+        GRN_OUTPUT_MAP_CLOSE();
+      }
     }
     GRN_OUTPUT_MAP_CLOSE();
   }
