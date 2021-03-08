@@ -3483,7 +3483,7 @@ grn_ja_defrag(grn_ctx *ctx, grn_ja *ja, int threshold)
   return nsegs;
 }
 
-static void
+static bool
 grn_ja_check_segment_chunk(grn_ctx *ctx,
                            grn_ja *ja,
                            uint32_t segment,
@@ -3500,9 +3500,11 @@ grn_ja_check_segment_chunk(grn_ctx *ctx,
   uint32_t variation = grn_ja_segment_info_value(ctx, info);
   GRN_OUTPUT_UINT32(variation);
   GRN_OUTPUT_MAP_CLOSE();
+
+  return true;
 }
 
-static void
+static bool
 grn_ja_check_segment_seq(grn_ctx *ctx,
                          grn_ja *ja,
                          uint32_t seg,
@@ -3576,6 +3578,8 @@ grn_ja_check_segment_seq(grn_ctx *ctx,
     }
   }
   GRN_OUTPUT_MAP_CLOSE();
+
+  return true;
 }
 
 static bool
@@ -3744,7 +3748,7 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
   return is_valid;
 }
 
-static void
+static bool
 grn_ja_check_segment_einfo(grn_ctx *ctx,
                            grn_ja *ja,
                            uint32_t seg,
@@ -3772,6 +3776,8 @@ grn_ja_check_segment_einfo(grn_ctx *ctx,
                                         referred_segment);
   GRN_OUTPUT_BOOL(is_valid);
   GRN_OUTPUT_MAP_CLOSE();
+
+  return is_valid;
 }
 
 static bool
@@ -3898,7 +3904,7 @@ grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
   return is_valid;
 }
 
-static void
+static bool
 grn_ja_check_segment_ginfo(grn_ctx *ctx,
                            grn_ja *ja,
                            uint32_t segment,
@@ -3959,9 +3965,12 @@ grn_ja_check_segment_ginfo(grn_ctx *ctx,
   }
 
   GRN_OUTPUT_MAP_CLOSE();
+
+  return is_valid;
+  
 }
 
-static void
+static bool
 grn_ja_check_segment(grn_ctx *ctx,
                      grn_ja *ja,
                      uint32_t seg,
@@ -3970,17 +3979,13 @@ grn_ja_check_segment(grn_ctx *ctx,
   uint32_t seg_type = grn_ja_segment_info_type(ctx, info);
   switch (seg_type) {
   case SEG_CHUNK :
-    grn_ja_check_segment_chunk(ctx, ja, seg, info);
-    return;
+    return grn_ja_check_segment_chunk(ctx, ja, seg, info);
   case SEG_SEQ :
-    grn_ja_check_segment_seq(ctx, ja, seg, info);
-    return;
+    return grn_ja_check_segment_seq(ctx, ja, seg, info);
   case SEG_EINFO :
-    grn_ja_check_segment_einfo(ctx, ja, seg, info);
-    return;
+    return grn_ja_check_segment_einfo(ctx, ja, seg, info);
   case SEG_GINFO :
-    grn_ja_check_segment_ginfo(ctx, ja, seg, info);
-    return;
+    return grn_ja_check_segment_ginfo(ctx, ja, seg, info);
   default :
     break;
   }
@@ -3995,6 +4000,7 @@ grn_ja_check_segment(grn_ctx *ctx,
   GRN_OUTPUT_CSTR("value");
   GRN_OUTPUT_UINT32(grn_ja_segment_info_value(ctx, info));
   GRN_OUTPUT_MAP_CLOSE();
+  return true;
 }
 
 static bool
@@ -4061,28 +4067,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
       }
     }
   }
-  GRN_OUTPUT_CSTR("summary");
-  {
-    struct grn_ja_header *h = ja->header;
-    char buf[8];
-    GRN_OUTPUT_MAP_OPEN("summary", 7);
-    GRN_OUTPUT_CSTR("flags");
-    grn_itoh(h->flags, buf, 8);
-    GRN_OUTPUT_STR(buf, 8);
-    GRN_OUTPUT_CSTR("curr seg");
-    GRN_OUTPUT_INT64(*(h->curr_seg));
-    GRN_OUTPUT_CSTR("curr pos");
-    GRN_OUTPUT_INT64(*(h->curr_pos));
-    GRN_OUTPUT_CSTR("max_element_size");
-    GRN_OUTPUT_INT64(h->max_element_size);
-    GRN_OUTPUT_CSTR("chunk_threshold");
-    GRN_OUTPUT_INT64(h->chunk_threshold);
-    GRN_OUTPUT_CSTR("n_element_variations");
-    GRN_OUTPUT_INT64(h->n_element_variations);
-    GRN_OUTPUT_CSTR("n_using_segments");
-    GRN_OUTPUT_UINT32(n_using_segments);
-    GRN_OUTPUT_MAP_CLOSE();
-  }
+  bool is_valid = true;
   GRN_OUTPUT_CSTR("details");
   {
     GRN_OUTPUT_MAP_OPEN("details", 3);
@@ -4093,7 +4078,9 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
       for (seg = 0; seg < JA_N_DATA_SEGMENTS; seg++) {
         uint32_t info = SEGMENT_INFO_AT(ja, seg);
         if (info != 0) {
-          grn_ja_check_segment(ctx, ja, seg, info);
+          if (!grn_ja_check_segment(ctx, ja, seg, info)) {
+            is_valid = false;
+          }
         }
       }
       GRN_OUTPUT_ARRAY_CLOSE();
@@ -4156,7 +4143,11 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
               GRN_OUTPUT_MAP_CLOSE();
             }
             GRN_OUTPUT_CSTR("valid");
-            GRN_OUTPUT_BOOL(ja->header->n_garbages[i] == real_total);
+            bool is_valid_n_garbages = (ja->header->n_garbages[i] == real_total);
+            if (!is_valid_n_garbages) {
+              is_valid = false;
+            }
+            GRN_OUTPUT_BOOL(is_valid_n_garbages);
             GRN_OUTPUT_MAP_CLOSE();
           }
         }
@@ -4190,17 +4181,46 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
             GRN_OUTPUT_CSTR("position");
             GRN_OUTPUT_UINT32(start.pos);
             GRN_OUTPUT_CSTR("valid");
-            bool is_valid = grn_ja_check_free_element_validate(ctx,
-                                                               ja,
-                                                               variation,
-                                                               &start);
-            GRN_OUTPUT_BOOL(is_valid);
+            bool is_valid_free_element =
+              grn_ja_check_free_element_validate(ctx,
+                                                 ja,
+                                                 variation,
+                                                 &start);
+            if (!is_valid_free_element) {
+              is_valid = false;
+            }
+            GRN_OUTPUT_BOOL(is_valid_free_element);
             GRN_OUTPUT_MAP_CLOSE();
           }
         }
         GRN_OUTPUT_MAP_CLOSE();
       }
     }
+    GRN_OUTPUT_MAP_CLOSE();
+  }
+
+  GRN_OUTPUT_CSTR("summary");
+  {
+    struct grn_ja_header *h = ja->header;
+    char buf[8];
+    GRN_OUTPUT_MAP_OPEN("summary", 8);
+    GRN_OUTPUT_CSTR("flags");
+    grn_itoh(h->flags, buf, 8);
+    GRN_OUTPUT_STR(buf, 8);
+    GRN_OUTPUT_CSTR("curr seg");
+    GRN_OUTPUT_INT64(*(h->curr_seg));
+    GRN_OUTPUT_CSTR("curr pos");
+    GRN_OUTPUT_INT64(*(h->curr_pos));
+    GRN_OUTPUT_CSTR("max_element_size");
+    GRN_OUTPUT_INT64(h->max_element_size);
+    GRN_OUTPUT_CSTR("chunk_threshold");
+    GRN_OUTPUT_INT64(h->chunk_threshold);
+    GRN_OUTPUT_CSTR("n_element_variations");
+    GRN_OUTPUT_INT64(h->n_element_variations);
+    GRN_OUTPUT_CSTR("n_using_segments");
+    GRN_OUTPUT_UINT32(n_using_segments);
+    GRN_OUTPUT_CSTR("valid");
+    GRN_OUTPUT_BOOL(is_valid);
     GRN_OUTPUT_MAP_CLOSE();
   }
   GRN_OUTPUT_MAP_CLOSE();
