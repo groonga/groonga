@@ -13,6 +13,7 @@ jobs:
       matrix:
         label:
           - Debian GNU/Linux buster amd64
+          - Debian GNU/Linux buster arm64
           - Debian GNU/Linux buster i386
           - CentOS 7
           - CentOS 8
@@ -22,6 +23,12 @@ jobs:
             rake-arguments: apt:build APT_TARGETS=debian-buster
             repositories-path: packages/apt/repositories/
             test-docker-image: debian:buster
+            test-script: packages/apt/test.sh
+          - label: Debian GNU/Linux buster arm64
+            id: debian-buster-arm64
+            rake-arguments: apt:build APT_TARGETS=debian-buster-arm64
+            repositories-path: packages/apt/repositories/
+            test-docker-image: arm64v8/debian:buster
             test-script: packages/apt/test.sh
           - label: Debian GNU/Linux buster i386
             id: debian-buster-i386
