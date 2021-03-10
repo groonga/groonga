@@ -14018,15 +14018,18 @@ msgstr ""
 "この ``select`` コマンドは ``Entries`` テーブルの中から ``content`` カラムの"
 "値に ``mroonga`` を含んでいないレコードを検索します。"
 
-msgid "Here is a usage example of ``QUERY_NO_SYNTAX_ERROR``."
+msgid "Here are a schema definition and sample data to describe other flags:"
+msgstr ""
+"他のフラグの使い方を示すために使うスキーマ定義とサンプルデータは以下の通りで"
+"す。"
+
+msgid "Here is an example of ``QUERY_NO_SYNTAX_ERROR``:"
 msgstr "以下は ``QUERY_NO_SYNTAX_ERROR`` の使用例です。"
 
 msgid ""
-"If you don't specify this flag, this query of example causes a syntax error "
-"as below."
+"If you don't specify this flag, the quey causes a syntax error as below."
 msgstr ""
-"このフラグを指定しない場合は、以下のように、この例のクエリーは、構文エラーに"
-"なります。"
+"このフラグを指定しない場合は、このクエリーは次のように構文エラーになります。"
 
 msgid "Here is a usage example of ``NONE``."
 msgstr "以下は ``NONE`` の使用例です。"

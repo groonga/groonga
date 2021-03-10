@@ -1,27 +1,17 @@
 Execution example::
 
-  table_create --name Magazine --flags TABLE_HASH_KEY --key_type ShortText
-  # [[0,1546673320.275529,0.08708477020263672],true]
-  column_create --table Magazine --name title --type ShortText
-  # [[0,1546673346.042032,0.09989762306213379],true]
-  load --table Magazine
-  [
-  {"_key":"http://test.jp/magazine/webplus","title":"WEB+"},
-  {"_key":"http://test.jp/magazine/database","title":"DataBase"},
-  ]
-  # [[0,1546673366.725134,0.0009036064147949219],2]
-  select Magazine --output_pretty yes --match_columns title --query 'WEB +'  --query_flags ALLOW_PRAGMA|ALLOW_COLUMN
+  select Magazine --match_columns title --query 'WEB +'  --query_flags ALLOW_PRAGMA|ALLOW_COLUMN
   # [
   #   [
-  #     -63,
-  #     1546674147.89755,
-  #     0.0006532669067382812,
-  #     "Syntax error: <WEB +||>",
+  #     -63, 
+  #     1337566253.89858, 
+  #     0.000355720520019531, 
+  #     "Syntax error: <WEB +||>", 
   #     [
   #       [
-  #         "yy_syntax_error",
-  #         "grn_ecmascript.lemon",
-  #         37
+  #         "yy_syntax_error", 
+  #         "lib/grn_ecmascript.lemon", 
+  #         78
   #       ]
   #     ]
   #   ]

@@ -339,6 +339,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_flags_no_query_no_syntax_error.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_flags_none.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_flags_query_no_syntax_error.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/query_flags_setup.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_less_than.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/query_or.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/simple_filter.log \
@@ -1452,6 +1453,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/query_flags_no_query_no_syntax_error.log \
 	source/example/reference/commands/select/query_flags_none.log \
 	source/example/reference/commands/select/query_flags_query_no_syntax_error.log \
+	source/example/reference/commands/select/query_flags_setup.log \
 	source/example/reference/commands/select/query_less_than.log \
 	source/example/reference/commands/select/query_or.log \
 	source/example/reference/commands/select/simple_filter.log \

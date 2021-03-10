@@ -719,8 +719,8 @@ Here is an example that can store ``_id`` and ``timestamp`` that a result of ``s
 .. select \
 ..   --table Logs_20150203 \
 ..   --load_table Logs \
-..   --load_columns "original_id, timestamp_text" \
-..   --load_values "_id, timestamp"
+..   --load_columns "_key, original_id, timestamp_text" \
+..   --load_values "_key, _id, timestamp"
 .. select --table Logs
 
 .. _select-load-columns:
@@ -952,31 +952,29 @@ Here is a usage example of ``ALLOW_LEADING_NOT``.
 The ``select`` command searches records that don't contain ``mroonga``
 in ``content`` column value from ``Entries`` table.
 
-Here is a usage example of ``QUERY_NO_SYNTAX_ERROR``.
+Here are a schema definition and sample data to describe other flags:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/query_flags_setup.log
+.. table_create --name Magazine --flags TABLE_HASH_KEY --key_type ShortText
+.. column_create --table Magazine --name title --type ShortText
+.. load --table Magazine
+.. [
+.. {"_key":"http://test.jp/magazine/webplus","title":"WEB+"},
+.. {"_key":"http://test.jp/magazine/database","title":"DataBase"},
+.. ]
+
+Here is an example of ``QUERY_NO_SYNTAX_ERROR``:
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/query_flags_query_no_syntax_error.log
-.. table_create --name Magazine --flags TABLE_HASH_KEY --key_type ShortText
-.. column_create --table Magazine --name title --type ShortText
-.. load --table Magazine
-.. [
-.. {"_key":"http://test.jp/magazine/webplus","title":"WEB+"},
-.. {"_key":"http://test.jp/magazine/database","title":"DataBase"},
-.. ]
-.. select Magazine --output_pretty yes --match_columns title --query 'WEB +'  --query_flags ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR
+.. select Magazine --match_columns title --query 'WEB +'  --query_flags ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR
 
-If you don't specify this flag, this query of example causes a syntax error as below.
+If you don't specify this flag, the quey causes a syntax error as below.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/query_flags_no_query_no_syntax_error.log
-.. table_create --name Magazine --flags TABLE_HASH_KEY --key_type ShortText
-.. column_create --table Magazine --name title --type ShortText
-.. load --table Magazine
-.. [
-.. {"_key":"http://test.jp/magazine/webplus","title":"WEB+"},
-.. {"_key":"http://test.jp/magazine/database","title":"DataBase"},
-.. ]
-.. select Magazine --output_pretty yes --match_columns title --query 'WEB +'  --query_flags ALLOW_PRAGMA|ALLOW_COLUMN
+.. select Magazine --match_columns title --query 'WEB +'  --query_flags ALLOW_PRAGMA|ALLOW_COLUMN
 
 Here is a usage example of ``NONE``.
 
