@@ -21,7 +21,7 @@ disabled in ``--query`` option of :doc:`/reference/commands/select`. You can use
 it if you use groonga as library and customize query syntax parser
 options.
 
-``Conditinal expression`` specifies an condition. ``Combinded
+``Conditional expression`` specifies an condition. ``Combinded
 expression`` consists of one or more ``conditional expression``,
 ``combined expression`` or ``assignment expression``. ``Assignment
 expression`` can assigns a column to a value.
@@ -544,6 +544,8 @@ Combined expression
 
 Here is available combined expression list.
 
+.. _query-syntax-logical-or:
+
 Logical OR
 ^^^^^^^^^^
 
@@ -563,6 +565,8 @@ Here is a simple example.
 The expression matches records that ``n_likes`` column value is
 greater than ``10`` or contain a word ``senna`` in ``content`` column
 value.
+
+.. _query-syntax-logical-and:
 
 Logical AND
 ^^^^^^^^^^^
@@ -587,8 +591,10 @@ The expression matches records that ``n_likes`` column value is
 greater than or equal to ``10`` and contain a word ``groonga`` in
 ``content`` column value.
 
-Logical NOT
-^^^^^^^^^^^
+.. _query-syntax-logical-and-not:
+
+Logical AND NOT
+^^^^^^^^^^^^^^^
 
 Its syntax is ``a - b``.
 

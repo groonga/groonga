@@ -25,26 +25,24 @@ by combination of multiple ``query`` functions.
 Syntax
 ------
 
-``query`` requires two arguments - ``match_columns`` and ``query_string``.
+``query`` requires two parameters - ``match_columns`` and
+``query_string``.
 
-The parameter ``query_expander``, ``substitution_table`` and
-``options`` are optional.
-
-::
+The parameter ``query_expander`` and ``options`` are optional::
 
   query(match_columns, query_string)
   query(match_columns, query_string, query_expander)
-  query(match_columns, query_string, substitution_table)
   query(match_columns, query_string, options)
 
-``options`` accepts the following keys::
+``options`` uses the following format. All of key-value pairs are
+optional::
 
   {
     "expander": query_expander,
     "default_mode": default_mode,
+    "default_operator": default_operator,
     "flags": flags
   }
-
 
 Usage
 -----
@@ -81,8 +79,8 @@ Sample data:
 .. {"name": "Tobby", "memo": "groonga and mroonga user. mroonga is ..."},
 .. ]
 
-Here is the simple usage of ``query`` function which execute full text
-search by keyword 'alice' without using ``--match_columns`` and
+Here is the simple usage of ``query`` function which executes full
+text search by keyword ``alice`` without using ``--match_columns`` and
 ``--query`` arguments in ``--filter``.
 
 .. groonga-command
@@ -118,12 +116,12 @@ Parameters
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
-There are two required parameter, ``match_columns`` and ``query_string``.
+There are two required parameters, ``match_columns`` and ``query_string``.
 
 ``match_columns``
 """""""""""""""""
 
-Specifies the default target column for fulltext search by
+Specifies the default target columns for full text search by
 ``query_string`` parameter value. It is the same role as
 :ref:`select-match-columns` parameter in ``select``.
 
@@ -142,34 +140,29 @@ Optional parameter
 
 There are some optional parameters.
 
+.. _query-query-expander:
+
 ``query_expander``
 """"""""""""""""""
 
-Specifies the plugin name for query expansion.
+Specifies the query expander name or substitution column name for
+query expansion.
 
-There is one plugin bundled in official release - :doc:`/reference/query_expanders/tsv`.
+See :doc:`/reference/query_expanders` for available query expanders.
 
-See :doc:`/reference/query_expanders/tsv` about details.
+Substitution column name uses ``${TABLE}.${COLUMN}`` format.
 
-
-``substitution_table``
-""""""""""""""""""""""
-
-Specifies the substitution table and substitution column name
-by following format such as ``${TABLE}.${COLUMN}`` for query expansion.
-
-See :ref:`select-query-expander` about details.
+See :ref:`select-query-expander` for details.
 
 .. _query-default-mode:
 
 ``default_mode``
 """"""""""""""""
 
-Specifies the default search mode. You can custom the default search
-mode by ``column:@keyword`` like syntax. The default search mode is
-used when you just specify ``keyword`` instead of
-``column:@keyword``. See :doc:`/reference/grn_expr/query_syntax` for
-more syntax details.
+Specifies the default search mode. You can change search mode by
+``column:@keyword`` like syntax. The default search mode is used when
+you just specify ``keyword`` instead of ``column:@keyword``. See
+:doc:`/reference/grn_expr/query_syntax` for more syntax details.
 
 Here are available modes. The default is ``"MATCH"`` mode. It does
 full text search.
@@ -227,6 +220,42 @@ full text search.
      - It uses :ref:`query-syntax-regular-expression-condition` as the default
        mode.
 
+.. _query-default-operator:
+
+``default_operator``
+"""""""""""""""""""""
+
+Specifies the default logical operator. It's used when no logical
+operator such as ``OR`` and ``-`` are specified between conditional
+expressions like ``keyword1 keyword2``. The default logical operator
+is used to combine ``keyword1`` result set and ``keyword2`` result
+set. The default logical operator is ``AND``. So ``keyword1 keyword2``
+result set includes only records that they are included in both
+``keyword1`` result set and ``keyword2`` result set.
+
+Here are available logical operators. The default is ``"AND"``.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Logical operator
+     - Aliases
+     - Description
+   * - ``"AND"``
+     - ``"&&"``, ``"+"``
+     - It uses :ref:`query-syntax-logical-and` as the default logical
+       operator.
+   * - ``"OR"``
+     - ``"||"``
+     - It uses :ref:`query-syntax-logical-or` as the default logical
+       operator.
+   * - ``"AND_NOT"``
+     - ``"&!"``, ``"-"``
+     - It uses :ref:`query-syntax-logical-and-not` as the default
+       logical operator.
+
+.. _query-flags:
+
 ``flags``
 """""""""
 
@@ -244,11 +273,13 @@ See :ref:`select-query-flags` for available flags.
 Return value
 ------------
 
-``query`` returns whether any record is matched or not. If one or more
-records are matched, it returns ``true``. Otherwise, it returns
-``false``.
+This function returns whether a record is matched or not as boolean.
+
+This function is also worked as a selector. It means that this
+function can be executable effectively.
 
 See also
 --------
 
 * :doc:`/reference/commands/select`
+* :doc:`query_parallel_or`
