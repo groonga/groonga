@@ -997,6 +997,16 @@ grn_fin(void)
 {
   grn_ctx *ctx, *ctx_;
   if (grn_gctx.stat == GRN_CTX_FIN) { return GRN_INVALID_ARGUMENT; }
+  /* Clear ctx pool to avoid double free. */
+  for (ctx = grn_gctx.next; ctx != &grn_gctx; ctx = ctx->next) {
+    if (!ctx->impl) {
+      continue;
+    }
+    if (GRN_PTR_VECTOR_SIZE(&(ctx->impl->children.pool)) == 0) {
+      continue;
+    }
+    GRN_BULK_REWIND(&(ctx->impl->children.pool));
+  }
   for (ctx = grn_gctx.next; ctx != &grn_gctx; ctx = ctx_) {
     ctx_ = ctx->next;
     if (ctx->stat != GRN_CTX_FIN) { grn_ctx_fin(ctx); }
