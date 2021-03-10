@@ -1490,10 +1490,10 @@ grn_proc_get_value_operator(grn_ctx *ctx,
              GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "OR")) {
     return GRN_OP_OR;
   } else if (GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "!") ||
-             GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "-") ||
              GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "NOT")) {
     return GRN_OP_NOT;
   } else if (GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "&!") ||
+             GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "-") ||
              GRN_RAW_STRING_EQUAL_CSTRING(operator_string, "AND_NOT")) {
     return GRN_OP_AND_NOT;
   } else {
@@ -1502,8 +1502,8 @@ grn_proc_get_value_operator(grn_ctx *ctx,
                      "["
                      "\"&&\", \"+\", \"AND\", "
                      "\"||\", \"OR\", "
-                     "\"!\", \"-\", \"NOT\", "
-                     "\"&!\", \"AND_NOT\""
+                     "\"!\" \"NOT\", "
+                     "\"&!\", \"-\",, \"AND_NOT\""
                      "]: <%.*s>",
                      tag,
                      (int)operator_string.length,
