@@ -1,0 +1,43 @@
+Execution example::
+
+  select Users \
+    --output_columns name,memo,_score \
+    --filter 'query_parallel_or("name * 10 || memo", "alice", "Groonga")'
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         2
+  #       ], 
+  #       [
+  #         [
+  #           "name", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "memo", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_score", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         "Alice", 
+  #         "Groonga user", 
+  #         11
+  #       ], 
+  #       [
+  #         "Tobby", 
+  #         "Groonga and Mroonga user. Mroonga is ...", 
+  #         1
+  #       ]
+  #     ]
+  #   ]
+  # ]

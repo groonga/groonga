@@ -459,6 +459,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/query/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/query/usage_with_query.log \
 	$(top_srcdir)/doc/source/example/reference/functions/query/usage_without_query.log \
+	$(top_srcdir)/doc/source/example/reference/functions/query_parallel_or/usage_basic.log \
+	$(top_srcdir)/doc/source/example/reference/functions/query_parallel_or/usage_setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/functions/query_parallel_or/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage.log \
 	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage_basic.log \
 	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage_setup.log \
@@ -997,6 +1000,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/number_classify.rst \
 	$(top_srcdir)/doc/source/reference/functions/prefix_rk_search.rst \
 	$(top_srcdir)/doc/source/reference/functions/query.rst \
+	$(top_srcdir)/doc/source/reference/functions/query_parallel_or.rst \
 	$(top_srcdir)/doc/source/reference/functions/rand.rst \
 	$(top_srcdir)/doc/source/reference/functions/snippet_html.rst \
 	$(top_srcdir)/doc/source/reference/functions/string_length.rst \
@@ -1573,6 +1577,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/query/usage_setup_schema.log \
 	source/example/reference/functions/query/usage_with_query.log \
 	source/example/reference/functions/query/usage_without_query.log \
+	source/example/reference/functions/query_parallel_or/usage_basic.log \
+	source/example/reference/functions/query_parallel_or/usage_setup_data.log \
+	source/example/reference/functions/query_parallel_or/usage_setup_schema.log \
 	source/example/reference/functions/snippet_html/usage.log \
 	source/example/reference/functions/snippet_html/usage_basic.log \
 	source/example/reference/functions/snippet_html/usage_setup.log \
@@ -2111,6 +2118,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/number_classify.rst \
 	source/reference/functions/prefix_rk_search.rst \
 	source/reference/functions/query.rst \
+	source/reference/functions/query_parallel_or.rst \
 	source/reference/functions/rand.rst \
 	source/reference/functions/snippet_html.rst \
 	source/reference/functions/string_length.rst \
@@ -2540,6 +2548,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/number_classify.html \
 	html/reference/functions/prefix_rk_search.html \
 	html/reference/functions/query.html \
+	html/reference/functions/query_parallel_or.html \
 	html/reference/functions/rand.html \
 	html/reference/functions/snippet_html.html \
 	html/reference/functions/string_length.html \

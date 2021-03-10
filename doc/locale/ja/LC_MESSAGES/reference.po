@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-03-10 16:24+0900\n"
+"PO-Revision-Date: 2021-03-10 16:30+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -22449,6 +22449,127 @@ msgid ""
 msgstr ""
 "この関数はセレクターとしても動きます。つまり、効率的に実行できるということで"
 "す。"
+
+msgid ":doc:`query_parallel_or`"
+msgstr ""
+
+msgid "``query_parallel_or``"
+msgstr ""
+
+msgid ""
+"``query_parallel_or`` is similar to :doc:`query` but ``query_parallel_or`` "
+"processes query that has multiple ``OR`` conditions in parallel."
+msgstr ""
+"``query_parallel_or`` は :doc:`query` と似ていますが、 ``query_parallel_or`` "
+"は複数の ``OR`` 条件を並列に処理します。"
+
+msgid ""
+"``query_parallel_or`` requires two or more parameters - ``match_columns`` "
+"and ``query_string`` s."
+msgstr ""
+"``query_parallel_or`` は2つ以上の引数が必要です。 ``match_columns`` と1つ以上"
+"の ``query_string`` です。"
+
+msgid "The ``options`` parameter is optional."
+msgstr "``options`` 引数は省略可能です。"
+
+msgid "You must specify at least one ``query_string``."
+msgstr "少なくとも1つ ``query_string`` を指定しなければいけません。"
+
+msgid ""
+"Here is an example to execute full text searches in parallel by "
+"``query_parallel_or`` function:"
+msgstr ""
+"以下は ``query_parallel_or`` 関数で並列に複数の全文検索を実行する例です。"
+
+msgid ""
+"This ``select`` command needs to execute the following full text searches:"
+msgstr "この ``select`` コマンドは以下の全文検索を実行しなければいけません。"
+
+msgid "``\"alice\"`` against ``name``"
+msgstr "``name`` から ``\"alice\"`` を全文検索"
+
+msgid "``\"alice\"`` against ``memo``"
+msgstr "``memo`` から ``\"alice\"`` を全文検索"
+
+msgid "``\"Groonga\"`` against ``name``"
+msgstr "``name`` から ``\"Groonga\"`` を全文検索"
+
+msgid "``\"Groonga\"`` against ``memo``"
+msgstr "``memo`` から ``\"Groonga\"`` を全文検索"
+
+msgid "And all result sets of them are needed to be combined by ``OR``."
+msgstr "さらに、これらのすべての結果セットは ``OR`` で結合する必要があります。"
+
+msgid ""
+"``query`` function executes them in a sequential order. "
+"``query_parallel_or`` function executes them in parallel. Result sets of "
+"both of them are same."
+msgstr ""
+"``query`` 関数はこれらを順番に実行します。 ``query_parallel_or`` 関数はこれら"
+"を並列に実行します。どちらの結果セットも同じになります。"
+
+msgid ""
+"Specifies the default target columns for full text search by "
+"``query_string`` parameters. It is the same role as :ref:`select-match-"
+"columns` parameter in ``select``."
+msgstr ""
+"``query_string`` パラメーターの値で全文検索するときのデフォルトの検索対象カラ"
+"ムを指定します。このパラメーターは ``select`` の :ref:`select-match-columns` "
+"パラメーターと同じ役割です。"
+
+msgid ""
+"Each pair of target column and query string is processed in parallel. For "
+"example, ``query_parallel_or(\"C1 || C2 || C3\", \"Q1\", \"Q2\")`` has the "
+"following pairs:"
+msgstr ""
+"検索対象カラムとクエリー文字列の各ペアは並列に処理されます。たとえば、 "
+"``query_parallel_or(\"C1 || C2 || C3\", \"Q1\", \"Q2\")`` には次のペアがあり"
+"ます。"
+
+msgid "``C1 @ \"Q1\"``"
+msgstr ""
+
+msgid "``C2 @ \"Q1\"``"
+msgstr ""
+
+msgid "``C3 @ \"Q1\"``"
+msgstr ""
+
+msgid "``C1 @ \"Q2\"``"
+msgstr ""
+
+msgid "``C2 @ \"Q2\"``"
+msgstr ""
+
+msgid "``C3 @ \"Q2\"``"
+msgstr ""
+
+msgid ""
+"Each pair is processed in parallel. Degree of parallelism is depends on your "
+"system. The default max number of threads is ``N_CPU_THREADS / 3``."
+msgstr ""
+"各ペアは並列に処理されます。並列度はシステムによります。デフォルトの最大ス"
+"レッド数は ``CPUスレッド数 / 3`` です。"
+
+msgid ""
+"You can specify multiple ``query_string`` s to execute full text searches in "
+"parallel. See also :ref:`query-parallel-or-match-columns` how to parallelize."
+msgstr ""
+"並列に全文検索するために複数の ``query_string`` を指定できます。どのように並"
+"列化されるかは :ref:`query-parallel-or-match-columns` を参照してください。"
+
+msgid "See :ref:`query-query-expander` for details."
+msgstr "詳細は :ref:`query-query-expander` を見てください。"
+
+msgid "See :ref:`query-default-mode` for details."
+msgstr "詳細は :ref:`query-default-mode` を見てください。"
+
+msgid "See :ref:`query-default-operator` for details."
+msgstr "詳細は :ref:`query-default-operator` を見てください。"
+
+msgid "See :ref:`query-flags` for details."
+msgstr "詳細は :ref:`query-flags` を見てください。"
 
 msgid ":doc:`query`"
 msgstr ""
