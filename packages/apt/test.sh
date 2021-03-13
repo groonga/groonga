@@ -34,6 +34,12 @@ if [ "${architecture}" = "i386" ]; then
   rm command/suite/tokenizers/document_vector_bm25/alphabet.test
   rm command/suite/tokenizers/document_vector_bm25/normalize_false.test
   rm command/suite/tokenizers/document_vector_bm25/reindex.test
+elif [ "${architecture}" = "arm64" ]; then
+  # Float32 value format is different.
+  rm command/suite/tokenizers/document_vector_bm25/alphabet.test
+  rm command/suite/tokenizers/document_vector_bm25/normalize_false.test
+  rm command/suite/tokenizers/document_vector_bm25/reindex.test
+  rm command/suite/tokenizers/document_vector_bm25/token_column_different_lexicon
 fi
 
 # libxxhash-dev 0.8.0 or later is required.

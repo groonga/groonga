@@ -141,6 +141,15 @@ jobs:
           asset_content_type: application/gzip
 
       # Test
+      - name: Disable tests not for Arm64
+        if: |
+          matrix.id == 'debian-buster-arm64'
+        run: |
+          # Float32 value format is different.
+          Remove-Item test\command\suite\tokenizers\document_vector_bm25\alphabet.test
+          Remove-Item test\command\suite\tokenizers\document_vector_bm25\normalize_false.test
+          Remove-Item test\command\suite\tokenizers\document_vector_bm25\reindex.test
+          Remove-Item test\command\suite\tokenizers\document_vector_bm25\token_column_different_lexicon.test
       - name: Test
         run: |
           docker run \
