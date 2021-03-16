@@ -4,6 +4,7 @@ table_create Timestamps TABLE_PAT_KEY Time
 
 load --table Timestamps
 [
+{"_key": 0},
 {"_key": "2016-05-05 22:33:09.999999"},
 {"_key": "2016-05-05 22:33:10.000000"},
 {"_key": "2016-05-05 22:33:10.000001"},

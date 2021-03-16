@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2016-2018 Brazil
+  Copyright(C) 2016-2018  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -79,6 +80,10 @@ func_time_classify_raw_compute(grn_ctx *ctx,
     return false;
   }
 
+  struct tm tm_timezone_offset;
+  grn_time_to_tm(ctx, 0, &tm_timezone_offset);
+  int64_t timezone_offset = 0;
+
   switch (unit) {
   case GRN_TIME_CLASSIFY_UNIT_SECOND :
     tm.tm_sec = (tm.tm_sec / interval_raw) * interval_raw;
@@ -89,13 +94,18 @@ func_time_classify_raw_compute(grn_ctx *ctx,
     break;
   case GRN_TIME_CLASSIFY_UNIT_HOUR :
     tm.tm_hour = (tm.tm_hour / interval_raw) * interval_raw;
-    tm.tm_min = 0;
+    tm.tm_min = tm_timezone_offset.tm_min;
     tm.tm_sec = 0;
+    timezone_offset = GRN_TIME_PACK((tm_timezone_offset.tm_min * 60),
+                                    0);
     break;
   case GRN_TIME_CLASSIFY_UNIT_DAY :
-    tm.tm_hour = 0;
-    tm.tm_min = 0;
+    tm.tm_hour = tm_timezone_offset.tm_hour;
+    tm.tm_min = tm_timezone_offset.tm_min;
     tm.tm_sec = 0;
+    timezone_offset = GRN_TIME_PACK((tm_timezone_offset.tm_hour * 60 * 60) +
+                                    (tm_timezone_offset.tm_min * 60),
+                                    0);
     break;
   case GRN_TIME_CLASSIFY_UNIT_WEEK :
     if ((tm.tm_mday - tm.tm_wday) >= 0) {
@@ -121,30 +131,40 @@ func_time_classify_raw_compute(grn_ctx *ctx,
       }
       tm.tm_mday -= n_underflowed_mday;
     }
-    tm.tm_hour = 0;
-    tm.tm_min = 0;
+    tm.tm_hour = tm_timezone_offset.tm_hour;
+    tm.tm_min = tm_timezone_offset.tm_min;
     tm.tm_sec = 0;
+    timezone_offset = GRN_TIME_PACK((tm_timezone_offset.tm_hour * 60 * 60) +
+                                    (tm_timezone_offset.tm_min * 60),
+                                    0);
     break;
   case GRN_TIME_CLASSIFY_UNIT_MONTH :
     tm.tm_mon = (tm.tm_mon / interval_raw) * interval_raw;
     tm.tm_mday = 1;
-    tm.tm_hour = 0;
-    tm.tm_min = 0;
+    tm.tm_hour = tm_timezone_offset.tm_hour;
+    tm.tm_min = tm_timezone_offset.tm_min;
     tm.tm_sec = 0;
+    timezone_offset = GRN_TIME_PACK((tm_timezone_offset.tm_hour * 60 * 60) +
+                                    (tm_timezone_offset.tm_min * 60),
+                                    0);
     break;
   case GRN_TIME_CLASSIFY_UNIT_YEAR :
     tm.tm_year = (((1900 + tm.tm_year) / interval_raw) * interval_raw) - 1900;
     tm.tm_mon = 0;
     tm.tm_mday = 1;
-    tm.tm_hour = 0;
-    tm.tm_min = 0;
+    tm.tm_hour = tm_timezone_offset.tm_hour;
+    tm.tm_min = tm_timezone_offset.tm_min;
     tm.tm_sec = 0;
+    timezone_offset = GRN_TIME_PACK((tm_timezone_offset.tm_hour * 60 * 60) +
+                                    (tm_timezone_offset.tm_min * 60),
+                                    0);
     break;
   }
 
   if (!grn_time_from_tm(ctx, classed_time_raw, &tm)) {
     return false;
   }
+  *classed_time_raw -= timezone_offset;
   return true;
 }
 
