@@ -97,6 +97,54 @@ int grn_lock_timeout = GRN_LOCK_TIMEOUT;
 int grn_uyield_count = 0;
 #endif
 
+#ifdef WIN32
+static DWORD grn_exception_filter_running = TLS_OUT_OF_INDEXES;
+/* Address is important. Value is meaningless. */
+static bool grn_exception_filter_running_true;
+static bool grn_exception_filter_running_false;
+static void
+grn_exception_filter_running_init(void)
+{
+  grn_exception_filter_running = TlsAlloc();
+}
+
+static void
+grn_exception_filter_running_fin(void)
+{
+  if (grn_exception_filter_running != TLS_OUT_OF_INDEXES) {
+    TlsFree(grn_exception_filter_running);
+    grn_exception_filter_running = TLS_OUT_OF_INDEXES;
+  }
+}
+
+static bool
+grn_exception_filter_running_get(void)
+{
+  if (grn_exception_filter_running == TLS_OUT_OF_INDEXES) {
+    return false;
+  }
+
+  return TlsGetValue(grn_exception_filter_running) ==
+    &grn_exception_filter_running_true;
+}
+
+static void
+grn_exception_filter_running_set(bool running)
+{
+  if (grn_exception_filter_running == TLS_OUT_OF_INDEXES) {
+    return;
+  }
+
+  if (running) {
+    TlsSetValue(grn_exception_filter_running,
+                &grn_exception_filter_running_true);
+  } else {
+    TlsSetValue(grn_exception_filter_running,
+                &grn_exception_filter_running_false);
+  }
+}
+#endif
+
 static grn_bool grn_ctx_per_db = GRN_FALSE;
 
 static void
@@ -831,6 +879,7 @@ grn_init(void)
   grn_rc rc;
   grn_ctx *ctx = &grn_gctx;
 #ifdef WIN32
+  grn_exception_filter_running_init();
   grn_windows_init();
 #endif
   grn_init_from_env();
@@ -931,6 +980,7 @@ fail_ctx_init_internal:
   grn_fin_external_libraries();
 #ifdef WIN32
   grn_windows_fin();
+  grn_exception_filter_running_fin();
 #endif
   return rc;
 }
@@ -1038,6 +1088,7 @@ grn_fin(void)
   grn_fin_external_libraries();
 #ifdef WIN32
   grn_windows_fin();
+  grn_exception_filter_running_fin();
 #endif
   return GRN_SUCCESS;
 }
@@ -2121,9 +2172,18 @@ grn_exception_filter(EXCEPTION_POINTERS *info)
   thread = GetCurrentThread();
   context = info->ContextRecord;
 
+  if (grn_exception_filter_running_get()) {
+    GRN_LOG(ctx, GRN_LOG_CRIT, "exception is occurred in exception filter");
+    GRN_LOG(ctx, GRN_LOG_CRIT, "%s", log_end_mark);
+    return EXCEPTION_CONTINUE_SEARCH;
+  }
+
+  grn_exception_filter_running_set(true);
+
   if (!grn_windows_symbol_initialize(ctx, process)) {
     GRN_LOG(ctx, GRN_LOG_CRIT, "failed to initialize symbol handler");
     GRN_LOG(ctx, GRN_LOG_CRIT, "%s", log_end_mark);
+    grn_exception_filter_running_set(false);
     return EXCEPTION_CONTINUE_SEARCH;
   }
 
@@ -2177,6 +2237,8 @@ grn_exception_filter(EXCEPTION_POINTERS *info)
   GRN_LOG(ctx, GRN_LOG_CRIT, "%s", log_end_mark);
 
   grn_windows_symbol_cleanup(ctx, process);
+
+  grn_exception_filter_running_set(false);
 
   return EXCEPTION_CONTINUE_SEARCH;
 }
