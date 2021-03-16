@@ -4,7 +4,6 @@ table_create Timestamps TABLE_PAT_KEY Time
 [[0,0.0,0.0],true]
 load --table Timestamps
 [
-{"_key": 0},
 {"_key": "2016-04-30 23:59:59.999999"},
 {"_key": "2016-05-01 00:00:00.000000"},
 {"_key": "2016-05-01 00:00:00.000001"},
@@ -12,7 +11,7 @@ load --table Timestamps
 {"_key": "2016-05-08 00:00:00.000000"},
 {"_key": "2016-05-08 00:00:00.000001"}
 ]
-[[0,0.0,0.0],7]
+[[0,0.0,0.0],6]
 select Timestamps   --sortby _id   --limit -1   --output_columns '_key, time_classify_week(_key)'
 [
   [
@@ -23,7 +22,7 @@ select Timestamps   --sortby _id   --limit -1   --output_columns '_key, time_cla
   [
     [
       [
-        7
+        6
       ],
       [
         [
@@ -34,10 +33,6 @@ select Timestamps   --sortby _id   --limit -1   --output_columns '_key, time_cla
           "time_classify_week",
           null
         ]
-      ],
-      [
-        0.0,
-        -378000.0
       ],
       [
         1462028399.999999,
