@@ -1998,7 +1998,7 @@ grn_ctx_log_back_trace_windows(grn_ctx *ctx, grn_log_level level)
   }
 
   HANDLE process = GetCurrentProcess();
-  if (!grn_windows_symbol_initialize(process)) {
+  if (!grn_windows_symbol_initialize(ctx, process)) {
     GRN_LOG(ctx,
             level,
             "[log][back-trace] failed to initialize symbol handler");
@@ -2011,7 +2011,7 @@ grn_ctx_log_back_trace_windows(grn_ctx *ctx, grn_log_level level)
     grn_windows_log_trace(ctx, level, process, (DWORD64)address);
   }
 
-  grn_windows_symbol_cleanup(process);
+  grn_windows_symbol_cleanup(ctx, process);
 }
 #else
 # ifdef HAVE_BACKTRACE
@@ -2112,7 +2112,7 @@ grn_exception_filter(EXCEPTION_POINTERS *info)
   thread = GetCurrentThread();
   context = info->ContextRecord;
 
-  if (!grn_windows_symbol_initialize(process)) {
+  if (!grn_windows_symbol_initialize(ctx, process)) {
     GRN_LOG(ctx, GRN_LOG_CRIT, "failed to initialize symbol handler");
     GRN_LOG(ctx, GRN_LOG_CRIT, "%s", log_end_mark);
     return EXCEPTION_CONTINUE_SEARCH;
@@ -2167,7 +2167,7 @@ grn_exception_filter(EXCEPTION_POINTERS *info)
   }
   GRN_LOG(ctx, GRN_LOG_CRIT, "%s", log_end_mark);
 
-  grn_windows_symbol_cleanup(process);
+  grn_windows_symbol_cleanup(ctx, process);
 
   return EXCEPTION_CONTINUE_SEARCH;
 }

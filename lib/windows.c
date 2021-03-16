@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2010-2017  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -129,8 +129,82 @@ grn_windows_encoding_to_code_page(grn_encoding encoding)
   return code_page;
 }
 
+static void
+grn_windows_append_path(grn_ctx *ctx,
+                        grn_obj *buffer,
+                        const char *path)
+{
+  for (; *path; path++) {
+    if (*path == '/') {
+      GRN_TEXT_PUTC(ctx, buffer, '\\');
+    } else {
+      GRN_TEXT_PUTC(ctx, buffer, *path);
+    }
+  }
+}
+
+static void
+grn_windows_symbol_add_search_path(grn_ctx *ctx,
+                                   grn_obj *search_path,
+                                   const char *relative_path)
+{
+  if (GRN_TEXT_LEN(search_path) > 0) {
+    GRN_TEXT_PUTC(ctx, search_path, ';');
+  }
+
+  grn_windows_append_path(ctx, search_path, grn_windows_base_dir());
+  grn_windows_append_path(ctx, search_path, "/");
+  grn_windows_append_path(ctx, search_path, relative_path);
+}
+
+static void
+grn_windows_symbol_add_search_paths(grn_ctx *ctx,
+                                    grn_obj *search_path,
+                                    const char *relative_path)
+{
+  grn_obj base_dir;
+  GRN_TEXT_INIT(&base_dir, 0);
+  grn_windows_append_path(ctx, &base_dir, grn_windows_base_dir());
+  grn_windows_append_path(ctx, &base_dir, "/");
+  grn_windows_append_path(ctx, &base_dir, relative_path);
+  grn_windows_append_path(ctx, &base_dir, "/*");
+  GRN_TEXT_PUTC(ctx, &base_dir, '\0');
+
+  WIN32_FIND_DATA data;
+  HANDLE finder = FindFirstFile(GRN_TEXT_VALUE(&base_dir), &data);
+  if (finder != INVALID_HANDLE_VALUE) {
+    do {
+      if (!(data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+        continue;
+      }
+      if (strcmp(data.cFileName, ".") == 0) {
+        continue;
+      }
+      if (strcmp(data.cFileName, "..") == 0) {
+        continue;
+      }
+
+      grn_obj sub_path;
+      GRN_TEXT_INIT(&sub_path, 0);
+      grn_windows_append_path(ctx, &sub_path, relative_path);
+      grn_windows_append_path(ctx, &sub_path, "/");
+      grn_windows_append_path(ctx, &sub_path, data.cFileName);
+      GRN_TEXT_PUTC(ctx, &sub_path, '\0');
+      grn_windows_symbol_add_search_path(ctx,
+                                         search_path,
+                                         GRN_TEXT_VALUE(&sub_path));
+      grn_windows_symbol_add_search_paths(ctx,
+                                          search_path,
+                                          GRN_TEXT_VALUE(&sub_path));
+      GRN_OBJ_FIN(ctx, &sub_path);
+    } while (FindNextFile(finder, &data) != 0);
+    FindClose(finder);
+  }
+  GRN_OBJ_FIN(ctx, &base_dir);
+}
+
 bool
-grn_windows_symbol_initialize(HANDLE process)
+grn_windows_symbol_initialize(grn_ctx *ctx, HANDLE process)
 {
   SymSetOptions(SYMOPT_ALLOW_ABSOLUTE_SYMBOLS |
                 SYMOPT_ALLOW_ZERO_ADDRESS |
@@ -143,46 +217,35 @@ grn_windows_symbol_initialize(HANDLE process)
     return false;
   }
 
-  char search_path[MAX_PATH * 2];
-  const char *base_dir;
-
-  if (SymGetSearchPath(process, search_path, sizeof(search_path))) {
-    grn_strcat(search_path, sizeof(search_path), ";");
-  } else {
-    search_path[0] = '\0';
+  char current_search_path[MAX_PATH];
+  grn_obj new_search_path;
+  GRN_TEXT_INIT(&new_search_path, 0);
+  if (SymGetSearchPath(process,
+                       current_search_path,
+                       sizeof(current_search_path))) {
+    GRN_TEXT_PUTS(ctx, &new_search_path, current_search_path);
   }
 
-  base_dir = grn_windows_base_dir();
-  {
-    char *current, *end;
-    /* TODO: Add more directories for plugins and so on. */
-    const char *bin_dir = "\\bin";
-    current = search_path + strlen(search_path);
-    end = current + sizeof(search_path) - 1;
-    for (; *base_dir && current < end; base_dir++, current++) {
-      if (*base_dir == '/') {
-        *current = '\\';
-      } else {
-        *current = *base_dir;
-      }
-    }
-    if (current == end) {
-      current--;
-    }
-    *current = '\0';
-    grn_strcat(search_path, sizeof(search_path), bin_dir);
-  }
+  grn_windows_symbol_add_search_path(ctx, &new_search_path, "bin");
+  grn_windows_symbol_add_search_paths(ctx,
+                                      &new_search_path,
+                                      "lib/" PACKAGE "/plugins");
+  GRN_TEXT_PUTC(ctx, &new_search_path, '\0');
 
-  if (!SymSetSearchPath(process, search_path)) {
+  const BOOL success =
+    SymSetSearchPath(process, GRN_TEXT_VALUE(&new_search_path));
+
+  GRN_OBJ_FIN(ctx, &new_search_path);
+
+  if (!success) {
     SymCleanup(process);
-    return false;
   }
 
-  return true;
+  return success;
 }
 
 bool
-grn_windows_symbol_cleanup(HANDLE process)
+grn_windows_symbol_cleanup(grn_ctx *ctx, HANDLE process)
 {
   return SymCleanup(process);
 }
