@@ -1659,7 +1659,7 @@ namespace grnarrow {
     }
 
     arrow::Status Close() override {
-      is_open_ = true;
+      is_open_ = false;
       return arrow::Status::OK();
     }
 
