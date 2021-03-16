@@ -24,6 +24,20 @@
 #ifdef WIN32
 # include <dbghelp.h>
 
+static grn_critical_section grn_windows_symbol_critical_section;
+
+void
+grn_windows_init(void)
+{
+  CRITICAL_SECTION_INIT(grn_windows_symbol_critical_section);
+}
+
+void
+grn_windows_fin(void)
+{
+  CRITICAL_SECTION_FIN(grn_windows_symbol_critical_section);
+}
+
 static char *windows_base_dir = NULL;
 const char *
 grn_windows_base_dir(void)
@@ -206,6 +220,7 @@ grn_windows_symbol_add_search_paths(grn_ctx *ctx,
 bool
 grn_windows_symbol_initialize(grn_ctx *ctx, HANDLE process)
 {
+  CRITICAL_SECTION_ENTER(grn_windows_symbol_critical_section);
   SymSetOptions(SYMOPT_ALLOW_ABSOLUTE_SYMBOLS |
                 SYMOPT_ALLOW_ZERO_ADDRESS |
                 SYMOPT_AUTO_PUBLICS |
@@ -214,6 +229,7 @@ grn_windows_symbol_initialize(grn_ctx *ctx, HANDLE process)
                 SYMOPT_LOAD_LINES |
                 SYMOPT_NO_PROMPTS);
   if (!SymInitialize(process, NULL, TRUE)) {
+    CRITICAL_SECTION_LEAVE(grn_windows_symbol_critical_section);
     return false;
   }
 
@@ -239,6 +255,7 @@ grn_windows_symbol_initialize(grn_ctx *ctx, HANDLE process)
 
   if (!success) {
     SymCleanup(process);
+    CRITICAL_SECTION_LEAVE(grn_windows_symbol_critical_section);
   }
 
   return success;
@@ -247,7 +264,9 @@ grn_windows_symbol_initialize(grn_ctx *ctx, HANDLE process)
 bool
 grn_windows_symbol_cleanup(grn_ctx *ctx, HANDLE process)
 {
-  return SymCleanup(process);
+  const BOOL success = SymCleanup(process);
+  CRITICAL_SECTION_LEAVE(grn_windows_symbol_critical_section);
+  return success;
 }
 
 void

@@ -830,6 +830,9 @@ grn_init(void)
 {
   grn_rc rc;
   grn_ctx *ctx = &grn_gctx;
+#ifdef WIN32
+  grn_windows_init();
+#endif
   grn_init_from_env();
   grn_init_external_libraries();
   grn_alloc_info_init();
@@ -926,6 +929,9 @@ fail_ctx_init_internal:
   CRITICAL_SECTION_FIN(grn_glock);
   grn_alloc_info_fin();
   grn_fin_external_libraries();
+#ifdef WIN32
+  grn_windows_fin();
+#endif
   return rc;
 }
 
@@ -1030,6 +1036,9 @@ grn_fin(void)
   CRITICAL_SECTION_FIN(grn_glock);
   grn_alloc_info_fin();
   grn_fin_external_libraries();
+#ifdef WIN32
+  grn_windows_fin();
+#endif
   return GRN_SUCCESS;
 }
 

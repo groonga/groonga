@@ -27,6 +27,8 @@ extern "C" {
 #endif
 
 #ifdef WIN32
+void grn_windows_init(void);
+void grn_windows_fin(void);
 GRN_API UINT grn_windows_encoding_to_code_page(grn_encoding encoding);
 bool grn_windows_symbol_initialize(grn_ctx *ctx, HANDLE process);
 bool grn_windows_symbol_cleanup(grn_ctx *ctx, HANDLE process);
