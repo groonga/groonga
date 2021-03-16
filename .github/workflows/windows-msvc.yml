@@ -306,7 +306,8 @@ jobs:
             mingw-w64-x86_64-gcc-ada `
             mingw-w64-x86_64-gcc-fortran `
             mingw-w64-x86_64-gcc-libgfortran `
-            mingw-w64-x86_64-gcc-objc
+            mingw-w64-x86_64-gcc-objc `
+            mingw-w64-x86_64-libgccjit
           ridk exec pacman --sync --noconfirm mingw-w64-x86_64-gcc
       - name: Install grntest
         run: |
