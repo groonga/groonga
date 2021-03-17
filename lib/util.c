@@ -1118,6 +1118,14 @@ grn_json_load_open_bracket_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
       GRN_TEXT_PUTS(ctx, buf, ", ");
     }
     grn_inspect(ctx, buf, value);
+    switch (value->header.domain) {
+    case GRN_JSON_LOAD_OPEN_BRACKET :
+    case GRN_JSON_LOAD_OPEN_BRACE :
+      i += GRN_UINT32_VALUE(value);
+      break;
+    default :
+      break;
+    }
   }
   GRN_TEXT_PUTS(ctx, buf, "]");
 
@@ -1142,6 +1150,14 @@ grn_json_load_open_brace_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     grn_inspect(ctx, buf, key);
     GRN_TEXT_PUTS(ctx, buf, ": ");
     grn_inspect(ctx, buf, value);
+    switch (value->header.domain) {
+    case GRN_JSON_LOAD_OPEN_BRACKET :
+    case GRN_JSON_LOAD_OPEN_BRACE :
+      i += GRN_UINT32_VALUE(value);
+      break;
+    default :
+      break;
+    }
   }
   GRN_TEXT_PUTS(ctx, buf, "}");
 
