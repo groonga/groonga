@@ -18,6 +18,6 @@ load --table LandMarks
   1
 ]
 #|e| <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"1x-648000000">
-#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"1x-648000000">: id: <1>: column: <LandMarks.location>, value: <"1x-648000000">
+#|e| [table][load][LandMarks][location] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"1x-648000000">: id: <1>: value: <"1x-648000000">
 select LandMarks
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["location","WGS84GeoPoint"]],[1,"0x0"]]]]

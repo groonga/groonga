@@ -11,8 +11,8 @@ load --table Memos
 [
 {"_id": 1, "content": "Mroonga is fast", "_id": 1}
 ]
-[[0,0.0,0.0],0]
-#|e| duplicated '_id' column
+[[[-22,0.0,0.0],"[table][load][Memos] duplicated <_id> columns"],0]
+#|e| [table][load][Memos] duplicated <_id> columns
 select Memos
 [
   [

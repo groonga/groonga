@@ -1,0 +1,26 @@
+#@require-input-type json
+
+table_create Purchases TABLE_HASH_KEY ShortText
+column_create Purchases item COLUMN_SCALAR ShortText
+column_create Purchases price COLUMN_SCALAR UInt32
+
+table_create Settlements TABLE_HASH_KEY ShortText
+column_create Settlements purchase COLUMN_SCALAR Purchases
+
+column_create Purchases settlements_purchases COLUMN_INDEX Settlements purchases
+
+load --table Settlements
+[
+{
+  "_key": "super market",
+  "purchase": {"_key": "super market-1", "item": "apple", "price": 100}
+},
+{
+  "_key": "shoes shop",
+  "purchase": {"_key": "shoes shop-1", "item": "sneakers", "price": 3000}
+}
+]
+
+dump \
+  --dump_plugins no \
+  --dump_schema no

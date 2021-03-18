@@ -18,6 +18,6 @@ load --table Users
   1
 ]
 #|e| <Users.age>: failed to cast to <Int32>: <"invalid number!">
-#|e| [table][load] failed to set column value: <Users.age>: failed to cast to <Int32>: <"invalid number!">: id: <1>: column: <Users.age>, value: <"invalid number!">
+#|e| [table][load][Users][age] failed to set column value: <Users.age>: failed to cast to <Int32>: <"invalid number!">: id: <1>: value: <"invalid number!">
 select Users
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["age","Int32"]],[1,0]]]]

@@ -27,13 +27,13 @@ load --table LandMarks
   8
 ]
 #|e| <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">
-#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"a">, column: <LandMarks.location>, value: <"x">
-#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <LandMarks.location>, value: <"x">
-#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <LandMarks.location>, value: <"x">
-#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <LandMarks.location>, value: <"x">
-#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <LandMarks.location>, value: <"x">
-#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <LandMarks.location>, value: <"x">
-#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <LandMarks.location>, value: <"x">
-#|e| [table][load] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, column: <LandMarks.location>, value: <"x">
+#|e| [table][load][LandMarks][location] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"a">, value: <"x">
+#|e| [table][load][LandMarks][location] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, value: <"x">
+#|e| [table][load][LandMarks][location] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, value: <"x">
+#|e| [table][load][LandMarks][location] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, value: <"x">
+#|e| [table][load][LandMarks][location] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, value: <"x">
+#|e| [table][load][LandMarks][location] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, value: <"x">
+#|e| [table][load][LandMarks][location] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, value: <"x">
+#|e| [table][load][LandMarks][location] failed to set column value: <LandMarks.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"b">, value: <"x">
 select LandMarks --filter 'code == "a0000000"' --output_columns _key
 [[0,0.0,0.0],[[[1],[["_key","ShortText"]],["a"]]]]

@@ -27,7 +27,7 @@ load --table Users
   1
 ]
 #|e| <Users.birthday>: failed to cast to <Time>: <"2012-02-29 GARBAGE">
-#|e| [table][load] failed to set column value: <Users.birthday>: failed to cast to <Time>: <"2012-02-29 GARBAGE">: key: <"alice">, column: <Users.birthday>, value: <"2012-02-29 GARBAGE">
+#|e| [table][load][Users][birthday] failed to set column value: <Users.birthday>: failed to cast to <Time>: <"2012-02-29 GARBAGE">: key: <"alice">, value: <"2012-02-29 GARBAGE">
 select Users
 [
   [

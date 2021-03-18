@@ -13,7 +13,7 @@ load --table Users --command_version 3 --output_ids yes
     "start_time": 0.0,
     "elapsed_time": 0.0,
     "error": {
-      "message": "[table][load][Users] neither _key nor _id is assigned",
+      "message": "[table][load][Users] neither <_key> nor <_id> is specified",
       "function": "grn_loader_on_no_identifier_error",
       "file": "load.c",
       "line": 0
@@ -28,4 +28,4 @@ load --table Users --command_version 3 --output_ids yes
     ]
   }
 }
-#|e| [table][load][Users] neither _key nor _id is assigned
+#|e| [table][load][Users] neither <_key> nor <_id> is specified

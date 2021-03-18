@@ -18,9 +18,9 @@ load --table Memos
       0.0,
       0.0
     ],
-    "<Memos.content>: columns except weight vector column don't support object value"
+    "[table][load][Memos][content] {...} is only for weight vector column or reference column"
   ],
   1
 ]
-#|e| <Memos.content>: columns except weight vector column don't support object value
-#|e| [table][load] failed to set column value: <Memos.content>: columns except weight vector column don't support object value: key: <"Groonga is fast">, column: <Memos.content>, value: <{"groonga": 100}>
+#|e| [table][load][Memos][content] {...} is only for weight vector column or reference column
+#|e| [table][load][Memos][content] failed to set column value: [table][load][Memos][content] {...} is only for weight vector column or reference column: key: <"Groonga is fast">, value: <{"groonga": 100}>

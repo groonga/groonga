@@ -1,0 +1,39 @@
+table_create Purchases TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Purchases item COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Purchases price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Settlements TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Settlements purchase COLUMN_SCALAR Purchases
+[[0,0.0,0.0],true]
+column_create Purchases settlements_purchases COLUMN_INDEX Settlements purchases
+[[[-22,0.0,0.0],"[column][create] nonexistent source: <purchases>"],false]
+#|e| [column][create] nonexistent source: <purchases>
+load --table Settlements
+[
+{
+  "_key": "super market",
+  "purchase": {"item": "apple", "price": 100}
+},
+{
+  "_key": "shoes shop",
+  "purchase": {"item": "sneakers", "price": 3000}
+}
+]
+[[0,0.0,0.0],2]
+dump   --dump_plugins no   --dump_schema no
+load --table Purchases
+[
+["_id","item","price"],
+[1,"apple",100],
+[2,"sneakers",3000]
+]
+
+load --table Settlements
+[
+["_key","purchase"],
+["super market",1],
+["shoes shop",2]
+]

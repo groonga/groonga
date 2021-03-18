@@ -19,9 +19,9 @@ load --table Entries
   2
 ]
 #|e| <Entries.location>: failed to cast to <WGS84GeoPoint>: <true>
-#|e| [table][load] failed to set column value: <Entries.location>: failed to cast to <WGS84GeoPoint>: <true>: key: <"Special news!">, column: <Entries.location>, value: <true>
+#|e| [table][load][Entries][location] failed to set column value: <Entries.location>: failed to cast to <WGS84GeoPoint>: <true>: key: <"Special news!">, value: <true>
 #|e| <Entries.location>: failed to cast to <WGS84GeoPoint>: <false>
-#|e| [table][load] failed to set column value: <Entries.location>: failed to cast to <WGS84GeoPoint>: <false>: key: <"Surprise news!">, column: <Entries.location>, value: <false>
+#|e| [table][load][Entries][location] failed to set column value: <Entries.location>: failed to cast to <WGS84GeoPoint>: <false>: key: <"Surprise news!">, value: <false>
 select Entries
 [
   [

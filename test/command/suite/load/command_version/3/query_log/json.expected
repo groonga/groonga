@@ -29,9 +29,9 @@ load --table Numbers --command_version 3
 }
 #|e| <Numbers>: failed to cast to <Int32>: <"string">
 #|e| <Numbers.value1>: failed to cast to <Int32>: <"string1">
-#|e| [table][load] failed to set column value: <Numbers.value1>: failed to cast to <Int32>: <"string1">: key: <2>, column: <Numbers.value1>, value: <"string1">
+#|e| [table][load][Numbers][value1] failed to set column value: <Numbers.value1>: failed to cast to <Int32>: <"string1">: key: <2>, value: <"string1">
 #|e| <Numbers.value2>: failed to cast to <Int32>: <"string2">
-#|e| [table][load] failed to set column value: <Numbers.value2>: failed to cast to <Int32>: <"string2">: key: <2>, column: <Numbers.value2>, value: <"string2">
+#|e| [table][load][Numbers][value2] failed to set column value: <Numbers.value2>: failed to cast to <Int32>: <"string2">: key: <2>, value: <"string2">
 #>load --command_version "3" --table "Numbers"
 #:000000000000000 load(3): [1][2][3]
 #:000000000000000 send(0)

@@ -407,7 +407,9 @@ namespace grnarrow {
         grn_id record_id;
         if (array.IsNull(i)) {
           record_id = GRN_ID_NIL;
-          grn_loader_on_no_identifier_error(ctx_, grn_loader_);
+          grn_loader_on_no_identifier_error(ctx_,
+                                            grn_loader_,
+                                            grn_loader_->table);
         } else {
           set_bulk(i);
           record_id = add_record();
@@ -446,11 +448,13 @@ namespace grnarrow {
             requested_record_id = GRN_UINT32_VALUE(&casted_record_id);
           } else {
             auto ctx = ctx_;
+            GRN_DEFINE_NAME(grn_loader_->table);
             grn_obj inspected;
             GRN_TEXT_INIT(&inspected, 0);
             grn_inspect(ctx_, &inspected, &bulk_);
             ERR(GRN_INVALID_ARGUMENT,
-                "<%s>: failed to cast to <UInt32>: <%.*s>",
+                "[table][load][%.*s][%s] failed to cast to <UInt32>: <%.*s>",
+                name_size, name,
                 GRN_COLUMN_NAME_ID,
                 (int)GRN_TEXT_LEN(&inspected),
                 GRN_TEXT_VALUE(&inspected));
@@ -1012,25 +1016,50 @@ namespace grnarrow {
         if (ctx_->rc == GRN_SUCCESS) {
           grn_obj_set_value(ctx_, grn_column_, record_id, &buffer_, GRN_OBJ_SET);
           if (grn_loader_) {
-            grn_loader_on_column_set(ctx_,
-                                     grn_loader_,
-                                     grn_column_,
-                                     record_id,
-                                     nullptr,
-                                     &buffer_);
+            grn_loader_add_record_data data;
+            std::string column_name_buffer;
+            init_grn_loader_add_record_data(&data,
+                                            record_id,
+                                            &buffer_,
+                                            column_name_buffer);
+            grn_loader_on_column_set(ctx_, grn_loader_, &data);
           }
         } else {
           if (grn_loader_) {
-            grn_loader_on_column_set(ctx_,
-                                     grn_loader_,
-                                     grn_column_,
-                                     record_id,
-                                     nullptr,
-                                     visitor.original_value());
+            grn_loader_add_record_data data;
+            std::string column_name_buffer;
+            init_grn_loader_add_record_data(&data,
+                                            record_id,
+                                            visitor.original_value(),
+                                            column_name_buffer);
+            grn_loader_on_column_set(ctx_, grn_loader_, &data);
           }
         }
       }
       return arrow::Status::OK();
+    }
+
+    void init_grn_loader_add_record_data(grn_loader_add_record_data *data,
+                                         grn_id record_id,
+                                         grn_obj *value,
+                                         std::string &column_name_buffer)
+    {
+      data->table = grn_loader_->table;
+      data->depth = 0;
+      data->record_value = nullptr;
+      data->id = record_id;
+      data->key = nullptr;
+      auto ctx = ctx_;
+      GRN_DEFINE_NAME(grn_column_);
+      column_name_buffer.assign(name, name_size);
+      auto delimiter_position = column_name_buffer.find(GRN_DB_DELIMITER);
+      if (delimiter_position != std::string::npos) {
+        column_name_buffer.erase(0, delimiter_position + 1);
+      }
+      data->current.column_name = column_name_buffer.data();
+      data->current.column_name_size = column_name_buffer.size();
+      data->current.column = grn_column_;
+      data->current.value = value;
     }
   };
 

@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2017 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2017  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -100,6 +100,20 @@ typedef struct {
   grn_bool lock_table;
 } grn_loader;
 
+typedef struct {
+  grn_obj *table;
+  uint32_t depth;
+  grn_obj *record_value;
+  grn_id id;
+  grn_obj *key;
+  struct {
+    const char *column_name;
+    uint32_t column_name_size;
+    grn_obj *column;
+    grn_obj *value;
+  } current;
+} grn_loader_add_record_data;
+
 void
 grn_loader_save_error(grn_ctx *ctx, grn_loader *loader);
 void
@@ -109,13 +123,11 @@ grn_loader_on_record_added(grn_ctx *ctx,
 void
 grn_loader_on_column_set(grn_ctx *ctx,
                          grn_loader *loader,
-                         grn_obj *column,
-                         grn_id id,
-                         grn_obj *key,
-                         grn_obj *value);
+                         grn_loader_add_record_data *data);
 void
 grn_loader_on_no_identifier_error(grn_ctx *ctx,
-                                  grn_loader *loader);
+                                  grn_loader *loader,
+                                  grn_obj *table);
 grn_obj *
 grn_loader_get_column(grn_ctx *ctx,
                       grn_loader *loader,
@@ -125,6 +137,9 @@ void
 grn_loader_apply_each(grn_ctx *ctx,
                       grn_loader *loader,
                       grn_id id);
+
+void
+grn_p_loader(grn_ctx *ctx, grn_loader *loader);
 
 #ifdef __cplusplus
 }

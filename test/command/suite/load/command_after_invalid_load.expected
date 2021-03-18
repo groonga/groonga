@@ -18,7 +18,7 @@ load --table Shops
   1
 ]
 #|e| <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">
-#|e| [table][load] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"Tokyo">, column: <Shops.location>, value: <"x">
+#|e| [table][load][Shops][location] failed to set column value: <Shops.location>: failed to cast to <WGS84GeoPoint>: <"x">: key: <"Tokyo">, value: <"x">
 table_list
 [
   [
