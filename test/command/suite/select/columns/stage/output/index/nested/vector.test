@@ -1,0 +1,31 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Products TABLE_PAT_KEY ShortText
+
+table_create Purchases TABLE_NO_KEY
+column_create Purchases product COLUMN_SCALAR Products
+column_create Purchases tags COLUMN_VECTOR Tags
+
+column_create Products purchases COLUMN_INDEX Purchases product
+
+load --table Products
+[
+{"_key": "apple"},
+{"_key": "banana"},
+{"_key": "cacao"}
+]
+
+load --table Purchases
+[
+{"product": "apple",  "tags": ["man", "one"]},
+{"product": "banana", "tags": ["man", "many"]},
+{"product": "cacao",  "tags": ["woman"]},
+{"product": "apple",  "tags": ["child", "many"]}
+]
+
+select Products \
+  --columns[tags].stage output \
+  --columns[tags].flags COLUMN_VECTOR \
+  --columns[tags].type ShortText \
+  --columns[tags].value purchases.tags \
+  --output_columns _key,tags

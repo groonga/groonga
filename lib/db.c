@@ -6326,48 +6326,87 @@ grn_accessor_get_value(grn_ctx *ctx, grn_accessor *a, grn_id id, grn_obj *value)
       value->header.domain = GRN_DB_FLOAT;
       break;
     case GRN_ACCESSOR_GET_COLUMN_VALUE :
-      grn_obj_get_value(ctx, a->obj, id, value);
-      if (value->header.type == GRN_UVECTOR && a->next) {
-        int i, n;
-        grn_id *sub_ids;
-        grn_obj sub_records;
-        grn_obj sub_value;
-        grn_id sub_value_range;
-
-        n = (GRN_BULK_VSIZE(value) - size0) / sizeof(grn_id);
-        sub_ids = (grn_id *)(GRN_BULK_HEAD(value) + size0);
-        GRN_RECORD_INIT(&sub_records, GRN_OBJ_VECTOR, value->header.domain);
-        for (i = 0; i < n; i++) {
-          GRN_RECORD_PUT(ctx, &sub_records, sub_ids[i]);
-        }
-
-        sub_value_range = grn_obj_get_range(ctx, (grn_obj *)(a->next));
+      if (grn_obj_is_index_column(ctx, a->obj) && a->next) {
+        grn_id sub_value_range = grn_obj_get_range(ctx, (grn_obj *)(a->next));
         grn_obj_reinit(ctx, value, sub_value_range, GRN_OBJ_VECTOR);
+        grn_obj sub_value;
         GRN_VOID_INIT(&sub_value);
-        for (i = 0; i < n; i++) {
-          grn_id sub_id = GRN_RECORD_VALUE_AT(&sub_records, i);
-          GRN_BULK_REWIND(&sub_value);
-          grn_accessor_get_value(ctx, a->next, sub_id, &sub_value);
-          if (value->header.type == GRN_UVECTOR) {
-            grn_bulk_write(ctx,
-                           value,
-                           GRN_BULK_HEAD(&sub_value),
-                           GRN_BULK_VSIZE(&sub_value));
-          } else {
-            grn_vector_add_element(ctx,
-                                   value,
-                                   GRN_BULK_HEAD(&sub_value),
-                                   GRN_BULK_VSIZE(&sub_value),
-                                   0,
-                                   sub_value.header.domain);
+        grn_ii *ii = (grn_ii *)(a->obj);
+        grn_ii_cursor *cursor =
+          grn_ii_cursor_open(ctx,
+                             ii,
+                             id,
+                             GRN_ID_NIL,
+                             GRN_ID_MAX,
+                             grn_ii_get_n_elements(ctx, ii),
+                             0);
+        if (cursor) {
+          grn_posting *posting;
+          while ((posting = grn_ii_cursor_next(ctx, cursor))) {
+            GRN_BULK_REWIND(&sub_value);
+            grn_accessor_get_value(ctx, a->next, posting->rid, &sub_value);
+            if (value->header.type == GRN_UVECTOR) {
+              grn_bulk_write(ctx,
+                             value,
+                             GRN_BULK_HEAD(&sub_value),
+                             GRN_BULK_VSIZE(&sub_value));
+            } else {
+              grn_vector_add_element(ctx,
+                                     value,
+                                     GRN_BULK_HEAD(&sub_value),
+                                     GRN_BULK_VSIZE(&sub_value),
+                                     0,
+                                     sub_value.header.domain);
+            }
           }
+          grn_ii_cursor_close(ctx, cursor);
         }
         GRN_OBJ_FIN(ctx, &sub_value);
-        GRN_OBJ_FIN(ctx, &sub_records);
         return value;
       } else {
-        vp = GRN_BULK_HEAD(value) + size0;
-        vs = GRN_BULK_VSIZE(value) - size0;
+        grn_obj_get_value(ctx, a->obj, id, value);
+        if (value->header.type == GRN_UVECTOR && a->next) {
+          int i, n;
+          grn_id *sub_ids;
+          grn_obj sub_records;
+          grn_obj sub_value;
+          grn_id sub_value_range;
+
+          n = (GRN_BULK_VSIZE(value) - size0) / sizeof(grn_id);
+          sub_ids = (grn_id *)(GRN_BULK_HEAD(value) + size0);
+          GRN_RECORD_INIT(&sub_records, GRN_OBJ_VECTOR, value->header.domain);
+          for (i = 0; i < n; i++) {
+            GRN_RECORD_PUT(ctx, &sub_records, sub_ids[i]);
+          }
+
+          sub_value_range = grn_obj_get_range(ctx, (grn_obj *)(a->next));
+          grn_obj_reinit(ctx, value, sub_value_range, GRN_OBJ_VECTOR);
+          GRN_VOID_INIT(&sub_value);
+          for (i = 0; i < n; i++) {
+            grn_id sub_id = GRN_RECORD_VALUE_AT(&sub_records, i);
+            GRN_BULK_REWIND(&sub_value);
+            grn_accessor_get_value(ctx, a->next, sub_id, &sub_value);
+            if (value->header.type == GRN_UVECTOR) {
+              grn_bulk_write(ctx,
+                             value,
+                             GRN_BULK_HEAD(&sub_value),
+                             GRN_BULK_VSIZE(&sub_value));
+            } else {
+              grn_vector_add_element(ctx,
+                                     value,
+                                     GRN_BULK_HEAD(&sub_value),
+                                     GRN_BULK_VSIZE(&sub_value),
+                                     0,
+                                     sub_value.header.domain);
+            }
+          }
+          GRN_OBJ_FIN(ctx, &sub_value);
+          GRN_OBJ_FIN(ctx, &sub_records);
+          return value;
+        } else {
+          vp = GRN_BULK_HEAD(value) + size0;
+          vs = GRN_BULK_VSIZE(value) - size0;
+        }
       }
       break;
     case GRN_ACCESSOR_GET_DB_OBJ :
