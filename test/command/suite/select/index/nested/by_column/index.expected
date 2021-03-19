@@ -1,0 +1,76 @@
+table_create Articles TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Comments TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Comments article COLUMN_SCALAR Articles
+[[0,0.0,0.0],true]
+column_create Comments content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Articles content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Articles comments COLUMN_INDEX Comments article
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerNFKC130
+[[0,0.0,0.0],true]
+column_create Terms articles_content COLUMN_INDEX|WITH_POSITION   Articles content
+[[0,0.0,0.0],true]
+column_create Terms comments_content COLUMN_INDEX|WITH_POSITION   Comments content
+[[0,0.0,0.0],true]
+load --table Articles
+[
+{"_key": "article-1", "content": "Groonga is fast!"},
+{"_key": "article-2", "content": "Groonga is useful!"},
+{"_key": "article-3", "content": "Mroonga is fast!"}
+]
+[[0,0.0,0.0],3]
+load --table Comments
+[
+{"article": "article-1", "content": "I'm using Groonga too!"},
+{"article": "article-3", "content": "I'm using Mroonga!"},
+{"article": "article-1", "content": "I'm using PGroonga!"}
+]
+[[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
+select Articles --match_columns comments.content --query groonga   --output_columns "_key, _score, comments.content"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "comments.content",
+          "ShortText"
+        ]
+      ],
+      [
+        "article-1",
+        1,
+        [
+          "I'm using Groonga too!",
+          "I'm using PGroonga!"
+        ]
+      ]
+    ]
+  ]
+]
+#|i| [object][search][index][key][exact] <Terms.comments_content>
+#|i| grn_ii_sel > (groonga)
+#|i| [ii][select] n=1 (groonga)
+#|i| exact: 1
+#|i| hits=1

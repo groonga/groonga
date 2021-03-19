@@ -1,0 +1,36 @@
+table_create Articles TABLE_HASH_KEY ShortText
+
+table_create Comments TABLE_NO_KEY
+column_create Comments article COLUMN_SCALAR Articles
+column_create Comments content COLUMN_SCALAR ShortText
+
+column_create Articles content COLUMN_SCALAR Text
+column_create Articles comments COLUMN_INDEX Comments article
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerNFKC130
+column_create Terms articles_content COLUMN_INDEX|WITH_POSITION \
+  Articles content
+column_create Terms comments_content COLUMN_INDEX|WITH_POSITION \
+  Comments content
+
+load --table Articles
+[
+{"_key": "article-1", "content": "Groonga is fast!"},
+{"_key": "article-2", "content": "Groonga is useful!"},
+{"_key": "article-3", "content": "Mroonga is fast!"}
+]
+
+load --table Comments
+[
+{"article": "article-1", "content": "I'm using Groonga too!"},
+{"article": "article-3", "content": "I'm using Mroonga!"},
+{"article": "article-1", "content": "I'm using PGroonga!"}
+]
+
+log_level --level info
+#@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
+select Articles --match_columns comments.content --query groonga \
+  --output_columns "_key, _score, comments.content"

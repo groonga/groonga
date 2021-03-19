@@ -13191,7 +13191,7 @@ find_section(grn_ctx *ctx, grn_obj *index_column, grn_obj *indexed_column)
   return section;
 }
 
-static void
+static bool
 grn_column_find_index_data_accessor_index_column(grn_ctx *ctx,
                                                  grn_accessor *a,
                                                  grn_find_index_data *data)
@@ -13200,25 +13200,52 @@ grn_column_find_index_data_accessor_index_column(grn_ctx *ctx,
   int section = 0;
 
   if (!grn_index_column_is_usable(ctx, index_column, data->op)) {
-    return;
+    return false;
   }
+
+  /* Available patterns:
+   *
+   *   1. No section specified index: Index with section=0 is returned.
+   *
+   *      Example: select Memos --match_columns Tags.memos_tag
+   *
+   *        table_create Tags TABLE_HASH_KEY ShortText
+   *        table_create Memos TABLE_HASH_KEY ShortText
+   *        column_create Memos tag COLUMN_SCALAR Tags
+   *        column_create Tags memos_tag COLUMN_INDEX Memos tag
+   *
+   *   2. Section specified index: Index with the specified section is returned.
+   *
+   *      Example: select Memos --match_columns Tags.memos_tag
+   *
+   *        table_create Memos TABLE_NO_KEY
+   *        column_create Memos title COLUMN_SCALAR ShortText
+   *        column_create Memos content COLUMN_SCALAR Text
+   *        table_create Terms TABLE_PAT_KEY ShortText \
+   *          --default_tokenizer TokenNgram \
+   *          --normalizer NormalizerNFKC130
+   *        column_create Terms memos \
+   *          COLUMN_INDEX|WITH_POSITION|WITH_SECTION Memos title,content
+   */
 
   if (a->next) {
     int specified_section;
     grn_bool is_invalid_section;
     if (a->next->next) {
-      return;
+      return false;
     }
     specified_section = find_section(ctx, index_column, a->next->obj);
     is_invalid_section = (specified_section == 0);
     if (is_invalid_section) {
-      return;
+      return false;
     }
     section = specified_section;
   }
 
   grn_find_index_data_refer(ctx, data, index_column);
   grn_find_index_data_found(ctx, data, index_column, section);
+
+  return true;
 }
 
 static grn_bool
@@ -13288,14 +13315,9 @@ grn_column_find_index_data_accessor(grn_ctx *ctx,
   int depth = 0;
   for (a = (grn_accessor *)obj; a; a = a->next, depth++) {
     grn_hook *hooks;
-    grn_bool found = GRN_FALSE;
+    bool found = false;
+    bool nested_index = false;
     grn_hook_entry entry = (grn_hook_entry)-1;
-
-    if (a->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
-        GRN_OBJ_INDEX_COLUMNP(a->obj)) {
-      grn_column_find_index_data_accessor_index_column(ctx, a, data);
-      return;
-    }
 
     switch (a->action) {
     case GRN_ACCESSOR_GET_ID :
@@ -13309,10 +13331,37 @@ grn_column_find_index_data_accessor(grn_ctx *ctx,
       entry = GRN_HOOK_INSERT;
       break;
     case GRN_ACCESSOR_GET_COLUMN_VALUE :
-      entry = GRN_HOOK_SET;
+      if (GRN_OBJ_INDEX_COLUMNP(a->obj)) {
+        if (grn_column_find_index_data_accessor_index_column(ctx, a, data)) {
+          return;
+        }
+        /* Available pattern: Nested index.
+         *
+         * Example: select Tags --match_columns memos_tag._key
+         *
+         *   table_create Tags TABLE_HASH_KEY ShortText
+         *   table_create Memos TABLE_HASH_KEY ShortText
+         *   column_create Memos tag COLUMN_SCALAR Tags
+         *   column_create Tags memos_tag COLUMN_INDEX Memos tag
+         *   table_create Terms TABLE_PAT_KEY ShortText    \
+         *     --default_tokenizer TokenNgram              \
+         *     --normalizer NormalizerNFKC130
+         *   column_create Terms memos_key COLUMN_INDEX|WITH_POSITION Memos _key
+         */
+        nested_index = true;
+      } else {
+        entry = GRN_HOOK_SET;
+      }
       break;
     default :
       break;
+    }
+
+    if (nested_index) {
+      if (!grn_index_column_is_usable(ctx, a->obj, GRN_OP_EQUAL)) {
+        break;
+      }
+      continue;
     }
 
     if (entry == (grn_hook_entry)-1) {
