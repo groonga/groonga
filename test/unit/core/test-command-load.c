@@ -35,7 +35,6 @@ void test_index_geo_point(void);
 void test_no_key_table(void);
 void test_two_bigram_indexes_to_key(void);
 void test_invalid_start_with_symbol(void);
-void test_no_key_table_without_columns(void);
 void test_nonexistent_table_name(void);
 void test_invalid_table_name(void);
 void data_each(void);
@@ -399,21 +398,6 @@ test_invalid_start_with_symbol(void)
                                      "--columns '_key' "
                                      "--values 'invalid'");
   cut_assert_equal_string(table_list_result, send_command("table_list"));
-}
-
-void
-test_no_key_table_without_columns(void)
-{
-  assert_send_command("table_create Numbers TABLE_NO_KEY");
-  grn_test_assert_send_command_error(context,
-                                     GRN_INVALID_ARGUMENT,
-                                     "column name must be string: <1>",
-                                     "load --table Numbers\n"
-                                     "[\n"
-                                     "[1],\n"
-                                     "[2],\n"
-                                     "[3]\n"
-                                     "]");
 }
 
 void
