@@ -56,6 +56,7 @@ jobs:
           sudo apt update
           sudo apt -V install \
             autoconf-archive \
+            ccache \
             devscripts \
             python3-pip \
             qemu-user-static \
@@ -63,6 +64,20 @@ jobs:
       - name: Install Sphinx
         run: |
           sudo pip3 install -v sphinx
+      - name: Setup ccache
+        run: |
+          echo "GROONGA_USE_CCACHE=ON" >> $GITHUB_ENV
+          echo "CCACHE_COMPILERCHECK=content" >> $GITHUB_ENV
+          echo "CCACHE_COMPRESS=1" >> $GITHUB_ENV
+          echo "CCACHE_COMPRESSLEVEL=6" >> $GITHUB_ENV
+          echo "CCACHE_MAXSIZE=500M" >> $GITHUB_ENV
+          echo "CCACHE_DIR=ccache" >> $GITHUB_ENV
+      - name: Cache ccache
+        uses: actions/cache@v2
+        with:
+          path: ccache
+          key: package-${{ matrix.id }}-ccache-${{ hashFiles('lib/**') }}
+          restore-keys: package-${{ matrix.id }}-ccache-
       - name: Clone dependencies
         run: |
           cd ..
