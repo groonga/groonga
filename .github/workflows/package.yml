@@ -164,6 +164,7 @@ jobs:
           rm test/command/suite/tokenizers/document_vector_bm25/alphabet.test
           rm test/command/suite/tokenizers/document_vector_bm25/normalize_false.test
           rm test/command/suite/tokenizers/document_vector_bm25/reindex.test
+          rm test/command/suite/tokenizers/document_vector_bm25/token_column.test
           rm test/command/suite/tokenizers/document_vector_bm25/token_column_different_lexicon.test
       - name: Test
         run: |
