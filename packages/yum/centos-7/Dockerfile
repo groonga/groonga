@@ -30,6 +30,7 @@ RUN \
     python2-devel \
     ruby \
     tar \
+    which \
     xxhash-devel \
     zeromq3-devel \
     zlib-devel && \
