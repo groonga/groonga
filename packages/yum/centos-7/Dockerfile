@@ -12,6 +12,7 @@ RUN \
   yum groupinstall -y ${quiet} "Development Tools" && \
   yum install -y ${quiet} \
     arrow-devel-${APACHE_ARROW_VERSION} \
+    ccache \
     gcc-c++ \
     intltool \
     libedit-devel \
