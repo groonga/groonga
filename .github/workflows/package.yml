@@ -92,7 +92,7 @@ jobs:
       - name: Cache ccache
         uses: actions/cache@v2
         with:
-          path: package/${{ matrix.task-namespace }}/build/${{ matrix.target }}/ccache
+          path: packages/${{ matrix.task-namespace }}/build/${{ matrix.target }}/ccache
           key: package-${{ matrix.id }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**') }}
           restore-keys: package-${{ matrix.id }}-ccache-
       - name: Build with docker
