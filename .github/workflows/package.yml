@@ -46,6 +46,8 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: recursive
       - name: Install dependencies
         run: |
           sudo apt update
@@ -100,7 +102,6 @@ jobs:
           cd packages
           rake ${{ matrix.task-namespace }}:build BUILD_DIR=build
         env:
-          APACHE_ARROW_REPOSITORY: ../../arrow
           APT_TARGETS: ${{ matrix.target }}
           YUM_TARGETS: ${{ matrix.target }}
 
