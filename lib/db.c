@@ -1948,7 +1948,9 @@ grn_id
 grn_table_get_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key)
 {
   grn_id id = GRN_ID_NIL;
-  if (table->header.domain == key->header.domain) {
+  if (table->header.domain == key->header.domain ||
+      (grn_type_id_is_text_family(ctx, table->header.domain) &&
+       grn_type_id_is_text_family(ctx, key->header.domain))) {
     id = grn_table_get(ctx, table, GRN_TEXT_VALUE(key), GRN_TEXT_LEN(key));
   } else {
     grn_rc rc;
@@ -1969,7 +1971,9 @@ grn_id
 grn_table_add_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key, int *added)
 {
   grn_id id = GRN_ID_NIL;
-  if (table->header.domain == key->header.domain) {
+  if (table->header.domain == key->header.domain ||
+      (grn_type_id_is_text_family(ctx, table->header.domain) &&
+       grn_type_id_is_text_family(ctx, key->header.domain))) {
     id = grn_table_add(ctx, table, GRN_TEXT_VALUE(key), GRN_TEXT_LEN(key), added);
   } else {
     grn_rc rc;
