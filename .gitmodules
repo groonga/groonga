@@ -15,4 +15,4 @@
 	url = https://github.com/groonga/groonga-log.git
 [submodule "vendor/apache-arrow-source"]
 	path = vendor/apache-arrow-source
-	url = https://github.com/kou/arrow.git
+	url = https://github.com/apache/arrow.git
