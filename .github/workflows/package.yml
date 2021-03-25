@@ -13,37 +13,41 @@ jobs:
       matrix:
         label:
           - Debian GNU/Linux buster amd64
+          - Debian GNU/Linux buster arm64
           - Debian GNU/Linux buster i386
           - CentOS 7
           - CentOS 8
         include:
           - label: Debian GNU/Linux buster amd64
             id: debian-buster-amd64
-            rake-arguments: apt:build APT_TARGETS=debian-buster
-            repositories-path: packages/apt/repositories/
+            task-namespace: apt
+            target: debian-buster
             test-docker-image: debian:buster
-            test-script: packages/apt/test.sh
+          - label: Debian GNU/Linux buster arm64
+            id: debian-buster-arm64
+            task-namespace: apt
+            target: debian-buster-arm64
+            test-docker-image: arm64v8/debian:buster
           - label: Debian GNU/Linux buster i386
             id: debian-buster-i386
-            rake-arguments: apt:build APT_TARGETS=debian-buster-i386
-            repositories-path: packages/apt/repositories/
+            task-namespace: apt
+            target: debian-buster-i386
             test-docker-image: i386/debian:buster
-            test-script: packages/apt/test.sh
           - label: CentOS 7
             id: centos-7
-            rake-arguments: yum:build YUM_TARGETS=centos-7
-            repositories-path: packages/yum/repositories/
+            task-namespace: yum
+            target: centos-7
             test-docker-image: centos:7
-            test-script: packages/yum/test.sh
           - label: CentOS 8
             id: centos-8
-            rake-arguments: yum:build YUM_TARGETS=centos-8
-            repositories-path: packages/yum/repositories/
+            task-namespace: yum
+            target: centos-8
             test-docker-image: centos:8
-            test-script: packages/yum/test.sh
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: recursive
       - name: Install dependencies
         run: |
           sudo apt update
@@ -51,6 +55,7 @@ jobs:
             autoconf-archive \
             devscripts \
             python3-pip \
+            qemu-user-static \
             ruby
       - name: Install Sphinx
         run: |
@@ -86,25 +91,32 @@ jobs:
             OLD_RELEASE=${OLD_RELEASE} \
             OLD_RELEASE_DATE=${OLD_RELEASE_DATE} \
             NEW_RELEASE_DATE=$(date +%Y-%m-%d)
+      - name: Cache ccache
+        uses: actions/cache@v2
+        with:
+          path: packages/${{ matrix.task-namespace }}/build/${{ matrix.target }}/ccache
+          key: package-${{ matrix.id }}-ccache-${{ hashFiles('lib/**/*.c', 'lib/**/*.cpp', 'lib/**/*.h') }}
+          restore-keys: package-${{ matrix.id }}-ccache-
       - name: Build with docker
         run: |
           cd packages
-          rake ${{ matrix.rake-arguments }}
+          rake ${{ matrix.task-namespace }}:build BUILD_DIR=build
         env:
-          APACHE_ARROW_REPOSITORY: ../../arrow
+          APT_TARGETS: ${{ matrix.target }}
+          YUM_TARGETS: ${{ matrix.target }}
 
       # Artifact
       - uses: actions/upload-artifact@v2
         with:
           name: packages-${{ matrix.id }}
-          path: ${{ matrix.repositories-path }}
+          path: packages/${{ matrix.task-namespace }}/repositories/
 
       # Release
       - name: Create assets
         if: |
           startsWith(github.ref, 'refs/tags/')
         run: |
-          tar czf ${{ matrix.id }}.tar.gz ${{ matrix.repositories-path }}
+          tar czf ${{ matrix.id }}.tar.gz packages/${{ matrix.task-namespace }}/repositories/
       - name: Ensure creating release
         if: |
           startsWith(github.ref, 'refs/tags/')
@@ -139,4 +151,4 @@ jobs:
             --rm \
             --volume ${PWD}:/groonga:ro \
             ${{ matrix.test-docker-image }} \
-            /groonga/${{ matrix.test-script }}
+            /groonga/packages/${{ matrix.task-namespace }}/test.sh

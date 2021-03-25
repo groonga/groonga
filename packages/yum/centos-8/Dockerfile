@@ -15,6 +15,7 @@ RUN \
   dnf groupinstall -y ${quiet} "Development Tools" && \
   dnf install -y ${quiet} \
     arrow-devel-${APACHE_ARROW_VERSION} \
+    ccache \
     gcc-c++ \
     intltool \
     libedit-devel \

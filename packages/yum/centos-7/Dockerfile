@@ -12,6 +12,7 @@ RUN \
   yum groupinstall -y ${quiet} "Development Tools" && \
   yum install -y ${quiet} \
     arrow-devel-${APACHE_ARROW_VERSION} \
+    ccache \
     gcc-c++ \
     intltool \
     libedit-devel \
@@ -29,6 +30,7 @@ RUN \
     python2-devel \
     ruby \
     tar \
+    which \
     xxhash-devel \
     zeromq3-devel \
     zlib-devel && \

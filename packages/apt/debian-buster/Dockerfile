@@ -19,6 +19,7 @@ RUN \
   apt install -y -V ${quiet} \
     autotools-dev \
     build-essential \
+    ccache \
     debhelper \
     devscripts \
     lsb-release \

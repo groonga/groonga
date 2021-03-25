@@ -34,6 +34,12 @@ if [ "${architecture}" = "i386" ]; then
   rm command/suite/tokenizers/document_vector_bm25/alphabet.test
   rm command/suite/tokenizers/document_vector_bm25/normalize_false.test
   rm command/suite/tokenizers/document_vector_bm25/reindex.test
+elif [ "${architecture}" = "arm64" ]; then
+  # Float32 value format is different.
+  rm command/suite/tokenizers/document_vector_bm25/alphabet.test
+  rm command/suite/tokenizers/document_vector_bm25/reindex.test
+  rm command/suite/tokenizers/document_vector_bm25/token_column.test
+  rm command/suite/tokenizers/document_vector_bm25/token_column_different_lexicon.test
 fi
 
 # libxxhash-dev 0.8.0 or later is required.
@@ -55,10 +61,12 @@ export TZ=Asia/Tokyo
 
 grntest_options=()
 grntest_options+=(--base-directory=command)
-grntest_options+=(--n-retries=3)
+grntest_options+=(--n-retries=2)
 grntest_options+=(--n-workers=$(nproc))
 grntest_options+=(--reporter=mark)
 grntest_options+=(command/suite)
 grntest "${grntest_options[@]}"
-grntest "${grntest_options[@]}" --interface http
-grntest "${grntest_options[@]}" --interface http --testee groonga-httpd
+if [ "${architecture}" != "arm64" ]; then
+  grntest "${grntest_options[@]}" --interface http
+  grntest "${grntest_options[@]}" --interface http --testee groonga-httpd
+fi
