@@ -1,0 +1,34 @@
+table_create Purchases TABLE_NO_KEY
+column_create Purchases item COLUMN_SCALAR ShortText
+column_create Purchases price COLUMN_SCALAR UInt32
+
+table_create Settlements TABLE_HASH_KEY ShortText
+column_create Settlements purchases COLUMN_VECTOR Purchases
+
+column_create Purchases settlements_purchases COLUMN_INDEX Settlements purchases
+
+load --table Purchases
+[
+{"item": "apple",
+ "price": 100},
+{"item": "milk",
+ "price": 200},
+{"item": "sneakers",
+ "price": 3000}
+]
+
+load --table Settlements
+[
+{
+  "_key": "super market",
+  "purchases": "[1, 2]"
+},
+{
+  "_key": "shoes shop",
+  "purchases": "[3]"
+}
+]
+
+dump \
+  --dump_plugins no \
+  --dump_schema no

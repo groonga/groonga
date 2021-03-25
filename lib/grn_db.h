@@ -227,6 +227,9 @@ grn_rc _grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
 
 grn_id grn_table_get_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
                        void **value);
+grn_id grn_table_get_by_key(grn_ctx *ctx,
+                            grn_obj *table,
+                            grn_obj *key);
 grn_id grn_table_add_v(grn_ctx *ctx, grn_obj *table, const void *key, int key_size,
                        void **value, int *added);
 grn_id grn_table_add_by_key(grn_ctx *ctx,

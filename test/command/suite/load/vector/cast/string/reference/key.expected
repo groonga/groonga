@@ -1,0 +1,55 @@
+table_create Purchases TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Purchases item COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Purchases price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Settlements TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Settlements purchases COLUMN_VECTOR Purchases
+[[0,0.0,0.0],true]
+column_create Purchases settlements_purchases COLUMN_INDEX Settlements purchases
+[[0,0.0,0.0],true]
+load --table Purchases
+[
+{"_key": "super market-1",
+ "item": "apple",
+ "price": 100},
+{"_key": "super market-2",
+ "item": "milk",
+ "price": 200},
+{"_key": "shoes shop-1",
+ "item": "sneakers",
+ "price": 3000}
+]
+[[0,0.0,0.0],3]
+load --table Settlements
+[
+{
+  "_key": "super market",
+  "purchases": "[\"super market-1\", \"super market-2\", \"super market-3\"]"
+},
+{
+  "_key": "shoes shop",
+  "purchases": "[\"shoes shop-1\"]"
+}
+]
+[[0,0.0,0.0],2]
+dump   --dump_plugins no   --dump_schema no
+load --table Purchases
+[
+["_key","item","price"],
+["super market-1","apple",100],
+["super market-2","milk",200],
+["shoes shop-1","sneakers",3000],
+["super market-3","",0]
+]
+
+load --table Settlements
+[
+["_key","purchases"],
+["super market",["super market-1","super market-2","super market-3"]],
+["shoes shop",["shoes shop-1"]]
+]
+
+column_create Purchases settlements_purchases COLUMN_INDEX Settlements purchases
