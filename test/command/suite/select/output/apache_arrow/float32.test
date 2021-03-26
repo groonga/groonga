@@ -1,0 +1,15 @@
+#@require-apache-arrow
+#@require-interface http
+#@require-testee groonga
+
+table_create Data TABLE_NO_KEY
+column_create Data float32 COLUMN_SCALAR Float32
+
+load --table Data
+[
+{"float32": 1.1}
+]
+
+select Data \
+  --command_version 3 \
+  --output_type apache-arrow

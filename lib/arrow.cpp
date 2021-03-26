@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2017 Brazil
-  Copyright(C) 2019-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2017  Brazil
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1927,6 +1927,38 @@ namespace grnarrow {
             "failed to add a column value: <" << value << ">");
     }
 
+    void add_column_float32(float value) {
+      auto column_builder =
+        record_batch_builder_->GetFieldAs<arrow::FloatBuilder>(
+          current_column_index_++);
+      auto status = column_builder->Append(value);
+      if (!status.ok()) {
+        return;
+      }
+      std::stringstream context;
+      check(ctx_,
+            status,
+            context <<
+            "[arrow][stream-writer][add-column][float32] " <<
+            "failed to add a column value: <" << value << ">");
+    }
+
+    void add_column_float(double value) {
+      auto column_builder =
+        record_batch_builder_->GetFieldAs<arrow::DoubleBuilder>(
+          current_column_index_++);
+      auto status = column_builder->Append(value);
+      if (!status.ok()) {
+        return;
+      }
+      std::stringstream context;
+      check(ctx_,
+            status,
+            context <<
+            "[arrow][stream-writer][add-column][float] " <<
+            "failed to add a column value: <" << value << ">");
+    }
+
     void add_column_timestamp(grn_timeval value) {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::TimestampBuilder>(
@@ -2678,6 +2710,38 @@ grn_arrow_stream_writer_add_column_uint64(grn_ctx *ctx,
 #else
   ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
       "[arrow][stream-writer][add-column][uint64] "
+      "Apache Arrow support isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_arrow_stream_writer_add_column_float32(grn_ctx *ctx,
+                                           grn_arrow_stream_writer *writer,
+                                           float value)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  writer->writer->add_column_float32(value);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-column][float32] "
+      "Apache Arrow support isn't enabled");
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_arrow_stream_writer_add_column_float(grn_ctx *ctx,
+                                         grn_arrow_stream_writer *writer,
+                                         double value)
+{
+  GRN_API_ENTER;
+#ifdef GRN_WITH_APACHE_ARROW
+  writer->writer->add_column_float(value);
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "[arrow][stream-writer][add-column][float] "
       "Apache Arrow support isn't enabled");
 #endif
   GRN_API_RETURN(ctx->rc);

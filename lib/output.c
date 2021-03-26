@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -638,6 +638,12 @@ grn_output_float32(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, 
     grn_text_f32toa(ctx, outbuf, value);
     break;
   case GRN_CONTENT_APACHE_ARROW :
+    if (ctx->impl->output.arrow_stream_writer) {
+      grn_arrow_stream_writer_add_column_float32(
+        ctx,
+        ctx->impl->output.arrow_stream_writer,
+        value);
+    }
     break;
   case GRN_CONTENT_NONE:
     break;
@@ -678,6 +684,12 @@ grn_output_float(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, do
     grn_text_ftoa(ctx, outbuf, value);
     break;
   case GRN_CONTENT_APACHE_ARROW :
+    if (ctx->impl->output.arrow_stream_writer) {
+      grn_arrow_stream_writer_add_column_float(
+        ctx,
+        ctx->impl->output.arrow_stream_writer,
+        value);
+    }
     break;
   case GRN_CONTENT_NONE:
     break;

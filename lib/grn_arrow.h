@@ -1,6 +1,6 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2019-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -87,6 +87,14 @@ grn_rc
 grn_arrow_stream_writer_add_column_uint64(grn_ctx *ctx,
                                           grn_arrow_stream_writer *writer,
                                           uint64_t value);
+grn_rc
+grn_arrow_stream_writer_add_column_float32(grn_ctx *ctx,
+                                           grn_arrow_stream_writer *writer,
+                                           float value);
+grn_rc
+grn_arrow_stream_writer_add_column_float(grn_ctx *ctx,
+                                         grn_arrow_stream_writer *writer,
+                                         double value);
 grn_rc
 grn_arrow_stream_writer_add_column_timestamp(grn_ctx *ctx,
                                              grn_arrow_stream_writer *writer,
