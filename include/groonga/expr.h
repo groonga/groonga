@@ -54,8 +54,17 @@ GRN_API grn_obj *grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj
 GRN_API grn_obj *grn_expr_append_const_str(grn_ctx *ctx, grn_obj *expr,
                                            const char *str, unsigned int str_size,
                                            grn_operator op, int nargs);
-GRN_API grn_obj *grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i,
-                                           grn_operator op, int nargs);
+/* Deprecated since Groonga 11.0.1. Use grn_expr_append_const_int32() instead. */
+GRN_API grn_obj *grn_expr_append_const_int(grn_ctx *ctx,
+                                           grn_obj *expr,
+                                           int value,
+                                           grn_operator op,
+                                           int nargs);
+GRN_API grn_obj *grn_expr_append_const_int32(grn_ctx *ctx,
+                                             grn_obj *expr,
+                                             int32_t value,
+                                             grn_operator op,
+                                             int nargs);
 GRN_API grn_obj *grn_expr_append_const_bool(grn_ctx *ctx,
                                             grn_obj *expr,
                                             grn_bool value,

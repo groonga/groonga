@@ -804,7 +804,11 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
     }
     break;
   case MRB_TT_INTEGER:
-    grn_expr_append_const_int(ctx, expr, mrb_integer(mrb_constant), op, n_args);
+    grn_expr_append_const_int32(ctx,
+                                expr,
+                                mrb_integer(mrb_constant),
+                                op,
+                                n_args);
     break;
   case MRB_TT_SYMBOL :
     {

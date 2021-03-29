@@ -1502,14 +1502,27 @@ grn_expr_append_const_str(grn_ctx *ctx, grn_obj *expr, const char *str, unsigned
 }
 
 grn_obj *
-grn_expr_append_const_int(grn_ctx *ctx, grn_obj *expr, int i,
-                          grn_operator op, int nargs)
+grn_expr_append_const_int(grn_ctx *ctx,
+                          grn_obj *expr,
+                          int value,
+                          grn_operator op,
+                          int nargs)
+{
+  return grn_expr_append_const_int32(ctx, expr, value, op, nargs);
+}
+
+grn_obj *
+grn_expr_append_const_int32(grn_ctx *ctx,
+                            grn_obj *expr,
+                            int32_t value,
+                            grn_operator op,
+                            int nargs)
 {
   grn_obj *res = NULL;
   GRN_API_ENTER;
   if ((res = grn_expr_alloc_const(ctx, expr))) {
     GRN_INT32_INIT(res, 0);
-    GRN_INT32_SET(ctx, res, i);
+    GRN_INT32_SET(ctx, res, value);
     res->header.impl_flags |= GRN_OBJ_EXPRCONST;
   }
   grn_expr_append_obj(ctx, expr, res, op, nargs); /* constant */
