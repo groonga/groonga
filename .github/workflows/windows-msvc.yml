@@ -300,12 +300,9 @@ jobs:
         run: |
           ridk exec pacman --sync --refresh --sysupgrade --sysupgrade --noconfirm
           taskkill /F /FI "MODULES eq msys-2.0.dll"
-      - name: Update MSYS2 again
-        run: |
-          ridk exec pacman --sync --refresh --sysupgrade --sysupgrade --noconfirm
       - name: Update GCC
         run: |
-          ridk exec pacman --remove --noconfirm --unneeded `
+          ridk exec pacman --remove --refresh --noconfirm --unneeded `
             mingw-w64-x86_64-gcc-ada `
             mingw-w64-x86_64-gcc-fortran `
             mingw-w64-x86_64-gcc-libgfortran `
