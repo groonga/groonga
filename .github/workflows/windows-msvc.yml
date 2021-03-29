@@ -300,6 +300,9 @@ jobs:
         run: |
           ridk exec pacman --sync --refresh --sysupgrade --sysupgrade --noconfirm
           taskkill /F /FI "MODULES eq msys-2.0.dll"
+      - name: Update MSYS2 again
+        run: |
+          ridk exec pacman --sync --refresh --sysupgrade --sysupgrade --noconfirm
       - name: Update GCC
         run: |
           ridk exec pacman --remove --noconfirm --unneeded `
