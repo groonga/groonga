@@ -1,0 +1,21 @@
+table_create Names TABLE_PAT_KEY ShortText
+
+table_create Tokens TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Tokens names_key COLUMN_INDEX|WITH_POSITION Names _key
+
+load --table Names
+[
+{"_key": "A name ~"}
+]
+
+select Names \
+  --match_columns "_key" \
+  --query "A ~0.1name" \
+  --query_flags ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR \
+  --columns[score].stage filtered \
+  --columns[score].flags COLUMN_SCALAR \
+  --columns[score].type Float32 \
+  --columns[score].value _score \
+  --output_columns '_key,score'

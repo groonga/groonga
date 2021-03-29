@@ -86,8 +86,11 @@ scan_info **grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
 
 scan_info *grn_scan_info_open(grn_ctx *ctx, int start);
 void grn_scan_info_close(grn_ctx *ctx, scan_info *si);
-void grn_scan_info_put_index(grn_ctx *ctx, scan_info *si, grn_obj *index,
-                             uint32_t sid, int32_t weight,
+void grn_scan_info_put_index(grn_ctx *ctx,
+                             scan_info *si,
+                             grn_obj *index,
+                             uint32_t sid,
+                             float weight,
                              grn_obj *scorer,
                              grn_obj *scorer_args_expr,
                              uint32_t scorer_args_expr_offset);
@@ -116,7 +119,7 @@ int grn_scan_info_get_start_position(scan_info *si);
 void grn_scan_info_set_start_position(scan_info *si, int start);
 void grn_scan_info_reset_position(scan_info *si);
 
-int32_t grn_expr_code_get_weight(grn_ctx *ctx, grn_expr_code *ec, uint32_t *offset);
+float grn_expr_code_get_weight(grn_ctx *ctx, grn_expr_code *ec, uint32_t *offset);
 grn_rc grn_expr_code_inspect_indented(grn_ctx *ctx,
                                       grn_obj *buffer,
                                       grn_expr_code *code,

@@ -107,7 +107,7 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
   scan_info *si;
   mrb_value mrb_index;
   mrb_int sid;
-  mrb_int weight;
+  mrb_float weight;
   mrb_value mrb_scorer;
   mrb_value mrb_scorer_args_expr;
   mrb_int scorer_args_expr_offset;
@@ -115,7 +115,7 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
   grn_obj *scorer = NULL;
   grn_obj *scorer_args_expr = NULL;
 
-  mrb_get_args(mrb, "oiiooi",
+  mrb_get_args(mrb, "oifooi",
                &mrb_index, &sid, &weight,
                &mrb_scorer,
                &mrb_scorer_args_expr,
@@ -410,7 +410,7 @@ mrb_grn_expr_code_inspect(mrb_state *mrb, mrb_value self)
   mrb_str_concat(mrb, inspected, mrb_ptr_to_str(mrb, mrb_cptr(self)));
 
   {
-    int32_t weight;
+    float weight;
     uint32_t offset;
 
     weight = grn_expr_code_get_weight(ctx, DATA_PTR(self), &offset);
@@ -418,7 +418,7 @@ mrb_grn_expr_code_inspect(mrb_state *mrb, mrb_value self)
     mrb_str_cat_lit(mrb, inspected, " weight=");
     mrb_str_concat(mrb, inspected,
                    mrb_funcall(mrb,
-                               mrb_int_value(mrb, weight),
+                               mrb_float_value(mrb, weight),
                                "inspect",
                                0));
     mrb_str_cat_lit(mrb, inspected, ", offset=");
@@ -473,12 +473,12 @@ static mrb_value
 mrb_grn_expr_code_get_weight(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  int32_t weight;
+  float weight;
   uint32_t offset;
   mrb_value mrb_values[2];
 
   weight = grn_expr_code_get_weight(ctx, DATA_PTR(self), &offset);
-  mrb_values[0] = mrb_int_value(mrb, weight);
+  mrb_values[0] = mrb_float_value(mrb, weight);
   mrb_values[1] = mrb_int_value(mrb, offset);
   return mrb_ary_new_from_values(mrb, 2, mrb_values);
 }

@@ -1449,20 +1449,20 @@ grn_expr_append_const(grn_ctx *ctx, grn_obj *expr, grn_obj *obj,
         for (unsigned int i = 0; i < n; i++) {
           const char *content;
           unsigned int content_length;
-          uint32_t weight;
+          float weight;
           grn_id domain;
-          content_length = grn_vector_get_element(ctx,
-                                                  obj,
-                                                  i,
-                                                  &content,
-                                                  &weight,
-                                                  &domain);
-          grn_vector_add_element(ctx,
-                                 res,
-                                 content,
-                                 content_length,
-                                 weight,
-                                 domain);
+          content_length = grn_vector_get_element_float(ctx,
+                                                        obj,
+                                                        i,
+                                                        &content,
+                                                        &weight,
+                                                        &domain);
+          grn_vector_add_element_float(ctx,
+                                       res,
+                                       content,
+                                       content_length,
+                                       weight,
+                                       domain);
         }
         break;
       default :
@@ -1749,7 +1749,8 @@ struct _grn_scan_info {
   int flags;
   grn_operator op;
   grn_operator logical_op;
-  grn_obj wv;
+  grn_obj sections;
+  grn_obj weights;
   grn_obj index;
   grn_obj *query;
   grn_obj **args;
@@ -1772,7 +1773,8 @@ static grn_inline void
 grn_scan_info_free(grn_ctx *ctx,
                    scan_info *si)
 {
-  GRN_OBJ_FIN(ctx, &(si->wv));
+  GRN_OBJ_FIN(ctx, &(si->weights));
+  GRN_OBJ_FIN(ctx, &(si->sections));
   if (grn_enable_reference_count) {
     size_t i;
     size_t n_indexes = GRN_PTR_VECTOR_SIZE(&(si->index));
@@ -1794,7 +1796,8 @@ grn_scan_info_free(grn_ctx *ctx,
 
 #define SI_ALLOC_RAW(si, st) do {\
   if (((si) = GRN_MALLOCN(scan_info, 1))) {\
-    GRN_INT32_INIT(&(si)->wv, GRN_OBJ_VECTOR);\
+    GRN_UINT32_INIT(&(si)->sections, GRN_OBJ_VECTOR);\
+    GRN_FLOAT32_INIT(&(si)->weights, GRN_OBJ_VECTOR);\
     GRN_PTR_INIT(&(si)->index, GRN_OBJ_VECTOR, GRN_ID_NIL);\
     (si)->op = GRN_OP_NOP;\
     (si)->logical_op = GRN_OP_OR;\
@@ -2057,37 +2060,54 @@ grn_expr_inspect_internal(grn_ctx *ctx, grn_obj *buf, grn_obj *expr)
 
 static void
 scan_info_put_index(grn_ctx *ctx, scan_info *si,
-                    grn_obj *index, uint32_t sid, int32_t weight,
+                    grn_obj *index,
+                    uint32_t sid,
+                    float weight,
                     grn_obj *scorer,
                     grn_obj *scorer_args_expr,
                     uint32_t scorer_args_expr_offset)
 {
-  GRN_PTR_PUT(ctx, &si->index, index);
-  GRN_UINT32_PUT(ctx, &si->wv, sid);
-  GRN_INT32_PUT(ctx, &si->wv, weight);
-  GRN_PTR_PUT(ctx, &si->scorers, scorer);
-  GRN_PTR_PUT(ctx, &si->scorer_args_exprs, scorer_args_expr);
-  GRN_UINT32_PUT(ctx, &si->scorer_args_expr_offsets, scorer_args_expr_offset);
-  {
-    int i, ni = (GRN_BULK_VSIZE(&si->index) / sizeof(grn_obj *)) - 1;
-    grn_obj **pi = &GRN_PTR_VALUE_AT(&si->index, ni);
-    for (i = 0; i < ni; i++, pi--) {
-      if (index == pi[-1]) {
-        if (i) {
-          int32_t *pw = &GRN_INT32_VALUE_AT(&si->wv, (ni - i) * 2);
-          grn_memmove(pw + 2, pw, sizeof(int32_t) * 2 * i);
-          pw[0] = (int32_t) sid;
-          pw[1] = weight;
-          grn_memmove(pi + 1, pi, sizeof(grn_obj *) * i);
-          pi[0] = index;
-        }
-        return;
+  uint32_t n_indexes = GRN_PTR_VECTOR_SIZE(&(si->index));
+  uint32_t i;
+  if (scorer) {
+    i = n_indexes;
+  } else {
+    for (i = 0; i < n_indexes; i++) {
+      grn_obj *existing_scorer = GRN_PTR_VALUE_AT(&(si->scorers), i);
+      if (existing_scorer) {
+        continue;
+      }
+      grn_obj *existing_index = GRN_PTR_VALUE_AT(&(si->index), i);
+      uint32_t existing_sid = GRN_UINT32_VALUE_AT(&(si->sections), i);
+      if (existing_index == index &&
+          existing_sid == sid) {
+        break;
       }
     }
   }
+  if (i == n_indexes) {
+    GRN_PTR_PUT(ctx, &(si->index), index);
+    GRN_UINT32_PUT(ctx, &(si->sections), sid);
+    GRN_FLOAT32_PUT(ctx, &(si->weights), weight);
+    GRN_PTR_PUT(ctx, &(si->scorers), scorer);
+    GRN_PTR_PUT(ctx, &(si->scorer_args_exprs), scorer_args_expr);
+    GRN_UINT32_PUT(ctx,
+                   &(si->scorer_args_expr_offsets),
+                   scorer_args_expr_offset);
+  } else {
+    GRN_PTR_SET_AT(ctx, &(si->index), i, index);
+    GRN_UINT32_SET_AT(ctx, &(si->sections), i, sid);
+    GRN_FLOAT32_SET_AT(ctx, &(si->weights), i, weight);
+    GRN_PTR_SET_AT(ctx, &(si->scorers), i, scorer);
+    GRN_PTR_SET_AT(ctx, &(si->scorer_args_exprs), i, scorer_args_expr);
+    GRN_UINT32_SET_AT(ctx,
+                      &(si->scorer_args_expr_offsets),
+                      i,
+                      scorer_args_expr_offset);
+  }
 }
 
-static int32_t
+static float
 get_weight(grn_ctx *ctx, grn_expr_code *ec, uint32_t *offset)
 {
   if (ec->modify == 2 && ec[2].op == GRN_OP_STAR &&
@@ -2095,15 +2115,20 @@ get_weight(grn_ctx *ctx, grn_expr_code *ec, uint32_t *offset)
     if (offset) {
       *offset = 2;
     }
-    if (ec[1].value->header.domain == GRN_DB_INT32 ||
-        ec[1].value->header.domain == GRN_DB_UINT32) {
+    if (ec[1].value->header.domain == GRN_DB_INT32) {
       return GRN_INT32_VALUE(ec[1].value);
+    } else if (ec[1].value->header.domain == GRN_DB_UINT32) {
+      return GRN_UINT32_VALUE(ec[1].value);
+    } else if (ec[1].value->header.domain == GRN_DB_FLOAT32) {
+      return GRN_FLOAT32_VALUE(ec[1].value);
+    } else if (ec[1].value->header.domain == GRN_DB_FLOAT) {
+      return GRN_FLOAT_VALUE(ec[1].value);
     } else {
-      int32_t weight = 1;
+      float weight = 1;
       grn_obj weight_buffer;
-      GRN_INT32_INIT(&weight_buffer, 0);
+      GRN_FLOAT32_INIT(&weight_buffer, 0);
       if (!grn_obj_cast(ctx, ec[1].value, &weight_buffer, GRN_FALSE)) {
-        weight = GRN_INT32_VALUE(&weight_buffer);
+        weight = GRN_FLOAT32_VALUE(&weight_buffer);
       }
       grn_obj_unlink(ctx, &weight_buffer);
       return weight;
@@ -2125,7 +2150,8 @@ grn_scan_info_open(grn_ctx *ctx, int start)
     return NULL;
   }
 
-  GRN_INT32_INIT(&si->wv, GRN_OBJ_VECTOR);
+  GRN_UINT32_INIT(&si->sections, GRN_OBJ_VECTOR);
+  GRN_FLOAT32_INIT(&si->weights, GRN_OBJ_VECTOR);
   GRN_PTR_INIT(&si->index, GRN_OBJ_VECTOR, GRN_ID_NIL);
   si->query = NULL;
   si->logical_op = GRN_OP_OR;
@@ -2154,8 +2180,11 @@ grn_scan_info_close(grn_ctx *ctx, scan_info *si)
 }
 
 void
-grn_scan_info_put_index(grn_ctx *ctx, scan_info *si,
-                        grn_obj *index, uint32_t sid, int32_t weight,
+grn_scan_info_put_index(grn_ctx *ctx,
+                        scan_info *si,
+                        grn_obj *index,
+                        uint32_t sid,
+                        float weight,
                         grn_obj *scorer,
                         grn_obj *scorer_args_expr,
                         uint32_t scorer_args_expr_offset)
@@ -2173,7 +2202,7 @@ grn_scan_info_put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip,
   return put_logical_op(ctx, sis, ip, op, start);
 }
 
-int32_t
+float
 grn_expr_code_get_weight(grn_ctx *ctx, grn_expr_code *ec, uint32_t *offset)
 {
   return get_weight(ctx, ec, offset);
@@ -2401,7 +2430,7 @@ scan_info_build_match_expr_codes(grn_ctx *ctx,
                                  scan_info *si,
                                  grn_expr *expr,
                                  uint32_t i,
-                                 int32_t weight)
+                                 float weight)
 {
   grn_expr_code *ec;
   grn_obj *index = NULL;
@@ -2483,7 +2512,7 @@ static void
 scan_info_build_match_expr(grn_ctx *ctx,
                            scan_info *si,
                            grn_expr *expr,
-                           int32_t weight)
+                           float weight)
 {
   uint32_t i;
   i = 0;
@@ -2620,7 +2649,7 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
 }
 
 static void
-scan_info_build_match(grn_ctx *ctx, scan_info *si, int32_t weight)
+scan_info_build_match(grn_ctx *ctx, scan_info *si, float weight)
 {
   grn_obj **p, **pe;
 
@@ -2829,6 +2858,29 @@ grn_scan_info_build_full_not(grn_ctx *ctx,
   return GRN_TRUE;
 }
 
+static float
+grn_weight_bulk_get(grn_ctx *ctx, grn_obj *bulk)
+{
+  if (!bulk) {
+    return 0;
+  }
+  if (bulk->header.domain == GRN_DB_INT32) {
+    return GRN_INT32_VALUE(bulk);
+  } else if (bulk->header.domain == GRN_DB_UINT32) {
+    return GRN_UINT32_VALUE(bulk);
+  } else if (bulk->header.domain == GRN_DB_INT64) {
+    return GRN_INT64_VALUE(bulk);
+  } else if (bulk->header.domain == GRN_DB_UINT64) {
+    return GRN_UINT64_VALUE(bulk);
+  } else if (bulk->header.domain == GRN_DB_FLOAT32) {
+    return GRN_FLOAT32_VALUE(bulk);
+  } else if (bulk->header.domain == GRN_DB_FLOAT) {
+    return GRN_FLOAT_VALUE(bulk);
+  } else {
+    return 0;
+  }
+}
+
 static scan_info **
 grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
                          grn_operator op, grn_bool record_exist)
@@ -3026,10 +3078,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
       si->end = c - e->codes;
       sis[i++] = si;
       {
-        int32_t weight = 0;
-        if (c->value && c->value->header.domain == GRN_DB_INT32) {
-          weight = GRN_INT32_VALUE(c->value);
-        }
+        float weight = grn_weight_bulk_get(ctx, c->value);
         scan_info_build_match(ctx, si, weight);
       }
       if (ctx->rc != GRN_SUCCESS) {
@@ -3374,10 +3423,7 @@ grn_scan_info_build_simple_operation(grn_ctx *ctx,
   grn_scan_info_push_arg(ctx, si, target->value);
   grn_scan_info_push_arg(ctx, si, constant->value);
   {
-    int32_t weight = 0;
-    if (operator->value && operator->value->header.domain == GRN_DB_INT32) {
-      weight = GRN_INT32_VALUE(operator->value);
-    }
+    float weight = grn_weight_bulk_get(ctx, operator->value);
     scan_info_build_match(ctx, si, weight);
     if (ctx->rc != GRN_SUCCESS) {
       SI_FREE(sis[0]);
@@ -3493,10 +3539,7 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
       si->logical_op = GRN_OP_AND;
     }
     {
-      int32_t weight = 0;
-      if (operator->value && operator->value->header.domain == GRN_DB_INT32) {
-        weight = GRN_INT32_VALUE(operator->value);
-      }
+      float weight = grn_weight_bulk_get(ctx, operator->value);
       scan_info_build_match(ctx, si, weight);
     }
 
@@ -3934,8 +3977,8 @@ grn_table_select_index_equal(grn_ctx *ctx,
       if (tid == GRN_ID_NIL) {
         rc = GRN_SUCCESS;
       } else {
-        uint32_t sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
-        int32_t weight =GRN_INT32_VALUE_AT(&(si->wv), 1);
+        uint32_t sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
+        float weight = GRN_FLOAT32_VALUE_AT(&(si->weights), 0);
         grn_obj *index_cursor = grn_index_cursor_open(ctx,
                                                       NULL,
                                                       index,
@@ -4051,12 +4094,12 @@ grn_table_select_index_not_equal(grn_ctx *ctx,
         rc = GRN_SUCCESS;
       } else {
         uint32_t sid;
-        int32_t weight;
+        float weight;
         grn_ii *ii = (grn_ii *)index;
         grn_ii_cursor *ii_cursor;
 
-        sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
-        weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
+        sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
+        weight = GRN_FLOAT32_VALUE_AT(&(si->weights), 0);
         ii_cursor = grn_ii_cursor_open(ctx, ii, tid,
                                        GRN_ID_NIL, GRN_ID_MAX,
                                        ii->n_elements, 0);
@@ -4490,10 +4533,10 @@ grn_table_select_index_range_id(grn_ctx *ctx,
                                    offset, limit, flags);
     if (cursor) {
       uint32_t sid;
-      int32_t weight;
+      float weight;
 
-      sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
-      weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
+      sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
+      weight = GRN_FLOAT32_VALUE_AT(&(si->weights), 0);
 
       if (sid == 0) {
         grn_posting_internal posting = {0};
@@ -4584,10 +4627,10 @@ grn_table_select_index_range_key(grn_ctx *ctx,
                                    offset, limit, flags);
     if (cursor) {
       uint32_t sid;
-      int32_t weight;
+      float weight;
 
-      sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
-      weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
+      sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
+      weight = GRN_FLOAT32_VALUE_AT(&(si->weights), 0);
 
       if (sid == 0) {
         rc = grn_result_set_add_table_cursor(ctx,
@@ -4675,8 +4718,8 @@ grn_table_select_index_range_column(grn_ctx *ctx,
                                    min, min_size, max, max_size,
                                    offset, limit, flags);
     if (cursor) {
-      uint32_t sid = GRN_UINT32_VALUE_AT(&(si->wv), 0);
-      int32_t weight = GRN_INT32_VALUE_AT(&(si->wv), 1);
+      uint32_t sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
+      float weight = GRN_FLOAT32_VALUE_AT(&(si->weights), 0);
       grn_obj *index_cursor = grn_index_cursor_open(ctx,
                                                     cursor,
                                                     index,
@@ -4861,7 +4904,7 @@ grn_table_select_index(grn_ctx *ctx,
     bool minimum_min_id_is_set = false;
 
     grn_obj weights;
-    GRN_INT32_INIT(&weights, GRN_OBJ_VECTOR);
+    GRN_FLOAT32_INIT(&weights, GRN_OBJ_VECTOR);
 
     int original_flags = ctx->flags;
     ctx->flags |= GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
@@ -4882,22 +4925,26 @@ grn_table_select_index(grn_ctx *ctx,
       options->similarity_threshold = si->similarity_threshold;
       options->quorum_threshold = si->quorum_threshold;
 
-      uint32_t section = GRN_UINT32_VALUE_AT(&(si->wv), i * 2);
-      int32_t weight = GRN_INT32_VALUE_AT(&(si->wv), (i * 2) + 1);
-      if (section > 0) {
+      uint32_t section = GRN_UINT32_VALUE_AT(&(si->sections), i);
+      float weight = GRN_FLOAT32_VALUE_AT(&(si->weights), i);
+      if (section == 0)  {
+        options->weight_vector = NULL;
+        options->weight_vector_float = NULL;
+        options->vector_size = -1;
+        options->weight_float = weight;
+      } else {
         int weight_index = section - 1;
         int current_vector_size;
-        current_vector_size = GRN_INT32_VECTOR_SIZE(&weights);
+        current_vector_size = GRN_FLOAT32_VECTOR_SIZE(&weights);
         if (weight_index < current_vector_size) {
-          ((int32_t *)(GRN_BULK_HEAD(&weights)))[weight_index] = weight;
+          GRN_FLOAT32_VALUE_AT(&weights, weight_index) = weight;
         } else {
-          GRN_INT32_SET_AT(ctx, &weights, weight_index, weight);
+          GRN_FLOAT32_SET_AT(ctx, &weights, weight_index, weight);
         }
-        options->weight_vector = &GRN_INT32_VALUE(&weights);
-        options->vector_size = GRN_INT32_VECTOR_SIZE(&weights);
-      } else {
         options->weight_vector = NULL;
-        options->vector_size = weight;
+        options->weight_vector_float = &GRN_FLOAT32_VALUE(&weights);
+        options->vector_size = GRN_FLOAT32_VECTOR_SIZE(&weights);
+        options->weight_float = 0.0;
       }
       options->scorer = GRN_PTR_VALUE_AT(&(si->scorers), i);
       options->scorer_args_expr =
@@ -4939,10 +4986,10 @@ grn_table_select_index(grn_ctx *ctx,
       if (rc != GRN_SUCCESS) {
         break;
       }
-      if (options->weight_vector) {
+      if (options->weight_vector_float) {
         int i;
         for (i = 0; i < options->vector_size; i++) {
-          options->weight_vector[i] = 0;
+          options->weight_vector_float[i] = 0;
         }
       }
       GRN_BULK_REWIND(&weights);
@@ -5416,7 +5463,17 @@ grn_int32_value_at(grn_obj *obj, int offset)
   int size = GRN_BULK_VSIZE(obj) / sizeof(int32_t);
   if (offset < 0) { offset = size + offset; }
   return (0 <= offset && offset < size)
-    ? (((int32_t *)GRN_BULK_HEAD(obj))[offset])
+    ? GRN_INT32_VALUE_AT(obj, offset)
+    : 0;
+}
+
+float
+grn_float32_value_at(grn_obj *obj, int offset)
+{
+  int size = GRN_BULK_VSIZE(obj) / sizeof(float);
+  if (offset < 0) { offset = size + offset; }
+  return (0 <= offset && offset < size)
+    ? GRN_FLOAT32_VALUE_AT(obj, offset)
     : 0;
 }
 
@@ -5460,13 +5517,13 @@ typedef struct {
     const char *string;
     size_t string_length;
     int token;
-    int weight;
+    float weight;
   } pending_token;
 } efs_info;
 
 typedef struct {
   grn_operator op;
-  int weight;
+  float weight;
 } efs_op;
 
 grn_inline static void
@@ -5572,6 +5629,24 @@ parse_query_op(efs_info *q,
     break;
   }
   return found;
+}
+
+static bool
+parse_query_parse_weight(grn_ctx *ctx,
+                         efs_info *query,
+                         efs_op *op,
+                         float *weight)
+{
+  char *end = (char *)(query->str_end);
+  errno = 0;
+  float value = strtof(query->cur, &end);
+  if (errno == 0 && end != query->cur) {
+    query->cur = end;
+    *weight = value;
+    return true;
+  } else {
+    return false;
+  }
 }
 
 #define DISABLE_UNUSED_CODE 1
@@ -5708,7 +5783,7 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
 {
   grn_obj *column, *token;
   grn_operator mode;
-  int32_t weight;
+  float weight;
 
   GRN_PTR_PUT(ctx, &efsi->token_stack,
               grn_expr_add_str(ctx, efsi->e, str, str_size));
@@ -5723,7 +5798,7 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
   grn_expr_append_obj(efsi->ctx, efsi->e, token, GRN_OP_PUSH, 1);
 
   mode = grn_int32_value_at(&efsi->mode_stack, -1);
-  weight = grn_int32_value_at(&efsi->weight_stack, -1);
+  weight = grn_float32_value_at(&efsi->weight_stack, -1);
   switch (mode) {
   case GRN_OP_ASSIGN :
     grn_expr_append_op(efsi->ctx, efsi->e, mode, 2);
@@ -5733,12 +5808,12 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
     {
       int max_interval;
       max_interval = grn_int32_value_at(&efsi->max_interval_stack, -1);
-      grn_expr_append_const_int(efsi->ctx, efsi->e, max_interval,
-                                GRN_OP_PUSH, 1);
-      if (weight == 0) {
+      grn_expr_append_const_int32(efsi->ctx, efsi->e, max_interval,
+                                  GRN_OP_PUSH, 1);
+      if (fpclassify(weight) == FP_ZERO) {
         grn_expr_append_op(efsi->ctx, efsi->e, mode, 3);
       } else {
-        grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 3);
+        grn_expr_append_const_float32(efsi->ctx, efsi->e, weight, mode, 3);
       }
     }
     break;
@@ -5750,14 +5825,14 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
       int additional_last_interval;
       additional_last_interval =
         grn_int32_value_at(&efsi->additional_last_interval_stack, -1);
-      grn_expr_append_const_int(efsi->ctx, efsi->e, max_interval,
-                                GRN_OP_PUSH, 1);
-      grn_expr_append_const_int(efsi->ctx, efsi->e, additional_last_interval,
-                                GRN_OP_PUSH, 1);
-      if (weight == 0) {
+      grn_expr_append_const_int32(efsi->ctx, efsi->e, max_interval,
+                                  GRN_OP_PUSH, 1);
+      grn_expr_append_const_int32(efsi->ctx, efsi->e, additional_last_interval,
+                                  GRN_OP_PUSH, 1);
+      if (fpclassify(weight) == FP_ZERO) {
         grn_expr_append_op(efsi->ctx, efsi->e, mode, 4);
       } else {
-        grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 4);
+        grn_expr_append_const_float32(efsi->ctx, efsi->e, weight, mode, 4);
       }
     }
     break;
@@ -5766,12 +5841,12 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
       int similarity_threshold;
       similarity_threshold =
         grn_int32_value_at(&efsi->similarity_threshold_stack, -1);
-      grn_expr_append_const_int(efsi->ctx, efsi->e, similarity_threshold,
-                                GRN_OP_PUSH, 1);
-      if (weight == 0) {
+      grn_expr_append_const_int32(efsi->ctx, efsi->e, similarity_threshold,
+                                  GRN_OP_PUSH, 1);
+      if (fpclassify(weight) == FP_ZERO) {
         grn_expr_append_op(efsi->ctx, efsi->e, mode, 3);
       } else {
-        grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 3);
+        grn_expr_append_const_float32(efsi->ctx, efsi->e, weight, mode, 3);
       }
     }
     break;
@@ -5780,20 +5855,20 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
       int quorum_threshold;
       quorum_threshold =
         grn_int32_value_at(&efsi->quorum_threshold_stack, -1);
-      grn_expr_append_const_int(efsi->ctx, efsi->e, quorum_threshold,
-                                GRN_OP_PUSH, 1);
-      if (weight == 0) {
+      grn_expr_append_const_int32(efsi->ctx, efsi->e, quorum_threshold,
+                                  GRN_OP_PUSH, 1);
+      if (fpclassify(weight) == FP_ZERO) {
         grn_expr_append_op(efsi->ctx, efsi->e, mode, 3);
       } else {
-        grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 3);
+        grn_expr_append_const_float32(efsi->ctx, efsi->e, weight, mode, 3);
       }
     }
     break;
   default :
-    if (weight == 0) {
+    if (fpclassify(weight) == FP_ZERO) {
       grn_expr_append_op(efsi->ctx, efsi->e, mode, 2);
     } else {
-      grn_expr_append_const_int(efsi->ctx, efsi->e, weight, mode, 2);
+      grn_expr_append_const_float32(efsi->ctx, efsi->e, weight, mode, 2);
     }
     break;
   }
@@ -5816,7 +5891,7 @@ parse_query_flush_pending_token(grn_ctx *ctx, efs_info *q)
   q->cur = q->pending_token.string;
   if (q->pending_token.token == GRN_EXPR_TOKEN_ADJUST ||
       q->pending_token.token == GRN_EXPR_TOKEN_NEGATIVE) {
-    GRN_INT32_PUT(ctx, &q->weight_stack, q->pending_token.weight);
+    GRN_FLOAT32_PUT(ctx, &q->weight_stack, q->pending_token.weight);
   }
   PARSE(q->pending_token.token);
   q->cur = cur_keep;
@@ -5857,10 +5932,10 @@ parse_query_accept_adjust(grn_ctx *ctx,
                           const char *string,
                           unsigned int string_length,
                           int token,
-                          int weight)
+                          float weight)
 {
   if (!(q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR)) {
-    GRN_INT32_PUT(ctx, &q->weight_stack, weight);
+    GRN_FLOAT32_PUT(ctx, &q->weight_stack, weight);
     PARSE(token);
     return;
   }
@@ -6158,38 +6233,64 @@ parse_query(grn_ctx *ctx, efs_info *q)
       q->cur++;
       break;
     case GRN_QUERY_ADJ_INC :
-      if (op->weight < 127) { op->weight++; }
-      op->op = GRN_OP_ADJUST;
-      parse_query_accept_adjust(ctx,
-                                q,
-                                q->cur, 1,
-                                GRN_EXPR_TOKEN_ADJUST,
-                                op->weight);
-      q->cur++;
+      {
+        const char *cur = q->cur;
+        uint32_t adjust_mark_length = 1;
+        q->cur++;
+        float weight;
+        if (!parse_query_parse_weight(ctx, q, op, &weight)) {
+          if (op->weight < 127) { op->weight++; }
+          weight = op->weight;
+        }
+        op->op = GRN_OP_ADJUST;
+        parse_query_accept_adjust(ctx,
+                                  q,
+                                  cur, adjust_mark_length,
+                                  GRN_EXPR_TOKEN_ADJUST,
+                                  weight);
+      }
       break;
     case GRN_QUERY_ADJ_DEC :
-      if (op->weight > -128) { op->weight--; }
-      op->op = GRN_OP_ADJUST;
-      parse_query_accept_adjust(ctx,
-                                q,
-                                q->cur, 1,
-                                GRN_EXPR_TOKEN_ADJUST,
-                                op->weight);
-      q->cur++;
+      {
+        const char *cur = q->cur;
+        uint32_t adjust_mark_length = 1;
+        q->cur++;
+        float weight;
+        if (parse_query_parse_weight(ctx, q, op, &weight)) {
+          weight = -weight;
+        } else {
+          if (op->weight > -128) { op->weight--; }
+          weight = op->weight;
+        }
+        op->op = GRN_OP_ADJUST;
+        parse_query_accept_adjust(ctx,
+                                  q,
+                                  cur, adjust_mark_length,
+                                  GRN_EXPR_TOKEN_ADJUST,
+                                  weight);
+      }
       break;
     case GRN_QUERY_ADJ_NEG :
       if (first_token) {
         parse_query_flush_pending_token(ctx, q);
         parse_query_accept_string(ctx, q, q->cur, 1);
       } else {
+        const char *cur = q->cur;
+        uint32_t adjust_mark_length = 1;
+        q->cur++;
+        float weight;
+        if (parse_query_parse_weight(ctx, q, op, &weight)) {
+          weight = -1 - weight;
+        } else {
+          weight = -DEFAULT_WEIGHT;
+        }
         op->op = GRN_OP_ADJUST;
         parse_query_accept_adjust(ctx,
                                   q,
-                                  q->cur, 1,
+                                  cur, adjust_mark_length,
                                   GRN_EXPR_TOKEN_NEGATIVE,
-                                  -DEFAULT_WEIGHT);
+                                  weight);
       }
-      q->cur++;
       break;
     case GRN_QUERY_PARENL :
       parse_query_flush_pending_token(ctx, q);
@@ -7044,7 +7145,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_INT32_INIT(&efsi.additional_last_interval_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.similarity_threshold_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.quorum_threshold_stack, GRN_OBJ_VECTOR);
-    GRN_INT32_INIT(&efsi.weight_stack, GRN_OBJ_VECTOR);
+    GRN_FLOAT32_INIT(&efsi.weight_stack, GRN_OBJ_VECTOR);
     GRN_PTR_INIT(&efsi.column_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
     GRN_PTR_INIT(&efsi.token_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
     efsi.e = expr;
@@ -7055,7 +7156,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_PTR_PUT(ctx, &efsi.column_stack, default_column);
     GRN_INT32_PUT(ctx, &efsi.op_stack, default_op);
     GRN_INT32_PUT(ctx, &efsi.mode_stack, default_mode);
-    GRN_INT32_PUT(ctx, &efsi.weight_stack, 0);
+    GRN_FLOAT32_PUT(ctx, &efsi.weight_stack, 0);
     efsi.default_flags = efsi.flags = flags;
     efsi.escalation_threshold = GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD;
     efsi.escalation_decaystep = DEFAULT_DECAYSTEP;

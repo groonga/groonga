@@ -10063,7 +10063,7 @@ grn_ii_posting_add_float(grn_ctx *ctx,
   return grn_result_set_add_record(ctx, s, pos, op);
 }
 
-static int
+static float
 get_weight(grn_ctx *ctx, grn_ii_select_data *data)
 {
   switch (data->wv_mode) {
@@ -10071,7 +10071,11 @@ get_weight(grn_ctx *ctx, grn_ii_select_data *data)
     return 1;
   case GRN_WV_STATIC :
     if (data->sid <= data->optarg->vector_size) {
-      return data->optarg->weight_vector[data->sid - 1];
+      if (data->optarg->weight_vector) {
+        return data->optarg->weight_vector[data->sid - 1];
+      } else {
+        return data->optarg->weight_vector_float[data->sid - 1];
+      }
     } else {
       return 0;
     }
@@ -10091,7 +10095,11 @@ get_weight(grn_ctx *ctx, grn_ii_select_data *data)
                               data->sid,
                               data->optarg->func_arg);
   case GRN_WV_CONSTANT :
-    return data->optarg->vector_size;
+    if (data->optarg->vector_size < 0) {
+      return data->optarg->weight_float;
+    } else {
+      return data->optarg->vector_size;
+    }
   default :
     return 1;
   }
@@ -10120,7 +10128,7 @@ grn_ii_select_data_init(grn_ctx *ctx,
   if (optarg->func) {
     data->wv_mode = GRN_WV_DYNAMIC;
   } else if (optarg->vector_size != 0) {
-    if (optarg->weight_vector) {
+    if (optarg->weight_vector || optarg->weight_vector_float) {
       data->wv_mode = GRN_WV_STATIC;
     } else {
       data->wv_mode = GRN_WV_CONSTANT;
@@ -10836,8 +10844,8 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
     if (tip != tie) {
       may_match = false;
     }
-    int weight = get_weight(ctx, data);
-    if (may_match && weight == 0) {
+    float weight = get_weight(ctx, data);
+    if (may_match && fpclassify(weight) == FP_ZERO) {
       may_match = false;
     }
     if (may_match) {
@@ -11592,8 +11600,8 @@ grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
 
         data->rid = cursor->post->rid;
         data->sid = cursor->post->sid;
-        int weight = get_weight(ctx, data);
-        if (weight == 0) {
+        float weight = get_weight(ctx, data);
+        if (fpclassify(weight) == FP_ZERO) {
           continue;
         }
         if (grn_hash_add(ctx, n_occurs,
@@ -11798,7 +11806,7 @@ grn_ii_select_sequential_search_reference(grn_ctx *ctx,
           info.pos = 0;
           data->rid = info.rid;
           data->sid = info.sid;
-          int score = get_weight(ctx, data);
+          float score = get_weight(ctx, data);
           res_add(ctx, data->result_set, &info, score, data->op);
         }
         break;
@@ -11819,7 +11827,7 @@ grn_ii_select_sequential_search_reference(grn_ctx *ctx,
             info.pos = 0;
             data->rid = info.rid;
             data->sid = info.sid;
-            int score = get_weight(ctx, data);
+            float score = get_weight(ctx, data);
             res_add(ctx, data->result_set, &info, score * n_founds, data->op);
           }
         }
@@ -11972,7 +11980,7 @@ grn_ii_select_sequential_search_text_body(grn_ctx *ctx,
         info.pos = 0;
         data->rid = info.rid;
         data->sid = info.rid;
-        int score = get_weight(ctx, data);
+        float score = get_weight(ctx, data);
         res_add(ctx, data->result_set, &info, score, data->op);
       }
       grn_obj_unlink(ctx, value);
@@ -12210,7 +12218,9 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
   }
   if (search_optarg->vector_size != 0) {
     select_optarg->weight_vector = search_optarg->weight_vector;
+    select_optarg->weight_vector_float = search_optarg->weight_vector_float;
     select_optarg->vector_size = search_optarg->vector_size;
+    select_optarg->weight_float = search_optarg->weight_float;
   }
   select_optarg->scorer = search_optarg->scorer;
   select_optarg->scorer_args_expr = search_optarg->scorer_args_expr;

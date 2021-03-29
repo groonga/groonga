@@ -184,6 +184,8 @@ struct _grn_select_optarg {
   int similarity_threshold;
   int max_interval;
   int *weight_vector;
+  float *weight_vector_float;
+  float weight_float;
   int vector_size;
   int (*func)(grn_ctx *, grn_hash *, const void *, int, void *);
   void *func_arg;
