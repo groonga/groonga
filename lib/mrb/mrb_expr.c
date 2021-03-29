@@ -821,11 +821,20 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
     break;
   case MRB_TT_FLOAT :
     {
-      grn_obj constant;
-      GRN_FLOAT_INIT(&constant, 0);
-      GRN_FLOAT_SET(ctx, &constant, mrb_float(mrb_constant));
-      grn_expr_append_const(ctx, expr, &constant, op, n_args);
-      GRN_OBJ_FIN(ctx, &constant);
+      mrb_float value = mrb_float(mrb_constant);
+      if (sizeof(mrb_float) == sizeof(float)) {
+        grn_expr_append_const_float32(ctx,
+                                      expr,
+                                      value,
+                                      op,
+                                      n_args);
+      } else {
+        grn_expr_append_const_float(ctx,
+                                    expr,
+                                    value,
+                                    op,
+                                    n_args);
+      }
     }
     break;
   case MRB_TT_STRING :

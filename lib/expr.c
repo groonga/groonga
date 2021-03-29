@@ -1544,6 +1544,42 @@ grn_expr_append_const_bool(grn_ctx *ctx, grn_obj *expr, grn_bool value,
   GRN_API_RETURN(res);
 }
 
+grn_obj *
+grn_expr_append_const_float32(grn_ctx *ctx,
+                              grn_obj *expr,
+                              float value,
+                              grn_operator op,
+                              int nargs)
+{
+  grn_obj *res = NULL;
+  GRN_API_ENTER;
+  if ((res = grn_expr_alloc_const(ctx, expr))) {
+    GRN_FLOAT32_INIT(res, 0);
+    GRN_FLOAT32_SET(ctx, res, value);
+    res->header.impl_flags |= GRN_OBJ_EXPRCONST;
+  }
+  grn_expr_append_obj(ctx, expr, res, op, nargs); /* constant */
+  GRN_API_RETURN(res);
+}
+
+grn_obj *
+grn_expr_append_const_float(grn_ctx *ctx,
+                            grn_obj *expr,
+                            double value,
+                            grn_operator op,
+                            int nargs)
+{
+  grn_obj *res = NULL;
+  GRN_API_ENTER;
+  if ((res = grn_expr_alloc_const(ctx, expr))) {
+    GRN_FLOAT_INIT(res, 0);
+    GRN_FLOAT_SET(ctx, res, value);
+    res->header.impl_flags |= GRN_OBJ_EXPRCONST;
+  }
+  grn_expr_append_obj(ctx, expr, res, op, nargs); /* constant */
+  GRN_API_RETURN(res);
+}
+
 grn_rc
 grn_expr_append_op(grn_ctx *ctx, grn_obj *expr, grn_operator op, int nargs)
 {
