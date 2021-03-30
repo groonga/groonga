@@ -3079,9 +3079,7 @@ grn_select_drilldowns_execute(grn_ctx *ctx,
 
   n_drilldowns = GRN_BULK_VSIZE(&tsorted_ids) / sizeof(grn_id);
   for (i = 0; i < n_drilldowns; i++) {
-    grn_id id;
-
-    id = GRN_RECORD_VALUE_AT(&tsorted_ids, i);
+    grn_id id = GRN_RECORD_VALUE_AT(&tsorted_ids, i);
     if (!grn_select_drilldown_execute(ctx,
                                       data,
                                       drilldowns,
