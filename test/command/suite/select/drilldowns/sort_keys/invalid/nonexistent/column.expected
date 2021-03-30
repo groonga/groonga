@@ -15,12 +15,9 @@ load --table Memos
 select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _key   --drilldowns[tag].sort_keys nonexistent
 [
   [
-    [
-      -22,
-      0.0,
-      0.0
-    ],
-    "invalid sort key: <nonexistent>: table:<(anonymous)> keys:<nonexistent>"
+    0,
+    0.0,
+    0.0
   ],
   [
     [
@@ -66,4 +63,4 @@ select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].output_columns _ke
     }
   ]
 ]
-#|w| invalid sort key: <nonexistent>: table:<(anonymous)> keys:<nonexistent>
+#|w| [table-sort-key][string] ignore invalid sort key: <nonexistent>: table:<(anonymous)> keys:<nonexistent>

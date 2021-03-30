@@ -71,6 +71,10 @@ extern "C" {
       name_size = grn_obj_name(ctx, (grn_obj *)obj,                     \
                                name_buffer, GRN_TABLE_MAX_KEY_SIZE);    \
       name = name_buffer;                                               \
+      if (name_size == 0) {                                             \
+        name = "(anonymous)";                                           \
+        name_size = strlen(name);                                       \
+      }                                                                 \
     }                                                                   \
   } while (false)
 

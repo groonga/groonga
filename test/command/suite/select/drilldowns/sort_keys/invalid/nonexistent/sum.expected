@@ -13,12 +13,9 @@ load --table Items
 select Items   --drilldowns[tag].keys tag   --drilldowns[tag].sort_keys -_sum
 [
   [
-    [
-      -22,
-      0.0,
-      0.0
-    ],
-    "invalid sort key: <_sum>: table:<(anonymous)> keys:<-_sum>"
+    0,
+    0.0,
+    0.0
   ],
   [
     [
@@ -54,4 +51,4 @@ select Items   --drilldowns[tag].keys tag   --drilldowns[tag].sort_keys -_sum
     }
   ]
 ]
-#|w| invalid sort key: <_sum>: table:<(anonymous)> keys:<-_sum>
+#|w| [table-sort-key][string] ignore invalid sort key: <_sum>: table:<(anonymous)> keys:<-_sum>

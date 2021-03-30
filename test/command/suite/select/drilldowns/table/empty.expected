@@ -106,4 +106,4 @@ select Memos   --drilldowns[category].table ''   --drilldowns[category].keys cat
     }
   ]
 ]
-#|w| invalid sort key: <category>: table:<Memos> keys:<category>
+#|w| [table-sort-key][string] ignore invalid sort key: <category>: table:<Memos> keys:<category>
