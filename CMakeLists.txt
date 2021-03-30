@@ -462,7 +462,7 @@ endif()
 
 
 include(ExternalProject)
-set(EP_COMMON_OPTIONS
+set(GRN_EP_COMMON_OPTIONS
   LOG_DOWNLOAD TRUE
   LOG_UPDATE TRUE
   LOG_PATCH TRUE
@@ -517,7 +517,7 @@ if(NOT ${GRN_WITH_ZSTD} STREQUAL "no")
 	string(APPEND ZSTD_SOURCE_URL "/${ZSTD_SOURCE_BASE_NAME}")
       endif()
       externalproject_add(zstd-ep
-	${EP_COMMON_OPTIONS}
+	${GRN_EP_COMMON_OPTIONS}
 	CMAKE_ARGS ${ZSTD_CMAKE_ARGS}
 	SOURCE_SUBDIR "build/cmake"
 	URL ${ZSTD_SOURCE_URL}
@@ -557,37 +557,71 @@ file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_rapidjson_version"
 string(STRIP
   "${GRN_BUNDLED_RAPIDJSON_VERSION}"
   GRN_BUNDLED_RAPIDJSON_VERSION)
+set(GRN_RAPIDJSON_EP_VERSION ${GRN_BUNDLED_RAPIDJSON_VERSION})
 
-set(GRN_WITH_BUNDLED_RAPIDJSON FALSE)
 set(GRN_WITH_RAPIDJSON "auto"
   CACHE STRING "Support JSON processing by RapidJSON.")
 if(NOT ${GRN_WITH_RAPIDJSON} STREQUAL "no")
   find_package(RapidJSON)
-  if(NOT RapidJSON_FOUND)
-    unset(RapidJSON_FOUND)
-    check_include_file_cxx(rapidjson/rapidjson.h RapidJSON_FOUND)
-  endif()
-  if(RapidJSON_FOUND)
-    set(GRN_WITH_RAPIDJSON TRUE)
-    if(DEFINED RapidJSON_INCLUDE_DIRS)
-      set(RAPIDJSON_INCLUDE_DIRS "${RapidJSON_INCLUDE_DIRS}")
-    endif()
-    message(STATUS "RapidJSON: ${RAPIDJSON_INCLUDE_DIRS}")
-  else()
-    set(GRN_BUNDLED_RAPIDJSON_DIR
-      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/rapidjson-${GRN_BUNDLED_RAPIDJSON_VERSION}")
-    if(EXISTS ${GRN_BUNDLED_RAPIDJSON_DIR})
-      set(RAPIDJSON_INCLUDE_DIRS "${GRN_BUNDLED_RAPIDJSON_DIR}/include")
-      set(GRN_WITH_BUNDLED_RAPIDJSON TRUE)
-      set(GRN_WITH_RAPIDJSON TRUE)
-      message(STATUS "RapidJSON: ${RAPIDJSON_INCLUDE_DIRS} (bundled)")
+  if(NOT TARGET rapidjson)
+    if(RAPIDJSON_INCLUDE_DIRS)
+      add_library(rapidjson INTERFACE IMPORTED)
+      set_property(TARGET rapidjson PROPERTY
+	INTERFACE_INCLUDE_DIRECTORIES ${RAPIDJSON_INCLUDE_DIRS})
+    elseif(RapidJSON_INCLUDE_DIRS)
+      add_library(rapidjson INTERFACE IMPORTED)
+      set_property(TARGET rapidjson PROPERTY
+	INTERFACE_INCLUDE_DIRECTORIES ${RAPIDJSON_INCLUDE_DIRS})
     else()
-      if(${GRN_WITH_RAPIDJSON} STREQUAL "yes")
-	message(FATAL_ERROR "No RapidJSON found")
+      unset(RapidJSON_FOUND)
+      check_include_file_cxx(rapidjson/rapidjson.h RapidJSON_FOUND)
+      if(RapidJSON_FOUND)
+	add_library(rapidjson INTERFACE IMPORTED)
       endif()
-      set(GRN_WITH_RAPIDJSON FALSE)
-      message(STATUS "No RapidJSON")
     endif()
+  endif()
+  if(TARGET rapidjson)
+    set(GRN_WITH_RAPIDJSON TRUE)
+    get_target_property(GRN_RAPIDJSON_INCLUDE_DIRS
+      rapidjson
+      INTERFACE_INCLUDE_DIRECTORIES)
+    if(GRN_RAPIDJSON_INCLUDE_DIRS)
+      message(STATUS "RapidJSON: ${GRN_RAPIDJSON_INCLUDE_DIRS} (system)")
+    else()
+      message(STATUS "RapidJSON: (system)")
+    endif()
+  else()
+    set(RAPIDJSON_SOURCE_URL
+      "https://github.com/Tencent/rapidjson/archive/v${GRN_RAPIDJSON_EP_VERSION}.tar.gz")
+    set(RAPIDJSON_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/rapidjson-ep-install")
+    set(RAPIDJSON_CMAKE_ARGS
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+      -DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}
+      -DCMAKE_INSTALL_PREFIX=${RAPIDJSON_PREFIX}
+      -DRAPIDJSON_BUILD_DOC=OFF
+      -DRAPIDJSON_BUILD_EXAMPLES=OFF
+      -DRAPIDJSON_BUILD_TESTS=OFF)
+    externalproject_add(rapidjson-ep
+      ${GRN_EP_COMMON_OPTIONS}
+      CMAKE_ARGS ${RAPIDJSON_CMAKE_ARGS}
+      URL ${RAPIDJSON_SOURCE_URL})
+    add_library(rapidjson INTERFACE IMPORTED)
+    file(MAKE_DIRECTORY "${RAPIDJSON_PREFIX}/include")
+    set_property(TARGET rapidjson PROPERTY
+      INTERFACE_INCLUDE_DIRECTORIES "${RAPIDJSON_PREFIX}/include")
+    add_dependencies(rapidjson rapidjson-ep)
+    set(RAPIDJSON_SOURCE_DIR
+      "${CMAKE_CURRENT_BINARY_DIR}/rapidjson-ep-prefix/src/rapidjson-ep")
+    install(FILES
+      "${RAPIDJSON_SOURCE_DIR}/CHANGELOG.md"
+      "${RAPIDJSON_SOURCE_DIR}/license.txt"
+      "${RAPIDJSON_SOURCE_DIR}/readme.md"
+      DESTINATION "${GRN_DATA_DIR}/rapidjson")
+    set(GRN_WITH_RAPIDJSON TRUE)
+    get_target_property(GRN_RAPIDJSON_INCLUDE_DIRS
+      rapidjson
+      INTERFACE_INCLUDE_DIRECTORIES)
+    message(STATUS "RapidJSON: ${GRN_RAPIDJSON_INCLUDE_DIRS} (bundled)")
   endif()
 else()
   set(GRN_WITH_RAPIDJSON FALSE)

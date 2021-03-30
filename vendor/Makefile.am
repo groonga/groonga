@@ -22,8 +22,7 @@ SUBDIRS =					\
 	mecab					\
 	message_pack				\
 	mruby					\
-	groonga-log				\
-	rapidjson
+	groonga-log
 
 EXTRA_DIST =					\
 	$(NGINX_DIR)				\

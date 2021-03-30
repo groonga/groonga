@@ -1888,7 +1888,6 @@ AC_CONFIG_FILES([
   vendor/message_pack/Makefile
   vendor/mruby/Makefile
   vendor/onigmo/Makefile
-  vendor/rapidjson/Makefile
 ])
 
 AC_OUTPUT
