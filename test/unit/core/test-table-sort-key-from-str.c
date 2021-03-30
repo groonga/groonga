@@ -1,6 +1,7 @@
 /* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
   Copyright (C) 2009-2010  Nobuyoshi Nakada <nakada@clear-code.com>
+  Copyright (C) 2021  Sutou Kouhei <nakada@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,8 +26,10 @@
 
 void data_valid(void);
 void test_valid(gconstpointer data);
-void data_invalid(void);
-void test_invalid(gconstpointer data);
+void data_partial_invalid(void);
+void test_partial_invalid(gconstpointer data);
+void data_all_invalid(void);
+void test_all_invalid(gconstpointer data);
 
 static gchar *tmp_directory;
 
@@ -136,7 +139,39 @@ test_valid(gconstpointer data)
 }
 
 void
-data_invalid(void)
+data_partial_invalid(void)
+{
+#define ADD_DATUM(str, count)                   \
+  gcut_add_datum("[" str "] == " #count,        \
+                 "keys", G_TYPE_STRING, str,    \
+                 "count", G_TYPE_UINT, count,   \
+                 NULL)
+
+  ADD_DATUM("_key, foo", 1);
+  ADD_DATUM("foo, name", 1);
+  ADD_DATUM("name, foo", 1);
+  ADD_DATUM("+ name", 1);
+  ADD_DATUM("- name", 1);
+
+#undef ADD_DATUM
+}
+
+void
+test_partial_invalid(gconstpointer data)
+{
+  unsigned i;
+  const char *str = gcut_data_get_string(data, "keys");
+  keys = grn_table_sort_key_from_str(context, str, strlen(str),
+                                     table, &n_keys);
+  cut_assert_not_null(keys);
+  cut_assert_equal_uint(gcut_data_get_uint(data, "count"), n_keys);
+  for (i = 0; i < n_keys; ++i) {
+    cut_assert_not_null(keys[i].key);
+  }
+}
+
+void
+data_all_invalid(void)
 {
 #define ADD_DATUM(str)                          \
   gcut_add_datum("[" str "] is invalid",        \
@@ -144,22 +179,15 @@ data_invalid(void)
                  NULL)
 
   ADD_DATUM("foo");
-  ADD_DATUM("_key, foo");
-  ADD_DATUM("foo, name");
-  ADD_DATUM("name, foo");
-  ADD_DATUM("+ name");
-  ADD_DATUM("- name");
 
 #undef ADD_DATUM
 }
 
 void
-test_invalid(gconstpointer data)
+test_all_invalid(gconstpointer data)
 {
-  unsigned nkeys;
   const char *str = gcut_data_get_string(data, "keys");
-  grn_table_sort_key *keys = grn_table_sort_key_from_str(context, str, strlen(str),
-                                                         table, &nkeys);
-  cut_assert_null(keys);
-  cut_assert_equal_uint(0, nkeys);
+  keys = grn_table_sort_key_from_str(context, str, strlen(str),
+                                     table, &n_keys);
+  cut_assert_equal_uint(0, n_keys);
 }

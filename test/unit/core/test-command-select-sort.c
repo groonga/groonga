@@ -27,7 +27,6 @@ void test_int(void);
 void test_drilldown(void);
 void test_score_without_query(void);
 void test_score_drilldown_without_query(void);
-void test_nonexistent(void);
 void test_fulltext_search_index_with_query(void);
 void test_pat_integer_index_with_query(void);
 void test_pat_integer_index_without_query(void);
@@ -250,19 +249,6 @@ test_score_drilldown_without_query(void)
                  "--drilldown \"site user rank\" "
                  "--drilldown_output_columns \"_key, _nsubrecs\" "
                  "--drilldown_sort_keys \"_key\""));
-}
-
-void
-test_nonexistent(void)
-{
-  grn_test_assert_send_command_error(
-    context,
-    GRN_INVALID_ARGUMENT,
-    "[select][sort] failed to parse: <_score,nonexistent>: "
-    "invalid sort key: <nonexistent>: table:<Sites> keys:<_score,nonexistent>",
-    "select Sites "
-    "--sort_keys \"_score,nonexistent\" "
-    "--output_columns \"_key\"");
 }
 
 void
