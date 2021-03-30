@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2020 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2790,6 +2790,17 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                     result,
                     1);
   } else {
+    if (n_keys == 0 && !target_table) {
+      /* For backward compatibility and consistency. Ignore
+       * nonexistent table case with warning like we did for sort_keys
+       * and drilldown[LABEL].keys. */
+      GRN_LOG(ctx, GRN_WARN,
+              "%s[table] doesn't exist: <%.*s>",
+              GRN_TEXT_VALUE(&log_tag_prefix),
+              (int)(drilldown->table_name.length),
+              drilldown->table_name.value);
+      goto exit;
+    }
     grn_table_group(ctx, target_table, keys, n_keys, result, 1);
   }
 
