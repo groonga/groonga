@@ -1385,6 +1385,105 @@ grn_table_group_update_aggregated_value_type_id(grn_ctx *ctx,
   }
 }
 
+static grn_rc
+grn_table_group_results_prepare(grn_ctx *ctx,
+                                grn_table_group_result *results,
+                                int n_results,
+                                grn_obj *table,
+                                grn_table_sort_key *keys,
+                                int n_keys)
+{
+  int i;
+  grn_table_group_result *rp;
+  for (i = 0, rp = results; i < n_results; i++, rp++) {
+    if (!rp->table) {
+      grn_table_flags flags;
+      grn_obj *key_type = NULL;
+      uint32_t additional_value_size;
+
+      flags = GRN_OBJ_TABLE_HASH_KEY|
+        GRN_OBJ_WITH_SUBREC|
+        GRN_OBJ_UNIT_USERDEF_DOCUMENT;
+      if (n_keys == 0 && n_results == 1) {
+        key_type = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);
+      } else if (n_keys == 1) {
+        grn_id key_type_id = grn_obj_get_range(ctx, keys[0].key);
+        if (key_type_id == GRN_ID_NIL) {
+          grn_obj inspected;
+          GRN_TEXT_INIT(&inspected, 0);
+          grn_inspect(ctx, &inspected, keys[0].key);
+          ERR(GRN_INVALID_ARGUMENT,
+              "[table][group] unknown key type: %.*s",
+              (int)GRN_TEXT_LEN(&inspected),
+              GRN_TEXT_VALUE(&inspected));
+          GRN_OBJ_FIN(ctx, &inspected);
+          return ctx->rc;
+        }
+        key_type = grn_ctx_at(ctx, key_type_id);
+      } else {
+        flags |= GRN_OBJ_KEY_VAR_SIZE;
+      }
+      additional_value_size = grn_rset_recinfo_calc_values_size(ctx,
+                                                                rp->flags);
+      rp->table = grn_table_create_with_max_n_subrecs(ctx, NULL, 0, NULL,
+                                                      flags,
+                                                      key_type, table,
+                                                      rp->max_n_subrecs,
+                                                      additional_value_size);
+      if (key_type) {
+        grn_obj_unref(ctx, key_type);
+      }
+      if (!rp->table) {
+        return ctx->rc;
+      }
+    }
+    DB_OBJ(rp->table)->group.flags = rp->flags;
+    DB_OBJ(rp->table)->group.calc_target = rp->calc_target;
+    grn_table_group_update_aggregated_value_type_id(ctx, rp->table);
+    if (rp->flags & GRN_TABLE_GROUP_CALC_AGGREGATOR) {
+      DB_OBJ(rp->table)->group.aggregators = rp->aggregators;
+      DB_OBJ(rp->table)->group.n_aggregators = rp->n_aggregators;
+    } else {
+      DB_OBJ(rp->table)->group.aggregators = NULL;
+      DB_OBJ(rp->table)->group.n_aggregators = 0;
+    }
+    {
+      uint32_t j;
+      for (j = 0; j < DB_OBJ(rp->table)->group.n_aggregators; j++) {
+        grn_table_group_aggregator *aggregator =
+          DB_OBJ(rp->table)->group.aggregators[j];
+        grn_table_group_aggregator_prepare(ctx, aggregator, rp->table);
+        if (ctx->rc != GRN_SUCCESS) {
+          return ctx->rc;
+        }
+      }
+    }
+  }
+  return ctx->rc;
+}
+
+static grn_rc
+grn_table_group_results_postpare(grn_ctx *ctx,
+                                 grn_table_group_result *results,
+                                 int n_results)
+{
+  int i;
+  grn_table_group_result *rp;
+  for (i = 0, rp = results; i < n_results; i++, rp++) {
+    GRN_TABLE_GROUPED_ON(rp->table);
+    DB_OBJ(rp->table)->group.calc_target = NULL;
+    {
+      uint32_t j;
+      for (j = 0; j < DB_OBJ(rp->table)->group.n_aggregators; j++) {
+        grn_table_group_aggregator *aggregator =
+          DB_OBJ(rp->table)->group.aggregators[j];
+        grn_table_group_aggregator_postpare(ctx, aggregator);
+      }
+    }
+  }
+  return ctx->rc;
+}
+
 grn_rc
 grn_table_group(grn_ctx *ctx, grn_obj *table,
                 grn_table_sort_key *keys, int n_keys,
@@ -1409,78 +1508,20 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     }
   }
   {
-    int k, r;
+    int k;
     grn_table_sort_key *kp;
-    grn_table_group_result *rp;
     for (k = 0, kp = keys; k < n_keys; k++, kp++) {
       if ((kp->flags & GRN_TABLE_GROUP_BY_COLUMN_VALUE) && !kp->key) {
         ERR(GRN_INVALID_ARGUMENT, "[table][group] column is missing: %d", k);
         goto exit;
       }
     }
-    for (r = 0, rp = results; r < n_results; r++, rp++) {
-      if (!rp->table) {
-        grn_table_flags flags;
-        grn_obj *key_type = NULL;
-        uint32_t additional_value_size;
-
-        flags = GRN_OBJ_TABLE_HASH_KEY|
-          GRN_OBJ_WITH_SUBREC|
-          GRN_OBJ_UNIT_USERDEF_DOCUMENT;
-        if (group_by_all_records) {
-          key_type = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);
-        } else if (n_keys == 1) {
-          grn_id key_type_id = grn_obj_get_range(ctx, keys[0].key);
-          if (key_type_id == GRN_ID_NIL) {
-            grn_obj inspected;
-            GRN_TEXT_INIT(&inspected, 0);
-            grn_inspect(ctx, &inspected, keys[0].key);
-            ERR(GRN_INVALID_ARGUMENT,
-                "[table][group] unknown key type: %.*s",
-                (int)GRN_TEXT_LEN(&inspected),
-                GRN_TEXT_VALUE(&inspected));
-            GRN_OBJ_FIN(ctx, &inspected);
-            goto exit;
-          }
-          key_type = grn_ctx_at(ctx, key_type_id);
-        } else {
-          flags |= GRN_OBJ_KEY_VAR_SIZE;
-        }
-        additional_value_size = grn_rset_recinfo_calc_values_size(ctx,
-                                                                  rp->flags);
-        rp->table = grn_table_create_with_max_n_subrecs(ctx, NULL, 0, NULL,
-                                                        flags,
-                                                        key_type, table,
-                                                        rp->max_n_subrecs,
-                                                        additional_value_size);
-        if (key_type) {
-          grn_obj_unref(ctx, key_type);
-        }
-        if (!rp->table) {
-          goto exit;
-        }
-      }
-      DB_OBJ(rp->table)->group.flags = rp->flags;
-      DB_OBJ(rp->table)->group.calc_target = rp->calc_target;
-      grn_table_group_update_aggregated_value_type_id(ctx, rp->table);
-      if (rp->flags & GRN_TABLE_GROUP_CALC_AGGREGATOR) {
-        DB_OBJ(rp->table)->group.aggregators = rp->aggregators;
-        DB_OBJ(rp->table)->group.n_aggregators = rp->n_aggregators;
-      } else {
-        DB_OBJ(rp->table)->group.aggregators = NULL;
-        DB_OBJ(rp->table)->group.n_aggregators = 0;
-      }
-      {
-        uint32_t i;
-        for (i = 0; i < DB_OBJ(rp->table)->group.n_aggregators; i++) {
-          grn_table_group_aggregator *aggregator =
-            DB_OBJ(rp->table)->group.aggregators[i];
-          grn_table_group_aggregator_prepare(ctx, aggregator, rp->table);
-          if (ctx->rc != GRN_SUCCESS) {
-            goto exit;
-          }
-        }
-      }
+    grn_table_group_results_prepare(ctx,
+                                    results, n_results,
+                                    table,
+                                    keys, n_keys);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
     }
     if (group_by_all_records) {
       grn_table_group_all_records(ctx, table, results);
@@ -1544,18 +1585,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
       }
       GRN_FREE(data.keys);
     }
-    for (r = 0, rp = results; r < n_results; r++, rp++) {
-      GRN_TABLE_GROUPED_ON(rp->table);
-      DB_OBJ(rp->table)->group.calc_target = NULL;
-      {
-        uint32_t i;
-        for (i = 0; i < DB_OBJ(rp->table)->group.n_aggregators; i++) {
-          grn_table_group_aggregator *aggregator =
-            DB_OBJ(rp->table)->group.aggregators[i];
-          grn_table_group_aggregator_postpare(ctx, aggregator);
-        }
-      }
-    }
+    grn_table_group_results_postpare(ctx, results, n_results);
   }
 exit :
   GRN_API_RETURN(ctx->rc);
