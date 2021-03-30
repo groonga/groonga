@@ -1390,21 +1390,24 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
                 grn_table_sort_key *keys, int n_keys,
                 grn_table_group_result *results, int n_results)
 {
-  grn_rc rc = GRN_SUCCESS;
-  bool group_by_all_records = false;
-  if (n_keys == 0 && n_results == 1) {
-    group_by_all_records = GRN_TRUE;
-  } else if (!table) {
-    ERR(GRN_INVALID_ARGUMENT, "[table][group] table is NULL");
-    return GRN_INVALID_ARGUMENT;
-  } else if (n_keys == 0) {
-    ERR(GRN_INVALID_ARGUMENT, "[table][group] no keys");
-    return GRN_INVALID_ARGUMENT;
-  } else if (n_results == 0) {
-    ERR(GRN_INVALID_ARGUMENT, "[table][group] no results");
-    return GRN_INVALID_ARGUMENT;
-  }
   GRN_API_ENTER;
+  if (!table) {
+    ERR(GRN_INVALID_ARGUMENT, "[table][group] table is NULL");
+    goto exit;
+  }
+  if (n_results == 0) {
+    ERR(GRN_INVALID_ARGUMENT, "[table][group] no results");
+    goto exit;
+  }
+  bool group_by_all_records = false;
+  if (n_keys == 0) {
+    if (n_results == 1) {
+      group_by_all_records = true;
+    } else {
+      ERR(GRN_INVALID_ARGUMENT, "[table][group] no keys");
+      goto exit;
+    }
+  }
   {
     int k, r;
     grn_table_sort_key *kp;
@@ -1555,7 +1558,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
     }
   }
 exit :
-  GRN_API_RETURN(rc);
+  GRN_API_RETURN(ctx->rc);
 }
 
 static void
