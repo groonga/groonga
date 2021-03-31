@@ -22,6 +22,7 @@
 # include "grn_db.h"
 # include <groonga/smart_obj.hpp>
 
+# include <limits>
 # include <string>
 # include <vector>
 
