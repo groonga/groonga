@@ -22,8 +22,8 @@
 #endif
 
 #ifdef HAVE_CONFIG_H
-//Ambiguous (onigmo has the same name header).
-# include <config.h>
+//Avoid ambiguity (onigmo has the same name header).
+# include <../../config.h>
 #endif /* HAVE_CONFIG_H */
 
 #include <groonga/plugin.h>
