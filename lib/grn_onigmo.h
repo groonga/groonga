@@ -39,7 +39,7 @@ extern "C" {
 grn_bool
 grn_onigmo_is_valid_encoding(grn_ctx *ctx);
 
-OnigRegex
+GRN_API OnigRegex
 grn_onigmo_new(grn_ctx *ctx,
                const char *pattern,
                size_t pattern_length,

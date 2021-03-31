@@ -1,0 +1,10 @@
+plugin_register functions/string
+
+table_create Memos TABLE_HASH_KEY ShortText
+
+load --table Memos
+[
+{"_key": "Groonga"}
+]
+
+select Memos   --output_columns '_key, string_slice(_key, "(roon)(g)", 2, "")'

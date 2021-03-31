@@ -68,6 +68,7 @@ else()
   endif()
 endif()
 target_link_libraries(string_functions libgroonga)
+target_include_directories(string_functions PRIVATE ${ONIGMO_INCLUDE_DIRS})
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/number_sources.am
   NUMBER_SOURCES)

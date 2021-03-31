@@ -1,0 +1,38 @@
+plugin_register functions/string
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga"}
+]
+[[0,0.0,0.0],1]
+select Memos   --output_columns '_key, string_slice(_key, 2)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "string_slice",
+          null
+        ]
+      ],
+      [
+        "Groonga",
+        "o"
+      ]
+    ]
+  ]
+]
