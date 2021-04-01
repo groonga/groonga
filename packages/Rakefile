@@ -54,6 +54,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
   def apt_targets_default
     [
       "debian-buster",
+      "debian-buster-arm64",
       "debian-buster-i386",
     ]
   end
@@ -93,8 +94,12 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
 
   def built_package_url(target_namespace, target)
     url = "https://github.com/groonga/groonga/releases/download/v#{@version}/"
-    if target_namespace == :apt and !target.end_with?("-i386")
-      url << "#{target}-amd64.tar.gz"
+    if target_namespace == :apt
+      if target.end_with?("-i386") or target.end_with?("-arm64")
+        url << "#{target}.tar.gz"
+      else
+        url << "#{target}-amd64.tar.gz"
+      end
     elsif target_namespace == :windows
       url << "#{target}"
     else
