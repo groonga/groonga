@@ -275,7 +275,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/reindex/index_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/reindex/table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/ruby_eval/calc.log \
-	$(top_srcdir)/doc/source/example/reference/commands/ruby_load/load.log \
 	$(top_srcdir)/doc/source/example/reference/commands/schema/output.log \
 	$(top_srcdir)/doc/source/example/reference/commands/schema/sample.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/adjuster_multiple.log \
@@ -955,7 +954,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/reindex.rst \
 	$(top_srcdir)/doc/source/reference/commands/request_cancel.rst \
 	$(top_srcdir)/doc/source/reference/commands/ruby_eval.rst \
-	$(top_srcdir)/doc/source/reference/commands/ruby_load.rst \
 	$(top_srcdir)/doc/source/reference/commands/schema.rst \
 	$(top_srcdir)/doc/source/reference/commands/select.rst \
 	$(top_srcdir)/doc/source/reference/commands/shutdown.rst \
@@ -1393,7 +1391,6 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/reindex/index_column.log \
 	source/example/reference/commands/reindex/table.log \
 	source/example/reference/commands/ruby_eval/calc.log \
-	source/example/reference/commands/ruby_load/load.log \
 	source/example/reference/commands/schema/output.log \
 	source/example/reference/commands/schema/sample.log \
 	source/example/reference/commands/select/adjuster_multiple.log \
@@ -2073,7 +2070,6 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/reindex.rst \
 	source/reference/commands/request_cancel.rst \
 	source/reference/commands/ruby_eval.rst \
-	source/reference/commands/ruby_load.rst \
 	source/reference/commands/schema.rst \
 	source/reference/commands/select.rst \
 	source/reference/commands/shutdown.rst \
@@ -2503,7 +2499,6 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/reindex.html \
 	html/reference/commands/request_cancel.html \
 	html/reference/commands/ruby_eval.html \
-	html/reference/commands/ruby_load.html \
 	html/reference/commands/schema.html \
 	html/reference/commands/select.html \
 	html/reference/commands/shutdown.html \
