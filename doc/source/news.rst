@@ -7,6 +7,412 @@
 News
 ====
 
+.. _release-11-0-2:
+
+Release 11.0.2 - 2021-05-10
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [Documentation] Removed a reference about ``ruby_load`` command. [GitHub#1172][Patched by Anthony M. Cook]
+
+  * Because this command has already deleted.
+
+* [:doc:`/install/debian`] Added support for Debian 11(Bullseye).
+
+* [:doc:`reference/commands/select`] Added support for ``--post_filter``.
+
+  * We can use ``post_filter`` to filter by ``filtered`` stage dynamic columns as below.
+
+    .. code-block::
+
+       table_create Items TABLE_NO_KEY
+       column_create Items price COLUMN_SCALAR UInt32
+
+       load --table Items
+       [
+       {"price": 100},
+       {"price": 150},
+       {"price": 200},
+       {"price": 250},
+       {"price": 300}
+       ]
+
+       select Items \
+         --filter "price >= 150" \
+         --columns[price_with_tax].stage filtered \
+         --columns[price_with_tax].type UInt32 \
+         --columns[price_with_tax].flags COLUMN_SCALAR \
+         --columns[price_with_tax].value "price * 1.1" \
+         --post_filter "price_with_tax <= 250"
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               2
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "price_with_tax",
+                 "UInt32"
+               ],
+               [
+                 "price",
+                 "UInt32"
+               ]
+             ],
+             [
+               2,
+               165,
+               150
+             ],
+             [
+               3,
+               220,
+               200
+             ]
+           ]
+         ]
+       ]
+
+* [:doc:`reference/commands/select`] Added support for ``--slices[].post_filter``.
+
+  * We can use ``post_filter`` to filter by ``--slices[].filter`` as below.
+
+    .. code-block::
+
+        table_create Items TABLE_NO_KEY
+        column_create Items price COLUMN_SCALAR UInt32
+
+        load --table Items
+        [
+        {"price": 100},
+        {"price": 200},
+        {"price": 300},
+        {"price": 1000},
+        {"price": 2000},
+        {"price": 3000}
+        ]
+
+        select Items \
+          --slices[expensive].filter 'price >= 1000' \
+          --slices[expensive].post_filter 'price < 3000'
+        [
+          [
+            0,
+            0.0,
+            0.0
+          ],
+          [
+            [
+              [
+                6
+              ],
+              [
+                [
+                  "_id",
+                  "UInt32"
+                ],
+                [
+                  "price",
+                  "UInt32"
+                ]
+              ],
+              [
+                1,
+                100
+              ],
+              [
+                2,
+                200
+              ],
+              [
+                3,
+                300
+              ],
+              [
+                4,
+                1000
+              ],
+              [
+                5,
+                2000
+              ],
+              [
+                6,
+                3000
+              ]
+            ],
+            {
+              "expensive": [
+                [
+                  2
+                ],
+                [
+                  [
+                    "_id",
+                    "UInt32"
+                  ],
+                  [
+                    "price",
+                    "UInt32"
+                  ]
+                ],
+                [
+                  4,
+                  1000
+                ],
+                [
+                  5,
+                  2000
+                ]
+              ]
+            }
+          ]
+        ]
+
+
+* [:doc:`reference/commands/select`] Added support for describing expression into ``--sort_keys``.
+
+  * We can describe the expression into ``--sort_keys``.
+
+    * If nonexistent keys into expression as a ``--sort_keys``, they are ignored and outputted warns into a log.
+
+  * By this, for example, we can specify a value of an element of ``VECTOR COLUMN`` to ``--sort_keys``. And we can sort a result with it.
+  * We can sort a result with an element of ``VECTOR COLUMN`` even if the before version by using dynamic column.
+    However, we can sort a result with an element of ``VECTOR COLUMN`` without using dynamic column by this feature.
+
+    .. code-block::
+
+       table_create Values TABLE_NO_KEY
+       column_create Values numbers COLUMN_VECTOR Int32
+       load --table Values
+       [
+       {"numbers": [127, 128, 129]},
+       {"numbers": [126, 255]},
+       {"numbers": [128, -254]}
+       ]
+       select Values --sort_keys 'numbers[1]' --output_columns numbers
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               3
+             ],
+             [
+               [
+                 "numbers",
+                 "Int32"
+               ]
+             ],
+             [
+               [
+                 128,
+                 -254
+               ]
+             ],
+             [
+               [
+                 127,
+                 128,
+                 129
+               ]
+             ],
+             [
+               [
+                 126,
+                 255
+               ]
+             ]
+           ]
+         ]
+       ]
+
+* [:doc:`/reference/token_filters`] Added support for multiple token filters with options.
+
+  * We can specify multiple token filters with options like ``--token_filters 'TokenFilterStopWord("column", "ignore"), TokenFilterNFKC130("unify_kana", true)'``. [Github#mroonga/mroonga#399][Reported by MASUDA Kazuhiro]
+
+* [:doc:`reference/functions/query`] Added support a dynamic column of ``result_set`` stage with complex expression.
+
+  * Complex expression is that it needs temporary result sets internally like a following expression.
+
+    .. code-block::
+
+       '(true && query("name * 10", "ali", {"score_column": "ali_score"})) || \
+        (true && query("name * 2", "li", {"score_column": "li_score"}))'
+
+    * In the above expressions, the temporary result sets are used to store the result of evaluating the ``true``.
+    * Therefore, for example, in the following expression, we can use a value of dynamic column of ``result_set`` stage in expression. Because temporary result sets internally are needless as below expression.
+
+      .. code-block::
+
+         '(query("name * 10", "ali", {"score_column": "ali_score"})) || \
+          (query("name * 2", "li", {"score_column": "li_score"}))'
+
+  * In this release, for example, we can set a value to ``li_score`` as below. (The value of ``li_score`` had been ``0`` in before version. Because the second expression could not get dynamic column.)
+
+    .. code-block::
+
+       table_create Users TABLE_NO_KEY
+       column_create Users name COLUMN_SCALAR ShortText
+
+       table_create Lexicon TABLE_HASH_KEY ShortText \
+         --default_tokenizer TokenBigramSplitSymbolAlphaDigit \
+         --normalizer NormalizerAuto
+       column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+
+       load --table Users
+       [
+       {"name": "Alice"},
+       {"name": "Alisa"},
+       {"name": "Bob"}
+       ]
+
+       select Users \
+         --columns[ali_score].stage result_set \
+         --columns[ali_score].type Float \
+         --columns[ali_score].flags COLUMN_SCALAR \
+         --columns[li_score].stage result_set \
+         --columns[li_score].type Float \
+         --columns[li_score].flags COLUMN_SCALAR \
+         --output_columns name,_score,ali_score,li_score \
+         --filter '(true && query("name * 10", "ali", {"score_column": "ali_score"})) || \
+                   (true && query("name * 2", "li", {"score_column": "li_score"}))'
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               2
+             ],
+             [
+               [
+                 "name",
+                 "ShortText"
+               ],
+               [
+                 "_score",
+                 "Int32"
+               ],
+               [
+                 "ali_score",
+                 "Float"
+               ],
+               [
+                 "li_score",
+                 "Float"
+               ]
+             ],
+             [
+               "Alice",
+               14,
+               10.0,
+               2.0
+             ],
+             [
+               "Alisa",
+               14,
+               10.0,
+               2.0
+             ]
+           ]
+         ]
+       ]
+
+  * We also supported a dynamic vector column of ``result_set`` stage as below.
+
+    .. code-block::
+
+       table_create Users TABLE_NO_KEY
+       column_create Users name COLUMN_SCALAR ShortText
+
+       table_create Lexicon TABLE_HASH_KEY ShortText \
+         --default_tokenizer TokenBigramSplitSymbolAlphaDigit \
+         --normalizer NormalizerAuto
+       column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+
+       load --table Users
+       [
+       {"name": "Alice"},
+       {"name": "Alisa"},
+       {"name": "Bob"}
+       ]
+
+       select Users \
+         --columns[tags].stage result_set \
+         --columns[tags].type ShortText \
+         --columns[tags].flags COLUMN_VECTOR \
+         --output_columns name,tags \
+         --filter '(true && query("name", "al", {"tags": ["al"], "tags_column": "tags"})) || \
+                   (true && query("name", "sa", {"tags": ["sa"], "tags_column": "tags"}))'
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               2
+             ],
+             [
+               [
+                 "name",
+                 "ShortText"
+               ],
+               [
+                 "tags",
+                 "ShortText"
+               ]
+             ],
+             [
+               "Alice",
+               [
+                 "al"
+               ]
+             ],
+             [
+               "Alisa",
+               [
+                 "al",
+                 "sa"
+               ]
+             ]
+           ]
+         ]
+       ]
+
+    * If we use a dynamic vector column, the storing values are appended values of each element.
+
+* [:doc:`/install/ubuntu`] Added support for Ubuntu 21.04 (Hirsute Hippo).
+
+Thanks
+^^^^^^
+
+* Anthony M. Cook
+
+* MASUDA Kazuhiro
+
 .. _release-11-0-1:
 
 Release 11.0.1 - 2021-03-31
