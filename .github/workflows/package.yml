@@ -12,12 +12,24 @@ jobs:
       fail-fast: false
       matrix:
         label:
+          - Debian GNU/Linux bullseye amd64
+          - Debian GNU/Linux bullseye arm64
           - Debian GNU/Linux buster amd64
           - Debian GNU/Linux buster arm64
           - Debian GNU/Linux buster i386
           - CentOS 7
           - CentOS 8
         include:
+          - label: Debian GNU/Linux bullseye amd64
+            id: debian-bullseye-amd64
+            task-namespace: apt
+            target: debian-bullseye
+            test-docker-image: debian:bullseye
+          - label: Debian GNU/Linux bullseye arm64
+            id: debian-bullseye-arm64
+            task-namespace: apt
+            target: debian-bullseye-arm64
+            test-docker-image: arm64v8/debian:bullseye
           - label: Debian GNU/Linux buster amd64
             id: debian-buster-amd64
             task-namespace: apt

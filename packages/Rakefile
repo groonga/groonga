@@ -53,6 +53,8 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
 
   def apt_targets_default
     [
+      "debian-bullseye",
+      "debian-bullseye-arm64",
       "debian-buster",
       "debian-buster-arm64",
       "debian-buster-i386",
