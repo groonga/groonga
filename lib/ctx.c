@@ -171,6 +171,7 @@ grn_init_from_env(void)
   grn_index_column_init_from_env();
   grn_output_init_from_env();
   grn_proc_init_from_env();
+  grn_proc_query_init_from_env();
   grn_plugin_init_from_env();
   grn_token_column_init_from_env();
   grn_group_init_from_env();

@@ -20,6 +20,7 @@
 #include "../grn_expr.h"
 #include "../grn_proc.h"
 #include "../grn_hash.h"
+#include "../grn_table_selector.h"
 
 #include <groonga/plugin.h>
 #include <groonga.hpp>
@@ -33,8 +34,47 @@
 
 #include <vector>
 
+static bool grn_query_min_id_skip_enable = false;
 static int grn_query_parallel_or_n_conditions_threshold = 4;
 static int grn_query_parallel_or_n_threads_limit = -1;
+
+void
+grn_proc_query_init_from_env(void)
+{
+  {
+    char env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_QUERY_MIN_ID_SKIP_ENABLE",
+               env,
+               GRN_ENV_BUFFER_SIZE);
+    if (std::string(env) == "yes") {
+      grn_query_min_id_skip_enable = true;
+    }
+  }
+
+  {
+    char env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_QUERY_PARALLEL_OR_N_CONDITIONS_THRESHOLD",
+               env,
+               GRN_ENV_BUFFER_SIZE);
+    if (env[0]) {
+      grn_query_parallel_or_n_conditions_threshold = atoi(env);
+    }
+  }
+
+  {
+#ifdef GRN_WITH_APACHE_ARROW
+    grn_query_parallel_or_n_threads_limit =
+      std::thread::hardware_concurrency() / 3;
+#endif
+    char env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_QUERY_PARALLEL_OR_N_THREADS_LIMIT",
+               env,
+               GRN_ENV_BUFFER_SIZE);
+    if (env[0]) {
+      grn_query_parallel_or_n_threads_limit = atoi(env);
+    }
+  }
+}
 
 namespace {
   class BaseQueryExecutor {
@@ -376,7 +416,24 @@ namespace {
       if (!condition_) {
         return true;
       }
-      grn_table_select(ctx_, table_, condition_, res_, op_);
+      grn_table_selector table_selector;
+      grn_table_selector_init(ctx_,
+                              &table_selector,
+                              table_,
+                              condition_,
+                              op_);
+      if (op_ != GRN_OP_OR && grn_query_min_id_skip_enable) {
+        auto min_id =
+          grn_result_set_get_min_id(ctx_,
+                                    reinterpret_cast<grn_hash *>(res_));
+        grn_table_selector_set_min_id(ctx_,
+                                      &table_selector,
+                                      min_id);
+      }
+      grn_table_selector_select(ctx_,
+                                &table_selector,
+                                res_);
+      grn_table_selector_fin(ctx_, &table_selector);
       return ctx_->rc == GRN_SUCCESS;
     }
 
@@ -534,6 +591,11 @@ namespace {
 #ifdef GRN_WITH_APACHE_ARROW
     bool
     select_parallel(std::shared_ptr<::arrow::internal::ThreadPool> pool) {
+      grn_id min_id = GRN_ID_NIL;
+      if (op_ != GRN_OP_OR && grn_query_min_id_skip_enable) {
+        min_id = grn_result_set_get_min_id(ctx_,
+                                           reinterpret_cast<grn_hash *>(res_));
+      }
       std::mutex mutex;
       std::vector<grn::UniqueObj> unique_sub_results;
       auto select = [&](grn_obj *match_columns, const std::string &query) {
@@ -563,11 +625,19 @@ namespace {
             }
           }
           if (sub_result) {
-            grn_table_select(sub_ctx,
-                             table_,
-                             condition,
-                             sub_result,
-                             GRN_OP_OR);
+            grn_table_selector table_selector;
+            grn_table_selector_init(sub_ctx,
+                                    &table_selector,
+                                    table_,
+                                    condition,
+                                    GRN_OP_OR);
+            grn_table_selector_set_min_id(sub_ctx,
+                                          &table_selector,
+                                          min_id);
+            grn_table_selector_select(sub_ctx,
+                                      &table_selector,
+                                      sub_result);
+            grn_table_selector_fin(sub_ctx, &table_selector);
             {
               std::lock_guard<std::mutex> lock(mutex);
               unique_sub_results.emplace_back(ctx_, sub_result);
@@ -637,6 +707,11 @@ namespace {
 
     bool
     select_sequential() {
+      grn_id min_id = GRN_ID_NIL;
+      if (op_ != GRN_OP_OR && grn_query_min_id_skip_enable) {
+        min_id = grn_result_set_get_min_id(ctx_,
+                                           reinterpret_cast<grn_hash *>(res_));
+      }
       grn::UniqueObj unique_sub_result(ctx_, nullptr);
       for (const auto &expanded_query : expanded_queries_) {
         grn_obj *condition = build_condition(ctx_,
@@ -647,11 +722,19 @@ namespace {
           return false;
         }
         grn::UniqueObj unique_condition(ctx_, condition);
-        auto sub_result = grn_table_select(ctx_,
-                                           table_,
-                                           condition,
-                                           unique_sub_result.get(),
-                                           GRN_OP_OR);
+        grn_table_selector table_selector;
+        grn_table_selector_init(ctx_,
+                                &table_selector,
+                                table_,
+                                condition,
+                                GRN_OP_OR);
+        grn_table_selector_set_min_id(ctx_,
+                                      &table_selector,
+                                      min_id);
+        auto sub_result = grn_table_selector_select(ctx_,
+                                                    &table_selector,
+                                                    unique_sub_result.get());
+        grn_table_selector_fin(ctx_, &table_selector);
         if (ctx_->rc != GRN_SUCCESS) {
           return false;
         }
@@ -827,30 +910,6 @@ selector_query_parallel_or(grn_ctx *ctx,
 void
 grn_proc_init_query_parallel_or(grn_ctx *ctx)
 {
-  {
-    char env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_QUERY_PARALLEL_OR_N_CONDITIONS_THRESHOLD",
-               env,
-               GRN_ENV_BUFFER_SIZE);
-    if (env[0]) {
-      grn_query_parallel_or_n_conditions_threshold = atoi(env);
-    }
-  }
-
-  {
-#ifdef GRN_WITH_APACHE_ARROW
-    grn_query_parallel_or_n_threads_limit =
-      std::thread::hardware_concurrency() / 3;
-#endif
-    char env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_QUERY_PARALLEL_OR_N_THREADS_LIMIT",
-               env,
-               GRN_ENV_BUFFER_SIZE);
-    if (env[0]) {
-      grn_query_parallel_or_n_threads_limit = atoi(env);
-    }
-  }
-
   grn_obj *selector_proc = grn_proc_create(ctx,
                                            "query_parallel_or", -1,
                                            GRN_PROC_FUNCTION,
