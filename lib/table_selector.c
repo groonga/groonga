@@ -33,7 +33,7 @@
 
 static double grn_table_select_enough_filtered_ratio = 0.01;
 static int grn_table_select_max_n_enough_filtered_records = 1000;
-static bool grn_table_select_and_min_skip_enable = true;
+static bool grn_table_select_min_id_skip_enable = true;
 static bool grn_query_log_show_condition = true;
 
 void
@@ -62,14 +62,27 @@ grn_table_selector_init_from_env(void)
   }
 
   {
-    char grn_table_select_and_min_skip_enable_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_TABLE_SELECT_AND_MIN_SKIP_ENABLE",
-               grn_table_select_and_min_skip_enable_env,
+    char env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_TABLE_SELECT_MIN_ID_SKIP_ENABLE",
+               env,
                GRN_ENV_BUFFER_SIZE);
-    if (strcmp(grn_table_select_and_min_skip_enable_env, "no") == 0) {
-      grn_table_select_and_min_skip_enable = false;
+    if (env[0]) {
+      if (strcmp(env, "no") == 0) {
+        grn_table_select_min_id_skip_enable = false;
+      } else {
+        grn_table_select_min_id_skip_enable = true;
+      }
     } else {
-      grn_table_select_and_min_skip_enable = true;
+      grn_getenv("GRN_TABLE_SELECT_AND_MIN_SKIP_ENABLE",
+                 env,
+                 GRN_ENV_BUFFER_SIZE);
+      if (env[0]) {
+        if (strcmp(env, "no") == 0) {
+          grn_table_select_min_id_skip_enable = false;
+        } else {
+          grn_table_select_min_id_skip_enable = true;
+        }
+      }
     }
   }
 
@@ -1451,10 +1464,10 @@ select_index(grn_ctx *ctx,
       options->scorer_args_expr_offset =
         GRN_UINT32_VALUE_AT(&(si->scorer_args_expr_offsets), i);
 
-      bool use_and_min_skip_enable;
-      use_and_min_skip_enable =
-        (grn_table_select_and_min_skip_enable && !GRN_ACCESSORP(index));
-      if (use_and_min_skip_enable) {
+      bool use_min_id_skip_enable;
+      use_min_id_skip_enable =
+        (grn_table_select_min_id_skip_enable && !GRN_ACCESSORP(index));
+      if (use_min_id_skip_enable) {
         options->match_info.min = data->min_id;
       } else {
         options->match_info.min = GRN_ID_NIL;
@@ -1493,7 +1506,7 @@ select_index(grn_ctx *ctx,
         }
       }
       GRN_BULK_REWIND(&weights_buffer);
-      if (use_and_min_skip_enable &&
+      if (use_min_id_skip_enable &&
           (!minimum_min_id_is_set ||
            options->match_info.min < minimum_min_id)) {
         minimum_min_id_is_set = true;
