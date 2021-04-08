@@ -129,6 +129,21 @@ namespace {
     virtual bool run() = 0;
 
   protected:
+    grn_id
+    get_min_id() {
+      if (op_ == GRN_OP_OR) {
+        return GRN_ID_NIL;
+      }
+      if (!grn_query_min_id_skip_enable) {
+        return GRN_ID_NIL;
+      }
+      if (grn_table_size(ctx_, res_) > 10000) {
+        return GRN_ID_NIL;
+      }
+      return grn_result_set_get_min_id(ctx_,
+                                       reinterpret_cast<grn_hash *>(res_));
+    }
+
     bool
     parse_match_columns_arg() {
       match_columns_string_ = args_[0];
@@ -422,14 +437,9 @@ namespace {
                               table_,
                               condition_,
                               op_);
-      if (op_ != GRN_OP_OR && grn_query_min_id_skip_enable) {
-        auto min_id =
-          grn_result_set_get_min_id(ctx_,
-                                    reinterpret_cast<grn_hash *>(res_));
-        grn_table_selector_set_min_id(ctx_,
-                                      &table_selector,
-                                      min_id);
-      }
+      grn_table_selector_set_min_id(ctx_,
+                                    &table_selector,
+                                    get_min_id());
       grn_table_selector_select(ctx_,
                                 &table_selector,
                                 res_);
@@ -591,11 +601,7 @@ namespace {
 #ifdef GRN_WITH_APACHE_ARROW
     bool
     select_parallel(std::shared_ptr<::arrow::internal::ThreadPool> pool) {
-      grn_id min_id = GRN_ID_NIL;
-      if (op_ != GRN_OP_OR && grn_query_min_id_skip_enable) {
-        min_id = grn_result_set_get_min_id(ctx_,
-                                           reinterpret_cast<grn_hash *>(res_));
-      }
+      grn_id min_id = get_min_id();
       std::mutex mutex;
       std::vector<grn::UniqueObj> unique_sub_results;
       auto select = [&](grn_obj *match_columns, const std::string &query) {
@@ -707,11 +713,7 @@ namespace {
 
     bool
     select_sequential() {
-      grn_id min_id = GRN_ID_NIL;
-      if (op_ != GRN_OP_OR && grn_query_min_id_skip_enable) {
-        min_id = grn_result_set_get_min_id(ctx_,
-                                           reinterpret_cast<grn_hash *>(res_));
-      }
+      grn_id min_id = get_min_id();
       grn::UniqueObj unique_sub_result(ctx_, nullptr);
       for (const auto &expanded_query : expanded_queries_) {
         grn_obj *condition = build_condition(ctx_,
