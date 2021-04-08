@@ -22,6 +22,9 @@
 extern "C" {
 #endif
 
+GRN_API grn_id
+grn_result_set_get_min_id(grn_ctx *ctx,
+                          grn_hash *result_set);
 GRN_API grn_rc
 grn_result_set_add_record(grn_ctx *ctx,
                           grn_hash *result_set,
