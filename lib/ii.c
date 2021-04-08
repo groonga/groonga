@@ -9784,6 +9784,10 @@ grn_rset_add_record(grn_ctx *ctx,
 
 /* TODO: It may be better that we record the min ID when add/delete a
  * record. */
+/* TODO: It may be useful that we just return approximate value. For
+ * example, we can stop min ID search when we find an ID that is less
+ * than grn_table_size(ctx, grn_ctx_at(ctx,
+ * result_set->header.domain))/100. */
 grn_id
 grn_result_set_get_min_id(grn_ctx *ctx,
                           grn_hash *result_set)
