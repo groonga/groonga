@@ -76,8 +76,10 @@ namespace {
       if (!prepare()) {
         return ctx_->rc;
       }
-      if (!run()) {
-        return ctx_->rc;
+      if (op_ == GRN_OP_OR || grn_table_size(ctx_, res_) > 0) {
+        if (!run()) {
+          return ctx_->rc;
+        }
       }
       return ctx_->rc;
     }
