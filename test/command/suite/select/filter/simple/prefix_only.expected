@@ -42,6 +42,6 @@ select Tags --filter '_key @^ "s"'
     ]
   ]
 ]
-#|i| [table][select][index][prefix][accessor][key] <Tags>
+#|i| [table-selector][select][index][prefix][accessor][key] <Tags>
 log_level --level notice
 [[0,0.0,0.0],true]

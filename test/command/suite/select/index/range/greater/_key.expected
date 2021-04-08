@@ -13,4 +13,4 @@ log_level --level info
 [[0,0.0,0.0],true]
 select Ages --filter '_key > 29' --output_columns '_key, _score'
 [[0,0.0,0.0],[[[2],[["_key","Int32"],["_score","Int32"]],[30,1],[39,1]]]]
-#|i| [table][select][index][range][key] <Ages>
+#|i| [table-selector][select][index][range][key] <Ages>

@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -307,8 +307,11 @@ GRN_API unsigned int grn_table_size(grn_ctx *ctx, grn_obj *table);
 GRN_API grn_rc grn_table_rename(grn_ctx *ctx, grn_obj *table,
                                 const char *name, unsigned int name_size);
 
-GRN_API grn_obj *grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
-                                  grn_obj *res, grn_operator op);
+GRN_API grn_obj *grn_table_select(grn_ctx *ctx,
+                                  grn_obj *table,
+                                  grn_obj *expr,
+                                  grn_obj *result_set,
+                                  grn_operator op);
 
 GRN_API grn_table_sort_key *grn_table_sort_key_from_str(grn_ctx *ctx,
                                                         const char *str, unsigned int str_size,
@@ -353,6 +356,36 @@ grn_table_get_duplicated_keys(grn_ctx *ctx,
 GRN_API bool
 grn_table_have_duplicated_keys(grn_ctx *ctx,
                                grn_obj *table);
+
+
+typedef struct _grn_table_selector grn_table_selector;
+
+GRN_API grn_table_selector *
+grn_table_selector_open(grn_ctx *ctx,
+                        grn_obj *table,
+                        grn_obj *expr,
+                        grn_operator op);
+GRN_API grn_rc
+grn_table_selector_close(grn_ctx *ctx,
+                         grn_table_selector *table_selector);
+GRN_API grn_id
+grn_table_selector_get_min_id(grn_ctx *ctx,
+                              grn_table_selector *table_selector);
+GRN_API grn_rc
+grn_table_selector_set_min_id(grn_ctx *ctx,
+                              grn_table_selector *table_selector,
+                              grn_id min_id);
+GRN_API bool
+grn_table_selector_get_use_sequential_scan(grn_ctx *ctx,
+                                           grn_table_selector *table_selector);
+GRN_API grn_rc
+grn_table_selector_set_use_sequential_scan(grn_ctx *ctx,
+                                           grn_table_selector *table_selector,
+                                           bool use);
+GRN_API grn_obj *
+grn_table_selector_select(grn_ctx *ctx,
+                          grn_table_selector *table_selector,
+                          grn_obj *result_set);
 
 #ifdef __cplusplus
 }

@@ -48,4 +48,4 @@ select Ages --filter '_key >= 29' --output_columns '_key, _score'
     ]
   ]
 ]
-#|i| [table][select][index][range][key] <Ages>
+#|i| [table-selector][select][index][range][key] <Ages>

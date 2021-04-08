@@ -79,8 +79,8 @@ select Users   --filter '_id > 1'   --slices[name].filter 'name == "bob"'   --sl
     }
   ]
 ]
-#|i| [table][select][index][range][id] <Users>
-#|i| [table][select][index][equal] <Names.users_name>
+#|i| [table-selector][select][index][range][id] <Users>
+#|i| [table-selector][select][index][equal] <Names.users_name>
 #|i| [accessor][resolve][table] (temporary) -> <Users>
 log_level --level notice
 [[0,0.0,0.0],true]

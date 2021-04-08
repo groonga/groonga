@@ -100,7 +100,7 @@ select   --table LoadedLogs   --filter 'timestamp >= "2015-02-03 12:49:00"'
     ]
   ]
 ]
-#|i| [table][select][index][range] <Times.logs_timestamp>
+#|i| [table-selector][select][index][range] <Times.logs_timestamp>
 #|i| [accessor][resolve][table] <LoadedLogs> -> <Logs> -> <ShortText>
 #>select --filter "timestamp >= \"2015-02-03 12:49:00\"" --table "LoadedLogs"
 #:000000000000000 filter(2): #<accessor _key(LoadedLogs).timestamp(Logs)> greater_equal "2015-02-03 12:49:00"

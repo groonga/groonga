@@ -161,6 +161,6 @@ select Users --filter '_key @^ "user0" && age > 5'
     ]
   ]
 ]
-#|i| [table][select][index-not-used][range] <Ages>: enough filtered: 10.00%(10/100) < 11.00% && 10 <= 1000
+#|i| [table-selector][select][index-not-used][range] <Ages>: enough filtered: 10.00%(10/100) < 11.00% && 10 <= 1000
 log_level --level notice
 [[0,0.0,0.0],true]

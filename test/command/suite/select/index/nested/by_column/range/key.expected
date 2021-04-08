@@ -52,7 +52,7 @@ select Users   --filter 'score._key < 2 && score._key >= -1'   --output_columns 
     ]
   ]
 ]
-#|i| [table][select][index][range] <Int8Tables.index>
+#|i| [table-selector][select][index][range] <Int8Tables.index>
 #|i| [accessor][resolve][data-column][index] <Int8Table.users_score>
-#|i| [table][select][index][range] <Int8Tables.index>
+#|i| [table-selector][select][index][range] <Int8Tables.index>
 #|i| [accessor][resolve][data-column][index] <Int8Table.users_score>

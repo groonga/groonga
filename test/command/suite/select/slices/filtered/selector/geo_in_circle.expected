@@ -150,6 +150,6 @@ select LandMarks   --limit 0   --filter '_id > 1'   --slices[point].filter 'geo_
     }
   ]
 ]
-#|i| [table][select][index][range][id] <LandMarks>
-#|i| [table][select][index][selector][geo_in_circle] <Points.land_mark_index>
+#|i| [table-selector][select][index][range][id] <LandMarks>
+#|i| [table-selector][select][index][selector][geo_in_circle] <Points.land_mark_index>
 #|i| [accessor][resolve][table] (temporary) -> <LandMarks>

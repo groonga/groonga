@@ -47,6 +47,6 @@ select Softwares --filter 'all_records()'
     ]
   ]
 ]
-#|i| [table][select][index][selector][no-index][all_records] <Softwares>
+#|i| [table-selector][select][index][selector][no-index][all_records] <Softwares>
 log_level --level notice
 [[0,0.0,0.0],true]

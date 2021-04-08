@@ -92,19 +92,19 @@ select Logs   --filter 'in_records(Reports,                        user, "==", "
     ]
   ]
 ]
-#|i| [table][select][index][selector][no-index][in_records] <Logs>
-#|i| [table][select][index][equal] <Users.reports_index>
-#|i| [table][select][index][equal] <Tags.reports_index>
-#|i| [table][select][index][equal] <Days.reports_index>
-#|i| [table][select][index][equal] <Users.reports_index>
-#|i| [table][select][index][equal] <Tags.reports_index>
-#|i| [table][select][index][equal] <Days.reports_index>
-#|i| [table][select][index][equal] <Users.reports_index>
-#|i| [table][select][index][equal] <Tags.reports_index>
-#|i| [table][select][index-not-used][equal] <Days.reports_index>: enough filtered: 0.00%(0/4) < 1.00% && 0 <= 1000
-#|i| [table][select][index][equal] <Users.reports_index>
-#|i| [table][select][index][equal] <Tags.reports_index>
-#|i| [table][select][index-not-used][equal] <Days.reports_index>: enough filtered: 0.00%(0/4) < 1.00% && 0 <= 1000
-#|i| [table][select][index][equal] <Users.reports_index>
-#|i| [table][select][index][equal] <Tags.reports_index>
-#|i| [table][select][index][equal] <Days.reports_index>
+#|i| [table-selector][select][index][selector][no-index][in_records] <Logs>
+#|i| [table-selector][select][index][equal] <Users.reports_index>
+#|i| [table-selector][select][index][equal] <Tags.reports_index>
+#|i| [table-selector][select][index][equal] <Days.reports_index>
+#|i| [table-selector][select][index][equal] <Users.reports_index>
+#|i| [table-selector][select][index][equal] <Tags.reports_index>
+#|i| [table-selector][select][index][equal] <Days.reports_index>
+#|i| [table-selector][select][index][equal] <Users.reports_index>
+#|i| [table-selector][select][index][equal] <Tags.reports_index>
+#|i| [table-selector][select][index-not-used][equal] <Days.reports_index>: enough filtered: 0.00%(0/4) < 1.00% && 0 <= 1000
+#|i| [table-selector][select][index][equal] <Users.reports_index>
+#|i| [table-selector][select][index][equal] <Tags.reports_index>
+#|i| [table-selector][select][index-not-used][equal] <Days.reports_index>: enough filtered: 0.00%(0/4) < 1.00% && 0 <= 1000
+#|i| [table-selector][select][index][equal] <Users.reports_index>
+#|i| [table-selector][select][index][equal] <Tags.reports_index>
+#|i| [table-selector][select][index][equal] <Days.reports_index>

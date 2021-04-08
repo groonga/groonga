@@ -54,7 +54,7 @@ select Logs --filter 'server @^ "www" && server != "www2"'
     ]
   ]
 ]
-#|i| [table][select][index][prefix] <Servers.logs_server>
-#|i| [table][select][index][not-equal] <Servers.logs_server>
+#|i| [table-selector][select][index][prefix] <Servers.logs_server>
+#|i| [table-selector][select][index][not-equal] <Servers.logs_server>
 log_level --level notice
 [[0,0.0,0.0],true]

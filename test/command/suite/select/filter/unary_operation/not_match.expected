@@ -46,7 +46,7 @@ select Texts --filter '!(_key @ "Groonga")' --sort_keys _key
     ]
   ]
 ]
-#|i| [table][select][index][selector][no-index][all_records] <Texts>
+#|i| [table-selector][select][index][selector][no-index][all_records] <Texts>
 #|i| [object][search][index][key][exact] <Terms.texts_key>
 #|i| grn_ii_sel > (Groonga)
 #|i| [ii][select] n=1 (Groonga)

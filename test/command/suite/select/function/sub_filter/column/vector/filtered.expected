@@ -72,10 +72,10 @@ select Packages   --filter '_key == "rroonga" &&             sub_filter(files, "
   ]
 ]
 #|i| [object][search][index][table][equal] <Packages>
-#|i| [table][select][index][selector][no-index][sub_filter] <Packages>
+#|i| [table-selector][select][index][selector][no-index][sub_filter] <Packages>
 #|i| [sub_filter][pre-filter][column][vector] <Packages.files> -> <Files>
-#|i| [table][select][index][range] <Revisions.files_revision>
-#|i| [table][select][index][range] <Revisions.files_revision>
+#|i| [table-selector][select][index][range] <Revisions.files_revision>
+#|i| [table-selector][select][index][range] <Revisions.files_revision>
 #|i| [accessor][resolve][data-column][index] <Files.packages_files_index>
 log_level --level notice
 [[0,0.0,0.0],true]

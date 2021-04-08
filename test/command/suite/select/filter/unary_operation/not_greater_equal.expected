@@ -11,6 +11,6 @@ log_level --level info
 [[0,0.0,0.0],true]
 select Numbers --filter '!(_key >= 29)'
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","UInt32"]],[1,2]]]]
-#|i| [table][select][index][range][key] <Numbers>
+#|i| [table-selector][select][index][range][key] <Numbers>
 log_level --level notice
 [[0,0.0,0.0],true]

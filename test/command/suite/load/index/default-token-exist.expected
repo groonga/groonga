@@ -52,4 +52,4 @@ select Users --filter 'age >= 10'
     ]
   ]
 ]
-#|i| [table][select][index][range] <Ages.users_age>
+#|i| [table-selector][select][index][range] <Ages.users_age>

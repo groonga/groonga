@@ -91,8 +91,8 @@ select Memos   --filter '_id > 1'   --slices[groonga].filter     'sub_filter(dat
     }
   ]
 ]
-#|i| [table][select][index][range][id] <Memos>
-#|i| [table][select][index][selector][no-index][sub_filter] <>
-#|i| [table][select][index][selector][between] <Times>
+#|i| [table-selector][select][index][range][id] <Memos>
+#|i| [table-selector][select][index][selector][no-index][sub_filter] <>
+#|i| [table-selector][select][index][selector][between] <Times>
 #|i| [accessor][resolve][data-column][index] <Times.memos_date>
 #|i| [accessor][resolve][table] (temporary) -> <Memos> -> <ShortText>

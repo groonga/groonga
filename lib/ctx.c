@@ -38,6 +38,7 @@
 #include "grn_logger.h"
 #include "grn_cache.h"
 #include "grn_expr.h"
+#include "grn_table_selector.h"
 #include "grn_token_column.h"
 #include "grn_window_function_executor.h"
 #include "grn_windows.h"
@@ -174,6 +175,7 @@ grn_init_from_env(void)
   grn_token_column_init_from_env();
   grn_group_init_from_env();
   grn_window_function_executor_init_from_env();
+  grn_table_selector_init_from_env();
 }
 
 static void

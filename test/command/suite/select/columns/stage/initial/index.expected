@@ -75,7 +75,7 @@ select Items   --columns[price_with_tax].stage initial   --columns[price_with_ta
     ]
   ]
 ]
-#|i| [table][select][index][range] <Prices.item_index>
+#|i| [table-selector][select][index][range] <Prices.item_index>
 #|i| [accessor][resolve][table] (temporary) -> <Items> -> <ShortText>
 log_level --level notice
 [[0,0.0,0.0],true]

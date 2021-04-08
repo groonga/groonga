@@ -17,6 +17,6 @@ log_level --level info
 [[0,0.0,0.0],true]
 select Logs --filter 'timestamp > "2016-04-08 00:00:01"'
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["timestamp","Time"]],[3,1460041202.0]]]]
-#|i| [table][select][index][range] <Timestamps.index>
+#|i| [table-selector][select][index][range] <Timestamps.index>
 log_level --level notice
 [[0,0.0,0.0],true]

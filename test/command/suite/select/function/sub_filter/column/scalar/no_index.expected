@@ -93,9 +93,9 @@ select Packages   --filter 'sub_filter(files.author, "birthday >= \\"1988-01-04 
     ]
   ]
 ]
-#|i| [table][select][index][selector][no-index][sub_filter] <Packages>
-#|i| [table][select][index][range] <Birthdays.users_birthday>
-#|i| [table][select][index][range] <Birthdays.users_birthday>
+#|i| [table-selector][select][index][selector][no-index][sub_filter] <Packages>
+#|i| [table-selector][select][index][range] <Birthdays.users_birthday>
+#|i| [table-selector][select][index][range] <Birthdays.users_birthday>
 #|i| [accessor][resolve][data-column][column] <Files.author> -> <Users>
 #|i| [accessor][resolve][data-column][index] <Files.packages_files_index>
 log_level --level notice

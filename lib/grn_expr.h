@@ -152,13 +152,6 @@ grn_expr_match_columns_split(grn_ctx *ctx,
                              grn_obj *expr,
                              grn_obj *splitted_match_columns);
 
-grn_rc
-grn_table_select_sequential(grn_ctx *ctx,
-                            grn_obj *table,
-                            grn_obj *expr,
-                            grn_obj *res,
-                            grn_operator op);
-
 grn_obj *
 grn_expr_slice(grn_ctx *ctx,
                grn_obj *expr,

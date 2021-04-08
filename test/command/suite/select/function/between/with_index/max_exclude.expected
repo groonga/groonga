@@ -51,6 +51,6 @@ select Users --filter 'between(age, 18, "exclude", 20, "exclude")'
     ]
   ]
 ]
-#|i| [table][select][index][selector][between] <Ages.users_age>
+#|i| [table-selector][select][index][selector][between] <Ages.users_age>
 log_level --level notice
 [[0,0.0,0.0],true]

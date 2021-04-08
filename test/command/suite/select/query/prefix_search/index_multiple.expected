@@ -53,6 +53,6 @@ select --table Users --query 'name:^"Ali"'
     ]
   ]
 ]
-#|i| [table][select][index][prefix] <NamesIndex.index>
+#|i| [table-selector][select][index][prefix] <NamesIndex.index>
 log_level --level notice
 [[0,0.0,0.0],true]

@@ -63,7 +63,7 @@ select Articles   --filter '_key == "article1" &&             sub_filter(comment
   ]
 ]
 #|i| [object][search][index][table][equal] <Articles>
-#|i| [table][select][index][selector][no-index][sub_filter] <Articles>
+#|i| [table-selector][select][index][selector][no-index][sub_filter] <Articles>
 #|i| [sub_filter][pre-filter][column][index] <Articles.comment_index> -> <Comments>
 #|i| [object][search][index][key][exact] <Lexicon.comments_content>
 #|i| grn_ii_sel > (Mroonga)

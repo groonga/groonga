@@ -94,5 +94,5 @@ select Memos   --filter 'tag @ "Groonga"'   --slices[groonga].filter 'date < 201
     }
   ]
 ]
-#|i| [table][select][index][range] <Dates.memos_date>
+#|i| [table-selector][select][index][range] <Dates.memos_date>
 #|i| [accessor][resolve][table] (temporary) -> <Memos> -> <ShortText>

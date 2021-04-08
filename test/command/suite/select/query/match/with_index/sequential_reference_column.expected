@@ -62,7 +62,7 @@ select Memos --query '_id:>=3 tag:@Groonga' --output_columns _id,_score,_key,tag
     ]
   ]
 ]
-#|i| [table][select][index][range][id] <Memos>
+#|i| [table-selector][select][index][range][id] <Memos>
 #|i| [object][search][index][key][exact] <Tags.memos_tag>
 #|i| grn_ii_sel > (Groonga)
 #|i| [ii][select] n=1 (Groonga)

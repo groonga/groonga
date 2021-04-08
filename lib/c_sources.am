@@ -70,6 +70,7 @@ libgroonga_c_sources =				\
 	grn_request_timer.h			\
 	grn_romaji.h				\
 	grn_rset.h				\
+	grn_scan_info.h				\
 	grn_scanner.h				\
 	grn_scorer.h				\
 	grn_scorers.h				\
@@ -80,6 +81,7 @@ libgroonga_c_sources =				\
 	grn_string.h				\
 	grn_table.h				\
 	grn_table_module.h			\
+	grn_table_selector.h			\
 	grn_time.h				\
 	grn_token.h				\
 	grn_token_cursor.h			\
@@ -140,6 +142,7 @@ libgroonga_c_sources =				\
 	string.c				\
 	table.c					\
 	table_module.c				\
+	table_selector.c			\
 	thread.c				\
 	time.c					\
 	token.c					\

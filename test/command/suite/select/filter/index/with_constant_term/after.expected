@@ -17,6 +17,6 @@ log_level --level info
 [[0,0.0,0.0],true]
 select Values   --filter 'number == -1 || true'   --output_columns 'number'
 [[0,0.0,0.0],[[[3],[["number","Int32"]],[-1],[1],[3]]]]
-#|i| [table][select][index][equal] <Numbers.values_number>
+#|i| [table-selector][select][index][equal] <Numbers.values_number>
 log_level --level notice
 [[0,0.0,0.0],true]

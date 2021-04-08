@@ -96,7 +96,7 @@ select Memos   --filter 'content @ "3"'   --slices[adult].filter 'content @ "4" 
     }
   ]
 ]
-#|i| [table][select][index][selector][no-index][sub_filter] <>
+#|i| [table-selector][select][index][selector][no-index][sub_filter] <>
 #|i| [sub_filter][pre-filter][accessor] _key(anonymous).user(Memos) -> <Users>
 #|i| [accessor][resolve][data-column][column] <Memos.user> -> <Users>
 #|i| [accessor][resolve][table] (temporary) -> <Memos>

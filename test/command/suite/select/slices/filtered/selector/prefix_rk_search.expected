@@ -58,6 +58,6 @@ select Readings   --filter '_id > 1'   --slices[key].filter 'prefix_rk_search(_k
     }
   ]
 ]
-#|i| [table][select][index][range][id] <Readings>
-#|i| [table][select][index][selector][prefix_rk_search] <Readings>
+#|i| [table-selector][select][index][range][id] <Readings>
+#|i| [table-selector][select][index][selector][prefix_rk_search] <Readings>
 #|i| [accessor][resolve][table] (temporary) -> <Readings> -> <ShortText>
