@@ -13923,7 +13923,7 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                       ac = grn_accessor_new(ctx);
                       GRN_PTR_PUT(ctx, res, (grn_obj *)ac);
                       for (a = (grn_accessor *)ai; a; a = a->next) {
-                        if (a->action != GRN_ACCESSOR_GET_ID) {
+                        if (a != id_accessor) {
                           ac->action = a->action;
                           ac->obj = a->obj;
                           if (grn_enable_reference_count && ac->obj) {
