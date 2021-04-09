@@ -146,23 +146,6 @@ msgstr ""
 
 msgid ""
 "[:doc:`/reference/commands/load`] Added support for loading reference vector "
-"from JSON text."
-msgstr ""
-"[:doc:`/reference/commands/load`] オブジェクトリテラルを使って、参照先のレ"
-"コードをロードできるようにしました。"
-
-msgid ""
-"We can load data to reference vector from source table with JSON text as "
-"below."
-msgstr ""
-"以下のように、JSONテキストを使ってソーステーブルから参照ベクターへデータを"
-"ロードできます。"
-
-msgid "Currently, this feature doesn't support nested reference record."
-msgstr "現状、この機能は、ネストされた参照レコードをサポートしていません。"
-
-msgid ""
-"[:doc:`/reference/commands/load`] Added support for loading reference vector "
 "with inline object literal."
 msgstr ""
 "[:doc:`/reference/commands/load`] オブジェクトリテラルを使って、参照先のレ"
@@ -181,6 +164,23 @@ msgstr "この機能によって、参照カラムにJSONデータを追加し�
 
 msgid "Currently, this feature only support with JSON input."
 msgstr "現状、この機能は、JSONの入力のみをサポートしています。"
+
+msgid ""
+"[:doc:`/reference/commands/load`] Added support for loading reference vector "
+"from JSON text."
+msgstr ""
+"[:doc:`/reference/commands/load`] JSON文字列で、参照先のレコードをロードでき"
+"るようにしました。"
+
+msgid ""
+"We can load data to reference vector from source table with JSON text as "
+"below."
+msgstr ""
+"以下のように、JSONテキストを使ってソーステーブルから参照ベクターへデータを"
+"ロードできます。"
+
+msgid "Currently, this feature doesn't support nested reference record."
+msgstr "現状、この機能は、ネストされた参照レコードをサポートしていません。"
 
 msgid ""
 "[Windows] Added support for UNIX epoch for ``time_classify_*`` functions."
@@ -205,7 +205,7 @@ msgid ""
 "release."
 msgstr ""
 "今回のリリースから、以下のようにUNIXエポックを ``time_classify_*`` 内で使える"
-"ようにしました。"
+"ように"
 
 msgid ""
 "[:doc:`reference/functions/query_parallel_or`] Added a new function for "
