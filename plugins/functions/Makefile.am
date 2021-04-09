@@ -15,12 +15,6 @@ AM_LDFLAGS =					\
 
 LIBS =						\
 	$(top_builddir)/lib/libgroonga.la
-	
-BUNDLED_LIBRARIES_CFLAGS =			\
-	$(ONIGMO_CFLAGS)
-
-DEFAULT_INCLUDES =				\
-	$(BUNDLED_LIBRARIES_CFLAGS)
 
 
 
