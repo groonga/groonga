@@ -1248,11 +1248,11 @@ grn_filter_data_fin(grn_ctx *ctx, grn_filter_data *data)
   if (data->post_filtered) {
     grn_obj_unlink(ctx, data->post_filtered);
   }
-  if (data->filtered) {
-    grn_obj_unlink(ctx, data->filtered);
-  }
   if (data->post_condition.expression) {
     grn_obj_close(ctx, data->post_condition.expression);
+  }
+  if (data->filtered) {
+    grn_obj_unlink(ctx, data->filtered);
   }
   if (data->condition.expression) {
     grn_obj_close(ctx, data->condition.expression);
