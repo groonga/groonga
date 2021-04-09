@@ -308,9 +308,13 @@ Improvements
   * It makes easier to add JSON data into reference columns by this feature.
   * Currently, this feature only support with JSON input.
 
-* Added support for UNIX epoch time for ``time_classify_*`` functions.
+* [Windows] Added support for UNIX epoch for ``time_classify_*`` functions.
 
-  * We can use UNIX epoch time in ``time_classify_*`` functions as below.
+  * Groonga handles timestamps on local time. Therefore, for example, if we input the UNIX epoch in Japan, inputting time is 9 hours behind the UNIX epoch.
+
+  * The Windows API outputs an error when we input the time before the UNIX epoch.
+
+  * We can use the UNIX epoch in ``time_classify_*`` functions as below in this release.
 
     .. code-block::
 
