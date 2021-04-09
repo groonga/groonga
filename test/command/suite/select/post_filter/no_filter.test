@@ -1,0 +1,12 @@
+table_create Items TABLE_NO_KEY
+column_create Items price COLUMN_SCALAR UInt32
+
+load --table Items
+[
+{"price": 100},
+{"price": 200},
+{"price": 300}
+]
+
+select Items \
+  --post_filter "price >= 200"

@@ -1,0 +1,52 @@
+table_create Items TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"price": 100},
+{"price": 150},
+{"price": 200},
+{"price": 250},
+{"price": 300}
+]
+[[0,0.0,0.0],5]
+select Items   --filter "price >= 150"   --columns[price_with_tax].stage filtered   --columns[price_with_tax].type UInt32   --columns[price_with_tax].flags COLUMN_SCALAR   --columns[price_with_tax].value "price * 1.1"   --post_filter "price_with_tax <= 250"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "price_with_tax",
+          "UInt32"
+        ],
+        [
+          "price",
+          "UInt32"
+        ]
+      ],
+      [
+        2,
+        165,
+        150
+      ],
+      [
+        3,
+        220,
+        200
+      ]
+    ]
+  ]
+]

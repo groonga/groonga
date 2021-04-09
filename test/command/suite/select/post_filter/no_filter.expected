@@ -1,0 +1,13 @@
+table_create Items TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"price": 100},
+{"price": 200},
+{"price": 300}
+]
+[[0,0.0,0.0],3]
+select Items   --post_filter "price >= 200"
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["price","UInt32"]],[2,200],[3,300]]]]

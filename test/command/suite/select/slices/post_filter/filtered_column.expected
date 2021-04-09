@@ -1,0 +1,94 @@
+table_create Items TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"price": 100},
+{"price": 200},
+{"price": 300},
+{"price": 1000},
+{"price": 2000},
+{"price": 3000}
+]
+[[0,0.0,0.0],6]
+select Items   --slices[expensive].filter 'price >= 1000'   --slices[expensive].columns[price_with_tax].stage filtered   --slices[expensive].columns[price_with_tax].type UInt32   --slices[expensive].columns[price_with_tax].flags COLUMN_SCALAR   --slices[expensive].columns[price_with_tax].value "price * 1.1"   --slices[expensive].post_filter 'price_with_tax >= 2200'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "price",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        100
+      ],
+      [
+        2,
+        200
+      ],
+      [
+        3,
+        300
+      ],
+      [
+        4,
+        1000
+      ],
+      [
+        5,
+        2000
+      ],
+      [
+        6,
+        3000
+      ]
+    ],
+    {
+      "expensive": [
+        [
+          2
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "price_with_tax",
+            "UInt32"
+          ],
+          [
+            "price",
+            "UInt32"
+          ]
+        ],
+        [
+          5,
+          2200,
+          2000
+        ],
+        [
+          6,
+          3300,
+          3000
+        ]
+      ]
+    }
+  ]
+]
