@@ -43,7 +43,7 @@ jobs:
             task-namespace: yum
             target: centos-8
             test-docker-image: centos:8
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-20.10
     steps:
       - uses: actions/checkout@v2
         with:
