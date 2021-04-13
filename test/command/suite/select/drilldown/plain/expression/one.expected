@@ -1,0 +1,96 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users first_name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users last_name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users nickname COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice1", "nickname": "My Alice"},
+{"_key": "alice2", "first_name": "My", "last_name": "Alice"},
+{"_key": "bob", "nickname": "Bob"}
+]
+[[0,0.0,0.0],3]
+select Users   --drilldown "nickname || first_name + ' ' + last_name"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "first_name",
+          "ShortText"
+        ],
+        [
+          "last_name",
+          "ShortText"
+        ],
+        [
+          "nickname",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "alice1",
+        "",
+        "",
+        "My Alice"
+      ],
+      [
+        2,
+        "alice2",
+        "My",
+        "Alice",
+        ""
+      ],
+      [
+        3,
+        "bob",
+        "",
+        "",
+        "Bob"
+      ]
+    ],
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_nsubrecs",
+          "Int32"
+        ]
+      ],
+      [
+        "My Alice",
+        2
+      ],
+      [
+        "Bob",
+        1
+      ]
+    ]
+  ]
+]

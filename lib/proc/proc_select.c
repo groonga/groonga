@@ -3272,11 +3272,11 @@ grn_select_prepare_drilldowns(grn_ctx *ctx,
 {
   if (data->drilldown.keys.length > 0) {
     data->drilldown.parsed_keys =
-      grn_table_sort_key_from_str(ctx,
-                                  data->drilldown.keys.value,
-                                  data->drilldown.keys.length,
-                                  data->tables.result,
-                                  &(data->drilldown.n_parsed_keys));
+      grn_table_group_keys_parse(ctx,
+                                 data->tables.result,
+                                 data->drilldown.keys.value,
+                                 data->drilldown.keys.length,
+                                 &(data->drilldown.n_parsed_keys));
     if (data->drilldown.parsed_keys) {
       int i;
       grn_obj buffer;
