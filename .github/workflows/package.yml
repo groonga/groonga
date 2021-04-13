@@ -67,8 +67,26 @@ jobs:
             autoconf-archive \
             devscripts \
             python3-pip \
-            qemu-user-static \
             ruby
+      - name: Install Qemu from Groovy
+        run: |
+          sudo tee /etc/apt/preferences.d/qemu <<EOF
+          Package: *
+          Pin: release n=focal
+          Pin-Priority: 900
+          Package: *
+          Pin: release n=groovy
+          Pin-Priority: 400
+          EOF
+          cat /etc/apt/preferences.d/qemu
+          sudo tee /etc/apt/sources.list.d/groovy.list <<EOF
+          deb http://jp.archive.ubuntu.com/ubuntu groovy universe
+          deb http://jp.archive.ubuntu.com/ubuntu groovy-updates universe
+          deb http://security.ubuntu.com/ubuntu groovy-security universe
+          EOF
+          cat /etc/apt/sources.list.d/groovy.list
+          sudo apt update
+          sudo apt install -t groovy qemu-user-static
       - name: Install Sphinx
         run: |
           sudo pip3 install -v sphinx
