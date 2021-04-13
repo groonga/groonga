@@ -7475,11 +7475,17 @@ grn_expr_get_range_info(grn_ctx *ctx,
       code++;
       break;
     case GRN_OP_GET_MEMBER :
-      GRN_LOG(ctx,
-              GRN_LOG_DEBUG,
-              "[expr][get-range-info] unsupported operator: %s",
-              grn_operator_to_string(code->op));
-      goto exit;
+      {
+        grn_id index_range_id;
+        grn_obj_flags index_range_flags;
+        POP(index_range_id, index_range_flags);
+        grn_id column_range_id;
+        grn_obj_flags column_range_flags;
+        POP(column_range_id, column_range_flags);
+        PUSH(column_range_id, 0);
+        code++;
+      }
+      break;
     case GRN_OP_REGEXP :
       DROP();
       DROP();
