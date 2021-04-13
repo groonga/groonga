@@ -6382,9 +6382,6 @@ grn_expr_is_module_list(grn_ctx *ctx, grn_obj *expr)
     case GRN_OP_PUSH :
       break;
     case GRN_OP_CALL :
-      if (codes + 1 != codes_end) {
-        return GRN_FALSE;
-      }
       break;
     case GRN_OP_COMMA :
       break;
@@ -6432,8 +6429,13 @@ grn_expr_module_list_detect_module(grn_ctx *ctx,
     for (codes = e->codes; codes < codes_end; codes++) {
       switch (codes[0].op) {
       case GRN_OP_CALL :
-        *module_start = codes - codes[0].nargs;
-        *module_end = codes;
+        if (codes != codes_end && codes[+1].op == GRN_OP_COMMA) {
+          *module_start = codes - codes[0].nargs - 1;
+          *module_end = codes - codes[0].nargs;
+        } else {
+          *module_start = codes - codes[0].nargs;
+          *module_end = codes;
+        }
         return;
       case GRN_OP_COMMA :
         if (codes[-1].op == GRN_OP_CALL) {
@@ -6457,7 +6459,7 @@ grn_expr_module_list_detect_module(grn_ctx *ctx,
       j++;
       if (i == j) {
         if (codes > e->codes && codes[-1].op == GRN_OP_CALL) {
-          *module_start = codes - codes[-1].nargs;
+          *module_start = codes - codes[-1].nargs - 1;
           *module_end = codes - 1;
         } else {
           *module_start = codes - 1;
