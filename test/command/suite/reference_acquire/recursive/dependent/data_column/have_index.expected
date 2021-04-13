@@ -52,6 +52,7 @@ select Memos --query content:@hello
 reference_release --target_name Memos.content --recursive dependent
 [[0,0.0,0.0],true]
 #|-| [obj][close] <258>(<Memos.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <256>(<Memos>):<51>(<table:no_key>)
 #|-| [obj][close] <261>(<Terms.is_stop_word>):<64>(<column:fix_size>)
 #|-| [obj][close] <260>(<Terms.memos_key_index>):<72>(<column:index>)
 #|-| [obj][close] <259>(<Terms>):<49>(<table:pat_key>)

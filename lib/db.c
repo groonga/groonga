@@ -4905,6 +4905,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
             /* lookup failed */
             grn_obj_close(ctx, (grn_obj *)res);
             res = NULL;
+            grn_obj_unref(ctx, obj);
             goto exit;
           }
         }
@@ -4946,6 +4947,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
               /* lookup failed */
               grn_obj_close(ctx, (grn_obj *)res);
               res = NULL;
+              grn_obj_unref(ctx, obj);
               goto exit;
             }
           }
@@ -5001,6 +5003,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
               /* lookup failed */
               grn_obj_close(ctx, (grn_obj *)res);
               res = NULL;
+              grn_obj_unref(ctx, obj);
               goto exit;
             }
           }
@@ -5171,6 +5174,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
             /* lookup failed */
             grn_obj_close(ctx, (grn_obj *)res);
             res = NULL;
+            grn_obj_unref(ctx, obj);
             goto exit;
           }
         }
