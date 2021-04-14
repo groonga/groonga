@@ -68,7 +68,7 @@ jobs:
             devscripts \
             python3-pip \
             ruby
-      - name: Install Qemu from Groovy
+      - name: Install QEMU from Groovy
         run: |
           sudo tee /etc/apt/preferences.d/qemu <<EOF
           Package: *
