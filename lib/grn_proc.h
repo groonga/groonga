@@ -26,7 +26,8 @@ extern "C" {
 #endif
 
 #define GRN_SELECT_DEFAULT_LIMIT           10
-#define GRN_SELECT_DEFAULT_OUTPUT_COLUMNS  "_id, _key, *"
+#define GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_NO_KEY  "_id, *"
+#define GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_WITH_KEY  "_id, _key, *"
 
 void grn_proc_init_from_env(void);
 void grn_proc_query_init_from_env(void);

@@ -4077,7 +4077,11 @@ proc_range_filter(grn_ctx *ctx, int nargs, grn_obj **args,
     raw_output_columns = GRN_TEXT_VALUE(output_columns);
     raw_output_columns_len = GRN_TEXT_LEN(output_columns);
     if (raw_output_columns_len == 0) {
-      raw_output_columns = GRN_SELECT_DEFAULT_OUTPUT_COLUMNS;
+      if (grn_obj_is_table_with_key(ctx, table)) {
+        raw_output_columns = GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_WITH_KEY;
+      } else {
+        raw_output_columns = GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_NO_KEY;
+      }
       raw_output_columns_len = strlen(raw_output_columns);
     }
     grn_proc_select_output_columns(ctx, res, -1, real_offset, real_limit,

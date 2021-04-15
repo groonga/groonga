@@ -1744,10 +1744,6 @@ grn_slice_data_fill(grn_ctx *ctx,
   GRN_RAW_STRING_FILL(slice->sort_keys, sort_keys);
 
   GRN_RAW_STRING_FILL(slice->output_columns, output_columns);
-  if (slice->output_columns.length == 0) {
-    slice->output_columns.value = GRN_SELECT_DEFAULT_OUTPUT_COLUMNS;
-    slice->output_columns.length = strlen(GRN_SELECT_DEFAULT_OUTPUT_COLUMNS);
-  }
 
   slice->offset = grn_proc_option_value_int32(ctx, offset, 0);
   slice->limit = grn_proc_option_value_int32(ctx,
@@ -2648,6 +2644,15 @@ grn_select_output_match_open(grn_ctx *ctx,
   int offset;
   grn_obj *output_table;
 
+  if (!data->output_columns.value) {
+    if (grn_obj_is_table_with_key(ctx, data->tables.target)) {
+      data->output_columns.value =
+        GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_WITH_KEY;
+    } else {
+      data->output_columns.value = GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_NO_KEY;
+    }
+    data->output_columns.length = strlen(data->output_columns.value);
+  }
   if (data->tables.sorted) {
     offset = 0;
     output_table = data->tables.sorted;
@@ -3845,6 +3850,16 @@ grn_select_output_slices(grn_ctx *ctx,
     if (slice->drilldowns) {
       n_additional_elements++;
     }
+    if (slice->output_columns.length == 0) {
+      if (grn_obj_is_table_with_key(ctx, data->tables.target)) {
+        slice->output_columns.value =
+          GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_WITH_KEY;
+      } else {
+        slice->output_columns.value =
+          GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_NO_KEY;
+      }
+      slice->output_columns.length = strlen(slice->output_columns.value);
+    }
     succeeded =
       grn_select_output_columns_open(ctx,
                                      data,
@@ -4972,10 +4987,6 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     grn_plugin_proc_get_var_string(ctx, user_data,
                                    "output_columns", -1,
                                    &(data.output_columns.length));
-  if (!data.output_columns.value) {
-    data.output_columns.value = GRN_SELECT_DEFAULT_OUTPUT_COLUMNS;
-    data.output_columns.length = strlen(GRN_SELECT_DEFAULT_OUTPUT_COLUMNS);
-  }
   data.offset = grn_plugin_proc_get_var_int32(ctx, user_data,
                                               "offset", -1,
                                               0);
