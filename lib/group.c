@@ -1592,33 +1592,6 @@ exit :
   GRN_API_RETURN(ctx->rc);
 }
 
-static void
-grn_table_group_keys_parse_one(grn_ctx *ctx,
-                               grn_obj *table,
-                               grn_obj *keys_expression,
-                               uint32_t code_start_offset,
-                               uint32_t code_end_offset,
-                               grn_table_sort_key *key)
-{
-  grn_expr *expr = (grn_expr *)keys_expression;
-  if ((code_end_offset - code_start_offset) == 1 &&
-      expr->codes[code_start_offset].op == GRN_OP_GET_VALUE &&
-      expr->codes[code_start_offset].value) {
-    key->key = expr->codes[code_start_offset].value;
-    if (grn_obj_is_accessor(ctx, key->key)) {
-      key->key = grn_accessor_copy(ctx, key->key);
-    } else {
-      grn_obj_refer(ctx, key->key);
-    }
-  } else {
-    grn_obj *sliced_expr = grn_expr_slice(ctx,
-                                          keys_expression,
-                                          code_start_offset,
-                                          code_end_offset);
-    key->key = sliced_expr;
-  }
-}
-
 grn_table_sort_key *
 grn_table_group_keys_parse(grn_ctx *ctx,
                            grn_obj *table,
