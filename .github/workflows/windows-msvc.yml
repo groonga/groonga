@@ -56,7 +56,9 @@ jobs:
       - name: Use JST
         run: |
           Set-TimeZone -Id "Tokyo Standard Time"
-      - uses: actions/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.0"
       - uses: actions/checkout@v2
         with:
           submodules: recursive
