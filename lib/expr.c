@@ -4672,7 +4672,26 @@ done :
       grn_expr_append_obj(ctx, q->e, obj, GRN_OP_PUSH, 1);
       goto exit;
     }
-    if (q->flags & GRN_EXPR_SYNTAX_OUTPUT_COLUMNS) {
+    if (q->flags & GRN_EXPR_SYNTAX_OUTPUT_COLUMNS ||
+        q->flags & GRN_EXPR_SYNTAX_SORT_KEYS) {
+      const char *type =
+        (q->flags & GRN_EXPR_SYNTAX_OUTPUT_COLUMNS) ? "column" : "key";
+      const char *identifier = name;
+      int identifier_size = name_size;
+      {
+        GRN_DEFINE_NAME(q->table);
+        GRN_LOG(ctx,
+                GRN_WARN,
+                "[expr][parse] ignore invalid %s: <%.*s>: "
+                "table:<%.*s> keys:<%.*s>",
+                type,
+                identifier_size,
+                identifier,
+                name_size,
+                name,
+                (int)(q->str_end - q->str),
+                q->str);
+      }
       PARSE(GRN_EXPR_TOKEN_NONEXISTENT_COLUMN);
     } else {
       rc = GRN_SYNTAX_ERROR;
