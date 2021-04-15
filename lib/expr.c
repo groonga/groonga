@@ -7528,19 +7528,20 @@ exit :
  *     separator.
  */
 bool
-grn_expr_is_v1_columns_format(grn_ctx *ctx,
-                              const char *raw_text,
-                              ssize_t raw_text_len)
+grn_expr_is_v1_format(grn_ctx *ctx,
+                      const char *raw_text,
+                      ssize_t raw_text_len,
+                      grn_expr_v1_format_type type)
 {
-  const char *current;
-  const char *end;
-  bool in_identifier = false;
 
   if (raw_text_len < 0) {
     raw_text_len = strlen(raw_text);
   }
-  current = raw_text;
-  end = current + raw_text_len;
+  const char *current = raw_text;
+  const char *end = current + raw_text_len;
+  bool in_identifier = false;
+  bool separator_is_comma = false;
+  size_t n_identifiers = 0;
   while (current < end) {
     int char_length;
 
@@ -7551,17 +7552,74 @@ grn_expr_is_v1_columns_format(grn_ctx *ctx,
 
     switch (current[0]) {
     case ' ' :
+      if (!separator_is_comma) {
+        in_identifier = false;
+        n_identifiers = 0;
+      } else {
+        if (in_identifier) {
+          n_identifiers++;
+        }
+      }
+      break;
     case ',' :
       in_identifier = false;
+      n_identifiers = 0;
+      separator_is_comma = true;
       break;
     case '_' :
       in_identifier = true;
       break;
     case '.' :
-    case '-' :
     case '#' :
     case '@' :
       if (!in_identifier) {
+        return false;
+      }
+      break;
+    case '-' :
+      if (!in_identifier) {
+        if (type == GRN_EXPR_V1_FORMAT_TYPE_SORT_KEYS) {
+          /* "A -" isn't v1 format. */
+          if (current == end) {
+            return false;
+          }
+          /* "-${NO_IDENTIFIER}" isn't v1 format. */
+          if (!(('a' <= current[1] && current[1] <= 'z') ||
+                ('Z' <= current[1] && current[1] <= 'Z') ||
+                current[1] == '_')) {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      } else {
+        if (n_identifiers >= 1) {
+          return false;
+        }
+      }
+      break;
+    case '+' :
+      if (type == GRN_EXPR_V1_FORMAT_TYPE_SORT_KEYS) {
+        /* "A +" isn't v1 format. */
+        if (current == end) {
+          return false;
+        }
+        /* "+${NO_IDENTIFIER}" isn't v1 format. */
+        if (!(('a' <= current[1] && current[1] <= 'z') ||
+              ('Z' <= current[1] && current[1] <= 'Z') ||
+              current[1] == '_')) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+      break;
+    case '*':
+      if (type == GRN_EXPR_V1_FORMAT_TYPE_OUTPUT_COLUMNS) {
+        if (in_identifier) {
+          return false;
+        }
+      } else {
         return false;
       }
       break;

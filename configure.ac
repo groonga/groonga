@@ -647,6 +647,8 @@ else
   if test "x$RUBY" = "xyes"; then
     AC_PATH_PROGS(RUBY,
                   [ dnl
+                    ruby3.0 ruby30 dnl
+                    ruby2.7 ruby27 dnl
                     ruby2.6 ruby26 dnl
                     ruby2.5 ruby25 dnl
                     ruby2.4 ruby24 dnl
@@ -658,7 +660,7 @@ else
                   ruby-not-found)
     if test "$RUBY" != "ruby-not-found"; then
       ruby_version="`$RUBY --version`"
-      if echo "$ruby_version" | grep -q -- 'ruby \(2\.\)'; then
+      if echo "$ruby_version" | grep -q -- 'ruby \(2\|3\)\.'; then
         ac_cv_ruby_available="yes"
       else
         AC_MSG_WARN([$RUBY isn't Ruby 2.0 or later ($ruby_version)])

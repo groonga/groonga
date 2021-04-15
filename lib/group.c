@@ -1630,7 +1630,7 @@ grn_table_group_keys_parse(grn_ctx *ctx,
     raw_keys_length = strlen(raw_keys);
   }
   grn_table_sort_key *keys = NULL;
-  if (grn_expr_is_v1_columns_format(ctx, raw_keys, raw_keys_length)) {
+  if (grn_expr_is_v1_format(ctx, raw_keys, raw_keys_length, GRN_EXPR_V1_FORMAT_TYPE_GROUP_KEYS)) {
     keys = grn_table_sort_key_from_str(ctx,
                                        raw_keys,
                                        raw_keys_length,

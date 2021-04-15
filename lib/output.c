@@ -3778,7 +3778,10 @@ grn_obj_format_set_columns(grn_ctx *ctx,
 {
   grn_rc rc;
 
-  if (grn_expr_is_v1_columns_format(ctx, columns, columns_len)) {
+  if (grn_expr_is_v1_format(ctx,
+                            columns,
+                            columns_len,
+                            GRN_EXPR_V1_FORMAT_TYPE_OUTPUT_COLUMNS)) {
     rc = grn_obj_columns(ctx, table, columns, columns_len, &(format->columns));
   } else {
     format->expression = grn_output_columns_parse(ctx,

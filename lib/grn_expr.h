@@ -167,10 +167,17 @@ grn_expr_get_range_info(grn_ctx *ctx,
                         grn_id *range_id,
                         grn_obj_flags *range_flags);
 
+typedef enum {
+  GRN_EXPR_V1_FORMAT_TYPE_OUTPUT_COLUMNS,
+  GRN_EXPR_V1_FORMAT_TYPE_SORT_KEYS,
+  GRN_EXPR_V1_FORMAT_TYPE_GROUP_KEYS,
+} grn_expr_v1_format_type;
+
 bool
-grn_expr_is_v1_columns_format(grn_ctx *ctx,
-                              const char *raw_text,
-                              ssize_t raw_text_len);
+grn_expr_is_v1_format(grn_ctx *ctx,
+                      const char *raw_text,
+                      ssize_t raw_text_len,
+                      grn_expr_v1_format_type type);
 
 
 #ifdef __cplusplus
