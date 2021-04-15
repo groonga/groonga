@@ -1,0 +1,3 @@
+#@include fixture/geo/sort/init.grn
+
+select LandMarks --sort_keys '+geo_distance(point, "0x0")'

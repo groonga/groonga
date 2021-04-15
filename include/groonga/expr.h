@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,9 @@ typedef uint32_t grn_expr_flags;
 #define GRN_EXPR_SYNTAX_SCRIPT         (0x01)
 #define GRN_EXPR_SYNTAX_OUTPUT_COLUMNS (0x20)
 #define GRN_EXPR_SYNTAX_ADJUSTER       (0x40)
-#define GRN_EXPR_SYNTAX_GROUP_KEYS     (0x100)
+#define GRN_EXPR_SYNTAX_SORT_KEYS      (0x100)
+/* Deprecated since Groonga 11.0.2. Use GRN_EXPR_SYNTAX_SORT_KEYS instead. */
+#define GRN_EXPR_SYNTAX_GROUP_KEYS     GRN_EXPR_SYNTAX_SORT_KEYS
 #define GRN_EXPR_ALLOW_PRAGMA          (0x02)
 #define GRN_EXPR_ALLOW_COLUMN          (0x04)
 #define GRN_EXPR_ALLOW_UPDATE          (0x08)

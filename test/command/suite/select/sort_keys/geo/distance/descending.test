@@ -1,0 +1,4 @@
+#@include fixture/geo/sort/init.grn
+
+# TODO: "-" is ignored. It should be implemented.
+select LandMarks --sort_keys '-geo_distance(point, "0x0")'

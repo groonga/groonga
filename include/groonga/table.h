@@ -313,9 +313,16 @@ GRN_API grn_obj *grn_table_select(grn_ctx *ctx,
                                   grn_obj *result_set,
                                   grn_operator op);
 
-GRN_API grn_table_sort_key *grn_table_sort_key_from_str(grn_ctx *ctx,
-                                                        const char *str, unsigned int str_size,
-                                                        grn_obj *table, unsigned int *nkeys);
+GRN_API grn_table_sort_key *
+grn_table_sort_key_from_str(grn_ctx *ctx,
+                            const char *str, unsigned int str_size,
+                            grn_obj *table, unsigned int *nkeys);
+GRN_API grn_table_sort_key *
+grn_table_sort_keys_parse(grn_ctx *ctx,
+                          grn_obj *table,
+                          const char *raw_sort_keys,
+                          int32_t raw_sort_keys_size,
+                          int *n_keys);
 GRN_API grn_rc grn_table_sort_key_close(grn_ctx *ctx,
                                         grn_table_sort_key *keys, unsigned int nkeys);
 

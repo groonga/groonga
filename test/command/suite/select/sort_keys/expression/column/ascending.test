@@ -1,0 +1,11 @@
+table_create Values TABLE_NO_KEY
+column_create Values number COLUMN_VECTOR Int32
+
+load --table Values
+[
+{"number": 128},
+{"number": 255},
+{"number": -254}
+]
+
+select Values --sort_keys '1 + 1, +number' --output_columns number

@@ -1,0 +1,13 @@
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values number COLUMN_VECTOR Int32
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"number": 128},
+{"number": 255},
+{"number": -254}
+]
+[[0,0.0,0.0],3]
+select Values --sort_keys '1 + 1, -number' --output_columns number
+[[0,0.0,0.0],[[[3],[["number","Int32"]],[[255]],[[128]],[[-254]]]]]

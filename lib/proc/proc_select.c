@@ -2403,11 +2403,11 @@ grn_select_sort(grn_ctx *ctx,
     return GRN_TRUE;
   }
 
-  keys = grn_table_sort_key_from_str(ctx,
-                                     data->sort_keys.value,
-                                     data->sort_keys.length,
-                                     data->tables.result,
-                                     &n_keys);
+  keys = grn_table_sort_keys_parse(ctx,
+                                   data->tables.result,
+                                   data->sort_keys.value,
+                                   data->sort_keys.length,
+                                   &n_keys);
   if (!keys) {
     if (ctx->rc == GRN_SUCCESS) {
       return GRN_TRUE;
@@ -3470,10 +3470,11 @@ grn_select_output_drilldowns(grn_ctx *ctx,
     if (drilldown->sort_keys.length > 0) {
       grn_table_sort_key *sort_keys;
       uint32_t n_sort_keys;
-      sort_keys = grn_table_sort_key_from_str(ctx,
-                                              drilldown->sort_keys.value,
-                                              drilldown->sort_keys.length,
-                                              target_table, &n_sort_keys);
+      sort_keys = grn_table_sort_keys_parse(ctx,
+                                            target_table,
+                                            drilldown->sort_keys.value,
+                                            drilldown->sort_keys.length,
+                                            &n_sort_keys);
       if (sort_keys) {
         grn_obj *sorted;
         sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY,
@@ -3788,11 +3789,11 @@ grn_select_output_slices(grn_ctx *ctx,
     } else {
       grn_table_sort_key *sort_keys;
       uint32_t n_sort_keys;
-      sort_keys = grn_table_sort_key_from_str(ctx,
-                                              slice->sort_keys.value,
-                                              slice->sort_keys.length,
-                                              slice->tables.result,
-                                              &n_sort_keys);
+      sort_keys = grn_table_sort_keys_parse(ctx,
+                                            slice->tables.result,
+                                            slice->sort_keys.value,
+                                            slice->sort_keys.length,
+                                            &n_sort_keys);
       if (sort_keys) {
         slice->tables.sorted =
           grn_table_create(ctx,

@@ -92,7 +92,7 @@ input ::= query.
 input ::= expression.
 input ::= START_OUTPUT_COLUMNS output_columns.
 input ::= START_ADJUSTER adjuster.
-input ::= START_GROUP_KEYS group_keys.
+input ::= START_SORT_KEYS sort_keys.
 
 query ::= query_element.
 query ::= query query_element. {
@@ -716,5 +716,33 @@ adjust_match_expression ::= IDENTIFIER MATCH STRING. {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
 }
 
-group_keys ::= .
-group_keys ::= expression.
+sort_keys(N_STACKED_COLUMNS) ::= . {
+  N_STACKED_COLUMNS = 0;
+}
+sort_keys(N_STACKED_COLUMNS) ::= sort_key(SUB_N_STACKED_COLUMNS). {
+  N_STACKED_COLUMNS = SUB_N_STACKED_COLUMNS;
+}
+sort_keys(N_STACKED_COLUMNS) ::=
+   sort_keys(SUB_N_STACKED_COLUMNS) COMMA
+   sort_key(NEW_N_STACKED_COLUMNS). {
+  if (SUB_N_STACKED_COLUMNS == 0) {
+    N_STACKED_COLUMNS = NEW_N_STACKED_COLUMNS;
+  } else if (NEW_N_STACKED_COLUMNS == 0) {
+    N_STACKED_COLUMNS = SUB_N_STACKED_COLUMNS;
+  } else {
+    if (NEW_N_STACKED_COLUMNS == 1) {
+      grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_COMMA, 2);
+    }
+    N_STACKED_COLUMNS = 1;
+  }
+}
+
+sort_key(N_STACKED_COLUMNS) ::= NONEXISTENT_COLUMN. {
+  N_STACKED_COLUMNS = 0;
+}
+sort_key(N_STACKED_COLUMNS) ::= MINUS NONEXISTENT_COLUMN. {
+  N_STACKED_COLUMNS = 0;
+}
+sort_key(N_STACKED_COLUMNS) ::= assignment_expression. {
+  N_STACKED_COLUMNS = 1;
+}

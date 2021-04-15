@@ -1,6 +1,6 @@
 #define GRN_EXPR_TOKEN_START_OUTPUT_COLUMNS             1
 #define GRN_EXPR_TOKEN_START_ADJUSTER                   2
-#define GRN_EXPR_TOKEN_START_GROUP_KEYS                 3
+#define GRN_EXPR_TOKEN_START_SORT_KEYS                  3
 #define GRN_EXPR_TOKEN_LOGICAL_AND                      4
 #define GRN_EXPR_TOKEN_LOGICAL_AND_NOT                  5
 #define GRN_EXPR_TOKEN_LOGICAL_OR                       6

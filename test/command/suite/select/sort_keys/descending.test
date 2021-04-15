@@ -1,0 +1,11 @@
+table_create Numbers TABLE_NO_KEY
+column_create Numbers value COLUMN_SCALAR Int32
+
+load --table Numbers
+[
+{"value": 3},
+{"value": -1},
+{"value": 2}
+]
+
+select Numbers --sort_keys -value

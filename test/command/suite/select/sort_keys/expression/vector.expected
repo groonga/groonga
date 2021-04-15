@@ -1,0 +1,51 @@
+table_create Values TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Values numbers COLUMN_VECTOR Int32
+[[0,0.0,0.0],true]
+load --table Values
+[
+{"numbers": [127, 128, 129]},
+{"numbers": [126, 255]},
+{"numbers": [128, -254]}
+]
+[[0,0.0,0.0],3]
+select Values --sort_keys 'numbers[1]' --output_columns numbers
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "numbers",
+          "Int32"
+        ]
+      ],
+      [
+        [
+          128,
+          -254
+        ]
+      ],
+      [
+        [
+          127,
+          128,
+          129
+        ]
+      ],
+      [
+        [
+          126,
+          255
+        ]
+      ]
+    ]
+  ]
+]

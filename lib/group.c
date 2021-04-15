@@ -26,6 +26,7 @@
 #include "grn_expr_executor.h"
 #include "grn_group.h"
 #include "grn_output_columns.h"
+#include "grn_sort.h"
 #include "grn_table.h"
 #include "grn_vector.h"
 
@@ -1625,94 +1626,11 @@ grn_table_group_keys_parse(grn_ctx *ctx,
                            int32_t raw_keys_length,
                            int *n_keys)
 {
-  GRN_API_ENTER;
-  if (raw_keys_length < 0) {
-    raw_keys_length = strlen(raw_keys);
-  }
-  grn_table_sort_key *keys = NULL;
-  if (grn_expr_is_v1_format(ctx, raw_keys, raw_keys_length, GRN_EXPR_V1_FORMAT_TYPE_GROUP_KEYS)) {
-    keys = grn_table_sort_key_from_str(ctx,
+  return
+    grn_table_sort_keys_parse_internal(ctx,
+                                       table,
                                        raw_keys,
                                        raw_keys_length,
-                                       table,
-                                       n_keys);
-    GRN_API_RETURN(keys);
-  }
-
-  grn_obj offsets;
-  GRN_UINT32_INIT(&offsets, GRN_OBJ_VECTOR);
-  grn_obj *keys_expression = NULL;
-  grn_obj *variable;
-  GRN_EXPR_CREATE_FOR_QUERY(ctx, table, keys_expression, variable);
-  if (ctx->rc != GRN_SUCCESS) {
-    goto exit;
-  }
-  grn_expr_parse(ctx,
-                 keys_expression,
-                 raw_keys,
-                 raw_keys_length,
-                 NULL,
-                 GRN_OP_MATCH,
-                 GRN_OP_AND,
-                 GRN_EXPR_SYNTAX_GROUP_KEYS);
-  if (ctx->rc != GRN_SUCCESS) {
-    goto exit;
-  }
-
-  grn_output_columns_get_offsets(ctx, keys_expression, &offsets);
-  if (ctx->rc != GRN_SUCCESS) {
-    goto exit;
-  }
-
-  size_t n_offsets = GRN_UINT32_VECTOR_SIZE(&offsets) / 2;
-  keys = GRN_MALLOCN(grn_table_sort_key, n_offsets);
-  if (!keys) {
-    goto exit;
-  }
-  size_t i;
-  for (i = 0; i < n_offsets; i++) {
-    keys[i].key = NULL;
-  }
-
-  for (i = 0; i < n_offsets; i++) {
-    uint32_t code_start_offset;
-    uint32_t code_end_offset;
-    code_start_offset = GRN_UINT32_VALUE_AT(&offsets, i * 2);
-    code_end_offset = GRN_UINT32_VALUE_AT(&offsets, i * 2 + 1);
-    grn_table_group_keys_parse_one(ctx,
-                                   table,
-                                   keys_expression,
-                                   code_start_offset,
-                                   code_end_offset,
-                                   &(keys[i]));
-    if (ctx->rc != GRN_SUCCESS) {
-      goto exit;
-    }
-  }
-  *n_keys = n_offsets;
-
-exit :
-  if (ctx->rc != GRN_SUCCESS) {
-    if (keys) {
-      size_t i;
-      size_t n_offsets = GRN_UINT32_VECTOR_SIZE(&offsets) / 2;
-      for (i = 0; i < n_offsets; i++) {
-        if (keys[i].key) {
-          if (grn_obj_is_accessor(ctx, keys[i].key)) {
-            grn_obj_close(ctx, keys[i].key);
-          } else {
-            grn_obj_unref(ctx, keys[i].key);
-          }
-        }
-      }
-      GRN_FREE(keys);
-      keys = NULL;
-    }
-  }
-  if (keys_expression) {
-    grn_obj_close(ctx, keys_expression);
-  }
-  GRN_OBJ_FIN(ctx, &offsets);
-
-  GRN_API_RETURN(keys);
+                                       n_keys,
+                                       GRN_TABLE_SORT_KEYS_PARSE_MODE_GROUP);
 }
