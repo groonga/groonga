@@ -128,6 +128,7 @@ typedef struct {
   grn_raw_string scorer;
   grn_raw_string sort_keys;
   grn_raw_string output_columns;
+  grn_raw_string default_output_columns;
   int offset;
   int limit;
   grn_hash *slices;
@@ -2645,13 +2646,7 @@ grn_select_output_match_open(grn_ctx *ctx,
   grn_obj *output_table;
 
   if (!data->output_columns.value) {
-    if (grn_obj_is_table_with_key(ctx, data->tables.target)) {
-      data->output_columns.value =
-        GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_WITH_KEY;
-    } else {
-      data->output_columns.value = GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_NO_KEY;
-    }
-    data->output_columns.length = strlen(data->output_columns.value);
+    data->output_columns = data->default_output_columns;
   }
   if (data->tables.sorted) {
     offset = 0;
@@ -3852,14 +3847,7 @@ grn_select_output_slices(grn_ctx *ctx,
       n_additional_elements++;
     }
     if (slice->output_columns.length == 0) {
-      if (grn_obj_is_table_with_key(ctx, data->tables.target)) {
-        slice->output_columns.value =
-          GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_WITH_KEY;
-      } else {
-        slice->output_columns.value =
-          GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_NO_KEY;
-      }
-      slice->output_columns.length = strlen(slice->output_columns.value);
+      slice->output_columns = data->default_output_columns;
     }
     succeeded =
       grn_select_output_columns_open(ctx,
@@ -4396,6 +4384,16 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
                      data->table.value);
     goto exit;
   }
+  if (grn_obj_is_table_with_key(ctx, data->tables.target) ||
+      grn_obj_is_table_with_value(ctx, data->tables.target)) {
+    data->default_output_columns.value =
+      GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_WITH_KEY;
+  } else {
+    data->default_output_columns.value =
+      GRN_SELECT_DEFAULT_OUTPUT_COLUMNS_FOR_NO_KEY;
+  }
+  data->default_output_columns.length =
+    strlen(data->default_output_columns.value);
 
   {
     data->tables.initial = data->tables.target;
