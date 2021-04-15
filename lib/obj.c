@@ -233,6 +233,28 @@ grn_obj_is_table_with_key(grn_ctx *ctx, grn_obj *obj)
 }
 
 bool
+grn_obj_is_table_with_value(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_bool is_table_with_value = false;
+
+  if (!obj) {
+    return false;
+  }
+
+  switch (obj->header.type) {
+  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_DAT_KEY :
+  case GRN_TABLE_NO_KEY :
+    is_table_with_value = DB_OBJ(obj)->range != GRN_ID_NIL;
+  default :
+    break;
+  }
+
+  return is_table_with_value;
+}
+
+bool
 grn_obj_is_lexicon(grn_ctx *ctx, grn_obj *obj)
 {
   if (!grn_obj_is_table_with_key(ctx, obj)) {

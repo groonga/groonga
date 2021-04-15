@@ -45,6 +45,7 @@ GRN_API bool grn_obj_is_uvector(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_weight_uvector(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_table(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_table_with_key(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool grn_obj_is_table_with_value(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_lexicon(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_lexicon_without_data_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_tiny_hash_table(grn_ctx *ctx, grn_obj *obj);
