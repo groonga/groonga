@@ -271,14 +271,14 @@ string_regex_slice(grn_ctx *ctx, int n_args, grn_obj **args, grn_user_data *user
 		GRN_TEXT_LEN(pattern),
 		GRN_ONIGMO_OPTION_DEFAULT,
 		GRN_ONIGMO_SYNTAX_DEFAULT,
-		"[expr-executor][regexp]");
+		"[regex_slice][regexp]");
 
 	region = onig_region_new();
 
 	target_p = GRN_TEXT_VALUE(target);
 	target_length = GRN_TEXT_LEN(target);
 
-	//Can not use normalized string. 
+	//Cannot use normalized string. 
 	//The matching parts of original string cannot be inferred from the matching parts of the normalized string.
 	position = onig_search(regex,
 		target_p,
@@ -300,7 +300,7 @@ string_regex_slice(grn_ctx *ctx, int n_args, grn_obj **args, grn_user_data *user
 		capture_num = grn_plugin_proc_get_value_int64(ctx,
 			capture,
 			0,
-			"[regex_capture][capture_num]");
+			"[regex_slice][capture_num]");
 	}
 
 	if (position >= 0 && capture_num >= 0 && region->num_regs > capture_num) {
