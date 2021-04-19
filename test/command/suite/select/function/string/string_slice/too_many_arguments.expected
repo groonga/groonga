@@ -15,7 +15,7 @@ select Memos   --output_columns '_key, string_slice(_key, "G", 1, "", "")'
       0.0,
       0.0
     ],
-    "[regex_slice] wrong number of arguments (5 for 3...4)"
+    "[string_slice] wrong number of arguments (5 for 2..4)"
   ],
   [
     [
@@ -34,9 +34,9 @@ select Memos   --output_columns '_key, string_slice(_key, "G", 1, "", "")'
       ],
       [
         "Groonga",
-        "[regex_slice] wrong number of arguments (5 for 3...4)"
+        "[string_slice] wrong number of arguments (5 for 2..4)"
       ]
     ]
   ]
 ]
-#|e| [regex_slice] wrong number of arguments (5 for 3...4)
+#|e| [string_slice] wrong number of arguments (5 for 2..4)
