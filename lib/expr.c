@@ -6438,13 +6438,8 @@ grn_expr_module_list_detect_module(grn_ctx *ctx,
         }
         return;
       case GRN_OP_COMMA :
-        if (codes[-1].op == GRN_OP_CALL) {
-          *module_start = codes - codes[-1].nargs - 1;
-          *module_end = codes - codes[-1].nargs;
-        } else {
-          *module_start = codes - 2;
-          *module_end = codes - 1;
-        }
+        *module_start = codes - 2;
+        *module_end = codes - 1;
         return;
       default :
         break;
