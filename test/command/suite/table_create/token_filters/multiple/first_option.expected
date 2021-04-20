@@ -1,0 +1,8 @@
+plugin_register token_filters/stop_word
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto   --token_filters 'TokenFilterStopWord("column", "ignore"), TokenFilterStopWord, TokenFilterNFKC130("unify_kana", true)'
+[[0,0.0,0.0],true]
+dump
+plugin_register token_filters/stop_word
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto --token_filters "TokenFilterStopWord(\"column\", \"ignore\"), TokenFilterStopWord, TokenFilterNFKC130(\"unify_kana\", true)"
