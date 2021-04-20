@@ -6401,9 +6401,6 @@ grn_expr_is_module_list(grn_ctx *ctx, grn_obj *expr)
     case GRN_OP_PUSH :
       break;
     case GRN_OP_CALL :
-      if (codes + 1 != codes_end) {
-        return GRN_FALSE;
-      }
       break;
     case GRN_OP_COMMA :
       break;
@@ -6451,17 +6448,37 @@ grn_expr_module_list_detect_module(grn_ctx *ctx,
     for (codes = e->codes; codes < codes_end; codes++) {
       switch (codes[0].op) {
       case GRN_OP_CALL :
-        *module_start = codes - codes[0].nargs;
-        *module_end = codes;
+        if (codes != codes_end && codes[1].op == GRN_OP_COMMA) {
+          /*
+           * A,B(X):
+           *   * push: A <- module_start
+           *   * push: B <- module_end
+           *   * push: X
+           *   * call
+           *   * comma
+           */
+          *module_start = codes - codes[0].nargs - 1;
+          *module_end = codes - codes[0].nargs;
+        } else {
+          /*
+           * A(X):
+           *   * push: A <- module_start
+           *   * push: X
+           *   * call    <- module_end
+           */
+          *module_start = codes - codes[0].nargs;
+          *module_end = codes;
+        }
         return;
       case GRN_OP_COMMA :
-        if (codes[-1].op == GRN_OP_CALL) {
-          *module_start = codes - codes[-1].nargs - 1;
-          *module_end = codes - codes[-1].nargs;
-        } else {
-          *module_start = codes - 2;
-          *module_end = codes - 1;
-        }
+        /*
+         * A(X):
+         *   * push: A <- module_start
+         *   * push: B <- module_end
+         *   * comma
+         */
+        *module_start = codes - 2;
+        *module_end = codes - 1;
         return;
       default :
         break;
@@ -6476,9 +6493,27 @@ grn_expr_module_list_detect_module(grn_ctx *ctx,
       j++;
       if (i == j) {
         if (codes > e->codes && codes[-1].op == GRN_OP_CALL) {
-          *module_start = codes - codes[-1].nargs;
+          /*
+           * i = 1
+           * A,B(X):
+           *   * push: A
+           *   * push: B <- module_start
+           *   * push: X
+           *   * call    <- module_end
+           *   * comma
+           */
+          *module_start = codes - codes[-1].nargs - 1;
           *module_end = codes - 1;
         } else {
+          /*
+           * i = 1
+           * A(X),B:
+           *   * push: A
+           *   * push: X
+           *   * call
+           *   * push: B <- module_start
+           *   * comma   <- module_end
+           */
           *module_start = codes - 1;
           *module_end = codes;
         }
