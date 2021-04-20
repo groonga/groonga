@@ -6430,14 +6430,34 @@ grn_expr_module_list_detect_module(grn_ctx *ctx,
       switch (codes[0].op) {
       case GRN_OP_CALL :
         if (codes != codes_end && codes[1].op == GRN_OP_COMMA) {
+          /*
+           * A,B(X):
+           *   * push: A <- module_start
+           *   * push: B <- module_end
+           *   * push: X
+           *   * call
+           *   * comma
+           */
           *module_start = codes - codes[0].nargs - 1;
           *module_end = codes - codes[0].nargs;
         } else {
+          /*
+           * A(X):
+           *   * push: A <- module_start
+           *   * push: X
+           *   * call    <- module_end
+           */
           *module_start = codes - codes[0].nargs;
           *module_end = codes;
         }
         return;
       case GRN_OP_COMMA :
+        /*
+         * A(X):
+         *   * push: A <- module_start
+         *   * push: B <- module_end
+         *   * comma
+         */
         *module_start = codes - 2;
         *module_end = codes - 1;
         return;
@@ -6454,9 +6474,27 @@ grn_expr_module_list_detect_module(grn_ctx *ctx,
       j++;
       if (i == j) {
         if (codes > e->codes && codes[-1].op == GRN_OP_CALL) {
+          /*
+           * i = 1
+           * A,B(X):
+           *   * push: A
+           *   * push: B <- module_start
+           *   * push: X
+           *   * call    <- module_end
+           *   * comma
+           */
           *module_start = codes - codes[-1].nargs - 1;
           *module_end = codes - 1;
         } else {
+          /*
+           * i = 1
+           * A(X),B:
+           *   * push: A
+           *   * push: X
+           *   * call
+           *   * push: B <- module_start
+           *   * comma   <- module_end
+           */
           *module_start = codes - 1;
           *module_end = codes;
         }
