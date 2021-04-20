@@ -1,0 +1,35 @@
+Execution example::
+
+  normalize --normalizer NormalizerNFKC100 --string "㌖" --flags WITH_CHECKS
+  # [
+  #   [
+  #     0,
+  #     1557005290.083241,
+  #     0.0001597404479980469
+  #   ],
+  #   {
+  #     "normalized": "キロメートル",
+  #     "types": [
+  #     ],
+  #     "checks": [
+  #       3,
+  #       0,
+  #       0,
+  #       -1,
+  #       0,
+  #       0,
+  #       -1,
+  #       0,
+  #       0,
+  #       -1,
+  #       0,
+  #       0,
+  #       -1,
+  #       0,
+  #       0,
+  #       -1,
+  #       0,
+  #       0
+  #     ]
+  #   }
+  # ]

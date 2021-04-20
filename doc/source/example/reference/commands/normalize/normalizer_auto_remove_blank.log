@@ -1,0 +1,17 @@
+Execution example::
+
+  normalize --normalizer NormalizerAuto --string "abc 123" --flags REMOVE_BLANK
+  # [
+  #   [
+  #     0,
+  #     1557151451.641031,
+  #     0.0001416206359863281
+  #   ],
+  #   {
+  #     "normalized": "abc123",
+  #     "types": [
+  #     ],
+  #     "checks": [
+  #     ]
+  #   }
+  # ]
