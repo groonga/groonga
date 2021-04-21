@@ -155,6 +155,7 @@ jobs:
             set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_APACHE_ARROW=yes
           )
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_MRUBY=yes
+          set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_ZSTD=bundled
           cmake %CMAKE_ARGS%
           type ..\groonga-build\CMakeFiles\CMakeError.log
           cmake --build ..\groonga-build --config RelWithDebInfo
