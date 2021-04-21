@@ -4173,7 +4173,12 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
             continue;
           }
           uint32_t variation = i + JA_W_EINFO;
-          GRN_OUTPUT_UINT32(variation);
+          grn_obj variation_string;
+          GRN_TEXT_INIT(&variation_string, 0);
+          grn_text_printf(ctx, &variation_string, "%u", variation);
+          GRN_OUTPUT_STR(GRN_TEXT_VALUE(&variation_string),
+                         GRN_TEXT_LEN(&variation_string));
+          GRN_OBJ_FIN(ctx, &variation_string);
           {
             GRN_OUTPUT_MAP_OPEN("start", 3);
             GRN_OUTPUT_CSTR("segment");
