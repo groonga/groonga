@@ -4103,8 +4103,13 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
             continue;
           }
           uint32_t variation = i + JA_W_EINFO;
+          grn_obj variation_string;
+          GRN_TEXT_INIT(&variation_string, 0);
+          grn_text_printf(ctx, &variation_string, "%u", variation);
+          GRN_OUTPUT_STR(GRN_TEXT_VALUE(&variation_string),
+                         GRN_TEXT_LEN(&variation_string));
+          GRN_OBJ_FIN(ctx, &variation_string);
           uint32_t real_total = 0;
-          GRN_OUTPUT_UINT32(variation);
           {
             GRN_OUTPUT_MAP_OPEN("variation", 3);
             GRN_OUTPUT_CSTR("total");
@@ -4130,7 +4135,12 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
                 if (v != variation) {
                   continue;
                 }
-                GRN_OUTPUT_UINT32(segment);
+                grn_obj segment_string;
+                GRN_TEXT_INIT(&segment_string, 0);
+                grn_text_printf(ctx, &segment_string, "%u", segment);
+                GRN_OUTPUT_STR(GRN_TEXT_VALUE(&segment_string),
+                               GRN_TEXT_LEN(&segment_string));
+                GRN_OBJ_FIN(ctx, &segment_string);
                 grn_ja_ginfo *ginfo = grn_io_seg_ref(ctx, ja->io, segment);
                 if (ginfo) {
                   real_total += ginfo->nrecs;
