@@ -1346,9 +1346,14 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
       grn_json_load_open_brace_inspect(ctx, buffer, obj);
       return buffer;
     default :
-      if (grn_obj_is_table(ctx, grn_ctx_at(ctx, obj->header.domain))) {
-        grn_record_inspect(ctx, buffer, obj);
-        return buffer;
+      {
+        grn_obj *domain = grn_ctx_at(ctx, obj->header.domain);
+        bool is_table = grn_obj_is_table(ctx, domain);
+        grn_obj_unref(ctx, domain);
+        if (is_table) {
+          grn_record_inspect(ctx, buffer, obj);
+          return buffer;
+        }
       }
       break;
     }
