@@ -335,8 +335,6 @@ string_regex_slice(grn_ctx *ctx, int n_args, grn_obj **args, grn_user_data *user
     }
 
     GRN_BULK_REWIND(default_value);
-    GRN_TEXT_INIT(default_value, 0);
-    GRN_TEXT_SET(ctx, default_value, "", 0);
   }
 
   if (!grn_obj_is_text_family_bulk(ctx, target)) {
