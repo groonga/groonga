@@ -7,7 +7,7 @@ load --table Memos
 {"_key": "ぐるんが"}
 ]
 [[0,0.0,0.0],1]
-select Memos   --output_columns '_key, string_slice(_key, "ぐ(る)(んが)", 2, "")'
+select Memos   --output_columns '_key, string_slice(_key, "ぐ(る)(んが)", 2)'
 [
   [
     0,

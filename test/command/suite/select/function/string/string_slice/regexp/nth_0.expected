@@ -7,7 +7,7 @@ load --table Memos
 {"_key": "Groonga"}
 ]
 [[0,0.0,0.0],1]
-select Memos   --output_columns '_key, string_slice(_key, "(Gr)(?<Name1>o*)(?<Name2>.*)", "Name3", "default_value")'
+select Memos   --output_columns '_key, string_slice(_key, "Groonga", 0)'
 [
   [
     0,
@@ -31,7 +31,7 @@ select Memos   --output_columns '_key, string_slice(_key, "(Gr)(?<Name1>o*)(?<Na
       ],
       [
         "Groonga",
-        "default_value"
+        "Groonga"
       ]
     ]
   ]
