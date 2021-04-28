@@ -26,6 +26,7 @@
 #include "grn_report.h"
 #include "grn_scan_info.h"
 #include "grn_selector.h"
+#include "grn_table.h"
 #include "grn_table_selector.h"
 #include "grn_util.h"
 
@@ -182,6 +183,47 @@ grn_table_selector_set_use_sequential_scan(grn_ctx *ctx,
   GRN_API_ENTER;
   table_selector->use_sequential_scan = use;
   GRN_API_RETURN(ctx->rc);
+}
+
+static grn_obj *
+selector_create_result_set(grn_ctx *ctx,
+                           grn_table_selector *table_selector)
+{
+  grn_obj *result_set =
+    grn_table_create(ctx,
+                     NULL, 0,
+                     NULL,
+                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                     table_selector->table,
+                     NULL);
+  if (!result_set) {
+    return NULL;
+  }
+
+  grn_obj *initial_result_set = table_selector->data.initial_result_set;
+  grn_hash *columns = grn_table_all_columns(ctx, initial_result_set);
+  if (!columns) {
+    return result_set;
+  }
+  GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
+    void *key;
+    grn_hash_cursor_get_key(ctx, cursor, &key);
+    grn_id column_id = *((grn_id *)key);
+    grn_obj *column = grn_ctx_at(ctx, column_id);
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size = grn_column_name(ctx, column, name, GRN_TABLE_MAX_KEY_SIZE);
+    grn_obj *range = grn_ctx_at(ctx, DB_OBJ(column)->range);
+    grn_column_create(ctx,
+                      result_set,
+                      name,
+                      name_size,
+                      NULL,
+                      grn_column_get_flags(ctx, column),
+                      range);
+    grn_obj_unref(ctx, range);
+    grn_obj_unref(ctx, column);
+  } GRN_HASH_EACH_END(ctx, cursor);
+  return result_set;
 }
 
 static grn_inline int32_t
@@ -1848,6 +1890,7 @@ grn_table_selector_select(grn_ctx *ctx,
 
   grn_obj *base_result_set = NULL;
 
+  data->initial_result_set = result_set;
   data->result_set = result_set;
   data->min_id = table_selector->min_id;
   data->expr = data->scanner->expr;
@@ -1865,13 +1908,7 @@ grn_table_selector_select(grn_ctx *ctx,
       }
     }
     if (have_push) {
-      base_result_set =
-        grn_table_create(ctx,
-                         NULL, 0,
-                         NULL,
-                         GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                         table_selector->table,
-                         NULL);
+      base_result_set = selector_create_result_set(ctx, table_selector);
       if (base_result_set) {
         GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)result_set, cursor, id) {
           void *key = NULL;
@@ -1930,15 +1967,9 @@ grn_table_selector_select(grn_ctx *ctx,
       } else {
         bool processed = false;
         if (si->flags & SCAN_PUSH) {
-          grn_obj *result_set_ = NULL;
-          result_set_ =
-            grn_table_create(ctx,
-                             NULL, 0,
-                             NULL,
-                             GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                             table_selector->table,
-                             NULL);
-          if (!result_set_) {
+          grn_obj *new_result_set =
+            selector_create_result_set(ctx, table_selector);
+          if (!new_result_set) {
             break;
           }
           if (base_result_set && si->logical_op == GRN_OP_OR) {
@@ -1946,14 +1977,14 @@ grn_table_selector_select(grn_ctx *ctx,
                     "[table-selector][select][push][initial] <%u>",
                     grn_table_size(ctx, base_result_set));
             grn_table_setoperation(ctx,
-                                   result_set_,
+                                   new_result_set,
                                    base_result_set,
-                                   result_set_,
+                                   new_result_set,
                                    GRN_OP_OR);
             si->logical_op = GRN_OP_AND;
           }
           GRN_PTR_PUT(ctx, &result_set_stack, data->result_set);
-          data->result_set = result_set_;
+          data->result_set = new_result_set;
           data->min_id = table_selector->min_id;
         }
         if (si->logical_op != GRN_OP_AND) {

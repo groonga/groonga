@@ -4101,15 +4101,376 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
   GRN_API_RETURN(rc);
 }
 
+typedef struct {
+  grn_operator op;
+  grn_obj *table_dest;
+  grn_obj *table_src;
+  bool have_subrec;
+  uint32_t value_size;
+  grn_obj merge_target_vector_columns;
+  grn_obj merge_target_number_columns;
+} grn_table_setoperation_data;
+
+static grn_inline void
+grn_table_setoperation_data_init_value_size(grn_ctx *ctx,
+                                            grn_table_setoperation_data *data)
+{
+  grn_obj *table_dest = data->table_dest;
+  grn_obj *table_src = data->table_src;
+  data->value_size = 0;
+  switch (table_dest->header.type) {
+  case GRN_TABLE_HASH_KEY :
+    data->value_size = ((grn_hash *)table_dest)->value_size;
+    break;
+  case GRN_TABLE_PAT_KEY :
+    data->value_size = ((grn_pat *)table_dest)->value_size;
+    break;
+  case GRN_TABLE_DAT_KEY :
+    data->value_size = 0;
+    break;
+  case GRN_TABLE_NO_KEY :
+    data->value_size = ((grn_array *)table_dest)->value_size;
+    break;
+  }
+  switch (table_src->header.type) {
+  case GRN_TABLE_HASH_KEY :
+    if (data->value_size < ((grn_hash *)table_src)->value_size) {
+      data->value_size = ((grn_hash *)table_src)->value_size;
+    }
+    break;
+  case GRN_TABLE_PAT_KEY :
+    if (data->value_size < ((grn_pat *)table_src)->value_size) {
+      data->value_size = ((grn_pat *)table_src)->value_size;
+    }
+    break;
+  case GRN_TABLE_DAT_KEY :
+    data->value_size = 0;
+    break;
+  case GRN_TABLE_NO_KEY :
+    if (data->value_size < ((grn_array *)table_src)->value_size) {
+      data->value_size = ((grn_array *)table_src)->value_size;
+    }
+    break;
+  default :
+    break;
+  }
+}
+
+static grn_inline void
+grn_table_setoperation_data_init_merge_target_columns(
+  grn_ctx *ctx,
+  grn_table_setoperation_data *data)
+{
+  grn_obj *merge_target_vector_columns = &(data->merge_target_vector_columns);
+  grn_obj *merge_target_number_columns = &(data->merge_target_number_columns);
+  GRN_PTR_INIT(merge_target_vector_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_PTR_INIT(merge_target_number_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
+
+  grn_hash *columns_src = grn_table_all_columns(ctx, data->table_src);
+  if (!columns_src) {
+    return;
+  }
+  if (grn_hash_size(ctx, columns_src) == 0) {
+    return;
+  }
+
+  GRN_HASH_EACH_BEGIN(ctx, columns_src, cursor, column_entry_id) {
+    void *key;
+    grn_hash_cursor_get_key(ctx, cursor, &key);
+    grn_id column_src_id = *((grn_id *)key);
+    grn_obj *column_src = grn_ctx_at(ctx, column_src_id);
+    bool is_vector_src = grn_obj_is_vector_column(ctx, column_src);
+    if (!(is_vector_src ||
+          grn_type_id_is_number_family(ctx, DB_OBJ(column_src)->range))) {
+      grn_obj_unref(ctx, column_src);
+      continue;
+    }
+    char name[GRN_TABLE_MAX_KEY_SIZE];
+    int name_size = grn_column_name(ctx,
+                                    column_src,
+                                    name,
+                                    GRN_TABLE_MAX_KEY_SIZE);
+    grn_obj *column_dest = grn_table_column(ctx,
+                                            data->table_dest,
+                                            name,
+                                            name_size);
+    if (!column_dest) {
+      grn_obj_unref(ctx, column_src);
+      continue;
+    }
+    bool is_target = false;
+    if (is_vector_src) {
+      if (grn_obj_is_vector_column(ctx, column_dest)) {
+        GRN_PTR_PUT(ctx, merge_target_vector_columns, column_dest);
+        GRN_PTR_PUT(ctx, merge_target_vector_columns, column_src);
+        is_target = true;
+      }
+    } else {
+      if (DB_OBJ(column_src)->range == DB_OBJ(column_dest)->range) {
+        GRN_PTR_PUT(ctx, merge_target_number_columns, column_dest);
+        GRN_PTR_PUT(ctx, merge_target_number_columns, column_src);
+        is_target = true;
+      }
+    }
+    if (!is_target) {
+      grn_obj_unref(ctx, column_dest);
+      grn_obj_unref(ctx, column_src);
+    }
+  } GRN_HASH_EACH_END(ctx, cursor);
+}
+
+static grn_inline void
+grn_table_setoperation_data_init(grn_ctx *ctx,
+                                 grn_table_setoperation_data *data)
+{
+  grn_table_setoperation_data_init_value_size(ctx, data);
+  grn_table_setoperation_data_init_merge_target_columns(ctx, data);
+}
+
+static grn_inline void
+grn_table_setoperation_fin_merge_target_columns(grn_ctx *ctx,
+                                                grn_obj *merge_target_columns)
+{
+    size_t n_elements = GRN_PTR_VECTOR_SIZE(merge_target_columns);
+    size_t i;
+    for (i = 0; i < n_elements; i++) {
+      grn_obj *column = GRN_PTR_VALUE_AT(merge_target_columns, i);
+      grn_obj_unref(ctx, column);
+    }
+    GRN_OBJ_FIN(ctx, merge_target_columns);
+}
+
+static grn_inline void
+grn_table_setoperation_data_fin(grn_ctx *ctx,
+                                grn_table_setoperation_data *data)
+{
+  grn_table_setoperation_fin_merge_target_columns(
+    ctx, &(data->merge_target_vector_columns));
+  grn_table_setoperation_fin_merge_target_columns(
+    ctx, &(data->merge_target_number_columns));
+}
+
+static grn_inline bool
+grn_table_setoperation_need_merge_columns(grn_ctx *ctx,
+                                          grn_table_setoperation_data *data)
+{
+  return
+    (GRN_PTR_VECTOR_SIZE(&(data->merge_target_vector_columns)) > 0) ||
+    (GRN_PTR_VECTOR_SIZE(&(data->merge_target_number_columns)) > 0);
+}
+
+static grn_inline void
+grn_table_setoperation_merge_columns(grn_ctx *ctx,
+                                     grn_table_setoperation_data *data,
+                                     grn_id id_dest,
+                                     grn_id id_src)
+{
+  /* TODO: We need a selector that stores something to a vector column
+   * to test this feature. */
+  if (false) {
+    grn_obj *merge_target_columns = &(data->merge_target_vector_columns);
+    size_t n_elements = GRN_PTR_VECTOR_SIZE(merge_target_columns);
+    if (n_elements > 0) {
+      size_t i;
+      grn_obj buffer;
+      GRN_VOID_INIT(&buffer);
+      for (i = 0; i < n_elements; i += 2) {
+        grn_obj *column_dest = GRN_PTR_VALUE_AT(merge_target_columns, i);
+        grn_obj *column_src = GRN_PTR_VALUE_AT(merge_target_columns, i + 1);
+        GRN_BULK_REWIND(&buffer);
+        grn_obj_get_value(ctx, column_src, id_src, &buffer);
+        /* This doesn't work. */
+        grn_obj_set_value(ctx, column_dest, id_dest, &buffer, GRN_OBJ_APPEND);
+      }
+      GRN_OBJ_FIN(ctx, &buffer);
+    }
+  }
+
+  {
+    grn_obj *merge_target_columns = &(data->merge_target_number_columns);
+    size_t n_elements = GRN_PTR_VECTOR_SIZE(merge_target_columns);
+    if (n_elements > 0) {
+      size_t i;
+      grn_obj buffer;
+      GRN_VOID_INIT(&buffer);
+      for (i = 0; i < n_elements; i += 2) {
+        grn_obj *column_dest = GRN_PTR_VALUE_AT(merge_target_columns, i);
+        grn_obj *column_src = GRN_PTR_VALUE_AT(merge_target_columns, i + 1);
+        GRN_BULK_REWIND(&buffer);
+        grn_obj_get_value(ctx, column_src, id_src, &buffer);
+        grn_obj_set_value(ctx, column_dest, id_dest, &buffer, GRN_OBJ_INCR);
+      }
+      GRN_OBJ_FIN(ctx, &buffer);
+    }
+  }
+}
+
+static grn_inline void
+grn_table_setoperation_or(grn_ctx *ctx,
+                          grn_table_setoperation_data *data)
+{
+  if (data->have_subrec) {
+    GRN_TABLE_EACH_BEGIN(ctx, data->table_src, cursor, id_src) {
+      void *key_src;
+      uint32_t key_src_size;
+      void *value_src;
+      grn_table_cursor_get_key_value(ctx,
+                                     cursor,
+                                     &key_src,
+                                     &key_src_size,
+                                     &value_src);
+      void *value_dest;
+      int added;
+      grn_id id_dest = grn_table_add_v_inline(ctx,
+                                              data->table_dest,
+                                              key_src,
+                                              key_src_size,
+                                              &value_dest,
+                                              &added);
+      if (id_dest != GRN_ID_NIL) {
+        if (added) {
+          grn_memcpy(value_dest, value_src, data->value_size);
+        } else {
+          grn_rset_recinfo *ri_dest = value_dest;
+          grn_rset_recinfo *ri_src = value_src;
+          grn_table_add_subrec(ctx,
+                               data->table_dest,
+                               ri_dest,
+                               ri_src->score,
+                               NULL,
+                               0);
+        }
+        grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
+      }
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  } else {
+    GRN_TABLE_EACH_BEGIN(ctx, data->table_src, cursor, id_src) {
+      void *key_src;
+      uint32_t key_src_size = grn_table_cursor_get_key(ctx, cursor, &key_src);
+      void *value_dest;
+      grn_id id_dest = grn_table_add_v_inline(ctx,
+                                              data->table_dest,
+                                              key_src,
+                                              key_src_size,
+                                              &value_dest,
+                                              NULL);
+      if (id_dest != GRN_ID_NIL) {
+        grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
+      }
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  }
+}
+
+static grn_inline void
+grn_table_setoperation_and(grn_ctx *ctx,
+                           grn_table_setoperation_data *data)
+{
+  if (data->have_subrec) {
+    GRN_TABLE_EACH_BEGIN(ctx, data->table_dest, cursor, id_dest) {
+      void *key_dest;
+      uint32_t key_dest_size;
+      void *value_dest;
+      grn_table_cursor_get_key_value(ctx,
+                                     cursor,
+                                     &key_dest,
+                                     &key_dest_size,
+                                     &value_dest);
+      void *value_src;
+      grn_id id_src = grn_table_get_v(ctx,
+                                      data->table_src,
+                                      key_dest,
+                                      key_dest_size,
+                                      &value_src);
+      if (id_src == GRN_ID_NIL) {
+        _grn_table_delete_by_id(ctx, data->table_dest, id_dest, NULL);
+      } else {
+        grn_rset_recinfo *ri_dest = value_dest;
+        grn_rset_recinfo *ri_src = value_src;
+        ri_dest->score += ri_src->score;
+        grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
+      }
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  } else {
+    GRN_TABLE_EACH_BEGIN(ctx, data->table_dest, cursor, id_dest) {
+      void *key_dest;
+      uint32_t key_dest_size = grn_table_cursor_get_key(ctx, cursor, &key_dest);
+      grn_id id_src = grn_table_get(ctx,
+                                    data->table_src,
+                                    key_dest,
+                                    key_dest_size);
+      if (id_src == GRN_ID_NIL) {
+        _grn_table_delete_by_id(ctx, data->table_dest, id_dest, NULL);
+      } else {
+        grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
+      }
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  }
+}
+
+static grn_inline void
+grn_table_setoperation_and_not(grn_ctx *ctx,
+                               grn_table_setoperation_data *data)
+{
+  GRN_TABLE_EACH_BEGIN(ctx, data->table_src, cursor, id_src) {
+    void *key_src;
+    uint32_t key_src_size = grn_table_cursor_get_key(ctx, cursor, &key_src);
+    grn_table_delete(ctx, data->table_dest, key_src, key_src_size);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+}
+
+static grn_inline void
+grn_table_setoperation_adjust(grn_ctx *ctx,
+                              grn_table_setoperation_data *data)
+{
+  if (data->have_subrec) {
+    GRN_TABLE_EACH_BEGIN(ctx, data->table_src, cursor, id_src) {
+      void *key_src;
+      uint32_t key_src_size;
+      void *value_src;
+      grn_table_cursor_get_key_value(ctx,
+                                     cursor,
+                                     &key_src,
+                                     &key_src_size,
+                                     &value_src);
+      void *value_dest;
+      grn_id id_dest = grn_table_get_v(ctx,
+                                       data->table_dest,
+                                       key_src,
+                                       key_src_size,
+                                       &value_dest);
+      if (id_dest != GRN_ID_NIL) {
+        grn_rset_recinfo *ri_dest = value_dest;
+        grn_rset_recinfo *ri_src = value_src;
+        ri_dest->score += ri_src->score;
+        grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
+      }
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  } else {
+    if (!grn_table_setoperation_need_merge_columns(ctx, data)) {
+      return;
+    }
+    GRN_TABLE_EACH_BEGIN(ctx, data->table_src, cursor, id_src) {
+      void *key_src;
+      uint32_t key_src_size = grn_table_cursor_get_key(ctx,
+                                                       cursor,
+                                                       &key_src);
+      void *value_dest;
+      grn_id id_dest = grn_table_get_v(ctx,
+                                       data->table_dest,
+                                       key_src,
+                                       key_src_size,
+                                       &value_dest);
+      if (id_dest != GRN_ID_NIL) {
+        grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
+      }
+    } GRN_TABLE_EACH_END(ctx, cursor);
+  }
+}
+
 grn_rc
 grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *res,
                        grn_operator op)
 {
-  void *key = NULL, *value1 = NULL, *value2 = NULL;
-  uint32_t value_size = 0;
-  uint32_t key_size = 0;
-  grn_bool have_subrec;
-
   GRN_API_ENTER;
   if (!table1) {
     ERR(GRN_INVALID_ARGUMENT, "[table][setoperation] table1 is NULL");
@@ -4124,120 +4485,42 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
     GRN_API_RETURN(ctx->rc);
   }
 
-  if (table1 != res) {
+  grn_table_setoperation_data data;
+  data.op = op;
+  if (table1 == res) {
+    data.table_src = table2;
+    data.table_dest = table1;
+  } else {
     if (table2 == res) {
-      grn_obj *t = table1;
-      table1 = table2;
-      table2 = t;
+      data.table_src = table1;
+      data.table_dest = table2;
     } else {
       ERR(GRN_INVALID_ARGUMENT,
           "[table][setoperation] table1 or table2 must be result table");
       GRN_API_RETURN(ctx->rc);
     }
   }
-  have_subrec = ((DB_OBJ(table1)->header.flags & GRN_OBJ_WITH_SUBREC) &&
-                 (DB_OBJ(table2)->header.flags & GRN_OBJ_WITH_SUBREC));
-  switch (table1->header.type) {
-  case GRN_TABLE_HASH_KEY :
-    value_size = ((grn_hash *)table1)->value_size;
-    break;
-  case GRN_TABLE_PAT_KEY :
-    value_size = ((grn_pat *)table1)->value_size;
-    break;
-  case GRN_TABLE_DAT_KEY :
-    value_size = 0;
-    break;
-  case GRN_TABLE_NO_KEY :
-    value_size = ((grn_array *)table1)->value_size;
-    break;
-  }
-  switch (table2->header.type) {
-  case GRN_TABLE_HASH_KEY :
-    if (value_size < ((grn_hash *)table2)->value_size) {
-      value_size = ((grn_hash *)table2)->value_size;
-    }
-    break;
-  case GRN_TABLE_PAT_KEY :
-    if (value_size < ((grn_pat *)table2)->value_size) {
-      value_size = ((grn_pat *)table2)->value_size;
-    }
-    break;
-  case GRN_TABLE_DAT_KEY :
-    value_size = 0;
-    break;
-  case GRN_TABLE_NO_KEY :
-    if (value_size < ((grn_array *)table2)->value_size) {
-      value_size = ((grn_array *)table2)->value_size;
-    }
-    break;
-  }
+  data.have_subrec =
+    ((DB_OBJ(data.table_src)->header.flags & GRN_OBJ_WITH_SUBREC) &&
+     (DB_OBJ(data.table_dest)->header.flags & GRN_OBJ_WITH_SUBREC));
+  grn_table_setoperation_data_init(ctx, &data);
   switch (op) {
   case GRN_OP_OR :
-    if (have_subrec) {
-      int added;
-      GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
-        if (grn_table_add_v_inline(ctx, table1, key, key_size, &value1, &added)) {
-          if (added) {
-            grn_memcpy(value1, value2, value_size);
-          } else {
-            grn_rset_recinfo *ri1 = value1;
-            grn_rset_recinfo *ri2 = value2;
-            grn_table_add_subrec(ctx, table1, ri1, ri2->score, NULL, 0);
-          }
-        }
-      });
-    } else {
-      GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
-        if (grn_table_add_v_inline(ctx, table1, key, key_size, &value1, NULL)) {
-          grn_memcpy(value1, value2, value_size);
-        }
-      });
-    }
+    grn_table_setoperation_or(ctx, &data);
     break;
   case GRN_OP_AND :
-    if (have_subrec) {
-      GRN_TABLE_EACH(ctx, table1, 0, 0, id, &key, &key_size, &value1, {
-        if (grn_table_get_v(ctx, table2, key, key_size, &value2)) {
-          grn_rset_recinfo *ri1 = value1;
-          grn_rset_recinfo *ri2 = value2;
-          ri1->score += ri2->score;
-        } else {
-          _grn_table_delete_by_id(ctx, table1, id, NULL);
-        }
-      });
-    } else {
-      GRN_TABLE_EACH(ctx, table1, 0, 0, id, &key, &key_size, &value1, {
-        if (!grn_table_get_v(ctx, table2, key, key_size, &value2)) {
-          _grn_table_delete_by_id(ctx, table1, id, NULL);
-        }
-      });
-    }
+    grn_table_setoperation_and(ctx, &data);
     break;
   case GRN_OP_AND_NOT :
-    GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
-      grn_table_delete(ctx, table1, key, key_size);
-    });
+    grn_table_setoperation_and_not(ctx, &data);
     break;
   case GRN_OP_ADJUST :
-    if (have_subrec) {
-      GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
-        if (grn_table_get_v(ctx, table1, key, key_size, &value1)) {
-          grn_rset_recinfo *ri1 = value1;
-          grn_rset_recinfo *ri2 = value2;
-          ri1->score += ri2->score;
-        }
-      });
-    } else {
-      GRN_TABLE_EACH(ctx, table2, 0, 0, id, &key, &key_size, &value2, {
-        if (grn_table_get_v(ctx, table1, key, key_size, &value1)) {
-          grn_memcpy(value1, value2, value_size);
-        }
-      });
-    }
+    grn_table_setoperation_adjust(ctx, &data);
     break;
   default :
     break;
   }
+  grn_table_setoperation_data_fin(ctx, &data);
   GRN_API_RETURN(ctx->rc);
 }
 

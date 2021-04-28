@@ -1,0 +1,60 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_HASH_KEY ShortText   --default_tokenizer TokenBigramSplitSymbolAlphaDigit   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"name": "Alice"},
+{"name": "Alisa"},
+{"name": "Bob"}
+]
+[[0,0.0,0.0],3]
+select Users   --columns[ali_score].stage result_set   --columns[ali_score].type Float   --columns[ali_score].flags COLUMN_SCALAR   --columns[li_score].stage result_set   --columns[li_score].type Float   --columns[li_score].flags COLUMN_SCALAR   --output_columns name,_score,ali_score,li_score   --filter '(true && query("name * 10", "ali", {"score_column": "ali_score"})) ||             (true && query("name * 2", "li", {"score_column": "li_score"}))'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "name",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "ali_score",
+          "Float"
+        ],
+        [
+          "li_score",
+          "Float"
+        ]
+      ],
+      [
+        "Alice",
+        14,
+        10.0,
+        2.0
+      ],
+      [
+        "Alisa",
+        14,
+        10.0,
+        2.0
+      ]
+    ]
+  ]
+]

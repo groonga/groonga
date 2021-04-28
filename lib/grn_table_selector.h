@@ -35,6 +35,7 @@ typedef struct {
   grn_obj *variable;
   int nth_scan_info;
   scan_info *scan_info;
+  grn_obj *initial_result_set;
   grn_obj *result_set;
   grn_id min_id;
   grn_bool is_first_unskipped_scan_info;
