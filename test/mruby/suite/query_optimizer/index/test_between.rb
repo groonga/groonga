@@ -163,7 +163,7 @@ class TestBetween < QueryOptimizerTestCase
   args[0]:    <#<proc:function fuzzy_search arguments:[]>>
   args[1]:    <#<column:var_size Logs.message range:Text type:scalar compress:none>>
   args[2]:    <\"roonga\">
-  args[3]:    <#<table:hash (nil) key:(nil) value:(nil) size:1 columns:[] default_tokenizer:(nil) normalizer:(nil) keys:[\"max_distance\"] subrec:none>>
+  args[3]:    <#<table:hash (nil) key:ShortText value:(nil) size:1 columns:[] default_tokenizer:(nil) normalizer:(nil) keys:[\"max_distance\"] subrec:none>>
   expr:       <0..4>
 [1]
   op:         <call>
