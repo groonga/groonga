@@ -130,7 +130,8 @@ jobs:
             "-DARROW_COMPUTE=ON",
             "-DBOOST_SOURCE=BUNDLED",
             "-DCMAKE_BUILD_TYPE=Release",
-            "-DCMAKE_INSTALL_PREFIX=${Env:FULL_INSTALL_FOLDER}"
+            "-DCMAKE_INSTALL_PREFIX=${Env:FULL_INSTALL_FOLDER}",
+            "-DCMAKE_UNITY_BUILD=ON",
           )
           if ("${{ matrix.cmake-architecture }}" -ne "") {
             $CMAKE_ARGS += ("-A", "${{ matrix.cmake-architecture }}")
