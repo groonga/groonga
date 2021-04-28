@@ -3265,6 +3265,66 @@ grn_table_cursor_get_value(grn_ctx *ctx, grn_table_cursor *tc, void **value)
   GRN_API_RETURN(len);
 }
 
+uint32_t
+grn_table_cursor_get_key_value(grn_ctx *ctx,
+                               grn_table_cursor *tc,
+                               void **key,
+                               uint32_t *key_size,
+                               void **value)
+{
+  const char *tag = "[table][cursor][get-key-value]";
+  uint32_t value_size = 0;
+  GRN_API_ENTER;
+  if (!tc) {
+    ERR(GRN_INVALID_ARGUMENT, "%s invalid cursor", tag);
+  } else {
+    switch (tc->header.type) {
+    case GRN_CURSOR_TABLE_PAT_KEY :
+      value_size = grn_pat_cursor_get_key_value(ctx,
+                                                (grn_pat_cursor *)tc,
+                                                key,
+                                                key_size,
+                                                value);
+      break;
+    case GRN_CURSOR_TABLE_DAT_KEY :
+      {
+        uint32_t dat_key_size = grn_dat_cursor_get_key(ctx,
+                                                       (grn_dat_cursor *)tc,
+                                                       (const void **)key);
+        if (key_size) {
+          *key_size = dat_key_size;
+        }
+        if (value) {
+          *value = NULL;
+        }
+      }
+      break;
+    case GRN_CURSOR_TABLE_HASH_KEY :
+      value_size = grn_hash_cursor_get_key_value(ctx,
+                                                 (grn_hash_cursor *)tc,
+                                                 key,
+                                                 key_size,
+                                                 value);
+      break;
+    case GRN_CURSOR_TABLE_NO_KEY :
+      if (key) {
+        *key = NULL;
+      }
+      if (key_size) {
+        *key_size = 0;
+      }
+      value_size = grn_array_cursor_get_value(ctx,
+                                              (grn_array_cursor *)tc,
+                                              value);
+      break;
+    default :
+      ERR(GRN_INVALID_ARGUMENT, "%s invalid type %d", tag, tc->header.type);
+      break;
+    }
+  }
+  GRN_API_RETURN(value_size);
+}
+
 grn_rc
 grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
                            const void *value, int flags)

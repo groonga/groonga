@@ -75,6 +75,12 @@ GRN_API grn_rc grn_table_cursor_close(grn_ctx *ctx, grn_table_cursor *tc);
 GRN_API grn_id grn_table_cursor_next(grn_ctx *ctx, grn_table_cursor *tc);
 GRN_API int grn_table_cursor_get_key(grn_ctx *ctx, grn_table_cursor *tc, void **key);
 GRN_API int grn_table_cursor_get_value(grn_ctx *ctx, grn_table_cursor *tc, void **value);
+GRN_API uint32_t
+grn_table_cursor_get_key_value(grn_ctx *ctx,
+                               grn_table_cursor *tc,
+                               void **key,
+                               uint32_t *key_size,
+                               void **value);
 GRN_API grn_rc grn_table_cursor_set_value(grn_ctx *ctx, grn_table_cursor *tc,
                                           const void *value, int flags);
 GRN_API grn_rc grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc);
