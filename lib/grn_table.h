@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2018  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -39,6 +39,9 @@ grn_table_create_with_max_n_subrecs(grn_ctx *ctx,
                                     grn_obj *value_type,
                                     uint32_t max_n_subrecs,
                                     uint32_t additional_value_size);
+
+grn_hash *
+grn_table_all_columns(grn_ctx *ctx, grn_obj *table);
 
 #define GRN_TABLE_LOCK_BEGIN(ctx, table) do {                           \
   grn_io *io_ = grn_obj_get_io(ctx, table);                             \
