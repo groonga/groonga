@@ -1247,10 +1247,10 @@ grn_table_sort_keys_parse_one(grn_ctx *ctx,
     n_codes--;
     flags = GRN_TABLE_SORT_DESC;
   }
+  key->flags = flags;
   if (n_codes == 1 &&
       expr->codes[code_start_offset].op == GRN_OP_GET_VALUE &&
       expr->codes[code_start_offset].value) {
-    key->flags = flags;
     key->key = expr->codes[code_start_offset].value;
     if (grn_obj_is_accessor(ctx, key->key)) {
       key->key = grn_accessor_copy(ctx, key->key);
