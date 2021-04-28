@@ -1250,7 +1250,6 @@ grn_table_sort_keys_parse_one(grn_ctx *ctx,
   if (n_codes == 1 &&
       expr->codes[code_start_offset].op == GRN_OP_GET_VALUE &&
       expr->codes[code_start_offset].value) {
-    key->flags = flags;
     key->key = expr->codes[code_start_offset].value;
     if (grn_obj_is_accessor(ctx, key->key)) {
       key->key = grn_accessor_copy(ctx, key->key);
@@ -1264,6 +1263,7 @@ grn_table_sort_keys_parse_one(grn_ctx *ctx,
                                           code_end_offset);
     key->key = sliced_expr;
   }
+  key->flags = flags;
 }
 
 grn_table_sort_key *
