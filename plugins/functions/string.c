@@ -153,7 +153,7 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
       return NULL;
     }
 
-    if (!grn_obj_is_text_family_bulk(ctx, default_value)) {
+    if (default_value && !grn_obj_is_text_family_bulk(ctx, default_value)) {
       grn_obj inspected;
 
       GRN_TEXT_INIT(&inspected, 0);
@@ -388,7 +388,7 @@ string_regex_slice(grn_ctx *ctx, int n_args, grn_obj **args, grn_user_data *user
       return NULL;
     }
 
-    if (!grn_obj_is_text_family_bulk(ctx, default_value)) {
+    if (default_value && !grn_obj_is_text_family_bulk(ctx, default_value)) {
       grn_obj inspected;
 
       GRN_TEXT_INIT(&inspected, 0);

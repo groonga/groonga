@@ -7,4 +7,4 @@ load --table Memos
 {"_key": "Groonga"}
 ]
 
-select Memos   --output_columns '_key, string_slice(_key, 10, { "default_value" : "default" })'
+select Memos   --output_columns '_key, string_slice(_key, "mismatch", 2, "a")'
