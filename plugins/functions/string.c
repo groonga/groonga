@@ -374,6 +374,7 @@ string_regex_slice(grn_ctx *ctx, int n_args, grn_obj **args, grn_user_data *user
   target_raw = args[0];
   pattern = args[1];
   nth_or_name = args[2];
+
   if (n_args == 4) {
     grn_obj *options = args[3];
     grn_rc rc = grn_proc_options_parse(ctx,
@@ -400,7 +401,6 @@ string_regex_slice(grn_ctx *ctx, int n_args, grn_obj **args, grn_user_data *user
       GRN_OBJ_FIN(ctx, &inspected);
       return NULL;
     }
-
   }
 
   if (!grn_obj_is_text_family_bulk(ctx, nth_or_name) && !grn_obj_is_number_family_bulk(ctx, nth_or_name)) {
