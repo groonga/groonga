@@ -1,0 +1,31 @@
+Execution example::
+
+  select Memos   --output_columns '_key, string_slice(_key, "(Gro+)(.*)", 2)'
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ],
+  #       [
+  #         [
+  #           "_key",
+  #           "ShortText"
+  #         ],
+  #         [
+  #           "string_slice",
+  #           null
+  #         ]
+  #       ],
+  #       [
+  #         "Groonga",
+  #         "nga"
+  #       ]
+  #     ]
+  #   ]
+  # ]

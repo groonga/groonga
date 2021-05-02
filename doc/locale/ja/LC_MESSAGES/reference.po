@@ -22676,7 +22676,27 @@ msgstr ""
 msgid "It returns the number of characters in the given string."
 msgstr "指定された文字列の文字数を返します。"
 
-msgid "``string_substring``"
+msgid "``string_slice``"
+msgstr ""
+
+msgid ""
+"``string_slice`` は文字列の部分文字列を抽出します。引数によって部分文字列の抽"
+"出方法を使い分けることが出来ます。抽出方法は以下の2つがあります。"
+msgstr ""
+
+msgid "位置による抽出"
+msgstr ""
+
+msgid "正規表現による抽出"
+msgstr ""
+
+msgid "Groongaでは正規表現にRubyと同じ構文を使います。"
+msgstr ""
+
+msgid ""
+"この関数で正規表現による抽出をする場合、正規表現のマッチにはインデックスを使"
+"用しません。 また、検索で正規表現を使う場合と異なり、マッチ対象のテキストを正"
+"規化しません。 :doc:`/reference/regular_expression` も参照してください。"
 msgstr ""
 
 msgid ""
@@ -22685,6 +22705,139 @@ msgid ""
 msgstr ""
 "この関数を有効にするには、以下のコマンドで ``functions/string`` プラグインを"
 "登録します::"
+
+msgid ""
+"``string_slice`` は2つから4つの引数を指定できます。抽出方法によって指定可能な"
+"引数が変わります。"
+msgstr ""
+
+msgid ""
+"``options`` には以下のキーを指定します。すべてのキー・値のペアは省略可能で"
+"す。::"
+msgstr ""
+
+msgid "位置により抽出する場合の簡単な例です。"
+msgstr ""
+
+msgid "正規表現により抽出する場合の簡単な例です。"
+msgstr ""
+
+msgid "以下の例では、捕獲式集合 ``(式)`` の番号を指定して抽出しています。"
+msgstr ""
+
+msgid ""
+"以下の例では、名前付き捕獲式集合 ``(?<name>式)`` の名前を指定して抽出していま"
+"す。"
+msgstr ""
+
+msgid "以下の例では、マッチしなかった場合のデフォルト値を指定しています。"
+msgstr ""
+
+msgid "必須引数は2つあります。 ``target`` と ``nth`` です。"
+msgstr ""
+
+msgid "省略可能引数は2つあります。 ``length`` と ``options`` です。"
+msgstr ""
+
+msgid "対象となる文字列または文字列型カラムを指定します。"
+msgstr ""
+
+msgid "``nth``"
+msgstr ""
+
+msgid ""
+"``target`` から抽出を開始する位置を指定します。負の値を指定した場合は終端から"
+"数えます。"
+msgstr ""
+
+msgid "``length``"
+msgstr ""
+
+msgid "``nth`` から抽出する文字数を指定します。省略時は1です。"
+msgstr ""
+
+#, fuzzy
+msgid "``options``"
+msgstr "オプション"
+
+msgid "以下のキーを指定します。"
+msgstr ""
+
+#, fuzzy
+msgid "``default_value``"
+msgstr "デフォルト値"
+
+msgid "抽出文字列が存在しなかった場合に返される文字列を指定します。"
+msgstr ""
+
+msgid "省略時は空文字列です。"
+msgstr ""
+
+msgid ""
+"必須引数は3つあります。 ``target`` と ``regexp`` と ``nth_or_name`` です。"
+msgstr ""
+
+msgid "省略可能引数は1つあります。 ``options`` です。"
+msgstr ""
+
+msgid "``regexp``"
+msgstr ""
+
+msgid "正規表現文字列を指定します。"
+msgstr ""
+
+msgid ""
+"``nth_or_name`` に数値を使用し、かつ1以上の値を指定する場合は、捕獲式集合 "
+"``(式)`` を使用する必要があります。"
+msgstr ""
+
+msgid ""
+"``nth_or_name`` に名前を使用する場合は、名前付き捕獲式集合 ``(?<name>式), "
+"(?'name'式)`` を使用する必要があります。"
+msgstr ""
+
+msgid "``nth_or_name``"
+msgstr ""
+
+msgid "``regexp`` の捕獲式集合を指定します。数値か文字列を指定可能です。"
+msgstr ""
+
+msgid "**数値を指定する場合**"
+msgstr ""
+
+msgid "``regexp`` の捕獲式集合の番号を指定します。"
+msgstr ""
+
+msgid ""
+"``regexp`` で指定したパターンに一致した時、 ``nth`` 番目の捕獲式集合の内容が"
+"返却されます。"
+msgstr ""
+
+msgid ""
+"0を指定すると、 ``regexp`` で指定したパターンに一致した全体が返却されます。"
+msgstr ""
+
+msgid "**文字列を指定する場合**"
+msgstr ""
+
+msgid "``regexp`` の名前付き捕獲式集合の名前を指定します。"
+msgstr ""
+
+msgid ""
+"``regexp`` で指定したパターンに一致した時、この名前に一致する名前付き捕獲式集"
+"合の内容が返却されます。"
+msgstr ""
+
+msgid ""
+"``regexp`` に一致しなかった場合に返される文字列を指定します。 "
+"``nth_or_name`` の値に誤りがある場合もこの値が返却されます。"
+msgstr ""
+
+msgid "``string_slice`` は指定した条件で抽出された文字列を返却します。"
+msgstr ""
+
+msgid "``string_substring``"
+msgstr ""
 
 msgid "``sub_filter``"
 msgstr ""
@@ -30708,3 +30861,7 @@ msgstr ""
 
 msgid "``window_sum``"
 msgstr ""
+
+#, fuzzy
+#~ msgid ":doc:`/reference/regular_expression`"
+#~ msgstr ":doc:`/reference/suggest`"
