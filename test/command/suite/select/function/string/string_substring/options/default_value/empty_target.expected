@@ -7,15 +7,12 @@ load --table Memos
 {"_key": "Groonga"}
 ]
 [[0,0.0,0.0],1]
-select Memos   --output_columns '_key, string_substring(_key, 5, "a")'
+select Memos   --output_columns '_key, string_substring("", 1, 1, {"default_value" : "default"})'
 [
   [
-    [
-      -22,
-      0.0,
-      0.0
-    ],
-    "[string_substring] 3rd argument must be long or hash table: \"a\""
+    0,
+    0.0,
+    0.0
   ],
   [
     [
@@ -34,9 +31,8 @@ select Memos   --output_columns '_key, string_substring(_key, 5, "a")'
       ],
       [
         "Groonga",
-        "[string_substring] 3rd argument must be long or hash table: \"a\""
+        "default"
       ]
     ]
   ]
 ]
-#|e| [string_substring] 3rd argument must be long or hash table: "a"

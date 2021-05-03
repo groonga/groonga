@@ -11,19 +11,19 @@ Execution example::
   #     [
   #       [
   #         1
-  #       ],
+  #       ], 
   #       [
   #         [
-  #           "_key",
+  #           "_key", 
   #           "ShortText"
-  #         ],
+  #         ], 
   #         [
-  #           "string_slice",
+  #           "string_slice", 
   #           null
   #         ]
-  #       ],
+  #       ], 
   #       [
-  #         "Groonga",
+  #         "Groonga", 
   #         "nga"
   #       ]
   #     ]

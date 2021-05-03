@@ -13,15 +13,12 @@
 Summary
 -------
 
-``string_slice`` は文字列の部分文字列を抽出します。引数によって部分文字列の抽出方法を使い分けることが出来ます。抽出方法は以下の2つがあります。
+``string_slice`` extracts a substring of a string. You can use two different extraction methods depending on the arguments.
 
-* 位置による抽出
-* 正規表現による抽出
+* Extraction by position
+* Extraction by regular expression
 
-Groongaでは正規表現にRubyと同じ構文を使います。
-
-この関数で正規表現による抽出をする場合、正規表現のマッチにはインデックスを使用しません。
-また、検索で正規表現を使う場合と異なり、マッチ対象のテキストを正規化しません。 :doc:`/reference/regular_expression` も参照してください。
+Groonga uses the same regular expression syntax in Ruby.
 
 To enable this function, register ``functions/string`` plugin by following the command::
 
@@ -30,31 +27,31 @@ To enable this function, register ``functions/string`` plugin by following the c
 Syntax
 ------
 
-``string_slice`` は2つから4つの引数を指定できます。抽出方法によって指定可能な引数が変わります。
+``string_slice`` requires two to four parameters. The required parametars are depending on the extraction method.
 
-位置による抽出
-^^^^^^^^^^^^^^^^^^
+Extraction by position
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
 
   string_slice(target, nth[, options])``
   string_slice(target, nth, length[, options])``
 
-``options`` には以下のキーを指定します。すべてのキー・値のペアは省略可能です。::
+``options`` uses the following format. All of key-value pairs are optional::
 
   {
     "default_value": default_value,
   }
 
-正規表現による抽出
-^^^^^^^^^^^^^^^^^^^^^^
+Extraction by regular expression
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  
 ::
 
-  string_slice(target, regexp, nth_or_name[, options])
+  string_slice(target, regexp, nth[, options])
+  string_slice(target, regexp, name[, options])
 
-
-``options`` には以下のキーを指定します。すべてのキー・値のペアは省略可能です。::
+``options`` uses the following format. All of key-value pairs are optional::
 
   {
     "default_value": default_value,
@@ -70,130 +67,149 @@ Sample schema:
 
 .. groonga-command
 .. include:: ../../example/reference/functions/string_slice/usage_setup_schema.log
+.. plugin_register functions/string
+.. table_create Memos TABLE_HASH_KEY ShortText
+
 
 Sample data:
 
 .. groonga-command
 .. include:: ../../example/reference/functions/string_slice/usage_setup_data.log
+.. load --table Memos
+.. [
+.. {"_key": "Groonga"}
+.. ]
 
-位置により抽出する場合の簡単な例です。
+Here is a simple example for the extraction by position.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/string_slice/usage_number.log
+.. select Memos   --output_columns '_key, string_slice(_key, 2, 3)'
 
-正規表現により抽出する場合の簡単な例です。
+Here are simple examples for the extraction by regular expression.
 
-以下の例では、捕獲式集合 ``(式)`` の番号を指定して抽出しています。
+In the following example, extracting by specifying the group number of the capturing group: ``(subexp)``.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/string_slice/usage_regexp_number.log
+.. select Memos   --output_columns '_key, string_slice(_key, "(Gro+)(.*)", 2)'
 
-以下の例では、名前付き捕獲式集合 ``(?<name>式)`` の名前を指定して抽出しています。
+In the following example, extracting by specifying the name of the named capturing group: ``(?<name>subexp)``.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/string_slice/usage_regexp_name.log
+.. select Memos   --output_columns '_key, string_slice(_key, "(Gr)(?<Name1>o*)(?<Name2>.*)", "Name1")'
 
-以下の例では、マッチしなかった場合のデフォルト値を指定しています。
+In the following example, specifying the default value.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/string_slice/usage_regexp_default.log
+.. select Memos   --output_columns '_key, string_slice(_key, "mismatch", 2, { "default_value" : "default" })'
 
 You can specify string literal instead of column.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/string_slice/usage_string_literal.log
+.. select Memos   --output_columns 'string_slice("Groonga", "(roon)(g)", 2)'
 
 Parameters
 ----------
 
-位置による抽出
-^^^^^^^^^^^^^^^^
+Extraction by position
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-必須引数は2つあります。 ``target`` と ``nth`` です。
+There are two required parameters, ``target`` and ``nth``.
 
-省略可能引数は2つあります。 ``length`` と ``options`` です。
+There are two optional parameters, ``length`` and ``options``.
 
 ``target``
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
 
-対象となる文字列または文字列型カラムを指定します。
+Specify a string literal or a string type column.
 
 ``nth``
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
 
-``target`` から抽出を開始する位置を指定します。負の値を指定した場合は終端から数えます。
+Specify where to start the extraction from ``target``. 
+
+If you specify a negative value, it counts from the end of ``target``.
 
 ``length``
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
-``nth`` から抽出する文字数を指定します。省略時は1です。
+Specify the number of characters to extract from ``nth``.
+
+The default is 1.
 
 ``options``
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
-以下のキーを指定します。
+Specify the following keys.
 
 ``default_value``
 ````````````````````
 
-抽出文字列が存在しなかった場合に返される文字列を指定します。 
+Specify a string to be returned when a substring is an empty string.
 
-省略時は空文字列です。
+The default is an empty string.
 
+Extraction by regular expression
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-正規表現による抽出
-^^^^^^^^^^^^^^^^^^^^^^^
+There are three required parameters, ``target`` and ``regexp`` and ``nth`` or ``name``. Specify either ``nth`` or ``name``.
 
-必須引数は3つあります。 ``target`` と ``regexp`` と ``nth_or_name`` です。
-
-省略可能引数は1つあります。 ``options`` です。
+There is one optional parameter, ``options``.
 
 ``target``
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
-対象となる文字列または文字列型カラムを指定します。
+Specify a string literal or a string type column.
 
 ``regexp``
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
-正規表現文字列を指定します。
+Specify a regular expression string.
 
-``nth_or_name`` に数値を使用し、かつ1以上の値を指定する場合は、捕獲式集合 ``(式)`` を使用する必要があります。
+When you use ``nth`` and specify a value greater than 0, you must use capturing group: ``(subexp)``.
 
-``nth_or_name`` に名前を使用する場合は、名前付き捕獲式集合 ``(?<name>式), (?'name'式)`` を使用する必要があります。
+When you use ``name``, you must use named capturing group: ``(?<name>subexp)``, ``(?'name'subexp)``.
 
-``nth_or_name``
-~~~~~~~~~~~~~~~~~~~~~~
+``nth``
+~~~~~~~~~
 
-``regexp`` の捕獲式集合を指定します。数値か文字列を指定可能です。
+Specify the number of the capturing group for ``regexp``.
 
-**数値を指定する場合**
+A captured string of the ``nth`` capturing group is returned when ``regexp`` is matched to ``target``.
 
-``regexp`` の捕獲式集合の番号を指定します。
+If 0 is specified for `nth`, the entire string that matches ``regexp`` is returned.
 
-``regexp`` で指定したパターンに一致した時、 ``nth`` 番目の捕獲式集合の内容が返却されます。
+Specify either ``nth`` or ``name``.
 
-0を指定すると、 ``regexp`` で指定したパターンに一致した全体が返却されます。
+``name``
+~~~~~~~~~
 
-**文字列を指定する場合**
+Specify the name of the named capturing group for ``regexp``.
 
-``regexp`` の名前付き捕獲式集合の名前を指定します。
+A captured string of the named capturing group that matches ``name`` is returned 
+when ``regexp`` is matched to ``target``.
 
-``regexp`` で指定したパターンに一致した時、この名前に一致する名前付き捕獲式集合の内容が返却されます。
+Specify either ``nth`` or ``name``.
 
 ``options``
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
-以下のキーを指定します。
+Specify the following keys.
 
 ``default_value``
 ````````````````````
 
-``regexp`` に一致しなかった場合に返される文字列を指定します。 ``nth_or_name`` の値に誤りがある場合もこの値が返却されます。
+Specify a string returned if ``regexp`` does not match to ``target``.
+This value also be returned when the value of ``nth`` or ``name`` is incorrect.
 
-省略時は空文字列です。
+The default is an empty string.
 
 Return value
 ------------
 
-``string_slice`` は指定した条件で抽出された文字列を返却します。
+``string_slice`` returns a substring extracted under the specified conditions from ``target``.
+
