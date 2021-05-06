@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-05-04 09:06+0900\n"
+"PO-Revision-Date: 2021-05-07 01:11+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -17,7 +17,6 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 2.4.3\n"
 "X-POOTLE-MTIME: 1411061943.000000\n"
-"POT-Creation-Date: \n"
 
 msgid "Execution example::"
 msgstr "実行例::"
@@ -22743,8 +22742,10 @@ msgstr "対象となる文字列または文字列型カラムを指定します
 msgid "``nth``"
 msgstr ""
 
-msgid "Specify where to start the extraction from ``target``."
-msgstr "``target`` から抽出を開始する位置を指定します。"
+msgid ""
+"Specify a 0-based index number of charactors where to start the extraction "
+"from ``target``."
+msgstr "``target`` から抽出を開始する位置を0始まりの文字数単位で指定します。"
 
 msgid "If you specify a negative value, it counts from the end of ``target``."
 msgstr "負の値を指定した場合は終端から数えます。"
@@ -22752,7 +22753,7 @@ msgstr "負の値を指定した場合は終端から数えます。"
 msgid "``length``"
 msgstr ""
 
-msgid "Specify the number of characters to extract from ``nth``."
+msgid "Specify a number of characters to extract from ``nth``."
 msgstr "``nth`` から抽出する文字数を指定します。"
 
 msgid "The default is 1."
@@ -22761,17 +22762,21 @@ msgstr "省略時は1です。"
 msgid "``options``"
 msgstr ""
 
-msgid "Specify the following keys."
+msgid "Specify the following key."
 msgstr "以下のキーを指定します。"
 
-msgid "``default_value``"
+msgid ""
+"Specify a string to be returned when a substring is an empty string except "
+"when specifying 0 for ``length``."
 msgstr ""
-
-msgid "Specify a string to be returned when a substring is an empty string."
-msgstr "部分文字列が空文字列になった場合に返される文字列を指定します。"
+"``length`` に0を指定した場合を除いて、部分文字列が空文字列になった場合に返さ"
+"れる文字列を指定します。"
 
 msgid "The default is an empty string."
 msgstr "省略時は空文字列です。"
+
+msgid "``default_value``"
+msgstr ""
 
 msgid ""
 "There are three required parameters, ``target`` and ``regexp`` and ``nth`` "
@@ -22803,7 +22808,7 @@ msgstr ""
 "``name`` を使用する場合は、名前付き捕獲式集合 ``(?<name>式)`` または "
 "``(?'name'式)`` を使用する必要があります。"
 
-msgid "Specify the number of the capturing group for ``regexp``."
+msgid "Specify a number of the capturing group for ``regexp``."
 msgstr "``regexp`` の捕獲式集合の番号を指定します。"
 
 msgid ""
@@ -22814,7 +22819,7 @@ msgstr ""
 "が返却されます。"
 
 msgid ""
-"If 0 is specified for `nth`, the entire string that matches ``regexp`` is "
+"If 0 is specified for ``nth``, the entire string that matches ``regexp`` is "
 "returned."
 msgstr ""
 "0を指定すると、 ``regexp`` で指定したパターンに一致した全体が返却されます。"
@@ -22822,7 +22827,7 @@ msgstr ""
 msgid "Specify either ``nth`` or ``name``."
 msgstr "``nth`` か ``name`` のいずれか一方のみを指定します。"
 
-msgid "Specify the name of the named capturing group for ``regexp``."
+msgid "Specify a name of the named capturing group for ``regexp``."
 msgstr "``regexp`` の名前付き捕獲式集合の名前を指定します。"
 
 msgid ""
@@ -30869,7 +30874,3 @@ msgstr ""
 
 msgid "``window_sum``"
 msgstr ""
-
-#, fuzzy
-#~ msgid ":doc:`/reference/regular_expression`"
-#~ msgstr ":doc:`/reference/suggest`"

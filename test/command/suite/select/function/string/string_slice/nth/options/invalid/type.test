@@ -7,4 +7,4 @@ load --table Memos
 {"_key": "Groonga"}
 ]
 
-select Memos   --output_columns '_key, string_slice(_key, 2, 2, "a")'
+select Memos --output_columns '_key, string_slice(_key, 2, 2, "a")'

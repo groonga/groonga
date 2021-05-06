@@ -1,6 +1,6 @@
 Execution example::
 
-  select Memos   --output_columns 'string_slice("Groonga", "(roon)(g)", 2)'
+  select Memos --output_columns 'string_slice("Groonga", "(roon)(g)", 2)'
   # [
   #   [
   #     0, 

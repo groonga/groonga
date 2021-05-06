@@ -7,12 +7,15 @@ load --table Memos
 {"_key": "Groonga"}
 ]
 [[0,0.0,0.0],1]
-select Memos   --output_columns '_key, string_slice(_key, 2, 3)'
+select Memos --output_columns '_key, string_slice(_key, 2, 2, "a")'
 [
   [
-    0,
-    0.0,
-    0.0
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[string_substring][options][parse] options must be a hash table: \"a\""
   ],
   [
     [
@@ -31,8 +34,9 @@ select Memos   --output_columns '_key, string_slice(_key, 2, 3)'
       ],
       [
         "Groonga",
-        "oon"
+        "[string_substring][options][parse] options must be a hash table: \"a\""
       ]
     ]
   ]
 ]
+#|e| [string_substring][options][parse] options must be a hash table: "a"

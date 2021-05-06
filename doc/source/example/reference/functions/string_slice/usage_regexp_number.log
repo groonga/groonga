@@ -1,6 +1,6 @@
 Execution example::
 
-  select Memos   --output_columns '_key, string_slice(_key, "(Gro+)(.*)", 2)'
+  select Memos --output_columns '_key, string_slice(_key, "(Gro+)(.*)", 2)'
   # [
   #   [
   #     0, 
