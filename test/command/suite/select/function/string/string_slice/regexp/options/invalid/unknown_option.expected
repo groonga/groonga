@@ -15,7 +15,7 @@ select Memos   --output_columns '_key, string_slice(_key, "Groonga", 0, { "unkno
       0.0,
       0.0
     ],
-    "[string_slice][options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:(nil) value:(nil) size:1 columns:"
+    "[string_slice][options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil) size:1 colu"
   ],
   [
     [
@@ -34,9 +34,9 @@ select Memos   --output_columns '_key, string_slice(_key, "Groonga", 0, { "unkno
       ],
       [
         "Groonga",
-        "[string_slice][options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:(nil) value:(nil) size:1 columns:"
+        "[string_slice][options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil) size:1 colu"
       ]
     ]
   ]
 ]
-#|e| [string_slice][options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:(nil) value:(nil) size:1 columns:[] default_tokenizer:(nil) normalizer:(nil) keys:["unknown_option"] subrec:none>
+#|e| [string_slice][options][parse] unknown option names: <unknown_option>: #<table:hash (nil) key:ShortText value:(nil) size:1 columns:[] default_tokenizer:(nil) normalizer:(nil) keys:["unknown_option"] subrec:none>
