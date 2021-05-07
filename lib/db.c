@@ -8195,7 +8195,7 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
             range_name_size, range_name,
             range_name_size == 0 ? "" : ")");
   }
-  grn_ja_putv(ctx, s->specs, obj->id, &v, 0);
+  grn_ja_putv(ctx, s->specs, obj->id, &v, GRN_OBJ_SET);
   grn_obj_close(ctx, &v);
 }
 
