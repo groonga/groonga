@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1022,7 +1022,9 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
   {
     grn_selector_data *data = grn_selector_data_get(ctx);
     const bool use_selector_data =
-      (data && grn_selector_data_have_score_column(ctx, data));
+      (data &&
+       (grn_selector_data_have_score_column(ctx, data) ||
+        grn_selector_data_have_tags_column(ctx, data)));
 
     int n_meshes, diff_bit;
     double d_far;

@@ -12104,6 +12104,8 @@ grn_ii_select(grn_ctx *ctx, grn_ii *ii,
   data->lexicon = data->ii->lexicon;
   if (!data->lexicon || !s) { return GRN_INVALID_ARGUMENT; }
 
+  grn_selector_data_current_set_default_tag_raw(ctx, string, string_len);
+
   data->query = string;
   data->query_len = string_len;
   data->result_set = s;

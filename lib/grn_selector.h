@@ -37,13 +37,38 @@ grn_selector_run(grn_ctx *ctx,
                  grn_operator op);
 
 grn_rc
+grn_selector_data_set_default_tags(grn_ctx *ctx,
+                                   grn_selector_data *data,
+                                   grn_obj *tags);
+
+grn_rc
+grn_selector_data_current_set_default_tag_raw_no_validation(grn_ctx *ctx,
+                                                            const char *tag,
+                                                            uint32_t tag_length);
+
+static grn_inline grn_rc
+grn_selector_data_current_set_default_tag_raw(grn_ctx *ctx,
+                                              const char *tag,
+                                              uint32_t tag_length)
+{
+  grn_selector_data *data = ctx->impl->current_selector_data;
+  if (!data) {
+    return ctx->rc;
+  }
+
+  return grn_selector_data_current_set_default_tag_raw_no_validation(ctx,
+                                                                     tag,
+                                                                     tag_length);
+}
+
+grn_rc
 grn_selector_data_current_add_score_no_validation(grn_ctx *ctx,
                                                   grn_obj *result_set,
                                                   grn_id result_set_record_id,
                                                   grn_id record_id,
                                                   double score);
 
-grn_inline static grn_rc
+static grn_inline grn_rc
 grn_selector_data_current_add_score(grn_ctx *ctx,
                                     grn_obj *result_set,
                                     grn_id result_set_record_id,
