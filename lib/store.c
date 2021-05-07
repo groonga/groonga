@@ -1425,8 +1425,7 @@ grn_ja_putv_raw(grn_ctx *ctx,
                 grn_id id,
                 grn_obj *header,
                 grn_obj *body,
-                grn_obj *footer,
-                int flags)
+                grn_obj *footer)
 {
   grn_rc rc;
   grn_io_win iw;
@@ -1597,8 +1596,7 @@ grn_ja_putv_packed(grn_ctx *ctx,
                    grn_id id,
                    grn_obj *header,
                    grn_obj *body,
-                   grn_obj *footer,
-                   int flags)
+                   grn_obj *footer)
 {
   grn_rc rc;
   grn_io_win iw;
@@ -1643,8 +1641,7 @@ grn_ja_putv_compressed(grn_ctx *ctx,
                        grn_id id,
                        void *compressed,
                        size_t compressed_size,
-                       size_t uncompressed_size,
-                       int flags)
+                       size_t uncompressed_size)
 {
   grn_rc rc;
   grn_io_win iw;
@@ -2110,8 +2107,7 @@ grn_ja_putv_zlib(grn_ctx *ctx,
                  grn_id id,
                  grn_obj *header,
                  grn_obj *body,
-                 grn_obj *footer,
-                 int flags)
+                 grn_obj *footer)
 {
   grn_rc rc;
   const size_t header_size = GRN_BULK_VSIZE(header);
@@ -2125,7 +2121,7 @@ grn_ja_putv_zlib(grn_ctx *ctx,
   int zrc;
 
   if (size < COMPRESS_THRESHOLD_BYTE) {
-    return grn_ja_putv_packed(ctx, ja, id, header, body, footer, flags);
+    return grn_ja_putv_packed(ctx, ja, id, header, body, footer);
   }
 
   zstream.zalloc = Z_NULL;
@@ -2227,8 +2223,7 @@ grn_ja_putv_zlib(grn_ctx *ctx,
                               id,
                               zvalue,
                               zstream.total_out,
-                              size,
-                              flags);
+                              size);
 
   GRN_FREE(zvalue);
   zrc = deflateEnd(&zstream);
@@ -2342,8 +2337,7 @@ grn_ja_putv_lz4(grn_ctx *ctx,
                 grn_id id,
                 grn_obj *header,
                 grn_obj *body,
-                grn_obj *footer,
-                int flags)
+                grn_obj *footer)
 {
   grn_rc rc;
   const size_t header_size = GRN_BULK_VSIZE(header);
@@ -2356,11 +2350,11 @@ grn_ja_putv_lz4(grn_ctx *ctx,
   int lz4_value_len_real;
 
   if (size < COMPRESS_THRESHOLD_BYTE) {
-    return grn_ja_putv_packed(ctx, ja, id, header, body, footer, flags);
+    return grn_ja_putv_packed(ctx, ja, id, header, body, footer);
   }
 
   if (size > (uint32_t)LZ4_MAX_INPUT_SIZE) {
-    return grn_ja_putv_packed(ctx, ja, id, header, body, footer, flags);
+    return grn_ja_putv_packed(ctx, ja, id, header, body, footer);
   }
 
   GRN_TEXT_INIT(&buffer, 0);
@@ -2403,8 +2397,7 @@ grn_ja_putv_lz4(grn_ctx *ctx,
                               id,
                               lz4_value,
                               lz4_value_len_real,
-                              size,
-                              flags);
+                              size);
 
   GRN_OBJ_FIN(ctx, &buffer);
   GRN_FREE(lz4_value);
@@ -2483,8 +2476,7 @@ grn_ja_putv_zstd(grn_ctx *ctx,
                  grn_id id,
                  grn_obj *header,
                  grn_obj *body,
-                 grn_obj *footer,
-                 int flags)
+                 grn_obj *footer)
 {
   grn_rc rc;
   const size_t header_size = GRN_BULK_VSIZE(header);
@@ -2506,7 +2498,7 @@ grn_ja_putv_zstd(grn_ctx *ctx,
 #endif /* ZSTD_VERSION_MAJOR < 1 */
 
   if (size < COMPRESS_THRESHOLD_BYTE) {
-    return grn_ja_putv_packed(ctx, ja, id, header, body, footer, flags);
+    return grn_ja_putv_packed(ctx, ja, id, header, body, footer);
   }
 
 #if ZSTD_VERSION_MAJOR < 1
@@ -2550,8 +2542,7 @@ grn_ja_putv_zstd(grn_ctx *ctx,
                                 id,
                                 zstd_value,
                                 zstd_value_len_real,
-                                size,
-                                flags);
+                                size);
   }
 #else /* ZSTD_VERSION_MAJOR < 1 */
   {
@@ -2671,8 +2662,7 @@ grn_ja_putv_zstd(grn_ctx *ctx,
                                 id,
                                 zstd_output.dst,
                                 zstd_output.pos,
-                                size,
-                                flags);
+                                size);
   }
 #endif /* ZSTD_VERSION_MAJOR < 1 */
 
@@ -2729,35 +2719,87 @@ grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
   grn_rc rc = GRN_SUCCESS;
   GRN_TEXT_INIT(&header, 0);
   GRN_TEXT_INIT(&footer, 0);
+  grn_obj *target_vector = vector;
+  grn_obj target_vector_buffer;
+  uint32_t set_mode = (flags & GRN_OBJ_SET_MASK);
+  switch (set_mode) {
+  case GRN_OBJ_SET :
+    break;
+  case GRN_OBJ_APPEND :
+  case GRN_OBJ_PREPEND :
+    {
+      grn_id range_id = DB_OBJ(ja)->range;
+      if (grn_type_id_is_text_family(ctx, range_id)) {
+        GRN_VALUE_VAR_SIZE_INIT(&target_vector_buffer,
+                                GRN_OBJ_VECTOR,
+                                range_id);
+      } else {
+        GRN_VALUE_FIX_SIZE_INIT(&target_vector_buffer,
+                                GRN_OBJ_VECTOR,
+                                range_id);
+        grn_column_flags flags = grn_ja_get_flags(ctx, ja);
+        if (flags & GRN_OBJ_WITH_WEIGHT) {
+          target_vector_buffer.header.flags |= GRN_OBJ_WITH_WEIGHT;
+        }
+      }
+      if ((flags & GRN_OBJ_SET_MASK) == GRN_OBJ_APPEND) {
+        grn_ja_get_value(ctx, ja, id, &target_vector_buffer);
+      }
+      if (grn_obj_is_vector(ctx, vector)) {
+        grn_vector_copy(ctx, vector, &target_vector_buffer);
+      } else {
+        grn_uvector_copy(ctx, vector, &target_vector_buffer);
+      }
+      if ((flags & GRN_OBJ_SET_MASK) == GRN_OBJ_PREPEND) {
+        grn_ja_get_value(ctx, ja, id, &target_vector_buffer);
+      }
+    }
+    target_vector = &target_vector_buffer;
+    break;
+  default :
+    {
+      GRN_DEFINE_NAME(ja);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[ja][putv][%.*s][%u] unsupported set mode: %d: %s",
+          name_size, name,
+          id,
+          flags,
+          grn_obj_set_flag_to_string(flags));
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
   grn_obj *body = grn_vector_pack(ctx,
-                                  vector,
+                                  target_vector,
                                   0,
-                                  grn_vector_size(ctx, vector),
+                                  grn_vector_size(ctx, target_vector),
                                   pack_flags,
                                   &header,
                                   &footer);
   switch (column_flags & GRN_OBJ_COMPRESS_MASK) {
 #ifdef GRN_WITH_ZLIB
   case GRN_OBJ_COMPRESS_ZLIB :
-    rc = grn_ja_putv_zlib(ctx, ja, id, &header, body, &footer, flags);
+    rc = grn_ja_putv_zlib(ctx, ja, id, &header, body, &footer);
     break;
 #endif /* GRN_WITH_ZLIB */
 #ifdef GRN_WITH_LZ4
   case GRN_OBJ_COMPRESS_LZ4 :
-    rc = grn_ja_putv_lz4(ctx, ja, id, &header, body, &footer, flags);
+    rc = grn_ja_putv_lz4(ctx, ja, id, &header, body, &footer);
     break;
 #endif /* GRN_WITH_LZ4 */
 #ifdef GRN_WITH_ZSTD
   case GRN_OBJ_COMPRESS_ZSTD :
-    rc = grn_ja_putv_zstd(ctx, ja, id, &header, body, &footer, flags);
+    rc = grn_ja_putv_zstd(ctx, ja, id, &header, body, &footer);
     break;
 #endif /* GRN_WITH_ZSTD */
   default :
-    rc = grn_ja_putv_raw(ctx, ja, id, &header, body, &footer, flags);
+    rc = grn_ja_putv_raw(ctx, ja, id, &header, body, &footer);
     break;
   }
   GRN_OBJ_FIN(ctx, &footer);
   GRN_OBJ_FIN(ctx, &header);
+  if (&target_vector_buffer == target_vector) {
+    GRN_OBJ_FIN(ctx, &target_vector_buffer);
+  }
   return rc;
 }
 
