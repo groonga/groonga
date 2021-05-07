@@ -4265,9 +4265,7 @@ grn_table_setoperation_merge_columns(grn_ctx *ctx,
                                      grn_id id_dest,
                                      grn_id id_src)
 {
-  /* TODO: We need a selector that stores something to a vector column
-   * to test this feature. */
-  if (false) {
+  {
     grn_obj *merge_target_columns = &(data->merge_target_vector_columns);
     size_t n_elements = GRN_PTR_VECTOR_SIZE(merge_target_columns);
     if (n_elements > 0) {
@@ -4279,7 +4277,6 @@ grn_table_setoperation_merge_columns(grn_ctx *ctx,
         grn_obj *column_src = GRN_PTR_VALUE_AT(merge_target_columns, i + 1);
         GRN_BULK_REWIND(&buffer);
         grn_obj_get_value(ctx, column_src, id_src, &buffer);
-        /* This doesn't work. */
         grn_obj_set_value(ctx, column_dest, id_dest, &buffer, GRN_OBJ_APPEND);
       }
       GRN_OBJ_FIN(ctx, &buffer);

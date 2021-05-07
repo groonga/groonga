@@ -1,0 +1,53 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_HASH_KEY ShortText   --default_tokenizer TokenBigramSplitSymbolAlphaDigit   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"name": "Alice"},
+{"name": "Alisa"},
+{"name": "Bob"}
+]
+[[0,0.0,0.0],3]
+select Users   --columns[tags].stage result_set   --columns[tags].type ShortText   --columns[tags].flags COLUMN_VECTOR   --output_columns name,tags   --filter '(true && query("name", "al", {"tags": ["al"], "tags_column": "tags"})) ||             (true && query("name", "sa", {"tags": ["sa"], "tags_column": "tags"}))'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "name",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "ShortText"
+        ]
+      ],
+      [
+        "Alice",
+        [
+          "al"
+        ]
+      ],
+      [
+        "Alisa",
+        [
+          "al",
+          "sa"
+        ]
+      ]
+    ]
+  ]
+]
