@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2015-2018 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2015-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,34 @@
 #include "grn_pat.h"
 #include "grn_store.h"
 #include "grn_token_column.h"
+
+const char *
+grn_obj_set_flag_to_string(int flags)
+{
+  const char *message = "invalid set flag";
+
+  switch (flags & GRN_OBJ_SET_MASK) {
+  case GRN_OBJ_SET :
+    message = "set";
+    break;
+  case GRN_OBJ_INCR :
+    message = "increment";
+    break;
+  case GRN_OBJ_DECR :
+    message = "decrement";
+    break;
+  case GRN_OBJ_APPEND :
+    message = "append";
+    break;
+  case GRN_OBJ_PREPEND :
+    message = "prepend";
+    break;
+  default :
+    break;
+  }
+
+  return message;
+}
 
 bool
 grn_obj_is_true(grn_ctx *ctx, grn_obj *obj)

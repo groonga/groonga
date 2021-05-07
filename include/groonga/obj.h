@@ -102,6 +102,8 @@ GRN_API void grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv);
 GRN_API uint32_t grn_obj_get_last_modified(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_dirty(grn_ctx *ctx, grn_obj *obj);
 
+GRN_API const char *grn_obj_set_flag_to_string(int flags);
+
 GRN_API const char *grn_obj_type_to_string(uint8_t type);
 
 GRN_API grn_bool grn_obj_name_is_column(grn_ctx *ctx,
