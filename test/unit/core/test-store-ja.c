@@ -96,7 +96,7 @@ test_vector_empty_load(void)
   cut_assert_null(ptr);
   cut_assert_equal_uint(0, len);
 
-  grn_test_assert(grn_ja_putv(context, ja, 1, vector, 0));
+  grn_test_assert(grn_ja_putv(context, ja, 1, vector, GRN_OBJ_SET));
 
   cut_assert_equal_int(1, grn_ja_size(context, ja, 1));
   ptr = grn_ja_ref(context, ja, 1, &iw, &len);
