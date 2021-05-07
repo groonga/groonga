@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -133,6 +133,9 @@ GRN_API grn_id grn_uvector_get_element_record(grn_ctx *ctx,
                                               grn_obj *uvector,
                                               uint32_t offset,
                                               float *weight);
+GRN_API grn_rc grn_uvector_copy(grn_ctx *ctx,
+                                grn_obj *src,
+                                grn_obj *dest);
 
 #ifdef __cplusplus
 }

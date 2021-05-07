@@ -723,4 +723,34 @@ extern "C" {
   exit :
     GRN_API_RETURN(id);
   }
+
+  grn_rc
+  grn_uvector_copy(grn_ctx *ctx,
+                   grn_obj *src,
+                   grn_obj *dest)
+  {
+    GRN_API_ENTER;
+    if (src->header.domain != dest->header.domain) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[uvector][copy] different domain: "
+          "source=<%u> "
+          "destination=<%u>",
+          src->header.domain,
+          dest->header.domain);
+      GRN_API_RETURN(ctx->rc);
+    }
+    bool src_have_weight = grn_obj_is_weight_uvector(ctx, src);
+    bool dest_have_weight = grn_obj_is_weight_uvector(ctx, dest);
+    if (src_have_weight != dest_have_weight) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "[uvector][copy] different weight availability: "
+          "source=<%s> "
+          "destination=<%s>",
+          src_have_weight ? "true" : "false",
+          dest_have_weight ? "true" : "false");
+      GRN_API_RETURN(ctx->rc);
+    }
+    grn_bulk_write(ctx, dest, GRN_BULK_HEAD(src), GRN_BULK_VSIZE(src));
+    GRN_API_RETURN(ctx->rc);
+  }
 }
