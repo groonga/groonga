@@ -102,14 +102,19 @@ class PackagesGroongaOrgPackageTask < PackageTask
     0
   end
 
-  def download_packages(target_namespace)
+  def download_repositories_dir(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
     case target_namespace
     when :windows
-      repositories_dir = "#{base_dir}/repositories/windows/#{@package}"
+      "#{base_dir}/repositories/windows/#{@package}"
     else
-      repositories_dir = "#{base_dir}/repositories"
+      "#{base_dir}/repositories"
     end
+  end
+
+  def download_packages(target_namespace)
+    base_dir = __send__("#{target_namespace}_dir")
+    repositories_dir = download_repositories_dir(target_namespace)
     mkdir_p(repositories_dir)
     download_dir = "#{base_dir}/tmp/downloads/#{@version}"
     mkdir_p(download_dir)
