@@ -91,9 +91,9 @@ Install required packages to build Groonga for Debian stretch::
 
 Download source::
 
-  % wget https://packages.groonga.org/source/groonga/groonga-11.0.1.tar.gz
-  % tar xvzf groonga-11.0.1.tar.gz
-  % cd groonga-11.0.1
+  % wget https://packages.groonga.org/source/groonga/groonga-11.0.2.tar.gz
+  % tar xvzf groonga-11.0.2.tar.gz
+  % cd groonga-11.0.2
 
 Configure (see :ref:`source-configure` about ``configure`` options)::
 
