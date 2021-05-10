@@ -12392,9 +12392,6 @@ msgstr ""
 "今のところ、 ``ruby_eval`` は評価された値として数値だけサポートしています。サ"
 "ポートしている型は今後増えていく予定です。"
 
-msgid ":doc:`/reference/commands/ruby_eval`"
-msgstr ""
-
 msgid "``schema``"
 msgstr ""
 
