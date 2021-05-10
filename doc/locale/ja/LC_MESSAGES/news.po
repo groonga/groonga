@@ -177,6 +177,9 @@ msgid ""
 msgstr ""
 "[:doc:`/install/ubuntu`] Ubuntu 21.04 (Hirsute Hippo)をサポートしました。"
 
+msgid "[httpd] Updated bundled nginx to 1.19.10."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.19.10に更新しました。"
+
 msgid "Thanks"
 msgstr "感謝"
 

@@ -406,6 +406,8 @@ Improvements
 
 * [:doc:`/install/ubuntu`] Added support for Ubuntu 21.04 (Hirsute Hippo).
 
+* [httpd] Updated bundled nginx to 1.19.10.
+
 Thanks
 ^^^^^^
 
