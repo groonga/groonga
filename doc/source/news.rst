@@ -408,12 +408,21 @@ Improvements
 
 * [httpd] Updated bundled nginx to 1.19.10.
 
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list. [Github#1186][Reported by poti]
+
 Thanks
 ^^^^^^
 
 * Anthony M. Cook
 
 * MASUDA Kazuhiro
+
+* poti
 
 .. _release-11-0-1:
 

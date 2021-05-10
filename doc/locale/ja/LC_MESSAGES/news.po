@@ -180,6 +180,26 @@ msgstr ""
 msgid "[httpd] Updated bundled nginx to 1.19.10."
 msgstr "[httpd] バンドルしているnginxのバージョンを1.19.10に更新しました。"
 
+msgid "Known Issues"
+msgstr "既知の問題"
+
+msgid ""
+"Currently, Groonga has a bug that there is possible that data is corrupt "
+"when we execute many additions, delete, and update data to vector column."
+msgstr ""
+"現在Groongaには、ベクターカラムに対してデータを大量に追加、削除、更新した際に"
+"データが破損することがある問題があります。"
+
+msgid ""
+"[The browser based administration tool] Currently, Groonga has a bug that a "
+"search query that is inputted to non-administration mode is sent even if we "
+"input checks to the checkbox for the administration mode of a record list. "
+"[Github#1186][Reported by poti]"
+msgstr ""
+"[ブラウザーベースの管理ツール] 現在Groongaには、レコード一覧の管理モードの"
+"チェックボックスにチェックを入れても、非管理モードに入力された検索クエリーが"
+"送信されるという問題があります。 [Github#1186][potiさんが報告]"
+
 msgid "Thanks"
 msgstr "感謝"
 
@@ -188,6 +208,9 @@ msgstr "Anthony M. Cookさん"
 
 msgid "MASUDA Kazuhiro"
 msgstr "MASUDA Kazuhiroさん"
+
+msgid "poti"
+msgstr "potiさん"
 
 msgid "Release 11.0.1 - 2021-03-31"
 msgstr "11.0.1リリース - 2021-03-31"
@@ -454,16 +477,6 @@ msgstr ""
 "[Windows] 別のスレッドで、他のバックトレースロギングプロセスが動作していると"
 "きに、新しくバックトレースロギングプロセスが開始されると、1つ以上のプロセスが"
 "SEGVのバックトレースの出力に失敗する問題を修正しました。"
-
-msgid "Known Issues"
-msgstr "既知の問題"
-
-msgid ""
-"Currently, Groonga has a bug that there is possible that data is corrupt "
-"when we execute many additions, delete, and update data to vector column."
-msgstr ""
-"現在Groongaには、ベクターカラムに対してデータを大量に追加、削除、更新した際に"
-"データが破損することがある問題があります。"
 
 msgid "naoa"
 msgstr "naoaさん"
