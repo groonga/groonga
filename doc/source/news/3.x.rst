@@ -139,7 +139,7 @@ Improvements
 * [experimental] Added some API to integrate mruby into groonga. [GitHub#109, #110, #111, #112, #113, #114, #115, #116, #117, #118] [Patch by wanabe]
 * [travis] Supported CMake build on Travis-CI.
 * [doc] Added documentation about :doc:`/reference/tuning`.
-* [experimental] Added :doc:`/reference/commands/ruby_load` command.
+* [experimental] Added "ruby_load" command.
 * [httpd] Supported multiple buffered body of POST request.
   The load command caused timeout in such a case. [GitHub #120] [Patch by Motoi Washida]
 * [gqtp] Supported error message. The body is changed to return

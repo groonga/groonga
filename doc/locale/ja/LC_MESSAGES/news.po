@@ -10635,8 +10635,8 @@ msgstr "[travis] Travis-CI上でCMakeによるビルドをサポートしまし�
 msgid "[doc] Added documentation about :doc:`/reference/tuning`."
 msgstr "[doc] :doc:`/reference/tuning` のドキュメントを追加しました。"
 
-msgid "[experimental] Added :doc:`/reference/commands/ruby_load` command."
-msgstr "[実験的] :doc:`/reference/commands/ruby_load` コマンドを追加しました。"
+msgid "[experimental] Added \"ruby_load\" command."
+msgstr "[実験的] \"ruby_load\" コマンドを追加しました。"
 
 msgid ""
 "[httpd] Supported multiple buffered body of POST request. The load command "
