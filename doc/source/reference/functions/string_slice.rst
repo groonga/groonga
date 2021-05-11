@@ -8,7 +8,7 @@
 ``string_slice``
 ================
 
-.. versionadded:: 11.0.2
+.. versionadded:: 11.0.3
 
 Summary
 -------
