@@ -1,6 +1,6 @@
 .. -*- rst -*-
 
-.. highlightlang:: c
+.. highlight:: c
 
 ``grn_cache``
 =============
