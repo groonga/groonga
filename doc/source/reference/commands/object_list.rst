@@ -1,7 +1,5 @@
 .. -*- rst -*-
 
-.. highlightlang:: none
-
 .. groonga-command
 .. database: commands_object_list
 

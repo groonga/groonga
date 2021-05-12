@@ -1,8 +1,6 @@
 .. -*- rst -*-
 .. Groonga Project
 
-.. highlightlang:: none
-
 .. groonga-command
 .. database: commands_cache_limit
 

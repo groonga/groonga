@@ -1,7 +1,5 @@
 .. -*- rst -*-
 
-.. highlightlang:: none
-
 .. groonga-command
 .. % groonga-suggest-create-dataset /tmp/groonga-databases/completion query
 .. database: completion

@@ -1,7 +1,5 @@
 .. -*- rst -*-
 
-.. highlightlang:: none
-
 ``grn_index_cursor``
 ====================
 

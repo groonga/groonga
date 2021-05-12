@@ -1,7 +1,5 @@
 .. -*- rst -*-
 
-.. highlightlang:: none
-
 Query expanders
 ===============
 

@@ -1,8 +1,6 @@
 .. -*- rst -*-
 .. Groonga Project
 
-.. highlightlang:: none
-
 .. groonga-include : search.rst
 
 .. groonga-command

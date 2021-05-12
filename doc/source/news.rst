@@ -2,8 +2,6 @@
 
 :orphan:
 
-.. highlightlang:: none
-
 News
 ====
 

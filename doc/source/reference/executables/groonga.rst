@@ -1,7 +1,5 @@
 .. -*- rst -*-
 
-.. highlightlang:: none
-
 .. program:: groonga
 
 ``groonga`` executable file

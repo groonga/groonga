@@ -1,7 +1,5 @@
 .. -*- rst -*-
 
-.. highlightlang:: none
-
 .. groonga-command
 .. database: reference_grn_expr_script_syntax
 

@@ -1,7 +1,5 @@
 .. -*- rst -*-
 
-.. highlightlang:: none
-
 .. groonga-command
 .. database: functions_query_parallel_or
 
