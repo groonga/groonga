@@ -1,6 +1,4 @@
 .. -*- rst -*-
-.. highlightlang:: none
-
 .. groonga-command
 .. database: tokenizers
 

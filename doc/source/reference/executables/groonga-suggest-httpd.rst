@@ -1,7 +1,5 @@
 .. -*- rst -*-
 
-.. highlightlang:: none
-
 .. program:: groonga-suggest-httpd
 
 .. groonga-command

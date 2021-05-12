@@ -1,7 +1,5 @@
 .. -*- rst -*-
 
-.. highlightlang:: none
-
 .. program:: groonga-suggest-learner
 
 groonga-suggest-learner

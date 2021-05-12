@@ -1,7 +1,5 @@
 .. -*- rst -*-
 
-.. highlightlang:: none
-
 Additional information about lexicon for full text search
 =========================================================
 

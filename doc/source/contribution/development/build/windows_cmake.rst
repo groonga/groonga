@@ -1,7 +1,5 @@
 .. -*- rst -*-
 
-.. highlightlang:: none
-
 How to build Groonga at the repository by CMake on Windows
 ==========================================================
 

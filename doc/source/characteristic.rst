@@ -1,8 +1,6 @@
 .. -*- rst -*-
 .. Groonga project
 
-.. highlightlang:: none
-
 Characteristics of Groonga
 ==========================
 

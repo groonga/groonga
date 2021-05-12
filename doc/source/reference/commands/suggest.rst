@@ -1,7 +1,5 @@
 .. -*- rst -*-
 
-.. highlightlang:: none
-
 .. groonga-command
 .. % groonga-suggest-create-dataset /tmp/groonga-databases/suggest query
 .. database: suggest
