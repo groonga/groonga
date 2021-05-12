@@ -7,15 +7,12 @@ load --table Memos
 {"_key": "Groonga"}
 ]
 [[0,0.0,0.0],1]
-select Memos   --output_columns '_key, string_substring(_key)'
+select Memos   --output_columns '_key, string_substring(_key, 0, {})'
 [
   [
-    [
-      -22,
-      0.0,
-      0.0
-    ],
-    "[string_substring] wrong number of arguments (1 for 2..3)"
+    0,
+    0.0,
+    0.0
   ],
   [
     [
@@ -34,9 +31,8 @@ select Memos   --output_columns '_key, string_substring(_key)'
       ],
       [
         "Groonga",
-        "[string_substring] wrong number of arguments (1 for 2..3)"
+        "Groonga"
       ]
     ]
   ]
 ]
-#|e| [string_substring] wrong number of arguments (1 for 2..3)

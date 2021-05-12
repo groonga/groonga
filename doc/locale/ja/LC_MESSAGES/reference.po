@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-03-10 16:30+0900\n"
+"PO-Revision-Date: 2021-05-07 01:11+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.0.7\n"
+"X-Generator: Poedit 2.4.3\n"
 "X-POOTLE-MTIME: 1411061943.000000\n"
 
 msgid "Execution example::"
@@ -22673,8 +22673,24 @@ msgstr ""
 msgid "It returns the number of characters in the given string."
 msgstr "指定された文字列の文字数を返します。"
 
-msgid "``string_substring``"
+msgid "``string_slice``"
 msgstr ""
+
+msgid ""
+"``string_slice`` extracts a substring of a string. You can use two different "
+"extraction methods depending on the arguments."
+msgstr ""
+"``string_slice`` は文字列の部分文字列を抽出します。引数によって部分文字列の抽"
+"出方法を使い分けることが出来ます。抽出方法は以下の2つがあります。"
+
+msgid "Extraction by position"
+msgstr "位置による抽出"
+
+msgid "Extraction by regular expression"
+msgstr "正規表現による抽出"
+
+msgid "Groonga uses the same regular expression syntax in Ruby."
+msgstr "Groongaでは正規表現にRubyと同じ構文を使います。"
 
 msgid ""
 "To enable this function, register ``functions/string`` plugin by following "
@@ -22682,6 +22698,156 @@ msgid ""
 msgstr ""
 "この関数を有効にするには、以下のコマンドで ``functions/string`` プラグインを"
 "登録します::"
+
+msgid ""
+"``string_slice`` requires two to four parameters. The required parametars "
+"are depending on the extraction method."
+msgstr ""
+"``string_slice`` は2つから4つの引数を指定できます。抽出方法によって指定可能な"
+"引数が変わります。"
+
+msgid "Here is a simple example for the extraction by position."
+msgstr "位置により抽出する場合の簡単な例です。"
+
+msgid "Here are simple examples for the extraction by regular expression."
+msgstr "正規表現により抽出する場合の簡単な例です。"
+
+msgid ""
+"In the following example, extracting by specifying the group number of the "
+"capturing group: ``(subexp)``."
+msgstr "以下の例では、捕獲式集合 ``(式)`` の番号を指定して抽出しています。"
+
+msgid ""
+"In the following example, extracting by specifying the name of the named "
+"capturing group: ``(?<name>subexp)``."
+msgstr ""
+"以下の例では、名前付き捕獲式集合 ``(?<name>式)`` の名前を指定して抽出していま"
+"す。"
+
+msgid "In the following example, specifying the default value."
+msgstr "以下の例では、マッチしなかった場合のデフォルト値を指定しています。"
+
+msgid "There are two required parameters, ``target`` and ``nth``."
+msgstr "必須引数は2つあります。 ``target`` と ``nth`` です。"
+
+msgid "There are two optional parameters, ``length`` and ``options``."
+msgstr "省略可能引数は2つあります。 ``length`` と ``options`` です。"
+
+msgid "Specify a string literal or a string type column."
+msgstr "対象となる文字列または文字列型カラムを指定します。"
+
+msgid "``nth``"
+msgstr ""
+
+msgid ""
+"Specify a 0-based index number of charactors where to start the extraction "
+"from ``target``."
+msgstr "``target`` から抽出を開始する位置を0始まりの文字数単位で指定します。"
+
+msgid "If you specify a negative value, it counts from the end of ``target``."
+msgstr "負の値を指定した場合は終端から数えます。"
+
+msgid "``length``"
+msgstr ""
+
+msgid "Specify a number of characters to extract from ``nth``."
+msgstr "``nth`` から抽出する文字数を指定します。"
+
+msgid "The default is 1."
+msgstr "省略時は1です。"
+
+msgid "``options``"
+msgstr ""
+
+msgid "Specify the following key."
+msgstr "以下のキーを指定します。"
+
+msgid ""
+"Specify a string to be returned when a substring is an empty string except "
+"when specifying 0 for ``length``."
+msgstr ""
+"``length`` に0を指定した場合を除いて、部分文字列が空文字列になった場合に返さ"
+"れる文字列を指定します。"
+
+msgid "The default is an empty string."
+msgstr "省略時は空文字列です。"
+
+msgid "``default_value``"
+msgstr ""
+
+msgid ""
+"There are three required parameters, ``target`` and ``regexp`` and ``nth`` "
+"or ``name``. Specify either ``nth`` or ``name``."
+msgstr ""
+"必須引数は3つあります。 ``target`` と ``regexp`` と ``nth`` または ``name`` "
+"です。 ``nth`` と ``name`` はいずれか一方のみを指定します。"
+
+msgid "There is one optional parameter, ``options``."
+msgstr "省略可能引数は1つあります。 ``options`` です。"
+
+msgid "``regexp``"
+msgstr ""
+
+msgid "Specify a regular expression string."
+msgstr "正規表現文字列を指定します。"
+
+msgid ""
+"When you use ``nth`` and specify a value greater than 0, you must use "
+"capturing group: ``(subexp)``."
+msgstr ""
+"``nth`` を使用し、かつ1以上の値を指定する場合は、捕獲式集合 ``(式)`` を使用す"
+"る必要があります。"
+
+msgid ""
+"When you use ``name``, you must use named capturing group: ``(?"
+"<name>subexp)``, ``(?'name'subexp)``."
+msgstr ""
+"``name`` を使用する場合は、名前付き捕獲式集合 ``(?<name>式)`` または "
+"``(?'name'式)`` を使用する必要があります。"
+
+msgid "Specify a number of the capturing group for ``regexp``."
+msgstr "``regexp`` の捕獲式集合の番号を指定します。"
+
+msgid ""
+"A captured string of the ``nth`` capturing group is returned when ``regexp`` "
+"is matched to ``target``."
+msgstr ""
+"``regexp`` で指定したパターンに一致した時、 ``nth`` 番目の捕獲式集合の文字列"
+"が返却されます。"
+
+msgid ""
+"If 0 is specified for ``nth``, the entire string that matches ``regexp`` is "
+"returned."
+msgstr ""
+"0を指定すると、 ``regexp`` で指定したパターンに一致した全体が返却されます。"
+
+msgid "Specify either ``nth`` or ``name``."
+msgstr "``nth`` か ``name`` のいずれか一方のみを指定します。"
+
+msgid "Specify a name of the named capturing group for ``regexp``."
+msgstr "``regexp`` の名前付き捕獲式集合の名前を指定します。"
+
+msgid ""
+"A captured string of the named capturing group that matches ``name`` is "
+"returned when ``regexp`` is matched to ``target``."
+msgstr ""
+"``regexp`` で指定したパターンに一致した時、この名前に一致する名前付き捕獲式集"
+"合の文字列が返却されます。"
+
+msgid ""
+"Specify a string returned if ``regexp`` does not match to ``target``. This "
+"value also be returned when the value of ``nth`` or ``name`` is incorrect."
+msgstr ""
+"``regexp`` に一致しなかった場合に返却される文字列を指定します。 ``nth`` や "
+"``name`` の値に誤りがある場合もこの値が返却されます。"
+
+msgid ""
+"``string_slice`` returns a substring extracted under the specified "
+"conditions from ``target``."
+msgstr "``string_slice`` は指定した条件で抽出された部分文字列を返却します。"
+
+msgid "``string_substring``"
+msgstr ""
 
 msgid "``sub_filter``"
 msgstr ""

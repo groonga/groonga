@@ -5,7 +5,8 @@ AM_CPPFLAGS =					\
 	-I$(top_builddir)			\
 	-I$(top_builddir)/include		\
 	-I$(top_srcdir)/include			\
-	-I$(top_srcdir)/lib
+	-I$(top_srcdir)/lib			\
+	$(ONIGMO_CFLAGS)
 
 AM_LDFLAGS =					\
 	-avoid-version				\

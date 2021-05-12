@@ -1,0 +1,42 @@
+plugin_register functions/string
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga"}
+]
+[[0,0.0,0.0],1]
+select Memos   --output_columns '_key, string_slice(_key, 1, 2, { "default_value" : 1 })'
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[string_substring][default_value] must be a text bulk: <1>"
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "string_slice",
+          null
+        ]
+      ],
+      [
+        "Groonga",
+        "[string_substring][default_value] must be a text bulk: <1>"
+      ]
+    ]
+  ]
+]
+#|e| [string_substring][default_value] must be a text bulk: <1>

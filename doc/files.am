@@ -465,6 +465,13 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage_basic.log \
 	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage_string_literal.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_slice/usage_number.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_slice/usage_regexp_default.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_slice/usage_regexp_name.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_slice/usage_regexp_number.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_slice/usage_setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_slice/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_slice/usage_string_literal.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
@@ -1002,6 +1009,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/rand.rst \
 	$(top_srcdir)/doc/source/reference/functions/snippet_html.rst \
 	$(top_srcdir)/doc/source/reference/functions/string_length.rst \
+	$(top_srcdir)/doc/source/reference/functions/string_slice.rst \
 	$(top_srcdir)/doc/source/reference/functions/string_substring.rst \
 	$(top_srcdir)/doc/source/reference/functions/sub_filter.rst \
 	$(top_srcdir)/doc/source/reference/functions/time_classify_day.rst \
