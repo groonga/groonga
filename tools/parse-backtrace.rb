@@ -48,8 +48,8 @@ def prepare_system_centos_7(options)
               "binutils",
               "yum-utils")
   packages = []
-  if options.groonga_version
-    groonga_package_version = "-#{options.groonga_version}-1.el7.x86_64"
+  if options.version
+    groonga_package_version = "-#{options.version}-1.el7.x86_64"
   else
     groonga_package_version = ""
   end
