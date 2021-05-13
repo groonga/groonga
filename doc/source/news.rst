@@ -5,6 +5,326 @@
 News
 ====
 
+.. _release-11-0-3:
+
+Release 11.0.3 - 2021-05-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/functions/query`] Added support for ignoring ``TokenFilterStem`` by the query.
+
+  * ``TokenFilterStem`` can search by using a stem.
+    For example, all of ``develop``, ``developing``, ``developed`` and ``develops`` tokens are stemmed as ``develop``.
+    So we can find ``develop``, ``developing`` and ``developed`` by ``develops`` query.
+
+  * In this release, we are able to search without ``TokenFilterStem`` in only a specific query as below.
+
+    .. code-block::
+
+       plugin_register token_filters/stem
+
+       table_create Memos TABLE_NO_KEY
+       column_create Memos content COLUMN_SCALAR ShortText
+
+       table_create Terms TABLE_PAT_KEY ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer NormalizerAuto \
+         --token_filters 'TokenFilterStem("keep_original", true)'
+       column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+       load --table Memos
+       [
+       {"content": "I develop Groonga"},
+       {"content": "I'm developing Groonga"},
+       {"content": "I developed Groonga"}
+       ]
+
+       select Memos \
+         --match_columns content \
+         --query '"developed groonga"' \
+         --query_options '{"TokenFilterStem.enable": false}'
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "content",
+                 "ShortText"
+               ]
+             ],
+             [
+               3,
+               "I developed Groonga"
+             ]
+           ]
+         ]
+       ]
+
+  * This feature is useful when users want to search by a stemmed word generally but users sometimes want to search by a exact (not stemmed) word as below.
+
+    * If Groonga returns many results when searching by a stemmed word.
+    * If ``TokenFilterStem`` returns the wrong result of stemming.
+    * If we want to find only records that have an exact (not stemmed) word.
+
+* [:doc:`reference/functions/query`] Added support for ignoring ``TokenFilterStopWord`` by the query.
+
+  * ``TokenFilterStopWord`` searched without stop word that we registered beforehand.
+    It uses for reducing noise of search by ignoring frequently word (e.g., ``and``, ``is``, and so on.).
+  * However, we sometimes want to search include these words only a specific query. In this release, we are able to search without ``TokenFilterStopWord`` in only a specific query as below.
+
+    .. code-block::
+
+       plugin_register token_filters/stop_word
+
+       table_create Memos TABLE_NO_KEY
+       column_create Memos content COLUMN_SCALAR ShortText
+
+       table_create Terms TABLE_PAT_KEY ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer NormalizerAuto \
+         --token_filters TokenFilterStopWord
+       column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+       column_create Terms is_stop_word COLUMN_SCALAR Bool
+
+       load --table Terms
+       [
+       {"_key": "and", "is_stop_word": true}
+       ]
+
+       load --table Memos
+       [
+       {"content": "Hello"},
+       {"content": "Hello and Good-bye"},
+       {"content": "Good-bye"}
+       ]
+
+       select Memos \
+         --match_columns content \
+         --query "Hello and" \
+         --query_options '{"TokenFilterStopWord.enable": false}' \
+         --match_escalation_threshold -1 \
+         --sort_keys -_score
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "content",
+                 "ShortText"
+               ]
+             ],
+             [
+               2,
+               "Hello and Good-bye"
+             ]
+           ]
+         ]
+       ]
+
+  * In the above example, we specify ``TokenFilterStopWord.enable`` by using ``--query-options``, but we also specify it by using ``{"options": {"TokenFilterStopWord.enabled": false}}`` as below.
+
+    .. code-block::
+
+       plugin_register token_filters/stop_word
+
+       table_create Memos TABLE_NO_KEY
+       column_create Memos content COLUMN_SCALAR ShortText
+
+       table_create Terms TABLE_PAT_KEY ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer NormalizerAuto \
+         --token_filters TokenFilterStopWord
+       column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+       column_create Terms is_stop_word COLUMN_SCALAR Bool
+
+       load --table Terms
+       [
+       {"_key": "and", "is_stop_word": true}
+       ]
+
+       load --table Memos
+       [
+       {"content": "Hello"},
+       {"content": "Hello and Good-bye"},
+       {"content": "Good-bye"}
+       ]
+
+       select Memos \
+         --filter 'query("content", \
+                         "Hello and", \
+                         {"options": {"TokenFilterStopWord.enable": false}})' \
+         --match_escalation_threshold -1 \
+         --sort_keys -_score
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "content",
+                 "ShortText"
+               ]
+             ],
+             [
+               2,
+               "Hello and Good-bye"
+             ]
+           ]
+         ]
+       ]
+
+  * This feature is useful if that Groonga can't return results correctly if we don't search by keywords include commonly used words (e.g., if a search for a song title, a shop name, and so on.).
+
+* [:doc:`/reference/normalizers`][NormalizerNFKC] Added a new option ``remove_new_line``.
+
+  * Normally, normalizers remove a new line. Because they needless in the full text search.
+  * However, If normalizers remove it, Groonga can't handle a key that is only a new line.
+  * We can register data that is only a new line as key by this option.
+
+* [:doc:`/reference/functions/string_slice`] Added a new function ``string_slice()``. [Github#1177][Patched by Takashi Hashida]
+
+  * ``string_slice()`` extracts a substring of a string.
+  * To enable this function, we need to register ``functions/string`` plugin.
+  * We can use two different extraction methods depending on the arguments as below.
+
+    * Extraction by position::
+
+         plugin_register functions/string
+         table_create Memos TABLE_HASH_KEY ShortText
+
+         load --table Memos
+         [
+           {"_key": "Groonga"}
+         ]
+         select Memos --output_columns '_key, string_slice(_key, 2, 3)'
+         [
+           [
+             0,
+             1337566253.89858,
+             0.000355720520019531
+           ],
+           [
+             [
+               [
+                 1
+               ],
+               [
+                 [
+                   "_key",
+                   "ShortText"
+                 ],
+                 [
+                   "string_slice",
+                   null
+                 ]
+               ],
+               [
+                 "Groonga",
+                 "oon"
+               ]
+             ]
+           ]
+         ]
+
+    * Extraction by regular expression::
+
+         plugin_register functions/string
+         table_create Memos TABLE_HASH_KEY ShortText
+
+         load --table Memos
+         [
+           {"_key": "Groonga"}
+         ]
+         select Memos --output_columns '_key, string_slice(_key, "(Gro+)(.*)", 2)'
+         [
+           [p
+             0,
+             1337566253.89858,
+             0.000355720520019531
+           ],
+           [
+             [
+               [
+                 1
+               ],
+               [
+                 [
+                   "_key",
+                   "ShortText"
+                 ],
+                 [
+                   "string_slice",
+                   null
+                 ]
+               ],
+               [
+                 "Groonga",
+                 "nga"
+               ]
+             ]
+           ]
+         ]
+
+* [:doc:`/install/ubuntu`] Dropped support for Ubuntu 16.04 LTS (Xenial Xerus).
+
+* Added EditorConfig for Visual Studio. [GitHub#1191][Patched by Takashi Hashida]
+
+  * Most settings are for Visual Studio only.
+
+Fixes
+^^^^^
+
+* Fixed a bug that Groonga may not have returned a result of a search query if we sent many search queries when tokenizer, normalizer, or token_filters that support options were used.
+
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list.
+
+Thanks
+^^^^^^
+
+* Takashi Hashida
+
 .. _release-11-0-2:
 
 Release 11.0.2 - 2021-05-10
