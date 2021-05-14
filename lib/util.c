@@ -1492,7 +1492,11 @@ grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
 }
 
 grn_obj *
-grn_inspect_key(grn_ctx *ctx, grn_obj *buffer, grn_obj *table, const void *key, unsigned int key_size)
+grn_inspect_key(grn_ctx *ctx,
+                grn_obj *buffer,
+                grn_obj *table,
+                const void *key,
+                uint32_t key_size)
 {
   if (!buffer) {
     buffer = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
