@@ -1894,7 +1894,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
           GRN_TEXT_INIT(&buffer, 0);
           grn_inspect_key(ctx, &buffer, table, key, key_size);
           ERR(GRN_INVALID_ARGUMENT,
-              "[table][add] failed to add: %.*s",
+              "[table][add][array] failed to add: %.*s",
               (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
           GRN_OBJ_FIN(ctx, &buffer);
         }
