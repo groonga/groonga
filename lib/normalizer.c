@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2012-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -584,6 +584,7 @@ typedef struct {
   grn_nfkc_normalize_context context;
   grn_bool remove_blank_p;
   grn_bool remove_tokenized_delimiter_p;
+  bool remove_new_line_p;
 } grn_nfkc_normalize_data;
 
 grn_inline static void
@@ -689,6 +690,7 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
     data->options->remove_blank;
   data->remove_tokenized_delimiter_p =
     (data->string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
+  data->remove_new_line_p = data->options->remove_new_line;
 
   size = data->string->original_length_in_bytes;
   data->context.size = size * 3;
@@ -1688,6 +1690,28 @@ exit:
   grn_nfkc_normalize_context_fin(ctx, &unify);
 }
 
+static grn_inline bool
+grn_nfkc_normalize_remove_character_p(grn_ctx *ctx,
+                                      const grn_nfkc_normalize_data *data,
+                                      const unsigned char *current,
+                                      size_t current_length)
+{
+  if (current[0] > ' ') {
+    return false;
+  }
+
+  switch (current[0]) {
+  case ' ' :
+    return data->remove_blank_p;
+  case '\r' :
+  case '\n' :
+    return data->remove_new_line_p;
+  default :
+    /* skip unprintable ascii */
+    return true;
+  }
+}
+
 grn_rc
 grn_nfkc_normalize(grn_ctx *ctx,
                    grn_obj *string,
@@ -1760,8 +1784,10 @@ grn_nfkc_normalize(grn_ctx *ctx,
         if (current_length == 0) {
           break;
         }
-        if ((current[0] == ' ' && data.remove_blank_p) ||
-            current[0] < 0x20 /* skip unprintable ascii */) {
+        if (grn_nfkc_normalize_remove_character_p(ctx,
+                                                  &data,
+                                                  current,
+                                                  current_length)) {
           if (context->t > context->types) {
             context->t[-1] |= GRN_CHAR_BLANK;
           }

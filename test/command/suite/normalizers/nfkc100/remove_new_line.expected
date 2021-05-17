@@ -1,0 +1,62 @@
+normalize   'NormalizerNFKC100("remove_new_line", false,                      "report_source_offset", true)'   "This\ris\na\rpen.\n"   WITH_CHECKS|WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "this\ris\na\rpen.\n",
+    "types": [
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "others",
+      "alpha",
+      "alpha",
+      "others",
+      "alpha",
+      "others",
+      "alpha",
+      "alpha",
+      "alpha",
+      "symbol",
+      "others"
+    ],
+    "checks": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "offsets": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ]
+  }
+]

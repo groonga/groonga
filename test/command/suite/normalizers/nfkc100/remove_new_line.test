@@ -1,0 +1,5 @@
+normalize \
+  'NormalizerNFKC100("remove_new_line", false, \
+                     "report_source_offset", true)' \
+  "This\ris\na\rpen.\n" \
+  WITH_CHECKS|WITH_TYPES
