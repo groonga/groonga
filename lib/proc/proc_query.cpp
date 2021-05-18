@@ -97,6 +97,7 @@ namespace {
       tag_(tag),
       match_columns_string_(nullptr),
       query_expander_name_(nullptr),
+      query_options_(nullptr),
       default_mode_(GRN_OP_MATCH),
       default_operator_(GRN_OP_AND),
       flags_(GRN_EXPR_SYNTAX_QUERY),
@@ -163,6 +164,7 @@ namespace {
 
     bool
     parse_options(grn_obj *options) {
+      grn_obj *query_options_ptr = NULL;
 #define OPTIONS                                                         \
       "expander",                                                       \
         GRN_PROC_OPTION_VALUE_RAW,                                      \
@@ -175,7 +177,10 @@ namespace {
         &default_operator_,                                             \
         "flags",                                                        \
         GRN_PROC_OPTION_VALUE_EXPR_FLAGS,                               \
-        &flags_specified_
+        &flags_specified_,                                              \
+        "options",                                                      \
+        GRN_PROC_OPTION_VALUE_RAW,                                      \
+        &query_options_ptr
       if (selector_data_) {
         grn_selector_data_parse_options(ctx_,
                                         selector_data_,
@@ -205,6 +210,9 @@ namespace {
                          (int)GRN_TEXT_LEN(*inspected),
                          GRN_TEXT_VALUE(*inspected));
         return false;
+      }
+      if (query_options_ptr) {
+        query_options_ = GRN_PTR_VALUE(query_options_ptr);
       }
       return true;
     }
@@ -280,6 +288,7 @@ namespace {
 
     grn_obj *match_columns_string_;
     grn_obj *query_expander_name_;
+    grn_obj *query_options_;
     grn_operator default_mode_;
     grn_operator default_operator_;
     grn_expr_flags flags_;
@@ -423,6 +432,12 @@ namespace {
                      default_mode_,
                      default_operator_,
                      flags_);
+      if (ctx_->rc != GRN_SUCCESS) {
+        return false;
+      }
+      if (query_options_) {
+        grn_expr_set_query_options(ctx_, condition_, query_options_);
+      }
       return ctx_->rc == GRN_SUCCESS;
     }
 
@@ -771,6 +786,9 @@ namespace {
       if (ctx->rc != GRN_SUCCESS) {
         grn_obj_close(ctx, condition);
         return nullptr;
+      }
+      if (query_options_) {
+        grn_expr_set_query_options(ctx_, condition, query_options_);
       }
       return condition;
     }

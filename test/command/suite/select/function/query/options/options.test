@@ -1,0 +1,30 @@
+plugin_register token_filters/stop_word
+
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto \
+  --token_filters TokenFilterStopWord
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+column_create Terms is_stop_word COLUMN_SCALAR Bool
+
+load --table Terms
+[
+{"_key": "and", "is_stop_word": true}
+]
+
+load --table Memos
+[
+{"content": "Hello"},
+{"content": "Hello and Good-bye"},
+{"content": "Good-bye"}
+]
+
+select Memos \
+  --filter 'query("content", \
+                  "Hello and", \
+                  {"options": {"TokenFilterStopWord.enabled": false}})' \
+  --match_escalation_threshold -1 \
+  --sort_keys -_score
