@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2016-2018 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2016-2018  Brazil
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -53,6 +53,12 @@ extern "C" {
   (cstring ?                                                            \
    (string.length == strlen(cstring) &&                                 \
     grn_strncasecmp(string.value, cstring, string.length) == 0) :       \
+   (string.length == 0))
+
+#define GRN_RAW_STRING_START_WITH_CSTRING(string, cstring)              \
+  (cstring ?                                                            \
+   (string.length >= strlen(cstring) &&                                 \
+    memcmp(string.value, cstring, strlen(cstring)) == 0) :              \
    (string.length == 0))
 
 typedef struct {
