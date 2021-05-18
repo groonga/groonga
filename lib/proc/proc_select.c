@@ -69,11 +69,13 @@ typedef struct {
   grn_raw_string query;
   grn_raw_string query_expander;
   grn_raw_string query_flags;
+  grn_raw_string query_options;
   grn_raw_string filter;
   grn_raw_string post_filter;
   struct {
     grn_obj *match_columns;
     grn_obj *expression;
+    grn_obj *query_options_expression;
   } condition;
   struct {
     grn_obj *expression;
@@ -1234,10 +1236,12 @@ grn_filter_data_init(grn_ctx *ctx, grn_filter_data *data)
   GRN_RAW_STRING_INIT(data->query);
   GRN_RAW_STRING_INIT(data->query_expander);
   GRN_RAW_STRING_INIT(data->query_flags);
+  GRN_RAW_STRING_INIT(data->query_options);
   GRN_RAW_STRING_INIT(data->filter);
   GRN_RAW_STRING_INIT(data->post_filter);
   data->condition.match_columns = NULL;
   data->condition.expression = NULL;
+  data->condition.query_options_expression = NULL;
   data->post_condition.expression = NULL;
   data->filtered = NULL;
   data->post_filtered = NULL;
@@ -1261,6 +1265,9 @@ grn_filter_data_fin(grn_ctx *ctx, grn_filter_data *data)
   if (data->condition.match_columns) {
     grn_obj_close(ctx, data->condition.match_columns);
   }
+  if (data->condition.query_options_expression) {
+    grn_obj_close(ctx, data->condition.query_options_expression);
+  }
 }
 
 static void
@@ -1270,6 +1277,7 @@ grn_filter_data_fill(grn_ctx *ctx,
                      grn_obj *query,
                      grn_obj *query_expander,
                      grn_obj *query_flags,
+                     grn_obj *query_options,
                      grn_obj *filter,
                      grn_obj *post_filter)
 {
@@ -1277,6 +1285,7 @@ grn_filter_data_fill(grn_ctx *ctx,
   GRN_RAW_STRING_FILL(data->query, query);
   GRN_RAW_STRING_FILL(data->query_expander, query_expander);
   GRN_RAW_STRING_FILL(data->query_flags, query_flags);
+  GRN_RAW_STRING_FILL(data->query_options, query_options);
   GRN_RAW_STRING_FILL(data->filter, filter);
   GRN_RAW_STRING_FILL(data->post_filter, post_filter);
 }
@@ -1465,6 +1474,42 @@ grn_filter_data_execute(grn_ctx *ctx,
     if (ctx->rc != GRN_SUCCESS) {
       return false;
     }
+  }
+
+  if (filter_data->query_options.length > 0) {
+    GRN_EXPR_CREATE_FOR_QUERY(ctx,
+                              table,
+                              filter_data->condition.query_options_expression,
+                              variable);
+    if (!filter_data->condition.expression) {
+      grn_rc rc = ctx->rc;
+      if (rc == GRN_SUCCESS) {
+        rc = GRN_NO_MEMORY_AVAILABLE;
+      }
+      GRN_PLUGIN_ERROR(ctx,
+                       rc,
+                       "%s[query-options] "
+                       "failed to create expression for query options: %s",
+                       log_tag_prefix,
+                       ctx->errbuf);
+      return false;
+    }
+    grn_expr_parse(ctx,
+                   filter_data->condition.query_options_expression,
+                   filter_data->query_options.value,
+                   filter_data->query_options.length,
+                   NULL,
+                   GRN_OP_MATCH,
+                   GRN_OP_AND,
+                   GRN_EXPR_SYNTAX_OPTIONS);
+    if (ctx->rc != GRN_SUCCESS) {
+      return false;
+    }
+    grn_expr *query_options_expression =
+      (grn_expr *)(filter_data->condition.query_options_expression);
+    grn_expr_set_query_options(ctx,
+                               filter_data->condition.expression,
+                               query_options_expression->codes[0].value);
   }
 
   grn_table_select(ctx,
@@ -1726,6 +1771,7 @@ grn_slice_data_fill(grn_ctx *ctx,
                     grn_obj *query,
                     grn_obj *query_expander,
                     grn_obj *query_flags,
+                    grn_obj *query_options,
                     grn_obj *filter,
                     grn_obj *post_filter,
                     grn_obj *sort_keys,
@@ -1739,6 +1785,7 @@ grn_slice_data_fill(grn_ctx *ctx,
                        query,
                        query_expander,
                        query_flags,
+                       query_options,
                        filter,
                        post_filter);
 
@@ -4146,6 +4193,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     data->match_escalation_threshold.length + 1 +
     data->filter.query_expander.length + 1 +
     data->filter.query_flags.length + 1 +
+    data->filter.query_options.length + 1 +
     data->filter.post_filter.length + 1 +
     data->adjuster.length + 1 +
     data->match_escalation.length + 1 +
@@ -4163,6 +4211,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         slice->filter.query.length + 1 +
         slice->filter.query_expander.length + 1 +
         slice->filter.query_flags.length + 1 +
+        slice->filter.query_options.length + 1 +
         slice->filter.filter.length + 1 +
         slice->filter.post_filter.length + 1 +
         slice->sort_keys.length + 1 +
@@ -4846,6 +4895,7 @@ grn_select_data_fill_slices(grn_ctx *ctx,
     grn_obj *query;
     grn_obj *query_expander;
     grn_obj *query_flags;
+    grn_obj *query_options;
     grn_obj *filter;
     grn_obj *post_filter;
     grn_obj *sort_keys;
@@ -4873,6 +4923,7 @@ grn_select_data_fill_slices(grn_ctx *ctx,
     GET_VAR(query);
     GET_VAR(query_expander);
     GET_VAR(query_flags);
+    GET_VAR(query_options);
     GET_VAR(filter);
     GET_VAR(post_filter);
     GET_VAR(sort_keys);
@@ -4888,6 +4939,7 @@ grn_select_data_fill_slices(grn_ctx *ctx,
                         query,
                         query_expander,
                         query_flags,
+                        query_options,
                         filter,
                         post_filter,
                         sort_keys,
@@ -4962,6 +5014,7 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                          GET_VAR("query"),
                          query_expander,
                          GET_VAR("query_flags"),
+                         GET_VAR("query_options"),
                          GET_VAR("filter"),
                          GET_VAR("post_filter"));
   }
@@ -5083,7 +5136,7 @@ exit :
   return NULL;
 }
 
-#define N_VARS 32
+#define N_VARS 33
 #define DEFINE_VARS grn_expr_var vars[N_VARS]
 
 static void
@@ -5124,6 +5177,7 @@ init_vars(grn_ctx *ctx, grn_expr_var *vars)
   grn_plugin_expr_var_init(ctx, &(vars[29]), "load_columns", -1);
   grn_plugin_expr_var_init(ctx, &(vars[30]), "load_values", -1);
   grn_plugin_expr_var_init(ctx, &(vars[31]), "post_filter", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[32]), "query_options", -1);
 }
 
 void
