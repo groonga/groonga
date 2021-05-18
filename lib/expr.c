@@ -5350,7 +5350,8 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     if (flags & (GRN_EXPR_SYNTAX_SCRIPT |
                  GRN_EXPR_SYNTAX_OUTPUT_COLUMNS |
                  GRN_EXPR_SYNTAX_ADJUSTER |
-                 GRN_EXPR_SYNTAX_SORT_KEYS)) {
+                 GRN_EXPR_SYNTAX_SORT_KEYS |
+                 GRN_EXPR_SYNTAX_OPTIONS)) {
       efs_info *q = &efsi;
       if (flags & GRN_EXPR_SYNTAX_OUTPUT_COLUMNS) {
         PARSE(GRN_EXPR_TOKEN_START_OUTPUT_COLUMNS);
@@ -5358,6 +5359,8 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
         PARSE(GRN_EXPR_TOKEN_START_ADJUSTER);
       } else if (flags & GRN_EXPR_SYNTAX_SORT_KEYS) {
         PARSE(GRN_EXPR_TOKEN_START_SORT_KEYS);
+      } else if (flags & GRN_EXPR_SYNTAX_OPTIONS) {
+        PARSE(GRN_EXPR_TOKEN_START_OPTIONS);
       }
       parse_script(ctx, &efsi);
     } else {

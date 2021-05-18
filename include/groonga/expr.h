@@ -32,6 +32,7 @@ typedef uint32_t grn_expr_flags;
 #define GRN_EXPR_SYNTAX_SORT_KEYS      (0x100)
 /* Deprecated since Groonga 11.0.2. Use GRN_EXPR_SYNTAX_SORT_KEYS instead. */
 #define GRN_EXPR_SYNTAX_GROUP_KEYS     GRN_EXPR_SYNTAX_SORT_KEYS
+#define GRN_EXPR_SYNTAX_OPTIONS        (0x200)
 #define GRN_EXPR_ALLOW_PRAGMA          (0x02)
 #define GRN_EXPR_ALLOW_COLUMN          (0x04)
 #define GRN_EXPR_ALLOW_UPDATE          (0x08)

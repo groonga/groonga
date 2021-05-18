@@ -93,6 +93,7 @@ input ::= expression.
 input ::= START_OUTPUT_COLUMNS output_columns.
 input ::= START_ADJUSTER adjuster.
 input ::= START_SORT_KEYS sort_keys.
+input ::= START_OPTIONS object_literal.
 
 query ::= query_element.
 query ::= query query_element. {
