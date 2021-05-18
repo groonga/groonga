@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -244,6 +244,17 @@ grn_token_cursor_set_index_column(grn_ctx *ctx,
   GRN_API_ENTER;
   grn_tokenizer_query *query = &(token_cursor->tokenizer.query);
   grn_rc rc = grn_tokenizer_query_set_index_column(ctx, query, column);
+  GRN_API_RETURN(rc);
+}
+
+grn_rc
+grn_token_cursor_set_query_options(grn_ctx *ctx,
+                                   grn_token_cursor *token_cursor,
+                                   grn_obj *query_options)
+{
+  GRN_API_ENTER;
+  grn_tokenizer_query *query = &(token_cursor->tokenizer.query);
+  grn_rc rc = grn_tokenizer_query_set_options(ctx, query, query_options);
   GRN_API_RETURN(rc);
 }
 
