@@ -164,7 +164,7 @@ stop_word_init(grn_ctx *ctx, grn_tokenizer_query *query)
                                     query_options,
                                     "TokenFilterStopWord.",
                                     "[token-filter][stop-word]",
-                                    "enabled",
+                                    "enable",
                                     GRN_PROC_OPTION_VALUE_BOOL,
                                     &(token_filter->is_enabled),
                                     NULL);
