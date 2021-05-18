@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -63,6 +63,22 @@ typedef enum {
   GRN_PROC_OPTION_VALUE_TOKENIZE_MODE,
   GRN_PROC_OPTION_VALUE_TOKEN_CURSOR_FLAGS,
 } grn_proc_option_value_type;
+
+GRN_API grn_rc
+grn_proc_prefixed_options_parse(grn_ctx *ctx,
+                                grn_obj *options,
+                                const char *prefix,
+                                const char *tag,
+                                const char *name,
+                                ...);
+
+GRN_API grn_rc
+grn_proc_prefixed_options_parsev(grn_ctx *ctx,
+                                 grn_obj *options,
+                                 const char *prefix,
+                                 const char *tag,
+                                 const char *name,
+                                 va_list args);
 
 GRN_API grn_rc
 grn_proc_options_parse(grn_ctx *ctx,

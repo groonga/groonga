@@ -150,27 +150,34 @@ exit :
 #endif /* stat */
 
 grn_rc
-grn_proc_options_parse(grn_ctx *ctx,
-                       grn_obj *options,
-                       const char *tag,
-                       const char *name,
-                       ...)
+grn_proc_prefixed_options_parse(grn_ctx *ctx,
+                                grn_obj *options,
+                                const char *prefix,
+                                const char *tag,
+                                const char *name,
+                                ...)
 {
   va_list args;
 
   va_start(args, name);
-  grn_rc rc = grn_proc_options_parsev(ctx, options, tag, name, args);
+  grn_rc rc = grn_proc_prefixed_options_parsev(ctx,
+                                               options,
+                                               prefix,
+                                               tag,
+                                               name,
+                                               args);
   va_end(args);
 
   return rc;
 }
 
 grn_rc
-grn_proc_options_parsev(grn_ctx *ctx,
-                        grn_obj *options,
-                        const char *tag,
-                        const char *name,
-                        va_list args)
+grn_proc_prefixed_options_parsev(grn_ctx *ctx,
+                                 grn_obj *options,
+                                 const char *prefix,
+                                 const char *tag,
+                                 const char *name,
+                                 va_list args)
 {
   GRN_API_ENTER;
 
@@ -179,6 +186,9 @@ grn_proc_options_parsev(grn_ctx *ctx,
   grn_text_printf(ctx, &func_tag_buffer, "%s[options][parse]", tag);
   GRN_TEXT_PUTC(ctx, &func_tag_buffer, '\0');
   const char *func_tag = GRN_TEXT_VALUE(&func_tag_buffer);
+
+  grn_obj full_name;
+  GRN_TEXT_INIT(&full_name, 0);
 
   grn_obj used_ids;
   GRN_RECORD_INIT(&used_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
@@ -202,9 +212,13 @@ grn_proc_options_parsev(grn_ctx *ctx,
          GRN_RECORD_VECTOR_SIZE(&used_ids) < n_specified_options) {
     grn_proc_option_value_type type = va_arg(args, grn_proc_option_value_type);
     void *value_raw = NULL;
+    GRN_TEXT_SETS(ctx, &full_name, prefix);
+    GRN_TEXT_PUTS(ctx, &full_name, name);
+    GRN_TEXT_PUTC(ctx, &full_name, '\0');
     grn_id id = grn_hash_get(ctx,
                              (grn_hash *)options,
-                             name, strlen(name),
+                             GRN_TEXT_VALUE(&full_name),
+                             GRN_TEXT_LEN(&full_name) - 1,
                              &value_raw);
     grn_obj *value = value_raw;
     switch (type) {
@@ -293,7 +307,11 @@ grn_proc_options_parsev(grn_ctx *ctx,
         void *user_data = va_arg(args, void *);
         if (id != GRN_ID_NIL) {
           GRN_RECORD_PUT(ctx, &used_ids, id);
-          grn_rc rc = func(ctx, name, value, func_tag, user_data);
+          grn_rc rc = func(ctx,
+                           GRN_TEXT_VALUE(&full_name),
+                           value,
+                           func_tag,
+                           user_data);
           if (rc != GRN_SUCCESS) {
             if (ctx->rc == GRN_SUCCESS) {
               grn_obj inspected;
@@ -348,7 +366,7 @@ grn_proc_options_parsev(grn_ctx *ctx,
                        GRN_INVALID_ARGUMENT,
                        "%s[%s] invalid option value type: %d",
                        func_tag,
-                       name,
+                       GRN_TEXT_VALUE(&full_name),
                        type);
       goto exit;
     }
@@ -378,30 +396,70 @@ grn_proc_options_parsev(grn_ctx *ctx,
 
       void *key;
       int key_size = grn_hash_cursor_get_key(ctx, cursor, &key);
+      grn_raw_string key_string;
+      key_string.value = key;
+      key_string.length = key_size;
+      if (!GRN_RAW_STRING_START_WITH_CSTRING(key_string, prefix)) {
+        continue;
+      }
       if (GRN_TEXT_LEN(&message) > 0) {
         GRN_TEXT_PUTS(ctx, &message, ", ");
       }
       grn_text_printf(ctx, &message, "<%.*s>", key_size, (char *)key);
     } GRN_HASH_EACH_END(ctx, cursor);
-    grn_obj inspected;
-    GRN_TEXT_INIT(&inspected, 0);
-    grn_inspect(ctx, &inspected, options);
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "%s unknown option names: %.*s: %.*s",
-                     func_tag,
-                     (int)GRN_TEXT_LEN(&message),
-                     GRN_TEXT_VALUE(&message),
-                     (int)GRN_TEXT_LEN(&inspected),
-                     GRN_TEXT_VALUE(&inspected));
+    if (GRN_TEXT_LEN(&message) > 0) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, options);
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "%s unknown option names: %.*s: %.*s",
+                       func_tag,
+                       (int)GRN_TEXT_LEN(&message),
+                       GRN_TEXT_VALUE(&message),
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+    }
     GRN_OBJ_FIN(ctx, &message);
-    GRN_OBJ_FIN(ctx, &inspected);
   }
 
 exit :
   GRN_OBJ_FIN(ctx, &used_ids);
+  GRN_OBJ_FIN(ctx, &full_name);
   GRN_OBJ_FIN(ctx, &func_tag_buffer);
   GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_proc_options_parse(grn_ctx *ctx,
+                       grn_obj *options,
+                       const char *tag,
+                       const char *name,
+                       ...)
+{
+  va_list args;
+
+  va_start(args, name);
+  grn_rc rc = grn_proc_options_parsev(ctx, options, tag, name, args);
+  va_end(args);
+
+  return rc;
+}
+
+grn_rc
+grn_proc_options_parsev(grn_ctx *ctx,
+                        grn_obj *options,
+                        const char *tag,
+                        const char *name,
+                        va_list args)
+{
+  return grn_proc_prefixed_options_parsev(ctx,
+                                          options,
+                                          "",
+                                          tag,
+                                          name,
+                                          args);
 }
 
 /**** procs ****/
