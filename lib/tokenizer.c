@@ -176,6 +176,8 @@ grn_tokenizer_query_init(grn_ctx *ctx, grn_tokenizer_query *query)
   query->need_normalize = GRN_TRUE;
   query->need_delimiter_check = GRN_TRUE;
 
+  query->options = NULL;
+
   return ctx->rc;
 }
 
@@ -501,6 +503,24 @@ grn_tokenizer_query_set_index_column(grn_ctx *ctx,
 {
   GRN_API_ENTER;
   query->index_column = column;
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_obj *
+grn_tokenizer_query_get_options(grn_ctx *ctx,
+                                grn_tokenizer_query *query)
+{
+  GRN_API_ENTER;
+  GRN_API_RETURN(query->options);
+}
+
+grn_rc
+grn_tokenizer_query_set_options(grn_ctx *ctx,
+                                grn_tokenizer_query *query,
+                                grn_obj *options)
+{
+  GRN_API_ENTER;
+  query->options = options;
   GRN_API_RETURN(ctx->rc);
 }
 

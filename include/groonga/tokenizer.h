@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2012-2018  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -157,6 +157,9 @@ grn_tokenizer_query_get_source_id(grn_ctx *ctx,
 GRN_PLUGIN_EXPORT grn_obj *
 grn_tokenizer_query_get_index_column(grn_ctx *ctx,
                                      grn_tokenizer_query *query);
+GRN_PLUGIN_EXPORT grn_obj *
+grn_tokenizer_query_get_options(grn_ctx *ctx,
+                                grn_tokenizer_query *query);
 
 /*
   grn_tokenizer_token is needed to return tokens. A grn_tokenizer_token object
