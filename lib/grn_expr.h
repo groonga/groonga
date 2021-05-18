@@ -81,6 +81,14 @@ typedef grn_bool (*grn_scan_info_each_arg_callback)(grn_ctx *ctx, grn_obj *obj, 
 
 void grn_expr_init_from_env(void);
 
+grn_obj *
+grn_expr_get_query_options(grn_ctx *ctx,
+                           grn_obj *expr);
+grn_rc
+grn_expr_set_query_options(grn_ctx *ctx,
+                           grn_obj *expr,
+                           grn_obj *query_options);
+
 scan_info **grn_scan_info_build(grn_ctx *ctx, grn_obj *expr, int *n,
                                 grn_operator op, grn_bool record_exist);
 

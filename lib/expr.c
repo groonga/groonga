@@ -814,6 +814,39 @@ grn_expr_get_var_by_offset(grn_ctx *ctx, grn_obj *expr, unsigned int offset)
   return res;
 }
 
+#define GRN_EXPR_VAR_QUERY_OPTIONS_NAME "$query_options"
+
+grn_obj *
+grn_expr_get_query_options(grn_ctx *ctx, grn_obj *expr)
+{
+  grn_obj *var = grn_expr_get_var(ctx,
+                                  expr,
+                                  GRN_EXPR_VAR_QUERY_OPTIONS_NAME,
+                                  strlen(GRN_EXPR_VAR_QUERY_OPTIONS_NAME));
+  if (!var) {
+    return NULL;
+  }
+  return GRN_PTR_VALUE(var);
+}
+
+grn_rc
+grn_expr_set_query_options(grn_ctx *ctx, grn_obj *expr, grn_obj *query_options)
+{
+  grn_obj *var = grn_expr_get_var(ctx,
+                                  expr,
+                                  GRN_EXPR_VAR_QUERY_OPTIONS_NAME,
+                                  strlen(GRN_EXPR_VAR_QUERY_OPTIONS_NAME));
+  if (!var) {
+    var = grn_expr_add_var(ctx,
+                           expr,
+                           GRN_EXPR_VAR_QUERY_OPTIONS_NAME,
+                           strlen(GRN_EXPR_VAR_QUERY_OPTIONS_NAME));
+    GRN_PTR_INIT(var, 0, GRN_DB_OBJECT);
+  }
+  GRN_PTR_SET(ctx, var, query_options);
+  return ctx->rc;
+}
+
 #define CONSTP(obj) ((obj) && ((obj)->header.impl_flags & GRN_OBJ_EXPRCONST))
 
 #define PUSH_CODE(e,o,v,n,c) do {\
