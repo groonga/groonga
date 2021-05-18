@@ -8582,6 +8582,7 @@ typedef struct {
   grn_id current_min;
   bool set_min_enable_for_and_query;
   grn_fuzzy_search_optarg *fuzzy_search_optarg;
+  grn_obj *query_options;
   bool only_skip_token;
   uint32_t phrase_id_max;
   token_info **token_infos;
@@ -8597,6 +8598,33 @@ typedef struct {
   grn_id next_rid;
   uint32_t next_sid;
 } grn_ii_select_data;
+
+static grn_inline grn_token_cursor *
+grn_ii_select_data_open_token_cursor(grn_ctx *ctx,
+                                     grn_ii_select_data *data,
+                                     const char *text,
+                                     size_t text_length,
+                                     grn_tokenize_mode mode)
+{
+  uint32_t token_flags = GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER;
+  grn_token_cursor *token_cursor = grn_token_cursor_open(ctx,
+                                                         data->lexicon,
+                                                         text,
+                                                         text_length,
+                                                         mode,
+                                                         token_flags);
+  if (!token_cursor) {
+    return NULL;
+  }
+  if (data->query_options) {
+    grn_token_cursor_set_query_options(ctx, token_cursor, data->query_options);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_token_cursor_close(ctx, token_cursor);
+      return NULL;
+    }
+  }
+  return token_cursor;
+}
 
 grn_inline static void
 token_info_expand_both(grn_ctx *ctx, grn_ii_select_data *data,
@@ -9255,14 +9283,13 @@ token_info_build_phrase(grn_ctx *ctx,
   grn_rc rc = GRN_END_OF_DATA;
   const char *key;
   uint32_t size;
-  unsigned int token_flags = GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER;
-  grn_token_cursor *token_cursor = grn_token_cursor_open(ctx,
-                                                         data->lexicon,
-                                                         phrase,
-                                                         phrase_len,
-                                                         GRN_TOKEN_GET,
-                                                         token_flags);
-  if (!token_cursor) { return GRN_NO_MEMORY_AVAILABLE; }
+  grn_token_cursor *token_cursor =
+    grn_ii_select_data_open_token_cursor(ctx,
+                                         data,
+                                         phrase,
+                                         phrase_len,
+                                         GRN_TOKENIZE_GET);
+  if (!token_cursor) { return ctx->rc; }
   if (data->mode == GRN_OP_UNSPLIT) {
     if ((ti = token_info_open(ctx,
                               data,
@@ -9393,16 +9420,14 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_ii_select_data *data)
 {
   token_info *ti;
   grn_rc rc = GRN_END_OF_DATA;
-  unsigned int token_flags = GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER;
   grn_token_cursor *token_cursor =
-    grn_token_cursor_open(ctx,
-                          data->lexicon,
-                          data->query,
-                          data->query_len,
-                          GRN_TOKENIZE_ONLY,
-                          token_flags);
+    grn_ii_select_data_open_token_cursor(ctx,
+                                         data,
+                                         data->query,
+                                         data->query_len,
+                                         GRN_TOKENIZE_ONLY);
   data->only_skip_token = false;
-  if (!token_cursor) { return GRN_NO_MEMORY_AVAILABLE; }
+  if (!token_cursor) { return ctx->rc; }
   grn_token_cursor_next(ctx, token_cursor);
   switch (token_cursor->status) {
   case GRN_TOKEN_CURSOR_DONE_SKIP :
@@ -10191,6 +10216,7 @@ grn_ii_select_data_init(grn_ctx *ctx,
   }
 
   data->fuzzy_search_optarg = &(optarg->fuzzy);
+  data->query_options = optarg->query_options;
 
   data->token_infos = NULL;
   data->n_token_infos = 0;
@@ -10332,7 +10358,6 @@ grn_ii_similar_search_internal(grn_ctx *ctx, grn_ii_select_data *data)
   grn_rc rc = GRN_SUCCESS;
   grn_hash *h;
   grn_token_cursor *token_cursor;
-  unsigned int token_flags = GRN_TOKEN_CURSOR_ENABLE_TOKENIZED_DELIMITER;
   if (!data->lexicon ||
       !data->query ||
       !data->query_len ||
@@ -10343,14 +10368,14 @@ grn_ii_similar_search_internal(grn_ctx *ctx, grn_ii_select_data *data)
   if (!(h = grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(int), 0))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
-  if (!(token_cursor = grn_token_cursor_open(ctx,
-                                             data->lexicon,
-                                             data->query,
-                                             data->query_len,
-                                             GRN_TOKEN_GET,
-                                             token_flags))) {
+  token_cursor = grn_ii_select_data_open_token_cursor(ctx,
+                                                      data,
+                                                      data->query,
+                                                      data->query_len,
+                                                      GRN_TOKENIZE_GET);
+  if (!token_cursor) {
     grn_hash_close(ctx, h);
-    return GRN_NO_MEMORY_AVAILABLE;
+    return ctx->rc;
   }
   if (!(max_size = data->optarg->max_size)) { max_size = 1048576; }
   while (token_cursor->status != GRN_TOKEN_CURSOR_DONE &&
@@ -11571,7 +11596,6 @@ grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
   size_t record_key_size;
   grn_hash *n_occurs;
   grn_token_cursor *token_cursor;
-  unsigned int token_flags = 0;
   int ii_cursor_flags = 0;
 
   record_key_size = sizeof(grn_id);
@@ -11589,11 +11613,11 @@ grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
     return GRN_NO_MEMORY_AVAILABLE;
   }
 
-  token_cursor = grn_token_cursor_open(ctx,
-                                       data->lexicon,
-                                       data->query, data->query_len,
-                                       GRN_TOKEN_GET,
-                                       token_flags);
+  token_cursor = grn_ii_select_data_open_token_cursor(ctx,
+                                                      data,
+                                                      data->query,
+                                                      data->query_len,
+                                                      GRN_TOKENIZE_GET);
   if (!token_cursor) {
     grn_rc rc = ctx->rc;
     char ii_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -12258,6 +12282,7 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
   select_optarg->scorer_args_expr_offset =
     search_optarg->scorer_args_expr_offset;
   select_optarg->match_info = &(search_optarg->match_info);
+  select_optarg->query_options = search_optarg->query_options;
 }
 
 static uint32_t

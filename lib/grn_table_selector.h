@@ -49,6 +49,7 @@ struct _grn_table_selector {
   grn_operator op;
   grn_id min_id;
   bool use_sequential_scan;
+  grn_obj *query_options;
   grn_table_selector_data data;
 };
 

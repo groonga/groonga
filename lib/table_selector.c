@@ -112,6 +112,7 @@ grn_table_selector_init(grn_ctx *ctx,
   table_selector->op = op;
   table_selector->min_id = GRN_ID_NIL;
   table_selector->use_sequential_scan = false;
+  table_selector->query_options = grn_expr_get_query_options(ctx, expr);
   grn_table_selector_data data = {0};
   table_selector->data = data;
 }
@@ -1479,6 +1480,7 @@ select_index(grn_ctx *ctx,
       options->additional_last_interval = si->additional_last_interval;
       options->similarity_threshold = si->similarity_threshold;
       options->quorum_threshold = si->quorum_threshold;
+      options->query_options = table_selector->query_options;
       uint32_t section = GRN_UINT32_VALUE_AT(&(si->sections), i);
       float weight = GRN_FLOAT32_VALUE_AT(&(si->weights), i);
       if (section == 0)  {

@@ -197,6 +197,7 @@ struct _grn_select_optarg {
   grn_match_info *match_info;
   int quorum_threshold;
   int additional_last_interval;
+  grn_obj *query_options;
 };
 
 GRN_API grn_rc grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id id,
