@@ -1,7 +1,7 @@
 /* -*- c-basic-offset: 2 -*- */
 /*
-  Copyright(C) 2014 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2014  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -37,6 +37,7 @@ typedef struct {
   grn_obj *lexicon;
   grn_obj *column;
   grn_obj value;
+  bool is_enabled;
   grn_tokenizer_token token;
 } grn_stop_word_token_filter;
 
@@ -156,6 +157,24 @@ stop_word_init(grn_ctx *ctx, grn_tokenizer_query *query)
   }
 
   GRN_BOOL_INIT(&(token_filter->value), 0);
+  token_filter->is_enabled = true;
+  grn_obj *query_options = grn_tokenizer_query_get_options(ctx, query);
+  if (query_options) {
+    grn_proc_prefixed_options_parse(ctx,
+                                    query_options,
+                                    "TokenFilterStopWord.",
+                                    "[token-filter][stop-word]",
+                                    "enabled",
+                                    GRN_PROC_OPTION_VALUE_BOOL,
+                                    &(token_filter->is_enabled),
+                                    NULL);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_obj_unlink(ctx, token_filter->column);
+      GRN_OBJ_FIN(ctx, &(token_filter->value));
+      GRN_PLUGIN_FREE(ctx, token_filter);
+      return NULL;
+    }
+  }
   grn_tokenizer_token_init(ctx, &(token_filter->token));
 
   return token_filter;
@@ -172,6 +191,10 @@ stop_word_filter(grn_ctx *ctx,
   grn_obj *data;
 
   if (!token_filter) {
+    return;
+  }
+
+  if (!token_filter->is_enabled) {
     return;
   }
 
@@ -205,7 +228,7 @@ stop_word_fin(grn_ctx *ctx, void *user_data)
 
   grn_tokenizer_token_fin(ctx, &(token_filter->token));
   grn_obj_unlink(ctx, token_filter->column);
-  grn_obj_unlink(ctx, &(token_filter->value));
+  GRN_OBJ_FIN(ctx, &(token_filter->value));
   GRN_PLUGIN_FREE(ctx, token_filter);
 }
 
