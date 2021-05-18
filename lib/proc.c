@@ -366,7 +366,7 @@ grn_proc_options_parsev(grn_ctx *ctx,
     GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)options, cursor, id) {
       bool is_used_option = false;
       size_t i;
-      for (i = 0; n_used_options; i++) {
+      for (i = 0; i < n_used_options; i++) {
         if (GRN_RECORD_VALUE_AT(&used_ids, i) == id) {
           is_used_option = true;
           break;
