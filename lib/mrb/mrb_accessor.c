@@ -1,4 +1,3 @@
-/* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2013-2015 Brazil
   Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>

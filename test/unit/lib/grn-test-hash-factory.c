@@ -1,4 +1,3 @@
-/* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
   Copyright (C) 2008-2019  Sutou Kouhei <kou@clear-code.com>
 
@@ -432,4 +431,3 @@ grn_test_hash_factory_add_cursor_flags(GrnTestHashFactory *factory,
 {
   GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory)->cursor_flags |= flags;
 }
-

@@ -1,4 +1,3 @@
-/* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
   Copyright(C) 2009  Brazil
   Copyright(C) 2011-2014  Kouhei Sutou <kou@clear-code.com>
@@ -125,4 +124,3 @@ test_printf_outplace_size(void)
                           GRN_TEXT_VALUE(&buffer),
                           GRN_BULK_VSIZE(&buffer));
 }
-

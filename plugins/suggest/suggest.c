@@ -1,4 +1,3 @@
-/* -*- c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
   Copyright(C) 2010-2014  Brazil
   Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
