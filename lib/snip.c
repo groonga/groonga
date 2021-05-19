@@ -1,4 +1,3 @@
-/* -*- c-basic-offset: 2 -*- */
 /* Copyright(C) 2009-2014 Brazil
 
   This library is free software; you can redistribute it and/or

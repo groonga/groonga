@@ -1,4 +1,3 @@
-/* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
   Copyright (C) 2008-2012  Kouhei Sutou <kou@clear-code.com>
 

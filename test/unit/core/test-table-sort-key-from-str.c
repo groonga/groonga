@@ -1,4 +1,3 @@
-/* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
   Copyright (C) 2009-2010  Nobuyoshi Nakada <nakada@clear-code.com>
   Copyright (C) 2021  Sutou Kouhei <nakada@clear-code.com>

@@ -1,4 +1,3 @@
-/* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
   Copyright (C) 2011  Kouhei Sutou <kou@clear-code.com>
 
@@ -85,5 +84,3 @@ cut_teardown(void)
 
   remove_tmp_directory();
 }
-
-

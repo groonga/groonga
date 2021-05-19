@@ -1,4 +1,3 @@
-/* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 

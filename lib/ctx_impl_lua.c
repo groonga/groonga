@@ -1,4 +1,3 @@
-/* -*- c-basic-offset: 2 -*- */
 /*
   Copyright(C) 2019 Yasuhiro Horimoto <horimoto@clear-code.com>
 

@@ -1,4 +1,3 @@
-/* -*- c-basic-offset: 2; coding: utf-8 -*- */
 /*
   Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
 
@@ -60,5 +59,3 @@ void            bench_reporter_register  (BenchReporter     *reporter,
 void            bench_reporter_run       (BenchReporter     *reporter);
 
 #endif /* __BENCH_REPORTER_H__ */
-
-
