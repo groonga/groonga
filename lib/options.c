@@ -329,6 +329,7 @@ grn_options_get(grn_ctx *ctx,
   }
 
   if (raw_value == revision) {
+    grn_ja_unref(ctx, &iw);
     return GRN_OPTION_REVISION_UNCHANGED;
   }
 
