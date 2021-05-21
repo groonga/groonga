@@ -1589,6 +1589,13 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/snippet_html/usage_basic.log \
 	source/example/reference/functions/snippet_html/usage_setup.log \
 	source/example/reference/functions/snippet_html/usage_string_literal.log \
+	source/example/reference/functions/string_slice/usage_number.log \
+	source/example/reference/functions/string_slice/usage_regexp_default.log \
+	source/example/reference/functions/string_slice/usage_regexp_name.log \
+	source/example/reference/functions/string_slice/usage_regexp_number.log \
+	source/example/reference/functions/string_slice/usage_setup_data.log \
+	source/example/reference/functions/string_slice/usage_setup_schema.log \
+	source/example/reference/functions/string_slice/usage_string_literal.log \
 	source/example/reference/functions/sub_filter/usage_setup_data.log \
 	source/example/reference/functions/sub_filter/usage_setup_schema.log \
 	source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
@@ -2126,6 +2133,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/rand.rst \
 	source/reference/functions/snippet_html.rst \
 	source/reference/functions/string_length.rst \
+	source/reference/functions/string_slice.rst \
 	source/reference/functions/string_substring.rst \
 	source/reference/functions/sub_filter.rst \
 	source/reference/functions/time_classify_day.rst \
@@ -2367,7 +2375,7 @@ html_files_relative_from_locale_dir = \
 	html/_static/plus.png \
 	html/_static/pygments.css \
 	html/_static/searchtools.js \
-	html/_static/underscore-1.12.0.js \
+	html/_static/underscore-1.13.1.js \
 	html/_static/underscore.js \
 	html/characteristic.html \
 	html/client.html \
@@ -2555,6 +2563,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/rand.html \
 	html/reference/functions/snippet_html.html \
 	html/reference/functions/string_length.html \
+	html/reference/functions/string_slice.html \
 	html/reference/functions/string_substring.html \
 	html/reference/functions/sub_filter.html \
 	html/reference/functions/time_classify_day.html \
