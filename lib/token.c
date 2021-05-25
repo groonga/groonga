@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2012-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -119,6 +119,38 @@ grn_token_set_status(grn_ctx *ctx,
     goto exit;
   }
   token->status = status;
+exit:
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_token_add_status(grn_ctx *ctx,
+                     grn_token *token,
+                     grn_token_status status)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][status][add] token must not be NULL");
+    goto exit;
+  }
+  token->status |= status;
+exit:
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_token_remove_status(grn_ctx *ctx,
+                        grn_token *token,
+                        grn_token_status status)
+{
+  GRN_API_ENTER;
+  if (!token) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "[token][status][remove] token must not be NULL");
+    goto exit;
+  }
+  token->status &= ~status;
 exit:
   GRN_API_RETURN(ctx->rc);
 }
