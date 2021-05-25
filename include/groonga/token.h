@@ -115,6 +115,13 @@ typedef uint32_t grn_token_status;
  * @since 4.0.8
  */
 #define GRN_TOKEN_FORCE_PREFIX       (0x01L<<6)
+/*
+ * GRN_TOKEN_KEEP_ORIGINAL means that the original token of the token is
+ * also used. This is for token filter.
+ *
+ * @since 11.0.3
+ */
+#define GRN_TOKEN_KEEP_ORIGINAL      (0x01L<<7)
 
 typedef struct _grn_token grn_token;
 

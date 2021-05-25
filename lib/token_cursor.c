@@ -101,6 +101,7 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   grn_tokenizer_query_set_mode(ctx, &(token_cursor->tokenizer.query), mode);
   grn_token_init(ctx, &(token_cursor->tokenizer.current_token));
   grn_token_init(ctx, &(token_cursor->tokenizer.next_token));
+  grn_token_init(ctx, &(token_cursor->tokenizer.original_token));
   token_cursor->token_filter.objects = token_filters;
   token_cursor->token_filter.data = NULL;
   GRN_VOID_INIT(&(token_cursor->original_buffer));
@@ -110,6 +111,8 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
   token_cursor->curr_size = 0;
   token_cursor->pos = -1;
   token_cursor->status = GRN_TOKEN_CURSOR_DOING;
+  token_cursor->pending.status = GRN_TOKEN_CURSOR_DOING;
+  token_cursor->pending.token = NULL;
   GRN_API_RETURN(token_cursor);
 }
 
@@ -265,6 +268,7 @@ grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
   unsigned int i, n_token_filters;
   grn_token *current_token = &(token_cursor->tokenizer.current_token);
   grn_token *next_token = &(token_cursor->tokenizer.next_token);
+  grn_token *original_token = &(token_cursor->tokenizer.original_token);
   grn_tokenizer_query *query = &(token_cursor->tokenizer.query);
 
   if (token_filters) {
@@ -274,6 +278,7 @@ grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
   }
 
   if (n_token_filters > 0) {
+    grn_token_copy(ctx, original_token, current_token);
     grn_token_copy(ctx, next_token, current_token);
     for (i = 0; i < n_token_filters; i++) {
       grn_obj *token_filter_object = GRN_PTR_VALUE_AT(token_filters, i);
@@ -307,6 +312,28 @@ grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
   return grn_token_get_status(ctx, current_token);
 }
 
+static bool
+grn_token_cursor_next_need_keep_original(grn_ctx *ctx,
+                                         grn_token_cursor *token_cursor)
+{
+  grn_token *current_token = &(token_cursor->tokenizer.current_token);
+  grn_token *original_token = &(token_cursor->tokenizer.original_token);
+
+  if (!(grn_token_get_status(ctx, current_token) & GRN_TOKEN_KEEP_ORIGINAL)) {
+    return false;
+  }
+
+  grn_raw_string current_data;
+  current_data.value = grn_token_get_data_raw(ctx,
+                                              current_token,
+                                              &(current_data.length));
+  grn_raw_string original_data;
+  original_data.value = grn_token_get_data_raw(ctx,
+                                               original_token,
+                                               &(original_data.length));
+  return !GRN_RAW_STRING_EQUAL(current_data, original_data);
+}
+
 grn_id
 grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
 {
@@ -325,7 +352,18 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
   grn_token *current_token = &(token_cursor->tokenizer.current_token);
   void *user_data = token_cursor->tokenizer.user_data;
   while (token_cursor->status != GRN_TOKEN_CURSOR_DONE) {
-    if (tokenizer) {
+    if (token_cursor->pending.token) {
+      token_cursor->status = token_cursor->pending.status;
+      grn_token_copy(ctx, current_token, token_cursor->pending.token);
+      grn_token_remove_status(ctx,
+                              current_token,
+                              GRN_TOKEN_KEEP_ORIGINAL);
+      size_t size;
+      token_cursor->curr = grn_token_get_data_raw(ctx, current_token, &size);
+      token_cursor->curr_size = size;
+      token_cursor->pending.token = NULL;
+      token_cursor->pos--;
+    } else if (tokenizer) {
       grn_proc *tokenizer_proc = (grn_proc *)tokenizer;
       grn_token_reset(ctx, current_token);
       if (tokenizer_proc->callbacks.tokenizer.next) {
@@ -498,6 +536,11 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         tid == GRN_ID_NIL && token_cursor->status != GRN_TOKEN_CURSOR_DONE) {
       token_cursor->status = GRN_TOKEN_CURSOR_NOT_FOUND;
     }
+    if (grn_token_cursor_next_need_keep_original(ctx, token_cursor)) {
+      token_cursor->pending.status = token_cursor->status;
+      token_cursor->status = GRN_TOKEN_CURSOR_DOING;
+      token_cursor->pending.token = &(token_cursor->tokenizer.original_token);
+    }
     token_cursor->pos++;
     grn_token_set_position(ctx, current_token, token_cursor->pos);
     break;
@@ -574,6 +617,7 @@ grn_token_cursor_close(grn_ctx *ctx, grn_token_cursor *token_cursor)
   }
   grn_token_fin(ctx, &(token_cursor->tokenizer.current_token));
   grn_token_fin(ctx, &(token_cursor->tokenizer.next_token));
+  grn_token_fin(ctx, &(token_cursor->tokenizer.original_token));
   grn_tokenizer_query_fin(ctx, &(token_cursor->tokenizer.query));
   grn_token_cursor_close_token_filters(ctx, token_cursor);
   GRN_OBJ_FIN(ctx, &(token_cursor->original_buffer));
