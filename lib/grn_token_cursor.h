@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -48,12 +48,16 @@ struct _grn_token_cursor {
     void *user_data;
     grn_token current_token;
     grn_token next_token;
+    grn_token original_token;
   } tokenizer;
   struct {
     grn_obj *objects;
     void **data;
   } token_filter;
-  uint32_t variant;
+  struct {
+    grn_token_cursor_status status;
+    grn_token *token;
+  } pending;
 };
 
 #ifdef __cplusplus
