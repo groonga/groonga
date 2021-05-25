@@ -38,6 +38,7 @@ typedef struct {
 typedef struct {
   grn_stem_token_filter_options *options;
   grn_tokenize_mode mode;
+  bool is_enabled;
   struct sb_stemmer *stemmer;
   grn_tokenizer_token token;
   grn_obj buffer;
@@ -136,6 +137,22 @@ stem_init(grn_ctx *ctx, grn_tokenizer_query *query)
   }
   token_filter->options = options;
   token_filter->mode = grn_tokenizer_query_get_mode(ctx, query);
+  token_filter->is_enabled = true;
+  grn_obj *query_options = grn_tokenizer_query_get_options(ctx, query);
+  if (query_options) {
+    grn_proc_prefixed_options_parse(ctx,
+                                    query_options,
+                                    "TokenFilterStem.",
+                                    "[token-filter][stem]",
+                                    "enable",
+                                    GRN_PROC_OPTION_VALUE_BOOL,
+                                    &(token_filter->is_enabled),
+                                    NULL);
+    if (ctx->rc != GRN_SUCCESS) {
+      GRN_PLUGIN_FREE(ctx, token_filter);
+      return NULL;
+    }
+  }
 
   {
     const char *algorithm = GRN_TEXT_VALUE(&(token_filter->options->algorithm));
@@ -268,6 +285,10 @@ stem_filter(grn_ctx *ctx,
   grn_stem_token_filter *token_filter = user_data;
   grn_obj *data;
   grn_bool is_all_upper = GRN_FALSE;
+
+  if (!token_filter->is_enabled) {
+    return;
+  }
 
   if (GRN_CTX_GET_ENCODING(ctx) != GRN_ENC_UTF8) {
     return;

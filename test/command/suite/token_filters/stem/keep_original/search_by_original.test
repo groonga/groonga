@@ -1,0 +1,24 @@
+#@on-error omit
+plugin_register token_filters/stem
+#@on-error default
+
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto \
+  --token_filters 'TokenFilterStem("keep_original", true)'
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "I develop Groonga"},
+{"content": "I'm developing Groonga"},
+{"content": "I developed Groonga"}
+]
+
+select Memos \
+  --match_columns content \
+  --query '"developed groonga"' \
+  --query_options '{"TokenFilterStem.enable": false}'
