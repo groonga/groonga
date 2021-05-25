@@ -65,7 +65,7 @@ typedef grn_tokenize_mode grn_token_mode;
  *
  * @since 4.0.8
  */
-typedef unsigned int grn_token_status;
+typedef uint32_t grn_token_status;
 
 /*
  * GRN_TOKEN_CONTINUE means that the next token is not the last one.
