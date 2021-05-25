@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2014-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -110,7 +110,7 @@ typedef unsigned int grn_token_status;
  */
 #define GRN_TOKEN_SKIP_WITH_POSITION (0x01L<<5)
 /*
- * GRN_TOKEN_FORCE_PREIX that the token is used common prefix search
+ * GRN_TOKEN_FORCE_PREIX means that the token is used common prefix search
  *
  * @since 4.0.8
  */
