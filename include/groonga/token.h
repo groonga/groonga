@@ -110,7 +110,7 @@ typedef unsigned int grn_token_status;
  */
 #define GRN_TOKEN_SKIP_WITH_POSITION (0x01L<<5)
 /*
- * GRN_TOKEN_FORCE_PREIX means that the token is used common prefix search
+ * GRN_TOKEN_FORCE_PREFIX means that the token is used common prefix search
  *
  * @since 4.0.8
  */
