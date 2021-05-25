@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2014 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2014  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,10 +32,12 @@
 
 typedef struct {
   grn_obj algorithm;
+  bool keep_original;
 } grn_stem_token_filter_options;
 
 typedef struct {
   grn_stem_token_filter_options *options;
+  grn_tokenize_mode mode;
   struct sb_stemmer *stemmer;
   grn_tokenizer_token token;
   grn_obj buffer;
@@ -47,6 +49,7 @@ stem_options_init(grn_ctx *ctx, grn_stem_token_filter_options *options)
   GRN_TEXT_INIT(&(options->algorithm), 0);
   GRN_TEXT_SETS(ctx, &(options->algorithm), "english");
   GRN_TEXT_PUTC(ctx, &(options->algorithm), '\0');
+  options->keep_original = false;
 }
 
 static void *
@@ -84,6 +87,12 @@ stem_open_options(grn_ctx *ctx,
                                       NULL);
       GRN_TEXT_SET(ctx, &(options->algorithm), algorithm, length);
       GRN_TEXT_PUTC(ctx, &(options->algorithm), '\0');
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "keep_original")) {
+      options->keep_original =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->keep_original);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
@@ -126,6 +135,7 @@ stem_init(grn_ctx *ctx, grn_tokenizer_query *query)
     return NULL;
   }
   token_filter->options = options;
+  token_filter->mode = grn_tokenizer_query_get_mode(ctx, query);
 
   {
     const char *algorithm = GRN_TEXT_VALUE(&(token_filter->options->algorithm));
@@ -281,36 +291,41 @@ stem_filter(grn_ctx *ctx,
                 buffer);
       stemmed = sb_stemmer_stem(token_filter->stemmer,
                                 GRN_TEXT_VALUE(buffer), GRN_TEXT_LEN(buffer));
-      if (stemmed) {
-        GRN_BULK_REWIND(buffer);
-        unnormalize(ctx,
-                    stemmed,
-                    sb_stemmer_length(token_filter->stemmer),
-                    buffer);
-        grn_token_set_data(ctx, next_token,
-                           GRN_TEXT_VALUE(buffer), GRN_TEXT_LEN(buffer));
-      } else {
+      if (!stemmed) {
         GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
                          "[token-filter][stem] "
                          "failed to allocate memory for stemmed word: <%.*s> "
                          "(normalized: <%.*s>)",
                          (int)GRN_TEXT_LEN(data), GRN_TEXT_VALUE(data),
                          (int)GRN_TEXT_LEN(buffer), GRN_TEXT_VALUE(buffer));
+        return;
       }
+      GRN_BULK_REWIND(buffer);
+      unnormalize(ctx,
+                  stemmed,
+                  sb_stemmer_length(token_filter->stemmer),
+                  buffer);
+      grn_token_set_data(ctx, next_token,
+                         GRN_TEXT_VALUE(buffer), GRN_TEXT_LEN(buffer));
     } else {
       stemmed = sb_stemmer_stem(token_filter->stemmer,
                                 GRN_TEXT_VALUE(data), GRN_TEXT_LEN(data));
-      if (stemmed) {
-        grn_token_set_data(ctx, next_token,
-                           stemmed,
-                           sb_stemmer_length(token_filter->stemmer));
-      } else {
+      if (!stemmed) {
         GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
                          "[token-filter][stem] "
                          "failed to allocate memory for stemmed word: <%.*s>",
                          (int)GRN_TEXT_LEN(data), GRN_TEXT_VALUE(data));
+        return;
       }
+      grn_token_set_data(ctx, next_token,
+                         stemmed,
+                         sb_stemmer_length(token_filter->stemmer));
     }
+  }
+
+  if (token_filter->mode == GRN_TOKENIZE_ADD &&
+      token_filter->options->keep_original) {
+    grn_token_add_status(ctx, next_token, GRN_TOKEN_KEEP_ORIGINAL);
   }
 }
 

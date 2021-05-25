@@ -1,0 +1,44 @@
+plugin_register token_filters/stem
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto   --token_filters 'TokenFilterStem("keep_original", true)'
+[[0,0.0,0.0],true]
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+table_tokenize Terms "I developed Groonga" --mode ADD
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "i",
+      "position": 0,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "develop",
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "developed",
+      "position": 1,
+      "force_prefix": false,
+      "force_prefix_search": false
+    },
+    {
+      "value": "groonga",
+      "position": 2,
+      "force_prefix": false,
+      "force_prefix_search": false
+    }
+  ]
+]
