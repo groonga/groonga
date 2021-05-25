@@ -42,6 +42,10 @@ extern "C" {
     string.length = GRN_TEXT_LEN(bulk);          \
   }
 
+#define GRN_RAW_STRING_EQUAL(string, other_string)                      \
+  (string.length == other_string.length &&                              \
+   memcmp(string.value, other_string.value, string.length) == 0)
+
 #define GRN_RAW_STRING_EQUAL_CSTRING(string, cstring)           \
   (cstring ?                                                    \
    (string.length == strlen(cstring) &&                         \
