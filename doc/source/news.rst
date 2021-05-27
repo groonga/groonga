@@ -308,6 +308,10 @@ Improvements
 
   * Most settings are for Visual Studio only.
 
+* [httpd] Updated bundled nginx to 1.20.1.
+
+  * Contains security fix of CVE-2021-23017.
+
 Fixes
 ^^^^^
 

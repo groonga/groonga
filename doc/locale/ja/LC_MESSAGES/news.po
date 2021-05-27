@@ -185,6 +185,12 @@ msgstr ""
 msgid "Most settings are for Visual Studio only."
 msgstr "多くの設定は、Visual Studio 専用です。"
 
+msgid "[httpd] Updated bundled nginx to 1.20.1."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.20.1に更新しました。"
+
+msgid "Contains security fix of CVE-2021-23017."
+msgstr "CVE-2021-23017のセキュリティの修正が含まれています。"
+
 msgid "Fixes"
 msgstr "修正"
 
