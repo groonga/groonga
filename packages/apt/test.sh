@@ -54,7 +54,7 @@ gem install grntest
 if groonga --version | grep -q apache-arrow; then
   apt install -V -y \
     g++
-  gem install red-arrow
+  gem install red-arrow -v 4.0.0
 fi
 
 export TZ=Asia/Tokyo

@@ -312,7 +312,7 @@ jobs:
           matrix.architecture == 'x64'
         run: |
           ridk exec pacman --sync --noconfirm mingw-w64-x86_64-arrow
-          gem install red-arrow
+          gem install red-arrow -v 4.0.0
       - name: "Test: command line"
         run: |
           ruby test\command_line\run-test.rb `

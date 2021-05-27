@@ -69,8 +69,8 @@ jobs:
           gem install \
             groonga-client \
             json \
-            pkg-config \
-            red-arrow
+            pkg-config
+          gem install red-arrow -v 4.0.0
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}

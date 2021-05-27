@@ -71,7 +71,7 @@ jobs:
       - name: Install red-arrow
         shell: msys2 {0}
         run: |
-          gem install red-arrow
+          gem install red-arrow -v 4.0.0
       - name: "Test: command line"
         shell: msys2 {0}
         run: |
