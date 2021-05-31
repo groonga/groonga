@@ -395,7 +395,7 @@ grn_table_get_duplicated_keys(grn_ctx *ctx,
     keys = grn_table_create(ctx,
                             NULL, 0,
                             NULL,
-                            GRN_TABLE_HASH_KEY,
+                            GRN_TABLE_HASH_KEY | GRN_OBJ_KEY_LARGE,
                             domain,
                             NULL);
     grn_obj_unref(ctx, domain);
@@ -569,7 +569,7 @@ grn_table_have_duplicated_keys(grn_ctx *ctx, grn_obj *table)
     keys = grn_table_create(ctx,
                             NULL, 0,
                             NULL,
-                            GRN_TABLE_HASH_KEY,
+                            GRN_TABLE_HASH_KEY | GRN_OBJ_KEY_LARGE,
                             domain,
                             NULL);
     grn_obj_unref(ctx, domain);
