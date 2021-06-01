@@ -156,7 +156,7 @@ msgstr "``string_slice()`` は、文字列の部分文字列を抽出します�
 
 msgid ""
 "To enable this function, we need to register ``functions/string`` plugin."
-msgstr "この関数を使うには、 ``functions/steing`` プラグインの登録が必要です。"
+msgstr "この関数を使うには、 ``functions/string`` プラグインの登録が必要です。"
 
 msgid ""
 "We can use two different extraction methods depending on the arguments as "
