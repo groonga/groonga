@@ -276,6 +276,12 @@ module Groonga
       n_dif_ops = 0
       r = 0
       j = @data_list.size
+      case operator
+      when Operator::AND_NOT, Operator::ADJUST
+        is_commutative_operator = false
+      else
+        is_commutative_operator = true
+      end
       while j > 0
         j -= 1
         data = @data_list[j]
@@ -288,7 +294,7 @@ module Groonga
             if n_parens == 0
               if r == 0
                 if n_dif_ops > 0
-                  if j > 0 and operator != Operator::AND_NOT
+                  if j > 0 and is_commutative_operator
                     n_parens = 1
                     n_dif_ops = 0
                     r = j
@@ -326,7 +332,7 @@ module Groonga
               end
             end
           else
-            if operator == Operator::AND_NOT or operator != data.logical_op
+            if !is_commutative_operator or operator != data.logical_op
               n_dif_ops += 1
             end
           end
