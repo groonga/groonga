@@ -1,0 +1,46 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "Groonga is a full text search engine."},
+{"content": "Rroonga is the Ruby bindings of Groonga."},
+{"content": "Mroonga is a MySQL storage engine based of Groonga."}
+]
+[[0,0.0,0.0],3]
+select Memos   --command_version 3   --filter 'content @ "a" *~2.5 query("content", "MySQL")'   --output_columns 'content, _score'   --sort_keys -_score,_id
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": {
+    "n_hits": 2,
+    "columns": [
+      {
+        "name": "content",
+        "type": "ShortText"
+      },
+      {
+        "name": "_score",
+        "type": "Float"
+      }
+    ],
+    "records": [
+      [
+        "Groonga is a full text search engine.",
+        1.0
+      ],
+      [
+        "Mroonga is a MySQL storage engine based of Groonga.",
+        -1.5
+      ]
+    ]
+  }
+}

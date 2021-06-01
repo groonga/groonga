@@ -1,0 +1,20 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "Groonga is a full text search engine."},
+{"content": "Rroonga is the Ruby bindings of Groonga."},
+{"content": "Mroonga is a MySQL storage engine based of Groonga."}
+]
+
+select Memos \
+  --command_version 3 \
+  --filter 'content @ "a" *~ query("content", "MySQL")' \
+  --output_columns 'content, _score' \
+  --sort_keys -_score,_id
