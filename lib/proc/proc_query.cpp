@@ -144,6 +144,15 @@ namespace {
                                        reinterpret_cast<grn_hash *>(res_));
     }
 
+    float
+    get_weight_factor() {
+      if (selector_data_) {
+        return grn_selector_data_get_weight_factor(ctx_, selector_data_);
+      } else {
+        return 1.0;
+      }
+    }
+
     bool
     parse_match_columns_arg() {
       match_columns_string_ = args_[0];
@@ -454,6 +463,9 @@ namespace {
       grn_table_selector_set_min_id(ctx_,
                                     &table_selector,
                                     get_min_id());
+      grn_table_selector_set_weight_factor(ctx_,
+                                           &table_selector,
+                                           get_weight_factor());
       grn_table_selector_select(ctx_,
                                 &table_selector,
                                 res_);
@@ -654,6 +666,9 @@ namespace {
             grn_table_selector_set_min_id(sub_ctx,
                                           &table_selector,
                                           min_id);
+            grn_table_selector_set_weight_factor(ctx_,
+                                                 &table_selector,
+                                                 get_weight_factor());
             grn_table_selector_select(sub_ctx,
                                       &table_selector,
                                       sub_result);
@@ -747,6 +762,9 @@ namespace {
         grn_table_selector_set_min_id(ctx_,
                                       &table_selector,
                                       min_id);
+        grn_table_selector_set_weight_factor(ctx_,
+                                             &table_selector,
+                                             get_weight_factor());
         auto sub_result = grn_table_selector_select(ctx_,
                                                     &table_selector,
                                                     unique_sub_result.get());
