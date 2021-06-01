@@ -316,20 +316,25 @@ grn_table_get_score(grn_ctx *ctx, grn_obj *table, grn_id id)
   grn_rset_recinfo *ri =
     (grn_rset_recinfo *)grn_obj_get_value_(ctx, table, id, &value_size);
   double score = ri->score;
-  grn_obj *parent = NULL;
-  grn_id parent_record_id;
-  if (grn_table_get_key(ctx,
-                        table,
-                        id,
-                        (void *)&parent_record_id,
-                        sizeof(grn_id)) == 0) {
-    parent_record_id = GRN_ID_NIL;
+  if (!(table->header.domain & GRN_OBJ_TMP_OBJECT)) {
+    return score;
+  }
+
+  grn_obj *parent = grn_ctx_at(ctx, table->header.domain);
+  grn_id parent_record_id = GRN_ID_NIL;
+  if (parent && (parent->header.flags & GRN_OBJ_WITH_SUBREC)) {
+    if (grn_table_get_key(ctx,
+                          table,
+                          id,
+                          (void *)&parent_record_id,
+                          sizeof(grn_id)) == 0) {
+      parent_record_id = GRN_ID_NIL;
+    }
   }
   if (parent_record_id == GRN_ID_NIL) {
     return score;
   }
 
-  parent = grn_ctx_at(ctx, table->header.domain);
   while (parent && (parent->header.flags & GRN_OBJ_WITH_SUBREC)) {
     uint32_t parent_value_size;
     grn_rset_recinfo *parent_ri =
