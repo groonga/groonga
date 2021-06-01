@@ -28,6 +28,7 @@ struct _grn_selector_data {
   grn_obj *index;
   size_t n_args;
   grn_obj **args;
+  float weight_factor;
   grn_obj *result_set;
   grn_operator op;
   grn_obj *score_table;
@@ -53,6 +54,7 @@ grn_selector_run(grn_ctx *ctx,
                  grn_obj *index,
                  size_t n_args,
                  grn_obj **args,
+                 float weight_factor,
                  grn_obj *result_set,
                  grn_operator op)
 {
@@ -63,6 +65,7 @@ grn_selector_run(grn_ctx *ctx,
   data.index = index;
   data.n_args = n_args;
   data.args = args;
+  data.weight_factor = weight_factor;
   data.result_set = result_set;
   data.op = op;
   data.score_table = NULL;
@@ -141,6 +144,13 @@ grn_selector_data_get_args(grn_ctx *ctx,
     *n_args = data->n_args;
   }
   return data->args;
+}
+
+float
+grn_selector_data_get_weight_factor(grn_ctx *ctx,
+                                    grn_selector_data *data)
+{
+  return data->weight_factor;
 }
 
 grn_obj *

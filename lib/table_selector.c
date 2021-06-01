@@ -112,6 +112,7 @@ grn_table_selector_init(grn_ctx *ctx,
   table_selector->min_id = GRN_ID_NIL;
   table_selector->use_sequential_scan = false;
   table_selector->query_options = grn_expr_get_query_options(ctx, expr);
+  table_selector->weight_factor = 1.0;
   grn_table_selector_data data = {0};
   table_selector->data = data;
 }
@@ -182,6 +183,23 @@ grn_table_selector_set_use_sequential_scan(grn_ctx *ctx,
 {
   GRN_API_ENTER;
   table_selector->use_sequential_scan = use;
+  GRN_API_RETURN(ctx->rc);
+}
+
+float
+grn_table_selector_get_weight_factor(grn_ctx *ctx,
+                                     grn_table_selector *table_selector)
+{
+  return table_selector->weight_factor;
+}
+
+grn_rc
+grn_table_selector_set_weight_factor(grn_ctx *ctx,
+                                     grn_table_selector *table_selector,
+                                     float factor)
+{
+  GRN_API_ENTER;
+  table_selector->weight_factor = factor;
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -529,6 +547,7 @@ select_index_equal(grn_ctx *ctx,
       } else {
         uint32_t sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
         float weight = GRN_FLOAT32_VALUE_AT(&(si->weights), 0);
+        weight *= table_selector->weight_factor * si->weight_factor;
         grn_obj *index_cursor = grn_index_cursor_open(ctx,
                                                       NULL,
                                                       index,
@@ -1024,6 +1043,7 @@ select_index_call(grn_ctx *ctx,
                           index_datum.index,
                           si->nargs,
                           si->args,
+                          si->weight_factor,
                           result_set,
                           logical_op);
     if (table_is_referred) {
@@ -1093,6 +1113,7 @@ select_index_range_id(grn_ctx *ctx,
     if (cursor) {
       uint32_t sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
       float weight = GRN_FLOAT32_VALUE_AT(&(si->weights), 0);
+      weight *= table_selector->weight_factor * si->weight_factor;
 
       if (sid == 0) {
         grn_posting_internal posting = {0};
@@ -1185,6 +1206,7 @@ select_index_range_key(grn_ctx *ctx,
     if (cursor) {
       uint32_t sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
       float weight = GRN_FLOAT32_VALUE_AT(&(si->weights), 0);
+      weight *= table_selector->weight_factor * si->weight_factor;
 
       if (sid == 0) {
         rc = grn_result_set_add_table_cursor(ctx,
@@ -1275,6 +1297,7 @@ select_index_range_column(grn_ctx *ctx,
     if (cursor) {
       uint32_t sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
       float weight = GRN_FLOAT32_VALUE_AT(&(si->weights), 0);
+      weight *= table_selector->weight_factor * si->weight_factor;
       grn_obj *index_cursor = grn_index_cursor_open(ctx,
                                                     cursor,
                                                     index,
@@ -1482,6 +1505,7 @@ select_index(grn_ctx *ctx,
       options->query_options = table_selector->query_options;
       uint32_t section = GRN_UINT32_VALUE_AT(&(si->sections), i);
       float weight = GRN_FLOAT32_VALUE_AT(&(si->weights), i);
+      weight *= table_selector->weight_factor * si->weight_factor;
       if (section == 0)  {
         options->weight_vector = NULL;
         options->weight_vector_float = NULL;
@@ -1613,6 +1637,7 @@ select_index(grn_ctx *ctx,
                               NULL,
                               si->nargs,
                               si->args,
+                              si->weight_factor,
                               data->result_set,
                               si->logical_op);
       }

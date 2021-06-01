@@ -394,6 +394,13 @@ GRN_API grn_rc
 grn_table_selector_set_use_sequential_scan(grn_ctx *ctx,
                                            grn_table_selector *table_selector,
                                            bool use);
+GRN_API float
+grn_table_selector_get_weight_factor(grn_ctx *ctx,
+                                     grn_table_selector *table_selector);
+GRN_API grn_rc
+grn_table_selector_set_weight_factor(grn_ctx *ctx,
+                                     grn_table_selector *table_selector,
+                                     float factor);
 GRN_API grn_obj *
 grn_table_selector_select(grn_ctx *ctx,
                           grn_table_selector *table_selector,
