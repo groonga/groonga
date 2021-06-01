@@ -1167,7 +1167,6 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_TABLE_GROUP :
     case GRN_OP_JSON_PUT :
     case GRN_OP_GET_REF :
-    case GRN_OP_ADJUST :
     case GRN_OP_TERM_EXTRACT :
     case GRN_OP_REGEXP :
     case GRN_OP_QUORUM :
@@ -1182,12 +1181,10 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_AND :
     case GRN_OP_OR :
     case GRN_OP_AND_NOT :
+    case GRN_OP_ADJUST :
       PUSH_CODE(e, op, obj, nargs, code);
       if (nargs != 2) {
         GRN_LOG(ctx, GRN_LOG_WARNING, "nargs(%d) != 2 in relative op", nargs);
-      }
-      if (obj) {
-        GRN_LOG(ctx, GRN_LOG_WARNING, "obj assigned to relative op");
       }
       {
         int i = nargs;
@@ -5026,16 +5023,41 @@ parse_script(grn_ctx *ctx, efs_info *q)
           }
           break;
         case '>' :
-          PARSE(GRN_EXPR_TOKEN_ADJUST);
           q->cur += 2;
+          {
+            float weight;
+            if (!parse_query_parse_weight(ctx, q, NULL, &weight)) {
+              weight = 2;
+            }
+            GRN_FLOAT32_PUT(ctx, &q->weight_stack, weight);
+          }
+          PARSE(GRN_EXPR_TOKEN_ADJUST);
           break;
         case '<' :
-          PARSE(GRN_EXPR_TOKEN_ADJUST);
           q->cur += 2;
+          {
+            float weight;
+            if (parse_query_parse_weight(ctx, q, NULL, &weight)) {
+              weight = -weight;
+            } else {
+              weight = 0.5;
+            }
+            GRN_FLOAT32_PUT(ctx, &q->weight_stack, weight);
+          }
+          PARSE(GRN_EXPR_TOKEN_ADJUST);
           break;
         case '~' :
-          PARSE(GRN_EXPR_TOKEN_ADJUST);
           q->cur += 2;
+          {
+            float weight;
+            if (parse_query_parse_weight(ctx, q, NULL, &weight)) {
+              weight = -weight;
+            } else {
+              weight = -1;
+            }
+            GRN_FLOAT32_PUT(ctx, &q->weight_stack, weight);
+          }
+          PARSE(GRN_EXPR_TOKEN_NEGATIVE);
           break;
         case '=' :
           if (q->flags & GRN_EXPR_ALLOW_UPDATE) {
