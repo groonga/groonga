@@ -3507,6 +3507,20 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
   }
   n_sis = nth_sis;
 
+  bool need_temporary_result_set = true;
+  switch (logical_op) {
+  case GRN_OP_AND :
+  case GRN_OP_OR :
+    need_temporary_result_set = false;
+    break;
+  default :
+    break;
+  }
+
+  if (need_temporary_result_set) {
+    n_sis++;
+  }
+
   sis = GRN_CALLOC(sizeof(scan_info *) * n_sis);
   if (!sis) {
     return NULL;
@@ -3526,10 +3540,15 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
     grn_scan_info_push_arg(ctx, si, constant->value);
     si->op = operator->op;
     si->end = i + 2;
-    si->flags &= ~SCAN_PUSH;
     if (nth_sis == 0) {
-      si->logical_op = logical_op;
+      if (need_temporary_result_set) {
+        si->logical_op = GRN_OP_OR;
+      } else {
+        si->flags &= ~SCAN_PUSH;
+        si->logical_op = logical_op;
+      }
     } else {
+      si->flags &= ~SCAN_PUSH;
       si->logical_op = GRN_OP_AND;
     }
     {
@@ -3540,6 +3559,18 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
     if (nth_sis > 0) {
       i++;
     }
+  }
+
+  if (need_temporary_result_set) {
+    scan_info *si;
+    sis[nth_sis] = si = grn_scan_info_open(ctx, i);
+    if (!si) {
+      goto exit;
+    }
+    si->end = i;
+    si->op = GRN_OP_NOP;
+    si->logical_op = logical_op;
+    si->flags = SCAN_POP;
   }
 
   *n = n_sis;
