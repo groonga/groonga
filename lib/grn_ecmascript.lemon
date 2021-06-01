@@ -233,6 +233,16 @@ logical_and_expression ::= logical_and_expression LOGICAL_AND bitwise_or_express
 logical_and_expression ::= logical_and_expression LOGICAL_AND_NOT bitwise_or_expression. {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND_NOT, 2);
 }
+logical_and_expression ::= logical_and_expression ADJUST bitwise_or_expression. {
+  float weight;
+  GRN_FLOAT32_POP(&efsi->weight_stack, weight);
+  grn_expr_append_const_float32(efsi->ctx, efsi->e, weight, GRN_OP_AND, 2);
+}
+logical_and_expression ::= logical_and_expression NEGATIVE bitwise_or_expression. {
+  float weight;
+  GRN_FLOAT32_POP(&efsi->weight_stack, weight);
+  grn_expr_append_const_float32(efsi->ctx, efsi->e, weight, GRN_OP_ADJUST, 2);
+}
 
 bitwise_or_expression ::= bitwise_xor_expression.
 bitwise_or_expression ::= bitwise_or_expression BITWISE_OR bitwise_xor_expression. {
