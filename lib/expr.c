@@ -1792,6 +1792,15 @@ put_logical_op(grn_ctx *ctx,
                float weight_factor)
 {
   int nparens = 1, ndifops = 0, i = *ip, j = i, r = 0;
+  bool is_commutative_operator = true;
+  switch (op) {
+  case GRN_OP_AND_NOT :
+  case GRN_OP_ADJUST :
+    is_commutative_operator = false;
+    break;
+  default :
+    break;
+  }
   while (j--) {
     scan_info *s_ = sis[j];
     if (s_->flags & SCAN_POP) {
@@ -1802,7 +1811,7 @@ put_logical_op(grn_ctx *ctx,
         if (!(--nparens)) {
           if (!r) {
             if (ndifops) {
-              if (j && op != GRN_OP_AND_NOT) {
+              if (j && is_commutative_operator) {
                 nparens = 1;
                 ndifops = 0;
                 r = j;
@@ -1841,7 +1850,7 @@ put_logical_op(grn_ctx *ctx,
           }
         }
       } else {
-        if ((op == GRN_OP_AND_NOT) || (op != s_->logical_op)) {
+        if (!is_commutative_operator || (op != s_->logical_op)) {
           ndifops++;
         }
       }
