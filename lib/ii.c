@@ -10171,6 +10171,7 @@ grn_ii_select_data_init(grn_ctx *ctx,
   data->current_min = GRN_ID_NIL;
   data->set_min_enable_for_and_query = GRN_FALSE;
   data->only_skip_token = GRN_FALSE;
+  data->query_options = NULL;
 
   if (!optarg) {
     return;
