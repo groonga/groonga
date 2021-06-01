@@ -21,7 +21,7 @@ select   --table Products   --filter 'query("name", "Groonga Mroonga", {"default
       0.0,
       0.0
     ],
-    "[query][options][parse] operator must be one of them: [\"&&\", \"+\", \"AND\", \"||\", \"OR\", \"!\" \"NOT\", \"&!\", \"-\",, \"AND_NOT\"]: <unknow"
+    "[query][options][parse] operator must be one of them: [\"&&\", \"+\", \"AND\", \"||\", \"OR\", \"!\" \"NOT\", \"&!\", \"-\", \"AND_NOT\"]: <unknown"
   ]
 ]
-#|e| [query][options][parse] operator must be one of them: ["&&", "+", "AND", "||", "OR", "!" "NOT", "&!", "-",, "AND_NOT"]: <unknown>
+#|e| [query][options][parse] operator must be one of them: ["&&", "+", "AND", "||", "OR", "!" "NOT", "&!", "-", "AND_NOT"]: <unknown>

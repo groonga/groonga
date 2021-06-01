@@ -1560,7 +1560,7 @@ grn_proc_get_value_operator(grn_ctx *ctx,
                      "\"&&\", \"+\", \"AND\", "
                      "\"||\", \"OR\", "
                      "\"!\" \"NOT\", "
-                     "\"&!\", \"-\",, \"AND_NOT\""
+                     "\"&!\", \"-\", \"AND_NOT\""
                      "]: <%.*s>",
                      tag,
                      (int)operator_string.length,
