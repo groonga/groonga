@@ -39,6 +39,14 @@ grn_table_create_with_max_n_subrecs(grn_ctx *ctx,
                                     uint32_t max_n_subrecs,
                                     uint32_t additional_value_size);
 
+grn_rc
+grn_table_setoperation_with_weight_factor(grn_ctx *ctx,
+                                          grn_obj *table1,
+                                          grn_obj *table2,
+                                          grn_obj *res,
+                                          grn_operator op,
+                                          float weight_factor);
+
 grn_hash *
 grn_table_all_columns(grn_ctx *ctx, grn_obj *table);
 

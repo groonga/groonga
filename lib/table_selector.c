@@ -1982,11 +1982,12 @@ grn_table_selector_select(grn_ctx *ctx,
       if (si->flags & SCAN_POP) {
         grn_obj *result_set_;
         GRN_PTR_POP(&result_set_stack, result_set_);
-        grn_table_setoperation(ctx,
-                               result_set_,
-                               data->result_set,
-                               result_set_,
-                               si->logical_op);
+        grn_table_setoperation_with_weight_factor(ctx,
+                                                  result_set_,
+                                                  data->result_set,
+                                                  result_set_,
+                                                  si->logical_op,
+                                                  si->weight_factor);
         grn_obj_close(ctx, data->result_set);
         data->result_set = result_set_;
         data->min_id = table_selector->min_id;

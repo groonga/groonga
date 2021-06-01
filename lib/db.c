@@ -4102,6 +4102,7 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
 
 typedef struct {
   grn_operator op;
+  float weight_factor;
   grn_obj *table_dest;
   grn_obj *table_src;
   bool have_subrec;
@@ -4325,14 +4326,16 @@ grn_table_setoperation_or(grn_ctx *ctx,
                                               &added);
       if (id_dest != GRN_ID_NIL) {
         if (added) {
-          grn_memcpy(value_dest, value_src, data->value_size);
+          grn_rset_recinfo ri_src = *((grn_rset_recinfo *)value_src);
+          ri_src.score *= data->weight_factor;
+          grn_memcpy(value_dest, &ri_src, data->value_size);
         } else {
           grn_rset_recinfo *ri_dest = value_dest;
           grn_rset_recinfo *ri_src = value_src;
           grn_table_add_subrec(ctx,
                                data->table_dest,
                                ri_dest,
-                               ri_src->score,
+                               ri_src->score * data->weight_factor,
                                NULL,
                                0);
         }
@@ -4382,7 +4385,7 @@ grn_table_setoperation_and(grn_ctx *ctx,
       } else {
         grn_rset_recinfo *ri_dest = value_dest;
         grn_rset_recinfo *ri_src = value_src;
-        ri_dest->score += ri_src->score;
+        ri_dest->score += ri_src->score * data->weight_factor;
         grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
       }
     } GRN_TABLE_EACH_END(ctx, cursor);
@@ -4437,7 +4440,7 @@ grn_table_setoperation_adjust(grn_ctx *ctx,
       if (id_dest != GRN_ID_NIL) {
         grn_rset_recinfo *ri_dest = value_dest;
         grn_rset_recinfo *ri_src = value_src;
-        ri_dest->score += ri_src->score;
+        ri_dest->score += ri_src->score * data->weight_factor;
         grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
       }
     } GRN_TABLE_EACH_END(ctx, cursor);
@@ -4464,8 +4467,27 @@ grn_table_setoperation_adjust(grn_ctx *ctx,
 }
 
 grn_rc
-grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *res,
+grn_table_setoperation(grn_ctx *ctx,
+                       grn_obj *table1,
+                       grn_obj *table2,
+                       grn_obj *res,
                        grn_operator op)
+{
+  return grn_table_setoperation_with_weight_factor(ctx,
+                                                   table1,
+                                                   table2,
+                                                   res,
+                                                   op,
+                                                   1.0);
+}
+
+grn_rc
+grn_table_setoperation_with_weight_factor(grn_ctx *ctx,
+                                          grn_obj *table1,
+                                          grn_obj *table2,
+                                          grn_obj *res,
+                                          grn_operator op,
+                                          float weight_factor)
 {
   GRN_API_ENTER;
   if (!table1) {
@@ -4483,6 +4505,7 @@ grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2, grn_obj *
 
   grn_table_setoperation_data data;
   data.op = op;
+  data.weight_factor = weight_factor;
   if (table1 == res) {
     data.table_src = table2;
     data.table_dest = table1;
