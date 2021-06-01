@@ -35,6 +35,7 @@ struct _grn_scan_info {
   int flags;
   grn_operator op;
   grn_operator logical_op;
+  float weight_factor;
   grn_obj sections;
   grn_obj weights;
   grn_obj index;

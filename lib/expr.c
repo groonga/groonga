@@ -1757,6 +1757,7 @@ grn_scan_info_free(grn_ctx *ctx,
     (si)->op = GRN_OP_NOP;\
     (si)->logical_op = GRN_OP_OR;\
     (si)->flags = SCAN_PUSH;\
+    (si)->weight_factor = 1.0;\
     (si)->nargs = 0;\
     (si)->max_nargs = GRN_SCAN_INFO_INITIAL_MAX_N_ARGS;\
     (si)->args = (si)->initial_args;\
@@ -1786,7 +1787,12 @@ grn_scan_info_free(grn_ctx *ctx,
 } while (0)
 
 static scan_info **
-put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int start)
+put_logical_op(grn_ctx *ctx,
+               scan_info **sis,
+               int *ip,
+               grn_operator op,
+               int start,
+               float weight_factor)
 {
   int nparens = 1, ndifops = 0, i = *ip, j = i, r = 0;
   while (j--) {
@@ -1807,6 +1813,7 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
                 SI_ALLOC(s_, i, start);
                 s_->flags = SCAN_POP;
                 s_->logical_op = op;
+                s_->weight_factor = weight_factor;
                 sis[i++] = s_;
                 *ip = i;
                 break;
@@ -1814,6 +1821,7 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
             } else {
               s_->flags &= ~SCAN_PUSH;
               s_->logical_op = op;
+              s_->weight_factor = weight_factor;
               break;
             }
           } else {
@@ -1821,11 +1829,13 @@ put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip, grn_operator op, int star
               SI_ALLOC(s_, i, start);
               s_->flags = SCAN_POP;
               s_->logical_op = op;
+              s_->weight_factor = weight_factor;
               sis[i++] = s_;
               *ip = i;
             } else {
               s_->flags &= ~SCAN_PUSH;
               s_->logical_op = op;
+              s_->weight_factor = weight_factor;
               grn_memcpy(&sis[i], &sis[j], sizeof(scan_info *) * (r - j));
               grn_memmove(&sis[j], &sis[r], sizeof(scan_info *) * (i - r));
               grn_memcpy(&sis[i + j - r], &sis[i], sizeof(scan_info *) * (r - j));
@@ -2111,6 +2121,7 @@ grn_scan_info_open(grn_ctx *ctx, int start)
   si->query = NULL;
   si->logical_op = GRN_OP_OR;
   si->flags = SCAN_PUSH;
+  si->weight_factor = 1.0;
   si->nargs = 0;
   si->max_nargs = GRN_SCAN_INFO_INITIAL_MAX_N_ARGS;
   si->args = si->initial_args;
@@ -2151,10 +2162,14 @@ grn_scan_info_put_index(grn_ctx *ctx,
 }
 
 scan_info **
-grn_scan_info_put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip,
-                             grn_operator op, int start)
+grn_scan_info_put_logical_op(grn_ctx *ctx,
+                             scan_info **sis,
+                             int *ip,
+                             grn_operator op,
+                             int start,
+                             float weight_factor)
 {
-  return put_logical_op(ctx, sis, ip, op, start);
+  return put_logical_op(ctx, sis, ip, op, start, weight_factor);
 }
 
 float
@@ -2197,6 +2212,18 @@ void
 grn_scan_info_set_op(scan_info *si, grn_operator op)
 {
   si->op = op;
+}
+
+float
+grn_scan_info_get_weight_factor(scan_info *si)
+{
+  return si->weight_factor;
+}
+
+void
+grn_scan_info_set_weight_factor(scan_info *si, float factor)
+{
+  si->weight_factor = factor;
 }
 
 void
@@ -2800,7 +2827,7 @@ grn_scan_info_build_full_not(grn_ctx *ctx,
           sis[*i] = sis[*i - 1];
           sis[*i - 1] = all_records_si;
           (*i)++;
-          put_logical_op(ctx, sis, i, GRN_OP_AND_NOT, code - codes);
+          put_logical_op(ctx, sis, i, GRN_OP_AND_NOT, code - codes, 1.0);
         }
         break;
       default :
@@ -3054,7 +3081,20 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
         sis[i++] = si;
         si = NULL;
       }
-      if (!put_logical_op(ctx, sis, &i, code_op, c - e->codes)) { return NULL; }
+      {
+        float weight_factor = 1.0;
+        if (c->value && c->value->header.domain == GRN_DB_FLOAT32) {
+          weight_factor = GRN_FLOAT32_VALUE(c->value);
+        }
+        if (!put_logical_op(ctx,
+                            sis,
+                            &i,
+                            code_op,
+                            c - e->codes,
+                            weight_factor)) {
+          return NULL;
+        }
+      }
       stat = SCAN_START;
       break;
     case GRN_OP_PUSH :
@@ -3235,7 +3275,9 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
       sis[0]->logical_op = op;
     }
   } else {
-    if (!put_logical_op(ctx, sis, &i, op, c - e->codes)) { return NULL; }
+    if (!put_logical_op(ctx, sis, &i, op, c - e->codes, 1.0)) {
+      return NULL;
+    }
   }
   *n = i;
   return sis;

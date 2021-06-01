@@ -32,6 +32,7 @@ grn_selector_run(grn_ctx *ctx,
                  grn_obj *index,
                  size_t n_args,
                  grn_obj **args,
+                 float weight_scale,
                  grn_obj *res,
                  grn_operator op);
 

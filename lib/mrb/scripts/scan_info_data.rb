@@ -16,6 +16,7 @@ module Groonga
     attr_accessor :quorum_threshold
     attr_accessor :start_position
     attr_accessor :weight
+    attr_accessor :weight_factor
     def initialize(start)
       @start = start
       @end = start
@@ -31,6 +32,7 @@ module Groonga
       @quorum_threshold = nil
       @start_position = nil
       @weight = 0
+      @weight_factor = 1.0
     end
 
     def match_resolve_index

@@ -56,6 +56,9 @@ GRN_API grn_obj **
 grn_selector_data_get_args(grn_ctx *ctx,
                            grn_selector_data *data,
                            size_t *n_args);
+GRN_API float
+grn_selector_data_get_weight_factor(grn_ctx *ctx,
+                                    grn_selector_data *data);
 GRN_API grn_obj *
 grn_selector_data_get_result_set(grn_ctx *ctx,
                                  grn_selector_data *data);

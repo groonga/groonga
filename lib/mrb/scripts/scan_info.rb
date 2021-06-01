@@ -10,6 +10,7 @@ module Groonga
     def apply(data)
       self.op = data.op
       self.logical_op = data.logical_op
+      self.weight_factor = data.weight_factor
       self.end = data.end
       self.query = data.query
       self.flags = data.flags

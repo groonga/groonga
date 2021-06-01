@@ -84,7 +84,9 @@ module Groonga
             @data_list << data
             context.data = nil
           end
-          put_logical_op(code_op, i)
+          weight_factor = 1.0
+          weight_factor = code.value.value if code.value
+          put_logical_op(code_op, i, weight_factor)
           # TODO: rescue and return nil
           context.status = :start
         when Operator::PUSH
@@ -171,7 +173,7 @@ module Groonga
           first_data.logical_op = @operator
         end
       else
-        put_logical_op(@operator, context.n_codes)
+        put_logical_op(@operator, context.n_codes, 1)
       end
 
       optimize
@@ -269,7 +271,7 @@ module Groonga
       true
     end
 
-    def put_logical_op(operator, start)
+    def put_logical_op(operator, start, weight_factor)
       n_parens = 1
       n_dif_ops = 0
       r = 0
@@ -294,12 +296,14 @@ module Groonga
                     new_data = ScanInfoData.new(start)
                     new_data.flags = ScanInfo::Flags::POP
                     new_data.logical_op = operator
+                    new_data.weight_factor = weight_factor
                     @data_list << new_data
                     break
                   end
                 else
                   data.flags &= ~ScanInfo::Flags::PUSH
                   data.logical_op = operator
+                  data.weight_factor = weight_factor
                   break
                 end
               else
@@ -307,10 +311,12 @@ module Groonga
                   new_data = ScanInfoData.new(start)
                   new_data.flags = ScanInfo::Flags::POP
                   new_data.logical_op = operator
+                  new_data.weight_factor = weight_factor
                   @data_list << new_data
                 else
                   data.flags &= ~ScanInfo::Flags::PUSH
                   data.logical_op = operator
+                  data.weight_factor = weight_factor
                   @data_list =
                     @data_list[0...j] +
                     @data_list[r..-1] +
@@ -377,7 +383,7 @@ module Groonga
             context.code_op = Operator::AND
           when Operator::OR
             @data_list[-1, 0] = create_all_match_data
-            put_logical_op(Operator::AND_NOT, i)
+            put_logical_op(Operator::AND_NOT, i, 1)
           else
             return false
           end

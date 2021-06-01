@@ -101,13 +101,19 @@ void grn_scan_info_put_index(grn_ctx *ctx,
                              grn_obj *scorer,
                              grn_obj *scorer_args_expr,
                              uint32_t scorer_args_expr_offset);
-scan_info **grn_scan_info_put_logical_op(grn_ctx *ctx, scan_info **sis, int *ip,
-                                         grn_operator op, int start);
+scan_info **grn_scan_info_put_logical_op(grn_ctx *ctx,
+                                         scan_info **sis,
+                                         int *ip,
+                                         grn_operator op,
+                                         int start,
+                                         float weight_factor);
 int grn_scan_info_get_flags(scan_info *si);
 void grn_scan_info_set_flags(scan_info *si, int flags);
 grn_operator grn_scan_info_get_logical_op(scan_info *si);
 void grn_scan_info_set_logical_op(scan_info *si, grn_operator logical_op);
 grn_operator grn_scan_info_get_op(scan_info *si);
+void grn_scan_info_set_weight_factor(scan_info *si, float factor);
+float grn_scan_info_get_weight_factor(scan_info *si);
 void grn_scan_info_set_op(scan_info *si, grn_operator op);
 void grn_scan_info_set_end(scan_info *si, uint32_t end);
 void grn_scan_info_set_query(scan_info *si, grn_obj *query);

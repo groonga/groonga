@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2019-2020  Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -156,6 +156,24 @@ mrb_grn_scan_info_set_op(mrb_state *mrb, mrb_value self)
   si = DATA_PTR(self);
   op = grn_mrb_value_to_operator(mrb, mrb_op);
   grn_scan_info_set_op(si, op);
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_get_weight_factor(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si = DATA_PTR(self);
+  float factor = grn_scan_info_get_weight_factor(si);
+  return mrb_float_value(mrb, factor);
+}
+
+static mrb_value
+mrb_grn_scan_info_set_weight_factor(mrb_state *mrb, mrb_value self)
+{
+  mrb_float factor;
+  mrb_get_args(mrb, "f", &factor);
+  scan_info *si = DATA_PTR(self);
+  grn_scan_info_set_weight_factor(si, factor);
   return self;
 }
 
@@ -930,6 +948,10 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     mrb_grn_scan_info_get_op, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "op=",
                     mrb_grn_scan_info_set_op, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "weight_factor",
+                    mrb_grn_scan_info_get_weight_factor, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "weight_factor=",
+                    mrb_grn_scan_info_set_weight_factor, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "end=",
                     mrb_grn_scan_info_set_end, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "query=",
