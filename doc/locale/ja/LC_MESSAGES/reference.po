@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-05-07 01:11+0900\n"
+"PO-Revision-Date: 2021-06-03 03:03+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -22725,7 +22725,7 @@ msgstr ""
 "す。"
 
 msgid "In the following example, specifying the default value."
-msgstr "以下の例では、マッチしなかった場合のデフォルト値を指定しています。"
+msgstr "以下の例では、デフォルト値を指定しています。"
 
 msgid "There are two required parameters, ``target`` and ``nth``."
 msgstr "必須引数は2つあります。 ``target`` と ``nth`` です。"
@@ -22848,6 +22848,24 @@ msgstr "``string_slice`` は指定した条件で抽出された部分文字列�
 
 msgid "``string_substring``"
 msgstr ""
+
+msgid "``string_substring`` extracts a substring of a string by position."
+msgstr "``string_substring`` は文字列の部分文字列を抽出します。"
+
+msgid "``string_substring`` requires two to four parameters."
+msgstr "``string_substring`` は2つから4つの引数を指定できます。"
+
+msgid ""
+"If you omit or specify a negative value, this function extracts from ``nth`` "
+"to the end."
+msgstr ""
+"省略するか、負の値を指定した場合は、 ``nth`` から終端までを抽出します。"
+
+msgid ""
+"``string_substring`` returns a substring extracted under the specified "
+"conditions from ``target``."
+msgstr ""
+"``string_substring`` は指定した条件で抽出された部分文字列を返却します。"
 
 msgid "``sub_filter``"
 msgstr ""
