@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2017 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2017  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -196,8 +196,96 @@ grn_log_flags_parse(const char *string,
   return GRN_TRUE;
 }
 
+typedef struct {
+  char *path;
+  FILE *file;
+  grn_critical_section lock;
+  off_t size;
+  off_t rotate_threshold_size;
+  bool need_flock;
+} grn_logger_output;
+
 static void
-rotate_log_file(grn_ctx *ctx, const char *current_path)
+grn_logger_output_init(grn_logger_output *output)
+{
+  CRITICAL_SECTION_INIT(output->lock);
+}
+
+static void
+grn_logger_output_close(grn_ctx *ctx, grn_logger_output *output)
+{
+  CRITICAL_SECTION_ENTER(output->lock);
+  if (output->file) {
+    if (output->file != stdout &&
+        output->file != stderr) {
+      fclose(output->file);
+    }
+    output->file = NULL;
+  }
+  CRITICAL_SECTION_LEAVE(output->lock);
+}
+
+static void
+grn_logger_output_fin(grn_ctx *ctx, grn_logger_output *output)
+{
+  grn_logger_output_close(ctx, output);
+  if (output->path) {
+    free(output->path);
+    output->path = NULL;
+  }
+  CRITICAL_SECTION_FIN(output->lock);
+}
+
+static bool
+grn_logger_output_start(grn_ctx *ctx,
+                        grn_logger_output *output,
+                        bool need_flock)
+{
+  if (!output->path) {
+    return false;
+  }
+
+  CRITICAL_SECTION_ENTER(output->lock);
+
+  if (!output->file) {
+    output->size = 0;
+    if (strcmp(output->path, "-") == 0) {
+      output->file = stdout;
+    } else if (strcmp(output->path, "+") == 0) {
+      output->file = stderr;
+    } else {
+      output->file = grn_fopen(output->path, "a");
+      if (output->file) {
+        struct stat stat;
+        if (fstat(grn_fileno(output->file), &stat) != -1) {
+          output->size = stat.st_size;
+        }
+      }
+    }
+  }
+
+  if (!output->file) {
+    CRITICAL_SECTION_LEAVE(output->lock);
+    return false;
+  }
+
+  output->need_flock = need_flock;
+  if (output->need_flock) {
+    if (output->file == stdout ||
+        output->file == stderr) {
+      output->need_flock = false;
+#ifndef _WIN32
+    } else if (flock(fileno(output->file), LOCK_EX) == -1) {
+      output->need_flock = false;
+#endif
+    }
+  }
+
+  return true;
+}
+
+static void
+grn_logger_output_rotate(grn_ctx *ctx, grn_logger_output *output)
 {
   char rotated_path[PATH_MAX];
   grn_timeval now;
@@ -208,107 +296,85 @@ rotate_log_file(grn_ctx *ctx, const char *current_path)
   tm = grn_timeval2tm(ctx, &now, &tm_buffer);
   grn_snprintf(rotated_path, PATH_MAX, PATH_MAX,
                "%s.%04d-%02d-%02d-%02d-%02d-%02d-%06d",
-               current_path,
+               output->path,
                tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
                tm->tm_hour, tm->tm_min, tm->tm_sec,
                (int)(GRN_TIME_NSEC_TO_USEC(now.tv_nsec)));
-  rename(current_path, rotated_path);
+  rename(output->path, rotated_path);
 }
 
-static grn_bool logger_inited = GRN_FALSE;
-static char *default_logger_path = NULL;
-static FILE *default_logger_file = NULL;
-static grn_critical_section default_logger_lock;
-static off_t default_logger_size = 0;
-static off_t default_logger_rotate_threshold_size = 0;
+static void
+grn_logger_output_end(grn_ctx *ctx,
+                      grn_logger_output *output,
+                      int written)
+{
+  if (written > 0) {
+    output->size += written;
+    if (output->file != stdout &&
+        output->file != stderr &&
+        (output->rotate_threshold_size > 0 &&
+         output->size >= output->rotate_threshold_size)) {
+      fclose(output->file);
+      output->file = NULL;
+      grn_logger_output_rotate(ctx, output);
+    } else {
+      fflush(output->file);
+    }
+  }
+#ifndef _WIN32
+  if (output->need_flock) {
+    flock(fileno(output->file), LOCK_UN);
+  }
+#endif
 
-#define LOGGER_NEED_ROTATE(size, threshold) \
-  ((threshold) > 0 && (size) >= (threshold))
+  CRITICAL_SECTION_LEAVE(output->lock);
+}
+
+static bool logger_inited = false;
+static grn_logger_output default_logger_output = {0};
 
 static void
 default_logger_log(grn_ctx *ctx, grn_log_level level,
                    const char *timestamp, const char *title,
                    const char *message, const char *location, void *user_data)
 {
-  const char slev[] = " EACewnid-";
-  if (default_logger_path) {
-    CRITICAL_SECTION_ENTER(default_logger_lock);
-    if (!default_logger_file) {
-      default_logger_file = grn_fopen(default_logger_path, "a");
-      default_logger_size = 0;
-      if (default_logger_file) {
-        struct stat stat;
-        if (fstat(grn_fileno(default_logger_file), &stat) != -1) {
-          default_logger_size = stat.st_size;
-        }
-      }
-    }
-    if (default_logger_file) {
-      char label = *(slev + level);
-      int written;
-#ifndef WIN32
-      grn_bool need_flock = (current_logger.flags & GRN_LOG_PID);
-      if (need_flock) {
-        if (flock(fileno(default_logger_file), LOCK_EX) == -1) {
-          need_flock = GRN_FALSE;
-        }
-      }
-#endif /* WIN32 */
-      if (location && *location) {
-        if (title && *title) {
-          written = fprintf(default_logger_file, "%s|%c|%s: %s %s\n",
-                            timestamp, label, location, title, message);
-        } else {
-          written = fprintf(default_logger_file, "%s|%c|%s: %s\n",
-                            timestamp, label, location, message);
-        }
-      } else {
-        written = fprintf(default_logger_file, "%s|%c|%s %s\n",
-                          timestamp, label, title, message);
-      }
-      if (written > 0) {
-        default_logger_size += written;
-        if (LOGGER_NEED_ROTATE(default_logger_size,
-                               default_logger_rotate_threshold_size)) {
-          fclose(default_logger_file);
-          default_logger_file = NULL;
-          rotate_log_file(ctx, default_logger_path);
-        } else {
-          fflush(default_logger_file);
-        }
-      }
-#ifndef WIN32
-      if (need_flock) {
-        flock(fileno(default_logger_file), LOCK_UN);
-      }
-#endif /* WIN32 */
-    }
-    CRITICAL_SECTION_LEAVE(default_logger_lock);
+  if (!grn_logger_output_start(ctx,
+                               &default_logger_output,
+                               (current_logger.flags & GRN_LOG_PID))) {
+    return;
   }
+
+  const char slev[] = " EACewnid-";
+  char label = *(slev + level);
+  int written = 0;
+  if (location && *location) {
+    if (title && *title) {
+      written = fprintf(default_logger_output.file, "%s|%c|%s: %s %s\n",
+                        timestamp, label, location, title, message);
+    } else {
+      written = fprintf(default_logger_output.file, "%s|%c|%s: %s\n",
+                        timestamp, label, location, message);
+    }
+  } else {
+    written = fprintf(default_logger_output.file, "%s|%c|%s %s\n",
+                      timestamp, label, title, message);
+  }
+
+  grn_logger_output_end(ctx, &default_logger_output, written);
 }
 
 static void
 default_logger_reopen(grn_ctx *ctx, void *user_data)
 {
   GRN_LOG(ctx, GRN_LOG_DEBUG, "log will be closed.");
-  CRITICAL_SECTION_ENTER(default_logger_lock);
-  if (default_logger_file) {
-    fclose(default_logger_file);
-    default_logger_file = NULL;
-  }
-  CRITICAL_SECTION_LEAVE(default_logger_lock);
+  grn_logger_output_close(ctx, &default_logger_output);
   GRN_LOG(ctx, GRN_LOG_DEBUG, "log opened.");
 }
 
 static void
 default_logger_fin(grn_ctx *ctx, void *user_data)
 {
-  CRITICAL_SECTION_ENTER(default_logger_lock);
-  if (default_logger_file) {
-    fclose(default_logger_file);
-    default_logger_file = NULL;
-  }
-  CRITICAL_SECTION_LEAVE(default_logger_lock);
+  grn_logger_output_close(ctx, &default_logger_output);
 }
 
 static grn_logger default_logger = {
@@ -354,40 +420,40 @@ void
 grn_default_logger_set_path(const char *path)
 {
   if (logger_inited) {
-    CRITICAL_SECTION_ENTER(default_logger_lock);
+    CRITICAL_SECTION_ENTER(default_logger_output.lock);
   }
 
-  if (default_logger_path) {
-    free(default_logger_path);
+  if (default_logger_output.path) {
+    free(default_logger_output.path);
   }
 
   if (path) {
-    default_logger_path = grn_strdup_raw(path);
+    default_logger_output.path = grn_strdup_raw(path);
   } else {
-    default_logger_path = NULL;
+    default_logger_output.path = NULL;
   }
 
   if (logger_inited) {
-    CRITICAL_SECTION_LEAVE(default_logger_lock);
+    CRITICAL_SECTION_LEAVE(default_logger_output.lock);
   }
 }
 
 const char *
 grn_default_logger_get_path(void)
 {
-  return default_logger_path;
+  return default_logger_output.path;
 }
 
 void
 grn_default_logger_set_rotate_threshold_size(off_t threshold)
 {
-  default_logger_rotate_threshold_size = threshold;
+  default_logger_output.rotate_threshold_size = threshold;
 }
 
 off_t
 grn_default_logger_get_rotate_threshold_size(void)
 {
-  return default_logger_rotate_threshold_size;
+  return default_logger_output.rotate_threshold_size;
 }
 
 void
@@ -597,34 +663,25 @@ grn_logger_putv(grn_ctx *ctx,
 void
 grn_logger_init(void)
 {
-  CRITICAL_SECTION_INIT(default_logger_lock);
+  grn_logger_output_init(&default_logger_output);
   if (!current_logger.log) {
     current_logger = default_logger;
   }
 
-  logger_inited = GRN_TRUE;
+  logger_inited = true;
 }
 
 void
 grn_logger_fin(grn_ctx *ctx)
 {
   current_logger_fin(ctx);
-  if (default_logger_path) {
-    free(default_logger_path);
-    default_logger_path = NULL;
-  }
-  CRITICAL_SECTION_FIN(default_logger_lock);
-
-  logger_inited = GRN_FALSE;
+  grn_logger_output_fin(ctx, &default_logger_output);
+  logger_inited = false;
 }
 
 
-static grn_bool query_logger_inited = GRN_FALSE;
-static char *default_query_logger_path = NULL;
-static FILE *default_query_logger_file = NULL;
-static grn_critical_section default_query_logger_lock;
-static off_t default_query_logger_size = 0;
-static off_t default_query_logger_rotate_threshold_size = 0;
+static bool query_logger_inited = false;
+static grn_logger_output default_query_logger_output = {0};
 
 grn_bool
 grn_query_log_flags_parse(const char *string,
@@ -685,80 +742,40 @@ default_query_logger_log(grn_ctx *ctx, unsigned int flag,
                          const char *timestamp, const char *info,
                          const char *message, void *user_data)
 {
-  if (default_query_logger_path) {
-    CRITICAL_SECTION_ENTER(default_query_logger_lock);
-    if (!default_query_logger_file) {
-      default_query_logger_file = grn_fopen(default_query_logger_path, "a");
-      default_query_logger_size = 0;
-      if (default_query_logger_file) {
-        struct stat stat;
-        if (fstat(grn_fileno(default_query_logger_file), &stat) != -1) {
-          default_query_logger_size = stat.st_size;
-        }
-      }
-    }
-    if (default_query_logger_file) {
-      int written;
-#ifndef WIN32
-      grn_bool need_flock = (current_logger.flags & GRN_LOG_PID);
-      if (need_flock) {
-        if (flock(fileno(default_query_logger_file), LOCK_EX) == -1) {
-          need_flock = GRN_FALSE;
-        }
-      }
-#endif /* WIN32 */
-      written = fprintf(default_query_logger_file, "%s|%s%s\n",
-                        timestamp, info, message);
-      if (written > 0) {
-        default_query_logger_size += written;
-        if (LOGGER_NEED_ROTATE(default_query_logger_size,
-                               default_query_logger_rotate_threshold_size)) {
-          fclose(default_query_logger_file);
-          default_query_logger_file = NULL;
-          rotate_log_file(ctx, default_query_logger_path);
-        } else {
-          fflush(default_query_logger_file);
-        }
-      }
-#ifndef WIN32
-      if (need_flock) {
-        flock(fileno(default_query_logger_file), LOCK_UN);
-      }
-#endif /* WIN32 */
-   }
-    CRITICAL_SECTION_LEAVE(default_query_logger_lock);
+  if (!grn_logger_output_start(ctx,
+                               &default_query_logger_output,
+                               (current_logger.flags & GRN_LOG_PID))) {
+    return;
   }
+  int written = fprintf(default_query_logger_output.file, "%s|%s%s\n",
+                        timestamp, info, message);
+  grn_logger_output_end(ctx, &default_query_logger_output, written);
 }
 
 static void
 default_query_logger_close(grn_ctx *ctx, void *user_data)
 {
   GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_DESTINATION, " ",
-                "query log will be closed: <%s>", default_query_logger_path);
-  CRITICAL_SECTION_ENTER(default_query_logger_lock);
-  if (default_query_logger_file) {
-    fclose(default_query_logger_file);
-    default_query_logger_file = NULL;
-  }
-  CRITICAL_SECTION_LEAVE(default_query_logger_lock);
+                "query log will be closed: <%s>",
+                default_query_logger_output.path);
+  grn_logger_output_close(ctx, &default_query_logger_output);
 }
 
 static void
 default_query_logger_reopen(grn_ctx *ctx, void *user_data)
 {
   default_query_logger_close(ctx, user_data);
-  if (default_query_logger_path) {
+  if (default_query_logger_output.path) {
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_DESTINATION, " ",
-                  "query log is opened: <%s>", default_query_logger_path);
+                  "query log is opened: <%s>",
+                  default_query_logger_output.path);
   }
 }
 
 static void
 default_query_logger_fin(grn_ctx *ctx, void *user_data)
 {
-  if (default_query_logger_file) {
-    default_query_logger_close(ctx, user_data);
-  }
+  default_query_logger_close(ctx, user_data);
 }
 
 static grn_query_logger default_query_logger = {
@@ -798,40 +815,40 @@ void
 grn_default_query_logger_set_path(const char *path)
 {
   if (query_logger_inited) {
-    CRITICAL_SECTION_ENTER(default_query_logger_lock);
+    CRITICAL_SECTION_ENTER(default_query_logger_output.lock);
   }
 
-  if (default_query_logger_path) {
-    free(default_query_logger_path);
+  if (default_query_logger_output.path) {
+    free(default_query_logger_output.path);
   }
 
   if (path) {
-    default_query_logger_path = grn_strdup_raw(path);
+    default_query_logger_output.path = grn_strdup_raw(path);
   } else {
-    default_query_logger_path = NULL;
+    default_query_logger_output.path = NULL;
   }
 
   if (query_logger_inited) {
-    CRITICAL_SECTION_LEAVE(default_query_logger_lock);
+    CRITICAL_SECTION_LEAVE(default_query_logger_output.lock);
   }
 }
 
 const char *
 grn_default_query_logger_get_path(void)
 {
-  return default_query_logger_path;
+  return default_query_logger_output.path;
 }
 
 void
 grn_default_query_logger_set_rotate_threshold_size(off_t threshold)
 {
-  default_query_logger_rotate_threshold_size = threshold;
+  default_query_logger_output.rotate_threshold_size = threshold;
 }
 
 off_t
 grn_default_query_logger_get_rotate_threshold_size(void)
 {
-  return default_query_logger_rotate_threshold_size;
+  return default_query_logger_output.rotate_threshold_size;
 }
 
 void
@@ -959,22 +976,16 @@ void
 grn_query_logger_init(void)
 {
   current_query_logger = default_query_logger;
-  CRITICAL_SECTION_INIT(default_query_logger_lock);
-
-  query_logger_inited = GRN_TRUE;
+  grn_logger_output_init(&default_query_logger_output);
+  query_logger_inited = true;
 }
 
 void
 grn_query_logger_fin(grn_ctx *ctx)
 {
   current_query_logger_fin(ctx);
-  if (default_query_logger_path) {
-    free(default_query_logger_path);
-    default_query_logger_path = NULL;
-  }
-  CRITICAL_SECTION_FIN(default_query_logger_lock);
-
-  query_logger_inited = GRN_FALSE;
+  grn_logger_output_fin(ctx, &default_query_logger_output);
+  query_logger_inited = false;
 }
 
 void
