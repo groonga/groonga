@@ -32,8 +32,8 @@ Extraction by position
 
 ::
 
-  string_slice(target, nth[, options])``
-  string_slice(target, nth, length[, options])``
+  string_slice(target, nth[, options])
+  string_slice(target, nth, length[, options])
 
 ``options`` uses the following format. All of key-value pairs are optional::
 
