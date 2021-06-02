@@ -23,7 +23,9 @@ stdout.each_line do |line|
                                           DATABASE_PATH,
                                           "object_inspect",
                                           index_name)
+  unix_time_when_command_executed = JSON.parse(stdout)[0][1]
+  n_buffer_segments = JSON.parse(stdout)[1]["value"]["statistics"]["n_buffer_segments"]
   File.open(index_name, 'a') do |file|
-    file.puts(JSON.parse(stdout)[1]["value"]["statistics"]["n_buffer_segments"])
+    file.puts("#{unix_time_when_command_executed}, #{n_buffer_segments}")
   end
 end
