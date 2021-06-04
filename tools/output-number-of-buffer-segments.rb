@@ -26,24 +26,25 @@ stdout, stderr, status = Open3.capture3("groonga",
                                         "--dump_schema", "no",
                                         "--dump_records", "no",
                                         "--dump_configs", "no")
-if (status.success?)
-  stdout.each_line do |line|
-    index_name = line.split[1..2].join(".")
-    stdout, stderr, status = Open3.capture3("groonga",
-                                            DATABASE_PATH,
-                                            "object_inspect",
-                                            index_name)
-    if (status.success?)
-      unix_time_when_command_executed = JSON.parse(stdout)[0][1]
-      n_buffer_segments = JSON.parse(stdout)[1]["value"]["statistics"]["n_buffer_segments"]
-      File.open(index_name, 'a') do |file|
-        file.puts("#{unix_time_when_command_executed}, #{n_buffer_segments}")
-      end
-    else
-      output_error(status, stdout, stderr)
-      exit
-    end
-  end
-else
+unless status.success?
   output_error(status, stdout, stderr)
+  exit
+end
+
+stdout.each_line do |line|
+  index_name = line.split[1..2].join(".")
+  stdout, stderr, status = Open3.capture3("groonga",
+                                          DATABASE_PATH,
+                                          "object_inspect",
+                                          index_name)
+  unless status.success?
+    output_error(status, stdout, stderr)
+    exit(status.exitstatus)
+  end
+
+  unix_time_when_command_executed = JSON.parse(stdout)[0][1]
+  n_buffer_segments = JSON.parse(stdout)[1]["value"]["statistics"]["n_buffer_segments"]
+  File.open(index_name, 'a') do |file|
+    file.puts("#{unix_time_when_command_executed}, #{n_buffer_segments}")
+  end
 end
