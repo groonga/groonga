@@ -42,8 +42,10 @@ stdout.each_line do |line|
     exit(status.exitstatus)
   end
 
-  unix_time_when_command_executed = JSON.parse(stdout)[0][1]
-  n_buffer_segments = JSON.parse(stdout)[1]["value"]["statistics"]["n_buffer_segments"]
+  result_object_inspect = JSON.parse(stdout)
+  unix_time_when_command_executed = result_object_inspect[0][1]
+  n_buffer_segments = result_object_inspect[1]["value"]["statistics"]["n_buffer_segments"]
+
   File.open(index_name, 'a') do |file|
     file.puts("#{unix_time_when_command_executed}, #{n_buffer_segments}")
   end
