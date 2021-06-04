@@ -28,7 +28,7 @@ stdout, stderr, status = Open3.capture3("groonga",
                                         "--dump_configs", "no")
 unless status.success?
   output_error(status, stdout, stderr)
-  exit
+  exit(status.exitstatus)
 end
 
 stdout.each_line do |line|
