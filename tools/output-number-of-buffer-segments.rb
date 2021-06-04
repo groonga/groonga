@@ -7,7 +7,7 @@ require "date"
 if ARGV.empty?
   puts "Usage: $0 DATABASE_PATH"
   puts " e.g.: $0 ~/database/db"
-  exit
+  exit(false)
 end
 
 DATABASE_PATH = ARGV[0]
