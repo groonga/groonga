@@ -4,7 +4,7 @@ require "open3"
 require "json"
 require "date"
 
-if ARGV.size() == 0
+if ARGV.empty?
   puts "Usage: $0 DATABASE_PATH"
   puts " e.g.: $0 ~/database/db"
   exit
