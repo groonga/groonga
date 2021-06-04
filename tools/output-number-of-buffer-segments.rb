@@ -14,9 +14,7 @@ DATABASE_PATH = ARGV[0]
 ERROR_LOG_NAME = "output_n_buffer_segments.error"
 
 def output_error(status, stdout, stderr)
-  File.open(ERROR_LOG_NAME, 'a') do |file|
-    file.puts("#{Time.now}: #{status.inspect}, #{stdout.chomp}, #{stderr.chomp}")
-  end
+  puts("#{Time.now}: #{status.inspect}, #{stdout.chomp}, #{stderr.chomp}")
 end
 
 stdout, stderr, status = Open3.capture3("groonga",
