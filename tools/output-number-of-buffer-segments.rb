@@ -28,7 +28,7 @@ stdout, stderr, status = Open3.capture3("groonga",
                                         "--dump_configs", "no")
 if (status.success?)
   stdout.each_line do |line|
-    index_name = "#{line.split()[1]}.#{line.split()[2]}"
+    index_name = line.split[1..2].join(".")
     stdout, stderr, status = Open3.capture3("groonga",
                                             DATABASE_PATH,
                                             "object_inspect",
