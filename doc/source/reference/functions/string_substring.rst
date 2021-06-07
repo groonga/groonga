@@ -54,11 +54,17 @@ Sample data:
 .. {"_key": "Groonga"}
 .. ]
 
-Here is a simple example for the extraction by position.
+Here is a simple example.
 
 .. groonga-command
 .. include:: ../../example/reference/functions/string_substring/usage_number.log
 .. select Memos --output_columns '_key, string_substring(_key, 2, 3)'
+
+In the following example, specifying the negative value for ``nth``.
+
+.. groonga-command
+.. include:: ../../example/reference/functions/string_substring/usage_negative.log
+.. select Memos --output_columns '_key, string_substring(_key, -3, 2)'
 
 In the following example, specifying the default value.
 
@@ -75,31 +81,33 @@ You can specify string literal instead of column.
 Parameters
 ----------
 
-There are two required parameters, ``target`` and ``nth``.
-
-There are two optional parameters, ``length`` and ``options``.
+Required parameters
+^^^^^^^^^^^^^^^^^^^
 
 ``target``
-^^^^^^^^^^
+~~~~~~~~~~
 
 Specify a string literal or a string type column.
 
 ``nth``
-^^^^^^^
+~~~~~~~
 
 Specify a 0-based index number of charactors where to start the extraction from ``target``.
 
 If you specify a negative value, it counts from the end of ``target``.
 
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
+
 ``length``
-^^^^^^^^^^
+~~~~~~~~~~
 
 Specify a number of characters to extract from ``nth``.
 
 If you omit or specify a negative value, this function extracts from ``nth`` to the end.
 
 ``options``
-^^^^^^^^^^^
+~~~~~~~~~~~
 
 .. versionadded:: 11.0.3
 

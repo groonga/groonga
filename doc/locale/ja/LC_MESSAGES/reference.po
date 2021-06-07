@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-06-03 03:03+0900\n"
+"PO-Revision-Date: 2021-06-08 01:20+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -22854,6 +22854,9 @@ msgstr "``string_substring`` は文字列の部分文字列を抽出します。
 
 msgid "``string_substring`` requires two to four parameters."
 msgstr "``string_substring`` は2つから4つの引数を指定できます。"
+
+msgid "In the following example, specifying the negative value for ``nth``."
+msgstr "以下の例では、 ``nth`` に負の値を指定しています。"
 
 msgid ""
 "If you omit or specify a negative value, this function extracts from ``nth`` "
