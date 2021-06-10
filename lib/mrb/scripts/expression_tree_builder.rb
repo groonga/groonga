@@ -84,7 +84,11 @@ module Groonga
           nodes = []
           add_logical_operation_node(code.op, nodes, left)
           add_logical_operation_node(code.op, nodes, right)
-          node = ExpressionTree::LogicalOperation.new(code.op, nodes)
+          weight_factor = nil
+          weight_factor = code.value.value if code.value
+          node = ExpressionTree::LogicalOperation.new(code.op,
+                                                      nodes,
+                                                      weight_factor)
           stack.push(node)
         when *RELATION_OPERATORS, *ARITHMETIC_OPERATORS
           options = {}

@@ -40,7 +40,8 @@ module Groonga
               optimized_sub_nodes[0]
             else
               ExpressionTree::LogicalOperation.new(optimized_node.operator,
-                                                   optimized_sub_nodes)
+                                                   optimized_sub_nodes,
+                                                   optimized_node.weight_factor)
             end
           end
         when ExpressionTree::BinaryOperation
@@ -66,6 +67,11 @@ module Groonga
             next
           end
 
+          if sub_node.respond_to?(:weight_factor)
+            weight_factor = sub_node.weight_factor
+          else
+            weight_factor = nil
+          end
           case sub_nodes.size
           when 0
             sub_nodes << sub_node
@@ -73,31 +79,36 @@ module Groonga
             and_not_node =
               ExpressionTree::LogicalOperation.new(Operator::AND_NOT,
                                                    [sub_nodes.first,
-                                                    sub_node.value])
+                                                    sub_node.value],
+                                                   weight_factor)
             optimized_sub_nodes << yield(and_not_node)
             sub_nodes = []
           else
             and_nodes = ExpressionTree::LogicalOperation.new(node.operator,
-                                                             sub_nodes)
+                                                             sub_nodes,
+                                                             weight_factor)
             optimized_and_nodes = yield(and_nodes)
             and_not_node =
               ExpressionTree::LogicalOperation.new(Operator::AND_NOT,
                                                    [optimized_and_nodes,
-                                                    sub_node.value])
+                                                    sub_node.value],
+                                                   weight_factor)
             optimized_sub_nodes << yield(and_not_node)
             sub_nodes = []
           end
         end
         unless sub_nodes.empty?
           and_nodes = ExpressionTree::LogicalOperation.new(node.operator,
-                                                           sub_nodes)
+                                                           sub_nodes,
+                                                           node.weight_factor)
           optimized_sub_nodes << yield(and_nodes)
         end
         if optimized_sub_nodes.size == 1
           optimized_sub_nodes.first
         else
           ExpressionTree::LogicalOperation.new(node.operator,
-                                               optimized_sub_nodes)
+                                               optimized_sub_nodes,
+                                               node.weight_factor)
         end
       end
 

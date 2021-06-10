@@ -3,15 +3,22 @@ module Groonga
     class LogicalOperation
       attr_reader :operator
       attr_reader :nodes
-      def initialize(operator, nodes)
+      attr_reader :weight_factor
+      def initialize(operator, nodes, weight_factor=nil)
         @operator = operator
         @nodes = nodes
+        @weight_factor = weight_factor
       end
 
       def build(expression)
         @nodes.each_with_index do |node, i|
           node.build(expression)
-          expression.append_operator(@operator, 2) if i > 0
+          next if i.zero?
+          if @weight_factor
+            expression.append_constant(@weight_factor, @operator, 2)
+          else
+            expression.append_operator(@operator, 2)
+          end
         end
       end
 
