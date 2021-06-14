@@ -4326,9 +4326,17 @@ grn_table_setoperation_or(grn_ctx *ctx,
                                               &added);
       if (id_dest != GRN_ID_NIL) {
         if (added) {
-          grn_rset_recinfo ri_src = *((grn_rset_recinfo *)value_src);
-          ri_src.score *= data->weight_factor;
-          grn_memcpy(value_dest, &ri_src, data->value_size);
+          /* grn_rset_recinfo::score is double */
+          if (data->value_size >= sizeof(double)) {
+            grn_rset_recinfo *ri_src = value_src;
+            double score = ri_src->score * data->weight_factor;
+            grn_memcpy(value_dest, &score, sizeof(double));
+            grn_memcpy(((uint8_t *)value_dest) + sizeof(double),
+                       ((uint8_t *)value_src) + sizeof(double),
+                       data->value_size - sizeof(double));
+          } else {
+            grn_memcpy(value_dest, value_src, data->value_size);
+          }
         } else {
           grn_rset_recinfo *ri_dest = value_dest;
           grn_rset_recinfo *ri_src = value_src;
