@@ -29,6 +29,7 @@ jobs:
             mingw-w64-x86_64-openssl
             mingw-w64-x86_64-pcre
             mingw-w64-x86_64-rapidjson
+            mingw-w64-x86_64-ruby
             mingw-w64-x86_64-mecab
             mingw-w64-x86_64-mecab-naist-jdic
             mingw-w64-x86_64-zeromq
