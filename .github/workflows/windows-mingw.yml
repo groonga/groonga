@@ -21,13 +21,18 @@ jobs:
             make
             mingw-w64-x86_64-arrow
             mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-libtool
+            mingw-w64-x86_64-luajit
+            mingw-w64-x86_64-lz4
+            mingw-w64-x86_64-msgpack-c
+            mingw-w64-x86_64-onigmo
+            mingw-w64-x86_64-openssl
+            mingw-w64-x86_64-pcre
+            mingw-w64-x86_64-rapidjson
             mingw-w64-x86_64-mecab
-            mingw-w64-x86_64-pkg-config
-            mingw-w64-x86_64-python-pip
-            mingw-w64-x86_64-ruby
-            mingw-w64-x86_64-xxhash
+            mingw-w64-x86_64-mecab-naist-jdic
+            mingw-w64-x86_64-zeromq
             mingw-w64-x86_64-zlib
+            mingw-w64-x86_64-zstd
       - name: Generate configure
         shell: msys2 {0}
         run: |
@@ -38,12 +43,16 @@ jobs:
           mkdir ../groonga.build
           cd ../groonga.build
           ../groonga/configure \
+            --disable-libedit \
+            --with-mecab \
+            --with-onigmo=system \
+            --without-kytea \
+            --without-cutter \
+            --without-libevent \
             --disable-benchmark \
             --disable-groonga-httpd \
-            --enable-mruby \
-            --enable-shared-onigmo \
+            --enable-mruby
             --prefix=/tmp/local \
-            --with-ruby
       - name: Show config.log
         shell: msys2 {0}
         if: always()
