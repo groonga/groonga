@@ -47,13 +47,14 @@ jobs:
             --disable-libedit \
             --with-mecab \
             --with-onigmo=system \
+            --with-ruby \
             --without-kytea \
             --without-cutter \
             --without-libevent \
             --disable-benchmark \
             --disable-groonga-httpd \
-            --enable-mruby
-            --prefix=/tmp/local \
+            --enable-mruby \
+            --prefix=/tmp/local
       - name: Show config.log
         shell: msys2 {0}
         if: always()
