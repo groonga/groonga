@@ -147,7 +147,7 @@ Improvements
          ]
        ]
 
-  * In the above example, we specify ``TokenFilterStopWord.enable`` by using ``--query-options``, but we also specify it by using ``{"options": {"TokenFilterStopWord.enabled": false}}`` as below.
+  * In the above example, we specify ``TokenFilterStopWord.enable`` by using ``--query-options``, but we also specify it by using ``{"options": {"TokenFilterStopWord.enable": false}}`` as below.
 
     .. code-block::
 
