@@ -130,19 +130,18 @@ msgstr ""
 "``remove_new_line`` を追加しました。"
 
 msgid ""
-"Normally, normalizers remove a new line. Because they needless in the full "
-"text search."
-msgstr "通常、ノーマライザーは改行を削除します。全文検索には不要なためです。"
-
-msgid ""
-"However, If normalizers remove it, Groonga can't handle a key that is only a "
-"new line."
+"If we want to normalize the key of a table that stores data, we set a "
+"normalizer to it. However, normally, normalizers remove a new line."
 msgstr ""
-"しかし、ノーマライザーが改行を削除してしまうと、Groongaは改行のみのキーを扱え"
-"ません。"
+"データを格納するテーブルのキーを正規化したい場合、そのテーブルにノーマライ"
+"ザーを設定しますが、通常ノーマライザーは改行を削除します。"
+
+msgid "Groonga can't handle a key that is only a new line."
+msgstr ""
+"ノーマライザーが改行を削除してしまうと、Groongaは改行のみのキーを扱えません。"
 
 msgid "We can register data that is only a new line as key by this option."
-msgstr "このオプションによって、改行のみのデータをキーとして登録できます。"
+msgstr "このオプションを使うことで、改行のみのデータをキーとして登録できます。"
 
 msgid ""
 "[:doc:`/reference/functions/string_slice`] Added a new function "

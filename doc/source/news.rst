@@ -214,8 +214,9 @@ Improvements
 
 * [:doc:`/reference/normalizers`][NormalizerNFKC] Added a new option ``remove_new_line``.
 
-  * Normally, normalizers remove a new line. Because they needless in the full text search.
-  * However, If normalizers remove it, Groonga can't handle a key that is only a new line.
+  * If we want to normalize the key of a table that stores data, we set a normalizer to it.
+    However, normally, normalizers remove a new line.
+  * Groonga can't handle a key that is only a new line.
   * We can register data that is only a new line as key by this option.
 
 * [:doc:`/reference/functions/string_slice`] Added a new function ``string_slice()``. [Github#1177][Patched by Takashi Hashida]
