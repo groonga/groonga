@@ -16520,3 +16520,13 @@ grn_ii_build2(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
   }
   return rc;
 }
+
+grn_rc
+grn_ii_warm(grn_ctx *ctx, grn_ii *ii)
+{
+  grn_rc rc = grn_io_warm(ctx, ii->seg);
+  if (rc == GRN_SUCCESS) {
+    rc = grn_io_warm(ctx, ii->chunk);
+  }
+  return rc;
+}

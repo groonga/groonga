@@ -1,0 +1,19 @@
+table_create dat TABLE_DAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create dat ra COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create dat ja COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table dat
+[
+{"_key": "a", "ra": 0, "ja": "a"}
+]
+[[0,0.0,0.0],1]
+log_level --level dump
+[[0,0.0,0.0],true]
+object_warm --name dat
+[[0,0.0,0.0],true]
+#|-| [io][warm] <db/db.0000100>
+#|-| [io][warm] <db/db.0000100.001>
+#|-| [io][warm] <db/db.0000102>
+#|-| [io][warm] <db/db.0000101>

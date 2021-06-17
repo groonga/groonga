@@ -27,6 +27,7 @@
 #include "grn_index_column.h"
 #include "grn_pat.h"
 #include "grn_store.h"
+#include "grn_table.h"
 #include "grn_token_column.h"
 
 const char *
@@ -1439,5 +1440,95 @@ grn_obj_to_script_syntax(grn_ctx *ctx, grn_obj *obj, grn_obj *buffer)
         grn_obj_type_to_string(obj->header.type));
     break;
   }
+  GRN_API_RETURN(ctx->rc);
+}
+
+static void grn_obj_warm_dispatch(grn_ctx *ctx, grn_obj *obj);
+
+static void
+grn_db_warm(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_db *db = (grn_db *)obj;
+  grn_obj_warm_dispatch(ctx, db->keys);
+  grn_ja_warm(ctx, db->specs);
+  grn_hash_warm(ctx, db->config);
+  grn_options_warm(ctx, db->options);
+
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, obj, cursor, id, GRN_CURSOR_BY_ID) {
+    if (id < GRN_N_RESERVED_TYPES) {
+      continue;
+    }
+
+    grn_obj *object = grn_ctx_at(ctx, id);
+    if (!object) {
+      continue;
+    }
+    if (grn_obj_is_table(ctx, object)) {
+      grn_obj_warm_dispatch(ctx, object);
+    }
+    grn_obj_unref(ctx, object);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+}
+
+static void
+grn_table_warm(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_hash *columns = grn_table_all_columns(ctx, obj);
+  if (!columns) {
+    return;
+  }
+
+  GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
+    void *key;
+    grn_hash_cursor_get_key(ctx, cursor, &key);
+    grn_id column_id = *((grn_id *)key);
+    grn_obj *column = grn_ctx_at(ctx, column_id);
+    grn_obj_warm_dispatch(ctx, column);
+    grn_obj_unref(ctx, column);
+  } GRN_HASH_EACH_END(ctx, cursor);
+}
+
+static void
+grn_obj_warm_dispatch(grn_ctx *ctx, grn_obj *obj)
+{
+  switch (obj->header.type) {
+  case GRN_DB :
+    grn_db_warm(ctx, obj);
+    break;
+  case GRN_TABLE_HASH_KEY :
+    grn_hash_warm(ctx, (grn_hash *)obj);
+    grn_table_warm(ctx, obj);
+    break;
+  case GRN_TABLE_PAT_KEY :
+    grn_pat_warm(ctx, (grn_pat *)obj);
+    grn_table_warm(ctx, obj);
+    break;
+  case GRN_TABLE_DAT_KEY :
+    grn_dat_warm(ctx, (grn_dat *)obj);
+    grn_table_warm(ctx, obj);
+    break;
+  case GRN_TABLE_NO_KEY :
+    grn_array_warm(ctx, (grn_array *)obj);
+    grn_table_warm(ctx, obj);
+    break;
+  case GRN_COLUMN_FIX_SIZE :
+    grn_ra_warm(ctx, (grn_ra *)obj);
+    break;
+  case GRN_COLUMN_VAR_SIZE :
+    grn_ja_warm(ctx, (grn_ja *)obj);
+    break;
+  case GRN_COLUMN_INDEX :
+    grn_ii_warm(ctx, (grn_ii *)obj);
+    break;
+  default :
+    break;
+  }
+}
+
+grn_rc
+grn_obj_warm(grn_ctx *ctx, grn_obj *obj)
+{
+  GRN_API_ENTER;
+  grn_obj_warm_dispatch(ctx, obj);
   GRN_API_RETURN(ctx->rc);
 }

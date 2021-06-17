@@ -227,6 +227,8 @@ typedef struct grn_ii_builder_options grn_ii_builder_options;
 grn_rc grn_ii_build2(grn_ctx *ctx, grn_ii *ii,
                      const grn_ii_builder_options *options);
 
+grn_rc grn_ii_warm(grn_ctx *ctx, grn_ii *ii);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2011-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2011-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -92,6 +92,8 @@ grn_rc grn_dat_clear_dirty(grn_ctx *ctx, grn_dat *dat);
 grn_bool grn_dat_is_corrupt(grn_ctx *ctx, grn_dat *dat);
 
 size_t grn_dat_get_disk_usage(grn_ctx *ctx, grn_dat *dat);
+
+grn_rc grn_dat_warm(grn_ctx *ctx, grn_dat *pat);
 
 #ifdef __cplusplus
 }

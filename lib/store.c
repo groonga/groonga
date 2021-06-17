@@ -213,6 +213,12 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
   return GRN_SUCCESS;
 }
 
+grn_rc
+grn_ra_warm(grn_ctx *ctx, grn_ra *ra)
+{
+  return grn_io_warm(ctx, ra->io);
+}
+
 /**** jagged arrays, ja ****/
 
 /*
@@ -4008,7 +4014,6 @@ grn_ja_check_segment_ginfo(grn_ctx *ctx,
   GRN_OUTPUT_MAP_CLOSE();
 
   return is_valid;
-  
 }
 
 static bool
@@ -4280,6 +4285,12 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
     GRN_OUTPUT_MAP_CLOSE();
   }
   GRN_OUTPUT_MAP_CLOSE();
+}
+
+grn_rc
+grn_ja_warm(grn_ctx *ctx, grn_ja *ja)
+{
+  return grn_io_warm(ctx, ja->io);
 }
 
 /* grn_ja_reader */

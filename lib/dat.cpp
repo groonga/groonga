@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2011-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2011-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1387,6 +1387,34 @@ grn_dat_get_disk_usage(grn_ctx *ctx, grn_dat *dat)
 
     return usage;
   }
+}
+
+grn_rc
+grn_dat_warm(grn_ctx *ctx, grn_dat *dat)
+{
+  if (!dat->io) {
+    return ctx->rc;
+  }
+
+  grn_rc rc = grn_io_warm(ctx, dat->io);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+
+  for (uint32_t i = 1; i <= dat->header->file_id; ++i) {
+    char trie_path[PATH_MAX];
+    grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, i);
+    struct stat stat;
+    if (::stat(trie_path, &stat) != 0) {
+      continue;
+    }
+    if (!grn_io_warm_path(ctx, dat->io, trie_path)) {
+      rc = ctx->rc;
+      break;
+    }
+  }
+
+  return rc;
 }
 
 }  // extern "C"

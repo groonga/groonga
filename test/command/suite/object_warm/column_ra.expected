@@ -1,0 +1,16 @@
+table_create array TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create array ra COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create array ja COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table array
+[
+{"ra": 0, "ja": "a"}
+]
+[[0,0.0,0.0],1]
+log_level --level dump
+[[0,0.0,0.0],true]
+object_warm --name array.ra
+[[0,0.0,0.0],true]
+#|-| [io][warm] <db/db.0000101>

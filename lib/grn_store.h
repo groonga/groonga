@@ -53,6 +53,7 @@ grn_rc grn_ra_close(grn_ctx *ctx, grn_ra *ra);
 grn_rc grn_ra_remove(grn_ctx *ctx, const char *path);
 void *grn_ra_ref(grn_ctx *ctx, grn_ra *ra, grn_id id);
 grn_rc grn_ra_unref(grn_ctx *ctx, grn_ra *ra, grn_id id);
+grn_rc grn_ra_warm(grn_ctx *ctx, grn_ra *ra);
 
 typedef struct _grn_ra_cache grn_ra_cache;
 
@@ -114,6 +115,7 @@ GRN_API grn_rc grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id,
 GRN_API uint32_t grn_ja_size(grn_ctx *ctx, grn_ja *ja, grn_id id);
 
 void grn_ja_check(grn_ctx *ctx, grn_ja *ja);
+grn_rc grn_ja_warm(grn_ctx *ctx, grn_ja *ra);
 
 #define GRN_JA_READER_INITIAL_REF_SEG_IDS_SIZE 16
 

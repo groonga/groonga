@@ -1184,6 +1184,16 @@ grn_array_add(grn_ctx *ctx, grn_array *array, void **value)
   return GRN_ID_NIL;
 }
 
+grn_rc
+grn_array_warm(grn_ctx *ctx, grn_array *array)
+{
+  if (grn_array_is_io_array(array)) {
+    return grn_io_warm(ctx, array->io);
+  } else {
+    return ctx->rc;
+  }
+}
+
 /* grn_hash : hash table */
 
 #define GRN_HASH_MAX_SEGMENT  0x400
@@ -4156,5 +4166,15 @@ grn_hash_max_total_key_size(grn_ctx *ctx, grn_hash *hash)
     return GRN_HASH_KEY_MAX_TOTAL_SIZE_LARGE;
   } else {
     return GRN_HASH_KEY_MAX_TOTAL_SIZE_NORMAL;
+  }
+}
+
+grn_rc
+grn_hash_warm(grn_ctx *ctx, grn_hash *hash)
+{
+  if (grn_hash_is_io_hash(hash)) {
+    return grn_io_warm(ctx, hash->io);
+  } else {
+    return GRN_SUCCESS;
   }
 }

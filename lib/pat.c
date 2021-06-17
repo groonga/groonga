@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3836,4 +3836,10 @@ grn_pat_clear_dirty(grn_ctx *ctx, grn_pat *pat)
   CRITICAL_SECTION_LEAVE(pat->lock);
 
   return rc;
+}
+
+grn_rc
+grn_pat_warm(grn_ctx *ctx, grn_pat *pat)
+{
+  return grn_io_warm(ctx, pat->io);
 }
