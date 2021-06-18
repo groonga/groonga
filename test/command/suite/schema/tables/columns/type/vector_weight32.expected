@@ -240,6 +240,10 @@ schema
       "NormalizerNFKC51": {
         "id": 84,
         "name": "NormalizerNFKC51"
+      },
+      "NormalizerTable": {
+        "id": 88,
+        "name": "NormalizerTable"
       }
     },
     "token_filters": {

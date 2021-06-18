@@ -1236,6 +1236,7 @@ GRN_API grn_rc grn_bulk_write_from(grn_ctx *ctx, grn_obj *bulk,
 GRN_API grn_rc grn_bulk_reserve(grn_ctx *ctx, grn_obj *bulk, size_t len);
 GRN_API grn_rc grn_bulk_space(grn_ctx *ctx, grn_obj *bulk, size_t len);
 GRN_API grn_rc grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, size_t len);
+GRN_API char *grn_bulk_detach(grn_ctx *ctx, grn_obj *bulk);
 GRN_API grn_rc grn_bulk_fin(grn_ctx *ctx, grn_obj *bulk);
 
 /* grn_text */

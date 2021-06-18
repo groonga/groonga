@@ -2457,6 +2457,578 @@ nfkc130_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 #endif /* GRN_WITH_NFKC */
 
+typedef grn_char_type (*grn_get_char_type_func)(const unsigned char *character);
+
+typedef struct {
+  grn_obj *table;
+  grn_obj *column;
+  grn_get_char_type_func get_char_type;
+  bool report_source_offset;
+} table_options;
+
+static void
+table_options_init(grn_ctx *ctx, table_options *options)
+{
+  options->table = NULL;
+  options->column = NULL;
+  options->get_char_type = grn_nfkc_char_type;
+  options->report_source_offset = false;
+}
+
+static void
+table_options_fin(grn_ctx *ctx, table_options *options)
+{
+  if (options->column) {
+    grn_obj_unlink(ctx, options->column);
+    options->column = NULL;
+  }
+  if (options->table) {
+    grn_obj_unlink(ctx, options->table);
+    options->table = NULL;
+  }
+}
+
+static void
+table_options_close(grn_ctx *ctx, void *data)
+{
+  table_options *options = data;
+  table_options_fin(ctx, options);
+  GRN_FREE(options);
+}
+
+static void *
+table_options_open(grn_ctx *ctx,
+                   grn_obj *normalizer,
+                   grn_obj *raw_options,
+                   void *user_data)
+{
+  const char *tag = "[normalizer][table]";
+
+  table_options *options = GRN_MALLOC(sizeof(table_options));
+  if (!options) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "%s failed to allocate memory for options",
+        tag);
+    return NULL;
+  }
+
+  table_options_init(ctx, options);
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+    grn_raw_string name_raw;
+    name_raw.value = name;
+    name_raw.length = name_length;
+
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "column")) {
+      const char *name;
+      grn_id domain;
+      unsigned int name_length = grn_vector_get_element(ctx,
+                                                        raw_options,
+                                                        i,
+                                                        &name,
+                                                        NULL,
+                                                        &domain);
+      if (!grn_type_id_is_text_family(ctx, domain)) {
+        grn_obj value;
+        GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
+        GRN_TEXT_SET(ctx, &value, name, name_length);
+        grn_obj inspected;
+        grn_inspect(ctx, &inspected, &value);
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[%.*s] must be a text: <%.*s>",
+            tag,
+            (int)(name_raw.length), name_raw.value,
+            (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+        GRN_OBJ_FIN(ctx, &value);
+        break;
+      }
+      if (name_length == 0) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[%.*s] must not be empty",
+            tag,
+            (int)(name_raw.length), name_raw.value);
+        break;
+      }
+      options->column = grn_ctx_get(ctx, name, name_length);
+      if (!options->column) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[%.*s] nonexistent column: <%.*s>",
+            tag,
+            (int)(name_raw.length), name_raw.value,
+            (int)name_length, name);
+        break;
+      }
+      if (!grn_obj_is_text_family_scalar_column(ctx, options->column)) {
+        grn_obj inspected;
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect_limited(ctx, &inspected, options->column);
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[%.*s] must be a text family scalar column: <%.*s>: <%.*s>",
+            tag,
+            (int)(name_raw.length), name_raw.value,
+            (int)name_length, name,
+            (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+        break;
+      }
+      options->table = grn_ctx_at(ctx, options->column->header.domain);
+      if (options->table->header.type != GRN_TABLE_PAT_KEY) {
+        grn_obj inspected;
+        GRN_TEXT_INIT(&inspected, 0);
+        grn_inspect_limited(ctx, &inspected, options->table);
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[%.*s] table must be a TABLE_PAT_KEY: <%.*s>: <%.*s>",
+            tag,
+            (int)(name_raw.length), name_raw.value,
+            (int)name_length, name,
+            (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+        break;
+      }
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unicode_version")) {
+      const char *version;
+      grn_id domain;
+      unsigned int version_length = grn_vector_get_element(ctx,
+                                                           raw_options,
+                                                           i,
+                                                           &version,
+                                                           NULL,
+                                                           &domain);
+      if (!grn_type_id_is_text_family(ctx, domain)) {
+        grn_obj value;
+        GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
+        GRN_TEXT_SET(ctx, &value, version, version_length);
+        grn_obj inspected;
+        grn_inspect(ctx, &inspected, &value);
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[%.*s] must be a text: <%.*s>",
+            tag,
+            (int)(name_raw.length), name_raw.value,
+            (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+        GRN_OBJ_FIN(ctx, &inspected);
+        GRN_OBJ_FIN(ctx, &value);
+        break;
+      }
+      if (version_length == 0) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[%.*s] must not be empty",
+            tag,
+            (int)(name_raw.length), name_raw.value);
+        break;
+      }
+      grn_raw_string version_raw;
+      version_raw.value = version;
+      version_raw.length = version_length;
+      if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "5.0.0")) {
+        options->get_char_type = grn_nfkc_char_type;
+      } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "10.0.0")) {
+        options->get_char_type = grn_nfkc100_char_type;
+      } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "12.1.0")) {
+        options->get_char_type = grn_nfkc121_char_type;
+      } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "13.0.0")) {
+        options->get_char_type = grn_nfkc130_char_type;
+      } else {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[%.*s] must be one of \"5.0.0\", \"10.0.0\", \"12.1.0\" or "
+            "\"13.0.0\": <%.*s>",
+            tag,
+            (int)(name_raw.length), name_raw.value,
+            (int)(version_raw.length), version_raw.value);
+        break;
+      }
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "report_source_offset")) {
+      options->report_source_offset =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->report_source_offset);
+    }
+  } GRN_OPTION_VALUES_EACH_END();
+
+  if (ctx->rc == GRN_SUCCESS && !options->table) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s column isn't specified",
+        tag);
+  }
+
+  if (ctx->rc != GRN_SUCCESS) {
+    table_options_fin(ctx, options);
+    table_options_close(ctx, options);
+    return NULL;
+  }
+
+  return options;
+}
+
+typedef struct {
+  const char *tag;
+  table_options *options;
+  grn_obj normalized;
+  grn_obj checks;
+  bool need_checks;
+  grn_obj types;
+  bool need_types;
+  size_t current_source_offset;
+  grn_obj offsets;
+  bool need_offsets;
+  size_t n_normalized_characters;
+  bool count_n_normalized_characters_in_checks;
+  bool count_n_normalized_characters_in_types;
+} table_data;
+
+static void
+table_normalize_add_checks_and_offsets(grn_ctx *ctx,
+                                       table_data *data,
+                                       const char *source,
+                                       size_t source_length,
+                                       const char *normalized,
+                                       size_t normalized_length)
+{
+  grn_obj *checks = &(data->checks);
+  grn_obj *offsets = &(data->offsets);
+
+  size_t current_source_offset = data->current_source_offset;
+  const char *source_current = source;
+  const char *previous_source_current = source;
+  const char *source_end = source_current + source_length;
+  const char *normalized_current = normalized;
+  const char *normalized_end = normalized_current + normalized_length;
+  while (source_current < source_end &&
+         normalized_current < normalized_end) {
+    int source_char_length = grn_charlen(ctx, source_current, source_end);
+    if (source_char_length == 0) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s invalid character in source text: <%.*s>",
+          data->tag,
+          (int)(source_end - source_current),
+          source_current);
+      return;
+    }
+    int normalized_char_length;
+    if (source_current == normalized_current) {
+      normalized_char_length = source_char_length;
+    } else {
+      normalized_char_length = grn_charlen(ctx,
+                                           normalized_current,
+                                           normalized_end);
+      if (normalized_char_length == 0) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s invalid character in normalized text: <%.*s>",
+            data->tag,
+            (int)(normalized_end - normalized_current),
+            normalized_current);
+        return;
+      }
+    }
+    if (data->need_checks) {
+      GRN_INT16_PUT(ctx, checks, source_char_length);
+      int i;
+      for (i = 1; i < normalized_char_length; i++) {
+        GRN_INT16_PUT(ctx, checks, 0);
+      }
+    }
+    if (data->need_offsets) {
+      GRN_UINT64_PUT(ctx,
+                     offsets,
+                     source_current - source + current_source_offset);
+    }
+    previous_source_current = source_current;
+    source_current += source_char_length;
+    normalized_current += normalized_char_length;
+    if (data->count_n_normalized_characters_in_checks) {
+      data->n_normalized_characters++;
+    }
+  }
+  if (source_current < source_end) {
+    size_t last_check_index = GRN_INT16_VECTOR_SIZE(checks);
+    if (last_check_index == 0) {
+      return;
+    }
+    for (last_check_index--; last_check_index > 0; last_check_index--) {
+      if (GRN_INT16_VALUE_AT(checks, last_check_index) != 0) {
+        break;
+      }
+    }
+    while (source_current < source_end) {
+      int source_char_length = grn_charlen(ctx,
+                                             source_current,
+                                             source_end);
+      if (source_char_length == 0) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s invalid character in source text: <%.*s>",
+            data->tag,
+            (int)(source_end - source_current),
+            source_current);
+        return;
+        }
+      GRN_INT16_VALUE_AT(checks, last_check_index) += source_char_length;
+      source_current += source_char_length;
+    }
+  } else if (normalized_current < normalized_end) {
+    while (normalized_current < normalized_end) {
+      int normalized_char_length = grn_charlen(ctx,
+                                               normalized_current,
+                                               normalized_end);
+      if (normalized_char_length == 0) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s invalid character in normalized text: <%.*s>",
+            data->tag,
+            (int)(normalized_end - normalized_current),
+            normalized_current);
+        return;
+      }
+      if (data->need_checks) {
+        GRN_INT16_PUT(ctx, checks, -1);
+        int i;
+        for (i = 1; i < normalized_char_length; i++) {
+          GRN_INT16_PUT(ctx, checks, 0);
+        }
+      }
+      if (data->need_offsets) {
+        GRN_UINT64_PUT(ctx,
+                       offsets,
+                       previous_source_current - source + current_source_offset);
+      }
+      normalized_current += normalized_char_length;
+      if (data->count_n_normalized_characters_in_checks) {
+        data->n_normalized_characters++;
+      }
+    }
+  }
+}
+
+static void
+table_normalize_add_types(grn_ctx *ctx,
+                          table_data *data,
+                          const char *normalized,
+                          size_t normalized_length)
+{
+  grn_obj *types = &(data->types);
+  const char *normalized_end = normalized + normalized_length;
+  while (normalized < normalized_end) {
+    int normalized_char_length = grn_charlen(ctx, normalized, normalized_end);
+    if (normalized_char_length == 0) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s invalid character in normalized text: <%.*s>",
+          data->tag,
+          (int)(normalized_end - normalized),
+          normalized);
+      return;
+    }
+    grn_char_type char_type = data->options->get_char_type(normalized);
+    GRN_UINT8_PUT(ctx, types, char_type);
+    normalized += normalized_char_length;
+    if (data->count_n_normalized_characters_in_types) {
+      data->n_normalized_characters++;
+    }
+  }
+}
+
+static void
+table_normalize_added(grn_ctx *ctx,
+                      table_data *data,
+                      const char *source,
+                      size_t source_length,
+                      const char *normalized,
+                      size_t normalized_length)
+{
+  if (data->need_checks || data->need_offsets) {
+    table_normalize_add_checks_and_offsets(ctx,
+                                           data,
+                                           source,
+                                           source_length,
+                                           normalized,
+                                           normalized_length);
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
+  }
+
+  if (data->need_types) {
+    table_normalize_add_types(ctx, data, normalized, normalized_length);
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
+  }
+
+  data->current_source_offset += source_length;
+}
+
+static void
+table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
+{
+  table_data data;
+  data.tag = "[normalizer][table]";
+  data.options = options;
+  GRN_TEXT_INIT(&(data.normalized), 0);
+  GRN_INT16_INIT(&(data.checks), GRN_OBJ_VECTOR);
+  data.need_checks = (string->flags & GRN_STRING_WITH_CHECKS);
+  GRN_UINT8_INIT(&(data.types), GRN_OBJ_VECTOR);
+  data.need_types =
+    (string->flags & GRN_STRING_WITH_TYPES) &&
+    (ctx->encoding == GRN_ENC_UTF8);
+  data.current_source_offset = 0;
+  GRN_UINT64_INIT(&(data.offsets), GRN_OBJ_VECTOR);
+  data.need_offsets = options->report_source_offset;
+  data.n_normalized_characters = 0;
+  data.count_n_normalized_characters_in_checks = false;
+  data.count_n_normalized_characters_in_types = false;
+  if (data.need_checks) {
+    data.count_n_normalized_characters_in_checks = true;
+  } else if (data.need_types) {
+    data.count_n_normalized_characters_in_types = true;
+  }
+
+  string->n_characters = 0;
+  string->normalized = NULL;
+  string->normalized_length_in_bytes = 0;
+  string->checks = NULL;
+  string->ctypes = NULL;
+  string->offsets = NULL;
+
+  grn_obj *normalized = &(data.normalized);
+  const char *source = string->original;
+  const char *source_end = source + string->original_length_in_bytes;
+  while (source < source_end) {
+#define MAX_N_HITS 16
+    grn_pat_scan_hit hits[MAX_N_HITS];
+    const char *rest;
+    unsigned int i, n_hits;
+    unsigned int previous = 0;
+    size_t chunk_length;
+
+    n_hits = grn_pat_scan(ctx,
+                          (grn_pat *)(options->table),
+                          source, source_end - source,
+                          hits,
+                          MAX_N_HITS,
+                          &rest);
+    for (i = 0; i < n_hits; i++) {
+      if (hits[i].offset - previous > 0) {
+        const char *source_previous = source + previous;
+        size_t source_previous_length = hits[i].offset - previous;
+        GRN_TEXT_PUT(ctx, normalized, source_previous, source_previous_length);
+        table_normalize_added(ctx,
+                              &data,
+                              source_previous,
+                              source_previous_length,
+                              source_previous,
+                              source_previous_length);
+        if (ctx->rc != GRN_SUCCESS) {
+          goto exit;
+        }
+      }
+      size_t before_offset = GRN_TEXT_LEN(normalized);
+      grn_obj_get_value(ctx, options->column, hits[i].id, normalized);
+      table_normalize_added(ctx,
+                            &data,
+                            source + hits[i].offset,
+                            hits[i].length,
+                            GRN_TEXT_VALUE(normalized) + before_offset,
+                            GRN_TEXT_LEN(normalized) - before_offset);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+      previous = hits[i].offset + hits[i].length;
+    }
+
+    chunk_length = rest - source;
+    if (chunk_length - previous > 0) {
+      const char *source_previous = source + previous;
+      size_t source_previous_length = source_end - source - previous;
+      GRN_TEXT_PUT(ctx, normalized, source_previous, source_previous_length);
+      table_normalize_added(ctx,
+                            &data,
+                            source_previous,
+                            source_previous_length,
+                            source_previous,
+                            source_previous_length);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+    }
+    source = rest;
+#undef MAX_N_HITS
+  }
+
+  if (!data.count_n_normalized_characters_in_checks &&
+      !data.count_n_normalized_characters_in_types) {
+    const char *current = GRN_TEXT_VALUE(normalized);
+    const char *end = current + GRN_TEXT_LEN(normalized);
+    while (current < end) {
+      int char_length = grn_charlen(ctx, current, end);
+      if (char_length == 0) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s invalid character in normalized text: <%.*s>",
+            data.tag,
+            (int)(end - current),
+            current);
+        goto exit;
+      }
+      data.n_normalized_characters++;
+      current += char_length;
+    }
+  }
+
+  string->n_characters = data.n_normalized_characters;
+  string->normalized_length_in_bytes = GRN_TEXT_LEN(normalized);
+  string->normalized = grn_bulk_detach(ctx, normalized);
+
+  if (data.need_checks) {
+    string->checks = (int16_t *)grn_bulk_detach(ctx, &(data.checks));
+  }
+
+  if (data.need_types) {
+    string->ctypes = (uint_least8_t *)grn_bulk_detach(ctx, &(data.types));
+  }
+
+  if (data.need_offsets) {
+    string->offsets = (uint64_t *)grn_bulk_detach(ctx, &(data.offsets));
+  }
+
+exit :
+  GRN_OBJ_FIN(ctx, &(data.normalized));
+  GRN_OBJ_FIN(ctx, &(data.checks));
+  GRN_OBJ_FIN(ctx, &(data.types));
+  GRN_OBJ_FIN(ctx, &(data.offsets));
+}
+
+static grn_obj *
+table_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *string = args[0];
+  grn_obj *table;
+  table_options *options;
+  table_options options_raw;
+
+  table = grn_string_get_table(ctx, string);
+  if (table) {
+    options = grn_table_cache_normalizer_options(ctx,
+                                                 table,
+                                                 string,
+                                                 table_options_open,
+                                                 table_options_close,
+                                                 NULL);
+    if (ctx->rc != GRN_SUCCESS) {
+      return NULL;
+    }
+  } else {
+    table_options_init(ctx, &options_raw);
+    if (ctx->rc != GRN_SUCCESS) {
+      table_options_fin(ctx, &options_raw);
+      return NULL;
+    }
+    options = &options_raw;
+  }
+
+  table_normalize(ctx, (grn_string *)string, options);
+
+  if (!table) {
+    table_options_fin(ctx, options);
+  }
+  return NULL;
+}
+
 grn_rc
 grn_normalizer_normalize(grn_ctx *ctx, grn_obj *normalizer, grn_obj *string)
 {
@@ -2501,6 +3073,10 @@ grn_db_init_builtin_normalizers(grn_ctx *ctx)
   grn_normalizer_register(ctx, normalizer_nfkc130_name, -1,
                           NULL, NULL, NULL);
 #endif /* GRN_WITH_NFKC */
+
+  grn_normalizer_register(ctx, "NormalizerTable", -1,
+                          NULL, table_next, NULL);
+
 /*
   grn_normalizer_register(ctx, "NormalizerUCA", -1,
                           NULL, uca_next, NULL);
