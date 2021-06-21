@@ -1450,9 +1450,15 @@ grn_db_warm(grn_ctx *ctx, grn_obj *obj)
 {
   grn_db *db = (grn_db *)obj;
   grn_obj_warm_dispatch(ctx, db->keys);
-  grn_ja_warm(ctx, db->specs);
-  grn_hash_warm(ctx, db->config);
-  grn_options_warm(ctx, db->options);
+  if (grn_ja_warm(ctx, db->specs) != GRN_SUCCESS) {
+    return;
+  }
+  if (grn_hash_warm(ctx, db->config) != GRN_SUCCESS) {
+    return;
+  }
+  if (grn_options_warm(ctx, db->options) != GRN_SUCCESS) {
+    return;
+  }
 
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, obj, cursor, id, GRN_CURSOR_BY_ID) {
     if (id < GRN_N_RESERVED_TYPES) {
@@ -1467,6 +1473,9 @@ grn_db_warm(grn_ctx *ctx, grn_obj *obj)
       grn_obj_warm_dispatch(ctx, object);
     }
     grn_obj_unref(ctx, object);
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
   } GRN_TABLE_EACH_END(ctx, cursor);
 }
 
@@ -1485,6 +1494,9 @@ grn_table_warm(grn_ctx *ctx, grn_obj *obj)
     grn_obj *column = grn_ctx_at(ctx, column_id);
     grn_obj_warm_dispatch(ctx, column);
     grn_obj_unref(ctx, column);
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
   } GRN_HASH_EACH_END(ctx, cursor);
 }
 
@@ -1496,19 +1508,27 @@ grn_obj_warm_dispatch(grn_ctx *ctx, grn_obj *obj)
     grn_db_warm(ctx, obj);
     break;
   case GRN_TABLE_HASH_KEY :
-    grn_hash_warm(ctx, (grn_hash *)obj);
+    if (grn_hash_warm(ctx, (grn_hash *)obj) != GRN_SUCCESS) {
+      return;
+    }
     grn_table_warm(ctx, obj);
     break;
   case GRN_TABLE_PAT_KEY :
-    grn_pat_warm(ctx, (grn_pat *)obj);
+    if (grn_pat_warm(ctx, (grn_pat *)obj) != GRN_SUCCESS) {
+      return;
+    }
     grn_table_warm(ctx, obj);
     break;
   case GRN_TABLE_DAT_KEY :
-    grn_dat_warm(ctx, (grn_dat *)obj);
+    if (grn_dat_warm(ctx, (grn_dat *)obj) != GRN_SUCCESS) {
+      return;
+    }
     grn_table_warm(ctx, obj);
     break;
   case GRN_TABLE_NO_KEY :
-    grn_array_warm(ctx, (grn_array *)obj);
+    if (grn_array_warm(ctx, (grn_array *)obj) != GRN_SUCCESS) {
+      return;
+    }
     grn_table_warm(ctx, obj);
     break;
   case GRN_COLUMN_FIX_SIZE :
