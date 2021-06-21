@@ -2360,3 +2360,40 @@ grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 }
 
 #endif /* WIN32 */
+
+bool
+grn_io_warm_path(grn_ctx *ctx, grn_io *io, const char *path)
+{
+  FILE *input = grn_fopen(path, "rb");
+  if (!input) {
+    SERR("[io][warm] failed to open a file: <%s>", path);
+    return false;
+  }
+
+  GRN_LOG(ctx, GRN_LOG_DUMP, "[io][warm] <%s>", path);
+  char buffer[4096];
+  while (fread(buffer, 1, sizeof(buffer), input) != 0) {
+    /* Do nothing */
+  }
+  fclose(input);
+  return true;
+}
+
+grn_rc
+grn_io_warm(grn_ctx *ctx, grn_io *io)
+{
+  if (io->path[0] == '\0') {
+    return GRN_SUCCESS;
+  }
+
+  char buffer[PATH_MAX];
+  uint32_t i;
+  uint32_t n_files = grn_io_n_files(ctx, io);
+  for (i = 0; i < n_files; i++) {
+    gen_pathname(io->path, buffer, i);
+    if (!grn_io_warm_path(ctx, io, buffer)) {
+      break;
+    }
+  }
+  return ctx->rc;
+}

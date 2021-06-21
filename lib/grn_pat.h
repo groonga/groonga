@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -126,6 +126,7 @@ grn_rc grn_pat_dirty(grn_ctx *ctx, grn_pat *pat);
 grn_bool grn_pat_is_dirty(grn_ctx *ctx, grn_pat *pat);
 grn_rc grn_pat_clean(grn_ctx *ctx, grn_pat *pat);
 grn_rc grn_pat_clear_dirty(grn_ctx *ctx, grn_pat *pat);
+grn_rc grn_pat_warm(grn_ctx *ctx, grn_pat *pat);
 
 #ifdef __cplusplus
 }

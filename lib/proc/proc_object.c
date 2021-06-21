@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2016 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2016  Brazil
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -206,5 +206,56 @@ grn_proc_init_object_set_visibility(grn_ctx *ctx)
                             "object_set_visibility", -1,
                             command_object_set_visibility,
                             n_vars,
+                            vars);
+}
+
+static grn_obj *
+command_object_warm(grn_ctx *ctx,
+                    int n_args,
+                    grn_obj **args,
+                    grn_user_data *user_data)
+{
+  grn_obj *name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
+
+  grn_obj *target;
+  bool need_unref = false;
+  if (GRN_TEXT_LEN(name) == 0) {
+    target = grn_ctx_db(ctx);
+  } else {
+    target = grn_ctx_get(ctx,
+                         GRN_TEXT_VALUE(name),
+                         GRN_TEXT_LEN(name));
+    if (!target) {
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_INVALID_ARGUMENT,
+                       "[object][warm] nonexistent target: <%.*s>",
+                       (int)GRN_TEXT_LEN(name),
+                       GRN_TEXT_VALUE(name));
+      grn_ctx_output_bool(ctx, false);
+      return NULL;
+    }
+    need_unref = true;
+  }
+
+  grn_rc rc = grn_obj_warm(ctx, target);
+  grn_ctx_output_bool(ctx, rc == GRN_SUCCESS);
+
+  if (need_unref) {
+    grn_obj_unref(ctx, target);
+  }
+
+  return NULL;
+}
+
+void
+grn_proc_init_object_warm(grn_ctx *ctx)
+{
+  grn_expr_var vars[1];
+
+  grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
+  grn_plugin_command_create(ctx,
+                            "object_warm", -1,
+                            command_object_warm,
+                            1,
                             vars);
 }

@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2018 Brazil
+  Copyright(C) 2018  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -382,4 +383,10 @@ grn_options_clear(grn_ctx *ctx,
                   grn_id id)
 {
   return grn_ja_put(ctx, options->values, id, NULL, 0, GRN_OBJ_SET, NULL);
+}
+
+grn_rc
+grn_options_warm(grn_ctx *ctx, grn_options *options)
+{
+  return grn_ja_warm(ctx, options->values);
 }

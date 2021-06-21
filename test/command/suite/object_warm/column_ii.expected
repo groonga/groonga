@@ -1,0 +1,19 @@
+table_create pat TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create pat ra COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create pat ja COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create pat index COLUMN_INDEX pat ja
+[[0,0.0,0.0],true]
+load --table pat
+[
+{"_key": "a", "ra": 0, "ja": "a"}
+]
+[[0,0.0,0.0],1]
+log_level --level dump
+[[0,0.0,0.0],true]
+object_warm --name pat.index
+[[0,0.0,0.0],true]
+#|-| [io][warm] <db/db.0000103>
+#|-| [io][warm] <db/db.0000103.c>

@@ -400,6 +400,9 @@ uint32_t grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limi
 
 grn_rc grn_io_flush(grn_ctx *ctx, grn_io *io);
 
+bool grn_io_warm_path(grn_ctx *ctx, grn_io *io, const char *path);
+grn_rc grn_io_warm(grn_ctx *ctx, grn_io *io);
+
 /* encode/decode */
 
 #define GRN_B_ENC_MAX_SIZE 5

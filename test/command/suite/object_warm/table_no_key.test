@@ -1,0 +1,21 @@
+table_create array TABLE_NO_KEY
+column_create array ra COLUMN_SCALAR UInt8
+column_create array ja COLUMN_SCALAR ShortText
+
+load --table array
+[
+{"ra": 0, "ja": "a"}
+]
+
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]\[open\]/
+#@add-ignore-log-pattern /\A\[io\]\[close\]/
+#@add-ignore-log-pattern /\A\[obj\]\[open\]/
+#@add-ignore-log-pattern /\A\[obj\]\[close\]/
+log_level --level dump
+object_warm --name array
+#@remove-ignore-log-pattern /\A\[obj\]\[close\]/
+#@remove-ignore-log-pattern /\A\[obj\]\[open\]/
+#@remove-ignore-log-pattern /\A\[io\]\[close\]/
+#@remove-ignore-log-pattern /\A\[io\]\[open\]/
+#@remove-important-log-levels dump

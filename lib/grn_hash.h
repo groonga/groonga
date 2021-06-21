@@ -197,6 +197,7 @@ uint32_t grn_array_get_flags(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_truncate(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
                                grn_table_sort_key *keys, int n_keys);
+grn_rc grn_array_warm(grn_ctx *ctx, grn_array *array);
 
 /**** grn_hash ****/
 
@@ -404,6 +405,8 @@ grn_bool grn_hash_is_large_total_key_size(grn_ctx *ctx, grn_hash *hash);
 
 uint64_t grn_hash_total_key_size(grn_ctx *ctx, grn_hash *hash);
 uint64_t grn_hash_max_total_key_size(grn_ctx *ctx, grn_hash *hash);
+
+grn_rc grn_hash_warm(grn_ctx *ctx, grn_hash *hash);
 
 #ifdef __cplusplus
 }

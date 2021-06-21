@@ -1,0 +1,70 @@
+table_create array TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create array ra COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create array ja COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create hash TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create hash ra COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create hash ja COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create pat TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create pat ra COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create pat ja COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create pat index COLUMN_INDEX hash _key
+[[0,0.0,0.0],true]
+table_create dat TABLE_DAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create dat ra COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+column_create dat ja COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table array
+[
+{"ra": 0, "ja": "a"}
+]
+[[0,0.0,0.0],1]
+load --table hash
+[
+{"_key": "a", "ra": 0, "ja": "a"}
+]
+[[0,0.0,0.0],1]
+load --table pat
+[
+{"_key": "a", "ra": 0, "ja": "a"}
+]
+[[0,0.0,0.0],1]
+load --table dat
+[
+{"_key": "a", "ra": 0, "ja": "a"}
+]
+[[0,0.0,0.0],1]
+log_level --level dump
+[[0,0.0,0.0],true]
+object_warm
+[[0,0.0,0.0],true]
+#|-| [io][warm] <db/db>
+#|-| [io][warm] <db/db.001>
+#|-| [io][warm] <db/db.0000000>
+#|-| [io][warm] <db/db.conf>
+#|-| [io][warm] <db/db.options>
+#|-| [io][warm] <db/db.0000100>
+#|-| [io][warm] <db/db.0000102>
+#|-| [io][warm] <db/db.0000101>
+#|-| [io][warm] <db/db.0000103>
+#|-| [io][warm] <db/db.0000105>
+#|-| [io][warm] <db/db.0000104>
+#|-| [io][warm] <db/db.0000106>
+#|-| [io][warm] <db/db.0000109>
+#|-| [io][warm] <db/db.0000109.c>
+#|-| [io][warm] <db/db.0000108>
+#|-| [io][warm] <db/db.0000107>
+#|-| [io][warm] <db/db.000010A>
+#|-| [io][warm] <db/db.000010A.001>
+#|-| [io][warm] <db/db.000010C>
+#|-| [io][warm] <db/db.000010B>
