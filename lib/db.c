@@ -7704,12 +7704,14 @@ grn_column_table(grn_ctx *ctx, grn_obj *column)
 grn_obj *
 grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf)
 {
+  const char *tag = "[info][get]";
   GRN_API_ENTER;
   switch (type) {
   case GRN_INFO_SUPPORT_ZLIB :
     if (!valuebuf && !(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_BOOL))) {
       ERR(GRN_INVALID_ARGUMENT,
-          "failed to open value buffer for GRN_INFO_ZLIB_SUPPORT");
+          "%s[support-zlib] failed to allocate value buffer",
+          tag);
       goto exit;
     }
 #ifdef GRN_WITH_ZLIB
@@ -7721,7 +7723,8 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
   case GRN_INFO_SUPPORT_LZ4 :
     if (!valuebuf && !(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_BOOL))) {
       ERR(GRN_INVALID_ARGUMENT,
-          "failed to open value buffer for GRN_INFO_LZ4_SUPPORT");
+          "%s[support-lz4] failed to allocate value buffer",
+          tag);
       goto exit;
     }
 #ifdef GRN_WITH_LZ4
@@ -7733,7 +7736,8 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
   case GRN_INFO_SUPPORT_ZSTD :
     if (!valuebuf && !(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_BOOL))) {
       ERR(GRN_INVALID_ARGUMENT,
-          "failed to open value buffer for GRN_INFO_ZSTD_SUPPORT");
+          "%s[support-zstd] failed to allocate value buffer",
+          tag);
       goto exit;
     }
 #ifdef GRN_WITH_ZSTD
@@ -7745,7 +7749,8 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
   case GRN_INFO_SUPPORT_APACHE_ARROW :
     if (!valuebuf && !(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_BOOL))) {
       ERR(GRN_INVALID_ARGUMENT,
-          "failed to open value buffer for GRN_INFO_APACHE_ARROW_SUPPORT");
+          "%s[support-apache-arrow] failed to allocate value buffer",
+          tag);
       goto exit;
     }
 #ifdef GRN_WITH_APACHE_ARROW
@@ -7756,14 +7761,18 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
     break;
   default :
     if (!obj) {
-      ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s obj is NULL",
+          tag);
       goto exit;
     }
     switch (type) {
     case GRN_INFO_ENCODING :
       if (!valuebuf) {
         if (!(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, 0))) {
-          ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+          ERR(GRN_INVALID_ARGUMENT,
+              "%s[encoding] failed to allocate value buffer",
+              tag);
           goto exit;
         }
       }
@@ -7784,19 +7793,31 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
           grn_bulk_write(ctx, valuebuf, (const char *)&enc, sizeof(grn_encoding));
           break;
         default :
-          ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+          ERR(GRN_INVALID_ARGUMENT,
+              "%s[encoding] target object must be one of %s, %s and %s: %s",
+              tag,
+              grn_obj_type_to_string(GRN_TABLE_HASH_KEY),
+              grn_obj_type_to_string(GRN_TABLE_PAT_KEY),
+              grn_obj_type_to_string(GRN_TABLE_DAT_KEY),
+              grn_obj_type_to_string(obj->header.type));
+          break;
         }
       }
       break;
     case GRN_INFO_SOURCE :
       if (!valuebuf) {
         if (!(valuebuf = grn_obj_open(ctx, GRN_BULK, 0, 0))) {
-          ERR(GRN_INVALID_ARGUMENT, "grn_obj_get_info failed");
+          ERR(GRN_INVALID_ARGUMENT,
+              "%s[source] failed to allocate value buffer",
+              tag);
           goto exit;
         }
       }
       if (!GRN_DB_OBJP(obj)) {
-        ERR(GRN_INVALID_ARGUMENT, "only db_obj can accept GRN_INFO_SOURCE");
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[source] target object must be a grn_db_obj: %s",
+            tag,
+            grn_obj_type_to_string(obj->header.type));
         goto exit;
       }
       grn_bulk_write(ctx, valuebuf, DB_OBJ(obj)->source, DB_OBJ(obj)->source_size);
@@ -7831,7 +7852,8 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
       if (!valuebuf) {
         if (!(valuebuf = grn_obj_open(ctx, GRN_PVECTOR, 0, 0))) {
           ERR(GRN_NO_MEMORY_AVAILABLE,
-              "grn_obj_get_info: failed to allocate value buffer");
+              "%s[token-filters] failed to allocate value buffer",
+              tag);
           goto exit;
         }
       }
