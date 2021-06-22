@@ -7871,10 +7871,12 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
           break;
         default :
           ERR(GRN_INVALID_ARGUMENT,
-              /* TODO: Show type name instead of type ID */
               "[info][get][token-filters] target object must be one of "
-              "GRN_TABLE_HASH_KEY, GRN_TABLE_PAT_KEY and GRN_TABLE_DAT_KEY: %d",
-              obj->header.type);
+              "%s, %s and %s: %s",
+              grn_obj_type_to_string(GRN_TABLE_HASH_KEY),
+              grn_obj_type_to_string(GRN_TABLE_PAT_KEY),
+              grn_obj_type_to_string(GRN_TABLE_DAT_KEY),
+              grn_obj_type_to_string(obj->header.type));
           break;
         }
         if (token_filters) {
