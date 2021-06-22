@@ -2478,12 +2478,18 @@ table_options_init(grn_ctx *ctx, table_options *options)
 static void
 table_options_fin(grn_ctx *ctx, table_options *options)
 {
+  /* We can't call grn_obj_unlink() safety here. Options are cached
+   * and closed when the table that have this option is closed. It may
+   * be occurred when DB is closed. In the case, options->column or
+   * options->table are already closed. If we call grn_obj_unlink()
+   * with closed column/table, Groonga may be crashed. */
+
   if (options->column) {
-    grn_obj_unlink(ctx, options->column);
+    /* grn_obj_unlink(ctx, options->column); */
     options->column = NULL;
   }
   if (options->table) {
-    grn_obj_unlink(ctx, options->table);
+    /* grn_obj_unlink(ctx, options->table); */
     options->table = NULL;
   }
 }
