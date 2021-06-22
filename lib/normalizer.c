@@ -2985,10 +2985,12 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
   }
 
   if (data.need_types) {
+    GRN_UINT64_PUT(ctx, &(data.types), GRN_CHAR_NULL);
     string->ctypes = (uint_least8_t *)grn_bulk_detach(ctx, &(data.types));
   }
 
   if (data.need_offsets) {
+    GRN_UINT64_PUT(ctx, &(data.offsets), string->original_length_in_bytes);
     string->offsets = (uint64_t *)grn_bulk_detach(ctx, &(data.offsets));
   }
 
