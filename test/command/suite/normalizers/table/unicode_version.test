@@ -1,0 +1,8 @@
+table_create Substitutions TABLE_PAT_KEY ShortText
+column_create Substitutions substituted COLUMN_SCALAR ShortText
+
+normalize \
+  'NormalizerTable("column", "Substitutions.substituted", \
+                   "unicode_version", "13.0.0")' \
+  "©" \
+  WITH_TYPES

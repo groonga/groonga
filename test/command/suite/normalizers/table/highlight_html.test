@@ -1,0 +1,30 @@
+table_create Substitutions TABLE_PAT_KEY ShortText
+column_create Substitutions substituted COLUMN_SCALAR ShortText
+
+load --table Substitutions
+[
+{"_key": "a", "substituted": "AAA"},
+{"_key": "b", "substituted": "BBB"},
+{"_key": "c", "substituted": "CCC"},
+{"_key": "d", "substituted": "DDD"},
+{"_key": "e", "substituted": "EEE"}
+]
+
+table_create Entries TABLE_NO_KEY
+column_create Entries body COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer 'TokenNgram("report_source_location", true)' \
+  --normalizer 'NormalizerTable("column", "Substitutions.substituted", \
+                                "report_source_offset", true)'
+column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+
+load --table Entries
+[
+{"body": ".a.b.c.d.e."}
+]
+
+select Entries \
+  --match_columns body \
+  --query 'CCC' \
+  --output_columns 'highlight_html(body, Terms)'

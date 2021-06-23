@@ -1,0 +1,13 @@
+table_create Substitutions TABLE_PAT_KEY ShortText
+column_create Substitutions substituted COLUMN_SCALAR ShortText
+
+load --table Substitutions
+[
+{"_key": "あ", "substituted": "<あ>"},
+{"_key": "いち", "substituted": "1"}
+]
+
+normalize \
+  'NormalizerTable("column", "Substitutions.substituted", \
+                   "report_source_offset", true)' \
+  ".あ。いち."

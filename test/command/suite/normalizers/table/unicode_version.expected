@@ -1,0 +1,6 @@
+table_create Substitutions TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Substitutions substituted COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+normalize   'NormalizerTable("column", "Substitutions.substituted",                    "unicode_version", "13.0.0")'   "©"   WITH_TYPES
+[[0,0.0,0.0],{"normalized":"©","types":["emoji"],"checks":[]}]

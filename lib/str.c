@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3366,3 +3366,24 @@ grn_bulk_is_zero(grn_ctx *ctx, grn_obj *obj)
   return GRN_TRUE;
 }
 
+char *
+grn_bulk_detach(grn_ctx *ctx, grn_obj *bulk)
+{
+  if (GRN_BULK_VSIZE(bulk) == 0) {
+    return NULL;
+  }
+
+  char *data;
+  if (GRN_BULK_OUTP(bulk)) {
+    data = GRN_BULK_HEAD(bulk);
+    bulk->header.impl_flags &= ~GRN_OBJ_OUTPLACE;
+  } else {
+    data = GRN_MALLOC(GRN_BULK_VSIZE(bulk));
+    if (!data) {
+      return NULL;
+    }
+    memcpy(data, GRN_BULK_HEAD(bulk), GRN_BULK_VSIZE(bulk));
+  }
+  GRN_BULK_REWIND(bulk);
+  return data;
+}

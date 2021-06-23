@@ -1,0 +1,51 @@
+table_create Substitutions TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Substitutions substituted COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Substitutions
+[
+{"_key": "a", "substituted": "<A>"},
+{"_key": "b", "substituted": "<B>"},
+{"_key": "c", "substituted": "<C>"},
+{"_key": "d", "substituted": "<D>"},
+{"_key": "e", "substituted": "<E>"},
+{"_key": "f", "substituted": "<F>"},
+{"_key": "g", "substituted": "<G>"},
+{"_key": "h", "substituted": "<H>"},
+{"_key": "i", "substituted": "<I>"},
+{"_key": "j", "substituted": "<J>"},
+{"_key": "k", "substituted": "<K>"},
+{"_key": "l", "substituted": "<L>"},
+{"_key": "m", "substituted": "<M>"},
+{"_key": "n", "substituted": "<N>"},
+{"_key": "o", "substituted": "<O>"},
+{"_key": "p", "substituted": "<P>"},
+{"_key": "q", "substituted": "<Q>"},
+{"_key": "r", "substituted": "<R>"},
+{"_key": "s", "substituted": "<S>"},
+{"_key": "t", "substituted": "<T>"},
+{"_key": "u", "substituted": "<U>"},
+{"_key": "v", "substituted": "<V>"},
+{"_key": "w", "substituted": "<W>"},
+{"_key": "x", "substituted": "<X>"},
+{"_key": "y", "substituted": "<Y>"},
+{"_key": "z", "substituted": "<Z>"}
+]
+[[0,0.0,0.0],26]
+normalize   'NormalizerTable("column", "Substitutions.substituted")'   ".a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z."
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": ".<A>.<B>.<C>.<D>.<E>.<F>.<G>.<H>.<I>.<J>.<K>.<L>.<M>.<N>.<O>.<P>.<Q>.<R>.<S>.<T>.<U>.<V>.<W>.<X>.<Y>.<Z>.",
+    "types": [
+
+    ],
+    "checks": [
+
+    ]
+  }
+]
