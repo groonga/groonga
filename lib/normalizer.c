@@ -2766,7 +2766,7 @@ table_normalize_add_checks_and_offsets(grn_ctx *ctx,
             (int)(source_end - source_current),
             source_current);
         return;
-        }
+      }
       GRN_INT16_VALUE_AT(checks, last_check_index) += source_char_length;
       source_current += source_char_length;
     }
