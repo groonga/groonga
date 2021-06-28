@@ -402,7 +402,10 @@ grn_dat_open(grn_ctx *ctx, const char *path)
   grn_dat_init(ctx, dat);
   dat->io = grn_io_open(ctx, path, GRN_IO_AUTO);
   if (!dat->io) {
+    // Don't reset rc by grn_dat_fin().
+    grn_rc rc = ctx->rc;
     grn_dat_fin(ctx, dat);
+    ctx->rc = rc;
     GRN_FREE(dat);
     return NULL;
   }
