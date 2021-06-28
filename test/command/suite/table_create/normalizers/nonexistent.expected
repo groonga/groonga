@@ -1,0 +1,17 @@
+table_create Terms TABLE_PAT_KEY ShortText   --normalizers NormalizerNonexistent
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[table][create][Terms] failed to set normalizers: <NormalizerNonexistent>: [info][set][normalizers][Terms] failed to parse norm"
+  ],
+  false
+]
+#|e| [expr][parse] unknown identifier: <NormalizerNonexistent>
+#|e| Syntax error: <NormalizerNonexistent||>: [expr][parse] unknown identifier: <NormalizerNonexistent>
+#|e| [info][set][normalizers][Terms] failed to parse normalizers: <NormalizerNonexistent>: Syntax error: <NormalizerNonexistent||>: [expr][parse] unknown identifier: <NormalizerNonexistent>
+#|e| [table][create][Terms] failed to set normalizers: <NormalizerNonexistent>: [info][set][normalizers][Terms] failed to parse normalizers: <NormalizerNonexistent>: Syntax error: <NormalizerNonexistent||>: 
+dump

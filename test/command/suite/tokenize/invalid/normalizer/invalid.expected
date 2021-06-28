@@ -6,8 +6,8 @@ tokenize TokenBigram "aBcDe 123" TokenDelimit
       0.0,
       0.0
     ],
-    "[tokenize] failed to set normalizer: <TokenDelimit>: [info][set][normalizer][(anonymous)] invalid normalizer: <TokenDelimit>"
+    "[tokenize] failed to set normalizer: <TokenDelimit>: [info][set][normalizers][(anonymous)] invalid normalizers: <TokenDelimit>"
   ]
 ]
-#|e| [info][set][normalizer][(anonymous)] invalid normalizer: <TokenDelimit>
-#|e| [tokenize] failed to set normalizer: <TokenDelimit>: [info][set][normalizer][(anonymous)] invalid normalizer: <TokenDelimit>
+#|e| [info][set][normalizers][(anonymous)] invalid normalizers: <TokenDelimit>
+#|e| [tokenize] failed to set normalizer: <TokenDelimit>: [info][set][normalizers][(anonymous)] invalid normalizers: <TokenDelimit>

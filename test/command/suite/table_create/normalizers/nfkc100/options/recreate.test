@@ -1,0 +1,11 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizers 'NormalizerNFKC100("unify_kana", true)'
+dump
+
+table_remove Terms
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizers 'NormalizerNFKC100("unify_kana", false)'
+dump

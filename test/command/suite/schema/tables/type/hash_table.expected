@@ -269,6 +269,9 @@ schema
         "value_type": null,
         "tokenizer": null,
         "normalizer": null,
+        "normalizers": [
+
+        ],
         "token_filters": [
 
         ],

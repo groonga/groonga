@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -103,6 +103,7 @@ command_table_create(grn_ctx *ctx,
   grn_obj *normalizer_raw;
   grn_raw_string token_filters_raw;
   grn_obj *path_raw;
+  grn_obj *normalizers_raw;
   grn_obj *key_type = NULL;
   grn_obj *value_type = NULL;
   grn_obj *table = NULL;
@@ -126,6 +127,7 @@ command_table_create(grn_ctx *ctx,
   normalizer_raw = grn_plugin_proc_get_var(ctx, user_data, "normalizer", -1);
   GET_VALUE(token_filters);
   path_raw = grn_plugin_proc_get_var(ctx, user_data, "path", -1);
+  normalizers_raw = grn_plugin_proc_get_var(ctx, user_data, "normalizers", -1);
 
 #undef GET_VALUE
 
@@ -216,17 +218,21 @@ command_table_create(grn_ctx *ctx,
       }
     }
 
-    if (GRN_TEXT_LEN(normalizer_raw) > 0) {
-      grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZER, normalizer_raw);
+    if (GRN_TEXT_LEN(normalizers_raw) == 0 &&
+        GRN_TEXT_LEN(normalizer_raw) > 0) {
+      normalizers_raw = normalizer_raw;
+    }
+    if (GRN_TEXT_LEN(normalizers_raw) > 0) {
+      grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZERS, normalizers_raw);
       if (ctx->rc != GRN_SUCCESS) {
         GRN_PLUGIN_ERROR(ctx,
                          GRN_INVALID_ARGUMENT,
                          "[table][create][%.*s] "
-                         "failed to set normalizer: <%.*s>: %s",
+                         "failed to set normalizers: <%.*s>: %s",
                          (int)name_raw.length,
                          name_raw.value,
-                         (int)GRN_TEXT_LEN(normalizer_raw),
-                         GRN_TEXT_VALUE(normalizer_raw),
+                         (int)GRN_TEXT_LEN(normalizers_raw),
+                         GRN_TEXT_VALUE(normalizers_raw),
                          ctx->errbuf);
         goto exit;
       }
@@ -263,7 +269,7 @@ exit :
 void
 grn_proc_init_table_create(grn_ctx *ctx)
 {
-  grn_expr_var vars[8];
+  grn_expr_var vars[9];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "flags", -1);
@@ -273,10 +279,11 @@ grn_proc_init_table_create(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[5]), "normalizer", -1);
   grn_plugin_expr_var_init(ctx, &(vars[6]), "token_filters", -1);
   grn_plugin_expr_var_init(ctx, &(vars[7]), "path", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[8]), "normalizers", -1);
   grn_plugin_command_create(ctx,
                             "table_create", -1,
                             command_table_create,
-                            8,
+                            9,
                             vars);
 }
 
@@ -324,7 +331,7 @@ output_table_info(grn_ctx *ctx, grn_obj *table)
 
   if (normalizer) {
     GRN_BULK_REWIND(&buffer);
-    grn_table_get_normalizer_string(ctx, table, &buffer);
+    grn_table_get_normalizers_string(ctx, table, &buffer);
     grn_ctx_output_obj(ctx, &buffer, NULL);
   } else {
     grn_ctx_output_null(ctx);

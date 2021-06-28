@@ -76,12 +76,12 @@ nfkc_init(grn_ctx *ctx,
 
   lexicon = grn_tokenizer_query_get_lexicon(ctx, query);
   i = grn_tokenizer_query_get_token_filter_index(ctx, query);
-  options = grn_table_cache_token_filter_options(ctx,
-                                                 lexicon,
-                                                 i,
-                                                 open_options_func,
-                                                 nfkc_close_options,
-                                                 NULL);
+  options = grn_table_cache_token_filters_options(ctx,
+                                                  lexicon,
+                                                  i,
+                                                  open_options_func,
+                                                  nfkc_close_options,
+                                                  NULL);
   if (ctx->rc != GRN_SUCCESS) {
     return NULL;
   }

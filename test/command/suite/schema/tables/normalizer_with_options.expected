@@ -276,6 +276,16 @@ schema
             true
           ]
         },
+        "normalizers": [
+          {
+            "id": 85,
+            "name": "NormalizerNFKC100",
+            "options": [
+              "unify_kana",
+              true
+            ]
+          }
+        ],
         "token_filters": [
 
         ],

@@ -38,7 +38,7 @@ struct _grn_pat {
   uint32_t key_size;
   uint32_t value_size;
   grn_table_module tokenizer;
-  grn_table_module normalizer;
+  grn_obj normalizers;
   grn_obj token_filters;
   /* For backward compatibility */
   grn_obj token_filter_procs;

@@ -1,0 +1,70 @@
+table_create Substitutions TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Substitutions substituted COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --normalizers 'NormalizerNFKC100("unify_kana", true),                  NormalizerTable("column", "Substitutions.substituted")'
+[[0,0.0,0.0],true]
+table_list
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "id",
+        "UInt32"
+      ],
+      [
+        "name",
+        "ShortText"
+      ],
+      [
+        "path",
+        "ShortText"
+      ],
+      [
+        "flags",
+        "ShortText"
+      ],
+      [
+        "domain",
+        "ShortText"
+      ],
+      [
+        "range",
+        "ShortText"
+      ],
+      [
+        "default_tokenizer",
+        "ShortText"
+      ],
+      [
+        "normalizer",
+        "ShortText"
+      ]
+    ],
+    [
+      256,
+      "Substitutions",
+      "db/db.0000100",
+      "TABLE_PAT_KEY|PERSISTENT",
+      "ShortText",
+      null,
+      null,
+      null
+    ],
+    [
+      258,
+      "Terms",
+      "db/db.0000102",
+      "TABLE_PAT_KEY|PERSISTENT",
+      "ShortText",
+      null,
+      null,
+      "NormalizerNFKC100(\"unify_kana\", true), NormalizerTable(\"column\", \"Substitutions.substituted\")"
+    ]
+  ]
+]

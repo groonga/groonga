@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -80,7 +80,32 @@ grn_table_get_normalizer_string(grn_ctx *ctx,
                                 grn_obj *table,
                                 grn_obj *output);
 
+GRN_API grn_rc
+grn_table_set_normalizers_options(grn_ctx *ctx,
+                                  grn_obj *table,
+                                  uint32_t i,
+                                  grn_obj *options);
 
+GRN_API grn_rc
+grn_table_get_normalizers_options(grn_ctx *ctx,
+                                  grn_obj *table,
+                                  uint32_t i,
+                                  grn_obj *options);
+
+GRN_API void *
+grn_table_cache_normalizers_options(grn_ctx *ctx,
+                                    grn_obj *table,
+                                    uint32_t i,
+                                    grn_table_module_open_options_func open_options_func,
+                                    grn_close_func close_options_func,
+                                    void *user_data);
+
+GRN_API grn_rc
+grn_table_get_normalizers_string(grn_ctx *ctx,
+                                 grn_obj *table,
+                                 grn_obj *output);
+
+/* Deprecated since 11.0.4. Use grn_table_set_token_filters_options() instead. */
 GRN_API grn_rc
 grn_table_set_token_filter_options(grn_ctx *ctx,
                                    grn_obj *table,
@@ -88,11 +113,26 @@ grn_table_set_token_filter_options(grn_ctx *ctx,
                                    grn_obj *options);
 
 GRN_API grn_rc
+grn_table_set_token_filters_options(grn_ctx *ctx,
+                                    grn_obj *table,
+                                    uint32_t i,
+                                    grn_obj *options);
+
+/* Deprecated since 11.0.4. Use grn_table_get_token_filters_options() instead. */
+GRN_API grn_rc
 grn_table_get_token_filter_options(grn_ctx *ctx,
                                    grn_obj *table,
                                    unsigned int i,
                                    grn_obj *options);
 
+GRN_API grn_rc
+grn_table_get_token_filters_options(grn_ctx *ctx,
+                                    grn_obj *table,
+                                    uint32_t i,
+                                    grn_obj *options);
+
+
+/* Deprecated since 11.0.4. Use grn_table_cache_token_filters_options() instead. */
 GRN_API void *
 grn_table_cache_token_filter_options(grn_ctx *ctx,
                                      grn_obj *table,
@@ -100,6 +140,14 @@ grn_table_cache_token_filter_options(grn_ctx *ctx,
                                      grn_table_module_open_options_func open_options_func,
                                      grn_close_func close_options_func,
                                      void *user_data);
+
+GRN_API void *
+grn_table_cache_token_filters_options(grn_ctx *ctx,
+                                      grn_obj *table,
+                                      uint32_t i,
+                                      grn_table_module_open_options_func open_options_func,
+                                      grn_close_func close_options_func,
+                                      void *user_data);
 
 GRN_API grn_rc
 grn_table_get_token_filters_string(grn_ctx *ctx,

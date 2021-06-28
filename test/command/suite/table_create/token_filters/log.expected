@@ -4,5 +4,7 @@ table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   -
 [[0,0.0,0.0],true]
 #|n| DDL:257:table_create Terms
 #|n| spec:257:update:Terms:49(table:pat_key):0
+#|n| DDL:257:set_normalizers NormalizerAuto
+#|n| spec:257:update:Terms:49(table:pat_key):0
 #|n| DDL:257:set_token_filters TokenFilterStopWord,TokenFilterStopWord
 #|n| spec:257:update:Terms:49(table:pat_key):0

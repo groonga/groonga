@@ -494,11 +494,12 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
   header->curr_del3 = 0;
   header->n_garbages = 0;
   header->tokenizer = GRN_ID_NIL;
+  grn_table_modules_init(ctx, &(pat->normalizers));
   if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
-    grn_obj *normalizer;
     header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-    header->normalizer = grn_obj_id(ctx, normalizer);
+    header->normalizer = GRN_ID_NIL;
+    grn_obj *normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    grn_table_modules_add(ctx, &(pat->normalizers), normalizer);
   } else {
     header->normalizer = GRN_ID_NIL;
   }
@@ -510,7 +511,6 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
   pat->key_size = key_size;
   pat->value_size = value_size;
   grn_table_module_init(ctx, &(pat->tokenizer), GRN_ID_NIL);
-  grn_table_module_init(ctx, &(pat->normalizer), header->normalizer);
   pat->encoding = encoding;
   pat->obj.header.flags = header->flags;
   if (!(node0 = pat_get(ctx, pat, 0))) {
@@ -627,14 +627,17 @@ grn_pat_open(grn_ctx *ctx, const char *path)
   pat->value_size = header->value_size;
   pat->encoding = header->encoding;
   grn_table_module_init(ctx, &(pat->tokenizer), header->tokenizer);
+  grn_table_modules_init(ctx, &(pat->normalizers));
   if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
-    grn_obj *normalizer;
     header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-    header->normalizer = grn_obj_id(ctx, normalizer);
+    header->normalizer = GRN_ID_NIL;
+    grn_obj *normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    grn_table_modules_add(ctx, &(pat->normalizers), normalizer);
+  } else if (header->normalizer != GRN_ID_NIL) {
+    grn_obj *normalizer = grn_ctx_at(ctx, header->normalizer);
+    grn_table_modules_add(ctx, &(pat->normalizers), normalizer);
   }
-  grn_table_module_init(ctx, &(pat->normalizer), header->normalizer);
-  GRN_TEXT_INIT(&(pat->token_filters), 0);
+  grn_table_modules_init(ctx, &(pat->token_filters));
   GRN_PTR_INIT(&(pat->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
   pat->obj.header.flags = header->flags;
   PAT_AT(pat, 0, node0);
@@ -675,17 +678,7 @@ grn_pat_error_if_truncated(grn_ctx *ctx, grn_pat *pat)
 static void
 grn_pat_close_token_filters(grn_ctx *ctx, grn_pat *pat)
 {
-  grn_obj *token_filters = &(pat->token_filters);
-  grn_table_module *raw_token_filters =
-    (grn_table_module *)GRN_BULK_HEAD(token_filters);
-  size_t i, n;
-
-  n = GRN_BULK_VSIZE(token_filters) / sizeof(grn_table_module);
-  for (i = 0; i < n; i++) {
-    grn_table_module *raw_token_filter = raw_token_filters + i;
-    grn_table_module_fin(ctx, raw_token_filter);
-  }
-  GRN_OBJ_FIN(ctx, token_filters);
+  grn_table_modules_fin(ctx, &(pat->token_filters));
   GRN_OBJ_FIN(ctx, &(pat->token_filter_procs));
 }
 
@@ -706,7 +699,7 @@ grn_pat_close(grn_ctx *ctx, grn_pat *pat)
     ERR(rc, "[pat][close] failed to close IO");
   }
   grn_table_module_fin(ctx, &(pat->tokenizer));
-  grn_table_module_fin(ctx, &(pat->normalizer));
+  grn_table_modules_fin(ctx, &(pat->normalizers));
   grn_pat_close_token_filters(ctx, pat);
   if (pat->cache) { grn_pat_cache_disable(ctx, pat); }
   GRN_FREE(pat);
@@ -752,7 +745,7 @@ grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
   }
   if ((rc = grn_io_close(ctx, pat->io))) { goto exit; }
   grn_table_module_fin(ctx, &(pat->tokenizer));
-  grn_table_module_fin(ctx, &(pat->normalizer));
+  grn_table_modules_fin(ctx, &(pat->normalizers));
   grn_pat_close_token_filters(ctx, pat);
   pat->io = NULL;
   if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
@@ -2298,7 +2291,7 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
   if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
     return 0;
   }
-  if (pat->normalizer.proc) {
+  if (GRN_BULK_VSIZE(&(pat->normalizers)) > 0) {
     int flags =
       GRN_STRING_REMOVE_BLANK |
       GRN_STRING_WITH_TYPES |

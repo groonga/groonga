@@ -1,0 +1,15 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizers 'NormalizerNFKC100("unify_kana", true)'
+column_create Terms memos_content COLUMN_INDEX Memos content
+
+load --table Memos
+[
+{"content": "リンゴ"},
+{"content": "りんご"}
+]
+
+select Terms --output_columns _key --limit -1

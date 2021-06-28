@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -200,6 +200,7 @@ grn_string_init(grn_ctx *ctx,
   string_->encoding = encoding;
   string_->flags = flags;
   string_->lexicon = NULL;
+  string_->normalizer_index = 0;
 
   if (lexicon_or_normalizer &&
       lexicon_or_normalizer != GRN_NORMALIZER_AUTO &&
@@ -243,33 +244,122 @@ grn_string_open_(grn_ctx *ctx,
   }
 
   {
-    grn_obj *normalizer = NULL;
+    grn_obj normalizers;
+    GRN_PTR_INIT(&normalizers, GRN_OBJ_VECTOR, GRN_ID_NIL);
     if (lexicon_or_normalizer) {
       if (string_->lexicon) {
-        normalizer = grn_obj_get_info(ctx,
-                                      string_->lexicon,
-                                      GRN_INFO_NORMALIZER,
-                                      NULL);
+        grn_obj_get_info(ctx,
+                         string_->lexicon,
+                         GRN_INFO_NORMALIZERS,
+                         &normalizers);
       } else {
         grn_bool is_normalizer_auto;
         is_normalizer_auto = (lexicon_or_normalizer == GRN_NORMALIZER_AUTO);
         if (is_normalizer_auto) {
-          normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+          grn_obj *normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
           if (!normalizer) {
             grn_obj_close(ctx, string);
             ERR(GRN_INVALID_ARGUMENT,
                 "[string][open] NormalizerAuto normalizer isn't available");
             return NULL;
           }
+          GRN_PTR_PUT(ctx, &normalizers, normalizer);
         } else {
-          normalizer = lexicon_or_normalizer;
+          grn_obj *normalizer = lexicon_or_normalizer;
+          GRN_PTR_PUT(ctx, &normalizers, normalizer);
         }
       }
     }
-    if (!normalizer) {
+    size_t n = GRN_PTR_VECTOR_SIZE(&normalizers);
+    if (n == 0) {
+      GRN_OBJ_FIN(ctx, &normalizers);
       return (grn_obj *)grn_fake_string_open(ctx, string_);
     }
-    grn_normalizer_normalize(ctx, normalizer, string);
+    char *previous_normalized = NULL;
+    unsigned int previous_normalized_length_in_bytes = 0;
+    int16_t *previous_checks = NULL;
+    uint8_t *previous_types = NULL;
+    uint64_t *previous_offsets = NULL;
+    size_t i;
+    for (i = 0; i < n; i++) {
+      grn_obj *normalizer = GRN_PTR_VALUE_AT(&normalizers, i);
+      string_->normalizer_index = i;
+      if (i > 0) {
+        previous_normalized = string_->normalized;
+        previous_normalized_length_in_bytes =
+          string_->normalized_length_in_bytes;
+        previous_checks = string_->checks;
+        previous_types = string_->ctypes;
+        previous_offsets = string_->offsets;
+        string_->original = previous_normalized;
+        string_->original_length_in_bytes = previous_normalized_length_in_bytes;
+      }
+      grn_normalizer_normalize(ctx, normalizer, string);
+      if (i > 0) {
+        if (previous_checks) {
+          if (string_->checks) {
+            unsigned int previous_i = 0;
+            unsigned int current_i = 0;
+            for (current_i = 0;
+                 current_i < string_->normalized_length_in_bytes;
+                 current_i++) {
+              int16_t previous_check = string_->checks[current_i];
+              if (previous_check > 0) {
+                int16_t original_check = previous_checks[previous_i];
+                string_->checks[current_i] = original_check;
+                previous_i += previous_check;
+              }
+            }
+          }
+          GRN_FREE(previous_checks);
+        }
+        if (previous_types) {
+          GRN_FREE(previous_types);
+        }
+        if (previous_offsets) {
+          if (string_->offsets) {
+            uint64_t previous_offset = 0;
+            const char *previous_start = string_->original;
+            const char *previous_end =
+              previous_start + string_->original_length_in_bytes;
+            unsigned int previous_i = 0;
+            unsigned int current_i = 0;
+            for (current_i = 0;
+                 current_i < string_->n_characters;
+                 current_i++) {
+              while (string_->offsets[current_i] > previous_offset) {
+                int previous_character_length =
+                  grn_charlen(ctx, previous_start, previous_end);
+                if (previous_character_length == 0) {
+                  ERR(GRN_INVALID_ARGUMENT,
+                      "[string][open] invalid character in normalized string: "
+                      "<%.*s>",
+                      (int)(previous_end - previous_start),
+                      previous_start);
+                  break;
+                }
+                previous_start += previous_character_length;
+                previous_offset += previous_character_length;
+                previous_i++;
+              }
+              if (ctx->rc != GRN_SUCCESS) {
+                break;
+              }
+              string_->offsets[current_i] = previous_offsets[previous_i];
+            }
+          }
+          GRN_FREE(previous_offsets);
+        }
+        GRN_FREE(previous_normalized);
+      }
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+    }
+    string_->original = str;
+    string_->original_length_in_bytes = str_len;
+    string_->normalizer_index = 0;
+    GRN_OBJ_FIN(ctx, &normalizers);
   }
   if (ctx->rc != GRN_SUCCESS) {
     grn_obj_close(ctx, string);
@@ -556,6 +646,18 @@ grn_string_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *string)
   GRN_TEXT_PUTS(ctx, buffer, ">");
 
   return GRN_SUCCESS;
+}
+
+uint32_t
+grn_string_get_normalizer_index(grn_ctx *ctx, grn_obj *string)
+{
+  uint32_t index = 0;
+  grn_string *string_ = (grn_string *)string;
+  GRN_API_ENTER;
+  if (string_) {
+    index = string_->normalizer_index;
+  }
+  GRN_API_RETURN(index);
 }
 
 grn_rc

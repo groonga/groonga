@@ -273,6 +273,13 @@ schema
           "name": "NormalizerAuto",
           "options": null
         },
+        "normalizers": [
+          {
+            "id": 83,
+            "name": "NormalizerAuto",
+            "options": null
+          }
+        ],
         "token_filters": [
 
         ],

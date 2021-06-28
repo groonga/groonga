@@ -59,7 +59,7 @@
 static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 15;
 
 #define WITH_NORMALIZE(table,key,key_size,block) do {\
-  if ((table)->normalizer.proc && key && key_size > 0) {\
+  if (GRN_BULK_VSIZE(&((table)->normalizers)) > 0 && key && key_size > 0) { \
     grn_obj *nstr;\
     if ((nstr = grn_string_open(ctx, key, key_size, (grn_obj *)(table), 0))) {\
       const char *key;\
@@ -2678,7 +2678,7 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
   if (table) {
     grn_hash *cols;
     grn_obj tokenizer;
-    grn_obj normalizer;
+    grn_obj normalizers;
     grn_obj token_filters;
     if ((cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                 GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
@@ -2694,8 +2694,8 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
     if (table->header.type != GRN_TABLE_NO_KEY) {
       GRN_TEXT_INIT(&tokenizer, 0);
       grn_table_get_default_tokenizer_string(ctx, table, &tokenizer);
-      GRN_TEXT_INIT(&normalizer, 0);
-      grn_table_get_normalizer_string(ctx, table, &normalizer);
+      GRN_TEXT_INIT(&normalizers, 0);
+      grn_table_get_normalizers_string(ctx, table, &normalizers);
       GRN_TEXT_INIT(&token_filters, 0);
       grn_table_get_token_filters_string(ctx, table, &token_filters);
 
@@ -2723,10 +2723,10 @@ grn_table_truncate(grn_ctx *ctx, grn_obj *table)
         grn_obj_set_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, &tokenizer);
       }
       GRN_OBJ_FIN(ctx, &tokenizer);
-      if (GRN_TEXT_LEN(&normalizer) > 0) {
-        grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZER, &normalizer);
+      if (GRN_TEXT_LEN(&normalizers) > 0) {
+        grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZERS, &normalizers);
       }
-      GRN_OBJ_FIN(ctx, &normalizer);
+      GRN_OBJ_FIN(ctx, &normalizers);
       if (GRN_TEXT_LEN(&token_filters) > 0) {
         grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
       }
@@ -2754,7 +2754,12 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
       if (flags) { *flags = ((grn_pat *)table)->header->flags; }
       if (encoding) { *encoding = ((grn_pat *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_pat *)table)->tokenizer.proc; }
-      if (normalizer) { *normalizer = ((grn_pat *)table)->normalizer.proc; }
+      if (normalizer) {
+        *normalizer =
+          grn_table_modules_get_proc(ctx,
+                                     &(((grn_pat *)table)->normalizers),
+                                     0);
+      }
       if (token_filters) {
         *token_filters = &(((grn_pat *)table)->token_filter_procs);
       }
@@ -2764,7 +2769,12 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
       if (flags) { *flags = ((grn_dat *)table)->header->flags; }
       if (encoding) { *encoding = ((grn_dat *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_dat *)table)->tokenizer.proc; }
-      if (normalizer) { *normalizer = ((grn_dat *)table)->normalizer.proc; }
+      if (normalizer) {
+        *normalizer =
+          grn_table_modules_get_proc(ctx,
+                                     &(((grn_dat *)table)->normalizers),
+                                     0);
+      }
       if (token_filters) {
         *token_filters = &(((grn_dat *)table)->token_filter_procs);
       }
@@ -2774,7 +2784,12 @@ grn_table_get_info(grn_ctx *ctx, grn_obj *table, grn_table_flags *flags,
       if (flags) { *flags = ((grn_hash *)table)->header.common->flags; }
       if (encoding) { *encoding = ((grn_hash *)table)->encoding; }
       if (tokenizer) { *tokenizer = ((grn_hash *)table)->tokenizer.proc; }
-      if (normalizer) { *normalizer = ((grn_hash *)table)->normalizer.proc; }
+      if (normalizer) {
+        *normalizer =
+          grn_table_modules_get_proc(ctx,
+                                     &(((grn_hash *)table)->normalizers),
+                                     0);
+      }
       if (token_filters) {
         *token_filters = &(((grn_hash *)table)->token_filter_procs);
       }
@@ -7704,7 +7719,7 @@ grn_column_table(grn_ctx *ctx, grn_obj *column)
 grn_obj *
 grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valuebuf)
 {
-  const char *tag = "[info][get]";
+  const char *tag = "[obj][get-info]";
   GRN_API_ENTER;
   switch (type) {
   case GRN_INFO_SUPPORT_ZLIB :
@@ -7836,16 +7851,70 @@ grn_obj_get_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *valueb
       }
       break;
     case GRN_INFO_NORMALIZER :
-      switch (DB_OBJ(obj)->header.type) {
-      case GRN_TABLE_HASH_KEY :
-        valuebuf = ((grn_hash *)obj)->normalizer.proc;
-        break;
-      case GRN_TABLE_PAT_KEY :
-        valuebuf = ((grn_pat *)obj)->normalizer.proc;
-        break;
-      case GRN_TABLE_DAT_KEY :
-        valuebuf = ((grn_dat *)obj)->normalizer.proc;
-        break;
+      {
+        grn_obj *normalizers = NULL;
+        switch (obj->header.type) {
+        case GRN_TABLE_HASH_KEY :
+          normalizers = &(((grn_hash *)obj)->normalizers);
+          break;
+        case GRN_TABLE_PAT_KEY :
+          normalizers = &(((grn_pat *)obj)->normalizers);
+          break;
+        case GRN_TABLE_DAT_KEY :
+          normalizers = &(((grn_dat *)obj)->normalizers);
+          break;
+        default :
+          break;
+        }
+        if (normalizers &&
+            GRN_BULK_VSIZE(normalizers) >= sizeof(grn_table_module)) {
+          grn_table_module *module =
+            (grn_table_module *)GRN_BULK_HEAD(normalizers);
+          valuebuf = module->proc;
+        }
+      }
+      break;
+    case GRN_INFO_NORMALIZERS :
+      if (!valuebuf) {
+        if (!(valuebuf = grn_obj_open(ctx, GRN_PVECTOR, 0, 0))) {
+          ERR(GRN_NO_MEMORY_AVAILABLE,
+              "%s[normalizers] failed to allocate value buffer",
+              tag);
+          goto exit;
+        }
+      }
+      {
+        grn_obj *normalizers = NULL;
+        switch (obj->header.type) {
+        case GRN_TABLE_HASH_KEY :
+          normalizers = &(((grn_hash *)obj)->normalizers);
+          break;
+        case GRN_TABLE_PAT_KEY :
+          normalizers = &(((grn_pat *)obj)->normalizers);
+          break;
+        case GRN_TABLE_DAT_KEY :
+          normalizers = &(((grn_dat *)obj)->normalizers);
+          break;
+        default :
+          ERR(GRN_INVALID_ARGUMENT,
+              "%s[normalizers] target object must be one of %s, %s and %s: %s",
+              tag,
+              grn_obj_type_to_string(GRN_TABLE_HASH_KEY),
+              grn_obj_type_to_string(GRN_TABLE_PAT_KEY),
+              grn_obj_type_to_string(GRN_TABLE_DAT_KEY),
+              grn_obj_type_to_string(obj->header.type));
+          break;
+        }
+        if (normalizers) {
+          grn_table_module *raw_normalizers =
+            (grn_table_module *)GRN_BULK_HEAD(normalizers);
+          size_t n = GRN_BULK_VSIZE(normalizers) / sizeof(grn_table_module);
+          size_t i;
+          for (i = 0; i < n; i++) {
+            grn_obj *normalizer = raw_normalizers[i].proc;
+            GRN_PTR_PUT(ctx, valuebuf, normalizer);
+          }
+        }
       }
       break;
     case GRN_INFO_TOKEN_FILTERS :
@@ -8049,19 +8118,18 @@ grn_hook_unpack(grn_ctx *ctx, grn_db_obj *obj, const char *buf, uint32_t buf_siz
 }
 
 static void
-grn_token_filters_pack(grn_ctx *ctx,
-                       grn_obj *token_filters,
+grn_table_modules_pack(grn_ctx *ctx,
+                       grn_obj *table_modules,
                        grn_obj *buffer)
 {
-  unsigned int i, n_token_filters;
-
-  n_token_filters = GRN_BULK_VSIZE(token_filters) / sizeof(grn_obj *);
-  for (i = 0; i < n_token_filters; i++) {
-    grn_obj *token_filter = GRN_PTR_VALUE_AT(token_filters, i);
-    grn_id token_filter_id;
-
-    token_filter_id = grn_obj_id(ctx, token_filter);
-    GRN_RECORD_PUT(ctx, buffer, token_filter_id);
+  grn_table_module *raw_table_modules =
+    (grn_table_module *)GRN_BULK_HEAD(table_modules);
+  size_t n = GRN_BULK_VSIZE(table_modules) / sizeof(grn_table_module);
+  size_t i;
+  for (i = 0; i < n; i++) {
+    grn_obj *proc = raw_table_modules[i].proc;
+    grn_id proc_id = grn_obj_id(ctx, proc);
+    GRN_RECORD_PUT(ctx, buffer, proc_id);
   }
 }
 
@@ -8154,15 +8222,21 @@ grn_obj_spec_save(grn_ctx *ctx, grn_db_obj *obj)
   grn_vector_delimit(ctx, &v, 0, 0);
   switch (obj->header.type) {
   case GRN_TABLE_HASH_KEY :
-    grn_token_filters_pack(ctx, &(((grn_hash *)obj)->token_filter_procs), b);
+    grn_table_modules_pack(ctx, &(((grn_hash *)obj)->token_filters), b);
+    grn_vector_delimit(ctx, &v, 0, 0);
+    grn_table_modules_pack(ctx, &(((grn_hash *)obj)->normalizers), b);
     grn_vector_delimit(ctx, &v, 0, 0);
     break;
   case GRN_TABLE_PAT_KEY :
-    grn_token_filters_pack(ctx, &(((grn_pat *)obj)->token_filter_procs), b);
+    grn_table_modules_pack(ctx, &(((grn_pat *)obj)->token_filters), b);
+    grn_vector_delimit(ctx, &v, 0, 0);
+    grn_table_modules_pack(ctx, &(((grn_pat *)obj)->normalizers), b);
     grn_vector_delimit(ctx, &v, 0, 0);
     break;
   case GRN_TABLE_DAT_KEY :
-    grn_token_filters_pack(ctx, &(((grn_dat *)obj)->token_filter_procs), b);
+    grn_table_modules_pack(ctx, &(((grn_dat *)obj)->token_filters), b);
+    grn_vector_delimit(ctx, &v, 0, 0);
+    grn_table_modules_pack(ctx, &(((grn_dat *)obj)->normalizers), b);
     grn_vector_delimit(ctx, &v, 0, 0);
     break;
   case GRN_EXPR :
@@ -8664,13 +8738,14 @@ grn_obj_set_info_table_module_raw(grn_ctx *ctx,
   }
 
   if (proc) {
-    grn_bool is_valid_proc = GRN_FALSE;
+    bool is_valid_proc = false;
 
     switch (type) {
     case GRN_INFO_DEFAULT_TOKENIZER :
       is_valid_proc = grn_obj_is_tokenizer_proc(ctx, proc);
       break;
     case GRN_INFO_NORMALIZER :
+    case GRN_INFO_NORMALIZERS :
       is_valid_proc = grn_obj_is_normalizer_proc(ctx, proc);
       break;
     case GRN_INFO_TOKEN_FILTERS :
@@ -8697,7 +8772,9 @@ grn_obj_set_info_table_module_raw(grn_ctx *ctx,
     }
   }
 
-  grn_table_module_set_proc(ctx, table_module, proc);
+  if (table_module) {
+    grn_table_module_set_proc(ctx, table_module, proc);
+  }
   if (proc) {
     *proc_id = grn_obj_id(ctx, proc);
   } else {
@@ -8714,7 +8791,7 @@ grn_obj_set_info_table_module_raw(grn_ctx *ctx,
     grn_table_set_normalizer_options(ctx, table, &options);
     break;
   case GRN_INFO_TOKEN_FILTERS :
-    grn_table_set_token_filter_options(ctx, table, i, &options);
+    grn_table_set_token_filters_options(ctx, table, i, &options);
     break;
   default :
     break;
@@ -8755,7 +8832,7 @@ grn_obj_set_info_table_module(grn_ctx *ctx,
       proc_id = &(((grn_hash *)table)->header.common->tokenizer);
       break;
     case GRN_INFO_NORMALIZER :
-      table_module = &(((grn_hash *)table)->normalizer);
+      table_module = NULL;
       proc_id = &(((grn_hash *)table)->header.common->normalizer);
       break;
     default :
@@ -8769,7 +8846,7 @@ grn_obj_set_info_table_module(grn_ctx *ctx,
       proc_id = &(((grn_pat *)table)->header->tokenizer);
       break;
     case GRN_INFO_NORMALIZER :
-      table_module = &(((grn_pat *)table)->normalizer);
+      table_module = NULL;
       proc_id = &(((grn_pat *)table)->header->normalizer);
       break;
     default :
@@ -8783,7 +8860,7 @@ grn_obj_set_info_table_module(grn_ctx *ctx,
       proc_id = &(((grn_dat *)table)->header->tokenizer);
       break;
     case GRN_INFO_NORMALIZER :
-      table_module = &(((grn_dat *)table)->normalizer);
+      table_module = NULL;
       proc_id = &(((grn_dat *)table)->header->normalizer);
       break;
     default :
@@ -8804,32 +8881,15 @@ grn_obj_set_info_table_module(grn_ctx *ctx,
                                            module_name);
 }
 
-static void
-grn_token_filters_add(grn_ctx *ctx,
-                      grn_obj *token_filters,
-                      grn_obj *token_filter_procs,
-                      grn_obj *token_filter)
-{
-  grn_table_module *table_module;
-  size_t n;
-
-  grn_bulk_space(ctx, token_filters, sizeof(grn_table_module));
-  n = GRN_BULK_VSIZE(token_filters) / sizeof(grn_table_module);
-  table_module = ((grn_table_module *)GRN_BULK_HEAD(token_filters)) + n - 1;
-  grn_table_module_init(ctx, table_module, grn_obj_id(ctx, token_filter));
-  grn_table_module_set_proc(ctx, table_module, token_filter);
-  GRN_PTR_PUT(ctx, token_filter_procs, token_filter);
-}
-
 static grn_rc
-grn_obj_set_info_table_modules(grn_ctx *ctx,
-                               grn_obj *table,
-                               grn_info_type type,
-                               grn_obj *table_modules,
-                               grn_obj *procs,
-                               grn_obj *modules,
-                               const char *context_tag,
-                               const char *module_name)
+grn_obj_set_info_table_modules_text(grn_ctx *ctx,
+                                    grn_obj *table,
+                                    grn_info_type type,
+                                    grn_obj *table_modules,
+                                    grn_obj *procs,
+                                    grn_obj *modules,
+                                    const char *context_tag,
+                                    const char *module_name)
 {
   char name[GRN_TABLE_MAX_KEY_SIZE];
   unsigned int name_size;
@@ -8889,13 +8949,16 @@ grn_obj_set_info_table_modules(grn_ctx *ctx,
   for (i = 0; i < n; i++) {
     grn_obj *proc;
     grn_id proc_id;
-    grn_bool is_valid_proc = GRN_FALSE;
 
     proc = grn_expr_module_list_get_function(ctx, expression, i);
     GRN_BULK_REWIND(&options);
     grn_expr_module_list_get_arguments(ctx, expression, i, &options);
 
+    bool is_valid_proc = false;
     switch (type) {
+    case GRN_INFO_NORMALIZERS :
+      is_valid_proc = grn_obj_is_normalizer_proc(ctx, proc);
+      break;
     case GRN_INFO_TOKEN_FILTERS :
       is_valid_proc = grn_obj_is_token_filter_proc(ctx, proc);
       break;
@@ -8921,11 +8984,15 @@ grn_obj_set_info_table_modules(grn_ctx *ctx,
 
     proc_id = grn_obj_id(ctx, proc);
 
-    grn_token_filters_add(ctx, table_modules, procs, proc);
+    grn_table_modules_add(ctx, table_modules, proc);
 
     switch (type) {
+    case GRN_INFO_NORMALIZERS :
+      grn_table_set_normalizers_options(ctx, table, i, &options);
+      break;
     case GRN_INFO_TOKEN_FILTERS :
-      grn_table_set_token_filter_options(ctx, table, i, &options);
+      GRN_PTR_PUT(ctx, procs, proc);
+      grn_table_set_token_filters_options(ctx, table, i, &options);
       break;
     default :
       break;
@@ -8943,153 +9010,188 @@ exit :
 }
 
 static grn_rc
-grn_obj_set_info_token_filters(grn_ctx *ctx,
-                               grn_obj *table,
-                               grn_obj *new_token_filters)
+grn_obj_set_info_table_modules_vector(grn_ctx *ctx,
+                                      grn_obj *table,
+                                      grn_info_type type,
+                                      grn_obj *table_modules,
+                                      grn_obj *procs,
+                                      grn_obj *modules,
+                                      const char *context_tag,
+                                      const char *module_name)
 {
-  const char *context_tag = "[info][set][token-filters]";
-  const char *module_name = "token filters";
-  grn_obj *token_filters = NULL;
-  grn_obj *token_filter_procs = NULL;
+  bool is_names = grn_obj_is_vector(ctx, modules);
+  unsigned int n_modules;
+  if (is_names) {
+    n_modules = grn_vector_size(ctx, modules);
+  } else {
+    n_modules = GRN_PTR_VECTOR_SIZE(modules);
+  }
 
+  unsigned int i;
+  for (i = 0; i < n_modules; i++) {
+    grn_obj name_buffer;
+    grn_obj *module;
+    if (is_names) {
+      const char *name;
+      unsigned int name_size = grn_vector_get_element(ctx,
+                                                      modules,
+                                                      i,
+                                                      &name,
+                                                      NULL,
+                                                      NULL);
+      GRN_TEXT_INIT(&name_buffer, GRN_OBJ_DO_SHALLOW_COPY);
+      GRN_TEXT_SET(ctx, &name_buffer, name, name_size);
+      module = &name_buffer;
+    } else {
+      module = GRN_PTR_VALUE_AT(modules, i);
+    }
+
+    unsigned int current_table_modules_size = GRN_BULK_VSIZE(table_modules);
+    grn_bulk_space(ctx, table_modules, sizeof(grn_table_module));
+    grn_table_module *table_module =
+      ((grn_table_module *)GRN_BULK_HEAD(table_modules)) + i;
+    grn_table_module_init(ctx, table_module, GRN_ID_NIL);
+    grn_id proc_id = GRN_ID_NIL;
+    grn_obj_set_info_table_module_raw(ctx,
+                                      table,
+                                      type,
+                                      table_module,
+                                      &proc_id,
+                                      i,
+                                      module,
+                                      context_tag,
+                                      module_name);
+    if (ctx->rc != GRN_SUCCESS) {
+      grn_table_module_fin(ctx, table_module);
+      grn_bulk_truncate(ctx, table_modules, current_table_modules_size);
+      return ctx->rc;
+    }
+    if (procs) {
+      GRN_PTR_PUT(ctx, procs, table_module->proc);
+    }
+
+    if (module == &name_buffer) {
+      GRN_OBJ_FIN(ctx, &name_buffer);
+    }
+  }
+
+  return ctx->rc;
+}
+
+static grn_rc
+grn_obj_set_info_table_modules(grn_ctx *ctx,
+                               grn_obj *table,
+                               grn_info_type type,
+                               grn_obj *modules,
+                               const char *context_tag,
+                               const char *module_name,
+                               const char *module_id)
+{
   if (grn_obj_set_info_require_key_table(ctx,
                                          table,
                                          context_tag) != GRN_SUCCESS) {
     return ctx->rc;
   }
 
+  grn_obj *table_modules = NULL;
+  grn_obj *procs = NULL;
   switch (table->header.type) {
   case GRN_TABLE_HASH_KEY :
-    token_filters = &(((grn_hash *)table)->token_filters);
-    token_filter_procs = &(((grn_hash *)table)->token_filter_procs);
+    switch (type) {
+    case GRN_INFO_NORMALIZERS :
+      table_modules = &(((grn_hash *)table)->normalizers);
+      break;
+    case GRN_INFO_TOKEN_FILTERS :
+      table_modules = &(((grn_hash *)table)->token_filters);
+      procs = &(((grn_hash *)table)->token_filter_procs);
+      break;
+    default :
+      break;
+    }
     break;
   case GRN_TABLE_PAT_KEY :
-    token_filters = &(((grn_pat *)table)->token_filters);
-    token_filter_procs = &(((grn_pat *)table)->token_filter_procs);
+    switch (type) {
+    case GRN_INFO_NORMALIZERS :
+      table_modules = &(((grn_pat *)table)->normalizers);
+      break;
+    case GRN_INFO_TOKEN_FILTERS :
+      table_modules = &(((grn_pat *)table)->token_filters);
+      procs = &(((grn_pat *)table)->token_filter_procs);
+      break;
+    default :
+      break;
+    }
     break;
   case GRN_TABLE_DAT_KEY :
-    token_filters = &(((grn_dat *)table)->token_filters);
-    token_filter_procs = &(((grn_dat *)table)->token_filter_procs);
-    break;
+    switch (type) {
+    case GRN_INFO_NORMALIZERS :
+      table_modules = &(((grn_dat *)table)->normalizers);
+      break;
+    case GRN_INFO_TOKEN_FILTERS :
+      table_modules = &(((grn_dat *)table)->token_filters);
+      procs = &(((grn_dat *)table)->token_filter_procs);
+      break;
+    default :
+      break;
+    }
   default :
     break;
   }
 
-  if (token_filters) {
-    unsigned int i, n_token_filters;
-    grn_table_module *raw_token_filters;
-
-    n_token_filters = GRN_BULK_VSIZE(token_filter_procs) / sizeof(grn_obj *);
-    raw_token_filters = (grn_table_module *)GRN_BULK_HEAD(token_filters);
-    for (i = 0; i < n_token_filters; i++) {
-      grn_table_module *raw_token_filter = raw_token_filters + i;
-      grn_table_module_fin(ctx, raw_token_filter);
-      grn_table_set_token_filter_options(ctx, table, i, NULL);
-    }
-    GRN_BULK_REWIND(token_filters);
+  grn_table_modules_rewind(ctx, table_modules);
+  if (procs) {
+    GRN_BULK_REWIND(procs);
   }
-  GRN_BULK_REWIND(token_filter_procs);
 
-  if (grn_obj_is_text_family_bulk(ctx, new_token_filters)) {
-    grn_obj_set_info_table_modules(ctx,
-                                   table,
-                                   GRN_INFO_TOKEN_FILTERS,
-                                   token_filters,
-                                   token_filter_procs,
-                                   new_token_filters,
-                                   context_tag,
-                                   module_name);
-    if (ctx->rc != GRN_SUCCESS) {
-      return ctx->rc;
-    }
-  } else {
-    grn_bool is_token_filter_names;
-    unsigned int i, n_new_token_filters;
-
-    is_token_filter_names = grn_obj_is_vector(ctx, new_token_filters);
-    if (is_token_filter_names) {
-      n_new_token_filters = grn_vector_size(ctx, new_token_filters);
-    } else {
-      n_new_token_filters =
-        GRN_BULK_VSIZE(new_token_filters) / sizeof(grn_obj *);
-    }
-
-    for (i = 0; i < n_new_token_filters; i++) {
-      grn_obj *token_filter;
-      grn_obj token_filter_name;
-      grn_id token_filter_id = GRN_ID_NIL;
-      grn_table_module *raw_token_filter;
-      unsigned int current_token_filters_size = GRN_BULK_VSIZE(token_filters);
-
-      if (is_token_filter_names) {
-        const char *name;
-        unsigned int name_size;
-
-        name_size = grn_vector_get_element(ctx,
-                                           new_token_filters,
-                                           i,
-                                           &name,
-                                           NULL,
-                                           NULL);
-        GRN_TEXT_INIT(&token_filter_name, GRN_OBJ_DO_SHALLOW_COPY);
-        GRN_TEXT_SET(ctx, &token_filter_name, name, name_size);
-        token_filter = &token_filter_name;
-      } else {
-        token_filter = GRN_PTR_VALUE_AT(new_token_filters, i);
-      }
-
-      grn_bulk_space(ctx, token_filters, sizeof(grn_table_module));
-      raw_token_filter = ((grn_table_module *)GRN_BULK_HEAD(token_filters)) + i;
-      grn_table_module_init(ctx, raw_token_filter, GRN_ID_NIL);
-      grn_obj_set_info_table_module_raw(ctx,
+  if (grn_obj_is_text_family_bulk(ctx, modules)) {
+    grn_obj_set_info_table_modules_text(ctx,
                                         table,
-                                        GRN_INFO_TOKEN_FILTERS,
-                                        raw_token_filter,
-                                        &token_filter_id,
-                                        i,
-                                        token_filter,
+                                        type,
+                                        table_modules,
+                                        procs,
+                                        modules,
                                         context_tag,
                                         module_name);
-      if (ctx->rc != GRN_SUCCESS) {
-        grn_table_module_fin(ctx, raw_token_filter);
-        grn_bulk_truncate(ctx, token_filters, current_token_filters_size);
-        return ctx->rc;
-      }
-      GRN_PTR_PUT(ctx, token_filter_procs, raw_token_filter->proc);
-
-      if (token_filter == &token_filter_name) {
-        GRN_OBJ_FIN(ctx, &token_filter_name);
-      }
-    }
+  } else {
+    grn_obj_set_info_table_modules_vector(ctx,
+                                          table,
+                                          type,
+                                          table_modules,
+                                          procs,
+                                          modules,
+                                          context_tag,
+                                          module_name);
+  }
+  if (ctx->rc != GRN_SUCCESS) {
+    return ctx->rc;
   }
 
   {
-    grn_obj token_filter_names;
-    unsigned int i, n_new_token_filters;
-
-    GRN_TEXT_INIT(&token_filter_names, 0);
-    n_new_token_filters = GRN_BULK_VSIZE(token_filter_procs) / sizeof(grn_obj *);
-    for (i = 0; i < n_new_token_filters; i++) {
-      grn_obj *token_filter = GRN_PTR_VALUE_AT(token_filter_procs, i);
-      char name[GRN_TABLE_MAX_KEY_SIZE];
-      unsigned int name_size;
+    grn_obj names;
+    GRN_TEXT_INIT(&names, 0);
+    size_t n = GRN_BULK_VSIZE(table_modules) / sizeof(grn_table_module);
+    size_t i;
+    for (i = 0; i < n; i++) {
+      grn_obj *proc = ((grn_table_module *)GRN_BULK_HEAD(table_modules))[i].proc;
 
       if (i > 0) {
-        GRN_TEXT_PUTC(ctx, &token_filter_names, ',');
+        GRN_TEXT_PUTC(ctx, &names, ',');
       }
 
-      name_size = grn_obj_name(ctx,
-                               token_filter,
-                               name,
-                               GRN_TABLE_MAX_KEY_SIZE);
-      GRN_TEXT_PUT(ctx, &token_filter_names, name, name_size);
+      char name[GRN_TABLE_MAX_KEY_SIZE];
+      unsigned int name_size = grn_obj_name(ctx,
+                                            proc,
+                                            name,
+                                            GRN_TABLE_MAX_KEY_SIZE);
+      GRN_TEXT_PUT(ctx, &names, name, name_size);
     }
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:%u:set_token_filters%s%.*s",
+    GRN_LOG(ctx, GRN_LOG_NOTICE, "DDL:%u:set_%s%s%.*s",
             DB_OBJ(table)->id,
-            n_new_token_filters == 0 ? "" : " ",
-            (int)GRN_BULK_VSIZE(&token_filter_names),
-            GRN_BULK_HEAD(&token_filter_names));
-    GRN_OBJ_FIN(ctx, &token_filter_names);
+            module_id,
+            n == 0 ? "" : " ",
+            (int)GRN_TEXT_LEN(&names),
+            GRN_TEXT_VALUE(&names));
+    GRN_OBJ_FIN(ctx, &names);
   }
   grn_obj_spec_save(ctx, DB_OBJ(table));
 
@@ -9105,6 +9207,7 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
     ERR(GRN_INVALID_ARGUMENT, "grn_obj_set_info failed");
     goto exit;
   }
+  grn_obj value_buffer;
   switch (type) {
   case GRN_INFO_SOURCE :
     if (!GRN_DB_OBJP(obj)) {
@@ -9125,16 +9228,43 @@ grn_obj_set_info(grn_ctx *ctx, grn_obj *obj, grn_info_type type, grn_obj *value)
     rc = grn_obj_set_info_table_module(ctx,
                                        obj,
                                        type,
-                                       value,
+                                       NULL,
                                        "[info][set][normalizer]",
                                        "normalizer");
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+    type = GRN_INFO_NORMALIZERS;
+    if (!grn_obj_is_text_family_bulk(ctx, value)) {
+      GRN_PTR_INIT(&value_buffer, GRN_OBJ_VECTOR, GRN_ID_NIL);
+      GRN_PTR_PUT(ctx, &value_buffer, value);
+      value = &value_buffer;
+    }
+    /* FALLTHROUGH */
+  case GRN_INFO_NORMALIZERS :
+    rc = grn_obj_set_info_table_modules(ctx,
+                                        obj,
+                                        type,
+                                        value,
+                                        "[info][set][normalizers]",
+                                        "normalizers",
+                                        "normalizers");
     break;
   case GRN_INFO_TOKEN_FILTERS :
-    rc = grn_obj_set_info_token_filters(ctx, obj, value);
+    rc = grn_obj_set_info_table_modules(ctx,
+                                        obj,
+                                        type,
+                                        value,
+                                        "[info][set][token-filters]",
+                                        "token filters",
+                                        "token_filters");
     break;
   default :
     /* todo */
     break;
+  }
+  if (value == &value_buffer) {
+    GRN_OBJ_FIN(ctx, &value_buffer);
   }
 exit :
   GRN_API_RETURN(rc);
@@ -10560,40 +10690,42 @@ grn_obj_spec_get_path(grn_ctx *ctx,
 } while (0)
 
 static void
-grn_token_filters_unpack(grn_ctx *ctx,
-                         grn_obj *token_filters,
-                         grn_obj *token_filter_procs,
-                         grn_obj *spec_vector)
+grn_table_modules_unpack(grn_ctx *ctx,
+                         grn_obj *spec_vector,
+                         uint32_t index,
+                         grn_obj *table_modules,
+                         grn_obj *table_module_procs,
+                         const char *tag)
 {
-  grn_id *token_filter_ids;
-  unsigned int element_size;
-  unsigned int i, n_token_filter_ids;
-
-  if (grn_vector_size(ctx, spec_vector) <= GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS) {
+  if (grn_vector_size(ctx, spec_vector) <= index) {
     return;
   }
 
-  element_size = grn_vector_get_element(ctx,
-                                        spec_vector,
-                                        GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS,
-                                        (const char **)(&token_filter_ids),
-                                        NULL,
-                                        NULL);
-  n_token_filter_ids = element_size / sizeof(grn_id);
-  for (i = 0; i < n_token_filter_ids; i++) {
-    grn_id token_filter_id = token_filter_ids[i];
-    grn_obj *token_filter;
+  grn_table_modules_rewind(ctx, table_modules);
 
-    token_filter = grn_ctx_at(ctx, token_filter_id);
-    if (!token_filter) {
+  grn_id *ids;
+  unsigned int element_size = grn_vector_get_element(ctx,
+                                                     spec_vector,
+                                                     index,
+                                                     (const char **)(&ids),
+                                                     NULL,
+                                                     NULL);
+  size_t n_ids = element_size / sizeof(grn_id);
+  size_t i;
+  for (i = 0; i < n_ids; i++) {
+    grn_id id = ids[i];
+    grn_obj *proc = grn_ctx_at(ctx, id);
+    if (!proc) {
       ERR(GRN_INVALID_ARGUMENT,
-          "nonexistent token filter ID: %d", token_filter_id);
+          "%s nonexistent table module proc ID: %d",
+          tag,
+          id);
       return;
     }
-    grn_token_filters_add(ctx,
-                          token_filters,
-                          token_filter_procs,
-                          token_filter);
+    grn_table_modules_add(ctx, table_modules, proc);
+    if (table_module_procs) {
+      GRN_PTR_PUT(ctx, table_module_procs, proc);
+    }
   }
 }
 
@@ -10860,10 +10992,20 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                   grn_obj_flags flags = vp->ptr->header.flags;
                   UNPACK_INFO(spec, &decoded_spec);
                   vp->ptr->header.flags = flags;
-                  grn_token_filters_unpack(ctx,
-                                           &(hash->token_filters),
-                                           &(hash->token_filter_procs),
-                                           &decoded_spec);
+                  grn_table_modules_unpack(
+                    ctx,
+                    &decoded_spec,
+                    GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS,
+                    &(hash->token_filters),
+                    &(hash->token_filter_procs),
+                    "[at][token-filters]");
+                  grn_table_modules_unpack(
+                    ctx,
+                    &decoded_spec,
+                    GRN_SERIALIZED_SPEC_INDEX_NORMALIZERS,
+                    &(hash->normalizers),
+                    NULL,
+                    "[at][normalizers]");
                 }
                 break;
               case GRN_TABLE_PAT_KEY :
@@ -10874,10 +11016,20 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                   grn_obj_flags flags = vp->ptr->header.flags;
                   UNPACK_INFO(spec, &decoded_spec);
                   vp->ptr->header.flags = flags;
-                  grn_token_filters_unpack(ctx,
-                                           &(pat->token_filters),
-                                           &(pat->token_filter_procs),
-                                           &decoded_spec);
+                  grn_table_modules_unpack(
+                    ctx,
+                    &decoded_spec,
+                    GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS,
+                    &(pat->token_filters),
+                    &(pat->token_filter_procs),
+                    "[at][token-filters]");
+                  grn_table_modules_unpack(
+                    ctx,
+                    &decoded_spec,
+                    GRN_SERIALIZED_SPEC_INDEX_NORMALIZERS,
+                    &(pat->normalizers),
+                    NULL,
+                    "[at][normalizers]");
                   if (pat->tokenizer.proc) {
                     grn_pat_cache_enable(ctx,
                                          pat,
@@ -10893,10 +11045,20 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                   grn_obj_flags flags = vp->ptr->header.flags;
                   UNPACK_INFO(spec, &decoded_spec);
                   vp->ptr->header.flags = flags;
-                  grn_token_filters_unpack(ctx,
-                                           &(dat->token_filters),
-                                           &(dat->token_filter_procs),
-                                           &decoded_spec);
+                  grn_table_modules_unpack(
+                    ctx,
+                    &decoded_spec,
+                    GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS,
+                    &(dat->token_filters),
+                    &(dat->token_filter_procs),
+                    "[at][token-filters]");
+                  grn_table_modules_unpack(
+                    ctx,
+                    &decoded_spec,
+                    GRN_SERIALIZED_SPEC_INDEX_NORMALIZERS,
+                    &(dat->normalizers),
+                    NULL,
+                    "[at][normalizers]");
                 }
                 break;
               case GRN_TABLE_NO_KEY :

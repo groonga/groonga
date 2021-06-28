@@ -2311,12 +2311,13 @@ nfkc100_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   table = grn_string_get_table(ctx, string);
   if (table) {
-    options = grn_table_cache_normalizer_options(ctx,
-                                                 table,
-                                                 string,
-                                                 nfkc100_open_options,
-                                                 nfkc100_close_options,
-                                                 NULL);
+    uint32_t i = grn_string_get_normalizer_index(ctx, string);
+    options = grn_table_cache_normalizers_options(ctx,
+                                                  table,
+                                                  i,
+                                                  nfkc100_open_options,
+                                                  nfkc100_close_options,
+                                                  NULL);
     if (ctx->rc != GRN_SUCCESS) {
       return NULL;
     }
@@ -2373,12 +2374,13 @@ nfkc121_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   table = grn_string_get_table(ctx, string);
   if (table) {
-    options = grn_table_cache_normalizer_options(ctx,
-                                                 table,
-                                                 string,
-                                                 nfkc121_open_options,
-                                                 nfkc121_close_options,
-                                                 NULL);
+    int32_t i = grn_string_get_normalizer_index(ctx, string);
+    options = grn_table_cache_normalizers_options(ctx,
+                                                  table,
+                                                  i,
+                                                  nfkc121_open_options,
+                                                  nfkc121_close_options,
+                                                  NULL);
     if (ctx->rc != GRN_SUCCESS) {
       return NULL;
     }
@@ -2435,12 +2437,13 @@ nfkc130_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   table = grn_string_get_table(ctx, string);
   if (table) {
-    options = grn_table_cache_normalizer_options(ctx,
-                                                 table,
-                                                 string,
-                                                 nfkc130_open_options,
-                                                 nfkc130_close_options,
-                                                 NULL);
+    uint32_t i = grn_string_get_normalizer_index(ctx, string);
+    options = grn_table_cache_normalizers_options(ctx,
+                                                  table,
+                                                  i,
+                                                  nfkc130_open_options,
+                                                  nfkc130_close_options,
+                                                  NULL);
     if (ctx->rc != GRN_SUCCESS) {
       return NULL;
     }
@@ -3011,12 +3014,13 @@ table_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   table = grn_string_get_table(ctx, string);
   if (table) {
-    options = grn_table_cache_normalizer_options(ctx,
-                                                 table,
-                                                 string,
-                                                 table_options_open,
-                                                 table_options_close,
-                                                 NULL);
+    uint32_t i = grn_string_get_normalizer_index(ctx, string);
+    options = grn_table_cache_normalizers_options(ctx,
+                                                  table,
+                                                  i,
+                                                  table_options_open,
+                                                  table_options_close,
+                                                  NULL);
     if (ctx->rc != GRN_SUCCESS) {
       return NULL;
     }

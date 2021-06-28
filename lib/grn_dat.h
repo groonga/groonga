@@ -35,7 +35,7 @@ struct _grn_dat {
   void *trie;
   void *old_trie;
   grn_table_module tokenizer;
-  grn_table_module normalizer;
+  grn_obj normalizers;
   grn_obj token_filters;
   /* For backward compatibility */
   grn_obj token_filter_procs;

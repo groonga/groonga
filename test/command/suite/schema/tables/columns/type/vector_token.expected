@@ -271,6 +271,9 @@ schema
         "value_type": null,
         "tokenizer": null,
         "normalizer": null,
+        "normalizers": [
+
+        ],
         "token_filters": [
 
         ],
@@ -380,6 +383,13 @@ schema
           "name": "NormalizerNFKC121",
           "options": null
         },
+        "normalizers": [
+          {
+            "id": 86,
+            "name": "NormalizerNFKC121",
+            "options": null
+          }
+        ],
         "token_filters": [
 
         ],

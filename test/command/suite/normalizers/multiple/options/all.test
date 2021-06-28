@@ -1,0 +1,14 @@
+table_create Substitutions TABLE_PAT_KEY ShortText
+column_create Substitutions substituted COLUMN_SCALAR ShortText
+
+load --table Substitutions
+[
+{"_key": "あ", "substituted": "<あ>"}
+]
+
+normalize \
+  'NormalizerNFKC130("unify_kana", true, "report_source_offset", true), \
+   NormalizerTable("column", "Substitutions.substituted", \
+                   "report_source_offset", true)' \
+  "お あ ａ ア ｉ ｱ オ" \
+  REMOVE_BLANK|WITH_TYPES|WITH_CHECKS
