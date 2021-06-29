@@ -532,13 +532,11 @@ namespace {
       if (!prepare_match_columns()) {
         return false;
       }
-#ifdef GRN_WITH_APACHE_ARROW
       if (match_columns_) {
         grn_expr_match_columns_split(ctx_, match_columns_, &sub_match_columns_);
       } else {
         GRN_PTR_PUT(ctx_, &sub_match_columns_, NULL);
       }
-#endif
       return true;
     }
 
@@ -684,13 +682,7 @@ namespace {
             sub_result =
               unique_sub_results[n_unique_sub_results - 1].release();
             unique_sub_results.pop_back();
-            // This is faster than grn_hash_truncate() or grn_table_create().
-            GRN_HASH_EACH_BEGIN(ctx_,
-                                reinterpret_cast<grn_hash *>(sub_result),
-                                cursor,
-                                id) {
-              grn_hash_cursor_delete(ctx_, cursor, nullptr);
-            } GRN_HASH_EACH_END(ctx_, cursor);
+            clear_result_set(ctx_, sub_result);
           }
         }
         grn_table_selector table_selector;
@@ -785,38 +777,67 @@ namespace {
     select_sequential() {
       grn_id min_id = get_min_id();
       grn::UniqueObj unique_sub_result(ctx_, nullptr);
-      for (const auto &expanded_query : expanded_queries_) {
-        grn_obj *condition = build_condition(ctx_,
-                                             match_columns_,
-                                             expanded_query.data(),
-                                             expanded_query.length());
-        if (!condition) {
-          return false;
-        }
-        grn::UniqueObj unique_condition(ctx_, condition);
-        grn_table_selector table_selector;
-        grn_table_selector_init(ctx_,
-                                &table_selector,
-                                table_,
-                                condition,
-                                GRN_OP_OR);
-        grn_table_selector_set_min_id(ctx_,
+      grn::UniqueObj unique_working_sub_result(ctx_, nullptr);
+      auto n_sub_match_columns = GRN_PTR_VECTOR_SIZE(&sub_match_columns_);
+      for (size_t i = 0; i < n_sub_match_columns; ++i) {
+        grn_obj *sub_match_column = GRN_PTR_VALUE_AT(&sub_match_columns_, i);
+        for (const auto &expanded_query : expanded_queries_) {
+          grn_obj *condition = build_condition(ctx_,
+                                               sub_match_column,
+                                               expanded_query.data(),
+                                               expanded_query.length());
+          if (!condition) {
+            return false;
+          }
+          grn::UniqueObj unique_condition(ctx_, condition);
+          grn_table_selector table_selector;
+          grn_table_selector_init(ctx_,
+                                  &table_selector,
+                                  table_,
+                                  condition,
+                                  GRN_OP_OR);
+          grn_table_selector_set_min_id(ctx_,
+                                        &table_selector,
+                                        min_id);
+          grn_table_selector_set_weight_factor(ctx_,
+                                               &table_selector,
+                                               get_weight_factor());
+          auto sub_result =
+            grn_table_selector_select(ctx_,
                                       &table_selector,
-                                      min_id);
-        grn_table_selector_set_weight_factor(ctx_,
-                                             &table_selector,
-                                             get_weight_factor());
-        auto sub_result = grn_table_selector_select(ctx_,
-                                                    &table_selector,
-                                                    unique_sub_result.get());
-        grn_table_selector_fin(ctx_, &table_selector);
-        if (ctx_->rc != GRN_SUCCESS) {
-          return false;
+                                      unique_working_sub_result.get());
+          grn_table_selector_fin(ctx_, &table_selector);
+          if (ctx_->rc != GRN_SUCCESS) {
+            return false;
+          }
+          if (!unique_sub_result.get()) {
+            unique_sub_result.reset(sub_result);
+          } else {
+            grn_table_setoperation(ctx_,
+                                   unique_sub_result.get(),
+                                   sub_result,
+                                   unique_sub_result.get(),
+                                   GRN_OP_OR);
+            if (!unique_working_sub_result.get()) {
+              unique_working_sub_result.reset(sub_result);
+            }
+            clear_result_set(ctx_, unique_working_sub_result.get());
+          }
         }
-        unique_sub_result.reset(sub_result);
       }
       grn_table_setoperation(ctx_, res_, unique_sub_result.get(), res_, op_);
       return true;
+    }
+
+    void
+    clear_result_set(grn_ctx *ctx, grn_obj *result_set) {
+      // This is faster than grn_hash_truncate() or grn_table_create().
+      GRN_HASH_EACH_BEGIN(ctx,
+                          reinterpret_cast<grn_hash *>(result_set),
+                          cursor,
+                          id) {
+        grn_hash_cursor_delete(ctx, cursor, nullptr);
+      } GRN_HASH_EACH_END(ctx, cursor);
     }
 
     grn_obj *
