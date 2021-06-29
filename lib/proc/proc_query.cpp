@@ -16,6 +16,7 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "../grn_ctx.hpp"
 #include "../grn_expr.h"
 #include "../grn_proc.h"
 #include "../grn_hash.h"
@@ -628,114 +629,154 @@ namespace {
     bool
     select_parallel(std::shared_ptr<::arrow::internal::ThreadPool> pool) {
       grn_id min_id = get_min_id();
+      // merge isn't parallel. This is just used for queue.
+      auto merge_pool_result = ::arrow::internal::ThreadPool::MakeEternal(1);
+      if (!grnarrow::check(ctx_,
+                           merge_pool_result,
+                           "%s failed to create a thread pool for merging",
+                           tag_)) {
+        return false;
+      }
+      auto merge_pool = *merge_pool_result;
       std::mutex mutex;
       std::vector<grn::UniqueObj> unique_sub_results;
+      auto merge = [&](grn_obj *sub_result) {
+        std::lock_guard<std::mutex> lock(mutex);
+        if (unique_sub_results.empty()) {
+          unique_sub_results.emplace_back(ctx_, sub_result);
+        } else {
+          if (ctx_->rc == GRN_SUCCESS) {
+            grn_table_setoperation(ctx_,
+                                   unique_sub_results[0].get(),
+                                   sub_result,
+                                   unique_sub_results[0].get(),
+                                   GRN_OP_OR);
+          }
+          unique_sub_results.emplace_back(ctx_, sub_result);
+        }
+        return arrow::Status::OK();
+      };
+      std::vector<::arrow::Future<>> merge_futures;
       auto select = [&](grn_obj *match_columns, const std::string &query) {
         auto sub_ctx = grn_ctx_pull_child(ctx_);
+        grn::ChildCtxReleaser releaser(ctx_, sub_ctx);
         grn_obj *condition = build_condition(sub_ctx,
                                              match_columns,
                                              query.data(),
                                              query.length());
+        if (!condition) {
+          return ::arrow::Status::OK();
+        }
+        grn::UniqueObj unique_condition(sub_ctx, condition);
         grn_obj *sub_result = nullptr;
-        if (condition) {
-          grn::UniqueObj unique_condition(sub_ctx, condition);
-          {
-            std::lock_guard<std::mutex> lock(mutex);
-            auto n_unique_sub_results = unique_sub_results.size();
-            if (n_unique_sub_results == 0) {
-              sub_result =
-                grn_table_create(ctx_,
-                                 nullptr, 0,
-                                 nullptr,
-                                 GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                                 table_,
-                                 nullptr);
-            } else {
-              sub_result =
-                unique_sub_results[n_unique_sub_results - 1].release();
-              unique_sub_results.pop_back();
-            }
-          }
-          if (sub_result) {
-            grn_table_selector table_selector;
-            grn_table_selector_init(sub_ctx,
-                                    &table_selector,
-                                    table_,
-                                    condition,
-                                    GRN_OP_OR);
-            grn_table_selector_set_min_id(sub_ctx,
-                                          &table_selector,
-                                          min_id);
-            grn_table_selector_set_weight_factor(ctx_,
-                                                 &table_selector,
-                                                 get_weight_factor());
-            grn_table_selector_select(sub_ctx,
-                                      &table_selector,
-                                      sub_result);
-            grn_table_selector_fin(sub_ctx, &table_selector);
-            {
-              std::lock_guard<std::mutex> lock(mutex);
-              unique_sub_results.emplace_back(ctx_, sub_result);
-            }
+        {
+          std::lock_guard<std::mutex> lock(mutex);
+          auto n_unique_sub_results = unique_sub_results.size();
+          if (n_unique_sub_results < 2) {
+            sub_result =
+              grn_table_create(ctx_,
+                               nullptr, 0,
+                               nullptr,
+                               GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                               table_,
+                               nullptr);
+          } else {
+            sub_result =
+              unique_sub_results[n_unique_sub_results - 1].release();
+            unique_sub_results.pop_back();
+            // This is faster than grn_hash_truncate() or grn_table_create().
+            GRN_HASH_EACH_BEGIN(ctx_,
+                                reinterpret_cast<grn_hash *>(sub_result),
+                                cursor,
+                                id) {
+              grn_hash_cursor_delete(ctx_, cursor, nullptr);
+            } GRN_HASH_EACH_END(ctx_, cursor);
           }
         }
-        grn_ctx_release_child(ctx_, sub_ctx);
+        grn_table_selector table_selector;
+        grn_table_selector_init(sub_ctx,
+                                &table_selector,
+                                table_,
+                                condition,
+                                GRN_OP_OR);
+        grn_table_selector_set_min_id(sub_ctx,
+                                      &table_selector,
+                                      min_id);
+        grn_table_selector_set_weight_factor(ctx_,
+                                             &table_selector,
+                                             get_weight_factor());
+        grn_table_selector_select(sub_ctx,
+                                  &table_selector,
+                                  sub_result);
+        grn_table_selector_fin(sub_ctx, &table_selector);
+        auto merge_future = merge_pool->Submit(merge, sub_result);
+        if (!merge_future.ok()) {
+          std::lock_guard<std::mutex> lock(mutex);
+          if (!grnarrow::check(ctx_,
+                               merge_future,
+                               "%s failed to submit a merge job",
+                               tag_)) {
+            return merge_future.status();
+          }
+        }
+        {
+          std::lock_guard<std::mutex> lock(mutex);
+          merge_futures.push_back(*merge_future);
+        }
         return ::arrow::Status::OK();
       };
 
       {
-        std::vector<::arrow::Future<>> futures;
+        std::vector<::arrow::Future<>> select_futures;
         auto n_sub_match_columns = GRN_PTR_VECTOR_SIZE(&sub_match_columns_);
         for (size_t i = 0; i < n_sub_match_columns; ++i) {
           grn_obj *sub_match_column = GRN_PTR_VALUE_AT(&sub_match_columns_, i);
           for (const auto &expanded_query : expanded_queries_) {
-            auto future = pool->Submit(select,
-                                       sub_match_column,
-                                       expanded_query);
-            if (!future.ok()) {
+            auto select_future = pool->Submit(select,
+                                              sub_match_column,
+                                              expanded_query);
+            if (!select_future.ok()) {
               std::lock_guard<std::mutex> lock(mutex);
               if (!grnarrow::check(ctx_,
-                                   future,
-                                   "%s failed to submit a job",
+                                   select_future,
+                                   "%s failed to submit a select job",
                                    tag_)) {
                 break;
               }
             }
-            futures.push_back(*future);
+            select_futures.push_back(*select_future);
           }
           if (ctx_->rc != GRN_SUCCESS) {
             break;
           }
         }
         auto status = ::arrow::Status::OK();
-        for (auto& future : futures) {
-          status &= future.status();
+        for (auto& select_future : select_futures) {
+          status &= select_future.status();
         }
         if (!grnarrow::check(ctx_,
                              status,
-                             "%s failed to complete a job",
+                             "%s failed to complete select jobs",
+                             tag_)) {
+          return false;
+        }
+        for (auto& merge_future : merge_futures) {
+          status &= merge_future.status();
+        }
+        if (!grnarrow::check(ctx_,
+                             status,
+                             "%s failed to complete merge jobs",
                              tag_)) {
           return false;
         }
       }
-      if (ctx_->rc != GRN_SUCCESS) {
-        return false;
-      }
-      auto sub_result = unique_sub_results[0].get();
-      auto n_sub_results = unique_sub_results.size();
-      for (size_t i = 1; i < n_sub_results; ++i) {
+      if (ctx_->rc == GRN_SUCCESS && !unique_sub_results.empty()) {
         grn_table_setoperation(ctx_,
-                               sub_result,
-                               unique_sub_results[i].get(),
-                               sub_result,
-                               GRN_OP_OR);
-        if (ctx_->rc != GRN_SUCCESS) {
-          break;
-        }
-      }
-      if (ctx_->rc == GRN_SUCCESS) {
-        grn_table_setoperation(ctx_, res_, sub_result, res_, op_);
-      }
+                               res_,
+                               unique_sub_results[0].get(),
+                               res_,
+                               op_);
+       }
       return ctx_->rc == GRN_SUCCESS;
     }
 #endif
