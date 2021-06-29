@@ -102,6 +102,8 @@ namespace {
       default_operator_(GRN_OP_AND),
       flags_(GRN_EXPR_SYNTAX_QUERY),
       flags_specified_(-1),
+      enough_filtered_ratio_(-1),
+      max_n_enough_filtered_records_(-1),
       match_columns_(nullptr) {
     }
 
@@ -154,6 +156,36 @@ namespace {
       }
     }
 
+    void
+    init_table_selector(grn_ctx *ctx,
+                        grn_table_selector *table_selector,
+                        grn_obj *condition,
+                        grn_operator op,
+                        grn_id min_id) {
+      grn_table_selector_init(ctx,
+                              table_selector,
+                              table_,
+                              condition,
+                              op);
+      grn_table_selector_set_min_id(ctx,
+                                    table_selector,
+                                    min_id);
+      grn_table_selector_set_weight_factor(ctx,
+                                           table_selector,
+                                           get_weight_factor());
+      if (enough_filtered_ratio_ >= 0) {
+        grn_table_selector_set_enough_filtered_ratio(ctx_,
+                                                     table_selector,
+                                                     enough_filtered_ratio_);
+      }
+      if (max_n_enough_filtered_records_ >= 0) {
+        grn_table_selector_set_max_n_enough_filtered_records(
+          ctx_,
+          table_selector,
+          max_n_enough_filtered_records_);
+      }
+    }
+
     bool
     parse_match_columns_arg() {
       match_columns_string_ = args_[0];
@@ -189,7 +221,13 @@ namespace {
         &flags_specified_,                                              \
         "options",                                                      \
         GRN_PROC_OPTION_VALUE_RAW,                                      \
-        &query_options_ptr
+        &query_options_ptr,                                             \
+        "enough_filtered_ratio",                                        \
+        GRN_PROC_OPTION_VALUE_DOUBLE,                                   \
+        &enough_filtered_ratio_,                                        \
+        "max_n_enough_filtered_records",                                \
+        GRN_PROC_OPTION_VALUE_INT64,                                    \
+        &max_n_enough_filtered_records_
       if (selector_data_) {
         grn_selector_data_parse_options(ctx_,
                                         selector_data_,
@@ -302,6 +340,8 @@ namespace {
     grn_operator default_operator_;
     grn_expr_flags flags_;
     grn_expr_flags flags_specified_;
+    double enough_filtered_ratio_;
+    int64_t max_n_enough_filtered_records_;
     grn_obj *match_columns_;
   };
 
@@ -456,17 +496,11 @@ namespace {
         return true;
       }
       grn_table_selector table_selector;
-      grn_table_selector_init(ctx_,
-                              &table_selector,
-                              table_,
-                              condition_,
-                              op_);
-      grn_table_selector_set_min_id(ctx_,
-                                    &table_selector,
-                                    get_min_id());
-      grn_table_selector_set_weight_factor(ctx_,
-                                           &table_selector,
-                                           get_weight_factor());
+      init_table_selector(ctx_,
+                          &table_selector,
+                          condition_,
+                          op_,
+                          get_min_id());
       grn_table_selector_select(ctx_,
                                 &table_selector,
                                 res_);
@@ -686,17 +720,11 @@ namespace {
           }
         }
         grn_table_selector table_selector;
-        grn_table_selector_init(sub_ctx,
-                                &table_selector,
-                                table_,
-                                condition,
-                                GRN_OP_OR);
-        grn_table_selector_set_min_id(sub_ctx,
-                                      &table_selector,
-                                      min_id);
-        grn_table_selector_set_weight_factor(ctx_,
-                                             &table_selector,
-                                             get_weight_factor());
+        init_table_selector(sub_ctx,
+                            &table_selector,
+                            condition,
+                            GRN_OP_OR,
+                            min_id);
         grn_table_selector_select(sub_ctx,
                                   &table_selector,
                                   sub_result);
@@ -791,17 +819,11 @@ namespace {
           }
           grn::UniqueObj unique_condition(ctx_, condition);
           grn_table_selector table_selector;
-          grn_table_selector_init(ctx_,
-                                  &table_selector,
-                                  table_,
-                                  condition,
-                                  GRN_OP_OR);
-          grn_table_selector_set_min_id(ctx_,
-                                        &table_selector,
-                                        min_id);
-          grn_table_selector_set_weight_factor(ctx_,
-                                               &table_selector,
-                                               get_weight_factor());
+          init_table_selector(ctx_,
+                              &table_selector,
+                              condition,
+                              GRN_OP_OR,
+                              min_id);
           auto sub_result =
             grn_table_selector_select(ctx_,
                                       &table_selector,

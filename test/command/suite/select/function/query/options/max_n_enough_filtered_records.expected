@@ -1,0 +1,41 @@
+table_create Products TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Products name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms products_name COLUMN_INDEX Products name
+[[0,0.0,0.0],true]
+load --table Products
+[
+["name"],
+["Groonga"],
+["Mroonga"],
+["Rroonga"],
+["PGroonga"],
+["Ruby"],
+["PostgreSQL"]
+]
+[[0,0.0,0.0],6]
+log_level --level info
+[[0,0.0,0.0],true]
+select   --table Products   --filter 'query("name", "r name:Ruby", {"max_n_enough_filtered_records": 10})'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["name","ShortText"]],[5,"Ruby"]]]]
+#|i| [table-selector][select][index][selector][no-index][query] <Products>
+#|i| [object][search][index][key][exact] <Terms.products_name>
+#|i| grn_ii_sel > (r)
+#|i| exact: 0
+#|i| [ii][select] n=1 (r)
+#|i| unsplit: 2
+#|i| hits=2
+#|i| [table-selector][select][index-not-used][equal] <Terms.products_name>: enough filtered: 33.33%(2/6) < 100.00% && 2 <= 10
+#>select --filter "query(\"name\", \"r name:Ruby\", {\"max_n_enough_filtered_records\": 10})" --table "Products"
+#:000000000000000 filter(2): (match columns) match "r"
+#:000000000000000 filter(1): Products.name equal "Ruby"
+#:000000000000000 filter(1): query("name", "r name:Ruby", (nil))
+#:000000000000000 select(1)
+#:000000000000000 output(1)
+#:000000000000000 send(0)
+#<000000000000000 rc=0
+log_level --level notice
+[[0,0.0,0.0],true]
