@@ -246,28 +246,26 @@ grn_string_open_(grn_ctx *ctx,
   {
     grn_obj normalizers;
     GRN_PTR_INIT(&normalizers, GRN_OBJ_VECTOR, GRN_ID_NIL);
-    if (lexicon_or_normalizer) {
-      if (string_->lexicon) {
-        grn_obj_get_info(ctx,
-                         string_->lexicon,
-                         GRN_INFO_NORMALIZERS,
-                         &normalizers);
-      } else {
-        grn_bool is_normalizer_auto;
-        is_normalizer_auto = (lexicon_or_normalizer == GRN_NORMALIZER_AUTO);
-        if (is_normalizer_auto) {
-          grn_obj *normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-          if (!normalizer) {
-            grn_obj_close(ctx, string);
-            ERR(GRN_INVALID_ARGUMENT,
-                "[string][open] NormalizerAuto normalizer isn't available");
-            return NULL;
-          }
-          GRN_PTR_PUT(ctx, &normalizers, normalizer);
-        } else {
-          grn_obj *normalizer = lexicon_or_normalizer;
-          GRN_PTR_PUT(ctx, &normalizers, normalizer);
+    if (string_->lexicon) {
+      grn_obj_get_info(ctx,
+                       string_->lexicon,
+                       GRN_INFO_NORMALIZERS,
+                       &normalizers);
+    } else {
+      grn_bool is_normalizer_auto;
+      is_normalizer_auto = (lexicon_or_normalizer == GRN_NORMALIZER_AUTO);
+      if (is_normalizer_auto) {
+        grn_obj *normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+        if (!normalizer) {
+          grn_obj_close(ctx, string);
+          ERR(GRN_INVALID_ARGUMENT,
+              "[string][open] NormalizerAuto normalizer isn't available");
+          return NULL;
         }
+        GRN_PTR_PUT(ctx, &normalizers, normalizer);
+      } else {
+        grn_obj *normalizer = lexicon_or_normalizer;
+        GRN_PTR_PUT(ctx, &normalizers, normalizer);
       }
     }
     size_t n = GRN_PTR_VECTOR_SIZE(&normalizers);
