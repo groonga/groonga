@@ -1,0 +1,28 @@
+table_create Products TABLE_NO_KEY
+column_create Products name COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+column_create Terms products_name COLUMN_INDEX Products name
+
+load --table Products
+[
+["name"],
+["Groonga"],
+["Mroonga"],
+["Rroonga"],
+["PGroonga"],
+["Ruby"],
+["PostgreSQL"]
+]
+
+#@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level info
+#@collect-query-log true
+select \
+  --table Products \
+  --filter 'query("name", "r name:Ruby", {"enough_filtered_ratio": 1.0})'
+#@collect-query-log false
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels info
