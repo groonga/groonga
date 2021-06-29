@@ -401,6 +401,22 @@ GRN_API grn_rc
 grn_table_selector_set_weight_factor(grn_ctx *ctx,
                                      grn_table_selector *table_selector,
                                      float factor);
+GRN_API double
+grn_table_selector_get_enough_filtered_ratio(grn_ctx *ctx,
+                                             grn_table_selector *table_selector);
+GRN_API grn_rc
+grn_table_selector_set_enough_filtered_ratio(grn_ctx *ctx,
+                                             grn_table_selector *table_selector,
+                                             double ratio);
+GRN_API int64_t
+grn_table_selector_get_max_n_enough_filtered_records(
+  grn_ctx *ctx,
+  grn_table_selector *table_selector);
+GRN_API grn_rc
+grn_table_selector_set_max_n_enough_filtered_records(
+  grn_ctx *ctx,
+  grn_table_selector *table_selector,
+  int64_t n);
 GRN_API grn_obj *
 grn_table_selector_select(grn_ctx *ctx,
                           grn_table_selector *table_selector,
