@@ -122,6 +122,11 @@ grn_proc_get_value_token_cursor_flags(grn_ctx *ctx,
                                       grn_obj *value,
                                       uint32_t default_flags,
                                       const char *context);
+double
+grn_proc_get_value_double(grn_ctx *ctx,
+                          grn_obj *value,
+                          double default_value_raw,
+                          const char *context);
 
 void grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
 void grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);
