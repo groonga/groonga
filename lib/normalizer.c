@@ -2374,7 +2374,7 @@ nfkc121_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   table = grn_string_get_table(ctx, string);
   if (table) {
-    int32_t i = grn_string_get_normalizer_index(ctx, string);
+    uint32_t i = grn_string_get_normalizer_index(ctx, string);
     options = grn_table_cache_normalizers_options(ctx,
                                                   table,
                                                   i,
