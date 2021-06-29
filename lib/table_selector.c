@@ -32,7 +32,7 @@
 #include <stdio.h>
 
 static double grn_table_select_enough_filtered_ratio = 0.01;
-static int grn_table_select_max_n_enough_filtered_records = 1000;
+static int64_t grn_table_select_max_n_enough_filtered_records = 1000;
 static bool grn_table_select_min_id_skip_enable = true;
 static bool grn_query_log_show_condition = true;
 
@@ -113,6 +113,10 @@ grn_table_selector_init(grn_ctx *ctx,
   table_selector->use_sequential_scan = false;
   table_selector->query_options = grn_expr_get_query_options(ctx, expr);
   table_selector->weight_factor = 1.0;
+  table_selector->enough_filtered_ratio =
+    grn_table_select_enough_filtered_ratio;
+  table_selector->max_n_enough_filtered_records =
+    grn_table_select_max_n_enough_filtered_records;
   grn_table_selector_data data = {0};
   table_selector->data = data;
 }
@@ -200,6 +204,42 @@ grn_table_selector_set_weight_factor(grn_ctx *ctx,
 {
   GRN_API_ENTER;
   table_selector->weight_factor = factor;
+  GRN_API_RETURN(ctx->rc);
+}
+
+double
+grn_table_selector_get_enough_filtered_ratio(grn_ctx *ctx,
+                                             grn_table_selector *table_selector)
+{
+  return table_selector->enough_filtered_ratio;
+}
+
+grn_rc
+grn_table_selector_set_enough_filtered_ratio(grn_ctx *ctx,
+                                             grn_table_selector *table_selector,
+                                             double ratio)
+{
+  GRN_API_ENTER;
+  table_selector->enough_filtered_ratio = ratio;
+  GRN_API_RETURN(ctx->rc);
+}
+
+int64_t
+grn_table_selector_get_max_n_enough_filtered_records(
+  grn_ctx *ctx,
+  grn_table_selector *table_selector)
+{
+  return table_selector->max_n_enough_filtered_records;
+}
+
+grn_rc
+grn_table_selector_set_max_n_enough_filtered_records(
+  grn_ctx *ctx,
+  grn_table_selector *table_selector,
+  int64_t n)
+{
+  GRN_API_ENTER;
+  table_selector->max_n_enough_filtered_records = n;
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -424,24 +464,25 @@ select_index_use_sequential_search(grn_ctx *ctx,
     filtered_ratio = (double)n_filtered_records / (double)n_records;
   }
 
-  if (filtered_ratio >= grn_table_select_enough_filtered_ratio) {
+  if (filtered_ratio >= table_selector->enough_filtered_ratio) {
     return false;
   }
 
-  if (n_filtered_records > grn_table_select_max_n_enough_filtered_records) {
+  if (n_filtered_records > table_selector->max_n_enough_filtered_records) {
     return false;
   }
 
   grn_obj reason;
   GRN_TEXT_INIT(&reason, 0);
   grn_text_printf(ctx, &reason,
-                  "enough filtered: %.2f%%(%d/%d) < %.2f%% && %d <= %d",
+                  "enough filtered: "
+                  "%.2f%%(%d/%d) < %.2f%% && %d <= %" GRN_FMT_INT64D,
                   filtered_ratio * 100,
                   n_filtered_records,
                   n_records,
-                  grn_table_select_enough_filtered_ratio * 100,
+                  table_selector->enough_filtered_ratio * 100,
                   n_filtered_records,
-                  grn_table_select_max_n_enough_filtered_records);
+                  table_selector->max_n_enough_filtered_records);
   GRN_TEXT_PUTC(ctx, &reason, '\0');
   select_index_not_used_report(ctx,
                                tag,

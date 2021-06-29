@@ -50,6 +50,8 @@ struct _grn_table_selector {
   bool use_sequential_scan;
   grn_obj *query_options;
   float weight_factor;
+  double enough_filtered_ratio;
+  int64_t max_n_enough_filtered_records;
   grn_table_selector_data data;
 };
 
