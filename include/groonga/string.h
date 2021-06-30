@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -104,6 +105,7 @@ GRN_API grn_rc grn_string_set_offsets(grn_ctx *ctx,
                                       uint64_t *offsets);
 GRN_API grn_encoding grn_string_get_encoding(grn_ctx *ctx, grn_obj *string);
 GRN_API grn_obj *grn_string_get_table(grn_ctx *ctx, grn_obj *string);
+GRN_API uint32_t grn_string_get_normalizer_index(grn_ctx *ctx, grn_obj *string);
 
 
 GRN_API int grn_charlen(grn_ctx *ctx, const char *str, const char *end);

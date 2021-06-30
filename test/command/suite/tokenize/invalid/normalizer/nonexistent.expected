@@ -6,8 +6,10 @@ tokenize TokenBigram "aBcDe 123" NormalizerNonexistent
       0.0,
       0.0
     ],
-    "[tokenize] failed to set normalizer: <NormalizerNonexistent>: [info][set][normalizer][(anonymous)] unknown normalizer: <Normali"
+    "[tokenize] failed to set normalizer: <NormalizerNonexistent>: [info][set][normalizers][(anonymous)] failed to parse normalizers"
   ]
 ]
-#|e| [info][set][normalizer][(anonymous)] unknown normalizer: <NormalizerNonexistent>
-#|e| [tokenize] failed to set normalizer: <NormalizerNonexistent>: [info][set][normalizer][(anonymous)] unknown normalizer: <NormalizerNonexistent>
+#|e| [expr][parse] unknown identifier: <NormalizerNonexistent>
+#|e| Syntax error: <NormalizerNonexistent||>: [expr][parse] unknown identifier: <NormalizerNonexistent>
+#|e| [info][set][normalizers][(anonymous)] failed to parse normalizers: <NormalizerNonexistent>: Syntax error: <NormalizerNonexistent||>: [expr][parse] unknown identifier: <NormalizerNonexistent>
+#|e| [tokenize] failed to set normalizer: <NormalizerNonexistent>: [info][set][normalizers][(anonymous)] failed to parse normalizers: <NormalizerNonexistent>: Syntax error: <NormalizerNonexisten

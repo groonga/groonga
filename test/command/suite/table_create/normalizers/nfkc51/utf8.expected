@@ -1,0 +1,57 @@
+table_create Terms TABLE_PAT_KEY ShortText   --normalizers NormalizerNFKC51
+[[0,0.0,0.0],true]
+table_create Movies TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Movies name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Terms movies_name COLUMN_INDEX Movies name
+[[0,0.0,0.0],true]
+load --table Movies
+[
+{"name": "Seven Samurai"},
+{"name": "The Last Samurai"}
+]
+[[0,0.0,0.0],2]
+select Movies --match_columns name --query seven
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "Seven Samurai"
+      ]
+    ]
+  ]
+]
+dump
+table_create Movies TABLE_NO_KEY
+column_create Movies name COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText --normalizer NormalizerNFKC51
+
+load --table Movies
+[
+["_id","name"],
+[1,"Seven Samurai"],
+[2,"The Last Samurai"]
+]
+
+column_create Terms movies_name COLUMN_INDEX Movies name

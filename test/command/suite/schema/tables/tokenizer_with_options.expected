@@ -276,6 +276,9 @@ schema
           ]
         },
         "normalizer": null,
+        "normalizers": [
+
+        ],
         "token_filters": [
 
         ],

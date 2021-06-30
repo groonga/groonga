@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2018 Brazil
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -67,6 +68,7 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   grn_raw_string normalizer_raw;
   grn_raw_string string_raw;
   grn_raw_string flags_raw;
+  grn_raw_string normalizers_raw;
 
 #define GET_VALUE(name)                                         \
   name ## _raw.value =                                          \
@@ -79,10 +81,14 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
   GET_VALUE(normalizer);
   GET_VALUE(string);
   GET_VALUE(flags);
+  GET_VALUE(normalizers);
 
 #undef GET_VALUE
 
-  if (normalizer_raw.length == 0) {
+  if (normalizers_raw.length == 0 && normalizer_raw.length > 0) {
+    normalizers_raw = normalizer_raw;
+  }
+  if (normalizers_raw.length == 0) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
                      "%s normalizer name is missing",
@@ -106,7 +112,7 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 
     lexicon = grn_proc_lexicon_open(ctx,
                                     NULL,
-                                    &normalizer_raw,
+                                    &normalizers_raw,
                                     NULL,
                                     context_tag);
     if (!lexicon) {
@@ -194,14 +200,15 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 void
 grn_proc_init_normalize(grn_ctx *ctx)
 {
-  grn_expr_var vars[3];
+  grn_expr_var vars[4];
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "normalizer", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "string", -1);
   grn_plugin_expr_var_init(ctx, &(vars[2]), "flags", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[3]), "normalizers", -1);
   grn_plugin_command_create(ctx,
                             "normalize", -1,
                             command_normalize,
-                            3,
+                            4,
                             vars);
 }

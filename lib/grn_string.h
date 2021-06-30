@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2012-2018 Brazil
+  Copyright(C) 2012-2018  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -40,6 +41,7 @@ typedef struct {
   grn_encoding encoding;
   int flags;
   grn_obj *lexicon;
+  uint32_t normalizer_index;
 } grn_string;
 
 grn_rc grn_string_init(grn_ctx *ctx,

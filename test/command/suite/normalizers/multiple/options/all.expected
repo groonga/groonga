@@ -1,0 +1,75 @@
+table_create Substitutions TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Substitutions substituted COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Substitutions
+[
+{"_key": "あ", "substituted": "<あ>"}
+]
+[[0,0.0,0.0],1]
+normalize   'NormalizerNFKC130("unify_kana", true, "report_source_offset", true),    NormalizerTable("column", "Substitutions.substituted",                    "report_source_offset", true)'   "お あ ａ ア ｉ ｱ オ"   REMOVE_BLANK|WITH_TYPES|WITH_CHECKS
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "お<あ>a<あ>i<あ>お",
+    "types": [
+      "hiragana",
+      "symbol",
+      "hiragana",
+      "symbol",
+      "alpha",
+      "symbol",
+      "hiragana",
+      "symbol",
+      "alpha",
+      "symbol",
+      "hiragana",
+      "symbol",
+      "hiragana"
+    ],
+    "checks": [
+      3,
+      0,
+      0,
+      4,
+      -1,
+      0,
+      0,
+      -1,
+      4,
+      4,
+      -1,
+      0,
+      0,
+      -1,
+      4,
+      4,
+      -1,
+      0,
+      0,
+      -1,
+      4,
+      0,
+      0
+    ],
+    "offsets": [
+      0,
+      4,
+      4,
+      4,
+      8,
+      12,
+      12,
+      12,
+      16,
+      20,
+      20,
+      20,
+      24
+    ]
+  }
+]

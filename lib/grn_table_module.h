@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2018  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -45,6 +45,25 @@ void grn_table_module_set_options(grn_ctx *ctx,
                                   grn_close_func close_func);
 void grn_table_module_fin(grn_ctx *ctx,
                           grn_table_module *module);
+
+void grn_table_modules_init(grn_ctx *ctx,
+                            grn_obj *modules_buffer);
+void grn_table_modules_fin(grn_ctx *ctx,
+                           grn_obj *modules_buffer);
+void grn_table_modules_add(grn_ctx *ctx,
+                           grn_obj *modules_buffer,
+                           grn_obj *proc);
+void grn_table_modules_rewind(grn_ctx *ctx,
+                              grn_obj *modules_buffer);
+grn_table_module *
+grn_table_modules_get_module(grn_ctx *ctx,
+                             grn_obj *modules_buffer,
+                             size_t i);
+grn_obj *
+grn_table_modules_get_proc(grn_ctx *ctx,
+                           grn_obj *modules_buffer,
+                           size_t i);
+
 
 #ifdef __cplusplus
 }

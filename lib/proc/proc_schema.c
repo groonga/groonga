@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2015-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -625,13 +625,50 @@ command_schema_table_output_normalizer(grn_ctx *ctx, grn_obj *table)
 }
 
 static void
+command_schema_table_output_normalizers(grn_ctx *ctx, grn_obj *table)
+{
+  grn_obj normalizers;
+  GRN_PTR_INIT(&normalizers, GRN_OBJ_VECTOR, GRN_ID_NIL);
+  if (grn_obj_is_table_with_key(ctx, table)) {
+    grn_obj_get_info(ctx, table, GRN_INFO_NORMALIZERS, &normalizers);
+  }
+
+  size_t n = GRN_PTR_VECTOR_SIZE(&normalizers);
+  grn_ctx_output_array_open(ctx, "normalizers", n);
+  size_t i;
+  for (i = 0; i < n; i++) {
+    grn_obj *normalizer = GRN_PTR_VALUE_AT(&normalizers, i);
+
+    grn_ctx_output_map_open(ctx, "normalizer", 3);
+    {
+      grn_ctx_output_cstr(ctx, "id");
+      command_schema_output_id(ctx, normalizer);
+
+      grn_ctx_output_cstr(ctx, "name");
+      command_schema_output_name(ctx, normalizer);
+
+      grn_ctx_output_cstr(ctx, "options");
+      {
+        grn_obj options;
+        GRN_VOID_INIT(&options);
+        grn_table_get_normalizers_options(ctx, table, i, &options);
+        command_schema_table_output_options(ctx, &options);
+        GRN_OBJ_FIN(ctx, &options);
+      }
+    }
+    grn_ctx_output_map_close(ctx);
+  }
+  grn_ctx_output_array_close(ctx);
+}
+
+static void
 command_schema_table_output_token_filters(grn_ctx *ctx, grn_obj *table)
 {
   grn_obj token_filters;
   int i, n;
 
   GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
-  if (table->header.type != GRN_TABLE_NO_KEY) {
+  if (grn_obj_is_table_with_key(ctx, table)) {
     grn_obj_get_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
   }
 
@@ -655,7 +692,7 @@ command_schema_table_output_token_filters(grn_ctx *ctx, grn_obj *table)
       grn_obj options;
 
       GRN_VOID_INIT(&options);
-      grn_table_get_token_filter_options(ctx, table, i, &options);
+      grn_table_get_token_filters_options(ctx, table, i, &options);
       command_schema_table_output_options(ctx, &options);
       GRN_OBJ_FIN(ctx, &options);
     }
@@ -755,7 +792,7 @@ command_schema_table_command_collect_arguments(grn_ctx *ctx,
     if (normalizer) {
       grn_obj sub_output;
       GRN_TEXT_INIT(&sub_output, 0);
-      grn_table_get_normalizer_string(ctx, table, &sub_output);
+      grn_table_get_normalizers_string(ctx, table, &sub_output);
       GRN_TEXT_PUTC(ctx, &sub_output, '\0');
       ADD("normalizer", GRN_TEXT_VALUE(&sub_output));
       GRN_OBJ_FIN(ctx, &sub_output);
@@ -1175,7 +1212,7 @@ command_schema_output_table(grn_ctx *ctx,
 {
   command_schema_output_name(ctx, table);
 
-  grn_ctx_output_map_open(ctx, "table", 11);
+  grn_ctx_output_map_open(ctx, "table", 12);
 
   grn_ctx_output_cstr(ctx, "id");
   command_schema_output_id(ctx, table);
@@ -1197,6 +1234,9 @@ command_schema_output_table(grn_ctx *ctx,
 
   grn_ctx_output_cstr(ctx, "normalizer");
   command_schema_table_output_normalizer(ctx, table);
+
+  grn_ctx_output_cstr(ctx, "normalizers");
+  command_schema_table_output_normalizers(ctx, table);
 
   grn_ctx_output_cstr(ctx, "token_filters");
   command_schema_table_output_token_filters(ctx, table);

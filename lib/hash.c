@@ -1791,16 +1791,17 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   header->n_entries = 0;
   header->n_garbages = 0;
   header->tokenizer = GRN_ID_NIL;
+  grn_table_modules_init(ctx, &(hash->normalizers));
   if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
-    grn_obj *normalizer;
     header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-    normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-    header->normalizer = grn_obj_id(ctx, normalizer);
+    header->normalizer = GRN_ID_NIL;
+    grn_obj *normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+    grn_table_modules_add(ctx, &(hash->normalizers), normalizer);
   } else {
     header->normalizer = GRN_ID_NIL;
   }
   header->truncated = GRN_FALSE;
-  GRN_TEXT_INIT(&(hash->token_filters), 0);
+  grn_table_modules_init(ctx, &(hash->token_filters));
   GRN_PTR_INIT(&(hash->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
 
   hash->obj.header.flags = (header->flags & GRN_OBJ_FLAGS_MASK);
@@ -1815,7 +1816,6 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   hash->header.common = header;
   hash->lock = &header->lock;
   grn_table_module_init(ctx, &(hash->tokenizer), GRN_ID_NIL);
-  grn_table_module_init(ctx, &(hash->normalizer), header->normalizer);
   return GRN_SUCCESS;
 }
 
@@ -1875,8 +1875,8 @@ grn_tiny_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   hash->n_entries_ = 0;
   hash->garbages = GRN_ID_NIL;
   grn_table_module_init(ctx, &(hash->tokenizer), GRN_ID_NIL);
-  grn_table_module_init(ctx, &(hash->normalizer), GRN_ID_NIL);
-  GRN_TEXT_INIT(&(hash->token_filters), 0);
+  grn_table_modules_init(ctx, &(hash->normalizers));
+  grn_table_modules_init(ctx, &(hash->token_filters));
   GRN_PTR_INIT(&(hash->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
   grn_tiny_array_init(ctx, &hash->a, entry_size, GRN_TINY_ARRAY_CLEAR);
   grn_tiny_bitmap_init(ctx, &hash->bitmap);
@@ -1944,14 +1944,18 @@ grn_hash_open(grn_ctx *ctx, const char *path)
             hash->header.common = header;
             hash->lock = &header->lock;
             grn_table_module_init(ctx, &(hash->tokenizer), header->tokenizer);
+            grn_table_modules_init(ctx, &(hash->normalizers));
             if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
-              grn_obj *normalizer;
               header->flags &= ~GRN_OBJ_KEY_NORMALIZE;
-              normalizer = grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
-              header->normalizer = grn_obj_id(ctx, normalizer);
+              header->normalizer = GRN_ID_NIL;
+              grn_obj *normalizer =
+                grn_ctx_get(ctx, GRN_NORMALIZER_AUTO_NAME, -1);
+              grn_table_modules_add(ctx, &(hash->normalizers), normalizer);
+            } else if (header->normalizer != GRN_ID_NIL) {
+              grn_obj *normalizer = grn_ctx_at(ctx, header->normalizer);
+              grn_table_modules_add(ctx, &(hash->normalizers), normalizer);
             }
-            grn_table_module_init(ctx, &(hash->normalizer), header->normalizer);
-            GRN_TEXT_INIT(&(hash->token_filters), 0);
+            grn_table_modules_init(ctx, &(hash->token_filters));
             GRN_PTR_INIT(&(hash->token_filter_procs), GRN_OBJ_VECTOR, GRN_ID_NIL);
             hash->obj.header.flags = header->flags;
             return hash;
@@ -1994,17 +1998,7 @@ grn_hash_error_if_truncated(grn_ctx *ctx, grn_hash *hash)
 static void
 grn_hash_close_token_filters(grn_ctx *ctx, grn_hash *hash)
 {
-  grn_obj *token_filters = &(hash->token_filters);
-  grn_table_module *raw_token_filters =
-    (grn_table_module *)GRN_BULK_HEAD(token_filters);
-  size_t i, n;
-
-  n = GRN_BULK_VSIZE(token_filters) / sizeof(grn_table_module);
-  for (i = 0; i < n; i++) {
-    grn_table_module *raw_token_filter = raw_token_filters + i;
-    grn_table_module_fin(ctx, raw_token_filter);
-  }
-  GRN_OBJ_FIN(ctx, token_filters);
+  grn_table_modules_fin(ctx, &(hash->token_filters));
   GRN_OBJ_FIN(ctx, &(hash->token_filter_procs));
 }
 
@@ -2015,7 +2009,7 @@ grn_io_hash_fin(grn_ctx *ctx, grn_hash *hash)
 
   rc = grn_io_close(ctx, hash->io);
   grn_table_module_fin(ctx, &(hash->tokenizer));
-  grn_table_module_fin(ctx, &(hash->normalizer));
+  grn_table_modules_fin(ctx, &(hash->normalizers));
   grn_hash_close_token_filters(ctx, hash);
   return rc;
 }
@@ -2028,7 +2022,7 @@ grn_tiny_hash_fin(grn_ctx *ctx, grn_hash *hash)
   }
 
   grn_table_module_fin(ctx, &(hash->tokenizer));
-  grn_table_module_fin(ctx, &(hash->normalizer));
+  grn_table_modules_fin(ctx, &(hash->normalizers));
   grn_hash_close_token_filters(ctx, hash);
 
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {

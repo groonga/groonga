@@ -282,6 +282,9 @@ schema
           "options": null
         },
         "normalizer": null,
+        "normalizers": [
+
+        ],
         "token_filters": [
           {
             "id": 256,

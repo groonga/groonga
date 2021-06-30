@@ -6,8 +6,10 @@ normalize Nonexistent "aBcDe"
       0.0,
       0.0
     ],
-    "[normalize] failed to set normalizer: <Nonexistent>: [info][set][normalizer][(anonymous)] unknown normalizer: <Nonexistent>"
+    "[normalize] failed to set normalizer: <Nonexistent>: [info][set][normalizers][(anonymous)] failed to parse normalizers: <Nonexi"
   ]
 ]
-#|e| [info][set][normalizer][(anonymous)] unknown normalizer: <Nonexistent>
-#|e| [normalize] failed to set normalizer: <Nonexistent>: [info][set][normalizer][(anonymous)] unknown normalizer: <Nonexistent>
+#|e| [expr][parse] unknown identifier: <Nonexistent>
+#|e| Syntax error: <Nonexistent||>: [expr][parse] unknown identifier: <Nonexistent>
+#|e| [info][set][normalizers][(anonymous)] failed to parse normalizers: <Nonexistent>: Syntax error: <Nonexistent||>: [expr][parse] unknown identifier: <Nonexistent>
+#|e| [normalize] failed to set normalizer: <Nonexistent>: [info][set][normalizers][(anonymous)] failed to parse normalizers: <Nonexistent>: Syntax error: <Nonexistent||>: [expr][parse] 

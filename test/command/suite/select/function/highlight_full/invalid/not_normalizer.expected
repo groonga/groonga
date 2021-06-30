@@ -15,7 +15,7 @@ select Entries --output_columns   'highlight_full(body, "TokenBigram", true,   "
       0.0,
       0.0
     ],
-    "[info][set][normalizer][(anonymous)] invalid normalizer: <TokenBigram>"
+    "[info][set][normalizers][(anonymous)] invalid normalizers: <TokenBigram>"
   ],
   [
     [
@@ -29,9 +29,9 @@ select Entries --output_columns   'highlight_full(body, "TokenBigram", true,   "
         ]
       ],
       [
-        "[info][set][normalizer][(anonymous)] invalid normalizer: <TokenBigram>"
+        "[info][set][normalizers][(anonymous)] invalid normalizers: <TokenBigram>"
       ]
     ]
   ]
 ]
-#|e| [info][set][normalizer][(anonymous)] invalid normalizer: <TokenBigram>
+#|e| [info][set][normalizers][(anonymous)] invalid normalizers: <TokenBigram>

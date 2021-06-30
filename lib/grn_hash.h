@@ -222,7 +222,7 @@ struct _grn_hash {
   uint32_t *n_entries;
   uint32_t *max_offset;
   grn_table_module tokenizer;
-  grn_table_module normalizer;
+  grn_obj normalizers;
   grn_obj token_filters;
   /* For backward compatibility */
   grn_obj token_filter_procs;

@@ -1,0 +1,8 @@
+table_create Substitutions TABLE_PAT_KEY ShortText
+column_create Substitutions substituted COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizers 'NormalizerNFKC130("unify_kana", true), \
+                 NormalizerTable("column", "Substitutions.substituted")'
+dump

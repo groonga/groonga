@@ -1,0 +1,18 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos contents COLUMN_VECTOR Text
+
+load --table Memos
+[
+{"contents": ["リンゴ", "バナナ"]},
+{"contents": ["りんご", "ばなな"]}
+]
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizers 'NormalizerNFKC100("unify_kana", true)'
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Memos contents
+
+select Terms --output_columns _key --limit -1
+
+select Memos --match_columns contents --query ばなな

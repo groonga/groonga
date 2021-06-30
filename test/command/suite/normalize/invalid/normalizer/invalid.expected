@@ -6,8 +6,8 @@ normalize TokenBigram "aBcDe"
       0.0,
       0.0
     ],
-    "[normalize] failed to set normalizer: <TokenBigram>: [info][set][normalizer][(anonymous)] invalid normalizer: <TokenBigram>"
+    "[normalize] failed to set normalizer: <TokenBigram>: [info][set][normalizers][(anonymous)] invalid normalizers: <TokenBigram>"
   ]
 ]
-#|e| [info][set][normalizer][(anonymous)] invalid normalizer: <TokenBigram>
-#|e| [normalize] failed to set normalizer: <TokenBigram>: [info][set][normalizer][(anonymous)] invalid normalizer: <TokenBigram>
+#|e| [info][set][normalizers][(anonymous)] invalid normalizers: <TokenBigram>
+#|e| [normalize] failed to set normalizer: <TokenBigram>: [info][set][normalizers][(anonymous)] invalid normalizers: <TokenBigram>

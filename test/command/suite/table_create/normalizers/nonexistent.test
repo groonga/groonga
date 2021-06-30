@@ -1,0 +1,5 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizers NormalizerNonexistent
+
+#@read-timeout 0.1
+dump
