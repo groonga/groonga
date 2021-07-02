@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010-2016  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -428,7 +428,7 @@ test_hash_empty(void)
                           "size:0 "
                           "columns:[] "
                           "default_tokenizer:(nil) "
-                          "normalizer:(nil) "
+                          "normalizers:(nil) "
                           "keys:[] "
                           "subrec:none"
                           ">",
@@ -455,7 +455,7 @@ test_hash_with_records(void)
                           "size:2 "
                           "columns:[name] "
                           "default_tokenizer:(nil) "
-                          "normalizer:(nil) "
+                          "normalizers:(nil) "
                           "keys:[\"groonga.org\", \"razil.jp\"] "
                           "subrec:none"
                           ">",
@@ -474,7 +474,7 @@ test_patricia_trie_empty(void)
                           "size:0 "
                           "columns:[] "
                           "default_tokenizer:(nil) "
-                          "normalizer:(nil) "
+                          "normalizers:(nil) "
                           "keys:[] "
                           "subrec:none "
                           "nodes:{}"
@@ -503,7 +503,7 @@ test_patricia_trie_with_records(void)
     "size:2 "
     "columns:[name] "
     "default_tokenizer:(nil) "
-    "normalizer:(nil) "
+    "normalizers:(nil) "
     "keys:[\"groonga.org\", \"razil.jp\"] "
     "subrec:none "
     "nodes:{\n"

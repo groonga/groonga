@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2010-2018  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -809,32 +809,39 @@ grn_table_ids_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 static grn_rc
 grn_table_default_tokenizer_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  grn_obj *default_tokenizer;
-
   GRN_TEXT_PUTS(ctx, buf, "default_tokenizer:");
-  default_tokenizer = grn_obj_get_info(ctx, obj,
-                                       GRN_INFO_DEFAULT_TOKENIZER, NULL);
-  if (default_tokenizer) {
-    grn_inspect_name(ctx, buf, default_tokenizer);
-  } else {
+  grn_obj default_tokenizer;
+  GRN_TEXT_INIT(&default_tokenizer, 0);
+  grn_table_get_default_tokenizer_string(ctx, obj, &default_tokenizer);
+  if (GRN_TEXT_LEN(&default_tokenizer) == 0) {
     GRN_TEXT_PUTS(ctx, buf, "(nil)");
+  } else {
+    GRN_TEXT_PUT(ctx,
+                 buf,
+                 GRN_TEXT_VALUE(&default_tokenizer),
+                 GRN_TEXT_LEN(&default_tokenizer));
   }
+  GRN_OBJ_FIN(ctx, &default_tokenizer);
 
   return GRN_SUCCESS;
 }
 
 static grn_rc
-grn_table_normalizer_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
+grn_table_normalizers_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 {
-  grn_obj *normalizer;
-
-  GRN_TEXT_PUTS(ctx, buf, "normalizer:");
-  normalizer = grn_obj_get_info(ctx, obj, GRN_INFO_NORMALIZER, NULL);
-  if (normalizer) {
-    grn_inspect_name(ctx, buf, normalizer);
-  } else {
+  GRN_TEXT_PUTS(ctx, buf, "normalizers:");
+  grn_obj normalizers;
+  GRN_TEXT_INIT(&normalizers, 0);
+  grn_table_get_normalizers_string(ctx, obj, &normalizers);
+  if (GRN_TEXT_LEN(&normalizers) == 0) {
     GRN_TEXT_PUTS(ctx, buf, "(nil)");
+  } else {
+    GRN_TEXT_PUT(ctx,
+                 buf,
+                 GRN_TEXT_VALUE(&normalizers),
+                 GRN_TEXT_LEN(&normalizers));
   }
+  GRN_OBJ_FIN(ctx, &normalizers);
 
   return GRN_SUCCESS;
 }
@@ -983,7 +990,7 @@ grn_table_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     grn_table_default_tokenizer_inspect(ctx, buf, obj);
 
     GRN_TEXT_PUTS(ctx, buf, " ");
-    grn_table_normalizer_inspect(ctx, buf, obj);
+    grn_table_normalizers_inspect(ctx, buf, obj);
 
     GRN_TEXT_PUTS(ctx, buf, " ");
     grn_table_keys_inspect(ctx, buf, obj);

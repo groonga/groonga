@@ -24,4 +24,4 @@ select   --table Products   --filter 'query("name", "r", {"unknown": "^"})'
     "[query][options][parse] unknown option names: <unknown>: #<table:hash (nil) key:ShortText value:(nil) size:1 columns:[] default"
   ]
 ]
-#|e| [query][options][parse] unknown option names: <unknown>: #<table:hash (nil) key:ShortText value:(nil) size:1 columns:[] default_tokenizer:(nil) normalizer:(nil) keys:["unknown"] subrec:none>
+#|e| [query][options][parse] unknown option names: <unknown>: #<table:hash (nil) key:ShortText value:(nil) size:1 columns:[] default_tokenizer:(nil) normalizers:(nil) keys:["unknown"] subrec:none>
