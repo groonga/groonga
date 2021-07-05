@@ -1,13 +1,13 @@
-table_create Substitutions TABLE_PAT_KEY ShortText
-column_create Substitutions substituted COLUMN_SCALAR ShortText
+table_create Normalizations TABLE_PAT_KEY ShortText
+column_create Normalizations normalized COLUMN_SCALAR ShortText
 
-load --table Substitutions
+load --table Normalizations
 [
-{"_key": "あ", "substituted": "<あ>"},
-{"_key": "いち", "substituted": "1"}
+{"_key": "あ", "normalized": "<あ>"},
+{"_key": "いち", "normalized": "1"}
 ]
 
 normalize \
-  'NormalizerTable("column", "Substitutions.substituted")' \
+  'NormalizerTable("normalized", "Normalizations.normalized")' \
   ".あ。いち." \
   WITH_TYPES

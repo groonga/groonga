@@ -1,13 +1,13 @@
-table_create Substitutions TABLE_PAT_KEY ShortText
+table_create Normalizations TABLE_PAT_KEY ShortText
 [[0,0.0,0.0],true]
-column_create Substitutions substituted COLUMN_SCALAR ShortText
+column_create Normalizations normalized COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
-load --table Substitutions
+load --table Normalizations
 [
-{"_key": "あ", "substituted": "<あ>"}
+{"_key": "あ", "normalized": "<あ>"}
 ]
 [[0,0.0,0.0],1]
-normalize   'NormalizerNFKC130("unify_kana", true, "report_source_offset", true),    NormalizerTable("column", "Substitutions.substituted",                    "report_source_offset", true)'   "お あ ａ ア ｉ ｱ オ"   REMOVE_BLANK|WITH_TYPES|WITH_CHECKS
+normalize   'NormalizerNFKC130("unify_kana", true, "report_source_offset", true),    NormalizerTable("normalized", "Normalizations.normalized",                    "report_source_offset", true)'   "お あ ａ ア ｉ ｱ オ"   REMOVE_BLANK|WITH_TYPES|WITH_CHECKS
 [
   [
     0,
