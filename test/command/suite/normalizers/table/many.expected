@@ -1,38 +1,38 @@
-table_create Substitutions TABLE_PAT_KEY ShortText
+table_create Normalizations TABLE_PAT_KEY ShortText
 [[0,0.0,0.0],true]
-column_create Substitutions substituted COLUMN_SCALAR ShortText
+column_create Normalizations normalized COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
-load --table Substitutions
+load --table Normalizations
 [
-{"_key": "a", "substituted": "<A>"},
-{"_key": "b", "substituted": "<B>"},
-{"_key": "c", "substituted": "<C>"},
-{"_key": "d", "substituted": "<D>"},
-{"_key": "e", "substituted": "<E>"},
-{"_key": "f", "substituted": "<F>"},
-{"_key": "g", "substituted": "<G>"},
-{"_key": "h", "substituted": "<H>"},
-{"_key": "i", "substituted": "<I>"},
-{"_key": "j", "substituted": "<J>"},
-{"_key": "k", "substituted": "<K>"},
-{"_key": "l", "substituted": "<L>"},
-{"_key": "m", "substituted": "<M>"},
-{"_key": "n", "substituted": "<N>"},
-{"_key": "o", "substituted": "<O>"},
-{"_key": "p", "substituted": "<P>"},
-{"_key": "q", "substituted": "<Q>"},
-{"_key": "r", "substituted": "<R>"},
-{"_key": "s", "substituted": "<S>"},
-{"_key": "t", "substituted": "<T>"},
-{"_key": "u", "substituted": "<U>"},
-{"_key": "v", "substituted": "<V>"},
-{"_key": "w", "substituted": "<W>"},
-{"_key": "x", "substituted": "<X>"},
-{"_key": "y", "substituted": "<Y>"},
-{"_key": "z", "substituted": "<Z>"}
+{"_key": "a", "normalized": "<A>"},
+{"_key": "b", "normalized": "<B>"},
+{"_key": "c", "normalized": "<C>"},
+{"_key": "d", "normalized": "<D>"},
+{"_key": "e", "normalized": "<E>"},
+{"_key": "f", "normalized": "<F>"},
+{"_key": "g", "normalized": "<G>"},
+{"_key": "h", "normalized": "<H>"},
+{"_key": "i", "normalized": "<I>"},
+{"_key": "j", "normalized": "<J>"},
+{"_key": "k", "normalized": "<K>"},
+{"_key": "l", "normalized": "<L>"},
+{"_key": "m", "normalized": "<M>"},
+{"_key": "n", "normalized": "<N>"},
+{"_key": "o", "normalized": "<O>"},
+{"_key": "p", "normalized": "<P>"},
+{"_key": "q", "normalized": "<Q>"},
+{"_key": "r", "normalized": "<R>"},
+{"_key": "s", "normalized": "<S>"},
+{"_key": "t", "normalized": "<T>"},
+{"_key": "u", "normalized": "<U>"},
+{"_key": "v", "normalized": "<V>"},
+{"_key": "w", "normalized": "<W>"},
+{"_key": "x", "normalized": "<X>"},
+{"_key": "y", "normalized": "<Y>"},
+{"_key": "z", "normalized": "<Z>"}
 ]
 [[0,0.0,0.0],26]
-normalize   'NormalizerTable("column", "Substitutions.substituted")'   ".a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z."
+normalize   'NormalizerTable("normalized", "Normalizations.normalized")'   ".a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s.t.u.v.w.x.y.z."
 [
   [
     0,

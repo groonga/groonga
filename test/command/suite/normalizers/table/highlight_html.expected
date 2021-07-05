@@ -1,21 +1,21 @@
-table_create Substitutions TABLE_PAT_KEY ShortText
+table_create Normalizations TABLE_PAT_KEY ShortText
 [[0,0.0,0.0],true]
-column_create Substitutions substituted COLUMN_SCALAR ShortText
+column_create Normalizations normalized COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
-load --table Substitutions
+load --table Normalizations
 [
-{"_key": "a", "substituted": "AAA"},
-{"_key": "b", "substituted": "BBB"},
-{"_key": "c", "substituted": "CCC"},
-{"_key": "d", "substituted": "DDD"},
-{"_key": "e", "substituted": "EEE"}
+{"_key": "a", "normalized": "AAA"},
+{"_key": "b", "normalized": "BBB"},
+{"_key": "c", "normalized": "CCC"},
+{"_key": "d", "normalized": "DDD"},
+{"_key": "e", "normalized": "EEE"}
 ]
 [[0,0.0,0.0],5]
 table_create Entries TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Entries body COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
-table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("report_source_location", true)'   --normalizer 'NormalizerTable("column", "Substitutions.substituted",                                 "report_source_offset", true)'
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("report_source_location", true)'   --normalizer 'NormalizerTable("normalized", "Normalizations.normalized",                                 "report_source_offset", true)'
 [[0,0.0,0.0],true]
 column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
 [[0,0.0,0.0],true]

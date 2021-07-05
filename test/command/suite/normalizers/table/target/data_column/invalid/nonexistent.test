@@ -1,0 +1,13 @@
+table_create Normalizations TABLE_NO_KEY
+column_create Normalizations target COLUMN_SCALAR ShortText
+column_create Normalizations normalized COLUMN_SCALAR ShortText
+
+load --table Normalizations
+[
+{"target": "a", "normalized": "<A>"}
+]
+
+normalize \
+  'NormalizerTable("normalized", "Normalizations.normalized", \
+                   "target", "nonexistent")' \
+  ".a."

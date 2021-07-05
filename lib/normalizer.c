@@ -18,6 +18,7 @@
 
 #include <string.h>
 
+#include "grn_ii.h"
 #include "grn_normalizer.h"
 #include "grn_romaji.h"
 #include <groonga/normalizer.h>
@@ -2463,8 +2464,10 @@ nfkc130_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 typedef grn_char_type (*grn_get_char_type_func)(const unsigned char *character);
 
 typedef struct {
-  grn_obj *table;
-  grn_obj *column;
+  grn_obj *target_table;
+  grn_obj *target_index_column;
+  int target_section;
+  grn_obj *normalized_column;
   grn_get_char_type_func get_char_type;
   bool report_source_offset;
 } table_options;
@@ -2472,8 +2475,10 @@ typedef struct {
 static void
 table_options_init(grn_ctx *ctx, table_options *options)
 {
-  options->table = NULL;
-  options->column = NULL;
+  options->target_table = NULL;
+  options->target_index_column = NULL;
+  options->target_section = 0;
+  options->normalized_column = NULL;
   options->get_char_type = grn_nfkc_char_type;
   options->report_source_offset = false;
 }
@@ -2483,17 +2488,23 @@ table_options_fin(grn_ctx *ctx, table_options *options)
 {
   /* We can't call grn_obj_unlink() safety here. Options are cached
    * and closed when the table that have this option is closed. It may
-   * be occurred when DB is closed. In the case, options->column or
-   * options->table are already closed. If we call grn_obj_unlink()
-   * with closed column/table, Groonga may be crashed. */
+   * be occurred when DB is closed. In the case,
+   * options->target_table, options->target_index_column or
+   * options->normalized_column are already closed. If we call
+   * grn_obj_unlink() with closed column/table, Groonga may be
+   * crashed. */
 
-  if (options->column) {
-    /* grn_obj_unlink(ctx, options->column); */
-    options->column = NULL;
+  if (options->normalized_column) {
+    /* grn_obj_unlink(ctx, options->normalized_column); */
+    options->normalized_column = NULL;
   }
-  if (options->table) {
-    /* grn_obj_unlink(ctx, options->table); */
-    options->table = NULL;
+  if (options->target_index_column) {
+    /* grn_obj_unlink(ctx, options->target_index_column); */
+    options->target_index_column = NULL;
+  }
+  if (options->target_table) {
+    /* grn_obj_unlink(ctx, options->target_table); */
+    options->target_table = NULL;
   }
 }
 
@@ -2522,12 +2533,24 @@ table_options_open(grn_ctx *ctx,
   }
 
   table_options_init(ctx, options);
+  grn_obj target_name_buffer;
+  GRN_TEXT_INIT(&target_name_buffer, 0);
+  grn_obj *target_name = &target_name_buffer;
   GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
     grn_raw_string name_raw;
     name_raw.value = name;
     name_raw.length = name_length;
 
-    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "column")) {
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "column") ||
+        GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "normalized")) {
+      if (options->normalized_column) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[%.*s] must not specify "
+            "both of <column> (deprecated) and <normalized>",
+            tag,
+            (int)(name_raw.length), name_raw.value);
+        break;
+      }
       const char *name;
       grn_id domain;
       unsigned int name_length = grn_vector_get_element(ctx,
@@ -2558,8 +2581,8 @@ table_options_open(grn_ctx *ctx,
             (int)(name_raw.length), name_raw.value);
         break;
       }
-      options->column = grn_ctx_get(ctx, name, name_length);
-      if (!options->column) {
+      options->normalized_column = grn_ctx_get(ctx, name, name_length);
+      if (!options->normalized_column) {
         ERR(GRN_INVALID_ARGUMENT,
             "%s[%.*s] nonexistent column: <%.*s>",
             tag,
@@ -2567,10 +2590,11 @@ table_options_open(grn_ctx *ctx,
             (int)name_length, name);
         break;
       }
-      if (!grn_obj_is_text_family_scalar_column(ctx, options->column)) {
+      if (!grn_obj_is_text_family_scalar_column(ctx,
+                                                options->normalized_column)) {
         grn_obj inspected;
         GRN_TEXT_INIT(&inspected, 0);
-        grn_inspect_limited(ctx, &inspected, options->column);
+        grn_inspect_limited(ctx, &inspected, options->normalized_column);
         ERR(GRN_INVALID_ARGUMENT,
             "%s[%.*s] must be a text family scalar column: <%.*s>: <%.*s>",
             tag,
@@ -2580,20 +2604,38 @@ table_options_open(grn_ctx *ctx,
         GRN_OBJ_FIN(ctx, &inspected);
         break;
       }
-      options->table = grn_ctx_at(ctx, options->column->header.domain);
-      if (options->table->header.type != GRN_TABLE_PAT_KEY) {
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "target")) {
+      const char *name;
+      grn_id domain;
+      unsigned int name_length = grn_vector_get_element(ctx,
+                                                        raw_options,
+                                                        i,
+                                                        &name,
+                                                        NULL,
+                                                        &domain);
+      if (!grn_type_id_is_text_family(ctx, domain)) {
+        grn_obj value;
+        GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
+        GRN_TEXT_SET(ctx, &value, name, name_length);
         grn_obj inspected;
-        GRN_TEXT_INIT(&inspected, 0);
-        grn_inspect_limited(ctx, &inspected, options->table);
+        grn_inspect(ctx, &inspected, &value);
         ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] table must be a TABLE_PAT_KEY: <%.*s>: <%.*s>",
+            "%s[%.*s] must be a text: <%.*s>",
             tag,
             (int)(name_raw.length), name_raw.value,
-            (int)name_length, name,
             (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
         GRN_OBJ_FIN(ctx, &inspected);
+        GRN_OBJ_FIN(ctx, &value);
         break;
       }
+      if (name_length == 0) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s[%.*s] must not be empty",
+            tag,
+            (int)(name_raw.length), name_raw.value);
+        break;
+      }
+      GRN_TEXT_SET(ctx, target_name, name, name_length);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unicode_version")) {
       const char *version;
       grn_id domain;
@@ -2653,13 +2695,141 @@ table_options_open(grn_ctx *ctx,
                                     options->report_source_offset);
     }
   } GRN_OPTION_VALUES_EACH_END();
-
-  if (ctx->rc == GRN_SUCCESS && !options->table) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "%s column isn't specified",
-        tag);
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
   }
 
+  if (!options->normalized_column) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s[normalized] not specified",
+        tag);
+    goto exit;
+  }
+
+  const char *target_table_option_name = "";
+  grn_raw_string raw_target_name;
+  GRN_RAW_STRING_SET(raw_target_name, target_name);
+  if (GRN_RAW_STRING_EQUAL_CSTRING(raw_target_name, "") ||
+      GRN_RAW_STRING_EQUAL_CSTRING(raw_target_name, "_key")) {
+    target_table_option_name = "normalized";
+    options->target_table =
+      grn_ctx_at(ctx, options->normalized_column->header.domain);
+  /* TODO: Enable this when we add support for
+     "Lexicon.index_column['source_name']" syntax. */
+  /*
+  } else if (grn_raw_string_have_sub_string_cstring(ctx,
+                                                    &raw_target_name,
+                                                    ".")) {
+    target_table_option_name = "target";
+    options->target_index_column =
+      grn_ctx_get(ctx,
+                  raw_target_name.value,
+                  raw_target_name.length);
+    if (!grn_obj_is_index_column(ctx, options->target_index_column)) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect_limited(ctx, &inspected, options->target_index_column);
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[target] must be a column "
+          "in the same table as the normalized column or "
+          "index column to resolve the table of the normalized column: <%.*s>",
+          tag,
+          (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      goto exit;
+    }
+    if (DB_OBJ(options->target_index_column)->range !=
+        options->normalized_column->header.domain) {
+      grn_obj inspected_target;
+      GRN_TEXT_INIT(&inspected_target, 0);
+      grn_inspect_limited(ctx, &inspected_target, options->target_index_column);
+      grn_obj inspected_normalized;
+      GRN_TEXT_INIT(&inspected_normalized, 0);
+      grn_obj *normalized_table =
+        grn_ctx_at(ctx, options->normalized_column->header.domain);
+      grn_inspect_limited(ctx, &inspected_normalized, normalized_table);
+      grn_obj_unref(ctx, normalized_table);
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[target] index column must be "
+          "for the table of the normalized column: <%.*s>: <%.*s>",
+          tag,
+          (int)GRN_TEXT_LEN(&inspected_target),
+          GRN_TEXT_VALUE(&inspected_target),
+          (int)GRN_TEXT_LEN(&inspected_normalized),
+          GRN_TEXT_VALUE(&inspected_normalized));
+      GRN_OBJ_FIN(ctx, &inspected_normalized);
+      GRN_OBJ_FIN(ctx, &inspected_target);
+      goto exit;
+    }
+    options->target_table =
+      grn_ctx_at(ctx, options->target_index_column->header.domain);
+  */
+  } else {
+    target_table_option_name = "target";
+    grn_obj *normalized_table =
+      grn_ctx_at(ctx, options->normalized_column->header.domain);
+    grn_obj *target_column = grn_table_column(ctx,
+                                              normalized_table,
+                                              raw_target_name.value,
+                                              raw_target_name.length);
+    grn_obj_unref(ctx, normalized_table);
+    if (!target_column) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[%s] nonexistent column: <%.*s>",
+          tag,
+          target_table_option_name,
+          (int)(raw_target_name.length),
+          raw_target_name.value);
+      goto exit;
+    }
+    grn_index_datum index_datum;
+    unsigned int n_indexes = grn_column_find_index_data(ctx,
+                                                        target_column,
+                                                        GRN_OP_EQUAL,
+                                                        &index_datum,
+                                                        1);
+    grn_obj_unref(ctx, target_column);
+    if (n_indexes == 0) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[target] no equal index: <%.*s>",
+          tag,
+          (int)(raw_target_name.length),
+          raw_target_name.value);
+      goto exit;
+    }
+    options->target_index_column = index_datum.index;
+    options->target_section = index_datum.section;
+    options->target_table =
+      grn_ctx_at(ctx, options->target_index_column->header.domain);
+  }
+
+  if (options->target_table->header.type != GRN_TABLE_PAT_KEY) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect_limited(ctx, &inspected, options->target_table);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s[%s] table must be a TABLE_PAT_KEY: <%.*s>",
+        tag,
+        target_table_option_name,
+        (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    goto exit;
+  }
+  if (options->target_table->header.domain != GRN_DB_SHORT_TEXT) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect_limited(ctx, &inspected, options->target_table);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s[%s] table's key must be ShortText: <%.*s>",
+        tag,
+        target_table_option_name,
+        (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    goto exit;
+  }
+
+exit :
+  GRN_OBJ_FIN(ctx, &target_name_buffer);
   if (ctx->rc != GRN_SUCCESS) {
     table_options_fin(ctx, options);
     table_options_close(ctx, options);
@@ -2907,7 +3077,7 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
     size_t chunk_length;
 
     n_hits = grn_pat_scan(ctx,
-                          (grn_pat *)(options->table),
+                          (grn_pat *)(options->target_table),
                           source, source_end - source,
                           hits,
                           MAX_N_HITS,
@@ -2928,7 +3098,43 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
         }
       }
       size_t before_offset = GRN_TEXT_LEN(normalized);
-      grn_obj_get_value(ctx, options->column, hits[i].id, normalized);
+      if (options->target_index_column) {
+        bool found = false;
+        grn_ii *ii = (grn_ii *)(options->target_index_column);
+        grn_ii_cursor *cursor = grn_ii_cursor_open(ctx,
+                                                   ii,
+                                                   hits[i].id,
+                                                   GRN_ID_NIL,
+                                                   GRN_ID_MAX,
+                                                   ii->n_elements,
+                                                   0);
+        if (cursor) {
+          grn_posting *ii_posting;
+          while ((ii_posting = grn_ii_cursor_next(ctx, cursor))) {
+            if (options->target_section == 0 ||
+                ii_posting->sid == options->target_section) {
+              grn_obj_get_value(ctx,
+                                options->normalized_column,
+                                ii_posting->rid,
+                                normalized);
+              found = true;
+              break;
+            }
+          }
+          grn_ii_cursor_close(ctx, cursor);
+        }
+        if (!found) {
+          GRN_TEXT_PUT(ctx,
+                       normalized,
+                       source + hits[i].offset,
+                       hits[i].length);
+        }
+      } else {
+        grn_obj_get_value(ctx,
+                          options->normalized_column,
+                          hits[i].id,
+                          normalized);
+      }
       table_normalize_added(ctx,
                             &data,
                             source + hits[i].offset,
