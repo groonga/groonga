@@ -74,6 +74,10 @@ GRN_API bool
 grn_raw_string_have_sub_string(grn_ctx *ctx,
                                grn_raw_string *string,
                                grn_raw_string *sub_string);
+GRN_API bool
+grn_raw_string_have_sub_string_cstring(grn_ctx *ctx,
+                                       grn_raw_string *string,
+                                       const char *sub_cstring);
 
 #ifdef __cplusplus
 }
