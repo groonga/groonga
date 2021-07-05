@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016-2017 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2016-2017  Brazil
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -94,4 +94,21 @@ grn_raw_string_have_sub_string(grn_ctx *ctx,
   }
 
   return false;
+}
+
+bool
+grn_raw_string_have_sub_string_cstring(grn_ctx *ctx,
+                                       grn_raw_string *string,
+                                       const char *sub_cstring)
+{
+  grn_raw_string sub_string;
+  if (sub_cstring) {
+    sub_string.value = sub_cstring;
+    sub_string.length = strlen(sub_cstring);
+  } else {
+    sub_string.value = NULL;
+    sub_string.length = 0;
+  }
+
+  return grn_raw_string_have_sub_string(ctx, string, &sub_string);
 }
