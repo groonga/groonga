@@ -465,7 +465,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
                               token_cursor->curr_size,
                               NULL,
                               NULL);
-          } GRN_TABLE_LOCK_END(ctx, table);
+          } GRN_TABLE_LOCK_END(ctx);
         }
         break;
       case GRN_TABLE_DAT_KEY :
@@ -484,7 +484,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
                               token_cursor->curr_size,
                               NULL,
                               NULL);
-          } GRN_TABLE_LOCK_END(ctx, table);
+          } GRN_TABLE_LOCK_END(ctx);
         }
         break;
       case GRN_TABLE_HASH_KEY :
@@ -502,7 +502,7 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
                              token_cursor->curr_size,
                              NULL,
                              NULL);
-        } GRN_TABLE_LOCK_END(ctx, table);
+        } GRN_TABLE_LOCK_END(ctx);
         break;
       case GRN_TABLE_NO_KEY :
         if (token_cursor->curr_size == sizeof(grn_id)) {

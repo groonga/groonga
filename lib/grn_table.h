@@ -62,7 +62,7 @@ grn_table_all_columns(grn_ctx *ctx, grn_obj *table);
     }                                                                   \
   }                                                                     \
   if (can_run_) {
-#define GRN_TABLE_LOCK_END(ctx, table)          \
+#define GRN_TABLE_LOCK_END(ctx)                 \
   }                                             \
   if (locked_) {                                \
     grn_io_unlock(io_);                         \

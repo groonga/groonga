@@ -1826,7 +1826,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         WITH_NORMALIZE(pat, key, key_size, {
           GRN_TABLE_LOCK_BEGIN(ctx, table) {
             id = grn_pat_add(ctx, pat, key, key_size, NULL, &added_);
-          } GRN_TABLE_LOCK_END(ctx, table);
+          } GRN_TABLE_LOCK_END(ctx);
         });
         if (added) { *added = added_; }
         if (id == GRN_ID_NIL) {
@@ -1846,7 +1846,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         WITH_NORMALIZE(dat, key, key_size, {
           GRN_TABLE_LOCK_BEGIN(ctx, table) {
             id = grn_dat_add(ctx, dat, key, key_size, NULL, &added_);
-          } GRN_TABLE_LOCK_END(ctx, table);
+          } GRN_TABLE_LOCK_END(ctx);
         });
         if (added) { *added = added_; }
         if (id == GRN_ID_NIL) {
@@ -1866,7 +1866,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         WITH_NORMALIZE(hash, key, key_size, {
           GRN_TABLE_LOCK_BEGIN(ctx, table) {
             id = grn_hash_add(ctx, hash, key, key_size, NULL, &added_);
-          } GRN_TABLE_LOCK_END(ctx, table);
+          } GRN_TABLE_LOCK_END(ctx);
         });
         if (added) { *added = added_; }
         if (id == GRN_ID_NIL) {
@@ -1885,7 +1885,7 @@ grn_table_add(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_si
         grn_array *array = (grn_array *)table;
         GRN_TABLE_LOCK_BEGIN(ctx, table) {
           id = grn_array_add(ctx, array, NULL);
-        } GRN_TABLE_LOCK_END(ctx, table);
+        } GRN_TABLE_LOCK_END(ctx);
         added_ = id ? 1 : 0;
         if (added) { *added = added_; }
         if (id == GRN_ID_NIL) {
@@ -2484,7 +2484,7 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key
             if (rc == GRN_SUCCESS) {
               rc = grn_pat_delete(ctx, pat, key, key_size, NULL);
             }
-          } GRN_TABLE_LOCK_END(ctx, table);
+          } GRN_TABLE_LOCK_END(ctx);
         });
         break;
       case GRN_TABLE_DAT_KEY :
@@ -2495,7 +2495,7 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key
             if (rc == GRN_SUCCESS) {
               rc = grn_dat_delete(ctx, dat, key, key_size, NULL);
             }
-          } GRN_TABLE_LOCK_END(ctx, table);
+          } GRN_TABLE_LOCK_END(ctx);
         });
         break;
       case GRN_TABLE_HASH_KEY :
@@ -2506,7 +2506,7 @@ grn_table_delete(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key
             if (rc == GRN_SUCCESS) {
               rc = grn_hash_delete(ctx, hash, key, key_size, NULL);
             }
-          } GRN_TABLE_LOCK_END(ctx, table);
+          } GRN_TABLE_LOCK_END(ctx);
         });
         break;
       }
@@ -2564,7 +2564,7 @@ grn_table_delete_by_id(grn_ctx *ctx, grn_obj *table, grn_id id)
   rc = ctx->rc;
   GRN_TABLE_LOCK_BEGIN(ctx, table) {
     rc = _grn_table_delete_by_id(ctx, table, id, NULL);
-  } GRN_TABLE_LOCK_END(ctx, table);
+  } GRN_TABLE_LOCK_END(ctx);
   if (rc == GRN_SUCCESS && ctx->rc != GRN_SUCCESS) {
     rc = ctx->rc;
   }
@@ -3350,7 +3350,7 @@ grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc)
           if (rc == GRN_SUCCESS) {
             rc = grn_pat_cursor_delete(ctx, pc, NULL);
           }
-        } GRN_TABLE_LOCK_END(ctx, table);
+        } GRN_TABLE_LOCK_END(ctx);
       }
       break;
     case GRN_CURSOR_TABLE_DAT_KEY :
@@ -3367,7 +3367,7 @@ grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc)
           if (rc == GRN_SUCCESS) {
             rc = grn_hash_cursor_delete(ctx, hc, NULL);
           }
-        } GRN_TABLE_LOCK_END(ctx, table);
+        } GRN_TABLE_LOCK_END(ctx);
       }
       break;
     case GRN_CURSOR_TABLE_NO_KEY :
@@ -3380,7 +3380,7 @@ grn_table_cursor_delete(grn_ctx *ctx, grn_table_cursor *tc)
           if (rc == GRN_SUCCESS) {
             rc = grn_array_cursor_delete(ctx, ac, NULL);
           }
-        } GRN_TABLE_LOCK_END(ctx, table);
+        } GRN_TABLE_LOCK_END(ctx);
       }
       break;
     default :
@@ -10353,7 +10353,7 @@ grn_table_update_by_id(grn_ctx *ctx, grn_obj *table, grn_id id,
     grn_dat *dat = (grn_dat *)table;
     GRN_TABLE_LOCK_BEGIN(ctx, table) {
       rc = grn_dat_update_by_id(ctx, dat, id, dest_key, dest_key_size);
-    } GRN_TABLE_LOCK_END(ctx, table);
+    } GRN_TABLE_LOCK_END(ctx);
   }
   GRN_API_RETURN(rc);
 }

@@ -757,7 +757,7 @@ grn_loader_brace_add_record(grn_ctx *ctx,
       } else {
         data->id = GRN_ID_NIL;
       }
-    } GRN_TABLE_LOCK_END(ctx, table);
+    } GRN_TABLE_LOCK_END(ctx);
   } else {
     grn_loader_brace_set_values(ctx, loader, data);
     if (data->depth == 0) {
@@ -1006,7 +1006,7 @@ grn_loader_bracket_add_record(grn_ctx *ctx,
           grn_loader_apply_each(ctx, loader, data->id);
         }
       }
-    } GRN_TABLE_LOCK_END(ctx, data->table);
+    } GRN_TABLE_LOCK_END(ctx);
   } else {
     grn_loader_bracket_set_values(ctx, loader, data);
     if (data->depth == 0) {
