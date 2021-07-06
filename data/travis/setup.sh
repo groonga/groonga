@@ -23,7 +23,7 @@ if [ "$GROONGA_MASTER" = "yes" ]; then
   sudo apt install -qq -y -V \
        lsb-release \
        wget
-  wget https://apache.bintray.com/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb
+  wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb
   sudo apt install -qq -y -V ./apache-arrow-archive-keyring-latest-$(lsb_release --codename --short).deb
   sudo apt-get update -qq
   sudo apt-get install -qq -y -V \
