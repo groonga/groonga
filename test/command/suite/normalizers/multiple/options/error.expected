@@ -1,0 +1,21 @@
+normalize   'NormalizerNFKC130("unify_kana", true),    NormalizerTable("normalized", "Nonexistent.nonexistent")'   "abcde"
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[normalizer][table][normalized] nonexistent column: <Nonexistent.nonexistent>"
+  ],
+  {
+    "normalized": "",
+    "types": [
+
+    ],
+    "checks": [
+
+    ]
+  }
+]
+#|e| [normalizer][table][normalized] nonexistent column: <Nonexistent.nonexistent>

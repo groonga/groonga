@@ -294,6 +294,9 @@ grn_string_open_(grn_ctx *ctx,
       }
       grn_normalizer_normalize(ctx, normalizer, string);
       if (i > 0) {
+        if (ctx->rc != GRN_SUCCESS) {
+          break;
+        }
         if (previous_checks) {
           if (string_->checks) {
             unsigned int previous_i = 0;
