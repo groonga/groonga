@@ -12,7 +12,7 @@ column_create Normalizations normalized COLUMN_SCALAR ShortText
 
 load --table Normalizations
 [
-{"_key": "ご", "normalized": "こ"}
+{"_key": "ご", "normalized": "[ご]"}
 ]
 
 table_create Terms TABLE_PAT_KEY ShortText \
@@ -23,4 +23,4 @@ column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
 
 select Terms --output_columns _key --limit -1
 
-select Memos --match_columns content --query りんこ
+select Memos --match_columns content --query 'りん['

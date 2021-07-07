@@ -33,9 +33,11 @@
 #include "grn_ii.h"
 #include "grn_ii_select_cursor.h"
 #include "grn_ctx_impl.h"
+#include "grn_table.h"
 #include "grn_token_cursor.h"
 #include "grn_pat.h"
 #include "grn_db.h"
+#include "grn_obj.h"
 #include "grn_output.h"
 #include "grn_report.h"
 #include "grn_scorer.h"
@@ -15211,7 +15213,42 @@ grn_ii_builder_flush_term(grn_ctx *ctx, grn_ii_builder *builder,
       }
       return ctx->rc;
     }
-    global_tid = grn_table_add(ctx, builder->ii->lexicon, key, key_size, NULL);
+    /* Don't normalize key. */
+    switch (builder->ii->lexicon->header.type) {
+    case GRN_TABLE_PAT_KEY :
+      GRN_TABLE_LOCK_BEGIN(ctx, builder->ii->lexicon) {
+        global_tid = grn_pat_add(ctx,
+                                 (grn_pat *)(builder->ii->lexicon),
+                                 key,
+                                 key_size,
+                                 NULL,
+                                 NULL);
+      } GRN_TABLE_LOCK_END(ctx);
+      break;
+    case GRN_TABLE_DAT_KEY :
+      GRN_TABLE_LOCK_BEGIN(ctx, builder->ii->lexicon) {
+        global_tid = grn_dat_add(ctx,
+                                 (grn_dat *)(builder->ii->lexicon),
+                                 key,
+                                 key_size,
+                                 NULL,
+                                 NULL);
+      } GRN_TABLE_LOCK_END(ctx);
+      break;
+    case GRN_TABLE_HASH_KEY :
+      GRN_TABLE_LOCK_BEGIN(ctx, builder->ii->lexicon) {
+        global_tid = grn_hash_add(ctx,
+                                 (grn_hash *)(builder->ii->lexicon),
+                                 key,
+                                 key_size,
+                                 NULL,
+                                 NULL);
+      } GRN_TABLE_LOCK_END(ctx);
+      break;
+    default :
+      global_tid = GRN_ID_NIL;
+      break;
+    }
     if (global_tid == GRN_ID_NIL) {
       if (ctx->rc == GRN_SUCCESS) {
         ERR(GRN_UNKNOWN_ERROR,

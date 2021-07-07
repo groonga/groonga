@@ -14,7 +14,7 @@ column_create Normalizations normalized COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 load --table Normalizations
 [
-{"_key": "ご", "normalized": "こ"}
+{"_key": "ご", "normalized": "[ご]"}
 ]
 [[0,0.0,0.0],1]
 table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizers 'NormalizerNFKC130("unify_kana", true),                  NormalizerTable("normalized", "Normalizations.normalized")'
@@ -22,8 +22,42 @@ table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   -
 column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
 [[0,0.0,0.0],true]
 select Terms --output_columns _key --limit -1
-[[0,0.0,0.0],[[[3],[["_key","ShortText"]],["こ"],["りん"],["んこ"]]]]
-select Memos --match_columns content --query りんこ
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        "["
+      ],
+      [
+        "]"
+      ],
+      [
+        "ご"
+      ],
+      [
+        "りん"
+      ],
+      [
+        "ん"
+      ]
+    ]
+  ]
+]
+select Memos --match_columns content --query 'りん['
 [
   [
     0,
