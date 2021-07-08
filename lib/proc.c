@@ -3231,6 +3231,22 @@ between_cast(grn_ctx *ctx, grn_obj *source, grn_obj *destination, grn_id domain,
   return rc;
 }
 
+static bool
+between_parse_option(grn_ctx *ctx, grn_obj *option) {
+  const char *tag = "[between]";
+#define OPTION                                                          \
+        "too_many_index_match_ratio",                                   \
+        GRN_PROC_OPTION_VALUE_DOUBLE,                                   \
+        &grn_between_too_many_index_match_ratio
+
+    grn_proc_options_parse(ctx, option, tag, OPTION, NULL);
+#undef OPTION
+  if (ctx->rc != GRN_SUCCESS) {
+    return false;
+  }
+  return true;
+}
+
 static grn_rc
 between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
 {
@@ -3240,11 +3256,19 @@ between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
   data->min   = args[1];
   switch (nargs) {
   case 3 :
+  case 4 :
     data->min_border_type = BETWEEN_BORDER_INCLUDE;
     data->max = args[2];
     data->max_border_type = BETWEEN_BORDER_INCLUDE;
+    if (nargs == 4) {
+      if(!between_parse_option(ctx, args[3])) {
+        rc = ctx->rc;
+        goto exit;
+      }
+    }
     break;
   case 5 :
+  case 6 :
     data->min_border_type =
       between_parse_border(ctx, args[2], "the 3rd argument (min_border)");
     if (data->min_border_type == BETWEEN_BORDER_INVALID) {
@@ -3257,6 +3281,12 @@ between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
     if (data->max_border_type == BETWEEN_BORDER_INVALID) {
       rc = ctx->rc;
       goto exit;
+    }
+    if (nargs == 6) {
+      if(!between_parse_option(ctx, args[5])) {
+        rc = ctx->rc;
+        goto exit;
+      }
     }
     break;
   default :
