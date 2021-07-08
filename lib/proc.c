@@ -3485,6 +3485,12 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
   }
 
   uint32_t n_existing_records = grn_table_size(ctx, res);
+  GRN_LOG(ctx,
+          GRN_LOG_INFO,
+          "[between][not-use-index] Too many index matched: %d %.2f >= %d",
+          estimated_size,
+          (estimated_size * too_many_index_match_ratio),
+          n_existing_records);
   return (estimated_size * too_many_index_match_ratio) >= n_existing_records;
 }
 
