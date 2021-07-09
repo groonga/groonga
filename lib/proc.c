@@ -3152,6 +3152,7 @@ typedef struct {
   grn_obj casted_max;
   between_border_type max_border_type;
   int cursor_flags;
+  const char* tag;
 } between_data;
 
 static void
@@ -3160,6 +3161,7 @@ between_data_init(grn_ctx *ctx, between_data *data)
   GRN_VOID_INIT(&(data->casted_min));
   GRN_VOID_INIT(&(data->casted_max));
   data->cursor_flags = 0;
+  data->tag = "[between]";
 }
 
 static void
@@ -3232,14 +3234,13 @@ between_cast(grn_ctx *ctx, grn_obj *source, grn_obj *destination, grn_id domain,
 }
 
 static bool
-between_parse_option(grn_ctx *ctx, grn_obj *option) {
-  const char *tag = "[between]";
+between_parse_option(grn_ctx *ctx, grn_obj *option, between_data *data) {
 #define OPTION                                                          \
         "too_many_index_match_ratio",                                   \
         GRN_PROC_OPTION_VALUE_DOUBLE,                                   \
         &grn_between_too_many_index_match_ratio
 
-    grn_proc_options_parse(ctx, option, tag, OPTION, NULL);
+    grn_proc_options_parse(ctx, option, data->tag, OPTION, NULL);
 #undef OPTION
   if (ctx->rc != GRN_SUCCESS) {
     return false;
@@ -3261,7 +3262,7 @@ between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
     data->max = args[2];
     data->max_border_type = BETWEEN_BORDER_INCLUDE;
     if (nargs == 4) {
-      if(!between_parse_option(ctx, args[3])) {
+      if(!between_parse_option(ctx, args[3], data)) {
         rc = ctx->rc;
         goto exit;
       }
@@ -3283,7 +3284,7 @@ between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
       goto exit;
     }
     if (nargs == 6) {
-      if(!between_parse_option(ctx, args[5])) {
+      if(!between_parse_option(ctx, args[5], data)) {
         rc = ctx->rc;
         goto exit;
       }
