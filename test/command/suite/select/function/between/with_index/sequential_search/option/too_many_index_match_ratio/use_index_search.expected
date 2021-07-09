@@ -62,7 +62,7 @@ load --table Memos
 [[0,0.0,0.0],50]
 log_level --level info
 [[0,0.0,0.0],true]
-select Memos   --filter '_key == "003" && between(timestamp, "2014-11-10 07:25:24", "include", "2014-11-10 07:27:26", "exclude", {"too_many_index_match_ratio": 0.03})'
+select Memos   --filter '_key == "003" && between(timestamp, "2014-11-10 07:25:24", "include", "2014-11-10 07:27:26", "exclude", {"too_many_index_match_ratio": 0.01})'
 [
   [
     0,
@@ -98,8 +98,8 @@ select Memos   --filter '_key == "003" && between(timestamp, "2014-11-10 07:25:2
 ]
 #|i| [object][search][index][table][equal] <Memos>
 #|i| [table-selector][select][index][selector][between] <Times.memos_timestamp>
-#|i| [between][not-use-index] Too many index matched: 49 1.47 >= 1
-#>select --filter "_key == \"003\" && between(timestamp, \"2014-11-10 07:25:24\", \"include\", \"2014-11-10 07:27:26\", \"exclude\", {\"too_many_index_match_ratio\": 0.03})" --table "Memos"
+#|i| [between][use-index] n_index_match_records:49, n_existing_records:1, too_many_index_match_ratio:0.01
+#>select --filter "_key == \"003\" && between(timestamp, \"2014-11-10 07:25:24\", \"include\", \"2014-11-10 07:27:26\", \"exclude\", {\"too_many_index_match_ratio\": 0.01})" --table "Memos"
 #:000000000000000 filter(1): #<accessor _key(Memos)> equal "003"
 #:000000000000000 filter(1): between(Memos.timestamp, "2014-11-10 07:25:24", "include", "2014-11-10 07:27:26", "exclude", (nil))
 #:000000000000000 select(1)
