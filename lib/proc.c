@@ -3152,6 +3152,7 @@ typedef struct {
   grn_obj casted_max;
   between_border_type max_border_type;
   int cursor_flags;
+  double too_many_index_match_ratio;
   const char* tag;
 } between_data;
 
@@ -3161,6 +3162,7 @@ between_data_init(grn_ctx *ctx, between_data *data)
   GRN_VOID_INIT(&(data->casted_min));
   GRN_VOID_INIT(&(data->casted_max));
   data->cursor_flags = 0;
+  data->too_many_index_match_ratio = grn_between_too_many_index_match_ratio;
   data->tag = "[between]";
 }
 
@@ -3238,7 +3240,7 @@ between_parse_option(grn_ctx *ctx, grn_obj *option, between_data *data) {
 #define OPTION                                                          \
         "too_many_index_match_ratio",                                   \
         GRN_PROC_OPTION_VALUE_DOUBLE,                                   \
-        &grn_between_too_many_index_match_ratio
+        &(data->too_many_index_match_ratio)
 
     grn_proc_options_parse(ctx, option, data->tag, OPTION, NULL);
 #undef OPTION
@@ -3440,10 +3442,9 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
                                               grn_obj *index_table,
                                               between_data *data,
                                               grn_obj *res,
-                                              grn_operator op,
-                                              double too_many_index_match_ratio)
+                                              grn_operator op)
 {
-  if (too_many_index_match_ratio < 0.0) {
+  if (data->too_many_index_match_ratio < 0.0) {
     return GRN_FALSE;
   }
 
@@ -3486,13 +3487,29 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
   }
 
   uint32_t n_existing_records = grn_table_size(ctx, res);
+  if ((estimated_size * data->too_many_index_match_ratio) >= n_existing_records) {
+    GRN_LOG(ctx,
+            GRN_LOG_INFO,
+            "%s[not-use-index] Too many index match. "
+            "n_index_match_records:%d, "
+            "n_existing_records:%d, "
+            "too_many_index_match_ratio:%.2f",
+            data->tag,
+            estimated_size,
+            n_existing_records,
+            data->too_many_index_match_ratio);
+    return GRN_TRUE;
+  }
   GRN_LOG(ctx,
           GRN_LOG_INFO,
-          "[between][not-use-index] Too many index matched: %d %.2f >= %d",
+          "%s[use-index] n_index_match_records:%d, "
+          "n_existing_records:%d, "
+          "too_many_index_match_ratio:%.2f",
+          data->tag,
           estimated_size,
-          (estimated_size * too_many_index_match_ratio),
-          n_existing_records);
-  return (estimated_size * too_many_index_match_ratio) >= n_existing_records;
+          n_existing_records,
+          data->too_many_index_match_ratio);
+  return GRN_FALSE;
 }
 
 static grn_rc
@@ -3644,7 +3661,6 @@ selector_between(grn_ctx *ctx,
   }
 
   if (index_table) {
-    double ratio = grn_between_too_many_index_match_ratio;
     use_sequential_search =
       selector_between_sequential_search_should_use(ctx,
                                                     table,
@@ -3652,8 +3668,7 @@ selector_between(grn_ctx *ctx,
                                                     index_table,
                                                     &data,
                                                     res,
-                                                    op,
-                                                    ratio);
+                                                    op);
   } else {
     use_sequential_search = GRN_TRUE;
   }
