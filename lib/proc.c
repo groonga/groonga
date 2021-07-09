@@ -3435,7 +3435,7 @@ exit :
   return found;
 }
 
-static grn_bool
+static bool
 selector_between_sequential_search_should_use(grn_ctx *ctx,
                                               grn_obj *table,
                                               grn_obj *index,
@@ -3445,23 +3445,23 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
                                               grn_operator op)
 {
   if (data->too_many_index_match_ratio < 0.0) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (op != GRN_OP_AND) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (!index) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (index->header.flags & GRN_OBJ_WITH_WEIGHT) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (data->value->header.type == GRN_COLUMN_INDEX) {
-    return GRN_FALSE;
+    return false;
   }
 
   grn_table_cursor *cursor = grn_table_cursor_open(ctx,
@@ -3474,7 +3474,7 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
                                                    -1,
                                                    data->cursor_flags);
   if (!cursor) {
-    return GRN_FALSE;
+    return false;
   }
   uint32_t estimated_size =
     grn_ii_estimate_size_for_lexicon_cursor(ctx,
@@ -3483,7 +3483,7 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
   grn_table_cursor_close(ctx, cursor);
 
   if (estimated_size == 0) {
-    return GRN_FALSE;
+    return false;
   }
 
   uint32_t n_existing_records = grn_table_size(ctx, res);
@@ -3498,7 +3498,7 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
             estimated_size,
             n_existing_records,
             data->too_many_index_match_ratio);
-    return GRN_TRUE;
+    return true;
   }
   GRN_LOG(ctx,
           GRN_LOG_INFO,
@@ -3509,7 +3509,7 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
           estimated_size,
           n_existing_records,
           data->too_many_index_match_ratio);
-  return GRN_FALSE;
+  return false;
 }
 
 static grn_rc
@@ -3618,7 +3618,7 @@ selector_between(grn_ctx *ctx,
   int offset = 0;
   int limit = -1;
   between_data data;
-  grn_bool use_sequential_search;
+  bool use_sequential_search;
   bool index_table_need_unref = false;
   grn_obj *index_table = NULL;
   grn_table_cursor *cursor;
@@ -3670,7 +3670,7 @@ selector_between(grn_ctx *ctx,
                                                     res,
                                                     op);
   } else {
-    use_sequential_search = GRN_TRUE;
+    use_sequential_search = true;
   }
   if (use_sequential_search) {
     rc = selector_between_sequential_search(ctx, table, &data, res, op);
