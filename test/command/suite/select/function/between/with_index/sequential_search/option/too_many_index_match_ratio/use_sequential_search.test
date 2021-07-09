@@ -59,6 +59,7 @@ load --table Memos
 ]
 
 #@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
 log_level --level info
 #@collect-query-log true
 
@@ -67,4 +68,5 @@ select Memos \
 
 #@collect-query-log false
 log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
 #@remove-important-log-levels info
