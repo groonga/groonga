@@ -1,6 +1,7 @@
 /*
   Copyright(C) 2009-2018  Brazil
   Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2021  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3804,43 +3805,45 @@ selector_in_values_find_source(grn_ctx *ctx, grn_obj *index, grn_obj *res)
   }
 }
 
-static grn_bool
+static bool
 selector_in_values_sequential_search(grn_ctx *ctx,
                                      grn_obj *table,
                                      grn_obj *index,
                                      int n_values,
                                      grn_obj **values,
                                      grn_obj *res,
-                                     grn_operator op)
+                                     grn_operator op,
+                                     const char *tag,
+                                     double too_many_index_match_ratio)
 {
   grn_obj *source;
   int n_existing_records;
 
-  if (grn_in_values_too_many_index_match_ratio < 0.0) {
-    return GRN_FALSE;
+  if (too_many_index_match_ratio < 0.0) {
+    return false;
   }
 
   if (op != GRN_OP_AND) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (index->header.flags & GRN_OBJ_WITH_WEIGHT) {
-    return GRN_FALSE;
+    return false;
   }
 
   n_existing_records = grn_table_size(ctx, res);
   if (n_existing_records == 0) {
-    return GRN_TRUE;
+    return true;
   }
 
   source = selector_in_values_find_source(ctx, index, res);
   if (!source) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (!is_reference_type_column(ctx, source)) {
     grn_obj_unlink(ctx, source);
-    return GRN_FALSE;
+    return false;
   }
 
   {
@@ -3856,7 +3859,7 @@ selector_in_values_sequential_search(grn_ctx *ctx,
       range = grn_ctx_at(ctx, range_id);
       if (!range) {
         grn_obj_unlink(ctx, source);
-        return GRN_FALSE;
+        return false;
       }
 
       GRN_RECORD_INIT(&value_ids, GRN_OBJ_VECTOR, range_id);
@@ -3886,11 +3889,30 @@ selector_in_values_sequential_search(grn_ctx *ctx,
      *  grn_in_values_too_many_index_match_ratio)
     */
     if (n_existing_records >
-        (n_indexed_records * grn_in_values_too_many_index_match_ratio)) {
+        (n_indexed_records * too_many_index_match_ratio)) {
+      GRN_LOG(ctx,
+              GRN_LOG_INFO,
+              "%s[use-index] n_index_match_records:%d, "
+              "n_existing_records:%d, "
+              "too_many_index_match_ratio:%.2f",
+              tag,
+              n_indexed_records,
+              n_existing_records,
+              too_many_index_match_ratio);
       grn_obj_unlink(ctx, &value_ids);
       grn_obj_unlink(ctx, source);
-      return GRN_FALSE;
+      return false;
     }
+    GRN_LOG(ctx,
+        GRN_LOG_INFO,
+        "%s[not-use-index] Too many index match. "
+        "n_index_match_records:%d, "
+        "n_existing_records:%d, "
+        "too_many_index_match_ratio:%.2f",
+        tag,
+        n_indexed_records,
+        n_existing_records,
+        too_many_index_match_ratio);
 
     {
       grn_obj *accessor;
@@ -3967,7 +3989,32 @@ selector_in_values_sequential_search(grn_ctx *ctx,
   }
   grn_obj_unlink(ctx, source);
 
-  return GRN_TRUE;
+  return true;
+}
+
+static bool
+in_values_parse_option(grn_ctx* ctx, grn_obj *option, const char *tag, double* in_values_option)
+{
+#define OPTION                                                          \
+        "too_many_index_match_ratio",                                   \
+        GRN_PROC_OPTION_VALUE_DOUBLE,                                   \
+        in_values_option
+
+  grn_proc_options_parse(ctx, option, tag, OPTION, NULL);
+#undef OPTION
+  if (ctx->rc != GRN_SUCCESS) {
+    return false;
+  }
+  return true;
+}
+
+static bool
+exist_option(grn_ctx *ctx, int nargs, grn_obj **args)
+{
+  if (args[nargs-1]->header.type == GRN_TABLE_HASH_KEY)
+    return true;
+  else
+    return false;
 }
 
 static grn_rc
@@ -3978,6 +4025,8 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   grn_rc rc = GRN_SUCCESS;
   int i, n_values;
   grn_obj **values;
+  double too_many_index_match_ratio = grn_in_values_too_many_index_match_ratio;
+  const char* tag = "[in_values]";
 
   if (!index) {
     return GRN_INVALID_ARGUMENT;
@@ -3989,7 +4038,17 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     return ctx->rc;
   }
 
-  n_values = nargs - 2;
+  if (exist_option(ctx, nargs, args)) {
+    if (!in_values_parse_option(ctx,
+                                args[nargs-1],
+                                tag,
+                                &too_many_index_match_ratio)) {
+      return ctx->rc;
+    }
+    n_values = nargs - 3;
+  } else {
+    n_values = nargs - 2;
+  }
   values = args + 2;
 
   if (n_values == 0) {
@@ -3998,7 +4057,9 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 
   if (selector_in_values_sequential_search(ctx, table, index,
                                            n_values, values,
-                                           res, op)) {
+                                           res, op,
+                                           tag,
+                                           too_many_index_match_ratio)) {
     return ctx->rc;
   }
 
