@@ -14,6 +14,7 @@ load --table Memos
 
 column_create Tags memos_tag COLUMN_INDEX Memos tag
 
+#@add-ignore-log-pattern /\A\[io\]/
 #@add-important-log-levels info
 log_level --level info
 #@collect-query-log true
@@ -22,3 +23,5 @@ select Memos --filter '_id >= 3 && in_values(tag, "Groonga", {"too_many_index_ma
 
 #@collect-query-log false
 log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels info
