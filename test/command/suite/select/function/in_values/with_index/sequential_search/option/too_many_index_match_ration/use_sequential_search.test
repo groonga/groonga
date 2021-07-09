@@ -1,0 +1,24 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tag COLUMN_SCALAR Tags
+
+load --table Memos
+[
+{"_key": "Rroonga is fast!", "tag": "Rroonga"},
+{"_key": "Groonga is fast!", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "tag": "Groonga"},
+{"_key": "Groonga is good!", "tag": "Groonga"}
+]
+
+column_create Tags memos_tag COLUMN_INDEX Memos tag
+
+#@add-important-log-levels info
+log_level --level info
+#@collect-query-log true
+
+select Memos --filter '_id >= 3 && in_values(tag, "Groonga", {"too_many_index_match_ratio": 0.7})' --output_columns _id,_score,_key,tag
+
+#@collect-query-log false
+log_level --level notice
