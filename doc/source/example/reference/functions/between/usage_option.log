@@ -1,0 +1,46 @@
+Execution example::
+
+  select Users --filter 'between(age, 13, "include", 16, "include", {"too_many_index_match_ratio":0.001})'
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         3
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "age", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         2, 
+  #         "Bob", 
+  #         13
+  #       ], 
+  #       [
+  #         3, 
+  #         "Calros", 
+  #         15
+  #       ], 
+  #       [
+  #         4, 
+  #         "Dave", 
+  #         16
+  #       ]
+  #     ]
+  #   ]
+  # ]
