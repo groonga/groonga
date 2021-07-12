@@ -208,5 +208,20 @@ load --table Memos
 {"_key": "200", "timestamp": "2014-11-10 07:28:42"}
 ]
 
+#@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level info
+#@collect-query-log true
+
 select Memos \
-  --filter '_key == "003" && between(timestamp, "2014-11-10 07:25:24", "include", "2014-11-10 07:27:26", "exclude")'
+  --filter '_key == "003" && \
+            between(timestamp, \
+                    "2014-11-10 07:25:24", \
+                    "include", \
+                    "2014-11-10 07:27:26", \
+                    "exclude")'
+
+#@collect-query-log false
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels info

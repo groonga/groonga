@@ -3152,6 +3152,8 @@ typedef struct {
   grn_obj casted_max;
   between_border_type max_border_type;
   int cursor_flags;
+  double too_many_index_match_ratio;
+  const char *tag;
 } between_data;
 
 static void
@@ -3160,6 +3162,8 @@ between_data_init(grn_ctx *ctx, between_data *data)
   GRN_VOID_INIT(&(data->casted_min));
   GRN_VOID_INIT(&(data->casted_max));
   data->cursor_flags = 0;
+  data->too_many_index_match_ratio = grn_between_too_many_index_match_ratio;
+  data->tag = "[between]";
 }
 
 static void
@@ -3231,6 +3235,18 @@ between_cast(grn_ctx *ctx, grn_obj *source, grn_obj *destination, grn_id domain,
   return rc;
 }
 
+static void
+between_parse_options(grn_ctx *ctx, grn_obj *options, between_data *data)
+{
+  grn_proc_options_parse(ctx,
+                         options,
+                         data->tag,
+                         "too_many_index_match_ratio",
+                         GRN_PROC_OPTION_VALUE_DOUBLE,
+                         &(data->too_many_index_match_ratio),
+                         NULL);
+}
+
 static grn_rc
 between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
 {
@@ -3240,11 +3256,20 @@ between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
   data->min   = args[1];
   switch (nargs) {
   case 3 :
+  case 4 :
     data->min_border_type = BETWEEN_BORDER_INCLUDE;
     data->max = args[2];
     data->max_border_type = BETWEEN_BORDER_INCLUDE;
+    if (nargs == 4) {
+      between_parse_options(ctx, args[3], data);
+      if (ctx->rc != GRN_SUCCESS) {
+        rc = ctx->rc;
+        goto exit;
+      }
+    }
     break;
   case 5 :
+  case 6 :
     data->min_border_type =
       between_parse_border(ctx, args[2], "the 3rd argument (min_border)");
     if (data->min_border_type == BETWEEN_BORDER_INVALID) {
@@ -3257,6 +3282,13 @@ between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
     if (data->max_border_type == BETWEEN_BORDER_INVALID) {
       rc = ctx->rc;
       goto exit;
+    }
+    if (nargs == 6) {
+      between_parse_options(ctx, args[5], data);
+      if (ctx->rc != GRN_SUCCESS) {
+        rc = ctx->rc;
+        goto exit;
+      }
     }
     break;
   default :
@@ -3402,34 +3434,33 @@ exit :
   return found;
 }
 
-static grn_bool
+static bool
 selector_between_sequential_search_should_use(grn_ctx *ctx,
                                               grn_obj *table,
                                               grn_obj *index,
                                               grn_obj *index_table,
                                               between_data *data,
                                               grn_obj *res,
-                                              grn_operator op,
-                                              double too_many_index_match_ratio)
+                                              grn_operator op)
 {
-  if (too_many_index_match_ratio < 0.0) {
-    return GRN_FALSE;
+  if (data->too_many_index_match_ratio < 0.0) {
+    return false;
   }
 
   if (op != GRN_OP_AND) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (!index) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (index->header.flags & GRN_OBJ_WITH_WEIGHT) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (data->value->header.type == GRN_COLUMN_INDEX) {
-    return GRN_FALSE;
+    return false;
   }
 
   grn_table_cursor *cursor = grn_table_cursor_open(ctx,
@@ -3442,7 +3473,7 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
                                                    -1,
                                                    data->cursor_flags);
   if (!cursor) {
-    return GRN_FALSE;
+    return false;
   }
   uint32_t estimated_size =
     grn_ii_estimate_size_for_lexicon_cursor(ctx,
@@ -3451,11 +3482,33 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
   grn_table_cursor_close(ctx, cursor);
 
   if (estimated_size == 0) {
-    return GRN_FALSE;
+    return false;
   }
 
   uint32_t n_existing_records = grn_table_size(ctx, res);
-  return (estimated_size * too_many_index_match_ratio) >= n_existing_records;
+  double too_many_index_match_threshold =
+    (estimated_size * data->too_many_index_match_ratio);
+  bool use_sequential_search =
+    (n_existing_records < too_many_index_match_threshold);
+  if (use_sequential_search) {
+    grn_obj reason;
+    GRN_TEXT_INIT(&reason, 0);
+    grn_text_printf(ctx, &reason,
+                    "too many index match: "
+                    "%d < %f (%u * %f)",
+                    n_existing_records,
+                    too_many_index_match_threshold,
+                    estimated_size,
+                    data->too_many_index_match_ratio);
+    GRN_TEXT_PUTC(ctx, &reason, '\0');
+    grn_report_index_not_used(ctx,
+                              data->tag,
+                              "",
+                              index,
+                              GRN_TEXT_VALUE(&reason));
+    GRN_OBJ_FIN(ctx, &reason);
+  }
+  return use_sequential_search;
 }
 
 static grn_rc
@@ -3564,7 +3617,7 @@ selector_between(grn_ctx *ctx,
   int offset = 0;
   int limit = -1;
   between_data data;
-  grn_bool use_sequential_search;
+  bool use_sequential_search;
   bool index_table_need_unref = false;
   grn_obj *index_table = NULL;
   grn_table_cursor *cursor;
@@ -3607,7 +3660,6 @@ selector_between(grn_ctx *ctx,
   }
 
   if (index_table) {
-    double ratio = grn_between_too_many_index_match_ratio;
     use_sequential_search =
       selector_between_sequential_search_should_use(ctx,
                                                     table,
@@ -3615,10 +3667,9 @@ selector_between(grn_ctx *ctx,
                                                     index_table,
                                                     &data,
                                                     res,
-                                                    op,
-                                                    ratio);
+                                                    op);
   } else {
-    use_sequential_search = GRN_TRUE;
+    use_sequential_search = true;
   }
   if (use_sequential_search) {
     rc = selector_between_sequential_search(ctx, table, &data, res, op);

@@ -1,0 +1,103 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+table_create Times TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
+column_create Times memos_timestamp COLUMN_INDEX Memos timestamp
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "001", "timestamp": "2014-11-10 07:25:23"},
+{"_key": "002", "timestamp": "2014-11-10 07:25:24"},
+{"_key": "003", "timestamp": "2014-11-10 07:25:25"},
+{"_key": "004", "timestamp": "2014-11-10 07:25:26"},
+{"_key": "005", "timestamp": "2014-11-10 07:25:27"},
+{"_key": "006", "timestamp": "2014-11-10 07:25:28"},
+{"_key": "007", "timestamp": "2014-11-10 07:25:29"},
+{"_key": "008", "timestamp": "2014-11-10 07:25:30"},
+{"_key": "009", "timestamp": "2014-11-10 07:25:31"},
+{"_key": "010", "timestamp": "2014-11-10 07:25:32"},
+{"_key": "011", "timestamp": "2014-11-10 07:25:33"},
+{"_key": "012", "timestamp": "2014-11-10 07:25:34"},
+{"_key": "013", "timestamp": "2014-11-10 07:25:35"},
+{"_key": "014", "timestamp": "2014-11-10 07:25:36"},
+{"_key": "015", "timestamp": "2014-11-10 07:25:37"},
+{"_key": "016", "timestamp": "2014-11-10 07:25:38"},
+{"_key": "017", "timestamp": "2014-11-10 07:25:39"},
+{"_key": "018", "timestamp": "2014-11-10 07:25:40"},
+{"_key": "019", "timestamp": "2014-11-10 07:25:41"},
+{"_key": "020", "timestamp": "2014-11-10 07:25:42"},
+{"_key": "021", "timestamp": "2014-11-10 07:25:43"},
+{"_key": "022", "timestamp": "2014-11-10 07:25:44"},
+{"_key": "023", "timestamp": "2014-11-10 07:25:45"},
+{"_key": "024", "timestamp": "2014-11-10 07:25:46"},
+{"_key": "025", "timestamp": "2014-11-10 07:25:47"},
+{"_key": "026", "timestamp": "2014-11-10 07:25:48"},
+{"_key": "027", "timestamp": "2014-11-10 07:25:49"},
+{"_key": "028", "timestamp": "2014-11-10 07:25:50"},
+{"_key": "029", "timestamp": "2014-11-10 07:25:51"},
+{"_key": "030", "timestamp": "2014-11-10 07:25:52"},
+{"_key": "031", "timestamp": "2014-11-10 07:25:53"},
+{"_key": "032", "timestamp": "2014-11-10 07:25:54"},
+{"_key": "033", "timestamp": "2014-11-10 07:25:55"},
+{"_key": "034", "timestamp": "2014-11-10 07:25:56"},
+{"_key": "035", "timestamp": "2014-11-10 07:25:57"},
+{"_key": "036", "timestamp": "2014-11-10 07:25:58"},
+{"_key": "037", "timestamp": "2014-11-10 07:25:59"},
+{"_key": "038", "timestamp": "2014-11-10 07:26:00"},
+{"_key": "039", "timestamp": "2014-11-10 07:26:01"},
+{"_key": "040", "timestamp": "2014-11-10 07:26:02"},
+{"_key": "041", "timestamp": "2014-11-10 07:26:03"},
+{"_key": "042", "timestamp": "2014-11-10 07:26:04"},
+{"_key": "043", "timestamp": "2014-11-10 07:26:05"},
+{"_key": "044", "timestamp": "2014-11-10 07:26:06"},
+{"_key": "045", "timestamp": "2014-11-10 07:26:07"},
+{"_key": "046", "timestamp": "2014-11-10 07:26:08"},
+{"_key": "047", "timestamp": "2014-11-10 07:26:09"},
+{"_key": "048", "timestamp": "2014-11-10 07:26:10"},
+{"_key": "049", "timestamp": "2014-11-10 07:26:11"},
+{"_key": "050", "timestamp": "2014-11-10 07:26:12"}
+]
+[[0,0.0,0.0],50]
+log_level --level info
+[[0,0.0,0.0],true]
+select Memos   --filter '_key == "003" &&             between(timestamp,                     "2014-11-10 07:25:24",                     "2014-11-10 07:27:25",                     {"too_many_index_match_ratio": 0.03})'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ],
+      [
+        3,
+        "003",
+        1415571925.0
+      ]
+    ]
+  ]
+]
+#|i| [object][search][index][table][equal] <Memos>
+#|i| [table-selector][select][index][selector][between] <Times.memos_timestamp>
+#|i| [between][index-not-used] <Times.memos_timestamp>: too many index match: 1 < 1.470000 (49 * 0.030000)
+log_level --level notice
+[[0,0.0,0.0],true]
