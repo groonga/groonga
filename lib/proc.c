@@ -4008,15 +4008,6 @@ in_values_parse_options(grn_ctx *ctx,
                          NULL);
 }
 
-static bool
-exist_option(grn_ctx *ctx, int nargs, grn_obj **args)
-{
-  if (args[nargs-1]->header.type == GRN_TABLE_HASH_KEY)
-    return true;
-  else
-    return false;
-}
-
 static grn_rc
 selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                    int nargs, grn_obj **args,
@@ -4038,7 +4029,7 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     return ctx->rc;
   }
 
-  if (exist_option(ctx, nargs, args)) {
+  if (args[nargs - 1]->header.type == GRN_TABLE_HASH_KEY) {
     in_values_parse_options(ctx,
                             args[nargs - 1],
                             &too_many_index_match_ratio,
