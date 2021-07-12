@@ -3235,7 +3235,7 @@ between_cast(grn_ctx *ctx, grn_obj *source, grn_obj *destination, grn_id domain,
   return rc;
 }
 
-static bool
+static void
 between_parse_options(grn_ctx *ctx, grn_obj *options, between_data *data)
 {
   grn_proc_options_parse(ctx,
@@ -3245,7 +3245,6 @@ between_parse_options(grn_ctx *ctx, grn_obj *options, between_data *data)
                          GRN_PROC_OPTION_VALUE_DOUBLE,
                          &(data->too_many_index_match_ratio),
                          NULL);
-  return ctx->rc == GRN_SUCCESS;
 }
 
 static grn_rc
@@ -3262,7 +3261,8 @@ between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
     data->max = args[2];
     data->max_border_type = BETWEEN_BORDER_INCLUDE;
     if (nargs == 4) {
-      if (!between_parse_options(ctx, args[3], data)) {
+      between_parse_options(ctx, args[3], data);
+      if (ctx->rc != GRN_SUCCESS) {
         rc = ctx->rc;
         goto exit;
       }
@@ -3284,7 +3284,8 @@ between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
       goto exit;
     }
     if (nargs == 6) {
-      if(!between_parse_options(ctx, args[5], data)) {
+      between_parse_options(ctx, args[5], data);
+      if (ctx->rc != GRN_SUCCESS) {
         rc = ctx->rc;
         goto exit;
       }
