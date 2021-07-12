@@ -3264,7 +3264,7 @@ between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
     data->max = args[2];
     data->max_border_type = BETWEEN_BORDER_INCLUDE;
     if (nargs == 4) {
-      if(!between_parse_option(ctx, args[3], data)) {
+      if (!between_parse_option(ctx, args[3], data)) {
         rc = ctx->rc;
         goto exit;
       }
