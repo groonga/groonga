@@ -63,7 +63,35 @@ If it doesn't match the specified range, the ``select`` returns no records becau
 In the above case, it returns all the records because 14 exists in between 13 and 16.
 This behavior is used for checking the specified value exists or not in the table.
 
-How to set options of ``between`` as below.
+Then, you can also specify options of ``between``.
+Currently, you can only specify ``too_many_index_match_ratio``. The type of this value is ``double``.
+
+You can change the value of ``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` with ``too_many_index_match_ratio``.
+The default value of ``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` is ``0.01``.
+``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` is used for deciding whether ``between`` use an index or not. 
+
+There is a case that sequential search is faster than index search when the number of narrowed down records is small enough in contrast to the number of expected records to narrow down by ``between`` with AND operation which use indexes.
+
+For example, suppose you narrow down records by ``--filter`` and you narrow down them by ``between``.
+
+In the default, ``between`` use sequential search in the following case.
+
+  1. If you narrow down records to 1,000 by ``--filter`` and records of the target of ``between`` are 500,000.
+
+     .. code-block::
+
+        1,000/500,000 = 0.002 < 0.01(``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO``) -> ``between`` use sequential search.
+
+On the other hand, ``between`` use index in the following case.
+
+  2. If you narrow down records to 1,000 by ``--filter`` and records of the target of ``between`` are 50,000.
+
+     .. code-block::
+
+        1,000/50,000 = 0.02 > 0.01(``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO``) -> ``between`` use index.
+
+
+Here is a query to set options of ``between``:
 
 .. groonga-command
 .. include:: ../../example/reference/functions/between/usage_options.log
@@ -116,30 +144,6 @@ The value of ``max_border`` must be either "include" or "exclude". If it is "inc
 
 Specify between's option.
 Currently, you can only specify ``too_many_index_match_ratio``. The type of this value is ``double``.
-
-You can change the value of ``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` with ``too_many_index_match_ratio``.
-The default value of ``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` is ``0.01``.
-``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` is used for deciding whether ``between`` use an index or not. 
-
-There is a case that sequential search is faster than index search when the number of narrowed down records is small enough in contrast to the number of expected records to narrow down by ``between`` with AND operation which use indexes.
-
-For example, suppose you narrow down records by ``--filter`` and you narrow down them by ``between``.
-
-In the default, ``between`` use sequential search in the following case.
-
-  1. If you narrow down records to 1,000 by ``--filter`` and records of the target of ``between`` are 500,000.
-
-     .. code-block::
-
-        1,000/500,000 = 0.002 < 0.01(``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO``) -> ``between`` use sequential search.
-
-On the other hand, ``between`` use index in the following case.
-
-  2. If you narrow down records to 1,000 by ``--filter`` and records of the target of ``between`` are 50,000.
-
-     .. code-block::
-
-        1,000/50,000 = 0.02 > 0.01(``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO``) -> ``between`` use index.
 
 Return value
 """"""""""""

@@ -58,31 +58,7 @@ Here is the simple usage of ``in_values`` function which selects the records - t
 
 When executing the above query, you can get the records except "rroonga" because "rroonga" is not specified as value in ``in_values``.
 
-How to set options of ``in_values`` as below.
-
-.. groonga-command
-.. include:: ../../example/reference/functions/in_values/usage_option.log
-.. select Memos --output_columns _key,tag --filter 'in_values(tag, "groonga", "mroonga", "droonga", {"too_many_index_match_ratio":0.001})' --sort_keys _id
-
-Parameters
-----------
-
-There are two or more required parameter, ``target_value`` and multiple ``value``.
-
-``target_value``
-^^^^^^^^^^^^^^^^
-
-Specifies a column of the table that is specified by ``table`` parameter in ``select``.
-
-``value``
-^^^^^^^^^
-
-Specifies a value of the column which you want to select.
-
-``{"option": "value of option"}``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Specify in_values's option.
+Then, you can also specify options of ``in_values``.
 Currently, you can only specify ``too_many_index_match_ratio``. The type of this value is ``double``.
 
 You can change the value of ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` with ``too_many_index_match_ratio``.
@@ -108,6 +84,33 @@ On the other hand, ``in_values`` use index in the following case.
      .. code-block::
 
         1,000/50,000 = 0.02 > 0.01(GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO) -> in_values use index.
+
+Here is a query to set options of ``in_values``:
+
+.. groonga-command
+.. include:: ../../example/reference/functions/in_values/usage_options.log
+.. select Memos --output_columns _key,tag --filter 'in_values(tag, "groonga", "mroonga", "droonga", {"too_many_index_match_ratio":0.001})' --sort_keys _id
+
+Parameters
+----------
+
+There are two or more required parameter, ``target_value`` and multiple ``value``.
+
+``target_value``
+^^^^^^^^^^^^^^^^
+
+Specifies a column of the table that is specified by ``table`` parameter in ``select``.
+
+``value``
+^^^^^^^^^
+
+Specifies a value of the column which you want to select.
+
+``{"option": "value of option"}``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Specify in_values's option.
+Currently, you can only specify ``too_many_index_match_ratio``. The type of this value is ``double``.
 
 Return value
 ------------
