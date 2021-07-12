@@ -15,7 +15,7 @@ It is often used in combination with :ref:`select-filter` option in :doc:`/refer
 Syntax
 ------
 
-``between`` has some arguments from three to six parameters::
+``between`` has some parameters from three to six parameters::
 
   between(column_or_value, min, max)
   between(column_or_value, min, max, {"option": "value of option"})
