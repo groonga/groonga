@@ -15,6 +15,8 @@ load --table Users
 {"_key": "eric",   "age": 21}
 ]
 [[0,0.0,0.0],5]
+log_level --level info
+[[0,0.0,0.0],true]
 select Users --filter 'between(age, 18, 20)'
 [
   [
@@ -59,3 +61,6 @@ select Users --filter 'between(age, 18, 20)'
     ]
   ]
 ]
+#|i| [table-selector][select][index][selector][between] <Ages.users_age>
+log_level --level notice
+[[0,0.0,0.0],true]

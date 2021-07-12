@@ -1,9 +1,11 @@
 table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
 column_create Memos timestamp COLUMN_SCALAR Time
-
+[[0,0.0,0.0],true]
 table_create Times TABLE_PAT_KEY Time
+[[0,0.0,0.0],true]
 column_create Times memos_timestamp COLUMN_INDEX Memos timestamp
-
+[[0,0.0,0.0],true]
 load --table Memos
 [
 {"_key": "001", "timestamp": "2014-11-10 07:25:23"},
@@ -57,16 +59,45 @@ load --table Memos
 {"_key": "049", "timestamp": "2014-11-10 07:26:11"},
 {"_key": "050", "timestamp": "2014-11-10 07:26:12"}
 ]
-
-#@add-important-log-levels info
-#@add-ignore-log-pattern /\A\[io\]/
+[[0,0.0,0.0],50]
 log_level --level info
-#@collect-query-log true
-
-select Memos \
-  --filter '_key == "003" && between(timestamp, "2014-11-10 07:25:24", "include", "2014-11-10 07:27:26", "exclude", {"too_many_index_match_ratio": 0.01})'
-
-#@collect-query-log false
+[[0,0.0,0.0],true]
+select Memos   --filter '_key == "003" &&             between(timestamp,                     "2014-11-10 07:25:24",                     "2014-11-10 07:27:25",                     {"too_many_index_match_ratio": 0.03})'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "timestamp",
+          "Time"
+        ]
+      ],
+      [
+        3,
+        "003",
+        1415571925.0
+      ]
+    ]
+  ]
+]
+#|i| [object][search][index][table][equal] <Memos>
+#|i| [table-selector][select][index][selector][between] <Times.memos_timestamp>
+#|i| [between][index-not-used] <Times.memos_timestamp>: too many index match: 1 < 1.470000 (49 * 0.030000)
 log_level --level notice
-#@remove-ignore-log-pattern /\A\[io\]/
-#@remove-important-log-levels info
+[[0,0.0,0.0],true]

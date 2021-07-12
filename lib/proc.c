@@ -3485,29 +3485,29 @@ selector_between_sequential_search_should_use(grn_ctx *ctx,
   }
 
   uint32_t n_existing_records = grn_table_size(ctx, res);
-  if ((estimated_size * data->too_many_index_match_ratio) >= n_existing_records) {
-    GRN_LOG(ctx,
-            GRN_LOG_INFO,
-            "%s[not-use-index] Too many index match. "
-            "n_index_match_records:%d, "
-            "n_existing_records:%d, "
-            "too_many_index_match_ratio:%.2f",
-            data->tag,
-            estimated_size,
-            n_existing_records,
-            data->too_many_index_match_ratio);
-    return true;
+  double too_many_index_match_threshold =
+    (estimated_size * data->too_many_index_match_ratio);
+  bool use_sequential_search =
+    (n_existing_records < too_many_index_match_threshold);
+  if (use_sequential_search) {
+    grn_obj reason;
+    GRN_TEXT_INIT(&reason, 0);
+    grn_text_printf(ctx, &reason,
+                    "too many index match: "
+                    "%d < %f (%u * %f)",
+                    n_existing_records,
+                    too_many_index_match_threshold,
+                    estimated_size,
+                    data->too_many_index_match_ratio);
+    GRN_TEXT_PUTC(ctx, &reason, '\0');
+    grn_report_index_not_used(ctx,
+                              data->tag,
+                              "",
+                              index,
+                              GRN_TEXT_VALUE(&reason));
+    GRN_OBJ_FIN(ctx, &reason);
   }
-  GRN_LOG(ctx,
-          GRN_LOG_INFO,
-          "%s[use-index] n_index_match_records:%d, "
-          "n_existing_records:%d, "
-          "too_many_index_match_ratio:%.2f",
-          data->tag,
-          estimated_size,
-          n_existing_records,
-          data->too_many_index_match_ratio);
-  return false;
+  return use_sequential_search;
 }
 
 static grn_rc
