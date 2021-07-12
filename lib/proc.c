@@ -1,6 +1,7 @@
 /*
   Copyright(C) 2009-2018  Brazil
   Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2021  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3804,49 +3805,51 @@ selector_in_values_find_source(grn_ctx *ctx, grn_obj *index, grn_obj *res)
   }
 }
 
-static grn_bool
+static bool
 selector_in_values_sequential_search(grn_ctx *ctx,
                                      grn_obj *table,
                                      grn_obj *index,
                                      int n_values,
                                      grn_obj **values,
                                      grn_obj *res,
-                                     grn_operator op)
+                                     grn_operator op,
+                                     double too_many_index_match_ratio,
+                                     const char *tag)
 {
   grn_obj *source;
   int n_existing_records;
 
-  if (grn_in_values_too_many_index_match_ratio < 0.0) {
-    return GRN_FALSE;
+  if (too_many_index_match_ratio < 0.0) {
+    return false;
   }
 
   if (op != GRN_OP_AND) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (index->header.flags & GRN_OBJ_WITH_WEIGHT) {
-    return GRN_FALSE;
+    return false;
   }
 
   n_existing_records = grn_table_size(ctx, res);
   if (n_existing_records == 0) {
-    return GRN_TRUE;
+    return true;
   }
 
   source = selector_in_values_find_source(ctx, index, res);
   if (!source) {
-    return GRN_FALSE;
+    return false;
   }
 
   if (!is_reference_type_column(ctx, source)) {
     grn_obj_unlink(ctx, source);
-    return GRN_FALSE;
+    return false;
   }
 
+  uint32_t n_indexed_records = 0;
   {
     grn_obj value_ids;
     int i, n_value_ids;
-    int n_indexed_records = 0;
 
     {
       grn_id range_id;
@@ -3856,7 +3859,7 @@ selector_in_values_sequential_search(grn_ctx *ctx,
       range = grn_ctx_at(ctx, range_id);
       if (!range) {
         grn_obj_unlink(ctx, source);
-        return GRN_FALSE;
+        return false;
       }
 
       GRN_RECORD_INIT(&value_ids, GRN_OBJ_VECTOR, range_id);
@@ -3886,10 +3889,10 @@ selector_in_values_sequential_search(grn_ctx *ctx,
      *  grn_in_values_too_many_index_match_ratio)
     */
     if (n_existing_records >
-        (n_indexed_records * grn_in_values_too_many_index_match_ratio)) {
+        (n_indexed_records * too_many_index_match_ratio)) {
       grn_obj_unlink(ctx, &value_ids);
       grn_obj_unlink(ctx, source);
-      return GRN_FALSE;
+      return false;
     }
 
     {
@@ -3967,7 +3970,41 @@ selector_in_values_sequential_search(grn_ctx *ctx,
   }
   grn_obj_unlink(ctx, source);
 
-  return GRN_TRUE;
+  {
+    grn_obj reason;
+    GRN_TEXT_INIT(&reason, 0);
+    grn_text_printf(ctx, &reason,
+                    "too many index match: "
+                    "%d < %f (%u * %f)",
+                    n_existing_records,
+                    (n_indexed_records * too_many_index_match_ratio),
+                    n_indexed_records,
+                    too_many_index_match_ratio);
+    GRN_TEXT_PUTC(ctx, &reason, '\0');
+    grn_report_index_not_used(ctx,
+                              tag,
+                              "",
+                              index,
+                              GRN_TEXT_VALUE(&reason));
+    GRN_OBJ_FIN(ctx, &reason);
+  }
+
+  return true;
+}
+
+static void
+in_values_parse_options(grn_ctx *ctx,
+                        grn_obj *options,
+                        double *too_many_index_match_ratio,
+                        const char *tag)
+{
+  grn_proc_options_parse(ctx,
+                         options,
+                         tag,
+                         "too_many_index_match_ratio",
+                         GRN_PROC_OPTION_VALUE_DOUBLE,
+                         too_many_index_match_ratio,
+                         NULL);
 }
 
 static grn_rc
@@ -3978,6 +4015,8 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   grn_rc rc = GRN_SUCCESS;
   int i, n_values;
   grn_obj **values;
+  double too_many_index_match_ratio = grn_in_values_too_many_index_match_ratio;
+  const char* tag = "[in_values]";
 
   if (!index) {
     return GRN_INVALID_ARGUMENT;
@@ -3985,11 +4024,23 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 
   if (nargs < 2) {
     ERR(GRN_INVALID_ARGUMENT,
-        "in_values(): wrong number of arguments (%d for 1..)", nargs);
+        "%s wrong number of arguments (%d for 1..)",
+        tag,
+        nargs);
     return ctx->rc;
   }
 
   n_values = nargs - 2;
+  if (args[nargs - 1]->header.type == GRN_TABLE_HASH_KEY) {
+    in_values_parse_options(ctx,
+                            args[nargs - 1],
+                            &too_many_index_match_ratio,
+                            tag);
+    if (ctx->rc != GRN_SUCCESS) {
+      return ctx->rc;
+    }
+    n_values--;
+  }
   values = args + 2;
 
   if (n_values == 0) {
@@ -3998,7 +4049,9 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 
   if (selector_in_values_sequential_search(ctx, table, index,
                                            n_values, values,
-                                           res, op)) {
+                                           res, op,
+                                           too_many_index_match_ratio,
+                                           tag)) {
     return ctx->rc;
   }
 

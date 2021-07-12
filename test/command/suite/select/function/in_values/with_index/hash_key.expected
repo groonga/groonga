@@ -13,6 +13,8 @@ load --table Memos
 {"_key": "Rroonga is fast", "tag": "Rroonga"}
 ]
 [[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
 select Memos   --filter 'in_values(tag, "groonga", "mroonga")'   --output_columns _key,tag
 [
   [
@@ -46,3 +48,16 @@ select Memos   --filter 'in_values(tag, "groonga", "mroonga")'   --output_column
     ]
   ]
 ]
+#|i| [table-selector][select][index][selector][in_values] <Tags.memos_tag>
+#|i| [object][search][index][key][exact] <Tags.memos_tag>
+#|i| grn_ii_sel > (groonga)
+#|i| [ii][select] n=1 (groonga)
+#|i| exact: 1
+#|i| hits=1
+#|i| [object][search][index][key][exact] <Tags.memos_tag>
+#|i| grn_ii_sel > (mroonga)
+#|i| [ii][select] n=1 (mroonga)
+#|i| exact: 2
+#|i| hits=2
+log_level --level notice
+[[0,0.0,0.0],true]
