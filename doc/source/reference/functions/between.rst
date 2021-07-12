@@ -66,7 +66,7 @@ This behavior is used for checking the specified value exists or not in the tabl
 How to set options of ``between`` as below.
 
 .. groonga-command
-.. include:: ../../example/reference/functions/between/usage_option.log
+.. include:: ../../example/reference/functions/between/usage_options.log
 .. select Users --filter 'between(age, 13, "include", 16, "include", {"too_many_index_match_ratio":0.001})'
 
 Parameters
