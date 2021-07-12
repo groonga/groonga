@@ -16,11 +16,12 @@ Summary
 Syntax
 ------
 
-``in_values`` requires two or more arguments - ``target_value`` and multiple ``value``.
+``in_values`` requires two or more arguments - ``target_value``, multiple ``value``, and options.
 
 ::
 
   in_values(target_value, value1, ..., valueN)
+  in_values(target_value, value1, ..., valueN, {"option": "value of option"}
 
 Usage
 -----
@@ -57,6 +58,39 @@ Here is the simple usage of ``in_values`` function which selects the records - t
 
 When executing the above query, you can get the records except "rroonga" because "rroonga" is not specified as value in ``in_values``.
 
+Then, you can also specify options of ``in_values``.
+Currently, you can only specify ``too_many_index_match_ratio``. The type of this value is ``double``.
+
+You can change the value of ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` with ``too_many_index_match_ratio``.
+The default value of ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` is ``0.01``.
+``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` is used for deciding whether ``in_values`` use an index or not. 
+
+There is a case that sequential search is faster than index search when the number of narrowed down records is small enough in contrast to the number of expected records to narrow down by ``in_values`` with AND operation which use indexes.
+
+For example, suppose you narrow down records by ``--filter`` and you narrow down them by ``in_values``.
+
+In the default, ``in_values`` use sequential search in the following case.
+
+  1. If you narrow down records to 1,000 by ``--filter`` and records of the target of ``in_values`` are 500,000.
+
+     .. code-block::
+
+        1,000/500,000 = 0.002 < 0.01(GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO) -> in_values use sequential search.
+
+On the other hand, ``in_values`` use index in the following case.
+
+  2. If you narrow down records to 1,000 by ``--filter`` and records of the target of ``in_values`` are 50,000.
+
+     .. code-block::
+
+        1,000/50,000 = 0.02 > 0.01(GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO) -> in_values use index.
+
+Here is a query to set options of ``in_values``:
+
+.. groonga-command
+.. include:: ../../example/reference/functions/in_values/usage_options.log
+.. select Memos --output_columns _key,tag --filter 'in_values(tag, "groonga", "mroonga", "droonga", {"too_many_index_match_ratio":0.001})' --sort_keys _id
+
 Parameters
 ----------
 
@@ -71,6 +105,12 @@ Specifies a column of the table that is specified by ``table`` parameter in ``se
 ^^^^^^^^^
 
 Specifies a value of the column which you want to select.
+
+``{"option": "value of option"}``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Specify in_values's option.
+Currently, you can only specify ``too_many_index_match_ratio``. The type of this value is ``double``.
 
 Return value
 ------------
