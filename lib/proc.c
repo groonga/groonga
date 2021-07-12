@@ -3992,20 +3992,20 @@ selector_in_values_sequential_search(grn_ctx *ctx,
   return true;
 }
 
-static bool
-in_values_parse_option(grn_ctx* ctx, grn_obj *option, const char *tag, double* in_values_option)
+static void
+in_values_parse_options(grn_ctx *ctx,
+                        grn_obj *options,
+                        double *too_many_index_match_ratio,
+                        const char *tag)
 {
-#define OPTION                                                          \
-        "too_many_index_match_ratio",                                   \
-        GRN_PROC_OPTION_VALUE_DOUBLE,                                   \
-        in_values_option
 
-  grn_proc_options_parse(ctx, option, tag, OPTION, NULL);
-#undef OPTION
-  if (ctx->rc != GRN_SUCCESS) {
-    return false;
-  }
-  return true;
+  grn_proc_options_parse(ctx,
+                         options,
+                         tag,
+                         "too_many_index_match_ratio",
+                         GRN_PROC_OPTION_VALUE_DOUBLE,
+                         too_many_index_match_ratio,
+                         NULL);
 }
 
 static bool
@@ -4039,10 +4039,11 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   }
 
   if (exist_option(ctx, nargs, args)) {
-    if (!in_values_parse_option(ctx,
-                                args[nargs-1],
-                                tag,
-                                &too_many_index_match_ratio)) {
+    in_values_parse_options(ctx,
+                            args[nargs - 1],
+                            &too_many_index_match_ratio,
+                            tag);
+    if (ctx->rc != GRN_SUCCESS) {
       return ctx->rc;
     }
     n_values = nargs - 3;
