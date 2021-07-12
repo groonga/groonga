@@ -3244,10 +3244,7 @@ between_parse_option(grn_ctx *ctx, grn_obj *option, between_data *data) {
                            GRN_PROC_OPTION_VALUE_DOUBLE,
                            &(data->too_many_index_match_ratio),
                            NULL);
-  if (ctx->rc != GRN_SUCCESS) {
-    return false;
-  }
-  return true;
+  return ctx->rc == GRN_SUCCESS;
 }
 
 static grn_rc
