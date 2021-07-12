@@ -3236,7 +3236,7 @@ between_cast(grn_ctx *ctx, grn_obj *source, grn_obj *destination, grn_id domain,
 }
 
 static bool
-between_parse_option(grn_ctx *ctx, grn_obj *option, between_data *data) {
+between_parse_options(grn_ctx *ctx, grn_obj *options, between_data *data) {
     grn_proc_options_parse(ctx,
                            option,
                            data->tag,
@@ -3261,7 +3261,7 @@ between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
     data->max = args[2];
     data->max_border_type = BETWEEN_BORDER_INCLUDE;
     if (nargs == 4) {
-      if (!between_parse_option(ctx, args[3], data)) {
+      if (!between_parse_options(ctx, args[3], data)) {
         rc = ctx->rc;
         goto exit;
       }
@@ -3283,7 +3283,7 @@ between_parse_args(grn_ctx *ctx, int nargs, grn_obj **args, between_data *data)
       goto exit;
     }
     if (nargs == 6) {
-      if(!between_parse_option(ctx, args[5], data)) {
+      if(!between_parse_options(ctx, args[5], data)) {
         rc = ctx->rc;
         goto exit;
       }
