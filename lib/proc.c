@@ -4030,6 +4030,7 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     return ctx->rc;
   }
 
+  n_values = nargs - 2;
   if (args[nargs - 1]->header.type == GRN_TABLE_HASH_KEY) {
     in_values_parse_options(ctx,
                             args[nargs - 1],
@@ -4038,9 +4039,7 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     if (ctx->rc != GRN_SUCCESS) {
       return ctx->rc;
     }
-    n_values = nargs - 3;
-  } else {
-    n_values = nargs - 2;
+    n_values--;
   }
   values = args + 2;
 
