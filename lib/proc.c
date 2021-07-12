@@ -3153,7 +3153,7 @@ typedef struct {
   between_border_type max_border_type;
   int cursor_flags;
   double too_many_index_match_ratio;
-  const char* tag;
+  const char *tag;
 } between_data;
 
 static void
