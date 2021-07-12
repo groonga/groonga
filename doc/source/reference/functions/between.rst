@@ -80,7 +80,7 @@ In the default, ``between`` use sequential search in the following case.
 
      .. code-block::
 
-        1,000/500,000 = 0.002 < 0.01(``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO``) -> ``between`` use sequential search.
+        1,000/500,000 = 0.002 < 0.01(GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO) -> between use sequential search.
 
 On the other hand, ``between`` use index in the following case.
 
@@ -88,7 +88,7 @@ On the other hand, ``between`` use index in the following case.
 
      .. code-block::
 
-        1,000/50,000 = 0.02 > 0.01(``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO``) -> ``between`` use index.
+        1,000/50,000 = 0.02 > 0.01(GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO) -> between use index.
 
 
 Here is a query to set options of ``between``:
