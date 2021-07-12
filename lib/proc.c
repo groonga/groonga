@@ -3998,7 +3998,6 @@ in_values_parse_options(grn_ctx *ctx,
                         double *too_many_index_match_ratio,
                         const char *tag)
 {
-
   grn_proc_options_parse(ctx,
                          options,
                          tag,
