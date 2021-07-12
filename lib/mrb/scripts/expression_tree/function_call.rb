@@ -37,7 +37,17 @@ module Groonga
 
       private
       def estimate_size_between(table)
-        column, min, min_border, max, max_border = @arguments
+        case @arguments.size
+        when 3, 4
+          column, min, max, _options = @arguments
+          min_border = "include"
+          max_border = "include"
+        when 5, 6
+          column, min, min_border, max, max_border, _options = @arguments
+          min_border = min_border.value
+          max_border = max_border.value
+        end
+        pp @arguments.size
 
         if column.is_a?(Groonga::ExpressionTree::IndexColumn)
           index_column = column.object
@@ -64,12 +74,12 @@ module Groonga
           :max => max.value,
           :flags => 0,
         }
-        if min_border.value == "include"
+        if min_border == "include"
           options[:flags] |= TableCursorFlags::LT
         else
           options[:flags] |= TableCursorFlags::LE
         end
-        if max_border.value == "include"
+        if max_border == "include"
           options[:flags] |= TableCursorFlags::GT
         else
           options[:flags] |= TableCursorFlags::GE
