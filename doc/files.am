@@ -411,6 +411,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/learn.log \
 	$(top_srcdir)/doc/source/example/reference/executables/groonga-suggest-httpd/setup.log \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_age.log \
+	$(top_srcdir)/doc/source/example/reference/functions/between/usage_options.log \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_value.log \
 	$(top_srcdir)/doc/source/example/reference/functions/cast_loose/usage_basic.log \
@@ -440,6 +441,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/in_records/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_records/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_only.log \
+	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_options.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/in_values/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/math_abs/nearest_shops.log \
@@ -472,6 +474,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/string_slice/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/string_slice/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/string_slice/usage_string_literal.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_substring/usage_default.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_substring/usage_negative.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_substring/usage_number.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_substring/usage_setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_substring/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/string_substring/usage_string_literal.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
@@ -1535,6 +1543,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/executables/groonga-suggest-httpd/learn.log \
 	source/example/reference/executables/groonga-suggest-httpd/setup.log \
 	source/example/reference/functions/between/usage_age.log \
+	source/example/reference/functions/between/usage_options.log \
 	source/example/reference/functions/between/usage_setup.log \
 	source/example/reference/functions/between/usage_value.log \
 	source/example/reference/functions/cast_loose/usage_basic.log \
@@ -1564,6 +1573,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/in_records/usage_setup_data.log \
 	source/example/reference/functions/in_records/usage_setup_schema.log \
 	source/example/reference/functions/in_values/usage_only.log \
+	source/example/reference/functions/in_values/usage_options.log \
 	source/example/reference/functions/in_values/usage_setup_data.log \
 	source/example/reference/functions/in_values/usage_setup_schema.log \
 	source/example/reference/functions/math_abs/nearest_shops.log \
@@ -1596,6 +1606,12 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/string_slice/usage_setup_data.log \
 	source/example/reference/functions/string_slice/usage_setup_schema.log \
 	source/example/reference/functions/string_slice/usage_string_literal.log \
+	source/example/reference/functions/string_substring/usage_default.log \
+	source/example/reference/functions/string_substring/usage_negative.log \
+	source/example/reference/functions/string_substring/usage_number.log \
+	source/example/reference/functions/string_substring/usage_setup_data.log \
+	source/example/reference/functions/string_substring/usage_setup_schema.log \
+	source/example/reference/functions/string_substring/usage_string_literal.log \
 	source/example/reference/functions/sub_filter/usage_setup_data.log \
 	source/example/reference/functions/sub_filter/usage_setup_schema.log \
 	source/example/reference/functions/sub_filter/usage_with_sub_filter.log \
