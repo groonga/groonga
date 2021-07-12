@@ -3236,14 +3236,15 @@ between_cast(grn_ctx *ctx, grn_obj *source, grn_obj *destination, grn_id domain,
 }
 
 static bool
-between_parse_options(grn_ctx *ctx, grn_obj *options, between_data *data) {
-    grn_proc_options_parse(ctx,
-                           option,
-                           data->tag,
-                           "too_many_index_match_ratio",
-                           GRN_PROC_OPTION_VALUE_DOUBLE,
-                           &(data->too_many_index_match_ratio),
-                           NULL);
+between_parse_options(grn_ctx *ctx, grn_obj *options, between_data *data)
+{
+  grn_proc_options_parse(ctx,
+                         options,
+                         data->tag,
+                         "too_many_index_match_ratio",
+                         GRN_PROC_OPTION_VALUE_DOUBLE,
+                         &(data->too_many_index_match_ratio),
+                         NULL);
   return ctx->rc == GRN_SUCCESS;
 }
 
