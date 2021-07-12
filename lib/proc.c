@@ -4025,7 +4025,9 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
 
   if (nargs < 2) {
     ERR(GRN_INVALID_ARGUMENT,
-        "in_values(): wrong number of arguments (%d for 1..)", nargs);
+        "%s wrong number of arguments (%d for 1..)",
+        tag,
+        nargs);
     return ctx->rc;
   }
 
