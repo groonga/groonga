@@ -3813,8 +3813,8 @@ selector_in_values_sequential_search(grn_ctx *ctx,
                                      grn_obj **values,
                                      grn_obj *res,
                                      grn_operator op,
-                                     const char *tag,
-                                     double too_many_index_match_ratio)
+                                     double too_many_index_match_ratio,
+                                     const char *tag)
 {
   grn_obj *source;
   int n_existing_records;
@@ -3846,10 +3846,10 @@ selector_in_values_sequential_search(grn_ctx *ctx,
     return false;
   }
 
+  uint32_t n_indexed_records = 0;
   {
     grn_obj value_ids;
     int i, n_value_ids;
-    int n_indexed_records = 0;
 
     {
       grn_id range_id;
@@ -3890,29 +3890,10 @@ selector_in_values_sequential_search(grn_ctx *ctx,
     */
     if (n_existing_records >
         (n_indexed_records * too_many_index_match_ratio)) {
-      GRN_LOG(ctx,
-              GRN_LOG_INFO,
-              "%s[use-index] n_index_match_records:%d, "
-              "n_existing_records:%d, "
-              "too_many_index_match_ratio:%.2f",
-              tag,
-              n_indexed_records,
-              n_existing_records,
-              too_many_index_match_ratio);
       grn_obj_unlink(ctx, &value_ids);
       grn_obj_unlink(ctx, source);
       return false;
     }
-    GRN_LOG(ctx,
-        GRN_LOG_INFO,
-        "%s[not-use-index] Too many index match. "
-        "n_index_match_records:%d, "
-        "n_existing_records:%d, "
-        "too_many_index_match_ratio:%.2f",
-        tag,
-        n_indexed_records,
-        n_existing_records,
-        too_many_index_match_ratio);
 
     {
       grn_obj *accessor;
@@ -3989,6 +3970,25 @@ selector_in_values_sequential_search(grn_ctx *ctx,
   }
   grn_obj_unlink(ctx, source);
 
+  {
+    grn_obj reason;
+    GRN_TEXT_INIT(&reason, 0);
+    grn_text_printf(ctx, &reason,
+                    "too many index match: "
+                    "%d < %f (%u * %f)",
+                    n_existing_records,
+                    (n_indexed_records * too_many_index_match_ratio),
+                    n_indexed_records,
+                    too_many_index_match_ratio);
+    GRN_TEXT_PUTC(ctx, &reason, '\0');
+    grn_report_index_not_used(ctx,
+                              tag,
+                              "",
+                              index,
+                              GRN_TEXT_VALUE(&reason));
+    GRN_OBJ_FIN(ctx, &reason);
+  }
+
   return true;
 }
 
@@ -4058,8 +4058,8 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   if (selector_in_values_sequential_search(ctx, table, index,
                                            n_values, values,
                                            res, op,
-                                           tag,
-                                           too_many_index_match_ratio)) {
+                                           too_many_index_match_ratio,
+                                           tag)) {
     return ctx->rc;
   }
 

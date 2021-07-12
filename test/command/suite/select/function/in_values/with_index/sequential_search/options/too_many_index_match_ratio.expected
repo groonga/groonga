@@ -17,7 +17,7 @@ column_create Tags memos_tag COLUMN_INDEX Memos tag
 [[0,0.0,0.0],true]
 log_level --level info
 [[0,0.0,0.0],true]
-select Memos --filter '_id >= 3 && in_values(tag, "Groonga", {"too_many_index_match_ratio": 0.02})' --output_columns _id,_score,_key,tag
+select   Memos   --filter '_id >= 3 &&             in_values(tag,                      "Groonga",                      {"too_many_index_match_ratio": 0.7})'   --output_columns _id,_score,_key,tag
 [
   [
     0,
@@ -64,18 +64,6 @@ select Memos --filter '_id >= 3 && in_values(tag, "Groonga", {"too_many_index_ma
 ]
 #|i| [table-selector][select][index][range][id] <Memos>
 #|i| [table-selector][select][index][selector][in_values] <Tags.memos_tag>
-#|i| [in_values][use-index] n_index_match_records:5, n_existing_records:3, too_many_index_match_ratio:0.02
-#|i| [object][search][index][key][exact] <Tags.memos_tag>
-#|i| grn_ii_sel > (Groonga)
-#|i| [ii][select] n=1 (Groonga)
-#|i| exact: 3
-#|i| hits=3
-#>select --filter "_id >= 3 && in_values(tag, \"Groonga\", {\"too_many_index_match_ratio\": 0.02})" --output_columns "_id,_score,_key,tag" --table "Memos"
-#:000000000000000 filter(3): #<accessor _id(Memos)> greater_equal 3
-#:000000000000000 filter(2): in_values(Memos.tag, "Groonga", (nil))
-#:000000000000000 select(2)
-#:000000000000000 output(2)
-#:000000000000000 send(0)
-#<000000000000000 rc=0
+#|i| [in_values][index-not-used] <Tags.memos_tag>: too many index match: 3 < 3.500000 (5 * 0.700000)
 log_level --level notice
 [[0,0.0,0.0],true]
