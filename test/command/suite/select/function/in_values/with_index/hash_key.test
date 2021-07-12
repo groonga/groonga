@@ -11,6 +11,14 @@ load --table Memos
 {"_key": "Rroonga is fast", "tag": "Rroonga"}
 ]
 
+#@add-ignore-log-pattern /\A\[io\]/
+#@add-important-log-levels info
+log_level --level info
+
 select Memos \
   --filter 'in_values(tag, "groonga", "mroonga")' \
   --output_columns _key,tag
+
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels info
