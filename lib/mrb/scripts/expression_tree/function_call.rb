@@ -47,7 +47,6 @@ module Groonga
           min_border = min_border.value
           max_border = max_border.value
         end
-        pp @arguments.size
 
         if column.is_a?(Groonga::ExpressionTree::IndexColumn)
           index_column = column.object
