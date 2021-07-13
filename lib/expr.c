@@ -6927,10 +6927,14 @@ grn_expr_slice(grn_ctx *ctx,
                             code->nargs);
       }
     } else {
+      int nargs = code->nargs;
+      if (code->op == GRN_OP_CALL) {
+        nargs--;
+      }
       grn_expr_append_op(ctx,
                          sliced_expr,
                          code->op,
-                         code->nargs);
+                         nargs);
     }
   }
   GRN_API_RETURN(sliced_expr);
