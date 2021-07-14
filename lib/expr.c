@@ -6724,16 +6724,6 @@ grn_expr_match_columns_split(grn_ctx *ctx,
   uint32_t i;
   for (i = 0; i < e->codes_curr; i++) {
     switch (e->codes[i].op) {
-    case GRN_OP_STAR :
-      {
-        grn_obj *match_column = grn_expr_slice(ctx,
-                                               expr,
-                                               match_columns_start,
-                                               i + 1);
-        GRN_PTR_PUT(ctx, splitted_match_columns, match_column);
-        match_columns_start = i + 1;
-      }
-      break;
     case GRN_OP_OR :
       if (match_columns_start == i) {
         match_columns_start++;
