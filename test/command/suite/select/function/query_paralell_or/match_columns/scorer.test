@@ -1,0 +1,23 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users tags COLUMN_VECTOR Tags
+
+load --table Users
+[
+{"_key": "Alice",
+ "tags": ["beginner", "active"]},
+{"_key": "Bob",
+ "tags": ["expert", "passive"]},
+{"_key": "Chris",
+ "tags": ["beginner", "passive"]}
+]
+
+column_create Tags users COLUMN_INDEX Users tags
+
+select Users \
+  --output_columns _key,_score \
+  --sort_keys _id \
+  --command_version 3 \
+  --filter 'query_parallel_or("scorer_tf_idf(tags)", \
+                              "beginner active")'

@@ -1,0 +1,45 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "Alice",
+ "tags": ["beginner", "active"]},
+{"_key": "Bob",
+ "tags": ["expert", "passive"]},
+{"_key": "Chris",
+ "tags": ["beginner", "passive"]}
+]
+[[0,0.0,0.0],3]
+column_create Tags users COLUMN_INDEX Users tags
+[[0,0.0,0.0],true]
+select Users   --output_columns _key,_score   --sort_keys _id   --command_version 3   --filter 'query_parallel_or("scorer_tf_idf(tags)",                               "beginner active")'
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": {
+    "n_hits": 1,
+    "columns": [
+      {
+        "name": "_key",
+        "type": "ShortText"
+      },
+      {
+        "name": "_score",
+        "type": "Float"
+      }
+    ],
+    "records": [
+      [
+        "Alice",
+        2.098612308502197
+      ]
+    ]
+  }
+}
