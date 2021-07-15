@@ -5788,15 +5788,22 @@ grn_expr_syntax_expand_query_terms(grn_ctx *ctx,
       goto exit;
       break;
     case GRN_QUERY_AND :
-    case GRN_QUERY_ADJ_INC :
-    case GRN_QUERY_ADJ_DEC :
-    case GRN_QUERY_ADJ_NEG :
     case GRN_QUERY_AND_NOT :
     case GRN_QUERY_PARENL :
     case GRN_QUERY_PARENR :
     case GRN_QUERY_PREFIX :
       GRN_TEXT_PUTC(ctx, expanded_query, *cur);
       cur++;
+      break;
+    case GRN_QUERY_ADJ_INC :
+    case GRN_QUERY_ADJ_DEC :
+    case GRN_QUERY_ADJ_NEG :
+      {
+        char *end = (char *)query_end;
+        strtof(cur + 1, &end);
+        GRN_TEXT_PUT(ctx, expanded_query, cur, end - cur);
+        cur = end;
+      }
       break;
     case GRN_QUERY_QUOTEL :
       GRN_BULK_REWIND(&buf);
