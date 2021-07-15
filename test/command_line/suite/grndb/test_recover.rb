@@ -193,7 +193,6 @@ object corrupt: <#{recover_error_message}>(-55)
 |i| [io][remove] removed path: <#{@table_path}>
 #{windows? ? "|i| [io][open] create new file: <#{@table_path}>" : ""}
 #{prepend_tag("|i| ", message).chomp}
-#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
 |i| Recovered database: <#{@database_path}>
                      MESSAGES
                    ],
@@ -267,8 +266,6 @@ object corrupt: <#{recover_error_message}>(-55)
 |i| [io][remove] removed path: <#{@column_path}>
 #{windows? ? "|i| [io][open] create new file: <#{@column_path}>" : ""}
 #{prepend_tag("|i| ", message).chomp}
-#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
-#{windows? ? "|i| [io][open] open existing file: <#{@column_path}>" : ""}
 |i| Recovered database: <#{@database_path}>
                      MESSAGES
                    ],
@@ -372,7 +369,6 @@ object corrupt: <#{recover_error_message}>(-55)
 |i| Recovering database: <#{@database_path}>
 #{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| [Users] Clear locked object: <#{path}>
-#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| Recovered database: <#{@database_path}>
                    MESSAGES
                  ],
@@ -400,7 +396,6 @@ object corrupt: <#{recover_error_message}>(-55)
 #{windows? ? "|i| [io][open] open existing file: <#{table_path}>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| [Users.age] Clear locked object: <#{path}>
-#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| Recovered database: <#{@database_path}>
                    MESSAGES
                  ],
@@ -439,8 +434,6 @@ object corrupt: <#{recover_error_message}>(-55)
 #{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000100>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000101>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000102>" : ""}
-#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
-#{windows? ? "|i| [io][open] open existing file: <#{path}.c>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{path}.c>" : ""}
 |i| [io][remove] removed path: <#{path}>
