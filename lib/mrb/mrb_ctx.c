@@ -832,7 +832,7 @@ grn_mrb_ctx_to_exception(mrb_state *mrb)
   return mrb_exc_new_str(mrb, error_class, mrb_str_new_cstr(mrb, message));
 }
 
-mrb_value
+static mrb_value
 ctx_push_temporary_open_space(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
@@ -843,7 +843,7 @@ ctx_push_temporary_open_space(mrb_state *mrb, mrb_value self)
   return mrb_nil_value();
 }
 
-mrb_value
+static mrb_value
 ctx_pop_temporary_open_space(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
