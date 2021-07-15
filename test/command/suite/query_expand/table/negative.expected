@@ -1,0 +1,13 @@
+table_create TermExpansions TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create TermExpansions term COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create TermExpansions expansions COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table TermExpansions
+[
+{"term": "Rroonga", "expansions": ["Rroonga", "Ruby Groonga"]}
+]
+[[0,0.0,0.0],1]
+query_expand TermExpansions "Groonga ~Rroonga Mroonga"   --term_column term   --expanded_term_column expansions
+[[0,0.0,0.0],"Groonga ~((Rroonga) OR (Ruby Groonga)) Mroonga"]

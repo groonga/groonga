@@ -1,0 +1,12 @@
+table_create TermExpansions TABLE_NO_KEY
+column_create TermExpansions term COLUMN_SCALAR ShortText
+column_create TermExpansions expansions COLUMN_VECTOR ShortText
+
+load --table TermExpansions
+[
+{"term": "Rroonga", "expansions": ["Rroonga", "Ruby Groonga"]}
+]
+
+query_expand TermExpansions "Groonga ~-0.2Rroonga Mroonga" \
+  --term_column term \
+  --expanded_term_column expansions
