@@ -1,0 +1,29 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+column_create Terms memo_content COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+["content"],
+["ドコモ"]
+]
+
+table_create SudachiDictionary TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC130
+column_create SudachiDictionary synonyms COLUMN_SCALAR ShortText
+
+#@timeout 300
+#@disable-logging
+#@synonym-generate SudachiDictionary --no-synonyms-column-is-vector
+#@enable-logging
+#@timeout default
+
+select \
+  --table Memos \
+  --query_expander SudachiDictionary.synonyms \
+  --match_columns content \
+  --query '"NTT docomo"' \
+  --output_columns content,_score \
+  --command_version 3
