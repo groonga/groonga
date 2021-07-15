@@ -832,6 +832,28 @@ grn_mrb_ctx_to_exception(mrb_state *mrb)
   return mrb_exc_new_str(mrb, error_class, mrb_str_new_cstr(mrb, message));
 }
 
+mrb_value
+ctx_push_temporary_open_space(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  grn_ctx_push_temporary_open_space(ctx);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
+mrb_value
+ctx_pop_temporary_open_space(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+
+  grn_ctx_pop_temporary_open_space(ctx);
+  grn_mrb_ctx_check(mrb);
+
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_ctx_check(mrb_state *mrb)
 {
@@ -903,5 +925,11 @@ grn_mrb_ctx_init(grn_ctx *ctx)
 
   mrb_define_method(mrb, klass, "opened?", ctx_is_opened,
                     MRB_ARGS_REQ(1));
+
+  mrb_define_method(mrb, klass, "push_temporary_open_space",
+                    ctx_push_temporary_open_space, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "pop_temporary_open_space",
+                    ctx_pop_temporary_open_space, MRB_ARGS_NONE());
+
 }
 #endif

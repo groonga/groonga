@@ -255,28 +255,6 @@ grn_mrb_object_is_closed(mrb_state *mrb, mrb_value self)
 }
 
 mrb_value
-grn_mrb_object_push_temporary_open_space(mrb_state *mrb, mrb_value self)
-{
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
-
-  grn_ctx_push_temporary_open_space(ctx);
-  grn_mrb_ctx_check(mrb);
-
-  return mrb_nil_value();
-}
-
-mrb_value
-grn_mrb_object_pop_temporary_open_space(mrb_state *mrb, mrb_value self)
-{
-  grn_ctx *ctx = (grn_ctx *)mrb->ud;
-
-  grn_ctx_pop_temporary_open_space(ctx);
-  grn_mrb_ctx_check(mrb);
-
-  return mrb_nil_value();
-}
-
-mrb_value
 grn_mrb_object_get_domain_id(mrb_state *mrb, mrb_value self)
 {
   grn_obj *object;
@@ -393,11 +371,6 @@ grn_mrb_object_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "remove", object_remove, MRB_ARGS_OPT(1));
   mrb_define_method(mrb, klass, "closed?",
                     grn_mrb_object_is_closed, MRB_ARGS_NONE());
-
-  mrb_define_method(mrb, klass, "push_temporary_open_space",
-                    grn_mrb_object_push_temporary_open_space, MRB_ARGS_NONE());
-  mrb_define_method(mrb, klass, "pop_temporary_open_space",
-                    grn_mrb_object_pop_temporary_open_space, MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "domain_id", grn_mrb_object_get_domain_id,
                     MRB_ARGS_NONE());
