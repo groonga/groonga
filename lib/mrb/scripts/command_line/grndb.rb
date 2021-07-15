@@ -602,7 +602,7 @@ module Groonga
         def recover
           logger.log(:info, "Recovering database: <#{@database.path}>")
           if @force_truncate
-            @database.each(use_temporary_open_space: true) do |object|
+            @database.each(use_temporary_open_space: close_opened_object_mode?) do |object|
               next unless truncate_target?(object)
               truncate_broken_object(object)
             end
@@ -616,6 +616,10 @@ module Groonga
         end
 
         private
+        def close_opened_object_mode?
+          Thread.limit == 1
+        end
+
         def truncate_target?(object)
           return true if object.corrupt?
 

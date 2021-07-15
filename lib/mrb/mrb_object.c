@@ -258,12 +258,9 @@ mrb_value
 grn_mrb_object_push_temporary_open_space(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  grn_bool is_close_opened_object_mode = (grn_thread_get_limit() == 1);
 
-  if (is_close_opened_object_mode) {
-    grn_ctx_push_temporary_open_space(ctx);
-    grn_mrb_ctx_check(mrb);
-  }
+  grn_ctx_push_temporary_open_space(ctx);
+  grn_mrb_ctx_check(mrb);
 
   return mrb_nil_value();
 }
@@ -272,12 +269,9 @@ mrb_value
 grn_mrb_object_pop_temporary_open_space(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  grn_bool is_close_opened_object_mode = (grn_thread_get_limit() == 1);
 
-  if (is_close_opened_object_mode) {
-    grn_ctx_pop_temporary_open_space(ctx);
-    grn_mrb_ctx_check(mrb);
-  }
+  grn_ctx_pop_temporary_open_space(ctx);
+  grn_mrb_ctx_check(mrb);
 
   return mrb_nil_value();
 }
