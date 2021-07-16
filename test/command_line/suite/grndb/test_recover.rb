@@ -189,18 +189,15 @@ object corrupt: <#{recover_error_message}>(-55)
                      message,
                      expected_groonga_log("dump", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
-#{windows? ? "|d| [io][open] <#{@table_path}>" : "|-| [io][open] <#{@table_path}>"}
+#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : "|-| [io][open] <#{@table_path}>"}
 #{windows? ? "|d| [io][close] <#{@table_path}>" : "|-| [io][close] <#{@table_path}>"}
-#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
 |i| [io][remove] removed path: <#{@table_path}>
-#{windows? ? "|d| [io][open] <#{@table_path}>" : "|-| [io][open] <#{@table_path}>"}
-#{windows? ? "|i| [io][open] create new file: <#{@table_path}>" : ""}
+#{windows? ? "|i| [io][open] create new file: <#{@table_path}>" : "|-| [io][open] <#{@table_path}>"}
 #{prepend_tag("|i| ", message).chomp}
 #{windows? ? "|d| [io][close] <#{@table_path}>" : "|-| [io][close] <#{@table_path}>"}
-#{windows? ? "|d| [io][open] <#{@table_path}>" : "|-| [io][open] <#{@table_path}>"}
-#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : "|-| [io][open] <#{@table_path}>"}
 |i| Recovered database: <#{@database_path}>
-#{windows? ? "|-| [io][close] <#{@table_path}>" : "|-| [io][close] <#{@table_path}>"}
+#{windows? ? "|d| [io][close] <#{@table_path}>" : "|-| [io][close] <#{@table_path}>"}
                      MESSAGES
                    ],
                    [
@@ -275,7 +272,7 @@ object corrupt: <#{recover_error_message}>(-55)
 #{windows? ? "|i| [io][open] create new file: <#{@column_path}>" : ""}
 #{prepend_tag("|i| ", message).chomp}
 #{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
-#{windows? ? "|i| [io][open] create new file: <#{@column_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@column_path}>" : ""}
 |i| Recovered database: <#{@database_path}>
                      MESSAGES
                    ],
@@ -448,8 +445,7 @@ object corrupt: <#{recover_error_message}>(-55)
                    "",
                    expected_groonga_log("info", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
-#{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000100>" : ""}
-#{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000101>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000102>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000102>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{path}.c>" : ""}
