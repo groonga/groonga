@@ -374,11 +374,11 @@ object corrupt: <#{recover_error_message}>(-55)
                    "",
                    expected_groonga_log("dump", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
-#{windows? ? "|d| [io][open] <#{path}>" : "|-| [io][open] <#{path}>"}
+#{windows? ? "" : "|-| [io][open] <#{path}>"}
 #{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| [Users] Clear locked object: <#{path}>
 #{windows? ? "|d| [io][close] <#{path}>" : "|-| [io][close] <#{path}>"}
-#{windows? ? "|d| [io][open] <#{path}>" : "|-| [io][open] <#{path}>"}
+#{windows? ? "" : "|-| [io][open] <#{path}>"}
 #{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| Recovered database: <#{@database_path}>
 #{windows? ? "|d| [io][close] <#{path}>" : "|-| [io][close] <#{path}>"}
