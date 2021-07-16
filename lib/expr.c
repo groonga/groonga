@@ -4143,6 +4143,14 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
 }
 
 static void
+parse_query_push_weight(grn_ctx *ctx, efs_info *efsi, float weight)
+{
+  float last_weight = grn_float32_value_at(&(efsi->weight_stack), -1);
+  weight += last_weight;
+  GRN_FLOAT32_PUT(ctx, &(efsi->weight_stack), weight);
+}
+
+static void
 parse_query_flush_pending_token(grn_ctx *ctx, efs_info *q)
 {
   const char *cur_keep;
@@ -4159,7 +4167,7 @@ parse_query_flush_pending_token(grn_ctx *ctx, efs_info *q)
   q->cur = q->pending_token.string;
   if (q->pending_token.token == GRN_EXPR_TOKEN_ADJUST ||
       q->pending_token.token == GRN_EXPR_TOKEN_NEGATIVE) {
-    GRN_FLOAT32_PUT(ctx, &q->weight_stack, q->pending_token.weight);
+    parse_query_push_weight(ctx, q, q->pending_token.weight);
   }
   PARSE(q->pending_token.token);
   q->cur = cur_keep;
@@ -4203,7 +4211,7 @@ parse_query_accept_adjust(grn_ctx *ctx,
                           float weight)
 {
   if (!(q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR)) {
-    GRN_FLOAT32_PUT(ctx, &q->weight_stack, weight);
+    parse_query_push_weight(ctx, q, weight);
     PARSE(token);
     return;
   }
@@ -5069,7 +5077,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
             if (!parse_query_parse_weight(ctx, q, NULL, &weight)) {
               weight = 2;
             }
-            GRN_FLOAT32_PUT(ctx, &q->weight_stack, weight);
+            parse_query_push_weight(ctx, q, weight);
           }
           PARSE(GRN_EXPR_TOKEN_ADJUST);
           break;
@@ -5082,7 +5090,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
             } else {
               weight = 0.5;
             }
-            GRN_FLOAT32_PUT(ctx, &q->weight_stack, weight);
+            parse_query_push_weight(ctx, q, weight);
           }
           PARSE(GRN_EXPR_TOKEN_ADJUST);
           break;
@@ -5095,7 +5103,7 @@ parse_script(grn_ctx *ctx, efs_info *q)
             } else {
               weight = -1;
             }
-            GRN_FLOAT32_PUT(ctx, &q->weight_stack, weight);
+            parse_query_push_weight(ctx, q, weight);
           }
           PARSE(GRN_EXPR_TOKEN_NEGATIVE);
           break;
