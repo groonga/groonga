@@ -189,12 +189,14 @@ namespace {
     bool
     parse_match_columns_arg() {
       match_columns_string_ = args_[0];
-      if (!grn_obj_is_text_family_bulk(ctx_, match_columns_string_)) {
+      if (!grn_obj_is_text_family_bulk(ctx_, match_columns_string_) &&
+          !grn_obj_is_vector(ctx_, match_columns_string_)) {
         grn::TextBulk inspected(ctx_);
         grn_inspect(ctx_, *inspected, match_columns_string_);
         GRN_PLUGIN_ERROR(ctx_,
                          GRN_INVALID_ARGUMENT,
-                         "%s 1st argument must be string: <%.*s>",
+                         "%s 1st argument must be string "
+                         "or array literal: <%.*s>",
                          tag_,
                          (int)GRN_TEXT_LEN(*inspected),
                          GRN_TEXT_VALUE(*inspected));
@@ -563,13 +565,19 @@ namespace {
       if (!parse_query_args(args_ + 1, n_queries_)) {
         return false;
       }
-      if (!prepare_match_columns()) {
-        return false;
-      }
-      if (match_columns_) {
-        grn_expr_match_columns_split(ctx_, match_columns_, &sub_match_columns_);
+      if (grn_obj_is_bulk(ctx_, match_columns_string_)) {
+        if (!prepare_match_columns()) {
+          return false;
+        }
+        if (match_columns_) {
+          grn_expr_match_columns_split(ctx_, match_columns_, &sub_match_columns_);
+        } else {
+          GRN_PTR_PUT(ctx_, &sub_match_columns_, NULL);
+        }
       } else {
-        GRN_PTR_PUT(ctx_, &sub_match_columns_, NULL);
+        if (!prepare_match_columns_in_vector()) {
+          return false;
+        }
       }
       return true;
     }
@@ -615,6 +623,48 @@ namespace {
                                        GRN_TEXT_LEN(*expanded_query));
       }
       return true;
+    }
+
+    bool
+    prepare_match_columns_in_vector() {
+      unsigned int n_match_columns = grn_vector_size(ctx_, match_columns_string_);
+      if (n_match_columns == 0) {
+        return true;
+      }
+
+      for (unsigned int i = 0; i < n_match_columns; ++i) {
+        grn_obj *dummy_variable;
+        grn_obj *sub_match_columns;
+        const char *sub_match_columns_string;
+        unsigned int sub_match_columns_string_length;
+
+        GRN_EXPR_CREATE_FOR_QUERY(ctx_,
+                                  table_,
+                                  sub_match_columns,
+                                  dummy_variable);
+        if (!sub_match_columns) {
+          return false;
+        }
+
+        sub_match_columns_string_length =
+          grn_vector_get_element(ctx_,
+                                 match_columns_string_,
+                                 i,
+                                 &sub_match_columns_string,
+                                 NULL,
+                                 NULL);
+
+        grn_expr_parse(ctx_,
+                       sub_match_columns,
+                       sub_match_columns_string,
+                       sub_match_columns_string_length,
+                       NULL,
+                       GRN_OP_MATCH,
+                       GRN_OP_AND,
+                       GRN_EXPR_SYNTAX_SCRIPT);
+        GRN_PTR_PUT(ctx_, &sub_match_columns_, sub_match_columns);
+      }
+      return ctx_->rc == GRN_SUCCESS;
     }
 
     bool
