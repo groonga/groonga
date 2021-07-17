@@ -179,7 +179,7 @@ object corrupt: <#{recover_error_message}>(-55)
       FileUtils.touch(additional_path)
       result = grndb("recover",
                      "--force-truncate",
-                     "--log-level", "info")
+                     "--log-level", "dump")
       message = <<-MESSAGE
 [Users] Truncated broken object: <#{@table_path}>
 [Users] Removed broken object related file: <#{additional_path}>
@@ -187,13 +187,17 @@ object corrupt: <#{recover_error_message}>(-55)
       assert_equal([
                      "",
                      message,
-                     expected_groonga_log("info", <<-MESSAGES),
+                     expected_groonga_log("dump", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
-#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : "|-| [io][open] <#{@table_path}>"}
+#{windows? ? "|d| [io][close] <#{@table_path}>" : "|-| [io][close] <#{@table_path}>"}
 |i| [io][remove] removed path: <#{@table_path}>
-#{windows? ? "|i| [io][open] create new file: <#{@table_path}>" : ""}
+#{windows? ? "|i| [io][open] create new file: <#{@table_path}>" : "|-| [io][open] <#{@table_path}>"}
 #{prepend_tag("|i| ", message).chomp}
+#{windows? ? "|d| [io][close] <#{@table_path}>" : "|-| [io][close] <#{@table_path}>"}
+#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : "|-| [io][open] <#{@table_path}>"}
 |i| Recovered database: <#{@database_path}>
+#{windows? ? "|d| [io][close] <#{@table_path}>" : "|-| [io][close] <#{@table_path}>"}
                      MESSAGES
                    ],
                    [
@@ -263,9 +267,12 @@ object corrupt: <#{recover_error_message}>(-55)
 |i| Recovering database: <#{@database_path}>
 #{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{@column_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@column_path}>" : ""}
 |i| [io][remove] removed path: <#{@column_path}>
 #{windows? ? "|i| [io][open] create new file: <#{@column_path}>" : ""}
 #{prepend_tag("|i| ", message).chomp}
+#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@column_path}>" : ""}
 |i| Recovered database: <#{@database_path}>
                      MESSAGES
                    ],
@@ -361,15 +368,20 @@ object corrupt: <#{recover_error_message}>(-55)
     _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
 
     remove_groonga_log
-    result = grndb("recover", "--force-lock-clear", "--log-level", "info")
+    result = grndb("recover", "--force-lock-clear", "--log-level", "dump")
     assert_equal([
                    "",
                    "",
-                   expected_groonga_log("info", <<-MESSAGES),
+                   expected_groonga_log("dump", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
+#{windows? ? "" : "|-| [io][open] <#{path}>"}
 #{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| [Users] Clear locked object: <#{path}>
+#{windows? ? "|d| [io][close] <#{path}>" : "|-| [io][close] <#{path}>"}
+#{windows? ? "" : "|-| [io][open] <#{path}>"}
+#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| Recovered database: <#{@database_path}>
+#{windows? ? "|d| [io][close] <#{path}>" : "|-| [io][close] <#{path}>"}
                    MESSAGES
                  ],
                  [
@@ -396,6 +408,8 @@ object corrupt: <#{recover_error_message}>(-55)
 #{windows? ? "|i| [io][open] open existing file: <#{table_path}>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| [Users.age] Clear locked object: <#{path}>
+#{windows? ? "|i| [io][open] open existing file: <#{table_path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
 |i| Recovered database: <#{@database_path}>
                    MESSAGES
                  ],
@@ -431,6 +445,12 @@ object corrupt: <#{recover_error_message}>(-55)
                    "",
                    expected_groonga_log("info", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
+#{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000102>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000102>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{path}.c>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000100>" : ""}
+#{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000101>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000100>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000101>" : ""}
 #{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000102>" : ""}

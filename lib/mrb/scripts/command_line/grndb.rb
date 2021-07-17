@@ -602,7 +602,7 @@ module Groonga
         def recover
           logger.log(:info, "Recovering database: <#{@database.path}>")
           if @force_truncate
-            @database.each do |object|
+            @database.each(use_temporary_open_space: true) do |object|
               next unless truncate_target?(object)
               truncate_broken_object(object)
             end
@@ -675,7 +675,7 @@ module Groonga
             @database.clear_lock
             logger.log(:info, "Clear locked database: <#{@database.path}>")
           end
-          @database.each do |object|
+          @database.each(use_temporary_open_space: true) do |object|
             case object
             when IndexColumn
               # Ignore. It'll be recovered later.

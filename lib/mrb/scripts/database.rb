@@ -37,8 +37,18 @@ module Groonga
 
       context = Context.instance
       each_raw(options) do |id, cursor|
-        object = context[id]
-        yield(object) if object
+        if options[:use_temporary_open_space]
+          context.push_temporary_open_space
+          begin
+            object = context[id]
+            yield(object) if object
+          ensure
+            context.pop_temporary_open_space
+          end
+        else
+          object = context[id]
+          yield(object) if object
+        end
       end
     end
 

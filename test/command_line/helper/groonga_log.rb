@@ -23,14 +23,22 @@ module GroongaLog
               "--log-level", level,
             ])
     standard_log_lines = normalize_groonga_log(File.read(log_file.path)).lines
-    log = standard_log_lines[0..-2].join("")
+    if level == "dump"
+      log = standard_log_lines[0..-6].join("") # [io][open]
+    else
+      log = standard_log_lines[0..-2].join("")
+    end
     unless messages.empty?
       messages.each_line do |message|
         next if message.chomp.empty?
         log << "1970-01-01 00:00:00.000000#{message}"
       end
     end
-    log << standard_log_lines[-1] # grn_fin
+    if level == "dump"
+      log << standard_log_lines[-5..-1].join("") # [io][close] and grn_fin
+    else
+      log << standard_log_lines[-1] # grn_fin
+    end
     log
   end
 
@@ -94,7 +102,7 @@ module GroongaLog
       when /\A
               (\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}\.\d+)?
               \|\
-              ([a-zA-Z])
+              ([a-zA-Z-])
               \|\
               ([^: ]+)?
               ([|:]\ )?
