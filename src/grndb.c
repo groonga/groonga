@@ -30,6 +30,12 @@
 #include <mruby/variable.h>
 #include <mruby/array.h>
 
+static uint32_t
+get_thread_limit(void *data)
+{
+  return 1;
+}
+
 static int
 run_command(grn_ctx *ctx, int argc, char **argv)
 {
@@ -133,6 +139,8 @@ main(int argc, char **argv)
   const char *log_path = GRN_LOG_PATH;
   const char *log_level_name = NULL;
   const char *log_flags_name = NULL;
+
+  grn_thread_set_get_limit_func(get_thread_limit, NULL);
 
   {
     int i;
