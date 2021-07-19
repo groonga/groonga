@@ -208,6 +208,11 @@ module GroongaLog
           id_section = "PROCESS_ID"
         end
         message = normalize_groonga_log_message(message)
+        case message
+        when /\A\|e\| \[tokenizer\]\[mecab\]\[create\]\[wakati\]/
+          # Ignore
+          next
+        end
         normalized <<
           "#{timestamp}|#{level}|#{id_section}#{separator}#{message}\n"
       else
