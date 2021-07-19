@@ -62,6 +62,66 @@ module GroongaLog
     log
   end
 
+  def open_file_log_line(path, log_level)
+    if windows?
+      case log_level
+      when "info",
+           "debug",
+           "dump"
+        "|i| [io][open] open existing file: <#{path}>"
+      else
+        ""
+      end
+    else
+      case log_level
+      when "dump"
+        "|-| [io][open] <#{path}>"
+      else
+        ""
+      end
+    end
+  end
+
+  def create_file_log_line(path, log_level)
+    if windows?
+      case log_level
+      when "info",
+           "debug",
+           "dump"
+        "|i| [io][open] create new file: <#{path}>"
+      else
+        ""
+      end
+    else
+      case log_level
+      when "dump"
+        "|-| [io][open] <#{path}>"
+      else
+        ""
+      end
+    end
+  end
+
+  def close_file_log_line(path, log_level)
+    if windows?
+      case log_level
+      when "info",
+           "debug",
+           "dump"
+        "|i| [io][close] <#{path}>"
+      else
+        ""
+      end
+    else
+      case log_level
+      when "dump"
+        "|-| [io][close] <#{path}>"
+      else
+        ""
+      end
+    end
+  end
+
   def prepend_tag(tag, messages)
     messages.each_line.inject("") do |result, line|
       result + "#{tag}#{line}"
