@@ -36,16 +36,9 @@ module Groonga
       return to_enum(__method__, options) unless block_given?
 
       context = Context.instance
+      use_temporary_open_space = options[:use_temporary_open_space]
       each_raw(options) do |id, cursor|
-        if options[:use_temporary_open_space]
-          context.push_temporary_open_space
-          begin
-            object = context[id]
-            yield(object) if object
-          ensure
-            context.pop_temporary_open_space
-          end
-        else
+        context.with_temporary_open_space(use_temporary_open_space) do
           object = context[id]
           yield(object) if object
         end
