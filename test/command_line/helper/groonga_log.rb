@@ -36,7 +36,7 @@ module GroongaLog
            /\A\|i\| To set/,
            /\A\|i\| add/,
            /\A\|i\| run/,
-           /\A\|-\| \[io\]\[open\]/
+           /\A\|[i-]\| \[io\]\[open\]/
         log << line
       else
         break
@@ -51,7 +51,7 @@ module GroongaLog
     last_log_lines = []
     standard_log_lines.reverse_each do |line|
       case remove_timestamp(line)
-      when /\A\|-\| \[io\]\[close\]/,
+      when /\A\|[i-]\| \[io\]\[close\]/,
            /\A\|n\| grn_fin/
         last_log_lines << line
       else
