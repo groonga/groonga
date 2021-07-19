@@ -14,6 +14,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 module GroongaLog
+  def remove_timestamp(line)
+    line.gsub(/\A\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{6}/, "")
+  end
+
   def expected_groonga_log(level, messages)
     log_file = Tempfile.new("groonga-log")
     log_file.close
@@ -23,10 +27,20 @@ module GroongaLog
               "--log-level", level,
             ])
     standard_log_lines = normalize_groonga_log(File.read(log_file.path)).lines
-    if level == "dump"
-      log = standard_log_lines[0..-6].join("") # [io][open]
-    else
-      log = standard_log_lines[0..-2].join("")
+    log = ""
+    standard_log_lines.each do |line|
+      case remove_timestamp(line)
+      when /\A\|n\| grn_init/,
+           /\A\|n\| vm\.overcommit_memory/,
+           /\A\|i\| Some processings with/,
+           /\A\|i\| To set/,
+           /\A\|i\| add/,
+           /\A\|i\| run/,
+           /\A\|-\| \[io\]\[open\]/
+        log << line
+      else
+        break
+      end
     end
     unless messages.empty?
       messages.each_line do |message|
@@ -34,11 +48,17 @@ module GroongaLog
         log << "1970-01-01 00:00:00.000000#{message}"
       end
     end
-    if level == "dump"
-      log << standard_log_lines[-5..-1].join("") # [io][close] and grn_fin
-    else
-      log << standard_log_lines[-1] # grn_fin
+    last_log_lines = []
+    standard_log_lines.reverse_each do |line|
+      case remove_timestamp(line)
+      when /\A\|-\| \[io\]\[close\]/,
+           /\A\|n\| grn_fin/
+        last_log_lines << line
+      else
+        break
+      end
     end
+    log << last_log_lines.reverse.join("")
     log
   end
 
