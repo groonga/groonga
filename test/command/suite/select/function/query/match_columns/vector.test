@@ -18,5 +18,5 @@ load --table Users
 
 select Users \
   --output_columns _score,name \
-  --filter 'query_parallel_or(["name * 100 || memo * 10", "", "tag * 1"], \
-                              "Alice OR Groonga")'
+  --filter 'query(["name * 100 || memo * 10", "", "tag * 1"], \
+                  "Alice OR Groonga")'
