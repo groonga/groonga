@@ -14,6 +14,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 module GroongaLog
+  def remove_timestamp(line)
+    line.gsub(/\A\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{6}/, "")
+  end
+
   def expected_groonga_log(level, messages)
     log_file = Tempfile.new("groonga-log")
     log_file.close
@@ -23,15 +27,99 @@ module GroongaLog
               "--log-level", level,
             ])
     standard_log_lines = normalize_groonga_log(File.read(log_file.path)).lines
-    log = standard_log_lines[0..-2].join("")
+    log = ""
+    standard_log_lines.each do |line|
+      case remove_timestamp(line)
+      when /\A\|n\| grn_init/,
+           /\A\|n\| vm\.overcommit_memory/,
+           /\A\|i\| Some processings with/,
+           /\A\|i\| To set/,
+           /\A\|i\| add/,
+           /\A\|i\| run/,
+           /\A\|[i-]\| \[io\]\[open\]/
+        log << line
+      else
+        break
+      end
+    end
     unless messages.empty?
       messages.each_line do |message|
         next if message.chomp.empty?
         log << "1970-01-01 00:00:00.000000#{message}"
       end
     end
-    log << standard_log_lines[-1] # grn_fin
+    last_log_lines = []
+    standard_log_lines.reverse_each do |line|
+      case remove_timestamp(line)
+      when /\A\|[d-]\| \[io\]\[close\]/,
+           /\A\|n\| grn_fin/
+        last_log_lines << line
+      else
+        break
+      end
+    end
+    log << last_log_lines.reverse.join("")
     log
+  end
+
+  def open_file_log_line(path, log_level)
+    if windows?
+      case log_level
+      when "info",
+           "debug",
+           "dump"
+        "|i| [io][open] open existing file: <#{path}>"
+      else
+        ""
+      end
+    else
+      case log_level
+      when "dump"
+        "|-| [io][open] <#{path}>"
+      else
+        ""
+      end
+    end
+  end
+
+  def create_file_log_line(path, log_level)
+    if windows?
+      case log_level
+      when "info",
+           "debug",
+           "dump"
+        "|i| [io][open] create new file: <#{path}>"
+      else
+        ""
+      end
+    else
+      case log_level
+      when "dump"
+        "|-| [io][open] <#{path}>"
+      else
+        ""
+      end
+    end
+  end
+
+  def close_file_log_line(path, log_level)
+    if windows?
+      case log_level
+      when "info",
+           "debug",
+           "dump"
+        "|d| [io][close] <#{path}>"
+      else
+        ""
+      end
+    else
+      case log_level
+      when "dump"
+        "|-| [io][close] <#{path}>"
+      else
+        ""
+      end
+    end
   end
 
   def prepend_tag(tag, messages)
@@ -94,7 +182,7 @@ module GroongaLog
       when /\A
               (\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2}\.\d+)?
               \|\
-              ([a-zA-Z])
+              ([a-zA-Z-])
               \|\
               ([^: ]+)?
               ([|:]\ )?
@@ -120,6 +208,11 @@ module GroongaLog
           id_section = "PROCESS_ID"
         end
         message = normalize_groonga_log_message(message)
+        case message
+        when /\A \[tokenizer\]\[mecab\]\[create\]\[wakati\]/
+          # Ignore
+          next
+        end
         normalized <<
           "#{timestamp}|#{level}|#{id_section}#{separator}#{message}\n"
       else

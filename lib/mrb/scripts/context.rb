@@ -67,6 +67,19 @@ module Groonga
       end
     end
 
+    def with_temporary_open_space(push=true)
+      if push
+        push_temporary_open_space
+        begin
+          yield
+        ensure
+          pop_temporary_open_space
+        end
+      else
+        yield
+      end
+    end
+
     private
     def set_error_raw(rc, error_level, message, backtrace)
       self.rc = rc.to_i

@@ -177,9 +177,10 @@ object corrupt: <#{recover_error_message}>(-55)
     def test_force_truncate
       additional_path = "#{@table_path}.002"
       FileUtils.touch(additional_path)
+      log_level = "dump"
       result = grndb("recover",
                      "--force-truncate",
-                     "--log-level", "info")
+                     "--log-level", log_level)
       message = <<-MESSAGE
 [Users] Truncated broken object: <#{@table_path}>
 [Users] Removed broken object related file: <#{additional_path}>
@@ -187,12 +188,16 @@ object corrupt: <#{recover_error_message}>(-55)
       assert_equal([
                      "",
                      message,
-                     expected_groonga_log("info", <<-MESSAGES),
+                     expected_groonga_log(log_level, <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
-#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
+#{open_file_log_line(@table_path, log_level)}
+#{close_file_log_line(@table_path, log_level)}
 |i| [io][remove] removed path: <#{@table_path}>
-#{windows? ? "|i| [io][open] create new file: <#{@table_path}>" : ""}
+#{create_file_log_line(@table_path, log_level)}
 #{prepend_tag("|i| ", message).chomp}
+#{close_file_log_line(@table_path, log_level)}
+#{open_file_log_line(@table_path, log_level)}
+#{close_file_log_line(@table_path, log_level)}
 |i| Recovered database: <#{@database_path}>
                      MESSAGES
                    ],
@@ -249,9 +254,10 @@ object corrupt: <#{recover_error_message}>(-55)
     def test_force_truncate
       additional_path = "#{@column_path}.002"
       FileUtils.touch(additional_path)
+      log_level = "dump"
       result = grndb("recover",
                      "--force-truncate",
-                     "--log-level", "info")
+                     "--log-level", log_level)
       message = <<-MESSAGE
 [Users.age] Truncated broken object: <#{@column_path}>
 [Users.age] Removed broken object related file: <#{additional_path}>
@@ -259,13 +265,22 @@ object corrupt: <#{recover_error_message}>(-55)
       assert_equal([
                      "",
                      message,
-                     expected_groonga_log("info", <<-MESSAGES),
+                     expected_groonga_log(log_level, <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
-#{windows? ? "|i| [io][open] open existing file: <#{@table_path}>" : ""}
-#{windows? ? "|i| [io][open] open existing file: <#{@column_path}>" : ""}
+#{open_file_log_line(@table_path, log_level)}
+#{open_file_log_line(@column_path, log_level)}
+#{close_file_log_line(@column_path, log_level)}
+#{close_file_log_line(@table_path, log_level)}
+#{open_file_log_line(@column_path, log_level)}
+#{close_file_log_line(@column_path, log_level)}
 |i| [io][remove] removed path: <#{@column_path}>
-#{windows? ? "|i| [io][open] create new file: <#{@column_path}>" : ""}
+#{create_file_log_line(@column_path, log_level)}
 #{prepend_tag("|i| ", message).chomp}
+#{close_file_log_line(@column_path, log_level)}
+#{open_file_log_line(@table_path, log_level)}
+#{close_file_log_line(@table_path, log_level)}
+#{open_file_log_line(@column_path, log_level)}
+#{close_file_log_line(@column_path, log_level)}
 |i| Recovered database: <#{@database_path}>
                      MESSAGES
                    ],
@@ -294,6 +309,17 @@ object corrupt: <#{recover_error_message}>(-55)
       groonga("truncate", "Ages")
       groonga("lock_acquire", "Ages.users_age")
 
+      _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+      @ages_path = path
+      _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][2]
+      @users_path = path
+      ages_column_list = JSON.parse(groonga("column_list", "Ages").output)
+      _id, _name, path, *_ = ages_column_list[1][2]
+      @ages_users_age_path = path
+      users_column_list = JSON.parse(groonga("column_list", "Users").output)
+      _id, _name, path, *_ = users_column_list[1][2]
+      @users_age_path = path
+
       remove_groonga_log
     end
 
@@ -302,7 +328,7 @@ object corrupt: <#{recover_error_message}>(-55)
       assert_equal([
                      "",
                      "",
-                     expected_groonga_log("notice", ""),
+                     expected_groonga_log("notice", "")
                    ],
                    [
                      result.output,
@@ -316,11 +342,58 @@ object corrupt: <#{recover_error_message}>(-55)
     end
 
     def test_force_truncate
-      result = grndb("recover", "--force-truncate")
+      log_level = "dump"
+      result = grndb("recover",
+                     "--force-truncate",
+                     "--log-level", log_level)
       assert_equal([
                      "",
                      "",
-                     expected_groonga_log("notice", ""),
+                     expected_groonga_log(log_level, <<-MESSAGES),
+|i| Recovering database: <#{@database_path}>
+#{open_file_log_line(@ages_path, log_level)}
+#{open_file_log_line(@ages_users_age_path, log_level)}
+#{open_file_log_line("#{@ages_users_age_path}.c", log_level)}
+#{close_file_log_line(@ages_users_age_path, log_level)}
+#{close_file_log_line("#{@ages_users_age_path}.c", log_level)}
+#{close_file_log_line(@ages_path, log_level)}
+#{open_file_log_line(@ages_path, log_level)}
+#{open_file_log_line(@ages_users_age_path, log_level)}
+#{open_file_log_line("#{@ages_users_age_path}.c", log_level)}
+#{close_file_log_line(@ages_users_age_path, log_level)}
+#{close_file_log_line("#{@ages_users_age_path}.c", log_level)}
+#{close_file_log_line(@ages_path, log_level)}
+#{open_file_log_line(@users_path, log_level)}
+#{open_file_log_line(@users_age_path, log_level)}
+#{close_file_log_line(@users_age_path, log_level)}
+#{close_file_log_line(@users_path, log_level)}
+#{open_file_log_line(@users_age_path, log_level)}
+#{close_file_log_line(@users_age_path, log_level)}
+#{open_file_log_line(@users_path, log_level)}
+#{close_file_log_line(@users_path, log_level)}
+#{open_file_log_line(@users_age_path, log_level)}
+#{close_file_log_line(@users_age_path, log_level)}
+#{open_file_log_line(@ages_path, log_level)}
+#{close_file_log_line(@ages_path, log_level)}
+#{open_file_log_line(@ages_path, log_level)}
+#{open_file_log_line(@ages_users_age_path, log_level)}
+#{open_file_log_line("#{@ages_users_age_path}.c", log_level)}
+#{close_file_log_line(@ages_users_age_path, log_level)}
+#{close_file_log_line("#{@ages_users_age_path}.c", log_level)}
+|i| [io][remove] removed path: <#{@ages_users_age_path}>
+|i| [io][remove] removed path: <#{@ages_users_age_path}.c>
+#{create_file_log_line(@ages_users_age_path, log_level)}
+#{create_file_log_line("#{@ages_users_age_path}.c", log_level)}
+#{open_file_log_line(@users_age_path, log_level)}
+#{open_file_log_line(@users_path, log_level)}
+|i| [ii][builder][fin] removed path: <#{@ages_users_age_path}XXXXXX>
+#{close_file_log_line(@users_path, log_level)}
+#{close_file_log_line(@users_age_path, log_level)}
+#{close_file_log_line(@ages_users_age_path, log_level)}
+#{close_file_log_line("#{@ages_users_age_path}.c", log_level)}
+#{close_file_log_line(@ages_path, log_level)}
+|i| Recovered database: <#{@database_path}>
+                     MESSAGES
                    ],
                    [
                      result.output,
@@ -338,11 +411,14 @@ object corrupt: <#{recover_error_message}>(-55)
     groonga("lock_acquire")
 
     remove_groonga_log
-    result = grndb("recover", "--force-lock-clear", "--log-level", "info")
+    log_level = "info"
+    result = grndb("recover",
+                   "--force-lock-clear",
+                   "--log-level", log_level)
     assert_equal([
                    "",
                    "",
-                   expected_groonga_log("info", <<-MESSAGES),
+                   expected_groonga_log(log_level, <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
 |i| Clear locked database: <#{@database_path}>
 |i| Recovered database: <#{@database_path}>
@@ -361,14 +437,20 @@ object corrupt: <#{recover_error_message}>(-55)
     _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
 
     remove_groonga_log
-    result = grndb("recover", "--force-lock-clear", "--log-level", "info")
+    log_level = "dump"
+    result = grndb("recover",
+                   "--force-lock-clear",
+                   "--log-level", log_level)
     assert_equal([
                    "",
                    "",
-                   expected_groonga_log("info", <<-MESSAGES),
+                   expected_groonga_log(log_level, <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
-#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
+#{open_file_log_line(path, log_level)}
 |i| [Users] Clear locked object: <#{path}>
+#{close_file_log_line(path, log_level)}
+#{open_file_log_line(path, log_level)}
+#{close_file_log_line(path, log_level)}
 |i| Recovered database: <#{@database_path}>
                    MESSAGES
                  ],
@@ -387,15 +469,24 @@ object corrupt: <#{recover_error_message}>(-55)
     _id, _name, path, *_ = JSON.parse(groonga("column_list Users").output)[1][2]
 
     remove_groonga_log
-    result = grndb("recover", "--force-lock-clear", "--log-level", "info")
+    log_level = "dump"
+    result = grndb("recover",
+                   "--force-lock-clear",
+                   "--log-level", log_level)
     assert_equal([
                    "",
                    "",
-                   expected_groonga_log("info", <<-MESSAGES),
+                   expected_groonga_log(log_level, <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
-#{windows? ? "|i| [io][open] open existing file: <#{table_path}>" : ""}
-#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
+#{open_file_log_line(table_path, log_level)}
+#{close_file_log_line(table_path, log_level)}
+#{open_file_log_line(path, log_level)}
 |i| [Users.age] Clear locked object: <#{path}>
+#{close_file_log_line(path, log_level)}
+#{open_file_log_line(table_path, log_level)}
+#{close_file_log_line(table_path, log_level)}
+#{open_file_log_line(path, log_level)}
+#{close_file_log_line(path, log_level)}
 |i| Recovered database: <#{@database_path}>
                    MESSAGES
                  ],
@@ -412,7 +503,16 @@ object corrupt: <#{recover_error_message}>(-55)
 
     groonga("table_create", "Ages", "TABLE_PAT_KEY", "UInt8")
     groonga("column_create", "Ages", "users_age", "COLUMN_INDEX", "Users", "age")
+
+    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][1]
+    ages_path = path
+    _id, _name, path, *_ = JSON.parse(groonga("table_list").output)[1][2]
+    users_path = path
+
     _id, _name, path, *_ = JSON.parse(groonga("column_list Ages").output)[1][2]
+    ages_users_age_path = path
+    _id, _name, path, *_ = JSON.parse(groonga("column_list Users").output)[1][2]
+    users_age_path = path
 
     groonga("load",
             "--table", "Users",
@@ -425,22 +525,50 @@ object corrupt: <#{recover_error_message}>(-55)
     assert_equal([0], n_hits)
 
     remove_groonga_log
-    result = grndb("recover", "--force-lock-clear", "--log-level", "info")
+    log_level = "dump"
+    result = grndb("recover",
+                   "--force-lock-clear",
+                   "--log-level", log_level)
     assert_equal([
                    "",
                    "",
-                   expected_groonga_log("info", <<-MESSAGES),
+                   expected_groonga_log(log_level, <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
-#{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000100>" : ""}
-#{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000101>" : ""}
-#{windows? ? "|i| [io][open] open existing file: <#{@database_path}.0000102>" : ""}
-#{windows? ? "|i| [io][open] open existing file: <#{path}>" : ""}
-#{windows? ? "|i| [io][open] open existing file: <#{path}.c>" : ""}
-|i| [io][remove] removed path: <#{path}>
-|i| [io][remove] removed path: <#{path}.c>
-#{windows? ? "|i| [io][open] create new file: <#{path}>" : ""}
-#{windows? ? "|i| [io][open] create new file: <#{path}.c>" : ""}
-|i| [ii][builder][fin] removed path: <#{path}XXXXXX>
+#{open_file_log_line(ages_path, log_level)}
+#{close_file_log_line(ages_path, log_level)}
+#{open_file_log_line(ages_path, log_level)}
+#{open_file_log_line(ages_users_age_path, log_level)}
+#{open_file_log_line("#{ages_users_age_path}.c", log_level)}
+#{close_file_log_line(ages_users_age_path, log_level)}
+#{close_file_log_line("#{ages_users_age_path}.c", log_level)}
+#{close_file_log_line(ages_path, log_level)}
+#{open_file_log_line(users_path, log_level)}
+#{close_file_log_line(users_path, log_level)}
+#{open_file_log_line(users_age_path, log_level)}
+#{close_file_log_line(users_age_path, log_level)}
+#{open_file_log_line(users_path, log_level)}
+#{close_file_log_line(users_path, log_level)}
+#{open_file_log_line(users_age_path, log_level)}
+#{close_file_log_line(users_age_path, log_level)}
+#{open_file_log_line(ages_path, log_level)}
+#{close_file_log_line(ages_path, log_level)}
+#{open_file_log_line(ages_path, log_level)}
+#{open_file_log_line(ages_users_age_path, log_level)}
+#{open_file_log_line("#{ages_users_age_path}.c", log_level)}
+#{close_file_log_line(ages_users_age_path, log_level)}
+#{close_file_log_line("#{ages_users_age_path}.c", log_level)}
+|i| [io][remove] removed path: <#{ages_users_age_path}>
+|i| [io][remove] removed path: <#{ages_users_age_path}.c>
+#{create_file_log_line(ages_users_age_path, log_level)}
+#{create_file_log_line("#{ages_users_age_path}.c", log_level)}
+#{open_file_log_line(users_age_path, log_level)}
+#{open_file_log_line(users_path, log_level)}
+|i| [ii][builder][fin] removed path: <#{ages_users_age_path}XXXXXX>
+#{close_file_log_line(users_path, log_level)}
+#{close_file_log_line(users_age_path, log_level)}
+#{close_file_log_line(ages_users_age_path, log_level)}
+#{close_file_log_line("#{ages_users_age_path}.c", log_level)}
+#{close_file_log_line(ages_path, log_level)}
 |i| Recovered database: <#{@database_path}>
                    MESSAGES
                  ],
