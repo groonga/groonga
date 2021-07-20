@@ -852,6 +852,8 @@ select_index_fix_column_prefix(grn_ctx *ctx,
   }
   {
     uint32_t sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
+    float weight = GRN_FLOAT32_VALUE_AT(&(si->weights), 0);
+    weight *= table_selector->weight_factor * si->weight_factor;
 
     grn_index_cursor_set_section_id(ctx, index_cursor, sid);
     select_index_report(ctx, "[prefix]", index);
@@ -859,7 +861,7 @@ select_index_fix_column_prefix(grn_ctx *ctx,
                                     (grn_hash *)result_set,
                                     index_cursor,
                                     1,
-                                    1,
+                                    weight,
                                     logical_op);
   }
 exit :
