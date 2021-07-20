@@ -261,20 +261,24 @@ grn_ii_cursor_set_min_enable_get(void)
 static void
 grn_ii_get_term(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_obj *term)
 {
-   char key[GRN_TABLE_MAX_KEY_SIZE];
-   int key_size;
-   key_size = grn_table_get_key(ctx, ii->lexicon, tid,
-                                key, GRN_TABLE_MAX_KEY_SIZE);
-   if (key_size != 0) {
-     grn_obj key_buf;
-     GRN_OBJ_INIT(&key_buf,
-                  GRN_BULK,
-                  GRN_OBJ_DO_SHALLOW_COPY,
-                  ii->lexicon->header.domain);
-     GRN_TEXT_SET(ctx, &key_buf, key, key_size);
-     grn_inspect(ctx, term, &key_buf);
-     GRN_OBJ_FIN(ctx, &key_buf);
-   }
+  if (tid == GRN_ID_NIL) {
+    return;
+  }
+
+  char key[GRN_TABLE_MAX_KEY_SIZE];
+  int key_size;
+  key_size = grn_table_get_key(ctx, ii->lexicon, tid,
+                               key, GRN_TABLE_MAX_KEY_SIZE);
+  if (key_size != 0) {
+    grn_obj key_buf;
+    GRN_OBJ_INIT(&key_buf,
+                 GRN_BULK,
+                 GRN_OBJ_DO_SHALLOW_COPY,
+                 ii->lexicon->header.domain);
+    GRN_TEXT_SET(ctx, &key_buf, key, key_size);
+    grn_inspect(ctx, term, &key_buf);
+    GRN_OBJ_FIN(ctx, &key_buf);
+  }
 }
 
 /* segment */
@@ -2424,13 +2428,11 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
       grn_obj term;
       GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
-      if (id != GRN_ID_NIL) {
-        grn_ii_get_term(ctx, ii, id, &term);
-      }
+      grn_ii_get_term(ctx, ii, id, &term);
       if (df == 0) {
         GRN_LOG(ctx, GRN_LOG_WARNING,
-                "[ii][p-decv] encoded data frequency is unexpectedly 0: "
-                "<%.*s>: <%.*s>(%u): data(%u/%u)",
+                "[ii][p-decv][%.*s][%*.s][%u] "
+                "encoded data frequency is unexpected: <0>: data(%u/%u)",
                 name_size, name,
                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                 id,
@@ -2438,8 +2440,8 @@ grn_p_decv(grn_ctx *ctx, grn_ii *ii, grn_id id,
                 data_size);
       } else {
         GRN_LOG(ctx, GRN_LOG_DEBUG,
-                "[ii][p-decv] failed to decode: "
-                "<%.*s>: <%.*s>(%u): <%u>: data(%u/%u)",
+                "[ii][p-decv][%.*s][%*.s][%u] "
+                "failed to decode: <%u>: data(%u/%u)",
                 name_size, name,
                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                 id,
@@ -6896,6 +6898,8 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
         }
       }
       if (skip_chunk > c->curr_chunk) {
+        grn_id old_rid = c->pc.rid;
+        grn_id old_prev_chunk_rid = c->prev_chunk_rid;
         uint32_t old_chunk = c->curr_chunk;
         grn_bool old_chunk_used = (c->stat & CHUNK_USED);
         c->pc.rid = rid;
@@ -6904,14 +6908,31 @@ grn_ii_cursor_set_min(grn_ctx *ctx, grn_ii_cursor *c, grn_id min)
         c->curr_chunk = skip_chunk;
         c->crp = c->cdp + c->cdf;
         c->stat |= CHUNK_USED;
-        GRN_LOG(ctx, GRN_LOG_DEBUG,
-                "[ii][cursor][min] skip: %p: min(%u->%u): chunk(%u->%u): "
-                "chunk-used(%s->%s)",
-                c,
-                old_min, min,
-                old_chunk, c->curr_chunk,
-                old_chunk_used ? "true" : "false",
-                (c->stat & CHUNK_USED) ? "true" : "false");
+        if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+          GRN_DEFINE_NAME(c->ii);
+          grn_obj term;
+          GRN_TEXT_INIT(&term, 0);
+          grn_ii_get_term(ctx, c->ii, c->id, &term);
+          GRN_LOG(ctx, GRN_LOG_DEBUG,
+                  "[ii][cursor][min][%.*s][%.*s][%u] skip: "
+                  "<%p>: "
+                  "rid(%u->%u): "
+                  "prev-chunk-rid(%u->%u): "
+                  "min(%u->%u): "
+                  "chunk(%u->%u): "
+                  "chunk-used(%s->%s)",
+                  name_size, name,
+                  (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+                  c->id,
+                  c,
+                  old_rid, rid,
+                  old_prev_chunk_rid, c->prev_chunk_rid,
+                  old_min, min,
+                  old_chunk, c->curr_chunk,
+                  old_chunk_used ? "true" : "false",
+                  (c->stat & CHUNK_USED) ? "true" : "false");
+          GRN_OBJ_FIN(ctx, &term);
+        }
       }
     }
   }
@@ -6986,29 +7007,38 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                                c->rdv, c->ii->n_elements);
                   if (decoded_size == 0) {
                     GRN_DEFINE_NAME(c->ii);
+                    grn_obj term;
+                    GRN_TEXT_INIT(&term, 0);
+                    grn_ii_get_term(ctx, c->ii, c->id, &term);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
-                            "[ii][cursor][next][chunk][last] "
+                            "[ii][cursor][next][chunk][last][%.*s][%*.s][%u] "
                             "failed to decode the last chunk. "
                             "Another thread might change "
                             "the chunk while decoding: "
-                            "<%.*s>: <%u>: <%p>: <%d>: <%d>",
+                            "<%p>: <%d>: <%d>",
                             name_size, name,
+                            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                             c->id,
                             c,
                             c->curr_chunk,
                             c->cinfo ? c->cinfo[c->curr_chunk].segno : -1);
+                    GRN_OBJ_FIN(ctx, &term);
                     c->pc.rid = GRN_ID_NIL;
                     break;
                   }
                   if (buffer_is_reused(ctx, c->ii, c)) {
                     GRN_DEFINE_NAME(c->ii);
+                    grn_obj term;
+                    GRN_TEXT_INIT(&term, 0);
+                    grn_ii_get_term(ctx, c->ii, c->id, &term);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
-                            "[ii][cursor][next][chunk][last] "
-                            "buffer is reused by another thread: "
-                            "<%.*s>: <%u>: <%p>",
+                            "[ii][cursor][next][chunk][last][%.*s][%*.s][%u] "
+                            "buffer is reused by another thread: <%p>",
                             name_size, name,
+                            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                             c->id,
                             c);
+                    GRN_OBJ_FIN(ctx, &term);
                     c->pc.rid = GRN_ID_NIL;
                     break;
                   }
@@ -7016,14 +7046,19 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                                       c->buf->header.chunk,
                                       c->buf->header.chunk_size)) {
                     GRN_DEFINE_NAME(c->ii);
+                    grn_obj term;
+                    GRN_TEXT_INIT(&term, 0);
+                    grn_ii_get_term(ctx, c->ii, c->id, &term);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
-                            "[ii][cursor][next][chunk][last] "
+                            "[ii][cursor][next][chunk][last][%.*s][%*.s][%u] "
                             "chunk is reused by another thread: "
-                            "<%.*s>: <%u>: <%p>: <%d>",
+                            "<%p>: <%d>",
                             name_size, name,
+                            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                             c->id,
                             c,
                             c->buf->header.chunk);
+                    GRN_OBJ_FIN(ctx, &term);
                     c->pc.rid = GRN_ID_NIL;
                     break;
                   }
@@ -7045,43 +7080,57 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                   grn_io_win_unmap(ctx, &iw);
                   if (decoded_size == 0) {
                     GRN_DEFINE_NAME(c->ii);
+                    grn_obj term;
+                    GRN_TEXT_INIT(&term, 0);
+                    grn_ii_get_term(ctx, c->ii, c->id, &term);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
-                            "[ii][cursor][next][chunk] "
+                            "[ii][cursor][next][chunk][%.*s][%.*s][%u]  "
                             "failed to decode the next chunk. "
                             "Another thread might change "
                             "the chunk while decoding: "
-                            "<%.*s>: <%u>: <%p>: <%d>: <%d>",
+                            "<%p>: <%d>: <%d>",
                             name_size, name,
+                            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                             c->id,
                             c,
                             c->curr_chunk,
                             c->cinfo ? c->cinfo[c->curr_chunk].segno : -1);
+                    GRN_OBJ_FIN(ctx, &term);
                     c->pc.rid = GRN_ID_NIL;
                     break;
                   }
                   if (buffer_is_reused(ctx, c->ii, c)) {
                     GRN_DEFINE_NAME(c->ii);
+                    grn_obj term;
+                    GRN_TEXT_INIT(&term, 0);
+                    grn_ii_get_term(ctx, c->ii, c->id, &term);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
-                            "[ii][cursor][next][chunk] "
-                            "buffer is reused by another thread: "
-                            "<%.*s>: <%u>: <%p>",
+                            "[ii][cursor][next][chunk][%.*s][%*.s][%u] "
+                            "buffer is reused by another thread: <%p>",
                             name_size, name,
+                            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                             c->id,
                             c);
+                    GRN_OBJ_FIN(ctx, &term);
                     c->pc.rid = GRN_ID_NIL;
                     break;
                   }
                   if (chunk_is_reused(ctx, c->ii, c,
                                       c->cinfo[c->curr_chunk].segno, size)) {
                     GRN_DEFINE_NAME(c->ii);
+                    grn_obj term;
+                    GRN_TEXT_INIT(&term, 0);
+                    grn_ii_get_term(ctx, c->ii, c->id, &term);
                     GRN_LOG(ctx, GRN_LOG_WARNING,
-                            "[ii][cursor][next][chunk] "
+                            "[ii][cursor][next][chunk][%*.s][%*.s][%u] "
                             "chunk is reused by another thread: "
-                            "<%.*s>: <%u>: <%p>: <%d>",
+                            "<%p>: <%d>",
                             name_size, name,
+                            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                             c->id,
                             c,
                             c->cinfo[c->curr_chunk].segno);
+                    GRN_OBJ_FIN(ctx, &term);
                     c->pc.rid = GRN_ID_NIL;
                     break;
                   }
@@ -7125,15 +7174,20 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
             buffer_rec *br = BUFFER_REC_AT(c->buf, c->nextb);
             if (buffer_is_reused(ctx, c->ii, c)) {
               GRN_DEFINE_NAME(c->ii);
+              grn_obj term;
+              GRN_TEXT_INIT(&term, 0);
+              grn_ii_get_term(ctx, c->ii, c->id, &term);
               GRN_LOG(ctx, GRN_LOG_WARNING,
-                      "[ii][cursor][next][buffer] "
+                      "[ii][cursor][next][buffer][%*.s][%*.s][%u] "
                       "buffer is reused by another thread: "
-                      "<%.*s>: <%d>: <%p>: <%d>: <%d>",
+                      "<%p>: <%d>: <%d>",
                       name_size, name,
+                      (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                       c->id,
                       c,
                       c->buffer_pseg,
                       *c->ppseg);
+              GRN_OBJ_FIN(ctx, &term);
               c->pb.rid = GRN_ID_NIL;
               break;
             }
@@ -7146,14 +7200,20 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
             }
             if (lrid > c->pb.rid || (lrid == c->pb.rid && lsid >= c->pb.sid)) {
               GRN_DEFINE_NAME(c->ii);
+              grn_obj term;
+              GRN_TEXT_INIT(&term, 0);
+              grn_ii_get_term(ctx, c->ii, c->id, &term);
               ERR(GRN_FILE_CORRUPT,
-                  "[ii][broken][cursor][next][buffer] "
+                  "[ii][broken][cursor][next][buffer][%*.s][%*.s][%u] "
                   "posting in list in buffer isn't sorted: "
-                  "<%.*s>: (%d:%d) -> (%d:%d) (%d->%d)",
+                  "(%d:%d) -> (%d:%d) (%d->%d)",
                   name_size, name,
+                  (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+                  c->id,
                   lrid, lsid,
                   c->pb.rid, c->pb.sid,
                   c->buffer_pseg, *c->ppseg);
+              GRN_OBJ_FIN(ctx, &term);
               c->pb.rid = GRN_ID_NIL;
               break;
             }
@@ -7292,11 +7352,19 @@ grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c)
           }
         } else if (c->post == (grn_posting *)(&c->pb)) {
           if (buffer_is_reused(ctx, c->ii, c)) {
+            GRN_DEFINE_NAME(c->ii);
+            grn_obj term;
+            GRN_TEXT_INIT(&term, 0);
+            grn_ii_get_term(ctx, c->ii, c->id, &term);
             GRN_LOG(ctx, GRN_LOG_WARNING,
-                    "[ii][cursor][next][pos][buffer] "
+                    "[ii][cursor][next][pos][buffer][%.*s][%.*s][%u] "
                     "buffer(%d,%d) is reused by another thread: %p",
+                    name_size, name,
+                    (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+                    c->id,
                     c->buffer_pseg, *c->ppseg,
                     c);
+            GRN_OBJ_FIN(ctx, &term);
             return NULL;
           }
           if (c->pb.rest) {
@@ -7515,15 +7583,17 @@ cursor_heap_push(grn_ctx *ctx, cursor_heap *h, grn_ii *ii, grn_id tid, uint32_t 
     }
     if (!grn_ii_cursor_next_pos(ctx, c)) {
       if (grn_logger_pass(ctx, GRN_LOG_ERROR)) {
+        GRN_DEFINE_NAME(c->ii);
         grn_obj term;
         GRN_TEXT_INIT(&term, 0);
         grn_ii_get_term(ctx, c->ii, c->id, &term);
         GRN_LOG(ctx, GRN_LOG_ERROR,
-                "[ii][cursor][heap][push] invalid cursor: "
-                "%p: <%.*s>(%u)",
-                c,
+                "[ii][cursor][heap][push][%*.s][%*.s][%u] "
+                "invalid cursor: <%p>",
+                name_size, name,
                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-                c->id);
+                c->id,
+                c);
         GRN_OBJ_FIN(ctx, &term);
       }
       grn_ii_cursor_close(ctx, c);
@@ -7601,15 +7671,16 @@ cursor_heap_pop(grn_ctx *ctx, cursor_heap *h, grn_id min)
       h->bins[0] = h->bins[--h->n_entries];
     } else if (!grn_ii_cursor_next_pos(ctx, c)) {
       if (grn_logger_pass(ctx, GRN_LOG_ERROR)) {
+        GRN_DEFINE_NAME(c->ii);
         grn_obj term;
         GRN_TEXT_INIT(&term, 0);
         grn_ii_get_term(ctx, c->ii, c->id, &term);
         GRN_LOG(ctx, GRN_LOG_ERROR,
-                "[ii][cursor][heap][pop] invalid cursor: "
-                "%p: <%.*s>(%u)",
-                c,
+                "[ii][cursor][heap][pop][%.*s][%.*s][%u] invalid cursor: <%p>",
+                name_size, name,
                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-                c->id);
+                c->id,
+                c);
         GRN_OBJ_FIN(ctx, &term);
       }
       grn_ii_cursor_close(ctx, c);
@@ -7630,15 +7701,17 @@ cursor_heap_pop_pos(grn_ctx *ctx, cursor_heap *h)
         h->bins[0] = h->bins[--h->n_entries];
       } else if (!grn_ii_cursor_next_pos(ctx, c)) {
         if (grn_logger_pass(ctx, GRN_LOG_ERROR)) {
+          GRN_DEFINE_NAME(c->ii);
           grn_obj term;
           GRN_TEXT_INIT(&term, 0);
           grn_ii_get_term(ctx, c->ii, c->id, &term);
           GRN_LOG(ctx, GRN_LOG_ERROR,
-                  "[ii][cursor][heap][pop][position] invalid cursor: "
-                  "%p: <%.*s>(%u)",
-                  c,
+                  "[ii][cursor][heap][pop][position][%.*s][%.*s][%u] "
+                  "invalid cursor: <%p>",
+                  name_size, name,
                   (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-                  c->id);
+                  c->id,
+                  c);
           GRN_OBJ_FIN(ctx, &term);
         }
         grn_ii_cursor_close(ctx, c);
@@ -8071,7 +8144,7 @@ grn_uvector2updspecs_data(grn_ctx *ctx, grn_ii *ii, grn_id rid,
           grn_inspect(ctx, &inspected_element, &element_buffer);
           GRN_LOG(ctx,
                   GRN_LOG_WARNING,
-                  "[ii][updspec][uvector][data] <%*.s>: "
+                  "[ii][updspec][uvector][data][%*.s] "
                   "failed to cast to <%.*s>: <%.*s>",
                   name_size, name,
                   domain_name_size, domain_name,
