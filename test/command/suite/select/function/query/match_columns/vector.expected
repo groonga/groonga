@@ -1,0 +1,24 @@
+table_create Users TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Users name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users memo COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Users tag COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC130
+[[0,0.0,0.0],true]
+column_create Terms name COLUMN_INDEX|WITH_POSITION Users name
+[[0,0.0,0.0],true]
+column_create Terms memo COLUMN_INDEX|WITH_POSITION Users memo
+[[0,0.0,0.0],true]
+column_create Terms tag COLUMN_INDEX|WITH_POSITION Users tag
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"name": "Alice", "memo": "Groonga user", "tag": "Groonga"},
+{"name": "Bob",   "memo": "Rroonga user", "tag": "Rroonga"}
+]
+[[0,0.0,0.0],2]
+select Users   --output_columns _score,name   --filter 'query(["name * 100 || memo * 10", "", "tag * 1"],                   "Alice OR Groonga")'
+[[0,0.0,0.0],[[[1],[["_score","Int32"],["name","ShortText"]],[111,"Alice"]]]]

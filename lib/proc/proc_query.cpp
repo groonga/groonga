@@ -95,7 +95,7 @@ namespace {
       op_(op),
       selector_data_(selector_data),
       tag_(tag),
-      match_columns_string_(nullptr),
+      match_columns_raw_(nullptr),
       query_expander_name_(nullptr),
       query_options_(nullptr),
       default_mode_(GRN_OP_MATCH),
@@ -188,13 +188,14 @@ namespace {
 
     bool
     parse_match_columns_arg() {
-      match_columns_string_ = args_[0];
-      if (!grn_obj_is_text_family_bulk(ctx_, match_columns_string_)) {
+      match_columns_raw_ = args_[0];
+      if (!grn_obj_is_text_family_bulk(ctx_, match_columns_raw_) &&
+          !grn_obj_is_vector(ctx_, match_columns_raw_)) {
         grn::TextBulk inspected(ctx_);
-        grn_inspect(ctx_, *inspected, match_columns_string_);
+        grn_inspect(ctx_, *inspected, match_columns_raw_);
         GRN_PLUGIN_ERROR(ctx_,
                          GRN_INVALID_ARGUMENT,
-                         "%s 1st argument must be string: <%.*s>",
+                         "%s 1st argument must be string or array: <%.*s>",
                          tag_,
                          (int)GRN_TEXT_LEN(*inspected),
                          GRN_TEXT_VALUE(*inspected));
@@ -276,28 +277,83 @@ namespace {
 
     bool
     prepare_match_columns() {
-      if (GRN_TEXT_LEN(match_columns_string_) == 0) {
-        return true;
+      if (grn_obj_is_text_family_bulk(ctx_, match_columns_raw_)) {
+        return prepare_match_columns_bulk();
+      } else {
+        return prepare_match_columns_vector();
       }
+    }
 
-      grn_obj *dummy_variable;
-      GRN_EXPR_CREATE_FOR_QUERY(ctx_,
-                                table_,
-                                match_columns_,
-                                dummy_variable);
-      if (!match_columns_) {
-        return false;
+    bool
+    prepare_match_columns_one(const char *match_columns_string,
+                              size_t match_columns_string_length,
+                              grn_obj **match_columns_inout) {
+      grn_obj *match_columns = *match_columns_inout;
+      if (!match_columns) {
+        grn_obj *dummy_variable;
+        GRN_EXPR_CREATE_FOR_QUERY(ctx_,
+                                  table_,
+                                  match_columns,
+                                  dummy_variable);
+        *match_columns_inout = match_columns;
+        if (!match_columns) {
+          return false;
+        }
       }
 
       grn_expr_parse(ctx_,
-                     match_columns_,
-                     GRN_TEXT_VALUE(match_columns_string_),
-                     GRN_TEXT_LEN(match_columns_string_),
+                     match_columns,
+                     match_columns_string,
+                     match_columns_string_length,
                      NULL,
                      GRN_OP_MATCH,
                      GRN_OP_AND,
                      GRN_EXPR_SYNTAX_SCRIPT);
       return ctx_->rc == GRN_SUCCESS;
+    }
+
+    virtual bool
+    prepare_match_columns_bulk() {
+      if (GRN_TEXT_LEN(match_columns_raw_) == 0) {
+        return true;
+      }
+
+      return prepare_match_columns_one(GRN_TEXT_VALUE(match_columns_raw_),
+                                       GRN_TEXT_LEN(match_columns_raw_),
+                                       &match_columns_);
+    }
+
+    virtual bool
+    prepare_match_columns_vector() {
+      auto n_match_columns = grn_vector_size(ctx_, match_columns_raw_);
+      if (n_match_columns == 0) {
+        return true;
+      }
+
+      uint32_t n_sub_match_columns = 0;
+      for (unsigned int i = 0; i < n_match_columns; ++i) {
+        const char *sub_match_columns_string;
+        auto sub_match_columns_string_length =
+          grn_vector_get_element(ctx_,
+                                 match_columns_raw_,
+                                 i,
+                                 &sub_match_columns_string,
+                                 NULL,
+                                 NULL);
+        if (sub_match_columns_string_length == 0) {
+          continue;
+        }
+        if (!prepare_match_columns_one(sub_match_columns_string,
+                                       sub_match_columns_string_length,
+                                       &match_columns_)) {
+          return false;
+        }
+        n_sub_match_columns++;
+        if (n_sub_match_columns >= 2) {
+          grn_expr_append_op(ctx_, match_columns_, GRN_OP_OR, 2);
+        }
+      }
+      return true;
     }
 
     bool
@@ -324,6 +380,67 @@ namespace {
       return ctx_->rc == GRN_SUCCESS;
     }
 
+    grn_obj *
+    build_condition(grn_ctx *ctx,
+                    grn_obj *match_columns,
+                    const char *query,
+                    size_t query_length) {
+      grn_obj *condition;
+      grn_obj *dummy_variable;
+      GRN_EXPR_CREATE_FOR_QUERY(ctx,
+                                table_,
+                                condition,
+                                dummy_variable);
+      if (!condition) {
+        return nullptr;
+      }
+      grn_expr_parse(ctx,
+                     condition,
+                     query,
+                     query_length,
+                     match_columns,
+                     default_mode_,
+                     default_operator_,
+                     flags_);
+      if (ctx->rc != GRN_SUCCESS) {
+        grn_obj_close(ctx, condition);
+        return nullptr;
+      }
+      if (query_options_) {
+        grn_expr_set_query_options(ctx_, condition, query_options_);
+      }
+      return condition;
+    }
+
+    bool
+    select_one(grn_ctx *ctx,
+               grn_obj *match_columns,
+               const char *query,
+               size_t query_length,
+               grn_operator op,
+               grn_id min_id,
+               grn_obj **result_set) {
+      auto condition = build_condition(ctx,
+                                       match_columns,
+                                       query,
+                                       query_length);
+      if (!condition) {
+        return false;
+      }
+      grn::UniqueObj unique_condition(ctx, condition);
+      grn_table_selector table_selector;
+      init_table_selector(ctx,
+                          &table_selector,
+                          condition,
+                          op,
+                          min_id);
+      *result_set = grn_table_selector_select(ctx,
+                                              &table_selector,
+                                              *result_set);
+      grn_table_selector_fin(ctx, &table_selector);
+      return ctx_->rc == GRN_SUCCESS;
+    }
+
     grn_ctx *ctx_;
     grn_obj *table_;
     int n_args_;
@@ -333,7 +450,7 @@ namespace {
     grn_selector_data *selector_data_;
     const char *tag_;
 
-    grn_obj *match_columns_string_;
+    grn_obj *match_columns_raw_;
     grn_obj *query_expander_name_;
     grn_obj *query_options_;
     grn_operator default_mode_;
@@ -362,14 +479,10 @@ namespace {
                         op,
                         selector_data,
                         "[query]"),
-      query_(nullptr),
-      condition_(nullptr) {
+      query_(nullptr) {
     }
 
     ~QueryExecutor() override {
-      if (condition_) {
-        grn_obj_close(ctx_, condition_);
-      }
     }
 
   private:
@@ -418,9 +531,6 @@ namespace {
       if (!prepare_match_columns()) {
         return false;
       }
-      if (!prepare_condition()) {
-        return false;
-      }
       return true;
     }
 
@@ -455,61 +565,26 @@ namespace {
     }
 
     bool
-    prepare_condition() {
+    run() override {
       if (GRN_TEXT_LEN(query_) == 0) {
         return true;
-      }
-
-      grn_obj *dummy_variable;
-      GRN_EXPR_CREATE_FOR_QUERY(ctx_,
-                                table_,
-                                condition_,
-                                dummy_variable);
-      if (!condition_) {
-        return false;
       }
 
       grn::TextBulk expanded_query(ctx_);
       if (!expand_query(query_, expanded_query)) {
         return false;
       }
-      grn_expr_parse(ctx_,
-                     condition_,
-                     GRN_TEXT_VALUE(*expanded_query),
-                     GRN_TEXT_LEN(*expanded_query),
-                     match_columns_,
-                     default_mode_,
-                     default_operator_,
-                     flags_);
-      if (ctx_->rc != GRN_SUCCESS) {
-        return false;
-      }
-      if (query_options_) {
-        grn_expr_set_query_options(ctx_, condition_, query_options_);
-      }
-      return ctx_->rc == GRN_SUCCESS;
-    }
 
-    bool
-    run() override {
-      if (!condition_) {
-        return true;
-      }
-      grn_table_selector table_selector;
-      init_table_selector(ctx_,
-                          &table_selector,
-                          condition_,
-                          op_,
-                          get_min_id());
-      grn_table_selector_select(ctx_,
-                                &table_selector,
-                                res_);
-      grn_table_selector_fin(ctx_, &table_selector);
-      return ctx_->rc == GRN_SUCCESS;
+      return select_one(ctx_,
+                        match_columns_,
+                        GRN_TEXT_VALUE(*expanded_query),
+                        GRN_TEXT_LEN(*expanded_query),
+                        op_,
+                        get_min_id(),
+                        &res_);
     }
 
     grn_obj *query_;
-    grn_obj *condition_;
   };
 
   class QueryParallelOrExecutor : public BaseQueryExecutor {
@@ -542,6 +617,51 @@ namespace {
 
   private:
     bool
+    prepare_match_columns_bulk() override {
+      if (!BaseQueryExecutor::prepare_match_columns_bulk()) {
+        return false;
+      }
+      if (match_columns_) {
+        grn_expr_match_columns_split(ctx_,
+                                     match_columns_,
+                                     &sub_match_columns_);
+      } else {
+        GRN_PTR_PUT(ctx_, &sub_match_columns_, NULL);
+      }
+      return true;
+    }
+
+    bool
+    prepare_match_columns_vector() override {
+      auto n_match_columns = grn_vector_size(ctx_, match_columns_raw_);
+      if (n_match_columns == 0) {
+        return true;
+      }
+
+      for (unsigned int i = 0; i < n_match_columns; ++i) {
+        const char *sub_match_columns_string;
+        auto sub_match_columns_string_length =
+          grn_vector_get_element(ctx_,
+                                 match_columns_raw_,
+                                 i,
+                                 &sub_match_columns_string,
+                                 NULL,
+                                 NULL);
+        if (sub_match_columns_string_length == 0) {
+          continue;
+        }
+        grn_obj *sub_match_columns = nullptr;
+        if (!prepare_match_columns_one(sub_match_columns_string,
+                                       sub_match_columns_string_length,
+                                       &sub_match_columns)) {
+          return false;
+        }
+        GRN_PTR_PUT(ctx_, &sub_match_columns_, sub_match_columns);
+      }
+      return true;
+    }
+
+    bool
     prepare() override {
       if (!validate_args()) {
         return false;
@@ -565,11 +685,6 @@ namespace {
       }
       if (!prepare_match_columns()) {
         return false;
-      }
-      if (match_columns_) {
-        grn_expr_match_columns_split(ctx_, match_columns_, &sub_match_columns_);
-      } else {
-        GRN_PTR_PUT(ctx_, &sub_match_columns_, NULL);
       }
       return true;
     }
@@ -692,14 +807,6 @@ namespace {
       auto select = [&](grn_obj *match_columns, const std::string &query) {
         auto sub_ctx = grn_ctx_pull_child(ctx_);
         grn::ChildCtxReleaser releaser(ctx_, sub_ctx);
-        grn_obj *condition = build_condition(sub_ctx,
-                                             match_columns,
-                                             query.data(),
-                                             query.length());
-        if (!condition) {
-          return ::arrow::Status::OK();
-        }
-        grn::UniqueObj unique_condition(sub_ctx, condition);
         grn_obj *sub_result = nullptr;
         {
           std::lock_guard<std::mutex> lock(mutex);
@@ -719,16 +826,15 @@ namespace {
             clear_result_set(ctx_, sub_result);
           }
         }
-        grn_table_selector table_selector;
-        init_table_selector(sub_ctx,
-                            &table_selector,
-                            condition,
-                            GRN_OP_OR,
-                            min_id);
-        grn_table_selector_select(sub_ctx,
-                                  &table_selector,
-                                  sub_result);
-        grn_table_selector_fin(sub_ctx, &table_selector);
+        if (!select_one(sub_ctx,
+                        match_columns,
+                        query.data(),
+                        query.length(),
+                        GRN_OP_OR,
+                        min_id,
+                        &sub_result)) {
+          return ::arrow::Status::OK();
+        }
         auto merge_future = merge_pool->Submit(merge, sub_result);
         if (!merge_future.ok()) {
           std::lock_guard<std::mutex> lock(mutex);
@@ -810,26 +916,14 @@ namespace {
       for (size_t i = 0; i < n_sub_match_columns; ++i) {
         grn_obj *sub_match_column = GRN_PTR_VALUE_AT(&sub_match_columns_, i);
         for (const auto &expanded_query : expanded_queries_) {
-          grn_obj *condition = build_condition(ctx_,
-                                               sub_match_column,
-                                               expanded_query.data(),
-                                               expanded_query.length());
-          if (!condition) {
-            return false;
-          }
-          grn::UniqueObj unique_condition(ctx_, condition);
-          grn_table_selector table_selector;
-          init_table_selector(ctx_,
-                              &table_selector,
-                              condition,
-                              GRN_OP_OR,
-                              min_id);
-          auto sub_result =
-            grn_table_selector_select(ctx_,
-                                      &table_selector,
-                                      unique_working_sub_result.get());
-          grn_table_selector_fin(ctx_, &table_selector);
-          if (ctx_->rc != GRN_SUCCESS) {
+          auto sub_result = unique_working_sub_result.get();
+          if (!select_one(ctx_,
+                          sub_match_column,
+                          expanded_query.data(),
+                          expanded_query.length(),
+                          GRN_OP_OR,
+                          min_id,
+                          &sub_result)) {
             return false;
           }
           if (!unique_sub_result.get()) {
@@ -860,38 +954,6 @@ namespace {
                           id) {
         grn_hash_cursor_delete(ctx, cursor, nullptr);
       } GRN_HASH_EACH_END(ctx, cursor);
-    }
-
-    grn_obj *
-    build_condition(grn_ctx *ctx,
-                    grn_obj *match_columns,
-                    const char *query,
-                    size_t query_length) {
-      grn_obj *condition;
-      grn_obj *dummy_variable;
-      GRN_EXPR_CREATE_FOR_QUERY(ctx,
-                                table_,
-                                condition,
-                                dummy_variable);
-      if (!condition) {
-        return nullptr;
-      }
-      grn_expr_parse(ctx,
-                     condition,
-                     query,
-                     query_length,
-                     match_columns,
-                     default_mode_,
-                     default_operator_,
-                     flags_);
-      if (ctx->rc != GRN_SUCCESS) {
-        grn_obj_close(ctx, condition);
-        return nullptr;
-      }
-      if (query_options_) {
-        grn_expr_set_query_options(ctx_, condition, query_options_);
-      }
-      return condition;
     }
 
     std::vector<std::string> expanded_queries_;
