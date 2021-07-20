@@ -1,3 +1,6 @@
+# This is too slow with HTTP chunked.
+#@require-interface stdio
+
 table_create Memos TABLE_NO_KEY
 column_create Memos content COLUMN_SCALAR ShortText
 

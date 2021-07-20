@@ -1,3 +1,6 @@
+# This is too slow with HTTP chunked.
+#@require-interface stdio
+
 #$GRN_ENABLE_REFERENCE_COUNT=no
 
 table_create Sources TABLE_NO_KEY
