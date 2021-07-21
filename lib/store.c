@@ -213,6 +213,149 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
   return GRN_SUCCESS;
 }
 
+#define INCRDECR(range, op)\
+  switch (range) {\
+  case GRN_DB_INT8 :\
+    if (s == sizeof(int8_t)) {\
+      int8_t *vp = (int8_t *)p;\
+      *vp op *(int8_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_UINT8 :\
+    if (s == sizeof(uint8_t)) {\
+      uint8_t *vp = (uint8_t *)p;\
+      *vp op *(int8_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_INT16 :\
+    if (s == sizeof(int16_t)) {\
+      int16_t *vp = (int16_t *)p;\
+      *vp op *(int16_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_UINT16 :\
+    if (s == sizeof(uint16_t)) {\
+      uint16_t *vp = (uint16_t *)p;\
+      *vp op *(int16_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_INT32 :\
+    if (s == sizeof(int32_t)) {\
+      int32_t *vp = (int32_t *)p;\
+      *vp op *(int32_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_UINT32 :\
+    if (s == sizeof(uint32_t)) {\
+      uint32_t *vp = (uint32_t *)p;\
+      *vp op *(int32_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_INT64 :\
+  case GRN_DB_TIME :\
+    if (s == sizeof(int64_t)) {\
+      int64_t *vp = (int64_t *)p;\
+      *vp op *(int64_t *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_FLOAT32 :\
+    if (s == sizeof(float)) {\
+      float *vp = (float *)p;\
+      *vp op *(float *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  case GRN_DB_FLOAT :\
+    if (s == sizeof(double)) {\
+      double *vp = (double *)p;\
+      *vp op *(double *)v;\
+      rc = GRN_SUCCESS;\
+    } else {\
+      rc = GRN_INVALID_ARGUMENT;\
+    }\
+    break;\
+  default :\
+    rc = GRN_OPERATION_NOT_SUPPORTED;\
+    break;\
+  }
+
+grn_rc
+grn_ra_set_value(grn_ctx *ctx,
+                 grn_ra *ra,
+                 grn_id id,
+                 grn_obj *value,
+                 int flags)
+{
+  void *p = grn_ra_ref(ctx, ra, id);
+  if (!p) {
+    GRN_DEFINE_NAME(ra);
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[column][fix][set-value][%.*s] failed to refer storage",
+        name_size, name);
+    return ctx->rc;
+  }
+
+  uint32_t element_size = ra->header->element_size;
+  void *v = GRN_BULK_HEAD(value);
+  size_t s = GRN_BULK_VSIZE(value);
+  grn_rc rc = GRN_SUCCESS;
+
+  switch (flags & GRN_OBJ_SET_MASK) {
+  case GRN_OBJ_SET :
+    if (element_size != s) {
+      if (s == 0) {
+        memset(p, 0, element_size);
+      } else {
+        void *buffer = GRN_CALLOC(element_size);
+        if (buffer) {
+          grn_memcpy(buffer, v, s);
+          grn_memcpy(p, buffer, element_size);
+          GRN_FREE(buffer);
+        }
+      }
+    } else {
+      grn_memcpy(p, v, s);
+    }
+    rc = GRN_SUCCESS;
+    break;
+  case GRN_OBJ_INCR :
+    INCRDECR(DB_OBJ(ra)->range, +=);
+    break;
+  case GRN_OBJ_DECR :
+    INCRDECR(DB_OBJ(ra)->range, -=);
+    break;
+  default :
+    rc = GRN_OPERATION_NOT_SUPPORTED;
+    break;
+  }
+  grn_ra_unref(ctx, ra, id);
+
+  return rc;
+}
+
 grn_rc
 grn_ra_warm(grn_ctx *ctx, grn_ra *ra)
 {

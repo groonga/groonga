@@ -6943,95 +6943,6 @@ grn_accessor_set_value(grn_ctx *ctx, grn_accessor *a, grn_id id,
   return rc;
 }
 
-#define INCRDECR(op) \
-  switch (DB_OBJ(obj)->range) {\
-  case GRN_DB_INT8 :\
-    if (s == sizeof(int8_t)) {\
-      int8_t *vp = (int8_t *)p;\
-      *vp op *(int8_t *)v;\
-      rc = GRN_SUCCESS;\
-    } else {\
-      rc = GRN_INVALID_ARGUMENT;\
-    }\
-    break;\
-  case GRN_DB_UINT8 :\
-    if (s == sizeof(uint8_t)) {\
-      uint8_t *vp = (uint8_t *)p;\
-      *vp op *(int8_t *)v;\
-      rc = GRN_SUCCESS;\
-    } else {\
-      rc = GRN_INVALID_ARGUMENT;\
-    }\
-    break;\
-  case GRN_DB_INT16 :\
-    if (s == sizeof(int16_t)) {\
-      int16_t *vp = (int16_t *)p;\
-      *vp op *(int16_t *)v;\
-      rc = GRN_SUCCESS;\
-    } else {\
-      rc = GRN_INVALID_ARGUMENT;\
-    }\
-    break;\
-  case GRN_DB_UINT16 :\
-    if (s == sizeof(uint16_t)) {\
-      uint16_t *vp = (uint16_t *)p;\
-      *vp op *(int16_t *)v;\
-      rc = GRN_SUCCESS;\
-    } else {\
-      rc = GRN_INVALID_ARGUMENT;\
-    }\
-    break;\
-  case GRN_DB_INT32 :\
-    if (s == sizeof(int32_t)) {\
-      int32_t *vp = (int32_t *)p;\
-      *vp op *(int32_t *)v;\
-      rc = GRN_SUCCESS;\
-    } else {\
-      rc = GRN_INVALID_ARGUMENT;\
-    }\
-    break;\
-  case GRN_DB_UINT32 :\
-    if (s == sizeof(uint32_t)) {\
-      uint32_t *vp = (uint32_t *)p;\
-      *vp op *(int32_t *)v;\
-      rc = GRN_SUCCESS;\
-    } else {\
-      rc = GRN_INVALID_ARGUMENT;\
-    }\
-    break;\
-  case GRN_DB_INT64 :\
-  case GRN_DB_TIME :\
-    if (s == sizeof(int64_t)) {\
-      int64_t *vp = (int64_t *)p;\
-      *vp op *(int64_t *)v;\
-      rc = GRN_SUCCESS;\
-    } else {\
-      rc = GRN_INVALID_ARGUMENT;\
-    }\
-    break;\
-  case GRN_DB_FLOAT32 :\
-    if (s == sizeof(float)) {\
-      float *vp = (float *)p;\
-      *vp op *(float *)v;\
-      rc = GRN_SUCCESS;\
-    } else {\
-      rc = GRN_INVALID_ARGUMENT;\
-    }\
-    break;\
-  case GRN_DB_FLOAT :\
-    if (s == sizeof(double)) {\
-      double *vp = (double *)p;\
-      *vp op *(double *)v;\
-      rc = GRN_SUCCESS;\
-    } else {\
-      rc = GRN_INVALID_ARGUMENT;\
-    }\
-    break;\
-  default :\
-    rc = GRN_OPERATION_NOT_SUPPORTED;\
-    break;\
-  }
-
 uint32_t
 grn_obj_size(grn_ctx *ctx, grn_obj *obj)
 {
@@ -7258,78 +7169,58 @@ static grn_rc
 grn_obj_set_value_column_fix_size(grn_ctx *ctx, grn_obj *obj, grn_id id,
                                   grn_obj *value, int flags)
 {
-  grn_rc rc = GRN_INVALID_ARGUMENT;
+  grn_rc rc = GRN_SUCCESS;
   grn_id range = DB_OBJ(obj)->range;
-  void *v = GRN_BULK_HEAD(value);
-  unsigned int s = grn_obj_size(ctx, value);
-  grn_obj buf, *value_ = value;
+  grn_obj buf;
+  grn_obj *value_ = value;
   uint32_t element_size = ((grn_ra *)obj)->header->element_size;
   GRN_OBJ_INIT(&buf, GRN_BULK, 0, range);
   if (range != value->header.domain) {
     rc = grn_obj_cast(ctx, value, &buf, GRN_TRUE);
-    if (rc) {
+    if (rc != GRN_SUCCESS) {
       grn_obj *range_obj;
       range_obj = grn_ctx_at(ctx, range);
       ERR_CAST(obj, range_obj, value);
-    } else {
-      value_ = &buf;
-      v = GRN_BULK_HEAD(&buf);
-      s = GRN_BULK_VSIZE(&buf);
+      grn_obj_unref(ctx, range_obj);
+      goto exit;
     }
-  } else {
-    rc = GRN_SUCCESS;
+    value_ = &buf;
   }
-  if (rc) {
-    /* do nothing because it already has error. */
-  } else if (element_size < s) {
-    ERR(GRN_INVALID_ARGUMENT, "too long value (%d)", s);
-  } else {
-    void *p = grn_ra_ref(ctx, (grn_ra *)obj, id);
-    if (!p) {
-      ERR(GRN_NO_MEMORY_AVAILABLE, "ra get failed");
-      rc = GRN_NO_MEMORY_AVAILABLE;
-      return rc;
-    }
-    switch (flags & GRN_OBJ_SET_MASK) {
-    case GRN_OBJ_SET :
-      if (!call_hook(ctx, obj, id, value_, flags)) {
-        if (ctx->rc) {
-          rc = ctx->rc;
-        }
-        GRN_OBJ_FIN(ctx, &buf);
-        grn_ra_unref(ctx, (grn_ra *)obj, id);
-        return rc;
-      }
-      if (element_size != s) {
-        if (!s) {
-          memset(p, 0, element_size);
-        } else {
-          void *b;
-          if ((b = GRN_CALLOC(element_size))) {
-            grn_memcpy(b, v, s);
-            grn_memcpy(p, b, element_size);
-            GRN_FREE(b);
-          }
-        }
-      } else {
-        grn_memcpy(p, v, s);
-      }
-      rc = GRN_SUCCESS;
-      break;
-    case GRN_OBJ_INCR :
-      /* todo : support hook */
-      INCRDECR(+=);
-      break;
-    case GRN_OBJ_DECR :
-      /* todo : support hook */
-      INCRDECR(-=);
-      break;
-    default :
-      rc = GRN_OPERATION_NOT_SUPPORTED;
-      break;
-    }
-    grn_ra_unref(ctx, (grn_ra *)obj, id);
+  uint32_t value_size = GRN_BULK_VSIZE(value_);
+  if (value_size > element_size) {
+    GRN_DEFINE_NAME(obj);
+    ERR(GRN_INVALID_ARGUMENT,
+        "[column][fix][set-value][%.*s] too long value: <%u>: max:<%u>",
+        name_size, name,
+        value_size,
+        element_size);
+    goto exit;
   }
+  switch (flags & GRN_OBJ_SET_MASK) {
+  case GRN_OBJ_SET :
+  case GRN_OBJ_INCR :
+  case GRN_OBJ_DECR :
+    if (!call_hook(ctx, obj, id, value_, flags)) {
+      if (ctx->rc != GRN_SUCCESS) {
+        rc = ctx->rc;
+        goto exit;
+      }
+    }
+    rc = grn_ra_set_value(ctx, (grn_ra *)obj, id, value_, flags);
+    break;
+  default :
+    rc = GRN_OPERATION_NOT_SUPPORTED;
+    {
+      GRN_DEFINE_NAME(obj);
+      ERR(rc,
+          "[column][fix][set-value][%.*s] unsupported set mode: <%s>(%u)",
+          name_size, name,
+          grn_obj_set_flag_to_string(flags),
+          flags & GRN_OBJ_SET_MASK);
+    }
+    break;
+  }
+exit :
   GRN_OBJ_FIN(ctx, &buf);
   return rc;
 }
