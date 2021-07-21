@@ -109,6 +109,15 @@ GRN_API uint32_t
 grn_index_cursor_get_section_id(grn_ctx *ctx,
                                 grn_obj *index_cursor);
 GRN_API grn_rc
+grn_index_cursor_set_scale(grn_ctx *ctx,
+                           grn_obj *index_cursor,
+                           float scale);
+GRN_API grn_rc
+grn_index_cursor_set_scales(grn_ctx *ctx,
+                            grn_obj *index_cursor,
+                            float *scales,
+                            size_t n_scales);
+GRN_API grn_rc
 grn_index_cursor_set_start_position(grn_ctx *ctx,
                                     grn_obj *index_cursor,
                                     uint32_t position);

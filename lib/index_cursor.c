@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2010-2015  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,9 @@ typedef struct {
   grn_id rid_max;
   int flags;
   uint32_t section_id;
+  float scale;
+  float *scales;
+  size_t n_scales;
   struct {
     bool specified;
     int start;
@@ -62,6 +65,9 @@ grn_index_cursor_open(grn_ctx *ctx,
   ic->rid_max = rid_max;
   ic->flags = flags;
   ic->section_id = 0;
+  ic->scale = 1.0;
+  ic->scales = NULL;
+  ic->n_scales = 0;
   ic->position.specified = false;
   ic->position.start = 0;
   GRN_DB_OBJ_SET_TYPE(ic, GRN_CURSOR_COLUMN_INDEX);
@@ -144,6 +150,34 @@ grn_index_cursor_get_section_id(grn_ctx *ctx,
   } else {
     GRN_API_RETURN(0);
   }
+}
+
+grn_rc
+grn_index_cursor_set_scale(grn_ctx *ctx,
+                           grn_obj *index_cursor,
+                           float scale)
+{
+  GRN_API_ENTER;
+  grn_index_cursor *ic = (grn_index_cursor *)index_cursor;
+  if (ic) {
+    ic->scale = scale;
+  }
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_index_cursor_set_scales(grn_ctx *ctx,
+                            grn_obj *index_cursor,
+                            float *scales,
+                            size_t n_scales)
+{
+  GRN_API_ENTER;
+  grn_index_cursor *ic = (grn_index_cursor *)index_cursor;
+  if (ic) {
+    ic->scales = scales;
+    ic->n_scales = n_scales;
+  }
+  GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc
@@ -264,6 +298,13 @@ grn_index_cursor_next_internal(grn_ctx *ctx,
                                  ic->rid_max,
                                  ii->n_elements,
                                  ic->flags);
+    if (ic->iic) {
+      if (ic->n_scales > 0) {
+        grn_ii_cursor_set_scales(ctx, ic->iic, ic->scales, ic->n_scales);
+      } else {
+        grn_ii_cursor_set_scale(ctx, ic->iic, ic->scale);
+      }
+    }
     ic->next_called = false;
   }
   if (term_id) {
