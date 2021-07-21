@@ -6700,6 +6700,10 @@ struct _grn_ii_cursor {
   int weight;
 
   uint32_t prev_chunk_rid;
+
+  float scale;
+  float *scales;
+  size_t n_scales;
 };
 
 static grn_bool
@@ -6776,6 +6780,9 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
     c->nelements = nelements;
     c->flags = flags;
     c->weight = 0;
+    c->scale = 1.0;
+    c->scales = NULL;
+    c->n_scales = 0;
     if (POS_IS_EMBED(pos)) {
       c->stat = 0;
       if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
@@ -6789,6 +6796,7 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
       c->pb.weight = 0;
       c->pb.weight_float = c->pb.weight;
       c->pb.pos = a[1];
+      c->pb.scale = c->scale;
     } else {
       uint32_t chunk;
       buffer_term *bt;
@@ -6862,6 +6870,51 @@ grn_ii *
 grn_ii_cursor_get_ii(grn_ctx *ctx, grn_ii_cursor *cursor)
 {
   return cursor->ii;
+}
+
+static grn_inline float
+grn_ii_cursor_resolve_scale(grn_ctx *ctx,
+                            grn_ii_cursor *cursor,
+                            uint32_t section_id)
+{
+  if (cursor->n_scales > 0) {
+    if (section_id <= cursor->n_scales) {
+      return cursor->scales[section_id - 1];
+    } else {
+      return 0.0;
+    }
+  } else {
+    return cursor->scale;
+  }
+}
+
+grn_rc
+grn_ii_cursor_set_scale(grn_ctx *ctx,
+                        grn_ii_cursor *cursor,
+                        float scale)
+{
+  cursor->scale = scale;
+  cursor->scales = NULL;
+  cursor->n_scales = 0;
+  if (!cursor->buf) {
+    cursor->pb.scale = grn_ii_cursor_resolve_scale(ctx, cursor, cursor->pb.sid);
+  }
+  return ctx->rc;
+}
+
+grn_rc
+grn_ii_cursor_set_scales(grn_ctx *ctx,
+                         grn_ii_cursor *cursor,
+                         float *scales,
+                         size_t n_scales)
+{
+  cursor->scale = 0.0;
+  cursor->scales = scales;
+  cursor->n_scales = n_scales;
+  if (!cursor->buf) {
+    cursor->pb.scale = grn_ii_cursor_resolve_scale(ctx, cursor, cursor->pb.sid);
+  }
+  return ctx->rc;
 }
 
 static grn_inline void
@@ -6969,6 +7022,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
             }
             c->pc.weight_float = c->pc.weight;
             c->pc.pos = 0;
+            c->pc.scale = grn_ii_cursor_resolve_scale(ctx, c, c->pc.sid);
             /*
             {
               static int count = 0;
@@ -6993,7 +7047,8 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
               GRN_OBJ_FIN(ctx, &buf);
             }
             */
-            if (c->pc.rid < c->min) {
+            if (c->pc.rid < c->min ||
+                c->pc.scale <= 0.0) {
               continue;
             }
           } else {
@@ -7217,7 +7272,9 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
               c->pb.rid = GRN_ID_NIL;
               break;
             }
-            if (c->pb.rid < c->min) {
+            c->pb.scale = grn_ii_cursor_resolve_scale(ctx, c, c->pb.sid);
+            if (c->pb.rid < c->min ||
+                c->pb.scale <= 0.0) {
               c->pb.rid = 0;
               if (br->jump > 0 && !BUFFER_REC_DELETED(br)) {
                 buffer_rec *jump_br = BUFFER_REC_AT(c->buf, br->jump);
@@ -7319,6 +7376,10 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
       c->post = (grn_posting *)(&c->pb);
       c->stat |= SOLE_DOC_USED;
       if (c->post->rid < c->min) {
+        c->post = NULL;
+        return NULL;
+      }
+      if (c->pb.scale <= 0.0) {
         c->post = NULL;
         return NULL;
       }

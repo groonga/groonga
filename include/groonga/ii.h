@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2017 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2017  Brazil
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -68,6 +68,15 @@ typedef struct _grn_ii_cursor grn_ii_cursor;
 GRN_API grn_ii_cursor *grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
                                           grn_id min, grn_id max, int nelements, int flags);
 GRN_API grn_ii *grn_ii_cursor_get_ii(grn_ctx *ctx, grn_ii_cursor *cursor);
+GRN_API grn_rc
+grn_ii_cursor_set_scales(grn_ctx *ctx,
+                         grn_ii_cursor *cursor,
+                         float *scales,
+                         size_t n_scales);
+GRN_API grn_rc
+grn_ii_cursor_set_scale(grn_ctx *ctx,
+                        grn_ii_cursor *cursor,
+                        float scale);
 GRN_API grn_posting *grn_ii_cursor_next(grn_ctx *ctx, grn_ii_cursor *c);
 GRN_API grn_posting *grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c);
 GRN_API grn_rc grn_ii_cursor_close(grn_ctx *ctx, grn_ii_cursor *c);

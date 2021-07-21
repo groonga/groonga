@@ -2812,17 +2812,18 @@ grn_hash_add_record(grn_ctx *ctx,
       posting->sid,
       posting->pos,
     };
+    float weight = posting->weight_float * posting->scale;
     grn_table_add_subrec(ctx,
                          (grn_obj *)hash,
                          recinfo,
-                         posting->weight_float,
+                         weight,
                          &posinfo,
                          1);
     grn_selector_data_current_add_score(ctx,
                                         (grn_obj *)hash,
                                         id,
                                         posinfo.rid,
-                                        posting->weight_float);
+                                        weight);
   }
   return ctx->rc;
 }
@@ -2852,6 +2853,7 @@ grn_hash_add_table_cursor(grn_ctx *ctx,
 
   grn_posting_internal posting = {0};
   posting.weight_float = score;
+  posting.scale = 1.0;
   while ((posting.rid = grn_table_cursor_next(ctx, cursor))) {
     rc = grn_hash_add_record(ctx, hash, &posting, op, tag);
     if (rc != GRN_SUCCESS) {
@@ -2977,6 +2979,7 @@ grn_hash_add_ii_select_cursor(grn_ctx *ctx,
     posting_new.sid = posting->sid;
     posting_new.pos = posting->pos;
     posting_new.weight_float = posting->score;
+    posting_new.scale = 1.0;
     rc = grn_hash_add_record(ctx, hash, &posting_new, op, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
