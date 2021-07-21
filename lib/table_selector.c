@@ -863,18 +863,24 @@ select_index_fix_column_prefix(grn_ctx *ctx,
     GRN_OBJ_FIN(ctx, &query_inspected);
     goto exit;
   }
-  {
-    uint32_t sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
-
-    grn_index_cursor_set_section_id(ctx, index_cursor, sid);
-    select_index_report(ctx, "[prefix]", index);
-    grn_result_set_add_index_cursor(ctx,
-                                    (grn_hash *)result_set,
-                                    index_cursor,
-                                    1,
-                                    1,
-                                    logical_op);
+  grn_search_optarg *options = &(table_selector->data.search_options);
+  if (options->weight_vector_float) {
+    grn_index_cursor_set_scales(ctx,
+                                index_cursor,
+                                options->weight_vector_float,
+                                options->vector_size);
+  } else {
+    grn_index_cursor_set_scale(ctx,
+                               index_cursor,
+                               options->weight_float);
   }
+  select_index_report(ctx, "[prefix]", index);
+  grn_result_set_add_index_cursor(ctx,
+                                  (grn_hash *)result_set,
+                                  index_cursor,
+                                  1,
+                                  1.0,
+                                  logical_op);
 exit :
   if (index_cursor) {
     grn_obj_close(ctx, index_cursor);
