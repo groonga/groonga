@@ -1,0 +1,18 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos title COLUMN_SCALAR ShortText
+column_create Memos tags COLUMN_VECTOR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText
+column_create Terms index COLUMN_INDEX|WITH_SECTION Memos title,tags
+
+load --table Memos
+[
+{"title": "Groonga", "tags": ["Groonga"]},
+{"title": "Rroonga", "tags": ["Groonga", "Rroonga", "Ruby"]},
+{"title": "Mroonga", "tags": ["Groonga", "Mroonga", "MySQL"]}
+]
+
+select Memos \
+  --match_columns "Terms.index.title * 2" \
+  --query 'G*' \
+  --output_columns title,tags,_score
