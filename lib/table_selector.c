@@ -586,9 +586,6 @@ select_index_equal(grn_ctx *ctx,
       if (tid == GRN_ID_NIL) {
         rc = GRN_SUCCESS;
       } else {
-        uint32_t sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
-        float weight = GRN_FLOAT32_VALUE_AT(&(si->weights), 0);
-        weight *= table_selector->weight_factor * si->weight_factor;
         grn_obj *index_cursor = grn_index_cursor_open(ctx,
                                                       NULL,
                                                       index,
@@ -598,7 +595,17 @@ select_index_equal(grn_ctx *ctx,
         if (index_cursor) {
           rc = grn_index_cursor_set_term_id(ctx, index_cursor, tid);
           if (rc == GRN_SUCCESS) {
-            rc = grn_index_cursor_set_section_id(ctx, index_cursor, sid);
+            grn_search_optarg *options = &(table_selector->data.search_options);
+            if (options->weight_vector_float) {
+              rc = grn_index_cursor_set_scales(ctx,
+                                               index_cursor,
+                                               options->weight_vector_float,
+                                               options->vector_size);
+            } else {
+              rc = grn_index_cursor_set_scale(ctx,
+                                              index_cursor,
+                                              options->weight_float);
+            }
           }
           if (si->position.specified) {
             if (rc == GRN_SUCCESS) {
@@ -612,7 +619,7 @@ select_index_equal(grn_ctx *ctx,
                                                  (grn_hash *)result_set,
                                                  index_cursor,
                                                  1,
-                                                 weight,
+                                                 1.0,
                                                  logical_op);
           }
           grn_obj_close(ctx, index_cursor);
@@ -712,17 +719,23 @@ select_index_not_equal(grn_ctx *ctx,
         grn_ii *ii = (grn_ii *)index;
         grn_ii_cursor *ii_cursor;
 
-        uint32_t sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
         ii_cursor = grn_ii_cursor_open(ctx, ii, tid,
                                        GRN_ID_NIL, GRN_ID_MAX,
                                        ii->n_elements, 0);
         if (ii_cursor) {
+          grn_search_optarg *options = &(table_selector->data.search_options);
+          if (options->weight_vector_float) {
+            rc = grn_ii_cursor_set_scales(ctx,
+                                          ii_cursor,
+                                          options->weight_vector_float,
+                                          options->vector_size);
+          } else {
+            rc = grn_ii_cursor_set_scale(ctx,
+                                         ii_cursor,
+                                         options->weight_float);
+          }
           grn_posting *posting;
           while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
-            if (!(sid == 0 || posting->sid == sid)) {
-              continue;
-            }
-
             if (si->position.specified) {
               while ((posting = grn_ii_cursor_next_pos(ctx, ii_cursor))) {
                 if (posting->pos == si->position.start) {
@@ -1160,6 +1173,7 @@ select_index_range_id(grn_ctx *ctx,
         grn_posting_internal posting = {0};
 
         posting.weight_float = weight;
+        posting.scale = 1.0;
         while ((posting.rid = grn_table_cursor_next(ctx, cursor))) {
           if (posting.rid < min) {
             continue;
@@ -1336,9 +1350,6 @@ select_index_range_column(grn_ctx *ctx,
                                    min, min_size, max, max_size,
                                    offset, limit, flags);
     if (cursor) {
-      uint32_t sid = GRN_UINT32_VALUE_AT(&(si->sections), 0);
-      float weight = GRN_FLOAT32_VALUE_AT(&(si->weights), 0);
-      weight *= table_selector->weight_factor * si->weight_factor;
       grn_obj *index_cursor = grn_index_cursor_open(ctx,
                                                     cursor,
                                                     index,
@@ -1346,7 +1357,17 @@ select_index_range_column(grn_ctx *ctx,
                                                     GRN_ID_MAX,
                                                     0);
       if (index_cursor) {
-        grn_index_cursor_set_section_id(ctx, index_cursor, sid);
+        grn_search_optarg *options = &(table_selector->data.search_options);
+        if (options->weight_vector_float) {
+          grn_index_cursor_set_scales(ctx,
+                                      index_cursor,
+                                      options->weight_vector_float,
+                                      options->vector_size);
+        } else {
+          grn_index_cursor_set_scale(ctx,
+                                     index_cursor,
+                                     options->weight_float);
+        }
         if (si->position.specified) {
           grn_index_cursor_set_start_position(ctx,
                                               index_cursor,
@@ -1356,7 +1377,7 @@ select_index_range_column(grn_ctx *ctx,
                                              (grn_hash *)result_set,
                                              index_cursor,
                                              1,
-                                             weight,
+                                             1.0,
                                              logical_op);
         grn_obj_close(ctx, index_cursor);
       }
