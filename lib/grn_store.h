@@ -53,6 +53,11 @@ grn_rc grn_ra_close(grn_ctx *ctx, grn_ra *ra);
 grn_rc grn_ra_remove(grn_ctx *ctx, const char *path);
 void *grn_ra_ref(grn_ctx *ctx, grn_ra *ra, grn_id id);
 grn_rc grn_ra_unref(grn_ctx *ctx, grn_ra *ra, grn_id id);
+grn_rc grn_ra_set_value(grn_ctx *ctx,
+                        grn_ra *ra,
+                        grn_id id,
+                        grn_obj *value,
+                        int flags);
 grn_rc grn_ra_warm(grn_ctx *ctx, grn_ra *ra);
 
 typedef struct _grn_ra_cache grn_ra_cache;
