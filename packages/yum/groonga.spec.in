@@ -15,7 +15,7 @@ URL:		http://groonga.org/
 Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
-BuildRequires:	arrow-devel = @APACHE_ARROW_VERSION@
+BuildRequires:	arrow-devel = @APACHE_ARROW_VERSION@-1%{?dist}
 BuildRequires:	mecab-devel
 BuildRequires:	zlib-devel
 BuildRequires:	lz4-devel
