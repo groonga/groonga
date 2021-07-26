@@ -16,7 +16,7 @@ select Memos --filter 'tags == ["groo" + "nga"]'
       0.0,
       0.0
     ],
-    "complex expression in array literal isn't supported yet: <tags == [\"groo\" + \"nga\"]>"
+    "[expr][array-literal] complex expression in array literal isn't supported yet: <tags == [\"groo\" + \"nga\"]>"
   ]
 ]
-#|e| complex expression in array literal isn't supported yet: <tags == ["groo" + "nga"]>
+#|e| [expr][array-literal] complex expression in array literal isn't supported yet: <tags == ["groo" + "nga"]>

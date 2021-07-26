@@ -8,45 +8,53 @@
 #define assert GRN_ASSERT
 
   static void
-  array_literal_add_element(efs_info *efsi)
+  array_literal_end(efs_info *efsi, int n_elements)
   {
     grn_ctx *ctx = efsi->ctx;
     grn_expr *e = (grn_expr *)(efsi->e);
-    grn_expr_code *code = &(e->codes[e->codes_curr - 1]);
-    if (code->op != GRN_OP_PUSH) {
-      if (!efsi->array_literal) {
-        efsi->array_literal = grn_obj_open(ctx, GRN_VECTOR, 0, GRN_ID_NIL);
-      }
-      ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-          "complex expression in array literal isn't supported yet: <%.*s>",
-          (int)(efsi->str_end - efsi->str), efsi->str);
+    grn_obj *array_literal = grn_obj_open(ctx, GRN_VECTOR, 0, GRN_ID_NIL);
+    if (!array_literal) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[expr][array-literal] couldn't create vector: <%.*s>",
+          (int)(efsi->str_end - efsi->str),
+          efsi->str);
+      return;
     }
-    if (ctx->rc == GRN_SUCCESS) {
+    grn_expr_take_obj(ctx, efsi->e, array_literal);
+
+    int i;
+    for (i = n_elements; i > 0; i--) {
+      grn_expr_code *code = &(e->codes[e->codes_curr - i]);
+      if (code->op != GRN_OP_PUSH) {
+        ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+            "[expr][array-literal] "
+            "complex expression in array literal isn't supported yet: <%.*s>",
+            (int)(efsi->str_end - efsi->str),
+            efsi->str);
+        return;
+      }
       grn_obj *element = code->value;
-      if (!efsi->array_literal) {
-        efsi->array_literal = grn_obj_open(ctx,
-                                           GRN_VECTOR,
-                                           0,
-                                           element->header.domain);
-        if (!efsi->array_literal) {
-          ERR(GRN_NO_MEMORY_AVAILABLE,
-              "couldn't create vector for parsing array literal: <%.*s>",
-              (int)(efsi->str_end - efsi->str), efsi->str);
-        }
-      }
-      if (efsi->array_literal) {
-        grn_vector_add_element_float(ctx,
-                                     efsi->array_literal,
-                                     GRN_TEXT_VALUE(element),
-                                     GRN_TEXT_LEN(element),
-                                     0,
-                                     element->header.domain);
-        if (ctx->rc == GRN_SUCCESS) {
-          grn_expr_dfi_pop(e);
-          e->codes_curr -= 1;
-        }
+      grn_vector_add_element_float(ctx,
+                                   array_literal,
+                                   GRN_TEXT_VALUE(element),
+                                   GRN_TEXT_LEN(element),
+                                   0,
+                                   element->header.domain);
+      if (ctx->rc != GRN_SUCCESS) {
+        char message[GRN_CTX_MSGSIZE];
+        grn_strncpy(message, sizeof(message), ctx->errbuf, sizeof(ctx->errbuf));
+        ERR(ctx->rc,
+            "[expr][array-literal] failed to add an element: %s",
+            message);
+        return;
       }
     }
+    for (i = 0; i < n_elements; i++) {
+      grn_expr_dfi_pop(e);
+      e->codes_curr -= 1;
+    }
+
+    grn_expr_append_obj(ctx, efsi->e, array_literal, GRN_OP_PUSH, 1);
   }
 
   static void
@@ -591,33 +599,18 @@ primary_expression ::= STRING.
 primary_expression ::= BOOLEAN.
 primary_expression ::= NULL.
 
-array_literal ::= BRACKETL element_list BRACKETR. {
-  grn_ctx *ctx = efsi->ctx;
-  if (efsi->array_literal) {
-    grn_expr_take_obj(ctx, efsi->e, efsi->array_literal);
-    grn_expr_append_obj(ctx, efsi->e, efsi->array_literal,
-                        GRN_OP_PUSH, 1);
-    efsi->array_literal = NULL;
-  }
+array_literal ::= BRACKETL element_list(N) BRACKETR. {
+  array_literal_end(efsi, N);
 }
 
-element_list ::= . {
-  grn_ctx *ctx = efsi->ctx;
-
-  efsi->array_literal = grn_obj_open(ctx, GRN_VECTOR, 0, GRN_ID_NIL);
-  if (!efsi->array_literal) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "couldn't create vector for parsing array literal: <%.*s>",
-        (int)(efsi->str_end - efsi->str), efsi->str);
-  }
+element_list(N) ::= . {
+  N = 0;
 }
-
-element_list ::= assignment_expression. {
-  array_literal_add_element(efsi);
+element_list(N) ::= assignment_expression. {
+  N = 1;
 }
-
-element_list ::= element_list COMMA assignment_expression. {
-  array_literal_add_element(efsi);
+element_list(N) ::= element_list(N_SUB) COMMA assignment_expression. {
+  N = N_SUB + 1;
 }
 
 object_literal ::= BRACEL property_list(N) BRACER. {

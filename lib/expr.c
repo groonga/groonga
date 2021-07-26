@@ -3778,7 +3778,6 @@ typedef struct {
   int weight_offset;
   grn_hash *weight_set;
   snip_cond *snip_conds;
-  grn_obj *array_literal;
   int paren_depth;
   struct {
     const char *string;
@@ -5483,7 +5482,6 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     memset(&(efsi.opt), 0, sizeof(grn_select_optarg));
     efsi.opt.weight_vector = NULL;
     efsi.weight_set = NULL;
-    efsi.array_literal = NULL;
     efsi.paren_depth = 0;
     efsi.pending_token.string = NULL;
     efsi.pending_token.string_length = 0;
@@ -5534,9 +5532,6 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_OBJ_FIN(ctx, &efsi.column_stack);
     GRN_OBJ_FIN(ctx, &efsi.token_stack);
     GRN_OBJ_FIN(ctx, &efsi.buf);
-    if (efsi.array_literal) {
-      GRN_OBJ_FIN(ctx, efsi.array_literal);
-    }
     if (grn_enable_reference_count) {
       grn_obj_unlink(ctx, efsi.table);
     }
