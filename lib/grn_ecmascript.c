@@ -73,7 +73,89 @@
       }
     }
   }
-#line 77 "../../groonga/lib/grn_ecmascript.c"
+
+  static void
+  object_literal_end(efs_info *efsi, int n_properties)
+  {
+    grn_ctx *ctx = efsi->ctx;
+    grn_hash *object_literal =
+      grn_hash_create(ctx,
+                      NULL,
+                      GRN_TABLE_MAX_KEY_SIZE,
+                      sizeof(grn_obj),
+                      GRN_OBJ_KEY_VAR_SIZE|GRN_OBJ_TEMPORARY|GRN_HASH_TINY);
+    if (!object_literal) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[expr][object-literal] couldn't create hash table: <%.*s>",
+          (int)(efsi->str_end - efsi->str),
+          efsi->str);
+      return;
+    }
+
+    grn_expr_take_obj(ctx, efsi->e, (grn_obj *)(object_literal));
+    DB_OBJ(object_literal)->header.domain = GRN_DB_SHORT_TEXT;
+
+    grn_expr *e = (grn_expr *)(efsi->e);
+    int i;
+    for (i = n_properties; i > 0; i--) {
+      int base = e->codes_curr - (i * 3);
+      grn_obj *name = e->codes[base].value;
+      grn_obj *value = e->codes[base + 2].value;
+
+      grn_obj *buf;
+      int added;
+      grn_id id = grn_hash_add(ctx,
+                               object_literal,
+                               GRN_TEXT_VALUE(name),
+                               GRN_TEXT_LEN(name),
+                               (void **)(&buf),
+                               &added);
+      if (id == GRN_ID_NIL) {
+        grn_rc rc = ctx->rc;
+        if (rc == GRN_SUCCESS) {
+          rc = GRN_NO_MEMORY_AVAILABLE;
+        }
+        ERR(rc,
+            "[expr][object-literal] failed to add a property: <%.*s>",
+            (int)GRN_TEXT_LEN(name),
+            GRN_TEXT_VALUE(name));
+        return;
+      }
+
+      if (!added) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "[expr][object-literal] duplicated property name: <%.*s>",
+            (int)GRN_TEXT_LEN(name),
+            GRN_TEXT_VALUE(name));
+        return;
+      }
+
+      switch (value->header.type) {
+      case GRN_TABLE_HASH_KEY :
+      case GRN_COLUMN_FIX_SIZE :
+      case GRN_COLUMN_VAR_SIZE :
+      case GRN_COLUMN_INDEX :
+        GRN_OBJ_INIT(buf, GRN_PTR, 0, GRN_ID_NIL);
+        GRN_PTR_SET(ctx, buf, value);
+        break;
+      case GRN_VECTOR :
+        GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
+        grn_vector_copy(ctx, value, buf);
+        break;
+      default :
+        GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
+        GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+        break;
+      }
+    }
+    for (i = 0; i < n_properties; i++) {
+      grn_expr_dfi_pop(e);
+      e->codes_curr -= 3;
+    }
+    grn_expr_append_obj(ctx, efsi->e, (grn_obj *)(object_literal),
+                        GRN_OP_PUSH, 1);
+  }
+#line 159 "../../groonga/lib/grn_ecmascript.c"
 /**************** End of %include directives **********************************/
 /* These constants specify the various numeric values for terminal symbols.
 ***************** Begin token definitions *************************************/
@@ -239,7 +321,7 @@ typedef union {
 #define grn_expr_parserCTX_STORE
 #define YYNSTATE             160
 #define YYNRULE              145
-#define YYNRULE_WITH_ACTION  101
+#define YYNRULE_WITH_ACTION  102
 #define YYNTOKEN             80
 #define YY_MAX_SHIFT         159
 #define YY_MIN_SHIFTREDUCE   247
@@ -317,44 +399,44 @@ typedef union {
 *********** Begin parsing tables **********************************************/
 #define YY_ACTTAB_COUNT (1957)
 static const YYACTIONTYPE yy_action[] = {
- /*     0 */   395,    3,   79,    4,   94,  127,  127,  151,  399,  355,
+ /*     0 */   395,    3,   79,    4,   94,  127,  474,  151,  399,  356,
  /*    10 */     2,  398,   60,   90,  141,    1,   85,   78,  393,   86,
  /*    20 */   125,  324,   85,   84,   82,   86,   82,  125,  125,   98,
  /*    30 */   138,  100,  154,  153,  152,  133,   95,  115,  129,  116,
- /*    40 */   116,  116,   98,   82,  487,  146,   82,  355,   81,  402,
- /*    50 */    91,   90,  159,   11,  328,   78,  467,  523,   73,   72,
+ /*    40 */   116,  116,   98,   82,  488,  146,   82,  356,   81,  402,
+ /*    50 */    91,   90,  159,   11,  329,   78,  467,  524,   73,   72,
  /*    60 */   404,   23,  404,   76,   75,   74,   71,   70,   68,   67,
- /*    70 */    66,  380,  381,  382,  383,  384,    8,  139,   77,   65,
+ /*    70 */    66,  381,  382,  383,  384,  385,    8,  139,   77,   65,
  /*    80 */    64,   82,  404,   82,  139,  139,   98,  138,  100,  154,
  /*    90 */   153,  152,  133,   95,  115,  129,  116,  116,  116,   98,
- /*   100 */    82,  534,  151,   82,  144,  127,  127,  151,  355,    2,
+ /*   100 */    82,  475,  151,   82,  144,  127,  474,  151,  356,    2,
  /*   110 */   387,   60,   90,  141,    1,  401,   78,   85,  131,   59,
  /*   120 */    58,   57,   82,   85,   82,  131,  131,   98,  138,  100,
  /*   130 */   154,  153,  152,  133,   95,  115,  129,  116,  116,  116,
- /*   140 */    98,   82,  500,    9,   82,   69,  400,  378,   80,   34,
+ /*   140 */    98,   82,  501,    9,   82,   69,  400,  379,   80,   34,
  /*   150 */    33,  397,   31,   62,   61,  396,   32,   73,   72,  255,
  /*   160 */     6,   29,   76,   75,   74,   71,   70,   68,   67,   66,
- /*   170 */   380,  381,  382,  383,  384,    8,   93,   92,   88,   87,
- /*   180 */   355,   81,  356,   91,   90,  159,   11,   25,   78,   39,
- /*   190 */    38,   73,   72,  336,  317,  318,   76,   75,   74,   71,
- /*   200 */    70,   68,   67,   66,  380,  381,  382,  383,  384,    8,
- /*   210 */   124,    7,  337,   82,  499,   82,  486,  486,   98,  138,
+ /*   170 */   381,  382,  383,  384,  385,    8,   93,   92,   88,   87,
+ /*   180 */   356,   81,  357,   91,   90,  159,   11,   25,   78,   39,
+ /*   190 */    38,   73,   72,  337,  317,  318,   76,   75,   74,   71,
+ /*   200 */    70,   68,   67,   66,  381,  382,  383,  384,  385,    8,
+ /*   210 */   124,    7,  338,   82,  500,   82,  487,  487,   98,  138,
  /*   220 */   100,  154,  153,  152,  133,   95,  115,  129,  116,  116,
- /*   230 */   116,   98,   82,  377,    9,   82,   69,  142,  378,   80,
- /*   240 */    29,  481,  123,   80,  122,   82,  320,   82,  495,  495,
+ /*   230 */   116,   98,   82,  378,    9,   82,   69,  142,  379,   80,
+ /*   240 */    29,  482,  123,   80,  122,   82,  320,   82,  496,  496,
  /*   250 */    98,  138,  100,  154,  153,  152,  133,   95,  115,  129,
- /*   260 */   116,  116,  116,   98,   82,   29,  535,   82,  498,   89,
- /*   270 */   501,  341,   83,  123,  146,  143,  491,   10,  340,  150,
- /*   280 */   145,   30,   73,   63,  497,   35,    5,   76,   75,   74,
- /*   290 */    71,   70,   68,   67,   66,  380,  381,  382,  383,  384,
- /*   300 */     8,  388,   29,  345,   82,   27,   82,  486,  486,   98,
+ /*   260 */   116,  116,  116,   98,   82,   29,  535,   82,  499,   89,
+ /*   270 */   502,  342,   83,  123,  146,  143,  492,   10,  341,  150,
+ /*   280 */   145,   30,   73,   63,  498,   35,    5,   76,   75,   74,
+ /*   290 */    71,   70,   68,   67,   66,  381,  382,  383,  384,  385,
+ /*   300 */     8,  388,   29,  346,   82,   27,   82,  487,  487,   98,
  /*   310 */   138,  100,  154,  153,  152,  133,   95,  115,  129,  116,
- /*   320 */   116,  116,   98,   82,  327,   24,   82,   37,   36,   26,
- /*   330 */   394,  394,  483,   82,  394,   82,  495,  495,   98,  138,
+ /*   320 */   116,  116,   98,   82,  328,   24,   82,   37,   36,   26,
+ /*   330 */   394,  394,  484,   82,  394,   82,  496,  496,   98,  138,
  /*   340 */   100,  154,  153,  152,  133,   95,  115,  129,  116,  116,
  /*   350 */   116,   98,   82,  394,  394,   82,  394,  394,  394,  394,
- /*   360 */   394,  394,  394,  394,  492,  394,  394,  394,  394,  394,
- /*   370 */    82,  394,   82,  478,  478,   98,  138,  100,  154,  153,
+ /*   360 */   394,  394,  394,  394,  493,  394,  394,  394,  394,  394,
+ /*   370 */    82,  394,   82,  479,  479,   98,  138,  100,  154,  153,
  /*   380 */   152,  133,   95,  115,  129,  116,  116,  116,   98,   82,
  /*   390 */   394,  394,   82,  394,  394,  394,   82,  126,   82,  470,
  /*   400 */   470,   98,  138,  100,  154,  153,  152,  133,   95,  115,
@@ -367,26 +449,26 @@ static const YYACTIONTYPE yy_action[] = {
  /*   470 */    98,   82,  139,  394,   82,  394,   82,  394,   82,  139,
  /*   480 */   139,   98,  138,  100,  154,  153,  152,  133,   95,  115,
  /*   490 */   129,  116,  116,  116,   98,   82,  394,    9,   82,   69,
- /*   500 */   394,  378,   80,   82,  394,   82,  417,  417,   98,  138,
+ /*   500 */   394,  379,   80,   82,  394,   82,  417,  417,   98,  138,
  /*   510 */   100,  154,  153,  152,  133,   95,  115,  129,  116,  116,
  /*   520 */   116,   98,   82,  394,  394,   82,   56,   55,   54,   53,
  /*   530 */    52,   51,   50,   49,   48,   47,   46,   45,   44,   43,
  /*   540 */    42,   41,   40,  394,  394,   73,   72,  394,  394,  394,
- /*   550 */    76,   75,   74,   71,   70,   68,   67,   66,  380,  381,
- /*   560 */   382,  383,  384,    8,  394,    9,  346,   69,  394,  378,
+ /*   550 */    76,   75,   74,   71,   70,   68,   67,   66,  381,  382,
+ /*   560 */   383,  384,  385,    8,  394,    9,  347,   69,  394,  379,
  /*   570 */    80,   82,  394,   82,  416,  416,   98,  138,  100,  154,
  /*   580 */   153,  152,  133,   95,  115,  129,  116,  116,  116,   98,
- /*   590 */    82,  496,  394,   82,  394,  394,   93,   92,   88,   87,
- /*   600 */   355,   81,  394,   91,   90,  159,   11,    9,   78,  394,
- /*   610 */   394,  378,   80,   73,   72,  394,  394,  394,   76,   75,
- /*   620 */    74,   71,   70,   68,   67,   66,  380,  381,  140,  383,
- /*   630 */   384,    8,    9,  394,   69,  394,  378,   80,   82,  394,
+ /*   590 */    82,  497,  394,   82,  394,  394,   93,   92,   88,   87,
+ /*   600 */   356,   81,  394,   91,   90,  159,   11,    9,   78,  394,
+ /*   610 */   394,  379,   80,   73,   72,  394,  394,  394,   76,   75,
+ /*   620 */    74,   71,   70,   68,   67,   66,  381,  382,  140,  384,
+ /*   630 */   385,    8,    9,  394,   69,  394,  379,   80,   82,  394,
  /*   640 */    82,  415,  415,   98,  138,  100,  154,  153,  152,  133,
  /*   650 */    95,  115,  129,  116,  116,  116,   98,   82,  394,  394,
- /*   660 */    82,  394,  394,  394,  394,  394,  394,  394,  380,  381,
- /*   670 */   382,  383,  384,    8,  394,  394,  394,  394,  394,  394,
+ /*   660 */    82,  394,  394,  394,  394,  394,  394,  394,  381,  382,
+ /*   670 */   383,  384,  385,    8,  394,  394,  394,  394,  394,  394,
  /*   680 */    73,   72,  394,  394,  394,   76,   75,   74,   71,   70,
- /*   690 */    68,   67,   66,  380,  381,  382,  383,  384,    8,  394,
+ /*   690 */    68,   67,   66,  381,  382,  383,  384,  385,    8,  394,
  /*   700 */   394,   82,  394,   82,  414,  414,   98,  138,  100,  154,
  /*   710 */   153,  152,  133,   95,  115,  129,  116,  116,  116,   98,
  /*   720 */    82,  394,   82,   82,   82,  413,  413,   98,  138,  100,
@@ -405,9 +487,9 @@ static const YYACTIONTYPE yy_action[] = {
  /*   850 */    82,  394,  394,   82,  394,  394,   82,  394,   82,  407,
  /*   860 */   407,   98,  138,  100,  154,  153,  152,  133,   95,  115,
  /*   870 */   129,  116,  116,  116,   98,   82,  394,   82,   82,   82,
- /*   880 */   479,  479,   98,  138,  100,  154,  153,  152,  133,   95,
+ /*   880 */   480,  480,   98,  138,  100,  154,  153,  152,  133,   95,
  /*   890 */   115,  129,  116,  116,  116,   98,   82,  394,   82,   82,
- /*   900 */    82,  474,  474,   98,  138,  100,  154,  153,  152,  133,
+ /*   900 */    82,  534,  534,   98,  138,  100,  154,  153,  152,  133,
  /*   910 */    95,  115,  129,  116,  116,  116,   98,   82,  394,   82,
  /*   920 */    82,   82,  471,  471,   98,  138,  100,  154,  153,  152,
  /*   930 */   133,   95,  115,  129,  116,  116,  116,   98,   82,  394,
@@ -757,7 +839,7 @@ static const short yy_reduce_ofst[] = {
  /*    90 */    27,   58,   63,   67,  150,
 };
 static const YYACTIONTYPE yy_default[] = {
- /*     0 */   392,  473,  392,  480,  490,  482,  392,  477,  469,  392,
+ /*     0 */   392,  473,  392,  481,  491,  483,  392,  478,  469,  392,
  /*    10 */   392,  392,  392,  392,  392,  392,  392,  392,  392,  392,
  /*    20 */   392,  392,  392,  392,  392,  392,  392,  392,  392,  392,
  /*    30 */   392,  392,  392,  392,  392,  392,  392,  392,  392,  392,
@@ -765,14 +847,14 @@ static const YYACTIONTYPE yy_default[] = {
  /*    50 */   392,  392,  392,  392,  392,  392,  392,  392,  392,  392,
  /*    60 */   392,  392,  392,  392,  392,  392,  392,  392,  392,  392,
  /*    70 */   392,  392,  392,  392,  392,  392,  392,  392,  392,  537,
- /*    80 */   473,  392,  521,  392,  392,  392,  392,  392,  392,  392,
- /*    90 */   392,  392,  392,  392,  392,  513,  428,  427,  519,  419,
- /*   100 */   508,  445,  444,  443,  442,  441,  440,  439,  438,  437,
- /*   110 */   436,  435,  434,  433,  432,  514,  516,  431,  450,  430,
- /*   120 */   449,  429,  392,  392,  392,  392,  392,  392,  392,  515,
- /*   130 */   448,  392,  447,  512,  392,  519,  446,  426,  507,  392,
- /*   140 */   530,  526,  392,  392,  392,  392,  539,  423,  422,  421,
- /*   150 */   392,  392,  511,  510,  509,  425,  424,  420,  392,  392,
+ /*    80 */   473,  392,  522,  392,  392,  392,  392,  392,  392,  392,
+ /*    90 */   392,  392,  392,  392,  392,  514,  428,  427,  520,  419,
+ /*   100 */   509,  445,  444,  443,  442,  441,  440,  439,  438,  437,
+ /*   110 */   436,  435,  434,  433,  432,  515,  517,  431,  450,  430,
+ /*   120 */   449,  429,  392,  392,  392,  392,  392,  392,  392,  516,
+ /*   130 */   448,  392,  447,  513,  392,  520,  446,  426,  508,  392,
+ /*   140 */   531,  527,  392,  392,  392,  392,  539,  423,  422,  421,
+ /*   150 */   392,  392,  512,  511,  510,  425,  424,  420,  392,  392,
 };
 /********** End of lemon-generated parsing tables *****************************/
 
@@ -991,8 +1073,8 @@ static const char *const yyTokenName[] = {
   /*  108 */ "member_expression_part",
   /*  109 */ "array_literal",
   /*  110 */ "element_list",
-  /*  111 */ "property_name_and_value_list",
-  /*  112 */ "property_name_and_value",
+  /*  111 */ "property_list",
+  /*  112 */ "property",
   /*  113 */ "property_name",
   /*  114 */ "argument_list",
   /*  115 */ "output_column",
@@ -1083,69 +1165,69 @@ static const char *const yyRuleName[] = {
  /*  74 */ "element_list ::=",
  /*  75 */ "element_list ::= assignment_expression",
  /*  76 */ "element_list ::= element_list COMMA assignment_expression",
- /*  77 */ "object_literal ::= BRACEL property_name_and_value_list BRACER",
- /*  78 */ "property_name_and_value_list ::=",
- /*  79 */ "property_name_and_value ::= property_name COLON assignment_expression",
- /*  80 */ "member_expression_part ::= BRACKETL expression BRACKETR",
- /*  81 */ "arguments ::= PARENL argument_list PARENR",
- /*  82 */ "argument_list ::=",
- /*  83 */ "argument_list ::= assignment_expression",
- /*  84 */ "argument_list ::= argument_list COMMA assignment_expression",
- /*  85 */ "output_columns ::=",
- /*  86 */ "output_columns ::= output_column",
- /*  87 */ "output_columns ::= output_columns COMMA",
- /*  88 */ "output_columns ::= output_columns COMMA output_column",
- /*  89 */ "output_column ::= STAR",
- /*  90 */ "output_column ::= NONEXISTENT_COLUMN",
- /*  91 */ "output_column ::= assignment_expression",
- /*  92 */ "adjuster ::= adjuster PLUS adjust_expression",
- /*  93 */ "adjust_expression ::= adjust_match_expression STAR DECIMAL",
- /*  94 */ "adjust_match_expression ::= IDENTIFIER MATCH STRING",
- /*  95 */ "sort_keys ::=",
- /*  96 */ "sort_keys ::= sort_key",
- /*  97 */ "sort_keys ::= sort_keys COMMA sort_key",
- /*  98 */ "sort_key ::= NONEXISTENT_COLUMN",
- /*  99 */ "sort_key ::= MINUS NONEXISTENT_COLUMN",
- /* 100 */ "sort_key ::= assignment_expression",
- /* 101 */ "input ::= query",
- /* 102 */ "input ::= expression",
- /* 103 */ "input ::= START_OUTPUT_COLUMNS output_columns",
- /* 104 */ "input ::= START_ADJUSTER adjuster",
- /* 105 */ "input ::= START_SORT_KEYS sort_keys",
- /* 106 */ "input ::= START_OPTIONS object_literal",
- /* 107 */ "query ::= query_element",
- /* 108 */ "query_element ::= QSTRING",
- /* 109 */ "query_element ::= PARENL query PARENR",
- /* 110 */ "expression ::= assignment_expression",
- /* 111 */ "assignment_expression ::= conditional_expression",
- /* 112 */ "conditional_expression ::= logical_or_expression",
- /* 113 */ "logical_or_expression ::= logical_and_expression",
- /* 114 */ "logical_and_expression ::= bitwise_or_expression",
- /* 115 */ "bitwise_or_expression ::= bitwise_xor_expression",
- /* 116 */ "bitwise_xor_expression ::= bitwise_and_expression",
- /* 117 */ "bitwise_and_expression ::= equality_expression",
- /* 118 */ "equality_expression ::= relational_expression",
- /* 119 */ "relational_expression ::= shift_expression",
- /* 120 */ "shift_expression ::= additive_expression",
- /* 121 */ "additive_expression ::= multiplicative_expression",
- /* 122 */ "multiplicative_expression ::= unary_expression",
- /* 123 */ "unary_expression ::= postfix_expression",
- /* 124 */ "postfix_expression ::= lefthand_side_expression",
- /* 125 */ "lefthand_side_expression ::= call_expression",
- /* 126 */ "lefthand_side_expression ::= member_expression",
- /* 127 */ "member_expression ::= primary_expression",
- /* 128 */ "member_expression ::= member_expression member_expression_part",
- /* 129 */ "primary_expression ::= object_literal",
- /* 130 */ "primary_expression ::= PARENL expression PARENR",
- /* 131 */ "primary_expression ::= IDENTIFIER",
- /* 132 */ "primary_expression ::= array_literal",
- /* 133 */ "primary_expression ::= DECIMAL",
- /* 134 */ "primary_expression ::= HEX_INTEGER",
- /* 135 */ "primary_expression ::= STRING",
- /* 136 */ "primary_expression ::= BOOLEAN",
- /* 137 */ "primary_expression ::= NULL",
- /* 138 */ "property_name_and_value_list ::= property_name_and_value",
- /* 139 */ "property_name_and_value_list ::= property_name_and_value_list COMMA property_name_and_value",
+ /*  77 */ "object_literal ::= BRACEL property_list BRACER",
+ /*  78 */ "property_list ::=",
+ /*  79 */ "property_list ::= property",
+ /*  80 */ "property_list ::= property_list COMMA property",
+ /*  81 */ "member_expression_part ::= BRACKETL expression BRACKETR",
+ /*  82 */ "arguments ::= PARENL argument_list PARENR",
+ /*  83 */ "argument_list ::=",
+ /*  84 */ "argument_list ::= assignment_expression",
+ /*  85 */ "argument_list ::= argument_list COMMA assignment_expression",
+ /*  86 */ "output_columns ::=",
+ /*  87 */ "output_columns ::= output_column",
+ /*  88 */ "output_columns ::= output_columns COMMA",
+ /*  89 */ "output_columns ::= output_columns COMMA output_column",
+ /*  90 */ "output_column ::= STAR",
+ /*  91 */ "output_column ::= NONEXISTENT_COLUMN",
+ /*  92 */ "output_column ::= assignment_expression",
+ /*  93 */ "adjuster ::= adjuster PLUS adjust_expression",
+ /*  94 */ "adjust_expression ::= adjust_match_expression STAR DECIMAL",
+ /*  95 */ "adjust_match_expression ::= IDENTIFIER MATCH STRING",
+ /*  96 */ "sort_keys ::=",
+ /*  97 */ "sort_keys ::= sort_key",
+ /*  98 */ "sort_keys ::= sort_keys COMMA sort_key",
+ /*  99 */ "sort_key ::= NONEXISTENT_COLUMN",
+ /* 100 */ "sort_key ::= MINUS NONEXISTENT_COLUMN",
+ /* 101 */ "sort_key ::= assignment_expression",
+ /* 102 */ "input ::= query",
+ /* 103 */ "input ::= expression",
+ /* 104 */ "input ::= START_OUTPUT_COLUMNS output_columns",
+ /* 105 */ "input ::= START_ADJUSTER adjuster",
+ /* 106 */ "input ::= START_SORT_KEYS sort_keys",
+ /* 107 */ "input ::= START_OPTIONS object_literal",
+ /* 108 */ "query ::= query_element",
+ /* 109 */ "query_element ::= QSTRING",
+ /* 110 */ "query_element ::= PARENL query PARENR",
+ /* 111 */ "expression ::= assignment_expression",
+ /* 112 */ "assignment_expression ::= conditional_expression",
+ /* 113 */ "conditional_expression ::= logical_or_expression",
+ /* 114 */ "logical_or_expression ::= logical_and_expression",
+ /* 115 */ "logical_and_expression ::= bitwise_or_expression",
+ /* 116 */ "bitwise_or_expression ::= bitwise_xor_expression",
+ /* 117 */ "bitwise_xor_expression ::= bitwise_and_expression",
+ /* 118 */ "bitwise_and_expression ::= equality_expression",
+ /* 119 */ "equality_expression ::= relational_expression",
+ /* 120 */ "relational_expression ::= shift_expression",
+ /* 121 */ "shift_expression ::= additive_expression",
+ /* 122 */ "additive_expression ::= multiplicative_expression",
+ /* 123 */ "multiplicative_expression ::= unary_expression",
+ /* 124 */ "unary_expression ::= postfix_expression",
+ /* 125 */ "postfix_expression ::= lefthand_side_expression",
+ /* 126 */ "lefthand_side_expression ::= call_expression",
+ /* 127 */ "lefthand_side_expression ::= member_expression",
+ /* 128 */ "member_expression ::= primary_expression",
+ /* 129 */ "member_expression ::= member_expression member_expression_part",
+ /* 130 */ "primary_expression ::= object_literal",
+ /* 131 */ "primary_expression ::= PARENL expression PARENR",
+ /* 132 */ "primary_expression ::= IDENTIFIER",
+ /* 133 */ "primary_expression ::= array_literal",
+ /* 134 */ "primary_expression ::= DECIMAL",
+ /* 135 */ "primary_expression ::= HEX_INTEGER",
+ /* 136 */ "primary_expression ::= STRING",
+ /* 137 */ "primary_expression ::= BOOLEAN",
+ /* 138 */ "primary_expression ::= NULL",
+ /* 139 */ "property ::= property_name COLON assignment_expression",
  /* 140 */ "property_name ::= STRING",
  /* 141 */ "member_expression_part ::= DOT IDENTIFIER",
  /* 142 */ "adjuster ::=",
@@ -1278,11 +1360,11 @@ static void yy_destructor(
 /********* Begin destructor definitions ***************************************/
     case 80: /* suppress_unused_variable_warning */
 {
-#line 56 "../../groonga/lib/grn_ecmascript.lemon"
+#line 138 "../../groonga/lib/grn_ecmascript.lemon"
 
   (void)efsi;
 
-#line 1285 "../../groonga/lib/grn_ecmascript.c"
+#line 1367 "../../groonga/lib/grn_ecmascript.c"
 }
       break;
 /********* End destructor definitions *****************************************/
@@ -1648,69 +1730,69 @@ static const YYCODETYPE yyRuleInfoLhs[] = {
    110,  /* (74) element_list ::= */
    110,  /* (75) element_list ::= assignment_expression */
    110,  /* (76) element_list ::= element_list COMMA assignment_expression */
-    87,  /* (77) object_literal ::= BRACEL property_name_and_value_list BRACER */
-   111,  /* (78) property_name_and_value_list ::= */
-   112,  /* (79) property_name_and_value ::= property_name COLON assignment_expression */
-   108,  /* (80) member_expression_part ::= BRACKETL expression BRACKETR */
-   107,  /* (81) arguments ::= PARENL argument_list PARENR */
-   114,  /* (82) argument_list ::= */
-   114,  /* (83) argument_list ::= assignment_expression */
-   114,  /* (84) argument_list ::= argument_list COMMA assignment_expression */
-    84,  /* (85) output_columns ::= */
-    84,  /* (86) output_columns ::= output_column */
-    84,  /* (87) output_columns ::= output_columns COMMA */
-    84,  /* (88) output_columns ::= output_columns COMMA output_column */
-   115,  /* (89) output_column ::= STAR */
-   115,  /* (90) output_column ::= NONEXISTENT_COLUMN */
-   115,  /* (91) output_column ::= assignment_expression */
-    85,  /* (92) adjuster ::= adjuster PLUS adjust_expression */
-   116,  /* (93) adjust_expression ::= adjust_match_expression STAR DECIMAL */
-   117,  /* (94) adjust_match_expression ::= IDENTIFIER MATCH STRING */
-    86,  /* (95) sort_keys ::= */
-    86,  /* (96) sort_keys ::= sort_key */
-    86,  /* (97) sort_keys ::= sort_keys COMMA sort_key */
-   118,  /* (98) sort_key ::= NONEXISTENT_COLUMN */
-   118,  /* (99) sort_key ::= MINUS NONEXISTENT_COLUMN */
-   118,  /* (100) sort_key ::= assignment_expression */
-    81,  /* (101) input ::= query */
-    81,  /* (102) input ::= expression */
-    81,  /* (103) input ::= START_OUTPUT_COLUMNS output_columns */
-    81,  /* (104) input ::= START_ADJUSTER adjuster */
-    81,  /* (105) input ::= START_SORT_KEYS sort_keys */
-    81,  /* (106) input ::= START_OPTIONS object_literal */
-    82,  /* (107) query ::= query_element */
-    88,  /* (108) query_element ::= QSTRING */
-    88,  /* (109) query_element ::= PARENL query PARENR */
-    83,  /* (110) expression ::= assignment_expression */
-    90,  /* (111) assignment_expression ::= conditional_expression */
-    91,  /* (112) conditional_expression ::= logical_or_expression */
-    93,  /* (113) logical_or_expression ::= logical_and_expression */
-    94,  /* (114) logical_and_expression ::= bitwise_or_expression */
-    95,  /* (115) bitwise_or_expression ::= bitwise_xor_expression */
-    96,  /* (116) bitwise_xor_expression ::= bitwise_and_expression */
-    97,  /* (117) bitwise_and_expression ::= equality_expression */
-    98,  /* (118) equality_expression ::= relational_expression */
-    99,  /* (119) relational_expression ::= shift_expression */
-   100,  /* (120) shift_expression ::= additive_expression */
-   101,  /* (121) additive_expression ::= multiplicative_expression */
-   102,  /* (122) multiplicative_expression ::= unary_expression */
-   103,  /* (123) unary_expression ::= postfix_expression */
-   104,  /* (124) postfix_expression ::= lefthand_side_expression */
-    92,  /* (125) lefthand_side_expression ::= call_expression */
-    92,  /* (126) lefthand_side_expression ::= member_expression */
-   106,  /* (127) member_expression ::= primary_expression */
-   106,  /* (128) member_expression ::= member_expression member_expression_part */
-    89,  /* (129) primary_expression ::= object_literal */
-    89,  /* (130) primary_expression ::= PARENL expression PARENR */
-    89,  /* (131) primary_expression ::= IDENTIFIER */
-    89,  /* (132) primary_expression ::= array_literal */
-    89,  /* (133) primary_expression ::= DECIMAL */
-    89,  /* (134) primary_expression ::= HEX_INTEGER */
-    89,  /* (135) primary_expression ::= STRING */
-    89,  /* (136) primary_expression ::= BOOLEAN */
-    89,  /* (137) primary_expression ::= NULL */
-   111,  /* (138) property_name_and_value_list ::= property_name_and_value */
-   111,  /* (139) property_name_and_value_list ::= property_name_and_value_list COMMA property_name_and_value */
+    87,  /* (77) object_literal ::= BRACEL property_list BRACER */
+   111,  /* (78) property_list ::= */
+   111,  /* (79) property_list ::= property */
+   111,  /* (80) property_list ::= property_list COMMA property */
+   108,  /* (81) member_expression_part ::= BRACKETL expression BRACKETR */
+   107,  /* (82) arguments ::= PARENL argument_list PARENR */
+   114,  /* (83) argument_list ::= */
+   114,  /* (84) argument_list ::= assignment_expression */
+   114,  /* (85) argument_list ::= argument_list COMMA assignment_expression */
+    84,  /* (86) output_columns ::= */
+    84,  /* (87) output_columns ::= output_column */
+    84,  /* (88) output_columns ::= output_columns COMMA */
+    84,  /* (89) output_columns ::= output_columns COMMA output_column */
+   115,  /* (90) output_column ::= STAR */
+   115,  /* (91) output_column ::= NONEXISTENT_COLUMN */
+   115,  /* (92) output_column ::= assignment_expression */
+    85,  /* (93) adjuster ::= adjuster PLUS adjust_expression */
+   116,  /* (94) adjust_expression ::= adjust_match_expression STAR DECIMAL */
+   117,  /* (95) adjust_match_expression ::= IDENTIFIER MATCH STRING */
+    86,  /* (96) sort_keys ::= */
+    86,  /* (97) sort_keys ::= sort_key */
+    86,  /* (98) sort_keys ::= sort_keys COMMA sort_key */
+   118,  /* (99) sort_key ::= NONEXISTENT_COLUMN */
+   118,  /* (100) sort_key ::= MINUS NONEXISTENT_COLUMN */
+   118,  /* (101) sort_key ::= assignment_expression */
+    81,  /* (102) input ::= query */
+    81,  /* (103) input ::= expression */
+    81,  /* (104) input ::= START_OUTPUT_COLUMNS output_columns */
+    81,  /* (105) input ::= START_ADJUSTER adjuster */
+    81,  /* (106) input ::= START_SORT_KEYS sort_keys */
+    81,  /* (107) input ::= START_OPTIONS object_literal */
+    82,  /* (108) query ::= query_element */
+    88,  /* (109) query_element ::= QSTRING */
+    88,  /* (110) query_element ::= PARENL query PARENR */
+    83,  /* (111) expression ::= assignment_expression */
+    90,  /* (112) assignment_expression ::= conditional_expression */
+    91,  /* (113) conditional_expression ::= logical_or_expression */
+    93,  /* (114) logical_or_expression ::= logical_and_expression */
+    94,  /* (115) logical_and_expression ::= bitwise_or_expression */
+    95,  /* (116) bitwise_or_expression ::= bitwise_xor_expression */
+    96,  /* (117) bitwise_xor_expression ::= bitwise_and_expression */
+    97,  /* (118) bitwise_and_expression ::= equality_expression */
+    98,  /* (119) equality_expression ::= relational_expression */
+    99,  /* (120) relational_expression ::= shift_expression */
+   100,  /* (121) shift_expression ::= additive_expression */
+   101,  /* (122) additive_expression ::= multiplicative_expression */
+   102,  /* (123) multiplicative_expression ::= unary_expression */
+   103,  /* (124) unary_expression ::= postfix_expression */
+   104,  /* (125) postfix_expression ::= lefthand_side_expression */
+    92,  /* (126) lefthand_side_expression ::= call_expression */
+    92,  /* (127) lefthand_side_expression ::= member_expression */
+   106,  /* (128) member_expression ::= primary_expression */
+   106,  /* (129) member_expression ::= member_expression member_expression_part */
+    89,  /* (130) primary_expression ::= object_literal */
+    89,  /* (131) primary_expression ::= PARENL expression PARENR */
+    89,  /* (132) primary_expression ::= IDENTIFIER */
+    89,  /* (133) primary_expression ::= array_literal */
+    89,  /* (134) primary_expression ::= DECIMAL */
+    89,  /* (135) primary_expression ::= HEX_INTEGER */
+    89,  /* (136) primary_expression ::= STRING */
+    89,  /* (137) primary_expression ::= BOOLEAN */
+    89,  /* (138) primary_expression ::= NULL */
+   112,  /* (139) property ::= property_name COLON assignment_expression */
    113,  /* (140) property_name ::= STRING */
    108,  /* (141) member_expression_part ::= DOT IDENTIFIER */
     85,  /* (142) adjuster ::= */
@@ -1798,69 +1880,69 @@ static const signed char yyRuleInfoNRhs[] = {
     0,  /* (74) element_list ::= */
    -1,  /* (75) element_list ::= assignment_expression */
    -3,  /* (76) element_list ::= element_list COMMA assignment_expression */
-   -3,  /* (77) object_literal ::= BRACEL property_name_and_value_list BRACER */
-    0,  /* (78) property_name_and_value_list ::= */
-   -3,  /* (79) property_name_and_value ::= property_name COLON assignment_expression */
-   -3,  /* (80) member_expression_part ::= BRACKETL expression BRACKETR */
-   -3,  /* (81) arguments ::= PARENL argument_list PARENR */
-    0,  /* (82) argument_list ::= */
-   -1,  /* (83) argument_list ::= assignment_expression */
-   -3,  /* (84) argument_list ::= argument_list COMMA assignment_expression */
-    0,  /* (85) output_columns ::= */
-   -1,  /* (86) output_columns ::= output_column */
-   -2,  /* (87) output_columns ::= output_columns COMMA */
-   -3,  /* (88) output_columns ::= output_columns COMMA output_column */
-   -1,  /* (89) output_column ::= STAR */
-   -1,  /* (90) output_column ::= NONEXISTENT_COLUMN */
-   -1,  /* (91) output_column ::= assignment_expression */
-   -3,  /* (92) adjuster ::= adjuster PLUS adjust_expression */
-   -3,  /* (93) adjust_expression ::= adjust_match_expression STAR DECIMAL */
-   -3,  /* (94) adjust_match_expression ::= IDENTIFIER MATCH STRING */
-    0,  /* (95) sort_keys ::= */
-   -1,  /* (96) sort_keys ::= sort_key */
-   -3,  /* (97) sort_keys ::= sort_keys COMMA sort_key */
-   -1,  /* (98) sort_key ::= NONEXISTENT_COLUMN */
-   -2,  /* (99) sort_key ::= MINUS NONEXISTENT_COLUMN */
-   -1,  /* (100) sort_key ::= assignment_expression */
-   -1,  /* (101) input ::= query */
-   -1,  /* (102) input ::= expression */
-   -2,  /* (103) input ::= START_OUTPUT_COLUMNS output_columns */
-   -2,  /* (104) input ::= START_ADJUSTER adjuster */
-   -2,  /* (105) input ::= START_SORT_KEYS sort_keys */
-   -2,  /* (106) input ::= START_OPTIONS object_literal */
-   -1,  /* (107) query ::= query_element */
-   -1,  /* (108) query_element ::= QSTRING */
-   -3,  /* (109) query_element ::= PARENL query PARENR */
-   -1,  /* (110) expression ::= assignment_expression */
-   -1,  /* (111) assignment_expression ::= conditional_expression */
-   -1,  /* (112) conditional_expression ::= logical_or_expression */
-   -1,  /* (113) logical_or_expression ::= logical_and_expression */
-   -1,  /* (114) logical_and_expression ::= bitwise_or_expression */
-   -1,  /* (115) bitwise_or_expression ::= bitwise_xor_expression */
-   -1,  /* (116) bitwise_xor_expression ::= bitwise_and_expression */
-   -1,  /* (117) bitwise_and_expression ::= equality_expression */
-   -1,  /* (118) equality_expression ::= relational_expression */
-   -1,  /* (119) relational_expression ::= shift_expression */
-   -1,  /* (120) shift_expression ::= additive_expression */
-   -1,  /* (121) additive_expression ::= multiplicative_expression */
-   -1,  /* (122) multiplicative_expression ::= unary_expression */
-   -1,  /* (123) unary_expression ::= postfix_expression */
-   -1,  /* (124) postfix_expression ::= lefthand_side_expression */
-   -1,  /* (125) lefthand_side_expression ::= call_expression */
-   -1,  /* (126) lefthand_side_expression ::= member_expression */
-   -1,  /* (127) member_expression ::= primary_expression */
-   -2,  /* (128) member_expression ::= member_expression member_expression_part */
-   -1,  /* (129) primary_expression ::= object_literal */
-   -3,  /* (130) primary_expression ::= PARENL expression PARENR */
-   -1,  /* (131) primary_expression ::= IDENTIFIER */
-   -1,  /* (132) primary_expression ::= array_literal */
-   -1,  /* (133) primary_expression ::= DECIMAL */
-   -1,  /* (134) primary_expression ::= HEX_INTEGER */
-   -1,  /* (135) primary_expression ::= STRING */
-   -1,  /* (136) primary_expression ::= BOOLEAN */
-   -1,  /* (137) primary_expression ::= NULL */
-   -1,  /* (138) property_name_and_value_list ::= property_name_and_value */
-   -3,  /* (139) property_name_and_value_list ::= property_name_and_value_list COMMA property_name_and_value */
+   -3,  /* (77) object_literal ::= BRACEL property_list BRACER */
+    0,  /* (78) property_list ::= */
+   -1,  /* (79) property_list ::= property */
+   -3,  /* (80) property_list ::= property_list COMMA property */
+   -3,  /* (81) member_expression_part ::= BRACKETL expression BRACKETR */
+   -3,  /* (82) arguments ::= PARENL argument_list PARENR */
+    0,  /* (83) argument_list ::= */
+   -1,  /* (84) argument_list ::= assignment_expression */
+   -3,  /* (85) argument_list ::= argument_list COMMA assignment_expression */
+    0,  /* (86) output_columns ::= */
+   -1,  /* (87) output_columns ::= output_column */
+   -2,  /* (88) output_columns ::= output_columns COMMA */
+   -3,  /* (89) output_columns ::= output_columns COMMA output_column */
+   -1,  /* (90) output_column ::= STAR */
+   -1,  /* (91) output_column ::= NONEXISTENT_COLUMN */
+   -1,  /* (92) output_column ::= assignment_expression */
+   -3,  /* (93) adjuster ::= adjuster PLUS adjust_expression */
+   -3,  /* (94) adjust_expression ::= adjust_match_expression STAR DECIMAL */
+   -3,  /* (95) adjust_match_expression ::= IDENTIFIER MATCH STRING */
+    0,  /* (96) sort_keys ::= */
+   -1,  /* (97) sort_keys ::= sort_key */
+   -3,  /* (98) sort_keys ::= sort_keys COMMA sort_key */
+   -1,  /* (99) sort_key ::= NONEXISTENT_COLUMN */
+   -2,  /* (100) sort_key ::= MINUS NONEXISTENT_COLUMN */
+   -1,  /* (101) sort_key ::= assignment_expression */
+   -1,  /* (102) input ::= query */
+   -1,  /* (103) input ::= expression */
+   -2,  /* (104) input ::= START_OUTPUT_COLUMNS output_columns */
+   -2,  /* (105) input ::= START_ADJUSTER adjuster */
+   -2,  /* (106) input ::= START_SORT_KEYS sort_keys */
+   -2,  /* (107) input ::= START_OPTIONS object_literal */
+   -1,  /* (108) query ::= query_element */
+   -1,  /* (109) query_element ::= QSTRING */
+   -3,  /* (110) query_element ::= PARENL query PARENR */
+   -1,  /* (111) expression ::= assignment_expression */
+   -1,  /* (112) assignment_expression ::= conditional_expression */
+   -1,  /* (113) conditional_expression ::= logical_or_expression */
+   -1,  /* (114) logical_or_expression ::= logical_and_expression */
+   -1,  /* (115) logical_and_expression ::= bitwise_or_expression */
+   -1,  /* (116) bitwise_or_expression ::= bitwise_xor_expression */
+   -1,  /* (117) bitwise_xor_expression ::= bitwise_and_expression */
+   -1,  /* (118) bitwise_and_expression ::= equality_expression */
+   -1,  /* (119) equality_expression ::= relational_expression */
+   -1,  /* (120) relational_expression ::= shift_expression */
+   -1,  /* (121) shift_expression ::= additive_expression */
+   -1,  /* (122) additive_expression ::= multiplicative_expression */
+   -1,  /* (123) multiplicative_expression ::= unary_expression */
+   -1,  /* (124) unary_expression ::= postfix_expression */
+   -1,  /* (125) postfix_expression ::= lefthand_side_expression */
+   -1,  /* (126) lefthand_side_expression ::= call_expression */
+   -1,  /* (127) lefthand_side_expression ::= member_expression */
+   -1,  /* (128) member_expression ::= primary_expression */
+   -2,  /* (129) member_expression ::= member_expression member_expression_part */
+   -1,  /* (130) primary_expression ::= object_literal */
+   -3,  /* (131) primary_expression ::= PARENL expression PARENR */
+   -1,  /* (132) primary_expression ::= IDENTIFIER */
+   -1,  /* (133) primary_expression ::= array_literal */
+   -1,  /* (134) primary_expression ::= DECIMAL */
+   -1,  /* (135) primary_expression ::= HEX_INTEGER */
+   -1,  /* (136) primary_expression ::= STRING */
+   -1,  /* (137) primary_expression ::= BOOLEAN */
+   -1,  /* (138) primary_expression ::= NULL */
+   -3,  /* (139) property ::= property_name COLON assignment_expression */
    -1,  /* (140) property_name ::= STRING */
    -2,  /* (141) member_expression_part ::= DOT IDENTIFIER */
     0,  /* (142) adjuster ::= */
@@ -1957,63 +2039,63 @@ static YYACTIONTYPE yy_reduce(
 /********** Begin reduce actions **********************************************/
         YYMINORTYPE yylhsminor;
       case 0: /* query ::= query query_element */
-#line 99 "../../groonga/lib/grn_ecmascript.lemon"
+#line 181 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, grn_int32_value_at(&efsi->op_stack, -1), 2);
 }
-#line 1964 "../../groonga/lib/grn_ecmascript.c"
+#line 2046 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 1: /* query ::= query LOGICAL_AND query_element */
       case 25: /* logical_and_expression ::= logical_and_expression LOGICAL_AND bitwise_or_expression */ yytestcase(yyruleno==25);
-#line 102 "../../groonga/lib/grn_ecmascript.lemon"
+#line 184 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND, 2);
 }
-#line 1972 "../../groonga/lib/grn_ecmascript.c"
+#line 2054 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 2: /* query ::= query LOGICAL_AND_NOT query_element */
       case 26: /* logical_and_expression ::= logical_and_expression LOGICAL_AND_NOT bitwise_or_expression */ yytestcase(yyruleno==26);
-#line 105 "../../groonga/lib/grn_ecmascript.lemon"
+#line 187 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND_NOT, 2);
 }
-#line 1980 "../../groonga/lib/grn_ecmascript.c"
+#line 2062 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 3: /* query ::= query LOGICAL_OR query_element */
       case 24: /* logical_or_expression ::= logical_or_expression LOGICAL_OR logical_and_expression */ yytestcase(yyruleno==24);
-#line 108 "../../groonga/lib/grn_ecmascript.lemon"
+#line 190 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR, 2);
 }
-#line 1988 "../../groonga/lib/grn_ecmascript.c"
+#line 2070 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 4: /* query ::= query NEGATIVE query_element */
-#line 111 "../../groonga/lib/grn_ecmascript.lemon"
+#line 193 "../../groonga/lib/grn_ecmascript.lemon"
 {
   float weight;
   GRN_FLOAT32_POP(&efsi->weight_stack, weight);
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ADJUST, 2);
 }
-#line 1997 "../../groonga/lib/grn_ecmascript.c"
+#line 2079 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 5: /* query_element ::= ADJUST query_element */
-#line 120 "../../groonga/lib/grn_ecmascript.lemon"
+#line 202 "../../groonga/lib/grn_ecmascript.lemon"
 {
   float weight;
   GRN_FLOAT32_POP(&efsi->weight_stack, weight);
 }
-#line 2005 "../../groonga/lib/grn_ecmascript.c"
+#line 2087 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 6: /* query_element ::= RELATIVE_OP query_element */
-#line 124 "../../groonga/lib/grn_ecmascript.lemon"
+#line 206 "../../groonga/lib/grn_ecmascript.lemon"
 {
   int mode;
   GRN_INT32_POP(&efsi->mode_stack, mode);
 }
-#line 2013 "../../groonga/lib/grn_ecmascript.c"
+#line 2095 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 7: /* query_element ::= IDENTIFIER RELATIVE_OP query_element */
-#line 128 "../../groonga/lib/grn_ecmascript.lemon"
+#line 210 "../../groonga/lib/grn_ecmascript.lemon"
 {
   int mode;
   grn_obj *c;
@@ -2053,214 +2135,214 @@ static YYACTIONTYPE yy_reduce(
     break;
   }
 }
-#line 2056 "../../groonga/lib/grn_ecmascript.c"
+#line 2138 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 8: /* query_element ::= BRACEL expression BRACER */
       case 9: /* query_element ::= EVAL primary_expression */ yytestcase(yyruleno==9);
-#line 167 "../../groonga/lib/grn_ecmascript.lemon"
+#line 249 "../../groonga/lib/grn_ecmascript.lemon"
 {
   efsi->flags = efsi->default_flags;
 }
-#line 2064 "../../groonga/lib/grn_ecmascript.c"
+#line 2146 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 10: /* expression ::= expression COMMA assignment_expression */
-#line 175 "../../groonga/lib/grn_ecmascript.lemon"
+#line 257 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_COMMA, 2);
 }
-#line 2071 "../../groonga/lib/grn_ecmascript.c"
+#line 2153 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 11: /* assignment_expression ::= lefthand_side_expression ASSIGN assignment_expression */
-#line 180 "../../groonga/lib/grn_ecmascript.lemon"
+#line 262 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ASSIGN, 2);
 }
-#line 2078 "../../groonga/lib/grn_ecmascript.c"
+#line 2160 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 12: /* assignment_expression ::= lefthand_side_expression STAR_ASSIGN assignment_expression */
-#line 183 "../../groonga/lib/grn_ecmascript.lemon"
+#line 265 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_STAR_ASSIGN, 2);
 }
-#line 2085 "../../groonga/lib/grn_ecmascript.c"
+#line 2167 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 13: /* assignment_expression ::= lefthand_side_expression SLASH_ASSIGN assignment_expression */
-#line 186 "../../groonga/lib/grn_ecmascript.lemon"
+#line 268 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SLASH_ASSIGN, 2);
 }
-#line 2092 "../../groonga/lib/grn_ecmascript.c"
+#line 2174 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 14: /* assignment_expression ::= lefthand_side_expression MOD_ASSIGN assignment_expression */
-#line 189 "../../groonga/lib/grn_ecmascript.lemon"
+#line 271 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MOD_ASSIGN, 2);
 }
-#line 2099 "../../groonga/lib/grn_ecmascript.c"
+#line 2181 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 15: /* assignment_expression ::= lefthand_side_expression PLUS_ASSIGN assignment_expression */
-#line 192 "../../groonga/lib/grn_ecmascript.lemon"
+#line 274 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS_ASSIGN, 2);
 }
-#line 2106 "../../groonga/lib/grn_ecmascript.c"
+#line 2188 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 16: /* assignment_expression ::= lefthand_side_expression MINUS_ASSIGN assignment_expression */
-#line 195 "../../groonga/lib/grn_ecmascript.lemon"
+#line 277 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS_ASSIGN, 2);
 }
-#line 2113 "../../groonga/lib/grn_ecmascript.c"
+#line 2195 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 17: /* assignment_expression ::= lefthand_side_expression SHIFTL_ASSIGN assignment_expression */
-#line 198 "../../groonga/lib/grn_ecmascript.lemon"
+#line 280 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTL_ASSIGN, 2);
 }
-#line 2120 "../../groonga/lib/grn_ecmascript.c"
+#line 2202 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 18: /* assignment_expression ::= lefthand_side_expression SHIFTR_ASSIGN assignment_expression */
-#line 201 "../../groonga/lib/grn_ecmascript.lemon"
+#line 283 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTR_ASSIGN, 2);
 }
-#line 2127 "../../groonga/lib/grn_ecmascript.c"
+#line 2209 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 19: /* assignment_expression ::= lefthand_side_expression SHIFTRR_ASSIGN assignment_expression */
-#line 204 "../../groonga/lib/grn_ecmascript.lemon"
+#line 286 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTRR_ASSIGN, 2);
 }
-#line 2134 "../../groonga/lib/grn_ecmascript.c"
+#line 2216 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 20: /* assignment_expression ::= lefthand_side_expression AND_ASSIGN assignment_expression */
-#line 207 "../../groonga/lib/grn_ecmascript.lemon"
+#line 289 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_AND_ASSIGN, 2);
 }
-#line 2141 "../../groonga/lib/grn_ecmascript.c"
+#line 2223 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 21: /* assignment_expression ::= lefthand_side_expression XOR_ASSIGN assignment_expression */
-#line 210 "../../groonga/lib/grn_ecmascript.lemon"
+#line 292 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_XOR_ASSIGN, 2);
 }
-#line 2148 "../../groonga/lib/grn_ecmascript.c"
+#line 2230 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 22: /* assignment_expression ::= lefthand_side_expression OR_ASSIGN assignment_expression */
-#line 213 "../../groonga/lib/grn_ecmascript.lemon"
+#line 295 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_OR_ASSIGN, 2);
 }
-#line 2155 "../../groonga/lib/grn_ecmascript.c"
+#line 2237 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 23: /* conditional_expression ::= logical_or_expression QUESTION assignment_expression COLON assignment_expression */
-#line 218 "../../groonga/lib/grn_ecmascript.lemon"
+#line 300 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr *e = (grn_expr *)efsi->e;
   e->codes[yymsp[-3].minor.yy0].nargs = yymsp[-1].minor.yy0 - yymsp[-3].minor.yy0;
   e->codes[yymsp[-1].minor.yy0].nargs = e->codes_curr - yymsp[-1].minor.yy0 - 1;
 }
-#line 2164 "../../groonga/lib/grn_ecmascript.c"
+#line 2246 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 27: /* logical_and_expression ::= logical_and_expression ADJUST bitwise_or_expression */
-#line 236 "../../groonga/lib/grn_ecmascript.lemon"
+#line 318 "../../groonga/lib/grn_ecmascript.lemon"
 {
   float weight;
   GRN_FLOAT32_POP(&efsi->weight_stack, weight);
   grn_expr_append_const_float32(efsi->ctx, efsi->e, weight, GRN_OP_AND, 2);
 }
-#line 2173 "../../groonga/lib/grn_ecmascript.c"
+#line 2255 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 28: /* logical_and_expression ::= logical_and_expression NEGATIVE bitwise_or_expression */
-#line 241 "../../groonga/lib/grn_ecmascript.lemon"
+#line 323 "../../groonga/lib/grn_ecmascript.lemon"
 {
   float weight;
   GRN_FLOAT32_POP(&efsi->weight_stack, weight);
   grn_expr_append_const_float32(efsi->ctx, efsi->e, weight, GRN_OP_ADJUST, 2);
 }
-#line 2182 "../../groonga/lib/grn_ecmascript.c"
+#line 2264 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 29: /* bitwise_or_expression ::= bitwise_or_expression BITWISE_OR bitwise_xor_expression */
-#line 248 "../../groonga/lib/grn_ecmascript.lemon"
+#line 330 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_OR, 2);
 }
-#line 2189 "../../groonga/lib/grn_ecmascript.c"
+#line 2271 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 30: /* bitwise_xor_expression ::= bitwise_xor_expression BITWISE_XOR bitwise_and_expression */
-#line 253 "../../groonga/lib/grn_ecmascript.lemon"
+#line 335 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_XOR, 2);
 }
-#line 2196 "../../groonga/lib/grn_ecmascript.c"
+#line 2278 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 31: /* bitwise_and_expression ::= bitwise_and_expression BITWISE_AND equality_expression */
-#line 258 "../../groonga/lib/grn_ecmascript.lemon"
+#line 340 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_AND, 2);
 }
-#line 2203 "../../groonga/lib/grn_ecmascript.c"
+#line 2285 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 32: /* equality_expression ::= equality_expression EQUAL relational_expression */
-#line 263 "../../groonga/lib/grn_ecmascript.lemon"
+#line 345 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_EQUAL, 2);
 }
-#line 2210 "../../groonga/lib/grn_ecmascript.c"
+#line 2292 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 33: /* equality_expression ::= equality_expression NOT_EQUAL relational_expression */
-#line 266 "../../groonga/lib/grn_ecmascript.lemon"
+#line 348 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NOT_EQUAL, 2);
 }
-#line 2217 "../../groonga/lib/grn_ecmascript.c"
+#line 2299 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 34: /* relational_expression ::= relational_expression LESS shift_expression */
-#line 271 "../../groonga/lib/grn_ecmascript.lemon"
+#line 353 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LESS, 2);
 }
-#line 2224 "../../groonga/lib/grn_ecmascript.c"
+#line 2306 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 35: /* relational_expression ::= relational_expression GREATER shift_expression */
-#line 274 "../../groonga/lib/grn_ecmascript.lemon"
+#line 356 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GREATER, 2);
 }
-#line 2231 "../../groonga/lib/grn_ecmascript.c"
+#line 2313 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 36: /* relational_expression ::= relational_expression LESS_EQUAL shift_expression */
-#line 277 "../../groonga/lib/grn_ecmascript.lemon"
+#line 359 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LESS_EQUAL, 2);
 }
-#line 2238 "../../groonga/lib/grn_ecmascript.c"
+#line 2320 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 37: /* relational_expression ::= relational_expression GREATER_EQUAL shift_expression */
-#line 280 "../../groonga/lib/grn_ecmascript.lemon"
+#line 362 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GREATER_EQUAL, 2);
 }
-#line 2245 "../../groonga/lib/grn_ecmascript.c"
+#line 2327 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 38: /* relational_expression ::= relational_expression IN shift_expression */
-#line 283 "../../groonga/lib/grn_ecmascript.lemon"
+#line 365 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_IN, 2);
 }
-#line 2252 "../../groonga/lib/grn_ecmascript.c"
+#line 2334 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 39: /* relational_expression ::= relational_expression MATCH shift_expression */
-      case 94: /* adjust_match_expression ::= IDENTIFIER MATCH STRING */ yytestcase(yyruleno==94);
-#line 286 "../../groonga/lib/grn_ecmascript.lemon"
+      case 95: /* adjust_match_expression ::= IDENTIFIER MATCH STRING */ yytestcase(yyruleno==95);
+#line 368 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MATCH, 2);
 }
-#line 2260 "../../groonga/lib/grn_ecmascript.c"
+#line 2342 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 40: /* relational_expression ::= relational_expression NEAR shift_expression */
-#line 289 "../../groonga/lib/grn_ecmascript.lemon"
+#line 371 "../../groonga/lib/grn_ecmascript.lemon"
 {
   {
     int max_interval;
@@ -2270,17 +2352,17 @@ static YYACTIONTYPE yy_reduce(
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR, 3);
 }
-#line 2273 "../../groonga/lib/grn_ecmascript.c"
+#line 2355 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 41: /* relational_expression ::= relational_expression NEAR2 shift_expression */
-#line 298 "../../groonga/lib/grn_ecmascript.lemon"
+#line 380 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR2, 2);
 }
-#line 2280 "../../groonga/lib/grn_ecmascript.c"
+#line 2362 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 42: /* relational_expression ::= relational_expression NEAR_PHRASE shift_expression */
-#line 301 "../../groonga/lib/grn_ecmascript.lemon"
+#line 383 "../../groonga/lib/grn_ecmascript.lemon"
 {
   {
     int max_interval;
@@ -2295,10 +2377,10 @@ static YYACTIONTYPE yy_reduce(
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR_PHRASE, 4);
 }
-#line 2298 "../../groonga/lib/grn_ecmascript.c"
+#line 2380 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 43: /* relational_expression ::= relational_expression ORDERED_NEAR_PHRASE shift_expression */
-#line 315 "../../groonga/lib/grn_ecmascript.lemon"
+#line 397 "../../groonga/lib/grn_ecmascript.lemon"
 {
   {
     int max_interval;
@@ -2313,10 +2395,10 @@ static YYACTIONTYPE yy_reduce(
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ORDERED_NEAR_PHRASE, 4);
 }
-#line 2316 "../../groonga/lib/grn_ecmascript.c"
+#line 2398 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 44: /* relational_expression ::= relational_expression SIMILAR shift_expression */
-#line 329 "../../groonga/lib/grn_ecmascript.lemon"
+#line 411 "../../groonga/lib/grn_ecmascript.lemon"
 {
   {
     int similarity_threshold;
@@ -2326,17 +2408,17 @@ static YYACTIONTYPE yy_reduce(
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SIMILAR, 3);
 }
-#line 2329 "../../groonga/lib/grn_ecmascript.c"
+#line 2411 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 45: /* relational_expression ::= relational_expression TERM_EXTRACT shift_expression */
-#line 338 "../../groonga/lib/grn_ecmascript.lemon"
+#line 420 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_TERM_EXTRACT, 2);
 }
-#line 2336 "../../groonga/lib/grn_ecmascript.c"
+#line 2418 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 46: /* relational_expression ::= relational_expression QUORUM shift_expression */
-#line 341 "../../groonga/lib/grn_ecmascript.lemon"
+#line 423 "../../groonga/lib/grn_ecmascript.lemon"
 {
   {
     int quorum_threshold;
@@ -2346,103 +2428,103 @@ static YYACTIONTYPE yy_reduce(
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_QUORUM, 3);
 }
-#line 2349 "../../groonga/lib/grn_ecmascript.c"
+#line 2431 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 47: /* relational_expression ::= relational_expression LCP shift_expression */
-#line 350 "../../groonga/lib/grn_ecmascript.lemon"
+#line 432 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_LCP, 2);
 }
-#line 2356 "../../groonga/lib/grn_ecmascript.c"
+#line 2438 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 48: /* relational_expression ::= relational_expression PREFIX shift_expression */
-#line 353 "../../groonga/lib/grn_ecmascript.lemon"
+#line 435 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PREFIX, 2);
 }
-#line 2363 "../../groonga/lib/grn_ecmascript.c"
+#line 2445 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 49: /* relational_expression ::= relational_expression SUFFIX shift_expression */
-#line 356 "../../groonga/lib/grn_ecmascript.lemon"
+#line 438 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SUFFIX, 2);
 }
-#line 2370 "../../groonga/lib/grn_ecmascript.c"
+#line 2452 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 50: /* relational_expression ::= relational_expression REGEXP shift_expression */
-#line 359 "../../groonga/lib/grn_ecmascript.lemon"
+#line 441 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_REGEXP, 2);
 }
-#line 2377 "../../groonga/lib/grn_ecmascript.c"
+#line 2459 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 51: /* shift_expression ::= shift_expression SHIFTL additive_expression */
-#line 364 "../../groonga/lib/grn_ecmascript.lemon"
+#line 446 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTL, 2);
 }
-#line 2384 "../../groonga/lib/grn_ecmascript.c"
+#line 2466 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 52: /* shift_expression ::= shift_expression SHIFTR additive_expression */
-#line 367 "../../groonga/lib/grn_ecmascript.lemon"
+#line 449 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTR, 2);
 }
-#line 2391 "../../groonga/lib/grn_ecmascript.c"
+#line 2473 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 53: /* shift_expression ::= shift_expression SHIFTRR additive_expression */
-#line 370 "../../groonga/lib/grn_ecmascript.lemon"
+#line 452 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SHIFTRR, 2);
 }
-#line 2398 "../../groonga/lib/grn_ecmascript.c"
+#line 2480 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 54: /* additive_expression ::= additive_expression PLUS multiplicative_expression */
-      case 92: /* adjuster ::= adjuster PLUS adjust_expression */ yytestcase(yyruleno==92);
-#line 375 "../../groonga/lib/grn_ecmascript.lemon"
+      case 93: /* adjuster ::= adjuster PLUS adjust_expression */ yytestcase(yyruleno==93);
+#line 457 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS, 2);
 }
-#line 2406 "../../groonga/lib/grn_ecmascript.c"
+#line 2488 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 55: /* additive_expression ::= additive_expression MINUS multiplicative_expression */
-#line 378 "../../groonga/lib/grn_ecmascript.lemon"
+#line 460 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS, 2);
 }
-#line 2413 "../../groonga/lib/grn_ecmascript.c"
+#line 2495 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 56: /* multiplicative_expression ::= multiplicative_expression STAR unary_expression */
-      case 93: /* adjust_expression ::= adjust_match_expression STAR DECIMAL */ yytestcase(yyruleno==93);
-#line 383 "../../groonga/lib/grn_ecmascript.lemon"
+      case 94: /* adjust_expression ::= adjust_match_expression STAR DECIMAL */ yytestcase(yyruleno==94);
+#line 465 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_STAR, 2);
 }
-#line 2421 "../../groonga/lib/grn_ecmascript.c"
+#line 2503 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 57: /* multiplicative_expression ::= multiplicative_expression SLASH unary_expression */
-#line 386 "../../groonga/lib/grn_ecmascript.lemon"
+#line 468 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_SLASH, 2);
 }
-#line 2428 "../../groonga/lib/grn_ecmascript.c"
+#line 2510 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 58: /* multiplicative_expression ::= multiplicative_expression MOD unary_expression */
-#line 389 "../../groonga/lib/grn_ecmascript.lemon"
+#line 471 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MOD, 2);
 }
-#line 2435 "../../groonga/lib/grn_ecmascript.c"
+#line 2517 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 59: /* unary_expression ::= DELETE unary_expression */
-#line 394 "../../groonga/lib/grn_ecmascript.lemon"
+#line 476 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DELETE, 1);
 }
-#line 2442 "../../groonga/lib/grn_ecmascript.c"
+#line 2524 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 60: /* unary_expression ::= INCR unary_expression */
-#line 397 "../../groonga/lib/grn_ecmascript.lemon"
+#line 479 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -2460,10 +2542,10 @@ static YYACTIONTYPE yy_reduce(
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR, 1);
   }
 }
-#line 2463 "../../groonga/lib/grn_ecmascript.c"
+#line 2545 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 61: /* unary_expression ::= DECR unary_expression */
-#line 414 "../../groonga/lib/grn_ecmascript.lemon"
+#line 496 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -2481,66 +2563,66 @@ static YYACTIONTYPE yy_reduce(
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR, 1);
   }
 }
-#line 2484 "../../groonga/lib/grn_ecmascript.c"
+#line 2566 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 62: /* unary_expression ::= PLUS unary_expression */
-#line 431 "../../groonga/lib/grn_ecmascript.lemon"
+#line 513 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PLUS, 1);
 }
-#line 2491 "../../groonga/lib/grn_ecmascript.c"
+#line 2573 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 63: /* unary_expression ::= MINUS unary_expression */
-#line 434 "../../groonga/lib/grn_ecmascript.lemon"
+#line 516 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_MINUS, 1);
 }
-#line 2498 "../../groonga/lib/grn_ecmascript.c"
+#line 2580 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 64: /* unary_expression ::= NOT unary_expression */
-#line 437 "../../groonga/lib/grn_ecmascript.lemon"
+#line 519 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NOT, 1);
 }
-#line 2505 "../../groonga/lib/grn_ecmascript.c"
+#line 2587 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 65: /* unary_expression ::= BITWISE_NOT unary_expression */
-#line 440 "../../groonga/lib/grn_ecmascript.lemon"
+#line 522 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_BITWISE_NOT, 1);
 }
-#line 2512 "../../groonga/lib/grn_ecmascript.c"
+#line 2594 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 66: /* unary_expression ::= ADJUST unary_expression */
-#line 443 "../../groonga/lib/grn_ecmascript.lemon"
+#line 525 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ADJUST, 1);
 }
-#line 2519 "../../groonga/lib/grn_ecmascript.c"
+#line 2601 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 67: /* unary_expression ::= EXACT unary_expression */
-#line 446 "../../groonga/lib/grn_ecmascript.lemon"
+#line 528 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_EXACT, 1);
 }
-#line 2526 "../../groonga/lib/grn_ecmascript.c"
+#line 2608 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 68: /* unary_expression ::= PARTIAL unary_expression */
-#line 449 "../../groonga/lib/grn_ecmascript.lemon"
+#line 531 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_PARTIAL, 1);
 }
-#line 2533 "../../groonga/lib/grn_ecmascript.c"
+#line 2615 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 69: /* unary_expression ::= UNSPLIT unary_expression */
-#line 452 "../../groonga/lib/grn_ecmascript.lemon"
+#line 534 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_UNSPLIT, 1);
 }
-#line 2540 "../../groonga/lib/grn_ecmascript.c"
+#line 2622 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 70: /* postfix_expression ::= lefthand_side_expression INCR */
-#line 457 "../../groonga/lib/grn_ecmascript.lemon"
+#line 539 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -2558,10 +2640,10 @@ static YYACTIONTYPE yy_reduce(
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_INCR_POST, 1);
   }
 }
-#line 2561 "../../groonga/lib/grn_ecmascript.c"
+#line 2643 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 71: /* postfix_expression ::= lefthand_side_expression DECR */
-#line 474 "../../groonga/lib/grn_ecmascript.lemon"
+#line 556 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_expr *e = (grn_expr *)(efsi->e);
@@ -2579,17 +2661,17 @@ static YYACTIONTYPE yy_reduce(
     grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_DECR_POST, 1);
   }
 }
-#line 2582 "../../groonga/lib/grn_ecmascript.c"
+#line 2664 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 72: /* call_expression ::= member_expression arguments */
-#line 495 "../../groonga/lib/grn_ecmascript.lemon"
+#line 577 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_CALL, yymsp[0].minor.yy0);
 }
-#line 2589 "../../groonga/lib/grn_ecmascript.c"
+#line 2671 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 73: /* array_literal ::= BRACKETL element_list BRACKETR */
-#line 512 "../../groonga/lib/grn_ecmascript.lemon"
+#line 594 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   if (efsi->array_literal) {
@@ -2599,10 +2681,10 @@ static YYACTIONTYPE yy_reduce(
     efsi->array_literal = NULL;
   }
 }
-#line 2602 "../../groonga/lib/grn_ecmascript.c"
+#line 2684 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 74: /* element_list ::= */
-#line 522 "../../groonga/lib/grn_ecmascript.lemon"
+#line 604 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
 
@@ -2613,164 +2695,97 @@ static YYACTIONTYPE yy_reduce(
         (int)(efsi->str_end - efsi->str), efsi->str);
   }
 }
-#line 2616 "../../groonga/lib/grn_ecmascript.c"
+#line 2698 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 75: /* element_list ::= assignment_expression */
       case 76: /* element_list ::= element_list COMMA assignment_expression */ yytestcase(yyruleno==76);
-#line 533 "../../groonga/lib/grn_ecmascript.lemon"
+#line 615 "../../groonga/lib/grn_ecmascript.lemon"
 {
   array_literal_add_element(efsi);
 }
-#line 2624 "../../groonga/lib/grn_ecmascript.c"
+#line 2706 "../../groonga/lib/grn_ecmascript.c"
         break;
-      case 77: /* object_literal ::= BRACEL property_name_and_value_list BRACER */
-#line 541 "../../groonga/lib/grn_ecmascript.lemon"
+      case 77: /* object_literal ::= BRACEL property_list BRACER */
+#line 623 "../../groonga/lib/grn_ecmascript.lemon"
 {
-  grn_ctx *ctx = efsi->ctx;
-  grn_expr_take_obj(ctx, efsi->e, (grn_obj *)(efsi->object_literal));
-  grn_expr_append_obj(ctx, efsi->e, (grn_obj *)(efsi->object_literal),
-                      GRN_OP_PUSH, 1);
-  efsi->object_literal = NULL;
+  object_literal_end(efsi, yymsp[-1].minor.yy0);
 }
-#line 2635 "../../groonga/lib/grn_ecmascript.c"
+#line 2713 "../../groonga/lib/grn_ecmascript.c"
         break;
-      case 78: /* property_name_and_value_list ::= */
-#line 549 "../../groonga/lib/grn_ecmascript.lemon"
-{
-  grn_ctx *ctx = efsi->ctx;
-
-  efsi->object_literal =
-    grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE, sizeof(grn_obj),
-                    GRN_OBJ_KEY_VAR_SIZE|GRN_OBJ_TEMPORARY|GRN_HASH_TINY);
-  if (!efsi->object_literal) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "couldn't create hash table for parsing object literal: <%.*s>",
-        (int)(efsi->str_end - efsi->str), efsi->str);
-  } else {
-    DB_OBJ(efsi->object_literal)->header.domain = GRN_DB_SHORT_TEXT;
-  }
-}
-#line 2653 "../../groonga/lib/grn_ecmascript.c"
-        break;
-      case 79: /* property_name_and_value ::= property_name COLON assignment_expression */
-#line 566 "../../groonga/lib/grn_ecmascript.lemon"
-{
-  grn_ctx *ctx = efsi->ctx;
-  grn_expr *e = (grn_expr *)(efsi->e);
-  grn_obj *property = e->codes[e->codes_curr - 3].value;
-  grn_obj *value = e->codes[e->codes_curr - 1].value;
-
-  if (!efsi->object_literal) {
-     efsi->object_literal =
-       grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE, sizeof(grn_obj),
-                       GRN_OBJ_KEY_VAR_SIZE|GRN_OBJ_TEMPORARY|GRN_HASH_TINY);
-     if (efsi->object_literal) {
-       DB_OBJ(efsi->object_literal)->header.domain = GRN_DB_SHORT_TEXT;
-     }
-  }
-
-  if (!efsi->object_literal) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "couldn't create hash table for parsing object literal: <%.*s>",
-        (int)(efsi->str_end - efsi->str), efsi->str);
-  } else {
-    grn_obj *buf;
-    int added;
-    if (grn_hash_add(ctx, (grn_hash *)efsi->object_literal,
-                     GRN_TEXT_VALUE(property), GRN_TEXT_LEN(property),
-                     (void **)&buf, &added)) {
-      if (added) {
-        switch (value->header.type) {
-        case GRN_TABLE_HASH_KEY :
-        case GRN_COLUMN_FIX_SIZE :
-        case GRN_COLUMN_VAR_SIZE :
-        case GRN_COLUMN_INDEX :
-          GRN_OBJ_INIT(buf, GRN_PTR, 0, GRN_ID_NIL);
-          GRN_PTR_SET(ctx, buf, value);
-          break;
-        case GRN_VECTOR :
-          GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
-          grn_vector_copy(ctx, value, buf);
-          break;
-        default :
-          GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
-          GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
-          break;
-        }
-        grn_expr_dfi_pop(e);
-        e->codes_curr -= 3;
-      } else {
-        ERR(GRN_INVALID_ARGUMENT,
-            "duplicated property name: <%.*s>",
-            (int)GRN_TEXT_LEN(property),
-            GRN_TEXT_VALUE(property));
-      }
-    } else {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "failed to add a property to object literal: <%.*s>",
-          (int)GRN_TEXT_LEN(property),
-          GRN_TEXT_VALUE(property));
-    }
-  }
-}
-#line 2716 "../../groonga/lib/grn_ecmascript.c"
-        break;
-      case 80: /* member_expression_part ::= BRACKETL expression BRACKETR */
-#line 628 "../../groonga/lib/grn_ecmascript.lemon"
-{
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GET_MEMBER, 2);
-}
-#line 2723 "../../groonga/lib/grn_ecmascript.c"
-        break;
-      case 81: /* arguments ::= PARENL argument_list PARENR */
-#line 633 "../../groonga/lib/grn_ecmascript.lemon"
-{ yymsp[-2].minor.yy0 = yymsp[-1].minor.yy0; }
-#line 2728 "../../groonga/lib/grn_ecmascript.c"
-        break;
-      case 82: /* argument_list ::= */
-#line 634 "../../groonga/lib/grn_ecmascript.lemon"
-{ yymsp[1].minor.yy0 = 0; }
-#line 2733 "../../groonga/lib/grn_ecmascript.c"
-        break;
-      case 83: /* argument_list ::= assignment_expression */
-#line 635 "../../groonga/lib/grn_ecmascript.lemon"
-{ yymsp[0].minor.yy0 = 1; }
-#line 2738 "../../groonga/lib/grn_ecmascript.c"
-        break;
-      case 84: /* argument_list ::= argument_list COMMA assignment_expression */
-#line 636 "../../groonga/lib/grn_ecmascript.lemon"
-{ yylhsminor.yy0 = yymsp[-2].minor.yy0 + 1; }
-#line 2743 "../../groonga/lib/grn_ecmascript.c"
-  yymsp[-2].minor.yy0 = yylhsminor.yy0;
-        break;
-      case 85: /* output_columns ::= */
-      case 95: /* sort_keys ::= */ yytestcase(yyruleno==95);
-#line 638 "../../groonga/lib/grn_ecmascript.lemon"
+      case 78: /* property_list ::= */
+      case 86: /* output_columns ::= */ yytestcase(yyruleno==86);
+      case 96: /* sort_keys ::= */ yytestcase(yyruleno==96);
+#line 627 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[1].minor.yy0 = 0;
 }
-#line 2752 "../../groonga/lib/grn_ecmascript.c"
+#line 2722 "../../groonga/lib/grn_ecmascript.c"
         break;
-      case 86: /* output_columns ::= output_column */
-      case 96: /* sort_keys ::= sort_key */ yytestcase(yyruleno==96);
-#line 641 "../../groonga/lib/grn_ecmascript.lemon"
+      case 79: /* property_list ::= property */
+      case 92: /* output_column ::= assignment_expression */ yytestcase(yyruleno==92);
+      case 101: /* sort_key ::= assignment_expression */ yytestcase(yyruleno==101);
+#line 630 "../../groonga/lib/grn_ecmascript.lemon"
+{
+  yymsp[0].minor.yy0 = 1;
+}
+#line 2731 "../../groonga/lib/grn_ecmascript.c"
+        break;
+      case 80: /* property_list ::= property_list COMMA property */
+#line 633 "../../groonga/lib/grn_ecmascript.lemon"
+{
+  yylhsminor.yy0 = yymsp[-2].minor.yy0 + 1;
+}
+#line 2738 "../../groonga/lib/grn_ecmascript.c"
+  yymsp[-2].minor.yy0 = yylhsminor.yy0;
+        break;
+      case 81: /* member_expression_part ::= BRACKETL expression BRACKETR */
+#line 640 "../../groonga/lib/grn_ecmascript.lemon"
+{
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_GET_MEMBER, 2);
+}
+#line 2746 "../../groonga/lib/grn_ecmascript.c"
+        break;
+      case 82: /* arguments ::= PARENL argument_list PARENR */
+#line 645 "../../groonga/lib/grn_ecmascript.lemon"
+{ yymsp[-2].minor.yy0 = yymsp[-1].minor.yy0; }
+#line 2751 "../../groonga/lib/grn_ecmascript.c"
+        break;
+      case 83: /* argument_list ::= */
+#line 646 "../../groonga/lib/grn_ecmascript.lemon"
+{ yymsp[1].minor.yy0 = 0; }
+#line 2756 "../../groonga/lib/grn_ecmascript.c"
+        break;
+      case 84: /* argument_list ::= assignment_expression */
+#line 647 "../../groonga/lib/grn_ecmascript.lemon"
+{ yymsp[0].minor.yy0 = 1; }
+#line 2761 "../../groonga/lib/grn_ecmascript.c"
+        break;
+      case 85: /* argument_list ::= argument_list COMMA assignment_expression */
+#line 648 "../../groonga/lib/grn_ecmascript.lemon"
+{ yylhsminor.yy0 = yymsp[-2].minor.yy0 + 1; }
+#line 2766 "../../groonga/lib/grn_ecmascript.c"
+  yymsp[-2].minor.yy0 = yylhsminor.yy0;
+        break;
+      case 87: /* output_columns ::= output_column */
+      case 97: /* sort_keys ::= sort_key */ yytestcase(yyruleno==97);
+#line 653 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yylhsminor.yy0 = yymsp[0].minor.yy0;
 }
-#line 2760 "../../groonga/lib/grn_ecmascript.c"
+#line 2775 "../../groonga/lib/grn_ecmascript.c"
   yymsp[0].minor.yy0 = yylhsminor.yy0;
         break;
-      case 87: /* output_columns ::= output_columns COMMA */
-#line 646 "../../groonga/lib/grn_ecmascript.lemon"
+      case 88: /* output_columns ::= output_columns COMMA */
+#line 658 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yylhsminor.yy0 = yymsp[-1].minor.yy0;
 }
-#line 2768 "../../groonga/lib/grn_ecmascript.c"
+#line 2783 "../../groonga/lib/grn_ecmascript.c"
   yymsp[-1].minor.yy0 = yylhsminor.yy0;
         break;
-      case 88: /* output_columns ::= output_columns COMMA output_column */
-      case 97: /* sort_keys ::= sort_keys COMMA sort_key */ yytestcase(yyruleno==97);
-#line 651 "../../groonga/lib/grn_ecmascript.lemon"
+      case 89: /* output_columns ::= output_columns COMMA output_column */
+      case 98: /* sort_keys ::= sort_keys COMMA sort_key */ yytestcase(yyruleno==98);
+#line 663 "../../groonga/lib/grn_ecmascript.lemon"
 {
   if (yymsp[-2].minor.yy0 == 0) {
     yylhsminor.yy0 = yymsp[0].minor.yy0;
@@ -2783,11 +2798,11 @@ static YYACTIONTYPE yy_reduce(
     yylhsminor.yy0 = 1;
   }
 }
-#line 2786 "../../groonga/lib/grn_ecmascript.c"
+#line 2801 "../../groonga/lib/grn_ecmascript.c"
   yymsp[-2].minor.yy0 = yylhsminor.yy0;
         break;
-      case 89: /* output_column ::= STAR */
-#line 664 "../../groonga/lib/grn_ecmascript.lemon"
+      case 90: /* output_column ::= STAR */
+#line 676 "../../groonga/lib/grn_ecmascript.lemon"
 {
   grn_ctx *ctx = efsi->ctx;
   grn_obj *expr = efsi->e;
@@ -2837,71 +2852,62 @@ static YYACTIONTYPE yy_reduce(
     yymsp[0].minor.yy0 = 0;
   }
 }
-#line 2840 "../../groonga/lib/grn_ecmascript.c"
+#line 2855 "../../groonga/lib/grn_ecmascript.c"
         break;
-      case 90: /* output_column ::= NONEXISTENT_COLUMN */
-      case 98: /* sort_key ::= NONEXISTENT_COLUMN */ yytestcase(yyruleno==98);
-#line 713 "../../groonga/lib/grn_ecmascript.lemon"
+      case 91: /* output_column ::= NONEXISTENT_COLUMN */
+      case 99: /* sort_key ::= NONEXISTENT_COLUMN */ yytestcase(yyruleno==99);
+#line 725 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 0;
 }
-#line 2848 "../../groonga/lib/grn_ecmascript.c"
+#line 2863 "../../groonga/lib/grn_ecmascript.c"
         break;
-      case 91: /* output_column ::= assignment_expression */
-      case 100: /* sort_key ::= assignment_expression */ yytestcase(yyruleno==100);
-#line 716 "../../groonga/lib/grn_ecmascript.lemon"
-{
-  yymsp[0].minor.yy0 = 1;
-}
-#line 2856 "../../groonga/lib/grn_ecmascript.c"
-        break;
-      case 99: /* sort_key ::= MINUS NONEXISTENT_COLUMN */
-#line 759 "../../groonga/lib/grn_ecmascript.lemon"
+      case 100: /* sort_key ::= MINUS NONEXISTENT_COLUMN */
+#line 771 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[-1].minor.yy0 = 0;
 }
-#line 2863 "../../groonga/lib/grn_ecmascript.c"
+#line 2870 "../../groonga/lib/grn_ecmascript.c"
         break;
       default:
-      /* (101) input ::= query */ yytestcase(yyruleno==101);
-      /* (102) input ::= expression */ yytestcase(yyruleno==102);
-      /* (103) input ::= START_OUTPUT_COLUMNS output_columns */ yytestcase(yyruleno==103);
-      /* (104) input ::= START_ADJUSTER adjuster */ yytestcase(yyruleno==104);
-      /* (105) input ::= START_SORT_KEYS sort_keys */ yytestcase(yyruleno==105);
-      /* (106) input ::= START_OPTIONS object_literal */ yytestcase(yyruleno==106);
-      /* (107) query ::= query_element (OPTIMIZED OUT) */ assert(yyruleno!=107);
-      /* (108) query_element ::= QSTRING */ yytestcase(yyruleno==108);
-      /* (109) query_element ::= PARENL query PARENR */ yytestcase(yyruleno==109);
-      /* (110) expression ::= assignment_expression (OPTIMIZED OUT) */ assert(yyruleno!=110);
-      /* (111) assignment_expression ::= conditional_expression (OPTIMIZED OUT) */ assert(yyruleno!=111);
-      /* (112) conditional_expression ::= logical_or_expression */ yytestcase(yyruleno==112);
-      /* (113) logical_or_expression ::= logical_and_expression */ yytestcase(yyruleno==113);
-      /* (114) logical_and_expression ::= bitwise_or_expression */ yytestcase(yyruleno==114);
-      /* (115) bitwise_or_expression ::= bitwise_xor_expression */ yytestcase(yyruleno==115);
-      /* (116) bitwise_xor_expression ::= bitwise_and_expression */ yytestcase(yyruleno==116);
-      /* (117) bitwise_and_expression ::= equality_expression */ yytestcase(yyruleno==117);
-      /* (118) equality_expression ::= relational_expression */ yytestcase(yyruleno==118);
-      /* (119) relational_expression ::= shift_expression */ yytestcase(yyruleno==119);
-      /* (120) shift_expression ::= additive_expression */ yytestcase(yyruleno==120);
-      /* (121) additive_expression ::= multiplicative_expression */ yytestcase(yyruleno==121);
-      /* (122) multiplicative_expression ::= unary_expression (OPTIMIZED OUT) */ assert(yyruleno!=122);
-      /* (123) unary_expression ::= postfix_expression (OPTIMIZED OUT) */ assert(yyruleno!=123);
-      /* (124) postfix_expression ::= lefthand_side_expression */ yytestcase(yyruleno==124);
-      /* (125) lefthand_side_expression ::= call_expression (OPTIMIZED OUT) */ assert(yyruleno!=125);
-      /* (126) lefthand_side_expression ::= member_expression */ yytestcase(yyruleno==126);
-      /* (127) member_expression ::= primary_expression (OPTIMIZED OUT) */ assert(yyruleno!=127);
-      /* (128) member_expression ::= member_expression member_expression_part */ yytestcase(yyruleno==128);
-      /* (129) primary_expression ::= object_literal (OPTIMIZED OUT) */ assert(yyruleno!=129);
-      /* (130) primary_expression ::= PARENL expression PARENR */ yytestcase(yyruleno==130);
-      /* (131) primary_expression ::= IDENTIFIER */ yytestcase(yyruleno==131);
-      /* (132) primary_expression ::= array_literal (OPTIMIZED OUT) */ assert(yyruleno!=132);
-      /* (133) primary_expression ::= DECIMAL */ yytestcase(yyruleno==133);
-      /* (134) primary_expression ::= HEX_INTEGER */ yytestcase(yyruleno==134);
-      /* (135) primary_expression ::= STRING */ yytestcase(yyruleno==135);
-      /* (136) primary_expression ::= BOOLEAN */ yytestcase(yyruleno==136);
-      /* (137) primary_expression ::= NULL */ yytestcase(yyruleno==137);
-      /* (138) property_name_and_value_list ::= property_name_and_value (OPTIMIZED OUT) */ assert(yyruleno!=138);
-      /* (139) property_name_and_value_list ::= property_name_and_value_list COMMA property_name_and_value */ yytestcase(yyruleno==139);
+      /* (102) input ::= query */ yytestcase(yyruleno==102);
+      /* (103) input ::= expression */ yytestcase(yyruleno==103);
+      /* (104) input ::= START_OUTPUT_COLUMNS output_columns */ yytestcase(yyruleno==104);
+      /* (105) input ::= START_ADJUSTER adjuster */ yytestcase(yyruleno==105);
+      /* (106) input ::= START_SORT_KEYS sort_keys */ yytestcase(yyruleno==106);
+      /* (107) input ::= START_OPTIONS object_literal */ yytestcase(yyruleno==107);
+      /* (108) query ::= query_element (OPTIMIZED OUT) */ assert(yyruleno!=108);
+      /* (109) query_element ::= QSTRING */ yytestcase(yyruleno==109);
+      /* (110) query_element ::= PARENL query PARENR */ yytestcase(yyruleno==110);
+      /* (111) expression ::= assignment_expression (OPTIMIZED OUT) */ assert(yyruleno!=111);
+      /* (112) assignment_expression ::= conditional_expression (OPTIMIZED OUT) */ assert(yyruleno!=112);
+      /* (113) conditional_expression ::= logical_or_expression */ yytestcase(yyruleno==113);
+      /* (114) logical_or_expression ::= logical_and_expression */ yytestcase(yyruleno==114);
+      /* (115) logical_and_expression ::= bitwise_or_expression */ yytestcase(yyruleno==115);
+      /* (116) bitwise_or_expression ::= bitwise_xor_expression */ yytestcase(yyruleno==116);
+      /* (117) bitwise_xor_expression ::= bitwise_and_expression */ yytestcase(yyruleno==117);
+      /* (118) bitwise_and_expression ::= equality_expression */ yytestcase(yyruleno==118);
+      /* (119) equality_expression ::= relational_expression */ yytestcase(yyruleno==119);
+      /* (120) relational_expression ::= shift_expression */ yytestcase(yyruleno==120);
+      /* (121) shift_expression ::= additive_expression */ yytestcase(yyruleno==121);
+      /* (122) additive_expression ::= multiplicative_expression */ yytestcase(yyruleno==122);
+      /* (123) multiplicative_expression ::= unary_expression (OPTIMIZED OUT) */ assert(yyruleno!=123);
+      /* (124) unary_expression ::= postfix_expression (OPTIMIZED OUT) */ assert(yyruleno!=124);
+      /* (125) postfix_expression ::= lefthand_side_expression */ yytestcase(yyruleno==125);
+      /* (126) lefthand_side_expression ::= call_expression (OPTIMIZED OUT) */ assert(yyruleno!=126);
+      /* (127) lefthand_side_expression ::= member_expression */ yytestcase(yyruleno==127);
+      /* (128) member_expression ::= primary_expression (OPTIMIZED OUT) */ assert(yyruleno!=128);
+      /* (129) member_expression ::= member_expression member_expression_part */ yytestcase(yyruleno==129);
+      /* (130) primary_expression ::= object_literal (OPTIMIZED OUT) */ assert(yyruleno!=130);
+      /* (131) primary_expression ::= PARENL expression PARENR */ yytestcase(yyruleno==131);
+      /* (132) primary_expression ::= IDENTIFIER */ yytestcase(yyruleno==132);
+      /* (133) primary_expression ::= array_literal (OPTIMIZED OUT) */ assert(yyruleno!=133);
+      /* (134) primary_expression ::= DECIMAL */ yytestcase(yyruleno==134);
+      /* (135) primary_expression ::= HEX_INTEGER */ yytestcase(yyruleno==135);
+      /* (136) primary_expression ::= STRING */ yytestcase(yyruleno==136);
+      /* (137) primary_expression ::= BOOLEAN */ yytestcase(yyruleno==137);
+      /* (138) primary_expression ::= NULL */ yytestcase(yyruleno==138);
+      /* (139) property ::= property_name COLON assignment_expression */ yytestcase(yyruleno==139);
       /* (140) property_name ::= STRING */ yytestcase(yyruleno==140);
       /* (141) member_expression_part ::= DOT IDENTIFIER */ yytestcase(yyruleno==141);
       /* (142) adjuster ::= */ yytestcase(yyruleno==142);
@@ -2966,7 +2972,7 @@ static void yy_syntax_error(
   grn_expr_parserCTX_FETCH
 #define TOKEN yyminor
 /************ Begin %syntax_error code ****************************************/
-#line 62 "../../groonga/lib/grn_ecmascript.lemon"
+#line 144 "../../groonga/lib/grn_ecmascript.lemon"
 
   {
     grn_ctx *ctx = efsi->ctx;
@@ -2994,7 +3000,7 @@ static void yy_syntax_error(
     }
     GRN_OBJ_FIN(ctx, &message);
   }
-#line 2997 "../../groonga/lib/grn_ecmascript.c"
+#line 3003 "../../groonga/lib/grn_ecmascript.c"
 /************ End %syntax_error code ******************************************/
   grn_expr_parserARG_STORE /* Suppress warning about unused %extra_argument variable */
   grn_expr_parserCTX_STORE
