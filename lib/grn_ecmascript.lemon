@@ -48,6 +48,88 @@
       }
     }
   }
+
+  static void
+  object_literal_end(efs_info *efsi, int n_properties)
+  {
+    grn_ctx *ctx = efsi->ctx;
+    grn_hash *object_literal =
+      grn_hash_create(ctx,
+                      NULL,
+                      GRN_TABLE_MAX_KEY_SIZE,
+                      sizeof(grn_obj),
+                      GRN_OBJ_KEY_VAR_SIZE|GRN_OBJ_TEMPORARY|GRN_HASH_TINY);
+    if (!object_literal) {
+      ERR(GRN_NO_MEMORY_AVAILABLE,
+          "[expr][object-literal] couldn't create hash table: <%.*s>",
+          (int)(efsi->str_end - efsi->str),
+          efsi->str);
+      return;
+    }
+
+    grn_expr_take_obj(ctx, efsi->e, (grn_obj *)(object_literal));
+    DB_OBJ(object_literal)->header.domain = GRN_DB_SHORT_TEXT;
+
+    grn_expr *e = (grn_expr *)(efsi->e);
+    int i;
+    for (i = n_properties; i > 0; i--) {
+      int base = e->codes_curr - (i * 3);
+      grn_obj *name = e->codes[base].value;
+      grn_obj *value = e->codes[base + 2].value;
+
+      grn_obj *buf;
+      int added;
+      grn_id id = grn_hash_add(ctx,
+                               object_literal,
+                               GRN_TEXT_VALUE(name),
+                               GRN_TEXT_LEN(name),
+                               (void **)(&buf),
+                               &added);
+      if (id == GRN_ID_NIL) {
+        grn_rc rc = ctx->rc;
+        if (rc == GRN_SUCCESS) {
+          rc = GRN_NO_MEMORY_AVAILABLE;
+        }
+        ERR(rc,
+            "[expr][object-literal] failed to add a property: <%.*s>",
+            (int)GRN_TEXT_LEN(name),
+            GRN_TEXT_VALUE(name));
+        return;
+      }
+
+      if (!added) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "[expr][object-literal] duplicated property name: <%.*s>",
+            (int)GRN_TEXT_LEN(name),
+            GRN_TEXT_VALUE(name));
+        return;
+      }
+
+      switch (value->header.type) {
+      case GRN_TABLE_HASH_KEY :
+      case GRN_COLUMN_FIX_SIZE :
+      case GRN_COLUMN_VAR_SIZE :
+      case GRN_COLUMN_INDEX :
+        GRN_OBJ_INIT(buf, GRN_PTR, 0, GRN_ID_NIL);
+        GRN_PTR_SET(ctx, buf, value);
+        break;
+      case GRN_VECTOR :
+        GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
+        grn_vector_copy(ctx, value, buf);
+        break;
+      default :
+        GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
+        GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+        break;
+      }
+    }
+    for (i = 0; i < n_properties; i++) {
+      grn_expr_dfi_pop(e);
+      e->codes_curr -= 3;
+    }
+    grn_expr_append_obj(ctx, efsi->e, (grn_obj *)(object_literal),
+                        GRN_OP_PUSH, 1);
+  }
 }
 
 %token_type { int }
@@ -538,90 +620,20 @@ element_list ::= element_list COMMA assignment_expression. {
   array_literal_add_element(efsi);
 }
 
-object_literal ::= BRACEL property_name_and_value_list BRACER. {
-  grn_ctx *ctx = efsi->ctx;
-  grn_expr_take_obj(ctx, efsi->e, (grn_obj *)(efsi->object_literal));
-  grn_expr_append_obj(ctx, efsi->e, (grn_obj *)(efsi->object_literal),
-                      GRN_OP_PUSH, 1);
-  efsi->object_literal = NULL;
+object_literal ::= BRACEL property_list(N) BRACER. {
+  object_literal_end(efsi, N);
 }
 
-property_name_and_value_list ::= . {
-  grn_ctx *ctx = efsi->ctx;
-
-  efsi->object_literal =
-    grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE, sizeof(grn_obj),
-                    GRN_OBJ_KEY_VAR_SIZE|GRN_OBJ_TEMPORARY|GRN_HASH_TINY);
-  if (!efsi->object_literal) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "couldn't create hash table for parsing object literal: <%.*s>",
-        (int)(efsi->str_end - efsi->str), efsi->str);
-  } else {
-    DB_OBJ(efsi->object_literal)->header.domain = GRN_DB_SHORT_TEXT;
-  }
+property_list(N) ::= . {
+  N = 0;
 }
-property_name_and_value_list ::= property_name_and_value.
-property_name_and_value_list ::= property_name_and_value_list COMMA property_name_and_value.
-
-property_name_and_value ::= property_name COLON assignment_expression. {
-  grn_ctx *ctx = efsi->ctx;
-  grn_expr *e = (grn_expr *)(efsi->e);
-  grn_obj *property = e->codes[e->codes_curr - 3].value;
-  grn_obj *value = e->codes[e->codes_curr - 1].value;
-
-  if (!efsi->object_literal) {
-     efsi->object_literal =
-       grn_hash_create(ctx, NULL, GRN_TABLE_MAX_KEY_SIZE, sizeof(grn_obj),
-                       GRN_OBJ_KEY_VAR_SIZE|GRN_OBJ_TEMPORARY|GRN_HASH_TINY);
-     if (efsi->object_literal) {
-       DB_OBJ(efsi->object_literal)->header.domain = GRN_DB_SHORT_TEXT;
-     }
-  }
-
-  if (!efsi->object_literal) {
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "couldn't create hash table for parsing object literal: <%.*s>",
-        (int)(efsi->str_end - efsi->str), efsi->str);
-  } else {
-    grn_obj *buf;
-    int added;
-    if (grn_hash_add(ctx, (grn_hash *)efsi->object_literal,
-                     GRN_TEXT_VALUE(property), GRN_TEXT_LEN(property),
-                     (void **)&buf, &added)) {
-      if (added) {
-        switch (value->header.type) {
-        case GRN_TABLE_HASH_KEY :
-        case GRN_COLUMN_FIX_SIZE :
-        case GRN_COLUMN_VAR_SIZE :
-        case GRN_COLUMN_INDEX :
-          GRN_OBJ_INIT(buf, GRN_PTR, 0, GRN_ID_NIL);
-          GRN_PTR_SET(ctx, buf, value);
-          break;
-        case GRN_VECTOR :
-          GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
-          grn_vector_copy(ctx, value, buf);
-          break;
-        default :
-          GRN_OBJ_INIT(buf, value->header.type, 0, value->header.domain);
-          GRN_TEXT_PUT(ctx, buf, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
-          break;
-        }
-        grn_expr_dfi_pop(e);
-        e->codes_curr -= 3;
-      } else {
-        ERR(GRN_INVALID_ARGUMENT,
-            "duplicated property name: <%.*s>",
-            (int)GRN_TEXT_LEN(property),
-            GRN_TEXT_VALUE(property));
-      }
-    } else {
-      ERR(GRN_NO_MEMORY_AVAILABLE,
-          "failed to add a property to object literal: <%.*s>",
-          (int)GRN_TEXT_LEN(property),
-          GRN_TEXT_VALUE(property));
-    }
-  }
+property_list(N) ::= property. {
+  N = 1;
 }
+property_list(N) ::= property_list(N_SUB) COMMA property. {
+  N = N_SUB + 1;
+}
+property ::= property_name COLON assignment_expression.
 
 property_name ::= STRING.
 
