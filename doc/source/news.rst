@@ -5,6 +5,547 @@
 News
 ====
 
+.. _release-11-0-5:
+
+Release 11.0.5 - 2021-07-29
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`/reference/normalizers`] Added support for multiple normalizers.
+
+  We can specify multiple normalizers by ``--notmalizers`` option when we create a table since this release.
+  If we can also specify them by  ``--normalizer`` existing option because of compatibility.
+
+  We added ``NormalizerTable`` for customizing a normalizer in Groonga 11.0.4.
+  We can more flexibly behavior of the normalizer by combining ``NormalizerTable`` with existing normalizer.
+
+  For example, this feature is useful in the following case.
+
+    * Search for a telephone number. However, we import data handwritten by OCR.
+      If data is handwritten, OCR may misunderstand a number and string(e.g. 5 and S).
+
+  The details are as follows.
+
+  .. code-block::
+
+     table_create Normalizations TABLE_PAT_KEY ShortText
+     column_create Normalizations normalized COLUMN_SCALAR ShortText
+     load --table Normalizations
+     [
+     {"_key": "s", "normalized": "5"}
+     ]
+
+
+     table_create Tels TABLE_NO_KEY
+     column_create Tels tel COLUMN_SCALAR ShortText
+
+     table_create TelsIndex TABLE_PAT_KEY ShortText \
+       --normalizers 'NormalizerNFKC130("unify_hyphen_and_prolonged_sound_mark", true), \
+                      NormalizerTable("column", "Normalizations.normalized")' \
+       --default_tokenizer 'TokenNgram("loose_symbol", true, "loose_blank", true)'
+     column_create TelsIndex tel_index COLUMN_INDEX|WITH_SECTION Tels tel
+
+     load --table Tels
+     [
+     {"tel": "03-4S-1234"}
+     {"tel": "03-45-9876"}
+     ]
+
+     select --table Tels \
+       --filter 'tel @ "03-45-1234"'
+     [
+       [
+         0,
+         1625227424.560146,
+         0.0001730918884277344
+       ],
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "_id",
+               "UInt32"
+             ],
+             [
+               "tel",
+               "ShortText"
+             ]
+           ],
+           [
+             1,
+             "03-4S-1234"
+           ]
+         ]
+       ]
+     ]
+
+  Existing normalizers can't meet in such case, but we can meet it by combining ``NormalizerTable`` with existing normalizer since this release.
+
+* [:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for customizing thresholds for sequential search.
+
+  We can customize thresholds in each queries whether to use sequential search by the following options.
+
+    * ``{"max_n_enough_filtered_records": xx}``
+
+      ``max_n_enough_filtered_records`` specify the number of records.
+      ``query`` or ``query_parallel_or`` use sequential search when they seems to narrow down until under this number.
+
+    * ``{"enough_filtered_ratio": x.x}``
+
+      ``enough_filtered_ratio`` specify percentage of total.
+      ``query`` or ``query_parallel_or`` use sequential search when they seems to narrow down until under this percentage.
+      For example, if we specify ``{"enough_filtered_ratio": 0.5}``, ``query`` or ``query_parallel_or`` use sequential search when they seems to narrow down until half of the whole.
+
+  The details are as follows.
+
+    .. code-block::
+
+       table_create Products TABLE_NO_KEY
+       column_create Products name COLUMN_SCALAR ShortText
+
+       table_create Terms TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+       column_create Terms products_name COLUMN_INDEX Products name
+
+       load --table Products
+       [
+       ["name"],
+       ["Groonga"],
+       ["Mroonga"],
+       ["Rroonga"],
+       ["PGroonga"],
+       ["Ruby"],
+       ["PostgreSQL"]
+       ]
+
+       select \
+         --table Products \
+         --filter 'query("name", "r name:Ruby", {"enough_filtered_ratio": 0.5})'
+
+    .. code-block::
+
+       table_create Products TABLE_NO_KEY
+       column_create Products name COLUMN_SCALAR ShortText
+
+       table_create Terms TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+       column_create Terms products_name COLUMN_INDEX Products name
+
+       load --table Products
+       [
+       ["name"],
+       ["Groonga"],
+       ["Mroonga"],
+       ["Rroonga"],
+       ["PGroonga"],
+       ["Ruby"],
+       ["PostgreSQL"]
+       ]
+
+       select \
+         --table Products \
+         --filter 'query("name", "r name:Ruby", {"max_n_enough_filtered_records": 10})'
+
+* [:doc:`/reference/functions/between`][:doc:`/reference/functions/in_values`] Added support for customizing thresholds for sequential search.
+
+  [:doc:`/reference/functions/between`] and [:doc:`/reference/functions/in_values`] have a feature that they switch to sequential search when the target of search records is narrowed down enough.
+
+  The value of ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` / ``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` is used as threshold whether Groonga execute sequential search or search with indexes in such a case.
+
+  This behavior is customized by only the following environment variable until now.
+
+  ``in_values()``::
+
+    # Don't use auto sequential search
+    GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO=-1
+    # Set threshold to 0.02
+    GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO=0.02
+
+  ``between()``::
+
+    # Don't use auto sequential search
+    GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO=-1
+    # Set threshold to 0.02
+    GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO=0.02
+
+  if customize by the environment variable, this threshold applies to all queries, but we can specify it in each query by using this feature.
+
+  The details are as follows. We can specify the threshold by using ``{"too_many_index_match_ratio": x.xx}`` option.
+  The value type of this option is ``double``.
+
+  .. code-block::
+
+     table_create Memos TABLE_HASH_KEY ShortText
+     column_create Memos timestamp COLUMN_SCALAR Time
+
+     table_create Times TABLE_PAT_KEY Time
+     column_create Times memos_timestamp COLUMN_INDEX Memos timestamp
+
+     load --table Memos
+     [
+     {"_key": "001", "timestamp": "2014-11-10 07:25:23"},
+     {"_key": "002", "timestamp": "2014-11-10 07:25:24"},
+     {"_key": "003", "timestamp": "2014-11-10 07:25:25"},
+     {"_key": "004", "timestamp": "2014-11-10 07:25:26"},
+     {"_key": "005", "timestamp": "2014-11-10 07:25:27"},
+     {"_key": "006", "timestamp": "2014-11-10 07:25:28"},
+     {"_key": "007", "timestamp": "2014-11-10 07:25:29"},
+     {"_key": "008", "timestamp": "2014-11-10 07:25:30"},
+     {"_key": "009", "timestamp": "2014-11-10 07:25:31"},
+     {"_key": "010", "timestamp": "2014-11-10 07:25:32"},
+     {"_key": "011", "timestamp": "2014-11-10 07:25:33"},
+     {"_key": "012", "timestamp": "2014-11-10 07:25:34"},
+     {"_key": "013", "timestamp": "2014-11-10 07:25:35"},
+     {"_key": "014", "timestamp": "2014-11-10 07:25:36"},
+     {"_key": "015", "timestamp": "2014-11-10 07:25:37"},
+     {"_key": "016", "timestamp": "2014-11-10 07:25:38"},
+     {"_key": "017", "timestamp": "2014-11-10 07:25:39"},
+     {"_key": "018", "timestamp": "2014-11-10 07:25:40"},
+     {"_key": "019", "timestamp": "2014-11-10 07:25:41"},
+     {"_key": "020", "timestamp": "2014-11-10 07:25:42"},
+     {"_key": "021", "timestamp": "2014-11-10 07:25:43"},
+     {"_key": "022", "timestamp": "2014-11-10 07:25:44"},
+     {"_key": "023", "timestamp": "2014-11-10 07:25:45"},
+     {"_key": "024", "timestamp": "2014-11-10 07:25:46"},
+     {"_key": "025", "timestamp": "2014-11-10 07:25:47"},
+     {"_key": "026", "timestamp": "2014-11-10 07:25:48"},
+     {"_key": "027", "timestamp": "2014-11-10 07:25:49"},
+     {"_key": "028", "timestamp": "2014-11-10 07:25:50"},
+     {"_key": "029", "timestamp": "2014-11-10 07:25:51"},
+     {"_key": "030", "timestamp": "2014-11-10 07:25:52"},
+     {"_key": "031", "timestamp": "2014-11-10 07:25:53"},
+     {"_key": "032", "timestamp": "2014-11-10 07:25:54"},
+     {"_key": "033", "timestamp": "2014-11-10 07:25:55"},
+     {"_key": "034", "timestamp": "2014-11-10 07:25:56"},
+     {"_key": "035", "timestamp": "2014-11-10 07:25:57"},
+     {"_key": "036", "timestamp": "2014-11-10 07:25:58"},
+     {"_key": "037", "timestamp": "2014-11-10 07:25:59"},
+     {"_key": "038", "timestamp": "2014-11-10 07:26:00"},
+     {"_key": "039", "timestamp": "2014-11-10 07:26:01"},
+     {"_key": "040", "timestamp": "2014-11-10 07:26:02"},
+     {"_key": "041", "timestamp": "2014-11-10 07:26:03"},
+     {"_key": "042", "timestamp": "2014-11-10 07:26:04"},
+     {"_key": "043", "timestamp": "2014-11-10 07:26:05"},
+     {"_key": "044", "timestamp": "2014-11-10 07:26:06"},
+     {"_key": "045", "timestamp": "2014-11-10 07:26:07"},
+     {"_key": "046", "timestamp": "2014-11-10 07:26:08"},
+     {"_key": "047", "timestamp": "2014-11-10 07:26:09"},
+     {"_key": "048", "timestamp": "2014-11-10 07:26:10"},
+     {"_key": "049", "timestamp": "2014-11-10 07:26:11"},
+     {"_key": "050", "timestamp": "2014-11-10 07:26:12"}
+     ]
+
+     select Memos \
+       --filter '_key == "003" && \
+                 between(timestamp, \
+                         "2014-11-10 07:25:24", \
+                         "include", \
+                         "2014-11-10 07:27:26", \
+                         "exclude", \
+                         {"too_many_index_match_ratio": 0.03})'
+
+  .. code-block::
+
+     table_create Tags TABLE_HASH_KEY ShortText
+
+     table_create Memos TABLE_HASH_KEY ShortText
+     column_create Memos tag COLUMN_SCALAR Tags
+
+     load --table Memos
+     [
+     {"_key": "Rroonga is fast!", "tag": "Rroonga"},
+     {"_key": "Groonga is fast!", "tag": "Groonga"},
+     {"_key": "Mroonga is fast!", "tag": "Mroonga"},
+     {"_key": "Groonga sticker!", "tag": "Groonga"},
+     {"_key": "Groonga is good!", "tag": "Groonga"}
+     ]
+
+     column_create Tags memos_tag COLUMN_INDEX Memos tag
+
+     select \
+       Memos \
+       --filter '_id >= 3 && \
+                 in_values(tag, \
+                          "Groonga", \
+                          {"too_many_index_match_ratio": 0.7})' \
+       --output_columns _id,_score,_key,tag
+
+* [:doc:`/reference/functions/between`] Added support for ``GRN_EXPR_OPTIMIZE=yes``.
+
+  ``between()`` supported for optimizing the order of evaluation of a conditional expression.
+
+* [:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for specifying group of match_columns as vector. [GitHub#1238][Patched by naoa]
+
+  We can use vector in ``match_columns`` of ``query`` and ``query_parallel_or`` as below.
+
+  .. code-block::
+
+     table_create Users TABLE_NO_KEY
+     column_create Users name COLUMN_SCALAR ShortText
+     column_create Users memo COLUMN_SCALAR ShortText
+     column_create Users tag COLUMN_SCALAR ShortText
+
+     table_create Terms TABLE_PAT_KEY ShortText \
+       --default_tokenizer TokenNgram \
+       --normalizer NormalizerNFKC130
+     column_create Terms name COLUMN_INDEX|WITH_POSITION Users name
+     column_create Terms memo COLUMN_INDEX|WITH_POSITION Users memo
+     column_create Terms tag COLUMN_INDEX|WITH_POSITION Users tag
+
+     load --table Users
+     [
+     {"name": "Alice", "memo": "Groonga user", "tag": "Groonga"},
+     {"name": "Bob",   "memo": "Rroonga user", "tag": "Rroonga"}
+     ]
+
+     select Users \
+       --output_columns _score,name \
+       --filter 'query(["name * 100", "memo", "tag * 10"], \
+                       "Alice OR Groonga")'
+
+* [:doc:`reference/commands/select`] Added support for section and weight in prefix search. [GitHub#1240][Patched by naoa]
+
+  We can use multi column index and adjusting score in prefix search.
+
+  .. code-block::
+
+     table_create Memos TABLE_NO_KEY
+     column_create Memos title COLUMN_SCALAR ShortText
+     column_create Memos tags COLUMN_VECTOR ShortText
+
+     table_create Terms TABLE_PAT_KEY ShortText
+     column_create Terms index COLUMN_INDEX|WITH_SECTION Memos title,tags
+
+     load --table Memos
+     [
+     {"title": "Groonga", "tags": ["Groonga"]},
+     {"title": "Rroonga", "tags": ["Groonga", "Rroonga", "Ruby"]},
+     {"title": "Mroonga", "tags": ["Groonga", "Mroonga", "MySQL"]}
+     ]
+
+     select Memos \
+       --match_columns "Terms.index.title * 2" \
+       --query 'G*' \
+       --output_columns title,tags,_score
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "title",
+               "ShortText"
+             ],
+             [
+               "tags",
+               "ShortText"
+             ],
+             [
+               "_score",
+               "Int32"
+             ]
+           ],
+           [
+             "Groonga",
+             [
+               "Groonga"
+             ],
+             2
+           ]
+         ]
+       ]
+     ]
+
+* [:doc:`/reference/executables/grndb`] Added support for closing used object immediately in ``grndb recover``.
+
+  We can reduce memory usage by this.
+  This may decrease performance but it will be acceptable.
+
+  Note that ``grndb check`` doesn't close used objects immediately yet.
+
+* [:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for specifying ``scorer_tf_idf`` in ``match_columns`` as below.
+
+  .. code-block::
+
+     table_create Tags TABLE_HASH_KEY ShortText
+
+     table_create Users TABLE_HASH_KEY ShortText
+     column_create Users tags COLUMN_VECTOR Tags
+
+     load --table Users
+     [
+     {"_key": "Alice",
+      "tags": ["beginner", "active"]},
+     {"_key": "Bob",
+      "tags": ["expert", "passive"]},
+     {"_key": "Chris",
+      "tags": ["beginner", "passive"]}
+     ]
+
+     column_create Tags users COLUMN_INDEX Users tags
+
+     select Users \
+       --output_columns _key,_score \
+       --sort_keys _id \
+       --command_version 3 \
+       --filter 'query_parallel_or("scorer_tf_idf(tags)", \
+                                   "beginner active")'
+     {
+       "header": {
+         "return_code": 0,
+         "start_time": 0.0,
+         "elapsed_time": 0.0
+       },
+       "body": {
+         "n_hits": 1,
+         "columns": [
+           {
+             "name": "_key",
+             "type": "ShortText"
+           },
+           {
+             "name": "_score",
+             "type": "Float"
+           }
+         ],
+         "records": [
+           [
+             "Alice",
+             2.098612308502197
+           ]
+         ]
+       }
+     }
+
+* [:doc:`/reference/commands/query_expand`] Added support for weighted increment, decrement, and negative.
+
+  We can specify weight against expanded words.
+
+  If we want to increment score, we use ``>``.
+  If we want to decrement score, we use ``<``.
+
+  We can specify the quantity of scores as a number. We can also use a negative numbers in it.
+
+  .. code-block::
+
+     table_create TermExpansions TABLE_NO_KEY
+     column_create TermExpansions term COLUMN_SCALAR ShortText
+     column_create TermExpansions expansions COLUMN_VECTOR ShortText
+
+     load --table TermExpansions
+     [
+     {"term": "Rroonga", "expansions": ["Rroonga", "Ruby Groonga"]}
+     ]
+
+     query_expand TermExpansions "Groonga <-0.2Rroonga Mroonga" \
+       --term_column term \
+       --expanded_term_column expansions
+     [[0,0.0,0.0],"Groonga <-0.2((Rroonga) OR (Ruby Groonga)) Mroonga"]
+
+* [httpd] Updated bundled nginx to 1.21.1.
+
+* Updated bundled Apache Arrow to 5.0.0.
+
+Fixes
+-----
+
+* [:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Fixed a bug that if we specify ``query_options`` and the other options, the other options are ignored.
+
+  For example, ``"default_operator": "OR"`` option had been ignored in the following case.
+
+  .. code-block::
+
+     plugin_register token_filters/stop_word
+
+     table_create Memos TABLE_NO_KEY
+     column_create Memos content COLUMN_SCALAR ShortText
+
+     table_create Terms TABLE_PAT_KEY ShortText \
+       --default_tokenizer TokenBigram \
+       --normalizer NormalizerAuto \
+       --token_filters TokenFilterStopWord
+     column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+     column_create Terms is_stop_word COLUMN_SCALAR Bool
+
+     load --table Terms
+     [
+     {"_key": "and", "is_stop_word": true}
+     ]
+
+     load --table Memos
+     [
+     {"content": "Hello"},
+     {"content": "Hello and Good-bye"},
+     {"content": "and"},
+     {"content": "Good-bye"}
+     ]
+
+     select Memos \
+       --filter 'query_parallel_or( \
+                   "content", \
+                   "Hello and", \
+                   {"default_operator": "OR", \
+                    "options": {"TokenFilterStopWord.enable": false}})' \
+       --match_escalation_threshold -1 \
+       --sort_keys -_score
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "_id",
+               "UInt32"
+             ],
+             [
+               "content",
+               "ShortText"
+             ]
+           ],
+           [
+             2,
+             "Hello and Good-bye"
+           ]
+         ]
+       ]
+     ]
+
+Known Issues
+------------
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* If we repeat that we remove any data and load them again, Groonga may not return records that should match.
+
+Thanks
+------
+
+* naoa
+
 .. _release-11-0-4:
 
 Release 11.0.4 - 2021-06-29
