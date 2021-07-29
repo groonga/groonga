@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2018  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,50 @@
 #ifdef GRN_WITH_MESSAGE_PACK
 
 # include <groonga/msgpack.h>
+
+const char *
+grn_msgpack_object_type_to_string(msgpack_object_type type)
+{
+  const char *string = "unknown";
+  switch (type) {
+  case MSGPACK_OBJECT_NIL :
+    string = "nil";
+    break;
+  case MSGPACK_OBJECT_BOOLEAN :
+    string = "boolean";
+    break;
+  case MSGPACK_OBJECT_POSITIVE_INTEGER :
+    string = "positive-integer";
+    break;
+  case MSGPACK_OBJECT_NEGATIVE_INTEGER :
+    string = "negative-integer";
+    break;
+  case MSGPACK_OBJECT_FLOAT32 :
+    string = "float32";
+    break;
+  case MSGPACK_OBJECT_FLOAT64 :
+    string = "float64";
+    break;
+  case MSGPACK_OBJECT_STR :
+    string = "string";
+    break;
+  case MSGPACK_OBJECT_ARRAY :
+    string = "array";
+    break;
+  case MSGPACK_OBJECT_MAP :
+    string = "map";
+    break;
+  case MSGPACK_OBJECT_BIN :
+    string = "binary";
+    break;
+  case MSGPACK_OBJECT_EXT :
+    string = "extension";
+    break;
+  default :
+    break;
+  }
+  return string;
+}
 
 grn_rc
 grn_msgpack_pack_raw_internal(grn_ctx *ctx,

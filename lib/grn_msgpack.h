@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -69,6 +69,9 @@ typedef size_t msgpack_size_t;
 #  define MSGPACK_UNPACKER_NEXT(unpacker, unpacked)                     \
   msgpack_unpacker_next((unpacker), (unpacked)) == MSGPACK_UNPACK_SUCCESS
 # endif /* MSGPACK_VERSION_MAJOR < 1 */
+
+const char *
+grn_msgpack_object_type_to_string(msgpack_object_type type);
 
 grn_rc grn_msgpack_pack_raw_internal(grn_ctx *ctx,
                                      msgpack_packer *packer,
