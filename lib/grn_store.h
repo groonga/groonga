@@ -43,7 +43,8 @@ struct grn_ra_header {
   uint32_t element_size;
   uint32_t nrecords; /* nrecords is not maintained by default */
   grn_column_flags flags;
-  uint32_t reserved[9];
+  uint64_t wal_id;
+  uint32_t reserved[7];
 };
 
 grn_ra *grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size);

@@ -25,6 +25,7 @@
 #include "grn_output.h"
 #include "grn_db.h"
 #include "grn_vector.h"
+#include "grn_wal.h"
 #include <string.h>
 
 /* rectangular arrays */
@@ -216,6 +217,42 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
   return GRN_SUCCESS;
 }
 
+static grn_rc
+grn_ra_set_value_raw(grn_ctx *ctx,
+                     grn_ra *ra,
+                     grn_id id,
+                     const void *value,
+                     size_t size)
+{
+  void *p = grn_ra_ref(ctx, ra, id);
+  if (!p) {
+    GRN_DEFINE_NAME(ra);
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "[column][fix][set-value][%.*s] failed to refer storage",
+        name_size, name);
+    return ctx->rc;
+  }
+
+  uint32_t element_size = ra->header->element_size;
+  if (element_size != size) {
+    if (size == 0) {
+      memset(p, 0, element_size);
+    } else {
+      void *buffer = GRN_CALLOC(element_size);
+      if (buffer) {
+        grn_memcpy(buffer, value, size);
+        grn_memcpy(p, buffer, element_size);
+        GRN_FREE(buffer);
+      }
+    }
+  } else {
+    grn_memcpy(p, value, size);
+  }
+  grn_ra_unref(ctx, ra, id);
+
+  return ctx->rc;
+}
+
 #define INCRDECR(range, op)\
   switch (range) {\
   case GRN_DB_INT8 :\
@@ -305,12 +342,13 @@ grn_ra_cache_fin(grn_ctx *ctx, grn_ra *ra, grn_id id)
     break;\
   }
 
-grn_rc
-grn_ra_set_value(grn_ctx *ctx,
-                 grn_ra *ra,
-                 grn_id id,
-                 grn_obj *value,
-                 int flags)
+static grn_rc
+grn_ra_set_value_incrdecr_raw(grn_ctx *ctx,
+                              grn_ra *ra,
+                              grn_id id,
+                              const void *v,
+                              size_t s,
+                              int flags)
 {
   void *p = grn_ra_ref(ctx, ra, id);
   if (!p) {
@@ -321,40 +359,72 @@ grn_ra_set_value(grn_ctx *ctx,
     return ctx->rc;
   }
 
-  uint32_t element_size = ra->header->element_size;
-  void *v = GRN_BULK_HEAD(value);
-  size_t s = GRN_BULK_VSIZE(value);
   grn_rc rc = GRN_SUCCESS;
-
   switch (flags & GRN_OBJ_SET_MASK) {
-  case GRN_OBJ_SET :
-    if (element_size != s) {
-      if (s == 0) {
-        memset(p, 0, element_size);
-      } else {
-        void *buffer = GRN_CALLOC(element_size);
-        if (buffer) {
-          grn_memcpy(buffer, v, s);
-          grn_memcpy(p, buffer, element_size);
-          GRN_FREE(buffer);
-        }
-      }
-    } else {
-      grn_memcpy(p, v, s);
-    }
-    rc = GRN_SUCCESS;
-    break;
   case GRN_OBJ_INCR :
     INCRDECR(DB_OBJ(ra)->range, +=);
     break;
   case GRN_OBJ_DECR :
+    /* WAL isn't supported */
     INCRDECR(DB_OBJ(ra)->range, -=);
     break;
   default :
     rc = GRN_OPERATION_NOT_SUPPORTED;
     break;
   }
-  grn_ra_unref(ctx, ra, id);
+  return rc;
+}
+
+grn_rc
+grn_ra_set_value(grn_ctx *ctx,
+                 grn_ra *ra,
+                 grn_id id,
+                 grn_obj *value,
+                 int flags)
+{
+  void *v = GRN_BULK_HEAD(value);
+  size_t s = GRN_BULK_VSIZE(value);
+  grn_rc rc = GRN_SUCCESS;
+
+  switch (flags & GRN_OBJ_SET_MASK) {
+  case GRN_OBJ_SET :
+    {
+      uint64_t wal_id;
+      rc = grn_wal_add_entry(ctx,
+                             (grn_obj *)ra,
+                             &wal_id,
+                             "[column][fix][set-value]",
+                             GRN_WAL_KEY_EVENT,
+                             GRN_WAL_VALUE_EVENT,
+                             GRN_WAL_EVENT_SET,
+
+                             GRN_WAL_KEY_RECORD_ID,
+                             GRN_WAL_VALUE_RECORD_ID,
+                             id,
+
+                             GRN_WAL_KEY_VALUE,
+                             GRN_WAL_VALUE_BINARY,
+                             v,
+                             s,
+
+                             GRN_WAL_KEY_END);
+      if (rc == GRN_SUCCESS) {
+        rc = grn_ra_set_value_raw(ctx, ra, id, v, s);
+      }
+      if (rc == GRN_SUCCESS) {
+        ra->header->wal_id = wal_id;
+      }
+    }
+    break;
+  case GRN_OBJ_INCR :
+  case GRN_OBJ_DECR :
+    /* WAL isn't supported */
+    rc = grn_ra_set_value_incrdecr_raw(ctx, ra, id, v, s, flags);
+    break;
+  default :
+    rc = GRN_OPERATION_NOT_SUPPORTED;
+    break;
+  }
 
   return rc;
 }

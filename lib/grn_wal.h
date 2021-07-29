@@ -64,12 +64,14 @@ grn_wal_generate_id(grn_ctx *ctx);
 grn_rc
 grn_wal_add_entry(grn_ctx *ctx,
                   grn_obj *obj,
+                  uint64_t *wal_id,
                   const char *tag,
                   grn_wal_key_type key_type,
                   ...);
 grn_rc
 grn_wal_add_entryv(grn_ctx *ctx,
                    grn_obj *obj,
+                   uint64_t *wal_id,
                    const char *tag,
                    grn_wal_key_type key_type,
                    va_list args);
