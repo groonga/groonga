@@ -1,0 +1,33 @@
+#$GRN_WAL_ROLE=primary
+table_create memos TABLE_NO_KEY
+column_create memos count COLUMN_SCALAR UInt32
+
+#@disable-logging
+io_flush
+#@copy-path #{db_path}.0000101 #{db_path}.0000101.initial
+#@enable-logging
+
+load --table memos
+[
+{"count": 10},
+{"count": 20},
+{"count": 30}
+]
+
+#@disable-logging
+#@copy-path #{db_path}.0000101.wal #{db_path}.0000101.wal.copy
+io_flush
+#@copy-path #{db_path}.0000101.initial #{db_path}.0000101
+#@copy-path #{db_path}.0000101.wal.copy #{db_path}.0000101.wal
+#@enable-logging
+
+#@disable-logging
+thread_limit 1
+database_unmap
+#@enable-logging
+
+select memos
+
+wal_recover
+
+select memos
