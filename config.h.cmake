@@ -138,6 +138,7 @@
 #cmakedefine HAVE_CLOCK
 #cmakedefine HAVE_CLOCK_GETTIME
 #cmakedefine HAVE_FPCLASSIFY
+#cmakedefine HAVE_FSYNC
 #cmakedefine HAVE_FUTIMENS
 #cmakedefine HAVE_FUTIMES
 #cmakedefine HAVE_GETRUSAGE
