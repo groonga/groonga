@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2013-2018 Brazil
-  Copyright(C) 2019-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2013-2018  Brazil
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,7 @@
 
 #include "../grn_db.h"
 #include "../grn_encoding.h"
+#include "../grn_wal.h"
 
 static mrb_value
 object_remove_force(mrb_state *mrb, mrb_value self)
@@ -332,6 +333,16 @@ object_check_corrupt(mrb_state *mrb, mrb_value self)
   return mrb_bool_value(is_corrupt);
 }
 
+static mrb_value
+object_dump_wal(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)mrb->ud;
+  grn_obj *object = DATA_PTR(self);
+  grn_wal_dump(ctx, object);
+  grn_mrb_ctx_check(mrb);
+  return mrb_nil_value();
+}
+
 void
 grn_mrb_object_init(grn_ctx *ctx)
 {
@@ -386,6 +397,9 @@ grn_mrb_object_init(grn_ctx *ctx)
                     MRB_ARGS_NONE());
 
   mrb_define_method(mrb, klass, "check_corrupt", object_check_corrupt,
+                    MRB_ARGS_NONE());
+
+  mrb_define_method(mrb, klass, "dump_wal", object_dump_wal,
                     MRB_ARGS_NONE());
 
   grn_mrb_load(ctx, "index_info.rb");
