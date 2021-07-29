@@ -82,6 +82,7 @@ grn_wal_generate_id(grn_ctx *ctx)
 grn_rc
 grn_wal_add_entry(grn_ctx *ctx,
                   grn_obj *obj,
+                  uint64_t *wal_id,
                   const char *tag,
                   grn_wal_key_type key_type,
                   ...)
@@ -89,7 +90,7 @@ grn_wal_add_entry(grn_ctx *ctx,
   va_list args;
 
   va_start(args, key_type);
-  grn_rc rc = grn_wal_add_entryv(ctx, obj, tag, key_type, args);
+  grn_rc rc = grn_wal_add_entryv(ctx, obj, wal_id, tag, key_type, args);
   va_end(args);
 
   return rc;
@@ -121,6 +122,7 @@ grn_wal_generate_path(grn_ctx *ctx,
 grn_rc
 grn_wal_add_entryv(grn_ctx *ctx,
                    grn_obj *obj,
+                   uint64_t *wal_id,
                    const char *tag,
                    grn_wal_key_type key_type,
                    va_list args)
@@ -188,7 +190,8 @@ grn_wal_add_entryv(grn_ctx *ctx,
 
   msgpack_pack_map(&packer, n_keys + 1);
   msgpack_pack_uint8(&packer, GRN_WAL_KEY_ID);
-  msgpack_pack_uint64(&packer, grn_wal_generate_id(ctx));
+  *wal_id = grn_wal_generate_id(ctx);
+  msgpack_pack_uint64(&packer, *wal_id);
   {
     grn_wal_key_type current_key_type = key_type;
     while (current_key_type != GRN_WAL_KEY_END) {
