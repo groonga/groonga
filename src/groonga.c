@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -110,6 +110,8 @@ static grn_encoding encoding;
 static const char *windows_event_source_name = "Groonga";
 static grn_bool use_windows_event_log = GRN_FALSE;
 static grn_obj http_response_server_line;
+static grn_wal_role wal_role = GRN_WAL_ROLE_NONE;
+static grn_wal_role worker_wal_role = GRN_WAL_ROLE_NONE;
 
 static grn_bool running_event_loop = GRN_FALSE;
 
@@ -490,6 +492,7 @@ do_alone(int argc, char **argv)
   grn_ctx ctx_, *ctx = &ctx_;
   create_pid_file();
   grn_ctx_init(ctx, 0);
+  grn_ctx_set_wal_role(ctx, wal_role);
   if (argc > 0 && argv) { path = *argv++; argc--; }
   db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
   if (db) {
@@ -3129,6 +3132,7 @@ h_worker(void *arg)
   ht_context hc;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
+  grn_ctx_set_wal_role(ctx, worker_wal_role);
   grn_ctx_use(ctx, (grn_obj *)arg);
   grn_ctx_recv_handler_set(ctx, h_output, &hc);
   CRITICAL_SECTION_ENTER(q_critical_section);
@@ -3241,6 +3245,7 @@ h_server(char *path)
   int exit_code = EXIT_FAILURE;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
+  grn_ctx_set_wal_role(ctx, wal_role);
   GRN_COM_QUEUE_INIT(&ctx_new);
   GRN_COM_QUEUE_INIT(&ctx_old);
   check_rlimit_nofile(ctx);
@@ -3393,6 +3398,7 @@ g_handler(grn_ctx *ctx, grn_obj *msg)
     edge = grn_edges_add(ctx, &((grn_msg *)msg)->edge_id, &added);
     if (added) {
       grn_ctx_init(&edge->ctx, 0);
+      grn_ctx_set_wal_role(ctx, worker_wal_role);
       GRN_COM_QUEUE_INIT(&edge->recv_new);
       GRN_COM_QUEUE_INIT(&edge->send_old);
       grn_ctx_use(&edge->ctx, (grn_obj *)com->ev->opaque);
@@ -3420,6 +3426,7 @@ g_server(char *path)
   int exit_code = EXIT_FAILURE;
   grn_ctx ctx_, *ctx = &ctx_;
   grn_ctx_init(ctx, 0);
+  grn_ctx_set_wal_role(ctx, wal_role);
   GRN_COM_QUEUE_INIT(&ctx_new);
   GRN_COM_QUEUE_INIT(&ctx_old);
   check_rlimit_nofile(ctx);
@@ -4020,6 +4027,7 @@ main(int argc, char **argv)
   const char *cache_base_path = NULL;
   const char *listen_backlog_arg = NULL;
   const char *log_flags_arg = NULL;
+  const char *wal_role_arg = NULL;
   int exit_code = EXIT_SUCCESS;
   int i;
   int flags = 0;
@@ -4064,6 +4072,7 @@ main(int argc, char **argv)
     {'\0', "cache-base-path", NULL, 0, GETOPT_OP_NONE},
     {'\0', "listen-backlog", NULL, 0, GETOPT_OP_NONE},
     {'\0', "log-flags", NULL, 0, GETOPT_OP_NONE},
+    {'\0', "wal-role", NULL, 0, GETOPT_OP_NONE},
     {'\0', NULL, NULL, 0, 0}
   };
   opts[0].arg = &port_arg;
@@ -4092,6 +4101,7 @@ main(int argc, char **argv)
   opts[31].arg = &cache_base_path;
   opts[32].arg = &listen_backlog_arg;
   opts[33].arg = &log_flags_arg;
+  opts[34].arg = &wal_role_arg;
 
   reset_ready_notify_pipe();
 
@@ -4465,6 +4475,25 @@ main(int argc, char **argv)
       return EXIT_FAILURE;
     }
     listen_backlog = value;
+  }
+
+  if (!wal_role_arg) {
+    wal_role_arg = getenv("GRN_WAL_ROLE");
+  }
+  if (wal_role_arg) {
+    if (strcmp(wal_role_arg, "none") == 0) {
+    } else if (strcmp(wal_role_arg, "primary") == 0) {
+      wal_role = GRN_WAL_ROLE_PRIMARY;
+      worker_wal_role = GRN_WAL_ROLE_SECONDARY;
+    } else if (strcmp(wal_role_arg, "secondary") == 0) {
+      wal_role = GRN_WAL_ROLE_SECONDARY;
+      worker_wal_role = GRN_WAL_ROLE_SECONDARY;
+    } else {
+      fprintf(stderr, "invalid WAL role: <%s>\n",
+              wal_role_arg);
+      fprintf(stderr, "available WAL roles: none, primary, secondary\n");
+      return EXIT_FAILURE;
+    }
   }
 
   grn_gctx.errbuf[0] = '\0';

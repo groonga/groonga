@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2014-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -72,3 +72,4 @@
 #include "groonga/windows.h"
 #include "groonga/windows_event_logger.h"
 #include "groonga/vector.h"
+#include "groonga/wal.h"
