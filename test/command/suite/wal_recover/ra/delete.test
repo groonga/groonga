@@ -2,11 +2,6 @@
 table_create memos TABLE_NO_KEY
 column_create memos count COLUMN_SCALAR UInt32
 
-#@disable-logging
-io_flush
-#@copy-path #{db_path}.0000101 #{db_path}.0000101.initial
-#@enable-logging
-
 load --table memos
 [
 {"count": 10},
@@ -15,9 +10,16 @@ load --table memos
 ]
 
 #@disable-logging
+io_flush
+#@copy-path #{db_path}.0000101 #{db_path}.0000101.loaded
+#@enable-logging
+
+delete memos --filter "_id<=2"
+
+#@disable-logging
 #@copy-path #{db_path}.0000101.wal #{db_path}.0000101.wal.keep
 io_flush
-#@copy-path #{db_path}.0000101.initial #{db_path}.0000101
+#@copy-path #{db_path}.0000101.loaded #{db_path}.0000101
 #@enable-logging
 
 #@disable-logging

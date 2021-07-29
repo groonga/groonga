@@ -1,0 +1,19 @@
+table_create memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create memos count COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table memos
+[
+{"count": 10},
+{"count": 20},
+{"count": 30}
+]
+[[0,0.0,0.0],3]
+delete memos --filter "_id<=2"
+[[0,0.0,0.0],true]
+select memos
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["count","UInt32"]],[3,30]]]]
+wal_recover
+[[0,0.0,0.0],true]
+select memos
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["count","UInt32"]],[3,30]]]]
