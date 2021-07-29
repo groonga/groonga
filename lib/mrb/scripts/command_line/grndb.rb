@@ -72,6 +72,19 @@ module Groonga
           end
         end
 
+        parser.add_command("dump-wal") do |command|
+          command.description = "Dump WAL in database"
+
+          options = command.options
+          options.banner += " DB_PATH"
+
+          command.add_action do |options|
+            open_database(command, options) do |database, rest_arguments|
+              dump_wal(database, options, rest_arguments)
+            end
+          end
+        end
+
         parser
       end
 
@@ -111,19 +124,6 @@ module Groonga
         @succeeded = false
       end
 
-      def recover(database, options, arguments)
-        recoverer = Recoverer.new(@output)
-        recoverer.database = database
-        recoverer.force_truncate = options[:force_truncate]
-        recoverer.force_lock_clear = options[:force_lock_clear]
-        begin
-          recoverer.recover
-        rescue Error => error
-          failed("Failed to recover database: <#{@database_path}>",
-                 error.message)
-        end
-      end
-
       def check(database, options, arguments)
         message = "Checking database: <#{@database_path}>"
         since = options[:since]
@@ -152,6 +152,30 @@ module Groonga
           checker.check_all
         end
         logger.log(:info, "Checked database: <#{@database_path}>")
+      end
+
+      def recover(database, options, arguments)
+        recoverer = Recoverer.new(@output)
+        recoverer.database = database
+        recoverer.force_truncate = options[:force_truncate]
+        recoverer.force_lock_clear = options[:force_lock_clear]
+        begin
+          recoverer.recover
+        rescue Error => error
+          failed("Failed to recover database: <#{@database_path}>",
+                 error.message)
+        end
+      end
+
+      def dump_wal(database, options, arguments)
+        dumper = WALDumper.new(@output)
+        dumper.database = database
+        begin
+          dumper.dump
+        rescue Error => error
+          failed("Failed to dump WAL in database: <#{@database_path}>",
+                 error.message)
+        end
       end
 
       class Checker
@@ -766,6 +790,28 @@ module Groonga
                 logger.log(:error, message)
                 logger.log_error(error)
               end
+            end
+          end
+        end
+      end
+
+      class WALDumper
+        include Loggable
+
+        attr_writer :database
+
+        def initialize(output)
+          @output = output
+          @context = Context.instance
+        end
+
+        def dump
+          @database.each(use_temporary_open_space: true) do |object|
+            case object
+            when Procedure # Do nothing
+            when Type # Do nothing
+            else
+              object.dump_wal
             end
           end
         end
