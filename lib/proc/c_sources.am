@@ -19,4 +19,5 @@ libgrnproc_c_sources =				\
 	proc_select.c				\
 	proc_snippet.c				\
 	proc_table.c				\
-	proc_tokenize.c
+	proc_tokenize.c				\
+	proc_wal.c
