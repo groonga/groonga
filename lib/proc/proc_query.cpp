@@ -407,7 +407,7 @@ namespace {
         return nullptr;
       }
       if (query_options_) {
-        grn_expr_set_query_options(ctx_, condition, query_options_);
+        grn_expr_set_query_options(ctx, condition, query_options_);
       }
       return condition;
     }
