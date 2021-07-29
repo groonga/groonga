@@ -178,6 +178,8 @@ void grn_obj_spec_get_path(grn_ctx *ctx,
 
 void grn_db_init_from_env(void);
 
+void grn_db_wal_recover(grn_ctx *ctx, grn_db *db);
+
 GRN_API grn_rc grn_db_close(grn_ctx *ctx, grn_obj *db);
 
 grn_obj *grn_db_keys(grn_obj *s);
