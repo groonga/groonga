@@ -93,6 +93,7 @@ libgroonga_c_sources =				\
 	grn_type.h				\
 	grn_util.h				\
 	grn_vector.h				\
+	grn_wal.h				\
 	grn_window_function.h			\
 	grn_window_function_executor.h		\
 	grn_window_functions.h			\
@@ -155,6 +156,7 @@ libgroonga_c_sources =				\
 	tokenizers.c				\
 	type.c					\
 	util.c					\
+	wal.c					\
 	window_function.c			\
 	window_functions.c			\
 	windows.c				\
