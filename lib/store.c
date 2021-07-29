@@ -433,6 +433,54 @@ grn_ra_set_value(grn_ctx *ctx,
 }
 
 grn_rc
+grn_ra_wal_recover(grn_ctx *ctx, grn_ra *ra)
+{
+  const char *tag = "[column][fix]";
+  grn_wal_reader *reader = grn_wal_reader_open(ctx, (grn_obj *)ra, tag);
+  if (!reader) {
+    return ctx->rc;
+  }
+
+  while (true) {
+    uint64_t id;
+    grn_wal_event_type event_type;
+    grn_id record_id;
+    const uint8_t *value;
+    size_t value_size;
+    grn_rc rc = grn_wal_reader_read_entry(ctx,
+                                          reader,
+                                          GRN_WAL_KEY_ID,
+                                          &id,
+                                          GRN_WAL_KEY_EVENT,
+                                          &event_type,
+                                          GRN_WAL_KEY_RECORD_ID,
+                                          &record_id,
+                                          GRN_WAL_KEY_VALUE,
+                                          &value,
+                                          &value_size,
+                                          GRN_WAL_KEY_END);
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+    /* TODO: Or ensure idempotence and always apply all entries. */
+    if (id <= ra->header->wal_id) {
+      continue;
+    }
+    grn_ra_set_value_raw(ctx, ra, record_id, value, value_size);
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+    ra->header->wal_id = id;
+  }
+
+  grn_wal_reader_close(ctx, reader);
+
+  grn_obj_flush(ctx, (grn_obj *)ra);
+
+  return ctx->rc;
+}
+
+grn_rc
 grn_ra_warm(grn_ctx *ctx, grn_ra *ra)
 {
   return grn_io_warm(ctx, ra->io);

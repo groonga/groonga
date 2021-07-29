@@ -59,6 +59,7 @@ grn_rc grn_ra_set_value(grn_ctx *ctx,
                         grn_id id,
                         grn_obj *value,
                         int flags);
+grn_rc grn_ra_wal_recover(grn_ctx *ctx, grn_ra *ra);
 grn_rc grn_ra_warm(grn_ctx *ctx, grn_ra *ra);
 
 typedef struct _grn_ra_cache grn_ra_cache;

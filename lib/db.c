@@ -53,6 +53,7 @@
 #include "grn_posting.h"
 #include "grn_vector.h"
 #include "grn_index_cursor.h"
+#include "grn_wal.h"
 #include <string.h>
 #include <math.h>
 
@@ -335,6 +336,37 @@ exit:
   GRN_API_RETURN(NULL);
 }
 
+void
+grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
+{
+  if (ctx->impl->wal.role != GRN_WAL_ROLE_PRIMARY) {
+    return;
+  }
+
+  GRN_TABLE_EACH_BEGIN(ctx, db->keys, cursor, id) {
+    if (grn_id_is_builtin(ctx, id)) {
+      continue;
+    }
+
+    grn_ctx_push_temporary_open_space(ctx);
+    grn_obj *object = grn_ctx_at(ctx, id);
+    if (object) {
+      switch (object->header.type) {
+      case GRN_COLUMN_FIX_SIZE :
+        grn_ra_wal_recover(ctx, (grn_ra *)object);
+        break;
+      default :
+        break;
+      }
+      grn_obj_unref(ctx, object);
+    }
+    grn_ctx_pop_temporary_open_space(ctx);
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+}
+
 #define GRN_TYPE_FLOAT32_NAME "Float32"
 #define GRN_TYPE_FLOAT32_NAME_LEN (sizeof(GRN_TYPE_FLOAT32_NAME) - 1)
 #define GRN_TYPE_FLOAT32_FLAGS GRN_OBJ_KEY_FLOAT
@@ -481,6 +513,10 @@ grn_db_open(grn_ctx *ctx, const char *path)
     if (need_flush) {
       grn_obj_flush(ctx, (grn_obj *)s);
     }
+  }
+  grn_db_wal_recover(ctx, s);
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
   }
   GRN_API_RETURN((grn_obj *)s);
 
