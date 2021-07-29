@@ -13026,6 +13026,10 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
     break;
   }
 
+  if (flushed && rc == GRN_SUCCESS) {
+    grn_wal_clear_without_lock(ctx, obj, "[flush]");
+  }
+
   if (flushed && name_size == 0) {
     name_size = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
     if (name_size == 0) {
