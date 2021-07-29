@@ -447,6 +447,8 @@ grn_ctx_impl_init(grn_ctx *ctx)
     goto exit;
   }
 
+  ctx->impl->wal.role = GRN_WAL_ROLE_NONE;
+
   CRITICAL_SECTION_INIT(ctx->impl->children.lock);
   /* grn_obj * isn't grn_ctx * but sizeof(grn_obj *) and
    * sizeof(grn_ctx *) is same. So we reuse GRN_PVECTOR here. */
@@ -1239,6 +1241,27 @@ grn_ctx_set_force_match_escalation(grn_ctx *ctx, grn_bool force)
 {
   if (ctx->impl) {
     ctx->impl->force_match_escalation = force;
+    return GRN_SUCCESS;
+  } else {
+    return GRN_INVALID_ARGUMENT;
+  }
+}
+
+grn_wal_role
+grn_ctx_get_wal_role(grn_ctx *ctx)
+{
+  if (ctx->impl) {
+    return ctx->impl->wal.role;
+  } else {
+    return GRN_WAL_ROLE_NONE;
+  }
+}
+
+grn_rc
+grn_ctx_set_wal_role(grn_ctx *ctx, grn_wal_role role)
+{
+  if (ctx->impl) {
+    ctx->impl->wal.role = role;
     return GRN_SUCCESS;
   } else {
     return GRN_INVALID_ARGUMENT;

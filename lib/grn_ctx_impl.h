@@ -193,6 +193,10 @@ struct _grn_ctx_impl {
   grn_hash *variables;
 
   struct {
+    grn_wal_role role;
+  } wal;
+
+  struct {
     grn_critical_section lock;
     grn_obj pool;
   } children;
