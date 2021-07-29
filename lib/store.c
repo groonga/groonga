@@ -151,6 +151,9 @@ grn_ra_truncate(grn_ctx *ctx, grn_ra *ra)
     path = NULL;
   }
   element_size = ra->header->element_size;
+  if (path) {
+    grn_wal_clear(ctx, (grn_obj *)ra, "[truncate]");
+  }
   if ((rc = grn_io_close(ctx, ra->io))) { goto exit; }
   ra->io = NULL;
   if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
