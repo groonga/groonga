@@ -124,6 +124,9 @@ grn_ra_close(grn_ctx *ctx, grn_ra *ra)
 {
   grn_rc rc;
   if (!ra) { return GRN_INVALID_ARGUMENT; }
+  if (ctx->impl->wal.role == GRN_WAL_ROLE_PRIMARY) {
+    grn_obj_flush(ctx, (grn_obj *)ra);
+  }
   rc = grn_io_close(ctx, ra->io);
   GRN_FREE(ra);
   return rc;
