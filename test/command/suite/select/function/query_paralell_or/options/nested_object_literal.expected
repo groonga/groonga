@@ -23,7 +23,7 @@ load --table Memos
 {"content": "Good-bye"}
 ]
 [[0,0.0,0.0],4]
-select Memos   --filter 'query_parallel_or(               "content",               "Hello and",               {"default_operator": "OR",                "options": {"TokenFilterStopWord.enable": false}})'   --match_escalation_threshold -1   --sort_keys -_score
+select Memos   --filter 'query_parallel_or(               "content",               "Hello and",               "nonexistent",               {"default_operator": "OR",                "options": {"TokenFilterStopWord.enable": false}})'   --match_escalation_threshold -1   --sort_keys -_score
 [
   [
     0,

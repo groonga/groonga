@@ -1,3 +1,5 @@
+#$GRN_QUERY_PARALLEL_OR_N_CONDITIONS_THRESHOLD=1
+
 plugin_register token_filters/stop_word
 
 table_create Memos TABLE_NO_KEY
@@ -27,6 +29,7 @@ select Memos \
   --filter 'query_parallel_or( \
               "content", \
               "Hello and", \
+              "nonexistent", \
               {"default_operator": "OR", \
                "options": {"TokenFilterStopWord.enable": false}})' \
   --match_escalation_threshold -1 \
