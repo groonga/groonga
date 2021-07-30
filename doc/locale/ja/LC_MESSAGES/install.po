@@ -858,7 +858,7 @@ msgstr ""
 msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-msgid "https://packages.groonga.org/source/groonga/groonga-11.0.4.zip"
+msgid "https://packages.groonga.org/source/groonga/groonga-11.0.5.zip"
 msgstr ""
 
 msgid "Move to the Groonga's source folder::"
