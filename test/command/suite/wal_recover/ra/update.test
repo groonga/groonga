@@ -14,7 +14,10 @@ io_flush
 #@copy-path #{db_path}.0000101 #{db_path}.0000101.loaded
 #@enable-logging
 
-delete memos --filter "_id<=2"
+load --table memos
+[
+{"_id": 2, "count": 200}
+]
 
 #@disable-logging
 #@copy-path #{db_path}.0000101.wal #{db_path}.0000101.wal.keep
