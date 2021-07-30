@@ -216,6 +216,16 @@ grn_obj_is_weight_uvector(grn_ctx *ctx, grn_obj *obj)
   return obj->header.flags & GRN_OBJ_WITH_WEIGHT;
 }
 
+bool
+grn_obj_is_db(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!obj) {
+    return false;
+  }
+
+  return obj->header.type == GRN_DB;
+}
+
 grn_bool
 grn_obj_is_table(grn_ctx *ctx, grn_obj *obj)
 {
