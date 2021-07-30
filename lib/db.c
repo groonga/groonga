@@ -13013,12 +13013,21 @@ grn_obj_is_locked(grn_ctx *ctx, grn_obj *obj)
   GRN_API_RETURN(res);
 }
 
-grn_rc
-grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
+static grn_rc
+grn_obj_flush_raw(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_rc rc = GRN_OPERATION_NOT_SUPPORTED;
+  grn_io *io = grn_obj_get_io(ctx, obj);
+  if (io) {
+    rc = grn_io_flush(ctx, io);
+  }
+  return rc;
+}
+
+static grn_rc
+grn_obj_flush_without_lock(grn_ctx *ctx, grn_obj *obj, const char *tag)
 {
   grn_rc rc = GRN_SUCCESS;
-
-  GRN_API_ENTER;
 
   char name[GRN_TABLE_MAX_KEY_SIZE];
   int name_size = 0;
@@ -13027,12 +13036,12 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
   case GRN_DB :
     {
       grn_db *db = (grn_db *)obj;
-      rc = grn_obj_flush(ctx, db->keys);
+      rc = grn_obj_flush_without_lock(ctx, db->keys, tag);
       if (rc == GRN_SUCCESS && db->specs) {
-        rc = grn_obj_flush(ctx, (grn_obj *)(db->specs));
+        rc = grn_obj_flush_without_lock(ctx, (grn_obj *)(db->specs), tag);
       }
       if (rc == GRN_SUCCESS) {
-        rc = grn_obj_flush(ctx, (grn_obj *)(db->config));
+        rc = grn_obj_flush_without_lock(ctx, (grn_obj *)(db->config), tag);
       }
       if (rc == GRN_SUCCESS) {
         rc = grn_options_flush(ctx, db->options);
@@ -13052,10 +13061,11 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
     break;
   default :
     {
-      grn_io *io;
-      io = grn_obj_get_io(ctx, obj);
-      if (io) {
-        rc = grn_io_flush(ctx, io);
+      grn_rc rc_raw = grn_obj_flush_raw(ctx, obj);
+      if (rc_raw != GRN_OPERATION_NOT_SUPPORTED) {
+        if (rc_raw != GRN_SUCCESS) {
+          rc = rc_raw;
+        }
         flushed = true;
       }
     }
@@ -13063,7 +13073,7 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
   }
 
   if (flushed && rc == GRN_SUCCESS) {
-    grn_wal_clear_without_lock(ctx, obj, "[flush]");
+    grn_wal_clear_without_lock(ctx, obj, tag);
   }
 
   if (flushed && name_size == 0) {
@@ -13091,15 +13101,102 @@ grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
     rc = grn_db_clean(ctx, DB_OBJ(obj)->db);
   }
 
+  return rc;
+}
+
+static grn_rc
+grn_obj_flush_lock(grn_ctx *ctx, grn_obj *obj, const char *tag)
+{
+  if (!grn_obj_get_io(ctx, obj)) {
+    return GRN_SUCCESS;
+  }
+
+  grn_rc rc = grn_obj_lock(ctx, obj, GRN_ID_NIL, grn_lock_timeout);
+  if (rc != GRN_SUCCESS) {
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, obj);
+    ERR(rc,
+        "%s failed to lock%s%s: <%.*s>",
+        tag,
+        errbuf[0] == '\0' ? "" : ": ",
+        errbuf,
+        (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+  }
+  return rc;
+}
+
+static grn_rc
+grn_obj_flush_unlock(grn_ctx *ctx, grn_obj *obj, const char *tag)
+{
+  if (!grn_obj_get_io(ctx, obj)) {
+    return GRN_SUCCESS;
+  }
+
+  grn_rc rc = grn_obj_unlock(ctx, obj, GRN_ID_NIL);
+  if (rc != GRN_SUCCESS) {
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, obj);
+    ERR(rc,
+        "%s failed to unlock%s%s: <%.*s>",
+        tag,
+        errbuf[0] == '\0' ? "" : ": ",
+        errbuf,
+        (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return rc;
+  }
+
+  /* For flushing io->lock */
+  return grn_obj_flush_raw(ctx, obj);
+}
+
+static grn_rc
+grn_obj_flush_internal(grn_ctx *ctx, grn_obj *obj, const char *tag)
+{
+  grn_rc rc = grn_obj_flush_lock(ctx, obj, tag);
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  rc = grn_obj_flush_without_lock(ctx, obj, tag);
+  grn_rc rc_unlock = grn_obj_flush_unlock(ctx, obj, tag);
+  if (rc == GRN_SUCCESS && rc_unlock != GRN_SUCCESS) {
+    rc = rc_unlock;
+  }
+
+  return rc;
+}
+
+grn_rc
+grn_obj_flush(grn_ctx *ctx, grn_obj *obj)
+{
+  GRN_API_ENTER;
+  grn_rc rc = grn_obj_flush_internal(ctx, obj, "[obj][flush]");
   GRN_API_RETURN(rc);
 }
+
+typedef struct {
+  const char *tag;
+  grn_obj *top_obj;
+} grn_obj_flush_traverse_data;
 
 static void
 grn_obj_flush_traverse(grn_ctx *ctx,
                        grn_obj *obj,
                        void *user_data)
 {
-  grn_obj_flush(ctx, obj);
+  grn_obj_flush_traverse_data *data = user_data;
+  if (obj == data->top_obj) {
+    grn_obj_flush_without_lock(ctx, obj, data->tag);
+  } else {
+    grn_obj_flush_internal(ctx, obj, data->tag);
+  }
 }
 
 grn_rc
@@ -13107,11 +13204,31 @@ grn_obj_flush_recursive(grn_ctx *ctx, grn_obj *obj)
 {
   GRN_API_ENTER;
 
+  grn_obj_flush_traverse_data traverse_data;
+  traverse_data.tag = "[obj][flush][recursive]";
+  traverse_data.top_obj = obj;
   grn_obj_traverse_recursive_data data;
   data.tag = "[obj][flush]";
   data.traverse = grn_obj_flush_traverse;
-  data.user_data = NULL;
+  data.user_data = &traverse_data;
+
+  grn_obj *db = grn_ctx_db(ctx);
+  grn_rc rc = grn_obj_flush_lock(ctx, db, traverse_data.tag);
+  if (rc != GRN_SUCCESS) {
+    GRN_API_RETURN(rc);
+  }
+  if (obj != db) {
+    rc = grn_obj_flush_lock(ctx, obj, traverse_data.tag);
+    if (rc != GRN_SUCCESS) {
+      grn_obj_flush_unlock(ctx, db, traverse_data.tag);
+      GRN_API_RETURN(rc);
+    }
+  }
   grn_obj_traverse_recursive(ctx, &data, obj);
+  if (obj != db) {
+    grn_obj_flush_unlock(ctx, obj, traverse_data.tag);
+  }
+  grn_obj_flush_unlock(ctx, db, traverse_data.tag);
 
   GRN_API_RETURN(ctx->rc);
 }
@@ -13121,14 +13238,86 @@ grn_obj_flush_recursive_dependent(grn_ctx *ctx, grn_obj *obj)
 {
   GRN_API_ENTER;
 
+  grn_obj_flush_traverse_data traverse_data;
+  traverse_data.tag = "[obj][flush][recursive][dependent]";
+  traverse_data.top_obj = obj;
   grn_obj_traverse_recursive_dependent_data data;
   data.tag = "[obj][flush]";
   data.traverse = grn_obj_flush_traverse;
-  data.user_data = NULL;
+  data.user_data = &traverse_data;
   data.for_reference = false;
+
+  grn_obj *db = grn_ctx_db(ctx);
+  grn_rc rc = grn_obj_flush_lock(ctx, db, traverse_data.tag);
+  if (rc != GRN_SUCCESS) {
+    GRN_API_RETURN(rc);
+  }
+  if (obj != db) {
+    rc = grn_obj_flush_lock(ctx, obj, traverse_data.tag);
+    if (rc != GRN_SUCCESS) {
+      grn_obj_flush_unlock(ctx, db, traverse_data.tag);
+      GRN_API_RETURN(rc);
+    }
+  }
   grn_obj_traverse_recursive_dependent(ctx, &data, obj);
+  if (obj != db) {
+    grn_obj_flush_unlock(ctx, obj, traverse_data.tag);
+  }
+  grn_obj_flush_unlock(ctx, db, traverse_data.tag);
 
   GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_obj_flush_only_opened(grn_ctx *ctx, grn_obj *obj)
+{
+  GRN_API_ENTER;
+
+  const char *tag = "[obj][flush][only-opened]";
+
+  if (!grn_obj_is_db(ctx, obj)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, obj);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s DB is only support for now: <%.*s>",
+        tag,
+        (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    GRN_API_RETURN(ctx->rc);
+  }
+
+  grn_rc rc = grn_obj_flush_lock(ctx, obj, tag);
+  if (rc != GRN_SUCCESS) {
+    GRN_API_RETURN(rc);
+  }
+
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, obj, cursor, id, GRN_CURSOR_BY_ID) {
+    if (id < GRN_N_RESERVED_TYPES) {
+      continue;
+    }
+
+    if (!grn_ctx_is_opened(ctx, id)) {
+      continue;
+    }
+
+    grn_obj *sub_obj = grn_ctx_at(ctx, id);
+    rc = grn_obj_flush_internal(ctx, sub_obj, tag);
+    grn_obj_unref(ctx, sub_obj);
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  if (rc == GRN_SUCCESS) {
+    rc = grn_obj_flush_without_lock(ctx, obj, tag);
+  }
+
+  grn_rc rc_unlock = grn_obj_flush_unlock(ctx, obj, tag);
+  if (rc == GRN_SUCCESS && rc_unlock != GRN_SUCCESS) {
+    rc = rc_unlock;
+  }
+
+  GRN_API_RETURN(rc);
 }
 
 grn_obj *
