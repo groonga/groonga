@@ -1,7 +1,9 @@
 name: "Windows MSVC"
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - master
+  pull_request:
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
