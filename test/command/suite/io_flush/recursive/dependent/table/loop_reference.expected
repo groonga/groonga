@@ -15,10 +15,5 @@ io_flush Users --recursive dependent
 #:000000000000000 flush[Users.group]
 #:000000000000000 flush[Users.name]
 #:000000000000000 flush[Users]
-#:000000000000000 flush[(anonymous:table:dat_key)]
-#:000000000000000 flush[(anonymous:column:var_size)]
-#:000000000000000 flush[(anonymous:table:hash_key)]
-#:000000000000000 flush[(anonymous:column:var_size)]
-#:000000000000000 flush[(DB)]
 #:000000000000000 send(0)
 #<000000000000000 rc=0

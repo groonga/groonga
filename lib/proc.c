@@ -4417,15 +4417,6 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     target = db;
   }
 
-  grn_rc rc = grn_obj_lock(ctx, db, GRN_ID_NIL, grn_lock_timeout);
-  if (rc != GRN_SUCCESS) {
-    char errbuf[GRN_CTX_MSGSIZE];
-    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
-    ERR(rc, "[io_flush] failed to lock DB: %s", errbuf);
-    GRN_OUTPUT_BOOL(GRN_FALSE);
-    return NULL;
-  }
-
   grn_raw_string recursive;
   recursive.value = grn_plugin_proc_get_var_string(ctx, user_data,
                                                    "recursive", -1,
@@ -4433,26 +4424,9 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   bool is_only_opened = grn_plugin_proc_get_var_bool(ctx, user_data,
                                                      "only_opened", -1,
                                                      GRN_FALSE);
-  if (target->header.type == GRN_DB && is_only_opened) {
-    GRN_TABLE_EACH_BEGIN_FLAGS(ctx, target, cursor, id, GRN_CURSOR_BY_ID) {
-      if (id < GRN_N_RESERVED_TYPES) {
-        continue;
-      }
-
-      if (!grn_ctx_is_opened(ctx, id)) {
-        continue;
-      }
-
-      grn_obj *sub_target = grn_ctx_at(ctx, id);
-      rc = grn_obj_flush(ctx, sub_target);
-      grn_obj_unref(ctx, sub_target);
-      if (rc != GRN_SUCCESS) {
-        break;
-      }
-    } GRN_TABLE_EACH_END(ctx, cursor);
-    if (rc == GRN_SUCCESS) {
-      rc = grn_obj_flush(ctx, target);
-    }
+  grn_rc rc = GRN_SUCCESS;
+  if (is_only_opened) {
+    rc = grn_obj_flush_only_opened(ctx, target);
   } else {
     if (GRN_RAW_STRING_EQUAL_CSTRING(recursive, "dependent")) {
       rc = grn_obj_flush_recursive_dependent(ctx, target);
@@ -4461,16 +4435,6 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     } else {
       rc = grn_obj_flush_recursive(ctx, target);
     }
-  }
-
-  grn_rc unlock_rc = grn_obj_unlock(ctx, db, GRN_ID_NIL);
-  if (rc == GRN_SUCCESS) {
-    rc = unlock_rc;
-  }
-
-  grn_rc flush_rc = grn_obj_flush(ctx, db);
-  if (rc == GRN_SUCCESS) {
-    rc = flush_rc;
   }
 
   if (target->header.type != GRN_DB) {
