@@ -23,6 +23,10 @@
 
 #include <sys/stat.h>
 
+#ifdef WIN32
+# include <share.h>
+#endif
+
 const char *
 grn_wal_key_type_to_string(grn_wal_key_type type)
 {
