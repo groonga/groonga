@@ -73,6 +73,8 @@ extern "C" {
       if (name_size == 0) {                                             \
         name = "(anonymous)";                                           \
         name_size = strlen(name);                                       \
+      } else if (name_size < GRN_TABLE_MAX_KEY_SIZE) {                  \
+        name_buffer[name_size] = '\0';                                  \
       }                                                                 \
     }                                                                   \
   } while (false)
