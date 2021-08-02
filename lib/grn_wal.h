@@ -64,6 +64,7 @@ grn_wal_generate_id(grn_ctx *ctx);
 grn_rc
 grn_wal_add_entry(grn_ctx *ctx,
                   grn_obj *obj,
+                  bool need_lock,
                   uint64_t *wal_id,
                   const char *tag,
                   grn_wal_key_type key_type,
@@ -71,17 +72,15 @@ grn_wal_add_entry(grn_ctx *ctx,
 grn_rc
 grn_wal_add_entryv(grn_ctx *ctx,
                    grn_obj *obj,
+                   bool need_lock,
                    uint64_t *wal_id,
                    const char *tag,
                    grn_wal_key_type key_type,
                    va_list args);
 grn_rc
-grn_wal_clear_without_lock(grn_ctx *ctx,
-                           grn_obj *obj,
-                           const char *tag);
-grn_rc
 grn_wal_clear(grn_ctx *ctx,
               grn_obj *obj,
+              bool need_lock,
               const char *tag);
 
 typedef struct grn_wal_reader_ grn_wal_reader;

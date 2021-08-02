@@ -156,7 +156,7 @@ grn_ra_truncate(grn_ctx *ctx, grn_ra *ra)
   }
   element_size = ra->header->element_size;
   if (path) {
-    grn_wal_clear(ctx, (grn_obj *)ra, "[truncate]");
+    grn_wal_clear(ctx, (grn_obj *)ra, true, "[truncate]");
   }
   if ((rc = grn_io_close(ctx, ra->io))) { goto exit; }
   ra->io = NULL;
@@ -395,6 +395,7 @@ grn_ra_set_value(grn_ctx *ctx,
       uint64_t wal_id;
       rc = grn_wal_add_entry(ctx,
                              (grn_obj *)ra,
+                             true,
                              &wal_id,
                              "[column][fix][set-value]",
                              GRN_WAL_KEY_EVENT,

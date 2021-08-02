@@ -82,6 +82,7 @@ grn_wal_generate_id(grn_ctx *ctx)
 grn_rc
 grn_wal_add_entry(grn_ctx *ctx,
                   grn_obj *obj,
+                  bool need_lock,
                   uint64_t *wal_id,
                   const char *tag,
                   grn_wal_key_type key_type,
@@ -90,7 +91,13 @@ grn_wal_add_entry(grn_ctx *ctx,
   va_list args;
 
   va_start(args, key_type);
-  grn_rc rc = grn_wal_add_entryv(ctx, obj, wal_id, tag, key_type, args);
+  grn_rc rc = grn_wal_add_entryv(ctx,
+                                 obj,
+                                 need_lock,
+                                 wal_id,
+                                 tag,
+                                 key_type,
+                                 args);
   va_end(args);
 
   return rc;
@@ -122,6 +129,7 @@ grn_wal_generate_path(grn_ctx *ctx,
 grn_rc
 grn_wal_add_entryv(grn_ctx *ctx,
                    grn_obj *obj,
+                   bool need_lock,
                    uint64_t *wal_id,
                    const char *tag,
                    grn_wal_key_type key_type,
@@ -137,9 +145,12 @@ grn_wal_add_entryv(grn_ctx *ctx,
     return GRN_SUCCESS;
   }
 
-  grn_rc rc = grn_io_lock(ctx, io, grn_lock_timeout);
-  if (rc != GRN_SUCCESS) {
-    return rc;
+  grn_rc rc = GRN_SUCCESS;
+  if (need_lock) {
+    rc = grn_io_lock(ctx, io, grn_lock_timeout);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
   }
 
   char path[PATH_MAX];
@@ -258,7 +269,10 @@ exit :
 # endif
     fclose(output);
   }
-  grn_io_unlock(io);
+
+  if (need_lock) {
+    grn_io_unlock(io);
+  }
 
   return rc;
 #else
@@ -267,9 +281,10 @@ exit :
 }
 
 grn_rc
-grn_wal_clear_without_lock(grn_ctx *ctx,
-                           grn_obj *obj,
-                           const char *tag)
+grn_wal_clear(grn_ctx *ctx,
+              grn_obj *obj,
+              bool need_lock,
+              const char *tag)
 {
   if (ctx->impl->wal.role == GRN_WAL_ROLE_NONE) {
     return GRN_SUCCESS;
@@ -281,6 +296,13 @@ grn_wal_clear_without_lock(grn_ctx *ctx,
   }
 
   grn_rc rc = GRN_SUCCESS;
+  if (need_lock) {
+    rc = grn_io_lock(ctx, io, grn_lock_timeout);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+
   char path[PATH_MAX];
   grn_wal_generate_path(ctx, io, path);
   struct stat s;
@@ -301,31 +323,9 @@ grn_wal_clear_without_lock(grn_ctx *ctx,
     }
   }
 
-  return rc;
-}
-
-grn_rc
-grn_wal_clear(grn_ctx *ctx,
-              grn_obj *obj,
-              const char *tag)
-{
-  if (ctx->impl->wal.role == GRN_WAL_ROLE_NONE) {
-    return GRN_SUCCESS;
+  if (need_lock) {
+    grn_io_unlock(io);
   }
-
-  grn_io *io = grn_obj_get_io(ctx, obj);
-  if (io->path[0] == '\0') {
-    return GRN_SUCCESS;
-  }
-
-  grn_rc rc = grn_io_lock(ctx, io, grn_lock_timeout);
-  if (rc != GRN_SUCCESS) {
-    return rc;
-  }
-
-  rc = grn_wal_clear_without_lock(ctx, obj, tag);
-
-  grn_io_unlock(io);
 
   return rc;
 }
