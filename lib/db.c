@@ -13073,7 +13073,7 @@ grn_obj_flush_without_lock(grn_ctx *ctx, grn_obj *obj, const char *tag)
   }
 
   if (flushed && rc == GRN_SUCCESS) {
-    grn_wal_clear_without_lock(ctx, obj, tag);
+    grn_wal_clear(ctx, obj, false, tag);
   }
 
   if (flushed && name_size == 0) {
