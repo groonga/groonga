@@ -1,3 +1,7 @@
+# wal_recover can't use with HTTP because requests via HTTP are always
+# processed by workers. Workers never use primary WAL role.
+#@require-interface stdio
+
 #$GRN_WAL_ROLE=primary
 table_create memos TABLE_NO_KEY
 column_create memos count COLUMN_SCALAR UInt32
