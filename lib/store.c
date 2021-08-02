@@ -476,7 +476,10 @@ grn_ra_wal_recover(grn_ctx *ctx, grn_ra *ra)
 
   grn_wal_reader_close(ctx, reader);
 
-  grn_obj_flush(ctx, (grn_obj *)ra);
+  if (ctx->rc == GRN_SUCCESS) {
+    grn_obj_touch(ctx, (grn_obj *)ra, NULL);
+    grn_obj_flush(ctx, (grn_obj *)ra);
+  }
 
   return ctx->rc;
 }
