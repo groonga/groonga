@@ -1,0 +1,717 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 1,
+          "type": 2,
+          "type_name": "huge",
+          "value": 0
+        },
+        {
+          "id": 2,
+          "type": 2,
+          "type_name": "huge",
+          "value": 0
+        }
+      ],
+      "garbage_counts": {
+      },
+      "free_elements": {
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 3,
+      "valid": true
+    }
+  }
+]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 1,
+          "type": 2,
+          "type_name": "huge",
+          "value": 0
+        },
+        {
+          "id": 2,
+          "type": 2,
+          "type_name": "huge",
+          "value": 0
+        },
+        {
+          "id": 3,
+          "type": 0,
+          "type_name": "chunk",
+          "variation": 0
+        }
+      ],
+      "garbage_counts": {
+      },
+      "free_elements": {
+        "0": {
+          "segment": 3,
+          "position": 1688,
+          "valid": true
+        }
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 4,
+      "valid": true
+    }
+  }
+]
+delete Memos --filter _id==3
+[[0,0.0,0.0],true]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 1,
+          "type": 2,
+          "type_name": "huge",
+          "value": 0
+        },
+        {
+          "id": 2,
+          "type": 2,
+          "type_name": "huge",
+          "value": 0
+        },
+        {
+          "id": 3,
+          "type": 0,
+          "type_name": "chunk",
+          "variation": 0
+        },
+        {
+          "id": 4,
+          "type": 4,
+          "type_name": "garbage info",
+          "variation": 0,
+          "head": 1,
+          "tail": 0,
+          "n_garbages": 1,
+          "next": 0,
+          "valid": true
+        }
+      ],
+      "garbage_counts": {
+        "0": {
+          "total": 1,
+          "details": {
+            "4": 1
+          },
+          "valid": true
+        }
+      },
+      "free_elements": {
+        "0": {
+          "segment": 3,
+          "position": 1688,
+          "valid": true
+        }
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 5,
+      "valid": true
+    }
+  }
+]
+delete Memos --filter _id<=2
+[[0,0.0,0.0],true]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 3,
+          "type": 0,
+          "type_name": "chunk",
+          "variation": 0
+        },
+        {
+          "id": 4,
+          "type": 4,
+          "type_name": "garbage info",
+          "variation": 0,
+          "head": 1,
+          "tail": 0,
+          "n_garbages": 1,
+          "next": 0,
+          "valid": true
+        }
+      ],
+      "garbage_counts": {
+        "0": {
+          "total": 1,
+          "details": {
+            "4": 1
+          },
+          "valid": true
+        }
+      },
+      "free_elements": {
+        "0": {
+          "segment": 3,
+          "position": 1688,
+          "valid": true
+        }
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 3,
+      "valid": true
+    }
+  }
+]
+delete Memos --filter true
+[[0,0.0,0.0],true]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 1,
+          "type": 4,
+          "type_name": "garbage info",
+          "variation": 0,
+          "head": 0,
+          "tail": 0,
+          "n_garbages": 100,
+          "next": 2,
+          "valid": true
+        },
+        {
+          "id": 2,
+          "type": 4,
+          "type_name": "garbage info",
+          "variation": 0,
+          "head": 11,
+          "tail": 0,
+          "n_garbages": 11,
+          "next": 0,
+          "valid": true
+        },
+        {
+          "id": 3,
+          "type": 0,
+          "type_name": "chunk",
+          "variation": 0
+        },
+        {
+          "id": 4,
+          "type": 4,
+          "type_name": "garbage info",
+          "variation": 0,
+          "head": 0,
+          "tail": 0,
+          "n_garbages": 100,
+          "next": 1,
+          "valid": true
+        }
+      ],
+      "garbage_counts": {
+        "0": {
+          "total": 211,
+          "details": {
+            "1": 100,
+            "2": 11,
+            "4": 100
+          },
+          "valid": true
+        }
+      },
+      "free_elements": {
+        "0": {
+          "segment": 3,
+          "position": 1688,
+          "valid": true
+        }
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 5,
+      "valid": true
+    }
+  }
+]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 2,
+          "type": 4,
+          "type_name": "garbage info",
+          "variation": 0,
+          "head": 11,
+          "tail": 1,
+          "n_garbages": 10,
+          "next": 0,
+          "valid": true
+        },
+        {
+          "id": 3,
+          "type": 0,
+          "type_name": "chunk",
+          "variation": 0
+        }
+      ],
+      "garbage_counts": {
+        "0": {
+          "total": 10,
+          "details": {
+            "2": 10
+          },
+          "valid": true
+        }
+      },
+      "free_elements": {
+        "0": {
+          "segment": 3,
+          "position": 1768,
+          "valid": true
+        }
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 3,
+      "valid": true
+    }
+  }
+]
+select Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        211
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        3,
+        "chunk: 8B <= && < 64KiB: 9",
+        "chunkXXX"
+      ],
+      [
+        4,
+        "chunk: 8B <= && < 64KiB: 8",
+        "chunkXXX"
+      ],
+      [
+        5,
+        "chunk: 8B <= && < 64KiB: 7",
+        "chunkXXX"
+      ],
+      [
+        6,
+        "chunk: 8B <= && < 64KiB: 6",
+        "chunkXXX"
+      ],
+      [
+        7,
+        "chunk: 8B <= && < 64KiB: 5",
+        "chunkXXX"
+      ],
+      [
+        8,
+        "chunk: 8B <= && < 64KiB: 4",
+        "chunkXXX"
+      ],
+      [
+        9,
+        "chunk: 8B <= && < 64KiB: 3",
+        "chunkXXX"
+      ],
+      [
+        10,
+        "chunk: 8B <= && < 64KiB: 2",
+        "chunkXXX"
+      ],
+      [
+        11,
+        "chunk: 8B <= && < 64KiB: 1",
+        "chunkXXX"
+      ],
+      [
+        12,
+        "chunk: 8B <= && < 64KiB: 99",
+        "chunkXXX"
+      ]
+    ]
+  ]
+]
+select Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        211
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        3,
+        "chunk: 8B <= && < 64KiB: 9",
+        ""
+      ],
+      [
+        4,
+        "chunk: 8B <= && < 64KiB: 8",
+        ""
+      ],
+      [
+        5,
+        "chunk: 8B <= && < 64KiB: 7",
+        ""
+      ],
+      [
+        6,
+        "chunk: 8B <= && < 64KiB: 6",
+        ""
+      ],
+      [
+        7,
+        "chunk: 8B <= && < 64KiB: 5",
+        ""
+      ],
+      [
+        8,
+        "chunk: 8B <= && < 64KiB: 4",
+        ""
+      ],
+      [
+        9,
+        "chunk: 8B <= && < 64KiB: 3",
+        ""
+      ],
+      [
+        10,
+        "chunk: 8B <= && < 64KiB: 2",
+        ""
+      ],
+      [
+        11,
+        "chunk: 8B <= && < 64KiB: 1",
+        ""
+      ],
+      [
+        12,
+        "chunk: 8B <= && < 64KiB: 99",
+        ""
+      ]
+    ]
+  ]
+]
+wal_recover
+[[0,0.0,0.0],true]
+select Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        211
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        3,
+        "chunk: 8B <= && < 64KiB: 9",
+        "chunkXXX"
+      ],
+      [
+        4,
+        "chunk: 8B <= && < 64KiB: 8",
+        "chunkXXX"
+      ],
+      [
+        5,
+        "chunk: 8B <= && < 64KiB: 7",
+        "chunkXXX"
+      ],
+      [
+        6,
+        "chunk: 8B <= && < 64KiB: 6",
+        "chunkXXX"
+      ],
+      [
+        7,
+        "chunk: 8B <= && < 64KiB: 5",
+        "chunkXXX"
+      ],
+      [
+        8,
+        "chunk: 8B <= && < 64KiB: 4",
+        "chunkXXX"
+      ],
+      [
+        9,
+        "chunk: 8B <= && < 64KiB: 3",
+        "chunkXXX"
+      ],
+      [
+        10,
+        "chunk: 8B <= && < 64KiB: 2",
+        "chunkXXX"
+      ],
+      [
+        11,
+        "chunk: 8B <= && < 64KiB: 1",
+        "chunkXXX"
+      ],
+      [
+        12,
+        "chunk: 8B <= && < 64KiB: 99",
+        "chunkXXX"
+      ]
+    ]
+  ]
+]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 2,
+          "type": 4,
+          "type_name": "garbage info",
+          "variation": 0,
+          "head": 11,
+          "tail": 1,
+          "n_garbages": 10,
+          "next": 0,
+          "valid": true
+        },
+        {
+          "id": 3,
+          "type": 0,
+          "type_name": "chunk",
+          "variation": 0
+        }
+      ],
+      "garbage_counts": {
+        "0": {
+          "total": 10,
+          "details": {
+            "2": 10
+          },
+          "valid": true
+        }
+      },
+      "free_elements": {
+        "0": {
+          "segment": 3,
+          "position": 1768,
+          "valid": true
+        }
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 3,
+      "valid": true
+    }
+  }
+]

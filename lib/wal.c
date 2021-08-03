@@ -28,10 +28,61 @@
 #endif
 
 const char *
-grn_wal_key_type_to_string(grn_wal_key_type type)
+grn_wal_event_to_string(grn_wal_event event)
+{
+  const char *string = "unknown";
+  switch (event) {
+  case GRN_WAL_EVENT_NIL :
+    string = "nil";
+    break;
+  case GRN_WAL_EVENT_SET_VALUE :
+    string = "set-value";
+    break;
+  case GRN_WAL_EVENT_NEW_SEGMENT :
+    string = "new-segment";
+    break;
+  case GRN_WAL_EVENT_USE_SEGMENT :
+    string = "use-segment";
+    break;
+  case GRN_WAL_EVENT_REUSE_SEGMENT :
+    string = "reuse-segment";
+    break;
+  case GRN_WAL_EVENT_FREE_SEGMENT :
+    string = "free-segment";
+    break;
+  }
+  return string;
+}
+
+const char *
+grn_wal_segment_type_to_string(grn_wal_segment_type type)
 {
   const char *string = "unknown";
   switch (type) {
+  case GRN_WAL_SEGMENT_SEQUENTIAL :
+    string = "sequential";
+    break;
+  case GRN_WAL_SEGMENT_CHUNK :
+    string = "chunk";
+    break;
+  case GRN_WAL_SEGMENT_HUGE :
+    string = "huge";
+    break;
+  case GRN_WAL_SEGMENT_EINFO :
+    string = "einfo";
+    break;
+  case GRN_WAL_SEGMENT_GINFO :
+    string = "ginfo";
+    break;
+  }
+  return string;
+}
+
+const char *
+grn_wal_key_to_string(grn_wal_key key)
+{
+  const char *string = "unknown";
+  switch (key) {
   case GRN_WAL_KEY_END :
     string = "end";
     break;
@@ -47,6 +98,42 @@ grn_wal_key_type_to_string(grn_wal_key_type type)
   case GRN_WAL_KEY_VALUE :
     string = "value";
     break;
+  case GRN_WAL_KEY_SEGMENT :
+    string = "segment";
+    break;
+  case GRN_WAL_KEY_SEGMENT_TYPE :
+    string = "segment-type";
+    break;
+  case GRN_WAL_KEY_SEGMENT_INFO :
+    string = "segment-info";
+    break;
+  case GRN_WAL_KEY_GARBAGE_SEGMENT :
+    string = "garbage-segment";
+    break;
+  case GRN_WAL_KEY_PREVIOUS_GARBAGE_SEGMENT :
+    string = "previous-garbage-segment";
+    break;
+  case GRN_WAL_KEY_NEXT_GARBAGE_SEGMENT :
+    string = "next-garbage-segment";
+    break;
+  case GRN_WAL_KEY_GARBAGE_SEGMENT_HEAD :
+    string = "garbage-segment-head";
+    break;
+  case GRN_WAL_KEY_GARBAGE_SEGMENT_TAIL :
+    string = "garbage-segment-tail";
+    break;
+  case GRN_WAL_KEY_GARBAGE_SEGMENT_N_RECORDS :
+    string = "garbage-n-records";
+    break;
+  case GRN_WAL_KEY_N_GARBAGES :
+    string = "n-garbages";
+    break;
+  case GRN_WAL_KEY_POSITION :
+    string = "position";
+    break;
+  case GRN_WAL_KEY_ELEMENT_SIZE :
+    string = "element-size";
+    break;
   }
   return string;
 }
@@ -59,14 +146,26 @@ grn_wal_reader_value_type_to_string(grn_wal_reader_value_type type)
   case GRN_WAL_READER_VALUE_NIL :
     string = "nil";
     break;
+  case GRN_WAL_READER_VALUE_BOOLEAN :
+    string = "boolean";
+    break;
   case GRN_WAL_READER_VALUE_INT64 :
     string = "int64";
     break;
   case GRN_WAL_READER_VALUE_UINT64 :
     string = "uint64";
     break;
+  case GRN_WAL_READER_VALUE_FLOAT32 :
+    string = "float32";
+    break;
+  case GRN_WAL_READER_VALUE_FLOAT64 :
+    string = "float64";
+    break;
   case GRN_WAL_READER_VALUE_BINARY :
     string = "binary";
+    break;
+  case GRN_WAL_READER_VALUE_STRING :
+    string = "string";
     break;
   }
   return string;
@@ -89,18 +188,18 @@ grn_wal_add_entry(grn_ctx *ctx,
                   bool need_lock,
                   uint64_t *wal_id,
                   const char *tag,
-                  grn_wal_key_type key_type,
+                  grn_wal_key key,
                   ...)
 {
   va_list args;
 
-  va_start(args, key_type);
+  va_start(args, key);
   grn_rc rc = grn_wal_add_entryv(ctx,
                                  obj,
                                  need_lock,
                                  wal_id,
                                  tag,
-                                 key_type,
+                                 key,
                                  args);
   va_end(args);
 
@@ -136,7 +235,7 @@ grn_wal_add_entryv(grn_ctx *ctx,
                    bool need_lock,
                    uint64_t *wal_id,
                    const char *tag,
-                   grn_wal_key_type key_type,
+                   grn_wal_key key,
                    va_list args)
 {
   if (ctx->impl->wal.role == GRN_WAL_ROLE_NONE) {
@@ -178,18 +277,33 @@ grn_wal_add_entryv(grn_ctx *ctx,
 
   uint8_t n_keys = 0;
   {
-    grn_wal_key_type current_key_type = key_type;
+    grn_wal_key current_key = key;
     va_list copied_args;
     va_copy(copied_args, args);
-    while (current_key_type != GRN_WAL_KEY_END) {
+    while (current_key != GRN_WAL_KEY_END) {
       n_keys++;
       grn_wal_value_type value_type = va_arg(copied_args, grn_wal_value_type);
       switch (value_type) {
       case GRN_WAL_VALUE_EVENT :
-        va_arg(copied_args, grn_wal_event_type);
+        va_arg(copied_args, grn_wal_event);
         break;
       case GRN_WAL_VALUE_RECORD_ID :
         va_arg(copied_args, grn_id);
+        break;
+      case GRN_WAL_VALUE_SEGMENT_TYPE :
+        va_arg(copied_args, grn_wal_segment_type);
+        break;
+      case GRN_WAL_VALUE_INT32 :
+        va_arg(copied_args, int32_t);
+        break;
+      case GRN_WAL_VALUE_UINT32 :
+        va_arg(copied_args, uint32_t);
+        break;
+      case GRN_WAL_VALUE_INT64 :
+        va_arg(copied_args, int64_t);
+        break;
+      case GRN_WAL_VALUE_UINT64 :
+        va_arg(copied_args, uint64_t);
         break;
       case GRN_WAL_VALUE_BINARY :
         va_arg(copied_args, void *);
@@ -198,7 +312,7 @@ grn_wal_add_entryv(grn_ctx *ctx,
       default :
         break;
       }
-      current_key_type = va_arg(copied_args, grn_wal_key_type);
+      current_key = va_arg(copied_args, grn_wal_key);
     }
     va_end(copied_args);
   }
@@ -208,9 +322,9 @@ grn_wal_add_entryv(grn_ctx *ctx,
   *wal_id = grn_wal_generate_id(ctx);
   msgpack_pack_uint64(&packer, *wal_id);
   {
-    grn_wal_key_type current_key_type = key_type;
-    while (current_key_type != GRN_WAL_KEY_END) {
-      msgpack_pack_uint8(&packer, current_key_type);
+    grn_wal_key current_key = key;
+    while (current_key != GRN_WAL_KEY_END) {
+      msgpack_pack_uint8(&packer, current_key);
       grn_wal_value_type value_type = va_arg(args, grn_wal_value_type);
       switch (value_type) {
       case GRN_WAL_VALUE_NIL :
@@ -228,10 +342,28 @@ grn_wal_add_entryv(grn_ctx *ctx,
           msgpack_pack_uint32(&packer, value);
         }
         break;
+      case GRN_WAL_VALUE_SEGMENT_TYPE :
+        {
+          grn_wal_segment_type value = va_arg(args, grn_wal_segment_type);
+          msgpack_pack_uint32(&packer, value);
+        }
+        break;
+      case GRN_WAL_VALUE_INT32 :
+        {
+          int32_t value = va_arg(args, int32_t);
+          msgpack_pack_int64(&packer, value);
+        }
+        break;
+      case GRN_WAL_VALUE_UINT32 :
+        {
+          uint32_t value = va_arg(args, uint32_t);
+          msgpack_pack_uint32(&packer, value);
+        }
+        break;
       case GRN_WAL_VALUE_INT64 :
         {
           int64_t value = va_arg(args, int64_t);
-          msgpack_pack_uint64(&packer, value);
+          msgpack_pack_int64(&packer, value);
         }
         break;
       case GRN_WAL_VALUE_UINT64 :
@@ -261,7 +393,7 @@ grn_wal_add_entryv(grn_ctx *ctx,
         }
         break;
       }
-      current_key_type = va_arg(args, grn_wal_key_type);
+      current_key = va_arg(args, grn_wal_key);
     }
   }
 
@@ -338,7 +470,7 @@ struct grn_wal_reader_ {
   grn_obj *obj;
   const char *tag;
   FILE *input;
-  grn_wal_key_type key_type;
+  grn_wal_key key;
   grn_wal_value_type value_type;
 #ifdef GRN_WITH_MESSAGE_PACK
   msgpack_unpacker unpacker;
@@ -446,8 +578,7 @@ grn_wal_reader_read_next(grn_ctx *ctx,
 grn_rc
 grn_wal_reader_read_entry(grn_ctx *ctx,
                           grn_wal_reader *reader,
-                          grn_wal_key_type key_type,
-                          ...)
+                          grn_wal_reader_entry *entry)
 {
   if (!reader) {
     return GRN_END_OF_DATA;
@@ -472,103 +603,55 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
   }
 
   msgpack_object_map *map = &(reader->unpacked.data.via.map);
-
-  va_list args;
-  va_start(args, key_type);
-  for (;
-       key_type != GRN_WAL_KEY_END;
-       key_type = va_arg(args, grn_wal_key_type)) {
-    msgpack_object *value = NULL;
-    uint32_t i;
-    for (i = 0; i < map->size; i++) {
-      msgpack_object_kv *kv = &(map->ptr[i]);
-      if (kv->key.type != MSGPACK_OBJECT_POSITIVE_INTEGER) {
-        continue;
-      }
-      grn_wal_key_type current_key_type = kv->key.via.u64;
-      if (key_type != current_key_type) {
-        continue;
-      }
-      value = &(kv->val);
-      break;
+  uint32_t i;
+  for (i = 0; i < map->size; i++) {
+    msgpack_object_kv *kv = &(map->ptr[i]);
+    if (kv->key.type != MSGPACK_OBJECT_POSITIVE_INTEGER) {
+      continue;
     }
-    if (!value) {
-      GRN_DEFINE_NAME(reader->obj);
-      ERR(GRN_FILE_CORRUPT,
-          "%s[%.*s]%s requested key is missing: <%s>(%u)",
-          tag,
-          name_size, name,
-          reader->tag,
-          grn_wal_key_type_to_string(key_type),
-          key_type);
-      break;
-    }
-    switch (key_type) {
+    grn_wal_key key = kv->key.via.u64;
+    msgpack_object *value = &(kv->val);
+    switch (key) {
     case GRN_WAL_KEY_ID :
-      {
-        uint64_t *output = va_arg(args, uint64_t *);
-        *output = value->via.u64;
-      }
+      entry->id = value->via.u64;
       break;
     case GRN_WAL_KEY_EVENT :
-      {
-        grn_wal_event_type *output = va_arg(args, grn_wal_event_type *);
-        *output = value->via.u64;
-      }
+      entry->event = value->via.u64;
       break;
     case GRN_WAL_KEY_RECORD_ID :
-      {
-        grn_id *output = va_arg(args, grn_id *);
-        *output = value->via.u64;
-      }
+      entry->record_id = value->via.u64;
       break;
     case GRN_WAL_KEY_VALUE :
       switch (value->type) {
       case MSGPACK_OBJECT_BOOLEAN :
-        {
-          bool *output = va_arg(args, bool *);
-          *output = value->via.boolean;
-        }
+        entry->value.type = GRN_WAL_READER_VALUE_BOOLEAN;
+        entry->value.data.boolean = value->via.boolean;
         break;
       case MSGPACK_OBJECT_POSITIVE_INTEGER :
-        {
-          uint64_t *output = va_arg(args, uint64_t *);
-          *output = value->via.u64;
-        }
+        entry->value.type = GRN_WAL_READER_VALUE_UINT64;
+        entry->value.data.uint64 = value->via.u64;
         break;
       case MSGPACK_OBJECT_NEGATIVE_INTEGER :
-        {
-          int64_t *output = va_arg(args, int64_t *);
-          *output = value->via.i64;
-        }
+        entry->value.type = GRN_WAL_READER_VALUE_INT64;
+        entry->value.data.int64 = value->via.i64;
         break;
       case MSGPACK_OBJECT_FLOAT32 :
-        {
-          float *output = va_arg(args, float *);
-          *output = value->via.f64;
-        }
+        entry->value.type = GRN_WAL_READER_VALUE_FLOAT32;
+        entry->value.data.float32 = value->via.f64;
         break;
       case MSGPACK_OBJECT_FLOAT64 :
-        {
-          double *output = va_arg(args, double *);
-          *output = value->via.f64;
-        }
+        entry->value.type = GRN_WAL_READER_VALUE_FLOAT64;
+        entry->value.data.float64 = value->via.f64;
         break;
       case MSGPACK_OBJECT_STR :
-        {
-          const char **output = va_arg(args, const char **);
-          size_t *output_size = va_arg(args, size_t *);
-          *output = value->via.str.ptr;
-          *output_size = value->via.str.size;
-        }
+        entry->value.type = GRN_WAL_READER_VALUE_STRING;
+        entry->value.data.string.data = value->via.str.ptr;
+        entry->value.data.string.size = value->via.str.size;
         break;
       case MSGPACK_OBJECT_BIN :
-        {
-          const void **output = va_arg(args, const void **);
-          size_t *output_size = va_arg(args, size_t *);
-          *output = value->via.bin.ptr;
-          *output_size = value->via.bin.size;
-        }
+        entry->value.type = GRN_WAL_READER_VALUE_BINARY;
+        entry->value.data.binary.data = value->via.bin.ptr;
+        entry->value.data.binary.size = value->via.bin.size;
         break;
       default :
         {
@@ -584,16 +667,52 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
         break;
       }
       break;
+    case GRN_WAL_KEY_SEGMENT :
+      entry->segment = value->via.u64;
+      break;
+    case GRN_WAL_KEY_SEGMENT_TYPE :
+      entry->segment_type = value->via.u64;
+      break;
+    case GRN_WAL_KEY_SEGMENT_INFO :
+      entry->segment_info = value->via.u64;
+      break;
+    case GRN_WAL_KEY_GARBAGE_SEGMENT :
+      entry->garbage_segment = value->via.u64;
+      break;
+    case GRN_WAL_KEY_PREVIOUS_GARBAGE_SEGMENT :
+      entry->previous_garbage_segment = value->via.u64;
+      break;
+    case GRN_WAL_KEY_NEXT_GARBAGE_SEGMENT :
+      entry->next_garbage_segment = value->via.u64;
+      break;
+    case GRN_WAL_KEY_GARBAGE_SEGMENT_HEAD :
+      entry->garbage_segment_head = value->via.u64;
+      break;
+    case GRN_WAL_KEY_GARBAGE_SEGMENT_TAIL :
+      entry->garbage_segment_tail = value->via.u64;
+      break;
+    case GRN_WAL_KEY_GARBAGE_SEGMENT_N_RECORDS :
+      entry->garbage_segment_n_records = value->via.u64;
+      break;
+    case GRN_WAL_KEY_N_GARBAGES :
+      entry->n_garbages = value->via.u64;
+      break;
+    case GRN_WAL_KEY_POSITION :
+      entry->position = value->via.u64;
+      break;
+    case GRN_WAL_KEY_ELEMENT_SIZE :
+      entry->element_size = value->via.u64;
+      break;
     default :
       {
         GRN_DEFINE_NAME(reader->obj);
         ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s]%s unsupported key type: <%s>(%u)",
+            "%s[%.*s]%s unsupported key: <%s>(%u)",
             tag,
             name_size, name,
             reader->tag,
-            grn_wal_key_type_to_string(key_type),
-            key_type);
+            grn_wal_key_to_string(key),
+            key);
       }
       break;
     }
@@ -601,9 +720,74 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       break;
     }
   }
-  va_end(args);
 #endif
   return ctx->rc;
+}
+
+void
+grn_wal_set_recover_error(grn_ctx *ctx,
+                          grn_rc rc,
+                          grn_obj *object,
+                          grn_wal_reader_entry *entry,
+                          const char *tag,
+                          const char *message)
+{
+  GRN_DEFINE_NAME(object);
+  grn_id object_id = grn_obj_id(ctx, object);
+  char path[PATH_MAX];
+  bool have_wal_file = false;
+  grn_io *io = grn_obj_get_io(ctx, object);
+  if (io) {
+    grn_wal_generate_path(ctx, io, path);
+    struct stat s;
+    have_wal_file = (stat(path, &s) == 0);
+  }
+  if (!have_wal_file) {
+    grn_strcpy(path, sizeof(path), "(nonexistent)");
+  }
+  ERR(rc,
+      "[wal][recover][error]%s[%.*s(%u)] %s: "
+      "id:%" GRN_FMT_INT64U " "
+      "event:%s(%u) "
+      "record-id:%u "
+      "element-size:%u "
+      "value-type:%s(%u) "
+      "segment:%u "
+      "position:%u "
+      "segment-type:%s(%u) "
+      "segment-info:<%s|%u>(%u) "
+      "garbage-segment:%u "
+      "garbage-segment-tail:%u "
+      "garbage-segment-n-records:%u "
+      "previous-garbage-segment:%u "
+      "next-garbage-segment:%u "
+      "n-garbages:%u "
+      "path:<%s>",
+      tag,
+      name_size, name,
+      object_id,
+      message,
+      entry->id,
+      grn_wal_event_to_string(entry->event),
+      entry->event,
+      entry->record_id,
+      entry->element_size,
+      grn_wal_reader_value_type_to_string(entry->value.type),
+      entry->value.type,
+      entry->segment,
+      entry->position,
+      grn_wal_segment_type_to_string(entry->segment_type),
+      entry->segment_type,
+      grn_ja_segment_info_type_name(ctx, entry->segment_info),
+      grn_ja_segment_info_value(ctx, entry->segment_info),
+      entry->segment_info,
+      entry->garbage_segment,
+      entry->garbage_segment_tail,
+      entry->garbage_segment_n_records,
+      entry->previous_garbage_segment,
+      entry->next_garbage_segment,
+      entry->n_garbages,
+      path);
 }
 
 grn_rc
@@ -630,11 +814,11 @@ grn_wal_dump(grn_ctx *ctx, grn_obj *obj)
     uint32_t j;
     for (j = 0; j < map->size; j++) {
       msgpack_object_kv *kv = &(map->ptr[j]);
-      grn_wal_key_type key_type = kv->key.via.u64;
+      grn_wal_key key = kv->key.via.u64;
       printf("%u:%s(%u):%s(%u):",
              j,
-             grn_wal_key_type_to_string(key_type),
-             key_type,
+             grn_wal_key_to_string(key),
+             key,
              grn_msgpack_object_type_to_string(kv->val.type),
              kv->val.type);
       switch (kv->val.type) {
@@ -645,7 +829,36 @@ grn_wal_dump(grn_ctx *ctx, grn_obj *obj)
         printf("%s", kv->val.via.boolean ? "true" : "false");
         break;
       case MSGPACK_OBJECT_POSITIVE_INTEGER :
-        printf("%" GRN_FMT_INT64U, kv->val.via.u64);
+        switch (key) {
+        case GRN_WAL_KEY_EVENT :
+          {
+            grn_wal_event event = kv->val.via.u64;
+            printf("event(%s)<%d>",
+                   grn_wal_event_to_string(event),
+                   event);
+          }
+          break;
+        case GRN_WAL_KEY_SEGMENT_TYPE :
+          {
+            grn_wal_segment_type type = kv->val.via.u64;
+            printf("segment-type(%s)<%d>",
+                   grn_wal_segment_type_to_string(type),
+                   type);
+          }
+          break;
+        case GRN_WAL_KEY_SEGMENT_INFO :
+          {
+            uint32_t info = kv->val.via.u64;
+            printf("segment-info(%s)(%u)<%u>",
+                   grn_ja_segment_info_type_name(ctx, info),
+                   grn_ja_segment_info_value(ctx, info),
+                   info);
+          }
+          break;
+        default :
+          printf("%" GRN_FMT_INT64U, kv->val.via.u64);
+          break;
+        }
         break;
       case MSGPACK_OBJECT_NEGATIVE_INTEGER :
         printf("%" GRN_FMT_INT64D, kv->val.via.i64);

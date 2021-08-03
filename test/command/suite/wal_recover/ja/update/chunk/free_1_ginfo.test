@@ -1,0 +1,80 @@
+# wal_recover can't use with HTTP because requests via HTTP are always
+# processed by workers. Workers never use primary WAL role.
+#@require-interface stdio
+
+#$GRN_WAL_ROLE=primary
+#$GRN_JA_N_GARBAGES_IN_A_SEGMENT=100
+
+#@disable-logging
+cache_limit --max 0
+#@enable-logging
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos content COLUMN_SCALAR Text
+
+#@disable-logging
+io_flush
+#@copy-path #{db_path}.0000101 #{db_path}.0000101.initial
+#@enable-logging
+
+#@timeout 300
+
+# We need grn_ja_n_garbages_in_a_segment(100) + JA_N_GARBAGES_TH(10) + 1 or more
+# garbage to free garbage segment.
+
+# Root ginfo: 0
+# Segment:
+#   0: einfo
+#   1: chunk
+
+#@disable-logging
+#@generate-series 1 111 Memos '{"_key" => "chunk: 8B <= && < 64KiB: #{i}", "content" => "chunkXXX"}'
+#@enable-logging
+
+check --obj Memos.content
+
+# Root ginfo: 2
+# Segment:
+#   0: einfo
+#   1: chunk
+#   2: ginfo -> 3
+#   3: ginfo
+
+delete Memos --filter true
+
+check --obj Memos.content
+
+# Root ginfo: 3
+# Segment:
+#   0: einfo
+#   1: chunk
+#   3: ginfo
+
+#@disable-logging
+#@generate-series 1 110 Memos '{"_key" => "chunk: 8B <= && < 64KiB: #{i}", "content" => "chunkXXX"}'
+#@enable-logging
+
+check --obj Memos.content
+
+select Memos
+
+#@disable-logging
+#@copy-path #{db_path}.0000101.wal #{db_path}.0000101.wal.keep
+io_flush
+#@copy-path #{db_path}.0000101 #{db_path}.0000101.keep
+#@copy-path #{db_path}.0000101.initial #{db_path}.0000101
+#@enable-logging
+
+#@disable-logging
+thread_limit 1
+database_unmap
+#@copy-path #{db_path}.0000101.wal.keep #{db_path}.0000101.wal
+#@enable-logging
+
+select Memos
+
+wal_recover
+
+select Memos
+
+check --obj Memos.content

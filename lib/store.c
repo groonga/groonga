@@ -397,10 +397,10 @@ grn_ra_set_value(grn_ctx *ctx,
                              (grn_obj *)ra,
                              true,
                              &wal_id,
-                             "[column][fix][set-value]",
+                             "[ra][set-value]",
                              GRN_WAL_KEY_EVENT,
                              GRN_WAL_VALUE_EVENT,
-                             GRN_WAL_EVENT_SET,
+                             GRN_WAL_EVENT_SET_VALUE,
 
                              GRN_WAL_KEY_RECORD_ID,
                              GRN_WAL_VALUE_RECORD_ID,
@@ -436,42 +436,33 @@ grn_ra_set_value(grn_ctx *ctx,
 grn_rc
 grn_ra_wal_recover(grn_ctx *ctx, grn_ra *ra)
 {
-  const char *tag = "[column][fix]";
+  const char *tag = "[ra][recover]";
   grn_wal_reader *reader = grn_wal_reader_open(ctx, (grn_obj *)ra, tag);
   if (!reader) {
     return ctx->rc;
   }
 
+  grn_io_clear_lock(ra->io);
+
   while (true) {
-    uint64_t id;
-    grn_wal_event_type event_type;
-    grn_id record_id;
-    const uint8_t *value;
-    size_t value_size;
-    grn_rc rc = grn_wal_reader_read_entry(ctx,
-                                          reader,
-                                          GRN_WAL_KEY_ID,
-                                          &id,
-                                          GRN_WAL_KEY_EVENT,
-                                          &event_type,
-                                          GRN_WAL_KEY_RECORD_ID,
-                                          &record_id,
-                                          GRN_WAL_KEY_VALUE,
-                                          &value,
-                                          &value_size,
-                                          GRN_WAL_KEY_END);
+    grn_wal_reader_entry entry = {0};
+    grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &entry);
     if (rc != GRN_SUCCESS) {
       break;
     }
     /* TODO: Or ensure idempotence and always apply all entries. */
-    if (id <= ra->header->wal_id) {
+    if (entry.id <= ra->header->wal_id) {
       continue;
     }
-    grn_ra_set_value_raw(ctx, ra, record_id, value, value_size);
+    grn_ra_set_value_raw(ctx,
+                         ra,
+                         entry.record_id,
+                         entry.value.data.binary.data,
+                         entry.value.data.binary.size);
     if (ctx->rc != GRN_SUCCESS) {
       break;
     }
-    ra->header->wal_id = id;
+    ra->header->wal_id = entry.id;
   }
 
   grn_wal_reader_close(ctx, reader);
@@ -572,6 +563,25 @@ grn_ra_warm(grn_ctx *ctx, grn_ra *ra)
 #define JA_N_DATA_SEGMENTS             (1U << JA_W_SEGMENTS_MAX)
 #define JA_N_ELEMENT_SEGMENTS          (1U << (GRN_ID_WIDTH - JA_W_EINFO_IN_A_SEGMENT))
 
+static uint32_t grn_ja_n_garbages_in_a_segment =
+  JA_N_GARBAGES_IN_A_SEGMENT;
+
+void
+grn_ja_init_from_env(void)
+{
+  {
+    /* Just for test. */
+    char grn_ja_n_garbages_in_a_segment_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_JA_N_GARBAGES_IN_A_SEGMENT",
+               grn_ja_n_garbages_in_a_segment_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_ja_n_garbages_in_a_segment_env[0]) {
+      grn_ja_n_garbages_in_a_segment =
+        atoi(grn_ja_n_garbages_in_a_segment_env);
+    }
+  }
+}
+
 typedef struct _grn_ja_einfo grn_ja_einfo;
 
 struct _grn_ja_einfo {
@@ -659,6 +669,7 @@ struct grn_ja_header_v2 {
   uint32_t element_segs[JA_N_ELEMENT_SEGMENTS];
   uint8_t chunk_threshold;
   uint8_t n_element_variations;
+  uint64_t wal_id;
 };
 
 struct grn_ja_header {
@@ -673,7 +684,29 @@ struct grn_ja_header {
   uint32_t *element_segs;
   uint8_t chunk_threshold;
   uint8_t n_element_variations;
+  uint64_t *wal_id;
 };
+
+typedef enum {
+  GRN_JA_ELEMENT_TINY,
+  GRN_JA_ELEMENT_CHUNK,
+  GRN_JA_ELEMENT_SEQUENTIAL,
+  GRN_JA_ELEMENT_HUGE,
+} grn_ja_element_type;
+
+static grn_ja_element_type
+grn_ja_detect_element_type(grn_ctx *ctx, grn_ja *ja, uint32_t element_size)
+{
+  if (element_size < 8) {
+    return GRN_JA_ELEMENT_TINY;
+  } else if (element_size <= (1 << ja->header->chunk_threshold)) {
+    return GRN_JA_ELEMENT_CHUNK;
+  } else if ((element_size + sizeof(grn_id)) <= JA_SEGMENT_SIZE) {
+    return GRN_JA_ELEMENT_SEQUENTIAL;
+  } else {
+    return GRN_JA_ELEMENT_HUGE;
+  }
+}
 
 #define SEG_CHUNK      (0x00000000U)
 #define SEG_SEQ        (0x10000000U)
@@ -763,6 +796,7 @@ _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
   header->element_segs         = header_v2->element_segs;
   header->chunk_threshold      = header_v2->chunk_threshold;
   header->n_element_variations = header_v2->n_element_variations;
+  header->wal_id               = &(header_v2->wal_id);
 
   ja->io = io;
   ja->header = header;
@@ -845,11 +879,96 @@ grn_ja_open(grn_ctx *ctx, const char *path)
     header->segment_infos = header_v2->segment_infos;
     header->element_segs  = header_v2->element_segs;
   }
+  header->wal_id = &(header_v2->wal_id);
 
   ja->io = io;
   ja->header = header;
 
   return ja;
+}
+
+static void
+grn_ja_set_error(grn_ctx *ctx,
+                 grn_ja *ja,
+                 grn_rc rc,
+                 grn_id id,
+                 const char *tag,
+                 const char *format,
+                 ...)
+{
+  grn_obj message;
+  GRN_TEXT_INIT(&message, 0);
+  va_list args;
+  va_start(args, format);
+  grn_text_printfv(ctx, &message, format, args);
+  va_end(args);
+
+  GRN_DEFINE_NAME(ja);
+  if (id == GRN_ID_NIL) {
+    ERR(rc,
+        "%s[%.*s] %.*s path:<%s>",
+        tag,
+        name_size, name,
+        (int)GRN_TEXT_LEN(&message),
+        GRN_TEXT_VALUE(&message),
+        ja->io->path);
+  } else {
+    ERR(rc,
+        "%s[%.*s][%u] %.*s path:<%s>",
+        tag,
+        name_size, name,
+        id,
+        (int)GRN_TEXT_LEN(&message),
+        GRN_TEXT_VALUE(&message),
+        ja->io->path);
+  }
+
+  GRN_OBJ_FIN(ctx, &message);
+}
+
+static void
+grn_ja_log(grn_ctx *ctx,
+           grn_ja *ja,
+           grn_log_level level,
+           grn_id id,
+           const char *tag,
+           const char *format,
+           ...)
+{
+  if (!grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+    return;
+  }
+
+  grn_obj message;
+  GRN_TEXT_INIT(&message, 0);
+  va_list args;
+  va_start(args, format);
+  grn_text_printfv(ctx, &message, format, args);
+  va_end(args);
+
+  GRN_DEFINE_NAME(ja);
+  if (id == GRN_ID_NIL) {
+    GRN_LOG(ctx,
+            level,
+            "%s[%.*s] %.*s path:<%s>",
+            tag,
+            name_size, name,
+            (int)GRN_TEXT_LEN(&message),
+            GRN_TEXT_VALUE(&message),
+            ja->io->path);
+  } else {
+    GRN_LOG(ctx,
+            level,
+            "%s[%.*s][%u] %.*s path:<%s>",
+            tag,
+            name_size, name,
+            id,
+            (int)GRN_TEXT_LEN(&message),
+            GRN_TEXT_VALUE(&message),
+            ja->io->path);
+  }
+
+  GRN_OBJ_FIN(ctx, &message);
 }
 
 grn_rc
@@ -885,6 +1004,9 @@ grn_ja_close(grn_ctx *ctx, grn_ja *ja)
 {
   grn_rc rc;
   if (!ja) { return GRN_INVALID_ARGUMENT; }
+  if (ctx->impl->wal.role == GRN_WAL_ROLE_PRIMARY) {
+    grn_obj_flush(ctx, (grn_obj *)ja);
+  }
   rc = grn_io_close(ctx, ja->io);
   GRN_FREE(ja->header);
   GRN_FREE(ja);
@@ -916,6 +1038,9 @@ grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
   }
   max_element_size = ja->header->max_element_size;
   flags = ja->header->flags;
+  if (path) {
+    grn_wal_clear(ctx, (grn_obj *)ja, true, "[truncate]");
+  }
   if ((rc = grn_io_close(ctx, ja->io))) { goto exit; }
   ja->io = NULL;
   if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
@@ -978,150 +1103,1358 @@ grn_ja_unref(grn_ctx *ctx, grn_io_win *iw)
   return GRN_SUCCESS;
 }
 
+typedef struct {
+  grn_ja *ja;
+  bool need_lock;
+  uint64_t wal_id;
+  const char *tag;
+  grn_wal_event event;
+  grn_id record_id;
+  uint32_t element_size;
+  uint32_t segment;
+  uint32_t position;
+  grn_wal_segment_type segment_type;
+  uint32_t segment_info;
+  uint32_t garbage_segment;
+  uint32_t garbage_segment_head;
+  uint32_t garbage_segment_tail;
+  uint32_t garbage_segment_n_records;
+  uint32_t previous_garbage_segment;
+  uint32_t next_garbage_segment;
+  uint32_t n_garbages;
+  grn_ja_einfo *element_info;
+  const void *value;
+  size_t value_size;
+} grn_ja_wal_add_entry_data;
+
+typedef struct {
+  bool record_id;
+  bool element_size;
+  bool segment;
+  bool position;
+  bool segment_type;
+  bool segment_info;
+  bool garbage_segment;
+  bool garbage_segment_head;
+  bool garbage_segment_tail;
+  bool garbage_segment_n_records;
+  bool previous_garbage_segment;
+  bool next_garbage_segment;
+  bool n_garbages;
+  bool element_info;
+  bool value;
+} grn_ja_wal_add_entry_used;
+
+static grn_rc
+grn_ja_wal_add_entry_set_value(grn_ctx *ctx,
+                               grn_ja_wal_add_entry_data *data,
+                               grn_ja_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->element_size = true;
+  used->segment = true;
+  used->position = true;
+  used->value = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_ELEMENT_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->element_size,
+
+                           GRN_WAL_KEY_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment,
+
+                           GRN_WAL_KEY_POSITION,
+                           GRN_WAL_VALUE_UINT32,
+                           data->position,
+
+                           GRN_WAL_KEY_VALUE,
+                           GRN_WAL_VALUE_BINARY,
+                           data->value,
+                           data->value_size,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_ja_wal_add_entry_new_segment_chunk(grn_ctx *ctx,
+                                       grn_ja_wal_add_entry_data *data,
+                                       grn_ja_wal_add_entry_used *used)
+{
+  used->element_size = true;
+  used->segment = true;
+  used->segment_type = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_ELEMENT_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->element_size,
+
+                           GRN_WAL_KEY_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment,
+
+                           GRN_WAL_KEY_SEGMENT_TYPE,
+                           GRN_WAL_VALUE_SEGMENT_TYPE,
+                           data->segment_type,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_ja_wal_add_entry_new_segment_sequential(grn_ctx *ctx,
+                                            grn_ja_wal_add_entry_data *data,
+                                            grn_ja_wal_add_entry_used *used)
+{
+  used->segment = true;
+  used->segment_type = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment,
+
+                           GRN_WAL_KEY_SEGMENT_TYPE,
+                           GRN_WAL_VALUE_SEGMENT_TYPE,
+                           data->segment_type,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_ja_wal_add_entry_new_segment_huge(grn_ctx *ctx,
+                                      grn_ja_wal_add_entry_data *data,
+                                      grn_ja_wal_add_entry_used *used)
+{
+  used->segment = true;
+  used->segment_type = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment,
+
+                           GRN_WAL_KEY_SEGMENT_TYPE,
+                           GRN_WAL_VALUE_SEGMENT_TYPE,
+                           data->segment_type,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_ja_wal_add_entry_new_segment_einfo(grn_ctx *ctx,
+                                       grn_ja_wal_add_entry_data *data,
+                                       grn_ja_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->element_size = true;
+  used->segment = true;
+  used->segment_type = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_ELEMENT_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->element_size,
+
+                           GRN_WAL_KEY_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment,
+
+                           GRN_WAL_KEY_SEGMENT_TYPE,
+                           GRN_WAL_VALUE_SEGMENT_TYPE,
+                           data->segment_type,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_ja_wal_add_entry_new_segment_ginfo(grn_ctx *ctx,
+                                       grn_ja_wal_add_entry_data *data,
+                                       grn_ja_wal_add_entry_used *used)
+{
+  used->element_size = true;
+  used->segment_type = true;
+  used->garbage_segment = true;
+  used->previous_garbage_segment = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_ELEMENT_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->element_size,
+
+                           GRN_WAL_KEY_SEGMENT_TYPE,
+                           GRN_WAL_VALUE_SEGMENT_TYPE,
+                           data->segment_type,
+
+                           GRN_WAL_KEY_GARBAGE_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->garbage_segment,
+
+                           GRN_WAL_KEY_PREVIOUS_GARBAGE_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->previous_garbage_segment,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_ja_wal_add_entry_use_segment_chunk(grn_ctx *ctx,
+                                       grn_ja_wal_add_entry_data *data,
+                                       grn_ja_wal_add_entry_used *used)
+{
+  used->element_size = true;
+  used->segment = true;
+  used->position = true;
+  used->segment_type = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_ELEMENT_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->element_size,
+
+                           GRN_WAL_KEY_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment,
+
+                           GRN_WAL_KEY_POSITION,
+                           GRN_WAL_VALUE_UINT32,
+                           data->position,
+
+                           GRN_WAL_KEY_SEGMENT_TYPE,
+                           GRN_WAL_VALUE_SEGMENT_TYPE,
+                           data->segment_type,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_ja_wal_add_entry_use_segment_sequential(grn_ctx *ctx,
+                                            grn_ja_wal_add_entry_data *data,
+                                            grn_ja_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->element_size = true;
+  used->segment = true;
+  used->position = true;
+  used->segment_type = true;
+  used->segment_info = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_ELEMENT_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->element_size,
+
+                           GRN_WAL_KEY_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment,
+
+                           GRN_WAL_KEY_POSITION,
+                           GRN_WAL_VALUE_UINT32,
+                           data->position,
+
+                           GRN_WAL_KEY_SEGMENT_TYPE,
+                           GRN_WAL_VALUE_SEGMENT_TYPE,
+                           data->segment_type,
+
+                           GRN_WAL_KEY_SEGMENT_INFO,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment_info,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_ja_wal_add_entry_use_segment_einfo(grn_ctx *ctx,
+                                       grn_ja_wal_add_entry_data *data,
+                                       grn_ja_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->element_size = true;
+  used->segment = true;
+  used->segment_type = true;
+  used->element_info = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_ELEMENT_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->element_size,
+
+                           GRN_WAL_KEY_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment,
+
+                           GRN_WAL_KEY_SEGMENT_TYPE,
+                           GRN_WAL_VALUE_SEGMENT_TYPE,
+                           data->segment_type,
+
+                           GRN_WAL_KEY_VALUE,
+                           GRN_WAL_VALUE_UINT64,
+                           *((uint64_t *)(data->element_info)),
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_ja_wal_add_entry_use_segment_ginfo(grn_ctx *ctx,
+                                       grn_ja_wal_add_entry_data *data,
+                                       grn_ja_wal_add_entry_used *used)
+{
+  used->element_size = true;
+  used->segment = true;
+  used->position = true;
+  used->segment_type = true;
+  used->garbage_segment = true;
+  used->garbage_segment_head = true;
+  used->garbage_segment_n_records = true;
+  used->n_garbages = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_ELEMENT_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->element_size,
+
+                           GRN_WAL_KEY_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment,
+
+                           GRN_WAL_KEY_POSITION,
+                           GRN_WAL_VALUE_UINT32,
+                           data->position,
+
+                           GRN_WAL_KEY_SEGMENT_TYPE,
+                           GRN_WAL_VALUE_SEGMENT_TYPE,
+                           data->segment_type,
+
+                           GRN_WAL_KEY_GARBAGE_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->garbage_segment,
+
+                           GRN_WAL_KEY_GARBAGE_SEGMENT_HEAD,
+                           GRN_WAL_VALUE_UINT32,
+                           data->garbage_segment_head,
+
+                           GRN_WAL_KEY_GARBAGE_SEGMENT_N_RECORDS,
+                           GRN_WAL_VALUE_UINT32,
+                           data->garbage_segment_n_records,
+
+                           GRN_WAL_KEY_N_GARBAGES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_garbages,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_ja_wal_add_entry_reuse_segment(grn_ctx *ctx,
+                                   grn_ja_wal_add_entry_data *data,
+                                   grn_ja_wal_add_entry_used *used)
+{
+  used->element_size = true;
+  used->segment = true;
+  used->position = true;
+  used->garbage_segment = true;
+  used->garbage_segment_tail = true;
+  used->garbage_segment_n_records = true;
+  used->n_garbages = true;
+  used->previous_garbage_segment = true;
+  used->next_garbage_segment = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_ELEMENT_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->element_size,
+
+                           GRN_WAL_KEY_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment,
+
+                           GRN_WAL_KEY_POSITION,
+                           GRN_WAL_VALUE_UINT32,
+                           data->position,
+
+                           GRN_WAL_KEY_GARBAGE_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->garbage_segment,
+
+                           GRN_WAL_KEY_GARBAGE_SEGMENT_TAIL,
+                           GRN_WAL_VALUE_UINT32,
+                           data->garbage_segment_tail,
+
+                           GRN_WAL_KEY_GARBAGE_SEGMENT_N_RECORDS,
+                           GRN_WAL_VALUE_UINT32,
+                           data->garbage_segment_n_records,
+
+                           GRN_WAL_KEY_N_GARBAGES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_garbages,
+
+                           GRN_WAL_KEY_PREVIOUS_GARBAGE_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->previous_garbage_segment,
+
+                           GRN_WAL_KEY_NEXT_GARBAGE_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->next_garbage_segment,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_ja_wal_add_entry_free_segment_sequential(grn_ctx *ctx,
+                                             grn_ja_wal_add_entry_data *data,
+                                             grn_ja_wal_add_entry_used *used)
+{
+  used->element_size = true;
+  used->segment = true;
+  used->position = true;
+  used->segment_type = true;
+  used->segment_info = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_ELEMENT_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->element_size,
+
+                           GRN_WAL_KEY_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment,
+
+                           GRN_WAL_KEY_POSITION,
+                           GRN_WAL_VALUE_UINT32,
+                           data->position,
+
+                           GRN_WAL_KEY_SEGMENT_TYPE,
+                           GRN_WAL_VALUE_SEGMENT_TYPE,
+                           data->segment_type,
+
+                           GRN_WAL_KEY_SEGMENT_INFO,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment_info,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_ja_wal_add_entry_free_segment_huge(grn_ctx *ctx,
+                                       grn_ja_wal_add_entry_data *data,
+                                       grn_ja_wal_add_entry_used *used)
+{
+  used->segment = true;
+  used->segment_type = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_ELEMENT_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->element_size,
+
+                           GRN_WAL_KEY_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment,
+
+                           GRN_WAL_KEY_SEGMENT_TYPE,
+                           GRN_WAL_VALUE_SEGMENT_TYPE,
+                           data->segment_type,
+
+                           GRN_WAL_KEY_GARBAGE_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->garbage_segment,
+
+                           GRN_WAL_KEY_PREVIOUS_GARBAGE_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->previous_garbage_segment,
+
+                           GRN_WAL_KEY_NEXT_GARBAGE_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->next_garbage_segment,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_ja_wal_add_entry_free_segment_ginfo(grn_ctx *ctx,
+                                        grn_ja_wal_add_entry_data *data,
+                                        grn_ja_wal_add_entry_used *used)
+{
+  used->element_size = true;
+  used->segment = true;
+  used->segment_type = true;
+  used->garbage_segment = true;
+  used->previous_garbage_segment = true;
+  used->next_garbage_segment = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->ja),
+                           data->need_lock,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_ELEMENT_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->element_size,
+
+                           GRN_WAL_KEY_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->segment,
+
+                           GRN_WAL_KEY_SEGMENT_TYPE,
+                           GRN_WAL_VALUE_SEGMENT_TYPE,
+                           data->segment_type,
+
+                           GRN_WAL_KEY_GARBAGE_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->garbage_segment,
+
+                           GRN_WAL_KEY_PREVIOUS_GARBAGE_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->previous_garbage_segment,
+
+                           GRN_WAL_KEY_NEXT_GARBAGE_SEGMENT,
+                           GRN_WAL_VALUE_UINT32,
+                           data->next_garbage_segment,
+
+                           GRN_WAL_KEY_END);
+}
+
+static void
+grn_ja_wal_add_entry_format_deatils(grn_ctx *ctx,
+                                    grn_ja_wal_add_entry_data *data,
+                                    grn_ja_wal_add_entry_used *used,
+                                    grn_obj *details)
+{
+  grn_text_printf(ctx,
+                  details,
+                  "event:%u<%s> ",
+                  data->event,
+                  grn_wal_event_to_string(data->event));
+  if (used->record_id) {
+    grn_text_printf(ctx, details, "record-id:%u ", data->record_id);
+  }
+  if (used->element_size) {
+    grn_text_printf(ctx, details, "element-size:%u ", data->element_size);
+  }
+  if (used->segment) {
+    grn_text_printf(ctx, details, "segment:%u ", data->segment);
+  }
+  if (used->position) {
+    grn_text_printf(ctx, details, "position:%u ", data->position);
+  }
+  if (used->segment_type) {
+    grn_text_printf(ctx,
+                    details,
+                    "segment-type:%u<%s> ",
+                    data->segment_type,
+                    grn_wal_segment_type_to_string(data->segment_type));
+  }
+  if (used->segment_info) {
+    grn_text_printf(ctx,
+                    details,
+                    "segment-info:%u<%s|%u> ",
+                    data->segment_info,
+                    grn_ja_segment_info_type_name(ctx, data->segment_info),
+                    grn_ja_segment_info_value(ctx, data->segment_info));
+  }
+  if (used->garbage_segment) {
+    grn_text_printf(ctx, details,
+                    "garbage-segment:%u ", data->garbage_segment);
+  }
+  if (used->garbage_segment_head) {
+    grn_text_printf(ctx, details,
+                    "garbage-segment-head:%u ", data->garbage_segment_head);
+  }
+  if (used->garbage_segment_tail) {
+    grn_text_printf(ctx, details,
+                    "garbage-segment-tail:%u ", data->garbage_segment_tail);
+  }
+  if (used->garbage_segment_n_records) {
+    grn_text_printf(ctx, details,
+                    "garbage-segment-n-records:%u ",
+                    data->garbage_segment_n_records);
+  }
+  if (used->previous_garbage_segment) {
+    grn_text_printf(ctx, details,
+                    "previous-garbage-segment:%u ",
+                    data->previous_garbage_segment);
+  }
+  if (used->next_garbage_segment) {
+    grn_text_printf(ctx, details,
+                    "next-garbage-segment:%u ",
+                    data->next_garbage_segment);
+  }
+  if (used->n_garbages) {
+    grn_text_printf(ctx, details,
+                    "n-garbages:%u ",
+                    data->n_garbages);
+  }
+  if (used->element_info) {
+    if (ETINY_P(data->element_info)) {
+      uint32_t size;
+      ETINY_DEC(data->element_info, size);
+      grn_text_printf(ctx,
+                      details,
+                      "element-info:<tiny|%u> ",
+                      size);
+    } else if (EHUGE_P(data->element_info)) {
+      uint32_t segment;
+      uint32_t size;
+      EHUGE_DEC(data->element_info, segment, size);
+      grn_text_printf(ctx,
+                      details,
+                      "element-info:<huge|%u|%u> ",
+                      segment,
+                      size);
+    } else {
+      uint32_t segment;
+      uint32_t position;
+      uint32_t size;
+      EINFO_DEC(data->element_info, segment, position, size);
+      grn_text_printf(ctx,
+                      details,
+                      "element-info:<normal|%u|%u|%u> ",
+                      segment,
+                      position,
+                      size);
+    }
+  }
+  if (used->value) {
+    grn_text_printf(ctx,
+                    details,
+                    "value:%" GRN_FMT_SIZE " ", data->value_size);
+  }
+}
+
+static grn_rc
+grn_ja_wal_add_entry(grn_ctx *ctx, grn_ja_wal_add_entry_data *data)
+{
+  grn_rc rc = GRN_SUCCESS;
+  const char *usage = "";
+  grn_ja_wal_add_entry_used used = {0};
+
+  switch (data->event) {
+  case GRN_WAL_EVENT_SET_VALUE :
+    usage = "setting value";
+    rc = grn_ja_wal_add_entry_set_value(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_NEW_SEGMENT :
+    switch (data->segment_type) {
+    case GRN_WAL_SEGMENT_CHUNK :
+      usage = "new chunk segment";
+      rc = grn_ja_wal_add_entry_new_segment_chunk(ctx, data, &used);
+      break;
+    case GRN_WAL_SEGMENT_SEQUENTIAL :
+      usage = "new sequential segment";
+      rc = grn_ja_wal_add_entry_new_segment_sequential(ctx, data, &used);
+      break;
+    case GRN_WAL_SEGMENT_HUGE :
+      usage = "new huge segment";
+      rc = grn_ja_wal_add_entry_new_segment_huge(ctx, data, &used);
+      break;
+    case GRN_WAL_SEGMENT_EINFO :
+      usage = "new element info segment";
+      rc = grn_ja_wal_add_entry_new_segment_einfo(ctx, data, &used);
+      break;
+    case GRN_WAL_SEGMENT_GINFO :
+      usage = "new garbage info segment";
+      rc = grn_ja_wal_add_entry_new_segment_ginfo(ctx, data, &used);
+      break;
+    default :
+      usage = "not implemented event";
+      rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+    }
+    break;
+  case GRN_WAL_EVENT_USE_SEGMENT :
+    switch (data->segment_type) {
+    case GRN_WAL_SEGMENT_CHUNK :
+      usage = "using chunk segment";
+      rc = grn_ja_wal_add_entry_use_segment_chunk(ctx, data, &used);
+      break;
+    case GRN_WAL_SEGMENT_SEQUENTIAL :
+      usage = "using sequential segment";
+      rc = grn_ja_wal_add_entry_use_segment_sequential(ctx, data, &used);
+      break;
+    case GRN_WAL_SEGMENT_EINFO :
+      usage = "using element info segment";
+      rc = grn_ja_wal_add_entry_use_segment_einfo(ctx, data, &used);
+      break;
+    case GRN_WAL_SEGMENT_GINFO :
+      usage = "using garbage info segment";
+      rc = grn_ja_wal_add_entry_use_segment_ginfo(ctx, data, &used);
+      break;
+    default :
+      usage = "not implemented event";
+      rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+      break;
+    }
+    break;
+  case GRN_WAL_EVENT_REUSE_SEGMENT :
+    usage = "reusing segment";
+    rc = grn_ja_wal_add_entry_reuse_segment(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_FREE_SEGMENT :
+    switch (data->segment_type) {
+    case GRN_WAL_SEGMENT_SEQUENTIAL :
+      usage = "freeing sequential segment";
+      rc = grn_ja_wal_add_entry_free_segment_sequential(ctx, data, &used);
+      break;
+    case GRN_WAL_SEGMENT_HUGE :
+      usage = "freeing huge segment";
+      rc = grn_ja_wal_add_entry_free_segment_huge(ctx, data, &used);
+      break;
+    case GRN_WAL_SEGMENT_GINFO :
+      usage = "freeing garbage info segment";
+      rc = grn_ja_wal_add_entry_free_segment_ginfo(ctx, data, &used);
+      break;
+    default :
+      usage = "not implemented event";
+      rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+      break;
+    }
+    break;
+  default :
+    usage = "not implemented event";
+    rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+    break;
+  }
+
+  if (rc != GRN_SUCCESS) {
+    grn_obj details;
+    GRN_TEXT_INIT(&details, 0);
+    grn_ja_wal_add_entry_format_deatils(ctx, data, &used, &details);
+    GRN_DEFINE_NAME(data->ja);
+    ERR(rc,
+        "%s[%.*s][%u] failed to add WAL entry for %s: %.*spath:<%s>",
+        data->tag,
+        name_size, name,
+        data->record_id,
+        usage,
+        (int)GRN_TEXT_LEN(&details),
+        GRN_TEXT_VALUE(&details),
+        data->ja->io->path);
+    GRN_OBJ_FIN(ctx, &details);
+  }
+
+  return rc;
+}
+
+static uint32_t
+grn_ja_compute_chunk_msb(uint32_t element_size)
+{
+  uint32_t chunk_msb;
+  uint32_t ensure_one_small_chunk_element_size = element_size - 1;
+  GRN_BIT_SCAN_REV(ensure_one_small_chunk_element_size, chunk_msb);
+  chunk_msb++;
+  return chunk_msb;
+}
+
+static uint32_t
+grn_ja_compute_sequence_data_size(uint32_t element_size)
+{
+  return element_size + sizeof(grn_id);
+}
+
+static uint32_t
+grn_ja_compute_sequence_aligned_element_size(uint32_t element_size)
+{
+  return (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
+}
+
+static uint32_t
+grn_ja_compute_sequence_aligned_data_size(uint32_t element_size)
+{
+  uint32_t aligned_element_size =
+    grn_ja_compute_sequence_aligned_element_size(element_size);
+  return grn_ja_compute_sequence_data_size(aligned_element_size);
+}
+
+static uint32_t
+grn_ja_compute_huge_n_segments(uint32_t element_size)
+{
+  return (element_size + JA_SEGMENT_SIZE - 1) >> GRN_JA_W_SEGMENT;
+  uint32_t aligned_element_size =
+    grn_ja_compute_sequence_aligned_element_size(element_size);
+  return grn_ja_compute_sequence_data_size(aligned_element_size);
+}
+
 #define DELETED 0x80000000
+
+static void
+grn_ja_chunk_segment_use(grn_ctx *ctx,
+                         grn_ja *ja,
+                         uint32_t element_size,
+                         uint32_t segment,
+                         uint32_t position)
+{
+  uint32_t chunk_msb = grn_ja_compute_chunk_msb(element_size);
+  uint32_t chunk_variation = chunk_msb - JA_W_EINFO;
+  ja_pos *vp = &(ja->header->free_elements[chunk_variation]);
+  vp->seg = segment;
+  vp->pos = position;
+}
+
+static void
+grn_ja_chunk_segment_new(grn_ctx *ctx,
+                         grn_ja *ja,
+                         uint32_t element_size,
+                         uint32_t segment)
+{
+  uint32_t chunk_msb = grn_ja_compute_chunk_msb(element_size);
+  SEGMENT_CHUNK_ON(ja, segment, chunk_msb);
+  grn_ja_chunk_segment_use(ctx,
+                           ja,
+                           element_size,
+                           segment,
+                           0);
+}
+
+static void
+grn_ja_chunk_segment_reuse(grn_ctx *ctx,
+                           grn_ja *ja,
+                           grn_ja_ginfo *ginfo,
+                           uint32_t garbage_segment_tail,
+                           uint32_t garbage_segment_n_records,
+                           uint32_t n_garbages,
+                           uint32_t element_size)
+{
+  uint32_t chunk_msb = grn_ja_compute_chunk_msb(element_size);
+  uint32_t chunk_variation = chunk_msb - JA_W_EINFO;
+  ginfo->tail = garbage_segment_tail;
+  ginfo->nrecs = garbage_segment_n_records;
+  ja->header->n_garbages[chunk_variation] = n_garbages;
+}
+
+static void
+grn_ja_sequential_segment_new(grn_ctx *ctx,
+                              grn_ja *ja,
+                              uint32_t segment)
+{
+  SEGMENT_SEQ_ON(ja, segment);
+  *(ja->header->curr_seg) = segment;
+  *(ja->header->curr_pos) = 0;
+}
+
+static void
+grn_ja_sequential_segment_use(grn_ctx *ctx,
+                              grn_ja *ja,
+                              uint8_t *address,
+                              grn_id record_id,
+                              uint32_t segment,
+                              uint32_t position,
+                              uint32_t segment_info,
+                              uint32_t element_size)
+{
+  uint32_t aligned_element_size =
+    grn_ja_compute_sequence_aligned_element_size(element_size);
+  uint32_t aligned_data_size =
+    grn_ja_compute_sequence_aligned_data_size(element_size);
+  *(grn_id *)(address + position) = record_id;
+  if (position + aligned_element_size < JA_SEGMENT_SIZE) {
+    *(grn_id *)(address + position + aligned_element_size) = GRN_ID_NIL;
+  }
+  SEGMENT_INFO_AT(ja, segment) = segment_info;
+  *(ja->header->curr_seg) = segment;
+  *(ja->header->curr_pos) = position + aligned_data_size;
+}
+
+static void
+grn_ja_sequential_segment_free(grn_ctx *ctx,
+                               grn_ja *ja,
+                               uint8_t *address,
+                               uint32_t segment,
+                               uint32_t position,
+                               uint32_t segment_info,
+                               uint32_t element_size)
+{
+  uint32_t aligned_element_size =
+    grn_ja_compute_sequence_aligned_element_size(element_size);
+  *(grn_id *)(address + position - sizeof(grn_id)) =
+    DELETED|aligned_element_size;
+  SEGMENT_INFO_AT(ja, segment) = segment_info;
+  if (SEGMENT_INFO_AT(ja, segment) == SEG_SEQ) {
+    /* reuse the segment */
+    SEGMENT_OFF(ja, segment);
+    if (segment == *(ja->header->curr_seg)) {
+      *(ja->header->curr_pos) = JA_SEGMENT_SIZE;
+    }
+  }
+}
+
+static void
+grn_ja_huge_segment_new(grn_ctx *ctx, grn_ja *ja, uint32_t segment)
+{
+  SEGMENT_HUGE_ON(ja, segment);
+}
+
+static void
+grn_ja_huge_segment_free(grn_ctx *ctx, grn_ja *ja, uint32_t segment)
+{
+  SEGMENT_OFF(ja, segment);
+}
+
+static void
+grn_ja_einfo_segment_new(grn_ctx *ctx,
+                         grn_ja *ja,
+                         grn_ja_einfo *einfo,
+                         grn_id id,
+                         uint32_t segment)
+{
+  uint32_t lseg = id >> JA_W_EINFO_IN_A_SEGMENT;
+  ja->header->element_segs[lseg] = segment;
+  SEGMENT_EINFO_ON(ja, segment, lseg);
+  memset(einfo, 0, JA_SEGMENT_SIZE);
+}
+
+static void
+grn_ja_einfo_segment_use(grn_ctx *ctx,
+                         grn_ja *ja,
+                         grn_ja_einfo *einfo,
+                         grn_id id,
+                         uint32_t segment,
+                         grn_ja_einfo *new_einfo)
+{
+  uint32_t lseg = id >> JA_W_EINFO_IN_A_SEGMENT;
+  uint32_t position = id & JA_M_EINFO_IN_A_SEGMENT;
+  ja->header->element_segs[lseg] = segment;
+  uint64_t *location = (uint64_t *)(einfo + position);
+  uint64_t value = *((uint64_t *)new_einfo);
+  GRN_SET_64BIT(location, value);
+}
+
+static void
+grn_ja_ginfo_segment_new(grn_ctx *ctx,
+                         grn_ja *ja,
+                         grn_ja_ginfo *ginfo_current,
+                         grn_ja_ginfo *ginfo_previous,
+                         uint32_t segment,
+                         uint32_t element_size)
+{
+  ginfo_current->head = 0;
+  ginfo_current->tail = 0;
+  ginfo_current->nrecs = 0;
+  ginfo_current->next = 0;
+  uint32_t chunk_msb = grn_ja_compute_chunk_msb(element_size);
+  uint32_t chunk_variation = chunk_msb - JA_W_EINFO;
+  SEGMENT_GINFO_ON(ja, segment, chunk_variation);
+  if (ginfo_previous) {
+    ginfo_previous->next = segment;
+  } else {
+    ja->header->garbages[chunk_variation] = segment;
+  }
+}
+
+static void
+grn_ja_ginfo_segment_use(grn_ctx *ctx,
+                         grn_ja *ja,
+                         grn_ja_ginfo *ginfo,
+                         uint32_t segment,
+                         uint32_t position,
+                         uint32_t garbage_segment_head,
+                         uint32_t garbage_segment_n_records,
+                         uint32_t n_garbages,
+                         uint32_t element_size)
+{
+  uint32_t chunk_msb = grn_ja_compute_chunk_msb(element_size);
+  uint32_t chunk_variation = chunk_msb - JA_W_EINFO;
+  uint32_t index =
+    (garbage_segment_head == 0) ?
+    (grn_ja_n_garbages_in_a_segment - 1) :
+    (garbage_segment_head - 1);
+  ginfo->recs[index].seg = segment;
+  ginfo->recs[index].pos = position;
+  ginfo->head = garbage_segment_head;
+  ginfo->nrecs = garbage_segment_n_records;
+  ja->header->n_garbages[chunk_variation] = n_garbages;
+}
+
+static void
+grn_ja_ginfo_segment_free(grn_ctx *ctx,
+                          grn_ja *ja,
+                          grn_ja_ginfo *ginfo_previous,
+                          uint32_t segment,
+                          uint32_t next_garbage_segment,
+                          uint32_t element_size)
+{
+  SEGMENT_OFF(ja, segment);
+  if (ginfo_previous) {
+    ginfo_previous->next = next_garbage_segment;
+  } else {
+    uint32_t chunk_msb = grn_ja_compute_chunk_msb(element_size);
+    uint32_t chunk_variation = chunk_msb - JA_W_EINFO;
+    ja->header->garbages[chunk_variation] = next_garbage_segment;
+  }
+}
+
+static grn_rc
+grn_ja_free_huge(grn_ctx *ctx,
+                 grn_ja_wal_add_entry_data *wal_data)
+{
+  grn_ja *ja = wal_data->ja;
+  uint32_t n_segments = grn_ja_compute_huge_n_segments(wal_data->element_size);
+
+  wal_data->event = GRN_WAL_EVENT_FREE_SEGMENT;
+  wal_data->segment_type = GRN_WAL_SEGMENT_HUGE;
+  uint32_t base_segment = wal_data->segment;
+  uint32_t i;
+  for (i = 0; i < n_segments; i++) {
+    wal_data->segment = base_segment + i;
+    if (grn_ja_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
+      break;
+    }
+    grn_ja_huge_segment_free(ctx, ja, wal_data->segment);
+    *(ja->header->wal_id) = wal_data->wal_id;
+  }
+  return ctx->rc;
+}
+
+static grn_rc
+grn_ja_free_chunk(grn_ctx *ctx,
+                  grn_ja_wal_add_entry_data *wal_data)
+{
+  grn_ja *ja = wal_data->ja;
+  uint32_t chunk_msb = grn_ja_compute_chunk_msb(wal_data->element_size);
+  uint32_t chunk_variation = chunk_msb - JA_W_EINFO;
+  uint32_t lseg_previous = 0;
+  uint32_t lseg_current = 0;
+  grn_ja_ginfo *ginfo_previous = NULL;
+  grn_ja_ginfo *ginfo_current = NULL;
+  const uint32_t lseg_initial = ja->header->garbages[chunk_variation];
+  for (lseg_current = lseg_initial;
+       lseg_current != 0;
+       lseg_current = ginfo_previous->next) {
+    ginfo_current = grn_io_seg_ref(ctx, ja->io, lseg_current);
+    if (!ginfo_current) {
+      grn_ja_set_error(ctx,
+                       ja,
+                       GRN_NO_MEMORY_AVAILABLE,
+                       GRN_ID_NIL,
+                       wal_data->tag,
+                       "failed to refer garbage info segment: "
+                       "variation:%u "
+                       "segment:%u "
+                       "element-size:%u "
+                       "initial-garbage-segment:%u "
+                       "n-garbages:%u",
+                       chunk_variation,
+                       lseg_current,
+                       wal_data->element_size,
+                       lseg_initial,
+                       ja->header->n_garbages[chunk_variation]);
+      goto exit;
+    }
+    if (ginfo_current->nrecs < grn_ja_n_garbages_in_a_segment) {
+      break;
+    }
+    if (ginfo_previous) {
+      grn_io_seg_unref(ctx, ja->io, lseg_previous);
+    }
+    lseg_previous = lseg_current;
+    ginfo_previous = ginfo_current;
+    ginfo_current = NULL;
+  }
+
+  wal_data->segment_type = GRN_WAL_SEGMENT_GINFO;
+  wal_data->previous_garbage_segment = lseg_previous;
+  if (ginfo_current) {
+    wal_data->garbage_segment = lseg_current;
+  } else {
+    uint32_t segment = 0;
+    for (segment = 0; segment < JA_N_DATA_SEGMENTS; segment++) {
+      if (SEGMENT_INFO_AT(ja, segment) == 0) {
+        break;
+      }
+    }
+    if (segment == JA_N_DATA_SEGMENTS) {
+      grn_ja_set_error(ctx,
+                       ja,
+                       GRN_NOT_ENOUGH_SPACE,
+                       GRN_ID_NIL,
+                       wal_data->tag,
+                       "failed to allocate a new garbage info segment "
+                       "because of full: "
+                       "variation:%u "
+                       "element-size:%u "
+                       "initial-garbage-segment:%u "
+                       "n-garbages:%u",
+                       chunk_variation,
+                       wal_data->element_size,
+                       lseg_initial,
+                       ja->header->n_garbages[chunk_variation]);
+      goto exit;
+    }
+    wal_data->event = GRN_WAL_EVENT_NEW_SEGMENT;
+    wal_data->garbage_segment = segment;
+    if (grn_ja_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
+      goto exit;
+    }
+    lseg_current = wal_data->garbage_segment;
+    ginfo_current = grn_io_seg_ref(ctx, ja->io, lseg_current);
+    if (!ginfo_current) {
+      grn_ja_set_error(ctx,
+                       ja,
+                       GRN_NO_MEMORY_AVAILABLE,
+                       GRN_ID_NIL,
+                       wal_data->tag,
+                       "failed to refer newly allocated garbage info segment: "
+                       "variation:%u "
+                       "element-size:%u "
+                       "garbage-segment:%u "
+                       "initial-garbage-segment:%u "
+                       "n-garbages:%u",
+                       chunk_variation,
+                       wal_data->element_size,
+                       wal_data->garbage_segment,
+                       lseg_initial,
+                       ja->header->n_garbages[chunk_variation]);
+      goto exit;
+    }
+    grn_ja_ginfo_segment_new(ctx,
+                             ja,
+                             ginfo_current,
+                             ginfo_previous,
+                             wal_data->garbage_segment,
+                             wal_data->element_size);
+  }
+  wal_data->event = GRN_WAL_EVENT_USE_SEGMENT;
+  wal_data->segment_type = GRN_WAL_SEGMENT_GINFO;
+  wal_data->garbage_segment_head =
+    (ginfo_current->head + 1) % grn_ja_n_garbages_in_a_segment;
+  wal_data->garbage_segment_n_records = ginfo_current->nrecs + 1;
+  wal_data->n_garbages = ja->header->n_garbages[chunk_variation] + 1;
+  if (grn_ja_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
+    goto exit;
+  }
+  grn_ja_ginfo_segment_use(ctx,
+                           ja,
+                           ginfo_current,
+                           wal_data->segment,
+                           wal_data->position,
+                           wal_data->garbage_segment_head,
+                           wal_data->garbage_segment_n_records,
+                           wal_data->n_garbages,
+                           wal_data->element_size);
+
+exit :
+  if (ginfo_previous) {
+    grn_io_seg_unref(ctx, ja->io, lseg_previous);
+  }
+  if (ginfo_current) {
+    grn_io_seg_unref(ctx, ja->io, lseg_current);
+  }
+  return ctx->rc;
+}
+
+static grn_rc
+grn_ja_free_sequential(grn_ctx *ctx,
+                       grn_ja_wal_add_entry_data *wal_data)
+{
+  grn_ja *ja = wal_data->ja;
+  uint32_t aligned_element_size =
+    grn_ja_compute_sequence_aligned_element_size(wal_data->element_size);
+  uint32_t data_size = aligned_element_size + sizeof(grn_id);
+  uint32_t segment_info = SEGMENT_INFO_AT(ja, wal_data->segment);
+  if (grn_ja_segment_info_type(ctx, segment_info) != SEG_SEQ ||
+      grn_ja_segment_info_value(ctx, segment_info) < data_size) {
+    grn_ja_log(ctx,
+               ja,
+               GRN_LOG_WARNING,
+               GRN_ID_NIL,
+               wal_data->tag,
+               "inconsistent sequence entry detected: "
+               "segment:%u "
+               "position:%u "
+               "element-info:%s|%u "
+               "element-size:%u "
+               "aligned-element-size:%u",
+               wal_data->segment,
+               wal_data->position,
+               grn_ja_segment_info_type_name(ctx, segment_info),
+               grn_ja_segment_info_value(ctx, segment_info),
+               wal_data->element_size,
+               aligned_element_size);
+  }
+  wal_data->event = GRN_WAL_EVENT_FREE_SEGMENT;
+  wal_data->segment_type = GRN_WAL_SEGMENT_SEQUENTIAL;
+  wal_data->segment_info = segment_info - data_size;
+  if (grn_ja_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+  uint8_t *address = grn_io_seg_ref(ctx, ja->io, wal_data->segment);
+  if (!address) {
+    grn_ja_set_error(ctx,
+                     ja,
+                     GRN_NO_MEMORY_AVAILABLE,
+                     GRN_ID_NIL,
+                     wal_data->tag,
+                     "failed to refer sequential segment: "
+                     "segment:%u "
+                     "position:%u "
+                     "element-size:%u",
+                     wal_data->segment,
+                     wal_data->position,
+                     wal_data->element_size);
+    return ctx->rc;
+  }
+  grn_ja_sequential_segment_free(ctx,
+                                 ja,
+                                 address,
+                                 wal_data->segment,
+                                 wal_data->position,
+                                 wal_data->segment_info,
+                                 wal_data->element_size);
+  grn_io_seg_unref(ctx, ja->io, wal_data->segment);
+  *(ja->header->wal_id) = wal_data->wal_id;
+  return ctx->rc;
+}
 
 static grn_rc
 grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
 {
   const char *tag = "[ja][free]";
-  grn_ja_ginfo *ginfo = NULL;
-  uint32_t seg, pos, element_size, aligned_size, m, *gseg;
+  grn_ja_wal_add_entry_data wal_data = {0};
+  wal_data.ja = ja;
+  wal_data.need_lock = false;
+  wal_data.tag = tag;
   if (ETINY_P(einfo)) { return GRN_SUCCESS; }
   if (EHUGE_P(einfo)) {
-    uint32_t n;
-    EHUGE_DEC(einfo, seg, element_size);
-    n = ((element_size + JA_SEGMENT_SIZE - 1) >> GRN_JA_W_SEGMENT);
-    for (; n--; seg++) { SEGMENT_OFF(ja, seg); }
+    EHUGE_DEC(einfo, wal_data.segment, wal_data.element_size);
+    return grn_ja_free_huge(ctx, &wal_data);
+  }
+  EINFO_DEC(einfo,
+            wal_data.segment,
+            wal_data.position,
+            wal_data.element_size);
+  if (wal_data.element_size == 0) {
     return GRN_SUCCESS;
   }
-  EINFO_DEC(einfo, seg, pos, element_size);
-  if (!element_size) { return GRN_SUCCESS; }
-  {
-    int es = element_size - 1;
-    GRN_BIT_SCAN_REV(es, m);
-    m++;
-  }
-  if (m > ja->header->chunk_threshold) {
-    byte *addr = NULL;
-    addr = grn_io_seg_ref(ctx, ja->io, seg);
-    if (!addr) { return GRN_NO_MEMORY_AVAILABLE; }
-    aligned_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
-    *(uint32_t *)(addr + pos - sizeof(grn_id)) = DELETED|aligned_size;
-    if (SEGMENT_INFO_AT(ja, seg) < (aligned_size + sizeof(grn_id)) + SEG_SEQ) {
-      GRN_DEFINE_NAME(ja);
-      GRN_LOG(ctx,
-              GRN_WARN,
-              "%s[%.*s] inconsistent ja entry detected (%d > %d): path:<%s>",
-              tag,
-              name_size, name,
-              element_size,
-              SEGMENT_INFO_AT(ja, seg) - SEG_SEQ,
-              ja->io->path);
-    }
-    SEGMENT_INFO_AT(ja, seg) -= (aligned_size + sizeof(grn_id));
-    if (SEGMENT_INFO_AT(ja, seg) == SEG_SEQ) {
-      /* reuse the segment */
-      SEGMENT_OFF(ja, seg);
-      if (seg == *(ja->header->curr_seg)) {
-        *(ja->header->curr_pos) = JA_SEGMENT_SIZE;
-      }
-    }
-    grn_io_seg_unref(ctx, ja->io, seg);
+  grn_ja_element_type element_type =
+    grn_ja_detect_element_type(ctx, ja, wal_data.element_size);
+  if (element_type == GRN_JA_ELEMENT_CHUNK) {
+    return grn_ja_free_chunk(ctx, &wal_data);
   } else {
-    /* The segment that is opened as ginfo. */
-    uint32_t target_seg = 0;
-    gseg = &ja->header->garbages[m - JA_W_EINFO];
-    const uint32_t initial_gseg = *gseg;
-    while (*gseg != 0) {
-      if (target_seg != 0) { grn_io_seg_unref(ctx, ja->io, target_seg); }
-      ginfo = grn_io_seg_ref(ctx, ja->io, *gseg);
-      if (!ginfo) {
-        GRN_DEFINE_NAME(ja);
-        ERR(GRN_NO_MEMORY_AVAILABLE,
-            "%s[%.*s] failed to refer garbage segment: "
-            "segment:%u, "
-            "element_size:%u, "
-            "variation:%u, "
-            "initial_garbage:%u, "
-            "n_garbages:%u, "
-            "path:<%s>",
-            tag,
-            name_size, name,
-            *gseg,
-            element_size,
-            m - JA_W_EINFO,
-            initial_gseg,
-            ja->header->n_garbages[m - JA_W_EINFO],
-            ja->io->path);
-        return ctx->rc;
-      }
-      target_seg = *gseg;
-      if (ginfo->nrecs < JA_N_GARBAGES_IN_A_SEGMENT) { break; }
-      gseg = &ginfo->next;
-    }
-    if (*gseg == 0) {
-      uint32_t i = 0;
-      while (SEGMENT_INFO_AT(ja, i)) {
-        if (++i >= JA_N_DATA_SEGMENTS) {
-          if (target_seg != 0) { grn_io_seg_unref(ctx, ja->io, target_seg); }
-          {
-            GRN_DEFINE_NAME(ja);
-            ERR(GRN_NOT_ENOUGH_SPACE,
-                "%s[%.*s] can't find free segment for garbage segment: "
-                "element_size:%u, "
-                "variation:%u, "
-                "initial_garbage:%u, "
-                "n_garbages:%u, "
-                "path:<%s>",
-                tag,
-                name_size, name,
-                element_size,
-                m - JA_W_EINFO,
-                initial_gseg,
-                ja->header->n_garbages[m - JA_W_EINFO],
-                ja->io->path);
-            return ctx->rc;
-          }
-        }
-      }
-      SEGMENT_GINFO_ON(ja, i, m - JA_W_EINFO);
-      *gseg = i;
-      if (target_seg != 0) { grn_io_seg_unref(ctx, ja->io, target_seg); }
-      ginfo = grn_io_seg_ref(ctx, ja->io, i);
-      if (!ginfo) {
-        GRN_DEFINE_NAME(ja);
-        ERR(GRN_NO_MEMORY_AVAILABLE,
-            "%s[%.*s] failed to refer newly allocated garbage segment: "
-            "segment:%u, "
-            "element_size:%u, "
-            "variation:%u, "
-            "initial_garbage:%u, "
-            "n_garbages:%u, "
-            "path:<%s>",
-            tag,
-            name_size, name,
-            i,
-            element_size,
-            m - JA_W_EINFO,
-            initial_gseg,
-            ja->header->n_garbages[m - JA_W_EINFO],
-            ja->io->path);
-        return ctx->rc;
-      }
-      target_seg = i;
-      ginfo->head = 0;
-      ginfo->tail = 0;
-      ginfo->nrecs = 0;
-      ginfo->next = 0;
-    }
-    ginfo->recs[ginfo->head].seg = seg;
-    ginfo->recs[ginfo->head].pos = pos;
-    if (++ginfo->head == JA_N_GARBAGES_IN_A_SEGMENT) { ginfo->head = 0; }
-    ginfo->nrecs++;
-    ja->header->n_garbages[m - JA_W_EINFO]++;
-    grn_io_seg_unref(ctx, ja->io, target_seg);
+    return grn_ja_free_sequential(ctx, &wal_data);
   }
-  return GRN_SUCCESS;
 }
 
 grn_rc
@@ -1129,76 +2462,110 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
                grn_ja_einfo *ei, uint64_t *cas)
 {
   const char *tag = "[ja][replace]";
-  uint32_t lseg, *pseg, pos;
-  grn_ja_einfo *einfo = NULL, eback;
-  lseg = id >> JA_W_EINFO_IN_A_SEGMENT;
-  pos = id & JA_M_EINFO_IN_A_SEGMENT;
-  pseg = &ja->header->element_segs[lseg];
-  if (grn_io_lock(ctx, ja->io, grn_lock_timeout)) {
+  grn_ja_wal_add_entry_data wal_data = {0};
+  wal_data.ja = ja;
+  wal_data.need_lock = false;
+  wal_data.tag = tag;
+  wal_data.record_id = id;
+  if (ETINY_P(ei)) {
+    ETINY_DEC(ei, wal_data.element_size);
+  } else if (EHUGE_P(ei)) {
+    uint32_t segment;
+    EHUGE_DEC(ei, segment, wal_data.element_size);
+  } else {
+    uint32_t segment;
+    uint32_t position;
+    EINFO_DEC(ei, segment, position, wal_data.element_size);
+  }
+  grn_ja_einfo *einfo = NULL;
+  uint32_t lseg = id >> JA_W_EINFO_IN_A_SEGMENT;
+  uint32_t pos = id & JA_M_EINFO_IN_A_SEGMENT;
+  if (grn_io_lock(ctx, ja->io, grn_lock_timeout) != GRN_SUCCESS) {
     return ctx->rc;
   }
-  uint32_t target_seg;
-  if (*pseg == JA_ELEMENT_SEG_VOID) {
-    int i = 0;
-    while (SEGMENT_INFO_AT(ja, i)) {
-      if (++i >= JA_N_DATA_SEGMENTS) {
-        GRN_DEFINE_NAME(ja);
-        ERR(GRN_NOT_ENOUGH_SPACE,
-            "%s[%.*s][%u] can't find free segment: <%s>",
-            tag,
-            name_size, name,
-            id,
-            ja->io->path);
-        goto exit;
+  wal_data.segment = ja->header->element_segs[lseg];
+  if (wal_data.segment == JA_ELEMENT_SEG_VOID) {
+    uint32_t segment;
+    for (segment = 0; segment < JA_N_DATA_SEGMENTS; segment++) {
+      if (SEGMENT_INFO_AT(ja, segment) == 0) {
+        break;
       }
     }
-    target_seg = i;
-    einfo = grn_io_seg_ref(ctx, ja->io, target_seg);
+    if (segment == JA_N_DATA_SEGMENTS) {
+      grn_ja_set_error(ctx,
+                       ja,
+                       GRN_NOT_ENOUGH_SPACE,
+                       wal_data.record_id,
+                       wal_data.tag,
+                       "failed to allocate element info segment "
+                       "because of full: "
+                       "element-size:%u",
+                       wal_data.element_size);
+      goto exit;
+    }
+    wal_data.event = GRN_WAL_EVENT_NEW_SEGMENT;
+    wal_data.segment = segment;
+    wal_data.segment_type = GRN_WAL_SEGMENT_EINFO;
+    if (grn_ja_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
+      goto exit;
+    }
+    einfo = grn_io_seg_ref(ctx, ja->io, wal_data.segment);
     if (einfo) {
-      *pseg = target_seg;
-      SEGMENT_EINFO_ON(ja, target_seg, lseg);
-      memset(einfo, 0, JA_SEGMENT_SIZE);
+      grn_ja_einfo_segment_new(ctx,
+                               ja,
+                               einfo,
+                               wal_data.record_id,
+                               wal_data.segment);
+      *(ja->header->wal_id) = wal_data.wal_id;
     }
   } else {
-    target_seg = *pseg;
-    einfo = grn_io_seg_ref(ctx, ja->io, target_seg);
+    einfo = grn_io_seg_ref(ctx, ja->io, wal_data.segment);
   }
   if (!einfo) {
-    GRN_DEFINE_NAME(ja);
-    ERR(GRN_NO_MEMORY_AVAILABLE,
-        "%s[%.*s][%u] failed to refer element info segment: "
-        "segment:%u, "
-        "path:<%s>",
-        tag,
-        name_size, name,
-        id,
-        target_seg,
-        ja->io->path);
+    grn_ja_set_error(ctx,
+                     ja,
+                     GRN_NO_MEMORY_AVAILABLE,
+                     wal_data.record_id,
+                     wal_data.tag,
+                     "failed to refer element info segment: "
+                     "segment:%u "
+                     "element-size:%u",
+                     wal_data.segment,
+                     wal_data.element_size);
     goto exit;
   }
-  eback = einfo[pos];
+  grn_ja_einfo eback = einfo[pos];
   if (cas && *cas != *((uint64_t *)&eback)) {
-    GRN_DEFINE_NAME(ja);
-    ERR(GRN_CAS_ERROR,
-        "%s[%.*s][%u] failed to CAS: "
-        "%" GRN_FMT_INT64U " != %" GRN_FMT_INT64U
-        ": <%s>",
-        tag,
-        name_size, name,
-        id,
-        *((uint64_t *)&eback),
-        *cas,
-        ja->io->path);
-    grn_io_seg_unref(ctx, ja->io, *pseg);
+    grn_ja_set_error(ctx,
+                     ja,
+                     GRN_CAS_ERROR,
+                     wal_data.record_id,
+                     wal_data.tag,
+                     "failed to CAS: "
+                     "segment:%u "
+                     "cas:%" GRN_FMT_INT64U " "
+                     "requested-cas:%" GRN_FMT_INT64U " "
+                     "element-size:%u",
+                     wal_data.segment,
+                     *((uint64_t *)&eback),
+                     cas,
+                     wal_data.element_size);
+    grn_io_seg_unref(ctx, ja->io, wal_data.segment);
     goto exit;
   }
-  // smb_wmb();
-  {
-    uint64_t *location = (uint64_t *)(einfo + pos);
-    uint64_t value = *((uint64_t *)ei);
-    GRN_SET_64BIT(location, value);
+  wal_data.event = GRN_WAL_EVENT_USE_SEGMENT;
+  wal_data.segment_type = GRN_WAL_SEGMENT_EINFO;
+  wal_data.element_info = ei;
+  if (grn_ja_wal_add_entry(ctx, &wal_data) == GRN_SUCCESS) {
+    grn_ja_einfo_segment_use(ctx,
+                             ja,
+                             einfo,
+                             wal_data.record_id,
+                             wal_data.segment,
+                             wal_data.element_info);
+    *(ja->header->wal_id) = wal_data.wal_id;
   }
-  grn_io_seg_unref(ctx, ja->io, *pseg);
+  grn_io_seg_unref(ctx, ja->io, wal_data.segment);
   grn_ja_free(ctx, ja, &eback);
 exit :
   grn_io_unlock(ja->io);
@@ -1207,297 +2574,484 @@ exit :
 
 #define JA_N_GARBAGES_TH 10
 
-// todo : grn_io_win_map cause verbose copy when nseg > 1, it should be copied directly.
+typedef struct {
+  const char *tag;
+  grn_ja *ja;
+  grn_id id;
+  uint32_t element_size;
+  grn_ja_einfo *einfo;
+  grn_io_win *iw;
+  grn_ja_wal_add_entry_data wal_data;
+} grn_ja_alloc_data;
+
+static grn_rc
+grn_ja_alloc_tiny(grn_ctx *ctx, grn_ja_alloc_data *data)
+{
+  ETINY_ENC(data->einfo, data->element_size);
+  data->iw->tiny_p = 1;
+  data->iw->addr = (void *)(data->einfo);
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_ja_alloc_chunk_garbage(grn_ctx *ctx,
+                           grn_ja_alloc_data *data,
+                           uint32_t chunk_variation)
+{
+  grn_ja *ja = data->ja;
+  uint32_t element_size = data->element_size;
+  uint32_t lseg_previous = 0;
+  uint32_t lseg_current = 0;
+  grn_ja_ginfo *ginfo_previous = NULL;
+  grn_ja_ginfo *ginfo_current = NULL;
+  bool processed = true;
+  uint32_t *gseg = &ja->header->garbages[chunk_variation];
+  while ((lseg_current = *gseg) != 0) {
+    ginfo_current = grn_io_seg_ref(ctx, ja->io, lseg_current);
+    if (!ginfo_current) {
+      grn_ja_set_error(ctx,
+                       ja,
+                       GRN_NO_MEMORY_AVAILABLE,
+                       data->wal_data.record_id,
+                       data->tag,
+                       "failed to refer garbage info segment: "
+                       "variation:%u "
+                       "segment:%u "
+                       "element-size:%u",
+                       chunk_variation,
+                       lseg_current,
+                       element_size);
+      goto exit;
+    }
+    if (ginfo_current->next != 0 ||
+        ginfo_current->nrecs > JA_N_GARBAGES_TH) {
+      data->wal_data.event = GRN_WAL_EVENT_REUSE_SEGMENT;
+      data->wal_data.segment =
+        ginfo_current->recs[ginfo_current->tail].seg;
+      data->wal_data.position =
+        ginfo_current->recs[ginfo_current->tail].pos;
+      data->wal_data.garbage_segment = lseg_current;
+      data->wal_data.garbage_segment_tail =
+        (ginfo_current->tail + 1) % grn_ja_n_garbages_in_a_segment;
+      data->wal_data.garbage_segment_n_records =
+        ginfo_current->nrecs - 1;
+      data->wal_data.n_garbages = ja->header->n_garbages[chunk_variation] - 1;
+      data->wal_data.previous_garbage_segment = lseg_previous;
+      data->wal_data.next_garbage_segment = ginfo_current->next;
+      if (grn_ja_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
+        goto exit;
+      }
+      uint8_t *address = grn_io_seg_ref(ctx, ja->io, data->wal_data.segment);
+      if (!address) {
+        grn_ja_set_error(ctx,
+                         ja,
+                         GRN_NO_MEMORY_AVAILABLE,
+                         data->wal_data.record_id,
+                         data->tag,
+                         "failed to refer chunk segment "
+                         "from garbage info segment: "
+                         "variation:%u "
+                         "garbage-segment:%u "
+                         "garbage-segment-tail:%u "
+                         "n-garbages:%u "
+                         "previous-garbage-segment:%u "
+                         "next-garbage-segment:%u "
+                         "segment:%u "
+                         "position:%u "
+                         "element-size:%u",
+                         chunk_variation,
+                         data->wal_data.garbage_segment,
+                         data->wal_data.garbage_segment_tail,
+                         data->wal_data.n_garbages,
+                         data->wal_data.previous_garbage_segment,
+                         data->wal_data.next_garbage_segment,
+                         data->wal_data.segment,
+                         data->wal_data.position,
+                         data->wal_data.element_size);
+        goto exit;
+      }
+      EINFO_ENC(data->einfo,
+                data->wal_data.segment,
+                data->wal_data.position,
+                data->wal_data.element_size);
+      data->iw->segment = data->wal_data.segment;
+      data->iw->addr = address + data->wal_data.position;
+      grn_ja_chunk_segment_reuse(ctx,
+                                 ja,
+                                 ginfo_current,
+                                 data->wal_data.garbage_segment_tail,
+                                 data->wal_data.garbage_segment_n_records,
+                                 data->wal_data.n_garbages,
+                                 data->wal_data.element_size);
+      *(ja->header->wal_id) = data->wal_data.wal_id;
+      if (data->wal_data.garbage_segment_n_records == 0) {
+        uint32_t chunk_msb = grn_ja_compute_chunk_msb(element_size);
+        uint32_t chunk_variation = chunk_msb - JA_W_EINFO;
+        grn_ja_log(ctx,
+                   ja,
+                   GRN_LOG_DEBUG,
+                   data->wal_data.record_id,
+                   data->tag,
+                   "free a garbage info segment that "
+                   "has no more garbage info: "
+                   "variation:%u "
+                   "segment:%u "
+                   "garbage-segment:%u "
+                   "next-garbage-segment:%u "
+                   "element-size:%u",
+                   chunk_variation,
+                   data->wal_data.segment,
+                   data->wal_data.garbage_segment,
+                   data->wal_data.next_garbage_segment,
+                   element_size);
+        data->wal_data.event = GRN_WAL_EVENT_FREE_SEGMENT;
+        data->wal_data.segment_type = GRN_WAL_SEGMENT_GINFO;
+        if (grn_ja_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
+          grn_io_seg_unref(ctx, ja->io, data->wal_data.segment);
+          goto exit;
+        }
+        grn_ja_ginfo_segment_free(ctx,
+                                  ja,
+                                  ginfo_previous,
+                                  data->wal_data.garbage_segment,
+                                  data->wal_data.next_garbage_segment,
+                                  element_size);
+        *(ja->header->wal_id) = data->wal_data.wal_id;
+      }
+      goto exit;
+    }
+    if (ginfo_previous) {
+      grn_io_seg_unref(ctx, ja->io, lseg_previous);
+    }
+    lseg_previous = lseg_current;
+    ginfo_previous = ginfo_current;
+    gseg = &(ginfo_current->next);
+    ginfo_current = NULL;
+  }
+
+  processed = false;
+
+exit :
+  if (ginfo_previous) {
+    grn_io_seg_unref(ctx, ja->io, lseg_previous);
+  }
+  if (ginfo_current) {
+    grn_io_seg_unref(ctx, ja->io, lseg_current);
+  }
+
+  return processed;
+}
+
+static grn_rc
+grn_ja_alloc_chunk(grn_ctx *ctx, grn_ja_alloc_data *data)
+{
+  grn_ja *ja = data->ja;
+  uint32_t element_size = data->element_size;
+  uint32_t chunk_msb = grn_ja_compute_chunk_msb(element_size);
+  uint32_t chunk_variation = chunk_msb - JA_W_EINFO;
+  uint32_t chunk_size = 1 << chunk_msb;
+  if (ja->header->n_garbages[chunk_variation] > JA_N_GARBAGES_TH) {
+    bool processed = grn_ja_alloc_chunk_garbage(ctx, data, chunk_variation);
+    if (processed) {
+      return ctx->rc;
+    }
+  }
+  ja_pos *vp = &(ja->header->free_elements[chunk_variation]);
+  if (vp->seg == 0) {
+    uint32_t seg = 0;
+    for (seg = 0; seg < JA_N_DATA_SEGMENTS; seg++) {
+      if (SEGMENT_INFO_AT(ja, seg) == 0) {
+        break;
+      }
+    }
+    if (seg == JA_N_DATA_SEGMENTS) {
+      grn_ja_set_error(ctx,
+                       ja,
+                       GRN_NO_MEMORY_AVAILABLE,
+                       data->wal_data.record_id,
+                       data->tag,
+                       "failed to allocate reference segment because of full: "
+                       "variation:%u "
+                       "element-size:%u",
+                       chunk_variation,
+                       element_size);
+      return ctx->rc;
+    }
+    data->wal_data.event = GRN_WAL_EVENT_NEW_SEGMENT;
+    data->wal_data.segment = seg;
+    data->wal_data.position = 0;
+    data->wal_data.segment_type = GRN_WAL_SEGMENT_CHUNK;
+    if (grn_ja_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
+      return ctx->rc;
+    }
+    /* vp is updated in this. */
+    grn_ja_chunk_segment_new(ctx, ja, element_size, data->wal_data.segment);
+    *(ja->header->wal_id) = data->wal_data.wal_id;
+  }
+  data->wal_data.event = GRN_WAL_EVENT_USE_SEGMENT;
+  if ((vp->pos + chunk_size) == JA_SEGMENT_SIZE) {
+    data->wal_data.segment = 0;
+    data->wal_data.position = 0;
+  } else {
+    data->wal_data.segment = vp->seg;
+    data->wal_data.position = vp->pos + chunk_size;
+  }
+  data->wal_data.segment_type = GRN_WAL_SEGMENT_CHUNK;
+  if (grn_ja_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+  EINFO_ENC(data->einfo, vp->seg, vp->pos, element_size);
+  uint8_t *addr = grn_io_seg_ref(ctx, ja->io, vp->seg);
+  if (!addr) {
+    grn_ja_set_error(ctx,
+                     ja,
+                     GRN_NO_MEMORY_AVAILABLE,
+                     data->wal_data.record_id,
+                     data->tag,
+                     "failed to refer content chunk segment in free elements: "
+                     "variation:%u "
+                     "segment:%u "
+                     "position:%u "
+                     "element-size:%u",
+                     chunk_variation,
+                     vp->seg,
+                     vp->pos,
+                     element_size);
+    return ctx->rc;
+  }
+  data->iw->segment = vp->seg;
+  data->iw->addr = addr + vp->pos;
+  grn_ja_chunk_segment_use(ctx,
+                           ja,
+                           element_size,
+                           data->wal_data.segment,
+                           data->wal_data.position);
+  *(ja->header->wal_id) = data->wal_data.wal_id;
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_ja_alloc_sequential(grn_ctx *ctx, grn_ja_alloc_data *data)
+{
+  grn_ja *ja = data->ja;
+  uint32_t element_size = data->element_size;
+  uint32_t data_size = grn_ja_compute_sequence_data_size(element_size);
+  data->wal_data.segment = *(ja->header->curr_seg);
+  data->wal_data.position = *(ja->header->curr_pos);
+  if (data->wal_data.position + data_size > JA_SEGMENT_SIZE) {
+    uint32_t segment;
+    for (segment = 0; segment < JA_N_DATA_SEGMENTS; segment++) {
+      if (SEGMENT_INFO_AT(ja, segment) == 0) {
+        break;
+      }
+    }
+    if (segment == JA_N_DATA_SEGMENTS) {
+      grn_ja_set_error(ctx,
+                       ja,
+                       GRN_NO_MEMORY_AVAILABLE,
+                       data->wal_data.record_id,
+                       data->tag,
+                       "failed to allocate sequential segment because of full: "
+                       "element-size:%u",
+                       element_size);
+      return ctx->rc;
+    }
+    data->wal_data.event = GRN_WAL_EVENT_NEW_SEGMENT;
+    data->wal_data.segment = segment;
+    data->wal_data.position = 0;
+    data->wal_data.segment_type = GRN_WAL_SEGMENT_SEQUENTIAL;
+    if (grn_ja_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
+      return ctx->rc;
+    }
+    grn_ja_sequential_segment_new(ctx,
+                                  ja,
+                                  data->wal_data.segment);
+    *(ja->header->wal_id) = data->wal_data.wal_id;
+  }
+  uint32_t aligned_data_size =
+    grn_ja_compute_sequence_aligned_data_size(element_size);
+  uint32_t new_segment_info =
+    SEGMENT_INFO_AT(ja, data->wal_data.segment) + aligned_data_size;
+  data->wal_data.event = GRN_WAL_EVENT_USE_SEGMENT;
+  data->wal_data.segment_type = GRN_WAL_SEGMENT_SEQUENTIAL;
+  data->wal_data.segment_info = new_segment_info;
+  if (grn_ja_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+  uint8_t *address = grn_io_seg_ref(ctx, ja->io, data->wal_data.segment);
+  if (!address) {
+    grn_ja_set_error(ctx,
+                     ja,
+                     GRN_NO_MEMORY_AVAILABLE,
+                     data->wal_data.record_id,
+                     data->tag,
+                     "failed to refer sequential segment: "
+                     "segment:%u "
+                     "position:%u "
+                     "element-size:%u",
+                     data->wal_data.segment,
+                     data->wal_data.position,
+                     element_size);
+    return ctx->rc;
+  }
+  grn_ja_sequential_segment_use(ctx,
+                                ja,
+                                address,
+                                data->wal_data.record_id,
+                                data->wal_data.segment,
+                                data->wal_data.position,
+                                data->wal_data.segment_info,
+                                data->wal_data.element_size);
+  EINFO_ENC(data->einfo,
+            data->wal_data.segment,
+            data->wal_data.position + sizeof(grn_id),
+            element_size);
+  data->iw->segment = data->wal_data.segment;
+  data->iw->addr = address + data->wal_data.position + sizeof(grn_id);
+  *(ja->header->wal_id) = data->wal_data.wal_id;
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+grn_ja_alloc_huge(grn_ctx *ctx, grn_ja_alloc_data *data)
+{
+  grn_ja *ja = data->ja;
+  uint32_t i;
+  uint32_t last_using_segment = 0;
+  uint32_t n_segments = grn_ja_compute_huge_n_segments(data->element_size);
+  for (i = 0; i < JA_N_DATA_SEGMENTS; i++) {
+    if (SEGMENT_INFO_AT(ja, i) != 0) {
+      last_using_segment = i;
+      continue;
+    }
+    if (i == last_using_segment + n_segments) {
+      break;
+    }
+  }
+  if (i == JA_N_DATA_SEGMENTS) {
+    grn_ja_set_error(ctx,
+                     ja,
+                     GRN_NOT_ENOUGH_SPACE,
+                     data->wal_data.record_id,
+                     data->tag,
+                     "failed to allocate huge segment because of full: "
+                     "element-size:%u",
+                     data->element_size);
+    return ctx->rc;
+  }
+
+  uint32_t start_segment = last_using_segment + 1;
+  /* TODO: grn_io_win_map cause verbose copy when nseg > 1, it
+   * should be copied directly. */
+  void *addr = grn_io_win_map(ctx,
+                              data->ja->io,
+                              data->iw,
+                              start_segment,
+                              0,
+                              data->element_size,
+                              GRN_IO_WRONLY);
+  if (!addr) {
+    grn_ja_set_error(ctx,
+                     ja,
+                     GRN_NO_MEMORY_AVAILABLE,
+                     data->wal_data.record_id,
+                     data->tag,
+                     "failed to map new window for huge element: "
+                     "n-segments:%u "
+                     "start-segment:%u "
+                     "element-size:%u",
+                     n_segments,
+                     start_segment,
+                     data->element_size);
+    return ctx->rc;
+  }
+  data->wal_data.event = GRN_WAL_EVENT_NEW_SEGMENT;
+  data->wal_data.position = 0;
+  data->wal_data.segment_type = GRN_WAL_SEGMENT_HUGE;
+  uint32_t j;
+  for (j = start_segment; j <= i; j++) {
+    data->wal_data.segment = j;
+    grn_ja_wal_add_entry(ctx, &(data->wal_data));
+    if (ctx->rc != GRN_SUCCESS) {
+      uint32_t k;
+      for (k = start_segment; k <= i; k++) {
+        SEGMENT_OFF(ja, k);
+      }
+      return ctx->rc;
+    }
+    grn_ja_huge_segment_new(ctx, ja, data->wal_data.segment);
+    *(ja->header->wal_id) = data->wal_data.wal_id;
+  }
+  EHUGE_ENC(data->einfo, start_segment, data->element_size);
+  return ctx->rc;
+}
+
 static grn_rc
 grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
              uint32_t element_size, grn_ja_einfo *einfo, grn_io_win *iw)
 {
-  const char *tag = "[ja][alloc]";
-  byte *addr = NULL;
-  iw->io = ja->io;
-  iw->ctx = ctx;
-  iw->cached = 1;
-  if (element_size < 8) {
-    ETINY_ENC(einfo, element_size);
-    iw->tiny_p = 1;
-    iw->addr = (void *)einfo;
-    return GRN_SUCCESS;
+  grn_ja_alloc_data data;
+  data.tag = "[ja][alloc]";
+  data.ja = ja;
+  data.id = id;
+  data.element_size = element_size;
+  data.einfo = einfo;
+  data.iw = iw;
+  {
+    grn_ja_wal_add_entry_data wal_data_zero = {0};
+    data.wal_data = wal_data_zero;
   }
-  iw->tiny_p = 0;
-  if (grn_io_lock(ctx, ja->io, grn_lock_timeout)) { return ctx->rc; }
-  if (element_size + sizeof(grn_id) > JA_SEGMENT_SIZE) {
-    int i, j, n = (element_size + JA_SEGMENT_SIZE - 1) >> GRN_JA_W_SEGMENT;
-    for (i = 0, j = -1; i < JA_N_DATA_SEGMENTS; i++) {
-      if (SEGMENT_INFO_AT(ja, i)) {
-        j = i;
-      } else {
-        if (i == j + n) {
-          j++;
-          addr = grn_io_win_map(ctx, ja->io, iw, j, 0, element_size, GRN_IO_WRONLY);
-          if (!addr) {
-            GRN_DEFINE_NAME(ja);
-            ERR(GRN_NO_MEMORY_AVAILABLE,
-                "%s[%.*s][%u] failed to map new window for huge element: "
-                "n_segments:%u, "
-                "start_segment:%u, "
-                "element_size:%u, "
-                "path:<%s>",
-                tag,
-                name_size, name,
-                id,
-                n,
-                j,
-                element_size,
-                ja->io->path);
-            grn_io_unlock(ja->io);
-            return ctx->rc;
-          }
-          EHUGE_ENC(einfo, j, element_size);
-          for (; j <= i; j++) { SEGMENT_HUGE_ON(ja, j); }
-          grn_io_unlock(ja->io);
-          return GRN_SUCCESS;
-        }
-      }
+  data.wal_data.ja = ja;
+  data.wal_data.need_lock = false;
+  data.wal_data.tag = data.tag;
+  data.wal_data.record_id = id;
+  data.wal_data.element_size = element_size;
+
+  data.iw->io = ja->io;
+  data.iw->ctx = ctx;
+  data.iw->cached = 1;
+  data.iw->tiny_p = 0;
+
+  grn_ja_element_type element_type =
+    grn_ja_detect_element_type(ctx, ja, element_size);
+
+  if (element_type != GRN_JA_ELEMENT_TINY) {
+    if (grn_io_lock(ctx, ja->io, grn_lock_timeout) != GRN_SUCCESS) {
+      return ctx->rc;
     }
-    {
-      GRN_DEFINE_NAME(ja);
-      ERR(GRN_NOT_ENOUGH_SPACE,
-          "%s[%.*s][%u] "
-          "failed to allocate huge segment because of full: "
-          "element_size:%u, "
-          "path:<%s>",
-          tag,
-          name_size, name,
-          id,
-          element_size,
-          ja->io->path);
-    }
+  }
+
+  grn_rc rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+  switch (grn_ja_detect_element_type(ctx, ja, element_size)) {
+  case GRN_JA_ELEMENT_TINY :
+    rc = grn_ja_alloc_tiny(ctx, &data);
+    break;
+  case GRN_JA_ELEMENT_CHUNK :
+    rc = grn_ja_alloc_chunk(ctx, &data);
+    break;
+  case GRN_JA_ELEMENT_SEQUENTIAL :
+    rc = grn_ja_alloc_sequential(ctx, &data);
+    break;
+  case GRN_JA_ELEMENT_HUGE :
+    rc = grn_ja_alloc_huge(ctx, &data);
+    break;
+  }
+
+  if (element_type != GRN_JA_ELEMENT_TINY) {
     grn_io_unlock(ja->io);
-    return ctx->rc;
-  } else {
-    ja_pos *vp;
-    int m, aligned_size, es = element_size - 1;
-    GRN_BIT_SCAN_REV(es, m);
-    m++;
-    if (m > ja->header->chunk_threshold) {
-      uint32_t seg = *(ja->header->curr_seg);
-      uint32_t pos = *(ja->header->curr_pos);
-      if (pos + element_size + sizeof(grn_id) > JA_SEGMENT_SIZE) {
-        seg = 0;
-        while (SEGMENT_INFO_AT(ja, seg)) {
-          if (++seg >= JA_N_DATA_SEGMENTS) {
-            GRN_DEFINE_NAME(ja);
-            ERR(GRN_NOT_ENOUGH_SPACE,
-                "%s[%*.s][%u] "
-                "failed to allocate sequential segment because of full: "
-                "element_size:%u, "
-                "path:<%s>",
-                tag,
-                name_size, name,
-                id,
-                element_size,
-                ja->io->path);
-            grn_io_unlock(ja->io);
-            return ctx->rc;
-          }
-        }
-        SEGMENT_SEQ_ON(ja, seg);
-        *(ja->header->curr_seg) = seg;
-        pos = 0;
-      }
-      addr = grn_io_seg_ref(ctx, ja->io, seg);
-      if (!addr) {
-        GRN_DEFINE_NAME(ja);
-        ERR(GRN_NO_MEMORY_AVAILABLE,
-            "%s[%*.s][%u] failed to refer sequential segment: "
-            "segment:%u, "
-            "element_size:%u, "
-            "path:<%s>",
-            tag,
-            name_size, name,
-            id,
-            seg,
-            element_size,
-            ja->io->path);
-        grn_io_unlock(ja->io);
-        return ctx->rc;
-      }
-      *(grn_id *)(addr + pos) = id;
-      aligned_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
-      if (pos + aligned_size < JA_SEGMENT_SIZE) {
-        *(grn_id *)(addr + pos + aligned_size) = GRN_ID_NIL;
-      }
-      SEGMENT_INFO_AT(ja, seg) += aligned_size + sizeof(grn_id);
-      pos += sizeof(grn_id);
-      EINFO_ENC(einfo, seg, pos, element_size);
-      iw->segment = seg;
-      iw->addr = addr + pos;
-      *(ja->header->curr_pos) = pos + aligned_size;
-      grn_io_unlock(ja->io);
-      return GRN_SUCCESS;
-    } else {
-      uint32_t lseg = 0, lseg_;
-      aligned_size = 1 << m;
-      if (ja->header->n_garbages[m - JA_W_EINFO] > JA_N_GARBAGES_TH) {
-        grn_ja_ginfo *ginfo = NULL;
-        uint32_t seg, pos, *gseg;
-        gseg = &ja->header->garbages[m - JA_W_EINFO];
-        while ((lseg_ = *gseg)) {
-          ginfo = grn_io_seg_ref(ctx, ja->io, lseg_);
-          if (!ginfo) {
-            if (lseg) { grn_io_seg_unref(ctx, ja->io, lseg); }
-            {
-              GRN_DEFINE_NAME(ja);
-              ERR(GRN_NO_MEMORY_AVAILABLE,
-                  "%s[%.*s][%u] failed to refer garbage segment: "
-                  "segment:%u, "
-                  "element_size:%u, "
-                  "path:<%s>",
-                  tag,
-                  name_size, name,
-                  id,
-                  lseg_,
-                  element_size,
-                  ja->io->path);
-            }
-            grn_io_unlock(ja->io);
-            return ctx->rc;
-          }
-          if (ginfo->next || ginfo->nrecs > JA_N_GARBAGES_TH) {
-            seg = ginfo->recs[ginfo->tail].seg;
-            pos = ginfo->recs[ginfo->tail].pos;
-            addr = grn_io_seg_ref(ctx, ja->io, seg);
-            if (!addr) {
-              {
-                GRN_DEFINE_NAME(ja);
-                ERR(GRN_NO_MEMORY_AVAILABLE,
-                    "%s[%.*s][%u] "
-                    "failed to refer content segment from garbage segment: "
-                    "segment:%u, "
-                    "position:%u, "
-                    "element_size:%u, "
-                    "path:<%s>",
-                    tag,
-                    name_size, name,
-                    id,
-                    seg,
-                    pos,
-                    element_size,
-                    ja->io->path);
-              }
-              if (lseg) { grn_io_seg_unref(ctx, ja->io, lseg); }
-              grn_io_seg_unref(ctx, ja->io, lseg_);
-              grn_io_unlock(ja->io);
-              return ctx->rc;
-            }
-            EINFO_ENC(einfo, seg, pos, element_size);
-            iw->segment = seg;
-            iw->addr = addr + pos;
-            if (++ginfo->tail == JA_N_GARBAGES_IN_A_SEGMENT) { ginfo->tail = 0; }
-            ginfo->nrecs--;
-            ja->header->n_garbages[m - JA_W_EINFO]--;
-            if (!ginfo->nrecs) {
-              if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
-                GRN_DEFINE_NAME(ja);
-                GRN_LOG(ctx,
-                        GRN_LOG_DEBUG,
-                        "%s[%.*s][%u] "
-                        "free a garbage info segment that "
-                        "has no more garbage info: "
-                        "segment:%u, "
-                        "next_segment:%u, "
-                        "element_size:%u, "
-                        "variation:%u,  "
-                        "path:<%s>",
-                        tag,
-                        name_size, name,
-                        id,
-                        *gseg,
-                        ginfo->next,
-                        element_size,
-                        m - JA_W_EINFO,
-                        ja->io->path);
-              }
-              SEGMENT_OFF(ja, *gseg);
-              *gseg = ginfo->next;
-            }
-            if (lseg) { grn_io_seg_unref(ctx, ja->io, lseg); }
-            grn_io_seg_unref(ctx, ja->io, lseg_);
-            grn_io_unlock(ja->io);
-            return GRN_SUCCESS;
-          }
-          if (lseg) { grn_io_seg_unref(ctx, ja->io, lseg); }
-          if (!ginfo->next) {
-            grn_io_seg_unref(ctx, ja->io, lseg_);
-            break;
-          }
-          lseg = lseg_;
-          gseg = &ginfo->next;
-        }
-      }
-      vp = &ja->header->free_elements[m - JA_W_EINFO];
-      if (!vp->seg) {
-        int i = 0;
-        while (SEGMENT_INFO_AT(ja, i)) {
-          if (++i >= JA_N_DATA_SEGMENTS) {
-            GRN_DEFINE_NAME(ja);
-            ERR(GRN_NO_MEMORY_AVAILABLE,
-                "%s[%.*s][%u] "
-                "failed to allocate reference segment because of full: "
-                "element_size:%u, "
-                "variation:%u, "
-                "path:<%s>",
-                tag,
-                name_size, name,
-                id,
-                element_size,
-                m - JA_W_EINFO,
-                ja->io->path);
-            grn_io_unlock(ja->io);
-            return ctx->rc;
-          }
-        }
-        SEGMENT_CHUNK_ON(ja, i, m);
-        vp->seg = i;
-        vp->pos = 0;
-      }
-      EINFO_ENC(einfo, vp->seg, vp->pos, element_size);
-      addr = grn_io_seg_ref(ctx, ja->io, vp->seg);
-      if (!addr) {
-        GRN_DEFINE_NAME(ja);
-        ERR(GRN_NO_MEMORY_AVAILABLE,
-            "%s[%*.s][%u] failed to refer content segment in free elements: "
-            "segment:%u, "
-            "position:%u, "
-            "element_size:%u, "
-            "path:<%s>",
-            tag,
-            name_size, name,
-            id,
-            vp->seg,
-            vp->pos,
-            element_size,
-            ja->io->path);
-        grn_io_unlock(ja->io);
-        return ctx->rc;
-      }
-      iw->segment = vp->seg;
-      iw->addr = addr + vp->pos;
-      if ((vp->pos += aligned_size) == JA_SEGMENT_SIZE) {
-        vp->seg = 0;
-        vp->pos = 0;
-      }
-      iw->uncompressed_value = NULL;
-      grn_io_unlock(ja->io);
-      return GRN_SUCCESS;
-    }
   }
+
+  return rc;
 }
 
 static grn_rc
 set_value(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
           grn_ja_einfo *einfo)
 {
+  if (value_len == 0) {
+    memset(einfo, 0, sizeof(grn_ja_einfo));
+    return GRN_SUCCESS;
+  }
   grn_rc rc = GRN_SUCCESS;
   grn_io_win iw;
   if ((ja->header->flags & GRN_OBJ_RING_BUFFER) &&
@@ -1505,13 +3059,39 @@ set_value(grn_ctx *ctx, grn_ja *ja, grn_id id, void *value, uint32_t value_len,
     if ((rc = grn_ja_alloc(ctx, ja, id, value_len + sizeof(uint32_t), einfo, &iw))) {
       return rc;
     }
+    /* TODO: WAL isn't supported. */
     grn_memcpy(iw.addr, value, value_len);
     memset((byte *)iw.addr + value_len, 0, sizeof(uint32_t));
     grn_io_win_unmap(ctx, &iw);
   } else {
     if ((rc = grn_ja_alloc(ctx, ja, id, value_len, einfo, &iw))) { return rc; }
-    grn_memcpy(iw.addr, value, value_len);
+    grn_ja_wal_add_entry_data wal_data = {0};
+    bool need_wal = !ETINY_P(einfo);
+    if (need_wal) {
+      wal_data.ja = ja;
+      wal_data.need_lock = false;
+      wal_data.tag = "[ja][set-value]";
+      wal_data.record_id = id;
+      wal_data.event = GRN_WAL_EVENT_SET_VALUE;
+      if (EHUGE_P(einfo)) {
+        EHUGE_DEC(einfo, wal_data.segment, wal_data.element_size);
+      } else {
+        EINFO_DEC(einfo,
+                  wal_data.segment,
+                  wal_data.position,
+                  wal_data.element_size);
+      }
+      wal_data.value = value;
+      wal_data.value_size = value_len;
+      rc = grn_ja_wal_add_entry(ctx, &wal_data);
+    }
+    if (rc == GRN_SUCCESS) {
+      grn_memcpy(iw.addr, value, value_len);
+    }
     grn_io_win_unmap(ctx, &iw);
+    if (need_wal && rc == GRN_SUCCESS) {
+      *(ja->header->wal_id) = wal_data.wal_id;
+    }
   }
   return rc;
 }
@@ -1549,6 +3129,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
       uint32_t old_len;
       void *oldvalue = grn_ja_ref(ctx, ja, id, &jw, &old_len);
       if (oldvalue) {
+        /* TODO: WAL isn't supported. */
         if ((ja->header->flags & GRN_OBJ_RING_BUFFER) &&
             old_len + value_len >= ja->header->max_element_size) {
           if (old_len >= ja->header->max_element_size) {
@@ -1599,6 +3180,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
       uint32_t old_len;
       void *oldvalue = grn_ja_ref(ctx, ja, id, &jw, &old_len);
       if (oldvalue) {
+        /* TODO: WAL isn't supported. */
         if ((ja->header->flags & GRN_OBJ_RING_BUFFER) &&
             old_len + value_len >= ja->header->max_element_size) {
           if (old_len >= ja->header->max_element_size) {
@@ -1644,6 +3226,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
     }
     break;
   case GRN_OBJ_DECR :
+    /* TODO: WAL isn't supported. */
     if (value_len == sizeof(int64_t)) {
       int64_t *v = (int64_t *)&buf;
       *v = -(*(int64_t *)value);
@@ -1657,6 +3240,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
     }
     /* fallthru */
   case GRN_OBJ_INCR :
+    /* TODO: WAL isn't supported. */
     {
       grn_io_win jw;
       uint32_t old_len;
@@ -1676,18 +3260,15 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
     }
     /* fallthru */
   case GRN_OBJ_SET :
-    if (value_len) {
-      set_value(ctx, ja, id, value, value_len, &einfo);
-    } else {
-      memset(&einfo, 0, sizeof(grn_ja_einfo));
-    }
+    set_value(ctx, ja, id, value, value_len, &einfo);
     break;
   default :
     ERR(GRN_INVALID_ARGUMENT, "grn_ja_put_raw called with illegal flags value");
     return GRN_INVALID_ARGUMENT;
   }
-  if ((rc = grn_ja_replace(ctx, ja, id, &einfo, cas))) {
-    if (!grn_io_lock(ctx, ja->io, grn_lock_timeout)) {
+  rc = grn_ja_replace(ctx, ja, id, &einfo, cas);
+  if (rc != GRN_SUCCESS) {
+    if (grn_io_lock(ctx, ja->io, grn_lock_timeout) == GRN_SUCCESS) {
       grn_ja_free(ctx, ja, &einfo);
       grn_io_unlock(ja->io);
     }
@@ -1716,17 +3297,56 @@ grn_ja_putv_raw(grn_ctx *ctx,
     return rc;
   }
 
-  grn_memcpy(iw.addr, GRN_BULK_HEAD(header), header_size);
-  if (body_size > 0) {
-    grn_memcpy((char *)iw.addr + header_size,
-               GRN_BULK_HEAD(body), body_size);
+  grn_ja_wal_add_entry_data wal_data = {0};
+  bool need_wal = !ETINY_P(&einfo);
+  if (need_wal) {
+    wal_data.ja = ja;
+    wal_data.need_lock = false;
+    wal_data.tag = "[ja][putv-raw]";
+    wal_data.record_id = id;
+    wal_data.event = GRN_WAL_EVENT_SET_VALUE;
+    if (EHUGE_P(&einfo)) {
+      EHUGE_DEC(&einfo, wal_data.segment, wal_data.element_size);
+    } else {
+      EINFO_DEC(&einfo,
+                wal_data.segment,
+                wal_data.position,
+                wal_data.element_size);
+    }
+    wal_data.value = GRN_BULK_HEAD(header);
+    wal_data.value_size = header_size;
+    rc = grn_ja_wal_add_entry(ctx, &wal_data);
+    wal_data.position += header_size;
+    if (body_size > 0 && rc == GRN_SUCCESS) {
+      wal_data.value = GRN_BULK_HEAD(body);
+      wal_data.value_size = body_size;
+      rc = grn_ja_wal_add_entry(ctx, &wal_data);
+      wal_data.position += body_size;
+    }
+    if (footer_size > 0 && rc == GRN_SUCCESS) {
+      wal_data.value = GRN_BULK_HEAD(footer);
+      wal_data.value_size = footer_size;
+      rc = grn_ja_wal_add_entry(ctx, &wal_data);
+    }
   }
-  if (footer_size > 0) {
-    grn_memcpy((char *)iw.addr + header_size + body_size,
-               GRN_BULK_HEAD(footer), footer_size);
+  if (rc == GRN_SUCCESS) {
+    grn_memcpy(iw.addr, GRN_BULK_HEAD(header), header_size);
+    if (body_size > 0) {
+      grn_memcpy((char *)iw.addr + header_size,
+                 GRN_BULK_HEAD(body), body_size);
+    }
+    if (footer_size > 0) {
+      grn_memcpy((char *)iw.addr + header_size + body_size,
+                 GRN_BULK_HEAD(footer), footer_size);
+    }
   }
   grn_io_win_unmap(ctx, &iw);
-  rc = grn_ja_replace(ctx, ja, id, &einfo, NULL);
+  if (need_wal && rc == GRN_SUCCESS) {
+    *(ja->header->wal_id) = wal_data.wal_id;
+  }
+  if (rc == GRN_SUCCESS) {
+    rc = grn_ja_replace(ctx, ja, id, &einfo, NULL);
+  }
 
   return rc;
 }
@@ -3815,7 +5435,7 @@ grn_ja_check_segment_chunk(grn_ctx *ctx,
   GRN_OUTPUT_CSTR("type_name");
   GRN_OUTPUT_CSTR(grn_ja_segment_info_type_name(ctx, info));
   GRN_OUTPUT_CSTR("variation");
-  uint32_t variation = grn_ja_segment_info_value(ctx, info);
+  uint32_t variation = grn_ja_segment_info_value(ctx, info) - JA_W_EINFO;
   GRN_OUTPUT_UINT32(variation);
   GRN_OUTPUT_MAP_CLOSE();
 
@@ -3857,14 +5477,14 @@ grn_ja_check_segment_seq(grn_ctx *ctx,
         GRN_OUTPUT_CSTR("id");
         GRN_OUTPUT_INT64(id);
       */
-      if (!id) { break; }
+      if (id == GRN_ID_NIL) { break; }
       if (id & DELETED) {
         element_size = (id & ~DELETED);
         n_del_elements++;
         s_del_elements += element_size;
       } else {
         element_size = grn_ja_size(ctx, ja, id);
-        element_size = (element_size + sizeof(grn_id) - 1) & ~(sizeof(grn_id) - 1);
+        element_size = grn_ja_compute_sequence_aligned_element_size(element_size);
         cum += sizeof(uint32_t) + element_size;
         n_elements++;
         s_elements += sizeof(uint32_t) + element_size;
@@ -4004,39 +5624,60 @@ grn_ja_check_segment_einfo_validate(grn_ctx *ctx,
       }
       uint32_t metadata = SEGMENT_INFO_AT(ja, data_segment);
       uint32_t segment_type = grn_ja_segment_info_type(ctx, metadata);
-      if (segment_type != SEG_CHUNK) {
-        GRN_DEFINE_NAME(ja);
-        GRN_LOG(ctx,
-                GRN_LOG_ERROR,
-                "%s[%.*s][%u] segment must be chunk type: "
-                "record_id:%u, "
-                "type:%u, "
-                "type_name:<%s>, "
-                "data_segment:%u, "
-                "position:%u, "
-                "element_size:%u",
-                tag,
-                name_size, name,
-                segment,
-                record_id,
-                segment_type >> SEG_TYPE_SHIFT,
-                grn_ja_segment_info_type_name(ctx, metadata),
-                data_segment,
-                position,
-                size);
-        is_valid = false;
-        continue;
-      }
-      uint32_t variation;
-      {
-        uint32_t s = size - 1;
-        GRN_BIT_SCAN_REV(s, variation);
-        variation++;
-      }
-      if (variation > ja->header->chunk_threshold) {
+      grn_ja_element_type element_type =
+        grn_ja_detect_element_type(ctx, ja, size);
+      if (element_type == GRN_JA_ELEMENT_SEQUENTIAL) {
+        if (segment_type != SEG_SEQ) {
+          GRN_DEFINE_NAME(ja);
+          GRN_LOG(ctx,
+                  GRN_LOG_ERROR,
+                  "%s[%.*s][%u] segment must be sequential type: "
+                  "record_id:%u, "
+                  "type:%u, "
+                  "type_name:<%s>, "
+                  "data_segment:%u, "
+                  "position:%u, "
+                  "element_size:%u",
+                  tag,
+                  name_size, name,
+                  segment,
+                  record_id,
+                  segment_type >> SEG_TYPE_SHIFT,
+                  grn_ja_segment_info_type_name(ctx, metadata),
+                  data_segment,
+                  position,
+                  size);
+          is_valid = false;
+          continue;
+        }
         /* TODO */
       } else {
-        uint32_t aligned_size = 1U << variation;
+        if (segment_type != SEG_CHUNK) {
+          GRN_DEFINE_NAME(ja);
+          GRN_LOG(ctx,
+                  GRN_LOG_ERROR,
+                  "%s[%.*s][%u] segment must be chunk type: "
+                  "record_id:%u, "
+                  "type:%u, "
+                  "type_name:<%s>, "
+                  "data_segment:%u, "
+                  "position:%u, "
+                  "element_size:%u",
+                  tag,
+                  name_size, name,
+                  segment,
+                  record_id,
+                  segment_type >> SEG_TYPE_SHIFT,
+                  grn_ja_segment_info_type_name(ctx, metadata),
+                  data_segment,
+                  position,
+                  size);
+          is_valid = false;
+          continue;
+        }
+        uint32_t chunk_msb = grn_ja_compute_chunk_msb(size);
+        uint32_t variation = chunk_msb - JA_W_EINFO;
+        uint32_t aligned_size = 1U << chunk_msb;
         uint32_t max_position = JA_SEGMENT_SIZE - aligned_size;
         if (position > max_position) {
           GRN_DEFINE_NAME(ja);
@@ -4109,12 +5750,30 @@ grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
   bool is_valid = true;
   uint32_t n_existing_records = 0;
   uint32_t i;
-  for (i = ginfo->tail;
-       i != ginfo->head;
-       i = ((i + 1) % JA_N_GARBAGES_IN_A_SEGMENT)) {
+  if (((ginfo->tail + ginfo->nrecs) % grn_ja_n_garbages_in_a_segment) !=
+      ginfo->head) {
+    GRN_DEFINE_NAME(ja);
+    GRN_LOG(ctx,
+            GRN_LOG_ERROR,
+            "%s[%.*s][%u] inconsistent the number of records: "
+            "variation:%u, "
+            "head:%u, "
+            "tail:%u, "
+            "n_records:%u",
+            tag,
+            name_size, name,
+            segment,
+            variation,
+            ginfo->head,
+            ginfo->tail,
+            ginfo->nrecs);
+    is_valid = false;
+  }
+  for (i = 0; i < ginfo->nrecs; i++) {
+    uint32_t index = (ginfo->tail + i) % grn_ja_n_garbages_in_a_segment;
     n_existing_records++;
-    uint32_t garbage_segment = ginfo->recs[i].seg;
-    uint32_t garbage_position = ginfo->recs[i].pos;
+    uint32_t garbage_segment = ginfo->recs[index].seg;
+    uint32_t garbage_position = ginfo->recs[index].pos;
     if (garbage_segment >= JA_N_DATA_SEGMENTS) {
       GRN_DEFINE_NAME(ja);
       GRN_LOG(ctx,
@@ -4127,7 +5786,7 @@ grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
               name_size, name,
               segment,
               variation,
-              i,
+              index,
               garbage_segment);
       is_valid = false;
       continue;
@@ -4149,14 +5808,14 @@ grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
               name_size, name,
               segment,
               variation,
-              i,
+              index,
               garbage_segment,
               garbage_segment_type >> SEG_TYPE_SHIFT,
               grn_ja_segment_info_type_name(ctx, garbage_segment_info));
       is_valid = false;
       continue;
     }
-    uint32_t aligned_size = 1U << variation;
+    uint32_t aligned_size = 1U << (variation + JA_W_EINFO);
     uint32_t max_position = JA_SEGMENT_SIZE - aligned_size;
     if (garbage_position > max_position) {
       GRN_DEFINE_NAME(ja);
@@ -4172,7 +5831,7 @@ grn_ja_check_segment_ginfo_validate(grn_ctx *ctx,
               name_size, name,
               segment,
               variation,
-              i,
+              index,
               garbage_segment,
               garbage_position,
               max_position);
@@ -4237,7 +5896,7 @@ grn_ja_check_segment_ginfo(grn_ctx *ctx,
   GRN_OUTPUT_CSTR("type_name");
   GRN_OUTPUT_CSTR(grn_ja_segment_info_type_name(ctx, info));
   GRN_OUTPUT_CSTR("variation");
-  uint32_t variation = grn_ja_segment_info_value(ctx, info) + JA_W_EINFO;
+  uint32_t variation = grn_ja_segment_info_value(ctx, info);
   GRN_OUTPUT_UINT32(variation);
 
   uint32_t head = 0;
@@ -4347,7 +6006,7 @@ grn_ja_check_free_element_validate(grn_ctx *ctx,
     return false;
   }
 
-  uint32_t aligned_size = 1U << variation;
+  uint32_t aligned_size = 1U << (variation + JA_W_EINFO);
   uint32_t max_position = JA_SEGMENT_SIZE - aligned_size;
   if (start->pos > max_position) {
     GRN_DEFINE_NAME(ja);
@@ -4419,7 +6078,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
           if (ja->header->n_garbages[i] == 0) {
             continue;
           }
-          uint32_t variation = i + JA_W_EINFO;
+          uint32_t variation = i;
           grn_obj variation_string;
           GRN_TEXT_INIT(&variation_string, 0);
           grn_text_printf(ctx, &variation_string, "%u", variation);
@@ -4448,7 +6107,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
                 if (grn_ja_segment_info_type(ctx, info) != SEG_GINFO) {
                   continue;
                 }
-                uint32_t v = grn_ja_segment_info_value(ctx, info) + JA_W_EINFO;
+                uint32_t v = grn_ja_segment_info_value(ctx, info);
                 if (v != variation) {
                   continue;
                 }
@@ -4499,7 +6158,7 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
           if (start.seg == 0) {
             continue;
           }
-          uint32_t variation = i + JA_W_EINFO;
+          uint32_t variation = i;
           grn_obj variation_string;
           GRN_TEXT_INIT(&variation_string, 0);
           grn_text_printf(ctx, &variation_string, "%u", variation);
@@ -4556,6 +6215,382 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
     GRN_OUTPUT_MAP_CLOSE();
   }
   GRN_OUTPUT_MAP_CLOSE();
+}
+
+grn_rc
+grn_ja_wal_recover(grn_ctx *ctx, grn_ja *ja)
+{
+  const char *error_tag = "[ja]";
+  const char *reader_tag = "[ja][recover]";
+  grn_wal_reader *reader = grn_wal_reader_open(ctx, (grn_obj *)ja, reader_tag);
+  if (!reader) {
+    return ctx->rc;
+  }
+
+  grn_io_clear_lock(ja->io);
+
+  while (true) {
+    grn_wal_reader_entry entry = {0};
+    grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &entry);
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+    /* TODO: Or ensure idempotence and always apply all entries. */
+    if (entry.id <= *(ja->header->wal_id)) {
+      continue;
+    }
+    switch (entry.event) {
+    case GRN_WAL_EVENT_NEW_SEGMENT :
+      switch (entry.segment_type) {
+      case GRN_WAL_SEGMENT_CHUNK :
+        grn_ja_chunk_segment_new(ctx,
+                                 ja,
+                                 entry.element_size,
+                                 entry.segment);
+        break;
+      case GRN_WAL_SEGMENT_SEQUENTIAL :
+        grn_ja_sequential_segment_new(ctx, ja, entry.segment);
+        break;
+      case GRN_WAL_SEGMENT_HUGE :
+        grn_ja_huge_segment_new(ctx, ja, entry.segment);
+        break;
+      case GRN_WAL_SEGMENT_EINFO :
+        {
+          grn_ja_einfo *einfo = grn_io_seg_ref(ctx, ja->io, entry.segment);
+          if (!einfo) {
+            grn_wal_set_recover_error(ctx,
+                                      GRN_NO_MEMORY_AVAILABLE,
+                                      (grn_obj *)ja,
+                                      &entry,
+                                      error_tag,
+                                      "failed to refer element info segment");
+            break;
+          }
+          grn_ja_einfo_segment_new(ctx,
+                                   ja,
+                                   einfo,
+                                   entry.record_id,
+                                   entry.segment);
+          grn_io_seg_unref(ctx, ja->io, entry.segment);
+        }
+        break;
+      case GRN_WAL_SEGMENT_GINFO :
+        {
+          grn_ja_ginfo *ginfo_current = NULL;
+          ginfo_current =
+            grn_io_seg_ref(ctx, ja->io, entry.garbage_segment);
+          if (!ginfo_current) {
+              grn_wal_set_recover_error(ctx,
+                                        GRN_NO_MEMORY_AVAILABLE,
+                                        (grn_obj *)ja,
+                                        &entry,
+                                        error_tag,
+                                        "failed to refer the current "
+                                        "garbage info segment");
+              break;
+          }
+          grn_ja_ginfo *ginfo_previous = NULL;
+          if (entry.previous_garbage_segment != 0) {
+            ginfo_previous =
+              grn_io_seg_ref(ctx, ja->io, entry.previous_garbage_segment);
+            if (!ginfo_previous) {
+              grn_io_seg_unref(ctx, ja->io, entry.garbage_segment);
+              grn_wal_set_recover_error(ctx,
+                                        GRN_NO_MEMORY_AVAILABLE,
+                                        (grn_obj *)ja,
+                                        &entry,
+                                        error_tag,
+                                        "failed to refer the previous "
+                                        "garbage info segment");
+              break;
+            }
+          }
+          grn_ja_ginfo_segment_new(ctx,
+                                   ja,
+                                   ginfo_current,
+                                   ginfo_previous,
+                                   entry.garbage_segment,
+                                   entry.element_size);
+          grn_io_seg_unref(ctx, ja->io, entry.garbage_segment);
+          if (ginfo_previous) {
+            grn_io_seg_unref(ctx, ja->io, entry.previous_garbage_segment);
+          }
+        }
+        break;
+      default :
+        grn_wal_set_recover_error(ctx,
+                                  GRN_FUNCTION_NOT_IMPLEMENTED,
+                                  (grn_obj *)ja,
+                                  &entry,
+                                  error_tag,
+                                  "not implemented yet");
+        break;
+      }
+      break;
+    case GRN_WAL_EVENT_USE_SEGMENT :
+      switch (entry.segment_type) {
+      case GRN_WAL_SEGMENT_CHUNK :
+        grn_ja_chunk_segment_use(ctx,
+                                 ja,
+                                 entry.element_size,
+                                 entry.segment,
+                                 entry.position);
+        break;
+      case GRN_WAL_SEGMENT_SEQUENTIAL :
+        {
+          uint8_t *address = grn_io_seg_ref(ctx, ja->io, entry.segment);
+          if (!address) {
+            grn_wal_set_recover_error(ctx,
+                                      GRN_NO_MEMORY_AVAILABLE,
+                                      (grn_obj *)ja,
+                                      &entry,
+                                      error_tag,
+                                      "failed to refer sequential segment");
+            break;
+          }
+          grn_ja_sequential_segment_use(ctx,
+                                        ja,
+                                        address,
+                                        entry.record_id,
+                                        entry.segment,
+                                        entry.position,
+                                        entry.segment_info,
+                                        entry.element_size);
+          grn_io_seg_unref(ctx, ja->io, entry.segment);
+        }
+        break;
+      case GRN_WAL_SEGMENT_EINFO :
+        {
+          grn_ja_einfo *einfo = grn_io_seg_ref(ctx, ja->io, entry.segment);
+          if (!einfo) {
+            grn_wal_set_recover_error(ctx,
+                                      GRN_NO_MEMORY_AVAILABLE,
+                                      (grn_obj *)ja,
+                                      &entry,
+                                      error_tag,
+                                      "failed to refer element info segment");
+            break;
+          }
+          grn_ja_einfo *new_einfo = (grn_ja_einfo *)&(entry.value.data.uint64);
+          grn_ja_einfo_segment_use(ctx,
+                                   ja,
+                                   einfo,
+                                   entry.record_id,
+                                   entry.segment,
+                                   new_einfo);
+          grn_io_seg_unref(ctx, ja->io, entry.segment);
+        }
+        break;
+      case GRN_WAL_SEGMENT_GINFO :
+        {
+          grn_ja_ginfo *ginfo =
+            grn_io_seg_ref(ctx, ja->io, entry.garbage_segment);
+          if (!ginfo) {
+            grn_wal_set_recover_error(ctx,
+                                      GRN_NO_MEMORY_AVAILABLE,
+                                      (grn_obj *)ja,
+                                      &entry,
+                                      error_tag,
+                                      "failed to refer garbage info segment");
+            break;
+          }
+          grn_ja_ginfo_segment_use(ctx,
+                                   ja,
+                                   ginfo,
+                                   entry.segment,
+                                   entry.position,
+                                   entry.garbage_segment_head,
+                                   entry.garbage_segment_n_records,
+                                   entry.n_garbages,
+                                   entry.element_size);
+          grn_io_seg_unref(ctx, ja->io, entry.garbage_segment);
+        }
+        break;
+      default :
+        grn_wal_set_recover_error(ctx,
+                                  GRN_FUNCTION_NOT_IMPLEMENTED,
+                                  (grn_obj *)ja,
+                                  &entry,
+                                  error_tag,
+                                  "not implemented yet");
+        break;
+      }
+      break;
+    case GRN_WAL_EVENT_REUSE_SEGMENT :
+      {
+        grn_ja_ginfo *ginfo = grn_io_seg_ref(ctx, ja->io, entry.garbage_segment);
+        if (!ginfo) {
+          grn_wal_set_recover_error(ctx,
+                                    GRN_NO_MEMORY_AVAILABLE,
+                                    (grn_obj *)ja,
+                                    &entry,
+                                    error_tag,
+                                    "failed to refer garbage segment");
+          break;
+        }
+        grn_ja_chunk_segment_reuse(ctx,
+                                   ja,
+                                   ginfo,
+                                   entry.garbage_segment_tail,
+                                   entry.garbage_segment_n_records,
+                                   entry.n_garbages,
+                                   entry.element_size);
+        grn_io_seg_unref(ctx, ja->io, entry.garbage_segment);
+      }
+      break;
+    case GRN_WAL_EVENT_FREE_SEGMENT :
+      switch (entry.segment_type) {
+      case GRN_WAL_SEGMENT_SEQUENTIAL :
+        {
+          uint8_t *address = grn_io_seg_ref(ctx, ja->io, entry.segment);
+          if (!address) {
+            grn_wal_set_recover_error(ctx,
+                                      GRN_NO_MEMORY_AVAILABLE,
+                                      (grn_obj *)ja,
+                                      &entry,
+                                      error_tag,
+                                      "failed to refer sequential segment");
+            break;
+          }
+          grn_ja_sequential_segment_free(ctx,
+                                         ja,
+                                         address,
+                                         entry.segment,
+                                         entry.position,
+                                         entry.segment_info,
+                                         entry.element_size);
+          grn_io_seg_unref(ctx, ja->io, entry.segment);
+        }
+        break;
+      case GRN_WAL_SEGMENT_HUGE :
+        grn_ja_huge_segment_free(ctx, ja, entry.segment);
+        break;
+      case GRN_WAL_SEGMENT_GINFO :
+        {
+          grn_ja_ginfo *ginfo_previous = NULL;
+          if (entry.previous_garbage_segment != 0) {
+            ginfo_previous =
+              grn_io_seg_ref(ctx, ja->io, entry.previous_garbage_segment);
+            if (!ginfo_previous) {
+              grn_wal_set_recover_error(ctx,
+                                        GRN_NO_MEMORY_AVAILABLE,
+                                        (grn_obj *)ja,
+                                        &entry,
+                                        error_tag,
+                                        "failed to refer "
+                                        "previous garbage segment");
+              break;
+            }
+          }
+          grn_ja_ginfo_segment_free(ctx,
+                                    ja,
+                                    ginfo_previous,
+                                    entry.garbage_segment,
+                                    entry.next_garbage_segment,
+                                    entry.element_size);
+          if (ginfo_previous) {
+            grn_io_seg_unref(ctx, ja->io, entry.previous_garbage_segment);
+          }
+        }
+        break;
+      default :
+        grn_wal_set_recover_error(ctx,
+                                  GRN_FUNCTION_NOT_IMPLEMENTED,
+                                  (grn_obj *)ja,
+                                  &entry,
+                                  error_tag,
+                                  "not implemented yet");
+        break;
+      }
+      break;
+    case GRN_WAL_EVENT_SET_VALUE :
+      switch (grn_ja_detect_element_type(ctx, ja, entry.element_size)) {
+      case GRN_JA_ELEMENT_CHUNK :
+      case GRN_JA_ELEMENT_SEQUENTIAL :
+        {
+          uint8_t *address = grn_io_seg_ref(ctx, ja->io, entry.segment);
+          if (!address) {
+            grn_wal_set_recover_error(ctx,
+                                      GRN_NO_MEMORY_AVAILABLE,
+                                      (grn_obj *)ja,
+                                      &entry,
+                                      error_tag,
+                                      "failed to refer chunk segment");
+            break;
+          }
+          memcpy(address + entry.position,
+                 entry.value.data.binary.data,
+                 entry.value.data.binary.size);
+          grn_io_seg_unref(ctx, ja->io, entry.segment);
+        }
+        break;
+      case GRN_JA_ELEMENT_HUGE :
+        {
+          uint32_t n_segments =
+            grn_ja_compute_huge_n_segments(entry.element_size);
+          const uint8_t *data = entry.value.data.binary.data;
+          size_t rest_size = entry.value.data.binary.size;
+          uint32_t i;
+          for (i = 0; i < n_segments; i++) {
+            uint32_t segment = entry.segment + i;
+            uint8_t *address = grn_io_seg_ref(ctx, ja->io, segment);
+            if (!address) {
+              char message[4096];
+              grn_snprintf(message,
+                           sizeof(message),
+                           sizeof(message),
+                           "failed to refer huge segment: %u",
+                           segment);
+              grn_wal_set_recover_error(ctx,
+                                        GRN_NO_MEMORY_AVAILABLE,
+                                        (grn_obj *)ja,
+                                        &entry,
+                                        error_tag,
+                                        message);
+              break;
+            }
+            size_t copy_size =
+              (rest_size > JA_SEGMENT_SIZE) ? JA_SEGMENT_SIZE : rest_size;
+            memcpy(address, data, copy_size);
+            data += copy_size;
+            rest_size -= copy_size;
+            grn_io_seg_unref(ctx, ja->io, segment);
+          }
+        }
+        break;
+      default :
+        grn_wal_set_recover_error(ctx,
+                                  GRN_FUNCTION_NOT_IMPLEMENTED,
+                                  (grn_obj *)ja,
+                                  &entry,
+                                  error_tag,
+                                  "not implemented yet");
+        break;
+      }
+      break;
+    default :
+      grn_wal_set_recover_error(ctx,
+                                GRN_FUNCTION_NOT_IMPLEMENTED,
+                                (grn_obj *)ja,
+                                &entry,
+                                error_tag,
+                                "not implemented yet");
+      break;
+    }
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+    *(ja->header->wal_id) = entry.id;
+  }
+
+  grn_wal_reader_close(ctx, reader);
+
+  if (ctx->rc == GRN_SUCCESS) {
+    grn_obj_touch(ctx, (grn_obj *)ja, NULL);
+    grn_obj_flush(ctx, (grn_obj *)ja);
+  }
+
+  return ctx->rc;
 }
 
 grn_rc

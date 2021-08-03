@@ -355,8 +355,19 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
       case GRN_COLUMN_FIX_SIZE :
         grn_ra_wal_recover(ctx, (grn_ra *)object);
         break;
+      case GRN_COLUMN_VAR_SIZE :
+        grn_ja_wal_recover(ctx, (grn_ja *)object);
+        break;
       default :
         break;
+      }
+      if (ctx->rc != GRN_SUCCESS) {
+        /* TODO: WAL recover is failed. How to recover from this?
+         * Index column: recreate
+         * Data column, Table: ...? Ignore unrecoverable WAL entries?
+         *   RocksDB provides two options: fatal error or ignore
+         *   unrecoverable WAL entries.
+         */
       }
       grn_obj_unref(ctx, object);
     }

@@ -1,0 +1,238 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 1,
+          "type": 0,
+          "type_name": "chunk",
+          "variation": 1
+        },
+        {
+          "id": 2,
+          "type": 4,
+          "type_name": "garbage info",
+          "variation": 1,
+          "head": 12,
+          "tail": 1,
+          "n_garbages": 11,
+          "next": 0,
+          "valid": true
+        }
+      ],
+      "garbage_counts": {
+        "1": {
+          "total": 11,
+          "details": {
+            "2": 11
+          },
+          "valid": true
+        }
+      },
+      "free_elements": {
+        "1": {
+          "segment": 1,
+          "position": 192,
+          "valid": true
+        }
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 3,
+      "valid": true
+    }
+  }
+]
+select Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "chunk: 8B <= && < 64KiB",
+        "chunkXXXX-odd"
+      ]
+    ]
+  ]
+]
+select Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "chunk: 8B <= && < 64KiB",
+        ""
+      ]
+    ]
+  ]
+]
+wal_recover
+[[0,0.0,0.0],true]
+select Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "chunk: 8B <= && < 64KiB",
+        "chunkXXXX-odd"
+      ]
+    ]
+  ]
+]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 1,
+          "type": 0,
+          "type_name": "chunk",
+          "variation": 1
+        },
+        {
+          "id": 2,
+          "type": 4,
+          "type_name": "garbage info",
+          "variation": 1,
+          "head": 12,
+          "tail": 1,
+          "n_garbages": 11,
+          "next": 0,
+          "valid": true
+        }
+      ],
+      "garbage_counts": {
+        "1": {
+          "total": 11,
+          "details": {
+            "2": 11
+          },
+          "valid": true
+        }
+      },
+      "free_elements": {
+        "1": {
+          "segment": 1,
+          "position": 192,
+          "valid": true
+        }
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 3,
+      "valid": true
+    }
+  }
+]

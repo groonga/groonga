@@ -1,0 +1,215 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "chunk: 8B <= && <= 64KiB", "tags": ["ABCD", "EFGH"]}
+]
+[[0,0.0,0.0],1]
+check --obj Memos.tags
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 1,
+          "type": 0,
+          "type_name": "chunk",
+          "variation": 1
+        }
+      ],
+      "garbage_counts": {
+      },
+      "free_elements": {
+        "1": {
+          "segment": 1,
+          "position": 16,
+          "valid": true
+        }
+      }
+    },
+    "summary": {
+      "flags": "0000C001",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 122880,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 2,
+      "valid": true
+    }
+  }
+]
+select --table Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "chunk: 8B <= && <= 64KiB",
+        [
+          "ABCD",
+          "EFGH"
+        ]
+      ]
+    ]
+  ]
+]
+select --table Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "chunk: 8B <= && <= 64KiB",
+        [
+
+        ]
+      ]
+    ]
+  ]
+]
+wal_recover
+[[0,0.0,0.0],true]
+select --table Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "chunk: 8B <= && <= 64KiB",
+        [
+          "ABCD",
+          "EFGH"
+        ]
+      ]
+    ]
+  ]
+]
+check --obj Memos.tags
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 1,
+          "type": 0,
+          "type_name": "chunk",
+          "variation": 1
+        }
+      ],
+      "garbage_counts": {
+      },
+      "free_elements": {
+        "1": {
+          "segment": 1,
+          "position": 16,
+          "valid": true
+        }
+      }
+    },
+    "summary": {
+      "flags": "0000C001",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 122880,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 2,
+      "valid": true
+    }
+  }
+]

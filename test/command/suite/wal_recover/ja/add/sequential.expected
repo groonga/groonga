@@ -1,0 +1,217 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 1,
+          "type": 1,
+          "type_name": "sequential",
+          "value": 65544,
+          "n_elements": 1,
+          "s_elements": 65544,
+          "n_del_elements": 0,
+          "s_del_elements": 0
+        }
+      ],
+      "garbage_counts": {
+      },
+      "free_elements": {
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 1,
+      "curr pos": 65544,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 2,
+      "valid": true
+    }
+  }
+]
+plugin_register functions/string
+[[0,0.0,0.0],true]
+select   --table Memos   --columns[content_head].stage output   --columns[content_head].flags COLUMN_SCALAR   --columns[content_head].type ShortText   --columns[content_head].value 'string_slice(content, 0, 5)'   --columns[content_tail].stage output   --columns[content_tail].flags COLUMN_SCALAR   --columns[content_tail].type ShortText   --columns[content_tail].value 'string_slice(content, -5, 5)'   --columns[content_length].stage output   --columns[content_length].flags COLUMN_SCALAR   --columns[content_length].type UInt32   --columns[content_length].value 'string_length(content)'   --output_columns _key,content_head,content_tail,content_length
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content_head",
+          "ShortText"
+        ],
+        [
+          "content_tail",
+          "ShortText"
+        ],
+        [
+          "content_length",
+          "UInt32"
+        ]
+      ],
+      [
+        "sequential: 64KiB < && < 4MiB",
+        "abcda",
+        "abcdx",
+        65537
+      ]
+    ]
+  ]
+]
+select   --table Memos   --columns[content_head].stage output   --columns[content_head].flags COLUMN_SCALAR   --columns[content_head].type ShortText   --columns[content_head].value 'string_slice(content, 0, 5)'   --columns[content_tail].stage output   --columns[content_tail].flags COLUMN_SCALAR   --columns[content_tail].type ShortText   --columns[content_tail].value 'string_slice(content, -5, 5)'   --columns[content_length].stage output   --columns[content_length].flags COLUMN_SCALAR   --columns[content_length].type UInt32   --columns[content_length].value 'string_length(content)'   --output_columns _key,content_head,content_tail,content_length
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content_head",
+          "ShortText"
+        ],
+        [
+          "content_tail",
+          "ShortText"
+        ],
+        [
+          "content_length",
+          "UInt32"
+        ]
+      ],
+      [
+        "sequential: 64KiB < && < 4MiB",
+        "",
+        "",
+        0
+      ]
+    ]
+  ]
+]
+wal_recover
+[[0,0.0,0.0],true]
+select   --table Memos   --columns[content_head].stage output   --columns[content_head].flags COLUMN_SCALAR   --columns[content_head].type ShortText   --columns[content_head].value 'string_slice(content, 0, 5)'   --columns[content_tail].stage output   --columns[content_tail].flags COLUMN_SCALAR   --columns[content_tail].type ShortText   --columns[content_tail].value 'string_slice(content, -5, 5)'   --columns[content_length].stage output   --columns[content_length].flags COLUMN_SCALAR   --columns[content_length].type UInt32   --columns[content_length].value 'string_length(content)'   --output_columns _key,content_head,content_tail,content_length
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content_head",
+          "ShortText"
+        ],
+        [
+          "content_tail",
+          "ShortText"
+        ],
+        [
+          "content_length",
+          "UInt32"
+        ]
+      ],
+      [
+        "sequential: 64KiB < && < 4MiB",
+        "abcda",
+        "abcdx",
+        65537
+      ]
+    ]
+  ]
+]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 1,
+          "type": 1,
+          "type_name": "sequential",
+          "value": 65544,
+          "n_elements": 1,
+          "s_elements": 65544,
+          "n_del_elements": 0,
+          "s_del_elements": 0
+        }
+      ],
+      "garbage_counts": {
+      },
+      "free_elements": {
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 1,
+      "curr pos": 65544,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 2,
+      "valid": true
+    }
+  }
+]

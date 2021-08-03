@@ -4,6 +4,10 @@
 
 #$GRN_WAL_ROLE=primary
 
+#@disable-logging
+cache_limit --max 0
+#@enable-logging
+
 table_create memos TABLE_NO_KEY
 column_create memos count COLUMN_SCALAR UInt32
 

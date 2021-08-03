@@ -165,6 +165,7 @@ grn_init_from_env(void)
   grn_ctx_impl_mrb_init_from_env();
   grn_io_init_from_env();
   grn_ii_init_from_env();
+  grn_ja_init_from_env();
   grn_db_init_from_env();
   grn_expr_init_from_env();
   grn_index_column_init_from_env();

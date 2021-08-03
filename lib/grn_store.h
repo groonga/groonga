@@ -89,6 +89,7 @@ struct _grn_ja {
   struct grn_ja_header *header;
 };
 
+void grn_ja_init_from_env(void);
 const char *grn_ja_segment_info_type_name(grn_ctx *ctx, uint32_t info);
 uint32_t grn_ja_segment_info_value(grn_ctx *ctx, uint32_t info);
 
@@ -125,6 +126,7 @@ GRN_API grn_rc grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id,
 GRN_API uint32_t grn_ja_size(grn_ctx *ctx, grn_ja *ja, grn_id id);
 
 void grn_ja_check(grn_ctx *ctx, grn_ja *ja);
+grn_rc grn_ja_wal_recover(grn_ctx *ctx, grn_ja *ja);
 grn_rc grn_ja_warm(grn_ctx *ctx, grn_ja *ra);
 
 #define GRN_JA_READER_INITIAL_REF_SEG_IDS_SIZE 16

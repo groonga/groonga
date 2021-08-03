@@ -1,0 +1,220 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 1,
+          "type": 2,
+          "type_name": "huge",
+          "value": 0
+        },
+        {
+          "id": 2,
+          "type": 2,
+          "type_name": "huge",
+          "value": 0
+        }
+      ],
+      "garbage_counts": {
+      },
+      "free_elements": {
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 3,
+      "valid": true
+    }
+  }
+]
+delete Memos --filter _id==1
+[[0,0.0,0.0],true]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 2,
+          "type": 2,
+          "type_name": "huge",
+          "value": 0
+        }
+      ],
+      "garbage_counts": {
+      },
+      "free_elements": {
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 2,
+      "valid": true
+    }
+  }
+]
+delete Memos --filter _id==2
+[[0,0.0,0.0],true]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        }
+      ],
+      "garbage_counts": {
+      },
+      "free_elements": {
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 1,
+      "valid": true
+    }
+  }
+]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        },
+        {
+          "id": 1,
+          "type": 2,
+          "type_name": "huge",
+          "value": 0
+        },
+        {
+          "id": 2,
+          "type": 2,
+          "type_name": "huge",
+          "value": 0
+        }
+      ],
+      "garbage_counts": {
+      },
+      "free_elements": {
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 3,
+      "valid": true
+    }
+  }
+]
+wal_recover
+[[0,0.0,0.0],true]
+check --obj Memos.content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "details": {
+      "segments": [
+        {
+          "id": 0,
+          "type": 3,
+          "type_name": "element info",
+          "element_info_index": 0,
+          "referred_segment": 0,
+          "valid": true
+        }
+      ],
+      "garbage_counts": {
+      },
+      "free_elements": {
+      }
+    },
+    "summary": {
+      "flags": "0000C000",
+      "curr seg": 0,
+      "curr pos": 4194304,
+      "max_element_size": 65536,
+      "chunk_threshold": 16,
+      "n_element_variations": 14,
+      "n_using_segments": 1,
+      "valid": true
+    }
+  }
+]
