@@ -89,6 +89,9 @@ struct _grn_ja {
   struct grn_ja_header *header;
 };
 
+const char *grn_ja_segment_info_type_name(grn_ctx *ctx, uint32_t info);
+uint32_t grn_ja_segment_info_value(grn_ctx *ctx, uint32_t info);
+
 GRN_API grn_ja *grn_ja_create(grn_ctx *ctx, const char *path,
                               uint32_t max_element_size, uint32_t flags);
 grn_ja *grn_ja_open(grn_ctx *ctx, const char *path);

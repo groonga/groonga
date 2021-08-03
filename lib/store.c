@@ -689,7 +689,7 @@ grn_ja_segment_info_type(grn_ctx *ctx, uint32_t info)
   return info & SEG_MASK;
 }
 
-static const char *
+const char *
 grn_ja_segment_info_type_name(grn_ctx *ctx, uint32_t info)
 {
   switch (grn_ja_segment_info_type(ctx, info)) {
@@ -708,7 +708,7 @@ grn_ja_segment_info_type_name(grn_ctx *ctx, uint32_t info)
   }
 }
 
-static uint32_t
+uint32_t
 grn_ja_segment_info_value(grn_ctx *ctx, uint32_t info)
 {
   return info & ~SEG_MASK;
