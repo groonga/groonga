@@ -276,8 +276,8 @@ msgid "[:doc:`/install/ubuntu`] Dropped Ubuntu 20.10 (Groovy Gorilla) support."
 msgstr ""
 "[:doc:`/install/ubuntu`] Ubuntu 20.10 (Groovy Gorilla)サポートをやめました。"
 
-msgid "Because it reached EOL July 22, 2021."
-msgstr "2021年7月22日でEOLとなったためです。"
+msgid "Because Ubuntu 20.10 reached EOL July 22, 2021."
+msgstr "Ubuntu 20.10 は、2021年7月22日でEOLとなったためです。"
 
 msgid "Fixes"
 msgstr "修正"
