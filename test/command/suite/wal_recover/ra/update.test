@@ -3,6 +3,7 @@
 #@require-interface stdio
 
 #$GRN_WAL_ROLE=primary
+
 table_create memos TABLE_NO_KEY
 column_create memos count COLUMN_SCALAR UInt32
 
