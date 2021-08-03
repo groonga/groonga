@@ -55,9 +55,27 @@ module CommandRunner
     end
   end
 
-  def run_command(*command_line, &block)
+  class GroongaProcess < ExternalProcess
+    def run_command(command)
+      parse_response(command, super)
+    end
+
+    private
+    def parse_response(command, response)
+      response = JSON.parse(response)
+      normalize_header!(response[0])
+      response
+    end
+
+    def normalize_header!(header)
+      header[1] = 0.0
+      header[2] = 0.0
+    end
+  end
+
+  def run_command(*command_line, **options, &block)
     if block_given?
-      run_command_interactive(*command_line, &block)
+      run_command_interactive(*command_line, **options, &block)
     else
       run_command_sync(*command_line)
     end
@@ -79,7 +97,9 @@ module CommandRunner
     command_line << "-n" unless @database_path.exist?
     command_line << @database_path.to_s
     command_line.concat(groonga_command_line)
-    run_command(*command_line, &block)
+    run_command(*command_line,
+                external_process_class: GroongaProcess,
+                &block)
   end
 
   def groonga_select(*select_arguments)
@@ -145,7 +165,8 @@ module CommandRunner
   end
 
   private
-  def run_command_interactive(*command_line)
+  def run_command_interactive(*command_line,
+                              external_process_class: ExternalProcess)
     IO.pipe do |input_read, input_write|
       IO.pipe do |output_read, output_write|
         options = {
@@ -156,7 +177,8 @@ module CommandRunner
         pid = spawn(*command_line, options)
         input_read.close
         output_write.close
-        external_process = ExternalProcess.new(pid, input_write, output_read)
+        external_process =
+          external_process_class.new(pid, input_write, output_read)
         begin
           yield(external_process)
         ensure
