@@ -222,11 +222,11 @@ grn_wal_msgpack_write(void *data, const char *buf, msgpack_size_t len)
 
 static void
 grn_wal_generate_path(grn_ctx *ctx,
-                      grn_io *io,
-                      char *path)
+                      const char *path,
+                      char *wal_path)
 {
-  grn_strcpy(path, PATH_MAX, io->path);
-  grn_strcat(path, PATH_MAX, ".wal");
+  grn_strcpy(wal_path, PATH_MAX, path);
+  grn_strcat(wal_path, PATH_MAX, ".wal");
 }
 
 grn_rc
@@ -257,7 +257,7 @@ grn_wal_add_entryv(grn_ctx *ctx,
   }
 
   char path[PATH_MAX];
-  grn_wal_generate_path(ctx, io, path);
+  grn_wal_generate_path(ctx, io->path, path);
   FILE *output = grn_fopen(path, "ab");
   if (!output) {
     GRN_DEFINE_NAME(obj);
@@ -416,6 +416,65 @@ exit :
 #endif
 }
 
+static grn_rc
+grn_wal_remove_raw(grn_ctx *ctx,
+                   grn_obj *obj,
+                   const char *path,
+                   const char *system_tag,
+                   const char *tag)
+{
+  if (path[0] == '\0') {
+    return GRN_SUCCESS;
+  }
+
+  char wal_path[PATH_MAX];
+  grn_wal_generate_path(ctx, path, wal_path);
+  struct stat s;
+  if (stat(wal_path, &s) == 0) {
+    if (grn_unlink(wal_path) == 0) {
+      if (obj) {
+        GRN_DEFINE_NAME(obj);
+        GRN_LOG(ctx, GRN_LOG_DEBUG,
+                "[wal]%s[%.*s]%s removed: <%s>",
+                system_tag,
+                name_size, name,
+                tag,
+                wal_path);
+      } else {
+        GRN_LOG(ctx, GRN_LOG_DEBUG,
+                "[wal]%s%s removed: <%s>",
+                system_tag,
+                tag,
+                wal_path);
+      }
+    } else {
+      if (obj) {
+        GRN_DEFINE_NAME(obj);
+        SERR("[wal]%s[%.*s]%s failed to remove: <%s>",
+             system_tag,
+             name_size, name,
+             tag,
+             wal_path);
+      } else {
+        SERR("[wal]%s%s failed to remove: <%s>",
+             system_tag,
+             tag,
+             wal_path);
+      }
+    }
+  }
+
+  return ctx->rc;
+}
+
+grn_rc
+grn_wal_remove(grn_ctx *ctx,
+               const char* path,
+               const char *tag)
+{
+  return grn_wal_remove_raw(ctx, NULL, path, "[remove]", tag);
+}
+
 grn_rc
 grn_wal_clear(grn_ctx *ctx,
               grn_obj *obj,
@@ -439,25 +498,7 @@ grn_wal_clear(grn_ctx *ctx,
     }
   }
 
-  char path[PATH_MAX];
-  grn_wal_generate_path(ctx, io, path);
-  struct stat s;
-  if (stat(path, &s) == 0) {
-    GRN_DEFINE_NAME(obj);
-    if (grn_unlink(path) == 0) {
-      GRN_LOG(ctx, GRN_LOG_DEBUG,
-              "[wal][clear][%.*s][%s] removed: <%s>",
-              name_size, name,
-              tag,
-              path);
-    } else {
-      SERR("[wal][clear][%.*s]%s failed to remove: <%s>",
-           name_size, name,
-           tag,
-           path);
-      rc = ctx->rc;
-    }
-  }
+  rc = grn_wal_remove_raw(ctx, obj, io->path, "[clear]", tag);
 
   if (need_lock) {
     grn_io_unlock(io);
@@ -492,7 +533,7 @@ grn_wal_reader_open_internal(grn_ctx *ctx,
 
 #ifdef GRN_WITH_MESSAGE_PACK
   char path[PATH_MAX];
-  grn_wal_generate_path(ctx, io, path);
+  grn_wal_generate_path(ctx, io->path, path);
   FILE *input = grn_fopen(path, "rb");
   if (!input) {
     return NULL;
@@ -738,7 +779,7 @@ grn_wal_set_recover_error(grn_ctx *ctx,
   bool have_wal_file = false;
   grn_io *io = grn_obj_get_io(ctx, object);
   if (io) {
-    grn_wal_generate_path(ctx, io, path);
+    grn_wal_generate_path(ctx, io->path, path);
     struct stat s;
     have_wal_file = (stat(path, &s) == 0);
   }

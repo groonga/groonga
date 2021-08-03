@@ -136,7 +136,13 @@ grn_rc
 grn_ra_remove(grn_ctx *ctx, const char *path)
 {
   if (!path) { return GRN_INVALID_ARGUMENT; }
-  return grn_io_remove(ctx, path);
+  grn_rc wal_rc = grn_wal_remove(ctx, path, "[ra]");
+  grn_rc io_rc = grn_io_remove(ctx, path);
+  grn_rc rc = wal_rc;
+  if (rc == GRN_SUCCESS) {
+    rc = io_rc;
+  }
+  return rc;
 }
 
 grn_rc
@@ -1017,7 +1023,13 @@ grn_rc
 grn_ja_remove(grn_ctx *ctx, const char *path)
 {
   if (!path) { return GRN_INVALID_ARGUMENT; }
-  return grn_io_remove(ctx, path);
+  grn_rc wal_rc = grn_wal_remove(ctx, path, "[ja]");
+  grn_rc io_rc = grn_io_remove(ctx, path);
+  grn_rc rc = wal_rc;
+  if (rc == GRN_SUCCESS) {
+    rc = io_rc;
+  }
+  return rc;
 }
 
 grn_rc

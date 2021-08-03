@@ -153,6 +153,10 @@ grn_wal_add_entryv(grn_ctx *ctx,
                    grn_wal_key key,
                    va_list args);
 grn_rc
+grn_wal_remove(grn_ctx *ctx,
+               const char *path,
+               const char *tag);
+grn_rc
 grn_wal_clear(grn_ctx *ctx,
               grn_obj *obj,
               bool need_lock,
