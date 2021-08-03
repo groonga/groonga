@@ -389,7 +389,7 @@ namespace {
   }
 
   constexpr uint32_t unpack_source_id_record_id(uint64_t source_id) {
-    return source_id & ((1UL << 32) - 1);
+    return source_id & ((1ULL << 32) - 1);
   }
 
   class AllTablesExecutor {
