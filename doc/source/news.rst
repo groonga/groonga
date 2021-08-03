@@ -456,6 +456,10 @@ Improvements
 
 * Updated bundled Apache Arrow to 5.0.0.
 
+* [:doc:`/install/ubuntu`] Dropped Ubuntu 20.10 (Groovy Gorilla) support.
+
+  * Because it reached EOL July 22, 2021.
+
 Fixes
 -----
 

@@ -272,6 +272,13 @@ msgstr "[httpd] バンドルしているnginxのバージョンを1.21.1に更�
 msgid "Updated bundled Apache Arrow to 5.0.0."
 msgstr "バンドルしているApache Arrowを5.0.0に更新しました。"
 
+msgid "[:doc:`/install/ubuntu`] Dropped Ubuntu 20.10 (Groovy Gorilla) support."
+msgstr ""
+"[:doc:`/install/ubuntu`] Ubuntu 20.10 (Groovy Gorilla)サポートをやめました。"
+
+msgid "Because it reached EOL July 22, 2021."
+msgstr "2021年7月22日でEOLとなったためです。"
+
 msgid "Fixes"
 msgstr "修正"
 
