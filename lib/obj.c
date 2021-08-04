@@ -1562,3 +1562,48 @@ grn_obj_warm(grn_ctx *ctx, grn_obj *obj)
   grn_obj_warm_dispatch(ctx, obj);
   GRN_API_RETURN(ctx->rc);
 }
+
+void
+grn_obj_set_error(grn_ctx *ctx,
+                  grn_obj *obj,
+                  grn_rc rc,
+                  grn_id id,
+                  const char *tag,
+                  const char *format,
+                  ...)
+{
+  grn_obj message;
+  GRN_TEXT_INIT(&message, 0);
+  va_list args;
+  va_start(args, format);
+  grn_text_printfv(ctx, &message, format, args);
+  va_end(args);
+
+  grn_io *io = grn_obj_get_io(ctx, obj);
+  bool have_path = (io->path[0] != '\0');
+  GRN_DEFINE_NAME(obj);
+  if (id == GRN_ID_NIL) {
+    ERR(rc,
+        "%s[%.*s] %.*s%s%s%s",
+        tag,
+        name_size, name,
+        (int)GRN_TEXT_LEN(&message),
+        GRN_TEXT_VALUE(&message),
+        have_path ? ": path:<" : "",
+        have_path ? io->path : "",
+        have_path ? ">" : "");
+  } else {
+    ERR(rc,
+        "%s[%.*s][%u] %.*s%s%s%s",
+        tag,
+        name_size, name,
+        id,
+        (int)GRN_TEXT_LEN(&message),
+        GRN_TEXT_VALUE(&message),
+        have_path ? ": path:<" : "",
+        have_path ? io->path : "",
+        have_path ? ">" : "");
+  }
+
+  GRN_OBJ_FIN(ctx, &message);
+}

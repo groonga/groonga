@@ -22,6 +22,7 @@
 #include "grn_str.h"
 #include "grn_store.h"
 #include "grn_ctx_impl.h"
+#include "grn_obj.h"
 #include "grn_output.h"
 #include "grn_db.h"
 #include "grn_vector.h"
@@ -891,45 +892,6 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   ja->header = header;
 
   return ja;
-}
-
-static void
-grn_ja_set_error(grn_ctx *ctx,
-                 grn_ja *ja,
-                 grn_rc rc,
-                 grn_id id,
-                 const char *tag,
-                 const char *format,
-                 ...)
-{
-  grn_obj message;
-  GRN_TEXT_INIT(&message, 0);
-  va_list args;
-  va_start(args, format);
-  grn_text_printfv(ctx, &message, format, args);
-  va_end(args);
-
-  GRN_DEFINE_NAME(ja);
-  if (id == GRN_ID_NIL) {
-    ERR(rc,
-        "%s[%.*s] %.*s path:<%s>",
-        tag,
-        name_size, name,
-        (int)GRN_TEXT_LEN(&message),
-        GRN_TEXT_VALUE(&message),
-        ja->io->path);
-  } else {
-    ERR(rc,
-        "%s[%.*s][%u] %.*s path:<%s>",
-        tag,
-        name_size, name,
-        id,
-        (int)GRN_TEXT_LEN(&message),
-        GRN_TEXT_VALUE(&message),
-        ja->io->path);
-  }
-
-  GRN_OBJ_FIN(ctx, &message);
 }
 
 static void
@@ -1955,16 +1917,15 @@ grn_ja_wal_add_entry(grn_ctx *ctx, grn_ja_wal_add_entry_data *data)
     grn_obj details;
     GRN_TEXT_INIT(&details, 0);
     grn_ja_wal_add_entry_format_deatils(ctx, data, &used, &details);
-    GRN_DEFINE_NAME(data->ja);
-    ERR(rc,
-        "%s[%.*s][%u] failed to add WAL entry for %s: %.*spath:<%s>",
-        data->tag,
-        name_size, name,
-        data->record_id,
-        usage,
-        (int)GRN_TEXT_LEN(&details),
-        GRN_TEXT_VALUE(&details),
-        data->ja->io->path);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)(data->ja),
+                      rc,
+                      data->record_id,
+                      data->tag,
+                      "failed to add WAL entry for %s: %.*s",
+                      usage,
+                      (int)GRN_TEXT_LEN(&details),
+                      GRN_TEXT_VALUE(&details));
     GRN_OBJ_FIN(ctx, &details);
   }
 
@@ -2257,22 +2218,22 @@ grn_ja_free_chunk(grn_ctx *ctx,
        lseg_current = ginfo_previous->next) {
     ginfo_current = grn_io_seg_ref(ctx, ja->io, lseg_current);
     if (!ginfo_current) {
-      grn_ja_set_error(ctx,
-                       ja,
-                       GRN_NO_MEMORY_AVAILABLE,
-                       GRN_ID_NIL,
-                       wal_data->tag,
-                       "failed to refer garbage info segment: "
-                       "variation:%u "
-                       "segment:%u "
-                       "element-size:%u "
-                       "initial-garbage-segment:%u "
-                       "n-garbages:%u",
-                       chunk_variation,
-                       lseg_current,
-                       wal_data->element_size,
-                       lseg_initial,
-                       ja->header->n_garbages[chunk_variation]);
+      grn_obj_set_error(ctx,
+                        (grn_obj *)ja,
+                        GRN_NO_MEMORY_AVAILABLE,
+                        GRN_ID_NIL,
+                        wal_data->tag,
+                        "failed to refer garbage info segment: "
+                        "variation:%u "
+                        "segment:%u "
+                        "element-size:%u "
+                        "initial-garbage-segment:%u "
+                        "n-garbages:%u",
+                        chunk_variation,
+                        lseg_current,
+                        wal_data->element_size,
+                        lseg_initial,
+                        ja->header->n_garbages[chunk_variation]);
       goto exit;
     }
     if (ginfo_current->nrecs < grn_ja_n_garbages_in_a_segment) {
@@ -2298,21 +2259,21 @@ grn_ja_free_chunk(grn_ctx *ctx,
       }
     }
     if (segment == JA_N_DATA_SEGMENTS) {
-      grn_ja_set_error(ctx,
-                       ja,
-                       GRN_NOT_ENOUGH_SPACE,
-                       GRN_ID_NIL,
-                       wal_data->tag,
-                       "failed to allocate a new garbage info segment "
-                       "because of full: "
-                       "variation:%u "
-                       "element-size:%u "
-                       "initial-garbage-segment:%u "
-                       "n-garbages:%u",
-                       chunk_variation,
-                       wal_data->element_size,
-                       lseg_initial,
-                       ja->header->n_garbages[chunk_variation]);
+      grn_obj_set_error(ctx,
+                        (grn_obj *)ja,
+                        GRN_NOT_ENOUGH_SPACE,
+                        GRN_ID_NIL,
+                        wal_data->tag,
+                        "failed to allocate a new garbage info segment "
+                        "because of full: "
+                        "variation:%u "
+                        "element-size:%u "
+                        "initial-garbage-segment:%u "
+                        "n-garbages:%u",
+                        chunk_variation,
+                        wal_data->element_size,
+                        lseg_initial,
+                        ja->header->n_garbages[chunk_variation]);
       goto exit;
     }
     wal_data->event = GRN_WAL_EVENT_NEW_SEGMENT;
@@ -2323,22 +2284,22 @@ grn_ja_free_chunk(grn_ctx *ctx,
     lseg_current = wal_data->garbage_segment;
     ginfo_current = grn_io_seg_ref(ctx, ja->io, lseg_current);
     if (!ginfo_current) {
-      grn_ja_set_error(ctx,
-                       ja,
-                       GRN_NO_MEMORY_AVAILABLE,
-                       GRN_ID_NIL,
-                       wal_data->tag,
-                       "failed to refer newly allocated garbage info segment: "
-                       "variation:%u "
-                       "element-size:%u "
-                       "garbage-segment:%u "
-                       "initial-garbage-segment:%u "
-                       "n-garbages:%u",
-                       chunk_variation,
-                       wal_data->element_size,
-                       wal_data->garbage_segment,
-                       lseg_initial,
-                       ja->header->n_garbages[chunk_variation]);
+      grn_obj_set_error(ctx,
+                        (grn_obj *)ja,
+                        GRN_NO_MEMORY_AVAILABLE,
+                        GRN_ID_NIL,
+                        wal_data->tag,
+                        "failed to refer newly allocated garbage info segment: "
+                        "variation:%u "
+                        "element-size:%u "
+                        "garbage-segment:%u "
+                        "initial-garbage-segment:%u "
+                        "n-garbages:%u",
+                        chunk_variation,
+                        wal_data->element_size,
+                        wal_data->garbage_segment,
+                        lseg_initial,
+                        ja->header->n_garbages[chunk_variation]);
       goto exit;
     }
     grn_ja_ginfo_segment_new(ctx,
@@ -2414,18 +2375,18 @@ grn_ja_free_sequential(grn_ctx *ctx,
   }
   uint8_t *address = grn_io_seg_ref(ctx, ja->io, wal_data->segment);
   if (!address) {
-    grn_ja_set_error(ctx,
-                     ja,
-                     GRN_NO_MEMORY_AVAILABLE,
-                     GRN_ID_NIL,
-                     wal_data->tag,
-                     "failed to refer sequential segment: "
-                     "segment:%u "
-                     "position:%u "
-                     "element-size:%u",
-                     wal_data->segment,
-                     wal_data->position,
-                     wal_data->element_size);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)ja,
+                      GRN_NO_MEMORY_AVAILABLE,
+                      GRN_ID_NIL,
+                      wal_data->tag,
+                      "failed to refer sequential segment: "
+                      "segment:%u "
+                      "position:%u "
+                      "element-size:%u",
+                      wal_data->segment,
+                      wal_data->position,
+                      wal_data->element_size);
     return ctx->rc;
   }
   grn_ja_sequential_segment_free(ctx,
@@ -2504,15 +2465,15 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
       }
     }
     if (segment == JA_N_DATA_SEGMENTS) {
-      grn_ja_set_error(ctx,
-                       ja,
-                       GRN_NOT_ENOUGH_SPACE,
-                       wal_data.record_id,
-                       wal_data.tag,
-                       "failed to allocate element info segment "
-                       "because of full: "
-                       "element-size:%u",
-                       wal_data.element_size);
+      grn_obj_set_error(ctx,
+                        (grn_obj *)ja,
+                        GRN_NOT_ENOUGH_SPACE,
+                        wal_data.record_id,
+                        wal_data.tag,
+                        "failed to allocate element info segment "
+                        "because of full: "
+                        "element-size:%u",
+                        wal_data.element_size);
       goto exit;
     }
     wal_data.event = GRN_WAL_EVENT_NEW_SEGMENT;
@@ -2534,34 +2495,34 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
     einfo = grn_io_seg_ref(ctx, ja->io, wal_data.segment);
   }
   if (!einfo) {
-    grn_ja_set_error(ctx,
-                     ja,
-                     GRN_NO_MEMORY_AVAILABLE,
-                     wal_data.record_id,
-                     wal_data.tag,
-                     "failed to refer element info segment: "
-                     "segment:%u "
-                     "element-size:%u",
-                     wal_data.segment,
-                     wal_data.element_size);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)ja,
+                      GRN_NO_MEMORY_AVAILABLE,
+                      wal_data.record_id,
+                      wal_data.tag,
+                      "failed to refer element info segment: "
+                      "segment:%u "
+                      "element-size:%u",
+                      wal_data.segment,
+                      wal_data.element_size);
     goto exit;
   }
   grn_ja_einfo eback = einfo[pos];
   if (cas && *cas != *((uint64_t *)&eback)) {
-    grn_ja_set_error(ctx,
-                     ja,
-                     GRN_CAS_ERROR,
-                     wal_data.record_id,
-                     wal_data.tag,
-                     "failed to CAS: "
-                     "segment:%u "
-                     "cas:%" GRN_FMT_INT64U " "
-                     "requested-cas:%" GRN_FMT_INT64U " "
-                     "element-size:%u",
-                     wal_data.segment,
-                     *((uint64_t *)&eback),
-                     cas,
-                     wal_data.element_size);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)ja,
+                      GRN_CAS_ERROR,
+                      wal_data.record_id,
+                      wal_data.tag,
+                      "failed to CAS: "
+                      "segment:%u "
+                      "cas:%" GRN_FMT_INT64U " "
+                      "requested-cas:%" GRN_FMT_INT64U " "
+                      "element-size:%u",
+                      wal_data.segment,
+                      *((uint64_t *)&eback),
+                      cas,
+                      wal_data.element_size);
     grn_io_seg_unref(ctx, ja->io, wal_data.segment);
     goto exit;
   }
@@ -2621,18 +2582,18 @@ grn_ja_alloc_chunk_garbage(grn_ctx *ctx,
   while ((lseg_current = *gseg) != 0) {
     ginfo_current = grn_io_seg_ref(ctx, ja->io, lseg_current);
     if (!ginfo_current) {
-      grn_ja_set_error(ctx,
-                       ja,
-                       GRN_NO_MEMORY_AVAILABLE,
-                       data->wal_data.record_id,
-                       data->tag,
-                       "failed to refer garbage info segment: "
-                       "variation:%u "
-                       "segment:%u "
-                       "element-size:%u",
-                       chunk_variation,
-                       lseg_current,
-                       element_size);
+      grn_obj_set_error(ctx,
+                        (grn_obj *)ja,
+                        GRN_NO_MEMORY_AVAILABLE,
+                        data->wal_data.record_id,
+                        data->tag,
+                        "failed to refer garbage info segment: "
+                        "variation:%u "
+                        "segment:%u "
+                        "element-size:%u",
+                        chunk_variation,
+                        lseg_current,
+                        element_size);
       goto exit;
     }
     if (ginfo_current->next != 0 ||
@@ -2655,31 +2616,31 @@ grn_ja_alloc_chunk_garbage(grn_ctx *ctx,
       }
       uint8_t *address = grn_io_seg_ref(ctx, ja->io, data->wal_data.segment);
       if (!address) {
-        grn_ja_set_error(ctx,
-                         ja,
-                         GRN_NO_MEMORY_AVAILABLE,
-                         data->wal_data.record_id,
-                         data->tag,
-                         "failed to refer chunk segment "
-                         "from garbage info segment: "
-                         "variation:%u "
-                         "garbage-segment:%u "
-                         "garbage-segment-tail:%u "
-                         "n-garbages:%u "
-                         "previous-garbage-segment:%u "
-                         "next-garbage-segment:%u "
-                         "segment:%u "
-                         "position:%u "
-                         "element-size:%u",
-                         chunk_variation,
-                         data->wal_data.garbage_segment,
-                         data->wal_data.garbage_segment_tail,
-                         data->wal_data.n_garbages,
-                         data->wal_data.previous_garbage_segment,
-                         data->wal_data.next_garbage_segment,
-                         data->wal_data.segment,
-                         data->wal_data.position,
-                         data->wal_data.element_size);
+        grn_obj_set_error(ctx,
+                          (grn_obj *)ja,
+                          GRN_NO_MEMORY_AVAILABLE,
+                          data->wal_data.record_id,
+                          data->tag,
+                          "failed to refer chunk segment "
+                          "from garbage info segment: "
+                          "variation:%u "
+                          "garbage-segment:%u "
+                          "garbage-segment-tail:%u "
+                          "n-garbages:%u "
+                          "previous-garbage-segment:%u "
+                          "next-garbage-segment:%u "
+                          "segment:%u "
+                          "position:%u "
+                          "element-size:%u",
+                          chunk_variation,
+                          data->wal_data.garbage_segment,
+                          data->wal_data.garbage_segment_tail,
+                          data->wal_data.n_garbages,
+                          data->wal_data.previous_garbage_segment,
+                          data->wal_data.next_garbage_segment,
+                          data->wal_data.segment,
+                          data->wal_data.position,
+                          data->wal_data.element_size);
         goto exit;
       }
       EINFO_ENC(data->einfo,
@@ -2777,16 +2738,16 @@ grn_ja_alloc_chunk(grn_ctx *ctx, grn_ja_alloc_data *data)
       }
     }
     if (seg == JA_N_DATA_SEGMENTS) {
-      grn_ja_set_error(ctx,
-                       ja,
-                       GRN_NO_MEMORY_AVAILABLE,
-                       data->wal_data.record_id,
-                       data->tag,
-                       "failed to allocate reference segment because of full: "
-                       "variation:%u "
-                       "element-size:%u",
-                       chunk_variation,
-                       element_size);
+      grn_obj_set_error(ctx,
+                        (grn_obj *)ja,
+                        GRN_NO_MEMORY_AVAILABLE,
+                        data->wal_data.record_id,
+                        data->tag,
+                        "failed to allocate reference segment because of full: "
+                        "variation:%u "
+                        "element-size:%u",
+                        chunk_variation,
+                        element_size);
       return ctx->rc;
     }
     data->wal_data.event = GRN_WAL_EVENT_NEW_SEGMENT;
@@ -2815,20 +2776,20 @@ grn_ja_alloc_chunk(grn_ctx *ctx, grn_ja_alloc_data *data)
   EINFO_ENC(data->einfo, vp->seg, vp->pos, element_size);
   uint8_t *addr = grn_io_seg_ref(ctx, ja->io, vp->seg);
   if (!addr) {
-    grn_ja_set_error(ctx,
-                     ja,
-                     GRN_NO_MEMORY_AVAILABLE,
-                     data->wal_data.record_id,
-                     data->tag,
-                     "failed to refer content chunk segment in free elements: "
-                     "variation:%u "
-                     "segment:%u "
-                     "position:%u "
-                     "element-size:%u",
-                     chunk_variation,
-                     vp->seg,
-                     vp->pos,
-                     element_size);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)ja,
+                      GRN_NO_MEMORY_AVAILABLE,
+                      data->wal_data.record_id,
+                      data->tag,
+                      "failed to refer content chunk segment in free elements: "
+                      "variation:%u "
+                      "segment:%u "
+                      "position:%u "
+                      "element-size:%u",
+                      chunk_variation,
+                      vp->seg,
+                      vp->pos,
+                      element_size);
     return ctx->rc;
   }
   data->iw->segment = vp->seg;
@@ -2858,14 +2819,14 @@ grn_ja_alloc_sequential(grn_ctx *ctx, grn_ja_alloc_data *data)
       }
     }
     if (segment == JA_N_DATA_SEGMENTS) {
-      grn_ja_set_error(ctx,
-                       ja,
-                       GRN_NO_MEMORY_AVAILABLE,
-                       data->wal_data.record_id,
-                       data->tag,
-                       "failed to allocate sequential segment because of full: "
-                       "element-size:%u",
-                       element_size);
+      grn_obj_set_error(ctx,
+                        (grn_obj *)ja,
+                        GRN_NO_MEMORY_AVAILABLE,
+                        data->wal_data.record_id,
+                        data->tag,
+                        "failed to allocate sequential segment because of full: "
+                        "element-size:%u",
+                        element_size);
       return ctx->rc;
     }
     data->wal_data.event = GRN_WAL_EVENT_NEW_SEGMENT;
@@ -2892,18 +2853,18 @@ grn_ja_alloc_sequential(grn_ctx *ctx, grn_ja_alloc_data *data)
   }
   uint8_t *address = grn_io_seg_ref(ctx, ja->io, data->wal_data.segment);
   if (!address) {
-    grn_ja_set_error(ctx,
-                     ja,
-                     GRN_NO_MEMORY_AVAILABLE,
-                     data->wal_data.record_id,
-                     data->tag,
-                     "failed to refer sequential segment: "
-                     "segment:%u "
-                     "position:%u "
-                     "element-size:%u",
-                     data->wal_data.segment,
-                     data->wal_data.position,
-                     element_size);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)ja,
+                      GRN_NO_MEMORY_AVAILABLE,
+                      data->wal_data.record_id,
+                      data->tag,
+                      "failed to refer sequential segment: "
+                      "segment:%u "
+                      "position:%u "
+                      "element-size:%u",
+                      data->wal_data.segment,
+                      data->wal_data.position,
+                      element_size);
     return ctx->rc;
   }
   grn_ja_sequential_segment_use(ctx,
@@ -2941,14 +2902,14 @@ grn_ja_alloc_huge(grn_ctx *ctx, grn_ja_alloc_data *data)
     }
   }
   if (i == JA_N_DATA_SEGMENTS) {
-    grn_ja_set_error(ctx,
-                     ja,
-                     GRN_NOT_ENOUGH_SPACE,
-                     data->wal_data.record_id,
-                     data->tag,
-                     "failed to allocate huge segment because of full: "
-                     "element-size:%u",
-                     data->element_size);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)ja,
+                      GRN_NOT_ENOUGH_SPACE,
+                      data->wal_data.record_id,
+                      data->tag,
+                      "failed to allocate huge segment because of full: "
+                      "element-size:%u",
+                      data->element_size);
     return ctx->rc;
   }
 
@@ -2963,18 +2924,18 @@ grn_ja_alloc_huge(grn_ctx *ctx, grn_ja_alloc_data *data)
                               data->element_size,
                               GRN_IO_WRONLY);
   if (!addr) {
-    grn_ja_set_error(ctx,
-                     ja,
-                     GRN_NO_MEMORY_AVAILABLE,
-                     data->wal_data.record_id,
-                     data->tag,
-                     "failed to map new window for huge element: "
-                     "n-segments:%u "
-                     "start-segment:%u "
-                     "element-size:%u",
-                     n_segments,
-                     start_segment,
-                     data->element_size);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)ja,
+                      GRN_NO_MEMORY_AVAILABLE,
+                      data->wal_data.record_id,
+                      data->tag,
+                      "failed to map new window for huge element: "
+                      "n-segments:%u "
+                      "start-segment:%u "
+                      "element-size:%u",
+                      n_segments,
+                      start_segment,
+                      data->element_size);
     return ctx->rc;
   }
   data->wal_data.event = GRN_WAL_EVENT_NEW_SEGMENT;
