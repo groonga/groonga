@@ -894,51 +894,6 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   return ja;
 }
 
-static void
-grn_ja_log(grn_ctx *ctx,
-           grn_ja *ja,
-           grn_log_level level,
-           grn_id id,
-           const char *tag,
-           const char *format,
-           ...)
-{
-  if (!grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
-    return;
-  }
-
-  grn_obj message;
-  GRN_TEXT_INIT(&message, 0);
-  va_list args;
-  va_start(args, format);
-  grn_text_printfv(ctx, &message, format, args);
-  va_end(args);
-
-  GRN_DEFINE_NAME(ja);
-  if (id == GRN_ID_NIL) {
-    GRN_LOG(ctx,
-            level,
-            "%s[%.*s] %.*s path:<%s>",
-            tag,
-            name_size, name,
-            (int)GRN_TEXT_LEN(&message),
-            GRN_TEXT_VALUE(&message),
-            ja->io->path);
-  } else {
-    GRN_LOG(ctx,
-            level,
-            "%s[%.*s][%u] %.*s path:<%s>",
-            tag,
-            name_size, name,
-            id,
-            (int)GRN_TEXT_LEN(&message),
-            GRN_TEXT_VALUE(&message),
-            ja->io->path);
-  }
-
-  GRN_OBJ_FIN(ctx, &message);
-}
-
 grn_rc
 grn_ja_info(grn_ctx *ctx, grn_ja *ja, unsigned int *max_element_size)
 {
@@ -2349,23 +2304,23 @@ grn_ja_free_sequential(grn_ctx *ctx,
   uint32_t segment_info = SEGMENT_INFO_AT(ja, wal_data->segment);
   if (grn_ja_segment_info_type(ctx, segment_info) != SEG_SEQ ||
       grn_ja_segment_info_value(ctx, segment_info) < data_size) {
-    grn_ja_log(ctx,
-               ja,
-               GRN_LOG_WARNING,
-               GRN_ID_NIL,
-               wal_data->tag,
-               "inconsistent sequence entry detected: "
-               "segment:%u "
-               "position:%u "
-               "element-info:%s|%u "
-               "element-size:%u "
-               "aligned-element-size:%u",
-               wal_data->segment,
-               wal_data->position,
-               grn_ja_segment_info_type_name(ctx, segment_info),
-               grn_ja_segment_info_value(ctx, segment_info),
-               wal_data->element_size,
-               aligned_element_size);
+    grn_obj_log(ctx,
+                (grn_obj *)ja,
+                GRN_LOG_WARNING,
+                GRN_ID_NIL,
+                wal_data->tag,
+                "inconsistent sequence entry detected: "
+                "segment:%u "
+                "position:%u "
+                "element-info:%s|%u "
+                "element-size:%u "
+                "aligned-element-size:%u",
+                wal_data->segment,
+                wal_data->position,
+                grn_ja_segment_info_type_name(ctx, segment_info),
+                grn_ja_segment_info_value(ctx, segment_info),
+                wal_data->element_size,
+                aligned_element_size);
   }
   wal_data->event = GRN_WAL_EVENT_FREE_SEGMENT;
   wal_data->segment_type = GRN_WAL_SEGMENT_SEQUENTIAL;
@@ -2660,23 +2615,23 @@ grn_ja_alloc_chunk_garbage(grn_ctx *ctx,
       if (data->wal_data.garbage_segment_n_records == 0) {
         uint32_t chunk_msb = grn_ja_compute_chunk_msb(element_size);
         uint32_t chunk_variation = chunk_msb - JA_W_EINFO;
-        grn_ja_log(ctx,
-                   ja,
-                   GRN_LOG_DEBUG,
-                   data->wal_data.record_id,
-                   data->tag,
-                   "free a garbage info segment that "
-                   "has no more garbage info: "
-                   "variation:%u "
-                   "segment:%u "
-                   "garbage-segment:%u "
-                   "next-garbage-segment:%u "
-                   "element-size:%u",
-                   chunk_variation,
-                   data->wal_data.segment,
-                   data->wal_data.garbage_segment,
-                   data->wal_data.next_garbage_segment,
-                   element_size);
+        grn_obj_log(ctx,
+                    (grn_obj *)ja,
+                    GRN_LOG_DEBUG,
+                    data->wal_data.record_id,
+                    data->tag,
+                    "free a garbage info segment that "
+                    "has no more garbage info: "
+                    "variation:%u "
+                    "segment:%u "
+                    "garbage-segment:%u "
+                    "next-garbage-segment:%u "
+                    "element-size:%u",
+                    chunk_variation,
+                    data->wal_data.segment,
+                    data->wal_data.garbage_segment,
+                    data->wal_data.next_garbage_segment,
+                    element_size);
         data->wal_data.event = GRN_WAL_EVENT_FREE_SEGMENT;
         data->wal_data.segment_type = GRN_WAL_SEGMENT_GINFO;
         if (grn_ja_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {

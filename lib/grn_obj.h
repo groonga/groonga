@@ -36,6 +36,16 @@ grn_obj_set_error(grn_ctx *ctx,
                   const char *format,
                   ...);
 
+void
+grn_obj_log(grn_ctx *ctx,
+            grn_obj *obj,
+            grn_log_level level,
+            grn_id id,
+            const char *tag,
+            const char *format,
+            ...);
+
+
 #ifdef __cplusplus
 }
 #endif

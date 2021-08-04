@@ -1607,3 +1607,54 @@ grn_obj_set_error(grn_ctx *ctx,
 
   GRN_OBJ_FIN(ctx, &message);
 }
+
+void
+grn_obj_log(grn_ctx *ctx,
+            grn_obj *obj,
+            grn_log_level level,
+            grn_id id,
+            const char *tag,
+            const char *format,
+            ...)
+{
+  if (!grn_logger_pass(ctx, level)) {
+    return;
+  }
+
+  grn_obj message;
+  GRN_TEXT_INIT(&message, 0);
+  va_list args;
+  va_start(args, format);
+  grn_text_printfv(ctx, &message, format, args);
+  va_end(args);
+
+  grn_io *io = grn_obj_get_io(ctx, obj);
+  bool have_path = (io->path[0] != '\0');
+  GRN_DEFINE_NAME(obj);
+  if (id == GRN_ID_NIL) {
+    GRN_LOG(ctx,
+            level,
+            "%s[%.*s] %.*s%s%s%s",
+            tag,
+            name_size, name,
+            (int)GRN_TEXT_LEN(&message),
+            GRN_TEXT_VALUE(&message),
+            have_path ? ": path:<" : "",
+            have_path ? io->path : "",
+            have_path ? ">" : "");
+  } else {
+    GRN_LOG(ctx,
+            level,
+            "%s[%.*s][%u] %.*s%s%s%s",
+            tag,
+            name_size, name,
+            id,
+            (int)GRN_TEXT_LEN(&message),
+            GRN_TEXT_VALUE(&message),
+            have_path ? ": path:<" : "",
+            have_path ? io->path : "",
+            have_path ? ">" : "");
+  }
+
+  GRN_OBJ_FIN(ctx, &message);
+}
