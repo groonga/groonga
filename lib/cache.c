@@ -531,6 +531,9 @@ grn_cache_expire_memory_without_lock(grn_cache *cache, int32_t size)
   while (ce0 != ce0->prev && size--) {
     grn_cache_expire_entry_memory(cache, ce0->prev);
   }
+  if (size == 0) {
+    grn_hash_truncate(cache->ctx, cache->impl.memory.hash);
+  }
 }
 
 static void
