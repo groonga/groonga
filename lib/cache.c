@@ -368,11 +368,12 @@ grn_persistent_cache_open(grn_ctx *ctx, const char *base_path)
 static void
 grn_cache_close_memory(grn_ctx *ctx, grn_cache *cache)
 {
-  grn_cache_entry_memory *vp;
-
-  GRN_HASH_EACH(ctx, cache->impl.memory.hash, id, NULL, NULL, &vp, {
-    grn_obj_close(ctx, vp->value);
-  });
+  GRN_HASH_EACH_BEGIN(ctx, cache->impl.memory.hash, cursor, id) {
+    void *value;
+    grn_hash_cursor_get_value(ctx, cursor, &value);
+    grn_cache_entry_memory *entry = value;
+    grn_obj_close(ctx, entry->value);
+  } GRN_HASH_EACH_END(ctx, cursor);
   grn_hash_close(ctx, cache->impl.memory.hash);
   MUTEX_FIN(cache->impl.memory.mutex);
 }
