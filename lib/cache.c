@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2017 Brazil
+  Copyright(C) 2009-2017  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -60,6 +61,8 @@ typedef union _grn_cache_entry_persistent {
 struct _grn_cache {
   union {
     struct {
+      /* next and prev is the same layout as grn_cache_entry_memory to
+       * use this struct as the root entry. */
       grn_cache_entry_memory *next;
       grn_cache_entry_memory *prev;
       grn_hash *hash;
@@ -117,8 +120,8 @@ grn_get_default_cache_base_path(void)
 static void
 grn_cache_open_memory(grn_ctx *ctx, grn_cache *cache)
 {
-  cache->impl.memory.next = (grn_cache_entry_memory *)cache;
-  cache->impl.memory.prev = (grn_cache_entry_memory *)cache;
+  cache->impl.memory.next = (grn_cache_entry_memory *)&(cache->impl.memory);
+  cache->impl.memory.prev = (grn_cache_entry_memory *)&(cache->impl.memory);
   cache->impl.memory.hash = grn_hash_create(cache->ctx,
                                             NULL,
                                             GRN_CACHE_MAX_KEY_SIZE,
