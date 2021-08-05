@@ -2135,12 +2135,12 @@ typedef struct {
   uint32_t key_hash_value;
   uint64_t key_offset;
   uint32_t index_hash_value;
+  const void *value;
   grn_id next_garbage_record_id;
   uint32_t n_entries;
   uint32_t n_garbages;
   uint32_t max_offset;
   uint32_t expected_n_entries;
-  const void *value;
 } grn_hash_wal_add_entry_data;
 
 typedef struct {
@@ -2150,6 +2150,7 @@ typedef struct {
   bool key_hash_value;
   bool key_offset;
   bool index_hash_value;
+  bool value;
   bool next_garbage_record_id;
   bool n_garbages;
   bool n_entries;
@@ -2405,6 +2406,35 @@ grn_hash_wal_add_entry_rehash(grn_ctx *ctx,
                            GRN_WAL_KEY_END);
 }
 
+static grn_rc
+grn_hash_wal_add_entry_set_value(grn_ctx *ctx,
+                                 grn_hash_wal_add_entry_data *data,
+                                 grn_hash_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->value = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->hash),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_VALUE,
+                           GRN_WAL_VALUE_BINARY,
+                           data->value,
+                           data->hash->value_size,
+
+                           GRN_WAL_KEY_END);
+}
+
 static void
 grn_hash_wal_add_entry_format_deatils(grn_ctx *ctx,
                                       grn_hash_wal_add_entry_data *data,
@@ -2436,6 +2466,9 @@ grn_hash_wal_add_entry_format_deatils(grn_ctx *ctx,
                     details,
                     "index-hash-value:%u ",
                     data->index_hash_value);
+  }
+  if (used->value) {
+    grn_text_printf(ctx, details, "value-size:%u ", data->hash->value_size);
   }
   if (used->next_garbage_record_id) {
     grn_text_printf(ctx,
@@ -2502,6 +2535,10 @@ grn_hash_wal_add_entry(grn_ctx *ctx, grn_hash_wal_add_entry_data *data)
   case GRN_WAL_EVENT_REHASH :
     usage = "rehash";
     rc = grn_hash_wal_add_entry_rehash(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_SET_VALUE :
+    usage = "setting value";
+    rc = grn_hash_wal_add_entry_set_value(ctx, data, &used);
     break;
   default :
     usage = "not implemented event";
@@ -3748,6 +3785,15 @@ _grn_hash_get_key_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   return *value ? key_size : 0;
 }
 
+static void
+grn_hash_set_value_raw(grn_ctx *ctx,
+                       grn_hash *hash,
+                       void *entry_value,
+                       const void *value)
+{
+  grn_memcpy(entry_value, value, hash->value_size);
+}
+
 grn_rc
 grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
                    const void *value, int flags)
@@ -3772,6 +3818,7 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   grn_hash_wal_add_entry_data wal_data = {0};
   wal_data.hash = hash;
   wal_data.tag = "[hash][set-value]";
+  wal_data.event = GRN_WAL_EVENT_SET_VALUE;
   wal_data.record_id = id;
   int32_t int32_value;
   int64_t int64_value;
@@ -3779,7 +3826,7 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   switch (flags & GRN_OBJ_SET_MASK) {
   case GRN_OBJ_SET :
     wal_data.value = value;
-    return GRN_SUCCESS;
+    break;
   case GRN_OBJ_INCR :
     switch (hash->value_size) {
     case sizeof(int32_t) :
@@ -3826,7 +3873,7 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   if (grn_hash_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
     return ctx->rc;
   }
-  grn_memcpy(entry_value, wal_data.value, hash->value_size);
+  grn_hash_set_value_raw(ctx, hash, entry_value, wal_data.value);
   return ctx->rc;
 }
 
@@ -5003,6 +5050,35 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
       *(hash->n_entries) = entry.n_entries;
       *(hash->max_offset) = entry.max_offset;
       rc = grn_hash_rehash(ctx, hash, entry.expected_n_entries);
+      break;
+    case GRN_WAL_EVENT_SET_VALUE :
+      {
+        grn_hash_entry *hash_entry =
+          grn_io_hash_entry_at(ctx, hash, entry.record_id, GRN_TABLE_ADD);
+        if (!hash_entry) {
+          grn_wal_set_recover_error(ctx,
+                                    GRN_NO_MEMORY_AVAILABLE,
+                                    (grn_obj *)hash,
+                                    &entry,
+                                    wal_error_tag,
+                                    "failed to refer hash entry");
+          break;
+        }
+        void *hash_entry_value = grn_hash_entry_get_value(ctx, hash, hash_entry);
+        if (!hash_entry_value) {
+          grn_wal_set_recover_error(ctx,
+                                    GRN_NO_MEMORY_AVAILABLE,
+                                    (grn_obj *)hash,
+                                    &entry,
+                                    wal_error_tag,
+                                    "failed to refer hash entry value");
+          break;
+        }
+        grn_hash_set_value_raw(ctx,
+                               hash,
+                               hash_entry_value,
+                               entry.value.content.binary.data);
+      }
       break;
     default :
       grn_wal_set_recover_error(ctx,
