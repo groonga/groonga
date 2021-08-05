@@ -23,6 +23,7 @@
 #include "grn_tokenizers.h"
 #include "grn_ctx_impl.h"
 #include "grn_encoding.h"
+#include "grn_hash.h"
 #include "grn_ii.h"
 #include "grn_pat.h"
 #include "grn_index_column.h"
@@ -163,6 +164,7 @@ grn_init_from_env(void)
   grn_alloc_init_from_env();
   grn_mrb_init_from_env();
   grn_ctx_impl_mrb_init_from_env();
+  grn_hash_init_from_env();
   grn_io_init_from_env();
   grn_ii_init_from_env();
   grn_ja_init_from_env();

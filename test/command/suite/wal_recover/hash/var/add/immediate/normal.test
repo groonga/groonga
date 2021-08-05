@@ -1,0 +1,47 @@
+# wal_recover can't use with HTTP because requests via HTTP are always
+# processed by workers. Workers never use primary WAL role.
+#@require-interface stdio
+
+#$GRN_WAL_ROLE=primary
+
+#@disable-logging
+cache_limit --max 0
+#@enable-logging
+
+table_create Data TABLE_HASH_KEY ShortText
+
+#@disable-logging
+io_flush
+#@copy-path #{db_path}.0000100 #{db_path}.0000100.initial
+#@enable-logging
+
+load --table Data
+[
+{"_key": "<=4B"}
+]
+
+select Data
+
+check --obj Data
+
+#@disable-logging
+#@copy-path #{db_path}.0000100.wal #{db_path}.0000100.wal.keep
+io_flush
+#@copy-path #{db_path}.0000100.initial #{db_path}.0000100
+#@enable-logging
+
+#@disable-logging
+thread_limit 1
+database_unmap
+#@copy-path #{db_path}.0000100.wal.keep #{db_path}.0000100.wal
+#@enable-logging
+
+select Data
+
+check --obj Data
+
+wal_recover
+
+select Data
+
+check --obj Data

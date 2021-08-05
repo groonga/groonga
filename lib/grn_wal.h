@@ -30,6 +30,13 @@ typedef enum {
   GRN_WAL_EVENT_USE_SEGMENT,
   GRN_WAL_EVENT_REUSE_SEGMENT,
   GRN_WAL_EVENT_FREE_SEGMENT,
+  GRN_WAL_EVENT_ADD_ENTRY,
+  GRN_WAL_EVENT_REUSE_ENTRY,
+  GRN_WAL_EVENT_RESET_ENTRY,
+  GRN_WAL_EVENT_ENABLE_ENTRY,
+  GRN_WAL_EVENT_SET_ENTRY_KEY,
+  GRN_WAL_EVENT_DELETE_ENTRY,
+  GRN_WAL_EVENT_REHASH,
 } grn_wal_event;
 
 const char *
@@ -51,8 +58,15 @@ typedef enum {
   GRN_WAL_KEY_ID,
   GRN_WAL_KEY_EVENT,
   GRN_WAL_KEY_RECORD_ID,
+  GRN_WAL_KEY_ELEMENT_SIZE,
+  GRN_WAL_KEY_KEY,
+  GRN_WAL_KEY_KEY_SIZE,
+  GRN_WAL_KEY_KEY_HASH_VALUE,
+  GRN_WAL_KEY_KEY_OFFSET,
   GRN_WAL_KEY_VALUE,
+  GRN_WAL_KEY_INDEX_HASH_VALUE,
   GRN_WAL_KEY_SEGMENT,
+  GRN_WAL_KEY_POSITION,
   GRN_WAL_KEY_SEGMENT_TYPE,
   GRN_WAL_KEY_SEGMENT_INFO,
   GRN_WAL_KEY_GARBAGE_SEGMENT,
@@ -61,9 +75,11 @@ typedef enum {
   GRN_WAL_KEY_GARBAGE_SEGMENT_HEAD,
   GRN_WAL_KEY_GARBAGE_SEGMENT_TAIL,
   GRN_WAL_KEY_GARBAGE_SEGMENT_N_RECORDS,
+  GRN_WAL_KEY_NEXT_GARBAGE_RECORD_ID,
   GRN_WAL_KEY_N_GARBAGES,
-  GRN_WAL_KEY_POSITION,
-  GRN_WAL_KEY_ELEMENT_SIZE,
+  GRN_WAL_KEY_N_ENTRIES,
+  GRN_WAL_KEY_MAX_OFFSET,
+  GRN_WAL_KEY_EXPECTED_N_ENTRIES,
 } grn_wal_key;
 
 const char *
@@ -82,21 +98,21 @@ typedef enum {
 } grn_wal_value_type;
 
 typedef enum {
-  GRN_WAL_READER_VALUE_NIL,
-  GRN_WAL_READER_VALUE_BOOLEAN,
-  GRN_WAL_READER_VALUE_INT64,
-  GRN_WAL_READER_VALUE_UINT64,
-  GRN_WAL_READER_VALUE_FLOAT32,
-  GRN_WAL_READER_VALUE_FLOAT64,
-  GRN_WAL_READER_VALUE_STRING,
-  GRN_WAL_READER_VALUE_BINARY,
-} grn_wal_reader_value_type;
+  GRN_WAL_READER_DATA_NIL,
+  GRN_WAL_READER_DATA_BOOLEAN,
+  GRN_WAL_READER_DATA_INT64,
+  GRN_WAL_READER_DATA_UINT64,
+  GRN_WAL_READER_DATA_FLOAT32,
+  GRN_WAL_READER_DATA_FLOAT64,
+  GRN_WAL_READER_DATA_STRING,
+  GRN_WAL_READER_DATA_BINARY,
+} grn_wal_reader_data_type;
 
 const char *
-grn_wal_reader_value_type_to_string(grn_wal_reader_value_type type);
+grn_wal_reader_data_type_to_string(grn_wal_reader_data_type type);
 
 typedef struct {
-  grn_wal_reader_value_type type;
+  grn_wal_reader_data_type type;
   union {
     bool boolean;
     int64_t int64;
@@ -111,15 +127,18 @@ typedef struct {
       const void *data;
       size_t size;
     } binary;
-  } data;
-} grn_wal_reader_value;
+  } content;
+} grn_wal_reader_data;
 
 typedef struct {
   uint64_t id;
   grn_wal_event event;
   grn_id record_id;
   uint32_t element_size;
-  grn_wal_reader_value value;
+  grn_wal_reader_data key;
+  uint32_t key_hash_value;
+  grn_wal_reader_data value;
+  uint32_t index_hash_value;
   uint32_t segment;
   uint32_t position;
   grn_wal_segment_type segment_type;
@@ -130,7 +149,11 @@ typedef struct {
   uint32_t garbage_segment_n_records;
   uint32_t previous_garbage_segment;
   uint32_t next_garbage_segment;
+  grn_id next_garbage_record_id;
   uint32_t n_garbages;
+  uint32_t n_entries;
+  uint32_t max_offset;
+  uint32_t expected_n_entries;
 } grn_wal_reader_entry;
 
 uint64_t

@@ -1,0 +1,302 @@
+table_create Data TABLE_HASH_KEY UInt32
+[[0,0.0,0.0],true]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        9
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        100
+      ],
+      [
+        3,
+        200
+      ],
+      [
+        4,
+        300
+      ],
+      [
+        5,
+        400
+      ],
+      [
+        6,
+        500
+      ],
+      [
+        7,
+        600
+      ],
+      [
+        8,
+        700
+      ],
+      [
+        9,
+        800
+      ]
+    ]
+  ]
+]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "00008000",
+      "key_size": 4,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "curr_rec": 9,
+      "curr_key_normal": 0,
+      "curr_key_large": 0,
+      "idx_offset": 536870912,
+      "entry_size": 4,
+      "max_offset": 255,
+      "n_entries": 9,
+      "n_garbages": 0,
+      "lock": 0
+    }
+  ]
+]
+select Data
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","UInt32"]]]]]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "00008000",
+      "key_size": 4,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "curr_rec": 0,
+      "curr_key_normal": 0,
+      "curr_key_large": 0,
+      "idx_offset": 0,
+      "entry_size": 4,
+      "max_offset": 15,
+      "n_entries": 0,
+      "n_garbages": 0,
+      "lock": 0
+    }
+  ]
+]
+wal_recover
+[[0,0.0,0.0],true]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        9
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        100
+      ],
+      [
+        3,
+        200
+      ],
+      [
+        4,
+        300
+      ],
+      [
+        5,
+        400
+      ],
+      [
+        6,
+        500
+      ],
+      [
+        7,
+        600
+      ],
+      [
+        8,
+        700
+      ],
+      [
+        9,
+        800
+      ]
+    ]
+  ]
+]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "00008000",
+      "key_size": 4,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "curr_rec": 9,
+      "curr_key_normal": 0,
+      "curr_key_large": 0,
+      "idx_offset": 536870912,
+      "entry_size": 4,
+      "max_offset": 255,
+      "n_entries": 9,
+      "n_garbages": 0,
+      "lock": 0
+    }
+  ]
+]
+load --table Data
+[
+{"_key": 29}
+]
+[[0,0.0,0.0],1]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        10
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        100
+      ],
+      [
+        3,
+        200
+      ],
+      [
+        4,
+        300
+      ],
+      [
+        5,
+        400
+      ],
+      [
+        6,
+        500
+      ],
+      [
+        7,
+        600
+      ],
+      [
+        8,
+        700
+      ],
+      [
+        9,
+        800
+      ],
+      [
+        10,
+        29
+      ]
+    ]
+  ]
+]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "00008000",
+      "key_size": 4,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "curr_rec": 10,
+      "curr_key_normal": 0,
+      "curr_key_large": 0,
+      "idx_offset": 536870912,
+      "entry_size": 4,
+      "max_offset": 255,
+      "n_entries": 10,
+      "n_garbages": 0,
+      "lock": 0
+    }
+  ]
+]

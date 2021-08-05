@@ -50,6 +50,27 @@ grn_wal_event_to_string(grn_wal_event event)
   case GRN_WAL_EVENT_FREE_SEGMENT :
     string = "free-segment";
     break;
+  case GRN_WAL_EVENT_ADD_ENTRY :
+    string = "add-entry";
+    break;
+  case GRN_WAL_EVENT_REUSE_ENTRY :
+    string = "reuse-entry";
+    break;
+  case GRN_WAL_EVENT_RESET_ENTRY :
+    string = "reset-entry";
+    break;
+  case GRN_WAL_EVENT_ENABLE_ENTRY :
+    string = "enable-entry";
+    break;
+  case GRN_WAL_EVENT_SET_ENTRY_KEY :
+    string = "set-entry-key";
+    break;
+  case GRN_WAL_EVENT_DELETE_ENTRY :
+    string = "delete-entry";
+    break;
+  case GRN_WAL_EVENT_REHASH :
+    string = "rehash";
+    break;
   }
   return string;
 }
@@ -95,11 +116,32 @@ grn_wal_key_to_string(grn_wal_key key)
   case GRN_WAL_KEY_RECORD_ID :
     string = "record-id";
     break;
+  case GRN_WAL_KEY_ELEMENT_SIZE :
+    string = "element-size";
+    break;
+  case GRN_WAL_KEY_KEY :
+    string = "key";
+    break;
+  case GRN_WAL_KEY_KEY_SIZE :
+    string = "key-size";
+    break;
+  case GRN_WAL_KEY_KEY_HASH_VALUE :
+    string = "key-hash-value";
+    break;
+  case GRN_WAL_KEY_KEY_OFFSET :
+    string = "key-offset";
+    break;
   case GRN_WAL_KEY_VALUE :
     string = "value";
     break;
+  case GRN_WAL_KEY_INDEX_HASH_VALUE :
+    string = "index-hash-value";
+    break;
   case GRN_WAL_KEY_SEGMENT :
     string = "segment";
+    break;
+  case GRN_WAL_KEY_POSITION :
+    string = "position";
     break;
   case GRN_WAL_KEY_SEGMENT_TYPE :
     string = "segment-type";
@@ -125,46 +167,52 @@ grn_wal_key_to_string(grn_wal_key key)
   case GRN_WAL_KEY_GARBAGE_SEGMENT_N_RECORDS :
     string = "garbage-n-records";
     break;
+  case GRN_WAL_KEY_NEXT_GARBAGE_RECORD_ID :
+    string = "next-garbage-record-id";
+    break;
   case GRN_WAL_KEY_N_GARBAGES :
     string = "n-garbages";
     break;
-  case GRN_WAL_KEY_POSITION :
-    string = "position";
+  case GRN_WAL_KEY_N_ENTRIES :
+    string = "n-entries";
     break;
-  case GRN_WAL_KEY_ELEMENT_SIZE :
-    string = "element-size";
+  case GRN_WAL_KEY_MAX_OFFSET :
+    string = "max-offset";
+    break;
+  case GRN_WAL_KEY_EXPECTED_N_ENTRIES :
+    string = "expected-n-entries";
     break;
   }
   return string;
 }
 
 const char *
-grn_wal_reader_value_type_to_string(grn_wal_reader_value_type type)
+grn_wal_reader_data_type_to_string(grn_wal_reader_data_type type)
 {
   const char *string = "unknown";
   switch (type) {
-  case GRN_WAL_READER_VALUE_NIL :
+  case GRN_WAL_READER_DATA_NIL :
     string = "nil";
     break;
-  case GRN_WAL_READER_VALUE_BOOLEAN :
+  case GRN_WAL_READER_DATA_BOOLEAN :
     string = "boolean";
     break;
-  case GRN_WAL_READER_VALUE_INT64 :
+  case GRN_WAL_READER_DATA_INT64 :
     string = "int64";
     break;
-  case GRN_WAL_READER_VALUE_UINT64 :
+  case GRN_WAL_READER_DATA_UINT64 :
     string = "uint64";
     break;
-  case GRN_WAL_READER_VALUE_FLOAT32 :
+  case GRN_WAL_READER_DATA_FLOAT32 :
     string = "float32";
     break;
-  case GRN_WAL_READER_VALUE_FLOAT64 :
+  case GRN_WAL_READER_DATA_FLOAT64 :
     string = "float64";
     break;
-  case GRN_WAL_READER_VALUE_BINARY :
+  case GRN_WAL_READER_DATA_BINARY :
     string = "binary";
     break;
-  case GRN_WAL_READER_VALUE_STRING :
+  case GRN_WAL_READER_DATA_STRING :
     string = "string";
     break;
   }
@@ -616,6 +664,57 @@ grn_wal_reader_read_next(grn_ctx *ctx,
 }
 #endif
 
+static void
+grn_wal_reader_read_data(grn_ctx *ctx,
+                         grn_wal_reader *reader,
+                         grn_wal_reader_data *data,
+                         msgpack_object *value,
+                         const char *tag)
+{
+  switch (value->type) {
+  case MSGPACK_OBJECT_BOOLEAN :
+    data->type = GRN_WAL_READER_DATA_BOOLEAN;
+    data->content.boolean = value->via.boolean;
+    break;
+  case MSGPACK_OBJECT_POSITIVE_INTEGER :
+    data->type = GRN_WAL_READER_DATA_UINT64;
+    data->content.uint64 = value->via.u64;
+    break;
+  case MSGPACK_OBJECT_NEGATIVE_INTEGER :
+    data->type = GRN_WAL_READER_DATA_INT64;
+    data->content.int64 = value->via.i64;
+    break;
+  case MSGPACK_OBJECT_FLOAT32 :
+    data->type = GRN_WAL_READER_DATA_FLOAT32;
+    data->content.float32 = value->via.f64;
+    break;
+  case MSGPACK_OBJECT_FLOAT64 :
+    data->type = GRN_WAL_READER_DATA_FLOAT64;
+    data->content.float64 = value->via.f64;
+    break;
+  case MSGPACK_OBJECT_STR :
+    data->type = GRN_WAL_READER_DATA_STRING;
+    data->content.string.data = value->via.str.ptr;
+    data->content.string.size = value->via.str.size;
+    break;
+  case MSGPACK_OBJECT_BIN :
+    data->type = GRN_WAL_READER_DATA_BINARY;
+    data->content.binary.data = value->via.bin.ptr;
+    data->content.binary.size = value->via.bin.size;
+    break;
+  default :
+    grn_obj_set_error(ctx,
+                      reader->obj,
+                      GRN_INVALID_ARGUMENT,
+                      GRN_ID_NIL,
+                      tag,
+                      "unsupported MessagePack type: <%s>(%u)",
+                      grn_msgpack_object_type_to_string(value->type),
+                      value->type);
+    break;
+  }
+}
+
 grn_rc
 grn_wal_reader_read_entry(grn_ctx *ctx,
                           grn_wal_reader *reader,
@@ -626,21 +725,27 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
   }
 
 #ifdef GRN_WITH_MESSAGE_PACK
-  const char *tag = "[tag][reader][read-record]";
   if (!grn_wal_reader_read_next(ctx, reader)) {
     return GRN_END_OF_DATA;
   }
 
+  grn_obj tag_buffer;
+  GRN_TEXT_INIT(&tag_buffer, 0);
+  GRN_TEXT_PUTS(ctx, &tag_buffer, "[reader][read-entry]");
+  GRN_TEXT_PUTS(ctx, &tag_buffer, reader->tag);
+  GRN_TEXT_PUTC(ctx, &tag_buffer, '\0');
+  const char *tag = GRN_TEXT_VALUE(&tag_buffer);
   if (reader->unpacked.data.type != MSGPACK_OBJECT_MAP) {
-    GRN_DEFINE_NAME(reader->obj);
-    ERR(GRN_FILE_CORRUPT,
-        "%s[%.*s]%s must be map: <%s>(%u)",
-        tag,
-        name_size, name,
-        reader->tag,
-        grn_msgpack_object_type_to_string(reader->unpacked.data.type),
-        reader->unpacked.data.type);
-    return ctx->rc;
+    grn_obj_set_error(
+      ctx,
+      reader->obj,
+      GRN_FILE_CORRUPT,
+      GRN_ID_NIL,
+      tag,
+      "must be map: <%s>(%u)",
+      grn_msgpack_object_type_to_string(reader->unpacked.data.type),
+      reader->unpacked.data.type);
+    goto exit;
   }
 
   msgpack_object_map *map = &(reader->unpacked.data.via.map);
@@ -662,54 +767,29 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
     case GRN_WAL_KEY_RECORD_ID :
       entry->record_id = value->via.u64;
       break;
+    case GRN_WAL_KEY_ELEMENT_SIZE :
+      entry->element_size = value->via.u64;
+      break;
+    case GRN_WAL_KEY_KEY :
+      grn_wal_reader_read_data(ctx, reader, &(entry->key), value, tag);
+      break;
+    case GRN_WAL_KEY_KEY_SIZE :
+      entry->key.content.uint64 = value->via.u64;
+      break;
+    case GRN_WAL_KEY_KEY_HASH_VALUE :
+      entry->key_hash_value = value->via.u64;
+      break;
     case GRN_WAL_KEY_VALUE :
-      switch (value->type) {
-      case MSGPACK_OBJECT_BOOLEAN :
-        entry->value.type = GRN_WAL_READER_VALUE_BOOLEAN;
-        entry->value.data.boolean = value->via.boolean;
-        break;
-      case MSGPACK_OBJECT_POSITIVE_INTEGER :
-        entry->value.type = GRN_WAL_READER_VALUE_UINT64;
-        entry->value.data.uint64 = value->via.u64;
-        break;
-      case MSGPACK_OBJECT_NEGATIVE_INTEGER :
-        entry->value.type = GRN_WAL_READER_VALUE_INT64;
-        entry->value.data.int64 = value->via.i64;
-        break;
-      case MSGPACK_OBJECT_FLOAT32 :
-        entry->value.type = GRN_WAL_READER_VALUE_FLOAT32;
-        entry->value.data.float32 = value->via.f64;
-        break;
-      case MSGPACK_OBJECT_FLOAT64 :
-        entry->value.type = GRN_WAL_READER_VALUE_FLOAT64;
-        entry->value.data.float64 = value->via.f64;
-        break;
-      case MSGPACK_OBJECT_STR :
-        entry->value.type = GRN_WAL_READER_VALUE_STRING;
-        entry->value.data.string.data = value->via.str.ptr;
-        entry->value.data.string.size = value->via.str.size;
-        break;
-      case MSGPACK_OBJECT_BIN :
-        entry->value.type = GRN_WAL_READER_VALUE_BINARY;
-        entry->value.data.binary.data = value->via.bin.ptr;
-        entry->value.data.binary.size = value->via.bin.size;
-        break;
-      default :
-        {
-          GRN_DEFINE_NAME(reader->obj);
-          ERR(GRN_INVALID_ARGUMENT,
-              "%s[%.*s]%s unsupported MessagePack type: <%s>(%u)",
-              tag,
-              name_size, name,
-              reader->tag,
-              grn_msgpack_object_type_to_string(value->type),
-              value->type);
-        }
-        break;
-      }
+      grn_wal_reader_read_data(ctx, reader, &(entry->value), value, tag);
+      break;
+    case GRN_WAL_KEY_INDEX_HASH_VALUE :
+      entry->index_hash_value = value->via.u64;
       break;
     case GRN_WAL_KEY_SEGMENT :
       entry->segment = value->via.u64;
+      break;
+    case GRN_WAL_KEY_POSITION :
+      entry->position = value->via.u64;
       break;
     case GRN_WAL_KEY_SEGMENT_TYPE :
       entry->segment_type = value->via.u64;
@@ -735,32 +815,38 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
     case GRN_WAL_KEY_GARBAGE_SEGMENT_N_RECORDS :
       entry->garbage_segment_n_records = value->via.u64;
       break;
+    case GRN_WAL_KEY_NEXT_GARBAGE_RECORD_ID :
+      entry->next_garbage_record_id = value->via.u64;
+      break;
     case GRN_WAL_KEY_N_GARBAGES :
       entry->n_garbages = value->via.u64;
       break;
-    case GRN_WAL_KEY_POSITION :
-      entry->position = value->via.u64;
+    case GRN_WAL_KEY_N_ENTRIES :
+      entry->n_entries = value->via.u64;
       break;
-    case GRN_WAL_KEY_ELEMENT_SIZE :
-      entry->element_size = value->via.u64;
+    case GRN_WAL_KEY_MAX_OFFSET :
+      entry->max_offset = value->via.u64;
+      break;
+    case GRN_WAL_KEY_EXPECTED_N_ENTRIES :
+      entry->expected_n_entries = value->via.u64;
       break;
     default :
-      {
-        GRN_DEFINE_NAME(reader->obj);
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s]%s unsupported key: <%s>(%u)",
-            tag,
-            name_size, name,
-            reader->tag,
-            grn_wal_key_to_string(key),
-            key);
-      }
+      grn_obj_set_error(ctx,
+                        reader->obj,
+                        GRN_INVALID_ARGUMENT,
+                        GRN_ID_NIL,
+                        tag,
+                        "unsupported key: <%s>(%u)",
+                        grn_wal_key_to_string(key),
+                        key);
       break;
     }
     if (ctx->rc != GRN_SUCCESS) {
       break;
     }
   }
+exit :
+  GRN_OBJ_FIN(ctx, &tag_buffer);
 #endif
   return ctx->rc;
 }
@@ -792,7 +878,10 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       "event:%s(%u) "
       "record-id:%u "
       "element-size:%u "
+      "key-type:%s(%u) "
+      "key-hash-value:%u "
       "value-type:%s(%u) "
+      "index-hash-value:%u "
       "segment:%u "
       "position:%u "
       "segment-type:%s(%u) "
@@ -803,6 +892,9 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       "previous-garbage-segment:%u "
       "next-garbage-segment:%u "
       "n-garbages:%u "
+      "n-entries:%u "
+      "max-offset:%u "
+      "expected-n-entries:%u "
       "path:<%s>",
       tag,
       name_size, name,
@@ -813,8 +905,12 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       entry->event,
       entry->record_id,
       entry->element_size,
-      grn_wal_reader_value_type_to_string(entry->value.type),
+      grn_wal_reader_data_type_to_string(entry->key.type),
+      entry->key.type,
+      entry->key_hash_value,
+      grn_wal_reader_data_type_to_string(entry->value.type),
       entry->value.type,
+      entry->index_hash_value,
       entry->segment,
       entry->position,
       grn_wal_segment_type_to_string(entry->segment_type),
@@ -828,6 +924,9 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       entry->previous_garbage_segment,
       entry->next_garbage_segment,
       entry->n_garbages,
+      entry->n_entries,
+      entry->max_offset,
+      entry->expected_n_entries,
       path);
 }
 

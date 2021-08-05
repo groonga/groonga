@@ -457,15 +457,11 @@ grn_ra_wal_recover(grn_ctx *ctx, grn_ra *ra)
     if (rc != GRN_SUCCESS) {
       break;
     }
-    /* TODO: Or ensure idempotence and always apply all entries. */
-    if (entry.id <= ra->header->wal_id) {
-      continue;
-    }
     grn_ra_set_value_raw(ctx,
                          ra,
                          entry.record_id,
-                         entry.value.data.binary.data,
-                         entry.value.data.binary.size);
+                         entry.value.content.binary.data,
+                         entry.value.content.binary.size);
     if (ctx->rc != GRN_SUCCESS) {
       break;
     }
@@ -6163,10 +6159,6 @@ grn_ja_wal_recover(grn_ctx *ctx, grn_ja *ja)
     if (rc != GRN_SUCCESS) {
       break;
     }
-    /* TODO: Or ensure idempotence and always apply all entries. */
-    if (entry.id <= *(ja->header->wal_id)) {
-      continue;
-    }
     switch (entry.event) {
     case GRN_WAL_EVENT_NEW_SEGMENT :
       switch (entry.segment_type) {
@@ -6299,7 +6291,8 @@ grn_ja_wal_recover(grn_ctx *ctx, grn_ja *ja)
                                       "failed to refer element info segment");
             break;
           }
-          grn_ja_einfo *new_einfo = (grn_ja_einfo *)&(entry.value.data.uint64);
+          grn_ja_einfo *new_einfo =
+            (grn_ja_einfo *)&(entry.value.content.uint64);
           grn_ja_einfo_segment_use(ctx,
                                    ja,
                                    einfo,
@@ -6447,8 +6440,8 @@ grn_ja_wal_recover(grn_ctx *ctx, grn_ja *ja)
             break;
           }
           memcpy(address + entry.position,
-                 entry.value.data.binary.data,
-                 entry.value.data.binary.size);
+                 entry.value.content.binary.data,
+                 entry.value.content.binary.size);
           grn_io_seg_unref(ctx, ja->io, entry.segment);
         }
         break;
@@ -6456,8 +6449,8 @@ grn_ja_wal_recover(grn_ctx *ctx, grn_ja *ja)
         {
           uint32_t n_segments =
             grn_ja_compute_huge_n_segments(entry.element_size);
-          const uint8_t *data = entry.value.data.binary.data;
-          size_t rest_size = entry.value.data.binary.size;
+          const uint8_t *data = entry.value.content.binary.data;
+          size_t rest_size = entry.value.content.binary.size;
           uint32_t i;
           for (i = 0; i < n_segments; i++) {
             uint32_t segment = entry.segment + i;

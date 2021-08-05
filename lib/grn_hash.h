@@ -275,7 +275,8 @@ struct _grn_hash {
   grn_id normalizer;\
   uint32_t truncated;\
   uint64_t curr_key_large;\
-  uint32_t reserved[12]
+  uint64_t wal_id;\
+  uint32_t reserved[10]
 
 struct _grn_hash_header_common {
   GRN_HASH_HEADER_COMMON_FIELDS;
@@ -329,6 +330,8 @@ struct _grn_table_sort_optarg {
   grn_obj *proc;
   int offset;
 };
+
+void grn_hash_init_from_env(void);
 
 GRN_API int grn_hash_sort(grn_ctx *ctx, grn_hash *hash, int limit,
                           grn_array *result, grn_table_sort_optarg *optarg);
@@ -406,6 +409,7 @@ grn_bool grn_hash_is_large_total_key_size(grn_ctx *ctx, grn_hash *hash);
 uint64_t grn_hash_total_key_size(grn_ctx *ctx, grn_hash *hash);
 uint64_t grn_hash_max_total_key_size(grn_ctx *ctx, grn_hash *hash);
 
+grn_rc grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash);
 grn_rc grn_hash_warm(grn_ctx *ctx, grn_hash *hash);
 
 #ifdef __cplusplus

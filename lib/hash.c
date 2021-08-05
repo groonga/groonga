@@ -18,10 +18,12 @@
 
 #include "grn_hash.h"
 #include "grn_normalizer.h"
+#include "grn_obj.h"
 #include "grn_output.h"
 #include "grn_posting.h"
 #include "grn_selector.h"
 #include "grn_store.h"
+#include "grn_wal.h"
 
 #include <string.h>
 #include <limits.h>
@@ -1214,6 +1216,23 @@ grn_array_warm(grn_ctx *ctx, grn_array *array)
    GRN_HASH_KEY_MAX_N_SEGMENTS_LARGE - 1)
 #define IDX_MASK_IN_A_SEGMENT 0xfffff
 
+static uint32_t grn_hash_initial_max_offset = IDX_MASK_IN_A_SEGMENT + 1;
+
+void
+grn_hash_init_from_env(void)
+{
+  {
+    /* Just for test. */
+    char grn_hash_initial_max_offset_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_HASH_INITIAL_MAX_OFFSET",
+               grn_hash_initial_max_offset_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_hash_initial_max_offset_env[0]) {
+      grn_hash_initial_max_offset = atoi(grn_hash_initial_max_offset_env);
+    }
+  }
+}
+
 typedef struct {
   uint8_t key[4];
   uint8_t value[1];
@@ -1290,14 +1309,6 @@ typedef struct {
   uint32_t str;
   uint8_t dummy[1];
 } entry_str;
-
-typedef struct {
-  uint32_t key;
-  uint16_t flag;
-  uint16_t size;
-  char *str;
-  uint8_t dummy[1];
-} entry_astr;
 
 enum {
   GRN_HASH_KEY_SEGMENT    = 0,
@@ -1669,21 +1680,6 @@ get_value(grn_ctx *ctx, grn_hash *hash, entry_str *n)
   return grn_hash_entry_get_value(ctx, hash, (grn_hash_entry *)n);
 }
 
-grn_inline static grn_rc
-put_key(grn_ctx *ctx, grn_hash *hash, entry_str *n, uint32_t h,
-        const char *key, unsigned int len)
-{
-  return grn_hash_entry_put_key(ctx, hash, (grn_hash_entry *)n, h, key, len);
-}
-
-grn_inline static int
-match_key(grn_ctx *ctx, grn_hash *hash, entry_str *ee, uint32_t h,
-          const char *key, unsigned int len)
-{
-  return grn_hash_entry_compare_key(ctx, hash, (grn_hash_entry *)ee,
-                                    h, key, len);
-}
-
 #define GARBAGE (0xffffffff)
 
 grn_inline static uint32_t
@@ -1764,7 +1760,7 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   }
   grn_io_set_type(io, GRN_TABLE_HASH_KEY);
 
-  max_offset = IDX_MASK_IN_A_SEGMENT + 1;
+  max_offset = grn_hash_initial_max_offset;
   while (max_offset < init_size * 2) {
     max_offset *= 2;
   }
@@ -2128,6 +2124,407 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
   return rc;
 }
 
+typedef struct {
+  grn_hash *hash;
+  uint64_t wal_id;
+  const char *tag;
+  grn_wal_event event;
+  grn_id record_id;
+  const void *key;
+  uint32_t key_size;
+  uint32_t key_hash_value;
+  uint64_t key_offset;
+  uint32_t index_hash_value;
+  grn_id next_garbage_record_id;
+  uint32_t n_entries;
+  uint32_t n_garbages;
+  uint32_t max_offset;
+  uint32_t expected_n_entries;
+  const void *value;
+} grn_hash_wal_add_entry_data;
+
+typedef struct {
+  bool record_id;
+  bool key;
+  bool key_size;
+  bool key_hash_value;
+  bool index_hash_value;
+  bool next_garbage_record_id;
+  bool n_garbages;
+  bool n_entries;
+  bool max_offset;
+  bool expected_n_entries;
+} grn_hash_wal_add_entry_used;
+
+static grn_rc
+grn_hash_wal_add_entry_add_entry(grn_ctx *ctx,
+                                 grn_hash_wal_add_entry_data *data,
+                                 grn_hash_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->index_hash_value = true;
+  used->n_entries = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->hash),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_INDEX_HASH_VALUE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->index_hash_value,
+
+                           GRN_WAL_KEY_N_ENTRIES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_entries,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_hash_wal_add_entry_reuse_entry(grn_ctx *ctx,
+                                   grn_hash_wal_add_entry_data *data,
+                                   grn_hash_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->key_size = true;
+  used->index_hash_value = true;
+  used->n_garbages = true;
+  used->n_entries = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->hash),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_KEY_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->key_size,
+
+                           GRN_WAL_KEY_INDEX_HASH_VALUE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->index_hash_value,
+
+                           GRN_WAL_KEY_N_GARBAGES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_garbages,
+
+                           GRN_WAL_KEY_N_ENTRIES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_entries,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_hash_wal_add_entry_reset_entry(grn_ctx *ctx,
+                                   grn_hash_wal_add_entry_data *data,
+                                   grn_hash_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->key_size = true;
+  used->next_garbage_record_id = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->hash),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_KEY_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->key_size,
+
+                           GRN_WAL_KEY_NEXT_GARBAGE_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->next_garbage_record_id,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_hash_wal_add_entry_enable_entry(grn_ctx *ctx,
+                                    grn_hash_wal_add_entry_data *data,
+                                    grn_hash_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->hash),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_hash_wal_add_entry_set_entry_key(grn_ctx *ctx,
+                                     grn_hash_wal_add_entry_data *data,
+                                     grn_hash_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->key = true;
+  used->key_size = true;
+  used->key_hash_value = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->hash),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_KEY,
+                           GRN_WAL_VALUE_BINARY,
+                           data->key,
+                           data->key_size,
+
+                           GRN_WAL_KEY_KEY_HASH_VALUE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->key_hash_value,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_hash_wal_add_entry_delete_entry(grn_ctx *ctx,
+                                    grn_hash_wal_add_entry_data *data,
+                                    grn_hash_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->key_size = true;
+  used->index_hash_value = true;
+  used->n_garbages = true;
+  used->n_entries = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->hash),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_KEY_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->key_size,
+
+                           GRN_WAL_KEY_INDEX_HASH_VALUE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->index_hash_value,
+
+                           GRN_WAL_KEY_N_GARBAGES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_garbages,
+
+                           GRN_WAL_KEY_N_ENTRIES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_entries,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_hash_wal_add_entry_rehash(grn_ctx *ctx,
+                              grn_hash_wal_add_entry_data *data,
+                              grn_hash_wal_add_entry_used *used)
+{
+  used->n_entries = true;
+  used->max_offset = true;
+  used->expected_n_entries = true;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->hash),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_N_ENTRIES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_entries,
+
+                           GRN_WAL_KEY_MAX_OFFSET,
+                           GRN_WAL_VALUE_UINT32,
+                           data->max_offset,
+
+                           GRN_WAL_KEY_EXPECTED_N_ENTRIES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->expected_n_entries,
+
+                           GRN_WAL_KEY_END);
+}
+
+static void
+grn_hash_wal_add_entry_format_deatils(grn_ctx *ctx,
+                                      grn_hash_wal_add_entry_data *data,
+                                      grn_hash_wal_add_entry_used *used,
+                                      grn_obj *details)
+{
+  grn_text_printf(ctx,
+                  details,
+                  "event:%u<%s> ",
+                  data->event,
+                  grn_wal_event_to_string(data->event));
+  if (used->record_id) {
+    grn_text_printf(ctx, details, "record-id:%u ", data->record_id);
+  }
+  if (used->key_size) {
+    grn_text_printf(ctx, details, "key-size:%u ", data->key_size);
+  }
+  if (used->key_hash_value) {
+    grn_text_printf(ctx, details, "key-hash-value:%u ", data->key_hash_value);
+  }
+  if (used->index_hash_value) {
+    grn_text_printf(ctx,
+                    details,
+                    "index-hash-value:%u ",
+                    data->index_hash_value);
+  }
+  if (used->next_garbage_record_id) {
+    grn_text_printf(ctx,
+                    details,
+                    "next-garbage-record-id:%u ",
+                    data->next_garbage_record_id);
+  }
+  if (used->n_garbages) {
+    grn_text_printf(ctx, details, "n-garbages:%u ", data->n_garbages);
+  }
+  if (used->n_entries) {
+    grn_text_printf(ctx, details, "n-entries:%u ", data->n_entries);
+  }
+  if (used->max_offset) {
+    grn_text_printf(ctx, details, "max-offset:%u ", data->max_offset);
+  }
+  if (used->expected_n_entries) {
+    grn_text_printf(ctx,
+                    details,
+                    "expected-n-entries:%u ",
+                    data->expected_n_entries);
+  }
+}
+
+static grn_rc
+grn_hash_wal_add_entry(grn_ctx *ctx, grn_hash_wal_add_entry_data *data)
+{
+  if (!data->hash->io) {
+    return GRN_SUCCESS;
+  }
+  if (data->hash->io->path[0] == '\0') {
+    return GRN_SUCCESS;
+  }
+
+  grn_rc rc = GRN_SUCCESS;
+  const char *usage = "";
+  grn_hash_wal_add_entry_used used = {0};
+
+  switch (data->event) {
+  case GRN_WAL_EVENT_ADD_ENTRY :
+    usage = "adding entry";
+    rc = grn_hash_wal_add_entry_add_entry(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_REUSE_ENTRY :
+    usage = "reusing entry";
+    rc = grn_hash_wal_add_entry_reuse_entry(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_RESET_ENTRY :
+    usage = "resetting entry";
+    rc = grn_hash_wal_add_entry_reset_entry(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_ENABLE_ENTRY :
+    usage = "enabling entry";
+    rc = grn_hash_wal_add_entry_enable_entry(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_SET_ENTRY_KEY :
+    usage = "setting entry key";
+    rc = grn_hash_wal_add_entry_set_entry_key(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_DELETE_ENTRY :
+    usage = "deleting entry";
+    rc = grn_hash_wal_add_entry_delete_entry(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_REHASH :
+    usage = "rehash";
+    rc = grn_hash_wal_add_entry_rehash(ctx, data, &used);
+    break;
+  default :
+    usage = "not implemented event";
+    rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+    break;
+  }
+
+  if (rc != GRN_SUCCESS) {
+    grn_obj details;
+    GRN_TEXT_INIT(&details, 0);
+    grn_hash_wal_add_entry_format_deatils(ctx, data, &used, &details);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)(data->hash),
+                      rc,
+                      data->record_id,
+                      data->tag,
+                      "failed to add WAL entry for %s: %.*s",
+                      usage,
+                      (int)GRN_TEXT_LEN(&details),
+                      GRN_TEXT_VALUE(&details));
+    GRN_OBJ_FIN(ctx, &details);
+  }
+
+  return rc;
+}
+
+grn_inline static void
+grn_hash_wal_set_wal_id(grn_ctx *ctx, grn_hash *hash, uint64_t wal_id)
+{
+  if (!grn_hash_is_io_hash(hash)) {
+    return;
+  }
+  hash->header.common->wal_id = wal_id;
+}
+
 grn_inline static uint32_t
 grn_hash_calculate_hash_value(const void *ptr, uint32_t size)
 {
@@ -2146,7 +2543,7 @@ grn_hash_calculate_step(uint32_t hash_value)
 }
 
 static grn_rc
-grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
+grn_hash_rehash(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
 {
   grn_id *new_index = NULL;
   uint32_t new_index_size = INITIAL_INDEX_SIZE;
@@ -2185,7 +2582,7 @@ grn_hash_reset(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
     if (grn_logger_pass(ctx, log_level)) {
       GRN_DEFINE_NAME(hash);
       GRN_LOG(ctx, log_level,
-              "[hash][reset][%.*s] <%u> -> <%u>: "
+              "[hash][rehash][%.*s] <%u> -> <%u>: "
               "max-offset:<%u> "
               "n-garbages:<%u>",
               name_size, name,
@@ -2339,93 +2736,248 @@ grn_hash_size(grn_ctx *ctx, grn_hash *hash)
   return *hash->n_entries;
 }
 
-grn_inline static grn_id
-grn_io_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
-                const void *key, unsigned int key_size, void **value)
+grn_inline static grn_hash_entry *
+grn_io_hash_reuse_entry(grn_ctx *ctx,
+                        grn_hash *hash,
+                        grn_id id,
+                        uint32_t key_size,
+                        grn_id *index,
+                        uint32_t new_n_garbages,
+                        uint32_t new_n_entries,
+                        const char *tag)
 {
-  grn_id entry_id;
-  grn_hash_entry *entry;
+  grn_hash_entry *entry = grn_io_hash_entry_at(ctx, hash, id, GRN_TABLE_ADD);
+  if (!entry) {
+    grn_obj_set_error(ctx,
+                      (grn_obj *)hash,
+                      GRN_INVALID_ARGUMENT,
+                      id,
+                      tag,
+                      "failed to reuse entry");
+    return NULL;
+  }
+  *index = id;
+  *(hash->n_garbages) = new_n_garbages;
+  *(hash->n_entries) = new_n_entries;
+  return entry;
+}
+
+grn_inline static void
+grn_io_hash_reset_entry(grn_ctx *ctx,
+                        grn_hash *hash,
+                        grn_hash_entry *entry,
+                        grn_id next_garbage_id,
+                        uint32_t key_size,
+                        const char *tag)
+{
   grn_hash_header_common * const header = hash->header.common;
   grn_id *garbages;
+  if (GRN_HASH_IS_LARGE_KEY(hash)) {
+    garbages = hash->header.large->garbages;
+  } else {
+    garbages = hash->header.normal->garbages;
+  }
+  uint32_t garbage_index = key_size - 1;
+  garbages[garbage_index] = next_garbage_id;
+  if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+    /* keep entry->io_entry's hash_value, flag, key_size and key. */
+    if (grn_hash_is_large_total_key_size(ctx, hash)) {
+      memset(entry->io_entry_large.value, 0, header->value_size);
+    } else {
+      memset(entry->io_entry_normal.value, 0, header->value_size);
+    }
+  } else {
+    memset(entry, 0, header->entry_size);
+  }
+}
 
+grn_inline static grn_hash_entry *
+grn_io_hash_add_entry(grn_ctx *ctx,
+                      grn_hash *hash,
+                      grn_id id,
+                      grn_id *index,
+                      uint32_t new_n_entries,
+                      const char *tag)
+{
+  grn_hash_entry *entry = grn_io_hash_entry_at(ctx, hash, id, GRN_TABLE_ADD);
+  if (!entry) {
+    grn_obj_set_error(ctx,
+                      (grn_obj *)hash,
+                      GRN_INVALID_ARGUMENT,
+                      id,
+                      tag,
+                      "failed to add entry");
+    return NULL;
+  }
+  hash->header.common->curr_rec = id;
+  *index = id;
+  *(hash->n_entries) = new_n_entries;
+  return entry;
+}
+
+grn_inline static bool
+grn_io_hash_enable_entry(grn_ctx *ctx,
+                         grn_hash *hash,
+                         grn_id id,
+                         const char *tag)
+{
+  if (!grn_io_array_bit_on(ctx, hash->io, GRN_HASH_BITMAP_SEGMENT, id)) {
+    grn_obj_set_error(ctx,
+                      (grn_obj *)hash,
+                      GRN_INVALID_ARGUMENT,
+                      id,
+                      tag,
+                      "failed to set a bit for the entry");
+    return false;
+  }
+  return true;
+}
+
+grn_inline static grn_id
+grn_io_hash_add(grn_ctx *ctx,
+                grn_hash *hash,
+                uint32_t hash_value,
+                const void *key,
+                uint32_t key_size,
+                void **value,
+                grn_id *index,
+                uint32_t index_hash_value)
+{
+  grn_hash_header_common * const header = hash->header.common;
+  grn_hash_wal_add_entry_data wal_data = {0};
+  wal_data.hash = hash;
+  wal_data.tag = "[hash][io][add]";
+  wal_data.key = key;
+  wal_data.key_size = key_size;
+  wal_data.key_hash_value = hash_value;
+  wal_data.index_hash_value = index_hash_value;
+
+  grn_id *garbages;
   if (GRN_HASH_IS_LARGE_KEY(hash)) {
     garbages = hash->header.large->garbages;
   } else {
     garbages = hash->header.normal->garbages;
   }
 
-  entry_id = garbages[key_size - 1];
-  if (entry_id) {
-    entry = grn_io_hash_entry_at(ctx, hash, entry_id, GRN_TABLE_ADD);
-    if (!entry) {
-      GRN_DEFINE_NAME(hash);
-      ERR(GRN_INVALID_ARGUMENT, "[hash][io][add] failed to reuse entry: <%.*s>: <%u>",
-          name_size, name, entry_id);
+  grn_hash_entry *entry;
+  uint32_t garbage_index = key_size - 1;
+  grn_id garbage_id = garbages[garbage_index];
+  if (garbage_id != GRN_ID_NIL) {
+    wal_data.event = GRN_WAL_EVENT_REUSE_ENTRY;
+    wal_data.record_id = garbage_id;
+    wal_data.n_garbages = *(hash->n_garbages) - 1;
+    wal_data.n_entries = *(hash->n_entries) + 1;
+    if (grn_hash_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
       return GRN_ID_NIL;
     }
-    garbages[key_size - 1] = *(grn_id *)entry;
-    if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-      /* keep entry->io_entry's hash_value, flag, key_size and key. */
-      if (grn_hash_is_large_total_key_size(ctx, hash)) {
-        memset(entry->io_entry_large.value, 0, header->value_size);
-      } else {
-        memset(entry->io_entry_normal.value, 0, header->value_size);
-      }
-    } else {
-      memset(entry, 0, header->entry_size);
+    entry = grn_io_hash_reuse_entry(ctx,
+                                    hash,
+                                    wal_data.record_id,
+                                    wal_data.key_size,
+                                    index,
+                                    wal_data.n_garbages,
+                                    wal_data.n_entries,
+                                    wal_data.tag);
+    if (!entry) {
+      return GRN_ID_NIL;
     }
+    wal_data.event = GRN_WAL_EVENT_RESET_ENTRY;
+    wal_data.next_garbage_record_id = *((grn_id *)entry);
+    if (grn_hash_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
+      return GRN_ID_NIL;
+    }
+    grn_io_hash_reset_entry(ctx,
+                            hash,
+                            entry,
+                            wal_data.next_garbage_record_id,
+                            wal_data.key_size,
+                            wal_data.tag);
   } else {
-    entry_id = header->curr_rec + 1;
-    entry = grn_hash_entry_at(ctx, hash, entry_id, GRN_TABLE_ADD);
-    if (!entry) {
-      GRN_DEFINE_NAME(hash);
-      ERR(GRN_INVALID_ARGUMENT, "[hash][io][add] failed to add entry: <%.*s>: <%u>",
-          name_size, name, entry_id);
+    wal_data.event = GRN_WAL_EVENT_ADD_ENTRY;
+    wal_data.record_id = header->curr_rec + 1;
+    wal_data.n_entries = *(hash->n_entries) + 1;
+    if (grn_hash_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
       return GRN_ID_NIL;
     }
-    header->curr_rec = entry_id;
+    entry = grn_io_hash_add_entry(ctx,
+                                  hash,
+                                  wal_data.record_id,
+                                  index,
+                                  wal_data.n_entries,
+                                  wal_data.tag);
+    if (!entry) {
+      return GRN_ID_NIL;
+    }
   }
 
-  if (!grn_io_array_bit_on(ctx, hash->io, GRN_HASH_BITMAP_SEGMENT, entry_id)) {
-    GRN_DEFINE_NAME(hash);
-    ERR(GRN_INVALID_ARGUMENT, "[hash][io][add] failed to set a bit for the entry: <%.*s>: <%u>",
-        name_size, name, entry_id);
+  wal_data.event = GRN_WAL_EVENT_ENABLE_ENTRY;
+  if (grn_hash_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
+    return GRN_ID_NIL;
+  }
+  if (!grn_io_hash_enable_entry(ctx, hash, wal_data.record_id, wal_data.tag)) {
     return GRN_ID_NIL;
   }
 
-  {
-    grn_rc rc;
-    rc = grn_hash_entry_put_key(ctx, hash, entry, hash_value, key, key_size);
-    if (rc != GRN_SUCCESS) {
-      grn_obj buffer, key_buffer;
-      GRN_TEXT_INIT(&buffer, 0);
-      GRN_OBJ_INIT(&key_buffer, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, ((grn_obj *)hash)->header.domain);
-      GRN_TEXT_SET(ctx, &key_buffer, key, key_size);
-      grn_inspect(ctx, &buffer, &key_buffer);
-      GRN_OBJ_FIN(ctx, &key_buffer);
-
-      GRN_DEFINE_NAME(hash);
-      ERR(rc, "[hash][io][add] failed to put key: <%.*s>: <%.*s>",
-          name_size, name, (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-      GRN_OBJ_FIN(ctx, &buffer);
-      rc = grn_hash_delete_by_id(ctx, hash, entry_id, NULL);
-      if (rc != GRN_SUCCESS) {
-        ERR(rc, "[hash][io][add] failed to delete by id: <%.*s>: <%u>",
-            name_size, name, entry_id);
-      }
-      return GRN_ID_NIL;
-    }
+  wal_data.event = GRN_WAL_EVENT_SET_ENTRY_KEY;
+  if (grn_hash_is_large_total_key_size(ctx, hash)) {
+    wal_data.key_offset = header->curr_key_large;
+  } else {
+    wal_data.key_offset = header->curr_key_normal;
+  }
+  if (grn_hash_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
+    goto exit;
+  }
+  grn_rc rc = grn_hash_entry_put_key(ctx,
+                                     hash,
+                                     entry,
+                                     hash_value,
+                                     key,
+                                     key_size);
+  if (rc != GRN_SUCCESS) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect_key(ctx, &inspected, (grn_obj *)hash, key, key_size);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)hash,
+                      rc,
+                      wal_data.record_id,
+                      wal_data.tag,
+                      "failed to put key: <%.*s>",
+                      (int)GRN_TEXT_LEN(&inspected),
+                      GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    goto exit;
   }
 
   if (value) {
     *value = grn_hash_entry_get_value(ctx, hash, entry);
   }
-  return entry_id;
+
+exit :
+  if (ctx->rc != GRN_SUCCESS && entry) {
+    rc = grn_hash_delete_by_id(ctx, hash, wal_data.record_id, NULL);
+    if (rc != GRN_SUCCESS) {
+      grn_obj_set_error(ctx,
+                        (grn_obj *)hash,
+                        rc,
+                        wal_data.record_id,
+                        wal_data.tag,
+                        "failed to delete by id");
+    }
+    return GRN_ID_NIL;
+  }
+
+  return wal_data.record_id;
 }
 
 grn_inline static grn_id
-grn_tiny_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
-                  const void *key, unsigned int key_size, void **value)
+grn_tiny_hash_add(grn_ctx *ctx,
+                  grn_hash *hash,
+                  uint32_t hash_value,
+                  const void *key,
+                  unsigned int key_size,
+                  void **value,
+                  grn_id *index)
 {
   grn_id entry_id;
   grn_hash_entry *entry;
@@ -2433,6 +2985,7 @@ grn_tiny_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
     entry_id = hash->garbages;
     entry = (grn_hash_entry *)grn_tiny_array_get(&hash->a, entry_id);
     hash->garbages = *(grn_id *)entry;
+    (*hash->n_garbages)--;
     memset(entry, 0, hash->entry_size);
   } else {
     entry_id = hash->a.max + 1;
@@ -2441,6 +2994,8 @@ grn_tiny_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
       return GRN_ID_NIL;
     }
   }
+  *index = entry_id;
+  (*hash->n_entries)++;
 
   if (!grn_tiny_bitmap_put_and_set(&hash->bitmap, entry_id, 1)) {
     /* TODO: error handling. */
@@ -2457,10 +3012,10 @@ grn_tiny_hash_add(grn_ctx *ctx, grn_hash *hash, uint32_t hash_value,
 }
 
 grn_inline static grn_rc
-grn_hash_ensure_reset(grn_ctx *ctx,
-                      grn_hash *hash,
-                      uint32_t threshold,
-                      const char *tag)
+grn_hash_ensure_rehash(grn_ctx *ctx,
+                       grn_hash *hash,
+                       uint32_t threshold,
+                       const char *tag)
 {
   if (threshold < *hash->max_offset) {
     return GRN_SUCCESS;
@@ -2475,14 +3030,31 @@ grn_hash_ensure_reset(grn_ctx *ctx,
     return ctx->rc;
   }
 
-  grn_rc rc = grn_hash_reset(ctx, hash, 0);
+  grn_hash_wal_add_entry_data wal_data = {0};
+  wal_data.hash = hash;
+  wal_data.tag = tag;
+  wal_data.event = GRN_WAL_EVENT_REHASH;
+  wal_data.n_entries = *(hash->n_entries);
+  wal_data.max_offset = *(hash->max_offset);
+  wal_data.expected_n_entries = 0;
+  if (grn_hash_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+  grn_rc rc = grn_hash_rehash(ctx, hash, wal_data.expected_n_entries);
   if (rc != GRN_SUCCESS) {
-    GRN_DEFINE_NAME(hash);
-    ERR(rc, "%s[%.*s] failed to reset hash",
-        tag,
-        name_size, name);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)hash,
+                      rc,
+                      GRN_ID_NIL,
+                      tag,
+                      "failed to rehash: "
+                      "n-entries:%u "
+                      "max-offset:%u",
+                      wal_data.n_entries,
+                      wal_data.max_offset);
     return rc;
   }
+  grn_hash_wal_set_wal_id(ctx, hash, wal_data.wal_id);
 
   return GRN_SUCCESS;
 }
@@ -2492,7 +3064,7 @@ grn_hash_add_entry(grn_ctx *ctx,
                    grn_hash *hash,
                    uint32_t hash_value,
                    const void *key,
-                   size_t key_size,
+                   uint32_t key_size,
                    void **value,
                    int *added,
                    bool is_record,
@@ -2501,6 +3073,8 @@ grn_hash_add_entry(grn_ctx *ctx,
   uint32_t i;
   const uint32_t step = grn_hash_calculate_step(hash_value);
   grn_id id, *index, *garbage_index = NULL;
+  uint32_t index_hash_value = 0;
+  uint32_t garbage_index_hash_value = 0;
   for (i = hash_value; ; i += step) {
     index = grn_hash_idx_at(ctx, hash, i);
     if (!index) {
@@ -2512,6 +3086,7 @@ grn_hash_add_entry(grn_ctx *ctx,
           i);
       return GRN_ID_NIL;
     }
+    index_hash_value = i;
     id = *index;
     if (id == GRN_ID_NIL) {
       break;
@@ -2519,6 +3094,7 @@ grn_hash_add_entry(grn_ctx *ctx,
     if (id == GARBAGE) {
       if (!garbage_index) {
         garbage_index = index;
+        garbage_index_hash_value = index_hash_value;
       }
       continue;
     }
@@ -2549,10 +3125,32 @@ grn_hash_add_entry(grn_ctx *ctx,
     }
   }
 
-  if (grn_hash_is_io_hash(hash)) {
-    id = grn_io_hash_add(ctx, hash, hash_value, key, key_size, value);
+  grn_id *target_index;
+  uint32_t target_index_hash_value;
+  if (garbage_index) {
+    target_index = garbage_index;
+    target_index_hash_value = garbage_index_hash_value;
   } else {
-    id = grn_tiny_hash_add(ctx, hash, hash_value, key, key_size, value);
+    target_index = index;
+    target_index_hash_value = index_hash_value;
+  }
+  if (grn_hash_is_io_hash(hash)) {
+    id = grn_io_hash_add(ctx,
+                         hash,
+                         hash_value,
+                         key,
+                         key_size,
+                         value,
+                         target_index,
+                         target_index_hash_value);
+  } else {
+    id = grn_tiny_hash_add(ctx,
+                           hash,
+                           hash_value,
+                           key,
+                           key_size,
+                           value,
+                           target_index);
   }
   if (id == GRN_ID_NIL) {
     GRN_DEFINE_NAME(hash);
@@ -2571,13 +3169,6 @@ grn_hash_add_entry(grn_ctx *ctx,
     }
     return GRN_ID_NIL;
   }
-  if (garbage_index) {
-    (*hash->n_garbages)--;
-    index = garbage_index;
-  }
-  *index = id;
-  (*hash->n_entries)++;
-
   if (added) {
     *added = 1;
   }
@@ -2586,7 +3177,7 @@ grn_hash_add_entry(grn_ctx *ctx,
 
 grn_id
 grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
-             unsigned int key_size, void **value, int *added)
+             uint32_t key_size, void **value, int *added)
 {
   const char *tag = "[hash][add]";
   uint32_t hash_value;
@@ -2640,7 +3231,7 @@ grn_hash_add(grn_ctx *ctx, grn_hash *hash, const void *key,
   if (!grn_id_maybe_table(ctx, hash->obj.header.domain)) {
     reset_threshold *= 2;
   }
-  grn_rc rc = grn_hash_ensure_reset(ctx, hash, reset_threshold, tag);
+  grn_rc rc = grn_hash_ensure_rehash(ctx, hash, reset_threshold, tag);
   if (rc != GRN_SUCCESS) {
     return GRN_ID_NIL;
   }
@@ -2776,7 +3367,7 @@ grn_hash_add_record(grn_ctx *ctx,
                     const char *tag)
 {
   const grn_id key = posting->rid;
-  const size_t key_size = sizeof(grn_id);
+  const uint32_t key_size = sizeof(grn_id);
   const uint32_t hash_value = key;
   void *value = NULL;
   grn_id id;
@@ -2845,7 +3436,7 @@ grn_hash_add_table_cursor(grn_ctx *ctx,
   if (op == GRN_OP_OR) {
     grn_obj *table = grn_table_cursor_table(ctx, cursor);
     const uint32_t reset_threshold = grn_table_size(ctx, table);
-    rc = grn_hash_ensure_reset(ctx, hash, reset_threshold, tag);
+    rc = grn_hash_ensure_rehash(ctx, hash, reset_threshold, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -2885,7 +3476,7 @@ grn_hash_add_index_cursor(grn_ctx *ctx,
     grn_obj *table = grn_ctx_at(ctx, DB_OBJ(index_column)->range);
     const uint32_t reset_threshold = grn_table_size(ctx, table);
     grn_obj_unref(ctx, table);
-    rc = grn_hash_ensure_reset(ctx, hash, reset_threshold, tag);
+    rc = grn_hash_ensure_rehash(ctx, hash, reset_threshold, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -2927,7 +3518,7 @@ grn_hash_add_ii_cursor(grn_ctx *ctx,
     grn_obj *table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
     const uint32_t reset_threshold = grn_table_size(ctx, table);
     grn_obj_unref(ctx, table);
-    rc = grn_hash_ensure_reset(ctx, hash, reset_threshold, tag);
+    rc = grn_hash_ensure_rehash(ctx, hash, reset_threshold, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -2966,7 +3557,7 @@ grn_hash_add_ii_select_cursor(grn_ctx *ctx,
     grn_obj *table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
     const uint32_t reset_threshold = grn_table_size(ctx, table);
     grn_obj_unref(ctx, table);
-    rc = grn_hash_ensure_reset(ctx, hash, reset_threshold, tag);
+    rc = grn_hash_ensure_rehash(ctx, hash, reset_threshold, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
     }
@@ -3166,18 +3757,27 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
     return GRN_NO_MEMORY_AVAILABLE;
   }
 
+  grn_hash_wal_add_entry_data wal_data = {0};
+  wal_data.hash = hash;
+  wal_data.tag = "[hash][set-value]";
+  wal_data.record_id = id;
+  int32_t int32_value;
+  int64_t int64_value;
+
   switch (flags & GRN_OBJ_SET_MASK) {
   case GRN_OBJ_SET :
-    grn_memcpy(entry_value, value, hash->value_size);
+    wal_data.value = value;
     return GRN_SUCCESS;
   case GRN_OBJ_INCR :
     switch (hash->value_size) {
     case sizeof(int32_t) :
-      *((int32_t *)entry_value) += *((int32_t *)value);
-      return GRN_SUCCESS;
+      int32_value = *((int32_t *)entry_value) + *((int32_t *)value);
+      wal_data.value = &int32_value;
+      break;
     case sizeof(int64_t) :
-      *((int64_t *)entry_value) += *((int64_t *)value);
-      return GRN_SUCCESS;
+      int64_value = *((int64_t *)entry_value) + *((int64_t *)value);
+      wal_data.value = &int64_value;
+      break;
     default :
       return GRN_INVALID_ARGUMENT;
     }
@@ -3185,73 +3785,139 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
   case GRN_OBJ_DECR :
     switch (hash->value_size) {
     case sizeof(int32_t) :
-      *((int32_t *)entry_value) -= *((int32_t *)value);
-      return GRN_SUCCESS;
+      int32_value = *((int32_t *)entry_value) - *((int32_t *)value);
+      wal_data.value = &int32_value;
+      break;
     case sizeof(int64_t) :
-      *((int64_t *)entry_value) -= *((int64_t *)value);
-      return GRN_SUCCESS;
+      int64_value = *((int64_t *)entry_value) - *((int64_t *)value);
+      wal_data.value = &int64_value;
+      break;
     default :
       return GRN_INVALID_ARGUMENT;
     }
     break;
   default :
-    ERR(GRN_INVALID_ARGUMENT, "flags = %d", flags);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)hash,
+                      GRN_INVALID_ARGUMENT,
+                      wal_data.record_id,
+                      wal_data.tag,
+                      "set flag must be "
+                      "GRN_OBJ_SET, GRN_OBJ_INCR or GRN_OBJ_DECR: "
+                      "%s<%d|%d>",
+                      grn_obj_set_flag_to_string(flags),
+                      flags & GRN_OBJ_SET_MASK,
+                      flags);
     return ctx->rc;
   }
+
+  if (grn_hash_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+  grn_memcpy(entry_value, wal_data.value, hash->value_size);
+  return ctx->rc;
 }
 
-#define DELETE_IT do {\
-  *ep = GARBAGE;\
-  if (grn_hash_is_io_hash(hash)) {\
-    uint32_t size = key_size - 1;\
-    grn_id *garbages;\
-    if (GRN_HASH_IS_LARGE_KEY(hash)) {\
-      garbages = hash->header.large->garbages;\
-    } else {\
-      garbages = hash->header.normal->garbages;\
-    }\
-    ee->key = garbages[size];\
-    garbages[size] = e;\
-    grn_io_array_bit_off(ctx, hash->io, GRN_HASH_BITMAP_SEGMENT, e);\
-  } else {\
-    ee->key = hash->garbages;\
-    hash->garbages = e;\
-    if ((hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) && !(ee->flag & HASH_IMMEDIATE)) {\
-      grn_ctx *ctx = hash->ctx;\
-      GRN_CTX_FREE(ctx, ((entry_astr *)ee)->str);\
-    }\
-    grn_tiny_bitmap_get_and_set(&hash->bitmap, e, 0);\
-  }\
-  (*hash->n_entries)--;\
-  (*hash->n_garbages)++;\
-  rc = GRN_SUCCESS;\
-} while (0)
+typedef struct {
+  grn_hash *hash;
+  const char *tag;
+  grn_id index_hash_value;
+  grn_id *index;
+  grn_id id;
+  grn_hash_entry *entry;
+  uint32_t key_size;
+  uint32_t new_n_garbages;
+  uint32_t new_n_entries;
+} grn_hash_delete_data;
+
+grn_inline static grn_rc
+grn_hash_delete_entry(grn_ctx *ctx, grn_hash_delete_data *data)
+{
+  grn_hash *hash = data->hash;
+  *(data->index) = GARBAGE;
+  if (grn_hash_is_io_hash(hash)) {
+    grn_id *garbages;
+    if (GRN_HASH_IS_LARGE_KEY(hash)) {
+      garbages = hash->header.large->garbages;
+    } else {
+      garbages = hash->header.normal->garbages;
+    }
+    uint32_t garbage_index = data->key_size - 1;
+    *((grn_id *)(data->entry)) = garbages[garbage_index];
+    garbages[garbage_index] = data->id;
+    grn_io_array_bit_off(ctx, hash->io, GRN_HASH_BITMAP_SEGMENT, data->id);
+  } else {
+    *((grn_id *)(data->entry)) = hash->garbages;
+    hash->garbages = data->id;
+    if ((hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) &&
+        !(data->entry->header.flag & HASH_IMMEDIATE)) {
+      grn_ctx *ctx = hash->ctx;
+      GRN_CTX_FREE(ctx, data->entry->tiny_entry.key.ptr);
+    }
+    grn_tiny_bitmap_get_and_set(&hash->bitmap, data->id, 0);
+  }
+  *hash->n_garbages = data->new_n_garbages;
+  *hash->n_entries = data->new_n_entries;
+  return GRN_SUCCESS;
+}
+
+grn_inline static grn_rc
+grn_hash_delete_internal(grn_ctx *ctx, grn_hash_delete_data *data)
+{
+  data->new_n_garbages = *(data->hash->n_garbages) + 1;
+  data->new_n_entries = *(data->hash->n_entries) - 1;
+  grn_hash_wal_add_entry_data wal_data = {0};
+  wal_data.hash = data->hash;
+  wal_data.tag = data->tag;
+  wal_data.event = GRN_WAL_EVENT_DELETE_ENTRY;
+  wal_data.record_id = data->id;
+  wal_data.key_size = data->key_size;
+  wal_data.index_hash_value = data->index_hash_value;
+  wal_data.n_garbages = data->new_n_garbages;
+  wal_data.n_entries = data->new_n_entries;
+  if (grn_hash_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+  grn_rc rc = grn_hash_delete_entry(ctx, data);
+  if (rc == GRN_SUCCESS) {
+    grn_hash_wal_set_wal_id(ctx, data->hash, wal_data.wal_id);
+  }
+  return ctx->rc;
+}
 
 grn_rc
 grn_hash_delete_by_id(grn_ctx *ctx, grn_hash *hash, grn_id id,
                       grn_table_delete_optarg *optarg)
 {
-  entry_str *ee;
-  grn_rc rc;
-  if (!hash || !id) { return GRN_INVALID_ARGUMENT; }
-  rc = grn_hash_error_if_truncated(ctx, hash);
+  grn_hash_delete_data data = {0};
+  data.hash = hash;
+  data.tag = "[hash][delete][id]";
+  data.id = id;
+  if (!hash || id == GRN_ID_NIL) { return GRN_INVALID_ARGUMENT; }
+  grn_rc rc = grn_hash_error_if_truncated(ctx, hash);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
   rc = GRN_INVALID_ARGUMENT;
   /* lock */
-  ee = grn_hash_entry_at(ctx, hash, id, 0);
-  if (ee) {
-    grn_id e, *ep;
-    uint32_t i, key_size, h = ee->key, s = grn_hash_calculate_step(h);
-    key_size = (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) ? ee->size : hash->key_size;
-    for (i = h; ; i += s) {
-      if (!(ep = grn_hash_idx_at(ctx, hash, i))) { return GRN_NO_MEMORY_AVAILABLE; }
-      if (!(e = *ep)) { break; }
-      if (e == id) {
-        DELETE_IT;
-        break;
-      }
+  data.entry = grn_hash_entry_at(ctx, hash, data.id, 0);
+  if (data.entry) {
+    uint32_t hash_value = data.entry->hash_value;
+    uint32_t step = grn_hash_calculate_step(hash_value);
+    if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
+      data.key_size = data.entry->header.key_size;
+    } else {
+      data.key_size = hash->key_size;
+    }
+    for (data.index_hash_value = hash_value;
+         ;
+         data.index_hash_value += step) {
+      data.index = grn_hash_idx_at(ctx, hash, data.index_hash_value);
+      if (!data.index) { return GRN_NO_MEMORY_AVAILABLE; }
+      if (*(data.index) == GRN_ID_NIL) { break; }
+      if (*(data.index) != id) { continue; }
+      rc = grn_hash_delete_internal(ctx, &data);
+      break;
     }
   }
   /* unlock */
@@ -3262,53 +3928,55 @@ grn_rc
 grn_hash_delete(grn_ctx *ctx, grn_hash *hash, const void *key, uint32_t key_size,
                 grn_table_delete_optarg *optarg)
 {
-  uint32_t h, i, m, s;
+  grn_hash_delete_data data = {0};
+  data.hash = hash;
+  data.tag = "[hash][delete][key]";
+  data.key_size = key_size;
   grn_rc rc = grn_hash_error_if_truncated(ctx, hash);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
   rc = GRN_INVALID_ARGUMENT;
+  uint32_t hash_value;
   if (hash->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) {
     if (key_size > hash->key_size) { return GRN_INVALID_ARGUMENT; }
-    h = grn_hash_calculate_hash_value(key, key_size);
+    hash_value = grn_hash_calculate_hash_value(key, key_size);
   } else {
     if (key_size != hash->key_size) { return GRN_INVALID_ARGUMENT; }
     if (key_size == sizeof(uint32_t)) {
-      h = *((uint32_t *)key);
+      hash_value = *((uint32_t *)key);
     } else {
-      h = grn_hash_calculate_hash_value(key, key_size);
+      hash_value = grn_hash_calculate_hash_value(key, key_size);
     }
   }
-  s = grn_hash_calculate_step(h);
+  uint32_t step = grn_hash_calculate_step(hash_value);
   {
-    grn_id e, *ep;
     /* lock */
-    m = *hash->max_offset;
-    for (i = h; ; i += s) {
-      if (!(ep = grn_hash_idx_at(ctx, hash, i))) { return GRN_NO_MEMORY_AVAILABLE; }
-      if (!(e = *ep)) { break; }
-      if (e == GARBAGE) { continue; }
-      {
-        entry_str * const ee = grn_hash_entry_at(ctx, hash, e, 0);
-        if (ee && match_key(ctx, hash, ee, h, key, key_size)) {
-          DELETE_IT;
-          break;
-        }
+    for (data.index_hash_value = hash_value;
+         ;
+         data.index_hash_value += step) {
+      data.index = grn_hash_idx_at(ctx, hash, data.index_hash_value);
+      if (!data.index) { return GRN_NO_MEMORY_AVAILABLE; }
+      data.id = *(data.index);
+      if (data.id == GRN_ID_NIL) { break; }
+      if (data.id == GARBAGE) { continue; }
+      data.entry = grn_hash_entry_at(ctx, hash, data.id, 0);
+      if (!data.entry) {
+        continue;
+      }
+      if (grn_hash_entry_compare_key(ctx,
+                                     hash,
+                                     data.entry,
+                                     hash_value,
+                                     key,
+                                     key_size)) {
+        rc = grn_hash_delete_internal(ctx, &data);
+        break;
       }
     }
     /* unlock */
     return rc;
   }
-}
-
-/* only valid for hash tables, GRN_OBJ_KEY_VAR_SIZE && GRN_HASH_TINY */
-const char *
-_grn_hash_strkey_by_val(void *v, uint16_t *size)
-{
-  entry_astr *n = (entry_astr *)((uintptr_t)v -
-                                 (uintptr_t)&((entry_astr *)0)->dummy);
-  *size = n->size;
-  return (n->flag & HASH_IMMEDIATE) ? (char *)&n->str : n->str;
 }
 
 void
@@ -4164,6 +4832,184 @@ grn_hash_max_total_key_size(grn_ctx *ctx, grn_hash *hash)
   } else {
     return GRN_HASH_KEY_MAX_TOTAL_SIZE_NORMAL;
   }
+}
+
+grn_rc
+grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
+{
+  const char *wal_error_tag = "[hash]";
+  const char *tag = "[hash][recover]";
+  grn_wal_reader *reader = grn_wal_reader_open(ctx, (grn_obj *)hash, tag);
+  if (!reader) {
+    return ctx->rc;
+  }
+
+  grn_io_clear_lock(hash->io);
+
+  while (true) {
+    grn_wal_reader_entry entry = {0};
+    grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &entry);
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+    switch (entry.event) {
+    case GRN_WAL_EVENT_ADD_ENTRY :
+      {
+        grn_id *index = grn_hash_idx_at(ctx, hash, entry.index_hash_value);
+        if (!index) {
+          grn_wal_set_recover_error(ctx,
+                                    GRN_NO_MEMORY_AVAILABLE,
+                                    (grn_obj *)hash,
+                                    &entry,
+                                    wal_error_tag,
+                                    "failed to refer index");
+          break;
+        }
+        if (!grn_io_hash_add_entry(ctx,
+                                   hash,
+                                   entry.record_id,
+                                   index,
+                                   entry.n_entries,
+                                   tag)) {
+          rc = ctx->rc;
+        }
+      }
+      break;
+    case GRN_WAL_EVENT_REUSE_ENTRY :
+      {
+        grn_id *index = grn_hash_idx_at(ctx, hash, entry.index_hash_value);
+        if (!index) {
+          grn_wal_set_recover_error(ctx,
+                                    GRN_NO_MEMORY_AVAILABLE,
+                                    (grn_obj *)hash,
+                                    &entry,
+                                    wal_error_tag,
+                                    "failed to refer index");
+          break;
+        }
+        if (!grn_io_hash_reuse_entry(ctx,
+                                     hash,
+                                     entry.record_id,
+                                     entry.key.content.uint64,
+                                     index,
+                                     entry.n_garbages,
+                                     entry.n_entries,
+                                     tag)) {
+          rc = ctx->rc;
+        }
+      }
+      break;
+    case GRN_WAL_EVENT_RESET_ENTRY :
+      {
+        grn_hash_entry *hash_entry =
+          grn_io_hash_entry_at(ctx, hash, entry.record_id, GRN_TABLE_ADD);
+        if (!hash_entry) {
+          grn_wal_set_recover_error(ctx,
+                                    GRN_NO_MEMORY_AVAILABLE,
+                                    (grn_obj *)hash,
+                                    &entry,
+                                    wal_error_tag,
+                                    "failed to refer hash entry");
+          break;
+        }
+        grn_io_hash_reset_entry(ctx,
+                                hash,
+                                hash_entry,
+                                entry.next_garbage_record_id,
+                                entry.key.content.uint64,
+                                tag);
+      }
+      break;
+    case GRN_WAL_EVENT_ENABLE_ENTRY :
+      if (!grn_io_hash_enable_entry(ctx,
+                                    hash,
+                                    entry.record_id,
+                                    tag)) {
+        rc = ctx->rc;
+      }
+      break;
+    case GRN_WAL_EVENT_SET_ENTRY_KEY :
+      {
+        grn_hash_entry *hash_entry =
+          grn_io_hash_entry_at(ctx, hash, entry.record_id, GRN_TABLE_ADD);
+        if (!hash_entry) {
+          grn_wal_set_recover_error(ctx,
+                                    GRN_NO_MEMORY_AVAILABLE,
+                                    (grn_obj *)hash,
+                                    &entry,
+                                    wal_error_tag,
+                                    "failed to refer hash entry");
+          break;
+        }
+        rc = grn_hash_entry_put_key(ctx,
+                                    hash,
+                                    hash_entry,
+                                    entry.key_hash_value,
+                                    entry.key.content.binary.data,
+                                    entry.key.content.binary.size);
+      }
+      break;
+    case GRN_WAL_EVENT_DELETE_ENTRY :
+      {
+        grn_hash_delete_data data;
+        data.hash = hash;
+        data.tag = tag;
+        data.index_hash_value = entry.index_hash_value;
+        data.index = grn_hash_idx_at(ctx, hash, data.index_hash_value);
+        if (!data.index) {
+          grn_wal_set_recover_error(ctx,
+                                    GRN_NO_MEMORY_AVAILABLE,
+                                    (grn_obj *)hash,
+                                    &entry,
+                                    wal_error_tag,
+                                    "failed to refer index");
+          break;
+        }
+        data.id = entry.record_id;
+        data.entry = grn_hash_entry_at(ctx, hash, data.id, 0);
+        if (!data.entry) {
+          grn_wal_set_recover_error(ctx,
+                                    GRN_NO_MEMORY_AVAILABLE,
+                                    (grn_obj *)hash,
+                                    &entry,
+                                    wal_error_tag,
+                                    "failed to refer hash entry");
+          break;
+        }
+        data.key_size = entry.key.content.uint64;
+        data.new_n_garbages = entry.n_garbages;
+        data.new_n_entries = entry.n_entries;
+        rc = grn_hash_delete_entry(ctx, &data);
+      }
+      break;
+    case GRN_WAL_EVENT_REHASH :
+      *(hash->n_entries) = entry.n_entries;
+      *(hash->max_offset) = entry.max_offset;
+      rc = grn_hash_rehash(ctx, hash, entry.expected_n_entries);
+      break;
+    default :
+      grn_wal_set_recover_error(ctx,
+                                GRN_FUNCTION_NOT_IMPLEMENTED,
+                                (grn_obj *)hash,
+                                &entry,
+                                wal_error_tag,
+                                "not implemented yet");
+      break;
+    }
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+    grn_hash_wal_set_wal_id(ctx, hash, entry.id);
+  }
+
+  grn_wal_reader_close(ctx, reader);
+
+  if (ctx->rc == GRN_SUCCESS) {
+    grn_obj_touch(ctx, (grn_obj *)hash, NULL);
+    grn_obj_flush(ctx, (grn_obj *)hash);
+  }
+
+  return ctx->rc;
 }
 
 grn_rc

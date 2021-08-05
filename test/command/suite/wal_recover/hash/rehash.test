@@ -1,0 +1,57 @@
+# wal_recover can't use with HTTP because requests via HTTP are always
+# processed by workers. Workers never use primary WAL role.
+#@require-interface stdio
+
+#$GRN_HASH_INITIAL_MAX_OFFSET=16
+#$GRN_WAL_ROLE=primary
+
+#@disable-logging
+cache_limit --max 0
+#@enable-logging
+
+table_create Data TABLE_HASH_KEY UInt32
+
+#@disable-logging
+io_flush
+#@copy-path #{db_path}.0000100 #{db_path}.0000100.initial
+#@enable-logging
+
+#@disable-logging
+# Initial rehash threashold is 16 (grn_hash_initial_max_offset).
+#@generate-series 0 8 Data '{"_key" => i * 100}'
+#@enable-logging
+
+select Data
+
+check --obj Data
+
+#@disable-logging
+#@copy-path #{db_path}.0000100.wal #{db_path}.0000100.wal.keep
+io_flush
+#@copy-path #{db_path}.0000100.initial #{db_path}.0000100
+#@enable-logging
+
+#@disable-logging
+thread_limit 1
+database_unmap
+#@copy-path #{db_path}.0000100.wal.keep #{db_path}.0000100.wal
+#@enable-logging
+
+select Data
+
+check --obj Data
+
+wal_recover
+
+select Data
+
+check --obj Data
+
+load --table Data
+[
+{"_key": 29}
+]
+
+select Data
+
+check --obj Data
