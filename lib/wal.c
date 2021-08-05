@@ -664,6 +664,7 @@ grn_wal_reader_read_next(grn_ctx *ctx,
 }
 #endif
 
+#ifdef GRN_WITH_MESSAGE_PACK
 static void
 grn_wal_reader_read_data(grn_ctx *ctx,
                          grn_wal_reader *reader,
@@ -714,6 +715,7 @@ grn_wal_reader_read_data(grn_ctx *ctx,
     break;
   }
 }
+#endif
 
 grn_rc
 grn_wal_reader_read_entry(grn_ctx *ctx,
