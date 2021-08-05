@@ -1454,7 +1454,7 @@ grn_io_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
                           const void *key, unsigned int key_size)
 {
   grn_bool is_large_mode;
-  grn_bool key_exist;
+  bool key_exist;
   uint64_t key_offset;
   grn_io_hash_entry_normal *io_entry_normal = &(entry->io_entry_normal);
   grn_io_hash_entry_large *io_entry_large = &(entry->io_entry_large);
@@ -1467,7 +1467,7 @@ grn_io_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
     key_exist = (io_entry_normal->key_size > 0);
   }
 
-  if (key_exist > 0) {
+  if (key_exist) {
     if (is_large_mode) {
       key_offset = io_entry_large->key.offset;
     } else {
