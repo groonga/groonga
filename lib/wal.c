@@ -779,6 +779,9 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
     case GRN_WAL_KEY_KEY_HASH_VALUE :
       entry->key_hash_value = value->via.u64;
       break;
+    case GRN_WAL_KEY_KEY_OFFSET :
+      entry->key_offset = value->via.u64;
+      break;
     case GRN_WAL_KEY_VALUE :
       grn_wal_reader_read_data(ctx, reader, &(entry->value), value, tag);
       break;
@@ -880,6 +883,7 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       "element-size:%u "
       "key-type:%s(%u) "
       "key-hash-value:%u "
+      "key-offset:%" GRN_FMT_INT64U " "
       "value-type:%s(%u) "
       "index-hash-value:%u "
       "segment:%u "
@@ -908,6 +912,7 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       grn_wal_reader_data_type_to_string(entry->key.type),
       entry->key.type,
       entry->key_hash_value,
+      entry->key_offset,
       grn_wal_reader_data_type_to_string(entry->value.type),
       entry->value.type,
       entry->index_hash_value,

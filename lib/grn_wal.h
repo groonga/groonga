@@ -137,6 +137,7 @@ typedef struct {
   uint32_t element_size;
   grn_wal_reader_data key;
   uint32_t key_hash_value;
+  uint64_t key_offset;
   grn_wal_reader_data value;
   uint32_t index_hash_value;
   uint32_t segment;

@@ -2148,6 +2148,7 @@ typedef struct {
   bool key;
   bool key_size;
   bool key_hash_value;
+  bool key_offset;
   bool index_hash_value;
   bool next_garbage_record_id;
   bool n_garbages;
@@ -2297,6 +2298,7 @@ grn_hash_wal_add_entry_set_entry_key(grn_ctx *ctx,
   used->key = true;
   used->key_size = true;
   used->key_hash_value = true;
+  used->key_offset = true;
   return grn_wal_add_entry(ctx,
                            (grn_obj *)(data->hash),
                            false,
@@ -2319,6 +2321,10 @@ grn_hash_wal_add_entry_set_entry_key(grn_ctx *ctx,
                            GRN_WAL_KEY_KEY_HASH_VALUE,
                            GRN_WAL_VALUE_UINT32,
                            data->key_hash_value,
+
+                           GRN_WAL_KEY_KEY_OFFSET,
+                           GRN_WAL_VALUE_UINT64,
+                           data->key_offset,
 
                            GRN_WAL_KEY_END);
 }
@@ -2418,6 +2424,12 @@ grn_hash_wal_add_entry_format_deatils(grn_ctx *ctx,
   }
   if (used->key_hash_value) {
     grn_text_printf(ctx, details, "key-hash-value:%u ", data->key_hash_value);
+  }
+  if (used->key_offset) {
+    grn_text_printf(ctx,
+                    details,
+                    "key-offset:%" GRN_FMT_INT64U " ",
+                    data->key_offset);
   }
   if (used->index_hash_value) {
     grn_text_printf(ctx,
@@ -4940,6 +4952,11 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
                                     wal_error_tag,
                                     "failed to refer hash entry");
           break;
+        }
+        if (grn_hash_is_large_total_key_size(ctx, hash)) {
+          hash->header.common->curr_key_large = entry.key_offset;
+        } else {
+          hash->header.common->curr_key_normal = entry.key_offset;
         }
         rc = grn_hash_entry_put_key(ctx,
                                     hash,
