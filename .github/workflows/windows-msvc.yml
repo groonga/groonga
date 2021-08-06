@@ -317,6 +317,7 @@ jobs:
           matrix.architecture == 'x64'
         run: |
           ridk exec pacman --sync --noconfirm mingw-w64-x86_64-arrow
+          $Env:MAKEFLAGS = "-j${Env:NUMBER_OF_PROCESSORS}"
           gem install red-arrow
       - name: "Test: command line"
         run: |

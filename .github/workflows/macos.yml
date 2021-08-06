@@ -70,7 +70,7 @@ jobs:
           make -C ../groonga.build -j$(/usr/sbin/sysctl -n hw.ncpu)
       - name: Install test dependencies
         run: |
-          gem install \
+          MAKEFLAGS=-j$(nproc) gem install \
             groonga-client \
             json \
             pkg-config \

@@ -49,12 +49,12 @@ apt install -V -y \
   gcc \
   make \
   ruby-dev
-gem install grntest
+MAKEFLAGS=-j$(nproc) gem install grntest
 
 if groonga --version | grep -q apache-arrow; then
   apt install -V -y \
     g++
-  gem install red-arrow
+  MAKEFLAGS=-j$(nproc) gem install red-arrow
 fi
 
 export TZ=Asia/Tokyo

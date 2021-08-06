@@ -37,7 +37,7 @@ ${DNF} install -y \
   make \
   redhat-rpm-config \
   ruby-devel
-gem install grntest
+MAKEFLAGS=-j$(nproc) gem install grntest
 
 export TZ=Asia/Tokyo
 

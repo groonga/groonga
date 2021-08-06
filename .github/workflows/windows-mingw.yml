@@ -77,7 +77,7 @@ jobs:
       - name: Install red-arrow
         shell: msys2 {0}
         run: |
-          gem install red-arrow
+          MAKEFLAGS=-j$(nproc) gem install red-arrow
       - name: "Test: command line"
         shell: msys2 {0}
         run: |

@@ -110,7 +110,7 @@ jobs:
           make -j$(nproc)
       - name: Install test dependencies
         run: |
-          sudo gem install \
+          sudo env MAKEFLAGS=-j$(nproc) gem install \
             groonga-client \
             groonga-synonym \
             json \
