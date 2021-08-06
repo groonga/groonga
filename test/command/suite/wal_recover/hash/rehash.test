@@ -30,12 +30,9 @@ check --obj Data
 #@disable-logging
 #@copy-path #{db_path}.0000100.wal #{db_path}.0000100.wal.keep
 io_flush
-#@copy-path #{db_path}.0000100.initial #{db_path}.0000100
-#@enable-logging
-
-#@disable-logging
 thread_limit 1
 database_unmap
+#@copy-path #{db_path}.0000100.initial #{db_path}.0000100
 #@copy-path #{db_path}.0000100.wal.keep #{db_path}.0000100.wal
 #@enable-logging
 

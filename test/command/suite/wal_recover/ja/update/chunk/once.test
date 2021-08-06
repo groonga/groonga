@@ -35,12 +35,9 @@ select Memos
 #@disable-logging
 #@copy-path #{db_path}.0000101.wal #{db_path}.0000101.wal.keep
 io_flush
-#@copy-path #{db_path}.0000101.initial #{db_path}.0000101
-#@enable-logging
-
-#@disable-logging
 thread_limit 1
 database_unmap
+#@copy-path #{db_path}.0000101.initial #{db_path}.0000101
 #@copy-path #{db_path}.0000101.wal.keep #{db_path}.0000101.wal
 #@enable-logging
 
