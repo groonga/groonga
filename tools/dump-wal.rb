@@ -31,6 +31,7 @@ if File.exist?(grn_wal_h_path)
     end
   end
   def describe(object)
+    return object unless object.is_a?(Hash)
     described = {}
     object.each do |key, value|
       key = @key_types[key] || key
