@@ -162,14 +162,15 @@ grn_ra_truncate(grn_ctx *ctx, grn_ra *ra)
     path = NULL;
   }
   element_size = ra->header->element_size;
-  if (path) {
-    grn_wal_clear(ctx, (grn_obj *)ra, true, "[truncate]");
-  }
   if ((rc = grn_io_close(ctx, ra->io))) { goto exit; }
   ra->io = NULL;
-  if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
-  if (!_grn_ra_create(ctx, ra, path, element_size)) {
-    rc = GRN_UNKNOWN_ERROR;
+  if (path) {
+    rc = grn_ra_remove(ctx, path);
+  }
+  if (rc == GRN_SUCCESS) {
+    if (!_grn_ra_create(ctx, ra, path, element_size)) {
+      rc = GRN_UNKNOWN_ERROR;
+    }
   }
 exit:
   if (path) { GRN_FREE(path); }
@@ -963,15 +964,16 @@ grn_ja_truncate(grn_ctx *ctx, grn_ja *ja)
   }
   max_element_size = ja->header->max_element_size;
   flags = ja->header->flags;
-  if (path) {
-    grn_wal_clear(ctx, (grn_obj *)ja, true, "[truncate]");
-  }
   if ((rc = grn_io_close(ctx, ja->io))) { goto exit; }
   ja->io = NULL;
-  if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
+  if (path) {
+    rc = grn_ja_remove(ctx, path);
+  }
   GRN_FREE(ja->header);
-  if (!_grn_ja_create(ctx, ja, path, max_element_size, flags)) {
-    rc = GRN_UNKNOWN_ERROR;
+  if (rc == GRN_SUCCESS) {
+    if (!_grn_ja_create(ctx, ja, path, max_element_size, flags)) {
+      rc = GRN_UNKNOWN_ERROR;
+    }
   }
 exit:
   if (path) { GRN_FREE(path); }

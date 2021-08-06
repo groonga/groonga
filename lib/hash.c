@@ -2068,7 +2068,13 @@ grn_rc
 grn_hash_remove(grn_ctx *ctx, const char *path)
 {
   if (!ctx || !path) { return GRN_INVALID_ARGUMENT; }
-  return grn_io_remove(ctx, path);
+  grn_rc wal_rc = grn_wal_remove(ctx, path, "[hash]");
+  grn_rc io_rc = grn_io_remove(ctx, path);
+  grn_rc rc = wal_rc;
+  if (rc == GRN_SUCCESS) {
+    rc = io_rc;
+  }
+  return rc;
 }
 
 grn_rc
@@ -2109,13 +2115,13 @@ grn_hash_truncate(grn_ctx *ctx, grn_hash *hash)
     if (!rc) {
       hash->io = NULL;
       if (path) {
-        rc = grn_io_remove(ctx, path);
+        rc = grn_hash_remove(ctx, path);
       }
     }
   } else {
     rc = grn_tiny_hash_fin(ctx, hash);
   }
-  if (!rc) {
+  if (rc == GRN_SUCCESS) {
     rc = grn_hash_init(ctx, hash, path, key_size, value_size, flags);
   }
   if (path) {
