@@ -2003,6 +2003,10 @@ grn_io_hash_fin(grn_ctx *ctx, grn_hash *hash)
 {
   grn_rc rc;
 
+  if (hash->io->path[0] != '\0' &&
+      grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) {
+    grn_obj_flush(ctx, (grn_obj *)hash);
+  }
   rc = grn_io_close(ctx, hash->io);
   grn_table_module_fin(ctx, &(hash->tokenizer));
   grn_table_modules_fin(ctx, &(hash->normalizers));
