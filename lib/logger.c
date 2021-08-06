@@ -963,7 +963,7 @@ grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
 
     va_start(args, format);
     GRN_BULK_REWIND(message);
-    grn_text_vprintf(ctx, message, format, args);
+    grn_text_printfv(ctx, message, format, args);
     va_end(args);
     GRN_TEXT_PUTC(ctx, message, '\0');
   }
