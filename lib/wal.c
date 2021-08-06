@@ -325,10 +325,12 @@ grn_wal_add_entryv(grn_ctx *ctx,
 
   uint8_t n_keys = 0;
   {
-    grn_wal_key current_key = key;
     va_list copied_args;
     va_copy(copied_args, args);
-    while (current_key != GRN_WAL_KEY_END) {
+    grn_wal_key current_key;
+    for (current_key = key;
+         current_key != GRN_WAL_KEY_END;
+         current_key = va_arg(copied_args, grn_wal_key)) {
       n_keys++;
       grn_wal_value_type value_type = va_arg(copied_args, grn_wal_value_type);
       switch (value_type) {
@@ -360,7 +362,6 @@ grn_wal_add_entryv(grn_ctx *ctx,
       default :
         break;
       }
-      current_key = va_arg(copied_args, grn_wal_key);
     }
     va_end(copied_args);
   }
@@ -370,8 +371,10 @@ grn_wal_add_entryv(grn_ctx *ctx,
   *wal_id = grn_wal_generate_id(ctx);
   msgpack_pack_uint64(&packer, *wal_id);
   {
-    grn_wal_key current_key = key;
-    while (current_key != GRN_WAL_KEY_END) {
+    grn_wal_key current_key;
+    for (current_key = key;
+         current_key != GRN_WAL_KEY_END;
+         current_key = va_arg(args, grn_wal_key)) {
       msgpack_pack_uint8(&packer, current_key);
       grn_wal_value_type value_type = va_arg(args, grn_wal_value_type);
       switch (value_type) {
@@ -441,7 +444,6 @@ grn_wal_add_entryv(grn_ctx *ctx,
         }
         break;
       }
-      current_key = va_arg(args, grn_wal_key);
     }
   }
 
