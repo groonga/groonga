@@ -21,7 +21,6 @@
 #include "grn.h"
 #include "grn_str.h"
 #include "grn_store.h"
-#include "grn_ctx_impl.h"
 #include "grn_obj.h"
 #include "grn_output.h"
 #include "grn_db.h"
@@ -125,7 +124,8 @@ grn_ra_close(grn_ctx *ctx, grn_ra *ra)
 {
   grn_rc rc;
   if (!ra) { return GRN_INVALID_ARGUMENT; }
-  if (ctx->impl->wal.role == GRN_WAL_ROLE_PRIMARY) {
+  if (ra->io->path[0] != '\0' &&
+      grn_ctx_get_wal_role(ctx)) {
     grn_obj_flush(ctx, (grn_obj *)ra);
   }
   rc = grn_io_close(ctx, ra->io);
@@ -924,7 +924,8 @@ grn_ja_close(grn_ctx *ctx, grn_ja *ja)
 {
   grn_rc rc;
   if (!ja) { return GRN_INVALID_ARGUMENT; }
-  if (ctx->impl->wal.role == GRN_WAL_ROLE_PRIMARY) {
+  if (ja->io->path[0] != '\0' &&
+      grn_ctx_get_wal_role(ctx)) {
     grn_obj_flush(ctx, (grn_obj *)ja);
   }
   rc = grn_io_close(ctx, ja->io);
