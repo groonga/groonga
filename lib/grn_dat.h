@@ -50,7 +50,8 @@ struct grn_dat_header {
   uint32_t file_id;
   grn_id normalizer;
   uint32_t n_dirty_opens;
-  uint32_t reserved[234];
+  uint64_t wal_id;
+  uint32_t reserved[232];
 };
 
 struct _grn_dat_cursor {
@@ -93,7 +94,8 @@ grn_bool grn_dat_is_corrupt(grn_ctx *ctx, grn_dat *dat);
 
 size_t grn_dat_get_disk_usage(grn_ctx *ctx, grn_dat *dat);
 
-grn_rc grn_dat_warm(grn_ctx *ctx, grn_dat *pat);
+grn_rc grn_dat_wal_recover(grn_ctx *ctx, grn_dat *dat);
+grn_rc grn_dat_warm(grn_ctx *ctx, grn_dat *dat);
 
 #ifdef __cplusplus
 }

@@ -19,12 +19,15 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <cstring>
+#include <sstream>
 #include <new>
 #include "grn_str.h"
 #include "grn_io.h"
 #include "grn_dat.h"
-#include "grn_util.h"
 #include "grn_normalizer.h"
+#include "grn_obj.h"
+#include "grn_util.h"
+#include "grn_wal.h"
 
 #include "dat/trie.hpp"
 #include "dat/cursor-factory.hpp"
@@ -311,6 +314,94 @@ bool grn_dat_rebuild_trie(grn_ctx *ctx, grn_dat *dat) {
   return true;
 }
 
+grn_id grn_dat_add_internal(grn_ctx *ctx,
+                            grn_dat *dat,
+                            const void *key,
+                            unsigned int key_size,
+                            int *added) {
+  if (!dat->trie) {
+    char trie_path[PATH_MAX];
+    grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, 1);
+    grn::dat::Trie * const new_trie = new (std::nothrow) grn::dat::Trie;
+    if (!new_trie) {
+      MERR("new grn::dat::Trie failed");
+      return GRN_ID_NIL;
+    }
+    try {
+      new_trie->create(trie_path);
+    } catch (const grn::dat::Exception &ex) {
+      ERR(grn_dat_translate_error_code(ex.code()),
+          "grn::dat::Trie::create failed: %s",
+          ex.what());
+      delete new_trie;
+      return GRN_ID_NIL;
+    }
+    dat->trie = new_trie;
+    dat->file_id = dat->header->file_id = 1;
+  }
+
+  grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  try {
+    grn::dat::UInt32 key_pos;
+    const bool res = trie->insert(key, key_size, &key_pos);
+    if (added) {
+      *added = res ? 1 : 0;
+    }
+    return trie->get_key(key_pos).id();
+  } catch (const grn::dat::SizeError &) {
+    if (!grn_dat_rebuild_trie(ctx, dat)) {
+      return GRN_ID_NIL;
+    }
+    grn::dat::Trie * const new_trie = static_cast<grn::dat::Trie *>(dat->trie);
+    grn::dat::UInt32 key_pos;
+    const bool res = new_trie->insert(key, key_size, &key_pos);
+    if (added) {
+      *added = res ? 1 : 0;
+    }
+    return new_trie->get_key(key_pos).id();
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        "grn::dat::Trie::insert failed: %s",
+        ex.what());
+    return GRN_ID_NIL;
+  }
+}
+
+grn_rc grn_dat_delete_by_id_internal(grn_ctx *ctx,
+                                     grn_dat *dat,
+                                     grn_id id) {
+  try {
+    grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+    if (!trie->remove(id)) {
+      return GRN_INVALID_ARGUMENT;
+    }
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        "grn::dat::Trie::remove failed: %s",
+        ex.what());
+    return ctx->rc;
+  }
+  return GRN_SUCCESS;
+}
+
+grn_rc grn_dat_delete_internal(grn_ctx *ctx,
+                               grn_dat *dat,
+                               const void *key,
+                               unsigned int key_size) {
+  try {
+    grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+    if (!trie->remove(key, key_size)) {
+      return GRN_INVALID_ARGUMENT;
+    }
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        "grn::dat::Trie::remove failed: %s",
+        ex.what());
+    return ctx->rc;
+  }
+  return GRN_SUCCESS;
+}
+
 void grn_dat_cursor_init(grn_ctx *, grn_dat_cursor *cursor) {
   GRN_DB_OBJ_SET_TYPE(cursor, GRN_CURSOR_TABLE_DAT_KEY);
   cursor->dat = NULL;
@@ -326,6 +417,252 @@ void grn_dat_cursor_fin(grn_ctx *, grn_dat_cursor *cursor) {
   cursor->key = &grn::dat::Key::invalid_key();
   cursor->curr_rec = GRN_ID_NIL;
 }
+
+void grn_dat_wal_set_wal_id(grn_ctx *, grn_dat *dat, uint64_t id) {
+  dat->header->wal_id = id;
+}
+
+class WALRecorder {
+ private:
+  struct Used {
+    bool record_id;
+    bool key;
+  };
+
+ public:
+  WALRecorder(grn_ctx *ctx, grn_dat *dat, const char *tag) :
+    ctx_(ctx),
+    dat_(dat),
+    tag_(tag),
+    wal_id_(0),
+    event(GRN_WAL_EVENT_NIL),
+    record_id(GRN_ID_NIL),
+    key(nullptr),
+    key_size(0) {
+  }
+
+  grn_rc record() {
+    if (!dat_->io) {
+      return GRN_SUCCESS;
+    }
+    if (dat_->io->path[0] == '\0') {
+      return GRN_SUCCESS;
+    }
+
+    grn_rc rc = GRN_SUCCESS;
+    const char *usage = "";
+    Used used;
+
+    switch (event) {
+    case GRN_WAL_EVENT_ADD_ENTRY :
+      usage = "adding entry";
+      rc = record_add_entry(used);
+      break;
+    case GRN_WAL_EVENT_DELETE_ENTRY :
+      usage = "deleting entry";
+      rc = record_delete_entry(used);
+      break;
+    default :
+      usage = "not implemented event";
+      rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+      break;
+    }
+
+    if (rc != GRN_SUCCESS) {
+      auto details = format_details(used);
+      grn_obj_set_error(ctx_,
+                        reinterpret_cast<grn_obj *>(dat_),
+                        rc,
+                        record_id,
+                        tag_,
+                        "failed to add WAL entry for %s: %s",
+                        usage,
+                        details.c_str());
+    }
+
+    return rc;
+  }
+
+  void apply_wal_id() {
+    grn_dat_wal_set_wal_id(ctx_, dat_, wal_id_);
+  }
+
+ private:
+  grn_ctx *ctx_;
+  grn_dat *dat_;
+  const char *tag_;
+  uint64_t wal_id_;
+ public:
+  grn_wal_event event;
+  grn_id record_id;
+  const void *key;
+  size_t key_size;
+
+ private:
+  // Disallows copy and assignment.
+  WALRecorder(const WALRecorder &);
+  WALRecorder &operator=(const WALRecorder &);
+
+  grn_rc record_add_entry(Used &used) {
+    used.key = true;
+    return grn_wal_add_entry(ctx_,
+                             reinterpret_cast<grn_obj *>(dat_),
+                             false,
+                             &wal_id_,
+                             tag_,
+
+                             GRN_WAL_KEY_EVENT,
+                             GRN_WAL_VALUE_EVENT,
+                             event,
+
+                             GRN_WAL_KEY_KEY,
+                             GRN_WAL_VALUE_BINARY,
+                             key,
+                             key_size,
+
+                             GRN_WAL_KEY_END);
+  }
+
+  grn_rc record_delete_entry(Used &used) {
+    if (record_id == GRN_ID_NIL) {
+      used.key = true;
+      return grn_wal_add_entry(ctx_,
+                               reinterpret_cast<grn_obj *>(dat_),
+                               false,
+                               &wal_id_,
+                               tag_,
+
+                               GRN_WAL_KEY_EVENT,
+                               GRN_WAL_VALUE_EVENT,
+                               event,
+
+                               GRN_WAL_KEY_KEY,
+                               GRN_WAL_VALUE_BINARY,
+                               key,
+                               key_size,
+
+                               GRN_WAL_KEY_END);
+    } else {
+      used.record_id = true;
+      return grn_wal_add_entry(ctx_,
+                               reinterpret_cast<grn_obj *>(dat_),
+                               false,
+                               &wal_id_,
+                               tag_,
+
+                               GRN_WAL_KEY_EVENT,
+                               GRN_WAL_VALUE_EVENT,
+                               event,
+
+                               GRN_WAL_KEY_RECORD_ID,
+                               GRN_WAL_VALUE_RECORD_ID,
+                               record_id,
+
+                               GRN_WAL_KEY_END);
+    }
+  }
+
+  std::string format_details(const Used &used) {
+    std::ostringstream details;
+    details << "event:" << event
+            << "<" << grn_wal_event_to_string(event) << "> ";
+    if (used.record_id) {
+      details << "record-id:" << record_id << " ";
+    }
+    if (used.key) {
+      details << "key-size:" << key_size << " ";
+    }
+    return details.str();
+  }
+};
+
+class WALRecoverer {
+ public:
+  WALRecoverer(grn_ctx *ctx, grn_dat *dat) :
+    ctx_(ctx),
+    dat_(dat),
+    wal_error_tag_("[dat]"),
+    tag_("[dat][recover]") {
+  }
+
+  grn_rc recover() {
+    if (!dat_->io) {
+      return GRN_SUCCESS;
+    }
+    if (dat_->io->path[0] == '\0') {
+      return GRN_SUCCESS;
+    }
+
+    auto reader = grn_wal_reader_open(ctx_,
+                                      reinterpret_cast<grn_obj *>(dat_),
+                                      tag_);
+    if (!reader) {
+      return ctx_->rc;
+    }
+
+    grn_io_clear_lock(dat_->io);
+
+    while(true) {
+      grn_wal_reader_entry entry = {};
+      grn_rc rc = grn_wal_reader_read_entry(ctx_, reader, &entry);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+      switch (entry.event) {
+      case GRN_WAL_EVENT_ADD_ENTRY :
+        grn_dat_add_internal(ctx_,
+                             dat_,
+                             entry.key.content.binary.data,
+                             entry.key.content.binary.size,
+                             nullptr);
+        break;
+      case GRN_WAL_EVENT_DELETE_ENTRY :
+        if (entry.record_id == GRN_ID_NIL) {
+          grn_dat_delete_internal(ctx_,
+                                  dat_,
+                                  entry.key.content.binary.data,
+                                  entry.key.content.binary.size);
+        } else {
+          grn_dat_delete_by_id_internal(ctx_,
+                                        dat_,
+                                        entry.record_id);
+        }
+        break;
+      default :
+        grn_wal_set_recover_error(ctx_,
+                                  GRN_FUNCTION_NOT_IMPLEMENTED,
+                                  reinterpret_cast<grn_obj *>(dat_),
+                                  &entry,
+                                  wal_error_tag_,
+                                  "not implemented yet");
+        break;
+      }
+      if (ctx_->rc != GRN_SUCCESS) {
+        break;
+      }
+      grn_dat_wal_set_wal_id(ctx_, dat_, entry.id);
+    }
+
+    grn_wal_reader_close(ctx_, reader);
+
+    if (ctx_->rc == GRN_SUCCESS) {
+      grn_obj_touch(ctx_, reinterpret_cast<grn_obj *>(dat_), NULL);
+      grn_obj_flush(ctx_, reinterpret_cast<grn_obj *>(dat_));
+    }
+
+    return ctx_->rc;
+  }
+
+ private:
+  grn_ctx *ctx_;
+  grn_dat *dat_;
+  const char *wal_error_tag_;
+  const char *tag_;
+
+  // Disallows copy and assignment.
+  WALRecoverer(const WALRecoverer &);
+  WALRecoverer &operator=(const WALRecoverer &);
+};
 
 }  // namespace
 
@@ -379,6 +716,8 @@ grn_dat_create(grn_ctx *ctx, const char *path, uint32_t,
   } else {
     dat->header->normalizer = GRN_ID_NIL;
   }
+  dat->header->n_dirty_opens = 0;
+  dat->header->wal_id = 0;
   dat->encoding = encoding;
 
   dat->obj.header.flags = dat->header->flags;
@@ -440,6 +779,10 @@ grn_rc
 grn_dat_close(grn_ctx *ctx, grn_dat *dat)
 {
   if (dat) {
+    if (dat->io->path[0] != '\0' &&
+        grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) {
+      grn_obj_flush(ctx, reinterpret_cast<grn_obj *>(dat));
+    }
     grn_dat_fin(ctx, dat);
     GRN_FREE(dat);
   }
@@ -478,7 +821,13 @@ grn_dat_remove(grn_ctx *ctx, const char *path)
   /*
     grn_io_remove() reports an error when it fails to remove `path'.
    */
-  return grn_io_remove(ctx, path);
+  grn_rc wal_rc = grn_wal_remove(ctx, path, "[dat]");
+  grn_rc io_rc = grn_io_remove(ctx, path);
+  grn_rc rc = wal_rc;
+  if (rc == GRN_SUCCESS) {
+    rc = io_rc;
+  }
+  return rc;
 }
 
 grn_id
@@ -520,52 +869,19 @@ grn_dat_add(grn_ctx *ctx, grn_dat *dat, const void *key,
     return GRN_ID_NIL;
   }
 
-  if (!dat->trie) {
-    char trie_path[PATH_MAX];
-    grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, 1);
-    grn::dat::Trie * const new_trie = new (std::nothrow) grn::dat::Trie;
-    if (!new_trie) {
-      MERR("new grn::dat::Trie failed");
-      return GRN_ID_NIL;
-    }
-    try {
-      new_trie->create(trie_path);
-    } catch (const grn::dat::Exception &ex) {
-      ERR(grn_dat_translate_error_code(ex.code()),
-          "grn::dat::Trie::create failed: %s",
-          ex.what());
-      delete new_trie;
-      return GRN_ID_NIL;
-    }
-    dat->trie = new_trie;
-    dat->file_id = dat->header->file_id = 1;
-  }
-
-  grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-  try {
-    grn::dat::UInt32 key_pos;
-    const bool res = trie->insert(key, key_size, &key_pos);
-    if (added) {
-      *added = res ? 1 : 0;
-    }
-    return trie->get_key(key_pos).id();
-  } catch (const grn::dat::SizeError &) {
-    if (!grn_dat_rebuild_trie(ctx, dat)) {
-      return GRN_ID_NIL;
-    }
-    grn::dat::Trie * const new_trie = static_cast<grn::dat::Trie *>(dat->trie);
-    grn::dat::UInt32 key_pos;
-    const bool res = new_trie->insert(key, key_size, &key_pos);
-    if (added) {
-      *added = res ? 1 : 0;
-    }
-    return new_trie->get_key(key_pos).id();
-  } catch (const grn::dat::Exception &ex) {
-    ERR(grn_dat_translate_error_code(ex.code()),
-        "grn::dat::Trie::insert failed: %s",
-        ex.what());
+  WALRecorder recorder(ctx, dat, "[dat][add]");
+  recorder.event = GRN_WAL_EVENT_ADD_ENTRY;
+  recorder.key = key;
+  recorder.key_size = key_size;
+  if (recorder.record() != GRN_SUCCESS) {
     return GRN_ID_NIL;
   }
+
+  grn_id id = grn_dat_add_internal(ctx, dat, key, key_size, added);
+  if (id != GRN_ID_NIL) {
+    recorder.apply_wal_id();
+  }
+  return id;
 }
 
 int
@@ -630,18 +946,18 @@ grn_dat_delete_by_id(grn_ctx *ctx, grn_dat *dat, grn_id id,
     }
   }
 
-  try {
-    grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-    if (!trie->remove(id)) {
-      return GRN_INVALID_ARGUMENT;
-    }
-  } catch (const grn::dat::Exception &ex) {
-    ERR(grn_dat_translate_error_code(ex.code()),
-        "grn::dat::Trie::remove failed: %s",
-        ex.what());
+  WALRecorder recorder(ctx, dat, "[dat][delete][id]");
+  recorder.event = GRN_WAL_EVENT_DELETE_ENTRY;
+  recorder.record_id = id;
+  auto rc = recorder.record();
+  if (rc != GRN_SUCCESS) {
     return ctx->rc;
   }
-  return GRN_SUCCESS;
+  rc = grn_dat_delete_by_id_internal(ctx, dat, id);
+  if (rc == GRN_SUCCESS) {
+    recorder.apply_wal_id();
+  }
+  return rc;
 }
 
 grn_rc
@@ -672,18 +988,19 @@ grn_dat_delete(grn_ctx *ctx, grn_dat *dat, const void *key, unsigned int key_siz
     }
   }
 
-  try {
-    grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-    if (!trie->remove(key, key_size)) {
-      return GRN_INVALID_ARGUMENT;
-    }
-  } catch (const grn::dat::Exception &ex) {
-    ERR(grn_dat_translate_error_code(ex.code()),
-        "grn::dat::Trie::remove failed: %s",
-        ex.what());
+  WALRecorder recorder(ctx, dat, "[dat][delete][key]");
+  recorder.event = GRN_WAL_EVENT_DELETE_ENTRY;
+  recorder.key = key;
+  recorder.key_size = key_size;
+  auto rc = recorder.record();
+  if (rc != GRN_SUCCESS) {
     return ctx->rc;
   }
-  return GRN_SUCCESS;
+  rc = grn_dat_delete_internal(ctx, dat, key, key_size);
+  if (rc == GRN_SUCCESS) {
+    recorder.apply_wal_id();
+  }
+  return rc;
 }
 
 grn_rc
@@ -1052,24 +1369,8 @@ grn_dat_cursor_delete(grn_ctx *ctx, grn_dat_cursor *c,
 {
   if (!c || !c->cursor) {
     return GRN_INVALID_ARGUMENT;
-  } else if (!grn_dat_open_trie_if_needed(ctx, c->dat)) {
-    return ctx->rc;
   }
-  grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(c->dat->trie);
-  if (!trie) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  try {
-    if (trie->remove(c->curr_rec)) {
-      return GRN_SUCCESS;
-    }
-  } catch (const grn::dat::Exception &ex) {
-    ERR(grn_dat_translate_error_code(ex.code()),
-        "grn::dat::Trie::remove failed: %s",
-        ex.what());
-    return GRN_INVALID_ARGUMENT;
-  }
-  return GRN_INVALID_ARGUMENT;
+  return grn_dat_delete_by_id(ctx, c->dat, c->curr_rec, optarg);
 }
 
 size_t
@@ -1111,8 +1412,9 @@ grn_dat_truncate(grn_ctx *ctx, grn_dat *dat)
     return GRN_SUCCESS;
   }
 
+  std::string path(grn_io_path(dat->io));
   char trie_path[PATH_MAX];
-  grn_dat_generate_trie_path(grn_io_path(dat->io), trie_path, dat->header->file_id + 1);
+  grn_dat_generate_trie_path(path.c_str(), trie_path, dat->header->file_id + 1);
   try {
     grn::dat::Trie().create(trie_path);
   } catch (const grn::dat::Exception &ex) {
@@ -1121,6 +1423,9 @@ grn_dat_truncate(grn_ctx *ctx, grn_dat *dat)
     return error_code;
   }
   ++dat->header->file_id;
+  if (!path.empty()) {
+    grn_wal_remove(ctx, path.c_str(), "[dat]");
+  }
   if (!grn_dat_open_trie_if_needed(ctx, dat)) {
     return ctx->rc;
   }
@@ -1388,6 +1693,13 @@ grn_dat_get_disk_usage(grn_ctx *ctx, grn_dat *dat)
 
     return usage;
   }
+}
+
+grn_rc
+grn_dat_wal_recover(grn_ctx *ctx, grn_dat *dat)
+{
+  WALRecoverer recoverer(ctx, dat);
+  return recoverer.recover();
 }
 
 grn_rc

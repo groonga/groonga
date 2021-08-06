@@ -339,7 +339,7 @@ exit:
 void
 grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
 {
-  if (ctx->impl->wal.role != GRN_WAL_ROLE_PRIMARY) {
+  if (grn_ctx_get_wal_role(ctx) != GRN_WAL_ROLE_PRIMARY) {
     return;
   }
 
@@ -354,6 +354,9 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
       switch (object->header.type) {
       case GRN_TABLE_HASH_KEY :
         grn_hash_wal_recover(ctx, (grn_hash *)object);
+        break;
+      case GRN_TABLE_DAT_KEY :
+        grn_dat_wal_recover(ctx, (grn_dat *)object);
         break;
       case GRN_COLUMN_FIX_SIZE :
         grn_ra_wal_recover(ctx, (grn_ra *)object);
