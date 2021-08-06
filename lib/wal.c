@@ -357,7 +357,7 @@ grn_wal_add_entryv(grn_ctx *ctx,
         break;
       case GRN_WAL_VALUE_BINARY :
         va_arg(copied_args, void *);
-        va_arg(copied_args, uint32_t);
+        va_arg(copied_args, size_t);
         break;
       default :
         break;
@@ -402,7 +402,7 @@ grn_wal_add_entryv(grn_ctx *ctx,
       case GRN_WAL_VALUE_INT32 :
         {
           int32_t value = va_arg(args, int32_t);
-          msgpack_pack_int64(&packer, value);
+          msgpack_pack_int32(&packer, value);
         }
         break;
       case GRN_WAL_VALUE_UINT32 :

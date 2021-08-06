@@ -2131,7 +2131,7 @@ typedef struct {
   grn_wal_event event;
   grn_id record_id;
   const void *key;
-  uint32_t key_size;
+  size_t key_size;
   uint32_t key_hash_value;
   uint64_t key_offset;
   uint32_t index_hash_value;
@@ -2413,6 +2413,7 @@ grn_hash_wal_add_entry_set_value(grn_ctx *ctx,
 {
   used->record_id = true;
   used->value = true;
+  size_t value_size = data->hash->value_size;
   return grn_wal_add_entry(ctx,
                            (grn_obj *)(data->hash),
                            false,
@@ -2430,7 +2431,7 @@ grn_hash_wal_add_entry_set_value(grn_ctx *ctx,
                            GRN_WAL_KEY_VALUE,
                            GRN_WAL_VALUE_BINARY,
                            data->value,
-                           data->hash->value_size,
+                           value_size,
 
                            GRN_WAL_KEY_END);
 }
@@ -2450,7 +2451,7 @@ grn_hash_wal_add_entry_format_deatils(grn_ctx *ctx,
     grn_text_printf(ctx, details, "record-id:%u ", data->record_id);
   }
   if (used->key_size) {
-    grn_text_printf(ctx, details, "key-size:%u ", data->key_size);
+    grn_text_printf(ctx, details, "key-size:%" GRN_FMT_SIZE " ", data->key_size);
   }
   if (used->key_hash_value) {
     grn_text_printf(ctx, details, "key-hash-value:%u ", data->key_hash_value);
