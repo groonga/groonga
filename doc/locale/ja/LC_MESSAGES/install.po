@@ -762,16 +762,13 @@ msgstr ""
 msgid "Here are supported Ubuntu versions:"
 msgstr "サポートしているUbuntuのバージョンは次の通りです。"
 
-msgid "16.04 LTS Xenial Xerus"
-msgstr ""
-
 msgid "18.04 LTS Bionic Beaver"
 msgstr ""
 
-msgid "19.10 Eoan Ermine"
+msgid "20.04 Focal Fossa"
 msgstr ""
 
-msgid "20.04 Focal Fossa"
+msgid "21.04 Hirsute Hippo"
 msgstr ""
 
 msgid "Enable the universe repository to install Groonga::"

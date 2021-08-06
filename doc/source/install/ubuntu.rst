@@ -20,10 +20,9 @@ Archive) on Launchpad. You can install Groonga by APT from the PPA.
 
 Here are supported Ubuntu versions:
 
-  * 16.04 LTS Xenial Xerus
   * 18.04 LTS Bionic Beaver
-  * 19.10 Eoan Ermine
   * 20.04 Focal Fossa
+  * 21.04 Hirsute Hippo
 
 Enable the universe repository to install Groonga::
 
