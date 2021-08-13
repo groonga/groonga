@@ -480,41 +480,43 @@ grn_wal_remove_raw(grn_ctx *ctx,
   char wal_path[PATH_MAX];
   grn_wal_generate_path(ctx, path, wal_path);
   struct stat s;
-  if (stat(wal_path, &s) == 0) {
-    if (grn_unlink(wal_path) == 0) {
-      if (obj) {
-        GRN_DEFINE_NAME(obj);
-        GRN_LOG(ctx, GRN_LOG_DEBUG,
-                "[wal]%s[%.*s]%s removed: <%s>",
-                system_tag,
-                name_size, name,
-                tag,
-                wal_path);
-      } else {
-        GRN_LOG(ctx, GRN_LOG_DEBUG,
-                "[wal]%s%s removed: <%s>",
-                system_tag,
-                tag,
-                wal_path);
-      }
-    } else {
-      if (obj) {
-        GRN_DEFINE_NAME(obj);
-        SERR("[wal]%s[%.*s]%s failed to remove: <%s>",
-             system_tag,
-             name_size, name,
-             tag,
-             wal_path);
-      } else {
-        SERR("[wal]%s%s failed to remove: <%s>",
-             system_tag,
-             tag,
-             wal_path);
-      }
-    }
+  if (stat(wal_path, &s) != 0) {
+    return GRN_SUCCESS;
   }
 
-  return ctx->rc;
+  if (grn_unlink(wal_path) == 0) {
+    if (obj) {
+      GRN_DEFINE_NAME(obj);
+      GRN_LOG(ctx, GRN_LOG_DEBUG,
+              "[wal]%s[%.*s]%s removed: <%s>",
+              system_tag,
+              name_size, name,
+              tag,
+              wal_path);
+    } else {
+      GRN_LOG(ctx, GRN_LOG_DEBUG,
+                "[wal]%s%s removed: <%s>",
+              system_tag,
+              tag,
+              wal_path);
+    }
+    return GRN_SUCCESS;
+  } else {
+    if (obj) {
+      GRN_DEFINE_NAME(obj);
+      SERR("[wal]%s[%.*s]%s failed to remove: <%s>",
+           system_tag,
+           name_size, name,
+           tag,
+           wal_path);
+    } else {
+      SERR("[wal]%s%s failed to remove: <%s>",
+           system_tag,
+           tag,
+           wal_path);
+    }
+    return ctx->rc;
+  }
 }
 
 grn_rc
