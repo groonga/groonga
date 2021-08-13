@@ -1249,7 +1249,11 @@ delinfo_turn_2(grn_ctx *ctx,
   if (grn_pat_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
     return ctx->rc;
   }
-  return delinfo_turn_2_internal(ctx, pat, di, ln, dn);
+  grn_rc rc = delinfo_turn_2_internal(ctx, pat, di, ln, dn);
+  if (rc == GRN_SUCCESS) {
+    pat->header->wal_id = wal_data.wal_id;
+  }
+  return rc;
 }
 
 grn_inline static void
@@ -1310,7 +1314,11 @@ delinfo_turn_3(grn_ctx *ctx,
   if (grn_pat_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
     return ctx->rc;
   }
-  return delinfo_turn_3_internal(ctx, pat, di, dn);
+  grn_rc rc = delinfo_turn_3_internal(ctx, pat, di, dn);
+  if (rc == GRN_SUCCESS) {
+    pat->header->wal_id = wal_data.wal_id;
+  }
+  return rc;
 }
 
 grn_inline static void
@@ -1358,6 +1366,8 @@ delinfo_new(grn_ctx *ctx,
     delinfo_turn_3_post(ctx, pat);
   }
   delinfo_turn_1_post(ctx, pat, next_delete_info_index);
+  /* We can't do this because this overwrites WAL ID for phase2 and phase3. */
+  /* pat->header->wal_id = wal_data.wal_id; */
   return di;
 }
 
@@ -2127,6 +2137,7 @@ grn_pat_add_internal(grn_ctx *ctx,
                                   data->wal_data.check,
                                   data->check_max,
                                   data->last_id_location);
+        pat->header->wal_id = data->wal_data.wal_id;
       } else {
         data->wal_data.event = GRN_WAL_EVENT_ADD_SHARED_ENTRY;
         data->wal_data.record_id = pat->header->curr_rec + 1;
@@ -2156,6 +2167,7 @@ grn_pat_add_internal(grn_ctx *ctx,
                                 data->wal_data.check,
                                 data->check_max,
                                 data->last_id_location);
+        pat->header->wal_id = data->wal_data.wal_id;
       }
     } else {
       if (pat->header->garbages[key_storage_size] != GRN_ID_NIL) {
@@ -2189,6 +2201,7 @@ grn_pat_add_internal(grn_ctx *ctx,
                                data->wal_data.tag) != GRN_SUCCESS) {
           return GRN_ID_NIL;
         }
+        pat->header->wal_id = data->wal_data.wal_id;
       } else {
         data->wal_data.event = GRN_WAL_EVENT_ADD_ENTRY;
         data->wal_data.record_id = pat->header->curr_rec + 1;
@@ -2218,6 +2231,7 @@ grn_pat_add_internal(grn_ctx *ctx,
                              data->wal_data.tag) != GRN_SUCCESS) {
           return GRN_ID_NIL;
         }
+        pat->header->wal_id = data->wal_data.wal_id;
       }
       data->shared_key_offset = node->key;
     }
@@ -3249,7 +3263,11 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
   data.p0 = p0;
   data.n_garbages = wal_data.n_garbages;
   data.n_entries = wal_data.n_entries;
-  return grn_pat_del_internal(ctx, pat, &data);
+  grn_rc rc = grn_pat_del_internal(ctx, pat, &data);
+  if (rc == GRN_SUCCESS) {
+    pat->header->wal_id = wal_data.wal_id;
+  }
+  return rc;
 }
 
 static grn_rc
