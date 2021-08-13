@@ -31,12 +31,17 @@ typedef enum {
   GRN_WAL_EVENT_REUSE_SEGMENT,
   GRN_WAL_EVENT_FREE_SEGMENT,
   GRN_WAL_EVENT_ADD_ENTRY,
+  GRN_WAL_EVENT_ADD_SHARED_ENTRY,
   GRN_WAL_EVENT_REUSE_ENTRY,
+  GRN_WAL_EVENT_REUSE_SHARED_ENTRY,
   GRN_WAL_EVENT_RESET_ENTRY,
   GRN_WAL_EVENT_ENABLE_ENTRY,
   GRN_WAL_EVENT_SET_ENTRY_KEY,
   GRN_WAL_EVENT_DELETE_ENTRY,
   GRN_WAL_EVENT_REHASH,
+  GRN_WAL_EVENT_DELETE_INFO_PHASE1,
+  GRN_WAL_EVENT_DELETE_INFO_PHASE2,
+  GRN_WAL_EVENT_DELETE_INFO_PHASE3,
 } grn_wal_event;
 
 const char *
@@ -58,11 +63,23 @@ typedef enum {
   GRN_WAL_KEY_ID,
   GRN_WAL_KEY_EVENT,
   GRN_WAL_KEY_RECORD_ID,
+  GRN_WAL_KEY_RECORD_DIRECTION,
   GRN_WAL_KEY_ELEMENT_SIZE,
   GRN_WAL_KEY_KEY,
   GRN_WAL_KEY_KEY_SIZE,
   GRN_WAL_KEY_KEY_HASH_VALUE,
   GRN_WAL_KEY_KEY_OFFSET,
+  GRN_WAL_KEY_SHARED_KEY_OFFSET,
+  GRN_WAL_KEY_IS_SHARED,
+  GRN_WAL_KEY_CHECK,
+  GRN_WAL_KEY_PARENT_RECORD_ID,
+  GRN_WAL_KEY_PARENT_RECORD_DIRECTION,
+  GRN_WAL_KEY_PARENT_CHECK,
+  GRN_WAL_KEY_GRANDPARENT_RECORD_ID,
+  GRN_WAL_KEY_OTHERSIDE_RECORD_ID,
+  GRN_WAL_KEY_OTHERSIDE_CHECK,
+  GRN_WAL_KEY_LEFT_RECORD_ID,
+  GRN_WAL_KEY_RIGHT_RECORD_ID,
   GRN_WAL_KEY_VALUE,
   GRN_WAL_KEY_INDEX_HASH_VALUE,
   GRN_WAL_KEY_SEGMENT,
@@ -80,6 +97,10 @@ typedef enum {
   GRN_WAL_KEY_N_ENTRIES,
   GRN_WAL_KEY_MAX_OFFSET,
   GRN_WAL_KEY_EXPECTED_N_ENTRIES,
+  GRN_WAL_KEY_DELETE_INFO_INDEX,
+  GRN_WAL_KEY_DELETE_INFO_PHASE1_INDEX,
+  GRN_WAL_KEY_DELETE_INFO_PHASE2_INDEX,
+  GRN_WAL_KEY_DELETE_INFO_PHASE3_INDEX,
 } grn_wal_key;
 
 const char *
@@ -90,6 +111,7 @@ typedef enum {
   GRN_WAL_VALUE_EVENT,
   GRN_WAL_VALUE_RECORD_ID,
   GRN_WAL_VALUE_SEGMENT_TYPE,
+  GRN_WAL_VALUE_BOOLEAN,
   GRN_WAL_VALUE_INT32,
   GRN_WAL_VALUE_UINT32,
   GRN_WAL_VALUE_INT64,
@@ -134,10 +156,22 @@ typedef struct {
   uint64_t id;
   grn_wal_event event;
   grn_id record_id;
+  uint8_t record_direction;
   uint32_t element_size;
   grn_wal_reader_data key;
   uint32_t key_hash_value;
   uint64_t key_offset;
+  uint64_t shared_key_offset;
+  bool is_shared;
+  uint16_t check;
+  grn_id parent_record_id;
+  uint8_t parent_record_direction;
+  uint16_t parent_check;
+  grn_id grandparent_record_id;
+  grn_id otherside_record_id;
+  uint16_t otherside_check;
+  grn_id left_record_id;
+  grn_id right_record_id;
   grn_wal_reader_data value;
   uint32_t index_hash_value;
   uint32_t segment;
@@ -155,6 +189,10 @@ typedef struct {
   uint32_t n_entries;
   uint32_t max_offset;
   uint32_t expected_n_entries;
+  uint32_t delete_info_index;
+  uint32_t delete_info_phase1_index;
+  uint32_t delete_info_phase2_index;
+  uint32_t delete_info_phase3_index;
 } grn_wal_reader_entry;
 
 uint64_t

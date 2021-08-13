@@ -1,0 +1,108 @@
+table_create Data TABLE_PAT_KEY|KEY_WITH_SIS ShortText
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"_key": "あいうえお"}
+]
+[[0,0.0,0.0],1]
+delete Data --filter true
+[[0,0.0,0.0],false]
+select Data
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C041",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 0,
+      "curr_rec": 5,
+      "curr_key": 15,
+      "curr_del": 5,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 5
+    }
+  ]
+]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "あいうえお"
+      ],
+      [
+        2,
+        "いうえお"
+      ],
+      [
+        3,
+        "うえお"
+      ],
+      [
+        4,
+        "えお"
+      ],
+      [
+        5,
+        "お"
+      ]
+    ]
+  ]
+]
+wal_recover
+[[0,0.0,0.0],true]
+select Data
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C041",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 0,
+      "curr_rec": 5,
+      "curr_key": 15,
+      "curr_del": 5,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 5
+    }
+  ]
+]

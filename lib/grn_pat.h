@@ -66,15 +66,16 @@ struct grn_pat_header {
   grn_id tokenizer;
   uint32_t n_entries;
   uint32_t curr_rec;
-  int32_t curr_key;
-  int32_t curr_del;
-  int32_t curr_del2;
-  int32_t curr_del3;
+  uint32_t curr_key;
+  uint32_t curr_del;
+  uint32_t curr_del2;
+  uint32_t curr_del3;
   uint32_t n_garbages;
   grn_id normalizer;
   uint32_t truncated;
   uint32_t n_dirty_opens;
-  uint32_t reserved[1002];
+  uint64_t wal_id;
+  uint32_t reserved[1000];
   grn_pat_delinfo delinfos[GRN_PAT_NDELINFOS];
   grn_id garbages[GRN_PAT_MAX_KEY_SIZE + 1];
 };
@@ -126,6 +127,7 @@ grn_rc grn_pat_dirty(grn_ctx *ctx, grn_pat *pat);
 grn_bool grn_pat_is_dirty(grn_ctx *ctx, grn_pat *pat);
 grn_rc grn_pat_clean(grn_ctx *ctx, grn_pat *pat);
 grn_rc grn_pat_clear_dirty(grn_ctx *ctx, grn_pat *pat);
+grn_rc grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat);
 grn_rc grn_pat_warm(grn_ctx *ctx, grn_pat *pat);
 
 #ifdef __cplusplus

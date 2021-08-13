@@ -19,9 +19,11 @@
 #include <string.h>
 #include <limits.h>
 #include "grn_pat.h"
+#include "grn_obj.h"
 #include "grn_output.h"
 #include "grn_util.h"
 #include "grn_normalizer.h"
+#include "grn_wal.h"
 
 #define GRN_PAT_DELETED (GRN_ID_MAX + 1)
 
@@ -37,6 +39,11 @@
 #define GRN_PAT_MDELINFOS (GRN_PAT_NDELINFOS - 1)
 
 #define GRN_PAT_BIN_KEY 0x70000
+
+typedef enum {
+  DIRECTION_LEFT = 0,
+  DIRECTION_RIGHT = 1,
+} pat_node_direction;
 
 typedef struct {
   grn_id lr[2];
@@ -79,6 +86,18 @@ typedef struct {
 #define PAT_DELETING  (1<<1)
 #define PAT_IMMEDIATE (1<<2)
 
+grn_inline static bool
+pat_key_is_embeddable(uint32_t key_size)
+{
+  return key_size <= sizeof(uint32_t);
+}
+
+grn_inline static uint32_t
+pat_key_storage_size(uint32_t key_size)
+{
+  return pat_key_is_embeddable(key_size) ? 0 : key_size;
+}
+
 #define PAT_DEL(x) ((x)->bits & PAT_DELETING)
 #define PAT_IMD(x) ((x)->bits & PAT_IMMEDIATE)
 #define PAT_LEN(x) (((x)->bits >> 3) + 1)
@@ -89,6 +108,21 @@ typedef struct {
 #define PAT_IMD_OFF(x) ((x)->bits &= ~PAT_IMMEDIATE)
 #define PAT_LEN_SET(x,v) ((x)->bits = ((x)->bits & ((1<<3) - 1))|(((v) - 1) << 3))
 #define PAT_CHK_SET(x,v) ((x)->check = (v))
+
+#define PAT_CHECK_BYTE_DIFFERENCES_SHIFT 4
+#define PAT_CHECK_BIT_DIFFERENCES_SHIFT 1
+#define PAT_CHECK_PACK(byte_differences, bit_differences, terminated) \
+  ((byte_differences) << PAT_CHECK_BYTE_DIFFERENCES_SHIFT) +          \
+  ((bit_differences) << PAT_CHECK_BIT_DIFFERENCES_SHIFT) +            \
+  ((terminated) ? 1 : 0)
+#define PAT_CHECK_BYTE_DIFFERENCES(check)       \
+  ((check) >> PAT_CHECK_BYTE_DIFFERENCES_SHIFT)
+#define PAT_CHECK_BIT_DIFFERENCES(check)                  \
+  (((check) >> PAT_CHECK_BIT_DIFFERENCES_SHIFT) & 0b111)
+#define PAT_CHECK_IS_TERMINATED(check)          \
+  ((check) & 1)
+#define PAT_CHECK_ADD_BIT_DIFFERENCES(check, n) \
+  ((check) + ((n) << PAT_CHECK_BIT_DIFFERENCES_SHIFT))
 
 typedef struct {
   grn_id children;
@@ -103,9 +137,770 @@ enum {
 
 void grn_p_pat_node(grn_ctx *ctx, grn_pat *pat, pat_node *node);
 
+/* WAL operation */
+
+typedef struct {
+  grn_pat *pat;
+  uint64_t wal_id;
+  const char *tag;
+  grn_wal_event event;
+  grn_id record_id;
+  pat_node_direction record_direction;
+  const uint8_t *key;
+  uint32_t key_size;
+  uint32_t key_offset;
+  uint32_t shared_key_offset;
+  bool is_shared;
+  uint16_t check;
+  grn_id parent_record_id;
+  pat_node_direction parent_record_direction;
+  uint16_t parent_check;
+  grn_id grandparent_record_id;
+  grn_id otherside_record_id;
+  uint16_t otherside_check;
+  grn_id left_record_id;
+  grn_id right_record_id;
+  grn_id next_garbage_record_id;
+  uint32_t n_garbages;
+  uint32_t n_entries;
+  uint32_t delete_info_index;
+  uint32_t delete_info_phase1_index;
+  uint32_t delete_info_phase2_index;
+  uint32_t delete_info_phase3_index;
+} grn_pat_wal_add_entry_data;
+
+typedef struct {
+  bool record_id;
+  bool record_direction;
+  bool key;
+  bool key_size;
+  bool key_offset;
+  bool shared_key_offset;
+  bool is_shared;
+  bool check;
+  bool parent_record_id;
+  bool parent_record_direction;
+  bool parent_check;
+  bool grandparent_record_id;
+  bool otherside_record_id;
+  bool otherside_check;
+  bool left_record_id;
+  bool right_record_id;
+  bool next_garbage_record_id;
+  bool n_garbages;
+  bool n_entries;
+  bool delete_info_index;
+  bool delete_info_phase1_index;
+  bool delete_info_phase2_index;
+  bool delete_info_phase3_index;
+} grn_pat_wal_add_entry_used;
+
+static grn_rc
+grn_pat_wal_add_entry_add_entry(grn_ctx *ctx,
+                                grn_pat_wal_add_entry_data *data,
+                                grn_pat_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->record_direction = true;
+  used->key = true;
+  used->key_size = true;
+  used->key_offset = true;
+  used->check = true;
+  used->parent_record_id = true;
+  used->n_entries = true;
+  const void *key = data->key;
+  size_t key_size = data->key_size;
+  uint32_t record_direction = data->record_direction;
+  uint32_t check = data->check;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->pat),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_RECORD_DIRECTION,
+                           GRN_WAL_VALUE_UINT32,
+                           record_direction,
+
+                           GRN_WAL_KEY_KEY,
+                           GRN_WAL_VALUE_BINARY,
+                           key,
+                           key_size,
+
+                           GRN_WAL_KEY_KEY_OFFSET,
+                           GRN_WAL_VALUE_UINT32,
+                           data->key_offset,
+
+                           GRN_WAL_KEY_CHECK,
+                           GRN_WAL_VALUE_UINT32,
+                           check,
+
+                           GRN_WAL_KEY_PARENT_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->parent_record_id,
+
+                           GRN_WAL_KEY_N_ENTRIES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_entries,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_pat_wal_add_entry_add_shared_entry(grn_ctx *ctx,
+                                       grn_pat_wal_add_entry_data *data,
+                                       grn_pat_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->record_direction = true;
+  used->key = true;
+  used->key_size = true;
+  used->shared_key_offset = true;
+  used->check = true;
+  used->parent_record_id = true;
+  used->n_entries = true;
+  const void *key = data->key;
+  size_t key_size = data->key_size;
+  uint32_t check = data->check;
+  uint32_t record_direction = data->record_direction;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->pat),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_RECORD_DIRECTION,
+                           GRN_WAL_VALUE_UINT32,
+                           record_direction,
+
+                           GRN_WAL_KEY_KEY,
+                           GRN_WAL_VALUE_BINARY,
+                           key,
+                           key_size,
+
+                           GRN_WAL_KEY_SHARED_KEY_OFFSET,
+                           GRN_WAL_VALUE_UINT32,
+                           data->shared_key_offset,
+
+                           GRN_WAL_KEY_CHECK,
+                           GRN_WAL_VALUE_UINT32,
+                           check,
+
+                           GRN_WAL_KEY_PARENT_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->parent_record_id,
+
+                           GRN_WAL_KEY_N_ENTRIES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_entries,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_pat_wal_add_entry_reuse_entry(grn_ctx *ctx,
+                                  grn_pat_wal_add_entry_data *data,
+                                  grn_pat_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->record_direction = true;
+  used->key = true;
+  used->key_size = true;
+  used->check = true;
+  used->parent_record_id = true;
+  used->next_garbage_record_id = true;
+  used->n_garbages = true;
+  used->n_entries = true;
+  const void *key = data->key;
+  size_t key_size = data->key_size;
+  uint32_t record_direction = data->record_direction;
+  uint32_t check = data->check;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->pat),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_RECORD_DIRECTION,
+                           GRN_WAL_VALUE_UINT32,
+                           record_direction,
+
+                           GRN_WAL_KEY_KEY,
+                           GRN_WAL_VALUE_BINARY,
+                           key,
+                           key_size,
+
+                           GRN_WAL_KEY_CHECK,
+                           GRN_WAL_VALUE_UINT32,
+                           check,
+
+                           GRN_WAL_KEY_NEXT_GARBAGE_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->next_garbage_record_id,
+
+                           GRN_WAL_KEY_PARENT_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->parent_record_id,
+
+                           GRN_WAL_KEY_N_GARBAGES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_garbages,
+
+                           GRN_WAL_KEY_N_ENTRIES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_entries,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_pat_wal_add_entry_reuse_shared_entry(grn_ctx *ctx,
+                                         grn_pat_wal_add_entry_data *data,
+                                         grn_pat_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->record_direction = true;
+  used->key = true;
+  used->key_size = true;
+  used->shared_key_offset = true;
+  used->check = true;
+  used->parent_record_id = true;
+  used->next_garbage_record_id = true;
+  used->n_garbages = true;
+  used->n_entries = true;
+  const void *key = data->key;
+  size_t key_size = data->key_size;
+  uint32_t check = data->check;
+  uint32_t record_direction = data->record_direction;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->pat),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_RECORD_DIRECTION,
+                           GRN_WAL_VALUE_UINT32,
+                           record_direction,
+
+                           GRN_WAL_KEY_KEY,
+                           GRN_WAL_VALUE_BINARY,
+                           key,
+                           key_size,
+
+                           GRN_WAL_KEY_SHARED_KEY_OFFSET,
+                           GRN_WAL_VALUE_UINT32,
+                           data->shared_key_offset,
+
+                           GRN_WAL_KEY_CHECK,
+                           GRN_WAL_VALUE_UINT32,
+                           check,
+
+                           GRN_WAL_KEY_PARENT_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->parent_record_id,
+
+                           GRN_WAL_KEY_NEXT_GARBAGE_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->next_garbage_record_id,
+
+                           GRN_WAL_KEY_N_GARBAGES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_garbages,
+
+                           GRN_WAL_KEY_N_ENTRIES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_entries,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_pat_wal_add_entry_delete_info_phase1(grn_ctx *ctx,
+                                         grn_pat_wal_add_entry_data *data,
+                                         grn_pat_wal_add_entry_used *used)
+{
+  used->is_shared = true;
+  used->delete_info_phase1_index = true;
+  int is_shared = data->is_shared;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->pat),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_IS_SHARED,
+                           GRN_WAL_VALUE_BOOLEAN,
+                           is_shared,
+
+                           GRN_WAL_KEY_DELETE_INFO_PHASE1_INDEX,
+                           GRN_WAL_VALUE_UINT32,
+                           data->delete_info_phase1_index,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_pat_wal_add_entry_delete_info_phase2(grn_ctx *ctx,
+                                         grn_pat_wal_add_entry_data *data,
+                                         grn_pat_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->key_size = true;
+  used->check = true;
+  used->parent_record_id = true;
+  used->left_record_id = true;
+  used->right_record_id = true;
+  used->delete_info_phase2_index = true;
+  uint32_t check = data->check;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->pat),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_KEY_SIZE,
+                           GRN_WAL_VALUE_UINT32,
+                           data->key_size,
+
+                           GRN_WAL_KEY_CHECK,
+                           GRN_WAL_VALUE_UINT32,
+                           check,
+
+                           GRN_WAL_KEY_PARENT_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->parent_record_id,
+
+                           GRN_WAL_KEY_LEFT_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->left_record_id,
+
+                           GRN_WAL_KEY_RIGHT_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->right_record_id,
+
+                           GRN_WAL_KEY_DELETE_INFO_PHASE2_INDEX,
+                           GRN_WAL_VALUE_UINT32,
+                           data->delete_info_phase2_index,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_pat_wal_add_entry_delete_info_phase3(grn_ctx *ctx,
+                                         grn_pat_wal_add_entry_data *data,
+                                         grn_pat_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->is_shared = true;
+  used->check = true;
+  used->next_garbage_record_id = true;
+  used->delete_info_phase3_index = true;
+  int is_shared = data->is_shared;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->pat),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_IS_SHARED,
+                           GRN_WAL_VALUE_BOOLEAN,
+                           is_shared,
+
+                           GRN_WAL_KEY_NEXT_GARBAGE_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->next_garbage_record_id,
+
+                           GRN_WAL_KEY_DELETE_INFO_PHASE3_INDEX,
+                           GRN_WAL_VALUE_UINT32,
+                           data->delete_info_phase3_index,
+
+                           GRN_WAL_KEY_END);
+}
+
+static grn_rc
+grn_pat_wal_add_entry_delete_entry(grn_ctx *ctx,
+                                   grn_pat_wal_add_entry_data *data,
+                                   grn_pat_wal_add_entry_used *used)
+{
+  used->record_id = true;
+  used->record_direction = true;
+  used->check = true;
+  used->parent_record_id = true;
+  used->parent_record_direction = true;
+  used->parent_check = true;
+  used->grandparent_record_id = true;
+  used->otherside_record_id = true;
+  used->otherside_check = true;
+  used->left_record_id = true;
+  used->right_record_id = true;
+  used->n_garbages = true;
+  used->n_entries = true;
+  used->delete_info_index = true;
+  used->delete_info_phase1_index = true;
+  used->delete_info_phase2_index = true;
+  uint32_t check = data->check;
+  uint32_t parent_check = data->parent_check;
+  uint32_t otherside_check = data->otherside_check;
+  return grn_wal_add_entry(ctx,
+                           (grn_obj *)(data->pat),
+                           false,
+                           &(data->wal_id),
+                           data->tag,
+
+                           GRN_WAL_KEY_EVENT,
+                           GRN_WAL_VALUE_EVENT,
+                           data->event,
+
+                           GRN_WAL_KEY_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->record_id,
+
+                           GRN_WAL_KEY_RECORD_DIRECTION,
+                           GRN_WAL_VALUE_UINT32,
+                           data->record_direction,
+
+                           GRN_WAL_KEY_CHECK,
+                           GRN_WAL_VALUE_UINT32,
+                           check,
+
+                           GRN_WAL_KEY_PARENT_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->parent_record_id,
+
+                           GRN_WAL_KEY_PARENT_CHECK,
+                           GRN_WAL_VALUE_UINT32,
+                           parent_check,
+
+                           GRN_WAL_KEY_PARENT_RECORD_DIRECTION,
+                           GRN_WAL_VALUE_UINT32,
+                           data->parent_record_direction,
+
+                           GRN_WAL_KEY_GRANDPARENT_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->grandparent_record_id,
+
+                           GRN_WAL_KEY_OTHERSIDE_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->otherside_record_id,
+
+                           GRN_WAL_KEY_OTHERSIDE_CHECK,
+                           GRN_WAL_VALUE_UINT32,
+                           otherside_check,
+
+                           GRN_WAL_KEY_LEFT_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->left_record_id,
+
+                           GRN_WAL_KEY_RIGHT_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->right_record_id,
+
+                           GRN_WAL_KEY_N_GARBAGES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_garbages,
+
+                           GRN_WAL_KEY_N_ENTRIES,
+                           GRN_WAL_VALUE_UINT32,
+                           data->n_entries,
+
+                           GRN_WAL_KEY_DELETE_INFO_INDEX,
+                           GRN_WAL_VALUE_UINT32,
+                           data->delete_info_index,
+
+                           GRN_WAL_KEY_DELETE_INFO_PHASE1_INDEX,
+                           GRN_WAL_VALUE_UINT32,
+                           data->delete_info_phase1_index,
+
+                           GRN_WAL_KEY_DELETE_INFO_PHASE2_INDEX,
+                           GRN_WAL_VALUE_UINT32,
+                           data->delete_info_phase2_index,
+
+                           GRN_WAL_KEY_END);
+}
+
+static void
+grn_pat_wal_add_entry_format_deatils(grn_ctx *ctx,
+                                     grn_pat_wal_add_entry_data *data,
+                                     grn_pat_wal_add_entry_used *used,
+                                     grn_obj *details)
+{
+  grn_text_printf(ctx,
+                  details,
+                  "event:%u<%s> ",
+                  data->event,
+                  grn_wal_event_to_string(data->event));
+  if (used->record_id) {
+    grn_text_printf(ctx, details, "record-id:%u ", data->record_id);
+  }
+  if (used->record_direction) {
+    grn_text_printf(ctx,
+                    details,
+                    "record-direction:%s ",
+                    data->record_direction == DIRECTION_LEFT ? "left" : "right");
+  }
+  if (used->key_size) {
+    grn_text_printf(ctx, details, "key-size:%u ", data->key_size);
+  }
+  if (used->key_offset) {
+    grn_text_printf(ctx, details, "key-offset:%u ", data->key_offset);
+  }
+  if (used->shared_key_offset) {
+    grn_text_printf(ctx,
+                    details,
+                    "shared-key-offset:%u ",
+                    data->shared_key_offset);
+  }
+  if (used->is_shared) {
+    grn_text_printf(ctx,
+                    details,
+                    "is-shared:%s ",
+                    data->is_shared ? "true" : "false");
+  }
+  if (used->check) {
+    uint16_t check = data->check;
+    grn_text_printf(ctx,
+                    details,
+                    "check:<%u|%u|%s>(%u) ",
+                    PAT_CHECK_BYTE_DIFFERENCES(check),
+                    PAT_CHECK_BIT_DIFFERENCES(check),
+                    PAT_CHECK_IS_TERMINATED(check) ? "true" : "false",
+                    check);
+  }
+  if (used->parent_record_id) {
+    grn_text_printf(ctx,
+                    details,
+                    "parent-record-id:%u ",
+                    data->parent_record_id);
+  }
+  if (used->parent_record_direction) {
+    grn_text_printf(ctx,
+                    details,
+                    "parent-record-direction:%s ",
+                    data->parent_record_direction == DIRECTION_LEFT ?
+                    "left" :
+                    "right");
+  }
+  if (used->grandparent_record_id) {
+    grn_text_printf(ctx,
+                    details,
+                    "grandparent-record-id:%u ",
+                    data->grandparent_record_id);
+  }
+  if (used->parent_check) {
+    uint16_t check = data->parent_check;
+    grn_text_printf(ctx,
+                    details,
+                    "parent-check:<%u|%u|%s>(%u) ",
+                    PAT_CHECK_BYTE_DIFFERENCES(check),
+                    PAT_CHECK_BIT_DIFFERENCES(check),
+                    PAT_CHECK_IS_TERMINATED(check) ? "true" : "false",
+                    check);
+  }
+  if (used->otherside_record_id) {
+    grn_text_printf(ctx,
+                    details,
+                    "otherside-record-id:%u ",
+                    data->otherside_record_id);
+  }
+  if (used->otherside_check) {
+    uint16_t check = data->otherside_check;
+    grn_text_printf(ctx,
+                    details,
+                    "otherside-check:<%u|%u|%s>(%u) ",
+                    PAT_CHECK_BYTE_DIFFERENCES(check),
+                    PAT_CHECK_BIT_DIFFERENCES(check),
+                    PAT_CHECK_IS_TERMINATED(check) ? "true" : "false",
+                    check);
+  }
+  if (used->left_record_id) {
+    grn_text_printf(ctx, details, "left-record-id:%u ", data->left_record_id);
+  }
+  if (used->right_record_id) {
+    grn_text_printf(ctx, details, "right-record-id:%u ", data->right_record_id);
+  }
+  if (used->next_garbage_record_id) {
+    grn_text_printf(ctx,
+                    details,
+                    "next-garbage-record-id:%u ",
+                    data->next_garbage_record_id);
+  }
+  if (used->n_garbages) {
+    grn_text_printf(ctx, details, "n-garbages:%u ", data->n_garbages);
+  }
+  if (used->n_entries) {
+    grn_text_printf(ctx, details, "n-entries:%u ", data->n_entries);
+  }
+  if (used->delete_info_index) {
+    grn_text_printf(ctx,
+                    details,
+                    "delete-info-index:%u ",
+                    data->delete_info_index);
+  }
+  if (used->delete_info_phase1_index) {
+    grn_text_printf(ctx,
+                    details,
+                    "delete-info-phase1-index:%u ",
+                    data->delete_info_phase1_index);
+  }
+  if (used->delete_info_phase2_index) {
+    grn_text_printf(ctx,
+                    details,
+                    "delete-info-phase2-index:%u ",
+                    data->delete_info_phase2_index);
+  }
+  if (used->delete_info_phase3_index) {
+    grn_text_printf(ctx,
+                    details,
+                    "delete-info-phase3-index:%u ",
+                    data->delete_info_phase3_index);
+  }
+}
+
+static grn_rc
+grn_pat_wal_add_entry(grn_ctx *ctx, grn_pat_wal_add_entry_data *data)
+{
+  if (data->pat->io->path[0] == '\0') {
+    return GRN_SUCCESS;
+  }
+
+  grn_rc rc = GRN_SUCCESS;
+  const char *usage = "";
+  grn_pat_wal_add_entry_used used = {0};
+
+  switch (data->event) {
+  case GRN_WAL_EVENT_ADD_ENTRY :
+    usage = "adding entry";
+    rc = grn_pat_wal_add_entry_add_entry(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_ADD_SHARED_ENTRY :
+    usage = "adding shared entry";
+    rc = grn_pat_wal_add_entry_add_shared_entry(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_REUSE_ENTRY :
+    usage = "reusing entry";
+    rc = grn_pat_wal_add_entry_reuse_entry(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_REUSE_SHARED_ENTRY :
+    usage = "reusing shared entry";
+    rc = grn_pat_wal_add_entry_reuse_shared_entry(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_DELETE_INFO_PHASE1 :
+    usage = "deleting info phase1";
+    rc = grn_pat_wal_add_entry_delete_info_phase1(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_DELETE_INFO_PHASE2 :
+    usage = "deleting info phase2";
+    rc = grn_pat_wal_add_entry_delete_info_phase2(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_DELETE_INFO_PHASE3 :
+    usage = "deleting info phase3";
+    rc = grn_pat_wal_add_entry_delete_info_phase3(ctx, data, &used);
+    break;
+  case GRN_WAL_EVENT_DELETE_ENTRY :
+    usage = "deleting entry";
+    rc = grn_pat_wal_add_entry_delete_entry(ctx, data, &used);
+    break;
+  default :
+    usage = "not implemented event";
+    rc = GRN_FUNCTION_NOT_IMPLEMENTED;
+    break;
+  }
+
+  if (rc != GRN_SUCCESS) {
+    grn_obj details;
+    GRN_TEXT_INIT(&details, 0);
+    grn_pat_wal_add_entry_format_deatils(ctx, data, &used, &details);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)(data->pat),
+                      rc,
+                      data->record_id,
+                      data->tag,
+                      "failed to add WAL entry for %s: %.*s",
+                      usage,
+                      (int)GRN_TEXT_LEN(&details),
+                      GRN_TEXT_VALUE(&details));
+    GRN_OBJ_FIN(ctx, &details);
+  }
+
+  return rc;
+}
+
+grn_inline static void
+grn_pat_wal_add_entry_data_set_record_direction(
+  grn_ctx *ctx,
+  grn_pat_wal_add_entry_data *data,
+  grn_id parent_record_id,
+  pat_node *parent_node,
+  grn_id *id_location)
+{
+  data->grandparent_record_id = data->parent_record_id;
+  data->parent_record_direction = data->record_direction;
+  data->parent_record_id = parent_record_id;
+  if (id_location == &(parent_node->lr[DIRECTION_LEFT])) {
+    data->record_direction = DIRECTION_LEFT;
+  } else {
+    data->record_direction = DIRECTION_RIGHT;
+  }
+}
+
 /* bit operation */
 
-#define nth_bit(key,n,l) ((((key)[(n)>>4]) >> (7 - (((n)>>1) & 7))) & 1)
+#define nth_bit(key,check)                                              \
+  ((((key)[PAT_CHECK_BYTE_DIFFERENCES((check))]) >>                     \
+    (0b111 - PAT_CHECK_BIT_DIFFERENCES((check))))                       \
+   & 1)
 
 /* segment operation */
 
@@ -231,7 +1026,7 @@ grn_inline static uint8_t *
 pat_node_get_key(grn_ctx *ctx, grn_pat *pat, pat_node *n)
 {
   if (PAT_IMD(n)) {
-    return (uint8_t *) &n->key;
+    return (uint8_t *)&(n->key);
   } else {
     uint8_t *res;
     KEY_AT(pat, n->key, res, 0);
@@ -245,7 +1040,7 @@ pat_node_set_key(grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, ui
   grn_rc rc;
   if (!key || !len) { return GRN_INVALID_ARGUMENT; }
   PAT_LEN_SET(n, len);
-  if (len <= sizeof(uint32_t)) {
+  if (pat_key_is_embeddable(len)) {
     PAT_IMD_ON(n);
     grn_memcpy(&n->key, key, len);
     rc = GRN_SUCCESS;
@@ -255,6 +1050,18 @@ pat_node_set_key(grn_ctx *ctx, grn_pat *pat, pat_node *n, const uint8_t *key, ui
     rc = ctx->rc;
   }
   return rc;
+}
+
+grn_inline static void
+pat_node_set_shared_key(grn_ctx *ctx,
+                        grn_pat *pat,
+                        pat_node *node,
+                        uint32_t key_size,
+                        uint32_t shared_key_offset)
+{
+  PAT_IMD_OFF(node);
+  PAT_LEN_SET(node, key_size);
+  node->key = shared_key_offset;
 }
 
 /* delinfo operation */
@@ -274,50 +1081,76 @@ enum {
   DL_PHASE2
 };
 
-grn_inline static grn_pat_delinfo *
-delinfo_search(grn_pat *pat, grn_id id)
+grn_inline static grn_id *
+grn_pat_next_location(grn_ctx *ctx,
+                      pat_node *node,
+                      const uint8_t *key,
+                      uint16_t check,
+                      uint16_t check_max)
 {
-  int i;
+  if (PAT_CHECK_IS_TERMINATED(check)) {
+    /* check + 1: delete terminated flag and increment bit differences */
+    if (check + 1 < check_max) {
+      return &(node->lr[1]);
+    } else {
+      return &(node->lr[0]);
+    }
+  } else {
+    return &(node->lr[nth_bit(key, check)]);
+  }
+}
+
+grn_inline static grn_pat_delinfo *
+delinfo_search(grn_pat *pat, grn_id id, uint32_t *index)
+{
+  uint32_t i;
   grn_pat_delinfo *di;
   for (i = (pat->header->curr_del2) & GRN_PAT_MDELINFOS;
        i != pat->header->curr_del;
        i = (i + 1) & GRN_PAT_MDELINFOS) {
     di = &pat->header->delinfos[i];
     if (di->stat != DL_PHASE1) { continue; }
-    if (di->ld == id) { return di; }
-    if (di->d == id) { return di; }
+    if (di->ld == id || di->d == id) {
+      if (index) {
+        *index = i;
+      }
+      return di;
+    }
   }
   return NULL;
 }
 
-grn_inline static grn_rc
-delinfo_turn_2(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di)
+grn_inline static uint32_t
+delinfo_turn_1_pre(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo **di)
 {
-  grn_id d, *p = NULL;
-  pat_node *ln, *dn;
-  // grn_log("delinfo_turn_2> di->d=%d di->ld=%d stat=%d", di->d, di->ld, di->stat);
-  if (di->stat != DL_PHASE1) {
-    return GRN_SUCCESS;
-  }
-  PAT_AT(pat, di->ld, ln);
-  if (!ln) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  d = di->d;
-  if (!d) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  PAT_AT(pat, d, dn);
-  if (!dn) {
-    return GRN_INVALID_ARGUMENT;
-  }
+  *di = &pat->header->delinfos[pat->header->curr_del];
+  return (pat->header->curr_del + 1) & GRN_PAT_MDELINFOS;
+}
+
+grn_inline static void
+delinfo_turn_1_post(grn_ctx *ctx,
+                    grn_pat *pat,
+                    uint32_t next_delete_info_index)
+{
+  pat->header->curr_del = next_delete_info_index;
+}
+
+grn_inline static grn_rc
+delinfo_turn_2_internal(grn_ctx *ctx,
+                        grn_pat *pat,
+                        grn_pat_delinfo *di,
+                        pat_node *ln,
+                        pat_node *dn)
+{
+  grn_id d = di->d;
+  grn_id *p = NULL;
   PAT_DEL_OFF(ln);
   PAT_DEL_OFF(dn);
   {
     grn_id *p0;
     pat_node *rn;
     int c0 = -1, c;
-    uint32_t len = PAT_LEN(dn) * 16;
+    uint32_t check_max = PAT_CHECK_PACK(PAT_LEN(dn), 0, false);
     const uint8_t *key = pat_node_get_key(ctx, pat, dn);
     if (!key) {
       return GRN_INVALID_ARGUMENT;
@@ -338,14 +1171,10 @@ delinfo_turn_2(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di)
         return GRN_FILE_CORRUPT;
       }
       c = PAT_CHK(rn);
-      if (c <= c0 || len <= c) {
+      if (c <= c0 || check_max <= c) {
         break;
       }
-      if (c & 1) {
-        p0 = (c + 1 < len) ? &rn->lr[1] : &rn->lr[0];
-      } else {
-        p0 = &rn->lr[nth_bit((uint8_t *)key, c, len)];
-      }
+      p0 = grn_pat_next_location(ctx, rn, key, c, check_max);
       c0 = c;
     }
   }
@@ -356,7 +1185,7 @@ delinfo_turn_2(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di)
     *p = di->ld;
   } else {
     /* debug */
-    int j;
+    int32_t j;
     grn_id dd;
     grn_pat_delinfo *ddi;
     GRN_LOG(ctx, GRN_LOG_DEBUG, "failed to find d=%d", d);
@@ -381,51 +1210,151 @@ delinfo_turn_2(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di)
 }
 
 grn_inline static grn_rc
-delinfo_turn_3(grn_ctx *ctx, grn_pat *pat, grn_pat_delinfo *di)
+delinfo_turn_2(grn_ctx *ctx,
+               grn_pat *pat,
+               grn_pat_wal_add_entry_data *base_wal_data,
+               uint32_t di_index)
 {
-  pat_node *dn;
-  uint32_t size;
-  if (di->stat != DL_PHASE2) { return GRN_SUCCESS; }
-  PAT_AT(pat, di->d, dn);
-  if (!dn) { return GRN_INVALID_ARGUMENT; }
+  grn_pat_delinfo *di = &pat->header->delinfos[di_index];
+  pat_node *ln, *dn;
+  // grn_log("delinfo_turn_2> di->d=%d di->ld=%d stat=%d", di->d, di->ld, di->stat);
+  if (di->stat != DL_PHASE1) {
+    return GRN_SUCCESS;
+  }
+  PAT_AT(pat, di->ld, ln);
+  if (!ln) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  grn_id d = di->d;
+  if (!d) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  PAT_AT(pat, d, dn);
+  if (!dn) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  grn_pat_wal_add_entry_data wal_data = *base_wal_data;
+  wal_data.event = GRN_WAL_EVENT_DELETE_INFO_PHASE2;
+  wal_data.record_id = d;
+  wal_data.key_size = PAT_LEN(dn);
+  wal_data.check = PAT_CHK(dn);
+  wal_data.parent_record_id = di->ld;
+  wal_data.left_record_id = dn->lr[0];
+  wal_data.right_record_id = dn->lr[1];
+  wal_data.delete_info_phase2_index = di_index;
+  if (grn_pat_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+  return delinfo_turn_2_internal(ctx, pat, di, ln, dn);
+}
+
+grn_inline static void
+delinfo_turn_2_post(grn_ctx *ctx, grn_pat *pat)
+{
+  pat->header->curr_del2 = (pat->header->curr_del2 + 1) & GRN_PAT_MDELINFOS;
+}
+
+grn_inline static uint32_t
+delinfo_compute_storage_size(grn_ctx *ctx, grn_pat_delinfo *di, pat_node *dn)
+{
   if (di->shared) {
-    PAT_IMD_ON(dn);
-    size = 0;
+    return 0;
   } else {
     if (PAT_IMD(dn)) {
-      size = 0;
+      return 0;
     } else {
-      size = PAT_LEN(dn);
+      return PAT_LEN(dn);
     }
+  }
+}
+
+grn_inline static grn_rc
+delinfo_turn_3_internal(grn_ctx *ctx,
+                        grn_pat *pat,
+                        grn_pat_delinfo *di,
+                        pat_node *dn)
+{
+  if (di->shared) {
+    PAT_IMD_ON(dn);
   }
   di->stat = DL_EMPTY;
   //  dn->lr[1] = GRN_PAT_DELETED;
+  uint32_t size = delinfo_compute_storage_size(ctx, di, dn);
   dn->lr[0] = pat->header->garbages[size];
   pat->header->garbages[size] = di->d;
   return GRN_SUCCESS;
 }
 
-grn_inline static grn_pat_delinfo *
-delinfo_new(grn_ctx *ctx, grn_pat *pat)
+grn_inline static grn_rc
+delinfo_turn_3(grn_ctx *ctx,
+               grn_pat *pat,
+               grn_pat_wal_add_entry_data *base_wal_data,
+               uint32_t di_index)
 {
-  grn_pat_delinfo *res = &pat->header->delinfos[pat->header->curr_del];
-  uint32_t n = (pat->header->curr_del + 1) & GRN_PAT_MDELINFOS;
-  int gap = ((n + GRN_PAT_NDELINFOS - pat->header->curr_del2) & GRN_PAT_MDELINFOS)
-            - (GRN_PAT_NDELINFOS / 2);
+  grn_pat_delinfo *di = &pat->header->delinfos[di_index];
+  pat_node *dn;
+  if (di->stat != DL_PHASE2) { return GRN_SUCCESS; }
+  PAT_AT(pat, di->d, dn);
+  if (!dn) { return GRN_INVALID_ARGUMENT; }
+  uint32_t size = delinfo_compute_storage_size(ctx, di, dn);
+  grn_pat_wal_add_entry_data wal_data = *base_wal_data;
+  wal_data.event = GRN_WAL_EVENT_DELETE_INFO_PHASE3;
+  wal_data.record_id = di->d;
+  wal_data.is_shared = di->shared;
+  wal_data.next_garbage_record_id = pat->header->garbages[size];
+  wal_data.delete_info_phase3_index = di_index;
+  if (grn_pat_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+  return delinfo_turn_3_internal(ctx, pat, di, dn);
+}
+
+grn_inline static void
+delinfo_turn_3_post(grn_ctx *ctx, grn_pat *pat)
+{
+  pat->header->curr_del3 = (pat->header->curr_del3 + 1) & GRN_PAT_MDELINFOS;
+}
+
+grn_inline static grn_pat_delinfo *
+delinfo_new(grn_ctx *ctx,
+            grn_pat *pat,
+            grn_pat_wal_add_entry_data *base_wal_data)
+{
+  base_wal_data->delete_info_index = pat->header->curr_del;
+  grn_pat_wal_add_entry_data wal_data = *base_wal_data;
+  wal_data.event = GRN_WAL_EVENT_DELETE_INFO_PHASE1;
+  wal_data.delete_info_phase1_index = pat->header->curr_del;
+  if (grn_pat_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
+    return NULL;
+  }
+  grn_pat_delinfo *di;
+  uint32_t next_delete_info_index = delinfo_turn_1_pre(ctx, pat, &di);
+  di->shared = wal_data.is_shared;
+  int gap =
+    ((next_delete_info_index +
+      GRN_PAT_NDELINFOS -
+      pat->header->curr_del2) & GRN_PAT_MDELINFOS) -
+    (GRN_PAT_NDELINFOS / 2);
   while (gap-- > 0) {
-    if (delinfo_turn_2(ctx, pat, &pat->header->delinfos[pat->header->curr_del2])) {
-      GRN_LOG(ctx, GRN_LOG_CRIT, "d2 failed: %d", pat->header->delinfos[pat->header->curr_del2].ld);
+    if (delinfo_turn_2(ctx, pat, base_wal_data, pat->header->curr_del2)) {
+      GRN_LOG(ctx,
+              GRN_LOG_CRIT,
+              "d2 failed: %d",
+              pat->header->delinfos[pat->header->curr_del2].ld);
     }
-    pat->header->curr_del2 = (pat->header->curr_del2 + 1) & GRN_PAT_MDELINFOS;
+    delinfo_turn_2_post(ctx, pat);
   }
-  if (n == pat->header->curr_del3) {
-    if (delinfo_turn_3(ctx, pat, &pat->header->delinfos[pat->header->curr_del3])) {
-      GRN_LOG(ctx, GRN_LOG_CRIT, "d3 failed: %d", pat->header->delinfos[pat->header->curr_del3].ld);
+  if (next_delete_info_index == pat->header->curr_del3) {
+    if (delinfo_turn_3(ctx, pat, base_wal_data, pat->header->curr_del3)) {
+      GRN_LOG(ctx,
+              GRN_LOG_CRIT,
+              "d3 failed: %d",
+              pat->header->delinfos[pat->header->curr_del3].ld);
     }
-    pat->header->curr_del3 = (pat->header->curr_del3 + 1) & GRN_PAT_MDELINFOS;
+    delinfo_turn_3_post(ctx, pat);
   }
-  pat->header->curr_del = n;
-  return res;
+  delinfo_turn_1_post(ctx, pat, next_delete_info_index);
+  return di;
 }
 
 /* pat operation */
@@ -674,6 +1603,10 @@ grn_pat_close(grn_ctx *ctx, grn_pat *pat)
     GRN_ATOMIC_ADD_EX(&(pat->header->n_dirty_opens), -1, n_dirty_opens);
   }
 
+  if (pat->io->path[0] != '\0' &&
+      grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) {
+    grn_obj_flush(ctx, (grn_obj *)pat);
+  }
   rc = grn_io_close(ctx, pat->io);
   if (rc != GRN_SUCCESS) {
     ERR(rc, "[pat][close] failed to close IO");
@@ -694,7 +1627,13 @@ grn_pat_remove(grn_ctx *ctx, const char *path)
     ERR(GRN_INVALID_ARGUMENT, "path is null");
     return GRN_INVALID_ARGUMENT;
   }
-  return grn_io_remove(ctx, path);
+  grn_rc wal_rc = grn_wal_remove(ctx, path, "[pat]");
+  grn_rc io_rc = grn_io_remove(ctx, path);
+  grn_rc rc = wal_rc;
+  if (rc == GRN_SUCCESS) {
+    rc = io_rc;
+  }
+  return rc;
 }
 
 grn_rc
@@ -728,7 +1667,7 @@ grn_pat_truncate(grn_ctx *ctx, grn_pat *pat)
   grn_table_modules_fin(ctx, &(pat->normalizers));
   grn_pat_close_token_filters(ctx, pat);
   pat->io = NULL;
-  if (path && (rc = grn_io_remove(ctx, path))) { goto exit; }
+  if (path && (rc = grn_pat_remove(ctx, path))) { goto exit; }
   if (!_grn_pat_create(ctx, pat, path, key_size, value_size, flags)) {
     rc = GRN_UNKNOWN_ERROR;
   }
@@ -756,198 +1695,548 @@ grn_pat_cache_compute_id(grn_ctx *ctx,
   return cache_id;
 }
 
-grn_inline static grn_id
-_grn_pat_add(grn_ctx *ctx, grn_pat *pat, const uint8_t *key, uint32_t size, uint32_t *new, uint32_t *lkey)
+typedef struct {
+  grn_pat_wal_add_entry_data wal_data;
+  bool added;
+  uint32_t shared_key_offset;
+  uint32_t cache_id;
+  grn_id found_id;
+  grn_id *last_id_location;
+  uint16_t check_max;
+} grn_pat_add_data;
+
+grn_inline static bool
+grn_pat_add_internal_find(grn_ctx *ctx,
+                          grn_pat_add_data *data)
 {
-  grn_id r, r0, *p0, *p1 = NULL;
-  pat_node *rn, *rn0;
-  int c, c0 = -1, c1 = -1, len;
-  uint32_t cache_id = 0;
+  grn_pat *pat = data->wal_data.pat;
+  const uint8_t *key = data->wal_data.key;
+  uint32_t key_size = data->wal_data.key_size;
+  uint16_t check_max = data->check_max;
 
-  *new = 0;
-  if (pat->cache) {
-    cache_id = grn_pat_cache_compute_id(ctx, pat, key, size);
-    if (pat->cache[cache_id]) {
-      PAT_AT(pat, pat->cache[cache_id], rn);
-      if (rn) {
-        const uint8_t *k = pat_node_get_key(ctx, pat, rn);
-        if (k && size == PAT_LEN(rn) && !memcmp(k, key, size)) {
-          return pat->cache[cache_id];
-        }
-      }
-    }
+  grn_id id = GRN_ID_NIL;
+  pat_node *node;
+  PAT_AT(pat, id, node);
+  grn_id *id_location_previous = NULL;
+  grn_id *id_location = &(node->lr[1]);
+  data->wal_data.record_direction = DIRECTION_RIGHT;
+  grn_pat_wal_add_entry_data_set_record_direction(ctx,
+                                                  &(data->wal_data),
+                                                  id,
+                                                  node,
+                                                  id_location);
+  if (*id_location == GRN_ID_NIL) {
+    data->last_id_location = id_location;
+    data->wal_data.check = PAT_CHECK_PACK(key_size - 1, 7, false);
+    return true;
   }
 
-  len = (int)size * 16;
-  PAT_AT(pat, 0, rn0);
-  p0 = &rn0->lr[1];
-  if (*p0) {
-    uint32_t size2;
-    int xor, mask;
-    const uint8_t *s, *d;
-    for (;;) {
-      if (!(r0 = *p0)) {
-        if (!(s = pat_node_get_key(ctx, pat, rn0))) {
-          GRN_DEFINE_NAME(pat);
-          ERR(GRN_INVALID_ARGUMENT, "[pat][add] failed to get key from node: <%.*s>",
-              name_size, name);
-          return GRN_ID_NIL;
-        }
-        size2 = PAT_LEN(rn0);
-        break;
+  const uint8_t *found_key = NULL;
+  uint32_t found_key_size = 0;
+  grn_id id_previous = GRN_ID_NIL;
+  pat_node *node_previous = NULL;
+  int check_node = -1;
+  int check_node_previous = -1;
+  for (;;) {
+    id_previous = id;
+    id = *id_location;
+    if (id == GRN_ID_NIL) {
+      found_key = pat_node_get_key(ctx, pat, node);
+      if (!found_key) {
+        grn_obj_set_error(ctx,
+                          (grn_obj *)pat,
+                          GRN_INVALID_ARGUMENT,
+                          id_previous,
+                          data->wal_data.tag,
+                          "failed to get key from node");
+        return false;
       }
-      PAT_AT(pat, r0, rn0);
-      if (!rn0) { return GRN_ID_NIL; }
-      if (c0 < rn0->check && rn0->check < len) {
-        c1 = c0; c0 = rn0->check;
-        p1 = p0;
-        if (c0 & 1) {
-          p0 = (c0 + 1 < len) ? &rn0->lr[1] : &rn0->lr[0];
-        } else {
-          p0 = &rn0->lr[nth_bit(key, c0, len)];
-        }
-      } else {
-        if (!(s = pat_node_get_key(ctx, pat, rn0))) {
-          GRN_DEFINE_NAME(pat);
-          ERR(GRN_INVALID_ARGUMENT, "[pat][add] failed to get key from node "
-              "c0 < rn0->check < len: <%.*s>: <%d> <%d> <%d>",
-              name_size, name, c0, rn0->check, len);
-          return GRN_ID_NIL;
-        }
-        size2 = PAT_LEN(rn0);
-        if (size == size2 && !memcmp(s, key, size)) {
-          if (pat->cache) { pat->cache[cache_id] = r0; }
-          return r0;
-        }
-        break;
-      }
+      found_key_size = PAT_LEN(node);
+      break;
     }
-    {
-      uint32_t min = size > size2 ? size2 : size;
-      for (c = 0, d = key; min && *s == *d; c += 16, s++, d++, min--);
-      if (min) {
-        for (xor = *s ^ *d, mask = 0x80; !(xor & mask); mask >>= 1, c += 2);
-      } else {
-        c--;
-      }
+    node_previous = node;
+    PAT_AT(pat, id, node);
+    if (!node) {
+      grn_obj_set_error(ctx,
+                        (grn_obj *)pat,
+                        GRN_INVALID_ARGUMENT,
+                        id,
+                        data->wal_data.tag,
+                        "failed to get node");
+      return false;
     }
-    if (c == c0 && !*p0) {
-      if (c < len - 2) { c += 2; }
+    if (check_node < node->check && node->check < check_max) {
+      check_node_previous = check_node;
+      check_node = node->check;
+      id_location_previous = id_location;
+      id_location = grn_pat_next_location(ctx,
+                                          node,
+                                          key,
+                                          check_node,
+                                          check_max);
+      grn_pat_wal_add_entry_data_set_record_direction(ctx,
+                                                      &(data->wal_data),
+                                                      id,
+                                                      node,
+                                                      id_location);
     } else {
-      if (c < c0) {
-        if (c > c1) {
-          p0 = p1;
-        } else {
-          PAT_AT(pat, 0, rn0);
-          p0 = &rn0->lr[1];
-          while ((r0 = *p0)) {
-            PAT_AT(pat, r0, rn0);
-            if (!rn0) {
-              GRN_DEFINE_NAME(pat);
-              ERR(GRN_INVALID_ARGUMENT, "[pat][add] failed to detect by node: <%.*s>", name_size, name);
-              return GRN_ID_NIL;
-            }
-            c0 = PAT_CHK(rn0);
-            if (c < c0) { break; }
-            if (c0 & 1) {
-              p0 = (c0 + 1 < len) ? &rn0->lr[1] : &rn0->lr[0];
-            } else {
-              p0 = &rn0->lr[nth_bit(key, c0, len)];
-            }
-          }
-        }
+      found_key = pat_node_get_key(ctx, pat, node);
+      if (!found_key) {
+        grn_obj_set_error(ctx,
+                          (grn_obj *)pat,
+                          GRN_INVALID_ARGUMENT,
+                          id,
+                          data->wal_data.tag,
+                          "failed to get key from node: "
+                          "check_node:%d "
+                          "node->check:%u "
+                          "check_max:%u",
+                          check_node,
+                          node->check,
+                          check_max);
+        return false;
       }
+      found_key_size = PAT_LEN(node);
+      if (key_size == found_key_size &&
+          memcmp(found_key, key, key_size) == 0) {
+        if (pat->cache) { pat->cache[data->cache_id] = id; }
+        data->found_id = id;
+        return true;
+      }
+      break;
     }
-    if (c >= len) { return GRN_ID_NIL; }
-  } else {
-    c = len - 2;
   }
+
+  uint16_t check;
   {
-    uint32_t size2 = size > sizeof(uint32_t) ? size : 0;
-    if (*lkey && size2) {
-      if (pat->header->garbages[0]) {
-        r = pat->header->garbages[0];
-        PAT_AT(pat, r, rn);
-        if (!rn) { return GRN_ID_NIL; }
-        pat->header->n_entries++;
-        pat->header->n_garbages--;
-        pat->header->garbages[0] = rn->lr[0];
-      } else {
-        r = pat->header->curr_rec + 1;
-        rn = pat_get(ctx, pat, r);
-        if (!rn) { return GRN_ID_NIL; }
-        pat->header->curr_rec = r;
-        pat->header->n_entries++;
-      }
-      PAT_IMD_OFF(rn);
-      PAT_LEN_SET(rn, size);
-      rn->key = *lkey;
+    uint32_t min = key_size > found_key_size ? found_key_size : key_size;
+    uint16_t byte_differences = 0;
+    const uint8_t *k1 = key;
+    const uint8_t *k2 = found_key;
+    for (; min > 0 && *k1 == *k2; byte_differences++, k1++, k2++, min--) {
+    }
+    if (min == 0) {
+      check = PAT_CHECK_PACK(byte_differences - 1, 7, true);
     } else {
-      if (pat->header->garbages[size2]) {
-        uint8_t *keybuf;
-        r = pat->header->garbages[size2];
-        PAT_AT(pat, r, rn);
-        if (!rn) { return GRN_ID_NIL; }
-        if (!(keybuf = pat_node_get_key(ctx, pat, rn))) {
-          GRN_DEFINE_NAME(pat);
-          ERR(GRN_INVALID_ARGUMENT, "[pat][add] failed to get key from node. header garbages[%u]: <%.*s>",
-              size2, name_size, name);
-          return GRN_ID_NIL;
-        }
-        pat->header->n_entries++;
-        pat->header->n_garbages--;
-        pat->header->garbages[size2] = rn->lr[0];
-        PAT_LEN_SET(rn, size);
-        grn_memcpy(keybuf, key, size);
-      } else {
-        r = pat->header->curr_rec + 1;
-        rn = pat_get(ctx, pat, r);
-        if (!rn) { return GRN_ID_NIL; }
-        if (pat_node_set_key(ctx, pat, rn, key, size)) {
-          GRN_DEFINE_NAME(pat);
-          grn_obj buffer, key_buffer;
-          GRN_TEXT_INIT(&buffer, 0);
-          GRN_OBJ_INIT(&key_buffer, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, ((grn_obj *)pat)->header.domain);
-          GRN_TEXT_SET(ctx, &key_buffer, key, size);
-          grn_inspect(ctx, &buffer, &key_buffer);
-          GRN_OBJ_FIN(ctx, &key_buffer);
-          ERR(GRN_INVALID_ARGUMENT, "[pat][add] failed to set key to pat node: <%.*s>: <%.*s>",
-              name_size, name, (int)GRN_TEXT_LEN(&buffer), GRN_TEXT_VALUE(&buffer));
-          GRN_OBJ_FIN(ctx, &buffer);
-          return GRN_ID_NIL;
-        }
-        pat->header->curr_rec = r;
-        pat->header->n_entries++;
+      uint8_t bit_differences = 0;
+      int xor = *k1 ^ *k2;
+      int mask = 0x80;
+      for (; !(xor & mask); mask >>= 1, bit_differences++) {
       }
-      *lkey = rn->key;
+      check = PAT_CHECK_PACK(byte_differences, bit_differences, false);
     }
   }
-  PAT_CHK_SET(rn, c);
-  PAT_DEL_OFF(rn);
-  if ((c & 1) ? (c + 1 < len) : nth_bit(key, c, len)) {
-    rn->lr[1] = r;
-    rn->lr[0] = *p0;
+  if (check == check_node && *id_location == GRN_ID_NIL) {
+    if (check < PAT_CHECK_ADD_BIT_DIFFERENCES(check_max, -1)) {
+      check = PAT_CHECK_ADD_BIT_DIFFERENCES(check, 1);
+    }
   } else {
-    rn->lr[1] = *p0;
-    rn->lr[0] = r;
+    if (check < check_node) {
+      if (check > check_node_previous) {
+        data->wal_data.record_direction = data->wal_data.parent_record_direction;
+        data->wal_data.parent_record_id = data->wal_data.grandparent_record_id;
+        id = id_previous;
+        id_location = id_location_previous;
+      } else {
+        id = GRN_ID_NIL;
+        PAT_AT(pat, id, node);
+        id_location = &(node->lr[1]);
+        data->wal_data.parent_record_direction = DIRECTION_RIGHT;
+        grn_pat_wal_add_entry_data_set_record_direction(ctx,
+                                                        &(data->wal_data),
+                                                        id,
+                                                        node,
+                                                        id_location);
+        while ((id = *id_location) != GRN_ID_NIL) {
+          PAT_AT(pat, id, node);
+          if (!node) {
+            grn_obj_set_error(ctx,
+                              (grn_obj *)pat,
+                              GRN_INVALID_ARGUMENT,
+                              id,
+                              data->wal_data.tag,
+                              "failed to get node to detect position");
+            return false;
+          }
+          check_node = PAT_CHK(node);
+          if (check < check_node) { break; }
+          id_location = grn_pat_next_location(ctx,
+                                              node,
+                                              key,
+                                              check_node,
+                                              check_max);
+          grn_pat_wal_add_entry_data_set_record_direction(ctx,
+                                                          &(data->wal_data),
+                                                          id,
+                                                          node,
+                                                          id_location);
+        }
+      }
+    }
   }
-  // smp_wmb();
-  *p0 = r;
-  *new = 1;
-  if (pat->cache) { pat->cache[cache_id] = r; }
-  return r;
+  if (check >= check_max) {
+    grn_obj_set_error(ctx,
+                      (grn_obj *)pat,
+                      GRN_INVALID_ARGUMENT,
+                      id,
+                      data->wal_data.tag,
+                      "BUG: computed check is too large: "
+                      "check:%u "
+                      "check_max:%u",
+                      check,
+                      check_max);
+    return false;
+  }
+  data->last_id_location = id_location;
+  data->wal_data.check = check;
+  return true;
 }
 
-grn_inline static grn_bool
-chop(grn_ctx *ctx, grn_pat *pat, const char **key, const char *end, uint32_t *lkey)
+grn_inline static void
+grn_pat_enable_node(grn_ctx *ctx,
+                    grn_pat *pat,
+                    pat_node *node,
+                    grn_id id,
+                    const uint8_t *key,
+                    uint16_t check,
+                    uint16_t check_max,
+                    grn_id *parent_id_location)
+{
+  PAT_CHK_SET(node, check);
+  PAT_DEL_OFF(node);
+  if (PAT_CHECK_IS_TERMINATED(check) ?
+      /* check + 1:
+       * delete terminated flag and increment bit differences */
+      (check + 1 < check_max) :
+      nth_bit(key, check)) {
+    node->lr[1] = id;
+    node->lr[0] = *parent_id_location;
+  } else {
+    node->lr[1] = *parent_id_location;
+    node->lr[0] = id;
+  }
+  // smp_wmb();
+  *parent_id_location = id;
+}
+
+grn_inline static void
+grn_pat_reuse_shared_node(grn_ctx *ctx,
+                          grn_pat *pat,
+                          pat_node *node,
+                          grn_id id,
+                          const uint8_t *key,
+                          uint32_t key_size,
+                          uint32_t shared_key_offset,
+                          uint16_t check,
+                          uint16_t check_max,
+                          grn_id *parent_id_location)
+{
+  pat->header->garbages[0] = node->lr[0];
+  pat->header->n_garbages--;
+  pat->header->n_entries++;
+  pat_node_set_shared_key(ctx, pat, node, key_size, shared_key_offset);
+  grn_pat_enable_node(ctx,
+                      pat,
+                      node,
+                      id,
+                      key,
+                      check,
+                      check_max,
+                      parent_id_location);
+}
+
+grn_inline static void
+grn_pat_add_shared_node(grn_ctx *ctx,
+                        grn_pat *pat,
+                        pat_node *node,
+                        grn_id id,
+                        const uint8_t *key,
+                        uint32_t key_size,
+                        uint32_t shared_key_offset,
+                        uint16_t check,
+                        uint16_t check_max,
+                        grn_id *parent_id_location)
+{
+  pat->header->curr_rec = id;
+  pat->header->n_entries++;
+  pat_node_set_shared_key(ctx, pat, node, key_size, shared_key_offset);
+  grn_pat_enable_node(ctx,
+                      pat,
+                      node,
+                      id,
+                      key,
+                      check,
+                      check_max,
+                      parent_id_location);
+}
+
+grn_inline static grn_rc
+grn_pat_reuse_node(grn_ctx *ctx,
+                   grn_pat *pat,
+                   pat_node *node,
+                   grn_id id,
+                   const uint8_t *key,
+                   uint32_t key_size,
+                   uint16_t check,
+                   uint16_t check_max,
+                   grn_id *parent_id_location,
+                   const char *tag)
+{
+  uint8_t *key_buffer;
+  key_buffer = pat_node_get_key(ctx, pat, node);
+  if (!key_buffer) {
+    grn_obj_set_error(ctx,
+                      (grn_obj *)pat,
+                      GRN_FILE_CORRUPT,
+                      id,
+                      tag,
+                      "failed to get key from node: "
+                      "size:%u",
+                      key_size);
+    return ctx->rc;
+  }
+  uint32_t key_storage_size = pat_key_storage_size(key_size);
+  pat->header->garbages[key_storage_size] = node->lr[0];
+  PAT_LEN_SET(node, key_size);
+  grn_memcpy(key_buffer, key, key_size);
+  pat->header->n_garbages--;
+  pat->header->n_entries++;
+  grn_pat_enable_node(ctx,
+                      pat,
+                      node,
+                      id,
+                      key,
+                      check,
+                      check_max,
+                      parent_id_location);
+  return GRN_SUCCESS;
+}
+
+grn_inline static grn_rc
+grn_pat_add_node(grn_ctx *ctx,
+                 grn_pat *pat,
+                 pat_node *node,
+                 grn_id id,
+                 const uint8_t *key,
+                 uint32_t key_size,
+                 uint16_t check,
+                 uint16_t check_max,
+                 grn_id *parent_id_location,
+                 const char *tag)
+{
+  grn_rc rc = pat_node_set_key(ctx, pat, node, key, key_size);
+  if (rc != GRN_SUCCESS) {
+    grn_obj inspected_key;
+    GRN_TEXT_INIT(&inspected_key, 0);
+    grn_inspect_key(ctx, &inspected_key, (grn_obj *)pat, key, key_size);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)pat,
+                      rc,
+                      id,
+                      tag,
+                      "failed to set key: %.*s",
+                      (int)GRN_TEXT_LEN(&inspected_key),
+                      GRN_TEXT_VALUE(&inspected_key));
+    GRN_OBJ_FIN(ctx, &inspected_key);
+    return ctx->rc;
+  }
+  pat->header->curr_rec = id;
+  pat->header->n_entries++;
+  grn_pat_enable_node(ctx,
+                      pat,
+                      node,
+                      id,
+                      key,
+                      check,
+                      check_max,
+                      parent_id_location);
+  return GRN_SUCCESS;
+}
+
+grn_inline static grn_id
+grn_pat_add_internal(grn_ctx *ctx,
+                     grn_pat_add_data *data)
+{
+  grn_pat *pat = data->wal_data.pat;
+  const uint8_t *key = data->wal_data.key;
+  uint32_t key_size = data->wal_data.key_size;
+
+  data->added = false;
+  data->cache_id = 0;
+  if (pat->cache) {
+    data->cache_id = grn_pat_cache_compute_id(ctx, pat, key, key_size);
+    if (pat->cache[data->cache_id] != GRN_ID_NIL) {
+      pat_node *node;
+      PAT_AT(pat, pat->cache[data->cache_id], node);
+      if (node) {
+        const uint8_t *k = pat_node_get_key(ctx, pat, node);
+        if (k && key_size == PAT_LEN(node) && memcmp(k, key, key_size) == 0) {
+          return pat->cache[data->cache_id];
+        }
+      }
+    }
+  }
+
+  data->check_max = PAT_CHECK_PACK(key_size, 0, false);
+  data->found_id = GRN_ID_NIL;
+  if (!grn_pat_add_internal_find(ctx, data)) {
+    return GRN_ID_NIL;
+  }
+  if (data->found_id != GRN_ID_NIL) {
+    return data->found_id;
+  }
+
+  data->wal_data.key_offset = pat->header->curr_key;
+  pat_node *node = NULL;
+  {
+    uint32_t key_storage_size = pat_key_storage_size(key_size);
+    if (data->shared_key_offset > 0 && key_storage_size > 0) {
+      data->wal_data.shared_key_offset = data->shared_key_offset;
+      if (pat->header->garbages[0] != GRN_ID_NIL) {
+        data->wal_data.event = GRN_WAL_EVENT_REUSE_SHARED_ENTRY;
+        data->wal_data.record_id = pat->header->garbages[0];
+        PAT_AT(pat, data->wal_data.record_id, node);
+        if (!node) {
+          grn_obj_set_error(ctx,
+                            (grn_obj *)pat,
+                            GRN_INVALID_ARGUMENT,
+                            data->wal_data.record_id,
+                            data->wal_data.tag,
+                            "failed to get node from garbage: "
+                            "shared-key-offset:%u",
+                            data->shared_key_offset);
+          return GRN_ID_NIL;
+        }
+        data->wal_data.next_garbage_record_id = node->lr[0];
+        data->wal_data.n_garbages = pat->header->n_garbages;
+        data->wal_data.n_entries = pat->header->n_entries;
+        if (grn_pat_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
+          return GRN_ID_NIL;
+        }
+        grn_pat_reuse_shared_node(ctx,
+                                  pat,
+                                  node,
+                                  data->wal_data.record_id,
+                                  data->wal_data.key,
+                                  data->wal_data.key_size,
+                                  data->wal_data.shared_key_offset,
+                                  data->wal_data.check,
+                                  data->check_max,
+                                  data->last_id_location);
+      } else {
+        data->wal_data.event = GRN_WAL_EVENT_ADD_SHARED_ENTRY;
+        data->wal_data.record_id = pat->header->curr_rec + 1;
+        data->wal_data.n_entries = pat->header->n_entries;
+        if (grn_pat_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
+          return GRN_ID_NIL;
+        }
+        node = pat_get(ctx, pat, data->wal_data.record_id);
+        if (!node) {
+          grn_obj_set_error(ctx,
+                            (grn_obj *)pat,
+                            GRN_INVALID_ARGUMENT,
+                            data->wal_data.record_id,
+                            data->wal_data.tag,
+                            "failed to get node: "
+                            "shared-key-offset:%u",
+                            data->shared_key_offset);
+          return GRN_ID_NIL;
+        }
+        grn_pat_add_shared_node(ctx,
+                                pat,
+                                node,
+                                data->wal_data.record_id,
+                                data->wal_data.key,
+                                data->wal_data.key_size,
+                                data->wal_data.shared_key_offset,
+                                data->wal_data.check,
+                                data->check_max,
+                                data->last_id_location);
+      }
+    } else {
+      if (pat->header->garbages[key_storage_size] != GRN_ID_NIL) {
+        data->wal_data.event = GRN_WAL_EVENT_REUSE_ENTRY;
+        data->wal_data.record_id = pat->header->garbages[key_storage_size];
+        data->wal_data.n_garbages = pat->header->n_garbages;
+        data->wal_data.n_entries = pat->header->n_entries;
+        PAT_AT(pat, data->wal_data.record_id, node);
+        if (!node) {
+          grn_obj_set_error(ctx,
+                            (grn_obj *)pat,
+                            GRN_INVALID_ARGUMENT,
+                            data->wal_data.record_id,
+                            data->wal_data.tag,
+                            "failed to get node from garbage");
+          return GRN_ID_NIL;
+        }
+        data->wal_data.next_garbage_record_id = node->lr[0];
+        if (grn_pat_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
+          return GRN_ID_NIL;
+        }
+        if (grn_pat_reuse_node(ctx,
+                               pat,
+                               node,
+                               data->wal_data.record_id,
+                               data->wal_data.key,
+                               data->wal_data.key_size,
+                               data->wal_data.check,
+                               data->check_max,
+                               data->last_id_location,
+                               data->wal_data.tag) != GRN_SUCCESS) {
+          return GRN_ID_NIL;
+        }
+      } else {
+        data->wal_data.event = GRN_WAL_EVENT_ADD_ENTRY;
+        data->wal_data.record_id = pat->header->curr_rec + 1;
+        data->wal_data.n_entries = pat->header->n_entries;
+        if (grn_pat_wal_add_entry(ctx, &(data->wal_data)) != GRN_SUCCESS) {
+          return GRN_ID_NIL;
+        }
+        node = pat_get(ctx, pat, data->wal_data.record_id);
+        if (!node) {
+          grn_obj_set_error(ctx,
+                            (grn_obj *)pat,
+                            GRN_INVALID_ARGUMENT,
+                            data->wal_data.record_id,
+                            data->wal_data.tag,
+                            "failed to get node");
+          return GRN_ID_NIL;
+        }
+        if (grn_pat_add_node(ctx,
+                             pat,
+                             node,
+                             data->wal_data.record_id,
+                             data->wal_data.key,
+                             data->wal_data.key_size,
+                             data->wal_data.check,
+                             data->check_max,
+                             data->last_id_location,
+                             data->wal_data.tag) != GRN_SUCCESS) {
+          return GRN_ID_NIL;
+        }
+      }
+      data->shared_key_offset = node->key;
+    }
+  }
+  data->added = true;
+  if (pat->cache) { pat->cache[data->cache_id] = data->wal_data.record_id; }
+  return data->wal_data.record_id;
+}
+
+grn_inline static bool
+chop(grn_ctx *ctx,
+     grn_pat *pat,
+     const char **key,
+     const char *end,
+     uint32_t *offset)
 {
   size_t len = grn_charlen(ctx, *key, end);
-  if (len) {
-    *lkey += len;
+  if (len > 0) {
+    *offset += len;
     *key += len;
     return (end - *key) > 0;
   } else {
-    return GRN_FALSE;
+    return false;
   }
 }
 
@@ -1016,54 +2305,76 @@ grn_id
 grn_pat_add(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size,
             void **value, int *added)
 {
-  uint32_t new, lkey = 0;
+  grn_pat_add_data data = {0};
+  data.wal_data.pat = pat;
+  data.wal_data.tag = "[pat][add]";
+  data.wal_data.key = key;
+  data.wal_data.key_size = key_size;
+  data.added = false;
+  data.shared_key_offset = 0;
   grn_id r0;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
     return GRN_ID_NIL;
   }
   if (!key) {
-    GRN_DEFINE_NAME(pat);
-    ERR(GRN_INVALID_ARGUMENT, "[pat][add] key must not NULL: <%.*s>",
-        name_size, name);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)pat,
+                      GRN_INVALID_ARGUMENT,
+                      GRN_ID_NIL,
+                      data.wal_data.tag,
+                      "key must not NULL");
     return GRN_ID_NIL;
   }
   if (!key_size) {
-    GRN_DEFINE_NAME(pat);
-    ERR(GRN_INVALID_ARGUMENT, "[pat][add] key size must not zero: <%.*s>",
-        name_size, name);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)pat,
+                      GRN_INVALID_ARGUMENT,
+                      GRN_ID_NIL,
+                      data.wal_data.tag,
+                      "key size must not zero");
     return GRN_ID_NIL;
   }
   if (key_size > GRN_TABLE_MAX_KEY_SIZE) {
-    GRN_DEFINE_NAME(pat);
-    ERR(GRN_INVALID_ARGUMENT, "[pat][add] too long key: <%.*s>: <%u>",
-        name_size, name, key_size);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)pat,
+                      GRN_INVALID_ARGUMENT,
+                      GRN_ID_NIL,
+                      data.wal_data.tag,
+                      "too long key: <%u>",
+                      key_size);
     return GRN_ID_NIL;
   }
-  KEY_ENCODE(pat, keybuf, key, key_size);
-  r0 = _grn_pat_add(ctx, pat, (uint8_t *)key, key_size, &new, &lkey);
+  KEY_ENCODE(pat, keybuf, data.wal_data.key, data.wal_data.key_size);
+  r0 = grn_pat_add_internal(ctx, &data);
   if (r0 == GRN_ID_NIL) {
-    GRN_DEFINE_NAME(pat);
-    ERR(GRN_INVALID_ARGUMENT, "[pat][add] failed to add a key: <%.*s>: <%u>: <%u>",
-        name_size, name, new, lkey);
+    grn_obj_set_error(ctx,
+                      (grn_obj *)pat,
+                      GRN_INVALID_ARGUMENT,
+                      GRN_ID_NIL,
+                      data.wal_data.tag,
+                      "failed to add a key");
     return GRN_ID_NIL;
   }
-  if (added) { *added = new; }
+  if (added) { *added = data.added; }
   if (r0 && (pat->obj.header.flags & GRN_OBJ_KEY_WITH_SIS) &&
-      (*((uint8_t *)key) & 0x80)) { // todo: refine!!
+      (*(data.wal_data.key) & 0x80)) { // todo: refine!!
     sis_node *sl, *sr;
     grn_id l = r0, r;
-    if (new && (sl = sis_get(ctx, pat, l))) {
-      const char *sis = key, *end = sis + key_size;
+    if (data.added && (sl = sis_get(ctx, pat, l))) {
+      const char *sis = data.wal_data.key;
+      const char *end = sis + data.wal_data.key_size;
       sl->children = l;
       sl->sibling = 0;
-      while (chop(ctx, pat, &sis, end, &lkey)) {
+      while (chop(ctx, pat, &sis, end, &(data.shared_key_offset))) {
         if (!(*sis & 0x80)) { break; }
-        if (!(r = _grn_pat_add(ctx, pat, (uint8_t *)sis, end - sis, &new, &lkey))) {
+        data.wal_data.key = sis;
+        data.wal_data.key_size = end - sis;
+        if (!(r = grn_pat_add_internal(ctx, &data))) {
           break;
         }
         if (!(sr = sis_get(ctx, pat, r))) { break; }
-        if (new) {
+        if (data.added) {
           sl->sibling = r;
           sr->children = l;
           sr->sibling = 0;
@@ -1116,11 +2427,7 @@ _grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size, voi
       }
       break;
     }
-    if (c & 1) {
-      r = (c + 1 < len) ? rn->lr[1] : rn->lr[0];
-    } else {
-      r = rn->lr[nth_bit((uint8_t *)key, c, len)];
-    }
+    r = *grn_pat_next_location(ctx, rn, key, c, len);
     c0 = c;
   }
   return GRN_ID_NIL;
@@ -1145,7 +2452,8 @@ grn_pat_nextid(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size)
     if (grn_pat_error_if_truncated(ctx, pat) != GRN_SUCCESS) {
       return GRN_ID_NIL;
     }
-    if (!(r = pat->header->garbages[key_size > sizeof(uint32_t) ? key_size : 0])) {
+    uint32_t key_storage_size = pat_key_storage_size(key_size);
+    if (!(r = pat->header->garbages[key_storage_size])) {
       r = pat->header->curr_rec + 1;
     }
   }
@@ -1206,11 +2514,7 @@ grn_pat_prefix_search(grn_ctx *ctx, grn_pat *pat,
     if (!rn) { return GRN_FILE_CORRUPT; }
     c = PAT_CHK(rn);
     if (c0 < c && c < len - 1) {
-      if (c & 1) {
-        r = (c + 1 < len) ? rn->lr[1] : rn->lr[0];
-      } else {
-        r = rn->lr[nth_bit((uint8_t *)key, c, len)];
-      }
+      r = *grn_pat_next_location(ctx, rn, key, c, len);
       c0 = c;
       continue;
     }
@@ -1301,7 +2605,7 @@ grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_siz
       break;
     }
     if (len <= c) { break; }
-    if (c & 1) {
+    if (PAT_CHECK_IS_TERMINATED(c)) {
       uint8_t *p;
       pat_node *rn0;
       grn_id r0 = rn->lr[0];
@@ -1310,10 +2614,8 @@ grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_siz
       p = pat_node_get_key(ctx, pat, rn0);
       if (!p) { break; }
       if (PAT_LEN(rn0) <= key_size && !memcmp(p, key, PAT_LEN(rn0))) { r2 = r0; }
-      r = (c + 1 < len) ? rn->lr[1] : rn->lr[0];
-    } else {
-      r = rn->lr[nth_bit((uint8_t *)key, c, len)];
     }
+    r = *grn_pat_next_location(ctx, rn, key, c, len);
     c0 = c;
   }
   return r2;
@@ -1337,11 +2639,7 @@ common_prefix_pat_node_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t
     if (!rn) { return GRN_ID_NIL; }
     c = PAT_CHK(rn);
     if (c0 < c && c < len - 1) {
-      if (c & 1) {
-        r = (c + 1 < len) ? rn->lr[1] : rn->lr[0];
-      } else {
-        r = rn->lr[nth_bit((uint8_t *)key, c, len)];
-      }
+      r = *grn_pat_next_location(ctx, rn, key, c, len);
       c0 = c;
       continue;
     }
@@ -1661,19 +2959,184 @@ grn_pat_fuzzy_search(grn_ctx *ctx, grn_pat *pat,
   }
 }
 
+typedef struct {
+  grn_pat_delinfo *di;
+  grn_id id;
+  uint16_t check;
+  uint16_t check0;
+  pat_node *rn;
+  pat_node *rn0;
+  pat_node *rno;
+  grn_id otherside;
+  grn_id *proot;
+  grn_id *p;
+  grn_id *p0;
+  uint32_t n_garbages;
+  uint32_t n_entries;
+} grn_pat_del_data;
+
+grn_inline static grn_rc
+grn_pat_del_internal(grn_ctx *ctx,
+                     grn_pat *pat,
+                     grn_pat_del_data *data)
+{
+  grn_pat_delinfo *di = data->di;
+  grn_id id = data->id;
+  uint16_t check = data->check;
+  uint16_t check0 = data->check0;
+  pat_node *rn = data->rn;
+  pat_node *rn0 = data->rn0;
+  pat_node *rno = data->rno;
+  grn_id otherside = data->otherside;
+  grn_id *proot = data->proot;
+  grn_id *p = data->p;
+  grn_id *p0 = data->p0;
+  if (rn == rn0) {
+    /* The last transition (p) is a self-loop. */
+    di->stat = DL_PHASE2;
+    di->d = id;
+    if (otherside) {
+      if (check0 < PAT_CHK(rno) && PAT_CHK(rno) <= check) {
+        /* To keep rno as an output node, its check is set to zero. */
+        if (!delinfo_search(pat, otherside, NULL)) {
+          GRN_LOG(ctx, GRN_LOG_DEBUG, "no delinfo found %d", otherside);
+        }
+        PAT_CHK_SET(rno, 0);
+      }
+      if (proot == p0 && !rno->check) {
+        /*
+         * Update rno->lr because the first node, rno becomes the new first
+         * node, is not an output node even if its check is zero.
+         */
+        const uint8_t *k = pat_node_get_key(ctx, pat, rno);
+        int direction = k ? (*k >> 7) : 1;
+        rno->lr[direction] = otherside;
+        rno->lr[!direction] = 0;
+      }
+    }
+    *p0 = otherside;
+  } else if ((rn->lr[0] != GRN_ID_NIL && rn->lr[1] == id) ||
+             (rn->lr[1] != GRN_ID_NIL && rn->lr[0] == id)) {
+    /* The output node has only a disabled self-loop. */
+    di->stat = DL_PHASE2;
+    di->d = id;
+    *p = GRN_ID_NIL;
+  } else {
+    /* The last transition (p) is not a self-loop. */
+    grn_pat_delinfo *ldi = NULL, *ddi = NULL;
+    if (PAT_DEL(rn)) {
+      ldi = delinfo_search(pat, id, NULL);
+    }
+    if (PAT_DEL(rn0)) {
+      ddi = delinfo_search(pat, *p0, NULL);
+    }
+    if (ldi) {
+      PAT_DEL_OFF(rn);
+      di->stat = DL_PHASE2;
+      if (ddi) {
+        PAT_DEL_OFF(rn0);
+        ddi->stat = DL_PHASE2;
+        if (ddi == ldi) {
+          if (id != ddi->ld) {
+            GRN_LOG(ctx, GRN_LOG_ERROR, "id(%u) != ddi->ld(%u)", id, ddi->ld);
+          }
+          di->d = id;
+        } else {
+          ldi->ld = ddi->ld;
+          di->d = id;
+        }
+      } else {
+        PAT_DEL_ON(rn0);
+        ldi->ld = *p0;
+        di->d = id;
+      }
+    } else {
+      PAT_DEL_ON(rn);
+      if (ddi) {
+        if (ddi->d != *p0) {
+          GRN_LOG(ctx, GRN_LOG_ERROR, "ddi->d(%d) != *p0(%d)", ddi->d, *p0);
+        }
+        PAT_DEL_OFF(rn0);
+        ddi->stat = DL_PHASE2;
+        di->stat = DL_PHASE1;
+        di->ld = ddi->ld;
+        di->d = id;
+        /*
+        PAT_DEL_OFF(rn0);
+        ddi->d = r;
+        di->stat = DL_PHASE2;
+        di->d = *p0;
+        */
+      } else {
+        PAT_DEL_ON(rn0);
+        di->stat = DL_PHASE1;
+        di->ld = *p0;
+        di->d = id;
+        // grn_log("pat_del d=%d ld=%d stat=%d", r, *p0, DL_PHASE1);
+      }
+    }
+    if (*p0 == otherside) {
+      /* The previous node (*p0) has a self-loop (rn0 == rno). */
+      PAT_CHK_SET(rno, 0);
+      if (proot == p0) {
+        /*
+         * Update rno->lr because the first node, rno becomes the new first
+         * node, is not an output node even if its check is zero.
+         */
+        const uint8_t *k = pat_node_get_key(ctx, pat, rno);
+        int direction = k ? (*k >> 7) : 1;
+        rno->lr[direction] = otherside;
+        rno->lr[!direction] = 0;
+      }
+    } else {
+      if (otherside) {
+        if (check0 < PAT_CHK(rno) && PAT_CHK(rno) <= check) {
+          /* To keep rno as an output node, its check is set to zero. */
+          if (!delinfo_search(pat, otherside, NULL)) {
+            GRN_LOG(ctx, GRN_LOG_ERROR, "no delinfo found %d", otherside);
+          }
+          PAT_CHK_SET(rno, 0);
+        }
+        if (proot == p0 && !rno->check) {
+          /*
+           * Update rno->lr because the first node, rno becomes the new first
+           * node, is not an output node even if its check is zero.
+           */
+          const uint8_t *k = pat_node_get_key(ctx, pat, rno);
+          int direction = k ? (*k >> 7) : 1;
+          rno->lr[direction] = otherside;
+          rno->lr[!direction] = 0;
+        }
+      }
+      *p0 = otherside;
+    }
+  }
+  pat->header->n_garbages = data->n_garbages;
+  pat->header->n_entries = data->n_entries;
+  return GRN_SUCCESS;
+}
+
 grn_inline static grn_rc
 _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int shared,
              grn_table_delete_optarg *optarg)
 {
-  grn_pat_delinfo *di;
   pat_node *rn, *rn0 = NULL, *rno = NULL;
   int c = -1, c0 = -1, ch;
   uint32_t len = key_size * 16;
-  grn_id r, otherside, *proot, *p, *p0 = NULL;
+  grn_id otherside, *proot, *p, *p0 = NULL;
+
+  grn_pat_wal_add_entry_data wal_data = {0};
+  wal_data.pat = pat;
+  wal_data.tag = "[pat][delete]";
+  wal_data.key = key;
+  wal_data.key_size = key_size;
+  wal_data.is_shared = shared;
 
   /* delinfo_new() must be called before searching for rn. */
-  di = delinfo_new(ctx, pat);
-  di->shared = shared;
+  grn_pat_delinfo *di = delinfo_new(ctx, pat, &wal_data);
+  if (!di) {
+    return ctx->rc;
+  }
 
   /*
    * Search a patricia tree for a given key.
@@ -1683,15 +3146,22 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
    * rno: the other side of rn (the other destination of rn0).
    * c, c0: checks of rn0 and its previous node.
    * p, p0: pointers to transitions (IDs) that refer to rn and rn0.
+   * id, id0: ID of p and p0.
    */
-  PAT_AT(pat, 0, rn);
+  grn_id id = GRN_ID_NIL;
+  grn_id id0 = GRN_ID_NIL;
+  PAT_AT(pat, id, rn);
   proot = p = &rn->lr[1];
+  wal_data.record_direction = DIRECTION_RIGHT;
+  grn_pat_wal_add_entry_data_set_record_direction(ctx, &wal_data, id, rn, p);
   for (;;) {
-    r = *p;
-    if (!r) {
+    grn_id next_id = *p;
+    if (next_id == GRN_ID_NIL) {
       return GRN_INVALID_ARGUMENT;
     }
-    PAT_AT(pat, r, rn);
+    id0 = id;
+    id = next_id;
+    PAT_AT(pat, id, rn);
     if (!rn) {
       return GRN_FILE_CORRUPT;
     }
@@ -1714,15 +3184,12 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
     c0 = c;
     p0 = p;
     c = ch;
-    if (c & 1) {
-      p = (c + 1 < len) ? &rn->lr[1] : &rn->lr[0];
-    } else {
-      p = &rn->lr[nth_bit((uint8_t *)key, c, len)];
-    }
+    p = grn_pat_next_location(ctx, rn, key, c, len);
+    grn_pat_wal_add_entry_data_set_record_direction(ctx, &wal_data, id, rn, p);
     rn0 = rn;
   }
   if (optarg && optarg->func &&
-      !optarg->func(ctx, (grn_obj *)pat, r, optarg->func_arg)) {
+      !optarg->func(ctx, (grn_obj *)pat, id, optarg->func_arg)) {
     return GRN_SUCCESS;
   }
   if (rn0->lr[0] == rn0->lr[1]) {
@@ -1730,7 +3197,7 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
             *p0, rn0->lr[0]);
     return GRN_FILE_CORRUPT;
   }
-  otherside = (rn0->lr[1] == r) ? rn0->lr[0] : rn0->lr[1];
+  otherside = (rn0->lr[1] == id) ? rn0->lr[0] : rn0->lr[1];
   if (otherside) {
     PAT_AT(pat, otherside, rno);
     if (!rno) {
@@ -1746,129 +3213,39 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
     }
   }
 
-  if (rn == rn0) {
-    /* The last transition (p) is a self-loop. */
-    di->stat = DL_PHASE2;
-    di->d = r;
-    if (otherside) {
-      if (c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
-        /* To keep rno as an output node, its check is set to zero. */
-        if (!delinfo_search(pat, otherside)) {
-          GRN_LOG(ctx, GRN_LOG_DEBUG, "no delinfo found %d", otherside);
-        }
-        PAT_CHK_SET(rno, 0);
-      }
-      if (proot == p0 && !rno->check) {
-        /*
-         * Update rno->lr because the first node, rno becomes the new first
-         * node, is not an output node even if its check is zero.
-         */
-        const uint8_t *k = pat_node_get_key(ctx, pat, rno);
-        int direction = k ? (*k >> 7) : 1;
-        rno->lr[direction] = otherside;
-        rno->lr[!direction] = 0;
-      }
-    }
-    *p0 = otherside;
-  } else if ((!rn->lr[0] && rn->lr[1] == r) ||
-             (!rn->lr[1] && rn->lr[0] == r)) {
-    /* The output node has only a disabled self-loop. */
-    di->stat = DL_PHASE2;
-    di->d = r;
-    *p = 0;
-  } else {
-    /* The last transition (p) is not a self-loop. */
-    grn_pat_delinfo *ldi = NULL, *ddi = NULL;
-    if (PAT_DEL(rn)) {
-      ldi = delinfo_search(pat, r);
-    }
-    if (PAT_DEL(rn0)) {
-      ddi = delinfo_search(pat, *p0);
-    }
-    if (ldi) {
-      PAT_DEL_OFF(rn);
-      di->stat = DL_PHASE2;
-      if (ddi) {
-        PAT_DEL_OFF(rn0);
-        ddi->stat = DL_PHASE2;
-        if (ddi == ldi) {
-          if (r != ddi->ld) {
-            GRN_LOG(ctx, GRN_LOG_ERROR, "r(%d) != ddi->ld(%d)", r, ddi->ld);
-          }
-          di->d = r;
-        } else {
-          ldi->ld = ddi->ld;
-          di->d = r;
-        }
-      } else {
-        PAT_DEL_ON(rn0);
-        ldi->ld = *p0;
-        di->d = r;
-      }
-    } else {
-      PAT_DEL_ON(rn);
-      if (ddi) {
-        if (ddi->d != *p0) {
-          GRN_LOG(ctx, GRN_LOG_ERROR, "ddi->d(%d) != *p0(%d)", ddi->d, *p0);
-        }
-        PAT_DEL_OFF(rn0);
-        ddi->stat = DL_PHASE2;
-        di->stat = DL_PHASE1;
-        di->ld = ddi->ld;
-        di->d = r;
-        /*
-        PAT_DEL_OFF(rn0);
-        ddi->d = r;
-        di->stat = DL_PHASE2;
-        di->d = *p0;
-        */
-      } else {
-        PAT_DEL_ON(rn0);
-        di->stat = DL_PHASE1;
-        di->ld = *p0;
-        di->d = r;
-        // grn_log("pat_del d=%d ld=%d stat=%d", r, *p0, DL_PHASE1);
-      }
-    }
-    if (*p0 == otherside) {
-      /* The previous node (*p0) has a self-loop (rn0 == rno). */
-      PAT_CHK_SET(rno, 0);
-      if (proot == p0) {
-        /*
-         * Update rno->lr because the first node, rno becomes the new first
-         * node, is not an output node even if its check is zero.
-         */
-        const uint8_t *k = pat_node_get_key(ctx, pat, rno);
-        int direction = k ? (*k >> 7) : 1;
-        rno->lr[direction] = otherside;
-        rno->lr[!direction] = 0;
-      }
-    } else {
-      if (otherside) {
-        if (c0 < PAT_CHK(rno) && PAT_CHK(rno) <= c) {
-          /* To keep rno as an output node, its check is set to zero. */
-          if (!delinfo_search(pat, otherside)) {
-            GRN_LOG(ctx, GRN_LOG_ERROR, "no delinfo found %d", otherside);
-          }
-          PAT_CHK_SET(rno, 0);
-        }
-        if (proot == p0 && !rno->check) {
-          /*
-           * Update rno->lr because the first node, rno becomes the new first
-           * node, is not an output node even if its check is zero.
-           */
-          const uint8_t *k = pat_node_get_key(ctx, pat, rno);
-          int direction = k ? (*k >> 7) : 1;
-          rno->lr[direction] = otherside;
-          rno->lr[!direction] = 0;
-        }
-      }
-      *p0 = otherside;
-    }
+  wal_data.event = GRN_WAL_EVENT_DELETE_ENTRY;
+  wal_data.record_id = id;
+  wal_data.check = c;
+  wal_data.parent_check = c0;
+  wal_data.otherside_record_id = otherside;
+  if (rno) {
+    wal_data.otherside_check = PAT_CHK(rno);
   }
-  pat->header->n_entries--;
-  pat->header->n_garbages++;
-  return GRN_SUCCESS;
+  wal_data.left_record_id = rn->lr[0];
+  wal_data.right_record_id = rn->lr[1];
+  wal_data.n_garbages = pat->header->n_garbages + 1;
+  wal_data.n_entries = pat->header->n_entries - 1;
+  wal_data.delete_info_phase1_index = pat->header->curr_del;
+  wal_data.delete_info_phase2_index = pat->header->curr_del2;
+  if (grn_pat_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
+    return ctx->rc;
+  }
+
+  grn_pat_del_data data = {0};
+  data.di = di;
+  data.id = id;
+  data.check = c;
+  data.check0 = c0;
+  data.rn = rn;
+  data.rn0 = rn0;
+  data.rno = rno;
+  data.otherside = otherside;
+  data.proot = proot;
+  data.p = p;
+  data.p0 = p0;
+  data.n_garbages = wal_data.n_garbages;
+  data.n_entries = wal_data.n_entries;
+  return grn_pat_del_internal(ctx, pat, &data);
 }
 
 static grn_rc
@@ -2160,9 +3537,9 @@ grn_pat_delete_with_sis(grn_ctx *ctx, grn_pat *pat, grn_id id,
     if (key && key_size) { _grn_pat_del(ctx, pat, key, key_size, shared, NULL); }
     if (si) {
       grn_id *p, sid;
-      uint32_t lkey = 0;
-      if ((*key & 0x80) && chop(ctx, pat, &key, key + key_size, &lkey)) {
-        if ((sid = grn_pat_get(ctx, pat, key, key_size - lkey, NULL)) &&
+      uint32_t offset = 0;
+      if ((*key & 0x80) && chop(ctx, pat, &key, key + key_size, &offset)) {
+        if ((sid = grn_pat_get(ctx, pat, key, key_size - offset, NULL)) &&
             (ss = sis_at(ctx, pat, sid))) {
           for (p = &ss->children; *p && *p != sid; p = &sp->sibling) {
             if (*p == id) {
@@ -2185,7 +3562,7 @@ grn_pat_delete_with_sis(grn_ctx *ctx, grn_pat *pat, grn_id id,
     level++;
   }
   if (level) {
-    uint32_t lkey = 0;
+    uint32_t shared_key_offset = 0;
     while (id && key) {
       uint32_t key_size;
       if (_grn_pat_key(ctx, pat, id, &key_size) != key) { break; }
@@ -2193,16 +3570,18 @@ grn_pat_delete_with_sis(grn_ctx *ctx, grn_pat *pat, grn_id id,
         pat_node *rn;
         PAT_AT(pat, id, rn);
         if (!rn) { break; }
-        if (lkey) {
-          rn->key = lkey;
+        if (shared_key_offset > 0) {
+          rn->key = shared_key_offset;
         } else {
           pat_node_set_key(ctx, pat, rn, (uint8_t *)key, key_size);
-          lkey = rn->key;
+          shared_key_offset = rn->key;
         }
       }
       {
         const char *end = key + key_size;
-        if (!((*key & 0x80) && chop(ctx, pat, &key, end, &lkey))) { break; }
+        if (!((*key & 0x80) && chop(ctx, pat, &key, end, &shared_key_offset))) {
+          break;
+        }
         id = grn_pat_get(ctx, pat, key, end - key, NULL);
       }
     }
@@ -2536,11 +3915,7 @@ set_cursor_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
     if (!node) { return GRN_FILE_CORRUPT; }
     ch = PAT_CHK(node);
     if (c0 < ch && ch < len - 1) {
-      if (ch & 1) {
-        id = (ch + 1 < len) ? node->lr[1] : node->lr[0];
-      } else {
-        id = node->lr[nth_bit((uint8_t *)key, ch, len)];
-      }
+      id = *grn_pat_next_location(ctx, node, key, ch, len);
       c0 = ch;
       continue;
     }
@@ -2603,7 +3978,7 @@ set_cursor_near(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
       }
     }
     check = ch;
-    if (nth_bit((uint8_t *)key, check, pat->key_size)) {
+    if (nth_bit((uint8_t *)key, check)) {
       if (check >= min) { push(c, node->lr[0], check); }
       id = node->lr[1];
     } else {
@@ -2642,7 +4017,7 @@ set_cursor_common_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
     }
     check = ch;
     if (len <= check) { break; }
-    if (check & 1) {
+    if (PAT_CHECK_IS_TERMINATED(check)) {
       grn_id id0 = node->lr[0];
       pat_node *node0;
       PAT_AT(pat, id0, node0);
@@ -2657,7 +4032,7 @@ set_cursor_common_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
       }
       id = node->lr[1];
     } else {
-      id = node->lr[nth_bit((uint8_t *)key, check, len)];
+      id = node->lr[nth_bit((uint8_t *)key, check)];
     }
   }
   return GRN_SUCCESS;
@@ -2714,7 +4089,7 @@ set_cursor_ascend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
       push(c, node->lr[0], ch);
       break;
     }
-    if (check & 1) {
+    if (PAT_CHECK_IS_TERMINATED(check)) {
       if (check + 1 < len) {
         id = node->lr[1];
       } else {
@@ -2722,7 +4097,7 @@ set_cursor_ascend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
         id = node->lr[0];
       }
     } else {
-      if (nth_bit((uint8_t *)key, check, len)) {
+      if (nth_bit((uint8_t *)key, check)) {
         id = node->lr[1];
       } else {
         push(c, node->lr[1], check);
@@ -2778,7 +4153,7 @@ set_cursor_descend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
     }
     check = ch;
     if (len <= check) { break; }
-    if (check & 1) {
+    if (PAT_CHECK_IS_TERMINATED(check)) {
       if (check + 1 < len) {
         push(c, node->lr[0], check);
         id = node->lr[1];
@@ -2786,7 +4161,7 @@ set_cursor_descend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
         id = node->lr[0];
       }
     } else {
-      if (nth_bit((uint8_t *)key, check, len)) {
+      if (nth_bit((uint8_t *)key, check)) {
         push(c, node->lr[0], check);
         id = node->lr[1];
       } else {
@@ -3139,11 +4514,15 @@ static void
 grn_pat_inspect_check(grn_ctx *ctx, grn_obj *buf, int check)
 {
   GRN_TEXT_PUTS(ctx, buf, "{");
-  grn_text_lltoa(ctx, buf, check >> 4);
+  grn_text_lltoa(ctx, buf, PAT_CHECK_BYTE_DIFFERENCES(check));
   GRN_TEXT_PUTS(ctx, buf, ",");
-  grn_text_lltoa(ctx, buf, (check >> 1) & 7);
+  grn_text_lltoa(ctx, buf, PAT_CHECK_BIT_DIFFERENCES(check));
   GRN_TEXT_PUTS(ctx, buf, ",");
-  grn_text_lltoa(ctx, buf, check & 1);
+  if (PAT_CHECK_IS_TERMINATED(check)) {
+    GRN_TEXT_PUTS(ctx, buf, "true");
+  } else {
+    GRN_TEXT_PUTS(ctx, buf, "false");
+  }
   GRN_TEXT_PUTS(ctx, buf, "}");
 }
 
@@ -3172,7 +4551,7 @@ grn_pat_inspect_node(grn_ctx *ctx, grn_pat *pat, grn_id id, int check,
     GRN_TEXT_PUTS(ctx, buf, "\n");
     grn_pat_inspect_node(ctx, pat, node->lr[1], c, key_buf,
                          indent + 2, "R:", buf);
-  } else if (id) {
+  } else if (id != GRN_ID_NIL) {
     int key_size;
     uint8_t *key;
 
@@ -3208,7 +4587,7 @@ grn_pat_inspect_nodes(grn_ctx *ctx, grn_pat *pat, grn_obj *buf)
 
   GRN_TEXT_PUTS(ctx, buf, "{");
   PAT_AT(pat, GRN_ID_NIL, node);
-  if (node->lr[1]) {
+  if (node->lr[1] != GRN_ID_NIL) {
     GRN_TEXT_PUTS(ctx, buf, "\n");
     GRN_OBJ_INIT(&key_buf, GRN_BULK, 0, pat->obj.header.domain);
     grn_pat_inspect_node(ctx, pat, node->lr[1], -1, &key_buf, 0, "", buf);
@@ -3628,7 +5007,7 @@ sub_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
       if (ch & 1) {
         id = (ch + 1 < len) ? pn->lr[1] : pn->lr[0];
       } else {
-        id = pn->lr[nth_bit(key, ch, len)];
+        id = pn->lr[nth_bit(key, ch)];
       }
       *c0 = ch;
       PAT_AT(pat, id, pn);
@@ -3791,6 +5170,409 @@ grn_pat_clear_dirty(grn_ctx *ctx, grn_pat *pat)
   CRITICAL_SECTION_LEAVE(pat->lock);
 
   return rc;
+}
+
+static void
+grn_pat_wal_recover_add_entry(grn_ctx *ctx,
+                              grn_pat *pat,
+                              grn_wal_reader_entry *entry,
+                              const char *tag,
+                              const char *wal_error_tag)
+{
+  pat->header->curr_key = entry->key_offset;
+  pat->header->n_entries = entry->n_entries;
+  pat_node *node = pat_get(ctx, pat, entry->record_id);
+  if (!node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer node");
+    return;
+  }
+  pat_node *parent_node = pat_get(ctx, pat, entry->parent_record_id);
+  if (!parent_node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer parent node");
+    return;
+  }
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+  grn_id *parent_id_location =
+    &(parent_node->lr[entry->record_direction]);
+  uint16_t check_max =
+    PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
+  grn_pat_add_node(ctx,
+                   pat,
+                   node,
+                   entry->record_id,
+                   entry->key.content.binary.data,
+                   entry->key.content.binary.size,
+                   entry->check,
+                   check_max,
+                   parent_id_location,
+                   tag);
+}
+
+static void
+grn_pat_wal_recover_add_shared_entry(grn_ctx *ctx,
+                                     grn_pat *pat,
+                                     grn_wal_reader_entry *entry,
+                                     const char *wal_error_tag)
+{
+  pat->header->n_entries = entry->n_entries;
+  pat_node *node = pat_get(ctx, pat, entry->record_id);
+  if (!node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer node");
+    return;
+  }
+  pat_node *parent_node = pat_get(ctx, pat, entry->parent_record_id);
+  if (!parent_node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer parent node");
+    return;
+  }
+  grn_id *parent_id_location =
+    &(parent_node->lr[entry->record_direction]);
+  uint16_t check_max =
+    PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
+  grn_pat_add_shared_node(ctx,
+                          pat,
+                          node,
+                          entry->record_id,
+                          entry->key.content.binary.data,
+                          entry->key.content.binary.size,
+                          entry->shared_key_offset,
+                          entry->check,
+                          check_max,
+                          parent_id_location);
+}
+
+static void
+grn_pat_wal_recover_reuse_entry(grn_ctx *ctx,
+                                grn_pat *pat,
+                                grn_wal_reader_entry *entry,
+                                const char *tag,
+                                const char *wal_error_tag)
+{
+  pat->header->n_garbages = entry->n_garbages;
+  pat->header->n_entries = entry->n_entries;
+  pat_node *node;
+  PAT_AT(pat, entry->record_id, node);
+  if (!node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer node");
+    return;
+  }
+  pat_node *parent_node;
+  PAT_AT(pat, entry->parent_record_id, parent_node);
+  if (!parent_node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer parent node");
+    return;
+  }
+  grn_id *parent_id_location =
+    &(parent_node->lr[entry->record_direction]);
+  uint16_t check_max =
+    PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
+  grn_pat_reuse_node(ctx,
+                     pat,
+                     node,
+                     entry->record_id,
+                     entry->key.content.binary.data,
+                     entry->key.content.binary.size,
+                     entry->check,
+                     check_max,
+                     parent_id_location,
+                     tag);
+}
+
+static void
+grn_pat_wal_recover_reuse_shared_entry(grn_ctx *ctx,
+                                       grn_pat *pat,
+                                       grn_wal_reader_entry *entry,
+                                       const char *wal_error_tag)
+{
+  pat_node *node = pat_get(ctx, pat, entry->record_id);
+  if (!node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer node");
+    return;
+  }
+  node->lr[0] = entry->next_garbage_record_id;
+  pat_node *parent_node = pat_get(ctx, pat, entry->parent_record_id);
+  if (!parent_node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer parent node");
+    return;
+  }
+  grn_id *parent_id_location =
+    &(parent_node->lr[entry->record_direction]);
+  uint16_t check_max =
+    PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
+  pat->header->n_garbages = entry->n_garbages;
+  pat->header->n_entries = entry->n_entries;
+  grn_pat_reuse_shared_node(ctx,
+                            pat,
+                            node,
+                            entry->record_id,
+                            entry->key.content.binary.data,
+                            entry->key.content.binary.size,
+                            entry->shared_key_offset,
+                            entry->check,
+                            check_max,
+                            parent_id_location);
+}
+
+static void
+grn_pat_wal_recover_delete_info_phase1(grn_ctx *ctx,
+                                       grn_pat *pat,
+                                       grn_wal_reader_entry *entry,
+                                       const char *wal_error_tag)
+{
+  pat->header->curr_del = entry->delete_info_phase1_index;
+  grn_pat_delinfo *di;
+  uint32_t next_delete_info_index = delinfo_turn_1_pre(ctx, pat, &di);
+  di->shared = entry->is_shared;
+  delinfo_turn_1_post(ctx, pat, next_delete_info_index);
+}
+
+static void
+grn_pat_wal_recover_delete_info_phase2(grn_ctx *ctx,
+                                       grn_pat *pat,
+                                       grn_wal_reader_entry *entry,
+                                       const char *wal_error_tag)
+{
+  pat->header->curr_del2 = entry->delete_info_phase2_index;
+  grn_pat_delinfo *di = &(pat->header->delinfos[pat->header->curr_del2]);
+  di->stat = DL_PHASE1;
+  di->d = entry->record_id;
+  pat_node *node;
+  PAT_AT(pat, di->d, node);
+  if (!node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer node");
+    return;
+  }
+  di->ld = entry->parent_record_id;
+  pat_node *parent_node;
+  PAT_AT(pat, di->ld, parent_node);
+  if (!parent_node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer parent node");
+    return;
+  }
+  PAT_LEN_SET(node, entry->key.content.uint64);
+  PAT_CHK_SET(node, entry->check);
+  node->lr[0] = entry->left_record_id;
+  node->lr[1] = entry->right_record_id;
+  delinfo_turn_2_internal(ctx, pat, di, parent_node, node);
+  delinfo_turn_2_post(ctx, pat);
+}
+
+static void
+grn_pat_wal_recover_delete_info_phase3(grn_ctx *ctx,
+                                       grn_pat *pat,
+                                       grn_wal_reader_entry *entry,
+                                       const char *wal_error_tag)
+{
+  pat->header->curr_del3 = entry->delete_info_phase3_index;
+  grn_pat_delinfo *di = &(pat->header->delinfos[pat->header->curr_del3]);
+  di->stat = DL_PHASE2;
+  di->d = entry->record_id;
+  pat_node *node;
+  PAT_AT(pat, di->d, node);
+  if (!node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer node");
+    return;
+  }
+  di->shared = entry->is_shared;
+  uint32_t size = delinfo_compute_storage_size(ctx, di, node);
+  pat->header->garbages[size] = entry->next_garbage_record_id;
+  delinfo_turn_3_internal(ctx, pat, di, node);
+  delinfo_turn_3_post(ctx, pat);
+}
+
+static void
+grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
+                                 grn_pat *pat,
+                                 grn_wal_reader_entry *entry,
+                                 const char *wal_error_tag)
+{
+  pat->header->curr_del = entry->delete_info_phase1_index;
+  pat->header->curr_del2 = entry->delete_info_phase2_index;
+  grn_pat_del_data data = {0};
+  data.di = &(pat->header->delinfos[entry->delete_info_index]);
+  data.id = entry->record_id;
+  data.check = entry->check;
+  data.check0 = entry->parent_check;
+  PAT_AT(pat, data.id, data.rn);
+  if (!data.rn) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer node");
+    return;
+  }
+  PAT_AT(pat, entry->parent_record_id, data.rn0);
+  if (!data.rn0) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer parent node");
+    return;
+  }
+  pat_node *grandparent_node;
+  PAT_AT(pat, entry->grandparent_record_id, grandparent_node);
+  if (!grandparent_node) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)pat,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer grandparent node");
+    return;
+  }
+  data.otherside = entry->otherside_record_id;
+  if (data.otherside != GRN_ID_NIL) {
+    PAT_AT(pat, data.otherside, data.rno);
+    if (!data.rno) {
+      grn_wal_set_recover_error(ctx,
+                                GRN_NO_MEMORY_AVAILABLE,
+                                (grn_obj *)pat,
+                                entry,
+                                wal_error_tag,
+                                "failed to refer otherside node");
+      return;
+    }
+  }
+  pat_node *root_node;
+  PAT_AT(pat, GRN_ID_NIL, root_node);
+  data.proot = &(root_node->lr[1]);
+  data.p = &(data.rn0->lr[entry->record_direction]);
+  data.p0 = &(grandparent_node->lr[entry->parent_record_direction]);
+  data.n_garbages = entry->n_garbages;
+  data.n_entries = entry->n_entries;
+  grn_pat_del_internal(ctx, pat, &data);
+}
+
+grn_rc
+grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat)
+{
+  if (pat->io->path[0] == '\0') {
+    return GRN_SUCCESS;
+  }
+
+  const char *wal_error_tag = "[pat]";
+  const char *tag = "[pat][recover]";
+  grn_wal_reader *reader = grn_wal_reader_open(ctx, (grn_obj *)pat, tag);
+  if (!reader) {
+    return ctx->rc;
+  }
+
+  grn_io_clear_lock(pat->io);
+
+  while (true) {
+    grn_wal_reader_entry entry = {0};
+    grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &entry);
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+    switch (entry.event) {
+    case GRN_WAL_EVENT_ADD_ENTRY :
+      grn_pat_wal_recover_add_entry(ctx, pat, &entry, tag, wal_error_tag);
+      break;
+    case GRN_WAL_EVENT_ADD_SHARED_ENTRY :
+      grn_pat_wal_recover_add_shared_entry(ctx, pat, &entry, wal_error_tag);
+      break;
+    case GRN_WAL_EVENT_REUSE_ENTRY :
+      grn_pat_wal_recover_reuse_entry(ctx, pat, &entry, tag, wal_error_tag);
+      break;
+    case GRN_WAL_EVENT_REUSE_SHARED_ENTRY :
+      grn_pat_wal_recover_reuse_shared_entry(ctx, pat, &entry, wal_error_tag);
+      break;
+    case GRN_WAL_EVENT_DELETE_INFO_PHASE1 :
+      grn_pat_wal_recover_delete_info_phase1(ctx, pat, &entry, wal_error_tag);
+      break;
+    case GRN_WAL_EVENT_DELETE_INFO_PHASE2 :
+      grn_pat_wal_recover_delete_info_phase2(ctx, pat, &entry, wal_error_tag);
+      break;
+    case GRN_WAL_EVENT_DELETE_INFO_PHASE3 :
+      grn_pat_wal_recover_delete_info_phase3(ctx, pat, &entry, wal_error_tag);
+      break;
+    case GRN_WAL_EVENT_DELETE_ENTRY :
+      grn_pat_wal_recover_delete_entry(ctx, pat, &entry, wal_error_tag);
+      break;
+    default :
+      grn_wal_set_recover_error(ctx,
+                                GRN_FUNCTION_NOT_IMPLEMENTED,
+                                (grn_obj *)pat,
+                                &entry,
+                                wal_error_tag,
+                                "not implemented yet");
+      break;
+    }
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+    pat->header->wal_id = entry.id;
+  }
+  grn_wal_reader_close(ctx, reader);
+
+  if (ctx->rc == GRN_SUCCESS) {
+    grn_obj_touch(ctx, (grn_obj *)pat, NULL);
+    grn_obj_flush(ctx, (grn_obj *)pat);
+  }
+
+  return ctx->rc;
 }
 
 grn_rc

@@ -53,8 +53,14 @@ grn_wal_event_to_string(grn_wal_event event)
   case GRN_WAL_EVENT_ADD_ENTRY :
     string = "add-entry";
     break;
+  case GRN_WAL_EVENT_ADD_SHARED_ENTRY :
+    string = "add-shared-entry";
+    break;
   case GRN_WAL_EVENT_REUSE_ENTRY :
     string = "reuse-entry";
+    break;
+  case GRN_WAL_EVENT_REUSE_SHARED_ENTRY :
+    string = "reuse-shared-entry";
     break;
   case GRN_WAL_EVENT_RESET_ENTRY :
     string = "reset-entry";
@@ -70,6 +76,15 @@ grn_wal_event_to_string(grn_wal_event event)
     break;
   case GRN_WAL_EVENT_REHASH :
     string = "rehash";
+    break;
+  case GRN_WAL_EVENT_DELETE_INFO_PHASE1 :
+    string = "delete-info-phase1";
+    break;
+  case GRN_WAL_EVENT_DELETE_INFO_PHASE2 :
+    string = "delete-info-phase2";
+    break;
+  case GRN_WAL_EVENT_DELETE_INFO_PHASE3 :
+    string = "delete-info-phase3";
     break;
   }
   return string;
@@ -116,6 +131,9 @@ grn_wal_key_to_string(grn_wal_key key)
   case GRN_WAL_KEY_RECORD_ID :
     string = "record-id";
     break;
+  case GRN_WAL_KEY_RECORD_DIRECTION :
+    string = "record-direction";
+    break;
   case GRN_WAL_KEY_ELEMENT_SIZE :
     string = "element-size";
     break;
@@ -130,6 +148,39 @@ grn_wal_key_to_string(grn_wal_key key)
     break;
   case GRN_WAL_KEY_KEY_OFFSET :
     string = "key-offset";
+    break;
+  case GRN_WAL_KEY_SHARED_KEY_OFFSET :
+    string = "shared-key-offset";
+    break;
+  case GRN_WAL_KEY_IS_SHARED :
+    string = "is-shared";
+    break;
+  case GRN_WAL_KEY_CHECK :
+    string = "check";
+    break;
+  case GRN_WAL_KEY_PARENT_RECORD_ID :
+    string = "parent-record-id";
+    break;
+  case GRN_WAL_KEY_PARENT_RECORD_DIRECTION :
+    string = "parent-record-direction";
+    break;
+  case GRN_WAL_KEY_PARENT_CHECK :
+    string = "parent-check";
+    break;
+  case GRN_WAL_KEY_GRANDPARENT_RECORD_ID :
+    string = "grandparent-record-id";
+    break;
+  case GRN_WAL_KEY_OTHERSIDE_RECORD_ID :
+    string = "otherside-record-id";
+    break;
+  case GRN_WAL_KEY_OTHERSIDE_CHECK :
+    string = "otherside-check";
+    break;
+  case GRN_WAL_KEY_LEFT_RECORD_ID :
+    string = "left-record-id";
+    break;
+  case GRN_WAL_KEY_RIGHT_RECORD_ID :
+    string = "right-record-id";
     break;
   case GRN_WAL_KEY_VALUE :
     string = "value";
@@ -181,6 +232,18 @@ grn_wal_key_to_string(grn_wal_key key)
     break;
   case GRN_WAL_KEY_EXPECTED_N_ENTRIES :
     string = "expected-n-entries";
+    break;
+  case GRN_WAL_KEY_DELETE_INFO_INDEX :
+    string = "delete-info-index";
+    break;
+  case GRN_WAL_KEY_DELETE_INFO_PHASE1_INDEX :
+    string = "delete-info-phase1-index";
+    break;
+  case GRN_WAL_KEY_DELETE_INFO_PHASE2_INDEX :
+    string = "delete-info-phase2-index";
+    break;
+  case GRN_WAL_KEY_DELETE_INFO_PHASE3_INDEX :
+    string = "delete-info-phase3-index";
     break;
   }
   return string;
@@ -343,6 +406,9 @@ grn_wal_add_entryv(grn_ctx *ctx,
       case GRN_WAL_VALUE_SEGMENT_TYPE :
         va_arg(copied_args, grn_wal_segment_type);
         break;
+      case GRN_WAL_VALUE_BOOLEAN :
+        va_arg(copied_args, int);
+        break;
       case GRN_WAL_VALUE_INT32 :
         va_arg(copied_args, int32_t);
         break;
@@ -397,6 +463,16 @@ grn_wal_add_entryv(grn_ctx *ctx,
         {
           grn_wal_segment_type value = va_arg(args, grn_wal_segment_type);
           msgpack_pack_uint32(&packer, value);
+        }
+        break;
+      case GRN_WAL_VALUE_BOOLEAN :
+        {
+          int value = va_arg(args, int);
+          if (value) {
+            msgpack_pack_true(&packer);
+          } else {
+            msgpack_pack_false(&packer);
+          }
         }
         break;
       case GRN_WAL_VALUE_INT32 :
@@ -773,6 +849,9 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
     case GRN_WAL_KEY_RECORD_ID :
       entry->record_id = value->via.u64;
       break;
+    case GRN_WAL_KEY_RECORD_DIRECTION :
+      entry->record_direction = value->via.u64;
+      break;
     case GRN_WAL_KEY_ELEMENT_SIZE :
       entry->element_size = value->via.u64;
       break;
@@ -787,6 +866,39 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       break;
     case GRN_WAL_KEY_KEY_OFFSET :
       entry->key_offset = value->via.u64;
+      break;
+    case GRN_WAL_KEY_SHARED_KEY_OFFSET :
+      entry->shared_key_offset = value->via.u64;
+      break;
+    case GRN_WAL_KEY_IS_SHARED :
+      entry->is_shared = value->via.boolean;
+      break;
+    case GRN_WAL_KEY_CHECK :
+      entry->check = value->via.u64;
+      break;
+    case GRN_WAL_KEY_PARENT_RECORD_ID :
+      entry->parent_record_id = value->via.u64;
+      break;
+    case GRN_WAL_KEY_PARENT_RECORD_DIRECTION :
+      entry->parent_record_direction = value->via.u64;
+      break;
+    case GRN_WAL_KEY_PARENT_CHECK :
+      entry->parent_check = value->via.u64;
+      break;
+    case GRN_WAL_KEY_GRANDPARENT_RECORD_ID :
+      entry->grandparent_record_id = value->via.u64;
+      break;
+    case GRN_WAL_KEY_OTHERSIDE_RECORD_ID :
+      entry->otherside_record_id = value->via.u64;
+      break;
+    case GRN_WAL_KEY_OTHERSIDE_CHECK :
+      entry->otherside_check = value->via.u64;
+      break;
+    case GRN_WAL_KEY_LEFT_RECORD_ID :
+      entry->left_record_id = value->via.u64;
+      break;
+    case GRN_WAL_KEY_RIGHT_RECORD_ID :
+      entry->right_record_id = value->via.u64;
       break;
     case GRN_WAL_KEY_VALUE :
       grn_wal_reader_read_data(ctx, reader, &(entry->value), value, tag);
@@ -839,6 +951,18 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
     case GRN_WAL_KEY_EXPECTED_N_ENTRIES :
       entry->expected_n_entries = value->via.u64;
       break;
+    case GRN_WAL_KEY_DELETE_INFO_INDEX :
+      entry->delete_info_index = value->via.u64;
+      break;
+    case GRN_WAL_KEY_DELETE_INFO_PHASE1_INDEX :
+      entry->delete_info_phase1_index = value->via.u64;
+      break;
+    case GRN_WAL_KEY_DELETE_INFO_PHASE2_INDEX :
+      entry->delete_info_phase2_index = value->via.u64;
+      break;
+    case GRN_WAL_KEY_DELETE_INFO_PHASE3_INDEX :
+      entry->delete_info_phase3_index = value->via.u64;
+      break;
     default :
       grn_obj_set_error(ctx,
                         reader->obj,
@@ -890,6 +1014,17 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       "key-type:%s(%u) "
       "key-hash-value:%u "
       "key-offset:%" GRN_FMT_INT64U " "
+      "shared-key-offset:%" GRN_FMT_INT64U " "
+      "is-shared:%s "
+      "check:%u "
+      "parent-record-id:%u "
+      "parent-record-direction:%u "
+      "parent-check:%u "
+      "grandparent-record-id:%u "
+      "otherside-record-id:%u "
+      "otherside-check:%u "
+      "left-record-id:%u "
+      "right-record-id:%u "
       "value-type:%s(%u) "
       "index-hash-value:%u "
       "segment:%u "
@@ -905,6 +1040,10 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       "n-entries:%u "
       "max-offset:%u "
       "expected-n-entries:%u "
+      "delete-info-index:%u "
+      "delete-info-phase1-index:%u "
+      "delete-info-phase2-index:%u "
+      "delete-info-phase3-index:%u "
       "path:<%s>",
       tag,
       name_size, name,
@@ -919,6 +1058,17 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       entry->key.type,
       entry->key_hash_value,
       entry->key_offset,
+      entry->shared_key_offset,
+      entry->is_shared ? "true" : "false",
+      entry->check,
+      entry->parent_record_id,
+      entry->parent_record_direction,
+      entry->parent_check,
+      entry->grandparent_record_id,
+      entry->otherside_record_id,
+      entry->otherside_check,
+      entry->left_record_id,
+      entry->right_record_id,
       grn_wal_reader_data_type_to_string(entry->value.type),
       entry->value.type,
       entry->index_hash_value,
@@ -938,6 +1088,10 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       entry->n_entries,
       entry->max_offset,
       entry->expected_n_entries,
+      entry->delete_info_index,
+      entry->delete_info_phase1_index,
+      entry->delete_info_phase2_index,
+      entry->delete_info_phase3_index,
       path);
 }
 

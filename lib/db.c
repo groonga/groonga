@@ -355,6 +355,9 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
       case GRN_TABLE_HASH_KEY :
         grn_hash_wal_recover(ctx, (grn_hash *)object);
         break;
+      case GRN_TABLE_PAT_KEY :
+        grn_pat_wal_recover(ctx, (grn_pat *)object);
+        break;
       case GRN_TABLE_DAT_KEY :
         grn_dat_wal_recover(ctx, (grn_dat *)object);
         break;
@@ -375,6 +378,7 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
          *   * Ignore unrecoverable WAL entries
          *   * Copy from existing data and is replaced
          */
+        ERRCLR(ctx);
       }
       grn_obj_unref(ctx, object);
     }

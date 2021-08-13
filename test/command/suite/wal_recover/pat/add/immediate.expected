@@ -1,0 +1,63 @@
+table_create Data TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"_key": "4B<="}
+]
+[[0,0.0,0.0],1]
+select Data
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"4B<="]]]]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 1,
+      "curr_rec": 1,
+      "curr_key": 0,
+      "curr_del": 0,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 0
+    }
+  ]
+]
+select Data
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
+wal_recover
+[[0,0.0,0.0],true]
+select Data
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"4B<="]]]]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 1,
+      "curr_rec": 1,
+      "curr_key": 0,
+      "curr_del": 0,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 0
+    }
+  ]
+]

@@ -1,0 +1,92 @@
+table_create Data TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"_key": "5B>=: Normal"}
+]
+[[0,0.0,0.0],1]
+delete Data --filter true
+[[0,0.0,0.0],true]
+select Data
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 0,
+      "curr_rec": 1,
+      "curr_key": 12,
+      "curr_del": 1,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 1
+    }
+  ]
+]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "5B>=: Normal"
+      ]
+    ]
+  ]
+]
+wal_recover
+[[0,0.0,0.0],true]
+select Data
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
+check --obj Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "0000C001",
+      "key size": 4096,
+      "value_size": 0,
+      "tokenizer": 0,
+      "normalizer": 0,
+      "n_entries": 0,
+      "curr_rec": 1,
+      "curr_key": 12,
+      "curr_del": 1,
+      "curr_del2": 0,
+      "curr_del3": 0,
+      "n_garbages": 1
+    }
+  ]
+]
