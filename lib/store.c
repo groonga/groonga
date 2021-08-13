@@ -400,26 +400,28 @@ grn_ra_set_value(grn_ctx *ctx,
   switch (flags & GRN_OBJ_SET_MASK) {
   case GRN_OBJ_SET :
     {
-      uint64_t wal_id;
-      rc = grn_wal_add_entry(ctx,
-                             (grn_obj *)ra,
-                             true,
-                             &wal_id,
-                             "[ra][set-value]",
-                             GRN_WAL_KEY_EVENT,
-                             GRN_WAL_VALUE_EVENT,
-                             GRN_WAL_EVENT_SET_VALUE,
+      uint64_t wal_id = 0;
+      if (grn_ctx_get_wal_role(ctx) != GRN_WAL_ROLE_NONE) {
+        rc = grn_wal_add_entry(ctx,
+                               (grn_obj *)ra,
+                               true,
+                               &wal_id,
+                               "[ra][set-value]",
+                               GRN_WAL_KEY_EVENT,
+                               GRN_WAL_VALUE_EVENT,
+                               GRN_WAL_EVENT_SET_VALUE,
 
-                             GRN_WAL_KEY_RECORD_ID,
-                             GRN_WAL_VALUE_RECORD_ID,
-                             id,
+                               GRN_WAL_KEY_RECORD_ID,
+                               GRN_WAL_VALUE_RECORD_ID,
+                               id,
 
-                             GRN_WAL_KEY_VALUE,
-                             GRN_WAL_VALUE_BINARY,
-                             v,
-                             s,
+                               GRN_WAL_KEY_VALUE,
+                               GRN_WAL_VALUE_BINARY,
+                               v,
+                               s,
 
-                             GRN_WAL_KEY_END);
+                               GRN_WAL_KEY_END);
+      }
       if (rc == GRN_SUCCESS) {
         rc = grn_ra_set_value_raw(ctx, ra, id, v, s);
       }
@@ -1777,6 +1779,10 @@ grn_ja_wal_add_entry_format_deatils(grn_ctx *ctx,
 static grn_rc
 grn_ja_wal_add_entry(grn_ctx *ctx, grn_ja_wal_add_entry_data *data)
 {
+  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+    return GRN_SUCCESS;
+  }
+
   grn_rc rc = GRN_SUCCESS;
   const char *usage = "";
   grn_ja_wal_add_entry_used used = {0};

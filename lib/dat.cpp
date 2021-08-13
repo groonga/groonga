@@ -442,6 +442,9 @@ class WALRecorder {
   }
 
   grn_rc record() {
+    if (grn_ctx_get_wal_role(ctx_) == GRN_WAL_ROLE_NONE) {
+      return GRN_SUCCESS;
+    }
     if (!dat_->io) {
       return GRN_SUCCESS;
     }

@@ -2507,6 +2507,10 @@ grn_hash_wal_add_entry_format_deatils(grn_ctx *ctx,
 static grn_rc
 grn_hash_wal_add_entry(grn_ctx *ctx, grn_hash_wal_add_entry_data *data)
 {
+  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+    return GRN_SUCCESS;
+  }
+
   if (!data->hash->io) {
     return GRN_SUCCESS;
   }
