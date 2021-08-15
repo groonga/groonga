@@ -125,7 +125,7 @@ grn_ra_close(grn_ctx *ctx, grn_ra *ra)
   grn_rc rc;
   if (!ra) { return GRN_INVALID_ARGUMENT; }
   if (ra->io->path[0] != '\0' &&
-      grn_ctx_get_wal_role(ctx)) {
+      grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) {
     grn_obj_flush(ctx, (grn_obj *)ra);
   }
   rc = grn_io_close(ctx, ra->io);
@@ -927,7 +927,7 @@ grn_ja_close(grn_ctx *ctx, grn_ja *ja)
   grn_rc rc;
   if (!ja) { return GRN_INVALID_ARGUMENT; }
   if (ja->io->path[0] != '\0' &&
-      grn_ctx_get_wal_role(ctx)) {
+      grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) {
     grn_obj_flush(ctx, (grn_obj *)ja);
   }
   rc = grn_io_close(ctx, ja->io);
