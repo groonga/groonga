@@ -483,6 +483,42 @@ clean_pid_file(void)
   }
 }
 
+static bool
+do_alone_allow_db_reopen(grn_ctx *ctx,
+                         grn_obj *text,
+                         grn_obj **db,
+                         const char *db_path)
+{
+  bool is_close = false;
+  bool is_reopen = false;
+  if (GRN_TEXT_EQUAL_CSTRING(text, "_database_close")) {
+    is_close = true;
+  } else if (GRN_TEXT_EQUAL_CSTRING(text, "_database_reopen")) {
+    is_reopen = true;
+  } else {
+    return false;
+  }
+
+  GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_COMMAND,
+                ">", "%.*s",
+                (int)GRN_TEXT_LEN(text),
+                GRN_TEXT_VALUE(text));
+  if (is_close) {
+    grn_obj_close(ctx, *db);
+    *db = NULL;
+  } else if (is_reopen) {
+    if (*db) {
+      grn_obj_close(ctx, *db);
+    }
+    if (db_path) {
+      *db = grn_db_open(ctx, db_path);
+    } else {
+      *db = grn_db_create(ctx, NULL, NULL);
+    }
+  }
+  return true;
+}
+
 static int
 do_alone(int argc, char **argv)
 {
@@ -496,6 +532,7 @@ do_alone(int argc, char **argv)
   if (argc > 0 && argv) { path = *argv++; argc--; }
   db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
   if (db) {
+    bool allow_db_reopen = (strcmp(getenv("GROONGA_ALLOW_DATABASE_REOPEN"), "yes") == 0);
     grn_obj command;
     GRN_TEXT_INIT(&command, 0);
     GRN_CTX_USER_DATA(ctx)->ptr = &command;
@@ -515,6 +552,22 @@ do_alone(int argc, char **argv)
                        &command,
                        GRN_TEXT_VALUE(&text),
                        GRN_TEXT_LEN(&text));
+          if (allow_db_reopen) {
+            bool processed = do_alone_allow_db_reopen(ctx, &text, &db, path);
+            if (processed) {
+              ctx->impl->curr_expr = NULL;
+              grn_ctx_set_output_type(ctx, GRN_CONTENT_JSON);
+              grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
+              grn_ctx_output_flush(ctx, GRN_CTX_TAIL);
+              GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_RESULT_CODE,
+                            "<", "rc=%d", ctx->rc);
+              if (ctx->rc == GRN_SUCCESS) {
+                continue;
+              } else {
+                break;
+              }
+            }
+          }
         }
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text), 0);
         if (ctx->stat == GRN_CTX_QUIT) { break; }
