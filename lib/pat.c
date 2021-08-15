@@ -3033,8 +3033,8 @@ grn_pat_del_internal(grn_ctx *ctx,
       }
     }
     *p0 = otherside;
-  } else if ((rn->lr[0] != GRN_ID_NIL && rn->lr[1] == id) ||
-             (rn->lr[1] != GRN_ID_NIL && rn->lr[0] == id)) {
+  } else if ((rn->lr[0] == GRN_ID_NIL && rn->lr[1] == id) ||
+             (rn->lr[1] == GRN_ID_NIL && rn->lr[0] == id)) {
     /* The output node has only a disabled self-loop. */
     di->stat = DL_PHASE2;
     di->d = id;
