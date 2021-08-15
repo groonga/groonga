@@ -343,6 +343,21 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
     return;
   }
 
+  switch (db->keys->header.type) {
+  case GRN_TABLE_PAT_KEY :
+    grn_pat_wal_recover(ctx, (grn_pat *)(db->keys));
+    break;
+  case GRN_TABLE_DAT_KEY :
+    grn_dat_wal_recover(ctx, (grn_dat *)(db->keys));
+    break;
+  default :
+    break;
+  }
+  ERRCLR(ctx);
+
+  grn_ja_wal_recover(ctx, db->specs);
+  ERRCLR(ctx);
+
   GRN_TABLE_EACH_BEGIN(ctx, db->keys, cursor, id) {
     if (grn_id_is_builtin(ctx, id)) {
       continue;

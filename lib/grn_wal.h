@@ -38,6 +38,7 @@ typedef enum {
   GRN_WAL_EVENT_ENABLE_ENTRY,
   GRN_WAL_EVENT_SET_ENTRY_KEY,
   GRN_WAL_EVENT_DELETE_ENTRY,
+  GRN_WAL_EVENT_UPDATE_ENTRY,
   GRN_WAL_EVENT_REHASH,
   GRN_WAL_EVENT_DELETE_INFO_PHASE1,
   GRN_WAL_EVENT_DELETE_INFO_PHASE2,
@@ -72,6 +73,7 @@ typedef enum {
   GRN_WAL_KEY_SHARED_KEY_OFFSET,
   GRN_WAL_KEY_IS_SHARED,
   GRN_WAL_KEY_CHECK,
+  GRN_WAL_KEY_NEW_KEY,
   GRN_WAL_KEY_PARENT_RECORD_ID,
   GRN_WAL_KEY_PARENT_RECORD_DIRECTION,
   GRN_WAL_KEY_PARENT_CHECK,
@@ -164,6 +166,7 @@ typedef struct {
   uint64_t shared_key_offset;
   bool is_shared;
   uint16_t check;
+  grn_wal_reader_data new_key;
   grn_id parent_record_id;
   uint8_t parent_record_direction;
   uint16_t parent_check;

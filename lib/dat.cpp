@@ -402,6 +402,65 @@ grn_rc grn_dat_delete_internal(grn_ctx *ctx,
   return GRN_SUCCESS;
 }
 
+grn_rc grn_dat_update_by_id_internal(grn_ctx *ctx,
+                                     grn_dat *dat,
+                                     grn_id src_key_id,
+                                     const void *dest_key,
+                                     unsigned int dest_key_size) {
+  try {
+    try {
+      grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+      if (!trie->update(src_key_id, dest_key, dest_key_size)) {
+        return GRN_INVALID_ARGUMENT;
+      }
+    } catch (const grn::dat::SizeError &) {
+      if (!grn_dat_rebuild_trie(ctx, dat)) {
+        return ctx->rc;
+      }
+      grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+      if (!trie->update(src_key_id, dest_key, dest_key_size)) {
+        return GRN_INVALID_ARGUMENT;
+      }
+    }
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        "grn::dat::Trie::update failed: %s",
+        ex.what());
+    return ctx->rc;
+  }
+  return GRN_SUCCESS;
+}
+
+grn_rc grn_dat_update_internal(grn_ctx *ctx,
+                               grn_dat *dat,
+                               const void *src_key,
+                               unsigned int src_key_size,
+                               const void *dest_key,
+                               unsigned int dest_key_size) {
+  try {
+    try {
+      grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+      if (!trie->update(src_key, src_key_size, dest_key, dest_key_size)) {
+        return GRN_INVALID_ARGUMENT;
+      }
+    } catch (const grn::dat::SizeError &) {
+      if (!grn_dat_rebuild_trie(ctx, dat)) {
+        return ctx->rc;
+      }
+      grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+      if (!trie->update(src_key, src_key_size, dest_key, dest_key_size)) {
+        return GRN_INVALID_ARGUMENT;
+      }
+    }
+  } catch (const grn::dat::Exception &ex) {
+    ERR(grn_dat_translate_error_code(ex.code()),
+        "grn::dat::Trie::update failed: %s",
+        ex.what());
+    return ctx->rc;
+  }
+  return GRN_SUCCESS;
+}
+
 void grn_dat_cursor_init(grn_ctx *, grn_dat_cursor *cursor) {
   GRN_DB_OBJ_SET_TYPE(cursor, GRN_CURSOR_TABLE_DAT_KEY);
   cursor->dat = NULL;
@@ -427,6 +486,7 @@ class WALRecorder {
   struct Used {
     bool record_id;
     bool key;
+    bool new_key;
   };
 
  public:
@@ -465,6 +525,10 @@ class WALRecorder {
       usage = "deleting entry";
       rc = record_delete_entry(used);
       break;
+    case GRN_WAL_EVENT_UPDATE_ENTRY :
+      usage = "updating entry";
+      rc = record_update_entry(used);
+      break;
     default :
       usage = "not implemented event";
       rc = GRN_FUNCTION_NOT_IMPLEMENTED;
@@ -500,6 +564,8 @@ class WALRecorder {
   grn_id record_id;
   const void *key;
   size_t key_size;
+  const void *new_key;
+  size_t new_key_size;
 
  private:
   // Disallows copy and assignment.
@@ -565,6 +631,57 @@ class WALRecorder {
     }
   }
 
+  grn_rc record_update_entry(Used &used) {
+    if (record_id == GRN_ID_NIL) {
+      used.key = true;
+      used.new_key = true;
+      return grn_wal_add_entry(ctx_,
+                               reinterpret_cast<grn_obj *>(dat_),
+                               false,
+                               &wal_id_,
+                               tag_,
+
+                               GRN_WAL_KEY_EVENT,
+                               GRN_WAL_VALUE_EVENT,
+                               event,
+
+                               GRN_WAL_KEY_KEY,
+                               GRN_WAL_VALUE_BINARY,
+                               key,
+                               key_size,
+
+                               GRN_WAL_KEY_NEW_KEY,
+                               GRN_WAL_VALUE_BINARY,
+                               new_key,
+                               new_key_size,
+
+                               GRN_WAL_KEY_END);
+    } else {
+      used.record_id = true;
+      used.new_key = true;
+      return grn_wal_add_entry(ctx_,
+                               reinterpret_cast<grn_obj *>(dat_),
+                               false,
+                               &wal_id_,
+                               tag_,
+
+                               GRN_WAL_KEY_EVENT,
+                               GRN_WAL_VALUE_EVENT,
+                               event,
+
+                               GRN_WAL_KEY_RECORD_ID,
+                               GRN_WAL_VALUE_RECORD_ID,
+                               record_id,
+
+                               GRN_WAL_KEY_NEW_KEY,
+                               GRN_WAL_VALUE_BINARY,
+                               new_key,
+                               new_key_size,
+
+                               GRN_WAL_KEY_END);
+    }
+  }
+
   std::string format_details(const Used &used) {
     std::ostringstream details;
     details << "event:" << event
@@ -574,6 +691,9 @@ class WALRecorder {
     }
     if (used.key) {
       details << "key-size:" << key_size << " ";
+    }
+    if (used.new_key) {
+      details << "new-key-size:" << new_key_size << " ";
     }
     return details.str();
   }
@@ -629,6 +749,22 @@ class WALRecoverer {
           grn_dat_delete_by_id_internal(ctx_,
                                         dat_,
                                         entry.record_id);
+        }
+        break;
+      case GRN_WAL_EVENT_UPDATE_ENTRY :
+        if (entry.record_id == GRN_ID_NIL) {
+          grn_dat_update_internal(ctx_,
+                                  dat_,
+                                  entry.key.content.binary.data,
+                                  entry.key.content.binary.size,
+                                  entry.new_key.content.binary.data,
+                                  entry.new_key.content.binary.size);
+        } else {
+          grn_dat_update_by_id_internal(ctx_,
+                                        dat_,
+                                        entry.record_id,
+                                        entry.new_key.content.binary.data,
+                                        entry.new_key.content.binary.size);
         }
         break;
       default :
@@ -1017,28 +1153,25 @@ grn_dat_update_by_id(grn_ctx *ctx, grn_dat *dat, grn_id src_key_id,
   } else if (!dat->trie) {
     return GRN_INVALID_ARGUMENT;
   }
-  try {
-    try {
-      grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-      if (!trie->update(src_key_id, dest_key, dest_key_size)) {
-        return GRN_INVALID_ARGUMENT;
-      }
-    } catch (const grn::dat::SizeError &) {
-      if (!grn_dat_rebuild_trie(ctx, dat)) {
-        return ctx->rc;
-      }
-      grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-      if (!trie->update(src_key_id, dest_key, dest_key_size)) {
-        return GRN_INVALID_ARGUMENT;
-      }
-    }
-  } catch (const grn::dat::Exception &ex) {
-    ERR(grn_dat_translate_error_code(ex.code()),
-        "grn::dat::Trie::update failed: %s",
-        ex.what());
+
+  WALRecorder recorder(ctx, dat, "[dat][update][id]");
+  recorder.event = GRN_WAL_EVENT_UPDATE_ENTRY;
+  recorder.record_id = src_key_id;
+  recorder.new_key = dest_key;
+  recorder.new_key_size = dest_key_size;
+  auto rc = recorder.record();
+  if (rc != GRN_SUCCESS) {
     return ctx->rc;
   }
-  return GRN_SUCCESS;
+  rc = grn_dat_update_by_id_internal(ctx,
+                                     dat,
+                                     src_key_id,
+                                     dest_key,
+                                     dest_key_size);
+  if (rc == GRN_SUCCESS) {
+    recorder.apply_wal_id();
+  }
+  return rc;
 }
 
 grn_rc
@@ -1053,28 +1186,27 @@ grn_dat_update(grn_ctx *ctx, grn_dat *dat,
   } else if (!dat->trie) {
     return GRN_INVALID_ARGUMENT;
   }
-  try {
-    try {
-      grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-      if (!trie->update(src_key, src_key_size, dest_key, dest_key_size)) {
-        return GRN_INVALID_ARGUMENT;
-      }
-    } catch (const grn::dat::SizeError &) {
-      if (!grn_dat_rebuild_trie(ctx, dat)) {
-        return ctx->rc;
-      }
-      grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
-      if (!trie->update(src_key, src_key_size, dest_key, dest_key_size)) {
-        return GRN_INVALID_ARGUMENT;
-      }
-    }
-  } catch (const grn::dat::Exception &ex) {
-    ERR(grn_dat_translate_error_code(ex.code()),
-        "grn::dat::Trie::update failed: %s",
-        ex.what());
+
+  WALRecorder recorder(ctx, dat, "[dat][update][key]");
+  recorder.event = GRN_WAL_EVENT_UPDATE_ENTRY;
+  recorder.key = src_key;
+  recorder.key_size = src_key_size;
+  recorder.new_key = dest_key;
+  recorder.new_key_size = dest_key_size;
+  auto rc = recorder.record();
+  if (rc != GRN_SUCCESS) {
     return ctx->rc;
   }
-  return GRN_SUCCESS;
+  rc = grn_dat_update_internal(ctx,
+                               dat,
+                               src_key,
+                               src_key_size,
+                               dest_key,
+                               dest_key_size);
+  if (rc == GRN_SUCCESS) {
+    recorder.apply_wal_id();
+  }
+  return rc;
 }
 
 int

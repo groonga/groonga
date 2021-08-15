@@ -1,0 +1,14 @@
+table_create Data TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Data value COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+column_remove Data value
+[[0,0.0,0.0],true]
+dump
+table_create Data TABLE_PAT_KEY ShortText
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
+[[0,0.0,0.0],true]
+dump
+table_create Data TABLE_PAT_KEY ShortText

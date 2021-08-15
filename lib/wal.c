@@ -74,6 +74,9 @@ grn_wal_event_to_string(grn_wal_event event)
   case GRN_WAL_EVENT_DELETE_ENTRY :
     string = "delete-entry";
     break;
+  case GRN_WAL_EVENT_UPDATE_ENTRY :
+    string = "update-entry";
+    break;
   case GRN_WAL_EVENT_REHASH :
     string = "rehash";
     break;
@@ -157,6 +160,9 @@ grn_wal_key_to_string(grn_wal_key key)
     break;
   case GRN_WAL_KEY_CHECK :
     string = "check";
+    break;
+  case GRN_WAL_KEY_NEW_KEY :
+    string = "new-key";
     break;
   case GRN_WAL_KEY_PARENT_RECORD_ID :
     string = "parent-record-id";
@@ -876,6 +882,9 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
     case GRN_WAL_KEY_CHECK :
       entry->check = value->via.u64;
       break;
+    case GRN_WAL_KEY_NEW_KEY :
+      grn_wal_reader_read_data(ctx, reader, &(entry->new_key), value, tag);
+      break;
     case GRN_WAL_KEY_PARENT_RECORD_ID :
       entry->parent_record_id = value->via.u64;
       break;
@@ -1017,6 +1026,7 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       "shared-key-offset:%" GRN_FMT_INT64U " "
       "is-shared:%s "
       "check:%u "
+      "new-key-type:%s(%u) "
       "parent-record-id:%u "
       "parent-record-direction:%u "
       "parent-check:%u "
@@ -1061,6 +1071,8 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       entry->shared_key_offset,
       entry->is_shared ? "true" : "false",
       entry->check,
+      grn_wal_reader_data_type_to_string(entry->new_key.type),
+      entry->new_key.type,
       entry->parent_record_id,
       entry->parent_record_direction,
       entry->parent_check,

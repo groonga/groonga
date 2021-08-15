@@ -1,0 +1,9 @@
+table_create Data TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+dump
+table_create Data TABLE_PAT_KEY ShortText
+dump
+wal_recover
+[[0,0.0,0.0],true]
+dump
+table_create Data TABLE_PAT_KEY ShortText

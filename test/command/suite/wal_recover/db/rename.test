@@ -1,0 +1,37 @@
+# wal_recover can't use with HTTP because requests via HTTP are always
+# processed by workers. Workers never use primary WAL role.
+#@require-interface stdio
+
+#@require-feature message_pack
+
+#$GROONGA_ALLOW_DATABASE_REOPEN=yes
+#$GRN_WAL_ROLE=primary
+
+table_create Data TABLE_PAT_KEY ShortText
+column_create Data value COLUMN_SCALAR UInt32
+
+#@disable-logging
+io_flush
+#@copy-path #{db_path} #{db_path}.keep
+#@copy-path #{db_path}.001 #{db_path}.001.keep
+#@copy-path #{db_path}.0000000 #{db_path}.0000000.keep
+#@enable-logging
+
+column_rename Data value renamed_value
+
+dump
+
+#@disable-logging
+#@copy-path #{db_path}.wal #{db_path}.wal.keep
+io_flush
+#@enable-logging
+
+_database_close
+
+#@copy-path #{db_path}.keep #{db_path}
+#@copy-path #{db_path}.001.keep #{db_path}.001
+#@copy-path #{db_path}.0000000.keep #{db_path}.0000000
+#@copy-path #{db_path}.wal.keep #{db_path}.wal
+_database_reopen
+
+dump
