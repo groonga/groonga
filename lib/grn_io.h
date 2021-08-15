@@ -186,7 +186,7 @@ grn_io_seg_ref(grn_ctx *ctx, grn_io *io, uint32_t segno)
         io->path);
     return NULL;
   }
-  info = &(io)->maps[segno];
+  info = &(io->maps[segno]);
   uint32_t nref, retry, *pnref = &info->nref;
   if (io->flags & GRN_IO_EXPIRE_SEGMENT) {
     if (io->flags & GRN_IO_EXPIRE_GTICK) {
