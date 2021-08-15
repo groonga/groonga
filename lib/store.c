@@ -6150,10 +6150,366 @@ grn_ja_check(grn_ctx *ctx, grn_ja *ja)
   GRN_OUTPUT_MAP_CLOSE();
 }
 
+static void
+grn_ja_wal_recover_new_segment(grn_ctx *ctx,
+                               grn_ja *ja,
+                               grn_wal_reader_entry *entry,
+                               const char *wal_error_tag)
+{
+  switch (entry->segment_type) {
+  case GRN_WAL_SEGMENT_CHUNK :
+    grn_ja_chunk_segment_new(ctx,
+                             ja,
+                             entry->element_size,
+                             entry->segment);
+    break;
+  case GRN_WAL_SEGMENT_SEQUENTIAL :
+    grn_ja_sequential_segment_new(ctx, ja, entry->segment);
+    break;
+  case GRN_WAL_SEGMENT_HUGE :
+    grn_ja_huge_segment_new(ctx, ja, entry->segment);
+    break;
+  case GRN_WAL_SEGMENT_EINFO :
+    {
+      grn_ja_einfo *einfo = grn_io_seg_ref(ctx, ja->io, entry->segment);
+      if (!einfo) {
+        grn_wal_set_recover_error(ctx,
+                                  GRN_NO_MEMORY_AVAILABLE,
+                                  (grn_obj *)ja,
+                                  entry,
+                                  wal_error_tag,
+                                  "failed to refer element info segment");
+        return;
+      }
+      grn_ja_einfo_segment_new(ctx,
+                               ja,
+                               einfo,
+                               entry->record_id,
+                               entry->segment);
+      grn_io_seg_unref(ctx, ja->io, entry->segment);
+    }
+  break;
+  case GRN_WAL_SEGMENT_GINFO :
+    {
+      grn_ja_ginfo *ginfo_current =
+        grn_io_seg_ref(ctx, ja->io, entry->garbage_segment);
+      if (!ginfo_current) {
+        grn_wal_set_recover_error(ctx,
+                                  GRN_NO_MEMORY_AVAILABLE,
+                                  (grn_obj *)ja,
+                                  entry,
+                                  wal_error_tag,
+                                  "failed to refer the current "
+                                  "garbage info segment");
+        return;
+      }
+      grn_ja_ginfo *ginfo_previous = NULL;
+      if (entry->previous_garbage_segment != 0) {
+        ginfo_previous =
+          grn_io_seg_ref(ctx, ja->io, entry->previous_garbage_segment);
+        if (!ginfo_previous) {
+          grn_io_seg_unref(ctx, ja->io, entry->garbage_segment);
+          grn_wal_set_recover_error(ctx,
+                                    GRN_NO_MEMORY_AVAILABLE,
+                                    (grn_obj *)ja,
+                                    entry,
+                                    wal_error_tag,
+                                    "failed to refer the previous "
+                                    "garbage info segment");
+          return;
+        }
+      }
+      grn_ja_ginfo_segment_new(ctx,
+                               ja,
+                               ginfo_current,
+                               ginfo_previous,
+                               entry->garbage_segment,
+                               entry->element_size);
+      grn_io_seg_unref(ctx, ja->io, entry->garbage_segment);
+      if (ginfo_previous) {
+        grn_io_seg_unref(ctx, ja->io, entry->previous_garbage_segment);
+      }
+    }
+    break;
+  default :
+    grn_wal_set_recover_error(ctx,
+                              GRN_FUNCTION_NOT_IMPLEMENTED,
+                              (grn_obj *)ja,
+                              entry,
+                              wal_error_tag,
+                              "not implemented yet");
+    break;
+  }
+}
+
+static void
+grn_ja_wal_recover_use_segment(grn_ctx *ctx,
+                               grn_ja *ja,
+                               grn_wal_reader_entry *entry,
+                               const char *wal_error_tag)
+{
+  switch (entry->segment_type) {
+  case GRN_WAL_SEGMENT_CHUNK :
+    grn_ja_chunk_segment_use(ctx,
+                             ja,
+                             entry->element_size,
+                             entry->segment,
+                             entry->position);
+    break;
+  case GRN_WAL_SEGMENT_SEQUENTIAL :
+    {
+      uint8_t *address = grn_io_seg_ref(ctx, ja->io, entry->segment);
+      if (!address) {
+        grn_wal_set_recover_error(ctx,
+                                  GRN_NO_MEMORY_AVAILABLE,
+                                  (grn_obj *)ja,
+                                  entry,
+                                  wal_error_tag,
+                                  "failed to refer sequential segment");
+        return;
+      }
+      grn_ja_sequential_segment_use(ctx,
+                                    ja,
+                                    address,
+                                    entry->record_id,
+                                    entry->segment,
+                                    entry->position,
+                                    entry->segment_info,
+                                    entry->element_size);
+      grn_io_seg_unref(ctx, ja->io, entry->segment);
+    }
+    break;
+  case GRN_WAL_SEGMENT_EINFO :
+    {
+      grn_ja_einfo *einfo = grn_io_seg_ref(ctx, ja->io, entry->segment);
+      if (!einfo) {
+        grn_wal_set_recover_error(ctx,
+                                  GRN_NO_MEMORY_AVAILABLE,
+                                  (grn_obj *)ja,
+                                  entry,
+                                  wal_error_tag,
+                                  "failed to refer element info segment");
+        return;
+      }
+      grn_ja_einfo *new_einfo =
+        (grn_ja_einfo *)&(entry->value.content.uint64);
+      grn_ja_einfo_segment_use(ctx,
+                               ja,
+                               einfo,
+                               entry->record_id,
+                               entry->segment,
+                               new_einfo);
+      grn_io_seg_unref(ctx, ja->io, entry->segment);
+    }
+    break;
+  case GRN_WAL_SEGMENT_GINFO :
+    {
+      grn_ja_ginfo *ginfo =
+        grn_io_seg_ref(ctx, ja->io, entry->garbage_segment);
+      if (!ginfo) {
+        grn_wal_set_recover_error(ctx,
+                                  GRN_NO_MEMORY_AVAILABLE,
+                                  (grn_obj *)ja,
+                                  entry,
+                                  wal_error_tag,
+                                  "failed to refer garbage info segment");
+        return;
+      }
+      grn_ja_ginfo_segment_use(ctx,
+                               ja,
+                               ginfo,
+                               entry->segment,
+                               entry->position,
+                               entry->garbage_segment_head,
+                               entry->garbage_segment_n_records,
+                               entry->n_garbages,
+                               entry->element_size);
+      grn_io_seg_unref(ctx, ja->io, entry->garbage_segment);
+    }
+    break;
+  default :
+    grn_wal_set_recover_error(ctx,
+                              GRN_FUNCTION_NOT_IMPLEMENTED,
+                              (grn_obj *)ja,
+                              entry,
+                              wal_error_tag,
+                              "not implemented yet");
+    break;
+  }
+}
+
+static void
+grn_ja_wal_recover_reuse_segment(grn_ctx *ctx,
+                                 grn_ja *ja,
+                                 grn_wal_reader_entry *entry,
+                                 const char *wal_error_tag)
+{
+  grn_ja_ginfo *ginfo = grn_io_seg_ref(ctx, ja->io, entry->garbage_segment);
+  if (!ginfo) {
+    grn_wal_set_recover_error(ctx,
+                              GRN_NO_MEMORY_AVAILABLE,
+                              (grn_obj *)ja,
+                              entry,
+                              wal_error_tag,
+                              "failed to refer garbage segment");
+    return;
+  }
+  grn_ja_chunk_segment_reuse(ctx,
+                             ja,
+                             ginfo,
+                             entry->garbage_segment_tail,
+                             entry->garbage_segment_n_records,
+                             entry->n_garbages,
+                             entry->element_size);
+  grn_io_seg_unref(ctx, ja->io, entry->garbage_segment);
+}
+
+static void
+grn_ja_wal_recover_free_segment(grn_ctx *ctx,
+                                 grn_ja *ja,
+                                 grn_wal_reader_entry *entry,
+                                 const char *wal_error_tag)
+{
+  switch (entry->segment_type) {
+  case GRN_WAL_SEGMENT_SEQUENTIAL :
+    {
+      uint8_t *address = grn_io_seg_ref(ctx, ja->io, entry->segment);
+      if (!address) {
+        grn_wal_set_recover_error(ctx,
+                                  GRN_NO_MEMORY_AVAILABLE,
+                                  (grn_obj *)ja,
+                                  entry,
+                                  wal_error_tag,
+                                  "failed to refer sequential segment");
+        return;
+      }
+      grn_ja_sequential_segment_free(ctx,
+                                     ja,
+                                     address,
+                                     entry->segment,
+                                     entry->position,
+                                     entry->segment_info,
+                                     entry->element_size);
+      grn_io_seg_unref(ctx, ja->io, entry->segment);
+    }
+    break;
+  case GRN_WAL_SEGMENT_HUGE :
+    grn_ja_huge_segment_free(ctx, ja, entry->segment);
+    break;
+  case GRN_WAL_SEGMENT_GINFO :
+    {
+      grn_ja_ginfo *ginfo_previous = NULL;
+      if (entry->previous_garbage_segment != 0) {
+        ginfo_previous =
+          grn_io_seg_ref(ctx, ja->io, entry->previous_garbage_segment);
+        if (!ginfo_previous) {
+          grn_wal_set_recover_error(ctx,
+                                    GRN_NO_MEMORY_AVAILABLE,
+                                    (grn_obj *)ja,
+                                    entry,
+                                    wal_error_tag,
+                                    "failed to refer "
+                                    "previous garbage segment");
+          return;
+        }
+      }
+      grn_ja_ginfo_segment_free(ctx,
+                                ja,
+                                ginfo_previous,
+                                entry->garbage_segment,
+                                entry->next_garbage_segment,
+                                entry->element_size);
+      if (ginfo_previous) {
+        grn_io_seg_unref(ctx, ja->io, entry->previous_garbage_segment);
+      }
+    }
+    break;
+  default :
+    grn_wal_set_recover_error(ctx,
+                              GRN_FUNCTION_NOT_IMPLEMENTED,
+                              (grn_obj *)ja,
+                              entry,
+                              wal_error_tag,
+                              "not implemented yet");
+    break;
+  }
+}
+
+static void
+grn_ja_wal_recover_set_value(grn_ctx *ctx,
+                             grn_ja *ja,
+                             grn_wal_reader_entry *entry,
+                             const char *wal_error_tag)
+{
+  switch (grn_ja_detect_element_type(ctx, ja, entry->element_size)) {
+  case GRN_JA_ELEMENT_CHUNK :
+  case GRN_JA_ELEMENT_SEQUENTIAL :
+    {
+      uint8_t *address = grn_io_seg_ref(ctx, ja->io, entry->segment);
+      if (!address) {
+        grn_wal_set_recover_error(ctx,
+                                  GRN_NO_MEMORY_AVAILABLE,
+                                  (grn_obj *)ja,
+                                  entry,
+                                  wal_error_tag,
+                                  "failed to refer chunk segment");
+        break;
+      }
+      memcpy(address + entry->position,
+             entry->value.content.binary.data,
+             entry->value.content.binary.size);
+      grn_io_seg_unref(ctx, ja->io, entry->segment);
+    }
+    break;
+  case GRN_JA_ELEMENT_HUGE :
+    {
+      uint32_t n_segments =
+        grn_ja_compute_huge_n_segments(entry->element_size);
+      const uint8_t *data = entry->value.content.binary.data;
+      size_t rest_size = entry->value.content.binary.size;
+      uint32_t i;
+      for (i = 0; i < n_segments; i++) {
+        uint32_t segment = entry->segment + i;
+        uint8_t *address = grn_io_seg_ref(ctx, ja->io, segment);
+        if (!address) {
+          char message[4096];
+          grn_snprintf(message,
+                       sizeof(message),
+                       sizeof(message),
+                       "failed to refer huge segment: %u",
+                       segment);
+          grn_wal_set_recover_error(ctx,
+                                    GRN_NO_MEMORY_AVAILABLE,
+                                    (grn_obj *)ja,
+                                    entry,
+                                    wal_error_tag,
+                                    message);
+          break;
+        }
+        size_t copy_size =
+          (rest_size > JA_SEGMENT_SIZE) ? JA_SEGMENT_SIZE : rest_size;
+        memcpy(address, data, copy_size);
+        data += copy_size;
+        rest_size -= copy_size;
+        grn_io_seg_unref(ctx, ja->io, segment);
+      }
+    }
+    break;
+  default :
+    grn_wal_set_recover_error(ctx,
+                              GRN_FUNCTION_NOT_IMPLEMENTED,
+                              (grn_obj *)ja,
+                              entry,
+                              wal_error_tag,
+                              "not implemented yet");
+    break;
+  }
+}
+
 grn_rc
 grn_ja_wal_recover(grn_ctx *ctx, grn_ja *ja)
 {
-  const char *error_tag = "[ja]";
+  const char *wal_error_tag = "[ja]";
   const char *reader_tag = "[ja][recover]";
   grn_wal_reader *reader = grn_wal_reader_open(ctx, (grn_obj *)ja, reader_tag);
   if (!reader) {
@@ -6170,340 +6526,26 @@ grn_ja_wal_recover(grn_ctx *ctx, grn_ja *ja)
     }
     switch (entry.event) {
     case GRN_WAL_EVENT_NEW_SEGMENT :
-      switch (entry.segment_type) {
-      case GRN_WAL_SEGMENT_CHUNK :
-        grn_ja_chunk_segment_new(ctx,
-                                 ja,
-                                 entry.element_size,
-                                 entry.segment);
-        break;
-      case GRN_WAL_SEGMENT_SEQUENTIAL :
-        grn_ja_sequential_segment_new(ctx, ja, entry.segment);
-        break;
-      case GRN_WAL_SEGMENT_HUGE :
-        grn_ja_huge_segment_new(ctx, ja, entry.segment);
-        break;
-      case GRN_WAL_SEGMENT_EINFO :
-        {
-          grn_ja_einfo *einfo = grn_io_seg_ref(ctx, ja->io, entry.segment);
-          if (!einfo) {
-            grn_wal_set_recover_error(ctx,
-                                      GRN_NO_MEMORY_AVAILABLE,
-                                      (grn_obj *)ja,
-                                      &entry,
-                                      error_tag,
-                                      "failed to refer element info segment");
-            break;
-          }
-          grn_ja_einfo_segment_new(ctx,
-                                   ja,
-                                   einfo,
-                                   entry.record_id,
-                                   entry.segment);
-          grn_io_seg_unref(ctx, ja->io, entry.segment);
-        }
-        break;
-      case GRN_WAL_SEGMENT_GINFO :
-        {
-          grn_ja_ginfo *ginfo_current = NULL;
-          ginfo_current =
-            grn_io_seg_ref(ctx, ja->io, entry.garbage_segment);
-          if (!ginfo_current) {
-              grn_wal_set_recover_error(ctx,
-                                        GRN_NO_MEMORY_AVAILABLE,
-                                        (grn_obj *)ja,
-                                        &entry,
-                                        error_tag,
-                                        "failed to refer the current "
-                                        "garbage info segment");
-              break;
-          }
-          grn_ja_ginfo *ginfo_previous = NULL;
-          if (entry.previous_garbage_segment != 0) {
-            ginfo_previous =
-              grn_io_seg_ref(ctx, ja->io, entry.previous_garbage_segment);
-            if (!ginfo_previous) {
-              grn_io_seg_unref(ctx, ja->io, entry.garbage_segment);
-              grn_wal_set_recover_error(ctx,
-                                        GRN_NO_MEMORY_AVAILABLE,
-                                        (grn_obj *)ja,
-                                        &entry,
-                                        error_tag,
-                                        "failed to refer the previous "
-                                        "garbage info segment");
-              break;
-            }
-          }
-          grn_ja_ginfo_segment_new(ctx,
-                                   ja,
-                                   ginfo_current,
-                                   ginfo_previous,
-                                   entry.garbage_segment,
-                                   entry.element_size);
-          grn_io_seg_unref(ctx, ja->io, entry.garbage_segment);
-          if (ginfo_previous) {
-            grn_io_seg_unref(ctx, ja->io, entry.previous_garbage_segment);
-          }
-        }
-        break;
-      default :
-        grn_wal_set_recover_error(ctx,
-                                  GRN_FUNCTION_NOT_IMPLEMENTED,
-                                  (grn_obj *)ja,
-                                  &entry,
-                                  error_tag,
-                                  "not implemented yet");
-        break;
-      }
+      grn_ja_wal_recover_new_segment(ctx, ja, &entry, wal_error_tag);
       break;
     case GRN_WAL_EVENT_USE_SEGMENT :
-      switch (entry.segment_type) {
-      case GRN_WAL_SEGMENT_CHUNK :
-        grn_ja_chunk_segment_use(ctx,
-                                 ja,
-                                 entry.element_size,
-                                 entry.segment,
-                                 entry.position);
-        break;
-      case GRN_WAL_SEGMENT_SEQUENTIAL :
-        {
-          uint8_t *address = grn_io_seg_ref(ctx, ja->io, entry.segment);
-          if (!address) {
-            grn_wal_set_recover_error(ctx,
-                                      GRN_NO_MEMORY_AVAILABLE,
-                                      (grn_obj *)ja,
-                                      &entry,
-                                      error_tag,
-                                      "failed to refer sequential segment");
-            break;
-          }
-          grn_ja_sequential_segment_use(ctx,
-                                        ja,
-                                        address,
-                                        entry.record_id,
-                                        entry.segment,
-                                        entry.position,
-                                        entry.segment_info,
-                                        entry.element_size);
-          grn_io_seg_unref(ctx, ja->io, entry.segment);
-        }
-        break;
-      case GRN_WAL_SEGMENT_EINFO :
-        {
-          grn_ja_einfo *einfo = grn_io_seg_ref(ctx, ja->io, entry.segment);
-          if (!einfo) {
-            grn_wal_set_recover_error(ctx,
-                                      GRN_NO_MEMORY_AVAILABLE,
-                                      (grn_obj *)ja,
-                                      &entry,
-                                      error_tag,
-                                      "failed to refer element info segment");
-            break;
-          }
-          grn_ja_einfo *new_einfo =
-            (grn_ja_einfo *)&(entry.value.content.uint64);
-          grn_ja_einfo_segment_use(ctx,
-                                   ja,
-                                   einfo,
-                                   entry.record_id,
-                                   entry.segment,
-                                   new_einfo);
-          grn_io_seg_unref(ctx, ja->io, entry.segment);
-        }
-        break;
-      case GRN_WAL_SEGMENT_GINFO :
-        {
-          grn_ja_ginfo *ginfo =
-            grn_io_seg_ref(ctx, ja->io, entry.garbage_segment);
-          if (!ginfo) {
-            grn_wal_set_recover_error(ctx,
-                                      GRN_NO_MEMORY_AVAILABLE,
-                                      (grn_obj *)ja,
-                                      &entry,
-                                      error_tag,
-                                      "failed to refer garbage info segment");
-            break;
-          }
-          grn_ja_ginfo_segment_use(ctx,
-                                   ja,
-                                   ginfo,
-                                   entry.segment,
-                                   entry.position,
-                                   entry.garbage_segment_head,
-                                   entry.garbage_segment_n_records,
-                                   entry.n_garbages,
-                                   entry.element_size);
-          grn_io_seg_unref(ctx, ja->io, entry.garbage_segment);
-        }
-        break;
-      default :
-        grn_wal_set_recover_error(ctx,
-                                  GRN_FUNCTION_NOT_IMPLEMENTED,
-                                  (grn_obj *)ja,
-                                  &entry,
-                                  error_tag,
-                                  "not implemented yet");
-        break;
-      }
+      grn_ja_wal_recover_use_segment(ctx, ja, &entry, wal_error_tag);
       break;
     case GRN_WAL_EVENT_REUSE_SEGMENT :
-      {
-        grn_ja_ginfo *ginfo = grn_io_seg_ref(ctx, ja->io, entry.garbage_segment);
-        if (!ginfo) {
-          grn_wal_set_recover_error(ctx,
-                                    GRN_NO_MEMORY_AVAILABLE,
-                                    (grn_obj *)ja,
-                                    &entry,
-                                    error_tag,
-                                    "failed to refer garbage segment");
-          break;
-        }
-        grn_ja_chunk_segment_reuse(ctx,
-                                   ja,
-                                   ginfo,
-                                   entry.garbage_segment_tail,
-                                   entry.garbage_segment_n_records,
-                                   entry.n_garbages,
-                                   entry.element_size);
-        grn_io_seg_unref(ctx, ja->io, entry.garbage_segment);
-      }
+      grn_ja_wal_recover_reuse_segment(ctx, ja, &entry, wal_error_tag);
       break;
     case GRN_WAL_EVENT_FREE_SEGMENT :
-      switch (entry.segment_type) {
-      case GRN_WAL_SEGMENT_SEQUENTIAL :
-        {
-          uint8_t *address = grn_io_seg_ref(ctx, ja->io, entry.segment);
-          if (!address) {
-            grn_wal_set_recover_error(ctx,
-                                      GRN_NO_MEMORY_AVAILABLE,
-                                      (grn_obj *)ja,
-                                      &entry,
-                                      error_tag,
-                                      "failed to refer sequential segment");
-            break;
-          }
-          grn_ja_sequential_segment_free(ctx,
-                                         ja,
-                                         address,
-                                         entry.segment,
-                                         entry.position,
-                                         entry.segment_info,
-                                         entry.element_size);
-          grn_io_seg_unref(ctx, ja->io, entry.segment);
-        }
-        break;
-      case GRN_WAL_SEGMENT_HUGE :
-        grn_ja_huge_segment_free(ctx, ja, entry.segment);
-        break;
-      case GRN_WAL_SEGMENT_GINFO :
-        {
-          grn_ja_ginfo *ginfo_previous = NULL;
-          if (entry.previous_garbage_segment != 0) {
-            ginfo_previous =
-              grn_io_seg_ref(ctx, ja->io, entry.previous_garbage_segment);
-            if (!ginfo_previous) {
-              grn_wal_set_recover_error(ctx,
-                                        GRN_NO_MEMORY_AVAILABLE,
-                                        (grn_obj *)ja,
-                                        &entry,
-                                        error_tag,
-                                        "failed to refer "
-                                        "previous garbage segment");
-              break;
-            }
-          }
-          grn_ja_ginfo_segment_free(ctx,
-                                    ja,
-                                    ginfo_previous,
-                                    entry.garbage_segment,
-                                    entry.next_garbage_segment,
-                                    entry.element_size);
-          if (ginfo_previous) {
-            grn_io_seg_unref(ctx, ja->io, entry.previous_garbage_segment);
-          }
-        }
-        break;
-      default :
-        grn_wal_set_recover_error(ctx,
-                                  GRN_FUNCTION_NOT_IMPLEMENTED,
-                                  (grn_obj *)ja,
-                                  &entry,
-                                  error_tag,
-                                  "not implemented yet");
-        break;
-      }
+      grn_ja_wal_recover_free_segment(ctx, ja, &entry, wal_error_tag);
       break;
     case GRN_WAL_EVENT_SET_VALUE :
-      switch (grn_ja_detect_element_type(ctx, ja, entry.element_size)) {
-      case GRN_JA_ELEMENT_CHUNK :
-      case GRN_JA_ELEMENT_SEQUENTIAL :
-        {
-          uint8_t *address = grn_io_seg_ref(ctx, ja->io, entry.segment);
-          if (!address) {
-            grn_wal_set_recover_error(ctx,
-                                      GRN_NO_MEMORY_AVAILABLE,
-                                      (grn_obj *)ja,
-                                      &entry,
-                                      error_tag,
-                                      "failed to refer chunk segment");
-            break;
-          }
-          memcpy(address + entry.position,
-                 entry.value.content.binary.data,
-                 entry.value.content.binary.size);
-          grn_io_seg_unref(ctx, ja->io, entry.segment);
-        }
-        break;
-      case GRN_JA_ELEMENT_HUGE :
-        {
-          uint32_t n_segments =
-            grn_ja_compute_huge_n_segments(entry.element_size);
-          const uint8_t *data = entry.value.content.binary.data;
-          size_t rest_size = entry.value.content.binary.size;
-          uint32_t i;
-          for (i = 0; i < n_segments; i++) {
-            uint32_t segment = entry.segment + i;
-            uint8_t *address = grn_io_seg_ref(ctx, ja->io, segment);
-            if (!address) {
-              char message[4096];
-              grn_snprintf(message,
-                           sizeof(message),
-                           sizeof(message),
-                           "failed to refer huge segment: %u",
-                           segment);
-              grn_wal_set_recover_error(ctx,
-                                        GRN_NO_MEMORY_AVAILABLE,
-                                        (grn_obj *)ja,
-                                        &entry,
-                                        error_tag,
-                                        message);
-              break;
-            }
-            size_t copy_size =
-              (rest_size > JA_SEGMENT_SIZE) ? JA_SEGMENT_SIZE : rest_size;
-            memcpy(address, data, copy_size);
-            data += copy_size;
-            rest_size -= copy_size;
-            grn_io_seg_unref(ctx, ja->io, segment);
-          }
-        }
-        break;
-      default :
-        grn_wal_set_recover_error(ctx,
-                                  GRN_FUNCTION_NOT_IMPLEMENTED,
-                                  (grn_obj *)ja,
-                                  &entry,
-                                  error_tag,
-                                  "not implemented yet");
-        break;
-      }
+      grn_ja_wal_recover_set_value(ctx, ja, &entry, wal_error_tag);
       break;
     default :
       grn_wal_set_recover_error(ctx,
                                 GRN_FUNCTION_NOT_IMPLEMENTED,
                                 (grn_obj *)ja,
                                 &entry,
-                                error_tag,
+                                wal_error_tag,
                                 "not implemented yet");
       break;
     }
