@@ -45,6 +45,7 @@
 #include "grn_posting.h"
 #include "grn_vector.h"
 #include "grn_selector.h"
+#include "grn_wal.h"
 
 #ifdef GRN_SUPPORT_REGEXP
 # define GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH_TEXT
@@ -5863,6 +5864,7 @@ _grn_ii_create(grn_ctx *ctx, grn_ii *ii, const char *path, grn_obj *lexicon, uin
   if ((flags & GRN_OBJ_WITH_SECTION)) { ii->n_elements++; }
   if ((flags & GRN_OBJ_WITH_WEIGHT)) { ii->n_elements++; }
   if ((flags & GRN_OBJ_WITH_POSITION)) { ii->n_elements++; }
+  ii->wal_touched = false;
   return ii;
 }
 
@@ -5989,6 +5991,7 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
   if ((header->flags & GRN_OBJ_WITH_SECTION)) { ii->n_elements++; }
   if ((header->flags & GRN_OBJ_WITH_WEIGHT)) { ii->n_elements++; }
   if ((header->flags & GRN_OBJ_WITH_POSITION)) { ii->n_elements++; }
+  ii->wal_touched = false;
   return ii;
 }
 
@@ -6092,6 +6095,10 @@ grn_ii_flush(grn_ctx *ctx, grn_ii *ii)
     rc = grn_io_flush(ctx, ii->chunk);
   }
 
+  if (rc == GRN_SUCCESS) {
+    ii->wal_touched = false;
+  }
+
   return rc;
 }
 
@@ -6119,9 +6126,28 @@ grn_ii_set_visibility(grn_ctx *ctx, grn_ii *ii, bool is_visible)
 #define BIT11_01(x) ((x >> 1) & 0x7ff)
 #define BIT31_12(x) (x >> 12)
 
+static grn_rc
+grn_ii_wal_touch(grn_ctx *ctx, grn_ii *ii, const char *tag)
+{
+  if (ii->wal_touched) {
+    return GRN_SUCCESS;
+  }
+
+  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+    return GRN_SUCCESS;
+  }
+
+  grn_rc rc = grn_wal_touch(ctx, (grn_obj *)ii, false, tag);
+  if (rc == GRN_SUCCESS) {
+    ii->wal_touched = true;
+  }
+  return rc;
+}
+
 grn_rc
 grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_hash *h)
 {
+  const char *tag = "[ii][update][one]";
   buffer *b;
   uint8_t *bs;
   buffer_rec *br = NULL;
@@ -6135,10 +6161,11 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     GRN_DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
     grn_ii_get_term(ctx, ii, tid, &term);
-    MERR("[ii][update][one] failed to allocate an array: "
+    MERR("%s failed to allocate an array: "
          "<%.*s>: "
          "<%.*s>(%u): "
          "(%u:%u)",
+         tag,
          name_size, name,
          (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
          tid,
@@ -6151,15 +6178,19 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     GRN_DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
     grn_ii_get_term(ctx, ii, tid, &term);
-    MERR("[ii][update][one] failed to encode a record: "
+    MERR("%s failed to encode a record: "
          "<%.*s>: "
          "<%.*s>(%u): "
          "(%u:%u)",
+         tag,
          name_size, name,
          (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
          tid,
          u->rid, u->sid);
     GRN_OBJ_FIN(ctx, &term);
+    goto exit;
+  }
+  if (grn_ii_wal_touch(ctx, ii, tag) != GRN_SUCCESS) {
     goto exit;
   }
   for (;;) {
@@ -6171,13 +6202,14 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
           GRN_DEFINE_NAME(ii);
           GRN_TEXT_INIT(&term, 0);
           grn_ii_get_term(ctx, ii, tid, &term);
-          MERR("[ii][update][one] failed to allocate a buffer: "
+          MERR("%s failed to allocate a buffer: "
                "<%.*s>: "
                "<%.*s>(%u): "
                "(%u:%u): "
                "segment:<%u>, "
                "free:<%u>, "
                "required:<%u>",
+               tag,
                name_size, name,
                (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                tid,
@@ -6211,7 +6243,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
               grn_ii_get_term(ctx, ii, tid, &term);
               grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
               ERR(ctx->rc,
-                  "[ii][update][one] failed to split a buffer: "
+                  "%s failed to split a buffer: "
                   "<%.*s>: "
                   "<%.*s>(%u): "
                   "(%u:%u): "
@@ -6219,6 +6251,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                   "free:<%u>, "
                   "required:<%u>, "
                   "%s",
+                  tag,
                   name_size, name,
                   (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                   tid,
@@ -6241,7 +6274,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             grn_ii_get_term(ctx, ii, tid, &term);
             grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
             ERR(ctx->rc,
-                "[ii][update][one] failed to flush a buffer: "
+                "%s failed to flush a buffer: "
                 "<%.*s>: "
                 "<%u>:<%u>:<%u>: "
                 "term:<%.*s>, "
@@ -6249,6 +6282,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                 "free:<%u>, "
                 "required:<%u>: "
                 "%s",
+                tag,
                 name_size, name,
                 u->rid, u->sid, tid,
                 (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
@@ -6271,7 +6305,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
               GRN_DEFINE_NAME(ii);
               GRN_TEXT_INIT(&term, 0);
               grn_ii_get_term(ctx, ii, tid, &term);
-              MERR("[ii][update][one] failed to reallocate a buffer: "
+              MERR("%s failed to reallocate a buffer: "
                    "<%.*s>: "
                    "<%.*s>(%u): "
                    "(%u:%u): "
@@ -6279,6 +6313,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                    "new-segment:<%u>, "
                    "free:<%u>, "
                    "required:<%u>",
+                   tag,
                    name_size, name,
                    (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                    tid,
@@ -6300,7 +6335,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
             grn_ii_get_term(ctx, ii, tid, &term);
-            MERR("[ii][update][one] buffer is full: "
+            MERR("%s buffer is full: "
                  "<%.*s>: "
                  "<%.*s>(%u): "
                  "(%u:%u): "
@@ -6308,6 +6343,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
                  "new-segment:<%u>, "
                  "free:<%u>, "
                  "required:<%u>",
+                 tag,
                  name_size, name,
                  (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                  tid,
@@ -6345,10 +6381,11 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
             GRN_DEFINE_NAME(ii);
             GRN_TEXT_INIT(&term, 0);
             grn_ii_get_term(ctx, ii, tid, &term);
-            MERR("[ii][update][one] failed to encode a record2: "
+            MERR("%s failed to encode a record2: "
                  "<%.*s>: "
                  "<%.*s>(%u): "
                  "(%u:%u)",
+                 tag,
                  name_size, name,
                  (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                  tid,
@@ -6364,11 +6401,12 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
               GRN_DEFINE_NAME(ii);
               GRN_TEXT_INIT(&term, 0);
               grn_ii_get_term(ctx, ii, tid, &term);
-              MERR("[ii][update][one] failed to create a buffer2: "
+              MERR("%s failed to create a buffer2: "
                    "<%.*s>: "
                    "<%.*s>(%u): "
                    "(%u:%u): "
                    "size:<%u>",
+                   tag,
                    name_size, name,
                    (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                    tid,
@@ -6394,11 +6432,12 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
               GRN_TEXT_INIT(&term, 0);
               grn_ii_get_term(ctx, ii, tid, &term);
               grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
-              MERR("[ii][update][one] failed to put to buffer: "
+              MERR("%s failed to put to buffer: "
                    "<%.*s>: "
                    "<%.*s>(%u): "
                    "(%u:%u): "
                    "%s",
+                   tag,
                    name_size, name,
                    (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                    tid,
@@ -6435,11 +6474,12 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
       grn_ii_get_term(ctx, ii, tid, &term);
-      MERR("[ii][update][one] failed to create a buffer: "
+      MERR("%s failed to create a buffer: "
            "<%.*s>: "
            "<%.*s>(%u): "
            "(%u:%u): "
            "size:<%u>",
+           tag,
            name_size, name,
            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
            tid,
@@ -6481,12 +6521,13 @@ exit :
       GRN_TEXT_INIT(&term, 0);
       grn_ii_get_term(ctx, ii, tid, &term);
       GRN_LOG(ctx, GRN_LOG_WARNING,
-              "[ii][update][one] too many postings: "
+              "%s too many postings: "
               "<%.*s>: "
               "<%.*s>(%u): "
               "record:<%.*s>(%d), "
               "n-postings:<%d>, "
               "n-discarded-postings:<%d>",
+              tag,
               name_size, name,
               (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
               tid,
@@ -6504,6 +6545,7 @@ exit :
 grn_rc
 grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_hash *h)
 {
+  const char *tag = "[ii][delete][one]";
   buffer *b;
   uint8_t *bs = NULL;
   buffer_rec *br;
@@ -6511,6 +6553,9 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   uint32_t pseg, size, *a;
   if (!tid) { return ctx->rc; }
   if (!(a = array_at(ctx, ii, tid))) {
+    return ctx->rc;
+  }
+  if (grn_ii_wal_touch(ctx, ii, tag) != GRN_SUCCESS) {
     return ctx->rc;
   }
   for (;;) {
@@ -6538,10 +6583,11 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
       grn_ii_get_term(ctx, ii, tid, &term);
-      MERR("[ii][delete][one] failed to encode a record: "
+      MERR("%s failed to encode a record: "
            "<%.*s>: "
            "<%.*s>(%u): "
            "(%u:%u)",
+           tag,
            name_size, name,
            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
            tid,
@@ -6554,11 +6600,12 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
       grn_ii_get_term(ctx, ii, tid, &term);
-      MERR("[ii][delete][one] failed to allocate a buffer: "
+      MERR("%s failed to allocate a buffer: "
            "<%.*s>: "
            "<%.*s>(%u): "
            "(%u:%u): "
            "position:<%u>",
+           tag,
            name_size, name,
            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
            tid,
@@ -6581,12 +6628,13 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         grn_ii_get_term(ctx, ii, tid, &term);
         grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
         ERR(ctx->rc,
-            "[ii][delete][one] failed to flush a buffer: "
+            "%s failed to flush a buffer: "
             "<%.*s>: "
             "<%.*s>(%u): "
             "(%u:%u): "
             "position:<%u>: "
             "%s",
+            tag,
             name_size, name,
             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
             tid,
@@ -6606,11 +6654,12 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
         grn_ii_get_term(ctx, ii, tid, &term);
-        MERR("[ii][delete][one] failed to reallocate a buffer: "
+        MERR("%s failed to reallocate a buffer: "
              "<%.*s>: "
              "<%.*s>(%u): "
              "(%u:%u): "
              "position:<%u>",
+             tag,
              name_size, name,
              (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
              tid,
@@ -6626,11 +6675,12 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
         GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
         grn_ii_get_term(ctx, ii, tid, &term);
-        MERR("[ii][delete][one] buffer is full: "
+        MERR("%s buffer is full: "
              "<%.*s>: "
              "<%.*s>(%u): "
              "(%u:%u): "
              "segment:<%u>, free:<%u>, required:<%u>",
+             tag,
              name_size, name,
              (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
              tid,
@@ -16689,7 +16739,30 @@ grn_ii_build2(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
       rc = rc_close;
     }
   }
+  if (rc != GRN_SUCCESS) {
+    grn_obj_flush(ctx, (grn_obj *)ii);
+  }
   return rc;
+}
+
+grn_rc
+grn_ii_wal_recover(grn_ctx *ctx, grn_ii *ii)
+{
+  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+    return GRN_SUCCESS;
+  }
+
+  if (!grn_wal_exist(ctx, (grn_obj *)ii)) {
+    return GRN_SUCCESS;
+  }
+
+  grn_obj_set_error(ctx,
+                    (grn_obj *)ii,
+                    GRN_FUNCTION_NOT_IMPLEMENTED,
+                    GRN_ID_NIL,
+                    "[ii][wal][recover]",
+                    "not implemented");
+  return ctx->rc;
 }
 
 grn_rc

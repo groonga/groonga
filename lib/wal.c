@@ -548,6 +548,68 @@ exit :
 #endif
 }
 
+grn_rc
+grn_wal_touch(grn_ctx *ctx,
+              grn_obj *obj,
+              bool need_lock,
+              const char *tag)
+{
+  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+    return GRN_SUCCESS;
+  }
+
+#ifdef GRN_WITH_MESSAGE_PACK
+  grn_io *io = grn_obj_get_io(ctx, obj);
+  if (io->path[0] == '\0') {
+    return GRN_SUCCESS;
+  }
+
+  grn_rc rc = GRN_SUCCESS;
+  if (need_lock) {
+    rc = grn_io_lock(ctx, io, grn_lock_timeout);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+
+  char path[PATH_MAX];
+  grn_wal_generate_path(ctx, io->path, path);
+  FILE *output = grn_fopen(path, "ab");
+  if (output) {
+    fclose(output);
+  } else {
+    GRN_DEFINE_NAME(obj);
+    SERR("[wal][touch][%.*s]%s failed to open file: <%s>",
+         name_size, name,
+         tag,
+         path);
+    rc = ctx->rc;
+  }
+
+  if (need_lock) {
+    grn_io_unlock(io);
+  }
+
+  return rc;
+#else
+  return GRN_SUCCESS;
+#endif
+}
+
+bool
+grn_wal_exist(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_io *io = grn_obj_get_io(ctx, obj);
+  if (io->path[0] == '\0') {
+    return false;
+  }
+
+  char wal_path[PATH_MAX];
+  grn_wal_generate_path(ctx, io->path, wal_path);
+  struct stat s;
+  return stat(wal_path, &s) == 0;
+}
+
 static grn_rc
 grn_wal_remove_raw(grn_ctx *ctx,
                    grn_obj *obj,

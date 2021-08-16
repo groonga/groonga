@@ -382,6 +382,18 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
       case GRN_COLUMN_VAR_SIZE :
         grn_ja_wal_recover(ctx, (grn_ja *)object);
         break;
+      case GRN_COLUMN_INDEX :
+        grn_ii_wal_recover(ctx, (grn_ii *)object);
+        if (ctx->rc != GRN_SUCCESS) {
+          ERRCLR(ctx);
+          GRN_DEFINE_NAME(object);
+          GRN_LOG(ctx, GRN_LOG_NOTICE,
+                  "[db][wal][recover] rebuild broken index column: <%.*s(%u)>",
+                  name_size, name,
+                  DB_OBJ(object)->id);
+          grn_index_column_rebuild(ctx, object);
+        }
+        break;
       default :
         break;
       }

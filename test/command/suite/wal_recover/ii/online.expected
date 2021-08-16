@@ -1,0 +1,142 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC130
+[[0,0.0,0.0],true]
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "hello world"},
+{"content": "good-by world"}
+]
+[[0,0.0,0.0],2]
+check --obj Terms.memos_content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "00008202",
+      "max sid": 1,
+      "number of garbage segments": 0,
+      "number of array segments": 1,
+      "max id of array segment": 1,
+      "number of buffer segments": 1,
+      "max id of buffer segment": 1,
+      "max id of physical segment in use": 1,
+      "number of unmanaged segments": 0,
+      "total chunk size": 0,
+      "max id of chunk segments in use": 0,
+      "number of garbage chunk": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "buffer id": 0,
+      "void chunk size": 0,
+      "buffer term": [
+        [
+          "world",
+          2,
+          2,
+          2,
+          0
+        ]
+      ],
+      "buffer free": 262096,
+      "size in buffer": 2,
+      "nterms": 1,
+      "nterms with chunk": 0
+    }
+  ]
+]
+select Memos --query content:@hello
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["content","Text"]],[1,"hello world"]]]]
+select Memos --query content:@hello
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["content","Text"]]]]]
+wal_recover
+[[0,0.0,0.0],true]
+#|e| [ii][wal][recover][Terms.memos_content] not implemented: path:<db/db.0000103>
+#|n| [db][wal][recover] rebuild broken index column: <Terms.memos_content(259)>
+#|n| DDL:2147483650:set_normalizers NormalizerNFKC130
+#|n| DDL:2147483650:set_normalizers NormalizerNFKC130
+select Memos --query content:@hello
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["content","Text"]],[1,"hello world"]]]]
+check --obj Terms.memos_content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "flags": "00008202",
+      "max sid": 0,
+      "number of garbage segments": 0,
+      "number of array segments": 1,
+      "max id of array segment": 1,
+      "number of buffer segments": 1,
+      "max id of buffer segment": 1,
+      "max id of physical segment in use": 1,
+      "number of unmanaged segments": 0,
+      "total chunk size": 1048576,
+      "max id of chunk segments in use": 1,
+      "number of garbage chunk": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "buffer id": 0,
+      "chunk size": 1048576,
+      "buffer term": [
+        [
+          "world",
+          2,
+          2,
+          0,
+          7,
+          2,
+          2
+        ]
+      ],
+      "buffer free": 262112,
+      "size in buffer": 0,
+      "nterms": 1,
+      "nterms with chunk": 1
+    }
+  ]
+]

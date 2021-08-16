@@ -48,6 +48,8 @@ struct _grn_ii {
     grn_ii_header_normal *normal;
     grn_ii_header_large *large;
   } header;
+
+  bool wal_touched;
 };
 
 /* BGQ is buffer garbage queue? */
@@ -227,6 +229,7 @@ typedef struct grn_ii_builder_options grn_ii_builder_options;
 grn_rc grn_ii_build2(grn_ctx *ctx, grn_ii *ii,
                      const grn_ii_builder_options *options);
 
+grn_rc grn_ii_wal_recover(grn_ctx *ctx, grn_ii *ii);
 grn_rc grn_ii_warm(grn_ctx *ctx, grn_ii *ii);
 
 #ifdef __cplusplus

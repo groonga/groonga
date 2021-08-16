@@ -218,6 +218,13 @@ grn_wal_add_entryv(grn_ctx *ctx,
                    grn_wal_key key,
                    va_list args);
 grn_rc
+grn_wal_touch(grn_ctx *ctx,
+              grn_obj *obj,
+              bool need_lock,
+              const char *tag);
+bool
+grn_wal_exist(grn_ctx *ctx, grn_obj *obj);
+grn_rc
 grn_wal_remove(grn_ctx *ctx,
                const char *path,
                const char *tag);
