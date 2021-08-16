@@ -25,6 +25,8 @@ dump
 #@copy-path #{db_path}.wal #{db_path}.wal.keep
 #@copy-path #{db_path}.0000000.wal #{db_path}.0000000.wal.keep
 io_flush
+thread_limit 1
+database_unmap
 #@enable-logging
 
 _database_close

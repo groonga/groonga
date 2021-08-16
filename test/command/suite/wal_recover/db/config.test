@@ -19,6 +19,8 @@ dump
 #@disable-logging
 #@copy-path #{db_path}.conf.wal #{db_path}.conf.wal.keep
 io_flush
+thread_limit 1
+database_unmap
 #@enable-logging
 
 _database_close
