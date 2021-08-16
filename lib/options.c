@@ -386,6 +386,12 @@ grn_options_clear(grn_ctx *ctx,
 }
 
 grn_rc
+grn_options_wal_recover(grn_ctx *ctx, grn_options *options)
+{
+  return grn_ja_wal_recover(ctx, options->values);
+}
+
+grn_rc
 grn_options_warm(grn_ctx *ctx, grn_options *options)
 {
   return grn_ja_warm(ctx, options->values);

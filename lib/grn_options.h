@@ -57,6 +57,9 @@ grn_rc grn_options_clear(grn_ctx *ctx,
                          grn_options *options,
                          grn_id id);
 
+grn_rc grn_options_wal_recover(grn_ctx *ctx,
+                               grn_options *options);
+
 grn_rc grn_options_warm(grn_ctx *ctx,
                         grn_options *options);
 
