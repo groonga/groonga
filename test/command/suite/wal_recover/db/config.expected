@@ -1,0 +1,10 @@
+config_set pgroonga_writable true
+[[0,0.0,0.0],true]
+dump
+config_set pgroonga_writable true
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
+[[0,0.0,0.0],true]
+dump
+config_set pgroonga_writable 

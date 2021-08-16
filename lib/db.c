@@ -358,6 +358,9 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
   grn_ja_wal_recover(ctx, db->specs);
   ERRCLR(ctx);
 
+  grn_hash_wal_recover(ctx, db->config);
+  ERRCLR(ctx);
+
   GRN_TABLE_EACH_BEGIN(ctx, db->keys, cursor, id) {
     if (grn_id_is_builtin(ctx, id)) {
       continue;
