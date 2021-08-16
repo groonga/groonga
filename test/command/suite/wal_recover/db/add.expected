@@ -2,8 +2,9 @@ table_create Data TABLE_PAT_KEY ShortText
 [[0,0.0,0.0],true]
 dump
 table_create Data TABLE_PAT_KEY ShortText
-dump
-wal_recover
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
 [[0,0.0,0.0],true]
 dump
 table_create Data TABLE_PAT_KEY ShortText

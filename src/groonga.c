@@ -533,7 +533,7 @@ do_alone(int argc, char **argv)
   db = (newdb || !path) ? grn_db_create(ctx, path, NULL) : grn_db_open(ctx, path);
   if (db) {
     const char *allow_db_reopen_env = getenv("GROONGA_ALLOW_DATABASE_REOPEN");
-    bool allow_db_reopen = (allow_db_reopen_env && strcmp(allow_db_reopen_env, "yes") == 0);
+    bool allow_db_reopen = (allow_db_reopen_env && (strcmp(allow_db_reopen_env, "yes") == 0));
     grn_obj command;
     GRN_TEXT_INIT(&command, 0);
     GRN_CTX_USER_DATA(ctx)->ptr = &command;
