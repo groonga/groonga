@@ -7,4 +7,4 @@ _database_close
 _database_reopen
 [[0,0.0,0.0],true]
 dump
-config_set pgroonga_writable 
+config_set pgroonga_writable true

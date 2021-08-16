@@ -27,7 +27,6 @@ grn_config_set(grn_ctx *ctx,
 {
   grn_obj *db;
   grn_hash *config;
-  void *packed_value;
   grn_id id;
 
   GRN_API_ENTER;
@@ -67,19 +66,28 @@ grn_config_set(grn_ctx *ctx,
       }
       GRN_API_RETURN(rc);
     }
-    id = grn_hash_add(ctx, config, key, key_size, &packed_value, NULL);
+    id = grn_hash_add(ctx, config, key, key_size, NULL, NULL);
+    if (id != GRN_ID_NIL) {
+      grn_obj packed_value;
+      GRN_TEXT_INIT(&packed_value, 0);
+      grn_bulk_reserve(ctx, &packed_value, GRN_CONFIG_MAX_VALUE_SIZE);
+      GRN_UINT32_PUT(ctx, &packed_value, value_size);
+      GRN_TEXT_PUT(ctx, &packed_value, value, value_size);
+      GRN_TEXT_PUTC(ctx, &packed_value, '\0');
+      grn_hash_set_value(ctx,
+                         config,
+                         id,
+                         GRN_TEXT_VALUE(&packed_value),
+                         GRN_OBJ_SET);
+      GRN_OBJ_FIN(ctx, &packed_value);
+    }
     grn_io_unlock(config->io);
   }
-  if (id == GRN_ID_NIL && ctx->rc == GRN_SUCCESS) {
+  if (id == GRN_ID_NIL || ctx->rc != GRN_SUCCESS) {
     ERR(GRN_INVALID_ARGUMENT,
         "[config][set] failed to set: name=<%.*s>: <%d>",
         key_size, key, value_size);
   }
-
-  *((uint32_t *)packed_value) = (uint32_t)value_size;
-  grn_memcpy((char *)packed_value + sizeof(uint32_t),
-             value, value_size);
-  ((char *)packed_value)[sizeof(uint32_t) + value_size] = '\0';
 
   GRN_API_RETURN(ctx->rc);
 }
@@ -289,4 +297,3 @@ grn_conf_get(grn_ctx *ctx,
 {
   return grn_config_get(ctx, key, key_size, value, value_size);
 }
-
