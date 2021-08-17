@@ -555,7 +555,7 @@ grn_array_open(grn_ctx *ctx, const char *path)
       struct grn_array_header * const header = grn_io_header(io);
       uint32_t io_type = grn_io_get_type(io);
       if (io_type == GRN_TABLE_NO_KEY) {
-        grn_array * const array = (grn_array *)GRN_MALLOC(sizeof(grn_array));
+        grn_array * const array = (grn_array *)GRN_CALLOC(sizeof(grn_array));
         if (array) {
           if (!(header->flags & GRN_ARRAY_TINY)) {
             GRN_DB_OBJ_SET_TYPE(array, GRN_TABLE_NO_KEY);
@@ -1924,7 +1924,7 @@ grn_hash_open(grn_ctx *ctx, const char *path)
       grn_hash_header_common * const header = grn_io_header(io);
       uint32_t io_type = grn_io_get_type(io);
       if (io_type == GRN_TABLE_HASH_KEY) {
-        grn_hash * const hash = (grn_hash *)GRN_MALLOC(sizeof(grn_hash));
+        grn_hash * const hash = (grn_hash *)GRN_CALLOC(sizeof(grn_hash));
         if (hash) {
           if (!(header->flags & GRN_HASH_TINY)) {
             GRN_DB_OBJ_SET_TYPE(hash, GRN_TABLE_HASH_KEY);
@@ -4074,7 +4074,7 @@ grn_hash_cursor_open(grn_ctx *ctx, grn_hash *hash,
   if (grn_hash_error_if_truncated(ctx, hash) != GRN_SUCCESS) {
     return NULL;
   }
-  if (!(c = GRN_MALLOCN(grn_hash_cursor, 1))) { return NULL; }
+  if (!(c = GRN_CALLOC(sizeof(grn_hash_cursor)))) { return NULL; }
   GRN_DB_OBJ_SET_TYPE(c, GRN_CURSOR_TABLE_HASH_KEY);
   c->hash = hash;
   c->ctx = ctx;

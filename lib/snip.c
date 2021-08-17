@@ -471,7 +471,7 @@ grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
 {
   int copy_tag;
   grn_snip *ret = NULL;
-  if (!(ret = GRN_MALLOC(sizeof(grn_snip)))) {
+  if (!(ret = GRN_CALLOC(sizeof(grn_snip)))) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "grn_snip allocation failed on grn_snip_open");
     return NULL;
   }

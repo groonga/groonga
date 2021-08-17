@@ -1536,7 +1536,7 @@ grn_pat_open(grn_ctx *ctx, const char *path)
     grn_io_close(ctx, io);
     return NULL;
   }
-  if (!(pat = GRN_MALLOC(sizeof(grn_pat)))) {
+  if (!(pat = GRN_CALLOC(sizeof(grn_pat)))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[pat][open] failed to allocate memory: <%s>",
         path ? path : "(temporary)");
@@ -2685,7 +2685,7 @@ typedef struct {
 static grn_inline fuzzy_heap *
 fuzzy_heap_open(grn_ctx *ctx, int max)
 {
-  fuzzy_heap *h = GRN_MALLOC(sizeof(fuzzy_heap));
+  fuzzy_heap *h = GRN_CALLOC(sizeof(fuzzy_heap));
   if (!h) { return NULL; }
   h->nodes = GRN_MALLOC(sizeof(fuzzy_heap_node) * max);
   if (!h->nodes) {
@@ -4203,7 +4203,7 @@ grn_pat_cursor_open_by_id(grn_ctx *ctx, grn_pat *pat,
   int dir;
   grn_pat_cursor *c;
   if (!pat || !ctx) { return NULL; }
-  if (!(c = GRN_MALLOCN(grn_pat_cursor, 1))) { return NULL; }
+  if (!(c = GRN_CALLOC(sizeof(grn_pat_cursor)))) { return NULL; }
   GRN_DB_OBJ_SET_TYPE(c, GRN_CURSOR_TABLE_PAT_KEY);
   c->pat = pat;
   c->ctx = ctx;
@@ -4298,7 +4298,7 @@ grn_pat_cursor_open(grn_ctx *ctx, grn_pat *pat,
     return grn_pat_cursor_open_by_id(ctx, pat, min, min_size, max, max_size,
                                      offset, limit, flags);
   }
-  if (!(c = GRN_MALLOCN(grn_pat_cursor, 1))) { return NULL; }
+  if (!(c = GRN_CALLOC(sizeof(grn_pat_cursor)))) { return NULL; }
   GRN_DB_OBJ_SET_TYPE(c, GRN_CURSOR_TABLE_PAT_KEY);
   c->pat = pat;
   c->ctx = ctx;

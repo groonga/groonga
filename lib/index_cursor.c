@@ -50,7 +50,7 @@ grn_index_cursor_open(grn_ctx *ctx,
                       int flags)
 {
   GRN_API_ENTER;
-  grn_index_cursor *ic = GRN_MALLOCN(grn_index_cursor, 1);
+  grn_index_cursor *ic = GRN_CALLOC(sizeof(grn_index_cursor));
   if (!ic) {
     GRN_API_RETURN(NULL);
   }

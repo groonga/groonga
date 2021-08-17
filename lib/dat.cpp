@@ -872,7 +872,7 @@ grn_dat_open(grn_ctx *ctx, const char *path)
     return NULL;
   }
 
-  grn_dat * const dat = static_cast<grn_dat *>(GRN_MALLOC(sizeof(grn_dat)));
+  grn_dat * const dat = static_cast<grn_dat *>(GRN_CALLOC(sizeof(grn_dat)));
   if (!dat) {
     return NULL;
   }
@@ -1390,7 +1390,7 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
   grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
   if (!trie) {
     grn_dat_cursor * const dc =
-        static_cast<grn_dat_cursor *>(GRN_MALLOC(sizeof(grn_dat_cursor)));
+        static_cast<grn_dat_cursor *>(GRN_CALLOC(sizeof(grn_dat_cursor)));
     if (dc) {
       grn_dat_cursor_init(ctx, dc);
     }
@@ -1398,7 +1398,7 @@ grn_dat_cursor_open(grn_ctx *ctx, grn_dat *dat,
   }
 
   grn_dat_cursor * const dc =
-      static_cast<grn_dat_cursor *>(GRN_MALLOC(sizeof(grn_dat_cursor)));
+      static_cast<grn_dat_cursor *>(GRN_CALLOC(sizeof(grn_dat_cursor)));
   if (!dc) {
     return NULL;
   }

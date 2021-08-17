@@ -11232,7 +11232,7 @@ grn_ctx_is_opened(grn_ctx *ctx, grn_id id)
 grn_obj *
 grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags flags, grn_id domain)
 {
-  grn_obj *obj = GRN_MALLOCN(grn_obj, 1);
+  grn_obj *obj = GRN_CALLOC(sizeof(grn_obj));
   if (obj) {
     GRN_OBJ_INIT(obj, type, flags, domain);
     obj->header.impl_flags |= GRN_OBJ_ALLOCATED;

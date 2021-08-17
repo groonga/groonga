@@ -36,7 +36,7 @@ nfkc_open_options(grn_ctx *ctx,
 {
   grn_nfkc_normalize_options *options;
 
-  options = GRN_MALLOC(sizeof(grn_nfkc_normalize_options));
+  options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
   if (!options) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_NO_MEMORY_AVAILABLE,

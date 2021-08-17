@@ -735,7 +735,7 @@ grn_wal_reader_open_internal(grn_ctx *ctx,
     return NULL;
   }
 
-  grn_wal_reader *reader = GRN_MALLOCN(grn_wal_reader, 1);
+  grn_wal_reader *reader = GRN_CALLOC(sizeof(grn_wal_reader));
   if (!reader) {
     GRN_DEFINE_NAME(obj);
     ERR(GRN_NO_MEMORY_AVAILABLE,

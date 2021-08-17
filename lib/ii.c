@@ -2919,7 +2919,7 @@ grn_ii_updspec *
 grn_ii_updspec_open(grn_ctx *ctx, uint32_t rid, uint32_t sid)
 {
   grn_ii_updspec *u;
-  if (!(u = GRN_MALLOC(sizeof(grn_ii_updspec)))) { return NULL; }
+  if (!(u = GRN_CALLOC(sizeof(grn_ii_updspec)))) { return NULL; }
   u->rid = rid;
   u->sid = sid;
   u->weight = 0;
@@ -2939,7 +2939,7 @@ grn_ii_updspec_add(grn_ctx *ctx, grn_ii_updspec *u, int pos, int32_t weight)
   struct _grn_ii_pos *p;
   u->atf++;
   if (u->tf >= GRN_II_MAX_TF) { return GRN_SUCCESS; }
-  if (!(p = GRN_MALLOC(sizeof(struct _grn_ii_pos)))) {
+  if (!(p = GRN_CALLOC(sizeof(struct _grn_ii_pos)))) {
     return GRN_NO_MEMORY_AVAILABLE;
   }
   u->weight += weight;
@@ -5872,7 +5872,7 @@ grn_ii *
 grn_ii_create(grn_ctx *ctx, const char *path, grn_obj *lexicon, uint32_t flags)
 {
   grn_ii *ii = NULL;
-  if (!(ii = GRN_MALLOCN(grn_ii, 1))) {
+  if (!(ii = GRN_CALLOC(sizeof(grn_ii)))) {
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(ii, GRN_COLUMN_INDEX);
@@ -5975,7 +5975,7 @@ grn_ii_open(grn_ctx *ctx, const char *path, grn_obj *lexicon)
     grn_io_close(ctx, chunk);
     return NULL;
   }
-  if (!(ii = GRN_MALLOCN(grn_ii, 1))) {
+  if (!(ii = GRN_CALLOC(sizeof(grn_ii)))) {
     grn_io_close(ctx, seg);
     grn_io_close(ctx, chunk);
     return NULL;
@@ -6820,8 +6820,7 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
   for (;;) {
     c = NULL;
     if (!(pos = a[0])) { goto exit; }
-    if (!(c = GRN_MALLOC(sizeof(grn_ii_cursor)))) { goto exit; }
-    memset(c, 0, sizeof(grn_ii_cursor));
+    if (!(c = GRN_CALLOC(sizeof(grn_ii_cursor)))) { goto exit; }
     c->ctx = ctx;
     c->ii = ii;
     c->id = tid;
@@ -7656,7 +7655,7 @@ typedef struct {
 static grn_inline cursor_heap *
 cursor_heap_open(grn_ctx *ctx, int max)
 {
-  cursor_heap *h = GRN_MALLOC(sizeof(cursor_heap));
+  cursor_heap *h = GRN_CALLOC(sizeof(cursor_heap));
   if (!h) { return NULL; }
   h->bins = GRN_MALLOC(sizeof(grn_ii_cursor *) * max);
   if (!h->bins) {
@@ -8905,7 +8904,7 @@ token_info_open(grn_ctx *ctx,
   grn_id tid;
   grn_id *tp;
   if (!key) { return NULL; }
-  if (!(ti = GRN_MALLOC(sizeof(token_info)))) { return NULL; }
+  if (!(ti = GRN_CALLOC(sizeof(token_info)))) { return NULL; }
   ti->cursors = NULL;
   ti->size = 0;
   ti->ntoken = 0;
@@ -9846,7 +9845,7 @@ bt_zap(btr *bt)
 grn_inline static btr *
 bt_open(grn_ctx *ctx, int size)
 {
-  btr *bt = GRN_MALLOC(sizeof(btr));
+  btr *bt = GRN_CALLOC(sizeof(btr));
   if (bt) {
     bt_zap(bt);
     if (!(bt->nodes = GRN_MALLOC(sizeof(btr_node) * size))) {
@@ -13760,7 +13759,7 @@ grn_ii_buffer_open(grn_ctx *ctx, grn_ii *ii,
                    long long unsigned int update_buffer_size)
 {
   if (ii && ii->lexicon) {
-    grn_ii_buffer *ii_buffer = GRN_MALLOCN(grn_ii_buffer, 1);
+    grn_ii_buffer *ii_buffer = GRN_CALLOC(sizeof(grn_ii_buffer));
     if (ii_buffer) {
       ii_buffer->ii = ii;
       ii_buffer->lexicon = ii->lexicon;

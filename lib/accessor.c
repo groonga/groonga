@@ -28,7 +28,7 @@
 grn_accessor *
 grn_accessor_new(grn_ctx *ctx)
 {
-  grn_accessor *res = GRN_MALLOCN(grn_accessor, 1);
+  grn_accessor *res = GRN_CALLOC(sizeof(grn_accessor));
   if (!res) {
     return NULL;
   }

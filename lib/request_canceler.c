@@ -40,7 +40,7 @@ grn_request_canceler_init(void)
 
   grn_ctx_init(ctx, 0);
 
-  grn_the_request_canceler = GRN_MALLOC(sizeof(grn_request_canceler));
+  grn_the_request_canceler = GRN_CALLOC(sizeof(grn_request_canceler));
   if (!grn_the_request_canceler) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[request-canceler] failed to allocate the global request canceler");

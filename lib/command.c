@@ -32,7 +32,7 @@ grn_command_input_open(grn_ctx *ctx, grn_obj *command)
   grn_command_input *input = NULL;
 
   GRN_API_ENTER;
-  input = GRN_MALLOC(sizeof(grn_command_input));
+  input = GRN_CALLOC(sizeof(grn_command_input));
   if (!input) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[command-input] failed to allocate grn_command_input");
@@ -197,4 +197,3 @@ grn_command_run(grn_ctx *ctx,
 
   GRN_API_RETURN(ctx->rc);
 }
-

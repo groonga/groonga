@@ -55,7 +55,7 @@ uvector_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     ERR(GRN_INVALID_ARGUMENT, "[tokenizer][uvector] missing argument: mode");
     return NULL;
   }
-  if (!(tokenizer = GRN_MALLOC(sizeof(grn_uvector_tokenizer)))) {
+  if (!(tokenizer = GRN_CALLOC(sizeof(grn_uvector_tokenizer)))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[tokenizer][uvector] "
         "memory allocation to grn_uvector_tokenizer failed");
@@ -147,7 +147,7 @@ delimit_open_options(grn_ctx *ctx,
   grn_delimit_options_default *options_default = user_data;
   grn_bool have_delimiter = GRN_FALSE;
 
-  options = GRN_MALLOC(sizeof(grn_delimit_options));
+  options = GRN_CALLOC(sizeof(grn_delimit_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[tokenizer][delimit] "
@@ -242,7 +242,7 @@ delimit_init_raw(grn_ctx *ctx,
 {
   grn_delimit_tokenizer *tokenizer;
 
-  if (!(tokenizer = GRN_MALLOC(sizeof(grn_delimit_tokenizer)))) {
+  if (!(tokenizer = GRN_CALLOC(sizeof(grn_delimit_tokenizer)))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[tokenizer][delimit] "
         "memory allocation to grn_delimit_tokenizer failed");
@@ -537,7 +537,7 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
     unsigned int n_chars = 0;
 
     tokenizer->loose.ctypes =
-      GRN_MALLOC(sizeof(uint_least8_t) * (normalized_length_in_chars + 1));
+      GRN_CALLOC(sizeof(uint_least8_t) * (normalized_length_in_chars + 1));
     if (!tokenizer->loose.ctypes) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[tokenizer][ngram][loose] "
@@ -678,7 +678,7 @@ ngram_init_raw(grn_ctx *ctx,
   }
   grn_tokenizer_query_set_normalize_flags(ctx, query, normalize_flags);
 
-  if (!(tokenizer = GRN_MALLOC(sizeof(grn_ngram_tokenizer)))) {
+  if (!(tokenizer = GRN_CALLOC(sizeof(grn_ngram_tokenizer)))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[tokenizer][ngram] "
         "memory allocation to grn_ngram_tokenizer failed");
@@ -876,7 +876,7 @@ ngram_open_options(grn_ctx *ctx,
 {
   grn_ngram_options *options;
 
-  options = GRN_MALLOC(sizeof(grn_ngram_options));
+  options = GRN_CALLOC(sizeof(grn_ngram_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[tokenizer][ngram] "
@@ -1305,7 +1305,7 @@ regexp_init(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     return NULL;
   }
 
-  tokenizer = GRN_MALLOC(sizeof(grn_regexp_tokenizer));
+  tokenizer = GRN_CALLOC(sizeof(grn_regexp_tokenizer));
   if (!tokenizer) {
     grn_tokenizer_query_close(ctx, query);
     ERR(GRN_NO_MEMORY_AVAILABLE,
@@ -1585,7 +1585,7 @@ pattern_open_options(grn_ctx *ctx,
   grn_pattern_options *options;
   grn_obj all_patterns;
 
-  options = GRN_MALLOC(sizeof(grn_pattern_options));
+  options = GRN_CALLOC(sizeof(grn_pattern_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[tokenizer][pattern] "
@@ -1666,7 +1666,7 @@ pattern_init(grn_ctx *ctx, grn_tokenizer_query *query)
     return NULL;
   }
 
-  if (!(tokenizer = GRN_MALLOC(sizeof(grn_pattern_tokenizer)))) {
+  if (!(tokenizer = GRN_CALLOC(sizeof(grn_pattern_tokenizer)))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[tokenizer][pattern] "
         "memory allocation to grn_pattern_tokenizer failed");
@@ -1829,7 +1829,7 @@ table_open_options(grn_ctx *ctx,
 {
   grn_table_options *options;
 
-  options = GRN_MALLOC(sizeof(grn_table_options));
+  options = GRN_CALLOC(sizeof(grn_table_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[tokenizer][table] "
@@ -1911,7 +1911,7 @@ table_init(grn_ctx *ctx, grn_tokenizer_query *query)
     return NULL;
   }
 
-  if (!(tokenizer = GRN_MALLOC(sizeof(grn_table_tokenizer)))) {
+  if (!(tokenizer = GRN_CALLOC(sizeof(grn_table_tokenizer)))) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[tokenizer][table] "
         "memory allocation to grn_table_tokenizer failed");
@@ -2765,7 +2765,7 @@ document_vector_tf_idf_open_options(grn_ctx *ctx,
                                     query);
 
   grn_document_vector_idf_base_options *options;
-  options = GRN_MALLOC(sizeof(grn_document_vector_idf_base_options));
+  options = GRN_CALLOC(sizeof(grn_document_vector_idf_base_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "%s failed to allocate memory for options",
@@ -2826,7 +2826,7 @@ document_vector_tf_idf_init(grn_ctx *ctx, grn_tokenizer_query *query)
                                     "document-vector-tf-idf",
                                     query);
   grn_document_vector_idf_base_tokenizer *tokenizer =
-    GRN_MALLOC(sizeof(grn_document_vector_idf_base_tokenizer));
+    GRN_CALLOC(sizeof(grn_document_vector_idf_base_tokenizer));
   if (!tokenizer) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "%s failed to allocate tokenizer",
@@ -2905,7 +2905,7 @@ document_vector_bm25_open_options(grn_ctx *ctx,
                                     query);
 
   grn_document_vector_idf_base_options *options =
-    GRN_MALLOC(sizeof(grn_document_vector_idf_base_options));
+    GRN_CALLOC(sizeof(grn_document_vector_idf_base_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "%s failed to allocate memory for options",
@@ -2967,7 +2967,7 @@ document_vector_bm25_init(grn_ctx *ctx, grn_tokenizer_query *query)
                                     "document-vector-bm25",
                                     query);
   grn_document_vector_idf_base_tokenizer *tokenizer =
-    GRN_MALLOC(sizeof(grn_document_vector_idf_base_tokenizer));
+    GRN_CALLOC(sizeof(grn_document_vector_idf_base_tokenizer));
   if (!tokenizer) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "%s failed to allocate tokenizer",

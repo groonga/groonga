@@ -25,7 +25,7 @@ grn_scanner_open(grn_ctx *ctx,
 {
   grn_scanner *scanner;
 
-  scanner = GRN_MALLOC(sizeof(grn_scanner));
+  scanner = GRN_CALLOC(sizeof(grn_scanner));
   if (!scanner) {
     return NULL;
   }

@@ -86,7 +86,7 @@ grn_token_cursor_open(grn_ctx *ctx, grn_obj *table,
         "[token-cursor][open] failed to get table information");
     GRN_API_RETURN(NULL);
   }
-  if (!(token_cursor = GRN_MALLOC(sizeof(grn_token_cursor)))) {
+  if (!(token_cursor = GRN_CALLOC(sizeof(grn_token_cursor)))) {
     GRN_API_RETURN(NULL);
   }
   token_cursor->initialized = false;

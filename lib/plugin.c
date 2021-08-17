@@ -348,7 +348,7 @@ grn_plugin_open_mrb(grn_ctx *ctx, const char *filename, size_t filename_size)
 
   {
     grn_ctx *ctx = plugins_ctx;
-    *plugin = GRN_MALLOCN(grn_plugin, 1);
+    *plugin = GRN_CALLOC(sizeof(grn_plugin));
   }
   if (!*plugin) {
     grn_hash_delete_by_id(plugins_ctx, grn_plugins, id, NULL);
@@ -402,7 +402,7 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
                            (void **)&plugin, NULL))) {
       {
         grn_ctx *ctx = plugins_ctx;
-        *plugin = GRN_MALLOCN(grn_plugin, 1);
+        *plugin = GRN_CALLOC(sizeof(grn_plugin));
       }
       if (*plugin) {
         grn_memcpy((*plugin)->path, filename, filename_size);

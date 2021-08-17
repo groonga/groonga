@@ -2472,7 +2472,8 @@ grn_arrow_stream_loader_open(grn_ctx *ctx,
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
   grn_arrow_stream_loader *arrow_stream_loader;
-  arrow_stream_loader = GRN_MALLOCN(grn_arrow_stream_loader, 1);
+  arrow_stream_loader = static_cast<grn_arrow_stream_loader *>(
+    GRN_CALLOC(sizeof(grn_arrow_stream_loader)));
   arrow_stream_loader->loader = new grnarrow::StreamLoader(ctx, loader);
   GRN_API_RETURN(arrow_stream_loader);
 #else
@@ -2530,7 +2531,8 @@ grn_arrow_stream_writer_open(grn_ctx *ctx,
   GRN_API_ENTER;
 #ifdef GRN_WITH_APACHE_ARROW
   grn_arrow_stream_writer *arrow_stream_writer;
-  arrow_stream_writer = GRN_MALLOCN(grn_arrow_stream_writer, 1);
+  arrow_stream_writer = static_cast<grn_arrow_stream_writer *>(
+    GRN_CALLOC(sizeof(grn_arrow_stream_writer)));
   arrow_stream_writer->writer = new grnarrow::StreamWriter(ctx, output_buffer);
   GRN_API_RETURN(arrow_stream_writer);
 #else

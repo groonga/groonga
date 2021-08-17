@@ -2279,7 +2279,7 @@ nfkc100_open_options(grn_ctx *ctx,
 {
   grn_nfkc_normalize_options *options;
 
-  options = GRN_MALLOC(sizeof(grn_nfkc_normalize_options));
+  options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[normalizer][nfkc100] "
@@ -2342,7 +2342,7 @@ nfkc121_open_options(grn_ctx *ctx,
 {
   grn_nfkc_normalize_options *options;
 
-  options = GRN_MALLOC(sizeof(grn_nfkc_normalize_options));
+  options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[normalizer][nfkc121] "
@@ -2405,7 +2405,7 @@ nfkc130_open_options(grn_ctx *ctx,
 {
   grn_nfkc_normalize_options *options;
 
-  options = GRN_MALLOC(sizeof(grn_nfkc_normalize_options));
+  options = GRN_CALLOC(sizeof(grn_nfkc_normalize_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[normalizer][nfkc130] "
@@ -2524,7 +2524,7 @@ table_options_open(grn_ctx *ctx,
 {
   const char *tag = "[normalizer][table]";
 
-  table_options *options = GRN_MALLOC(sizeof(table_options));
+  table_options *options = GRN_CALLOC(sizeof(table_options));
   if (!options) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "%s failed to allocate memory for options",

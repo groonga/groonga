@@ -125,7 +125,7 @@ grn_column_cache_open(grn_ctx *ctx, grn_obj *column)
     GRN_API_RETURN(NULL);
   }
 
-  cache = GRN_MALLOC(sizeof(grn_column_cache));
+  cache = GRN_CALLOC(sizeof(grn_column_cache));
   if (!cache) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[column-cache][open] failed to allocate memory");
@@ -517,4 +517,3 @@ grn_column_copy(grn_ctx *ctx, grn_obj *from, grn_obj *to)
 exit :
   GRN_API_RETURN(ctx->rc);
 }
-

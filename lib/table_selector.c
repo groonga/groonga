@@ -137,7 +137,7 @@ grn_table_selector_open(grn_ctx *ctx,
                         grn_operator op)
 {
   GRN_API_ENTER;
-  grn_table_selector *table_selector = GRN_MALLOC(sizeof(grn_table_selector));
+  grn_table_selector *table_selector = GRN_CALLOC(sizeof(grn_table_selector));
   if (table_selector) {
     grn_table_selector_init(ctx, table_selector, table, expr, op);
   }

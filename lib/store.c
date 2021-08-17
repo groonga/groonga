@@ -96,7 +96,7 @@ grn_ra_open(grn_ctx *ctx, const char *path)
     grn_io_close(ctx, io);
     return NULL;
   }
-  ra = GRN_MALLOCN(grn_ra, 1);
+  ra = GRN_CALLOC(sizeof(grn_ra));
   if (!ra) {
     grn_io_close(ctx, io);
     return NULL;
@@ -786,7 +786,7 @@ _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
   header_v2->chunk_threshold = GRN_JA_W_CHUNK_THRESH_V2;
   header_v2->n_element_variations = JA_N_ELEMENT_VARIATIONS_V2;
 
-  header = GRN_MALLOCN(struct grn_ja_header, 1);
+  header = GRN_CALLOC(sizeof(struct grn_ja_header));
   if (!header) {
     grn_io_close(ctx, io);
     return NULL;
@@ -852,13 +852,13 @@ grn_ja_open(grn_ctx *ctx, const char *path)
   if (header_v2->n_element_variations == 0) {
     header_v2->n_element_variations = JA_N_ELEMENT_VARIATIONS_V1;
   }
-  ja = GRN_MALLOCN(grn_ja, 1);
+  ja = GRN_CALLOC(sizeof(grn_ja));
   if (!ja) {
     grn_io_close(ctx, io);
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(ja, GRN_COLUMN_VAR_SIZE);
-  header = GRN_MALLOCN(struct grn_ja_header, 1);
+  header = GRN_CALLOC(sizeof(struct grn_ja_header));
   if (!header) {
     grn_io_close(ctx, io);
     GRN_FREE(ja);
@@ -6589,7 +6589,7 @@ grn_ja_reader_init(grn_ctx *ctx, grn_ja_reader *reader, grn_ja *ja)
   reader->packed_buf_size = 0;
 #ifdef GRN_WITH_ZLIB
   if (reader->ja->header->flags & GRN_OBJ_COMPRESS_ZLIB) {
-    z_stream *new_stream = GRN_MALLOCN(z_stream, 1);
+    z_stream *new_stream = GRN_CALLOC(sizeof(z_stream));
     if (!new_stream) {
       return GRN_NO_MEMORY_AVAILABLE;
     }
@@ -6640,7 +6640,7 @@ grn_rc
 grn_ja_reader_open(grn_ctx *ctx, grn_ja *ja, grn_ja_reader **reader)
 {
   grn_rc rc;
-  grn_ja_reader *new_reader = GRN_MALLOCN(grn_ja_reader, 1);
+  grn_ja_reader *new_reader = GRN_CALLOC(sizeof(grn_ja_reader));
   if (!new_reader) {
     return GRN_NO_MEMORY_AVAILABLE;
   }

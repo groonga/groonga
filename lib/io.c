@@ -238,7 +238,7 @@ grn_io_create_tmp(grn_ctx *ctx, uint32_t header_size, uint32_t segment_size,
     header->flags = flags;
     header->lock = 0;
     grn_memcpy(header->idstr, GRN_IO_IDSTR, 16);
-    if ((io = GRN_MALLOCN(grn_io, 1))) {
+    if ((io = GRN_CALLOC(sizeof(grn_io)))) {
       grn_io_mapinfo *maps = NULL;
       if ((maps = GRN_CALLOC(sizeof(grn_io_mapinfo) * max_segment))) {
         io->header = header;
@@ -343,7 +343,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size,
         header->lock = 0;
         grn_memcpy(header->idstr, GRN_IO_IDSTR, 16);
         GRN_MSYNC(ctx, &(fis[0]), header, b);
-        if ((io = GRN_MALLOCN(grn_io, 1))) {
+        if ((io = GRN_CALLOC(sizeof(grn_io)))) {
           grn_io_mapinfo *maps = NULL;
           if ((maps = GRN_CALLOC(sizeof(grn_io_mapinfo) * max_segment))) {
             grn_strncpy(io->path, PATH_MAX, path, path_length + 1);
@@ -673,7 +673,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
 
   grn_fileinfo_init(fis, max_nfiles);
   grn_memcpy(fis, &fi, sizeof(fileinfo));
-  grn_io *io = GRN_MALLOC(sizeof(grn_io));
+  grn_io *io = GRN_CALLOC(sizeof(grn_io));
   if (!io) {
     GRN_FREE(fis);
     GRN_MUNMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, header, b);
@@ -963,7 +963,7 @@ grn_io_read_ja(grn_io *io, grn_ctx *ctx, grn_io_ja_einfo *einfo, uint32_t epos,
   fileinfo *fi = &io->fis[fno];
   off_t base = fno ? 0 : io->base - (uint64_t)segment_size * io->base_seg;
   off_t pos = (uint64_t)segment_size * (bseg % segments_per_file) + offset + base;
-  ja_element *v = GRN_MALLOC(size);
+  ja_element *v = GRN_CALLOC(size);
   if (!v) {
     *value = NULL;
     *value_len = 0;
@@ -1170,7 +1170,7 @@ grn_io_win_map(grn_ctx *ctx,
     iw->cached = 1;
     iw->addr = addr + offset;
   } else {
-    if (!(iw->addr = GRN_MALLOC(size))) { return NULL; }
+    if (!(iw->addr = GRN_CALLOC(size))) { return NULL; }
     iw->cached = 0;
     switch (mode) {
     case GRN_IO_RDONLY:

@@ -1612,7 +1612,7 @@ grn_geo_cursor_open_in_rectangle(grn_ctx *ctx,
     goto exit;
   }
 
-  cursor = GRN_MALLOCN(grn_geo_cursor_in_rectangle, 1);
+  cursor = GRN_CALLOC(sizeof(grn_geo_cursor_in_rectangle));
   if (!cursor) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[geo][cursor][in-rectangle] failed to allocate memory for geo cursor");

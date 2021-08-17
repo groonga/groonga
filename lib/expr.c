@@ -457,7 +457,7 @@ grn_obj *
 grn_expr_open(grn_ctx *ctx, grn_obj_spec *spec, const uint8_t *p, const uint8_t *pe)
 {
   grn_expr *expr = NULL;
-  if ((expr = GRN_MALLOCN(grn_expr, 1))) {
+  if ((expr = GRN_CALLOC(sizeof(grn_expr)))) {
     int size = GRN_STACK_SIZE;
     expr->const_blks = NULL;
     expr->nconsts = 0;
@@ -600,7 +600,7 @@ grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size)
     GRN_API_RETURN(NULL);
   }
   id = grn_obj_register(ctx, db, name, name_size);
-  if (id && (expr = GRN_MALLOCN(grn_expr, 1))) {
+  if (id && (expr = GRN_CALLOC(sizeof(grn_expr)))) {
     int size = GRN_STACK_SIZE;
     expr->const_blks = NULL;
     expr->nconsts = 0;
@@ -1747,7 +1747,7 @@ grn_scan_info_free(grn_ctx *ctx,
 #define SI_FREE(si) grn_scan_info_free((ctx), (si))
 
 #define SI_ALLOC_RAW(si, st) do {\
-  if (((si) = GRN_MALLOCN(scan_info, 1))) {\
+  if (((si) = GRN_CALLOC(sizeof(scan_info)))) {\
     GRN_UINT32_INIT(&(si)->sections, GRN_OBJ_VECTOR);\
     GRN_FLOAT32_INIT(&(si)->weights, GRN_OBJ_VECTOR);\
     GRN_PTR_INIT(&(si)->index, GRN_OBJ_VECTOR, GRN_ID_NIL);\
@@ -2115,7 +2115,7 @@ get_weight(grn_ctx *ctx, grn_expr_code *ec, uint32_t *offset)
 scan_info *
 grn_scan_info_open(grn_ctx *ctx, int start)
 {
-  scan_info *si = GRN_MALLOCN(scan_info, 1);
+  scan_info *si = GRN_CALLOC(sizeof(scan_info));
 
   if (!si) {
     return NULL;

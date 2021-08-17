@@ -198,7 +198,7 @@ grn_config_cursor_open(grn_ctx *ctx)
   }
   config = ((grn_db *)db)->config;
 
-  cursor = GRN_MALLOCN(grn_config_cursor, 1);
+  cursor = GRN_CALLOC(sizeof(grn_config_cursor));
   if (!cursor) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[config][cursor][open] failed to allocate memory for config cursor");

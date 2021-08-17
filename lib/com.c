@@ -127,7 +127,7 @@ grn_msg_open(grn_ctx *ctx, grn_com *com, grn_com_queue *old)
       return NULL;
     }
     GRN_BULK_REWIND(&msg->qe.obj);
-  } else if ((msg = GRN_MALLOCN(grn_msg, 1))) {
+  } else if ((msg = GRN_CALLOC(sizeof(grn_msg)))) {
     GRN_OBJ_INIT(&msg->qe.obj, GRN_MSG, 0, GRN_DB_TEXT);
     msg->qe.obj.header.impl_flags |= GRN_OBJ_ALLOCATED;
     msg->ctx = ctx;
@@ -1136,7 +1136,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
     cs->opaque = NULL;
     GRN_COM_QUEUE_INIT(&cs->new_);
   } else {
-    if (!(cs = GRN_MALLOC(sizeof(grn_com)))) { goto exit; }
+    if (!(cs = GRN_CALLOC(sizeof(grn_com)))) { goto exit; }
     cs->fd = lfd;
   }
   cs->accepting = GRN_TRUE;

@@ -22,10 +22,8 @@ grn_posting *
 grn_posting_open(grn_ctx *ctx)
 {
   GRN_API_ENTER;
-  grn_posting *posting = GRN_MALLOC(sizeof(grn_posting));
-  if (posting) {
-    memset(posting, 0, sizeof(grn_posting));
-  } else {
+  grn_posting *posting = GRN_CALLOC(sizeof(grn_posting));
+  if (!posting) {
     ERR(GRN_NO_MEMORY_AVAILABLE, "[posting][open] failed to allocate");
   }
   GRN_API_RETURN(posting);

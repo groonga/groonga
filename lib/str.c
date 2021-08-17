@@ -1129,7 +1129,7 @@ grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding en
 {
   /* TODO: support GRN_STR_REMOVEBLANK flag and ctypes */
   grn_str *nstr;
-  if (!(nstr = GRN_MALLOC(sizeof(grn_str)))) {
+  if (!(nstr = GRN_CALLOC(sizeof(grn_str)))) {
     GRN_LOG(ctx, GRN_LOG_ALERT, "memory allocation on grn_fakenstr_open failed !");
     return NULL;
   }

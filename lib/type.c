@@ -150,7 +150,7 @@ grn_type_create_internal(grn_ctx *ctx,
                          unsigned int size)
 {
   GRN_API_ENTER;
-  struct _grn_type *type = GRN_MALLOC(sizeof(grn_db_obj));
+  struct _grn_type *type = GRN_CALLOC(sizeof(grn_db_obj));
   if (!type) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[type][init] failed to allocate type: <%u>",

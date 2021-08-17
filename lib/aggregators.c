@@ -119,7 +119,7 @@ aggregator_mean_init(grn_ctx *ctx, grn_aggregator_data *data)
     return NULL;
   }
 
-  aggregator_mean_data *mean_data = GRN_MALLOCN(aggregator_mean_data, 1);
+  aggregator_mean_data *mean_data = GRN_CALLOC(sizeof(aggregator_mean_data));
   if (!mean_data) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_NO_MEMORY_AVAILABLE,
@@ -272,7 +272,7 @@ aggregator_sd_init(grn_ctx *ctx, grn_aggregator_data *data)
     }
   }
 
-  aggregator_sd_data *sd_data = GRN_MALLOCN(aggregator_sd_data, 1);
+  aggregator_sd_data *sd_data = GRN_CALLOC(sizeof(aggregator_sd_data));
   if (!sd_data) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_NO_MEMORY_AVAILABLE,

@@ -226,7 +226,7 @@ grn_string_open_(grn_ctx *ctx,
     return NULL;
   }
 
-  string_ = GRN_MALLOCN(grn_string, 1);
+  string_ = GRN_CALLOC(sizeof(grn_string));
   if (!string_) {
     GRN_LOG(ctx, GRN_LOG_ALERT,
             "[string][open] failed to allocate memory");

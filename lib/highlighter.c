@@ -89,7 +89,7 @@ grn_highlighter_open(grn_ctx *ctx)
 
   GRN_API_ENTER;
 
-  highlighter = GRN_MALLOCN(grn_highlighter, 1);
+  highlighter = GRN_CALLOC(sizeof(grn_highlighter));
   if (!highlighter) {
     char errbuf[GRN_CTX_MSGSIZE];
     grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);

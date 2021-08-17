@@ -102,7 +102,8 @@ grn_table_group_aggregator *
 grn_table_group_aggregator_open(grn_ctx *ctx)
 {
   GRN_API_ENTER;
-  grn_table_group_aggregator *aggregator = GRN_MALLOCN(grn_table_group_aggregator, 1);
+  grn_table_group_aggregator *aggregator =
+    GRN_CALLOC(sizeof(grn_table_group_aggregator));
   if (!aggregator) {
     ERR(ctx->rc,
         "[table-group-aggregator][open] failed to allocate: %s",

@@ -60,7 +60,7 @@ grn_file_reader_open(grn_ctx *ctx, const char *path)
     file_need_close = GRN_TRUE;
   }
 
-  reader = GRN_MALLOC(sizeof(grn_file_reader));
+  reader = GRN_CALLOC(sizeof(grn_file_reader));
   if (!reader) {
     if (file_need_close) {
       fclose(file);
