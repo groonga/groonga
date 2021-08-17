@@ -15387,7 +15387,8 @@ grn_ii_builder_flush_term(grn_ctx *ctx, grn_ii_builder *builder,
     uint8_t *p;
     uint32_t rest, value;
     grn_rc rc;
-    grn_id local_tid = term - builder->terms + 1, global_tid;
+    grn_id local_tid = term - builder->terms + 1;
+    grn_id global_tid = GRN_ID_NIL;
     key_size = grn_table_get_key(ctx, builder->lexicon, local_tid,
                                  key, GRN_TABLE_MAX_KEY_SIZE);
     if (!key_size) {
