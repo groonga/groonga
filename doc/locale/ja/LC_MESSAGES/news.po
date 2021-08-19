@@ -249,7 +249,7 @@ msgid ""
 "increment, decrement, and negative."
 msgstr ""
 "[:doc:`/reference/commands/query_expand`] 展開後の語の重みを操作できるように"
-"しました。."
+"しました。"
 
 msgid "We can specify weight against expanded words."
 msgstr "展開後の語に対して、重みを指定できます。"
