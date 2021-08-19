@@ -5,6 +5,74 @@
 News
 ====
 
+.. _release-11-0-6:
+
+Release 11.0.6 - 2021-08-29
+---------------------------
+
+Improvements
+------------
+
+* Added support for recovering on crash. (experimental)
+
+  This is a experimental feature. Currently, this feature is still not stable.
+
+  If Groonga crashes, it recovers the database automatically when it open a database for the first time since the crash. However, This feature can't recover the database automatically in all crash cases.
+  We need to recover the database manually depending on timing even if this feature enable.
+
+  Groonga execute WAL (write ahead log) when this feature is enable.
+  We can dump WAL by the following tools, but currently, users doesn't need to use them.
+
+    * [:doc:`reference/executables/grndb`] ``dump-wal`` command.
+    * ``dump-wal.rb`` scritp.
+
+* [:doc:`/install/debian`] Added how to install Groonga into Debian 11 (bullseye).
+
+* [:doc:`reference/commands/cache_limit`] Groonga remove cache when we execute ``cache_limit 0``. [GitHub#1224][Reported by higchi]
+
+  Groonga stores query cache to internally table.
+  The maximum total size of keys of this table is 4GiB. Because this table is hash table.
+  Therefore, If we execute many huge queries, Groonga may be unable to store query cache, because the maximum total size of keys may be over 4GiB.
+  In such cases, We can clear the table for query cache by using ``cache_limit 0``, and Groonga can store query cache 
+
+Fixes
+-----
+
+* Fixed a bug that Groonga doesn't clear lock when some threads open the same object around the same time.
+
+  If some threads open the same object around the same time, threads except for a thread that executes the opening object at first are waiting for opening the target object.
+  At this time, threads that are waited for an opening object take locks, but these locks are not released.
+  Therefore, these locks remain until Groonga's process is restarted in the above case, and a new thread can't also open the object all the time until Groonga's process is restarted.
+
+  However, this bug rarely happens. Because a time of a thread open the object is a very short time. 
+
+* [:doc:`reference/functions/query_parallel_or`] Fixed a bug that result may be different from the ``query()``.
+
+  For example, If we used ``query("tags || tags2", "beginner man")``, the following record was a match, but if we used ``query_parallel_or("tags || tags2", "beginner man")``, the following record wasn't a match until now.
+
+  * ``{"_key": "Bob",   "comment": "Hey!",       "tags": ["expert", "man"], "tags2": ["beginner"]}``
+
+  Even if we use ``query_parallel_or("tags || tags2", "beginner man")``, the above record is match by this modification.
+
+Known Issues
+------------
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
+
+Thanks
+------
+
+* higchi
+
 .. _release-11-0-5:
 
 Release 11.0.5 - 2021-07-29
