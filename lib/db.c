@@ -11151,7 +11151,8 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
           vp->done = 1;
           GRN_FUTEX_WAKE(&vp->ptr);
         } else {
-          if (!grn_db_value_wait(ctx, id, vp)) {
+          bool success = grn_db_value_wait(ctx, id, vp);
+          if (!success) {
             const char *name;
             uint32_t name_size = 0;
             name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
@@ -11162,10 +11163,11 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 "<%u>(<%.*s>)",
                 id,
                 name_size, name);
-            grn_db_value_unlock(ctx, id, vp);
+          }
+          grn_db_value_unlock(ctx, id, vp); /* This sentence is always executed because there is no condition. */
+          if (!success) {
             goto exit;
           }
-          grn_db_value_unlock(ctx, id, vp);
         }
         if (vp->ptr) {
           switch (vp->ptr->header.type) {
