@@ -11164,7 +11164,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 id,
                 name_size, name);
           }
-          grn_db_value_unlock(ctx, id, vp); /* This sentence is always executed because there is no condition. */
+          grn_db_value_unlock(ctx, id, vp);
           if (!success) {
             goto exit;
           }
