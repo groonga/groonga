@@ -1,6 +1,7 @@
 /*
   Copyright(C) 2009-2018  Brazil
   Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2021       Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -11164,9 +11165,16 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 id,
                 name_size, name);
           }
-          grn_db_value_unlock(ctx, id, vp);
-          if (!success) {
-            goto exit;
+          if (grn_enable_reference_count) {
+            if (!success) {
+              grn_db_value_unlock(ctx, id, vp);
+              goto exit;
+            }
+          } else {
+            grn_db_value_unlock(ctx, id, vp);
+            if (!success) {
+              goto exit;
+            }
           }
         }
         if (vp->ptr) {
