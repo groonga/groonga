@@ -1,6 +1,7 @@
 /*
   Copyright(C) 2009-2018  Brazil
   Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2021       Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -11151,8 +11152,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
           vp->done = 1;
           GRN_FUTEX_WAKE(&vp->ptr);
         } else {
-          bool success = grn_db_value_wait(ctx, id, vp);
-          if (!success) {
+          if (!grn_db_value_wait(ctx, id, vp)) {
             const char *name;
             uint32_t name_size = 0;
             name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
@@ -11163,10 +11163,11 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 "<%u>(<%.*s>)",
                 id,
                 name_size, name);
-          }
-          grn_db_value_unlock(ctx, id, vp);
-          if (!success) {
+            grn_db_value_unlock(ctx, id, vp);
             goto exit;
+          }
+          if (!grn_enable_reference_count) {
+            grn_db_value_unlock(ctx, id, vp);
           }
         }
         if (vp->ptr) {
