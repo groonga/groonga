@@ -11152,8 +11152,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
           vp->done = 1;
           GRN_FUTEX_WAKE(&vp->ptr);
         } else {
-          bool success = grn_db_value_wait(ctx, id, vp);
-          if (!success) {
+          if (!grn_db_value_wait(ctx, id, vp)) {
             const char *name;
             uint32_t name_size = 0;
             name = _grn_table_key(ctx, (grn_obj *)s, id, &name_size);
@@ -11164,17 +11163,11 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                 "<%u>(<%.*s>)",
                 id,
                 name_size, name);
-          }
-          if (grn_enable_reference_count) {
-            if (!success) {
-              grn_db_value_unlock(ctx, id, vp);
-              goto exit;
-            }
-          } else {
             grn_db_value_unlock(ctx, id, vp);
-            if (!success) {
-              goto exit;
-            }
+            goto exit;
+          }
+          if (!grn_enable_reference_count) {
+            grn_db_value_unlock(ctx, id, vp);
           }
         }
         if (vp->ptr) {
