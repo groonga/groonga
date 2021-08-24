@@ -13488,7 +13488,7 @@ grn_obj_flush_only_opened(grn_ctx *ctx, grn_obj *obj)
     }
 
     grn_obj *sub_obj = grn_ctx_at(ctx, id);
-    rc = grn_obj_flush_internal(ctx, sub_obj, tag);
+    rc = grn_obj_flush_without_lock(ctx, sub_obj, tag);
     grn_obj_unref(ctx, sub_obj);
     if (rc != GRN_SUCCESS) {
       break;
