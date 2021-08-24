@@ -13346,14 +13346,22 @@ grn_obj_flush_unlock(grn_ctx *ctx, grn_obj *obj, const char *tag)
 static grn_rc
 grn_obj_flush_internal(grn_ctx *ctx, grn_obj *obj, const char *tag)
 {
-  grn_rc rc = grn_obj_flush_lock(ctx, obj, tag);
-  if (rc != GRN_SUCCESS) {
-    return rc;
+  bool need_lock =
+    ((grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) &&
+     grn_wal_exist(ctx, obj));
+  grn_rc rc = GRN_SUCCESS;
+  if (need_lock) {
+    rc = grn_obj_flush_lock(ctx, obj, tag);
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
   }
   rc = grn_obj_flush_without_lock(ctx, obj, tag);
-  grn_rc rc_unlock = grn_obj_flush_unlock(ctx, obj, tag);
-  if (rc == GRN_SUCCESS && rc_unlock != GRN_SUCCESS) {
-    rc = rc_unlock;
+  if (need_lock) {
+    grn_rc rc_unlock = grn_obj_flush_unlock(ctx, obj, tag);
+    if (rc == GRN_SUCCESS && rc_unlock != GRN_SUCCESS) {
+      rc = rc_unlock;
+    }
   }
 
   return rc;
