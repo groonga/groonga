@@ -1,9 +1,10 @@
-# wal_recover can't use with HTTP because requests via HTTP are always
+# _database_close/_database_reopen can't use with HTTP because requests via HTTP are always
 # processed by workers. Workers never use primary WAL role.
 #@require-interface stdio
 
 #@require-feature message_pack
 
+#$GROONGA_ALLOW_DATABASE_REOPEN=yes
 #$GRN_WAL_ROLE=primary
 
 #@disable-logging
@@ -17,10 +18,8 @@ load --table Data
 {"_key": "あいうえお"}
 ]
 
-#@disable-logging
 io_flush
 #@copy-path #{db_path}.0000100 #{db_path}.0000100.keep
-#@enable-logging
 
 delete Data --filter true
 
@@ -28,18 +27,12 @@ select Data
 
 check --obj Data
 
-#@disable-logging
 #@copy-path #{db_path}.0000100.wal #{db_path}.0000100.wal.keep
-io_flush
-thread_limit 1
-database_unmap
+_database_close
+
 #@copy-path #{db_path}.0000100.keep #{db_path}.0000100
 #@copy-path #{db_path}.0000100.wal.keep #{db_path}.0000100.wal
-#@enable-logging
-
-select Data
-
-wal_recover
+_database_reopen
 
 select Data
 

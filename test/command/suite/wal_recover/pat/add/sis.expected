@@ -1,5 +1,7 @@
 table_create Data TABLE_PAT_KEY|KEY_WITH_SIS ShortText
 [[0,0.0,0.0],true]
+io_flush
+[[0,0.0,0.0],true]
 load --table Data
 [
 {"_key": "あいうえお"}
@@ -74,9 +76,9 @@ check --obj Data
     }
   ]
 ]
-select Data
-[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
-wal_recover
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
 [[0,0.0,0.0],true]
 select Data
 [

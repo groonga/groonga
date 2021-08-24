@@ -1,9 +1,10 @@
-# wal_recover can't use with HTTP because requests via HTTP are always
+# _database_close/_database_reopen can't use with HTTP because requests via HTTP are always
 # processed by workers. Workers never use primary WAL role.
 #@require-interface stdio
 
 #@require-feature message_pack
 
+#$GROONGA_ALLOW_DATABASE_REOPEN=yes
 #$GRN_WAL_ROLE=primary
 
 #@disable-logging
@@ -18,11 +19,9 @@ table_create Terms TABLE_PAT_KEY ShortText \
   --normalizer NormalizerNFKC130
 column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
 
-#@disable-logging
 io_flush
 #@copy-path #{db_path}.0000103 #{db_path}.0000103.initial
 #@copy-path #{db_path}.0000103.c #{db_path}.0000103.c.initial
-#@enable-logging
 
 load --table Memos
 [
@@ -34,20 +33,14 @@ check --obj Terms.memos_content
 
 select Memos --query content:@hello
 
-#@disable-logging
 #@copy-path #{db_path}.0000103.wal #{db_path}.0000103.wal.keep
-io_flush
-thread_limit 1
-database_unmap
+_database_close
+
 #@copy-path #{db_path}.0000103.initial #{db_path}.0000103
 #@copy-path #{db_path}.0000103.c.initial #{db_path}.0000103.c
 #@copy-path #{db_path}.0000103.wal.keep #{db_path}.0000103.wal
-#@enable-logging
-
-select Memos --query content:@hello
-
 #@add-important-log-levels notice
-wal_recover
+_database_reopen
 #@remove-important-log-levels notice
 
 select Memos --query content:@hello

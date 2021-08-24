@@ -2,6 +2,8 @@ table_create Memos TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 column_create Memos content COLUMN_SCALAR Text
 [[0,0.0,0.0],true]
+io_flush
+[[0,0.0,0.0],true]
 check --obj Memos.content
 [
   [
@@ -490,86 +492,9 @@ select Memos
     ]
   ]
 ]
-select Memos
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        211
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ],
-        [
-          "content",
-          "Text"
-        ]
-      ],
-      [
-        3,
-        "chunk: 8B <= && < 64KiB: 9",
-        ""
-      ],
-      [
-        4,
-        "chunk: 8B <= && < 64KiB: 8",
-        ""
-      ],
-      [
-        5,
-        "chunk: 8B <= && < 64KiB: 7",
-        ""
-      ],
-      [
-        6,
-        "chunk: 8B <= && < 64KiB: 6",
-        ""
-      ],
-      [
-        7,
-        "chunk: 8B <= && < 64KiB: 5",
-        ""
-      ],
-      [
-        8,
-        "chunk: 8B <= && < 64KiB: 4",
-        ""
-      ],
-      [
-        9,
-        "chunk: 8B <= && < 64KiB: 3",
-        ""
-      ],
-      [
-        10,
-        "chunk: 8B <= && < 64KiB: 2",
-        ""
-      ],
-      [
-        11,
-        "chunk: 8B <= && < 64KiB: 1",
-        ""
-      ],
-      [
-        12,
-        "chunk: 8B <= && < 64KiB: 99",
-        ""
-      ]
-    ]
-  ]
-]
-wal_recover
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
 [[0,0.0,0.0],true]
 select Memos
 [

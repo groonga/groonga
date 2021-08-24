@@ -65,6 +65,8 @@ select Data
     ]
   ]
 ]
+io_flush
+[[0,0.0,0.0],true]
 delete Data --filter true
 [[0,0.0,0.0],false]
 select Data
@@ -163,72 +165,9 @@ check --obj Data
     }
   ]
 ]
-select Data
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        260
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ]
-      ],
-      [
-        10,
-        "ぃ"
-      ],
-      [
-        9,
-        "ぃぃ"
-      ],
-      [
-        8,
-        "ぃぃぃ"
-      ],
-      [
-        7,
-        "ぃぃぃぃ"
-      ],
-      [
-        6,
-        "ぃぃぃぃぃ"
-      ],
-      [
-        5,
-        "ぃぃぃぃぃぃ"
-      ],
-      [
-        4,
-        "ぃぃぃぃぃぃぃ"
-      ],
-      [
-        3,
-        "ぃぃぃぃぃぃぃぃ"
-      ],
-      [
-        2,
-        "ぃぃぃぃぃぃぃぃぃ"
-      ],
-      [
-        1,
-        "ぃぃぃぃぃぃぃぃぃぃ"
-      ]
-    ]
-  ]
-]
-wal_recover
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
 [[0,0.0,0.0],true]
 select Data
 [

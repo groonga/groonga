@@ -2,6 +2,8 @@ table_create Memos TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 column_create Memos content COLUMN_SCALAR Text
 [[0,0.0,0.0],true]
+io_flush
+[[0,0.0,0.0],true]
 plugin_register functions/string
 [[0,0.0,0.0],true]
 select   --table Memos   --columns[content_head].stage output   --columns[content_head].flags COLUMN_SCALAR   --columns[content_head].type ShortText   --columns[content_head].value 'string_slice(content, 0, 5)'   --columns[content_tail].stage output   --columns[content_tail].flags COLUMN_SCALAR   --columns[content_tail].type ShortText   --columns[content_tail].value 'string_slice(content, -5, 5)'   --columns[content_length].stage output   --columns[content_length].flags COLUMN_SCALAR   --columns[content_length].type UInt32   --columns[content_length].value 'string_length(content)'   --output_columns _key,content_head,content_tail,content_length
@@ -43,46 +45,9 @@ select   --table Memos   --columns[content_head].stage output   --columns[conten
     ]
   ]
 ]
-select   --table Memos   --columns[content_head].stage output   --columns[content_head].flags COLUMN_SCALAR   --columns[content_head].type ShortText   --columns[content_head].value 'string_slice(content, 0, 5)'   --columns[content_tail].stage output   --columns[content_tail].flags COLUMN_SCALAR   --columns[content_tail].type ShortText   --columns[content_tail].value 'string_slice(content, -5, 5)'   --columns[content_length].stage output   --columns[content_length].flags COLUMN_SCALAR   --columns[content_length].type UInt32   --columns[content_length].value 'string_length(content)'   --output_columns _key,content_head,content_tail,content_length
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        1
-      ],
-      [
-        [
-          "_key",
-          "ShortText"
-        ],
-        [
-          "content_head",
-          "ShortText"
-        ],
-        [
-          "content_tail",
-          "ShortText"
-        ],
-        [
-          "content_length",
-          "UInt32"
-        ]
-      ],
-      [
-        "huge: 4MiB <=: 1 segment",
-        "",
-        "",
-        0
-      ]
-    ]
-  ]
-]
-wal_recover
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
 [[0,0.0,0.0],true]
 select   --table Memos   --columns[content_head].stage output   --columns[content_head].flags COLUMN_SCALAR   --columns[content_head].type ShortText   --columns[content_head].value 'string_slice(content, 0, 5)'   --columns[content_tail].stage output   --columns[content_tail].flags COLUMN_SCALAR   --columns[content_tail].type ShortText   --columns[content_tail].value 'string_slice(content, -5, 5)'   --columns[content_length].stage output   --columns[content_length].flags COLUMN_SCALAR   --columns[content_length].type UInt32   --columns[content_length].value 'string_length(content)'   --output_columns _key,content_head,content_tail,content_length
 [

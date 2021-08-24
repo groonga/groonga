@@ -7,13 +7,15 @@ load --table Data
 [[0,0.0,0.0],1]
 select Data
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"key"]]]]
+io_flush
+[[0,0.0,0.0],true]
 delete Data --id 1
 [[0,0.0,0.0],true]
 select Data
 [[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]
-select Data
-[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"key"]]]]
-wal_recover
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
 [[0,0.0,0.0],true]
 select Data
 [[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]

@@ -5,6 +5,8 @@ load --table Data
 {"_key": "4B<="}
 ]
 [[0,0.0,0.0],1]
+io_flush
+[[0,0.0,0.0],true]
 delete Data --filter true
 [[0,0.0,0.0],true]
 select Data
@@ -33,9 +35,9 @@ check --obj Data
     }
   ]
 ]
-select Data
-[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"4B<="]]]]
-wal_recover
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
 [[0,0.0,0.0],true]
 select Data
 [[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"]]]]]

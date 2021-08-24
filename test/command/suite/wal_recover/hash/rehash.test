@@ -1,9 +1,10 @@
-# wal_recover can't use with HTTP because requests via HTTP are always
+# _database_close/_database_reopen can't use with HTTP because requests via HTTP are always
 # processed by workers. Workers never use primary WAL role.
 #@require-interface stdio
 
 #@require-feature message_pack
 
+#$GROONGA_ALLOW_DATABASE_REOPEN=yes
 #$GRN_HASH_INITIAL_MAX_OFFSET=16
 #$GRN_WAL_ROLE=primary
 
@@ -13,10 +14,8 @@ cache_limit --max 0
 
 table_create Data TABLE_HASH_KEY UInt32
 
-#@disable-logging
 io_flush
 #@copy-path #{db_path}.0000100 #{db_path}.0000100.initial
-#@enable-logging
 
 #@disable-logging
 # Initial rehash threashold is 16 (grn_hash_initial_max_offset).
@@ -27,20 +26,12 @@ select Data
 
 check --obj Data
 
-#@disable-logging
 #@copy-path #{db_path}.0000100.wal #{db_path}.0000100.wal.keep
-io_flush
-thread_limit 1
-database_unmap
+_database_close
+
 #@copy-path #{db_path}.0000100.initial #{db_path}.0000100
 #@copy-path #{db_path}.0000100.wal.keep #{db_path}.0000100.wal
-#@enable-logging
-
-select Data
-
-check --obj Data
-
-wal_recover
+_database_reopen
 
 select Data
 

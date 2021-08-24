@@ -9,49 +9,16 @@ load --table memos
 {"count": 30}
 ]
 [[0,0.0,0.0],3]
+io_flush
+[[0,0.0,0.0],true]
 load --table memos
 [
 {"_id": 2, "count": 200}
 ]
 [[0,0.0,0.0],1]
-select memos
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        3
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "count",
-          "UInt32"
-        ]
-      ],
-      [
-        1,
-        10
-      ],
-      [
-        2,
-        20
-      ],
-      [
-        3,
-        30
-      ]
-    ]
-  ]
-]
-wal_recover
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
 [[0,0.0,0.0],true]
 select memos
 [

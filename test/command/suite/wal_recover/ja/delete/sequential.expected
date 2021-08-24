@@ -48,6 +48,8 @@ check --obj Memos.content
     }
   }
 ]
+io_flush
+[[0,0.0,0.0],true]
 delete Memos --filter _id==1
 [[0,0.0,0.0],true]
 check --obj Memos.content
@@ -134,53 +136,9 @@ check --obj Memos.content
     }
   }
 ]
-check --obj Memos.content
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  {
-    "details": {
-      "segments": [
-        {
-          "id": 0,
-          "type": 3,
-          "type_name": "element info",
-          "element_info_index": 0,
-          "referred_segment": 0,
-          "valid": true
-        },
-        {
-          "id": 1,
-          "type": 1,
-          "type_name": "sequential",
-          "value": 131088,
-          "n_elements": 2,
-          "s_elements": 131088,
-          "n_del_elements": 0,
-          "s_del_elements": 0
-        }
-      ],
-      "garbage_counts": {
-      },
-      "free_elements": {
-      }
-    },
-    "summary": {
-      "flags": "0000C000",
-      "curr seg": 1,
-      "curr pos": 131088,
-      "max_element_size": 65536,
-      "chunk_threshold": 16,
-      "n_element_variations": 14,
-      "n_using_segments": 2,
-      "valid": true
-    }
-  }
-]
-wal_recover
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
 [[0,0.0,0.0],true]
 check --obj Memos.content
 [

@@ -4927,6 +4927,4 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
   grn_proc_init_query_parallel_or(ctx);
 
   grn_proc_init_object_warm(ctx);
-
-  grn_proc_init_wal_recover(ctx);
 }

@@ -1,9 +1,10 @@
-# wal_recover can't use with HTTP because requests via HTTP are always
+# _database_close/_database_reopen can't use with HTTP because requests via HTTP are always
 # processed by workers. Workers never use primary WAL role.
 #@require-interface stdio
 
 #@require-feature message_pack
 
+#$GROONGA_ALLOW_DATABASE_REOPEN=yes
 #$GRN_WAL_ROLE=primary
 
 #@disable-logging
@@ -13,10 +14,8 @@ cache_limit --max 0
 table_create Memos TABLE_HASH_KEY ShortText
 column_create Memos content COLUMN_SCALAR Text
 
-#@disable-logging
 io_flush
 #@copy-path #{db_path}.0000101 #{db_path}.0000101.initial
-#@enable-logging
 
 #@timeout 300
 #@disable-logging
@@ -30,18 +29,12 @@ check --obj Memos.content
 
 select Memos
 
-#@disable-logging
 #@copy-path #{db_path}.0000101.wal #{db_path}.0000101.wal.keep
-io_flush
-thread_limit 1
-database_unmap
+_database_close
+
 #@copy-path #{db_path}.0000101.initial #{db_path}.0000101
 #@copy-path #{db_path}.0000101.wal.keep #{db_path}.0000101.wal
-#@enable-logging
-
-select Memos
-
-wal_recover
+_database_reopen
 
 select Memos
 

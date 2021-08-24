@@ -740,6 +740,9 @@ class WALRecoverer {
                              nullptr);
         break;
       case GRN_WAL_EVENT_DELETE_ENTRY :
+        if (!grn_dat_open_trie_if_needed(ctx_, dat_)) {
+          break;
+        }
         if (entry.record_id == GRN_ID_NIL) {
           grn_dat_delete_internal(ctx_,
                                   dat_,

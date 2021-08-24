@@ -1,4 +1,4 @@
-# wal_recover can't use with HTTP because requests via HTTP are always
+# _database_close/_database_reopen can't use with HTTP because requests via HTTP are always
 # processed by workers. Workers never use primary WAL role.
 #@require-interface stdio
 
@@ -10,25 +10,17 @@
 table_create Data TABLE_PAT_KEY ShortText
 column_create Data value COLUMN_SCALAR UInt32
 
-#@disable-logging
 io_flush
 #@copy-path #{db_path} #{db_path}.keep
 #@copy-path #{db_path}.001 #{db_path}.001.keep
 #@copy-path #{db_path}.0000000 #{db_path}.0000000.keep
-#@enable-logging
 
 column_remove Data value
 
 dump
 
-#@disable-logging
 #@copy-path #{db_path}.wal #{db_path}.wal.keep
 #@copy-path #{db_path}.0000000.wal #{db_path}.0000000.wal.keep
-io_flush
-thread_limit 1
-database_unmap
-#@enable-logging
-
 _database_close
 
 #@copy-path #{db_path}.keep #{db_path}

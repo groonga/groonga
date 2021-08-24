@@ -1,5 +1,7 @@
 table_create Data TABLE_HASH_KEY UInt32
 [[0,0.0,0.0],true]
+io_flush
+[[0,0.0,0.0],true]
 select Data
 [
   [
@@ -87,35 +89,9 @@ check --obj Data
     }
   ]
 ]
-select Data
-[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","UInt32"]]]]]
-check --obj Data
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    {
-      "flags": "00008000",
-      "key_size": 4,
-      "value_size": 0,
-      "tokenizer": 0,
-      "normalizer": 0,
-      "curr_rec": 0,
-      "curr_key_normal": 0,
-      "curr_key_large": 0,
-      "idx_offset": 0,
-      "entry_size": 4,
-      "max_offset": 15,
-      "n_entries": 0,
-      "n_garbages": 0,
-      "lock": 0
-    }
-  ]
-]
-wal_recover
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
 [[0,0.0,0.0],true]
 select Data
 [

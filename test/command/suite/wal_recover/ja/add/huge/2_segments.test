@@ -1,9 +1,10 @@
-# wal_recover can't use with HTTP because requests via HTTP are always
+# _database_close/_database_reopen can't use with HTTP because requests via HTTP are always
 # processed by workers. Workers never use primary WAL role.
 #@require-interface stdio
 
 #@require-feature message_pack
 
+#$GROONGA_ALLOW_DATABASE_REOPEN=yes
 #$GRN_WAL_ROLE=primary
 
 #@disable-logging
@@ -13,10 +14,8 @@ cache_limit --max 0
 table_create Memos TABLE_HASH_KEY ShortText
 column_create Memos content COLUMN_SCALAR Text
 
-#@disable-logging
 io_flush
 #@copy-path #{db_path}.0000101 #{db_path}.0000101.initial
-#@enable-logging
 
 #@timeout 300
 
@@ -42,32 +41,12 @@ select \
   --columns[content_length].value 'string_length(content)' \
   --output_columns _key,content_head,content_tail,content_length
 
-#@disable-logging
 #@copy-path #{db_path}.0000101.wal #{db_path}.0000101.wal.keep
-io_flush
-thread_limit 1
-database_unmap
+_database_close
+
 #@copy-path #{db_path}.0000101.initial #{db_path}.0000101
 #@copy-path #{db_path}.0000101.wal.keep #{db_path}.0000101.wal
-#@enable-logging
-
-select \
-  --table Memos \
-  --columns[content_head].stage output \
-  --columns[content_head].flags COLUMN_SCALAR \
-  --columns[content_head].type ShortText \
-  --columns[content_head].value 'string_slice(content, 0, 5)' \
-  --columns[content_tail].stage output \
-  --columns[content_tail].flags COLUMN_SCALAR \
-  --columns[content_tail].type ShortText \
-  --columns[content_tail].value 'string_slice(content, -5, 5)' \
-  --columns[content_length].stage output \
-  --columns[content_length].flags COLUMN_SCALAR \
-  --columns[content_length].type UInt32 \
-  --columns[content_length].value 'string_length(content)' \
-  --output_columns _key,content_head,content_tail,content_length
-
-wal_recover
+_database_reopen
 
 select \
   --table Memos \

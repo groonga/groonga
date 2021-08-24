@@ -2,6 +2,8 @@ table_create Memos TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 column_create Memos content COLUMN_SCALAR Text
 [[0,0.0,0.0],true]
+io_flush
+[[0,0.0,0.0],true]
 load --table Memos
 [
 {"_key": "chunk: 8B <= && < 64KiB", "content": "chunkXXX"}
@@ -111,41 +113,9 @@ select Memos
     ]
   ]
 ]
-select Memos
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        1
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "_key",
-          "ShortText"
-        ],
-        [
-          "content",
-          "Text"
-        ]
-      ],
-      [
-        1,
-        "chunk: 8B <= && < 64KiB",
-        ""
-      ]
-    ]
-  ]
-]
-wal_recover
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
 [[0,0.0,0.0],true]
 select Memos
 [
