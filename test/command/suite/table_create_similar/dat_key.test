@@ -1,0 +1,5 @@
+table_create Data TABLE_DAT_KEY Int32
+
+table_create_similar DataSimilar Data
+
+dump

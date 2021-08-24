@@ -1,0 +1,6 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizers NormalizerAuto
+
+table_create_similar TermsSimilar Terms
+
+dump

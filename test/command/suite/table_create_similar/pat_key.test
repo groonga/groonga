@@ -1,0 +1,5 @@
+table_create Data TABLE_PAT_KEY Int32 --value_type UInt32
+
+table_create_similar DataSimilar Data
+
+dump

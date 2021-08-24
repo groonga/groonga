@@ -1,0 +1,5 @@
+table_create Users TABLE_HASH_KEY|KEY_LARGE ShortText
+
+table_create_similar UsersSimilar Users
+
+dump

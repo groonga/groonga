@@ -1,0 +1,5 @@
+table_create Users TABLE_PAT_KEY|KEY_WITH_SIS ShortText
+
+table_create_similar UsersSimilar Users
+
+dump

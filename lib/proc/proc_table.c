@@ -608,33 +608,35 @@ grn_proc_init_table_rename(grn_ctx *ctx)
                             vars);
 }
 
-static grn_rc
-command_table_copy_resolve_target(grn_ctx *ctx,
-                                  const char *label,
-                                  grn_obj *name,
-                                  grn_obj **table)
+static grn_obj *
+command_table_resolve_target(grn_ctx *ctx,
+                             const char *label,
+                             grn_obj *name,
+                             const char *tag)
 {
   if (GRN_TEXT_LEN(name) == 0) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
-                     "[table][copy] %s name isn't specified",
+                     "%s %s name isn't specified",
+                     tag,
                      label);
-    return ctx->rc;
+    return NULL;
   }
-  *table = grn_ctx_get(ctx,
-                       GRN_TEXT_VALUE(name),
-                       GRN_TEXT_LEN(name));
-  if (!*table) {
+  grn_obj *table = grn_ctx_get(ctx,
+                               GRN_TEXT_VALUE(name),
+                               GRN_TEXT_LEN(name));
+  if (!table) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
-                     "[table][copy] %s table isn't found: <%.*s>",
+                     "%s %s table isn't found: <%.*s>",
+                     tag,
                      label,
                      (int)GRN_TEXT_LEN(name),
                      GRN_TEXT_VALUE(name));
-    return ctx->rc;
+    return NULL;
   }
 
-  return ctx->rc;
+  return table;
 }
 
 static grn_obj *
@@ -643,7 +645,7 @@ command_table_copy(grn_ctx *ctx,
                    grn_obj **args,
                    grn_user_data *user_data)
 {
-  grn_rc rc = GRN_SUCCESS;
+  const char *tag = "[table][copy]";
   grn_obj *from_table = NULL;
   grn_obj *to_table = NULL;
   grn_obj *from_name;
@@ -652,19 +654,19 @@ command_table_copy(grn_ctx *ctx,
   from_name = grn_plugin_proc_get_var(ctx, user_data, "from_name", -1);
   to_name   = grn_plugin_proc_get_var(ctx, user_data, "to_name", -1);
 
-  rc = command_table_copy_resolve_target(ctx, "from", from_name, &from_table);
-  if (rc != GRN_SUCCESS) {
+  from_table = command_table_resolve_target(ctx, "from", from_name, tag);
+  if (!from_table) {
     goto exit;
   }
-  rc = command_table_copy_resolve_target(ctx, "to", to_name, &to_table);
-  if (rc != GRN_SUCCESS) {
+  to_table = command_table_resolve_target(ctx, "to", to_name, tag);
+  if (!to_table) {
     goto exit;
   }
 
-  rc = grn_table_copy(ctx, from_table, to_table);
+  grn_table_copy(ctx, from_table, to_table);
 
 exit :
-  grn_ctx_output_bool(ctx, rc == GRN_SUCCESS);
+  grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
 
   if (to_table) {
     grn_obj_unlink(ctx, to_table);
@@ -686,6 +688,62 @@ grn_proc_init_table_copy(grn_ctx *ctx)
   grn_plugin_command_create(ctx,
                             "table_copy", -1,
                             command_table_copy,
+                            2,
+                            vars);
+}
+
+static grn_obj *
+command_table_create_similar(grn_ctx *ctx,
+                             int nargs,
+                             grn_obj **args,
+                             grn_user_data *user_data)
+{
+  const char *tag = "[table][create][similar]";
+  grn_obj *name;
+  grn_obj *base_table_name;
+  grn_obj *base_table = NULL;
+  grn_obj *table;
+
+  name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
+  base_table_name = grn_plugin_proc_get_var(ctx, user_data, "base_table", -1);
+
+  base_table = command_table_resolve_target(ctx,
+                                            "base_table",
+                                            base_table_name,
+                                            tag);
+  if (!base_table) {
+    goto exit;
+  }
+
+  table = grn_table_create_similar(ctx,
+                                   GRN_TEXT_VALUE(name),
+                                   GRN_TEXT_LEN(name),
+                                   NULL,
+                                   base_table);
+
+exit :
+  grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
+
+  if (base_table) {
+    grn_obj_unref(ctx, base_table);
+  }
+  if (table) {
+    grn_obj_unref(ctx, table);
+  }
+
+  return NULL;
+}
+
+void
+grn_proc_init_table_create_similar(grn_ctx *ctx)
+{
+  grn_expr_var vars[2];
+
+  grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[1]), "base_table", -1);
+  grn_plugin_command_create(ctx,
+                            "table_create_similar", -1,
+                            command_table_create_similar,
                             2,
                             vars);
 }

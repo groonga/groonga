@@ -78,6 +78,7 @@ void grn_proc_init_snippet(grn_ctx *ctx);
 void grn_proc_init_snippet_html(grn_ctx *ctx);
 void grn_proc_init_table_copy(grn_ctx *ctx);
 void grn_proc_init_table_create(grn_ctx *ctx);
+void grn_proc_init_table_create_similar(grn_ctx *ctx);
 void grn_proc_init_table_list(grn_ctx *ctx);
 void grn_proc_init_table_remove(grn_ctx *ctx);
 void grn_proc_init_table_rename(grn_ctx *ctx);

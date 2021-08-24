@@ -1,0 +1,8 @@
+table_create Terms TABLE_PAT_KEY ShortText   --normalizers NormalizerAuto
+[[0,0.0,0.0],true]
+table_create_similar TermsSimilar Terms
+[[0,0.0,0.0],true]
+dump
+table_create Terms TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+
+table_create TermsSimilar TABLE_PAT_KEY ShortText --normalizer NormalizerAuto

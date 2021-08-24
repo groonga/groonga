@@ -29,6 +29,12 @@ GRN_API grn_obj *grn_table_create(grn_ctx *ctx,
                                   const char *name, unsigned int name_size,
                                   const char *path, grn_table_flags flags,
                                   grn_obj *key_type, grn_obj *value_type);
+GRN_API grn_obj *
+grn_table_create_similar(grn_ctx *ctx,
+                         const char *name,
+                         uint32_t name_size,
+                         const char *path,
+                         grn_obj *base_table);
 
 #define GRN_TABLE_OPEN_OR_CREATE(ctx,name,name_size,path,flags,key_type,value_type,table) \
   (((table) = grn_ctx_get((ctx), (name), (name_size))) ||\

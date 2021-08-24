@@ -1736,6 +1736,132 @@ grn_table_create_for_group(grn_ctx *ctx, const char *name,
   GRN_API_RETURN(res);
 }
 
+grn_obj *
+grn_table_create_similar(grn_ctx *ctx,
+                         const char *name,
+                         uint32_t name_size,
+                         const char *path,
+                         grn_obj *base_table)
+{
+  GRN_API_ENTER;
+
+  const char *tag = "[table][create][similar]";
+  if (!grn_obj_is_table(ctx, base_table)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect_limited(ctx, &inspected, base_table);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s must be table: %.*s",
+        tag,
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    GRN_API_RETURN(NULL);
+  }
+
+  grn_table_flags flags = 0;
+  grn_id domain = GRN_ID_NIL;
+  grn_id range = GRN_ID_NIL;
+  grn_obj *key_type = NULL;
+  grn_obj *value_type = NULL;
+
+  if (grn_obj_is_persistent(ctx, base_table)) {
+    flags |= GRN_OBJ_PERSISTENT;
+  }
+
+  switch (base_table->header.type) {
+  case GRN_TABLE_HASH_KEY :
+    flags |= GRN_OBJ_TABLE_HASH_KEY;
+    if (((grn_hash *)base_table)->header.common->flags & GRN_OBJ_KEY_LARGE) {
+      flags |= GRN_OBJ_KEY_LARGE;
+    }
+    domain = base_table->header.domain;
+    range = DB_OBJ(base_table)->range;
+    break;
+  case GRN_TABLE_PAT_KEY :
+    flags |= GRN_OBJ_TABLE_PAT_KEY;
+    if (base_table->header.flags & GRN_OBJ_KEY_WITH_SIS) {
+      flags |= GRN_OBJ_KEY_WITH_SIS;
+    }
+    domain = base_table->header.domain;
+    range = DB_OBJ(base_table)->range;
+    break;
+  case GRN_TABLE_DAT_KEY :
+    flags |= GRN_OBJ_TABLE_DAT_KEY;
+    domain = base_table->header.domain;
+    break;
+  case GRN_TABLE_NO_KEY :
+    flags |= GRN_OBJ_TABLE_NO_KEY;
+    range = DB_OBJ(base_table)->range;
+    break;
+  default :
+    break;
+  }
+  if (domain != GRN_ID_NIL) {
+    key_type = grn_ctx_at(ctx, domain);
+  }
+  if (range != GRN_ID_NIL) {
+    value_type = grn_ctx_at(ctx, range);
+  }
+  grn_obj *table = grn_table_create(ctx,
+                                    name,
+                                    name_size,
+                                    path,
+                                    flags,
+                                    key_type,
+                                    value_type);
+  if (key_type) {
+    grn_obj_unref(ctx, key_type);
+  }
+  if (value_type) {
+    grn_obj_unref(ctx, value_type);
+  }
+  if (!table) {
+    GRN_API_RETURN(NULL);
+  }
+
+  grn_obj buffer;
+  GRN_TEXT_INIT(&buffer, 0);
+  if (grn_obj_is_table_with_key(ctx, base_table)) {
+    GRN_BULK_REWIND(&buffer);
+    grn_table_get_default_tokenizer_string(ctx, base_table, &buffer);
+    if (GRN_TEXT_LEN(&buffer) > 0) {
+      grn_obj_set_info(ctx, table, GRN_INFO_DEFAULT_TOKENIZER, &buffer);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+    }
+
+    GRN_BULK_REWIND(&buffer);
+    grn_table_get_normalizers_string(ctx, base_table, &buffer);
+    if (GRN_TEXT_LEN(&buffer) > 0) {
+      grn_obj_set_info(ctx, table, GRN_INFO_NORMALIZERS, &buffer);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+    }
+
+    GRN_BULK_REWIND(&buffer);
+    grn_table_get_token_filters_string(ctx, base_table, &buffer);
+    if (GRN_TEXT_LEN(&buffer) > 0) {
+      grn_obj_set_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &buffer);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+    }
+  }
+
+exit :
+  GRN_OBJ_FIN(ctx, &buffer);
+
+  if (ctx->rc != GRN_SUCCESS) {
+    grn_obj_remove(ctx, table);
+    GRN_API_RETURN(NULL);
+  }
+
+  GRN_API_RETURN(table);
+}
+
 unsigned int
 grn_table_get_subrecs(grn_ctx *ctx, grn_obj *table, grn_id id,
                       grn_id *subrecbuf, int *scorebuf, int buf_size)

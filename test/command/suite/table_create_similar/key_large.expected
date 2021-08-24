@@ -1,0 +1,8 @@
+table_create Users TABLE_HASH_KEY|KEY_LARGE ShortText
+[[0,0.0,0.0],true]
+table_create_similar UsersSimilar Users
+[[0,0.0,0.0],true]
+dump
+table_create Users TABLE_HASH_KEY|KEY_LARGE ShortText
+
+table_create UsersSimilar TABLE_HASH_KEY|KEY_LARGE ShortText
