@@ -1,0 +1,14 @@
+table_create Notes TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Notes tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+table_create NotesSimilar TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create_similar NotesSimilar tags Notes.tags
+[[0,0.0,0.0],true]
+dump
+table_create Notes TABLE_NO_KEY
+column_create Notes tags COLUMN_VECTOR ShortText
+
+table_create NotesSimilar TABLE_NO_KEY
+column_create NotesSimilar tags COLUMN_VECTOR ShortText

@@ -1,0 +1,19 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Notes TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Notes tags COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+table_create NotesSimilar TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create_similar NotesSimilar tags Notes.tags
+[[0,0.0,0.0],true]
+dump
+table_create Notes TABLE_NO_KEY
+
+table_create NotesSimilar TABLE_NO_KEY
+
+table_create Tags TABLE_PAT_KEY ShortText
+
+column_create Notes tags COLUMN_SCALAR Tags
+column_create NotesSimilar tags COLUMN_SCALAR Tags

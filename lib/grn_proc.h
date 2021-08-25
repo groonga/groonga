@@ -38,6 +38,7 @@ void grn_proc_init_cast_loose(grn_ctx *ctx);
 void grn_proc_init_clearlock(grn_ctx *ctx);
 void grn_proc_init_column_copy(grn_ctx *ctx);
 void grn_proc_init_column_create(grn_ctx *ctx);
+void grn_proc_init_column_create_similar(grn_ctx *ctx);
 void grn_proc_init_column_list(grn_ctx *ctx);
 void grn_proc_init_column_remove(grn_ctx *ctx);
 void grn_proc_init_column_rename(grn_ctx *ctx);

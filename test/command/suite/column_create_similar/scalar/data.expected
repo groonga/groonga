@@ -1,0 +1,14 @@
+table_create Notes TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Notes title COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create NotesSimilar TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create_similar NotesSimilar title Notes.title
+[[0,0.0,0.0],true]
+dump
+table_create Notes TABLE_NO_KEY
+column_create Notes title COLUMN_SCALAR Text
+
+table_create NotesSimilar TABLE_NO_KEY
+column_create NotesSimilar title COLUMN_SCALAR Text

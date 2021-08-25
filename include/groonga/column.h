@@ -50,6 +50,14 @@ typedef struct _grn_column_cache grn_column_cache;
 GRN_API grn_obj *grn_column_create(grn_ctx *ctx, grn_obj *table,
                                    const char *name, unsigned int name_size,
                                    const char *path, grn_column_flags flags, grn_obj *type);
+GRN_API grn_obj *
+grn_column_create_similar(grn_ctx *ctx,
+                          grn_obj *table,
+                          const char *name,
+                          uint32_t name_size,
+                          const char *path,
+                          grn_obj *base_column);
+
 #define GRN_COLUMN_OPEN_OR_CREATE(ctx,table,name,name_size,path,flags,type,column) \
   (((column) = grn_obj_column((ctx), (table), (name), (name_size))) ||\
    ((column) = grn_column_create((ctx), (table), (name), (name_size), (path), (flags), (type))))

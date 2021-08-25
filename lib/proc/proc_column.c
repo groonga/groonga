@@ -814,3 +814,72 @@ grn_proc_init_column_copy(grn_ctx *ctx)
                             4,
                             vars);
 }
+
+static grn_obj *
+command_column_create_similar(grn_ctx *ctx,
+                              int nargs,
+                              grn_obj **args,
+                              grn_user_data *user_data)
+{
+  grn_obj *table_name;
+  grn_obj *table = NULL;
+  grn_obj *name;
+  grn_obj *base_column_name;
+  grn_obj *base_column = NULL;
+  grn_obj *column = NULL;
+
+  table_name = grn_plugin_proc_get_var(ctx, user_data, "table", -1);
+  name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
+  base_column_name = grn_plugin_proc_get_var(ctx, user_data, "base_column", -1);
+
+  table = grn_proc_get_value_object(ctx,
+                                    table_name,
+                                    "[column][create][similar][table]");
+  if (!table) {
+    goto exit;
+  }
+  base_column =
+    grn_proc_get_value_object(ctx,
+                              base_column_name,
+                              "[column][create][similar][base_column]");
+  if (!base_column) {
+    goto exit;
+  }
+
+  column = grn_column_create_similar(ctx,
+                                     table,
+                                     GRN_TEXT_VALUE(name),
+                                     GRN_TEXT_LEN(name),
+                                     NULL,
+                                     base_column);
+
+exit :
+  grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
+
+  if (table) {
+    grn_obj_unref(ctx, table);
+  }
+  if (base_column) {
+    grn_obj_unref(ctx, base_column);
+  }
+  if (column) {
+    grn_obj_unref(ctx, column);
+  }
+
+  return NULL;
+}
+
+void
+grn_proc_init_column_create_similar(grn_ctx *ctx)
+{
+  grn_expr_var vars[3];
+
+  grn_plugin_expr_var_init(ctx, &(vars[0]), "table", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[1]), "name", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[2]), "base_column", -1);
+  grn_plugin_command_create(ctx,
+                            "column_create_similar", -1,
+                            command_column_create_similar,
+                            3,
+                            vars);
+}

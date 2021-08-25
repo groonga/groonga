@@ -1,0 +1,9 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Notes TABLE_NO_KEY
+column_create Notes tags COLUMN_VECTOR Tags
+
+table_create NotesSimilar TABLE_NO_KEY
+column_create_similar NotesSimilar tags Notes.tags
+
+dump

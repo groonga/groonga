@@ -1,0 +1,15 @@
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC121 \
+  --default_tokenizer TokenNgram
+
+table_create Notes TABLE_NO_KEY
+column_create Notes title COLUMN_SCALAR Text
+
+column_create Notes title_terms COLUMN_VECTOR Terms title
+
+table_create NotesSimilar TABLE_NO_KEY
+column_create NotesSimilar title COLUMN_SCALAR Text
+
+column_create_similar NotesSimilar title_terms Notes.title_terms
+
+dump
