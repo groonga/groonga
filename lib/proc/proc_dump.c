@@ -805,8 +805,18 @@ dump_table(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
     GRN_OBJ_FIN(ctx, &sub_output);
   }
   if (normalizer) {
+    grn_obj normalizers;
+    GRN_PTR_INIT(&normalizers, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    grn_obj_get_info(ctx, table, GRN_INFO_NORMALIZERS, &normalizers);
+    bool multiple_normalizers = (GRN_PTR_VECTOR_SIZE(&normalizers) > 1);
+    GRN_OBJ_FIN(ctx, &normalizers);
+
     grn_obj sub_output;
-    GRN_TEXT_PUTS(ctx, dumper->output, " --normalizer ");
+    if (multiple_normalizers) {
+      GRN_TEXT_PUTS(ctx, dumper->output, " --normalizers ");
+    } else {
+      GRN_TEXT_PUTS(ctx, dumper->output, " --normalizer ");
+    }
     GRN_TEXT_INIT(&sub_output, 0);
     grn_table_get_normalizers_string(ctx, table, &sub_output);
     dump_string(ctx, dumper, &sub_output);
