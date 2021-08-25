@@ -609,43 +609,11 @@ grn_proc_init_table_rename(grn_ctx *ctx)
 }
 
 static grn_obj *
-command_table_resolve_target(grn_ctx *ctx,
-                             const char *label,
-                             grn_obj *name,
-                             const char *tag)
-{
-  if (GRN_TEXT_LEN(name) == 0) {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "%s %s name isn't specified",
-                     tag,
-                     label);
-    return NULL;
-  }
-  grn_obj *table = grn_ctx_get(ctx,
-                               GRN_TEXT_VALUE(name),
-                               GRN_TEXT_LEN(name));
-  if (!table) {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "%s %s table isn't found: <%.*s>",
-                     tag,
-                     label,
-                     (int)GRN_TEXT_LEN(name),
-                     GRN_TEXT_VALUE(name));
-    return NULL;
-  }
-
-  return table;
-}
-
-static grn_obj *
 command_table_copy(grn_ctx *ctx,
                    int nargs,
                    grn_obj **args,
                    grn_user_data *user_data)
 {
-  const char *tag = "[table][copy]";
   grn_obj *from_table = NULL;
   grn_obj *to_table = NULL;
   grn_obj *from_name;
@@ -654,11 +622,11 @@ command_table_copy(grn_ctx *ctx,
   from_name = grn_plugin_proc_get_var(ctx, user_data, "from_name", -1);
   to_name   = grn_plugin_proc_get_var(ctx, user_data, "to_name", -1);
 
-  from_table = command_table_resolve_target(ctx, "from", from_name, tag);
+  from_table = grn_proc_get_value_object(ctx, from_name, "[table][copy][from]");
   if (!from_table) {
     goto exit;
   }
-  to_table = command_table_resolve_target(ctx, "to", to_name, tag);
+  to_table = grn_proc_get_value_object(ctx, to_name, "[table][copy][to]");
   if (!to_table) {
     goto exit;
   }
@@ -698,19 +666,17 @@ command_table_create_similar(grn_ctx *ctx,
                              grn_obj **args,
                              grn_user_data *user_data)
 {
-  const char *tag = "[table][create][similar]";
   grn_obj *name;
   grn_obj *base_table_name;
   grn_obj *base_table = NULL;
-  grn_obj *table;
+  grn_obj *table = NULL;
 
   name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
   base_table_name = grn_plugin_proc_get_var(ctx, user_data, "base_table", -1);
 
-  base_table = command_table_resolve_target(ctx,
-                                            "base_table",
-                                            base_table_name,
-                                            tag);
+  base_table = grn_proc_get_value_object(ctx,
+                                         base_table_name,
+                                         "[table][create][similar][base_table]");
   if (!base_table) {
     goto exit;
   }

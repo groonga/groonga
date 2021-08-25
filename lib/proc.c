@@ -1765,6 +1765,82 @@ grn_proc_get_value_double(grn_ctx *ctx,
   return value_raw;
 }
 
+grn_obj *
+grn_proc_get_value_object(grn_ctx *ctx,
+                          grn_obj *value,
+                          const char *tag)
+{
+  if (!value) {
+    return NULL;
+  }
+
+  if (!grn_obj_is_text_family_bulk(ctx, value)) {
+    return value;
+  }
+
+  if (GRN_TEXT_LEN(value) == 0) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s object name isn't specified",
+                     tag);
+    return NULL;
+  }
+
+  grn_obj *object = grn_ctx_get(ctx, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+  if (!object) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s object doesn't exist: <%.*s>",
+                     tag,
+                     (int)GRN_TEXT_LEN(value),
+                     GRN_TEXT_VALUE(value));
+    return NULL;
+  }
+
+  return object;
+}
+
+grn_obj *
+grn_proc_get_value_column(grn_ctx *ctx,
+                          grn_obj *value,
+                          grn_obj *table,
+                          const char *tag)
+{
+  if (!value) {
+    return NULL;
+  }
+
+  if (!grn_obj_is_text_family_bulk(ctx, value)) {
+    return value;
+  }
+
+  if (GRN_TEXT_LEN(value) == 0) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s column name isn't specified",
+                     tag);
+    return NULL;
+  }
+
+  grn_obj *column = grn_obj_column(ctx,
+                                   table,
+                                   GRN_TEXT_VALUE(value),
+                                   GRN_TEXT_LEN(value));
+  if (!column) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect_limited(ctx, &inspected, table);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s column doesn't exist: <%.*s>: %.*s",
+                     tag,
+                     (int)GRN_TEXT_LEN(value),
+                     GRN_TEXT_VALUE(value),
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
+  }
+
+  return column;
+}
+
 static grn_obj *
 proc_cache_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {

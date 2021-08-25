@@ -128,6 +128,15 @@ grn_proc_get_value_double(grn_ctx *ctx,
                           grn_obj *value,
                           double default_value_raw,
                           const char *tag);
+grn_obj *
+grn_proc_get_value_object(grn_ctx *ctx,
+                          grn_obj *value,
+                          const char *tag);
+grn_obj *
+grn_proc_get_value_column(grn_ctx *ctx,
+                          grn_obj *value,
+                          grn_obj *table,
+                          const char *tag);
 
 void grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
 void grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);

@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -733,60 +733,10 @@ grn_proc_init_column_list(grn_ctx *ctx)
                             vars);
 }
 
-static grn_rc
-command_column_copy_resolve_target(grn_ctx *ctx,
-                                   const char *label,
-                                   grn_obj *table_name,
-                                   grn_obj *column_name,
-                                   grn_obj **table,
-                                   grn_obj **column)
-{
-  if (GRN_TEXT_LEN(table_name) == 0) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[column][copy] %s table name isn't specified",
-        label);
-    return ctx->rc;
-  }
-  *table = grn_ctx_get(ctx,
-                       GRN_TEXT_VALUE(table_name),
-                       GRN_TEXT_LEN(table_name));
-  if (!*table) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[column][copy] %s table isn't found: <%.*s>",
-        label,
-        (int)GRN_TEXT_LEN(table_name),
-        GRN_TEXT_VALUE(table_name));
-    return ctx->rc;
-  }
-
-  if (GRN_TEXT_LEN(column_name) == 0) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[column][copy] %s column name isn't specified: <%.*s>",
-        label,
-        (int)GRN_TEXT_LEN(table_name),
-        GRN_TEXT_VALUE(table_name));
-    return ctx->rc;
-  }
-  *column = grn_obj_column(ctx, *table,
-                           GRN_TEXT_VALUE(column_name),
-                           GRN_TEXT_LEN(column_name));
-  if (!*column) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "[column][copy] %s column isn't found: <%.*s.%.*s>",
-        label,
-        (int)GRN_TEXT_LEN(table_name), GRN_TEXT_VALUE(table_name),
-        (int)GRN_TEXT_LEN(column_name), GRN_TEXT_VALUE(column_name));
-    return ctx->rc;
-  }
-
-  return ctx->rc;
-}
-
 static grn_obj *
 command_column_copy(grn_ctx *ctx, int nargs, grn_obj **args,
                     grn_user_data *user_data)
 {
-  grn_rc rc = GRN_SUCCESS;
   grn_obj *from_table = NULL;
   grn_obj *from_column = NULL;
   grn_obj *to_table = NULL;
@@ -801,35 +751,49 @@ command_column_copy(grn_ctx *ctx, int nargs, grn_obj **args,
   to_table_name    = grn_plugin_proc_get_var(ctx, user_data, "to_table", -1);
   to_column_name   = grn_plugin_proc_get_var(ctx, user_data, "to_name", -1);
 
-  rc = command_column_copy_resolve_target(ctx, "from",
-                                          from_table_name, from_column_name,
-                                          &from_table, &from_column);
-  if (rc != GRN_SUCCESS) {
+  from_table = grn_proc_get_value_object(ctx,
+                                         from_table_name,
+                                         "[column][copy][from_table]");
+  if (!from_table) {
     goto exit;
   }
-  rc = command_column_copy_resolve_target(ctx, "to",
-                                          to_table_name, to_column_name,
-                                          &to_table, &to_column);
-  if (rc != GRN_SUCCESS) {
+  from_column = grn_proc_get_value_column(ctx,
+                                          from_column_name,
+                                          from_table,
+                                          "[column][copy][from_name]");
+  if (!from_column) {
+    goto exit;
+  }
+  to_table = grn_proc_get_value_object(ctx,
+                                       to_table_name,
+                                       "[column][copy][to_table]");
+  if (!to_table) {
+    goto exit;
+  }
+  to_column = grn_proc_get_value_column(ctx,
+                                        to_column_name,
+                                        to_table,
+                                        "[column][copy][to_name]");
+  if (!to_column) {
     goto exit;
   }
 
-  rc = grn_column_copy(ctx, from_column, to_column);
+  grn_column_copy(ctx, from_column, to_column);
 
 exit :
-  grn_ctx_output_bool(ctx, rc == GRN_SUCCESS);
+  grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
 
   if (to_column) {
-    grn_obj_unlink(ctx, to_column);
+    grn_obj_unref(ctx, to_column);
   }
   if (to_table) {
-    grn_obj_unlink(ctx, to_table);
+    grn_obj_unref(ctx, to_table);
   }
   if (from_column) {
-    grn_obj_unlink(ctx, from_column);
+    grn_obj_unref(ctx, from_column);
   }
   if (from_table) {
-    grn_obj_unlink(ctx, from_table);
+    grn_obj_unref(ctx, from_table);
   }
 
   return NULL;
