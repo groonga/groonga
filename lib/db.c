@@ -337,6 +337,190 @@ exit:
   GRN_API_RETURN(NULL);
 }
 
+static void
+grn_db_wal_recover_keys(grn_ctx *ctx, grn_db *db)
+{
+  const char *tag = "[db][wal][recover]";
+
+  GRN_LOG(ctx, GRN_LOG_NOTICE,
+          "%s rebuild broken DB keys",
+          tag);
+
+  bool success = false;
+
+  grn_obj path;
+  GRN_TEXT_INIT(&path, 0);
+  GRN_TEXT_SETS(ctx, &path, grn_io_path(grn_obj_get_io(ctx, db->keys)));
+  GRN_TEXT_PUTC(ctx, &path, '\0');
+  grn_obj recovering_path;
+  GRN_TEXT_INIT(&recovering_path, 0);
+  GRN_TEXT_PUTS(ctx, &recovering_path, GRN_TEXT_VALUE(&path));
+  GRN_TEXT_PUTS(ctx, &recovering_path, ".recovering");
+  GRN_TEXT_PUTC(ctx, &recovering_path, '\0');
+  grn_obj broken_path;
+  GRN_TEXT_INIT(&broken_path, 0);
+  GRN_TEXT_PUTS(ctx, &broken_path, GRN_TEXT_VALUE(&path));
+  GRN_TEXT_PUTS(ctx, &broken_path, ".broken");
+  GRN_TEXT_PUTC(ctx, &broken_path, '\0');
+
+  grn_io_remove_if_exist(ctx, GRN_TEXT_VALUE(&recovering_path));
+  bool use_pat = (db->keys->header.type == GRN_TABLE_PAT_KEY);
+  grn_obj *new_keys = NULL;
+  if (use_pat) {
+    new_keys = (grn_obj *)grn_pat_create(ctx,
+                                         GRN_TEXT_VALUE(&recovering_path),
+                                         GRN_TABLE_MAX_KEY_SIZE,
+                                         0,
+                                         GRN_OBJ_KEY_VAR_SIZE);
+  } else {
+    new_keys = (grn_obj *)grn_dat_create(ctx,
+                                         GRN_TEXT_VALUE(&recovering_path),
+                                         GRN_TABLE_MAX_KEY_SIZE,
+                                         0,
+                                         GRN_OBJ_KEY_VAR_SIZE);
+  }
+  if (!new_keys) {
+    goto exit;
+  }
+
+  const char *placeholder_prefix = "_PLACEHOLDER_";
+  grn_obj placeholder_key;
+  GRN_TEXT_INIT(&placeholder_key, 0);
+  grn_id previous_id = GRN_ID_NIL;
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx,
+                             db->keys,
+                             cursor,
+                             id,
+                             GRN_CURSOR_BY_ID|GRN_CURSOR_ASCENDING) {
+    for (; previous_id < id - 1; previous_id++) {
+      GRN_BULK_REWIND(&placeholder_key);
+      grn_text_printf(ctx,
+                      &placeholder_key,
+                      "%s%u",
+                      placeholder_prefix,
+                      previous_id + 1);
+      grn_id placeholder_id;
+      if (use_pat) {
+        placeholder_id = grn_pat_add(ctx,
+                                     (grn_pat *)new_keys,
+                                     GRN_TEXT_VALUE(&placeholder_key),
+                                     GRN_TEXT_LEN(&placeholder_key),
+                                     NULL,
+                                     NULL);
+      } else {
+        placeholder_id = grn_dat_add(ctx,
+                                     (grn_dat *)new_keys,
+                                     GRN_TEXT_VALUE(&placeholder_key),
+                                     GRN_TEXT_LEN(&placeholder_key),
+                                     NULL,
+                                     NULL);
+      }
+      if (placeholder_id != previous_id + 1) {
+        ERR(GRN_UNKNOWN_ERROR,
+            "%s failed to assign ID for deleted object: "
+            "assigned:%u "
+            "expected:%u",
+            tag,
+            placeholder_id,
+            previous_id + 1);
+        break;
+      }
+    }
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
+    void *key;
+    int key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+    grn_id added_id;
+    if (new_keys->header.type == GRN_TABLE_PAT_KEY) {
+      added_id = grn_pat_add(ctx, (grn_pat *)new_keys, key, key_size, NULL, NULL);
+    } else {
+      added_id = grn_dat_add(ctx, (grn_dat *)new_keys, key, key_size, NULL, NULL);
+    }
+    if (added_id != id) {
+      ERR(GRN_UNKNOWN_ERROR,
+          "%s failed to assign expected ID: "
+          "name:<%.*s> "
+          "assigned:%u "
+          "expected:%u",
+          tag,
+          key_size, (const char *)key,
+          added_id,
+          id);
+      break;
+    }
+    previous_id = id;
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  GRN_OBJ_FIN(ctx, &placeholder_key);
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
+  }
+
+  GRN_TABLE_EACH_BEGIN_MIN(ctx,
+                           new_keys,
+                           cursor,
+                           id,
+                           placeholder_prefix,
+                           strlen(placeholder_prefix),
+                           GRN_CURSOR_PREFIX) {
+    grn_table_cursor_delete(ctx, cursor);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+
+  grn_obj_close(ctx, new_keys);
+  new_keys = NULL;
+  grn_obj_close(ctx, db->keys);
+
+  grn_io_remove_if_exist(ctx, GRN_TEXT_VALUE(&broken_path));
+  grn_io_rename(ctx, GRN_TEXT_VALUE(&path), GRN_TEXT_VALUE(&broken_path));
+  if (ctx->rc != GRN_SUCCESS) {
+    goto exit;
+  }
+  grn_io_rename(ctx, GRN_TEXT_VALUE(&recovering_path), GRN_TEXT_VALUE(&path));
+  if (ctx->rc != GRN_SUCCESS) {
+    ERRCLR(ctx);
+    grn_io_remove_if_exist(ctx, GRN_TEXT_VALUE(&path));
+    grn_io_rename(ctx, GRN_TEXT_VALUE(&broken_path), GRN_TEXT_VALUE(&path));
+    ERR(GRN_UNKNOWN_ERROR,
+        "%s failed to rename files of rebuilt DB keys: <%s>",
+        tag,
+        GRN_TEXT_VALUE(&recovering_path));
+    goto exit;
+  }
+  if (use_pat) {
+    db->keys = (grn_obj *)grn_pat_open(ctx, GRN_TEXT_VALUE(&path));
+  } else {
+    db->keys = (grn_obj *)grn_dat_open(ctx, GRN_TEXT_VALUE(&path));
+  }
+  if (!db->keys) {
+    ERRCLR(ctx);
+    grn_io_remove_if_exist(ctx, GRN_TEXT_VALUE(&path));
+    grn_io_rename(ctx, GRN_TEXT_VALUE(&broken_path), GRN_TEXT_VALUE(&path));
+    ERR(GRN_UNKNOWN_ERROR,
+        "%s failed to open rebuilt DB keys: <%s>",
+        tag,
+        GRN_TEXT_VALUE(&path));
+    goto exit;
+  }
+  grn_io_remove(ctx, GRN_TEXT_VALUE(&broken_path));
+  success = true;
+  GRN_LOG(ctx, GRN_LOG_NOTICE,
+          "%s succeeded to rebuild broken DB keys",
+          tag);
+
+exit :
+  if (!success) {
+    GRN_LOG(ctx, GRN_LOG_NOTICE,
+            "%s failed to rebuild broken DB keys",
+            tag);
+  }
+  if (new_keys) {
+    grn_obj_close(ctx, new_keys);
+  }
+  GRN_OBJ_FIN(ctx, &path);
+  GRN_OBJ_FIN(ctx, &recovering_path);
+  GRN_OBJ_FIN(ctx, &broken_path);
+}
+
 void
 grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
 {
@@ -354,7 +538,10 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
   default :
     break;
   }
-  ERRCLR(ctx);
+  if (ctx->rc != GRN_SUCCESS) {
+    ERRCLR(ctx);
+    grn_db_wal_recover_keys(ctx, db);
+  }
 
   grn_ja_wal_recover(ctx, db->specs);
   ERRCLR(ctx);

@@ -914,13 +914,15 @@ grn_io_remove_if_exist(grn_ctx *ctx, const char *path)
 grn_rc
 grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
 {
+  const char *tag = "[io][rename]";
   struct stat s;
   if (stat(old_name, &s)) {
-    SERR("failed to stat path to be renamed: <%s>", old_name);
+    SERR("%s failed to stat path to be renamed: <%s>",
+         tag, old_name);
     return ctx->rc;
   } else if (rename(old_name, new_name)) {
-    SERR("failed to rename path: <%s> -> <%s>",
-         old_name, new_name);
+    SERR("%s failed to rename path: <%s> -> <%s>",
+         tag, old_name, new_name);
     return ctx->rc;
   } else {
     int fno;
@@ -928,16 +930,13 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
     char new_buffer[PATH_MAX];
     for (fno = 1; ; fno++) {
       gen_pathname(old_name, old_buffer, fno);
-      if (!stat(old_buffer, &s)) {
-        gen_pathname(new_name, new_buffer, fno);
-        if (rename(old_buffer, new_buffer)) {
-          SERR("failed to rename path: <%s> -> <%s>",
-               old_buffer, new_buffer);
-        }
-      } else {
-        SERR("failed to stat path to be renamed: <%s>",
-             old_buffer);
-        return ctx->rc;
+      if (stat(old_buffer, &s) == 0) {
+        break;
+      }
+      gen_pathname(new_name, new_buffer, fno);
+      if (rename(old_buffer, new_buffer)) {
+        SERR("%s failed to rename path: <%s> -> <%s>",
+             tag, old_buffer, new_buffer);
       }
     }
     return GRN_SUCCESS;
