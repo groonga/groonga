@@ -725,7 +725,7 @@ class WALRecoverer {
 
     grn_io_clear_lock(dat_->io);
 
-    while(true) {
+    while (true) {
       grn_wal_reader_entry entry = {};
       grn_rc rc = grn_wal_reader_read_entry(ctx_, reader, &entry);
       if (rc != GRN_SUCCESS) {
