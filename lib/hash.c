@@ -2806,8 +2806,6 @@ grn_io_hash_reuse_entry(grn_ctx *ctx,
                         grn_id id,
                         uint32_t key_size,
                         grn_id *index,
-                        uint32_t new_n_garbages,
-                        uint32_t new_n_entries,
                         const char *tag)
 {
   grn_hash_entry *entry = grn_io_hash_entry_at(ctx, hash, id, GRN_TABLE_ADD);
@@ -2821,8 +2819,8 @@ grn_io_hash_reuse_entry(grn_ctx *ctx,
     return NULL;
   }
   *index = id;
-  *(hash->n_garbages) = new_n_garbages;
-  *(hash->n_entries) = new_n_entries;
+  (*(hash->n_garbages))--;
+  (*(hash->n_entries))++;
   return entry;
 }
 
@@ -2860,7 +2858,6 @@ grn_io_hash_add_entry(grn_ctx *ctx,
                       grn_hash *hash,
                       grn_id id,
                       grn_id *index,
-                      uint32_t new_n_entries,
                       const char *tag)
 {
   grn_hash_entry *entry = grn_io_hash_entry_at(ctx, hash, id, GRN_TABLE_ADD);
@@ -2875,7 +2872,7 @@ grn_io_hash_add_entry(grn_ctx *ctx,
   }
   hash->header.common->curr_rec = id;
   *index = id;
-  *(hash->n_entries) = new_n_entries;
+  (*(hash->n_entries))++;
   return entry;
 }
 
@@ -2929,8 +2926,8 @@ grn_io_hash_add(grn_ctx *ctx,
   if (garbage_id != GRN_ID_NIL) {
     wal_data.event = GRN_WAL_EVENT_REUSE_ENTRY;
     wal_data.record_id = garbage_id;
-    wal_data.n_garbages = *(hash->n_garbages) - 1;
-    wal_data.n_entries = *(hash->n_entries) + 1;
+    wal_data.n_garbages = *(hash->n_garbages);
+    wal_data.n_entries = *(hash->n_entries);
     if (grn_hash_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
       return GRN_ID_NIL;
     }
@@ -2939,8 +2936,6 @@ grn_io_hash_add(grn_ctx *ctx,
                                     wal_data.record_id,
                                     wal_data.key_size,
                                     index,
-                                    wal_data.n_garbages,
-                                    wal_data.n_entries,
                                     wal_data.tag);
     if (!entry) {
       return GRN_ID_NIL;
@@ -2959,7 +2954,7 @@ grn_io_hash_add(grn_ctx *ctx,
   } else {
     wal_data.event = GRN_WAL_EVENT_ADD_ENTRY;
     wal_data.record_id = header->curr_rec + 1;
-    wal_data.n_entries = *(hash->n_entries) + 1;
+    wal_data.n_entries = *(hash->n_entries);
     if (grn_hash_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
       return GRN_ID_NIL;
     }
@@ -2967,7 +2962,6 @@ grn_io_hash_add(grn_ctx *ctx,
                                   hash,
                                   wal_data.record_id,
                                   index,
-                                  wal_data.n_entries,
                                   wal_data.tag);
     if (!entry) {
       return GRN_ID_NIL;
@@ -3900,8 +3894,6 @@ typedef struct {
   grn_id id;
   grn_hash_entry *entry;
   uint32_t key_size;
-  uint32_t new_n_garbages;
-  uint32_t new_n_entries;
 } grn_hash_delete_data;
 
 grn_inline static grn_rc
@@ -3930,16 +3922,14 @@ grn_hash_delete_entry(grn_ctx *ctx, grn_hash_delete_data *data)
     }
     grn_tiny_bitmap_get_and_set(&hash->bitmap, data->id, 0);
   }
-  *hash->n_garbages = data->new_n_garbages;
-  *hash->n_entries = data->new_n_entries;
+  (*(hash->n_garbages))++;
+  (*(hash->n_entries))--;
   return GRN_SUCCESS;
 }
 
 grn_inline static grn_rc
 grn_hash_delete_internal(grn_ctx *ctx, grn_hash_delete_data *data)
 {
-  data->new_n_garbages = *(data->hash->n_garbages) + 1;
-  data->new_n_entries = *(data->hash->n_entries) - 1;
   grn_hash_wal_add_entry_data wal_data = {0};
   wal_data.hash = data->hash;
   wal_data.tag = data->tag;
@@ -3947,8 +3937,8 @@ grn_hash_delete_internal(grn_ctx *ctx, grn_hash_delete_data *data)
   wal_data.record_id = data->id;
   wal_data.key_size = data->key_size;
   wal_data.index_hash_value = data->index_hash_value;
-  wal_data.n_garbages = data->new_n_garbages;
-  wal_data.n_entries = data->new_n_entries;
+  wal_data.n_garbages = *(data->hash->n_garbages);
+  wal_data.n_entries = *(data->hash->n_entries);
   if (grn_hash_wal_add_entry(ctx, &wal_data) != GRN_SUCCESS) {
     return ctx->rc;
   }
@@ -4947,11 +4937,11 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
                                     "failed to refer index");
           break;
         }
+        *(hash->n_entries) = entry.n_entries;
         if (grn_io_hash_add_entry(ctx,
                                   hash,
                                   entry.record_id,
                                   index,
-                                  entry.n_entries,
                                   tag)) {
           partial_record_id = entry.record_id;
         }
@@ -4969,13 +4959,13 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
                                     "failed to refer index");
           break;
         }
+        *(hash->n_garbages) = entry.n_garbages;
+        *(hash->n_entries) = entry.n_entries;
         if (grn_io_hash_reuse_entry(ctx,
                                     hash,
                                     entry.record_id,
                                     entry.key.content.uint64,
                                     index,
-                                    entry.n_garbages,
-                                    entry.n_entries,
                                     tag)) {
           partial_record_id = entry.record_id;
         }
@@ -5065,8 +5055,8 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
           break;
         }
         data.key_size = entry.key.content.uint64;
-        data.new_n_garbages = entry.n_garbages;
-        data.new_n_entries = entry.n_entries;
+        *(hash->n_garbages) = entry.n_garbages;
+        *(hash->n_entries) = entry.n_entries;
         if (grn_hash_delete_entry(ctx, &data) == GRN_SUCCESS) {
           if (partial_record_id == data.id) {
             partial_record_id = GRN_ID_NIL;
