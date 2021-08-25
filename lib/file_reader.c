@@ -120,6 +120,7 @@ grn_file_reader_read_line(grn_ctx *ctx,
         if (n_ready_fds != 1) {
           break;
         }
+        errno = 0;
         continue;
       }
       break;
