@@ -11258,7 +11258,7 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool dependent)
       n_elements = GRN_BULK_VSIZE(space) / sizeof(grn_obj *);
       for (i = 0; i < n_elements; i++) {
         if (GRN_PTR_VALUE_AT(space, i) == obj) {
-          GRN_PTR_SET_AT(ctx, space, i, NULL);
+          GRN_PTR_VALUE_AT(space, i) = NULL;
         }
       }
     }
