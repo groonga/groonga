@@ -2662,7 +2662,15 @@ grn_table_create_with_max_n_subrecs(grn_ctx *ctx, const char *name,
     DB_OBJ(res)->group.flags = 0;
     DB_OBJ(res)->group.calc_target = NULL;
     DB_OBJ(res)->group.aggregated_value_type_id = GRN_DB_INT64;
-    if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
+    if (grn_db_obj_init(ctx, db, id, DB_OBJ(res)) == GRN_SUCCESS) {
+      if (grn_obj_is_persistent(ctx, res)) {
+        grn_obj *space;
+        space = ctx->impl->temporary_open_spaces.current;
+        if (space) {
+          GRN_PTR_PUT(ctx, space, res);
+        }
+      }
+    } else {
       _grn_obj_remove(ctx, res, GRN_FALSE);
       res = NULL;
     }
@@ -6033,13 +6041,20 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
     DB_OBJ(res)->range = range;
     DB_OBJ(res)->header.flags = flags;
     res->header.flags = flags;
-    if (grn_db_obj_init(ctx, db, id, DB_OBJ(res))) {
+    if (grn_db_obj_init(ctx, db, id, DB_OBJ(res)) != GRN_SUCCESS) {
       _grn_obj_remove(ctx, res, GRN_FALSE);
       res = NULL;
-    } else {
-      grn_ctx_impl_columns_cache_delete(ctx, domain);
-      grn_obj_touch(ctx, res, NULL);
+      goto exit;
     }
+    if (grn_obj_is_persistent(ctx, res)) {
+      grn_obj *space;
+      space = ctx->impl->temporary_open_spaces.current;
+      if (space) {
+        GRN_PTR_PUT(ctx, space, res);
+      }
+    }
+    grn_ctx_impl_columns_cache_delete(ctx, domain);
+    grn_obj_touch(ctx, res, NULL);
   }
 exit :
   if (!res && id) { grn_obj_delete_by_id(ctx, db, id, GRN_TRUE); }
