@@ -1,0 +1,35 @@
+table_create SmallNumbers TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create SmallNumbers id_uint8 COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+load --table SmallNumbers
+[
+{"id_uint8": 11},
+{"id_uint8": 22},
+{"id_uint8": 33}
+]
+[[0,0.0,0.0],3]
+table_create LargeNumbers TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create LargeNumbers id_text COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_copy SmallNumbers LargeNumbers
+[[0,0.0,0.0],true]
+column_copy SmallNumbers id_uint8 LargeNumbers id_text
+[[0,0.0,0.0],true]
+dump --dump_schema no
+load --table LargeNumbers
+[
+["_id","id_text"],
+[1,"11"],
+[2,"22"],
+[3,"33"]
+]
+
+load --table SmallNumbers
+[
+["_id","id_uint8"],
+[1,11],
+[2,22],
+[3,33]
+]

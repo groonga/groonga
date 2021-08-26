@@ -307,6 +307,35 @@ grn_column_copy_same_table(grn_ctx *ctx,
 }
 
 static void
+grn_column_copy_array(grn_ctx *ctx,
+                      grn_obj *from_table,
+                      grn_obj *from_column,
+                      grn_obj *to_table,
+                      grn_obj *to_column)
+{
+  grn_obj value;
+  GRN_VOID_INIT(&value);
+  GRN_TABLE_EACH_BEGIN(ctx, from_table, cursor, from_id) {
+    grn_id to_id = grn_table_at(ctx, to_table, from_id);
+    if (to_id != from_id) {
+      GRN_DEFINE_NAME_CUSTOM(from_table, from_name);
+      GRN_DEFINE_NAME_CUSTOM(to_table, to_name);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[column][copy] target ID doesn't exist: <%u>: "
+          "<%.*s> -> <%.*s>",
+          from_id,
+          from_name_size, from_name,
+          to_name_size, to_name);
+      break;
+    }
+    GRN_BULK_REWIND(&value);
+    grn_obj_get_value(ctx, from_column, from_id, &value);
+    grn_obj_set_value(ctx, to_column, to_id, &value, GRN_OBJ_SET);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+  GRN_OBJ_FIN(ctx, &value);
+}
+
+static void
 grn_column_copy_same_key_type(grn_ctx *ctx,
                               grn_obj *from_table,
                               grn_obj *from_column,
@@ -486,7 +515,7 @@ grn_column_copy(grn_ctx *ctx, grn_obj *from, grn_obj *to)
   to_table = grn_ctx_at(ctx, to->header.domain);
   if ((from_table->header.type == GRN_TABLE_NO_KEY ||
        to_table->header.type == GRN_TABLE_NO_KEY) &&
-      from_table != to_table) {
+      (from_table->header.type != to_table->header.type)) {
     char from_name[GRN_TABLE_MAX_KEY_SIZE];
     int from_name_size;
     char to_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -504,6 +533,10 @@ grn_column_copy(grn_ctx *ctx, grn_obj *from, grn_obj *to)
 
   if (from_table == to_table) {
     grn_column_copy_same_table(ctx, from_table, from, to);
+  } else if (from_table->header.type == GRN_TABLE_NO_KEY) {
+    grn_column_copy_array(ctx,
+                          from_table, from,
+                          to_table, to);
   } else if (from_table->header.domain == to_table->header.domain) {
     grn_column_copy_same_key_type(ctx,
                                   from_table, from,

@@ -1,0 +1,17 @@
+table_create SmallNumbers TABLE_NO_KEY
+column_create SmallNumbers id_uint8 COLUMN_SCALAR UInt8
+
+load --table SmallNumbers
+[
+{"id_uint8": 11},
+{"id_uint8": 22},
+{"id_uint8": 33}
+]
+
+table_create LargeNumbers TABLE_NO_KEY
+column_create LargeNumbers id_text COLUMN_SCALAR Text
+
+table_copy SmallNumbers LargeNumbers
+column_copy SmallNumbers id_uint8 LargeNumbers id_text
+
+dump --dump_schema no
