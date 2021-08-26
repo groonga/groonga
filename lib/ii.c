@@ -6000,6 +6000,10 @@ grn_ii_close(grn_ctx *ctx, grn_ii *ii)
 {
   grn_rc rc = GRN_SUCCESS;
   if (!ii) { return GRN_INVALID_ARGUMENT; }
+  if (ii->seg->path[0] != '\0' &&
+      grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) {
+    grn_obj_flush(ctx, (grn_obj *)ii);
+  }
   {
     grn_rc sub_rc = grn_io_close(ctx, ii->seg);
     if (rc == GRN_SUCCESS) {
