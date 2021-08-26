@@ -33,15 +33,19 @@ check --obj Terms.memos_content
 
 select Memos --query content:@hello
 
+log_level --level dump
+
 #@copy-path #{db_path}.0000103.wal #{db_path}.0000103.wal.keep
 _database_close
 
 #@copy-path #{db_path}.0000103.initial #{db_path}.0000103
 #@copy-path #{db_path}.0000103.c.initial #{db_path}.0000103.c
 #@copy-path #{db_path}.0000103.wal.keep #{db_path}.0000103.wal
-#@add-important-log-levels notice
+#@add-important-log-levels notice dump
 _database_reopen
-#@remove-important-log-levels notice
+#@remove-important-log-levels notice dump
+
+log_level --level notice
 
 select Memos --query content:@hello
 
