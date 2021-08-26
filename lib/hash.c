@@ -268,6 +268,24 @@ grn_tiny_bitmap_put_and_set(grn_tiny_bitmap *bitmap, grn_id bit_id,
 
 #define GRN_ARRAY_MAX (GRN_ID_MAX - 8)
 
+grn_inline static grn_rc
+grn_io_array_wal_touch(grn_ctx *ctx, grn_array *array, const char *tag)
+{
+  if (array->wal_touched) {
+    return GRN_SUCCESS;
+  }
+
+  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+    return GRN_SUCCESS;
+  }
+
+  grn_rc rc = grn_wal_touch(ctx, (grn_obj *)array, false, tag);
+  if (rc == GRN_SUCCESS) {
+    array->wal_touched = true;
+  }
+  return rc;
+}
+
 grn_inline static void *
 grn_io_array_at_inline(grn_ctx *ctx, grn_io *io, uint32_t segment_id,
                        uint64_t offset, int flags)
@@ -516,6 +534,7 @@ grn_array_init_io_array(grn_ctx *ctx, grn_array *array, const char *path,
   array->io = io;
   array->header = header;
   array->lock = &header->lock;
+  array->wal_touched = false;
   return GRN_SUCCESS;
 }
 
@@ -569,6 +588,7 @@ grn_array_open(grn_ctx *ctx, const char *path)
             array->io = io;
             array->header = header;
             array->lock = &header->lock;
+            array->wal_touched = false;
             /* For old array created by Groonga that doesn't have
              * garbages_buffer. */
             if (!grn_array_can_use_value_for_garbage(array) &&
@@ -623,6 +643,10 @@ grn_array_close(grn_ctx *ctx, grn_array *array)
   if (!ctx || !array) { return GRN_INVALID_ARGUMENT; }
   if (array->keys) { GRN_FREE(array->keys); }
   if (grn_array_is_io_array(array)) {
+    if (array->io->path[0] != '\0' &&
+        grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) {
+      grn_obj_flush(ctx, (grn_obj *)array);
+    }
     rc = grn_io_close(ctx, array->io);
   } else {
     GRN_ASSERT(ctx == array->ctx);
@@ -637,7 +661,13 @@ grn_rc
 grn_array_remove(grn_ctx *ctx, const char *path)
 {
   if (!ctx || !path) { return GRN_INVALID_ARGUMENT; }
-  return grn_io_remove(ctx, path);
+  grn_rc wal_rc = grn_wal_remove(ctx, path, "[array]");
+  grn_rc io_rc = grn_io_remove(ctx, path);
+  grn_rc rc = io_rc;
+  if (rc == GRN_SUCCESS) {
+    rc = wal_rc;
+  }
+  return rc;
 }
 
 uint32_t
@@ -689,7 +719,7 @@ grn_array_truncate(grn_ctx *ctx, grn_array *array)
     if (!rc) {
       array->io = NULL;
       if (path) {
-        rc = grn_io_remove(ctx, path);
+        rc = grn_array_remove(ctx, path);
       }
     }
   }
@@ -756,6 +786,13 @@ grn_array_set_value_inline(grn_ctx *ctx, grn_array *array, grn_id id,
   entry = grn_array_entry_at(ctx, array, id, 0);
   if (!entry) {
     return GRN_NO_MEMORY_AVAILABLE;
+  }
+
+  if (grn_array_is_io_array(array)) {
+    grn_rc rc = grn_io_array_wal_touch(ctx, array, "[array][add]");
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
   }
 
   switch ((flags & GRN_OBJ_SET_MASK)) {
@@ -840,6 +877,10 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
     rc = GRN_SUCCESS;
     /* lock */
     if (grn_array_is_io_array(array)) {
+      rc = grn_io_array_wal_touch(ctx, array, "[array][delete]");
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
       if (grn_array_can_use_value_for_garbage(array)) {
         struct grn_array_header * const header = array->header;
         void * const entry = grn_array_io_entry_at(ctx, array, id, 0);
@@ -1103,6 +1144,9 @@ grn_array_add_to_io_array(grn_ctx *ctx, grn_array *array, void **value)
   if (grn_array_error_if_truncated(ctx, array) != GRN_SUCCESS) {
     return GRN_ID_NIL;
   }
+  if (grn_io_array_wal_touch(ctx, array, "[array][add]") != GRN_SUCCESS) {
+    return GRN_ID_NIL;
+  }
   header = array->header;
   id = header->garbages;
   if (id) {
@@ -1184,6 +1228,26 @@ grn_array_add(grn_ctx *ctx, grn_array *array, void **value)
     }
   }
   return GRN_ID_NIL;
+}
+
+grn_rc
+grn_array_wal_recover(grn_ctx *ctx, grn_array *array)
+{
+  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+    return GRN_SUCCESS;
+  }
+
+  if (!grn_wal_exist(ctx, (grn_obj *)array)) {
+    return GRN_SUCCESS;
+  }
+
+  grn_obj_set_error(ctx,
+                    (grn_obj *)array,
+                    GRN_FUNCTION_NOT_IMPLEMENTED,
+                    GRN_ID_NIL,
+                    "[array][wal][recover]",
+                    "not implemented");
+  return ctx->rc;
 }
 
 grn_rc

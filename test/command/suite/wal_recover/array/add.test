@@ -1,0 +1,38 @@
+# _database_close/_database_reopen can't use with HTTP because requests via HTTP are always
+# processed by workers. Workers never use primary WAL role.
+#@require-interface stdio
+
+#@require-feature message_pack
+
+#$GROONGA_ALLOW_DATABASE_REOPEN=yes
+#$GRN_WAL_ROLE=primary
+
+#@disable-logging
+cache_limit --max 0
+#@enable-logging
+
+table_create Data TABLE_NO_KEY
+
+io_flush
+
+load --table Data
+[
+{},
+{},
+{}
+]
+
+select Data --output_columns _id
+
+log_level --level dump
+
+_database_close
+
+#@copy-path #{db_path}.0000100 #{db_path}.0000100.wal
+#@add-important-log-levels notice dump
+_database_reopen
+#@remove-important-log-levels notice dump
+
+log_level --level notice
+
+select Data --output_columns _id

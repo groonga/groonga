@@ -1505,6 +1505,10 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
         is_table = true;
         grn_dat_wal_recover(ctx, (grn_dat *)object);
         break;
+      case GRN_TABLE_NO_KEY :
+        is_table = true;
+        grn_array_wal_recover(ctx, (grn_array *)object);
+        break;
       case GRN_COLUMN_FIX_SIZE :
         is_column = true;
         grn_ra_wal_recover(ctx, (grn_ra *)object);

@@ -1,0 +1,50 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+io_flush
+[[0,0.0,0.0],true]
+load --table Data
+[
+{},
+{},
+{}
+]
+[[0,0.0,0.0],3]
+select Data --output_columns _id
+[[0,0.0,0.0],[[[3],[["_id","UInt32"]],[1],[2],[3]]]]
+log_level --level dump
+[[0,0.0,0.0],true]
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
+[[0,0.0,0.0],true]
+#|-| [io][open] <db/db>
+#|-| [io][open] <db/db.0000000>
+#|-| [io][open] <db/db.conf>
+#|-| [io][open] <db/db.options>
+#|-| [io][open] <db/db.0000100>
+#|e| [array][wal][recover][Data] not implemented: path:<db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000100>
+#|n| [db][wal][recover] rebuild broken table: <Data>(256)
+#|n| DDL:257:table_create #recovering#Data
+#|-| [io][open] <db/db.0000101>
+#|n| spec:257:update:#recovering#Data:51(table:no_key):0
+#|-| [io][close] <db/db.0000101>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][open] <db/db.0000100>
+#|n| DDL:256:obj_remove Data
+#|-| [io][close] <db/db.0000100>
+#|n| spec:256:remove:Data:51(table:no_key)
+#|n| [db][wal][recover] succeeded to rebuild broken table: <Data>(257)
+#|-| [io][close] <db/db.0000101>
+log_level --level notice
+[[0,0.0,0.0],true]
+select Data --output_columns _id
+[[0,0.0,0.0],[[[3],[["_id","UInt32"]],[1],[2],[3]]]]

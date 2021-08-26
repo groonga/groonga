@@ -166,6 +166,7 @@ struct _grn_array {
   grn_io *io;
   struct grn_array_header *header;
   uint32_t *lock;
+  bool wal_touched;
 
   /* For grn_tiny_array. */
   uint32_t n_garbages_buf;
@@ -197,6 +198,7 @@ uint32_t grn_array_get_flags(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_truncate(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
                                grn_table_sort_key *keys, int n_keys);
+grn_rc grn_array_wal_recover(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_warm(grn_ctx *ctx, grn_array *array);
 
 /**** grn_hash ****/
