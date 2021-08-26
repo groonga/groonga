@@ -1,0 +1,100 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Data TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Data tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"_key": "abc",    "tag": "A"},
+{"_key": "ABC",    "tag": "A"},
+{"_key": "abcdef", "tag": "B"}
+]
+[[0,0.0,0.0],3]
+delete --table Data --key ABC
+[[0,0.0,0.0],true]
+dump
+table_create Data TABLE_PAT_KEY ShortText
+
+table_create Tags TABLE_HASH_KEY ShortText
+
+column_create Data tag COLUMN_SCALAR Tags
+
+load --table Data
+[
+["_key","tag"],
+["abc","A"],
+["abcdef","B"]
+]
+
+load --table Tags
+[
+["_key"],
+["A"],
+["B"]
+]
+log_level --level dump
+[[0,0.0,0.0],true]
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
+[[0,0.0,0.0],true]
+#|-| [io][open] <db/db>
+#|-| [io][open] <db/db.0000000>
+#|-| [io][open] <db/db.conf>
+#|-| [io][open] <db/db.options>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000102>
+#|e| [reader][read-entry][ra][recover][Data.tag] must be map: <positive-integer>(2): path:<db/db.0000102>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000102>
+#|n| [db][wal][recover] rebuild broken column: <Data.tag>(258)
+#|-| [io][open] <db/db.0000101>
+#|-| [io][open] <db/db.0000100>
+#|n| DDL:259:column_create Data #recovering#tag
+#|-| [io][open] <db/db.0000103>
+#|n| spec:259:update:Data.#recovering#tag:64(column:fix_size):256(Tags)
+#|-| [io][close] <db/db.0000103>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][open] <db/db.0000103>
+#|n| DDL:258:obj_remove Data.tag
+#|-| [io][close] <db/db.0000102>
+#|n| spec:258:remove:Data.tag:64(column:fix_size)
+#|n| [db][wal][recover] succeeded to rebuild broken column: <Data.tag>(259)
+#|-| [io][close] <db/db.0000103>
+#|-| [io][close] <db/db.0000101>
+log_level --level notice
+[[0,0.0,0.0],true]
+dump
+table_create Data TABLE_PAT_KEY ShortText
+
+table_create Tags TABLE_HASH_KEY ShortText
+
+column_create Data tag COLUMN_SCALAR Tags
+
+load --table Data
+[
+["_key","tag"],
+["abc","A"],
+["abcdef","B"]
+]
+
+load --table Tags
+[
+["_key"],
+["A"],
+["B"]
+]

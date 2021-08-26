@@ -1,0 +1,48 @@
+# _database_close/_database_reopen can't use with HTTP because requests via HTTP are always
+# processed by workers. Workers never use primary WAL role.
+#@require-interface stdio
+
+#@require-feature message_pack
+
+#$GROONGA_ALLOW_DATABASE_REOPEN=yes
+#$GRN_WAL_ROLE=primary
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC130 \
+  --default_tokenizer TokenNgram
+
+table_create Data TABLE_PAT_KEY ShortText
+column_create Data content COLUMN_SCALAR ShortText
+
+column_create Terms data_content COLUMN_INDEX|WITH_POSITION Data content
+
+load --table Data
+[
+{"_key": "abc",    "content": "a and b and c"},
+{"_key": "ABC",    "content": "A and B and C"},
+{"_key": "abcdef", "content": "a and b and c and d and e and f"}
+]
+
+delete --table Data --key ABC
+
+dump
+
+log_level --level dump
+
+_database_close
+
+#@copy-path #{db_path}.0000103 #{db_path}.0000103.wal
+#@add-important-log-levels notice dump
+_database_reopen
+#@remove-important-log-levels notice dump
+
+log_level --level notice
+
+dump
+
+index_column_diff --table Terms --name data_content
+
+select Data \
+  --match_columns 'content * 2' \
+  --query d \
+  --output_columns _id,_key,content,_score

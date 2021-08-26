@@ -1,0 +1,74 @@
+table_create Data TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Data count COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"_key": "abc",    "count": 10},
+{"_key": "ABC",    "count": 100},
+{"_key": "abcdef", "count": 1000}
+]
+[[0,0.0,0.0],3]
+delete --table Data --key ABC
+[[0,0.0,0.0],true]
+dump
+table_create Data TABLE_PAT_KEY ShortText
+column_create Data count COLUMN_SCALAR UInt32
+
+load --table Data
+[
+["_key","count"],
+["abc",10],
+["abcdef",1000]
+]
+log_level --level dump
+[[0,0.0,0.0],true]
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
+[[0,0.0,0.0],true]
+#|-| [io][open] <db/db>
+#|-| [io][open] <db/db.0000000>
+#|-| [io][open] <db/db.conf>
+#|-| [io][open] <db/db.options>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000101>
+#|e| [reader][read-entry][ra][recover][Data.count] must be map: <positive-integer>(2): path:<db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000101>
+#|n| [db][wal][recover] rebuild broken column: <Data.count>(257)
+#|-| [io][open] <db/db.0000100>
+#|n| DDL:258:column_create Data #recovering#count
+#|-| [io][open] <db/db.0000102>
+#|n| spec:258:update:Data.#recovering#count:64(column:fix_size):9(UInt32)
+#|-| [io][close] <db/db.0000102>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
+#|n| DDL:257:obj_remove Data.count
+#|-| [io][close] <db/db.0000101>
+#|n| spec:257:remove:Data.count:64(column:fix_size)
+#|n| [db][wal][recover] succeeded to rebuild broken column: <Data.count>(258)
+#|-| [io][close] <db/db.0000102>
+#|-| [io][close] <db/db.0000100>
+log_level --level notice
+[[0,0.0,0.0],true]
+dump
+table_create Data TABLE_PAT_KEY ShortText
+column_create Data count COLUMN_SCALAR UInt32
+
+load --table Data
+[
+["_key","count"],
+["abc",10],
+["abcdef",1000]
+]

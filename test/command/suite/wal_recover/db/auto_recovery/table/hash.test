@@ -7,22 +7,28 @@
 #$GROONGA_ALLOW_DATABASE_REOPEN=yes
 #$GRN_WAL_ROLE=primary
 
-table_create Data TABLE_PAT_KEY ShortText
-column_create Data number COLUMN_SCALAR UInt32
-column_create Data text COLUMN_SCALAR ShortText
-column_remove Data number
+table_create Data TABLE_HASH_KEY ShortText
 
-schema
+load --table Data
+[
+{"_key": "a"},
+{"_key": "abcdefg"},
+{"_key": "abcdefghijklmn"}
+]
+
+delete Data --key abcdefg
+
+dump
 
 log_level --level dump
 
 _database_close
 
-#@copy-path #{db_path} #{db_path}.wal
+#@copy-path #{db_path}.0000100 #{db_path}.0000100.wal
 #@add-important-log-levels notice dump
 _database_reopen
 #@remove-important-log-levels notice dump
 
 log_level --level notice
 
-schema
+dump

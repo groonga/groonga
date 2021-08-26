@@ -1,0 +1,187 @@
+table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC130   --default_tokenizer TokenNgram
+[[0,0.0,0.0],true]
+table_create Data TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Data content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Data content_terms COLUMN_VECTOR Terms content
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"_key": "abc",    "content": "a and b and c"},
+{"_key": "ABC",    "content": "A and B and C"},
+{"_key": "abcdef", "content": "a and b and c and d and e and f"}
+]
+[[0,0.0,0.0],3]
+delete --table Data --key ABC
+[[0,0.0,0.0],true]
+dump
+table_create Data TABLE_PAT_KEY ShortText
+column_create Data content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenNgram --normalizer NormalizerNFKC130
+
+column_create Data content_terms COLUMN_VECTOR Terms content
+
+load --table Data
+[
+["_key","content"],
+["abc","a and b and c"],
+["abcdef","a and b and c and d and e and f"]
+]
+
+load --table Terms
+[
+["_key"],
+["a"],
+["and"],
+["b"],
+["c"],
+["d"],
+["e"],
+["f"]
+]
+log_level --level dump
+[[0,0.0,0.0],true]
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
+[[0,0.0,0.0],true]
+#|-| [io][open] <db/db>
+#|-| [io][open] <db/db.0000000>
+#|-| [io][open] <db/db.conf>
+#|-| [io][open] <db/db.options>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000103>
+#|e| [reader][read-entry][ja][recover][Data.content_terms] must be map: <positive-integer>(2): path:<db/db.0000103>
+#|-| [io][close] <db/db.0000103>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][close] <db/db.0000103>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][close] <db/db.0000103>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][close] <db/db.0000103>
+#|-| [io][open] <db/db.0000103>
+#|n| [db][wal][recover] rebuild broken column: <Data.content_terms>(259)
+#|-| [io][open] <db/db.0000101>
+#|-| [io][open] <db/db.0000100>
+#|n| DDL:260:column_create Data #recovering#content_terms
+#|-| [io][open] <db/db.0000104>
+#|n| spec:260:update:Data.#recovering#content_terms:65(column:var_size):256(Terms)
+#|-| [io][open] <db/db.0000102>
+#|n| DDL:260:set_source Data.#recovering#content_terms Data.content
+#|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)
+#|n| spec:260:update:Data.#recovering#content_terms:65(column:var_size):256(Terms)
+#|-| [io][close] <db/db.0000102>
+#|-| [io][close] <db/db.0000104>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][close] <db/db.0000103>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][open] <db/db.0000104>
+#|n| DDL:259:obj_remove Data.content_terms
+#|-| [io][open] <db/db.0000102>
+#|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)
+#|-| [io][close] <db/db.0000103>
+#|n| spec:259:remove:Data.content_terms:65(column:var_size)
+#|n| [db][wal][recover] succeeded to rebuild broken column: <Data.content_terms>(260)
+#|-| [io][close] <db/db.0000102>
+#|-| [io][close] <db/db.0000104>
+#|-| [io][close] <db/db.0000101>
+log_level --level notice
+[[0,0.0,0.0],true]
+select Data
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "content_terms",
+          "Terms"
+        ]
+      ],
+      [
+        1,
+        "abc",
+        "a and b and c",
+        [
+          "a",
+          "and",
+          "b",
+          "and",
+          "c"
+        ]
+      ],
+      [
+        3,
+        "abcdef",
+        "a and b and c and d and e and f",
+        [
+          "a",
+          "and",
+          "b",
+          "and",
+          "c",
+          "and",
+          "d",
+          "and",
+          "e",
+          "and",
+          "f"
+        ]
+      ]
+    ]
+  ]
+]
+dump
+table_create Data TABLE_PAT_KEY ShortText
+column_create Data content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenNgram --normalizer NormalizerNFKC130
+
+column_create Data content_terms COLUMN_VECTOR Terms content
+
+load --table Data
+[
+["_key","content"],
+["abc","a and b and c"],
+["abcdef","a and b and c and d and e and f"]
+]
+
+load --table Terms
+[
+["_key"],
+["a"],
+["and"],
+["b"],
+["c"],
+["d"],
+["e"],
+["f"]
+]
