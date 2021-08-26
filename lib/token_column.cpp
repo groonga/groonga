@@ -308,23 +308,25 @@ extern "C" {
     grn_obj *lexicon = grn_ctx_at(ctx, DB_OBJ(column)->range);
     grn_obj tokens;
     GRN_RECORD_INIT(&tokens, GRN_OBJ_VECTOR, DB_OBJ(lexicon)->id);
-    unsigned int token_flags = 0;
-    grn_token_cursor *token_cursor =
-      grn_token_cursor_open(ctx,
-                            lexicon,
-                            GRN_TEXT_VALUE(new_value),
-                            GRN_TEXT_LEN(new_value),
-                            GRN_TOKEN_ADD,
-                            token_flags);
-    if (token_cursor) {
-      while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
-        grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
-        if (token_id == GRN_ID_NIL) {
-          break;
+    if (GRN_TEXT_LEN(new_value) > 0) {
+      unsigned int token_flags = 0;
+      grn_token_cursor *token_cursor =
+        grn_token_cursor_open(ctx,
+                              lexicon,
+                              GRN_TEXT_VALUE(new_value),
+                              GRN_TEXT_LEN(new_value),
+                              GRN_TOKEN_ADD,
+                              token_flags);
+      if (token_cursor) {
+        while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
+          grn_id token_id = grn_token_cursor_next(ctx, token_cursor);
+          if (token_id == GRN_ID_NIL) {
+            break;
+          }
+          GRN_RECORD_PUT(ctx, &tokens, token_id);
         }
-        GRN_RECORD_PUT(ctx, &tokens, token_id);
+        grn_token_cursor_close(ctx, token_cursor);
       }
-      grn_token_cursor_close(ctx, token_cursor);
     }
     grn_obj_set_value(ctx, column, id, &tokens, GRN_OBJ_SET);
     GRN_OBJ_FIN(ctx, &tokens);
