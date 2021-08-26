@@ -1,3 +1,5 @@
+#@require-input-type json
+
 table_create Logs TABLE_NO_KEY
 
 load --table Logs
