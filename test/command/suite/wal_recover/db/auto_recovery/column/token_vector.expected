@@ -51,6 +51,8 @@ _database_reopen
 #|-| [io][open] <db/db.0000000>
 #|-| [io][open] <db/db.conf>
 #|-| [io][open] <db/db.options>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][close] <db/db.0000100>
 #|-| [io][open] <db/db.0000101>
 #|-| [io][close] <db/db.0000101>
 #|-| [io][open] <db/db.0000102>
@@ -60,6 +62,10 @@ _database_reopen
 #|-| [io][close] <db/db.0000103>
 #|-| [io][open] <db/db.0000100>
 #|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
 #|-| [io][open] <db/db.0000103>
 #|-| [io][close] <db/db.0000103>
 #|-| [io][open] <db/db.0000103>

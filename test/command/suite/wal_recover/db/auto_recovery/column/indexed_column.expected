@@ -44,11 +44,11 @@ _database_reopen
 #|-| [io][open] <db/db.0000101>
 #|-| [io][close] <db/db.0000101>
 #|-| [io][open] <db/db.0000102>
+#|e| [reader][read-entry][ja][recover][Data.content] must be map: <positive-integer>(2): path:<db/db.0000102>
 #|-| [io][close] <db/db.0000102>
 #|-| [io][open] <db/db.0000100>
 #|-| [io][open] <db/db.0000103>
 #|-| [io][open] <db/db.0000103.c>
-#|e| [ii][wal][recover][Terms.data_content] not implemented: path:<db/db.0000103>
 #|-| [io][close] <db/db.0000103>
 #|-| [io][close] <db/db.0000103.c>
 #|-| [io][close] <db/db.0000100>
@@ -56,6 +56,12 @@ _database_reopen
 #|-| [io][close] <db/db.0000100>
 #|-| [io][open] <db/db.0000101>
 #|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][open] <db/db.0000103.c>
+#|-| [io][close] <db/db.0000103>
+#|-| [io][close] <db/db.0000103.c>
+#|-| [io][close] <db/db.0000100>
 #|-| [io][open] <db/db.0000102>
 #|-| [io][close] <db/db.0000102>
 #|-| [io][open] <db/db.0000100>
@@ -64,55 +70,74 @@ _database_reopen
 #|-| [io][close] <db/db.0000103>
 #|-| [io][close] <db/db.0000103.c>
 #|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
+#|n| [db][wal][recover] rebuild broken column: <Data.content>(258)
+#|-| [io][open] <db/db.0000101>
+#|n| DDL:260:column_create Data #recovering#content
+#|-| [io][open] <db/db.0000104>
+#|n| spec:260:update:Data.#recovering#content:65(column:var_size):14(ShortText)
+#|-| [io][close] <db/db.0000104>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][close] <db/db.0000102>
 #|-| [io][open] <db/db.0000100>
 #|-| [io][open] <db/db.0000103>
 #|-| [io][open] <db/db.0000103.c>
 #|-| [io][close] <db/db.0000103>
 #|-| [io][close] <db/db.0000103.c>
 #|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
 #|-| [io][open] <db/db.0000100>
 #|-| [io][open] <db/db.0000103>
 #|-| [io][open] <db/db.0000103.c>
 #|-| [io][close] <db/db.0000103>
 #|-| [io][close] <db/db.0000103.c>
 #|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
 #|-| [io][open] <db/db.0000100>
 #|-| [io][open] <db/db.0000103>
 #|-| [io][open] <db/db.0000103.c>
 #|n| [db][wal][recover] rebuild broken column: <Terms.data_content>(259)
 #|-| [io][open] <db/db.0000101>
-#|n| DDL:260:column_create Terms #recovering#data_content
+#|n| DDL:261:column_create Terms #recovering#data_content
+#|-| [io][open] <db/db.0000105>
+#|-| [io][open] <db/db.0000105.c>
+#|n| spec:261:update:Terms.#recovering#data_content:72(column:index):257(Data)
 #|-| [io][open] <db/db.0000104>
-#|-| [io][open] <db/db.0000104.c>
-#|n| spec:260:update:Terms.#recovering#data_content:72(column:index):257(Data)
-#|-| [io][open] <db/db.0000102>
-#|n| DDL:260:set_source Terms.#recovering#data_content Data.content
-#|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)
+#|n| DDL:261:set_source Terms.#recovering#data_content Data.#recovering#content
+#|n| spec:260:update:Data.#recovering#content:65(column:var_size):14(ShortText)
 #|n| DDL:2147483649:set_normalizers NormalizerNFKC130
 #|n| DDL:2147483649:set_normalizers NormalizerNFKC130
-#|n| spec:260:update:Terms.#recovering#data_content:72(column:index):257(Data)
-#|-| [io][close] <db/db.0000102>
+#|n| spec:261:update:Terms.#recovering#data_content:72(column:index):257(Data)
 #|-| [io][close] <db/db.0000104>
-#|-| [io][close] <db/db.0000104.c>
+#|-| [io][close] <db/db.0000105>
+#|-| [io][close] <db/db.0000105.c>
 #|-| [io][close] <db/db.0000101>
 #|-| [io][close] <db/db.0000103>
 #|-| [io][close] <db/db.0000103.c>
 #|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000104>
+#|-| [io][open] <db/db.0000102>
+#|n| DDL:258:obj_remove Data.content
 #|-| [io][open] <db/db.0000100>
 #|-| [io][open] <db/db.0000103>
 #|-| [io][open] <db/db.0000103.c>
-#|-| [io][open] <db/db.0000104>
-#|-| [io][open] <db/db.0000104.c>
 #|n| DDL:259:obj_remove Terms.data_content
-#|-| [io][open] <db/db.0000102>
-#|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)
 #|-| [io][close] <db/db.0000103>
 #|-| [io][close] <db/db.0000103.c>
 #|n| spec:259:remove:Terms.data_content:72(column:index)
-#|n| [db][wal][recover] succeeded to rebuild broken column: <Terms.data_content>(260)
 #|-| [io][close] <db/db.0000102>
+#|n| spec:258:remove:Data.content:65(column:var_size)
+#|n| [db][wal][recover] succeeded to rebuild broken column: <Data.content>(260)
+#|-| [io][close] <db/db.0000100>
 #|-| [io][close] <db/db.0000104>
-#|-| [io][close] <db/db.0000104.c>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][open] <db/db.0000105>
+#|-| [io][open] <db/db.0000105.c>
+#|n| [db][wal][recover] succeeded to rebuild broken column: <Terms.data_content>(261)
+#|-| [io][close] <db/db.0000105>
+#|-| [io][close] <db/db.0000105.c>
 #|-| [io][close] <db/db.0000100>
 log_level --level notice
 [[0,0.0,0.0],true]

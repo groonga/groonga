@@ -36,6 +36,8 @@ _database_reopen
 #|-| [io][open] <db/db.0000101>
 #|e| [reader][read-entry][ra][recover][Data.count] must be map: <positive-integer>(2): path:<db/db.0000101>
 #|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][close] <db/db.0000100>
 #|-| [io][open] <db/db.0000101>
 #|-| [io][close] <db/db.0000101>
 #|-| [io][open] <db/db.0000101>

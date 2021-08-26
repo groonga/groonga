@@ -524,9 +524,166 @@ exit :
 }
 
 static grn_hash *
+grn_broken_ids_open(grn_ctx *ctx)
+{
+  return grn_hash_create(ctx,
+                         NULL,
+                         sizeof(grn_id),
+                         0,
+                         GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+}
+
+static void
+grn_broken_ids_close(grn_ctx *ctx, grn_hash *broken_ids)
+{
+  grn_hash_close(ctx, broken_ids);
+}
+
+static void
+grn_broken_ids_add(grn_ctx *ctx, grn_hash *broken_ids, grn_id id)
+{
+  grn_hash_add(ctx, broken_ids, &id, sizeof(grn_id), NULL, NULL);
+}
+
+static bool
+grn_broken_ids_exist(grn_ctx *ctx, grn_hash *broken_ids, grn_id id)
+{
+  return grn_hash_get(ctx, broken_ids, &id, sizeof(grn_id), NULL) != GRN_ID_NIL;
+}
+
+static grn_id
+grn_broken_ids_cursor_get(grn_ctx *ctx, grn_hash_cursor *cursor)
+{
+  void *key;
+  grn_hash_cursor_get_key(ctx, cursor, &key);
+  return *((grn_id *)key);
+}
+
+static void
+grn_db_wal_recover_collect_depended_object_ids(
+  grn_ctx *ctx,
+  grn_db *db,
+  grn_hash *broken_table_ids,
+  grn_hash *broken_column_ids)
+{
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, db->keys, cursor, id, GRN_CURSOR_BY_ID) {
+    if (grn_id_is_builtin(ctx, id)) {
+      continue;
+    }
+    if (grn_broken_ids_exist(ctx, broken_table_ids, id)) {
+      continue;
+    }
+    if (grn_broken_ids_exist(ctx, broken_column_ids, id)) {
+      continue;
+    }
+
+    grn_ctx_push_temporary_open_space(ctx);
+    grn_obj *object = grn_ctx_at(ctx, id);
+    if (object) {
+      switch (object->header.type) {
+      case GRN_TABLE_HASH_KEY :
+      case GRN_TABLE_PAT_KEY :
+      case GRN_TABLE_DAT_KEY :
+        if (grn_broken_ids_exist(ctx, broken_table_ids, object->header.domain)) {
+          grn_broken_ids_add(ctx, broken_table_ids, id);
+        }
+        break;
+      case GRN_COLUMN_FIX_SIZE :
+        if (grn_broken_ids_exist(ctx, broken_table_ids, DB_OBJ(object)->range)) {
+          grn_broken_ids_add(ctx, broken_column_ids, id);
+        }
+        break;
+      case GRN_COLUMN_VAR_SIZE :
+        if (grn_broken_ids_exist(ctx, broken_table_ids, DB_OBJ(object)->range)) {
+          grn_broken_ids_add(ctx, broken_column_ids, id);
+        }
+        {
+          grn_obj source_ids;
+          GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+          grn_obj_get_info(ctx, object, GRN_INFO_SOURCE, &source_ids);
+          size_t n = GRN_RECORD_VECTOR_SIZE(&source_ids);
+          size_t i;
+          for (i = 0; i < n; i++) {
+            grn_id source_id = GRN_RECORD_VALUE_AT(&source_ids, i);
+            if (grn_broken_ids_exist(ctx, broken_column_ids, source_id)) {
+              grn_broken_ids_add(ctx, broken_column_ids, id);
+            }
+          }
+          GRN_OBJ_FIN(ctx, &source_ids);
+        }
+        break;
+      case GRN_COLUMN_INDEX :
+        if (grn_broken_ids_exist(ctx, broken_table_ids, DB_OBJ(object)->range)) {
+          grn_broken_ids_add(ctx, broken_column_ids, id);
+        }
+        {
+          grn_obj source_ids;
+          GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
+          grn_obj_get_info(ctx, object, GRN_INFO_SOURCE, &source_ids);
+          size_t n = GRN_RECORD_VECTOR_SIZE(&source_ids);
+          size_t i;
+          for (i = 0; i < n; i++) {
+            grn_id source_id = GRN_RECORD_VALUE_AT(&source_ids, i);
+            if (grn_broken_ids_exist(ctx, broken_table_ids, source_id) ||
+                grn_broken_ids_exist(ctx, broken_column_ids, source_id)) {
+              grn_broken_ids_add(ctx, broken_column_ids, id);
+            }
+          }
+          GRN_OBJ_FIN(ctx, &source_ids);
+        }
+        break;
+      default :
+        break;
+      }
+      grn_obj_unref(ctx, object);
+    }
+    ERRCLR(ctx);
+    grn_ctx_pop_temporary_open_space(ctx);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+}
+
+
+static void
+grn_db_wal_recover_remove_duplicated_broken_column_ids(
+  grn_ctx *ctx,
+  grn_db *db,
+  grn_hash *broken_table_ids,
+  grn_hash *broken_column_ids)
+{
+  GRN_HASH_EACH_BEGIN(ctx, broken_column_ids, cursor, column_entry_id) {
+    grn_ctx_push_temporary_open_space(ctx);
+    grn_id broken_column_id = grn_broken_ids_cursor_get(ctx, cursor);
+    grn_obj *broken_column = grn_ctx_at(ctx, broken_column_id);
+    if (grn_broken_ids_exist(ctx,
+                             broken_table_ids,
+                             broken_column->header.domain)) {
+      grn_hash_cursor_delete(ctx, cursor, NULL);
+    }
+    grn_ctx_pop_temporary_open_space(ctx);
+  } GRN_HASH_EACH_END(ctx, cursor);
+}
+
+static void
+grn_db_wal_recover_collect_related_broken_object_ids(
+  grn_ctx *ctx,
+  grn_db *db,
+  grn_hash *broken_table_ids,
+  grn_hash *broken_column_ids)
+{
+  grn_db_wal_recover_collect_depended_object_ids(
+    ctx, db, broken_table_ids, broken_column_ids);
+  grn_db_wal_recover_remove_duplicated_broken_column_ids(
+    ctx, db, broken_table_ids, broken_column_ids);
+}
+
+static grn_hash *
 grn_id_map_open(grn_ctx *ctx)
 {
-  return grn_hash_create(ctx, NULL, sizeof(grn_id), sizeof(grn_id), 0);
+  return grn_hash_create(ctx,
+                         NULL,
+                         sizeof(grn_id),
+                         sizeof(grn_id),
+                         GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
 }
 
 static grn_rc
@@ -1027,7 +1184,8 @@ grn_db_wal_recover_copy_reference_data_columns(grn_ctx *ctx,
     if (!column) {
       continue;
     }
-    grn_db_wal_recover_copy_reference_data_column(ctx, column, new_table, id_map);
+    grn_db_wal_recover_copy_reference_data_column(
+      ctx, column, new_table, id_map);
     grn_obj_unref(ctx, column);
   } GRN_HASH_EACH_END(ctx, cursor);
 
@@ -1118,55 +1276,58 @@ grn_db_wal_recover_copy_auto_generated_columns(grn_ctx *ctx,
 
 static void
 grn_db_wal_recover_rename_table(grn_ctx *ctx,
-                                grn_obj *table,
+                                grn_id broken_table_id,
                                 grn_hash *id_map)
 {
-  GRN_DEFINE_NAME(table);
-  grn_obj new_name;
-  GRN_TEXT_INIT(&new_name, 0);
-  grn_text_printf(ctx, &new_name,
-                  "%s%.*s",
-                  recovering_name_prefix, name_size, name);
-  grn_obj *new_table = grn_ctx_get(ctx,
-                                   GRN_TEXT_VALUE(&new_name),
-                                   GRN_TEXT_LEN(&new_name));
-  GRN_OBJ_FIN(ctx, &new_name);
+  grn_id new_table_id = grn_id_map_resolve(ctx, id_map, broken_table_id);
+  grn_obj *new_table = grn_ctx_at(ctx, new_table_id);
+  GRN_DEFINE_NAME(new_table);
 
-  grn_obj_remove(ctx, table);
-  grn_table_rename(ctx, new_table, name, name_size);
+  grn_obj *broken_table = grn_ctx_at(ctx, broken_table_id);
+  if (broken_table) {
+    grn_obj_remove(ctx, broken_table);
+  }
+
+  grn_table_rename(ctx,
+                   new_table,
+                   name + strlen(recovering_name_prefix),
+                   name_size - strlen(recovering_name_prefix));
   GRN_LOG(ctx, GRN_LOG_NOTICE,
           "%s succeeded to rebuild broken table: <%.*s>(%u)",
-          grn_db_wal_recover_tag, name_size, name, DB_OBJ(new_table)->id);
+          grn_db_wal_recover_tag,
+          (int)(name_size - strlen(recovering_name_prefix)),
+          name + strlen(recovering_name_prefix),
+          DB_OBJ(new_table)->id);
   grn_obj_unref(ctx, new_table);
 }
 
 static void
 grn_db_wal_recover_rename_column(grn_ctx *ctx,
-                                 grn_obj *column,
+                                 grn_id broken_column_id,
                                  grn_hash *id_map)
 {
-  char name[GRN_TABLE_MAX_KEY_SIZE];
-  int name_size = grn_column_name(ctx, column, name, sizeof(name));
-  grn_obj new_name;
-  GRN_TEXT_INIT(&new_name, 0);
-  grn_text_printf(ctx, &new_name,
-                  "%s%.*s",
-                  recovering_name_prefix, name_size, name);
-  grn_obj *table = grn_ctx_at(ctx, column->header.domain);
-  grn_obj *new_column = grn_table_column(ctx,
-                                         table,
-                                         GRN_TEXT_VALUE(&new_name),
-                                         GRN_TEXT_LEN(&new_name));
-  grn_obj_unref(ctx, table);
-  GRN_OBJ_FIN(ctx, &new_name);
+  grn_id new_column_id = grn_id_map_resolve(ctx, id_map, broken_column_id);
+  grn_obj *new_column = grn_ctx_at(ctx, new_column_id);
+  char column_name[GRN_TABLE_MAX_KEY_SIZE];
+  int column_name_size =
+    grn_column_name(ctx, new_column, column_name, sizeof(column_name));
 
-  grn_obj_remove(ctx, column);
-  grn_column_rename(ctx, new_column, name, name_size);
+  grn_obj *broken_column = grn_ctx_at(ctx, broken_column_id);
+  if (broken_column) {
+    grn_obj_remove(ctx, broken_column);
+  }
+
+  grn_column_rename(ctx,
+                    new_column,
+                    column_name + strlen(recovering_name_prefix),
+                    column_name_size - strlen(recovering_name_prefix));
   {
     GRN_DEFINE_NAME(new_column);
     GRN_LOG(ctx, GRN_LOG_NOTICE,
             "%s succeeded to rebuild broken column: <%.*s>(%u)",
-            grn_db_wal_recover_tag, name_size, name, DB_OBJ(new_column)->id);
+            grn_db_wal_recover_tag,
+            name_size, name,
+            DB_OBJ(new_column)->id);
   }
   grn_obj_unref(ctx, new_column);
 }
@@ -1174,28 +1335,25 @@ grn_db_wal_recover_rename_column(grn_ctx *ctx,
 static void
 grn_db_wal_recover_copy_rename(grn_ctx *ctx,
                                grn_db *db,
-                               grn_obj *broken_table_ids,
-                               grn_obj *broken_column_ids)
+                               grn_hash *broken_table_ids,
+                               grn_hash *broken_column_ids)
 {
   grn_hash *id_map = grn_id_map_open(ctx);
-  size_t n_broken_tables = GRN_RECORD_VECTOR_SIZE(broken_table_ids);
-  size_t n_broken_columns = GRN_RECORD_VECTOR_SIZE(broken_column_ids);
-  size_t i;
 
-  for (i = 0; i < n_broken_tables; i++) {
+  GRN_HASH_EACH_BEGIN(ctx, broken_table_ids, cursor, entry_id) {
     grn_ctx_push_temporary_open_space(ctx);
-    grn_id broken_table_id = GRN_RECORD_VALUE_AT(broken_table_ids, i);
+    grn_id broken_table_id = grn_broken_ids_cursor_get(ctx, cursor);
     grn_obj *broken_table = grn_ctx_at(ctx, broken_table_id);
     if (broken_table) {
       grn_db_wal_recover_copy_table(ctx, broken_table, id_map);
       grn_obj_unref(ctx, broken_table);
     }
     grn_ctx_pop_temporary_open_space(ctx);
-  }
+  } GRN_HASH_EACH_END(ctx, cursor);
 
-  for (i = 0; i < n_broken_tables; i++) {
+  GRN_HASH_EACH_BEGIN(ctx, broken_table_ids, cursor, entry_id) {
     grn_ctx_push_temporary_open_space(ctx);
-    grn_id broken_table_id = GRN_RECORD_VALUE_AT(broken_table_ids, i);
+    grn_id broken_table_id = grn_broken_ids_cursor_get(ctx, cursor);
     grn_obj *broken_table = grn_ctx_at(ctx, broken_table_id);
     if (broken_table) {
       grn_db_wal_recover_copy_non_reference_data_columns(
@@ -1203,11 +1361,11 @@ grn_db_wal_recover_copy_rename(grn_ctx *ctx,
       grn_obj_unref(ctx, broken_table);
     }
     grn_ctx_pop_temporary_open_space(ctx);
-  }
+  } GRN_HASH_EACH_END(ctx, cursor);
 
-  for (i = 0; i < n_broken_columns; i++) {
+  GRN_HASH_EACH_BEGIN(ctx, broken_column_ids, cursor, entry_id) {
     grn_ctx_push_temporary_open_space(ctx);
-    grn_id broken_column_id = GRN_RECORD_VALUE_AT(broken_column_ids, i);
+    grn_id broken_column_id = grn_broken_ids_cursor_get(ctx, cursor);
     grn_obj *broken_column = grn_ctx_at(ctx, broken_column_id);
     if (broken_column) {
       grn_db_wal_recover_copy_non_reference_data_column(ctx,
@@ -1217,22 +1375,22 @@ grn_db_wal_recover_copy_rename(grn_ctx *ctx,
       grn_obj_unref(ctx, broken_column);
     }
     grn_ctx_pop_temporary_open_space(ctx);
-  }
+  } GRN_HASH_EACH_END(ctx, cursor);
 
-  for (i = 0; i < n_broken_tables; i++) {
+  GRN_HASH_EACH_BEGIN(ctx, broken_table_ids, cursor, entry_id) {
     grn_ctx_push_temporary_open_space(ctx);
-    grn_id broken_table_id = GRN_RECORD_VALUE_AT(broken_table_ids, i);
+    grn_id broken_table_id = grn_broken_ids_cursor_get(ctx, cursor);
     grn_obj *broken_table = grn_ctx_at(ctx, broken_table_id);
     if (broken_table) {
       grn_db_wal_recover_copy_reference_data_columns(ctx, broken_table, id_map);
       grn_obj_unref(ctx, broken_table);
     }
     grn_ctx_pop_temporary_open_space(ctx);
-  }
+  } GRN_HASH_EACH_END(ctx, cursor);
 
-  for (i = 0; i < n_broken_columns; i++) {
+  GRN_HASH_EACH_BEGIN(ctx, broken_column_ids, cursor, entry_id) {
     grn_ctx_push_temporary_open_space(ctx);
-    grn_id broken_column_id = GRN_RECORD_VALUE_AT(broken_column_ids, i);
+    grn_id broken_column_id = grn_broken_ids_cursor_get(ctx, cursor);
     grn_obj *broken_column = grn_ctx_at(ctx, broken_column_id);
     if (broken_column) {
       grn_db_wal_recover_copy_reference_data_column(ctx,
@@ -1242,22 +1400,22 @@ grn_db_wal_recover_copy_rename(grn_ctx *ctx,
       grn_obj_unref(ctx, broken_column);
     }
     grn_ctx_pop_temporary_open_space(ctx);
-  }
+  } GRN_HASH_EACH_END(ctx, cursor);
 
-  for (i = 0; i < n_broken_tables; i++) {
+  GRN_HASH_EACH_BEGIN(ctx, broken_table_ids, cursor, entry_id) {
     grn_ctx_push_temporary_open_space(ctx);
-    grn_id broken_table_id = GRN_RECORD_VALUE_AT(broken_table_ids, i);
+    grn_id broken_table_id = grn_broken_ids_cursor_get(ctx, cursor);
     grn_obj *broken_table = grn_ctx_at(ctx, broken_table_id);
     if (broken_table) {
       grn_db_wal_recover_copy_auto_generated_columns(ctx, broken_table, id_map);
       grn_obj_unref(ctx, broken_table);
     }
     grn_ctx_pop_temporary_open_space(ctx);
-  }
+  } GRN_HASH_EACH_END(ctx, cursor);
 
-  for (i = 0; i < n_broken_columns; i++) {
+  GRN_HASH_EACH_BEGIN(ctx, broken_column_ids, cursor, entry_id) {
     grn_ctx_push_temporary_open_space(ctx);
-    grn_id broken_column_id = GRN_RECORD_VALUE_AT(broken_column_ids, i);
+    grn_id broken_column_id = grn_broken_ids_cursor_get(ctx, cursor);
     grn_obj *broken_column = grn_ctx_at(ctx, broken_column_id);
     if (broken_column) {
       grn_db_wal_recover_copy_auto_generated_column(ctx,
@@ -1267,29 +1425,21 @@ grn_db_wal_recover_copy_rename(grn_ctx *ctx,
       grn_obj_unref(ctx, broken_column);
     }
     grn_ctx_pop_temporary_open_space(ctx);
-  }
+  } GRN_HASH_EACH_END(ctx, cursor);
 
-  for (i = 0; i < n_broken_tables; i++) {
+  GRN_HASH_EACH_BEGIN(ctx, broken_table_ids, cursor, entry_id) {
     grn_ctx_push_temporary_open_space(ctx);
-    grn_id broken_table_id = GRN_RECORD_VALUE_AT(broken_table_ids, i);
-    grn_obj *broken_table = grn_ctx_at(ctx, broken_table_id);
-    if (broken_table) {
-      grn_db_wal_recover_rename_table(ctx, broken_table, id_map);
-      grn_obj_unref(ctx, broken_table);
-    }
+    grn_id broken_table_id = grn_broken_ids_cursor_get(ctx, cursor);
+    grn_db_wal_recover_rename_table(ctx, broken_table_id, id_map);
     grn_ctx_pop_temporary_open_space(ctx);
-  }
+  } GRN_HASH_EACH_END(ctx, cursor);
 
-  for (i = 0; i < n_broken_columns; i++) {
+  GRN_HASH_EACH_BEGIN(ctx, broken_column_ids, cursor, entry_id) {
     grn_ctx_push_temporary_open_space(ctx);
-    grn_id broken_column_id = GRN_RECORD_VALUE_AT(broken_column_ids, i);
-    grn_obj *broken_column = grn_ctx_at(ctx, broken_column_id);
-    if (broken_column) {
-      grn_db_wal_recover_rename_column(ctx, broken_column, id_map);
-      grn_obj_unref(ctx, broken_column);
-    }
+    grn_id broken_column_id = grn_broken_ids_cursor_get(ctx, cursor);
+    grn_db_wal_recover_rename_column(ctx, broken_column_id, id_map);
     grn_ctx_pop_temporary_open_space(ctx);
-  }
+  } GRN_HASH_EACH_END(ctx, cursor);
 
   grn_id_map_close(ctx, id_map);
 }
@@ -1330,11 +1480,9 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
 
   grn_db_wal_recover_remove_recovering_objects(ctx, db);
 
-  grn_obj broken_table_ids;
-  GRN_RECORD_INIT(&broken_table_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  grn_obj broken_column_ids;
-  GRN_RECORD_INIT(&broken_column_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  GRN_TABLE_EACH_BEGIN(ctx, db->keys, cursor, id) {
+  grn_hash *broken_table_ids = grn_broken_ids_open(ctx);
+  grn_hash *broken_column_ids = grn_broken_ids_open(ctx);
+  GRN_TABLE_EACH_BEGIN_FLAGS(ctx, db->keys, cursor, id, GRN_CURSOR_BY_ID) {
     if (grn_id_is_builtin(ctx, id)) {
       continue;
     }
@@ -1374,9 +1522,9 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
       }
       if (ctx->rc != GRN_SUCCESS) {
         if (is_table) {
-          GRN_RECORD_PUT(ctx, &broken_table_ids, id);
+          grn_broken_ids_add(ctx, broken_table_ids, id);
         } else if (is_column) {
-          GRN_RECORD_PUT(ctx, &broken_column_ids, id);
+          grn_broken_ids_add(ctx, broken_column_ids, id);
         }
         ERRCLR(ctx);
       }
@@ -1388,44 +1536,20 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
     }
   } GRN_TABLE_EACH_END(ctx, cursor);
 
-  grn_obj target_broken_column_ids;
-  GRN_RECORD_INIT(&target_broken_column_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  size_t n_broken_table_ids = GRN_RECORD_VECTOR_SIZE(&broken_table_ids);
-  size_t n_broken_column_ids = GRN_RECORD_VECTOR_SIZE(&broken_column_ids);
-  size_t i;
-  for (i = 0; i < n_broken_column_ids; i++) {
-    grn_ctx_push_temporary_open_space(ctx);
-    grn_id column_id = GRN_RECORD_VALUE_AT(&broken_column_ids, i);
-    grn_obj *column = grn_ctx_at(ctx, column_id);
-    grn_id range = DB_OBJ(column)->id;
-    grn_obj_unref(ctx, column);
-    bool in_broken_table = false;
-    size_t j;
-    for (j = 0; j < n_broken_table_ids; j++) {
-      grn_id table_id = GRN_RECORD_VALUE_AT(&broken_table_ids, j);
-      if (range == table_id) {
-        in_broken_table = true;
-        break;
-      }
-    }
-    if (!in_broken_table) {
-      GRN_RECORD_PUT(ctx, &target_broken_column_ids, column_id);
-    }
-    grn_ctx_pop_temporary_open_space(ctx);
-  }
-  GRN_OBJ_FIN(ctx, &broken_column_ids);
+  grn_db_wal_recover_collect_related_broken_object_ids(
+    ctx, db, broken_table_ids, broken_column_ids);
 
   /* Disable WAL generation on copy. */
   grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_NONE);
   grn_db_wal_recover_copy_rename(ctx,
                                  db,
-                                 &broken_table_ids,
-                                 &target_broken_column_ids);
+                                 broken_table_ids,
+                                 broken_column_ids);
   /* Enable WAL generation. */
   grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_PRIMARY);
 
-  GRN_OBJ_FIN(ctx, &broken_table_ids);
-  GRN_OBJ_FIN(ctx, &target_broken_column_ids);
+  grn_broken_ids_close(ctx, broken_table_ids);
+  grn_broken_ids_close(ctx, broken_column_ids);
 
   grn_db_wal_recover_remove_recovering_objects(ctx, db);
 }
