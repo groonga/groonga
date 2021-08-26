@@ -843,6 +843,26 @@ grn_column_create_similar_internal(grn_ctx *ctx,
 static const char *recovering_name_prefix = "#recovering#";
 
 static void
+grn_db_wal_recover_remove_recovering_objects(grn_ctx *ctx,
+                                             grn_db *db)
+{
+  GRN_TABLE_EACH_BEGIN_MIN(ctx,
+                           db->keys,
+                           cursor,
+                           id,
+                           recovering_name_prefix,
+                           strlen(recovering_name_prefix),
+                           GRN_CURSOR_PREFIX) {
+    grn_ctx_push_temporary_open_space(ctx);
+    grn_obj *object = grn_ctx_at(ctx, id);
+    if (object) {
+      grn_obj_remove(ctx, object);
+    }
+    grn_ctx_pop_temporary_open_space(ctx);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+}
+
+static void
 grn_db_wal_recover_copy_table(grn_ctx *ctx,
                               grn_obj *table,
                               grn_hash *id_map)
@@ -1307,6 +1327,8 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
   grn_options_wal_recover(ctx, db->options);
   ERRCLR(ctx);
 
+  grn_db_wal_recover_remove_recovering_objects(ctx, db);
+
   grn_obj broken_table_ids;
   GRN_RECORD_INIT(&broken_table_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
   grn_obj broken_column_ids;
@@ -1403,6 +1425,8 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
 
   GRN_OBJ_FIN(ctx, &broken_table_ids);
   GRN_OBJ_FIN(ctx, &target_broken_column_ids);
+
+  grn_db_wal_recover_remove_recovering_objects(ctx, db);
 }
 
 #define GRN_TYPE_FLOAT32_NAME "Float32"
