@@ -5889,10 +5889,14 @@ grn_ii_remove(grn_ctx *ctx, const char *path)
   grn_rc rc;
   char buffer[PATH_MAX];
   if (!path || strlen(path) > PATH_MAX - 4) { return GRN_INVALID_ARGUMENT; }
+  grn_rc wal_rc = grn_wal_remove(ctx, path, "[ii]");
   if ((rc = grn_io_remove(ctx, path))) { goto exit; }
   grn_snprintf(buffer, PATH_MAX, PATH_MAX,
                "%s.c", path);
   rc = grn_io_remove(ctx, buffer);
+  if (rc == GRN_SUCCESS) {
+    rc = wal_rc;
+  }
 exit :
   return rc;
 }
@@ -5901,22 +5905,14 @@ grn_rc
 grn_ii_truncate(grn_ctx *ctx, grn_ii *ii)
 {
   grn_rc rc;
-  const char *io_segpath, *io_chunkpath;
-  char *segpath, *chunkpath = NULL;
+  const char *io_segpath;
+  char *segpath = NULL;
   grn_obj *lexicon;
   uint32_t flags;
   if ((io_segpath = grn_io_path(ii->seg)) && *io_segpath != '\0') {
     if (!(segpath = GRN_STRDUP(io_segpath))) {
       ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_segpath);
       return GRN_NO_MEMORY_AVAILABLE;
-    }
-    if ((io_chunkpath = grn_io_path(ii->chunk)) && *io_chunkpath != '\0') {
-      if (!(chunkpath = GRN_STRDUP(io_chunkpath))) {
-        ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_chunkpath);
-        return GRN_NO_MEMORY_AVAILABLE;
-      }
-    } else {
-      chunkpath = NULL;
     }
   } else {
     segpath = NULL;
@@ -5927,8 +5923,7 @@ grn_ii_truncate(grn_ctx *ctx, grn_ii *ii)
   if ((rc = grn_io_close(ctx, ii->chunk))) { goto exit; }
   ii->seg = NULL;
   ii->chunk = NULL;
-  if (segpath && (rc = grn_io_remove(ctx, segpath))) { goto exit; }
-  if (chunkpath && (rc = grn_io_remove(ctx, chunkpath))) { goto exit; }
+  if (segpath && (rc = grn_ii_remove(ctx, segpath))) { goto exit; }
   if (!_grn_ii_create(ctx, ii, segpath, lexicon, flags)) {
     rc = GRN_UNKNOWN_ERROR;
     goto exit;
@@ -5936,7 +5931,6 @@ grn_ii_truncate(grn_ctx *ctx, grn_ii *ii)
   grn_obj_unref(ctx, lexicon);
 exit:
   if (segpath) { GRN_FREE(segpath); }
-  if (chunkpath) { GRN_FREE(chunkpath); }
   return rc;
 }
 
