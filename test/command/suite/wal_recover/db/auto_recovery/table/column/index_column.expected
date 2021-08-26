@@ -1,0 +1,220 @@
+table_create Data TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Data content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"_key": "a",      "content": "a"},
+{"_key": "abc",    "content": "a and b and c"},
+{"_key": "abcdef", "content": "a and b and c and d and e and f"}
+]
+[[0,0.0,0.0],3]
+delete Data --key abc
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC130
+[[0,0.0,0.0],true]
+column_create Terms data_content COLUMN_INDEX|WITH_POSITION Data content
+[[0,0.0,0.0],true]
+dump
+table_create Data TABLE_PAT_KEY ShortText
+column_create Data content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenNgram --normalizer NormalizerNFKC130
+
+load --table Data
+[
+["_key","content"],
+["a","a"],
+["abcdef","a and b and c and d and e and f"]
+]
+
+column_create Terms data_content COLUMN_INDEX|WITH_POSITION Data content
+log_level --level dump
+[[0,0.0,0.0],true]
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
+[[0,0.0,0.0],true]
+#|-| [io][open] <db/db>
+#|-| [io][open] <db/db.0000000>
+#|-| [io][open] <db/db.conf>
+#|-| [io][open] <db/db.options>
+#|-| [io][open] <db/db.0000100>
+#|e| [reader][read-entry][pat][recover][Data] must be map: <positive-integer>(2): path:<db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][open] <db/db.0000103.c>
+#|-| [io][close] <db/db.0000103>
+#|-| [io][close] <db/db.0000103.c>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][open] <db/db.0000103.c>
+#|-| [io][close] <db/db.0000103>
+#|-| [io][close] <db/db.0000103.c>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][open] <db/db.0000103.c>
+#|-| [io][close] <db/db.0000103>
+#|-| [io][close] <db/db.0000103.c>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000100>
+#|n| [db][wal][recover] rebuild broken table: <Data>(256)
+#|n| DDL:260:table_create #recovering#Data
+#|-| [io][open] <db/db.0000104>
+#|n| spec:260:update:#recovering#Data:49(table:pat_key):0
+#|-| [io][close] <db/db.0000104>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][open] <db/db.0000104>
+#|-| [io][open] <db/db.0000101>
+#|n| [db][wal][recover] rebuild broken column: <Data.content>(257)
+#|n| DDL:261:column_create #recovering#Data content
+#|-| [io][open] <db/db.0000105>
+#|n| spec:261:update:#recovering#Data.content:65(column:var_size):14(ShortText)
+#|-| [io][close] <db/db.0000105>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][close] <db/db.0000104>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][open] <db/db.0000103.c>
+#|-| [io][close] <db/db.0000103>
+#|-| [io][close] <db/db.0000103.c>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][open] <db/db.0000104>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][close] <db/db.0000104>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][open] <db/db.0000103.c>
+#|-| [io][close] <db/db.0000103>
+#|-| [io][close] <db/db.0000103.c>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][open] <db/db.0000104>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][close] <db/db.0000104>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][open] <db/db.0000103.c>
+#|n| [db][wal][recover] rebuild broken column: <Terms.data_content>(259)
+#|-| [io][open] <db/db.0000104>
+#|n| DDL:262:column_create Terms #recovering#data_content
+#|-| [io][open] <db/db.0000106>
+#|-| [io][open] <db/db.0000106.c>
+#|n| spec:262:update:Terms.#recovering#data_content:72(column:index):260(#recovering#Data)
+#|-| [io][open] <db/db.0000105>
+#|n| DDL:262:set_source Terms.#recovering#data_content #recovering#Data.content
+#|n| spec:261:update:#recovering#Data.content:65(column:var_size):14(ShortText)
+#|n| DDL:2147483649:set_normalizers NormalizerNFKC130
+#|n| DDL:2147483649:set_normalizers NormalizerNFKC130
+#|n| spec:262:update:Terms.#recovering#data_content:72(column:index):260(#recovering#Data)
+#|-| [io][close] <db/db.0000105>
+#|-| [io][close] <db/db.0000106>
+#|-| [io][close] <db/db.0000106.c>
+#|-| [io][close] <db/db.0000104>
+#|-| [io][close] <db/db.0000103>
+#|-| [io][close] <db/db.0000103.c>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][open] <db/db.0000106>
+#|-| [io][open] <db/db.0000106.c>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][open] <db/db.0000103.c>
+#|n| DDL:259:obj_remove Terms.data_content
+#|-| [io][open] <db/db.0000101>
+#|n| spec:257:update:Data.content:65(column:var_size):14(ShortText)
+#|-| [io][close] <db/db.0000103>
+#|-| [io][close] <db/db.0000103.c>
+#|n| spec:259:remove:Terms.data_content:72(column:index)
+#|n| [db][wal][recover] succeeded to rebuild broken column: <Terms.data_content>(262)
+#|-| [io][close] <db/db.0000101>
+#|-| [io][close] <db/db.0000106>
+#|-| [io][close] <db/db.0000106.c>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000104>
+#|-| [io][open] <db/db.0000100>
+#|n| DDL:256:obj_remove Data
+#|-| [io][open] <db/db.0000101>
+#|n| DDL:257:obj_remove Data.content
+#|-| [io][close] <db/db.0000101>
+#|n| spec:257:remove:Data.content:65(column:var_size)
+#|-| [io][close] <db/db.0000100>
+#|n| spec:256:remove:Data:49(table:pat_key)
+#|-| [io][open] <db/db.0000105>
+#|n| [db][wal][recover] succeeded to rebuild broken table: <Data>(260)
+#|-| [io][close] <db/db.0000105>
+#|-| [io][close] <db/db.0000104>
+log_level --level notice
+[[0,0.0,0.0],true]
+dump
+table_create Data TABLE_PAT_KEY ShortText
+column_create Data content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenNgram --normalizer NormalizerNFKC130
+
+load --table Data
+[
+["_key","content"],
+["a","a"],
+["abcdef","a and b and c and d and e and f"]
+]
+
+column_create Terms data_content COLUMN_INDEX|WITH_POSITION Data content
+index_column_diff Terms data_content
+[[0,0.0,0.0],[]]
+select Data   --match_columns 'content * 2'   --query e   --output_columns _id,_key,content,_score
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        2,
+        "abcdef",
+        "a and b and c and d and e and f",
+        2
+      ]
+    ]
+  ]
+]

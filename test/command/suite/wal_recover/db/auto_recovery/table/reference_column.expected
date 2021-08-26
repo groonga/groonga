@@ -1,0 +1,127 @@
+table_create Data TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"_key": "a"},
+{"_key": "abcdefg"},
+{"_key": "abcdefghijklmn"}
+]
+[[0,0.0,0.0],3]
+delete Data --key abcdefg
+[[0,0.0,0.0],true]
+table_create Referer TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Referer data COLUMN_SCALAR Data
+[[0,0.0,0.0],true]
+load --table Referer
+[
+{"_key": "123", "data": "a"}
+]
+[[0,0.0,0.0],1]
+dump
+table_create Data TABLE_PAT_KEY ShortText
+
+table_create Referer TABLE_HASH_KEY ShortText
+
+column_create Referer data COLUMN_SCALAR Data
+
+load --table Data
+[
+["_key"],
+["a"],
+["abcdefghijklmn"]
+]
+
+load --table Referer
+[
+["_key","data"],
+["123","a"]
+]
+log_level --level dump
+[[0,0.0,0.0],true]
+_database_close
+[[0,0.0,0.0],true]
+_database_reopen
+[[0,0.0,0.0],true]
+#|-| [io][open] <db/db>
+#|-| [io][open] <db/db.0000000>
+#|-| [io][open] <db/db.conf>
+#|-| [io][open] <db/db.options>
+#|-| [io][open] <db/db.0000100>
+#|e| [reader][read-entry][pat][recover][Data] must be map: <positive-integer>(2): path:<db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000100>
+#|n| [db][wal][recover] rebuild broken table: <Data>(256)
+#|n| DDL:259:table_create #recovering#Data
+#|-| [io][open] <db/db.0000103>
+#|n| spec:259:update:#recovering#Data:49(table:pat_key):0
+#|-| [io][close] <db/db.0000103>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
+#|n| [db][wal][recover] rebuild broken column: <Referer.data>(258)
+#|-| [io][open] <db/db.0000101>
+#|-| [io][open] <db/db.0000103>
+#|n| DDL:260:column_create Referer #recovering#data
+#|-| [io][open] <db/db.0000104>
+#|n| spec:260:update:Referer.#recovering#data:64(column:fix_size):259(#recovering#Data)
+#|-| [io][open] <db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][close] <db/db.0000104>
+#|-| [io][close] <db/db.0000103>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000104>
+#|-| [io][open] <db/db.0000102>
+#|n| DDL:258:obj_remove Referer.data
+#|-| [io][close] <db/db.0000102>
+#|n| spec:258:remove:Referer.data:64(column:fix_size)
+#|n| [db][wal][recover] succeeded to rebuild broken column: <Referer.data>(260)
+#|-| [io][close] <db/db.0000104>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][open] <db/db.0000100>
+#|n| DDL:256:obj_remove Data
+#|-| [io][close] <db/db.0000100>
+#|n| spec:256:remove:Data:49(table:pat_key)
+#|n| [db][wal][recover] succeeded to rebuild broken table: <Data>(259)
+#|-| [io][close] <db/db.0000103>
+log_level --level notice
+[[0,0.0,0.0],true]
+dump
+table_create Data TABLE_PAT_KEY ShortText
+
+table_create Referer TABLE_HASH_KEY ShortText
+
+column_create Referer data COLUMN_SCALAR Data
+
+load --table Data
+[
+["_key"],
+["a"],
+["abcdefghijklmn"]
+]
+
+load --table Referer
+[
+["_key","data"],
+["123","a"]
+]

@@ -1,26 +1,28 @@
-table_create Data TABLE_HASH_KEY ShortText
+table_create Data TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Data content COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 load --table Data
 [
-{"_key": "a",      "content": "a"},
-{"_key": "abc",    "content": "a and b and c"},
-{"_key": "abcdef", "content": "a and b and c and d and e and f"}
+{"content": "a"},
+{"content": "a and b and c"},
+{"content": "a and b and c and d and e and f"}
 ]
 [[0,0.0,0.0],3]
-delete Data --key abc
+delete Data --id 2
 [[0,0.0,0.0],true]
 dump
-table_create Data TABLE_HASH_KEY ShortText
+table_create Data TABLE_NO_KEY
 column_create Data content COLUMN_SCALAR ShortText
 
 load --table Data
 [
-["_key","content"],
-["a","a"],
-["abcdef","a and b and c and d and e and f"]
+["_id","content"],
+[1,"a"],
+[],
+[3,"a and b and c and d and e and f"]
 ]
+delete --table Data --id 2
 log_level --level dump
 [[0,0.0,0.0],true]
 _database_close
@@ -32,7 +34,7 @@ _database_reopen
 #|-| [io][open] <db/db.conf>
 #|-| [io][open] <db/db.options>
 #|-| [io][open] <db/db.0000100>
-#|e| [reader][read-entry][hash][recover][Data] must be map: <positive-integer>(2): path:<db/db.0000100>
+#|e| [array][wal][recover][Data] not implemented: path:<db/db.0000100>
 #|-| [io][close] <db/db.0000100>
 #|-| [io][open] <db/db.0000101>
 #|-| [io][close] <db/db.0000101>
@@ -42,7 +44,7 @@ _database_reopen
 #|n| [db][wal][recover] rebuild broken table: <Data>(256)
 #|n| DDL:258:table_create #recovering#Data
 #|-| [io][open] <db/db.0000102>
-#|n| spec:258:update:#recovering#Data:48(table:hash_key):0
+#|n| spec:258:update:#recovering#Data:51(table:no_key):0
 #|-| [io][close] <db/db.0000102>
 #|-| [io][close] <db/db.0000100>
 #|-| [io][open] <db/db.0000100>
@@ -76,7 +78,7 @@ _database_reopen
 #|-| [io][close] <db/db.0000101>
 #|n| spec:257:remove:Data.content:65(column:var_size)
 #|-| [io][close] <db/db.0000100>
-#|n| spec:256:remove:Data:48(table:hash_key)
+#|n| spec:256:remove:Data:51(table:no_key)
 #|-| [io][open] <db/db.0000103>
 #|n| [db][wal][recover] succeeded to rebuild broken table: <Data>(258)
 #|-| [io][close] <db/db.0000103>
@@ -84,12 +86,14 @@ _database_reopen
 log_level --level notice
 [[0,0.0,0.0],true]
 dump
-table_create Data TABLE_HASH_KEY ShortText
+table_create Data TABLE_NO_KEY
 column_create Data content COLUMN_SCALAR ShortText
 
 load --table Data
 [
-["_key","content"],
-["a","a"],
-["abcdef","a and b and c and d and e and f"]
+["_id","content"],
+[1,"a"],
+[],
+[3,"a and b and c and d and e and f"]
 ]
+delete --table Data --id 2

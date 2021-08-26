@@ -74,15 +74,13 @@ _database_reopen
 #|-| [io][close] <db/db.0000102>
 #|-| [io][open] <db/db.0000102>
 #|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][open] <db/db.0000101>
 #|-| [io][open] <db/db.0000103>
+#|-| [io][open] <db/db.0000102>
 #|n| DDL:258:obj_remove Data.tags
 #|-| [io][close] <db/db.0000102>
 #|n| spec:258:remove:Data.tags:65(column:var_size)
 #|n| [db][wal][recover] succeeded to rebuild broken column: <Data.tags>(259)
 #|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000101>
 log_level --level notice
 [[0,0.0,0.0],true]
 dump

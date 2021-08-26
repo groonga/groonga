@@ -7,7 +7,7 @@
 #$GROONGA_ALLOW_DATABASE_REOPEN=yes
 #$GRN_WAL_ROLE=primary
 
-table_create Data TABLE_DAT_KEY ShortText
+table_create Data TABLE_PAT_KEY ShortText
 column_create Data content COLUMN_SCALAR ShortText
 
 load --table Data
@@ -18,6 +18,11 @@ load --table Data
 ]
 
 delete Data --key abc
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC130
+column_create Terms data_content COLUMN_INDEX|WITH_POSITION Data content
 
 dump
 
@@ -33,3 +38,10 @@ _database_reopen
 log_level --level notice
 
 dump
+
+index_column_diff Terms data_content
+
+select Data \
+  --match_columns 'content * 2' \
+  --query e \
+  --output_columns _id,_key,content,_score

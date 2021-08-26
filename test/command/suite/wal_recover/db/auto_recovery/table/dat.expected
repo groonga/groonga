@@ -1,22 +1,25 @@
 table_create Data TABLE_DAT_KEY ShortText
 [[0,0.0,0.0],true]
+column_create Data content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
 load --table Data
 [
-{"_key": "a"},
-{"_key": "abcdefg"},
-{"_key": "abcdefghijklmn"}
+{"_key": "a",      "content": "a"},
+{"_key": "abc",    "content": "a and b and c"},
+{"_key": "abcdef", "content": "a and b and c and d and e and f"}
 ]
 [[0,0.0,0.0],3]
-delete Data --key abcdefg
+delete Data --key abc
 [[0,0.0,0.0],true]
 dump
 table_create Data TABLE_DAT_KEY ShortText
+column_create Data content COLUMN_SCALAR ShortText
 
 load --table Data
 [
-["_key"],
-["a"],
-["abcdefghijklmn"]
+["_key","content"],
+["a","a"],
+["abcdef","a and b and c and d and e and f"]
 ]
 log_level --level dump
 [[0,0.0,0.0],true]
@@ -31,36 +34,64 @@ _database_reopen
 #|-| [io][open] <db/db.0000100>
 #|e| [reader][read-entry][dat][recover][Data] must be map: <positive-integer>(2): path:<db/db.0000100>
 #|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
 #|-| [io][open] <db/db.0000100>
 #|n| [db][wal][recover] rebuild broken table: <Data>(256)
-#|n| DDL:257:table_create #recovering#Data
+#|n| DDL:258:table_create #recovering#Data
+#|-| [io][open] <db/db.0000102>
+#|n| spec:258:update:#recovering#Data:50(table:dat_key):0
+#|-| [io][close] <db/db.0000102>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
 #|-| [io][open] <db/db.0000101>
-#|n| spec:257:update:#recovering#Data:50(table:dat_key):0
+#|n| [db][wal][recover] rebuild broken column: <Data.content>(257)
+#|n| DDL:259:column_create #recovering#Data content
+#|-| [io][open] <db/db.0000103>
+#|n| spec:259:update:#recovering#Data.content:65(column:var_size):14(ShortText)
+#|-| [io][close] <db/db.0000103>
 #|-| [io][close] <db/db.0000101>
+#|-| [io][close] <db/db.0000102>
 #|-| [io][close] <db/db.0000100>
 #|-| [io][open] <db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
 #|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][close] <db/db.0000102>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][open] <db/db.0000100>
 #|n| DDL:256:obj_remove Data
+#|-| [io][open] <db/db.0000101>
+#|n| DDL:257:obj_remove Data.content
+#|-| [io][close] <db/db.0000101>
+#|n| spec:257:remove:Data.content:65(column:var_size)
 #|-| [io][close] <db/db.0000100>
 #|-| [io][open] <db/db.0000100>
 #|-| [io][close] <db/db.0000100>
 #|n| spec:256:remove:Data:50(table:dat_key)
-#|n| [db][wal][recover] succeeded to rebuild broken table: <Data>(257)
-#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000103>
+#|n| [db][wal][recover] succeeded to rebuild broken table: <Data>(258)
+#|-| [io][close] <db/db.0000103>
+#|-| [io][close] <db/db.0000102>
 log_level --level notice
 [[0,0.0,0.0],true]
 dump
 table_create Data TABLE_DAT_KEY ShortText
+column_create Data content COLUMN_SCALAR ShortText
 
 load --table Data
 [
-["_key"],
-["a"],
-["abcdefghijklmn"]
+["_key","content"],
+["a","a"],
+["abcdef","a and b and c and d and e and f"]
 ]

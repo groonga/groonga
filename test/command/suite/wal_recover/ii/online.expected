@@ -96,6 +96,12 @@ _database_reopen
 #|-| [io][close] <db/db.0000103>
 #|-| [io][close] <db/db.0000103.c>
 #|-| [io][close] <db/db.0000102>
+#|-| [io][open] <db/db.0000100>
+#|-| [io][close] <db/db.0000100>
+#|-| [io][open] <db/db.0000101>
+#|-| [io][close] <db/db.0000101>
+#|-| [io][open] <db/db.0000102>
+#|-| [io][close] <db/db.0000102>
 #|-| [io][open] <db/db.0000102>
 #|-| [io][open] <db/db.0000103>
 #|-| [io][open] <db/db.0000103.c>
@@ -137,10 +143,10 @@ _database_reopen
 #|-| [io][close] <db/db.0000103.c>
 #|-| [io][close] <db/db.0000102>
 #|-| [io][open] <db/db.0000102>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
 #|-| [io][open] <db/db.0000104>
 #|-| [io][open] <db/db.0000104.c>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][open] <db/db.0000103.c>
 #|n| DDL:259:obj_remove Terms.memos_content
 #|-| [io][open] <db/db.0000101>
 #|n| spec:257:update:Memos.content:65(column:var_size):15(Text)

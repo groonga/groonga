@@ -8,15 +8,16 @@
 #$GRN_WAL_ROLE=primary
 
 table_create Data TABLE_HASH_KEY ShortText
+column_create Data content COLUMN_SCALAR ShortText
 
 load --table Data
 [
-{"_key": "a"},
-{"_key": "abcdefg"},
-{"_key": "abcdefghijklmn"}
+{"_key": "a",      "content": "a"},
+{"_key": "abc",    "content": "a and b and c"},
+{"_key": "abcdef", "content": "a and b and c and d and e and f"}
 ]
 
-delete Data --key abcdefg
+delete Data --key abc
 
 dump
 

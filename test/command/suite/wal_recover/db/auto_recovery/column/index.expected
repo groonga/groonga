@@ -99,10 +99,10 @@ _database_reopen
 #|-| [io][close] <db/db.0000103.c>
 #|-| [io][close] <db/db.0000100>
 #|-| [io][open] <db/db.0000100>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
 #|-| [io][open] <db/db.0000104>
 #|-| [io][open] <db/db.0000104.c>
+#|-| [io][open] <db/db.0000103>
+#|-| [io][open] <db/db.0000103.c>
 #|n| DDL:259:obj_remove Terms.data_content
 #|-| [io][open] <db/db.0000102>
 #|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)

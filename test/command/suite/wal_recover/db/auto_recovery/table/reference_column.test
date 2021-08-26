@@ -7,17 +7,24 @@
 #$GROONGA_ALLOW_DATABASE_REOPEN=yes
 #$GRN_WAL_ROLE=primary
 
-table_create Data TABLE_DAT_KEY ShortText
-column_create Data content COLUMN_SCALAR ShortText
+table_create Data TABLE_PAT_KEY ShortText
 
 load --table Data
 [
-{"_key": "a",      "content": "a"},
-{"_key": "abc",    "content": "a and b and c"},
-{"_key": "abcdef", "content": "a and b and c and d and e and f"}
+{"_key": "a"},
+{"_key": "abcdefg"},
+{"_key": "abcdefghijklmn"}
 ]
 
-delete Data --key abc
+delete Data --key abcdefg
+
+table_create Referer TABLE_HASH_KEY ShortText
+column_create Referer data COLUMN_SCALAR Data
+
+load --table Referer
+[
+{"_key": "123", "data": "a"}
+]
 
 dump
 

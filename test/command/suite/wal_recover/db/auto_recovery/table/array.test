@@ -7,17 +7,17 @@
 #$GROONGA_ALLOW_DATABASE_REOPEN=yes
 #$GRN_WAL_ROLE=primary
 
-table_create Data TABLE_DAT_KEY ShortText
+table_create Data TABLE_NO_KEY
 column_create Data content COLUMN_SCALAR ShortText
 
 load --table Data
 [
-{"_key": "a",      "content": "a"},
-{"_key": "abc",    "content": "a and b and c"},
-{"_key": "abcdef", "content": "a and b and c and d and e and f"}
+{"content": "a"},
+{"content": "a and b and c"},
+{"content": "a and b and c and d and e and f"}
 ]
 
-delete Data --key abc
+delete Data --id 2
 
 dump
 
