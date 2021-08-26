@@ -11255,7 +11255,7 @@ _grn_obj_remove(grn_ctx *ctx, grn_obj *obj, grn_bool dependent)
     space = ctx->impl->temporary_open_spaces.current;
     if (space) {
       unsigned int i, n_elements;
-      n_elements = GRN_BULK_VSIZE(space) / sizeof(grn_obj *);
+      n_elements = GRN_PTR_VECTOR_SIZE(space);
       for (i = 0; i < n_elements; i++) {
         if (GRN_PTR_VALUE_AT(space, i) == obj) {
           GRN_PTR_VALUE_AT(space, i) = NULL;
@@ -12288,7 +12288,7 @@ grn_pvector_fin(grn_ctx *ctx, grn_obj *obj)
      * because grn_obj_close is a DB API function.
      */
     unsigned int i, n_elements;
-    n_elements = GRN_BULK_VSIZE(obj) / sizeof(grn_obj *);
+    n_elements = GRN_PTR_VECTOR_SIZE(obj);
     for (i = 0; i < n_elements; i++) {
       grn_obj *element = GRN_PTR_VALUE_AT(obj, n_elements - i - 1);
       if (element) {
@@ -16195,7 +16195,7 @@ grn_ctx_merge_temporary_open_space(grn_ctx *ctx)
   next_space = ctx->impl->temporary_open_spaces.current - 1;
   {
     unsigned int i, n_elements;
-    n_elements = GRN_BULK_VSIZE(space) / sizeof(grn_obj *);
+    n_elements = GRN_PTR_VECTOR_SIZE(space);
     for (i = 0; i < n_elements; i++) {
       grn_obj *element = GRN_PTR_VALUE_AT(space, i);
       GRN_PTR_PUT(ctx, next_space, element);
