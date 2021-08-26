@@ -123,6 +123,56 @@ grn_table_find_reference_object(grn_ctx *ctx, grn_obj *table)
 }
 
 static void
+grn_table_copy_array(grn_ctx *ctx, grn_obj *from, grn_obj *to)
+{
+  grn_obj missing_ids;
+  GRN_RECORD_INIT(&missing_ids, GRN_OBJ_VECTOR, DB_OBJ(from)->id);
+  grn_id previous_from_id = GRN_ID_NIL;
+  GRN_TABLE_EACH_BEGIN(ctx, from, cursor, from_id) {
+    for (; previous_from_id < from_id - 1; previous_from_id++) {
+      grn_id to_id = grn_table_add(ctx, to, NULL, 0, NULL);
+      if (to_id != previous_from_id + 1) {
+        GRN_DEFINE_NAME_CUSTOM(from, from_name);
+        GRN_DEFINE_NAME_CUSTOM(to, to_name);
+        ERR(GRN_INVALID_ARGUMENT,
+            "[table][copy] failed to assign ID for deleted record: "
+            "<%u> != <%u>: <%.*s> -> <%.*s>",
+            to_id,
+            previous_from_id + 1,
+            from_name_size, from_name,
+            to_name_size, to_name);
+        break;
+      }
+      GRN_RECORD_PUT(ctx, &missing_ids, to_id);
+    }
+    grn_id to_id = grn_table_add(ctx, to, NULL, 0, NULL);
+    if (to_id == GRN_ID_NIL) {
+      GRN_DEFINE_NAME_CUSTOM(from, from_name);
+      GRN_DEFINE_NAME_CUSTOM(to, to_name);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[table][copy] failed to add a record for ID: <%u>: "
+          "<%.*s> -> <%.*s>",
+          from_id,
+          from_name_size, from_name,
+          to_name_size, to_name);
+      break;
+    }
+    previous_from_id = from_id;
+  } GRN_TABLE_EACH_END(ctx, cursor);
+
+  if (ctx->rc == GRN_SUCCESS) {
+    size_t n_missing_ids = GRN_RECORD_VECTOR_SIZE(&missing_ids);
+    size_t i;
+    for (i = 0; i < n_missing_ids; i++) {
+      grn_id missing_id = GRN_RECORD_VALUE_AT(&missing_ids, i);
+      grn_table_delete_by_id(ctx, to, missing_id);
+    }
+  }
+
+  GRN_OBJ_FIN(ctx, &missing_ids);
+}
+
+static void
 grn_table_copy_same_key_type(grn_ctx *ctx, grn_obj *from, grn_obj *to)
 {
   GRN_TABLE_EACH_BEGIN_FLAGS(ctx, from, cursor, from_id,
@@ -266,8 +316,21 @@ grn_table_copy(grn_ctx *ctx, grn_obj *from, grn_obj *to)
 {
   GRN_API_ENTER;
 
-  if (from->header.type == GRN_TABLE_NO_KEY ||
-      to->header.type == GRN_TABLE_NO_KEY) {
+  if (from == to) {
+    char from_name[GRN_TABLE_MAX_KEY_SIZE];
+    int from_name_size;
+
+    from_name_size = grn_obj_name(ctx, from, from_name, sizeof(from_name));
+    ERR(GRN_OPERATION_NOT_SUPPORTED,
+        "[table][copy] from table and to table is the same: "
+        "<%.*s>",
+        from_name_size, from_name);
+    goto exit;
+  }
+
+  if ((from->header.type == GRN_TABLE_NO_KEY ||
+       to->header.type == GRN_TABLE_NO_KEY) &&
+      from->header.type != to->header.type) {
     char from_name[GRN_TABLE_MAX_KEY_SIZE];
     int from_name_size;
     char to_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -283,19 +346,9 @@ grn_table_copy(grn_ctx *ctx, grn_obj *from, grn_obj *to)
     goto exit;
   }
 
-  if (from == to) {
-    char from_name[GRN_TABLE_MAX_KEY_SIZE];
-    int from_name_size;
-
-    from_name_size = grn_obj_name(ctx, from, from_name, sizeof(from_name));
-    ERR(GRN_OPERATION_NOT_SUPPORTED,
-        "[table][copy] from table and to table is the same: "
-        "<%.*s>",
-        from_name_size, from_name);
-    goto exit;
-  }
-
-  if (from->header.domain == to->header.domain) {
+  if (from->header.type == GRN_TABLE_NO_KEY) {
+    grn_table_copy_array(ctx, from, to);
+  } else if (from->header.domain == to->header.domain) {
     grn_table_copy_same_key_type(ctx, from, to);
   } else {
     grn_table_copy_different(ctx, from, to);

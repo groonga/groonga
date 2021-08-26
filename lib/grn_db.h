@@ -58,26 +58,29 @@ extern "C" {
 
 #define DB_OBJ(obj) ((grn_db_obj *)obj)
 
-#define GRN_DEFINE_NAME(obj)                                            \
-  const char *name;                                                     \
-  char name_buffer[GRN_TABLE_MAX_KEY_SIZE];                             \
-  int name_size;                                                        \
+#define GRN_DEFINE_NAME_CUSTOM(obj, prefix)                             \
+  const char *prefix;                                                   \
+  char prefix ## _buffer[GRN_TABLE_MAX_KEY_SIZE];                       \
+  int prefix ## _size;                                                  \
   do {                                                                  \
     if (DB_OBJ(obj)->id == GRN_ID_NIL) {                                \
-      name = "(temporary)";                                             \
-      name_size = strlen(name);                                         \
+      prefix = "(temporary)";                                           \
+      prefix ## _size = strlen(prefix);                                 \
     } else {                                                            \
-      name_size = grn_obj_name(ctx, (grn_obj *)obj,                     \
-                               name_buffer, GRN_TABLE_MAX_KEY_SIZE);    \
-      name = name_buffer;                                               \
-      if (name_size == 0) {                                             \
-        name = "(anonymous)";                                           \
-        name_size = strlen(name);                                       \
-      } else if (name_size < GRN_TABLE_MAX_KEY_SIZE) {                  \
-        name_buffer[name_size] = '\0';                                  \
+      prefix ## _size = grn_obj_name(ctx, (grn_obj *)obj,               \
+                                     prefix ## _buffer,                 \
+                                     GRN_TABLE_MAX_KEY_SIZE);           \
+      prefix = prefix ## _buffer;                                       \
+      if (prefix ## _size == 0) {                                       \
+        prefix = "(anonymous)";                                         \
+        prefix ## _size = strlen(prefix);                               \
+      } else if (prefix ## _size < GRN_TABLE_MAX_KEY_SIZE) {            \
+        prefix ## _buffer[prefix ## _size] = '\0';                      \
       }                                                                 \
     }                                                                   \
   } while (false)
+
+#define GRN_DEFINE_NAME(obj) GRN_DEFINE_NAME_CUSTOM(obj, name)
 
 extern bool grn_enable_reference_count;
 

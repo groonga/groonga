@@ -1,0 +1,16 @@
+table_create Logs TABLE_NO_KEY
+
+load --table Logs
+[
+{},
+{},
+{}
+]
+
+delete Logs --id 2
+
+table_create ApplicationLogs TABLE_NO_KEY
+
+table_copy Logs ApplicationLogs
+
+dump
