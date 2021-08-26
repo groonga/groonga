@@ -27,16 +27,12 @@ delete --table Data --key ABC
 
 dump
 
-log_level --level dump
-
 _database_close
 
 #@copy-path #{db_path}.0000102 #{db_path}.0000102.wal
-#@add-important-log-levels notice dump
+#@add-important-log-levels notice
 _database_reopen
-#@remove-important-log-levels notice dump
-
-log_level --level notice
+#@remove-important-log-levels notice
 
 dump
 

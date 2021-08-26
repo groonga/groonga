@@ -12,41 +12,17 @@ column_create #recovering#Data content COLUMN_SCALAR ShortText
 
 table_create Data TABLE_PAT_KEY ShortText
 column_create Data content COLUMN_SCALAR ShortText
-log_level --level dump
-[[0,0.0,0.0],true]
 _database_close
 [[0,0.0,0.0],true]
 _database_reopen
 [[0,0.0,0.0],true]
-#|-| [io][open] <db/db>
-#|-| [io][open] <db/db.0000000>
-#|-| [io][open] <db/db.conf>
-#|-| [io][open] <db/db.options>
 #|e| [reader][read-entry][dat][recover][(temporary)] must be map: <positive-integer>(2): path:<db/db>
 #|n| [db][wal][recover] rebuild broken DB keys
-#|-| [io][open] <db/db.recovering>
-#|-| [io][close] <db/db.recovering>
-#|-| [io][close] <db/db>
-#|-| [io][open] <db/db>
 #|n| [db][wal][recover] succeeded to rebuild broken DB keys
-#|-| [io][open] <db/db.0000100>
 #|n| DDL:256:obj_remove #recovering#Data
-#|-| [io][open] <db/db.0000101>
 #|n| DDL:257:obj_remove #recovering#Data.content
-#|-| [io][close] <db/db.0000101>
 #|n| spec:257:remove:#recovering#Data.content:65(column:var_size)
-#|-| [io][close] <db/db.0000100>
 #|n| spec:256:remove:#recovering#Data:49(table:pat_key)
-#|-| [io][open] <db/db.0000102>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][close] <db/db.0000103>
-log_level --level notice
-[[0,0.0,0.0],true]
 dump
 table_create Data TABLE_PAT_KEY ShortText
 column_create Data content COLUMN_SCALAR ShortText

@@ -332,33 +332,13 @@ schema
     }
   }
 ]
-log_level --level dump
-[[0,0.0,0.0],true]
 _database_close
 [[0,0.0,0.0],true]
 _database_reopen
 [[0,0.0,0.0],true]
-#|-| [io][open] <db/db>
-#|-| [io][open] <db/db.0000000>
-#|-| [io][open] <db/db.conf>
-#|-| [io][open] <db/db.options>
 #|e| [reader][read-entry][dat][recover][(temporary)] must be map: <positive-integer>(2): path:<db/db>
 #|n| [db][wal][recover] rebuild broken DB keys
-#|-| [io][open] <db/db.recovering>
-#|-| [io][close] <db/db.recovering>
-#|-| [io][close] <db/db>
-#|-| [io][open] <db/db>
 #|n| [db][wal][recover] succeeded to rebuild broken DB keys
-#|-| [io][open] <db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][close] <db/db.0000102>
-log_level --level notice
-[[0,0.0,0.0],true]
 schema
 [
   [

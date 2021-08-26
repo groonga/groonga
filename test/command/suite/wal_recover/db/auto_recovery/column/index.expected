@@ -29,93 +29,23 @@ load --table Data
 ]
 
 column_create Terms data_content COLUMN_INDEX|WITH_POSITION Data content
-log_level --level dump
-[[0,0.0,0.0],true]
 _database_close
 [[0,0.0,0.0],true]
 _database_reopen
 [[0,0.0,0.0],true]
-#|-| [io][open] <db/db>
-#|-| [io][open] <db/db.0000000>
-#|-| [io][open] <db/db.conf>
-#|-| [io][open] <db/db.options>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
 #|e| [ii][wal][recover][Terms.data_content] not implemented: path:<db/db.0000103>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
 #|n| [db][wal][recover] rebuild broken column: <Terms.data_content>(259)
-#|-| [io][open] <db/db.0000101>
 #|n| DDL:260:column_create Terms #recovering#data_content
-#|-| [io][open] <db/db.0000104>
-#|-| [io][open] <db/db.0000104.c>
 #|n| spec:260:update:Terms.#recovering#data_content:72(column:index):257(Data)
-#|-| [io][open] <db/db.0000102>
 #|n| DDL:260:set_source Terms.#recovering#data_content Data.content
 #|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)
 #|n| DDL:2147483649:set_normalizers NormalizerNFKC130
 #|n| DDL:2147483649:set_normalizers NormalizerNFKC130
 #|n| spec:260:update:Terms.#recovering#data_content:72(column:index):257(Data)
-#|-| [io][close] <db/db.0000102>
-#|-| [io][close] <db/db.0000104>
-#|-| [io][close] <db/db.0000104.c>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][open] <db/db.0000104>
-#|-| [io][open] <db/db.0000104.c>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
 #|n| DDL:259:obj_remove Terms.data_content
-#|-| [io][open] <db/db.0000102>
 #|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000103.c>
 #|n| spec:259:remove:Terms.data_content:72(column:index)
 #|n| [db][wal][recover] succeeded to rebuild broken column: <Terms.data_content>(260)
-#|-| [io][close] <db/db.0000102>
-#|-| [io][close] <db/db.0000104>
-#|-| [io][close] <db/db.0000104.c>
-#|-| [io][close] <db/db.0000100>
-log_level --level notice
-[[0,0.0,0.0],true]
 dump
 table_create Data TABLE_PAT_KEY ShortText
 column_create Data content COLUMN_SCALAR ShortText

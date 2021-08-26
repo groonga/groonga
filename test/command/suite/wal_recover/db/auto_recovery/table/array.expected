@@ -23,68 +23,22 @@ load --table Data
 [3,"a and b and c and d and e and f"]
 ]
 delete --table Data --id 2
-log_level --level dump
-[[0,0.0,0.0],true]
 _database_close
 [[0,0.0,0.0],true]
 _database_reopen
 [[0,0.0,0.0],true]
-#|-| [io][open] <db/db>
-#|-| [io][open] <db/db.0000000>
-#|-| [io][open] <db/db.conf>
-#|-| [io][open] <db/db.options>
-#|-| [io][open] <db/db.0000100>
 #|e| [array][wal][recover][Data] not implemented: path:<db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][open] <db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][open] <db/db.0000100>
 #|n| [db][wal][recover] rebuild broken table: <Data>(256)
 #|n| DDL:258:table_create #recovering#Data
-#|-| [io][open] <db/db.0000102>
 #|n| spec:258:update:#recovering#Data:51(table:no_key):0
-#|-| [io][close] <db/db.0000102>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][open] <db/db.0000101>
 #|n| [db][wal][recover] rebuild broken column: <Data.content>(257)
 #|n| DDL:259:column_create #recovering#Data content
-#|-| [io][open] <db/db.0000103>
 #|n| spec:259:update:#recovering#Data.content:65(column:var_size):14(ShortText)
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][open] <db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][open] <db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][open] <db/db.0000100>
 #|n| DDL:256:obj_remove Data
-#|-| [io][open] <db/db.0000101>
 #|n| DDL:257:obj_remove Data.content
-#|-| [io][close] <db/db.0000101>
 #|n| spec:257:remove:Data.content:65(column:var_size)
-#|-| [io][close] <db/db.0000100>
 #|n| spec:256:remove:Data:51(table:no_key)
-#|-| [io][open] <db/db.0000103>
 #|n| [db][wal][recover] succeeded to rebuild broken table: <Data>(258)
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000102>
-log_level --level notice
-[[0,0.0,0.0],true]
 dump
 table_create Data TABLE_NO_KEY
 column_create Data content COLUMN_SCALAR ShortText

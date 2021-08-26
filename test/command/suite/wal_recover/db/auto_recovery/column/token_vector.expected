@@ -41,65 +41,21 @@ load --table Terms
 ["e"],
 ["f"]
 ]
-log_level --level dump
-[[0,0.0,0.0],true]
 _database_close
 [[0,0.0,0.0],true]
 _database_reopen
 [[0,0.0,0.0],true]
-#|-| [io][open] <db/db>
-#|-| [io][open] <db/db.0000000>
-#|-| [io][open] <db/db.conf>
-#|-| [io][open] <db/db.options>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000103>
 #|e| [reader][read-entry][ja][recover][Data.content_terms] must be map: <positive-integer>(2): path:<db/db.0000103>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][open] <db/db.0000103>
 #|n| [db][wal][recover] rebuild broken column: <Data.content_terms>(259)
-#|-| [io][open] <db/db.0000101>
-#|-| [io][open] <db/db.0000100>
 #|n| DDL:260:column_create Data #recovering#content_terms
-#|-| [io][open] <db/db.0000104>
 #|n| spec:260:update:Data.#recovering#content_terms:65(column:var_size):256(Terms)
-#|-| [io][open] <db/db.0000102>
 #|n| DDL:260:set_source Data.#recovering#content_terms Data.content
 #|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)
 #|n| spec:260:update:Data.#recovering#content_terms:65(column:var_size):256(Terms)
-#|-| [io][close] <db/db.0000102>
-#|-| [io][close] <db/db.0000104>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][open] <db/db.0000104>
-#|-| [io][open] <db/db.0000103>
 #|n| DDL:259:obj_remove Data.content_terms
-#|-| [io][open] <db/db.0000102>
 #|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)
-#|-| [io][close] <db/db.0000103>
 #|n| spec:259:remove:Data.content_terms:65(column:var_size)
 #|n| [db][wal][recover] succeeded to rebuild broken column: <Data.content_terms>(260)
-#|-| [io][close] <db/db.0000102>
-#|-| [io][close] <db/db.0000104>
-log_level --level notice
-[[0,0.0,0.0],true]
 select Data
 [
   [

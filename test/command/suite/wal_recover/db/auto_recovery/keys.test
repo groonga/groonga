@@ -14,15 +14,11 @@ column_remove Data number
 
 schema
 
-log_level --level dump
-
 _database_close
 
 #@copy-path #{db_path} #{db_path}.wal
-#@add-important-log-levels notice dump
+#@add-important-log-levels notice
 _database_reopen
-#@remove-important-log-levels notice dump
-
-log_level --level notice
+#@remove-important-log-levels notice
 
 schema

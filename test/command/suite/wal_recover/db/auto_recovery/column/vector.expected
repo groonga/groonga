@@ -21,47 +21,17 @@ load --table Data
 ["abc",["A","B","C"]],
 ["abcdef",["F"]]
 ]
-log_level --level dump
-[[0,0.0,0.0],true]
 _database_close
 [[0,0.0,0.0],true]
 _database_reopen
 [[0,0.0,0.0],true]
-#|-| [io][open] <db/db>
-#|-| [io][open] <db/db.0000000>
-#|-| [io][open] <db/db.conf>
-#|-| [io][open] <db/db.options>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000101>
 #|e| [reader][read-entry][ja][recover][Data.tags] must be map: <positive-integer>(2): path:<db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][open] <db/db.0000101>
 #|n| [db][wal][recover] rebuild broken column: <Data.tags>(257)
-#|-| [io][open] <db/db.0000100>
 #|n| DDL:258:column_create Data #recovering#tags
-#|-| [io][open] <db/db.0000102>
 #|n| spec:258:update:Data.#recovering#tags:65(column:var_size):14(ShortText)
-#|-| [io][close] <db/db.0000102>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][open] <db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][open] <db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][open] <db/db.0000101>
 #|n| DDL:257:obj_remove Data.tags
-#|-| [io][close] <db/db.0000101>
 #|n| spec:257:remove:Data.tags:65(column:var_size)
 #|n| [db][wal][recover] succeeded to rebuild broken column: <Data.tags>(258)
-#|-| [io][close] <db/db.0000102>
-log_level --level notice
-[[0,0.0,0.0],true]
 dump
 table_create Data TABLE_PAT_KEY ShortText
 column_create Data tags COLUMN_VECTOR ShortText
