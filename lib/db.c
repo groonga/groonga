@@ -12143,6 +12143,24 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                           spec->header.type,
                           grn_obj_type_to_string(spec->header.type));
                 }
+
+                switch (vp->ptr->header.type) {
+                case GRN_TABLE_HASH_KEY :
+                case GRN_TABLE_PAT_KEY :
+                case GRN_TABLE_DAT_KEY :
+                case GRN_TABLE_NO_KEY :
+                case GRN_COLUMN_FIX_SIZE :
+                case GRN_COLUMN_VAR_SIZE :
+                case GRN_COLUMN_INDEX :
+                  {
+                    grn_obj *space;
+                    space = ctx->impl->temporary_open_spaces.current;
+                    if (space) {
+                      GRN_PTR_PUT(ctx, space, vp->ptr);
+                    }
+                  }
+                  break;
+                }
               } else {
                 const char *name;
                 uint32_t name_size = 0;
@@ -12185,25 +12203,6 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
           }
           if (!grn_enable_reference_count) {
             grn_db_value_unlock(ctx, id, vp);
-          }
-        }
-        if (vp->ptr) {
-          switch (vp->ptr->header.type) {
-          case GRN_TABLE_HASH_KEY :
-          case GRN_TABLE_PAT_KEY :
-          case GRN_TABLE_DAT_KEY :
-          case GRN_TABLE_NO_KEY :
-          case GRN_COLUMN_FIX_SIZE :
-          case GRN_COLUMN_VAR_SIZE :
-          case GRN_COLUMN_INDEX :
-            {
-              grn_obj *space;
-              space = ctx->impl->temporary_open_spaces.current;
-              if (space) {
-                GRN_PTR_PUT(ctx, space, vp->ptr);
-              }
-            }
-            break;
           }
         }
       }
