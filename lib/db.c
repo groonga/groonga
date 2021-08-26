@@ -807,7 +807,8 @@ grn_column_create_similar_internal(grn_ctx *ctx,
         GRN_OBJ_FIN(ctx, &source_ids);
       }
       GRN_OBJ_FIN(ctx, &base_source_ids);
-      if (!ctx->rc != GRN_SUCCESS) {
+      if (ctx->rc != GRN_SUCCESS) {
+        grn_obj_remove(ctx, column);
         return NULL;
       }
     }
