@@ -1894,7 +1894,7 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   hash->io = io;
   hash->header.common = header;
   hash->lock = &header->lock;
-  hash->wal_data = GRN_MALLOC(sizeof(grn_hash_wal_add_entry_data));
+  hash->wal_data = GRN_CALLOC(sizeof(grn_hash_wal_add_entry_data));
   hash->wal_data->hash = hash;
   grn_table_module_init(ctx, &(hash->tokenizer), GRN_ID_NIL);
   return GRN_SUCCESS;
@@ -2024,7 +2024,7 @@ grn_hash_open(grn_ctx *ctx, const char *path)
             hash->io = io;
             hash->header.common = header;
             hash->lock = &header->lock;
-            hash->wal_data = GRN_MALLOC(sizeof(grn_hash_wal_add_entry_data));
+            hash->wal_data = GRN_CALLOC(sizeof(grn_hash_wal_add_entry_data));
             hash->wal_data->hash = hash;
             grn_table_module_init(ctx, &(hash->tokenizer), header->tokenizer);
             grn_table_modules_init(ctx, &(hash->normalizers));
@@ -2573,17 +2573,25 @@ grn_hash_wal_add_entry_format_deatils(grn_ctx *ctx,
   }
 }
 
+grn_inline static bool
+grn_hash_wal_need(grn_ctx *ctx, grn_hash *hash)
+{
+  if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {
+    return false;
+  }
+  if (!hash->io) {
+    return false;
+  }
+  if (hash->io->path[0] == '\0') {
+    return false;
+  }
+  return true;
+}
+
 grn_inline static grn_rc
 grn_hash_wal_add_entry(grn_ctx *ctx, grn_hash_wal_add_entry_data *data)
 {
-  if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {
-    return GRN_SUCCESS;
-  }
-
-  if (!data->hash->io) {
-    return GRN_SUCCESS;
-  }
-  if (data->hash->io->path[0] == '\0') {
+  if (!grn_hash_wal_need(ctx, data->hash)) {
     return GRN_SUCCESS;
   }
 
@@ -2652,7 +2660,10 @@ grn_hash_wal_add_entry(grn_ctx *ctx, grn_hash_wal_add_entry_data *data)
 grn_inline static void
 grn_hash_wal_set_wal_id(grn_ctx *ctx, grn_hash *hash, uint64_t wal_id)
 {
-  if (!grn_hash_is_io_hash(hash)) {
+  if (wal_id == 0) {
+    return;
+  }
+  if (!grn_hash_wal_need(ctx, hash)) {
     return;
   }
   hash->header.common->wal_id = wal_id;
@@ -2978,8 +2989,11 @@ grn_io_hash_add(grn_ctx *ctx,
   wal_data->tag = "[hash][io][add]";
   wal_data->key = key;
   wal_data->key_size = key_size;
-  wal_data->key_hash_value = hash_value;
-  wal_data->index_hash_value = index_hash_value;
+  const bool need_wal = grn_hash_wal_need(ctx, hash);
+  if (need_wal) {
+    wal_data->key_hash_value = hash_value;
+    wal_data->index_hash_value = index_hash_value;
+  }
 
   grn_id *garbages;
   if (GRN_HASH_IS_LARGE_KEY(hash)) {
@@ -2992,12 +3006,14 @@ grn_io_hash_add(grn_ctx *ctx,
   uint32_t garbage_index = key_size - 1;
   grn_id garbage_id = garbages[garbage_index];
   if (garbage_id != GRN_ID_NIL) {
-    wal_data->event = GRN_WAL_EVENT_REUSE_ENTRY;
     wal_data->record_id = garbage_id;
-    wal_data->n_garbages = *(hash->n_garbages);
-    wal_data->n_entries = *(hash->n_entries);
-    if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
-      return GRN_ID_NIL;
+    if (need_wal) {
+      wal_data->event = GRN_WAL_EVENT_REUSE_ENTRY;
+      wal_data->n_garbages = *(hash->n_garbages);
+      wal_data->n_entries = *(hash->n_entries);
+      if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
+        return GRN_ID_NIL;
+      }
     }
     entry = grn_io_hash_reuse_entry(ctx,
                                     hash,
@@ -3008,10 +3024,12 @@ grn_io_hash_add(grn_ctx *ctx,
     if (!entry) {
       return GRN_ID_NIL;
     }
-    wal_data->event = GRN_WAL_EVENT_RESET_ENTRY;
     wal_data->next_garbage_record_id = *((grn_id *)entry);
-    if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
-      return GRN_ID_NIL;
+    if (need_wal) {
+      wal_data->event = GRN_WAL_EVENT_RESET_ENTRY;
+      if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
+        return GRN_ID_NIL;
+      }
     }
     grn_io_hash_reset_entry(ctx,
                             hash,
@@ -3020,11 +3038,13 @@ grn_io_hash_add(grn_ctx *ctx,
                             wal_data->key_size,
                             wal_data->tag);
   } else {
-    wal_data->event = GRN_WAL_EVENT_ADD_ENTRY;
     wal_data->record_id = header->curr_rec + 1;
-    wal_data->n_entries = *(hash->n_entries);
-    if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
-      return GRN_ID_NIL;
+    if (need_wal) {
+      wal_data->event = GRN_WAL_EVENT_ADD_ENTRY;
+      wal_data->n_entries = *(hash->n_entries);
+      if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
+        return GRN_ID_NIL;
+      }
     }
     entry = grn_io_hash_add_entry(ctx,
                                   hash,
@@ -3036,22 +3056,26 @@ grn_io_hash_add(grn_ctx *ctx,
     }
   }
 
-  wal_data->event = GRN_WAL_EVENT_ENABLE_ENTRY;
-  if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
-    return GRN_ID_NIL;
+  if (need_wal) {
+    wal_data->event = GRN_WAL_EVENT_ENABLE_ENTRY;
+    if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
+      return GRN_ID_NIL;
+    }
   }
   if (!grn_io_hash_enable_entry(ctx, hash, wal_data->record_id, wal_data->tag)) {
     return GRN_ID_NIL;
   }
 
-  wal_data->event = GRN_WAL_EVENT_SET_ENTRY_KEY;
-  if (grn_hash_is_large_total_key_size(ctx, hash)) {
-    wal_data->key_offset = header->curr_key_large;
-  } else {
-    wal_data->key_offset = header->curr_key_normal;
-  }
-  if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
-    goto exit;
+  if (need_wal) {
+    wal_data->event = GRN_WAL_EVENT_SET_ENTRY_KEY;
+    if (grn_hash_is_large_total_key_size(ctx, hash)) {
+      wal_data->key_offset = header->curr_key_large;
+    } else {
+      wal_data->key_offset = header->curr_key_normal;
+    }
+    if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
+      goto exit;
+    }
   }
   grn_rc rc = grn_hash_entry_put_key(ctx,
                                      hash,
@@ -3077,6 +3101,10 @@ grn_io_hash_add(grn_ctx *ctx,
 
   if (value) {
     *value = grn_hash_entry_get_value(ctx, hash, entry);
+  }
+
+  if (need_wal) {
+    grn_hash_wal_set_wal_id(ctx, hash, wal_data->wal_id);
   }
 
 exit :
@@ -3157,13 +3185,16 @@ grn_hash_ensure_rehash(grn_ctx *ctx,
   }
 
   grn_hash_wal_add_entry_data *wal_data = hash->wal_data;
+  const bool need_wal = grn_hash_wal_need(ctx, hash);
   wal_data->tag = tag;
-  wal_data->event = GRN_WAL_EVENT_REHASH;
   wal_data->n_entries = *(hash->n_entries);
   wal_data->max_offset = *(hash->max_offset);
   wal_data->expected_n_entries = 0;
-  if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
-    return ctx->rc;
+  if (need_wal) {
+    wal_data->event = GRN_WAL_EVENT_REHASH;
+    if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
+      return ctx->rc;
+    }
   }
   grn_rc rc = grn_hash_rehash(ctx, hash, wal_data->expected_n_entries);
   if (rc != GRN_SUCCESS) {
@@ -3179,7 +3210,9 @@ grn_hash_ensure_rehash(grn_ctx *ctx,
                       wal_data->max_offset);
     return rc;
   }
-  grn_hash_wal_set_wal_id(ctx, hash, wal_data->wal_id);
+  if (need_wal) {
+    grn_hash_wal_set_wal_id(ctx, hash, wal_data->wal_id);
+  }
 
   return GRN_SUCCESS;
 }
@@ -3949,6 +3982,9 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
     return ctx->rc;
   }
   grn_hash_set_value_raw(ctx, hash, entry_value, wal_data->value);
+  if (ctx->rc == GRN_SUCCESS && grn_hash_wal_need(ctx, hash)) {
+    grn_hash_wal_set_wal_id(ctx, hash, wal_data->wal_id);
+  }
   return ctx->rc;
 }
 
@@ -3997,7 +4033,8 @@ grn_inline static grn_rc
 grn_hash_delete_internal(grn_ctx *ctx, grn_hash_delete_data *data)
 {
   grn_hash_wal_add_entry_data *wal_data = data->hash->wal_data;
-  if (wal_data) {
+  const bool need_wal = grn_hash_wal_need(ctx, data->hash);
+  if (need_wal) {
     wal_data->tag = data->tag;
     wal_data->event = GRN_WAL_EVENT_DELETE_ENTRY;
     wal_data->record_id = data->id;
@@ -4010,7 +4047,7 @@ grn_hash_delete_internal(grn_ctx *ctx, grn_hash_delete_data *data)
     }
   }
   grn_rc rc = grn_hash_delete_entry(ctx, data);
-  if (wal_data && rc == GRN_SUCCESS) {
+  if (rc == GRN_SUCCESS && need_wal) {
     grn_hash_wal_set_wal_id(ctx, data->hash, wal_data->wal_id);
   }
   return ctx->rc;
