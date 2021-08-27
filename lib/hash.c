@@ -3061,12 +3061,6 @@ grn_io_hash_add(grn_ctx *ctx,
     if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
       return GRN_ID_NIL;
     }
-  }
-  if (!grn_io_hash_enable_entry(ctx, hash, wal_data->record_id, wal_data->tag)) {
-    return GRN_ID_NIL;
-  }
-
-  if (need_wal) {
     wal_data->event = GRN_WAL_EVENT_SET_ENTRY_KEY;
     if (grn_hash_is_large_total_key_size(ctx, hash)) {
       wal_data->key_offset = header->curr_key_large;
@@ -3074,8 +3068,11 @@ grn_io_hash_add(grn_ctx *ctx,
       wal_data->key_offset = header->curr_key_normal;
     }
     if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
-      goto exit;
+      return GRN_ID_NIL;
     }
+  }
+  if (!grn_io_hash_enable_entry(ctx, hash, wal_data->record_id, wal_data->tag)) {
+    return GRN_ID_NIL;
   }
   grn_rc rc = grn_hash_entry_put_key(ctx,
                                      hash,
