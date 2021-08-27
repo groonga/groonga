@@ -213,6 +213,8 @@ typedef struct _grn_hash_header_common grn_hash_header_common;
 typedef struct _grn_hash_header_normal grn_hash_header_normal;
 typedef struct _grn_hash_header_large  grn_hash_header_large;
 
+typedef struct _grn_hash_wal_add_entry_data grn_hash_wal_add_entry_data;
+
 struct _grn_hash {
   grn_db_obj obj;
   grn_ctx *ctx;
@@ -249,6 +251,7 @@ struct _grn_hash {
   // int limit;
   // void *userdata;
   // grn_id subrec_id;
+  grn_hash_wal_add_entry_data *wal_data;
 
   /* For grn_tiny_hash. */
   uint32_t max_offset_;
