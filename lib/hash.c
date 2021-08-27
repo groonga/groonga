@@ -2111,6 +2111,7 @@ grn_io_hash_fin(grn_ctx *ctx, grn_hash *hash)
     grn_obj_flush(ctx, (grn_obj *)hash);
   }
   rc = grn_io_close(ctx, hash->io);
+  GRN_FREE(hash->wal_data);
   grn_table_module_fin(ctx, &(hash->tokenizer));
   grn_table_modules_fin(ctx, &(hash->normalizers));
   grn_hash_close_token_filters(ctx, hash);
@@ -2124,6 +2125,7 @@ grn_tiny_hash_fin(grn_ctx *ctx, grn_hash *hash)
     return GRN_INVALID_ARGUMENT;
   }
 
+  GRN_FREE(hash->wal_data);
   grn_table_module_fin(ctx, &(hash->tokenizer));
   grn_table_modules_fin(ctx, &(hash->normalizers));
   grn_hash_close_token_filters(ctx, hash);
@@ -2153,15 +2155,12 @@ grn_tiny_hash_fin(grn_ctx *ctx, grn_hash *hash)
 static grn_rc
 grn_hash_fin(grn_ctx *ctx, grn_hash *hash)
 {
-  grn_rc rc;
   if (grn_hash_is_io_hash(hash)) {
-    rc = grn_io_hash_fin(ctx, hash);
+    return grn_io_hash_fin(ctx, hash);
   } else {
     GRN_ASSERT(ctx == hash->ctx);
-    rc = grn_tiny_hash_fin(ctx, hash);
+    return grn_tiny_hash_fin(ctx, hash);
   }
-  GRN_FREE(hash->wal_data);
-  return rc;
 }
 
 grn_rc
