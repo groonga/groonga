@@ -73,93 +73,23 @@ check --obj Terms.memos_content
 ]
 select Memos --query content:@hello
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["content","Text"]],[1,"hello world"]]]]
-log_level --level dump
-[[0,0.0,0.0],true]
 _database_close
 [[0,0.0,0.0],true]
 _database_reopen
 [[0,0.0,0.0],true]
-#|-| [io][open] <db/db>
-#|-| [io][open] <db/db.0000000>
-#|-| [io][open] <db/db.conf>
-#|-| [io][open] <db/db.options>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
 #|e| [ii][wal][recover][Terms.memos_content] not implemented: path:<db/db.0000103>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000100>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][open] <db/db.0000101>
-#|-| [io][close] <db/db.0000101>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
 #|n| [db][wal][recover] rebuild broken column: <Terms.memos_content>(259)
-#|-| [io][open] <db/db.0000100>
 #|n| DDL:260:column_create Terms #recovering#memos_content
-#|-| [io][open] <db/db.0000104>
-#|-| [io][open] <db/db.0000104.c>
 #|n| spec:260:update:Terms.#recovering#memos_content:72(column:index):256(Memos)
-#|-| [io][open] <db/db.0000101>
 #|n| DDL:260:set_source Terms.#recovering#memos_content Memos.content
 #|n| spec:257:update:Memos.content:65(column:var_size):15(Text)
 #|n| DDL:2147483649:set_normalizers NormalizerNFKC130
 #|n| DDL:2147483649:set_normalizers NormalizerNFKC130
 #|n| spec:260:update:Terms.#recovering#memos_content:72(column:index):256(Memos)
-#|-| [io][close] <db/db.0000101>
-#|-| [io][close] <db/db.0000104>
-#|-| [io][close] <db/db.0000104.c>
-#|-| [io][close] <db/db.0000100>
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000103.c>
-#|-| [io][close] <db/db.0000102>
-#|-| [io][open] <db/db.0000102>
-#|-| [io][open] <db/db.0000104>
-#|-| [io][open] <db/db.0000104.c>
-#|-| [io][open] <db/db.0000103>
-#|-| [io][open] <db/db.0000103.c>
 #|n| DDL:259:obj_remove Terms.memos_content
-#|-| [io][open] <db/db.0000101>
 #|n| spec:257:update:Memos.content:65(column:var_size):15(Text)
-#|-| [io][close] <db/db.0000103>
-#|-| [io][close] <db/db.0000103.c>
 #|n| spec:259:remove:Terms.memos_content:72(column:index)
 #|n| [db][wal][recover] succeeded to rebuild broken column: <Terms.memos_content>(260)
-#|-| [io][close] <db/db.0000101>
-#|-| [io][close] <db/db.0000104>
-#|-| [io][close] <db/db.0000104.c>
-#|-| [io][close] <db/db.0000102>
-log_level --level notice
-[[0,0.0,0.0],true]
 select Memos --query content:@hello
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["content","Text"]],[1,"hello world"]]]]
 check --obj Terms.memos_content
