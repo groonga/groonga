@@ -26,15 +26,11 @@ delete Data --id 2
 
 select Data --output_columns _id
 
-log_level --level dump
-
 _database_close
 
 #@copy-path #{db_path}.0000100 #{db_path}.0000100.wal
-#@add-important-log-levels notice dump
+#@add-important-log-levels notice
 _database_reopen
-#@remove-important-log-levels notice dump
-
-log_level --level notice
+#@remove-important-log-levels notice
 
 select Data --output_columns _id
