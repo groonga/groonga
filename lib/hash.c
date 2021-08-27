@@ -1894,8 +1894,6 @@ grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
   hash->io = io;
   hash->header.common = header;
   hash->lock = &header->lock;
-  hash->wal_data = GRN_CALLOC(sizeof(grn_hash_wal_add_entry_data));
-  hash->wal_data->hash = hash;
   grn_table_module_init(ctx, &(hash->tokenizer), GRN_ID_NIL);
   return GRN_SUCCESS;
 }
@@ -1965,16 +1963,32 @@ grn_tiny_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
 }
 
 static grn_rc
+grn_hash_init_wal_data(grn_ctx *ctx, grn_hash *hash)
+{
+  hash->wal_data = GRN_CALLOC(sizeof(grn_hash_wal_add_entry_data));
+  if (!hash->wal_data) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+  hash->wal_data->hash = hash;
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
               uint32_t key_size, uint32_t value_size, uint32_t flags)
 {
+  grn_rc rc;
   if (flags & GRN_HASH_TINY) {
-    return grn_tiny_hash_init(ctx, hash, path, key_size, value_size,
-                              flags, ctx->encoding);
+    rc = grn_tiny_hash_init(ctx, hash, path, key_size, value_size,
+                                   flags, ctx->encoding);
   } else {
-    return grn_io_hash_init(ctx, hash, path, key_size, value_size,
-                            flags, ctx->encoding, 0);
+    rc = grn_io_hash_init(ctx, hash, path, key_size, value_size,
+                          flags, ctx->encoding, 0);
   }
+  if (rc == GRN_SUCCESS) {
+    rc = grn_hash_init_wal_data(ctx, hash);
+  }
+  return rc;
 }
 
 grn_hash *
@@ -2012,6 +2026,10 @@ grn_hash_open(grn_ctx *ctx, const char *path)
         grn_hash * const hash = (grn_hash *)GRN_CALLOC(sizeof(grn_hash));
         if (hash) {
           if (!(header->flags & GRN_HASH_TINY)) {
+            if (grn_hash_init_wal_data(ctx, hash) != GRN_SUCCESS) {
+              GRN_FREE(hash);
+              return NULL;
+            }
             GRN_DB_OBJ_SET_TYPE(hash, GRN_TABLE_HASH_KEY);
             hash->ctx = ctx;
             hash->key_size = header->key_size;
@@ -2024,8 +2042,6 @@ grn_hash_open(grn_ctx *ctx, const char *path)
             hash->io = io;
             hash->header.common = header;
             hash->lock = &header->lock;
-            hash->wal_data = GRN_CALLOC(sizeof(grn_hash_wal_add_entry_data));
-            hash->wal_data->hash = hash;
             grn_table_module_init(ctx, &(hash->tokenizer), header->tokenizer);
             grn_table_modules_init(ctx, &(hash->normalizers));
             if (header->flags & GRN_OBJ_KEY_NORMALIZE) {
@@ -2095,7 +2111,6 @@ grn_io_hash_fin(grn_ctx *ctx, grn_hash *hash)
     grn_obj_flush(ctx, (grn_obj *)hash);
   }
   rc = grn_io_close(ctx, hash->io);
-  GRN_FREE(hash->wal_data);
   grn_table_module_fin(ctx, &(hash->tokenizer));
   grn_table_modules_fin(ctx, &(hash->normalizers));
   grn_hash_close_token_filters(ctx, hash);
@@ -2138,12 +2153,15 @@ grn_tiny_hash_fin(grn_ctx *ctx, grn_hash *hash)
 static grn_rc
 grn_hash_fin(grn_ctx *ctx, grn_hash *hash)
 {
+  grn_rc rc;
   if (grn_hash_is_io_hash(hash)) {
-    return grn_io_hash_fin(ctx, hash);
+    rc = grn_io_hash_fin(ctx, hash);
   } else {
     GRN_ASSERT(ctx == hash->ctx);
-    return grn_tiny_hash_fin(ctx, hash);
+    rc = grn_tiny_hash_fin(ctx, hash);
   }
+  GRN_FREE(hash->wal_data);
+  return rc;
 }
 
 grn_rc
@@ -3181,12 +3199,7 @@ grn_hash_ensure_rehash(grn_ctx *ctx,
     return ctx->rc;
   }
 
-  grn_hash_wal_add_entry_data wal_data_buffer;
   grn_hash_wal_add_entry_data *wal_data = hash->wal_data;
-  if (!wal_data) {
-    wal_data = &wal_data_buffer;
-    wal_data->hash = hash;
-  }
   const bool need_wal = grn_hash_wal_need(ctx, hash);
   wal_data->tag = tag;
   wal_data->n_entries = *(hash->n_entries);
@@ -3926,13 +3939,7 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
     return GRN_NO_MEMORY_AVAILABLE;
   }
 
-  grn_hash_wal_add_entry_data wal_data_buffer;
   grn_hash_wal_add_entry_data *wal_data = hash->wal_data;
-  if (!wal_data) {
-    wal_data = &wal_data_buffer;
-    wal_data->hash = hash;
-    wal_data->wal_id = 0;
-  }
   wal_data->tag = "[hash][set-value]";
   wal_data->event = GRN_WAL_EVENT_SET_VALUE;
   wal_data->record_id = id;

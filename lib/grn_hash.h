@@ -251,7 +251,6 @@ struct _grn_hash {
   // int limit;
   // void *userdata;
   // grn_id subrec_id;
-  grn_hash_wal_add_entry_data *wal_data;
 
   /* For grn_tiny_hash. */
   uint32_t max_offset_;
@@ -261,6 +260,8 @@ struct _grn_hash {
   grn_id garbages;
   grn_tiny_array a;
   grn_tiny_bitmap bitmap;
+
+  grn_hash_wal_add_entry_data *wal_data;
 };
 
 #define GRN_HASH_HEADER_COMMON_FIELDS\
