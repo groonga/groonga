@@ -18,7 +18,7 @@ load --table Users
  "tags_by_others": ["beginner", "passive"]},
 {"_key": "Chris",
  "tags_by_me": ["beginner", "passive"],
- "tags_by_others": ["beginner", "active"]}
+ "tags_by_others": ["active"]}
 ]
 
 column_create Tags users COLUMN_INDEX|WITH_SECTION \
@@ -27,8 +27,6 @@ column_create Tags users COLUMN_INDEX|WITH_SECTION \
 select Users \
   --output_columns _id,_key,tags_by_me,tags_by_others,,_score \
   --sort_keys _id \
-  --filter 'query_parallel_or("tags_by_me * 1 || \
-                               tags_by_me * 10 || \
-                               tags_by_me * 100 || \
+  --filter 'query_parallel_or("tags_by_me * 100 || \
                                tags_by_others * 1000", \
                               "beginner active")'
