@@ -3921,7 +3921,13 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
     return GRN_NO_MEMORY_AVAILABLE;
   }
 
+  grn_hash_wal_add_entry_data wal_data_buffer;
   grn_hash_wal_add_entry_data *wal_data = hash->wal_data;
+  if (!wal_data) {
+    wal_data = &wal_data_buffer;
+    wal_data->hash = hash;
+    wal_data->wal_id = 0;
+  }
   wal_data->tag = "[hash][set-value]";
   wal_data->event = GRN_WAL_EVENT_SET_VALUE;
   wal_data->record_id = id;
@@ -3979,7 +3985,7 @@ grn_hash_set_value(grn_ctx *ctx, grn_hash *hash, grn_id id,
     return ctx->rc;
   }
   grn_hash_set_value_raw(ctx, hash, entry_value, wal_data->value);
-  if (ctx->rc == GRN_SUCCESS && grn_hash_wal_need(ctx, hash)) {
+  if (ctx->rc == GRN_SUCCESS) {
     grn_hash_wal_set_wal_id(ctx, hash, wal_data->wal_id);
   }
   return ctx->rc;
