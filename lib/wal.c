@@ -355,7 +355,7 @@ grn_wal_add_entryv(grn_ctx *ctx,
                    grn_wal_key key,
                    va_list args)
 {
-  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+  if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {
     return GRN_SUCCESS;
   }
 
@@ -554,7 +554,7 @@ grn_wal_touch(grn_ctx *ctx,
               bool need_lock,
               const char *tag)
 {
-  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+  if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {
     return GRN_SUCCESS;
   }
 

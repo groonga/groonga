@@ -15,12 +15,14 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "grn.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <cstring>
 #include <sstream>
 #include <new>
+#include "grn_ctx_impl.h"
 #include "grn_str.h"
 #include "grn_io.h"
 #include "grn_dat.h"
@@ -502,7 +504,7 @@ class WALRecorder {
   }
 
   grn_rc record() {
-    if (grn_ctx_get_wal_role(ctx_) == GRN_WAL_ROLE_NONE) {
+    if (GRN_CTX_GET_WAL_ROLE(ctx_) == GRN_WAL_ROLE_NONE) {
       return GRN_SUCCESS;
     }
     if (!dat_->io) {
@@ -922,7 +924,7 @@ grn_dat_close(grn_ctx *ctx, grn_dat *dat)
 {
   if (dat) {
     if (dat->io->path[0] != '\0' &&
-        grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) {
+        GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_PRIMARY) {
       grn_obj_flush(ctx, reinterpret_cast<grn_obj *>(dat));
     }
     grn_dat_fin(ctx, dat);

@@ -1447,7 +1447,7 @@ grn_db_wal_recover_copy_rename(grn_ctx *ctx,
 void
 grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
 {
-  if (grn_ctx_get_wal_role(ctx) != GRN_WAL_ROLE_PRIMARY) {
+  if (GRN_CTX_GET_WAL_ROLE(ctx) != GRN_WAL_ROLE_PRIMARY) {
     return;
   }
 
@@ -14408,7 +14408,7 @@ static grn_rc
 grn_obj_flush_internal(grn_ctx *ctx, grn_obj *obj, const char *tag)
 {
   bool need_lock =
-    ((grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) &&
+    ((GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_PRIMARY) &&
      grn_wal_exist(ctx, obj));
   grn_rc rc = GRN_SUCCESS;
   if (need_lock) {

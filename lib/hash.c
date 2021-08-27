@@ -275,7 +275,7 @@ grn_io_array_wal_touch(grn_ctx *ctx, grn_array *array, const char *tag)
     return GRN_SUCCESS;
   }
 
-  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+  if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {
     return GRN_SUCCESS;
   }
 
@@ -644,7 +644,7 @@ grn_array_close(grn_ctx *ctx, grn_array *array)
   if (array->keys) { GRN_FREE(array->keys); }
   if (grn_array_is_io_array(array)) {
     if (array->io->path[0] != '\0' &&
-        grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) {
+        GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_PRIMARY) {
       grn_obj_flush(ctx, (grn_obj *)array);
     }
     rc = grn_io_close(ctx, array->io);
@@ -1233,7 +1233,7 @@ grn_array_add(grn_ctx *ctx, grn_array *array, void **value)
 grn_rc
 grn_array_wal_recover(grn_ctx *ctx, grn_array *array)
 {
-  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+  if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {
     return GRN_SUCCESS;
   }
 
@@ -2068,7 +2068,7 @@ grn_io_hash_fin(grn_ctx *ctx, grn_hash *hash)
   grn_rc rc;
 
   if (hash->io->path[0] != '\0' &&
-      grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) {
+      GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_PRIMARY) {
     grn_obj_flush(ctx, (grn_obj *)hash);
   }
   rc = grn_io_close(ctx, hash->io);
@@ -2571,7 +2571,7 @@ grn_hash_wal_add_entry_format_deatils(grn_ctx *ctx,
 static grn_rc
 grn_hash_wal_add_entry(grn_ctx *ctx, grn_hash_wal_add_entry_data *data)
 {
-  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+  if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {
     return GRN_SUCCESS;
   }
 

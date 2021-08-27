@@ -5995,7 +5995,7 @@ grn_ii_close(grn_ctx *ctx, grn_ii *ii)
   grn_rc rc = GRN_SUCCESS;
   if (!ii) { return GRN_INVALID_ARGUMENT; }
   if (ii->seg->path[0] != '\0' &&
-      grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) {
+      GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_PRIMARY) {
     grn_obj_flush(ctx, (grn_obj *)ii);
   }
   {
@@ -6131,7 +6131,7 @@ grn_ii_wal_touch(grn_ctx *ctx, grn_ii *ii, const char *tag)
     return GRN_SUCCESS;
   }
 
-  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+  if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {
     return GRN_SUCCESS;
   }
 
@@ -16746,7 +16746,7 @@ grn_ii_build2(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
 grn_rc
 grn_ii_wal_recover(grn_ctx *ctx, grn_ii *ii)
 {
-  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+  if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {
     return GRN_SUCCESS;
   }
 

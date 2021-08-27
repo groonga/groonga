@@ -15,9 +15,11 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "grn.h"
 #include <string.h>
 #include <limits.h>
+#include "grn_ctx_impl.h"
 #include "grn_pat.h"
 #include "grn_obj.h"
 #include "grn_output.h"
@@ -811,7 +813,7 @@ grn_pat_wal_add_entry_format_deatils(grn_ctx *ctx,
 static grn_rc
 grn_pat_wal_add_entry(grn_ctx *ctx, grn_pat_wal_add_entry_data *data)
 {
-  if (grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_NONE) {
+  if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {
     return GRN_SUCCESS;
   }
 
@@ -1618,7 +1620,7 @@ grn_pat_close(grn_ctx *ctx, grn_pat *pat)
   }
 
   if (pat->io->path[0] != '\0' &&
-      grn_ctx_get_wal_role(ctx) == GRN_WAL_ROLE_PRIMARY) {
+      GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_PRIMARY) {
     grn_obj_flush(ctx, (grn_obj *)pat);
   }
   rc = grn_io_close(ctx, pat->io);

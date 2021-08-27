@@ -203,6 +203,8 @@ struct _grn_ctx_impl {
   grn_ctx *parent;
 };
 
+#define GRN_CTX_GET_WAL_ROLE(ctx) ((ctx)->impl->wal.role)
+
 void grn_ctx_impl_columns_cache_delete(grn_ctx *ctx, grn_id table_id);
 void grn_ctx_impl_columns_cache_clear(grn_ctx *ctx);
 
