@@ -1777,7 +1777,7 @@ grn_ja_wal_add_entry_format_deatils(grn_ctx *ctx,
   }
 }
 
-static grn_rc
+grn_inline static grn_rc
 grn_ja_wal_add_entry(grn_ctx *ctx, grn_ja_wal_add_entry_data *data)
 {
   if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {

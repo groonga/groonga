@@ -6124,7 +6124,7 @@ grn_ii_set_visibility(grn_ctx *ctx, grn_ii *ii, bool is_visible)
 #define BIT11_01(x) ((x >> 1) & 0x7ff)
 #define BIT31_12(x) (x >> 12)
 
-static grn_rc
+grn_inline static grn_rc
 grn_ii_wal_touch(grn_ctx *ctx, grn_ii *ii, const char *tag)
 {
   if (ii->wal_touched) {
