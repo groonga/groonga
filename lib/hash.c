@@ -3181,7 +3181,12 @@ grn_hash_ensure_rehash(grn_ctx *ctx,
     return ctx->rc;
   }
 
+  grn_hash_wal_add_entry_data wal_data_buffer;
   grn_hash_wal_add_entry_data *wal_data = hash->wal_data;
+  if (!wal_data) {
+    wal_data = &wal_data_buffer;
+    wal_data->hash = hash;
+  }
   const bool need_wal = grn_hash_wal_need(ctx, hash);
   wal_data->tag = tag;
   wal_data->n_entries = *(hash->n_entries);
