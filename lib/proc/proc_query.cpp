@@ -618,13 +618,14 @@ namespace {
   private:
     bool
     prepare_match_columns_bulk() override {
-      if (!BaseQueryExecutor::prepare_match_columns_bulk()) {
-        return false;
-      }
-      if (match_columns_) {
-        grn_expr_match_columns_split(ctx_,
-                                     match_columns_,
-                                     &sub_match_columns_);
+      if (GRN_TEXT_LEN(match_columns_raw_) > 0) {
+        grn_obj *sub_match_columns = nullptr;
+        if (!prepare_match_columns_one(GRN_TEXT_VALUE(match_columns_raw_),
+                                       GRN_TEXT_LEN(match_columns_raw_),
+                                       &sub_match_columns)) {
+          return false;
+        }
+        GRN_PTR_PUT(ctx_, &sub_match_columns_, sub_match_columns);
       } else {
         GRN_PTR_PUT(ctx_, &sub_match_columns_, NULL);
       }

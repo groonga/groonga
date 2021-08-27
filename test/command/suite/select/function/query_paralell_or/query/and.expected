@@ -68,7 +68,7 @@ select Users   --output_columns _id,_key,tags_by_me,tags_by_others,,_score   --s
           "expert",
           "active"
         ],
-        222
+        1200
       ],
       [
         3,
@@ -81,7 +81,7 @@ select Users   --output_columns _id,_key,tags_by_me,tags_by_others,,_score   --s
           "beginner",
           "active"
         ],
-        2000
+        2100
       ]
     ]
   ]
