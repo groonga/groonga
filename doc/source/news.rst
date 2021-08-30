@@ -17,8 +17,8 @@ Improvements
 
   This is a experimental feature. Currently, this feature is still not stable.
 
-  If Groonga crashes, it recovers the database automatically when it open a database for the first time since the crash. However, This feature can't recover the database automatically in all crash cases.
-  We need to recover the database manually depending on timing even if this feature enable.
+  If Groonga crashes, it recovers the database automatically when it opens a database for the first time since the crash. However, This feature can't recover the database automatically in all crash cases.
+  We need to recover the database manually depending on timing even if this feature enables.
 
   Groonga execute WAL (write ahead log) when this feature is enable.
   We can dump WAL by the following tools, but currently, users doesn't need to use them.
