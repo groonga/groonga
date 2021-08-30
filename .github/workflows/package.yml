@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - master
+      - 'maintenance/**'
+    tags:
+      - '*'
   pull_request:
   schedule:
     - cron: |
