@@ -41,7 +41,7 @@ Fixes
 * Fixed a bug that Groonga doesn't clear lock when some threads open the same object around the same time.
 
   If some threads open the same object around the same time, threads except for a thread that executes the opening object at first are waiting for opening the target object.
-  At this time, threads that are waited for an opening object take locks, but these locks are not released.
+  At this time, threads that wait for an opening object take locks, but these locks are not released.
   Therefore, these locks remain until Groonga's process is restarted in the above case, and a new thread can't also open the object all the time until Groonga's process is restarted.
 
   However, this bug rarely happens. Because a time of a thread open the object is a very short time. 
