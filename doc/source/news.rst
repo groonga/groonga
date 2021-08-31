@@ -26,8 +26,6 @@ Improvements
     * [:doc:`reference/executables/grndb`] ``dump-wal`` command.
     * ``dump-wal.rb`` scritp.
 
-* [:doc:`/install/debian`] Added how to install Groonga into Debian 11 (bullseye).
-
 * [:doc:`reference/commands/cache_limit`] Groonga remove cache when we execute ``cache_limit 0``. [GitHub#1224][Reported by higchi]
 
   Groonga stores query cache to internally table.

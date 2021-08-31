@@ -75,11 +75,6 @@ msgid "``dump-wal.rb`` scritp."
 msgstr "``dump-wal.rb`` スクリプト"
 
 msgid ""
-"[:doc:`/install/debian`] Added how to install Groonga into Debian 11 "
-"(bullseye)."
-msgstr "[:doc:`/install/debian`] Debian 11 (bullseye) をサポートしました。"
-
-msgid ""
 "[:doc:`reference/commands/cache_limit`] Groonga remove cache when we execute "
 "``cache_limit 0``. [GitHub#1224][Reported by higchi]"
 msgstr ""
