@@ -201,16 +201,10 @@ namespace grnarrow {
         if (!arrow_type) {
           auto range = object_cache[range_id];
           if (grn_obj_is_table_with_key(ctx, range)) {
-            // TODO: We can't return reference value as dictionary
-            // because arrow::ipc::RecordBatchWriter doesn't support
-            // dictionary delta for now.
-            //
-            // auto domain = object_cache[range->header.domain];
-            // auto dictionary_type =
-            //   grn_column_to_arrow_type(ctx, domain, object_cache);
-            // arrow_type = arrow::dictionary(arrow::int32(), dictionary_type);
             auto domain = object_cache[range->header.domain];
-            arrow_type = grn_column_to_arrow_type(ctx, domain, object_cache);
+            auto dictionary_type =
+              grn_column_to_arrow_type(ctx, domain, object_cache);
+              arrow_type = arrow::dictionary(arrow::int32(), dictionary_type);
           }
         }
         if (range_flags & GRN_OBJ_VECTOR) {
@@ -1724,6 +1718,41 @@ namespace grnarrow {
     bool is_open_;
   };
 
+  class ArrayBuilderResetFullVisitor : public arrow::TypeVisitor {
+    // Some arrow implementations have a 2GB limitation on the value
+    // of ArrowArray and the dictionary can exceed that limitation
+    // so we need execute DictionaryBuilder.ResetFull() if the dictionary becomes large.
+  public:
+    ArrayBuilderResetFullVisitor(grn_ctx *ctx,
+                     arrow::ArrayBuilder *array_builder)
+      : ctx_(ctx),
+        array_builder_(array_builder)
+    { }
+
+    arrow::Status Visit(const arrow::DictionaryType &type) override
+    {
+      // The value type of Dictionary is always string for now.
+      auto builder = (arrow::StringDictionaryBuilder *)array_builder_;
+      if(builder->dictionary_length() > dictionary_length_threshold) {
+        builder->ResetFull();
+      }
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::ListType &type) override
+    {
+      auto builder = (arrow::ListBuilder *)array_builder_;
+      auto child_builder = builder->child_builder(0);
+      auto child_visitor = new ArrayBuilderResetFullVisitor(ctx_, child_builder.get());
+      return child_builder->type()->Accept(child_visitor);
+    }
+
+  private:
+    grn_ctx *ctx_;
+    const arrow::ArrayBuilder *array_builder_;
+    const int dictionary_length_threshold = 128 * 1024;
+  };
+
   class StreamWriter {
   public:
     StreamWriter(grn_ctx *ctx, grn_obj *bulk)
@@ -1804,7 +1833,9 @@ namespace grnarrow {
       schema_builder_.Reset();
       schema_ = *schema;
 
-      auto writer = arrow::ipc::MakeStreamWriter(&output_, schema_);
+      auto option = arrow::ipc::IpcWriteOptions::Defaults();
+      option.emit_dictionary_deltas = true;
+      auto writer = arrow::ipc::MakeStreamWriter(&output_, schema_, option);
 
       if (!check(ctx_,
                  writer,
@@ -1988,16 +2019,8 @@ namespace grnarrow {
     }
 
     void add_column_record(grn_obj *record) {
-      // TODO: We can't return reference value as dictionary
-      // because arrow::ipc::RecordBatchWriter doesn't support
-      // dictionary delta for now.
-      //
-      // auto column_builder =
-      //   record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
-      //     current_column_index_++);
-
       auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::StringBuilder>(
+        record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
           current_column_index_++);
       auto table = object_cache_[record->header.domain];
       char key[GRN_TABLE_MAX_KEY_SIZE];
@@ -2103,6 +2126,15 @@ namespace grnarrow {
               "[arrow][stream-writer][flush] "
               "failed to write flushed record batch");
       }
+
+      int fields_count = record_batch_builder_->num_fields();
+
+      for(int i = 0; i < fields_count; i++) {
+        auto builder = record_batch_builder_->GetField(i);
+        auto child_visitor = new ArrayBuilderResetFullVisitor(ctx_, builder);
+        auto type = builder->type()->Accept(child_visitor);
+      }
+
       n_records_ = 0;
     }
 
