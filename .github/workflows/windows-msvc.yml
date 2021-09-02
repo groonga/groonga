@@ -1,11 +1,6 @@
 name: "Windows MSVC"
 on:
   push:
-    branches:
-      - master
-      - 'maintenance/**'
-    tags:
-      - '*'
   pull_request:
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
