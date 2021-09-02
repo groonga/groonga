@@ -1,6 +1,7 @@
 /*
   Copyright(C) 2010-2018  Brazil
   Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2021       Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3563,6 +3564,12 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
     {
       float weight = grn_weight_bulk_get(ctx, operator->value);
       scan_info_build_match(ctx, si, weight);
+      if (nth_sis > 0) {
+        grn_expr_code *logical_operator = e->codes + i + 3;
+        float logical_operator_weight =
+          grn_weight_bulk_get(ctx, logical_operator->value);
+        scan_info_build_match(ctx, si, logical_operator_weight);
+      }
     }
 
     if (nth_sis > 0) {
