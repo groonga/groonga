@@ -1,0 +1,62 @@
+# Maintainer: Hiroshi Hatake <cosmo0920.wp@gmail.com>
+
+_realname=groonga
+pkgbase=mingw-w64-${_realname}
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=
+pkgrel=1
+pkgdesc="An opensource fulltext search engine (mingw-w64)"
+arch=('any')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
+url="https://groonga.org/"
+license=('LGPL2')
+options=('strip' 'staticlibs')
+source=(${_realname}-${pkgver}.tar.gz)
+depends=("${MINGW_PACKAGE_PREFIX}-arrow"
+         "${MINGW_PACKAGE_PREFIX}-lz4"
+         "${MINGW_PACKAGE_PREFIX}-mecab"
+         "${MINGW_PACKAGE_PREFIX}-mecab-naist-jdic"
+         "${MINGW_PACKAGE_PREFIX}-msgpack-c"
+         "${MINGW_PACKAGE_PREFIX}-onigmo"
+         "${MINGW_PACKAGE_PREFIX}-xxhash"
+         "${MINGW_PACKAGE_PREFIX}-zlib"
+         "${MINGW_PACKAGE_PREFIX}-zstd")
+makedepends=("git"
+             "${MINGW_PACKAGE_PREFIX}-cmake"
+             "${MINGW_PACKAGE_PREFIX}-rapidjson"
+             "${MINGW_PACKAGE_PREFIX}-ruby"
+             "${MINGW_PACKAGE_PREFIX}-ninja")
+sha256sums=('SKIP')
+validpgpkeys=('2701F317CFCCCB975CADE9C2624CF77434839225') # Groonga Key <packages@groonga.org>
+
+build() {
+  [[ -d ${srcdir}/build-${CARCH} ]] && rm -rf ${srcdir}/build-${CARCH}
+  mkdir -p ${srcdir}/build-${CARCH} && cd ${srcdir}/build-${CARCH}
+
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+    ${MINGW_PREFIX}/bin/cmake.exe \
+      ../${_realname}-${pkgver} \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
+      -DGRN_WITH_APACHE_ARROW=ON \
+      -DGRN_WITH_MRUBY=ON \
+      -G Ninja
+
+  ninja
+}
+
+package() {
+  cd ${srcdir}/build-${CARCH}
+  DESTDIR="${pkgdir}" ninja install
+
+  local PREFIX_DEPS=$(cygpath -am ${MINGW_PREFIX})
+  pushd "${pkgdir}${MINGW_PREFIX}/lib/pkgconfig"
+  for pc in *.pc; do
+    sed -s "s|${PREFIX_DEPS}|${MINGW_PREFIX}|g" -i ${pc}
+  done
+  popd
+
+  install -Dm644 \
+    ${srcdir}/${_realname}-${pkgver}/COPYING \
+    "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
+}

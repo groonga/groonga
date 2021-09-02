@@ -29,7 +29,9 @@ if groonga_install_prefix
   ].join(File::PATH_SEPARATOR)
 else
   Dir.chdir(build_top_dir_path.to_s) do
-    system("make -j8 > /dev/null") or exit(false)
+    if File.exist?("Makefile")
+      system("make -j8 > /dev/null") or exit(false)
+    end
   end
 
   ENV["PATH"] = [

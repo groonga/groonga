@@ -570,7 +570,15 @@ set(GRN_RAPIDJSON_EP_VERSION ${GRN_BUNDLED_RAPIDJSON_VERSION})
 set(GRN_WITH_RAPIDJSON "auto"
   CACHE STRING "Support JSON processing by RapidJSON.")
 if(NOT ${GRN_WITH_RAPIDJSON} STREQUAL "no")
-  find_package(RapidJSON)
+  pkg_check_modules(RAPIDJSON rapidjson)
+  if(RAPIDJSON_FOUND)
+    add_library(rapidjson INTERFACE IMPORTED)
+    set_property(TARGET rapidjson PROPERTY
+      INTERFACE_INCLUDE_DIRECTORIES ${RAPIDJSON_INCLUDE_DIRS})
+  endif()
+  if(NOT TARGET rapidjson)
+    find_package(RapidJSON)
+  endif()
   if(NOT TARGET rapidjson)
     if(RAPIDJSON_INCLUDE_DIRS)
       add_library(rapidjson INTERFACE IMPORTED)
@@ -651,35 +659,27 @@ set(GRN_WITH_BUNDLED_MECAB FALSE)
 set(GRN_WITH_MECAB "auto"
   CACHE STRING "use MeCab for morphological analysis")
 if(NOT ${GRN_WITH_MECAB} STREQUAL "no")
-  set(GRN_MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
-  if(NOT CMAKE_CROSSCOMPILING)
-    find_program(GRN_MECAB_CONFIG_ABSOLUTE_PATH "${GRN_MECAB_CONFIG}")
-  endif()
-  if(EXISTS "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}")
-    execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --inc-dir
-      OUTPUT_VARIABLE MECAB_INCLUDE_DIRS
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-    execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --libs-only-L
-      OUTPUT_VARIABLE MECAB_LIBRARY_DIRS
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-    find_library(MECAB_LIBRARIES
-      NAMES mecab
-      PATHS ${MECAB_LIBRARY_DIRS}
-      NO_DEFAULT_PATH)
-    if(MECAB_LIBRARIES)
-      set(GRN_WITH_MECAB TRUE)
-      message(STATUS "MeCab: ${MECAB_LIBRARIES}")
-    else()
-      if(${GRN_WITH_MECAB} STREQUAL "yes")
-	message(FATAL_ERROR
-	  "No MeCab library found: "
-	  "include directories: <${MECAB_INCLUDE_DIRS}>, "
-	  "library directories: <${MECAB_LIBRARY_DIRS}>")
-      endif()
-      set(MECAB_LIBRARIES "")
-      set(GRN_WITH_MECAB FALSE)
-      message(STATUS "No MeCab: ${MECAB_LIBRARY_DIRS}")
+  if(WIN32)
+    find_path(MECAB_INCLUDE_DIR NAMES mecab.h)
+    find_library(MECAB_LIBRARIES NAMES mecab)
+  else()
+    set(GRN_MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
+    if(EXISTS "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}")
+      execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --inc-dir
+	OUTPUT_VARIABLE MECAB_INCLUDE_DIRS
+	OUTPUT_STRIP_TRAILING_WHITESPACE)
+      execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --libs-only-L
+	OUTPUT_VARIABLE MECAB_LIBRARY_DIRS
+	OUTPUT_STRIP_TRAILING_WHITESPACE)
+      find_library(MECAB_LIBRARIES
+	NAMES mecab
+	PATHS ${MECAB_LIBRARY_DIRS}
+	NO_DEFAULT_PATH)
     endif()
+  endif()
+  if(MECAB_LIBRARIES)
+    set(GRN_WITH_MECAB TRUE)
+    message(STATUS "MeCab: ${MECAB_LIBRARIES}")
   else()
     set(GRN_BUNDLED_MECAB_DIR
       "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mecab-${GRN_BUNDLED_MECAB_VERSION}")
@@ -692,8 +692,13 @@ if(NOT ${GRN_WITH_MECAB} STREQUAL "no")
       message(STATUS "MeCab: ${MECAB_LIBRARIES} (bundled)")
     else()
       if(${GRN_WITH_MECAB} STREQUAL "yes")
-	message(FATAL_ERROR "No mecab-config found: <${GRN_MECAB_CONFIG}>")
+	message(FATAL_ERROR
+	  "No MeCab found: "
+	  "include directories: <${MECAB_INCLUDE_DIRS}>, "
+	  "library directories: <${MECAB_LIBRARY_DIRS}>, "
+	  "mecab-config: <${GRN_MECAB_CONFIG_ABSOLUTE_PATH}>")
       endif()
+      set(MECAB_LIBRARIES "")
       set(GRN_WITH_MECAB FALSE)
       message(STATUS "No MeCab")
     endif()
@@ -864,8 +869,7 @@ else()
   set(GRN_WITH_MESSAGE_PACK FALSE)
 endif()
 
-set(GRN_WITH_APACHE_ARROW FALSE
-  CACHE BOOL "Support Apache Arrow")
+option(GRN_WITH_APACHE_ARROW "use Apache Arrow" OFF)
 if(GRN_WITH_APACHE_ARROW)
   find_package(Arrow "1.0.0" REQUIRED)
 endif()
@@ -882,46 +886,60 @@ set(GRN_WITH_XXHASH "auto"
   CACHE STRING "Support drilldown by hashed key with xxHash.")
 if(NOT ${GRN_WITH_XXHASH} STREQUAL "no")
   set(LIBXXHASH_DEFINITIONS)
-  if(NOT DEFINED LIBXXHASH_FOUND)
-    pkg_check_modules(LIBXXHASH libxxhash)
-    unset(LIBXXHASH_LIBS)
-    unset(LIBXXHASH_LIBS CACHE)
-  endif()
-  if(LIBXXHASH_FOUND)
-    if(${LIBXXHASH_LIBRARY_DIRS})
-      find_library(LIBXXHASH_LIBS
-        NAMES ${LIBXXHASH_LIBRARIES}
-        PATHS ${LIBXXHASH_LIBRARY_DIRS}
-        NO_DEFAULT_PATH)
-    else()
-      find_library(LIBXXHASH_LIBS
-        NAMES ${LIBXXHASH_LIBRARIES})
+  find_package(xxHash)
+  if(xxHash_FOUND)
+    get_target_property(LIBXXHASH_INCLUDE_DIRS xxHash::xxhash
+      INTERFACE_INCLUDE_DIRECTORIES)
+    get_target_property(LIBXXHASH_LIBS xxHash::xxhash IMPORTED_LOCATION_RELEASE)
+    if(NOT LIBXXHASH_LIBS)
+      get_target_property(LIBXXHASH_LIBS xxHash::xxhash IMPORTED_LOCATION)
     endif()
-    if(LIBXXHASH_VERSION VERSION_LESS "0.8.0")
-      set(LIBXXHASH_DEFINITIONS -DXXH_INLINE_ALL)
-    endif()
-    set(GRN_WITH_XXHASH TRUE)
     message(STATUS "xxHash: ${LIBXXHASH_LIBS}")
   else()
-    set(GRN_BUNDLED_XXHASH_DIR
-      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/xxHash-${GRN_BUNDLED_XXHASH_VERSION}")
-    if(EXISTS ${GRN_BUNDLED_XXHASH_DIR})
-      set(LIBXXHASH_INCLUDE_DIRS ${GRN_BUNDLED_XXHASH_DIR})
-      set(LIBXXHASH_LIBS)
-      set(LIBXXHASH_DEFINITIONS -DXXH_INLINE_ALL)
-      set(GRN_WITH_BUNDLED_XXHASH TRUE)
-      set(GRN_WITH_XXHASH TRUE)
-      message(STATUS "xxHash: ${LIBXXHASH_INCLUDE_DIRS} (bundled)")
-      install(FILES
-	"${GRN_BUNDLED_XXHASH_DIR}/LICENSE"
-	"${GRN_BUNDLED_XXHASH_DIR}/README.md"
-	DESTINATION "${GRN_DATA_DIR}/xxhash")
-    else()
-      if(${GRN_WITH_XXHASH} STREQUAL "yes")
-        message(FATAL_ERROR "No xxHash found")
+    if(NOT DEFINED LIBXXHASH_FOUND)
+      pkg_check_modules(LIBXXHASH libxxhash)
+      unset(LIBXXHASH_LIBS)
+      unset(LIBXXHASH_LIBS CACHE)
+    endif()
+    if(LIBXXHASH_FOUND)
+      if(${LIBXXHASH_LIBRARY_DIRS})
+	find_library(LIBXXHASH_LIBS
+          NAMES ${LIBXXHASH_LIBRARIES}
+          PATHS ${LIBXXHASH_LIBRARY_DIRS}
+          NO_DEFAULT_PATH)
+      else()
+	find_library(LIBXXHASH_LIBS
+          NAMES ${LIBXXHASH_LIBRARIES})
       endif()
-      set(GRN_WITH_XXHASH FALSE)
-      message(STATUS "No xxHash")
+      if(LIBXXHASH_VERSION VERSION_LESS "0.8.0")
+	set(LIBXXHASH_DEFINITIONS -DXXH_INLINE_ALL)
+      endif()
+      set(GRN_WITH_XXHASH TRUE)
+      add_library(xxHash::xxhash INTERFACE IMPORTED)
+      set_property(TARGET xxHash::xxhash PROPERTY
+	INTERFACE_INCLUDE_DIRECTORIES "${RAPIDJSON_PREFIX}/include")
+      message(STATUS "xxHash: ${LIBXXHASH_LIBS}")
+    else()
+      set(GRN_BUNDLED_XXHASH_DIR
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/xxHash-${GRN_BUNDLED_XXHASH_VERSION}")
+      if(EXISTS ${GRN_BUNDLED_XXHASH_DIR})
+	set(LIBXXHASH_INCLUDE_DIRS ${GRN_BUNDLED_XXHASH_DIR})
+	set(LIBXXHASH_LIBS)
+	set(LIBXXHASH_DEFINITIONS -DXXH_INLINE_ALL)
+	set(GRN_WITH_BUNDLED_XXHASH TRUE)
+	set(GRN_WITH_XXHASH TRUE)
+	message(STATUS "xxHash: ${LIBXXHASH_INCLUDE_DIRS} (bundled)")
+	install(FILES
+	  "${GRN_BUNDLED_XXHASH_DIR}/LICENSE"
+	  "${GRN_BUNDLED_XXHASH_DIR}/README.md"
+	  DESTINATION "${GRN_DATA_DIR}/xxhash")
+      else()
+	if(${GRN_WITH_XXHASH} STREQUAL "yes")
+          message(FATAL_ERROR "No xxHash found")
+	endif()
+	set(GRN_WITH_XXHASH FALSE)
+	message(STATUS "No xxHash")
+      endif()
     endif()
   endif()
 else()
@@ -956,14 +974,18 @@ if(NOT WIN32)
   ac_check_headers(sys/sysmacros.h)
 endif()
 
-# TODO: Support using system Onigmo instead of bundled Onigmo.
 set(GRN_WITH_ONIGMO ON)
-set(ONIGMO_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/vendor/onigmo-source")
-set(ONIGMO_LIBS onigmo)
+option(GRN_WITH_BUNDLED_ONIGMO "use bundled Onigmo" ON)
+if(GRN_WITH_BUNDLED_ONIGMO)
+  set(ONIGMO_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/vendor/onigmo-source")
+  set(ONIGMO_LIBS onigmo)
 
-# TODO: It's for Onigmo static link case. If we support system Onigmo,
-# we need to remove it and add -DEXPORT to Onigmo build.
-add_definitions(-DONIG_EXTERN=extern)
+  # TODO: It's for Onigmo static link case. If we support system Onigmo,
+  # we need to remove it and add -DEXPORT to Onigmo build.
+  add_definitions(-DONIG_EXTERN=extern)
+else()
+  pkg_check_modules(ONIGMO REQUIRED onigmo)
+endif()
 
 add_subdirectory(vendor)
 if(GRN_EMBED)
