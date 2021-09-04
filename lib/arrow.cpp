@@ -202,9 +202,7 @@ namespace grnarrow {
           auto range = object_cache[range_id];
           if (grn_obj_is_table_with_key(ctx, range)) {
             auto domain = object_cache[range->header.domain];
-            auto dictionary_type =
-              grn_column_to_arrow_type(ctx, domain, object_cache);
-              arrow_type = arrow::dictionary(arrow::int32(), dictionary_type);
+            arrow_type = grn_column_to_arrow_type(ctx, domain, object_cache);
           }
         }
         if (range_flags & GRN_OBJ_VECTOR) {
@@ -1794,7 +1792,7 @@ namespace grnarrow {
     }
 
     void add_field(const char *name, grn_obj *column) {
-      auto type = grn_column_to_arrow_type(ctx_, column, object_cache_);
+      auto type = StreamWriter::grn_column_to_arrow_type(ctx_, column, object_cache_);
       if (!type) {
         auto ctx = ctx_;
         grn_obj inspected;
@@ -1870,7 +1868,7 @@ namespace grnarrow {
 
     void add_column_string(const char *value, size_t value_length) {
       auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::StringBuilder>(
+        record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
           current_column_index_++);
       auto status = column_builder->Append(value, value_length);
       if (!status.ok()) {
@@ -2148,6 +2146,81 @@ namespace grnarrow {
     size_t n_records_;
     int current_column_index_;
     ObjectCache object_cache_;
+
+    std::shared_ptr<arrow::DataType> grn_type_id_to_arrow_type(grn_ctx *ctx,
+                                                           grn_id type_id)
+    {
+      switch (type_id) {
+      case GRN_DB_BOOL:
+        return arrow::boolean();
+      case GRN_DB_UINT8:
+        return arrow::uint8();
+      case GRN_DB_INT8:
+        return arrow::int8();
+      case GRN_DB_UINT16:
+        return arrow::uint16();
+      case GRN_DB_INT16:
+        return arrow::int16();
+      case GRN_DB_UINT32:
+        return arrow::uint32();
+      case GRN_DB_INT32:
+        return arrow::int32();
+      case GRN_DB_UINT64:
+        return arrow::uint64();
+      case GRN_DB_INT64:
+        return arrow::int64();
+      case GRN_DB_FLOAT32:
+        return arrow::float32();
+      case GRN_DB_FLOAT:
+        return arrow::float64();
+      case GRN_DB_TIME:
+        return arrow::timestamp(arrow::TimeUnit::NANO);
+      case GRN_DB_SHORT_TEXT:
+      case GRN_DB_TEXT:
+      case GRN_DB_LONG_TEXT:
+        return arrow::dictionary(arrow::int32(), arrow::utf8());
+      default:
+        return nullptr;
+      }
+    }
+
+    std::shared_ptr<arrow::DataType> grn_column_to_arrow_type(
+      grn_ctx *ctx,
+      grn_obj *column,
+      ObjectCache &object_cache)
+    {
+      switch (column->header.type) {
+      case GRN_TYPE:
+        return grn_type_id_to_arrow_type(ctx, grn_obj_id(ctx, column));
+      case GRN_ACCESSOR:
+      case GRN_COLUMN_FIX_SIZE:
+      case GRN_COLUMN_VAR_SIZE:
+      {
+        grn_id range_id = GRN_ID_NIL;
+        grn_obj_flags range_flags = 0;
+        grn_obj_get_range_info(ctx, column, &range_id, &range_flags);
+        auto arrow_type = StreamWriter::grn_type_id_to_arrow_type(ctx, range_id);
+        if (!arrow_type) {
+          auto range = object_cache[range_id];
+          if (grn_obj_is_table_with_key(ctx, range)) {
+            auto domain = object_cache[range->header.domain];
+            arrow_type = StreamWriter::grn_column_to_arrow_type(ctx, domain, object_cache);
+          }
+        }
+        if (range_flags & GRN_OBJ_VECTOR) {
+          return arrow::list(arrow_type);
+        } else {
+          return arrow_type;
+        }
+      }
+      break;
+      case GRN_COLUMN_INDEX:
+        return arrow::uint32();
+      default:
+        return nullptr;
+      }
+      return nullptr;
+    }
   };
 }
 
