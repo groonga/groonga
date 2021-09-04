@@ -664,6 +664,7 @@ if(NOT ${GRN_WITH_MECAB} STREQUAL "no")
     find_library(MECAB_LIBRARIES NAMES mecab)
   else()
     set(GRN_MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
+    find_program(GRN_MECAB_CONFIG_ABSOLUTE_PATH "${GRN_MECAB_CONFIG}")
     if(EXISTS "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}")
       execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --inc-dir
 	OUTPUT_VARIABLE MECAB_INCLUDE_DIRS
@@ -692,11 +693,18 @@ if(NOT ${GRN_WITH_MECAB} STREQUAL "no")
       message(STATUS "MeCab: ${MECAB_LIBRARIES} (bundled)")
     else()
       if(${GRN_WITH_MECAB} STREQUAL "yes")
-	message(FATAL_ERROR
-	  "No MeCab found: "
-	  "include directories: <${MECAB_INCLUDE_DIRS}>, "
-	  "library directories: <${MECAB_LIBRARY_DIRS}>, "
-	  "mecab-config: <${GRN_MECAB_CONFIG_ABSOLUTE_PATH}>")
+	if(WIN32)
+	  message(FATAL_ERROR
+	    "No MeCab found: "
+	    "include directories: <${MECAB_INCLUDE_DIRS}>, "
+	    "library directories: <${MECAB_LIBRARY_DIRS}>")
+	else()
+	  message(FATAL_ERROR
+	    "No MeCab found: "
+	    "include directories: <${MECAB_INCLUDE_DIRS}>, "
+	    "library directories: <${MECAB_LIBRARY_DIRS}>, "
+	    "mecab-config: <${GRN_MECAB_CONFIG_ABSOLUTE_PATH}>")
+	endif()
       endif()
       set(MECAB_LIBRARIES "")
       set(GRN_WITH_MECAB FALSE)
