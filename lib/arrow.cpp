@@ -33,6 +33,11 @@
 #include <sstream>
 
 namespace grnarrow {
+  enum arrow_type_mode {
+    PLAIN = 1 << 0,
+    STRING_AS_DICTIONARY = 1 << 1,
+  };
+
   grn_rc status_to_rc(const arrow::Status &status) {
     switch (status.code()) {
     case arrow::StatusCode::OK:
@@ -148,7 +153,8 @@ namespace grnarrow {
   }
 
   std::shared_ptr<arrow::DataType> grn_type_id_to_arrow_type(grn_ctx *ctx,
-                                                             grn_id type_id) {
+                                                             grn_id type_id,
+                                                             arrow_type_mode mode) {
     switch (type_id) {
     case GRN_DB_BOOL :
       return arrow::boolean();
@@ -177,7 +183,9 @@ namespace grnarrow {
     case GRN_DB_SHORT_TEXT :
     case GRN_DB_TEXT :
     case GRN_DB_LONG_TEXT :
-      return arrow::utf8();
+      return (mode & arrow_type_mode::STRING_AS_DICTIONARY) ?
+        arrow::dictionary(arrow::int32(), arrow::utf8()) :
+        arrow::utf8();
     default :
       return nullptr;
     }
@@ -186,10 +194,11 @@ namespace grnarrow {
   std::shared_ptr<arrow::DataType> grn_column_to_arrow_type(
     grn_ctx *ctx,
     grn_obj *column,
-    ObjectCache &object_cache) {
+    ObjectCache &object_cache,
+    arrow_type_mode mode) {
     switch (column->header.type) {
     case GRN_TYPE :
-      return grn_type_id_to_arrow_type(ctx, grn_obj_id(ctx, column));
+      return grn_type_id_to_arrow_type(ctx, grn_obj_id(ctx, column), mode);
     case GRN_ACCESSOR :
     case GRN_COLUMN_FIX_SIZE :
     case GRN_COLUMN_VAR_SIZE :
@@ -197,12 +206,12 @@ namespace grnarrow {
         grn_id range_id = GRN_ID_NIL;
         grn_obj_flags range_flags = 0;
         grn_obj_get_range_info(ctx, column, &range_id, &range_flags);
-        auto arrow_type = grn_type_id_to_arrow_type(ctx, range_id);
+        auto arrow_type = grn_type_id_to_arrow_type(ctx, range_id, mode);
         if (!arrow_type) {
           auto range = object_cache[range_id];
           if (grn_obj_is_table_with_key(ctx, range)) {
             auto domain = object_cache[range->header.domain];
-            arrow_type = grn_column_to_arrow_type(ctx, domain, object_cache);
+            arrow_type = grn_column_to_arrow_type(ctx, domain, object_cache, mode);
           }
         }
         if (range_flags & GRN_OBJ_VECTOR) {
@@ -219,6 +228,45 @@ namespace grnarrow {
     }
     return nullptr;
   }
+
+  class ArrayBuilderResetFullVisitor : public arrow::TypeVisitor {
+    // We need execute ResetFull() with an appropriate dictionary length
+    // in order to avoid memory exhaustion and so on.
+    // - Dictionary data in DictionaryBuilder are held in memory until
+    //   ResetFull() is executed.
+    // - Some arrow implementations (clients) have a 2GB limitation on
+    //   the value size of ArrowArray. 
+  public:
+    ArrayBuilderResetFullVisitor(grn_ctx *ctx,
+                                 arrow::ArrayBuilder *builder)
+      : ctx_(ctx),
+      builder_(builder) {
+    }
+
+    arrow::Status Visit(const arrow::DictionaryType &type) override
+    {
+      const int dictionary_length_threshold = 10000;
+
+      // The value type of Dictionary is always string for now.
+      auto builder = static_cast<arrow::StringDictionaryBuilder *>(builder_);
+      if (builder->dictionary_length() > dictionary_length_threshold) {
+        builder->ResetFull();
+      }
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::ListType &type) override
+    {
+      auto builder = static_cast<arrow::ListBuilder *>(builder_);
+      auto value_builder = builder->value_builder();
+      ArrayBuilderResetFullVisitor value_visitor(ctx_, value_builder);
+      return value_builder->type()->Accept(&value_visitor);
+    }
+
+  private:
+    grn_ctx *ctx_;
+    arrow::ArrayBuilder *builder_;
+  };
 
   class RecordAddVisitor : public arrow::ArrayVisitor {
   public:
@@ -1148,7 +1196,7 @@ namespace grnarrow {
         std::string field_name(column_name, column_name_size);
         auto range_id = grn_obj_get_range(ctx_, column);
         auto range = object_cache_[range_id];
-        auto field_type = grn_column_to_arrow_type(ctx_, range, object_cache_);
+        auto field_type = grn_column_to_arrow_type(ctx_, range, object_cache_, arrow_type_mode::PLAIN);
         if (!field_type) {
           continue;
         }
@@ -1716,41 +1764,6 @@ namespace grnarrow {
     bool is_open_;
   };
 
-  class ArrayBuilderResetFullVisitor : public arrow::TypeVisitor {
-    // Some arrow implementations have a 2GB limitation on the value
-    // of ArrowArray and the dictionary can exceed that limitation
-    // so we need execute DictionaryBuilder.ResetFull() if the dictionary becomes large.
-  public:
-    ArrayBuilderResetFullVisitor(grn_ctx *ctx,
-                     arrow::ArrayBuilder *array_builder)
-      : ctx_(ctx),
-        array_builder_(array_builder)
-    { }
-
-    arrow::Status Visit(const arrow::DictionaryType &type) override
-    {
-      // The value type of Dictionary is always string for now.
-      auto builder = (arrow::StringDictionaryBuilder *)array_builder_;
-      if(builder->dictionary_length() > dictionary_length_threshold) {
-        builder->ResetFull();
-      }
-      return arrow::Status::OK();
-    }
-
-    arrow::Status Visit(const arrow::ListType &type) override
-    {
-      auto builder = (arrow::ListBuilder *)array_builder_;
-      auto child_builder = builder->child_builder(0);
-      auto child_visitor = new ArrayBuilderResetFullVisitor(ctx_, child_builder.get());
-      return child_builder->type()->Accept(child_visitor);
-    }
-
-  private:
-    grn_ctx *ctx_;
-    const arrow::ArrayBuilder *array_builder_;
-    const int dictionary_length_threshold = 128 * 1024;
-  };
-
   class StreamWriter {
   public:
     StreamWriter(grn_ctx *ctx, grn_obj *bulk)
@@ -1792,7 +1805,7 @@ namespace grnarrow {
     }
 
     void add_field(const char *name, grn_obj *column) {
-      auto type = StreamWriter::grn_column_to_arrow_type(ctx_, column, object_cache_);
+      auto type = grn_column_to_arrow_type(ctx_, column, object_cache_, arrow_type_mode::STRING_AS_DICTIONARY);
       if (!type) {
         auto ctx = ctx_;
         grn_obj inspected;
@@ -1867,9 +1880,15 @@ namespace grnarrow {
     }
 
     void add_column_string(const char *value, size_t value_length) {
+#if ARROW_VERSION_MAJOR >= 3
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
           current_column_index_++);
+#else
+      auto column_builder =
+        record_batch_builder_->GetFieldAs<arrow::StringBuilder>(
+          current_column_index_++);
+#endif
       auto status = column_builder->Append(value, value_length);
       if (!status.ok()) {
         return;
@@ -2017,9 +2036,15 @@ namespace grnarrow {
     }
 
     void add_column_record(grn_obj *record) {
+#if ARROW_VERSION_MAJOR >= 3
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
           current_column_index_++);
+#else
+      auto column_builder =
+        record_batch_builder_->GetFieldAs<arrow::StringBuilder>(
+          current_column_index_++);
+#endif
       auto table = object_cache_[record->header.domain];
       char key[GRN_TABLE_MAX_KEY_SIZE];
       auto key_size = grn_table_get_key(ctx_,
@@ -2059,8 +2084,13 @@ namespace grnarrow {
         auto n = GRN_BULK_VSIZE(uvector) / element_size;
         auto raw_value_builder = column_builder->value_builder();
         if (grn_obj_is_table_with_key(ctx_, domain)) {
+#if ARROW_VERSION_MAJOR >= 3
+          auto value_builder =
+            static_cast<arrow::StringDictionaryBuilder *>(raw_value_builder);
+#else
           auto value_builder =
             static_cast<arrow::StringBuilder *>(raw_value_builder);
+#endif
           for (size_t i = 0; i < n; ++i) {
             auto record_id =
               *reinterpret_cast<grn_id *>(raw_elements + (element_size * i));
@@ -2126,11 +2156,10 @@ namespace grnarrow {
       }
 
       int fields_count = record_batch_builder_->num_fields();
-
       for(int i = 0; i < fields_count; i++) {
         auto builder = record_batch_builder_->GetField(i);
-        auto child_visitor = new ArrayBuilderResetFullVisitor(ctx_, builder);
-        auto type = builder->type()->Accept(child_visitor);
+        auto visitor = ArrayBuilderResetFullVisitor(ctx_, builder);
+        builder->type()->Accept(&visitor);
       }
 
       n_records_ = 0;
@@ -2146,81 +2175,6 @@ namespace grnarrow {
     size_t n_records_;
     int current_column_index_;
     ObjectCache object_cache_;
-
-    std::shared_ptr<arrow::DataType> grn_type_id_to_arrow_type(grn_ctx *ctx,
-                                                           grn_id type_id)
-    {
-      switch (type_id) {
-      case GRN_DB_BOOL:
-        return arrow::boolean();
-      case GRN_DB_UINT8:
-        return arrow::uint8();
-      case GRN_DB_INT8:
-        return arrow::int8();
-      case GRN_DB_UINT16:
-        return arrow::uint16();
-      case GRN_DB_INT16:
-        return arrow::int16();
-      case GRN_DB_UINT32:
-        return arrow::uint32();
-      case GRN_DB_INT32:
-        return arrow::int32();
-      case GRN_DB_UINT64:
-        return arrow::uint64();
-      case GRN_DB_INT64:
-        return arrow::int64();
-      case GRN_DB_FLOAT32:
-        return arrow::float32();
-      case GRN_DB_FLOAT:
-        return arrow::float64();
-      case GRN_DB_TIME:
-        return arrow::timestamp(arrow::TimeUnit::NANO);
-      case GRN_DB_SHORT_TEXT:
-      case GRN_DB_TEXT:
-      case GRN_DB_LONG_TEXT:
-        return arrow::dictionary(arrow::int32(), arrow::utf8());
-      default:
-        return nullptr;
-      }
-    }
-
-    std::shared_ptr<arrow::DataType> grn_column_to_arrow_type(
-      grn_ctx *ctx,
-      grn_obj *column,
-      ObjectCache &object_cache)
-    {
-      switch (column->header.type) {
-      case GRN_TYPE:
-        return grn_type_id_to_arrow_type(ctx, grn_obj_id(ctx, column));
-      case GRN_ACCESSOR:
-      case GRN_COLUMN_FIX_SIZE:
-      case GRN_COLUMN_VAR_SIZE:
-      {
-        grn_id range_id = GRN_ID_NIL;
-        grn_obj_flags range_flags = 0;
-        grn_obj_get_range_info(ctx, column, &range_id, &range_flags);
-        auto arrow_type = StreamWriter::grn_type_id_to_arrow_type(ctx, range_id);
-        if (!arrow_type) {
-          auto range = object_cache[range_id];
-          if (grn_obj_is_table_with_key(ctx, range)) {
-            auto domain = object_cache[range->header.domain];
-            arrow_type = StreamWriter::grn_column_to_arrow_type(ctx, domain, object_cache);
-          }
-        }
-        if (range_flags & GRN_OBJ_VECTOR) {
-          return arrow::list(arrow_type);
-        } else {
-          return arrow_type;
-        }
-      }
-      break;
-      case GRN_COLUMN_INDEX:
-        return arrow::uint32();
-      default:
-        return nullptr;
-      }
-      return nullptr;
-    }
   };
 }
 
@@ -2305,7 +2259,7 @@ namespace grn {
       ::arrow::Status add_column(grn_obj *column,
                                  grn_table_cursor *cursor) {
         const auto arrow_type =
-          grn_column_to_arrow_type(ctx_, column, object_cache_);
+          grn_column_to_arrow_type(ctx_, column, object_cache_, grnarrow::arrow_type_mode::PLAIN);
         if (!arrow_type) {
           grn::TextBulk inspected(ctx_);
           grn_inspect(ctx_, *inspected, column);
