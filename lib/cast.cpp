@@ -900,6 +900,29 @@ namespace grn {
       std::vector<ContainerType> container_type_stack_;
     };
 
+    struct TextHandler : public rapidjson::BaseReaderHandler<>
+    {
+      grn_ctx *ctx_;
+      grn_obj *vector_;
+
+      TextHandler(grn_ctx *ctx, grn_obj *vector)
+        : ctx_(ctx),
+          vector_(vector) {
+      }
+
+      bool Default() {return false;}
+
+      bool String(const char *data, size_t size, bool copy) {
+        grn_vector_add_element_float(ctx_,
+                                     vector_,
+                                     data,
+                                     size,
+                                     0.0,
+                                     GRN_DB_SHORT_TEXT);
+        return true;
+      }
+    };
+
     template <typename Handler>
     grn_rc
     json_to_uvector(grn_ctx *ctx,
@@ -930,6 +953,25 @@ namespace grn {
             return GRN_INVALID_ARGUMENT;
           }
           if (!member->name.Accept(handler)) {
+            return GRN_INVALID_ARGUMENT;
+          }
+        }
+        return GRN_SUCCESS;
+      } else {
+        return GRN_INVALID_ARGUMENT;
+      }
+    }
+
+    grn_rc
+    json_to_text_vector(grn_ctx *ctx,
+                        rapidjson::Document *document,
+                        grn_obj *dest) {
+      TextHandler handler(ctx, dest);
+      if (document->IsArray()) {
+        auto n = document->Size();
+        for (size_t i = 0; i < n; ++i) {
+          const auto &element = (*document)[i];
+          if (!element.Accept(handler)) {
             return GRN_INVALID_ARGUMENT;
           }
         }
@@ -1028,6 +1070,20 @@ namespace grn {
       }
     }
   }
+
+  grn_rc
+  cast_text_to_text_vector(grn_ctx *ctx,
+                           grn_obj *src,
+                           grn_obj *dest)
+  {
+    rapidjson::Document document;
+    rapidjson::MemoryStream stream(GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
+    document.ParseStream(stream);
+    if (document.HasParseError()) {
+      return GRN_INVALID_ARGUMENT;
+    }
+    return json_to_text_vector(ctx, &document, dest);
+  }
 }
 #endif
 
@@ -1040,6 +1096,18 @@ extern "C" {
   {
 #ifdef GRN_WITH_RAPIDJSON
     return grn::cast_text_to_uvector(ctx, src, dest, add_record_if_not_exist);
+#else
+    return GRN_INVALID_ARGUMENT;
+#endif
+  }
+
+  grn_rc
+  grn_obj_cast_text_to_text_vector(grn_ctx *ctx,
+                                   grn_obj *src,
+                                   grn_obj *dest)
+  {
+#ifdef GRN_WITH_RAPIDJSON
+    return grn::cast_text_to_text_vector(ctx, src, dest);
 #else
     return GRN_INVALID_ARGUMENT;
 #endif

@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,10 @@ grn_obj_cast_text_to_uvector(grn_ctx *ctx,
                              grn_obj *src,
                              grn_obj *dest,
                              bool add_record_if_not_exist);
+grn_rc
+grn_obj_cast_text_to_text_vector(grn_ctx *ctx,
+                                 grn_obj *src,
+                                 grn_obj *dest);
 
 #ifdef __cplusplus
 }

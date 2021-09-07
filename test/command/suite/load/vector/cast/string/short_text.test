@@ -1,0 +1,19 @@
+table_create Data TABLE_NO_KEY
+column_create Data strings COLUMN_VECTOR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC130 \
+  --default_tokenizer TokenNgram
+column_create Terms data_strings COLUMN_INDEX Data strings
+
+load --table Data
+[
+{"strings": "[\"Hello\", \"World\"]"},
+{"strings": "[\"Good-bye\", \"World\"]"}
+]
+
+dump \
+  --dump_plugins no \
+  --dump_schema no
+
+select Data --filter 'strings @ "bye"'

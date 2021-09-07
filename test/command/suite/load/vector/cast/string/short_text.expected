@@ -1,0 +1,55 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data strings COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC130   --default_tokenizer TokenNgram
+[[0,0.0,0.0],true]
+column_create Terms data_strings COLUMN_INDEX Data strings
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"strings": "[\"Hello\", \"World\"]"},
+{"strings": "[\"Good-bye\", \"World\"]"}
+]
+[[0,0.0,0.0],2]
+dump   --dump_plugins no   --dump_schema no
+load --table Data
+[
+["_id","strings"],
+[1,["Hello","World"]],
+[2,["Good-bye","World"]]
+]
+
+column_create Terms data_strings COLUMN_INDEX Data strings
+select Data --filter 'strings @ "bye"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "strings",
+          "ShortText"
+        ]
+      ],
+      [
+        2,
+        [
+          "Good-bye",
+          "World"
+        ]
+      ]
+    ]
+  ]
+]
