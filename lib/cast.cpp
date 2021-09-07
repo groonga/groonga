@@ -30,6 +30,134 @@
 
 namespace grn {
   namespace {
+    struct Int8Handler : public rapidjson::BaseReaderHandler<>
+    {
+      grn_ctx *ctx_;
+      grn_obj *uvector_;
+
+      Int8Handler(grn_ctx *ctx,
+                  grn_obj *uvector,
+                  bool add_record_if_not_exist)
+        : ctx_(ctx),
+          uvector_(uvector) {
+      }
+
+      bool Default() {return false;}
+
+      bool Int(int value) {
+        GRN_INT8_PUT(ctx_, uvector_, value);
+        return true;
+      }
+
+      bool Uint(unsigned int value) {
+        return Int(value);
+      }
+
+      bool Int64(int64_t value) {
+        return Int(value);
+      }
+
+      bool Uint64(uint64_t value) {
+        return Int(value);
+      }
+    };
+
+    struct UInt8Handler : public rapidjson::BaseReaderHandler<>
+    {
+      grn_ctx *ctx_;
+      grn_obj *uvector_;
+
+      UInt8Handler(grn_ctx *ctx,
+                   grn_obj *uvector,
+                   bool add_record_if_not_exist)
+        : ctx_(ctx),
+          uvector_(uvector) {
+      }
+
+      bool Default() {return false;}
+
+      bool Int(int value) {
+        return Uint(value);
+      }
+
+      bool Uint(unsigned int value) {
+        GRN_UINT8_PUT(ctx_, uvector_, value);
+        return true;
+      }
+
+      bool Int64(int64_t value) {
+        return Uint(value);
+      }
+
+      bool Uint64(uint64_t value) {
+        return Uint(value);
+      }
+    };
+
+    struct Int16Handler : public rapidjson::BaseReaderHandler<>
+    {
+      grn_ctx *ctx_;
+      grn_obj *uvector_;
+
+      Int16Handler(grn_ctx *ctx,
+                   grn_obj *uvector,
+                   bool add_record_if_not_exist)
+        : ctx_(ctx),
+          uvector_(uvector) {
+      }
+
+      bool Default() {return false;}
+
+      bool Int(int value) {
+        GRN_INT16_PUT(ctx_, uvector_, value);
+        return true;
+      }
+
+      bool Uint(unsigned int value) {
+        return Int(value);
+      }
+
+      bool Int64(int64_t value) {
+        return Int(value);
+      }
+
+      bool Uint64(uint64_t value) {
+        return Int(value);
+      }
+    };
+
+    struct UInt16Handler : public rapidjson::BaseReaderHandler<>
+    {
+      grn_ctx *ctx_;
+      grn_obj *uvector_;
+
+      UInt16Handler(grn_ctx *ctx,
+                    grn_obj *uvector,
+                    bool add_record_if_not_exist)
+        : ctx_(ctx),
+          uvector_(uvector) {
+      }
+
+      bool Default() {return false;}
+
+      bool Int(int value) {
+        return Uint(value);
+      }
+
+      bool Uint(unsigned int value) {
+        GRN_UINT16_PUT(ctx_, uvector_, value);
+        return true;
+      }
+
+      bool Int64(int64_t value) {
+        return Uint(value);
+      }
+
+      bool Uint64(uint64_t value) {
+        return Uint(value);
+      }
+    };
+
     struct Int32Handler : public rapidjson::BaseReaderHandler<>
     {
       grn_ctx *ctx_;
@@ -59,6 +187,102 @@ namespace grn {
 
       bool Uint64(uint64_t value) {
         return Int(value);
+      }
+    };
+
+    struct UInt32Handler : public rapidjson::BaseReaderHandler<>
+    {
+      grn_ctx *ctx_;
+      grn_obj *uvector_;
+
+      UInt32Handler(grn_ctx *ctx,
+                    grn_obj *uvector,
+                    bool add_record_if_not_exist)
+        : ctx_(ctx),
+          uvector_(uvector) {
+      }
+
+      bool Default() {return false;}
+
+      bool Int(int value) {
+        return Uint(value);
+      }
+
+      bool Uint(unsigned int value) {
+        GRN_UINT32_PUT(ctx_, uvector_, value);
+        return true;
+      }
+
+      bool Int64(int64_t value) {
+        return Uint(value);
+      }
+
+      bool Uint64(uint64_t value) {
+        return Uint(value);
+      }
+    };
+
+    struct Int64Handler : public rapidjson::BaseReaderHandler<>
+    {
+      grn_ctx *ctx_;
+      grn_obj *uvector_;
+
+      Int64Handler(grn_ctx *ctx,
+                   grn_obj *uvector,
+                   bool add_record_if_not_exist)
+        : ctx_(ctx),
+          uvector_(uvector) {
+      }
+
+      bool Default() {return false;}
+
+      bool Int(int value) {
+        return Int64(value);
+      }
+
+      bool Uint(unsigned int value) {
+        return Int64(value);
+      }
+
+      bool Int64(int64_t value) {
+        GRN_INT64_PUT(ctx_, uvector_, value);
+        return true;
+      }
+
+      bool Uint64(uint64_t value) {
+        return Int64(value);
+      }
+    };
+
+    struct UInt64Handler : public rapidjson::BaseReaderHandler<>
+    {
+      grn_ctx *ctx_;
+      grn_obj *uvector_;
+
+      UInt64Handler(grn_ctx *ctx,
+                    grn_obj *uvector,
+                    bool add_record_if_not_exist)
+        : ctx_(ctx),
+          uvector_(uvector) {
+      }
+
+      bool Default() {return false;}
+
+      bool Int(int value) {
+        return Uint64(value);
+      }
+
+      bool Uint(unsigned int value) {
+        return Uint64(value);
+      }
+
+      bool Int64(int64_t value) {
+        return Uint64(value);
+      }
+
+      bool Uint64(uint64_t value) {
+        GRN_UINT64_PUT(ctx_, uvector_, value);
+        return true;
       }
     };
 
@@ -742,11 +966,46 @@ namespace grn {
       return rc;
     }
     switch (dest->header.domain) {
+    case GRN_DB_INT8 :
+      return json_to_uvector<Int8Handler>(ctx,
+                                          &document,
+                                          dest,
+                                          add_record_if_not_exist);
+    case GRN_DB_UINT8 :
+      return json_to_uvector<UInt8Handler>(ctx,
+                                           &document,
+                                           dest,
+                                           add_record_if_not_exist);
+    case GRN_DB_INT16 :
+      return json_to_uvector<Int16Handler>(ctx,
+                                           &document,
+                                           dest,
+                                           add_record_if_not_exist);
+    case GRN_DB_UINT16 :
+      return json_to_uvector<UInt16Handler>(ctx,
+                                            &document,
+                                            dest,
+                                            add_record_if_not_exist);
     case GRN_DB_INT32 :
       return json_to_uvector<Int32Handler>(ctx,
                                            &document,
                                            dest,
                                            add_record_if_not_exist);
+    case GRN_DB_UINT32 :
+      return json_to_uvector<UInt32Handler>(ctx,
+                                            &document,
+                                            dest,
+                                            add_record_if_not_exist);
+    case GRN_DB_INT64 :
+      return json_to_uvector<Int64Handler>(ctx,
+                                           &document,
+                                           dest,
+                                           add_record_if_not_exist);
+    case GRN_DB_UINT64 :
+      return json_to_uvector<UInt64Handler>(ctx,
+                                            &document,
+                                            dest,
+                                            add_record_if_not_exist);
     default :
       {
         grn_rc rc = GRN_INVALID_ARGUMENT;

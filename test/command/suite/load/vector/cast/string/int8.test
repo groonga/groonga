@@ -1,0 +1,17 @@
+table_create Data TABLE_NO_KEY
+column_create Data numbers COLUMN_VECTOR Int8
+
+table_create Numbers TABLE_PAT_KEY Int8
+column_create Numbers data_numbers COLUMN_INDEX Data numbers
+
+load --table Data
+[
+{"numbers": "[1, -2]"},
+{"numbers": "[-3, 4]"}
+]
+
+dump \
+  --dump_plugins no \
+  --dump_schema no
+
+select Data --filter 'numbers @ -2'

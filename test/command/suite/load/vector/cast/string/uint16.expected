@@ -1,0 +1,25 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data numbers COLUMN_VECTOR UInt16
+[[0,0.0,0.0],true]
+table_create Numbers TABLE_PAT_KEY UInt16
+[[0,0.0,0.0],true]
+column_create Numbers data_numbers COLUMN_INDEX Data numbers
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"numbers": "[1, 2]"},
+{"numbers": "[3, 4]"}
+]
+[[0,0.0,0.0],2]
+dump   --dump_plugins no   --dump_schema no
+load --table Data
+[
+["_id","numbers"],
+[1,[1,2]],
+[2,[3,4]]
+]
+
+column_create Numbers data_numbers COLUMN_INDEX Data numbers
+select Data --filter 'numbers @ 2'
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["numbers","UInt16"]],[1,[1,2]]]]]
