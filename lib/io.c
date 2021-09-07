@@ -1272,6 +1272,7 @@ grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info)
       if (!grn_fileinfo_open(ctx, fi, path, O_RDWR|O_CREAT)) {
         DO_MAP(io, &info->fmo, fi, pos, segment_size, segno, info->map);
         if (!info->map && !path_exist) {
+          grn_fileinfo_close(ctx, fi);
           if (grn_unlink(path) == 0) {
             GRN_LOG(ctx, GRN_LOG_INFO,
                     "[io][map][error] memory mapping is failed and then "
