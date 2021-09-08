@@ -19,6 +19,7 @@
 #include "grn_token_cursor.h"
 
 #include "grn.h"
+#include "grn_cast.h"
 #include "grn_ctx_impl.h"
 #include "grn_str.h"
 #include "grn_store.h"
