@@ -153,11 +153,8 @@ namespace grn {
         };
 
         std::vector<grn_id> ids;
-# if ARROW_VERSION_MAJOR >= 3
         std::vector<::arrow::Future<>> futures;
-# else
-        std::vector<::arrow::Future<::arrow::Status>> futures;
-# endif
+
         GRN_TABLE_EACH_BEGIN_FLAGS(ctx_, table_, cursor, id, GRN_CURSOR_BY_ID) {
           ids.push_back(id);
           if (ids.size() == chunk_size) {

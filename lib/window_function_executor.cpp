@@ -369,7 +369,7 @@ grn_window_function_executor_is_ascending(grn_ctx *ctx,
   return true;
 }
 
-#if ARROW_VERSION_MAJOR >= 3
+#ifdef GRN_WITH_APACHE_ARROW
 namespace {
   struct GrnSortKeys {
     grn_table_sort_key *keys_;
@@ -741,7 +741,7 @@ grn_window_function_executor_execute_all_tables(
   grn_window_function_executor *executor,
   const char *tag)
 {
-#if ARROW_VERSION_MAJOR >= 3
+#ifdef GRN_WITH_APACHE_ARROW
   AllTablesExecutor all_tables_executor(ctx, executor, tag);
   all_tables_executor.execute();
 #endif
@@ -1119,7 +1119,7 @@ grn_window_function_executor_execute(grn_ctx *ctx,
   }
 
   bool process_all_tables_at_once = false;
-#if defined(GRN_WITH_APACHE_ARROW) && ARROW_VERSION_MAJOR >= 3
+#ifdef GRN_WITH_APACHE_ARROW
   process_all_tables_at_once =
     grn_window_function_executor_all_tables_at_once_enable &&
     (n_tables > 1);
