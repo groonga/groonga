@@ -13,8 +13,7 @@ Summary
 
 .. versionadded:: 8.0.2
 
-``NormalizerNFKC100`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition)
-for Unicode version 10.0.
+``NormalizerNFKC100`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition) for Unicode version 10.0.
 
 This normalizer can change behavior by specifying options.
 
@@ -27,8 +26,7 @@ No options::
 
   NormalizerNFKC100
 
-``NormalizerNFKC100`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition)
-for Unicode version 10.0.
+``NormalizerNFKC100`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition) for Unicode version 10.0.
 
 Specify option::
 
@@ -68,8 +66,7 @@ Specify multiple options::
 
   NormalizerNFKC100("unify_to_romaji", true, "unify_kana_case", true, "unify_hyphen_and_prolonged_sound_mark", true)
 
-``NormalizerNFKC100`` also specify multiple options as above.
-You can also specify mingle multiple options except above example.
+``NormalizerNFKC100`` also specify multiple options as above. You can also specify mingle multiple options except above example.
 
 Usage
 -----

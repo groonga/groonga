@@ -1,6 +1,6 @@
 Execution example::
 
-  normalize   'NormalizerNFKC100("unify_middle_dot", true)'   "·ᐧ•∙⋅⸱・･"   WITH_TYPES
+  normalize   'NormalizerNFKC130("unify_middle_dot", true)'   "·ᐧ•∙⋅⸱・･"   WITH_TYPES
   # [
   #   [
   #     0, 

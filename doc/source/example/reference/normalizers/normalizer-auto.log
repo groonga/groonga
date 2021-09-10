@@ -1,17 +1,4 @@
 Execution example::
 
-  normalize NormalizerAuto "ｶﾞ"
-  # [
-  #   [
-  #     0,
-  #     1547239424.874337,
-  #     0.0001468658447265625
-  #   ],
-  #   {
-  #     "normalized": "ガ",
-  #     "types": [
-  #     ],
-  #     "checks": [
-  #     ]
-  #   }
-  # ]
+  table_create NormalLexicon TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
+  # [[0, 1337566253.89858, 0.000355720520019531], true]

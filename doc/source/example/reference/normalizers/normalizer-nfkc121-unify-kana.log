@@ -1,6 +1,6 @@
 Execution example::
 
-  normalize   'NormalizerNFKC100("unify_kana", true)'   "あイｳｪおヽヾ"   WITH_TYPES
+  normalize   'NormalizerNFKC121("unify_kana", true)'   "あイｳｪおヽヾ"   WITH_TYPES
   # [
   #   [
   #     0, 

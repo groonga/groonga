@@ -1,17 +1,4 @@
 Execution example::
 
-  normalize NormalizerNFKC51 "㎡"
-  # [
-  #   [
-  #     0,
-  #     1547241266.278454,
-  #     0.0001294612884521484
-  #   ],
-  #   {
-  #     "normalized": "m2",
-  #     "types": [
-  #     ],
-  #     "checks": [
-  #     ]
-  #   }
-  # ]
+  table_create NFKC51Lexicon TABLE_HASH_KEY ShortText --normalizer NormalizerNFKC51
+  # [[0, 1337566253.89858, 0.000355720520019531], true]

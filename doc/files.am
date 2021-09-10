@@ -1040,6 +1040,8 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/normalizers.rst \
 	$(top_srcdir)/doc/source/reference/normalizers/normalizer_auto.rst \
 	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc100.rst \
+	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc121.rst \
+	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc130.rst \
 	$(top_srcdir)/doc/source/reference/normalizers/normalizer_nfkc51.rst \
 	$(top_srcdir)/doc/source/reference/operations.rst \
 	$(top_srcdir)/doc/source/reference/operations/geolocation_search.rst \
@@ -2172,6 +2174,8 @@ source_files_relative_from_doc_dir = \
 	source/reference/normalizers.rst \
 	source/reference/normalizers/normalizer_auto.rst \
 	source/reference/normalizers/normalizer_nfkc100.rst \
+	source/reference/normalizers/normalizer_nfkc121.rst \
+	source/reference/normalizers/normalizer_nfkc130.rst \
 	source/reference/normalizers/normalizer_nfkc51.rst \
 	source/reference/operations.rst \
 	source/reference/operations/geolocation_search.rst \

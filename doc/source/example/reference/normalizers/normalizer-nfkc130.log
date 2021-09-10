@@ -1,6 +1,6 @@
 Execution example::
 
-  normalize NormalizerNFKC100 "©" WITH_TYPES
+  normalize NormalizerNFKC130 "©" WITH_TYPES
   # [
   #   [
   #     0, 

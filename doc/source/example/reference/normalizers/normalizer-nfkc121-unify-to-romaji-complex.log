@@ -37,7 +37,7 @@ Execution example::
   #     }
   #   ]
   # ]
-  normalize   'NormalizerNFKC100("unify_to_romaji", true)'   "カレ"   WITH_TYPES
+  normalize   'NormalizerNFKC121("unify_to_romaji", true)'   "カレ"   WITH_TYPES
   # [
   #   [
   #     0, 
@@ -55,7 +55,7 @@ Execution example::
   #     "checks": []
   #   }
   # ]
-  normalize   'NormalizerNFKC100("unify_to_romaji", true)'   "ナマエ"   WITH_TYPES
+  normalize   'NormalizerNFKC121("unify_to_romaji", true)'   "ナマエ"   WITH_TYPES
   # [
   #   [
   #     0, 
@@ -74,7 +74,7 @@ Execution example::
   #     "checks": []
   #   }
   # ]
-  normalize   'NormalizerNFKC100("unify_to_romaji", true)'   "ヤマダ"   WITH_TYPES
+  normalize   'NormalizerNFKC121("unify_to_romaji", true)'   "ヤマダ"   WITH_TYPES
   # [
   #   [
   #     0, 
