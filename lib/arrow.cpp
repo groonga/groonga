@@ -1880,15 +1880,10 @@ namespace grnarrow {
     }
 
     void add_column_string(const char *value, size_t value_length) {
-#if ARROW_VERSION_MAJOR >= 3
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
           current_column_index_++);
-#else
-      auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::StringBuilder>(
-          current_column_index_++);
-#endif
+
       auto status = column_builder->Append(value, value_length);
       if (!status.ok()) {
         return;
@@ -2036,15 +2031,10 @@ namespace grnarrow {
     }
 
     void add_column_record(grn_obj *record) {
-#if ARROW_VERSION_MAJOR >= 3
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
           current_column_index_++);
-#else
-      auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::StringBuilder>(
-          current_column_index_++);
-#endif
+
       auto table = object_cache_[record->header.domain];
       char key[GRN_TABLE_MAX_KEY_SIZE];
       auto key_size = grn_table_get_key(ctx_,
@@ -2084,13 +2074,9 @@ namespace grnarrow {
         auto n = GRN_BULK_VSIZE(uvector) / element_size;
         auto raw_value_builder = column_builder->value_builder();
         if (grn_obj_is_table_with_key(ctx_, domain)) {
-#if ARROW_VERSION_MAJOR >= 3
           auto value_builder =
             static_cast<arrow::StringDictionaryBuilder *>(raw_value_builder);
-#else
-          auto value_builder =
-            static_cast<arrow::StringBuilder *>(raw_value_builder);
-#endif
+
           for (size_t i = 0; i < n; ++i) {
             auto record_id =
               *reinterpret_cast<grn_id *>(raw_elements + (element_size * i));
