@@ -103,12 +103,12 @@ load --table Logs_20150205
 ]
 [[0,0.0,0.0],1]
 logical_range_filter Logs time   --command_version 3   --output_type apache-arrow
-_key: string
+_key: dictionary<values=string, indices=int32, ordered=0>
 int32: int32
 int32_vector: list<item: int32>
 int64: int64
-reference_short_text: string
-reference_short_text_vector: list<item: string>
+reference_short_text: dictionary<values=string, indices=int32, ordered=0>
+reference_short_text_vector: list<item: dictionary<values=string, indices=int32, ordered=0>>
 time: timestamp[ns]
 uint32: uint32
 	_key	int32	int32_vector	     int64	reference_short_text	reference_short_text_vector	                     time	uint32
@@ -116,32 +116,72 @@ uint32: uint32
   1,
   -2,
   3
-]	4294967296	Hello 2015-02-03    	[
-  "2015-02-03 1",
-  "2015-02-03 2"
-]	2015-02-03T23:59:58+09:00	    29
+]	4294967296	Hello 2015-02-03    	
+-- dictionary:
+  [
+    "2015-02-03 1",
+    "2015-02-03 2"
+  ]
+-- indices:
+  [
+    0,
+    1
+  ]	2015-02-03T23:59:58+09:00	    29
 1	2015-02-03 23:59:59	  -29	[
   1,
   -2,
   3
-]	4294967296	Hello again 2015-02-03	[
-  "2015-02-03 3",
-  "2015-02-03 4"
-]	2015-02-03T23:59:59+09:00	  2929
+]	4294967296	Hello again 2015-02-03	
+-- dictionary:
+  [
+    "2015-02-03 1",
+    "2015-02-03 2",
+    "2015-02-03 3",
+    "2015-02-03 4"
+  ]
+-- indices:
+  [
+    2,
+    3
+  ]	2015-02-03T23:59:59+09:00	  2929
 2	2015-02-04 00:00:00	 -290	[
   10,
   -20,
   30
-]	4294967297	Hello 2015-02-04    	[
-  "2015-02-04 1",
-  "2015-02-04 2",
-  "2015-02-04 3"
-]	2015-02-04T00:00:00+09:00	   290
+]	4294967297	Hello 2015-02-04    	
+-- dictionary:
+  [
+    "2015-02-03 1",
+    "2015-02-03 2",
+    "2015-02-03 3",
+    "2015-02-03 4",
+    "2015-02-04 1",
+    "2015-02-04 2",
+    "2015-02-04 3"
+  ]
+-- indices:
+  [
+    4,
+    5,
+    6
+  ]	2015-02-04T00:00:00+09:00	   290
 3	2015-02-05 00:00:00	-2900	[
   100,
   -200,
   300
-]	4294967298	Hello 2015-02-05    	[]                         	2015-02-05T00:00:00+09:00	  2900
+]	4294967298	Hello 2015-02-05    	
+-- dictionary:
+  [
+    "2015-02-03 1",
+    "2015-02-03 2",
+    "2015-02-03 3",
+    "2015-02-03 4",
+    "2015-02-04 1",
+    "2015-02-04 2",
+    "2015-02-04 3"
+  ]
+-- indices:
+  []	2015-02-05T00:00:00+09:00	  2900
 ========================================
 return_code: int32
 start_time: timestamp[ns]
@@ -162,12 +202,12 @@ GROONGA:data_type: metadata
 #:000000000000000 send(0)
 #<000000000000000 rc=0
 logical_range_filter Logs time   --command_version 3   --output_type apache-arrow
-_key: string
+_key: dictionary<values=string, indices=int32, ordered=0>
 int32: int32
 int32_vector: list<item: int32>
 int64: int64
-reference_short_text: string
-reference_short_text_vector: list<item: string>
+reference_short_text: dictionary<values=string, indices=int32, ordered=0>
+reference_short_text_vector: list<item: dictionary<values=string, indices=int32, ordered=0>>
 time: timestamp[ns]
 uint32: uint32
 	_key	int32	int32_vector	     int64	reference_short_text	reference_short_text_vector	                     time	uint32
@@ -175,32 +215,72 @@ uint32: uint32
   1,
   -2,
   3
-]	4294967296	Hello 2015-02-03    	[
-  "2015-02-03 1",
-  "2015-02-03 2"
-]	2015-02-03T23:59:58+09:00	    29
+]	4294967296	Hello 2015-02-03    	
+-- dictionary:
+  [
+    "2015-02-03 1",
+    "2015-02-03 2"
+  ]
+-- indices:
+  [
+    0,
+    1
+  ]	2015-02-03T23:59:58+09:00	    29
 1	2015-02-03 23:59:59	  -29	[
   1,
   -2,
   3
-]	4294967296	Hello again 2015-02-03	[
-  "2015-02-03 3",
-  "2015-02-03 4"
-]	2015-02-03T23:59:59+09:00	  2929
+]	4294967296	Hello again 2015-02-03	
+-- dictionary:
+  [
+    "2015-02-03 1",
+    "2015-02-03 2",
+    "2015-02-03 3",
+    "2015-02-03 4"
+  ]
+-- indices:
+  [
+    2,
+    3
+  ]	2015-02-03T23:59:59+09:00	  2929
 2	2015-02-04 00:00:00	 -290	[
   10,
   -20,
   30
-]	4294967297	Hello 2015-02-04    	[
-  "2015-02-04 1",
-  "2015-02-04 2",
-  "2015-02-04 3"
-]	2015-02-04T00:00:00+09:00	   290
+]	4294967297	Hello 2015-02-04    	
+-- dictionary:
+  [
+    "2015-02-03 1",
+    "2015-02-03 2",
+    "2015-02-03 3",
+    "2015-02-03 4",
+    "2015-02-04 1",
+    "2015-02-04 2",
+    "2015-02-04 3"
+  ]
+-- indices:
+  [
+    4,
+    5,
+    6
+  ]	2015-02-04T00:00:00+09:00	   290
 3	2015-02-05 00:00:00	-2900	[
   100,
   -200,
   300
-]	4294967298	Hello 2015-02-05    	[]                         	2015-02-05T00:00:00+09:00	  2900
+]	4294967298	Hello 2015-02-05    	
+-- dictionary:
+  [
+    "2015-02-03 1",
+    "2015-02-03 2",
+    "2015-02-03 3",
+    "2015-02-03 4",
+    "2015-02-04 1",
+    "2015-02-04 2",
+    "2015-02-04 3"
+  ]
+-- indices:
+  []	2015-02-05T00:00:00+09:00	  2900
 ========================================
 return_code: int32
 start_time: timestamp[ns]
