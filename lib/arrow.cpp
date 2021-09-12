@@ -1883,7 +1883,6 @@ namespace grnarrow {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
           current_column_index_++);
-
       auto status = column_builder->Append(value, value_length);
       if (!status.ok()) {
         return;
@@ -2034,7 +2033,6 @@ namespace grnarrow {
       auto column_builder =
         record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
           current_column_index_++);
-
       auto table = object_cache_[record->header.domain];
       char key[GRN_TABLE_MAX_KEY_SIZE];
       auto key_size = grn_table_get_key(ctx_,
@@ -2076,7 +2074,6 @@ namespace grnarrow {
         if (grn_obj_is_table_with_key(ctx_, domain)) {
           auto value_builder =
             static_cast<arrow::StringDictionaryBuilder *>(raw_value_builder);
-
           for (size_t i = 0; i < n; ++i) {
             auto record_id =
               *reinterpret_cast<grn_id *>(raw_elements + (element_size * i));
