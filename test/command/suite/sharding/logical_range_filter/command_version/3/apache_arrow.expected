@@ -103,7 +103,7 @@ load --table Logs_20150205
 ]
 [[0,0.0,0.0],1]
 logical_range_filter Logs time   --command_version 3   --output_type apache-arrow
-_key: dictionary<values=string, indices=int32, ordered=0>
+_key: string
 int32: int32
 int32_vector: list<item: int32>
 int64: int64
@@ -202,7 +202,7 @@ GROONGA:data_type: metadata
 #:000000000000000 send(0)
 #<000000000000000 rc=0
 logical_range_filter Logs time   --command_version 3   --output_type apache-arrow
-_key: dictionary<values=string, indices=int32, ordered=0>
+_key: string
 int32: int32
 int32_vector: list<item: int32>
 int64: int64
