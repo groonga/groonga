@@ -234,12 +234,12 @@ namespace grnarrow {
   }
 
   class ArrayBuilderResetFullVisitor : public arrow::TypeVisitor {
-    // We need execute ResetFull() with an appropriate dictionary length
+    // We need to execute ResetFull() with an appropriate dictionary length
     // in order to avoid memory exhaustion and so on.
     // - Dictionary data in DictionaryBuilder are held in memory until
     //   ResetFull() is executed.
-    // - Some arrow implementations (clients) have a 2GB limitation on
-    //   the value size of ArrowArray. 
+    // - Some Apache Arrow implementations (clients) have a 2GB limitation on
+    //   the value size of array.
   public:
     ArrayBuilderResetFullVisitor(grn_ctx *ctx,
                                  arrow::ArrayBuilder *builder)
@@ -249,7 +249,7 @@ namespace grnarrow {
 
     arrow::Status Visit(const arrow::DictionaryType &type) override
     {
-      const int dictionary_length_threshold = 10000;
+      const int64_t dictionary_length_threshold = 10000;
 
       // The value type of Dictionary is always string for now.
       auto builder = static_cast<arrow::StringDictionaryBuilder *>(builder_);
@@ -2142,8 +2142,8 @@ namespace grnarrow {
               "failed to write flushed record batch");
       }
 
-      int fields_count = record_batch_builder_->num_fields();
-      for(int i = 0; i < fields_count; i++) {
+      auto n_fields = record_batch_builder_->num_fields();
+      for (int i = 0; i < n_fields; ++i) {
         auto builder = record_batch_builder_->GetField(i);
         auto visitor = ArrayBuilderResetFullVisitor(ctx_, builder);
         builder->type()->Accept(&visitor);
