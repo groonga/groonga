@@ -46,6 +46,6 @@ Here is an example that uses ``NormalizerAuto`` normalizer:
 .. table_create NormalLexicon TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
 
 See also
-----------
+--------
 
 * :doc:`../commands/normalize`

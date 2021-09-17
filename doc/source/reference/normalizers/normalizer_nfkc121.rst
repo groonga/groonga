@@ -60,7 +60,7 @@ Usage
 -----
 
 Simple usage
-------------
+^^^^^^^^^^^^
 
 Here is an example of ``NormalizerNFKC121``. ``NormalizerNFKC121`` normalizes text by Unicode NFKC (Normalization Form Compatibility Composition) for Unicode version 12.1.
 
@@ -151,7 +151,7 @@ This option enables normalize hiragana and katakana to romaji as below.
 .. normalize   'NormalizerNFKC121("unify_to_romaji", true)'   "アァイィウゥエェオォ"   WITH_TYPES
 
 Advanced usage
---------------
+^^^^^^^^^^^^^^
 
 You can output romaji of specific a part of speech with using to combine
 ``TokenMecab`` and ``NormalizerNFKC121`` as below.
