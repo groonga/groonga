@@ -25,12 +25,12 @@ SUFFIXES += .pot .po .mo .edit
 .PHONY: gettext update build
 
 .pot.edit:
-	if test -f $*.po; then			\
+	if test -f $(srcdir)/$*.po; then	\
 	  msgmerge				\
 	    --quiet				\
 	    --sort-by-file			\
 	    --output-file=$@.tmp		\
-	    $*.po				\
+	    $(srcdir)/$*.po			\
 	    $<;					\
 	else					\
 	  msginit				\
@@ -45,10 +45,10 @@ SUFFIXES += .pot .po .mo .edit
 	rm $@.tmp
 
 .edit.po:
-	msgcat --no-location --output $@ $<
+	msgcat --no-location --output $(srcdir)/$@ $<
 
 .po.mo:
-	msgfmt -o $@ $<
+	msgfmt -o $@ $(srcdir)/$<
 
 if DOCUMENT_BUILDABLE
 update: edit-po-build-stamp

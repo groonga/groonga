@@ -1,0 +1,25 @@
+Execution example::
+
+  normalize 'NormalizerTable("normalized", "Normalizations.normalized")' "Groonga" WITH_TYPES
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   {
+  #     "normalized": "Groong<A>", 
+  #     "types": [
+  #       "alpha", 
+  #       "alpha", 
+  #       "alpha", 
+  #       "alpha", 
+  #       "alpha", 
+  #       "alpha", 
+  #       "symbol", 
+  #       "alpha", 
+  #       "symbol"
+  #     ], 
+  #     "checks": []
+  #   }
+  # ]

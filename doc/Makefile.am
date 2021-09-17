@@ -22,7 +22,7 @@ files.am: update-files.sh
 update-files: $(BUILT_SOURCES)
 	cd locale/en/LC_MESSAGES && $(MAKE) gettext
 	cd locale/en && $(MAKE) clean html
-	$(srcdir)/update-files.sh > files.am
+	$(srcdir)/update-files.sh > $(srcdir)/files.am
 
 clean-html update-po:
 	for dir in $(SUBDIRS); do		\
