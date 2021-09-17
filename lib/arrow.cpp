@@ -33,12 +33,6 @@
 #include <sstream>
 
 namespace grnarrow {
-  enum class ArrowArrayOutputMode {
-    PLAIN = 0,
-    STRING_AS_DICTIONARY = 1,
-    REF_STRING_AS_DICTIONARY = 2,
-  };
-
   grn_rc status_to_rc(const arrow::Status &status) {
     switch (status.code()) {
     case arrow::StatusCode::OK:
@@ -154,8 +148,7 @@ namespace grnarrow {
   }
 
   std::shared_ptr<arrow::DataType> grn_type_id_to_arrow_type(grn_ctx *ctx,
-                                                             grn_id type_id,
-                                                             ArrowArrayOutputMode mode) {
+                                                             grn_id type_id) {
     switch (type_id) {
     case GRN_DB_BOOL :
       return arrow::boolean();
@@ -184,9 +177,7 @@ namespace grnarrow {
     case GRN_DB_SHORT_TEXT :
     case GRN_DB_TEXT :
     case GRN_DB_LONG_TEXT :
-      return (mode == ArrowArrayOutputMode::STRING_AS_DICTIONARY) ?
-        arrow::dictionary(arrow::int32(), arrow::utf8()) :
-        arrow::utf8();
+      return arrow::utf8();
     default :
       return nullptr;
     }
@@ -195,11 +186,10 @@ namespace grnarrow {
   std::shared_ptr<arrow::DataType> grn_column_to_arrow_type(
     grn_ctx *ctx,
     grn_obj *column,
-    ObjectCache &object_cache,
-    ArrowArrayOutputMode output_mode) {
+    ObjectCache &object_cache) {
     switch (column->header.type) {
     case GRN_TYPE :
-      return grn_type_id_to_arrow_type(ctx, grn_obj_id(ctx, column), output_mode);
+      return grn_type_id_to_arrow_type(ctx, grn_obj_id(ctx, column));
     case GRN_ACCESSOR :
     case GRN_COLUMN_FIX_SIZE :
     case GRN_COLUMN_VAR_SIZE :
@@ -207,15 +197,15 @@ namespace grnarrow {
         grn_id range_id = GRN_ID_NIL;
         grn_obj_flags range_flags = 0;
         grn_obj_get_range_info(ctx, column, &range_id, &range_flags);
-        auto arrow_type = grn_type_id_to_arrow_type(ctx, range_id, output_mode);
+        auto arrow_type = grn_type_id_to_arrow_type(ctx, range_id);
         if (!arrow_type) {
           auto range = object_cache[range_id];
           if (grn_obj_is_table_with_key(ctx, range)) {
             auto domain = object_cache[range->header.domain];
-            auto domain_output_mode = (output_mode == ArrowArrayOutputMode::REF_STRING_AS_DICTIONARY) ?
-              ArrowArrayOutputMode::STRING_AS_DICTIONARY :
-              output_mode;
-            arrow_type = grn_column_to_arrow_type(ctx, domain, object_cache, domain_output_mode);
+            arrow_type = grn_column_to_arrow_type(ctx, domain, object_cache);
+            if (arrow_type == arrow::utf8()) {
+              arrow_type = arrow::dictionary(arrow::int32(), arrow_type);
+            }
           }
         }
         if (range_flags & GRN_OBJ_VECTOR) {
@@ -231,6 +221,17 @@ namespace grnarrow {
       return nullptr;
     }
     return nullptr;
+  }
+
+  const std::shared_ptr<arrow::DataType> undictionary(
+    const std::shared_ptr<arrow::DataType> data_type)
+  {
+    if (data_type->id() != arrow::Type::DICTIONARY) {
+      return data_type;
+    }
+    auto dictionary_data_type =
+      std::static_pointer_cast<arrow::DictionaryType>(data_type);
+    return dictionary_data_type->value_type();
   }
 
   class ArrayBuilderResetFullVisitor : public arrow::TypeVisitor {
@@ -1200,10 +1201,13 @@ namespace grnarrow {
         std::string field_name(column_name, column_name_size);
         auto range_id = grn_obj_get_range(ctx_, column);
         auto range = object_cache_[range_id];
-        auto field_type = grn_column_to_arrow_type(ctx_, range, object_cache_, ArrowArrayOutputMode::PLAIN);
+        auto field_type = grn_column_to_arrow_type(ctx_, range, object_cache_);
         if (!field_type) {
           continue;
         }
+        // We can't use dictionary with FileWriter. It doesn't support
+        // dictionary delta.
+        field_type = undictionary(field_type);
 
         auto field = std::make_shared<arrow::Field>(field_name,
                                                     field_type,
@@ -1809,7 +1813,7 @@ namespace grnarrow {
     }
 
     void add_field(const char *name, grn_obj *column) {
-      auto type = grn_column_to_arrow_type(ctx_, column, object_cache_, ArrowArrayOutputMode::REF_STRING_AS_DICTIONARY);
+      auto type = grn_column_to_arrow_type(ctx_, column, object_cache_);
       if (!type) {
         auto ctx = ctx_;
         grn_obj inspected;
@@ -2245,8 +2249,8 @@ namespace grn {
 
       ::arrow::Status add_column(grn_obj *column,
                                  grn_table_cursor *cursor) {
-        const auto arrow_type =
-          grn_column_to_arrow_type(ctx_, column, object_cache_, grnarrow::ArrowArrayOutputMode::PLAIN);
+        auto arrow_type =
+          grn_column_to_arrow_type(ctx_, column, object_cache_);
         if (!arrow_type) {
           grn::TextBulk inspected(ctx_);
           grn_inspect(ctx_, *inspected, column);
@@ -2254,6 +2258,7 @@ namespace grn {
             "[arrow][array-builder][add-column] "
             "unsupported column: ", inspected.value());
         }
+        arrow_type = grnarrow::undictionary(arrow_type);
         if (!builder_) {
           ARROW_RETURN_NOT_OK(
             ::arrow::MakeBuilder(::arrow::default_memory_pool(),
