@@ -240,7 +240,7 @@ namespace grnarrow {
     // - Dictionary data in DictionaryBuilder are held in memory until
     //   ResetFull() is executed.
     // - Some Apache Arrow implementations (clients) have a 2GB limitation on
-    //   the value size of array.
+    //   the value size of array: C#.
   public:
     ArrayBuilderResetFullVisitor(grn_ctx *ctx,
                                  arrow::ArrayBuilder *builder)
