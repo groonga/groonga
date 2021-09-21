@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2021-09-17 17:59+0900\n"
+"PO-Revision-Date: 2021-09-21 16:34+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -5684,6 +5684,17 @@ msgstr ""
 
 msgid "This flag is available only for ``COLUMN_VECTOR`` or ``COLUMN_INDEX``."
 msgstr "``COLUMN_VECTOR`` と ``COLUMN_INDEX`` でだけこのフラグは有効です。"
+
+msgid "``WEIGHT_FLOAT32``"
+msgstr ""
+
+msgid ""
+"You can use 32bit floating point instead of 32bit unsigned integer for "
+"weight value."
+msgstr "重みの値に32bit非負整数ではなく32bit浮動小数点を使います。"
+
+msgid "You also need to specify ``WITH_WEIGHT``."
+msgstr "``WITH_WEIGHT`` も指定する必要があります。"
 
 msgid "``WITH_POSITION``"
 msgstr ""

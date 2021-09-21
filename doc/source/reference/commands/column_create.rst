@@ -736,6 +736,17 @@ Here are available flags:
        This flag is available only for ``COLUMN_VECTOR`` or
        ``COLUMN_INDEX``.
 
+   * - ``WEIGHT_FLOAT32``
+     - .. versionadded:: 10.0.3
+
+       You can use 32bit floating point instead of 32bit unsigned
+       integer for weight value.
+
+       You also need to specify ``WITH_WEIGHT``.
+
+       This flag is available only for ``COLUMN_VECTOR`` or
+       ``COLUMN_INDEX``.
+
    * - ``WITH_POSITION``
      - It enables position support to index column. It means that the
        index column is full inverted index. (Index column is
