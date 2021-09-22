@@ -1885,6 +1885,11 @@ table_open_options(grn_ctx *ctx,
         "[tokenizer][table] table isn't specified");
   }
 
+  if (ctx->rc != GRN_SUCCESS) {
+    GRN_FREE(options);
+    options = NULL;
+  }
+
   return options;
 }
 
