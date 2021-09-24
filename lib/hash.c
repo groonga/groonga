@@ -3145,7 +3145,8 @@ grn_tiny_hash_add(grn_ctx *ctx,
                   const void *key,
                   unsigned int key_size,
                   void **value,
-                  grn_id *index)
+                  grn_id *index,
+                  bool found_garbage)
 {
   grn_id entry_id;
   grn_hash_entry *entry;
@@ -3153,7 +3154,6 @@ grn_tiny_hash_add(grn_ctx *ctx,
     entry_id = hash->garbages;
     entry = (grn_hash_entry *)grn_tiny_array_get(&hash->a, entry_id);
     hash->garbages = *(grn_id *)entry;
-    (*hash->n_garbages)--;
     memset(entry, 0, hash->entry_size);
   } else {
     entry_id = hash->a.max + 1;
@@ -3161,6 +3161,9 @@ grn_tiny_hash_add(grn_ctx *ctx,
     if (!entry) {
       return GRN_ID_NIL;
     }
+  }
+  if (found_garbage) {
+    (*hash->n_garbages)--;
   }
   *index = entry_id;
   (*hash->n_entries)++;
@@ -3322,7 +3325,8 @@ grn_hash_add_entry(grn_ctx *ctx,
                            key,
                            key_size,
                            value,
-                           target_index);
+                           target_index,
+                           target_index == garbage_index);
   }
   if (id == GRN_ID_NIL) {
     GRN_DEFINE_NAME(hash);
