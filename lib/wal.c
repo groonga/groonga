@@ -233,6 +233,9 @@ grn_wal_key_to_string(grn_wal_key key)
   case GRN_WAL_KEY_N_ENTRIES :
     string = "n-entries";
     break;
+  case GRN_WAL_KEY_FOUND_GARBAGE :
+    string = "found-garbage";
+    break;
   case GRN_WAL_KEY_MAX_OFFSET :
     string = "max-offset";
     break;
@@ -1015,6 +1018,9 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       break;
     case GRN_WAL_KEY_N_ENTRIES :
       entry->n_entries = value->via.u64;
+      break;
+    case GRN_WAL_KEY_FOUND_GARBAGE :
+      entry->found_garbage = value->via.boolean;
       break;
     case GRN_WAL_KEY_MAX_OFFSET :
       entry->max_offset = value->via.u64;

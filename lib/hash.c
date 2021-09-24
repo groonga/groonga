@@ -1817,6 +1817,7 @@ typedef struct _grn_hash_wal_add_entry_data {
   grn_id next_garbage_record_id;
   uint32_t n_entries;
   uint32_t n_garbages;
+  bool found_garbage;
   uint32_t max_offset;
   uint32_t expected_n_entries;
 } grn_hash_wal_add_entry_data;
@@ -2250,6 +2251,7 @@ typedef struct {
   bool next_garbage_record_id;
   bool n_garbages;
   bool n_entries;
+  bool found_garbage;
   bool max_offset;
   bool expected_n_entries;
 } grn_hash_wal_add_entry_used;
@@ -2297,6 +2299,8 @@ grn_hash_wal_add_entry_reuse_entry(grn_ctx *ctx,
   used->index_hash_value = true;
   used->n_garbages = true;
   used->n_entries = true;
+  used->found_garbage = true;
+  int found_garbage = data->found_garbage;
   return grn_wal_add_entry(ctx,
                            (grn_obj *)(data->hash),
                            false,
@@ -2326,6 +2330,10 @@ grn_hash_wal_add_entry_reuse_entry(grn_ctx *ctx,
                            GRN_WAL_KEY_N_ENTRIES,
                            GRN_WAL_VALUE_UINT32,
                            data->n_entries,
+
+                           GRN_WAL_KEY_FOUND_GARBAGE,
+                           GRN_WAL_VALUE_BOOLEAN,
+                           found_garbage,
 
                            GRN_WAL_KEY_END);
 }
@@ -2903,6 +2911,7 @@ grn_io_hash_reuse_entry(grn_ctx *ctx,
                         grn_id id,
                         uint32_t key_size,
                         grn_id *index,
+                        bool found_garbage,
                         const char *tag)
 {
   grn_hash_entry *entry = grn_io_hash_entry_at(ctx, hash, id, GRN_TABLE_ADD);
@@ -2916,7 +2925,9 @@ grn_io_hash_reuse_entry(grn_ctx *ctx,
     return NULL;
   }
   *index = id;
-  (*(hash->n_garbages))--;
+  if (found_garbage) {
+    (*(hash->n_garbages))--;
+  }
   (*(hash->n_entries))++;
   return entry;
 }
@@ -2999,7 +3010,8 @@ grn_io_hash_add(grn_ctx *ctx,
                 uint32_t key_size,
                 void **value,
                 grn_id *index,
-                uint32_t index_hash_value)
+                uint32_t index_hash_value,
+                bool found_garbage)
 {
   grn_hash_header_common * const header = hash->header.common;
   grn_hash_wal_add_entry_data *wal_data = hash->wal_data;
@@ -3028,6 +3040,7 @@ grn_io_hash_add(grn_ctx *ctx,
       wal_data->event = GRN_WAL_EVENT_REUSE_ENTRY;
       wal_data->n_garbages = *(hash->n_garbages);
       wal_data->n_entries = *(hash->n_entries);
+      wal_data->found_garbage = found_garbage;
       if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
         return GRN_ID_NIL;
       }
@@ -3037,6 +3050,7 @@ grn_io_hash_add(grn_ctx *ctx,
                                     wal_data->record_id,
                                     wal_data->key_size,
                                     index,
+                                    found_garbage,
                                     wal_data->tag);
     if (!entry) {
       return GRN_ID_NIL;
@@ -3317,7 +3331,8 @@ grn_hash_add_entry(grn_ctx *ctx,
                          key_size,
                          value,
                          target_index,
-                         target_index_hash_value);
+                         target_index_hash_value,
+                         target_index == garbage_index);
   } else {
     id = grn_tiny_hash_add(ctx,
                            hash,
@@ -5088,6 +5103,7 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
                                     entry.record_id,
                                     entry.key.content.uint64,
                                     index,
+                                    entry.found_garbage,
                                     tag)) {
           partial_record_id = entry.record_id;
         }

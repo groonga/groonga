@@ -97,6 +97,7 @@ typedef enum {
   GRN_WAL_KEY_NEXT_GARBAGE_RECORD_ID,
   GRN_WAL_KEY_N_GARBAGES,
   GRN_WAL_KEY_N_ENTRIES,
+  GRN_WAL_KEY_FOUND_GARBAGE,
   GRN_WAL_KEY_MAX_OFFSET,
   GRN_WAL_KEY_EXPECTED_N_ENTRIES,
   GRN_WAL_KEY_DELETE_INFO_INDEX,
@@ -190,6 +191,7 @@ typedef struct {
   grn_id next_garbage_record_id;
   uint32_t n_garbages;
   uint32_t n_entries;
+  bool found_garbage;
   uint32_t max_offset;
   uint32_t expected_n_entries;
   uint32_t delete_info_index;
