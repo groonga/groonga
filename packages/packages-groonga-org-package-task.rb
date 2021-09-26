@@ -1,4 +1,4 @@
-# Copyright(C) 2014-2020  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2014-2021  Sutou Kouhei <kou@clear-code.com>
 # Copyright(C) 2020-2021  Horimoto Yasuhiro <horimoto@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
@@ -142,10 +142,16 @@ class PackagesGroongaOrgPackageTask < PackageTask
   def release(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
+    destination = "#{repository_rsync_base_path}/"
+    case target_namespace
+    when :windows
+    else
+      destination << "incoming/"
+    end
     sh("rsync",
        "-av",
        "#{repositories_dir}/",
-       "#{repository_rsync_base_path}/")
+       destination)
   end
 
   def define_release_tasks
