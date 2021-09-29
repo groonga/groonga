@@ -5,6 +5,160 @@
 News
 ====
 
+.. _release-11-0-7:
+
+Release 11.0.7 - 2021-09-29
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`/reference/commands/load`] Added support for casting a string like as "[int, int,...]" to a vector of integer like as [int, int,...].
+
+  For example, Groonga handle as a vector of integer like as [1, -2] even if we load vector of string like as "[1, -2]" as below.
+
+    .. code-block::
+
+       table_create Data TABLE_NO_KEY
+       column_create Data numbers COLUMN_VECTOR Int16
+       table_create Numbers TABLE_PAT_KEY Int16
+       column_create Numbers data_numbers COLUMN_INDEX Data numbers
+
+       load --table Data
+       [
+       {"numbers": "[1, -2]"},
+       {"numbers": "[-3, 4]"}
+       ]
+
+       dump   --dump_plugins no   --dump_schema no
+       load --table Data
+       [
+       ["_id","numbers"],
+       [1,[1,-2]],
+       [2,[-3,4]]
+       ]
+
+       column_create Numbers data_numbers COLUMN_INDEX Data numbers
+       select Data --filter 'numbers @ -2'
+       [[0,0.0,0.0],[[[1],[["_id","UInt32"],["numbers","Int16"]],[1,[1,-2]]]]]
+
+  This feature supports for the floowings types.
+
+    * Int8
+    * UInt8
+    * Int16
+    * UInt16
+    * Int32
+    * UInt32
+    * Int64
+    * UInt64
+
+* [:doc:`/reference/commands/load`] Added support for loading a JSON array expressed as a text string as a vector of string.
+
+  For example, Groonga handle as a vector that has two elements like as ["hello", "world"] if we load JSON array expressed as a text string like as "[\"hello\", \"world\"]" as below.
+
+  .. code-block::
+
+     table_create Data TABLE_NO_KEY
+     [[0,0.0,0.0],true]
+     column_create Data strings COLUMN_VECTOR ShortText
+     [[0,0.0,0.0],true]
+     table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC130   --default_tokenizer TokenNgram
+     [[0,0.0,0.0],true]
+     column_create Terms data_strings COLUMN_INDEX Data strings
+     [[0,0.0,0.0],true]
+     load --table Data
+     [
+     {"strings": "[\"Hello\", \"World\"]"},
+     {"strings": "[\"Good-bye\", \"World\"]"}
+     ]
+     [[0,0.0,0.0],2]
+     dump   --dump_plugins no   --dump_schema no
+     load --table Data
+     [
+     ["_id","strings"],
+     [1,["Hello","World"]],
+     [2,["Good-bye","World"]]
+     ]
+
+     column_create Terms data_strings COLUMN_INDEX Data strings
+     select Data --filter 'strings @ "bye"'
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "_id",
+               "UInt32"
+             ],
+             [
+               "strings",
+               "ShortText"
+             ]
+           ],
+           [
+             2,
+             [
+               "Good-bye",
+               "World"
+             ]
+           ]
+         ]
+       ]
+     ]
+
+  In before version, Groonga handled as a vector that had one element like as ["[\"hello\", \"world\"]"] if we loaded JSON array expressed as a text string like as "[\"hello\", \"world\"]".
+
+* [Documentation] Added a documentation about the following items.
+
+  * [:doc:`reference/commands/column_create`] Added a documentation about ``WEIGHT_FLOAT32`` flag.
+
+  * [:doc:`reference/normalizers/normalizer_nfkc121`] Added a documentation about ``NormalizerNFKC121``.
+
+  * [:doc:`reference/normalizers/normalizer_nfkc130`] Added a documentation about ``NormalizerNFKC130``.
+
+  * [:doc:`reference/normalizers/normalizer_table`] Added a documentation about ``NormalizerTable``.
+
+* Updated to 3.0.0 that the version of Apache Arrow that Groonga requires. [GitHub#1265][Patched by Takashi Hashida]
+
+Fixes
+-----
+
+* Fixed a memory leak when we created a table with a tokenizer with invalid option.
+
+* Fixed a bug that may not add a new entry in Hash table.
+
+  This bug occurs in Groonga 11.0.6, and it may occur if we quite a lot of add and delete data.
+
+* Fixed a resource leak when Groonga fail open a new file caused by out of memory.
+
+Known Issues
+------------
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
+
+Thanks
+------
+
+* Takashi Hashida
+
 .. _release-11-0-6:
 
 Release 11.0.6 - 2021-08-29
