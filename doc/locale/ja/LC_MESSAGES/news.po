@@ -18489,7 +18489,3 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
-
-#, fuzzy
-#~ msgid "Added support for loading JSON array text as text vector."
-#~ msgstr "重み付きベクターをJSON文字列としてロードできるようにしました。"
