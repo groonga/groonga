@@ -94,6 +94,13 @@ grn_proc_options_parsev(grn_ctx *ctx,
                         const char *name,
                         va_list args);
 
+GRN_API grn_rc
+grn_proc_func_generate_cache_key(grn_ctx *ctx,
+                                 const char *function_name,
+                                 grn_obj **args,
+                                 int n_args,
+                                 grn_obj *cache_key);
+
 #ifdef __cplusplus
 }
 #endif
