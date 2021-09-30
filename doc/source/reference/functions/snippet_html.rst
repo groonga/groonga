@@ -9,13 +9,18 @@
 Summary
 -------
 
-``snippet_html`` extracts snippets of target text around search
-keywords (``KWIC``. ``KeyWord In Context``). The snippets are prepared
-for embedding HTML. Special characters such as ``<`` and ``>`` are
-escapsed as ``&lt;`` and ``&gt;``. Keyword is surrounded with ``<span
-class="keyword">`` and ``</span>``. For example, a snippet of ``I am a
-groonga user. <3`` for keyword ``groonga`` is ``I am a <span
-class="keyword">groonga</span> user. &lt;3``.
+This function extracts snippets of target text around search keywords
+(``KWIC``. ``KeyWord In Context``).
+
+The snippets are prepared for embedding HTML. Special characters such
+as ``<`` and ``>`` are escapsed as ``&lt;`` and ``&gt;``. Keyword is
+surrounded with ``<span class="keyword">`` and ``</span>``. For
+example, a snippet of ``I am a groonga user. <3`` for keyword
+``groonga`` is ``I am a <span class="keyword">groonga</span>
+user. &lt;3``.
+
+This function is a HTML specific version of :doc:`snippet`. Generally,
+this function is enough for normal Web application use.
 
 Syntax
 ------
@@ -23,9 +28,6 @@ Syntax
 ``snippet_html`` has only one parameter::
 
   snippet_html(column)
-
-``snippet_html`` has many parameters internally but they can't be
-specified for now. You will be able to custom those parameters soon.
 
 Usage
 -----
@@ -73,6 +75,9 @@ and ``</span>``.
 Both the max number of text parts and the max size of a text part
 aren't customizable.
 
+If you want to customize them, you need to use :doc:`snippet` instead
+of this function.
+
 You can specify string literal instead of column.
 
 .. groonga-command
@@ -82,31 +87,27 @@ You can specify string literal instead of column.
 Return value
 ------------
 
-``snippet_html`` returns an array of string or ``null``. If
-``snippet_html`` can't find any snippets, it returns ``null``.
+This function returns an array of string or ``null``. If This function
+can't find any snippets, it returns ``null``.
 
 An element of array is a snippet::
 
   [SNIPPET1, SNIPPET2, SNIPPET3]
 
 A snippet includes one or more keywords. The max byte size of a
-snippet except ``<span class="keyword">`` and ``</span>`` is
-200byte. The unit isn't the number of characters.
+snippet except open tag and close tag is 200byte. The unit isn't the
+number of characters.
 
-The array size is larger than or equal to 0 and less than or equal
-to 3. The max size 3 will be customizable soon.
+Open tag is ``<span class="keyword">`` and close tag is ``</span>``.
 
-TODO
-----
+The array size is larger than or equal to 1 and less than or equal
+to 3.
 
-* Make the max number of text parts customizable.
-* Make the max size of a text part customizable.
-* Make keywords customizable.
-* Make tag that surrounds a keyword customizable.
-* Make normalization customizable.
-* Support options by object literal.
+If you want to customize the max byte size of snippet and/or the max
+number of snippets, use :doc:`snippet` instead.
 
 See also
 --------
 
+* :doc:`snippet`
 * :doc:`/reference/commands/select`

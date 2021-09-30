@@ -133,8 +133,8 @@ Specifies the search condition in
 See :ref:`select-match-columns` about ``query`` parameter in
 ``select``.
 
-Optional parameter
-^^^^^^^^^^^^^^^^^^
+Optional parameters
+^^^^^^^^^^^^^^^^^^^
 
 There are some optional parameters.
 
@@ -221,7 +221,7 @@ full text search.
 .. _query-default-operator:
 
 ``default_operator``
-"""""""""""""""""""""
+""""""""""""""""""""
 
 Specifies the default logical operator. It's used when no logical
 operator such as ``OR`` and ``-`` are specified between conditional
