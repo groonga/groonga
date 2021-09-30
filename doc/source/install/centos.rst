@@ -51,7 +51,7 @@ CentOS 8
 Install::
 
   % sudo dnf install -y https://packages.groonga.org/centos/8/groonga-release-latest.noarch.rpm
-  % sudo dnf install -y --enablerepo=epel groonga
+  % sudo dnf install -y --enablerepo=epel --enablerepo=powertools groonga
 
 .. include:: server-use.inc
 

@@ -84,6 +84,7 @@ bullseye
 Install ``groonga-apt-source``::
 
   % sudo apt update
+  % sudo apt install -y -V wget
   % wget https://packages.groonga.org/debian/groonga-apt-source-latest-bullseye.deb
   % sudo apt install -y -V ./groonga-apt-source-latest-bullseye.deb
   % sudo apt update
