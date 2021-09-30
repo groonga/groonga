@@ -1,4 +1,6 @@
-/* Copyright(C) 2009-2014 Brazil
+/*
+  Copyright(C) 2009-2014  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -13,6 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "grn.h"
 #include <string.h>
 #include <stddef.h>
@@ -715,7 +718,7 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
       }
       last_last_end_offset = snip_result->end_offset;
 
-      if (snip_->mapping == (grn_snip_mapping *) -1) {
+      if (snip_->mapping == GRN_SNIP_MAPPING_HTML_ESCAPE) {
         tagged_len +=
           count_mapped_chars(&string[snip_result->start_offset],
                              &string[snip_result->end_offset]) + 1;
