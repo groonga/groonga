@@ -1,0 +1,11 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "aaa. bbb. ccc. AAA. BBB. CCC. xxx. yyy. zzz."}
+]
+[[0,0.0,0.0],1]
+select Entries   --output_columns '   snippet(content,   "ccc", "[", "]",   {"width": 10,    "delimiter_regexp": "\\\\."})'
+[[0,0.0,0.0],[[[1],[["snippet",null]],[[" [ccc]"," [CCC]"]]]]]
