@@ -1,0 +1,37 @@
+Execution example::
+
+  select Documents \
+    --output_columns 'snippet(content, \
+                              { \
+                                 "default_open_tag": "[", \
+                                 "default_close_tag": "]", \
+                                 "width": 50 \
+                              })' \
+    --match_columns content \
+    --query "fast performance"
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "snippet", 
+  #           null
+  #         ]
+  #       ], 
+  #       [
+  #         [
+  #           "Groonga is a [fast] and accurate full text search en", 
+  #           " result in superior [performance] on real-time appli"
+  #         ]
+  #       ]
+  #     ]
+  #   ]
+  # ]

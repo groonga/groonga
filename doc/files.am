@@ -463,6 +463,13 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/query_parallel_or/usage_basic.log \
 	$(top_srcdir)/doc/source/example/reference/functions/query_parallel_or/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/query_parallel_or/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/functions/snippet/usage_delimiter_regexp.log \
+	$(top_srcdir)/doc/source/example/reference/functions/snippet/usage_keywords.log \
+	$(top_srcdir)/doc/source/example/reference/functions/snippet/usage_keywords_from_conditions.log \
+	$(top_srcdir)/doc/source/example/reference/functions/snippet/usage_max_n_results.log \
+	$(top_srcdir)/doc/source/example/reference/functions/snippet/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/functions/snippet/usage_tags.log \
+	$(top_srcdir)/doc/source/example/reference/functions/snippet/usage_width.log \
 	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage.log \
 	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage_basic.log \
 	$(top_srcdir)/doc/source/example/reference/functions/snippet_html/usage_setup.log \
@@ -1047,6 +1054,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/query.rst \
 	$(top_srcdir)/doc/source/reference/functions/query_parallel_or.rst \
 	$(top_srcdir)/doc/source/reference/functions/rand.rst \
+	$(top_srcdir)/doc/source/reference/functions/snippet.rst \
 	$(top_srcdir)/doc/source/reference/functions/snippet_html.rst \
 	$(top_srcdir)/doc/source/reference/functions/string_length.rst \
 	$(top_srcdir)/doc/source/reference/functions/string_slice.rst \
@@ -1630,6 +1638,13 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/query_parallel_or/usage_basic.log \
 	source/example/reference/functions/query_parallel_or/usage_setup_data.log \
 	source/example/reference/functions/query_parallel_or/usage_setup_schema.log \
+	source/example/reference/functions/snippet/usage_delimiter_regexp.log \
+	source/example/reference/functions/snippet/usage_keywords.log \
+	source/example/reference/functions/snippet/usage_keywords_from_conditions.log \
+	source/example/reference/functions/snippet/usage_max_n_results.log \
+	source/example/reference/functions/snippet/usage_setup.log \
+	source/example/reference/functions/snippet/usage_tags.log \
+	source/example/reference/functions/snippet/usage_width.log \
 	source/example/reference/functions/snippet_html/usage.log \
 	source/example/reference/functions/snippet_html/usage_basic.log \
 	source/example/reference/functions/snippet_html/usage_setup.log \
@@ -2214,6 +2229,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/query.rst \
 	source/reference/functions/query_parallel_or.rst \
 	source/reference/functions/rand.rst \
+	source/reference/functions/snippet.rst \
 	source/reference/functions/snippet_html.rst \
 	source/reference/functions/string_length.rst \
 	source/reference/functions/string_slice.rst \
@@ -2647,6 +2663,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/query.html \
 	html/reference/functions/query_parallel_or.html \
 	html/reference/functions/rand.html \
+	html/reference/functions/snippet.html \
 	html/reference/functions/snippet_html.html \
 	html/reference/functions/string_length.html \
 	html/reference/functions/string_slice.html \

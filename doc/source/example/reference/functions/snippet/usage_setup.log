@@ -1,0 +1,17 @@
+Execution example::
+
+  table_create Documents TABLE_NO_KEY
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Documents content COLUMN_SCALAR Text
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram  --normalizer NormalizerAuto
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Terms documents_content_index COLUMN_INDEX|WITH_POSITION Documents content
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  load --table Documents
+  [
+  ["content"],
+  ["Groonga is a fast and accurate full text search engine based on inverted index. One of the characteristics of groonga is that a newly registered document instantly appears in search results. Also, groonga allows updates without read locks. These characteristics result in superior performance on real-time applications."],
+  ["Groonga is also a column-oriented database management system (DBMS). Compared with well-known row-oriented systems, such as MySQL and PostgreSQL, column-oriented systems are more suited for aggregate queries. Due to this advantage, groonga can cover weakness of row-oriented systems."]
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 2]
