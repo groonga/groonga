@@ -477,6 +477,54 @@ grn_proc_options_parsev(grn_ctx *ctx,
                                           args);
 }
 
+static void
+grn_proc_func_generate_cache_key_add(grn_ctx *ctx,
+                                     grn_obj *cache_key,
+                                     grn_obj *arg)
+{
+  switch (arg->header.type) {
+  case GRN_TABLE_HASH_KEY :
+    GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)arg, cursor, id) {
+      void *key;
+      unsigned int key_size;
+      void *value;
+      int value_size = grn_hash_cursor_get_key_value(ctx,
+                                                     cursor,
+                                                     &key,
+                                                     &key_size,
+                                                     &value);
+      GRN_TEXT_PUT(ctx, cache_key, key, key_size);
+      GRN_TEXT_PUTC(ctx, cache_key, '\1');
+      if (value_size == sizeof(grn_obj)) {
+        grn_proc_func_generate_cache_key_add(ctx, cache_key, (grn_obj *)value);
+      }
+      GRN_TEXT_PUTC(ctx, cache_key, '\2');
+    } GRN_HASH_EACH_END(ctx, cursor);
+    break;
+  default :
+    GRN_TEXT_PUT(ctx, cache_key, GRN_BULK_HEAD(arg), GRN_BULK_VSIZE(arg));
+    break;
+  }
+}
+
+grn_rc
+grn_proc_func_generate_cache_key(grn_ctx *ctx,
+                                 const char *function_name,
+                                 grn_obj **args,
+                                 int n_args,
+                                 grn_obj *cache_key)
+{
+  GRN_API_ENTER;
+  GRN_TEXT_PUTS(ctx, cache_key, function_name);
+  GRN_TEXT_PUTC(ctx, cache_key, '\0');
+  int i;
+  for (i = 0; i < n_args; i++) {
+    grn_proc_func_generate_cache_key_add(ctx, cache_key, args[i]);
+    GRN_TEXT_PUTC(ctx, cache_key, '\0');
+  }
+  GRN_API_RETURN(ctx->rc);
+}
+
 /**** procs ****/
 
 static grn_obj *
