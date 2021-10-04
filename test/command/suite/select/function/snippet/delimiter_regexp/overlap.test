@@ -1,0 +1,14 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR ShortText
+
+load --table Entries
+[
+{"content": "aaa. bbb ccc AAA. BBB CCC xxx yyy. zzz."}
+]
+
+select Entries \
+  --output_columns ' \
+  snippet(content, \
+  "ccc", "[", "]", \
+  {"width": 40, \
+   "delimiter_regexp": "\\\\."})'

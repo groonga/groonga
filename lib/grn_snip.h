@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2016  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,6 +21,7 @@
 #include "grn.h"
 #include "grn_str.h"
 #include "grn_db.h"
+#include "grn_onigmo.h"
 
 #define ASIZE                   256U
 #define MAX_SNIP_TAG_COUNT      512U
@@ -110,6 +112,12 @@ typedef struct _grn_snip
   size_t max_tagged_len;
 
   grn_obj *normalizer;
+
+  char *delimiter_pattern;
+  size_t delimiter_pattern_length;
+#ifdef GRN_SUPPORT_REGEXP
+  OnigRegex delimiter_regex;
+#endif
 } grn_snip;
 
 grn_rc grn_snip_close(grn_ctx *ctx, grn_snip *snip);

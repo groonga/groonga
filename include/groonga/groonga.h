@@ -954,6 +954,15 @@ GRN_API grn_rc grn_snip_add_cond(grn_ctx *ctx, grn_obj *snip,
 GRN_API grn_rc grn_snip_set_normalizer(grn_ctx *ctx, grn_obj *snip,
                                        grn_obj *normalizer);
 GRN_API grn_obj *grn_snip_get_normalizer(grn_ctx *ctx, grn_obj *snip);
+GRN_API grn_rc
+grn_snip_set_delimiter_regexp(grn_ctx *ctx,
+                              grn_obj *snip,
+                              const char *pattern,
+                              int pattern_length);
+GRN_API const char *
+grn_snip_get_delimiter_regexp(grn_ctx *ctx,
+                              grn_obj *snip,
+                              size_t *pattern_length);
 GRN_API grn_rc grn_snip_exec(grn_ctx *ctx, grn_obj *snip,
                              const char *string, unsigned int string_len,
                              unsigned int *nresults, unsigned int *max_tagged_len);

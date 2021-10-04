@@ -367,6 +367,76 @@ grn_snip_get_normalizer(grn_ctx *ctx, grn_obj *snip)
 }
 
 grn_rc
+grn_snip_set_delimiter_regexp(grn_ctx *ctx,
+                              grn_obj *snip,
+                              const char *pattern,
+                              int pattern_length)
+{
+  const char *tag = "[snip][delimiter-regexp][set]";
+
+  if (!snip) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  GRN_API_ENTER;
+#ifdef GRN_SUPPORT_REGEXP
+  grn_snip *snip_ = (grn_snip *)snip;
+  if (snip_->delimiter_regex) {
+    onig_free(snip_->delimiter_regex);
+  }
+  if (snip_->delimiter_pattern) {
+    GRN_FREE(snip_->delimiter_pattern);
+  }
+  if (pattern) {
+    if (pattern_length < 0) {
+      snip_->delimiter_pattern_length = strlen(pattern);
+    } else {
+      snip_->delimiter_pattern_length = pattern_length;
+    }
+    snip_->delimiter_pattern =
+      grn_snip_strndup(ctx,
+                       pattern,
+                       snip_->delimiter_pattern_length);
+    if (snip_->delimiter_pattern) {
+      snip_->delimiter_regex = grn_onigmo_new(ctx,
+                                              pattern,
+                                              pattern_length,
+                                              GRN_ONIGMO_OPTION_DEFAULT,
+                                              GRN_ONIGMO_SYNTAX_DEFAULT,
+                                              tag);
+    }
+  } else {
+    snip_->delimiter_regex = NULL;
+    snip_->delimiter_pattern = NULL;
+  }
+#else
+  ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+      "%s Onigmo isn't enabled",
+      tag);
+#endif
+  GRN_API_RETURN(ctx->rc);
+}
+
+const char *
+grn_snip_get_delimiter_regexp(grn_ctx *ctx, grn_obj *snip, size_t *length)
+{
+  grn_snip *snip_;
+
+  if (!snip) {
+    if (length) {
+      *length = 0;
+    }
+    return NULL;
+  }
+
+  snip_ = (grn_snip *)snip;
+  if (length) {
+    *length = snip_->delimiter_pattern_length;
+  }
+  return snip_->delimiter_pattern;
+}
+
+grn_rc
 grn_snip_add_cond(grn_ctx *ctx, grn_obj *snip,
                   const char *keyword, unsigned int keyword_len,
                   const char *opentag, unsigned int opentag_len,
@@ -523,6 +593,11 @@ grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
   } else {
     ret->normalizer = NULL;
   }
+  ret->delimiter_pattern = NULL;
+  ret->delimiter_pattern_length = 0;
+#ifdef GRN_SUPPORT_REGEXP
+  ret->delimiter_regex = NULL;
+#endif
 
   GRN_DB_OBJ_SET_TYPE(ret, GRN_SNIP);
   {
@@ -561,6 +636,14 @@ grn_snip_close(grn_ctx *ctx, grn_snip *snip)
   snip_cond *cond, *cond_end;
   if (!snip) { return GRN_INVALID_ARGUMENT; }
   GRN_API_ENTER;
+#ifdef GRN_SUPPORT_REGEXP
+  if (snip->delimiter_regex) {
+    onig_free(snip->delimiter_regex);
+  }
+#endif
+  if (snip->delimiter_pattern) {
+    GRN_FREE(snip->delimiter_pattern);
+  }
   if (snip->flags & GRN_SNIP_COPY_TAG) {
     int i;
     snip_cond *sc;
@@ -638,17 +721,18 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
         if (!cond) {
           break;
         }
-        /* check whether condtion is the first condition in snippet */
+        /* check whether condition is the first condition in snippet */
         if (snip_result->tag_count == 0) {
           /* skip condition if the number of rest snippet field is smaller than */
           /* the number of unfound keywords. */
           if (snip_->max_results - *nresults <= unfound_cond_count && cond->count > 0) {
-            int_least8_t exclude_other_cond = 1;
+            bool exclude_other_cond = true;
             for (i = 0; i < snip_->cond_len; i++) {
               if ((snip_->cond + i) != cond
                   && snip_->cond[i].end_offset <= cond->start_offset + snip_->width
                   && snip_->cond[i].count == 0) {
-                exclude_other_cond = 0;
+                exclude_other_cond = false;
+                break;
               }
             }
             if (exclude_other_cond) {
@@ -659,6 +743,22 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
           snip_result->start_offset = cond->start_offset;
           snip_result->first_tag_result_idx = snip_->tag_count;
         } else {
+#ifdef GRN_SUPPORT_REGEXP
+          if (snip_->delimiter_regex) {
+            size_t range_offset = MIN(snip_result->start_offset + snip_->width,
+                                      cond->start_offset);
+            OnigPosition position = onig_search(snip_->delimiter_regex,
+                                                string,
+                                                string + string_len,
+                                                string + snip_result->start_offset,
+                                                string + range_offset,
+                                                NULL,
+                                                ONIG_OPTION_NONE);
+            if (position != ONIG_MISMATCH) {
+              break;
+            }
+          }
+#endif
           if (cond->start_offset >= snip_result->start_offset + snip_->width) {
             break;
           }
@@ -698,23 +798,197 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
       if (!found_cond) {
         break;
       }
-      if (snip_result->start_offset + last_end_offset < snip_->width) {
-        snip_result->start_offset = 0;
-      } else {
-        snip_result->start_offset =
-          MAX(MIN
-              ((snip_result->start_offset + last_end_offset - snip_->width) / 2,
-               string_len - snip_->width), last_last_end_offset);
-      }
-      snip_result->start_offset =
-        grn_snip_find_firstbyte(string, snip_->encoding, snip_result->start_offset, 1);
+      {
+        /*
+          No overlap case:
+            keyword = hij
+            width = 10
+            string = abcdefghijklmnopqrstuvwxyz
 
-      snip_result->end_offset = snip_result->start_offset + snip_->width;
-      if (snip_result->end_offset < string_len) {
-        snip_result->end_offset =
-          grn_snip_find_firstbyte(string, snip_->encoding, snip_result->end_offset, -1);
-      } else {
-        snip_result->end_offset = string_len;
+            abcdefghijklmnopqrstuvwxyz
+                   ^
+                   match_start_offset
+            abcdefghijklmnopqrstuvwxyz
+                     ^
+                     match_end_offset
+            abcdefghijklmnopqrstuvwxyz
+                   <->
+                   match_width
+            abcdefghijklmnopqrstuvwxyz
+               <-->   <->
+               around_width
+            abcdefghijklmnopqrstuvwxyz
+               <-->
+               pre_width
+            abcdefghijklmnopqrstuvwxyz
+                      <->
+                      post_width
+            abcdefghijklmnopqrstuvwxyz
+               <-------->
+               snip_->width
+
+          Overlapped case:
+            keyword = hij
+            width = 15
+            string = abcdefghijklhijklmnopq
+
+            abcdefghijklhijklmnopq
+                   ^
+                   match_start_offset
+            abcdefghijklhijklmnopq
+                          ^
+                          match_end_offset
+            abcdefghijklhijklmnopq
+                   <------>
+                   match_width
+            abcdefghijklhijklmnopq
+               <-->        <->
+               around_width
+            abcdefghijklhijklmnopq
+               <-->
+               pre_width
+            abcdefghijklhijklmnopq
+                           <->
+                           post_width
+            abcdefghijklhijklmnopq
+               <------------->
+               snip_->width
+
+          Delimiter regexp case:
+            keyword = hij
+            width = 10
+            delimiter_regexp = X
+            string = abcdXfghijkXmnopqrstuvwxyz
+
+            abcdXfghijkXmnopqrstuvwxyz
+                   ^
+                   match_start_offset
+            abcdXfghijkXmnopqrstuvwxyz
+                     ^
+                     match_end_offset
+            abcdXfghijkXmnopqrstuvwxyz
+                   <->
+                   match_width
+            abcdXfghijkXmnopqrstuvwxyz
+               <-->   <->
+               around_width
+            abcdXfghijkXmnopqrstuvwxyz
+               <-->
+               pre_width
+            abcdXfghijkXmnopqrstuvwxyz
+                      <->
+                      post_width
+            abcdXfghijkXmnopqrstuvwxyz
+               <-------->
+               snip_->width
+            abcdXfghijkXmnopqrstuvwxyz
+                 ^
+                 snip_result->start_offset (after processed)
+            abcdXfghijkXmnopqrstuvwxyz
+                      ^
+                      snip_result->end_offset (after processed)
+         */
+        size_t match_start_offset = snip_result->start_offset;
+        size_t match_end_offset = last_end_offset;
+        size_t match_width = match_end_offset - match_start_offset;
+        size_t pre_width;
+        size_t post_width;
+        if (match_width >= snip_->width) {
+          pre_width = post_width = 0;
+        } else {
+          size_t around_width = snip_->width - match_width;
+          pre_width = post_width = around_width / 2;
+          if (around_width % 2 == 1) {
+            pre_width++;
+          }
+        }
+        {
+          size_t start_offset_min;
+          if (match_start_offset < pre_width) {
+            start_offset_min = 0;
+          } else {
+            if (match_end_offset + post_width >= string_len) {
+              if (string_len < snip_->width) {
+                start_offset_min = 0;
+              } else {
+                start_offset_min = string_len - snip_->width;
+              }
+            } else {
+              start_offset_min = match_start_offset - pre_width;
+            }
+            start_offset_min =
+              grn_snip_find_firstbyte(string,
+                                      snip_->encoding,
+                                      start_offset_min,
+                                      1);
+          }
+#ifdef GRN_SUPPORT_REGEXP
+          if (snip_->delimiter_regex) {
+            OnigRegion region;
+            onig_region_init(&region);
+            OnigPosition position = onig_search(snip_->delimiter_regex,
+                                                string,
+                                                string + string_len,
+                                                string + match_start_offset,
+                                                string + start_offset_min,
+                                                &region,
+                                                ONIG_OPTION_NONE);
+            if (position != ONIG_MISMATCH) {
+              start_offset_min = region.end[0];
+              onig_region_free(&region, 0);
+            }
+          }
+#endif
+          start_offset_min = MAX(start_offset_min, last_last_end_offset);
+          snip_result->start_offset =
+            grn_snip_find_firstbyte(string,
+                                    snip_->encoding,
+                                    start_offset_min,
+                                    1);
+        }
+
+        {
+          size_t end_offset_max = snip_result->start_offset + snip_->width;
+          if (end_offset_max < match_end_offset) {
+            end_offset_max = match_end_offset + post_width;
+          }
+#ifdef GRN_SUPPORT_REGEXP
+          if (snip_->delimiter_regex) {
+            size_t valid_end_offset_max;
+            if (end_offset_max >= string_len) {
+              valid_end_offset_max = string_len;
+            } else {
+              valid_end_offset_max =
+                grn_snip_find_firstbyte(string,
+                                        snip_->encoding,
+                                        end_offset_max,
+                                        -1);
+            }
+            OnigRegion region;
+            onig_region_init(&region);
+            OnigPosition position = onig_search(snip_->delimiter_regex,
+                                                string,
+                                                string + string_len,
+                                                string + match_end_offset,
+                                                string + valid_end_offset_max,
+                                                &region,
+                                                ONIG_OPTION_NONE);
+            if (position != ONIG_MISMATCH) {
+              end_offset_max = region.beg[0];
+              onig_region_free(&region, 0);
+            }
+          }
+#endif
+          if (end_offset_max >= string_len) {
+            snip_result->end_offset = string_len;
+          } else {
+            snip_result->end_offset =
+              grn_snip_find_firstbyte(string,
+                                      snip_->encoding,
+                                      end_offset_max,
+                                      -1);
+          }
+        }
       }
       last_last_end_offset = snip_result->end_offset;
 

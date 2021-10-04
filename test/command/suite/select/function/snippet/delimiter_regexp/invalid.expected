@@ -1,0 +1,37 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "aaa. bbb. ccc. AAA. BBB. CCC. xxx. yyy. zzz."}
+]
+[[0,0.0,0.0],1]
+select Entries   --output_columns '   snippet(content,   "ccc", "[", "]",   {"delimiter_regexp": "("})'
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[snip][delimiter-regexp][set][regexp][new] failed to create regular expression object: <(>: end pattern with unmatched parenthe"
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "snippet",
+          null
+        ]
+      ],
+      [
+        "[snip][delimiter-regexp][set][regexp][new] failed to create regular expression object: <(>: end pattern with unmatched parenthe"
+      ]
+    ]
+  ]
+]
+#|e| [snip][delimiter-regexp][set][regexp][new] failed to create regular expression object: <(>: end pattern with unmatched parenthesis

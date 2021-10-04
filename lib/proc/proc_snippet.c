@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -115,6 +115,7 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     grn_obj *default_close_tag = NULL;
     int n_args_without_option = nargs;
     grn_obj *default_return_value = NULL;
+    grn_obj *delimiter_regexp = NULL;
 
     if (end_arg->header.type == GRN_TABLE_HASH_KEY) {
       grn_obj *options = end_arg;
@@ -152,6 +153,9 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                          "default",
                                          GRN_PROC_OPTION_VALUE_RAW,
                                          &default_return_value,
+                                         "delimiter_regexp",
+                                         GRN_PROC_OPTION_VALUE_RAW,
+                                         &delimiter_regexp,
                                          NULL);
       if (rc != GRN_SUCCESS) {
         goto exit;
@@ -226,6 +230,15 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                  GRN_TEXT_LEN(keyword_args[i]),
                                  NULL, 0,
                                  NULL, 0);
+        }
+      }
+      if (grn_obj_is_text_family_bulk(ctx, delimiter_regexp)) {
+        grn_snip_set_delimiter_regexp(ctx,
+                                      snip,
+                                      GRN_TEXT_VALUE(delimiter_regexp),
+                                      GRN_TEXT_LEN(delimiter_regexp));
+        if (ctx->rc != GRN_SUCCESS) {
+          goto exit;
         }
       }
       snippets = snippet_exec(ctx,
