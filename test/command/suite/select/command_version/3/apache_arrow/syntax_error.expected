@@ -1,0 +1,17 @@
+table_create Records TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+load --table Records
+[
+{"_key": 1}
+]
+[[0,0.0,0.0],1]
+select Records   --command_version 3   --filter nonexistent   --output_type apache-arrow
+return_code: int32
+start_time: timestamp[ns]
+elapsed_time: double
+-- metadata --
+GROONGA:data_type: metadata
+	return_code	               start_time	elapsed_time
+0	        -63	1970-01-01T09:00:00+09:00	    0.000000
+#|e| [expr][parse] unknown identifier: <nonexistent>
+#|e| Syntax error: <nonexistent||>: [expr][parse] unknown identifier: <nonexistent>

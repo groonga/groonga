@@ -1,0 +1,15 @@
+#@require-apache-arrow
+#@require-interface http
+#@require-testee groonga
+
+table_create Records TABLE_PAT_KEY Int32
+
+load --table Records
+[
+{"_key": 1}
+]
+
+select Records \
+  --command_version 3 \
+  --filter nonexistent \
+  --output_type apache-arrow

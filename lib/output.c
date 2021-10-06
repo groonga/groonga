@@ -3403,10 +3403,10 @@ grn_output_envelope_close_apache_arrow(grn_ctx *ctx,
 
   ctx->impl->output.arrow_stream_writer =
     grn_arrow_stream_writer_open(ctx, output);
-  if (ctx->rc != GRN_SUCCESS) {
+  grn_arrow_stream_writer *writer = ctx->impl->output.arrow_stream_writer;
+  if (!writer) {
     return;
   }
-  grn_arrow_stream_writer *writer = ctx->impl->output.arrow_stream_writer;
 
   grn_arrow_stream_writer_add_metadata(ctx,
                                        writer,
