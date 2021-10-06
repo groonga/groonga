@@ -1,0 +1,13 @@
+table_create Numbers TABLE_HASH_KEY UInt64
+
+load --table Numbers
+[
+{"_key": 100},
+{"_key": 200},
+{"_key": 300}
+]
+
+select Numbers \
+  --output_columns _key \
+  --filter 'in_values(_key, 200, 100)' \
+  --sortby _id

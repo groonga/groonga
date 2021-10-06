@@ -5295,6 +5295,17 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
       {
         const void *key = GRN_BULK_HEAD(query);
         uint32_t key_size = GRN_BULK_VSIZE(query);
+        bool need_cast = false;
+        grn_obj casted_query;
+        if (!grn_type_id_is_text_family(ctx, obj->header.domain) &&
+            obj->header.domain != query->header.domain) {
+          need_cast = true;
+          GRN_VALUE_FIX_SIZE_INIT(&casted_query, 0, obj->header.domain);
+          if (grn_obj_cast(ctx, query, &casted_query, false) == GRN_SUCCESS) {
+            key = GRN_BULK_HEAD(&casted_query);
+            key_size = GRN_BULK_VSIZE(&casted_query);
+          }
+        }
         grn_operator mode = optarg ? optarg->mode : GRN_OP_EXACT;
         if (key && key_size) {
           if (grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
@@ -5354,6 +5365,9 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
             rc = grn_table_search(ctx, obj, key, key_size, mode, res, op);
             break;
           }
+        }
+        if (need_cast) {
+          GRN_OBJ_FIN(ctx, &casted_query);
         }
       }
       break;
