@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,7 @@ struct _grn_window_function_executor {
     size_t n_group_keys;
     grn_table_sort_key *window_sort_keys;
     size_t n_window_sort_keys;
+    grn_obj key_columns;
     grn_obj *sorted;
   } context;
   struct {

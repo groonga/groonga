@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016-2017 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2016-2017  Brazil
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,9 +29,10 @@ typedef struct {
   bool is_context_table;
   grn_obj *window_function_call;
   grn_proc *window_function;
-  grn_obj *arguments;
+  grn_obj arguments;
   grn_obj *output_column;
-  grn_obj *ids;
+  grn_obj key_columns;
+  grn_obj ids;
   ssize_t current_index;
 } grn_window_shard;
 
@@ -39,8 +40,18 @@ struct _grn_window {
   grn_window_shard *shards;
   size_t n_shards;
   ssize_t current_shard;
+  grn_id current_id;
   grn_window_direction direction;
   bool is_sorted;
+  struct {
+    size_t n;
+    grn_obj *buffer1;
+    grn_obj *buffer2;
+    grn_obj *previous;
+    grn_obj *current;
+  } values;
+  bool is_value_changed_computed;
+  bool is_value_changed;
 };
 
 grn_rc grn_window_init(grn_ctx *ctx,
@@ -53,7 +64,8 @@ grn_rc grn_window_add_record(grn_ctx *ctx,
                              bool is_context_table,
                              grn_id record_id,
                              grn_obj *window_function_call,
-                             grn_obj *output_column);
+                             grn_obj *output_column,
+                             grn_obj *key_columns);
 bool grn_window_is_empty(grn_ctx *ctx, grn_window *window);
 grn_rc grn_window_set_is_sorted(grn_ctx *ctx,
                                 grn_window *window,
