@@ -136,9 +136,14 @@ Fixes
 
 * Fixed a bug that may not add a new entry in Hash table.
 
-  This bug occurs in Groonga 11.0.6, and it may occur if we quite a lot of add and delete data.
+  This bug only occurs in Groonga 11.0.6, and it may occur if we quite a lot of add and delete data.
+  If this bug occurs in your environment, you can resolve this problem by executing the following steps.
 
-* Fixed a resource leak when Groonga fail open a new file caused by out of memory.
+  1. We upgrade Groonga to 11.0.7 or later from 11.0.6.
+  2. We make a new table that has the same schema as the original table.
+  3. We copy data to the new table from the original table.
+
+* [Windows] Fixed a resource leak when Groonga fail open a new file caused by out of memory.
 
 Known Issues
 ------------
@@ -163,6 +168,14 @@ Thanks
 
 Release 11.0.6 - 2021-08-29
 ---------------------------
+
+  .. warning::
+
+     Groonga 11.0.6 has had a bug that may not add a new entry in Hash table.
+
+     We fixed this bug on Groonga 11.0.7. This bug only occurs in Groonga 11.0.6.
+     Therefore, if you were using Groonga 11.0.6, we highly recommended that
+     you use Groonga 11.0.7 or later.
 
 Improvements
 ------------
