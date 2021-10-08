@@ -1,0 +1,73 @@
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "item1", "price": 666},
+{"_key": "item2", "price": 999},
+{"_key": "item3", "price": 777},
+{"_key": "item4", "price": 111},
+{"_key": "item5", "price": 222},
+{"_key": "item6", "price": 222}
+]
+[[0,0.0,0.0],6]
+select Items   --columns[rank].stage initial   --columns[rank].value 'window_rank()'   --columns[rank].type UInt32   --columns[rank].window.sort_keys price   --output_columns '_key, price, rank'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "price",
+          "UInt32"
+        ],
+        [
+          "rank",
+          "UInt32"
+        ]
+      ],
+      [
+        "item1",
+        666,
+        4
+      ],
+      [
+        "item2",
+        999,
+        6
+      ],
+      [
+        "item3",
+        777,
+        5
+      ],
+      [
+        "item4",
+        111,
+        1
+      ],
+      [
+        "item5",
+        222,
+        2
+      ],
+      [
+        "item6",
+        222,
+        2
+      ]
+    ]
+  ]
+]

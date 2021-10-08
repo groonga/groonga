@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -63,6 +63,7 @@ grn_window_function_executor_init(grn_ctx *ctx,
   executor->context.n_group_keys = 0;
   executor->context.window_sort_keys = NULL;
   executor->context.n_window_sort_keys = 0;
+  GRN_PTR_INIT(&(executor->context.key_columns), GRN_OBJ_VECTOR, GRN_ID_NIL);
   executor->context.sorted = NULL;
   executor->values.n = 0;
   executor->values.previous = NULL;
@@ -78,6 +79,8 @@ static void
 grn_window_function_executor_rewind(grn_ctx *ctx,
                                     grn_window_function_executor *executor)
 {
+  GRN_BULK_REWIND(&(executor->context.key_columns));
+
   grn_obj *window_function_calls = &(executor->window_function_calls);
   const size_t n_calls = GRN_PTR_VECTOR_SIZE(window_function_calls);
   for (size_t i = 0; i < n_calls; i++) {
@@ -112,6 +115,7 @@ grn_window_function_executor_fin(grn_ctx *ctx,
   grn_window_fin(ctx, &(executor->window));
 
   grn_window_function_executor_rewind(ctx, executor);
+  GRN_OBJ_FIN(ctx, &(executor->context.key_columns));
   GRN_OBJ_FIN(ctx, &(executor->output_columns));
   GRN_OBJ_FIN(ctx, &(executor->window_function_calls));
 
@@ -401,7 +405,6 @@ namespace {
         executor_(executor),
         executor_tag_(GRN_TEXT_VALUE(&(executor->tag)),
                       GRN_TEXT_LEN(&(executor->tag))),
-
         tag_(tag),
         sort_keys_builders_(),
         group_keys_builders_(),
@@ -458,7 +461,8 @@ namespace {
                                 is_context_table,
                                 record_id,
                                 window_function_call,
-                                output_column);
+                                output_column,
+                                &(executor_->context.key_columns));
           if (ctx_->rc != GRN_SUCCESS) {
             break;
           }
@@ -549,7 +553,8 @@ namespace {
                               is_context_table,
                               record_id,
                               window_function_call,
-                              output_column);
+                              output_column,
+                              &(executor_->context.key_columns));
         if (ctx_->rc != GRN_SUCCESS) {
           break;
         }
@@ -657,6 +662,7 @@ namespace {
       }
       for (unsigned int i = 0; i < n_sort_keys; ++i) {
         const auto& sort_key = sort_keys[i];
+        GRN_PTR_PUT(ctx_, &(executor_->context.key_columns), sort_key.key);
         if (builders.size() < n_sort_keys) {
           builders.push_back(
             ::arrow::internal::make_unique<grn::arrow::ArrayBuilder>(ctx));
@@ -859,11 +865,14 @@ grn_window_function_executor_execute_per_table(
       executor->context.n_window_sort_keys = n_window_sort_keys;
     }
     grn_table_sort_key *window_sort_keys = executor->context.window_sort_keys;
+    grn_obj *key_columns = &(executor->context.key_columns);
     for (size_t j = 0; j < n_group_keys; j++) {
       window_sort_keys[j] = group_keys[j];
+      GRN_PTR_PUT(ctx, key_columns, window_sort_keys[j].key);
     }
     for (size_t j = 0; j < n_sort_keys; j++) {
       window_sort_keys[j + n_group_keys] = sort_keys[j];
+      GRN_PTR_PUT(ctx, key_columns, window_sort_keys[j + n_group_keys].key);
     }
 
     grn_obj *sorted = grn_table_create(ctx,
@@ -972,7 +981,8 @@ grn_window_function_executor_execute_per_table(
                               is_context_table,
                               record_id,
                               window_function_call,
-                              output_column);
+                              output_column,
+                              key_columns);
         if (ctx->rc != GRN_SUCCESS) {
           break;
         }
@@ -990,7 +1000,8 @@ grn_window_function_executor_execute_per_table(
                               is_context_table,
                               record_id,
                               window_function_call,
-                              output_column);
+                              output_column,
+                              key_columns);
         if (ctx->rc != GRN_SUCCESS) {
           break;
         }

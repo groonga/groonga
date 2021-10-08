@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016-2017 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2016-2017  Brazil
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,21 +29,28 @@ grn_window_shard_init(grn_ctx *ctx,
                       grn_obj *table,
                       bool is_context_table,
                       grn_obj *window_function_call,
-                      grn_obj *output_column)
+                      grn_obj *output_column,
+                      grn_obj *key_columns)
 {
   shard->table = table;
   shard->is_context_table = is_context_table;
   shard->window_function_call = window_function_call;
   grn_expr *expr = (grn_expr *)(window_function_call);
   shard->window_function = (grn_proc *)(expr->codes[0].value);
-  shard->arguments = grn_obj_open(ctx, GRN_UVECTOR, 0, GRN_ID_NIL);
-  int32_t n = expr->codes_curr - 1;
-  for (int32_t i = 1; i < n; i++) {
+  GRN_PTR_INIT(&(shard->arguments), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  int32_t n_arguments = expr->codes_curr - 1;
+  for (int32_t i = 1; i < n_arguments; i++) {
     /* TODO: Check op. */
-    GRN_PTR_PUT(ctx, shard->arguments, expr->codes[i].value);
+    GRN_PTR_PUT(ctx, &(shard->arguments), expr->codes[i].value);
   }
   shard->output_column = output_column;
-  shard->ids = grn_obj_open(ctx, GRN_UVECTOR, 0, grn_obj_id(ctx, table));
+  GRN_PTR_INIT(&(shard->key_columns), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  size_t n_key_columns = GRN_PTR_VECTOR_SIZE(key_columns);
+  for (size_t i = 0; i < n_key_columns; i++) {
+    grn_obj *key_column = GRN_PTR_VALUE_AT(key_columns, i);
+    GRN_PTR_PUT(ctx, &(shard->key_columns), key_column);
+  }
+  GRN_RECORD_INIT(&(shard->ids), GRN_OBJ_VECTOR, grn_obj_id(ctx, table));
   shard->current_index = -1;
 }
 
@@ -51,8 +58,9 @@ static void
 grn_window_shard_fin(grn_ctx *ctx,
                      grn_window_shard *shard)
 {
-  grn_obj_close(ctx, shard->arguments);
-  grn_obj_close(ctx, shard->ids);
+  GRN_OBJ_FIN(ctx, &(shard->arguments));
+  GRN_OBJ_FIN(ctx, &(shard->key_columns));
+  GRN_OBJ_FIN(ctx, &(shard->ids));
 }
 
 grn_rc
@@ -64,7 +72,15 @@ grn_window_init(grn_ctx *ctx,
   window->shards = NULL;
   window->n_shards = 0;
   window->current_shard = -1;
+  window->current_id = GRN_ID_NIL;
   window->direction = GRN_WINDOW_DIRECTION_ASCENDING;
+  window->values.n = 0;
+  window->values.buffer1 = NULL;
+  window->values.buffer2 = NULL;
+  window->values.previous = NULL;
+  window->values.current = NULL;
+  window->is_value_changed_computed = false;
+  window->is_value_changed = false;
 
   GRN_API_RETURN(GRN_SUCCESS);
 }
@@ -75,6 +91,19 @@ grn_window_fin(grn_ctx *ctx, grn_window *window)
   GRN_API_ENTER;
 
   grn_window_reset(ctx, window);
+
+  if (window->values.buffer1) {
+    for (size_t i = 0; i < window->values.n; i++) {
+      GRN_OBJ_FIN(ctx, &(window->values.buffer1[i]));
+    }
+    GRN_FREE(window->values.buffer1);
+  }
+  if (window->values.buffer2) {
+    for (size_t i = 0; i < window->values.n; i++) {
+      GRN_OBJ_FIN(ctx, &(window->values.buffer2[i]));
+    }
+    GRN_FREE(window->values.buffer2);
+  }
 
   GRN_API_RETURN(ctx->rc);
 }
@@ -88,13 +117,15 @@ grn_window_next(grn_ctx *ctx, grn_window *window)
     GRN_API_RETURN(GRN_ID_NIL);
   }
 
+  window->is_value_changed_computed = false;
+
   if (window->current_shard < 0) {
     GRN_API_RETURN(GRN_ID_NIL);
   }
 
   grn_window_shard *shard = &(window->shards[window->current_shard]);
   if (window->direction == GRN_WINDOW_DIRECTION_ASCENDING) {
-    if (shard->current_index >= GRN_RECORD_VECTOR_SIZE(shard->ids)) {
+    if (shard->current_index >= GRN_RECORD_VECTOR_SIZE(&(shard->ids))) {
       if (window->current_shard + 1 < window->n_shards) {
         window->current_shard++;
         shard = &(window->shards[window->current_shard]);
@@ -113,14 +144,15 @@ grn_window_next(grn_ctx *ctx, grn_window *window)
     }
   }
 
-  grn_id next_id = GRN_RECORD_VALUE_AT(shard->ids, shard->current_index);
+  grn_id next_id = GRN_RECORD_VALUE_AT(&(shard->ids), shard->current_index);
   if (window->direction == GRN_WINDOW_DIRECTION_ASCENDING) {
     shard->current_index++;
   } else {
     shard->current_index--;
   }
 
-  GRN_API_RETURN(next_id);
+  window->current_id = next_id;
+  GRN_API_RETURN(window->current_id);
 }
 
 grn_rc
@@ -143,9 +175,22 @@ grn_window_rewind(grn_ctx *ctx, grn_window *window)
     window->current_shard = window->n_shards - 1;
     for (size_t i = 0; i < window->n_shards; i++) {
       grn_window_shard *shard = &(window->shards[i]);
-      shard->current_index = GRN_RECORD_VECTOR_SIZE(shard->ids) - 1;
+      shard->current_index = GRN_RECORD_VECTOR_SIZE(&(shard->ids)) - 1;
     }
   }
+
+  if (window->values.buffer1) {
+    for (size_t i = 0; i < window->values.n; i++) {
+      GRN_BULK_REWIND(&(window->values.buffer1[i]));
+    }
+  }
+  if (window->values.buffer2) {
+    for (size_t i = 0; i < window->values.n; i++) {
+      GRN_BULK_REWIND(&(window->values.buffer2[i]));
+    }
+  }
+
+  window->is_value_changed_computed = false;
 
   GRN_API_RETURN(GRN_SUCCESS);
 }
@@ -223,7 +268,7 @@ grn_window_get_n_arguments(grn_ctx *ctx, grn_window *window)
   }
 
   grn_window_shard *shard = &(window->shards[window->current_shard]);
-  GRN_API_RETURN(GRN_PTR_VECTOR_SIZE(shard->arguments));
+  GRN_API_RETURN(GRN_PTR_VECTOR_SIZE(&(shard->arguments)));
 }
 
 grn_obj *
@@ -241,11 +286,29 @@ grn_window_get_argument(grn_ctx *ctx, grn_window *window, size_t i)
   }
 
   grn_window_shard *shard = &(window->shards[window->current_shard]);
-  if (i < GRN_PTR_VECTOR_SIZE(shard->arguments)) {
-    GRN_API_RETURN(GRN_PTR_VALUE_AT(shard->arguments, i));
+  if (i < GRN_PTR_VECTOR_SIZE(&(shard->arguments))) {
+    GRN_API_RETURN(GRN_PTR_VALUE_AT(&(shard->arguments), i));
   } else {
     GRN_API_RETURN(NULL);
   }
+}
+
+grn_obj *
+grn_window_get_key_columns(grn_ctx *ctx, grn_window *window)
+{
+  GRN_API_ENTER;
+
+  if (!window) {
+    ERR(GRN_INVALID_ARGUMENT, "[window][n-key-columns][get] window is NULL");
+    GRN_API_RETURN(NULL);
+  }
+
+  if (window->current_shard < 0) {
+    GRN_API_RETURN(NULL);
+  }
+
+  grn_window_shard *shard = &(window->shards[window->current_shard]);
+  GRN_API_RETURN(&(shard->key_columns));
 }
 
 grn_rc
@@ -290,6 +353,7 @@ grn_window_reset(grn_ctx *ctx,
                  grn_window *window)
 {
   GRN_API_ENTER;
+
   for (size_t i = 0; i < window->n_shards; i++) {
     grn_window_shard *shard = &(window->shards[i]);
     grn_window_shard_fin(ctx, shard);
@@ -300,6 +364,22 @@ grn_window_reset(grn_ctx *ctx,
     window->n_shards = 0;
     window->current_shard = -1;
   }
+
+  window->current_id = GRN_ID_NIL;
+
+  if (window->values.buffer1) {
+    for (size_t i = 0; i < window->values.n; i++) {
+      GRN_BULK_REWIND(&(window->values.buffer1[i]));
+    }
+  }
+  if (window->values.buffer2) {
+    for (size_t i = 0; i < window->values.n; i++) {
+      GRN_BULK_REWIND(&(window->values.buffer2[i]));
+    }
+  }
+  window->is_value_changed_computed = false;
+  window->is_value_changed = false;
+
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -337,6 +417,7 @@ grn_window_add_record_validate(grn_ctx *ctx,
                                grn_obj *table,
                                grn_obj *window_function_call,
                                grn_obj *output_column,
+                               grn_obj *key_columns,
                                const char *tag)
 {
   if (!table) {
@@ -372,7 +453,8 @@ grn_window_add_record(grn_ctx *ctx,
                       bool is_context_table,
                       grn_id record_id,
                       grn_obj *window_function_call,
-                      grn_obj *output_column)
+                      grn_obj *output_column,
+                      grn_obj *key_columns)
 {
   GRN_API_ENTER;
   const char *tag = "[window][record][add]";
@@ -382,6 +464,7 @@ grn_window_add_record(grn_ctx *ctx,
                                         table,
                                         window_function_call,
                                         output_column,
+                                        key_columns,
                                         tag)) {
       GRN_API_RETURN(ctx->rc);
     }
@@ -391,7 +474,8 @@ grn_window_add_record(grn_ctx *ctx,
                           table,
                           is_context_table,
                           window_function_call,
-                          output_column);
+                          output_column,
+                          key_columns);
     window->current_shard = 0;
     window->n_shards = 1;
   } else if (window->shards[window->n_shards - 1].table != table) {
@@ -400,6 +484,7 @@ grn_window_add_record(grn_ctx *ctx,
                                         table,
                                         window_function_call,
                                         output_column,
+                                        key_columns,
                                         tag)) {
       GRN_API_RETURN(ctx->rc);
     }
@@ -426,10 +511,11 @@ grn_window_add_record(grn_ctx *ctx,
                           table,
                           is_context_table,
                           window_function_call,
-                          output_column);
+                          output_column,
+                          key_columns);
   }
   GRN_RECORD_PUT(ctx,
-                 window->shards[window->n_shards - 1].ids,
+                 &(window->shards[window->n_shards - 1].ids),
                  record_id);
   GRN_API_RETURN(ctx->rc);
 }
@@ -442,7 +528,7 @@ grn_window_is_empty(grn_ctx *ctx,
   bool is_empty = true;
   for (size_t i = 0; i < window->n_shards; i++) {
     grn_window_shard *shard = &(window->shards[i]);
-    if (GRN_RECORD_VECTOR_SIZE(shard->ids) > 0) {
+    if (GRN_RECORD_VECTOR_SIZE(&(shard->ids)) > 0) {
       is_empty = false;
       break;
     }
@@ -478,6 +564,69 @@ grn_window_set_is_sorted(grn_ctx *ctx, grn_window *window, bool is_sorted)
   GRN_API_RETURN(ctx->rc);
 }
 
+bool
+grn_window_is_value_changed(grn_ctx *ctx, grn_window *window)
+{
+  GRN_API_ENTER;
+
+  if (!window) {
+    ERR(GRN_INVALID_ARGUMENT, "[window][is-value-changed] window is NULL");
+    GRN_API_RETURN(false);
+  }
+
+  if (window->is_value_changed_computed) {
+    GRN_API_RETURN(window->is_value_changed);
+  }
+
+  grn_obj *key_columns = grn_window_get_key_columns(ctx, window);
+  if (!key_columns) {
+    GRN_API_RETURN(false);
+  }
+
+  if (GRN_PTR_VECTOR_SIZE(key_columns) == 0) {
+    GRN_API_RETURN(false);
+  }
+
+  window->is_value_changed = false;
+  if (window->values.n == 0) {
+    window->values.n = GRN_PTR_VECTOR_SIZE(key_columns);
+    window->values.buffer1 = GRN_MALLOCN(grn_obj, window->values.n);
+    window->values.buffer2 = GRN_MALLOCN(grn_obj, window->values.n);
+    for (size_t i = 0; i < window->values.n; i++) {
+      GRN_VOID_INIT(&(window->values.buffer1[i]));
+      GRN_VOID_INIT(&(window->values.buffer2[i]));
+    }
+    window->values.previous = window->values.buffer1;
+    window->values.current = window->values.buffer2;
+  }
+
+  for (size_t i = 0; i < window->values.n; i++) {
+    grn_obj *key_column = GRN_PTR_VALUE_AT(key_columns, i);
+    grn_obj *value = &(window->values.current[i]);
+    GRN_BULK_REWIND(value);
+    grn_obj_get_value(ctx, key_column, window->current_id, value);
+  }
+  for (size_t i = 0; i < window->values.n; i++) {
+    grn_obj *previous = &(window->values.previous[i]);
+    grn_obj *current = &(window->values.current[i]);
+    if ((GRN_BULK_VSIZE(previous) != GRN_BULK_VSIZE(current)) ||
+        (memcmp(GRN_BULK_HEAD(previous),
+                GRN_BULK_HEAD(current),
+                GRN_BULK_VSIZE(previous)) != 0)) {
+      window->is_value_changed = true;
+      break;
+    }
+  }
+  window->is_value_changed_computed = true;
+  {
+    grn_obj *tmp = window->values.current;
+    window->values.current = window->values.previous;
+    window->values.previous = tmp;
+  }
+
+  GRN_API_RETURN(window->is_value_changed);
+}
+
 size_t
 grn_window_get_size(grn_ctx *ctx,
                     grn_window *window)
@@ -486,7 +635,7 @@ grn_window_get_size(grn_ctx *ctx,
   size_t n_ids = 0;
   for (size_t i = 0; i < window->n_shards; i++) {
     grn_window_shard *shard = &(window->shards[i]);
-    n_ids += GRN_RECORD_VECTOR_SIZE(shard->ids);
+    n_ids += GRN_RECORD_VECTOR_SIZE(&(shard->ids));
   }
   GRN_API_RETURN(n_ids);
 }
@@ -555,8 +704,8 @@ grn_window_execute(grn_ctx *ctx, grn_window *window)
   grn_rc rc = window_function_func(ctx,
                                    shard->output_column,
                                    window,
-                                   (grn_obj **)GRN_BULK_HEAD(shard->arguments),
-                                   GRN_PTR_VECTOR_SIZE(shard->arguments));
+                                   (grn_obj **)GRN_BULK_HEAD(&(shard->arguments)),
+                                   GRN_PTR_VECTOR_SIZE(&(shard->arguments)));
 
   GRN_API_RETURN(rc);
 }
@@ -593,11 +742,15 @@ grn_table_apply_window_function(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
+  grn_obj key_columns;
+  GRN_PTR_INIT(&key_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
   for (size_t i = 0; i < definition->n_group_keys; i++) {
     sort_keys[i] = definition->group_keys[i];
+    GRN_PTR_PUT(ctx, &key_columns, sort_keys[i].key);
   }
   for (size_t i = 0; i < definition->n_sort_keys; i++) {
     sort_keys[i + definition->n_group_keys] = definition->sort_keys[i];
+    GRN_PTR_PUT(ctx, &key_columns, sort_keys[i + definition->n_group_keys].key);
   }
 
   grn_obj *sorted = grn_table_create(ctx,
@@ -612,6 +765,7 @@ grn_table_apply_window_function(grn_ctx *ctx,
       rc = GRN_NO_MEMORY_AVAILABLE;
     }
     grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
+    GRN_OBJ_FIN(ctx, &key_columns);
     GRN_FREE(sort_keys);
     ERR(rc,
         "[table][apply][window-function] "
@@ -684,7 +838,8 @@ grn_table_apply_window_function(grn_ctx *ctx,
                             false,
                             record_id,
                             window_function_call,
-                            output_column);
+                            output_column,
+                            &key_columns);
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
@@ -706,7 +861,8 @@ grn_table_apply_window_function(grn_ctx *ctx,
                             false,
                             record_id,
                             window_function_call,
-                            output_column);
+                            output_column,
+                            &key_columns);
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
@@ -719,6 +875,8 @@ grn_table_apply_window_function(grn_ctx *ctx,
   grn_window_fin(ctx, &window);
 
   grn_obj_close(ctx, sorted);
+
+  GRN_OBJ_FIN(ctx, &key_columns);
 
   GRN_FREE(sort_keys);
 

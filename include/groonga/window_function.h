@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2016  Brazil
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -49,6 +49,8 @@ GRN_API grn_obj *grn_window_get_argument(grn_ctx *ctx,
                                          size_t i);
 GRN_API bool grn_window_is_sorted(grn_ctx *ctx,
                                   grn_window *window);
+GRN_API bool grn_window_is_value_changed(grn_ctx *ctx,
+                                         grn_window *window);
 GRN_API size_t grn_window_get_size(grn_ctx *ctx,
                                    grn_window *window);
 
