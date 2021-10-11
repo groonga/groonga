@@ -207,11 +207,6 @@ Required parameters
 
 TODO
 
-Required parameters
-^^^^^^^^^^^^^^^^^^^
-
-TODO
-
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
