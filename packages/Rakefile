@@ -37,10 +37,29 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     end
   end
 
+  def make_archive
+    sh("make", "dist")
+  end
+
+  def upload_archive
+    source_dir = "source"
+    cd(source_dir) do
+      sh("make", "download")
+      sh("make", "upload")
+    end
+  end
+
   def define_archive_task
-    file @original_archive_name do
-      File.symlink("../#{@original_archive_name}",
-                   @original_archive_name)
+    namespace :archive do
+      desc "Set tag for release"
+      task :tag do
+        cd("..") do
+          sh("make", "tag")
+          sh("git", "push", "--tags", "origin")
+          make_archive
+        end
+        upload_archive
+      end
     end
   end
 
