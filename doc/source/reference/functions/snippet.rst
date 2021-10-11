@@ -205,10 +205,52 @@ Parameters
 Required parameters
 ^^^^^^^^^^^^^^^^^^^
 
+There is one required parameter ``column``.
+
+.. _snippet-column:
+
+``column``
+""""""""""
+
 TODO
 
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
+
+There are fourteen optional parameters.
+
+.. _snippet-keyword:
+
+``keyword``
+"""""""""""
+
+TODO
+
+.. _snippet-open-tag:
+
+``open-tag``
+""""""""""""
+
+TODO
+
+.. _snippet-close-tag:
+
+``close-tag``
+"""""""""""""
+
+TODO
+
+.. _snippet-default-open-tag:
+
+``default_open_tag``
+""""""""""""""""""""
+
+TODO
+
+.. _snippet-default-close-tag:
+
+``default_close_tag``
+"""""""""""""""""""""
 
 TODO
 
@@ -223,6 +265,57 @@ TODO
 
 ``width``
 """""""""
+
+TODO
+
+.. _snippet-skip-leading-spaces:
+
+``skip_leading_spaces``
+"""""""""""""""""""""""
+
+TODO
+
+.. _snippet-html-escape:
+
+``html_escape``
+"""""""""""""""
+
+TODO
+
+.. _snippet-prefix:
+
+``prefix``
+""""""""""
+
+TODO
+
+.. _snippet-suffix:
+
+``suffix``
+""""""""""
+
+TODO
+
+.. _snippet-normalizer:
+
+``normalizer``
+""""""""""""""
+
+TODO
+
+.. _snippet-default:
+
+``default``
+"""""""""""
+
+TODO
+
+.. versionadded:: 11.0.8
+
+.. _snippet-delimiter-pattern:
+
+``delimiter_pattern``
+"""""""""""""""""""""
 
 TODO
 
