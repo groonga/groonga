@@ -1,0 +1,78 @@
+Execution example::
+
+  select Points \
+    --columns[rank].stage filtered \
+    --columns[rank].value 'window_rank()' \
+    --columns[rank].type UInt32 \
+    --columns[rank].window.group_keys game \
+    --columns[rank].window.sort_keys -score \
+    --output_columns 'game, score, rank' \
+    --sort_keys game,-score
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         8
+  #       ], 
+  #       [
+  #         [
+  #           "game", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "score", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "rank", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         "game1", 
+  #         400, 
+  #         1
+  #       ], 
+  #       [
+  #         "game1", 
+  #         200, 
+  #         2
+  #       ], 
+  #       [
+  #         "game1", 
+  #         100, 
+  #         3
+  #       ], 
+  #       [
+  #         "game1", 
+  #         100, 
+  #         3
+  #       ], 
+  #       [
+  #         "game2", 
+  #         200, 
+  #         1
+  #       ], 
+  #       [
+  #         "game2", 
+  #         200, 
+  #         1
+  #       ], 
+  #       [
+  #         "game2", 
+  #         200, 
+  #         1
+  #       ], 
+  #       [
+  #         "game2", 
+  #         150, 
+  #         4
+  #       ]
+  #     ]
+  #   ]
+  # ]
