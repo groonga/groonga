@@ -43,7 +43,7 @@ only keywords::
             "default_close_tag": "close-tag"
           })
 
-.. versionadded:: 11.0.8
+.. versionadded:: 11.0.9
 
    If you specify default open tag and default close tag and omit
    keywords, keywords are extracted from the current condition
