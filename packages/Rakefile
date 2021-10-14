@@ -90,6 +90,12 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     ]
   end
 
+  def source_targets_default
+    [
+      "#{@package}-#{@version}"
+    ]
+  end
+
   def use_built_package?
     true
   end

@@ -90,6 +90,10 @@ class PackagesGroongaOrgPackageTask < PackageTask
     task windows: ["windows:clean"]
   end
 
+  def source_dir
+    "source"
+  end
+
   def use_built_package?
     false
   end
@@ -107,6 +111,8 @@ class PackagesGroongaOrgPackageTask < PackageTask
     case target_namespace
     when :windows
       "#{base_dir}/repositories/windows/#{@package}"
+    when :source
+      "#{base_dir}/repositories/source/#{@package}"
     else
       "#{base_dir}/repositories"
     end
@@ -128,7 +134,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
              "xf", archive,
              "--strip-components=#{built_package_n_split_components}")
         end
-      when :windows
+      when :windows, :source
         cd(repositories_dir) do
           cp(archive, ".")
           archive_base_name = File.basename(archive)
@@ -155,7 +161,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
   end
 
   def define_release_tasks
-    [:apt, :yum, :windows].each do |target_namespace|
+    [:apt, :yum, :windows, :source].each do |target_namespace|
       tasks = []
       namespace target_namespace do
         enabled = __send__("enable_#{target_namespace}?")
