@@ -212,7 +212,7 @@ There is one required parameter ``column``.
 ``column``
 """"""""""
 
-TODO
+We specify the snippet target text.
 
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
@@ -224,35 +224,38 @@ There are fourteen optional parameters.
 ``keyword``
 """""""""""
 
-TODO
+We specify the search keyword.
+We can specify multiple search keywords.
 
 .. _snippet-open-tag:
 
 ``open-tag``
 """"""""""""
 
-TODO
+We specify an open tag put on the start point of the search keyword.
 
 .. _snippet-close-tag:
 
 ``close-tag``
 """""""""""""
 
-TODO
+We specify a close tag put on the end point of the search keyword.
 
 .. _snippet-default-open-tag:
 
 ``default_open_tag``
 """"""""""""""""""""
 
-TODO
+We specify an open tag put on the start point of the search keyword.
+When we don't specify ``open-tag``, Groonga uses an open tag of ``default_open_tag``.
 
 .. _snippet-default-close-tag:
 
 ``default_close_tag``
 """""""""""""""""""""
 
-TODO
+We specify a close tag put on the start point of the search keyword.
+When we don't specify ``close-tag``, Groonga uses an open tag of ``default_close_tag``.
 
 .. _snippet-max-n-results:
 
