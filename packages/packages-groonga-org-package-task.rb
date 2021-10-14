@@ -28,7 +28,6 @@ class PackagesGroongaOrgPackageTask < PackageTask
     define_windows_task
     define_release_tasks
     define_ubuntu_tasks
-    define_archive_task
   end
 
   private
