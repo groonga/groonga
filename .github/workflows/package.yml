@@ -174,7 +174,20 @@ jobs:
             const script = fs.readFileSync(path).toString();
             const func = new AsyncFunction("require", "github", "context", script);
             return await func(require, github, context);
-      - name: Upload to release
+      - name: Upload source archive to release
+        run: |
+          GROONGA_VERSION=$(cat base_version)
+        uses: actions/upload-release-asset@v1.0.1
+        if: |
+          startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.result }}
+          asset_path: groonga-${GROONGA_VERSION}.tar.gz
+          asset_name: groonga-${GROONGA_VERSION}.tar.gz
+          asset_content_type: application/gzip
+      - name: Upload packages to release
         uses: actions/upload-release-asset@v1.0.1
         if: |
           startsWith(github.ref, 'refs/tags/')
