@@ -126,7 +126,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
         cd(repositories_dir) do
           case File.extname(archive)
           when ".zip"
-            sh("unzip", archive)
+            sh("unzip", "-o", archive)
           else
             sh("tar",
                "xf", archive,
