@@ -124,9 +124,14 @@ class PackagesGroongaOrgPackageTask < PackageTask
       case target_namespace
       when :apt, :yum
         cd(repositories_dir) do
-          sh("tar",
-             "xf", archive,
-             "--strip-components=#{built_package_n_split_components}")
+          case File.extname(archive)
+          when ".zip"
+            sh("unzip", archive)
+          else
+            sh("tar",
+               "xf", archive,
+               "--strip-components=#{built_package_n_split_components}")
+          end
         end
       when :windows
         cd(repositories_dir) do
