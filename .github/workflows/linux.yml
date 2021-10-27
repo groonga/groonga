@@ -68,6 +68,7 @@ jobs:
             libmecab-dev \
             libmsgpack-dev \
             libstemmer-dev \
+            libthrift-dev \
             libxxhash-dev \
             libzstd-dev \
             mecab-naist-jdic \
