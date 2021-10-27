@@ -1172,7 +1172,7 @@ grn_edges_add(grn_ctx *ctx, grn_com_addr *addr, int *added)
     grn_edge *edge;
     grn_id id = grn_hash_add(ctx, grn_edges, addr, sizeof(grn_com_addr),
                              (void **)&edge, added);
-    grn_io_unlock(grn_edges->io);
+    grn_io_unlock(ctx, grn_edges->io);
     if (id) { edge->id = id; }
     return edge;
   }
@@ -1183,7 +1183,7 @@ grn_edges_delete(grn_ctx *ctx, grn_edge *edge)
 {
   if (!grn_io_lock(ctx, grn_edges->io, grn_lock_timeout)) {
     grn_hash_delete_by_id(ctx, grn_edges, edge->id, NULL);
-    grn_io_unlock(grn_edges->io);
+    grn_io_unlock(ctx, grn_edges->io);
   }
 }
 

@@ -65,7 +65,7 @@ grn_table_all_columns(grn_ctx *ctx, grn_obj *table);
 #define GRN_TABLE_LOCK_END(ctx)                 \
   }                                             \
   if (locked_) {                                \
-    grn_io_unlock(io_);                         \
+    grn_io_unlock(ctx, io_);                    \
   }                                             \
 } while (GRN_FALSE)
 

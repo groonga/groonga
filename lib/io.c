@@ -1467,7 +1467,7 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
 }
 
 void
-grn_io_unlock(grn_io *io)
+grn_io_unlock(grn_ctx *ctx, grn_io *io)
 {
   if (io) {
     uint32_t lock;

@@ -128,7 +128,7 @@ test_read_write(gconstpointer *data)
     grn_test_assert(rc);
   added = 0;
   id = grn_pat_add(context, trie, key, strlen(key), &value, &added);
-  grn_io_unlock(trie->io);
+  grn_io_unlock(context, trie->io);
   grn_test_assert_not_nil(id);
   cut_assert_equal_uint(1, added);
   strcpy(value, value_string);

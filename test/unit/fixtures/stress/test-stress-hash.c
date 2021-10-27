@@ -126,7 +126,7 @@ test_read_write(gconstpointer *data)
   if (rc != GRN_SUCCESS)
     grn_test_assert(rc);
   id = grn_hash_add(context, hash, &key, sizeof(key), &value, &added);
-  grn_io_unlock(hash->io);
+  grn_io_unlock(context, hash->io);
   grn_test_assert_not_nil(id);
   cut_assert_equal_int(1, added);
   strcpy(value, value_string);

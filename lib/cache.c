@@ -605,7 +605,7 @@ grn_cache_set_max_n_entries_persistent(grn_ctx *ctx,
   if (n < current_max_n_entries) {
     grn_cache_expire_persistent_without_lock(cache, current_max_n_entries - n);
   }
-  grn_io_unlock(keys->io);
+  grn_io_unlock(ctx, keys->io);
 
   return GRN_SUCCESS;
 }
@@ -649,7 +649,7 @@ grn_cache_get_max_n_entries_persistent(grn_ctx *ctx, grn_cache *cache)
                                                         GRN_CACHE_PERSISTENT_METADATA_ID,
                                                         NULL);
   current_max_n_entries = metadata_entry->metadata.max_nentries;
-  grn_io_unlock(keys->io);
+  grn_io_unlock(ctx, keys->io);
 
   return current_max_n_entries;
 }
@@ -704,7 +704,7 @@ grn_cache_get_statistics_persistent(grn_ctx *ctx, grn_cache *cache,
   statistics->nfetches = metadata_entry->metadata.nfetches;
   statistics->nhits = metadata_entry->metadata.nhits;
 
-  grn_io_unlock(keys->io);
+  grn_io_unlock(ctx, keys->io);
 }
 
 void
@@ -824,7 +824,7 @@ grn_cache_fetch_persistent(grn_ctx *ctx, grn_cache *cache,
   }
 
 exit :
-  grn_io_unlock(keys->io);
+  grn_io_unlock(ctx, keys->io);
 
   return rc;
 }
@@ -976,7 +976,7 @@ grn_cache_update_persistent(grn_ctx *ctx, grn_cache *cache,
   }
 
 exit :
-  grn_io_unlock(keys->io);
+  grn_io_unlock(ctx, keys->io);
 }
 
 void
@@ -1014,7 +1014,7 @@ grn_cache_expire_persistent(grn_cache *cache, int32_t size)
 
   grn_cache_expire_persistent_without_lock(cache, size);
 
-  grn_io_unlock(keys->io);
+  grn_io_unlock(ctx, keys->io);
 }
 
 void

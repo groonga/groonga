@@ -328,7 +328,7 @@ void grn_io_segment_alloc(grn_ctx *ctx, grn_io *io, grn_io_array_info *ai,
                           uint32_t lseg, int *flags, void **p);
 
 GRN_API grn_rc grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout);
-GRN_API void grn_io_unlock(grn_io *io);
+GRN_API void grn_io_unlock(grn_ctx *ctx, grn_io *io);
 void grn_io_clear_lock(grn_io *io);
 uint32_t grn_io_is_locked(grn_io *io);
 grn_bool grn_io_is_corrupt(grn_ctx *ctx, grn_io *io);

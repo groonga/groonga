@@ -81,7 +81,7 @@ grn_config_set(grn_ctx *ctx,
                          GRN_OBJ_SET);
       GRN_OBJ_FIN(ctx, &packed_value);
     }
-    grn_io_unlock(config->io);
+    grn_io_unlock(ctx, config->io);
   }
   if (id == GRN_ID_NIL || ctx->rc != GRN_SUCCESS) {
     ERR(GRN_INVALID_ARGUMENT,
@@ -169,7 +169,7 @@ grn_config_delete(grn_ctx *ctx,
       GRN_API_RETURN(rc);
     }
     rc = grn_hash_delete(ctx, config, key, key_size, NULL);
-    grn_io_unlock(config->io);
+    grn_io_unlock(ctx, config->io);
     if (rc != GRN_SUCCESS) {
       if (ctx->rc == GRN_SUCCESS) {
         ERR(rc,

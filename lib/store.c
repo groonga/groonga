@@ -2503,7 +2503,7 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
   grn_io_seg_unref(ctx, ja->io, wal_data.segment);
   grn_ja_free(ctx, ja, &eback);
 exit :
-  grn_io_unlock(ja->io);
+  grn_io_unlock(ctx, ja->io);
   return ctx->rc;
 }
 
@@ -2973,7 +2973,7 @@ grn_ja_alloc(grn_ctx *ctx, grn_ja *ja, grn_id id,
   }
 
   if (element_type != GRN_JA_ELEMENT_TINY) {
-    grn_io_unlock(ja->io);
+    grn_io_unlock(ctx, ja->io);
   }
 
   return rc;
@@ -3205,7 +3205,7 @@ grn_ja_put_raw(grn_ctx *ctx, grn_ja *ja, grn_id id,
   if (rc != GRN_SUCCESS) {
     if (grn_io_lock(ctx, ja->io, grn_lock_timeout) == GRN_SUCCESS) {
       grn_ja_free(ctx, ja, &einfo);
-      grn_io_unlock(ja->io);
+      grn_io_unlock(ctx, ja->io);
     }
   }
   return rc;

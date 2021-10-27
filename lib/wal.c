@@ -544,7 +544,7 @@ exit :
   }
 
   if (need_lock) {
-    grn_io_unlock(io);
+    grn_io_unlock(ctx, io);
   }
 
   return rc;
@@ -592,7 +592,7 @@ grn_wal_touch(grn_ctx *ctx,
   }
 
   if (need_lock) {
-    grn_io_unlock(io);
+    grn_io_unlock(ctx, io);
   }
 
   return rc;
@@ -702,7 +702,7 @@ grn_wal_clear(grn_ctx *ctx,
   rc = grn_wal_remove_raw(ctx, obj, io->path, "[clear]", tag);
 
   if (need_lock) {
-    grn_io_unlock(io);
+    grn_io_unlock(ctx, io);
   }
 
   return rc;

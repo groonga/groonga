@@ -8687,7 +8687,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     }
   }
 exit :
-  grn_io_unlock(ii->seg);
+  grn_io_unlock(ctx, ii->seg);
   if (old && old->header.type == GRN_TABLE_HASH_KEY) {
     grn_hash *o = (grn_hash *)old;
     GRN_HASH_EACH(ctx, o, id, &tp, NULL, &u, {
