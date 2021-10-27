@@ -535,7 +535,9 @@ grn_wal_add_entryv(grn_ctx *ctx,
 exit :
   if (output) {
     fflush(output);
-# ifdef HAVE_FSYNC
+# ifdef HAVE_FDATASYNC
+    fdatasync(fileno(output));
+# elif defined(HAVE_FSYNC)
     fsync(fileno(output));
 # endif
     fclose(output);

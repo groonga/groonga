@@ -3,6 +3,7 @@
 AC_CHECK_FUNCS(_gmtime64_s)
 AC_CHECK_FUNCS(_localtime64_s)
 AC_CHECK_FUNCS(_strtoui64)
+AC_CHECK_FUNCS(fdatasync)
 AC_CHECK_FUNCS(fsync)
 AC_CHECK_FUNCS(futimens)
 AC_CHECK_FUNCS(futimes)
