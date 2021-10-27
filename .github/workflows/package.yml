@@ -27,6 +27,7 @@ jobs:
           - Debian GNU/Linux buster i386
           - CentOS 7
           - CentOS 8
+          - AlmaLinux 8
         include:
           - label: Debian GNU/Linux bullseye amd64
             id: debian-bullseye-amd64
@@ -63,6 +64,11 @@ jobs:
             task-namespace: yum
             target: centos-8
             test-docker-image: centos:8
+          - label: AlmaLinux 8
+            id: almalinux-8
+            task-namespace: yum
+            target: almalinux-8
+            test-docker-image: almalinux:8
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
