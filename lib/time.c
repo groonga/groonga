@@ -123,7 +123,7 @@ grn_time_t_to_tm(grn_ctx *ctx, const grn_time_t time, struct tm *tm)
 }
 
 struct tm *
-grn_timeval2tm(grn_ctx *ctx, grn_timeval *tv, struct tm *tm)
+  grn_timeval2tm(grn_ctx *ctx, grn_timeval *tv, struct tm *tm)
 {
   if (grn_time_t_to_tm(ctx, tv->tv_sec, tm)) {
     return tm;
@@ -203,11 +203,65 @@ grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf, size_t buf_size)
 }
 
 grn_rc
+grn_str2gm_offset_sec(const char *start, const char *end, grn_bool *has_offset, int64_t *gm_offset)
+{
+  const char *position = start;
+  int32_t hours, minutes = 0;
+
+  *has_offset = GRN_FALSE;
+
+  if (position >= end) {
+    return GRN_SUCCESS;
+  }
+
+  switch (*position) {
+  case '+':
+    *gm_offset = 1;
+    *has_offset = GRN_TRUE;
+    break;
+  case '-':
+    *gm_offset = -1;
+    *has_offset = GRN_TRUE;
+    break;
+  case 'Z':
+  case 'z':
+    *gm_offset = 0;
+    *has_offset = GRN_TRUE;
+    return GRN_SUCCESS;
+  default:
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  if ((position + 1) >= end) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  position++;
+
+  hours = grn_atoi(position, end, &position);
+  if (hours < 0 || hours >= 24) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  if ((position + 1) < end && *position == ':') {
+    position++;
+    minutes = grn_atoi(position, end, &position);
+    if (minutes < 0 || minutes >= 60) {
+      return GRN_INVALID_ARGUMENT;
+    }
+  }
+
+  *gm_offset *= ((int64_t)hours * 3600 + (int64_t)minutes * 60);
+
+  return GRN_SUCCESS;
+}
+
+grn_rc
 grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
 {
   struct tm tm;
   const char *r1, *r2, *rend = str + str_len;
-  uint32_t uv;
+  uint32_t uv = 0;
+
   memset(&tm, 0, sizeof(struct tm));
 
   tm.tm_year = (int)grn_atoui(str, rend, &r1) - 1900;
@@ -217,11 +271,15 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
   r1++;
   tm.tm_mon = (int)grn_atoui(r1, rend, &r1) - 1;
   if ((r1 + 1) >= rend || (*r1 != '/' && *r1 != '-') ||
-      tm.tm_mon < 0 || tm.tm_mon >= 12) { return GRN_INVALID_ARGUMENT; }
+      tm.tm_mon < 0 || tm.tm_mon >= 12) {
+    return GRN_INVALID_ARGUMENT;
+  }
   r1++;
   tm.tm_mday = (int)grn_atoui(r1, rend, &r1);
-  if ((r1 + 1) >= rend || *r1 != ' ' ||
-      tm.tm_mday < 1 || tm.tm_mday > 31) { return GRN_INVALID_ARGUMENT; }
+  if ((r1 + 1) >= rend || (*r1 != ' ' && *r1 != 'T' && *r1 != 't') ||
+      tm.tm_mday < 1 || tm.tm_mday > 31) {
+    return GRN_INVALID_ARGUMENT;
+  }
 
   tm.tm_hour = (int)grn_atoui(++r1, rend, &r2);
   if ((r2 + 1) >= rend || r1 == r2 || *r2 != ':' ||
@@ -241,19 +299,40 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
     return GRN_INVALID_ARGUMENT;
   }
   r1 = r2;
+
+  if ((r1 + 1) < rend && *r1 == '.') {
+    r1++;
+    uv = grn_atoi(r1, rend, &r2);
+
+    for (int i = 0; r2 + i < r1 + 6; i++) {
+      uv *= 10;
+    }
+    if (uv >= GRN_TIME_USEC_PER_SEC) { return GRN_INVALID_ARGUMENT; }
+  }
+
   tm.tm_yday = -1;
   tm.tm_isdst = -1;
 
-  /* tm_yday is set appropriately (0-365) on successful completion. */
-  tv->tv_sec = grn_mktime(&tm);
-  if (tm.tm_yday == -1) { return GRN_INVALID_ARGUMENT; }
-  if ((r1 + 1) < rend && *r1 == '.') { r1++; }
-  uv = grn_atoi(r1, rend, &r2);
-  while (r2 < r1 + 6) {
-    uv *= 10;
-    r2++;
+  {
+    grn_bool has_offset = GRN_FALSE;
+    int64_t gm_offset_sec = 0;
+    grn_rc rc = GRN_SUCCESS;
+
+    rc = grn_str2gm_offset_sec(r2, rend, &has_offset, &gm_offset_sec);
+
+    if (rc != GRN_SUCCESS) { return rc; }
+
+    if (has_offset) {
+      tv->tv_sec = grn_timegm(&tm);
+      tv->tv_sec -= gm_offset_sec;
+    } else {
+      tv->tv_sec = grn_mktime(&tm);
+    }
   }
-  if (uv >= GRN_TIME_USEC_PER_SEC) { return GRN_INVALID_ARGUMENT; }
+
+  /* tm_yday is set appropriately (0-365) on successful completion. */
+  if (tm.tm_yday == -1) { return GRN_INVALID_ARGUMENT; }
+
   tv->tv_nsec = GRN_TIME_USEC_TO_NSEC(uv);
   return GRN_SUCCESS;
 }
