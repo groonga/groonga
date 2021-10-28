@@ -9,8 +9,8 @@ on:
       - '*'
   pull_request:
 concurrency:
-  group: ${{ github.ref }}-${{ github.workflow }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+  group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
+  cancel-in-progress: true
 jobs:
   test:
     name: ${{ matrix.msystem }}
