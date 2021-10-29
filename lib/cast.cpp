@@ -25,12 +25,13 @@
 # include <string>
 # include <vector>
 
+# define RAPIDJSON_NAMESPACE grn_rapidjson
 # include <rapidjson/document.h>
 # include <rapidjson/memorystream.h>
 
 namespace grn {
   namespace {
-    struct Int8Handler : public rapidjson::BaseReaderHandler<>
+    struct Int8Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
     {
       grn_ctx *ctx_;
       grn_obj *uvector_;
@@ -62,7 +63,7 @@ namespace grn {
       }
     };
 
-    struct UInt8Handler : public rapidjson::BaseReaderHandler<>
+    struct UInt8Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
     {
       grn_ctx *ctx_;
       grn_obj *uvector_;
@@ -94,7 +95,7 @@ namespace grn {
       }
     };
 
-    struct Int16Handler : public rapidjson::BaseReaderHandler<>
+    struct Int16Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
     {
       grn_ctx *ctx_;
       grn_obj *uvector_;
@@ -126,7 +127,7 @@ namespace grn {
       }
     };
 
-    struct UInt16Handler : public rapidjson::BaseReaderHandler<>
+    struct UInt16Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
     {
       grn_ctx *ctx_;
       grn_obj *uvector_;
@@ -158,7 +159,7 @@ namespace grn {
       }
     };
 
-    struct Int32Handler : public rapidjson::BaseReaderHandler<>
+    struct Int32Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
     {
       grn_ctx *ctx_;
       grn_obj *uvector_;
@@ -190,7 +191,7 @@ namespace grn {
       }
     };
 
-    struct UInt32Handler : public rapidjson::BaseReaderHandler<>
+    struct UInt32Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
     {
       grn_ctx *ctx_;
       grn_obj *uvector_;
@@ -222,7 +223,7 @@ namespace grn {
       }
     };
 
-    struct Int64Handler : public rapidjson::BaseReaderHandler<>
+    struct Int64Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
     {
       grn_ctx *ctx_;
       grn_obj *uvector_;
@@ -254,7 +255,7 @@ namespace grn {
       }
     };
 
-    struct UInt64Handler : public rapidjson::BaseReaderHandler<>
+    struct UInt64Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
     {
       grn_ctx *ctx_;
       grn_obj *uvector_;
@@ -286,7 +287,7 @@ namespace grn {
       }
     };
 
-    struct TableWeightHandler : public rapidjson::BaseReaderHandler<>
+    struct TableWeightHandler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
     {
       TableWeightHandler(grn_ctx *ctx,
                          grn_obj *uvector,
@@ -612,7 +613,7 @@ namespace grn {
       std::vector<grn_obj *> values_;
     };
 
-    class TableHandler : public rapidjson::BaseReaderHandler<>
+    class TableHandler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
     {
     public:
       TableHandler(grn_ctx *ctx,
@@ -900,7 +901,7 @@ namespace grn {
       std::vector<ContainerType> container_type_stack_;
     };
 
-    struct TextHandler : public rapidjson::BaseReaderHandler<>
+    struct TextHandler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<>
     {
       grn_ctx *ctx_;
       grn_obj *vector_;
@@ -926,7 +927,7 @@ namespace grn {
     template <typename Handler>
     grn_rc
     json_to_uvector(grn_ctx *ctx,
-                    rapidjson::Document *document,
+                    RAPIDJSON_NAMESPACE::Document *document,
                     grn_obj *dest,
                     bool add_record_if_not_exist) {
       Handler handler(ctx, dest, add_record_if_not_exist);
@@ -964,7 +965,7 @@ namespace grn {
 
     grn_rc
     json_to_text_vector(grn_ctx *ctx,
-                        rapidjson::Document *document,
+                        RAPIDJSON_NAMESPACE::Document *document,
                         grn_obj *dest) {
       TextHandler handler(ctx, dest);
       if (document->IsArray()) {
@@ -988,8 +989,9 @@ namespace grn {
                        grn_obj *dest,
                        bool add_record_if_not_exist)
   {
-    rapidjson::Document document;
-    rapidjson::MemoryStream stream(GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
+    RAPIDJSON_NAMESPACE::Document document;
+    RAPIDJSON_NAMESPACE::MemoryStream stream(GRN_TEXT_VALUE(src),
+                                             GRN_TEXT_LEN(src));
     document.ParseStream(stream);
     if (document.HasParseError()) {
       auto domain = grn_ctx_at(ctx, dest->header.domain);
@@ -1076,8 +1078,9 @@ namespace grn {
                            grn_obj *src,
                            grn_obj *dest)
   {
-    rapidjson::Document document;
-    rapidjson::MemoryStream stream(GRN_TEXT_VALUE(src), GRN_TEXT_LEN(src));
+    RAPIDJSON_NAMESPACE::Document document;
+    RAPIDJSON_NAMESPACE::MemoryStream stream(GRN_TEXT_VALUE(src),
+                                             GRN_TEXT_LEN(src));
     document.ParseStream(stream);
     if (document.HasParseError()) {
       return GRN_INVALID_ARGUMENT;
