@@ -210,9 +210,7 @@ grn_str2gm_offset_sec(const char *start, const char *end, grn_bool *has_offset, 
 
   *has_offset = GRN_FALSE;
 
-  if (position >= end) {
-    return GRN_SUCCESS;
-  }
+  if (position >= end) { return GRN_SUCCESS; }
 
   switch (*position) {
   case '+':
@@ -232,22 +230,16 @@ grn_str2gm_offset_sec(const char *start, const char *end, grn_bool *has_offset, 
     return GRN_INVALID_ARGUMENT;
   }
 
-  if ((position + 1) >= end) {
-    return GRN_INVALID_ARGUMENT;
-  }
+  if ((position + 1) >= end) { return GRN_INVALID_ARGUMENT; }
   position++;
 
   hours = grn_atoi(position, end, &position);
-  if (hours < 0 || hours >= 24) {
-    return GRN_INVALID_ARGUMENT;
-  }
+  if (hours < 0 || hours >= 24) { return GRN_INVALID_ARGUMENT; }
 
   if ((position + 1) < end && *position == ':') {
     position++;
     minutes = grn_atoi(position, end, &position);
-    if (minutes < 0 || minutes >= 60) {
-      return GRN_INVALID_ARGUMENT;
-    }
+    if (minutes < 0 || minutes >= 60) { return GRN_INVALID_ARGUMENT; }
   }
 
   *gm_offset *= ((int64_t)hours * 3600 + (int64_t)minutes * 60);
@@ -271,15 +263,11 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
   r1++;
   tm.tm_mon = (int)grn_atoui(r1, rend, &r1) - 1;
   if ((r1 + 1) >= rend || (*r1 != '/' && *r1 != '-') ||
-      tm.tm_mon < 0 || tm.tm_mon >= 12) {
-    return GRN_INVALID_ARGUMENT;
-  }
+      tm.tm_mon < 0 || tm.tm_mon >= 12) { return GRN_INVALID_ARGUMENT; }
   r1++;
   tm.tm_mday = (int)grn_atoui(r1, rend, &r1);
   if ((r1 + 1) >= rend || (*r1 != ' ' && *r1 != 'T' && *r1 != 't') ||
-      tm.tm_mday < 1 || tm.tm_mday > 31) {
-    return GRN_INVALID_ARGUMENT;
-  }
+      tm.tm_mday < 1 || tm.tm_mday > 31) { return GRN_INVALID_ARGUMENT; }
 
   tm.tm_hour = (int)grn_atoui(++r1, rend, &r2);
   if ((r2 + 1) >= rend || r1 == r2 || *r2 != ':' ||
