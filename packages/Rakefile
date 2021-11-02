@@ -63,6 +63,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
 
   def yum_targets_default
     [
+      "almalinux-8",
       "centos-7",
       "centos-8",
     ]

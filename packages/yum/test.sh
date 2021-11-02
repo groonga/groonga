@@ -2,7 +2,16 @@
 
 set -exu
 
-version=$(cut -d: -f5 /etc/system-release-cpe)
+os=$(cut -d: -f4 /etc/system-release-cpe)
+case ${os} in
+  centos)
+    version=$(cut -d: -f5 /etc/system-release-cpe)
+    ;;
+  *) # For AlmaLinux
+    version=$(cut -d: -f5 /etc/system-release-cpe | sed -e 's/\.[0-9]$//')
+    ;;
+esac
+
 case ${version} in
   7)
     DNF=yum
@@ -17,7 +26,7 @@ ${DNF} install -y \
 
 repositories_dir=/groonga/packages/yum/repositories
 ${DNF} install -y \
-  ${repositories_dir}/centos/${version}/x86_64/Packages/*.rpm
+  ${repositories_dir}/${os}/${version}/x86_64/Packages/*.rpm
 
 groonga --version
 
