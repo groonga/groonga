@@ -123,7 +123,7 @@ grn_time_t_to_tm(grn_ctx *ctx, const grn_time_t time, struct tm *tm)
 }
 
 struct tm *
-  grn_timeval2tm(grn_ctx *ctx, grn_timeval *tv, struct tm *tm)
+grn_timeval2tm(grn_ctx *ctx, grn_timeval *tv, struct tm *tm)
 {
   if (grn_time_t_to_tm(ctx, tv->tv_sec, tm)) {
     return tm;
@@ -213,26 +213,26 @@ grn_str2gm_offset_sec(const char *start, const char *end, grn_bool *has_offset, 
   if (position >= end) { return GRN_SUCCESS; }
 
   switch (*position) {
-  case '+':
+  case '+' :
     *gm_offset = 1;
     *has_offset = GRN_TRUE;
     break;
-  case '-':
+  case '-' :
     *gm_offset = -1;
     *has_offset = GRN_TRUE;
     break;
-  case 'Z':
-  case 'z':
+  case 'Z' :
+  case 'z' :
     *gm_offset = 0;
     *has_offset = GRN_TRUE;
     return GRN_SUCCESS;
-  default:
+  default :
     return GRN_INVALID_ARGUMENT;
   }
 
   if ((position + 1) >= end) { return GRN_INVALID_ARGUMENT; }
-  position++;
 
+  position++;
   hours = grn_atoi(position, end, &position);
   if (hours < 0 || hours >= 24) { return GRN_INVALID_ARGUMENT; }
 
@@ -289,8 +289,7 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
   r1 = r2;
 
   if ((r1 + 1) < rend && *r1 == '.') {
-    r1++;
-    uv = grn_atoi(r1, rend, &r2);
+    uv = grn_atoi(++r1, rend, &r2);
 
     for (int i = 0; r2 + i < r1 + 6; i++) {
       uv *= 10;
