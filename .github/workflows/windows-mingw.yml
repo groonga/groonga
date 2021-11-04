@@ -43,7 +43,7 @@ jobs:
             binutils
             git
             msys2-devel
-            pactoys-git
+            pactoys
       - name: Prepare
         shell: msys2 {0}
         run: |
