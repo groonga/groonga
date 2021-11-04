@@ -111,7 +111,7 @@ reference_short_text: string
 reference_short_text_vector: list<item: string>
 time: timestamp[ns]
 uint32: uint32
-	_key	int32	int32_vector	int64	reference_short_text	reference_short_text_vector	                     time	uint32
+	_key	int32	int32_vector	     int64	reference_short_text	reference_short_text_vector	                     time	uint32
 0	2015-02-03 23:59:58	  -29	[
   1,
   -2,
@@ -170,7 +170,7 @@ reference_short_text: string
 reference_short_text_vector: list<item: string>
 time: timestamp[ns]
 uint32: uint32
-	_key	int32	int32_vector	int64	reference_short_text	reference_short_text_vector	                     time	uint32
+	_key	int32	int32_vector	     int64	reference_short_text	reference_short_text_vector	                     time	uint32
 0	2015-02-03 23:59:58	  -29	[
   1,
   -2,
