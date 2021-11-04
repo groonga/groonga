@@ -129,6 +129,10 @@ msgid "[:doc:`/install/almalinux`] Added support for AlmaLinux 8."
 msgstr ""
 "[:doc:`/install/almalinux`]AlmaLinux 8 向けのパッケージをサポートしました。"
 
+msgid "[:doc:`/install/ubuntu`] Added support for Ubuntu 21.10 (Impish Indri)."
+msgstr ""
+"[:doc:`/install/ubuntu`] Ubuntu 21.10 (Impish Indri)をサポートしました。"
+
 msgid "Fixes"
 msgstr "修正"
 

@@ -204,6 +204,8 @@ Improvements
 
 * [:doc:`/install/almalinux`] Added support for AlmaLinux 8.
 
+* [:doc:`/install/ubuntu`] Added support for Ubuntu 21.10 (Impish Indri).
+
 Fixes
 -----
 
