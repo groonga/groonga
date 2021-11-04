@@ -899,6 +899,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/images/reference/tokenizers/used-when-searching.svg \
 	$(top_srcdir)/doc/source/index.rst \
 	$(top_srcdir)/doc/source/install.rst \
+	$(top_srcdir)/doc/source/install/almalinux.rst \
 	$(top_srcdir)/doc/source/install/centos.rst \
 	$(top_srcdir)/doc/source/install/debian.rst \
 	$(top_srcdir)/doc/source/install/docker.rst \
@@ -2079,6 +2080,7 @@ source_files_relative_from_doc_dir = \
 	source/images/reference/tokenizers/used-when-searching.svg \
 	source/index.rst \
 	source/install.rst \
+	source/install/almalinux.rst \
 	source/install/centos.rst \
 	source/install/debian.rst \
 	source/install/docker.rst \
@@ -2514,6 +2516,7 @@ html_files_relative_from_locale_dir = \
 	html/genindex.html \
 	html/index.html \
 	html/install.html \
+	html/install/almalinux.html \
 	html/install/centos.html \
 	html/install/debian.html \
 	html/install/docker.html \

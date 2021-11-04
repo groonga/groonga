@@ -21,6 +21,7 @@ size data.
    install/debian
    install/ubuntu
    install/centos
+   install/almalinux
    install/fedora
    install/solaris
    install/docker

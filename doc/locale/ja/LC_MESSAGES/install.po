@@ -42,6 +42,42 @@ msgstr ""
 "だけ使って下さい。32-bit用パッケージを使った場合は、中程度のサイズのデータで"
 "もメモリ不足エラーになることがあります。"
 
+msgid "AlmaLinux"
+msgstr ""
+
+msgid ""
+"This section describes how to install Groonga related RPM packages on "
+"AlmaLinux OS. You can install them by ``dnf``."
+msgstr ""
+"このセクションではAlmaLinux OS上でGroonga関連のRPMパッケージをインストールす"
+"る方法を説明します。これらのパッケージは ``dnf`` でインストールできます。"
+
+msgid "We distribute only 64-bit packages."
+msgstr "64-bit用のパッケージのみ配布しています。"
+
+msgid "AlmaLinux 8"
+msgstr ""
+
+msgid "Install::"
+msgstr "インストール::"
+
+msgid "Build from source"
+msgstr "ソースからビルド"
+
+msgid "Install required packages to build Groonga::"
+msgstr "Groongaをビルドするために必要なパッケージをインストールします::"
+
+msgid "Download source::"
+msgstr "ソースをダウンロードします::"
+
+msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
+msgstr ""
+"configureを実行します（ ``configure`` のオプションについては :ref:`source-"
+"configure` を参照してください）::"
+
+msgid "Build::"
+msgstr "ビルド::"
+
 msgid "CentOS"
 msgstr ""
 
@@ -54,9 +90,6 @@ msgstr ""
 
 msgid "CentOS 7"
 msgstr ""
-
-msgid "Install::"
-msgstr "インストール::"
 
 msgid ""
 "If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a "
@@ -94,23 +127,6 @@ msgstr "groonga-normalizer-mysqlパッケージのインストール::"
 
 msgid "CentOS 8"
 msgstr ""
-
-msgid "Build from source"
-msgstr "ソースからビルド"
-
-msgid "Install required packages to build Groonga::"
-msgstr "Groongaをビルドするために必要なパッケージをインストールします::"
-
-msgid "Download source::"
-msgstr "ソースをダウンロードします::"
-
-msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
-msgstr ""
-"configureを実行します（ ``configure`` のオプションについては :ref:`source-"
-"configure` を参照してください）::"
-
-msgid "Build::"
-msgstr "ビルド::"
 
 msgid "Debian GNU/Linux"
 msgstr ""
