@@ -5,6 +5,213 @@
 News
 ====
 
+.. _release-11-0-9:
+
+Release 11.0.9 - 2021-11-04
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`reference/functions/snippet`] Added a new option ``delimiter_regexp`` for detecting snippet delimiter with regular expression.
+
+  :doc:`reference/functions/snippet` extracts text around search keywords.
+  We call the text that is extracted by :doc:`reference/functions/snippet` snippet.
+
+  Normally, :doc:`reference/functions/snippet` () returns the text of 200 bytes around search keywords.
+  However, :doc:`reference/functions/snippet` () gives no thought to a delimiter of sentences.
+  The snippet may be composed of multi sentences.
+
+  ``delimiter_regexp`` option is useful if we want to only extract the text of the same sentence as search keywords.
+  For example, we can use ``\.\s*`` to extract only text in the target sentence as below.
+  Note that you need to escape ``\`` in string.
+
+    .. code-block::
+
+       table_create Documents TABLE_NO_KEY
+       column_create Documents content COLUMN_SCALAR Text
+
+       table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram  --normalizer NormalizerAuto
+       column_create Terms documents_content_index COLUMN_INDEX|WITH_POSITION Documents content
+
+       load --table Documents
+       [
+       ["content"],
+       ["Groonga is a fast and accurate full text search engine based on inverted index. One of the characteristics of groonga is that a newly registered document instantly appears in search results. Also, groonga allows updates without read locks. These characteristics result in superior performance on real-time applications."],
+       ["Groonga is also a column-oriented database management system (DBMS). Compared with well-known row-oriented systems, such as MySQL and PostgreSQL, column-oriented systems are more suited for aggregate queries. Due to this advantage, groonga can cover weakness of row-oriented systems."]
+       ]
+
+       select Documents \
+         --output_columns 'snippet(content, \
+                                   { \
+                                      "default_open_tag": "[", \
+                                      "default_close_tag": "]", \
+                                      "delimiter_regexp": "\\\\.\\\\s*" \
+                                   })' \
+         --match_columns content \
+         --query "fast performance"
+       [
+         [
+           0,
+           1337566253.89858,
+           0.000355720520019531
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "snippet",
+                 null
+               ]
+             ],
+             [
+               [
+                 "Groonga is a [fast] and accurate full text search engine based on inverted index",
+                 "These characteristics result in superior [performance] on real-time applications"
+               ]
+             ]
+           ]
+         ]
+       ]
+
+* [:doc:`reference/window_functions/window_rank`] Added a new function ``window_rank()``.
+
+  * We can calculate a rank that includes a gap of each record.
+    Normally, the rank isn’t incremented when multiple records that are the same order.
+    For example, if values of sort keys are 100, 100, 200 then the ranks of them
+    are 1, 1, 3.
+    The rank of the last record is 3 not 2 because there are two 1 rank records.
+
+    This is similar to :doc:`reference/window_functions/window_record_number`.
+    However, :doc:`reference/window_functions/window_record_number` gives no thought to gap.
+
+    .. code-block::
+
+       table_create Points TABLE_NO_KEY
+       column_create Points game COLUMN_SCALAR ShortText
+       column_create Points score COLUMN_SCALAR UInt32
+
+       load --table Points
+       [
+       ["game",  "score"],
+       ["game1", 100],
+       ["game1", 200],
+       ["game1", 100],
+       ["game1", 400],
+       ["game2", 150],
+       ["game2", 200],
+       ["game2", 200],
+       ["game2", 200]
+       ]
+
+       select Points \
+         --columns[rank].stage filtered \
+         --columns[rank].value 'window_rank()' \
+         --columns[rank].type UInt32 \
+         --columns[rank].window.sort_keys score \
+         --output_columns 'game, score, rank' \
+         --sort_keys score
+       [
+         [
+           0,
+           1337566253.89858,
+           0.000355720520019531
+         ],
+         [
+           [
+             [
+               8
+             ],
+             [
+               [
+                 "game",
+                 "ShortText"
+               ],
+               [
+                 "score",
+                 "UInt32"
+               ],
+               [
+                 "rank",
+                 "UInt32"
+               ]
+             ],
+             [
+               "game1",
+               100,
+               1
+             ],
+             [
+               "game1",
+               100,
+               1
+             ],
+             [
+               "game2",
+               150,
+               3
+             ],
+             [
+               "game2",
+               200,
+               4
+             ],
+             [
+               "game2",
+               200,
+               4
+             ],
+             [
+               "game1",
+               200,
+               4
+             ],
+             [
+               "game2",
+               200,
+               4
+             ],
+             [
+               "game1",
+               400,
+               8
+             ]
+           ]
+         ]
+       ]
+
+* [:doc:`/reference/functions/in_values`] Added support for auto cast when we search tables.
+
+  For example, if we load values of ``UInt32`` into a table that a key type is ``UInt64``, Groonga cast the values to ``UInt64`` automatically when we search the table with ``in_values()``. However, ``in_values(_key, 10)`` doesn't work with ``UInt64`` key table. Because 10 is parsed as ``Int32``.
+
+  .. code-block::
+
+     table_create Numbers TABLE_HASH_KEY UInt64
+     load --table Numbers
+     [
+     {"_key": 100},
+     {"_key": 200},
+     {"_key": 300}
+     ]
+
+     select Numbers   --output_columns _key   --filter 'in_values(_key, 200, 100)'   --sortby _id
+     [[0,0.0,0.0],[[[2],[["_key","UInt64"]],[100],[200]]]]
+
+* [httpd] Updated bundled nginx to 1.21.3.
+
+* [:doc:`/install/almalinux`] Added support for AlmaLinux 8.
+
+Fixes
+-----
+
+* Fixed a bug that Groonga doesn't return a response when an error occurred
+  in command (e.g. sytax error in filter).
+
+  * This bug only occurs when we use ``--output_type apache-arrow``.
+
 .. _release-11-0-7:
 
 Release 11.0.7 - 2021-09-29
