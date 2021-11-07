@@ -174,7 +174,7 @@ function GroongaAdmin() {
     that.removetable();
   });
   $('#tab-recordlist-form').submit(function() {
-    if ($('#table-tab-recordlist-full-checkbox').attr('checked')) {
+    if ($('#table-tab-recordlist-full-checkbox').prop('checked')) {
       // full
       var d = {
         'table': that.current_table
