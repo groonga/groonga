@@ -420,7 +420,9 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
       header[1] = (int32_t) size;
     } else {
       i = ctx->impl->currseg;
-      mi = &ctx->impl->segs[i];
+      if (i >= 0) {
+        mi = &ctx->impl->segs[i];
+      }
       if (i < 0 || size + mi->nref > GRN_CTX_SEGMENT_SIZE) {
         for (i = 0, mi = ctx->impl->segs;; i++, mi++) {
           if (i >= GRN_CTX_N_SEGMENTS) {
