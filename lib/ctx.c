@@ -2279,7 +2279,7 @@ grn_segv_handler(int signal_number, siginfo_t *info, void *context)
 
   if (segv_received) {
     GRN_LOG(ctx, GRN_LOG_CRIT, "SEGV received in SEGV handler.");
-    exit(EXIT_FAILURE);
+    return;
   }
   segv_received = true;
 
