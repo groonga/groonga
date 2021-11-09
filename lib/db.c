@@ -14661,7 +14661,7 @@ grn_obj_defrag(grn_ctx *ctx, grn_obj *obj, int threshold)
 
 static grn_obj *
 deftype(grn_ctx *ctx, const char *name,
-        grn_obj_flags flags,  unsigned int size)
+        grn_obj_flags flags, unsigned int size)
 {
   grn_obj *o = grn_ctx_get(ctx, name, strlen(name));
   if (!o) { o = grn_type_create(ctx, name, strlen(name), flags, size); }
