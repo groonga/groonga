@@ -17,6 +17,10 @@
 
 #include "grn-test-hash-factory.h"
 
+#if !GLIB_CHECK_VERSION(2, 68, 0)
+# define g_memdup2 g_memdup
+#endif
+
 #define GRN_TEST_HASH_FACTORY_GET_PRIVATE(obj)                          \
   ((GrnTestHashFactoryPrivate *)                                        \
    grn_test_hash_factory_get_instance_private(GRN_TEST_HASH_FACTORY(obj)))
