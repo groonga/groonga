@@ -2271,7 +2271,7 @@ grn_exception_filter(EXCEPTION_POINTERS *info)
   return EXCEPTION_CONTINUE_SEARCH;
 }
 #elif defined(HAVE_SIGNAL_H) /* WIN32 */
-static int segv_received = 0;
+static bool segv_received = false;
 static void
 grn_segv_handler(int signal_number, siginfo_t *info, void *context)
 {
@@ -2281,7 +2281,7 @@ grn_segv_handler(int signal_number, siginfo_t *info, void *context)
     GRN_LOG(ctx, GRN_LOG_CRIT, "SEGV received in SEGV handler.");
     exit(EXIT_FAILURE);
   }
-  segv_received = 1;
+  segv_received = true;
 
   GRN_LOG(ctx, GRN_LOG_CRIT, "-- CRASHED!!! --");
 # ifdef HAVE_BACKTRACE
