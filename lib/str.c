@@ -2000,9 +2000,11 @@ grn_bulk_write(grn_ctx *ctx, grn_obj *buf, const char *str, size_t len)
     new_size = grn_bulk_compute_new_size(ctx, buf, GRN_BULK_VSIZE(buf) + len);
     if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
   }
-  curr = GRN_BULK_CURR(buf);
-  grn_memcpy(curr, str, len);
-  GRN_BULK_INCR_LEN(buf, len);
+  if (len > 0) {
+    curr = GRN_BULK_CURR(buf);
+    grn_memcpy(curr, str, len);
+    GRN_BULK_INCR_LEN(buf, len);
+  }
   return rc;
 }
 
