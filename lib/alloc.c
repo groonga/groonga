@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -343,13 +343,13 @@ grn_alloc_info_free(grn_ctx *ctx)
 }
 #endif /* USE_MEMORY_DEBUG */
 
-#define GRN_CTX_SEGMENT_SIZE    (1<<22)
+#define GRN_CTX_SEGMENT_SIZE    (1U<<22)
 #define GRN_CTX_SEGMENT_MASK    (GRN_CTX_SEGMENT_SIZE - 1)
 
-#define GRN_CTX_SEGMENT_WORD    (1<<31)
-#define GRN_CTX_SEGMENT_VLEN    (1<<30)
-#define GRN_CTX_SEGMENT_LIFO    (1<<29)
-#define GRN_CTX_SEGMENT_DIRTY   (1<<28)
+#define GRN_CTX_SEGMENT_WORD    (1U<<31)
+#define GRN_CTX_SEGMENT_VLEN    (1U<<30)
+#define GRN_CTX_SEGMENT_LIFO    (1U<<29)
+#define GRN_CTX_SEGMENT_DIRTY   (1U<<28)
 
 void
 grn_alloc_init_ctx_impl(grn_ctx *ctx)
