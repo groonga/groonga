@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010-2011  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2010-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -607,7 +607,8 @@ test_prefix_geo_point(gpointer data)
   grn_test_assert_context(context);
   while ((id = grn_table_cursor_next(context, cursor))) {
     grn_geo_point *key;
-    int i, j, key_size;
+    size_t i;
+    int j, key_size;
     uint8_t encoded_key[sizeof(grn_geo_point)];
     GString *geo_byte;
 

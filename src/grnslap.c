@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2012 Brazil
+  Copyright(C) 2009-2012  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -113,8 +114,8 @@ static grn_hash *sessions;
 static int done = 0;
 static int nsent = 0;
 static int nrecv = 0;
-static int etime_min = INT32_MAX;
-static int etime_max = 0;
+static uint32_t etime_min = INT32_MAX;
+static uint32_t etime_max = 0;
 static int64_t etime_amount = 0;
 
 static session *
@@ -173,7 +174,7 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
     } else {
       if (verbose) {
         GRN_TEXT_PUTC(ctx, msg, '\0');
-        lprint(ctx, "%8d(%4d) %8d : %s", s->query_id, s->n_sessions, etime, GRN_BULK_HEAD(msg));
+        lprint(ctx, "%8d(%4d) %8u : %s", s->query_id, s->n_sessions, etime, GRN_BULK_HEAD(msg));
       }
     }
     if ((m->header.flags & GRN_CTX_TAIL)) {
@@ -294,7 +295,7 @@ do_client()
           etime *= 1000000;
           etime += (tve.tv_usec - tvb.tv_usec);
           qps = (double)nsent * 1000000 / etime;
-          lprint(ctx, "end  : n=%d min=%d max=%d avg=%d qps=%f etime=%d.%06d", nsent, etime_min, etime_max, (int)(etime_amount / nsent), qps, etime / 1000000, etime % 1000000);
+          lprint(ctx, "end  : n=%d min=%u max=%u avg=%d qps=%f etime=%u.%06u", nsent, etime_min, etime_max, (int)(etime_amount / nsent), qps, etime / 1000000, etime % 1000000);
         }
         {
           session *s;

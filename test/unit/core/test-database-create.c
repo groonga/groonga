@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2010  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -102,7 +102,7 @@ test_create_simple(void)
 void
 test_create_with_long_path(void)
 {
-  gssize max_path = PATH_MAX - 14;
+  gsize max_path = PATH_MAX - 14;
   GString *long_path;
   const gchar last_component[] = G_DIR_SEPARATOR_S "db";
 

@@ -605,7 +605,7 @@ mrb_grn_expression_codes(mrb_state *mrb, mrb_value self)
 {
   grn_expr *expr;
   mrb_value mrb_codes;
-  int i;
+  uint32_t i;
 
   expr = DATA_PTR(self);
   mrb_codes = mrb_ary_new_capa(mrb, expr->codes_curr);

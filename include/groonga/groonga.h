@@ -1133,7 +1133,7 @@ GRN_API off_t grn_default_query_logger_get_rotate_threshold_size(void);
 #define GRN_BULK_BUFSIZE (sizeof(grn_obj) - sizeof(grn_obj_header))
 /* This assumes that GRN_BULK_BUFSIZE is less than 32 (= 0x20). */
 #define GRN_BULK_BUFSIZE_MAX 0x1f
-#define GRN_BULK_SIZE_IN_FLAGS(flags) ((flags) & GRN_BULK_BUFSIZE_MAX)
+#define GRN_BULK_SIZE_IN_FLAGS(flags) (size_t)((flags) & GRN_BULK_BUFSIZE_MAX)
 #define GRN_BULK_OUTP(bulk) ((bulk)->header.impl_flags & GRN_OBJ_OUTPLACE)
 #define GRN_BULK_REWIND(bulk) do {\
   if ((bulk)->header.type == GRN_VECTOR) {\
@@ -1170,15 +1170,15 @@ GRN_API off_t grn_default_query_logger_get_rotate_threshold_size(void);
 } while (0)
 #define GRN_BULK_WSIZE(bulk) \
   (GRN_BULK_OUTP(bulk)\
-   ? ((bulk)->u.b.tail - (bulk)->u.b.head)\
+   ? (size_t)((bulk)->u.b.tail - (bulk)->u.b.head)\
    : GRN_BULK_BUFSIZE)
 #define GRN_BULK_REST(bulk) \
   (GRN_BULK_OUTP(bulk)\
-   ? ((bulk)->u.b.tail - (bulk)->u.b.curr)\
+   ? (size_t)((bulk)->u.b.tail - (bulk)->u.b.curr)\
    : GRN_BULK_BUFSIZE - GRN_BULK_SIZE_IN_FLAGS((bulk)->header.flags))
 #define GRN_BULK_VSIZE(bulk) \
   (GRN_BULK_OUTP(bulk)\
-   ? ((bulk)->u.b.curr - (bulk)->u.b.head)\
+   ? (size_t)((bulk)->u.b.curr - (bulk)->u.b.head) \
    : GRN_BULK_SIZE_IN_FLAGS((bulk)->header.flags))
 #define GRN_BULK_EMPTYP(bulk) \
   (GRN_BULK_OUTP(bulk)\

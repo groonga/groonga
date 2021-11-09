@@ -1143,7 +1143,7 @@ grn_expr_exec_get_member_vector(grn_ctx *ctx,
   grn_obj *column;
   grn_id record_id;
   grn_obj values;
-  int i;
+  uint32_t i;
 
   column = GRN_PTR_VALUE(column_and_record_id);
   record_id = *((grn_id *)(&(GRN_PTR_VALUE_AT(column_and_record_id, 1))));
@@ -1152,7 +1152,7 @@ grn_expr_exec_get_member_vector(grn_ctx *ctx,
 
   i = GRN_UINT32_VALUE(index);
   if (values.header.type == GRN_UVECTOR) {
-    int n_elements = 0;
+    uint32_t n_elements = 0;
     grn_obj *range;
     grn_id range_id = DB_OBJ(column)->range;
 
@@ -3187,7 +3187,7 @@ grn_expr_executor_is_simple_proc(grn_ctx *ctx,
     return false;
   }
 
-  if (func->modify != e->codes_curr - 1) {
+  if (func->modify != (int32_t)(e->codes_curr - 1)) {
     return false;
   }
   if (e->codes[func->modify].op != GRN_OP_CALL) {
@@ -3781,7 +3781,7 @@ grn_expr_executor_is_simple_proc_scorer(grn_ctx *ctx,
   }
   executor->data.simple_proc_scorer.score_column = score->value;
 
-  if (score->modify != e->codes_curr - 1) {
+  if (score->modify != (int32_t)(e->codes_curr - 1)) {
     return false;
   }
   grn_expr_code *operation = &(e->codes[score->modify]);

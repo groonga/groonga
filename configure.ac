@@ -197,6 +197,7 @@ if test "$GCC" = "yes"; then
   if test "x$check_cflag" = "xyes"; then
     NO_MISSING_FIELD_INITIALIZES_CFLAGS="-Wno-missing-field-initializers"
   fi
+  CHECK_BUILD_FLAG([-Wsign-compare])
 
   CHECK_CXXFLAG([-fexceptions])
   CHECK_CXXFLAG([-fimplicit-templates])

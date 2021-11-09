@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -410,7 +410,7 @@ chunked_tokenize_utf8(grn_ctx *ctx,
   grn_encoding encoding =
     grn_tokenizer_query_get_encoding(ctx, tokenizer->query);
 
-  if (string_bytes < tokenizer->options->chunk_size_threshold) {
+  if ((int32_t)string_bytes < tokenizer->options->chunk_size_threshold) {
     return chunked_tokenize_utf8_chunk(ctx,
                                        tokenizer,
                                        string,

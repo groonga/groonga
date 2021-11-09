@@ -133,7 +133,7 @@ dump_value_raw(grn_ctx *ctx, grn_obj *output, const char *value, int value_len)
   grn_text_esc(ctx, &escaped_value, value, value_len);
   /* is no character escaped? */
   /* TODO false positive with spaces inside values */
-  if (GRN_TEXT_LEN(&escaped_value) == value_len + 2) {
+  if (GRN_TEXT_LEN(&escaped_value) == (size_t)(value_len + 2)) {
     GRN_TEXT_PUT(ctx, output, value, value_len);
   } else {
     GRN_TEXT_PUT(ctx, output,

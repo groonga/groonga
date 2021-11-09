@@ -1,4 +1,6 @@
-/* Copyright(C) 2010-2015 Brazil
+/*
+  Copyright(C) 2010-2015  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -415,7 +417,7 @@ handle_msg(msgpack_object *obj, grn_ctx *ctx, grn_obj *buf)
              *client_id = NULL, *learn_target_names = NULL;
   uint32_t query_len = 0, client_id_len = 0, learn_target_names_len = 0;
   if (obj->type == MSGPACK_OBJECT_MAP) {
-    int i;
+    uint32_t i;
     for (i = 0; i < obj->via.map.size; i++) {
       msgpack_object_kv *kv;
       msgpack_object *key;

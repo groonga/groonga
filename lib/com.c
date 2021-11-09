@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -350,7 +350,7 @@ grn_com_event_add(grn_ctx *ctx, grn_com_event *ev, grn_sock fd, int events, grn_
 {
   grn_com *c;
   /* todo : expand events */
-  if (!ev || *ev->hash->n_entries == ev->max_nevents) {
+  if (!ev || *ev->hash->n_entries == (uint32_t)(ev->max_nevents)) {
     if (ev) { GRN_LOG(ctx, GRN_LOG_ERROR, "too many connections (%d)", ev->max_nevents); }
     return GRN_INVALID_ARGUMENT;
   }
@@ -710,7 +710,7 @@ grn_com_send_http(grn_ctx *ctx, grn_com *cs, const char *path, uint32_t path_len
   if ((ret = send(cs->fd, GRN_BULK_HEAD(&buf), GRN_BULK_VSIZE(&buf), MSG_NOSIGNAL|flags)) == -1) {
     SOERR("send");
   }
-  if (ret != GRN_BULK_VSIZE(&buf)) {
+  if ((size_t)ret != GRN_BULK_VSIZE(&buf)) {
     GRN_LOG(ctx, GRN_LOG_NOTICE, "send %d != %d", (int)ret, (int)GRN_BULK_VSIZE(&buf));
   }
   grn_obj_close(ctx, &buf);
@@ -762,7 +762,7 @@ grn_com_send(grn_ctx *ctx, grn_com *cs,
       rc = ctx->rc;
     }
   }
-  if (ret != whole_size) {
+  if ((size_t)ret != whole_size) {
     GRN_LOG(ctx, GRN_LOG_ERROR,
             "sendmsg(%" GRN_FMT_SOCKET "): %" GRN_FMT_LLD " < %" GRN_FMT_LLU,
             cs->fd, (long long int)ret, (unsigned long long int)whole_size);

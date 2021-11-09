@@ -51,7 +51,7 @@ struct _grn_scan_info {
   grn_obj scorer_args_expr_offsets;
   struct {
     grn_bool specified;
-    int start;
+    uint32_t start;
   } position;
   int32_t max_nargs;
 };

@@ -396,7 +396,7 @@ uint32_t grn_io_get_type(grn_io *io);
 
 void grn_io_init_from_env(void);
 
-uint32_t grn_io_expire(grn_ctx *ctx, grn_io *io, int count_thresh, uint32_t limit);
+uint32_t grn_io_expire(grn_ctx *ctx, grn_io *io, uint32_t count_thresh, uint32_t limit);
 
 grn_rc grn_io_flush(grn_ctx *ctx, grn_io *io);
 

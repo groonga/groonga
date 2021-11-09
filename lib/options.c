@@ -238,7 +238,7 @@ grn_options_set(grn_ctx *ctx,
           msgpack_object_kv *kv = &(map->ptr[i]);
           msgpack_object *key = &(kv->key);
           if (key->type == MSGPACK_OBJECT_STR &&
-              name_length == MSGPACK_OBJECT_STR_SIZE(key) &&
+              MSGPACK_OBJECT_STR_SIZE(key) == (size_t)name_length &&
               memcmp(name, MSGPACK_OBJECT_STR_PTR(key), name_length) == 0) {
             have_same_key = GRN_TRUE;
             same_key_index = i;
@@ -353,7 +353,7 @@ grn_options_get(grn_ctx *ctx,
       for (i = 0; i < map->size; i++) {
         msgpack_object_kv *kv = &(map->ptr[i]);
         if (kv->key.type == MSGPACK_OBJECT_STR &&
-            MSGPACK_OBJECT_STR_SIZE(&(kv->key)) == name_length &&
+            MSGPACK_OBJECT_STR_SIZE(&(kv->key)) == (size_t)name_length &&
             memcmp(MSGPACK_OBJECT_STR_PTR(&(kv->key)), name, name_length) == 0) {
           if (kv->val.type == MSGPACK_OBJECT_ARRAY) {
             grn_msgpack_unpack_array_internal(ctx,

@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2019  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2008-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -382,7 +382,7 @@ grn_test_hash_factory_set_cursor_min(GrnTestHashFactory *factory,
   priv = GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
   if (priv->cursor_min)
     g_free(priv->cursor_min);
-  priv->cursor_min = g_memdup(min, size);
+  priv->cursor_min = g_memdup2(min, size);
   priv->cursor_min_size = size;
 }
 
@@ -408,7 +408,7 @@ grn_test_hash_factory_set_cursor_max(GrnTestHashFactory *factory,
   priv = GRN_TEST_HASH_FACTORY_GET_PRIVATE(factory);
   if (priv->cursor_max)
     g_free(priv->cursor_max);
-  priv->cursor_max = g_memdup(max, size);
+  priv->cursor_max = g_memdup2(max, size);
   priv->cursor_max_size = size;
 }
 

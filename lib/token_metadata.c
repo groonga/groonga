@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -158,7 +158,7 @@ grn_token_metadata_get(grn_ctx *ctx,
                                                  &current_name,
                                                  NULL,
                                                  NULL);
-    if (name_length == current_name_length &&
+    if ((unsigned int)name_length == current_name_length &&
         memcmp(name, current_name, name_length) == 0) {
       const char *raw_value;
       unsigned int raw_value_length;

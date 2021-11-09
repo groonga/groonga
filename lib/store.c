@@ -707,7 +707,7 @@ grn_ja_detect_element_type(grn_ctx *ctx, grn_ja *ja, uint32_t element_size)
 {
   if (element_size < 8) {
     return GRN_JA_ELEMENT_TINY;
-  } else if (element_size <= (1 << ja->header->chunk_threshold)) {
+  } else if (element_size <= (uint32_t)(1 << ja->header->chunk_threshold)) {
     return GRN_JA_ELEMENT_CHUNK;
   } else if ((element_size + sizeof(grn_id)) <= JA_SEGMENT_SIZE) {
     return GRN_JA_ELEMENT_SEQUENTIAL;
@@ -767,7 +767,7 @@ static grn_ja *
 _grn_ja_create(grn_ctx *ctx, grn_ja *ja, const char *path,
                unsigned int max_element_size, uint32_t flags)
 {
-  int i;
+  uint32_t i;
   grn_io *io;
   struct grn_ja_header *header;
   struct grn_ja_header_v2 *header_v2;

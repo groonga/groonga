@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2013  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -70,8 +70,8 @@ grn_logger_info *
 void         teardown_grn_logger           (grn_logger_info  *logger);
 
 GString     *grn_long_path_new             (const gchar      *base_path,
-                                            gssize            max_size);
-GString     *grn_long_name_new             (gssize            max_size);
+                                            gsize             max_size);
+GString     *grn_long_name_new             (gsize             max_size);
 
 GList       *grn_test_pat_cursor_get_keys  (grn_ctx          *context,
                                             grn_table_cursor *cursor);

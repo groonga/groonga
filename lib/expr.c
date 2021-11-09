@@ -1601,7 +1601,7 @@ grn_proc_call(grn_ctx *ctx, grn_obj *proc, int nargs, grn_obj *caller)
   grn_proc_ctx pctx;
   grn_obj *obj = NULL, **args;
   grn_proc *p = (grn_proc *)proc;
-  if (nargs > ctx->impl->stack_curr) { return GRN_INVALID_ARGUMENT; }
+  if (nargs > (int)(ctx->impl->stack_curr)) { return GRN_INVALID_ARGUMENT; }
   GRN_API_ENTER;
   if (grn_obj_is_selector_only_proc(ctx, proc)) {
     char name[GRN_TABLE_MAX_KEY_SIZE];
@@ -1706,7 +1706,7 @@ grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset)
   grn_obj *res = NULL;
   grn_expr *e = (grn_expr *)expr;
   GRN_API_ENTER;
-  if (0 <= offset && offset < e->values_size) {
+  if (0 <= offset && (uint32_t)offset < e->values_size) {
     res = &e->values[offset];
   }
   GRN_API_RETURN(res);
@@ -2335,7 +2335,7 @@ grn_scan_info_get_start_position(scan_info *si)
 }
 
 void
-grn_scan_info_set_start_position(scan_info *si, int start)
+grn_scan_info_set_start_position(scan_info *si, uint32_t start)
 {
   si->position.specified = GRN_TRUE;
   si->position.start = start;
@@ -2576,7 +2576,7 @@ is_index_searchable_regexp(grn_ctx *ctx, grn_obj *regexp)
             return GRN_FALSE;
           } else {
             const char *options = regexp_raw + 1;
-            if (regexp_raw_end - options >= all_off_options_length &&
+            if ((size_t)(regexp_raw_end - options) >= all_off_options_length &&
                 memcmp(options, all_off_options, all_off_options_length) == 0) {
               in_paren = GRN_TRUE;
               regexp_raw += all_off_options_length;
@@ -3446,9 +3446,9 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
 {
   grn_expr *e = (grn_expr *)expr;
   scan_info **sis = NULL;
-  int n_sis = 0;
-  int i;
-  int nth_sis;
+  uint32_t n_sis = 0;
+  uint32_t i;
+  uint32_t nth_sis;
 
   for (i = 0, nth_sis = 0; i < e->codes_curr; i += 3, nth_sis++) {
     grn_expr_code *target = e->codes + i;

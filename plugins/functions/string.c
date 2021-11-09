@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2016  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -214,7 +214,7 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
       for (;
            p < end && (char_length = grn_charlen(ctx, p, end));
            p += char_length, n_chars++) {
-        if (n_chars == from) {
+        if (n_chars == (size_t)from) {
           start = p;
           break;
         }
@@ -228,7 +228,7 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
       for (;
            p < end && (char_length = grn_charlen(ctx, p, end));
            p += char_length, n_chars++) {
-        if (n_chars == length) {
+        if (n_chars == (size_t)length) {
           end = p;
           break;
         }

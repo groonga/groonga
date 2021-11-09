@@ -688,7 +688,11 @@ namespace {
                              " failed to add ",
                              type_name,
                              " key values: <",
+#if ARROW_VERSION_MAJOR >= 7
+                             arrow_sort_keys_[i].target.ToString(),
+#else
                              arrow_sort_keys_[i].name,
+#endif
                              ">")) {
           return false;
         }
@@ -715,13 +719,22 @@ namespace {
                              " failed to build ",
                              type_name,
                              " key array: <",
+#if ARROW_VERSION_MAJOR >= 7
+                             arrow_sort_key.target.ToString(),
+#else
                              arrow_sort_key.name,
+#endif
                              ">")) {
           return false;
         }
         auto array = *array_result;
         arrays.push_back(array);
-        fields.push_back(::arrow::field(arrow_sort_key.name,
+#if ARROW_VERSION_MAJOR >= 7
+        auto field_name = *(arrow_sort_key.target.name());
+#else
+        auto field_name = arrow_sort_key.name;
+#endif
+        fields.push_back(::arrow::field(field_name,
                                         array->type(),
                                         false));
       }

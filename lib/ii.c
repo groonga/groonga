@@ -362,7 +362,7 @@ segment_get(grn_ctx *ctx, grn_ii *ii)
   } else {
     pseg = header->pnext;
     if (!pseg) {
-      int i;
+      uint32_t i;
       uint32_t pmax = 0;
       char *used;
       const uint32_t max_segment = ii->seg->header->max_segment;
@@ -661,7 +661,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
   }
   */
   if (size > S_CHUNK) {
-    int i, j;
+    uint32_t i, j;
     uint32_t n = (size + S_CHUNK - 1) >> GRN_II_W_CHUNK;
     for (i = 0, j = -1; i < n_chunks; i++) {
       if (HEADER_CHUNK_AT(ii, i)) {
@@ -745,7 +745,7 @@ chunk_new(grn_ctx *ctx, grn_ii *ii, uint32_t *res, uint32_t size)
     }
     vp = &header->free_chunks[m - GRN_II_W_LEAST_CHUNK];
     if (*vp == GRN_II_PSEG_NOT_ASSIGNED) {
-      int i = 0;
+      uint32_t i = 0;
       while (HEADER_CHUNK_AT(ii, i)) {
         if (++i >= n_chunks) {
           GRN_DEFINE_NAME(ii);
@@ -1954,7 +1954,7 @@ static grn_rc
 datavec_reset(grn_ctx *ctx, datavec *dv, uint32_t dvlen,
               size_t unitsize, size_t totalsize)
 {
-  int i;
+  uint32_t i;
   if (!dv[0].data || dv[dvlen].data < dv[0].data + totalsize) {
     if (dv[0].data) { GRN_FREE(dv[0].data); }
     if (!(dv[0].data = GRN_MALLOC(totalsize * sizeof(uint32_t)))) {
@@ -1979,7 +1979,7 @@ static grn_rc
 datavec_init(grn_ctx *ctx, datavec *dv, uint32_t dvlen,
              size_t unitsize, size_t totalsize)
 {
-  int i;
+  uint32_t i;
   if (!totalsize) {
     memset(dv, 0, sizeof(datavec) * (dvlen + 1));
     return GRN_SUCCESS;
@@ -4291,7 +4291,7 @@ buffer_merge_dump_datavec(grn_ctx *ctx,
                           datavec *dv,
                           datavec *rdv)
 {
-  int i, j;
+  uint32_t i, j;
   grn_obj buffer;
 
   GRN_TEXT_INIT(&buffer, 0);
@@ -4520,7 +4520,7 @@ buffer_merge(grn_ctx *ctx,
       chunk_data->data = chunk_data->data_start + bt->pos_in_chunk;
       chunk_data->data_end = chunk_data->data + bt->size_in_chunk;
       if ((bt->tid & CHUNK_SPLIT)) {
-        int i;
+        uint32_t i;
         GRN_B_DEC(nchunks, chunk_data->data);
         if (!(cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) {
           grn_obj term;
@@ -4844,7 +4844,7 @@ buffer_merge(grn_ctx *ctx,
           if (encsize > CHUNK_SPLIT_THRESHOLD &&
               (cinfo || (cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) &&
               !chunk_flush(ctx, ii, &cinfo[nchunks], dcp, encsize)) {
-            int i;
+            uint32_t i;
             cinfo[nchunks].dgap = data.last_id.rid - crid;
             nvchunks++;
             dcp = dc + dc_offset;
@@ -5131,7 +5131,7 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
       chunk_data->data = chunk_data->data_start + bt->pos_in_chunk;
       chunk_data->data_end = chunk_data->data + bt->size_in_chunk;
       if ((bt->tid & CHUNK_SPLIT)) {
-        int i;
+        uint32_t i;
         GRN_B_DEC(nchunks, chunk_data->data);
         if (!(cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) {
           datavec_fin(ctx, rdv);
@@ -5251,10 +5251,10 @@ term_compar(const void *t1, const void *t2)
   const term_sort *x = (term_sort *)t1, *y = (term_sort *)t2;
   if (x->key_size > y->key_size) {
     r = memcmp(x->key, y->key, y->key_size);
-    return r ? r : x->key_size - y->key_size;
+    return r ? r : (int)(x->key_size - y->key_size);
   } else {
     r = memcmp(x->key, y->key, x->key_size);
-    return r ? r : x->key_size - y->key_size;
+    return r ? r : (int)(x->key_size - y->key_size);
   }
 }
 
@@ -6729,7 +6729,7 @@ struct _grn_ii_cursor {
 
   uint8_t *bp;
 
-  int nelements;
+  uint32_t nelements;
   uint32_t nchunks;
   uint32_t curr_chunk;
   chunk_info *cinfo;
@@ -6869,7 +6869,7 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
         }
         c->cpe = c->cp + bt->size_in_chunk;
         if ((bt->tid & CHUNK_SPLIT)) {
-          int i;
+          uint32_t i;
           grn_id crid;
           GRN_B_DEC(c->nchunks, c->cp);
           if (chunk_is_reused(ctx, ii, c, chunk, c->buf->header.chunk_size)) {
@@ -7117,13 +7117,15 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                             "failed to decode the last chunk. "
                             "Another thread might change "
                             "the chunk while decoding: "
-                            "<%p>: <%d>: <%d>",
+                            "<%p>: <%d>: <%" GRN_FMT_INT64D ">",
                             name_size, name,
                             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                             c->id,
                             c,
                             c->curr_chunk,
-                            c->cinfo ? c->cinfo[c->curr_chunk].segno : -1);
+                            c->cinfo ?
+                            (int64_t)(c->cinfo[c->curr_chunk].segno) :
+                            -1);
                     GRN_OBJ_FIN(ctx, &term);
                     c->pc.rid = GRN_ID_NIL;
                     break;
@@ -7190,13 +7192,15 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
                             "failed to decode the next chunk. "
                             "Another thread might change "
                             "the chunk while decoding: "
-                            "<%p>: <%d>: <%d>",
+                            "<%p>: <%d>: <%" GRN_FMT_INT64D ">",
                             name_size, name,
                             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
                             c->id,
                             c,
                             c->curr_chunk,
-                            c->cinfo ? c->cinfo[c->curr_chunk].segno : -1);
+                            c->cinfo ?
+                            (int64_t)(c->cinfo[c->curr_chunk].segno) :
+                            -1);
                     GRN_OBJ_FIN(ctx, &term);
                     c->pc.rid = GRN_ID_NIL;
                     break;
@@ -8709,8 +8713,8 @@ exit :
 
 typedef struct {
   cursor_heap *cursors;
-  int offset;
-  int pos;
+  uint32_t offset;
+  int32_t pos;
   uint32_t size;
   int ntoken;
   grn_posting *p;
@@ -8774,7 +8778,7 @@ typedef struct {
   btr *bt;
   int max_interval;
   int additional_last_interval;
-  int pos;
+  int32_t pos;
   grn_id rid;
   uint32_t sid;
   grn_id next_rid;
@@ -9061,7 +9065,7 @@ token_info_skip_pos(grn_ctx *ctx, token_info *ti, uint32_t rid, uint32_t sid, in
   for (;;) {
     if (!(c = cursor_heap_min(ti->cursors))) { return GRN_END_OF_DATA; }
     p = c->post;
-    if (p->rid != rid || p->sid != sid || p->pos >= pos) { break; }
+    if (p->rid != rid || p->sid != sid || (int32_t)(p->pos) >= pos) { break; }
     cursor_heap_pop_pos(ctx, ti->cursors);
   }
   ti->pos = p->pos - ti->offset;
@@ -9173,7 +9177,7 @@ token_candidate_init(grn_ctx *ctx,
   curr++;
 
   while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
-    if (curr - top >= size) {
+    if ((size_t)(curr - top) >= size) {
       token_candidate_node *nodes =
         GRN_REALLOC(data->nodes,
                     (curr - top + TOKEN_CANDIDATE_NODE_SIZE) *
@@ -9288,8 +9292,8 @@ token_candidate_score(grn_ctx *ctx,
 grn_inline static grn_rc
 token_candidate_select(grn_ctx *ctx,
                        token_candidate_data *data,
-                       int offset,
-                       int limit)
+                       uint32_t offset,
+                       uint32_t limit)
 {
   if (offset + limit > (data->n_nodes - 1)) {
     limit = (data->n_nodes - 1) - offset;
@@ -9311,8 +9315,9 @@ token_candidate_select(grn_ctx *ctx,
       token_candidate_last_node(ctx, data, candidate, offset);
     int i;
     for (i = 0; i < candidate_last_node->n_adjacent; i++) {
-      int adjacent, n_nodes = 0;
+      uint32_t adjacent;
       uint32_t new_candidate;
+      uint32_t n_nodes = 0;
       adjacent = candidate_last_node->adjacent[i] - offset;
       if (adjacent > limit) {
         break;
@@ -9867,7 +9872,7 @@ bt_push(btr *bt, token_info *ti)
 {
   bool min_p = true;
   bool max_p = true;
-  int pos = ti->pos;
+  int32_t pos = ti->pos;
   btr_node *node, *new, **last;
   new = bt->nodes + bt->n++;
   new->ti = ti;
@@ -9895,7 +9900,7 @@ bt_pop(btr *bt)
   if (min) {
     bool min_p = true;
     bool max_p = true;
-    int pos = min->ti->pos;
+    int32_t pos = min->ti->pos;
     *last = min->cdr;
     min->cdr = NULL;
     for (last = &bt->root; (node = *last);) {
@@ -10306,7 +10311,7 @@ get_weight(grn_ctx *ctx, grn_ii_select_data *data)
   case GRN_WV_NONE :
     return 1;
   case GRN_WV_STATIC :
-    if (data->sid <= data->optarg->vector_size) {
+    if (data->sid <= (uint32_t)(data->optarg->vector_size)) {
       if (data->optarg->weight_vector) {
         return data->optarg->weight_vector[data->sid - 1];
       } else {
@@ -10536,7 +10541,8 @@ grn_ii_select_data_fin(grn_ctx *ctx,
 static grn_rc
 grn_ii_similar_search_internal(grn_ctx *ctx, grn_ii_select_data *data)
 {
-  int *w1, limit;
+  int *w1;
+  uint32_t limit;
   grn_id tid, *tp, max_size;
   grn_rc rc = GRN_SUCCESS;
   grn_hash *h;
@@ -10611,9 +10617,9 @@ grn_ii_similar_search_internal(grn_ctx *ctx, grn_ii_select_data *data)
     grn_hash_cursor_close(ctx, c);
   }
   limit = data->optarg->similarity_threshold
-    ? (data->optarg->similarity_threshold > GRN_HASH_SIZE(h)
+    ? ((uint32_t)(data->optarg->similarity_threshold) > GRN_HASH_SIZE(h)
        ? GRN_HASH_SIZE(h)
-       : data->optarg->similarity_threshold)
+       :(uint32_t)(data->optarg->similarity_threshold))
     : (GRN_HASH_SIZE(h) >> 3) + 1;
   if (GRN_HASH_SIZE(h)) {
     grn_id j, id;
@@ -10934,7 +10940,7 @@ grn_ii_select_cursor_set_per_occurrence_mode(grn_ctx *ctx,
 grn_inline static bool
 grn_ii_select_skip_pos(grn_ctx *ctx,
                        grn_ii_select_data *data,
-                       int pos)
+                       int32_t pos)
 {
   if (token_info_skip_pos(ctx,
                           data->token_info,
@@ -10956,7 +10962,7 @@ grn_inline static bool
 grn_ii_select_data_find_phrase(grn_ctx *ctx,
                                grn_ii_select_data *data,
                                uint32_t phrase_id,
-                               int start_pos)
+                               int32_t start_pos)
 {
   token_info **tip;
   token_info **tis = data->token_infos;
@@ -11108,8 +11114,8 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
       continue;
     }
 
-    uint32_t start_pos = 0;
-    uint32_t end_pos = 0;
+    int32_t start_pos = 0;
+    int32_t end_pos = 0;
     int32_t total_score = 0;
     uint32_t n_occurrences = 0;
 
@@ -11167,8 +11173,8 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
       if (need_check) {
         for (;;) {
           data->token_info = data->bt->min;
-          int min = data->token_info->pos;
-          int max = data->bt->max->pos;
+          int32_t min = data->token_info->pos;
+          int32_t max = data->bt->max->pos;
           if (min > max) {
             char ii_name[GRN_TABLE_MAX_KEY_SIZE];
             int ii_name_size;
@@ -11187,7 +11193,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
                 data->query);
             goto exit;
           }
-          int interval = max - min;
+          int32_t interval = max - min;
           if (data->mode == GRN_OP_NEAR_PHRASE ||
               data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
             interval -= (data->token_info->n_tokens_in_phrase - 1);
@@ -11197,7 +11203,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
               data->last_token_info) {
             if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
               matched = true;
-              int pos = tis[0]->pos;
+              int32_t pos = tis[0]->pos;
               for (tip = tis + 1; tip < tie; tip++) {
                 token_info *ti = *tip;
                 if (ti->pos < pos) {
@@ -11220,7 +11226,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
           }
           if (matched) {
             n_occurrences++;
-            int next_pos = max + 1;
+            int32_t next_pos = max + 1;
             if (data->mode == GRN_OP_NEAR_PHRASE ||
                 data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
               if (!grn_ii_select_data_find_phrase(ctx,
@@ -11237,7 +11243,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
           } else {
             if (data->mode == GRN_OP_NEAR_PHRASE ||
                 data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
-              int next_pos = min + 1;
+              int32_t next_pos = min + 1;
               if (!grn_ii_select_data_find_phrase(ctx,
                                                   data,
                                                   data->token_info->phrase_id,
@@ -11245,7 +11251,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
                 break;
               }
             } else {
-              int next_pos = max - data->max_interval;
+              int32_t next_pos = max - data->max_interval;
               if (!grn_ii_select_skip_pos(ctx, data, next_pos)) {
                 break;
               }
@@ -11268,7 +11274,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
         if (!grn_ii_select_skip_pos(ctx, data, data->pos)) {
           break;
         }
-        if (data->token_info->pos == data->pos) {
+        if (data->token_info->pos == (int32_t)(data->pos)) {
           if (count == 0) {
             start_pos = data->pos;
           }
@@ -11276,7 +11282,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
             data->token_info->p->weight +
             data->token_info->cursors->bins[0]->weight;
           count++;
-          if (data->token_info->p->pos > end_pos) {
+          if ((int32_t)(data->token_info->p->pos) > end_pos) {
             end_pos = data->token_info->p->pos;
           }
         } else {
@@ -11305,7 +11311,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
           data->record.n_tokens += data->token_info->ntoken;
         }
         if (count == data->n_token_infos) {
-          if (data->token_info->p->pos > end_pos) {
+          if ((int32_t)(data->token_info->p->pos) > end_pos) {
             end_pos = data->token_info->p->pos;
           }
           total_score += score;
@@ -11495,7 +11501,7 @@ grn_ii_parse_regexp_query(grn_ctx *ctx,
           escaping = GRN_TRUE;
           continue;
         } else if (*target == '(' &&
-                   (string_end - current) >= all_off_options_len &&
+                   (size_t)(string_end - current) >= all_off_options_len &&
                    memcmp(current, all_off_options, all_off_options_len) == 0) {
           current += all_off_options_len;
           in_paren = GRN_TRUE;
@@ -11606,7 +11612,7 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
                        parsed_string_len,
                        s, op, optarg);
   } else {
-    int i;
+    unsigned int i;
     grn_ii_select_regexp_chunk *chunks;
     grn_bool have_error = GRN_FALSE;
 
@@ -11883,7 +11889,7 @@ grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
       return rc;
     }
     {
-      const int quorum_threshold = data->optarg->quorum_threshold;
+      const uint32_t quorum_threshold = data->optarg->quorum_threshold;
       while (grn_hash_cursor_next(ctx, cursor) != GRN_ID_NIL) {
         grn_posting *posting;
         grn_ii_quorum_match_record_data *record_data;
@@ -12102,7 +12108,7 @@ grn_ii_select_sequential_search_text_should_use(grn_ctx *ctx,
   }
 
   {
-    int i;
+    size_t i;
     grn_id *source_ids = DB_OBJ(data->ii)->source;
 
     for (i = 0; i < n_sources; i++) {
@@ -13156,10 +13162,10 @@ grn_ii_buffer_flush(grn_ctx *ctx, grn_ii_buffer *ii_buffer)
   encode_last_tf(ctx, ii_buffer, outbuf);
   {
     ssize_t r = grn_write(ii_buffer->tmpfd, outbuf, encsize);
-    if (r != encsize) {
+    if (r == -1 || (size_t)r != encsize) {
       ERR(GRN_INPUT_OUTPUT_ERROR,
-          "write returned %" GRN_FMT_LLD " != %" GRN_FMT_LLU,
-          (long long int)r, (unsigned long long int)encsize);
+          "write returned %" GRN_FMT_INT64D " != %" GRN_FMT_INT64U,
+          (int64_t)r, (uint64_t)encsize);
       GRN_FREE(outbuf);
       return;
     }
@@ -15140,14 +15146,14 @@ grn_ii_builder_fin(grn_ctx *ctx, grn_ii_builder *builder)
     grn_obj_close(ctx, builder->lexicon);
   }
   if (builder->srcs) {
-    int i;
+    uint32_t i;
     for (i = 0; i < builder->n_srcs; i++) {
       grn_obj_unref(ctx, builder->srcs[i]);
     }
     GRN_FREE(builder->srcs);
   }
   if (builder->src_token_columns) {
-    int i;
+    uint32_t i;
     for (i = 0; i < builder->n_srcs; i++) {
       grn_obj_unref(ctx, builder->src_token_columns[i]);
     }
@@ -16521,7 +16527,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx, grn_ii_builder *builder,
             return rc;
           }
         }
-        if (pos == -1) {
+        if (pos == (uint32_t)-1) {
           chunk->pos_buf[chunk->pos_offset] = value - 1;
           chunk->pos_sum += value - 1;
         } else {

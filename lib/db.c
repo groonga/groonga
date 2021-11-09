@@ -2916,7 +2916,7 @@ grn_table_get_subrecs(grn_ctx *ctx, grn_obj *table, grn_id id,
       byte *psubrec = (byte *)ri->subrecs;
       uint32_t n_subrecs = (uint32_t)GRN_RSET_N_SUBRECS(ri);
       uint32_t limit = value_size / (GRN_RSET_SCORE_SIZE + subrec_size);
-      if (limit > buf_size) {
+      if ((int)limit > buf_size) {
         limit = buf_size;
       }
       if (limit > n_subrecs) {
@@ -3398,7 +3398,7 @@ grn_table_get_key(grn_ctx *ctx, grn_obj *table, grn_id id, void *keybuf, int buf
       {
         grn_array *a = (grn_array *)table;
         if (a->obj.header.domain) {
-          if (buf_size >= a->value_size) {
+          if (buf_size >= (int)(a->value_size)) {
             r = grn_array_get_value(ctx, a, id, keybuf);
           } else {
             r = a->value_size;
@@ -4129,7 +4129,7 @@ grn_table_cursor_open(grn_ctx *ctx, grn_obj *table,
       ERR(GRN_TOO_SMALL_OFFSET,
           "%s can't use negative offset with GRN_CURSOR_PREFIX: %d",
           tag,offset);
-    } else if (offset != 0 && offset >= table_size) {
+    } else if (offset != 0 && (unsigned int)offset >= table_size) {
       ERR(GRN_TOO_LARGE_OFFSET,
           "%s offset is not less than table size: offset:%d, table_size:%d",
           tag, offset, table_size);
@@ -5893,7 +5893,7 @@ grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int nam
           const size_t table_name_len = len - delimiter_len;
           const char *alias_name = GRN_TEXT_VALUE(&alias_name_buffer);
           size_t alias_name_size = GRN_TEXT_LEN(&alias_name_buffer);
-          if (alias_name_size > len &&
+          if (alias_name_size > (size_t)len &&
               alias_name[table_name_len] == GRN_DB_DELIMITER &&
               strncmp(alias_name, buf, table_name_len) == 0) {
             alias_name += len;
@@ -8847,7 +8847,7 @@ grn_obj_get_values(grn_ctx *ctx, grn_obj *obj, grn_id offset, void **values)
   if (obj->header.type == GRN_COLUMN_FIX_SIZE) {
     grn_obj *domain = grn_column_table(ctx, obj);
     if (domain) {
-      int table_size = (int)grn_table_size(ctx, domain);
+      unsigned int table_size = grn_table_size(ctx, domain);
       if (0 < offset && offset <= table_size) {
         grn_ra *ra = (grn_ra *)obj;
         void *p = grn_ra_ref(ctx, ra, offset);

@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2010-2014 Brazil
-  Copyright(C) 2018-2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2010-2014  Brazil
+  Copyright(C) 2018-2021  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -514,11 +514,12 @@ static void
 command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, const char *command)
 {
   char tok_type;
-  int offset = 0, have_key = 0;
+  uint32_t offset = 0;
+  bool have_key = false;
   const char *p, *e, *v;
   grn_obj buf, *expr = NULL;
   grn_expr_var *vars;
-  unsigned int nvars;
+  uint32_t nvars;
 
   GRN_TEXT_INIT(&buf, 0);
   p = command;
@@ -554,7 +555,7 @@ command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, const char *command)
             GRN_TEXT_PUTS(ctx, &params, "&");
           }
           grn_text_urlenc(ctx, &params, v, l);
-          have_key = 1;
+          have_key = true;
           break;
         }
         /* fallthru */
@@ -572,7 +573,7 @@ command_line_to_uri_path(grn_ctx *ctx, grn_obj *uri, const char *command)
         }
         GRN_TEXT_PUTS(ctx, &params, "=");
         grn_text_urlenc(ctx, &params, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
-        have_key = 0;
+        have_key = false;
         break;
       }
     }
@@ -2501,7 +2502,7 @@ ftp_main(int argc, char **argv)
 */
 
 static int
-get_username(char *name, int maxlen)
+get_username(char *name, size_t maxlen)
 {
   char *env=NULL;
   grn_strcpy(name, maxlen, "nobody");

@@ -102,7 +102,7 @@ pat_key_storage_size(uint32_t key_size)
 
 #define PAT_DEL(x) ((x)->bits & PAT_DELETING)
 #define PAT_IMD(x) ((x)->bits & PAT_IMMEDIATE)
-#define PAT_LEN(x) (((x)->bits >> 3) + 1)
+#define PAT_LEN(x) (uint32_t)(((x)->bits >> 3) + 1)
 #define PAT_CHK(x) ((x)->check)
 #define PAT_DEL_ON(x) ((x)->bits |= PAT_DELETING)
 #define PAT_IMD_ON(x) ((x)->bits |= PAT_IMMEDIATE)
@@ -1155,8 +1155,8 @@ delinfo_turn_2_internal(grn_ctx *ctx,
   {
     grn_id *p0;
     pat_node *rn;
-    int c0 = -1, c;
-    uint32_t check_max = PAT_CHECK_PACK(PAT_LEN(dn), 0, false);
+    int32_t c0 = -1, c;
+    int32_t check_max = PAT_CHECK_PACK(PAT_LEN(dn), 0, false);
     const uint8_t *key = pat_node_get_key(ctx, pat, dn);
     if (!key) {
       return GRN_INVALID_ARGUMENT;
@@ -1191,7 +1191,7 @@ delinfo_turn_2_internal(grn_ctx *ctx,
     *p = di->ld;
   } else {
     /* debug */
-    int32_t j;
+    uint32_t j;
     grn_id dd;
     grn_pat_delinfo *ddi;
     GRN_LOG(ctx, GRN_LOG_DEBUG, "failed to find d=%d", d);
@@ -1389,7 +1389,9 @@ _grn_pat_create(grn_ctx *ctx, grn_pat *pat,
   } else {
     entry_size = value_size;
   }
-  for (w_of_element = 0; (1 << w_of_element) < entry_size; w_of_element++) {
+  for (w_of_element = 0;
+       (uint32_t)(1 << w_of_element) < entry_size;
+       w_of_element++) {
     /* nop */
   }
   {
@@ -2262,8 +2264,9 @@ chop(grn_ctx *ctx,
 
 #define MAX_FIXED_KEY_SIZE (sizeof(int64_t))
 
-#define KEY_NEEDS_CONVERT(pat,size) \
-  (!((pat)->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) && (size) <= MAX_FIXED_KEY_SIZE)
+#define KEY_NEEDS_CONVERT(pat,size)                     \
+  (!((pat)->obj.header.flags & GRN_OBJ_KEY_VAR_SIZE) && \
+   (size_t)(size) <= MAX_FIXED_KEY_SIZE)
 
 #define KEY_ENC(pat,keybuf,key,size) do {\
   switch ((pat)->obj.header.flags & GRN_OBJ_KEY_MASK) {\
@@ -2424,8 +2427,8 @@ _grn_pat_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size, voi
 {
   grn_id r;
   pat_node *rn;
-  int c0 = -1, c;
-  uint32_t len = key_size * 16;
+  int32_t c0 = -1, c;
+  int32_t len = key_size * 16;
   PAT_AT(pat, 0, rn);
   for (r = rn->lr[1]; r;) {
     PAT_AT(pat, r, rn);
@@ -2513,9 +2516,9 @@ grn_rc
 grn_pat_prefix_search(grn_ctx *ctx, grn_pat *pat,
                       const void *key, uint32_t key_size, grn_hash *h)
 {
-  int c0 = -1, c;
+  int32_t c0 = -1, c;
   const uint8_t *k;
-  uint32_t len = key_size * 16;
+  int32_t len = key_size * 16;
   grn_id r;
   pat_node *rn;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
@@ -2602,8 +2605,8 @@ grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_siz
 {
   pat_node *rn;
   grn_id r, r2 = GRN_ID_NIL;
-  uint32_t len = key_size * 16;
-  int c0 = -1, c;
+  int32_t len = key_size * 16;
+  int32_t c0 = -1, c;
   if (!pat || !key) {
     return GRN_ID_NIL;
   }
@@ -2644,9 +2647,9 @@ grn_pat_lcp_search(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_siz
 static grn_id
 common_prefix_pat_node_get(grn_ctx *ctx, grn_pat *pat, const void *key, uint32_t key_size)
 {
-  int c0 = -1, c;
+  int32_t c0 = -1, c;
   const uint8_t *k;
-  uint32_t len = key_size * 16;
+  int32_t len = key_size * 16;
   grn_id r;
   pat_node *rn;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
@@ -2679,13 +2682,13 @@ typedef struct {
 } fuzzy_heap_node;
 
 typedef struct {
-  int n_entries;
-  int limit;
+  uint32_t n_entries;
+  uint32_t limit;
   fuzzy_heap_node *nodes;
 } fuzzy_heap;
 
 static grn_inline fuzzy_heap *
-fuzzy_heap_open(grn_ctx *ctx, int max)
+fuzzy_heap_open(grn_ctx *ctx, uint32_t max)
 {
   fuzzy_heap *h = GRN_CALLOC(sizeof(fuzzy_heap));
   if (!h) { return NULL; }
@@ -2706,7 +2709,7 @@ fuzzy_heap_push(grn_ctx *ctx, fuzzy_heap *h, grn_id id, uint16_t distance)
   fuzzy_heap_node node = {id, distance};
   fuzzy_heap_node node2;
   if (h->n_entries >= h->limit) {
-    int max = h->limit * 2;
+    uint32_t max = h->limit * 2;
     fuzzy_heap_node *nodes = GRN_REALLOC(h->nodes, sizeof(fuzzy_heap) * max);
     if (!h) {
       return GRN_FALSE;
@@ -3141,8 +3144,8 @@ _grn_pat_del(grn_ctx *ctx, grn_pat *pat, const char *key, uint32_t key_size, int
              grn_table_delete_optarg *optarg)
 {
   pat_node *rn, *rn0 = NULL, *rno = NULL;
-  int c = -1, c0 = -1, ch;
-  uint32_t len = key_size * 16;
+  int32_t c = -1, c0 = -1, ch;
+  int32_t len = key_size * 16;
   grn_id otherside, *proot, *p, *p0 = NULL;
 
   grn_pat_wal_add_entry_data wal_data = {0};
@@ -3671,7 +3674,7 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
       grn_string_get_normalized(ctx, nstr, &sp, &normalized_length_in_bytes,
                                 NULL);
       se = sp + normalized_length_in_bytes;
-      while (n < sh_size) {
+      while ((unsigned int)n < sh_size) {
         if ((tid = grn_pat_lcp_search(ctx, pat, sp, se - sp))) {
           const char *key;
           uint32_t len;
@@ -3745,7 +3748,7 @@ grn_pat_scan(grn_ctx *ctx, grn_pat *pat, const char *str, unsigned int str_len,
   } else {
     uint32_t len;
     const char *sp, *se = str + str_len;
-    for (sp = str; sp < se && n < sh_size; sp += len) {
+    for (sp = str; sp < se && (unsigned int)n < sh_size; sp += len) {
       if ((tid = grn_pat_lcp_search(ctx, pat, sp, se - sp))) {
         _grn_pat_key(ctx, pat, tid, &len);
         sh[n].id = tid;
@@ -3918,9 +3921,10 @@ grn_inline static grn_rc
 set_cursor_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
                   const void *key, uint32_t key_size, int flags)
 {
-  int c0 = -1, ch;
+  int32_t c0 = -1, ch;
   const uint8_t *k;
-  uint32_t len, byte_len;
+  int32_t len;
+  uint32_t byte_len;
   grn_id id;
   pat_node *node;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
@@ -3961,7 +3965,7 @@ set_cursor_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
           }
         }
       } else {
-        if (PAT_LEN(node) * 16 > len || !(flags & GRN_CURSOR_GT)) {
+        if (PAT_LEN(node) * 16 > (uint32_t)len || !(flags & GRN_CURSOR_GT)) {
           push(c, id, ch);
         }
       }
@@ -3978,8 +3982,8 @@ set_cursor_near(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
   grn_id id;
   pat_node *node;
   const uint8_t *k;
-  int r, check = -1, ch;
-  uint32_t min = min_size * 16;
+  int32_t r, check = -1, ch;
+  int32_t min = min_size * 16;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   KEY_ENCODE(pat, keybuf, key, pat->key_size);
   PAT_AT(pat, 0, node);
@@ -4020,8 +4024,8 @@ set_cursor_common_prefix(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
   grn_id id;
   pat_node *node;
   const uint8_t *k;
-  int check = -1, ch;
-  uint32_t len = key_size * 16;
+  int32_t check = -1, ch;
+  int32_t len = key_size * 16;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   KEY_ENCODE(pat, keybuf, key, key_size);
   PAT_AT(pat, 0, node);
@@ -4069,8 +4073,8 @@ set_cursor_ascend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
   grn_id id;
   pat_node *node;
   const uint8_t *k;
-  int r, check = -1, ch, c2;
-  uint32_t len = key_size * 16;
+  int32_t r, check = -1, ch, c2;
+  int32_t len = key_size * 16;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   KEY_ENCODE(pat, keybuf, key, key_size);
   PAT_AT(pat, 0, node);
@@ -4139,8 +4143,8 @@ set_cursor_descend(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
   grn_id id;
   pat_node *node;
   const uint8_t *k;
-  int r, check = -1, ch, c2;
-  uint32_t len = key_size * 16;
+  int32_t r, check = -1, ch, c2;
+  int32_t len = key_size * 16;
   uint8_t keybuf[MAX_FIXED_KEY_SIZE];
   KEY_ENCODE(pat, keybuf, key, key_size);
   PAT_AT(pat, 0, node);
@@ -4269,7 +4273,7 @@ grn_pat_cursor_open_by_id(grn_ctx *ctx, grn_pat *pat,
       }
     }
   } else {
-    if ((dir * (c->tail - c->curr_rec)) < offset) {
+    if ((int)(dir * (c->tail - c->curr_rec)) < offset) {
       c->curr_rec = c->tail;
     } else {
       c->curr_rec += dir * offset;
@@ -4624,7 +4628,7 @@ grn_pat_inspect_nodes(grn_ctx *ctx, grn_pat *pat, grn_obj *buf)
 static void
 grn_pat_cursor_inspect_entries(grn_ctx *ctx, grn_pat_cursor *c, grn_obj *buf)
 {
-  int i;
+  uint32_t i;
   GRN_TEXT_PUTS(ctx, buf, "[");
   for (i = 0; i < c->sp; i++) {
     grn_pat_cursor_entry *e = c->ss + i;
@@ -5018,14 +5022,14 @@ rk_conv(const char *str, uint32_t str_len, uint8_t *buf, uint32_t buf_size, uint
 
 static grn_id
 sub_search(grn_ctx *ctx, grn_pat *pat, grn_id id,
-           int *c0, uint8_t *key, uint32_t key_len)
+           int32_t *c0, uint8_t *key, uint32_t key_len)
 {
   pat_node *pn;
-  uint32_t len = key_len * 16;
+  int32_t len = key_len * 16;
   if (!key_len) { return id; }
   PAT_AT(pat, id, pn);
   while (pn) {
-    int ch;
+    int32_t ch;
     ch = PAT_CHK(pn);
     if (*c0 < ch && ch < len - 1) {
       if (ch & 1) {
@@ -5066,7 +5070,7 @@ search_push(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
         uint32_t l = rk_emit(rn, &e);
         if (l) {
           if (l + key_len <= GRN_TABLE_MAX_KEY_SIZE) {
-            int ch = c0;
+            int32_t ch = c0;
             grn_id i;
             grn_memcpy(key + key_len, e, l);
             if ((i = sub_search(ctx, pat, id, &ch, key, key_len + l))) {
@@ -5082,8 +5086,8 @@ search_push(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
     pat_node *pn;
     PAT_AT(pat, id, pn);
     if (pn) {
-      int ch = PAT_CHK(pn);
-      uint32_t len = key_len * 16;
+      int32_t ch = PAT_CHK(pn);
+      int32_t len = key_len * 16;
       if (c0 < ch) {
         if (flags & GRN_CURSOR_DESCENDING) {
           if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) { push(c, pn->lr[0], ch); }
@@ -5093,7 +5097,10 @@ search_push(grn_ctx *ctx, grn_pat *pat, grn_pat_cursor *c,
           if ((ch > len - 1) || !(flags & GRN_CURSOR_GT)) { push(c, pn->lr[0], ch); }
         }
       } else {
-        if (PAT_LEN(pn) * 16 > len || !(flags & GRN_CURSOR_GT)) { push(c, id, ch); }
+        if (PAT_LEN(pn) * 16 > (uint32_t)len ||
+            !(flags & GRN_CURSOR_GT)) {
+          push(c, id, ch);
+        }
       }
     }
   }

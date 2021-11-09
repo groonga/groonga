@@ -36,7 +36,7 @@ parse_normalize_flags(grn_ctx *ctx, grn_raw_string *flags_raw)
     }
 
 #define CHECK_FLAG(name)\
-    if (((names_end - names) >= (sizeof(#name) - 1)) &&\
+    if (((size_t)(names_end - names) >= (sizeof(#name) - 1)) && \
         (!memcmp(names, #name, sizeof(#name) - 1))) {\
       flags |= GRN_STRING_ ## name;\
       names += sizeof(#name) - 1;\

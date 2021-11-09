@@ -184,7 +184,7 @@ grn_msgpack_unpack_array_internal(grn_ctx *ctx,
                                   msgpack_object_array *array,
                                   grn_obj *vector)
 {
-  int32_t i;
+  uint32_t i;
 
   grn_obj_ensure_vector(ctx, vector);
 

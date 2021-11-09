@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2015-2016  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -49,7 +50,7 @@ grn_config_set(grn_ctx *ctx,
   if (value_size == -1) {
     value_size = strlen(value);
   }
-  if (value_size > GRN_CONFIG_MAX_VALUE_SIZE) {
+  if ((size_t)value_size > GRN_CONFIG_MAX_VALUE_SIZE) {
     ERR(GRN_INVALID_ARGUMENT,
         "[config][set] too large value: max=<%" GRN_FMT_SIZE ">: <%d>",
         GRN_CONFIG_MAX_VALUE_SIZE, value_size);

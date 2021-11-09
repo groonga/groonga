@@ -37,7 +37,7 @@ typedef struct {
   size_t n_scales;
   struct {
     bool specified;
-    int start;
+    uint32_t start;
   } position;
 } grn_index_cursor;
 

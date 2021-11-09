@@ -1998,7 +1998,7 @@ grn_table_selector_select(grn_ctx *ctx,
   data->is_first_unskipped_scan_info = true;
   if (result_set_size > 0 && table_selector->op == GRN_OP_AND) {
     bool have_push = false;
-    int i;
+    uint32_t i;
     for (i = 0; i < data->scanner->n_sis; i++) {
       scan_info *si = data->scanner->sis[i];
       if (si->flags & SCAN_PUSH) {
@@ -2037,7 +2037,7 @@ grn_table_selector_select(grn_ctx *ctx,
   grn_obj condition_inspect_buffer;
   GRN_TEXT_INIT(&condition_inspect_buffer, 0);
   {
-    int i;
+    uint32_t i;
     for (i = 0; i < data->scanner->n_sis; i++) {
       scan_info *si = data->scanner->sis[i];
       data->nth_scan_info = i;

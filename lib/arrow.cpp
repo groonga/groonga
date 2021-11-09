@@ -2040,7 +2040,7 @@ namespace grnarrow {
         if (grn_obj_is_table_with_key(ctx_, domain)) {
           auto value_builder =
             static_cast<arrow::StringBuilder *>(raw_value_builder);
-          for (long i = 0; i < n; ++i) {
+          for (size_t i = 0; i < n; ++i) {
             auto record_id =
               *reinterpret_cast<grn_id *>(raw_elements + (element_size * i));
             char key[GRN_TABLE_MAX_KEY_SIZE];
@@ -2058,7 +2058,7 @@ namespace grnarrow {
         } else {
           auto value_builder =
             static_cast<arrow::Int32Builder *>(raw_value_builder);
-          for (long i = 0; i < n; ++i) {
+          for (size_t i = 0; i < n; ++i) {
             // TODO: check type
             auto element =
               *reinterpret_cast<int32_t *>(raw_elements + (element_size * i));

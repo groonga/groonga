@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -57,7 +58,7 @@ grn_scanner_close(grn_ctx *ctx, grn_scanner *scanner)
   }
 
   if (scanner->sis) {
-    int i;
+    uint32_t i;
     for (i = 0; i < scanner->n_sis; i++) {
       grn_scan_info_close(ctx, scanner->sis[i]);
     }

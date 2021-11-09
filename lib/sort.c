@@ -1435,9 +1435,9 @@ grn_table_sort_keys_parse(grn_ctx *ctx,
 }
 
 grn_rc
-grn_table_sort_key_close(grn_ctx *ctx, grn_table_sort_key *keys, unsigned int nkeys)
+grn_table_sort_key_close(grn_ctx *ctx, grn_table_sort_key *keys, uint32_t nkeys)
 {
-  int i;
+  uint32_t i;
   if (keys) {
     for (i = 0; i < nkeys; i++) {
       grn_obj *key = keys[i].key;

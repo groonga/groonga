@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2015-2016  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,7 +28,7 @@ typedef struct _grn_scaner {
   grn_obj *expr;
   grn_obj *source_expr;
   scan_info **sis;
-  unsigned int n_sis;
+  uint32_t n_sis;
 } grn_scanner;
 
 grn_scanner *grn_scanner_open(grn_ctx *ctx, grn_obj *expr,

@@ -1030,7 +1030,7 @@ grn_array_cursor_open(grn_ctx *ctx, grn_array *array, grn_id min, grn_id max,
   } else {
     cursor->curr_rec += cursor->dir * offset;
   }
-  cursor->rest = (limit < 0) ? *(array->n_entries) : limit;
+  cursor->rest = (limit < 0) ? *(array->n_entries) : (unsigned int)limit;
   return cursor;
 }
 
@@ -2864,7 +2864,7 @@ grn_hash_lock(grn_ctx *ctx, grn_hash *hash, int timeout)
     GRN_ATOMIC_ADD_EX(hash->lock, 1, lock);
     if (lock) {
       GRN_ATOMIC_ADD_EX(hash->lock, -1, lock);
-      if (!timeout || (timeout > 0 && timeout == count)) { break; }
+      if (!timeout || (timeout > 0 && (uint32_t)timeout == count)) { break; }
       if (!(++_ncolls % 1000000) && (_ncolls > _ncalls)) {
         if (_ncolls < 0 || _ncalls < 0) {
           _ncolls = 0; _ncalls = 0;
@@ -4666,7 +4666,7 @@ grn_hash_sort(grn_ctx *ctx, grn_hash *hash,
       return 0;
     }
   }
-  if (limit > *hash->n_entries) { limit = *hash->n_entries; }
+  if ((uint32_t)limit > *hash->n_entries) { limit = *hash->n_entries; }
   /*  hash->limit = limit; */
   if (optarg) {
     int dir = (optarg->flags & GRN_TABLE_SORT_DESC);

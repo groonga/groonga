@@ -424,7 +424,7 @@ grn_pvector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *pvector)
 static grn_rc
 grn_vector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *vector)
 {
-  int i;
+  uint32_t i;
   grn_obj *body = vector->u.v.body;
 
   GRN_TEXT_PUTS(ctx, buffer, "[");
@@ -1085,7 +1085,7 @@ grn_geo_point_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   GRN_TEXT_PUTS(ctx, buf, ")");
 
   {
-    int i, j;
+    size_t i;
     grn_geo_point point;
     uint8_t encoded[sizeof(grn_geo_point)];
 
@@ -1094,6 +1094,7 @@ grn_geo_point_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     point.longitude = longitude;
     grn_gton(encoded, &point, sizeof(grn_geo_point));
     for (i = 0; i < sizeof(grn_geo_point); i++) {
+      int j;
       if (i != 0) {
         GRN_TEXT_PUTS(ctx, buf, " ");
       }

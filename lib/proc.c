@@ -1724,12 +1724,12 @@ grn_proc_get_value_token_cursor_flags(grn_ctx *ctx,
       continue;
     }
 
-#define CHECK_FLAG(name)                                \
-    if (((names_end - names) >= (sizeof(#name) - 1)) && \
-        (!memcmp(names, #name, sizeof(#name) - 1))) {   \
-      flags |= GRN_TOKEN_CURSOR_ ## name;               \
-      names += sizeof(#name) - 1;                       \
-      continue;                                         \
+#define CHECK_FLAG(name)                                        \
+    if (((size_t)(names_end - names) >= (sizeof(#name) - 1)) && \
+        (!memcmp(names, #name, sizeof(#name) - 1))) {           \
+      flags |= GRN_TOKEN_CURSOR_ ## name;                       \
+      names += sizeof(#name) - 1;                               \
+      continue;                                                 \
     }
 
     CHECK_FLAG(ENABLE_TOKENIZED_DELIMITER);
@@ -3255,9 +3255,7 @@ func_html_untag(grn_ctx *ctx, int nargs, grn_obj **args,
 static grn_bool
 grn_text_equal_cstr(grn_ctx *ctx, grn_obj *text, const char *cstr)
 {
-  int cstr_len;
-
-  cstr_len = strlen(cstr);
+  size_t cstr_len = strlen(cstr);
   return (GRN_TEXT_LEN(text) == cstr_len &&
           strncmp(GRN_TEXT_VALUE(text), cstr, cstr_len) == 0);
 }

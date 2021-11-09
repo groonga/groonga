@@ -344,7 +344,8 @@ grn_table_sort_keys_parse(grn_ctx *ctx,
                           int32_t raw_sort_keys_size,
                           int *n_keys);
 GRN_API grn_rc grn_table_sort_key_close(grn_ctx *ctx,
-                                        grn_table_sort_key *keys, unsigned int nkeys);
+                                        grn_table_sort_key *keys,
+                                        uint32_t nkeys);
 
 GRN_API grn_bool grn_table_is_grouped(grn_ctx *ctx, grn_obj *table);
 

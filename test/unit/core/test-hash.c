@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2015  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2008-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -271,7 +271,7 @@ static void
 not_uint32_size_key_increment(grn_test_data *test_data)
 {
   gchar *string = test_data->key;
-  gint i;
+  uint32_t i;
 
   for (i = 0; i < not_uint32_key_size; i++) {
     if (string[i] < '~') {

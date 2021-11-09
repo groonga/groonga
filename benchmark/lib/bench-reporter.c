@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008  Kouhei Sutou <kou@cozmixng.org>
+  Copyright (C) 2008-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -60,10 +60,8 @@ bench_item_free(BenchItem *item)
   g_slice_free(BenchItem, item);
 }
 
-#define BENCH_REPORTER_GET_PRIVATE(obj)                                 \
-  (G_TYPE_INSTANCE_GET_PRIVATE((obj),                                   \
-                               BENCH_TYPE_REPORTER,                     \
-                               BenchReporterPrivate))
+#define BENCH_REPORTER_GET_PRIVATE(obj)                     \
+  bench_reporter_get_instance_private(BENCH_REPORTER(obj))
 
 typedef struct _BenchReporterPrivate BenchReporterPrivate;
 struct _BenchReporterPrivate
@@ -71,7 +69,7 @@ struct _BenchReporterPrivate
   GList *items;
 };
 
-G_DEFINE_TYPE(BenchReporter, bench_reporter, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_PRIVATE(BenchReporter, bench_reporter, G_TYPE_OBJECT)
 
 static void dispose        (GObject         *object);
 
@@ -83,8 +81,6 @@ bench_reporter_class_init(BenchReporterClass *klass)
   gobject_class = G_OBJECT_CLASS(klass);
 
   gobject_class->dispose = dispose;
-
-  g_type_class_add_private(gobject_class, sizeof(BenchReporterPrivate));
 }
 
 static void
@@ -295,7 +291,7 @@ bench_reporter_run(BenchReporter *reporter)
 {
   BenchReporterPrivate *priv;
   GList *node;
-  gint max_label_length = 0;
+  size_t max_label_length = 0;
 
   priv = BENCH_REPORTER_GET_PRIVATE(reporter);
   for (node = priv->items; node; node = g_list_next(node)) {

@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1351,8 +1351,8 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   int char_len;
   grn_token_status status = 0;
   grn_regexp_tokenizer *tokenizer = user_data->ptr;
-  unsigned int n_characters = 0;
-  int ngram_unit = 2;
+  uint32_t n_characters = 0;
+  uint32_t ngram_unit = 2;
   grn_obj *buffer = &(tokenizer->buffer);
   const char *current = tokenizer->next;
   const char *end = tokenizer->end;

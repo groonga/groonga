@@ -900,7 +900,7 @@ grn_loader_bracket_set_values(grn_ctx *ctx,
   grn_obj *bracket_value = data->record_value;
   grn_obj *value = bracket_value + 1;
   grn_obj *value_end = value + GRN_UINT32_VALUE(bracket_value);
-  uint32_t i = 0;
+  int32_t i = 0;
   GRN_HASH_EACH_BEGIN(ctx, loader->columns, cursor, cursor_id) {
     if (value >= value_end) {
       break;
@@ -1686,4 +1686,3 @@ grn_p_loader(grn_ctx *ctx, grn_loader *loader)
   printf("  ]\n");
   printf(">\n");
 }
-

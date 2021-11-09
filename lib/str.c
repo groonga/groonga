@@ -2052,7 +2052,7 @@ grn_rc
 grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, size_t len)
 {
   if (GRN_BULK_OUTP(bulk)) {
-    if ((bulk->u.b.tail - bulk->u.b.head) < len) {
+    if ((size_t)(bulk->u.b.tail - bulk->u.b.head) < len) {
       return grn_bulk_space_clear(ctx, bulk, len - GRN_BULK_VSIZE(bulk));
     } else {
       if (GRN_BULK_VSIZE(bulk) < len) {

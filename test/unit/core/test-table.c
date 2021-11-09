@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2016  Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2009-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -282,7 +282,7 @@ test_array_sort(gpointer data)
   const gint32 values[] = {
     5, 6, 18, 9, 0, 4, 13, 12, 8, 14, 19, 11, 7, 3, 1, 10, 15, 2, 17, 16
   };
-  const int n_values = sizeof(values) / sizeof(values[0]);
+  const guint n_values = sizeof(values) / sizeof(values[0]);
   const gchar table_name[] = "Store";
   const gchar column_name[] = "sample_column";
   const int n_keys = 1;

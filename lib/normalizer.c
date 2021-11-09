@@ -2466,7 +2466,7 @@ typedef grn_char_type (*grn_get_char_type_func)(const unsigned char *character);
 typedef struct {
   grn_obj *target_table;
   grn_obj *target_index_column;
-  int target_section;
+  uint32_t target_section;
   grn_obj *normalized_column;
   grn_get_char_type_func get_char_type;
   bool report_source_offset;

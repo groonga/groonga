@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015  Brazil
+  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -129,7 +130,7 @@ mrb_grn_record_key(mrb_state *mrb, mrb_value self)
   key_size = grn_table_get_key(ctx, record->table, record->id,
                                GRN_BULK_HEAD(&(record->key)),
                                GRN_BULK_VSIZE(&(record->key)));
-  if (key_size > GRN_BULK_VSIZE(&(record->key))) {
+  if ((size_t)key_size > GRN_BULK_VSIZE(&(record->key))) {
     grn_bulk_space(ctx, &(record->key), key_size);
     key_size = grn_table_get_key(ctx, record->table, record->id,
                                  GRN_BULK_HEAD(&(record->key)),

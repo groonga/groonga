@@ -92,10 +92,10 @@ struct _grn_pat_cursor {
   grn_id curr_rec;   /* ID of the latest record */
   grn_pat *pat;
   grn_ctx *ctx;
-  unsigned int size; /* stack size (the maximum number of entries) */
-  unsigned int sp;   /* stack pointer (the number of entries) */
+  uint32_t size;     /* stack size (the maximum number of entries) */
+  uint32_t sp;       /* stack pointer (the number of entries) */
   grn_id tail;       /* sentinel (the end of the traversal) */
-  unsigned int rest; /* limit rest (the number of remaining records) */
+  uint32_t rest;     /* limit rest (the number of remaining records) */
   grn_pat_cursor_entry *ss; /* stack buffer (pointer to entries) */
   uint8_t curr_key[GRN_TABLE_MAX_KEY_SIZE];
 };

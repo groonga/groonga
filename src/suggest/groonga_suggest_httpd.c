@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2010-2015  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -439,7 +439,7 @@ msgpack2json(msgpack_object *o, grn_ctx *ctx, grn_obj *buf)
   case MSGPACK_OBJECT_ARRAY:
     GRN_TEXT_PUTC(ctx, buf, '[');
     {
-      int i;
+      uint32_t i;
       for (i = 0; i < o->via.array.size; i++) {
         msgpack2json(o->via.array.ptr, ctx, buf);
       }
@@ -467,7 +467,7 @@ load_from_learner(msgpack_object *o, grn_ctx *ctx, grn_obj *cmd_buf)
     if (key->type == MSGPACK_OBJECT_STR && MSGPACK_OBJECT_STR_SIZE(key) == 6 &&
         !memcmp(MSGPACK_OBJECT_STR_PTR(key), CONST_STR_LEN("target"))) {
       if (value->type == MSGPACK_OBJECT_STR) {
-        int i;
+        uint32_t i;
         GRN_BULK_REWIND(cmd_buf);
         GRN_TEXT_PUTS(ctx, cmd_buf, "load --table ");
         GRN_TEXT_PUT(ctx, cmd_buf,
@@ -579,7 +579,7 @@ recv_from_learner(void *arg)
 }
 
 static int
-serve_threads(int nthreads, int port, const char *db_path, void *zmq_ctx,
+serve_threads(uint32_t nthreads, int port, const char *db_path, void *zmq_ctx,
               const char *send_endpoint, const char *recv_endpoint,
               const char *log_base_path)
 {

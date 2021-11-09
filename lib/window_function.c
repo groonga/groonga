@@ -125,8 +125,9 @@ grn_window_next(grn_ctx *ctx, grn_window *window)
 
   grn_window_shard *shard = &(window->shards[window->current_shard]);
   if (window->direction == GRN_WINDOW_DIRECTION_ASCENDING) {
-    if (shard->current_index >= GRN_RECORD_VECTOR_SIZE(&(shard->ids))) {
-      if (window->current_shard + 1 < window->n_shards) {
+    if ((size_t)(shard->current_index) >=
+        GRN_RECORD_VECTOR_SIZE(&(shard->ids))) {
+      if ((size_t)(window->current_shard + 1) < window->n_shards) {
         window->current_shard++;
         shard = &(window->shards[window->current_shard]);
       } else {
@@ -404,7 +405,7 @@ grn_expr_is_window_function_call(grn_ctx *ctx,
   if (call->op != GRN_OP_CALL) {
     return GRN_FALSE;
   }
-  if (call->nargs != (expr->codes_curr - 1)) {
+  if (call->nargs != (int32_t)(expr->codes_curr - 1)) {
     return GRN_FALSE;
   }
 
