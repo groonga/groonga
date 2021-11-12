@@ -1,3 +1,9 @@
+groonga (11.0.9-2) unstable; urgency=low
+
+  * Enable Apache Arrow support.
+
+ -- Sutou Kouhei <kou@clear-code.com>  Fri, 12 Nov 2021 06:47:34 -0000
+
 groonga (11.0.9-1) unstable; urgency=low
 
   * New upstream release.
