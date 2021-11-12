@@ -124,7 +124,6 @@ class PackagesGroongaOrgPackageTask < PackageTask
                                                   branch: branch)
     workflow_runs_response.workflow_runs.each do |workflow_run|
       artifacts_response = client.get(workflow_run.artifacts_url)
-      pp [workflow_run, artifacts_response.artifacts]
       next if artifacts_response.total_count.zero?
 
       artifacts_response.artifacts.each do |artifact|
