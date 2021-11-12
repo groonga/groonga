@@ -29,6 +29,10 @@ ${DNF} install -y \
   ${repositories_dir}/${os}/${version}/x86_64/Packages/*.rpm
 
 groonga --version
+if ! groonga --version | grep -q apache-arrow; then
+  echo "Apache Arrow isn't enabled"
+  exit 1
+fi
 
 case ${version} in
   7)
