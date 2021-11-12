@@ -31,6 +31,7 @@ RUN \
     libpcre3-dev \
     libssl-dev \
     libstemmer-dev \
+    libthrift-dev \
     libzmq3-dev \
     libzstd-dev \
     pkg-config \
