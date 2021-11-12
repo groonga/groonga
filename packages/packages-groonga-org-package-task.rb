@@ -94,12 +94,70 @@ class PackagesGroongaOrgPackageTask < PackageTask
     false
   end
 
+  def github_repository
+    raise NotImplementedError
+  end
+
+  def github_actions_workflow_file_name(target_namespace, target)
+    raise NotImplementedError
+  end
+
+  def github_actions_artifact_name(target_namespace, target)
+    raise NotImplementedError
+  end
+
+  def github_access_token
+    ENV["GITHUB_ACCESS_TOKEN"]
+  end
+
+  def detect_built_package_url_github_actions(target_namespace,
+                                              target,
+                                              branch,
+                                              artifact_name)
+    require "octokit"
+    client = Octokit::Client.new
+    client.access_token = github_access_token
+    workflow_file_name = github_actions_workflow_file_name(target_namespace,
+                                                           target)
+    workflow_runs_response = client.workflow_runs(github_repository,
+                                                  workflow_file_name,
+                                                  branch: branch)
+    workflow_runs_response.workflow_runs.each do |workflow_run|
+      artifacts_response = client.get(workflow_run.artifacts_url)
+      pp [workflow_run, artifacts_response.artifacts]
+      next if artifacts_response.total_count.zero?
+
+      artifacts_response.artifacts.each do |artifact|
+        if artifact.name == artifact_name
+          return artifact.archive_download_url
+        end
+      end
+    end
+    message = "can't detect built package URL:"
+    message << " target_namespace=<#{target_namespace.inspect}>"
+    message << " target=<#{target.inspect}>"
+    message << " branch=<#{branch.inspect}>"
+    message << " workflow_file_name=<#{workflow_file_name.inspect}>"
+    message << " artifact_name=<#{artifact_name.inspect}>"
+    raise message
+  end
+
   def built_package_url(target_namespace, target)
     raise NotImplementedError
   end
 
   def built_package_n_split_components
     0
+  end
+
+  def open_url(url, &block)
+    if url.start_with?("https://api.github.com/")
+      access_token = github_access_token
+      URI(url).open("Authorization" => "token #{access_token}",
+                    &block)
+    else
+      super
+    end
   end
 
   def download_repositories_dir(target_namespace)
@@ -119,8 +177,19 @@ class PackagesGroongaOrgPackageTask < PackageTask
     download_dir = "#{base_dir}/tmp/downloads/#{@version}"
     mkdir_p(download_dir)
     __send__("#{target_namespace}_targets").each do |target|
-      url = built_package_url(target_namespace, target)
-      archive = download(url, download_dir)
+      branch = ENV["BRANCH"]
+      if branch
+        artifact_name = github_actions_artifact_name(target_namespace, target)
+        url = detect_built_package_url_github_actions(target_namespace,
+                                                      target,
+                                                      branch,
+                                                      artifact_name)
+        download_path = "#{download_dir}/#{artifact_name}.zip"
+        archive = download(url, download_path)
+      else
+        url = built_package_url(target_namespace, target)
+        archive = download(url, download_dir)
+      end
       case target_namespace
       when :apt, :yum
         cd(repositories_dir) do

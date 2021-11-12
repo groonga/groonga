@@ -95,15 +95,46 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     true
   end
 
+  def github_repository
+    "groonga/groonga"
+  end
+
+  def github_actions_workflow_file_name(target_namespace, target)
+    case target_namespace
+    when :apt, :yum
+      "package.yml"
+    when :windows
+      "windows-msvc.yml"
+    else
+      super
+    end
+  end
+
+  def github_actions_artifact_name(target_namespace, target)
+    case target_namespace
+    when :apt
+      if target.end_with?("-i386") or target.end_with?("-arm64")
+        "packages-#{target}"
+      else
+        "packages-#{target}-amd64"
+      end
+    when :yum
+      "packages-#{target}"
+    else
+      raise NotImplementedError
+    end
+  end
+
   def built_package_url(target_namespace, target)
     url = "https://github.com/groonga/groonga/releases/download/v#{@version}/"
-    if target_namespace == :apt
+    case target_namespace
+    when :apt
       if target.end_with?("-i386") or target.end_with?("-arm64")
         url << "#{target}.tar.gz"
       else
         url << "#{target}-amd64.tar.gz"
       end
-    elsif target_namespace == :windows
+    when :windows
       url << "#{target}"
     else
       url << "#{target}.tar.gz"
