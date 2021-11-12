@@ -18,9 +18,11 @@ apt install -V -y \
   ${repositories_dir}/debian/pool/${code_name}/main/*/*/*_{${architecture},all}.deb
 
 groonga --version
-if ! groonga --version | grep -q apache-arrow; then
-  echo "Apache Arrow isn't enabled"
-  exit 1
+if [ "${architecture}" != "i386" ]; then
+  if ! groonga --version | grep -q apache-arrow; then
+    echo "Apache Arrow isn't enabled"
+    exit 1
+  fi
 fi
 
 mkdir -p /test
