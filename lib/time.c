@@ -203,28 +203,28 @@ grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf, size_t buf_size)
 }
 
 grn_rc
-grn_str2gm_offset_sec(const char *start, const char *end, grn_bool *has_offset, int64_t *gm_offset)
+grn_str2gm_offset_sec(const char *start, const char *end, bool *has_offset, int64_t *gm_offset)
 {
   const char *position = start;
   int32_t hours, minutes = 0;
 
-  *has_offset = GRN_FALSE;
+  *has_offset = false;
 
   if (position >= end) { return GRN_SUCCESS; }
 
   switch (*position) {
   case '+' :
     *gm_offset = 1;
-    *has_offset = GRN_TRUE;
+    *has_offset = true;
     break;
   case '-' :
     *gm_offset = -1;
-    *has_offset = GRN_TRUE;
+    *has_offset = true;
     break;
   case 'Z' :
   case 'z' :
     *gm_offset = 0;
-    *has_offset = GRN_TRUE;
+    *has_offset = true;
     return GRN_SUCCESS;
   default :
     return GRN_INVALID_ARGUMENT;
@@ -301,7 +301,7 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
   tm.tm_isdst = -1;
 
   {
-    grn_bool has_offset = GRN_FALSE;
+    bool has_offset = false;
     int64_t gm_offset_sec = 0;
     grn_rc rc = GRN_SUCCESS;
 
