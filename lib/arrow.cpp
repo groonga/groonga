@@ -201,16 +201,11 @@ namespace grnarrow {
         if (!arrow_type) {
           auto range = object_cache[range_id];
           if (grn_obj_is_table_with_key(ctx, range)) {
-            // TODO: We can't return reference value as dictionary
-            // because arrow::ipc::RecordBatchWriter doesn't support
-            // dictionary delta for now.
-            //
-            // auto domain = object_cache[range->header.domain];
-            // auto dictionary_type =
-            //   grn_column_to_arrow_type(ctx, domain, object_cache);
-            // arrow_type = arrow::dictionary(arrow::int32(), dictionary_type);
             auto domain = object_cache[range->header.domain];
             arrow_type = grn_column_to_arrow_type(ctx, domain, object_cache);
+            if (arrow_type == arrow::utf8()) {
+              arrow_type = arrow::dictionary(arrow::int32(), arrow_type);
+            }
           }
         }
         if (range_flags & GRN_OBJ_VECTOR) {
@@ -227,6 +222,56 @@ namespace grnarrow {
     }
     return nullptr;
   }
+
+  const std::shared_ptr<arrow::DataType> undictionary(
+    const std::shared_ptr<arrow::DataType> data_type)
+  {
+    if (data_type->id() != arrow::Type::DICTIONARY) {
+      return data_type;
+    }
+    auto dictionary_data_type =
+      std::static_pointer_cast<arrow::DictionaryType>(data_type);
+    return dictionary_data_type->value_type();
+  }
+
+  class ArrayBuilderResetFullVisitor : public arrow::TypeVisitor {
+    // We need to execute ResetFull() with an appropriate dictionary length
+    // in order to avoid memory exhaustion and so on.
+    // - Dictionary data in DictionaryBuilder are held in memory until
+    //   ResetFull() is executed.
+    // - Some Apache Arrow implementations (clients) have a 2GB limitation on
+    //   the value size of array: C#.
+  public:
+    ArrayBuilderResetFullVisitor(grn_ctx *ctx,
+                                 arrow::ArrayBuilder *builder)
+      : ctx_(ctx),
+      builder_(builder) {
+    }
+
+    arrow::Status Visit(const arrow::DictionaryType &type) override
+    {
+      const int64_t dictionary_length_threshold = 10000;
+
+      // The value type of Dictionary is always string for now.
+      auto builder = static_cast<arrow::StringDictionaryBuilder *>(builder_);
+      if (builder->dictionary_length() > dictionary_length_threshold) {
+        builder->ResetFull();
+      }
+      return arrow::Status::OK();
+    }
+
+    arrow::Status Visit(const arrow::ListType &type) override
+    {
+      auto builder = static_cast<arrow::ListBuilder *>(builder_);
+      auto value_builder = builder->value_builder();
+      ArrayBuilderResetFullVisitor value_visitor(ctx_, value_builder);
+      return value_builder->type()->Accept(&value_visitor);
+    }
+
+  private:
+    grn_ctx *ctx_;
+    arrow::ArrayBuilder *builder_;
+  };
 
   class RecordAddVisitor : public arrow::ArrayVisitor {
   public:
@@ -1160,6 +1205,9 @@ namespace grnarrow {
         if (!field_type) {
           continue;
         }
+        // We can't use dictionary with FileWriter. It doesn't support
+        // dictionary delta.
+        field_type = undictionary(field_type);
 
         auto field = std::make_shared<arrow::Field>(field_name,
                                                     field_type,
@@ -1804,7 +1852,9 @@ namespace grnarrow {
       schema_builder_.Reset();
       schema_ = *schema;
 
-      auto writer = arrow::ipc::MakeStreamWriter(&output_, schema_);
+      auto option = arrow::ipc::IpcWriteOptions::Defaults();
+      option.emit_dictionary_deltas = true;
+      auto writer = arrow::ipc::MakeStreamWriter(&output_, schema_, option);
 
       if (!check(ctx_,
                  writer,
@@ -1988,16 +2038,8 @@ namespace grnarrow {
     }
 
     void add_column_record(grn_obj *record) {
-      // TODO: We can't return reference value as dictionary
-      // because arrow::ipc::RecordBatchWriter doesn't support
-      // dictionary delta for now.
-      //
-      // auto column_builder =
-      //   record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
-      //     current_column_index_++);
-
       auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::StringBuilder>(
+        record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
           current_column_index_++);
       auto table = object_cache_[record->header.domain];
       char key[GRN_TABLE_MAX_KEY_SIZE];
@@ -2039,7 +2081,7 @@ namespace grnarrow {
         auto raw_value_builder = column_builder->value_builder();
         if (grn_obj_is_table_with_key(ctx_, domain)) {
           auto value_builder =
-            static_cast<arrow::StringBuilder *>(raw_value_builder);
+            static_cast<arrow::StringDictionaryBuilder *>(raw_value_builder);
           for (size_t i = 0; i < n; ++i) {
             auto record_id =
               *reinterpret_cast<grn_id *>(raw_elements + (element_size * i));
@@ -2103,6 +2145,14 @@ namespace grnarrow {
               "[arrow][stream-writer][flush] "
               "failed to write flushed record batch");
       }
+
+      auto n_fields = record_batch_builder_->num_fields();
+      for (int i = 0; i < n_fields; ++i) {
+        auto builder = record_batch_builder_->GetField(i);
+        auto visitor = ArrayBuilderResetFullVisitor(ctx_, builder);
+        builder->type()->Accept(&visitor);
+      }
+
       n_records_ = 0;
     }
 
@@ -2199,7 +2249,7 @@ namespace grn {
 
       ::arrow::Status add_column(grn_obj *column,
                                  grn_table_cursor *cursor) {
-        const auto arrow_type =
+        auto arrow_type =
           grn_column_to_arrow_type(ctx_, column, object_cache_);
         if (!arrow_type) {
           grn::TextBulk inspected(ctx_);
@@ -2208,6 +2258,7 @@ namespace grn {
             "[arrow][array-builder][add-column] "
             "unsupported column: ", inspected.value());
         }
+        arrow_type = grnarrow::undictionary(arrow_type);
         if (!builder_) {
           ARROW_RETURN_NOT_OK(
             ::arrow::MakeBuilder(::arrow::default_memory_pool(),
