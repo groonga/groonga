@@ -20,6 +20,7 @@ jobs:
           - "GCC"
           - "GCC: mruby"
           - "GCC: mruby: optimize"
+          - "GCC: mruby: Apache Arrow RC"
           - "Clang: mruby"
         include:
           - label: "GCC"
@@ -31,6 +32,9 @@ jobs:
           - label: "GCC: mruby: optimize"
             use-mruby: true
             optimize: true
+          - label: "GCC: mruby: Apache Arrow RC"
+            use-mruby: true
+            use-apache-arrow-rc: true
           - label: "Clang: mruby"
             use-mruby: true
             packages: >-
@@ -49,8 +53,17 @@ jobs:
           sudo apt install -y -V \
             lsb-release \
             wget
-          wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-          sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          if [ "${{ matrix.use-apache-arrow-rc }}" = "true" ]; then
+            wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')-rc/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+            sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+            sudo sed \
+              -i"" \
+              -e "s,^URIs: \\(.*\\)/,URIs: \\1-rc/,g" \
+              /etc/apt/sources.list.d/apache-arrow.sources
+          else
+            wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+            sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          fi
       - name: Install packages
         run: |
           sudo apt update
@@ -68,7 +81,6 @@ jobs:
             libmecab-dev \
             libmsgpack-dev \
             libstemmer-dev \
-            libthrift-dev \
             libxxhash-dev \
             libzstd-dev \
             mecab-naist-jdic \
