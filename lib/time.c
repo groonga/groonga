@@ -202,37 +202,37 @@ grn_timeval2str(grn_ctx *ctx, grn_timeval *tv, char *buf, size_t buf_size)
   return ctx->rc;
 }
 
-grn_rc
-grn_str2gm_offset_sec(const char *start, const char *end, bool *has_offset, int64_t *gm_offset)
+static grn_rc
+grn_str2timeval_offset_sec(const char *start, const char *end, bool *have_offset, int32_t *gm_offset_sec)
 {
   const char *position = start;
-  int32_t hours, minutes = 0;
+  int32_t hours, minutes = 0, sign = 1;
 
-  *has_offset = false;
+  *have_offset = false;
+  *gm_offset_sec = 0;
 
   if (position >= end) { return GRN_SUCCESS; }
 
   switch (*position) {
   case '+' :
-    *gm_offset = 1;
-    *has_offset = true;
+    sign = 1;
+    *have_offset = true;
     break;
   case '-' :
-    *gm_offset = -1;
-    *has_offset = true;
+    sign = -1;
+    *have_offset = true;
     break;
   case 'Z' :
   case 'z' :
-    *gm_offset = 0;
-    *has_offset = true;
+    *have_offset = true;
     return GRN_SUCCESS;
   default :
     return GRN_INVALID_ARGUMENT;
   }
 
-  if ((position + 1) >= end) { return GRN_INVALID_ARGUMENT; }
-
   position++;
+  if (position >= end) { return GRN_INVALID_ARGUMENT; }
+
   hours = grn_atoi(position, end, &position);
   if (hours < 0 || hours >= 24) { return GRN_INVALID_ARGUMENT; }
 
@@ -242,7 +242,7 @@ grn_str2gm_offset_sec(const char *start, const char *end, bool *has_offset, int6
     if (minutes < 0 || minutes >= 60) { return GRN_INVALID_ARGUMENT; }
   }
 
-  *gm_offset *= ((int64_t)hours * 3600 + (int64_t)minutes * 60);
+  *gm_offset_sec = sign * (hours * 3600 + minutes * 60);
 
   return GRN_SUCCESS;
 }
@@ -301,24 +301,23 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
   tm.tm_isdst = -1;
 
   {
-    bool has_offset = false;
-    int64_t gm_offset_sec = 0;
+    bool have_offset = false;
+    int32_t gm_offset_sec = 0;
     grn_rc rc = GRN_SUCCESS;
 
-    rc = grn_str2gm_offset_sec(r2, rend, &has_offset, &gm_offset_sec);
+    rc = grn_str2timeval_offset_sec(r2, rend, &have_offset, &gm_offset_sec);
 
     if (rc != GRN_SUCCESS) { return rc; }
 
-    if (has_offset) {
+    if (have_offset) {
       tv->tv_sec = grn_timegm(&tm);
       tv->tv_sec -= gm_offset_sec;
     } else {
       tv->tv_sec = grn_mktime(&tm);
+      /* tm_yday is set appropriately (0-365) on successful completion. */
+      if (tm.tm_yday == -1) { return GRN_INVALID_ARGUMENT; }
     }
   }
-
-  /* tm_yday is set appropriately (0-365) on successful completion. */
-  if (tm.tm_yday == -1) { return GRN_INVALID_ARGUMENT; }
 
   tv->tv_nsec = GRN_TIME_USEC_TO_NSEC(uv);
   return GRN_SUCCESS;
