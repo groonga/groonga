@@ -9,7 +9,8 @@ load --table Logs
 {"created_at": "2000-01-01T10:00:00+24:00"},
 {"created_at": "2000-01-01T12:00:00+00:60"},
 {"created_at": "2000-01-01T10:00:00--01:00"},
-{"created_at": "2000-01-01T10:00:00-01:-01"}
+{"created_at": "2000-01-01T10:00:00-01:-01"},
+{"created_at": "2000-01-01T10:00:00+01:"}
 ]
 [
   [
@@ -18,9 +19,9 @@ load --table Logs
       0.0,
       0.0
     ],
-    "<Logs.created_at>: failed to cast to <Time>: <\"2000-01-01T10:00:00-01:-01\">"
+    "<Logs.created_at>: failed to cast to <Time>: <\"2000-01-01T10:00:00+01:\">"
   ],
-  6
+  7
 ]
 #|e| <Logs.created_at>: failed to cast to <Time>: <"2000-01-01T11:00:00+">
 #|e| [table][load][Logs][created_at] failed to set column value: <Logs.created_at>: failed to cast to <Time>: <"2000-01-01T11:00:00+">: id: <1>: value: <"2000-01-01T11:00:00+">
@@ -34,3 +35,5 @@ load --table Logs
 #|e| [table][load][Logs][created_at] failed to set column value: <Logs.created_at>: failed to cast to <Time>: <"2000-01-01T10:00:00--01:00">: id: <5>: value: <"2000-01-01T10:00:00--01:00">
 #|e| <Logs.created_at>: failed to cast to <Time>: <"2000-01-01T10:00:00-01:-01">
 #|e| [table][load][Logs][created_at] failed to set column value: <Logs.created_at>: failed to cast to <Time>: <"2000-01-01T10:00:00-01:-01">: id: <6>: value: <"2000-01-01T10:00:00-01:-01">
+#|e| <Logs.created_at>: failed to cast to <Time>: <"2000-01-01T10:00:00+01:">
+#|e| [table][load][Logs][created_at] failed to set column value: <Logs.created_at>: failed to cast to <Time>: <"2000-01-01T10:00:00+01:">: id: <7>: value: <"2000-01-01T10:00:00+01:">

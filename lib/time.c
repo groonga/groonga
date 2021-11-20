@@ -236,10 +236,13 @@ grn_str2timeval_offset_sec(const char *start, const char *end, bool *have_offset
   hours = grn_atoi(position, end, &position);
   if (hours < 0 || hours >= 24) { return GRN_INVALID_ARGUMENT; }
 
-  if ((position + 1) < end && *position == ':') {
+  if (*position == ':') {
     position++;
-    minutes = grn_atoi(position, end, &position);
-    if (minutes < 0 || minutes >= 60) { return GRN_INVALID_ARGUMENT; }
+    if(position == end) { return GRN_INVALID_ARGUMENT; }
+    if(position < end) {
+      minutes = grn_atoi(position, end, &position);
+      if (minutes < 0 || minutes >= 60) { return GRN_INVALID_ARGUMENT; }
+    }
   }
 
   *gm_offset_sec = sign * (hours * 3600 + minutes * 60);
@@ -314,9 +317,10 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
       tv->tv_sec -= gm_offset_sec;
     } else {
       tv->tv_sec = grn_mktime(&tm);
-      /* tm_yday is set appropriately (0-365) on successful completion. */
-      if (tm.tm_yday == -1) { return GRN_INVALID_ARGUMENT; }
     }
+
+    /* tm_yday is set appropriately (0-365) on successful completion. */
+    if (tm.tm_yday == -1) { return GRN_INVALID_ARGUMENT; }
   }
 
   tv->tv_nsec = GRN_TIME_USEC_TO_NSEC(uv);
