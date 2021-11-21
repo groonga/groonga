@@ -236,13 +236,12 @@ grn_str2timeval_offset_sec(const char *start, const char *end, bool *have_offset
   hours = grn_atoi(position, end, &position);
   if (hours < 0 || hours >= 24) { return GRN_INVALID_ARGUMENT; }
 
-  if (*position == ':') {
+  if (position < end && *position == ':') {
     position++;
     if(position == end) { return GRN_INVALID_ARGUMENT; }
-    if(position < end) {
-      minutes = grn_atoi(position, end, &position);
-      if (minutes < 0 || minutes >= 60) { return GRN_INVALID_ARGUMENT; }
-    }
+
+    minutes = grn_atoi(position, end, &position);
+    if (minutes < 0 || minutes >= 60) { return GRN_INVALID_ARGUMENT; }
   }
 
   *gm_offset_sec = sign * (hours * 3600 + minutes * 60);
