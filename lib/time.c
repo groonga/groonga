@@ -238,7 +238,7 @@ grn_str2timeval_offset_sec(const char *start, const char *end, bool *have_offset
 
   if (position < end && *position == ':') {
     position++;
-    if(position == end) { return GRN_INVALID_ARGUMENT; }
+    if (position == end) { return GRN_INVALID_ARGUMENT; }
 
     minutes = grn_atoi(position, end, &position);
     if (minutes < 0 || minutes >= 60) { return GRN_INVALID_ARGUMENT; }
