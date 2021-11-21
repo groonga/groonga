@@ -317,7 +317,6 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
     } else {
       tv->tv_sec = grn_mktime(&tm);
     }
-
     /* tm_yday is set appropriately (0-365) on successful completion. */
     if (tm.tm_yday == -1) { return GRN_INVALID_ARGUMENT; }
   }
