@@ -1,0 +1,11 @@
+table_create Users TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice"},
+{"_key": "alan"},
+{"_key": "^a"}
+]
+[[0,0.0,0.0],3]
+select Users   --query "_key:^a"   --query_flags "ALLOW_COLUMN|DISABLE_PREFIX_SEARCH"
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[3,"^a"]]]]

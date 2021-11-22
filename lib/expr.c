@@ -4287,8 +4287,13 @@ parse_query_word(grn_ctx *ctx, efs_info *q)
           q->cur = end + 2;
           break;
         case '^' :
-          mode = GRN_OP_PREFIX;
-          q->cur = end + 2;
+          if (q->flags & GRN_EXPR_DISABLE_PREFIX_SEARCH) {
+            mode = GRN_OP_EQUAL;
+            q->cur = end + 1;
+          } else {
+            mode = GRN_OP_PREFIX;
+            q->cur = end + 2;
+          }
           break;
         case '$' :
           mode = GRN_OP_SUFFIX;
@@ -4321,7 +4326,9 @@ parse_query_word(grn_ctx *ctx, efs_info *q)
       GRN_INT32_PUT(ctx, &q->mode_stack, mode);
 
       return GRN_SUCCESS;
-    } else if (GRN_TEXT_LEN(&q->buf) > 0 && *end == GRN_QUERY_PREFIX) {
+    } else if (!(q->flags & GRN_EXPR_DISABLE_PREFIX_SEARCH) &&
+               GRN_TEXT_LEN(&q->buf) > 0 &&
+               *end == GRN_QUERY_PREFIX) {
       q->cur = end + 1;
       GRN_INT32_PUT(ctx, &q->mode_stack, GRN_OP_PREFIX);
       break;
@@ -4933,8 +4940,13 @@ parse_script(grn_ctx *ctx, efs_info *q)
     case '@' :
       switch (q->cur[1]) {
       case '^' :
-        PARSE(GRN_EXPR_TOKEN_PREFIX);
-        q->cur += 2;
+        if (q->flags & GRN_EXPR_DISABLE_PREFIX_SEARCH) {
+          PARSE(GRN_EXPR_TOKEN_MATCH);
+          q->cur++;
+        } else {
+          PARSE(GRN_EXPR_TOKEN_PREFIX);
+          q->cur += 2;
+        }
         break;
       case '$' :
         PARSE(GRN_EXPR_TOKEN_SUFFIX);

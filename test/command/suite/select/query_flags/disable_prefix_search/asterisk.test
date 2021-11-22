@@ -1,0 +1,13 @@
+table_create Users TABLE_PAT_KEY ShortText
+
+load --table Users
+[
+{"_key": "alice"},
+{"_key": "alan"},
+{"_key": "ba*"}
+]
+
+select Users \
+  --match_columns "_key" \
+  --query "a*" \
+  --query_flags "DISABLE_PREFIX_SEARCH"
