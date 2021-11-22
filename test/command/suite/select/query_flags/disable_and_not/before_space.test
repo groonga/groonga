@@ -1,0 +1,13 @@
+table_create Users TABLE_PAT_KEY ShortText
+
+load --table Users
+[
+{"_key": "alice"},
+{"_key": "bob"},
+{"_key": "c-ab"}
+]
+
+select Users \
+  --match_columns "_key" \
+  --query "b -a" \
+  --query_flags "DISABLE_AND_NOT"
