@@ -4490,28 +4490,32 @@ parse_query(grn_ctx *ctx, efs_info *q)
       q->cur++;
       break;
     case GRN_QUERY_AND_NOT :
-      if (first_token) {
-        if (q->flags & GRN_EXPR_ALLOW_LEADING_NOT) {
-          grn_obj *all_records = grn_ctx_get(ctx, "all_records", 11);
-          if (all_records) {
-            /* dummy token */
-            PARSE(GRN_EXPR_TOKEN_QSTRING);
-            grn_expr_append_obj(ctx, q->e, all_records, GRN_OP_PUSH, 1);
-            grn_expr_append_op(ctx, q->e, GRN_OP_CALL, 0);
+      if (q->flags & GRN_EXPR_DISABLE_AND_NOT) {
+        parse_query_word(ctx, q);
+      } else {
+        if (first_token) {
+          if (q->flags & GRN_EXPR_ALLOW_LEADING_NOT) {
+            grn_obj *all_records = grn_ctx_get(ctx, "all_records", 11);
+            if (all_records) {
+              /* dummy token */
+              PARSE(GRN_EXPR_TOKEN_QSTRING);
+              grn_expr_append_obj(ctx, q->e, all_records, GRN_OP_PUSH, 1);
+              grn_expr_append_op(ctx, q->e, GRN_OP_CALL, 0);
+            }
+          } else if (q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR) {
+            parse_query_flush_pending_token(ctx, q);
+            parse_query_accept_string(ctx, q, q->cur, 1);
+            q->cur++;
+            break;
           }
-        } else if (q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR) {
-          parse_query_flush_pending_token(ctx, q);
-          parse_query_accept_string(ctx, q, q->cur, 1);
-          q->cur++;
-          break;
         }
+        op->op = GRN_OP_AND_NOT;
+        parse_query_accept_logical_op(ctx,
+                                      q,
+                                      q->cur, 1,
+                                      GRN_EXPR_TOKEN_LOGICAL_AND_NOT);
+        q->cur++;
       }
-      op->op = GRN_OP_AND_NOT;
-      parse_query_accept_logical_op(ctx,
-                                    q,
-                                    q->cur, 1,
-                                    GRN_EXPR_TOKEN_LOGICAL_AND_NOT);
-      q->cur++;
       break;
     case GRN_QUERY_ADJ_INC :
       {
@@ -5289,8 +5293,15 @@ parse_script(grn_ctx *ctx, efs_info *q)
         }
         break;
       case '!' :
-        PARSE(GRN_EXPR_TOKEN_LOGICAL_AND_NOT);
-        q->cur += 2;
+        if (q->flags & GRN_EXPR_DISABLE_AND_NOT) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "[expr][parse][script] '&!' is disabled: <%.*s>",
+              (int)(q->str_end - q->str),
+              q->str);
+        } else {
+          PARSE(GRN_EXPR_TOKEN_LOGICAL_AND_NOT);
+          q->cur += 2;
+        }
         break;
       default :
         PARSE(GRN_EXPR_TOKEN_BITWISE_AND);

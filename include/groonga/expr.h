@@ -39,6 +39,7 @@ typedef uint32_t grn_expr_flags;
 #define GRN_EXPR_ALLOW_LEADING_NOT     (0x10)
 #define GRN_EXPR_QUERY_NO_SYNTAX_ERROR (0x80)
 #define GRN_EXPR_DISABLE_PREFIX_SEARCH (0x400)
+#define GRN_EXPR_DISABLE_AND_NOT       (0x800)
 
 GRN_API grn_obj *grn_expr_create(grn_ctx *ctx, const char *name, unsigned int name_size);
 GRN_API grn_rc grn_expr_close(grn_ctx *ctx, grn_obj *expr);
