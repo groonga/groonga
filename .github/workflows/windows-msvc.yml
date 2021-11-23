@@ -237,21 +237,6 @@ jobs:
           path: ${{ steps.env.outputs.install-parent-folder-with-vcruntime }}
 
       # Release
-      - name: Ensure creating release
-        if: |
-          startsWith(github.ref, 'refs/tags/')
-        id: create-release
-        uses: actions/github-script@0.4.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
-          script: |
-            const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor
-            const fs = require("fs");
-            const path = ".github/workflows/ensure-creating-release.js";
-            const script = fs.readFileSync(path).toString();
-            const func = new AsyncFunction("require", "github", "context", script);
-            return await func(require, github, context);
       - name: Compress the artifact without VC++ runtime
         if: |
           startsWith(github.ref, 'refs/tags/')
@@ -262,16 +247,12 @@ jobs:
             -DestinationPath "${Env:FULL_INSTALL_FOLDER}.zip"
           popd
       - name: Upload the artifact without VC++ runtime to release
-        uses: actions/upload-release-asset@v1.0.1
+        uses: softprops/action-gh-release@v1
         if: |
           startsWith(github.ref, 'refs/tags/')
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create-release.outputs.result }}
-          asset_path: ${{ steps.env.outputs.relative-install-folder }}.zip
-          asset_name: ${{ steps.env.outputs.install-folder }}.zip
-          asset_content_type: application/zip
+          files: |
+            ${{ steps.env.outputs.relative-install-folder }}.zip
       - name: Compress the artifact with VC++ runtime
         if: |
           startsWith(github.ref, 'refs/tags/')
@@ -282,16 +263,12 @@ jobs:
             -DestinationPath "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
           popd
       - name: Upload the artifact with VC++ runtime to release
-        uses: actions/upload-release-asset@v1.0.1
+        uses: softprops/action-gh-release@v1
         if: |
           startsWith(github.ref, 'refs/tags/')
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create-release.outputs.result }}
-          asset_path: ${{ steps.env.outputs.relative-install-folder-with-vcruntime }}.zip
-          asset_name: ${{ steps.env.outputs.install-folder-with-vcruntime }}.zip
-          asset_content_type: application/zip
+          files: |
+            ${{ steps.env.outputs.relative-install-folder-with-vcruntime }}.zip
 
       # Test
       - name: Update MSYS2

@@ -14,8 +14,61 @@ concurrency:
   group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
   cancel-in-progress: true
 jobs:
+  source:
+    name: Source
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt -V install \
+            autoconf-archive \
+            devscripts \
+            python3-pip \
+            ruby
+      - name: Install Sphinx
+        run: |
+          sudo pip3 install -v sphinx
+      - name: Clone dependencies
+        run: |
+          cd ..
+          git clone --depth 1 https://github.com/groonga/groonga.org.git
+          git clone --depth 1 https://github.com/clear-code/cutter.git
+      - name: Generate configure
+        run: |
+          ./autogen.sh
+      - name: Configure for archive
+        run: |
+          ./configure \
+            --enable-document \
+            --enable-mruby \
+            --with-cutter-source-path=../cutter \
+            --with-groonga-org-path=../groonga.org \
+            --with-ruby
+      - name: Build archive
+        run: |
+          make dist
+
+      # Artifact
+      - uses: actions/upload-artifact@v2
+        with:
+          name: source
+          path: groonga-*.tar.gz
+
+      # Release
+      - name: Upload to release
+        uses: softprops/action-gh-release@v1
+        if: |
+          startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            groonga-*.tar.gz
   build:
     name: Build
+    needs: source
     strategy:
       fail-fast: false
       matrix:
@@ -78,9 +131,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt -V install \
-            autoconf-archive \
             devscripts \
-            python3-pip \
             ruby
       # qemu-user-static in Ubuntu 20.04 has the following bug.
       # https://bugs.launchpad.net/qemu/+bug/1749393
@@ -105,28 +156,9 @@ jobs:
           EOF
           sudo apt update
           sudo apt install -t groovy qemu-user-static
-      - name: Install Sphinx
-        run: |
-          sudo pip3 install -v sphinx
-      - name: Clone dependencies
-        run: |
-          cd ..
-          git clone --depth 1 https://github.com/groonga/groonga.org.git
-          git clone --depth 1 https://github.com/clear-code/cutter.git
-      - name: Generate configure
-        run: |
-          ./autogen.sh
-      - name: Configure for archive
-        run: |
-          ./configure \
-            --enable-document \
-            --enable-mruby \
-            --with-cutter-source-path=../cutter \
-            --with-groonga-org-path=../groonga.org \
-            --with-ruby
-      - name: Build archive
-        run: |
-          make dist
+      - uses: actions/download-artifact@v2
+        with:
+          name: source
       - name: Update version
         if: |
           !startsWith(github.ref, 'refs/tags/') &&
@@ -168,32 +200,13 @@ jobs:
           startsWith(github.ref, 'refs/tags/')
         run: |
           tar czf ${{ matrix.id }}.tar.gz packages/${{ matrix.task-namespace }}/repositories/
-      - name: Ensure creating release
-        if: |
-          startsWith(github.ref, 'refs/tags/')
-        id: create-release
-        uses: actions/github-script@0.4.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
-          script: |
-            const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor
-            const fs = require("fs");
-            const path = ".github/workflows/ensure-creating-release.js";
-            const script = fs.readFileSync(path).toString();
-            const func = new AsyncFunction("require", "github", "context", script);
-            return await func(require, github, context);
       - name: Upload to release
-        uses: actions/upload-release-asset@v1.0.1
+        uses: softprops/action-gh-release@v1
         if: |
           startsWith(github.ref, 'refs/tags/')
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create-release.outputs.result }}
-          asset_path: ${{ matrix.id }}.tar.gz
-          asset_name: ${{ matrix.id }}.tar.gz
-          asset_content_type: application/gzip
+          files: |
+            ${{ matrix.id }}.tar.gz
 
       # Test
       - name: Test
