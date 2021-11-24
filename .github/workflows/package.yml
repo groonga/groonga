@@ -164,16 +164,8 @@ jobs:
           !startsWith(github.ref, 'refs/tags/') &&
           !startsWith(github.ref, 'refs/heads/maintenance/')
         run: |
-          OLD_RELEASE=$(grep -E -o '[0-9.]+' packages/debian/changelog | \
-                          head -n1)
-          OLD_RELEASE_DATE_FULL="$(grep '^ -- ' packages/debian/changelog | \
-                                     head -n1 | \
-                                     sed -E -e 's/ -- .+<[^>]+>  //')"
-          OLD_RELEASE_DATE=$(date --date="${OLD_RELEASE_DATE_FULL}" +%Y-%m-%d)
-          make update-latest-release \
-            OLD_RELEASE=${OLD_RELEASE} \
-            OLD_RELEASE_DATE=${OLD_RELEASE_DATE} \
-            NEW_RELEASE_DATE=$(date +%Y-%m-%d)
+          cd packages
+          rake version:update RELEASE_DATE=$(date +%Y-%m-%d)
       - name: Cache ccache
         uses: actions/cache@v2
         with:
