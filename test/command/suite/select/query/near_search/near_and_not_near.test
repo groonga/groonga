@@ -9,4 +9,7 @@ load --table Entries
 {"_key":    "Only not near",
  "content": "I also started to use Mroonga. It's very fast! Really fast!"}
 ]
-select Entries --filter 'content *N "also Really"' --output_columns content
+select Entries \
+  --match_columns content \
+  --query '*N"also Really"' \
+  --output_columns content

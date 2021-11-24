@@ -14,7 +14,7 @@ load --table Entries
  "content": "I also started to use Mroonga. It's very fast! Really fast!"}
 ]
 [[0,0.0,0.0],2]
-select Entries --filter 'content *N "also Really"' --output_columns content
+select Entries   --match_columns content   --query '*N"also Really"'   --output_columns content
 [
   [
     0,
