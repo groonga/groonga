@@ -42,7 +42,7 @@
 #define GRN_EXPR_TOKEN_IN                              42
 #define GRN_EXPR_TOKEN_MATCH                           43
 #define GRN_EXPR_TOKEN_NEAR                            44
-#define GRN_EXPR_TOKEN_NEAR2                           45
+#define GRN_EXPR_TOKEN_NEAR_NO_OFFSET                  45
 #define GRN_EXPR_TOKEN_NEAR_PHRASE                     46
 #define GRN_EXPR_TOKEN_ORDERED_NEAR_PHRASE             47
 #define GRN_EXPR_TOKEN_SIMILAR                         48

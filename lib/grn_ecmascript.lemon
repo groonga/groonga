@@ -222,7 +222,7 @@ query_element ::= IDENTIFIER RELATIVE_OP query_element. {
   GRN_INT32_POP(&efsi->mode_stack, mode);
   switch (mode) {
   case GRN_OP_NEAR :
-  case GRN_OP_NEAR2 :
+  case GRN_OP_NEAR_NO_OFFSET :
     {
       int max_interval;
       GRN_INT32_POP(&efsi->max_interval_stack, max_interval);
@@ -385,8 +385,8 @@ relational_expression ::= relational_expression NEAR shift_expression. {
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR, 3);
 }
-relational_expression ::= relational_expression NEAR2 shift_expression. {
-  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR2, 2);
+relational_expression ::= relational_expression NEAR_NO_OFFSET shift_expression. {
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR_NO_OFFSET, 2);
 }
 relational_expression ::= relational_expression NEAR_PHRASE shift_expression. {
   {

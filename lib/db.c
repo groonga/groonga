@@ -5154,8 +5154,8 @@ grn_obj_search_column_index_by_key(grn_ctx *ctx, grn_obj *obj,
         case GRN_OP_NEAR :
           tag = "[key][near]";
           break;
-        case GRN_OP_NEAR2 :
-          tag = "[key][near2]";
+        case GRN_OP_NEAR_NO_OFFSET :
+          tag = "[key][near-no-offset]";
           break;
         case GRN_OP_NEAR_PHRASE :
           tag = "[key][near-phrase]";
@@ -14983,7 +14983,7 @@ grn_column_find_index_data_column_match(grn_ctx *ctx,
     prefer_full_text_search_index = !grn_column_is_vector(ctx, obj);
     break;
   case GRN_OP_NEAR :
-  case GRN_OP_NEAR2 :
+  case GRN_OP_NEAR_NO_OFFSET :
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
   case GRN_OP_SIMILAR :
@@ -15386,7 +15386,7 @@ grn_find_index_data_dispatch(grn_ctx *ctx,
     case GRN_OP_SUFFIX :
     case GRN_OP_MATCH :
     case GRN_OP_NEAR :
-    case GRN_OP_NEAR2 :
+    case GRN_OP_NEAR_NO_OFFSET :
     case GRN_OP_NEAR_PHRASE :
     case GRN_OP_ORDERED_NEAR_PHRASE :
     case GRN_OP_SIMILAR :

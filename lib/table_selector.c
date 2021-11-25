@@ -1475,7 +1475,7 @@ select_index_dispatch(grn_ctx *ctx,
     break;
   case GRN_OP_MATCH :
   case GRN_OP_NEAR :
-  case GRN_OP_NEAR2 :
+  case GRN_OP_NEAR_NO_OFFSET :
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
   case GRN_OP_SIMILAR :
@@ -1835,7 +1835,7 @@ inspect_condition(grn_ctx *ctx,
   case GRN_OP_GREATER_EQUAL :
   case GRN_OP_MATCH :
   case GRN_OP_NEAR :
-  case GRN_OP_NEAR2 :
+  case GRN_OP_NEAR_NO_OFFSET :
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
   case GRN_OP_PREFIX :

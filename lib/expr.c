@@ -1143,7 +1143,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_EXPR_GET_VAR :
     case GRN_OP_MATCH :
     case GRN_OP_NEAR :
-    case GRN_OP_NEAR2 :
+    case GRN_OP_NEAR_NO_OFFSET :
     case GRN_OP_NEAR_PHRASE :
     case GRN_OP_ORDERED_NEAR_PHRASE :
     case GRN_OP_SIMILAR :
@@ -2695,7 +2695,7 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, float weight)
     } else {
       switch (si->op) {
       case GRN_OP_NEAR :
-      case GRN_OP_NEAR2 :
+      case GRN_OP_NEAR_NO_OFFSET :
         if (si->nargs == 3 &&
             *p == si->args[2] &&
             (*p)->header.domain == GRN_DB_INT32) {
@@ -2887,7 +2887,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
     switch (c->op) {
     case GRN_OP_MATCH :
     case GRN_OP_NEAR :
-    case GRN_OP_NEAR2 :
+    case GRN_OP_NEAR_NO_OFFSET :
     case GRN_OP_NEAR_PHRASE :
     case GRN_OP_ORDERED_NEAR_PHRASE :
     case GRN_OP_SIMILAR :
@@ -3043,7 +3043,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
     switch (code_op) {
     case GRN_OP_MATCH :
     case GRN_OP_NEAR :
-    case GRN_OP_NEAR2 :
+    case GRN_OP_NEAR_NO_OFFSET :
     case GRN_OP_NEAR_PHRASE :
     case GRN_OP_ORDERED_NEAR_PHRASE :
     case GRN_OP_SIMILAR :
@@ -3863,7 +3863,7 @@ parse_query_op(efs_info *q,
     q->cur = end;
     break;
   case 'n' :
-    *mode = GRN_OP_NEAR2;
+    *mode = GRN_OP_NEAR_NO_OFFSET;
     start = ++end;
     *option1 = grn_atoi(start, q->str_end, (const char **)&end);
     if (start == end) { *option1 = DEFAULT_MAX_INTERVAL; }
@@ -4070,7 +4070,7 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
     grn_expr_append_op(efsi->ctx, efsi->e, mode, 2);
     break;
   case GRN_OP_NEAR :
-  case GRN_OP_NEAR2 :
+  case GRN_OP_NEAR_NO_OFFSET :
     {
       int max_interval;
       max_interval = grn_int32_value_at(&efsi->max_interval_stack, -1);
@@ -4451,7 +4451,7 @@ parse_query(grn_ctx *ctx, efs_info *q)
         if (parse_query_op(q, op, &mode, &option1, &option2)) {
           switch (mode) {
           case GRN_OP_NEAR :
-          case GRN_OP_NEAR2 :
+          case GRN_OP_NEAR_NO_OFFSET :
             GRN_INT32_PUT(ctx, &q->max_interval_stack, option1);
             break;
           case GRN_OP_NEAR_PHRASE :

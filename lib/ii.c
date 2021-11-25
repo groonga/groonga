@@ -10456,7 +10456,7 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
     return false;
   }
 
-  if (data->mode == GRN_OP_NEAR2) {
+  if (data->mode == GRN_OP_NEAR_NO_OFFSET) {
     token_info_clear_offset(data->token_infos, data->n_token_infos);
     data->mode = GRN_OP_NEAR;
   }
@@ -10896,7 +10896,7 @@ grn_ii_select_cursor_open(grn_ctx *ctx,
   case GRN_OP_EXACT :
   case GRN_OP_FUZZY :
   case GRN_OP_NEAR :
-  case GRN_OP_NEAR2 :
+  case GRN_OP_NEAR_NO_OFFSET :
     break;
   default :
     ERR(GRN_INVALID_ARGUMENT,
@@ -12430,7 +12430,7 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
 
   switch (search_optarg->mode) {
   case GRN_OP_NEAR :
-  case GRN_OP_NEAR2 :
+  case GRN_OP_NEAR_NO_OFFSET :
     select_optarg->mode = search_optarg->mode;
     select_optarg->max_interval = search_optarg->max_interval;
     break;

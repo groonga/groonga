@@ -572,7 +572,9 @@ typedef enum {
   GRN_OP_IN,
   GRN_OP_MATCH,
   GRN_OP_NEAR,
-  GRN_OP_NEAR2,
+  GRN_OP_NEAR_NO_OFFSET,
+  /* Deprecated. Just for backward compatibility. */
+#define GRN_OP_NEAR2 GRN_OP_NEAR_NO_OFFSET
   GRN_OP_SIMILAR,
   GRN_OP_TERM_EXTRACT,
   GRN_OP_SHIFTL,

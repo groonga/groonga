@@ -1430,7 +1430,7 @@ grn_index_column_is_usable(grn_ctx *ctx,
     break;
   case GRN_OP_MATCH :
   case GRN_OP_NEAR :
-  case GRN_OP_NEAR2 :
+  case GRN_OP_NEAR_NO_OFFSET :
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
   case GRN_OP_SIMILAR :
