@@ -5,6 +5,239 @@
 News
 ====
 
+.. _release-11-1-0:
+
+Release 11.1.0 - 2021-11-29
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`/reference/commands/load`] Added support for ISO 8601 time format.[GitHub#1228][Patched by Takashi Hashida]
+
+  ``load`` support the following format by this modification.
+
+    * YYYY-MM-ddThh:mm:ss.sZ
+    * YYYY-MM-ddThh:mm:ss.s+10:00
+    * YYYY-MM-ddThh:mm:ss.s-10:00
+
+  We can also use ``t`` and ``z`` characters instead of ``T`` and ``Z`` in this syntax.
+  We can also use ``/`` character instead of ``-`` in this syntax. However, note that this is not an ISO 8601 format.
+  This format is present for compatibility.
+
+  .. code-block::
+
+     plugin_register functions/time
+
+     table_create Logs TABLE_NO_KEY
+     column_create Logs case COLUMN_SCALAR ShortText
+     column_create Logs created_at COLUMN_SCALAR Time
+     column_create Logs created_at_text COLUMN_SCALAR ShortText
+
+     load --table Logs
+     [
+     {"case": "timezone: Z", "created_at": "2000-01-01T10:00:00Z", "created_at_text": "2000-01-01T10:00:00Z"},
+     {"case": "timezone: z", "created_at": "2000-01-01t10:00:00z", "created_at_text": "2000-01-01T10:00:00z"},
+     {"case": "timezone: 00:00", "created_at": "2000-01-01T10:00:00+00:00", "created_at_text": "2000-01-01T10:00:00+00:00"},
+     {"case": "timezone: +01:01", "created_at": "2000-01-01T11:01:00+01:01", "created_at_text": "2000-01-01T11:01:00+01:01"},
+     {"case": "timezone: +11:11", "created_at": "2000-01-01T21:11:00+11:11", "created_at_text": "2000-01-01T21:11:00+11:11"},
+     {"case": "timezone: -01:01", "created_at": "2000-01-01T08:59:00-01:01", "created_at_text": "2000-01-01T08:59:00-01:01"},
+     {"case": "timezone: -11:11", "created_at": "1999-12-31T22:49:00-11:11", "created_at_text": "1999-12-31T22:49:00-11:11"},
+     {"case": "timezone hour threshold: +23:00", "created_at": "2000-01-02T09:00:00+23:00", "created_at_text": "2000-01-02T09:00:00+23:00"},
+     {"case": "timezone minute threshold: +00:59", "created_at": "2000-01-01T10:59:00+00:59", "created_at_text": "2000-01-01T10:59:00+00:59"},
+     {"case": "timezone omitting minute: +01", "created_at": "2000-01-01T11:00:00+01", "created_at_text": "2000-01-01T11:00:00+01"},
+     {"case": "timezone omitting minute: -01", "created_at": "2000-01-01T09:00:00-01", "created_at_text": "2000-01-01T09:00:00-01"},
+     {"case": "timezone: localtime", "created_at": "2000-01-01T19:00:00", "created_at_text": "2000-01-01T19:00:00"},
+     {"case": "compatible: date delimiter: /", "created_at": "2000/01/01T10:00:00Z", "created_at_text": "2000/01/01T10:00:00Z"},
+     {"case": "decimal", "created_at": "2000-01-01T11:01:00.123+01:01", "created_at_text": "2000-01-01T11:01:00.123+01:01"}
+     ]
+
+     select Logs \
+       --limit -1 \
+       --output_columns "case, time_format_iso8601(created_at), created_at_text"
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             14
+           ],
+           [
+             [
+               "case",
+               "ShortText"
+             ],
+             [
+               "time_format_iso8601",
+               null
+             ],
+             [
+               "created_at_text",
+               "ShortText"
+             ]
+           ],
+           [
+             "timezone: Z",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T10:00:00Z"
+           ],
+           [
+             "timezone: z",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T10:00:00z"
+           ],
+           [
+             "timezone: 00:00",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T10:00:00+00:00"
+           ],
+           [
+             "timezone: +01:01",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T11:01:00+01:01"
+           ],
+           [
+             "timezone: +11:11",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T21:11:00+11:11"
+           ],
+           [
+             "timezone: -01:01",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T08:59:00-01:01"
+           ],
+           [
+             "timezone: -11:11",
+             "2000-01-01T19:00:00.000000+09:00",
+             "1999-12-31T22:49:00-11:11"
+           ],
+           [
+             "timezone hour threshold: +23:00",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-02T09:00:00+23:00"
+           ],
+           [
+             "timezone minute threshold: +00:59",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T10:59:00+00:59"
+           ],
+           [
+             "timezone omitting minute: +01",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T11:00:00+01"
+           ],
+           [
+             "timezone omitting minute: -01",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T09:00:00-01"
+           ],
+           [
+             "timezone: localtime",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T19:00:00"
+           ],
+           [
+             "compatible: date delimiter: /",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000/01/01T10:00:00Z"
+           ],
+           [
+             "decimal",
+             "2000-01-01T19:00:00.123000+09:00",
+             "2000-01-01T11:01:00.123+01:01"
+           ]
+         ]
+       ]
+     ]
+
+* [:doc:`reference/commands/select`] Added a new ``query_flags`` ``DISABLE_PREFIX_SEARCH``.
+
+  We can use the prefix search operators ``^`` and ``*`` as search keywords
+  by ``DISABLE_PREFIX_SEARCH`` as below.
+
+  This feature is useful if we want to search documents including ``^`` and ``*``.
+
+  .. code-block::
+
+     table_create Users TABLE_PAT_KEY ShortText
+
+     load --table Users
+     [
+     {"_key": "alice"},
+     {"_key": "alan"},
+     {"_key": "ba*"}
+     ]
+
+     select Users \
+       --match_columns "_key" \
+       --query "a*" \
+       --query_flags "DISABLE_PREFIX_SEARCH"
+     [[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[3,"ba*"]]]]
+
+
+  .. code-block::
+
+     table_create Users TABLE_PAT_KEY ShortText
+
+     load --table Users
+     [
+     {"_key": "alice"},
+     {"_key": "alan"},
+     {"_key": "^a"}
+     ]
+
+     select Users \
+       --query "_key:^a" \
+       --query_flags "ALLOW_COLUMN|DISABLE_PREFIX_SEARCH"
+     [[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[3,"^a"]]]]
+
+* [:doc:`reference/commands/select`] Added a new ``query_flags`` ``DISABLE_AND_NOT``.
+
+  We can use ``AND NOT`` operators ``-`` as search keywords
+  by ``DISABLE_AND_NOT`` as below.
+
+  This feature is useful if we want to search documents including ``-``.
+
+  .. code-block::
+
+    table_create Users TABLE_PAT_KEY ShortText
+
+    load --table Users
+    [
+    {"_key": "alice"},
+    {"_key": "bob"},
+    {"_key": "cab-"}
+    ]
+
+    select Users   --match_columns "_key"   --query "b - a"   --query_flags "DISABLE_AND_NOT"
+    [[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[3,"cab-"]]]]
+
+Fixes
+-----
+
+* [The browser based administration tool] Fixed a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list. [GitHub#1186][Patched by Takashi Hashida]
+
+Known Issues
+------------
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
+
+Thanks
+------
+
+* Takashi Hashida
+
 .. _release-11-0-9:
 
 Release 11.0.9 - 2021-11-04
