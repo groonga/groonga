@@ -787,6 +787,9 @@ msgstr ""
 msgid "21.04 Hirsute Hippo"
 msgstr ""
 
+msgid "21.10 Impish Indri"
+msgstr ""
+
 msgid "Enable the universe repository to install Groonga::"
 msgstr ""
 "Groongaをインストールするためにuniverseリポジトリを有効にしてください::"
