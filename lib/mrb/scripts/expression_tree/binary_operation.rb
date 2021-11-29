@@ -42,7 +42,7 @@ module Groonga
       QUERY_OPERATIONS = [
         Operator::MATCH,
         Operator::NEAR,
-        Operator::NEAR2,
+        Operator::NEAR_NO_OFFSET,
         Operator::NEAR_PHRASE,
         Operator::ORDERED_NEAR_PHRASE,
         Operator::SIMILAR,

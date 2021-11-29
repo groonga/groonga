@@ -1906,7 +1906,7 @@ static const char *opstrs[] = {
   "IN",
   "MATCH",
   "NEAR",
-  "NEAR2",
+  "NEAR_NO_OFFSET",
   "SIMILAR",
   "TERM_EXTRACT",
   "SHIFTL",

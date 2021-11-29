@@ -10900,7 +10900,7 @@ grn_ii_select_cursor_open(grn_ctx *ctx,
     break;
   default :
     ERR(GRN_INVALID_ARGUMENT,
-        "%s EXACT, FUZZY, NEAR and NEAR2 are only supported mode: %s",
+        "%s EXACT, FUZZY, NEAR and NEAR_NO_OFFSET are only supported mode: %s",
         tag,
         grn_operator_to_string(cursor->data.mode));
     grn_ii_select_cursor_close(ctx, cursor);

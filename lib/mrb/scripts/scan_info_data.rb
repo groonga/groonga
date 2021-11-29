@@ -64,7 +64,7 @@ module Groonga
     private
     def near_search?
       return true if ((@op == Operator::NEAR or
-                       @op == Operator::NEAR2) and
+                       @op == Operator::NEAR_NO_OFFSET) and
                       (@args.size == 3))
       return true if ((@op == Operator::NEAR_PHRASE or
                        @op == Operator::ORDERED_NEAR_PHRASE) and
@@ -84,7 +84,7 @@ module Groonga
       else
         message =
           "The first argument of " +
-          "NEAR/NEAR2/NEAR_PHRASE/ORDERED_NEAR_PHRASE must be " +
+          "NEAR/NEAR_NO_OFFSET/NEAR_PHRASE/ORDERED_NEAR_PHRASE must be " +
           "Expression, Accessor or Indexable: #{arg.class}"
         raise ErrorMessage, message
       end
