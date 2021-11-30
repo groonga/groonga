@@ -216,13 +216,16 @@ class PackagesGroongaOrgPackageTask < PackageTask
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
     destination = "#{repository_rsync_base_path}/"
+    rsync_options = ["-av"]
     case target_namespace
     when :windows
     else
+      rsync_options << "--exclude=*.buildinfo"
+      rsync_options << "--exclude=*.changes"
       destination << "incoming/"
     end
     sh("rsync",
-       "-av",
+       *rsync_options,
        "#{repositories_dir}/",
        destination)
   end
