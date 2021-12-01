@@ -9867,6 +9867,9 @@ bt_close(grn_ctx *ctx, btr *bt)
   GRN_FREE(bt);
 }
 
+/* Adds a token info to the given tree. btr::min and btr::max are updated
+ * are updated when the given token info is minimum or maximum token info
+ * in the given tree. */
 grn_inline static void
 bt_push(btr *bt, token_info *ti)
 {
@@ -9892,8 +9895,10 @@ bt_push(btr *bt, token_info *ti)
   if (max_p) { bt->max = ti; }
 }
 
+/* Re-order the minimum token info. The minimum token info must be
+ * updated before you call this function. */
 grn_inline static void
-bt_pop(btr *bt)
+bt_reorder_min(btr *bt)
 {
   btr_node *node, *min, **last;
   for (last = &bt->root; (min = *last) && min->car; last = &min->car) ;
@@ -11257,7 +11262,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
               }
             }
           }
-          bt_pop(data->bt);
+          bt_reorder_min(data->bt);
           if ((data->mode == GRN_OP_NEAR_PHRASE ||
                data->mode == GRN_OP_ORDERED_NEAR_PHRASE) &&
               data->bt->min->pos == min) {
