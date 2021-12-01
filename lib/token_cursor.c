@@ -64,6 +64,9 @@ grn_token_cursor_open_initialize_token_filters(grn_ctx *ctx,
                                                   token_cursor->table,
                                                   token_cursor->mode);
     }
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
   }
 }
 
