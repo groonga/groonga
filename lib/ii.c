@@ -9506,6 +9506,10 @@ token_info_build_phrase(grn_ctx *ctx,
       break;
     }
     tid = grn_token_cursor_next(ctx, token_cursor);
+    if (ctx->rc != GRN_SUCCESS) {
+      rc = ctx->rc;
+      goto exit;
+    }
     token = grn_token_cursor_get_token(ctx, token_cursor);
     if (grn_token_get_force_prefix_search(ctx, token)) { ef |= EX_PREFIX; }
     switch (token_cursor->status) {
