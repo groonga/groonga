@@ -1,0 +1,11 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC121
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+select Entries \
+  --filter 'content *NPP2 "(a b) 1 2 (x y)"' \
+  --output_columns '_score, content'

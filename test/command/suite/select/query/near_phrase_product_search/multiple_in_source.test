@@ -1,0 +1,21 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC121
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+load --table Entries
+[
+{"content": "c x b x a x 1 x x"},
+{"content": "b x a x 1 x x"},
+{"content": "a x x 1 x"},
+{"content": "b x 3 x"},
+{"content": "3 x b x"}
+]
+
+select Entries \
+  --match_columns content \
+  --query '*NPP2"(c a b) (1 2)"' \
+  --output_columns '_score, content'

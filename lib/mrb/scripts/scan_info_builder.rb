@@ -18,6 +18,7 @@ module Groonga
       Operator::NEAR_NO_OFFSET,
       Operator::NEAR_PHRASE,
       Operator::ORDERED_NEAR_PHRASE,
+      Operator::NEAR_PHRASE_PRODUCT,
       Operator::SIMILAR,
       Operator::PREFIX,
       Operator::SUFFIX,

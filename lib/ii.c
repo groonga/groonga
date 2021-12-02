@@ -8718,6 +8718,7 @@ typedef struct {
   uint32_t size;
   int ntoken;
   grn_posting *p;
+  uint32_t phrase_group_id;
   uint32_t phrase_id;
   uint32_t n_tokens_in_phrase;
   bool must_last;
@@ -8753,6 +8754,11 @@ typedef enum {
 } grn_wv_mode;
 
 typedef struct {
+  uint32_t n_phrases;
+  btr *btree;
+} phrase_group;
+
+typedef struct {
   grn_ii *ii;
   grn_obj *lexicon;
   const char *query;
@@ -8770,9 +8776,11 @@ typedef struct {
   grn_fuzzy_search_optarg *fuzzy_search_optarg;
   grn_obj *query_options;
   bool only_skip_token;
-  uint32_t phrase_id_max;
   token_info **token_infos;
   uint32_t n_token_infos;
+  uint32_t n_phrase_groups;
+  phrase_group *phrase_groups;
+  uint32_t n_phrases;
   token_info *last_token_info;
   token_info *token_info;
   btr *bt;
@@ -9082,10 +9090,14 @@ grn_inline static int
 token_compare(const void *a, const void *b)
 {
   const token_info *t1 = *((token_info **)a), *t2 = *((token_info **)b);
-  if (t1->phrase_id == t2->phrase_id) {
-    return t1->size - t2->size;
+  if (t1->phrase_group_id == t2->phrase_group_id) {
+    if (t1->phrase_id == t2->phrase_id) {
+      return t1->size - t2->size;
+    } else {
+      return t1->phrase_id - t2->phrase_id;
+    }
   } else {
-    return t1->phrase_id - t2->phrase_id;
+    return t1->phrase_group_id - t2->phrase_group_id;
   }
 }
 
@@ -9678,6 +9690,7 @@ grn_inline static grn_rc
 token_info_build_near_phrase(grn_ctx *ctx,
                              grn_ii_select_data *data)
 {
+  const char *tag = "[ii][token-info][build]";
   grn_rc rc = GRN_SUCCESS;
   data->only_skip_token = false;
   grn_obj buffer;
@@ -9686,7 +9699,13 @@ token_info_build_near_phrase(grn_ctx *ctx,
   const char *query_end = current + data->query_len;
   const char *last_char = NULL;
   int last_char_len = 0;
+  bool in_paren = false;
+  uint32_t phrase_group_id = 0;
   uint32_t phrase_id = 0;
+
+  if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
+    phrase_group_id--;
+  }
 
   while (current < query_end) {
     int space_char_len = grn_isspace(current, ctx->encoding);
@@ -9703,12 +9722,64 @@ token_info_build_near_phrase(grn_ctx *ctx,
     int char_len = grn_charlen(ctx, current, query_end);
     if (char_len == 0) {
       ERR(GRN_INVALID_ARGUMENT,
-          "[ii][token-info][build] invalid character: <%0x>: <%.*s>",
+          "%s invalid character: <%0x>: <%.*s>",
+          tag,
           current[0],
           (int)(data->query_len),
           data->query);
       goto exit;
     }
+
+    if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
+      if (char_len == 1 && current[0] == GRN_QUERY_PARENL) {
+        if (in_paren) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "%s parenthesis must not be nested: <%.*s|%.*s|%.*s>",
+              tag,
+              (int)(current - data->query),
+              data->query,
+              char_len,
+              current,
+              (int)((data->query + data->query_len) - current - char_len),
+              current + char_len);
+          goto exit;
+        }
+        in_paren = true;
+        phrase_group_id++;
+        current += char_len;
+        continue;
+      } else if (char_len == 1 && current[0] == GRN_QUERY_PARENR) {
+        if (!in_paren) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "%s unbalanced close parenthesis is detected: <%.*s|%.*s|%.*s>",
+              tag,
+              (int)(current - data->query),
+              data->query,
+              char_len,
+              current,
+              (int)((data->query + data->query_len) - current - char_len),
+              current + char_len);
+          goto exit;
+        }
+        in_paren = false;
+        current += char_len;
+        continue;
+      } else {
+        if (!in_paren) {
+          ERR(GRN_INVALID_ARGUMENT,
+              "%s all phrases must be in parenthesis: <%.*s|%.*s|%.*s>",
+              tag,
+              (int)(current - data->query),
+              data->query,
+              char_len,
+              current,
+              (int)((data->query + data->query_len) - current - char_len),
+              current + char_len);
+          goto exit;
+        }
+      }
+    }
+
     if (char_len == 1 && current[0] == GRN_QUERY_QUOTEL) {
       use_buffer = true;
       current += char_len;
@@ -9716,7 +9787,8 @@ token_info_build_near_phrase(grn_ctx *ctx,
         char_len = grn_charlen(ctx, current, query_end);
         if (char_len == 0) {
           ERR(GRN_INVALID_ARGUMENT,
-              "[ii][token-info][build] invalid character: <%0x>: <%.*s>",
+              "%s invalid character: <%0x>: <%.*s>",
+              tag,
               current[0],
               (int)(data->query_len),
               data->query);
@@ -9757,7 +9829,8 @@ token_info_build_near_phrase(grn_ctx *ctx,
         char_len = grn_charlen(ctx, current, query_end);
         if (char_len == 0) {
           ERR(GRN_INVALID_ARGUMENT,
-              "[ii][token-info][build] invalid character: <%0x>: <%.*s>",
+              "%s invalid character: <%0x>: <%.*s>",
+              tag,
               current[0],
               (int)(data->query_len),
               data->query);
@@ -9778,6 +9851,10 @@ token_info_build_near_phrase(grn_ctx *ctx,
               escaping = true;
               continue;
             } else if (current[0] == GRN_QUERY_QUOTEL) {
+              break;
+            } else if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT &&
+                       (current[0] == GRN_QUERY_PARENL ||
+                        current[0] == GRN_QUERY_PARENR)) {
               break;
             }
           }
@@ -9811,7 +9888,15 @@ token_info_build_near_phrase(grn_ctx *ctx,
 
     uint32_t n_before = data->n_token_infos;
     rc = token_info_build_phrase(ctx, data, phrase, phrase_len);
-    if (rc != GRN_SUCCESS) {
+    if (rc == GRN_END_OF_DATA && data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
+      rc = GRN_SUCCESS;
+      uint32_t i;
+      for (i = n_before; i < data->n_token_infos; i++) {
+        token_info_close(ctx, data->token_infos[i]);
+      }
+      data->n_token_infos = n_before;
+      continue;
+    } else if (rc != GRN_SUCCESS) {
       goto exit;
     }
     if (data->n_token_infos > n_before) {
@@ -9821,10 +9906,21 @@ token_info_build_near_phrase(grn_ctx *ctx,
     uint32_t i;
     for (i = n_before; i < data->n_token_infos; i++) {
       data->token_infos[i]->n_tokens_in_phrase = data->n_token_infos - n_before;
+      data->token_infos[i]->phrase_group_id = phrase_group_id;
       data->token_infos[i]->phrase_id = phrase_id;
     }
     phrase_id++;
   }
+
+  if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT && in_paren) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s close parenthesis is missing",
+        tag);
+    goto exit;
+  }
+
+  data->n_phrase_groups = phrase_group_id + 1;
+  data->n_phrases = phrase_id;
 
   if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
     if (data->n_token_infos > 0) {
@@ -9902,6 +9998,50 @@ bt_push(btr *bt, token_info *ti)
   *last = new;
   if (min_p) { bt->min = ti; }
   if (max_p) { bt->max = ti; }
+}
+
+/* Drops the minimum token info. Note that you can't push a token info to
+ * this btr after this function is called. */
+grn_inline static void
+bt_pop(btr *bt)
+{
+  btr_node *min;
+  btr_node *parent = NULL;
+  btr_node **last;
+  for (last = &bt->root;
+       (min = *last) && min->car;
+       parent = min, last = &min->car) {
+  }
+  if (min) {
+    *last = min->cdr;
+    if (min->cdr) {
+      btr_node *new_min;
+      for (new_min = min->cdr; new_min->car; new_min = new_min->car) ;
+      bt->min = new_min->ti;
+    } else if (parent) {
+      bt->min = parent->ti;
+    } else {
+      bt->min = NULL;
+    }
+    if (last == &(bt->root)) {
+      bt->max = bt->min;
+    }
+    min->cdr = NULL;
+    bt->n--;
+  }
+}
+
+/* Replace the token info of the minimum node. Note that bt->min may
+ * not be correct until you call bt_reorder_min(). */
+grn_inline static void
+bt_replace_min(btr *bt, token_info *ti)
+{
+  btr_node *min, **last;
+  for (last = &bt->root; (min = *last) && min->car; last = &min->car) ;
+  if (min) {
+    min->ti = ti;
+    bt->min = ti;
+  }
 }
 
 /* Re-order the minimum token info. The minimum token info must be
@@ -10375,6 +10515,19 @@ grn_ii_select_data_init(grn_ctx *ctx,
   data->only_skip_token = GRN_FALSE;
   data->query_options = NULL;
 
+  data->token_infos = NULL;
+  data->n_token_infos = 0;
+  data->n_phrase_groups = 0;
+  data->phrase_groups = NULL;
+  data->n_phrases = 0;
+
+  data->bt = NULL;
+
+  data->rid = 0;
+  data->sid = 0;
+  data->next_rid = 0;
+  data->next_sid = 0;
+
   if (!optarg) {
     return;
   }
@@ -10419,11 +10572,6 @@ grn_ii_select_data_init(grn_ctx *ctx,
 
   data->fuzzy_search_optarg = &(optarg->fuzzy);
   data->query_options = optarg->query_options;
-
-  data->token_infos = NULL;
-  data->n_token_infos = 0;
-
-  data->bt = NULL;
 }
 
 static bool
@@ -10455,7 +10603,8 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
       return false;
     }
   } else if (data->mode == GRN_OP_NEAR_PHRASE ||
-             data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
+             data->mode == GRN_OP_ORDERED_NEAR_PHRASE ||
+             data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
     grn_rc rc = token_info_build_near_phrase(ctx, data);
     if (rc != GRN_SUCCESS) {
       return false;
@@ -10470,6 +10619,29 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
     return false;
   }
 
+  if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
+    data->phrase_groups =
+      GRN_MALLOC(sizeof(phrase_group) * data->n_phrase_groups);
+    if (!data->phrase_groups) {
+      return false;
+    }
+    uint32_t i;
+    uint32_t i_token_info = 0;
+    for (i = 0; i < data->n_phrase_groups; i++) {
+      uint32_t n_phrases = 0;
+      for (;
+           i_token_info < data->n_token_infos &&
+             data->token_infos[i_token_info]->phrase_group_id == i;
+           i_token_info += data->token_infos[i_token_info]->n_tokens_in_phrase) {
+        n_phrases++;
+      }
+      data->phrase_groups[i].n_phrases = n_phrases;
+      data->phrase_groups[i].btree = bt_open(ctx, n_phrases);
+    }
+  } else {
+    data->phrase_groups = NULL;
+  }
+
   if (data->mode == GRN_OP_NEAR_NO_OFFSET) {
     token_info_clear_offset(data->token_infos, data->n_token_infos);
     data->mode = GRN_OP_NEAR;
@@ -10478,6 +10650,7 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
   case GRN_OP_NEAR :
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
+  case GRN_OP_NEAR_PHRASE_PRODUCT :
     data->bt = bt_open(ctx, data->n_token_infos);
     if (!data->bt) {
       char errbuf[GRN_CTX_MSGSIZE];
@@ -10494,7 +10667,6 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
   default :
     break;
   }
-  data->phrase_id_max = data->token_infos[data->n_token_infos - 1]->phrase_id;
   qsort(data->token_infos,
         data->n_token_infos,
         sizeof(token_info *),
@@ -10533,6 +10705,14 @@ grn_ii_select_data_fin(grn_ctx *ctx,
 
   if (data->only_skip_token && data->optarg && data->optarg->match_info) {
     data->optarg->match_info->flags |= GRN_MATCH_INFO_ONLY_SKIP_TOKEN;
+  }
+
+  if (data->phrase_groups) {
+    uint32_t i;
+    for (i = 0; i < data->n_phrase_groups; i++) {
+      bt_close(ctx, data->phrase_groups[i].btree);
+    }
+    GRN_FREE(data->phrase_groups);
   }
 
   if (data->token_infos) {
@@ -10965,8 +11145,10 @@ grn_ii_select_skip_pos(grn_ctx *ctx,
   }
   if (data->token_info->p->rid != data->rid ||
       data->token_info->p->sid != data->sid) {
-    data->next_rid = data->token_info->p->rid;
-    data->next_sid = data->token_info->p->sid;
+    if (data->mode != GRN_OP_NEAR_PHRASE_PRODUCT) {
+      data->next_rid = data->token_info->p->rid;
+      data->next_sid = data->token_info->p->sid;
+    }
     return false;
   }
   return true;
@@ -11002,6 +11184,44 @@ grn_ii_select_data_find_phrase(grn_ctx *ctx,
     }
   }
   return false;
+}
+
+grn_inline static bool
+grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
+                                       grn_ii_select_data *data,
+                                       int32_t start_pos)
+{
+  uint32_t phrase_group_id = data->token_info->phrase_group_id;
+  phrase_group *group = &(data->phrase_groups[phrase_group_id]);
+  bool skipped = false;
+  token_info *min_before = group->btree->min;
+  while (true) {
+    data->token_info = group->btree->min;
+    if (grn_ii_select_data_find_phrase(ctx,
+                                       data,
+                                       data->token_info->phrase_id,
+                                       start_pos)) {
+      skipped = true;
+      bt_reorder_min(group->btree);
+      if (group->btree->min == min_before) {
+        break;
+      }
+      if (group->btree->min->pos == min_before->pos) {
+        break;
+      }
+      min_before = group->btree->min;
+    } else {
+      bt_pop(group->btree);
+      if (!group->btree->min) {
+        break;
+      }
+    }
+  }
+  if (!skipped) {
+    return false;
+  }
+  bt_replace_min(data->bt, group->btree->min);
+  return true;
 }
 
 grn_inline static bool
@@ -11061,26 +11281,52 @@ grn_ii_select_cursor_next_prepare(grn_ctx *ctx,
   grn_ii_select_data *data = &(cursor->data);
   uint32_t i;
   uint32_t n = data->n_token_infos;
-  data->rid = data->token_infos[0]->p->rid;
-  data->sid = data->token_infos[0]->p->sid;
-  data->next_rid = data->rid;
-  data->next_sid = data->sid + 1;
-  for (i = 1; i < n; i++) {
-    data->token_info = data->token_infos[i];
-    if (token_info_skip(ctx,
-                        data->token_info,
-                        data->rid,
-                        data->sid) != GRN_SUCCESS) {
-      return false;
+  if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
+    uint32_t min_rid = 0;
+    uint32_t min_sid = 0;
+    for (i = 0; i < n; i++) {
+      token_info *ti = data->token_infos[i];
+      if (ti->phrase_group_id == 0) {
+        if ((ti->p->rid < data->next_rid) ||
+            (ti->p->rid == data->next_rid && ti->p->sid < data->next_sid)) {
+          continue;
+        }
+        if (min_rid == 0 ||
+            ti->p->rid < min_rid ||
+            (ti->p->rid == min_rid && ti->p->sid < min_sid)) {
+          min_rid = ti->p->rid;
+          min_sid = ti->p->sid;
+        }
+      } else {
+        token_info_skip(ctx, ti, min_rid, min_sid);
+      }
     }
-    if (data->token_info->p->rid != data->rid ||
-        data->token_info->p->sid != data->sid) {
-      data->next_rid = data->token_info->p->rid;
-      data->next_sid = data->token_info->p->sid;
-      break;
+    data->rid = min_rid;
+    data->sid = min_sid;
+    data->next_rid = data->rid;
+    data->next_sid = data->sid + 1;
+  } else {
+    data->rid = data->token_infos[0]->p->rid;
+    data->sid = data->token_infos[0]->p->sid;
+    data->next_rid = data->rid;
+    data->next_sid = data->sid + 1;
+    for (i = 1; i < n; i++) {
+      data->token_info = data->token_infos[i];
+      if (token_info_skip(ctx,
+                          data->token_info,
+                          data->rid,
+                          data->sid) != GRN_SUCCESS) {
+        return false;
+      }
+      if (data->token_info->p->rid != data->rid ||
+          data->token_info->p->sid != data->sid) {
+        data->next_rid = data->token_info->p->rid;
+        data->next_sid = data->token_info->p->sid;
+        break;
+      }
     }
+    data->may_match = (i == data->n_token_infos);
   }
-  data->may_match = (i == data->n_token_infos);
   return true;
 }
 
@@ -11089,10 +11335,29 @@ grn_ii_select_cursor_next_skip(grn_ctx *ctx,
                                grn_ii_select_cursor *cursor)
 {
   grn_ii_select_data *data = &(cursor->data);
-  return token_info_skip(ctx,
-                         data->token_infos[0],
-                         data->next_rid,
-                         data->next_sid) == GRN_SUCCESS;
+  if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
+    bool skipped = false;
+    uint32_t i;
+    uint32_t n = data->n_token_infos;
+    for (i = 0; i < n; i++) {
+      token_info *ti = data->token_infos[i];
+      if (ti->phrase_group_id != 0) {
+        break;
+      }
+      if (token_info_skip(ctx,
+                          ti,
+                          data->next_rid,
+                          data->next_sid) == GRN_SUCCESS) {
+        skipped = true;
+      }
+    }
+    return skipped;
+  } else {
+    return token_info_skip(ctx,
+                           data->token_infos[0],
+                           data->next_rid,
+                           data->next_sid) == GRN_SUCCESS;
+  }
 }
 
 grn_inline static bool
@@ -11132,7 +11397,7 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
   if (data->mode == GRN_OP_NEAR_PHRASE ||
       data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
     uint32_t phrase_id;
-    for (phrase_id = 0; phrase_id <= data->phrase_id_max; phrase_id++) {
+    for (phrase_id = 0; phrase_id < data->n_phrases; phrase_id++) {
       if (!grn_ii_select_data_find_phrase(ctx,
                                           data,
                                           phrase_id,
@@ -11140,7 +11405,32 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
         need_check = false;
         break;
       }
+      /* TODO: Can we update data->pos to reduce needless search? */
       bt_push(data->bt, data->token_info);
+    }
+  } else if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
+    uint32_t i;
+    uint32_t phrase_id = 0;
+    for (i = 0; i < data->n_phrase_groups; i++) {
+      phrase_group *group = &(data->phrase_groups[i]);
+      bt_zap(group->btree);
+      uint32_t end_phrase_id = phrase_id + group->n_phrases;
+      bool have_phrase = false;
+      for (; phrase_id < end_phrase_id; phrase_id++) {
+        if (grn_ii_select_data_find_phrase(ctx,
+                                           data,
+                                           phrase_id,
+                                           data->pos)) {
+          have_phrase = true;
+          bt_push(group->btree, data->token_info);
+          /* TODO: Can we update data->pos to reduce needless search? */
+        }
+      }
+      if (!have_phrase) {
+        need_check = false;
+        break;
+      }
+      bt_push(data->bt, group->btree->min);
     }
   } else {
     uint32_t i;
@@ -11166,10 +11456,11 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
                                   ii_name,
                                   GRN_TABLE_MAX_KEY_SIZE);
       ERR(GRN_FILE_CORRUPT,
-          "%s[near] "
+          "%s[%s] "
           "max position must be larger than min position: "
           "min:<%d> max:<%d> ii:<%.*s> string:<%.*s>",
           tag,
+          grn_operator_to_string(data->mode),
           min, max,
           ii_name_size, ii_name,
           data->query_len,
@@ -11178,7 +11469,8 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
     }
     int32_t interval = max - min;
     if (data->mode == GRN_OP_NEAR_PHRASE ||
-        data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
+        data->mode == GRN_OP_ORDERED_NEAR_PHRASE ||
+        data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
       interval -= (data->token_info->n_tokens_in_phrase - 1);
     }
     bool matched;
@@ -11220,6 +11512,10 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
                                             next_pos)) {
           break;
         }
+      } else if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
+        if (!grn_ii_select_data_find_phrase_product(ctx, data, next_pos)) {
+          break;
+        }
       } else {
         if (!grn_ii_select_skip_pos(ctx, data, next_pos)) {
           break;
@@ -11235,6 +11531,11 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
                                             next_pos)) {
           break;
         }
+      } else if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
+        int32_t next_pos = min + 1;
+        if (!grn_ii_select_data_find_phrase_product(ctx, data, next_pos)) {
+          break;
+        }
       } else {
         int32_t next_pos = max - data->max_interval;
         if (!grn_ii_select_skip_pos(ctx, data, next_pos)) {
@@ -11244,7 +11545,8 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
     }
     bt_reorder_min(data->bt);
     if ((data->mode == GRN_OP_NEAR_PHRASE ||
-         data->mode == GRN_OP_ORDERED_NEAR_PHRASE) &&
+         data->mode == GRN_OP_ORDERED_NEAR_PHRASE ||
+         data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) &&
         data->bt->min->pos == min) {
       break;
     }
@@ -11386,7 +11688,8 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
       }
     } else if (data->mode == GRN_OP_NEAR ||
                data->mode == GRN_OP_NEAR_PHRASE ||
-               data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
+               data->mode == GRN_OP_ORDERED_NEAR_PHRASE ||
+               data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
       if (!grn_ii_select_cursor_next_find_near(ctx, cursor, tag)) {
         goto exit;
       }
@@ -12500,6 +12803,7 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
     break;
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
+  case GRN_OP_NEAR_PHRASE_PRODUCT :
     select_optarg->mode = search_optarg->mode;
     select_optarg->max_interval = search_optarg->max_interval;
     select_optarg->additional_last_interval =
