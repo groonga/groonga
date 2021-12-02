@@ -8783,6 +8783,7 @@ typedef struct {
   uint32_t sid;
   grn_id next_rid;
   uint32_t next_sid;
+  bool may_match;
 } grn_ii_select_data;
 
 static grn_inline grn_token_cursor *
@@ -11049,6 +11050,36 @@ grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
   }
 }
 
+grn_inline static bool
+grn_ii_select_cursor_next_prepare(grn_ctx *ctx,
+                                  grn_ii_select_cursor *cursor)
+{
+  grn_ii_select_data *data = &(cursor->data);
+  uint32_t i;
+  uint32_t n = data->n_token_infos;
+  data->rid = data->token_infos[0]->p->rid;
+  data->sid = data->token_infos[0]->p->sid;
+  data->next_rid = data->rid;
+  data->next_sid = data->sid + 1;
+  for (i = 1; i < n; i++) {
+    data->token_info = data->token_infos[i];
+    if (token_info_skip(ctx,
+                        data->token_info,
+                        data->rid,
+                        data->sid) != GRN_SUCCESS) {
+      return false;
+    }
+    if (data->token_info->p->rid != data->rid ||
+        data->token_info->p->sid != data->sid) {
+      data->next_rid = data->token_info->p->rid;
+      data->next_sid = data->token_info->p->sid;
+      break;
+    }
+  }
+  data->may_match = (i == data->n_token_infos);
+  return true;
+}
+
 grn_ii_select_cursor_posting *
 grn_ii_select_cursor_next(grn_ctx *ctx,
                           grn_ii_select_cursor *cursor)
@@ -11066,41 +11097,18 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
 
   grn_ii_select_data *data = &(cursor->data);
   token_info **tis = data->token_infos;
-  uint32_t n = data->n_token_infos;
-  token_info **tie = tis + n;
+  token_info **tie = data->token_infos + data->n_token_infos;
+  token_info **tip;
   for (;;) {
-    token_info **tip;
-    data->rid = (*tis)->p->rid;
-    data->sid = (*tis)->p->sid;
-    for (tip = tis + 1,
-           data->next_rid = data->rid,
-           data->next_sid = data->sid + 1;
-         tip < tie;
-         tip++) {
-      data->token_info = *tip;
-      if (token_info_skip(ctx,
-                          data->token_info,
-                          data->rid,
-                          data->sid) != GRN_SUCCESS) {
-        goto exit;
-      }
-      if (data->token_info->p->rid != data->rid ||
-          data->token_info->p->sid != data->sid) {
-        data->next_rid = data->token_info->p->rid;
-        data->next_sid = data->token_info->p->sid;
-        break;
-      }
-    }
-
-    bool may_match = true;
-    if (tip != tie) {
-      may_match = false;
+    data->may_match = true;
+    if (!grn_ii_select_cursor_next_prepare(ctx, cursor)) {
+      goto exit;
     }
     float weight = get_weight(ctx, data);
-    if (may_match && fpclassify(weight) == FP_ZERO) {
-      may_match = false;
+    if (data->may_match && fpclassify(weight) == FP_ZERO) {
+      data->may_match = false;
     }
-    if (may_match) {
+    if (data->may_match) {
       if (data->op != GRN_OP_OR) {
         if (data->result_set) {
           grn_rset_posinfo pi = {data->rid, data->sid, 0};
@@ -11109,13 +11117,13 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
                                    &pi,
                                    data->result_set->key_size,
                                    NULL);
-          may_match = (id != GRN_ID_NIL);
+          data->may_match = (id != GRN_ID_NIL);
         }
       }
     }
-    if (!may_match) {
+    if (!data->may_match) {
       if (token_info_skip(ctx,
-                          *tis,
+                          data->token_infos[0],
                           data->next_rid,
                           data->next_sid) != GRN_SUCCESS) {
         goto exit;
@@ -11370,7 +11378,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
     cursor->posting.score = record_score;
     if (cursor->per_occurrence_mode) {
       if (token_info_skip_pos(ctx,
-                              *tis,
+                              data->token_infos[0],
                               data->rid,
                               data->sid,
                               end_pos + 1) != GRN_SUCCESS) {
@@ -11378,7 +11386,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
       }
     } else {
       if (token_info_skip(ctx,
-                          *tis,
+                          data->token_infos[0],
                           data->next_rid,
                           data->next_sid) != GRN_SUCCESS) {
         cursor->done = true;
