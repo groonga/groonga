@@ -11080,6 +11080,17 @@ grn_ii_select_cursor_next_prepare(grn_ctx *ctx,
   return true;
 }
 
+grn_inline static bool
+grn_ii_select_cursor_next_skip(grn_ctx *ctx,
+                               grn_ii_select_cursor *cursor)
+{
+  grn_ii_select_data *data = &(cursor->data);
+  return token_info_skip(ctx,
+                         data->token_infos[0],
+                         data->next_rid,
+                         data->next_sid) == GRN_SUCCESS;
+}
+
 grn_ii_select_cursor_posting *
 grn_ii_select_cursor_next(grn_ctx *ctx,
                           grn_ii_select_cursor *cursor)
@@ -11122,10 +11133,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
       }
     }
     if (!data->may_match) {
-      if (token_info_skip(ctx,
-                          data->token_infos[0],
-                          data->next_rid,
-                          data->next_sid) != GRN_SUCCESS) {
+      if (!grn_ii_select_cursor_next_skip(ctx, cursor)) {
         goto exit;
       }
       continue;
@@ -11344,10 +11352,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
     }
 
     if (n_occurrences == 0) {
-      if (token_info_skip(ctx,
-                          *tis,
-                          data->next_rid,
-                          data->next_sid) != GRN_SUCCESS) {
+      if (!grn_ii_select_cursor_next_skip(ctx, cursor)) {
         goto exit;
       }
       continue;
@@ -11385,10 +11390,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
         cursor->done = true;
       }
     } else {
-      if (token_info_skip(ctx,
-                          data->token_infos[0],
-                          data->next_rid,
-                          data->next_sid) != GRN_SUCCESS) {
+      if (!grn_ii_select_cursor_next_skip(ctx, cursor)) {
         cursor->done = true;
       }
     }
