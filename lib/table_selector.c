@@ -1478,6 +1478,7 @@ select_index_dispatch(grn_ctx *ctx,
   case GRN_OP_NEAR_NO_OFFSET :
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
+  case GRN_OP_NEAR_PHRASE_PRODUCT :
   case GRN_OP_SIMILAR :
   case GRN_OP_REGEXP :
   case GRN_OP_QUORUM :
@@ -1838,6 +1839,7 @@ inspect_condition(grn_ctx *ctx,
   case GRN_OP_NEAR_NO_OFFSET :
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
+  case GRN_OP_NEAR_PHRASE_PRODUCT :
   case GRN_OP_PREFIX :
     if (n_codes == 3) {
       grn_expr_code *arg1 = expr->codes + si->start;
