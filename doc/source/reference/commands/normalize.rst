@@ -105,7 +105,9 @@ Here are available flags.
    * - ``WITH_TYPES``
      - TODO
    * - ``WITH_CHECKS``
-     - TODO
+     - If we specify this flag, Groonga output position of character before normalizing.
+       Note that these positions of character before normalizing are a relative position
+       against a previous character.
    * - ``REMOVE_TOKENIZED_DELIMITER``
      - TODO
 
@@ -116,6 +118,12 @@ TODO
 Here is an example that uses ``WITH_TYPES``.
 
 TODO
+
+Here is an example that uses ``WITH_CHECKS``.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/normalize/normalizer_auto_with_checks.log
+.. normalize NormalizerAuto "　A　　B　　　C" WITH_CHECKS
 
 Here is an example that uses ``REMOVE_TOKENIZED_DELIMITER``.
 

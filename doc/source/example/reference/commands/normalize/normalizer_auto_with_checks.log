@@ -1,0 +1,27 @@
+Execution example::
+
+  normalize NormalizerAuto "　A　　B　　　C" WITH_CHECKS
+  #[
+  #  [
+  #    0,
+  #    0.0,
+  #    0.0
+  #  ],
+  #  {
+  #    "normalized":" a   b    c",
+  #    "types": [
+  #
+  #    ],
+  #    "checks": [
+  #      3,
+  #      1,
+  #      3,
+  #      3,
+  #      1,
+  #      3,
+  #      3,
+  #      3,
+  #      1
+  #    ]
+  #  }
+  #]

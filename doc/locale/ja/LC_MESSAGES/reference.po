@@ -10204,6 +10204,15 @@ msgstr ""
 msgid "``WITH_CHECKS``"
 msgstr ""
 
+msgid ""
+"If we specify this flag, Groonga output position of character before "
+"normalizing. Note that these positions of character before normalizing are a "
+"relative position against a previous character."
+msgstr ""
+"このフラグを指定した場合、Groongaは、ノーマライズ前の文字の位置を出力します。"
+"これらのノーマライズ前の文字の位置は、一つ前の文字との相対位置であることに注"
+"意してください。"
+
 msgid "``REMOVE_TOKENIZED_DELIMITER``"
 msgstr ""
 
@@ -10212,6 +10221,9 @@ msgstr "以下は ``REMOVE_BLANK`` を使った例です。"
 
 msgid "Here is an example that uses ``WITH_TYPES``."
 msgstr "以下は ``WITH_TYPES`` を使った例です。"
+
+msgid "Here is an example that uses ``WITH_CHECKS``."
+msgstr "以下は ``WITH_CHECKS`` を使った例です。"
 
 msgid "Here is an example that uses ``REMOVE_TOKENIZED_DELIMITER``."
 msgstr "以下は ``REMOVE_TOKENIZED_DELIMITER`` を使った例です。"

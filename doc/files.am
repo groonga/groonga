@@ -236,6 +236,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_table_remove/remove_with_reference_dependent.log \
 	$(top_srcdir)/doc/source/example/reference/commands/logical_table_remove/usage_register.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalize/normalizer_auto_ascii.log \
+	$(top_srcdir)/doc/source/example/reference/commands/normalize/normalizer_auto_with_checks.log \
 	$(top_srcdir)/doc/source/example/reference/commands/normalizer_list/simple_example.log \
 	$(top_srcdir)/doc/source/example/reference/commands/object_exist/name_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/object_exist/usage.log \
@@ -1417,6 +1418,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/logical_table_remove/remove_with_reference_dependent.log \
 	source/example/reference/commands/logical_table_remove/usage_register.log \
 	source/example/reference/commands/normalize/normalizer_auto_ascii.log \
+	source/example/reference/commands/normalize/normalizer_auto_with_checks.log \
 	source/example/reference/commands/normalizer_list/simple_example.log \
 	source/example/reference/commands/object_exist/name_column.log \
 	source/example/reference/commands/object_exist/usage.log \
