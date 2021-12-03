@@ -1,0 +1,71 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "a 1 x x c"},
+{"content": "a 1 x x 3"},
+{"content": "b 2 x x x c"},
+{"content": "b 2 x x x 3"},
+{"content": "b x x 2 x 3"},
+{"content": "b x x 2 x c"},
+{"content": "a x 2 x 3"},
+{"content": "a x 2 x c"},
+{"content": "a x 2 3"},
+{"content": "a x 2 c"}
+]
+[[0,0.0,0.0],10]
+select   --table Memos   --match_columns content   --query '*ONPP3,1"(a b) (1 2) (c 3)"'   --output_columns _score,content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "content",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "a 1 x x c"
+      ],
+      [
+        1,
+        "a 1 x x 3"
+      ],
+      [
+        1,
+        "a x 2 x 3"
+      ],
+      [
+        1,
+        "a x 2 x c"
+      ],
+      [
+        1,
+        "a x 2 3"
+      ],
+      [
+        1,
+        "a x 2 c"
+      ]
+    ]
+  ]
+]

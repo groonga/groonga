@@ -231,6 +231,7 @@ query_element ::= IDENTIFIER RELATIVE_OP query_element. {
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
   case GRN_OP_NEAR_PHRASE_PRODUCT :
+  case GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT :
     {
       int max_interval;
       GRN_INT32_POP(&efsi->max_interval_stack, max_interval);
@@ -430,6 +431,20 @@ relational_expression ::= relational_expression NEAR_PHRASE_PRODUCT shift_expres
                               GRN_OP_PUSH, 1);
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR_PHRASE_PRODUCT, 4);
+}
+relational_expression ::= relational_expression ORDERED_NEAR_PHRASE_PRODUCT shift_expression. {
+  {
+    int max_interval;
+    GRN_INT32_POP(&efsi->max_interval_stack, max_interval);
+    grn_expr_append_const_int(efsi->ctx, efsi->e, max_interval,
+                              GRN_OP_PUSH, 1);
+    int additional_last_interval;
+    GRN_INT32_POP(&efsi->additional_last_interval_stack,
+                  additional_last_interval);
+    grn_expr_append_const_int(efsi->ctx, efsi->e, additional_last_interval,
+                              GRN_OP_PUSH, 1);
+  }
+  grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT, 4);
 }
 relational_expression ::= relational_expression SIMILAR shift_expression. {
   {

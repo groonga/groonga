@@ -46,6 +46,7 @@ module Groonga
         Operator::NEAR_PHRASE,
         Operator::ORDERED_NEAR_PHRASE,
         Operator::NEAR_PHRASE_PRODUCT,
+        Operator::ORDERED_NEAR_PHRASE_PRODUCT,
         Operator::SIMILAR,
         Operator::EXACT,
         Operator::REGEXP,

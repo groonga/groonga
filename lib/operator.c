@@ -109,6 +109,7 @@ static const char *operator_names[] = {
   "near_phrase",
   "ordered_near_phrase",
   "near_phrase_product",
+  "ordered_near_phrase_product",
 };
 
 static const char *operator_script_syntaxes[] = {
@@ -195,9 +196,10 @@ static const char *operator_script_syntaxes[] = {
   "*NP",
   "*ONP",
   "*NPP",
+  "*ONPP",
 };
 
-#define GRN_OP_LAST GRN_OP_NEAR_PHRASE_PRODUCT
+#define GRN_OP_LAST GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT
 
 const char *
 grn_operator_to_string(grn_operator op)
