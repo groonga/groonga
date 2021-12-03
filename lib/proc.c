@@ -1539,6 +1539,8 @@ grn_proc_get_value_mode(grn_ctx *ctx,
     return GRN_OP_ORDERED_NEAR_PHRASE;
   } else if (EQUAL_MODE("*NPP") || EQUAL_MODE("NEAR_PHRASE_PRODUCT")) {
     return GRN_OP_NEAR_PHRASE_PRODUCT;
+  } else if (EQUAL_MODE("*ONPP") || EQUAL_MODE("ORDERED_NEAR_PHRASE_PRODUCT")) {
+    return GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT;
   } else if (EQUAL_MODE("*S") || EQUAL_MODE("SIMILAR")) {
     return GRN_OP_SIMILAR;
   } else if (EQUAL_MODE("^") || EQUAL_MODE("@^") || EQUAL_MODE("PREFIX")) {
@@ -1561,6 +1563,8 @@ grn_proc_get_value_mode(grn_ctx *ctx,
                      "\"*N\", \"NEAR\", "
                      "\"*NP\", \"NEAR_PHRASE\", "
                      "\"*ONP\", \"ORDERED_NEAR_PHRASE\", "
+                     "\"*NPP\", \"NEAR_PHRASE_PRODUCT\", "
+                     "\"*ONPP\", \"ORDERED_NEAR_PHRASE_PRODUCT\", "
                      "\"*S\", \"SIMILAR\", "
                      "\"^\", \"@^\", \"PREFIX\", "
                      "\"$\", \"@$\", \"SUFFIX\", "

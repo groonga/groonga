@@ -1,0 +1,21 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC121
+[[0,0.0,0.0],true]
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+[[0,0.0,0.0],true]
+select Entries   --match_columns content   --query '*ONPP2"(a (b))"'   --output_columns '_score, content'
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[ii][token-info][build] parenthesis must not be nested: <(a |(|b))>"
+  ]
+]
+#|e| [ii][token-info][build] parenthesis must not be nested: <(a |(|b))>
+#|e| grn_ii_select on grn_ii_sel(1) failed !

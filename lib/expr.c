@@ -1147,6 +1147,7 @@ grn_expr_append_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj, grn_operator op, 
     case GRN_OP_NEAR_PHRASE :
     case GRN_OP_ORDERED_NEAR_PHRASE :
     case GRN_OP_NEAR_PHRASE_PRODUCT :
+    case GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -1952,6 +1953,7 @@ static const char *opstrs[] = {
   "NEAR_PHRASE",
   "ORDERED_NEAR_PHRASE",
   "NEAR_PHRASE_PRODUCT",
+  "ORDERED_NEAR_PHRASE_PRODUCT",
 };
 
 static void
@@ -2709,6 +2711,7 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, float weight)
       case GRN_OP_NEAR_PHRASE :
       case GRN_OP_ORDERED_NEAR_PHRASE :
       case GRN_OP_NEAR_PHRASE_PRODUCT :
+      case GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT :
         if (si->nargs >= 3 &&
             *p == si->args[2] &&
             (*p)->header.domain == GRN_DB_INT32) {
@@ -2894,6 +2897,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_NEAR_PHRASE :
     case GRN_OP_ORDERED_NEAR_PHRASE :
     case GRN_OP_NEAR_PHRASE_PRODUCT :
+    case GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -3051,6 +3055,7 @@ grn_scan_info_build_full(grn_ctx *ctx, grn_obj *expr, int *n,
     case GRN_OP_NEAR_PHRASE :
     case GRN_OP_ORDERED_NEAR_PHRASE :
     case GRN_OP_NEAR_PHRASE_PRODUCT :
+    case GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -3403,6 +3408,7 @@ grn_scan_info_build_simple_operation(grn_ctx *ctx,
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
   case GRN_OP_NEAR_PHRASE_PRODUCT :
+  case GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT :
   case GRN_OP_SIMILAR :
   case GRN_OP_PREFIX :
   case GRN_OP_SUFFIX :
@@ -3490,6 +3496,7 @@ grn_scan_info_build_simple_and_operations(grn_ctx *ctx,
     case GRN_OP_NEAR_PHRASE :
     case GRN_OP_ORDERED_NEAR_PHRASE :
     case GRN_OP_NEAR_PHRASE_PRODUCT :
+    case GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT :
     case GRN_OP_SIMILAR :
     case GRN_OP_PREFIX :
     case GRN_OP_SUFFIX :
@@ -3846,8 +3853,13 @@ parse_query_op(efs_info *q,
       }
     } else {
       if (end + 2 < q->str_end && end[1] == 'N' && end[2] == 'P') {
-        *mode = GRN_OP_ORDERED_NEAR_PHRASE;
         start = end + 3;
+        if (start < q->str_end && start[0] == 'P') {
+          start++;
+          *mode = GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT;
+        } else {
+          *mode = GRN_OP_ORDERED_NEAR_PHRASE;
+        }
       } else {
         found = false;
       }
@@ -4098,6 +4110,7 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
   case GRN_OP_NEAR_PHRASE_PRODUCT :
+  case GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT :
     {
       int max_interval;
       max_interval = grn_int32_value_at(&efsi->max_interval_stack, -1);
@@ -4470,6 +4483,7 @@ parse_query(grn_ctx *ctx, efs_info *q)
           case GRN_OP_NEAR_PHRASE :
           case GRN_OP_ORDERED_NEAR_PHRASE :
           case GRN_OP_NEAR_PHRASE_PRODUCT :
+          case GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT :
             GRN_INT32_PUT(ctx, &q->max_interval_stack, option1);
             GRN_INT32_PUT(ctx, &q->additional_last_interval_stack, option2);
             break;
@@ -5026,7 +5040,12 @@ parse_script(grn_ctx *ctx, efs_info *q)
                   q->cur[2] == 'N' &&
                   q->cur[3] == 'P') {
                 next_start = q->cur + 4;
-                token = GRN_EXPR_TOKEN_ORDERED_NEAR_PHRASE;
+                if (next_start < q->str_end && next_start[0] == 'P') {
+                  next_start++;
+                  token = GRN_EXPR_TOKEN_ORDERED_NEAR_PHRASE_PRODUCT;
+                } else {
+                  token = GRN_EXPR_TOKEN_ORDERED_NEAR_PHRASE;
+                }
               } else {
                 processed = false;
               }

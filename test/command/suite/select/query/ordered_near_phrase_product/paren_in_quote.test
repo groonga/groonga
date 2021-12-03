@@ -1,0 +1,21 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+load --table Entries
+[
+{"content": "a(x]b"},
+{"content": "a]x(b"},
+{"content": "a[xx)b"},
+{"content": "a[x)b"},
+{"content": "a)x[b"},
+{"content": "a(xx]b"}
+]
+
+select Entries \
+  --match_columns content \
+  --query '*ONPP2"([ \\\"(\\\") (] \\\")\\\")"' \
+  --output_columns '_score, content'

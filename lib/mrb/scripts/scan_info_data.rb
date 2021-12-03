@@ -68,7 +68,8 @@ module Groonga
                       (@args.size == 3))
       return true if ((@op == Operator::NEAR_PHRASE or
                        @op == Operator::ORDERED_NEAR_PHRASE or
-                       @op == Operator::NEAR_PHRASE_PRODUCT) and
+                       @op == Operator::NEAR_PHRASE_PRODUCT or
+                       @op == Operator::ORDERED_NEAR_PHRASE_PRODUCT) and
                       (@args.size == 4))
       false
     end
@@ -86,7 +87,7 @@ module Groonga
         message =
           "The first argument of " +
           "NEAR/NEAR_NO_OFFSET/NEAR_PHRASE/ORDERED_NEAR_PHRASE/" +
-          "NEAR_PHRASE_PRODUCT must be " +
+          "NEAR_PHRASE_PRODUCT/ORDERED_NEAR_PHRASE_PRODUCT must be " +
           "Expression, Accessor or Indexable: #{arg.class}"
         raise ErrorMessage, message
       end
@@ -96,7 +97,8 @@ module Groonga
       case @op
       when Operator::NEAR_PHRASE,
            Operator::ORDERED_NEAR_PHRASE,
-           Operator::NEAR_PHRASE_PRODUCT
+           Operator::NEAR_PHRASE_PRODUCT,
+           Operator::ORDERED_NEAR_PHRASE_PRODUCT
         self.additional_last_interval = @args[3].value
       end
     end
