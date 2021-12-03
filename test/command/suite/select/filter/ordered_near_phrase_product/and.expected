@@ -1,0 +1,49 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC121
+[[0,0.0,0.0],true]
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "c * 3"},
+{"content": "3 * c"},
+{"content": "a * 7 * 8 * 9 * x"},
+{"content": "a * x * y * z * 7"},
+{"content": "a * b * 1 * x * * 9 * y"},
+{"content": "1 * a * b * 7 * * x * 8"},
+{"content": "x y z"},
+{"content": "7 8 9"}
+]
+[[0,0.0,0.0],8]
+select Entries   --filter 'content *ONPP2 "(a b c) (1 2 3)" && content *ONPP2 "(7 8 9) (x y z)"'   --output_columns '_score, content'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        2,
+        "a * b * 1 * x * * 9 * y"
+      ]
+    ]
+  ]
+]
