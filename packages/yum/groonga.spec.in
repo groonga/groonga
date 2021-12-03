@@ -6,7 +6,7 @@
 
 Name:		groonga
 Version:	@VERSION@
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	An Embeddable Fulltext Search Engine
 
 Group:		Applications/Text
@@ -438,6 +438,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Mon Dec 03 2021 Horimoto Yasuhiro <horimoto@clear-code.com> - 11.1.0-2
+- Use the latest Apache Arrow.
+
 * Mon Nov 29 2021 Horimoto Yasuhiro <horimoto@clear-code.com> - 11.1.0-1
 - New upstream release.
 
