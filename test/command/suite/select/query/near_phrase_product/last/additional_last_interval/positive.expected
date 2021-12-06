@@ -1,0 +1,59 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "a c d ."},
+{"content": "1 3 4 ,"},
+{"content": "a b x c ."},
+{"content": "1 2 x 3 ,"},
+{"content": "a b x c d ."},
+{"content": "1 2 x 3 4 ,"}
+]
+[[0,0.0,0.0],6]
+select   --table Memos   --match_columns content   --query '*NPP3,1"(a 1) (c 3) (,$ .$)"'   --output_columns _score,content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "content",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "a c d ."
+      ],
+      [
+        1,
+        "1 3 4 ,"
+      ],
+      [
+        1,
+        "a b x c ."
+      ],
+      [
+        1,
+        "1 2 x 3 ,"
+      ]
+    ]
+  ]
+]
