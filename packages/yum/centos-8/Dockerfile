@@ -3,7 +3,6 @@ FROM ${FROM}
 
 ARG DEBUG
 ARG APACHE_ARROW_VERSION
-ARG APACHE_ARROW_NEXT_VERSION
 
 RUN \
   quiet=$([ "${DEBUG}" = "yes" ] || echo "--quiet") && \

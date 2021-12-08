@@ -54,8 +54,6 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     [
       "--build-arg",
       "APACHE_ARROW_VERSION=#{detect_target_apache_arrow_version}",
-      "--build-arg",
-      "APACHE_ARROW_NEXT_VERSION=#{detect_apache_arrow_next_version}",
     ]
   end
 
