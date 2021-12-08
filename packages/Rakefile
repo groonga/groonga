@@ -78,6 +78,8 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     case key
     when "APACHE_ARROW_VERSION"
       detect_target_apache_arrow_version
+    when "APACHE_ARROW_NEXT_VERSION"
+      detect_apache_arrow_next_version
     else
       super
     end
