@@ -25520,6 +25520,61 @@ msgid ""
 "to show difference with near search with English text."
 msgstr ""
 
+msgid "Ordered near phrase search operator"
+msgstr "順序つき近傍フレーズ検索演算子"
+
+msgid ""
+"The operator does ordered near phrase search with phrases ``phrase1 "
+"phrase2 ...``. Ordered near phrase search searches records that contain the "
+"phrases and the phrases are appeared in the specified order and the max "
+"interval."
+msgstr ""
+"この演算子は ``phrase1 phrase2 ...`` というフレーズで順序つき近傍フレーズ検索"
+"します。順序つき近傍フレーズ検索はすべてのフレーズが含まれていてかつそれぞれ"
+"が指定した順番で出現していてかつそれぞれのフレーズが指定した距離以内にあるレ"
+"コードを検索します。"
+
+msgid "The first expression matches records of below conditions."
+msgstr "最初の式は、以下の条件のレコードにマッチします。"
+
+msgid "Recordes contain ``I`` and ``fast``."
+msgstr "``I`` と ``fast`` を含むレコード。"
+
+msgid "The interval of between ``I`` and ``fast`` are within 10 words."
+msgstr "``I`` と ``fast`` の間が10単語以内。"
+
+msgid ""
+"Those phrases appear in the specified order (When the order of ``I`` and "
+"``fast`` is ``I`` -> ``fast``)."
+msgstr ""
+"これらのフレーズが指定した順序で出現する(``I`` と ``fast`` の順序が ``I`` -> "
+"``fast`` の場合)。"
+
+msgid ""
+"Therefore ``I also started to use mroonga. It's also very fast! ...`` is "
+"matched. The number of words between ``I`` and ``fast`` is just 10."
+msgstr ""
+"したがって、 ``I also started to use mroonga. It's also very fast! ...`` に"
+"マッチします。 ``I`` と ``fast`` の間の単語数はちょうど10です。"
+
+msgid "The second expression matches records of below conditions."
+msgstr "次の式は、以下の条件のレコードにマッチします。"
+
+msgid ""
+"Those phrases appear in the specified order (When the order of ``I`` and "
+"``fast`` is ``fast`` -> ``I``)."
+msgstr ""
+"これらのフレーズが指定した順序で出現する(``I`` と ``fast`` の順序が ``fast`` "
+"-> ``I`` の場合)。"
+
+msgid ""
+"Therefore ``I also started to use mroonga. It's also very fast! ...`` is not "
+"matched. Because the order of ``I`` and ``fast`` is ``I`` -> ``fast``."
+msgstr ""
+"したがって、 ``I also started to use mroonga. It's also very fast! ...`` は"
+"マッチしません。``I`` と ``fast`` の順序が、 ``I`` -> ``fast`` であるためで"
+"す。"
+
 msgid "Similar search"
 msgstr "類似文書検索"
 

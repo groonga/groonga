@@ -1103,6 +1103,72 @@ the record that its content is ``I also st arted to use mroonga. It's
 also very fast! Really fast!`` is matched. The number of words between
 ``also`` and ``Really`` is 10.
 
+.. _script-syntax-ordered-near-phrase-search-operator:
+
+Ordered near phrase search operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Its syntax is one of them::
+
+  column *ONP "phrase1 phrase2 ..."
+  column *ONP${MAX_INTERVAL} "phrase1 phrase2 ..."
+
+Here are the examples of the second form::
+
+  column *ONP29 "phrase1 phrase2 ..."
+  column *ONP-1 "phrase1 phrase2 ..."
+
+The first example means that ``29`` is used for the max interval.
+
+The second example means that ``-1`` is used for the max interval.
+``-1`` max interval means no limit.
+
+The operator does ordered near phrase search with phrases ``phrase1 phrase2
+...``. Ordered near phrase search searches records that contain the phrases
+and the phrases are appeared in the specified order and the max
+interval.
+
+The max interval is ``10`` by default. The unit of the max interval is
+the number of characters in N-gram family tokenizers and the number of
+words in morphological analysis family tokenizers.
+
+However, ``TokenBigram`` doesn't split ASCII only word into tokens.
+Because ``TokenBigram`` uses white-space-separate like tokenize method
+for ASCII characters in this case.
+
+So the unit for ASCII words with ``TokenBigram`` is the number of
+words even if ``TokenBigram`` is a N-gram family tokenizer.
+
+Note that an index column for full text search must be defined for
+``column``.
+
+Here is a simple example.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_ordered_near_phrase_search_operator.log
+.. select Entries --filter 'content *ONP "I fast"'      --output_columns content
+.. select Entries --filter 'content *ONP "fast I"'      --output_columns content
+
+The first expression matches records of below conditions.
+
+* Recordes contain ``I`` and ``fast``.
+* The interval of between ``I`` and ``fast`` are within 10 words.
+* Those phrases appear in the specified order
+  (When the order of ``I`` and ``fast`` is ``I`` -> ``fast``).
+
+Therefore ``I also started to use mroonga. It's also very fast! ...`` is matched.
+The number of words between ``I`` and ``fast`` is just 10.
+
+The second expression matches records of below conditions.
+
+* Recordes contain ``I`` and ``fast``.
+* The interval of between ``I`` and ``fast`` are within 10 words.
+* Those phrases appear in the specified order
+  (When the order of ``I`` and ``fast`` is ``fast`` -> ``I``).
+
+Therefore ``I also started to use mroonga. It's also very fast! ...`` is not matched.
+Because the order of ``I`` and ``fast`` is ``I`` -> ``fast``.
+
 .. _script-syntax-similar-search-operator:
 
 Similar search
