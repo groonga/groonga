@@ -15,7 +15,7 @@ URL:		http://groonga.org/
 Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
-BuildRequires:	arrow-devel = @APACHE_ARROW_VERSION@, arrow-devel < @APACHE_ARROW_NEXT_VERSION@
+BuildRequires:	arrow-devel >= @APACHE_ARROW_VERSION@, arrow-devel < @APACHE_ARROW_NEXT_VERSION@
 BuildRequires:	mecab-devel
 BuildRequires:	zlib-devel
 BuildRequires:	lz4-devel
@@ -45,7 +45,7 @@ on relational data model.
 Summary:	Runtime libraries for Groonga
 Group:		System Environment/Libraries
 License:	LGPLv2 and (MIT or GPLv2)
-Requires:	arrow-libs = @APACHE_ARROW_VERSION@, arrow-libs < @APACHE_ARROW_NEXT_VERSION@
+Requires:	arrow-libs >= @APACHE_ARROW_VERSION@, arrow-libs < @APACHE_ARROW_NEXT_VERSION@
 Requires:	zlib
 Requires:	lz4
 Requires:	libzstd
