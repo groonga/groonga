@@ -138,7 +138,7 @@ Documentation for Groonga
 Summary:	Libraries and header files for Groonga
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	arrow-devel = @APACHE_ARROW_VERSION@
+Requires:	arrow-devel >= @APACHE_ARROW_VERSION@, arrow-devel < @APACHE_ARROW_NEXT_MAJOR_VERSION@.0.0
 
 %description devel
 Libraries and header files for Groonga
