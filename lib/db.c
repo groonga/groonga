@@ -927,8 +927,6 @@ grn_column_create_similar_internal(grn_ctx *ctx,
                 "%s base column's source doesn't exist: %u",
                 tag,
                 base_source_column_id);
-            grn_obj_remove(ctx, column);
-            column = NULL;
             break;
           }
           char source_column_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -951,8 +949,6 @@ grn_column_create_similar_internal(grn_ctx *ctx,
                 name,
                 source_column_name_length,
                 source_column_name);
-            grn_obj_remove(ctx, column);
-            column = NULL;
             break;
           }
           GRN_RECORD_PUT(ctx, &source_ids, DB_OBJ(source_column)->id);
@@ -965,7 +961,10 @@ grn_column_create_similar_internal(grn_ctx *ctx,
       }
       GRN_OBJ_FIN(ctx, &base_source_ids);
       if (ctx->rc != GRN_SUCCESS) {
+        grn_rc original_rc = ctx->rc;
+        ctx->rc = GRN_SUCCESS;
         grn_obj_remove(ctx, column);
+        ctx->rc = original_rc;
         return NULL;
       }
     }

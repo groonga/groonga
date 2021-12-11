@@ -5,3 +5,6 @@ column_create Docs sentences COLUMN_VECTOR Text
 
 table_create Words TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
 column_create Words docs_sentences COLUMN_INDEX|WITH_POSITION Docs sentences
+
+dump
+table_remove Words

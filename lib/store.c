@@ -2398,8 +2398,6 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
 {
   const char *tag = "[ja][replace]";
   grn_ja_wal_add_entry_data wal_data = {0};
-  grn_rc original_rc = ctx->rc;
-  ctx->rc = GRN_SUCCESS;
   wal_data.ja = ja;
   wal_data.need_lock = false;
   wal_data.tag = tag;
@@ -2418,11 +2416,7 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
   uint32_t lseg = id >> JA_W_EINFO_IN_A_SEGMENT;
   uint32_t pos = id & JA_M_EINFO_IN_A_SEGMENT;
   if (grn_io_lock(ctx, ja->io, grn_lock_timeout) != GRN_SUCCESS) {
-    if(ctx->rc != GRN_SUCCESS) {
-      return ctx->rc;
-    }
-    ctx->rc = original_rc;
-    return GRN_SUCCESS;
+    return ctx->rc;
   }
   wal_data.segment = ja->header->element_segs[lseg];
   if (wal_data.segment == JA_ELEMENT_SEG_VOID) {
@@ -2510,11 +2504,7 @@ grn_ja_replace(grn_ctx *ctx, grn_ja *ja, grn_id id,
   grn_ja_free(ctx, ja, &eback);
 exit :
   grn_io_unlock(ctx, ja->io);
-  if(ctx->rc != GRN_SUCCESS) {
-    return ctx->rc;
-  }
-  ctx->rc = original_rc;
-  return GRN_SUCCESS;
+  return ctx->rc;
 }
 
 #define JA_N_GARBAGES_TH 10

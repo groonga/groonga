@@ -7,3 +7,6 @@ column_create Docs sentences COLUMN_VECTOR Text
 table_create Words TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
 column_create Words docs_content \
   COLUMN_INDEX|WITH_SECTION|WITH_POSITION Docs title,sentences
+
+dump
+table_remove Words

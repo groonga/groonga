@@ -5,3 +5,6 @@ column_create Sites tags COLUMN_VECTOR ShortText
 
 table_create TagsIndex TABLE_HASH_KEY Tags
 column_create TagsIndex sites_tags COLUMN_INDEX Sites tags
+
+dump
+table_remove TagsIndex

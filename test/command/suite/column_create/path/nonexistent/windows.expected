@@ -13,3 +13,7 @@ column_create Data number COLUMN_SCALAR Int64   --path nonexistent/directory/dat
   false
 ]
 #|e| system error[3]: The system cannot find the path specified.: CreateFile(<nonexistent/directory/data/number>, <O_RDWR|O_CREAT|O_EXCL>) failed
+dump
+table_create Data TABLE_NO_KEY
+table_remove Data
+[[0,0.0,0.0],true]

@@ -277,7 +277,10 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
     }
     GRN_OBJ_FIN(ctx, &source_ids);
     if (rc != GRN_SUCCESS) {
+      grn_rc original_rc = ctx->rc;
+      ctx->rc = GRN_SUCCESS;
       grn_obj_remove(ctx, column);
+      ctx->rc = original_rc;
       succeeded = GRN_FALSE;
       goto exit;
     }
