@@ -500,10 +500,13 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int depth,
       posting.sid = 1;
       posting.pos = 0;
       posting.weight_float = recinfo->score;
-      grn_ii_posting_add_float(ctx,
-                               (grn_posting *)(&posting),
-                               (grn_hash *)res,
-                               op);
+      rc = grn_ii_posting_add_float(ctx,
+                                    (grn_posting *)(&posting),
+                                    (grn_hash *)res,
+                                    op);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
     } GRN_HASH_EACH_END(ctx, cursor);
     grn_obj_unlink(ctx, current_res);
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
@@ -514,6 +517,10 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int depth,
   }
 
   GRN_OBJ_FIN(ctx, &accessor_stack);
+
+  if (rc == GRN_SUCCESS && ctx->rc != GRN_SUCCESS) {
+    rc = ctx->rc;
+  }
   return rc;
 }
 
