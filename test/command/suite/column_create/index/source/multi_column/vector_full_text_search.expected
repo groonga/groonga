@@ -21,3 +21,13 @@ column_create Words docs_content   COLUMN_INDEX|WITH_SECTION|WITH_POSITION Docs 
   false
 ]
 #|e| grn_obj_set_info(): GRN_INFO_SOURCE: multi column full text index with vector column isn't supported yet: <Words.docs_content>
+dump
+plugin_register functions/index_column
+
+table_create Docs TABLE_NO_KEY
+column_create Docs sentences COLUMN_VECTOR Text
+column_create Docs title COLUMN_SCALAR ShortText
+
+table_create Words TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+table_remove Words
+[[0,0.0,0.0],true]

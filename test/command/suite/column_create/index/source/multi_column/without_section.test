@@ -6,3 +6,6 @@ table_create Terms TABLE_PAT_KEY ShortText \
   --default_tokenizer TokenBigram \
   --normalizer NormalizerAuto
 column_create Terms memos_index COLUMN_INDEX Memos title,content
+
+dump
+table_remove Terms

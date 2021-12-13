@@ -4,3 +4,6 @@ table_create TagPriorities TABLE_HASH_KEY ShortText
 
 table_create TagsIndex TABLE_HASH_KEY Tags
 column_create TagsIndex sites_tags COLUMN_INDEX TagPriorities _key
+
+dump
+table_remove TagsIndex

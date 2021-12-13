@@ -19,3 +19,12 @@ column_create TagsIndex sites_tags COLUMN_INDEX Sites tags
   false
 ]
 #|e| [column][index][source] index table's key must equal source type: <Tags> -> <ShortText>: index-column:<TagsIndex.sites_tags> source:<Sites.tags>
+dump
+table_create Sites TABLE_HASH_KEY ShortText
+column_create Sites tags COLUMN_VECTOR ShortText
+
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create TagsIndex TABLE_HASH_KEY Tags
+table_remove TagsIndex
+[[0,0.0,0.0],true]

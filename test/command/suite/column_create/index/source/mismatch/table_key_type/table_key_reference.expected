@@ -17,3 +17,11 @@ column_create TagsIndex sites_tags COLUMN_INDEX TagPriorities _key
   false
 ]
 #|e| [column][index][source] index table must equal to source type: <TagsIndex> -> <Tags>: index-column:<TagsIndex.sites_tags> source:<TagPriorities._key>
+dump
+table_create TagPriorities TABLE_HASH_KEY Tags
+
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create TagsIndex TABLE_HASH_KEY ShortText
+table_remove TagsIndex
+[[0,0.0,0.0],true]

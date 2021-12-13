@@ -22,3 +22,5 @@ table_create Memos TABLE_NO_KEY
 column_create Memos content COLUMN_SCALAR Text
 
 table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+table_remove Terms
+[[0,0.0,0.0],true]

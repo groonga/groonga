@@ -19,3 +19,12 @@ column_create Words docs_sentences COLUMN_INDEX|WITH_POSITION Docs sentences
   false
 ]
 #|e| grn_obj_set_info(): GRN_INFO_SOURCE: full text index for vector column must be created with WITH_SECTION flag: <Words.docs_sentences>
+dump
+plugin_register functions/index_column
+
+table_create Docs TABLE_NO_KEY
+column_create Docs sentences COLUMN_VECTOR Text
+
+table_create Words TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+table_remove Words
+[[0,0.0,0.0],true]

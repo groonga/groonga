@@ -7,3 +7,4 @@ table_create Terms TABLE_PAT_KEY ShortText \
 column_create Terms memos_index COLUMN_INDEX|WITH_POSITION Memos nonexistent
 
 dump
+table_remove Terms

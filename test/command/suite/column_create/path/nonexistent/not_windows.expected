@@ -13,3 +13,7 @@ column_create Data number COLUMN_SCALAR Int64   --path nonexistent/directory/dat
   false
 ]
 #|e| system call error: No such file or directory: failed to open file info path: <nonexistent/directory/data/number>
+dump
+table_create Data TABLE_NO_KEY
+table_remove Data
+[[0,0.0,0.0],true]
