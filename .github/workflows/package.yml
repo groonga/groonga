@@ -79,7 +79,6 @@ jobs:
           - Debian GNU/Linux buster arm64
           - Debian GNU/Linux buster i386
           - CentOS 7
-          - CentOS 8
           - AlmaLinux 8
         include:
           - label: Debian GNU/Linux bullseye amd64
@@ -112,11 +111,6 @@ jobs:
             task-namespace: yum
             target: centos-7
             test-docker-image: centos:7
-          - label: CentOS 8
-            id: centos-8
-            task-namespace: yum
-            target: centos-8
-            test-docker-image: centos:8
           - label: AlmaLinux 8
             id: almalinux-8
             task-namespace: yum
