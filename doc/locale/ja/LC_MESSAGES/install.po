@@ -125,9 +125,6 @@ msgstr ""
 msgid "Install groonga-normalizer-mysql package::"
 msgstr "groonga-normalizer-mysqlパッケージのインストール::"
 
-msgid "CentOS 8"
-msgstr ""
-
 msgid "Debian GNU/Linux"
 msgstr ""
 

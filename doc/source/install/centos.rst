@@ -45,24 +45,6 @@ Install groonga-normalizer-mysql package::
 
   % sudo yum install -y --enablerepo=epel groonga-normalizer-mysql
 
-CentOS 8
---------
-
-Install::
-
-  % sudo dnf install -y https://packages.groonga.org/centos/8/groonga-release-latest.noarch.rpm
-  % sudo dnf install -y --enablerepo=epel --enablerepo=powertools groonga
-
-.. include:: server-use.inc
-
-There is a package that provides MySQL compatible normalizer as
-a Groonga plugin.
-If you want to use that one, install groonga-normalizer-mysql package.
-
-Install groonga-normalizer-mysql package::
-
-  % sudo dnf install -y --enablerepo=epel groonga-normalizer-mysql
-
 Build from source
 -----------------
 
