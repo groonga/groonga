@@ -3126,6 +3126,7 @@ grn_io_hash_add(grn_ctx *ctx,
     GRN_OBJ_FIN(ctx, &inspected);
     goto exit;
   }
+  ctx->rc = rc;
 
   if (value) {
     *value = grn_hash_entry_get_value(ctx, hash, entry);
