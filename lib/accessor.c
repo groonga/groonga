@@ -504,6 +504,9 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int depth,
                                (grn_posting *)(&posting),
                                (grn_hash *)res,
                                op);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
     } GRN_HASH_EACH_END(ctx, cursor);
     grn_obj_unlink(ctx, current_res);
     grn_ii_resolve_sel_and(ctx, (grn_hash *)res, op);
@@ -514,6 +517,8 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int depth,
   }
 
   GRN_OBJ_FIN(ctx, &accessor_stack);
+
+  rc = grn_ctx_rc_propagate(ctx, rc);
   return rc;
 }
 
@@ -646,6 +651,7 @@ grn_accessor_execute(grn_ctx *ctx,
     grn_obj_unref(ctx, index_data.index);
   }
 
+  rc = grn_ctx_rc_propagate(ctx, rc);
   GRN_API_RETURN(rc);
 }
 

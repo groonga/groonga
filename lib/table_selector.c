@@ -1638,6 +1638,7 @@ select_index(grn_ctx *ctx,
                                    si->logical_op,
                                    table_selector);
       }
+      rc = grn_ctx_rc_propagate(ctx, rc);
       if (rc != GRN_SUCCESS) {
         break;
       }
@@ -1719,6 +1720,7 @@ select_index(grn_ctx *ctx,
     }
   }
 
+  rc = grn_ctx_rc_propagate(ctx, rc);
   switch (rc) {
   case GRN_SUCCESS :
     return true;
@@ -2095,10 +2097,7 @@ grn_table_selector_select(grn_ctx *ctx,
           data->min_id = table_selector->min_id;
         }
         processed = select_index(ctx, table_selector);
-        if (!processed) {
-          if (ctx->rc != GRN_SUCCESS) {
-            break;
-          }
+        if (!processed && ctx->rc == GRN_SUCCESS) {
           e->codes = codes + si->start;
           e->codes_curr = si->end - si->start + 1;
           grn_table_selector sequential_table_selector;

@@ -44,6 +44,15 @@ extern "C" {
   grn_gctx.rc = GRN_SUCCESS;\
 } while (0)
 
+static grn_inline grn_rc
+grn_ctx_rc_propagate(grn_ctx *ctx, grn_rc rc)
+{
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
+  return ctx->rc;
+}
+
 GRN_API grn_bool grn_ctx_impl_should_log(grn_ctx *ctx);
 GRN_API void grn_ctx_impl_set_current_error_message(grn_ctx *ctx);
 
