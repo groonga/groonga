@@ -572,6 +572,12 @@ do_alone(int argc, char **argv)
         }
         grn_ctx_send(ctx, GRN_TEXT_VALUE(&text), GRN_TEXT_LEN(&text), 0);
         if (ctx->stat == GRN_CTX_QUIT) { break; }
+        if (!is_loading) {
+          ERRCLR(ctx);
+          if (ctx->rc == GRN_CANCEL) {
+            ctx->rc = GRN_SUCCESS;
+          }
+        }
       }
       exit_code = grn_rc_to_exit_code(ctx->rc);
       grn_obj_unlink(ctx, &text);
