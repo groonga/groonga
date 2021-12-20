@@ -998,57 +998,6 @@ proc_defrag(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
-static grn_obj *
-proc_log_level(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{
-  grn_obj *level_name = VAR(0);
-  if (GRN_TEXT_LEN(level_name) > 0) {
-    grn_log_level max_level;
-    GRN_TEXT_PUTC(ctx, level_name, '\0');
-    if (grn_log_level_parse(GRN_TEXT_VALUE(level_name), &max_level)) {
-      grn_logger_set_max_level(ctx, max_level);
-    } else {
-      ERR(GRN_INVALID_ARGUMENT,
-          "invalid log level: <%s>", GRN_TEXT_VALUE(level_name));
-    }
-  } else {
-    ERR(GRN_INVALID_ARGUMENT, "log level is missing");
-  }
-  GRN_OUTPUT_BOOL(!ctx->rc);
-  return NULL;
-}
-
-static grn_obj *
-proc_log_put(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{
-  grn_obj *level_name = VAR(0);
-  grn_obj *message = VAR(1);
-  if (GRN_TEXT_LEN(level_name) > 0) {
-    grn_log_level level;
-    GRN_TEXT_PUTC(ctx, level_name, '\0');
-    if (grn_log_level_parse(GRN_TEXT_VALUE(level_name), &level)) {
-      GRN_LOG(ctx, level, "%.*s",
-              (int)GRN_TEXT_LEN(message),
-              GRN_TEXT_VALUE(message));
-    } else {
-      ERR(GRN_INVALID_ARGUMENT,
-          "invalid log level: <%s>", GRN_TEXT_VALUE(level_name));
-    }
-  } else {
-    ERR(GRN_INVALID_ARGUMENT, "log level is missing");
-  }
-  GRN_OUTPUT_BOOL(!ctx->rc);
-  return NULL;
-}
-
-static grn_obj *
-proc_log_reopen(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{
-  grn_log_reopen(ctx);
-  GRN_OUTPUT_BOOL(!ctx->rc);
-  return NULL;
-}
-
 static grn_rc
 proc_delete_validate_selector(grn_ctx *ctx, grn_obj *table, grn_obj *table_name,
                               grn_obj *key, grn_obj *id, grn_obj *filter)
@@ -4828,14 +4777,9 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
   DEF_VAR(vars[1], "threshold");
   DEF_COMMAND("defrag", proc_defrag, 2, vars);
 
-  DEF_VAR(vars[0], "level");
-  DEF_COMMAND("log_level", proc_log_level, 1, vars);
-
-  DEF_VAR(vars[0], "level");
-  DEF_VAR(vars[1], "message");
-  DEF_COMMAND("log_put", proc_log_put, 2, vars);
-
-  DEF_COMMAND("log_reopen", proc_log_reopen, 0, vars);
+  grn_proc_init_log_level(ctx);
+  grn_proc_init_log_put(ctx);
+  grn_proc_init_log_reopen(ctx);
 
   DEF_VAR(vars[0], "table");
   DEF_VAR(vars[1], "key");
