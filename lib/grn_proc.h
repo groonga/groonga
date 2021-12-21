@@ -87,6 +87,7 @@ void grn_proc_init_table_list(grn_ctx *ctx);
 void grn_proc_init_table_remove(grn_ctx *ctx);
 void grn_proc_init_table_rename(grn_ctx *ctx);
 void grn_proc_init_table_tokenize(grn_ctx *ctx);
+void grn_proc_init_thread_dump(grn_ctx *ctx);
 void grn_proc_init_thread_limit(grn_ctx *ctx);
 void grn_proc_init_tokenize(grn_ctx *ctx);
 

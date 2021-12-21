@@ -76,3 +76,24 @@ grn_proc_init_thread_limit(grn_ctx *ctx)
                             1,
                             vars);
 }
+
+static grn_obj *
+command_thread_dump(grn_ctx *ctx,
+                    int n_args,
+                    grn_obj **args,
+                    grn_user_data *user_data)
+{
+  grn_thread_dump(ctx);
+  GRN_OUTPUT_BOOL(ctx->rc == GRN_SUCCESS);
+  return NULL;
+}
+
+void
+grn_proc_init_thread_dump(grn_ctx *ctx)
+{
+  grn_plugin_command_create(ctx,
+                            "thread_dump", -1,
+                            command_thread_dump,
+                            0,
+                            NULL);
+}

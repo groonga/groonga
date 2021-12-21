@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2015-2016 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2015-2016  Brazil
+  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -47,6 +47,9 @@ typedef void (*grn_thread_set_limit_with_ctx_func)(grn_ctx *ctx,
                                                    void *data);
 GRN_API void grn_thread_set_set_limit_with_ctx_func(grn_thread_set_limit_with_ctx_func func,
                                                     void *data);
+
+GRN_API grn_rc
+grn_thread_dump(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }

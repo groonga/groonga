@@ -53,7 +53,6 @@
 
 #ifdef WIN32
 # include <share.h>
-# include <dbghelp.h>
 # ifndef MAXUSHORT
 #  define MAXUSHORT 0xffff
 # endif
@@ -96,54 +95,6 @@ int grn_lock_timeout = GRN_LOCK_TIMEOUT;
 
 #ifdef USE_UYIELD
 int grn_uyield_count = 0;
-#endif
-
-#ifdef WIN32
-static DWORD grn_exception_filter_running = TLS_OUT_OF_INDEXES;
-/* Address is important. Value is meaningless. */
-static bool grn_exception_filter_running_true;
-static bool grn_exception_filter_running_false;
-static void
-grn_exception_filter_running_init(void)
-{
-  grn_exception_filter_running = TlsAlloc();
-}
-
-static void
-grn_exception_filter_running_fin(void)
-{
-  if (grn_exception_filter_running != TLS_OUT_OF_INDEXES) {
-    TlsFree(grn_exception_filter_running);
-    grn_exception_filter_running = TLS_OUT_OF_INDEXES;
-  }
-}
-
-static bool
-grn_exception_filter_running_get(void)
-{
-  if (grn_exception_filter_running == TLS_OUT_OF_INDEXES) {
-    return false;
-  }
-
-  return TlsGetValue(grn_exception_filter_running) ==
-    &grn_exception_filter_running_true;
-}
-
-static void
-grn_exception_filter_running_set(bool running)
-{
-  if (grn_exception_filter_running == TLS_OUT_OF_INDEXES) {
-    return;
-  }
-
-  if (running) {
-    TlsSetValue(grn_exception_filter_running,
-                &grn_exception_filter_running_true);
-  } else {
-    TlsSetValue(grn_exception_filter_running,
-                &grn_exception_filter_running_false);
-  }
-}
 #endif
 
 static grn_bool grn_ctx_per_db = GRN_FALSE;
@@ -886,7 +837,6 @@ grn_init(void)
   grn_rc rc;
   grn_ctx *ctx = &grn_gctx;
 #ifdef WIN32
-  grn_exception_filter_running_init();
   grn_windows_init();
 #endif
   grn_init_from_env();
@@ -987,7 +937,6 @@ fail_ctx_init_internal:
   grn_fin_external_libraries();
 #ifdef WIN32
   grn_windows_fin();
-  grn_exception_filter_running_fin();
 #endif
   return rc;
 }
@@ -1095,7 +1044,6 @@ grn_fin(void)
   grn_fin_external_libraries();
 #ifdef WIN32
   grn_windows_fin();
-  grn_exception_filter_running_fin();
 #endif
   return GRN_SUCCESS;
 }
@@ -2096,7 +2044,7 @@ grn_ctx_log_back_trace_windows(grn_ctx *ctx, grn_log_level level)
   USHORT i;
   for (i = 0; i < n_frames; i++) {
     void *address = back_trace[i];
-    grn_windows_log_trace(ctx, level, process, (DWORD64)address);
+    grn_windows_log_back_trace_entry(ctx, level, process, (DWORD64)address);
   }
 
   grn_windows_symbol_cleanup(ctx, process);
@@ -2186,88 +2134,13 @@ static LONG WINAPI
 grn_exception_filter(EXCEPTION_POINTERS *info)
 {
   grn_ctx *ctx = &grn_gctx;
-  const char *log_start_mark = "-- CRASHED!!! --";
-  const char *log_end_mark =   "----------------";
-  HANDLE process;
-  HANDLE thread;
-  CONTEXT *context;
-  STACKFRAME64 frame;
-  DWORD machine_type;
-
-  GRN_LOG(ctx, GRN_LOG_CRIT, "%s", log_start_mark);
-
-  process = GetCurrentProcess();
-  thread = GetCurrentThread();
-  context = info->ContextRecord;
-
-  if (grn_exception_filter_running_get()) {
-    GRN_LOG(ctx, GRN_LOG_CRIT, "exception is occurred in exception filter");
-    GRN_LOG(ctx, GRN_LOG_CRIT, "%s", log_end_mark);
-    return EXCEPTION_CONTINUE_SEARCH;
-  }
-
-  grn_exception_filter_running_set(true);
-
-  if (!grn_windows_symbol_initialize(ctx, process)) {
-    GRN_LOG(ctx, GRN_LOG_CRIT, "failed to initialize symbol handler");
-    GRN_LOG(ctx, GRN_LOG_CRIT, "%s", log_end_mark);
-    grn_exception_filter_running_set(false);
-    return EXCEPTION_CONTINUE_SEARCH;
-  }
-
-  memset(&frame, 0, sizeof(STACKFRAME64));
-  frame.AddrPC.Mode = AddrModeFlat;
-  frame.AddrReturn.Mode = AddrModeFlat;
-  frame.AddrFrame.Mode = AddrModeFlat;
-  frame.AddrStack.Mode = AddrModeFlat;
-  frame.AddrBStore.Mode = AddrModeFlat;
-# ifdef _M_IX86
-  machine_type = IMAGE_FILE_MACHINE_I386;
-  frame.AddrPC.Offset = context->Eip;
-  frame.AddrFrame.Offset = context->Ebp;
-  frame.AddrStack.Offset = context->Esp;
-# elif defined(_M_IA64) /* _M_IX86 */
-  machine_type = IMAGE_FILE_MACHINE_IA64;
-  frame.AddrPC.Offset = context->StIIP;
-  frame.AddrStack.Offset = context->IntSP; /* SP is IntSP? */
-  frame.AddrBStore.Offset = context->RsBSP;
-# elif defined(_M_AMD64) /* _M_IX86 */
-  machine_type = IMAGE_FILE_MACHINE_AMD64;
-  frame.AddrPC.Offset = context->Rip;
-  frame.AddrFrame.Offset = context->Rbp;
-  frame.AddrStack.Offset = context->Rsp;
-# else /* _M_IX86 */
-#  error "Intel x86, Intel Itanium and x64 are only supported architectures"
-# endif /* _M_IX86 */
-
-  DWORD64 previous_address = 0;
-  while (GRN_TRUE) {
-    if (!StackWalk64(machine_type,
-                     process,
-                     thread,
-                     &frame,
-                     context,
-                     NULL,
-                     NULL,
-                     NULL,
-                     NULL)) {
-      break;
-    }
-
-    DWORD64 address = frame.AddrPC.Offset;
-    if (previous_address != 0 && address == previous_address) {
-      break;
-    }
-
-    grn_windows_log_trace(ctx, GRN_LOG_CRIT, process, address);
-    previous_address = address;
-  }
-  GRN_LOG(ctx, GRN_LOG_CRIT, "%s", log_end_mark);
-
-  grn_windows_symbol_cleanup(ctx, process);
-
-  grn_exception_filter_running_set(false);
-
+  GRN_LOG(ctx, GRN_LOG_CRIT, "-- CRASHED!!! --");
+  grn_windows_log_back_trace(ctx,
+                             GRN_LOG_CRIT,
+                             GetCurrentProcess(),
+                             GetCurrentThread(),
+                             info->ContextRecord);
+  GRN_LOG(ctx, GRN_LOG_CRIT, "----------------");
   return EXCEPTION_CONTINUE_SEARCH;
 }
 #elif defined(HAVE_SIGNAL_H) /* WIN32 */

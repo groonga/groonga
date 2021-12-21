@@ -25,17 +25,22 @@
 extern "C" {
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 void grn_windows_init(void);
 void grn_windows_fin(void);
 GRN_API UINT grn_windows_encoding_to_code_page(grn_encoding encoding);
 bool grn_windows_symbol_initialize(grn_ctx *ctx, HANDLE process);
 bool grn_windows_symbol_cleanup(grn_ctx *ctx, HANDLE process);
-void grn_windows_log_trace(grn_ctx *ctx,
-                           grn_log_level level,
-                           HANDLE process,
-                           DWORD64 address);
-#endif /* WIN32 */
+void grn_windows_log_back_trace_entry(grn_ctx *ctx,
+                                      grn_log_level level,
+                                      HANDLE process,
+                                      DWORD64 address);
+void grn_windows_log_back_trace(grn_ctx *ctx,
+                                grn_log_level level,
+                                HANDLE process,
+                                HANDLE thread,
+                                CONTEXT *context);
+#endif
 
 #ifdef __cplusplus
 }

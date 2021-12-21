@@ -25,16 +25,55 @@
 
 static grn_critical_section grn_windows_symbol_critical_section;
 
+static DWORD grn_windows_trace_logging = TLS_OUT_OF_INDEXES;
+/* Address is important. Value is meaningless. */
+static bool grn_windows_trace_logging_true;
+static bool grn_windows_trace_logging_false;
+
 void
 grn_windows_init(void)
 {
   CRITICAL_SECTION_INIT(grn_windows_symbol_critical_section);
+
+  grn_windows_trace_logging = TlsAlloc();
 }
 
 void
 grn_windows_fin(void)
 {
   CRITICAL_SECTION_FIN(grn_windows_symbol_critical_section);
+
+  if (grn_windows_trace_logging != TLS_OUT_OF_INDEXES) {
+    TlsFree(grn_windows_trace_logging);
+    grn_windows_trace_logging = TLS_OUT_OF_INDEXES;
+  }
+}
+
+static bool
+grn_windows_trace_logging_get(void)
+{
+  if (grn_windows_trace_logging == TLS_OUT_OF_INDEXES) {
+    return false;
+  }
+
+  return TlsGetValue(grn_windows_trace_logging) ==
+    &grn_windows_trace_logging_true;
+}
+
+static void
+grn_windows_trace_logging_set(bool logging)
+{
+  if (grn_windows_trace_logging == TLS_OUT_OF_INDEXES) {
+    return;
+  }
+
+  if (logging) {
+    TlsSetValue(grn_windows_trace_logging,
+                &grn_windows_trace_logging_true);
+  } else {
+    TlsSetValue(grn_windows_trace_logging,
+                &grn_windows_trace_logging_false);
+  }
 }
 
 static char *windows_base_dir = NULL;
@@ -269,10 +308,10 @@ grn_windows_symbol_cleanup(grn_ctx *ctx, HANDLE process)
 }
 
 void
-grn_windows_log_trace(grn_ctx *ctx,
-                      grn_log_level level,
-                      HANDLE process,
-                      DWORD64 address)
+grn_windows_log_back_trace_entry(grn_ctx *ctx,
+                                 grn_log_level level,
+                                 HANDLE process,
+                                 DWORD64 address)
 {
   IMAGEHLP_MODULE64 module;
   char *buffer[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)];
@@ -319,5 +358,80 @@ grn_windows_log_trace(grn_ctx *ctx,
       grn_encoding_converted_free(ctx, grn_encoding_image_name);
     }
   }
+}
+
+void
+grn_windows_log_back_trace(grn_ctx *ctx,
+                           grn_log_level level,
+                           HANDLE process,
+                           HANDLE thread,
+                           CONTEXT *context)
+{
+  if (grn_windows_trace_logging_get()) {
+    GRN_LOG(ctx, level, "recursive trace logging isn't supported");
+    return;
+  }
+
+  grn_windows_trace_logging_set(true);
+
+  if (!grn_windows_symbol_initialize(ctx, process)) {
+    GRN_LOG(ctx, level, "failed to initialize symbol handler");
+    grn_windows_trace_logging_set(false);
+    return;
+  }
+
+  STACKFRAME64 frame;
+  DWORD machine_type;
+  memset(&frame, 0, sizeof(STACKFRAME64));
+  frame.AddrPC.Mode = AddrModeFlat;
+  frame.AddrReturn.Mode = AddrModeFlat;
+  frame.AddrFrame.Mode = AddrModeFlat;
+  frame.AddrStack.Mode = AddrModeFlat;
+  frame.AddrBStore.Mode = AddrModeFlat;
+# ifdef _M_IX86
+  machine_type = IMAGE_FILE_MACHINE_I386;
+  frame.AddrPC.Offset = context->Eip;
+  frame.AddrFrame.Offset = context->Ebp;
+  frame.AddrStack.Offset = context->Esp;
+# elif defined(_M_IA64) /* _M_IX86 */
+  machine_type = IMAGE_FILE_MACHINE_IA64;
+  frame.AddrPC.Offset = context->StIIP;
+  frame.AddrStack.Offset = context->IntSP; /* SP is IntSP? */
+  frame.AddrBStore.Offset = context->RsBSP;
+# elif defined(_M_AMD64) /* _M_IX86 */
+  machine_type = IMAGE_FILE_MACHINE_AMD64;
+  frame.AddrPC.Offset = context->Rip;
+  frame.AddrFrame.Offset = context->Rbp;
+  frame.AddrStack.Offset = context->Rsp;
+# else /* _M_IX86 */
+#  error "Intel x86, Intel Itanium and x64 are only supported architectures"
+# endif /* _M_IX86 */
+
+  DWORD64 previous_address = 0;
+  while (true) {
+    if (!StackWalk64(machine_type,
+                     process,
+                     thread,
+                     &frame,
+                     context,
+                     NULL,
+                     NULL,
+                     NULL,
+                     NULL)) {
+      break;
+    }
+
+    DWORD64 address = frame.AddrPC.Offset;
+    if (previous_address != 0 && address == previous_address) {
+      break;
+    }
+
+    grn_windows_log_back_trace_entry(ctx, level, process, address);
+    previous_address = address;
+  }
+
+  grn_windows_symbol_cleanup(ctx, process);
+
+  grn_windows_trace_logging_set(false);
 }
 #endif /* WIN32 */
