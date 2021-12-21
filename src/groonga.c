@@ -4057,7 +4057,7 @@ show_usage(FILE *output)
           "time|message", /* TODO: Generate from GRN_LOG_DEFAULT */
           default_log_path, default_query_log_path,
           default_config_path, default_default_command_version,
-          (long long int)default_default_match_escalation_threshold,
+          default_default_match_escalation_threshold,
           default_dest);
 }
 
