@@ -43,7 +43,7 @@ command_log_level(grn_ctx *ctx,
   } else {
     ERR(GRN_INVALID_ARGUMENT, "log level is missing");
   }
-  GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_BOOL(ctx->rc == GRN_SUCCESS);
   return NULL;
 }
 
@@ -85,7 +85,7 @@ command_log_put(grn_ctx *ctx,
   } else {
     ERR(GRN_INVALID_ARGUMENT, "log level is missing");
   }
-  GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_BOOL(ctx->rc == GRN_SUCCESS);
   return NULL;
 }
 
@@ -109,7 +109,7 @@ command_log_reopen(grn_ctx *ctx,
                    grn_user_data *user_data)
 {
   grn_log_reopen(ctx);
-  GRN_OUTPUT_BOOL(!ctx->rc);
+  GRN_OUTPUT_BOOL(ctx->rc == GRN_SUCCESS);
   return NULL;
 }
 
