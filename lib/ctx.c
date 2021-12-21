@@ -1030,14 +1030,14 @@ grn_set_default_command_version(grn_command_version version)
   return grn_ctx_set_command_version(&grn_gctx, version);
 }
 
-long long int
+int64_t
 grn_get_default_match_escalation_threshold(void)
 {
   return grn_ctx_get_match_escalation_threshold(&grn_gctx);
 }
 
 grn_rc
-grn_set_default_match_escalation_threshold(long long int threshold)
+grn_set_default_match_escalation_threshold(int64_t threshold)
 {
   return grn_ctx_set_match_escalation_threshold(&grn_gctx, threshold);
 }
@@ -1212,7 +1212,7 @@ grn_ctx_get_mime_type(grn_ctx *ctx)
   }
 }
 
-long long int
+int64_t
 grn_ctx_get_match_escalation_threshold(grn_ctx *ctx)
 {
   if (ctx->impl) {
@@ -1223,7 +1223,7 @@ grn_ctx_get_match_escalation_threshold(grn_ctx *ctx)
 }
 
 grn_rc
-grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, long long int threshold)
+grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, int64_t threshold)
 {
   ctx->impl->match_escalation_threshold = threshold;
   return GRN_SUCCESS;

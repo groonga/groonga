@@ -277,12 +277,12 @@ GRN_API grn_command_version grn_get_default_command_version(void);
 GRN_API grn_rc grn_set_default_command_version(grn_command_version version);
 GRN_API grn_command_version grn_ctx_get_command_version(grn_ctx *ctx);
 GRN_API grn_rc grn_ctx_set_command_version(grn_ctx *ctx, grn_command_version version);
-GRN_API long long int grn_ctx_get_match_escalation_threshold(grn_ctx *ctx);
-GRN_API grn_rc grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, long long int threshold);
+GRN_API int64_t grn_ctx_get_match_escalation_threshold(grn_ctx *ctx);
+GRN_API grn_rc grn_ctx_set_match_escalation_threshold(grn_ctx *ctx, int64_t threshold);
 GRN_API grn_bool grn_ctx_get_force_match_escalation(grn_ctx *ctx);
 GRN_API grn_rc grn_ctx_set_force_match_escalation(grn_ctx *ctx, grn_bool force);
-GRN_API long long int grn_get_default_match_escalation_threshold(void);
-GRN_API grn_rc grn_set_default_match_escalation_threshold(long long int threshold);
+GRN_API int64_t grn_get_default_match_escalation_threshold(void);
+GRN_API grn_rc grn_set_default_match_escalation_threshold(int64_t threshold);
 
 GRN_API grn_rc grn_ctx_set_variable(grn_ctx *ctx,
                                     const char *name,

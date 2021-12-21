@@ -3873,7 +3873,7 @@ show_version(void)
 #endif
   printf("%s", GRN_DEFAULT_ENCODING);
 
-  printf(",match-escalation-threshold=%" GRN_FMT_LLD,
+  printf(",match-escalation-threshold=%" GRN_FMT_INT64D,
          grn_get_default_match_escalation_threshold());
 
 #ifndef NO_NFKC
@@ -4037,7 +4037,7 @@ show_usage(FILE *output)
           "                       specify default command version (default: %d)\n"
           "      --default-match-escalation-threshold <threshold>:\n"
           "                       specify default match escalation threshold"
-          " (default: %" GRN_FMT_LLD ")\n"
+          " (default: %" GRN_FMT_INT64D ")\n"
           "\n"
           "      --show-config:   show config\n"
           "  -h, --help:          show usage\n"
