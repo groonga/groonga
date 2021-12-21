@@ -4524,44 +4524,6 @@ proc_io_flush(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 static grn_obj *
-proc_thread_limit(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
-{
-  grn_obj *max_bulk;
-  uint32_t current_limit;
-
-  current_limit = grn_thread_get_limit_with_ctx(ctx);
-  GRN_OUTPUT_INT64(current_limit);
-
-  max_bulk = VAR(0);
-  if (GRN_TEXT_LEN(max_bulk) > 0) {
-    uint32_t max;
-    const char *max_text = GRN_TEXT_VALUE(max_bulk);
-    const char *max_text_end;
-    const char *max_text_rest;
-
-    max_text_end = max_text + GRN_TEXT_LEN(max_bulk);
-    max = grn_atoui(max_text, max_text_end, &max_text_rest);
-    if (max_text_rest != max_text_end) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "[thread_limit] max must be unsigned integer value: <%.*s>",
-          (int)GRN_TEXT_LEN(max_bulk),
-          max_text);
-      return NULL;
-    }
-    if (max == 0) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "[thread_limit] max must be 1 or larger: <%.*s>",
-          (int)GRN_TEXT_LEN(max_bulk),
-          max_text);
-      return NULL;
-    }
-    grn_thread_set_limit_with_ctx(ctx, max);
-  }
-
-  return NULL;
-}
-
-static grn_obj *
 proc_database_unmap(grn_ctx *ctx, int nargs, grn_obj **args,
                     grn_user_data *user_data)
 {
@@ -4936,8 +4898,7 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
 
   grn_proc_init_object_exist(ctx);
 
-  DEF_VAR(vars[0], "max");
-  DEF_COMMAND("thread_limit", proc_thread_limit, 1, vars);
+  grn_proc_init_thread_limit(ctx);
 
   DEF_COMMAND("database_unmap", proc_database_unmap, 0, vars);
 
