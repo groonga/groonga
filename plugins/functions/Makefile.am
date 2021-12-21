@@ -33,3 +33,4 @@ include math_sources.am
 
 number_la_LIBADD = -lm
 math_la_LIBADD = -lm
+string_la_LIBADD = $(ONIGMO_LIBS)
