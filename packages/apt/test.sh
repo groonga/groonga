@@ -71,8 +71,11 @@ grntest_options+=(--n-retries=2)
 grntest_options+=(--n-workers=$(nproc))
 grntest_options+=(--reporter=mark)
 grntest_options+=(command/suite)
-grntest "${grntest_options[@]}"
+# There are some problems for running arm64 tests:
+#   * Too long test time because of QEMU
+#   * Unknown crash with bullseye
 if [ "${architecture}" != "arm64" ]; then
+  grntest "${grntest_options[@]}"
   grntest "${grntest_options[@]}" --interface http
   grntest "${grntest_options[@]}" --interface http --testee groonga-httpd
 fi
