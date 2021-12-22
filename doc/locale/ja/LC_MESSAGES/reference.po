@@ -17414,6 +17414,42 @@ msgstr ""
 msgid ":doc:`/reference/commands/tokenize`"
 msgstr ""
 
+msgid "``thread_dump``"
+msgstr ""
+
+msgid "Currently, this command works only on Windows."
+msgstr "現在このコマンドはWindowsでのみ動作します。"
+
+msgid "``thread_dump`` has the following a features:"
+msgstr "``thread_dump`` は次の機能を提供します。"
+
+msgid ""
+"``thread_dump`` puts a backtrace of all threads into a log as logs of INFO "
+"level at the time of running this command as below."
+msgstr ""
+"``thread_dump`` は、以下のように、このコマンドを実行した時点の全てのスレッド"
+"のバックトレースをINFOレベルのログとして記録します。"
+
+msgid "For example, ``thread_dump`` puts a backtrace in a log as below."
+msgstr ""
+"例えば、 ``thread_dump`` は、以下のようにバックトレースをログに記録します。"
+
+msgid "This command has not parameter::"
+msgstr "このコマンドに引数はありません::"
+
+msgid ""
+"We can get a backtrace of all threads into a log as logs of INFO level at "
+"the time of running this command."
+msgstr ""
+"このコマンドを実行した時点の全てのスレッドのバックトレースをINFOレベルのログ"
+"として取得できます。"
+
+msgid "The command returns `true` as body on success such as::"
+msgstr "このコマンドが成功したときは以下のようにボディは ``true`` になります::"
+
+msgid "If ``thread_dump`` fails, error details are in HEADER."
+msgstr "``thread_dump`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
+
 msgid "``thread_limit``"
 msgstr ""
 

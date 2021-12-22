@@ -389,6 +389,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/table_remove/unremovable_cases_value_type_remove_success.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_rename/usage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/table_tokenize/simple_example.log \
+	$(top_srcdir)/doc/source/example/reference/commands/thread_dump/usage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/thread_limit/max.log \
 	$(top_srcdir)/doc/source/example/reference/commands/thread_limit/usage_get.log \
 	$(top_srcdir)/doc/source/example/reference/commands/thread_limit/usage_set.log \
@@ -1025,6 +1026,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/commands/table_remove.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_rename.rst \
 	$(top_srcdir)/doc/source/reference/commands/table_tokenize.rst \
+	$(top_srcdir)/doc/source/reference/commands/thread_dump.rst \
 	$(top_srcdir)/doc/source/reference/commands/thread_limit.rst \
 	$(top_srcdir)/doc/source/reference/commands/tokenize.rst \
 	$(top_srcdir)/doc/source/reference/commands/tokenizer_list.rst \
@@ -1571,6 +1573,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/table_remove/unremovable_cases_value_type_remove_success.log \
 	source/example/reference/commands/table_rename/usage.log \
 	source/example/reference/commands/table_tokenize/simple_example.log \
+	source/example/reference/commands/thread_dump/usage.log \
 	source/example/reference/commands/thread_limit/max.log \
 	source/example/reference/commands/thread_limit/usage_get.log \
 	source/example/reference/commands/thread_limit/usage_set.log \
@@ -2207,6 +2210,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/commands/table_remove.rst \
 	source/reference/commands/table_rename.rst \
 	source/reference/commands/table_tokenize.rst \
+	source/reference/commands/thread_dump.rst \
 	source/reference/commands/thread_limit.rst \
 	source/reference/commands/tokenize.rst \
 	source/reference/commands/tokenizer_list.rst \
@@ -2643,6 +2647,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/commands/table_remove.html \
 	html/reference/commands/table_rename.html \
 	html/reference/commands/table_tokenize.html \
+	html/reference/commands/thread_dump.html \
 	html/reference/commands/thread_limit.html \
 	html/reference/commands/tokenize.html \
 	html/reference/commands/tokenizer_list.html \
