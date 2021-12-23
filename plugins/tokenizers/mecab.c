@@ -358,7 +358,7 @@ is_delimiter_character(grn_ctx *ctx, const char *character, int character_bytes)
   }
 }
 
-static grn_bool
+static bool
 chunked_tokenize_utf8_chunk(grn_ctx *ctx,
                             grn_mecab_tokenizer *tokenizer,
                             const char *chunk,
@@ -369,15 +369,22 @@ chunked_tokenize_utf8_chunk(grn_ctx *ctx,
   mecab_lattice_set_sentence2(tokenizer->lattice,
                               chunk,
                               chunk_bytes);
-  mecab_parse_lattice(tokenizer->mecab->mecab, tokenizer->lattice);
+  if (!mecab_parse_lattice(tokenizer->mecab->mecab, tokenizer->lattice)) {
+    GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                     "[tokenizer][mecab][chunk] "
+                     "mecab_parse_lattice() failed len=%d err=%s",
+                     chunk_bytes,
+                     mecab_lattice_strerror(tokenizer->lattice));
+    return false;
+  }
   tokenized_chunk = mecab_lattice_tostr(tokenizer->lattice);
   if (!tokenized_chunk) {
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer][mecab][chunk] "
                      "mecab_sparse_tostr2() failed len=%d err=%s",
                      chunk_bytes,
-                     mecab_strerror(tokenizer->mecab->mecab));
-    return GRN_FALSE;
+                     mecab_lattice_strerror(tokenizer->lattice));
+    return false;
   }
 
   if (GRN_TEXT_LEN(&(tokenizer->buf)) > 0) {
@@ -394,7 +401,7 @@ chunked_tokenize_utf8_chunk(grn_ctx *ctx,
                  tokenized_chunk, tokenized_chunk_length);
   }
 
-  return GRN_TRUE;
+  return true;
 }
 
 static grn_bool
@@ -1153,35 +1160,40 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
       tokenizer->next = "";
       tokenizer->end = tokenizer->next;
     } else {
-      grn_bool succeeded;
       if (tokenizer->options->chunked_tokenize &&
           ctx->encoding == GRN_ENC_UTF8) {
-        succeeded = chunked_tokenize_utf8(ctx,
-                                          tokenizer,
-                                          normalized_string,
-                                          normalized_string_length);
+        if (!chunked_tokenize_utf8(ctx,
+                                   tokenizer,
+                                   normalized_string,
+                                   normalized_string_length)) {
+          GRN_PLUGIN_FREE(ctx, tokenizer);
+          return NULL;
+        }
       } else {
         const char *s;
         mecab_lattice_set_sentence2(tokenizer->lattice,
                                     normalized_string,
                                     normalized_string_length);
-        mecab_parse_lattice(tokenizer->mecab->mecab, tokenizer->lattice);
+        if (!mecab_parse_lattice(tokenizer->mecab->mecab, tokenizer->lattice)) {
+          GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
+                           "[tokenizer][mecab] "
+                           "mecab_parse_lattice() failed len=%d err=%s",
+                           normalized_string_length,
+                           mecab_lattice_strerror(tokenizer->lattice));
+          GRN_PLUGIN_FREE(ctx, tokenizer);
+          return NULL;
+        }
         s = mecab_lattice_tostr(tokenizer->lattice);
         if (!s) {
-          succeeded = GRN_FALSE;
           GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                            "[tokenizer][mecab] "
                            "mecab_sparse_tostr() failed len=%d err=%s",
                            normalized_string_length,
-                           mecab_strerror(tokenizer->mecab->mecab));
-        } else {
-          succeeded = GRN_TRUE;
-          GRN_TEXT_PUTS(ctx, &(tokenizer->buf), s);
+                           mecab_lattice_strerror(tokenizer->lattice));
+          GRN_PLUGIN_FREE(ctx, tokenizer);
+          return NULL;
         }
-      }
-      if (!succeeded) {
-        GRN_PLUGIN_FREE(ctx, tokenizer);
-        return NULL;
+        GRN_TEXT_PUTS(ctx, &(tokenizer->buf), s);
       }
       if (mecab_tokenizer_options_need_default_output(ctx, tokenizer->options)) {
         tokenizer->next = GRN_TEXT_VALUE(&(tokenizer->buf));
