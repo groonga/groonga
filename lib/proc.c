@@ -1694,7 +1694,7 @@ grn_proc_get_value_token_cursor_flags(grn_ctx *ctx,
 #undef GRN_TOKEN_CURSOR_NONE
 
     GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
-                     "%s token cursor flag must be on of them: "
+                     "%s token cursor flag must be one of them: "
                      "["
                      "\"ENABLE_TOKENIZED_DELIMITER\", "
                      "\"NONE\""
