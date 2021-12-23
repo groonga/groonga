@@ -6,7 +6,7 @@ tokenize TokenDelimit "aBcDe 123" NormalizerAuto UNKNOWN
       0.0,
       0.0
     ],
-    "[tokenize][flags] token cursor flag must be on of them: [\"ENABLE_TOKENIZED_DELIMITER\", \"NONE\"]: <UNKNOWN>"
+    "[tokenize][flags] token cursor flag must be one of them: [\"ENABLE_TOKENIZED_DELIMITER\", \"NONE\"]: <UNKNOWN>"
   ]
 ]
-#|e| [tokenize][flags] token cursor flag must be on of them: ["ENABLE_TOKENIZED_DELIMITER", "NONE"]: <UNKNOWN>
+#|e| [tokenize][flags] token cursor flag must be one of them: ["ENABLE_TOKENIZED_DELIMITER", "NONE"]: <UNKNOWN>
