@@ -21,7 +21,7 @@ Summary
 ``thread_dump`` has the following a features:
 
   * ``thread_dump`` puts a backtrace of all threads into a log as logs of
-    INFO level at the time of running this command as below.
+    NOTICE level at the time of running this command as below.
 
     For example, ``thread_dump`` puts a backtrace in a log as below.
 
@@ -66,7 +66,7 @@ Usage
 -----
 
 We can get a backtrace of all threads into a log as logs of
-INFO level at the time of running this command.
+NOTICE level at the time of running this command.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/thread_dump/usage.log
