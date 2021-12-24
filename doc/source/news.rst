@@ -5,6 +5,173 @@
 News
 ====
 
+.. _release-11-1-1:
+
+Release 11.1.1 - 2021-12-29
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`reference/commands/select`] Added support for near phrase product search.
+
+  This feature is a shortcut of ``'*NP"..." OR *NP"..." OR ...'``.
+  For example, we can use ``*NPP`` instead of the expression that execute mulitiple
+  ``*NP`` with ``query`` as below.
+
+  .. code-block::
+
+     query ("title * 10 || content",
+            "*NP"a 1 x" OR
+             *NP"a 1 y" OR
+             *NP"a 1 z" OR
+             *NP"a 2 x" OR
+             *NP"a 2 y" OR
+             *NP"a 2 z" OR
+             *NP"a 3 x" OR
+             *NP"a 3 y" OR
+             *NP"a 3 z" OR
+             *NP"b 1 x" OR
+             *NP"b 1 y" OR
+             *NP"b 1 z" OR
+             *NP"b 2 x" OR
+             *NP"b 2 y" OR
+             *NP"b 2 z" OR
+             *NP"b 3 x" OR
+             *NP"b 3 y" OR
+             *NP"b 3 z"")
+
+  We can be written as ``*NPP"(a b) (1 2 3) (x y z)"`` the above expression by this feature.
+  In addition, ``*NPP"(a b) (1 2 3) (x y z)"`` is faster than ``'*NP"..." OR *NP"..." OR ...'``.
+
+  .. code-block::
+
+     query ("title * 10 || content",
+            "*NPP"(a b) (1 2 3) (x y z)"")
+
+  We implements this feature for improving performance near phrase search
+  like ``'*NP"..." OR *NP"..." OR ...'``.
+
+* [:doc:`reference/commands/select`] Added support for order near phrase product search.
+
+  This feature is a shortcut of ``'*ONP"..." OR *ONP"..." OR ...'``.
+  For example, we can use ``*ONPP`` instead of the expression that execute multiple
+  ``*ONP`` with ``query`` as below.
+
+  .. code-block::
+
+     query ("title * 10 || content",
+            "*ONP"a 1 x" OR
+             *ONP"a 1 y" OR
+             *ONP"a 1 z" OR
+             *ONP"a 2 x" OR
+             *ONP"a 2 y" OR
+             *ONP"a 2 z" OR
+             *ONP"a 3 x" OR
+             *ONP"a 3 y" OR
+             *ONP"a 3 z" OR
+             *ONP"b 1 x" OR
+             *ONP"b 1 y" OR
+             *ONP"b 1 z" OR
+             *ONP"b 2 x" OR
+             *ONP"b 2 y" OR
+             *ONP"b 2 z" OR
+             *ONP"b 3 x" OR
+             *ONP"b 3 y" OR
+             *ONP"b 3 z"")
+
+  We can be written as ``*ONPP"(a b) (1 2 3) (x y z)"`` the above expression by this feature.
+  In addition, ``*ONPP"(a b) (1 2 3) (x y z)"`` is faster than ``'*ONP"..." OR *ONP"..." OR ...'``.
+
+  .. code-block::
+
+     query ("title * 10 || content",
+            "*ONPP"(a b) (1 2 3) (x y z)"")
+
+  We implements this feature for improving performance near phrase search
+  like ``'*ONP"..." OR *ONP"..." OR ...'``.
+
+* Groonga became easily detects ``request_cancel`` while executing a search.
+
+  Because we added more checks of return code to detect ``request_cancel``.
+
+* [:doc:`/reference/commands/thread_dump`] Added a new command ``thread_dump``
+
+  Currently, this command works only on Windows.
+
+  We can put a backtrace of all threads into a log as logs of NOTICE level
+  at the time of running this command.
+
+  This feature is useful when we solve a problem such as Groonga doesn't return a response.
+
+* [:doc:`/install/centos`] Dropped support for CentOS 8.
+
+  Because CentOS 8 will reach EOL at 2021-12-31.
+
+Fixes
+-----
+
+* Fixed a bug that we can't remove a index column with invalid parameter. [GitHub#1301][Patched by Takashi Hashida]
+
+  * For example, we can't remove a table when we create an invalid index column with ``column_create`` as below.
+
+    .. code-block::
+
+       table_create Statuses TABLE_NO_KEY
+       column_create Statuses start_time COLUMN_SCALAR UInt16
+       column_create Statuses end_time COLUMN_SCALAR UInt16
+
+       table_create Times TABLE_PAT_KEY UInt16
+       column_create Times statuses COLUMN_INDEX Statuses start_time,end_time
+       # [
+           [
+             -22,
+             1639037503.16114,
+             0.003981828689575195,
+             "grn_obj_set_info(): GRN_INFO_SOURCE: multi column index must be created with WITH_SECTION flag: <Times.statuses>",
+             [
+               [
+                 "grn_obj_set_info_source_validate",
+                 "../../groonga/lib/db.c",
+                 9605
+               ],
+               [
+                 "/tmp/d.grn",
+                 6,
+                 "column_create Times statuses COLUMN_INDEX Statuses start_time,end_time"
+               ]
+             ]
+           ],
+           false
+         ]
+       table_remove Times
+       # [
+           [
+             -22,
+             1639037503.16515,
+             0.0005414485931396484,
+             "[object][remove] column is broken: <Times.statuses>",
+             [
+               [
+                 "remove_columns",
+                 "../../groonga/lib/db.c",
+                 10649
+               ],
+               [
+                 "/tmp/d.grn",
+                 8,
+                 "table_remove Times"
+               ]
+             ]
+           ],
+           false
+         ]
+
+Thanks
+------
+
+* Takashi Hashida
+
 .. _release-11-1-0:
 
 Release 11.1.0 - 2021-11-29
