@@ -179,17 +179,10 @@ configureオプションである--with-cutter-source-pathにはcutterのソー�
 
     % ssh packages@packages.groonga.org
 
-デバッグ用や開発用のパッケージをテスト用に公開する時は、 ``--with-launchpad-ppa=groonga-nightly`` を指定して不安定版のリポジトリにアップロードするように指定します。::
+Ubuntu向けパッケージをテスト用に公開する時は、 以下の環境変数を設定して不安定版のリポジトリにアップロードするように指定します。::
 
-    % ./configure \
-          --with-launchpad-ppa=groonga-nightly \
-          --prefix=/tmp/local \
-          --with-launchpad-uploader-pgp-key=(Launchpadに登録したkeyID) \
-          --with-groonga-org-path=$HOME/work/groonga/groonga.org \
-          --enable-document \
-          --with-ruby \
-          --enable-mruby \
-          --with-cutter-source-path=$HOME/work/cutter/cutter
+  export DPUT_CONFIGUARATION_NAME=groonga-ppa-nightly
+  export DPUT_INCOMING="~groonga/ubuntu/nightly"
 
 新任のリリース担当者は必ず、この方法でPPAのリポジトリにパッケージをアップロードできる事を確認しておいてください。
 
@@ -264,8 +257,7 @@ make update-poコマンドの実行により更新した各種.poファイルを
 
 翻訳結果をHTMLで確認するために、以下のコマンドを実行します。::
 
-    % make -C doc/locale/ja html
-    % make -C doc/locale/en html
+    % make -C html
 
 修正が必要な箇所を調べて、 ``***.edit`` というファイルを適宜修正します。::
 
@@ -275,11 +267,22 @@ make update-poコマンドの実行により更新した各種.poファイルを
 ``***.edit`` というファイルの編集中は、翻訳元のファイルは絶対に編集しないで下さい（編集すると、``***.edit`` に加えた変更が make update-po の実行時に失われます）。
 ファイルを編集したら、再度poファイルとHTMLを更新するために以下のコマンドを実行します。::
 
-    % make update-po
-    % make -C doc/locale/ja html
-    % make -C doc/locale/en html
+    % make -C html
 
 確認が完了したら、翻訳済みpoファイルをコミットします。
+
+Ubuntu向けパッケージのビルド確認
+---------------------------------------
+
+Ubuntu向けのパッケージは、LaunchPadでビルドしています。
+リリース前にUbuntu向けパッケージが正常にビルドできるか以下の手順で確認します。::
+
+   % export DPUT_CONFIGUARATION_NAME=groonga-ppa-nightly
+   % export DPUT_INCOMING="~groonga/ubuntu/nightly"
+   % export LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
+   % make dist
+   % cd packages
+   % rake ubuntu
 
 各種テストの確認
 ----------------
@@ -288,8 +291,7 @@ make update-poコマンドの実行により更新した各種.poファイルを
 タグを設定してから問題が発覚すると、再度リリースすることになってしまうので、タグを設定する前に問題がないか確認します。
 
 * `GitHub Actions <https://github.com/groonga/groonga/actions?query=workflow%3APackage>`_
-* `TravisCI <https://travis-ci.org/github/groonga/groonga>`_
-* `AppVeyor <https://ci.appveyor.com/project/groonga/groonga>`_
+* `LaunchPad <https://launchpad.net/~groonga/+archive/ubuntu/nightly/+packages>`_
 
 テストやパッケージの作成に失敗していたら、原因を特定して修正します。
 
@@ -304,78 +306,46 @@ make update-poコマンドの実行により更新した各種.poファイルを
 .. note::
    タグを打った後にconfigureを実行することで、ドキュメント生成時のバージョン番号に反映されます。
 
-リリース用アーカイブファイルの作成
-----------------------------------
-
-リリース用のソースアーカイブファイルを作成するために以下のコマンドを$GROONGA_CLONE_DIRにて実行します。::
-
-    % make dist
-
-これにより$GROONGA_CLONE_DIR/groonga-(バージョン).tar.gzが作成されます。
-
-.. note::
-   タグを打つ前にmake distを行うとversionが古いままになることがあります。
-   するとgroonga --versionで表示されるバージョン表記が更新されないので注意が必要です。
-   make distで生成したtar.gzのversionおよびversion.shがタグと一致することを確認するのが望ましいです。
-
-リリース用アーカイブファイルのアップロード
-------------------------------------------
+リリース用アーカイブファイルの作成とアップロード
+------------------------------------------------
 
 Groongaのリリース用アーカイブファイルは、MroongaやPGroonga、Rroonga等関連プロダクトのリリースにも使用します。
 生成でき次第アップロードしておくと、関連プロダクトのリリース作業がしやすくなります。
 
-リリース用のアーカイブファイルは以下の手順でアップロードします。
+タグを設定すると、GitHub　Actionsで自動生成されます。
+GitHub　Actionsでソースアーカイブが自動生成されたのを確認したら以下の手順でアップロードします。::
 
-アップロードはrsyncコマンドで行います。
-以下のコマンドを実行して、現在のリポジトリーと同期します。::
+    % cd packages
+    % rake source
 
-    % cd packages/source
-    % make download
+これにより、GitHub Actionsで生成したソースアーカイブを $GROONGA_CLONE_DIR/groonga-(バージョン).tar.gz
+にダウンロードし packages.groonga.org へアップロードします。
 
-これにより過去にリリースしたソースアーカイブ(.tar.gz)が
-packages/source/filesディレクトリ以下へとダウンロードされます。
+パッケージのビルドとアップロード
+--------------------------------
 
-その後、以下のコマンドを実行してリリース用ソースアーカイブをアップロードします。::
-
-    % cd packages/source
-    % make upload
-
-アップロードが正常終了すると、リリース用ソースアーカイブがpackages.groonga.orgへと反映されます。
-
-パッケージのビルド
-------------------
-
-リリース用のアーカイブファイルができたので、パッケージ化する作業を行います。
-
-パッケージ化作業は以下の3種類を対象に行います。
+パッケージ化は以下の3種類を対象に行います。
+Ubuntu以外のOS向けのパッケージは全てGitHub Actionsで生成されます。
 
 * Debian系(.deb)
 * Red Hat系(.rpm)
 * Windows系(.exe,.zip)
 
-パッケージのビルドではいくつかのサブタスクから構成されています。
-
 Debian系パッケージのビルドとアップロード
 ----------------------------------------
 
-環境変数 ``APACHE_ARROW_REPOSITORY`` にapache/arrowのリポジトリをcloneしたパスを指定します。
-
-現在サポートしているOSのバージョンは以下の通りです。
+タグを設定すると、GitHub　Actionsで自動生成されます。
+現在サポートしているOSとバージョンは以下の通りです。
 
 * Debian GNU/Linux
 
-  * bullseye amd64
+  * buster i386/amd64/arm64
+  * bullseye amd64/arm64
 
-正常にビルドが終了すると$GROONGA_CLONE_DIR/packages/apt/repositories配下に.debパッケージが生成されます。
-
-debパッケージをビルドするには以下のコマンドを実行します。::
+GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。::
 
     % cd packages
     % rake apt
-
-パッケージのビルドが完了したら、以下のコマンドを実行してビルドしたパッケージをpackages.groonga.orgへアップロードします。::
-
-    % rake apt:release
 
 この段階では、ビルドしたパッケージはまだ未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
 
@@ -397,10 +367,10 @@ Ubuntu向けのパッケージのアップロードには以下のコマンド�
 
 現在サポートされているのは以下の通りです。
 
-* Xenial i386/amd64
-* Bionic i386/amd64
-* Disco  i386/amd64
-* Focal  amd64
+* Bionic  i386/amd64
+* Focal   amd64
+* Hirsute amd64
+* Impish  amd64
 
 アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果がメールで通知されます。ビルドに成功すると、リリース対象のパッケージがlaunchpad.netのGroongaチームのPPAへと反映されます。公開されているパッケージは以下のURLで確認できます。
 
@@ -416,26 +386,16 @@ LaunchpadのGroongaチームのページで対象のPPAを選択し、バージ�
 Red Hat系パッケージのビルドとアップロード
 -----------------------------------------
 
-現在サポートしているOSのバージョンは以下の通りです。
+タグを設定すると、GitHub　Actionsで自動生成されます。
+現在サポートしているOSとバージョンは以下の通りです。
 
-* centos-6 x86_64
 * centos-7 x86_64
-* centos-8 x86_64
+* almalinux-8 x86_64
 
-ビルドが正常終了すると$GROONGA_CLONE_DIR/packages/yum/repositories配下にRPMパッケージが生成されます。
-
-* repositories/yum/centos/6/x86_64/Packages
-* repositories/yum/centos/7/x86_64/Packages
-* repositories/yum/centos/8/x86_64/Packages
-
-rpmパッケージをビルドするには以下のコマンドを実行します。::
+GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。::
 
     % cd packages
     % rake yum
-
-パッケージのビルドが完了したら、以下のコマンドを実行してビルドしたパッケージをpackages.groonga.orgへアップロードします。::
-
-    % rake yum:release
 
 この段階では、ビルドしたパッケージはまだ未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
 
@@ -444,127 +404,13 @@ rpmパッケージをビルドするには以下のコマンドを実行しま�
 上記のコマンドを実行することで、リポジトリーの同期、パッケージの署名、リポジトリーの更新、アップロードまで実行できます。
 
 Windows用パッケージのビルドとアップロード
------------------------------------------
+------------------------------------------
 
-Windowsパッケージのビルドに必要なファイルを以下のコマンドを実行してダウンロードします。::
+タグを設定すると、GitHub　Actionsで自動生成されます。
+GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。::
 
-    % cd packages/windows
-    % make download
-
-これにより、Groongaのインストーラやzipアーカイブが packages/windows以下へとダウンロードされます。
-
-次に、以下のコマンドを実行してWindowsパッケージをビルドします。::
-
-    % cd packages/windows
-    % make build
-    % make package
-    % make installer
-
-make buildでクロスコンパイルを行います。
-正常に終了するとdist-x64/dist-x86ディレクトリ以下にx64/x86バイナリを作成します。
-
-make packageが正常に終了するとzipアーカイブをfilesディレクトリ以下に作成します。
-
-make installerが正常に終了するとWindowsインストーラをfilesディレクトリ以下に作成します。
-
-パッケージのビルドが完了したら、以下のコマンドを実行してビルドしたパッケージをpackages.groonga.orgへアップロードします。::
-
-    % cd packages/windows
-    % make upload
-
-パッケージの動作確認
---------------------
-
-.. note::
-   パッケージの動作確認はGitHub Actions上で自動で実施できるように改良中で、以下の手順は今後削除する予定です。
-
-ビルドしたパッケージに対しリリース前の動作確認を行います。
-
-Debian系もしくはRed Hat系の場合には本番環境へとアップロードする前にローカルのaptないしyumのリポジトリを参照して正常に更新できることを確認します。
-
-ここでは以下のようにrubyを利用してリポジトリをwebサーバ経由で参照できるようにします。
-
-yumの場合::
-
-    % ruby -run -e httpd -- packages/yum/repositories
-    % yum update
-    ...
-
-aptの場合::
-
-    % ruby -run -e httpd -- packages/apt/repositories
-    % sudo apt update
-    ...
-
-grntestの準備
-~~~~~~~~~~~~~
-
-TravisCIの結果が正常であれば、この手順はスキップして構いません。
-grntestを実行するためにはGroongaのテストデータとgrntestのソースが必要です。
-
-まずGroongaのソースを任意のディレクトリへと展開します。::
-
-    % tar zxvf groonga-(バージョン).tar.gz
-
-次にGroongaのtest/functionディレクトリ以下にgrntestのソースを展開します。
-つまりtest/function/grntestという名前でgrntestのソースを配置します。::
-
-    % ls test/function/grntest/
-    README.md  binlib  license  test
-
-grntestの実行方法
-~~~~~~~~~~~~~~~~~
-
-grntestではGroongaコマンドを明示的に指定することができます。
-後述のパッケージごとのgrntestによる動作確認では以下のようにして実行します。::
-
-    % GROONGA=(groongaのパス指定) test/function/run-test.sh
-
-最後にgrntestによる実行結果が以下のようにまとめて表示されます。::
-
-    55 tests, 52 passes, 0 failures, 3 not checked tests.
-    94.55% passed.
-
-grntestでエラーが発生しないことを確認します。
-
-
-Debian系の場合
-~~~~~~~~~~~~~~
-
-Debian系の場合の動作確認手順は以下の通りとなります。
-
-* 旧バージョンをテスト環境へとインストールする
-* テスト環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを
-  参照するように変更する
-* ホストでwebサーバを起動してドキュメントルートをビルド環境のもの
-  (repositories/apt/packages)に設定する
-* アップグレード手順を実行する
-* grntestのアーカイブを展開してインストールしたバージョンでテストを実
-  行する
-* grntestの正常終了を確認する
-
-
-Red Hat系の場合
-~~~~~~~~~~~~~~~
-
-Red Hat系の場合の動作確認手順は以下の通りとなります。
-
-* 旧バージョンをテスト環境へとインストール
-* テスト環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを参照するように変更する
-* ホストでwebサーバを起動してドキュメントルートをビルド環境のもの(packages/yum/repositories)に設定する
-* アップグレード手順を実行する
-* grntestのアーカイブを展開してインストールしたバージョンでテストを実行する
-* grntestの正常終了を確認する
-
-
-Windows向けの場合
-~~~~~~~~~~~~~~~~~
-
-* テスト環境で新規インストール/上書きインストールを行う
-* grntestのアーカイブを展開してインストールしたバージョンでテストを実行する
-* grntestの正常終了を確認する
-
-zipアーカイブも同様にしてgrntestを実行し動作確認を行います。
+    % cd packages
+    % rake windows
 
 リリースアナウンスの作成
 ------------------------
@@ -595,7 +441,6 @@ news.rstに変更点をまとめましたが、それを元にリリースアナ
     * http://osdn.jp/projects/groonga/lists/archive/dev/2012-April/000794.html
 
 後述しますが、Twitter等でのリリースアナウンスの際はここで用意したアナウンス文の要約を使用します。
-
 
 blogroonga(ブログ)の更新
 ------------------------
