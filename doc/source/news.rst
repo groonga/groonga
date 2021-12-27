@@ -123,49 +123,49 @@ Fixes
 
        table_create Times TABLE_PAT_KEY UInt16
        column_create Times statuses COLUMN_INDEX Statuses start_time,end_time
-       # [
+       [
+         [
+           -22,
+           1639037503.16114,
+           0.003981828689575195,
+           "grn_obj_set_info(): GRN_INFO_SOURCE: multi column index must be created with WITH_SECTION flag: <Times.statuses>",
            [
-             -22,
-             1639037503.16114,
-             0.003981828689575195,
-             "grn_obj_set_info(): GRN_INFO_SOURCE: multi column index must be created with WITH_SECTION flag: <Times.statuses>",
              [
-               [
-                 "grn_obj_set_info_source_validate",
-                 "../../groonga/lib/db.c",
-                 9605
-               ],
-               [
-                 "/tmp/d.grn",
-                 6,
-                 "column_create Times statuses COLUMN_INDEX Statuses start_time,end_time"
-               ]
+               "grn_obj_set_info_source_validate",
+               "../../groonga/lib/db.c",
+               9605
+             ],
+             [
+               "/tmp/d.grn",
+               6,
+               "column_create Times statuses COLUMN_INDEX Statuses start_time,end_time"
              ]
-           ],
-           false
-         ]
+           ]
+         ],
+         false
+       ]
        table_remove Times
-       # [
+       [
+         [
+           -22,
+           1639037503.16515,
+           0.0005414485931396484,
+           "[object][remove] column is broken: <Times.statuses>",
            [
-             -22,
-             1639037503.16515,
-             0.0005414485931396484,
-             "[object][remove] column is broken: <Times.statuses>",
              [
-               [
-                 "remove_columns",
-                 "../../groonga/lib/db.c",
-                 10649
-               ],
-               [
-                 "/tmp/d.grn",
-                 8,
-                 "table_remove Times"
-               ]
+               "remove_columns",
+               "../../groonga/lib/db.c",
+               10649
+             ],
+             [
+               "/tmp/d.grn",
+               8,
+               "table_remove Times"
              ]
-           ],
-           false
-         ]
+           ]
+         ],
+         false
+       ]
 
 Known Issues
 ------------
