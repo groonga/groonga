@@ -91,7 +91,7 @@ Improvements
   We implements this feature for improving performance near phrase search
   like ``'*ONP"..." OR *ONP"..." OR ...'``.
 
-* Groonga became easily detects ``request_cancel`` while executing a search.
+* [:doc:`/reference/commands/request_cancel`] Groonga became easily detects ``request_cancel`` while executing a search.
 
   Because we added more checks of return code to detect ``request_cancel``.
 

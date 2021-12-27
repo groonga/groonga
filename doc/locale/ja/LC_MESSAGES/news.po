@@ -104,8 +104,11 @@ msgstr ""
 "ズ検索のパフォーマンスを改善するために実装されました。"
 
 msgid ""
-"Groonga became easily detects ``request_cancel`` while executing a search."
-msgstr "検索実行中に ``request_cancel`` を検知しやすくしました。"
+"[:doc:`/reference/commands/request_cancel`] Groonga became easily detects "
+"``request_cancel`` while executing a search."
+msgstr ""
+"[:doc:`/reference/commands/request_cancel`] 検索実行中に ``request_cancel`` "
+"を検知しやすくしました。"
 
 msgid ""
 "Because we added more checks of return code to detect ``request_cancel``."
