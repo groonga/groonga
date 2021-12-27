@@ -157,6 +157,33 @@ msgstr ""
 "例えば、以下のように ``column_create`` を使って無効なインデックスカラムを作成"
 "した時、テーブルが削除できなくなります。"
 
+msgid "Known Issues"
+msgstr "既知の問題"
+
+msgid ""
+"Currently, Groonga has a bug that there is possible that data is corrupt "
+"when we execute many additions, delete, and update data to vector column."
+msgstr ""
+"現在Groongaには、ベクターカラムに対してデータを大量に追加、削除、更新した際に"
+"データが破損することがある問題があります。"
+
+msgid ""
+"``*<`` and ``*>`` only valid when we use ``query()`` the right side of "
+"filter condition. If we specify as below, ``*<`` and ``*>`` work as ``&&``."
+msgstr ""
+"``*<`` と ``*>`` は、filter条件の右辺に ``query()`` を使う時のみ有効です。も"
+"し、以下のように指定した場合、 ``*<`` と ``*>`` は ``&&`` として機能します。"
+
+msgid "``'content @ \"Groonga\" *< content @ \"Mroonga\"'``"
+msgstr ""
+
+msgid ""
+"Groonga may not return records that should match caused by "
+"``GRN_II_CURSOR_SET_MIN_ENABLE``."
+msgstr ""
+"``GRN_II_CURSOR_SET_MIN_ENABLE`` が原因でマッチするはずのレコードを返さないこ"
+"とがあります。"
+
 msgid "Thanks"
 msgstr "感謝"
 
@@ -241,33 +268,6 @@ msgstr ""
 "[ブラウザーベースの管理ツール] レコード一覧の管理モードのチェックボックスに"
 "チェックを入れても、非管理モードに入力された検索クエリーが送信される問題を修"
 "正しました。 [Github#1186][Takashi Hashidaさんがパッチ提供]"
-
-msgid "Known Issues"
-msgstr "既知の問題"
-
-msgid ""
-"Currently, Groonga has a bug that there is possible that data is corrupt "
-"when we execute many additions, delete, and update data to vector column."
-msgstr ""
-"現在Groongaには、ベクターカラムに対してデータを大量に追加、削除、更新した際に"
-"データが破損することがある問題があります。"
-
-msgid ""
-"``*<`` and ``*>`` only valid when we use ``query()`` the right side of "
-"filter condition. If we specify as below, ``*<`` and ``*>`` work as ``&&``."
-msgstr ""
-"``*<`` と ``*>`` は、filter条件の右辺に ``query()`` を使う時のみ有効です。も"
-"し、以下のように指定した場合、 ``*<`` と ``*>`` は ``&&`` として機能します。"
-
-msgid "``'content @ \"Groonga\" *< content @ \"Mroonga\"'``"
-msgstr ""
-
-msgid ""
-"Groonga may not return records that should match caused by "
-"``GRN_II_CURSOR_SET_MIN_ENABLE``."
-msgstr ""
-"``GRN_II_CURSOR_SET_MIN_ENABLE`` が原因でマッチするはずのレコードを返さないこ"
-"とがあります。"
 
 msgid "Release 11.0.9 - 2021-11-04"
 msgstr "11.0.9リリース - 2021-11-04"
