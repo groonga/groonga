@@ -66,6 +66,7 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->unify_to_katakana = GRN_FALSE;
   options->remove_blank = GRN_FALSE;
   options->remove_new_line = true;
+  options->remove_symbol = false;  
 }
 
 void
@@ -203,6 +204,12 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->remove_new_line);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "remove_symbol")) {
+      options->remove_symbol =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->remove_symbol);
     }
   } GRN_OPTION_VALUES_EACH_END();
 

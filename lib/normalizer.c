@@ -585,6 +585,7 @@ typedef struct {
   grn_bool remove_blank_p;
   grn_bool remove_tokenized_delimiter_p;
   bool remove_new_line_p;
+  bool remove_symbol_p;
 } grn_nfkc_normalize_data;
 
 grn_inline static void
@@ -691,6 +692,7 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
   data->remove_tokenized_delimiter_p =
     (data->string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
   data->remove_new_line_p = data->options->remove_new_line;
+  data->remove_symbol_p = data->options->remove_symbol;  
 
   size = data->string->original_length_in_bytes;
   data->context.size = size * 3;
@@ -1700,6 +1702,9 @@ grn_nfkc_normalize_remove_character_p(grn_ctx *ctx,
     return false;
   }
 
+  if ((data->context.types[0] == GRN_CHAR_SYMBOL) && data->remove_symbol_p) {
+    return data->remove_symbol_p;
+  }
   switch (current[0]) {
   case ' ' :
     return data->remove_blank_p;
