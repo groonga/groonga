@@ -692,7 +692,7 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
   data->remove_tokenized_delimiter_p =
     (data->string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
   data->remove_new_line_p = data->options->remove_new_line;
-  data->remove_symbol_p = data->options->remove_symbol;  
+  data->remove_symbol_p = data->options->remove_symbol;
 
   size = data->string->original_length_in_bytes;
   data->context.size = size * 3;
@@ -1698,13 +1698,15 @@ grn_nfkc_normalize_remove_character_p(grn_ctx *ctx,
                                       const unsigned char *current,
                                       size_t current_length)
 {
+  if ((GRN_CHAR_TYPE(data->options->char_type_func(current)) == GRN_CHAR_SYMBOL)
+      && data->remove_symbol_p) {
+    return data->remove_symbol_p;
+  }
+
   if (current[0] > ' ') {
     return false;
   }
 
-  if ((data->context.types[0] == GRN_CHAR_SYMBOL) && data->remove_symbol_p) {
-    return data->remove_symbol_p;
-  }
   switch (current[0]) {
   case ' ' :
     return data->remove_blank_p;
