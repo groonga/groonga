@@ -437,6 +437,20 @@ grn_snip_get_delimiter_regexp(grn_ctx *ctx, grn_obj *snip, size_t *length)
 }
 
 grn_rc
+grn_ctx_expand_cond(grn_ctx *ctx, grn_snip *snip)
+{
+  size_t cond_capacity = snip->cond_capacity * 2;
+  snip_cond *cond = (snip_cond *)GRN_REALLOC(snip->cond,
+                                          sizeof(snip_cond) * cond_capacity);
+  if (!cond) {
+    return ctx->rc;
+  }
+  snip->cond = cond;
+  snip->cond_capacity = cond_capacity;
+  return GRN_SUCCESS;
+}
+
+grn_rc
 grn_snip_add_cond(grn_ctx *ctx, grn_obj *snip,
                   const char *keyword, unsigned int keyword_len,
                   const char *opentag, unsigned int opentag_len,
@@ -449,8 +463,14 @@ grn_snip_add_cond(grn_ctx *ctx, grn_obj *snip,
   grn_snip *snip_;
 
   snip_ = (grn_snip *)snip;
-  if (!snip_ || !keyword || !keyword_len || snip_->cond_len >= MAX_SNIP_COND_COUNT) {
+  if (!snip_ || !keyword || !keyword_len) {
     return GRN_INVALID_ARGUMENT;
+  }
+
+  if (snip_->cond_len >= snip_->cond_capacity) {
+    if ((rc = grn_ctx_expand_cond(ctx, snip_))) {
+      return rc;
+    }
   }
 
   cond = snip_->cond + snip_->cond_len;
@@ -583,6 +603,22 @@ grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
     GRN_API_RETURN(NULL);
   }
 
+  ret->cond_capacity = DEFAULT_SNIP_COND_CAPACITY;
+  ret->cond = (snip_cond *)GRN_MALLOC(sizeof(snip_cond) * ret->cond_capacity);
+
+  if (!ret->cond) {
+    if (copy_tag) {
+      if(ret->defaultopentag){
+        GRN_FREE((void *)ret->defaultopentag);
+      }
+      if (ret->defaultclosetag) {
+        GRN_FREE((void *)ret->defaultclosetag);
+      }
+    }
+    GRN_FREE(ret);
+    GRN_API_RETURN(NULL);
+  }
+
   ret->cond_len = 0;
   ret->mapping = mapping;
   ret->nstr = NULL;
@@ -661,6 +697,9 @@ grn_snip_close(grn_ctx *ctx, grn_snip *snip)
   for (cond = snip->cond, cond_end = cond + snip->cond_len;
        cond < cond_end; cond++) {
     grn_snip_cond_close(ctx, cond);
+  }
+  if (snip->cond) {
+    GRN_FREE(snip->cond);
   }
   GRN_FREE(snip);
   GRN_API_RETURN(GRN_SUCCESS);
