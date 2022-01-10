@@ -836,7 +836,6 @@ test_open_with_copy_tag(void)
 void
 test_add_cond_with_invalid_argument(void)
 {
-  unsigned int n_conds = 0, max_n_conds = 32U;
   const gchar keyword[] = "Groonga";
   unsigned int keyword_len;
   const gchar open_tag[] = "<<";
@@ -853,7 +852,6 @@ test_add_cond_with_invalid_argument(void)
                                     keyword, keyword_len,
                                     open_tag, open_tag_len,
                                     close_tag, close_tag_len));
-  n_conds++;
 
   grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
                            grn_snip_add_cond(&context, NULL,
@@ -870,22 +868,6 @@ test_add_cond_with_invalid_argument(void)
                                              keyword, 0,
                                              open_tag, open_tag_len,
                                              close_tag, close_tag_len));
-
-  while (n_conds < max_n_conds) {
-    grn_test_assert(grn_snip_add_cond(&context, snip,
-                                      keyword, keyword_len,
-                                      open_tag, open_tag_len,
-                                      close_tag, close_tag_len),
-                    cut_message("cond #%d", n_conds));
-    n_conds++;
-  }
-
-  grn_test_assert_equal_rc(GRN_INVALID_ARGUMENT,
-                           grn_snip_add_cond(&context, snip,
-                                             keyword, keyword_len,
-                                             open_tag, open_tag_len,
-                                             close_tag, close_tag_len),
-                           cut_message("cond #%d", n_conds));
 }
 
 void
