@@ -126,6 +126,9 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                        expression,
                                        GRN_TEXT_VALUE(&cache_key),
                                        GRN_TEXT_LEN(&cache_key));
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
     GRN_OBJ_FIN(ctx, snip_ptr);
     GRN_PTR_INIT(snip_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
   }

@@ -1,0 +1,37 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "groonga and MySQL and PosrgreSQL"}
+]
+[[0,0.0,0.0],1]
+select Entries   --output_columns '   snippet(content,   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>",   "SQL", "<span class=\\"keyword\\">", "</span>"   )'
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[hash][add][(temporary)] too long key"
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "snippet",
+          null
+        ]
+      ],
+      [
+        "[hash][add][(temporary)] too long key"
+      ]
+    ]
+  ]
+]
+#|e| [hash][add][(temporary)] too long key
