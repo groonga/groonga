@@ -30,48 +30,50 @@ grn_char_type_to_string(grn_char_type type)
 {
   const char *string = "unknown";
 
-#define CHAR_TYPE_STRING_WITH_BLANK(type_string) do {   \
-    if (GRN_CHAR_IS_BLANK(type)) {                      \
-      string = type_string "|blank";                    \
-    } else {                                            \
-      string = type_string;                             \
-    }                                                   \
+#define CHAR_TYPE_STRING_WITH_REMOVED_CAHR_TYPE(type_string) do {   \
+    if (GRN_CHAR_IS_BLANK(type)) {                                  \
+      string = type_string "|blank";                                \
+    } else if (GRN_REMOVED_CHAR_TYPE_IS_SYMBOL(type)) {             \
+      string = type_string "|symbol";                               \
+    } else {                                                        \
+      string = type_string;                                         \
+    }                                                               \
   } while (GRN_FALSE)
 
   switch (GRN_CHAR_TYPE(type)) {
   case GRN_CHAR_NULL :
-    CHAR_TYPE_STRING_WITH_BLANK("null");
+    CHAR_TYPE_STRING_WITH_REMOVED_CAHR_TYPE("null");
     break;
   case GRN_CHAR_ALPHA :
-    CHAR_TYPE_STRING_WITH_BLANK("alpha");
+    CHAR_TYPE_STRING_WITH_REMOVED_CAHR_TYPE("alpha");
     break;
   case GRN_CHAR_DIGIT :
-    CHAR_TYPE_STRING_WITH_BLANK("digit");
+    CHAR_TYPE_STRING_WITH_REMOVED_CAHR_TYPE("digit");
     break;
   case GRN_CHAR_SYMBOL :
-    CHAR_TYPE_STRING_WITH_BLANK("symbol");
+    CHAR_TYPE_STRING_WITH_REMOVED_CAHR_TYPE("symbol");
     break;
   case GRN_CHAR_HIRAGANA :
-    CHAR_TYPE_STRING_WITH_BLANK("hiragana");
+    CHAR_TYPE_STRING_WITH_REMOVED_CAHR_TYPE("hiragana");
     break;
   case GRN_CHAR_KATAKANA :
-    CHAR_TYPE_STRING_WITH_BLANK("katakana");
+    CHAR_TYPE_STRING_WITH_REMOVED_CAHR_TYPE("katakana");
     break;
   case GRN_CHAR_KANJI :
-    CHAR_TYPE_STRING_WITH_BLANK("kanji");
+    CHAR_TYPE_STRING_WITH_REMOVED_CAHR_TYPE("kanji");
     break;
   case GRN_CHAR_OTHERS :
-    CHAR_TYPE_STRING_WITH_BLANK("others");
+    CHAR_TYPE_STRING_WITH_REMOVED_CAHR_TYPE("others");
     break;
   case GRN_CHAR_EMOJI :
-    CHAR_TYPE_STRING_WITH_BLANK("emoji");
+    CHAR_TYPE_STRING_WITH_REMOVED_CAHR_TYPE("emoji");
     break;
   default :
-    CHAR_TYPE_STRING_WITH_BLANK("unknown");
+    CHAR_TYPE_STRING_WITH_REMOVED_CAHR_TYPE("unknown");
     break;
   }
 
-#undef CHAR_TYPE_STRING_WITH_BLANK
+#undef CHAR_TYPE_STRING_WITH_REMOVED_CAHR_TYPE
 
   return string;
 }

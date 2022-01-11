@@ -1,6 +1,7 @@
 /*
   Copyright(C) 2012-2018  Brazil
   Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2021  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1795,7 +1796,11 @@ grn_nfkc_normalize(grn_ctx *ctx,
                                                   current,
                                                   current_length)) {
           if (context->t > context->types) {
-            context->t[-1] |= GRN_CHAR_BLANK;
+            if (data.options->char_type_func(current) == GRN_CHAR_SYMBOL) {
+              context->t[-1] |= GRN_REMOVED_CHAR_TYPE_SYMBOL;
+            } else {
+              context->t[-1] |= GRN_CHAR_BLANK;
+            }
           }
           if (!data.options->include_removed_source_location) {
             source_ += current_length;
