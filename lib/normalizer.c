@@ -1698,8 +1698,7 @@ grn_nfkc_normalize_remove_character_p(grn_ctx *ctx,
                                       const unsigned char *current,
                                       size_t current_length)
 {
-  if ((GRN_CHAR_TYPE(data->options->char_type_func(current)) == GRN_CHAR_SYMBOL)
-      && data->remove_symbol_p) {
+  if (data->options->char_type_func(current) == GRN_CHAR_SYMBOL) {
     return data->remove_symbol_p;
   }
 
