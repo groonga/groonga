@@ -58,7 +58,10 @@ GRN_API grn_rc grn_str_close(grn_ctx *ctx, grn_str *nstr);
 
 #define GRN_CHAR_BLANK 0x80
 #define GRN_CHAR_IS_BLANK(c) ((c) & (GRN_CHAR_BLANK))
-#define GRN_CHAR_TYPE(c) ((c) & 0x7f)
+#define GRN_REMOVED_CHAR_TYPE_SYMBOL 0x40
+#define GRN_REMOVED_CHAR_TYPE_IS_SYMBOL(char_type) \
+  ((char_type) & (GRN_REMOVED_CHAR_TYPE_SYMBOL))
+#define GRN_CHAR_TYPE(c) ((c) & 0x3f)
 
 typedef enum {
   GRN_CHAR_NULL = 0,
