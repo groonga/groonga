@@ -437,7 +437,7 @@ grn_snip_get_delimiter_regexp(grn_ctx *ctx, grn_obj *snip, size_t *length)
 }
 
 grn_rc
-grn_ctx_expand_cond(grn_ctx *ctx, grn_snip *snip)
+grn_snip_expand_cond(grn_ctx *ctx, grn_snip *snip)
 {
   size_t cond_capacity = snip->cond_capacity * 2;
   snip_cond *cond = (snip_cond *)GRN_REALLOC(snip->cond,
@@ -468,7 +468,7 @@ grn_snip_add_cond(grn_ctx *ctx, grn_obj *snip,
   }
 
   if (snip_->cond_len >= snip_->cond_capacity) {
-    if ((rc = grn_ctx_expand_cond(ctx, snip_))) {
+    if ((rc = grn_snip_expand_cond(ctx, snip_))) {
       return rc;
     }
   }
