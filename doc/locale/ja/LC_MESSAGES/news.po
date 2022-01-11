@@ -33,11 +33,97 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 11.1.1 - 2021-12-29"
-msgstr "11.1.1リリース - 2021-12-29"
+msgid "Release 11.1.2 - 2022-01-29"
+msgstr "11.1.2リリース - 2020-01-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[:doc:`reference/functions/snippet`] Added support for using the keyword of "
+"32 or more. [GitHub#1313][Pathched by Takashi Hashida]"
+msgstr ""
+"[:doc:`reference/functions/snippet`] 32個以上のキーワードを使えるようにしまし"
+"た。 [GitHub#1313][Takashi Hashidaさんがパッチ提供]"
+
+msgid ""
+"We could not specify the keyword of 32 or more with ``snippet`` until now. "
+"However, we can specify the keyword of 32 or more by this improvement as "
+"below."
+msgstr ""
+"いままで、 ``snippet`` は32個以上のキーワードを指定できませんでしたが、この改"
+"良によって、以下のように32個以上のキーワードを指定できます。"
+
+msgid "[:doc:`/install/almalinux`] Added support for AlmaLinux 8 on ARM64."
+msgstr ""
+"[:doc:`/install/almalinux`] ARM64版 AlmaLinux 8 向けのパッケージをサポートし"
+"ました。"
+
+msgid "[httpd] Updated bundled nginx to 1.21.5."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.21.5に更新しました。"
+
+msgid ""
+"[Documentation] Fixed a typo in :doc:`reference/commands/ruby_eval`. "
+"[GitHub#1317][Pathched by wi24rd]"
+msgstr ""
+"[Documentation] :doc:`reference/commands/ruby_eval` の誤記を集成しました。"
+"[GitHub#1317][wi24rdさんがパッチ提供]"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"[:doc:`/reference/commands/load`] Fixed a crash bug when we load data with "
+"specifying a nonexistent column."
+msgstr ""
+"[:doc:`/reference/commands/load`] 存在しないカラムを指定してロードした時にク"
+"ラッシュする問題を修正しました。"
+
+msgid ""
+"This bug only occurs when we specify ``apache-arrow`` into ``input_type`` as "
+"the argument of ``load``."
+msgstr ""
+"この問題は、 ``load`` の引数として、 ``input_type`` に ``apache-arrow`` を指"
+"定したときのみ発生します。"
+
+msgid ""
+"Fixed a bug that the version up of Groonga failed Because the version up of "
+"arrow-libs on which Groonga depends. [groonga-talk,540][Reported by Josep "
+"Sanz][Gitter,61eaaa306d9ba23328d23ce1][Reported by shibanao4870][GitHub#1316]"
+"[Reported by Keitaro YOSHIMURA]"
+msgstr ""
+"Groongaが依存している arrow-libs がバージョンアップしたことによって、Groonga"
+"のバージョンアップが失敗する問題を修正しました。[groonga-talk,540][Josep Sanz"
+"さんの報告][Gitter,61eaaa306d9ba23328d23ce1][shibanao4870さんの報告]"
+"[GitHub#1316][Keitaro YOSHIMURAさんの報告]"
+
+msgid ""
+"However, if arrow-libs update a major version, this problem reproduces. In "
+"this case, we will handle that by rebuilding the Groonga package."
+msgstr ""
+"ただし、 arrow-libs がメジャーバージョンアップした場合は、この問題は再発しま"
+"す。その場合は、Groongaパッケージを再構築して対応する予定です。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Takashi Hashida"
+msgstr "Takashi Hashidaさん"
+
+msgid "wi24rd"
+msgstr "wi24rdさん"
+
+msgid "Josep Sanz"
+msgstr "Josep Sanzさん"
+
+msgid "Keitaro YOSHIMURA"
+msgstr "Keitaro YOSHIMURAさん"
+
+msgid "shibanao4870"
+msgstr "shibanao4870さん"
+
+msgid "Release 11.1.1 - 2021-12-29"
+msgstr "11.1.1リリース - 2021-12-29"
 
 msgid ""
 "[:doc:`reference/commands/select`] Added support for near phrase product "
@@ -143,9 +229,6 @@ msgstr "[:doc:`/install/centos`] CentOS 8のサポートをやめました。"
 msgid "Because CentOS 8 will reach EOL at 2021-12-31."
 msgstr "CentOS 8は、2021年12月31日でEOLとなるためです。"
 
-msgid "Fixes"
-msgstr "修正"
-
 msgid ""
 "Fixed a bug that we can't remove a index column with invalid parameter. "
 "[GitHub#1301][Patched by Takashi Hashida]"
@@ -186,12 +269,6 @@ msgid ""
 msgstr ""
 "``GRN_II_CURSOR_SET_MIN_ENABLE`` が原因でマッチするはずのレコードを返さないこ"
 "とがあります。"
-
-msgid "Thanks"
-msgstr "感謝"
-
-msgid "Takashi Hashida"
-msgstr "Takashi Hashidaさん"
 
 msgid "Release 11.1.0 - 2021-11-29"
 msgstr "11.1.0リリース - 2021-11-29"
@@ -5180,9 +5257,6 @@ msgstr ""
 
 msgid "Shimadzu Corporation"
 msgstr "島津製作所さん"
-
-msgid "Josep Sanz"
-msgstr "Josep Sanzさん"
 
 msgid "Release 9.0.4 - 2019-06-29"
 msgstr "9.0.4リリース - 2019-06-29"
