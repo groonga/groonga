@@ -115,22 +115,24 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *snip_ptr = NULL;
   grn_obj *expression;
   grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
-  snip_ptr = grn_expr_get_var(ctx,
-                              expression,
-                              GRN_TEXT_VALUE(&cache_key),
-                              GRN_TEXT_LEN(&cache_key));
-  if (snip_ptr) {
-    snip = GRN_PTR_VALUE(snip_ptr);
-  } else {
-    snip_ptr = grn_expr_get_or_add_var(ctx,
-                                       expression,
-                                       GRN_TEXT_VALUE(&cache_key),
-                                       GRN_TEXT_LEN(&cache_key));
-    if (ctx->rc != GRN_SUCCESS) {
-      goto exit;
+  if (GRN_TEXT_LEN(&cache_key) <= GRN_TABLE_MAX_KEY_SIZE) {
+    snip_ptr = grn_expr_get_var(ctx,
+                                expression,
+                                GRN_TEXT_VALUE(&cache_key),
+                                GRN_TEXT_LEN(&cache_key));
+    if (snip_ptr) {
+      snip = GRN_PTR_VALUE(snip_ptr);
+    } else {
+      snip_ptr = grn_expr_get_or_add_var(ctx,
+                                         expression,
+                                         GRN_TEXT_VALUE(&cache_key),
+                                         GRN_TEXT_LEN(&cache_key));
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+      GRN_OBJ_FIN(ctx, snip_ptr);
+      GRN_PTR_INIT(snip_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
     }
-    GRN_OBJ_FIN(ctx, snip_ptr);
-    GRN_PTR_INIT(snip_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
   }
 
   grn_obj *end_arg = args[nargs - 1];

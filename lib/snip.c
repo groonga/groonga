@@ -436,17 +436,17 @@ grn_snip_get_delimiter_regexp(grn_ctx *ctx, grn_obj *snip, size_t *length)
   return snip_->delimiter_pattern;
 }
 
-grn_rc
+static grn_rc
 grn_snip_expand_cond(grn_ctx *ctx, grn_snip *snip)
 {
-  size_t cond_capacity = snip->cond_capacity * 2;
-  snip_cond *cond = (snip_cond *)GRN_REALLOC(snip->cond,
-                                          sizeof(snip_cond) * cond_capacity);
-  if (!cond) {
+  size_t new_cond_capacity = snip->cond_capacity * 2;
+  snip_cond *new_cond = (snip_cond *)GRN_REALLOC(snip->cond,
+                                          sizeof(snip_cond) * new_cond_capacity);
+  if (!new_cond) {
     return ctx->rc;
   }
-  snip->cond = cond;
-  snip->cond_capacity = cond_capacity;
+  snip->cond = new_cond;
+  snip->cond_capacity = new_cond_capacity;
   return GRN_SUCCESS;
 }
 
@@ -468,14 +468,16 @@ grn_snip_add_cond(grn_ctx *ctx, grn_obj *snip,
   }
 
   if (snip_->cond_len >= snip_->cond_capacity) {
-    if ((rc = grn_snip_expand_cond(ctx, snip_))) {
+    rc = grn_snip_expand_cond(ctx, snip_);
+    if (rc) {
       return rc;
     }
   }
 
   cond = snip_->cond + snip_->cond_len;
-  if ((rc = grn_snip_cond_init(ctx, cond, keyword, keyword_len,
-                               snip_->encoding, snip_->normalizer, snip_->flags))) {
+  rc = grn_snip_cond_init(ctx, cond, keyword, keyword_len,
+                               snip_->encoding, snip_->normalizer, snip_->flags);
+  if (rc) {
     return rc;
   }
   grn_string_get_normalized(ctx, cond->keyword, NULL, &norm_blen, NULL);
@@ -608,7 +610,7 @@ grn_snip_open(grn_ctx *ctx, int flags, unsigned int width,
 
   if (!ret->cond) {
     if (copy_tag) {
-      if(ret->defaultopentag){
+      if (ret->defaultopentag) {
         GRN_FREE((void *)ret->defaultopentag);
       }
       if (ret->defaultclosetag) {
@@ -698,9 +700,7 @@ grn_snip_close(grn_ctx *ctx, grn_snip *snip)
        cond < cond_end; cond++) {
     grn_snip_cond_close(ctx, cond);
   }
-  if (snip->cond) {
-    GRN_FREE(snip->cond);
-  }
+  GRN_FREE(snip->cond);
   GRN_FREE(snip);
   GRN_API_RETURN(GRN_SUCCESS);
 }
