@@ -256,7 +256,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
   end
 
   def dput_configuration_name
-    ENV["DPUT_CONFIGUARATION_NAME"] || "groonga-ppa"
+    ENV["DPUT_CONFIGURATION_NAME"] || "groonga-ppa"
   end
 
   def dput_incoming
