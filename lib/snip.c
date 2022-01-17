@@ -476,7 +476,7 @@ grn_snip_add_cond(grn_ctx *ctx, grn_obj *snip,
 
   cond = snip_->cond + snip_->cond_len;
   rc = grn_snip_cond_init(ctx, cond, keyword, keyword_len,
-                               snip_->encoding, snip_->normalizer, snip_->flags);
+                          snip_->encoding, snip_->normalizer, snip_->flags);
   if (rc) {
     return rc;
   }
