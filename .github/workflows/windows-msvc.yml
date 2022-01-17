@@ -297,6 +297,10 @@ jobs:
         if: |
           matrix.architecture == 'x64'
         run: |
+          # This is workaround for https://github.com/apache/arrow/pull/12165
+          wget https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gettext-0.19.8.1-10-any.pkg.tar.zst
+          ridk exec pacman -U --noconfirm mingw-w64-x86_64-gettext-0.19.8.1-10-any.pkg.tar.zst
+
           ridk exec pacman --sync --noconfirm mingw-w64-x86_64-arrow
           $Env:MAKEFLAGS = "-j${Env:NUMBER_OF_PROCESSORS}"
           gem install red-arrow
