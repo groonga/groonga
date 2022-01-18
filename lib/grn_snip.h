@@ -23,10 +23,10 @@
 #include "grn_db.h"
 #include "grn_onigmo.h"
 
-#define ASIZE                   256U
-#define MAX_SNIP_TAG_COUNT      512U
-#define MAX_SNIP_COND_COUNT     32U
-#define MAX_SNIP_RESULT_COUNT   16U
+#define ASIZE                      256U
+#define MAX_SNIP_TAG_COUNT         512U
+#define DEFAULT_SNIP_COND_CAPACITY 32U
+#define MAX_SNIP_RESULT_COUNT      16U
 
 #ifdef __cplusplus
 extern "C"
@@ -97,8 +97,9 @@ typedef struct _grn_snip
 
   grn_snip_mapping *mapping;
 
-  snip_cond cond[MAX_SNIP_COND_COUNT];
-  unsigned int cond_len;
+  snip_cond *cond;
+  size_t cond_capacity;
+  size_t cond_len;
 
   unsigned int tag_count;
   unsigned int snip_count;
