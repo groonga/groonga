@@ -440,8 +440,8 @@ static grn_rc
 grn_snip_expand_cond(grn_ctx *ctx, grn_snip *snip)
 {
   size_t new_cond_capacity = snip->cond_capacity * 2;
-  snip_cond *new_cond = (snip_cond *)GRN_REALLOC(snip->cond,
-                                          sizeof(snip_cond) * new_cond_capacity);
+  size_t new_cond_size = sizeof(snip_cond) * new_cond_capacity;
+  snip_cond *new_cond = (snip_cond *)GRN_REALLOC(snip->cond, new_cond_size);
   if (!new_cond) {
     return ctx->rc;
   }
