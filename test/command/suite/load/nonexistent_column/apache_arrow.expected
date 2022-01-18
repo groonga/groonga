@@ -1,0 +1,30 @@
+table_create Numbers TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+column_create Numbers value COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+load --table Numbers --command_version 3
+[
+{"_key": 1, "value": 1, "nonexistent": 10},
+{"_key": 2, "value": 2},
+{"_key": 3, "value": 3, "nonexistent": 30}
+]
+{
+  "header": {
+    "return_code": -22,
+    "start_time": 0.0,
+    "elapsed_time": 0.0,
+    "error": {
+      "message": "[table][load][Numbers] nonexistent column: <nonexistent>",
+      "function": "set_values",
+      "file": "arrow.cpp",
+      "line": 0
+    }
+  },
+  "body": {
+    "n_loaded_records": 3
+  }
+}
+#|e| [table][load][Numbers] nonexistent column: <nonexistent>
+#|e| [table][load][Numbers][nonexistent] failed to set column value: [table][load][Numbers] nonexistent column: <nonexistent>: key: <1>, value: <10>
+#|e| [table][load][Numbers][nonexistent] failed to set column value: [table][load][Numbers] nonexistent column: <nonexistent>: key: <2>, value: <0>
+#|e| [table][load][Numbers][nonexistent] failed to set column value: [table][load][Numbers] nonexistent column: <nonexistent>: key: <3>, value: <30>

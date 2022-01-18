@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2017  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -813,10 +813,12 @@ namespace grnarrow {
     arrow::Status
     load_value(LoadBulk load_bulk) {
       load_bulk();
-      if (grn_obj_cast(ctx_, &buffer_, bulk_, true) != GRN_SUCCESS) {
-        auto ctx = ctx_;
-        auto range = (*object_cache_)[bulk_->header.domain];
-        ERR_CAST(grn_column_, range, &buffer_);
+      if (bulk_->header.domain != GRN_DB_VOID) {
+        if (grn_obj_cast(ctx_, &buffer_, bulk_, true) != GRN_SUCCESS) {
+          auto ctx = ctx_;
+          auto range = (*object_cache_)[bulk_->header.domain];
+          ERR_CAST(grn_column_, range, &buffer_);
+        }
       }
       return arrow::Status::OK();
     }
@@ -834,20 +836,20 @@ namespace grnarrow {
         grn_loader_(grn_loader),
         grn_table_(grn_table),
         record_ids_(record_ids),
+        column_name_(arrow_field->name()),
         grn_column_(nullptr),
         buffer_(),
         object_cache_(object_cache) {
-      const auto &column_name = arrow_field->name();
       if (grn_loader_) {
         grn_column_ = grn_loader_get_column(ctx_,
                                             grn_loader_,
-                                            column_name.data(),
-                                            column_name.size());
+                                            column_name_.data(),
+                                            column_name_.size());
       } else {
         grn_column_ = grn_obj_column(ctx_,
                                      grn_table,
-                                     column_name.data(),
-                                     column_name.size());
+                                     column_name_.data(),
+                                     column_name_.size());
       }
 
       const auto &arrow_type = arrow_field->type();
@@ -861,23 +863,12 @@ namespace grnarrow {
       }
 
       if (!grn_column_) {
-        if (grn_loader_) {
-          char table_name[GRN_TABLE_MAX_KEY_SIZE];
-          auto table_name_size = grn_obj_name(ctx_,
-                                              grn_table_,
-                                              table_name,
-                                              GRN_TABLE_MAX_KEY_SIZE);
-          ERR(GRN_INVALID_ARGUMENT,
-              "[table][load][%.*s] nonexistent column: <%s>",
-              table_name_size, table_name,
-              column_name.data());
-          return;
-        } else {
+        if (!grn_loader_) {
           grn_column_ =
             grn_column_create(ctx_,
                               grn_table_,
-                              column_name.data(),
-                              static_cast<unsigned int>(column_name.size()),
+                              column_name_.data(),
+                              static_cast<unsigned int>(column_name_.size()),
                               NULL,
                               GRN_OBJ_COLUMN_SCALAR,
                               (*object_cache_)[arrow_type_id]);
@@ -886,7 +877,10 @@ namespace grnarrow {
       if (grn_type_id_is_text_family(ctx_, arrow_type_id)) {
         GRN_VALUE_VAR_SIZE_INIT(&buffer_, flags, arrow_type_id);
       } else {
-        grn_id range_id = grn_obj_get_range(ctx, grn_column_);
+        grn_id range_id = GRN_ID_NIL;
+        if (grn_column_) {
+          range_id = grn_obj_get_range(ctx, grn_column_);
+        }
         GRN_VALUE_FIX_SIZE_INIT(&buffer_, flags, range_id);
         if (flags & GRN_OBJ_WITH_WEIGHT) {
           buffer_.header.flags |= GRN_OBJ_WITH_WEIGHT;
@@ -970,6 +964,7 @@ namespace grnarrow {
     grn_loader *grn_loader_;
     grn_obj *grn_table_;
     const grn_id *record_ids_;
+    std::string column_name_;
     grn_obj *grn_column_;
     grn_obj buffer_;
     ObjectCache *object_cache_;
@@ -1054,54 +1049,63 @@ namespace grnarrow {
         if (record_id == GRN_ID_NIL) {
           continue;
         }
+
         GRN_BULK_REWIND(&buffer_);
         ValueLoadVisitor visitor(ctx_, grn_column_, &buffer_, i, object_cache_);
         ARROW_RETURN_NOT_OK(array.Accept(&visitor));
-        if (ctx_->rc == GRN_SUCCESS) {
-          grn_obj_set_value(ctx_, grn_column_, record_id, &buffer_, GRN_OBJ_SET);
+        if (!grn_column_) {
+          auto ctx = ctx_;
+          GRN_DEFINE_NAME(grn_table_);
+          ERR(GRN_INVALID_ARGUMENT,
+              "[table][load][%.*s] nonexistent column: <%s>",
+              name_size, name,
+              column_name_.data());
           if (grn_loader_) {
             grn_loader_add_record_data data;
-            std::string column_name_buffer;
             init_grn_loader_add_record_data(&data,
                                             record_id,
-                                            &buffer_,
-                                            column_name_buffer);
+                                            visitor.original_value());
             grn_loader_on_column_set(ctx_, grn_loader_, &data);
           }
-        } else {
+          continue;
+        }
+
+        if (ctx_->rc != GRN_SUCCESS) {
           if (grn_loader_) {
             grn_loader_add_record_data data;
-            std::string column_name_buffer;
             init_grn_loader_add_record_data(&data,
                                             record_id,
-                                            visitor.original_value(),
-                                            column_name_buffer);
+                                            visitor.original_value());
+            grn_loader_on_column_set(ctx_, grn_loader_, &data);
+          }
+          continue;
+        }
+
+        grn_obj_set_value(ctx_, grn_column_,record_id, &buffer_, GRN_OBJ_SET);
+        if (ctx_->rc != GRN_SUCCESS) {
+          if (grn_loader_) {
+            grn_loader_add_record_data data;
+            init_grn_loader_add_record_data(&data,
+                                            record_id,
+                                            &buffer_);
             grn_loader_on_column_set(ctx_, grn_loader_, &data);
           }
         }
       }
-      return arrow::Status::OK();
+      return check(ctx_, ctx_->rc, "[arrow][column-loader][set-value]");
     }
 
     void init_grn_loader_add_record_data(grn_loader_add_record_data *data,
                                          grn_id record_id,
-                                         grn_obj *value,
-                                         std::string &column_name_buffer)
+                                         grn_obj *value)
     {
       data->table = grn_loader_->table;
       data->depth = 0;
       data->record_value = nullptr;
       data->id = record_id;
       data->key = nullptr;
-      auto ctx = ctx_;
-      GRN_DEFINE_NAME(grn_column_);
-      column_name_buffer.assign(name, name_size);
-      auto delimiter_position = column_name_buffer.find(GRN_DB_DELIMITER);
-      if (delimiter_position != std::string::npos) {
-        column_name_buffer.erase(0, delimiter_position + 1);
-      }
-      data->current.column_name = column_name_buffer.data();
-      data->current.column_name_size = column_name_buffer.size();
+      data->current.column_name = column_name_.data();
+      data->current.column_name_size = column_name_.size();
       data->current.column = grn_column_;
       data->current.value = value;
     }

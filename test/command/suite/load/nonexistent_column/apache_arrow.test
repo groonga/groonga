@@ -1,0 +1,11 @@
+#@require-input-type apache-arrow
+
+table_create Numbers TABLE_PAT_KEY Int32
+column_create Numbers value COLUMN_SCALAR Int32
+
+load --table Numbers --command_version 3
+[
+{"_key": 1, "value": 1, "nonexistent": 10},
+{"_key": 2, "value": 2},
+{"_key": 3, "value": 3, "nonexistent": 30}
+]
