@@ -38,7 +38,9 @@ case ${version} in
   7)
     ${DNF} install -y centos-release-scl-rh
     ${DNF} install -y rh-ruby30-ruby-devel
+    set +u
     . /opt/rh/rh-ruby30/enable
+    set -u
     ;;
   *)
     ${DNF} install -y ruby-devel
