@@ -37,7 +37,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     end
   end
 
-  def detect_apache_arrow_next_major_version
+  def detect_target_apache_arrow_next_major_version
     detect_target_apache_arrow_version.split(".", 2)[0].succ
   end
 
@@ -77,7 +77,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     when "APACHE_ARROW_VERSION"
       detect_target_apache_arrow_version
     when "APACHE_ARROW_NEXT_MAJOR_VERSION"
-      detect_apache_arrow_next_major_version
+      detect_target_apache_arrow_next_major_version
     else
       super
     end
