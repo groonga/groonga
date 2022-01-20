@@ -36,20 +36,19 @@ fi
 
 case ${version} in
   7)
-    exit 0
+    ${DNF} install -y centos-release-scl-rh
+    ${DNF} install -y rh-ruby30-ruby-devel
+    . /opt/rh/rh-ruby30/enable
     ;;
   *)
+    ${DNF} install -y ruby-devel
     ;;
 esac
-
-# TODO: mecab-devel is needed
-exit
 
 ${DNF} install -y \
   gcc \
   make \
-  redhat-rpm-config \
-  ruby-devel
+  redhat-rpm-config
 MAKEFLAGS=-j$(nproc) gem install grntest
 
 export TZ=Asia/Tokyo
