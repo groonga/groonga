@@ -26,7 +26,7 @@ ${DNF} install -y \
 
 repositories_dir=/groonga/packages/yum/repositories
 ${DNF} install -y \
-  ${repositories_dir}/${os}/${version}/x86_64/Packages/*.rpm
+  ${repositories_dir}/${os}/${version}/$(arch)/Packages/*.rpm
 
 groonga --version
 if ! groonga --version | grep -q apache-arrow; then
