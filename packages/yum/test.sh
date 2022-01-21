@@ -34,41 +34,50 @@ if ! groonga --version | grep -q apache-arrow; then
   exit 1
 fi
 
-mkdir -p /test
-cd /test
-cp -a /groonga/test/command ./
-
-case ${version} in
-  7)
-    ${DNF} install -y centos-release-scl-rh
-    ${DNF} install -y rh-ruby30-ruby-devel
-    set +u
-    . /opt/rh/rh-ruby30/enable
-    set -u
-    ;;
-  *)
-    ${DNF} install -y ruby-devel
+run_test=yes
+case $(arch) in
+  aarch64)
+    run_test=no
     ;;
 esac
 
-${DNF} install -y \
-  gcc \
-  make \
-  redhat-rpm-config
-MAKEFLAGS=-j$(nproc) gem install grntest
+if [ "${run_test}" = "yes" ]; then
+  mkdir -p /test
+  cd /test
+  cp -a /groonga/test/command ./
 
-export TZ=Asia/Tokyo
+  case ${version} in
+    7)
+      ${DNF} install -y centos-release-scl-rh
+      ${DNF} install -y rh-ruby30-ruby-devel
+      set +u
+      . /opt/rh/rh-ruby30/enable
+      set -u
+      ;;
+    *)
+      ${DNF} install -y ruby-devel
+      ;;
+  esac
 
-grntest_options=()
-grntest_options+=(--base-directory=command)
-grntest_options+=(--n-retries=3)
-grntest_options+=(--n-workers=$(nproc))
-grntest_options+=(--reporter=mark)
-grntest_options+=(command/suite)
+  ${DNF} install -y \
+    gcc \
+    make \
+    redhat-rpm-config
+  MAKEFLAGS=-j$(nproc) gem install grntest
 
-grntest "${grntest_options[@]}"
-grntest "${grntest_options[@]}" --interface http
-grntest "${grntest_options[@]}" --interface http --testee groonga-httpd
+  export TZ=Asia/Tokyo
+
+  grntest_options=()
+  grntest_options+=(--base-directory=command)
+  grntest_options+=(--n-retries=3)
+  grntest_options+=(--n-workers=$(nproc))
+  grntest_options+=(--reporter=mark)
+  grntest_options+=(command/suite)
+
+  grntest "${grntest_options[@]}"
+  grntest "${grntest_options[@]}" --interface http
+  grntest "${grntest_options[@]}" --interface http --testee groonga-httpd
+fi
 
 # Should not block system update
 ${DNF} update -y
