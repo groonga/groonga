@@ -59,7 +59,7 @@ exception information (Including metadata isn't implemented yet)::
 
 ``EVALUATED_VALUE``
 
-  ``EVALUATED_VALUE`` is the evaludated value of ``ruby_script``.
+  ``EVALUATED_VALUE`` is the evaluated value of ``ruby_script``.
 
   ``ruby_eval`` supports only a number for evaluated value for now.
   Supported types will be increased in the future.
