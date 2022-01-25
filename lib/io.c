@@ -1825,7 +1825,7 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
     fi->fh = CreateFile(path, GRN_IO_FILE_CREATE_MODE,
                         FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
                         NULL,
-                        dwCreationDisposition, FILE_ATTRIBUTE_NORMAL, 0);
+                        dwCreationDisposition, FILE_ATTRIBUTE_NORMAL, NULL);
     if (fi->fh == INVALID_HANDLE_VALUE) {
       SERR("CreateFile(<%s>, <%s>) failed",
            path, flags_description);
@@ -1891,7 +1891,7 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
     fi->fh = CreateFile(path, GRN_IO_FILE_CREATE_MODE,
                         FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
                         NULL,
-                        TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+                        TRUNCATE_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (fi->fh == INVALID_HANDLE_VALUE) {
       SERR("CreateFile(<%s>, <O_RDWR|O_TRUNC>) failed",
            path);
@@ -1906,7 +1906,7 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
   fi->fh = CreateFile(path, GRN_IO_FILE_CREATE_MODE,
                       FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
                       NULL,
-                      OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+                      OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
   if (fi->fh == INVALID_HANDLE_VALUE) {
     SERR("CreateFile(<%s>, <O_RDWR>) failed",
          path);
