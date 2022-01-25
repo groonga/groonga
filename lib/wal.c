@@ -329,14 +329,27 @@ grn_wal_add_entry(grn_ctx *ctx,
 #ifdef GRN_WITH_MESSAGE_PACK
 typedef struct {
   grn_ctx *ctx;
+# ifdef _WIN32
+  HANDLE output;
+# else
   FILE *output;
+# endif
 } grn_wal_msgpack_write_data;
 
 static int
 grn_wal_msgpack_write(void *data, const char *buf, msgpack_size_t len)
 {
   grn_wal_msgpack_write_data *write_data = data;
+# ifdef _WIN32
+  DWORD n_written = 0;
+  if (WriteFile(write_data->output, buf, len, &n_written, NULL)) {
+    return n_written;
+  } else {
+    return 0;
+  }
+# else
   return fwrite(buf, len, 1, write_data->output);
+# endif
 }
 #endif
 
@@ -378,8 +391,21 @@ grn_wal_add_entryv(grn_ctx *ctx,
 
   char path[PATH_MAX];
   grn_wal_generate_path(ctx, io->path, path);
+# ifdef _WIN32
+  HANDLE output =
+    CreateFile(path,
+               FILE_APPEND_DATA | SYNCHRONIZE,
+               FILE_SHARE_READ | FILE_SHARE_DELETE,
+               NULL,
+               OPEN_ALWAYS,
+               FILE_ATTRIBUTE_NORMAL,
+               NULL);
+  bool open_success = (output != INVALID_HANDLE_VALUE);
+# else
   FILE *output = grn_fopen(path, "ab");
-  if (!output) {
+  bool open_success = (output != NULL);
+# endif
+  if (!open_success) {
     GRN_DEFINE_NAME(obj);
     SERR("[wal][add][%.*s]%s failed to open file: <%s>",
          name_size, name,
@@ -533,8 +559,10 @@ grn_wal_add_entryv(grn_ctx *ctx,
   }
 
 exit :
-  if (output) {
+  if (open_success) {
+# ifndef _WIN32
     fflush(output);
+# endif
     /*
      * Synchronizing on each WAL write has very large write
      * performance penalty.  We can't accept it... We disable
@@ -545,13 +573,21 @@ exit :
      * flushed data are lost on OS crash.
      */
     /*
-# ifdef HAVE_FDATASYNC
+# ifdef _WIN32
+    FlushFileBuffers(output);
+# else
+#  ifdef HAVE_FDATASYNC
     fdatasync(fileno(output));
-# elif defined(HAVE_FSYNC)
+#  elif defined(HAVE_FSYNC)
     fsync(fileno(output));
+#  endif
 # endif
     */
+# ifdef _WIN32
+    CloseHandle(output);
+# else
     fclose(output);
+# endif
   }
 
   if (need_lock) {
