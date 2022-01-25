@@ -535,11 +535,22 @@ grn_wal_add_entryv(grn_ctx *ctx,
 exit :
   if (output) {
     fflush(output);
+    /*
+     * Synchronizing on each WAL write has very large write
+     * performance penalty.  We can't accept it... We disable
+     * synchronizing for now.
+     *
+     * This works on application crash not OS crash because OS will
+     * flush the buffered data after application crash. But not
+     * flushed data are lost on OS crash.
+     */
+    /*
 # ifdef HAVE_FDATASYNC
     fdatasync(fileno(output));
 # elif defined(HAVE_FSYNC)
     fsync(fileno(output));
 # endif
+    */
     fclose(output);
   }
 
