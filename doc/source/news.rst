@@ -5,6 +5,100 @@
 News
 ====
 
+.. _release-11-1-2:
+
+Release 11.1.2 - 2022-01-29
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`reference/functions/snippet`] Added support for using the keyword of 32 or more. [GitHub#1313][Pathched by Takashi Hashida]
+
+  We could not specify the keyword of 32 or more with ``snippet`` until now.
+  However, we can specify the keyword of 32 or more by this improvement as below.
+
+  .. code-block::
+
+      table_create Entries TABLE_NO_KEY
+      column_create Entries content COLUMN_SCALAR ShortText
+
+      load --table Entries
+      [
+      {"content": "Groonga is a fast and accurate full text search engine based on inverted index. One of the characteristics of Groonga is that a newly registered document instantly appears in search results. Also, Groonga allows updates without read locks. These characteristics result in superior performance on real-time applications.\nGroonga is also a column-oriented database management system (DBMS). Compared with well-known row-oriented systems, such as MySQL and PostgreSQL, column-oriented systems are more suited for aggregate queries. Due to this advantage, Groonga can cover weakness of row-oriented systems.\nThe basic functions of Groonga are provided in a C library. Also, libraries for using Groonga in other languages, such as Ruby, are provided by related projects. In addition, groonga-based storage engines are provided for MySQL and PostgreSQL. These libraries and storage engines allow any application to use Groonga. See usage examples."},
+      {"content": "In widely used DBMSs, updates are immediately processed, for example, a newly registered record appears in the result of the next query. In contrast, some full text search engines do not support instant updates, because it is difficult to dynamically update inverted indexes, the underlying data structure.\nGroonga also uses inverted indexes but supports instant updates. In addition, Groonga allows you to search documents even when updating the document collection. Due to these superior characteristics, Groonga is very flexible as a full text search engine. Also, Groonga always shows good performance because it divides a large task, inverted index merging, into smaller tasks."}
+      ]
+
+      select Entries \
+        --output_columns ' \
+        snippet(content, \
+        "groonga", "inverted", "index", "fast", "full", "text", "search", "engine", "registered", "document", \
+        "results", "appears", "also", "system", "libraries", "for", "mysql", "postgresql", "column-oriented", "dbms", \
+        "basic", "ruby", "projects", "storage", "allow", "application", "usage", "sql", "well-known", "real-time", \
+        "weakness", "merging", "performance", "superior", "large", "dynamically", "difficult", "query", "examples", "divides", \
+        { \
+          "default_open_tag": "[", \
+          "default_close_tag": "]", \
+          "width" : 2048 \
+        })'
+      [
+        [
+          0,
+          1643165838.691991,
+          0.0003311634063720703
+        ],
+        [
+          [
+            [
+              2
+            ],
+            [
+              [
+                "snippet",
+                null
+              ]
+            ],
+            [
+              [
+                "[Groonga] is a [fast] and accurate [full] [text] [search] [engine] based on [inverted] [index]. One of the characteristics of [Groonga] is that a newly [registered] [document] instantly [appears] in [search] [results]. [Also], [Groonga] [allow]s updates without read locks. These characteristics result in [superior] [performance] on [real-time] [application]s.\n[Groonga] is [also] a [column-oriented] database management [system] ([DBMS]). Compared with [well-known] row-oriented [system]s, such as [MySQL] and [PostgreSQL], [column-oriented] [system]s are more suited [for] aggregate queries. Due to this advantage, [Groonga] can cover [weakness] of row-oriented [system]s.\nThe [basic] functions of [Groonga] are provided in a C library. [Also], [libraries] [for] using [Groonga] in other languages, such as [Ruby], are provided by related [projects]. In addition, [groonga]-based [storage] [engine]s are provided [for] [MySQL] and [PostgreSQL]. These [libraries] and [storage] [engine]s [allow] any [application] to use [Groonga]. See [usage] [examples]."
+              ]
+            ],
+            [
+              [
+                "In widely used [DBMS]s, updates are immediately processed, [for] example, a newly [registered] record [appears] in the result of the next [query]. In contrast, some [full] [text] [search] [engine]s do not support instant updates, because it is [difficult] to [dynamically] update [inverted] [index]es, the underlying data structure.\n[Groonga] [also] uses [inverted] [index]es but supports instant updates. In addition, [Groonga] [allow]s you to [search] [document]s even when updating the [document] collection. Due to these [superior] characteristics, [Groonga] is very flexible as a [full] [text] [search] [engine]. [Also], [Groonga] always shows good [performance] because it [divides] a [large] task, [inverted] [index] [merging], into smaller tasks."
+              ]
+            ]
+          ]
+        ]
+      ]
+
+* [:doc:`/install/almalinux`] Added support for AlmaLinux 8 on ARM64.
+
+* [httpd] Updated bundled nginx to 1.21.5.
+
+* [Documentation] Fixed a typo in :doc:`reference/commands/ruby_eval`. [GitHub#1317][Pathched by wi24rd]
+
+Fixes
+-----
+
+* [:doc:`/reference/commands/load`] Fixed a crash bug when we load data with specifying a nonexistent column.
+
+  This bug only occurs when we specify ``apache-arrow`` into ``input_type`` as the argument of ``load``.
+
+* Fixed a bug that the version up of Groonga failed Because the version up of arrow-libs on which Groonga depends. [groonga-talk,540][Reported by Josep Sanz][Gitter,61eaaa306d9ba23328d23ce1][Reported by shibanao4870][GitHub#1316][Reported by Keitaro YOSHIMURA]
+
+  However, if arrow-libs update a major version, this problem reproduces.
+  In this case, we will handle that by rebuilding the Groonga package.
+
+Thanks
+------
+
+* Takashi Hashida
+* wi24rd
+* Josep Sanz
+* Keitaro YOSHIMURA
+* shibanao4870
+
 .. _release-11-1-1:
 
 Release 11.1.1 - 2021-12-29
