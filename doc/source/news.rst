@@ -90,6 +90,18 @@ Fixes
   However, if arrow-libs update a major version, this problem reproduces.
   In this case, we will handle that by rebuilding the Groonga package.
 
+Known Issues
+------------
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
+
 Thanks
 ------
 
