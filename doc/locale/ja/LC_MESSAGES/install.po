@@ -781,9 +781,6 @@ msgstr ""
 msgid "20.04 Focal Fossa"
 msgstr ""
 
-msgid "21.04 Hirsute Hippo"
-msgstr ""
-
 msgid "21.10 Impish Indri"
 msgstr ""
 

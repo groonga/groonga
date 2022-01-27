@@ -22,7 +22,6 @@ Here are supported Ubuntu versions:
 
   * 18.04 LTS Bionic Beaver
   * 20.04 Focal Fossa
-  * 21.04 Hirsute Hippo
   * 21.10 Impish Indri
 
 Enable the universe repository to install Groonga::

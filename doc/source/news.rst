@@ -78,6 +78,10 @@ Improvements
 
 * [Documentation] Fixed a typo in :doc:`reference/commands/ruby_eval`. [GitHub#1317][Pathched by wi24rd]
 
+* [:doc:`/install/ubuntu`] Dropped Ubuntu 21.04 (Hirsute Hippo) support.
+
+  * Because Ubuntu 21.04 reached EOL January 20, 2022.
+
 Fixes
 -----
 
