@@ -15255,7 +15255,7 @@ msgstr ""
 "filter` と同じです。"
 
 msgid "Here is an example to suppress tags that are occurred only once:"
-msgstr "以下は1開始か出現していないタグを除く例です。"
+msgstr "以下は1回しか出現していないタグを除く例です。"
 
 msgid ""
 "You can get multiple drilldown results by specifying multiple group keys by :"
