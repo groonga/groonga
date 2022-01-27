@@ -12405,7 +12405,7 @@ msgstr ""
 msgid "``EVALUATED_VALUE``"
 msgstr ""
 
-msgid "``EVALUATED_VALUE`` is the evaludated value of ``ruby_script``."
+msgid "``EVALUATED_VALUE`` is the evaluated value of ``ruby_script``."
 msgstr "``EVALUATED_VALUE`` は ``ruby_script`` を評価した値です。"
 
 msgid ""
