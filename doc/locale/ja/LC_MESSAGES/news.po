@@ -33,8 +33,8 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 11.1.2 - 2022-01-29"
-msgstr "11.1.2リリース - 2020-01-29"
+msgid "Release 11.1.3 - 2022-01-29"
+msgstr "11.1.3リリース - 2022-01-29"
 
 msgid "Improvements"
 msgstr "改良"
