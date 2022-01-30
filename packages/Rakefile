@@ -125,7 +125,11 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
         "packages-#{target}-amd64"
       end
     when :yum
-      "packages-#{target}"
+      if target.end_with?("-aarch64")
+        "packages-#{target}"
+      else
+        "packages-#{target}-x86_64"
+      end
     else
       raise NotImplementedError
     end
@@ -139,6 +143,12 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
         url << "#{target}.tar.gz"
       else
         url << "#{target}-amd64.tar.gz"
+      end
+    when :yum
+      if target.end_with?("-aarch64")
+        url << "#{target}.tar.gz"
+      else
+        url << "#{target}-x86_64.tar.gz"
       end
     when :windows
       url << "#{target}"

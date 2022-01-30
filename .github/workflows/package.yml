@@ -78,7 +78,7 @@ jobs:
           - Debian GNU/Linux buster amd64
           - Debian GNU/Linux buster arm64
           - Debian GNU/Linux buster i386
-          - CentOS 7
+          - CentOS 7 x86_64
           - AlmaLinux 8 x86_64
           - AlmaLinux 8 aarch64
         include:
@@ -107,8 +107,8 @@ jobs:
             task-namespace: apt
             target: debian-buster-i386
             test-docker-image: i386/debian:buster
-          - label: CentOS 7
-            id: centos-7
+          - label: CentOS 7 x86_64
+            id: centos-7-x86_64
             task-namespace: yum
             target: centos-7
             test-docker-image: centos:7
