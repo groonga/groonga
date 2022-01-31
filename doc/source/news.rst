@@ -72,6 +72,43 @@ Improvements
         ]
       ]
 
+* [:doc:`reference/normalizers/normalizer_nfkc130`] Added a new option ``remove_symbol``.
+
+  This option removes symbols (e.g. #, !, ", &, %, ...) from the string that the target of normalizing as below.
+
+  .. code-block::
+
+       normalize   'NormalizerNFKC130("remove_symbol", true)'   "#This & is %% a pen."   WITH_TYPES
+       [
+         [
+           0,
+           1643595008.729597,
+           0.0005540847778320312
+         ],
+         {
+           "normalized": "this  is  a pen",
+           "types": [
+             "alpha",
+             "alpha",
+             "alpha",
+             "alpha",
+             "others",
+             "others",
+             "alpha",
+             "alpha",
+             "others",
+             "others",
+             "alpha",
+             "others",
+             "alpha",
+             "alpha",
+             "alpha"
+           ],
+           "checks": [
+           ]
+         }
+       ]
+
 * [:doc:`/install/almalinux`] Added support for AlmaLinux 8 on ARM64.
 
 * [httpd] Updated bundled nginx to 1.21.5.
