@@ -604,6 +604,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc121-unify-voiced-sound-mark-hiragana.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc121-unify-voiced-sound-mark-katakana.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc121.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-remove-symbol.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-hyphen-and-prolonged-sound-mark.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-hyphen.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-kana-case-hiragana.log \
@@ -1788,6 +1789,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/normalizers/normalizer-nfkc121-unify-voiced-sound-mark-hiragana.log \
 	source/example/reference/normalizers/normalizer-nfkc121-unify-voiced-sound-mark-katakana.log \
 	source/example/reference/normalizers/normalizer-nfkc121.log \
+	source/example/reference/normalizers/normalizer-nfkc130-remove-symbol.log \
 	source/example/reference/normalizers/normalizer-nfkc130-unify-hyphen-and-prolonged-sound-mark.log \
 	source/example/reference/normalizers/normalizer-nfkc130-unify-hyphen.log \
 	source/example/reference/normalizers/normalizer-nfkc130-unify-kana-case-hiragana.log \

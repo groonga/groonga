@@ -50,6 +50,8 @@ Specify option::
 
   NormalizerNFKC130("unify_to_romaji", true)
 
+  NormalizerNFKC130("remove_symbol", true)
+
 Specify multiple options::
 
   NormalizerNFKC130("unify_to_romaji", true, "unify_kana_case", true, "unify_hyphen_and_prolonged_sound_mark", true)
@@ -149,6 +151,13 @@ This option enables normalize hiragana and katakana to romaji as below.
 .. groonga-command
 .. include:: ../../example/reference/normalizers/normalizer-nfkc130-unify-to-romaji.log
 .. normalize   'NormalizerNFKC130("unify_to_romaji", true)'   "アァイィウゥエェオォ"   WITH_TYPES
+
+Here is an example of :ref:`normalizer-nfkc130-remove-symbol` option.
+This option removes symbols (e.g. #, !, ", &, %, ...) as below.
+
+.. groonga-command
+.. include:: ../../example/reference/normalizers/normalizer-nfkc130-remove-symbol.log
+.. normalize   'NormalizerNFKC130("remove_symbol", true)'   "#This & is %% a pen."   WITH_TYPES
 
 Advanced usage
 ^^^^^^^^^^^^^^
@@ -295,6 +304,13 @@ This option enables normalize "ヴァヴィヴゥヴェヴォ" to "ブ".
 """""""""""""""""""
 
 This option enables normalize hiragana and katakana to romaji.
+
+.. _normalizer-nfkc130-remove-symbol:
+
+``remove_symbol``
+"""""""""""""""""
+
+This option removes symbols (e.g. #, !, ", &, %, ...) from the string that the target of normalizing.
 
 See also
 ----------
