@@ -1,6 +1,7 @@
 /*
   Copyright(C) 2012-2018  Brazil
   Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2022  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -585,6 +586,7 @@ typedef struct {
   grn_bool remove_blank_p;
   grn_bool remove_tokenized_delimiter_p;
   bool remove_new_line_p;
+  bool remove_symbol_p;
 } grn_nfkc_normalize_data;
 
 grn_inline static void
@@ -691,6 +693,7 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
   data->remove_tokenized_delimiter_p =
     (data->string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
   data->remove_new_line_p = data->options->remove_new_line;
+  data->remove_symbol_p = data->options->remove_symbol;
 
   size = data->string->original_length_in_bytes;
   data->context.size = size * 3;
@@ -1691,11 +1694,16 @@ exit:
 }
 
 static grn_inline bool
-grn_nfkc_normalize_remove_character_p(grn_ctx *ctx,
-                                      const grn_nfkc_normalize_data *data,
-                                      const unsigned char *current,
-                                      size_t current_length)
+grn_nfkc_normalize_remove_target_blank_character_p(
+  grn_ctx *ctx,
+  const grn_nfkc_normalize_data *data,
+  const unsigned char *current,
+  size_t current_length)
 {
+  if (current_length != 1) {
+    return false;
+  }
+
   if (current[0] > ' ') {
     return false;
   }
@@ -1710,6 +1718,19 @@ grn_nfkc_normalize_remove_character_p(grn_ctx *ctx,
     /* skip unprintable ascii */
     return true;
   }
+}
+
+static grn_inline bool
+grn_nfkc_normalize_remove_target_non_blank_character_p(
+  grn_ctx *ctx,
+  const grn_nfkc_normalize_data *data,
+  const unsigned char *current,
+  size_t current_length)
+{
+  if (data->options->char_type_func(current) == GRN_CHAR_SYMBOL) {
+    return data->remove_symbol_p;
+  }
+  return false;
 }
 
 grn_rc
@@ -1784,13 +1805,21 @@ grn_nfkc_normalize(grn_ctx *ctx,
         if (current_length == 0) {
           break;
         }
-        if (grn_nfkc_normalize_remove_character_p(ctx,
-                                                  &data,
-                                                  current,
-                                                  current_length)) {
+        if (grn_nfkc_normalize_remove_target_blank_character_p(ctx,
+                                                               &data,
+                                                               current,
+                                                               current_length)) {
           if (context->t > context->types) {
             context->t[-1] |= GRN_CHAR_BLANK;
           }
+          if (!data.options->include_removed_source_location) {
+            source_ += current_length;
+          }
+        } else if (grn_nfkc_normalize_remove_target_non_blank_character_p(
+                     ctx,
+                     &data,
+                     current,
+                     current_length)) {
           if (!data.options->include_removed_source_location) {
             source_ += current_length;
           }

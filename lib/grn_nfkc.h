@@ -48,6 +48,7 @@ typedef struct {
   grn_bool unify_to_katakana;
   grn_bool remove_blank;
   bool remove_new_line;
+  bool remove_symbol;
 } grn_nfkc_normalize_options;
 
 typedef void (*grn_nfkc_normalize_options_init_func)(grn_ctx *ctx,
