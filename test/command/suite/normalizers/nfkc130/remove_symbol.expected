@@ -12,17 +12,17 @@ normalize   'NormalizerNFKC130("remove_symbol", true,                      "repo
       "alpha",
       "alpha",
       "alpha",
-      "others|symbol",
+      "others",
       "others",
       "alpha",
       "alpha",
-      "others|symbol",
+      "others",
       "others",
       "alpha",
       "others",
       "alpha",
       "alpha",
-      "alpha|symbol"
+      "alpha"
     ],
     "checks": [
       2,

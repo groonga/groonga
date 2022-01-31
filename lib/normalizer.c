@@ -1694,13 +1694,14 @@ exit:
 }
 
 static grn_inline bool
-grn_nfkc_normalize_remove_character_p(grn_ctx *ctx,
-                                      const grn_nfkc_normalize_data *data,
-                                      const unsigned char *current,
-                                      size_t current_length)
+grn_nfkc_normalize_remove_target_blank_character_p(
+  grn_ctx *ctx,
+  const grn_nfkc_normalize_data *data,
+  const unsigned char *current,
+  size_t current_length)
 {
-  if (data->options->char_type_func(current) == GRN_CHAR_SYMBOL) {
-    return data->remove_symbol_p;
+  if (current_length != 1) {
+    return false;
   }
 
   if (current[0] > ' ') {
@@ -1717,6 +1718,19 @@ grn_nfkc_normalize_remove_character_p(grn_ctx *ctx,
     /* skip unprintable ascii */
     return true;
   }
+}
+
+static grn_inline bool
+grn_nfkc_normalize_remove_target_non_blank_character_p(
+  grn_ctx *ctx,
+  const grn_nfkc_normalize_data *data,
+  const unsigned char *current,
+  size_t current_length)
+{
+  if (data->options->char_type_func(current) == GRN_CHAR_SYMBOL) {
+    return data->remove_symbol_p;
+  }
+  return false;
 }
 
 grn_rc
@@ -1791,17 +1805,21 @@ grn_nfkc_normalize(grn_ctx *ctx,
         if (current_length == 0) {
           break;
         }
-        if (grn_nfkc_normalize_remove_character_p(ctx,
-                                                  &data,
-                                                  current,
-                                                  current_length)) {
+        if (grn_nfkc_normalize_remove_target_blank_character_p(ctx,
+                                                               &data,
+                                                               current,
+                                                               current_length)) {
           if (context->t > context->types) {
-            if (data.options->char_type_func(current) == GRN_CHAR_SYMBOL) {
-              context->t[-1] |= GRN_REMOVED_CHAR_TYPE_SYMBOL;
-            } else {
-              context->t[-1] |= GRN_CHAR_BLANK;
-            }
+            context->t[-1] |= GRN_CHAR_BLANK;
           }
+          if (!data.options->include_removed_source_location) {
+            source_ += current_length;
+          }
+        } else if (grn_nfkc_normalize_remove_target_non_blank_character_p(
+                     ctx,
+                     &data,
+                     current,
+                     current_length)) {
           if (!data.options->include_removed_source_location) {
             source_ += current_length;
           }

@@ -1,0 +1,37 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("report_source_location", true)'   --normalizer 'NormalizerNFKC130("remove_symbol", true)'
+[[0,0.0,0.0],true]
+column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"body": "Yay! He!l[l]o World."}
+]
+[[0,0.0,0.0],1]
+select Entries   --match_columns body   --query 'hello'   --output_columns 'highlight_html(body, Terms)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "highlight_html",
+          null
+        ]
+      ],
+      [
+        "Yay<span class=\"keyword\">! He!l[l]o</span> World."
+      ]
+    ]
+  ]
+]
