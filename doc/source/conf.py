@@ -11,9 +11,6 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-SPHINX_VERSION_REQUIRED = "1.0.8" # 1.1 is required.
-RST2PDF_VERSION_REQUIRED = "0.14.2"
-
 import re
 import sphinx
 import sys, os
@@ -25,14 +22,6 @@ from pkg_resources import parse_version
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.append(os.path.abspath('.'))
-
-if parse_version(sphinx.__version__) < parse_version(SPHINX_VERSION_REQUIRED):
-  print('sphinx version is old. %s is requred. exec "easy_install -U sphinx"' % SPHINX_VERSION_REQUIRED)
-  sys.exit(1)
-
-#if sphinx.__version__ != SPHINX_VERSION_REQUIRED:
-#  print('sphinx version is different. %s is requred. exec "easy_install -U sphinx"' % SPHINX_VERSION_REQUIRED)
-#  sys.exit(1)
 
 # -- General configuration -----------------------------------------------------
 
