@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1386,7 +1386,7 @@ grn_table_group_update_aggregated_value_type_id(grn_ctx *ctx,
   }
 }
 
-static grn_rc
+grn_rc
 grn_table_group_results_prepare(grn_ctx *ctx,
                                 grn_table_group_result *results,
                                 int n_results,
@@ -1463,7 +1463,7 @@ grn_table_group_results_prepare(grn_ctx *ctx,
   return ctx->rc;
 }
 
-static grn_rc
+grn_rc
 grn_table_group_results_postpare(grn_ctx *ctx,
                                  grn_table_group_result *results,
                                  int n_results)

@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 #include "../grn_cache.h"
 #include "../grn_ctx_impl.h"
 #include "../grn_expr.h"
+#include "../grn_group.h"
 #include "../grn_ii.h"
 #include "../grn_output.h"
 #include "../grn_posting.h"
@@ -115,6 +116,7 @@ typedef struct {
   grn_raw_string filter;
   grn_raw_string adjuster;
   grn_raw_string table_name;
+  int32_t if_max_n_records;
   grn_columns columns;
   grn_table_group_result result;
   grn_obj *filtered_result;
@@ -1613,6 +1615,7 @@ grn_drilldown_data_init(grn_ctx *ctx,
   GRN_RAW_STRING_INIT(drilldown->filter);
   GRN_RAW_STRING_INIT(drilldown->adjuster);
   GRN_RAW_STRING_INIT(drilldown->table_name);
+  drilldown->if_max_n_records = -1;
   grn_columns_init(ctx, &(drilldown->columns));
   drilldown->result.table = NULL;
   drilldown->filtered_result = NULL;
@@ -1671,7 +1674,8 @@ grn_drilldown_data_fill(grn_ctx *ctx,
                         grn_obj *calc_target,
                         grn_obj *filter,
                         grn_obj *adjuster,
-                        grn_obj *table)
+                        grn_obj *table,
+                        grn_obj *if_max_n_records)
 {
   GRN_RAW_STRING_FILL(drilldown->keys, keys);
 
@@ -1713,6 +1717,11 @@ grn_drilldown_data_fill(grn_ctx *ctx,
   GRN_RAW_STRING_FILL(drilldown->adjuster, adjuster);
 
   GRN_RAW_STRING_FILL(drilldown->table_name, table);
+
+  drilldown->if_max_n_records =
+    grn_proc_option_value_int32(ctx,
+                                if_max_n_records,
+                                drilldown->if_max_n_records);
 }
 
 static void
@@ -2944,13 +2953,33 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     }
   }
 
+  unsigned int target_table_size = grn_table_size(ctx, target_table);
+  bool run_group = (drilldown->if_max_n_records < 0 ||
+                    target_table_size <=
+                    (unsigned int)(drilldown->if_max_n_records));
   if (drilldown->parsed_keys) {
-    grn_table_group(ctx,
-                    target_table,
-                    drilldown->parsed_keys,
-                    drilldown->n_parsed_keys,
-                    result,
-                    1);
+    if (run_group) {
+      grn_table_group(ctx,
+                      target_table,
+                      drilldown->parsed_keys,
+                      drilldown->n_parsed_keys,
+                      result,
+                      1);
+    } else {
+      grn_table_group_results_prepare(ctx,
+                                      result,
+                                      1,
+                                      target_table,
+                                      drilldown->parsed_keys,
+                                      drilldown->n_parsed_keys);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+      grn_table_group_results_postpare(ctx, result, 1);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+    }
   } else {
     if (n_keys == 0 && !target_table) {
       /* For backward compatibility and consistency. Ignore
@@ -2963,7 +2992,23 @@ grn_select_drilldown_execute(grn_ctx *ctx,
               drilldown->table_name.value);
       goto exit;
     }
-    grn_table_group(ctx, target_table, keys, n_keys, result, 1);
+    if (run_group) {
+      grn_table_group(ctx, target_table, keys, n_keys, result, 1);
+    } else {
+      grn_table_group_results_prepare(ctx,
+                                      result,
+                                      1,
+                                      target_table,
+                                      keys,
+                                      n_keys);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+      grn_table_group_results_postpare(ctx, result, 1);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+    }
   }
 
   if (keys) {
@@ -3362,6 +3407,7 @@ grn_select_prepare_drilldowns(grn_ctx *ctx,
         COPY(calc_target_name);
         COPY(filter);
         COPY(adjuster);
+        COPY(if_max_n_records);
 
 #undef COPY
       }
@@ -4668,6 +4714,7 @@ grn_select_fill_drilldowns(grn_ctx *ctx,
     grn_obj *filter = NULL;
     grn_obj *adjuster = NULL;
     grn_obj *table = NULL;
+    grn_obj *if_max_n_records = NULL;
 
     grn_hash_cursor_get_value(ctx, cursor, (void **)&drilldown);
 
@@ -4727,6 +4774,7 @@ grn_select_fill_drilldowns(grn_ctx *ctx,
     GET_VAR(filter);
     GET_VAR(adjuster);
     GET_VAR(table);
+    GET_VAR(if_max_n_records);
 
 #undef GET_VAR
 
@@ -4743,7 +4791,8 @@ grn_select_fill_drilldowns(grn_ctx *ctx,
                             calc_target,
                             filter,
                             adjuster,
-                            table);
+                            table,
+                            if_max_n_records);
   } GRN_HASH_EACH_END(ctx, cursor);
 
   return succeeded;
@@ -4786,7 +4835,11 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
                                                     "drilldown_filter", -1),
                             grn_plugin_proc_get_var(ctx, user_data,
                                                     "drilldown_adjuster", -1),
-                            NULL);
+                            NULL,
+                            grn_plugin_proc_get_var(ctx,
+                                                    user_data,
+                                                    "drilldown_if_max_n_records",
+                                                    -1));
     return GRN_TRUE;
   } else {
     return grn_select_fill_drilldowns(ctx,
@@ -5143,7 +5196,7 @@ exit :
   return NULL;
 }
 
-#define N_VARS 33
+#define N_VARS 34
 #define DEFINE_VARS grn_expr_var vars[N_VARS]
 
 static void
@@ -5185,6 +5238,7 @@ init_vars(grn_ctx *ctx, grn_expr_var *vars)
   grn_plugin_expr_var_init(ctx, &(vars[30]), "load_values", -1);
   grn_plugin_expr_var_init(ctx, &(vars[31]), "post_filter", -1);
   grn_plugin_expr_var_init(ctx, &(vars[32]), "query_options", -1);
+  grn_plugin_expr_var_init(ctx, &(vars[33]), "drilldown_if_max_n_records", -1);
 }
 
 void
