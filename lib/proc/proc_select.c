@@ -2953,36 +2953,11 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     }
   }
 
-  unsigned int target_table_size = 0;
-  if (target_table) {
-    target_table_size = grn_table_size(ctx, target_table);
-  }
-  bool run_group = (drilldown->if_max_n_records < 0 ||
-                    target_table_size <=
-                    (unsigned int)(drilldown->if_max_n_records));
+  grn_table_sort_key *group_keys;
+  unsigned int n_group_keys;
   if (drilldown->parsed_keys) {
-    if (run_group) {
-      grn_table_group(ctx,
-                      target_table,
-                      drilldown->parsed_keys,
-                      drilldown->n_parsed_keys,
-                      result,
-                      1);
-    } else {
-      grn_table_group_results_prepare(ctx,
-                                      result,
-                                      1,
-                                      target_table,
-                                      drilldown->parsed_keys,
-                                      drilldown->n_parsed_keys);
-      if (ctx->rc != GRN_SUCCESS) {
-        goto exit;
-      }
-      grn_table_group_results_postpare(ctx, result, 1);
-      if (ctx->rc != GRN_SUCCESS) {
-        goto exit;
-      }
-    }
+    group_keys = drilldown->parsed_keys;
+    n_group_keys = drilldown->n_parsed_keys;
   } else {
     if (n_keys == 0 && !target_table) {
       /* For backward compatibility and consistency. Ignore
@@ -2995,22 +2970,35 @@ grn_select_drilldown_execute(grn_ctx *ctx,
               drilldown->table_name.value);
       goto exit;
     }
-    if (run_group) {
-      grn_table_group(ctx, target_table, keys, n_keys, result, 1);
-    } else {
-      grn_table_group_results_prepare(ctx,
-                                      result,
-                                      1,
-                                      target_table,
-                                      keys,
-                                      n_keys);
-      if (ctx->rc != GRN_SUCCESS) {
-        goto exit;
-      }
-      grn_table_group_results_postpare(ctx, result, 1);
-      if (ctx->rc != GRN_SUCCESS) {
-        goto exit;
-      }
+    group_keys = keys;
+    n_group_keys = n_keys;
+  }
+
+  unsigned int target_table_size = 0;
+  if (target_table) {
+    target_table_size = grn_table_size(ctx, target_table);
+  }
+  if (drilldown->if_max_n_records < 0 ||
+      target_table_size <= (unsigned int)(drilldown->if_max_n_records)) {
+      grn_table_group(ctx,
+                      target_table,
+                      group_keys,
+                      n_group_keys,
+                      result,
+                      1);
+  } else {
+    grn_table_group_results_prepare(ctx,
+                                    result,
+                                    1,
+                                    target_table,
+                                    group_keys,
+                                    n_group_keys);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    grn_table_group_results_postpare(ctx, result, 1);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
     }
   }
 
