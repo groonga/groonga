@@ -2953,7 +2953,10 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     }
   }
 
-  unsigned int target_table_size = grn_table_size(ctx, target_table);
+  unsigned int target_table_size = 0;
+  if (target_table) {
+    target_table_size = grn_table_size(ctx, target_table);
+  }
   bool run_group = (drilldown->if_max_n_records < 0 ||
                     target_table_size <=
                     (unsigned int)(drilldown->if_max_n_records));
