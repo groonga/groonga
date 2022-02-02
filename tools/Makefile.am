@@ -12,7 +12,6 @@ dist_tools_DATA =				\
 	groonga-object-list-checker.rb		\
 	index-column-diff-all.sh		\
 	object-inspect-all.sh			\
-	prepare-sphinx-html.rb			\
 	ucd-symbol-list.rb
 
 NONEXISTENT_CXX_SOURCE = nonexistent.cpp

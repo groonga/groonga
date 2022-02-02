@@ -102,15 +102,15 @@ update-document:
 	mkdir tmp-doc
 	(cd doc && $(MAKE) clean-html)
 	(cd doc && $(MAKE) install docdir=$(abs_builddir)/tmp-doc/install)
-	ruby $(srcdir)/tools/prepare-sphinx-html.rb tmp-doc/install tmp-doc/dist
 	rm -rf $(GROONGA_ORG_PATH)/docs
-	mv tmp-doc/dist/en $(GROONGA_ORG_PATH)/docs
-	for locale in `cd tmp-doc/dist; echo *`; do		\
+	mv tmp-doc/install/en/html $(GROONGA_ORG_PATH)/docs
+	rm -rf tmp-doc/install/en
+	for locale in $$(cd tmp-doc/install/; echo *); do	\
 	  dest_base_dir=$(GROONGA_ORG_PATH)/$${locale};		\
 	  mkdir -p $${dest_base_dir};				\
 	  dest_dir=$${dest_base_dir}/docs;			\
 	  rm -rf $${dest_dir};					\
-	  mv tmp-doc/dist/$${locale} $${dest_dir};		\
+	  mv tmp-doc/install/$${locale}/html $${dest_dir};	\
 	done
 
 

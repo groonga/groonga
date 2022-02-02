@@ -31,7 +31,7 @@ jobs:
             ruby
       - name: Install Sphinx
         run: |
-          sudo pip3 install -v sphinx
+          sudo pip3 install -v Sphinx pydata_sphinx_theme
       - name: Clone dependencies
         run: |
           cd ..

@@ -1,5 +1,8 @@
 absolute_source_files = \
 	$(top_srcdir)/doc/source/__init__.py \
+	$(top_srcdir)/doc/source/_static/favicon.ico \
+	$(top_srcdir)/doc/source/_static/groonga.png \
+	$(top_srcdir)/doc/source/_static/switcher.json \
 	$(top_srcdir)/doc/source/characteristic.rst \
 	$(top_srcdir)/doc/source/client.rst \
 	$(top_srcdir)/doc/source/community.rst \
@@ -1173,18 +1176,11 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/tutorial/search.rst \
 	$(NULL)
 
-absolute_theme_files = \
-	$(top_srcdir)/doc/themes/groonga/layout.html \
-	$(top_srcdir)/doc/themes/groonga/static/favicon.ico \
-	$(top_srcdir)/doc/themes/groonga/static/groonga.css_t \
-	$(top_srcdir)/doc/themes/groonga/static/header-background.png \
-	$(top_srcdir)/doc/themes/groonga/static/logo.png \
-	$(top_srcdir)/doc/themes/groonga/static/navigation-bar.png \
-	$(top_srcdir)/doc/themes/groonga/theme.conf \
-	$(NULL)
-
 source_files_relative_from_doc_dir = \
 	source/__init__.py \
+	source/_static/favicon.ico \
+	source/_static/groonga.png \
+	source/_static/switcher.json \
 	source/characteristic.rst \
 	source/client.rst \
 	source/community.rst \
@@ -2358,16 +2354,6 @@ source_files_relative_from_doc_dir = \
 	source/tutorial/search.rst \
 	$(NULL)
 
-theme_files_relative_from_doc_dir = \
-	themes/groonga/layout.html \
-	themes/groonga/static/favicon.ico \
-	themes/groonga/static/groonga.css_t \
-	themes/groonga/static/header-background.png \
-	themes/groonga/static/logo.png \
-	themes/groonga/static/navigation-bar.png \
-	themes/groonga/theme.conf \
-	$(NULL)
-
 po_files = \
 	characteristic.po \
 	client.po \
@@ -2477,7 +2463,6 @@ mo_files_relative_from_locale_dir = \
 	$(NULL)
 
 html_files_relative_from_locale_dir = \
-	html/.buildinfo \
 	html/_images/geo-points.png \
 	html/_images/used-when-indexing.png \
 	html/_images/used-when-searching.png \
@@ -2486,19 +2471,38 @@ html_files_relative_from_locale_dir = \
 	html/_static/documentation_options.js \
 	html/_static/favicon.ico \
 	html/_static/file.png \
-	html/_static/groonga.css \
-	html/_static/header-background.png \
+	html/_static/groonga.png \
 	html/_static/jquery-3.5.1.js \
 	html/_static/jquery.js \
 	html/_static/language_data.js \
-	html/_static/logo.png \
 	html/_static/minus.png \
-	html/_static/navigation-bar.png \
 	html/_static/plus.png \
 	html/_static/pygments.css \
+	html/_static/scripts/pydata-sphinx-theme.js \
 	html/_static/searchtools.js \
+	html/_static/styles/pydata-sphinx-theme.css \
+	html/_static/styles/theme.css \
+	html/_static/switcher.json \
 	html/_static/underscore-1.13.1.js \
 	html/_static/underscore.js \
+	html/_static/vendor/fontawesome/5.13.0/LICENSE.txt \
+	html/_static/vendor/fontawesome/5.13.0/css/all.min.css \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.eot \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.svg \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.ttf \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2 \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-regular-400.eot \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-regular-400.svg \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-regular-400.ttf \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-regular-400.woff \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-regular-400.woff2 \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.eot \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.svg \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.ttf \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2 \
+	html/_static/webpack-macros.html \
 	html/characteristic.html \
 	html/client.html \
 	html/community.html \

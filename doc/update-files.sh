@@ -21,21 +21,10 @@ list_paths()
       sed -e 's,^,$(top_srcdir)/doc/,g' | \
       list_paths "absolute_source_files")
 
-## absolute theme file path list.
-(cd $source_dir &&
-   find "themes" -type f | \
-       sed -e 's,^,$(top_srcdir)/doc/,g' | \
-       list_paths "absolute_theme_files")
-
 ## source file path list from doc/.
 (cd $source_dir &&
    find "source" -type f -not -name '*.pyc' | \
      list_paths "source_files_relative_from_doc_dir")
-
-## theme file path list from doc/.
-(cd $source_dir &&
-   find "themes" -type f | \
-       list_paths "theme_files_relative_from_doc_dir")
 
 # gettext related
 ## po file base paths
@@ -82,5 +71,5 @@ list_paths()
 
 # output files
 ## HTML file path list relative from locale/$LANG/ dir.
-(cd locale/en; find html -type f) | \
+(cd locale/en; find html -type f ! -path 'html/.buildinfo') | \
     list_paths "html_files_relative_from_locale_dir"
