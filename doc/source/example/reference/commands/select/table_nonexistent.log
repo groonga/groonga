@@ -10,8 +10,8 @@ Execution example::
   #     [
   #       [
   #         "grn_select", 
-  #         "proc_select.c", 
-  #         4240
+  #         "lib/proc/proc_select.c", 
+  #         4473
   #       ]
   #     ]
   #   ]

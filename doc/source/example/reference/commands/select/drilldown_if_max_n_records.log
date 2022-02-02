@@ -1,0 +1,66 @@
+Execution example::
+
+  select Entries \
+    --limit -1 \
+    --output_columns _id,tag \
+    --drilldown tag \
+    --drilldown_if_max_n_records 4
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         5
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "tag", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "Hello"
+  #       ], 
+  #       [
+  #         2, 
+  #         "Groonga"
+  #       ], 
+  #       [
+  #         3, 
+  #         "Groonga"
+  #       ], 
+  #       [
+  #         4, 
+  #         "Senna"
+  #       ], 
+  #       [
+  #         5, 
+  #         "Senna"
+  #       ]
+  #     ], 
+  #     [
+  #       [
+  #         0
+  #       ], 
+  #       [
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "_nsubrecs", 
+  #           "Int32"
+  #         ]
+  #       ]
+  #     ]
+  #   ]
+  # ]

@@ -52,6 +52,7 @@ optional::
          [load_table=null]
          [load_columns=null]
          [load_values=null]
+         [drilldown_if_max_n_records=-1]
 
 This command has the following named parameters for dynamic columns:
 
@@ -93,6 +94,7 @@ This command has the following named parameters for advanced drilldown:
   * ``drilldowns[${LABEL}].calc_types=NONE``
   * ``drilldowns[${LABEL}].calc_target=null``
   * ``drilldowns[${LABEL}].filter=null``
+  * ``drilldowns[${LABEL}].if_max_n_records=-1``
   * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
   * ``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``
   * ``drilldowns[${LABEL}].columns[${NAME}].type=null``
@@ -2198,6 +2200,37 @@ Here is an example to suppress tags that are occurred only once:
 ..   --drilldown_filter '_nsubrecs > 1' \
 ..   --drilldown_output_columns _key,_nsubrecs
 
+.. _select-drilldown-if-max-n-records:
+
+``drilldown_if_max_n_records``
+""""""""""""""""""""""""""""""
+
+.. versionadded:: 12.0.0
+
+Specifies the max number of records as a threshold whether drilldown
+is executed or not. A drilldown is executed only if the number of
+records of the drilldown target table (filtered result) is less than
+or equal to the specified value. If a drilldown isn't executed,
+empty drilldown result is returned.
+
+If this value is negative, a drilldown is executed. The default
+value is ``-1``. It means that all drilldowns are executed by default.
+
+This feature is useful when filtered result may be very large. A
+drilldown against large filtered result may be slow. You can omit
+drilldown execution dynamically based on the number of records in
+filtered result by this feature.
+
+Here is an example to omit drilldown execution:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldown_if_max_n_records.log
+.. select Entries \
+..   --limit -1 \
+..   --output_columns _id,tag \
+..   --drilldown tag \
+..   --drilldown_if_max_n_records 4
+
 .. _select-advanced-drilldown-related-parameters:
 
 Advanced drilldown related parameters
@@ -2221,6 +2254,7 @@ parameters:
   * ``drilldowns[${LABEL}].calc_types``
   * ``drilldowns[${LABEL}].calc_target``
   * ``drilldowns[${LABEL}].filter``
+  * ``drilldowns[${LABEL}].if_max_n_records``
   * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
   * ``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``
   * ``drilldowns[${LABEL}].columns[${NAME}].type=null``
@@ -2277,6 +2311,7 @@ to use it for the following parameters:
   * ``drilldowns[${LABEL}].calc_types``: :ref:`select-drilldown-calc-types`
   * ``drilldowns[${LABEL}].calc_target``: :ref:`select-drilldown-calc-target`
   * ``drilldowns[${LABEL}].filter``: :ref:`select-drilldown-filter`
+  * ``drilldowns[${LABEL}].if_max_n_records``: :ref:`select-drilldown-if-max-n-records`
 
 See document for corresponding ``columns[${NAME}].XXX`` parameter to
 know how to use it for the following parameters:
