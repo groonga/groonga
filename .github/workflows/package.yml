@@ -31,7 +31,7 @@ jobs:
             ruby
       - name: Install Sphinx
         run: |
-          sudo pip3 install \
+          sudo pip3 install -U \
             Jinja2 \
             Sphinx \
             pydata_sphinx_theme
