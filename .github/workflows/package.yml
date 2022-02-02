@@ -32,8 +32,8 @@ jobs:
       - name: Install Sphinx
         run: |
           sudo pip3 install \
+            Jinja2 \
             Sphinx \
-            jinja2 \
             pydata_sphinx_theme
       - name: Clone dependencies
         run: |

@@ -103,8 +103,8 @@ jobs:
           matrix.use-sphinx
         run: |
           sudo pip3 install \
+            Jinja2 \
             Sphinx \
-            jinja2 \
             pydata_sphinx_theme
       - name: Install Bundler
         run: |
