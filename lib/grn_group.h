@@ -56,18 +56,6 @@ grn_table_group_aggregator_fin(grn_ctx *ctx,
                                grn_table_group_aggregator *aggregator);
 
 
-grn_rc
-grn_table_group_results_prepare(grn_ctx *ctx,
-                                grn_table_group_result *results,
-                                int n_results,
-                                grn_obj *table,
-                                grn_table_sort_key *keys,
-                                int n_keys);
-grn_rc
-grn_table_group_results_postpare(grn_ctx *ctx,
-                                 grn_table_group_result *results,
-                                 int n_results);
-
 #ifdef __cplusplus
 }
 #endif

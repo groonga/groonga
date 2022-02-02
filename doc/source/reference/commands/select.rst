@@ -52,7 +52,7 @@ optional::
          [load_table=null]
          [load_columns=null]
          [load_values=null]
-         [drilldown_if_max_n_records=-1]
+         [drilldown_max_n_target_records=-1]
 
 This command has the following named parameters for dynamic columns:
 
@@ -94,7 +94,7 @@ This command has the following named parameters for advanced drilldown:
   * ``drilldowns[${LABEL}].calc_types=NONE``
   * ``drilldowns[${LABEL}].calc_target=null``
   * ``drilldowns[${LABEL}].filter=null``
-  * ``drilldowns[${LABEL}].if_max_n_records=-1``
+  * ``drilldowns[${LABEL}].max_n_target_records=-1``
   * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
   * ``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``
   * ``drilldowns[${LABEL}].columns[${NAME}].type=null``
@@ -2200,36 +2200,38 @@ Here is an example to suppress tags that are occurred only once:
 ..   --drilldown_filter '_nsubrecs > 1' \
 ..   --drilldown_output_columns _key,_nsubrecs
 
-.. _select-drilldown-if-max-n-records:
+.. _select-drilldown-max-n-target-records:
 
-``drilldown_if_max_n_records``
-""""""""""""""""""""""""""""""
+``drilldown_max_n_target_records``
+""""""""""""""""""""""""""""""""""
 
 .. versionadded:: 12.0.0
 
-Specifies the max number of records as a threshold whether drilldown
-is executed or not. A drilldown is executed only if the number of
-records of the drilldown target table (filtered result) is less than
-or equal to the specified value. If a drilldown isn't executed,
-empty drilldown result is returned.
+Specifies the max number of records of the drilldown target table
+(filtered result) to use drilldown. If the number of filtered result
+is larger than the specified value, some records in filtered result
+aren't used for drilldown.
 
-If this value is negative, a drilldown is executed. The default
-value is ``-1``. It means that all drilldowns are executed by default.
+If the specified value is negative, it's processed same as
+:ref:`select-limit`. For example, ``-1`` uses all records. The default
+value is ``-1``. It means that all filtered records are used by
+default.
 
 This feature is useful when filtered result may be very large. A
-drilldown against large filtered result may be slow. You can omit
-drilldown execution dynamically based on the number of records in
-filtered result by this feature.
+drilldown against large filtered result may be slow. You can limit the
+max number of records to be used for drilldown by this feature.
 
-Here is an example to omit drilldown execution:
+Here is an example to limit the max number of records to be used for
+drilldown. The last 2 records, ``{"_id": 4, "tag": "Senna"}`` and
+``{"_id": 5, "tag": "Senna"}``, aren't used:
 
 .. groonga-command
-.. include:: ../../example/reference/commands/select/drilldown_if_max_n_records.log
+.. include:: ../../example/reference/commands/select/drilldown_max_n_target_records.log
 .. select Entries \
 ..   --limit -1 \
 ..   --output_columns _id,tag \
 ..   --drilldown tag \
-..   --drilldown_if_max_n_records 4
+..   --drilldown_max_n_target_records 3
 
 .. _select-advanced-drilldown-related-parameters:
 
@@ -2254,7 +2256,7 @@ parameters:
   * ``drilldowns[${LABEL}].calc_types``
   * ``drilldowns[${LABEL}].calc_target``
   * ``drilldowns[${LABEL}].filter``
-  * ``drilldowns[${LABEL}].if_max_n_records``
+  * ``drilldowns[${LABEL}].max_n_target_records``
   * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
   * ``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``
   * ``drilldowns[${LABEL}].columns[${NAME}].type=null``
@@ -2311,7 +2313,7 @@ to use it for the following parameters:
   * ``drilldowns[${LABEL}].calc_types``: :ref:`select-drilldown-calc-types`
   * ``drilldowns[${LABEL}].calc_target``: :ref:`select-drilldown-calc-target`
   * ``drilldowns[${LABEL}].filter``: :ref:`select-drilldown-filter`
-  * ``drilldowns[${LABEL}].if_max_n_records``: :ref:`select-drilldown-if-max-n-records`
+  * ``drilldowns[${LABEL}].max_n_target_records``: :ref:`select-drilldown-max-n-target-records`
 
 See document for corresponding ``columns[${NAME}].XXX`` parameter to
 know how to use it for the following parameters:

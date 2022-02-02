@@ -1,0 +1,116 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR Tags
+[[0,0.0,0.0],true]
+column_create Memos date COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "tag": "Groonga", "date": "2014-11-16 00:00:00"},
+{"_key": "Mroonga is fast!", "tag": "Mroonga", "date": "2014-11-16 00:00:00"},
+{"_key": "Groonga sticker!", "tag": "Groonga", "date": "2014-11-16 00:00:00"},
+{"_key": "Rroonga is fast!", "tag": "Rroonga", "date": "2014-11-17 00:00:00"},
+{"_key": "Groonga is good!", "tag": "Groonga", "date": "2014-11-17 00:00:00"}
+]
+[[0,0.0,0.0],5]
+select Memos   --drilldowns[tag].keys tag,date   --drilldowns[tag].output_columns _key[0],_key[1],_nsubrecs   --drilldowns[tag].max_n_target_records 4
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "date",
+          "Time"
+        ],
+        [
+          "tag",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast!",
+        1416063600.0,
+        "Groonga"
+      ],
+      [
+        2,
+        "Mroonga is fast!",
+        1416063600.0,
+        "Mroonga"
+      ],
+      [
+        3,
+        "Groonga sticker!",
+        1416063600.0,
+        "Groonga"
+      ],
+      [
+        4,
+        "Rroonga is fast!",
+        1416150000.0,
+        "Rroonga"
+      ],
+      [
+        5,
+        "Groonga is good!",
+        1416150000.0,
+        "Groonga"
+      ]
+    ],
+    {
+      "tag": [
+        [
+          3
+        ],
+        [
+          [
+            "_key[0]",
+            null
+          ],
+          [
+            "_key[1]",
+            null
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          "Groonga",
+          1416063600.0,
+          2
+        ],
+        [
+          "Mroonga",
+          1416063600.0,
+          1
+        ],
+        [
+          "Rroonga",
+          1416150000.0,
+          1
+        ]
+      ]
+    }
+  ]
+]

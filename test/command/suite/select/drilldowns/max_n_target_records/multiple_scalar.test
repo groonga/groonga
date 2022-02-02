@@ -1,0 +1,19 @@
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tag COLUMN_SCALAR Tags
+column_create Memos date COLUMN_SCALAR Time
+
+load --table Memos
+[
+{"_key": "Groonga is fast!", "tag": "Groonga", "date": "2014-11-16 00:00:00"},
+{"_key": "Mroonga is fast!", "tag": "Mroonga", "date": "2014-11-16 00:00:00"},
+{"_key": "Groonga sticker!", "tag": "Groonga", "date": "2014-11-16 00:00:00"},
+{"_key": "Rroonga is fast!", "tag": "Rroonga", "date": "2014-11-17 00:00:00"},
+{"_key": "Groonga is good!", "tag": "Groonga", "date": "2014-11-17 00:00:00"}
+]
+
+select Memos \
+  --drilldowns[tag].keys tag,date \
+  --drilldowns[tag].output_columns _key[0],_key[1],_nsubrecs \
+  --drilldowns[tag].max_n_target_records 4

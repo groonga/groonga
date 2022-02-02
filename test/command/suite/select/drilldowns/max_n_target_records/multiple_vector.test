@@ -1,0 +1,28 @@
+table_create Users TABLE_HASH_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos user COLUMN_SCALAR Users
+column_create Memos date COLUMN_SCALAR Time
+column_create Memos tags COLUMN_VECTOR ShortText
+
+load --table Memos
+[
+{"_key": "Groonga is fast!", "user": "alice", "date": "2014-11-16 00:00:00",
+ "tags": ["Groonga"]},
+{"_key": "Mroonga is fast!", "user": "alice", "date": "2014-11-16 00:00:00",
+ "tags": ["Mroonga", "Groonga"]},
+{"_key": "Groonga sticker!", "user": "alice", "date": "2014-11-16 00:00:00",
+ "tags": ["Groonga"]},
+{"_key": "Rroonga is fast!", "user": "alice", "date": "2014-11-17 00:00:00",
+ "tags": ["Rroonga", "Groonga"]},
+{"_key": "Groonga is good!", "user": "alice", "date": "2014-11-17 00:00:00",
+ "tags": ["Groonga"]}
+]
+
+select Memos \
+  --limit 0 \
+  --output_columns _id \
+  --drilldowns[vector].keys user,tags,date \
+  --drilldowns[vector].output_columns _key[0],_key[1],_key[2],_nsubrecs \
+  --drilldowns[vector].sort_keys -_nsubrecs,_id \
+  --drilldowns[vector].max_n_target_records 4

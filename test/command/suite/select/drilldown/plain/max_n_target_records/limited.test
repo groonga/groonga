@@ -1,0 +1,20 @@
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tags COLUMN_VECTOR ShortText
+
+load --table Memos
+[
+{"_key": "Groonga is fast!", "tags": ["Groonga"]},
+{"_key": "Mroonga is fast!", "tags": ["Mroonga", "Groonga"]},
+{"_key": "Groonga sticker!", "tags": ["Groonga"]},
+{"_key": "Rroonga is fast!", "tags": ["Rroonga", "Groonga"]},
+{"_key": "Groonga is good!", "tags": ["Groonga"]}
+]
+
+#@collect-query-log true
+select Memos \
+  --limit 0 \
+  --output_columns _id \
+  --drilldown tags \
+  --drilldown_output_columns _key,_nsubrecs \
+  --drilldown_max_n_target_records 4
+#@collect-query-log false

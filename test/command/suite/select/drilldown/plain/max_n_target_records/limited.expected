@@ -11,7 +11,7 @@ load --table Memos
 {"_key": "Groonga is good!", "tags": ["Groonga"]}
 ]
 [[0,0.0,0.0],5]
-select Memos   --limit 0   --output_columns _id   --drilldown tags   --drilldown_output_columns _key,_nsubrecs   --drilldown_if_max_n_records 4
+select Memos   --limit 0   --output_columns _id   --drilldown tags   --drilldown_output_columns _key,_nsubrecs   --drilldown_max_n_target_records 4
 [
   [
     0,
@@ -32,7 +32,7 @@ select Memos   --limit 0   --output_columns _id   --drilldown tags   --drilldown
     ],
     [
       [
-        0
+        3
       ],
       [
         [
@@ -43,14 +43,26 @@ select Memos   --limit 0   --output_columns _id   --drilldown tags   --drilldown
           "_nsubrecs",
           "Int32"
         ]
+      ],
+      [
+        "Groonga",
+        4
+      ],
+      [
+        "Mroonga",
+        1
+      ],
+      [
+        "Rroonga",
+        1
       ]
     ]
   ]
 ]
-#>select --drilldown "tags" --drilldown_if_max_n_records "4" --drilldown_output_columns "_key,_nsubrecs" --limit "0" --output_columns "_id" --table "Memos"
+#>select --drilldown "tags" --drilldown_max_n_target_records "4" --drilldown_output_columns "_key,_nsubrecs" --limit "0" --output_columns "_id" --table "Memos"
 #:000000000000000 select(5)
-#:000000000000000 drilldown(0): Memos.tags
+#:000000000000000 drilldown(3): Memos.tags
 #:000000000000000 output(0)
-#:000000000000000 output.drilldown(0)
+#:000000000000000 output.drilldown(3)
 #:000000000000000 send(0)
 #<000000000000000 rc=0

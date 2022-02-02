@@ -4,7 +4,7 @@ Execution example::
     --limit -1 \
     --output_columns _id,tag \
     --drilldown tag \
-    --drilldown_if_max_n_records 4
+    --drilldown_max_n_target_records 3
   # [
   #   [
   #     0, 
@@ -49,7 +49,7 @@ Execution example::
   #     ], 
   #     [
   #       [
-  #         0
+  #         2
   #       ], 
   #       [
   #         [
@@ -60,6 +60,14 @@ Execution example::
   #           "_nsubrecs", 
   #           "Int32"
   #         ]
+  #       ], 
+  #       [
+  #         "Hello", 
+  #         1
+  #       ], 
+  #       [
+  #         "Groonga", 
+  #         2
   #       ]
   #     ]
   #   ]

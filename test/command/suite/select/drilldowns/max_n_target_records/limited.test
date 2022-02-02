@@ -13,4 +13,4 @@ load --table Memos
 
 select Memos \
   --drilldowns[tag].keys tag \
-  --drilldowns[tag].if_max_n_records 3
+  --drilldowns[tag].max_n_target_records 3

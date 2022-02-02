@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -245,6 +245,7 @@ typedef uint32_t grn_table_group_flags;
 #define GRN_TABLE_GROUP_CALC_AVG        GRN_TABLE_GROUP_CALC_MEAN
 #define GRN_TABLE_GROUP_CALC_MEAN       (0x01<<7)
 #define GRN_TABLE_GROUP_CALC_AGGREGATOR (0x01<<8)
+#define GRN_TABLE_GROUP_LIMIT           (0x01<<9)
 
 typedef struct _grn_table_group_aggregator grn_table_group_aggregator;
 

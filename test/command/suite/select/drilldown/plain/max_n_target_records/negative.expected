@@ -1,0 +1,68 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "tags": ["Groonga"]},
+{"_key": "Mroonga is fast!", "tags": ["Mroonga", "Groonga"]},
+{"_key": "Groonga sticker!", "tags": ["Groonga"]},
+{"_key": "Rroonga is fast!", "tags": ["Rroonga", "Groonga"]},
+{"_key": "Groonga is good!", "tags": ["Groonga"]}
+]
+[[0,0.0,0.0],5]
+select Memos   --limit 0   --output_columns _id   --drilldown tags   --drilldown_output_columns _key,_nsubrecs   --drilldown_max_n_target_records -2
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ]
+      ]
+    ],
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_nsubrecs",
+          "Int32"
+        ]
+      ],
+      [
+        "Groonga",
+        4
+      ],
+      [
+        "Mroonga",
+        1
+      ],
+      [
+        "Rroonga",
+        1
+      ]
+    ]
+  ]
+]
+#>select --drilldown "tags" --drilldown_max_n_target_records "-2" --drilldown_output_columns "_key,_nsubrecs" --limit "0" --output_columns "_id" --table "Memos"
+#:000000000000000 select(5)
+#:000000000000000 drilldown(3): Memos.tags
+#:000000000000000 output(0)
+#:000000000000000 output.drilldown(3)
+#:000000000000000 send(0)
+#<000000000000000 rc=0

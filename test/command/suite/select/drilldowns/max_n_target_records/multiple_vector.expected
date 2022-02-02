@@ -1,0 +1,94 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos user COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+column_create Memos date COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is fast!", "user": "alice", "date": "2014-11-16 00:00:00",
+ "tags": ["Groonga"]},
+{"_key": "Mroonga is fast!", "user": "alice", "date": "2014-11-16 00:00:00",
+ "tags": ["Mroonga", "Groonga"]},
+{"_key": "Groonga sticker!", "user": "alice", "date": "2014-11-16 00:00:00",
+ "tags": ["Groonga"]},
+{"_key": "Rroonga is fast!", "user": "alice", "date": "2014-11-17 00:00:00",
+ "tags": ["Rroonga", "Groonga"]},
+{"_key": "Groonga is good!", "user": "alice", "date": "2014-11-17 00:00:00",
+ "tags": ["Groonga"]}
+]
+[[0,0.0,0.0],5]
+select Memos   --limit 0   --output_columns _id   --drilldowns[vector].keys user,tags,date   --drilldowns[vector].output_columns _key[0],_key[1],_key[2],_nsubrecs   --drilldowns[vector].sort_keys -_nsubrecs,_id   --drilldowns[vector].max_n_target_records 4
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ]
+      ]
+    ],
+    {
+      "vector": [
+        [
+          4
+        ],
+        [
+          [
+            "_key[0]",
+            null
+          ],
+          [
+            "_key[1]",
+            null
+          ],
+          [
+            "_key[2]",
+            null
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          "alice",
+          "Groonga",
+          1416063600.0,
+          3
+        ],
+        [
+          "alice",
+          "Mroonga",
+          1416063600.0,
+          1
+        ],
+        [
+          "alice",
+          "Rroonga",
+          1416150000.0,
+          1
+        ],
+        [
+          "alice",
+          "Groonga",
+          1416150000.0,
+          1
+        ]
+      ]
+    }
+  ]
+]

@@ -300,6 +300,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_filter.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_limit_negative.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_limit_simple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_max_n_target_records.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_multiple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_offset_negative.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_offset_simple.log \
@@ -1478,6 +1479,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/drilldown_filter.log \
 	source/example/reference/commands/select/drilldown_limit_negative.log \
 	source/example/reference/commands/select/drilldown_limit_simple.log \
+	source/example/reference/commands/select/drilldown_max_n_target_records.log \
 	source/example/reference/commands/select/drilldown_multiple.log \
 	source/example/reference/commands/select/drilldown_offset_negative.log \
 	source/example/reference/commands/select/drilldown_offset_simple.log \

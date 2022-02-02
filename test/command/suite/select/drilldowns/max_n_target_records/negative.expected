@@ -12,7 +12,7 @@ load --table Memos
 {"_key": "Rroonga is fast!", "tag": "Rroonga"}
 ]
 [[0,0.0,0.0],4]
-select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].if_max_n_records 4
+select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].max_n_target_records -2
 [
   [
     0,
@@ -62,7 +62,7 @@ select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].if_max_n_records 4
     {
       "tag": [
         [
-          3
+          2
         ],
         [
           [
@@ -80,10 +80,6 @@ select Memos   --drilldowns[tag].keys tag   --drilldowns[tag].if_max_n_records 4
         ],
         [
           "Mroonga",
-          1
-        ],
-        [
-          "Rroonga",
           1
         ]
       ]

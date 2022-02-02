@@ -904,7 +904,14 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
   GRN_VOID_INIT(&(data.value_buffer));
   data.table = table;
   data.res = result->table;
-  if ((cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
+  int limit = -1;
+  if (result->flags & GRN_TABLE_GROUP_LIMIT) {
+    limit = result->limit;
+  }
+  if ((cursor = grn_table_cursor_open(ctx, table,
+                                      NULL, 0,
+                                      NULL, 0,
+                                      0, limit, 0))) {
     grn_obj *real_key = key;
     data.need_resolved_id = false;
     if (key->header.type == GRN_ACCESSOR) {
@@ -958,7 +965,14 @@ grn_table_group_all_records(grn_ctx *ctx, grn_obj *table,
   grn_obj *res = result->table;
 
   GRN_VOID_INIT(&value_buffer);
-  if ((tc = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0))) {
+  int limit = -1;
+  if (result->flags & GRN_TABLE_GROUP_LIMIT) {
+    limit = result->limit;
+  }
+  if ((tc = grn_table_cursor_open(ctx, table,
+                                  NULL, 0,
+                                  NULL, 0,
+                                  0, limit, 0))) {
     void *value;
     grn_id group_id;
     if ((group_id = grn_table_add_v(ctx, res,
@@ -1098,6 +1112,9 @@ typedef struct {
   int n_keys;
   grn_table_group_result *results;
   int n_results;
+  unsigned int n_records;
+  int max_n_target_records;
+  int nth_record;
   grn_obj bulk;
   grn_obj vector;
   grn_obj vector_pack_header;
@@ -1118,6 +1135,10 @@ grn_table_group_multi_keys_add_record(grn_ctx *ctx,
   int i;
   for (i = 0; i < data->n_results; i++) {
     grn_table_group_result *result = data->results + i;
+
+    if (data->nth_record > result->limit) {
+      break;
+    }
 
     int end;
     if (result->key_end > data->n_keys) {
@@ -1203,7 +1224,8 @@ grn_table_group_multi_keys_scalar_records(grn_ctx *ctx,
                                                data->table,
                                                NULL, 0,
                                                NULL, 0,
-                                               0, -1, 0);
+                                               0, data->max_n_target_records,
+                                               0);
   if (!tc) {
     return;
   }
@@ -1229,6 +1251,8 @@ grn_table_group_multi_keys_scalar_records(grn_ctx *ctx,
     }
 
     grn_table_group_multi_keys_add_record(ctx, data);
+
+    data->nth_record++;
   }
   grn_table_cursor_close(ctx, tc);
 }
@@ -1326,7 +1350,8 @@ grn_table_group_multi_keys_vector_records(grn_ctx *ctx,
                                                data->table,
                                                NULL, 0,
                                                NULL, 0,
-                                               0, -1, 0);
+                                               0, data->max_n_target_records,
+                                               0);
   if (!tc) {
     return;
   }
@@ -1360,6 +1385,8 @@ grn_table_group_multi_keys_vector_records(grn_ctx *ctx,
 
     GRN_BULK_REWIND(vector);
     grn_table_group_multi_keys_vector_record(ctx, data, key_buffers, 0);
+
+    data->nth_record++;
   }
   for (i = 0; i < data->n_keys; i++) {
     GRN_OBJ_FIN(ctx, &(key_buffers[i]));
@@ -1386,7 +1413,7 @@ grn_table_group_update_aggregated_value_type_id(grn_ctx *ctx,
   }
 }
 
-grn_rc
+static grn_rc
 grn_table_group_results_prepare(grn_ctx *ctx,
                                 grn_table_group_result *results,
                                 int n_results,
@@ -1463,7 +1490,7 @@ grn_table_group_results_prepare(grn_ctx *ctx,
   return ctx->rc;
 }
 
-grn_rc
+static grn_rc
 grn_table_group_results_postpare(grn_ctx *ctx,
                                  grn_table_group_result *results,
                                  int n_results)
@@ -1566,6 +1593,29 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
       }
       data.results = results;
       data.n_results = n_results;
+      data.n_records = grn_table_size(ctx, table);
+      data.max_n_target_records = -1;
+      for (i = 0; i < n_results; i++) {
+        if (results[i].flags & GRN_TABLE_GROUP_LIMIT) {
+          int limit = results[i].limit;
+          if (limit < 0) {
+            limit += data.n_records + 1;
+            if (limit < 0) {
+              limit = 0;
+            }
+          }
+          results[i].limit = limit;
+          if (limit > data.max_n_target_records) {
+            data.max_n_target_records = limit;
+          }
+        } else {
+          results[i].limit = data.n_records;
+        }
+      }
+      if (data.max_n_target_records == -1) {
+        data.max_n_target_records = data.n_records;
+      }
+      data.nth_record = 0;
       GRN_TEXT_INIT(&(data.bulk), 0);
       GRN_OBJ_INIT(&(data.vector), GRN_VECTOR, 0, GRN_DB_VOID);
       GRN_TEXT_INIT(&(data.vector_pack_header), 0);

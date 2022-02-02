@@ -16,5 +16,5 @@ select Memos \
   --output_columns _id \
   --drilldown tags \
   --drilldown_output_columns _key,_nsubrecs \
-  --drilldown_if_max_n_records 5
+  --drilldown_max_n_target_records 5
 #@collect-query-log false
