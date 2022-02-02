@@ -137,7 +137,7 @@ html_theme_options = {
   "switcher": {
     # "json_url": "/_static/switcher.json",
     "json_url": "https://groonga.org/docs/_static/switcher.json",
-    "url_template": "https://groonga.org/{version}docs",
+    "url_template": "https://groonga.org/{version}docs/",
     "version_match": switcher_version,
   },
   "navbar_center": [
