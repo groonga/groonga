@@ -102,7 +102,10 @@ jobs:
         if: |
           matrix.use-sphinx
         run: |
-          sudo pip3 install Sphinx pydata_sphinx_theme
+          sudo pip3 install \
+            Sphinx \
+            jinja2 \
+            pydata_sphinx_theme
       - name: Install Bundler
         run: |
           sudo gem install bundler
