@@ -16,7 +16,6 @@ import sphinx
 import sys, os
 import gettext
 from datetime import datetime
-from pkg_resources import parse_version
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
