@@ -43,6 +43,11 @@ jobs:
           cd ..
           git clone --depth 1 https://github.com/groonga/groonga.org.git
           git clone --depth 1 https://github.com/clear-code/cutter.git
+      - name: Detect nginx update
+        run: |
+          upstream_version=`curl -s "https://nginx.org/en/CHANGES" | awk 'NR==2{print $4}'`
+          bundled_version=`cat nginx_version`
+          test "${upstream_version}" = "${bundled_version}"
       - name: Generate configure
         run: |
           ./autogen.sh
