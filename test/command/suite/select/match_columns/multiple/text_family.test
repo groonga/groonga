@@ -1,0 +1,18 @@
+table_create Records TABLE_NO_KEY
+column_create Records short_text COLUMN_SCALAR ShortText
+column_create Records text COLUMN_SCALAR Text
+
+load --table Records
+[
+{"short_text": "a", "text": "b"}
+]
+
+log_level --level debug
+#@add-important-log-levels debug
+#@add-ignore-log-pattern /\A\[io\]/
+select Records \
+  --match_columns 'short_text || text' \
+  --query 'a OR b'
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels info
+log_level --level notice

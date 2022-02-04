@@ -7616,16 +7616,35 @@ grn_expr_get_range_info(grn_ctx *ctx,
         grn_obj_flags y_range_flags;
         POP(y_range_id, y_range_flags);
         POP(x_range_id, x_range_flags);
-        if (x_range_id != y_range_id) {
+        if (x_range_id == y_range_id) {
+          PUSH(x_range_id, x_range_flags);
+        } else if (grn_type_id_is_text_family(ctx, x_range_id) &&
+                   grn_type_id_is_text_family(ctx, y_range_id)) {
+          if (x_range_id >= y_range_id) {
+            PUSH(x_range_id, x_range_flags);
+          } else {
+            PUSH(y_range_id, y_range_flags);
+          }
+        } else {
+          grn_obj *x_range = grn_ctx_at(ctx, x_range_id);
+          grn_obj *y_range = grn_ctx_at(ctx, y_range_id);
+          GRN_DEFINE_NAME_CUSTOM(x_range, x_range_name);
+          GRN_DEFINE_NAME_CUSTOM(y_range, y_range_name);
           GRN_LOG(ctx,
                   GRN_LOG_DEBUG,
-                  "[expr][get-range-info] can't chose range: %s %s %s",
-                  grn_obj_type_to_string(x_range_id),
+                  "[expr][get-range-info] can't chose range: "
+                  "<%.*s> <%s> <%.*s>",
+                  x_range_name_size, x_range_name,
                   grn_operator_to_string(code->op),
-                  grn_obj_type_to_string(y_range_id));
+                  y_range_name_size, y_range_name);
+          if (x_range) {
+            grn_obj_unref(ctx, x_range);
+          }
+          if (y_range) {
+            grn_obj_unref(ctx, y_range);
+          }
           goto exit;
         }
-        PUSH(x_range_id, x_range_flags);
       }
       code++;
       break;
