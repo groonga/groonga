@@ -412,17 +412,6 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
         grn_token_set_force_prefix_search(ctx, current_token, GRN_TRUE);
       }
       if (token_cursor->curr_size == 0) {
-        if (token_cursor->status != GRN_TOKEN_CURSOR_DONE) {
-          char tokenizer_name[GRN_TABLE_MAX_KEY_SIZE];
-          int tokenizer_name_length;
-          tokenizer_name_length =
-            grn_obj_name(ctx, token_cursor->tokenizer.object,
-                         tokenizer_name, GRN_TABLE_MAX_KEY_SIZE);
-          GRN_LOG(ctx, GRN_WARN,
-                  "[token_next] ignore an empty token: <%.*s>: <%.*s>",
-                  tokenizer_name_length, tokenizer_name,
-                  token_cursor->orig_blen, token_cursor->orig);
-        }
         continue;
       }
       if (token_cursor->curr_size > GRN_TABLE_MAX_KEY_SIZE) {
