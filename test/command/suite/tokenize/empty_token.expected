@@ -20,4 +20,3 @@ tokenize TokenDelimit "aB￾￾c" NormalizerAuto ENABLE_TOKENIZED_DELIMITER
     }
   ]
 ]
-#|w| [token_next] ignore an empty token: <TokenDelimit>: <aB￾￾c>
