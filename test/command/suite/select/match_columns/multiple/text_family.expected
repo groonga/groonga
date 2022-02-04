@@ -12,4 +12,33 @@ load --table Records
 log_level --level debug
 [[0,0.0,0.0],true]
 select Records   --match_columns 'short_text || text'   --query 'a OR b'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        0
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "short_text",
+          "ShortText"
+        ],
+        [
+          "text",
+          "Text"
+        ]
+      ]
+    ]
+  ]
+]
 log_level --level notice
+[[0,0.0,0.0],true]
