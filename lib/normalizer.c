@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2012-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
   Copyright(C) 2022  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -585,8 +585,6 @@ typedef struct {
   grn_nfkc_normalize_context context;
   grn_bool remove_blank_p;
   grn_bool remove_tokenized_delimiter_p;
-  bool remove_new_line_p;
-  bool remove_symbol_p;
 } grn_nfkc_normalize_data;
 
 grn_inline static void
@@ -692,8 +690,6 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
     data->options->remove_blank;
   data->remove_tokenized_delimiter_p =
     (data->string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
-  data->remove_new_line_p = data->options->remove_new_line;
-  data->remove_symbol_p = data->options->remove_symbol;
 
   size = data->string->original_length_in_bytes;
   data->context.size = size * 3;
@@ -1312,23 +1308,27 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
 
 typedef const unsigned char *
 (*grn_nfkc_normalize_unify_stateful_func)(grn_ctx *ctx,
+                                          const unsigned char *start,
                                           const unsigned char *current,
                                           const unsigned char *end,
                                           size_t *n_used_bytes,
                                           size_t *n_used_characters,
                                           unsigned char *unified_buffer,
                                           size_t *n_unified_bytes,
-                                          size_t *n_unified_characters);
+                                          size_t *n_unified_characters,
+                                          void *user_data);
 
 static const unsigned char *
 grn_nfkc_normalize_unify_katakana_v_sounds(grn_ctx *ctx,
+                                           const unsigned char *start,
                                            const unsigned char *current,
                                            const unsigned char *end,
                                            size_t *n_used_bytes,
                                            size_t *n_used_characters,
                                            unsigned char *unified_buffer,
                                            size_t *n_unified_bytes,
-                                           size_t *n_unified_characters)
+                                           size_t *n_unified_characters,
+                                           void *user_data)
 {
   size_t char_length;
 
@@ -1412,13 +1412,15 @@ grn_nfkc_normalize_unify_katakana_v_sounds(grn_ctx *ctx,
 
 static const unsigned char *
 grn_nfkc_normalize_unify_katakana_bu_sound(grn_ctx *ctx,
+                                           const unsigned char *start,
                                            const unsigned char *current,
                                            const unsigned char *end,
                                            size_t *n_used_bytes,
                                            size_t *n_used_characters,
                                            unsigned char *unified_buffer,
                                            size_t *n_unified_bytes,
-                                           size_t *n_unified_characters)
+                                           size_t *n_unified_characters,
+                                           void *user_data)
 {
   size_t char_length;
 
@@ -1466,14 +1468,77 @@ grn_nfkc_normalize_unify_katakana_bu_sound(grn_ctx *ctx,
   return current;
 }
 
+static const unsigned char *
+grn_nfkc_normalize_unify_romaji(grn_ctx *ctx,
+                                const unsigned char *start,
+                                const unsigned char *current,
+                                const unsigned char *end,
+                                size_t *n_used_bytes,
+                                size_t *n_used_characters,
+                                unsigned char *unified_buffer,
+                                size_t *n_unified_bytes,
+                                size_t *n_unified_characters,
+                                void *user_data)
+{
+  return grn_romaji_hepburn_convert(ctx,
+                                    current,
+                                    end,
+                                    n_used_bytes,
+                                    n_used_characters,
+                                    unified_buffer,
+                                    n_unified_bytes,
+                                    n_unified_characters);
+}
+
+static const unsigned char *
+grn_nfkc_normalize_strip(grn_ctx *ctx,
+                         const unsigned char *start,
+                         const unsigned char *current,
+                         const unsigned char *end,
+                         size_t *n_used_bytes,
+                         size_t *n_used_characters,
+                         unsigned char *unified_buffer,
+                         size_t *n_unified_bytes,
+                         size_t *n_unified_characters,
+                         void *user_data)
+{
+  bool *striped_from_last = user_data;
+  const bool from_start = (start == current);
+  const unsigned char *current_keep = current;
+  while (current < end) {
+    size_t char_length = grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+    (*n_used_bytes) += char_length;
+    (*n_used_characters)++;
+
+    const bool is_blank = (char_length == 1 && current[0] == ' ');
+    if (!is_blank) {
+      if (from_start) {
+        *n_unified_bytes = char_length;
+        *n_unified_characters = 1;
+        return current;
+      } else {
+        *n_unified_bytes = *n_used_bytes;
+        *n_unified_characters = *n_used_characters;
+        return current_keep;
+      }
+    }
+
+    current += char_length;
+  }
+  *striped_from_end = true;
+  return current;
+}
+
 grn_inline static void
 grn_nfkc_normalize_unify_stateful(grn_ctx *ctx,
                                   grn_nfkc_normalize_data *data,
                                   grn_nfkc_normalize_context *unify,
                                   grn_nfkc_normalize_unify_stateful_func func,
+                                  void *func_data,
                                   const char *context_tag)
 {
-  const unsigned char *current = data->context.dest;
+  const unsigned char *start = data->context.dest;
+  const unsigned char *current = start;
   const unsigned char *end = data->context.d;
   size_t i_byte = 0;
   size_t i_character = 0;
@@ -1487,8 +1552,9 @@ grn_nfkc_normalize_unify_stateful(grn_ctx *ctx,
     size_t n_unified_characters = 0;
 
     unified = func(ctx,
-                   current, end, &n_used_bytes, &n_used_characters,
-                   unified_buffer, &n_unified_bytes, &n_unified_characters);
+                   start, current, end, &n_used_bytes, &n_used_characters,
+                   unified_buffer, &n_unified_bytes, &n_unified_characters,
+                   func_data);
 
     if (unify->d + n_unified_bytes >= unify->dest_end) {
       grn_nfkc_normalize_context_expand(ctx,
@@ -1503,20 +1569,25 @@ grn_nfkc_normalize_unify_stateful(grn_ctx *ctx,
     if (unified == current && n_unified_bytes == n_used_bytes) {
       grn_memcpy(unify->d, unified, n_unified_bytes);
       unify->d += n_unified_bytes;
-      unify->n_characters++;
+      unify->n_characters += n_unified_characters;
       if (unify->t) {
-        *(unify->t++) = data->context.types[i_character];
+        memcpy(unify->t,
+               data->context.types + i_character,
+               sizeof(uint8_t) * n_unified_characters);
+        unify->t += n_unified_characters;
       }
       if (unify->c) {
-        size_t i;
-        *(unify->c++) = data->context.checks[i_byte];
-        for (i = 1; i < n_unified_bytes; i++) {
-          *(unify->c++) = 0;
-        }
+        memcpy(unify->c,
+               data->context.checks + i_byte,
+               sizeof(int16_t) * n_unified_bytes);
+        unify->c += n_unified_bytes;
         unify->c[0] = 0;
       }
       if (unify->o) {
-        *(unify->o++) = data->context.offsets[i_character];
+        memcpy(unify->o,
+               data->context.offsets + i_character,
+               sizeof(uint64_t) * n_unified_characters);
+        unify->o += n_unified_characters;
       }
     } else {
       if (n_unified_bytes > 0) {
@@ -1588,7 +1659,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
         data->options->unify_katakana_v_sounds ||
         data->options->unify_katakana_bu_sound ||
         data->options->unify_to_romaji ||
-        data->options->unify_to_katakana)) {
+        data->options->unify_to_katakana ||
+        data->options->strip)) {
     return;
   }
 
@@ -1628,6 +1700,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
                                       data,
                                       &unify,
                                       grn_nfkc_normalize_unify_katakana_v_sounds,
+                                      NULL,
                                       "[unify][katakana-v-sounds]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
@@ -1644,6 +1717,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
                                       data,
                                       &unify,
                                       grn_nfkc_normalize_unify_katakana_bu_sound,
+                                      NULL,
                                       "[unify][katakana-bu-sound]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
@@ -1659,10 +1733,34 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     grn_nfkc_normalize_unify_stateful(ctx,
                                       data,
                                       &unify,
-                                      grn_romaji_hepburn_convert,
+                                      grn_nfkc_normalize_unify_romaji,
+                                      NULL,
                                       "[unify][romaji]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
+    }
+    need_swap = GRN_TRUE;
+  }
+
+  if (data->options->strip) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    bool striped_from_end = false;
+    grn_nfkc_normalize_unify_stateful(ctx,
+                                      data,
+                                      &unify,
+                                      grn_nfkc_normalize_strip,
+                                      &striped_from_end,
+                                      "[strip]");
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    if (striped_from_end) {
+      if (unify.types && unify.n_characters > 0) {
+        unify.types[unify.n_characters - 1] |= GRN_CHAR_BLANK;
+      }
     }
     need_swap = GRN_TRUE;
   }
@@ -1713,7 +1811,7 @@ grn_nfkc_normalize_remove_target_blank_character_p(
     return data->remove_blank_p;
   case '\r' :
   case '\n' :
-    return data->remove_new_line_p;
+    return data->options->remove_new_line;
   default :
     /* skip unprintable ascii */
     return true;
@@ -1728,7 +1826,7 @@ grn_nfkc_normalize_remove_target_non_blank_character_p(
   size_t current_length)
 {
   if (data->options->char_type_func(current) == GRN_CHAR_SYMBOL) {
-    return data->remove_symbol_p;
+    return data->options->remove_symbol;
   }
   return false;
 }

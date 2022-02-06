@@ -1,0 +1,5 @@
+normalize \
+  'NormalizerNFKC121("strip", true, \
+                     "report_source_offset", true)' \
+  "  hello world\t! \t " \
+  WITH_CHECKS|WITH_TYPES

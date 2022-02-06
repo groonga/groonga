@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -49,6 +49,7 @@ typedef struct {
   grn_bool remove_blank;
   bool remove_new_line;
   bool remove_symbol;
+  bool strip;
 } grn_nfkc_normalize_options;
 
 typedef void (*grn_nfkc_normalize_options_init_func)(grn_ctx *ctx,

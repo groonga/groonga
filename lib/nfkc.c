@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2010-2016  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -66,7 +66,8 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->unify_to_katakana = GRN_FALSE;
   options->remove_blank = GRN_FALSE;
   options->remove_new_line = true;
-  options->remove_symbol = false;  
+  options->remove_symbol = false;
+  options->strip = false;
 }
 
 void
@@ -210,6 +211,12 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->remove_symbol);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "strip")) {
+      options->strip =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->strip);
     }
   } GRN_OPTION_VALUES_EACH_END();
 
@@ -223,4 +230,3 @@ grn_nfkc_normalize_options_fin(grn_ctx *ctx,
 }
 
 #endif /* GRN_WITH_NFKC */
-
