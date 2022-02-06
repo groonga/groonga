@@ -1415,8 +1415,11 @@ get_content_mime_type(grn_ctx *ctx, const char *p, const char *pe)
 #endif
 #ifdef GRN_WITH_APACHE_ARROW
   case 'a' :
-    if (GRN_RAW_STRING_EQUAL_CSTRING(type, "arrow") ||
-        GRN_RAW_STRING_EQUAL_CSTRING(type, "apache-arrow")) {
+    if (GRN_RAW_STRING_EQUAL_CSTRING(type, "arrows")) {
+      ctx->impl->output.type = GRN_CONTENT_APACHE_ARROW;
+      ctx->impl->output.mime_type = "application/vnd.apache.arrow.stream";
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(type, "arrow") ||
+               GRN_RAW_STRING_EQUAL_CSTRING(type, "apache-arrow")) {
       ctx->impl->output.type = GRN_CONTENT_APACHE_ARROW;
       ctx->impl->output.mime_type = "application/x-apache-arrow-streaming";
     }
