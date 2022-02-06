@@ -2042,9 +2042,6 @@ namespace grnarrow {
     }
 
     void add_column_record(grn_obj *record) {
-      auto column_builder =
-        record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
-          current_column_index_++);
       auto table = object_cache_[record->header.domain];
       char key[GRN_TABLE_MAX_KEY_SIZE];
       auto key_size = grn_table_get_key(ctx_,
@@ -2052,6 +2049,16 @@ namespace grnarrow {
                                         GRN_RECORD_VALUE(record),
                                         key,
                                         sizeof(key));
+      switch (table->header.domain) {
+      case GRN_DB_INT32 :
+        add_column_int32(*reinterpret_cast<int32_t *>(key));
+        return;
+      default :
+        break;
+      }
+      auto column_builder =
+        record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
+          current_column_index_++);
       auto status =
         column_builder->Append(arrow::util::string_view(key, key_size));
       if (status.ok()) {
