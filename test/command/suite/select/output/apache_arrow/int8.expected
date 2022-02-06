@@ -1,0 +1,24 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data value COLUMN_SCALAR Int8
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"value": 29}
+]
+[[0,0.0,0.0],1]
+select Data   --command_version 3   --output_type apache-arrow
+return_code: int32
+start_time: timestamp[ns]
+elapsed_time: double
+-- metadata --
+GROONGA:data_type: metadata
+	return_code	               start_time	elapsed_time
+0	          0	1970-01-01T09:00:00+09:00	    0.000000
+========================================
+_id: uint32
+value: int8
+-- metadata --
+GROONGA:n_hits: 1
+	_id	value
+0	  1	   29

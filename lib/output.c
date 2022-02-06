@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -415,8 +415,39 @@ grn_output_int8(grn_ctx *ctx,
                 grn_content_type output_type,
                 int8_t value)
 {
-  /* TODO */
-  grn_output_int32(ctx, outbuf, output_type, value);
+  put_delimiter(ctx, outbuf, output_type);
+  switch (output_type) {
+  case GRN_CONTENT_JSON:
+    grn_text_itoa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_TSV:
+    grn_text_itoa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_XML:
+    GRN_TEXT_PUTS(ctx, outbuf, "<INT>");
+    grn_text_itoa(ctx, outbuf, value);
+    GRN_TEXT_PUTS(ctx, outbuf, "</INT>");
+    break;
+  case GRN_CONTENT_MSGPACK :
+#ifdef GRN_WITH_MESSAGE_PACK
+    msgpack_pack_int8(&ctx->impl->output.msgpacker, value);
+#endif
+    break;
+  case GRN_CONTENT_GROONGA_COMMAND_LIST :
+    grn_text_itoa(ctx, outbuf, value);
+    break;
+  case GRN_CONTENT_APACHE_ARROW :
+    if (ctx->impl->output.arrow_stream_writer) {
+      grn_arrow_stream_writer_add_column_int8(
+        ctx,
+        ctx->impl->output.arrow_stream_writer,
+        value);
+    }
+    break;
+  case GRN_CONTENT_NONE:
+    break;
+  }
+  INCR_LENGTH;
 }
 
 static void

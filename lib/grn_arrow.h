@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -70,6 +70,10 @@ grn_arrow_stream_writer_add_column_string(grn_ctx *ctx,
                                           grn_arrow_stream_writer *writer,
                                           const char *value,
                                           size_t value_length);
+grn_rc
+grn_arrow_stream_writer_add_column_int8(grn_ctx *ctx,
+                                        grn_arrow_stream_writer *writer,
+                                        int8_t value);
 grn_rc
 grn_arrow_stream_writer_add_column_int32(grn_ctx *ctx,
                                          grn_arrow_stream_writer *writer,
