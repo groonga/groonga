@@ -1,0 +1,26 @@
+plugin_register functions/index_column
+
+table_create Memos TABLE_HASH_KEY ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerAuto
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos _key
+
+load --table Memos
+[
+{"_key": "Groonga is a fast full text search engine."},
+{"_key": "Mroonga is a MySQL storage engine based on Groonga."},
+{"_key": "Rroonga is a Ruby bindings for Groonga."}
+]
+
+delete Memos --id 1
+
+select Terms \
+  --limit -1 \
+  --sort_keys _id \
+  --columns[have].stage output \
+  --columns[have].type Bool \
+  --columns[have].flags COLUMN_SCALAR \
+  --columns[have].value 'index_column_have_source_record("index")' \
+  --output_columns '_id, _key, have'

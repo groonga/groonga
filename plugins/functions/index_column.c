@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2017 Brazil
-  Copyright(C) 2019-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2017  Brazil
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -394,6 +394,63 @@ func_index_column_source_records(grn_ctx *ctx,
   }
 }
 
+static grn_obj *
+func_index_column_have_source_record(grn_ctx *ctx,
+                                     int n_args,
+                                     grn_obj **args,
+                                     grn_user_data *user_data)
+{
+  grn_ii *ii;
+  caller_index_info caller_index_info;
+
+  if (n_args != 1) {
+    GRN_PLUGIN_ERROR(ctx,
+                     GRN_INVALID_ARGUMENT,
+                     "index_column_have_source_record(): "
+                     "wrong number of arguments (%d for 1)", n_args - 1);
+    return NULL;
+  }
+
+  grn_rc rc = caller_index_info_init(ctx,
+                                     &caller_index_info,
+                                     args[0],
+                                     user_data,
+                                     "index_column_have_source_record()");
+  if (rc != GRN_SUCCESS) {
+    return NULL;
+  }
+
+  ii = (grn_ii *)caller_index_info.index_column;
+  grn_obj *have =
+    grn_plugin_proc_alloc(ctx, user_data, GRN_DB_BOOL, 0);
+  if (!have) {
+    caller_index_info_fin(ctx, &caller_index_info);
+    return NULL;
+  }
+
+  GRN_BOOL_SET(ctx, have, false);
+  {
+    grn_ii_cursor *ii_cursor;
+    ii_cursor = grn_ii_cursor_open(ctx,
+                                   ii,
+                                   caller_index_info.term_id,
+                                   GRN_ID_NIL,
+                                   GRN_ID_MAX,
+                                   grn_ii_get_n_elements(ctx, ii),
+                                   0);
+    if (ii_cursor) {
+      grn_posting *posting;
+      while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
+        GRN_BOOL_SET(ctx, have, true);
+        true;
+      }
+      grn_ii_cursor_close(ctx, ii_cursor);
+    }
+  }
+  caller_index_info_fin(ctx, &caller_index_info);
+  return have;
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -419,6 +476,10 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
   grn_proc_create(ctx, "index_column_source_records", -1,
                   GRN_PROC_FUNCTION,
                   func_index_column_source_records, NULL, NULL, 0, NULL);
+
+  grn_proc_create(ctx, "index_column_have_source_record", -1,
+                  GRN_PROC_FUNCTION,
+                  func_index_column_have_source_record, NULL, NULL, 0, NULL);
 
   return ctx->rc;
 }

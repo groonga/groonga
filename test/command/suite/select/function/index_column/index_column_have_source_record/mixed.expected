@@ -1,0 +1,136 @@
+plugin_register functions/index_column
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos _key
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga is a fast full text search engine."},
+{"_key": "Mroonga is a MySQL storage engine based on Groonga."},
+{"_key": "Rroonga is a Ruby bindings for Groonga."}
+]
+[[0,0.0,0.0],3]
+delete Memos --id 1
+[[0,0.0,0.0],true]
+select Terms   --limit -1   --sort_keys _id   --columns[have].stage output   --columns[have].type Bool   --columns[have].flags COLUMN_SCALAR   --columns[have].value 'index_column_have_source_record("index")'   --output_columns '_id, _key, have'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        18
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "have",
+          "Bool"
+        ]
+      ],
+      [
+        1,
+        "groonga",
+        true
+      ],
+      [
+        2,
+        "is",
+        true
+      ],
+      [
+        3,
+        "a",
+        true
+      ],
+      [
+        4,
+        "fast",
+        false
+      ],
+      [
+        5,
+        "full",
+        false
+      ],
+      [
+        6,
+        "text",
+        false
+      ],
+      [
+        7,
+        "search",
+        false
+      ],
+      [
+        8,
+        "engine",
+        true
+      ],
+      [
+        9,
+        ".",
+        true
+      ],
+      [
+        10,
+        "mroonga",
+        true
+      ],
+      [
+        11,
+        "mysql",
+        true
+      ],
+      [
+        12,
+        "storage",
+        true
+      ],
+      [
+        13,
+        "based",
+        true
+      ],
+      [
+        14,
+        "on",
+        true
+      ],
+      [
+        15,
+        "rroonga",
+        true
+      ],
+      [
+        16,
+        "ruby",
+        true
+      ],
+      [
+        17,
+        "bindings",
+        true
+      ],
+      [
+        18,
+        "for",
+        true
+      ]
+    ]
+  ]
+]
