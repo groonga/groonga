@@ -1,0 +1,42 @@
+table_create Notes TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Notes title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Notes
+[
+{"title": "\t"}
+]
+[[0,0.0,0.0],1]
+table_create Titles TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC130
+[[0,0.0,0.0],true]
+column_create Titles notes_title COLUMN_INDEX Notes title
+[[0,0.0,0.0],true]
+select Titles
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        0
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "notes_title",
+          "UInt32"
+        ]
+      ]
+    ]
+  ]
+]

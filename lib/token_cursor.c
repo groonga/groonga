@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -263,7 +263,7 @@ grn_token_cursor_set_query_options(grn_ctx *ctx,
   GRN_API_RETURN(rc);
 }
 
-static int
+static void
 grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
                                           grn_token_cursor *token_cursor)
 {
@@ -311,8 +311,6 @@ grn_token_cursor_next_apply_token_filters(grn_ctx *ctx,
     token_cursor->curr = grn_token_get_data_raw(ctx, current_token, &size);
     token_cursor->curr_size = size;
   }
-
-  return grn_token_get_status(ctx, current_token);
 }
 
 static bool
@@ -347,7 +345,6 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
     GRN_API_RETURN(GRN_ID_NIL);
   }
 
-  int status;
   grn_id tid = GRN_ID_NIL;
   grn_obj *table = token_cursor->table;
   grn_obj *tokenizer = token_cursor->tokenizer.object;
@@ -375,20 +372,26 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
                                                  current_token,
                                                  user_data);
       } else if (tokenizer_proc->funcs[PROC_NEXT]) {
-        grn_obj *data, *status;
+        grn_obj *data, *status_obj;
         tokenizer_proc->funcs[PROC_NEXT](ctx,
                                          1,
                                          &table,
                                          &token_cursor->tokenizer.pctx.user_data);
-        status = grn_ctx_pop(ctx);
+        status_obj = grn_ctx_pop(ctx);
         data = grn_ctx_pop(ctx);
         grn_token_set_data(ctx,
                            current_token,
                            GRN_TEXT_VALUE(data),
                            GRN_TEXT_LEN(data));
-        grn_token_set_status(ctx, current_token, GRN_UINT32_VALUE(status));
+        grn_token_set_status(ctx, current_token, GRN_UINT32_VALUE(status_obj));
       }
-      status = grn_token_cursor_next_apply_token_filters(ctx, token_cursor);
+      grn_token_cursor_next_apply_token_filters(ctx, token_cursor);
+    } else {
+      grn_token_set_status(ctx, current_token, GRN_TOKEN_LAST);
+      grn_token_cursor_next_apply_token_filters(ctx, token_cursor);
+    }
+    {
+      grn_token_status status = grn_token_get_status(ctx, current_token);
       token_cursor->status =
         ((status & GRN_TOKEN_LAST) ||
          (token_cursor->mode == GRN_TOKENIZE_GET &&
@@ -435,9 +438,6 @@ grn_token_cursor_next(grn_ctx *ctx, grn_token_cursor *token_cursor)
           }
         }
       }
-    } else {
-      grn_token_cursor_next_apply_token_filters(ctx, token_cursor);
-      token_cursor->status = GRN_TOKEN_CURSOR_DONE;
     }
     if (token_cursor->mode == GRN_TOKENIZE_ADD) {
       switch (table->header.type) {

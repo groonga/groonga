@@ -1,0 +1,13 @@
+table_create Notes TABLE_NO_KEY
+column_create Notes title COLUMN_SCALAR ShortText
+
+load --table Notes
+[
+{"title": "\t"}
+]
+
+table_create Titles TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC130
+column_create Titles notes_title COLUMN_INDEX Notes title
+
+select Titles
