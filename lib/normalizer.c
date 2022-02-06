@@ -1502,7 +1502,7 @@ grn_nfkc_normalize_strip(grn_ctx *ctx,
                          size_t *n_unified_characters,
                          void *user_data)
 {
-  bool *striped_from_last = user_data;
+  bool *striped_from_end = user_data;
   const bool from_start = (start == current);
   const unsigned char *current_keep = current;
   while (current < end) {
