@@ -1,0 +1,45 @@
+table_create Files TABLE_PAT_KEY ShortText
+column_create Files revision COLUMN_SCALAR UInt32
+
+table_create Packages TABLE_PAT_KEY ShortText
+column_create Packages files COLUMN_VECTOR Files
+
+column_create Files packages_files_index COLUMN_INDEX Packages files
+
+table_create Revisions TABLE_PAT_KEY UInt32
+column_create Revisions files_revision_index COLUMN_INDEX Files revision
+
+table_create Names TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigramSplitSymbolAlpha
+column_create Names packages_key_index COLUMN_INDEX|WITH_POSITION Packages _key
+
+load --table Files
+[
+{"_key": "include/groonga.h", "revision": 100},
+{"_key": "src/groonga.c",     "revision": 29},
+{"_key": "lib/groonga.rb",    "revision": 12},
+{"_key": "README.textile",    "revision": 24},
+{"_key": "ha_mroonga.cc",     "revision": 40},
+{"_key": "ha_mroonga.hpp",    "revision": 6}
+]
+
+load --table Packages
+[
+{"_key": "groonga", "files": ["include/groonga.h", "src/groonga.c"]},
+{"_key": "rroonga", "files": ["lib/groonga.rb", "README.textile"]},
+{"_key": "mroonga", "files": ["ha_mroonga.cc", "ha_mroonga.hpp"]}
+]
+
+#@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level info
+select Packages \
+  --filter 'all_records() && \
+            sub_filter(files, \
+                       "revision >= 10 && \
+                        (_key @^ \\\"ha\\\" || _key @^ \\\"include/\\\")", \
+                       {"pre_filter_threshold": -1})' \
+  --output_columns '_key, _score, files, files.revision'
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels info

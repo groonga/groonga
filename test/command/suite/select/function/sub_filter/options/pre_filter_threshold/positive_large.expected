@@ -1,0 +1,104 @@
+table_create Files TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Files revision COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Packages TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Packages files COLUMN_VECTOR Files
+[[0,0.0,0.0],true]
+column_create Files packages_files_index COLUMN_INDEX Packages files
+[[0,0.0,0.0],true]
+table_create Revisions TABLE_PAT_KEY UInt32
+[[0,0.0,0.0],true]
+column_create Revisions files_revision_index COLUMN_INDEX Files revision
+[[0,0.0,0.0],true]
+table_create Names TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigramSplitSymbolAlpha
+[[0,0.0,0.0],true]
+column_create Names packages_key_index COLUMN_INDEX|WITH_POSITION Packages _key
+[[0,0.0,0.0],true]
+load --table Files
+[
+{"_key": "include/groonga.h", "revision": 100},
+{"_key": "src/groonga.c",     "revision": 29},
+{"_key": "lib/groonga.rb",    "revision": 12},
+{"_key": "README.textile",    "revision": 24},
+{"_key": "ha_mroonga.cc",     "revision": 40},
+{"_key": "ha_mroonga.hpp",    "revision": 6}
+]
+[[0,0.0,0.0],6]
+load --table Packages
+[
+{"_key": "groonga", "files": ["include/groonga.h", "src/groonga.c"]},
+{"_key": "rroonga", "files": ["lib/groonga.rb", "README.textile"]},
+{"_key": "mroonga", "files": ["ha_mroonga.cc", "ha_mroonga.hpp"]}
+]
+[[0,0.0,0.0],3]
+log_level --level info
+[[0,0.0,0.0],true]
+select Packages   --filter 'all_records() &&             sub_filter(files,                        "revision >= 10 &&                         (_key @^ \\\"ha\\\" || _key @^ \\\"include/\\\")",                        {"pre_filter_threshold": 100})'   --output_columns '_key, _score, files, files.revision'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "files",
+          "Files"
+        ],
+        [
+          "files.revision",
+          "UInt32"
+        ]
+      ],
+      [
+        "groonga",
+        3,
+        [
+          "include/groonga.h",
+          "src/groonga.c"
+        ],
+        [
+          100,
+          29
+        ]
+      ],
+      [
+        "mroonga",
+        3,
+        [
+          "ha_mroonga.cc",
+          "ha_mroonga.hpp"
+        ],
+        [
+          40,
+          6
+        ]
+      ]
+    ]
+  ]
+]
+#|i| [table-selector][select][index][selector][no-index][all_records] <Packages>
+#|i| [table-selector][select][index][selector][no-index][sub_filter] <Packages>
+#|i| [sub-filter][pre-filter][column][vector] <Packages.files> -> <Files>
+#|i| [table-selector][select][push][initial] <6>
+#|i| [table-selector][select][index][prefix][accessor][key] <Files>
+#|i| [table-selector][select][index][prefix][accessor][key] <Files>
+#|i| [table-selector][select][index][range] <Revisions.files_revision_index>
+#|i| [accessor][resolve][data-column][index] <Files.packages_files_index>
+log_level --level notice
+[[0,0.0,0.0],true]

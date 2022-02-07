@@ -58,7 +58,7 @@ const char *grn_document_root = NULL;
 
 static double grn_between_too_many_index_match_ratio = 0.01;
 static double grn_in_values_too_many_index_match_ratio = 0.01;
-static unsigned int grn_sub_filter_pre_filter_threshold = 10;
+static int32_t grn_sub_filter_pre_filter_threshold = 10;
 
 void
 grn_proc_init_from_env(void)
@@ -92,7 +92,7 @@ grn_proc_init_from_env(void)
                GRN_ENV_BUFFER_SIZE);
     if (env[0]) {
       grn_sub_filter_pre_filter_threshold =
-        grn_atoui(env, env + strlen(env), NULL);
+        grn_atoi(env, env + strlen(env), NULL);
     }
   }
 }
@@ -3058,14 +3058,31 @@ sub_filter_pre_filter_accessor(grn_ctx *ctx,
 }
 
 static bool
+sub_filter_need_pre_filter(grn_ctx *ctx,
+                           grn_obj *res,
+                           int32_t pre_filter_threshold)
+{
+  if (pre_filter_threshold < 0) {
+    return true;
+  }
+
+  if ((int32_t)(grn_table_size(ctx, res)) <= pre_filter_threshold) {
+    return true;
+  }
+
+  return false;
+}
+
+static bool
 sub_filter_pre_filter(grn_ctx *ctx,
                       grn_obj *res,
                       grn_obj *scope,
-                      grn_obj *base_res)
+                      grn_obj *base_res,
+                      int32_t pre_filter_threshold)
 {
   const char *action = "[sub-filter][pre-filter]";
 
-  if (grn_table_size(ctx, res) > grn_sub_filter_pre_filter_threshold) {
+  if (!sub_filter_need_pre_filter(ctx, res, pre_filter_threshold)) {
     return false;
   }
 
@@ -3164,13 +3181,14 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
   grn_rc rc = GRN_SUCCESS;
   grn_obj *scope;
   grn_obj *sub_filter_string;
+  int32_t pre_filter_threshold = grn_sub_filter_pre_filter_threshold;
   grn_obj *scope_domain = NULL;
   grn_obj *sub_filter = NULL;
   grn_obj *dummy_variable = NULL;
 
-  if (nargs != 2) {
+  if (!(nargs >= 2 && nargs <= 3)) {
     ERR(GRN_INVALID_ARGUMENT,
-        "%s wrong number of arguments (%d for 2)",
+        "%s wrong number of arguments (%d for 2..3)",
         tag,
         nargs);
     rc = ctx->rc;
@@ -3179,6 +3197,15 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
 
   scope = args[0];
   sub_filter_string = args[1];
+  if (nargs == 3) {
+    grn_proc_options_parse(ctx,
+                           args[2],
+                           tag,
+                           "pre_filter_threshold",
+                           GRN_PROC_OPTION_VALUE_INT32,
+                           &pre_filter_threshold,
+                           NULL);
+  }
 
   switch (scope->header.type) {
   case GRN_ACCESSOR :
@@ -3234,7 +3261,8 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
     base_res = grn_table_create(ctx, NULL, 0, NULL,
                                 GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                                 scope_domain, NULL);
-    if (op == GRN_OP_AND && sub_filter_pre_filter(ctx, res, scope, base_res)) {
+    if (op == GRN_OP_AND &&
+        sub_filter_pre_filter(ctx, res, scope, base_res, pre_filter_threshold)) {
       if (base_res) {
         void *key = NULL, *value = NULL;
         uint32_t key_size = 0;
