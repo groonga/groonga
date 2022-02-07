@@ -19178,23 +19178,3 @@ msgid ""
 "applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
 "MODE' supported"
 msgstr ""
-
-#, fuzzy
-#~ msgid ""
-#~ "This feature is a shortcut of ``'*NP\"...\" OR *NP\"...\" OR ...'``. We "
-#~ "can use ``*NPP`` instead of the expression that execute mulitiple ``*NP`` "
-#~ "with ``query``"
-#~ msgstr ""
-#~ "この機能は、 ``'*NP\"...\" OR *NP\"...\" OR ...'`` の短縮形です。例えば、"
-#~ "以下のように、 ``query`` を使って ``*NP`` を複数実行する式のかわりに "
-#~ "``*NPP`` を使えます。"
-
-#, fuzzy
-#~ msgid ""
-#~ "This feature is a shortcut of ``'*ONP\"...\" OR *ONP\"...\" OR ...'``. We "
-#~ "can use ``*ONPP`` instead of the expression that execute multiple "
-#~ "``*ONP`` with ``query``"
-#~ msgstr ""
-#~ "この機能は、 ``'*ONP\"...\" OR *ONP\"...\" OR ...'`` の短縮形です。例え"
-#~ "ば、以下のように、 ``query`` を使って ``*ONP`` を複数実行する式のかわりに "
-#~ "``*ONPP`` を使えます。"
