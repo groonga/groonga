@@ -345,14 +345,264 @@ with the expression.
 Near search condition
 ^^^^^^^^^^^^^^^^^^^^^
 
-TODO: ``*N"word1 word2 ..."``
+Its syntax is ``*N"token1 token2 ..."``.
+
+This conditional expression does near search with ``token1``,
+``token2`` and ``...``. Near search searches records that contain the
+all specified tokens and there are at most 10 tokens between them. For
+example, ``*N"a b c"`` matches ``a 1 2 3 4 5 b 6 7 8 9 10 c`` but
+doesn't match ``a 1 2 3 4 5 b 6 7 8 9 10 11 c``:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_search_search.log
+.. table_create NearTokens TABLE_NO_KEY
+.. column_create NearTokens content COLUMN_SCALAR ShortText
+.. table_create NearTokensTerms TABLE_PAT_KEY ShortText \
+..   --default_tokenizer TokenNgram \
+..   --normalizer NormalizerNFKC130
+.. column_create NearTokensTerms index COLUMN_INDEX|WITH_POSITION \
+..   NearTokens content
+.. load --table NearTokens
+.. [
+.. {"content": "a 1 2 3 4 5 b 6 7 8 9 10 c"},
+.. {"content": "a 1 2 3 4 5 b 6 7 8 9 10 11 c"},
+.. {"content": "a 1 2 3 4 5 b 6 7 8 9 10 11 12 c"}
+.. ]
+.. select NearTokens --match_columns content --query '*N"a b c"'
+
+Note that you must specify ``WITH_POSITION`` to an index column that
+is used for near search. If you don't specify ``WITH_POSITION``, near
+search can't count distance correctly.
+
+You can customize the max interval of the given tokens (``10`` by
+default) by specifying a number after ``*N``. Here is an example that
+uses ``2`` as the max interval of the given tokens::
+
+    *N2"..."
+
+Here is an example to customize the max interval of the given tokens:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_search_max_interval.log
+.. select NearTokens --match_columns content --query '*N11"a b c"'
+
+To be precious, you can specify a word instead of a token for near
+search. Because the passed text is tokenized before near search. A
+word consists of one or more tokens. If you specify a word, it may not
+work as you expected. For example, ``*N"a1b2c3d"`` matches both ``a 1
+b 2 c 3 d`` and ``a b c d 1 2 3``:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_search_word.log
+.. load --table NearTokens
+.. [
+.. {"content": "a 1 b 2 c 3 d"},
+.. {"content": "a b c d 1 2 3"}
+.. ]
+.. select NearTokens --match_columns content --query '*N"a1b2c3d"'
+
+Because ``*N"a1b2c3d"`` equals to ``*N"a 1 b 2 c 3 d"``.
+
+If you want to specify words,
+:ref:`query-syntax-near-phrase-search-condition` is what you want.
 
 .. _query-syntax-near-phrase-search-condition:
 
 Near phrase search condition
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-TODO: ``*NP"phrase1 phrase2 ..."``
+Its syntax is ``*NP"phrase1 phrase2 ..."``.
+
+This conditional expression does near phrase search with ``phrase1``,
+``phrase2`` and ``...``. Near phrase search searches records that
+contain the all specified phrases and there are at most 10 tokens
+between them. For example, ``*NP"a1b2c3d"`` matches ``a 1 b 2 c 3 d``
+but doesn't match ``a b c d 1 2 3``. Because the latter uses different
+order:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_phrase_search_search.log
+.. select NearTokens --match_columns content --query '*NP"a1b2c3d"'
+
+You can use a phrase that includes spaces by quoting such as
+``*NP"\"groonga mroonga\" pgroonga"``. Note that you need to escape
+``\"`` in command syntax such as ``*NP"\\\"groonga mroonga\\\"
+pgroonga"``. This query matches ``groonga mroonga pgroonga`` but
+doesn't match ``groonga pgroonga mroonga`` because ``mroonga`` isn't
+right after ``groonga``:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_search_word.log
+.. load --table NearTokens
+.. [
+.. {"content": "groonga mroonga rroonga pgroonga"},
+.. {"content": "groonga rroonga pgroonga mroonga"}
+.. ]
+.. select NearTokens \
+..   --match_columns content \
+..   --query '*NP"\\\"groonga mroonga\\\" pgroonga"'
+
+You can customize the max interval of the given phrases (``10`` by
+default) by specifying a number after ``*NP``. Here is an example that
+uses ``2`` as the max interval of the given phrases::
+
+    *NP2"..."
+
+Here is an example to customize the max interval of the given phrases:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_phrase_search_max_interval.log
+.. select NearTokens --match_columns content --query '*NP1"groonga pgroonga"'
+
+You can use additional interval only for the last phrase. It means
+that you can accept more distances only between the second to last
+phrase and the last phrase. This is useful for implementing a near
+phrase search in the same sentence. If you specify ``.`` (sentence end
+phrase) as the last phrase and specify ``-1`` as the additional last
+interval, the other specified phrases must be appeared before
+``.``. You must append ``$`` to the last phrase like ``.$``.
+
+Here is an example that uses ``-1`` as the additional last interval of
+the given phrases::
+
+    *NP10,-1"a b .$"
+
+Here is an example to customize the additional last interval of the
+given phrases:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_phrase_search_additional_last_interval_negative.log
+.. load --table NearTokens
+.. [
+.. {"content": "x 1 y 2 3 4 . x 1 2 y 3 z 4 5 6 7 ."},
+.. {"content": "x 1 2 y 3 4 . x 1 2 y 3 z 4 5 6 7 ."},
+.. {"content": "x 1 2 3 y 4 . x 1 y 2 z 3 4 5 6 7 ."},
+.. ]
+.. select NearTokens --match_columns content --query '*NP2,-1"x y .$"'
+
+You can also use positive number for the additional last interval. If
+you specify positive number as the additional last interval, all of
+the following conditions must be satisfied:
+
+1. The interval between the first phrase and the second to last
+   phrase is less than or equals to ``the max interval``.
+
+2. The interval between the first phrase and the last phrase is less
+   than or equals to ``the max interval`` + ``the additional last
+   interval``.
+
+If you specify negative number as the additional last interval, the
+second condition isn't required. Appearing the last phrase is just
+needed.
+
+Here is an example to use positive number as the additional last interval:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_phrase_search_additional_last_interval_positive.log
+.. select NearTokens --match_columns content --query '*NP2,4"x y .$"'
+
+.. _query-syntax-near-phrase-product-search-condition:
+
+Near phrase product search condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 11.1.1
+
+Its syntax is ``*NPP"(phrase1_1 phrase1_2 ...) (phrase2_1 phrase2_2
+...) ..."``.
+
+This conditional expression does multiple
+:ref:`query-syntax-near-phrase-search-condition`. Phrases for each
+:ref:`query-syntax-near-phrase-search-condition` are computed as
+product of ``{phrase1_1, phrase1_2, ...}``, ``{phrase2_1, phrase2_2,
+...}`` and ``...``. For example, ``*NPP"(a b c) (d e)"`` uses the
+following phrases for near phrase searches:
+
+  * ``a d``
+  * ``a e``
+  * ``b d``
+  * ``b e``
+  * ``c d``
+  * ``c e``
+
+Here is a simple example:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_phrase_product_search_simple.log
+.. select NearTokens --match_columns content --query '*NPP"(a x) (b y)"'
+
+You can use the all features of
+:ref:`query-syntax-near-phrase-search-condition` such as the max
+interval, ``$`` for the last phrase and the additional last
+interval.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_phrase_product_search_options.log
+.. select NearTokens --match_columns content --query '*NPP2,-1"(a x) (b c y) (d$ .$)"'
+
+This is more effective than multiple
+:ref:`query-syntax-near-phrase-search-condition` .
+
+.. _query-syntax-ordered-near-phrase-search-condition:
+
+Ordered near phrase search condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 11.0.9
+
+It's syntax is ``*ONP"phrase1 phrase2 ..."``
+
+This conditional expression does ordered near phrase search with
+``phrase1``, ``phrase2`` and ``...``. Ordered near phrase search is
+similar to :ref:`query-syntax-near-phrase-search-condition` but
+ordered near phrase search checks phrases order. For example,
+``*ONP"groonga mroonga pgroonga"`` matches ``groonga mroonga rroonga
+pgroonga`` but doesn't match ``groonga rroonga pgroonga
+mroonga``. Because the latter uses different order:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/ordered_near_phrase_search_search.log
+.. select NearTokens \
+..   --match_columns content \
+..   --query '*ONP"groonga mroonga pgroonga"'
+
+You can use the all features of
+:ref:`query-syntax-near-phrase-search-condition` such as the max
+interval and the additional last interval. But you don't need to
+specify ``$`` for the last phrase because the last phrase in query is
+the last phrase.
+
+.. _query-syntax-ordered-near-phrase-product-search-condition:
+
+Ordered near phrase product search condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 11.1.1
+
+Its syntax is ``*ONPP"(phrase1_1 phrase1_2 ...) (phrase2_1 phrase2_2
+...) ..."``.
+
+This conditional expression does ordered near phrase product
+search. Ordered near phrase product search is similar to
+:ref:`query-syntax-near-phrase-product-search-condition` but ordered
+near phrase product search checks phrases order like
+:ref:`query-syntax-ordered-near-phrase-search-condition`. For example,
+``*ONPP"(a b c) (d e)"`` matches ``a 1 d`` but doesn't match ``d 1
+a``. Because the latter uses different order.
+
+Here is a simple example:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/ordered_near_phrase_product_search_simple.log
+.. select NearTokens \
+..   --match_columns content \
+..   --query '*ONPP"(a x) (b y)"'
+
+You can use the all features of
+:ref:`query-syntax-near-phrase-search-condition` such as the max
+interval and the additional last interval. But you don't need to
+specify ``$`` for the last phrase because the last phrase in query is
+the last phrase.
 
 .. _query-syntax-similar-search-condition:
 

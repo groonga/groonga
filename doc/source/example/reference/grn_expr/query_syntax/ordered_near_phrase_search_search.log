@@ -1,0 +1,33 @@
+Execution example::
+
+  select NearTokens \
+    --match_columns content \
+    --query '*ONP"groonga mroonga pgroonga"'
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         6, 
+  #         "groonga mroonga rroonga pgroonga"
+  #       ]
+  #     ]
+  #   ]
+  # ]

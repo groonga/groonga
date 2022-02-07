@@ -31,15 +31,15 @@ Execution example::
   #         ]
   #       ], 
   #       [
-  #         5, 
-  #         "Good-bye Tritonn", 
-  #         "I also migrated all Tritonn system!", 
-  #         3
-  #       ], 
-  #       [
   #         4, 
   #         "Good-bye Senna", 
   #         "I migrated all Senna system!", 
+  #         3
+  #       ], 
+  #       [
+  #         5, 
+  #         "Good-bye Tritonn", 
+  #         "I also migrated all Tritonn system!", 
   #         3
   #       ]
   #     ]

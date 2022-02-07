@@ -1,0 +1,31 @@
+Execution example::
+
+  select NearTokens --match_columns content --query '*NP"a1b2c3d"'
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "ShortText"
+  #         ]
+  #       ], 
+  #       [
+  #         4, 
+  #         "a 1 b 2 c 3 d"
+  #       ]
+  #     ]
+  #   ]
+  # ]

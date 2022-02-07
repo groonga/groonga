@@ -513,6 +513,17 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/vector_size/usage_only.log \
 	$(top_srcdir)/doc/source/example/reference/functions/vector_size/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/vector_size/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_product_search_options.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_product_search_simple.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_search_additional_last_interval_negative.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_search_additional_last_interval_positive.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_search_max_interval.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_search_search.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_search_max_interval.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_search_search.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_search_word.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/ordered_near_phrase_product_search_simple.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/ordered_near_phrase_search_search.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/setup.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_equal.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_full_text_search.log \
@@ -1692,6 +1703,17 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/vector_size/usage_only.log \
 	source/example/reference/functions/vector_size/usage_setup_data.log \
 	source/example/reference/functions/vector_size/usage_setup_schema.log \
+	source/example/reference/grn_expr/query_syntax/near_phrase_product_search_options.log \
+	source/example/reference/grn_expr/query_syntax/near_phrase_product_search_simple.log \
+	source/example/reference/grn_expr/query_syntax/near_phrase_search_additional_last_interval_negative.log \
+	source/example/reference/grn_expr/query_syntax/near_phrase_search_additional_last_interval_positive.log \
+	source/example/reference/grn_expr/query_syntax/near_phrase_search_max_interval.log \
+	source/example/reference/grn_expr/query_syntax/near_phrase_search_search.log \
+	source/example/reference/grn_expr/query_syntax/near_search_max_interval.log \
+	source/example/reference/grn_expr/query_syntax/near_search_search.log \
+	source/example/reference/grn_expr/query_syntax/near_search_word.log \
+	source/example/reference/grn_expr/query_syntax/ordered_near_phrase_product_search_simple.log \
+	source/example/reference/grn_expr/query_syntax/ordered_near_phrase_search_search.log \
 	source/example/reference/grn_expr/query_syntax/setup.log \
 	source/example/reference/grn_expr/query_syntax/simple_equal.log \
 	source/example/reference/grn_expr/query_syntax/simple_full_text_search.log \
