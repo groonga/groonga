@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -56,6 +56,7 @@ typedef enum {
   GRN_PROC_OPTION_VALUE_MODE,
   GRN_PROC_OPTION_VALUE_OPERATOR,
   GRN_PROC_OPTION_VALUE_EXPR_FLAGS,
+  GRN_PROC_OPTION_VALUE_INT32,
   GRN_PROC_OPTION_VALUE_INT64,
   GRN_PROC_OPTION_VALUE_BOOL,
   GRN_PROC_OPTION_VALUE_FUNC,

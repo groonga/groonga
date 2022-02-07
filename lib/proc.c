@@ -270,6 +270,21 @@ grn_proc_prefixed_options_parsev(grn_ctx *ctx,
         }
       }
       break;
+    case GRN_PROC_OPTION_VALUE_INT32 :
+      {
+        int32_t *number = va_arg(args, int32_t *);
+        if (id != GRN_ID_NIL) {
+          GRN_RECORD_PUT(ctx, &used_ids, id);
+          *number = grn_proc_get_value_int32(ctx,
+                                             value,
+                                             *number,
+                                             func_tag);
+          if (ctx->rc != GRN_SUCCESS) {
+            goto exit;
+          }
+        }
+      }
+      break;
     case GRN_PROC_OPTION_VALUE_INT64 :
       {
         int64_t *number = va_arg(args, int64_t *);
@@ -1373,6 +1388,66 @@ grn_proc_get_value_bool(grn_ctx *ctx,
                    GRN_TEXT_VALUE(&inspected));
   GRN_OBJ_FIN(ctx, &inspected);
   return default_value;
+}
+
+int32_t
+grn_proc_get_value_int32(grn_ctx *ctx,
+                         grn_obj *value,
+                         int32_t default_value_raw,
+                         const char *tag)
+{
+  int32_t value_raw;
+
+  if (!value) {
+    return default_value_raw;
+  }
+
+  if (!grn_type_id_is_number_family(ctx, value->header.domain)) {
+    grn_obj inspected;
+
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, value);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s value must be a number: <%.*s>",
+                     tag,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return default_value_raw;
+  }
+
+  if (value->header.domain == GRN_DB_INT32) {
+    value_raw = GRN_INT32_VALUE(value);
+  } else if (value->header.domain == GRN_DB_INT64) {
+    value_raw = GRN_INT64_VALUE(value);
+  } else {
+    grn_obj buffer;
+    grn_rc rc;
+
+    GRN_INT32_INIT(&buffer, 0);
+    rc = grn_obj_cast(ctx, value, &buffer, GRN_FALSE);
+    if (rc == GRN_SUCCESS) {
+      value_raw = GRN_INT32_VALUE(&buffer);
+    }
+    GRN_OBJ_FIN(ctx, &buffer);
+
+    if (rc != GRN_SUCCESS) {
+      grn_obj inspected;
+
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, value);
+      GRN_PLUGIN_ERROR(ctx, rc,
+                       "%s "
+                       "failed to cast value to number: <%.*s>",
+                       tag,
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      value_raw = default_value_raw;
+    }
+  }
+
+  return value_raw;
 }
 
 int64_t
