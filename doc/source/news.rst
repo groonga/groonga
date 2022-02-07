@@ -10,17 +10,17 @@ News
 Release 12.0.0 - 2022-02-09
 ---------------------------
 
+This is a major version up!
+But It keeps backward compatibility. We can upgrade to 12.0.0 without rebuilding database.
+
+First of all, we introduce the Summary of changes from Groonga 11.0.0 to 11.1.3.
+Then, we introduce the main changes in 12.0.0.
+
 Summary of changes from Groonga 11.0.0 to 11.1.3
 ------------------------------------------------
 
 New Features and Improvements
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* [:doc:`reference/normalizers/normalizer_nfkc130`] Added a new option ``strip``
-
-  This option removes spaces from the start and the end.
-
-  See :ref:`release 12.0.0 <release-12-0-0>` for details.
 
 * [:doc:`reference/functions/snippet`] Added support for using the keyword of 32 or more.
 
@@ -111,8 +111,6 @@ New Features and Improvements
 
   Note that if we use ``--slices[].post_filter``, the format of the response is different from the normal ``select`` 's response.
 
-* [httpd] Updated bundled nginx to 1.21.6.
-
 Fixes
 ^^^^^
 
@@ -190,6 +188,215 @@ Thanks
 * Josep Sanz
 * Keitaro YOSHIMURA
 * shibanao4870
+
+The main changes in 12.0.0 are as follows.
+
+Improvements
+------------
+
+* [:doc:`reference/functions/sub_filter`] Added a new option ``pre_filter_threshold``.
+
+  We can change the value of ``GRN_SUB_FILTER_PRE_FILTER_THRESHOLD`` by this option.
+  If the number of records is less than ``GRN_SUB_FILTER_PRE_FILTER_THRESHOLD`` when Groonga executes ``sub_filter``, Groonga execute ``sub_filter`` against records that have been already narrowed down.  
+
+  We can use -1 to always use this optimization.
+
+* [index_column_have_source_record] Added a new function ``index_column_have_source_record()``.
+
+  We can confirm whether a token that is existing in the index is included in any of the records that are registered in Groonga or not.
+
+  Groonga does not remove a token even if the token become never used from records in Groonga by updating records.
+  Therefore, for example, when we use the feature of autocomplete, Groonga may return a token that is not included in any of the records as candidates for search words.
+  However, we can become that we don't return the needless token by using this function.
+
+  Because this function can detect a token that is not included in any of the records.
+
+* [:doc:`reference/normalizers/normalizer_nfkc130`] Added a new option ``strip``
+
+  This option removes spaces from the start and the end as below.
+
+  .. code-block::
+
+     normalize \
+     'NormalizerNFKC121("strip", true, \
+                        "report_source_offset", true)' \
+     "  hello world\t! \t " \
+     WITH_CHECKS|WITH_TYPES
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        {
+          "normalized": "hello world!",
+          "types": [
+            "alpha",
+            "alpha",
+            "alpha",
+            "alpha",
+            "alpha",
+            "others",
+            "alpha",
+            "alpha",
+            "alpha",
+            "alpha",
+            "alpha|blank",
+            "symbol|blank"
+          ],
+          "checks": [
+            3,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2
+          ],
+          "offsets": [
+            0,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            14
+          ]
+        }
+      ]
+
+* [:doc:`reference/commands/select`] Added new arguments ``drilldown_max_n_target_records`` and ``drilldown[${LABEL}].max_n_target_records``.
+
+  We can specify the max number of records of the drilldown target table (filtered result) to use drilldown.
+  If the number of filtered result is larger than the specified value, some records in filtered result aren't used for drilldown.
+  The default value of this arguments are ``-1``.
+  If these arguments are set ``-1``, Groonga uses all records for drilldown.
+
+  This argument is useful when filtered result may be very large.
+  Because a drilldown against large filtered result may be slow.
+  We can limit the max number of records to be used for drilldown by this feature.
+
+  Here is an example to limit the max number of records to be used for drilldown.
+  The last 2 records, ``{\"_id\": 4, \"tag\": \"Senna\"}`` and ``{\"_id\": 5, \"tag\": \"Senna\"}``, aren't used.
+
+  .. code-block::
+
+      table_create Entries TABLE_HASH_KEY ShortText
+      column_create Entries content COLUMN_SCALAR Text
+      column_create Entries n_likes COLUMN_SCALAR UInt32
+      column_create Entries tag COLUMN_SCALAR ShortText
+
+      table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+      column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
+      column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
+      load --table Entries
+      [
+      {"_key":    "The first post!",
+       "content": "Welcome! This is my first post!",
+       "n_likes": 5,
+       "tag": "Hello"},
+      {"_key":    "Groonga",
+       "content": "I started to use Groonga. It's very fast!",
+       "n_likes": 10,
+       "tag": "Groonga"},
+      {"_key":    "Mroonga",
+       "content": "I also started to use Mroonga. It's also very fast! Really fast!",
+       "n_likes": 15,
+       "tag": "Groonga"},
+      {"_key":    "Good-bye Senna",
+       "content": "I migrated all Senna system!",
+       "n_likes": 3,
+       "tag": "Senna"},
+      {"_key":    "Good-bye Tritonn",
+       "content": "I also migrated all Tritonn system!",
+       "n_likes": 3,
+       "tag": "Senna"}
+      ]
+
+      select Entries \
+        --limit -1 \
+        --output_columns _id,tag \
+        --drilldown tag \
+        --drilldown_max_n_target_records 3
+      [
+        [
+          0, 
+          1337566253.89858, 
+          0.000355720520019531
+        ], 
+        [
+          [
+            [
+              5
+            ], 
+            [
+              [
+                "_id", 
+                "UInt32"
+              ], 
+              [
+                "tag", 
+                "ShortText"
+              ]
+            ], 
+            [
+              1, 
+              "Hello"
+            ], 
+            [
+              2, 
+              "Groonga"
+            ], 
+            [
+              3, 
+              "Groonga"
+            ], 
+            [
+              4, 
+              "Senna"
+            ], 
+            [
+              5, 
+              "Senna"
+            ]
+          ], 
+          [
+            [
+              2
+            ], 
+            [
+              [
+                "_key", 
+                "ShortText"
+              ], 
+              [
+                "_nsubrecs", 
+                "Int32"
+              ]
+            ], 
+            [
+              "Hello", 
+              1
+            ], 
+            [
+              "Groonga", 
+              2
+            ]
+          ]
+        ]
+      ]
+
+* [httpd] Updated bundled nginx to 1.21.6.
 
 .. _release-11-1-3:
 
