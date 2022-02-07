@@ -76,13 +76,13 @@ example, ``"`` is a special character. It is escaped as ``\"``.
 
 Here is a special character list:
 
-  * ``[space]`` (escaped as ``[backslash][space]``) (You should
-    substitute ``[space]`` with a white space character that is 0x20
-    in ASCII and ``[backslash]`` with ``\\``.)
-  * ``"`` (escaped as ``\"``)
-  * ``(`` (escaped as ``\(``)
-  * ``)`` (escaped as ``\)``)
-  * ``\`` (escaped as ``\\``)
+* ``[space]`` (escaped as ``[backslash][space]``) (You should
+  substitute ``[space]`` with a white space character that is 0x20
+  in ASCII and ``[backslash]`` with ``\\``.)
+* ``"`` (escaped as ``\"``)
+* ``(`` (escaped as ``\(``)
+* ``)`` (escaped as ``\)``)
+* ``\`` (escaped as ``\\``)
 
 You can use quote instead of escape special characters except ``\``
 (backslash). You need to use backslash for escaping backslash like
@@ -205,9 +205,9 @@ supports advanced match columns but ``full text search condition (with
 explicit match column)`` isn't supported. Advanced match columns has
 the following features:
 
-  * Weight is supported.
-  * Using multiple columns are supported.
-  * Using index column as a match column is supported.
+* Weight is supported.
+* Using multiple columns are supported.
+* Using index column as a match column is supported.
 
 See description of ``--match_columns`` option of
 :doc:`/reference/commands/select` about them.
@@ -518,12 +518,12 @@ product of ``{phrase1_1, phrase1_2, ...}``, ``{phrase2_1, phrase2_2,
 ...}`` and ``...``. For example, ``*NPP"(a b c) (d e)"`` uses the
 following phrases for near phrase searches:
 
-  * ``a d``
-  * ``a e``
-  * ``b d``
-  * ``b e``
-  * ``c d``
-  * ``c e``
+* ``a d``
+* ``a e``
+* ``b d``
+* ``b e``
+* ``c d``
+* ``c e``
 
 Here is a simple example:
 
