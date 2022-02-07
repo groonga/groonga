@@ -111,6 +111,10 @@ int32_t grn_proc_get_value_int32(grn_ctx *ctx,
                                  grn_obj *value,
                                  int32_t default_value_raw,
                                  const char *tag);
+uint32_t grn_proc_get_value_uint32(grn_ctx *ctx,
+                                   grn_obj *value,
+                                   uint32_t default_value_raw,
+                                   const char *tag);
 int64_t grn_proc_get_value_int64(grn_ctx *ctx,
                                  grn_obj *value,
                                  int64_t default_value_raw,

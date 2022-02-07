@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
   Copyright(C) 2021  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -279,6 +279,21 @@ grn_proc_prefixed_options_parsev(grn_ctx *ctx,
                                              value,
                                              *number,
                                              func_tag);
+          if (ctx->rc != GRN_SUCCESS) {
+            goto exit;
+          }
+        }
+      }
+      break;
+    case GRN_PROC_OPTION_VALUE_UINT32 :
+      {
+        uint32_t *number = va_arg(args, uint32_t *);
+        if (id != GRN_ID_NIL) {
+          GRN_RECORD_PUT(ctx, &used_ids, id);
+          *number = grn_proc_get_value_uint32(ctx,
+                                              value,
+                                              *number,
+                                              func_tag);
           if (ctx->rc != GRN_SUCCESS) {
             goto exit;
           }
@@ -1428,6 +1443,70 @@ grn_proc_get_value_int32(grn_ctx *ctx,
     rc = grn_obj_cast(ctx, value, &buffer, GRN_FALSE);
     if (rc == GRN_SUCCESS) {
       value_raw = GRN_INT32_VALUE(&buffer);
+    }
+    GRN_OBJ_FIN(ctx, &buffer);
+
+    if (rc != GRN_SUCCESS) {
+      grn_obj inspected;
+
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, value);
+      GRN_PLUGIN_ERROR(ctx, rc,
+                       "%s "
+                       "failed to cast value to number: <%.*s>",
+                       tag,
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      value_raw = default_value_raw;
+    }
+  }
+
+  return value_raw;
+}
+
+uint32_t
+grn_proc_get_value_uint32(grn_ctx *ctx,
+                          grn_obj *value,
+                          uint32_t default_value_raw,
+                          const char *tag)
+{
+  uint32_t value_raw;
+
+  if (!value) {
+    return default_value_raw;
+  }
+
+  if (!grn_type_id_is_number_family(ctx, value->header.domain)) {
+    grn_obj inspected;
+
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, &inspected, value);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s value must be a number: <%.*s>",
+                     tag,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return default_value_raw;
+  }
+
+  if (value->header.domain == GRN_DB_UINT32) {
+    value_raw = GRN_UINT32_VALUE(value);
+  } else if (value->header.domain == GRN_DB_INT32) {
+    value_raw = GRN_INT32_VALUE(value);
+  } else if (value->header.domain == GRN_DB_UINT64) {
+    value_raw = GRN_UINT64_VALUE(value);
+  } else if (value->header.domain == GRN_DB_INT64) {
+    value_raw = GRN_INT64_VALUE(value);
+  } else {
+    grn_obj buffer;
+    grn_rc rc;
+
+    GRN_UINT32_INIT(&buffer, 0);
+    rc = grn_obj_cast(ctx, value, &buffer, GRN_FALSE);
+    if (rc == GRN_SUCCESS) {
+      value_raw = GRN_UINT32_VALUE(&buffer);
     }
     GRN_OBJ_FIN(ctx, &buffer);
 
