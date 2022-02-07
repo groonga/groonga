@@ -5,6 +5,192 @@
 News
 ====
 
+.. _release-12-0-0:
+
+Release 12.0.0 - 2022-02-09
+---------------------------
+
+Summary of changes from Groonga 11.0.0 to 11.1.3
+------------------------------------------------
+
+New Features and Improvements
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* [:doc:`reference/normalizers/normalizer_nfkc130`] Added a new option ``strip``
+
+  This option removes spaces from the start and the end.
+
+  See :ref:`release 12.0.0 <release-12-0-0>` for details.
+
+* [:doc:`reference/functions/snippet`] Added support for using the keyword of 32 or more.
+
+  We could not specify the keyword of 32 or more with snippet until now.
+  However, we can specify the keyword of 32 or more by this improvement.
+
+  See :ref:`release 11.1.3 <release-11-1-3>` for details.
+
+* [:doc:`reference/normalizers/normalizer_nfkc130`] Added a new option ``remove_symbol``.
+
+  This option removes symbols (e.g. #, !, “, &, %, …) from the string that the target of normalizing.
+
+  See :ref:`release 11.1.3 <release-11-1-3>` for details.
+
+* [:doc:`/reference/commands/load`] Added support for ISO 8601 time format.
+
+  See :ref:`release 11.1.0 <release-11-1-0>` for details.
+
+* [:doc:`reference/functions/snippet`] Added a new option ``delimiter_regexp`` for detecting snippet delimiter with regular expression.
+
+  :doc:`reference/functions/snippet` extracts text around search keywords.
+  We call the text that is extracted by :doc:`reference/functions/snippet` snippet.
+
+  Normally, :doc:`reference/functions/snippet` () returns the text of 200 bytes around search keywords.
+  However, :doc:`reference/functions/snippet` () gives no thought to a delimiter of sentences.
+  The snippet may be composed of multi sentences.
+
+  ``delimiter_regexp`` option is useful if we want to only extract the text of the same sentence as search keywords.
+  For example, we can use ``\.\s*`` to extract only text in the target sentence.
+  Note that you need to escape ``\`` in string.
+
+  See :ref:`release 11.0.9 <release-11-0-9>` for details.
+
+* [:doc:`reference/commands/cache_limit`] Groonga remove query cache when we execute ``cache_limit 0``.
+
+  See :ref:`release 11.0.6 <release-11-0-6>` for details.
+
+* [:doc:`/reference/functions/between`] Added support for optimizing the order of evaluation of a conditional expression.
+
+  We can use the optimization of  the order of evaluation of a conditional expression in ``between()`` by setting ``GRN_EXPR_OPTIMIZE=yes``.
+
+* [:doc:`reference/commands/select`] Added support for adjusting the score of a specific record in ``--filter``.
+
+  See :ref:`release 11.0.4 <release-11-0-4>` for details.
+
+* [:doc:`reference/log`] Added support for outputting to stdout and stderr.
+
+  This feature is useful when we execute Groonga on Docker.
+  Docker has the feature that records stdout and stderr in standard.
+  Therefore, we don't need to login into the environment of Docker to get Groonga's log.
+
+  See :ref:`release 11.0.4 <release-11-0-4>` for details.
+
+* [:doc:`reference/functions/query`] Added support for ignoring ``TokenFilterStem`` and ``TokenFilterStopWord`` by the query.
+
+  We are able to search without ``TokenFilterStem`` and ``TokenFilterStopWord`` in only a specific query.
+
+  See :ref:`release 11.0.3 <release-11-0-3>` for details.
+
+* [:doc:`/reference/functions/string_slice`] Added a new function ``string_slice()``.
+
+  ``string_slice()`` extracts a substring of a string of search results by position or regular expression.
+  This function is useful if we want to edit search results.
+
+* [:doc:`reference/functions/query_parallel_or`] Added a new function for processing queries in parallel.
+
+  ``query_parallel_or`` is similar to query but ``query_parallel_or`` processes query that has multiple OR conditions in parallel.
+  We can increase in speed of the execution of many OR conditions by using this function.
+
+  However, ``query_parallel_or`` alone uses multiple CPUs.
+  Therefore, queries that are executing at the same time as the query that executes ``query_parallel_or`` may be slow.
+
+* [:doc:`/reference/token_filters`] Added support for multiple token filters with options.
+
+  We can use multiple token filters with options as the following example.
+
+  .. code-block::
+
+     --token_filters 'TokenFilterStopWord("column", "ignore"), TokenFilterNFKC130("unify_kana", true)'
+
+* [:doc:`reference/commands/select`] Added support for ``--post_filter`` and ``--slices[].post_filter``.
+
+  We can filter again after we execute ``--filter`` by using ``--post-filter`` and ``--slices[].post_filter``.
+  The difference between ``--post-filter`` and ``--slices[].post_filter`` is response format.
+
+  The response format of ``--post_filter`` same as the response of ``--filter``.
+  The response format of ``--slices[].post_filter`` show the result of before and after ``--slices[].post_filter`` executed.
+
+  Note that if we use ``--slices[].post_filter``, the format of the response is different from the normal ``select`` 's response.
+
+* [httpd] Updated bundled nginx to 1.21.6.
+
+Fixes
+^^^^^
+
+* Fixed a bug that the version up of Groonga failed Because the version up of arrow-libs on which Groonga depends.
+
+  However, if arrow-libs update a major version, this problem reproduces.
+  In this case, we will handle that by rebuilding the Groonga package.
+
+* [:doc:`/reference/commands/load`] Fixed a crash bug when we load data with specifying a nonexistent column.
+
+  This bug only occurs when we specify ``apache-arrow`` into ``input_type`` as the argument of ``load``.
+
+* Fixed a bug that we can’t remove a index column with invalid parameter.
+
+  For example, we can’t remove a table when we create an invalid index column with column_create.
+
+* Fixed a bug that Groonga doesn't return a response when an error occurred in command (e.g. sytax error in filter).
+
+  This bug only occurs when we use ``--output_type apache-arrow``.
+
+* Fixed a memory leak when we created a table with a tokenizer with invalid option.
+
+* [Windows] Fixed a resource leak when Groonga fail open a new file caused by out of memory.
+
+* Fixed a bug that Groonga may not have returned a result of a search query if we sent many search queries when tokenizer, normalizer, or token_filters that support options were used.
+
+* Fixed a bug that there is possible that index is corrupt when Groonga executes many additions, delete, and update information in it.
+
+  This bug occurs when we only execute many delete information from index.
+  However, it doesn’t occur when we only execute many additions information into index.
+
+  See :ref:`release 11.0.0 <release-11-0-0>` for details.
+
+Newly supported OSes
+^^^^^^^^^^^^^^^^^^^^
+
+* [:doc:`/install/almalinux`] Added support for AlmaLinux 8.
+
+* [:doc:`/install/almalinux`] Added support for AlmaLinux 8 for ARM64.
+
+* [:doc:`/install/debian`] Added support for Debian 11(Bullseye).
+
+* [:doc:`/install/debian`] Added support for Debian 11(Bullseye) for ARM64 and Debian 10(buster) for ARM64.
+
+* [:doc:`/install/ubuntu`] Added support for Ubuntu 21.10 (Impish Indri).
+
+Dropped support OSes
+^^^^^^^^^^^^^^^^^^^^
+
+* [:doc:`/install/centos`] Dropped support for CentOS 8.
+
+* [:doc:`/install/ubuntu`] Dropped support for Ubuntu 21.04 (Hirsute Hippo).
+
+* [:doc:`/install/ubuntu`] Dropped support for Ubuntu 20.10 (Groovy Gorilla).
+
+* [:doc:`/install/ubuntu`] Dropped support for Ubuntu 16.04 LTS (Xenial Xerus).
+
+* [:doc:`/install/windows`] Dropped support for the following packages of Windows version that we had cross-compiled by using MinGW on Linux.
+
+  * groonga-x.x.x-x86.exe
+  * groonga-x.x.x-x86.zip
+  * groonga-x.x.x-x64.exe
+  * groonga-x.x.x-x86.zip
+
+Thanks
+------
+
+* naoa
+* Anthony M. Cook
+* MASUDA Kazuhiro
+* poti
+* Takashi Hashida
+* higchi
+* wi24rd
+* Josep Sanz
+* Keitaro YOSHIMURA
+* shibanao4870
+
 .. _release-11-1-3:
 
 Release 11.1.3 - 2022-01-29
