@@ -3063,6 +3063,8 @@ sub_filter_pre_filter(grn_ctx *ctx,
                       grn_obj *scope,
                       grn_obj *base_res)
 {
+  const char *action = "[sub-filter][pre-filter]";
+
   if (grn_table_size(ctx, res) > grn_sub_filter_pre_filter_threshold) {
     return false;
   }
@@ -3089,10 +3091,7 @@ sub_filter_pre_filter(grn_ctx *ctx,
     } GRN_TABLE_EACH_END(ctx, cursor);
     GRN_OBJ_FIN(ctx, &value);
 
-    grn_report_column(ctx,
-                      "[sub_filter][pre-filter]",
-                      "[scalar]",
-                      scope);
+    grn_report_column(ctx, action, "[scalar]", scope);
     return true;
   } else if (grn_obj_is_vector_column(ctx, scope)) {
     grn_posting_internal posting = {0};
@@ -3121,10 +3120,7 @@ sub_filter_pre_filter(grn_ctx *ctx,
     } GRN_TABLE_EACH_END(ctx, cursor);
     GRN_OBJ_FIN(ctx, &values);
 
-    grn_report_column(ctx,
-                      "[sub_filter][pre-filter]",
-                      "[vector]",
-                      scope);
+    grn_report_column(ctx, action, "[vector]", scope);
     return true;
   } else if (grn_obj_is_index_column(ctx, scope)) {
     GRN_TABLE_EACH_BEGIN(ctx, res, cursor, id) {
@@ -3137,10 +3133,7 @@ sub_filter_pre_filter(grn_ctx *ctx,
                 GRN_OP_OR);
     } GRN_TABLE_EACH_END(ctx, cursor);
 
-    grn_report_column(ctx,
-                      "[sub_filter][pre-filter]",
-                      "[index]",
-                      scope);
+    grn_report_column(ctx, action, "[index]", scope);
     return true;
   } else if (grn_obj_is_accessor(ctx, scope)) {
     grn_accessor *accessor = (grn_accessor *)scope;
@@ -3155,10 +3148,7 @@ sub_filter_pre_filter(grn_ctx *ctx,
                                      *matched_id,
                                      base_res);
     } GRN_TABLE_EACH_END(ctx, cursor);
-    grn_report_accessor(ctx,
-                        "[sub_filter][pre-filter]",
-                        "",
-                        scope);
+    grn_report_accessor(ctx, action, "", scope);
     return true;
   } else {
     return false;
@@ -3170,6 +3160,7 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
                int nargs, grn_obj **args,
                grn_obj *res, grn_operator op)
 {
+  const char *tag = "[sub-filter]";
   grn_rc rc = GRN_SUCCESS;
   grn_obj *scope;
   grn_obj *sub_filter_string;
@@ -3179,7 +3170,9 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
 
   if (nargs != 2) {
     ERR(GRN_INVALID_ARGUMENT,
-        "sub_filter(): wrong number of arguments (%d for 2)", nargs);
+        "%s wrong number of arguments (%d for 2)",
+        tag,
+        nargs);
     rc = ctx->rc;
     goto exit;
   }
@@ -3196,7 +3189,7 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
   default :
     /* TODO: put inspected the 1st argument to message */
     ERR(GRN_INVALID_ARGUMENT,
-        "sub_filter(): the 1st argument must be column or accessor");
+        "%s the 1st argument must be column or accessor", tag);
     rc = ctx->rc;
     goto exit;
     break;
@@ -3207,13 +3200,13 @@ run_sub_filter(grn_ctx *ctx, grn_obj *table,
   if (sub_filter_string->header.domain != GRN_DB_TEXT) {
     /* TODO: put inspected the 2nd argument to message */
     ERR(GRN_INVALID_ARGUMENT,
-        "sub_filter(): the 2nd argument must be String");
+        "%s the 2nd argument must be String", tag);
     rc = ctx->rc;
     goto exit;
   }
   if (GRN_TEXT_LEN(sub_filter_string) == 0) {
     ERR(GRN_INVALID_ARGUMENT,
-        "sub_filter(): the 2nd argument must not be empty String");
+        "%s the 2nd argument must not be empty String", tag);
     rc = ctx->rc;
     goto exit;
   }

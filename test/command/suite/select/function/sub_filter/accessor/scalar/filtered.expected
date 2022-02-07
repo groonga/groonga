@@ -86,7 +86,7 @@ select Packages   --filter '_key == "groonga" &&             sub_filter(files.au
 ]
 #|i| [object][search][index][table][equal] <Packages>
 #|i| [table-selector][select][index][selector][no-index][sub_filter] <Packages>
-#|i| [sub_filter][pre-filter][accessor] files(Packages).author(Files) -> <Users>
+#|i| [sub-filter][pre-filter][accessor] files(Packages).author(Files) -> <Users>
 #|i| [table-selector][select][index][range] <Birthdays.users_birthday>
 #|i| [table-selector][select][index][range] <Birthdays.users_birthday>
 #|i| [accessor][resolve][data-column][index] <Users.files_author_index>

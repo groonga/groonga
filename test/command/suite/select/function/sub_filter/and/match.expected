@@ -81,7 +81,7 @@ select Packages   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 1
 #|i| exact: 1
 #|i| hits=1
 #|i| [table-selector][select][index][selector][no-index][sub_filter] <Packages>
-#|i| [sub_filter][pre-filter][column][vector] <Packages.files> -> <Files>
+#|i| [sub-filter][pre-filter][column][vector] <Packages.files> -> <Files>
 #|i| [table-selector][select][index][range] <Revisions.files_revision_index>
 #|i| [table-selector][select][index][range] <Revisions.files_revision_index>
 #|i| [accessor][resolve][data-column][index] <Files.packages_files_index>

@@ -74,7 +74,7 @@ select Groups   --filter '_key == "group3" &&             sub_filter(users.files
 ]
 #|i| [object][search][index][table][equal] <Groups>
 #|i| [table-selector][select][index][selector][no-index][sub_filter] <Groups>
-#|i| [sub_filter][pre-filter][accessor] users(Groups).files_author_index(Users) -> <Files>
+#|i| [sub-filter][pre-filter][accessor] users(Groups).files_author_index(Users) -> <Files>
 #|i| [table-selector][select][index][prefix][accessor][key] <Files>
 #|i| [accessor][resolve][data-column][index] <Users.groups_index>
 log_level --level notice
