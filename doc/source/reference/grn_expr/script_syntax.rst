@@ -247,7 +247,7 @@ control syntax.
 
 ``A ? B : C`` returns ``B`` if ``A`` is true, ``C`` otherwise.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_control_syntax_ternary_operator.log
@@ -267,7 +267,7 @@ an expression. ``a && b || c`` means that ``a`` and ``b`` are matched
 or ``c`` is matched. ``a && (b || c)`` means that ``a`` and one of
 ``b`` and ``c`` are matched.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_grouping.log
@@ -292,7 +292,7 @@ Its syntax is ``name(arugment1, argument2, ...)``.
 
 See :doc:`/reference/function` for available functin list.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_function.log
@@ -322,7 +322,7 @@ Its syntax is ``number1 + number2``.
 
 The operator adds ``number1`` and ``number2`` and returns the result.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_addition_operator.log
@@ -338,7 +338,7 @@ Its syntax is ``number1 - number2``.
 
 The operator subtracts ``number2`` from ``number1`` and returns the result.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_subtraction_operator.log
@@ -354,7 +354,7 @@ Its syntax is ``number1 * number2``.
 
 The operator multiplies ``number1`` and ``number2`` and returns the result.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_multiplication_operator.log
@@ -399,7 +399,7 @@ Its syntax is ``!condition``.
 
 The operator inverts boolean value of ``condition``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_logical_not_operator.log
@@ -416,7 +416,7 @@ Its syntax is ``condition1 && condition2``.
 The operator returns true if both of ``condition1`` and
 ``condition2`` are true, false otherwise.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_logical_and_operator.log
@@ -434,7 +434,7 @@ Its syntax is ``condition1 || condition2``.
 The operator returns true if either ``condition1`` or ``condition2`` is
 true, false otherwise.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_logical_or_operator.log
@@ -451,7 +451,7 @@ Its syntax is ``condition1 &! condition2``.
 The operator returns true if ``condition1`` is true but ``condition2``
 is false, false otherwise. It returns difference set.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_logical_but_operator.log
@@ -476,7 +476,7 @@ Its syntax is ``~number``.
 
 The operator returns bitwise NOT of ``number``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_bitwise_not_operator.log
@@ -494,7 +494,7 @@ Its syntax is ``number1 & number2``.
 
 The operator returns bitwise AND between ``number1`` and ``number2``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_bitwise_and_operator.log
@@ -514,7 +514,7 @@ Its syntax is ``number1 | number2``.
 
 The operator returns bitwise OR between ``number1`` and ``number2``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_bitwise_or_operator.log
@@ -532,7 +532,7 @@ Its syntax is ``number1 ^ number2``.
 
 The operator returns bitwise XOR between ``number1`` and ``number2``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_bitwise_xor_operator.log
@@ -558,7 +558,7 @@ Its syntax is ``number1 << number2``.
 The operator performs a bitwise left shift operation on ``number1`` by
 ``number2``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_left_shift_operator.log
@@ -577,7 +577,7 @@ Its syntax is ``number1 >> number2``.
 The operator shifts bits of ``number1`` to right by ``number2``. The sign
 of the result is the same as ``number1``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_signed_right_shift_operator.log
@@ -596,7 +596,7 @@ Its syntax is ``number1 >>> number2``.
 The operator shifts bits of ``number1`` to right by ``number2``. The
 leftmost ``number2`` bits are filled by ``0``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_unsigned_right_shift_operator.log
@@ -620,7 +620,7 @@ Its syntax is ``object1 == object2``.
 The operator returns true if ``object1`` equals to ``object2``, false
 otherwise.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_equal_operator.log
@@ -637,7 +637,7 @@ Its syntax is ``object1 != object2``.
 The operator returns true if ``object1`` does not equal to
 ``object2``, false otherwise.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_not_equal_operator.log
@@ -877,7 +877,7 @@ Because tag search is also implemented by inverted index.
 
 :doc:`query_syntax` uses this operator by default.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_match_operator.log
@@ -907,7 +907,7 @@ Prefix search can be used with other table types but it causes all
 records scan. It's not problem for small records but it spends more
 time for large records.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log
@@ -1009,7 +1009,7 @@ words even if ``TokenBigram`` is a N-gram family tokenizer.
 Note that an index column for full text search must be defined for
 ``column``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_near_search_operator.log
@@ -1044,8 +1044,9 @@ Its syntax is one of them::
 
   column *NP "phrase1 phrase2 ..."
   column *NP${MAX_INTERVAL} "phrase1 phrase2 ..."
+  column *NP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL} "phrase1 phrase2 ..."
 
-Here are the examples of the second form::
+Here are examples of the second form::
 
   column *NP29 "phrase1 phrase2 ..."
   column *NP-1 "phrase1 phrase2 ..."
@@ -1053,7 +1054,21 @@ Here are the examples of the second form::
 The first example means that ``29`` is used for the max interval.
 
 The second example means that ``-1`` is used for the max interval.
-``-1`` max interval means no limit.
+
+The max interval is described later.
+
+Here are examples of the third form::
+
+  column *NP10,29 "phrase1 phrase2 ..."
+  column *NP10,-1 "phrase1 phrase2 ..."
+
+The first example means that ``29`` is used for the additional last
+interval.
+
+The second example means that ``-1`` is used for the additional last
+interval.
+
+The additional last interval is described later.
 
 The operator does near phrase search with phrases ``phrase1 phrase2
 ...``. Near phrase search searches records that contain the phrases
@@ -1077,7 +1092,7 @@ Note that an index column for full text search must be defined for
 TODO: Use index that has ``TokenNgram("unify_alphabet", false)``
 tokenizer to show difference with near search with English text.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_near_phrase_search_operator.log
@@ -1095,7 +1110,7 @@ The second expression matches records that contain ``I`` and
 ``Really`` and the max interval of those words are in 10 words. So the
 record that its content is ``I also started to use mroonga. It's also
 very fast! Really fast!`` is not matched. The number of words between
-``I`` and ``Really`` is 11.
+``I`` and ``Really`` is 14.
 
 The third expression matches records that contain ``also`` and
 ``Really`` and the max interval of those words are in 10 words. So
@@ -1103,10 +1118,248 @@ the record that its content is ``I also st arted to use mroonga. It's
 also very fast! Really fast!`` is matched. The number of words between
 ``also`` and ``Really`` is 10.
 
+Here is an example to use the custom max interval:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/near_phrase_search_operator_max_interval.log
+.. select Entries --filter 'content *NP14 "I Really"' --output_columns content
+.. select Entries --filter 'content *NP-1 "I Really"' --output_columns content
+
+The first expression matches ``I also started to use
+mroonga. It's also very fast! Really fast!`` because the number of
+words between ``I`` and ``Really`` is 14.
+
+The second expression also matches ``I also started to use
+mroonga. It's also very fast! Really fast!`` because ``-1`` means that
+there is no limitation the number of words between ``I`` and
+``Really``.
+
+You can use additional interval only for the last phrase. It means
+that you can accept more distance only between the second to last
+phrase and the last phrase. This is useful for implementing a near
+phrase search in the same sentence. If you specify ``.`` (sentence end
+phrase) as the last phrase and specify ``-1`` as the additional last
+interval, the other specified phrases must be appeared before
+``.``. You must append ``$`` to the last phrase like ``.$``.
+
+Here is an example that uses ``-1`` as the additional last interval of
+the given phrases::
+
+    column *NP10,-1 "a b .$"
+
+Here is an example to customize the additional last interval of the
+given phrases:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/near_phrase_search_operator_additional_last_interval_negative.log
+.. select Entries --filter 'content *NP1,-1 "I started .$"' --output_columns content
+
+You can also use positive number for the additional last interval. If
+you specify positive number as the additional last interval, all of
+the following conditions must be satisfied:
+
+1. The interval between the first phrase and the second to last
+   phrase is less than or equals to ``the max interval``.
+
+2. The interval between the first phrase and the last phrase is less
+   than or equals to ``the max interval`` + ``the additional last
+   interval``.
+
+If you specify negative number as the additional last interval, the
+second condition isn't required. Appearing the last phrase is just
+needed.
+
+Here is an example to use positive number as the additional last interval:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/near_phrase_search_operator_additional_last_interval_positive.log
+.. select Entries --filter 'content *NP1,4 "I started .$"' --output_columns content
+
+.. _script-syntax-near-phrase-product-search-operator:
+
+Near phrase product search operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 11.1.1
+
+Its syntax is one of them::
+
+  column *NPP "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+  column *NPP${MAX_INTERVAL} "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+  column *NPP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL} "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+
+Here are examples of the second form::
+
+  column *NPP29 "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+  column *NPP-1 "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+
+The first example means that ``29`` is used for the max interval.
+
+The second example means that ``-1`` is used for the max interval.
+
+Here are examples of the third form::
+
+  column *NPP10,29 "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+  column *NPP10,-1 "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+
+The first example means that ``29`` is used for the additional last
+interval.
+
+The second example means that ``-1`` is used for the additional last
+interval.
+
+This operator does multiple
+:ref:`script-syntax-near-phrase-search-operator`. Phrases for each
+:ref:`script-syntax-near-phrase-search-operator` are computed as
+product of ``{phrase1_1, phrase1_2, ...}``, ``{phrase2_1, phrase2_2,
+...}`` and ``...``. For example, ``column *NPP "(a b c) (d e)"`` uses
+the following phrases for near phrase searches:
+
+* ``a d``
+* ``a e``
+* ``b d``
+* ``b e``
+* ``c d``
+* ``c e``
+
+Here is a simple example:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_near_phrase_product_search_operator.log
+.. select Entries \
+..   --filter 'content *NPP "(I It) (migrated fast)"' \
+..   --output_columns content
+
+You can use the all features of
+:ref:`script-syntax-near-phrase-search-operator` such as the max
+interval, ``$`` for the last phrase and the additional last interval.
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/near_phrase_product_search_operator_options.log
+.. select Entries \
+..   --filter 'content *NPP2,-1 "(I It) (migrated fast) (.$)"' \
+..   --output_columns content
+
+This is more effective than multiple
+:ref:`script-syntax-near-phrase-search-operator` .
+
+.. _script-syntax-ordered-near-phrase-search-operator:
+
+Ordered near phrase search operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 11.0.9
+
+Its syntax is one of them::
+
+  column *ONP "phrase1 phrase2 ..."
+  column *ONP${MAX_INTERVAL} "phrase1 phrase2 ..."
+  column *ONP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL} "phrase1 phrase2 ..."
+
+Here are examples of the second form::
+
+  column *ONP29 "phrase1 phrase2 ..."
+  column *ONP-1 "phrase1 phrase2 ..."
+
+The first example means that ``29`` is used for the max interval.
+
+The second example means that ``-1`` is used for the max interval.
+
+Here are examples of the third form::
+
+  column *ONP10,29 "phrase1 phrase2 ..."
+  column *ONP10,-1 "phrase1 phrase2 ..."
+
+The first example means that ``29`` is used for the additional last
+interval.
+
+The second example means that ``-1`` is used for the additional last
+interval.
+
+This operator does ordered near phrase search with ``phrase1``,
+``phrase2`` and ``...``. Ordered near phrase search is similar to
+:ref:`script-syntax-near-phrase-search-operator` but ordered near
+phrase search checks phrases order. For example, ``column *ONP
+"groonga mroonga pgroonga"`` matches ``groonga mroonga rroonga
+pgroonga`` but doesn't match ``groonga rroonga pgroonga
+mroonga``. Because the latter uses different order.
+
+Here is a simple example:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_ordered_near_phrase_search_operator.log
+.. select Entries \
+..   --filter 'content *ONP "I Groonga"' \
+..   --output_columns content
+.. select Entries \
+..   --filter 'content *ONP "Groonga I"' \
+..   --output_columns content
+
+You can use the all features of
+:ref:`script-syntax-near-phrase-search-operator` such as the max
+interval and the additional last interval. But you don't need to
+specify ``$`` for the last phrase because the last phrase in query is
+the last phrase.
+
+.. _script-syntax-ordered-near-phrase-product-search-operator:
+
+Ordered near phrase product search operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 11.1.1
+
+Its syntax is one of them::
+
+  column *ONPP "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+  column *ONPP${MAX_INTERVAL} "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+  column *ONPP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL} "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+
+Here are examples of the second form::
+
+  column *ONPP29 "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+  column *ONPP-1 "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+
+The first example means that ``29`` is used for the max interval.
+
+The second example means that ``-1`` is used for the max interval.
+
+Here are examples of the third form::
+
+  column *ONPP10,29 "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+  column *ONPP10,-1 "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+
+The first example means that ``29`` is used for the additional last
+interval.
+
+The second example means that ``-1`` is used for the additional last
+interval.
+
+This operator does ordered near phrase product search. Ordered near
+phrase product search is similar to
+:ref:`script-syntax-near-phrase-product-search-operator` but ordered
+near phrase product search checks phrases order like
+:ref:`script-syntax-ordered-near-phrase-search-operator`. For example,
+``column *ONPP "(a b c) (d e)"`` matches ``a 1 d`` but doesn't match
+``d 1 a``. Because the latter uses different order.
+
+Here is a simple example:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/simple_ordered_near_phrase_product_search_operator.log
+.. select Entries \
+..   --filter 'content *ONPP "(I It) (migrated fast) (.)"' \
+..   --output_columns content
+
+You can use the all features of
+:ref:`script-syntax-near-phrase-search-operator` such as the max
+interval and the additional last interval. But you don't need to
+specify ``$`` for the last phrase because the last phrase in query is
+the last phrase.
+
 .. _script-syntax-similar-search-operator:
 
-Similar search
-^^^^^^^^^^^^^^
+Similar search operator
+^^^^^^^^^^^^^^^^^^^^^^^
 
 Its syntax is ``column *S "document"``.
 
@@ -1117,7 +1370,7 @@ search searches records that have similar content to
 Note that an index column for full text search must be defined for
 ``column``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_similar_search_operator.log
@@ -1146,7 +1399,7 @@ double array trie (``TABLE_DAT_KEY``). You can't use hash table
 support longest common prefix search. Longest common prefix search is
 used to implement the operator.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/script_syntax/simple_term_extract_operator.log

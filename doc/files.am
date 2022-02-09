@@ -542,6 +542,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_prefix_search.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_regular_expression.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/simple_suffix_search.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/near_phrase_product_search_operator_options.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/near_phrase_search_operator_additional_last_interval_negative.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/near_phrase_search_operator_additional_last_interval_positive.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/near_phrase_search_operator_max_interval.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_addition_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_addition_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_and_assignment_operator.log \
@@ -566,10 +570,13 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_modulo_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_multiplication_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_multiplication_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_near_phrase_product_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_near_phrase_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_near_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_not_equal_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_or_assignment_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_ordered_near_phrase_product_search_operator.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_ordered_near_phrase_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_regular_expression_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_right_shift_operator.log \
@@ -1732,6 +1739,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/grn_expr/query_syntax/simple_prefix_search.log \
 	source/example/reference/grn_expr/query_syntax/simple_regular_expression.log \
 	source/example/reference/grn_expr/query_syntax/simple_suffix_search.log \
+	source/example/reference/grn_expr/script_syntax/near_phrase_product_search_operator_options.log \
+	source/example/reference/grn_expr/script_syntax/near_phrase_search_operator_additional_last_interval_negative.log \
+	source/example/reference/grn_expr/script_syntax/near_phrase_search_operator_additional_last_interval_positive.log \
+	source/example/reference/grn_expr/script_syntax/near_phrase_search_operator_max_interval.log \
 	source/example/reference/grn_expr/script_syntax/simple_addition_assignment_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_addition_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_and_assignment_operator.log \
@@ -1756,10 +1767,13 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/grn_expr/script_syntax/simple_modulo_assignment_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_multiplication_assignment_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_multiplication_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_near_phrase_product_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_near_phrase_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_near_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_not_equal_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_or_assignment_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_ordered_near_phrase_product_search_operator.log \
+	source/example/reference/grn_expr/script_syntax/simple_ordered_near_phrase_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_prefix_search_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_regular_expression_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_right_shift_operator.log \

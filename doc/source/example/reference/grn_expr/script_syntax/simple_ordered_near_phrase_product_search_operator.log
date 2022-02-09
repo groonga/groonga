@@ -1,0 +1,6 @@
+Execution example::
+
+  select Entries \
+    --filter 'content *ONPP "(I It) (migrated fast) (.)"' \
+    --output_columns content
+  # [[0, 1337566253.89858, 0.000355720520019531], [[[0], [["content", "Text"]]]]]

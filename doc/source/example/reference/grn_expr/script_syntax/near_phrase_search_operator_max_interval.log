@@ -1,0 +1,50 @@
+Execution example::
+
+  select Entries --filter 'content *NP14 "I Really"' --output_columns content
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ]
+  #       ], 
+  #       [
+  #         "I also started to use Mroonga. It's also very fast! Really fast!"
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select Entries --filter 'content *NP-1 "I Really"' --output_columns content
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ]
+  #       ], 
+  #       [
+  #         "I also started to use Mroonga. It's also very fast! Really fast!"
+  #       ]
+  #     ]
+  #   ]
+  # ]

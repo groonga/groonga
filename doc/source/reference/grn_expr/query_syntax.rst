@@ -135,7 +135,7 @@ search conditions; ``search`` and ``keyword``. If you want to
 specifies a keyword that contains one or more spaces, you can use
 ``phrase search condition`` that is described below.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_full_text_search.log
@@ -168,7 +168,7 @@ adjacent. Thus, ``Put a search keyword in the form`` is matched but
 ``Search by the keyword`` and ``There is a keyword. Search by it!``
 aren't matched.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_phrase_search.log
@@ -212,7 +212,7 @@ the following features:
 See description of ``--match_columns`` option of
 :doc:`/reference/commands/select` about them.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_full_text_search_with_explicit_match_column.log
@@ -239,7 +239,7 @@ advanced match columns but ``phrase search condition (with explicit
 match column)`` isn't supported. See description of ``full text search
 condition (with explicit match column)`` about advanced match columns.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_phrase_search_with_explicit_match_column.log
@@ -273,7 +273,7 @@ time for large records.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_prefix_search.log
@@ -455,7 +455,7 @@ Here is an example to customize the max interval of the given phrases:
 .. select NearTokens --match_columns content --query '*NP1"groonga pgroonga"'
 
 You can use additional interval only for the last phrase. It means
-that you can accept more distances only between the second to last
+that you can accept more distance only between the second to last
 phrase and the last phrase. This is useful for implementing a near
 phrase search in the same sentence. If you specify ``.`` (sentence end
 phrase) as the last phrase and specify ``-1`` as the additional last
@@ -623,7 +623,7 @@ It matches records that ``column`` value is equal to ``value``.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_equal.log
@@ -644,7 +644,7 @@ It matches records that ``column`` value isn't equal to ``value``.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_not_equal.log
@@ -670,7 +670,7 @@ compared as bit sequence.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_less_than.log
@@ -696,7 +696,7 @@ compared as bit sequence.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_greater_than.log
@@ -723,7 +723,7 @@ compared as bit sequence.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_less_than_or_equal_to.log
@@ -750,7 +750,7 @@ compared as bit sequence.
 It doesn't require the default match columns such as ``full text
 search condition`` and ``phrase search condition``.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_greater_than_or_equal_to.log
@@ -804,7 +804,7 @@ assignment expressions.
 
 If at least one of ``a`` and ``b`` are matched, ``a OR b`` is matched.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_logical_or.log
@@ -829,7 +829,7 @@ If both ``a`` and ``b`` are matched, ``a + b`` is matched.
 You can specify ``+`` the first expression such as ``+a``. The ``+``
 is just ignored.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_logical_and.log
@@ -854,7 +854,7 @@ If ``a`` is matched and ``b`` is not matched, ``a - b`` is matched.
 You can not specify ``-`` the first expression such as ``-a``. It's
 syntax error.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_logical_not.log
@@ -874,7 +874,7 @@ processed as an expression. ``a b OR c`` means that ``a`` and ``b``
 are matched or ``c`` is matched. ``a (b OR c)`` means that ``a`` and
 one of ``b`` and ``c`` are matched.
 
-Here is a simple example.
+Here is a simple example:
 
 .. groonga-command
 .. include:: ../../example/reference/grn_expr/query_syntax/simple_grouping.log
