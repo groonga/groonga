@@ -22,7 +22,7 @@ case ${version} in
 esac
 
 ${DNF} install -y \
-  https://packages.groonga.org/centos/groonga-release-latest.noarch.rpm
+  https://packages.groonga.org/${os}/${version}/groonga-release-latest.noarch.rpm
 
 repositories_dir=/groonga/packages/yum/repositories
 ${DNF} install -y \
