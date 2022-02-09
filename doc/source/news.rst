@@ -27,19 +27,30 @@ New Features and Improvements
   We could not specify the keyword of 32 or more with snippet until now.
   However, we can specify the keyword of 32 or more by this improvement.
 
+  We don't specify the keyword of 32 or more with snippet in normal use.
+  However, if the keyword increments automatically by using such as ``query_expand``, the number of target keywords may be 32 or more.
+
+  In this case, Groonga occurs an error until now. However, Groonga doesn't occur an error by this improvement.
+
   See :ref:`release 11.1.3 <release-11-1-3>` for details.
 
 * [:doc:`reference/normalizers/normalizer_nfkc130`] Added a new option ``remove_symbol``.
 
   This option removes symbols (e.g. #, !, “, &, %, …) from the string that the target of normalizing.
+  For example, this option useful when we prevent orthographical variants such as a title of song and name of artist, and a name of store.
 
   See :ref:`release 11.1.3 <release-11-1-3>` for details.
 
 * [:doc:`/reference/commands/load`] Added support for ISO 8601 time format.
 
+  ISO 8601 format is the format generally.
+  Therefore ``load`` becomes easy to use by Groonga support the more standard format.
+
   See :ref:`release 11.1.0 <release-11-1-0>` for details.
 
 * [:doc:`reference/functions/snippet`] Added a new option ``delimiter_regexp`` for detecting snippet delimiter with regular expression.
+
+  This feature is useful in that we want to show by the sentence the result of the search.
 
   :doc:`reference/functions/snippet` extracts text around search keywords.
   We call the text that is extracted by :doc:`reference/functions/snippet` snippet.
@@ -56,15 +67,20 @@ New Features and Improvements
 
 * [:doc:`reference/commands/cache_limit`] Groonga remove query cache when we execute ``cache_limit 0``.
 
+  Groonga stores query cache to internally table.
+  The maximum total size of keys of this table is 4GiB. Because this table is hash table.
+  Therefore, If we execute many huge queries, Groonga may be unable to store query cache, because the maximum total size of keys may be over 4GiB.
+  In such cases, We can clear the table for query cache by using ``cache_limit 0``, and Groonga can store query cache 
+
+  We needed to restart Groonga to resolve this problem until now.
+  However, We can resolve this problem if we just execute ``cache_limit 0`` by this improvement.
+
   See :ref:`release 11.0.6 <release-11-0-6>` for details.
 
 * [:doc:`/reference/functions/between`] Added support for optimizing the order of evaluation of a conditional expression.
 
   We can use the optimization of  the order of evaluation of a conditional expression in ``between()`` by setting ``GRN_EXPR_OPTIMIZE=yes``.
-
-* [:doc:`reference/commands/select`] Added support for adjusting the score of a specific record in ``--filter``.
-
-  See :ref:`release 11.0.4 <release-11-0-4>` for details.
+  This optimization is effective with respect if ``between()`` narrow down records enough or ``between()`` can't narrow down few records.
 
 * [:doc:`reference/log`] Added support for outputting to stdout and stderr.
 
@@ -78,12 +94,23 @@ New Features and Improvements
 
   We are able to search without ``TokenFilterStem`` and ``TokenFilterStopWord`` in only a specific query.
 
+  This feature is useful when we want to search for the same words exactly as a search keyword.
+  Normally, Groonga gets better results with enable stemming and stopwords excepting.
+  However, if we want to search words the same as a keyword of search exactly, These features are needless.
+
+  Until now, If we want to search words the same as a keyword of search exactly,
+  We needed to make the index of the exclusive use.
+  By this improvement, we can search words the same as a keyword of search exactly
+  without making the index of the exclusive use.
+
   See :ref:`release 11.0.3 <release-11-0-3>` for details.
 
 * [:doc:`/reference/functions/string_slice`] Added a new function ``string_slice()``.
 
   ``string_slice()`` extracts a substring of a string of search results by position or regular expression.
   This function is useful if we want to edit search results.
+
+  For example, this feature is useful in that we exclude tags from search results.
 
 * [:doc:`reference/functions/query_parallel_or`] Added a new function for processing queries in parallel.
 
@@ -103,8 +130,8 @@ New Features and Improvements
 
 * [:doc:`reference/commands/select`] Added support for ``--post_filter`` and ``--slices[].post_filter``.
 
-  We can filter again after we execute ``--filter`` by using ``--post-filter`` and ``--slices[].post_filter``.
-  The difference between ``--post-filter`` and ``--slices[].post_filter`` is response format.
+  We can filter again after we execute ``--filter`` by using ``--post_filter`` and ``--slices[].post_filter``.
+  The difference between ``--post_filter`` and ``--slices[].post_filter`` is response format.
 
   The response format of ``--post_filter`` same as the response of ``--filter``.
   The response format of ``--slices[].post_filter`` show the result of before and after ``--slices[].post_filter`` executed.
@@ -119,19 +146,7 @@ Fixes
   However, if arrow-libs update a major version, this problem reproduces.
   In this case, we will handle that by rebuilding the Groonga package.
 
-* [:doc:`/reference/commands/load`] Fixed a crash bug when we load data with specifying a nonexistent column.
-
-  This bug only occurs when we specify ``apache-arrow`` into ``input_type`` as the argument of ``load``.
-
-* Fixed a bug that we can’t remove a index column with invalid parameter.
-
-  For example, we can’t remove a table when we create an invalid index column with column_create.
-
-* Fixed a bug that Groonga doesn't return a response when an error occurred in command (e.g. sytax error in filter).
-
-  This bug only occurs when we use ``--output_type apache-arrow``.
-
-* Fixed a memory leak when we created a table with a tokenizer with invalid option.
+  This bug only occurs AlmaLinux 8 and CentOS 7.
 
 * [Windows] Fixed a resource leak when Groonga fail open a new file caused by out of memory.
 
@@ -151,9 +166,9 @@ Newly supported OSes
 
 * [:doc:`/install/almalinux`] Added support for AlmaLinux 8 for ARM64.
 
-* [:doc:`/install/debian`] Added support for Debian 11(Bullseye).
+* [:doc:`/install/debian`] Added support for Debian 11 (Bullseye).
 
-* [:doc:`/install/debian`] Added support for Debian 11(Bullseye) for ARM64 and Debian 10(buster) for ARM64.
+* [:doc:`/install/debian`] Added support for Debian 11 (Bullseye) for ARM64 and Debian 10 (buster) for ARM64.
 
 * [:doc:`/install/ubuntu`] Added support for Ubuntu 21.10 (Impish Indri).
 
