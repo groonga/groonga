@@ -1,0 +1,14 @@
+table_create Synonyms TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC130
+[[0,0.0,0.0],true]
+column_create Synonyms representative COLUMN_SCALAR Synonyms
+[[0,0.0,0.0],true]
+column_create Synonyms group COLUMN_INDEX Synonyms representative
+[[0,0.0,0.0],true]
+load --table Synonyms
+[
+["_key", "representative"],
+["rroonga", "rroonga"]
+]
+[[0,0.0,0.0],1]
+query_expand Synonyms.group "Rroonga"
+[[0,0.0,0.0],"rroonga"]
