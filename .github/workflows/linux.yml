@@ -169,7 +169,6 @@ jobs:
         run: |
           bash -x test/command/run-test.sh \
             --n-retries=3 \
-            --timeout=10 \
             --read-timeout=30 \
             --reporter=mark \
             --input-type=apache-arrow \
@@ -178,7 +177,6 @@ jobs:
         run: |
           bash -x test/command/run-test.sh \
             --n-retries=3 \
-            --timeout=10 \
             --read-timeout=30 \
             --reporter=mark \
             --interface=http \
@@ -197,7 +195,6 @@ jobs:
           mkdir -p /tmp/local/var/log/groonga/httpd/
           bash -x test/command/run-test.sh \
             --n-retries=3 \
-            --timeout=10 \
             --read-timeout=30 \
             --reporter=mark \
             --testee groonga-httpd
@@ -206,7 +203,6 @@ jobs:
           export GRN_ENABLE_REFERENCE_COUNT=yes
           bash -x test/command/run-test.sh \
             --n-retries=3 \
-            --timeout=10 \
             --read-timeout=30 \
             --reporter=mark \
             --interface=http
