@@ -17,11 +17,20 @@ jobs:
       fail-fast: false
       matrix:
         label:
+          - Visual Studio 2022 x64
           - Visual Studio 2019 x64
           - Visual Studio 2019 x86
           - Visual Studio 2017 x64
           - Visual Studio 2017 x86
         include:
+          - label: Visual Studio 2022 x64
+            architecture: x64
+            cmake-architecture: x64
+            cmake-generator: Visual Studio 17 2022
+            runs-on: windows-2022
+            vc-architecture: x64
+            vc-toolset-version: 143
+            vs-version: 2022
           - label: Visual Studio 2019 x64
             architecture: x64
             cmake-architecture: x64
