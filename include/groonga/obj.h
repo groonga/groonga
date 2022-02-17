@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2015-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -49,6 +49,7 @@ GRN_API bool grn_obj_is_table_with_value(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_lexicon(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_lexicon_without_data_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_tiny_hash_table(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool grn_obj_is_result_set(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_scalar_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_text_family_scalar_column(grn_ctx *ctx, grn_obj *obj);

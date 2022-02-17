@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2015-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -379,6 +379,22 @@ grn_obj_is_tiny_hash_table(grn_ctx *ctx, grn_obj *obj)
   }
 
   return obj->header.flags & GRN_HASH_TINY;
+}
+
+bool
+grn_obj_is_result_set(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_temporary(ctx, obj)) {
+    return false;
+  }
+
+  if (obj->header.type != GRN_TABLE_HASH_KEY) {
+    return false;
+  }
+
+  grn_table_flags flags = 0;
+  grn_table_get_info(ctx, obj, &flags, NULL, NULL, NULL, NULL);
+  return flags & GRN_OBJ_WITH_SUBREC;
 }
 
 grn_bool
