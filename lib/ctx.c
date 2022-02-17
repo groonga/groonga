@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -98,6 +98,7 @@ int grn_uyield_count = 0;
 #endif
 
 static grn_bool grn_ctx_per_db = GRN_FALSE;
+static bool grn_back_trace_enable = true;
 
 static void
 grn_init_from_env(void)
@@ -109,6 +110,17 @@ grn_init_from_env(void)
                GRN_ENV_BUFFER_SIZE);
     if (grn_ctx_per_db_env[0] && strcmp(grn_ctx_per_db_env, "yes") == 0) {
       grn_ctx_per_db = GRN_TRUE;
+    }
+  }
+
+  {
+    char grn_back_trace_enable_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_BACK_TRACE_ENABLE",
+               grn_back_trace_enable_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_back_trace_enable_env[0] &&
+        strcmp(grn_back_trace_enable_env, "no") == 0) {
+      grn_back_trace_enable = false;
     }
   }
 
@@ -2076,9 +2088,25 @@ grn_ctx_log_back_trace_backtrace(grn_ctx *ctx, grn_log_level level)
 # endif
 #endif
 
+bool
+grn_is_back_trace_enable(void)
+{
+  return grn_back_trace_enable;
+}
+
+grn_rc
+grn_set_back_trace_enable(bool enable)
+{
+  grn_back_trace_enable = enable;
+  return GRN_SUCCESS;
+}
+
 void
 grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level)
 {
+  if (!grn_back_trace_enable) {
+    return;
+  }
 #ifdef WIN32
   grn_ctx_log_back_trace_windows(ctx, level);
 #else

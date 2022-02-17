@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -283,6 +283,8 @@ GRN_API grn_bool grn_ctx_get_force_match_escalation(grn_ctx *ctx);
 GRN_API grn_rc grn_ctx_set_force_match_escalation(grn_ctx *ctx, grn_bool force);
 GRN_API int64_t grn_get_default_match_escalation_threshold(void);
 GRN_API grn_rc grn_set_default_match_escalation_threshold(int64_t threshold);
+GRN_API bool grn_is_back_trace_enable(void);
+GRN_API grn_rc grn_set_back_trace_enable(bool enable);
 
 GRN_API grn_rc grn_ctx_set_variable(grn_ctx *ctx,
                                     const char *name,
