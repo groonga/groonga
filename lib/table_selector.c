@@ -628,10 +628,10 @@ select_index_equal(grn_ctx *ctx,
 
       grn_obj_unref(ctx, domain);
     }
-  }
 
-  if (rc == GRN_SUCCESS) {
-    grn_ii_resolve_sel_and(ctx, (grn_hash *)result_set, logical_op);
+    if (rc == GRN_SUCCESS) {
+      grn_ii_resolve_sel_and(ctx, (grn_hash *)result_set, logical_op);
+    }
   }
 
   return rc;
