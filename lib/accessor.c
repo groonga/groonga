@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2018  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -591,21 +591,28 @@ grn_accessor_execute(grn_ctx *ctx,
   }
 
   int depth = 0;
-  grn_accessor *a;
-  for (a = (grn_accessor *)accessor; a->next; a = a->next) {
-    depth++;
+  grn_accessor *last_a = NULL;
+  grn_accessor *second_to_last_a = NULL;
+  {
+    grn_accessor *a;
+    for (last_a = a = (grn_accessor *)accessor;
+         a->next;
+         last_a = a = a->next) {
+      depth++;
+      second_to_last_a = a;
+    }
   }
 
   grn_index_datum index_data;
   unsigned int n_index_datum;
   grn_obj *index;
   n_index_datum = grn_column_find_index_data(ctx,
-                                             a->obj,
+                                             last_a->obj,
                                              execute_op,
                                              &index_data,
                                              1);
   if (n_index_datum == 0) {
-    index = (grn_obj *)a;
+    index = (grn_obj *)last_a;
   } else {
     index = index_data.index;
   }
@@ -620,22 +627,44 @@ grn_accessor_execute(grn_ctx *ctx,
                  execute_data);
   } else {
     grn_obj *base_table = NULL;
-    if (grn_obj_is_table(ctx, a->obj)) {
-      base_table = a->obj;
+    if (grn_obj_is_table(ctx, last_a->obj)) {
+      base_table = last_a->obj;
     } else {
-      base_table = grn_ctx_at(ctx, a->obj->header.domain);
+      base_table = grn_ctx_at(ctx, last_a->obj->header.domain);
     }
 
     grn_obj *base_res =
       grn_table_create(ctx, NULL, 0, NULL,
                        GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                        base_table, NULL);
+    grn_operator base_logical_op = GRN_OP_OR;
+    if (second_to_last_a &&
+        grn_obj_is_result_set(ctx, second_to_last_a->obj) &&
+        second_to_last_a->obj->header.domain == base_res->header.domain) {
+      GRN_LOG(ctx, GRN_REPORT_INDEX_LOG_LEVEL,
+              "[accessor][execute][initial] <%u>",
+              grn_table_size(ctx, second_to_last_a->obj));
+      GRN_TABLE_EACH_BEGIN(ctx, second_to_last_a->obj, cursor, id) {
+        void *key;
+        uint32_t key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+        grn_hash_add(ctx,
+                     (grn_hash *)base_res,
+                     key,
+                     key_size,
+                     NULL,
+                     NULL);
+      } GRN_TABLE_EACH_END(ctx, cursor);
+      base_logical_op = GRN_OP_AND;
+    }
+    int original_flags = ctx->flags;
+    ctx->flags &= ~GRN_CTX_TEMPORARY_DISABLE_II_RESOLVE_SEL_AND;
     rc = execute(ctx,
                  index,
                  execute_op,
                  base_res,
-                 GRN_OP_OR,
+                 base_logical_op,
                  execute_data);
+    ctx->flags = original_flags;
     if (rc == GRN_SUCCESS) {
       rc = grn_accessor_resolve(ctx,
                                 accessor,

@@ -92,5 +92,6 @@ select Memos   --filter '_id > 1'   --slices[groonga].filter 'between(date,     
   ]
 ]
 #|i| [table-selector][select][index][range][id] <Memos>
+#|i| [accessor][execute][initial] <3>
 #|i| [table-selector][select][index][selector][between] <Times.memos_date>
 #|i| [accessor][resolve][table] (temporary) -> <Memos> -> <ShortText>

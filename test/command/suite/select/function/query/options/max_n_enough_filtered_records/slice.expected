@@ -1,0 +1,96 @@
+table_create Products TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Products name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms products_name COLUMN_INDEX Products name
+[[0,0.0,0.0],true]
+load --table Products
+[
+["name"],
+["Groonga"],
+["Mroonga"],
+["Rroonga"],
+["PGroonga"],
+["Ruby"],
+["PostgreSQL"]
+]
+[[0,0.0,0.0],6]
+log_level --level info
+[[0,0.0,0.0],true]
+select   --table Products   --filter 'name @ "r"'   --slices[slice].filter 'query("name", "name:Ruby", {"max_n_enough_filtered_records": 10})'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "name",
+          "ShortText"
+        ]
+      ],
+      [
+        3,
+        "Rroonga"
+      ],
+      [
+        5,
+        "Ruby"
+      ]
+    ],
+    {
+      "slice": [
+        [
+          1
+        ],
+        [
+          [
+            "_id",
+            "UInt32"
+          ],
+          [
+            "name",
+            "ShortText"
+          ]
+        ],
+        [
+          5,
+          "Ruby"
+        ]
+      ]
+    }
+  ]
+]
+#|i| [object][search][index][key][exact] <Terms.products_name>
+#|i| grn_ii_sel > (r)
+#|i| exact: 0
+#|i| [ii][select] n=1 (r)
+#|i| unsplit: 2
+#|i| hits=2
+#|i| [table-selector][select][index][selector][no-index][query] <>
+#|i| [accessor][execute][initial] <2>
+#|i| [table-selector][select][index-not-used][equal] <Terms.products_name>: enough filtered: 33.33%(2/6) < 100.00% && 2 <= 10
+#>select --filter "name @ \"r\"" --slices[slice].filter "query(\"name\", \"name:Ruby\", {\"max_n_enough_filtered_records\": 10})" --table "Products"
+#:000000000000000 filter(2): Products.name match "r"
+#:000000000000000 select(2)
+#:000000000000000 filter(1): #<accessor _key(anonymous).name(Products)> equal "Ruby"
+#:000000000000000 slices[slice].filter(1): query("name", "name:Ruby", (nil))
+#:000000000000000 slices[slice](1)
+#:000000000000000 output(2)
+#:000000000000000 slices[slice].output(1)
+#:000000000000000 send(0)
+#<000000000000000 rc=0
+log_level --level notice
+[[0,0.0,0.0],true]

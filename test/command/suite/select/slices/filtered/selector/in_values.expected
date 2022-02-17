@@ -92,20 +92,21 @@ select Memos   --filter '_id > 1'   --slices[groonga].filter 'in_values(date,   
   ]
 ]
 #|i| [table-selector][select][index][range][id] <Memos>
+#|i| [accessor][execute][initial] <3>
 #|i| [table-selector][select][index][selector][in_values] <Times.memos_date>
 #|i| [object][search][index][key][exact] <Times.memos_date>
 #|i| grn_ii_sel > (#<key 1463626800.0 table:#<pat Times key:Time>>)
 #|i| [ii][select] n=1 (#<key 1463626800.0 table:#<pat Times key:Time>>)
-#|i| exact: 1
-#|i| hits=1
+#|i| exact: 3
+#|i| hits=3
 #|i| [object][search][index][key][exact] <Times.memos_date>
 #|i| grn_ii_sel > (#<key 1463626801.0 table:#<pat Times key:Time>>)
 #|i| [ii][select] n=1 (#<key 1463626801.0 table:#<pat Times key:Time>>)
-#|i| exact: 2
-#|i| hits=2
+#|i| exact: 3
+#|i| hits=3
 #|i| [object][search][index][key][exact] <Times.memos_date>
 #|i| grn_ii_sel > (#<key 1463626803.0 table:#<pat Times key:Time>>)
 #|i| [ii][select] n=1 (#<key 1463626803.0 table:#<pat Times key:Time>>)
-#|i| exact: 3
-#|i| hits=3
+#|i| exact: 2
+#|i| hits=2
 #|i| [accessor][resolve][table] (temporary) -> <Memos> -> <ShortText>
