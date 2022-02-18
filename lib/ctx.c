@@ -2034,12 +2034,14 @@ grn_ctx_logv(grn_ctx *ctx, const char *fmt, va_list ap)
 }
 
 #ifdef WIN32
-static void
+static __declspec(noinline) void
 grn_ctx_log_back_trace_windows(grn_ctx *ctx, grn_log_level level)
 {
+#define MAX_N_FRAMES 62
   ULONG frames_to_skip = 0;
-  ULONG frames_to_capture = MAXUSHORT;
-  void *back_trace[MAXUSHORT];
+  ULONG frames_to_capture = MAX_N_FRAMES;
+  void *back_trace[MAX_N_FRAMES];
+#undef MAX_N_FRAMES
   USHORT n_frames = CaptureStackBackTrace(frames_to_skip,
                                           frames_to_capture,
                                           back_trace,
