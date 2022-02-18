@@ -48,6 +48,8 @@
 
 #define GRN_DLL_FILENAME     L"${GRN_DLL_FILENAME}"
 
+#cmakedefine GRN_WITH_WINDOWS_BACK_TRACE
+
 /* build switches */
 #cmakedefine USE_MEMORY_DEBUG
 #cmakedefine USE_MAP_HUGETLB

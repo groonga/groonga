@@ -280,6 +280,15 @@ if test "x$grn_optimize" != "xno"; then
   fi
 fi
 
+AC_ARG_ENABLE(windows-back-trace,
+  [AS_HELP_STRING([--enable-windows-back-trace],
+                  [enable back trace on Windows (default=yes)])],
+  [grn_with_windows_back_trace="$enableval"],
+  [grn_with_windows_back_trace="yes"])
+if test "x$grn_with_windows_back_trace" = "yes"; then
+  AC_DEFINE(GRN_WITH_WINDOWS_BACK_TRACE, [1], [enable back trace on Windows])
+fi
+
 AC_SEARCH_LIBS(log, m, [], [AC_MSG_ERROR("No libm found")])
 AC_MSG_CHECKING([for fpclassify])
 AC_LINK_IFELSE(
