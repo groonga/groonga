@@ -470,6 +470,16 @@ grn_obj_is_vector_column(grn_ctx *ctx, grn_obj *obj)
            GRN_OBJ_COLUMN_VECTOR));
 }
 
+bool
+grn_obj_is_text_family_vector_column(grn_ctx *ctx, grn_obj *obj)
+{
+  if (!grn_obj_is_vector_column(ctx, obj)) {
+    return false;
+  }
+
+  return grn_type_id_is_text_family(ctx, grn_obj_get_range(ctx, obj));
+}
+
 grn_bool
 grn_obj_is_weight_vector_column(grn_ctx *ctx, grn_obj *obj)
 {
