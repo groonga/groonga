@@ -1,0 +1,33 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+column_create Lexicon diary_content COLUMN_INDEX|WITH_POSITION Memos content
+
+table_create SynonymGroups TABLE_NO_KEY
+column_create SynonymGroups synonyms COLUMN_VECTOR ShortText
+
+table_create Synonyms TABLE_PAT_KEY ShortText
+column_create Synonyms group COLUMN_INDEX SynonymGroups synonyms
+
+load --table Memos
+[
+["content"],
+["Start groonga!"],
+["Start mroonga!"],
+["Start rroonga!"],
+["Start Ruby!"],
+["Learning Ruby and groonga..."]
+]
+
+load --table SynonymGroups
+[
+["synonyms"],
+[["rroonga", "rroonga"]],
+[["Ruby groonga", "rroonga"]]
+]
+
+select \
+  --table Memos \
+  --query_expander Synonyms.group \
+  --match_columns content --query rroonga

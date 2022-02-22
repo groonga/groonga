@@ -1,0 +1,66 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Lexicon diary_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+table_create SynonymGroups TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create SynonymGroups synonyms COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+table_create Synonyms TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Synonyms group COLUMN_INDEX SynonymGroups synonyms
+[[0,0.0,0.0],true]
+load --table Memos
+[
+["content"],
+["Start groonga!"],
+["Start mroonga!"],
+["Start rroonga!"],
+["Start Ruby!"],
+["Learning Ruby and groonga..."]
+]
+[[0,0.0,0.0],5]
+load --table SynonymGroups
+[
+["synonyms"],
+[["rroonga", "rroonga"]],
+[["Ruby groonga", "rroonga"]]
+]
+[[0,0.0,0.0],2]
+select   --table Memos   --query_expander Synonyms.group   --match_columns content --query rroonga
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "ShortText"
+        ]
+      ],
+      [
+        3,
+        "Start rroonga!"
+      ],
+      [
+        5,
+        "Learning Ruby and groonga..."
+      ]
+    ]
+  ]
+]

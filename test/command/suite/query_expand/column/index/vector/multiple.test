@@ -1,0 +1,14 @@
+table_create SynonymGroups TABLE_NO_KEY
+column_create SynonymGroups synonyms COLUMN_VECTOR ShortText
+
+table_create Synonyms TABLE_PAT_KEY ShortText
+column_create Synonyms group COLUMN_INDEX SynonymGroups synonyms
+
+load --table SynonymGroups
+[
+["synonyms"],
+[["rroonga", "Ruby groonga"]],
+[["groonga", "rroonga", "mroonga"]]
+]
+
+query_expand Synonyms.group "rroonga"

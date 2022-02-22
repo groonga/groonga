@@ -5648,11 +5648,36 @@ grn_expr_syntax_expand_term_by_func(grn_ctx *ctx,
   return rc;
 }
 
+static grn_rc
+grn_expr_syntax_expand_term_by_text_vector(grn_ctx *ctx,
+                                           grn_obj *vector,
+                                           grn_obj *expanded_term)
+{
+  unsigned int i, n;
+  n = grn_vector_size(ctx, vector);
+  if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, '('); }
+  for (i = 0; i < n; i++) {
+    const char *value;
+    unsigned int length;
+    if (i > 0) {
+      GRN_TEXT_PUTS(ctx, expanded_term, " OR ");
+    }
+    if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, '('); }
+    length = grn_vector_get_element(ctx, vector, i, &value, NULL, NULL);
+    GRN_TEXT_PUT(ctx, expanded_term, value, length);
+    if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, ')'); }
+  }
+  if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, ')'); }
+  return i == 0 ? GRN_END_OF_DATA : GRN_SUCCESS;
+}
+
 typedef struct {
   grn_obj *table;
   grn_obj *column;
   grn_obj *representative_column;
   uint32_t representative_column_section;
+  grn_obj *group_column;
+  uint32_t group_column_section;
 } grn_expr_syntax_expand_term_by_column_data;
 
 static grn_rc
@@ -5671,93 +5696,116 @@ grn_expr_syntax_expand_term_by_column(grn_ctx *ctx,
 
   grn_obj *column = data->column;
   if (grn_obj_is_vector_column(ctx, column)) {
-    unsigned int i, n;
     grn_obj values;
     GRN_TEXT_INIT(&values, GRN_OBJ_VECTOR);
     grn_obj_get_value(ctx, column, id, &values);
-    n = grn_vector_size(ctx, &values);
-    if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, '('); }
-    for (i = 0; i < n; i++) {
-      const char *value;
-      unsigned int length;
-      if (i > 0) {
-        GRN_TEXT_PUTS(ctx, expanded_term, " OR ");
-      }
-      if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, '('); }
-      length = grn_vector_get_element(ctx, &values, i, &value, NULL, NULL);
-      GRN_TEXT_PUT(ctx, expanded_term, value, length);
-      if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, ')'); }
-    }
-    if (n > 1) { GRN_TEXT_PUTC(ctx, expanded_term, ')'); }
+    grn_rc rc =
+      grn_expr_syntax_expand_term_by_text_vector(ctx,
+                                                 &values,
+                                                 expanded_term);
     GRN_OBJ_FIN(ctx, &values);
-    return GRN_SUCCESS;
+    return rc;
   } else if (grn_obj_is_index_column(ctx, column)) {
-    grn_obj representative_term;
-    GRN_RECORD_INIT(&representative_term, 0, DB_OBJ(column)->range);
-    grn_obj_get_value(ctx,
-                      data->representative_column,
-                      id,
-                      &representative_term);
-    grn_id representative_term_id = GRN_ID_NIL;
-    if (GRN_BULK_VSIZE(&(representative_term)) > 0) {
-      representative_term_id = GRN_RECORD_VALUE(&representative_term);
-    }
-    GRN_OBJ_FIN(ctx, &representative_term);
-    if (representative_term_id == GRN_ID_NIL) {
-      return GRN_END_OF_DATA;
-    }
-    grn_obj *index_cursor = grn_index_cursor_open(ctx,
-                                                  NULL,
-                                                  column,
-                                                  GRN_ID_NIL,
-                                                  GRN_ID_MAX,
-                                                  0);
-    if (!index_cursor) {
-      return ctx->rc;
-    }
-    grn_rc rc = grn_index_cursor_set_term_id(ctx,
-                                             index_cursor,
-                                             representative_term_id);
-    if (rc != GRN_SUCCESS) {
-      grn_obj_close(ctx, index_cursor);
-      return rc;
-    }
-    rc = grn_index_cursor_set_section_id(ctx,
-                                         index_cursor,
-                                         data->representative_column_section);
-    if (rc != GRN_SUCCESS) {
-      grn_obj_close(ctx, index_cursor);
-      return rc;
-    }
-    grn_posting *posting;
-    grn_id term_id;
-    grn_id pending_id = GRN_ID_NIL;
-    int i = 0;
-    while ((posting = grn_index_cursor_next(ctx, index_cursor, &term_id))) {
-      if (pending_id != GRN_ID_NIL) {
-        if (i == 1) {
-          GRN_TEXT_PUTC(ctx, expanded_term, '(');
-        } else {
-          GRN_TEXT_PUTS(ctx, expanded_term, " OR ");
-        }
-        GRN_TEXT_PUTC(ctx, expanded_term, '(');
-        grn_table_get_key2(ctx, table, pending_id, expanded_term);
-        GRN_TEXT_PUTC(ctx, expanded_term, ')');
+    if (data->representative_column) {
+      grn_obj representative_term;
+      GRN_RECORD_INIT(&representative_term, 0, DB_OBJ(column)->range);
+      grn_obj_get_value(ctx,
+                        data->representative_column,
+                        id,
+                        &representative_term);
+      grn_id representative_term_id = GRN_ID_NIL;
+      if (GRN_BULK_VSIZE(&(representative_term)) > 0) {
+        representative_term_id = GRN_RECORD_VALUE(&representative_term);
       }
-      pending_id = posting->rid;
-      i++;
+      GRN_OBJ_FIN(ctx, &representative_term);
+      if (representative_term_id == GRN_ID_NIL) {
+        return GRN_END_OF_DATA;
+      }
+      grn_obj *index_cursor = grn_index_cursor_open(ctx,
+                                                    NULL,
+                                                    column,
+                                                    GRN_ID_NIL,
+                                                    GRN_ID_MAX,
+                                                    0);
+      if (!index_cursor) {
+        return ctx->rc;
+      }
+      grn_rc rc = grn_index_cursor_set_term_id(ctx,
+                                               index_cursor,
+                                               representative_term_id);
+      if (rc != GRN_SUCCESS) {
+        grn_obj_close(ctx, index_cursor);
+        return rc;
+      }
+      rc = grn_index_cursor_set_section_id(ctx,
+                                           index_cursor,
+                                           data->representative_column_section);
+      if (rc != GRN_SUCCESS) {
+        grn_obj_close(ctx, index_cursor);
+        return rc;
+      }
+      grn_posting *posting;
+      grn_id term_id;
+      grn_obj synonym;
+      GRN_TEXT_INIT(&synonym, 0);
+      grn_obj synonyms;
+      GRN_TEXT_INIT(&synonyms, GRN_OBJ_VECTOR);
+      while ((posting = grn_index_cursor_next(ctx, index_cursor, &term_id))) {
+        GRN_BULK_REWIND(&synonym);
+        grn_table_get_key2(ctx, table, posting->rid, &synonym);
+        grn_vector_add_element_float(ctx,
+                                     &synonyms,
+                                     GRN_TEXT_VALUE(&synonym),
+                                     GRN_TEXT_LEN(&synonym),
+                                     0.0,
+                                     synonym.header.domain);
+      }
+      GRN_OBJ_FIN(ctx, &synonym);
+      grn_obj_close(ctx, index_cursor);
+      rc = grn_expr_syntax_expand_term_by_text_vector(ctx,
+                                                      &synonyms,
+                                                      expanded_term);
+      GRN_OBJ_FIN(ctx, &synonyms);
+      return rc;
+    } else {
+      grn_obj *index_cursor = grn_index_cursor_open(ctx,
+                                                    NULL,
+                                                    column,
+                                                    GRN_ID_NIL,
+                                                    GRN_ID_MAX,
+                                                    0);
+      if (!index_cursor) {
+        return ctx->rc;
+      }
+      grn_rc rc = grn_index_cursor_set_term_id(ctx, index_cursor, id);
+      if (rc != GRN_SUCCESS) {
+        grn_obj_close(ctx, index_cursor);
+        return rc;
+      }
+      rc = grn_index_cursor_set_section_id(ctx,
+                                           index_cursor,
+                                           data->group_column_section);
+      if (rc != GRN_SUCCESS) {
+        grn_obj_close(ctx, index_cursor);
+        return rc;
+      }
+      grn_posting *posting;
+      grn_id term_id;
+      grn_obj synonyms;
+      GRN_TEXT_INIT(&synonyms, GRN_OBJ_VECTOR);
+      while ((posting = grn_index_cursor_next(ctx, index_cursor, &term_id))) {
+        grn_obj_get_value(ctx,
+                          data->group_column,
+                          posting->rid,
+                          &synonyms);
+      }
+      grn_obj_close(ctx, index_cursor);
+      rc = grn_expr_syntax_expand_term_by_text_vector(ctx,
+                                                      &synonyms,
+                                                      expanded_term);
+      GRN_OBJ_FIN(ctx, &synonyms);
+      return rc;
     }
-    if (i == 1) {
-      grn_table_get_key2(ctx, table, pending_id, expanded_term);
-    } else if (i > 1) {
-      GRN_TEXT_PUTS(ctx, expanded_term, " OR ");
-      GRN_TEXT_PUTC(ctx, expanded_term, '(');
-      grn_table_get_key2(ctx, table, pending_id, expanded_term);
-      GRN_TEXT_PUTC(ctx, expanded_term, ')');
-      GRN_TEXT_PUTC(ctx, expanded_term, ')');
-    }
-    grn_obj_close(ctx, index_cursor);
-    return i == 0 ? GRN_END_OF_DATA : GRN_SUCCESS;
   } else {
     grn_obj_get_value(ctx, column, id, expanded_term);
     return GRN_SUCCESS;
@@ -6068,6 +6116,8 @@ grn_expr_syntax_expand_query(grn_ctx *ctx,
       data.column = expander;
       data.representative_column = NULL;
       data.representative_column_section = 0;
+      data.group_column = NULL;
+      data.group_column_section = 0;
       if (expander->header.type == GRN_COLUMN_INDEX) {
         grn_obj source_ids;
         GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
@@ -6088,13 +6138,20 @@ grn_expr_syntax_expand_query(grn_ctx *ctx,
             data.representative_column = source;
             data.representative_column_section = i + 1;
             break;
+          } else if (grn_obj_is_text_family_vector_column(ctx, source)) {
+            /* TODO: Add support for multiple group columns. */
+            data.group_column = source;
+            data.group_column_section = i + 1;
+            break;
           }
         }
-        if (!data.representative_column) {
+        if (!data.representative_column &&
+            !data.group_column) {
           GRN_DEFINE_NAME(expander);
           ERR(GRN_INVALID_ARGUMENT,
               "[query][expand][column][index] "
-              "there is no source that refers lexicon: <%.*s>",
+              "must have a reference scalar column source that refers "
+              "lexicon itself or a text vector column source: <%.*s>",
               name_size, name);
           goto exit;
         }
