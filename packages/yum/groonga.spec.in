@@ -172,8 +172,6 @@ Group:		Applications/System
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	munin-node
 Requires(post):	munin-node
-Requires(post):	/sbin/service
-Requires(postun):	/sbin/service
 
 %description munin-plugins
 Munin plugins for Groonga
@@ -275,9 +273,7 @@ fi
 
 %post munin-plugins
 %{_sbindir}/munin-node-configure --shell --remove-also | grep -e 'groonga_' | sh
-[ -f %{_localstatedir}/lock/subsys/munin-node ] && \
-	/sbin/service munin-node restart > /dev/null 2>&1
-:
+%systemd_post munin-node
 
 %preun server-gqtp
 %systemd_preun groonga-server-gqtp.service
@@ -300,11 +296,8 @@ fi
 %postun libs -p /sbin/ldconfig
 
 %postun munin-plugins
-if [ $1 -eq 0 ]; then
-	[ -f %{_localstatedir}/lock/subsys/munin-node ] && \
-		/sbin/service munin-node restart >/dev/null 2>&1
-	:
-fi
+%{_sbindir}/munin-node-configure --shell --remove-also | grep -e 'groonga_' | sh
+%systemd_postun munin-node
 
 
 %files
