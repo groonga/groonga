@@ -122,7 +122,12 @@ jobs:
           Write-Output "FULL_INSTALL_FOLDER_WITH_VCRUNTIME=${FULL_INSTALL_FOLDER_WITH_VCRUNTIME}" | `
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-          $VC_PREFIX = "C:\Program Files (x86)\Microsoft Visual Studio\${{ matrix.vs-version }}\Enterprise\VC"
+          if ${{ matrix.vs-version }} -ge 2022 {
+            $VC_PREFIX = "C:\Program Files\Microsoft Visual Studio\${{ matrix.vs-version }}\Enterprise\VC"
+          }
+          else {
+            $VC_PREFIX = "C:\Program Files (x86)\Microsoft Visual Studio\${{ matrix.vs-version }}\Enterprise\VC"
+          }
           Write-Output "VC_PREFIX=${VC_PREFIX}" | `
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
