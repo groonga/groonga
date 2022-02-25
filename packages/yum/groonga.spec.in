@@ -99,28 +99,25 @@ Obsoletes:	%{name}-server < 2.0.7-0
 This package contains the Groonga GQTP server
 
 %package server-http
-Summary:	Groonga HTTP server (transitional)
+Summary:	Groonga HTTP server
 Group:		Applications/Text
 License:	LGPLv2
 Requires:	%{name}-server-common = %{version}-%{release}
 Requires:	curl
-Requires:	%{name}-httpd = %{version}-%{release}
 Requires(pre):	shadow-utils
 %systemd_requires
-Obsoletes:	%{name} < 1.2.2-0
-Obsoletes:	%{name}-server < 2.0.7-0
+Conflicts	%{name}-httpd
 
 %description server-http
-This is a transitional package to groonga-httpd.
+This package contains the Groonga HTTP server
 
 %package httpd
-Summary:	Groonga HTTP server
+Summary:	Groonga HTTP server based on nginx
 Group:		Applications/Text
 License:	LGPLv2 and BSD
 Requires:	%{name}-server-common = %{version}-%{release}
 %systemd_requires
-Provides:	%{name}-server-http = %{version}-%{release}
-Obsoletes:	%{name}-server-http <= 4.0.7-2
+Conflicts	%{name}-server-http
 
 %description httpd
 This package contains the Groonga HTTP server. It has
@@ -282,23 +279,23 @@ fi
 	/sbin/service munin-node restart > /dev/null 2>&1
 :
 
-%preun server-http
-%systemd_preun groonga-server-http.service
-
-%postun server-http
-%systemd_postun groonga-server-http.service
-
 %preun server-gqtp
 %systemd_preun groonga-server-gqtp.service
 
 %postun server-gqtp
 %systemd_postun groonga-server-gqtp.service
 
-%preun httpd
+%preun server-http
 %systemd_preun groonga-server-http.service
 
-%postun httpd
+%postun server-http
 %systemd_postun groonga-server-http.service
+
+%preun httpd
+%systemd_preun groonga-httpd.service
+
+%postun httpd
+%systemd_postun groonga-httpd.service
 
 %postun libs -p /sbin/ldconfig
 
