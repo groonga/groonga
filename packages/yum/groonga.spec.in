@@ -216,7 +216,7 @@ cat <<EOC > $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/groonga
 [groonga_*]
   user groonga
   group groonga
-  env.PATH ${_bindir}
+  env.PATH %{_bindir}
   env.database_path %{_localstatedir}/lib/groonga/db/db
   env.host 127.0.0.1
 
