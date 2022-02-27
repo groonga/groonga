@@ -3704,7 +3704,7 @@ grn_table_select(grn_ctx *ctx, grn_obj *table, grn_obj *expr,
 
 /* grn_expr_parse */
 
-grn_obj *
+static grn_obj *
 grn_ptr_value_at(grn_obj *obj, int offset)
 {
   int size = GRN_BULK_VSIZE(obj) / sizeof(grn_obj *);
@@ -3714,7 +3714,7 @@ grn_ptr_value_at(grn_obj *obj, int offset)
     : NULL;
 }
 
-int32_t
+static int32_t
 grn_int32_value_at(grn_obj *obj, int offset)
 {
   int size = GRN_BULK_VSIZE(obj) / sizeof(int32_t);
@@ -3724,7 +3724,7 @@ grn_int32_value_at(grn_obj *obj, int offset)
     : 0;
 }
 
-float
+static float
 grn_float32_value_at(grn_obj *obj, int offset)
 {
   int size = GRN_BULK_VSIZE(obj) / sizeof(float);
