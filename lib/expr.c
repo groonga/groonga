@@ -2119,33 +2119,8 @@ get_weight(grn_ctx *ctx, grn_expr_code *ec, uint32_t *offset)
 scan_info *
 grn_scan_info_open(grn_ctx *ctx, int start)
 {
-  scan_info *si = GRN_CALLOC(sizeof(scan_info));
-
-  if (!si) {
-    return NULL;
-  }
-
-  GRN_UINT32_INIT(&si->sections, GRN_OBJ_VECTOR);
-  GRN_FLOAT32_INIT(&si->weights, GRN_OBJ_VECTOR);
-  GRN_PTR_INIT(&si->index, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  si->query = NULL;
-  si->logical_op = GRN_OP_OR;
-  si->flags = SCAN_PUSH;
-  si->weight_factor = 1.0;
-  si->nargs = 0;
-  si->max_nargs = GRN_SCAN_INFO_INITIAL_MAX_N_ARGS;
-  si->args = si->initial_args;
-  si->max_interval = DEFAULT_MAX_INTERVAL;
-  si->additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;
-  si->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;
-  si->quorum_threshold = DEFAULT_QUORUM_THRESHOLD;
-  si->start = start;
-  GRN_PTR_INIT(&si->scorers, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  GRN_PTR_INIT(&si->scorer_args_exprs, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  GRN_UINT32_INIT(&si->scorer_args_expr_offsets, GRN_OBJ_VECTOR);
-  si->position.specified = GRN_FALSE;
-  si->position.start = 0;
-
+  scan_info *si;
+  SI_ALLOC_RAW(si, start);
   return si;
 }
 
