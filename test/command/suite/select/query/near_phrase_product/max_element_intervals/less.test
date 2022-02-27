@@ -1,0 +1,27 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "1 c x x a"},
+{"content": "1 3 x x a"},
+{"content": "2 c x x x b"},
+{"content": "2 3 x x x b"},
+{"content": "2 x x 3 x b"},
+{"content": "2 x x c x b"},
+{"content": "2 x 3 x a"},
+{"content": "2 x c x a"},
+{"content": "2 x 3 a"},
+{"content": "2 x c a"}
+]
+
+select \
+  --table Memos \
+  --match_columns content \
+  --query '*NPP-1,0,2"(a b) (1 2) (c 3)"' \
+  --output_columns _score,content

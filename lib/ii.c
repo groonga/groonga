@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -8786,6 +8786,8 @@ typedef struct {
   btr *bt;
   int max_interval;
   int additional_last_interval;
+  grn_obj *max_element_intervals;
+  btr *check_element_intervals_btree;
   int32_t pos;
   grn_id rid;
   uint32_t sid;
@@ -10539,6 +10541,7 @@ grn_ii_select_data_init(grn_ctx *ctx,
   data->n_phrases = 0;
 
   data->bt = NULL;
+  data->check_element_intervals_btree = NULL;
 
   data->rid = 0;
   data->sid = 0;
@@ -10671,18 +10674,44 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
   case GRN_OP_ORDERED_NEAR_PHRASE :
   case GRN_OP_NEAR_PHRASE_PRODUCT :
   case GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT :
-    data->bt = bt_open(ctx, data->n_token_infos);
-    if (!data->bt) {
-      char errbuf[GRN_CTX_MSGSIZE];
-      grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
-      ERR(ctx->rc,
-          "%s failed to allocate btree: %s",
-          tag,
-          errbuf);
-      return false;
+    {
+      size_t btree_size;
+      if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
+          data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
+        btree_size = data->n_phrase_groups;
+      } else {
+        btree_size = data->n_token_infos;
+      }
+      data->bt = bt_open(ctx, btree_size);
+      if (!data->bt) {
+        char errbuf[GRN_CTX_MSGSIZE];
+        grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
+        ERR(ctx->rc,
+            "%s failed to allocate btree: %s",
+            tag,
+            errbuf);
+        return false;
+      }
+      data->max_interval = data->optarg->max_interval;
+      data->additional_last_interval = data->optarg->additional_last_interval;
+      data->max_element_intervals = data->optarg->max_element_intervals;
+      if ((data->mode == GRN_OP_NEAR ||
+           data->mode == GRN_OP_NEAR_PHRASE ||
+           data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) &&
+          data->max_element_intervals &&
+          GRN_INT32_VECTOR_SIZE(data->max_element_intervals) > 0) {
+        data->check_element_intervals_btree = bt_open(ctx, btree_size);
+        if (!data->check_element_intervals_btree) {
+          char errbuf[GRN_CTX_MSGSIZE];
+          grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
+          ERR(ctx->rc,
+              "%s failed to allocate btree for checking element intervals: %s",
+              tag,
+              errbuf);
+          return false;
+        }
+      }
     }
-    data->max_interval = data->optarg->max_interval;
-    data->additional_last_interval = data->optarg->additional_last_interval;
     break;
   default :
     break;
@@ -10749,6 +10778,10 @@ grn_ii_select_data_fin(grn_ctx *ctx,
 
   if (data->bt) {
     bt_close(ctx, data->bt);
+  }
+
+  if (data->check_element_intervals_btree) {
+    bt_close(ctx, data->check_element_intervals_btree);
   }
 }
 
@@ -11330,6 +11363,87 @@ grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
 }
 
 grn_inline static bool
+grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
+                                                grn_ii_select_data *data)
+{
+  if (!data->max_element_intervals) {
+    return true;
+  }
+
+  uint32_t n_max_element_intervals =
+    GRN_INT32_VECTOR_SIZE(data->max_element_intervals);
+  if (n_max_element_intervals == 0) {
+    return true;
+  }
+
+  if (data->mode == GRN_OP_NEAR ||
+      data->mode == GRN_OP_NEAR_PHRASE ||
+      data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
+    uint32_t i;
+    uint32_t n = data->bt->n;
+    bt_zap(data->check_element_intervals_btree);
+    for (i = 0; i < n; i++) {
+      bt_push(data->check_element_intervals_btree,
+              data->bt->nodes[i].ti);
+    }
+    if (n > n_max_element_intervals + 1) {
+      n = n_max_element_intervals + 1;
+    }
+    int32_t previous_pos = data->check_element_intervals_btree->min->pos;
+    for (i = 1; i < n; i++) {
+      bt_pop(data->check_element_intervals_btree);
+      int32_t pos = data->check_element_intervals_btree->min->pos;
+      int32_t max_element_interval =
+        GRN_INT32_VALUE_AT(data->max_element_intervals, i - 1);
+      if (max_element_interval >= 0 &&
+          (pos - previous_pos) > max_element_interval) {
+        return false;
+      }
+      previous_pos = pos;
+    }
+    return true;
+  } else if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
+    uint32_t i;
+    uint32_t n = data->n_token_infos;
+    if (n > n_max_element_intervals + 1) {
+      n = n_max_element_intervals + 1;
+    }
+    int32_t previous_pos = data->token_infos[0]->pos;
+    for (i = 1; i < n; i++) {
+      int32_t pos = data->token_infos[i]->pos;
+      int32_t max_element_interval =
+        GRN_INT32_VALUE_AT(data->max_element_intervals, i - 1);
+      if (max_element_interval >= 0 &&
+          (pos - previous_pos) > max_element_interval) {
+        return false;
+      }
+      previous_pos = pos;
+    }
+    return true;
+  } else if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
+    uint32_t i;
+    uint32_t n = data->n_phrase_groups;
+    if (n > n_max_element_intervals + 1) {
+      n = n_max_element_intervals + 1;
+    }
+    int32_t previous_pos = data->phrase_groups[0].btree->min->pos;
+    for (i = 1; i < n; i++) {
+      int32_t pos = data->phrase_groups[i].btree->min->pos;
+      int32_t max_element_interval =
+        GRN_INT32_VALUE_AT(data->max_element_intervals, i - 1);
+      if (max_element_interval >= 0 &&
+          (pos - previous_pos) > max_element_interval) {
+        return false;
+      }
+      previous_pos = pos;
+    }
+    return true;
+  } else {
+    return false;
+  }
+}
+
+grn_inline static bool
 grn_ii_select_cursor_next_prepare(grn_ctx *ctx,
                                   grn_ii_select_cursor *cursor)
 {
@@ -11578,6 +11692,9 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
     } else {
       matched = ((data->max_interval < 0) ||
                  (interval <= data->max_interval));
+    }
+    if (matched) {
+      matched = grn_ii_select_data_check_near_element_intervals(ctx, data);
     }
     if (matched) {
       data->n_occurrences++;
@@ -12882,6 +12999,7 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
   case GRN_OP_NEAR_NO_OFFSET :
     select_optarg->mode = search_optarg->mode;
     select_optarg->max_interval = search_optarg->max_interval;
+    select_optarg->max_element_intervals = search_optarg->max_element_intervals;
     break;
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
@@ -12891,6 +13009,7 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
     select_optarg->max_interval = search_optarg->max_interval;
     select_optarg->additional_last_interval =
       search_optarg->additional_last_interval;
+    select_optarg->max_element_intervals = search_optarg->max_element_intervals;
     break;
   case GRN_OP_SIMILAR :
     select_optarg->mode = search_optarg->mode;

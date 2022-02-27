@@ -1,0 +1,26 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "a 2 3"},
+{"content": "a 2 c"},
+{"content": "a 2 x c"},
+{"content": "a x 2 3"},
+{"content": "a x 2 c"},
+{"content": "a x 2 x c"},
+{"content": "a x x 2 3"},
+{"content": "a x x 2 c"},
+{"content": "a x x 2 x c"}
+]
+
+select \
+  --table Memos \
+  --match_columns content \
+  --query '*ONP-1,0,2"a 2 c"' \
+  --output_columns _score,content

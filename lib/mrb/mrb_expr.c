@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -297,6 +297,53 @@ mrb_grn_scan_info_get_additional_last_interval(mrb_state *mrb, mrb_value self)
   si = DATA_PTR(self);
   additional_last_interval = grn_scan_info_get_additional_last_interval(si);
   return mrb_int_value(mrb, additional_last_interval);
+}
+
+static mrb_value
+mrb_grn_scan_info_set_max_element_intervals(mrb_state *mrb, mrb_value self)
+{
+  grn_ctx *ctx = (grn_ctx *)(mrb->ud);
+  scan_info *si = DATA_PTR(self);
+
+  mrb_value mrb_max_element_intervals;
+  mrb_get_args(mrb, "A", &mrb_max_element_intervals);
+
+  if (mrb_nil_p(mrb_max_element_intervals)) {
+    grn_scan_info_set_max_element_intervals(ctx, si, NULL);
+    return self;
+  }
+
+  grn_obj max_element_intervals;
+  GRN_INT32_INIT(&max_element_intervals, GRN_OBJ_VECTOR);
+  mrb_int n = RARRAY_LEN(mrb_max_element_intervals);
+  mrb_int i;
+  for (i = 0; i < n; i++) {
+    mrb_value mrb_max_element_interval =
+      RARRAY_PTR(mrb_max_element_intervals)[i];
+    mrb_int max_element_interval = mrb_integer(mrb_max_element_interval);
+    GRN_INT32_PUT(ctx, &max_element_intervals, max_element_interval);
+  }
+  grn_scan_info_set_max_element_intervals(ctx, si, &max_element_intervals);
+  GRN_OBJ_FIN(ctx, &max_element_intervals);
+
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_get_max_element_intervals(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si = DATA_PTR(self);
+  grn_obj *max_element_intervals = grn_scan_info_get_max_element_intervals(si);
+  size_t n = GRN_INT32_VECTOR_SIZE(max_element_intervals);
+  mrb_value mrb_max_element_intervals = mrb_ary_new_capa(mrb, n);
+  size_t i;
+  for (i = 0; i < n; i++) {
+    int32_t max_element_interval = GRN_INT32_VALUE_AT(max_element_intervals, i);
+    mrb_ary_push(mrb,
+                 mrb_max_element_intervals,
+                 mrb_int_value(mrb, max_element_interval));
+  }
+  return mrb_max_element_intervals;
 }
 
 static mrb_value
@@ -973,6 +1020,12 @@ grn_mrb_expr_init(grn_ctx *ctx)
                     MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "additional_last_interval=",
                     mrb_grn_scan_info_set_additional_last_interval,
+                    MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "max_element_intervals",
+                    mrb_grn_scan_info_get_max_element_intervals,
+                    MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "max_element_intervals=",
+                    mrb_grn_scan_info_set_max_element_intervals,
                     MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "similarity_threshold",
                     mrb_grn_scan_info_get_similarity_threshold, MRB_ARGS_NONE());

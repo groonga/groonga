@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -44,6 +44,7 @@ struct _grn_scan_info {
   grn_obj *initial_args[GRN_SCAN_INFO_INITIAL_MAX_N_ARGS];
   int max_interval;
   int additional_last_interval;
+  grn_obj max_element_intervals;
   int similarity_threshold;
   int quorum_threshold;
   grn_obj scorers;

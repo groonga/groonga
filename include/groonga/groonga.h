@@ -829,6 +829,7 @@ struct _grn_search_optarg {
   float *weight_vector_float;
   float weight_float;
   grn_obj *query_options;
+  grn_obj *max_element_intervals;
 };
 
 GRN_API grn_rc grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,

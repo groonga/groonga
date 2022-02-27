@@ -1,0 +1,57 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content": "2 3 a"},
+{"content": "2 c a"},
+{"content": "2 c x a"},
+{"content": "2 c x x a"},
+{"content": "2 x 3 a"},
+{"content": "2 x c a"},
+{"content": "2 x c x a"},
+{"content": "2 x c x x a"},
+{"content": "2 x x 3 a"},
+{"content": "2 x x c a"},
+{"content": "2 x x c x a"},
+{"content": "2 x x c x x a"}
+]
+[[0,0.0,0.0],12]
+select   --table Memos   --filter 'content *NP-1,0,2|1|0 "a 2 c"'   --output_columns _score,content
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "content",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "2 c a"
+      ],
+      [
+        1,
+        "2 x c a"
+      ]
+    ]
+  ]
+]

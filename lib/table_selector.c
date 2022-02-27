@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2010-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1575,6 +1575,9 @@ select_index(grn_ctx *ctx,
       options->match_info.flags = GRN_MATCH_INFO_GET_MIN_RECORD_ID;
       options->max_interval = si->max_interval;
       options->additional_last_interval = si->additional_last_interval;
+      if (GRN_INT32_VECTOR_SIZE(&(si->max_element_intervals)) > 0) {
+        options->max_element_intervals = &(si->max_element_intervals);
+      }
       options->similarity_threshold = si->similarity_threshold;
       options->quorum_threshold = si->quorum_threshold;
       options->query_options = table_selector->query_options;

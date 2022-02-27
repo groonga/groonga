@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -122,6 +122,10 @@ void grn_scan_info_set_max_interval(scan_info *si, int max_interval);
 int grn_scan_info_get_additional_last_interval(scan_info *si);
 void grn_scan_info_set_additional_last_interval(scan_info *si,
                                                 int additional_last_interval);
+grn_obj *grn_scan_info_get_max_element_intervals(scan_info *si);
+void grn_scan_info_set_max_element_intervals(grn_ctx *ctx,
+                                             scan_info *si,
+                                             grn_obj *max_element_intervals);
 int grn_scan_info_get_similarity_threshold(scan_info *si);
 void grn_scan_info_set_similarity_threshold(scan_info *si, int similarity_threshold);
 int grn_scan_info_get_quorum_threshold(scan_info *si);
