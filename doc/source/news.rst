@@ -5,6 +5,137 @@
 News
 ====
 
+.. _release-12-0-1:
+
+Release 12.0.1 - 2022-02-28
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`/reference/commands/query_expand`] Added a support for synonym group.
+
+  Until now, We had to each defined a keyword and synonyms of the keyword as below when we use the synonym search.
+
+  .. code-block::
+
+     table_create Thesaurus TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+     # [[0, 1337566253.89858, 0.000355720520019531], true]
+     column_create Thesaurus synonym COLUMN_VECTOR ShortText
+     # [[0, 1337566253.89858, 0.000355720520019531], true]
+     load --table Thesaurus
+     [
+     {"_key": "mroonga", "synonym": ["mroonga", "tritonn", "groonga mysql"]},
+     {"_key": "groonga", "synonym": ["groonga", "senna"]}
+     ]
+
+  In the above case, if we search ``mroonga``, Groonga search ``mroonga OR tritonn OR "groonga mysql"`` as we intended.
+  However, if we search ``tritonn``, Groonga search only ``tritonn``.
+  If we want to search ``tritonn OR mroonga OR "groonga mysql"`` even if we search ``tritonn``, we need had added a definition as below.
+
+  .. code-block::
+
+     load --table Thesaurus
+     [
+     {"_key": "tritonn", "synonym": ["tritonn", "mroonga", "groonga mysql"]},
+     ]
+
+  In many cases, if we expand ``mroonga`` to ``mroonga OR tritonn OR "groonga mysql"``, we feel we want to expand ``tritonn`` and ``"groonga mysql"`` to ``mroonga OR tritonn OR "groonga mysql"``.
+  However, until now, we had needed additional definitions in such a case.
+  Therefore, if target keywords for synonyms are many, we are troublesome to define synonyms.
+  Because we need to define many similar definitions.
+
+  In addition, when we remove synonyms, we are troublesome because we need to execute remove against many records.
+
+  We can make a group by deciding on a representative synonym record since this release.
+  For example, the all following keywords are the "mroonga" group.
+
+  .. code-block::
+
+     load --table Synonyms
+     [
+       {"_key": "mroonga": "representative": "mroonga"}
+     ]
+
+     load --table Synonyms
+     [
+       {"_key": "tritonn": "representative": "mroonga"},
+       {"_key": "groonga mysql": "representative": "mroonga"}
+     ]
+
+  In this case, ``mroonga`` is expanded to ``mroonga OR tritonn OR "groonga mysql"``.
+  In addition, ``tritonn`` and ``"groonga mysql"`` are also expanded to ``mroonga OR tritonn OR "groonga mysql"``.
+
+  When we want to remove synonyms, we execute just remove against a target record.
+  For example, if we want to remove ``"groonga mysql"`` from synonyms, we just remove ``{"_key": "groonga mysql": "representative": "mroonga"}``.
+
+* [:doc:`/reference/commands/query_expand`] Added a support for text vector and index.
+
+  We can use text vector in a synonym group as below.
+
+  .. code-block::
+
+    table_create SynonymGroups TABLE_NO_KEY
+    [[0,0.0,0.0],true]
+    column_create SynonymGroups synonyms COLUMN_VECTOR ShortText
+    [[0,0.0,0.0],true]
+    table_create Synonyms TABLE_PAT_KEY ShortText
+    [[0,0.0,0.0],true]
+    column_create Synonyms group COLUMN_INDEX SynonymGroups synonyms
+    [[0,0.0,0.0],true]
+    load --table SynonymGroups
+    [
+    ["synonyms"],
+    [["rroonga", "Ruby groonga"]],
+    [["groonga", "rroonga", "mroonga"]]
+    ]
+    [[0,0.0,0.0],2]
+    query_expand Synonyms.group "rroonga"
+    [
+      [
+        0,
+        0.0,
+        0.0
+      ],
+      "((rroonga) OR (Ruby groonga) OR (groonga) OR (rroonga) OR (mroonga))"
+    ]
+
+* Added support for disabling a backtrace by the environment variable.
+
+  We can disable output a backtrace by using ``GRN_BACK_TRACE_ENABLE``.
+  If we set ``GRN_BACK_TRACE_ENABLE=no``, Groonga doesn't output a backtrace.
+
+  Groonga output backtrace to a stack area. Therefore, Groonga may crash because Groonga uses up stack area depending on the OS.
+  In such cases, we can avoid crashes by using ``GRN_BACK_TRACE_ENABLE=no``.
+
+* [:doc:`reference/commands/select`] Improved performance for ``--slices``.
+
+* [Windows] Added support for Visual Studio 2022.
+
+* [:doc:`reference/commands/select`] Added support for specifing max intervals for each elements in near search.
+
+  For example, we can specify max intervals for each phrase in a near phrase search.
+  We make documentation for this feature in the future. Therefore, we will make more details later.   
+
+* [:doc:`reference/executables/groonga-server-http`] We could use ``groonga-server-http`` even if Groonga of RPM packages.
+
+Fixes
+^^^^^
+
+* [Windows] Fixed a crash bug when Groonga output backtrace.
+
+Known Issues
+------------
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
+
 .. _release-12-0-0:
 
 Release 12.0.0 - 2022-02-09
