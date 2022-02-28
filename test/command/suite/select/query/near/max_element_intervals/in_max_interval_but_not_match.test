@@ -1,0 +1,14 @@
+table_create NearTokens TABLE_NO_KEY
+column_create NearTokens content COLUMN_SCALAR ShortText
+table_create NearTokenTerms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC130
+column_create NearTokenTerms near_tokens_content COLUMN_INDEX|WITH_POSITION \
+  NearTokens content
+load --table NearTokens
+[
+{"content": "a 1 b 2 c"},
+{"content": "a 1 b 2 3 c"}
+]
+
+select NearTokens --match_columns content --query '*N5,1|1"a b c"'

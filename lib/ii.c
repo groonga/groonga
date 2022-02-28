@@ -11735,6 +11735,9 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
         }
       } else {
         int32_t next_pos = max - data->max_interval;
+        if (next_pos <= min) {
+          next_pos = min + 1;
+        }
         if (!grn_ii_select_skip_pos(ctx, data, next_pos)) {
           break;
         }

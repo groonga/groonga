@@ -1,0 +1,43 @@
+table_create NearTokens TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create NearTokens content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create NearTokenTerms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC130
+[[0,0.0,0.0],true]
+column_create NearTokenTerms near_tokens_content COLUMN_INDEX|WITH_POSITION   NearTokens content
+[[0,0.0,0.0],true]
+load --table NearTokens
+[
+{"content": "a 1 b 2 c"},
+{"content": "a 1 b 2 3 c"}
+]
+[[0,0.0,0.0],2]
+select NearTokens --filter 'content *N5,1|1 "a b c"'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "a 1 b 2 c"
+      ]
+    ]
+  ]
+]
