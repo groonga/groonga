@@ -513,12 +513,17 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/vector_size/usage_only.log \
 	$(top_srcdir)/doc/source/example/reference/functions/vector_size/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/vector_size/usage_setup_schema.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_product_search_max_element_intervals.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_product_search_options.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_product_search_simple.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_search_additional_last_interval_negative.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_search_additional_last_interval_positive.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_search_max_element_intervals.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_search_max_interval.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_phrase_search_search.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_search_max_element_intervals.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_search_max_element_intervals_extra.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_search_max_element_intervals_omit.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_search_max_interval.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_search_search.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/query_syntax/near_search_word.log \
@@ -546,6 +551,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/near_phrase_search_operator_additional_last_interval_negative.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/near_phrase_search_operator_additional_last_interval_positive.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/near_phrase_search_operator_max_interval.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/near_search_operator_max_element_intervals.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/near_search_operator_max_element_intervals_extra.log \
+	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/near_search_operator_max_element_intervals_omit.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_addition_assignment_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_addition_operator.log \
 	$(top_srcdir)/doc/source/example/reference/grn_expr/script_syntax/simple_and_assignment_operator.log \
@@ -1710,12 +1718,17 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/vector_size/usage_only.log \
 	source/example/reference/functions/vector_size/usage_setup_data.log \
 	source/example/reference/functions/vector_size/usage_setup_schema.log \
+	source/example/reference/grn_expr/query_syntax/near_phrase_product_search_max_element_intervals.log \
 	source/example/reference/grn_expr/query_syntax/near_phrase_product_search_options.log \
 	source/example/reference/grn_expr/query_syntax/near_phrase_product_search_simple.log \
 	source/example/reference/grn_expr/query_syntax/near_phrase_search_additional_last_interval_negative.log \
 	source/example/reference/grn_expr/query_syntax/near_phrase_search_additional_last_interval_positive.log \
+	source/example/reference/grn_expr/query_syntax/near_phrase_search_max_element_intervals.log \
 	source/example/reference/grn_expr/query_syntax/near_phrase_search_max_interval.log \
 	source/example/reference/grn_expr/query_syntax/near_phrase_search_search.log \
+	source/example/reference/grn_expr/query_syntax/near_search_max_element_intervals.log \
+	source/example/reference/grn_expr/query_syntax/near_search_max_element_intervals_extra.log \
+	source/example/reference/grn_expr/query_syntax/near_search_max_element_intervals_omit.log \
 	source/example/reference/grn_expr/query_syntax/near_search_max_interval.log \
 	source/example/reference/grn_expr/query_syntax/near_search_search.log \
 	source/example/reference/grn_expr/query_syntax/near_search_word.log \
@@ -1743,6 +1756,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/grn_expr/script_syntax/near_phrase_search_operator_additional_last_interval_negative.log \
 	source/example/reference/grn_expr/script_syntax/near_phrase_search_operator_additional_last_interval_positive.log \
 	source/example/reference/grn_expr/script_syntax/near_phrase_search_operator_max_interval.log \
+	source/example/reference/grn_expr/script_syntax/near_search_operator_max_element_intervals.log \
+	source/example/reference/grn_expr/script_syntax/near_search_operator_max_element_intervals_extra.log \
+	source/example/reference/grn_expr/script_syntax/near_search_operator_max_element_intervals_omit.log \
 	source/example/reference/grn_expr/script_syntax/simple_addition_assignment_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_addition_operator.log \
 	source/example/reference/grn_expr/script_syntax/simple_and_assignment_operator.log \

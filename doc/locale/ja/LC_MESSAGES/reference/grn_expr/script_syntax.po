@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"PO-Revision-Date: 2022-02-28 18:15+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -1227,6 +1227,28 @@ msgstr ""
 "2つめの例は近いと判断する最大距離として ``-1`` を使うという意味です。 ``-1`` "
 "はどれだけ離れていてもよいという意味です。"
 
+msgid "Here are examples of the third form::"
+msgstr "3つめの形式の例は次の通りです。"
+
+msgid ""
+"The first example means that ``2`` is used for the max interval of the first "
+"interval and ``3`` is used for the max interval of the second interval."
+msgstr ""
+"最初の例は最初のトークン間の最大距離として ``2`` を使い、2番目のトークン間の"
+"最大距離として ``3`` を使うという意味です。"
+
+msgid ""
+"The second example means that ``2`` is used for the first max interval of "
+"the first interval and ``-1`` is used for the max interval of the second "
+"interval. Because the omitted max interval is treated as ``-1``."
+msgstr ""
+"2番目の例は最初のトークン間の最大距離として ``2`` を使い、2番目のトークン間の"
+"最大距離として ``-1`` を使うという意味です。なぜなら省略された最大距離は "
+"``-1`` として処理されるからです。"
+
+msgid "The max intervals of each token (word) are described later."
+msgstr "トークン（単語）間の最大距離は後で説明します。"
+
 msgid ""
 "The operator does near search with words ``word1 word2 ...``. Near search "
 "searches records that contain the words and the words are appeared in the "
@@ -1301,6 +1323,58 @@ msgstr ""
 "mroonga. It's also very fast! Really fast!`` にマッチします。 ``also`` と "
 "``Really`` の間の単語数は10です。"
 
+msgid ""
+"You can specify the max intervals of each token. The default is no limit. It "
+"means that all intervals of each token are valid as long as the max interval "
+"is satisfied."
+msgstr ""
+"各トークン間の最大距離を指定することができます。デフォルトでは制限はありませ"
+"ん。これは全体の最大距離が満たされていれば各トークン間の距離は問わないという"
+"ことです。"
+
+msgid ""
+"Here is an example that use ``2`` for the max interval of the first interval "
+"and ``4`` for the max interval of the second interval::"
+msgstr ""
+"以下は最初のトークン間の最大距離として ``2`` を使い、2番目のトークン間の最大"
+"距離として ``4`` を使う例です。::"
+
+msgid "``10`` is the max interval."
+msgstr "``10`` は最大距離です。"
+
+msgid "``|`` is the separator of the max intervals of each token."
+msgstr "トークン間の最大距離は ``|`` で区切ります。"
+
+msgid ""
+"This matches ``a x b x x x c``. But this doesn't match ``a x x b c``, ``a b "
+"x x x x c`` and so on because the former has ``3`` interval for the first "
+"interval that is larger than ``2`` and the latter has ``5`` interval for the "
+"second interval that is later than ``4``."
+msgstr ""
+"これは ``a x b x x x c`` にマッチします。しかし、これは ``a x x b c`` や ``a "
+"b x x x x c`` にはマッチしません。なぜなら、前者は最初のトークン間の距離が "
+"``3`` で ``2`` より大きいからです。後者は2番目のトークン間の距離が ``5`` で "
+"``4`` より大きいからです。"
+
+msgid "Here is an example that specifies the max intervals of each token:"
+msgstr "以下は各トークン間の最大距離を指定する例です。"
+
+msgid ""
+"You can omit one or more intervals. Omitted intervals are treated as ``-1``. "
+"It means that ``*N11,5`` equals ``*N11,5|-1``. ``-1`` means that no limit."
+msgstr ""
+"1つ以上のトークン間の最大距離を省略することができます。省略されたトークン間の"
+"最大距離は ``-1`` として扱われます。これは ``*N11,5`` と ``*N11,5|-1`` は等し"
+"いということです。 ``-1`` は最大距離の制限がないという意味です。"
+
+msgid "Here is an example that omits an interval:"
+msgstr "以下は1つのトークン間の最大距離を省略する例です。"
+
+msgid "You can specify extra intervals. They are just ignored:"
+msgstr ""
+"トークン間の最大距離を余分に指定することもできます。余分な最大距離は単に無視"
+"されます。"
+
 msgid "Near phrase search operator"
 msgstr "近傍フレーズ検索演算子"
 
@@ -1313,9 +1387,6 @@ msgstr "2つめの例は近いと判断する最大距離として ``-1`` を使
 msgid "The max interval is described later."
 msgstr "最大距離は後で説明します。"
 
-msgid "Here are examples of the third form::"
-msgstr "3つめの形式の例は次の通りです。"
-
 msgid ""
 "The first example means that ``29`` is used for the additional last interval."
 msgstr "最初の例は最後の追加距離として ``29`` を使うという意味です。"
@@ -1327,6 +1398,16 @@ msgstr "2つめの例は最後の追加距離として ``-1`` を使うという
 
 msgid "The additional last interval is described later."
 msgstr "最後の追加距離は後で説明します。"
+
+msgid "Here are examples of the forth form::"
+msgstr "4つめの形式の例は次の通りです。"
+
+msgid ""
+"See :ref:`script-syntax-near-phrase-search-operator` for the max intervals "
+"of each phrase."
+msgstr ""
+"各フレーズ間の最大距離については :ref:`script-syntax-near-phrase-search-"
+"operator` を参照してください。"
 
 msgid ""
 "The operator does near phrase search with phrases ``phrase1 phrase2 ...``. "

@@ -1,0 +1,74 @@
+Execution example::
+
+  select Entries --filter 'content *N11,5|3 "first welcome post"'
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "The first post!", 
+  #         "Welcome! This is my first post!", 
+  #         5
+  #       ]
+  #     ]
+  #   ]
+  # ]
+  select Entries --filter 'content *N11,4|3 "first welcome post"'
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         0
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "content", 
+  #           "Text"
+  #         ], 
+  #         [
+  #           "n_likes", 
+  #           "UInt32"
+  #         ]
+  #       ]
+  #     ]
+  #   ]
+  # ]

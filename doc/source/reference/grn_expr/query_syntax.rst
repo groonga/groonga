@@ -357,10 +357,10 @@ doesn't match ``a 1 2 3 4 5 b 6 7 8 9 10 11 c``:
 .. include:: ../../example/reference/grn_expr/query_syntax/near_search_search.log
 .. table_create NearTokens TABLE_NO_KEY
 .. column_create NearTokens content COLUMN_SCALAR ShortText
-.. table_create NearTokensTerms TABLE_PAT_KEY ShortText \
+.. table_create NearTokenTerms TABLE_PAT_KEY ShortText \
 ..   --default_tokenizer TokenNgram \
 ..   --normalizer NormalizerNFKC130
-.. column_create NearTokensTerms index COLUMN_INDEX|WITH_POSITION \
+.. column_create NearTokenTerms index COLUMN_INDEX|WITH_POSITION \
 ..   NearTokens content
 .. load --table NearTokens
 .. [
@@ -405,6 +405,49 @@ Because ``*N"a1b2c3d"`` equals to ``*N"a 1 b 2 c 3 d"``.
 
 If you want to specify words,
 :ref:`query-syntax-near-phrase-search-condition` is what you want.
+
+You can specify the max intervals of each token. The default is no
+limit. It means that all intervals of each token are valid as long as
+the max interval is satisfied.
+
+Here is an example that use ``2`` for the max interval of the first
+interval and ``4`` for the max interval of the second interval::
+
+    *N10,2|4"a b c"
+
+``10`` is the max interval.
+
+``|`` is the separator of the max intervals of each token.
+
+This matches ``a x b x x x c``. But this doesn't match ``a x x b c``,
+``a b x x x x c`` and so on because the former has ``3`` interval for
+the first interval that is larger than ``2`` and the latter has ``5``
+interval for the second interval that is later than ``4``.
+
+Here is an example that specifies the max intervals of each token:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_search_max_element_intervals.log
+.. select NearTokens --match_columns content --query '*N11,5|5"a b c"'
+.. select NearTokens --match_columns content --query '*N11,5|6"a b c"'
+
+You can omit one or more intervals. Omitted intervals are treated as
+``-1``. It means that ``*N11,5`` equals ``*N11,5|-1``. ``-1`` means
+that no limit.
+
+Here is an example that omits an interval:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_search_max_element_intervals_omit.log
+.. select NearTokens --match_columns content --query '*N11,5"a b c"'
+.. select NearTokens --match_columns content --query '*N11,5|-1"a b c"'
+
+You can specify extra intervals. They are just ignored:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_search_max_element_intervals_extra.log
+.. select NearTokens --match_columns content --query '*N11,5|5|1|1|1"a b c"'
+.. select NearTokens --match_columns content --query '*N11,5|5"a b c"'
 
 .. _query-syntax-near-phrase-search-condition:
 
@@ -501,6 +544,16 @@ Here is an example to use positive number as the additional last interval:
 .. include:: ../../example/reference/grn_expr/query_syntax/near_phrase_search_additional_last_interval_positive.log
 .. select NearTokens --match_columns content --query '*NP2,4"x y .$"'
 
+You can also specify the max intervals of each phrase like
+:ref:`query-syntax-near-search-condition`.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_phrase_search_max_element_intervals.log
+.. select NearTokens --match_columns content --query '*NP11,0,5|5"a b c"'
+.. select NearTokens --match_columns content --query '*NP11,0,5|6"a b c"'
+
 .. _query-syntax-near-phrase-product-search-condition:
 
 Near phrase product search condition
@@ -540,6 +593,16 @@ interval.
 .. include:: ../../example/reference/grn_expr/query_syntax/near_phrase_product_search_options.log
 .. select NearTokens --match_columns content --query '*NPP2,-1"(a x) (b c y) (d$ .$)"'
 
+You can also specify the max intervals of each phrase like
+:ref:`query-syntax-near-search-condition`.
+
+Here is an example:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/query_syntax/near_phrase_product_search_max_element_intervals.log
+.. select NearTokens --match_columns content --query '*NPP11,0,5|5"(a x) (b y) (c z)"'
+.. select NearTokens --match_columns content --query '*NPP11,0,5|6"(a x) (b y) (c z)"'
+
 This is more effective than multiple
 :ref:`query-syntax-near-phrase-search-condition` .
 
@@ -572,6 +635,9 @@ interval and the additional last interval. But you don't need to
 specify ``$`` for the last phrase because the last phrase in query is
 the last phrase.
 
+You can also specify the max intervals of each phrase like
+:ref:`query-syntax-near-search-condition`.
+
 .. _query-syntax-ordered-near-phrase-product-search-condition:
 
 Ordered near phrase product search condition
@@ -603,6 +669,9 @@ You can use the all features of
 interval and the additional last interval. But you don't need to
 specify ``$`` for the last phrase because the last phrase in query is
 the last phrase.
+
+You can also specify the max intervals of each phrase like
+:ref:`query-syntax-near-search-condition`.
 
 .. _query-syntax-similar-search-condition:
 

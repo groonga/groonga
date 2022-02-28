@@ -4,11 +4,11 @@ Execution example::
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   column_create NearTokens content COLUMN_SCALAR ShortText
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  table_create NearTokensTerms TABLE_PAT_KEY ShortText \
+  table_create NearTokenTerms TABLE_PAT_KEY ShortText \
     --default_tokenizer TokenNgram \
     --normalizer NormalizerNFKC130
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  column_create NearTokensTerms index COLUMN_INDEX|WITH_POSITION \
+  column_create NearTokenTerms index COLUMN_INDEX|WITH_POSITION \
     NearTokens content
   # [[0, 1337566253.89858, 0.000355720520019531], true]
   load --table NearTokens

@@ -980,6 +980,7 @@ Its syntax is one of them::
 
   column *N "word1 word2 ..."
   column *N${MAX_INTERVAL} "word1 word2 ..."
+  column *N${MAX_INTERVAL},${MAX_TOKEN_INTERVAL_1}|${MAX_TOKEN_INTERVAL_2}|... "word1 word2 ..."
 
 Here are the examples of the second form::
 
@@ -990,6 +991,22 @@ The first example means that ``29`` is used for the max interval.
 
 The second example means that ``-1`` is used for the max interval.
 ``-1`` max interval means no limit.
+
+Here are examples of the third form::
+
+  column *N10,2|3 "word1 word2 word3"
+  column *N10,2 "word1 word2 word3"
+
+The first example means that ``2`` is used for the max interval of the
+first interval and ``3`` is used for the max interval of the second
+interval.
+
+The second example means that ``2`` is used for the first max interval
+of the first interval and ``-1`` is used for the max interval of the
+second interval. Because the omitted max interval is treated as
+``-1``.
+
+The max intervals of each token (word) are described later.
 
 The operator does near search with words ``word1 word2 ...``. Near
 search searches records that contain the words and the words are
@@ -1035,6 +1052,49 @@ the record that its content is ``I also st arted to use mroonga. It's
 also very fast! Really fast!`` is matched. The number of words between
 ``also`` and ``Really`` is 10.
 
+You can specify the max intervals of each token. The default is no
+limit. It means that all intervals of each token are valid as long as
+the max interval is satisfied.
+
+Here is an example that use ``2`` for the max interval of the first
+interval and ``4`` for the max interval of the second interval::
+
+    content *N10,2|4 "a b c"
+
+``10`` is the max interval.
+
+``|`` is the separator of the max intervals of each token.
+
+This matches ``a x b x x x c``. But this doesn't match ``a x x b c``,
+``a b x x x x c`` and so on because the former has ``3`` interval for
+the first interval that is larger than ``2`` and the latter has ``5``
+interval for the second interval that is later than ``4``.
+
+Here is an example that specifies the max intervals of each token:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/near_search_operator_max_element_intervals.log
+.. select Entries --filter 'content *N11,5|3 "first welcome post"'
+.. select Entries --filter 'content *N11,4|3 "first welcome post"'
+
+You can omit one or more intervals. Omitted intervals are treated as
+``-1``. It means that ``*N11,5`` equals ``*N11,5|-1``. ``-1`` means
+that no limit.
+
+Here is an example that omits an interval:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/near_search_operator_max_element_intervals_omit.log
+.. select Entries --filter 'content *N11,5 "first welcome post"'
+.. select Entries --filter 'content *N11,5|-1 "first welcome post"'
+
+You can specify extra intervals. They are just ignored:
+
+.. groonga-command
+.. include:: ../../example/reference/grn_expr/script_syntax/near_search_operator_max_element_intervals_extra.log
+.. select Entries --filter 'content *N11,5|6|1|2|3 "first welcome post"'
+.. select Entries --filter 'content *N11,5|6 "first welcome post"'
+
 .. _script-syntax-near-phrase-search-operator:
 
 Near phrase search operator
@@ -1045,6 +1105,7 @@ Its syntax is one of them::
   column *NP "phrase1 phrase2 ..."
   column *NP${MAX_INTERVAL} "phrase1 phrase2 ..."
   column *NP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL} "phrase1 phrase2 ..."
+  column *NP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL},${MAX_PHRASE_INTERVAL_1}|${MAX_PHRASE_INTERVAL_2}|... "phrase1 phrase2 ..."
 
 Here are examples of the second form::
 
@@ -1069,6 +1130,23 @@ The second example means that ``-1`` is used for the additional last
 interval.
 
 The additional last interval is described later.
+
+Here are examples of the forth form::
+
+  column *NP10,0,2|3 "phrase1 phrase2 phrase3"
+  column *NP10,0,2 "phrase1 phrase2 phrase3"
+
+The first example means that ``2`` is used for the max interval of the
+first interval and ``3`` is used for the max interval of the second
+interval.
+
+The second example means that ``2`` is used for the first max interval
+of the first interval and ``-1`` is used for the max interval of the
+second interval. Because the omitted max interval is treated as
+``-1``.
+
+See :ref:`script-syntax-near-phrase-search-operator` for the max
+intervals of each phrase.
 
 The operator does near phrase search with phrases ``phrase1 phrase2
 ...``. Near phrase search searches records that contain the phrases
@@ -1187,6 +1265,7 @@ Its syntax is one of them::
   column *NPP "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
   column *NPP${MAX_INTERVAL} "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
   column *NPP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL} "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+  column *NPP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL},${MAX_PHRASE_INTERVAL_1}|${MAX_PHRASE_INTERVAL_2}|... "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
 
 Here are examples of the second form::
 
@@ -1207,6 +1286,23 @@ interval.
 
 The second example means that ``-1`` is used for the additional last
 interval.
+
+Here are examples of the forth form::
+
+  column *NPP10,0,2|3 "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) (phrase3-1 phrase3-2 ...)"
+  column *NPP10,0,2 "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) (phrase3-1 phrase3-2 ...)"
+
+The first example means that ``2`` is used for the max interval of the
+first interval and ``3`` is used for the max interval of the second
+interval.
+
+The second example means that ``2`` is used for the first max interval
+of the first interval and ``-1`` is used for the max interval of the
+second interval. Because the omitted max interval is treated as
+``-1``.
+
+See :ref:`script-syntax-near-phrase-search-operator` for the max
+intervals of each phrase.
 
 This operator does multiple
 :ref:`script-syntax-near-phrase-search-operator`. Phrases for each
@@ -1255,6 +1351,7 @@ Its syntax is one of them::
   column *ONP "phrase1 phrase2 ..."
   column *ONP${MAX_INTERVAL} "phrase1 phrase2 ..."
   column *ONP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL} "phrase1 phrase2 ..."
+  column *ONP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL},${MAX_PHRASE_INTERVAL_1}|${MAX_PHRASE_INTERVAL_2}|... "phrase1 phrase2 ..."
 
 Here are examples of the second form::
 
@@ -1275,6 +1372,23 @@ interval.
 
 The second example means that ``-1`` is used for the additional last
 interval.
+
+Here are examples of the forth form::
+
+  column *ONP10,0,2|3 "phrase1 phrase2 phrase3"
+  column *ONP10,0,2 "phrase1 phrase2 phrase3"
+
+The first example means that ``2`` is used for the max interval of the
+first interval and ``3`` is used for the max interval of the second
+interval.
+
+The second example means that ``2`` is used for the first max interval
+of the first interval and ``-1`` is used for the max interval of the
+second interval. Because the omitted max interval is treated as
+``-1``.
+
+See :ref:`script-syntax-near-phrase-search-operator` for the max
+intervals of each phrase.
 
 This operator does ordered near phrase search with ``phrase1``,
 ``phrase2`` and ``...``. Ordered near phrase search is similar to
@@ -1313,6 +1427,7 @@ Its syntax is one of them::
   column *ONPP "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
   column *ONPP${MAX_INTERVAL} "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
   column *ONPP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL} "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+  column *ONPP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL},${MAX_PHRASE_INTERVAL_1}|${MAX_PHRASE_INTERVAL_2}|... "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
 
 Here are examples of the second form::
 
@@ -1333,6 +1448,23 @@ interval.
 
 The second example means that ``-1`` is used for the additional last
 interval.
+
+Here are examples of the forth form::
+
+  column *ONPP10,0,2|3 "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) (phrase3-1 phrase3-2 ...)"
+  column *ONPP10,0,2 "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) (phrase3-1 phrase3-2 ...)"
+
+The first example means that ``2`` is used for the max interval of the
+first interval and ``3`` is used for the max interval of the second
+interval.
+
+The second example means that ``2`` is used for the first max interval
+of the first interval and ``-1`` is used for the max interval of the
+second interval. Because the omitted max interval is treated as
+``-1``.
+
+See :ref:`script-syntax-near-phrase-search-operator` for the max
+intervals of each phrase.
 
 This operator does ordered near phrase product search. Ordered near
 phrase product search is similar to
