@@ -406,6 +406,9 @@ Because ``*N"a1b2c3d"`` equals to ``*N"a 1 b 2 c 3 d"``.
 If you want to specify words,
 :ref:`query-syntax-near-phrase-search-condition` is what you want.
 
+.. versionadded:: 12.0.1
+   The max intervals of each token.
+
 You can specify the max intervals of each token. The default is no
 limit. It means that all intervals of each token are valid as long as
 the max interval is satisfied.
@@ -544,6 +547,9 @@ Here is an example to use positive number as the additional last interval:
 .. include:: ../../example/reference/grn_expr/query_syntax/near_phrase_search_additional_last_interval_positive.log
 .. select NearTokens --match_columns content --query '*NP2,4"x y .$"'
 
+.. versionadded:: 12.0.1
+   The max intervals of each phrase.
+
 You can also specify the max intervals of each phrase like
 :ref:`query-syntax-near-search-condition`.
 
@@ -593,6 +599,9 @@ interval.
 .. include:: ../../example/reference/grn_expr/query_syntax/near_phrase_product_search_options.log
 .. select NearTokens --match_columns content --query '*NPP2,-1"(a x) (b c y) (d$ .$)"'
 
+.. versionadded:: 12.0.1
+   The max intervals of each phrase.
+
 You can also specify the max intervals of each phrase like
 :ref:`query-syntax-near-search-condition`.
 
@@ -635,6 +644,9 @@ interval and the additional last interval. But you don't need to
 specify ``$`` for the last phrase because the last phrase in query is
 the last phrase.
 
+.. versionadded:: 12.0.1
+   The max intervals of each phrase.
+
 You can also specify the max intervals of each phrase like
 :ref:`query-syntax-near-search-condition`.
 
@@ -669,6 +681,9 @@ You can use the all features of
 interval and the additional last interval. But you don't need to
 specify ``$`` for the last phrase because the last phrase in query is
 the last phrase.
+
+.. versionadded:: 12.0.1
+   The max intervals of each phrase.
 
 You can also specify the max intervals of each phrase like
 :ref:`query-syntax-near-search-condition`.

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-28 18:15+0900\n"
+"PO-Revision-Date: 2022-02-28 18:31+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -1323,6 +1323,9 @@ msgstr ""
 "mroonga. It's also very fast! Really fast!`` にマッチします。 ``also`` と "
 "``Really`` の間の単語数は10です。"
 
+msgid "The max intervals of each token."
+msgstr "各トークン間の最大距離。"
+
 msgid ""
 "You can specify the max intervals of each token. The default is no limit. It "
 "means that all intervals of each token are valid as long as the max interval "
@@ -1398,6 +1401,9 @@ msgstr "2つめの例は最後の追加距離として ``-1`` を使うという
 
 msgid "The additional last interval is described later."
 msgstr "最後の追加距離は後で説明します。"
+
+msgid "The max intervals of each phrase."
+msgstr "各フレーズ間の最大距離。"
 
 msgid "Here are examples of the forth form::"
 msgstr "4つめの形式の例は次の通りです。"

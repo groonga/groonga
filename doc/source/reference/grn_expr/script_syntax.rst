@@ -1052,6 +1052,9 @@ the record that its content is ``I also st arted to use mroonga. It's
 also very fast! Really fast!`` is matched. The number of words between
 ``also`` and ``Really`` is 10.
 
+.. versionadded:: 12.0.1
+   The max intervals of each token.
+
 You can specify the max intervals of each token. The default is no
 limit. It means that all intervals of each token are valid as long as
 the max interval is satisfied.
@@ -1130,6 +1133,9 @@ The second example means that ``-1`` is used for the additional last
 interval.
 
 The additional last interval is described later.
+
+.. versionadded:: 12.0.1
+   The max intervals of each phrase.
 
 Here are examples of the forth form::
 
@@ -1287,6 +1293,9 @@ interval.
 The second example means that ``-1`` is used for the additional last
 interval.
 
+.. versionadded:: 12.0.1
+   The max intervals of each phrase.
+
 Here are examples of the forth form::
 
   column *NPP10,0,2|3 "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) (phrase3-1 phrase3-2 ...)"
@@ -1373,6 +1382,9 @@ interval.
 The second example means that ``-1`` is used for the additional last
 interval.
 
+.. versionadded:: 12.0.1
+   The max intervals of each phrase.
+
 Here are examples of the forth form::
 
   column *ONP10,0,2|3 "phrase1 phrase2 phrase3"
@@ -1448,6 +1460,9 @@ interval.
 
 The second example means that ``-1`` is used for the additional last
 interval.
+
+.. versionadded:: 12.0.1
+   The max intervals of each phrase.
 
 Here are examples of the forth form::
 
