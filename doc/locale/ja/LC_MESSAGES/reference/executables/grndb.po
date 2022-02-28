@@ -1,0 +1,443 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "``grndb``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``grndb`` manages a Groonga database."
+msgstr "``grndb`` はGroongaのデータベースを管理します。"
+
+msgid "Here are features:"
+msgstr "機能は次の通りです。"
+
+msgid "Checks whether database is broken or not."
+msgstr "データベースが壊れているかどうかをチェックする。"
+
+msgid "Recovers broken database automatically if the database is recoverable."
+msgstr "壊れたデータベースが復旧可能なら自動でデータベースを復旧する。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``grndb`` requires command and database path::"
+msgstr "``grndb`` にはコマンドとデータベースのパスを渡します。::"
+
+msgid "Here are available commands:"
+msgstr "利用可能なコマンドは以下の通りです。"
+
+msgid "``check`` - Checks whether database is broken or not."
+msgstr "``check`` - データベースが壊れているかどうかをチェックします。"
+
+msgid "``recover`` - Recovers database."
+msgstr "``recover`` - データベースを復旧します。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"Here is an example to check the database at ``/var/lib/groonga/db/db``::"
+msgstr ""
+"以下は ``/var/lib/groonga/db/db`` にあるデータベースをチェックする例です::"
+
+msgid ""
+"Here is an example to recover the database at ``/var/lib/groonga/db/db``::"
+msgstr "以下は ``/var/lib/groonga/db/db`` にあるデータベースを復旧する例です::"
+
+msgid "Commands"
+msgstr "コマンド一覧"
+
+msgid "This section describes available commands."
+msgstr "このセクションでは利用可能なコマンドについて説明します。"
+
+msgid "``check``"
+msgstr ""
+
+msgid ""
+"It checks an existing Groonga database. If the database is broken, ``grndb`` "
+"reports reasons and exits with non-``0`` exit status."
+msgstr ""
+"既存のGroongaデータベースをチェックします。もし、データベースが壊れていたら "
+"``grndb`` は詳細を報告し、 ``0`` 以外の終了ステータスで終了します。"
+
+msgid ""
+"You must not use this command for opened database. If the database is "
+"opened, this command may report wrong result."
+msgstr ""
+"このコマンドを他のプロセスが開いているデータベースに対しては使ってはいけませ"
+"ん。もし、データベースが他のプロセスから開かれていると、このコマンドは間違っ"
+"た結果を報告する可能性があります。"
+
+msgid "``check`` has some options."
+msgstr "``check`` にはいくつかオプションがあります。"
+
+msgid "``--target``"
+msgstr ""
+
+msgid "It specifies a check target object."
+msgstr "チェック対象のオブジェクトを指定します。"
+
+msgid ""
+"If your database is large and you know an unreliable object, this option "
+"will help you. ``check`` need more time for large database. You can reduce "
+"check time by ``--target`` option to reduce check target."
+msgstr ""
+"もし、データベースが大きく、かつ、信頼できないオブジェクトがわかっているな"
+"ら、このオプションが役に立つでしょう。 ``check`` は大きなデータベースほど処理"
+"に時間がかかります。 ``--target`` オプションでチェック対象を限定することで"
+"チェック時間を削減できます。"
+
+msgid ""
+"The check target is checked recursive. Because related objects of unreliable "
+"object will be unreliable."
+msgstr ""
+"``check`` はチェック対象を再帰的にチェックします。なぜなら、信頼できないオブ"
+"ジェクトに関連するオブジェクトも信頼できないことが多いからです。"
+
+msgid ""
+"If the check target is a table, all columns of the table are also checked "
+"recursive."
+msgstr ""
+"チェック対象がテーブルの場合、そのテーブルのすべてのカラムも再帰的にチェック"
+"します。"
+
+msgid ""
+"If the check target is a table and its key type is another table, the "
+"another table is also checked recursive."
+msgstr ""
+"チェック対象がテーブルでテーブルのキーの型が他のテーブルの場合、他のテーブル"
+"も再帰的にチェックします。"
+
+msgid ""
+"If the check target is a column and its value type is a table, the table is "
+"also checked recursive."
+msgstr ""
+"チェック対象がカラムで値の型がテーブルの場合、そのテーブルも再帰的にチェック"
+"します。"
+
+msgid ""
+"If the check target is an index column, the table specified as value type "
+"and all sources are also checked recursive."
+msgstr ""
+"チェック対象がインデックスカラムの場合、値の型に指定したテーブルとすべての"
+"ソースも再帰的にチェックします。"
+
+msgid "Here is an example that checks only ``Entries`` table and its columns::"
+msgstr "以下は ``Entries`` テーブルとそのカラムだけをチェックする例です。::"
+
+msgid "Here is an example that checks only ``Entries.name`` column::"
+msgstr "以下は ``Entries.name`` カラムだけをチェックする例です。::"
+
+msgid "``--log-level``"
+msgstr ""
+
+msgid "It specifies a log level of ``grndb`` log."
+msgstr "``grndb`` のログレベルを指定します。"
+
+msgid "Here is an example that specifies ``--log-level`` option::"
+msgstr "以下は ``--log-level`` オプションを指定する例です。"
+
+msgid ""
+"See :doc:`/reference/commands/log_level` to know about supported log level."
+msgstr ""
+"サポートされているログレベルについては :doc:`/reference/commands/log_level` "
+"を参照してください。"
+
+msgid "``--log-path``"
+msgstr ""
+
+msgid "It specifies a path of ``grndb`` log."
+msgstr "``grndb`` のログ出力先のパスを指定します。"
+
+msgid "Here is an example that specifies ``--log-path`` option::"
+msgstr "以下は ``--log-path`` オプションを指定する例です。"
+
+msgid "``--log-flags``"
+msgstr ""
+
+msgid ""
+"It specifies a logged content in ``grndb`` log by flags. The default value "
+"of ``--log-flags`` is ``time|message``. It means that timestamp and log "
+"messages are logged into ``grndb`` log."
+msgstr ""
+"``grndb`` のログに出力する内容をフラグで指定します。 ``--log-flags`` のデフォ"
+"ルト値は ``time|message`` です。 ``grndb`` のログにタイムスタンプとログメッ"
+"セージを出力することを意味します。"
+
+msgid "Here is an example that specifies ``--log-flags`` option::"
+msgstr "以下は ``--log-flags`` オプションを指定する例です。"
+
+msgid "See :doc:`groonga` to know about supported log flags."
+msgstr ""
+"サポートされているログフラグについては :doc:`groonga` を参照してください。"
+
+msgid "``--since``"
+msgstr ""
+
+msgid ""
+"It specifies the object's modified time which should be checked. If object's "
+"modified time is newer than the specified time, these objects are checked by "
+"``grndb``. You can specify the modified time as ISO 8601 format or ``-"
+"NUNIT`` format such as -3days or -2.5weeks format."
+msgstr ""
+"チェックすべきオブジェクトの更新時刻を指定します。もしオブジェクトの更新時刻"
+"が指定したものよりも新しければ、 ``grndb`` のチェックの対象となります。更新時"
+"刻は ISO 8601形式か -3days や -2.5weeksといった ``-NUNIT`` 形式で指定します。"
+
+msgid ""
+"Here is an example that specifies ``--since`` option in ISO 8601 format::"
+msgstr "以下は ``--since`` オプションをISO 8601形式で指定する例です。"
+
+msgid ""
+"In above example, the objects which are modified after "
+"``2019-06-24T18:16:22`` are checked."
+msgstr ""
+"上記の例では ``2019-06-24T18:16:22`` 以降に更新されたオブジェクトをチェックし"
+"ます。"
+
+msgid ""
+"Here is an example that specifies ``--since`` option in ``-NUNIT`` format::"
+msgstr "以下は ``--since`` オプションを ``-NUNIT`` 形式で指定する例です。"
+
+msgid ""
+"In above example, the objects which are modified in recent 7 days are "
+"checked."
+msgstr "上記の例では、直近7日で更新されたものがチェックされます。"
+
+msgid "``-NUNIT`` accepts the following suffix as a unit."
+msgstr "``-NUNIT`` は以下の単位を受け付けます。"
+
+msgid "Supported suffix"
+msgstr "対応している単位"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "``s``, ``sec``, ``secs``, ``second``, ``seconds``"
+msgstr ""
+
+msgid ""
+"Specify recent N seconds. For example, ``--since=-100s`` means within recent "
+"100 seconds should be checked."
+msgstr ""
+"直近N秒を指定します。例えば、 ``--since=-100s`` は直近100秒以内のものをチェッ"
+"クします。"
+
+msgid "``m``, ``min``, ``mins``, ``minute``, ``minutes``"
+msgstr ""
+
+msgid ""
+"Specify recent N minutes. For example, ``--since=-10m`` means within recent "
+"10 minutes should be checked."
+msgstr ""
+"直近N分を指定します。例えば、 ``--since=-10m`` は直近10分以内のものをチェック"
+"します。"
+
+msgid "``h``, ``hour``, ``hours``"
+msgstr ""
+
+msgid ""
+"Specify recent N hours. For example, ``--since=-10h`` means within recent 10 "
+"hours should be checked."
+msgstr ""
+"直近N時間を指定します。例えば、 ``--since=-10h`` は直近10時間以内のものを"
+"チェックします。"
+
+msgid "``d``, ``day``, ``days``"
+msgstr ""
+
+msgid ""
+"Specify recent N days. For example, ``--since=-10d`` means within recent 10 "
+"days should be checked."
+msgstr ""
+"直近N日を指定します。例えば、 ``--since=-10d`` は直近10日以内のものをチェック"
+"します。"
+
+msgid "``w``, ``week``, ``weeks``"
+msgstr ""
+
+msgid ""
+"Specify recent N weeks. For example, ``--since=-10w`` means within recent 10 "
+"weeks should be checked."
+msgstr ""
+"直近N週を指定します。例えば、 ``--since=-10w`` は直近10週以内のものをチェック"
+"します。"
+
+msgid "``month``, ``months``"
+msgstr ""
+
+msgid ""
+"Specify recent N months. For example, ``--since=-10month`` means within "
+"recent 10 months should be checked."
+msgstr ""
+"直近10ヶ月を指定します。例えば、 ``--since=-10month`` は直近10ヶ月以内のもの"
+"をチェックします。"
+
+msgid "``year``, ``years``"
+msgstr ""
+
+msgid ""
+"Specify recent N years. For example, ``--since=-1year`` means within recent "
+"1 year should be checked."
+msgstr ""
+"直近N年を指定します。例えば、 ``--since=-1year`` は直近1年以内のものをチェッ"
+"クします。"
+
+msgid "``recover``"
+msgstr ""
+
+msgid "It recovers an existing broken Groonga database."
+msgstr "既存の壊れたGroongaデータベースを復旧します。"
+
+msgid ""
+"If the database is not broken, ``grndb`` does nothing and exits with ``0`` "
+"exit status."
+msgstr ""
+"もしデータベースが壊れていなかったら、 ``grndb`` は何もせず終了ステータス "
+"``0`` で終了します。"
+
+msgid ""
+"If the database is broken and one or more index columns are only broken, "
+"``grndb`` recovers these index columns and exists with ``0`` exit status. It "
+"may take a long time for large indexed data."
+msgstr ""
+"もしデータベースが壊れていて、壊れているのがインデックスカラムだけなら、 "
+"``grndb`` は壊れているインデックスカラムを復旧して終了ステータス ``0`` で終了"
+"します。インデックス対象のデータが大きい場合は復旧に長時間かかることもありま"
+"す。"
+
+msgid ""
+"If the database is broken and tables or data columns are broken, ``grndb`` "
+"reports broken reasons and exits with non-``0`` exit status. You can know "
+"whether the database is recoverable or not by ``check`` command."
+msgstr ""
+"もしデータベースが壊れていて、壊れているのがテーブルまたはデータカラムの場合"
+"は、 ``grndb`` は壊れている原因を報告して ``0`` 以外の終了ステータスで終了し"
+"ます。データベースを復旧可能かどうかは ``check`` コマンドで確認できます。"
+
+msgid ""
+"You must not use this command for opened database. If the database is "
+"opened, this command may break the database."
+msgstr ""
+"このコマンドを他のプロセスが開いているデータベースに対しては使ってはいけませ"
+"ん。もし、データベースが他のプロセスから開かれていると、このコマンドはデータ"
+"ベースを壊してしまう可能性があります。"
+
+msgid "``recover`` has some options."
+msgstr "``recover`` にはいくつかオプションがあります。"
+
+msgid "``--force-truncate``"
+msgstr ""
+
+msgid "It forces to truncate a corrupted database object."
+msgstr "壊れたデータベースオブジェクトを強制的に初期化します。"
+
+msgid "Here is an example that specifies ``--force-truncate`` option::"
+msgstr "以下は ``--force-truncate`` オプションを指定する例です。"
+
+msgid "When this option is specified, ``grndb`` does the followings:"
+msgstr "このオプションが指定されたとき、 ``grndb`` は次のことを実行します。:"
+
+msgid ""
+"check whether there is a corrupted database object (table, column, indexes)"
+msgstr ""
+"壊れたデータベースオブジェクト(テーブル、カラム、インデックス)がないかチェッ"
+"クします"
+
+msgid "truncate a corrupted database object (table, column, indexes)"
+msgstr ""
+"壊れたデータベースオブジェクト(テーブル、カラム、インデックス)を初期化します"
+
+msgid ""
+"remove incremental files with .00N suffix which is created when large amount "
+"of data is loaded"
+msgstr ""
+"大量のデータをロードしたときに作られる増分ファイル(末尾に.00Nがつきます)を削"
+"除します"
+
+msgid ""
+"``--force-truncate`` option is destructive one. Even though lock is still "
+"remained, ``grndb`` truncates a targeted corrupted database object."
+msgstr ""
+"``--force-truncate`` は破壊的なオプションです。ロックが残留していても、 "
+"``grndb`` は構わず対象となる壊れたデータベースオブジェクトを初期化します。"
+
+msgid ""
+"After ``grndb recover`` command has finished, you need to load data against "
+"truncated tables or columns to recreate database."
+msgstr ""
+"``grndb recover`` の処理が終わったら、データベースを再構築するために初期化さ"
+"れたテーブルやカラムに対して再びデータをロードする必要があります。"
+
+msgid ""
+"You must use this option only when necessary. It means that you use it when "
+"there is a mismatch between database meta information and database object "
+"files which exists actually. This options should be used when there is no "
+"other way to recover database."
+msgstr ""
+"このオプションは必要なときのみ使用します。つまりデータベースのメタ情報と実際"
+"に存在するデータベースのオブジェクトファイルの情報が食い違っているときです。 "
+"他にデータベースを復旧する方法がないときのみ使うべきです。"
+
+msgid "``--force-lock-clear``"
+msgstr ""
+
+msgid ""
+"It forces to clear lock of database, table and data column. It doesn't clear "
+"lock of index column. If index column has lock, the index column is "
+"recreated instead of clearing lock."
+msgstr ""
+"データベース・テーブル・データカラムのロックをクリアーします。インデックスカ"
+"ラムのロックはクリアーしません。インデックスカラムにロックが残っている場合は"
+"ロックをクリアーするのではなく作り直します。"
+
+msgid ""
+"Normally, you should truncate and load data again instead of just clearing "
+"lock. Because objects that have lock may be broken. This option is provided "
+"only for users who know the risk that \"the database may be broken but I "
+"want to keep using it\"."
+msgstr ""
+"通常、ロックをクリアーするのではなく、初期化（truncate）してデータをロードし"
+"直すべきです。なぜならロックが残留しているオブジェクトは壊れているかもしれな"
+"いからです。このオプションは「データベースは壊れているかもしれないけどそのま"
+"ま使い続けたい」というリスクをわかったユーザーだけのために用意されています。"
+
+msgid "Here is an example that specifies ``--force-lock-clear`` option::"
+msgstr "以下は ``--force-lock-clear`` オプションを指定する例です。"
+
+msgid "check whether there are database, table or data column that have lock"
+msgstr "ロックが残留したデータベース・テーブル・データカラムがないかチェック"
+
+msgid "clear lock of these objects"
+msgstr "これらのオブジェクトのロックをクリアー"
+
+msgid ""
+"You must use this option only when necessary. Because your database may not "
+"be recovered. The database that has objects that have lock may be broken or "
+"not be broken. You can keep using the database but Groonga may crash if the "
+"database is broken."
+msgstr ""
+"このオプションは必要なときのみ使用するべきです。なぜならこのデータベースは実"
+"は復旧できていないかもしれないからです。ロックが残留しているデータベースは壊"
+"れているかもしれませんし壊れていないかもしれません。このオプションを使うこと"
+"でデータベースを使い続けることはできますが、もしデータベースが壊れていたら"
+"Groongaがクラッシュするかもしれません。"

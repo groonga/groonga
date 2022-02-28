@@ -1,0 +1,324 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``tokenize``"
+msgstr "``tokenize``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"``tokenize`` command tokenizes text by the specified tokenizer. It is useful "
+"to debug tokenization."
+msgstr ""
+"``tokenize`` command tokenizes text by the specified tokenizer. It is useful "
+"to debug tokenization."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "This command takes many parameters."
+msgstr "This command takes many parameters."
+
+msgid ""
+"``tokenizer`` and ``string`` are required parameters. Others are optional::"
+msgstr ""
+"``tokenizer`` and ``string`` are required parameters. Others are optional::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Here is a simple example."
+msgstr "Here is a simple example."
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"It has only required parameters. ``tokenizer`` is ``TokenBigram`` and "
+"``string`` is ``\"Fulltext Search\"``. It returns tokens that is generated "
+"by tokenizing ``\"Fulltext Search\"`` with ``TokenBigram`` tokenizer. It "
+"doesn't normalize ``\"Fulltext Search\"``."
+msgstr ""
+"It has only required parameters. ``tokenizer`` is ``TokenBigram`` and "
+"``string`` is ``\"Fulltext Search\"``. It returns tokens that is generated "
+"by tokenizing ``\"Fulltext Search\"`` with ``TokenBigram`` tokenizer. It "
+"doesn't normalize ``\"Fulltext Search\"``."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "This section describes all parameters. Parameters are categorized."
+msgstr "This section describes all parameters. Parameters are categorized."
+
+msgid "Required parameters"
+msgstr "Required parameters"
+
+msgid "There are required parameters, ``tokenizer`` and ``string``."
+msgstr "There are required parameters, ``tokenizer`` and ``string``."
+
+msgid "``tokenizer``"
+msgstr "``tokenizer``"
+
+msgid ""
+"Specifies the tokenizer name. ``tokenize`` command uses the tokenizer that "
+"is named ``tokenizer``."
+msgstr ""
+"Specifies the tokenizer name. ``tokenize`` command uses the tokenizer that "
+"is named ``tokenizer``."
+
+msgid "See :doc:`/reference/tokenizers` about built-in tokenizers."
+msgstr "See :doc:`/reference/tokenizers` about built-in tokenizers."
+
+msgid "Here is an example to use built-in ``TokenTrigram`` tokenizer."
+msgstr "Here is an example to use built-in ``TokenTrigram`` tokenizer."
+
+msgid ""
+"If you want to use other tokenizers, you need to register additional "
+"tokenizer plugin by :doc:`register` command. For example, you can use `KyTea "
+"<http://www.phontron.com/kytea/>`_ based tokenizer by registering "
+"``tokenizers/kytea``."
+msgstr ""
+"If you want to use other tokenizers, you need to register additional "
+"tokenizer plugin by :doc:`register` command. For example, you can use `KyTea "
+"<http://www.phontron.com/kytea/>`_ based tokenizer by registering "
+"``tokenizers/kytea``."
+
+msgid "``string``"
+msgstr "``string``"
+
+msgid "Specifies any string which you want to tokenize."
+msgstr "Specifies any string which you want to tokenize."
+
+msgid ""
+"If you want to include spaces in ``string``, you need to quote ``string`` by "
+"single quotation (``'``) or double quotation (``\"``)."
+msgstr ""
+"If you want to include spaces in ``string``, you need to quote ``string`` by "
+"single quotation (``'``) or double quotation (``\"``)."
+
+msgid "Here is an example to use spaces in ``string``."
+msgstr "Here is an example to use spaces in ``string``."
+
+msgid "Optional parameters"
+msgstr "Optional parameters"
+
+msgid "There are optional parameters."
+msgstr "There are optional parameters."
+
+msgid "``normalizer``"
+msgstr "``normalizer``"
+
+msgid ""
+"Specifies the normalizer name. ``tokenize`` command uses the normalizer that "
+"is named ``normalizer``. Normalizer is important for N-gram family "
+"tokenizers such as ``TokenBigram``."
+msgstr ""
+"Specifies the normalizer name. ``tokenize`` command uses the normalizer that "
+"is named ``normalizer``. Normalizer is important for N-gram family "
+"tokenizers such as ``TokenBigram``."
+
+msgid ""
+"Normalizer detects character type for each character while normalizing. N-"
+"gram family tokenizers use character types while tokenizing."
+msgstr ""
+"Normalizer detects character type for each character while normalizing. N-"
+"gram family tokenizers use character types while tokenizing."
+
+msgid "Here is an example that doesn't use normalizer."
+msgstr "Here is an example that doesn't use normalizer."
+
+msgid ""
+"All alphabets are tokenized by two characters. For example, ``Fu`` is a "
+"token."
+msgstr ""
+"All alphabets are tokenized by two characters. For example, ``Fu`` is a "
+"token."
+
+msgid "Here is an example that uses normalizer."
+msgstr "Here is an example that uses normalizer."
+
+msgid ""
+"Continuous alphabets are tokenized as one token. For example, ``fulltext`` "
+"is a token."
+msgstr ""
+"Continuous alphabets are tokenized as one token. For example, ``fulltext`` "
+"is a token."
+
+msgid ""
+"If you want to tokenize by two characters with noramlizer, use "
+"``TokenBigramSplitSymbolAlpha``."
+msgstr ""
+"If you want to tokenize by two characters with noramlizer, use "
+"``TokenBigramSplitSymbolAlpha``."
+
+msgid ""
+"All alphabets are tokenized by two characters. And they are normalized to "
+"lower case characters. For example, ``fu`` is a token."
+msgstr ""
+"All alphabets are tokenized by two characters. And they are normalized to "
+"lower case characters. For example, ``fu`` is a token."
+
+msgid "``flags``"
+msgstr "``flags``"
+
+msgid ""
+"Specifies a tokenization customize options. You can specify multiple options "
+"separated by \"``|``\". For example, ``NONE|ENABLE_TOKENIZED_DELIMITER``."
+msgstr ""
+"Specifies a tokenization customize options. You can specify multiple options "
+"separated by \"``|``\". For example, ``NONE|ENABLE_TOKENIZED_DELIMITER``."
+
+msgid "Here are available flags."
+msgstr "Here are available flags."
+
+msgid "Flag"
+msgstr "Flag"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "``NONE``"
+msgstr "``NONE``"
+
+msgid "Just ignored."
+msgstr "Just ignored."
+
+msgid "``ENABLE_TOKENIZED_DELIMITER``"
+msgstr "``ENABLE_TOKENIZED_DELIMITER``"
+
+msgid ""
+"Enables tokenized delimiter. See :doc:`/reference/tokenizers` about "
+"tokenized delimiter details."
+msgstr ""
+"Enables tokenized delimiter. See :doc:`/reference/tokenizers` about "
+"tokenized delimiter details."
+
+msgid "Here is an example that uses ``ENABLE_TOKENIZED_DELIMITER``."
+msgstr "Here is an example that uses ``ENABLE_TOKENIZED_DELIMITER``."
+
+msgid ""
+"``TokenDelimit`` tokenizer is one of tokenized delimiter supported "
+"tokenizer. ``ENABLE_TOKENIZED_DELIMITER`` enables tokenized delimiter. "
+"Tokenized delimiter is special character that indicates token border. It is "
+"``U+FFFE``. The character is not assigned any character. It means that the "
+"character is not appeared in normal string. So the character is good "
+"character for this puropose. If ``ENABLE_TOKENIZED_DELIMITER`` is enabled, "
+"the target string is treated as already tokenized string. Tokenizer just "
+"tokenizes by tokenized delimiter."
+msgstr ""
+"``TokenDelimit`` tokenizer is one of tokenized delimiter supported "
+"tokenizer. ``ENABLE_TOKENIZED_DELIMITER`` enables tokenized delimiter. "
+"Tokenized delimiter is special character that indicates token border. It is "
+"``U+FFFE``. The character is not assigned any character. It means that the "
+"character is not appeared in normal string. So the character is good "
+"character for this puropose. If ``ENABLE_TOKENIZED_DELIMITER`` is enabled, "
+"the target string is treated as already tokenized string. Tokenizer just "
+"tokenizes by tokenized delimiter."
+
+msgid "``mode``"
+msgstr "``mode``"
+
+msgid ""
+"Specifies a tokenize mode. If the mode is specified ``ADD``, the text is "
+"tokenized by the rule that adding a document. If the mode is specified "
+"``GET``, the text is tokenized by the rule that searching a document. If the "
+"mode is omitted, the text is tokenized by the ``ADD`` mode."
+msgstr ""
+"Specifies a tokenize mode. If the mode is specified ``ADD``, the text is "
+"tokenized by the rule that adding a document. If the mode is specified "
+"``GET``, the text is tokenized by the rule that searching a document. If the "
+"mode is omitted, the text is tokenized by the ``ADD`` mode."
+
+msgid "The default mode is ``ADD``."
+msgstr "The default mode is ``ADD``."
+
+msgid "Here is an example to the ``ADD`` mode."
+msgstr "Here is an example to the ``ADD`` mode."
+
+msgid "The last alphabet is tokenized by one character."
+msgstr "The last alphabet is tokenized by one character."
+
+msgid "Here is an example to the ``GET`` mode."
+msgstr "Here is an example to the ``GET`` mode."
+
+msgid "The last alphabet is tokenized by two characters."
+msgstr "The last alphabet is tokenized by two characters."
+
+msgid "``token_filters``"
+msgstr "``token_filters``"
+
+msgid ""
+"Specifies the token filter names. ``tokenize`` command uses the tokenizer "
+"that is named ``token_filters``."
+msgstr ""
+"Specifies the token filter names. ``tokenize`` command uses the tokenizer "
+"that is named ``token_filters``."
+
+msgid "See :doc:`/reference/token_filters` about token filters."
+msgstr "See :doc:`/reference/token_filters` about token filters."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid ""
+"``tokenize`` command returns tokenized tokens. Each token has some "
+"attributes except token itself. The attributes will be increased in the "
+"feature::"
+msgstr ""
+"``tokenize`` command returns tokenized tokens. Each token has some "
+"attributes except token itself. The attributes will be increased in the "
+"feature::"
+
+msgid "``HEADER``"
+msgstr "``HEADER``"
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr "See :doc:`/reference/command/output_format` about ``HEADER``."
+
+msgid "``tokens``"
+msgstr "``tokens``"
+
+msgid ""
+"``tokens`` is an array of token. Token is an object that has the following "
+"attributes."
+msgstr ""
+"``tokens`` is an array of token. Token is an object that has the following "
+"attributes."
+
+msgid "Name"
+msgstr "Name"
+
+msgid "``value``"
+msgstr "``value``"
+
+msgid "Token itself."
+msgstr "Token itself."
+
+msgid "``position``"
+msgstr "``position``"
+
+msgid "The N-th token."
+msgstr "The N-th token."
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`/reference/tokenizers`"
+msgstr ":doc:`/reference/tokenizers`"

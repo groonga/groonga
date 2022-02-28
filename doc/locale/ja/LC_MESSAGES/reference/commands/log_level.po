@@ -1,0 +1,138 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "``log_level``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``log_level`` command sets log level of Groonga."
+msgstr "``log_level`` コマンドはGroongaのログレベルを設定します。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "``level``"
+msgstr ""
+
+msgid "Specify log level with a character or string which means log level."
+msgstr "ログレベル（1文字）もしくはログレベルを表す文字列を指定します。"
+
+msgid "Value"
+msgstr "値"
+
+msgid "Alias"
+msgstr "エイリアス"
+
+msgid "``E``"
+msgstr ""
+
+msgid "``emerge`` or ``emergency``"
+msgstr "``emerge`` もしくは ``emergency``"
+
+msgid "``A``"
+msgstr ""
+
+msgid "``alert``"
+msgstr "``alert``"
+
+msgid "``C``"
+msgstr ""
+
+msgid "``crit`` or ``critical``"
+msgstr "``crit`` もしくは ``critical``"
+
+msgid "``e``"
+msgstr ""
+
+msgid "``error``"
+msgstr ""
+
+msgid "``w``"
+msgstr ""
+
+msgid "``warn`` or ``warning``"
+msgstr "``warn`` もしくは ``warning``"
+
+msgid "``n``"
+msgstr ""
+
+msgid "``notice``"
+msgstr ""
+
+msgid "``i``"
+msgstr ""
+
+msgid "``info``"
+msgstr ""
+
+msgid "``d``"
+msgstr ""
+
+msgid "``debug``"
+msgstr ""
+
+msgid "``-``"
+msgstr ""
+
+msgid "``dump``"
+msgstr ""
+
+msgid "Example::"
+msgstr "実行例::"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid ""
+"``log_level`` command returns whether log level configuration is succeeded "
+"or not::"
+msgstr ""
+"``log_level`` コマンドはログレベルの設定に成功したかどうかを返します。::"
+
+msgid "``HEADER``"
+msgstr ""
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "``SUCCEEDED_OR_NOT``"
+msgstr ""
+
+msgid ""
+"If command succeeded, it returns true, otherwise it returns false on error."
+msgstr ""
+"コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返しま"
+"す。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`log_put` :doc:`log_reopen`"
+msgstr ""

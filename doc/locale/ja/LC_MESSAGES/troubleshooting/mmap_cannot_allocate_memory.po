@@ -1,0 +1,106 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2014-08-14 22:59+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "How to avoid mmap Cannot allocate memory error"
+msgstr "mmap Cannot allocate memoryエラーを回避するには"
+
+msgid "Example"
+msgstr "例"
+
+msgid "There is a case following mmap error in log file:"
+msgstr "ログファイルに以下のようなmmapエラーが存在する場合があります。::"
+
+msgid ""
+"2013-06-04 08:19:34.835218|A|4e86e700|mmap(4194304,551,432017408)=Cannot "
+"allocate memory <13036498944>"
+msgstr ""
+
+msgid ""
+"Note that <13036498944> means total size of mmap (almost 12GB) in this case."
+msgstr "<13036498944> はこの場合mmapの合計サイズ(約12GB)です。"
+
+msgid "Solution"
+msgstr "対策方法"
+
+msgid "So you need to confirm following point of views."
+msgstr "以下の観点を確認する必要があります。"
+
+msgid "Are there enough free memory?"
+msgstr "十分なメモリの空きが存在するか？"
+
+msgid "Are maximum number of mappings exceeded?"
+msgstr "マッピング最大数を超過していないか？"
+
+msgid "To check there are enough free memory, you can use vmstat command."
+msgstr ""
+"十分な空きメモリがあるかを調べるために、vmstat コマンドを使うことができます。"
+
+msgid ""
+"To check whether maximum number of mappings are exceeded, you can "
+"investigate the value of vm.max_map_count."
+msgstr ""
+"最大マッピング数を超過しているかどうかを確認するために、 vm.max_map_count の"
+"値を調べることができます。"
+
+msgid ""
+"If this issue is fixed by modifying the value of vm.max_map_count, it's "
+"exactly the reason."
+msgstr ""
+"もしこの問題が vm.max_map_count の値を調整することで解決するなら、これが原因"
+"です。"
+
+msgid ""
+"As groonga allocates memory chunks each 256KB, you can estimate the size of "
+"database you can handle by following formula:"
+msgstr ""
+"groongaはメモリを256KBごとに確保するので、扱えるデータベースのサイズを以下の"
+"式で見積ることができます:"
+
+msgid "(database size) = vm.max_map_count * (memory chunks)"
+msgstr ""
+
+msgid ""
+"If you want to handle over 16GB groonga database, you must specify at least "
+"65536 as the value of vm.max_map_count:"
+msgstr ""
+"16GBを超えるデータベースを扱うには、少くとも65536を vm.max_map_count の値とし"
+"て設定しないといけません。"
+
+msgid "database size (16GB) = vm.max_map_count (65536) * memory chunks (256KB)"
+msgstr ""
+
+msgid ""
+"You can modify vm.max_map_count temporary by sudo sysctl -w vm."
+"max_map_count=65536."
+msgstr ""
+"sudo sysctl -w vm.max_map_count=65536 で一時的に vm.max_map_count を調整する"
+"ことができます。"
+
+msgid ""
+"Then save the configuration value to ``/etc/sysctl.conf`` or ``/etc/sysctl.d/"
+"*.conf``."
+msgstr ""
+"その後、設定値を ``/etc/sysctl.conf`` もしくは ``/etc/sysctl.d/*.conf`` へと"
+"保存します。"
+
+msgid ""
+"See :doc:`/reference/tuning` documentation about tuning related parameters."
+msgstr ""
+"チューニング関連のパラメータについては、 :doc:`/reference/tuning` のドキュメ"
+"ントを参照してください。"

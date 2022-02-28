@@ -1,0 +1,1302 @@
+# -*- po -*-
+# Japanese translations for 1.2.4 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.4\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2020-04-24 08:59+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.1.1\n"
+
+msgid "News - 2.x"
+msgstr ""
+
+msgid "Release 2.1.2 - 2013-01-29"
+msgstr "2.1.2リリース - 2013-01-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid ""
+"Supported multiple ``query()`` in a select command. For example, you can "
+"specify the keyword which has different weight such as 'query(\"column * "
+"weight1\", keyword1) || query(\"column * weight2\", keyword2) || ...' for "
+"``--filter``."
+msgstr ""
+"複数の ``query()`` を ``select`` コマンドでサポートしました。例えば、キーワー"
+"ドごとに異なる重みづけを指定して検索するのに'query(\"column * weight1\", "
+"keyword1) || query(\"column * weight2\", keyword2) || ...'などと ``--"
+"filter`` に指定することができます。"
+
+msgid "Dropped experimental view feature."
+msgstr "実験的機能であったビューを削除しました。"
+
+msgid ""
+"Added ``grn_logger_reopen`` API for custom logger. Note that "
+"``grn_logger_info`` API is deprecated, use ``grn_logger`` API instead."
+msgstr ""
+"``grn_logger_reopen`` APIを追加しました。 ``grn_logger_info`` APIは非推奨とな"
+"りました。 ``grn_logger`` APIを代りに使ってください。"
+
+msgid ""
+"Added ``grn_default_logger_set_path()`` and "
+"``grn_default_logger_get_path()`` API. Note that global ``grn_log_path`` "
+"variable was removed. Use above API."
+msgstr ""
+"``grn_default_logger_set_path()`` と ``grn_default_logger_get_path()`` APIを"
+"追加しました。グローバル変数としての ``grn_log_path`` は削除しました。上記変"
+"数を使うにはAPIを使用してください。"
+
+msgid ""
+"Added ``grn_default_query_logger_set_path()`` and "
+"``grn_default_query_logger_get_path()`` API. Note that global "
+"``grn_qlog_path`` variable was removed. Use above API."
+msgstr ""
+"``grn_default_query_logger_set_path()`` と "
+"``grn_default_query_logger_get_path()`` APIを追加しました。グローバル変数とし"
+"ての ``grn_qlog_path`` は削除しました。上記変数を使うにはAPIを使用してくださ"
+"い。"
+
+msgid ""
+"Added translated documentation about :doc:`/reference/tables` and :doc:`/"
+"reference/normalizers`."
+msgstr ""
+":doc:`/reference/tables` と :doc:`/reference/normalizers` に関するドキュメン"
+"トを追加。"
+
+msgid ""
+"[deb][rpm] Improved to install with missing dictionary when ``groonga-"
+"tokenizer-mecab`` package is installed."
+msgstr ""
+"[deb][rpm] ``groonga-tokenizer-mecab`` パッケージのインストール時に必要な辞書"
+"をインストールするように改善した。"
+
+msgid ""
+"Supported :ref:`nested-index-search` with range search. For example, you can "
+"specify 'column1.column2...columnN <= \"1988-01-04 00:00:00\"' in ``--"
+"filter``."
+msgstr ""
+"範囲検索を :ref:`nested-index-search` でもサポートした。例えば、 'column1."
+"column2...columnN <= \"1988-01-04 00:00:00\"' というように ``--filter`` に範"
+"囲を指定することができるようになります。"
+
+msgid "[rpm][fedora] Supported Fedora 18."
+msgstr "[rpm][fedora] Fedora 18をサポート。"
+
+msgid "[rpm][fedora] Dropped Fedora 17 support."
+msgstr "[rpm][fedora] Fedora 17サポートを削除。"
+
+msgid "[doc] Added documentation for :doc:`/server/package`."
+msgstr "[doc] :doc:`/server/package` のドキュメントを追加。"
+
+msgid "[doc] Added documentation for :doc:`/reference/functions/query`."
+msgstr "[doc] :doc:`/reference/functions/query` のドキュメントを追加。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"Fixed not to report an error even though MeCab tokenizer shared object isn't "
+"found. [groonga-dev,01174] [Reported by wing]"
+msgstr ""
+"MeCabトークナイザーの共有オブジェクトが見つからなくてもエラーをログに記録しな"
+"いようにした。 [groonga-dev,01174] [wingさんが報告]"
+
+msgid ""
+"[httpd] Fixed not to fail configure on CentOS 5.4 by setting ``SED`` "
+"variable explicitly."
+msgstr ""
+"[httpd] CentOS 5.4で ``SED`` 変数を明示的に設定することで、configureスクリプ"
+"ト実行が失敗しないようにした。"
+
+msgid ""
+"Fixed a crash bug that not initialized vector column value is accessed by "
+"select command."
+msgstr ""
+"値を設定していない未初期化のベクタカラムの値を ``select`` コマンドで参照した"
+"ときにクラッシュする不具合を修正した。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "wing"
+msgstr "wingさん"
+
+msgid "Release 2.1.1 - 2012-12-29"
+msgstr "2.1.1リリース - 2012-12-29"
+
+msgid ""
+"This is bug fix release of 2.1.0. All of 2.1.0 users should use 2.1.1 "
+"instead."
+msgstr ""
+"2.1.0のバグフィックスリリースです。2.1.0を使っている人は2.1.0ではなく2.1.1を"
+"使ってください。"
+
+msgid ""
+"Fixed a bug that ``KEY_NORMALIZE`` information in database that is created "
+"by groonga 2.0.8 or ealier is dropped."
+msgstr ""
+"groonga 2.0.8以前で作成したデータベース中の ``KEY_NORMALIZE`` 関連の情報が失"
+"われる問題を修正。"
+
+msgid "Release 2.1.0 - 2012-12-29"
+msgstr "2.1.0リリース - 2012-12-29"
+
+msgid ""
+"Use 2.1.1 instead of 2.1.0. 2.1.0 has a serious bug related "
+"``KEY_NORMALIZE``."
+msgstr ""
+"2.1.0ではなく2.1.1を使ってください。2.1.0は ``KEY_NORMALIZE`` 関連の深刻な問"
+"題があります。"
+
+msgid ""
+"This release has backward incompatible changes against ``table_list`` and "
+"``column_list`` commands. If you use own program which depends on the output "
+"results above commands, you need to support null instead of \"null\" string."
+msgstr ""
+"このリリースでは ``table_list`` や ``column_list`` コマンドに関する非互換な変"
+"更があります。もしご自身で作成したプログラム等でこれらコマンドの出力結果に依"
+"存しているものがあるなら、\"null\"文字列ではなくnullをサポートする必要があり"
+"ます。"
+
+msgid ""
+"This release has supported ``--normalizer`` option, but there is side effect "
+"for this feature. If you open old version of groonga database at least once, "
+"you can not open its database by old version of groonga."
+msgstr ""
+"このリリースでは ``--normalizer`` オプションをサポートしましたが、副作用があ"
+"り、一度でも古いバージョンのデータベースを新しいバージョンのgroongaで開くと、"
+"古いバージョンのgroongaではデータベースを開けなくなります。"
+
+msgid ""
+"There is also another backward incompatible change agaist plugin API for "
+"tokenizer. The argument of ``grn_tokenizer_query_open`` API has changed. "
+"This API change affects developer of tokenizer plugin."
+msgstr ""
+"もうひとつトークナイザプラグインAPIに関する非互換な変更があります。 "
+"``grn_tokenizer_query_open`` APIの引数が変更されました。このAPIの変更はトーク"
+"ナイザプラグインの開発者に影響があります。"
+
+msgid "[doc] Added documentation about :ref:`nested-index-search`."
+msgstr "[doc] :ref:`nested-index-search` に関するドキュメントを追加。"
+
+msgid ""
+"Supported the expression as :doc:`/reference/functions/snippet_html` "
+"arguments. This change enables you to use ``snippet_html(\"STRING\" + "
+"\"STRING\")`` for example. You can specify column name or literal for "
+"\"STRING\". [Reported by Tomoatsu Shimada]"
+msgstr ""
+":doc:`/reference/functions/snippet_html` の引数として式を指定できるようにし"
+"た。この変更で、 ``snippet_html(\"STRING\" + \"STRING\")`` と書けるようになり"
+"ます。 \"STRING\"にはカラム名や文字列を指定できます。 [嶋田 大貴さんが報告]"
+
+msgid "Supported to create own normalizer as a plugin."
+msgstr "正規化を行うプラグインを作成できるようにした。"
+
+msgid ""
+"Moved ``groonga-query-log-analyzer`` as `groonga-query-log <http://rubygems."
+"org/gems/groonga-query-log>`_ RubyGems. It enables you to analyze query logs "
+"without installing groonga package."
+msgstr ""
+"``groonga-query-log-analyzer`` を `groonga-query-log <http://rubygems.org/"
+"gems/groonga-query-log>`_ というRubyGemsにして移動しました。これによりgroonga"
+"のパッケージをインストールせずにクエリログの解析を行えるようになります。"
+
+msgid ""
+"Supported ``--normalizer`` option for :doc:`/reference/commands/"
+"table_create` command. This change enables you to specify normalizer plugin."
+msgstr ""
+":doc:`/reference/commands/table_create` コマンドにて ``--normalizer`` オプ"
+"ションの指定をサポートしました。正規化のためのプラグインを指定できるようにな"
+"ります。"
+
+msgid ""
+"Changed \"null\" string to null value as meaning for \"No Object\". This is "
+"backward incompatible change and affects output results of introspection "
+"related commands such as ``table_list`` and ``column_list``."
+msgstr ""
+"\"No Object\"を表現するのに\"null\"文字列ではなくnull値を使うように変更しまし"
+"た。これは非互換な変更で ``table_list`` や ``column_list`` といったコマンドの"
+"出力結果に影響します。"
+
+msgid ""
+"Added a flag which controls behavior about normalizer as the last argument "
+"of ``grn_tokenizer_query_open`` API."
+msgstr ""
+"正規化の振舞いを制御するためのフラグを ``grn_tokenizer_query_open`` APIの最後"
+"の引数として追加した。"
+
+msgid ""
+"Supported continuous line in :ref:`command-list-with-continuous-line` list."
+msgstr ""
+":ref:`command-list-with-continuous-line` リストに書かれた継続行のサポート。"
+
+msgid ""
+"Improved to support not only no key table, but also hash table, patricia "
+"trie and double array trie for :ref:`nested-index-search`."
+msgstr ""
+":ref:`nested-index-search` をキーのないテーブルだけでなく、ハッシュやパトリシ"
+"ア木、ダブル配列を指定したテーブルでも使えるように改善した。"
+
+msgid ""
+"[windows] Added missing ``O_BINARY`` flag to open file correctly. This "
+"change fixes the infinite loop problem about groonga HTTP server. "
+"[GitHub#47] [Patch by Shimomura Tatsuya]"
+msgstr ""
+"[windows] ``O_BINARY`` フラグをファイルを開くときに指定するようにした。"
+"groonga HTTPサーバが無限ループに陥っていた問題が解決します。 [GitHub#47] "
+"[Shimomura Tatsuyaさんがパッチ提供]"
+
+msgid ""
+"Fixed a bug that ``--default-match-escalation-threshold`` doesn't accept "
+"negative value to disable functionality that is used on :doc:`/spec/"
+"search`.  This fix enable you to disable search escalation.  see :option:"
+"`groonga --default-match-escalation-threshold` about details."
+msgstr ""
+"``--default-match-escalation-threshold`` が負数を受け付けないため、 :doc:`/"
+"spec/search` 時に行なわれる挙動の変更を無効化できない問題を修正しました。オプ"
+"ションの詳細は :option:`groonga --default-match-escalation-threshold` を参照"
+"してください。"
+
+msgid ""
+"Fixed a bug that ``_score`` after \"*\" is ignored in ``--output_columns``."
+msgstr ""
+"``--output_columns`` で\"*\"のあとに ``_score`` を指定しても無視される不具合"
+"を修正した。"
+
+msgid "Tomoatsu Shimada"
+msgstr "嶋田 大貴さん"
+
+msgid "Shimomura Tatsuya"
+msgstr "Shimomura Tatsuyaさん"
+
+msgid "Release 2.0.9 - 2012-11-29"
+msgstr "2.0.9リリース - 2012-11-29"
+
+msgid ""
+"Supported to calculate the value of distance accross border in "
+"``geo_distance`` with ``rectangle`` as approximate type. [#1534]"
+msgstr ""
+"``geo_distance`` 関数の近似方法として ``rectangle`` を指定したときに境界をま"
+"たいでも距離の算出できるようにした。 [#1534]"
+
+msgid "[doc] Added the :doc:`/spec/gqtp` specification."
+msgstr "[doc] :doc:`/spec/gqtp` の仕様についてのドキュメントを追加した。"
+
+msgid ""
+"Improved to ignore non critical ``getaddrinfo()`` error which groonga "
+"command emits on startup. This change does not affects nomal use of groonga "
+"because it just checked whether default hostname is resolved in previous "
+"version."
+msgstr ""
+"groongaコマンドの起動時に致命的でない ``getaddrinfo()`` 関数のエラーは無視す"
+"るようにした。この変更はgroongaを通常使用する場合には影響しません。その理由は"
+"デフォルトのホスト名が解決できるかチェックするのに使っていただけだからです。"
+
+msgid ""
+"[experimental] Added ``snippet_html()`` function which extract keyword and "
+"surrounding text. See :doc:`/reference/functions/snippet_html` about details."
+msgstr ""
+"[実験的] キーワードとその周辺のテキストを抽出するための ``snippet_html()`` 関"
+"数を追加した。詳細については :doc:`/reference/functions/snippet_html` を参照"
+"してください。"
+
+msgid ""
+"Supported to report error reason when error occured during reading table "
+"record."
+msgstr ""
+"テーブルのレコードを出力している際に発生したエラーを表示するようにした。"
+
+msgid ""
+"Supported to search with keyword by nested index notation ( concatinate "
+"multiple indexed column name with dot character ) if there is a relationship "
+"between multiple table with index."
+msgstr ""
+"複数のテーブルで関連したインデックスが設定されていれば、ネストしたインデック"
+"ス (複数のカラムインデックス名を ``.`` で連結して指定)に対してキーワードで検"
+"索できるようにした。"
+
+msgid ""
+"Supported to log \"[tokenizer][mecab]\" tag when using ``TokenMecab`` "
+"tokenizer."
+msgstr ""
+"``TokenMecab`` トークナイザを使ったときにログに\"[tokenizer][mecab]\"タグを出"
+"力するようにした。"
+
+msgid ""
+"Supported to log \"[tokenizer][kytea]\" tag when using ``TokenKyTea`` "
+"tokenizer."
+msgstr ""
+"``TokenKyTea`` トークナイザを使ったときにログに\"[tokenizer][kytea]\"タグを出"
+"力するようにした。"
+
+msgid ""
+"Improved to use separated array for command error location as output "
+"results. This change is incompatibility change, but does not affects "
+"existing program."
+msgstr ""
+"検索結果の内容のうち、コマンドのエラー表示は別の配列として表示するようにしま"
+"した。この変更は非互換な変更ですが、既存のプログラムには影響しません。"
+
+msgid "Added documentation for :doc:`/reference/command/output_format`."
+msgstr ":doc:`/reference/command/output_format` に関するドキュメントを追加。"
+
+msgid ""
+"Added documentation for :doc:`/reference/command/return_code` of output "
+"results."
+msgstr ":doc:`/reference/command/return_code` に関するドキュメントを追加。"
+
+msgid "Supported range search by using index."
+msgstr "インデックスを使った指定範囲の検索をサポート。"
+
+msgid ""
+"Fixed to use network byte order for status code of :ref:`gqtp-header-spec` "
+"to follow the normal network protocol convention. This change affects that "
+"groonga <= 2.0.8 client which connects to groonga server 2.0.9 or later can "
+"not show status code properly when command failed."
+msgstr ""
+":ref:`gqtp-header-spec` にてステータスコードにネットワークバイトオーダーを使"
+"用するように修正した。ネットワークプロトコルの慣習に合わせたものですが、これ"
+"によりgroongaバージョン2.0.8以下のクライアントからgroongaバージョン2.0.9以上"
+"のサーバに接続してコマンドの実行に失敗したときにバイトオーダーが異なるため、"
+"ステータスコードを正しく表示できなくなります。"
+
+msgid ""
+"Fixed a bug that UTF-8 normalization computes wrong offset which affects to "
+"return value of ``snippet_html()``. This change not to insert tag of snippet "
+"into invalid location. [#1531] [Reported by Tomoatsu Shimada]"
+msgstr ""
+"UTF-8の正規化でオフセット計算の誤りを修正した。この変更は ``snippet_html()`` "
+"関数の返す結果に影響し、キーワードとタグ周辺のテキストが誤った位置に挿入され"
+"ないようにする。 [#1531] [嶋田大貴さんが報告]"
+
+msgid ""
+"[windows] Fixed over allocated memory access which cause segmentation fault "
+"on startup by groonga command. [#1532] [Patch by Akio Tajima]"
+msgstr ""
+"[windows] groongaコマンドの起動時にバッファの範囲外アクセスによるセグメンテー"
+"ションフォルトが発生しないように修正した。 [#1532] [Akio Tajimaさんがパッチ提"
+"供]"
+
+msgid ""
+"[windows] Fixed a bug that data stored in column couldn't be read when total "
+"amount of data stored in column exceeds 128MB. [groonga-dev,01088] [Reported "
+"by ongaeshi]"
+msgstr ""
+"[windows] カラムに保存しているデータのサイズが128MBを超える場合に、そのデータ"
+"を参照できない不具合を修正した。 [groonga-dev,01088] [ongaeshiさんが報告]"
+
+msgid ""
+"Fixed a bug that searching with indexed column for ``Int*`` and ``UInt*`` "
+"except ``Int32/Uint32`` returns invalid results."
+msgstr ""
+"``Int*`` や ``UInt*`` ( ``Int32/Uint32`` は除く) に対してカラムインデックスに"
+"よる検索結果が正しくない不具合を修正した。"
+
+msgid "Fixed a bug that deleting record can be found."
+msgstr "削除したはずのレコードが検索結果で見つかる問題を修正した。"
+
+msgid ""
+"Fixed a bug that latin1 and koi8r normalizations could not process all "
+"string data if given string contains NULL character on the way."
+msgstr ""
+"latin1やkoi8rの正規化で、与えた文字列データにNULL終端が途中に含まれているとす"
+"べての文字列データを正規化できない不具合を修正した。"
+
+msgid ""
+"Fixed to return the correct default value of type when no data stored in "
+"column is referenced by ``select`` command."
+msgstr ""
+"``select`` コマンドでデータが保存されていないカラムを参照したときに、型にあっ"
+"たデフォルト値を返さない不具合を修正した。"
+
+msgid ""
+"Fixed to exclude the value of vector column metadata in :ref:`offline-index-"
+"construction`. This change not to contain such a metadata as search results."
+msgstr ""
+" :ref:`offline-index-construction` によるベクタ型のカラムのメタデータが含まれ"
+"ないように修正した。この変更で検索結果にメタデータが混入しないようになりま"
+"す。"
+
+msgid "Akio Tajima"
+msgstr "Akio Tajimaさん"
+
+msgid "ongaeshi"
+msgstr "ongaeshiさん"
+
+msgid "Release 2.0.8 - 2012-10-29"
+msgstr "2.0.8リリース - 2012-10-29"
+
+msgid ""
+"[rpm] Improved the description of server-http and httpd packages. [Suggested "
+"by Daiki Ueno]"
+msgstr ""
+"[rpm] server-httpとhttpdパッケージの説明を改善した。 [Daiki Uenoさんが提案]"
+
+msgid "Supported custom query expansion by plugin."
+msgstr "プラグインによるクエリ展開のカスタマイズをサポート。"
+
+msgid "[experimental] Added query expander ``QueryExpanderTSV`` plugin."
+msgstr "[実験的] クエリ展開を行う ``QueryExpanderTSV`` プラグインを追加。"
+
+msgid "Supported Ubuntu 12.10 Quantal Quetzal"
+msgstr "Ubuntu 12.10 Quantal Quetzalをサポート。"
+
+msgid "[experimental] Supported function call in ``output_columns``."
+msgstr "[実験的] クエリの ``output_columns`` で関数呼び出しをサポート。"
+
+msgid ""
+"[doc][rpm] Add missing description about installing MeCab dictionary. "
+"[Reported by serihiro]"
+msgstr ""
+"[doc][rpm] MeCab辞書のインストールについて説明を追加。 [serihiroさんが報告]"
+
+msgid ""
+"[rpm] Fixed to remove needless \"Requires\" from spec file. [Reported by "
+"Daiki Ueno]"
+msgstr ""
+"[rpm] 不要な\"Requires\"をspecファイルから削除するようにした。[Daiki Uenoさん"
+"が報告]"
+
+msgid ""
+"[rpm] Fixed inaccurate description about license of groonga-server-gqtp."
+msgstr "groonga-server-gqtpパッケージのライセンス表記が不正確なのを修正した。"
+
+msgid ""
+"[admin] Fixed record edit button shows wrong record. [GitHub#34] [Reported "
+"by firewood]"
+msgstr ""
+"[admin] レコードの編集ボタンで誤ったレコードが表示されるのを修正した。 "
+"[GitHub#34] [firewoodさんが報告]"
+
+msgid "[deb] Fixed to remove needless dependency to pcre."
+msgstr "[deb] 不要なpcreパッケージへの依存を削除した。"
+
+msgid "[deb] Fixed to bundle missing table plugin."
+msgstr ""
+"[deb] パッケージに入っていなかったテーブルプラグインを添付するようにした。"
+
+msgid "Daiki Ueno"
+msgstr "うえのさん"
+
+msgid "firewood"
+msgstr "firewoodさん"
+
+msgid "serihiro"
+msgstr "serihiroさん"
+
+msgid "Release 2.0.7 - 2012-09-29"
+msgstr "2.0.7リリース - 2012-09-29"
+
+msgid "[doc] Added more descriptions about ``--query_flags``."
+msgstr "[doc] ``--query_flags`` の説明を追加。"
+
+msgid "[doc][httpd] Added sample configuration for gzip compression."
+msgstr "[doc][httpd] gzip圧縮についての設定サンプルを追加。"
+
+msgid "[httpd][rpm][centos] Added groonga-httpd init script."
+msgstr "[httpd][rpm][centos] groonga-httpd initスクリプトを追加。"
+
+msgid "[rpm] Added logrotate config files."
+msgstr "[rpm] logrotateの設定ファイルを追加。"
+
+msgid "Supported creating database during install process."
+msgstr "インストール中のデータベース作成をサポート。"
+
+msgid "[httpd] Supported ``groonga_database_auto_create`` directive."
+msgstr "[httpd] ``groonga_database_auto_create`` ディレクティブをサポート。"
+
+msgid "Supported score respected merge by set operation. [GitHub#31]"
+msgstr "集合演算でのスコアのマージをサポート。 [GitHub#31]"
+
+msgid "[httpd] Supported ``load`` command by POST."
+msgstr "[httpd] POSTによる ``load`` コマンドをサポート。"
+
+msgid "Added error check for creating temporary result set. [GitHub#33]"
+msgstr "一時結果テーブルを作成する際のエラーチェックを追加。 [GitHub#33]"
+
+msgid "Added GQTP server package."
+msgstr "GQTP サーバーパッケージを追加。"
+
+msgid "Added ``max()`` function."
+msgstr "``max()`` 関数を追加。"
+
+msgid "Added ``min()`` function."
+msgstr "``min()`` 関数を追加。"
+
+msgid "Fixed to set domain to vector elements to ``load`` command. [GitHub#30]"
+msgstr ""
+"``load`` コマンド実行時にベクタ要素へ主キー値の属する型情報を設定するように修"
+"正した。 [GitHub#30]"
+
+msgid "[httpd] Fixed missing NULL initialization. [Reported by @Kiske]"
+msgstr "[httpd] NULLでの初期化漏れを修正した。 [@Kiskeさんが報告]"
+
+msgid "[httpd] Fixed missing size about ``content_type_len``."
+msgstr "[httpd] ``content_type_len`` のサイズ設定漏れを修正した。"
+
+msgid "[rpm][fedora] Fixed to use ``--bind-address`` in ``groonga.service``."
+msgstr ""
+"[rpm][fedora] ``groonga.service`` で ``--bind-address`` を使うように修正し"
+"た。"
+
+msgid "Fixed crash by invalid argument filter. [GitHub#32]"
+msgstr "不適切なフィルタの引数によリクラッシュする問題を修正した。 [GitHub#32]"
+
+msgid "Fixed a bug that Time -> Time cast breaks value."
+msgstr "Time型からTime型へのキャストで値が壊れる不具合を修正。"
+
+msgid "Fixed a bug that Time -> Float cast breaks value."
+msgstr "Time型からFloat型へのキャストで値が壊れる不具合を修正。"
+
+msgid "@Kiske"
+msgstr "@Kiskeさん"
+
+msgid "Release 2.0.6 - 2012-08-29"
+msgstr "2.0.6リリース - 2012-08-29"
+
+msgid "[deb][rpm] Added ``groonga-server-common`` meta package. [#1451]"
+msgstr "[deb][rpm] ``groonga-server-common`` メタパッケージを追加。 [#1451]"
+
+msgid "Supported ``--query_flags`` option to ``select`` command."
+msgstr "``--query_flags`` オプションを ``select`` コマンドでサポート。"
+
+msgid "Supported PCRE auto detection for groonga-httpd."
+msgstr "groonga-httpdでPCREの自動検出をサポート。"
+
+msgid "[doc] Added information about Twitter and Facebook."
+msgstr "[doc] TwiterとFacebookの情報を追加。"
+
+msgid "Improved to show error message from MeCab on ``mecab_new2()`` failure."
+msgstr ""
+"MeCabで ``mecab_new2()`` 関数失敗時のエラーメッセージも表示するように改善し"
+"た。"
+
+msgid "[doc] Added details about groonga for server use."
+msgstr "[doc] groonga をサーバーとして利用するときの詳細ドキュメントを追加。"
+
+msgid "Improved to log details about ``vm.overcommit_memory``."
+msgstr "``vm.overcommit_memory`` の詳細を記録するように改善した。"
+
+msgid "Supported custom selector definition."
+msgstr "カスタムセレクタの定義をサポート。"
+
+msgid "Supported ``--working-directory`` option for groonga."
+msgstr "groongaで ``--working-directory`` オプションをサポートした。"
+
+msgid "Supported ``dump`` command for groonga-httpd."
+msgstr "groonga-httpdで ``dump`` コマンドをサポートした。"
+
+msgid "Improved to show not found target name for ``clearlock`` command."
+msgstr ""
+"``clearlock`` コマンドで見つからないターゲット名を表示するように改善した。"
+
+msgid ""
+"Improved error messages about ``get`` command implemented by table plugin."
+msgstr ""
+"テーブルプラグインで実装されている ``get`` コマンドについてのエラーメッセージ"
+"を改善した。"
+
+msgid ""
+"[rpm][centos] Supported MeCab 0.994. [#1455] [Suggested by IWAI, Masaharu]"
+msgstr "[rpm][centos] MeCab 0.994をサポートした。 [#1455] [岩井さんが提案]"
+
+msgid "Supported changing default logger's max level before ``grn_init()``."
+msgstr ""
+"ログ記録レベルの既定の最大値を ``grn_init()`` を呼ぶ前に変更可能にした。"
+
+msgid ""
+"Added ``all_records()`` function which copies all record IDs to the result "
+"table."
+msgstr ""
+"すべてのレコードIDを結果テーブルへとコピーするための関数 ``all_records()`` を"
+"追加した。"
+
+msgid "Supported '-WORD' in ``--query`` of the select command."
+msgstr "``select`` コマンドの ``--query`` で '-WORD' 構文をサポート。"
+
+msgid ""
+"[doc] Fixed the execution examples. [#1428] [Reported by IWAI, Masaharu]"
+msgstr "[doc] チュートリアルの実行例を修正した。 [#1428] [岩井さんが報告]"
+
+msgid ""
+"[deb] Fixed not to force groonga user/group by init script for groonga-httpd."
+msgstr ""
+"groonga-httpdの初期化スクリプトでユーザ/グループとしてgroongaを強制的に指定し"
+"ないように修正した。"
+
+msgid "[rpm][fedora] Fixed missing stop parameter for groonga-httpd service."
+msgstr ""
+"[rpm][fedora] groonga-httpdサービスでstopパラメータの指定漏れを修正した。"
+
+msgid ""
+"Fixed a bug that the last 1 byte for cache key is ignored by ``select`` "
+"command."
+msgstr ""
+" ``select`` コマンドでキャッシュされたキーの最後の1バイトが無視される不具合を"
+"修正した。"
+
+msgid ""
+"Fixed detection of the number of arguments in the complex function call."
+msgstr "複雑な関数呼び出しで引数の個数の検出処理を修正した。"
+
+msgid "Fixed to suppress a warning by Clang."
+msgstr "Clangによる警告を抑制するように修正した。"
+
+msgid ""
+"Fixed backward incompatibility about missing ``add`` command related error "
+"by executing ``clearlock`` command."
+msgstr ""
+"``clearlock`` コマンドを実行する際に ``add`` コマンドが存在しないことによる前"
+"方非互換なエラーを修正した。"
+
+msgid ""
+"[windows] Fixed database open failure which is related to binary data. "
+"[Reported by @yito]"
+msgstr ""
+"[windows] バイナリデータを含むデータベースを開く際のエラーを修正した。 [@yito"
+"さんが報告]"
+
+msgid "IWAI, Masaharu"
+msgstr "岩井さん"
+
+msgid "@yito"
+msgstr "@yitoさん"
+
+msgid "Release 2.0.5 - 2012-07-29"
+msgstr "2.0.5リリース - 2012-07-29"
+
+msgid ""
+"Supported calculating the value of distance with \"rect\" or \"rectangle\" "
+"argument in southern hemisphere. [#1418] [#1419] [#1420] [#1421]"
+msgstr ""
+"``\"rect\"`` もしくは ``\"rectangle\"`` 引数を指定した南半球における距離の計"
+"算をサポート。 [#1418] [#1419] [#1420] [#1421]"
+
+msgid "[doc] Added some literals description in script syntax."
+msgstr "[doc] スクリプト構文にてリテラルの説明を追加。"
+
+msgid "Supported other directory build for groonga-suggest and groonga-httpd."
+msgstr "groonga-suggestとgroonga-httpdのソース外ビルドに対応。"
+
+msgid ""
+"Supported \";\" as a query parameter separator. [#1406] [Suggested by IWAI, "
+"Masaharu]"
+msgstr ""
+"クエリパラメータの区切り文字として \";\"をサポート。 [#1406] [岩井さんが提案]"
+
+msgid "[doc] Added descriptions about script syntax."
+msgstr "[doc] スクリプト構文の説明を追加。"
+
+msgid ""
+"Supported near search by ``'column *N \"word1 word2 ...\"'`` in script "
+"syntax. [#1423]"
+msgstr ""
+"スクリプト構文で近傍検索を行う ``'column *N \"word1 word2 ...\"'`` 構文をサ"
+"ポート。 [#1423]"
+
+msgid "[doc] Added a description about limitation of suffix search."
+msgstr "[doc] 後方一致検索の制限を追記。"
+
+msgid "Supported near search for ``_key`` pseudo column. [GitHub#19]"
+msgstr "近傍検索で ``_key`` 疑似カラムをサポート。 [GitHub#19]"
+
+msgid "[doc] Added basic ECMAScript related syntaxes."
+msgstr "[doc] 基本的なECMAScript関連の構文を追加。"
+
+msgid ""
+"[doc] Updated a description about :doc:`/reference/functions/geo_distance`."
+msgstr "[doc] :doc:`/reference/functions/geo_distance` の説明を更新。"
+
+msgid "[rpm][fedora] Supported Fedora 17."
+msgstr "[rpm][fedora] Fedora 17をサポート。"
+
+msgid "[rpm][fedora] Dropped Fedora 16 support."
+msgstr "[rpm][fedora] Fedora 16サポートを削除。"
+
+msgid "Supported logical not ``\"!\"`` operator. [GitHub#22]"
+msgstr "論理演算子 ``\"!\"`` をサポート。 [GitHub#22]"
+
+msgid "[httpd] Supported per location groonga database."
+msgstr "[httpd] groongaデータベースごとのロケーション指定をサポート。"
+
+msgid "Improved to return error messages while load command is processing."
+msgstr "loadコマンドを処理中にはエラーメッセージを返すように改善。"
+
+msgid "Improved to exit load command when an uncontinuable error occurred."
+msgstr "継続困難なエラーが発生した場合にloadコマンドを中断するように改善。"
+
+msgid "Improved to stop load command for invalid --columns value."
+msgstr ""
+"正しくない--columnsの値が渡されたときloadコマンドを中断するように改善。"
+
+msgid "Supported to open locked database. [GitHub#21]"
+msgstr "ロックされたデータベースのオープンをサポート。 [GitHub#21]"
+
+msgid ""
+"Fixed a build problem about groonga-httpd on Mac OS X. [Reported by SHIMADA "
+"Koji]"
+msgstr ""
+"groonga-httpdが Mac OS Xでビルドできない問題を修正。[島田 浩二さんが報告]"
+
+msgid "Fixed not to use installed groonga's header files for groonga-httpd."
+msgstr ""
+"groonga-httpdがインストール済みのヘッダファイルを使用しないように修正。"
+
+msgid "Fixed a build problem about groonga on Mac OS X Lion."
+msgstr "Mac OS X Lionでgroongaがビルドできない問題を修正。"
+
+msgid ""
+"[doc] Fixed a description of :doc:`/reference/commands/table_remove` command."
+msgstr "[doc] :doc:`/reference/commands/table_remove` コマンドの説明を修正。"
+
+msgid ""
+"Fixed infinite loop problem for not implemented operator without index. "
+"[GitHub#20]"
+msgstr ""
+"インデックスが張られていないと未対応のオぺレータで無限ループする問題を修正。 "
+"[GitHub#20]"
+
+msgid "Fixed a wrong error code which causes memory leaks."
+msgstr "メモリリークを引き起すエラーコードの誤りを修正。"
+
+msgid "Fixed a wrong error code which collapse ja columns."
+msgstr "カラムの値を壊すことにつながるエラーコードの誤りを修正。"
+
+msgid "[admin] Fixed to escape error message."
+msgstr "[admin] エラーメッセージをエスケープするように修正。"
+
+msgid ""
+"Fixed to ignore unloadable objects which causes database incompatible. "
+"[#1429] [Reported by IWAI, Masaharu]"
+msgstr ""
+"データベースの非互換を引き起こす読めないオブジェクトを無視するように修正。 "
+"[#1429] [岩井さんが報告]"
+
+msgid "SHIMADA Koji"
+msgstr "島田 浩二さん"
+
+msgid "Release 2.0.4 - 2012-06-29"
+msgstr "2.0.4リリース - 2012-06-29"
+
+msgid "Supported only KyTea 0.4.2."
+msgstr "KyTea 0.4.2のみをサポート。"
+
+msgid "Dropped KyTea 0.4.1 or ealier support."
+msgstr "KyTea 0.4.1以前のサポートを削除。"
+
+msgid "[experimental] Supported nginx based groonga HTTP interface."
+msgstr "[実験的] nginxベースのHTTPインタフェースをサポート。"
+
+msgid ""
+"Supported calculating the value of distance with \"rect\" or \"rectangle\" "
+"argument in northern hemisphere. [#1386] [#1387] [#1388] [#1389]"
+msgstr ""
+"``\"rect\"`` もしくは ``\"rectangle\"`` 引数を指定した北半球における距離の計"
+"算をサポート。"
+
+msgid "[doc] Added a document about :doc:`/development/travis-ci` integration."
+msgstr "[doc] :doc:`/development/travis-ci` の統合に関するドキュメントを追加。"
+
+msgid ""
+"[doc] Added descriptions about full text search and phrase search. See :ref:"
+"`query-syntax-full-text-search-condition` and :ref:`query-syntax-phrase-"
+"search-condition` about detail."
+msgstr ""
+"[doc] 全文検索とフレーズ検索についての説明を追加。詳細については :ref:`query-"
+"syntax-full-text-search-condition` および :ref:`query-syntax-phrase-search-"
+"condition` を参照してください。"
+
+msgid ""
+"[doc] Added descriptions about comparison conditions.  See :ref:`query-"
+"syntax-conditional-expression` about detail."
+msgstr ""
+"[doc] 比較条件についての説明を追加。詳細は :ref:`query-syntax-conditional-"
+"expression` を参照してください。"
+
+msgid "[doc] Added examples for :doc:`/reference/grn_expr/query_syntax`."
+msgstr "[doc] :doc:`/reference/grn_expr/query_syntax` のサンプルを追加。"
+
+msgid "[doc] Added descriptions about :ref:`query-syntax-combined-expression`."
+msgstr "[doc] :ref:`query-syntax-combined-expression` の説明を追加。"
+
+msgid ""
+"[doc] Added descriptions about :ref:`query-syntax-prefix-search-condition` "
+"and :ref:`query-syntax-suffix-search-condition`."
+msgstr ""
+"[doc] :ref:`query-syntax-prefix-search-condition` と :ref:`query-syntax-"
+"suffix-search-condition` の説明を追加。"
+
+msgid "Supported suffix search by index."
+msgstr "インデックスを使った後方一致検索をサポート。"
+
+msgid "[doc] Added a document about :doc:`/reference/grn_expr`."
+msgstr "[doc] :doc:`/reference/grn_expr` に関するドキュメントを追加。"
+
+msgid ""
+"[munin] Supported JSON library installed by RubyGems [GitHub#17] [Patch by "
+"IWAI, Masaharu]"
+msgstr ""
+"[munin] RubyGemsでインストールしたJSONライブラリをサポート。 [GitHub#17] [岩"
+"井さんがパッチ提供]"
+
+msgid ""
+"[doc] Updated the description of how to specify a value as Time in tutorial. "
+"[#1405] [Reported by IWAI, Masaharu]"
+msgstr ""
+"[doc] チュートリアル記載のTime型指定値についての説明を更新。 [#1405] [岩井さ"
+"んが報告]"
+
+msgid ""
+"[rpm] Removed groonga-tokenizer-mecab dependency from groonga package. "
+"[GitHub#18] [Patch by IWAI, Masaharu]"
+msgstr ""
+"[rpm] groongaパッケージから必要のないgroonga-tokenizer-mecabパッケージへの依"
+"存関係を削除。 [GitHub#18] [岩井さんがパッチ提供]"
+
+msgid ""
+"Fixed a problem that display of command prompt changes to not intended state "
+"by using batch mode on Mac OS X. [Reported by @soundkitchen]"
+msgstr ""
+"Mac OS Xでバッチモードを使用した際にコマンドプロンプトの表示が意図しない状態"
+"になる問題を修正。 [@soundkitchenさんが報告]"
+
+msgid "Fixed not to terminate after an invalid command in client mode. [#1305]"
+msgstr ""
+"誤ったコマンドをクライアントモードで実行しても終了しないように修正。 [#1305]"
+
+msgid ""
+"Fixed a problem that '=R' is treated as 'OR' in ``--query`` syntax. [#1393]"
+msgstr ""
+"``--query`` 構文で ``'=R'`` が ``'OR'`` として扱われてしまう問題を修正。 "
+"[#1393]"
+
+msgid "@soundkitchen"
+msgstr "@soundkitchenさん"
+
+msgid "Release 2.0.3 - 2012-05-29"
+msgstr "2.0.3リリース - 2012-05-29"
+
+msgid "[doc] Added about release procedure."
+msgstr "[doc] リリース手順を追加。"
+
+msgid "Removed restriction that the max number of opened files is 4096."
+msgstr ""
+"1プロセスで開けるファイルディスクリプターの最大数が4096という制限を削除。"
+
+msgid "[experimental] Added table plugin."
+msgstr "[実験的] tableプラグインを追加。"
+
+msgid ""
+"[doc] Added more descriptions about :doc:`/reference/commands/select` "
+"command."
+msgstr "[doc] :doc:`/reference/commands/select` コマンドの説明を追加。"
+
+msgid "[doc] Made execution example copy & paste friendly."
+msgstr "[doc] 実行例をコピー&ペーストしやすくした。"
+
+msgid ""
+"[windows] Supported build with Visual Studio 2010 Express and CMake. See :"
+"doc:`/install/windows` about details."
+msgstr ""
+"[windows] Visual Studio 2010 ExpressとCMakeを使ったビルドをサポート。詳細は :"
+"doc:`/install/windows` を参照してください。"
+
+msgid ""
+"[doc][solaris] Added a document about building on Solaris. See :doc:`/"
+"install/solaris` about details."
+msgstr ""
+"[doc][solaris] Solarisでビルドするためのドキュメントを追加。詳細は :doc:`/"
+"install/solaris` を参照してください。"
+
+msgid ""
+"[doc][yum] Updated epel-release package version. [Reported by IWAI, Masaharu]"
+msgstr "[doc][yum] epel-releaseパッケージのバージョンを更新。[岩井さんが報告]"
+
+msgid ""
+"[doc][cenos6] Disabled Repoforge for Munin for CentOS 6. [Reported by IWAI, "
+"Masaharu]"
+msgstr ""
+"[doc][centos6] RepoforgeにあるCentOS 6用のMuninを使うという設定を削除。[岩井"
+"さんが報告]"
+
+msgid "Started distributing source archive in zip format."
+msgstr "ソースをzip形式でも配布するようにした。"
+
+msgid ""
+"[munin] groonga_dist Munin plugin supported an object that has separated "
+"files."
+msgstr ""
+"[munin] groonga_dist Muninプラグインが複数のファイルを使っているオブジェクト"
+"をサポート。"
+
+msgid "Started using Travis CI."
+msgstr "Travis CIを使うようにした。"
+
+msgid ""
+"[yum] Changed RPM package name that provides yum repository from groonga-"
+"repository to groonga-release to follow RPM package name convension such as "
+"centos-release and fedora-release."
+msgstr ""
+"[yum] groongaのyumリポジトリを提供するRPMパッケージ名をgroonga-repositoryから"
+"groonga-releaseへと変更。これは、centos-releaseやfedora-releaseといったRPM"
+"パッケージの命名規則とあわせるためである。"
+
+msgid ""
+"[doc] Fixed a command to update yum repository. [Suggested by IWAI, Masaharu]"
+msgstr "[doc] yumリポジトリを更新するためのコマンドを修正。 [岩井さんが提案]"
+
+msgid ""
+"[deb] Fixed a bug that log_repoen command in logrotate uses wrong protocol."
+msgstr ""
+"[deb] logrotateでlog_reopenコマンドが誤ったプロトコルを使用する不具合を修正。"
+
+msgid ""
+"Fixed broken ERROR tag in XML response. [#1363] [GitHub#13] [Patch by IWAI, "
+"Masaharu]"
+msgstr ""
+"XMLレスポンスのERRORタグが壊れている問題を修正。[#1363] [GitHub#13] [岩井さん"
+"がパッチ提供]"
+
+msgid "Fixed a bug that grn_ctx isn't fully cleared by grn_ctx_fin()."
+msgstr "grn_ctx_fin()がgrn_ctxの一部をクリアしきれていない問題を修正。"
+
+msgid ""
+"Fixed a bug that ``&!`` set operation doesn't work with grouped expression. "
+"[#1372]"
+msgstr ""
+"``&!`` 演算子をグループ化した式と一緒に使うと間違った結果を返す不具合を修正。"
+"[#1372]"
+
+msgid ""
+"Fixed a bug that a record key registered via index source isn't normalized."
+msgstr ""
+"インデックスのソースに指定したカラム経由でレコードのキーを登録するとキーが正"
+"規化されない問題を修正。"
+
+msgid "Release 2.0.2 - 2012-04-29"
+msgstr "2.0.2リリース - 2012-04-29"
+
+msgid ""
+"The package sign key is changed since this release. Import the new package "
+"sign key before updating groonga packages."
+msgstr ""
+"今回のリリースよりパッケージへ署名する鍵を変更しました。groongaパッケージを更"
+"新する前にパッケージ署名用の新しい鍵をインポートして下さい。"
+
+msgid "Debian/Ubuntu::"
+msgstr ""
+
+msgid "CentOS/Fedora::"
+msgstr ""
+
+msgid "[pkg-config] Removed needless MessagePack dependency."
+msgstr "[pkg-config] 必要のないMessagePackへの依存関係を削除。"
+
+msgid "[rpm][fedora] Supported libedit. [#1325] [Suggested by IWAI, Masaharu]"
+msgstr "[rpm][fedora] libeditをサポート。[#1325] [IWAI, Masaharuさんが提案]"
+
+msgid "[rpm] Supported zlib and LZO. [#1324] [Patch by IWAI, Masaharu]"
+msgstr ""
+"[rpm] zlibおよびLZOをサポート。[#1324] [IWAI, Masaharuさんがパッチ提供]"
+
+msgid ""
+"[groonga] Improved daemoinzed timing. Groonga server daemonizes after socket "
+"is listened. It means that groonga server is ready when groonga server is "
+"daemonized. [#1326]"
+msgstr ""
+"[groonga] デーモン化のタイミングを改善。groongaサーバーはソケットがlisten状態"
+"になった後にデーモン化するようになった。これによりgroongaサーバーがデーモン化"
+"した時点で接続を受け付けられる状態になっている。 [#1326]"
+
+msgid "[admin] Supported suggest in groonga administration page."
+msgstr "[admin] groongaの管理ページでサジェスト機能をサポート。"
+
+msgid "[dump] Ignored MeCab tokenizer load error."
+msgstr "[dump] Mecabのトークナイザのロードエラーを無視するようにした。"
+
+msgid "Supported CMake."
+msgstr "CMakeをサポート。"
+
+msgid "[load] Supported error report when a column value can't be set."
+msgstr "[load] カラムの値が設定できなかった時のエラーレポートをサポート。"
+
+msgid ""
+"Supported similar search. ``select --filter \"column *S 'TEXT'\"`` is the "
+"similar search syntax. [#1342]"
+msgstr ""
+"類似検索をサポート。類似検索の構文は ``select --filter \"column *S "
+"'TEXT'\"`` 。 [#1342]"
+
+msgid "[apt][yum] Changed package sign key."
+msgstr "[apt][yum] パッケージ署名用の鍵を変更。"
+
+msgid "Supported Ubuntu Precise Pangolin."
+msgstr "Ubuntu Precise Pangolinをサポート。"
+
+msgid ""
+"[apt] Added a new groonga-keyring deb package for the groonga's package sign "
+"key."
+msgstr ""
+"[apt] groongaのパッケージ署名用の鍵を提供するgroonga-keyring debパッケージを"
+"追加。"
+
+msgid ""
+"[deb][rpm] Used ``--bind-address`` option instead of deprecated ``--"
+"address`` option. [#1320] [Patch by IWAI, Masaharu]"
+msgstr ""
+"[deb][rpm] 非推奨の ``--address`` オプションではなく ``--bind--address`` オプ"
+"ションを使用するようにした。[#1320] [IWAI, Masaharuさんがパッチ提供]"
+
+msgid ""
+"[deb] Renamed groonga-server package's configuration file to /etc/default/"
+"groonga-server from /etc/default/groonga."
+msgstr ""
+"[deb] groonga-serverパッケージの設定ファイルを ``/etc/default/groonga`` から "
+"``/etc/default/groonga-server`` へ改名。"
+
+msgid ""
+"[rpm][fedora] Fixed upgrade condition in %post server. [GitHub#11] [Patch by "
+"Daiki Ueno]"
+msgstr ""
+"[rpm][fedora] groonga-serverの%postで更新処理を行うかどうかの条件を修正。 "
+"[GitHub#11] [Daiki Uenoさんがパッチ提供]"
+
+msgid "[rpm] Removed needless change logs. [#1328] [Patch by IWAI, Masaharu]"
+msgstr "[rpm] 必要のないログを削除。 [#1328] [IWAI, Masaharuさんがパッチ提供]"
+
+msgid ""
+"[deb][rpm] Added missing curl dependency. [GitHub#12] [Patch by IWAI, "
+"Masaharu]"
+msgstr ""
+"[deb][rpm] curlへの依存関係を追加。 [GitHub#12] [IWAI, Masaharuさんがパッチ提"
+"供]"
+
+msgid ""
+"[rpm] Removed needleess ruby package dependency from groonga package. "
+"[#1330] [Suggested by IWAI, Masaharu]"
+msgstr ""
+"[rpm] groongaパッケージから必要のないrubyパッケージへの依存関係を削除。 "
+"[#1330] [IWAI, Masaharuさんが提案]"
+
+msgid ""
+"[deb] Added missing default values to groonga-server's configuration file."
+msgstr "[deb] groonga-serverの設定ファイルに未設定だったデフォルト値を追加。"
+
+msgid ""
+"Fixed a crash bug that is caused when searching with updaging very large "
+"inverted index. [#1329]"
+msgstr ""
+"非常に大きな転置インデックスを更新しながら検索するとクラッシュする不具合を修"
+"正。 [#1329]"
+
+msgid ""
+"Fixed a bug that strings are compared as characters instead of byte string. "
+"[#1340] [Reported by Shinya Kawaji]"
+msgstr ""
+"文字列をバイト文字列でなく文字として比較している不具合を修正。 [#1340] "
+"[Kawaji Shinyaさんが報告]"
+
+msgid "Shinya Kawaji"
+msgstr "Shinya Kawajiさん"
+
+msgid "Release 2.0.1 - 2012-03-29"
+msgstr "2.0.1リリース - 2012-03-29"
+
+msgid "Supported build in other directory. [#1298] [Reported by Kazuhiko]"
+msgstr "別ディレクトリでのビルドをサポートした。 [#1298] [かずひこさんが報告]"
+
+msgid "[solaris] Supported build on Solaris 11. [Reported by Kazuhiko]"
+msgstr ""
+"[solaris] Solaris 11上でのビルドできるようにした。 [かずひこさんが報告]"
+
+msgid "[test] Supported functional test."
+msgstr "[test] 機能テストを追加した。"
+
+msgid "[test] Required ``--with-ruby19`` configure option for testing by Ruby."
+msgstr ""
+"[test] Rubyでテストを実行するためにはconfigureに ``--with-ruby19`` オプション"
+"を指定しなければいけないようにした。"
+
+msgid "[dump] Supported records dump for a table that has default tokenizer."
+msgstr ""
+"[dump] デフォルトトークナイザーを持っているテーブルのレコードもダンプするよう"
+"にした。"
+
+msgid "[suggest] Added ``similar_search`` option."
+msgstr "[suggest] ``similar_search`` オプションを追加。"
+
+msgid ""
+"[groonga] Removed deprecated options, ``-a``, ``--address`` and ``--admin-"
+"html-path``."
+msgstr ""
+"[groonga] 非推奨の ``-a`` と ``--address`` と ``--admin-html-path`` オプショ"
+"ンを削除した。"
+
+msgid "Added more return value checks. [GitHub#9] [Reported by Markus Elfring]"
+msgstr "戻り値チェックを追加した。 [GitHub#9] [Markus Elfringさんが報告]"
+
+msgid "[dat] Supported term extract operation."
+msgstr "[dat] 単語抽出処理をサポートした。"
+
+msgid "Added `logos <http://groonga.org/logo/>`_ ."
+msgstr "`ロゴ <http://groonga.org/ja/logo/>`_ を追加した。"
+
+msgid "Updated HTML design."
+msgstr "HTMLのデザインを更新した。"
+
+msgid "Renamed ``grntest`` to ``groonga-benchmark``."
+msgstr "``grntest`` を ``groonga-benchmark`` に改名した。"
+
+msgid "Supported ``autogen.sh`` on CentOS 5."
+msgstr "CentOS 5上で ``autogen.sh`` が動くようにした。"
+
+msgid ""
+"[linux] Added ``vm.overcommit_memory`` kernel parameter value check. [#1289]"
+msgstr ""
+"[linux] ``vm.overcommit_memory`` カーネルパラメーターの値をチェックするように"
+"した。 [#1289]"
+
+msgid "``grn_snip`` uses ``grn_obj`` mechanism. [#1054]"
+msgstr "``grn_snip`` が ``grn_obj`` の仕組みを使うようにした。 [#1054]"
+
+msgid ""
+"Fixed a bug that uninstall task doesn't uninstall installed Ruby scripts. "
+"[#1299] [Reported by Kazuhiko]"
+msgstr ""
+"インストールしたRubyスクリプトをuninstallでアンインストールできない問題を修正"
+"した。 [#1299] [かずひこさんが報告]"
+
+msgid "Added a missing Gemfile. [#1302] [Reported by Kazuhiko]"
+msgstr "Gemfileを追加した。 [#1302] [かずひこさんが報告]"
+
+msgid ""
+"Fixed a bug that some indexed records aren't found. The feature is only used "
+"by mroonga. [#1303]"
+msgstr ""
+"インデックスに登録されているレコードが見つからないことがある問題を修正した。"
+"この機能を使っているのはmroongaだけである。 [#1303]"
+
+msgid "[groonga] Appended missing ``-id`` to ``--server-id`` option name."
+msgstr ""
+"[groonga] ``--server-id`` オプションの名前の最後に ``-id`` がついていなかった"
+"ので追加した。"
+
+msgid "Fixed a bug that latin1 normalization may access unexpected memory."
+msgstr ""
+"latin1を正規化するときに意図しないメモリ領域にアクセスしてしまう問題を修正し"
+"た。"
+
+msgid "Kazuhiko"
+msgstr "かずひこさん"
+
+msgid "Markus Elfring"
+msgstr "Markus Elfringさん"
+
+msgid "Release 2.0.0 - 2012-02-29"
+msgstr "2.0.0リリース - 2012-02-29"
+
+msgid "[dat] Added 0 length key check."
+msgstr "[dat] 長さが0かどうかキーをチェックするようにした。"
+
+msgid ""
+"[windows] Added missing GCC related DLLs. [groonga-dev,00686] [Reported by "
+"Suzuki]"
+msgstr ""
+"[windows] GCC関連のDLLを同梱するようにした。 [groonga-dev,00686] [鈴木さんが"
+"報告]"
+
+msgid "[php] Supported PHP 5.4. [Patch by Daiki Ueno]"
+msgstr "[php] PHP 5.4に対応した。 [Daiki Uenoさんがパッチ提供]"
+
+msgid "Updated FSF address. [Suggested by Daiki Ueno]"
+msgstr "FSFの住所を更新した。 [Daiki Uenoさんが提案]"
+
+msgid "[fedora] Supported systemd. [Patch by Daiki Ueno]"
+msgstr "[fedora] systemdに対応した。 [Daiki Uenoさんがパッチ提供]"
+
+msgid "[rpm][debian] Changed the default protocol to HTTP from gqtp."
+msgstr "[rpm][debian] デフォルトのプロトコルをgqtpからHTTPに変更した。"
+
+msgid "[rpm][centos] Supported status command."
+msgstr "[rpm][centos] statusコマンドに対応した。"
+
+msgid "Removed needless ``:`` from log message."
+msgstr "ログメッセージから必要のない ``:`` を削除した。"
+
+msgid "Removed deprecated grn_query. [#1247]"
+msgstr "非推奨となっていたgrn_queryを削除した。 [#1247]"
+
+msgid "Reduced needless grn_ctx_at() calls on creating table."
+msgstr "テーブル作成時にgrn_ctx_at()の呼び出し回数を減らした。"
+
+msgid "[pat] Supported cache."
+msgstr "[pat] キャッシュに対応した。"
+
+msgid "[tokenizer] Improved tokenizer API."
+msgstr "[tokenizer] トークナイザーAPIを整理した。"
+
+msgid "Accepted ``@`` as a valid name character."
+msgstr "名前に ``@`` も使えるようにした。"
+
+msgid ""
+"[tokenizer] Added a tokenizer based on `KyTea <http://www.phontron.com/kytea/"
+">`_."
+msgstr ""
+"[tokenizer] `KyTea <http://www.phontron.com/kytea/index-ja.html>`_ を使った"
+"トークナイザーを追加した。"
+
+msgid "Supported :doc:`offline index construction </reference/indexing>`."
+msgstr ""
+":doc:`静的なインデックス構築方法 </reference/indexing>` をサポートした。"
+
+msgid ""
+"[tokenizer] Supported MeCab 0.993. [groonga-dev,00703] [Reported by Masaharu "
+"YOSHIOKA]"
+msgstr ""
+"[tokenizer] MeCab 0.993に対応した。 [groonga-dev,00703] [Masaharu YOSHIOKAさ"
+"んが報告]"
+
+msgid "[windows] Supported MessagePack."
+msgstr "[windows] MessagePackに対応した。"
+
+msgid "[pat] Fixed a bug that the last node can't be found. [#1258]"
+msgstr "[pat] 最後のノードを見つけられない問題を修正した。 [#1258]"
+
+msgid "[doc] Fixed links in Japanese page. [Reported by @naoina]"
+msgstr "[doc] 日本語ページ内のリンクを修正した。 [@naoinaさんが報告]"
+
+msgid "[doc] Fixed wrong the default value. [Reported by @naoina]"
+msgstr "[doc] 間違ったデフォルト値を修正した。 [@naoinaさんが報告]"
+
+msgid "Fixed a typo. [Reported by Kazuhiko]"
+msgstr "誤字を修正した。[かずひこさんが報告]"
+
+msgid ""
+"[http] Fixed a bug that ``load`` command error isn't cleared. [Reported by "
+"@wareohji]"
+msgstr ""
+"[http] ``load`` コマンドのエラーがクリアされない不具合を修正した。 [@wareohji"
+"さんが報告]"
+
+msgid "Suzuki"
+msgstr "鈴木さん"
+
+msgid "@naoina"
+msgstr "@naoinaさん"
+
+msgid "Masaharu YOSHIOKA"
+msgstr "Masaharu YOSHIOKAさん"
+
+msgid "@wareohji"
+msgstr "@wareohjiさん"

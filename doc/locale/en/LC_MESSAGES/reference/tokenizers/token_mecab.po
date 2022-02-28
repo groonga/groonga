@@ -1,0 +1,234 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``TokenMecab``"
+msgstr "``TokenMecab``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"``TokenMecab`` is a tokenizer based on `MeCab <https://taku910.github.io/"
+"mecab/>`_ part-of-speech and morphological analyzer."
+msgstr ""
+"``TokenMecab`` is a tokenizer based on `MeCab <https://taku910.github.io/"
+"mecab/>`_ part-of-speech and morphological analyzer."
+
+msgid ""
+"MeCab doesn't depend on Japanese. You can use MeCab for other languages by "
+"creating dictionary for the languages. You can use `NAIST Japanese "
+"Dictionary <http://osdn.jp/projects/naist-jdic/>`_ for Japanese."
+msgstr ""
+"MeCab doesn't depend on Japanese. You can use MeCab for other languages by "
+"creating dictionary for the languages. You can use `NAIST Japanese "
+"Dictionary <http://osdn.jp/projects/naist-jdic/>`_ for Japanese."
+
+msgid ""
+"You need to install an additional package to using TokenMecab. For more "
+"detail of how to installing an additional package, see `how to install each "
+"OS <http://groonga.org/docs/install.html>`_ ."
+msgstr ""
+"You need to install an additional package to using TokenMecab. For more "
+"detail of how to installing an additional package, see `how to install each "
+"OS <http://groonga.org/docs/install.html>`_ ."
+
+msgid ""
+"``TokenMecab`` is good for precision rather than recall. You can find ``東京"
+"都`` and ``京都`` texts by ``京都`` query with :ref:`token-bigram` but ``東京"
+"都`` isn't expected. You can find only ``京都`` text by ``京都`` query with "
+"``TokenMecab``."
+msgstr ""
+"``TokenMecab`` is good for precision rather than recall. You can find ``東京"
+"都`` and ``京都`` texts by ``京都`` query with :ref:`token-bigram` but ``東京"
+"都`` isn't expected. You can find only ``京都`` text by ``京都`` query with "
+"``TokenMecab``."
+
+msgid ""
+"If you want to support neologisms, you need to keep updating your MeCab "
+"dictionary. It needs maintain cost. (:ref:`token-bigram` doesn't require "
+"dictionary maintenance because :ref:`token-bigram` doesn't use dictionary.) "
+"`mecab-ipadic-NEologd : Neologism dictionary for MeCab <https://github.com/"
+"neologd/mecab-ipadic-neologd>`_ may help you."
+msgstr ""
+"If you want to support neologisms, you need to keep updating your MeCab "
+"dictionary. It needs maintain cost. (:ref:`token-bigram` doesn't require "
+"dictionary maintenance because :ref:`token-bigram` doesn't use dictionary.) "
+"`mecab-ipadic-NEologd : Neologism dictionary for MeCab <https://github.com/"
+"neologd/mecab-ipadic-neologd>`_ may help you."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "``TokenMecab`` has optional parameter."
+msgstr "``TokenMecab`` has optional parameter."
+
+msgid "No options::"
+msgstr "No options::"
+
+msgid "Specify option::"
+msgstr "Specify option::"
+
+msgid "Specify multiple options::"
+msgstr "Specify multiple options::"
+
+msgid ""
+"``TokenMecab`` also specify multiple options as above. You can also specify "
+"mingle multiple options except above example."
+msgstr ""
+"``TokenMecab`` also specify multiple options as above. You can also specify "
+"mingle multiple options except above example."
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Simple usage"
+msgstr "Simple usage"
+
+msgid ""
+"Here is an example of ``TokenMeCab``. ``東京都`` is tokenized to ``東京`` "
+"and ``都``. They don't include ``京都``:"
+msgstr ""
+"Here is an example of ``TokenMeCab``. ``東京都`` is tokenized to ``東京`` "
+"and ``都``. They don't include ``京都``:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"``TokenMecab`` can also specify options. ``TokenMecab`` has ``target_class`` "
+"option, ``include_class`` option, ``include_reading`` option, "
+"``include_form`` option and ``use_reading`` option."
+msgstr ""
+"``TokenMecab`` can also specify options. ``TokenMecab`` has ``target_class`` "
+"option, ``include_class`` option, ``include_reading`` option, "
+"``include_form`` option and ``use_reading`` option."
+
+msgid ""
+"``target_class`` option searches a token of specifying a part-of-speech. For "
+"example, you can search only a noun as below."
+msgstr ""
+"``target_class`` option searches a token of specifying a part-of-speech. For "
+"example, you can search only a noun as below."
+
+msgid ""
+"``include_class`` option outputs class and subclass in MeCab's metadata as "
+"below."
+msgstr ""
+"``include_class`` option outputs class and subclass in MeCab's metadata as "
+"below."
+
+msgid ""
+"You can exclude needless token with ``target_class`` and class and sub class "
+"of this option outputs."
+msgstr ""
+"You can exclude needless token with ``target_class`` and class and sub class "
+"of this option outputs."
+
+msgid "``include_reading`` outputs reading in MeCab's metadata as below."
+msgstr "``include_reading`` outputs reading in MeCab's metadata as below."
+
+msgid "You can get reading of a token with this option."
+msgstr "You can get reading of a token with this option."
+
+msgid ""
+"``include_form`` outputs inflected_type, inflected_form and base_form in "
+"MeCab's metadata as below."
+msgstr ""
+"``include_form`` outputs inflected_type, inflected_form and base_form in "
+"MeCab's metadata as below."
+
+msgid ""
+"``use_reading`` supports a search by kana. This option is useful for "
+"countermeasure of orthographical variants because it searches with kana."
+msgstr ""
+"``use_reading`` supports a search by kana. This option is useful for "
+"countermeasure of orthographical variants because it searches with kana."
+
+msgid "Advanced usage"
+msgstr "Advanced usage"
+
+msgid ""
+"``target_class`` option can also specify subclasses and exclude or add "
+"specific part-of-speech of specific using + or -. So, you can also search a "
+"noun with excluding non-independent word and suffix of person name as below."
+msgstr ""
+"``target_class`` option can also specify subclasses and exclude or add "
+"specific part-of-speech of specific using + or -. So, you can also search a "
+"noun with excluding non-independent word and suffix of person name as below."
+
+msgid "In this way you can search exclude the noise of token."
+msgstr "In this way you can search exclude the noise of token."
+
+msgid ""
+"In addition, you can get reading of a token that exclude the noise with "
+"``include_reading`` option as below."
+msgstr ""
+"In addition, you can get reading of a token that exclude the noise with "
+"``include_reading`` option as below."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "Optional parameter"
+msgstr "Optional parameter"
+
+msgid ""
+"There are four optional parameters ``include_class`` , ``target_class`` , "
+"``include_form`` and ``use_reading`` ."
+msgstr ""
+"There are four optional parameters ``include_class`` , ``target_class`` , "
+"``include_form`` and ``use_reading`` ."
+
+msgid "``include_class``"
+msgstr "``include_class``"
+
+msgid "Outputs class and subclass in MeCab's metadata."
+msgstr "Outputs class and subclass in MeCab's metadata."
+
+msgid "``target_class``"
+msgstr "``target_class``"
+
+msgid "Outputs a token of specifying a part-of-speech."
+msgstr "Outputs a token of specifying a part-of-speech."
+
+msgid "``include_reading``"
+msgstr "``include_reading``"
+
+msgid "Outputs reading in MeCab's metadata."
+msgstr "Outputs reading in MeCab's metadata."
+
+msgid "``include_form``"
+msgstr "``include_form``"
+
+msgid ""
+"Outputs inflected_type, inflected_form and base_form in MeCab's metadata."
+msgstr ""
+"Outputs inflected_type, inflected_form and base_form in MeCab's metadata."
+
+msgid "``use_reading``"
+msgstr "``use_reading``"
+
+msgid "Outputs reading of token."
+msgstr "Outputs reading of token."
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`../commands/tokenize`"
+msgstr ":doc:`../commands/tokenize`"

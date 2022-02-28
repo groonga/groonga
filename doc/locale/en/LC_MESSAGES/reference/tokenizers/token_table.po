@@ -1,0 +1,102 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``TokenTable``"
+msgstr "``TokenTable``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"``TokenTable`` is a tokenizer which treats only known keywords as a token. "
+"The known keywords must be registered as a key in the table for "
+"``TokenTable``."
+msgstr ""
+"``TokenTable`` is a tokenizer which treats only known keywords as a token. "
+"The known keywords must be registered as a key in the table for "
+"``TokenTable``."
+
+msgid ""
+"For example, query contains a known keyword and a unknown keyword, only a "
+"known keyword is used in search query (unknown keyword will be ignored). In "
+"other words, you can search contents with only known keywords. Because of "
+"this characteristic, you need to maintain keyword table for a new keyword "
+"continuously."
+msgstr ""
+"For example, query contains a known keyword and a unknown keyword, only a "
+"known keyword is used in search query (unknown keyword will be ignored). In "
+"other words, you can search contents with only known keywords. Because of "
+"this characteristic, you need to maintain keyword table for a new keyword "
+"continuously."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "``TokenTable`` has a required parameter."
+msgstr "``TokenTable`` has a required parameter."
+
+msgid "Specify the table::"
+msgstr "Specify the table::"
+
+msgid ""
+"``TABLE`` must be created with ``--default_tokenizer 'TokenTable(\"table\", "
+"TABLE)``."
+msgstr ""
+"``TABLE`` must be created with ``--default_tokenizer 'TokenTable(\"table\", "
+"TABLE)``."
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid ""
+"Here is an example of ``TokenTable``. For example, let's search ``Raspberry "
+"Pie`` from ``Pies`` table. The table which is used for keyword is "
+"``Keywords``."
+msgstr ""
+"Here is an example of ``TokenTable``. For example, let's search ``Raspberry "
+"Pie`` from ``Pies`` table. The table which is used for keyword is "
+"``Keywords``."
+
+msgid "Here is the sample schema and data:"
+msgstr "Here is the sample schema and data:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "Then search ``Raspberry Pie`` with ``--query Raspberry``."
+msgstr "Then search ``Raspberry Pie`` with ``--query Raspberry``."
+
+msgid "As you expected, the above query matches the ``Raspberry Pie`` record."
+msgstr "As you expected, the above query matches the ``Raspberry Pie`` record."
+
+msgid "Next, search ``Stargazy Pie`` with ``--query Stargazy``."
+msgstr "Next, search ``Stargazy Pie`` with ``--query Stargazy``."
+
+msgid ""
+"In above example, as the keyword ``Stargazy`` is not registered in "
+"``Keywords`` table yet, it doesn't match anything."
+msgstr ""
+"In above example, as the keyword ``Stargazy`` is not registered in "
+"``Keywords`` table yet, it doesn't match anything."
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`../commands/tokenize`"
+msgstr ":doc:`../commands/tokenize`"

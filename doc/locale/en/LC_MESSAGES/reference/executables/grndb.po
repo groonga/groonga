@@ -1,0 +1,441 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``grndb``"
+msgstr "``grndb``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "``grndb`` manages a Groonga database."
+msgstr "``grndb`` manages a Groonga database."
+
+msgid "Here are features:"
+msgstr "Here are features:"
+
+msgid "Checks whether database is broken or not."
+msgstr "Checks whether database is broken or not."
+
+msgid "Recovers broken database automatically if the database is recoverable."
+msgstr "Recovers broken database automatically if the database is recoverable."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "``grndb`` requires command and database path::"
+msgstr "``grndb`` requires command and database path::"
+
+msgid "Here are available commands:"
+msgstr "Here are available commands:"
+
+msgid "``check`` - Checks whether database is broken or not."
+msgstr "``check`` - Checks whether database is broken or not."
+
+msgid "``recover`` - Recovers database."
+msgstr "``recover`` - Recovers database."
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid ""
+"Here is an example to check the database at ``/var/lib/groonga/db/db``::"
+msgstr ""
+"Here is an example to check the database at ``/var/lib/groonga/db/db``::"
+
+msgid ""
+"Here is an example to recover the database at ``/var/lib/groonga/db/db``::"
+msgstr ""
+"Here is an example to recover the database at ``/var/lib/groonga/db/db``::"
+
+msgid "Commands"
+msgstr "Commands"
+
+msgid "This section describes available commands."
+msgstr "This section describes available commands."
+
+msgid "``check``"
+msgstr "``check``"
+
+msgid ""
+"It checks an existing Groonga database. If the database is broken, ``grndb`` "
+"reports reasons and exits with non-``0`` exit status."
+msgstr ""
+"It checks an existing Groonga database. If the database is broken, ``grndb`` "
+"reports reasons and exits with non-``0`` exit status."
+
+msgid ""
+"You must not use this command for opened database. If the database is "
+"opened, this command may report wrong result."
+msgstr ""
+"You must not use this command for opened database. If the database is "
+"opened, this command may report wrong result."
+
+msgid "``check`` has some options."
+msgstr "``check`` has some options."
+
+msgid "``--target``"
+msgstr "``--target``"
+
+msgid "It specifies a check target object."
+msgstr "It specifies a check target object."
+
+msgid ""
+"If your database is large and you know an unreliable object, this option "
+"will help you. ``check`` need more time for large database. You can reduce "
+"check time by ``--target`` option to reduce check target."
+msgstr ""
+"If your database is large and you know an unreliable object, this option "
+"will help you. ``check`` need more time for large database. You can reduce "
+"check time by ``--target`` option to reduce check target."
+
+msgid ""
+"The check target is checked recursive. Because related objects of unreliable "
+"object will be unreliable."
+msgstr ""
+"The check target is checked recursive. Because related objects of unreliable "
+"object will be unreliable."
+
+msgid ""
+"If the check target is a table, all columns of the table are also checked "
+"recursive."
+msgstr ""
+"If the check target is a table, all columns of the table are also checked "
+"recursive."
+
+msgid ""
+"If the check target is a table and its key type is another table, the "
+"another table is also checked recursive."
+msgstr ""
+"If the check target is a table and its key type is another table, the "
+"another table is also checked recursive."
+
+msgid ""
+"If the check target is a column and its value type is a table, the table is "
+"also checked recursive."
+msgstr ""
+"If the check target is a column and its value type is a table, the table is "
+"also checked recursive."
+
+msgid ""
+"If the check target is an index column, the table specified as value type "
+"and all sources are also checked recursive."
+msgstr ""
+"If the check target is an index column, the table specified as value type "
+"and all sources are also checked recursive."
+
+msgid "Here is an example that checks only ``Entries`` table and its columns::"
+msgstr ""
+"Here is an example that checks only ``Entries`` table and its columns::"
+
+msgid "Here is an example that checks only ``Entries.name`` column::"
+msgstr "Here is an example that checks only ``Entries.name`` column::"
+
+msgid "``--log-level``"
+msgstr "``--log-level``"
+
+msgid "It specifies a log level of ``grndb`` log."
+msgstr "It specifies a log level of ``grndb`` log."
+
+msgid "Here is an example that specifies ``--log-level`` option::"
+msgstr "Here is an example that specifies ``--log-level`` option::"
+
+msgid ""
+"See :doc:`/reference/commands/log_level` to know about supported log level."
+msgstr ""
+"See :doc:`/reference/commands/log_level` to know about supported log level."
+
+msgid "``--log-path``"
+msgstr "``--log-path``"
+
+msgid "It specifies a path of ``grndb`` log."
+msgstr "It specifies a path of ``grndb`` log."
+
+msgid "Here is an example that specifies ``--log-path`` option::"
+msgstr "Here is an example that specifies ``--log-path`` option::"
+
+msgid "``--log-flags``"
+msgstr "``--log-flags``"
+
+msgid ""
+"It specifies a logged content in ``grndb`` log by flags. The default value "
+"of ``--log-flags`` is ``time|message``. It means that timestamp and log "
+"messages are logged into ``grndb`` log."
+msgstr ""
+"It specifies a logged content in ``grndb`` log by flags. The default value "
+"of ``--log-flags`` is ``time|message``. It means that timestamp and log "
+"messages are logged into ``grndb`` log."
+
+msgid "Here is an example that specifies ``--log-flags`` option::"
+msgstr "Here is an example that specifies ``--log-flags`` option::"
+
+msgid "See :doc:`groonga` to know about supported log flags."
+msgstr "See :doc:`groonga` to know about supported log flags."
+
+msgid "``--since``"
+msgstr "``--since``"
+
+msgid ""
+"It specifies the object's modified time which should be checked. If object's "
+"modified time is newer than the specified time, these objects are checked by "
+"``grndb``. You can specify the modified time as ISO 8601 format or ``-"
+"NUNIT`` format such as -3days or -2.5weeks format."
+msgstr ""
+"It specifies the object's modified time which should be checked. If object's "
+"modified time is newer than the specified time, these objects are checked by "
+"``grndb``. You can specify the modified time as ISO 8601 format or ``-"
+"NUNIT`` format such as -3days or -2.5weeks format."
+
+msgid ""
+"Here is an example that specifies ``--since`` option in ISO 8601 format::"
+msgstr ""
+"Here is an example that specifies ``--since`` option in ISO 8601 format::"
+
+msgid ""
+"In above example, the objects which are modified after "
+"``2019-06-24T18:16:22`` are checked."
+msgstr ""
+"In above example, the objects which are modified after "
+"``2019-06-24T18:16:22`` are checked."
+
+msgid ""
+"Here is an example that specifies ``--since`` option in ``-NUNIT`` format::"
+msgstr ""
+"Here is an example that specifies ``--since`` option in ``-NUNIT`` format::"
+
+msgid ""
+"In above example, the objects which are modified in recent 7 days are "
+"checked."
+msgstr ""
+"In above example, the objects which are modified in recent 7 days are "
+"checked."
+
+msgid "``-NUNIT`` accepts the following suffix as a unit."
+msgstr "``-NUNIT`` accepts the following suffix as a unit."
+
+msgid "Supported suffix"
+msgstr "Supported suffix"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "``s``, ``sec``, ``secs``, ``second``, ``seconds``"
+msgstr "``s``, ``sec``, ``secs``, ``second``, ``seconds``"
+
+msgid ""
+"Specify recent N seconds. For example, ``--since=-100s`` means within recent "
+"100 seconds should be checked."
+msgstr ""
+"Specify recent N seconds. For example, ``--since=-100s`` means within recent "
+"100 seconds should be checked."
+
+msgid "``m``, ``min``, ``mins``, ``minute``, ``minutes``"
+msgstr "``m``, ``min``, ``mins``, ``minute``, ``minutes``"
+
+msgid ""
+"Specify recent N minutes. For example, ``--since=-10m`` means within recent "
+"10 minutes should be checked."
+msgstr ""
+"Specify recent N minutes. For example, ``--since=-10m`` means within recent "
+"10 minutes should be checked."
+
+msgid "``h``, ``hour``, ``hours``"
+msgstr "``h``, ``hour``, ``hours``"
+
+msgid ""
+"Specify recent N hours. For example, ``--since=-10h`` means within recent 10 "
+"hours should be checked."
+msgstr ""
+"Specify recent N hours. For example, ``--since=-10h`` means within recent 10 "
+"hours should be checked."
+
+msgid "``d``, ``day``, ``days``"
+msgstr "``d``, ``day``, ``days``"
+
+msgid ""
+"Specify recent N days. For example, ``--since=-10d`` means within recent 10 "
+"days should be checked."
+msgstr ""
+"Specify recent N days. For example, ``--since=-10d`` means within recent 10 "
+"days should be checked."
+
+msgid "``w``, ``week``, ``weeks``"
+msgstr "``w``, ``week``, ``weeks``"
+
+msgid ""
+"Specify recent N weeks. For example, ``--since=-10w`` means within recent 10 "
+"weeks should be checked."
+msgstr ""
+"Specify recent N weeks. For example, ``--since=-10w`` means within recent 10 "
+"weeks should be checked."
+
+msgid "``month``, ``months``"
+msgstr "``month``, ``months``"
+
+msgid ""
+"Specify recent N months. For example, ``--since=-10month`` means within "
+"recent 10 months should be checked."
+msgstr ""
+"Specify recent N months. For example, ``--since=-10month`` means within "
+"recent 10 months should be checked."
+
+msgid "``year``, ``years``"
+msgstr "``year``, ``years``"
+
+msgid ""
+"Specify recent N years. For example, ``--since=-1year`` means within recent "
+"1 year should be checked."
+msgstr ""
+"Specify recent N years. For example, ``--since=-1year`` means within recent "
+"1 year should be checked."
+
+msgid "``recover``"
+msgstr "``recover``"
+
+msgid "It recovers an existing broken Groonga database."
+msgstr "It recovers an existing broken Groonga database."
+
+msgid ""
+"If the database is not broken, ``grndb`` does nothing and exits with ``0`` "
+"exit status."
+msgstr ""
+"If the database is not broken, ``grndb`` does nothing and exits with ``0`` "
+"exit status."
+
+msgid ""
+"If the database is broken and one or more index columns are only broken, "
+"``grndb`` recovers these index columns and exists with ``0`` exit status. It "
+"may take a long time for large indexed data."
+msgstr ""
+"If the database is broken and one or more index columns are only broken, "
+"``grndb`` recovers these index columns and exists with ``0`` exit status. It "
+"may take a long time for large indexed data."
+
+msgid ""
+"If the database is broken and tables or data columns are broken, ``grndb`` "
+"reports broken reasons and exits with non-``0`` exit status. You can know "
+"whether the database is recoverable or not by ``check`` command."
+msgstr ""
+"If the database is broken and tables or data columns are broken, ``grndb`` "
+"reports broken reasons and exits with non-``0`` exit status. You can know "
+"whether the database is recoverable or not by ``check`` command."
+
+msgid ""
+"You must not use this command for opened database. If the database is "
+"opened, this command may break the database."
+msgstr ""
+"You must not use this command for opened database. If the database is "
+"opened, this command may break the database."
+
+msgid "``recover`` has some options."
+msgstr "``recover`` has some options."
+
+msgid "``--force-truncate``"
+msgstr "``--force-truncate``"
+
+msgid "It forces to truncate a corrupted database object."
+msgstr "It forces to truncate a corrupted database object."
+
+msgid "Here is an example that specifies ``--force-truncate`` option::"
+msgstr "Here is an example that specifies ``--force-truncate`` option::"
+
+msgid "When this option is specified, ``grndb`` does the followings:"
+msgstr "When this option is specified, ``grndb`` does the followings:"
+
+msgid ""
+"check whether there is a corrupted database object (table, column, indexes)"
+msgstr ""
+"check whether there is a corrupted database object (table, column, indexes)"
+
+msgid "truncate a corrupted database object (table, column, indexes)"
+msgstr "truncate a corrupted database object (table, column, indexes)"
+
+msgid ""
+"remove incremental files with .00N suffix which is created when large amount "
+"of data is loaded"
+msgstr ""
+"remove incremental files with .00N suffix which is created when large amount "
+"of data is loaded"
+
+msgid ""
+"``--force-truncate`` option is destructive one. Even though lock is still "
+"remained, ``grndb`` truncates a targeted corrupted database object."
+msgstr ""
+"``--force-truncate`` option is destructive one. Even though lock is still "
+"remained, ``grndb`` truncates a targeted corrupted database object."
+
+msgid ""
+"After ``grndb recover`` command has finished, you need to load data against "
+"truncated tables or columns to recreate database."
+msgstr ""
+"After ``grndb recover`` command has finished, you need to load data against "
+"truncated tables or columns to recreate database."
+
+msgid ""
+"You must use this option only when necessary. It means that you use it when "
+"there is a mismatch between database meta information and database object "
+"files which exists actually. This options should be used when there is no "
+"other way to recover database."
+msgstr ""
+"You must use this option only when necessary. It means that you use it when "
+"there is a mismatch between database meta information and database object "
+"files which exists actually. This options should be used when there is no "
+"other way to recover database."
+
+msgid "``--force-lock-clear``"
+msgstr "``--force-lock-clear``"
+
+msgid ""
+"It forces to clear lock of database, table and data column. It doesn't clear "
+"lock of index column. If index column has lock, the index column is "
+"recreated instead of clearing lock."
+msgstr ""
+"It forces to clear lock of database, table and data column. It doesn't clear "
+"lock of index column. If index column has lock, the index column is "
+"recreated instead of clearing lock."
+
+msgid ""
+"Normally, you should truncate and load data again instead of just clearing "
+"lock. Because objects that have lock may be broken. This option is provided "
+"only for users who know the risk that \"the database may be broken but I "
+"want to keep using it\"."
+msgstr ""
+"Normally, you should truncate and load data again instead of just clearing "
+"lock. Because objects that have lock may be broken. This option is provided "
+"only for users who know the risk that \"the database may be broken but I "
+"want to keep using it\"."
+
+msgid "Here is an example that specifies ``--force-lock-clear`` option::"
+msgstr "Here is an example that specifies ``--force-lock-clear`` option::"
+
+msgid "check whether there are database, table or data column that have lock"
+msgstr "check whether there are database, table or data column that have lock"
+
+msgid "clear lock of these objects"
+msgstr "clear lock of these objects"
+
+msgid ""
+"You must use this option only when necessary. Because your database may not "
+"be recovered. The database that has objects that have lock may be broken or "
+"not be broken. You can keep using the database but Groonga may crash if the "
+"database is broken."
+msgstr ""
+"You must use this option only when necessary. Because your database may not "
+"be recovered. The database that has objects that have lock may be broken or "
+"not be broken. You can keep using the database but Groonga may crash if the "
+"database is broken."

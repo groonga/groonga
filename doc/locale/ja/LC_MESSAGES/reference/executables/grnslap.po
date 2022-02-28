@@ -1,0 +1,92 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "grnslap"
+msgstr ""
+
+msgid "名前"
+msgstr ""
+
+msgid "grnslap - groongaプロセスの通信層のパフォーマンスをチェックするツール"
+msgstr ""
+
+msgid "書式"
+msgstr ""
+
+msgid "説明"
+msgstr ""
+
+msgid ""
+"grnslapは、groongaプロセスに対してリクエストを多重に行い、パフォーマンスを"
+"チェックするためのツールです。"
+msgstr ""
+
+msgid ""
+"Groonga独自プロトコルであるGQTPと、httpの両プロトコルでリクエストを行うことが"
+"できます。また、リクエストの多重度を指定することができます。"
+msgstr ""
+
+msgid ""
+"クエリの内容を標準入力から与えることができます。実稼動環境でのクエリパタンに"
+"近いクエリを標準入力に与えることによって、実稼動環境に近い状態での検証を行う"
+"ことができます。"
+msgstr ""
+
+msgid "現在は、make installしてもインストールは行われない。"
+msgstr ""
+
+msgid "オプション"
+msgstr ""
+
+msgid "リクエストのプロトコルを指定します。"
+msgstr ""
+
+msgid "`http`"
+msgstr ""
+
+msgid ""
+"httpでリクエストします。対象のhttpのパス群(GETパラメータを含む)をLF区切り形式"
+"で標準入力に与えると、それらのパスに順次アクセスします。"
+msgstr ""
+
+msgid "`gqtp`"
+msgstr ""
+
+msgid ""
+"gqtpでリクエストします。gqtpのリクエストをLF区切り形式で標準入力に与えると、"
+"それらのリクエストを順次行います。"
+msgstr ""
+
+msgid "リクエストの多重度を指定します。初期値は10です。"
+msgstr ""
+
+msgid "引数"
+msgstr ""
+
+msgid ""
+"接続先のホスト名とポート番号をを指定します(デフォルト値は'localhost:10041')。"
+"ポート番号を指定しない場合には、10041が指定されたものとします。"
+msgstr ""
+
+msgid "サンプル"
+msgstr ""
+
+msgid "http://localhost:10041/d/status に、多重度100でリクエストを行う。"
+msgstr ""

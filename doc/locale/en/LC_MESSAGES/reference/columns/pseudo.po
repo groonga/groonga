@@ -1,0 +1,105 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Pseudo column"
+msgstr "Pseudo column"
+
+msgid "名前"
+msgstr "名前"
+
+msgid "疑似カラム"
+msgstr "疑似カラム"
+
+msgid "説明"
+msgstr "説明"
+
+msgid ""
+"Groongaのデータベースで作成したテーブルには、いくつかのカラムが自動的に定義さ"
+"れます。"
+msgstr ""
+"Groongaのデータベースで作成したテーブルには、いくつかのカラムが自動的に定義さ"
+"れます。"
+
+msgid ""
+"これらのカラムはいずれもアンダースコア('_')で始まる名前が付与されます。定義さ"
+"れる疑似カラムは、テーブルの種類によって異なります。"
+msgstr ""
+"これらのカラムはいずれもアンダースコア('_')で始まる名前が付与されます。定義さ"
+"れる疑似カラムは、テーブルの種類によって異なります。"
+
+msgid "``_id``"
+msgstr "``_id``"
+
+msgid ""
+"レコードに付与される一意な番号です。全てのテーブルに定義されます。値の範囲は"
+"1〜1073741824の整数で、通常はレコードを追加した順に1ずつ加算されます。_idの値"
+"は不変で、レコードが存在する限り変更することはできません。ただし、削除された"
+"レコードの_idの値は再利用されます。"
+msgstr ""
+"レコードに付与される一意な番号です。全てのテーブルに定義されます。値の範囲は"
+"1〜1073741824の整数で、通常はレコードを追加した順に1ずつ加算されます。_idの値"
+"は不変で、レコードが存在する限り変更することはできません。ただし、削除された"
+"レコードの_idの値は再利用されます。"
+
+msgid "``_key``"
+msgstr "``_key``"
+
+msgid ""
+"レコードの主キー値を表します。主キーを持つテーブルのみに定義されます。主キー"
+"値はテーブルの中で一意であり、変更することはできません。"
+msgstr ""
+"レコードの主キー値を表します。主キーを持つテーブルのみに定義されます。主キー"
+"値はテーブルの中で一意であり、変更することはできません。"
+
+msgid "``_value``"
+msgstr "``_value``"
+
+msgid ""
+"レコードの値を表します。value_typeを指定したテーブルのみに定義されます。自由"
+"に変更可能です。"
+msgstr ""
+"レコードの値を表します。value_typeを指定したテーブルのみに定義されます。自由"
+"に変更可能です。"
+
+msgid "``_score``"
+msgstr "``_score``"
+
+msgid ""
+"各レコードのスコア値を表します。検索結果として生成されたテーブルのみに定義さ"
+"れます。"
+msgstr ""
+"各レコードのスコア値を表します。検索結果として生成されたテーブルのみに定義さ"
+"れます。"
+
+msgid "検索処理を実行する過程で値が設定されますが、自由に変更可能です。"
+msgstr "検索処理を実行する過程で値が設定されますが、自由に変更可能です。"
+
+msgid "``_nsubrecs``"
+msgstr "``_nsubrecs``"
+
+msgid ""
+"主キーの値が同一であったレコードの件数を表します。検索結果として生成された"
+"テーブルのみに定義されます。グループ化(drilldown)処理を実行すると、グループ化"
+"前のテーブルにおいて、グループ化キーの値が同一であったレコードの件数が、グ"
+"ループ化処理の結果を格納するテーブルの_nsubrecsに記録されます。"
+msgstr ""
+"主キーの値が同一であったレコードの件数を表します。検索結果として生成された"
+"テーブルのみに定義されます。グループ化(drilldown)処理を実行すると、グループ化"
+"前のテーブルにおいて、グループ化キーの値が同一であったレコードの件数が、グ"
+"ループ化処理の結果を格納するテーブルの_nsubrecsに記録されます。"

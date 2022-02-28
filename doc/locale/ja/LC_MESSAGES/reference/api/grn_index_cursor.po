@@ -1,0 +1,77 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "パラメータ"
+msgstr ""
+
+msgid "``grn_index_cursor``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "TODO..."
+msgstr "TODO..."
+
+msgid "Example"
+msgstr "例"
+
+msgid "Reference"
+msgstr "リファレンス"
+
+msgid ""
+":c:type:`grn_table_cursor` から取得できるそれぞれのレコードについて、 "
+"``GRN_OBJ_COLUMN_INDEX`` 型のカラムの値を順番に取り出すためのカーソルを生成し"
+"て返します。"
+msgstr ""
+
+msgid ""
+"rid_min, rid_maxを指定して取得するレコードidの値を制限することができます。"
+msgstr ""
+
+msgid ""
+"戻り値であるgrn_index_cursorは :c:func:`grn_obj_close()` を使って解放します。"
+msgstr ""
+
+msgid "対象cursorを指定します。"
+msgstr ""
+
+msgid "対象インデックスカラムを指定します。"
+msgstr ""
+
+msgid "出力するレコードidの下限を指定します。"
+msgstr ""
+
+msgid "出力するレコードidの上限を指定します。"
+msgstr ""
+
+msgid "cursorの範囲内のインデックスの値を順番に取り出します。"
+msgstr ""
+
+msgid ""
+"tidにNULL以外を指定した場合は、index_cursorを作成するときに指定した"
+"table_cursorの現在の対象レコードのidを返します。"
+msgstr ""
+
+msgid "戻り値である :c:type:`grn_posting` 構造体は解放する必要はありません。"
+msgstr ""
+
+msgid "テーブルレコードIDを指定します。"
+msgstr ""

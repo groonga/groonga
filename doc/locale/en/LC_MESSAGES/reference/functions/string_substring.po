@@ -1,0 +1,142 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``string_substring``"
+msgstr "``string_substring``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "``string_substring`` extracts a substring of a string by position."
+msgstr "``string_substring`` extracts a substring of a string by position."
+
+msgid ""
+"To enable this function, register ``functions/string`` plugin by following "
+"the command::"
+msgstr ""
+"To enable this function, register ``functions/string`` plugin by following "
+"the command::"
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "``string_substring`` requires two to four parameters."
+msgstr "``string_substring`` requires two to four parameters."
+
+msgid ""
+"``options`` uses the following format. All of key-value pairs are optional::"
+msgstr ""
+"``options`` uses the following format. All of key-value pairs are optional::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "Here are a schema definition and sample data to show usage."
+
+msgid "Sample schema:"
+msgstr "Sample schema:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "Sample data:"
+msgstr "Sample data:"
+
+msgid "Here is a simple example."
+msgstr "Here is a simple example."
+
+msgid "In the following example, specifying the negative value for ``nth``."
+msgstr "In the following example, specifying the negative value for ``nth``."
+
+msgid "In the following example, specifying the default value."
+msgstr "In the following example, specifying the default value."
+
+msgid "You can specify string literal instead of column."
+msgstr "You can specify string literal instead of column."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "Required parameters"
+msgstr "Required parameters"
+
+msgid "``target``"
+msgstr "``target``"
+
+msgid "Specify a string literal or a string type column."
+msgstr "Specify a string literal or a string type column."
+
+msgid "``nth``"
+msgstr "``nth``"
+
+msgid ""
+"Specify a 0-based index number of charactors where to start the extraction "
+"from ``target``."
+msgstr ""
+"Specify a 0-based index number of charactors where to start the extraction "
+"from ``target``."
+
+msgid "If you specify a negative value, it counts from the end of ``target``."
+msgstr "If you specify a negative value, it counts from the end of ``target``."
+
+msgid "Optional parameters"
+msgstr "Optional parameters"
+
+msgid "``length``"
+msgstr "``length``"
+
+msgid "Specify a number of characters to extract from ``nth``."
+msgstr "Specify a number of characters to extract from ``nth``."
+
+msgid ""
+"If you omit or specify a negative value, this function extracts from ``nth`` "
+"to the end."
+msgstr ""
+"If you omit or specify a negative value, this function extracts from ``nth`` "
+"to the end."
+
+msgid "``options``"
+msgstr "``options``"
+
+msgid "Specify the following key."
+msgstr "Specify the following key."
+
+msgid "``default_value``"
+msgstr "``default_value``"
+
+msgid ""
+"Specify a string to be returned when a substring is an empty string except "
+"when specifying 0 for ``length``."
+msgstr ""
+"Specify a string to be returned when a substring is an empty string except "
+"when specifying 0 for ``length``."
+
+msgid "The default is an empty string."
+msgstr "The default is an empty string."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid ""
+"``string_substring`` returns a substring extracted under the specified "
+"conditions from ``target``."
+msgstr ""
+"``string_substring`` returns a substring extracted under the specified "
+"conditions from ``target``."

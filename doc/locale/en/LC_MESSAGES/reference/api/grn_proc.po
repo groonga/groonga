@@ -1,0 +1,94 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``grn_proc``"
+msgstr "``grn_proc``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "TODO..."
+msgstr "TODO..."
+
+msgid "Example"
+msgstr "Example"
+
+msgid "Reference"
+msgstr "Reference"
+
+msgid "nameに対応する新たなproc(手続き)をctxが使用するdbに定義します。"
+msgstr "nameに対応する新たなproc(手続き)をctxが使用するdbに定義します。"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "作成するprocの名前を指定します。"
+msgstr "作成するprocの名前を指定します。"
+
+msgid ""
+"The number of bytes of name parameter. If negative value is specified, name "
+"parameter is assumed that NULL-terminated string."
+msgstr ""
+"The number of bytes of name parameter. If negative value is specified, name "
+"parameter is assumed that NULL-terminated string."
+
+msgid "procの種類を指定します。"
+msgstr "procの種類を指定します。"
+
+msgid "初期化関数のポインタを指定します。"
+msgstr "初期化関数のポインタを指定します。"
+
+msgid "実処理関数のポインタを指定します。"
+msgstr "実処理関数のポインタを指定します。"
+
+msgid "終了関数のポインタを指定します。"
+msgstr "終了関数のポインタを指定します。"
+
+msgid "procで使用する変数の数を指定します。"
+msgstr "procで使用する変数の数を指定します。"
+
+msgid ""
+"procで使用する変数の定義を指定します。( :c:type:`grn_expr_var` 構造体の配列)"
+msgstr ""
+"procで使用する変数の定義を指定します。( :c:type:`grn_expr_var` 構造体の配列)"
+
+msgid ""
+"user_dataをキーとして、現在実行中の :c:type:`grn_proc_func` 関数および定義さ"
+"れている変数( :c:type:`grn_expr_var` )の配列とその数を取得します。"
+msgstr ""
+"user_dataをキーとして、現在実行中の :c:type:`grn_proc_func` 関数および定義さ"
+"れている変数( :c:type:`grn_expr_var` )の配列とその数を取得します。"
+
+msgid ":c:type:`grn_proc_func` に渡されたuser_dataを指定します。"
+msgstr ":c:type:`grn_proc_func` に渡されたuser_dataを指定します。"
+
+msgid "変数の数を取得します。"
+msgstr "変数の数を取得します。"
+
+msgid "objectを破棄するときに呼ばれる関数を設定します。"
+msgstr "objectを破棄するときに呼ばれる関数を設定します。"
+
+msgid "table, column, proc, exprのみ設定可能です。"
+msgstr "table, column, proc, exprのみ設定可能です。"
+
+msgid "対象objectを指定します。"
+msgstr "対象objectを指定します。"
+
+msgid "objectを破棄するときに呼ばれる関数を指定します。"
+msgstr "objectを破棄するときに呼ばれる関数を指定します。"

@@ -1,0 +1,454 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``query``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``query`` provides ``--match_columns`` and ``--query`` parameters of :doc:`/"
+"reference/commands/select` feature as function. You can specify multiple "
+"``query`` functions in ``--filter`` parameter in :doc:`/reference/commands/"
+"select`."
+msgstr ""
+"``query`` は、:doc:`/reference/commands/select` の ``--match_columns`` と "
+"``--query`` 引数の機能を関数として提供します。:doc:`/reference/commands/"
+"select` の ``--filter`` 引数で複数の ``query`` 関数を指定することができます。"
+
+msgid ""
+"Because of such flexibility, you can control full text search behavior by "
+"combination of multiple ``query`` functions."
+msgstr ""
+"そのような柔軟性があるので、 複数の ``query`` 関数を組合せることで全文検索の"
+"振舞いを制御することができます。"
+
+msgid ""
+"``query`` can be used in only ``--filter`` in :doc:`/reference/commands/"
+"select`."
+msgstr ""
+"``query`` は :doc:`/reference/commands/select` コマンドの ``--filter`` 内での"
+"み指定できます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid ""
+"``query`` requires two parameters - ``match_columns`` and ``query_string``."
+msgstr ""
+"``query`` は2つの引数が必要です。 ``match_columns`` と ``query_string`` で"
+"す。"
+
+msgid "The parameter ``query_expander`` and ``options`` are optional::"
+msgstr "引数の ``query_expander`` と ``options`` は省略可能です。"
+
+msgid ""
+"``options`` uses the following format. All of key-value pairs are optional::"
+msgstr ""
+"``options`` には以下のキーを指定します。すべてのキー・値のペアは省略可能で"
+"す。::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid "Sample schema:"
+msgstr "サンプルスキーマ:"
+
+msgid "Sample data:"
+msgstr "サンプルデータ:"
+
+msgid ""
+"Here is the simple usage of ``query`` function which executes full text "
+"search by keyword ``alice`` without using ``--match_columns`` and ``--"
+"query`` arguments in ``--filter``."
+msgstr ""
+"``--match_columns`` と ``--query`` 引数を使わずに、 ``--filter`` で "
+"``query`` 関数を使ってキーワード ``alice`` を検索する簡単な使用例です。"
+
+msgid ""
+"When executing above query, the keyword ``alice`` is weighted to the value "
+"``10``."
+msgstr ""
+"上記のクエリを実行する際、'alice'というキーワードには重みづけとして値 ``10`` "
+"を設定します。"
+
+msgid "Here are the contrasting examples with/without ``query``."
+msgstr "``query`` あり/なしで対照的な例がこちらです。"
+
+msgid ""
+"In this case, the all keywords ``groonga``, ``mroonga`` and ``user`` use the "
+"default weight. You can't pass different weight value to each keyword in "
+"this way."
+msgstr ""
+"この場合、 ``groonga`` と ``mroonga`` と ``user`` というキーワードは同じ重み"
+"づけがされています。この方法ではキーワードごとに異なる重みづけを行うことはで"
+"きません。"
+
+msgid ""
+"On the other hand, by specifying multiple ``query``, the keywords "
+"``groonga``, ``mroonga`` and ``user`` use different weight."
+msgstr ""
+"一方、複数の ``query`` を指定することで、 ``groonga`` と ``mroonga`` と "
+"``user`` それぞれのキーワードに対し異なる重みづけを行えます。"
+
+msgid ""
+"As a result, you can control full text search result score by specifying "
+"different weight to the keywords on your purpose."
+msgstr ""
+"結果として、意図した様に異なる重みづけを行いつつ全文検索の振舞いを制御するこ"
+"とができます。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid ""
+"There are two required parameters, ``match_columns`` and ``query_string``."
+msgstr "必須引数は二つあります。 ``match_columns`` と ``query_string`` です。"
+
+msgid "``match_columns``"
+msgstr ""
+
+msgid ""
+"Specifies the default target columns for full text search by "
+"``query_string`` parameter value. It is the same role as :ref:`select-match-"
+"columns` parameter in ``select``."
+msgstr ""
+"``query_string`` パラメーターの値で全文検索するときのデフォルトの検索対象カラ"
+"ムを指定します。このパラメーターは ``select`` の :ref:`select-match-columns` "
+"パラメーターと同じ役割です。"
+
+msgid "``query_string``"
+msgstr ""
+
+msgid ""
+"Specifies the search condition in :doc:`/reference/grn_expr/query_syntax`. "
+"It is the same role as ``query`` parameter in ``select``."
+msgstr ""
+":doc:`/reference/grn_expr/query_syntax` で検索条件を指定します。このパラメー"
+"ターは ``select`` コマンドの ``query`` パラメーターと同じ役割です。"
+
+msgid ""
+"See :ref:`select-match-columns` about ``query`` parameter in ``select``."
+msgstr ""
+"``select`` コマンドの ``query`` については :ref:`select-match-columns` を参照"
+"してください。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There are some optional parameters."
+msgstr "いくつか省略可能な引数があります。"
+
+msgid "``query_expander``"
+msgstr ""
+
+msgid ""
+"Specifies the query expander name or substitution column name for query "
+"expansion."
+msgstr ""
+"クエリー展開に使うクエリー展開オブジェクトの名前または置換カラム名を指定しま"
+"す。"
+
+msgid "See :doc:`/reference/query_expanders` for available query expanders."
+msgstr ""
+"利用可能なクエリー展開オブジェクトは :doc:`/reference/query_expanders` を参照"
+"してください。"
+
+msgid "Substitution column name uses ``${TABLE}.${COLUMN}`` format."
+msgstr "置換カラム名は ``テーブル名.カラム名`` という書式を使います。"
+
+msgid "See :ref:`select-query-expander` for details."
+msgstr "詳細は :ref:`select-query-expander` を見てください。"
+
+msgid "``default_mode``"
+msgstr ""
+
+msgid ""
+"Specifies the default search mode. You can change search mode by ``column:"
+"@keyword`` like syntax. The default search mode is used when you just "
+"specify ``keyword`` instead of ``column:@keyword``. See :doc:`/reference/"
+"grn_expr/query_syntax` for more syntax details."
+msgstr ""
+"デフォルトの検索モードを指定します。検索モードは ``column:@keyword`` というよ"
+"うな構文でカスタマイズできます。デフォルトの検索モードは ``column:@keyword`` "
+"ではなく単に ``keyword`` と指定したときに使われます。構文の詳細は :doc:`/"
+"reference/grn_expr/query_syntax` を見てください。"
+
+msgid ""
+"Here are available modes. The default is ``\"MATCH\"`` mode. It does full "
+"text search."
+msgstr ""
+"以下は利用可能なモードです。デフォルトは ``\"MATCH\"`` モードです。このモード"
+"では全文検索をします。"
+
+msgid "Mode"
+msgstr "モード"
+
+msgid "Aliases"
+msgstr "別名"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "``\"EQUAL\"``"
+msgstr ""
+
+msgid "``\"==\"``"
+msgstr ""
+
+msgid "It uses :ref:`query-syntax-equal-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-equal-condition` を使います。"
+
+msgid "``\"NOT_EQUAL\"``"
+msgstr ""
+
+msgid "``\"!=\"``"
+msgstr ""
+
+msgid "It uses :ref:`query-syntax-not-equal-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-not-equal-condition` を使います。"
+
+msgid "``\"LESS\"``"
+msgstr ""
+
+msgid "``\"<\"``"
+msgstr ""
+
+msgid "It uses :ref:`query-syntax-less-than-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-less-than-condition` を使います。"
+
+msgid "``\"GREATER\"``"
+msgstr ""
+
+msgid "``\">\"``"
+msgstr ""
+
+msgid "It uses :ref:`query-syntax-greater-than-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-greater-than-condition` を使いま"
+"す。"
+
+msgid "``\"LESS_EQUAL\"``"
+msgstr ""
+
+msgid "``\"<=\"``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-less-than-or-equal-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-less-than-or-equal-condition` を"
+"使います。"
+
+msgid "``\"GREATER_EQUAL\"``"
+msgstr ""
+
+msgid "``\">=\"``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-greater-than-or-equal-condition` as the default "
+"mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-greater-than-or-equal-condition` "
+"を使います。"
+
+msgid "``\"MATCH\"``"
+msgstr ""
+
+msgid "``\"@\"``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-full-text-search-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-full-text-search-condition` を使"
+"います。"
+
+msgid "It's the default."
+msgstr "これがデフォルトです。"
+
+msgid "``\"NEAR\"``"
+msgstr ""
+
+msgid "``\"*N\"``"
+msgstr ""
+
+msgid "It uses :ref:`query-syntax-near-search-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-near-search-condition` を使いま"
+"す。"
+
+msgid "``\"SIMILAR\"``"
+msgstr ""
+
+msgid "``\"*S\"``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-similar-search-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-similar-search-condition` を使い"
+"ます。"
+
+msgid "``\"PREFIX\"``"
+msgstr ""
+
+msgid "``\"^\"``, ``\"@^\"``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-prefix-search-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-prefix-search-condition` を使いま"
+"す。"
+
+msgid "``\"SUFFIX\"``"
+msgstr ""
+
+msgid "``\"$\"``, ``\"@$\"``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-suffix-search-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-suffix-search-condition` を使いま"
+"す。"
+
+msgid "``\"REGEXP\"``"
+msgstr ""
+
+msgid "``\"~\"``, ``\"@~\"``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-regular-expression-condition` as the default mode."
+msgstr ""
+"デフォルトのモードとして :ref:`query-syntax-regular-expression-condition` を"
+"使います。"
+
+msgid "``default_operator``"
+msgstr ""
+
+msgid ""
+"Specifies the default logical operator. It's used when no logical operator "
+"such as ``OR`` and ``-`` are specified between conditional expressions like "
+"``keyword1 keyword2``. The default logical operator is used to combine "
+"``keyword1`` result set and ``keyword2`` result set. The default logical "
+"operator is ``AND``. So ``keyword1 keyword2`` result set includes only "
+"records that they are included in both ``keyword1`` result set and "
+"``keyword2`` result set."
+msgstr ""
+"デフォルトの論理演算子を指定します。これは ``キーワード1 キーワード2`` という"
+"ように条件式の間に ``OR`` や ``-`` といった論理演算子が指定されない場合に使わ"
+"れます。デフォルトの論理演算子は ``キーワード1`` の結果セットと ``キーワード"
+"2`` の結果セットを組み合わせるときに使われます。デフォルトの論理演算子は "
+"``AND`` です。つまり、 ``キーワード1 キーワード2`` の結果セットは ``キーワー"
+"ド1`` の結果セットと ``キーワード2`` の結果セットの両方に含まれるレコードだけ"
+"が含まれます。"
+
+msgid "Here are available logical operators. The default is ``\"AND\"``."
+msgstr "以下は利用可能な論理演算子ですデフォルトは ``\"AND\"`` です。"
+
+msgid "Logical operator"
+msgstr "論理演算子"
+
+msgid "``\"AND\"``"
+msgstr ""
+
+msgid "``\"&&\"``, ``\"+\"``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-logical-and` as the default logical operator."
+msgstr ""
+"デフォルトの論理演算子として :ref:`query-syntax-logical-and` を使います。"
+
+msgid "``\"OR\"``"
+msgstr ""
+
+msgid "``\"||\"``"
+msgstr ""
+
+msgid "It uses :ref:`query-syntax-logical-or` as the default logical operator."
+msgstr ""
+"デフォルトの論理演算子として :ref:`query-syntax-logical-or` を使います。"
+
+msgid "``\"AND_NOT\"``"
+msgstr ""
+
+msgid "``\"&!\"``, ``\"-\"``"
+msgstr ""
+
+msgid ""
+"It uses :ref:`query-syntax-logical-and-not` as the default logical operator."
+msgstr ""
+"デフォルトの論理演算子として :ref:`query-syntax-logical-and-not` を使います。"
+
+msgid "``flags``"
+msgstr ""
+
+msgid "Specifies the flags that customizes how to parse query."
+msgstr "クエリーのパース方法をカスタマイズするフラグを指定します。"
+
+msgid ""
+"You can specify multiple flags by separating each flags by ``|``. Here is "
+"the example to specify multiple flags::"
+msgstr ""
+"1つ以上のフラグを指定できます。複数のフラグを指定する場合は ``|`` で区切りま"
+"す。以下が複数のフラグを指定する例です。::"
+
+msgid "See :ref:`select-query-flags` for available flags."
+msgstr "詳細は :ref:`select-query-flags` を見てください。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "This function returns whether a record is matched or not as boolean."
+msgstr "この関数は対象レコードがマッチしたかどうかを真偽値で返します。"
+
+msgid ""
+"This function is also worked as a selector. It means that this function can "
+"be executable effectively."
+msgstr ""
+"この関数はセレクターとしても動きます。つまり、効率的に実行できるということで"
+"す。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/commands/select`"
+msgstr ""
+
+msgid ":doc:`query_parallel_or`"
+msgstr ""

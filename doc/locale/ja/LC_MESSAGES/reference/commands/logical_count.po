@@ -1,0 +1,694 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``logical_count``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``logical_count`` is a command that has only count feature in :doc:"
+"`logical_select`. :doc:`logical_select` searches records from multiple "
+"tables, outputs the number of matched records, outputs columns of the "
+"matched records and so on. ``logical_count`` only searches records from "
+"multiple tables and output the number of matched records."
+msgstr ""
+"``logical_count`` は :doc:`logical_select` の件数カウント機能だけを提供するコ"
+"マンドです。 :doc:`logical_select` は複数のテーブルからレコードを検索し、マッ"
+"チしたレコード数を出力し、マッチしたレコードのカラムを出力し、他にもいろいろ"
+"します。 ``logical_count`` は複数のテーブルからレコードを検索し、マッチしたレ"
+"コード数を出力するだけです。"
+
+msgid ""
+"``logical_count`` is useful when you just want the number of matched "
+"records. You can use ``logical_count`` and :doc:`logical_range_filter` at "
+"once. You can show the first N matched records before you get the number of "
+"matched records. If you use only :doc:`logical_select`, you need to wait "
+"finishing all search."
+msgstr ""
+"``logical_count`` はマッチしたレコードの数だけを知りたいときに便利です。 "
+"``logical_count`` と :doc:`logical_range_filter` を一緒に使えます。一緒に使う"
+"と、マッチしたレコード数を取得する前に、マッチしたレコードのうち先頭のNレコー"
+"ドだけを先に表示できます。 :doc:`logical_select` だけを使っている場合は、すべ"
+"ての検索処理が終わるまで待たなければいけません。"
+
+msgid ""
+"You need to :doc:`plugin_register` ``sharding`` plugin because this command "
+"is included in ``sharding`` plugin."
+msgstr ""
+"このコマンド は ``sharding`` プラグインに含まれているので、 ``sharding`` プラ"
+"グインを :doc:`plugin_register` する必要があります。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes many parameters."
+msgstr "このコマンドにはたくさんの引数があります。"
+
+msgid ""
+"The required parameters are ``logical_table`` and ``shard_key``. Other "
+"parameters are optional::"
+msgstr ""
+"必須の引数は ``logical_table`` と ``shard_key`` です。それ以外の引数は省略可"
+"能です::"
+
+msgid ""
+"There are some parameters that can be only used as named parameters. You "
+"can't use these parameters as ordered parameters. You must specify parameter "
+"name."
+msgstr ""
+"いくつか名前付き引数としてしか使えない引数があります。これらの引数を「○番目の"
+"引数」として使うことはできません。必ず名前を指定する必要があります。"
+
+msgid "Here are parameters that can be only used as named parameters:"
+msgstr "名前付き引数としてしか使えない引数は次の通りです。"
+
+msgid "``cache=no``"
+msgstr ""
+
+msgid "This command has the following named parameters for dynamic columns:"
+msgstr "以下の名前付き引数で動的カラム機能を使うことができます。"
+
+msgid "``columns[${NAME}].stage=null``"
+msgstr ""
+
+msgid "``columns[${NAME}].flags=COLUMN_SCALAR``"
+msgstr ""
+
+msgid "``columns[${NAME}].type=null``"
+msgstr ""
+
+msgid "``columns[${NAME}].value=null``"
+msgstr ""
+
+msgid "``columns[${NAME}].window.sort_keys=null``"
+msgstr ""
+
+msgid "``columns[${NAME}].window.group_keys=null``"
+msgstr ""
+
+msgid ""
+"You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For "
+"example, ``column1`` is a valid ``${NAME}``. This is the same rule as normal "
+"column. See also :ref:`column-create-name`."
+msgstr ""
+"``${NAME}`` には1つ以上のアルファベット、数字、 ``_``  を使うことができます。"
+"たとえば、 ``column1`` は有効な ``${NAME}`` です。これは通常のカラムと同じ"
+"ルールです。 :ref:`column-create-name` も見てください。"
+
+msgid "Parameters that have the same ``${NAME}`` are grouped."
+msgstr "同じ ``${NAME}`` も持つ引数は同じグループになります。"
+
+msgid "For example, the following parameters specify one dynamic column:"
+msgstr "たとえば、以下の引数は1つの動的カラムを指定しています。"
+
+msgid "``--columns[name].stage initial``"
+msgstr ""
+
+msgid "``--columns[name].type UInt32``"
+msgstr ""
+
+msgid "``--columns[name].value 29``"
+msgstr ""
+
+msgid "The following parameters specify two dynamic columns:"
+msgstr "以下の引数は2つの動的カラムを指定しています。"
+
+msgid "``--columns[name1].stage initial``"
+msgstr ""
+
+msgid "``--columns[name1].type UInt32``"
+msgstr ""
+
+msgid "``--columns[name1].value 29``"
+msgstr ""
+
+msgid "``--columns[name2].stage initial``"
+msgstr ""
+
+msgid "``--columns[name2].type Float``"
+msgstr ""
+
+msgid "``--columns[name2].value '_score * 0.1'``"
+msgstr ""
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"Let's learn about usage with examples. This section shows many popular "
+"usages."
+msgstr ""
+"例を使いながら使い方を学びましょう。このセクションではよく使われる使い方を紹"
+"介します。"
+
+msgid ""
+"You need to register ``sharding`` plugin because this command is included in "
+"``sharding`` plugin."
+msgstr ""
+"このコマンドは ``sharding`` プラグインに含まれているので ``sharding`` プラグ"
+"インを登録する必要があります。"
+
+msgid ""
+"Note that ``logical_count`` is implemented as an experimental plugin, and "
+"the specification may be changed in the future."
+msgstr ""
+"``logical_count`` コマンドは実験的なプラグインです。このコマンドは将来的に変"
+"更されるかもしれません。"
+
+msgid ""
+"Here is the simple example which shows how to use this feature. Let's "
+"consider to count specified logs which are stored into multiple tables."
+msgstr ""
+"この機能を使う簡単な例を示します。複数のテーブルに保存されている特定のログを"
+"カウントしてみましょう。"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid ""
+"There are two tables, ``Entries_20150708`` and ``Entries_20150709``, for "
+"blog entries."
+msgstr ""
+"ブログエントリー用に ``Entries_20150708`` と ``Entries_20150709`` の2つのテー"
+"ブルがあります。"
+
+msgid ""
+"You need to use ``${LOGICAL_TABLE_NAME}_${YYYYMMDD}`` naming rule for table "
+"names. In this example, ``LOGICAL_TABLE_NAME`` is ``Entries`` and "
+"``YYYYMMDD`` is ``20150708`` or ``20150709``."
+msgstr ""
+"テーブル名には ``${論理テーブル名}_${YYYYMMDD}`` という命名規則を使う必要があ"
+"ります。この例では、 ``論理テーブル名`` は ``Entries`` で ``YYYYMMDD`` は "
+"``20150708`` または ``20150709`` です。"
+
+msgid ""
+"An entry has title, created time, content, the number of likes for the entry "
+"and tag. Title is key of ``Entries_YYYYMMDD``. Created time is value of "
+"``Entries_YYYYMMDD.created_at`` column. Content is value of "
+"``Entries_YYYYMMDD.content`` column. The number of likes is value of "
+"``Entries_YYYYMMDD.n_likes`` column. Tag is value of ``Entries_YYYYMMDD."
+"tag`` column."
+msgstr ""
+"各エントリはタイトルと作成日時と内容と「いいね！」数、タグを持っています。タ"
+"イトルは ``Entries_YYYYMMDD`` のキーとします。作成日時は ``Entries_YYYYMMDD."
+"created_at`` カラムの値とします。内容は ``Entries_YYYYMMDD.content`` カラムの"
+"値とします。「いいね！」数は ``Entries_YYYYMMDD.n_likes`` カラムの値としま"
+"す。タグは ``Entries_YYYYMMDD.tag`` カラムの値とします。"
+
+msgid ""
+"``Entries_YYYYMMDD._key`` column and ``Entries_YYYYMMDD.content`` column are "
+"indexed using ``TokenBigram`` tokenizer. So both ``Entries_YYYYMMDD._key`` "
+"and ``Entries_YYYYMMDD.content`` are fulltext search ready."
+msgstr ""
+"``Entries_YYYYMMDD._key`` カラムと ``Entries_YYYYMMDD.content`` カラムには "
+"``TokenBigram`` トークナイザーを使ったインデックスを作成します。そのため、 "
+"``Entries_YYYYMMDD._key`` と ``Entries_YYYYMMDD.content`` は両方とも全文検索"
+"できます。"
+
+msgid "OK. The schema and data for examples are ready."
+msgstr "これで例を示すためのスキーマとデータの準備ができました。"
+
+msgid ""
+"Here is an example to count the number of records which have ``Groonga`` or "
+"``Senna`` in ``content`` column. ``logical_count`` searches records over all "
+"``Entries_YYYYMMDD`` tables."
+msgstr ""
+"以下は ``content`` カラムに ``Groonga`` または ``Senna`` を含むレコード数を数"
+"える例です。 ``logical_count`` はすべての ``Entries_YYYYMMDD`` テーブルを検索"
+"します。"
+
+msgid "Here are matched records:"
+msgstr "マッチしたレコードは次の通りです。"
+
+msgid "``_key:\"Groonga\"`` in ``Entries_20150708``"
+msgstr "``Entries_20150708`` の中の ``_key:\"Groonga\"``"
+
+msgid "``_key:\"Good-bye Senna\"`` in ``Entries_20150709``"
+msgstr "``Entries_20150709`` の中の ``_key:\"Good-bye Senna\"``"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes parameters of this command."
+msgstr "このセクションではこのコマンドのパラメーターを説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There are required parameters, ``logical_table`` and ``shard_key``."
+msgstr "必須引数は二つあります。 ``logical_table`` と ``shard_key`` です。"
+
+msgid "``logical_table``"
+msgstr ""
+
+msgid ""
+"Specifies logical table name. It means table name without ``_YYYYMMDD`` "
+"postfix.  If you use actual table such as ``Logs_20150203``, "
+"``Logs_20150203`` and so on, logical table name is ``Logs``."
+msgstr ""
+"論理テーブル名を指定します。これは ``_YYYYMMDD`` をテーブル名から除いたもので"
+"す。実際のテーブルが ``Logs_20150203`` や ``Logs_20150203`` といったものな"
+"ら、論理テーブル名は ``Logs`` です。"
+
+msgid ""
+"You can count all records by specifying only ``logical_table`` and "
+"``shard_key`` parameters. They are required parameters."
+msgstr ""
+"``logical_table`` と ``shard_key`` だけを指定すると全レコード数をカウントでき"
+"ます。これらの引数は必須の引数です。"
+
+msgid "If nonexistent table is specified, an error is returned."
+msgstr "存在しないテーブルを指定するとエラーが返ります。"
+
+msgid "``shard_key``"
+msgstr ""
+
+msgid ""
+"Specifies column name which is treated as shared key. Shard key is a column "
+"that stores data that is used for distributing records to suitable shards."
+msgstr ""
+"シャードキーとして使うカラム名を指定します。シャードキーは適切なシャードへレ"
+"コードを分配するために使う値を保存しているカラムです。"
+
+msgid "Shard key must be ``Time`` type for now."
+msgstr "今のところ、シャードキーは ``Time`` 型でなければいけません。"
+
+msgid "See :ref:`logical-count-logical-table` how to specify ``shard_key``."
+msgstr ""
+"``shard_key`` の指定方法は :ref:`logical-count-logical-table` を見てくださ"
+"い。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There are optional parameters."
+msgstr "いくつか省略可能な引数があります。"
+
+msgid "``min``"
+msgstr ""
+
+msgid ""
+"Specifies the minimum value of ``shard_key`` column. If shard doesn't have "
+"any matched records, the shard isn't searched."
+msgstr ""
+"``shard_key`` カラムの最小値を指定します。シャードにマッチするレコードがない"
+"場合は、そのシャードは検索対象外になります。"
+
+msgid ""
+"For example, ``min`` is ``\"2015/07/09 00:00:00\"``, ``Entry_20150708`` "
+"isn't searched. Because ``Entry_20150708`` has only records for "
+"``\"2015/07/08\"``."
+msgstr ""
+"たとえば、 ``min`` が ``\"2015/07/09 00:00:00\"`` なら、 ``Entry_20150708`` "
+"は検索対象外です。なぜなら、 ``Entry_20150708`` は ``\"2015/07/08\"`` のレ"
+"コードしかないからです。"
+
+msgid ""
+"The following example only uses ``Entry_20150709`` table. ``Entry_20150708`` "
+"isn't used."
+msgstr ""
+"以下の例は ``Entry_20150709`` テーブルだけを使う例です。 ``Entry_20150708`` "
+"は使われません。"
+
+msgid "``min_border``"
+msgstr ""
+
+msgid ""
+"Specifies whether the minimum value is included or not. Here is available "
+"values."
+msgstr "最小値を含めるかどうかを指定します。指定可能な値は次の通りです。"
+
+msgid "Value"
+msgstr "値"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "``include``"
+msgstr ""
+
+msgid "Includes ``min`` value. This is the default."
+msgstr "``min`` の値を含みます。これがデフォルト値です。"
+
+msgid "``exclude``"
+msgstr ""
+
+msgid "Doesn't include ``min`` value."
+msgstr "``min`` の値を含みません。"
+
+msgid ""
+"Here is an example for ``exclude``. The result doesn't include the ``\"Good-"
+"bye Senna\"`` record because its ``created_at`` value is ``\"2015/07/09 "
+"00:00:00\"``."
+msgstr ""
+"次の例は ``exclude`` の使用例です。結果には ``\"Good-bye Senna\"`` レコードは"
+"含まれません。このレコードの ``created_at`` の値が ``\"2015/07/09 "
+"00:00:00\"`` だからです。"
+
+msgid "``max``"
+msgstr ""
+
+msgid ""
+"Specifies the maximum value of ``shard_key`` column. If shard doesn't have "
+"any matched records, the shard isn't searched."
+msgstr ""
+"``shard_key`` カラムの最大値を指定します。シャードにマッチするレコードがない"
+"場合、そのシャードは検索対象外になります。"
+
+msgid ""
+"For example, ``max`` is ``\"2015/07/08 23:59:59\"``, ``Entry_20150709`` "
+"isn't searched. Because ``Entry_20150709`` has only records for "
+"``\"\"2015/07/09\"``."
+msgstr ""
+"たとえば、 ``max`` が ``\"2015/07/08 23:59:59\"`` なら ``Entry_20150709`` は"
+"検索対象外です。なぜなら ``Entry_20150709`` には ``\"\"2015/07/09\"`` のレ"
+"コードしかないからです。"
+
+msgid ""
+"The following example only uses ``Entry_20150708`` table. ``Entry_20150709`` "
+"isn't used."
+msgstr ""
+"以下の例は ``Entry_20150708`` テーブルだけを使います。 ``Entry_20150709`` は"
+"使いません。"
+
+msgid "``max_border``"
+msgstr ""
+
+msgid ""
+"Specifies whether the maximum value is included or not. Here is available "
+"values."
+msgstr "最大値を含めるかどうかを指定します。指定可能な値は次の通りです。"
+
+msgid "Includes ``max`` value. This is the default."
+msgstr "``max`` の値を含みます。これがデフォルト値です。"
+
+msgid "Doesn't include ``max`` value."
+msgstr "``max`` の値を含みません。"
+
+msgid "Search related parameters"
+msgstr "検索関係の引数"
+
+msgid ""
+"This command provides :doc:`select` compatible search related parameters."
+msgstr ""
+"このコマンドは :doc:`select` 互換の検索関連パラメーターをサポートしています。"
+
+msgid "``filter``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-filter` in :doc:`select`. See :ref:`select-"
+"filter` for details."
+msgstr ""
+":doc:`select` の :ref:`select-filter` に対応しています。詳細は :ref:`select-"
+"filter` を見てください。"
+
+msgid "Here is an example:"
+msgstr "以下は例です。"
+
+msgid "``post_filter``"
+msgstr ""
+
+msgid ""
+"Specifies the filter text that is processed after ``filtered`` stage dynamic "
+"columns are generated. You can use ``post_filter`` to filter by ``filtered`` "
+"stage dynamic columns. Others are the same as :ref:`select-filter`."
+msgstr ""
+"``filtered`` ステージの動的カラムが生成されてから実行するフィルターを指定しま"
+"す。 ``post_filter`` を使うと ``filtered`` ステージの動的カラムを使って絞り込"
+"むことができます。他は :ref:`select-filter` と同じです。"
+
+msgid ""
+"Here is an example that shows entries only in popular tag. All target "
+"entries have ``system`` or ``use`` words:"
+msgstr ""
+"以下は人気のあるタグのエントリーだけを表示する例です。対象となるすべてのエン"
+"トリーには ``system`` または ``use`` という単語が含まれています。"
+
+msgid "Dynamic column related parameters"
+msgstr "動的カラム関連の引数"
+
+msgid ""
+"All dynamic column related parameters in :doc:`select` are supported. See :"
+"ref:`select-dynamic-column-related-parameters` for details."
+msgstr ""
+":doc:`select` のすべての動的カラム関連パラメーターをサポートしています。詳細"
+"は :ref:`select-dynamic-column-related-parameters` を見てください。"
+
+msgid "``columns[${NAME}].stage``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-stage` in :doc:`select`. See :ref:"
+"`select-columns-name-stage` for details."
+msgstr ""
+":doc:`select` の :ref:`select-columns-name-stage` に対応しています。詳細は :"
+"ref:`select-columns-name-stage` を見てください。"
+
+msgid "This is a required parameter."
+msgstr "必須の引数です。"
+
+msgid ""
+"``initial`` stage and ``filtered`` stage are valid. Because there are no "
+"processes after ``output`` stages."
+msgstr ""
+"``initial`` ステージと ``filtered`` ステージが有効です。なぜなら ``output`` "
+"ステージ以降にはなにも処理がないからです。"
+
+msgid "``filtered`` stage is valid since 8.0.1."
+msgstr "``filtered`` ステージは8.0.1から使えます。"
+
+msgid ""
+"Here is an example that creates ``is_popular`` column at ``initial`` stage. "
+"You can use ``is_popular`` in all parameters such as ``filter``:"
+msgstr ""
+"以下は ``initial`` ステージで ``is_popular`` カラムを作る例です。作成した "
+"``is_popular`` カラムは ``filter`` を含むすべてのパラメーターで使えます。"
+
+msgid "``columns[${NAME}].flags``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-flags` in :doc:`select`. See :ref:"
+"`select-columns-name-flags` for details."
+msgstr ""
+":doc:`select` の :ref:`select-columns-name-flags` に対応しています。詳細は :"
+"ref:`select-columns-name-flags` を見てください。"
+
+msgid "The default value is ``COLUMN_SCALAR``."
+msgstr "デフォルト値は ``COLUMN_SCALAR`` です。"
+
+msgid ""
+"Here is an example that creates a vector column by ``COLUMN_VECTOR`` flags. "
+"``plugin_register functions/vector`` is for using :doc:`/reference/functions/"
+"vector_new` function:"
+msgstr ""
+"以下は ``COLUMN_VECTOR`` フラグを指定してベクターカラムを作る例です。 "
+"``plugin_register functions/vector`` は :doc:`/reference/functions/"
+"vector_new` 関数を使うために実行しています。:"
+
+msgid "``columns[${NAME}].type``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-type` in :doc:`select`. See :ref:"
+"`select-columns-name-type` for details."
+msgstr ""
+":doc:`select` の :ref:`select-columns-name-type` に対応しています。詳細は :"
+"ref:`select-columns-name-type` を見てください。"
+
+msgid ""
+"Here is an example that creates a ``ShortText`` type column. Stored value is "
+"casted to ``ShortText`` automatically. In this example, number is casted to "
+"``ShortText``:"
+msgstr ""
+"以下は ``ShortText`` 型のカラムを作る例です。保存された値は自動的に "
+"``ShortText`` にキャストされます。この例では数値が ``ShortText`` にキャストさ"
+"れています。"
+
+msgid "``columns[${NAME}].value``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-value` in :doc:`select`. See :ref:"
+"`select-columns-name-value` for details."
+msgstr ""
+":doc:`select` の :ref:`select-columns-name-value` に対応しています。詳細は :"
+"ref:`select-columns-name-value` を見てください。"
+
+msgid ""
+"You need to specify :doc:`/reference/window_function` as ``value`` value and "
+"other window function related parameters when you use window function. See :"
+"ref:`logical-count-window-function-related-parameters` for details."
+msgstr ""
+"ウィンドウ関数を使う場合は、 ``value`` の値に :doc:`/reference/"
+"window_function` を指定し、さらに他のウィンドウ関数関連のパラメーターも指定す"
+"る必要があります。詳細は :ref:`logical-count-window-function-related-"
+"parameters` を見てください。"
+
+msgid ""
+"Here is an example that creates a new dynamic column that stores the number "
+"of characters of content. This example uses :doc:`/reference/functions/"
+"string_length` function in ``functions/string`` plugin to compute the number "
+"of characters in a string. :doc:`plugin_register` is used to register "
+"``functions/string`` plugin:"
+msgstr ""
+"以下は内容の文字数を格納するための動的カラムを1つ作る例です。この例では文字数"
+"を数えるために ``functions/string`` プラグイン内の :doc:`/reference/"
+"functions/string_length` 関数を使っています。 ``functions/string`` プラグイン"
+"を登録するために :doc:`plugin_register` を使っています。"
+
+msgid "Window function related parameters"
+msgstr "ウィンドウ関数関連の引数"
+
+msgid ""
+"All window function related parameters in :doc:`select` are supported. See :"
+"ref:`select-window-function-related-parameters` for details."
+msgstr ""
+":doc:`select` のすべてのウィンドウ関数関連パラメーターをサポートしています。"
+"詳細は :ref:`select-window-function-related-parameters` を見てください。"
+
+msgid ""
+"Window function over multiple tables aren't supported version 9.0.1 or "
+"before. Groonga supported it since version 9.0.2 or later. However, we need "
+"to align the same order for shard key and leading group key or sort key."
+msgstr ""
+"バージョン9.0.1以前では、複数のテーブルをまたがったウィンドウ関数はサポートし"
+"ていません。バージョン9.0.2以降ではサポートしていますが、先頭のグループキーま"
+"たは、ソートキーがシャードキーと同じ順序で並んでいる必要があります。"
+
+msgid ""
+"For example, we can apply the window function to over multiple tables as "
+"below case. Because the below example aligns the same order for shard key "
+"and leading group key."
+msgstr ""
+"例えば、以下のようなケースでは、複数のテーブルをまたいでウインドウ関数を適用"
+"できます。以下の例では、先頭のグループキーがシャードキーと同じ順序で並んでい"
+"るからです。"
+
+msgid ""
+"The leading group key is ``price`` and shard key is ``timestamp`` in the "
+"below example. We can apply the window function to over multiple tables in "
+"the below example. Because ``price`` and ``timestamp`` aligns the same order."
+msgstr ""
+"以下の例では、先頭のグループキーは ``price`` でシャードキーは ``timestamp`` "
+"です。 ``price`` と ``timestamp`` は同じ順序で並んでいるため、複数のテーブル"
+"をまたいでウインドウ関数を適用できます。"
+
+msgid "``columns[${NAME}].window.sort_keys``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-window-sort-keys` in :doc:`select`. "
+"See :ref:`select-columns-name-window-sort-keys` for details."
+msgstr ""
+":doc:`select` の :ref:`select-columns-name-window-sort-keys` に対応していま"
+"す。詳細は :ref:`select-columns-name-window-sort-keys` を見てください。"
+
+msgid ""
+"You must specify :ref:`logical-count-columns-name-window-sort-keys` or :ref:"
+"`logical-count-columns-name-window-group-keys` to use window function."
+msgstr ""
+"ウィンドウ関数を使うには :ref:`logical-count-columns-name-window-sort-keys` "
+"または :ref:`logical-count-columns-name-window-group-keys` を指定しなければい"
+"けません。"
+
+msgid ""
+"Here is an example that computes cumulative sum per ``Entries.tag``. Each "
+"group is sorted by ``Entries._key``:"
+msgstr ""
+"以下は ``Entries.tag`` 毎に累積和を計算する例です。各グループ内のレコードは "
+"``Entries._key`` でソートします。"
+
+msgid "``columns[${NAME}].window.group_keys``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-window-group-keys` in :doc:"
+"`select`. See :ref:`select-columns-name-window-group-keys` for details."
+msgstr ""
+":doc:`select` の :ref:`select-columns-name-window-group-keys` に対応していま"
+"す。詳細は :ref:`select-columns-name-window-group-keys` を見てください。"
+
+msgid "Here is an example that computes sum per ``Entries.tag``:"
+msgstr "以下は ``Entries.tag`` 毎に合計を計算する例です。"
+
+msgid "Cache related parameter"
+msgstr "キャッシュ関連の引数"
+
+msgid "``cache``"
+msgstr ""
+
+msgid "Specifies whether caching the result of this query or not."
+msgstr "このクエリーの結果をキャッシュするかどうかを指定します。"
+
+msgid ""
+"If the result of this query is cached, the next same query returns response "
+"quickly by using the cache."
+msgstr ""
+"このクエリーの結果がキャッシュしてあると、次に同じクエリーを実行するときは"
+"キャッシュを使って高速にレスポンスを返すことができます。"
+
+msgid "It doesn't control whether existing cached result is used or not."
+msgstr ""
+"これは既存のキャッシュされた結果を使うかどうかを指定するものではありません。"
+
+msgid "Here are available values:"
+msgstr "指定可能な値は以下の通りです。"
+
+msgid "``no``"
+msgstr ""
+
+msgid "Don't cache the output of this query."
+msgstr "このクエリーの出力をキャッシュしない。"
+
+msgid "``yes``"
+msgstr ""
+
+msgid "Cache the output of this query. It's the default value."
+msgstr "このクエリーの出力をキャッシュする。デフォルト値。"
+
+msgid "Here is an example to disable caching the result of this query:"
+msgstr "このクエリーの結果をキャッシュしないようにする例です。"
+
+msgid "The default value is ``yes``."
+msgstr "デフォルト値は ``yes`` です。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "The command returns a response with the following format::"
+msgstr "このコマンドは以下のフォーマットのレスポンスを返します。::"
+
+msgid "If the command fails, error details are in ``HEADER``."
+msgstr "このコマンドが失敗すると、 ``HEADER`` にエラーの詳細が含まれます。"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "``N_HITS`` is the number of matched records."
+msgstr "``N_HITS`` はマッチしたレコード数です。"

@@ -1,0 +1,310 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "Completion"
+msgstr "補完"
+
+msgid "This section describes about the following completion features:"
+msgstr "このセクションでは以下の補完機能について説明します。:"
+
+msgid "How it works"
+msgstr "どのように動作するか"
+
+msgid "How to use"
+msgstr "使い方"
+
+msgid "How to learn"
+msgstr "学習方法"
+
+msgid "The completion feature uses three searches to compute completed words:"
+msgstr "補完機能は補完される語を計算するために3種類の検索を使います。"
+
+msgid "Prefix RK search against registered words."
+msgstr "登録されている語を前方一致RK検索。"
+
+msgid "Cooccurrence search against learned data."
+msgstr "学習したデータを共起検索。"
+
+msgid "Prefix search against registered words. (optional)"
+msgstr "登録されている語を前方一致検索。（実行しないこともある）"
+
+msgid "Prefix RK search"
+msgstr "前方一致RK検索"
+
+msgid "See :doc:`/reference/operations/prefix_rk_search` for prefix RK search."
+msgstr ""
+"前方一致RK検索については :doc:`/reference/operations/prefix_rk_search` を見て"
+"ください。"
+
+msgid ""
+"If you create dataset which is named as ``query`` by :doc:`/reference/"
+"executables/groonga-suggest-create-dataset` executable file, you can update "
+"pairs of registered word and its reading by loading data to ``_key`` and "
+"``kana`` column of ``item_query`` table explicitly for prefix RK search."
+msgstr ""
+":doc:`/reference/executables/groonga-suggest-create-dataset` 実行ファイルで "
+"``query`` という名前のデータセットを作ったとします。前方一致RK検索で使うため"
+"に ``item_query`` テーブルの ``_key`` と ``kana`` カラムに登録済みの単語と読"
+"みのペアを指定することで更新できます。"
+
+msgid "Cooccurrence search"
+msgstr "共起検索"
+
+msgid ""
+"Cooccurrence search can find registered words from user's partial input. It "
+"uses user input sequences that will be learned from query logs, access logs "
+"and so on."
+msgstr ""
+"共起検索は入力途中のユーザのクエリから登録されている語を見つけます。共起検索"
+"では検索データベースとしてユーザの入力シーケンスを使います。これはクエリログ"
+"やアクセスログなどから学習します。"
+
+msgid "For example, there is the following user input sequence:"
+msgstr "例えば、以下のようなユーザの入力シーケンスがあるとします。"
+
+msgid "input"
+msgstr "入力"
+
+msgid "submit"
+msgstr "検索実行"
+
+msgid "no"
+msgstr "していない"
+
+msgid "s"
+msgstr ""
+
+msgid "se"
+msgstr ""
+
+msgid "sea"
+msgstr ""
+
+msgid "sear"
+msgstr ""
+
+msgid "searc"
+msgstr ""
+
+msgid "search"
+msgstr ""
+
+msgid "yes"
+msgstr "した"
+
+msgid "e"
+msgstr ""
+
+msgid "en"
+msgstr ""
+
+msgid "eng"
+msgstr ""
+
+msgid "engi"
+msgstr ""
+
+msgid "engin"
+msgstr ""
+
+msgid "engine"
+msgstr ""
+
+msgid "enginen"
+msgstr ""
+
+msgid "no (typo!)"
+msgstr "していない（入力ミス！）"
+
+msgid "Groonga creates the following completion pairs:"
+msgstr "Groongaは以下のような補完ペアを作ります。:"
+
+msgid "completed word"
+msgstr "補完語"
+
+msgid ""
+"All user not-submitted inputs (e.g. \"s\", \"se\" and so on) before each an "
+"user submission maps to the submitted input (e.g. \"search\")."
+msgstr ""
+"ユーザが検索を実行する前のすべての入力（例では\"s\"、\"se\"など）を検索を実行"
+"した語（例では\"search\"）に対応付けます。"
+
+msgid ""
+"To be precise, this description isn't correct because it omits about time "
+"stamp. Groonga doesn't case about \"all user not-submitted inputs before "
+"each an user submission\". Groonga just case about \"all user not-submitted "
+"inputs within a minute from an user submission before each an user "
+"submission\". Groonga doesn't treat user inputs before a minute ago."
+msgstr ""
+"厳密に言うとこの説明は正しくありません。なぜならタイムスタンプに関することを"
+"省略しているからです。groongaは本当は「ユーザが検索を実行する前のすべての入力"
+"を」使いません。厳密には「ユーザが検索を実行する前の1分以内の入力のみ」を使い"
+"ます。検索実行時から1分より前の入力は使われません。"
+
+msgid ""
+"If an user inputs \"sea\" and cooccurrence search returns \"search\" because "
+"\"sea\" is in input column and corresponding completed word column value is "
+"\"search\"."
+msgstr ""
+"ユーザが\"sea\"と入力したら、共起検索は\"search\"を返します。なぜなら、「入"
+"力」カラムには\"sea\"という値があり、対応する「補完語」カラムには\"search\"と"
+"いう値が入っているからです。"
+
+msgid "Prefix search"
+msgstr "前方一致検索"
+
+msgid ""
+"Prefix search can find registered word that start with user's input. This "
+"search doesn't care about romaji, katakana and hiragana not like prefix RK "
+"search."
+msgstr ""
+"前方一致検索はユーザが入力した文字列から始まる登録済みの語を検索します。この"
+"検索は前方一致RK検索とは違ってローマ字、カタカナ、ひらがなを特別扱いしませ"
+"ん。"
+
+msgid ""
+"This search isn't always ran. It's just ran when it's requested explicitly "
+"or both prefix RK search and cooccurrence search return nothing."
+msgstr ""
+"この検索はいつも実行されるわけではありません。この検索は明示的に実行するよう"
+"に指示するか、前方一致RK検索と共起検索の両方がなにもヒットしないときのみ実行"
+"されます。"
+
+msgid ""
+"For example, there is a registered word \"search\". An user can find "
+"\"search\" by \"s\", \"se\", \"sea\", \"sear\", \"searc\" and \"search\"."
+msgstr ""
+"例えば、\"search\"が登録されているとします。ユーザは"
+"\"s\"、\"se\"、\"sea\"、\"sear\"、\"searc\"、\"search\"のどれでも\"search\"を"
+"補完候補として利用できます。"
+
+msgid ""
+"Groonga provides :doc:`/reference/commands/suggest` command to use "
+"completion. ``--type complete`` option requests completion."
+msgstr ""
+"Groongaは補完機能を使うために :doc:`/reference/commands/suggest` コマンドを用"
+"意しています。 ``--type complete`` オプションを使うと補完機能を利用できます。"
+
+msgid "For example, here is an command to get completion results by \"en\":"
+msgstr ""
+"例えば、\"en\"と入力したときの補完結果を取得するコマンドは以下のようになりま"
+"す。:"
+
+msgid "How it learns"
+msgstr "学習方法"
+
+msgid ""
+"Cooccurrence search uses learned data. They are based on query logs, access "
+"logs and so on. To create learned data, Groonga needs user input sequence "
+"with time stamp and user submit input with time stamp."
+msgstr ""
+"共起検索は学習データを使います。学習データはクエリログやアクセスログなどを元"
+"に作成します。学習データを作成するには、タイムスタンプ付きの入力シーケンス"
+"と、タイムスタンプ付きの検索実行時の入力内容が必要です。"
+
+msgid ""
+"For example, an user wants to search by \"engine\". The user inputs the "
+"query with the following sequence:"
+msgstr ""
+"例えば、ユーザが\"engine\"で検索したいとします。ユーザが以下のようなシーケン"
+"スで検索クエリを入力したとします。:"
+
+msgid "2011-08-10T13:33:23+09:00: e"
+msgstr ""
+
+msgid "2011-08-10T13:33:23+09:00: en"
+msgstr ""
+
+msgid "2011-08-10T13:33:24+09:00: eng"
+msgstr ""
+
+msgid "2011-08-10T13:33:24+09:00: engi"
+msgstr ""
+
+msgid "2011-08-10T13:33:24+09:00: engin"
+msgstr ""
+
+msgid "2011-08-10T13:33:25+09:00: engine (submit!)"
+msgstr "2011-08-10T13:33:25+09:00: engine （検索実行！）"
+
+msgid ""
+"Groonga can be learned from the input sequence by the following command::"
+msgstr "以下のコマンドでこの入力シーケンスから学習できます。::"
+
+msgid "How to update reading data"
+msgstr "読みデータの更新方法"
+
+msgid ""
+"Groonga requires registered word and its reading for prefix RK search. This "
+"section describes how to register a word and its reading."
+msgstr ""
+"前方一致RK検索をするために単語とその読みが必要になります。このセクションでは"
+"どのように単語と読みを登録するかを説明します。"
+
+msgid "Here is an example to register \"日本\" which means Japan in English:"
+msgstr "以下は「日本」を登録する例です:"
+
+msgid "Here is an example to update reading data to complete \"日本\":"
+msgstr "以下は「日本」を補完するために読みデータを登録する例です:"
+
+msgid ""
+"Then you can complete registered word \"日本\" by Romaji input - \"nihon\"."
+msgstr ""
+"これで「nihon」というローマ字で登録済みの「日本」という単語を補完できます。"
+
+msgid ""
+"Without loading above reading data, you can't complete registered word \"日本"
+"\" by query - \"nihon\"."
+msgstr ""
+"この読みデータがないと登録済みの「日本」という単語を「nihon」というクエリーで"
+"補完できません。"
+
+msgid ""
+"You can register multiple readings for a registered word because ``kana`` "
+"column in ``item_query`` table is defined as a :doc:`/reference/columns/"
+"vector`."
+msgstr ""
+"``item_query`` テーブルの ``kana`` カラムは :doc:`/reference/columns/vector` "
+"なので、複数の読みを登録できます。"
+
+msgid ""
+"This is the reason that you can also complete the registered word \"日本\" "
+"by query - \"nippon\"."
+msgstr "これが「nippon」でも「日本」を補完できる理由です。"
+
+msgid ""
+"This feature is very convenient because you can search registered word even "
+"though Japanese input method is disabled."
+msgstr ""
+"日本語入力システムが無効になっている状態でも登録済みの単語を検索できるのでこ"
+"の機能はとても便利です。"
+
+msgid ""
+"If there are multiple candidates as completed result, you can customize "
+"priority to set the value of ``boost`` column in ``item_query`` table."
+msgstr ""
+"補完候補が複数ある場合、 ``item_query`` テーブルの ``boost`` カラムに値を設定"
+"することで優先度をカスタマイズすることができます。"
+
+msgid "Here is an example to customize priority for prefix RK search:"
+msgstr "以下は前方一致RK検索での優先度をカスタマイズする例です:"

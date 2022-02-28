@@ -1,0 +1,692 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``logical_count``"
+msgstr "``logical_count``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"``logical_count`` is a command that has only count feature in :doc:"
+"`logical_select`. :doc:`logical_select` searches records from multiple "
+"tables, outputs the number of matched records, outputs columns of the "
+"matched records and so on. ``logical_count`` only searches records from "
+"multiple tables and output the number of matched records."
+msgstr ""
+"``logical_count`` is a command that has only count feature in :doc:"
+"`logical_select`. :doc:`logical_select` searches records from multiple "
+"tables, outputs the number of matched records, outputs columns of the "
+"matched records and so on. ``logical_count`` only searches records from "
+"multiple tables and output the number of matched records."
+
+msgid ""
+"``logical_count`` is useful when you just want the number of matched "
+"records. You can use ``logical_count`` and :doc:`logical_range_filter` at "
+"once. You can show the first N matched records before you get the number of "
+"matched records. If you use only :doc:`logical_select`, you need to wait "
+"finishing all search."
+msgstr ""
+"``logical_count`` is useful when you just want the number of matched "
+"records. You can use ``logical_count`` and :doc:`logical_range_filter` at "
+"once. You can show the first N matched records before you get the number of "
+"matched records. If you use only :doc:`logical_select`, you need to wait "
+"finishing all search."
+
+msgid ""
+"You need to :doc:`plugin_register` ``sharding`` plugin because this command "
+"is included in ``sharding`` plugin."
+msgstr ""
+"You need to :doc:`plugin_register` ``sharding`` plugin because this command "
+"is included in ``sharding`` plugin."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "This command takes many parameters."
+msgstr "This command takes many parameters."
+
+msgid ""
+"The required parameters are ``logical_table`` and ``shard_key``. Other "
+"parameters are optional::"
+msgstr ""
+"The required parameters are ``logical_table`` and ``shard_key``. Other "
+"parameters are optional::"
+
+msgid ""
+"There are some parameters that can be only used as named parameters. You "
+"can't use these parameters as ordered parameters. You must specify parameter "
+"name."
+msgstr ""
+"There are some parameters that can be only used as named parameters. You "
+"can't use these parameters as ordered parameters. You must specify parameter "
+"name."
+
+msgid "Here are parameters that can be only used as named parameters:"
+msgstr "Here are parameters that can be only used as named parameters:"
+
+msgid "``cache=no``"
+msgstr "``cache=no``"
+
+msgid "This command has the following named parameters for dynamic columns:"
+msgstr "This command has the following named parameters for dynamic columns:"
+
+msgid "``columns[${NAME}].stage=null``"
+msgstr "``columns[${NAME}].stage=null``"
+
+msgid "``columns[${NAME}].flags=COLUMN_SCALAR``"
+msgstr "``columns[${NAME}].flags=COLUMN_SCALAR``"
+
+msgid "``columns[${NAME}].type=null``"
+msgstr "``columns[${NAME}].type=null``"
+
+msgid "``columns[${NAME}].value=null``"
+msgstr "``columns[${NAME}].value=null``"
+
+msgid "``columns[${NAME}].window.sort_keys=null``"
+msgstr "``columns[${NAME}].window.sort_keys=null``"
+
+msgid "``columns[${NAME}].window.group_keys=null``"
+msgstr "``columns[${NAME}].window.group_keys=null``"
+
+msgid ""
+"You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For "
+"example, ``column1`` is a valid ``${NAME}``. This is the same rule as normal "
+"column. See also :ref:`column-create-name`."
+msgstr ""
+"You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For "
+"example, ``column1`` is a valid ``${NAME}``. This is the same rule as normal "
+"column. See also :ref:`column-create-name`."
+
+msgid "Parameters that have the same ``${NAME}`` are grouped."
+msgstr "Parameters that have the same ``${NAME}`` are grouped."
+
+msgid "For example, the following parameters specify one dynamic column:"
+msgstr "For example, the following parameters specify one dynamic column:"
+
+msgid "``--columns[name].stage initial``"
+msgstr "``--columns[name].stage initial``"
+
+msgid "``--columns[name].type UInt32``"
+msgstr "``--columns[name].type UInt32``"
+
+msgid "``--columns[name].value 29``"
+msgstr "``--columns[name].value 29``"
+
+msgid "The following parameters specify two dynamic columns:"
+msgstr "The following parameters specify two dynamic columns:"
+
+msgid "``--columns[name1].stage initial``"
+msgstr "``--columns[name1].stage initial``"
+
+msgid "``--columns[name1].type UInt32``"
+msgstr "``--columns[name1].type UInt32``"
+
+msgid "``--columns[name1].value 29``"
+msgstr "``--columns[name1].value 29``"
+
+msgid "``--columns[name2].stage initial``"
+msgstr "``--columns[name2].stage initial``"
+
+msgid "``--columns[name2].type Float``"
+msgstr "``--columns[name2].type Float``"
+
+msgid "``--columns[name2].value '_score * 0.1'``"
+msgstr "``--columns[name2].value '_score * 0.1'``"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid ""
+"Let's learn about usage with examples. This section shows many popular "
+"usages."
+msgstr ""
+"Let's learn about usage with examples. This section shows many popular "
+"usages."
+
+msgid ""
+"You need to register ``sharding`` plugin because this command is included in "
+"``sharding`` plugin."
+msgstr ""
+"You need to register ``sharding`` plugin because this command is included in "
+"``sharding`` plugin."
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"Note that ``logical_count`` is implemented as an experimental plugin, and "
+"the specification may be changed in the future."
+msgstr ""
+"Note that ``logical_count`` is implemented as an experimental plugin, and "
+"the specification may be changed in the future."
+
+msgid ""
+"Here is the simple example which shows how to use this feature. Let's "
+"consider to count specified logs which are stored into multiple tables."
+msgstr ""
+"Here is the simple example which shows how to use this feature. Let's "
+"consider to count specified logs which are stored into multiple tables."
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "Here are a schema definition and sample data to show usage."
+
+msgid ""
+"There are two tables, ``Entries_20150708`` and ``Entries_20150709``, for "
+"blog entries."
+msgstr ""
+"There are two tables, ``Entries_20150708`` and ``Entries_20150709``, for "
+"blog entries."
+
+msgid ""
+"You need to use ``${LOGICAL_TABLE_NAME}_${YYYYMMDD}`` naming rule for table "
+"names. In this example, ``LOGICAL_TABLE_NAME`` is ``Entries`` and "
+"``YYYYMMDD`` is ``20150708`` or ``20150709``."
+msgstr ""
+"You need to use ``${LOGICAL_TABLE_NAME}_${YYYYMMDD}`` naming rule for table "
+"names. In this example, ``LOGICAL_TABLE_NAME`` is ``Entries`` and "
+"``YYYYMMDD`` is ``20150708`` or ``20150709``."
+
+msgid ""
+"An entry has title, created time, content, the number of likes for the entry "
+"and tag. Title is key of ``Entries_YYYYMMDD``. Created time is value of "
+"``Entries_YYYYMMDD.created_at`` column. Content is value of "
+"``Entries_YYYYMMDD.content`` column. The number of likes is value of "
+"``Entries_YYYYMMDD.n_likes`` column. Tag is value of ``Entries_YYYYMMDD."
+"tag`` column."
+msgstr ""
+"An entry has title, created time, content, the number of likes for the entry "
+"and tag. Title is key of ``Entries_YYYYMMDD``. Created time is value of "
+"``Entries_YYYYMMDD.created_at`` column. Content is value of "
+"``Entries_YYYYMMDD.content`` column. The number of likes is value of "
+"``Entries_YYYYMMDD.n_likes`` column. Tag is value of ``Entries_YYYYMMDD."
+"tag`` column."
+
+msgid ""
+"``Entries_YYYYMMDD._key`` column and ``Entries_YYYYMMDD.content`` column are "
+"indexed using ``TokenBigram`` tokenizer. So both ``Entries_YYYYMMDD._key`` "
+"and ``Entries_YYYYMMDD.content`` are fulltext search ready."
+msgstr ""
+"``Entries_YYYYMMDD._key`` column and ``Entries_YYYYMMDD.content`` column are "
+"indexed using ``TokenBigram`` tokenizer. So both ``Entries_YYYYMMDD._key`` "
+"and ``Entries_YYYYMMDD.content`` are fulltext search ready."
+
+msgid "OK. The schema and data for examples are ready."
+msgstr "OK. The schema and data for examples are ready."
+
+msgid ""
+"Here is an example to count the number of records which have ``Groonga`` or "
+"``Senna`` in ``content`` column. ``logical_count`` searches records over all "
+"``Entries_YYYYMMDD`` tables."
+msgstr ""
+"Here is an example to count the number of records which have ``Groonga`` or "
+"``Senna`` in ``content`` column. ``logical_count`` searches records over all "
+"``Entries_YYYYMMDD`` tables."
+
+msgid "Here are matched records:"
+msgstr "Here are matched records:"
+
+msgid "``_key:\"Groonga\"`` in ``Entries_20150708``"
+msgstr "``_key:\"Groonga\"`` in ``Entries_20150708``"
+
+msgid "``_key:\"Good-bye Senna\"`` in ``Entries_20150709``"
+msgstr "``_key:\"Good-bye Senna\"`` in ``Entries_20150709``"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "This section describes parameters of this command."
+msgstr "This section describes parameters of this command."
+
+msgid "Required parameters"
+msgstr "Required parameters"
+
+msgid "There are required parameters, ``logical_table`` and ``shard_key``."
+msgstr "There are required parameters, ``logical_table`` and ``shard_key``."
+
+msgid "``logical_table``"
+msgstr "``logical_table``"
+
+msgid ""
+"Specifies logical table name. It means table name without ``_YYYYMMDD`` "
+"postfix.  If you use actual table such as ``Logs_20150203``, "
+"``Logs_20150203`` and so on, logical table name is ``Logs``."
+msgstr ""
+"Specifies logical table name. It means table name without ``_YYYYMMDD`` "
+"postfix.  If you use actual table such as ``Logs_20150203``, "
+"``Logs_20150203`` and so on, logical table name is ``Logs``."
+
+msgid ""
+"You can count all records by specifying only ``logical_table`` and "
+"``shard_key`` parameters. They are required parameters."
+msgstr ""
+"You can count all records by specifying only ``logical_table`` and "
+"``shard_key`` parameters. They are required parameters."
+
+msgid "If nonexistent table is specified, an error is returned."
+msgstr "If nonexistent table is specified, an error is returned."
+
+msgid "``shard_key``"
+msgstr "``shard_key``"
+
+msgid ""
+"Specifies column name which is treated as shared key. Shard key is a column "
+"that stores data that is used for distributing records to suitable shards."
+msgstr ""
+"Specifies column name which is treated as shared key. Shard key is a column "
+"that stores data that is used for distributing records to suitable shards."
+
+msgid "Shard key must be ``Time`` type for now."
+msgstr "Shard key must be ``Time`` type for now."
+
+msgid "See :ref:`logical-count-logical-table` how to specify ``shard_key``."
+msgstr "See :ref:`logical-count-logical-table` how to specify ``shard_key``."
+
+msgid "Optional parameters"
+msgstr "Optional parameters"
+
+msgid "There are optional parameters."
+msgstr "There are optional parameters."
+
+msgid "``min``"
+msgstr "``min``"
+
+msgid ""
+"Specifies the minimum value of ``shard_key`` column. If shard doesn't have "
+"any matched records, the shard isn't searched."
+msgstr ""
+"Specifies the minimum value of ``shard_key`` column. If shard doesn't have "
+"any matched records, the shard isn't searched."
+
+msgid ""
+"For example, ``min`` is ``\"2015/07/09 00:00:00\"``, ``Entry_20150708`` "
+"isn't searched. Because ``Entry_20150708`` has only records for "
+"``\"2015/07/08\"``."
+msgstr ""
+"For example, ``min`` is ``\"2015/07/09 00:00:00\"``, ``Entry_20150708`` "
+"isn't searched. Because ``Entry_20150708`` has only records for "
+"``\"2015/07/08\"``."
+
+msgid ""
+"The following example only uses ``Entry_20150709`` table. ``Entry_20150708`` "
+"isn't used."
+msgstr ""
+"The following example only uses ``Entry_20150709`` table. ``Entry_20150708`` "
+"isn't used."
+
+msgid "``min_border``"
+msgstr "``min_border``"
+
+msgid ""
+"Specifies whether the minimum value is included or not. Here is available "
+"values."
+msgstr ""
+"Specifies whether the minimum value is included or not. Here is available "
+"values."
+
+msgid "Value"
+msgstr "Value"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "``include``"
+msgstr "``include``"
+
+msgid "Includes ``min`` value. This is the default."
+msgstr "Includes ``min`` value. This is the default."
+
+msgid "``exclude``"
+msgstr "``exclude``"
+
+msgid "Doesn't include ``min`` value."
+msgstr "Doesn't include ``min`` value."
+
+msgid ""
+"Here is an example for ``exclude``. The result doesn't include the ``\"Good-"
+"bye Senna\"`` record because its ``created_at`` value is ``\"2015/07/09 "
+"00:00:00\"``."
+msgstr ""
+"Here is an example for ``exclude``. The result doesn't include the ``\"Good-"
+"bye Senna\"`` record because its ``created_at`` value is ``\"2015/07/09 "
+"00:00:00\"``."
+
+msgid "``max``"
+msgstr "``max``"
+
+msgid ""
+"Specifies the maximum value of ``shard_key`` column. If shard doesn't have "
+"any matched records, the shard isn't searched."
+msgstr ""
+"Specifies the maximum value of ``shard_key`` column. If shard doesn't have "
+"any matched records, the shard isn't searched."
+
+msgid ""
+"For example, ``max`` is ``\"2015/07/08 23:59:59\"``, ``Entry_20150709`` "
+"isn't searched. Because ``Entry_20150709`` has only records for "
+"``\"\"2015/07/09\"``."
+msgstr ""
+"For example, ``max`` is ``\"2015/07/08 23:59:59\"``, ``Entry_20150709`` "
+"isn't searched. Because ``Entry_20150709`` has only records for "
+"``\"\"2015/07/09\"``."
+
+msgid ""
+"The following example only uses ``Entry_20150708`` table. ``Entry_20150709`` "
+"isn't used."
+msgstr ""
+"The following example only uses ``Entry_20150708`` table. ``Entry_20150709`` "
+"isn't used."
+
+msgid "``max_border``"
+msgstr "``max_border``"
+
+msgid ""
+"Specifies whether the maximum value is included or not. Here is available "
+"values."
+msgstr ""
+"Specifies whether the maximum value is included or not. Here is available "
+"values."
+
+msgid "Includes ``max`` value. This is the default."
+msgstr "Includes ``max`` value. This is the default."
+
+msgid "Doesn't include ``max`` value."
+msgstr "Doesn't include ``max`` value."
+
+msgid "Search related parameters"
+msgstr "Search related parameters"
+
+msgid ""
+"This command provides :doc:`select` compatible search related parameters."
+msgstr ""
+"This command provides :doc:`select` compatible search related parameters."
+
+msgid "``filter``"
+msgstr "``filter``"
+
+msgid ""
+"Corresponds to :ref:`select-filter` in :doc:`select`. See :ref:`select-"
+"filter` for details."
+msgstr ""
+"Corresponds to :ref:`select-filter` in :doc:`select`. See :ref:`select-"
+"filter` for details."
+
+msgid "Here is an example:"
+msgstr "Here is an example:"
+
+msgid "``post_filter``"
+msgstr "``post_filter``"
+
+msgid ""
+"Specifies the filter text that is processed after ``filtered`` stage dynamic "
+"columns are generated. You can use ``post_filter`` to filter by ``filtered`` "
+"stage dynamic columns. Others are the same as :ref:`select-filter`."
+msgstr ""
+"Specifies the filter text that is processed after ``filtered`` stage dynamic "
+"columns are generated. You can use ``post_filter`` to filter by ``filtered`` "
+"stage dynamic columns. Others are the same as :ref:`select-filter`."
+
+msgid ""
+"Here is an example that shows entries only in popular tag. All target "
+"entries have ``system`` or ``use`` words:"
+msgstr ""
+"Here is an example that shows entries only in popular tag. All target "
+"entries have ``system`` or ``use`` words:"
+
+msgid "Dynamic column related parameters"
+msgstr "Dynamic column related parameters"
+
+msgid ""
+"All dynamic column related parameters in :doc:`select` are supported. See :"
+"ref:`select-dynamic-column-related-parameters` for details."
+msgstr ""
+"All dynamic column related parameters in :doc:`select` are supported. See :"
+"ref:`select-dynamic-column-related-parameters` for details."
+
+msgid "``columns[${NAME}].stage``"
+msgstr "``columns[${NAME}].stage``"
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-stage` in :doc:`select`. See :ref:"
+"`select-columns-name-stage` for details."
+msgstr ""
+"Corresponds to :ref:`select-columns-name-stage` in :doc:`select`. See :ref:"
+"`select-columns-name-stage` for details."
+
+msgid "This is a required parameter."
+msgstr "This is a required parameter."
+
+msgid ""
+"``initial`` stage and ``filtered`` stage are valid. Because there are no "
+"processes after ``output`` stages."
+msgstr ""
+"``initial`` stage and ``filtered`` stage are valid. Because there are no "
+"processes after ``output`` stages."
+
+msgid "``filtered`` stage is valid since 8.0.1."
+msgstr "``filtered`` stage is valid since 8.0.1."
+
+msgid ""
+"Here is an example that creates ``is_popular`` column at ``initial`` stage. "
+"You can use ``is_popular`` in all parameters such as ``filter``:"
+msgstr ""
+"Here is an example that creates ``is_popular`` column at ``initial`` stage. "
+"You can use ``is_popular`` in all parameters such as ``filter``:"
+
+msgid "``columns[${NAME}].flags``"
+msgstr "``columns[${NAME}].flags``"
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-flags` in :doc:`select`. See :ref:"
+"`select-columns-name-flags` for details."
+msgstr ""
+"Corresponds to :ref:`select-columns-name-flags` in :doc:`select`. See :ref:"
+"`select-columns-name-flags` for details."
+
+msgid "The default value is ``COLUMN_SCALAR``."
+msgstr "The default value is ``COLUMN_SCALAR``."
+
+msgid ""
+"Here is an example that creates a vector column by ``COLUMN_VECTOR`` flags. "
+"``plugin_register functions/vector`` is for using :doc:`/reference/functions/"
+"vector_new` function:"
+msgstr ""
+"Here is an example that creates a vector column by ``COLUMN_VECTOR`` flags. "
+"``plugin_register functions/vector`` is for using :doc:`/reference/functions/"
+"vector_new` function:"
+
+msgid "``columns[${NAME}].type``"
+msgstr "``columns[${NAME}].type``"
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-type` in :doc:`select`. See :ref:"
+"`select-columns-name-type` for details."
+msgstr ""
+"Corresponds to :ref:`select-columns-name-type` in :doc:`select`. See :ref:"
+"`select-columns-name-type` for details."
+
+msgid ""
+"Here is an example that creates a ``ShortText`` type column. Stored value is "
+"casted to ``ShortText`` automatically. In this example, number is casted to "
+"``ShortText``:"
+msgstr ""
+"Here is an example that creates a ``ShortText`` type column. Stored value is "
+"casted to ``ShortText`` automatically. In this example, number is casted to "
+"``ShortText``:"
+
+msgid "``columns[${NAME}].value``"
+msgstr "``columns[${NAME}].value``"
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-value` in :doc:`select`. See :ref:"
+"`select-columns-name-value` for details."
+msgstr ""
+"Corresponds to :ref:`select-columns-name-value` in :doc:`select`. See :ref:"
+"`select-columns-name-value` for details."
+
+msgid ""
+"You need to specify :doc:`/reference/window_function` as ``value`` value and "
+"other window function related parameters when you use window function. See :"
+"ref:`logical-count-window-function-related-parameters` for details."
+msgstr ""
+"You need to specify :doc:`/reference/window_function` as ``value`` value and "
+"other window function related parameters when you use window function. See :"
+"ref:`logical-count-window-function-related-parameters` for details."
+
+msgid ""
+"Here is an example that creates a new dynamic column that stores the number "
+"of characters of content. This example uses :doc:`/reference/functions/"
+"string_length` function in ``functions/string`` plugin to compute the number "
+"of characters in a string. :doc:`plugin_register` is used to register "
+"``functions/string`` plugin:"
+msgstr ""
+"Here is an example that creates a new dynamic column that stores the number "
+"of characters of content. This example uses :doc:`/reference/functions/"
+"string_length` function in ``functions/string`` plugin to compute the number "
+"of characters in a string. :doc:`plugin_register` is used to register "
+"``functions/string`` plugin:"
+
+msgid "Window function related parameters"
+msgstr "Window function related parameters"
+
+msgid ""
+"All window function related parameters in :doc:`select` are supported. See :"
+"ref:`select-window-function-related-parameters` for details."
+msgstr ""
+"All window function related parameters in :doc:`select` are supported. See :"
+"ref:`select-window-function-related-parameters` for details."
+
+msgid ""
+"Window function over multiple tables aren't supported version 9.0.1 or "
+"before. Groonga supported it since version 9.0.2 or later. However, we need "
+"to align the same order for shard key and leading group key or sort key."
+msgstr ""
+"Window function over multiple tables aren't supported version 9.0.1 or "
+"before. Groonga supported it since version 9.0.2 or later. However, we need "
+"to align the same order for shard key and leading group key or sort key."
+
+msgid ""
+"For example, we can apply the window function to over multiple tables as "
+"below case. Because the below example aligns the same order for shard key "
+"and leading group key."
+msgstr ""
+"For example, we can apply the window function to over multiple tables as "
+"below case. Because the below example aligns the same order for shard key "
+"and leading group key."
+
+msgid ""
+"The leading group key is ``price`` and shard key is ``timestamp`` in the "
+"below example. We can apply the window function to over multiple tables in "
+"the below example. Because ``price`` and ``timestamp`` aligns the same order."
+msgstr ""
+"The leading group key is ``price`` and shard key is ``timestamp`` in the "
+"below example. We can apply the window function to over multiple tables in "
+"the below example. Because ``price`` and ``timestamp`` aligns the same order."
+
+msgid "``columns[${NAME}].window.sort_keys``"
+msgstr "``columns[${NAME}].window.sort_keys``"
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-window-sort-keys` in :doc:`select`. "
+"See :ref:`select-columns-name-window-sort-keys` for details."
+msgstr ""
+"Corresponds to :ref:`select-columns-name-window-sort-keys` in :doc:`select`. "
+"See :ref:`select-columns-name-window-sort-keys` for details."
+
+msgid ""
+"You must specify :ref:`logical-count-columns-name-window-sort-keys` or :ref:"
+"`logical-count-columns-name-window-group-keys` to use window function."
+msgstr ""
+"You must specify :ref:`logical-count-columns-name-window-sort-keys` or :ref:"
+"`logical-count-columns-name-window-group-keys` to use window function."
+
+msgid ""
+"Here is an example that computes cumulative sum per ``Entries.tag``. Each "
+"group is sorted by ``Entries._key``:"
+msgstr ""
+"Here is an example that computes cumulative sum per ``Entries.tag``. Each "
+"group is sorted by ``Entries._key``:"
+
+msgid "``columns[${NAME}].window.group_keys``"
+msgstr "``columns[${NAME}].window.group_keys``"
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-window-group-keys` in :doc:"
+"`select`. See :ref:`select-columns-name-window-group-keys` for details."
+msgstr ""
+"Corresponds to :ref:`select-columns-name-window-group-keys` in :doc:"
+"`select`. See :ref:`select-columns-name-window-group-keys` for details."
+
+msgid "Here is an example that computes sum per ``Entries.tag``:"
+msgstr "Here is an example that computes sum per ``Entries.tag``:"
+
+msgid "Cache related parameter"
+msgstr "Cache related parameter"
+
+msgid "``cache``"
+msgstr "``cache``"
+
+msgid "Specifies whether caching the result of this query or not."
+msgstr "Specifies whether caching the result of this query or not."
+
+msgid ""
+"If the result of this query is cached, the next same query returns response "
+"quickly by using the cache."
+msgstr ""
+"If the result of this query is cached, the next same query returns response "
+"quickly by using the cache."
+
+msgid "It doesn't control whether existing cached result is used or not."
+msgstr "It doesn't control whether existing cached result is used or not."
+
+msgid "Here are available values:"
+msgstr "Here are available values:"
+
+msgid "``no``"
+msgstr "``no``"
+
+msgid "Don't cache the output of this query."
+msgstr "Don't cache the output of this query."
+
+msgid "``yes``"
+msgstr "``yes``"
+
+msgid "Cache the output of this query. It's the default value."
+msgstr "Cache the output of this query. It's the default value."
+
+msgid "Here is an example to disable caching the result of this query:"
+msgstr "Here is an example to disable caching the result of this query:"
+
+msgid "The default value is ``yes``."
+msgstr "The default value is ``yes``."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "The command returns a response with the following format::"
+msgstr "The command returns a response with the following format::"
+
+msgid "If the command fails, error details are in ``HEADER``."
+msgstr "If the command fails, error details are in ``HEADER``."
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr "See :doc:`/reference/command/output_format` for ``HEADER``."
+
+msgid "``N_HITS`` is the number of matched records."
+msgstr "``N_HITS`` is the number of matched records."

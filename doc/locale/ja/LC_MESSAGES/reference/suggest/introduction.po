@@ -1,0 +1,180 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Introduction"
+msgstr "はじめに"
+
+msgid "The suggest feature in Groonga provides the following features:"
+msgstr "Groongaのサジェスト機能は以下の機能を提供します。:"
+
+msgid "Completion"
+msgstr "補完"
+
+msgid "Correction"
+msgstr "補正"
+
+msgid "Suggestion"
+msgstr "提案"
+
+msgid ""
+"Completion helps user input. If user inputs a partial word, Groonga can "
+"return complete words from registered words."
+msgstr ""
+"補完はユーザの入力を支援します。ユーザが単語の一部分のみしか入力していないと"
+"きに、登録済みの語の中から補完候補の語を返します。"
+
+msgid "For example, there are registered words:"
+msgstr "例えば、以下が登録済みの語とします。:"
+
+msgid "\"groonga\""
+msgstr ""
+
+msgid "\"complete\""
+msgstr ""
+
+msgid "\"correction\""
+msgstr ""
+
+msgid "\"suggest\""
+msgstr ""
+
+msgid ""
+"An user inputs \"co\" and groonga returns \"complete\" and \"correction\" "
+"because they starts with \"co\"."
+msgstr ""
+"ユーザが\"co\"と入力したとき、\"complete\"と\"correction\"を補完候補として返"
+"します。これはどちらも\"co\"で始まっているからです。"
+
+msgid ""
+"An user inputs \"sug\" and groonga returns \"suggest\" because \"suggest\" "
+"starts with \"sug\"."
+msgstr ""
+"ユーザが\"sug\"と入力したとき、\"suggest\"を返します。これは\"suggest\"が"
+"\"sug\"から始まっているからです。"
+
+msgid ""
+"An user inputs \"ab\" and groonga returns nothing because no word starts "
+"with \"ab\"."
+msgstr ""
+"ユーザが\"ab\"と入力したときは何も返しません。これは\"ab\"から始まる語が1つも"
+"登録されていないからです。"
+
+msgid ""
+"Correction also helps user input. If user inputs a wrong word, groonga can "
+"return correct words from registered correction pairs."
+msgstr ""
+"補正もユーザの入力を支援します。ユーザが間違った語を入力したときに登録済みの"
+"補正ペアの中から補正された語を返します。"
+
+msgid "For example, there are registered correction pairs:"
+msgstr "例えば、以下のような補正ペアが登録されていたとします。"
+
+msgid "correct word"
+msgstr "正しい語"
+
+msgid "wrong word"
+msgstr "間違った語"
+
+msgid "groonga"
+msgstr ""
+
+msgid "grroonga"
+msgstr ""
+
+msgid "gronga"
+msgstr ""
+
+msgid "gronnga"
+msgstr ""
+
+msgid ""
+"An user inputs \"gronga\" and groonga returns \"groonga\" because \"gronga\" "
+"is in wrong word and corresponding correct word is \"groonga\"."
+msgstr ""
+"ユーザが\"gronga\"と入力したとき、\"groonga\"を返します。これは、\"gronga\"が"
+"「間違った語」にあり、対応する「正しい語」カラムの値が\"groonga\"だからです。"
+
+msgid ""
+"An user inputs \"roonga\" and groonga returns nothing because \"roonga\" "
+"isn't in wrong word."
+msgstr ""
+"ユーザが\"roonga\"と入力したときは何も返しません。これは\"roonga\"が「間違っ"
+"た語」カラムにないからです。"
+
+msgid ""
+"Suggestion helps that user filters many found documents. If user inputs a "
+"query, groonga can return new queries that has more additional keywords from "
+"registered related query pairs."
+msgstr ""
+"提案は、たくさんの文書が見つかったときに、ユーザがさらに絞り込むことを支援し"
+"ます。ユーザがクエリを入力したとき、登録済みの関連クエリペアから追加のキー"
+"ワードを選び、追加のキーワードを含んだ新しいクエリを返します。"
+
+msgid "For example, there are registered related query pairs:"
+msgstr "例えば、以下の関連クエリペアが登録されているとします。:"
+
+msgid "keyword"
+msgstr "キーワード"
+
+msgid "related query"
+msgstr "関連クエリ"
+
+msgid "groonga search engine"
+msgstr ""
+
+msgid "Google search"
+msgstr ""
+
+msgid "search"
+msgstr ""
+
+msgid "groonga speed"
+msgstr ""
+
+msgid "speed"
+msgstr ""
+
+msgid ""
+"An user inputs \"groonga\" and groonga returns \"groonga search engine\" "
+"because \"groonga\" is in keyword column and related query column is "
+"\"groonga search engine\"."
+msgstr ""
+"ユーザが\"groonga\"と入力したとき、\"groonga search engine\"を返します。これ"
+"は、\"groonga\"が「キーワード」カラムの値にあり、対応する「関連クエリ」カラム"
+"の値が\"groonga search engine\"だからです。"
+
+msgid ""
+"An user inputs \"MySQL\" and groonga returns nothing because \"MySQL\" isn't "
+"in keyword column values."
+msgstr ""
+"ユーザが\"MySQL\"と入力したときは何も返しません。これは\"MySQL\"が「キーワー"
+"ド」カラムにないからです。"
+
+msgid "Learning"
+msgstr "学習"
+
+msgid ""
+"The suggest feature requires registered data before using the feature. Those "
+"data can be registered from user inputs. Gronnga-suggest-httpd and groonga-"
+"suggest-learner commands are provided for the propose."
+msgstr ""
+"サジェスト機能を使う場合は、事前に登録済みのデータを用意する必要があります。"
+"これらのデータはユーザの入力を使って登録できます。これ用にgroonga-suggest-"
+"httpdコマンドとgroonga-suggest-learnerコマンドがあります。"

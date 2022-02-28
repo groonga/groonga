@@ -1,0 +1,183 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "Suggestion"
+msgstr "提案"
+
+msgid "This section describes about the following completion features:"
+msgstr "このセクションでは以下の補完機能について説明します。:"
+
+msgid "How it works"
+msgstr "どのように動作するか"
+
+msgid "How to use"
+msgstr "使い方"
+
+msgid "How to learn"
+msgstr "学習方法"
+
+msgid "The suggestion feature uses a search to compute suggested words:"
+msgstr "提案機能は提案する語を計算するために1種類の検索を使います。:"
+
+msgid "Cooccurrence search against learned data."
+msgstr "学習したデータを共起検索。"
+
+msgid "Cooccurrence search"
+msgstr "共起検索"
+
+msgid ""
+"Cooccurrence search can find related words from user's input. It uses user "
+"submissions that will be learned from query logs, access logs and so on."
+msgstr ""
+"共起検索はユーザの入力と関連する語を検索します。共起検索ではユーザの実行した"
+"ときの検索クエリを使います。このデータはクエリログやアクセスログなどから学習"
+"します。"
+
+msgid "For example, there are the following user submissions:"
+msgstr "例えば、ユーザが以下のように検索を実行したとします。:"
+
+msgid "query"
+msgstr ""
+
+msgid "search engine"
+msgstr ""
+
+msgid "web search realtime"
+msgstr ""
+
+msgid "Groonga creates the following suggestion pairs:"
+msgstr "Groongaは以下のような提案ペアを作成します。"
+
+msgid "input"
+msgstr "入力"
+
+msgid "suggested words"
+msgstr "提案される語"
+
+msgid "search"
+msgstr ""
+
+msgid "engine"
+msgstr ""
+
+msgid "web"
+msgstr ""
+
+msgid "realtime"
+msgstr ""
+
+msgid "Those pairs are created by the following steps:"
+msgstr "これらのペアは以下の手順で作成します。:"
+
+msgid ""
+"Tokenizes user input query by TokenDelimit tokenizer that uses a space as "
+"token delimiter. (e.g. \"search engine\" is tokenized to two tokens "
+"\"search\" and \"engine\".)"
+msgstr ""
+"ユーザの入力をTokenDelimitトークナイザーでトークナイズします。TokenDelimitは"
+"空白をトークンの区切りに使います。（例えば、\"search engine\"は\"search\"トー"
+"クンと\"engine\"トークンの2つのトークンにトークナイズされます。）"
+
+msgid ""
+"Creates a pair that is consists of a token and original query for each token."
+msgstr "各トークンについて、トークンと元のクエリからなるペアを作成する。"
+
+msgid ""
+"If an user inputs \"search\" and cooccurrence search returns \"search "
+"engine\" and \"web search realtime\" because \"search\" is in two input "
+"columns and corresponding suggested word columns have \"search engine\" and "
+"\"web search realtime\"."
+msgstr ""
+"ユーザが\"search\"と入力したとき、共起検索は\"search engine\"と\"web search "
+"raltime\"を返します。これは、\"search\"が2つの「入力」カラムに含まれていて、"
+"対応するそれぞれの「提案される語」カラムの値が\"search engine\"と\"web "
+"search realtime\"だからです。"
+
+msgid ""
+"Groonga provides :doc:`/reference/commands/suggest` command to use "
+"suggestion. `--type suggest` option requests suggestion"
+msgstr ""
+"Groongaは提案機能を使うために :doc:`/reference/commands/suggest` コマンドを用"
+"意しています。 `--type suggest` オプションを使うと提案機能を利用できます。"
+
+msgid ""
+"For example, here is an command to get suggestion results by \"search\":"
+msgstr ""
+"例えば、\"search\"と入力した時の提案結果を取得するコマンドは以下の通りです。:"
+
+msgid "How it learns"
+msgstr "学習方法"
+
+msgid ""
+"Cooccurrence search uses learned data. They are based on query logs, access "
+"logs and so on. To create learned data, groonga needs user input sequence "
+"with time stamp and user submit input with time stamp."
+msgstr ""
+"共起検索は学習データを使います。学習データはクエリログやアクセスログなどを元"
+"に作成します。学習データを作成するには、タイムスタンプ付きの入力シーケンス"
+"と、タイムスタンプ付きの検索実行時の入力内容が必要です。"
+
+msgid ""
+"For example, an user wants to search by \"engine\". The user inputs the "
+"query with the following sequence:"
+msgstr ""
+"例えば、ユーザが\"engine\"で検索したいとします。ユーザが以下のようなシーケン"
+"スで検索クエリを入力したとします。:"
+
+msgid "2011-08-10T13:33:23+09:00: search engine (submit)"
+msgstr "2011-08-10T13:33:25+09:00: search engine （検索実行）"
+
+msgid "2011-08-10T13:33:28+09:00: web search realtime (submit)"
+msgstr "2011-08-10T13:33:28+09:00: web search realtime （検索実行）"
+
+msgid "Groonga can be learned from the submissions by the following command::"
+msgstr "以下のコマンドで上記の検索実行結果から学習します。::"
+
+msgid "How to extract learning data"
+msgstr "学習データを抽出する方法"
+
+msgid ""
+"The learning data is stored into ``item_DATASET`` and ``pair_DATASET`` "
+"tables. By using select command for such tables, you can all extract learing "
+"data."
+msgstr ""
+"学習データは、 ``item_DATASET`` テーブルと ``pair_DATASET`` テーブルに保存さ"
+"れています。このようなテーブルに対して、selectコマンドを使うことで、全ての学"
+"習データを抽出できます。"
+
+msgid "Here is the query to extract all learning data::"
+msgstr "以下は、全ての学習データを抽出するためのクエリーです。"
+
+msgid ""
+"Without '--limit -1', you can't get all data. In pair table, the valid value "
+"of ``freq0``, ``freq1`` and ``freq2`` column must be larger than 0."
+msgstr ""
+"'--limit -1'が無いと全てのデータを取得できません。pairテーブル内の ``freq0`` "
+"と ``freq1`` 、 ``freq2`` カラムの値は0より大きくなければなりません。"
+
+msgid ""
+"Don't execute above query via HTTP request because enormous number of "
+"records are fetched."
+msgstr ""
+"莫大な数のレコードを読み込むため、上記のクエリーはHTTPリクエスト経由では実行"
+"できません。"

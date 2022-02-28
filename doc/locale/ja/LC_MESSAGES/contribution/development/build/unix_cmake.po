@@ -1,0 +1,166 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2016-03-23 13:57+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "How to build Groonga at the repository by CMake on GNU/Linux or Unix"
+msgstr ""
+"GNU/LinuxまたはUnix上でCMakeを使ってリポジトリーのGroongaをビルドする方法"
+
+msgid ""
+"This document describes how to build Groonga at the repository by CMake on "
+"GNU/Linux or Unix."
+msgstr ""
+"このドキュメントではGNU/LinuxまたはUnix上でCMakeを使ってリポジトリーのGroonga"
+"をビルドする方法を説明します。"
+
+msgid "Unix is \\*BSD, Solaris, OS X and so on."
+msgstr "Unixとは\\*BSDやSolaris、OS Xなどのことです。"
+
+msgid ""
+"If you want to use Windows for developing Groonga, see :doc:`windows_cmake`."
+msgstr ""
+"Groongaの開発にWindowsを使いたい場合は :doc:`windows_cmake` を参照してくださ"
+"い。"
+
+msgid ""
+"You can't choose this way if you want to release Groonga. Groonga release "
+"system is only supported by GNU Autotools build. See :doc:`unix_autotools` "
+"about GNU Autotools build."
+msgstr ""
+"Groongaをリリースするときはこの方法を使うことはできません。Groongaのリリース"
+"システムはGNU Autotoolsを使ったビルドでしかサポートしてません。GNU Autotools"
+"を使ったビルドについては :doc:`unix_autotools` を参照してください。"
+
+msgid "Install depended software"
+msgstr "必要なソフトウェアのインストール"
+
+msgid "TODO"
+msgstr ""
+
+msgid "`CMake <http://www.cmake.org/>`_"
+msgstr ""
+
+msgid "`Ruby <https://www.ruby-lang.org/>`_"
+msgstr ""
+
+msgid "`Git <https://git-scm.com/>`_"
+msgstr ""
+
+msgid "`Cutter <http://cutter.sourceforge.net/>`_"
+msgstr ""
+
+msgid "..."
+msgstr ""
+
+msgid "Checkout Groonga from the repository"
+msgstr "リポジトリーからGroongaをチェックアウト"
+
+msgid ""
+"Users use released source archive. But developers must build Groonga at the "
+"repository. Because source code in the repository is the latest."
+msgstr ""
+"ユーザーはリリースされたソースアーカイブを使います。しかし、開発者はリポジト"
+"リーからGroongaをビルドするべきです。なぜなら、リポジトリーにあるソースコード"
+"が最新のソースコードだからです。"
+
+msgid ""
+"The Groonga repository is hosted on `GitHub <https://github.com/groonga/"
+"groonga>`_. Checkout the latest source code from the repository::"
+msgstr ""
+"Groongaのリポジトリーは `GitHub <https://github.com/groonga/groonga>`_ にあり"
+"ます。リポジトリーから最新のソースコードをチェックアウトします::"
+
+msgid "Run ``cmake``"
+msgstr "``cmake`` を実行"
+
+msgid "You need to create ``Makefile`` for your environment."
+msgstr "あなたの環境用の ``Makefile`` を作る必要があります。"
+
+msgid ""
+"You can custom your build configuration by passing options to ``cmake``."
+msgstr ""
+"``cmake`` へオプションを渡してビルドパラメーターをカスタマイズできます。"
+
+msgid "Here are recommended ``cmake`` options for developers::"
+msgstr "開発者向けのオススメ ``cmake`` オプションは次の通りです::"
+
+msgid "Here are descriptions of these options:"
+msgstr "それぞれのオプションの説明です。"
+
+msgid "``-DCMAKE_INSTALL_PREFIX=/tmp/local``"
+msgstr ""
+
+msgid ""
+"It specifies that you install your Groonga into temporary directory. You can "
+"do \"clean install\" by removing ``/tmp/local`` directory. It'll be useful "
+"for debugging install."
+msgstr ""
+"あなたのGroongaを一時ディレクトリーにインストールように指定しています。 ``/"
+"tmp/local`` ディレクトリーを削除することで「クリーンインストール」を試すこと"
+"ができます。インストール処理をデバッグするときに便利です。"
+
+msgid "``-DGRN_WITH_DEBUG=on``"
+msgstr ""
+
+msgid ""
+"It enables debug options for C/C++ compiler. It's useful for debugging on "
+"debugger such as GDB and LLDB."
+msgstr ""
+"C/C++コンパイラーのデバッグオプションを有効にします。GDBやLLDBなどのデバッ"
+"ガーでデバッグするときに便利です。"
+
+msgid "``-DGRN_WITH_MRUBY=on``"
+msgstr ""
+
+msgid ""
+"It enables mruby support. The feature isn't enabled by default but "
+"developers should enable the feature."
+msgstr ""
+"mrubyサポートを有効にします。この機能はデフォルトで無効になっていますが、開発"
+"者はこの機能を有効にするべきです。"
+
+msgid "Run ``make``"
+msgstr "``make`` を実行"
+
+msgid "Now, you can build Groonga."
+msgstr "これでGroongaをビルドできるようになりました。"
+
+msgid "Here is a recommended ``make`` command line for developers::"
+msgstr "開発者向けのオススメの ``make`` のコマンドラインです::"
+
+msgid ""
+"``-j8`` decreases build time. It enables parallel build. If you have 8 or "
+"more CPU cores, you can increase ``8`` to decreases more build time."
+msgstr ""
+"``-j8`` はビルド時間を短縮します。並列ビルドが有効になっているためです。も"
+"し、CPUコアが8よりもたくさんあるのであれば、 ``8`` をもっと増やすとさらにビル"
+"ドタイムを短縮できるでしょう。"
+
+msgid ""
+"You can just see only warning and error messages by ``> /dev/null``. "
+"Developers shouldn't add new warnings and errors in new commit."
+msgstr ""
+"``> /dev/null`` をつけることで警告メッセージとエラーメッセージだけが見えるよ"
+"うになります。開発者は新しいコミットで警告メッセージもエラーメッセージも増や"
+"すべきではありません。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/contribution/development/test`"
+msgstr ""

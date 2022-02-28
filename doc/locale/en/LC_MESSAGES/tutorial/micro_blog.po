@@ -1,0 +1,489 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Let's create micro-blog"
+msgstr "Let's create micro-blog"
+
+msgid ""
+"Let's create micro-blog with full text search by Groonga. Micro-blog is one "
+"of the broadcast medium in the forms of blog. It is mainly used to post "
+"small messages like a Twitter."
+msgstr ""
+"Let's create micro-blog with full text search by Groonga. Micro-blog is one "
+"of the broadcast medium in the forms of blog. It is mainly used to post "
+"small messages like a Twitter."
+
+msgid "Create a table"
+msgstr "Create a table"
+
+msgid "Let's create table."
+msgstr "Let's create table."
+
+msgid "Users table"
+msgstr "Users table"
+
+msgid ""
+"This is the table which stores user information. It stores name of user, "
+"profile, list of follower and so on."
+msgstr ""
+"This is the table which stores user information. It stores name of user, "
+"profile, list of follower and so on."
+
+msgid "``_key``"
+msgstr "``_key``"
+
+msgid "User ID"
+msgstr "User ID"
+
+msgid "``name``"
+msgstr "``name``"
+
+msgid "User name"
+msgstr "User name"
+
+msgid "``follower``"
+msgstr "``follower``"
+
+msgid "List of following users"
+msgstr "List of following users"
+
+msgid "``favorites``"
+msgstr "``favorites``"
+
+msgid "List of favorite comments"
+msgstr "List of favorite comments"
+
+msgid "``location``"
+msgstr "``location``"
+
+msgid "Current location of user (geolocation)"
+msgstr "Current location of user (geolocation)"
+
+msgid "``location_str``"
+msgstr "``location_str``"
+
+msgid "Current location of user (string)"
+msgstr "Current location of user (string)"
+
+msgid "``description``"
+msgstr "``description``"
+
+msgid "User profile"
+msgstr "User profile"
+
+msgid "``followee``"
+msgstr "``followee``"
+
+msgid ""
+"Indexes for ``follower`` column in ``Users`` table. With this indexes, you "
+"can search users who follows the person."
+msgstr ""
+"Indexes for ``follower`` column in ``Users`` table. With this indexes, you "
+"can search users who follows the person."
+
+msgid "Comments table"
+msgstr "Comments table"
+
+msgid ""
+"This is the table which stores comments and its metadata. It stores content "
+"of comment, posted date, comment which reply to, and so on."
+msgstr ""
+"This is the table which stores comments and its metadata. It stores content "
+"of comment, posted date, comment which reply to, and so on."
+
+msgid "Comment ID"
+msgstr "Comment ID"
+
+msgid "``comment``"
+msgstr "``comment``"
+
+msgid "Content of comment"
+msgstr "Content of comment"
+
+msgid "``last_modified``"
+msgstr "``last_modified``"
+
+msgid "Posted date"
+msgstr "Posted date"
+
+msgid "``replied_to``"
+msgstr "``replied_to``"
+
+msgid "Comment which you reply to someone"
+msgstr "Comment which you reply to someone"
+
+msgid "``replied_users``"
+msgstr "``replied_users``"
+
+msgid "List of users who you reply to"
+msgstr "List of users who you reply to"
+
+msgid "``hash_tags``"
+msgstr "``hash_tags``"
+
+msgid "List of hash tags about comment"
+msgstr "List of hash tags about comment"
+
+msgid "Posted place (for geolocation)"
+msgstr "Posted place (for geolocation)"
+
+msgid "``posted_by``"
+msgstr "``posted_by``"
+
+msgid "Person who write comment"
+msgstr "Person who write comment"
+
+msgid "``favorited_by``"
+msgstr "``favorited_by``"
+
+msgid ""
+"Indexes for ``favorites`` column in ``Users`` table. With this indexes, you "
+"can search the person who mark comment as favorite one."
+msgstr ""
+"Indexes for ``favorites`` column in ``Users`` table. With this indexes, you "
+"can search the person who mark comment as favorite one."
+
+msgid "HashTags table"
+msgstr "HashTags table"
+
+msgid "This is the table which stores hash tags for comments."
+msgstr "This is the table which stores hash tags for comments."
+
+msgid "Hash tag"
+msgstr "Hash tag"
+
+msgid "``hash_index``"
+msgstr "``hash_index``"
+
+msgid ""
+"Indexes for ``Comments.hash_tags``. With this indexes, you can search list "
+"of comments with specified hash tags."
+msgstr ""
+"Indexes for ``Comments.hash_tags``. With this indexes, you can search list "
+"of comments with specified hash tags."
+
+msgid "Bigram table"
+msgstr "Bigram table"
+
+msgid ""
+"This is the table which stores indexes for full text search by user "
+"information or comments."
+msgstr ""
+"This is the table which stores indexes for full text search by user "
+"information or comments."
+
+msgid "Word"
+msgstr "Word"
+
+msgid "``users_index``"
+msgstr "``users_index``"
+
+msgid ""
+"Indexes of user information. This column contains indexes of user name "
+"(``Users.name``), current location (``Users.location_str``), profile "
+"(``Users.description``)."
+msgstr ""
+"Indexes of user information. This column contains indexes of user name "
+"(``Users.name``), current location (``Users.location_str``), profile "
+"(``Users.description``)."
+
+msgid "``comment_index``"
+msgstr "``comment_index``"
+
+msgid "Indexes about content of comments (``Comments.comment``)."
+msgstr "Indexes about content of comments (``Comments.comment``)."
+
+msgid "GeoIndex table"
+msgstr "GeoIndex table"
+
+msgid ""
+"This is the table which stores indexes of location column to search geo "
+"location effectively."
+msgstr ""
+"This is the table which stores indexes of location column to search geo "
+"location effectively."
+
+msgid "``users_location``"
+msgstr "``users_location``"
+
+msgid "Indexes of location column for Users table"
+msgstr "Indexes of location column for Users table"
+
+msgid "``comments_location``"
+msgstr "``comments_location``"
+
+msgid "Indexes of location column for Comments table"
+msgstr "Indexes of location column for Comments table"
+
+msgid "Loading data"
+msgstr "Loading data"
+
+msgid "Then, load example data."
+msgstr "Then, load example data."
+
+msgid ""
+"``follower`` column and ``favorites`` column in ``Users`` table and "
+"``replied_users`` column in ``Comments`` table are vector column, so specify "
+"the value as an array."
+msgstr ""
+"``follower`` column and ``favorites`` column in ``Users`` table and "
+"``replied_users`` column in ``Comments`` table are vector column, so specify "
+"the value as an array."
+
+msgid ""
+"``location`` column in ``Users`` table, ``location`` column in ``Comments`` "
+"table use GeoPoint type. This type accepts \"[latitude]x[longitude]\"."
+msgstr ""
+"``location`` column in ``Users`` table, ``location`` column in ``Comments`` "
+"table use GeoPoint type. This type accepts \"[latitude]x[longitude]\"."
+
+msgid "``last_modified`` column in ``Comments`` table use Time type."
+msgstr "``last_modified`` column in ``Comments`` table use Time type."
+
+msgid ""
+"There are two way to specify the value. First, specify epoch (seconds since "
+"Jan, 1, 1970 AM 00:00:00) directly. In this case, you can specify micro "
+"seconds as fractional part. The value is converted from factional part to "
+"the time which is micro seconds based one when data is loaded. The second, "
+"specify the timestamp as string in following format: \"(YEAR)/(MONTH)/(DAY) "
+"(HOUR):(MINUTE):(SECOND)\". In this way, the string is casted to proper "
+"micro seconds when data is loaded."
+msgstr ""
+"There are two way to specify the value. First, specify epoch (seconds since "
+"Jan, 1, 1970 AM 00:00:00) directly. In this case, you can specify micro "
+"seconds as fractional part. The value is converted from factional part to "
+"the time which is micro seconds based one when data is loaded. The second, "
+"specify the timestamp as string in following format: \"(YEAR)/(MONTH)/(DAY) "
+"(HOUR):(MINUTE):(SECOND)\". In this way, the string is casted to proper "
+"micro seconds when data is loaded."
+
+msgid "Search"
+msgstr "Search"
+
+msgid "Let's search micro-blog."
+msgstr "Let's search micro-blog."
+
+msgid "Search users by keyword"
+msgstr "Search users by keyword"
+
+msgid ""
+"In this section, we search micro-blog against multiple column by keyword. "
+"See :doc:`match_columns` to search multiple column at once."
+msgstr ""
+"In this section, we search micro-blog against multiple column by keyword. "
+"See :doc:`match_columns` to search multiple column at once."
+
+msgid ""
+"Let's search user from micro-blog's user name, location, description entries."
+msgstr ""
+"Let's search user from micro-blog's user name, location, description entries."
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"By using \"New York\" as searching keyword for user, \"Bob\" who lives in "
+"\"New York\" is listed in search result."
+msgstr ""
+"By using \"New York\" as searching keyword for user, \"Bob\" who lives in "
+"\"New York\" is listed in search result."
+
+msgid "Search users by geolocation data (GeoPoint)"
+msgstr "Search users by geolocation data (GeoPoint)"
+
+msgid ""
+"In this section, we search users by column data which use type of GeoPoint. "
+"See :doc:`search` about GeoPoint column."
+msgstr ""
+"In this section, we search users by column data which use type of GeoPoint. "
+"See :doc:`search` about GeoPoint column."
+
+msgid ""
+"Following example searches users who live in within 20km from specified "
+"location."
+msgstr ""
+"Following example searches users who live in within 20km from specified "
+"location."
+
+msgid ""
+"It shows that \"Bob\" and \"Charlie\" lives in within 20 km from station of "
+"\"Grand Central Terminal\"."
+msgstr ""
+"It shows that \"Bob\" and \"Charlie\" lives in within 20 km from station of "
+"\"Grand Central Terminal\"."
+
+msgid "Search users who follows specific user"
+msgstr "Search users who follows specific user"
+
+msgid ""
+"In this section, we do reverse resolution of reference relationships which "
+"is described at :doc:`index`."
+msgstr ""
+"In this section, we do reverse resolution of reference relationships which "
+"is described at :doc:`index`."
+
+msgid ""
+"Following examples shows reverse resolution about ``follower`` column of "
+"``Users`` table."
+msgstr ""
+"Following examples shows reverse resolution about ``follower`` column of "
+"``Users`` table."
+
+msgid "It shows that \"Alice\" and \"Charlie\" follows \"Bob\"."
+msgstr "It shows that \"Alice\" and \"Charlie\" follows \"Bob\"."
+
+msgid "Search comments by using the value of GeoPoint type"
+msgstr "Search comments by using the value of GeoPoint type"
+
+msgid ""
+"In this section, we search comments which are written within specific "
+"location."
+msgstr ""
+"In this section, we search comments which are written within specific "
+"location."
+
+msgid ""
+"Then, we also use drill down which is described at :doc:`drilldown`. "
+"Following example shows how to drill down against search results. As a "
+"result, we get the value of count which is grouped by user, and hash tags "
+"respectively."
+msgstr ""
+"Then, we also use drill down which is described at :doc:`drilldown`. "
+"Following example shows how to drill down against search results. As a "
+"result, we get the value of count which is grouped by user, and hash tags "
+"respectively."
+
+msgid ""
+"Above query searches comments which are posted within 20 km from Central "
+"Park in city of New York."
+msgstr ""
+"Above query searches comments which are posted within 20 km from Central "
+"Park in city of New York."
+
+msgid ""
+"As specified range is 20 km, all comments with location are collected. You "
+"know that search results contain 2 #groonga hash tags and one #travel hash "
+"tag, and bob and charlie posted 2 comments."
+msgstr ""
+"As specified range is 20 km, all comments with location are collected. You "
+"know that search results contain 2 #groonga hash tags and one #travel hash "
+"tag, and bob and charlie posted 2 comments."
+
+msgid "Search comments by keyword"
+msgstr "Search comments by keyword"
+
+msgid ""
+"In this section, we search comments which contains specific keyword. And "
+"more, Let's calculate the value of `_score` which is described at :doc:"
+"`search`."
+msgstr ""
+"In this section, we search comments which contains specific keyword. And "
+"more, Let's calculate the value of `_score` which is described at :doc:"
+"`search`."
+
+msgid ""
+"By using 'Now' as a keyword, above query returns 2 comments. It also "
+"contains count of 'Now' as the value of `_score`."
+msgstr ""
+"By using 'Now' as a keyword, above query returns 2 comments. It also "
+"contains count of 'Now' as the value of `_score`."
+
+msgid "Search comments by keyword and geolocation"
+msgstr "Search comments by keyword and geolocation"
+
+msgid ""
+"In this section, we search comments by specific keyword and geolocation. By "
+"using `--query` and `--filter` option, following query returns records which "
+"are matched to both conditions."
+msgstr ""
+"In this section, we search comments by specific keyword and geolocation. By "
+"using `--query` and `--filter` option, following query returns records which "
+"are matched to both conditions."
+
+msgid ""
+"It returns 1 comment which meets both condition. It also returns result of "
+"drilldown. There is 1 comment which is commented by Bob."
+msgstr ""
+"It returns 1 comment which meets both condition. It also returns result of "
+"drilldown. There is 1 comment which is commented by Bob."
+
+msgid "Search comments by hash tags"
+msgstr "Search comments by hash tags"
+
+msgid ""
+"In this section, we search comments which contains specific hash tags. Let's "
+"use reverse resolution of reference relationships."
+msgstr ""
+"In this section, we search comments which contains specific hash tags. Let's "
+"use reverse resolution of reference relationships."
+
+msgid ""
+"Above query returns 2 comments which contains #groonga hash tag. It also "
+"returns result of drilldown grouped by person who posted it. It shows that "
+"there are 2 comments. Bob commented it."
+msgstr ""
+"Above query returns 2 comments which contains #groonga hash tag. It also "
+"returns result of drilldown grouped by person who posted it. It shows that "
+"there are 2 comments. Bob commented it."
+
+msgid "Search comments by user id"
+msgstr "Search comments by user id"
+
+msgid "In this section, we search comments which are posted by specific user."
+msgstr "In this section, we search comments which are posted by specific user."
+
+msgid ""
+"Above query returns 4 comments which are posted by Bob. It also returns "
+"result of drilldown by hash tags. There are 2 comments which contains "
+"#groonga, and 1 comment which contains #travel as hash tag."
+msgstr ""
+"Above query returns 4 comments which are posted by Bob. It also returns "
+"result of drilldown by hash tags. There are 2 comments which contains "
+"#groonga, and 1 comment which contains #travel as hash tag."
+
+msgid "Search user's favorite comments"
+msgstr "Search user's favorite comments"
+
+msgid "In this section, we search user's favorite comments."
+msgstr "In this section, we search user's favorite comments."
+
+msgid "Above query returns Bob's favorite comments."
+msgstr "Above query returns Bob's favorite comments."
+
+msgid "Search comments by posted time"
+msgstr "Search comments by posted time"
+
+msgid ""
+"In this section, we search comments by posted time. See type of `Time` in :"
+"doc:`data`."
+msgstr ""
+"In this section, we search comments by posted time. See type of `Time` in :"
+"doc:`data`."
+
+msgid "Let's search comments that posted time are older than specified time."
+msgstr "Let's search comments that posted time are older than specified time."
+
+msgid ""
+"Above query returns 5 comments which are older than 2010/03/17 14:00:00. It "
+"also returns result of drilldown by posted person. There are 2 comments by "
+"Alice, 3 comments by Bob."
+msgstr ""
+"Above query returns 5 comments which are older than 2010/03/17 14:00:00. It "
+"also returns result of drilldown by posted person. There are 2 comments by "
+"Alice, 3 comments by Bob."

@@ -1,0 +1,238 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "パラメータ"
+msgstr ""
+
+msgid "戻り値"
+msgstr ""
+
+msgid "``grn_ctx``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+":c:type:`grn_ctx` is the most important object. :c:type:`grn_ctx` keeps the "
+"current information such as:"
+msgstr ""
+":c:type:`grn_ctx` は最も重要なオブジェクトです。:c:type:`grn_ctx` はその時点"
+"の情報を保持します:"
+
+msgid "The last occurred error."
+msgstr "最後に発生したエラー。"
+
+msgid "The current encoding."
+msgstr "その時点のエンコーディング。"
+
+msgid "The default thresholds. (e.g. :ref:`select-match-escalation-threshold`)"
+msgstr "デフォルトの閾値。（例: :ref:`select-match-escalation-threshold`）"
+
+msgid ""
+"The default command version. (See :doc:`/reference/command/command_version`)"
+msgstr ""
+"デフォルトのコマンドバージョン。（ :doc:`/reference/command/"
+"command_version` ）を参照のこと。"
+
+msgid ":c:type:`grn_ctx` provides platform features such as:"
+msgstr ":c:type:`grn_ctx` は基盤となる機能を提供します:"
+
+msgid "Memory management."
+msgstr "メモリ管理機能"
+
+msgid "Logging."
+msgstr "ロギング機能"
+
+msgid "Most APIs receive :c:type:`grn_ctx` as the first argument."
+msgstr "ほとんどのAPIは :c:type:`grn_ctx` を最初の引数にとります。"
+
+msgid ""
+"You can't use the same :c:type:`grn_ctx` from two or more threads. You need "
+"to create a :c:type:`grn_ctx` for a thread. You can use two or more :c:type:"
+"`grn_ctx` in a thread but it is not needed for usual use-case."
+msgstr ""
+"同じ :c:type:`grn_ctx` を二つ以上のスレッドからは扱えません。:c:type:"
+"`grn_ctx` はスレッドごとに作成する必要があります。一つのスレッドでは :c:type:"
+"`grn_ctx` を二つ以上扱えますが、通常はその必要はありません。"
+
+msgid "Example"
+msgstr "例"
+
+msgid "TODO..."
+msgstr "TODO..."
+
+msgid "Reference"
+msgstr "リファレンス"
+
+msgid "ctxを初期化します。"
+msgstr ""
+
+msgid "初期化するctx構造体へのポインタを指定します。"
+msgstr ""
+
+msgid "初期化する ``ctx`` のオプションを指定します。"
+msgstr ""
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
+
+msgid "ctxの管理するメモリを解放し、使用を終了します。"
+msgstr ""
+
+msgid ""
+"If ``ctx`` is initialized by :c:func:`grn_ctx_open()` not :c:func:"
+"`grn_ctx_init()`, you need to use :c:func:`grn_ctx_close()` instead of :c:"
+"func:`grn_ctx_fin()`."
+msgstr ""
+":c:func:`grn_ctx_init()` ではなく :c:func:`grn_ctx_open()` で ``ctx`` を初期"
+"化した場合、 :c:func:`grn_ctx_fin()` ではなく :c:func:`grn_ctx_close()` を使"
+"わなければいけません。"
+
+msgid "解放するctx構造体へのポインタを指定します。"
+msgstr ""
+
+msgid "初期化された :c:type:`grn_ctx` オブジェクトを返します。"
+msgstr ""
+
+msgid ""
+":c:func:`grn_ctx_init()` で初期化された :c:type:`grn_ctx` オブジェクトは構造"
+"体の実体をAPIの呼び元で確保するのに対して、 :c:func:`grn_ctx_open()` では"
+"Groongaライブラリの内部で、実体を確保します。 どちらで初期化された :c:type:"
+"`grn_ctx` も、 :c:func:`grn_ctx_fin()` で解放できます。 :c:func:"
+"`grn_ctx_open()` で確保した :c:type:`grn_ctx` 構造体に関しては、:c:func:"
+"`grn_ctx_fin()` で解放した後に、その :c:type:`grn_ctx` で作成した :c:type:"
+"`grn_obj` を :c:func:`grn_obj_close()` によって解放しても問題ありません。"
+msgstr ""
+
+msgid ""
+"It calls :c:func:`grn_ctx_fin()` and frees allocated memory for ``ctx`` by :"
+"c:func:`grn_ctx_open()`."
+msgstr ""
+":c:func:`grn_ctx_fin()` を呼び出し、その後、 :c:func:`grn_ctx_open()` によっ"
+"て割り当てた ``ctx`` のメモリを解放する。"
+
+msgid "no longer needed :c:type:`grn_ctx`."
+msgstr "もう使わない :c:type:`grn_ctx` 。"
+
+msgid "ctxを破棄するときに呼ばれる関数を設定します。"
+msgstr ""
+
+msgid "対象ctxを指定します。"
+msgstr ""
+
+msgid "``ctx`` を破棄するときに呼ばれる関数を指定します。"
+msgstr ""
+
+msgid "command_versionを返します。"
+msgstr ""
+
+msgid "command_versionを変更します。"
+msgstr ""
+
+msgid "変更後のcommand_versionを指定します。"
+msgstr ""
+
+msgid ""
+"ctxが操作対象とするdbを指定します。NULLを指定した場合は、dbを操作しない状態"
+"(init直後の状態)になります。"
+msgstr ""
+
+msgid "Don't use it with :c:type:`grn_ctx` that has ``GRN_CTX_PER_DB`` flag."
+msgstr ""
+"``GRN_CTX_PER_DB`` フラグを指定した :c:type:`grn_ctx` と一緒に使ってはいけま"
+"せん。"
+
+msgid "ctxが使用するdbを指定します。"
+msgstr ""
+
+msgid ""
+"ctxが現在操作対象としているdbを返します。dbを使用していない場合はNULLを返しま"
+"す。"
+msgstr ""
+
+msgid ""
+"ctxが使用するdbからnameに対応するオブジェクトを検索して返す。nameに一致するオ"
+"ブジェクトが存在しなければNULLを返す。"
+msgstr ""
+
+msgid "検索しようとするオブジェクトの名前。"
+msgstr ""
+
+msgid ""
+"The number of bytes of name. If negative value is specified, name is assumed "
+"that NULL-terminated string."
+msgstr ""
+"名前のバイト数。負の値が指定された場合は、終端をNULL文字とした文字列として扱"
+"われる。"
+
+msgid ""
+"ctx、またはctxが使用するdbからidに対応するオブジェクトを検索して返す。idに一"
+"致するオブジェクトが存在しなければNULLを返す。"
+msgstr ""
+
+msgid "検索しようとするオブジェクトのidを指定します。"
+msgstr ""
+
+msgid ""
+"It pushes all tables in the database of ``ctx`` into ``tables_buffer``. "
+"``tables_buffer`` should be initialized as ``GRN_PVECTOR``. You can use "
+"``GRN_PTR_INIT()`` with ``GRN_OBJ_VECTOR`` flags to initialize "
+"``tables_buffer``."
+msgstr ""
+
+msgid "Here is an example:"
+msgstr "以下は例です。"
+
+msgid "The context object."
+msgstr "その時点のコンテキスト。"
+
+msgid "The output buffer to store tables."
+msgstr ""
+
+msgid "Gets the current output type of the context."
+msgstr "コンテキストの出力形式を取得します。"
+
+msgid "Normally, this function isn't needed."
+msgstr ""
+
+msgid "The output type of the context."
+msgstr ""
+
+msgid ""
+"Sets the new output type to the context. It is used by executing a command "
+"by :c:func:`grn_expr_exec()`. If you use :c:func:`grn_ctx_send()`, the new "
+"output type isn't used. :c:func:`grn_ctx_send()` sets output type from "
+"command line internally."
+msgstr ""
+
+msgid "The new output type."
+msgstr "新しい出力形式。"
+
+msgid "Checks whether object with the ID is opened or not."
+msgstr "指定したIDのオブジェクトが開かれているかどうかをチェックします。"
+
+msgid "The object ID to be checked."
+msgstr "チェック対象のオブジェクトのID。"
+
+msgid "``GRN_TRUE`` if object with the ID is opened, ``GRN_FALSE`` otherwise."
+msgstr ""
+"指定したIDのオブジェクトが開かれていたら ``GRN_TRUE`` 、そうでなければ "
+"``GRN_FALSE`` 。"

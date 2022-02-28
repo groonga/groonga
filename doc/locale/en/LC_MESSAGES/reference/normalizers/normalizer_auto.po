@@ -1,0 +1,80 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``NormalizerAuto``"
+msgstr "``NormalizerAuto``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"Normally you should use ``NormalizerAuto`` normalizer. ``NormalizerAuto`` "
+"was the normalizer for Groonga 2.0.9 or earlier. ``KEY_NORMALIZE`` flag in "
+"``table_create`` on Groonga 2.0.9 or earlier equals to ``--normalizer "
+"NormalizerAuto`` option in ``table_create`` on Groonga 2.1.0 or later."
+msgstr ""
+"Normally you should use ``NormalizerAuto`` normalizer. ``NormalizerAuto`` "
+"was the normalizer for Groonga 2.0.9 or earlier. ``KEY_NORMALIZE`` flag in "
+"``table_create`` on Groonga 2.0.9 or earlier equals to ``--normalizer "
+"NormalizerAuto`` option in ``table_create`` on Groonga 2.1.0 or later."
+
+msgid ""
+"``NormalizerAuto`` supports all encoding. It uses Unicode NFKC "
+"(Normalization Form Compatibility Composition) for UTF-8 encoding text. It "
+"uses encoding specific original normalization for other encodings. The "
+"results of those original normalization are similar to NFKC."
+msgstr ""
+"``NormalizerAuto`` supports all encoding. It uses Unicode NFKC "
+"(Normalization Form Compatibility Composition) for UTF-8 encoding text. It "
+"uses encoding specific original normalization for other encodings. The "
+"results of those original normalization are similar to NFKC."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "``NormalizerAuto`` hasn't parameter::"
+msgstr "``NormalizerAuto`` hasn't parameter::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid ""
+"``NormalizerAuto`` normalizes half-width katakana (such as U+FF76 HALFWIDTH "
+"KATAKANA LETTER KA) + half-width katakana voiced sound mark (U+FF9E "
+"HALFWIDTH KATAKANA VOICED SOUND MARK) to full-width katakana with voiced "
+"sound mark (U+30AC KATAKANA LETTER GA). The former is two characters but the "
+"latter is one character."
+msgstr ""
+"``NormalizerAuto`` normalizes half-width katakana (such as U+FF76 HALFWIDTH "
+"KATAKANA LETTER KA) + half-width katakana voiced sound mark (U+FF9E "
+"HALFWIDTH KATAKANA VOICED SOUND MARK) to full-width katakana with voiced "
+"sound mark (U+30AC KATAKANA LETTER GA). The former is two characters but the "
+"latter is one character."
+
+msgid "Here is an example that uses ``NormalizerAuto`` normalizer:"
+msgstr "Here is an example that uses ``NormalizerAuto`` normalizer:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`../commands/normalize`"
+msgstr ":doc:`../commands/normalize`"

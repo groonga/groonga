@@ -1,0 +1,47 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2019-09-26 09:22+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Docker"
+msgstr ""
+
+msgid ""
+"This section describes how to install Groonga on Docker. You can install "
+"Groonga image via DockerHub."
+msgstr ""
+"このセクションではDockerでGroongaをインストールする方法を説明します。Groonga"
+"イメージはDockerHub経由でインストールできます。"
+
+msgid "We distribute Alpine Linux Groonga docker image on DockerHub."
+msgstr ""
+"DockerHubにおいて、Alpine LinuxのGroongaのDockerイメージを配布しています。"
+
+msgid "Pulling image"
+msgstr "イメージの取得"
+
+msgid "Install::"
+msgstr "インストール::"
+
+msgid "Then run it with the following command::"
+msgstr "次のコマンドで実行します::"
+
+msgid "With docker-compose"
+msgstr "docker-composeを用いる場合"
+
+msgid "Create docker-compose.yml as follows::"
+msgstr "docker-compose.ymlを次のように作成します::"

@@ -1,0 +1,203 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``check``"
+msgstr "``check``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "check - オブジェクトの状態表示"
+msgstr "check - オブジェクトの状態表示"
+
+msgid ""
+"Groonga組込コマンドの一つであるcheckについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+msgstr ""
+"Groonga組込コマンドの一つであるcheckについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+
+msgid ""
+"checkコマンドは、groongaプロセス内の指定したオブジェクトの状態を表示します。"
+"主にデータベースが壊れた場合など異常時の問題解決のために使用することを想定し"
+"ています。デバッグ用のため、返値のフォーマットが安定しているということは保証"
+"されません。（フォーマットが変更される可能性が高い）"
+msgstr ""
+"checkコマンドは、groongaプロセス内の指定したオブジェクトの状態を表示します。"
+"主にデータベースが壊れた場合など異常時の問題解決のために使用することを想定し"
+"ています。デバッグ用のため、返値のフォーマットが安定しているということは保証"
+"されません。（フォーマットが変更される可能性が高い）"
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "テーブルTermsのインデックスカラムnameの状態を表示します。::"
+msgstr "テーブルTermsのインデックスカラムnameの状態を表示します。::"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "``obj``"
+msgstr "``obj``"
+
+msgid "状態を表示するオブジェクトの名前を指定します。"
+msgstr "状態を表示するオブジェクトの名前を指定します。"
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "チェックするオブジェクトにより返される値が変わります。"
+msgstr "チェックするオブジェクトにより返される値が変わります。"
+
+msgid "インデックスカラムの場合::"
+msgstr "インデックスカラムの場合::"
+
+msgid "``インデックスの状態`` には下記の項目がハッシュ形式で出力されます。"
+msgstr "``インデックスの状態`` には下記の項目がハッシュ形式で出力されます。"
+
+msgid "``flags``"
+msgstr "``flags``"
+
+msgid "指定されているフラグ値です。16進数で表現されています。"
+msgstr "指定されているフラグ値です。16進数で表現されています。"
+
+msgid "``max sid``"
+msgstr "``max sid``"
+
+msgid "セグメントのうち最も大きなIDです。"
+msgstr "セグメントのうち最も大きなIDです。"
+
+msgid "``number of garbage segments``"
+msgstr "``number of garbage segments``"
+
+msgid "ゴミセグメントの数です。"
+msgstr "ゴミセグメントの数です。"
+
+msgid "``number of array segments``"
+msgstr "``number of array segments``"
+
+msgid "配列セグメントの数です。"
+msgstr "配列セグメントの数です。"
+
+msgid "``max id of array segment``"
+msgstr "``max id of array segment``"
+
+msgid "配列セグメントのうち最も大きなIDです。"
+msgstr "配列セグメントのうち最も大きなIDです。"
+
+msgid "``number of buffer segments``"
+msgstr "``number of buffer segments``"
+
+msgid "バッファセグメントの数です。"
+msgstr "バッファセグメントの数です。"
+
+msgid "``max id of buffer segment``"
+msgstr "``max id of buffer segment``"
+
+msgid "バッファセグメントのうち最も大きなIDです。"
+msgstr "バッファセグメントのうち最も大きなIDです。"
+
+msgid "``max id of physical segment in use``"
+msgstr "``max id of physical segment in use``"
+
+msgid "使用中の論理セグメントのうち最も大きなIDです。"
+msgstr "使用中の論理セグメントのうち最も大きなIDです。"
+
+msgid "``number of unmanaged segments``"
+msgstr "``number of unmanaged segments``"
+
+msgid "管理されていないセグメントの数です。"
+msgstr "管理されていないセグメントの数です。"
+
+msgid "``total chunk size``"
+msgstr "``total chunk size``"
+
+msgid "チャンクサイズの合計です。"
+msgstr "チャンクサイズの合計です。"
+
+msgid "``max id of chunk segments in use``"
+msgstr "``max id of chunk segments in use``"
+
+msgid "使用中のチャンクセグメントのうち最も大きなIDです。"
+msgstr "使用中のチャンクセグメントのうち最も大きなIDです。"
+
+msgid "``number of garbage chunk``"
+msgstr "``number of garbage chunk``"
+
+msgid "各チャンク毎のゴミの数です。"
+msgstr "各チャンク毎のゴミの数です。"
+
+msgid "``バッファの状態`` には下記の項目がハッシュ形式で出力されます。"
+msgstr "``バッファの状態`` には下記の項目がハッシュ形式で出力されます。"
+
+msgid "``buffer id``"
+msgstr "``buffer id``"
+
+msgid "バッファIDです。"
+msgstr "バッファIDです。"
+
+msgid "``chunk size``"
+msgstr "``chunk size``"
+
+msgid "チャンクのサイズです。"
+msgstr "チャンクのサイズです。"
+
+msgid "``buffer term``"
+msgstr "``buffer term``"
+
+msgid ""
+"バッファ内にある語の一覧です。各語の状態は以下のような配列となっています。"
+msgstr ""
+"バッファ内にある語の一覧です。各語の状態は以下のような配列となっています。"
+
+msgid ""
+"[語, バッファに登録されている語のID, 用語集に登録されている語のID, バッファ内"
+"でのサイズ, チャンク内でのサイズ]"
+msgstr ""
+"[語, バッファに登録されている語のID, 用語集に登録されている語のID, バッファ内"
+"でのサイズ, チャンク内でのサイズ]"
+
+msgid "``buffer free``"
+msgstr "``buffer free``"
+
+msgid "バッファの空き容量です。"
+msgstr "バッファの空き容量です。"
+
+msgid "``size in buffer``"
+msgstr "``size in buffer``"
+
+msgid "バッファの使用量です。"
+msgstr "バッファの使用量です。"
+
+msgid "``nterms``"
+msgstr "``nterms``"
+
+msgid "バッファ内にある語の数です。"
+msgstr "バッファ内にある語の数です。"
+
+msgid "``nterms with chunk``"
+msgstr "``nterms with chunk``"
+
+msgid "バッファ内にある語のうち、チャンクを使っている語の数です。"
+msgstr "バッファ内にある語のうち、チャンクを使っている語の数です。"

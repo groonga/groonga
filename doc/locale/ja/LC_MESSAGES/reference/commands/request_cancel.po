@@ -1,0 +1,198 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "``request_cancel``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``request_cancel`` command cancels a running request."
+msgstr "``request_cancel`` コマンドは実行中のリクエストをキャンセルします。"
+
+msgid "There are some limitations:"
+msgstr "いくつか制限があります。"
+
+msgid ""
+"Request ID must be managed by user. (You need to assign unique key for each "
+"request.)"
+msgstr ""
+"リクエストIDはユーザーが管理する必要があります。（各リクエストに一意のキーを"
+"割り当てる必要があります。）"
+
+msgid ""
+"Cancel request may be ignored. (You can send ``request_cancel`` command "
+"multiple times for the same request ID.)"
+msgstr ""
+"キャンセルリクエストは無視されることもあります。（同じリクエストIDに対して何"
+"度も ``request_cancel`` コマンドを送信することができます。）"
+
+msgid ""
+"Only multithreading type Groonga server is supported. (You can use with :doc:"
+"`/reference/executables/groonga` based server but can't use with :doc:`/"
+"reference/executables/groonga-httpd`.)"
+msgstr ""
+"マルチスレッド型のGroongaサーバーのみサポートしています。（ :doc:`/reference/"
+"executables/groonga` ベースのサーバーでは使えますが、 :doc:`/reference/"
+"executables/groonga-httpd` では使えません。）"
+
+msgid "See :doc:`/reference/command/request_id` about request ID."
+msgstr ""
+"リクエストIDについては :doc:`/reference/command/request_id` を参照してくださ"
+"い。"
+
+msgid ""
+"If the request is canceled, a :doc:`/reference/command/return_code` of the "
+"canceled request as below."
+msgstr ""
+"リクエストがキャンセルされたら、キャンセルされたリクエストの :doc:`/"
+"reference/command/return_code` は、以下のようになります。"
+
+msgid ""
+"``-5`` (``GRN_INTERRUPTED_FUNCTION_CALL``) (Groonga version 6.0.1 before)"
+msgstr ""
+"``-5`` (``GRN_INTERRUPTED_FUNCTION_CALL``) (Groonga version 6.0.1 より前)"
+
+msgid "``-77`` (``GRN_CANCEL``) (Groonga version 6.0.1 or later)"
+msgstr "``-77`` (``GRN_CANCEL``) (Groonga version 6.0.1 以降)"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes only one required parameter::"
+msgstr "このコマンドの引数は1つで必須です::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is an example of ``request_cancel`` command::"
+msgstr "以下は ``request_cancel`` コマンドの使用例です::"
+
+msgid ""
+"Assume that the first ``select`` command takes a long time. ``unique-id-1`` "
+"request ID is assigned to the ``select`` command by ``request_id=unique-"
+"id-1`` parameter."
+msgstr ""
+"最初の ``select`` コマンドが長時間かかると仮定します。 ``request_id=unique-"
+"id-1`` パラメーターを指定することで ``unique-id-1`` というリクエストIDをこの "
+"``select`` コマンドに割り当てます。"
+
+msgid ""
+"The second ``request_cancel`` command passes ``id=unique-id-1`` parameter. "
+"``unique-id-1`` is the same request ID passed in ``select`` command."
+msgstr ""
+"2つめの ``request_cancel`` コマンドで ``id=unique-id-1`` パラメーターを指定し"
+"ています。 ``unique-id-1`` は ``select`` コマンドに渡したリクエストIDと同じリ"
+"クエストIDです。"
+
+msgid ""
+"The ``select`` command may not be canceled immediately. And the cancel "
+"request may be ignored."
+msgstr ""
+"この ``select`` コマンドはすぐにはキャンセルされないかもしれません。また、こ"
+"のキャンセルリクエストは無視されることもあります。"
+
+msgid ""
+"You can send cancel request for the same request ID multiple times. If the "
+"target request is canceled or finished, ``\"canceled\"`` value is changed to "
+"``false`` from ``true`` in return value::"
+msgstr ""
+"同じリクエストIDに対するキャンセルリクエストを複数回送ることができます。も"
+"し、対象のリクエストがキャンセルされたか終了した場合は戻り値の中の "
+"``\"canceled\"`` の値が ``true`` から ``false`` に変わります。"
+
+msgid ""
+"If the ``select`` command is canceled, response of the ``select`` command "
+"has ``-5`` (``GRN_INTERRUPTED_FUNCTION_CALL``) as :doc:`/reference/command/"
+"return_code`::"
+msgstr ""
+"もし、この ``select`` コマンドがキャンセルされたら、 ``select`` コマンドの :"
+"doc:`/reference/command/return_code` は ``-5`` "
+"（ ``GRN_INTERRUPTED_FUNCTION_CALL`` ）になります。::"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes parameters of ``request_cancel``."
+msgstr "このセクションでは ``request_cancel`` の引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is required parameter, ``id``."
+msgstr "``id`` だけが必須の引数です。"
+
+msgid "``id``"
+msgstr ""
+
+msgid "Specifies the ID for the target request."
+msgstr "対象リクエストのIDを指定します。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "``request_cancel`` command returns the result of the cancel request::"
+msgstr "``request_cancel`` コマンドはキャンセルリクエストの結果を返します。::"
+
+msgid "``HEADER``"
+msgstr ""
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "``ID``"
+msgstr ""
+
+msgid "The ID of the target request."
+msgstr "対象のリクエストのIDです。"
+
+msgid "``CANCEL_REQUEST_IS_ACCEPTED_OR_NOT``"
+msgstr ""
+
+msgid ""
+"If the cancel request is accepted, this is ``true``, otherwise this is "
+"``false``."
+msgstr ""
+"もし、このキャンセルリクエストが受け付けられたら ``true`` 、そうでなければ "
+"``false`` になります。"
+
+msgid ""
+"Note that \"cancel request is accepted\" doesn't means that \"the target "
+"request is canceled\". It just means \"cancel request is notified to the "
+"target request but the cancel request may be ignored by the target request\"."
+msgstr ""
+"「キャンセルリクエストが受け付けられた」というのは「対象リクエストがキャンセ"
+"ルされた」という意味ではないことに注意してください。これは「キャンセルリクエ"
+"ストは対象リクエストに通知したが、対象リクエストはそのキャンセルリクエストを"
+"無視するかもしれない」という意味です。"
+
+msgid ""
+"If request assigned with the request ID doesn't exist, this is ``false``."
+msgstr ""
+"指定したリクエストIDが割り当てられているリクエストが存在しなければ ``false`` "
+"になります。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/command/request_id`"
+msgstr ""

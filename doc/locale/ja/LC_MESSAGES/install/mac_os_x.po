@@ -1,0 +1,70 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2019-09-26 09:22+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Mac OS X"
+msgstr ""
+
+msgid ""
+"This section describes how to install Groonga on Mac OS X. You can install "
+"Groonga by `MacPorts <http://www.macports.org/>`__ or `Homebrew <http://mxcl."
+"github.com/homebrew/>`__."
+msgstr ""
+"このセクションではMac OS X上でGroongaをインストールする方法を説明します。 "
+"`MacPorts <http://www.macports.org/>`__ か `Homebrew <http://mxcl.github.com/"
+"homebrew/>`__ を使ってインストールできます。"
+
+msgid "MacPorts"
+msgstr ""
+
+msgid "Install::"
+msgstr "インストール::"
+
+msgid "Homebrew"
+msgstr ""
+
+msgid ""
+"If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a "
+"tokenizer, specify ``--with-mecab`` option::"
+msgstr ""
+"`MeCab <https://taku910.github.io/mecab/>`_ をトークナイザーとして使いたいと"
+"きは、 ``--with-mecab`` オプションを指定してください。"
+
+msgid "Then install and configure MeCab dictionary."
+msgstr "それからMeCabの辞書をインストール・設定します。"
+
+msgid "Configure::"
+msgstr "設定::"
+
+msgid "Build from source"
+msgstr "ソースからビルド"
+
+msgid "Install `Xcode <https://developer.apple.com/xcode/>`_."
+msgstr ""
+"`Xcode <https://developer.apple.com/xcode/>`_ をインストールしてください。"
+
+msgid "Download source::"
+msgstr "ソースをダウンロードします::"
+
+msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
+msgstr ""
+"configureを実行します（ ``configure`` のオプションについては :ref:`source-"
+"configure` を参照してください）::"
+
+msgid "Build::"
+msgstr "ビルド::"

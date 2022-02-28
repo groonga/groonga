@@ -1,0 +1,86 @@
+# -*- po -*-
+# Japanese translations for groonga package.
+# Copyright (C) 2009-2012, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: groonga 2.0.6\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2016-02-06 22:27+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "GQTP"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+msgid "GQTP is the acronym standing for \"Groonga Query Transfer Protocol\"."
+msgstr ""
+
+msgid ""
+"GQTP is a protocol designed for Groonga. It's a stateful protocol. You can "
+"send multiple commands in one session."
+msgstr ""
+
+msgid ""
+"GQTP will be faster rather than :doc:`/server/http` when you send many light "
+"commands like :doc:`/reference/commands/status`. GQTP will be almost same "
+"performance as HTTP when you send heavy commands like :doc:`/reference/"
+"commands/select`."
+msgstr ""
+
+msgid ""
+"We recommend that you use HTTP for many cases. Because there are many HTTP "
+"client libraries."
+msgstr ""
+
+msgid "If you want to use GQTP, you can use the following libraries:"
+msgstr ""
+
+msgid "Ruby: `groonga-client <https://github.com/ranguba/groonga-client>`_"
+msgstr ""
+
+msgid "Python: `poyonga <https://github.com/hhatto/poyonga>`_"
+msgstr ""
+
+msgid "Go: `goroo <https://github.com/hhatto/goroo>`_"
+msgstr ""
+
+msgid "PHP: `proonga <https://github.com/Yujiro3/proonga>`_"
+msgstr ""
+
+msgid "C/C++: Groonga (Groonga can be also used as library)"
+msgstr ""
+
+msgid ""
+"It's not a library but you can use :doc:`/reference/executables/groonga` as "
+"a GQTP client."
+msgstr ""
+"ライブラリではありませんが、:doc:`/reference/executables/groonga` をGQTPクラ"
+"イアントとして使えます。"
+
+msgid "How to run"
+msgstr ""
+
+msgid ""
+":doc:`/reference/executables/groonga` is a GQTP server implementation. You "
+"can run a Groonga server by the following command line::"
+msgstr ""
+
+msgid ""
+"You can run a Groonga server as a daemon by the following command line::"
+msgstr ""
+
+msgid "See :doc:`/reference/executables/groonga` for available ``options``."
+msgstr ""
+"利用可能なオプションについては、 :doc:`/reference/executables/groonga` を参照"
+"してください。"

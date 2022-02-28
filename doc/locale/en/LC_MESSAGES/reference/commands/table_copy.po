@@ -1,0 +1,81 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``table_copy``"
+msgstr "``table_copy``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "TOOD: Write me"
+msgstr "TOOD: Write me"
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "This command takes two parameters."
+msgstr "This command takes two parameters."
+
+msgid "All parameters are required::"
+msgstr "All parameters are required::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "This section describes parameters."
+msgstr "This section describes parameters."
+
+msgid "Required parameters"
+msgstr "Required parameters"
+
+msgid "All parameters are required."
+msgstr "All parameters are required."
+
+msgid "``from_name``"
+msgstr "``from_name``"
+
+msgid "Specifies the table name of source table."
+msgstr "Specifies the table name of source table."
+
+msgid "``to_name``"
+msgstr "``to_name``"
+
+msgid "Specifies the destination table name."
+msgstr "Specifies the destination table name."
+
+msgid "Optional parameters"
+msgstr "Optional parameters"
+
+msgid "There is no optional parameter."
+msgstr "There is no optional parameter."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "The command returns ``true`` as body on success such as::"
+msgstr "The command returns ``true`` as body on success such as::"
+
+msgid "If the command fails, error details are in ``HEADER``."
+msgstr "If the command fails, error details are in ``HEADER``."
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr "See :doc:`/reference/command/output_format` for ``HEADER``."

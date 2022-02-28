@@ -1,0 +1,101 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``TokenFilterStem``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``TokenFilterStem`` stems tokenized token."
+msgstr "``TokenFilterStem`` は、トークナイズされたトークンをステミングします。"
+
+msgid ""
+"You need to install an additional package to using ``TokenFilterStem``. For "
+"more detail of how to installing an additional package, see `how to install "
+"each OS <http://groonga.org/docs/install.html>`_ ."
+msgstr ""
+"``TokenFilterStem`` を使うには、追加のパッケージをインストールする必要があり"
+"ます。追加のパッケージをインストールする方法の詳細については、`各OSのインス"
+"トール方法 <http://groonga.org/ja/docs/install.html>`_ を参照して下さい。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``TokenFilterStem`` has optional parameter::"
+msgstr "``TokenFilterStem`` は、省略可能な引数があります。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is an example that uses ``TokenFilterStem`` token filter:"
+msgstr "以下は ``TokenFilterStem`` トークンフィルターを使う例です。"
+
+msgid ""
+"All of ``develop``, ``developing``, ``developed`` and ``develops`` tokens "
+"are stemmed as ``develop``. So we can find ``develop``, ``developing`` and "
+"``developed`` by ``develops`` query."
+msgstr ""
+"``develop`` も ``developing`` も ``developed`` も ``develops`` も、すべてステ"
+"ミングすると ``develop`` になります。そのため、 ``develops`` というクエリー"
+"で ``develop`` も ``developing`` も ``developed`` も検索できます。"
+
+msgid ""
+"You can specify steming algorithm except English with ``algorithm`` option "
+"as below."
+msgstr ""
+"以下のように ``algorithm`` オプションを使って、英語以外のステミングアルゴリズ"
+"ムを指定できます。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "Optional parameter"
+msgstr "省略可能引数"
+
+msgid "There is a optional parameters ``algorithm``."
+msgstr "省略可能な引数として ``algorithm`` があります。"
+
+msgid "``algorithm``"
+msgstr ""
+
+msgid "Specify a steming algorithm."
+msgstr "ステミングアルゴリズムを指定します。"
+
+msgid ""
+"Steming algorithm is extract the stem. It is prepared for each language."
+msgstr ""
+"ステミングアルゴリズムとは、語幹を抽出するもので、各言語用に用意されていま"
+"す。"
+
+msgid ""
+"You can extract the stem of each language by changing steming algorithm. For "
+"example, if you want extract the stem of the French, you specify French to "
+"``algorithm`` option."
+msgstr ""
+"ステミングアルゴリズムを切り替えることに寄って、各言語の語幹を抽出できます。"
+"例えば、フランス語の語幹を抽出したい場合は、 ``algorithm`` オプションに "
+"French を指定します。"
+
+msgid "Here are support steming algorithm::"
+msgstr "サポートしているステミングアルゴリズムは以下の通りです::"

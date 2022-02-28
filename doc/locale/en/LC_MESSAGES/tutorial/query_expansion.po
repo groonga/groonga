@@ -1,0 +1,91 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Query expansion"
+msgstr "Query expansion"
+
+msgid ""
+"Groonga accepts ``query_expander`` parameter for :doc:`/reference/commands/"
+"select` command. It enables you to extend your query string."
+msgstr ""
+"Groonga accepts ``query_expander`` parameter for :doc:`/reference/commands/"
+"select` command. It enables you to extend your query string."
+
+msgid ""
+"For example, if user searches \"theatre\" instead of \"theater\", query "
+"expansion enables to return search results of \"theatre OR theater\". This "
+"kind of way reduces search leakages. This is what really user wants."
+msgstr ""
+"For example, if user searches \"theatre\" instead of \"theater\", query "
+"expansion enables to return search results of \"theatre OR theater\". This "
+"kind of way reduces search leakages. This is what really user wants."
+
+msgid "Preparation"
+msgstr "Preparation"
+
+msgid ""
+"To use query expansion, you need to create table which stores documents, "
+"synonym table which stores query string and replacement string. In synonym "
+"table, primary key represents original string, the column of ShortText "
+"represents modified string."
+msgstr ""
+"To use query expansion, you need to create table which stores documents, "
+"synonym table which stores query string and replacement string. In synonym "
+"table, primary key represents original string, the column of ShortText "
+"represents modified string."
+
+msgid "Let's create document table and synonym table."
+msgstr "Let's create document table and synonym table."
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"In this case, it doesn't occur search leakage because it creates synonym "
+"table which accepts \"theatre\" and \"theater\" as query string."
+msgstr ""
+"In this case, it doesn't occur search leakage because it creates synonym "
+"table which accepts \"theatre\" and \"theater\" as query string."
+
+msgid "Search"
+msgstr "Search"
+
+msgid ""
+"Then, let's use prepared synonym table. First, use select command without "
+"``query_expander`` parameter."
+msgstr ""
+"Then, let's use prepared synonym table. First, use select command without "
+"``query_expander`` parameter."
+
+msgid "Above query returns the record which completely equal to query string."
+msgstr "Above query returns the record which completely equal to query string."
+
+msgid ""
+"Then, use ``query_expander`` parameter against ``body`` column of "
+"``Synonym`` table."
+msgstr ""
+"Then, use ``query_expander`` parameter against ``body`` column of "
+"``Synonym`` table."
+
+msgid ""
+"In which cases, query string is replaced to \"(theater OR theatre)\", thus "
+"synonym is considered for full text search."
+msgstr ""
+"In which cases, query string is replaced to \"(theater OR theatre)\", thus "
+"synonym is considered for full text search."

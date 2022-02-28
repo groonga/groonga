@@ -1,0 +1,160 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2016-03-23 13:57+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "How to build Groonga at the repository by CMake on Windows"
+msgstr "Windows上でCMakeを使ってリポジトリーのGroongaをビルドする方法"
+
+msgid ""
+"This document describes how to build Groonga at the repository by CMake on "
+"Windows."
+msgstr ""
+"このドキュメントではWindows上でCMakeを使ってリポジトリーのGroongaをビルドする"
+"方法を説明します。"
+
+msgid ""
+"If you want to use GNU/Linux or Unix for developing Groonga, see :doc:"
+"`unix_cmake`."
+msgstr ""
+"Groongaの開発にGNU/LinuxまたはUnixを使いたい人は :doc:`unix_cmake` を参照して"
+"ください。"
+
+msgid "Unix is \\*BSD, Solaris, OS X and so on."
+msgstr "Unixとは\\*BSDやSolaris、OS Xなどのことです。"
+
+msgid "Install depended software"
+msgstr "必要なソフトウェアのインストール"
+
+msgid ""
+"`Microsoft Visual Studio Express 2013 for Windows Desktop <https://www."
+"visualstudio.com/downloads/#d-2013-express>`_"
+msgstr ""
+
+msgid "`CMake <http://www.cmake.org/>`_"
+msgstr ""
+
+msgid "`Ruby <https://www.ruby-lang.org/>`_"
+msgstr ""
+
+msgid ""
+"`RubyInstaller for Windows <http://rubyinstaller.org/>`_ is recommended."
+msgstr ""
+"`RubyInstaller for Windows <http://rubyinstaller.org/>`_ をオススメします。"
+
+msgid ""
+"`Git <https://git-scm.com/>`_: There are some Git clients for Windows. For "
+"example:"
+msgstr ""
+"`Git <https://git-scm.com/>`_: Windows用のGitクライアントはいくつかあります。"
+"例："
+
+msgid "`The official Git package <https://git-scm.com/download/win>`_"
+msgstr "`公式のGitパッケージ <https://git-scm.com/download/win>`_"
+
+msgid "`TortoiseGit <https://tortoisegit.org/>`_"
+msgstr ""
+
+msgid "`Git for Windows <https://git-for-windows.github.io/>`_"
+msgstr ""
+
+msgid "`GitHub Desktop <https://desktop.github.com/>`_"
+msgstr ""
+
+msgid "Checkout Groonga from the repository"
+msgstr "リポジトリーからGroongaをチェックアウト"
+
+msgid ""
+"Users use released source archive. But developers must build Groonga at the "
+"repository. Because source code in the repository is the latest."
+msgstr ""
+"ユーザーはリリースされたソースアーカイブを使います。しかし、開発者はリポジト"
+"リーからGroongaをビルドするべきです。なぜなら、リポジトリーにあるソースコード"
+"が最新のソースコードだからです。"
+
+msgid ""
+"The Groonga repository is hosted on `GitHub <https://github.com/groonga/"
+"groonga>`_. Checkout the latest source code from the repository::"
+msgstr ""
+"Groongaのリポジトリーは `GitHub <https://github.com/groonga/groonga>`_ にあり"
+"ます。リポジトリーから最新のソースコードをチェックアウトします::"
+
+msgid "Run ``cmake``"
+msgstr "``cmake`` を実行"
+
+msgid "You need to create ``Makefile`` for your environment."
+msgstr "あなたの環境用の ``Makefile`` を作る必要があります。"
+
+msgid ""
+"You can custom your build configuration by passing options to ``cmake``."
+msgstr ""
+"``cmake`` へオプションを渡してビルドパラメーターをカスタマイズできます。"
+
+msgid "You must to pass ``-G`` option. Here are available ``-G`` value:"
+msgstr ""
+"``-G`` オプションを指定する必要があります。有効な ``-G`` の値は次の通りです。"
+
+msgid "``\"Visual Studio 12 2013\"``: For 32bit build."
+msgstr "``\"Visual Studio 12 2013\"``: 32bitビルド用。"
+
+msgid "``\"Visual Studio 12 2013 Win64\"``: For 64bit build."
+msgstr "``\"Visual Studio 12 2013 Win64\"``: 64bitビルド用。"
+
+msgid "Here are recommended ``cmake`` options for developers::"
+msgstr "開発者向けのオススメ ``cmake`` オプションは次の通りです::"
+
+msgid "Here are descriptions of these options:"
+msgstr "それぞれのオプションの説明です。"
+
+msgid "``-G \"Visual Studio 12 2013 Win64\"``"
+msgstr ""
+
+msgid "``-DCMAKE_INSTALL_PREFIX=C:\\Groonga``"
+msgstr ""
+
+msgid ""
+"It specifies that you install your Groonga into ``C:\\\\Groonga`` folder."
+msgstr ""
+"ビルドしたGroongaを ``C:\\\\Groonga`` にインストールする、と指定しています。"
+
+msgid "``-DGRN_WITH_MRUBY=on``"
+msgstr ""
+
+msgid ""
+"It enables mruby support. The feature isn't enabled by default but "
+"developers should enable the feature."
+msgstr ""
+"mrubyサポートを有効にします。この機能はデフォルトで無効になっていますが、開発"
+"者はこの機能を有効にするべきです。"
+
+msgid "Build Groonga"
+msgstr "Groongaをビルド"
+
+msgid "Now, you can build Groonga."
+msgstr "これでGroongaをビルドできるようになりました。"
+
+msgid "You can use Visual Studio or ``cmake --build``."
+msgstr "Visual Studioまたは ``cmake --build`` を使えます。"
+
+msgid "Here is a command line to build Groonga by ``cmake --build``::"
+msgstr "``cmake --build`` でGroongaをビルドするコマンドラインは次の通りです::"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/contribution/development/test`"
+msgstr ""

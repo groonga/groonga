@@ -1,0 +1,623 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``groonga-suggest-httpd``"
+msgstr "``groonga-suggest-httpd``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"``groonga-suggest-httpd`` is a program that provides HTTP interface for the "
+"following features:"
+msgstr ""
+"``groonga-suggest-httpd`` is a program that provides HTTP interface for the "
+"following features:"
+
+msgid "Returning :doc:`/reference/suggest` execution result"
+msgstr "Returning :doc:`/reference/suggest` execution result"
+
+msgid "Saving logs for learning"
+msgstr "Saving logs for learning"
+
+msgid ""
+"``groonga-suggest-httpd`` provides suggest feature like :doc:`/reference/"
+"commands/suggest` command. Note that some parameter names are different of "
+"them."
+msgstr ""
+"``groonga-suggest-httpd`` provides suggest feature like :doc:`/reference/"
+"commands/suggest` command. Note that some parameter names are different of "
+"them."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "``groonga-suggest-httpd`` requires database path::"
+msgstr "``groonga-suggest-httpd`` requires database path::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid ""
+"You need to create one or more datasets to use ``groonga-suggest-httpd``. A "
+"dataset consists of tables and columns. You can define them by :doc:`groonga-"
+"suggest-create-dataset`."
+msgstr ""
+"You need to create one or more datasets to use ``groonga-suggest-httpd``. A "
+"dataset consists of tables and columns. You can define them by :doc:`groonga-"
+"suggest-create-dataset`."
+
+msgid ""
+"You need to use :doc:`groonga-suggest-learner` to learn suggestion data from "
+"user inputs. You doesn't need to use :doc:`groonga-suggest-learner` when you "
+"create suggestion data by hand. See :doc:`/reference/suggest` and sub "
+"documents about creating suggestion data by hand."
+msgstr ""
+"You need to use :doc:`groonga-suggest-learner` to learn suggestion data from "
+"user inputs. You doesn't need to use :doc:`groonga-suggest-learner` when you "
+"create suggestion data by hand. See :doc:`/reference/suggest` and sub "
+"documents about creating suggestion data by hand."
+
+msgid ""
+"You can use ``groonga-suggest-httpd`` via HTTP after you create one or more "
+"datasets."
+msgstr ""
+"You can use ``groonga-suggest-httpd`` via HTTP after you create one or more "
+"datasets."
+
+msgid "The following sections describes the followings:"
+msgstr "The following sections describes the followings:"
+
+msgid "How to set up a dataset"
+msgstr "How to set up a dataset"
+
+msgid ""
+"How to use ``groonga-suggest-httpd`` with :doc:`groonga-suggest-learner`"
+msgstr ""
+"How to use ``groonga-suggest-httpd`` with :doc:`groonga-suggest-learner`"
+
+msgid "How to use ``groonga-suggest-httpd`` for retrieving suggestions."
+msgstr "How to use ``groonga-suggest-httpd`` for retrieving suggestions."
+
+msgid "Setup"
+msgstr "Setup"
+
+msgid "You need to create a dataset by :doc:`groonga-suggest-create-dataset`."
+msgstr "You need to create a dataset by :doc:`groonga-suggest-create-dataset`."
+
+msgid "Here is an example that creates ``query`` dataset:"
+msgstr "Here is an example that creates ``query`` dataset:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+":doc:`groonga-suggest-create-dataset` outputs executed commands. You can "
+"confirm that what tables and columns are created for the new dataset."
+msgstr ""
+":doc:`groonga-suggest-create-dataset` outputs executed commands. You can "
+"confirm that what tables and columns are created for the new dataset."
+
+msgid "Launch ``groonga-suggest-learner``"
+msgstr "Launch ``groonga-suggest-learner``"
+
+msgid ""
+"You can choose whether you use learned suggestion data immediately or not."
+msgstr ""
+"You can choose whether you use learned suggestion data immediately or not."
+
+msgid "There are two ways to use learned suggestion data immediately:"
+msgstr "There are two ways to use learned suggestion data immediately:"
+
+msgid ""
+"Both of ``groonga-suggest-httpd`` and :doc:`groonga-suggest-learner` use the "
+"same database"
+msgstr ""
+"Both of ``groonga-suggest-httpd`` and :doc:`groonga-suggest-learner` use the "
+"same database"
+
+msgid ""
+"``groonga-suggest-httpd`` receives learned suggestion data from :doc:"
+"`groonga-suggest-learner`"
+msgstr ""
+"``groonga-suggest-httpd`` receives learned suggestion data from :doc:"
+"`groonga-suggest-learner`"
+
+msgid ""
+"In the former case, you must run both ``groonga-suggest-httpd`` and :doc:"
+"`groonga-suggest-learner` on the same host."
+msgstr ""
+"In the former case, you must run both ``groonga-suggest-httpd`` and :doc:"
+"`groonga-suggest-learner` on the same host."
+
+msgid ""
+"In the latter case, you can run ``groonga-suggest-httpd`` and :doc:`groonga-"
+"suggest-learner` on different hosts."
+msgstr ""
+"In the latter case, you can run ``groonga-suggest-httpd`` and :doc:`groonga-"
+"suggest-learner` on different hosts."
+
+msgid ""
+"If you don't need to use learned suggestion data immediately, you need to "
+"apply learned suggestion data from database that is used by :doc:`groonga-"
+"suggest-learner` to database that is used by ``groonga-suggest-httpd`` by "
+"hand. Normally, this usage is recommended. Because learned suggestion data "
+"may have garbage data by inputs from evil users."
+msgstr ""
+"If you don't need to use learned suggestion data immediately, you need to "
+"apply learned suggestion data from database that is used by :doc:`groonga-"
+"suggest-learner` to database that is used by ``groonga-suggest-httpd`` by "
+"hand. Normally, this usage is recommended. Because learned suggestion data "
+"may have garbage data by inputs from evil users."
+
+msgid ""
+"In this document, learned suggestion data are used immediately by receiving "
+"learned suggestion data from :doc:`groonga-suggest-learner`. Both ``groonga-"
+"suggest-httpd`` and :doc:`groonga-suggest-learner` are running on the same "
+"host. Because it's easy to explain."
+msgstr ""
+"In this document, learned suggestion data are used immediately by receiving "
+"learned suggestion data from :doc:`groonga-suggest-learner`. Both ``groonga-"
+"suggest-httpd`` and :doc:`groonga-suggest-learner` are running on the same "
+"host. Because it's easy to explain."
+
+msgid ""
+"Here is an example that launches :doc:`groonga-suggest-learner`. You need to "
+"specify database that has ``query`` dataset. This document omits the "
+"instruction for creating ``query`` dataset:"
+msgstr ""
+"Here is an example that launches :doc:`groonga-suggest-learner`. You need to "
+"specify database that has ``query`` dataset. This document omits the "
+"instruction for creating ``query`` dataset:"
+
+msgid ""
+"The ``groonga-suggest-learner`` process opens two endpoints at ``1234`` port "
+"and ``1235`` port:"
+msgstr ""
+"The ``groonga-suggest-learner`` process opens two endpoints at ``1234`` port "
+"and ``1235`` port:"
+
+msgid ""
+"``1234`` port: Endpoint that accepts user input data from ``groonga-suggest-"
+"httpd``"
+msgstr ""
+"``1234`` port: Endpoint that accepts user input data from ``groonga-suggest-"
+"httpd``"
+
+msgid ""
+"``1235`` port: Endpoint that sends learned suggestion data to ``groonga-"
+"suggest-httpd``"
+msgstr ""
+"``1235`` port: Endpoint that sends learned suggestion data to ``groonga-"
+"suggest-httpd``"
+
+msgid "Launch ``groonga-suggest-httpd``"
+msgstr "Launch ``groonga-suggest-httpd``"
+
+msgid ""
+"You need to launch ``groonga-suggest-httpd`` for the following proposes:"
+msgstr ""
+"You need to launch ``groonga-suggest-httpd`` for the following proposes:"
+
+msgid "Learning suggestion data from user inputs"
+msgstr "Learning suggestion data from user inputs"
+
+msgid "Providing suggestion result to clients"
+msgstr "Providing suggestion result to clients"
+
+msgid ""
+"Here is an example that launches ``groonga-suggest-httpd`` that "
+"communicates :doc:`groonga-suggest-learner`:"
+msgstr ""
+"Here is an example that launches ``groonga-suggest-httpd`` that "
+"communicates :doc:`groonga-suggest-learner`:"
+
+msgid ""
+"The ``groonga-suggest-httpd`` process accepts HTTP requests on ``8080`` port."
+msgstr ""
+"The ``groonga-suggest-httpd`` process accepts HTTP requests on ``8080`` port."
+
+msgid ""
+"If you want to save requests into log file, use :option:`--log-base-path` "
+"option."
+msgstr ""
+"If you want to save requests into log file, use :option:`--log-base-path` "
+"option."
+
+msgid ""
+"Here is an example to save log files under ``logs`` directory with ``log`` "
+"prefix for each file::"
+msgstr ""
+"Here is an example to save log files under ``logs`` directory with ``log`` "
+"prefix for each file::"
+
+msgid ""
+"``groonga-suggest-httpd`` creates log files such as ``logYYYYmmddHHMMSS-00`` "
+"under ``logs`` directory."
+msgstr ""
+"``groonga-suggest-httpd`` creates log files such as ``logYYYYmmddHHMMSS-00`` "
+"under ``logs`` directory."
+
+msgid "Learn from user inputs"
+msgstr "Learn from user inputs"
+
+msgid "You can learn suggestion data from user inputs."
+msgstr "You can learn suggestion data from user inputs."
+
+msgid "You need to specify the following parameters to learn suggestion data:"
+msgstr "You need to specify the following parameters to learn suggestion data:"
+
+msgid "``i``: The ID of the user (You may use IP address of client)"
+msgstr "``i``: The ID of the user (You may use IP address of client)"
+
+msgid "``l``: The dataset name"
+msgstr "``l``: The dataset name"
+
+msgid "``s``: The timestamp of the input in seconds"
+msgstr "``s``: The timestamp of the input in seconds"
+
+msgid ""
+"``t``: The query type (It's optional. You must specify ``submit`` only when "
+"the user input is submitted.)"
+msgstr ""
+"``t``: The query type (It's optional. You must specify ``submit`` only when "
+"the user input is submitted.)"
+
+msgid "``q``: The user input"
+msgstr "``q``: The user input"
+
+msgid ""
+"Here are example requests to learn user input \"Groonga\" in ``query`` "
+"dataset::"
+msgstr ""
+"Here are example requests to learn user input \"Groonga\" in ``query`` "
+"dataset::"
+
+msgid ""
+"Inputting data must not use ``t=submit`` parameter. In the above example, "
+"you just learn user inputs but you can learn and get complete candidates at "
+"once. It's described at the next section."
+msgstr ""
+"Inputting data must not use ``t=submit`` parameter. In the above example, "
+"you just learn user inputs but you can learn and get complete candidates at "
+"once. It's described at the next section."
+
+msgid "Submitted data must use ``t=submit`` parameter."
+msgstr "Submitted data must use ``t=submit`` parameter."
+
+msgid "Use suggested response"
+msgstr "Use suggested response"
+
+msgid "You can get suggested result from ``groonga-suggest-httpd``."
+msgstr "You can get suggested result from ``groonga-suggest-httpd``."
+
+msgid "You need to specify the following parameters to get suggested result:"
+msgstr "You need to specify the following parameters to get suggested result:"
+
+msgid "``n``: The dataset name"
+msgstr "``n``: The dataset name"
+
+msgid "``t``: The query type (``complete``, ``correct`` and/or ``suggest``)"
+msgstr "``t``: The query type (``complete``, ``correct`` and/or ``suggest``)"
+
+msgid ""
+"You can also specify parameters for :doc:`/reference/commands/suggest` as "
+"option."
+msgstr ""
+"You can also specify parameters for :doc:`/reference/commands/suggest` as "
+"option."
+
+msgid ""
+"Here is an example that gets :doc:`/reference/suggest/completion` result. "
+"The result is computed by using learned data at the previous section. "
+"``frequency_threshold=1`` parameter is used because this is an example. The "
+"parameter enables input data that are occurred one or more times. Normally, "
+"you should not use the parameter for production. The parameter will increase "
+"noises:"
+msgstr ""
+"Here is an example that gets :doc:`/reference/suggest/completion` result. "
+"The result is computed by using learned data at the previous section. "
+"``frequency_threshold=1`` parameter is used because this is an example. The "
+"parameter enables input data that are occurred one or more times. Normally, "
+"you should not use the parameter for production. The parameter will increase "
+"noises:"
+
+msgid ""
+"You can combine completion and learning by specifying parameters for both:"
+msgstr ""
+"You can combine completion and learning by specifying parameters for both:"
+
+msgid "Command line parameters"
+msgstr "Command line parameters"
+
+msgid "Required parameters"
+msgstr "Required parameters"
+
+msgid "There is only one required parameter."
+msgstr "There is only one required parameter."
+
+msgid "``DATABASE_PATH``"
+msgstr "``DATABASE_PATH``"
+
+msgid ""
+"Specifies the path to a Groonga database. This database must have one or "
+"more datasets. Each dataset must be created by :doc:`groonga-suggest-create-"
+"dataset`."
+msgstr ""
+"Specifies the path to a Groonga database. This database must have one or "
+"more datasets. Each dataset must be created by :doc:`groonga-suggest-create-"
+"dataset`."
+
+msgid "Optional parameters"
+msgstr "Optional parameters"
+
+msgid "Specify HTTP server port number."
+msgstr "Specify HTTP server port number."
+
+msgid "The default port number is ``8080``."
+msgstr "The default port number is ``8080``."
+
+msgid "Specify number of threads."
+msgstr "Specify number of threads."
+
+msgid ""
+"This option accepts ``128`` as the max value, but use the number of CPU "
+"cores for performance."
+msgstr ""
+"This option accepts ``128`` as the max value, but use the number of CPU "
+"cores for performance."
+
+msgid "The default value is the number of CPU cores."
+msgstr "The default value is the number of CPU cores."
+
+msgid ""
+"Specify endpoint URI of :doc:`groonga-suggest-learner` for sending user "
+"inputs."
+msgstr ""
+"Specify endpoint URI of :doc:`groonga-suggest-learner` for sending user "
+"inputs."
+
+msgid ""
+"The format is ``tcp://${HOST}:${PORT}`` such as ``tcp://192.168.0.1:2929``."
+msgstr ""
+"The format is ``tcp://${HOST}:${PORT}`` such as ``tcp://192.168.0.1:2929``."
+
+msgid "The default value is none."
+msgstr "The default value is none."
+
+msgid ""
+"Specify endpoint URI of :doc:`groonga-suggest-learner` for receiving learned "
+"suggestion data."
+msgstr ""
+"Specify endpoint URI of :doc:`groonga-suggest-learner` for receiving learned "
+"suggestion data."
+
+msgid "Specify path prefix of log."
+msgstr "Specify path prefix of log."
+
+msgid "Specify the max number of lines in a log file."
+msgstr "Specify the max number of lines in a log file."
+
+msgid "The default value is ``1000000``."
+msgstr "The default value is ``1000000``."
+
+msgid "Specify this option to daemonize."
+msgstr "Specify this option to daemonize."
+
+msgid "Don't daemonize by default."
+msgstr "Don't daemonize by default."
+
+msgid ""
+"Specify this option to disable checking the max number of file descriptors "
+"on start."
+msgstr ""
+"Specify this option to disable checking the max number of file descriptors "
+"on start."
+
+msgid "Check by default."
+msgstr "Check by default."
+
+msgid "GET parameters"
+msgstr "GET parameters"
+
+msgid "``groonga-suggest-httpd`` accepts some GET parameters."
+msgstr "``groonga-suggest-httpd`` accepts some GET parameters."
+
+msgid "There are required parameters which depend on query type."
+msgstr "There are required parameters which depend on query type."
+
+msgid ""
+"In ``complete``, ``correct`` or ``suggest`` query type, unhandled parameters "
+"are passed through :doc:`/reference/commands/suggest`. It means that you can "
+"use parameters of :doc:`/reference/commands/suggest`."
+msgstr ""
+"In ``complete``, ``correct`` or ``suggest`` query type, unhandled parameters "
+"are passed through :doc:`/reference/commands/suggest`. It means that you can "
+"use parameters of :doc:`/reference/commands/suggest`."
+
+msgid "You must specify the following parameters."
+msgstr "You must specify the following parameters."
+
+msgid "Key"
+msgstr "Key"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Note"
+msgstr "Note"
+
+msgid "``q``"
+msgstr "``q``"
+
+msgid "Input by user. It must be UTF-8 encoded string."
+msgstr "Input by user. It must be UTF-8 encoded string."
+
+msgid "Required parameters for learning"
+msgstr "Required parameters for learning"
+
+msgid ""
+"You must specify the following parameters when you specify :option:`--send-"
+"endpoint`."
+msgstr ""
+"You must specify the following parameters when you specify :option:`--send-"
+"endpoint`."
+
+msgid "``s``"
+msgstr "``s``"
+
+msgid "Elapsed time since ``1970-01-01T00:00:00Z``."
+msgstr "Elapsed time since ``1970-01-01T00:00:00Z``."
+
+msgid "The unit is millisecond."
+msgstr "The unit is millisecond."
+
+msgid "``i``"
+msgstr "``i``"
+
+msgid "Unique ID to distinct each user"
+msgstr "Unique ID to distinct each user"
+
+msgid "Session ID, IP address and so on will be usable for this value."
+msgstr "Session ID, IP address and so on will be usable for this value."
+
+msgid "``l``"
+msgstr "``l``"
+
+msgid ""
+"One or more learn target dataset names. You need to use ``|`` as separator "
+"such as ``dataset1|dataset2|dataset3``."
+msgstr ""
+"One or more learn target dataset names. You need to use ``|`` as separator "
+"such as ``dataset1|dataset2|dataset3``."
+
+msgid ""
+"Dataset name is the name that you specify to :doc:`groonga-suggest-create-"
+"dataset`."
+msgstr ""
+"Dataset name is the name that you specify to :doc:`groonga-suggest-create-"
+"dataset`."
+
+msgid "Required parameters for suggestion"
+msgstr "Required parameters for suggestion"
+
+msgid ""
+"You must specify the following parameters when you specify one of "
+"``complete``, ``correct`` and ``suggest`` to ``t`` parameter."
+msgstr ""
+"You must specify the following parameters when you specify one of "
+"``complete``, ``correct`` and ``suggest`` to ``t`` parameter."
+
+msgid "``n``"
+msgstr "``n``"
+
+msgid "The dataset name to use computing suggestion result."
+msgstr "The dataset name to use computing suggestion result."
+
+msgid "``t``"
+msgstr "``t``"
+
+msgid "The query type."
+msgstr "The query type."
+
+msgid "Available values are ``complete``, ``correct``, ``suggest``."
+msgstr "Available values are ``complete``, ``correct``, ``suggest``."
+
+msgid ""
+"You can specify multiple types. You need to use ``|`` as separator such as "
+"``complete|correct``."
+msgstr ""
+"You can specify multiple types. You need to use ``|`` as separator such as "
+"``complete|correct``."
+
+msgid "Here are optional parameters."
+msgstr "Here are optional parameters."
+
+msgid "``callback``"
+msgstr "``callback``"
+
+msgid "Function name for JSONP"
+msgstr "Function name for JSONP"
+
+msgid "Optional parameters for learning"
+msgstr "Optional parameters for learning"
+
+msgid ""
+"Here are optional parameters when you specify :option:`--send-endpoint`."
+msgstr ""
+"Here are optional parameters when you specify :option:`--send-endpoint`."
+
+msgid "Available value is only ``submit``."
+msgstr "Available value is only ``submit``."
+
+msgid ""
+"You must specify ``submit`` when user submits the input specified as ``q``."
+msgstr ""
+"You must specify ``submit`` when user submits the input specified as ``q``."
+
+msgid ""
+"You must not specify ``submit`` for user inputs that aren't submitted yet. "
+"You can use suggestion by specifying ``complete``, ``correct`` and/or "
+"``suggest`` to ``t`` when you doesn't specify ``submit``. See :ref:`groonga-"
+"suggest-httpd-required-parameters-suggestion` for details about these values."
+msgstr ""
+"You must not specify ``submit`` for user inputs that aren't submitted yet. "
+"You can use suggestion by specifying ``complete``, ``correct`` and/or "
+"``suggest`` to ``t`` when you doesn't specify ``submit``. See :ref:`groonga-"
+"suggest-httpd-required-parameters-suggestion` for details about these values."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid ""
+"``groonga-suggest-httpd`` returns the following format response. It's the "
+"same format as body of :doc:`/reference/commands/suggest`::"
+msgstr ""
+"``groonga-suggest-httpd`` returns the following format response. It's the "
+"same format as body of :doc:`/reference/commands/suggest`::"
+
+msgid "Here is the response when ``t`` is ``submit``::"
+msgstr "Here is the response when ``t`` is ``submit``::"
+
+msgid "``TYPE``"
+msgstr "``TYPE``"
+
+msgid "One of ``complete``, ``correct`` and ``suggest``."
+msgstr "One of ``complete``, ``correct`` and ``suggest``."
+
+msgid "``CANDIDATE_N``"
+msgstr "``CANDIDATE_N``"
+
+msgid "The string of candidate in UTF-8."
+msgstr "The string of candidate in UTF-8."
+
+msgid "``SCORE_N``"
+msgstr "``SCORE_N``"
+
+msgid "The score of the candidate."
+msgstr "The score of the candidate."
+
+msgid "Candidates are sorted by score descendant."
+msgstr "Candidates are sorted by score descendant."
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`/reference/commands/suggest`"
+msgstr ":doc:`/reference/commands/suggest`"

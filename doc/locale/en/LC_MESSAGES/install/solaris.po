@@ -1,0 +1,50 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Oracle Solaris"
+msgstr "Oracle Solaris"
+
+msgid ""
+"This section describes how to install Groonga from source on Oracle Solaris."
+msgstr ""
+"This section describes how to install Groonga from source on Oracle Solaris."
+
+msgid "Oracle Solaris 11"
+msgstr "Oracle Solaris 11"
+
+msgid "Install required packages to build Groonga::"
+msgstr "Install required packages to build Groonga::"
+
+msgid "Download source::"
+msgstr "Download source::"
+
+msgid ""
+"Configure with ``CFLAGS=\"-m64\" CXXFLAGS=\"-m64\"`` variables. They are "
+"needed for building 64-bit version. To build 32-bit version, just remove "
+"those variables. (see :ref:`source-configure` about ``configure`` options)::"
+msgstr ""
+"Configure with ``CFLAGS=\"-m64\" CXXFLAGS=\"-m64\"`` variables. They are "
+"needed for building 64-bit version. To build 32-bit version, just remove "
+"those variables. (see :ref:`source-configure` about ``configure`` options)::"
+
+msgid "Build::"
+msgstr "Build::"
+
+msgid "Install::"
+msgstr "Install::"

@@ -1,0 +1,129 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Normalizers"
+msgstr "Normalizers"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"Groonga has normalizer module that normalizes text. It is used when "
+"tokenizing text and storing table key. For example, ``A`` and ``a`` are "
+"processed as the same character after normalization."
+msgstr ""
+"Groonga has normalizer module that normalizes text. It is used when "
+"tokenizing text and storing table key. For example, ``A`` and ``a`` are "
+"processed as the same character after normalization."
+
+msgid ""
+"Normalizer module can be added as a plugin. You can customize text "
+"normalization by registering your normalizer plugins to Groonga."
+msgstr ""
+"Normalizer module can be added as a plugin. You can customize text "
+"normalization by registering your normalizer plugins to Groonga."
+
+msgid ""
+"A normalizer module is attached to a table. A table can have zero or one "
+"normalizer module. You can attach a normalizer module to a table by :ref:"
+"`table-create-normalizer` option in :doc:`/reference/commands/table_create`."
+msgstr ""
+"A normalizer module is attached to a table. A table can have zero or one "
+"normalizer module. You can attach a normalizer module to a table by :ref:"
+"`table-create-normalizer` option in :doc:`/reference/commands/table_create`."
+
+msgid ""
+"Here is an example ``table_create`` that uses ``NormalizerAuto`` normalizer "
+"module:"
+msgstr ""
+"Here is an example ``table_create`` that uses ``NormalizerAuto`` normalizer "
+"module:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"Groonga 2.0.9 or earlier doesn't have ``--normalizer`` option in "
+"``table_create``. ``KEY_NORMALIZE`` flag was used instead."
+msgstr ""
+"Groonga 2.0.9 or earlier doesn't have ``--normalizer`` option in "
+"``table_create``. ``KEY_NORMALIZE`` flag was used instead."
+
+msgid ""
+"You can open an old database by Groonga 2.1.0 or later. An old database "
+"means that the database is created by Groonga 2.0.9 or earlier. But you "
+"cannot open the opened old database by Groonga 2.0.9 or earlier. Once you "
+"open the old database by Groonga 2.1.0 or later, ``KEY_NORMALIZE`` flag "
+"information in the old database is converted to normalizer information. So "
+"Groonga 2.0.9 or earlier cannot find ``KEY_NORMALIZE`` flag information in "
+"the opened old database."
+msgstr ""
+"You can open an old database by Groonga 2.1.0 or later. An old database "
+"means that the database is created by Groonga 2.0.9 or earlier. But you "
+"cannot open the opened old database by Groonga 2.0.9 or earlier. Once you "
+"open the old database by Groonga 2.1.0 or later, ``KEY_NORMALIZE`` flag "
+"information in the old database is converted to normalizer information. So "
+"Groonga 2.0.9 or earlier cannot find ``KEY_NORMALIZE`` flag information in "
+"the opened old database."
+
+msgid "Keys of a table that has a normalizer module are normalized:"
+msgstr "Keys of a table that has a normalizer module are normalized:"
+
+msgid ""
+"``NormalizerAuto`` normalizer normalizes a text as a downcased text. For "
+"example, ``\"Apple\"`` is normalized to ``\"apple\"``, ``\"black\"`` is "
+"normalized to ``\"black\"`` and ``\"COLOR\"`` is normalized to ``\"color\"``."
+msgstr ""
+"``NormalizerAuto`` normalizer normalizes a text as a downcased text. For "
+"example, ``\"Apple\"`` is normalized to ``\"apple\"``, ``\"black\"`` is "
+"normalized to ``\"black\"`` and ``\"COLOR\"`` is normalized to ``\"color\"``."
+
+msgid ""
+"If a table is a lexicon for fulltext search, tokenized tokens are "
+"normalized. Because tokens are stored as table keys. Table keys are "
+"normalized as described above."
+msgstr ""
+"If a table is a lexicon for fulltext search, tokenized tokens are "
+"normalized. Because tokens are stored as table keys. Table keys are "
+"normalized as described above."
+
+msgid "Built-in normalizers"
+msgstr "Built-in normalizers"
+
+msgid "Here is a list of built-in normalizers:"
+msgstr "Here is a list of built-in normalizers:"
+
+msgid "Additional normalizers"
+msgstr "Additional normalizers"
+
+msgid "There are additional normalizers:"
+msgstr "There are additional normalizers:"
+
+msgid ""
+"`groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-"
+"mysql>`_"
+msgstr ""
+"`groonga-normalizer-mysql <https://github.com/groonga/groonga-normalizer-"
+"mysql>`_"
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`/reference/commands/table_create`"
+msgstr ":doc:`/reference/commands/table_create`"

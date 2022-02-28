@@ -1,0 +1,186 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"Groonga has tokenizer module that tokenizes text. It is used when the "
+"following cases:"
+msgstr ""
+"Groongaにはテキストをトークナイズするトークナイザーモージュールがあります。次"
+"のケースのときにトークナイザーを使います。"
+
+msgid "Indexing text"
+msgstr "テキストのインデックスを構築するとき"
+
+msgid "Tokenizer is used when indexing text."
+msgstr "テキストのインデックスを構築するときにトークナイザーを使います。"
+
+msgid "Searching by query"
+msgstr "クエリーで検索するとき"
+
+msgid "Tokenizer is used when searching by query."
+msgstr "クエリーで検索するときにトークナイザーを使います。"
+
+msgid ""
+"Tokenizer is an important module for full-text search. You can change trade-"
+"off between `precision and recall <http://en.wikipedia.org/wiki/"
+"Precision_and_recall>`_ by changing tokenizer."
+msgstr ""
+"全文検索ではトークナイザーは重要なモジュールです。トークナイザーを変えること"
+"で `適合率と再現率 <http://ja.wikipedia.org/wiki/"
+"%E6%83%85%E5%A0%B1%E6%A4%9C%E7%B4%A2>`_ のトレードオフを調整することができま"
+"す。"
+
+msgid ""
+"Normally, :ref:`token-bigram` is a suitable tokenizer. If you don't know "
+"much about tokenizer, it's recommended that you choose :ref:`token-bigram`."
+msgstr ""
+"一般的に :ref:`token-bigram` が適切なトークナイザーです。トークナイザーについ"
+"てよく知らない場合は :ref:`token-bigram` を使うことをオススメします。"
+
+msgid ""
+"You can try a tokenizer by :doc:`/reference/commands/tokenize` and :doc:`/"
+"reference/commands/table_tokenize`. Here is an example to try :ref:`token-"
+"bigram` tokenizer by :doc:`/reference/commands/tokenize`:"
+msgstr ""
+":doc:`/reference/commands/tokenize` コマンドと :doc:`/reference/commands/"
+"table_tokenize` コマンドを使うことでトークナイザーを試すことができます。 :"
+"doc:`/reference/commands/tokenize` コマンドを使って :ref:`token-bigram` トー"
+"クナイザーを試す例を以下に示します。"
+
+msgid ""
+"\"tokenize\" is the process that extracts zero or more tokens from a text. "
+"There are some \"tokenize\" methods."
+msgstr ""
+"「トークナイズ」はテキストから0個以上のトークンを抽出する処理です。「トークナ"
+"イズ」する方法はいくつかあります。"
+
+msgid ""
+"For example, ``Hello World`` is tokenized to the following tokens by bigram "
+"tokenize method:"
+msgstr ""
+"例えば、バイグラムというトークナイズ方法では ``Hello World`` は次のトークンに"
+"トークナイズされます。"
+
+msgid "``He``"
+msgstr ""
+
+msgid "``el``"
+msgstr ""
+
+msgid "``ll``"
+msgstr ""
+
+msgid "``lo``"
+msgstr ""
+
+msgid "``o_`` (``_`` means a white-space)"
+msgstr "``o_`` （ ``_`` は空白文字という意味）"
+
+msgid "``_W`` (``_`` means a white-space)"
+msgstr "``_W`` （ ``_`` は空白文字という意味）"
+
+msgid "``Wo``"
+msgstr ""
+
+msgid "``or``"
+msgstr ""
+
+msgid "``rl``"
+msgstr ""
+
+msgid "``ld``"
+msgstr ""
+
+msgid ""
+"In the above example, 10 tokens are extracted from one text ``Hello World``."
+msgstr "上記の例では、 ``Hello World`` から10個のトークンを抽出しました。"
+
+msgid ""
+"For example, ``Hello World`` is tokenized to the following tokens by white-"
+"space-separate tokenize method:"
+msgstr ""
+"例えば、空白区切りのトークナイズ方法では ``Hello World`` は次のトークンにトー"
+"クナイズされます。"
+
+msgid "``Hello``"
+msgstr ""
+
+msgid "``World``"
+msgstr ""
+
+msgid ""
+"In the above example, 2 tokens are extracted from one text ``Hello World``."
+msgstr "上記の例では、``Hello World`` から2つのトークンを抽出しました。"
+
+msgid ""
+"Token is used as search key. You can find indexed documents only by tokens "
+"that are extracted by used tokenize method. For example, you can find "
+"``Hello World`` by ``ll`` with bigram tokenize method but you can't find "
+"``Hello World`` by ``ll`` with white-space-separate tokenize method. Because "
+"white-space-separate tokenize method doesn't extract ``ll`` token. It just "
+"extracts ``Hello`` and ``World`` tokens."
+msgstr ""
+"トークンは検索時のキーとして使われます。使用したトークナイズ方法で抽出した"
+"トークンでしかインデックス化されたドキュメントを探すことはできません。例え"
+"ば、トークナイズ方法としてバイグラムを使った場合は ``ll`` で ``Hello World`` "
+"を見つけることができます。しかし、空白区切りのトークナイズ方法を使ったときは "
+"``ll`` で ``Hello World`` を見つけることはできません。なぜなら、空白区切りの"
+"トークナイズ方法は ``ll`` というトークンを抽出していないからです。空白区切り"
+"のトークナイズ方法は ``Hello`` というトークンと ``World`` というトークンしか"
+"抽出していません。"
+
+msgid ""
+"In general, tokenize method that generates small tokens increases recall but "
+"decreases precision. Tokenize method that generates large tokens increases "
+"precision but decreases recall."
+msgstr ""
+"一般的に、小さいトークンを生成するトークナイズ方法は再現率が高い代わりに適合"
+"率が低くなりがちです。一方、大きいトークンを生成するトークナイズ方法は適合率"
+"が高い代わりに再現率が低くなりがちです。"
+
+msgid ""
+"For example, we can find ``Hello World`` and ``A or B`` by ``or`` with "
+"bigram tokenize method. ``Hello World`` is a noise for people who wants to "
+"search \"logical and\". It means that precision is decreased. But recall is "
+"increased."
+msgstr ""
+"例えば、バイグラムというトークナイズ方法では ``or`` で ``Hello World`` と "
+"``A or B`` を検索できます。しかし、「論理和」を検索したい人にとっては "
+"``Hello World`` は不要な結果です。これは、適合率が下がったということです。し"
+"かし、再現率は上がっています。"
+
+msgid ""
+"We can find only ``A or B`` by ``or`` with white-space-separate tokenize "
+"method. Because ``World`` is tokenized to one token ``World`` with white-"
+"space-separate tokenize method. It means that precision is increased for "
+"people who wants to search \"logical and\". But recall is decreased because "
+"``Hello World`` that contains ``or`` isn't found."
+msgstr ""
+"空白区切りのトークナイズ方法を使った場合は ``or`` で ``A or B`` だけが見つか"
+"ります。なぜなら、空白区切りのトークナイズ方法では ``World`` は ``World`` と"
+"いう1つのトークンだけにトークナイズされるからです。これは、「論理和」を探した"
+"い人にとっては適合率が挙がっています。しかし、 ``Hello World`` も ``or`` を含"
+"んでいるのに見つかっていないので再現率が下がっています。"

@@ -1,0 +1,638 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``schema``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``schema`` command returns schema in the database."
+msgstr "``schema`` コマンドはデータベース内のスキーマを返します。"
+
+msgid ""
+"This command is useful when you want to inspect the database. For example, "
+"visualizing the database, creating GUI for the database and so on."
+msgstr ""
+"このコマンドはデータベースの詳細を知りたいときに便利です。たとえば、データ"
+"ベースを視覚化したり、データベースのGUIを作ったりするときに便利です。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes no parameters::"
+msgstr "このコマンドに引数はありません::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is an example schema to show example output:"
+msgstr "以下は出力例を示すためのサンプルスキーマです。"
+
+msgid "Here is an output of ``schema`` command against this example schema:"
+msgstr "このサンプルスキーマに対する ``schema`` コマンドの出力は次の通りです。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes all parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is no required parameter."
+msgstr "必須の引数はありません。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There is no optional parameter."
+msgstr "省略可能な引数はありません。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "``schema`` command returns schema in the database::"
+msgstr "``schema`` はこのデータベースのスキーマを返します。::"
+
+msgid "``HEADER``"
+msgstr ""
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "``SCHEMA``"
+msgstr ""
+
+msgid "``SCHEMA`` is an object that consists of the following information::"
+msgstr "``SCHEMA`` は以下の情報を含んだオブジェクトです。::"
+
+msgid "``PLUGINS``"
+msgstr ""
+
+msgid ""
+"``PLUGINS`` is an object. Its key is plugin name and its value is plugin "
+"detail::"
+msgstr ""
+"``PLUGINS`` はオブジェクトです。キーはプラグイン名で値はプラグインの詳細で"
+"す。::"
+
+msgid "``PLUGIN``"
+msgstr ""
+
+msgid "``PLUGIN`` is an object that describes plugin detail::"
+msgstr "``PLUGIN`` はプラグインの詳細を示すオブジェクトです。"
+
+msgid "Here are properties of ``PLUGIN``:"
+msgstr "以下は ``PLUGIN`` のプロパティです。"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "``name``"
+msgstr ""
+
+msgid "The plugin name. It's used in :doc:`plugin_register`."
+msgstr "プラグイン名。 :doc:`plugin_register` で使います。"
+
+msgid "``TYPES``"
+msgstr ""
+
+msgid ""
+"``TYPES`` is an object. Its key is type name and its value is type detail::"
+msgstr "``TYPES`` はオブジェクトです。キーは型名で、値は型の詳細です。::"
+
+msgid "``TYPE``"
+msgstr ""
+
+msgid "``TYPE`` is an object that describes type detail::"
+msgstr "``TYPE`` は型の詳細を示すオブジェクトです。::"
+
+msgid "Here are properties of ``TYPE``:"
+msgstr "以下は ``TYPE`` のプロパティです。"
+
+msgid "The type name."
+msgstr "型名。"
+
+msgid "``size``"
+msgstr ""
+
+msgid "The number of bytes of one value."
+msgstr "1つの値のバイト数です。"
+
+msgid "``can_be_key_type``"
+msgstr ""
+
+msgid "``true`` when the type can be used for table key, ``false`` otherwise."
+msgstr ""
+"この型をテーブルのキーの型に使えるなら ``true`` 、そうでないなら ``false`` 。"
+
+msgid "``can_be_value_type``"
+msgstr ""
+
+msgid ""
+"``true`` when the type can be used for table value, ``false`` otherwise."
+msgstr ""
+"この型をテーブルの値の型に使えるなら ``true`` 、そうでないなら ``false`` 。"
+
+msgid "``TOKENIZERS``"
+msgstr ""
+
+msgid ""
+"``TOKENIZERS`` is an object. Its key is tokenizer name and its value is "
+"tokenizer detail::"
+msgstr ""
+"``TOKENIZERS`` はオブジェクトです。キーはトークナイザー名で値はトークナイザー"
+"の詳細です。::"
+
+msgid "``TOKENIZER``"
+msgstr ""
+
+msgid "``TOKENIZER`` is an object that describes tokenizer detail::"
+msgstr "``TOKENIZER`` はトークナイザーの詳細を示すオブジェクトです。::"
+
+msgid "Here are properties of ``TOKENIZER``:"
+msgstr "以下は ``TOKENIZER`` のプロパティです。"
+
+msgid ""
+"The tokenizer name. It's used for :ref:`table-create-default-tokenizer`."
+msgstr "トークナイザー名。 :ref:`table-create-default-tokenizer` で使います。"
+
+msgid "``NORMALIZERS``"
+msgstr ""
+
+msgid ""
+"``NORMALIZERS`` is an object. Its key is normalizer name and its value is "
+"normalizer detail::"
+msgstr ""
+"``NORMALIZERS`` はオブジェクトです。キーはノーマライザー名で値はノーマライ"
+"ザーの詳細です。::"
+
+msgid "``NORMALIZER``"
+msgstr ""
+
+msgid "``NORMALIZER`` is an object that describes normalizer detail::"
+msgstr "``NORMALIZER`` はノーマライザーの詳細を示すオブジェクトです。::"
+
+msgid "Here are properties of ``NORMALIZER``:"
+msgstr "以下は ``NORMALIZER`` のプロパティです。"
+
+msgid "The normalizer name. It's used for :ref:`table-create-normalizer`."
+msgstr "ノーマライザー名。 :ref:`table-create-normalizer` で使います。"
+
+msgid "``TOKEN_FILTERS``"
+msgstr ""
+
+msgid ""
+"``TOKEN_FILTERS`` is an object. Its key is token filter name and its value "
+"is token filter detail::"
+msgstr ""
+"``TOKEN_FILTERS`` はオブジェクトです。キーはトークンフィルター名で値はトーク"
+"ンフィルターの詳細です。::"
+
+msgid "``TOKEN_FILTER``"
+msgstr ""
+
+msgid "``TOKEN_FILTER`` is an object that describes token filter detail::"
+msgstr "``TOKEN_FILTER`` はトークンフィルターの詳細を示すオブジェクトです。::"
+
+msgid "Here are properties of ``TOKEN_FILTER``:"
+msgstr "以下は ``TOKEN_FILTER`` のプロパティです。"
+
+msgid "The token filter name. It's used for :ref:`table-create-token-filters`."
+msgstr "トークンフィルター名。 :ref:`table-create-token-filters` で使います。"
+
+msgid "``TABLES``"
+msgstr ""
+
+msgid ""
+"``TABLES`` is an object. Its key is table name and its value is table "
+"detail::"
+msgstr ""
+"``TABLES`` はオブジェクトです。キーはテーブル名で値はテーブルの詳細です。::"
+
+msgid "``TABLE``"
+msgstr ""
+
+msgid "``TABLE`` is an object that describes table detail::"
+msgstr "``TABLE`` はテーブルの詳細を示すオブジェクトです。"
+
+msgid "Here are properties of ``TABLE``:"
+msgstr "以下は ``TABLE`` のプロパティです。"
+
+msgid "The table name."
+msgstr "テーブル名。"
+
+msgid "``type``"
+msgstr ""
+
+msgid "The table type."
+msgstr "テーブルの種類。"
+
+msgid "This is one of the followings:"
+msgstr "以下のどれかです。"
+
+msgid "``array``: :ref:`table-no-key`"
+msgstr ""
+
+msgid "``hash``: :ref:`table-hash-key`"
+msgstr ""
+
+msgid "``patricia trie``: :ref:`table-pat-key`"
+msgstr ""
+
+msgid "``double array trie``: :ref:`table-dat-key`"
+msgstr ""
+
+msgid "``key_type``"
+msgstr ""
+
+msgid "The type of the table's key."
+msgstr "テーブルのキーの型。"
+
+msgid "If the table type is ``array``, this is ``null``."
+msgstr "テーブルの種類が ``array`` なら ``null`` になります。"
+
+msgid ""
+"If the table type isn't ``array``, this is an object that has the following "
+"properties:"
+msgstr ""
+"テーブルの種類が ``array`` でなければオブジェクトになります。オブジェクトは次"
+"のプロパティを持ちます。"
+
+msgid "``name``: The type name."
+msgstr "``name`` ：型名。"
+
+msgid "``type``: ``reference`` if the type is an table, ``type`` otherwise."
+msgstr ""
+"``type`` ：もし型がテーブルなら ``reference`` 、そうでないなら ``type`` 。"
+
+msgid "``value_type``"
+msgstr ""
+
+msgid "The type of the table's value."
+msgstr "テーブルの値の型。"
+
+msgid "If the table doesn't use value, this is ``null``."
+msgstr "テーブルが「値」を使っていない場合は ``null`` になります。"
+
+msgid ""
+"If the table uses value, this is an object that has the following properties:"
+msgstr ""
+"テーブルが「値」を使っている場合はオブジェクトになります。オブジェクトは次の"
+"プロパティを持ちます。"
+
+msgid "``tokenizer``"
+msgstr ""
+
+msgid ""
+"The tokenizer of the table. It's specified by :ref:`table-create-default-"
+"tokenizer`."
+msgstr ""
+"テーブルのトークナイザー。 :ref:`table-create-default-tokenizer` で指定された"
+"ものです。"
+
+msgid "If the table doesn't use tokenizer, this is ``null``."
+msgstr "テーブルがトークナイザーを使っていない場合は ``null`` になります。"
+
+msgid ""
+"If the table uses tokenizer, this is an object that has the following "
+"properties:"
+msgstr ""
+"テーブルがトークナイザーを使っている場合はオブジェクトになります。オブジェク"
+"トは次のプロパティを持ちます。"
+
+msgid "``name``: The tokenizer name."
+msgstr "``name`` ：トークナイザー名。"
+
+msgid "``normalizer``"
+msgstr ""
+
+msgid ""
+"The normalizer of the table. It's specified by :ref:`table-create-"
+"normalizer`."
+msgstr ""
+"テーブルのノーマライザー。 :ref:`table-create-normalizer` で指定されたもので"
+"す。"
+
+msgid "If the table doesn't use normalizer, this is ``null``."
+msgstr "テーブルがノーマライザーを使っていない場合は ``null`` になります。"
+
+msgid ""
+"If the table uses normalizer, this is an object that has the following "
+"properties:"
+msgstr ""
+"テーブルがノーマライザーを使っている場合はオブジェクトになります。オブジェク"
+"トは次のプロパティを持ちます。"
+
+msgid "``name``: The normalizer name."
+msgstr "``name`` ：ノーマライザー名。"
+
+msgid "``token_filters``"
+msgstr ""
+
+msgid ""
+"The token filters of the table. It's specified by :ref:`table-create-token-"
+"filters`."
+msgstr ""
+"テーブルのトークンフィルターです。 :ref:`table-create-token-filters` で指定さ"
+"れたものです。"
+
+msgid "This is an array of an object. The object has the following properties:"
+msgstr "オブジェクトの配列です。オブジェクトは次のプロパティを持ちます。"
+
+msgid "``name``: The token filter name."
+msgstr "``name`` ：トークンフィルター名。"
+
+msgid "``indexes``"
+msgstr ""
+
+msgid "The indexes of the table's key."
+msgstr "テーブルのキーに対するインデックス。"
+
+msgid "This is an array of :ref:`schema-return-value-index`."
+msgstr ":ref:`schema-return-value-index` の配列です。"
+
+msgid "``command``"
+msgstr ""
+
+msgid "The Groonga command information to create the table."
+msgstr "このテーブルを作るためのGroongaコマンドに関する情報。"
+
+msgid "This is :ref:`schema-return-value-command`."
+msgstr ":ref:`schema-return-value-command` になります。"
+
+msgid "``columns``"
+msgstr ""
+
+msgid "The columns of the table."
+msgstr "テーブルのカラム。"
+
+msgid ""
+"This is an object that its key is a column name and its value is :ref:"
+"`schema-return-value-column`."
+msgstr ""
+"オブジェクトです。キーはカラム名で値は :ref:`schema-return-value-column` で"
+"す。"
+
+msgid "``INDEX``"
+msgstr ""
+
+msgid "``INDEX`` is an object that describes index detail::"
+msgstr "``INDEX`` はインデックスの詳細を示すオブジェクトです。::"
+
+msgid "Here are properties of ``INDEX``:"
+msgstr "以下は ``INDEX`` のプロパティです。"
+
+msgid "``full_name``"
+msgstr ""
+
+msgid "The index column name with table name."
+msgstr "テーブル名を含むインデックスカラム名。"
+
+msgid "For example, ``Terms.index``."
+msgstr "例： ``Terms.index``"
+
+msgid "``table``"
+msgstr ""
+
+msgid "The table name of the index column."
+msgstr "インデックスカラムのテーブル名。"
+
+msgid "For example, ``Terms``."
+msgstr "例： ``Terms``"
+
+msgid "The index column name."
+msgstr "インデックスカラム名。"
+
+msgid "For example, ``index``."
+msgstr "例： ``index``"
+
+msgid "``section``"
+msgstr ""
+
+msgid "The section number in the index column for the table's key."
+msgstr "テーブルのキーに対するインデックスカラムのセクション番号。"
+
+msgid "If the index column isn't multiple column index, this is ``0``."
+msgstr ""
+"インデックスカラムがマルチカラムインデックスでない場合は ``0`` になります。"
+
+msgid "``COMMAND``"
+msgstr ""
+
+msgid ""
+"``COMMAND`` is an object that describes how to create the table or column::"
+msgstr ""
+"``COMMAND`` はこのテーブル・カラムを作る方法を示したオブジェクトです。::"
+
+msgid "Here are properties of ``COMMAND``:"
+msgstr "以下は ``COMMAND`` のプロパティです。"
+
+msgid "The Groonga command name to create the table or column."
+msgstr "このテーブル・カラムを作るGroongaコマンドの名前。"
+
+msgid "``arguments``"
+msgstr ""
+
+msgid "The arguments of the Groonga command to create the table or column."
+msgstr "このテーブル・カラムを作るためのGroongaコマンドの引数。"
+
+msgid ""
+"This is an object that its key is argument name and its value is argument "
+"value."
+msgstr "オブジェクトになります。キーは引数名で値は引数の値です。"
+
+msgid "``command_line``"
+msgstr ""
+
+msgid "The Groonga command line to create the table or column."
+msgstr "このテーブル・カラムを作るGroongaコマンドのコマンドラインです。"
+
+msgid "This is a string that can be evaluated by Groonga."
+msgstr "この文字列はGroongaが評価できます。"
+
+msgid "``COLUMN``"
+msgstr ""
+
+msgid "``COLUMN`` is an object that describes column detail::"
+msgstr "``COLUMN`` はカラムの詳細を示したオブジェクトです。::"
+
+msgid "Here are properties of ``COLUMN``:"
+msgstr "以下は ``COLUMN`` のプロパティです。"
+
+msgid "The column name."
+msgstr "カラム名。"
+
+msgid "For example, ``age``."
+msgstr "例： ``age``"
+
+msgid "The table name of the column."
+msgstr "カラムのテーブル名。"
+
+msgid "For example, ``Users``."
+msgstr "例： ``Users``"
+
+msgid "The column name with table name."
+msgstr "テーブル名を含むカラム名。"
+
+msgid "For example, ``Users.age``."
+msgstr "例： ``Users.age``"
+
+msgid "The column type."
+msgstr "カラムの種類。"
+
+msgid "``scalar``: :doc:`/reference/columns/scalar`"
+msgstr ""
+
+msgid "``vector``: :doc:`/reference/columns/vector`"
+msgstr ""
+
+msgid "``index``: :doc:`/reference/columns/index`"
+msgstr ""
+
+msgid "The type of the column's value."
+msgstr "カラムの値の型。"
+
+msgid "This is an object that has the following properties:"
+msgstr "オブジェクトです。このオブジェクトは次のプロパティを持ちます。"
+
+msgid "``compress``"
+msgstr ""
+
+msgid "The compression method of the column."
+msgstr "カラムの圧縮方法です。"
+
+msgid "If the column doesn't use any compression methods, this is ``null``."
+msgstr "カラムがどの圧縮方法も使っていない場合は ``null`` になります。"
+
+msgid "If the column uses a compression method, this is one of the followings:"
+msgstr "カラムが圧縮方法を使っている場合は次のどれかになります。"
+
+msgid "``zlib``: The column uses zlib to compress column value."
+msgstr "``zlib`` ：カラムの値を圧縮するためにzlibを使います。"
+
+msgid "``lz4``: The column uses LZ4 to compress column value."
+msgstr "``lz4`` ：カラムの値を圧縮するためにLZ4を使います。"
+
+msgid "Whether the column can store section information or not."
+msgstr "カラムがセクション情報を保存できるかどうか。"
+
+msgid ""
+"``true`` if the column is created with ``WITH_SECTION`` flag, ``false`` "
+"otherwise."
+msgstr ""
+"``WITH_SECTION`` フラグ付きでカラムを作ったときは ``true`` 、そうでないとき"
+"は ``false`` になります。"
+
+msgid "Normally, if the column isn't an index column, this is ``false``."
+msgstr "通常、インデックスカラムでない場合は ``false`` になります。"
+
+msgid "``weight``"
+msgstr ""
+
+msgid "Whether the column can store weight information or not."
+msgstr "カラムが重み情報を保存できるかどうか。"
+
+msgid ""
+"``true`` if the column is created with ``WITH_WEIGHT`` flag, ``false`` "
+"otherwise."
+msgstr ""
+"``WITH_WEIGHT`` フラグ付きでカラムを作ったときは ``true`` 、そうでないときは "
+"``false`` になります。"
+
+msgid "``position``"
+msgstr ""
+
+msgid "Whether the column can store position information or not."
+msgstr "カラムが位置情報を保存できるかどうか。"
+
+msgid ""
+"``true`` if the column is created with ``WITH_POSITION`` flag, ``false`` "
+"otherwise."
+msgstr ""
+"``WITH_POSITION`` フラグ付きでカラムを作ったときは ``true`` 、そうでないとき"
+"は ``false`` になります。"
+
+msgid "``sources``"
+msgstr ""
+
+msgid "The source columns of the index column."
+msgstr "インデックスカラムのソースカラム。"
+
+msgid "This is an array of :ref:`schema-return-value-source`."
+msgstr ":ref:`schema-return-value-source` の配列になります。"
+
+msgid "Normally, if the column isn't an index column, this is an empty array."
+msgstr "通常、カラムがインデックスカラムでない場合は空配列になります。"
+
+msgid "The indexes of the column."
+msgstr "カラムのインデックス。"
+
+msgid "The Groonga command information to create the column."
+msgstr "このカラムを作るためのGroongaコマンド情報。"
+
+msgid "``SOURCE``"
+msgstr ""
+
+msgid "``SOURCE`` is an object that describes source detail::"
+msgstr "``SOURCE`` はソースの詳細を示すオブジェクトです。::"
+
+msgid "Here are properties of ``SOURCE``:"
+msgstr "以下は ``SOURCE`` のプロパティです。"
+
+msgid "The source column name."
+msgstr "ソースカラム名。"
+
+msgid "For example, ``content``."
+msgstr "例： ``content``"
+
+msgid "This may be a ``_key`` pseudo column."
+msgstr "``_key`` 擬似カラムになるかもしれません。"
+
+msgid "The table name of the source column."
+msgstr "ソースカラムのテーブル名。"
+
+msgid "For example, ``Memos``."
+msgstr "例： ``Memos``"
+
+msgid "The source column name with table name."
+msgstr "テーブル名を含むソースカラム名。"
+
+msgid "For example, ``Memos.content``."
+msgstr "例： ``Memos.content``"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`table_create`"
+msgstr ""
+
+msgid ":doc:`column_create`"
+msgstr ""

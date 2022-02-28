@@ -1,0 +1,154 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``highlight_html``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``highlight_html`` tags target text. It can use to highlight the search "
+"keywords. The tagged text are prepared for embedding HTML. Special "
+"characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and ``&gt;``. "
+"Keyword is surrounded with ``<span class=\"keyword\">`` and ``</span>``. For "
+"example, a tagged text of ``I am a groonga user. <3`` for keyword "
+"``groonga`` is ``I am a <span class=\"keyword\">groonga</span> user. &lt;3``."
+msgstr ""
+"``highlight_html`` は対象テキストをタグ付けします。検索文字列をハイライトさせ"
+"るために利用することができます。タグ付けされたテキストはHTML中に埋め込みやす"
+"いように処理されています。``<`` や ``>`` などの特殊文字は &lt; や &gt; にエス"
+"ケープされています。キーワードは ``<span class=\"keyword\">`` と ``</span>`` "
+"で囲まれています。たとえば、 ``I am a groonga user. <3`` という対象テキストの"
+"キーワード ``groonga`` でタグ付けされたテキストは ``I am a <span "
+"class=\"keyword\">groonga</span> user. &lt;3`` となります。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This function has only one parameter::"
+msgstr "この関数の引数は1つです。::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid ""
+"``highlight_html`` can be used in only ``--output_columns`` in :doc:`/"
+"reference/commands/select` before version 10.0.6 (exclusive). However, it "
+"can be also used in ``--output_columns`` in :doc:`/reference/commands/"
+"logical_select` since version 10.0.6."
+msgstr ""
+"10.0.6より前のバージョンでは、``highlight_html`` は :doc:`/reference/"
+"commands/select` コマンドの ``--output_columns`` 内でのみ指定できますが、"
+"10.0.6以降は、 :doc:`/reference/commands/logical_select` コマンドの ``--"
+"output_columns`` 内でも使用できます。"
+
+msgid ""
+"``highlight_html`` requires :doc:`/reference/command/command_version` 2 or "
+"later."
+msgstr ""
+"``highlight_html`` を使うには :doc:`/reference/command/command_version` 2以降"
+"を使う必要があります。"
+
+msgid ""
+"You also need to specify ``--query`` and/or ``--filter``. Keywords are "
+"extracted from ``--query`` and ``--filter`` arguments."
+msgstr ""
+"また、 ``--query`` と ``--filter`` オプションも指定する必要があります。（どち"
+"らか一方でも構いません。）これは、 ``--query`` と ``--filter`` オプションから"
+"キーワードを抽出しているためです。"
+
+msgid ""
+"The following example uses ``--query \"groonga mysql\"``. In this case, "
+"``groonga`` and ``mysql`` are used as keywords."
+msgstr ""
+"以下の例は ``--query \"groonga mysql\"`` を使っています。この場合は、キーワー"
+"ドとして ``groonga`` と ``mysql`` を使います。"
+
+msgid ""
+"The text are scanned by the keywords for tagging after they are normalized "
+"by ``NormalizerAuto`` normalizer."
+msgstr ""
+"キーワードとテキストは ``NormalizerAuto`` ノーマライザーで正規化されてタグ付"
+"けのためにスキャンされます。"
+
+msgid ""
+"``--query \"groonga mysql\"`` matches to only the first record's body. "
+"``highlight_html(body)`` surrounds the keywords ``groonga`` or ``mysql`` "
+"contained in the text with ``<span class=\"keyword\">`` and ``</span>``."
+msgstr ""
+"``--query \"groonga mysql\"`` は最初のレコードにマッチします。"
+"``highlight_html(body)`` は、テキスト中に含まれるキーワード ``groonga`` と "
+"``mysql`` を ``<span class=\"keyword\">`` と ``</span>`` で囲みます。"
+
+msgid "You can specify string literal instead of column."
+msgstr "カラムの代わりに文字列リテラルを指定することもできます。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes all parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is only one required parameter."
+msgstr "必須の引数は1つです。"
+
+msgid "``text``"
+msgstr ""
+
+msgid "The text to be highlighted in HTML."
+msgstr "HTMLでハイライトする対象のテキストです。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There is no optional parameter."
+msgstr "省略可能な引数はありません。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid ""
+"``highlight_html`` returns a tagged string or ``null``. If "
+"``highlight_html`` can't find any keywords, it returns ``null``."
+msgstr ""
+"``highlight_html`` はタグ付の文字列もしくは null を返します。"
+"``highlight_html`` は該当するキーワードがない場合に null を返します。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/commands/select`"
+msgstr ""
+
+msgid ":doc:`/reference/commands/logical_select`"
+msgstr ""
+
+msgid ":doc:`/reference/functions/highlight_full`"
+msgstr ""

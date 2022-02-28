@@ -1,0 +1,1310 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``logical_select``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``logical_select`` is a sharding version of :doc:`select`. "
+"``logical_select`` searches records from multiple tables and outputs them."
+msgstr ""
+"``logical_select`` は :doc:`select` のシャーディングバージョンです。 "
+"``logical_select`` は複数のテーブルからレコードを検索し、マッチしたレコードを"
+"出力します。"
+
+msgid ""
+"You need to :doc:`plugin_register` ``sharding`` plugin because this command "
+"is included in ``sharding`` plugin."
+msgstr ""
+"このコマンド は ``sharding`` プラグインに含まれているので、 ``sharding`` プラ"
+"グインを :doc:`plugin_register` する必要があります。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes many parameters."
+msgstr "このコマンドにはたくさんの引数があります。"
+
+msgid ""
+"The required parameters are ``logical_table`` and ``shard_key``. Other "
+"parameters are optional::"
+msgstr ""
+"必須の引数は ``logical_table`` と ``shard_key`` です。それ以外の引数は省略可"
+"能です::"
+
+msgid ""
+"There are some parameters that can be only used as named parameters. You "
+"can't use these parameters as ordered parameters. You must specify parameter "
+"name."
+msgstr ""
+"いくつか名前付き引数としてしか使えない引数があります。これらの引数を「○番目の"
+"引数」として使うことはできません。必ず名前を指定する必要があります。"
+
+msgid "Here are parameters that can be only used as named parameters:"
+msgstr "名前付き引数としてしか使えない引数は次の通りです。"
+
+msgid "``cache=no``"
+msgstr ""
+
+msgid "This command has the following named parameters for dynamic columns:"
+msgstr "以下の名前付き引数で動的カラム機能を使うことができます。"
+
+msgid "``columns[${NAME}].stage=null``"
+msgstr ""
+
+msgid "``columns[${NAME}].flags=COLUMN_SCALAR``"
+msgstr ""
+
+msgid "``columns[${NAME}].type=null``"
+msgstr ""
+
+msgid "``columns[${NAME}].value=null``"
+msgstr ""
+
+msgid "``columns[${NAME}].window.sort_keys=null``"
+msgstr ""
+
+msgid "``columns[${NAME}].window.group_keys=null``"
+msgstr ""
+
+msgid ""
+"You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For "
+"example, ``column1`` is a valid ``${NAME}``. This is the same rule as normal "
+"column. See also :ref:`column-create-name`."
+msgstr ""
+"``${NAME}`` には1つ以上のアルファベット、数字、 ``_``  を使うことができます。"
+"たとえば、 ``column1`` は有効な ``${NAME}`` です。これは通常のカラムと同じ"
+"ルールです。 :ref:`column-create-name` も見てください。"
+
+msgid "Parameters that have the same ``${NAME}`` are grouped."
+msgstr "同じ ``${NAME}`` も持つ引数は同じグループになります。"
+
+msgid "For example, the following parameters specify one dynamic column:"
+msgstr "たとえば、以下の引数は1つの動的カラムを指定しています。"
+
+msgid "``--columns[name].stage initial``"
+msgstr ""
+
+msgid "``--columns[name].type UInt32``"
+msgstr ""
+
+msgid "``--columns[name].value 29``"
+msgstr ""
+
+msgid "The following parameters specify two dynamic columns:"
+msgstr "以下の引数は2つの動的カラムを指定しています。"
+
+msgid "``--columns[name1].stage initial``"
+msgstr ""
+
+msgid "``--columns[name1].type UInt32``"
+msgstr ""
+
+msgid "``--columns[name1].value 29``"
+msgstr ""
+
+msgid "``--columns[name2].stage filtered``"
+msgstr ""
+
+msgid "``--columns[name2].type Float``"
+msgstr ""
+
+msgid "``--columns[name2].value '_score * 0.1'``"
+msgstr ""
+
+msgid "This command has the following named parameters for advanced drilldown:"
+msgstr ""
+"このコマンドには高度なドリルダウン機能のために以下の名前付き引数があります。"
+
+msgid "``drilldowns[${LABEL}].keys=null``"
+msgstr ""
+
+msgid "``drilldowns[${LABEL}].sort_keys=null``"
+msgstr ""
+
+msgid "``drilldowns[${LABEL}].output_columns=\"_key, _nsubrecs\"``"
+msgstr ""
+
+msgid "``drilldowns[${LABEL}].offset=0``"
+msgstr ""
+
+msgid "``drilldowns[${LABEL}].limit=10``"
+msgstr ""
+
+msgid "``drilldowns[${LABEL}].calc_types=NONE``"
+msgstr ""
+
+msgid "``drilldowns[${LABEL}].calc_target=null``"
+msgstr ""
+
+msgid "``drilldowns[${LABEL}].filter=null``"
+msgstr ""
+
+msgid "``drilldowns[${LABEL}].columns[${NAME}].stage=null``"
+msgstr ""
+
+msgid "``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``"
+msgstr ""
+
+msgid "``drilldowns[${LABEL}].columns[${NAME}].type=null``"
+msgstr ""
+
+msgid "``drilldowns[${LABEL}].columns[${NAME}].value=null``"
+msgstr ""
+
+msgid "``drilldowns[${LABEL}].columns[${NAME}].window.sort_keys=null``"
+msgstr ""
+
+msgid "``drilldowns[${LABEL}].columns[${NAME}].window.group_keys=null``"
+msgstr ""
+
+msgid ""
+"``drilldown[...]`` syntax is deprecated. Use ``drilldowns[...]`` instead."
+msgstr ""
+"``drilldown[...]`` 構文は非推奨になりました。代わりに ``drilldowns[...]`` を"
+"使用してください。"
+
+msgid ""
+":ref:`logical-select-drilldowns-label-sortby` is deprecated. Use :ref:"
+"`logical-select-drilldowns-label-sort-keys` instead."
+msgstr ""
+":ref:`logical-select-drilldowns-label-sortby` は非推奨になりました。代わり"
+"に :ref:`logical-select-drilldowns-label-sort-keys` を使ってください。"
+
+msgid ""
+"You can use one or more alphabets, digits, ``_`` and ``.`` for ``${LABEL}``. "
+"For example, ``parent.sub1`` is a valid ``${LABEL}``."
+msgstr ""
+"``${LABEL}`` には1つ以上のアルファベット、数字、 ``_`` 、 ``.`` を使うことが"
+"できます。たとえば、 ``parent.sub1`` は有効な ``${LABEL}`` です。"
+
+msgid "Parameters that have the same ``${LABEL}`` are grouped."
+msgstr "同じ ``${LABEL}`` も持つ引数は同じグループになります。"
+
+msgid "For example, the following parameters specify one drilldown:"
+msgstr "たとえば、以下の引数は1つのドリルダウンを指定しています。"
+
+msgid "``--drilldowns[label].keys column``"
+msgstr ""
+
+msgid "``--drilldowns[label].sort_keys -_nsubrecs``"
+msgstr ""
+
+msgid "The following parameters specify two drilldowns:"
+msgstr "以下の引数は2つのドリルダウンを指定しています。"
+
+msgid "``--drilldowns[label1].keys column1``"
+msgstr ""
+
+msgid "``--drilldowns[label1].sort_keys -_nsubrecs``"
+msgstr ""
+
+msgid "``--drilldowns[label2].keys column2``"
+msgstr ""
+
+msgid "``--drilldowns[label2].sort_keys _key``"
+msgstr ""
+
+msgid "Differences from ``select``"
+msgstr "``select`` との違い"
+
+msgid ""
+"Most of ``logical_select`` features can be used like corresponding :doc:"
+"`select` features. For example, parameter name is same, output format is "
+"same and so on."
+msgstr ""
+"``logical_select`` の多くの機能は :doc:`select` の機能と対応しています。たと"
+"えば、引数名は同じですし、出力フォーマットも同じです。"
+
+msgid "But there are some differences from :doc:`select`:"
+msgstr "しかし、いくつか :doc:`select` と違うところもあります。"
+
+msgid ""
+"``logical_table`` and ``shard_key`` parameters are required instead of "
+"``table`` parameter."
+msgstr ""
+"``table`` 引数ではなく、 ``logical_table`` と ``shard_key`` 引数が必須です。"
+
+msgid ""
+"``sort_keys`` isn't supported when multiple shards are used. (Only one shard "
+"is used, they are supported. There is one exception about ``sort_keys`` for "
+"multiple shards. When ``shard_keys`` and ``sort_keys`` are same, they are "
+"supported. See :ref:`logical-select-sort-keys` about details)"
+msgstr ""
+"複数のシャードを使った場合の ``sort_keys`` はサポートしていません。（1つの"
+"シャードのみを使った場合はサポートしています。複数のシャードについては1つ例外"
+"があります。``shard_key`` と ``sort_keys`` が同じ場合です。その場合はサポート"
+"しています。詳細は :ref:`logical-select-sort-keys` を参照してください。）"
+
+msgid ""
+"``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].sort_keys`` doesn't work "
+"with multiple shards. It works with one shard. ``_key`` in "
+"``drilldowns[${LABEL}].sort_keys`` work with multiple shards."
+msgstr ""
+"複数のシャードを使った場合、 ``drilldowns[${LABEL}].sort_keys`` の中で "
+"``_value.${KEY_NAME}`` を使えません。1つのシャードのみを使った場合は使えま"
+"す。複数のシャードを使った場合、``_key`` は、``drilldowns[${LABEL}]."
+"sort_keys`` の中で使えます。"
+
+msgid ""
+"``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].output_columns`` also "
+"doesn't work with multiple shards either. It works with one shard."
+msgstr ""
+"複数のシャードを使った場合、 ``drilldowns[${LABEL}].output_columns`` の中で"
+"も ``_value.${KEY_NAME}`` を使えません。1つのシャードのみを使った場合は使えま"
+"す。"
+
+msgid "``match_escalation_threshold`` isn't supported yet."
+msgstr "``match_escalation_threshold`` はまだサポートしていません。"
+
+msgid "``query_flags`` isn't supported yet."
+msgstr "``query_flags`` はまだサポートしていません。"
+
+msgid "``query_expander`` isn't supported yet."
+msgstr "``query_expander`` はまだサポートしていません。"
+
+msgid "``adjuster`` isn't supported yet."
+msgstr "``adjuster`` はまだサポートしていません。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"Let's learn about usage with examples. This section shows many popular "
+"usages."
+msgstr ""
+"例を使いながら使い方を学びましょう。このセクションではよく使われる使い方を紹"
+"介します。"
+
+msgid ""
+"You need to register ``sharding`` plugin because this command is included in "
+"``sharding`` plugin."
+msgstr ""
+"このコマンドは ``sharding`` プラグインに含まれているので ``sharding`` プラグ"
+"インを登録する必要があります。"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid ""
+"There are two tables, ``Entries_20150708`` and ``Entries_20150709``, for "
+"blog entries."
+msgstr ""
+"ブログエントリー用に ``Entries_20150708`` と ``Entries_20150709`` の2つのテー"
+"ブルがあります。"
+
+msgid ""
+"You need to use ``${LOGICAL_TABLE_NAME}_${YYYYMMDD}`` naming rule for table "
+"names. In this example, ``LOGICAL_TABLE_NAME`` is ``Entries`` and "
+"``YYYYMMDD`` is ``20150708`` or ``20150709``."
+msgstr ""
+"テーブル名には ``${論理テーブル名}_${YYYYMMDD}`` という命名規則を使う必要があ"
+"ります。この例では、 ``論理テーブル名`` は ``Entries`` で ``YYYYMMDD`` は "
+"``20150708`` または ``20150709`` です。"
+
+msgid ""
+"An entry has title, created time, content, the number of likes for the entry "
+"and tag. Title is key of ``Entries_YYYYMMDD``. Created time is value of "
+"``Entries_YYYYMMDD.created_at`` column. Content is value of "
+"``Entries_YYYYMMDD.content`` column. The number of likes is value of "
+"``Entries_YYYYMMDD.n_likes`` column. Tag is value of ``Entries_YYYYMMDD."
+"tag`` column."
+msgstr ""
+"各エントリはタイトルと作成日時と内容と「いいね！」数、タグを持っています。タ"
+"イトルは ``Entries_YYYYMMDD`` のキーとします。作成日時は ``Entries_YYYYMMDD."
+"created_at`` カラムの値とします。内容は ``Entries_YYYYMMDD.content`` カラムの"
+"値とします。「いいね！」数は ``Entries_YYYYMMDD.n_likes`` カラムの値としま"
+"す。タグは ``Entries_YYYYMMDD.tag`` カラムの値とします。"
+
+msgid ""
+"``Entries_YYYYMMDD._key`` column and ``Entries_YYYYMMDD.content`` column are "
+"indexed using ``TokenBigram`` tokenizer. So both ``Entries_YYYYMMDD._key`` "
+"and ``Entries_YYYYMMDD.content`` are fulltext search ready."
+msgstr ""
+"``Entries_YYYYMMDD._key`` カラムと ``Entries_YYYYMMDD.content`` カラムには "
+"``TokenBigram`` トークナイザーを使ったインデックスを作成します。そのため、 "
+"``Entries_YYYYMMDD._key`` と ``Entries_YYYYMMDD.content`` は両方とも全文検索"
+"できます。"
+
+msgid "OK. The schema and data for examples are ready."
+msgstr "これで例を示すためのスキーマとデータの準備ができました。"
+
+msgid "Simple usage"
+msgstr "簡単な使い方"
+
+msgid "Here is an example that specifies only required parameters."
+msgstr "以下は必須のパラメータのみを指定した例です。"
+
+msgid ""
+"It is shown that is searched from Entries_20150708 and Entries_20150709 in "
+"above example."
+msgstr ""
+"上記の例では、 ``Entries_20150708`` と ``Entries_20150709`` から検索されてい"
+"ることがわかります。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes parameters of ``logical_select``."
+msgstr "このセクションでは ``logical_select`` の引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There are required parameters, ``logical_table`` and ``shard_key``."
+msgstr "必須引数は二つあります。 ``logical_table`` と ``shard_key`` です。"
+
+msgid "``logical_table``"
+msgstr ""
+
+msgid ""
+"Specifies logical table name. It means table name without ``_YYYYMMDD`` "
+"postfix. If you use actual table such as ``Entries_20150708``, "
+"``Entries_20150709`` and so on, logical table name is ``Entries``."
+msgstr ""
+"論理テーブル名を指定します。これは ``_YYYYMMDD`` をテーブル名からのぞいたもの"
+"です。実際のテーブルが ``Entries_20150708`` や ``Entries_20150709`` といった"
+"ものなら、論理テーブル名は ``Entries`` です。"
+
+msgid ""
+"You can show 5 records by specifying ``logical_table`` and ``shard_key`` "
+"parameters. They are required parameters."
+msgstr ""
+"``logical_table`` と ``shard_key`` 引数を指定すると5レコード表示できます。こ"
+"れらの引数は必須の引数です。"
+
+msgid "If nonexistent table is specified, an error is returned."
+msgstr "存在しないテーブルを指定するとエラーが返ります。"
+
+msgid "``shard_key``"
+msgstr ""
+
+msgid ""
+"Specifies column name which is treated as shared key. Shard key is a column "
+"that stores data that is used for distributing records to suitable shards."
+msgstr ""
+"シャードキーとして使うカラム名を指定します。シャードキーは適切なシャードへレ"
+"コードを分配するために使う値を保存しているカラムです。"
+
+msgid "Shard key must be ``Time`` type for now."
+msgstr "今のところ、シャードキーは ``Time`` 型でなければいけません。"
+
+msgid "See :ref:`logical-select-logical-table` how to specify ``shard_key``."
+msgstr ""
+"``shard_key`` の指定方法は :ref:`logical-select-logical-table` を見てくださ"
+"い。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There are optional parameters."
+msgstr "いくつか省略可能な引数があります。"
+
+msgid "``min``"
+msgstr ""
+
+msgid ""
+"Specifies the minimum value of ``shard_key`` column. If shard doesn't have "
+"any matched records, the shard isn't searched."
+msgstr ""
+"``shard_key`` カラムの最小値を指定します。シャードにマッチするレコードがない"
+"場合は、そのシャードは検索対象外になります。"
+
+msgid ""
+"For example, ``min`` is ``\"2015/07/09 00:00:00\"``, ``Entry_20150708`` "
+"isn't searched. Because ``Entry_20150708`` has only records for "
+"``\"2015/07/08\"``."
+msgstr ""
+"たとえば、 ``min`` が ``\"2015/07/09 00:00:00\"`` なら、 ``Entry_20150708`` "
+"は検索対象外です。なぜなら、 ``Entry_20150708`` は ``\"2015/07/08\"`` のレ"
+"コードしかないからです。"
+
+msgid ""
+"The following example only uses ``Entry_20150709`` table. ``Entry_20150708`` "
+"isn't used."
+msgstr ""
+"以下の例は ``Entry_20150709`` テーブルだけを使う例です。 ``Entry_20150708`` "
+"は使われません。"
+
+msgid "``min_border``"
+msgstr ""
+
+msgid ""
+"Specifies whether the minimum value is included or not. Here is available "
+"values."
+msgstr "最小値を含めるかどうかを指定します。指定可能な値は次の通りです。"
+
+msgid "Value"
+msgstr "値"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "``include``"
+msgstr ""
+
+msgid "Includes ``min`` value. This is the default."
+msgstr "``min`` の値を含みます。これがデフォルト値です。"
+
+msgid "``exclude``"
+msgstr ""
+
+msgid "Doesn't include ``min`` value."
+msgstr "``min`` の値を含みません。"
+
+msgid ""
+"Here is an example for ``exclude``. The result doesn't include the ``\"Good-"
+"bye Senna\"`` record because its ``created_at`` value is ``\"2015/07/09 "
+"00:00:00\"``."
+msgstr ""
+"次の例は ``exclude`` の使用例です。結果には ``\"Good-bye Senna\"`` レコードは"
+"含まれません。このレコードの ``created_at`` の値が ``\"2015/07/09 "
+"00:00:00\"`` だからです。"
+
+msgid "``max``"
+msgstr ""
+
+msgid ""
+"Specifies the maximum value of ``shard_key`` column. If shard doesn't have "
+"any matched records, the shard isn't searched."
+msgstr ""
+"``shard_key`` カラムの最大値を指定します。シャードにマッチするレコードがない"
+"場合、そのシャードは検索対象外になります。"
+
+msgid ""
+"For example, ``max`` is ``\"2015/07/08 23:59:59\"``, ``Entry_20150709`` "
+"isn't searched. Because ``Entry_20150709`` has only records for "
+"``\"\"2015/07/09\"``."
+msgstr ""
+"たとえば、 ``max`` が ``\"2015/07/08 23:59:59\"`` なら ``Entry_20150709`` は"
+"検索対象外です。なぜなら ``Entry_20150709`` には ``\"\"2015/07/09\"`` のレ"
+"コードしかないからです。"
+
+msgid ""
+"The following example only uses ``Entry_20150708`` table. ``Entry_20150709`` "
+"isn't used."
+msgstr ""
+"以下の例は ``Entry_20150708`` テーブルだけを使います。 ``Entry_20150709`` は"
+"使いません。"
+
+msgid "``max_border``"
+msgstr ""
+
+msgid ""
+"Specifies whether the maximum value is included or not. Here is available "
+"values."
+msgstr "最大値を含めるかどうかを指定します。指定可能な値は次の通りです。"
+
+msgid "Includes ``max`` value. This is the default."
+msgstr "``max`` の値を含みます。これがデフォルト値です。"
+
+msgid "Doesn't include ``max`` value."
+msgstr "``max`` の値を含みません。"
+
+msgid "Search related parameters"
+msgstr "検索関係の引数"
+
+msgid ""
+"This command provides :doc:`select` compatible search related parameters."
+msgstr ""
+"このコマンドは :doc:`select` 互換の検索関連パラメーターをサポートしています。"
+
+msgid "``match_columns``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-match-columns` in :doc:`select`. See :ref:"
+"`select-match-columns` for details."
+msgstr ""
+":doc:`select` の :ref:`select-match-columns` に対応しています。詳細は :ref:"
+"`select-match-columns` を見てください。"
+
+msgid ""
+"Here is an example to find records that include ``\"fast\"`` text in "
+"``content`` column:"
+msgstr ""
+"以下は ``content`` カラムに ``\"fast\"`` というテキストを含むレコードを検索す"
+"る例です。"
+
+msgid "``query``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-query` in :doc:`select`. See :ref:`select-query` "
+"for details."
+msgstr ""
+":doc:`select` の :ref:`select-query` に対応しています。詳細は :ref:`select-"
+"query` を見てください。"
+
+msgid "See also :ref:`logical-select-match-columns`."
+msgstr ":ref:`logical-select-match-columns` も参照してください。"
+
+msgid "``filter``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-filter` in :doc:`select`. See :ref:`select-"
+"filter` for details."
+msgstr ""
+":doc:`select` の :ref:`select-filter` に対応しています。詳細は :ref:`select-"
+"filter` を見てください。"
+
+msgid "Here is an example:"
+msgstr "以下は例です。"
+
+msgid "``post_filter``"
+msgstr ""
+
+msgid ""
+"Specifies the filter text that is processed after ``filtered`` stage dynamic "
+"columns are generated. You can use ``post_filter`` to filter by ``filtered`` "
+"stage dynamic columns. Others are the same as :ref:`logical-select-filter`."
+msgstr ""
+"``filtered`` ステージの動的カラムが生成されてから実行するフィルターを指定しま"
+"す。 ``post_filter`` を使うと ``filtered`` ステージの動的カラムを使って絞り込"
+"むことができます。他は :ref:`logical-select-filter` と同じです。"
+
+msgid ""
+"Here is an example that shows entries only in popular tag. All target "
+"entries have ``system`` or ``use`` words:"
+msgstr ""
+"以下は人気のあるタグのエントリーだけを表示する例です。対象となるすべてのエン"
+"トリーには ``system`` または ``use`` という単語が含まれています。"
+
+msgid "``load_table``"
+msgstr ""
+
+msgid ""
+"You can store specified a table a result of ``logical_select`` with ``--"
+"load_table``, ``--load-columns`` and ``--load_values`` arguments. ``--"
+"load_table`` specifies a table name for storing a result of "
+"``logical_select``."
+msgstr ""
+"``--load_table`` 、 ``--load_columns`` 、 ``--load_values`` を使って、"
+"``logical_select`` の結果を指定したテーブルに格納できます。 ``--load_table`` "
+"は、``logical_select`` の結果を格納するテーブルの名前を指定します。"
+
+msgid "You must specify a table that already exists."
+msgstr "既に存在するテーブルを指定する必要があります。"
+
+msgid ""
+"This argument must use with :ref:`logical-select-load-columns` and :ref:"
+"`logical-select-load-values`."
+msgstr ""
+"この引数は、 :ref:`logical-select-load-columns` と :ref:`logical-select-load-"
+"values` と一緒に使う必要があります。"
+
+msgid ""
+"Here is an example that can store ``_id`` and ``timestamp`` that a result of "
+"``logical_select`` in a Logs table specified by ``--load_table``."
+msgstr ""
+"以下は、 ``--load_table`` で指定したLogsテーブルに ``logical_select`` の結果"
+"である ``_id`` と ``timestamp`` を格納する例です。"
+
+msgid "``load_columns``"
+msgstr "``load_columns``"
+
+msgid ""
+"Specifies columns of a table that specifying ``--load-table``. Stores value "
+"of columns that specified with :ref:`logical-select-load-values` in columns "
+"that specified with this argument. You must specify columns that already "
+"exists."
+msgstr ""
+"``--load_table`` で指定したテーブルのカラムを指定します。:ref:`logical-"
+"select-load-values` で指定したカラムの値をこの引数で指定したカラムに格納しま"
+"す。既に存在するカラムを指定する必要があります。"
+
+msgid ""
+"This argument must use with :ref:`logical-select-load-table` and :ref:"
+"`logical-select-load-values`."
+msgstr ""
+"この引数は、 :ref:`logical-select-load-table` と :ref:`logical-select-load-"
+"values` と一緒に使う必要があります。"
+
+msgid "See example of ``--load_table`` for how to use this argument."
+msgstr "この引数の使い方は、 ``--load_table`` の例を参照してください。"
+
+msgid "``load_values``"
+msgstr ""
+
+msgid ""
+"Specifies columns of result of ``logical_select``. Specifies columns for "
+"storing values into columns that specified with :ref:`logical-select-load-"
+"columns`. You must specify columns that already exists."
+msgstr ""
+"``logical_select`` の結果のカラムを指定します。 :ref:`logical-select-load-"
+"columns` で指定したカラムに値を格納するカラムを指定します。既に存在するカラム"
+"を指定する必要があります。"
+
+msgid ""
+"This argument must use with :ref:`logical-select-load-table` and :ref:"
+"`logical-select-load-columns`."
+msgstr ""
+"この引数は、 :ref:`logical-select-load-table` と :ref:`logical-select-load-"
+"columns` と一緒に使う必要があります。"
+
+msgid "Advanced search parameters"
+msgstr "高度な検索のための引数"
+
+msgid "``logical_select`` doesn't implement advanced search parameters yet."
+msgstr "``logical_select`` は高度な検索パラメーターをまだ実装していません。"
+
+msgid "``match_escalation_threshold``"
+msgstr ""
+
+msgid "Not implemented yet."
+msgstr "未実装です。"
+
+msgid "``query_flags``"
+msgstr ""
+
+msgid "``query_expander``"
+msgstr ""
+
+msgid "Output related parameters"
+msgstr "出力関連の引数"
+
+msgid "``output_columns``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-output-columns` in :doc:`select`. See :ref:"
+"`select-output-columns` for details."
+msgstr ""
+":doc:`select` の :ref:`select-output-columns` に対応しています。詳細は :ref:"
+"`select-output-columns` を見てください。"
+
+msgid "``sortby``"
+msgstr ""
+
+msgid "Use :ref:`logical-select-sort-keys` instead."
+msgstr "代わりに :ref:`logical-select-sort-keys` を使ってください。"
+
+msgid "``sort_keys``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-sort-keys` in :doc:`select`. See :ref:`select-"
+"sort-keys` for details."
+msgstr ""
+":doc:`select` の :ref:`select-sort-keys` に対応しています。詳細は :ref:"
+"`select-sort-keys` を見てください。"
+
+msgid ""
+"``sort_keys`` has a limitation. It works only when the number of search "
+"target shards is one. If the number of search target shards is larger than "
+"one, ``sort_keys`` doesn't work."
+msgstr ""
+"``sort_keys`` には制限があります。検索対象のシャードが1つの場合のみ動作しま"
+"す。もし、検索対象のシャードが複数ある場合、 ``sort_keys`` は正常な動作をしま"
+"せん。"
+
+msgid ""
+"There is one exception for multiple shards. When the same value is specified "
+"for ``shard_key`` and ``sort_keys``, they are supported. This command "
+"processes target shards one by one by ascending order. Thus, in this "
+"process, magnitude correlation about the value of ``shard_key`` is kept "
+"among them. This is because ``sort_keys`` is supported when ``shard_key`` "
+"and ``sort_keys`` is same."
+msgstr ""
+"複数のシャードに関して例外があります。``shard_key`` と ``sort_keys`` に同じ値"
+"が指定された場合です。その場合はサポートしています。このコマンドはシャードを"
+"昇順で順番に処理します。そのため、``shard_key`` の大小関係は保たれるので、正"
+"しくソートできます。"
+
+msgid "Here is an example that uses only one shard:"
+msgstr "以下は1つのシャードのみを使っている例です。"
+
+msgid "``offset``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-offset` in :doc:`select`. See :ref:`select-"
+"offset` for details."
+msgstr ""
+":doc:`select` の :ref:`select-offset` に対応しています。詳細は :ref:`select-"
+"offset` を見てください。"
+
+msgid "``limit``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-limit` in :doc:`select`. See :ref:`select-limit` "
+"for details."
+msgstr ""
+":doc:`select` の :ref:`select-limit` に対応しています。詳細は :ref:`select-"
+"limit` を見てください。"
+
+msgid "``scorer``"
+msgstr ""
+
+msgid "Dynamic column related parameters"
+msgstr "動的カラム関連の引数"
+
+msgid ""
+"All dynamic column related parameters in :doc:`select` are supported. See :"
+"ref:`select-dynamic-column-related-parameters` for details."
+msgstr ""
+":doc:`select` のすべての動的カラム関連パラメーターをサポートしています。詳細"
+"は :ref:`select-dynamic-column-related-parameters` を見てください。"
+
+msgid "``columns[${NAME}].stage``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-stage` in :doc:`select`. See :ref:"
+"`select-columns-name-stage` for details."
+msgstr ""
+":doc:`select` の :ref:`select-columns-name-stage` に対応しています。詳細は :"
+"ref:`select-columns-name-stage` を見てください。"
+
+msgid "This is a required parameter."
+msgstr "必須の引数です。"
+
+msgid ""
+"Here is an example that creates ``is_popular`` column at ``initial`` stage. "
+"You can use ``is_popular`` in all parameters such as ``filter`` and "
+"``output_columns``:"
+msgstr ""
+"以下は ``initial`` ステージで ``is_popular`` カラムを作る例です。作成した "
+"``is_popular`` カラムは ``filter`` や ``output_columns`` を含むすべてのパラ"
+"メーターで使えます。"
+
+msgid "``columns[${NAME}].flags``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-flags` in :doc:`select`. See :ref:"
+"`select-columns-name-flags` for details."
+msgstr ""
+":doc:`select` の :ref:`select-columns-name-flags` に対応しています。詳細は :"
+"ref:`select-columns-name-flags` を見てください。"
+
+msgid "The default value is ``COLUMN_SCALAR``."
+msgstr "デフォルト値は ``COLUMN_SCALAR`` です。"
+
+msgid ""
+"Here is an example that creates a vector column by ``COLUMN_VECTOR`` flags. "
+"``plugin_register functions/vector`` is for using :doc:`/reference/functions/"
+"vector_new` function:"
+msgstr ""
+"以下は ``COLUMN_VECTOR`` フラグを指定してベクターカラムを作る例です。 "
+"``plugin_register functions/vector`` は :doc:`/reference/functions/"
+"vector_new` 関数を使うために実行しています。:"
+
+msgid "``columns[${NAME}].type``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-type` in :doc:`select`. See :ref:"
+"`select-columns-name-type` for details."
+msgstr ""
+":doc:`select` の :ref:`select-columns-name-type` に対応しています。詳細は :"
+"ref:`select-columns-name-type` を見てください。"
+
+msgid ""
+"Here is an example that creates a ``ShortText`` type column. Stored value is "
+"casted to ``ShortText`` automatically. In this example, number is casted to "
+"``ShortText``:"
+msgstr ""
+"以下は ``ShortText`` 型のカラムを作る例です。保存された値は自動的に "
+"``ShortText`` にキャストされます。この例では数値が ``ShortText`` にキャストさ"
+"れています。"
+
+msgid "``columns[${NAME}].value``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-value` in :doc:`select`. See :ref:"
+"`select-columns-name-value` for details."
+msgstr ""
+":doc:`select` の :ref:`select-columns-name-value` に対応しています。詳細は :"
+"ref:`select-columns-name-value` を見てください。"
+
+msgid ""
+"You need to specify :doc:`/reference/window_function` as ``value`` value and "
+"other window function related parameters when you use window function. See :"
+"ref:`logical-select-window-function-related-parameters` for details."
+msgstr ""
+"ウィンドウ関数を使う場合は、 ``value`` の値に :doc:`/reference/"
+"window_function` を指定し、さらに他のウィンドウ関数関連のパラメーターも指定す"
+"る必要があります。詳細は :ref:`logical-select-window-function-related-"
+"parameters` を見てください。"
+
+msgid ""
+"Here is an example that creates a new dynamic column that stores the number "
+"of characters of content. This example uses :doc:`/reference/functions/"
+"string_length` function in ``functions/string`` plugin to compute the number "
+"of characters in a string. :doc:`plugin_register` is used to register "
+"``functions/string`` plugin:"
+msgstr ""
+"以下は内容の文字数を格納するための動的カラムを1つ作る例です。この例では文字数"
+"を数えるために ``functions/string`` プラグイン内の :doc:`/reference/"
+"functions/string_length` 関数を使っています。 ``functions/string`` プラグイン"
+"を登録するために :doc:`plugin_register` を使っています。"
+
+msgid "Window function related parameters"
+msgstr "ウィンドウ関数関連の引数"
+
+msgid ""
+"All window function related parameters in :doc:`select` are supported. See :"
+"ref:`select-window-function-related-parameters` for details."
+msgstr ""
+":doc:`select` のすべてのウィンドウ関数関連パラメーターをサポートしています。"
+"詳細は :ref:`select-window-function-related-parameters` を見てください。"
+
+msgid ""
+"Window function over multiple tables aren't supported version 9.0.1 or "
+"before. Groonga supported it since version 9.0.2 or later. However, we need "
+"to align the same order for shard key and leading group key or sort key."
+msgstr ""
+"バージョン9.0.1以前では、複数のテーブルをまたがったウィンドウ関数はサポートし"
+"ていません。バージョン9.0.2以降ではサポートしていますが、先頭のグループキーま"
+"たは、ソートキーがシャードキーと同じ順序で並んでいる必要があります。"
+
+msgid ""
+"For example, we can apply the window function to over multiple tables as "
+"below case. Because the below example aligns the same order for shard key "
+"and leading group key."
+msgstr ""
+"例えば、以下のようなケースでは、複数のテーブルをまたいでウインドウ関数を適用"
+"できます。以下の例では、先頭のグループキーがシャードキーと同じ順序で並んでい"
+"るからです。"
+
+msgid ""
+"The leading group key is ``price`` and shard key is ``timestamp`` in the "
+"below example. We can apply the window function to over multiple tables in "
+"the below example. Because ``price`` and ``timestamp`` aligns the same order."
+msgstr ""
+"以下の例では、先頭のグループキーは ``price`` でシャードキーは ``timestamp`` "
+"です。 ``price`` と ``timestamp`` は同じ順序で並んでいるため、複数のテーブル"
+"をまたいでウインドウ関数を適用できます。"
+
+msgid "``columns[${NAME}].window.sort_keys``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-window-sort-keys` in :doc:`select`. "
+"See :ref:`select-columns-name-window-sort-keys` for details."
+msgstr ""
+":doc:`select` の :ref:`select-columns-name-window-sort-keys` に対応していま"
+"す。詳細は :ref:`select-columns-name-window-sort-keys` を見てください。"
+
+msgid ""
+"You must specify :ref:`logical-select-columns-name-window-sort-keys` or :ref:"
+"`logical-select-columns-name-window-group-keys` to use window function."
+msgstr ""
+"ウィンドウ関数を使うには :ref:`logical-select-columns-name-window-sort-keys` "
+"または :ref:`logical-select-columns-name-window-group-keys` を指定しなければ"
+"いけません。"
+
+msgid ""
+"Here is an example that computes cumulative sum per ``Entries.tag``. Each "
+"group is sorted by ``Entries._key``:"
+msgstr ""
+"以下は ``Entries.tag`` 毎に累積和を計算する例です。各グループ内のレコードは "
+"``Entries._key`` でソートします。"
+
+msgid "``columns[${NAME}].window.group_keys``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-window-group-keys` in :doc:"
+"`select`. See :ref:`select-columns-name-window-group-keys` for details."
+msgstr ""
+":doc:`select` の :ref:`select-columns-name-window-group-keys` に対応していま"
+"す。詳細は :ref:`select-columns-name-window-group-keys` を見てください。"
+
+msgid "Here is an example that computes sum per ``Entries.tag``:"
+msgstr "以下は ``Entries.tag`` 毎に合計を計算する例です。"
+
+msgid "Drilldown related parameters"
+msgstr "ドリルダウン関連の引数"
+
+msgid ""
+"All drilldown related parameters in :doc:`select` are supported. See :ref:"
+"`select-drilldown-related-parameters` for details."
+msgstr ""
+":doc:`select` のすべてのドリルダウン関連パラメーターをサポートしています。詳"
+"細は :ref:`select-drilldown-related-parameters` を見てください。"
+
+msgid "``drilldown``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-drilldown` in :doc:`select`. See :ref:`select-"
+"drilldown` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown` に対応しています。詳細は :ref:"
+"`select-drilldown` を見てください。"
+
+msgid "``drilldown_sortby``"
+msgstr ""
+
+msgid "Use :ref:`logical-select-drilldown-sort-keys` instead."
+msgstr ":ref:`logical-select-drilldown-sort-keys` を代わりに使ってください"
+
+msgid "``drilldown_sort_keys``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-drilldown-sort-keys` in :doc:`select`. See :ref:"
+"`select-drilldown-sort-keys` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-sort-keys` に対応しています。詳細は :"
+"ref:`select-drilldown-sort-keys` を見てください。"
+
+msgid "``drilldown_output_columns``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-drilldown-output-columns` in :doc:`select`. See :"
+"ref:`select-drilldown-output-columns` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-output-columns` に対応しています。詳"
+"細は :ref:`select-drilldown-output-columns` を見てください。"
+
+msgid "``drilldown_offset``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-drilldown-offset` in :doc:`select`. See :ref:"
+"`select-drilldown-offset` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-offset` に対応しています。詳細は :"
+"ref:`select-drilldown-offset` を見てください。"
+
+msgid "``drilldown_limit``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-drilldown-limit` in :doc:`select`. See :ref:"
+"`select-drilldown-limit` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-limit` に対応しています。詳細は :ref:"
+"`select-drilldown-limit` を見てください。"
+
+msgid "``drilldown_calc_types``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-drilldown-calc-types` in :doc:`select`. See :ref:"
+"`select-drilldown-calc-types` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-calc-types` に対応しています。詳細"
+"は :ref:`select-drilldown-calc-types` を見てください。"
+
+msgid "``drilldown_calc_target``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-drilldown-calc-target` in :doc:`select`. See :"
+"ref:`select-drilldown-calc-target` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-calc-target` に対応しています。詳細"
+"は :ref:`select-drilldown-calc-target` を見てください。"
+
+msgid "See also :ref:`logical-select-drilldown-calc-types` for an example."
+msgstr "具体例は :ref:`select-drilldown-calc-types` を見てください。"
+
+msgid "``drilldown_filter``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-drilldown-filter` in :doc:`select`. See :ref:"
+"`select-drilldown-filter` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldown-filter` に対応しています。詳細は :"
+"ref:`select-drilldown-filter` を見てください。"
+
+msgid ""
+"Here is an example to suppress drilled down tags that are occurred only once:"
+msgstr "以下は1度しか出現していないタグをドリルダウン結果から除く例です。"
+
+msgid "Advanced drilldown related parameters"
+msgstr "高度なドリルダウン関連のパラメーター"
+
+msgid ""
+"All advanced drilldown related parameters in :doc:`select` are supported. "
+"See :ref:`select-advanced-drilldown-related-parameters` for details."
+msgstr ""
+":doc:`select` のすべての高度なドリルダウン関連のパラメーターをサポートしてい"
+"ます。詳細は :ref:`select-advanced-drilldown-related-parameters` を見てくださ"
+"い。"
+
+msgid "There are some limitations:"
+msgstr "いくつか制限があります。"
+
+msgid ""
+"``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].sort_keys`` doesn't work "
+"with multiple shards. It works with one shard. ``_key`` in "
+"``drilldowns[${LABEL}].sort_key`` work with multiple shards."
+msgstr ""
+"複数のシャードを使った場合、 ``drilldowns[${LABEL}].sort_keys`` の中で "
+"``_value.${KEY_NAME}`` を使えません。1つのシャードのみを使った場合は使えま"
+"す。"
+
+msgid "``drilldowns[${LABEL}].keys``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-drilldowns-label-keys` in :doc:`select`. See :"
+"ref:`select-drilldowns-label-keys` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldowns-label-keys` に対応しています。詳細"
+"は :ref:`select-drilldowns-label-keys` を見てください。"
+
+msgid "``drilldowns[${LABEL}].output_columns``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-drilldowns-label-output-columns` in :doc:"
+"`select`. See :ref:`select-drilldowns-label-output-columns` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldowns-label-output-columns` に対応していま"
+"す。詳細は :ref:`select-drilldowns-label-output-columns` を見てください。"
+
+msgid "``drilldowns[${LABEL}].output_columns`` has a limitation."
+msgstr "``drilldowns[${LABEL}].output_columns`` には制限があります。"
+
+msgid ""
+"``_value.${KEY_NAME}`` in ``drilldowns[${LABEL}].output_columns`` doesn't "
+"work with multiple shards. It works with one shard."
+msgstr ""
+"複数のシャードを使った場合、 ``drilldowns[${LABEL}].output_columns`` の中で "
+"``_value.${KEY_NAME}`` を使えません。1つのシャードのみを使った場合は使えま"
+"す。"
+
+msgid "``drilldowns[${LABEL}].sortby``"
+msgstr ""
+
+msgid "Use :ref:`logical-select-drilldowns-label-sort-keys` instead."
+msgstr ""
+":ref:`logical-select-drilldowns-label-sort-keys` を代わりに使ってください"
+
+msgid "``drilldowns[${LABEL}].sort_keys``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`logical-select-drilldown-sort-keys` in not labeled "
+"drilldown."
+msgstr ""
+"ラベルなしドリルダウンの :ref:`logical-select-drilldown-sort-keys` に対応して"
+"います。"
+
+msgid "``drilldowns[${LABEL}].sort_keys`` has a limitation."
+msgstr "``drilldowns[${LABEL}].sort_keys`` には制限があります。"
+
+msgid ""
+"Here is an example that uses ``_value.${KEY_NAME}`` with only one shard:"
+msgstr "以下は1つのシャードに対して ``_value.${KEY_NAME}`` を使う例です。"
+
+msgid "``drilldowns[${LABEL}].offset``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`logical-select-drilldown-offset` in not labeled "
+"drilldown."
+msgstr ""
+"ラベルなしドリルダウンの :ref:`logical-select-drilldown-offset` に対応してい"
+"ます。"
+
+msgid "``drilldowns[${LABEL}].limit``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`logical-select-drilldown-limit` in not labeled "
+"drilldown."
+msgstr ""
+"ラベルなしドリルダウンの :ref:`logical-select-drilldown-limit` に対応していま"
+"す。"
+
+msgid "``drilldowns[${LABEL}].calc_types``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`logical-select-drilldown-calc-types` in not labeled "
+"drilldown."
+msgstr ""
+"ラベルなしドリルダウンの :ref:`logical-select-drilldown-calc-types` に対応し"
+"ています。"
+
+msgid "``drilldowns[${LABEL}].calc_target``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`logical-select-drilldown-calc-target` in not labeled "
+"drilldown."
+msgstr ""
+"ラベルなしドリルダウンの :ref:`logical-select-drilldown-calc-target` に対応し"
+"ています。"
+
+msgid ""
+"See also :ref:`logical-select-drilldowns-label-calc-types` for an example."
+msgstr ""
+"例は :ref:`logical-select-drilldowns-label-calc-types` を参照してください。"
+
+msgid "``drilldowns[${LABEL}].filter``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`logical-select-drilldown-filter` in not labeled "
+"drilldown."
+msgstr ""
+"ラベルなしドリルダウンの :ref:`logical-select-drilldown-filter` に対応してい"
+"ます。"
+
+msgid "``drilldowns[${LABEL}].columns[${NAME}].stage``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`select-drilldowns-label-columns-name-stage` in :doc:"
+"`select`. See :ref:`select-drilldowns-label-columns-name-stage` for details."
+msgstr ""
+":doc:`select` の :ref:`select-drilldowns-label-columns-name-stage` に対応して"
+"います。詳細は :ref:`select-drilldowns-label-columns-name-stage` を見てくださ"
+"い。"
+
+msgid ""
+"Here is an example that creates a dynamic column at ``initial`` stage. This "
+"example creates a dynamic column that stores whether each drilled down tag "
+"is occurred only once or not:"
+msgstr ""
+"以下は ``initial`` ステージで動的カラムを作る例です。この例ではドリルダウンし"
+"た各タグが1回だけ出現したかどうかを保存する動的カラムを1つ作っています。"
+
+msgid "``drilldowns[${LABEL}].columns[${NAME}].flags``"
+msgstr ""
+
+msgid "Corresponds to :ref:`logical-select-columns-name-flags` in main search."
+msgstr ""
+"メインの検索の :ref:`logical-select-columns-name-flags` に対応しています。"
+
+msgid "``drilldowns[${LABEL}].columns[${NAME}].type``"
+msgstr ""
+
+msgid "Corresponds to :ref:`logical-select-columns-name-type` in main search."
+msgstr ""
+"メインの検索の :ref:`logical-select-columns-name-type` に対応しています。"
+
+msgid "``drilldowns[${LABEL}].columns[${NAME}].value``"
+msgstr ""
+
+msgid "Corresponds to :ref:`logical-select-columns-name-value` in main search."
+msgstr ""
+"メインの検索の :ref:`logical-select-columns-name-value` に対応しています。"
+
+msgid "``drilldowns[${LABEL}].columns[${NAME}].window.sort_keys``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`logical-select-columns-name-window-sort-keys` in main "
+"search."
+msgstr ""
+"メインの検索の :ref:`logical-select-columns-name-window-sort-keys` に対応して"
+"います。"
+
+msgid ""
+"You must specify :ref:`logical-select-drilldowns-label-columns-name-window-"
+"sort-keys` or :ref:`logical-select-drilldowns-label-columns-name-window-"
+"group-keys` to use window function."
+msgstr ""
+"ウィンドウ関数を使うには :ref:`logical-select-drilldowns-label-columns-name-"
+"window-sort-keys` または :ref:`logical-select-drilldowns-label-columns-name-"
+"window-group-keys` を指定しなければいけません。"
+
+msgid ""
+"Here is an example that computes the Nth record in the number of sub records "
+"order:"
+msgstr "以下はサブレコード数順で何番目のレコードかを計算する例です。"
+
+msgid "``drilldowns[${LABEL}].columns[${NAME}].window.group_keys``"
+msgstr ""
+
+msgid ""
+"Corresponds to :ref:`logical-select-columns-name-window-group-keys` in main "
+"search."
+msgstr ""
+"メインの検索の :ref:`logical-select-columns-name-window-group-keys` に対応し"
+"ています。"
+
+msgid ""
+"Here is an example that computes the Nth record ordered by tag name for each "
+"the same number of sub records:"
+msgstr ""
+"以下はサブレコード数が同じグループ毎にタグ名順で何番目のレコードかを計算する"
+"例です。"
+
+msgid "Cache related parameter"
+msgstr "キャッシュ関連の引数"
+
+msgid "``cache``"
+msgstr ""
+
+msgid "Specifies whether caching the result of this query or not."
+msgstr "このクエリーの結果をキャッシュするかどうかを指定します。"
+
+msgid ""
+"If the result of this query is cached, the next same query returns response "
+"quickly by using the cache."
+msgstr ""
+"このクエリーの結果がキャッシュしてあると、次に同じクエリーを実行するときは"
+"キャッシュを使って高速にレスポンスを返すことができます。"
+
+msgid "It doesn't control whether existing cached result is used or not."
+msgstr ""
+"これは既存のキャッシュされた結果を使うかどうかを指定するものではありません。"
+
+msgid "Here are available values:"
+msgstr "指定可能な値は以下の通りです。"
+
+msgid "``no``"
+msgstr ""
+
+msgid "Don't cache the output of this query."
+msgstr "このクエリーの出力をキャッシュしない。"
+
+msgid "``yes``"
+msgstr ""
+
+msgid "Cache the output of this query. It's the default value."
+msgstr "このクエリーの出力をキャッシュする。デフォルト値。"
+
+msgid "Here is an example to disable caching the result of this query:"
+msgstr "このクエリーの結果をキャッシュしないようにする例です。"
+
+msgid "The default value is ``yes``."
+msgstr "デフォルト値は ``yes`` です。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid ""
+"The return value format of ``logical_select`` is compatible with :doc:"
+"`select`. See :ref:`select-return-value` for details."
+msgstr ""
+"``logical_select`` の戻り値のフォーマットは :doc:`select` と同じです。詳細"
+"は :ref:`select-return-value` を見てください。"

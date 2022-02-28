@@ -1,0 +1,160 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``prefix_rk_search``"
+msgstr "``prefix_rk_search``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"``prefix_rk_search`` selects records by :doc:`/reference/operations/"
+"prefix_rk_search`."
+msgstr ""
+"``prefix_rk_search`` selects records by :doc:`/reference/operations/"
+"prefix_rk_search`."
+
+msgid "You need to create :ref:`table-pat-key` table for prefix RK search."
+msgstr "You need to create :ref:`table-pat-key` table for prefix RK search."
+
+msgid ""
+"You can't use ``prefix_rk_search`` for sequential scan. It's a selector only "
+"procedure."
+msgstr ""
+"You can't use ``prefix_rk_search`` for sequential scan. It's a selector only "
+"procedure."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid ""
+"``prefix_rk_search`` requires two arguments. They are ``column`` and "
+"``query``::"
+msgstr ""
+"``prefix_rk_search`` requires two arguments. They are ``column`` and "
+"``query``::"
+
+msgid "``column`` must be ``_key`` for now."
+msgstr "``column`` must be ``_key`` for now."
+
+msgid "``query`` must be string."
+msgstr "``query`` must be string."
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Here are a schema definition and sample data to show usage:"
+msgstr "Here are a schema definition and sample data to show usage:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"Here is the simple usage of ``prefix_rk_search()`` function which selects ``"
+"ニホン`` and ``ニッポン`` by ``ni``:"
+msgstr ""
+"Here is the simple usage of ``prefix_rk_search()`` function which selects ``"
+"ニホン`` and ``ニッポン`` by ``ni``:"
+
+msgid ""
+"You can implement :doc:`/reference/suggest/completion` like feature by "
+"combining :doc:`sub_filter`."
+msgstr ""
+"You can implement :doc:`/reference/suggest/completion` like feature by "
+"combining :doc:`sub_filter`."
+
+msgid ""
+"Create a table that has candidates of completion as records. Each records "
+"have zero or more readings. They are stored into ``Readings`` table. Don't "
+"forget define an index column for ``Items.readings`` in ``Readings`` table. "
+"The index column is needed for :doc:`sub_filter`:"
+msgstr ""
+"Create a table that has candidates of completion as records. Each records "
+"have zero or more readings. They are stored into ``Readings`` table. Don't "
+"forget define an index column for ``Items.readings`` in ``Readings`` table. "
+"The index column is needed for :doc:`sub_filter`:"
+
+msgid ""
+"You can find ``日本`` record in ``Items`` table by ``niho``. Because prefix "
+"RK search with ``niho`` selects ``ニホン`` reading and ``ニホン`` reading is "
+"one of readings of ``日本`` record:"
+msgstr ""
+"You can find ``日本`` record in ``Items`` table by ``niho``. Because prefix "
+"RK search with ``niho`` selects ``ニホン`` reading and ``ニホン`` reading is "
+"one of readings of ``日本`` record:"
+
+msgid ""
+"You need to combine :ref:`script-syntax-prefix-search-operator` to support "
+"no reading completion targets."
+msgstr ""
+"You need to combine :ref:`script-syntax-prefix-search-operator` to support "
+"no reading completion targets."
+
+msgid "Add one no reading completion target:"
+msgstr "Add one no reading completion target:"
+
+msgid ""
+"Combine :ref:`script-syntax-prefix-search-operator` to support no reading "
+"completion targets:"
+msgstr ""
+"Combine :ref:`script-syntax-prefix-search-operator` to support no reading "
+"completion targets:"
+
+msgid ""
+"Normally, you want to use case insensitive search for completion. Use ``--"
+"normalizer NormalizerAuto`` and ``label`` column for the case:"
+msgstr ""
+"Normally, you want to use case insensitive search for completion. Use ``--"
+"normalizer NormalizerAuto`` and ``label`` column for the case:"
+
+msgid "Use ``LooseItems.label`` for display:"
+msgstr "Use ``LooseItems.label`` for display:"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "There are two required parameter, ``column`` and ``query``."
+msgstr "There are two required parameter, ``column`` and ``query``."
+
+msgid "``column``"
+msgstr "``column``"
+
+msgid "Always specifies ``_key`` for now."
+msgstr "Always specifies ``_key`` for now."
+
+msgid "``query``"
+msgstr "``query``"
+
+msgid "Specifies a query in romaji, katakana or hiragana as string."
+msgstr "Specifies a query in romaji, katakana or hiragana as string."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "``prefix_rk_search`` function returns matched records."
+msgstr "``prefix_rk_search`` function returns matched records."
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`/reference/operations/prefix_rk_search`"
+msgstr ":doc:`/reference/operations/prefix_rk_search`"
+
+msgid ":doc:`/reference/functions/sub_filter`"
+msgstr ":doc:`/reference/functions/sub_filter`"

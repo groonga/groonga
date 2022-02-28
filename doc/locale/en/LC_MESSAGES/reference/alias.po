@@ -1,0 +1,207 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Alias"
+msgstr "Alias"
+
+msgid ""
+"You can refer a table and column by multiple names by using alias feature."
+msgstr ""
+"You can refer a table and column by multiple names by using alias feature."
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "The alias feature is useful for the following cases:"
+msgstr "The alias feature is useful for the following cases:"
+
+msgid ""
+"You want to rename a table but you can't change some Groonga clients that "
+"uses the current table name."
+msgstr ""
+"You want to rename a table but you can't change some Groonga clients that "
+"uses the current table name."
+
+msgid "You want to change column type without downtime."
+msgstr "You want to change column type without downtime."
+
+msgid ""
+"In the former case, some Groonga clients can use the current table name "
+"after you rename a table. Because the alias feature maps the current table "
+"name to the renamed new table name."
+msgstr ""
+"In the former case, some Groonga clients can use the current table name "
+"after you rename a table. Because the alias feature maps the current table "
+"name to the renamed new table name."
+
+msgid ""
+"In the latter case, all Groonga clients access the column by aliased name "
+"such as ``aliased_column``. ``aliased_column`` refers ``current_column``. "
+"You create a new column ``new_column`` with new type and copy data from "
+"``current_column`` by :doc:`/reference/commands/column_copy`. You change "
+"``aliased_column`` to refer ``new_column`` from ``current_column``. Now, all "
+"Groonga clients access ``new_column`` by ``aliased_column`` without stopping "
+"search requests."
+msgstr ""
+"In the latter case, all Groonga clients access the column by aliased name "
+"such as ``aliased_column``. ``aliased_column`` refers ``current_column``. "
+"You create a new column ``new_column`` with new type and copy data from "
+"``current_column`` by :doc:`/reference/commands/column_copy`. You change "
+"``aliased_column`` to refer ``new_column`` from ``current_column``. Now, all "
+"Groonga clients access ``new_column`` by ``aliased_column`` without stopping "
+"search requests."
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid ""
+"You manage alias to real name mapping by a normal table and a normal column."
+msgstr ""
+"You manage alias to real name mapping by a normal table and a normal column."
+
+msgid ""
+"You can use any table type except :ref:`table-no-key` for the table. :ref:"
+"`table-hash-key` is recommended because exact key match search is only used "
+"for the alias feature. :ref:`table-hash-key` is the fastest table type for "
+"exact key match search."
+msgstr ""
+"You can use any table type except :ref:`table-no-key` for the table. :ref:"
+"`table-hash-key` is recommended because exact key match search is only used "
+"for the alias feature. :ref:`table-hash-key` is the fastest table type for "
+"exact key match search."
+
+msgid ""
+"The column must be :doc:`/reference/columns/scalar` and type is "
+"``ShortText``. You can also use ``Text`` and ``LongText`` types but they are "
+"meaningless. Because the max table/column name size is 4KiB. ``ShortText`` "
+"can store 4KiB data."
+msgstr ""
+"The column must be :doc:`/reference/columns/scalar` and type is "
+"``ShortText``. You can also use ``Text`` and ``LongText`` types but they are "
+"meaningless. Because the max table/column name size is 4KiB. ``ShortText`` "
+"can store 4KiB data."
+
+msgid "Here are example definitions of table and column for managing aliases:"
+msgstr "Here are example definitions of table and column for managing aliases:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"You need to register the table and column by :doc:`configuration`. The alias "
+"feature uses ``alias.column`` configuration item. You can register the table "
+"and column by the following :doc:`/reference/commands/config_set`:"
+msgstr ""
+"You need to register the table and column by :doc:`configuration`. The alias "
+"feature uses ``alias.column`` configuration item. You can register the table "
+"and column by the following :doc:`/reference/commands/config_set`:"
+
+msgid "Here are schema and data to show how to use alias:"
+msgstr "Here are schema and data to show how to use alias:"
+
+msgid "You can use ``Users.age`` in :doc:`/reference/commands/select`:"
+msgstr "You can use ``Users.age`` in :doc:`/reference/commands/select`:"
+
+msgid ""
+"You can't use ``Users.age`` when you rename ``Users.age`` to ``Users.years`` "
+"by :doc:`/reference/commands/column_rename`:"
+msgstr ""
+"You can't use ``Users.age`` when you rename ``Users.age`` to ``Users.years`` "
+"by :doc:`/reference/commands/column_rename`:"
+
+msgid ""
+"But you can use ``Users.age`` by registering ``Users.age`` to ``Users."
+"years`` mapping to ``Aliases``."
+msgstr ""
+"But you can use ``Users.age`` by registering ``Users.age`` to ``Users."
+"years`` mapping to ``Aliases``."
+
+msgid "Now, you can use ``Users.age`` as alias of ``Users.years``."
+msgstr "Now, you can use ``Users.age`` as alias of ``Users.years``."
+
+msgid "How to resolve alias"
+msgstr "How to resolve alias"
+
+msgid "This section describes how to resolve alias."
+msgstr "This section describes how to resolve alias."
+
+msgid ""
+"Groonga uses the alias feature when nonexistent object name (table name, "
+"column name, command name, function name and so on) is referred. It means "
+"that you can't override existing object (table, column, command, function "
+"and so on) by the alias feature."
+msgstr ""
+"Groonga uses the alias feature when nonexistent object name (table name, "
+"column name, command name, function name and so on) is referred. It means "
+"that you can't override existing object (table, column, command, function "
+"and so on) by the alias feature."
+
+msgid ""
+"For example, alias isn't resolved in the following example because ``Users."
+"years`` exists:"
+msgstr ""
+"For example, alias isn't resolved in the following example because ``Users."
+"years`` exists:"
+
+msgid ""
+"Alias is resolved recursively. If you rename ``Users.years`` to ``Users."
+"years_old`` and you refer ``Users.age``, Groonga replaces ``Users.age`` with "
+"``Users.years`` and then ``Users.years`` with ``Users.years_old``. Because "
+"``Aliases`` table has the following records:"
+msgstr ""
+"Alias is resolved recursively. If you rename ``Users.years`` to ``Users."
+"years_old`` and you refer ``Users.age``, Groonga replaces ``Users.age`` with "
+"``Users.years`` and then ``Users.years`` with ``Users.years_old``. Because "
+"``Aliases`` table has the following records:"
+
+msgid "``_key``"
+msgstr "``_key``"
+
+msgid "``real_name``"
+msgstr "``real_name``"
+
+msgid "``Users.age``"
+msgstr "``Users.age``"
+
+msgid "``Users.years``"
+msgstr "``Users.years``"
+
+msgid "``Users.years_old``"
+msgstr "``Users.years_old``"
+
+msgid "Here is an example to ``Users.age`` is resolved recursively:"
+msgstr "Here is an example to ``Users.age`` is resolved recursively:"
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`/reference/configuration`"
+msgstr ":doc:`/reference/configuration`"
+
+msgid ":doc:`/reference/commands/config_set`"
+msgstr ":doc:`/reference/commands/config_set`"
+
+msgid ":doc:`/reference/commands/table_create`"
+msgstr ":doc:`/reference/commands/table_create`"
+
+msgid ":doc:`/reference/commands/column_create`"
+msgstr ":doc:`/reference/commands/column_create`"
+
+msgid ":doc:`/reference/commands/select`"
+msgstr ":doc:`/reference/commands/select`"

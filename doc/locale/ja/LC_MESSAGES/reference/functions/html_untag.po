@@ -1,0 +1,105 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``html_untag``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``html_untag`` strips HTML tags from HTML and outputs plain text."
+msgstr "``html_untag`` はHTMLタグをHTMLから除去したテキストを出力します。"
+
+msgid ""
+"``html_untag`` is used in ``--output_columns`` described at :ref:`select-"
+"output-columns`."
+msgstr ""
+"``html_untag`` は :ref:`select-output-columns` で説明している ``--"
+"output_columns`` で使います。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``html_untag`` requires only one argument. It is ``html``."
+msgstr "``html_untag`` は引数を一つだけとります。 それは ``html`` です。"
+
+msgid "Requirements"
+msgstr "必要条件"
+
+msgid "``html_untag`` requires Groonga 3.0.5 or later."
+msgstr "``html_untag`` を使うにはGroonga 3.0.5以降が必要です。"
+
+msgid ""
+"``html_untag`` requires :doc:`/reference/command/command_version` 2 or later."
+msgstr ""
+"``html_untag`` を使うには :doc:`/reference/command/command_version` 2以降を使"
+"う必要があります。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid "Sample schema:"
+msgstr "サンプルスキーマ:"
+
+msgid "Sample data:"
+msgstr "サンプルデータ:"
+
+msgid ""
+"Here is the simple usage of ``html_untag`` function which strips HTML tags "
+"from content of column."
+msgstr ""
+"カラムの本文からHTMLタグを除去する ``html_untag`` 関数の簡単な例はこちらで"
+"す。"
+
+msgid ""
+"When executing the above query, you can see \"span\" tag with \"class\" "
+"attribute is stripped. Note that you must specify ``--command_version 2`` to "
+"use ``html_untag`` function."
+msgstr ""
+"上記クエリを実行すると、\"class\" 属性つきの \"span\" タグが除去されているの"
+"がわかります。``html_untag`` 関数を使うのには ``--command_version 2`` を指定"
+"しなければならないことに注意してください。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "There is only one required parameter."
+msgstr "必須の引数は1つです。"
+
+msgid "``html``"
+msgstr ""
+
+msgid "Specifies HTML text to be untagged."
+msgstr "タグを取り除きたいHTMLを指定します。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid ""
+"``html_untag`` returns plain text which is stripped HTML tags from HTML text."
+msgstr ""
+"``html_untag`` はHTMLテキストからHTMLタグを除去したタグなしのテキストを返しま"
+"す。"

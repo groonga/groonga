@@ -1,0 +1,92 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "パラメータ"
+msgstr ""
+
+msgid "戻り値"
+msgstr ""
+
+msgid "Global configurations"
+msgstr "全体設定"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "Groonga has the global configurations. You can access them by API."
+msgstr ""
+"Groongaにはグローバルな設定があります。それらにアクセスするにはAPIを使いま"
+"す。"
+
+msgid "Reference"
+msgstr "リファレンス"
+
+msgid "Returns the lock timeout."
+msgstr "ロックタイムアウトを返します。"
+
+msgid ""
+":c:type:`grn_ctx` acquires a lock for updating a shared value. If other :c:"
+"type:`grn_ctx` is already updating the same value, :c:type:`grn_ctx` that "
+"try to acquire a lock can't acquires a lock. The :c:type:`grn_ctx` that "
+"can't acquires a lock waits 1 millisecond and try to acquire a lock again. "
+"The try is done ``timeout`` times. If the :c:type:`grn_ctx` that can't "
+"acquires a lock until ``timeout`` times, the tries are failed."
+msgstr ""
+
+msgid ""
+"The default lock timeout is ``10000000``. It means that Groonga doesn't "
+"report a lock failure until about 3 hours.  (1 * 10000000 [msec] = 10000 "
+"[sec] = 166.666... [min] = 2.777... [hour])"
+msgstr ""
+"デフォルトのロックタイムアウトは ``10000000`` です。つまりGroongaはロックの失"
+"敗をおよそ3時間経過するまで報告しません。(1 * 10000000 [msec] = 10000 [sec] "
+"= 166.666... [min] = 2.777... [hour])"
+
+msgid "The lock timeout."
+msgstr "ロックタイムアウト。"
+
+msgid "Sets the lock timeout."
+msgstr "ロックタイムアウトを設定します。"
+
+msgid "See :c:func:`grn_get_lock_timeout` about lock timeout."
+msgstr ""
+"ロックタイムアウトについては、 :c:func:`grn_get_lock_timeout` を参照してくだ"
+"さい。"
+
+msgid "There are some special values for ``timeout``."
+msgstr "``timeout`` にはいくつか特別な値があります。"
+
+msgid ""
+"``0``: It means that Groonga doesn't retry acquiring a lock. Groonga reports "
+"a failure after one lock acquirement failure."
+msgstr ""
+"``0``: Groongaがロックを再度取得しようとしません。一度ロックの取得に失敗した"
+"時点でGroongaはその失敗を報告します。"
+
+msgid ""
+"negative value: It means that Groonga retries acquiring a lock until Groonga "
+"can acquire a lock."
+msgstr "負数: Groongaはロックを取得できるまでリトライします。"
+
+msgid "The new lock timeout."
+msgstr "新しいロックのタイムアウト。"
+
+msgid "``GRN_SUCCESS``. It doesn't fail."
+msgstr "``GRN_SUCCESS`` 。この関数は失敗しません。"

@@ -1,0 +1,184 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Sharding"
+msgstr "Sharding"
+
+msgid ""
+"Groonga has :doc:`/limitations` against table size. You can't add "
+"268,435,455 more records in one table."
+msgstr ""
+"Groonga has :doc:`/limitations` against table size. You can't add "
+"268,435,455 more records in one table."
+
+msgid "Groonga supports time based sharding to resolve the limitation."
+msgstr "Groonga supports time based sharding to resolve the limitation."
+
+msgid ""
+"It works in the same database. It doesn't work with multiple databases. It "
+"means that this sharding feature isn't for distributing large data to "
+"multiple hosts."
+msgstr ""
+"It works in the same database. It doesn't work with multiple databases. It "
+"means that this sharding feature isn't for distributing large data to "
+"multiple hosts."
+
+msgid ""
+"If you want distributed sharding feature, use `Mroonga <http://mroonga.org/"
+">`_ or `PGroonga <http://pgroonga.github.io/>`_. You can use sharding "
+"feature by MySQL or PostgreSQL. You'll be able to use `Droonga <http://"
+"droonga.org/>`_ for distributed sharding feature soon."
+msgstr ""
+"If you want distributed sharding feature, use `Mroonga <http://mroonga.org/"
+">`_ or `PGroonga <http://pgroonga.github.io/>`_. You can use sharding "
+"feature by MySQL or PostgreSQL. You'll be able to use `Droonga <http://"
+"droonga.org/>`_ for distributed sharding feature soon."
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"Sharding is implemented in ``sharding`` plugin. The plugin is written in "
+"mruby. You need to enable mruby when you build Groonga."
+msgstr ""
+"Sharding is implemented in ``sharding`` plugin. The plugin is written in "
+"mruby. You need to enable mruby when you build Groonga."
+
+msgid ""
+"You can confirm whether your Groonga supports mruby or not by ``--version`` "
+"command line argument of :doc:`/reference/executables/groonga`::"
+msgstr ""
+"You can confirm whether your Groonga supports mruby or not by ``--version`` "
+"command line argument of :doc:`/reference/executables/groonga`::"
+
+msgid "If you find ``mruby``, your Groonga supports mruby."
+msgstr "If you find ``mruby``, your Groonga supports mruby."
+
+msgid ""
+"``sharding`` plugin provides only search commands. They have ``logical_`` "
+"prefix in their command names such as :doc:`/reference/commands/"
+"logical_select` and :doc:`/reference/commands/logical_range_filter`."
+msgstr ""
+"``sharding`` plugin provides only search commands. They have ``logical_`` "
+"prefix in their command names such as :doc:`/reference/commands/"
+"logical_select` and :doc:`/reference/commands/logical_range_filter`."
+
+msgid ""
+"``sharding`` plugin doesn't provide schema define commands and data load "
+"commands yet. You need to use existing commands such as :doc:`/reference/"
+"commands/table_create`, :doc:`/reference/commands/column_create` and :doc:`/"
+"reference/commands/load`."
+msgstr ""
+"``sharding`` plugin doesn't provide schema define commands and data load "
+"commands yet. You need to use existing commands such as :doc:`/reference/"
+"commands/table_create`, :doc:`/reference/commands/column_create` and :doc:`/"
+"reference/commands/load`."
+
+msgid ""
+"``sharding`` plugin requires some rules against table and column. You need "
+"to follow these rules. They are described later."
+msgstr ""
+"``sharding`` plugin requires some rules against table and column. You need "
+"to follow these rules. They are described later."
+
+msgid "Glossary"
+msgstr "Glossary"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Logical table"
+msgstr "Logical table"
+
+msgid ""
+"It's a table that consists of shards. It doesn't exist in Groonga database. "
+"It just exists in our minds."
+msgstr ""
+"It's a table that consists of shards. It doesn't exist in Groonga database. "
+"It just exists in our minds."
+
+msgid "Logical table name"
+msgstr "Logical table name"
+
+msgid ""
+"The name of logical table. It's prefix of shard names. For example, ``Logs`` "
+"is a logical table name and ``Logs_20150814`` and ``Logs_20150815`` are "
+"shard names."
+msgstr ""
+"The name of logical table. It's prefix of shard names. For example, ``Logs`` "
+"is a logical table name and ``Logs_20150814`` and ``Logs_20150815`` are "
+"shard names."
+
+msgid "Shard"
+msgstr "Shard"
+
+msgid ""
+"It's a table that has records in a day or month.  One shard has only partial "
+"records."
+msgstr ""
+"It's a table that has records in a day or month.  One shard has only partial "
+"records."
+
+msgid ""
+"Shard name (= table name) must follow ``${LOGICAL_TABLE_NAME}_${YYYYMMDD}`` "
+"format or ``${LOGICAL_TABLE_NAME}_${YYYYMM}`` format. ``${LOGICAL_TABLE_NAME}"
+"`` is expanded to logical table name. ``${YYYYMMDD}`` is expanded to day. "
+"``${YYYYMM}`` is expanded to month."
+msgstr ""
+"Shard name (= table name) must follow ``${LOGICAL_TABLE_NAME}_${YYYYMMDD}`` "
+"format or ``${LOGICAL_TABLE_NAME}_${YYYYMM}`` format. ``${LOGICAL_TABLE_NAME}"
+"`` is expanded to logical table name. ``${YYYYMMDD}`` is expanded to day. "
+"``${YYYYMM}`` is expanded to month."
+
+msgid ""
+"For example, ``Logs_20150814`` is consists of ``Logs`` logical name and "
+"``20150814`` day."
+msgstr ""
+"For example, ``Logs_20150814`` is consists of ``Logs`` logical name and "
+"``20150814`` day."
+
+msgid "Rules"
+msgstr "Rules"
+
+msgid "TODO"
+msgstr "TODO"
+
+msgid "Commands"
+msgstr "Commands"
+
+msgid ":doc:`commands/logical_count`"
+msgstr ":doc:`commands/logical_count`"
+
+msgid ":doc:`commands/logical_parameters`"
+msgstr ":doc:`commands/logical_parameters`"
+
+msgid ":doc:`commands/logical_range_filter`"
+msgstr ":doc:`commands/logical_range_filter`"
+
+msgid ":doc:`commands/logical_select`"
+msgstr ":doc:`commands/logical_select`"
+
+msgid ":doc:`commands/logical_shard_list`"
+msgstr ":doc:`commands/logical_shard_list`"
+
+msgid ":doc:`commands/logical_table_remove`"
+msgstr ":doc:`commands/logical_table_remove`"

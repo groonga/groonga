@@ -1,0 +1,75 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2019-09-26 09:22+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "AlmaLinux"
+msgstr ""
+
+msgid ""
+"This section describes how to install Groonga related RPM packages on "
+"AlmaLinux OS. You can install them by ``dnf``."
+msgstr ""
+"このセクションではAlmaLinux OS上でGroonga関連のRPMパッケージをインストールす"
+"る方法を説明します。これらのパッケージは ``dnf`` でインストールできます。"
+
+msgid "We distribute only 64-bit packages."
+msgstr "64-bit用のパッケージのみ配布しています。"
+
+msgid "AlmaLinux 8"
+msgstr ""
+
+msgid "Install::"
+msgstr "インストール::"
+
+msgid "Build from source"
+msgstr "ソースからビルド"
+
+msgid "Install required packages to build Groonga::"
+msgstr "Groongaをビルドするために必要なパッケージをインストールします::"
+
+msgid "Download source::"
+msgstr "ソースをダウンロードします::"
+
+msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
+msgstr ""
+"configureを実行します（ ``configure`` のオプションについては :ref:`source-"
+"configure` を参照してください）::"
+
+msgid "Build::"
+msgstr "ビルド::"
+
+msgid ""
+"``groonga`` package is the minimum set of fulltext search engine. If you "
+"want to use Groonga for server use, you can install additional preconfigured "
+"packages."
+msgstr ""
+"``groonga`` パッケージは全文検索のための最小構成パッケージです。Groongaをサー"
+"バー用途で使うなら、設定済みの追加パッケージをインストールすることができま"
+"す。"
+
+msgid "There are two packages for server use."
+msgstr "サーバー用途のための2つのパッケージがあります。"
+
+msgid "groonga-httpd (nginx and HTTP protocol based server package)"
+msgstr "groonga-httpd (nginxを元にしたHTTPサーバー)"
+
+msgid "groonga-server-gqtp (GQTP protocol based server package)"
+msgstr "groonga-server-gqtp (GQTPサーバー)"
+
+msgid "See :doc:`/server` section about details."
+msgstr "詳細は :doc:`/server` を参照してください。"

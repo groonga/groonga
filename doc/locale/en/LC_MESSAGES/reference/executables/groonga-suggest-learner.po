@@ -1,0 +1,117 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "groonga-suggest-learner"
+msgstr "groonga-suggest-learner"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"groonga-suggest-learner is a program to learn suggest result from data which "
+"derived from groonga-suggest-httpd. Usually, it is used with groonga-suggest-"
+"httpd, but It is allowed to launch standalone. In such a case, groonga-"
+"suggest-learner loads data from log directory."
+msgstr ""
+"groonga-suggest-learner is a program to learn suggest result from data which "
+"derived from groonga-suggest-httpd. Usually, it is used with groonga-suggest-"
+"httpd, but It is allowed to launch standalone. In such a case, groonga-"
+"suggest-learner loads data from log directory."
+
+msgid "Synopsis"
+msgstr "Synopsis"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid ""
+"groonga-suggest-leaner supports the two way of learning data. One is "
+"learning data from groonga-suggest-httpd, the other is learning data from "
+"already existing log files."
+msgstr ""
+"groonga-suggest-leaner supports the two way of learning data. One is "
+"learning data from groonga-suggest-httpd, the other is learning data from "
+"already existing log files."
+
+msgid "Learning data from groonga-suggest-httpd"
+msgstr "Learning data from groonga-suggest-httpd"
+
+msgid "Execute groonga-suggest-learner.::"
+msgstr "Execute groonga-suggest-learner.::"
+
+msgid "Learning data from log files"
+msgstr "Learning data from log files"
+
+msgid "Execute groonga-suggest-learner with ``-l`` option."
+msgstr "Execute groonga-suggest-learner with ``-l`` option."
+
+msgid "Here is the sample to load log data under ``logs`` directory::"
+msgstr "Here is the sample to load log data under ``logs`` directory::"
+
+msgid "Options"
+msgstr "Options"
+
+msgid "Uses ``<endpoint>`` as the receiver endpoint."
+msgstr "Uses ``<endpoint>`` as the receiver endpoint."
+
+msgid "Uses ``<endpoint>`` as the sender endpoint."
+msgstr "Uses ``<endpoint>`` as the sender endpoint."
+
+msgid "Runs as a daemon."
+msgstr "Runs as a daemon."
+
+msgid "Reads logs from ``<directory>``."
+msgstr "Reads logs from ``<directory>``."
+
+msgid "Outputs log to ``<path>``."
+msgstr "Outputs log to ``<path>``."
+
+msgid ""
+"Uses ``<level>`` for log level. ``<level>`` must be between 1 and 9. Larger "
+"level outputs more logs."
+msgstr ""
+"Uses ``<level>`` for log level. ``<level>`` must be between 1 and 9. Larger "
+"level outputs more logs."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "There is only one required parameter."
+msgstr "There is only one required parameter."
+
+msgid "``database_path``"
+msgstr "``database_path``"
+
+msgid "Specifies the path to a groonga database."
+msgstr "Specifies the path to a groonga database."
+
+msgid "Related tables"
+msgstr "Related tables"
+
+msgid ""
+"Here is the list of table which learned data is stored. If you specify "
+"``query`` as dataset name, following ``_DATASET`` suffix are replaced. Thus, "
+"``event_query`` table is used."
+msgstr ""
+"Here is the list of table which learned data is stored. If you specify "
+"``query`` as dataset name, following ``_DATASET`` suffix are replaced. Thus, "
+"``event_query`` table is used."
+
+msgid "event_DATASET"
+msgstr "event_DATASET"

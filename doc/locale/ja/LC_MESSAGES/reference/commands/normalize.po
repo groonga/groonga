@@ -1,0 +1,228 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``normalize``"
+msgstr ""
+
+msgid "This command is an experimental feature."
+msgstr "このコマンドは実験的な機能です。"
+
+msgid "This command may be changed in the future."
+msgstr "このコマンドは将来的に変更されるかもしれません。"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``normalize`` command normalizes text by the specified normalizer."
+msgstr ""
+"``normalize`` コマンドは指定したノーマライザーでテキストを正規化します。"
+
+msgid ""
+"There is no need to create table to use ``normalize`` command. It is useful "
+"for you to check the results of normalizer."
+msgstr ""
+"``normalize`` コマンドを使うのにテーブルを作成する必要はありません。このコマ"
+"ンドは、ノーマライザーの結果を確認するのに便利です。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes three parameters."
+msgstr "このコマンドの引数は3つです。"
+
+msgid "``normalizer`` and ``string`` are required. Others are optional::"
+msgstr "``normalizer`` と ``string`` が必須です。他は省略できます::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is a simple example of ``normalize`` command."
+msgstr "以下は ``normalize`` コマンドの簡単な使用例です。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes parameters of ``normalizer``."
+msgstr "このセクションでは ``normalizer`` の引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There are required parameters, ``normalizer`` and ``string``."
+msgstr "必須引数は二つあります。 ``normalizer`` と ``string`` です。"
+
+msgid "``normalizer``"
+msgstr ""
+
+msgid ""
+"Specifies the normalizer name. ``normalize`` command uses the normalizer "
+"that is named ``normalizer``."
+msgstr ""
+"ノーマライザー名を指定します。 ``normalize`` コマンドは ``normalizer`` で指定"
+"された名前のノーマライザーを使います。"
+
+msgid "See :doc:`/reference/normalizers` about built-in normalizers."
+msgstr ""
+"組み込みのノーマライザーの一覧は :doc:`/reference/normalizers` にあります。"
+
+msgid "Here is an example to use built-in ``NormalizerAuto`` normalizer."
+msgstr "以下は ``NormalizerAuto`` ノーマライザーを使う例です。"
+
+msgid "TODO"
+msgstr ""
+
+msgid ""
+"If you want to use other normalizers, you need to register additional "
+"normalizer plugin by :doc:`register` command. For example, you can use MySQL "
+"compatible normalizer by registering `groonga-normalizer-mysql <https://"
+"github.com/groonga/groonga-normalizer-mysql>`_."
+msgstr ""
+"他のノーマライザーを使いたい場合は、 :doc:`register` コマンドでノーマライザー"
+"プラグインを登録する必要があります。例えば、 `groonga-normalizer-mysql "
+"<https://github.com/groonga/groonga-normalizer-mysql>`_ を登録することでMySQL"
+"互換の正規化方法を使うことができます。"
+
+msgid "``string``"
+msgstr ""
+
+msgid "Specifies any string which you want to normalize."
+msgstr "正規化したい文字列を指定します。"
+
+msgid ""
+"If you want to include spaces in ``string``, you need to quote ``string`` by "
+"single quotation (``'``) or double quotation (``\"``)."
+msgstr ""
+"``string`` の中に文字列を含める場合は、シングルクォート（ ``'`` ）またはダブ"
+"ルクォート（ ``\"`` ）で ``string`` をクォートする必要があります。"
+
+msgid "Here is an example to use spaces in ``string``."
+msgstr "``string`` の中で空白を使う例です。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There are optional parameters."
+msgstr "いくつか省略可能な引数があります。"
+
+msgid "``flags``"
+msgstr ""
+
+msgid ""
+"Specifies a normalization customize options. You can specify multiple "
+"options separated by \"``|``\". For example, ``REMOVE_BLANK|WITH_TYPES``."
+msgstr ""
+"ノーマライズ処理をカスタマイズするオプションを指定します。「 ``|`` 」で区切っ"
+"て複数のオプションを指定することができます。例えば、 ``REMOVE_BLANK|"
+"WITH_TYPES`` というように指定できます。"
+
+msgid "Here are available flags."
+msgstr "指定可能なフラグは以下の通りです。"
+
+msgid "Flag"
+msgstr "フラグ"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "``NONE``"
+msgstr ""
+
+msgid "Just ignored."
+msgstr "無視されます。"
+
+msgid "``REMOVE_BLANK``"
+msgstr ""
+
+msgid "``WITH_TYPES``"
+msgstr ""
+
+msgid "``WITH_CHECKS``"
+msgstr ""
+
+msgid ""
+"If we specify this flag, Groonga output position of character before "
+"normalizing. Note that these positions of character before normalizing are a "
+"relative position against a previous character."
+msgstr ""
+"このフラグを指定した場合、Groongaは、ノーマライズ前の文字の位置を出力します。"
+"これらのノーマライズ前の文字の位置は、一つ前の文字との相対位置であることに注"
+"意してください。"
+
+msgid "``REMOVE_TOKENIZED_DELIMITER``"
+msgstr ""
+
+msgid "Here is an example that uses ``REMOVE_BLANK``."
+msgstr "以下は ``REMOVE_BLANK`` を使った例です。"
+
+msgid "Here is an example that uses ``WITH_TYPES``."
+msgstr "以下は ``WITH_TYPES`` を使った例です。"
+
+msgid "Here is an example that uses ``WITH_CHECKS``."
+msgstr "以下は ``WITH_CHECKS`` を使った例です。"
+
+msgid "Here is an example that uses ``REMOVE_TOKENIZED_DELIMITER``."
+msgstr "以下は ``REMOVE_TOKENIZED_DELIMITER`` を使った例です。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "``HEADER``"
+msgstr ""
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "``normalized_text``"
+msgstr ""
+
+msgid "``normalized_text`` is an object that has the following attributes."
+msgstr ""
+"``normalized_text`` はオブジェクトです。このオブジェクトは以下の属性を持って"
+"います。"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "``normalized``"
+msgstr ""
+
+msgid "The normalized text."
+msgstr "正規化されたテキスト。"
+
+msgid "``types``"
+msgstr ""
+
+msgid ""
+"An array of types of the normalized text. The N-th ``types`` shows the type "
+"of the N-th character in ``normalized``."
+msgstr ""
+"正規化されたテキストのtype(文字種別)の配列です。N番目の ``types`` は正規化さ"
+"れたテキストのN番目の文字のtype(文字種別)を示しています。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/normalizers`"
+msgstr ""

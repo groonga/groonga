@@ -1,0 +1,35 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2016-03-23 13:57+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Repository"
+msgstr "リポジトリ"
+
+msgid ""
+"There is `the repository of Groonga on GitHub <https://github.com/groonga/"
+"groonga>`_. If you want to check-out Groonga, type the below command::"
+msgstr ""
+"Groongaのリポジトリは `GitHub <https://github.com/groonga/groonga>`_ 上にあり"
+"ます。次のコマンドでcloneできます。"
+
+msgid ""
+"There is `the list of related projects of Groonga <https://github.com/"
+"groonga>`_ (grntest, fluent-plugin-groonga and so on)."
+msgstr ""
+"`Groonga関係のプロジェクト（grntest, fluent-plugin-groongaなど） <https://"
+"github.com/groonga>`_ のリストはリンク先をごらんください。"

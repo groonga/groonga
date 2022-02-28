@@ -1,0 +1,121 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "パラメータ"
+msgstr ""
+
+msgid "戻り値"
+msgstr ""
+
+msgid "``grn_thread_*``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "Groonga provides thread related APIs with ``grn_thread_`` prefix."
+msgstr "スレッド関連のAPIには ``grn_thread_`` プレフィックスがついています。"
+
+msgid "Normally, you don't need to use these APIs."
+msgstr "通常、このAPIを使う必要はありません。"
+
+msgid "You may want to use these APIs when you write a Groonga server."
+msgstr "Groongaサーバーを実装するときにこのAPIを使いたくなるかもしれません。"
+
+msgid "Example"
+msgstr "例"
+
+msgid ""
+"Here is a real word use case of ``grn_thread_*`` APIs by :doc:`/reference/"
+"executables/groonga`. :doc:`/reference/executables/groonga` increases its "
+"thread pool size when the max number of threads is increased. :doc:`/"
+"reference/executables/groonga` decreases its thread pool size and stops too "
+"many threads when the max number of threads is decreased."
+msgstr ""
+"以下は、 :doc:`/reference/executables/groonga` が実際に使っている "
+"``grn_thread_*`` APIの使い方です。 :doc:`/reference/executables/groonga` は最"
+"大スレッド数を増やすと、スレッドプールのサイズを増やします。一方、 :doc:`/"
+"reference/executables/groonga` は最大スレッド数を減らすと、スレッドプールのサ"
+"イズを減らします。もし、すでに減少後のスレッドプールのサイズ以上のスレッドが"
+"動いていたらそれらを止めます。"
+
+msgid "Reference"
+msgstr "リファレンス"
+
+msgid "It's the type of function that returns the max number of threads."
+msgstr "最大スレッド数を返す関数の型です。"
+
+msgid "It's the type of function that sets the max number of threads."
+msgstr "最大スレッド数を設定する関数の型です。"
+
+msgid "It returns the max number of threads."
+msgstr "最大スレッド数を返します。"
+
+msgid ""
+"If :c:type:`grn_thread_get_limit_func` isn't set by :c:func:"
+"`grn_thread_set_get_limit_func()`, it always returns ``0``."
+msgstr ""
+":c:func:`grn_thread_set_get_limit_func()` で :c:type:"
+"`grn_thread_get_limit_func` を設定していない場合は、常に ``0`` を返します。"
+
+msgid "The max number of threads or ``0``."
+msgstr "最大スレッド数または ``0`` 。"
+
+msgid "It sets the max number of threads."
+msgstr "最大スレッド数を設定します。"
+
+msgid ""
+"If :c:type:`grn_thread_set_limit_func` isn't set by :c:func:"
+"`grn_thread_set_set_limit_func()`, it does nothing."
+msgstr ""
+":c:func:`grn_thread_set_set_limit_func()` で :c:type:"
+"`grn_thread_set_limit_func` を設定していない場合はなにもしません。"
+
+msgid "The new max number of threads."
+msgstr "新しい最大スレッド数。"
+
+msgid "It sets the custom function that returns the max number of threads."
+msgstr "最大スレッド数を返すカスタム関数を設定します。"
+
+msgid ""
+"``data`` is passed to ``func`` when ``func`` is called from :c:func:"
+"`grn_thread_get_limit()`."
+msgstr ""
+"``data`` は :c:func:`grn_thread_get_limit()` が ``func`` を呼ぶときに "
+"``func`` に渡されます。"
+
+msgid "The custom function that returns the max number of threads."
+msgstr "最大スレッド数を返すカスタム関数。"
+
+msgid "An user data to be passed to ``func`` when ``func`` is called."
+msgstr "``func`` が呼ばれるときに ``func`` に渡されるユーザーのためのデータ。"
+
+msgid "It sets the custom function that sets the max number of threads."
+msgstr "最大スレッド数を設定するカスタム関数を設定します。"
+
+msgid ""
+"``data`` is passed to ``func`` when ``func`` is called from :c:func:"
+"`grn_thread_set_limit()`."
+msgstr ""
+"``data`` は :c:func:`grn_thread_set_limit()` が ``func`` を呼ぶときに "
+"``func`` に渡されます。"
+
+msgid "The custom function that sets the max number of threads."
+msgstr "最大スレッド数を設定するカスタム関数。"

@@ -1,0 +1,127 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``column_rename``"
+msgstr "``column_rename``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "``column_rename`` command renames a column."
+msgstr "``column_rename`` command renames a column."
+
+msgid ""
+"It is a light operation. It just changes a relationship between name and the "
+"column object. It doesn't copy column values."
+msgstr ""
+"It is a light operation. It just changes a relationship between name and the "
+"column object. It doesn't copy column values."
+
+msgid ""
+"It is a dangerous operation. You must stop all operations including read "
+"operations while you run ``column_rename``. If the following case is "
+"occurred, Groonga process may be crashed:"
+msgstr ""
+"It is a dangerous operation. You must stop all operations including read "
+"operations while you run ``column_rename``. If the following case is "
+"occurred, Groonga process may be crashed:"
+
+msgid ""
+"Starts an operation (like ``select``) that accesses the column to be renamed "
+"by the current column name. The current column name is called as ``the old "
+"column name`` in the below because the column name is renamed."
+msgstr ""
+"Starts an operation (like ``select``) that accesses the column to be renamed "
+"by the current column name. The current column name is called as ``the old "
+"column name`` in the below because the column name is renamed."
+
+msgid "Runs ``column_rename``. The ``select`` is still running."
+msgstr "Runs ``column_rename``. The ``select`` is still running."
+
+msgid ""
+"The ``select`` accesses the column to be renamed by the old column name. But "
+"the ``select`` can't find the column by the old name because the column has "
+"been renamed to the new column name. It may crash the Groonga process."
+msgstr ""
+"The ``select`` accesses the column to be renamed by the old column name. But "
+"the ``select`` can't find the column by the old name because the column has "
+"been renamed to the new column name. It may crash the Groonga process."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "This command takes three parameters."
+msgstr "This command takes three parameters."
+
+msgid "All parameters are required::"
+msgstr "All parameters are required::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Here is a simple example of ``column_rename`` command."
+msgstr "Here is a simple example of ``column_rename`` command."
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "This section describes parameters of ``column_rename``."
+msgstr "This section describes parameters of ``column_rename``."
+
+msgid "Required parameters"
+msgstr "Required parameters"
+
+msgid "All parameters are required."
+msgstr "All parameters are required."
+
+msgid "``table``"
+msgstr "``table``"
+
+msgid "Specifies the name of table that has the column to be renamed."
+msgstr "Specifies the name of table that has the column to be renamed."
+
+msgid "``name``"
+msgstr "``name``"
+
+msgid "Specifies the column name to be renamed."
+msgstr "Specifies the column name to be renamed."
+
+msgid "``new_name``"
+msgstr "``new_name``"
+
+msgid "Specifies the new column name."
+msgstr "Specifies the new column name."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "``HEADER``"
+msgstr "``HEADER``"
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr "See :doc:`/reference/command/output_format` about ``HEADER``."
+
+msgid "``SUCCEEDED_OR_NOT``"
+msgstr "``SUCCEEDED_OR_NOT``"
+
+msgid "It is ``true`` on success, ``false`` otherwise."
+msgstr "It is ``true`` on success, ``false`` otherwise."

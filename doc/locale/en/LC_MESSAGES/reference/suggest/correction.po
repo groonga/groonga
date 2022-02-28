@@ -1,0 +1,219 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Correction"
+msgstr "Correction"
+
+msgid "This section describes about the following correction features:"
+msgstr "This section describes about the following correction features:"
+
+msgid "How it works"
+msgstr "How it works"
+
+msgid "How to use"
+msgstr "How to use"
+
+msgid "How to learn"
+msgstr "How to learn"
+
+msgid "The correction feature uses three searches to compute corrected words:"
+msgstr "The correction feature uses three searches to compute corrected words:"
+
+msgid "Cooccurrence search against learned data."
+msgstr "Cooccurrence search against learned data."
+
+msgid "Similar search against registered words. (optional)"
+msgstr "Similar search against registered words. (optional)"
+
+msgid "Cooccurrence search"
+msgstr "Cooccurrence search"
+
+msgid ""
+"Cooccurrence search can find registered words from user's wrong input. It "
+"uses user submit sequences that will be learned from query logs, access logs "
+"and so on."
+msgstr ""
+"Cooccurrence search can find registered words from user's wrong input. It "
+"uses user submit sequences that will be learned from query logs, access logs "
+"and so on."
+
+msgid "For example, there are the following user submissions:"
+msgstr "For example, there are the following user submissions:"
+
+msgid "query"
+msgstr "query"
+
+msgid "time"
+msgstr "time"
+
+msgid "serach (typo!)"
+msgstr "serach (typo!)"
+
+msgid "2011-08-10T22:20:50+09:00"
+msgstr "2011-08-10T22:20:50+09:00"
+
+msgid "search (fixed!)"
+msgstr "search (fixed!)"
+
+msgid "2011-08-10T22:20:52+09:00"
+msgstr "2011-08-10T22:20:52+09:00"
+
+msgid ""
+"Groonga creates the following correction pair from the above submissions:"
+msgstr ""
+"Groonga creates the following correction pair from the above submissions:"
+
+msgid "input"
+msgstr "input"
+
+msgid "corrected word"
+msgstr "corrected word"
+
+msgid "serach"
+msgstr "serach"
+
+msgid "search"
+msgstr "search"
+
+msgid ""
+"Groonga treats continuous submissions within a minute as input correction by "
+"user. Not submitted user input sequence between two submissions isn't used "
+"as learned data for correction."
+msgstr ""
+"Groonga treats continuous submissions within a minute as input correction by "
+"user. Not submitted user input sequence between two submissions isn't used "
+"as learned data for correction."
+
+msgid ""
+"If an user inputs \"serach\" and cooccurrence search returns \"search\" "
+"because \"serach\" is in input column and corresponding corrected word "
+"column value is \"search\"."
+msgstr ""
+"If an user inputs \"serach\" and cooccurrence search returns \"search\" "
+"because \"serach\" is in input column and corresponding corrected word "
+"column value is \"search\"."
+
+msgid "Similar search"
+msgstr "Similar search"
+
+msgid ""
+"Similar search can find registered words that has one or more the same "
+"tokens as user input. TokenBigram tokenizer is used for tokenization because "
+"suggest dataset schema created by :doc:`/reference/executables/groonga-"
+"suggest-create-dataset` uses TokenBigram tokenizer as the default tokenizer."
+msgstr ""
+"Similar search can find registered words that has one or more the same "
+"tokens as user input. TokenBigram tokenizer is used for tokenization because "
+"suggest dataset schema created by :doc:`/reference/executables/groonga-"
+"suggest-create-dataset` uses TokenBigram tokenizer as the default tokenizer."
+
+msgid ""
+"For example, there is a registered query \"search engine\". An user can find "
+"\"search engine\" by \"web search service\", \"sound engine\" and so on. "
+"Because \"search engine\" and \"web search engine\" have the same token "
+"\"search\" and \"search engine\" and \"sound engine\" have the same token "
+"\"engine\"."
+msgstr ""
+"For example, there is a registered query \"search engine\". An user can find "
+"\"search engine\" by \"web search service\", \"sound engine\" and so on. "
+"Because \"search engine\" and \"web search engine\" have the same token "
+"\"search\" and \"search engine\" and \"sound engine\" have the same token "
+"\"engine\"."
+
+msgid ""
+"\"search engine\" is tokenized to \"search\" and \"engine\" tokens. "
+"(Groonga's TokenBigram tokenizer doesn't tokenize two characters for "
+"continuous alphabets and continuous digits for reducing search noise. "
+"TokenBigramSplitSymbolAlphaDigit tokenizer should be used to ensure "
+"tokenizing to two characters.) \"web search service\" is tokenized to "
+"\"web\", \"search\" and \"service\". \"sound engine\" is tokenized to "
+"\"sound\" and \"engine\"."
+msgstr ""
+"\"search engine\" is tokenized to \"search\" and \"engine\" tokens. "
+"(Groonga's TokenBigram tokenizer doesn't tokenize two characters for "
+"continuous alphabets and continuous digits for reducing search noise. "
+"TokenBigramSplitSymbolAlphaDigit tokenizer should be used to ensure "
+"tokenizing to two characters.) \"web search service\" is tokenized to "
+"\"web\", \"search\" and \"service\". \"sound engine\" is tokenized to "
+"\"sound\" and \"engine\"."
+
+msgid ""
+"Groonga provides :doc:`/reference/commands/suggest` command to use "
+"correction. `--type correct` option requests corrections."
+msgstr ""
+"Groonga provides :doc:`/reference/commands/suggest` command to use "
+"correction. `--type correct` option requests corrections."
+
+msgid ""
+"For example, here is an command to get correction results by \"saerch\":"
+msgstr ""
+"For example, here is an command to get correction results by \"saerch\":"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "How it learns"
+msgstr "How it learns"
+
+msgid ""
+"Cooccurrence search uses learned data. They are based on query logs, access "
+"logs and so on. To create learned data, groonga needs user submit inputs "
+"with time stamp."
+msgstr ""
+"Cooccurrence search uses learned data. They are based on query logs, access "
+"logs and so on. To create learned data, groonga needs user submit inputs "
+"with time stamp."
+
+msgid ""
+"For example, an user wants to search by \"search\" but the user has typo "
+"\"saerch\" before inputs the correct query. The user inputs the query with "
+"the following sequence:"
+msgstr ""
+"For example, an user wants to search by \"search\" but the user has typo "
+"\"saerch\" before inputs the correct query. The user inputs the query with "
+"the following sequence:"
+
+msgid "2011-08-10T13:33:23+09:00: s"
+msgstr "2011-08-10T13:33:23+09:00: s"
+
+msgid "2011-08-10T13:33:23+09:00: sa"
+msgstr "2011-08-10T13:33:23+09:00: sa"
+
+msgid "2011-08-10T13:33:24+09:00: sae"
+msgstr "2011-08-10T13:33:24+09:00: sae"
+
+msgid "2011-08-10T13:33:24+09:00: saer"
+msgstr "2011-08-10T13:33:24+09:00: saer"
+
+msgid "2011-08-10T13:33:24+09:00: saerc"
+msgstr "2011-08-10T13:33:24+09:00: saerc"
+
+msgid "2011-08-10T13:33:25+09:00: saerch (submit!)"
+msgstr "2011-08-10T13:33:25+09:00: saerch (submit!)"
+
+msgid "2011-08-10T13:33:29+09:00: serch (correcting...)"
+msgstr "2011-08-10T13:33:29+09:00: serch (correcting...)"
+
+msgid "2011-08-10T13:33:30+09:00: search (submit!)"
+msgstr "2011-08-10T13:33:30+09:00: search (submit!)"
+
+msgid ""
+"Groonga can be learned from the input sequence by the following command::"
+msgstr ""
+"Groonga can be learned from the input sequence by the following command::"

@@ -1,0 +1,213 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``TokenBigram``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``TokenBigram`` is a bigram based tokenizer. It's recommended to use this "
+"tokenizer for most cases."
+msgstr ""
+"``TokenBigram`` はバイグラムベースのトークナイザーです。多くのケースでは、こ"
+"のトークナイザーを使うことをオススメします。"
+
+msgid ""
+"Bigram tokenize method tokenizes a text to two adjacent characters tokens. "
+"For example, ``Hello`` is tokenized to the following tokens:"
+msgstr ""
+"バイグラムというトークナイズ方法は、隣り合った2つの文字を1つのトークンとして"
+"テキストをトークナイズします。例えば、 ``Hello`` は次のトークンにトークナイズ"
+"します。"
+
+msgid "``He``"
+msgstr ""
+
+msgid "``el``"
+msgstr ""
+
+msgid "``ll``"
+msgstr ""
+
+msgid "``lo``"
+msgstr ""
+
+msgid ""
+"Bigram tokenize method is good for recall because you can find all texts by "
+"query consists of two or more characters."
+msgstr ""
+"バイグラムというトークナイズ方法は再現性に優れています。なぜなら、2文字以上の"
+"文字のクエリーに対してはすべてのテキストを見つけることができるからです。"
+
+msgid ""
+"In general, you can't find all texts by query consists of one character "
+"because one character token doesn't exist. But you can find all texts by "
+"query consists of one character in Groonga. Because Groonga find tokens that "
+"start with query by predictive search. For example, Groonga can find ``ll`` "
+"and ``lo`` tokens by ``l`` query."
+msgstr ""
+"一般的に、1文字のクエリーではすべてのテキストを見つけることはできません。なぜ"
+"なら、1つの文字のトークンが存在しないからです。しかし、Groongaでは1文字のクエ"
+"リーでもすべてのテキストを見つけることができます。なぜなら、Groongaは前方一致"
+"検索によりクエリーで指定した文字で始まるトークンをすべて見つけることができる"
+"からです。例えば、Groongaは ``l`` というクエリーから ``ll`` というトークンと "
+"``lo`` というトークンを見つけることができます。"
+
+msgid ""
+"Bigram tokenize method isn't good for precision because you can find texts "
+"that includes query in word. For example, you can find ``world`` by ``or``. "
+"This is more sensitive for ASCII only languages rather than non-ASCII "
+"languages. ``TokenBigram`` has solution for this problem described in the "
+"below."
+msgstr ""
+"バイグラムというトークナイズ方法は適合率はそれほど優れていません。なぜなら、"
+"単語の一部にクエリーが含まれていればすべてのテキストが見つかってしまうからで"
+"す。例えば、 ``or`` で ``world`` が見つかります。これは非ASCIIを使う言語より"
+"ASCIIのみを使う言語で顕著です。以降の説明で触れる通り、 ``TokenBigram`` はこ"
+"の問題を解決しています。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``TokenBigram`` hasn't parameter::"
+msgstr "``TokenBigram`` には、引数がありません。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"``TokenBigram`` behavior is different when it's worked with any :doc:`/"
+"reference/normalizers`."
+msgstr ""
+"``TokenBigram`` の挙動は :doc:`/reference/normalizers` を使うかどうかで変わり"
+"ます。"
+
+msgid ""
+"If no normalizer is used, ``TokenBigram`` uses pure bigram (all tokens "
+"except the last token have two characters) tokenize method:"
+msgstr ""
+"ノーマライザーを使っていない場合は ``TokenBigram`` は純粋なバイグラム（最後の"
+"トークンをのぞいてすべてのトークンを2文字にする）のトークナイズ方法を使いま"
+"す。"
+
+msgid ""
+"If normalizer is used, ``TokenBigram`` uses white-space-separate like "
+"tokenize method for ASCII characters. ``TokenBigram`` uses bigram tokenize "
+"method for non-ASCII characters."
+msgstr ""
+"ノーマライザーを使っている場合は ``TokenBigram`` はASCIIの文字には空白区切り"
+"のようなトークナイズ方法を使います。非ASCII文字にはバイグラムのトークナイズ方"
+"法を使います。"
+
+msgid ""
+"You may be confused with this combined behavior. But it's reasonable for "
+"most use cases such as English text (only ASCII characters) and Japanese "
+"text (ASCII and non-ASCII characters are mixed)."
+msgstr ""
+"もしかしたら、複数の方法が混ざったこの挙動はわかりにくいかもしれません。しか"
+"し、英語のテキスト（ASCII文字列のみ）や日本語テキスト（ASCII文字列と非ASCII文"
+"字列が混ざっている）ような多くのユースケースでは合理的な方法です。"
+
+msgid ""
+"Most languages consists of only ASCII characters use white-space for word "
+"separator. White-space-separate tokenize method is suitable for the case."
+msgstr ""
+"ASCII文字しか使わない多くの言語は単語の区切りに空白文字を使っています。このよ"
+"うなケースに空白区切りのトークナイズ方法は適切です。"
+
+msgid ""
+"Languages consists of non-ASCII characters don't use white-space for word "
+"separator. Bigram tokenize method is suitable for the case."
+msgstr ""
+"非ASCII文字を使う言語では単語の区切りに空白文字を使いません。このケースにはバ"
+"イグラムなトークナイズ方法は適切です。"
+
+msgid "Mixed tokenize method is suitable for mixed language case."
+msgstr ""
+"複数の言語が混ざっている場合は、複数の方法を組み合わせたトークナイズ方法が適"
+"切です。"
+
+msgid ""
+"If you want to use bigram tokenize method for ASCII character, see "
+"``TokenBigramSplitXXX`` type tokenizers such as :ref:`token-bigram-split-"
+"symbol-alpha`."
+msgstr ""
+"ASCII文字にバイグラムなトークナイズ方法を使いたい場合は :ref:`token-bigram-"
+"split-symbol-alpha` のような ``TokenBigramSplitXXX`` というトークナイザーを参"
+"照してください。"
+
+msgid "Let's confirm ``TokenBigram`` behavior by example."
+msgstr "例を使いながら ``TokenBigram`` の挙動を確認しましょう。"
+
+msgid ""
+"``TokenBigram`` uses one or more white-spaces as token delimiter for ASCII "
+"characters:"
+msgstr ""
+"``TokenBigram`` はASCII文字には1つ以上の空白文字をトークンの区切りとして使い"
+"ます。"
+
+msgid ""
+"``TokenBigram`` uses character type change as token delimiter for ASCII "
+"characters. Character type is one of them:"
+msgstr ""
+"``TokenBigram`` はASCII文字には文字の種類が変わったところをトークンの区切りと"
+"します。文字の種類は次のどれかです。"
+
+msgid "Alphabet"
+msgstr "アルファベット"
+
+msgid "Digit"
+msgstr "数字"
+
+msgid "Symbol (such as ``(``, ``)`` and ``!``)"
+msgstr "記号（たとえば ``(`` 、 ``)`` 、 ``!`` など）"
+
+msgid "Hiragana"
+msgstr "ひらがな"
+
+msgid "Katakana"
+msgstr "カタカナ"
+
+msgid "Kanji"
+msgstr "漢字"
+
+msgid "Others"
+msgstr "その他"
+
+msgid "The following example shows two token delimiters:"
+msgstr "次の例は2つのトークン区切りを示しています。"
+
+msgid "at between ``100`` (digits) and ``cents`` (alphabets)"
+msgstr "``100`` （数字）と ``cents`` （アルファベット）の間のところ"
+
+msgid "at between ``cents`` (alphabets) and ``!!!`` (symbols)"
+msgstr "``cents`` （アルファベット）と ``!!!`` （記号）の間のところ"
+
+msgid ""
+"Here is an example that ``TokenBigram`` uses bigram tokenize method for non-"
+"ASCII characters."
+msgstr ""
+"以下は ``TokenBigram`` が非ASCII文字にはトークナイズ方法としてバイグラムを使"
+"う例です。"

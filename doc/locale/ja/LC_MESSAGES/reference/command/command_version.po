@@ -1,0 +1,150 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Command version"
+msgstr "コマンドバージョン"
+
+msgid "概要"
+msgstr ""
+
+msgid ""
+"Groonga1.1からコマンドバージョンという概念が導入されます。コマンドバージョン"
+"は、selectやloadなどのGroongaのコマンドの仕様の互換性を表します。Groongaパッ"
+"ケージのバージョンが新しくなったとしても、同一のコマンドバージョンが使用可能"
+"であるなら、すべてのコマンドについて互換性が保証されます。コマンドバージョン"
+"が異なれば、同じ名前のコマンドであっても、動作に互換性がない可能性がありま"
+"す。"
+msgstr ""
+
+msgid ""
+"あるバージョンのGroongaは、二つのコマンドバージョンを同時にサポートするように"
+"なります。 使用するコマンドバージョンは、groongaを起動する際のコマンドライン"
+"オプションないしコンフィグファイルにdefault-commnad-versionパラメータを与える"
+"ことによって指定できます。また、個々のコマンドを実行する際に、command_version"
+"パラメータを与えることによっても指定することができます。"
+msgstr ""
+
+msgid ""
+"コマンドバージョンは1からはじまり、更新されるたびに1ずつ大きくなります。現状"
+"のGroongaのコマンドの仕様はcommand-version 1という扱いになります。次回提供す"
+"るGroongaは、command-version 1とcommand-version 2の二つをサポートすることにな"
+"ります。"
+msgstr ""
+
+msgid "バージョンの位置づけ"
+msgstr ""
+
+msgid ""
+"あるバージョンのGroongaにおいてサポートされるコマンドバージョンは、develop, "
+"stable,deprecatedのいずれかの位置づけとなります。"
+msgstr ""
+
+msgid "develop"
+msgstr ""
+
+msgid "まだ開発中であり、仕様が変更される可能性があります。"
+msgstr ""
+
+msgid "stable"
+msgstr ""
+
+msgid ""
+"使用可能であり仕様も安定しています。その時点で使用することが推奨されます。"
+msgstr ""
+
+msgid "deprecated"
+msgstr ""
+
+msgid ""
+"使用可能であり仕様も安定していますが、廃止予定であり使用が推奨されません。"
+msgstr ""
+
+msgid ""
+"あるバージョンのGroongaがサポートする二つのコマンドバージョンのうち、いずれか"
+"一つが必ずstableの位置づけとなります。残りの一つは、developないしdeprecatedと"
+"なります。"
+msgstr ""
+
+msgid ""
+"たとえば下記のようにGroongaのサポートするコマンドバージョンは推移します。::"
+msgstr ""
+
+msgid ""
+"あるコマンドバージョンははじめにdevelop扱いとしてリリースされ、やがてstableに"
+"移行します。 その後二世代経過するとそのコマンドバージョンはdeprecated扱いとな"
+"ります。さらに次のコマンドバージョンがリリースされると、deprecatedだったコマ"
+"ンドバージョンはサポート対象外となります。"
+msgstr ""
+
+msgid ""
+"default-commnad-versionパラメータやcommand_versionパラメータを指定せずに"
+"groongaコマンドを実行した際には、その時点でstableであるコマンドバージョンが指"
+"定されたものとみなします。"
+msgstr ""
+
+msgid ""
+"groongaプロセス起動時に、default-command-versionパラメータにstable扱いでない"
+"コマンドバージョンを指定した場合には、警告メッセージがログファイルに出力され"
+"ます。また、サポート範囲外のコマンドバージョンを指定した場合にはエラーとな"
+"り、プロセスは速やかに停止します。"
+msgstr ""
+
+msgid "コマンドバージョンの指定方法"
+msgstr ""
+
+msgid ""
+"コマンドバージョンの指定方法はgroonga実行モジュールの引数として指定する方法と"
+"各コマンドの引数として指定する方法があります。"
+msgstr ""
+
+msgid "default-command-versionパラメータ"
+msgstr ""
+
+msgid ""
+"groonga実行モジュールの引数としてdefault-command-versionパラメータを指定でき"
+"ます。 (configファイルの中に指定することも可能です)"
+msgstr ""
+
+msgid "実行例::"
+msgstr ""
+
+msgid ""
+"そのプロセスで実行するすべてのコマンドについて、デフォルトのコマンドバージョ"
+"ンとして指定されたバージョンを使用します。指定されたコマンドバージョンが"
+"stableであった場合にはなんのメッセージも表示されずそのまま起動します。指定さ"
+"れたコマンドバージョンがdevelopあるいはdeprecatedであった場合には、groonga."
+"logファイルに警告メッセージを出力します。指定されたコマンドバージョンがサポー"
+"ト対象外であった場合には標準エラー出力にエラーメッセージを出力し、プロセスは"
+"速やかに終了します。"
+msgstr ""
+
+msgid "command_versionパラメータ"
+msgstr ""
+
+msgid ""
+"select,loadなどのすべてのgroongaコマンドにcommand_versionが指定できます。"
+msgstr ""
+
+msgid ""
+"指定されたコマンドバージョンでコマンドを実行します。指定されたコマンドバー"
+"ジョンがサポート対象外であった場合にはエラーが返されます。command-versionが指"
+"定されなかった場合は、当該プロセス起動時にdefault-command-versionに指定した値"
+"が指定されたものとみなします。"
+msgstr ""

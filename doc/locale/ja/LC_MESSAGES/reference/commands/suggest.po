@@ -1,0 +1,297 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``suggest``"
+msgstr ""
+
+msgid ""
+"The suggest feature specification isn't stable. The specification may be "
+"changed."
+msgstr ""
+"サジェスト機能の仕様はまだ確定していません。仕様は変更される可能性がありま"
+"す。"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "suggest - returns completion, correction and/or suggestion for a query."
+msgstr "suggest - 指定されたクエリーに対する補完・補正・提案候補を返す。"
+
+msgid ""
+"The suggest command returns completion, correction and/or suggestion for a "
+"specified query."
+msgstr ""
+"suggestコマンドは指定されたクエリーに対する補完・補正・提案候補を返します。"
+
+msgid ""
+"See :doc:`/reference/suggest/introduction` about completion, correction and "
+"suggestion."
+msgstr ""
+"補完・補正・提案については :doc:`/reference/suggest/introduction` を参照して"
+"ください。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here are learned data for completion."
+msgstr "以下は補完用の学習データです。"
+
+msgid "Here are learned data for correction."
+msgstr "以下は補正用の学習データです。"
+
+msgid "Here are learned data for suggestion."
+msgstr "以下は提案用の学習データです。"
+
+msgid "Here is a completion example."
+msgstr "以下は補完例です。"
+
+msgid "Here is a correction example."
+msgstr "以下は補正例です。"
+
+msgid "Here is a suggestion example."
+msgstr "以下は提案例です。"
+
+msgid "Here is a mixed example."
+msgstr "以下は補完・補正・提案を混ぜた例です。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "Specifies what types are returned by the suggest command."
+msgstr "suggestコマンドでどの種類の候補を返すかを指定します。"
+
+msgid "Here are available types:"
+msgstr "指定できる種類は以下の通りです。"
+
+msgid "The suggest command does completion."
+msgstr "補完を実行します。"
+
+msgid "``complete``"
+msgstr ""
+
+msgid "The suggest command does correction."
+msgstr "補正を実行します。"
+
+msgid "``correct``"
+msgstr ""
+
+msgid "The suggest command does suggestion."
+msgstr "提案を実行します。"
+
+msgid ""
+"You can specify one or more types separated by ``|``. Here are examples:"
+msgstr ""
+"1つ以上の種類を指定できます。複数の種類を指定する場合は ``|`` で区切ります。"
+"以下が例です。:"
+
+msgid "It returns correction::"
+msgstr "補正候補を返します::"
+
+msgid "It returns correction and suggestion::"
+msgstr "補正候補と提案候補を返します::"
+
+msgid "It returns complete, correction and suggestion::"
+msgstr "補完候補と補正候補と提案候補を返します::"
+
+msgid "``types``"
+msgstr ""
+
+msgid ""
+"Specifies table name that has ``item_${DATA_SET_NAME}`` format. For example, "
+"``item_query`` is a table name if you created dataset by the following "
+"command::"
+msgstr ""
+"``item_${データセット名}`` というフォーマットのテーブル名を指定します。例え"
+"ば、以下のコマンドでデータセットを作成した場合はテーブル名として "
+"``item_query`` を指定します::"
+
+msgid "``table``"
+msgstr ""
+
+msgid ""
+"Specifies a column name that has furigana in Katakana in ``table`` table."
+msgstr ""
+"``table`` で指定したテーブルにあるふりがな情報を含むカラムを指定します。ふり"
+"がなはカタカナで指定します。"
+
+msgid "``column``"
+msgstr ""
+
+msgid "Specifies query for completion, correction and/or suggestion."
+msgstr "補完・補正・提案対象のクエリーを指定します。"
+
+msgid "``query``"
+msgstr ""
+
+msgid "Specifies sort key."
+msgstr "ソートキーを指定します。"
+
+msgid "Default:"
+msgstr ""
+
+msgid "``-_score``"
+msgstr ""
+
+msgid "``sortby``"
+msgstr ""
+
+msgid "Specifies output columns."
+msgstr "出力するカラムを指定します。"
+
+msgid "``_key,_score``"
+msgstr ""
+
+msgid "``output_columns``"
+msgstr ""
+
+msgid "Specifies returned records offset."
+msgstr "返されるレコードのオフセットを指定します。"
+
+msgid "``0``"
+msgstr ""
+
+msgid "``offset``"
+msgstr ""
+
+msgid "Specifies number of returned records."
+msgstr "返されるレコード数を指定します。"
+
+msgid "``10``"
+msgstr ""
+
+msgid "``limit``"
+msgstr ""
+
+msgid ""
+"Specifies threshold for item frequency. Returned records must have "
+"``_score`` that is greater than or equal to ``frequency_threshold``."
+msgstr ""
+"出現頻度に対する閾値を指定します。返されるレコードの ``_score`` 値は "
+"``frequency_threshold`` 以上になります。"
+
+msgid "``100``"
+msgstr ""
+
+msgid "``frequency_threshold``"
+msgstr ""
+
+msgid "``conditional_probability_threshold``"
+msgstr ""
+
+msgid ""
+"Specifies threshold for conditional probability. Conditional probability is "
+"used for learned data. It is probability of query submission when ``query`` "
+"is occurred. Returned records must have conditional probability that is "
+"greater than or equal to ``conditional_probability_threshold``."
+msgstr ""
+"条件付き確率に対する閾値を指定します。学習データに対して条件付き確率を使いま"
+"す。ここで使う条件付き確率は、入力した ``query`` と同じ入力があったときにクエ"
+"リが検索された確率です。返されるレコードの条件付き確率は "
+"``conditional_probability_threshold`` 以上になります。"
+
+msgid "``0.2``"
+msgstr ""
+
+msgid "Specifies whether optional prefix search is used or not in completion."
+msgstr "補完時に前方一致検索を実行するかどうかを指定します。"
+
+msgid "Here are available values:"
+msgstr "指定可能な値は以下の通りです。"
+
+msgid "Prefix search is always used."
+msgstr "常に前方一致検索を実行します。"
+
+msgid "``yes``"
+msgstr ""
+
+msgid "Prefix search is never used."
+msgstr "前方一致検索を実行しません。"
+
+msgid "``no``"
+msgstr ""
+
+msgid "Prefix search is used only when other search can't find any records."
+msgstr "他の検索でレコードが見つからない場合のみ前方一致検索を実行します。"
+
+msgid "``auto``"
+msgstr ""
+
+msgid "``prefix_search``"
+msgstr ""
+
+msgid "Specifies whether optional similar search is used or not in correction."
+msgstr "補正時に類似検索を実行するかどうかを指定します。"
+
+msgid "Similar search is always used."
+msgstr "常に類似検索を実行します。"
+
+msgid "Similar search is never used."
+msgstr "類似検索を実行しません。"
+
+msgid "Similar search is used only when other search can't find any records."
+msgstr "他の検索でレコードが見つからない場合のみ類似検索を実行します。"
+
+msgid "``similar_search``"
+msgstr ""
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "Here is a returned JSON format::"
+msgstr "返されるJSON形式は以下の通りです::"
+
+msgid "``type``"
+msgstr ""
+
+msgid "A type specified by ``types``."
+msgstr "``types`` で指定した値。"
+
+msgid "``candidate``"
+msgstr ""
+
+msgid "A candidate for completion, correction or suggestion."
+msgstr "補完・補正・提案候補。"
+
+msgid "``score of candidate``"
+msgstr "``score of candidate``"
+
+msgid ""
+"A score of corresponding ``candidate``. It means that higher score candidate "
+"is more likely candidate for completion, correction or suggestion. Returned "
+"candidates are sorted by ``score of candidate`` descending by default."
+msgstr ""
+"対応する ``candidate`` のスコアです。スコアが高いほど補完・補正・提案候補とし"
+"て有力という意味になります。デフォルトでは候補は ``score of candidate`` の降"
+"順でソートされています。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/suggest`"
+msgstr ":doc:`/reference/suggest`"
+
+msgid ":doc:`/reference/executables/groonga-suggest-create-dataset`"
+msgstr ""

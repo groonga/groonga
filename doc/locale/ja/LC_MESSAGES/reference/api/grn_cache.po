@@ -1,0 +1,168 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "パラメータ"
+msgstr ""
+
+msgid "戻り値"
+msgstr ""
+
+msgid "``grn_cache``"
+msgstr "``grn_cache``"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "This API is experimental."
+msgstr "このAPIは実験的です。"
+
+msgid ""
+"``grn_cache`` is a data store that keeps responses of :doc:`/reference/"
+"commands/select` command. It is not general use cache object. It is only "
+"for :doc:`/reference/commands/select` command."
+msgstr ""
+"``grn_cache`` は :doc:`/reference/commands/select` コマンドのレスポンスを保持"
+"するためのデータストアです。一般的なオブジェクトのキャッシュとして使うもので"
+"はありません。あくまで :doc:`/reference/commands/select` コマンドのためのもの"
+"です。"
+
+msgid ""
+"You can just change the current cache object by :c:func:"
+"`grn_cache_current_set()`. :doc:`/reference/commands/select` command "
+"response cache is done internally."
+msgstr ""
+":c:func:`grn_cache_current_set()` を使うことで現在のキャッシュオブジェクトを"
+"変更することができます。 :doc:`/reference/commands/select` コマンドのレスポン"
+"スが内部的に用いられます。"
+
+msgid ""
+":doc:`/reference/commands/select` command uses one global cache object. If "
+"you open multiple databases, the one cache is shared. It is an important "
+"problem."
+msgstr ""
+":doc:`/reference/commands/select` コマンドは、一つのグローバルキャッシュオブ"
+"ジェクトを利用します。もし複数のデータベースをオープンしていた場合、その"
+"キャッシュオブジェクトは共有されます。これは重要な問題です。"
+
+msgid ""
+"If you open multiple databases and use :doc:`/reference/commands/select` "
+"command, you need to use ``grn_cache`` object. It is :doc:`/reference/"
+"executables/groonga-httpd` case. If you open only one database or don't use :"
+"doc:`/reference/commands/select` command, you don't need to use "
+"``grn_cache`` object. It is `rroonga <http://ranguba.org/#about-rroonga>`_ "
+"case."
+msgstr ""
+"もし複数のデータベースを開き、 :doc:`/reference/commands/select` コマンドを使"
+"用するのであれば、 ``grn_cache`` オブジェクトを使う必要があります。 :doc:`/"
+"reference/executables/groonga-httpd` のようなケースが該当します。もし一つの"
+"データベースのみを開く場合や、 :doc:`/reference/commands/select` コマンドを使"
+"わない場合は、 ``grn_cache`` オブジェクトを使う必要はありません。 `Rroonga "
+"<http://ranguba.org/ja/#about-rroonga>`_ のようなケースです。"
+
+msgid "Example"
+msgstr "例"
+
+msgid "Here is an example that change the current cache object."
+msgstr "以下はキャッシュを変更する例です。"
+
+msgid "Reference"
+msgstr "リファレンス"
+
+msgid ""
+"It is an opaque cache object. You can create a ``grn_cache`` by :c:func:"
+"`grn_cache_open()` and free the created object by :c:func:"
+"`grn_cache_close()`."
+msgstr ""
+"``grn_cache`` は詳細を公開していないオブジェクトです。 :c:func:"
+"`grn_cache_open()` で作成し、 :c:func:`grn_cache_close()` で解放できます。"
+
+msgid "Creates a new cache object."
+msgstr "新規にキャッシュオブジェクトを作成します。"
+
+msgid ""
+"If memory allocation for the new cache object is failed, ``NULL`` is "
+"returned. Error information is stored into the ``ctx``."
+msgstr ""
+"新しいキャッシュオブジェクト作成のためのメモリ割り当てに失敗した場合、 "
+"``NULL`` を返します。エラー情報は ``ctx`` に格納されます。"
+
+msgid "The context."
+msgstr "その時点のコンテキスト。"
+
+msgid ""
+"A newly allocated cache object on success, ``NULL`` otherwise. The returned "
+"cache object must be freed by :c:func:`grn_cache_close()`."
+msgstr ""
+"新しいキャッシュオブジェクトの作成に成功した場合は ``NULL`` 以外の値を返しま"
+"す。このキャッシュオブジェクトは :c:func:`grn_cache_close()` で解放されなけれ"
+"ばなりません。"
+
+msgid "Frees resourses of the ``cache``."
+msgstr "``cache`` のリソースを解放。"
+
+msgid "The cache object to be freed."
+msgstr "キャッシュオブジェクトを解放する。"
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` otherwise."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
+
+msgid ""
+"Sets the cache object that is used in :doc:`/reference/commands/select` "
+"command."
+msgstr ""
+":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクトを"
+"設定します。"
+
+msgid ""
+"The cache object that is used in :doc:`/reference/commands/select` command."
+msgstr ""
+":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクト。"
+
+msgid ""
+"Gets the cache object that is used in :doc:`/reference/commands/select` "
+"command."
+msgstr ""
+":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクトを"
+"取得します。"
+
+msgid ""
+"The cache object that is used in :doc:`/reference/commands/select` command. "
+"It may be ``NULL``."
+msgstr ""
+":doc:`/reference/commands/select` コマンドで使われるキャッシュオブジェクト。 "
+"``NULL`` のこともあります。"
+
+msgid "Sets the max number of entries of the cache object."
+msgstr "キャッシュオブジェクトのエントリの最大数を設定します。"
+
+msgid "The cache object to be changed."
+msgstr "変更するキャッシュオブジェクト。"
+
+msgid "The new max number of entries of the cache object."
+msgstr "キャッシュオブジェクトの新しい最大エントリ数。"
+
+msgid "Gets the max number of entries of the cache object."
+msgstr "キャッシュオブジェクトのエントリの最大数を取得します。"
+
+msgid "The target cache object."
+msgstr "ターゲットキャッシュオブジェクト。"
+
+msgid "The max number of entries of the cache object."
+msgstr "キャッシュオブジェクトの最大エントリ数。"

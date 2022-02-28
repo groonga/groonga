@@ -1,0 +1,550 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``io_flush``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``io_flush`` flushes all changes in memory to disk explicitly. Normally, you "
+"don't need to use ``io_flush`` explicitly. Because flushing is done "
+"automatically by OS. And flushing by OS is effective."
+msgstr ""
+"``io_flush`` はメモリー上のすべての変更を明示的にディスクに書き出します。通"
+"常、明示的に ``io_flush`` を使う必要はありません。なぜなら、OSが自動的に書き"
+"出してくれるからです。また、OSが書き出した方が効率的だからです。"
+
+msgid ""
+"You need to use ``io_flush`` explicitly when your system may often crash "
+"unexpectedly or you may not shutdown your Groonga process in a normal way. "
+"(For example, using :doc:`shutdown` is a normal shutdown process.) It's "
+"better that you use ``io_flush`` after you change your Groonga database for "
+"the case. Here are commands that change your Groonga database:"
+msgstr ""
+"いくつか明示的に ``io_flush`` を使う必要があるケースがあります。1つは、システ"
+"ムが不意にクラッシュすることがよくあるケースです。もう1つは、Groongaプロセス"
+"を通常の終了プロセスで終了できない可能性があるケースです。（通常の終了プロセ"
+"スとは、例えば、 :doc:`shutdown` を使った終了プロセスです。）これらのケースで"
+"は、Groongaデータベースに変更を加えた後に ``io_flush`` を使うとよいです。以下"
+"はGroongaデータベースに変更を加えるコマンドのリストです。"
+
+msgid ":doc:`column_create`"
+msgstr ""
+
+msgid ":doc:`column_remove`"
+msgstr ""
+
+msgid ":doc:`column_rename`"
+msgstr ""
+
+msgid ":doc:`delete`"
+msgstr ""
+
+msgid ":doc:`load`"
+msgstr ""
+
+msgid ":doc:`logical_table_remove`"
+msgstr ""
+
+msgid ":doc:`object_remove`"
+msgstr ""
+
+msgid ":doc:`plugin_register`"
+msgstr ""
+
+msgid ":doc:`plugin_unregister`"
+msgstr ""
+
+msgid ":doc:`table_create`"
+msgstr ""
+
+msgid ":doc:`table_remove`"
+msgstr ""
+
+msgid ":doc:`table_rename`"
+msgstr ""
+
+msgid ":doc:`truncate`"
+msgstr ""
+
+msgid ""
+"If you're using :ref:`select-scorer` parameter in :doc:`select` to change "
+"existing column values, :doc:`select` is added to the above list."
+msgstr ""
+"もし、 :doc:`select` の :ref:`select-scorer` パラメーターをカラムの値を変更す"
+"るために使っているなら、 :doc:`select` もこのリストに入ります。"
+
+msgid ""
+"Note that ``io_flush`` may be a heavy process. If there are many changes in "
+"memory, flushing them to disk is a heavy process."
+msgstr ""
+"``io_flush`` は重い処理になる可能性があることに注意してください。もし、メモ"
+"リー上に多くの変更があるなら、それらをディスクに書き出す処理は重い処理になり"
+"ます。"
+
+msgid ""
+"``io_flush`` locks Groonga database while flushing. It means that you can't "
+"run the following commands while ``io_flush``:"
+msgstr ""
+"``io_flush`` はフラッシュ中はGroongaのデータベースをロックします。つまり、 "
+"``io_flush`` 中は次のコマンドを実行できないということです。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes three parameters."
+msgstr "このコマンドの引数は3つです。"
+
+msgid "All parameters are optional::"
+msgstr "すべての引数は省略可能です::"
+
+msgid ":ref:`io-flush-only-opened` is added."
+msgstr ":ref:`io-flush-only-opened` が追加されました。"
+
+msgid ""
+"``--recursive dependent`` option is added. It is recommended way to flush "
+"target object and its related objects since 9.0.2. See :ref:`io-flush-"
+"recursive` about details."
+msgstr ""
+"``--recursive dependent`` が追加されました。9.0.2以降で対象のオブジェクトを書"
+"き出すのにおすすめの方法です。オプションの詳細は :ref:`io-flush-recursive` を"
+"参照してください。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "You can flush all changes in memory to disk with no arguments:"
+msgstr ""
+"引数無しで実行するとメモリー上のすべての変更をディスクに書き出すことができま"
+"す。"
+
+msgid ""
+"If you know what is changed, you can narrow flush targets. Here is a "
+"correspondence table between command and flush targets for Groonga 9.0.2 or "
+"later."
+msgstr ""
+"もし変更点を把握しているなら、書き出し対象を狭めることができます。以下は"
+"Groonga 9.0.2以降向けのコマンドと書き出し対象の対応表です。"
+
+msgid ""
+"There is a different recommended way which depends on Groonga version. If "
+"Groonga is 9.0.1 or earlier ( ``--recursive dependent`` is not available ), "
+"you need to flush related objects explicitly, otherwise, using ``--recursive "
+"dependent`` is a recommended way not to forget flush target objects."
+msgstr ""
+"Groonga が9.0.1以前の場合( ``--recursive dependent`` が使えないので)関連する"
+"オブジェクトを明示的に書き出す必要があります。それ以降はオブジェクトの書き出"
+"し忘れをしないようにするのには ``--recursive dependent`` を使うのがおすすめで"
+"す。"
+
+msgid "Command"
+msgstr "コマンド"
+
+msgid "Flush targets"
+msgstr "書き出し対象"
+
+msgid "``io_flush`` arguments"
+msgstr "``io_flush`` の引数"
+
+msgid ":doc:`load` and :doc:`delete`"
+msgstr ":doc:`load` と :doc:`delete`"
+
+msgid "Target table and its columns."
+msgstr "テーブルとそのテーブルのカラム。"
+
+msgid ""
+"If there are one or more reference columns in these columns, referenced "
+"tables are also flush targets."
+msgstr ""
+"カラムの中に参照カラムがある場合、参照されているテーブルも書き出し対象にな"
+"る。"
+
+msgid ""
+"If there are one or more indexed columns in these columns, tables of "
+"corresponding index columns and corresponding index columns are also flush "
+"targets."
+msgstr ""
+"インデックスが張られているカラムがある場合、対応するインデックスカラムとその"
+"インデックスカラムのテーブルも書き出し対象になる。"
+
+msgid ""
+"Use ``--recursive dependent`` to flush target table and its columns, "
+"referenced tables and tables of corresponding index columns and "
+"corresponding index columns at once::"
+msgstr ""
+"対象となるテーブルとそのカラム、参照先のテーブル、インデックスが張られている"
+"カラムがある場合、対応するインデックスカラムとそのインデックスカラムのテーブ"
+"ルを書き出すのに ``--recursive dependent`` を使います。"
+
+msgid "Database is also flush target."
+msgstr "データベースも書き出し対象。"
+
+msgid "Target table and database."
+msgstr "処理対象のテーブルとデータベース。"
+
+msgid "Table::"
+msgstr "テーブル::"
+
+msgid ""
+":doc:`table_remove`, :doc:`table_rename` and :doc:`logical_table_remove`"
+msgstr ""
+":doc:`table_remove` と :doc:`table_rename` と :doc:`logical_table_remove`"
+
+msgid "Database."
+msgstr "データベース。"
+
+msgid "Database::"
+msgstr "データベース::"
+
+msgid "Target column and database."
+msgstr "処理対象のカラムとデータベース。"
+
+msgid ":doc:`column_remove` and :doc:`column_rename`"
+msgstr ":doc:`column_remove` と :doc:`column_rename`"
+
+msgid ":doc:`plugin_register` and :doc:`plugin_unregister`"
+msgstr ":doc:`plugin_register` と :doc:`plugin_unregister`"
+
+msgid ""
+"If Groonga is 9.0.1 or earlier ( ``--recursive dependent`` is not "
+"available ), flush objects explicitly. Here is a correspondence table "
+"between command and flush targets for Groonga 9.0.1 or earlier."
+msgstr ""
+"もしGroongaが9.0.1以前なら( ``--recursive dependent`` が使えないので) 明示的"
+"にオブジェクトを書き出す必要があります。以下はGroonga 9.0.1以前向けのコマンド"
+"と書き出し対象の対応表です。"
+
+msgid "Table and its columns::"
+msgstr "テーブルとそのテーブルのカラム::"
+
+msgid "A referenced table::"
+msgstr "参照されているテーブル::"
+
+msgid "A table of an index column::"
+msgstr "インデックスカラムのテーブル::"
+
+msgid "An index column::"
+msgstr "インデックスカラム::"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes all parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is no required parameter."
+msgstr "必須の引数はありません。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There are optional parameters."
+msgstr "いくつか省略可能な引数があります。"
+
+msgid "``target_name``"
+msgstr ""
+
+msgid ""
+"Specifies a target object name. Target object is one of database, table or "
+"column."
+msgstr ""
+"対象オブジェクトの名前を指定します。対象オブジェクトはデータベース、テーブ"
+"ル、カラムのどれかです。"
+
+msgid "If you omit this parameter, database is the target object:"
+msgstr ""
+"このパラメーターを省略すると、データベースが対象オブジェクトになります。"
+
+msgid "If you specify a table name, the table is the target object:"
+msgstr "テーブル名を指定すると、そのテーブルが対象オブジェクトになります。"
+
+msgid "If you specify a column name, the column is the target object:"
+msgstr "カラム名を指定すると、そのカラムが対象オブジェクトになります。"
+
+msgid "``recursive``"
+msgstr ""
+
+msgid ""
+"Specifies whether child objects of the target object are also target objects."
+msgstr ""
+"書き出し対象オブジェクトの子オブジェクトも対象にするかどうかを指定します。"
+
+msgid "Child objects of database are all tables and all columns."
+msgstr "データベースの子オブジェクトはすべてのテーブルとすべてのカラムです。"
+
+msgid "Child objects of table are all its columns."
+msgstr "テーブルの子オブジェクトはそのテーブルのすべてのカラムです。"
+
+msgid "Child objects of column are nothing."
+msgstr "カラムの子オブジェクトはありません。"
+
+msgid ""
+"If you specify ``yes`` to :ref:`io-flush-only-opened`, ``recursive`` is "
+"ignored."
+msgstr ""
+":ref:`io-flush-only-opened` に ``yes`` を指定すると ``recursive`` は無視され"
+"ます。"
+
+msgid ""
+"``recursive`` value must be ``yes``, ``no`` or ``dependent``. ``yes`` means "
+"that all of the specified target object and child objects are the target "
+"objects. ``no`` means that only the specified target object is the target "
+"object. ``dependent`` means that all of the specified target object, child "
+"objects, corresponding table of index column and corresponding index column "
+"are the target objects."
+msgstr ""
+"``recursive`` の値は ``yes`` または ``no`` もしくは ``dependent`` でなければ"
+"いけません。 ``yes`` は指定した対象オブジェクトとその子オブジェクトすべてを対"
+"象オブジェクトにするという意味です。 ``no`` は指定した対象オブジェクトのみを"
+"対象オブジェクトにするという意味です。``dependent`` は指定した対象オブジェク"
+"トとその子オブジェクトすべて、参照先のテーブル、インデックスが張られているカ"
+"ラムがある場合、対応するインデックスカラムとそのインデックスカラムのテーブル"
+"を対象オブジェクトにするという意味です。"
+
+msgid ""
+"The following ``io_flush`` flushes all changes in database, all tables and "
+"all columns:"
+msgstr ""
+"次の ``io_flush`` はデータベースとすべてのテーブルとすべてのカラムのすべての"
+"変更を書き出します。"
+
+msgid "The following ``io_flush`` flushes all changes only in database:"
+msgstr "次の ``io_flush`` はデータベースの変更だけを書き出します。"
+
+msgid ""
+"If you specify other value (not ``yes`` neither ``no``) or omit "
+"``recursive`` parameter, ``yes`` is used."
+msgstr ""
+"他の値（つまり、 ``yes`` でも ``no`` でもない値）を指定した場合、または "
+"``recursive`` パラメーターを指定しない場合は ``yes`` が使われます。"
+
+msgid ""
+"``yes`` is used in the following case because invalid ``recursive`` argument "
+"is specified:"
+msgstr ""
+"``recursive`` 引数の値が不正なので、次のケースでは ``yes`` が使われます。"
+
+msgid ""
+"``yes`` is used in the following case because ``recursive`` parameter isn't "
+"specified:"
+msgstr ""
+"``recursive`` パラメーターが指定されていないので、次のケースでは ``yes`` が使"
+"われます。"
+
+msgid ""
+"Since 9.0.2, ``--recursive dependent`` is added to flush not only target "
+"object and child objects, but also related objects. The related objects are:"
+msgstr ""
+"9.0.2から ``--recursive dependent`` が追加され、書き出し対象とその子オブジェ"
+"クトだけでなく、関連したオブジェクトも書き出し対象にするようになりました。関"
+"連するオブジェクトは次のとおり::"
+
+msgid "A referenced table"
+msgstr "参照されているテーブル"
+
+msgid ""
+"A related index column (There is source column in target ``TABLE_NAME``)"
+msgstr "関連するインデックスカラム(対象の ``TABLE_NAME`` にソースカラムがある)"
+
+msgid ""
+"A table of related index column (There is source column in target "
+"``TABLE_NAME``)"
+msgstr ""
+"関連するインデックスカラムのテーブル(対象の ``TABLE_NAME`` にソースカラムがあ"
+"る)"
+
+msgid "It is useful not to forget flushing related objects."
+msgstr "関連するオブジェクトのフラッシュ漏れをなくすのに便利です。"
+
+msgid ""
+"For example, ``--recursive dependent`` is specified for ``TABLE_NAME``, this "
+"option executes equivalent to the following commands internally."
+msgstr ""
+"例えば、 ``--recursive dependent`` が ``TABLE_NAME`` に指定されていると、この"
+"オプションは以下と同等のコマンドを内部で実行します。"
+
+msgid "Flush table and its columns::"
+msgstr "テーブルとそのテーブルのカラムをフラッシュ::"
+
+msgid "Flush a referenced table::"
+msgstr "参照されているテーブルをフラッシュ::"
+
+msgid ""
+"Flush a related index column (There is source column in ``TABLE_NAME``)::"
+msgstr ""
+"関連するインデックスカラムをフラッシュ(対象の ``TABLE_NAME`` にソースカラムが"
+"ある)::"
+
+msgid ""
+"Flush a table of related index column (There is source column in "
+"``TABLE_NAME``)::"
+msgstr ""
+"関連するインデックスカラムのテーブルをフラッシュ(対象の ``TABLE_NAME`` にソー"
+"スカラムがある)::"
+
+msgid ""
+"To confirm whether all target objects are flushed correctly, you can check "
+"query log::"
+msgstr ""
+"すべての対象となるオブジェクトが正しくフラッシュされたかを確認するにはクエ"
+"リーログをチェックします::"
+
+msgid ""
+"In above example, specified not only ``Users`` table, related lexicon table "
+"``Terms`` and index column ``Terms.users_name`` (data source is ``Users."
+"name``) are also flushed."
+msgstr ""
+"上記の例では、 指定した ``Users`` テーブルだけでなく、関連する語彙表の "
+"``Terms`` テーブルとインデックスカラム ``Terms.users_name`` カラム( ``Users."
+"name`` がソースカラム)もフラッシュされています。"
+
+msgid ""
+"``flush[(anonymous:...)]`` and ``flush[(DB)]`` means that Groonga's internal "
+"objects are also flushed."
+msgstr ""
+"``flush[(anonymous:...)]`` と ``flush[(DB)]`` はGroongaの内部のオブジェクトが"
+"フラッシュされたことを意味します。"
+
+msgid "Log"
+msgstr "ログ"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "``flush[(anonymous:table:dat_key)]``"
+msgstr ""
+
+msgid ""
+"The internal object names in DB are flushed. If ``GRN_DB_KEY=pat`` is set, "
+"``TABLE_PAT_KEY`` is used instead."
+msgstr ""
+"DB内部のオブジェクト名がフラッシュされます。もし ``GRN_DB_KEY=pat`` が指定さ"
+"れていると ``TABLE_PAT_KEY`` が使われます。"
+
+msgid ""
+"``flush[(anonymous:column:var_size)]`` (logged as first ``(anonymous:column:"
+"var_size)`` object)"
+msgstr ""
+"``flush[(anonymous:column:var_size)]`` (1番目に記録されている ``(anonymous:"
+"column:var_size)`` オブジェクト)"
+
+msgid ""
+"The internal object metadata (builtin types, token filter and so on) are "
+"flushed."
+msgstr ""
+"内部のオブジェクトのメタデータ(組込の型だったり、トークンフィルターなど)がフ"
+"ラッシュされます。"
+
+msgid ""
+"This is a variable sized column which stores the above internal object "
+"metadata."
+msgstr ""
+"可変長のカラムで、内部で使っているオブジェクトのメタデータを保持しています。"
+
+msgid "``flush[(anonymous:table:hash_key)]``"
+msgstr ""
+
+msgid ""
+"The internal configuration objects (which is set by ``config_set``) are "
+"flushed."
+msgstr ""
+"設定情報のオブジェクト( ``config_set`` で設定される)がフラッシュされます。"
+
+msgid ""
+"``flush[(anonymous:column:var_size)]`` (logged as second ``(anonymous:column:"
+"var_size)`` object)"
+msgstr ""
+"``flush[(anonymous:column:var_size)]`` (2番目に記録されている ``(anonymous:"
+"column:var_size)`` オブジェクト)"
+
+msgid ""
+"The internal object metadata (options about internal objects such as "
+"specified tokenizer options) are flushed."
+msgstr ""
+"内部のオブジェクトのメタデータ(内部で使っているオブジェクトのオプション。トー"
+"クナイザーのオプションなど)がフラッシュされます。"
+
+msgid "``flush[(DB)]``"
+msgstr ""
+
+msgid "The DB changes (lock acquired during ``io_flush``) are flushed."
+msgstr ""
+"DBの変更( ``io_flush`` を実行中にロックを獲得している) がフラッシュされます。"
+
+msgid "``only_opened``"
+msgstr ""
+
+msgid "Specifies whether opened objects are only flushed."
+msgstr "すでに開かれているオブジェクトだけフラッシュするかどうかを指定します。"
+
+msgid ""
+"If there is only one process that changes the target database, flush "
+"performance will be improved by specifying ``yes`` to ``only_opened``. It "
+"skips needless flushes."
+msgstr ""
+"対象のデータベースを変更するプロセスが1つだけの場合、 ``only_opened`` に "
+"``yes`` を指定することでフラッシュの性能が改善する可能性があります。これは、"
+"不要なフラッシュを省略するからです。"
+
+msgid ""
+"You can't specify :ref:`io-flush-target-name` with ``only_opened`` option. "
+"If you specify :ref:`io-flush-target-name`, ``only_opened`` is ignored."
+msgstr ""
+":ref:`io-flush-target-name` と ``only_opened`` オプションを一緒に指定すること"
+"はできません。もし、 :ref:`io-flush-target-name` を指定した場合は "
+"``only_opened`` は無視されます。"
+
+msgid ""
+"If you specify ``yes`` to ``only_opened``, :ref:`io-flush-recursive` is "
+"ignored."
+msgstr ""
+"``only_opened`` に ``yes`` を指定した場合、 :ref:`io-flush-recursive` は無視"
+"されます。"
+
+msgid ""
+"``only_opened`` value must be ``yes`` or ``no``. ``yes`` means that opened "
+"objects are only flushed. ``no`` means that all target objects are flushed "
+"even they aren't opened."
+msgstr ""
+"``only_opened`` の値は ``yes`` または ``no`` でなければいけません。 ``yes`` "
+"の場合はすでに開かれているオブジェクトだけフラッシュします。 ``no`` の場合は"
+"開いているかどうかに関わらず、対象のオブジェクトをフラッシュします。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "The command returns ``true`` as body on success such as::"
+msgstr "このコマンドが成功したときは以下のようにボディは ``true`` になります::"
+
+msgid "If the command fails, error details are in ``HEADER``."
+msgstr "このコマンドが失敗すると、 ``HEADER`` にエラーの詳細が含まれます。"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"

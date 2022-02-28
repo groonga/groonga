@@ -1,0 +1,255 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``in_records``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"You can use ``in_records`` for using an existing table as condition "
+"patterns. Each record in the existing table is treated as a condition "
+"pattern."
+msgstr ""
+"``in_records`` を使うと既存のテーブルを条件のパターンとして使うことができま"
+"す。テーブル内の各レコードがそれぞれ条件のパターンになります。"
+
+msgid ""
+"You may be able to reduce multiple queries to only one query by "
+"``in_records``."
+msgstr ""
+"``in_records`` を使うと複数のクエリーを1つのクエリーにできるかもしれません。"
+
+msgid ""
+"``in_records`` is similar to :doc:`sub_filter`. Here are differences of them:"
+msgstr ""
+"``in_records`` は :doc:`sub_filter` に似ています。2つの違いは次の通りです。"
+
+msgid ""
+"``sub_filter`` requires a reference column to condition table but "
+"``in_records`` doesn't require."
+msgstr ""
+"``sub_filter`` では条件テーブルを参照するカラムが必須ですが、 ``in_records`` "
+"では必要ありません。"
+
+msgid ""
+"``sub_filter`` requires an index column for the reference column but "
+"``in_records`` doesn't require."
+msgstr ""
+"``sub_filter`` では上述の参照カラム用のインデックスカラムが必須ですが、 "
+"``in_records`` ではインデックスカラムは必要ありません。"
+
+msgid ""
+"``sub_filter`` can use all logical operations but ``in_records`` can use "
+"only AND logical operation in one pattern."
+msgstr ""
+"``sub_filter`` ではすべての論理演算を使えますが、 ``in_records`` では1つのパ"
+"ターン内でAND論理演算しか使えません。"
+
+msgid ""
+"``sub_filter`` can use only the value of one reference column for condition "
+"but ``in_records`` can use one or more values for condition. You can use "
+"multiple columns, functions and so on for multiple values."
+msgstr ""
+"``sub_filter`` では条件に1つの参照カラムの値しか使えませんが、 "
+"``in_records`` では条件に1つ以上の値を使えます。複数の値を指定するために複数"
+"のカラムや関数などを使えます。"
+
+msgid ""
+"``sub_filter`` uses index search but ``in_records`` uses sequential search."
+msgstr ""
+"``sub_filter`` ではインデックスサーチを使いますが、 ``in_records`` ではシーケ"
+"ンシャルサーチを使います。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``in_records`` has four or more parameters::"
+msgstr "``in_records`` には4つ以上のパラメーターがあります。::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is a schema definition and sample data."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid "Sample schema:"
+msgstr "サンプルスキーマ:"
+
+msgid "Sample data:"
+msgstr "サンプルデータ:"
+
+msgid "Sample conditions:"
+msgstr "サンプル条件："
+
+msgid ""
+"Here is a simple usage of ``in_records`` that searches by records in "
+"``Conditions`` table. Each record is used as a condition:"
+msgstr ""
+"以下は ``Conditions`` テーブル内のレコードで検索をする ``in_records`` の使用"
+"例です。各レコードを条件として使います。"
+
+msgid "The ``filter`` tries the following three conditions for each record:"
+msgstr "この ``filter`` は各レコードに対して次の3つの条件で絞り込みます。"
+
+msgid "``Memos.user`` matches (``@``) ``Conditions.user_pattern``."
+msgstr ""
+"``Memos.user`` が ``Conditions.user_pattern`` にマッチ（ ``@`` ）するか。"
+
+msgid "``Memos.tag`` equals (``==``) ``Conditions.tag``."
+msgstr "``Memos.tag`` は ``Conditions.tag`` と等しい（ ``==`` ）か。"
+
+msgid ""
+"The number of characters in ``Memos._key`` is less than or equals to "
+"``Conditions.max_length``."
+msgstr "``Memos._key`` の文字数が ``Conditions.max_length`` 以下か。"
+
+msgid ""
+"If at least one record in ``Conditions`` table returns true for the all "
+"three conditions, the record in ``Memos`` is matched."
+msgstr ""
+"``Conditions`` テーブル内の少なくとも1つのレコードがこれら3つの条件すべてで真"
+"を返せば ``Memos`` テーブルのそのレコードはマッチします。"
+
+msgid "The first record in ``Conditions`` table use the following conditions:"
+msgstr "``Conditions`` テーブルの最初のレコードは次の条件を使います。"
+
+msgid "``Memos.user`` has ``\"lic\"`` substring."
+msgstr "``Memos.user`` には部分文字列として ``\"lic\"`` がある。"
+
+msgid "``Memos.tag`` is ``\"groonga\"``."
+msgstr "``Memos.tag`` は ``\"groonga\"`` である。"
+
+msgid ""
+"The number of characters in ``Memos._key`` is less than or equals to ``20``."
+msgstr "``Memos._key`` の文字数が ``20`` 以下である。"
+
+msgid "This condition matches the following records:"
+msgstr "この条件は次のレコードにマッチします。"
+
+msgid ""
+"``{\"_key\": \"Groonga is fast\", \"user\": \"alice\", \"tag\": \"groonga\"}"
+"``"
+msgstr ""
+
+msgid "The second record in ``Conditions`` table use the following conditions:"
+msgstr "``Conditions`` テーブルの2つめのレコードは次の条件を使います。"
+
+msgid "``Memos.user`` has ``\"dav\"`` substring."
+msgstr "``Memos.user`` には部分文字列として ``\"dav\"`` がある。"
+
+msgid "``Memos.tag`` is ``\"droonga\"``."
+msgstr "``Memos.tag`` は ``\"droonga\"`` である。"
+
+msgid ""
+"The number of characters in ``Memos._key`` is less than or equals to ``50``."
+msgstr "``Memos._key`` の文字数が ``50`` 以下である。"
+
+msgid ""
+"``{\"_key\": \"Droonga is fast\", \"user\": \"david\", \"tag\": \"droonga\"}"
+"``"
+msgstr ""
+
+msgid "The result has the all above records."
+msgstr "検索結果には前述のすべてのレコードが含まれます。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "``in_records`` requires four or more parameters."
+msgstr "``in_records`` には4つ以上のパラメーターが必須です。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid ""
+"``condition_table`` and tuples of ``value``, ``mode_name`` and "
+"``condition_column_name`` are required. You can specify multiple tuples of "
+"``value``, ``mode_name`` and ``condition_column_name``"
+msgstr ""
+"``condition_table`` と「 ``value`` 、 ``mode_name`` 、 "
+"``condition_column_name`` 」のセットです。「 ``value`` 、 ``mode_name`` 、 "
+"``condition_column_name`` 」のセットは複数回指定できます。"
+
+msgid "``condition_table``"
+msgstr ""
+
+msgid "Specifies a table that has conditions as its records."
+msgstr "レコードとして条件が入っているテーブルを指定します。"
+
+msgid "``value``"
+msgstr ""
+
+msgid "Specifies a value to be compared."
+msgstr "比較対象の値を指定します。"
+
+msgid "``mode_name``"
+msgstr ""
+
+msgid ""
+"Specifies a mode name that specifies how to compare :ref:`in-records-value` "
+"with a value of :ref:`in-records-condition-column-name`."
+msgstr ""
+":ref:`in-records-value` と :ref:`in-records-condition-column-name` の値の比較"
+"方法（モード名）を指定します。"
+
+msgid ""
+"See :ref:`query-default-mode` for available mode names. All mode names "
+"except ``\"NEAR\"``, ``\"SIMILAR\"`` and ``\"SUFFIX\"`` are supported."
+msgstr ""
+"利用可能なモード名は :ref:`query-default-mode` を見てください。 "
+"``\"NEAR\"`` 、 ``\"SIMILAR\"`` と ``\"SUFFIX\"`` 以外のすべてのモード名をサ"
+"ポートしています。"
+
+msgid "``condition_column_name``"
+msgstr ""
+
+msgid ""
+"Specifies a column name of :ref:`in-records-condition-table` to be used as "
+"condition."
+msgstr ""
+"条件として使う :ref:`in-records-condition-table` のカラム名を指定します。"
+
+msgid "Optional parameter"
+msgstr "省略可能引数"
+
+msgid "There are no optional parameter."
+msgstr "省略可能な引数はありません。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid ""
+"``in_records`` returns whether the record is matched one of records of the "
+"specified condition table or not."
+msgstr ""
+"``in_records`` は対象レコードが指定した条件テーブル内の1つ以上のレコード（パ"
+"ターン）にマッチするかどうかを返します。"
+
+msgid ""
+"If the record is matched, it returns ``true``. Otherwise, it returns "
+"``false``."
+msgstr ""
+"もし該当レコードがマッチすれば、 ``true`` を返します。そうでなければ "
+"``false`` を返します。"

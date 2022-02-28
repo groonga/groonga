@@ -1,0 +1,91 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2012, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2019-05-23 14:19+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 1.7.7\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "Query expansion"
+msgstr "クエリ拡張"
+
+msgid ""
+"Groonga accepts ``query_expander`` parameter for :doc:`/reference/commands/"
+"select` command. It enables you to extend your query string."
+msgstr ""
+"Groongaの :doc:`/reference/commands/select` コマンドは ``query_expander`` 引"
+"数を受付ます。これを使うとクエリ文字列を拡張することができます。"
+
+msgid ""
+"For example, if user searches \"theatre\" instead of \"theater\", query "
+"expansion enables to return search results of \"theatre OR theater\". This "
+"kind of way reduces search leakages. This is what really user wants."
+msgstr ""
+"例えば、\"theater\"ではなく\"theatre\"で検索したとしましょう。クエリ拡張では"
+"\"theater OR theatre\"の結果を返します。このようなやりかたで検索漏れを減らせ"
+"ます。これはユーザーが本当にやりたかったことです。"
+
+msgid "Preparation"
+msgstr "準備"
+
+msgid ""
+"To use query expansion, you need to create table which stores documents, "
+"synonym table which stores query string and replacement string. In synonym "
+"table, primary key represents original string, the column of ShortText "
+"represents modified string."
+msgstr ""
+"クエリ拡張を使うには、文書を格納するテーブルと検索文字列と置換文字列のペアを"
+"格納する置換テーブルを作る必要があります。置換テーブルでは主キーが元の文字"
+"列、ShortText型のカラムが置換後の文字列をあらわします。"
+
+msgid "Let's create document table and synonym table."
+msgstr "それでは文書テーブルと置換テーブルを作成しましょう。"
+
+msgid ""
+"In this case, it doesn't occur search leakage because it creates synonym "
+"table which accepts \"theatre\" and \"theater\" as query string."
+msgstr ""
+"このようにすると、検索漏れは起こりません。これは置換テーブルがクエリ文字列と"
+"して\"theater\"も\"theatre\"のいずれも受け付けるからです。"
+
+msgid "Search"
+msgstr "検索"
+
+msgid ""
+"Then, let's use prepared synonym table. First, use select command without "
+"``query_expander`` parameter."
+msgstr ""
+"では、準備した置換テーブルを使ってみます。まずは ``query_expander`` を使わず"
+"に ``select`` コマンドを実行してみましょう。"
+
+msgid "Above query returns the record which completely equal to query string."
+msgstr "このクエリではクエリ文字列に完全に一致するレコードを返します。"
+
+msgid ""
+"Then, use ``query_expander`` parameter against ``body`` column of "
+"``Synonym`` table."
+msgstr ""
+"では、 ``query_expander`` を ``Synonym`` テーブルの ``body`` カラムに対して"
+"使ってみましょう。"
+
+msgid ""
+"In which cases, query string is replaced to \"(theater OR theatre)\", thus "
+"synonym is considered for full text search."
+msgstr ""
+"この場合、クエリ文字列は \"theater OR theatre\" へと置き換えられます。つま"
+"り、検索時に表記揺れを考慮して検索できます。"

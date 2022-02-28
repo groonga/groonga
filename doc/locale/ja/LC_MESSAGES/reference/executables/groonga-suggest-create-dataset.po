@@ -1,0 +1,101 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "groonga-suggest-create-dataset"
+msgstr ""
+
+msgid "NAME"
+msgstr "名前"
+
+msgid ""
+"groonga-suggest-create-dataset - Defines schema for a suggestion dataset"
+msgstr ""
+
+msgid "SYNOPSTIS"
+msgstr ""
+
+msgid "DESCTIPION"
+msgstr ""
+
+msgid ""
+"groonga-suggest-create-dataset creates a dataset for :doc:`/reference/"
+"suggest`. A database has many datasets. This command just defines schema for "
+"a suggestion dataset."
+msgstr ""
+
+msgid ""
+"This command generates some tables and columns for :doc:`/reference/suggest`."
+msgstr ""
+
+msgid ""
+"Here is the list of such tables. If you specify 'query' as dataset name, "
+"following '_DATASET' suffix are replaced. Thus, 'item_query', 'pair_query', "
+"'sequence_query', 'event_query' tables are generated."
+msgstr ""
+
+msgid "event_type"
+msgstr ""
+
+msgid "bigram"
+msgstr ""
+
+msgid "kana"
+msgstr ""
+
+msgid "item_DATASET"
+msgstr ""
+
+msgid "pair_DATASET"
+msgstr ""
+
+msgid "sequence_DATASET"
+msgstr ""
+
+msgid "event_DATASET"
+msgstr ""
+
+msgid "configuration"
+msgstr "設定ディレクティブ"
+
+msgid "OPTIONS"
+msgstr "オプション"
+
+msgid "None."
+msgstr ""
+
+msgid "EXIT STATUS"
+msgstr ""
+
+msgid "TODO"
+msgstr ""
+
+msgid "FILES"
+msgstr ""
+
+msgid "EXAMPLE"
+msgstr "例"
+
+msgid "SEE ALSO"
+msgstr "参考"
+
+msgid ""
+":doc:`/reference/suggest` :doc:`groonga-suggest-httpd` :doc:`groonga-suggest-"
+"learner`"
+msgstr ""

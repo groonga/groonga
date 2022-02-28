@@ -1,0 +1,117 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``grn_geo``"
+msgstr "``grn_geo``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "TODO..."
+msgstr "TODO..."
+
+msgid "Example"
+msgstr "Example"
+
+msgid "Reference"
+msgstr "Reference"
+
+msgid ""
+"It selects records that are in the rectangle specified by top_left_point "
+"parameter and bottom_right_point parameter. Records are searched by index "
+"parameter. Found records are added to res parameter table with op parameter "
+"operation."
+msgstr ""
+"It selects records that are in the rectangle specified by top_left_point "
+"parameter and bottom_right_point parameter. Records are searched by index "
+"parameter. Found records are added to res parameter table with op parameter "
+"operation."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "the index column for TokyoGeoPoint or WGS84GeoPpoint type."
+msgstr "the index column for TokyoGeoPoint or WGS84GeoPpoint type."
+
+msgid ""
+"the top left point of the target rectangle. (ShortText, Text, LongText, "
+"TokyoGeoPoint or  WGS84GeoPoint)"
+msgstr ""
+"the top left point of the target rectangle. (ShortText, Text, LongText, "
+"TokyoGeoPoint or  WGS84GeoPoint)"
+
+msgid ""
+"the bottom right point of the target rectangle. (ShortText, Text, LongText, "
+"TokyoGeoPoint or WGS84GeoPoint)"
+msgstr ""
+"the bottom right point of the target rectangle. (ShortText, Text, LongText, "
+"TokyoGeoPoint or WGS84GeoPoint)"
+
+msgid ""
+"the table to store found record IDs. It must be ``GRN_TABLE_HASH_KEY`` type "
+"table."
+msgstr ""
+"the table to store found record IDs. It must be ``GRN_TABLE_HASH_KEY`` type "
+"table."
+
+msgid "the operator for matched records."
+msgstr "the operator for matched records."
+
+msgid ""
+"It estimates number of records in the rectangle specified by top_left_point "
+"parameter and bottom_right_point parameter. Number of records is estimated "
+"by index parameter. If an error is occurred, -1 is returned."
+msgstr ""
+"It estimates number of records in the rectangle specified by top_left_point "
+"parameter and bottom_right_point parameter. Number of records is estimated "
+"by index parameter. If an error is occurred, -1 is returned."
+
+msgid ""
+"the top left point of the target rectangle. (ShortText, Text, LongText, "
+"TokyoGeoPoint or WGS84GeoPoint)"
+msgstr ""
+"the top left point of the target rectangle. (ShortText, Text, LongText, "
+"TokyoGeoPoint or WGS84GeoPoint)"
+
+msgid ""
+"It opens a cursor to get records in the rectangle specified by "
+"top_left_point parameter and bottom_right_point parameter."
+msgstr ""
+"It opens a cursor to get records in the rectangle specified by "
+"top_left_point parameter and bottom_right_point parameter."
+
+msgid ""
+"the cursor returns records from offset parameter position. offset parameter "
+"is based on 0."
+msgstr ""
+"the cursor returns records from offset parameter position. offset parameter "
+"is based on 0."
+
+msgid "the cursor returns at most limit parameter records. -1 means no limit."
+msgstr "the cursor returns at most limit parameter records. -1 means no limit."
+
+msgid ""
+"It returns the next posting that has record ID. It returns NULL after all "
+"records are returned."
+msgstr ""
+"It returns the next posting that has record ID. It returns NULL after all "
+"records are returned."
+
+msgid "the geo cursor."
+msgstr "the geo cursor."

@@ -1,0 +1,252 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Log"
+msgstr "Log"
+
+msgid ""
+"Groonga has two log files. They are process log and query log. Process log "
+"is for all of :doc:`executables/groonga` works. Query log is just for query "
+"processing."
+msgstr ""
+"Groonga has two log files. They are process log and query log. Process log "
+"is for all of :doc:`executables/groonga` works. Query log is just for query "
+"processing."
+
+msgid "Process log"
+msgstr "Process log"
+
+msgid ""
+"Process log is enabled by default. Log path can be customized by :option:"
+"`groonga --log-path` option. Each log has its log level. If a log is smaller "
+"than Groonga process' log level, it's not logged. Log level can be "
+"customized by :option:`groonga -l` or :doc:`commands/log_level`."
+msgstr ""
+"Process log is enabled by default. Log path can be customized by :option:"
+"`groonga --log-path` option. Each log has its log level. If a log is smaller "
+"than Groonga process' log level, it's not logged. Log level can be "
+"customized by :option:`groonga -l` or :doc:`commands/log_level`."
+
+msgid "Format"
+msgstr "Format"
+
+msgid "Process log uses the following format::"
+msgstr "Process log uses the following format::"
+
+msgid ""
+"Some multi-process based applications such as :doc:`/reference/executables/"
+"groonga-httpd` and `PGroonga <https://pgroonga.github.io/>`_ use the "
+"following format::"
+msgstr ""
+"Some multi-process based applications such as :doc:`/reference/executables/"
+"groonga-httpd` and `PGroonga <https://pgroonga.github.io/>`_ use the "
+"following format::"
+
+msgid "TIME_STAMP"
+msgstr "TIME_STAMP"
+
+msgid "It's time stamp uses the following format::"
+msgstr "It's time stamp uses the following format::"
+
+msgid "YYYY"
+msgstr "YYYY"
+
+msgid "Year with four digits."
+msgstr "Year with four digits."
+
+msgid "MM"
+msgstr "MM"
+
+msgid "Month with two digits."
+msgstr "Month with two digits."
+
+msgid "DD"
+msgstr "DD"
+
+msgid "Day with two digits."
+msgstr "Day with two digits."
+
+msgid "hh"
+msgstr "hh"
+
+msgid "Hour with two digits."
+msgstr "Hour with two digits."
+
+msgid "mm"
+msgstr "mm"
+
+msgid "Minute with two digits."
+msgstr "Minute with two digits."
+
+msgid "ss"
+msgstr "ss"
+
+msgid "Second with two digits."
+msgstr "Second with two digits."
+
+msgid "SSSSSS"
+msgstr "SSSSSS"
+
+msgid "Microsecond with six digits."
+msgstr "Microsecond with six digits."
+
+msgid "Example::"
+msgstr "Example::"
+
+msgid "L"
+msgstr "L"
+
+msgid "Log level with a character. Here is a character and log level map."
+msgstr "Log level with a character. Here is a character and log level map."
+
+msgid "E"
+msgstr "E"
+
+msgid "Emergency"
+msgstr "Emergency"
+
+msgid "A"
+msgstr "A"
+
+msgid "Alert"
+msgstr "Alert"
+
+msgid "C"
+msgstr "C"
+
+msgid "Critical"
+msgstr "Critical"
+
+msgid "e"
+msgstr "e"
+
+msgid "Error"
+msgstr "Error"
+
+msgid "w"
+msgstr "w"
+
+msgid "Warning"
+msgstr "Warning"
+
+msgid "n"
+msgstr "n"
+
+msgid "Notification"
+msgstr "Notification"
+
+msgid "i"
+msgstr "i"
+
+msgid "Information"
+msgstr "Information"
+
+msgid "d"
+msgstr "d"
+
+msgid "Debug"
+msgstr "Debug"
+
+msgid "\\-"
+msgstr "\\-"
+
+msgid "Dump"
+msgstr "Dump"
+
+msgid "PID"
+msgstr "PID"
+
+msgid "The process ID."
+msgstr "The process ID."
+
+msgid "MESSAGE"
+msgstr "MESSAGE"
+
+msgid "Details about the log with free format."
+msgstr "Details about the log with free format."
+
+msgid "Example with PID::"
+msgstr "Example with PID::"
+
+msgid "Query log"
+msgstr "Query log"
+
+msgid ""
+"Query log is disabled by default. It can be enabled by :option:`groonga --"
+"query-log-path` option."
+msgstr ""
+"Query log is disabled by default. It can be enabled by :option:`groonga --"
+"query-log-path` option."
+
+msgid "Query log uses the following formats::"
+msgstr "Query log uses the following formats::"
+
+msgid "ID"
+msgstr "ID"
+
+msgid ""
+"ID of a thread. Groonga process creates threads to process requests "
+"concurrently. Each thread outputs some logs for a request. This ID can be "
+"used to extract a log sequence by a thread."
+msgstr ""
+"ID of a thread. Groonga process creates threads to process requests "
+"concurrently. Each thread outputs some logs for a request. This ID can be "
+"used to extract a log sequence by a thread."
+
+msgid ">"
+msgstr ">"
+
+msgid "A character that indicates query is started."
+msgstr "A character that indicates query is started."
+
+msgid ":"
+msgstr ":"
+
+msgid "A character that indicates query is processing."
+msgstr "A character that indicates query is processing."
+
+msgid "<"
+msgstr "<"
+
+msgid "A character that indicates query is finished."
+msgstr "A character that indicates query is finished."
+
+msgid "QUERY"
+msgstr "QUERY"
+
+msgid "A query to be processed."
+msgstr "A query to be processed."
+
+msgid "ELAPSED_TIME"
+msgstr "ELAPSED_TIME"
+
+msgid "Elapsed time in nanoseconds since query is started."
+msgstr "Elapsed time in nanoseconds since query is started."
+
+msgid "PROGRESS"
+msgstr "PROGRESS"
+
+msgid "A processed work at the time."
+msgstr "A processed work at the time."
+
+msgid "RETURN_CODE"
+msgstr "RETURN_CODE"
+
+msgid "A return code for the query."
+msgstr "A return code for the query."

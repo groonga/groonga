@@ -1,0 +1,116 @@
+# -*- po -*-
+# Japanese translations for 1.2.4 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.4\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2020-04-24 08:59+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.1.1\n"
+
+msgid "News in Senna period"
+msgstr ""
+
+msgid "Senna -> groonga - 2009-01-14"
+msgstr ""
+
+msgid "2006-04-05"
+msgstr ""
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "SEN_INDEX_DELIMITED added"
+msgstr ""
+
+msgid "sen_sel_term_extract added"
+msgstr ""
+
+msgid "2006-03-03"
+msgstr ""
+
+msgid "snippet function added"
+msgstr ""
+
+msgid "2006-01-16"
+msgstr ""
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "io.c bug fix. index format changed"
+msgstr ""
+
+msgid "2006-01-12"
+msgstr ""
+
+msgid "windows porting released"
+msgstr ""
+
+msgid "2005-12-22"
+msgstr ""
+
+msgid ""
+"support unpatched version of mecab (0.81, 0.82pre, 0.90) no longer depends "
+"on mecab mte patch."
+msgstr ""
+
+msgid "2005-10-27"
+msgstr ""
+
+msgid "mysql binding updated"
+msgstr ""
+
+msgid "2005-09-17"
+msgstr ""
+
+msgid "mysql-5.0.12-beta binding from <tasuku at hottolink.co.jp>"
+msgstr ""
+
+msgid "2005-09-08"
+msgstr ""
+
+msgid "utf-8 support enhanced. (SEN_INDEX_NORMALIZE become available)"
+msgstr ""
+
+msgid "2005-08-16"
+msgstr ""
+
+msgid "Ruby binding has rewrited using SWIG and supports advanced API."
+msgstr ""
+
+msgid "SJIS support enhanced."
+msgstr ""
+
+msgid "2005-07-05"
+msgstr ""
+
+msgid "Changes"
+msgstr ""
+
+msgid "the license has changed to LGPL from GPL."
+msgstr ""
+
+msgid "2005-06-23"
+msgstr ""
+
+msgid "advanced API functions implemented"
+msgstr ""
+
+msgid "2005-04-12"
+msgstr ""
+
+msgid ""
+"applied ftb patch for mysql binding from <ko at yappo.ne.jp> 'IN BOOLEAN "
+"MODE' supported"
+msgstr ""

@@ -1,0 +1,93 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``thread_dump``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "Currently, this command works only on Windows."
+msgstr "現在このコマンドはWindowsでのみ動作します。"
+
+msgid "``thread_dump`` has the following a features:"
+msgstr "``thread_dump`` は次の機能を提供します。"
+
+msgid ""
+"``thread_dump`` puts a backtrace of all threads into a log as logs of NOTICE "
+"level at the time of running this command as below."
+msgstr ""
+"``thread_dump`` は、以下のように、このコマンドを実行した時点の全てのスレッド"
+"のバックトレースをNOTICEレベルのログとして記録します。"
+
+msgid "For example, ``thread_dump`` puts a backtrace in a log as below."
+msgstr ""
+"例えば、 ``thread_dump`` は、以下のようにバックトレースをログに記録します。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command has not parameter::"
+msgstr "このコマンドに引数はありません::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"We can get a backtrace of all threads into a log as logs of NOTICE level at "
+"the time of running this command."
+msgstr ""
+"このコマンドを実行した時点の全てのスレッドのバックトレースをNOTICEレベルのロ"
+"グとして取得できます。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes all parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is no required parameter."
+msgstr "必須の引数はありません。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There is no optional parameter."
+msgstr "省略可能な引数はありません。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "The command returns `true` as body on success such as::"
+msgstr "このコマンドが成功したときは以下のようにボディは ``true`` になります::"
+
+msgid "If ``thread_dump`` fails, error details are in HEADER."
+msgstr "``thread_dump`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"

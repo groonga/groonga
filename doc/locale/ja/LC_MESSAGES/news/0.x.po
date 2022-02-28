@@ -1,0 +1,207 @@
+# -*- po -*-
+# Japanese translations for 1.2.4 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.4\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2020-04-24 08:59+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.1.1\n"
+
+msgid "バージョン0.xのお知らせ"
+msgstr ""
+
+msgid "0.7.7リリース - 2010-08-25"
+msgstr ""
+
+msgid "改良"
+msgstr ""
+
+msgid ""
+"編集距離（レーベンシュタイン距離）を計算する :doc:`/reference/functions/"
+"edit_distance` ()関数の追加。"
+msgstr ""
+
+msgid "manを追加。"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/delete` コマンドでデータの整合性が壊れる場合はエ"
+"ラー を返すようにした。"
+msgstr ""
+
+msgid "MeCabの辞書のエンコーディング検出処理を改善。"
+msgstr ""
+
+msgid "デフォルトの設定ファイルを追加。"
+msgstr ""
+
+msgid "修正"
+msgstr ""
+
+msgid ""
+":doc:`/reference/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」"
+"で はなく、「左下」と「右上」と扱っていた問題を修正。"
+msgstr ""
+
+msgid "前方一致検索がマッチしない問題を修正。"
+msgstr ""
+
+msgid "0.7.6リリース - 2010-08-19"
+msgstr ""
+
+msgid "デーモンになるときは標準出力を閉じるようにした。"
+msgstr ""
+
+msgid "PIDファイルを指定する ``--pid-path`` オプションを追加。"
+msgstr ""
+
+msgid "設定ファイルを指定する ``--config-path`` オプションを追加。"
+msgstr ""
+
+msgid "最大キャッシュ数を指定する ``--cache-limit`` オプションを追加。"
+msgstr ""
+
+msgid "設定値を表示する ``--show-config`` オプションを追加。"
+msgstr ""
+
+msgid "指定したファイルからコマンドを読み込む ``--file`` オプションを追加。"
+msgstr ""
+
+msgid ""
+"groongaとMeCabの辞書のエンコーディングが同じかどうかを確 認するようにした。"
+msgstr ""
+
+msgid "Web管理画面:"
+msgstr ""
+
+msgid "データロード機能を追加。"
+msgstr ""
+
+msgid "uptimeの表示形式を読みやすい形式に変更。"
+msgstr ""
+
+msgid "Muninプラグインの追加。"
+msgstr ""
+
+msgid "クエリパフォーマンス計測用"
+msgstr ""
+
+msgid "ディスク使用量計測用"
+msgstr ""
+
+msgid "libedit対応。"
+msgstr ""
+
+msgid "存在しないデータベースを指定したときのエラーメッセージを改善。"
+msgstr ""
+
+msgid "loadコマンド:"
+msgstr ""
+
+msgid "不正な文字を見つけた場合はログに出力。"
+msgstr ""
+
+msgid "必要な項目がない場合はログに出力。"
+msgstr ""
+
+msgid "true/false/nullリテラルをサポート。"
+msgstr ""
+
+msgid ""
+"GeoPointの度での指定をサポート。 （例: "
+"\"35.6954581363924,139.564207350021\"）"
+msgstr ""
+
+msgid "NO_KEYテーブルを参照しているカラム値をサポート。"
+msgstr ""
+
+msgid "数値のベクタをサポート。"
+msgstr ""
+
+msgid "selectコマンド"
+msgstr ""
+
+msgid "索引を用いた高速なGeoPointの検索機能を追加。"
+msgstr ""
+
+msgid ""
+"索引を用いた高速なGeoPointのソート機能を追加。 （ただし複数のソートキーと一緒"
+"に使うことはできない。）"
+msgstr ""
+
+msgid "ベクタのGeoPointの出力に対応。"
+msgstr ""
+
+msgid "不正な入力値に対してエラーを出力するようにした。"
+msgstr ""
+
+msgid "dumpコマンド:"
+msgstr ""
+
+msgid "フラグを数値ではなくキーワードで出力するように変更。"
+msgstr ""
+
+msgid "column_listコマンド:"
+msgstr ""
+
+msgid "_keyカラムの出力に対応。"
+msgstr ""
+
+msgid "deleteコマンド:"
+msgstr ""
+
+msgid "データに不整合が発生する場合はデータを削除しないように変更。"
+msgstr ""
+
+msgid "statusコマンド:"
+msgstr ""
+
+msgid "キャッシュ情報を追加。"
+msgstr ""
+
+msgid "データの整合性を確認するcheckコマンドの追加。"
+msgstr ""
+
+msgid "強制的にロックを解除するclearlockコマンドの追加。"
+msgstr ""
+
+msgid "最大キャッシュ数を指定するcache_limitコマンドの追加。"
+msgstr ""
+
+msgid "フラグメンテーションを解消するdefragコマンドの追加。"
+msgstr ""
+
+msgid "データ投入後のインデックスカラム作成に対応。"
+msgstr ""
+
+msgid "不正なsortキーを指定された場合はSEGVする問題の修正。"
+msgstr ""
+
+msgid "selectの出力に不正なカラムを指定された時にSEGVする問題を修正。"
+msgstr ""
+
+msgid "空のベクタをloadするとSEGVする問題の修正。"
+msgstr ""
+
+msgid "メモリリークの修正。"
+msgstr ""
+
+msgid "drilldown時に参照先が存在しない場合にSEGVする問題の修正。"
+msgstr ""
+
+msgid "感謝"
+msgstr ""
+
+msgid "おばたさん"
+msgstr ""

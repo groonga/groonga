@@ -1,0 +1,149 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``thread_limit``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``thread_limit`` has the following two features:"
+msgstr "``thread_limit`` は次の2つの機能を提供します。"
+
+msgid "It returns the max number of threads."
+msgstr "最大スレッド数を返します。"
+
+msgid "It sets the max number of threads."
+msgstr "最大スレッド数を設定します。"
+
+msgid ""
+":doc:`/reference/executables/groonga` is the only Groonga server that "
+"supports full ``thread_limit`` features."
+msgstr ""
+":doc:`/reference/executables/groonga` は ``thread_limit`` のすべての機能を提"
+"供する唯一のGroongaサーバーです。"
+
+msgid ""
+":doc:`/reference/executables/groonga-httpd` supports only one feature that "
+"returns the max number of threads. The max number of threads of :doc:`/"
+"reference/executables/groonga-httpd` always returns ``1`` because :doc:`/"
+"reference/executables/groonga-httpd` uses single thread model."
+msgstr ""
+":doc:`/reference/executables/groonga-httpd` は最大スレッド数を返す機能だけを"
+"サポートしています。 :doc:`/reference/executables/groonga-httpd` の最大スレッ"
+"ド数は常に1です。なぜなら、 :doc:`/reference/executables/groonga-httpd` はシ"
+"ングルスレッドモデルを採用しているからです。"
+
+msgid ""
+"If you're using Groonga as a library, ``thread_limit`` doesn't work without "
+"you set custom functions by :c:func:`grn_thread_set_get_limit_func()` and :c:"
+"func:`grn_thread_set_set_limit_func()`. If you set a function by :c:func:"
+"`grn_thread_set_get_limit_func()`, the feature that returns the max number "
+"of threads works. If you set a function by :c:func:"
+"`grn_thread_set_set_limit_func()`, the feature that sets the max number of "
+"threads works."
+msgstr ""
+"Groongaをライブラリーとして使っている場合、 :c:func:"
+"`grn_thread_set_get_limit_func()` と :c:func:"
+"`grn_thread_set_set_limit_func()` でカスタム関数を設定しない限り動きませ"
+"ん。 :c:func:`grn_thread_set_get_limit_func()` でカスタム関数を設定すると最大"
+"スレッド数を返す機能が動きます。 :c:func:`grn_thread_set_set_limit_func()` で"
+"カスタム関数を設定すると最大スレッド数を設定する機能が動きます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes only one optional parameter::"
+msgstr "このコマンドの引数は1つで省略できます::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"You can get the max number of threads by calling without any parameters:"
+msgstr "引数なしで呼び出すと最大スレッド数を得られます。"
+
+msgid "If it returns ``0``, your Groonga server doesn't support the feature."
+msgstr ""
+"``0`` が返ってきたら、そのGroongaサーバーはこの機能をサポートしていないという"
+"ことです。"
+
+msgid "You can set the max number of threads by calling ``max`` parameter:"
+msgstr "``max`` 引数つきで呼び出すと最大スレッド数を設定できます。"
+
+msgid ""
+"It returns the previous max number of threads when you pass ``max`` "
+"parameter."
+msgstr "``max`` 引数を渡したときは設定前の最大スレッド数が返ります。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes all parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is no required parameter."
+msgstr "必須の引数はありません。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There is one optional parameter."
+msgstr "省略可能な引数が1つあります。"
+
+msgid "``max``"
+msgstr ""
+
+msgid "Specifies the new max number of threads."
+msgstr "新しい最大スレッド数を指定します。"
+
+msgid "You must specify positive integer:"
+msgstr "正の整数を指定してください。"
+
+msgid ""
+"If you specify ``max`` parameter, ``thread_limit`` returns the max number of "
+"threads before ``max`` is applied."
+msgstr ""
+"``max`` 引数を指定した場合、 ``thread_limit`` は ``max`` を適用する前の最大ス"
+"レッド数を返します。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "The command returns the max number of threads as body::"
+msgstr "このコマンドのボディは最大スレッド数になります::"
+
+msgid ""
+"If ``max`` is specified, ``N_MAX_THREADS`` is the max number of threads "
+"before ``max`` is applied."
+msgstr ""
+"``max`` を指定したときは ``N_MAX_THREADS`` は ``max`` を適用する前の最大ス"
+"レッド数になります。"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"

@@ -1,0 +1,96 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``TokenFilterStopWord``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``TokenFilterStopWord`` removes stop words from tokenized token in searching "
+"the documents."
+msgstr ""
+"``TokenFilterStopWord`` は、文書を検索する時にトークナイズされたトークンから"
+"ストップワードを除去します。"
+
+msgid ""
+"``TokenFilterStopWord`` can specify stop word after adding the documents "
+"because it removes token in searching the documents."
+msgstr ""
+"``TokenFilterStopWord`` は、文書を検索する時のみトークン除去するため、文書を"
+"追加した後でストップワードを指定することもできます。"
+
+msgid ""
+"The stop word is specified ``is_stop_word`` column on lexicon table when you "
+"don't specify ``column`` option."
+msgstr ""
+"``column`` オプションを指定しない場合、ストップワードは、語彙表の "
+"``is_stop_word`` カラムで指定されます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``TokenFilterStopWord`` has optional parameter::"
+msgstr "``TokenFilterStopWord`` は、省略可能な引数があります。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is an example that uses ``TokenFilterStopWord`` token filter:"
+msgstr "以下は ``TokenFilterStopWord`` トークンフィルターを使う例です。"
+
+msgid "``and`` token is marked as stop word in ``Terms`` table."
+msgstr ""
+"``and`` というトークンは ``Terms`` テーブルでストップワードと指定されていま"
+"す。"
+
+msgid ""
+"``\"Hello\"`` that doesn't have ``and`` in content is matched. Because "
+"``and`` is a stop word and ``and`` is removed from query."
+msgstr ""
+"``\"Hello\"`` は文書内に ``and`` がありませんがマッチしています。なぜなら、 "
+"``and`` はストップワードと指定されているため、クエリーから除去されているから"
+"です。"
+
+msgid ""
+"You can specify stop word in column except ``is_stop_columns`` by "
+"``columns`` option as below."
+msgstr ""
+"以下のように ``columns`` オプションを使って ``is_stop_columns`` 以外のカラム"
+"をストップワードに指定できます。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "Optional parameter"
+msgstr "省略可能引数"
+
+msgid "There is a optional parameters ``columns``."
+msgstr "省略可能な引数 ``columns`` があります。"
+
+msgid "``columns``"
+msgstr ""
+
+msgid "Specify a column that specified a stop word."
+msgstr "ストップワードを指定するカラムを指定します。"

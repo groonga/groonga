@@ -1,0 +1,127 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "Indexing"
+msgstr "インデックス構築"
+
+msgid ""
+"Groonga supports both online index construction and offline index "
+"construction since 2.0.0."
+msgstr ""
+"Groongaは2.0.0から動的なインデックス構築方法と静的なインデックス構築方法を両"
+"方サポートしています。"
+
+msgid "Online index construction"
+msgstr "動的なインデックス構築方法"
+
+msgid ""
+"In online index construction, registered documents can be searchable quickly "
+"while indexing. But indexing requires more cost rather than indexing by "
+"offline index construction."
+msgstr ""
+"動的なインデックス構築方法では、登録された文書はインデックス構築中にすぐに検"
+"索できるようになります。しかし、静的なインデックス構築方法に比べてコストがか"
+"かります。"
+
+msgid ""
+"Online index construction is suitable for a search system that values "
+"freshness. For example, a search system for tweets, news, blog posts and so "
+"on will value freshness. Online index construction can make fresh documents "
+"searchable and keep searchable while indexing."
+msgstr ""
+"動的なインデックス構築方法は鮮度が重要な検索システムに適しています。例えば、"
+"つぶやきやニュースやブログ記事などを検索するシステムは鮮度が重要になるでしょ"
+"う。動的なインデックス構築方法はできたばかりの文書を検索できるようにし、イン"
+"デックス構築中も検索できます。"
+
+msgid "Offline index construction"
+msgstr "静的なインデックス構築方法"
+
+msgid ""
+"In offline index construction, indexing cost is less than indexing cost by "
+"online index construction. Indexing time will be shorter. Index will be "
+"smaller. Resources required for indexing will be smaller. But a registering "
+"document cannot be searchable until all registered documents are indexed."
+msgstr ""
+"静的なインデックス構築方法では、動的なインデックス構築方法よりもインデックス"
+"構築にかかるコストが小さくなります。インデックス構築時間は短くなるでしょう。"
+"インデックスは小さくなるでしょう。インデックス構築に必要なリソースは少なくな"
+"るでしょう。しかし、登録中の文書は登録しようとしている全ての文書のインデック"
+"ス構築が終わるまで検索できません。"
+
+msgid ""
+"Offline index construction is suitable for a search system that values less "
+"required resources. If a search system doesn't value freshness, offline "
+"index construction will be suitable. For example, a reference manual search "
+"system doesn't value freshness because a reference manual will be updated "
+"only at a release."
+msgstr ""
+"静的なインデックス構築方法は消費リソースが少ないことが重要な検索システムに適"
+"しています。鮮度が重要でないシステムであれば静的なインデックス構築方法が適し"
+"ているでしょう。例えば、リファレンスマニュアルを検索するシステムは鮮度を重視"
+"しません。これは、リファレンスマニュアルはリリース時にだけ更新されるだけだか"
+"らです。"
+
+msgid "How to use"
+msgstr "使い方"
+
+msgid ""
+"Groonga uses online index construction by default. We register a document, "
+"we can search it quickly."
+msgstr ""
+"Groongaはデフォルトで動的なインデックス構築方法を使います。文書を登録するとす"
+"ぐに検索できるようになります。"
+
+msgid ""
+"Groonga uses offline index construction by adding an index to a column that "
+"already has data."
+msgstr ""
+"すでにデータが格納されているカラムにインデックスを追加した場合は静的なイン"
+"デックス構築方法を使います。"
+
+msgid "We define a schema:"
+msgstr "スキーマを定義します。"
+
+msgid "We register data:"
+msgstr "データを登録します:"
+
+msgid "We can search with sequential search when we don't have index:"
+msgstr "インデックスがないときはシーケンシャルサーチで検索できます。"
+
+msgid ""
+"We create index for ``Tweets.content``. Already registered data in ``Tweets."
+"content`` are indexed by offline index construction:"
+msgstr ""
+"``Tweets.content`` 用のインデックスを作成します。すでに ``Tweets.content`` に"
+"登録されているデータは静的なインデックス構築方法でインデックスを構築します:"
+
+msgid "We search with index. We get a matched record:"
+msgstr "インデックスありで検索します。1件ヒットします:"
+
+msgid "We register data again. They are indexed by online index construction:"
+msgstr ""
+"もう一度データを登録します。このデータ用のインデックスは動的なインデックス構"
+"築方法で構築します。"
+
+msgid "We can also get newly registered records by searching:"
+msgstr "検索すると新しく登録されたレコードもヒットします:"

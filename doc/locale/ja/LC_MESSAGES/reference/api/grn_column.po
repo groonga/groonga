@@ -1,0 +1,255 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "パラメータ"
+msgstr ""
+
+msgid "戻り値"
+msgstr ""
+
+msgid "``grn_column``"
+msgstr "``grn_column``"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "TODO..."
+msgstr "TODO..."
+
+msgid "Example"
+msgstr "例"
+
+msgid "Reference"
+msgstr "リファレンス"
+
+msgid "It returns the name of :doc:`/reference/columns/pseudo` ``_id``."
+msgstr ":doc:`/reference/columns/pseudo` ``_id`` の名前を返します。"
+
+msgid ""
+"It is useful to use with :c:macro:`GRN_COLUMN_NAME_ID_LEN` like the "
+"following::"
+msgstr ""
+"以下のように :c:macro:`GRN_COLUMN_NAME_ID_LEN` と一緒に使うと便利です::"
+
+msgid "Since 3.1.1."
+msgstr "3.1.1から。"
+
+msgid "It returns the byte size of :c:macro:`GRN_COLUMN_NAME_ID`."
+msgstr ""
+
+msgid "It returns the name of :doc:`/reference/columns/pseudo` ``_key``."
+msgstr ""
+
+msgid ""
+"It is useful to use with :c:macro:`GRN_COLUMN_NAME_KEY_LEN` like the "
+"following::"
+msgstr ""
+
+msgid "It returns the byte size of :c:macro:`GRN_COLUMN_NAME_KEY`."
+msgstr ""
+
+msgid "It returns the name of :doc:`/reference/columns/pseudo` ``_value``."
+msgstr ""
+
+msgid ""
+"It is useful to use with :c:macro:`GRN_COLUMN_NAME_VALUE_LEN` like the "
+"following::"
+msgstr ""
+
+msgid "It returns the byte size of :c:macro:`GRN_COLUMN_NAME_VALUE`."
+msgstr ""
+
+msgid "It returns the name of :doc:`/reference/columns/pseudo` ``_score``."
+msgstr ":doc:`/reference/columns/pseudo` ``_score`` の名前を返します。"
+
+msgid ""
+"It is useful to use with :c:macro:`GRN_COLUMN_NAME_SCORE_LEN` like the "
+"following::"
+msgstr ""
+"以下のように :c:macro:`GRN_COLUMN_NAME_SCORE_LEN` と一緒に使うと便利です::"
+
+msgid "It returns the byte size of :c:macro:`GRN_COLUMN_NAME_SCORE`."
+msgstr ":c:macro:`GRN_COLUMN_NAME_SCORE` のサイズをバイト数で返します。"
+
+msgid "It returns the name of :doc:`/reference/columns/pseudo` ``_nsubrecs``."
+msgstr ":doc:`/reference/columns/pseudo` ``_nsubrecs`` の名前を返します"
+
+msgid ""
+"It is useful to use with :c:macro:`GRN_COLUMN_NAME_NSUBRECS_LEN` like the "
+"following::"
+msgstr ""
+"以下のように :c:macro:`GRN_COLUMN_NAME_NSUBRECS_LEN` と一緒に使うと便利です::"
+
+msgid "It returns the byte size of :c:macro:`GRN_COLUMN_NAME_NSUBRECS`."
+msgstr ":c:macro:`GRN_COLUMN_NAME_NSUBRECS` のサイズをバイト数で返す。"
+
+msgid ""
+"tableに新たなカラムを定義します。nameは省略できません。一つのtableに同一の"
+"nameのcolumnを複数定義することはできません。"
+msgstr ""
+
+msgid "対象tableを指定します。"
+msgstr ""
+
+msgid "カラム名を指定します。"
+msgstr ""
+
+msgid "nameパラメータのsize(byte)を指定します。"
+msgstr ""
+
+msgid ""
+"カラムを格納するファイルパスを指定します。 flagsに ``GRN_OBJ_PERSISTENT`` が"
+"指定されている場合のみ有効です。 NULLなら自動的にファイルパスが付与されます。"
+msgstr ""
+
+msgid ""
+"``GRN_OBJ_PERSISTENT`` を指定すると永続columnとなります。  "
+"``GRN_OBJ_COLUMN_INDEX`` を指定すると転置インデックスとなります。  "
+"``GRN_OBJ_COLUMN_SCALAR`` を指定するとスカラ値(単独の値)を格納します。  "
+"``GRN_OBJ_COLUMN_VECTOR`` を指定すると値の配列を格納します。  "
+"``GRN_OBJ_COMPRESS_ZLIB`` を指定すると値をzlib圧縮して格納します。  "
+"``GRN_OBJ_COMPRESS_LZO`` を指定すると値をlzo圧縮して格納します。  "
+"``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_SECTION`` を指定すると、転置索"
+"引にsection(段落情報)を合わせて格納します。  ``GRN_OBJ_COLUMN_INDEX`` と共に "
+"``GRN_OBJ_WITH_WEIGHT`` を指定すると、転置索引にweight情報を合わせて格納しま"
+"す。  ``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_POSITION`` を指定する"
+"と、転置索引に出現位置情報を合わせて格納します。"
+msgstr ""
+
+msgid "``GRN_OBJ_PERSISTENT`` を指定すると永続columnとなります。"
+msgstr ""
+
+msgid "``GRN_OBJ_COLUMN_INDEX`` を指定すると転置インデックスとなります。"
+msgstr ""
+
+msgid "``GRN_OBJ_COLUMN_SCALAR`` を指定するとスカラ値(単独の値)を格納します。"
+msgstr ""
+
+msgid "``GRN_OBJ_COLUMN_VECTOR`` を指定すると値の配列を格納します。"
+msgstr ""
+
+msgid "``GRN_OBJ_COMPRESS_ZLIB`` を指定すると値をzlib圧縮して格納します。"
+msgstr ""
+
+msgid "``GRN_OBJ_COMPRESS_LZO`` を指定すると値をlzo圧縮して格納します。"
+msgstr ""
+
+msgid ""
+"``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_SECTION`` を指定すると、転置索"
+"引にsection(段落情報)を合わせて格納します。"
+msgstr ""
+
+msgid ""
+"``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_WEIGHT`` を指定すると、転置索"
+"引にweight情報を合わせて格納します。"
+msgstr ""
+
+msgid ""
+"``GRN_OBJ_COLUMN_INDEX`` と共に ``GRN_OBJ_WITH_POSITION`` を指定すると、転置"
+"索引に出現位置情報を合わせて格納します。"
+msgstr ""
+
+msgid "カラム値の型を指定します。定義済みのtypeあるいはtableを指定できます。"
+msgstr ""
+
+msgid ""
+"oldvalue, newvalueの値から得られるキーに対応するcolumnの値の中の、id, section"
+"に対応するエントリを更新します。columnは ``GRN_OBJ_COLUMN_INDEX`` 型のカラム"
+"でなければなりません。"
+msgstr ""
+
+msgid "対象columnを指定します。"
+msgstr ""
+
+msgid "対象レコードのIDを指定します。"
+msgstr ""
+
+msgid "対象レコードのセクション番号を指定します。"
+msgstr ""
+
+msgid "更新前の値を指定します。"
+msgstr ""
+
+msgid "更新後の値を指定します。"
+msgstr ""
+
+msgid "columnが属するtableを返します。"
+msgstr ""
+
+msgid ""
+"ctxが使用するdbにおいてcolumnに対応する名前をnameに更新します。columnは永続オ"
+"ブジェクトでなければいけません。"
+msgstr ""
+
+msgid "新しい名前を指定します。"
+msgstr ""
+
+msgid "nameパラメータのsize（byte）を指定します。"
+msgstr ""
+
+msgid ""
+"カラムobjの名前の長さを返します。buf_sizeの長さが名前の長さ以上であった場合"
+"は、namebufに該当する名前をコピーします。"
+msgstr ""
+
+msgid "対象objectを指定します。"
+msgstr ""
+
+msgid "名前を格納するバッファ（呼出側で準備する）を指定します。"
+msgstr ""
+
+msgid "namebufのサイズ（byte長）を指定します。"
+msgstr ""
+
+msgid ""
+"columnに張られているindexのうち、opの操作を実行可能なものの数を返します。また"
+"それらのidを、buf_sizeに指定された個数を上限としてindexbufに返します。"
+msgstr ""
+
+msgid "対象のcolumnを指定します。"
+msgstr ""
+
+msgid "indexで実行したい操作を指定します。"
+msgstr ""
+
+msgid "indexを格納するバッファ（呼出側で準備する）を指定します。"
+msgstr ""
+
+msgid "indexbufのサイズ（byte長）を指定します。"
+msgstr ""
+
+msgid "section番号を格納するint長バッファ（呼出側で準備する）を指定します。"
+msgstr ""
+
+msgid ""
+"This is a dangerous API. You must not use this API when other thread or "
+"process accesses the target column. If you use this API against shared "
+"column, the process that accesses the column may be broken and the column "
+"may be broken."
+msgstr ""
+
+msgid "Clears all values in the column."
+msgstr ""
+
+msgid "The column to be truncated."
+msgstr "truncate対象のカラム。"
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"

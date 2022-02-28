@@ -1,0 +1,77 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "戻り値"
+msgstr ""
+
+msgid "Overview"
+msgstr "概要"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"You can use Groonga as a library. You need to use the following APIs to "
+"initialize and finalize Groonga."
+msgstr ""
+"Groongaをライブラリーとして使うことができます。Groongaを初期化・終了するため"
+"に次のAPIを使う必要があります。"
+
+msgid ""
+":c:func:`grn_init()` initializes Groonga. In contrast, :c:func:`grn_fin()` "
+"finalizes Groonga."
+msgstr ""
+":c:func:`grn_init()` はGroongaを初期化します。一方、 :c:func:`grn_fin()` は"
+"Groongaを終了します。"
+
+msgid ""
+"You must call :c:func:`grn_init()` only once before you use APIs which are "
+"provided by Groonga. You must call :c:func:`grn_fin()` only once after you "
+"finish to use APIs which are provided by Groonga."
+msgstr ""
+"Groongaが提供するAPIを使う前に :c:func:`grn_init()` を1度だけ呼ぶ必要がありま"
+"す。Groongaが提供するAPIを呼び終わったら、 :c:func:`grn_fin()` を1度だけ呼ぶ"
+"必要があります。"
+
+msgid "Example"
+msgstr "例"
+
+msgid "Here is an example that uses Groonga as a full-text search library."
+msgstr "以下はGroongaを全文検索ライブラリーとして使う例です。"
+
+msgid "Reference"
+msgstr "リファレンス"
+
+msgid ""
+"``grn_init()`` initializes resources that are used by Groonga. You must call "
+"it just once before you call other Groonga APIs."
+msgstr ""
+"``grn_init()`` はGroongaが使うリソースを初期化します。他のGroongaのAPIを呼ぶ"
+"前に1度だけこれを呼ぶ必要があります。"
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
+
+msgid ""
+"``grn_fin()`` releases resources that are used by Groonga. You can't call "
+"other Groonga APIs after you call ``grn_fin()``."
+msgstr ""
+"``grn_fin()`` はGroongaが使ったリソースを解放します。 ``grn_fin()`` を呼んだ"
+"後はGroongaのAPIを呼ぶことはできません。"

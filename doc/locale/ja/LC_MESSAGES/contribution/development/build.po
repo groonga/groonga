@@ -1,0 +1,32 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2016-03-23 13:57+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "How to build Groonga at the repository"
+msgstr "リポジトリーのGroongaをビルドする方法"
+
+msgid ""
+"This document describes how to build Groonga at the repository for each "
+"build system. You can choose GNU Autotools or CMake if you develop Groonga "
+"on GNU/Linux or Unix (\\*BSD, Solaris, OS X and so on). You need to use "
+"CMake if you develop on Windows."
+msgstr ""
+"このドキュメントではビルドシステム毎にリポジトリーにあるGroongaをビルドする方"
+"法を説明します。GNU/LinuxまたはUnix（\\*BSDやSolaris、OS Xなど）でGroongaを開"
+"発する場合はGNU AutotoolsかCMakeを選べます。Windowsで開発する場合はCMakeを使"
+"う必要があります。"

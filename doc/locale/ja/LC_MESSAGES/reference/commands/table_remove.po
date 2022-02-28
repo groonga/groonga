@@ -1,0 +1,342 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``table_remove``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``table_remove`` removes a table and its columns. If there are one or more "
+"indexes against key of the table and its columns, they are also removed."
+msgstr ""
+"``table_remove`` はテーブルとそのカラムを削除します。もし、テーブルのキーある"
+"いはそのテーブルのカラムにインデックスが張ってある場合はそれらも削除されま"
+"す。"
+
+msgid ""
+"You can also remove tables and columns that reference the target table by "
+"using ``dependent`` parameter."
+msgstr ""
+"もし、自分がなにをしようとしているかちゃんと理解しているのであれば、 ``--"
+"dependent yes`` パラメーターを使うことで1回の ``table_remove`` で対象テーブル"
+"を参照しているテーブルとカラムも削除することができます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes two parameters::"
+msgstr "このコマンドには2つの引数があります。::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"You just specify table name that you want to remove. ``table_remove`` "
+"removes the table and its columns. If the table and its columns are indexed, "
+"all index columns for the table and its columns are also removed."
+msgstr ""
+"削除したいテーブルの名前を指定するだけです。 ``table_remove`` は指定された"
+"テーブルとそのテーブルのカラムを削除します。もし、テーブルとそのテーブルのカ"
+"ラムにインデックスが張ってある場合は、張ってあるすべてのインデックスも削除し"
+"ます。"
+
+msgid "This section describes about the followings:"
+msgstr "このセクションでは次のことについて説明します。"
+
+msgid "Basic usage"
+msgstr "基本的な使い方"
+
+msgid "Unremovable cases"
+msgstr "削除できないケース"
+
+msgid "Removes a table with tables and columns that reference the target table"
+msgstr "対象テーブルを参照しているテーブル・カラムも一緒に削除"
+
+msgid "Decreases used resources"
+msgstr "利用リソースの削減"
+
+msgid "Let's think about the following case:"
+msgstr "次のケースを考えてみましょう。"
+
+msgid "There is one table ``Entries``."
+msgstr "``Entries`` というテーブルがあります。"
+
+msgid "``Entries`` table has some columns."
+msgstr "``Entries`` テーブルにはいくつかカラムがあります。"
+
+msgid "``Entries`` table's key is indexed."
+msgstr "``Entries`` テーブルのキーにはインデックスが張ってあります。"
+
+msgid "A column of ``Entries`` is indexed."
+msgstr "``Entries`` のあるカラムにはインデックスが張ってあります。"
+
+msgid "Here are commands that create ``Entries`` table:"
+msgstr "以下は ``Entries`` テーブルを作成するコマンドです。"
+
+msgid "Here are commands that create an index for ``Entries`` table's key:"
+msgstr "以下は ``Entries`` テーブルのキーにインデックスを張るコマンドです。"
+
+msgid "Here are commands that create an index for ``Entries`` table's column:"
+msgstr "以下は ``Entries`` テーブルのカラムにインデックスを張るコマンドです。"
+
+msgid "Let's confirm the current schema before running ``table_remove``:"
+msgstr "``table_remove`` を実行する前に現在のスキーマを確認しましょう。"
+
+msgid ""
+"If you remove ``Entries`` table, the following tables and columns are "
+"removed:"
+msgstr "``Entries`` テーブルを削除すると、次のテーブルとカラムが削除されます。"
+
+msgid "``Entries``"
+msgstr ""
+
+msgid "``Entries.title``"
+msgstr ""
+
+msgid "``Entries.context``"
+msgstr ""
+
+msgid "``EntryKeys.key_index``"
+msgstr ""
+
+msgid "``Terms.content_index``"
+msgstr ""
+
+msgid "The following tables (lexicons) aren't removed:"
+msgstr "次のテーブル（語彙表）は削除されません。"
+
+msgid "``EntryKeys``"
+msgstr ""
+
+msgid "``Terms``"
+msgstr ""
+
+msgid "Let's run ``table_remove``:"
+msgstr "``table_remove`` を実行しましょう。"
+
+msgid ""
+"Here is schema after ``table_remove``. Only ``EntryKeys`` and ``Terms`` "
+"exist:"
+msgstr ""
+"以下が ``table_remove`` 実行後のスキーマです。 ``EntryKeys`` と ``Terms`` だ"
+"けが残っています。"
+
+msgid "There are some unremovable cases:"
+msgstr "以下は削除できないケースです。"
+
+msgid "One or more tables use the table as key type."
+msgstr "1つ以上のテーブルがこの削除対象のテーブルをキーの型として使っている。"
+
+msgid "One or more columns use the table as value type."
+msgstr "1つ以上のカラムがこの削除対象のテーブルを値の型として使っている。"
+
+msgid ""
+"Both cases blocks dangling references. If the table is referenced as type "
+"and the table is removed, tables and columns that refer the table are broken."
+msgstr ""
+"どちらのケースも参照先がなくなることを防ぎます。もし、削除対象のテーブルが型"
+"として参照されているままそのテーブルが削除されてしまうと、そのテーブルを参照"
+"しているテーブルとカラムは壊れてしまいます。"
+
+msgid ""
+"If the target table satisfies one of them, ``table_remove`` is failed. The "
+"target table and its columns aren't removed."
+msgstr ""
+"もし、削除対象のテーブルがどれかの条件を満たしたら ``table_remove`` は失敗し"
+"ます。削除対象のテーブルも削除対象のテーブルのカラムも削除されません。"
+
+msgid "Here is an example for the table is used as key type case."
+msgstr "以下は削除対象のテーブルがキーの型に使われるケースの例です。"
+
+msgid ""
+"The following commands create a table to be removed and a table that uses "
+"the table to be removed as key type:"
+msgstr ""
+"次のコマンドは削除対象のテーブルとそのテーブルをキーの型として使うテーブルを"
+"作成します。"
+
+msgid "``table_remove`` against ``ReferencedByTable`` is failed:"
+msgstr "``ReferencedByTable`` に対する ``table_remove`` は失敗します。"
+
+msgid ""
+"You need to remove ``ReferenceTable`` before you remove "
+"``ReferencedByTable``:"
+msgstr ""
+"``ReferencedByTable`` を削除する前に ``ReferenceTable`` を削除する必要があり"
+"ます。"
+
+msgid "Here is an example for the table is used as value type case."
+msgstr "以下は削除対象のテーブルが値の型に使われるケースの例です。"
+
+msgid ""
+"The following commands create a table to be removed and a column that uses "
+"the table to be removed as value type:"
+msgstr ""
+"次のコマンドは削除対象のテーブルとそのテーブルを値の型として使うカラムを作成"
+"します。"
+
+msgid "``table_remove`` against ``ReferencedByColumn`` is failed:"
+msgstr "``ReferencedByColumn`` に対する ``table_remove`` は失敗します。"
+
+msgid ""
+"You need to remove ``Table.reference_column`` before you remove "
+"``ReferencedByColumn``:"
+msgstr ""
+"``ReferencedByColumn`` を削除する前に ``Table.reference_column`` を削除する必"
+"要があります。"
+
+msgid ""
+"If you understand what you'll do, you can also remove tables and columns "
+"that reference the target table with one ``table_remove`` command by using "
+"``--dependent yes`` parameter."
+msgstr ""
+"もし、自分がなにをしようとしているかちゃんと理解しているのであれば、 ``--"
+"dependent yes`` パラメーターを使うことで1回の ``table_remove`` で対象テーブル"
+"を参照しているテーブルとカラムも削除することができます。"
+
+msgid ""
+"``ReferencedTable`` in the following schema is referenced from a table and a "
+"column:"
+msgstr ""
+"以下のスキーマの ``ReferencedTable`` は1つのテーブルと1つのカラムから参照され"
+"ています。"
+
+msgid "You can't remove ``ReferencedTable`` by default:"
+msgstr "デフォルトでは ``ReferencedTable`` を削除することはできません。"
+
+msgid ""
+"You can remove ``ReferencedTable``, ``Table1`` and ``Table2."
+"reference_column`` by using ``--dependent yes`` parameter. ``Table1`` and "
+"``Table2.reference_column`` reference ``ReferencedTable``:"
+msgstr ""
+"``--dependent yes`` パラメーターを使うことで ``ReferencedTable`` と "
+"``Table1`` と ``Table2.reference_column`` を削除できます。 ``Table1`` と "
+"``Table2.reference_column`` は ``ReferencedTable`` を参照しています。"
+
+msgid ""
+"``table_remove`` opens all tables and columns in database to check :ref:"
+"`table-remove-unremovable-cases`."
+msgstr ""
+"``table_remove`` は :ref:`table-remove-unremovable-cases` のチェックをするた"
+"めにデータベース内のすべてのテーブルとカラムを開きます。"
+
+msgid ""
+"If you have many tables and columns, ``table_remove`` may use many "
+"resources. There is a workaround to avoid the case."
+msgstr ""
+"もし、大量のテーブルとカラムがある場合、 ``table_remove`` はたくさんのリソー"
+"スを使うかもしれません。このケース用の回避策があります。"
+
+msgid ""
+"``table_remove`` closes temporary opened tables and columns for checking "
+"when the max number of threads is ``1``."
+msgstr ""
+"``table_remove`` は最大スレッド数が ``1`` のときはチェック用に一時的に開いた"
+"テーブルとカラムを閉じます。"
+
+msgid ""
+"You can confirm and change the current max number of threads by :doc:"
+"`thread_limit`."
+msgstr ":doc:`thread_limit` を使うと現在の最大スレッド数を確認・変更できます。"
+
+msgid "The feature is used in the following case:"
+msgstr "この機能は次のケースでは使われます。"
+
+msgid "The feature isn't used in the following case:"
+msgstr "この機能は次のケースでは使われません。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes all parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is only one required parameter."
+msgstr "必須の引数は1つです。"
+
+msgid "``name``"
+msgstr ""
+
+msgid "Specifies the table name to be removed."
+msgstr "削除するテーブルの名前を指定します。"
+
+msgid "See :ref:`table-remove-usage` how to use this parameter."
+msgstr ""
+"このパラメーターの使い方は :ref:`table-remove-usage` を参照してください。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There is only one optional parameter."
+msgstr "省略可能な引数が1つあります。"
+
+msgid "``dependent``"
+msgstr ""
+
+msgid ""
+"Specifies whether tables and columns that reference the target table are "
+"also removed or not."
+msgstr ""
+"対象テーブルを参照しているテーブル・カラムも一緒に削除するかどうかを指定しま"
+"す。"
+
+msgid ""
+"If this value is ``yes``, tables and columns that reference the target table "
+"are also removed. Otherwise, they aren't removed and an error is returned."
+msgstr ""
+"``yes`` を指定した場合は、対象テーブルを参照しているテーブル・カラムも一緒に"
+"削除します。それ以外の場合は、どれも削除せずにエラーが返ります。"
+
+msgid ""
+"In other words, if there are any tables and columns that reference the "
+"target table, the target table isn't removed by default."
+msgstr ""
+"言い換えると、デフォルトでは、対象テーブルを参照しているテーブル・カラムが1つ"
+"でもあると、対象テーブルを削除しません。"
+
+msgid "You should use this parameter carefully. This is a danger parameter."
+msgstr "このパラメーターは注意して使ってください。危険なパラメーターです。"
+
+msgid "See :ref:`table-remove-remove-dependents` how to use this parameter."
+msgstr ""
+"このパラメーターの使い方は :ref:`table-remove-remove-dependents` を参照してく"
+"ださい。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "The command returns ``true`` as body on success such as::"
+msgstr "このコマンドが成功したときは以下のようにボディは ``true`` になります::"
+
+msgid "If the command fails, error details are in ``HEADER``."
+msgstr "このコマンドが失敗すると、 ``HEADER`` にエラーの詳細が含まれます。"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"

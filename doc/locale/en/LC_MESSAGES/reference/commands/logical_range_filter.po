@@ -1,0 +1,807 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``logical_range_filter``"
+msgstr "``logical_range_filter``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"``logical_range_filter`` is a sharding version of :doc:`range_filter`. "
+"``logical_range_filter`` searches records from multiple tables and outputs "
+"them."
+msgstr ""
+"``logical_range_filter`` is a sharding version of :doc:`range_filter`. "
+"``logical_range_filter`` searches records from multiple tables and outputs "
+"them."
+
+msgid ""
+"``logical_range_filter`` is similar to :doc:`logical_select`. Both of them "
+"searches records from multiples tables and outputs them. "
+"``logical_range_filter`` stops searching when the number of matched records "
+"is requested the number of records. :doc:`logical_select` searches all "
+"records and outputs only needed records."
+msgstr ""
+"``logical_range_filter`` is similar to :doc:`logical_select`. Both of them "
+"searches records from multiples tables and outputs them. "
+"``logical_range_filter`` stops searching when the number of matched records "
+"is requested the number of records. :doc:`logical_select` searches all "
+"records and outputs only needed records."
+
+msgid "``logical_range_filter`` has performance merit but some restrictions."
+msgstr "``logical_range_filter`` has performance merit but some restrictions."
+
+msgid ""
+"If many records are matched and requested records are small, "
+"``logical_range_filter`` will be faster than :doc:`logical_select`."
+msgstr ""
+"If many records are matched and requested records are small, "
+"``logical_range_filter`` will be faster than :doc:`logical_select`."
+
+msgid ""
+"``logical_range_filter`` doesn't support drilldown because drilldown "
+"requires all matched records. ``logical_range_filter`` may not find all "
+"matched records. So ``logical_range_filter`` doesn't support drilldown."
+msgstr ""
+"``logical_range_filter`` doesn't support drilldown because drilldown "
+"requires all matched records. ``logical_range_filter`` may not find all "
+"matched records. So ``logical_range_filter`` doesn't support drilldown."
+
+msgid ""
+"``logical_range_filter`` doesn't return the number of all matched records. "
+"Because ``logical_range_filter`` may not search all matched records."
+msgstr ""
+"``logical_range_filter`` doesn't return the number of all matched records. "
+"Because ``logical_range_filter`` may not search all matched records."
+
+msgid ""
+"You need to :doc:`plugin_register` ``sharding`` plugin because this command "
+"is included in ``sharding`` plugin."
+msgstr ""
+"You need to :doc:`plugin_register` ``sharding`` plugin because this command "
+"is included in ``sharding`` plugin."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "This command takes many parameters."
+msgstr "This command takes many parameters."
+
+msgid "The required parameters are ``logical_table`` and ``shard_key``::"
+msgstr "The required parameters are ``logical_table`` and ``shard_key``::"
+
+msgid ""
+"There are some parameters that can be only used as named parameters. You "
+"can't use these parameters as ordered parameters. You must specify parameter "
+"name."
+msgstr ""
+"There are some parameters that can be only used as named parameters. You "
+"can't use these parameters as ordered parameters. You must specify parameter "
+"name."
+
+msgid "Here are parameters that can be only used as named parameters:"
+msgstr "Here are parameters that can be only used as named parameters:"
+
+msgid "``cache=no``"
+msgstr "``cache=no``"
+
+msgid "This command has the following named parameters for dynamic columns:"
+msgstr "This command has the following named parameters for dynamic columns:"
+
+msgid "``columns[${NAME}].stage=null``"
+msgstr "``columns[${NAME}].stage=null``"
+
+msgid "``columns[${NAME}].flags=COLUMN_SCALAR``"
+msgstr "``columns[${NAME}].flags=COLUMN_SCALAR``"
+
+msgid "``columns[${NAME}].type=null``"
+msgstr "``columns[${NAME}].type=null``"
+
+msgid "``columns[${NAME}].value=null``"
+msgstr "``columns[${NAME}].value=null``"
+
+msgid "``columns[${NAME}].window.sort_keys=null``"
+msgstr "``columns[${NAME}].window.sort_keys=null``"
+
+msgid "``columns[${NAME}].window.group_keys=null``"
+msgstr "``columns[${NAME}].window.group_keys=null``"
+
+msgid ""
+"You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For "
+"example, ``column1`` is a valid ``${NAME}``. This is the same rule as normal "
+"column. See also :ref:`column-create-name`."
+msgstr ""
+"You can use one or more alphabets, digits, ``_`` for ``${NAME}``. For "
+"example, ``column1`` is a valid ``${NAME}``. This is the same rule as normal "
+"column. See also :ref:`column-create-name`."
+
+msgid "Parameters that have the same ``${NAME}`` are grouped."
+msgstr "Parameters that have the same ``${NAME}`` are grouped."
+
+msgid "For example, the following parameters specify one dynamic column:"
+msgstr "For example, the following parameters specify one dynamic column:"
+
+msgid "``--columns[name].stage initial``"
+msgstr "``--columns[name].stage initial``"
+
+msgid "``--columns[name].type UInt32``"
+msgstr "``--columns[name].type UInt32``"
+
+msgid "``--columns[name].value 29``"
+msgstr "``--columns[name].value 29``"
+
+msgid "The following parameters specify two dynamic columns:"
+msgstr "The following parameters specify two dynamic columns:"
+
+msgid "``--columns[name1].stage initial``"
+msgstr "``--columns[name1].stage initial``"
+
+msgid "``--columns[name1].type UInt32``"
+msgstr "``--columns[name1].type UInt32``"
+
+msgid "``--columns[name1].value 29``"
+msgstr "``--columns[name1].value 29``"
+
+msgid "``--columns[name2].stage filtered``"
+msgstr "``--columns[name2].stage filtered``"
+
+msgid "``--columns[name2].type Float``"
+msgstr "``--columns[name2].type Float``"
+
+msgid "``--columns[name2].value '_score * 0.1'``"
+msgstr "``--columns[name2].value '_score * 0.1'``"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid ""
+"Let's learn about usage with examples. This section shows many popular "
+"usages."
+msgstr ""
+"Let's learn about usage with examples. This section shows many popular "
+"usages."
+
+msgid ""
+"You need to register ``sharding`` plugin because this command is included in "
+"``sharding`` plugin."
+msgstr ""
+"You need to register ``sharding`` plugin because this command is included in "
+"``sharding`` plugin."
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "Here are a schema definition and sample data to show usage."
+
+msgid ""
+"There are two tables, ``Entries_20150708`` and ``Entries_20150709``, for "
+"blog entries."
+msgstr ""
+"There are two tables, ``Entries_20150708`` and ``Entries_20150709``, for "
+"blog entries."
+
+msgid ""
+"You need to use ``${LOGICAL_TABLE_NAME}_${YYYYMMDD}`` naming rule for table "
+"names. In this example, ``LOGICAL_TABLE_NAME`` is ``Entries`` and "
+"``YYYYMMDD`` is ``20150708`` or ``20150709``."
+msgstr ""
+"You need to use ``${LOGICAL_TABLE_NAME}_${YYYYMMDD}`` naming rule for table "
+"names. In this example, ``LOGICAL_TABLE_NAME`` is ``Entries`` and "
+"``YYYYMMDD`` is ``20150708`` or ``20150709``."
+
+msgid ""
+"An entry has title, created time, content, the number of likes for the entry "
+"and tag. Title is key of ``Entries_YYYYMMDD``. Created time is value of "
+"``Entries_YYYYMMDD.created_at`` column. Content is value of "
+"``Entries_YYYYMMDD.content`` column. The number of likes is value of "
+"``Entries_YYYYMMDD.n_likes`` column. Tag is value of ``Entries_YYYYMMDD."
+"tag`` column."
+msgstr ""
+"An entry has title, created time, content, the number of likes for the entry "
+"and tag. Title is key of ``Entries_YYYYMMDD``. Created time is value of "
+"``Entries_YYYYMMDD.created_at`` column. Content is value of "
+"``Entries_YYYYMMDD.content`` column. The number of likes is value of "
+"``Entries_YYYYMMDD.n_likes`` column. Tag is value of ``Entries_YYYYMMDD."
+"tag`` column."
+
+msgid ""
+"``Entries_YYYYMMDD._key`` column and ``Entries_YYYYMMDD.content`` column are "
+"indexed using ``TokenBigram`` tokenizer. So both ``Entries_YYYYMMDD._key`` "
+"and ``Entries_YYYYMMDD.content`` are fulltext search ready."
+msgstr ""
+"``Entries_YYYYMMDD._key`` column and ``Entries_YYYYMMDD.content`` column are "
+"indexed using ``TokenBigram`` tokenizer. So both ``Entries_YYYYMMDD._key`` "
+"and ``Entries_YYYYMMDD.content`` are fulltext search ready."
+
+msgid "OK. The schema and data for examples are ready."
+msgstr "OK. The schema and data for examples are ready."
+
+msgid "Simple usage"
+msgstr "Simple usage"
+
+msgid "TODO"
+msgstr "TODO"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "This section describes parameters of ``logical_range_filter``."
+msgstr "This section describes parameters of ``logical_range_filter``."
+
+msgid "Required parameters"
+msgstr "Required parameters"
+
+msgid "There are required parameters, ``logical_table`` and ``shard_key``."
+msgstr "There are required parameters, ``logical_table`` and ``shard_key``."
+
+msgid "``logical_table``"
+msgstr "``logical_table``"
+
+msgid ""
+"Specifies logical table name. It means table name without ``_YYYYMMDD`` "
+"postfix. If you use actual table such as ``Entries_20150708``, "
+"``Entries_20150709`` and so on, logical table name is ``Entries``."
+msgstr ""
+"Specifies logical table name. It means table name without ``_YYYYMMDD`` "
+"postfix. If you use actual table such as ``Entries_20150708``, "
+"``Entries_20150709`` and so on, logical table name is ``Entries``."
+
+msgid "If nonexistent table is specified, an error is returned."
+msgstr "If nonexistent table is specified, an error is returned."
+
+msgid "``shard_key``"
+msgstr "``shard_key``"
+
+msgid ""
+"Specifies column name which is treated as shared key in each parted table."
+msgstr ""
+"Specifies column name which is treated as shared key in each parted table."
+
+msgid "TODO: Add examples"
+msgstr "TODO: Add examples"
+
+msgid "Optional parameters"
+msgstr "Optional parameters"
+
+msgid "There are optional parameters."
+msgstr "There are optional parameters."
+
+msgid "``min``"
+msgstr "``min``"
+
+msgid "Specifies the min value of ``shard_key``"
+msgstr "Specifies the min value of ``shard_key``"
+
+msgid "``min_border``"
+msgstr "``min_border``"
+
+msgid ""
+"Specifies whether the min value of borderline must be include or not. "
+"Specify ``include`` or ``exclude`` as the value of this parameter."
+msgstr ""
+"Specifies whether the min value of borderline must be include or not. "
+"Specify ``include`` or ``exclude`` as the value of this parameter."
+
+msgid "``max``"
+msgstr "``max``"
+
+msgid "Specifies the max value of ``shard_key``."
+msgstr "Specifies the max value of ``shard_key``."
+
+msgid "``max_border``"
+msgstr "``max_border``"
+
+msgid ""
+"Specifies whether the max value of borderline must be include or not. "
+"Specify ``include`` or ``exclude`` as the value of this parameter."
+msgstr ""
+"Specifies whether the max value of borderline must be include or not. "
+"Specify ``include`` or ``exclude`` as the value of this parameter."
+
+msgid "``order``"
+msgstr "``order``"
+
+msgid ""
+"Specifies order of search result. Specify ``ascending`` or ``descending`` as "
+"the value of this parameter."
+msgstr ""
+"Specifies order of search result. Specify ``ascending`` or ``descending`` as "
+"the value of this parameter."
+
+msgid ""
+"If we set ``ascending`` in this parameter, search results are sorted by "
+"ascending order based on ``shared_key``. If we set ``descending`` in this "
+"parameter, search results are sorted by descending order based on "
+"``shared_key``."
+msgstr ""
+"If we set ``ascending`` in this parameter, search results are sorted by "
+"ascending order based on ``shared_key``. If we set ``descending`` in this "
+"parameter, search results are sorted by descending order based on "
+"``shared_key``."
+
+msgid "Search related parameters"
+msgstr "Search related parameters"
+
+msgid ""
+"This command provides :doc:`select` compatible search related parameters."
+msgstr ""
+"This command provides :doc:`select` compatible search related parameters."
+
+msgid "``filter``"
+msgstr "``filter``"
+
+msgid ""
+"Corresponds to :ref:`select-filter` in :doc:`select`. See :ref:`select-"
+"filter` for details."
+msgstr ""
+"Corresponds to :ref:`select-filter` in :doc:`select`. See :ref:`select-"
+"filter` for details."
+
+msgid "Here is an example:"
+msgstr "Here is an example:"
+
+msgid "``post_filter``"
+msgstr "``post_filter``"
+
+msgid ""
+"Specifies the filter text that is processed after ``filtered`` stage dynamic "
+"columns are generated. You can use ``post_filter`` to filter by ``filtered`` "
+"stage dynamic columns. Others are the same as :ref:`logical-range-filter-"
+"filter`."
+msgstr ""
+"Specifies the filter text that is processed after ``filtered`` stage dynamic "
+"columns are generated. You can use ``post_filter`` to filter by ``filtered`` "
+"stage dynamic columns. Others are the same as :ref:`logical-range-filter-"
+"filter`."
+
+msgid ""
+"If you use ``post_filter``, \"stop searching when enough records are matched "
+"in a table\" feature is disabled. (\"Stop searching against rest tables when "
+"enough records are matched\" is still enabled.)  Because ``post_filter`` "
+"needs to wait dynamic columns generation. See also :ref:`logical-range-"
+"filter-dynamic-column-related-parameters`."
+msgstr ""
+"If you use ``post_filter``, \"stop searching when enough records are matched "
+"in a table\" feature is disabled. (\"Stop searching against rest tables when "
+"enough records are matched\" is still enabled.)  Because ``post_filter`` "
+"needs to wait dynamic columns generation. See also :ref:`logical-range-"
+"filter-dynamic-column-related-parameters`."
+
+msgid ""
+"Here is an example that shows entries only in popular tag. All target "
+"entries have ``system`` or ``use`` words:"
+msgstr ""
+"Here is an example that shows entries only in popular tag. All target "
+"entries have ``system`` or ``use`` words:"
+
+msgid "Output related parameters"
+msgstr "Output related parameters"
+
+msgid "``output_columns``"
+msgstr "``output_columns``"
+
+msgid ""
+"Corresponds to :ref:`select-output-columns` in :doc:`select`. See :ref:"
+"`select-output-columns` for details."
+msgstr ""
+"Corresponds to :ref:`select-output-columns` in :doc:`select`. See :ref:"
+"`select-output-columns` for details."
+
+msgid "``sort_keys``"
+msgstr "``sort_keys``"
+
+msgid ""
+"Corresponds to :ref:`select-sort-keys` in :doc:`select`. See :ref:`select-"
+"sort-keys` for details."
+msgstr ""
+"Corresponds to :ref:`select-sort-keys` in :doc:`select`. See :ref:`select-"
+"sort-keys` for details."
+
+msgid ""
+"``sort_keys`` has a limitation. It works only when the number of search "
+"target shards is one. If the number of search target shards is larger than "
+"one, ``sort_keys`` doesn't work."
+msgstr ""
+"``sort_keys`` has a limitation. It works only when the number of search "
+"target shards is one. If the number of search target shards is larger than "
+"one, ``sort_keys`` doesn't work."
+
+msgid ""
+"There is one exception for multiple shards. When the same value is specified "
+"for ``shard_key`` and ``sort_keys``, they are supported. This command "
+"processes target shards one by one by ascending order. Thus, in this "
+"process, magnitude correlation about the value of ``shard_key`` is kept "
+"among them. This is because ``sort_keys`` is supported when ``shard_key`` "
+"and ``sort_keys`` is same."
+msgstr ""
+"There is one exception for multiple shards. When the same value is specified "
+"for ``shard_key`` and ``sort_keys``, they are supported. This command "
+"processes target shards one by one by ascending order. Thus, in this "
+"process, magnitude correlation about the value of ``shard_key`` is kept "
+"among them. This is because ``sort_keys`` is supported when ``shard_key`` "
+"and ``sort_keys`` is same."
+
+msgid "Here is an example that uses only one shard:"
+msgstr "Here is an example that uses only one shard:"
+
+msgid ""
+"Here is an example that uses ``shard_key`` based value as the first sort key:"
+msgstr ""
+"Here is an example that uses ``shard_key`` based value as the first sort key:"
+
+msgid "``offset``"
+msgstr "``offset``"
+
+msgid ""
+"Corresponds to :ref:`select-offset` in :doc:`select`. See :ref:`select-"
+"offset` for details."
+msgstr ""
+"Corresponds to :ref:`select-offset` in :doc:`select`. See :ref:`select-"
+"offset` for details."
+
+msgid "``limit``"
+msgstr "``limit``"
+
+msgid ""
+"Corresponds to :ref:`select-limit` in :doc:`select`. See :ref:`select-limit` "
+"for details."
+msgstr ""
+"Corresponds to :ref:`select-limit` in :doc:`select`. See :ref:`select-limit` "
+"for details."
+
+msgid ""
+"The difference from :doc:`select` is that this command stops searching when "
+"all requested records specified by :ref:`logical-range-filter-offset` and :"
+"ref:`logical-range-filter-limit` are found."
+msgstr ""
+"The difference from :doc:`select` is that this command stops searching when "
+"all requested records specified by :ref:`logical-range-filter-offset` and :"
+"ref:`logical-range-filter-limit` are found."
+
+msgid "Test related parameters"
+msgstr "Test related parameters"
+
+msgid "``use_range_index``"
+msgstr "``use_range_index``"
+
+msgid ""
+"Specifies whether range_index is used or not. Note that it's a parameter for "
+"test. It should not be used for production."
+msgstr ""
+"Specifies whether range_index is used or not. Note that it's a parameter for "
+"test. It should not be used for production."
+
+msgid "Dynamic column related parameters"
+msgstr "Dynamic column related parameters"
+
+msgid ""
+"All dynamic column related parameters in :doc:`select` are supported. See :"
+"ref:`select-dynamic-column-related-parameters` for details."
+msgstr ""
+"All dynamic column related parameters in :doc:`select` are supported. See :"
+"ref:`select-dynamic-column-related-parameters` for details."
+
+msgid ""
+"If you use one or more dynamic columns, \"stop searching when enough records "
+"are matched in a table\" feature is disabled. (\"Stop searching against rest "
+"tables when enough records are matched\" is still enabled.)  "
+"``logical_range_filter`` searches all matched records in a table even when "
+"requested the number of matched records is small. It's for supporting window "
+"function. Running window function requires all target records in a table."
+msgstr ""
+"If you use one or more dynamic columns, \"stop searching when enough records "
+"are matched in a table\" feature is disabled. (\"Stop searching against rest "
+"tables when enough records are matched\" is still enabled.)  "
+"``logical_range_filter`` searches all matched records in a table even when "
+"requested the number of matched records is small. It's for supporting window "
+"function. Running window function requires all target records in a table."
+
+msgid "``columns[${NAME}].stage``"
+msgstr "``columns[${NAME}].stage``"
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-stage` in :doc:`select`. See :ref:"
+"`select-columns-name-stage` for details."
+msgstr ""
+"Corresponds to :ref:`select-columns-name-stage` in :doc:`select`. See :ref:"
+"`select-columns-name-stage` for details."
+
+msgid "This is a required parameter."
+msgstr "This is a required parameter."
+
+msgid ""
+"Here is an example that creates ``is_popular`` column at ``initial`` stage. "
+"You can use ``is_popular`` in all parameters such as ``filter`` and "
+"``output_columns``:"
+msgstr ""
+"Here is an example that creates ``is_popular`` column at ``initial`` stage. "
+"You can use ``is_popular`` in all parameters such as ``filter`` and "
+"``output_columns``:"
+
+msgid "``columns[${NAME}].flags``"
+msgstr "``columns[${NAME}].flags``"
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-flags` in :doc:`select`. See :ref:"
+"`select-columns-name-flags` for details."
+msgstr ""
+"Corresponds to :ref:`select-columns-name-flags` in :doc:`select`. See :ref:"
+"`select-columns-name-flags` for details."
+
+msgid "The default value is ``COLUMN_SCALAR``."
+msgstr "The default value is ``COLUMN_SCALAR``."
+
+msgid ""
+"Here is an example that creates a vector column by ``COLUMN_VECTOR`` flags. "
+"``plugin_register functions/vector`` is for using :doc:`/reference/functions/"
+"vector_new` function:"
+msgstr ""
+"Here is an example that creates a vector column by ``COLUMN_VECTOR`` flags. "
+"``plugin_register functions/vector`` is for using :doc:`/reference/functions/"
+"vector_new` function:"
+
+msgid "``columns[${NAME}].type``"
+msgstr "``columns[${NAME}].type``"
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-type` in :doc:`select`. See :ref:"
+"`select-columns-name-type` for details."
+msgstr ""
+"Corresponds to :ref:`select-columns-name-type` in :doc:`select`. See :ref:"
+"`select-columns-name-type` for details."
+
+msgid ""
+"Here is an example that creates a ``ShortText`` type column. Stored value is "
+"casted to ``ShortText`` automatically. In this example, number is casted to "
+"``ShortText``:"
+msgstr ""
+"Here is an example that creates a ``ShortText`` type column. Stored value is "
+"casted to ``ShortText`` automatically. In this example, number is casted to "
+"``ShortText``:"
+
+msgid "``columns[${NAME}].value``"
+msgstr "``columns[${NAME}].value``"
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-value` in :doc:`select`. See :ref:"
+"`select-columns-name-value` for details."
+msgstr ""
+"Corresponds to :ref:`select-columns-name-value` in :doc:`select`. See :ref:"
+"`select-columns-name-value` for details."
+
+msgid ""
+"You need to specify :doc:`/reference/window_function` as ``value`` value and "
+"other window function related parameters when you use window function. See :"
+"ref:`logical-range-filter-window-function-related-parameters` for details."
+msgstr ""
+"You need to specify :doc:`/reference/window_function` as ``value`` value and "
+"other window function related parameters when you use window function. See :"
+"ref:`logical-range-filter-window-function-related-parameters` for details."
+
+msgid ""
+"Here is an example that creates a new dynamic column that stores the number "
+"of characters of content. This example uses :doc:`/reference/functions/"
+"string_length` function in ``functions/string`` plugin to compute the number "
+"of characters in a string. :doc:`plugin_register` is used to register "
+"``functions/string`` plugin:"
+msgstr ""
+"Here is an example that creates a new dynamic column that stores the number "
+"of characters of content. This example uses :doc:`/reference/functions/"
+"string_length` function in ``functions/string`` plugin to compute the number "
+"of characters in a string. :doc:`plugin_register` is used to register "
+"``functions/string`` plugin:"
+
+msgid "Window function related parameters"
+msgstr "Window function related parameters"
+
+msgid ""
+"All window function related parameters in :doc:`select` are supported. See :"
+"ref:`select-window-function-related-parameters` for details."
+msgstr ""
+"All window function related parameters in :doc:`select` are supported. See :"
+"ref:`select-window-function-related-parameters` for details."
+
+msgid ""
+"Window function over multiple tables aren't supported version 9.0.1 or "
+"before. Groonga supported it since version 9.0.2 or later. However, we need "
+"to align the same order for shard key and leading group key or sort key."
+msgstr ""
+"Window function over multiple tables aren't supported version 9.0.1 or "
+"before. Groonga supported it since version 9.0.2 or later. However, we need "
+"to align the same order for shard key and leading group key or sort key."
+
+msgid ""
+"For example, we can apply the window function to over multiple tables as "
+"below case. Because the below example aligns the same order for shard key "
+"and leading group key."
+msgstr ""
+"For example, we can apply the window function to over multiple tables as "
+"below case. Because the below example aligns the same order for shard key "
+"and leading group key."
+
+msgid ""
+"The leading group key is ``price`` and shard key is ``timestamp`` in the "
+"below example. We can apply the window function to over multiple tables in "
+"the below example. Because ``price`` and ``timestamp`` aligns the same order."
+msgstr ""
+"The leading group key is ``price`` and shard key is ``timestamp`` in the "
+"below example. We can apply the window function to over multiple tables in "
+"the below example. Because ``price`` and ``timestamp`` aligns the same order."
+
+msgid "``columns[${NAME}].window.sort_keys``"
+msgstr "``columns[${NAME}].window.sort_keys``"
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-window-sort-keys` in :doc:`select`. "
+"See :ref:`select-columns-name-window-sort-keys` for details."
+msgstr ""
+"Corresponds to :ref:`select-columns-name-window-sort-keys` in :doc:`select`. "
+"See :ref:`select-columns-name-window-sort-keys` for details."
+
+msgid ""
+"You must specify :ref:`logical-range-filter-columns-name-window-sort-keys` "
+"or :ref:`logical-range-filter-columns-name-window-group-keys` to use window "
+"function."
+msgstr ""
+"You must specify :ref:`logical-range-filter-columns-name-window-sort-keys` "
+"or :ref:`logical-range-filter-columns-name-window-group-keys` to use window "
+"function."
+
+msgid ""
+"Here is an example that computes cumulative sum per ``Entries.tag``. Each "
+"group is sorted by ``Entries._key``:"
+msgstr ""
+"Here is an example that computes cumulative sum per ``Entries.tag``. Each "
+"group is sorted by ``Entries._key``:"
+
+msgid "``columns[${NAME}].window.group_keys``"
+msgstr "``columns[${NAME}].window.group_keys``"
+
+msgid ""
+"Corresponds to :ref:`select-columns-name-window-group-keys` in :doc:"
+"`select`. See :ref:`select-columns-name-window-group-keys` for details."
+msgstr ""
+"Corresponds to :ref:`select-columns-name-window-group-keys` in :doc:"
+"`select`. See :ref:`select-columns-name-window-group-keys` for details."
+
+msgid "Here is an example that computes sum per ``Entries.tag``:"
+msgstr "Here is an example that computes sum per ``Entries.tag``:"
+
+msgid "Cache related parameter"
+msgstr "Cache related parameter"
+
+msgid "``cache``"
+msgstr "``cache``"
+
+msgid "Specifies whether caching the result of this query or not."
+msgstr "Specifies whether caching the result of this query or not."
+
+msgid ""
+"If the result of this query is cached, the next same query returns response "
+"quickly by using the cache."
+msgstr ""
+"If the result of this query is cached, the next same query returns response "
+"quickly by using the cache."
+
+msgid "It doesn't control whether existing cached result is used or not."
+msgstr "It doesn't control whether existing cached result is used or not."
+
+msgid "Here are available values:"
+msgstr "Here are available values:"
+
+msgid "Value"
+msgstr "Value"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "``no``"
+msgstr "``no``"
+
+msgid "Don't cache the output of this query."
+msgstr "Don't cache the output of this query."
+
+msgid "``yes``"
+msgstr "``yes``"
+
+msgid "Cache the output of this query. It's the default value."
+msgstr "Cache the output of this query. It's the default value."
+
+msgid "Here is an example to disable caching the result of this query:"
+msgstr "Here is an example to disable caching the result of this query:"
+
+msgid "The default value is ``yes``."
+msgstr "The default value is ``yes``."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "The command returns a response with the following format::"
+msgstr "The command returns a response with the following format::"
+
+msgid "If the command fails, error details are in ``HEADER``."
+msgstr "If the command fails, error details are in ``HEADER``."
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr "See :doc:`/reference/command/output_format` for ``HEADER``."
+
+msgid ""
+"``COLUMNS`` describes about output columns specified by :ref:`logical-range-"
+"filter-output-columns`. It uses the following format::"
+msgstr ""
+"``COLUMNS`` describes about output columns specified by :ref:`logical-range-"
+"filter-output-columns`. It uses the following format::"
+
+msgid ""
+"``COLUMNS`` includes one or more output column information. Each output "
+"column information includes the followings:"
+msgstr ""
+"``COLUMNS`` includes one or more output column information. Each output "
+"column information includes the followings:"
+
+msgid "Column name as string"
+msgstr "Column name as string"
+
+msgid "Column type as string or ``null``"
+msgstr "Column type as string or ``null``"
+
+msgid ""
+"Column name is extracted from value specified as :ref:`logical-range-filter-"
+"output-columns`."
+msgstr ""
+"Column name is extracted from value specified as :ref:`logical-range-filter-"
+"output-columns`."
+
+msgid ""
+"Column type is Groonga's type name or ``null``. It doesn't describe whether "
+"the column value is vector or scalar. You need to determine it by whether "
+"real column value is array or not."
+msgstr ""
+"Column type is Groonga's type name or ``null``. It doesn't describe whether "
+"the column value is vector or scalar. You need to determine it by whether "
+"real column value is array or not."
+
+msgid "See :doc:`/reference/types` for type details."
+msgstr "See :doc:`/reference/types` for type details."
+
+msgid ""
+"``null`` is used when column value type isn't determined. For example, "
+"function call in :ref:`logical-range-filter-output-columns` such as ``--"
+"output_columns \"snippet_html(content)\"`` uses ``null``."
+msgstr ""
+"``null`` is used when column value type isn't determined. For example, "
+"function call in :ref:`logical-range-filter-output-columns` such as ``--"
+"output_columns \"snippet_html(content)\"`` uses ``null``."
+
+msgid "Here is an example of ``COLUMNS``::"
+msgstr "Here is an example of ``COLUMNS``::"
+
+msgid ""
+"``RECORDS`` includes column values for each matched record. Included records "
+"are selected by :ref:`logical-range-filter-offset` and :ref:`logical-range-"
+"filter-limit`. It uses the following format::"
+msgstr ""
+"``RECORDS`` includes column values for each matched record. Included records "
+"are selected by :ref:`logical-range-filter-offset` and :ref:`logical-range-"
+"filter-limit`. It uses the following format::"
+
+msgid "Here is an example ``RECORDS``::"
+msgstr "Here is an example ``RECORDS``::"

@@ -1,0 +1,123 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``table_rename``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``table_rename`` command renames a table."
+msgstr "``table_rename`` コマンドはテーブル名を変更します。"
+
+msgid ""
+"It is a light operation. It just changes a relationship between name and the "
+"table object. It doesn't copy table and its column values."
+msgstr ""
+"これは軽い操作です。名前とテーブルオブジェクト間の関係を変更するだけです。"
+"テーブルの値とテーブルのカラムの値をコピーしません。"
+
+msgid ""
+"It is a dangerous operation. You must stop all operations including read "
+"operations while you run ``table_rename``. If the following case is "
+"occurred, Groonga process may be crashed:"
+msgstr ""
+"これは危険な操作です。 ``table_rename`` を実行している間、読み取り操作を含む"
+"すべての操作を停止しなければいけません。以下のケースが起こった場合、Groongaプ"
+"ロセスはクラッシュするかもしれません。"
+
+msgid ""
+"Starts an operation (like ``select``) that accesses the table to be renamed "
+"by the current table name. The current table name is called as ``the old "
+"table name`` in the below because the table name is renamed."
+msgstr ""
+"現在のテーブル名で名前を変更しようとしているテーブルにアクセスする操作（たと"
+"えば ``select`` ）を開始します。以降、現在のテーブル名を ``古いテーブル名`` "
+"と呼ぶことにします。これは、今、このテーブル名を変更しようとしているからで"
+"す。"
+
+msgid "Runs ``table_rename``. The ``select`` is still running."
+msgstr "``table_rename`` を実行します。 ``select`` は実行中です。"
+
+msgid ""
+"The ``select`` accesses the table to be renamed by the old table name. But "
+"the ``select`` can't find the table by the old name because the table has "
+"been renamed to the new table name. It may crash the Groonga process."
+msgstr ""
+"``select`` は古いテーブル名で、名前が変更されたテーブルにアクセスします。しか"
+"し、テーブルはすでに新しいテーブル名に変更されているため、 ``select`` は古い"
+"テーブル名でテーブルを見つけることができません。このときGroongaプロセスがク"
+"ラッシュするかもしれません。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes two parameters."
+msgstr "このコマンドには2つの引数があります。"
+
+msgid "All parameters are required::"
+msgstr "すべての引数は必須です::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is a simple example of ``table_rename`` command."
+msgstr "以下は ``table_rename`` コマンドの簡単な使用例です。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes parameters of ``table_rename``."
+msgstr "このセクションでは ``table_rename`` の引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "All parameters are required."
+msgstr "すべての引数は必須です。"
+
+msgid "``name``"
+msgstr ""
+
+msgid "Specifies the table name to be renamed."
+msgstr "名前を変更するテーブルの名前を指定します。"
+
+msgid "``new_name``"
+msgstr ""
+
+msgid "Specifies the new table name."
+msgstr "新しいテーブル名を指定します。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "The command returns ``true`` as body on success such as::"
+msgstr "このコマンドが成功したときは以下のようにボディは ``true`` になります::"
+
+msgid "If the command fails, error details are in ``HEADER``."
+msgstr "このコマンドが失敗すると、 ``HEADER`` にエラーの詳細が含まれます。"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"

@@ -1,0 +1,235 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``TokenDelimit``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``TokenDelimit`` extracts token by splitting one or more space characters "
+"(``U+0020``). For example, ``Hello World`` is tokenized to ``Hello`` and "
+"``World``."
+msgstr ""
+"``TokenDelimit`` は1つ以上の空白文字（ ``U+0020`` ）で分割してトークンを抽出"
+"します。たとえば、 ``Hello World`` は ``Hello`` と ``World`` にトークナイズさ"
+"れます。"
+
+msgid ""
+"``TokenDelimit`` is suitable for tag text. You can extract ``groonga`` and "
+"``full-text-search`` and ``http`` as tags from ``groonga full-text-search "
+"http``."
+msgstr ""
+"``TokenDelimit`` はタグテキストに適切です。 ``groonga full-text-search "
+"http`` というテキストから ``groonga`` 、 ``full-text-search`` 、 ``http`` を"
+"抽出します。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``TokenDelimit`` has optional parameter."
+msgstr "``TokenDelimit`` は、省略可能な引数があります。"
+
+msgid ""
+"No options(Extracts token by splitting one or more space characters "
+"(``U+0020``))::"
+msgstr ""
+"オプションなし(1つ以上の空白文字( ``U+0020`` )で分割してトークンを抽出)::"
+
+msgid "Specify delimiter::"
+msgstr "区切り文字を指定::"
+
+msgid "Specify delimiter with regular expression::"
+msgstr "正規表現で区切り文字を指定::"
+
+msgid ""
+"The ``delimiter`` option and a ``pattern`` option are not use at the same "
+"time."
+msgstr ""
+"``delimiter`` オプションと ``pattern`` オプションは同時に使用できません。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Simple usage"
+msgstr "簡単な使い方"
+
+msgid "Here is an example of ``TokenDelimit``:"
+msgstr "以下は ``TokenDelimit`` の例です。"
+
+msgid ""
+"``TokenDelimit`` can also specify options. ``TokenDelimit`` has "
+"``delimiter`` option and ``pattern`` option."
+msgstr ""
+"``TokenDelimit`` はオプションを指定することもできます。 ``TokenDelimit`` は "
+"``delimiter`` オプションと ``pattern`` オプションを持っています。"
+
+msgid "``delimiter`` option can split token with a specified character."
+msgstr "``delimiter`` オプションは、指定した文字でトークンに分割できます。"
+
+msgid ""
+"For example, ``Hello,World`` is tokenized to ``Hello`` and ``World`` with "
+"``delimiter`` option as below."
+msgstr ""
+"例えば、以下のように ``Hello,World`` は、``Hello`` と ``World`` にトークナイ"
+"ズされます。"
+
+msgid ""
+"``pattern`` option can split token with a regular expression. You can except "
+"needless space by ``pattern`` option."
+msgstr ""
+"``pattern`` オプションは、正規表現でトークンを分割できます。``pattern`` オプ"
+"ションを使うことで、不要な空白を除去することができます。"
+
+msgid ""
+"For example, ``This is a pen. This is an apple`` is tokenized to ``This is a "
+"pen`` and ``This is an apple`` with ``pattern`` option as below."
+msgstr ""
+"例えば、以下のように ``pattern`` オプションによって、 ``This is a pen. This "
+"is an apple`` は ``This is a pen`` と ``This is an apple`` にトークナイズされ"
+"ます。"
+
+msgid ""
+"Normally, when ``This is a pen. This is an apple.`` is splitted by ``.``, "
+"needless spaces are included at the beginning of \"This is an apple.\"."
+msgstr ""
+"通常、 ``This is a pen. This is an apple.`` を ``.`` で分割する際は、\"This "
+"is an apple.\"の文頭に不要な空白が含まれます。"
+
+msgid ""
+"You can except the needless spaces by a ``pattern`` option as below example."
+msgstr ""
+"以下の例の用に ``pattern`` オプションを使うことで、その不要な空白を除去できま"
+"す。"
+
+msgid "Advanced usage"
+msgstr "高度な使い方"
+
+msgid "``delimiter`` option can also specify multiple delimiters."
+msgstr "``delimiter`` オプションは、複数の区切り文字を指定することもできます。"
+
+msgid ""
+"For example, ``Hello, World`` is tokenized to ``Hello`` and ``World``. ``,`` "
+"and `` `` are delimiters in below example."
+msgstr ""
+"例えば、以下のように ``Hello, World`` は、``Hello`` と ``World`` にトークナイ"
+"ズされます。"
+
+msgid "You can extract token in complex conditions by ``pattern`` option."
+msgstr "``pattern`` オプションを使って複雑な条件でトークンを抽出できます。"
+
+msgid ""
+"For example, ``これはペンですか！？リンゴですか？「リンゴです。」`` is "
+"tokenize to ``これはペンですか`` and ``リンゴですか``, ``「リンゴです。」`` "
+"with ``delimiter`` option as below."
+msgstr ""
+"例えば、以下のように ``delimiter`` オプションを使って、 ``これはペンです"
+"か！？リンゴですか？「リンゴです。」`` を ``これはペンですか`` と ``リンゴで"
+"すか`` 、 ``「リンゴです。」`` とトークナイズします。"
+
+msgid ""
+"``\\\\s*`` of the end of above regular expression match 0 or more spaces "
+"after a delimiter."
+msgstr ""
+"上記の正規表現の末尾の ``\\\\s*`` は、区切り文字の後ろの0個以上の空白にマッチ"
+"します。"
+
+msgid ""
+"``[。！？]+`` matches 1 or more ``。`` or ``！``, ``？``. For example, "
+"``[。！？]+`` matches ``！？`` of ``これはペンですか！？``."
+msgstr ""
+"``[。！？]+`` は、1個以上の ``。`` または ``！``、 ``？`` にマッチします。例"
+"えば、 ``[。！？]+`` は ``これはペンですか！？`` の ``！？`` にマッチします。"
+
+msgid ""
+"``(?![）」])`` is negative lookahead. ``(?![）」])`` matches if a character "
+"is not matched ``）`` or ``」``. negative lookahead interprets in "
+"combination regular expression of just before."
+msgstr ""
+"``(?![）」])`` は否定先読みです。 ``(?![）」])`` は ``）`` または ``」`` に"
+"マッチしない場合にマッチします。否定先読みは直前の正規表現と合わせて解釈しま"
+"す。"
+
+msgid "Therefore it interprets ``[。！？]+(?![）」])``."
+msgstr "したがって、 ``[。！？]+(?![）」])`` を解釈します。"
+
+msgid ""
+"``[。！？]+(?![）」])`` matches if there are not ``）`` or ``」`` after ``。"
+"`` or ``！``, ``？``."
+msgstr ""
+"``[。！？]+(?![）」])`` は、``。`` または ``！``、 ``？`` の後ろに ``）`` ま"
+"たは ``」`` が無い場合にマッチします。"
+
+msgid ""
+"In other words, ``[。！？]+(?![）」])`` matches ``。`` of ``これはペンです"
+"か。``. But ``[。！？]+(?![）」])`` doesn't match ``。`` of ``「リンゴで"
+"す。」``. Because there is ``」`` after ``。``."
+msgstr ""
+"つまり、 ``[。！？]+(?![）」])`` は、 ``これはペンですか。`` の ``。`` にマッ"
+"チしますが、 ``「リンゴです。」`` の ``。`` にはマッチしません。 ``。`` の後"
+"ろに ``」`` があるためです。"
+
+msgid "``[\\\\r\\\\n]+`` match 1 or more newline character."
+msgstr "``[\\\\r\\\\n]+`` は、1個以上の改行文字にマッチします。"
+
+msgid ""
+"In conclusion, ``([。！？]+(?![）」])|[\\\\r\\\\n]+)\\\\s*`` uses ``。`` and "
+"``！`` and ``？``, newline character as delimiter. However, ``。`` and ``!"
+"``, ``？`` are not delimiters if there is ``）`` or ``」`` after ``。`` or "
+"``！``, ``？``."
+msgstr ""
+"まとめると、 ``([。！？]+(?![）」])|[\\\\r\\\\n]+)\\\\s*`` は、 ``。`` と "
+"``！`` と ``？``、 改行文字を区切り文字としています。ただし、 ``。`` または "
+"``!``、 ``？`` の後ろに ``）`` または ``」`` がある場合は、 ``。`` や ``！"
+"``、 ``？`` は区切り文字としません。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "Optional parameter"
+msgstr "省略可能引数"
+
+msgid "There are two optional parameters ``delimiter`` and ``pattern``."
+msgstr "省略可能引数は2つあります。 ``delimiter`` と ``pattern`` です。"
+
+msgid "``delimiter``"
+msgstr ""
+
+msgid "Split token with a specified one or more characters."
+msgstr "指定した1つ以上の文字でトークンを分割します。"
+
+msgid "You can use one or more characters for a delimiter."
+msgstr "区切り文字には、1つ以上の文字を指定できます。"
+
+msgid "``pattern``"
+msgstr ""
+
+msgid "Split token with a regular expression."
+msgstr "正規表現を使って、トークンを分割します。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`../commands/tokenize`"
+msgstr ""

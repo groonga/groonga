@@ -1,0 +1,194 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "``check``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "check - オブジェクトの状態表示"
+msgstr ""
+
+msgid ""
+"Groonga組込コマンドの一つであるcheckについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+msgstr ""
+
+msgid ""
+"checkコマンドは、groongaプロセス内の指定したオブジェクトの状態を表示します。"
+"主にデータベースが壊れた場合など異常時の問題解決のために使用することを想定し"
+"ています。デバッグ用のため、返値のフォーマットが安定しているということは保証"
+"されません。（フォーマットが変更される可能性が高い）"
+msgstr ""
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "テーブルTermsのインデックスカラムnameの状態を表示します。::"
+msgstr ""
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "``obj``"
+msgstr ""
+
+msgid "状態を表示するオブジェクトの名前を指定します。"
+msgstr ""
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "チェックするオブジェクトにより返される値が変わります。"
+msgstr ""
+
+msgid "インデックスカラムの場合::"
+msgstr ""
+
+msgid "``インデックスの状態`` には下記の項目がハッシュ形式で出力されます。"
+msgstr ""
+
+msgid "``flags``"
+msgstr ""
+
+msgid "指定されているフラグ値です。16進数で表現されています。"
+msgstr ""
+
+msgid "``max sid``"
+msgstr ""
+
+msgid "セグメントのうち最も大きなIDです。"
+msgstr ""
+
+msgid "``number of garbage segments``"
+msgstr ""
+
+msgid "ゴミセグメントの数です。"
+msgstr ""
+
+msgid "``number of array segments``"
+msgstr ""
+
+msgid "配列セグメントの数です。"
+msgstr ""
+
+msgid "``max id of array segment``"
+msgstr ""
+
+msgid "配列セグメントのうち最も大きなIDです。"
+msgstr ""
+
+msgid "``number of buffer segments``"
+msgstr ""
+
+msgid "バッファセグメントの数です。"
+msgstr ""
+
+msgid "``max id of buffer segment``"
+msgstr ""
+
+msgid "バッファセグメントのうち最も大きなIDです。"
+msgstr ""
+
+msgid "``max id of physical segment in use``"
+msgstr ""
+
+msgid "使用中の論理セグメントのうち最も大きなIDです。"
+msgstr ""
+
+msgid "``number of unmanaged segments``"
+msgstr ""
+
+msgid "管理されていないセグメントの数です。"
+msgstr ""
+
+msgid "``total chunk size``"
+msgstr ""
+
+msgid "チャンクサイズの合計です。"
+msgstr ""
+
+msgid "``max id of chunk segments in use``"
+msgstr ""
+
+msgid "使用中のチャンクセグメントのうち最も大きなIDです。"
+msgstr ""
+
+msgid "``number of garbage chunk``"
+msgstr ""
+
+msgid "各チャンク毎のゴミの数です。"
+msgstr ""
+
+msgid "``バッファの状態`` には下記の項目がハッシュ形式で出力されます。"
+msgstr ""
+
+msgid "``buffer id``"
+msgstr ""
+
+msgid "バッファIDです。"
+msgstr ""
+
+msgid "``chunk size``"
+msgstr ""
+
+msgid "チャンクのサイズです。"
+msgstr ""
+
+msgid "``buffer term``"
+msgstr ""
+
+msgid ""
+"バッファ内にある語の一覧です。各語の状態は以下のような配列となっています。"
+msgstr ""
+
+msgid ""
+"[語, バッファに登録されている語のID, 用語集に登録されている語のID, バッファ内"
+"でのサイズ, チャンク内でのサイズ]"
+msgstr ""
+
+msgid "``buffer free``"
+msgstr ""
+
+msgid "バッファの空き容量です。"
+msgstr ""
+
+msgid "``size in buffer``"
+msgstr ""
+
+msgid "バッファの使用量です。"
+msgstr ""
+
+msgid "``nterms``"
+msgstr ""
+
+msgid "バッファ内にある語の数です。"
+msgstr ""
+
+msgid "``nterms with chunk``"
+msgstr ""
+
+msgid "バッファ内にある語のうち、チャンクを使っている語の数です。"
+msgstr ""

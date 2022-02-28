@@ -1,0 +1,163 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Groonga HTTP server"
+msgstr "Groonga HTTP server"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"You can communicate by HTTP if you specify ``http`` to ``--protocol`` "
+"option. And output a file that is put under the path, and correspond to "
+"specified URI to HTTP request if you specify static page path by ``--"
+"document-root``."
+msgstr ""
+"You can communicate by HTTP if you specify ``http`` to ``--protocol`` "
+"option. And output a file that is put under the path, and correspond to "
+"specified URI to HTTP request if you specify static page path by ``--"
+"document-root``."
+
+msgid ""
+"Groonga has an Web-based administration tool implemented with HTML and "
+"JavaScript. If you don't specify ``--document-root``, regarded as "
+"administration tool installed path is specified, so you can use "
+"administration tool to access ``http://HOSTNAME:PORT/`` in Web browser."
+msgstr ""
+"Groonga has an Web-based administration tool implemented with HTML and "
+"JavaScript. If you don't specify ``--document-root``, regarded as "
+"administration tool installed path is specified, so you can use "
+"administration tool to access ``http://HOSTNAME:PORT/`` in Web browser."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "You must specify ``--protocol http``::"
+msgstr "You must specify ``--protocol http``::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid ""
+"You can use HTTP GET or HTTP POST to send a request. One request runs only "
+"one command. You can't run multiple commands by one request."
+msgstr ""
+"You can use HTTP GET or HTTP POST to send a request. One request runs only "
+"one command. You can't run multiple commands by one request."
+
+msgid "You must use ``/d/${COMMAND_NAME}`` path for request."
+msgstr "You must use ``/d/${COMMAND_NAME}`` path for request."
+
+msgid "Here is an example URL to run :doc:`/reference/commands/status`::"
+msgstr "Here is an example URL to run :doc:`/reference/commands/status`::"
+
+msgid "If you use HTTP GET, you must specify parameters as URL \"query\"."
+msgstr "If you use HTTP GET, you must specify parameters as URL \"query\"."
+
+msgid "Here is an example URL to specify ``3`` as ``command_version``::"
+msgstr "Here is an example URL to specify ``3`` as ``command_version``::"
+
+msgid "You can also specify multiple parameters::"
+msgstr "You can also specify multiple parameters::"
+
+msgid ""
+"If you use HTTP POST, you can specify parameters by URL \"query\" and HTTP "
+"request body. If you use HTTP request body, you must specify ``application/x-"
+"www-form-urlencoded`` as ``Content-Type`` header value."
+msgstr ""
+"If you use HTTP POST, you can specify parameters by URL \"query\" and HTTP "
+"request body. If you use HTTP request body, you must specify ``application/x-"
+"www-form-urlencoded`` as ``Content-Type`` header value."
+
+msgid ""
+"Here is an example HTTP POST request to specify multiple parameters by HTTP "
+"request body::"
+msgstr ""
+"Here is an example HTTP POST request to specify multiple parameters by HTTP "
+"request body::"
+
+msgid "You can mix URL \"query\" and HTTP request body::"
+msgstr "You can mix URL \"query\" and HTTP request body::"
+
+msgid ""
+"You can also use HTTP POST to specify data for :doc:`/reference/commands/"
+"load`. If you send data by HTTP POST, you can't specify parameters as HTTP "
+"body. You must specify parameters by URL \"path\"."
+msgstr ""
+"You can also use HTTP POST to specify data for :doc:`/reference/commands/"
+"load`. If you send data by HTTP POST, you can't specify parameters as HTTP "
+"body. You must specify parameters by URL \"path\"."
+
+msgid ""
+"You must specify suitable HTTP ``Content-Type`` header value and :doc:`/"
+"reference/commands/load` ``input_type`` parameter value for your data. Here "
+"are available values:"
+msgstr ""
+"You must specify suitable HTTP ``Content-Type`` header value and :doc:`/"
+"reference/commands/load` ``input_type`` parameter value for your data. Here "
+"are available values:"
+
+msgid "``Content-Type``"
+msgstr "``Content-Type``"
+
+msgid "``input_type``"
+msgstr "``input_type``"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "``application/json``"
+msgstr "``application/json``"
+
+msgid "``json``"
+msgstr "``json``"
+
+msgid "Send JSON data."
+msgstr "Send JSON data."
+
+msgid "``application/x-apache-arrow-streaming``"
+msgstr "``application/x-apache-arrow-streaming``"
+
+msgid "``apache-arrow``"
+msgstr "``apache-arrow``"
+
+msgid "Send Apache Arrow data."
+msgstr "Send Apache Arrow data."
+
+msgid ""
+"You can specify :doc:`/reference/command/output_format` as URL \"path\" "
+"extension."
+msgstr ""
+"You can specify :doc:`/reference/command/output_format` as URL \"path\" "
+"extension."
+
+msgid "Here is an example HTTP request to get response as JSON::"
+msgstr "Here is an example HTTP request to get response as JSON::"
+
+msgid "Here is an example HTTP request to get response as XML::"
+msgstr "Here is an example HTTP request to get response as XML::"
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`groonga-httpd`"
+msgstr ":doc:`groonga-httpd`"
+
+msgid ":doc:`/reference/commands/load`"
+msgstr ":doc:`/reference/commands/load`"

@@ -1,0 +1,245 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2016-03-23 13:57+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "クエリの実現"
+msgstr ""
+
+msgid ""
+"Groongaのデータベースには大量のデータを格納し、その中から必要な部分を高速に取"
+"り出すことができます。必要な部分をGroongaのデータベースに問い合わせるためのク"
+"エリの表現と実行に関して、Groongaは複数の手段を用意しています。"
+msgstr ""
+
+msgid "クエリ実行のためのインタフェース"
+msgstr ""
+
+msgid ""
+"Groongaは低機能で単純なライブラリインタフェースから、高機能で複雑なコマンドイ"
+"ンタフェースまでいくつかの階層的なインタフェースをユーザプログラムに提供して"
+"います。"
+msgstr ""
+
+msgid ""
+"クエリ実行のためのインタフェースも階層的なインタフェースのそれぞれに対応する"
+"形で用意されています。以下に低レイヤなインタフェースから順に説明します。"
+msgstr ""
+
+msgid "DB_API"
+msgstr ""
+
+msgid ""
+"DB_APIは、Groongaデータベースを操作するための一群のC言語向けAPI関数を提供しま"
+"す。DB_APIはデータベースを構成する個々の部分に対する単純な操作関数を提供しま"
+"す。DB_APIの機能を組み合わせることによって複雑なクエリを実行することができま"
+"す。後述のすべてのクエリインタフェースはDB_APIの機能を組み合わせることによっ"
+"て実現されています。"
+msgstr ""
+
+msgid "grn_expr"
+msgstr ""
+
+msgid ""
+"grn_exprは、Groongaデータベースに対する検索処理や更新処理のための条件を表現す"
+"るためのデータ構造で、複数の条件を再帰的に組み合わせてより複雑な条件を表現す"
+"ることができます。grn_exprによって表現されたクエリを実行するためには、"
+"grn_table_select()関数を使用します。"
+msgstr ""
+
+msgid "Groonga実行ファイル"
+msgstr ""
+
+msgid ""
+"Groongaデータベースを操作するためのコマンドインタープリタです。渡されたコマン"
+"ドを解釈し、実行結果を返します。コマンドの実処理はC言語で記述されます。ユーザ"
+"がC言語で定義した関数を新たなコマンドとしてGroonga実行ファイルに組み込むこと"
+"ができます。各コマンドはいくつかの文字列引数を受け取り、これをクエリとして解"
+"釈して実行します。引数をgrn_exprとして解釈するか、別の形式として解釈して"
+"DB_APIを使ってデータベースを操作するかはコマンド毎に自由に決めることができま"
+"す。"
+msgstr ""
+
+msgid "grn_exprで表現できるクエリ"
+msgstr ""
+
+msgid ""
+"grn_exprは代入や関数呼び出しのような様々な操作を表現できますが、この中で検索"
+"クエリを表現するgrn_exprのことを特に条件式とよびます。条件式を構成する個々の"
+"要素を関係式と呼びます。条件式は一個以上の関係式か、あるいは条件式を論理演算"
+"子で結合したものです。"
+msgstr ""
+
+msgid "論理演算子は、以下の3種類があります。 ::"
+msgstr ""
+
+msgid ""
+"関係式は、下記の11種類が用意されています。また、ユーザが定義した関数を新たな"
+"関係式として使うこともできます。 ::"
+msgstr ""
+
+msgid "grn_table_select()"
+msgstr ""
+
+msgid ""
+"grn_table_select()関数は、grn_exprで表現された検索クエリを実行するときに使い"
+"ます。引数として、検索対象となるテーブル、クエリを表すgrn_expr、検索結果を格"
+"納するテーブル、それに検索にマッチしたレコードを検索結果にどのように反映する"
+"かを指定する演算子を渡します。演算子と指定できるのは下記の4種類です。 ::"
+msgstr ""
+
+msgid ""
+"GRN_OP_ORは、検索対象テーブルの中からクエリにマッチするレコードを検索結果テー"
+"ブルに加えます。GRN_OP_OR以外の演算子は、検索結果テーブルが空でない場合にだけ"
+"意味を持ちます。GRN_OP_ANDは、検索結果テーブルの中からクエリにマッチしないレ"
+"コードを取り除きます。GRN_OP_BUTは、検索結果テーブルの中からクエリにマッチす"
+"るレコードを取り除きます。GRN_OP_ADJUSTは、検索結果テーブルの中でクエリにマッ"
+"チするレコードに対してスコア値の更新のみを行います。"
+msgstr ""
+
+msgid ""
+"grn_table_select()は、データベース上に定義されたテーブルや索引などを組み合わ"
+"せて可能な限り高速に指定されたクエリを実行しようとします。"
+msgstr ""
+
+msgid "関係式"
+msgstr ""
+
+msgid ""
+"関係式は、検索しようとしているデータが満たすべき条件を、指定した値の間の関係"
+"として表現します。いずれの関係式も、その関係が成り立ったときに評価される"
+"callback、コールバック関数に渡されるargとを引数として指定することができます。"
+"callbackが与えられず、argのみが数値で与えられた場合はスコア値の係数とみなされ"
+"ます。主な関係式について説明します。"
+msgstr ""
+
+msgid "equal(v1, v2, arg, callback)"
+msgstr ""
+
+msgid "v1の値とv2の値が等しいことを表します。"
+msgstr ""
+
+msgid "not_equal(v1, v2, arg, callback)"
+msgstr ""
+
+msgid "v1の値とv2の値が等しくないことを表します。"
+msgstr ""
+
+msgid "less(v1, v2, arg, callback)"
+msgstr ""
+
+msgid "v1の値がv2の値よりも小さいことを表します。"
+msgstr ""
+
+msgid "greater(v1, v2, arg, callback)"
+msgstr ""
+
+msgid "v1の値がv2の値よりも大きいことを表します。"
+msgstr ""
+
+msgid "less_equal(v1, v2, arg, callback)"
+msgstr ""
+
+msgid "v1の値がv2の値と等しいか小さいことを表します。"
+msgstr ""
+
+msgid "greater_equal(v1, v2, arg, callback)"
+msgstr ""
+
+msgid "v1の値がv2の値と等しいか大きいことを表します。"
+msgstr ""
+
+msgid "contain(v1, v2, mode, arg, callback)"
+msgstr ""
+
+msgid ""
+"v1の値がv2の値を含んでいることを表します。また、v1の値が要素に分解されると"
+"き、それぞれの要素に対して二つ目の要素が一致するためのmodeとして下記のいずれ"
+"かを指定することができます。"
+msgstr ""
+
+msgid "near(v1, v2, arg, callback)"
+msgstr ""
+
+msgid ""
+"v1の値の中に、v2の値の要素が接近して含まれていることを表します。(v2には値の配"
+"列を渡します)"
+msgstr ""
+
+msgid "similar(v1, v2, arg, callback)"
+msgstr ""
+
+msgid "v1の値とv2の値が類似していることを表します。"
+msgstr ""
+
+msgid "prefix(v1, v2, arg, callback)"
+msgstr ""
+
+msgid "v1の値がv2の値に対して前方一致することを表します。"
+msgstr ""
+
+msgid "suffix(v1, v2, arg, callback)"
+msgstr ""
+
+msgid "v1の値がv2の値に対して後方一致することを表します。"
+msgstr ""
+
+msgid "クエリの実例"
+msgstr ""
+
+msgid "grn_exprを使って様々な検索クエリを表現することができます。"
+msgstr ""
+
+msgid "検索例1"
+msgstr ""
+
+msgid ""
+"tableのcolumnの値がstringを含むレコードをresultに返します。columnの値"
+"が'needle in haystack'であるレコードr1と、columnの値が'haystack'であるレコー"
+"ドr2がtableに登録されていたとき、stringに'needle'を指定したなら、レコードr1の"
+"みがヒットします。"
+msgstr ""
+
+msgid "検索例2"
+msgstr ""
+
+msgid ""
+"tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
+"コア値にscore1を積算してresultにセットします。次に、resultにセットされたレ"
+"コードのうち、column2の値がstringにexactモードでヒットするレコードについて"
+"は、得られたスコア値にscore2を積算したものを、元のスコア値に加えます。"
+msgstr ""
+
+msgid "検索例3"
+msgstr ""
+
+msgid ""
+"tableのcolumn1の値がstringにexactモードでヒットするレコードについて得られるス"
+"コア値にscore1を積算してresultにセットします。得られた検索結果数がt1よりも小"
+"さい場合は、partialモードで再度検索し、ヒットしたレコードについて得られるスコ"
+"ア値にscore2を積算してresultに追加します。"
+msgstr ""
+
+msgid "検索例4"
+msgstr ""
+
+msgid ""
+"tableのcolumnの値がstringに含まれるレコードをresultに返します。 columnの値"
+"が'needle'であるレコードr1と、columnの値が'haystack'であるレコードr2がtableに"
+"登録されていたとき、stringに'hay in haystack'を指定したなら、レコードr2のみが"
+"ヒットします。"
+msgstr ""

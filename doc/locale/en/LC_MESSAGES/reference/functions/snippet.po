@@ -1,0 +1,234 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``snippet``"
+msgstr "``snippet``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"This function extracts snippets of target text around search keywords "
+"(``KWIC``. ``KeyWord In Context``)."
+msgstr ""
+"This function extracts snippets of target text around search keywords "
+"(``KWIC``. ``KeyWord In Context``)."
+
+msgid ""
+"If you want to use this function for normal Web application, :doc:"
+"`snippet_html` may be suitable. It's a HTML specific version of this "
+"function."
+msgstr ""
+"If you want to use this function for normal Web application, :doc:"
+"`snippet_html` may be suitable. It's a HTML specific version of this "
+"function."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid ""
+"``snippet`` requires at least one parameter that is the snippet target text::"
+msgstr ""
+"``snippet`` requires at least one parameter that is the snippet target text::"
+
+msgid ""
+"You can specify one ore more tuples of keyword, open tag and close tag::"
+msgstr ""
+"You can specify one ore more tuples of keyword, open tag and close tag::"
+
+msgid ""
+"If you specify default open tag and default close tag, you can specify only "
+"keywords::"
+msgstr ""
+"If you specify default open tag and default close tag, you can specify only "
+"keywords::"
+
+msgid ""
+"If you specify default open tag and default close tag and omit keywords, "
+"keywords are extracted from the current condition automatically like :doc:"
+"`snippet_html`::"
+msgstr ""
+"If you specify default open tag and default close tag and omit keywords, "
+"keywords are extracted from the current condition automatically like :doc:"
+"`snippet_html`::"
+
+msgid "You can specify options as the last argument with all syntaxes::"
+msgstr "You can specify options as the last argument with all syntaxes::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "Here are a schema definition and sample data to show usage."
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"``snippet`` extracts keywords from conditions specified in ``--query`` and/"
+"or ``--filter`` automatically when you specify ``default_open_tag`` option "
+"and ``default_close_tag`` and don't specify keywords. It's similar to :doc:"
+"`snippet_html`."
+msgstr ""
+"``snippet`` extracts keywords from conditions specified in ``--query`` and/"
+"or ``--filter`` automatically when you specify ``default_open_tag`` option "
+"and ``default_close_tag`` and don't specify keywords. It's similar to :doc:"
+"`snippet_html`."
+
+msgid ""
+"The following example uses ``--query \"fast performance\"``. In this case, "
+"``fast`` and ``performance`` are used as keywords."
+msgstr ""
+"The following example uses ``--query \"fast performance\"``. In this case, "
+"``fast`` and ``performance`` are used as keywords."
+
+msgid ""
+"``--query \"fast performance\"`` matches to only the first record's content. "
+"This ``snippet`` extracts two text parts that include the keywords ``fast`` "
+"or ``performance`` and surrounds the keywords with ``[`` and ``]``."
+msgstr ""
+"``--query \"fast performance\"`` matches to only the first record's content. "
+"This ``snippet`` extracts two text parts that include the keywords ``fast`` "
+"or ``performance`` and surrounds the keywords with ``[`` and ``]``."
+
+msgid ""
+"The max number of text parts is 3 by default. You can change it by "
+"``max_n_results`` option:"
+msgstr ""
+"The max number of text parts is 3 by default. You can change it by "
+"``max_n_results`` option:"
+
+msgid ""
+"It returns only one snippet because ``\"max_n_results\": 1`` is specified."
+msgstr ""
+"It returns only one snippet because ``\"max_n_results\": 1`` is specified."
+
+msgid ""
+"The max size of a text part is 200byte by default. The unit is bytes not "
+"characters. The size doesn't include inserted ``[`` and ``[``. You can "
+"change it by ``width`` option:"
+msgstr ""
+"The max size of a text part is 200byte by default. The unit is bytes not "
+"characters. The size doesn't include inserted ``[`` and ``[``. You can "
+"change it by ``width`` option:"
+
+msgid ""
+"You can detect snippet delimiter with regular expression by "
+"``delimiter_regexp`` option. You can use ``\\.\\s*`` to use only text in the "
+"target sentence. Note that you need to escape ``\\`` in string:"
+msgstr ""
+"You can detect snippet delimiter with regular expression by "
+"``delimiter_regexp`` option. You can use ``\\.\\s*`` to use only text in the "
+"target sentence. Note that you need to escape ``\\`` in string:"
+
+msgid ""
+"You can see the detected delimiters (``.`` and following white spaces) "
+"aren't included in the result snippets. This is intentional behavior."
+msgstr ""
+"You can see the detected delimiters (``.`` and following white spaces) "
+"aren't included in the result snippets. This is intentional behavior."
+
+msgid ""
+"You can specify keywords explicitly instead of extracting keywords from the "
+"current condition:"
+msgstr ""
+"You can specify keywords explicitly instead of extracting keywords from the "
+"current condition:"
+
+msgid ""
+"This ``snippet`` returns two snippets for the first record and ``null`` for "
+"the second record. Because the second record doesn't have any specified "
+"keywords."
+msgstr ""
+"This ``snippet`` returns two snippets for the first record and ``null`` for "
+"the second record. Because the second record doesn't have any specified "
+"keywords."
+
+msgid "You can specify open tag and close tag for each keyword:"
+msgstr "You can specify open tag and close tag for each keyword:"
+
+msgid ""
+"This ``snippet`` surrounds ``fast`` with ``[`` and ``]]`` and "
+"``performance`` with ``(`` and ``)``."
+msgstr ""
+"This ``snippet`` surrounds ``fast`` with ``[`` and ``]]`` and "
+"``performance`` with ``(`` and ``)``."
+
+msgid "TODO: ``html_escape`` option and so on"
+msgstr "TODO: ``html_escape`` option and so on"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "Required parameters"
+msgstr "Required parameters"
+
+msgid "TODO"
+msgstr "TODO"
+
+msgid "Optional parameters"
+msgstr "Optional parameters"
+
+msgid "``max_n_results``"
+msgstr "``max_n_results``"
+
+msgid "``width``"
+msgstr "``width``"
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid ""
+"This function returns an array of string or ``null``. If This function can't "
+"find any snippets, it returns ``null``."
+msgstr ""
+"This function returns an array of string or ``null``. If This function can't "
+"find any snippets, it returns ``null``."
+
+msgid "An element of array is a snippet::"
+msgstr "An element of array is a snippet::"
+
+msgid ""
+"A snippet includes one or more keywords. The max byte size of a snippet "
+"except open tag and close tag is 200byte. The unit isn't the number of "
+"characters."
+msgstr ""
+"A snippet includes one or more keywords. The max byte size of a snippet "
+"except open tag and close tag is 200byte. The unit isn't the number of "
+"characters."
+
+msgid "You can change this by :ref:`snippet-width` option."
+msgstr "You can change this by :ref:`snippet-width` option."
+
+msgid ""
+"The array size is larger than or equal to 1 and less than or equal to 3."
+msgstr ""
+"The array size is larger than or equal to 1 and less than or equal to 3."
+
+msgid "You can change this by :ref:`snippet-max-n-results` option."
+msgstr "You can change this by :ref:`snippet-max-n-results` option."
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`snippet_html`"
+msgstr ":doc:`snippet_html`"
+
+msgid ":doc:`/reference/commands/select`"
+msgstr ":doc:`/reference/commands/select`"

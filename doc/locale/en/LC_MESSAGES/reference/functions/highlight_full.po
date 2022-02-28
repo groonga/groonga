@@ -1,0 +1,193 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``highlight_full``"
+msgstr "``highlight_full``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"``highlight_full`` tags target text. It can use to highlight the search "
+"keyword. It can specify use/not use HTML escape, the normalizer name and "
+"change the tag for each keyword."
+msgstr ""
+"``highlight_full`` tags target text. It can use to highlight the search "
+"keyword. It can specify use/not use HTML escape, the normalizer name and "
+"change the tag for each keyword."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "``highlight_full`` has required parameter and optional parameter::"
+msgstr "``highlight_full`` has required parameter and optional parameter::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "Here are a schema definition and sample data to show usage."
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"``highlight_full`` can be used in only ``--output_columns`` in :doc:`/"
+"reference/commands/select` before version 10.0.6 (exclusive). However, it "
+"can be also used in ``--output_columns`` in :doc:`/reference/commands/"
+"logical_select` since version 10.0.6."
+msgstr ""
+"``highlight_full`` can be used in only ``--output_columns`` in :doc:`/"
+"reference/commands/select` before version 10.0.6 (exclusive). However, it "
+"can be also used in ``--output_columns`` in :doc:`/reference/commands/"
+"logical_select` since version 10.0.6."
+
+msgid ""
+"``highlight_full`` requires :doc:`/reference/command/command_version` 2 or "
+"later."
+msgstr ""
+"``highlight_full`` requires :doc:`/reference/command/command_version` 2 or "
+"later."
+
+msgid ""
+"The following example uses HTML escape and normalzier is ``NormalizeAuto``. "
+"It specifies the tags ``<span class=\"keyword1\">`` and ``</span>`` of the "
+"keyword ``groonga``, and the tags ``<span class=\"keyword2\">`` and ``</"
+"span>`` of the keyword ``mysql``."
+msgstr ""
+"The following example uses HTML escape and normalzier is ``NormalizeAuto``. "
+"It specifies the tags ``<span class=\"keyword1\">`` and ``</span>`` of the "
+"keyword ``groonga``, and the tags ``<span class=\"keyword2\">`` and ``</"
+"span>`` of the keyword ``mysql``."
+
+msgid ""
+"The text are scanned by the keywords for tagging after they are normalized "
+"by ``NormalizerAuto`` normalizer."
+msgstr ""
+"The text are scanned by the keywords for tagging after they are normalized "
+"by ``NormalizerAuto`` normalizer."
+
+msgid ""
+"``--query \"groonga mysql\"`` matches to the first record's body. "
+"``highight_full`` surrounds the keywords ``groonga`` contained in the text "
+"with ``<span class=\"keyword1\">`` and ``</span>``, and the keywords "
+"``mysql`` contained in the text with with ``<span class=\"keyword2\">`` and "
+"``</span>``."
+msgstr ""
+"``--query \"groonga mysql\"`` matches to the first record's body. "
+"``highight_full`` surrounds the keywords ``groonga`` contained in the text "
+"with ``<span class=\"keyword1\">`` and ``</span>``, and the keywords "
+"``mysql`` contained in the text with with ``<span class=\"keyword2\">`` and "
+"``</span>``."
+
+msgid ""
+"Special characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and "
+"``&gt;``."
+msgstr ""
+"Special characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and "
+"``&gt;``."
+
+msgid "You can specify string literal instead of column."
+msgstr "You can specify string literal instead of column."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid ""
+"There are three required parameters, ``column``, ``normalizer_name`` and "
+"``use_html_escape``. There are three or over optional parameters, "
+"``keywordN``, ``open_tagN`` and ``end_tagN``."
+msgstr ""
+"There are three required parameters, ``column``, ``normalizer_name`` and "
+"``use_html_escape``. There are three or over optional parameters, "
+"``keywordN``, ``open_tagN`` and ``end_tagN``."
+
+msgid "``column``"
+msgstr "``column``"
+
+msgid "Specifies a column of the table."
+msgstr "Specifies a column of the table."
+
+msgid "``normalizer_name``"
+msgstr "``normalizer_name``"
+
+msgid "Specifies a normalizer name."
+msgstr "Specifies a normalizer name."
+
+msgid "``use_html_escape``"
+msgstr "``use_html_escape``"
+
+msgid ""
+"Specifies use or not use HTML escape. If it is ``true`` , use HTML escape. "
+"If it is ``false`` , not use HTML escape."
+msgstr ""
+"Specifies use or not use HTML escape. If it is ``true`` , use HTML escape. "
+"If it is ``false`` , not use HTML escape."
+
+msgid "``keywordN``"
+msgstr "``keywordN``"
+
+msgid ""
+"Specifies a keyword for tagging. You can specify multiple keywords for each "
+"three arguments."
+msgstr ""
+"Specifies a keyword for tagging. You can specify multiple keywords for each "
+"three arguments."
+
+msgid "``open_tagN``"
+msgstr "``open_tagN``"
+
+msgid ""
+"Specifies a open tag. You can specify multiple open tags for each three "
+"arguments."
+msgstr ""
+"Specifies a open tag. You can specify multiple open tags for each three "
+"arguments."
+
+msgid "``close_tagN``"
+msgstr "``close_tagN``"
+
+msgid ""
+"Specifies a close tag. You can specify multiple close tags for each three "
+"arguments."
+msgstr ""
+"Specifies a close tag. You can specify multiple close tags for each three "
+"arguments."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid ""
+"``highlight_full`` returns a tagged string or ``null``. If "
+"``highlight_full`` can't find any keywords, it returns ``null``."
+msgstr ""
+"``highlight_full`` returns a tagged string or ``null``. If "
+"``highlight_full`` can't find any keywords, it returns ``null``."
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`/reference/commands/select`"
+msgstr ":doc:`/reference/commands/select`"
+
+msgid ":doc:`/reference/commands/logical_select`"
+msgstr ":doc:`/reference/commands/logical_select`"
+
+msgid ":doc:`/reference/functions/highlight_html`"
+msgstr ":doc:`/reference/functions/highlight_html`"

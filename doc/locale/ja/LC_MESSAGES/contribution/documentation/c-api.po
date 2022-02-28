@@ -1,0 +1,33 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2016-03-23 13:57+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "C API"
+msgstr ""
+
+msgid ""
+"We still have C API documentation in include/groonga.h. But we want to move "
+"them into doc/source/c-api/\\*.txt. We welcome to you help us by moving C "
+"API documentation."
+msgstr ""
+"今のところ、C APIのドキュメントはinclude/groonga.hにありますが、これをdoc/"
+"source/c-api/\\*.txtに移動したいと思っています。C APIのドキュメントを移動し"
+"て、パッチを送ってくれるととても喜びます。"
+
+msgid "We will use `the C domain markup`_ of Sphinx."
+msgstr "Sphinxの `the C domain markup`_ を使う予定です。"

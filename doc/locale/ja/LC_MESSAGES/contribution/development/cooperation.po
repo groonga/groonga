@@ -1,0 +1,100 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2016-03-23 13:57+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "ユーザーと協力して開発をうまく進めていくための指針"
+msgstr ""
+
+msgid ""
+"Groongaを使ってくれているユーザーと協力して 開発をうまく進めていくためにこう"
+"するといい、という事柄をまとめました。 まとめておくと、新しく開発に加わる人と"
+"も共有することができます。"
+msgstr ""
+
+msgid "Twitter編"
+msgstr ""
+
+msgid ""
+"Groongaを使ってもらえるようにTwitterのアカウントGroongaを取得して 日々、リ"
+"リースの案内をしたり、ユーザーサポートをしたりしています。"
+msgstr ""
+
+msgid ""
+"リリースの案内に利用する場合には、やりとりを考えなくて良いですが、 複数人によ"
+"るサポートをGroongaで行う場合に、どうサポートするのが 良いのか/どうしてそうす"
+"るのかという共通認識を持っていないと一貫性のないサポートとなってしま います。"
+msgstr ""
+
+msgid ""
+"Twitterでサポートされている安心感からGroongaユーザーの拡大に繋げる ことができ"
+"るようにサポートの際に気をつけることをまとめます。"
+msgstr ""
+
+msgid "過去のツイートはおさらいしておく"
+msgstr ""
+
+msgid "理由"
+msgstr ""
+
+msgid ""
+"自分がツイートした内容を把握していない返信をされたら普通いい気はしません。"
+msgstr ""
+
+msgid "対応"
+msgstr ""
+
+msgid ""
+"過去のツイートをおさらいし、こうすれば良いという提案をできるのが望ましいで"
+"す。::"
+msgstr ""
+
+msgid "こちらから情報を提供する"
+msgstr ""
+
+msgid ""
+"困っているユーザーが複数回ツイートして限られたなかで情報を提供してくれている"
+"ことがあります。 その限られたツイートから解決方法が見つかればユーザーにとって"
+"余計な手間が少なくて済みます。 あれこれ情報提供を要求すると、ユーザーはそのぶ"
+"ん確認する作業が必要になります。"
+msgstr ""
+
+msgid ""
+"最初に声をかけるときに解決策を1つか2つ提案できると望ましいです。ユーザーにあ"
+"まり負担を感じさせないようにすると良いです。::"
+msgstr ""
+
+msgid "Twitterでのやりとりはできるだけ他の場所(例えばRedmine)へと誘導しない"
+msgstr ""
+
+msgid ""
+"Twitterは気軽につぶやけることが重要なので、気軽にできないことを相手に要求する"
+"と萎縮されてしまう可能性があります。"
+msgstr ""
+
+msgid ""
+"いきなりRedmineでバグ報告をお願いすると、しりごみしてしまうかもしれません。::"
+msgstr ""
+
+msgid ""
+"Groonga関連で気軽につぶやけないとなると開発者は困っている人を見つけられない"
+"し、利用者は困ったままとなるので、双方にとって嬉しくない状態になってしまいま"
+"す。"
+msgstr ""
+
+msgid "Twitterでやりとりを完結できるようにします。"
+msgstr ""

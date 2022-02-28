@@ -1,0 +1,104 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``TokenTable``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``TokenTable`` is a tokenizer which treats only known keywords as a token. "
+"The known keywords must be registered as a key in the table for "
+"``TokenTable``."
+msgstr ""
+"``TokenTable`` は既知のキーワードのみをトークンとして扱うトークナイザーです。"
+"既知のキーワードは ``TokenTable`` 用のテーブルにキーとして登録されていないと"
+"いけません。"
+
+msgid ""
+"For example, query contains a known keyword and a unknown keyword, only a "
+"known keyword is used in search query (unknown keyword will be ignored). In "
+"other words, you can search contents with only known keywords. Because of "
+"this characteristic, you need to maintain keyword table for a new keyword "
+"continuously."
+msgstr ""
+"例えば、クエリーが既知のキーワードと既知でないキーワードを含む場合、検索クエ"
+"リーには既知のキーワードのみが使われます。(既知でないキーワードは無視されま"
+"す) コンテンツを既知のキーワードからしか検索できないとも言えます。この特徴の"
+"ため、新語を使えるようにするにはキーワードを登録するテーブルを継続的にメンテ"
+"ナンスする必要があります。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``TokenTable`` has a required parameter."
+msgstr "``TokenTable`` には必須の引数があります。"
+
+msgid "Specify the table::"
+msgstr "テーブルを指定します。::"
+
+msgid ""
+"``TABLE`` must be created with ``--default_tokenizer 'TokenTable(\"table\", "
+"TABLE)``."
+msgstr ""
+"``TABLE`` は ``--default_tokenizer 'TokenTable(\"table\", TABLE)`` を指定して"
+"作成されていないといけません。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"Here is an example of ``TokenTable``. For example, let's search ``Raspberry "
+"Pie`` from ``Pies`` table. The table which is used for keyword is "
+"``Keywords``."
+msgstr ""
+"``TokenTable`` の使用例です。例えば ``Raspberry Pie`` を ``Pies`` テーブルか"
+"ら検索してみましょう。キーワードのために使われるのは ``Keywords`` テーブルで"
+"す。"
+
+msgid "Here is the sample schema and data:"
+msgstr "スキーマ定義とサンプルデータは以下の通りです。"
+
+msgid "Then search ``Raspberry Pie`` with ``--query Raspberry``."
+msgstr "``--query Raspberry`` で ``Raspberry Pie`` を検索します。"
+
+msgid "As you expected, the above query matches the ``Raspberry Pie`` record."
+msgstr ""
+"期待通りに、上記のクエリーは ``Raspberry Pie`` というレコードにマッチします。"
+
+msgid "Next, search ``Stargazy Pie`` with ``--query Stargazy``."
+msgstr "次に、``Stargazy Pie`` を ``--query Stargazy`` で検索してみましょう。"
+
+msgid ""
+"In above example, as the keyword ``Stargazy`` is not registered in "
+"``Keywords`` table yet, it doesn't match anything."
+msgstr ""
+"上記の例では、``Stargazy`` というキーワードは ``Keywords`` テーブルに登録され"
+"ていません。そのためマッチしません。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`../commands/tokenize`"
+msgstr ""

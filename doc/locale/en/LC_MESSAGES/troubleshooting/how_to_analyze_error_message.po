@@ -1,0 +1,100 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "How to analyze error messages"
+msgstr "How to analyze error messages"
+
+msgid "This section describes how to analyze Groonga error messages."
+msgstr "This section describes how to analyze Groonga error messages."
+
+msgid "How to analyze socket errors"
+msgstr "How to analyze socket errors"
+
+msgid "This subsection describes how to analyze socket errors with an example."
+msgstr ""
+"This subsection describes how to analyze socket errors with an example."
+
+msgid "Example"
+msgstr "Example"
+
+msgid ""
+"The following is an example of an error message reported by Groonga, where "
+"xxxxx is an arbitrary number::"
+msgstr ""
+"The following is an example of an error message reported by Groonga, where "
+"xxxxx is an arbitrary number::"
+
+msgid "How to analyze"
+msgstr "How to analyze"
+
+msgid ""
+"First, grep Groonga source files for \"SOERR\" that is the name of a macro "
+"for socket errors."
+msgstr ""
+"First, grep Groonga source files for \"SOERR\" that is the name of a macro "
+"for socket errors."
+
+msgid ""
+"Then, extract SOERRs whose argument contains \"accept\" from the grep output "
+"and you will find the following SOERRs::"
+msgstr ""
+"Then, extract SOERRs whose argument contains \"accept\" from the grep output "
+"and you will find the following SOERRs::"
+
+msgid ""
+"It is clear that the above error message is associated with the last line "
+"because the error message contains only \"accept\"."
+msgstr ""
+"It is clear that the above error message is associated with the last line "
+"because the error message contains only \"accept\"."
+
+msgid "The source code around the line is as follows::"
+msgstr "The source code around the line is as follows::"
+
+msgid ""
+"From the above source code, you can confirm that the error occurred due to "
+"accept. Let's dig into the cause."
+msgstr ""
+"From the above source code, you can confirm that the error occurred due to "
+"accept. Let's dig into the cause."
+
+msgid "The error message provides hints for investigation::"
+msgstr "The error message provides hints for investigation::"
+
+msgid ""
+"10055 is a Windows socket error code and \"no buffer\" is a message by "
+"Groonga given in SOERR."
+msgstr ""
+"10055 is a Windows socket error code and \"no buffer\" is a message by "
+"Groonga given in SOERR."
+
+msgid "Windows socket error codes are listed in the following page::"
+msgstr "Windows socket error codes are listed in the following page::"
+
+msgid "10055 is assigned to WSAENOBUFS and its description is as follows::"
+msgstr "10055 is assigned to WSAENOBUFS and its description is as follows::"
+
+msgid ""
+"From the above description, you can narrow down the causes. The possible "
+"causes are the lack of memory and too many connections. Finally, determine "
+"which one is appropriate for the situation when the error occurred."
+msgstr ""
+"From the above description, you can narrow down the causes. The possible "
+"causes are the lack of memory and too many connections. Finally, determine "
+"which one is appropriate for the situation when the error occurred."

@@ -1,0 +1,604 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2015-03-27 23:47+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "GQTP"
+msgstr ""
+
+msgid ""
+"GQTP is the acronym of Groonga Query Transfer Protocol. GQTP is the original "
+"protocol for groonga."
+msgstr ""
+"GQTPはGroonga Query Transfer Protocolの頭文字です。GQTPはgroonga用の独自プロ"
+"トコルです。"
+
+msgid "Protocol"
+msgstr "プロトコル"
+
+msgid ""
+"GQTP is stateful client server model protocol. The following sequence is one "
+"processing unit:"
+msgstr ""
+"GQTPはステートフルなクライアント・サーバーモデルのプロトコルです。以下の流れ"
+"が1つの処理単位です:"
+
+msgid "Client sends a request"
+msgstr "クライアントがリクエストを送る"
+
+msgid "Server receives the request"
+msgstr "サーバーがリクエストを受け取る"
+
+msgid "Server processes the request"
+msgstr "サーバーがリクエストを処理する"
+
+msgid "Server sends a response"
+msgstr "サーバーがレスポンスを返す"
+
+msgid "Client receives the response"
+msgstr "クライアントがレスポンスを受け取る"
+
+msgid "You can do zero or more processing units in a session."
+msgstr "1つのセッション内で0個以上の処理単位を実行できます。"
+
+msgid ""
+"Both request and response consist of GQTP header and body. GQTP header is "
+"fixed size data. Body is variable size data and its size is stored in GQTP "
+"header. The content of body isn't defined in GQTP."
+msgstr ""
+"リクエストもレスポンスもGQTPヘッダーとボディから成ります。GQTPヘッダーは固定"
+"長のデータです。ボディは可変長サイズのデータです。ボディのサイズはGQTPヘッ"
+"ダーの中に入っています。GQTPではボディの中身については何も定義しません。"
+
+msgid "GQTP header"
+msgstr "GQTPヘッダー"
+
+msgid "GQTP header consists of the following unsigned integer values:"
+msgstr "GQTPヘッダーは以下の符号なし整数値から成ります:"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "Size"
+msgstr "サイズ"
+
+msgid "1byte"
+msgstr ""
+
+msgid "Protocol type."
+msgstr "プロトコルの種類。"
+
+msgid "``protocol``"
+msgstr ""
+
+msgid "Content type of body."
+msgstr "ボディのコンテントタイプ。"
+
+msgid "``query_type``"
+msgstr ""
+
+msgid "2byte"
+msgstr ""
+
+msgid "Not used."
+msgstr "未使用。"
+
+msgid "``key_length``"
+msgstr ""
+
+msgid "``level``"
+msgstr ""
+
+msgid "Flags."
+msgstr "フラグ。"
+
+msgid "``flags``"
+msgstr ""
+
+msgid "Return code."
+msgstr "リターンコード。"
+
+msgid "``status``"
+msgstr ""
+
+msgid "4byte"
+msgstr ""
+
+msgid "Body size."
+msgstr "ボディのサイズ。"
+
+msgid "``size``"
+msgstr ""
+
+msgid "``opaque``"
+msgstr ""
+
+msgid "8byte"
+msgstr ""
+
+msgid "``cas``"
+msgstr ""
+
+msgid "All header values are encoded by network byte order."
+msgstr "ヘッダーのすべての値はネットワークバイトオーダーを使っています。"
+
+msgid "The following sections describes available values of each header value."
+msgstr ""
+"以下のセクションではそれぞれのヘッダーの値で利用可能な値について説明します。"
+
+msgid "The total size of GQTP header is 24byte."
+msgstr "GQTPヘッダーは全部で24byteになります。"
+
+msgid "The value is always ``0xc7`` in both request and response GQTP header."
+msgstr ""
+"リクエストのGQTPヘッダーでもレスポンスのGQTPヘッダーでも、この値は常に "
+"``0xc7`` になります。"
+
+msgid "The value is one of the following values:"
+msgstr "この値は以下のいずれかの値です:"
+
+msgid "Value"
+msgstr "値"
+
+msgid "0"
+msgstr ""
+
+msgid "Free format."
+msgstr "自由形式。"
+
+msgid "``NONE``"
+msgstr ""
+
+msgid "1"
+msgstr ""
+
+msgid "Tab Separated Values."
+msgstr "値をタブで区切った形式。"
+
+msgid "``TSV``"
+msgstr ""
+
+msgid "2"
+msgstr ""
+
+msgid "JSON."
+msgstr "JSON。"
+
+msgid "``JSON``"
+msgstr ""
+
+msgid "3"
+msgstr ""
+
+msgid "XML."
+msgstr "XML。"
+
+msgid "``XML``"
+msgstr ""
+
+msgid "4"
+msgstr ""
+
+msgid "MessagePack."
+msgstr "MessagePack。"
+
+msgid "``MSGPACK``"
+msgstr ""
+
+msgid "This is not used in request GQTP header."
+msgstr "リクエストGQTPヘッダーでは使われません。"
+
+msgid ""
+"This is used in response GQTP header. Body is formatted as specified type."
+msgstr "レスポンスGQTPヘッダーで使われます。ボディは指定した形式にします。"
+
+msgid "The value is bitwise OR of the following values:"
+msgstr "この値は以下の値をビット単位ORしたものになります:"
+
+msgid "0x01"
+msgstr ""
+
+msgid "There are more data."
+msgstr "まだデータがあります。"
+
+msgid "``MORE``"
+msgstr ""
+
+msgid "0x02"
+msgstr ""
+
+msgid "There are no more data."
+msgstr "これ以上データはありません。"
+
+msgid "``TAIL``"
+msgstr ""
+
+msgid "0x04"
+msgstr ""
+
+msgid "``HEAD``"
+msgstr ""
+
+msgid "0x08"
+msgstr ""
+
+msgid "Be quiet."
+msgstr "レスポンスを出力しません。"
+
+msgid "``QUIET``"
+msgstr ""
+
+msgid "0x10"
+msgstr ""
+
+msgid "Quit."
+msgstr "終了します。"
+
+msgid "``QUIT``"
+msgstr ""
+
+msgid "You must specify ``MORE`` or ``TAIL`` flag."
+msgstr "``MORE`` あるいは ``TAIL`` フラグは必ず指定しないといけません。"
+
+msgid ""
+"If you use ``MORE`` flag, you should also use ``QUIET`` flag. Because you "
+"don't need to show a response for your partial request."
+msgstr ""
+"``MORE`` フラグを使うときは ``QUIET`` フラグも使うべきです。リクエストが途中"
+"のときはレスポンスを出力する必要がないからです。"
+
+msgid "Use ``QUIT`` flag to quit this session."
+msgstr "セッションを終了するときは ``QUIT`` フラグを使ってください。"
+
+msgid ""
+"Here are available values. The new statuses will be added in the future."
+msgstr ""
+"利用可能な値です。将来的に新しいステータスが追加される可能性があります。"
+
+msgid "0: ``SUCCESS``"
+msgstr ""
+
+msgid "1: ``END_OF_DATA``"
+msgstr ""
+
+msgid "65535: ``UNKNOWN_ERROR``"
+msgstr ""
+
+msgid "65534: ``OPERATION_NOT_PERMITTED``"
+msgstr ""
+
+msgid "65533: ``NO_SUCH_FILE_OR_DIRECTORY``"
+msgstr ""
+
+msgid "65532: ``NO_SUCH_PROCESS``"
+msgstr ""
+
+msgid "65531: ``INTERRUPTED_FUNCTION_CALL``"
+msgstr ""
+
+msgid "65530: ``INPUT_OUTPUT_ERROR``"
+msgstr ""
+
+msgid "65529: ``NO_SUCH_DEVICE_OR_ADDRESS``"
+msgstr ""
+
+msgid "65528: ``ARG_LIST_TOO_LONG``"
+msgstr ""
+
+msgid "65527: ``EXEC_FORMAT_ERROR``"
+msgstr ""
+
+msgid "65526: ``BAD_FILE_DESCRIPTOR``"
+msgstr ""
+
+msgid "65525: ``NO_CHILD_PROCESSES``"
+msgstr ""
+
+msgid "65524: ``RESOURCE_TEMPORARILY_UNAVAILABLE``"
+msgstr ""
+
+msgid "65523: ``NOT_ENOUGH_SPACE``"
+msgstr ""
+
+msgid "65522: ``PERMISSION_DENIED``"
+msgstr ""
+
+msgid "65521: ``BAD_ADDRESS``"
+msgstr ""
+
+msgid "65520: ``RESOURCE_BUSY``"
+msgstr ""
+
+msgid "65519: ``FILE_EXISTS``"
+msgstr ""
+
+msgid "65518: ``IMPROPER_LINK``"
+msgstr ""
+
+msgid "65517: ``NO_SUCH_DEVICE``"
+msgstr ""
+
+msgid "65516: ``NOT_A_DIRECTORY``"
+msgstr ""
+
+msgid "65515: ``IS_A_DIRECTORY``"
+msgstr ""
+
+msgid "65514: ``INVALID_ARGUMENT``"
+msgstr ""
+
+msgid "65513: ``TOO_MANY_OPEN_FILES_IN_SYSTEM``"
+msgstr ""
+
+msgid "65512: ``TOO_MANY_OPEN_FILES``"
+msgstr ""
+
+msgid "65511: ``INAPPROPRIATE_I_O_CONTROL_OPERATION``"
+msgstr ""
+
+msgid "65510: ``FILE_TOO_LARGE``"
+msgstr ""
+
+msgid "65509: ``NO_SPACE_LEFT_ON_DEVICE``"
+msgstr ""
+
+msgid "65508: ``INVALID_SEEK``"
+msgstr ""
+
+msgid "65507: ``READ_ONLY_FILE_SYSTEM``"
+msgstr ""
+
+msgid "65506: ``TOO_MANY_LINKS``"
+msgstr ""
+
+msgid "65505: ``BROKEN_PIPE``"
+msgstr ""
+
+msgid "65504: ``DOMAIN_ERROR``"
+msgstr ""
+
+msgid "65503: ``RESULT_TOO_LARGE``"
+msgstr ""
+
+msgid "65502: ``RESOURCE_DEADLOCK_AVOIDED``"
+msgstr ""
+
+msgid "65501: ``NO_MEMORY_AVAILABLE``"
+msgstr ""
+
+msgid "65500: ``FILENAME_TOO_LONG``"
+msgstr ""
+
+msgid "65499: ``NO_LOCKS_AVAILABLE``"
+msgstr ""
+
+msgid "65498: ``FUNCTION_NOT_IMPLEMENTED``"
+msgstr ""
+
+msgid "65497: ``DIRECTORY_NOT_EMPTY``"
+msgstr ""
+
+msgid "65496: ``ILLEGAL_BYTE_SEQUENCE``"
+msgstr ""
+
+msgid "65495: ``SOCKET_NOT_INITIALIZED``"
+msgstr ""
+
+msgid "65494: ``OPERATION_WOULD_BLOCK``"
+msgstr ""
+
+msgid "65493: ``ADDRESS_IS_NOT_AVAILABLE``"
+msgstr ""
+
+msgid "65492: ``NETWORK_IS_DOWN``"
+msgstr ""
+
+msgid "65491: ``NO_BUFFER``"
+msgstr ""
+
+msgid "65490: ``SOCKET_IS_ALREADY_CONNECTED``"
+msgstr ""
+
+msgid "65489: ``SOCKET_IS_NOT_CONNECTED``"
+msgstr ""
+
+msgid "65488: ``SOCKET_IS_ALREADY_SHUTDOWNED``"
+msgstr ""
+
+msgid "65487: ``OPERATION_TIMEOUT``"
+msgstr ""
+
+msgid "65486: ``CONNECTION_REFUSED``"
+msgstr ""
+
+msgid "65485: ``RANGE_ERROR``"
+msgstr ""
+
+msgid "65484: ``TOKENIZER_ERROR``"
+msgstr ""
+
+msgid "65483: ``FILE_CORRUPT``"
+msgstr ""
+
+msgid "65482: ``INVALID_FORMAT``"
+msgstr ""
+
+msgid "65481: ``OBJECT_CORRUPT``"
+msgstr ""
+
+msgid "65480: ``TOO_MANY_SYMBOLIC_LINKS``"
+msgstr ""
+
+msgid "65479: ``NOT_SOCKET``"
+msgstr ""
+
+msgid "65478: ``OPERATION_NOT_SUPPORTED``"
+msgstr ""
+
+msgid "65477: ``ADDRESS_IS_IN_USE``"
+msgstr ""
+
+msgid "65476: ``ZLIB_ERROR``"
+msgstr ""
+
+msgid "65475: ``LZO_ERROR``"
+msgstr ""
+
+msgid "65474: ``STACK_OVER_FLOW``"
+msgstr ""
+
+msgid "65473: ``SYNTAX_ERROR``"
+msgstr ""
+
+msgid "65472: ``RETRY_MAX``"
+msgstr ""
+
+msgid "65471: ``INCOMPATIBLE_FILE_FORMAT``"
+msgstr ""
+
+msgid "65470: ``UPDATE_NOT_ALLOWED``"
+msgstr ""
+
+msgid "65469: ``TOO_SMALL_OFFSET``"
+msgstr ""
+
+msgid "65468: ``TOO_LARGE_OFFSET``"
+msgstr ""
+
+msgid "65467: ``TOO_SMALL_LIMIT``"
+msgstr ""
+
+msgid "65466: ``CAS_ERROR``"
+msgstr ""
+
+msgid "65465: ``UNSUPPORTED_COMMAND_VERSION``"
+msgstr ""
+
+msgid ""
+"The size of body. The maximum body size is 4GiB because ``size`` is 4byte "
+"unsigned integer. If you want to send 4GiB or more larger data, use ``MORE`` "
+"flag."
+msgstr ""
+"ボディのサイズです。ボディの最大サイズは4GiBです。これは ``size`` が4byteの符"
+"号なし整数だからです。4GiB以上のサイズのデータを送りたい場合は ``MORE`` フラ"
+"グを使ってください。"
+
+msgid "Example"
+msgstr "例"
+
+msgid "How to run a GQTP server"
+msgstr "GQTPサーバの起動"
+
+msgid ""
+"Groonga has a special protocol, named Groonga Query Transfer Protocol "
+"(GQTP), for remote access to a database. The following form shows how to run "
+"Groonga as a GQTP server."
+msgstr ""
+"Groongaには、専用のプロトコルであるGQTPが存在します。GQTPを用いることにより、"
+"データベースへとリモートアクセスすることができます。以下の書式はGQTPサーバの"
+"起動方法を示しています。"
+
+msgid "Form::"
+msgstr ""
+
+msgid ""
+"The `-s` option specifies to run Groonga as a server. DB_PATH specifies the "
+"path of the existing database to be hosted. The `-p` option and its "
+"argument, PORT_NUMBER, specify the port number of the server. The default "
+"port number is 10043, which is used when you don't specify PORT_NUMBER."
+msgstr ""
+"`-s` オプションはGroongaをサーバとして起動するためのオプションです。DB_PATHに"
+"は既存のデータベースのパスを指定します。 `-p` オプションとその引数により、"
+"サーバのポート番号を指定することができます。ポート番号を省略した場合は10043が"
+"使用されます。"
+
+msgid ""
+"The following command runs a server that listens on the default port number. "
+"The server accepts operations to the specified database."
+msgstr ""
+"以下のコマンドにより、デフォルトのポート番号で待ち受けるサーバを起動すること"
+"ができます。サーバは指定されたデータベースへの操作を受け付けます。"
+
+msgid "How to run a GQTP daemon"
+msgstr "GQTPデーモンの起動"
+
+msgid ""
+"You can also run a GQTP server as a daemon by using the `-d` option, instead "
+"of the `-s` option."
+msgstr ""
+"GQTPサーバはデーモンとして起動することができます。オプションとして、 `-s` の"
+"代わりに `-d` を与えてください。"
+
+msgid ""
+"A Groonga daemon prints its process ID as follows. In this example, the "
+"process ID is 12345. Then, the daemon opens a specified database and accepts "
+"operations to that database."
+msgstr ""
+"Groongaをデーモンとして起動したときは、デーモンのプロセスIDが表示されます。以"
+"下の例では、12345というプロセスIDが表示されています。サーバとして起動した場合"
+"と同様に、指定されたデータベースへの操作を受け付けます。"
+
+msgid "How to run a GQTP client"
+msgstr "GQTPサーバへの接続"
+
+msgid "You can run Groonga as a GQTP client as follows:"
+msgstr "GQTPサーバに接続するクライアントは、以下のように起動します。"
+
+msgid ""
+"This command establishes a connection with a GQTP server and then enters "
+"into interactive mode. HOST_NAME_OR_IP_ADDRESS specifies the hostname or the "
+"IP address of the server. If not specified, Groonga uses the default "
+"hostname \"localhost\". The `-p` option and its argument, PORT_NUMBER, "
+"specify the port number of the server. If not specified, Groonga uses the "
+"default port number 10043."
+msgstr ""
+"上記のコマンドによって起動されたクライアントは、サーバとの接続に成功すると対"
+"話モードに入ります。HOST_NAME_OR_IP_ADDRESSにはサーバのホスト名もしくはIPアド"
+"レスを指定します。HOST_NAME_OR_IP_ADDRESSが省略されたときは\"localhost\"を"
+"サーバのホスト名として採用します。また、 `-p` オプションとその引数により、"
+"サーバのポート番号を指定することができます。ポート番号を省略した場合は10043が"
+"使用されます。"
+
+msgid ""
+"In interactive mode, Groonga reads commands from the standard input and "
+"executes them one by one."
+msgstr "対話モードでは、標準入力からコマンドを読み込んで順次実行します。"
+
+msgid "How to terminate a GQTP server"
+msgstr "GQTPサーバの終了"
+
+msgid ""
+"You can terminate a GQTP server with a :doc:`/reference/commands/shutdown` "
+"command."
+msgstr ""
+"GQTPサーバを終了する安全は方法は、クライアントを起動して :doc:`/reference/"
+"commands/shutdown` を発行することです。"
+
+msgid "See also"
+msgstr "参照"
+
+msgid ":doc:`/reference/executables/groonga`"
+msgstr ""
+
+msgid ":doc:`/server/gqtp`"
+msgstr ""

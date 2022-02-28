@@ -1,0 +1,101 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``ruby_eval``"
+msgstr "``ruby_eval``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "``ruby_eval`` command evaluates Ruby script and returns the result."
+msgstr "``ruby_eval`` command evaluates Ruby script and returns the result."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "This command takes only one required parameter::"
+msgstr "This command takes only one required parameter::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid ""
+"You can execute any scripts which mruby supports by calling ``ruby_eval``."
+msgstr ""
+"You can execute any scripts which mruby supports by calling ``ruby_eval``."
+
+msgid "Here is an example that just calculate ``1 + 2`` as Ruby script."
+msgstr "Here is an example that just calculate ``1 + 2`` as Ruby script."
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "Register ``ruby/eval`` plugin to use ``ruby_eval`` command in advance."
+msgstr "Register ``ruby/eval`` plugin to use ``ruby_eval`` command in advance."
+
+msgid ""
+"Note that ``ruby_eval`` is implemented as an experimental plugin, and the "
+"specification may be changed in the future."
+msgstr ""
+"Note that ``ruby_eval`` is implemented as an experimental plugin, and the "
+"specification may be changed in the future."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "This section describes all parameters."
+msgstr "This section describes all parameters."
+
+msgid "``script``"
+msgstr "``script``"
+
+msgid "Specifies the Ruby script which you want to evaluate."
+msgstr "Specifies the Ruby script which you want to evaluate."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid ""
+"``ruby_eval`` returns the evaluated result with metadata such as exception "
+"information (Including metadata isn't implemented yet)::"
+msgstr ""
+"``ruby_eval`` returns the evaluated result with metadata such as exception "
+"information (Including metadata isn't implemented yet)::"
+
+msgid "``HEADER``"
+msgstr "``HEADER``"
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr "See :doc:`/reference/command/output_format` about ``HEADER``."
+
+msgid "``EVALUATED_VALUE``"
+msgstr "``EVALUATED_VALUE``"
+
+msgid "``EVALUATED_VALUE`` is the evaluated value of ``ruby_script``."
+msgstr "``EVALUATED_VALUE`` is the evaluated value of ``ruby_script``."
+
+msgid ""
+"``ruby_eval`` supports only a number for evaluated value for now. Supported "
+"types will be increased in the future."
+msgstr ""
+"``ruby_eval`` supports only a number for evaluated value for now. Supported "
+"types will be increased in the future."
+
+msgid "See also"
+msgstr "See also"

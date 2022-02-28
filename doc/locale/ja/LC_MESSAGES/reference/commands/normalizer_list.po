@@ -1,0 +1,99 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``normalizer_list``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``normalizer_list`` command lists normalizers in a database."
+msgstr ""
+"``normalizer_list`` コマンドはデータベースに登録されているノーマライザーの一"
+"覧を返します。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes no parameters::"
+msgstr "このコマンドに引数はありません::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is a simple example."
+msgstr "以下は簡単な使用例です。"
+
+msgid "It returns normalizers in a database."
+msgstr "データベースに登録されているノーマライザーの一覧を返します。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid ""
+"``normalizer_list`` command returns normalizers. Each normalizers has an "
+"attribute that contains the name. The attribute will be increased in the "
+"feature::"
+msgstr ""
+"``normalizer_list`` コマンドはノーマライザーの一覧を返します。各ノーマライ"
+"ザーは属性を持っています。例えば名前です。将来、属性は増えるかもしれませ"
+"ん。::"
+
+msgid "``HEADER``"
+msgstr ""
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "``normalizers``"
+msgstr ""
+
+msgid ""
+"``normalizers`` is an array of normalizer. Normalizer is an object that has "
+"the following attributes."
+msgstr ""
+"``normalizers`` はノーマライザーの配列です。ノーマライザーは次の属性を持つオ"
+"ブジェクトです。"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "``name``"
+msgstr ""
+
+msgid "Normalizer name."
+msgstr "ノーマライザー名。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/normalizers`"
+msgstr ""
+
+msgid ":doc:`/reference/commands/normalize`"
+msgstr ""

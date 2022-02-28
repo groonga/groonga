@@ -1,0 +1,238 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``between``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``between`` is used for checking the specified value exists in the specific "
+"range. It is often used in combination with :ref:`select-filter` option in :"
+"doc:`/reference/commands/select`."
+msgstr ""
+"``between`` は、指定された値が指定された範囲にあるかをチェックするために使わ"
+"れます。これは :doc:`/reference/commands/select` の :ref:`select-filter` オプ"
+"ションと組み合わせてよく使われます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``between`` has some parameters from three to six parameters::"
+msgstr "``between`` は3つから6つの引数を受け取ります。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid "Here is a query to show users who match PG-13 rating (MPAA)."
+msgstr "これはPG-13 (MPAA)のレーティングに該当する人を示すクエリです。"
+
+msgid "It returns 13, 14, 15 and 16 years old users."
+msgstr "13から16歳までのユーザーを返します。"
+
+msgid "``between`` function accepts not only a column but also a value."
+msgstr "``between`` 関数はテーブルのカラムだけでなく、値も受け付けます。"
+
+msgid ""
+"If you specify a value as the 1st parameter, it checks whether the value is "
+"included or not. If the value matches the specified range, the ``select`` "
+"returns all the records because the ``between`` function returns true. If it "
+"doesn't match the specified range, the ``select`` returns no records because "
+"the ``between`` function returns false."
+msgstr ""
+"最初の引数に値を指定した場合、その値が含まれているか否かをチェックします。も"
+"し、指定した範囲にマッチしたら、( ``between`` 関数がtrueを返すので)すべてのレ"
+"コードを返します。もし、指定した範囲にマッチしなかった場合、( ``between`` 関"
+"数がfalseを返すので)1件もレコードを返しません。"
+
+msgid ""
+"In the above case, it returns all the records because 14 exists in between "
+"13 and 16. This behavior is used for checking the specified value exists or "
+"not in the table."
+msgstr ""
+"上記の例では、すべてのレコードを返します。これは、14は指定した範囲である13か"
+"ら16の間にあるからです。この振舞いは指定した値がテーブルに存在するかどうかの"
+"確認に使えます。"
+
+msgid ""
+"Then, you can also specify options of ``between``. Currently, you can only "
+"specify ``too_many_index_match_ratio``. The type of this value is ``double``."
+msgstr ""
+"また、 ``between`` はオプションも指定できます。現在は、 "
+"``too_many_index_match_ratio`` のみ指定できます。この値は、 ``double`` 型で"
+"す。"
+
+msgid ""
+"You can change the value of ``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` with "
+"``too_many_index_match_ratio``. The default value of "
+"``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` is ``0.01``. "
+"``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` is used for deciding whether "
+"``between`` use an index or not."
+msgstr ""
+"``too_many_index_match_ratio`` を使って、 "
+"``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` の値を変更できます。"
+"``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` のデフォルト値は ``0.01`` です。"
+"``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` は、 ``between`` がインデックスを"
+"使うかどうかを決定するために使います。"
+
+msgid ""
+"There is a case that sequential search is faster than index search when the "
+"number of narrowed down records is small enough in contrast to the number of "
+"expected records to narrow down by ``between`` with AND operation which use "
+"indexes."
+msgstr ""
+"``between`` とANDで絞り込むと予想されるレコード数よりも、絞り込んだレコード数"
+"が十分に小さい場合は、インデックスを使った検索より、シーケンシャルサーチの方"
+"が速いことがあります。"
+
+msgid ""
+"For example, suppose you narrow down records by ``--filter`` and you narrow "
+"down them by ``between``."
+msgstr ""
+"例えば、 ``--filter`` でレコードを絞り込んだあと、さらに ``between`` で絞り込"
+"むとします。"
+
+msgid ""
+"In the default, ``between`` use sequential search in the following case."
+msgstr ""
+"デフォルトでは、以下のケースでは、 ``between`` はシーケンシャルサーチを使いま"
+"す。"
+
+msgid ""
+"If you narrow down records to 1,000 by ``--filter`` and records of the "
+"target of ``between`` are 500,000."
+msgstr ""
+"``--filter`` で絞り込んだレコード数が1000で ``between`` 対象のレコード数が"
+"500,000の場合。"
+
+msgid "On the other hand, ``between`` use index in the following case."
+msgstr "一方、以下のケースでは、 ``between`` はインデックスを使います。"
+
+msgid ""
+"If you narrow down records to 1,000 by ``--filter`` and records of the "
+"target of ``between`` are 50,000."
+msgstr ""
+"``--filter`` で絞り込んだレコード数が1000で ``between`` 対象のレコード数が"
+"50,000の場合。"
+
+msgid "Here is a query to set options of ``between``:"
+msgstr "``between`` のオプションを設定するクエリーは以下の通りです。:"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid ""
+"There are three required parameters ``column_or_value``, ``min`` and ``max``."
+msgstr ""
+"必須引数は3つあります。 ``column_or_value`` と ``min`` と ``max`` です。"
+
+msgid "``column_or_value``"
+msgstr ""
+
+msgid "Specifies a column or value."
+msgstr "カラムもしくは値を指定します。"
+
+msgid "``min``"
+msgstr ""
+
+msgid ""
+"Specifies the minimal border value of the range. The range is inclusive by "
+"default but you can control the behavior that the value of ``min`` is "
+"included or excluded with ``min_border`` parameter."
+msgstr ""
+"範囲のうち最小値を指定します。デフォルトでは ``min`` を範囲に含めますが、 "
+"``min_border`` 引数で含めるかどうかを制御できます。"
+
+msgid "``max``"
+msgstr ""
+
+msgid ""
+"Specifies the maximum border value of the range. The range is inclusive by "
+"default but you can control the behavior that the value of ``max`` is "
+"included or excluded with ``max_border`` parameter."
+msgstr ""
+"範囲のうち最大値を指定します。デフォルトでは値 ``max`` を範囲に含めますが、 "
+"``max_border`` 引数で含めるかどうかを制御できます。"
+
+msgid "Optional parameter"
+msgstr "省略可能引数"
+
+msgid "There are two optional parameters ``min_border`` and ``max_border``."
+msgstr "省略可能引数は2つあります。 ``min_border`` と ``max_border`` です。"
+
+msgid "``min_border``"
+msgstr ""
+
+msgid ""
+"Specifies whether the specified range contains the value of ``min`` or not. "
+"The value of ``min_border`` must be either \"include\" or \"exclude\". If it "
+"is \"include\", ``min`` value is included. If it is \"exclude\", ``min`` "
+"value is not included."
+msgstr ""
+"``min`` の値を含めた範囲となるかどうかを指定します。 ``min_border`` に指定で"
+"きるのは \\\"include\\\" または \\\"exclude\\\" のどちらかです。\n"
+"\\\"include\\\" を指定すれば、``min`` が含まれます。 \\\"exclude\\\" を指定す"
+"れば ``min`` は含まれません。"
+
+msgid "``max_border``"
+msgstr ""
+
+msgid ""
+"Specifies whether the specified range contains the value of ``max`` or not. "
+"The value of ``max_border`` must be either \"include\" or \"exclude\". If it "
+"is \"include\", ``max`` value is included. If it is \"exclude\", ``max`` "
+"value is not included."
+msgstr ""
+"``man`` の値を含めた範囲となるかどうかを指定します。 ``max_border`` に指定で"
+"きるのは \\\"include\\\" または \\\"exclude\\\" のどちらかです。\n"
+"\\\"include\\\" を指定すれば、``max`` が含まれます。 \\\"exclude\\\" を指定す"
+"れば ``max`` は含まれません。"
+
+msgid "``{\"option\": \"value of option\"}``"
+msgstr ""
+
+msgid ""
+"Specify between's option. Currently, you can only specify "
+"``too_many_index_match_ratio``. The type of this value is ``double``."
+msgstr ""
+"``between`` のオプションを指定します。現在は、 "
+"``too_many_index_match_ratio`` のみ指定できます。この値は、 ``double`` 型で"
+"す。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid ""
+"``between`` returns whether the column value exists in the specified range "
+"or not. If a record matches the specified range, it returns true. Otherwise, "
+"it returns false."
+msgstr ""
+"``between`` は指定した範囲にカラムの値が含まれるかを返します。もし該当するレ"
+"コードがあれば、 ``true`` を返します。そうでなければ ``false`` を返します。"

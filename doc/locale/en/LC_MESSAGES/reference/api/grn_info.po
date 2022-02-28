@@ -1,0 +1,75 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``grn_info``"
+msgstr "``grn_info``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "TODO..."
+msgstr "TODO..."
+
+msgid "Example"
+msgstr "Example"
+
+msgid "Reference"
+msgstr "Reference"
+
+msgid "objのtypeに対応する情報をvaluebufに格納します。"
+msgstr "objのtypeに対応する情報をvaluebufに格納します。"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "対象objを指定します。"
+msgstr "対象objを指定します。"
+
+msgid "取得する情報の種類を指定します。"
+msgstr "取得する情報の種類を指定します。"
+
+msgid "値を格納するバッファ（呼出側で準備）を指定します。"
+msgstr "値を格納するバッファ（呼出側で準備）を指定します。"
+
+msgid "objのtypeに対応する情報をvalueの内容に更新します。"
+msgstr "objのtypeに対応する情報をvalueの内容に更新します。"
+
+msgid "設定する情報の種類を指定します。"
+msgstr "設定する情報の種類を指定します。"
+
+msgid ""
+"objのidに対応するレコードの、typeに対応する情報をvaluebufに格納します。呼出側"
+"ではtypeに応じて十分なサイズのバッファを確保しなければいけません。"
+msgstr ""
+"objのidに対応するレコードの、typeに対応する情報をvaluebufに格納します。呼出側"
+"ではtypeに応じて十分なサイズのバッファを確保しなければいけません。"
+
+msgid "対象IDを指定します。"
+msgstr "対象IDを指定します。"
+
+msgid ""
+"objのidに対応するレコードのtypeに対応する情報をvalueの内容に更新します。"
+msgstr ""
+"objのidに対応するレコードのtypeに対応する情報をvalueの内容に更新します。"
+
+msgid "対象objectを指定します。"
+msgstr "対象objectを指定します。"
+
+msgid "設定しようとする値を指定します。"
+msgstr "設定しようとする値を指定します。"

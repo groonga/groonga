@@ -1,0 +1,173 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "パラメータ"
+msgstr ""
+
+msgid "戻り値"
+msgstr ""
+
+msgid "``grn_db``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "TODO..."
+msgstr "TODO..."
+
+msgid "Example"
+msgstr "例"
+
+msgid "Reference"
+msgstr "リファレンス"
+
+msgid "It is used for specifying options for :c:func:`grn_db_create`."
+msgstr ":c:func:`grn_db_create` のオプションを指定するために使います。"
+
+msgid "組み込み型の名前となるnul終端文字列の配列を指定する。"
+msgstr ""
+
+msgid ""
+"n_builtin_type_namesには、optarg.builtin_type_namesで指定する文字列の数を 指"
+"定する。配列のoffsetはenum型grn_builtin_typeの値に対応する。"
+msgstr ""
+
+msgid "新たなdbを作成します。"
+msgstr ""
+
+msgid "初期化済みの :c:type:`grn_ctx` を指定します。"
+msgstr ""
+
+msgid ""
+"作成するdbを格納するファイルパスを指定します。NULLならtemporary dbとなりま"
+"す。NULL以外のパスを指定した場合はpersistent dbとなります。"
+msgstr ""
+
+msgid ""
+"Currently, it is not used. It is just ignored.  作成するdbの組み込み型の名前"
+"を変更する時に指定します。  optarg.builtin_type_namesには、組み込み型の名前と"
+"なるnull終端文字列の配列を指定します。optarg.n_builtin_type_namesには、"
+"optarg.builtin_type_namesで指定する文字列の数を指定します。配列のoffsetはenum"
+"型grn_builtin_typeの値に対応します。"
+msgstr ""
+
+msgid "Currently, it is not used. It is just ignored."
+msgstr ""
+
+msgid "作成するdbの組み込み型の名前を変更する時に指定します。"
+msgstr ""
+
+msgid ""
+"optarg.builtin_type_namesには、組み込み型の名前となるnull終端文字列の配列を指"
+"定します。optarg.n_builtin_type_namesには、optarg.builtin_type_namesで指定す"
+"る文字列の数を指定します。配列のoffsetはenum型grn_builtin_typeの値に対応しま"
+"す。"
+msgstr ""
+
+msgid "既存のdbを開きます。"
+msgstr ""
+
+msgid "開こうとするdbを格納するファイルパスを指定します。"
+msgstr ""
+
+msgid "dbの内容の最終更新時刻を現在時刻にします。"
+msgstr ""
+
+msgid "最終更新時刻はキャッシュが有効かどうかの判断などに利用されます。"
+msgstr ""
+
+msgid "内容が変更されたdbを指定します。"
+msgstr ""
+
+msgid "objの属するdbを返します。"
+msgstr ""
+
+msgid "対象objectを指定します。"
+msgstr ""
+
+msgid "This is an experimental API."
+msgstr "これは実験的なAPIです。"
+
+msgid ""
+"This is a dangerous API. You must not use this API when other thread or "
+"process opens the target database. If you use this API against shared "
+"database, the database may be broken."
+msgstr ""
+
+msgid ""
+"Checks the passed database and recovers it if it is broken and it can be "
+"recovered."
+msgstr ""
+
+msgid ""
+"This API uses lock existence for checking whether the database is broken or "
+"not."
+msgstr ""
+
+msgid "Here are recoverable cases:"
+msgstr "以下は復旧可能なケースです。"
+
+msgid "Index column is broken. The index column must have source column."
+msgstr ""
+
+msgid "Here are unrecoverable cases:"
+msgstr "以下は復旧できないケースです。"
+
+msgid "Object name management feature is broken."
+msgstr ""
+
+msgid "Table is broken."
+msgstr ""
+
+msgid "Data column is broken."
+msgstr ""
+
+msgid ""
+"Object name management feature is used for managing table name, column name "
+"and so on. If the feature is broken, the database can't be recovered. Please "
+"re-create the database from backup."
+msgstr ""
+
+msgid ""
+"Table and data column can be recovered by removing an existence lock and re-"
+"add data."
+msgstr ""
+
+msgid "The database to be recovered."
+msgstr "復旧対象のデータベース。"
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
+
+msgid ""
+"This is a thread unsafe API. You can't touch the database while this API is "
+"running."
+msgstr ""
+
+msgid ""
+"Unmaps all opened tables and columns in the passed database. Resources used "
+"by these opened tables and columns are freed."
+msgstr ""
+
+msgid ""
+"Normally, this API isn't useless. Because resources used by opened tables "
+"and columns are managed by OS automatically."
+msgstr ""

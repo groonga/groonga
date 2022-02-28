@@ -1,0 +1,349 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Vector column"
+msgstr "Vector column"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"Vector column is a data store object. It can stores zero or more scalar "
+"values. In short, scalar value is a single value such as number and string. "
+"See :doc:`scalar` about scalar value details."
+msgstr ""
+"Vector column is a data store object. It can stores zero or more scalar "
+"values. In short, scalar value is a single value such as number and string. "
+"See :doc:`scalar` about scalar value details."
+
+msgid ""
+"One of vector column use cases is tags store. You can use a vector column to "
+"store tag values."
+msgstr ""
+"One of vector column use cases is tags store. You can use a vector column to "
+"store tag values."
+
+msgid ""
+"You can use vector column as index search target in the same way as scalar "
+"column. You can set weight for each element. The element that has one or "
+"more weight is matched, the record has more score rather than no weight "
+"case. It is a vector column specific feature. Vector column that can store "
+"weight is called weight vector column."
+msgstr ""
+"You can use vector column as index search target in the same way as scalar "
+"column. You can set weight for each element. The element that has one or "
+"more weight is matched, the record has more score rather than no weight "
+"case. It is a vector column specific feature. Vector column that can store "
+"weight is called weight vector column."
+
+msgid ""
+"You can also do full text search against each text element. But search score "
+"is too high when weight is used. You should use full text search with weight "
+"carefully."
+msgstr ""
+"You can also do full text search against each text element. But search score "
+"is too high when weight is used. You should use full text search with weight "
+"carefully."
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "There are three vector column types:"
+msgstr "There are three vector column types:"
+
+msgid "Normal vector column"
+msgstr "Normal vector column"
+
+msgid "Reference vector column"
+msgstr "Reference vector column"
+
+msgid "Weight vector column"
+msgstr "Weight vector column"
+
+msgid "This section describes how to use these types."
+msgstr "This section describes how to use these types."
+
+msgid ""
+"Normal vector column stores zero or more scalar data. For example, scalar "
+"data are number, string and so on."
+msgstr ""
+"Normal vector column stores zero or more scalar data. For example, scalar "
+"data are number, string and so on."
+
+msgid ""
+"A normal vector column can store the same type elements. You can't mix "
+"types. For example, you can't store a number and a string in the same normal "
+"vector column."
+msgstr ""
+"A normal vector column can store the same type elements. You can't mix "
+"types. For example, you can't store a number and a string in the same normal "
+"vector column."
+
+msgid ""
+"Normal vector column is useful when a record has multiple values with a key. "
+"Tags are the most popular use case."
+msgstr ""
+"Normal vector column is useful when a record has multiple values with a key. "
+"Tags are the most popular use case."
+
+msgid "How to create"
+msgstr "How to create"
+
+msgid ""
+"Use :doc:`/reference/commands/column_create` command to create a normal "
+"vector column. The point is ``COLUMN_VECTOR`` flag:"
+msgstr ""
+"Use :doc:`/reference/commands/column_create` command to create a normal "
+"vector column. The point is ``COLUMN_VECTOR`` flag:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "You can set zero or more tags to a bookmark."
+msgstr "You can set zero or more tags to a bookmark."
+
+msgid "How to load"
+msgstr "How to load"
+
+msgid "You can load vector data by JSON array syntax::"
+msgstr "You can load vector data by JSON array syntax::"
+
+msgid "Let's load the following data:"
+msgstr "Let's load the following data:"
+
+msgid "``_key``"
+msgstr "``_key``"
+
+msgid "``tags``"
+msgstr "``tags``"
+
+msgid "``http://groonga.org/``"
+msgstr "``http://groonga.org/``"
+
+msgid "``[\"groonga\"]``"
+msgstr "``[\"groonga\"]``"
+
+msgid "``http://mroonga.org/``"
+msgstr "``http://mroonga.org/``"
+
+msgid "``[\"mroonga\", \"mysql\", \"groonga\"]``"
+msgstr "``[\"mroonga\", \"mysql\", \"groonga\"]``"
+
+msgid "``http://ranguba.org/``"
+msgstr "``http://ranguba.org/``"
+
+msgid "``[\"ruby\", \"groonga\"]``"
+msgstr "``[\"ruby\", \"groonga\"]``"
+
+msgid "Here is a command that loads the data:"
+msgstr "Here is a command that loads the data:"
+
+msgid "The loaded data can be outputted as JSON array syntax:"
+msgstr "The loaded data can be outputted as JSON array syntax:"
+
+msgid "How to search"
+msgstr "How to search"
+
+msgid "You need to create an index to search normal vector column:"
+msgstr "You need to create an index to search normal vector column:"
+
+msgid ""
+"There is no vector column specific way. You can create an index like a "
+"scalar column."
+msgstr ""
+"There is no vector column specific way. You can create an index like a "
+"scalar column."
+
+msgid "You can search an element in ``tags`` like full text search syntax."
+msgstr "You can search an element in ``tags`` like full text search syntax."
+
+msgid "With :ref:`select-match-columns` and :ref:`select-query`:"
+msgstr "With :ref:`select-match-columns` and :ref:`select-query`:"
+
+msgid "You can also use weight in :ref:`select-match-columns`:"
+msgstr "You can also use weight in :ref:`select-match-columns`:"
+
+msgid "With :ref:`select-filter`:"
+msgstr "With :ref:`select-filter`:"
+
+msgid "TODO"
+msgstr "TODO"
+
+msgid ""
+"Reference vector column is space-efficient if there are many same value "
+"elements. Reference vector column keeps reference record IDs not value "
+"itself. Record ID is smaller than value itself."
+msgstr ""
+"Reference vector column is space-efficient if there are many same value "
+"elements. Reference vector column keeps reference record IDs not value "
+"itself. Record ID is smaller than value itself."
+
+msgid ""
+"Weight vector column is similar to normal vector column. It can store "
+"elements. It can also stores weights for them. Weight is degree of "
+"importance of the element."
+msgstr ""
+"Weight vector column is similar to normal vector column. It can store "
+"elements. It can also stores weights for them. Weight is degree of "
+"importance of the element."
+
+msgid ""
+"Weight is positive integer. ``0`` is the default weight. It means that no "
+"weight."
+msgstr ""
+"Weight is positive integer. ``0`` is the default weight. It means that no "
+"weight."
+
+msgid ""
+"If weight is one or larger, search score is increased by the weight. If the "
+"weight is ``0``, score is ``1``. If the weight is ``10``, score is ``11`` "
+"(``= 1 + 10``)."
+msgstr ""
+"If weight is one or larger, search score is increased by the weight. If the "
+"weight is ``0``, score is ``1``. If the weight is ``10``, score is ``11`` "
+"(``= 1 + 10``)."
+
+msgid ""
+"Weight vector column is useful for tuning search score. See also :ref:"
+"`select-adjuster`. You can increase search score of specific records."
+msgstr ""
+"Weight vector column is useful for tuning search score. See also :ref:"
+"`select-adjuster`. You can increase search score of specific records."
+
+msgid "Limitations"
+msgstr "Limitations"
+
+msgid ""
+"There are some limitations for now. They will be resolved in the future."
+msgstr ""
+"There are some limitations for now. They will be resolved in the future."
+
+msgid "Here are limitations:"
+msgstr "Here are limitations:"
+
+msgid ""
+"You need to use string representation for element value on load. For "
+"example, you can't use ``29`` for number 29. You need to use ``\"29\"`` for "
+"number 29."
+msgstr ""
+"You need to use string representation for element value on load. For "
+"example, you can't use ``29`` for number 29. You need to use ``\"29\"`` for "
+"number 29."
+
+msgid ""
+"Use :doc:`/reference/commands/column_create` command to create a weight "
+"vector column. The point is ``COLUMN_VECTOR|WITH_WEIGHT`` flags:"
+msgstr ""
+"Use :doc:`/reference/commands/column_create` command to create a weight "
+"vector column. The point is ``COLUMN_VECTOR|WITH_WEIGHT`` flags:"
+
+msgid ""
+"If you don't specify ``WITH_WEIGHT`` flag, it is just a normal vector column."
+msgstr ""
+"If you don't specify ``WITH_WEIGHT`` flag, it is just a normal vector column."
+
+msgid "You can set zero or more tags with weight to a bookmark."
+msgstr "You can set zero or more tags with weight to a bookmark."
+
+msgid "You can load vector data by JSON object syntax::"
+msgstr "You can load vector data by JSON object syntax::"
+
+msgid "``{\"groonga\": 100}``"
+msgstr "``{\"groonga\": 100}``"
+
+msgid "``{\"mroonga\": 100, \"mysql\": 50, \"groonga\": 10}``"
+msgstr "``{\"mroonga\": 100, \"mysql\": 50, \"groonga\": 10}``"
+
+msgid "``{\"ruby\": 100, \"groonga\": 50}``"
+msgstr "``{\"ruby\": 100, \"groonga\": 50}``"
+
+msgid "The loaded data can be outputted as JSON object syntax:"
+msgstr "The loaded data can be outputted as JSON object syntax:"
+
+msgid ""
+"You need to create an index to search weight vector column. You don't forget "
+"to specify ``WITH_WEIGHT`` flag to ``column_create``:"
+msgstr ""
+"You need to create an index to search weight vector column. You don't forget "
+"to specify ``WITH_WEIGHT`` flag to ``column_create``:"
+
+msgid ""
+"There is no weight vector column specific way except ``WITH_WEIGHT`` flag. "
+"You can create an index like a scalar column."
+msgstr ""
+"There is no weight vector column specific way except ``WITH_WEIGHT`` flag. "
+"You can create an index like a scalar column."
+
+msgid ""
+"You can also use weight in :ref:`select-match-columns`. The score is ``(1 + "
+"weight_in_weight_vector) * weight_in_match_columns``:"
+msgstr ""
+"You can also use weight in :ref:`select-match-columns`. The score is ``(1 + "
+"weight_in_weight_vector) * weight_in_match_columns``:"
+
+msgid "How to apply just weight"
+msgstr "How to apply just weight"
+
+msgid ""
+"You can use weight in weight vector column to just increase search score "
+"without changing a set of matched records."
+msgstr ""
+"You can use weight in weight vector column to just increase search score "
+"without changing a set of matched records."
+
+msgid "Use :ref:`select-adjuster` for the purpose:"
+msgstr "Use :ref:`select-adjuster` for the purpose:"
+
+msgid ""
+"The ``select`` command uses ``--filter true``. So all records are matched "
+"with score 1. Then it applies ``--adjuster``. The adjuster does the "
+"following:"
+msgstr ""
+"The ``select`` command uses ``--filter true``. So all records are matched "
+"with score 1. Then it applies ``--adjuster``. The adjuster does the "
+"following:"
+
+msgid ""
+"``tags @ \"mysql\" * 10`` increases score by ``(1 + weight) * 10`` of "
+"records that has ``\"mysql\"`` tag."
+msgstr ""
+"``tags @ \"mysql\" * 10`` increases score by ``(1 + weight) * 10`` of "
+"records that has ``\"mysql\"`` tag."
+
+msgid ""
+"``tags @ \"groonga\" * 5`` increases score by ``(1 + weight) * 5`` of "
+"records that has ``\"groonga\"`` tag."
+msgstr ""
+"``tags @ \"groonga\" * 5`` increases score by ``(1 + weight) * 5`` of "
+"records that has ``\"groonga\"`` tag."
+
+msgid ""
+"For example, record ``\"http://mroonga.org/\"`` has both ``\"mysql\"`` tag "
+"and ``\"groonga\"`` tag. So its score is increased by ``565`` (``= ((1 + 50) "
+"* 10) + ((1 + 10) * 5) = (51 * 10) + (11 * 5) = 510 + 55``). The search "
+"score is 1 by ``--filter true`` before applying ``--adjuster``. So the final "
+"search score is ``566`` (``= 1 + 565``) of record ``\"http://mroonga.org/"
+"\"``."
+msgstr ""
+"For example, record ``\"http://mroonga.org/\"`` has both ``\"mysql\"`` tag "
+"and ``\"groonga\"`` tag. So its score is increased by ``565`` (``= ((1 + 50) "
+"* 10) + ((1 + 10) * 5) = (51 * 10) + (11 * 5) = 510 + 55``). The search "
+"score is 1 by ``--filter true`` before applying ``--adjuster``. So the final "
+"search score is ``566`` (``= 1 + 565``) of record ``\"http://mroonga.org/"
+"\"``."

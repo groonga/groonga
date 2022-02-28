@@ -1,0 +1,78 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``log_put``"
+msgstr "``log_put``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "log_put - ログ出力"
+msgstr "log_put - ログ出力"
+
+msgid ""
+"groonga組込コマンドの一つであるlog_putについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+msgstr ""
+"groonga組込コマンドの一つであるlog_putについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+
+msgid "log_putは、ログにmessageを出力します。"
+msgstr "log_putは、ログにmessageを出力します。"
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "``level``"
+msgstr "``level``"
+
+msgid "設定するログ出力レベルの値を以下のいずれかで指定します。"
+msgstr "設定するログ出力レベルの値を以下のいずれかで指定します。"
+
+msgid "EMERG ALERT CRIT error warning notice info debug"
+msgstr "EMERG ALERT CRIT error warning notice info debug"
+
+msgid "``message``"
+msgstr "``message``"
+
+msgid "出力する文字列を指定します。"
+msgstr "出力する文字列を指定します。"
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "``成功かどうかのフラグ``"
+msgstr "``成功かどうかのフラグ``"
+
+msgid "エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。"
+msgstr "エラーが生じなかった場合にはtrue、エラーが生じた場合にはfalseを返す。"
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`log_level` :doc:`log_reopen`"
+msgstr ":doc:`log_level` :doc:`log_reopen`"

@@ -1,0 +1,439 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``query``"
+msgstr "``query``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"``query`` provides ``--match_columns`` and ``--query`` parameters of :doc:`/"
+"reference/commands/select` feature as function. You can specify multiple "
+"``query`` functions in ``--filter`` parameter in :doc:`/reference/commands/"
+"select`."
+msgstr ""
+"``query`` provides ``--match_columns`` and ``--query`` parameters of :doc:`/"
+"reference/commands/select` feature as function. You can specify multiple "
+"``query`` functions in ``--filter`` parameter in :doc:`/reference/commands/"
+"select`."
+
+msgid ""
+"Because of such flexibility, you can control full text search behavior by "
+"combination of multiple ``query`` functions."
+msgstr ""
+"Because of such flexibility, you can control full text search behavior by "
+"combination of multiple ``query`` functions."
+
+msgid ""
+"``query`` can be used in only ``--filter`` in :doc:`/reference/commands/"
+"select`."
+msgstr ""
+"``query`` can be used in only ``--filter`` in :doc:`/reference/commands/"
+"select`."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid ""
+"``query`` requires two parameters - ``match_columns`` and ``query_string``."
+msgstr ""
+"``query`` requires two parameters - ``match_columns`` and ``query_string``."
+
+msgid "The parameter ``query_expander`` and ``options`` are optional::"
+msgstr "The parameter ``query_expander`` and ``options`` are optional::"
+
+msgid ""
+"``options`` uses the following format. All of key-value pairs are optional::"
+msgstr ""
+"``options`` uses the following format. All of key-value pairs are optional::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "Here are a schema definition and sample data to show usage."
+
+msgid "Sample schema:"
+msgstr "Sample schema:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "Sample data:"
+msgstr "Sample data:"
+
+msgid ""
+"Here is the simple usage of ``query`` function which executes full text "
+"search by keyword ``alice`` without using ``--match_columns`` and ``--"
+"query`` arguments in ``--filter``."
+msgstr ""
+"Here is the simple usage of ``query`` function which executes full text "
+"search by keyword ``alice`` without using ``--match_columns`` and ``--"
+"query`` arguments in ``--filter``."
+
+msgid ""
+"When executing above query, the keyword ``alice`` is weighted to the value "
+"``10``."
+msgstr ""
+"When executing above query, the keyword ``alice`` is weighted to the value "
+"``10``."
+
+msgid "Here are the contrasting examples with/without ``query``."
+msgstr "Here are the contrasting examples with/without ``query``."
+
+msgid ""
+"In this case, the all keywords ``groonga``, ``mroonga`` and ``user`` use the "
+"default weight. You can't pass different weight value to each keyword in "
+"this way."
+msgstr ""
+"In this case, the all keywords ``groonga``, ``mroonga`` and ``user`` use the "
+"default weight. You can't pass different weight value to each keyword in "
+"this way."
+
+msgid ""
+"On the other hand, by specifying multiple ``query``, the keywords "
+"``groonga``, ``mroonga`` and ``user`` use different weight."
+msgstr ""
+"On the other hand, by specifying multiple ``query``, the keywords "
+"``groonga``, ``mroonga`` and ``user`` use different weight."
+
+msgid ""
+"As a result, you can control full text search result score by specifying "
+"different weight to the keywords on your purpose."
+msgstr ""
+"As a result, you can control full text search result score by specifying "
+"different weight to the keywords on your purpose."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "Required parameters"
+msgstr "Required parameters"
+
+msgid ""
+"There are two required parameters, ``match_columns`` and ``query_string``."
+msgstr ""
+"There are two required parameters, ``match_columns`` and ``query_string``."
+
+msgid "``match_columns``"
+msgstr "``match_columns``"
+
+msgid ""
+"Specifies the default target columns for full text search by "
+"``query_string`` parameter value. It is the same role as :ref:`select-match-"
+"columns` parameter in ``select``."
+msgstr ""
+"Specifies the default target columns for full text search by "
+"``query_string`` parameter value. It is the same role as :ref:`select-match-"
+"columns` parameter in ``select``."
+
+msgid "``query_string``"
+msgstr "``query_string``"
+
+msgid ""
+"Specifies the search condition in :doc:`/reference/grn_expr/query_syntax`. "
+"It is the same role as ``query`` parameter in ``select``."
+msgstr ""
+"Specifies the search condition in :doc:`/reference/grn_expr/query_syntax`. "
+"It is the same role as ``query`` parameter in ``select``."
+
+msgid ""
+"See :ref:`select-match-columns` about ``query`` parameter in ``select``."
+msgstr ""
+"See :ref:`select-match-columns` about ``query`` parameter in ``select``."
+
+msgid "Optional parameters"
+msgstr "Optional parameters"
+
+msgid "There are some optional parameters."
+msgstr "There are some optional parameters."
+
+msgid "``query_expander``"
+msgstr "``query_expander``"
+
+msgid ""
+"Specifies the query expander name or substitution column name for query "
+"expansion."
+msgstr ""
+"Specifies the query expander name or substitution column name for query "
+"expansion."
+
+msgid "See :doc:`/reference/query_expanders` for available query expanders."
+msgstr "See :doc:`/reference/query_expanders` for available query expanders."
+
+msgid "Substitution column name uses ``${TABLE}.${COLUMN}`` format."
+msgstr "Substitution column name uses ``${TABLE}.${COLUMN}`` format."
+
+msgid "See :ref:`select-query-expander` for details."
+msgstr "See :ref:`select-query-expander` for details."
+
+msgid "``default_mode``"
+msgstr "``default_mode``"
+
+msgid ""
+"Specifies the default search mode. You can change search mode by ``column:"
+"@keyword`` like syntax. The default search mode is used when you just "
+"specify ``keyword`` instead of ``column:@keyword``. See :doc:`/reference/"
+"grn_expr/query_syntax` for more syntax details."
+msgstr ""
+"Specifies the default search mode. You can change search mode by ``column:"
+"@keyword`` like syntax. The default search mode is used when you just "
+"specify ``keyword`` instead of ``column:@keyword``. See :doc:`/reference/"
+"grn_expr/query_syntax` for more syntax details."
+
+msgid ""
+"Here are available modes. The default is ``\"MATCH\"`` mode. It does full "
+"text search."
+msgstr ""
+"Here are available modes. The default is ``\"MATCH\"`` mode. It does full "
+"text search."
+
+msgid "Mode"
+msgstr "Mode"
+
+msgid "Aliases"
+msgstr "Aliases"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "``\"EQUAL\"``"
+msgstr "``\"EQUAL\"``"
+
+msgid "``\"==\"``"
+msgstr "``\"==\"``"
+
+msgid "It uses :ref:`query-syntax-equal-condition` as the default mode."
+msgstr "It uses :ref:`query-syntax-equal-condition` as the default mode."
+
+msgid "``\"NOT_EQUAL\"``"
+msgstr "``\"NOT_EQUAL\"``"
+
+msgid "``\"!=\"``"
+msgstr "``\"!=\"``"
+
+msgid "It uses :ref:`query-syntax-not-equal-condition` as the default mode."
+msgstr "It uses :ref:`query-syntax-not-equal-condition` as the default mode."
+
+msgid "``\"LESS\"``"
+msgstr "``\"LESS\"``"
+
+msgid "``\"<\"``"
+msgstr "``\"<\"``"
+
+msgid "It uses :ref:`query-syntax-less-than-condition` as the default mode."
+msgstr "It uses :ref:`query-syntax-less-than-condition` as the default mode."
+
+msgid "``\"GREATER\"``"
+msgstr "``\"GREATER\"``"
+
+msgid "``\">\"``"
+msgstr "``\">\"``"
+
+msgid "It uses :ref:`query-syntax-greater-than-condition` as the default mode."
+msgstr ""
+"It uses :ref:`query-syntax-greater-than-condition` as the default mode."
+
+msgid "``\"LESS_EQUAL\"``"
+msgstr "``\"LESS_EQUAL\"``"
+
+msgid "``\"<=\"``"
+msgstr "``\"<=\"``"
+
+msgid ""
+"It uses :ref:`query-syntax-less-than-or-equal-condition` as the default mode."
+msgstr ""
+"It uses :ref:`query-syntax-less-than-or-equal-condition` as the default mode."
+
+msgid "``\"GREATER_EQUAL\"``"
+msgstr "``\"GREATER_EQUAL\"``"
+
+msgid "``\">=\"``"
+msgstr "``\">=\"``"
+
+msgid ""
+"It uses :ref:`query-syntax-greater-than-or-equal-condition` as the default "
+"mode."
+msgstr ""
+"It uses :ref:`query-syntax-greater-than-or-equal-condition` as the default "
+"mode."
+
+msgid "``\"MATCH\"``"
+msgstr "``\"MATCH\"``"
+
+msgid "``\"@\"``"
+msgstr "``\"@\"``"
+
+msgid ""
+"It uses :ref:`query-syntax-full-text-search-condition` as the default mode."
+msgstr ""
+"It uses :ref:`query-syntax-full-text-search-condition` as the default mode."
+
+msgid "It's the default."
+msgstr "It's the default."
+
+msgid "``\"NEAR\"``"
+msgstr "``\"NEAR\"``"
+
+msgid "``\"*N\"``"
+msgstr "``\"*N\"``"
+
+msgid "It uses :ref:`query-syntax-near-search-condition` as the default mode."
+msgstr "It uses :ref:`query-syntax-near-search-condition` as the default mode."
+
+msgid "``\"SIMILAR\"``"
+msgstr "``\"SIMILAR\"``"
+
+msgid "``\"*S\"``"
+msgstr "``\"*S\"``"
+
+msgid ""
+"It uses :ref:`query-syntax-similar-search-condition` as the default mode."
+msgstr ""
+"It uses :ref:`query-syntax-similar-search-condition` as the default mode."
+
+msgid "``\"PREFIX\"``"
+msgstr "``\"PREFIX\"``"
+
+msgid "``\"^\"``, ``\"@^\"``"
+msgstr "``\"^\"``, ``\"@^\"``"
+
+msgid ""
+"It uses :ref:`query-syntax-prefix-search-condition` as the default mode."
+msgstr ""
+"It uses :ref:`query-syntax-prefix-search-condition` as the default mode."
+
+msgid "``\"SUFFIX\"``"
+msgstr "``\"SUFFIX\"``"
+
+msgid "``\"$\"``, ``\"@$\"``"
+msgstr "``\"$\"``, ``\"@$\"``"
+
+msgid ""
+"It uses :ref:`query-syntax-suffix-search-condition` as the default mode."
+msgstr ""
+"It uses :ref:`query-syntax-suffix-search-condition` as the default mode."
+
+msgid "``\"REGEXP\"``"
+msgstr "``\"REGEXP\"``"
+
+msgid "``\"~\"``, ``\"@~\"``"
+msgstr "``\"~\"``, ``\"@~\"``"
+
+msgid ""
+"It uses :ref:`query-syntax-regular-expression-condition` as the default mode."
+msgstr ""
+"It uses :ref:`query-syntax-regular-expression-condition` as the default mode."
+
+msgid "``default_operator``"
+msgstr "``default_operator``"
+
+msgid ""
+"Specifies the default logical operator. It's used when no logical operator "
+"such as ``OR`` and ``-`` are specified between conditional expressions like "
+"``keyword1 keyword2``. The default logical operator is used to combine "
+"``keyword1`` result set and ``keyword2`` result set. The default logical "
+"operator is ``AND``. So ``keyword1 keyword2`` result set includes only "
+"records that they are included in both ``keyword1`` result set and "
+"``keyword2`` result set."
+msgstr ""
+"Specifies the default logical operator. It's used when no logical operator "
+"such as ``OR`` and ``-`` are specified between conditional expressions like "
+"``keyword1 keyword2``. The default logical operator is used to combine "
+"``keyword1`` result set and ``keyword2`` result set. The default logical "
+"operator is ``AND``. So ``keyword1 keyword2`` result set includes only "
+"records that they are included in both ``keyword1`` result set and "
+"``keyword2`` result set."
+
+msgid "Here are available logical operators. The default is ``\"AND\"``."
+msgstr "Here are available logical operators. The default is ``\"AND\"``."
+
+msgid "Logical operator"
+msgstr "Logical operator"
+
+msgid "``\"AND\"``"
+msgstr "``\"AND\"``"
+
+msgid "``\"&&\"``, ``\"+\"``"
+msgstr "``\"&&\"``, ``\"+\"``"
+
+msgid ""
+"It uses :ref:`query-syntax-logical-and` as the default logical operator."
+msgstr ""
+"It uses :ref:`query-syntax-logical-and` as the default logical operator."
+
+msgid "``\"OR\"``"
+msgstr "``\"OR\"``"
+
+msgid "``\"||\"``"
+msgstr "``\"||\"``"
+
+msgid "It uses :ref:`query-syntax-logical-or` as the default logical operator."
+msgstr ""
+"It uses :ref:`query-syntax-logical-or` as the default logical operator."
+
+msgid "``\"AND_NOT\"``"
+msgstr "``\"AND_NOT\"``"
+
+msgid "``\"&!\"``, ``\"-\"``"
+msgstr "``\"&!\"``, ``\"-\"``"
+
+msgid ""
+"It uses :ref:`query-syntax-logical-and-not` as the default logical operator."
+msgstr ""
+"It uses :ref:`query-syntax-logical-and-not` as the default logical operator."
+
+msgid "``flags``"
+msgstr "``flags``"
+
+msgid "Specifies the flags that customizes how to parse query."
+msgstr "Specifies the flags that customizes how to parse query."
+
+msgid ""
+"You can specify multiple flags by separating each flags by ``|``. Here is "
+"the example to specify multiple flags::"
+msgstr ""
+"You can specify multiple flags by separating each flags by ``|``. Here is "
+"the example to specify multiple flags::"
+
+msgid "See :ref:`select-query-flags` for available flags."
+msgstr "See :ref:`select-query-flags` for available flags."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "This function returns whether a record is matched or not as boolean."
+msgstr "This function returns whether a record is matched or not as boolean."
+
+msgid ""
+"This function is also worked as a selector. It means that this function can "
+"be executable effectively."
+msgstr ""
+"This function is also worked as a selector. It means that this function can "
+"be executable effectively."
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`/reference/commands/select`"
+msgstr ":doc:`/reference/commands/select`"
+
+msgid ":doc:`query_parallel_or`"
+msgstr ":doc:`query_parallel_or`"

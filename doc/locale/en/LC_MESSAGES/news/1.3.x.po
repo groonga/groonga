@@ -1,0 +1,135 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "News - 1.3.x"
+msgstr "News - 1.3.x"
+
+msgid "Release 1.3.0 - 2012-01-29"
+msgstr "Release 1.3.0 - 2012-01-29"
+
+msgid "Improvements"
+msgstr "Improvements"
+
+msgid ""
+"Supported dynamic DB key table change by GRN_DB_KEY=pat or GRN_DB_KEY=dat "
+"environment variable value."
+msgstr ""
+"Supported dynamic DB key table change by GRN_DB_KEY=pat or GRN_DB_KEY=dat "
+"environment variable value."
+
+msgid ""
+"Added ``--with-default-db-key`` configure option that specifies the default "
+"DB key table."
+msgstr ""
+"Added ``--with-default-db-key`` configure option that specifies the default "
+"DB key table."
+
+msgid ""
+"Supported \"\" value for geo point data types. It's interpreted as \"0x0\"."
+msgstr ""
+"Supported \"\" value for geo point data types. It's interpreted as \"0x0\"."
+
+msgid "Added column name to cast error message."
+msgstr "Added column name to cast error message."
+
+msgid "Inhibit file information for stdin on load error."
+msgstr "Inhibit file information for stdin on load error."
+
+msgid ""
+"Enabled write-strings warnings and suppress those warnings. [Suggested by "
+"montywi]"
+msgstr ""
+"Enabled write-strings warnings and suppress those warnings. [Suggested by "
+"montywi]"
+
+msgid "Marked MessagePack output format as supported. [#1215]"
+msgstr "Marked MessagePack output format as supported. [#1215]"
+
+msgid "Added ``const`` to ``void *`` of ``*_set_value()``."
+msgstr "Added ``const`` to ``void *`` of ``*_set_value()``."
+
+msgid "Enabled warning flags on C and C++."
+msgstr "Enabled warning flags on C and C++."
+
+msgid "Supported ``--with-libevent`` without value configure option."
+msgstr "Supported ``--with-libevent`` without value configure option."
+
+msgid "``grn_table_get()`` supported grn_db. [#1242]"
+msgstr "``grn_table_get()`` supported grn_db. [#1242]"
+
+msgid ""
+"[rpm] Removed needless groonga-munin-plugins dependency from groonga-server. "
+"[#1251] [Suggested by Masaharu IWAI]"
+msgstr ""
+"[rpm] Removed needless groonga-munin-plugins dependency from groonga-server. "
+"[#1251] [Suggested by Masaharu IWAI]"
+
+msgid ""
+"[rpm] Removed needless groonga-doc dependency from groonga. [#1251] "
+"[Suggested by Masaharu IWAI]"
+msgstr ""
+"[rpm] Removed needless groonga-doc dependency from groonga. [#1251] "
+"[Suggested by Masaharu IWAI]"
+
+msgid "[dat] Supported repair by ``grn_dat_repair()``."
+msgstr "[dat] Supported repair by ``grn_dat_repair()``."
+
+msgid "``grn_table_at()`` supported grn_db."
+msgstr "``grn_table_at()`` supported grn_db."
+
+msgid "[suggest] Removed unstable mark."
+msgstr "[suggest] Removed unstable mark."
+
+msgid "[suggest][complete] Supported normalized value search in prefix-search."
+msgstr ""
+"[suggest][complete] Supported normalized value search in prefix-search."
+
+msgid ""
+"Added experimental offline index build. It's disabled by default for now. "
+"You can enable it by USE_OFFLINE_INDEXER=yes environment variable."
+msgstr ""
+"Added experimental offline index build. It's disabled by default for now. "
+"You can enable it by USE_OFFLINE_INDEXER=yes environment variable."
+
+msgid "Added internal API ``grn_obj_path_by_id()`` for mroonga."
+msgstr "Added internal API ``grn_obj_path_by_id()`` for mroonga."
+
+msgid "[suggest][httpd] Passed unknown parameters to groonga."
+msgstr "[suggest][httpd] Passed unknown parameters to groonga."
+
+msgid "[output][xml] Added a newline before ``</RESULT>`` for readability."
+msgstr "[output][xml] Added a newline before ``</RESULT>`` for readability."
+
+msgid "[doc][output] Added documentation about output format type."
+msgstr "[doc][output] Added documentation about output format type."
+
+msgid "Added ``table_rename``. [#1234]"
+msgstr "Added ``table_rename``. [#1234]"
+
+msgid "Added ``column_rename``. [#1234]"
+msgstr "Added ``column_rename``. [#1234]"
+
+msgid "Thanks"
+msgstr "Thanks"
+
+msgid "montywi"
+msgstr "montywi"
+
+msgid "Masaharu IWAI"
+msgstr "Masaharu IWAI"

@@ -1,0 +1,232 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2012, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2019-05-23 14:19+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 1.7.7\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "Drilldown"
+msgstr "ドリルダウン"
+
+msgid ""
+"You learned how to search and sort searched results in the previous "
+"sections. Now that you can search as you likes, but how do you summarize the "
+"number of records which has specific value in the column?"
+msgstr ""
+"これまでのセクションで検索方法と検索結果をどのようにソートするかを学びまし"
+"た。思うがままに検索できるようになりましたね。それでは、次のことをするにはど"
+"うすればよいでしょか。まず、あるカラムに注目します。そして、そのカラムの値が"
+"同じレコードを集め、それぞれの値毎に集まったレコードの数を数えます。"
+
+msgid ""
+"As you know, there is a naive solution to execute query by every the value "
+"of column, then you can get the number of records as a result. It is a "
+"simple way, but it is not reasonable to many records."
+msgstr ""
+"素朴な実現方法は、カラムのそれぞれの値で検索する方法です。結果として、すべて"
+"のカラムの値についてレコード数を求めることができます。シンプルな方法ですが、"
+"たくさんのレコードがある場合には現実的ではありません。"
+
+msgid ""
+"If you are familiar with SQL, you will doubt with \"Is there a similar SQL "
+"functionality to ``GROUP BY`` in Groonga?\"."
+msgstr ""
+"SQLに慣れている人は、「GroongaにはSQLでいう ``GROUP BY`` 相当の機能はない"
+"の？」と思うでしょう。"
+
+msgid ""
+"Of course, Groonga provides such a functionality. It's called as "
+"``drilldown``."
+msgstr ""
+"もちろん、Groongaはそのような機能を提供しています。それが ``drilldown`` と呼"
+"んでいる機能です。"
+
+msgid ""
+"``drilldown`` enables you to get the number of records which belongs to "
+"specific the value of column at once."
+msgstr ""
+"``drilldown`` はカラムの値ごとにレコード数を数える機能を提供します。値ごとに"
+"別々のクエリーになるのではなく、1回のクエリーですべての値に対してレコード数を"
+"数えます。"
+
+msgid ""
+"To illustrate this feature, imagine the case that classification by domain "
+"and grouping by country that domain belongs to."
+msgstr ""
+"この機能を説明するために次のケースを考えます。ドメインで分類し、ドメインが属"
+"している国ごとにグループ化する、というケースです。"
+
+msgid "Here is the concrete examples how to use this feature."
+msgstr "この機能を使った具体的な例を示します。"
+
+msgid ""
+"In this example, we add two columns to ``Site`` table. ``domain`` column is "
+"used for TLD (top level domain). ``country`` column is used for country "
+"name. The type of these columns are ``SiteDomain`` table which uses domain "
+"name as a primary key and ``SiteCountry`` table which uses country name as a "
+"primary key."
+msgstr ""
+"この例では、 ``Site`` テーブルに2つのカラムを追加しています。 ``domain`` カラ"
+"ムはTLD(トップレベルドメイン)に使います。 ``country`` カラムは国名に使いま"
+"す。これらのカラムの型はドメイン名を主キーとする ``SiteDomain`` テーブルと国"
+"名を主キーとする ``SiteCountry`` テーブルです。"
+
+msgid ""
+"Here is a example of drilldown with ``domain`` column. Three kind of values "
+"are used in ``domain`` column - \".org\", \".net\" and \".com\"."
+msgstr ""
+"``domain`` カラムでドリルダウンする例を示します。 3つの値が ``domain`` カラム"
+"では使われています。\".org\"、\".net\"そして\".com\"です。"
+
+msgid "Here is a summary of above query."
+msgstr "上記のクエリの集計結果です。"
+
+msgid "Drilldown by ``domain`` column"
+msgstr "``domain`` カラムによるドリルダウン"
+
+msgid "Group by"
+msgstr "グループ化するカラムの値"
+
+msgid "The number of group records"
+msgstr "グループ化されたレコード数"
+
+msgid "Group records means following records"
+msgstr "グループ化されたレコードは次のとおり"
+
+msgid ".org"
+msgstr ""
+
+msgid "3"
+msgstr ""
+
+msgid "http://example.org/"
+msgstr ""
+
+msgid "http://example.org/aba"
+msgstr ""
+
+msgid "http://example.org/gat"
+msgstr ""
+
+msgid ".net"
+msgstr ""
+
+msgid "http://example.net/"
+msgstr ""
+
+msgid "http://example.net/afr"
+msgstr ""
+
+msgid "http://example.net/atv"
+msgstr ""
+
+msgid ".com"
+msgstr ""
+
+msgid "http://example.com/"
+msgstr ""
+
+msgid "http://example.com/rab"
+msgstr ""
+
+msgid "http://example.com/vdw"
+msgstr ""
+
+msgid ""
+"The value of drilldown are returned as the value of ``_nsubrecs`` column. In "
+"this case, ``Site`` table is grouped by \".org\", \".net\", \".com\" domain. "
+"``_nsubrecs`` shows that each three domain has three records."
+msgstr ""
+"ドリルダウン結果は ``_nsubrecs`` カラムの値として返ります。この場合は、"
+"``Site`` テーブルは \".org\"、\".net\"、\".com\"ドメインでグループ化されてい"
+"ます。 ``_nsubrecs`` はグループ化されたドメインが3つのレコードをそれぞれもつ"
+"ことを意味します。"
+
+msgid ""
+"If you execute drildown to the column which has table as a type, you can get "
+"the value of column which is stored in referenced table. ``_nsubrecs`` "
+"pseudo column is added to the table which is used for drilldown. this pseudo "
+"column stores the number of records which is grouped by."
+msgstr ""
+"テーブル型を持つカラムに対してドリルダウンを行った場合、参照先のテーブルに存"
+"在するカラム値を取得することもできます。ドリルダウンを行ったテーブルには、 "
+"``_nsubrecs`` という仮想的なカラムが追加されます。このカラムには、グループ化"
+"されたレコード数が入ります。"
+
+msgid ""
+"Then, investigate referenced table in detail. As ``Site`` table use "
+"``SiteDomain`` table as column type of ``domain``, you can use ``--"
+"drilldown_output_columns`` to know detail of referenced column."
+msgstr ""
+"では、参照されているテーブルの詳細を調べてみましょう。 ``Site`` テーブルは "
+"``SiteDomain`` テーブルを ``domain`` カラムの型として使っています。 ``--"
+"drilldown_output_columns`` を参照されているカラムの詳細を知るのに使えます。"
+
+msgid ""
+"Now, you can see detail of each grouped domain, drilldown by ``country`` "
+"column which has \".org\" as column value."
+msgstr ""
+"これでグループ化されたドメインの詳細がわかります。 ``domain`` の値が\"."
+"org\"であるレコードに対して ``country`` カラムを使ってドリルダウンしてみま"
+"しょう。"
+
+msgid "Drilldown with multiple column"
+msgstr "複数のカラムでドリルダウン"
+
+msgid ""
+"Drilldown feature supports multiple column. Use comma separated multiple "
+"column names as ``drildown`` parameter. You can get the each result of "
+"drilldown at once."
+msgstr ""
+"ドリルダウンでは複数のカラムをサポートしています。 ``drilldown`` パラメータの"
+"引数にカンマ区切りの値を指定します。すると一度にまとめてドリルダウン結果を取"
+"得できます。"
+
+msgid "Sorting drildown results"
+msgstr "ドリルダウン結果をソートする"
+
+msgid ""
+"Use ``--drilldown_sort_keys`` if you want to sort the result of drilldown. "
+"For example, specify ``_nsubrecs`` as ascending order."
+msgstr ""
+"ドリルダウン結果をソートしたい場合には ``--drilldown_sort_keys`` を使います。"
+"指定した ``_nsubrecs`` カラムを昇順でソートします。"
+
+msgid "limits drildown results"
+msgstr "ドリルダウン結果の制限"
+
+msgid ""
+"The number of drilldown results is limited to 10 as a default. Use "
+"``drilldown_limit`` and ``drilldown_offset`` parameter to customize "
+"orilldown results."
+msgstr ""
+"ドリルダウン結果はデフォルト10件に制限されています。 ``drilldown_limit`` と "
+"``drilldown_offset`` パラメータをドリルダウン結果をカスタマイズするのに使いま"
+"す。"
+
+msgid ""
+"Note that drilldown to the column which stores string is slower than the "
+"columns which stores the other types. If you drilldown to string type of "
+"column, create the table that type of primary key is string, then create the "
+"column which refers that table."
+msgstr ""
+"文字列を格納しているカラムのドリルダウンは、他の型のカラムのドリルダウンより"
+"も遅くなることに注意してください。文字列型のカラムでドリルダウンするときは、"
+"主キーの方が文字列のテーブルを作って、そのテーブルを参照するカラムにしてくだ"
+"さい。"

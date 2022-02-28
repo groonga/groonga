@@ -1,0 +1,95 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Global configurations"
+msgstr "Global configurations"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "Groonga has the global configurations. You can access them by API."
+msgstr "Groonga has the global configurations. You can access them by API."
+
+msgid "Reference"
+msgstr "Reference"
+
+msgid "Returns the lock timeout."
+msgstr "Returns the lock timeout."
+
+msgid ""
+":c:type:`grn_ctx` acquires a lock for updating a shared value. If other :c:"
+"type:`grn_ctx` is already updating the same value, :c:type:`grn_ctx` that "
+"try to acquire a lock can't acquires a lock. The :c:type:`grn_ctx` that "
+"can't acquires a lock waits 1 millisecond and try to acquire a lock again. "
+"The try is done ``timeout`` times. If the :c:type:`grn_ctx` that can't "
+"acquires a lock until ``timeout`` times, the tries are failed."
+msgstr ""
+":c:type:`grn_ctx` acquires a lock for updating a shared value. If other :c:"
+"type:`grn_ctx` is already updating the same value, :c:type:`grn_ctx` that "
+"try to acquire a lock can't acquires a lock. The :c:type:`grn_ctx` that "
+"can't acquires a lock waits 1 millisecond and try to acquire a lock again. "
+"The try is done ``timeout`` times. If the :c:type:`grn_ctx` that can't "
+"acquires a lock until ``timeout`` times, the tries are failed."
+
+msgid ""
+"The default lock timeout is ``10000000``. It means that Groonga doesn't "
+"report a lock failure until about 3 hours.  (1 * 10000000 [msec] = 10000 "
+"[sec] = 166.666... [min] = 2.777... [hour])"
+msgstr ""
+"The default lock timeout is ``10000000``. It means that Groonga doesn't "
+"report a lock failure until about 3 hours.  (1 * 10000000 [msec] = 10000 "
+"[sec] = 166.666... [min] = 2.777... [hour])"
+
+msgid "Returns"
+msgstr "Returns"
+
+msgid "The lock timeout."
+msgstr "The lock timeout."
+
+msgid "Sets the lock timeout."
+msgstr "Sets the lock timeout."
+
+msgid "See :c:func:`grn_get_lock_timeout` about lock timeout."
+msgstr "See :c:func:`grn_get_lock_timeout` about lock timeout."
+
+msgid "There are some special values for ``timeout``."
+msgstr "There are some special values for ``timeout``."
+
+msgid ""
+"``0``: It means that Groonga doesn't retry acquiring a lock. Groonga reports "
+"a failure after one lock acquirement failure."
+msgstr ""
+"``0``: It means that Groonga doesn't retry acquiring a lock. Groonga reports "
+"a failure after one lock acquirement failure."
+
+msgid ""
+"negative value: It means that Groonga retries acquiring a lock until Groonga "
+"can acquire a lock."
+msgstr ""
+"negative value: It means that Groonga retries acquiring a lock until Groonga "
+"can acquire a lock."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "The new lock timeout."
+msgstr "The new lock timeout."
+
+msgid "``GRN_SUCCESS``. It doesn't fail."
+msgstr "``GRN_SUCCESS``. It doesn't fail."

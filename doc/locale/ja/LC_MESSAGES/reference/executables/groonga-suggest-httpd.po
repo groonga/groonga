@@ -1,0 +1,631 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``groonga-suggest-httpd``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``groonga-suggest-httpd`` is a program that provides HTTP interface for the "
+"following features:"
+msgstr ""
+"``groonga-suggest-httpd`` は次の機能に対するHTTPインターフェイスを提供するプ"
+"ログラムです。"
+
+msgid "Returning :doc:`/reference/suggest` execution result"
+msgstr ":doc:`/reference/suggest` を実行した結果を返す"
+
+msgid "Saving logs for learning"
+msgstr "学習用にログを保存する"
+
+msgid ""
+"``groonga-suggest-httpd`` provides suggest feature like :doc:`/reference/"
+"commands/suggest` command. Note that some parameter names are different of "
+"them."
+msgstr ""
+"``groonga-suggest-httpd`` は :doc:`/reference/commands/suggest` コマンドのよ"
+"うなサジェスト機能を提供します。いくつかパラメーター名が異なることに注意して"
+"ください。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``groonga-suggest-httpd`` requires database path::"
+msgstr "``groonga-suggest-httpd`` にはデータベースのパスを指定します。::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"You need to create one or more datasets to use ``groonga-suggest-httpd``. A "
+"dataset consists of tables and columns. You can define them by :doc:`groonga-"
+"suggest-create-dataset`."
+msgstr ""
+"``groonga-suggest-httpd`` を使う場合は1つ以上のデータセットを作る必要がありま"
+"す。データセットはテーブルとカラムの集まりです。これらのテーブル・カラムは :"
+"doc:`groonga-suggest-create-dataset` で作成できます。"
+
+msgid ""
+"You need to use :doc:`groonga-suggest-learner` to learn suggestion data from "
+"user inputs. You doesn't need to use :doc:`groonga-suggest-learner` when you "
+"create suggestion data by hand. See :doc:`/reference/suggest` and sub "
+"documents about creating suggestion data by hand."
+msgstr ""
+"ユーザーの入力からサジェスト用データを学習するには :doc:`groonga-suggest-"
+"learner` を使う必要があります。手動でサジェスト用データを作成する場合は :doc:"
+"`groonga-suggest-learner` を使う必要はありません。手動でサジェスト用データを"
+"作る方法については :doc:`/reference/suggest` とその関連ドキュメントを参照して"
+"ください。"
+
+msgid ""
+"You can use ``groonga-suggest-httpd`` via HTTP after you create one or more "
+"datasets."
+msgstr ""
+"1つ以上のデータセットを作ったらHTTP経由で ``groonga-suggest-httpd`` を使えま"
+"す。"
+
+msgid "The following sections describes the followings:"
+msgstr "つづくセクションでは次のことについて説明します。"
+
+msgid "How to set up a dataset"
+msgstr "データセットのセットアップ方法"
+
+msgid ""
+"How to use ``groonga-suggest-httpd`` with :doc:`groonga-suggest-learner`"
+msgstr ""
+":doc:`groonga-suggest-learner` と一緒に ``groonga-suggest-httpd`` を使う方法"
+
+msgid "How to use ``groonga-suggest-httpd`` for retrieving suggestions."
+msgstr "サジェスト結果を取得するために ``groonga-suggest-httpd`` を使う方法"
+
+msgid "Setup"
+msgstr "セットアップ"
+
+msgid "You need to create a dataset by :doc:`groonga-suggest-create-dataset`."
+msgstr ":doc:`groonga-suggest-create-dataset` でデータセットを作ります。"
+
+msgid "Here is an example that creates ``query`` dataset:"
+msgstr "以下は ``query`` データセットを作る例です。"
+
+msgid ""
+":doc:`groonga-suggest-create-dataset` outputs executed commands. You can "
+"confirm that what tables and columns are created for the new dataset."
+msgstr ""
+":doc:`groonga-suggest-create-dataset` は実行したコマンドを出力します。新しい"
+"データセット用にどんなテーブル・カラムを作ったかを確認できます。"
+
+msgid "Launch ``groonga-suggest-learner``"
+msgstr "``groonga-suggest-learner`` を起動"
+
+msgid ""
+"You can choose whether you use learned suggestion data immediately or not."
+msgstr "学習したサジェストデータをすぐに使うかどうかを選択できます。"
+
+msgid "There are two ways to use learned suggestion data immediately:"
+msgstr "学習したサジェストデータをすぐに使う方法は2つあります。"
+
+msgid ""
+"Both of ``groonga-suggest-httpd`` and :doc:`groonga-suggest-learner` use the "
+"same database"
+msgstr ""
+"``groonga-suggest-httpd`` と :doc:`groonga-suggest-learner` のどちらも同じ"
+"データベースを使う"
+
+msgid ""
+"``groonga-suggest-httpd`` receives learned suggestion data from :doc:"
+"`groonga-suggest-learner`"
+msgstr ""
+"``groonga-suggest-httpd`` が :doc:`groonga-suggest-learner` から学習したサ"
+"ジェストデータを受け取る"
+
+msgid ""
+"In the former case, you must run both ``groonga-suggest-httpd`` and :doc:"
+"`groonga-suggest-learner` on the same host."
+msgstr ""
+"前者のケースでは、 ``groonga-suggest-httpd`` と :doc:`groonga-suggest-"
+"learner` を同じホスト上で実行しなければいけません。"
+
+msgid ""
+"In the latter case, you can run ``groonga-suggest-httpd`` and :doc:`groonga-"
+"suggest-learner` on different hosts."
+msgstr ""
+"後者のケースでは、 ``groonga-suggest-httpd`` と :doc:`groonga-suggest-"
+"learner` を違うホストで動かせます。"
+
+msgid ""
+"If you don't need to use learned suggestion data immediately, you need to "
+"apply learned suggestion data from database that is used by :doc:`groonga-"
+"suggest-learner` to database that is used by ``groonga-suggest-httpd`` by "
+"hand. Normally, this usage is recommended. Because learned suggestion data "
+"may have garbage data by inputs from evil users."
+msgstr ""
+"学習したサジェストデータをすぐに使う必要がないとき、 :doc:`groonga-suggest-"
+"learner` が使っているデータベースから ``groonga-suggest-httpd`` が使っている"
+"データベースに学習したサジェストデータを主導で反映する必要があります。通常、"
+"こちらの使い方を推奨します。なぜなら学習したサジェストデータには悪意のある"
+"ユーザーが入力由来のゴミデータが含まれているかもしれないからです。"
+
+msgid ""
+"In this document, learned suggestion data are used immediately by receiving "
+"learned suggestion data from :doc:`groonga-suggest-learner`. Both ``groonga-"
+"suggest-httpd`` and :doc:`groonga-suggest-learner` are running on the same "
+"host. Because it's easy to explain."
+msgstr ""
+"このドキュメントでは :doc:`groonga-suggest-learner` から学習したサジェスト"
+"データを受け取り、学習したサジェストデータをすぐに使います。 ``groonga-"
+"suggest-httpd`` と :doc:`groonga-suggest-learner` はどちらも同じホストで動か"
+"します。これは説明しやすいからです。"
+
+msgid ""
+"Here is an example that launches :doc:`groonga-suggest-learner`. You need to "
+"specify database that has ``query`` dataset. This document omits the "
+"instruction for creating ``query`` dataset:"
+msgstr ""
+"以下は :doc:`groonga-suggest-learner` を起動する例です。 ``query`` データセッ"
+"トがあるデータベースを指定します。このドキュメントでは ``query`` データセット"
+"を作る手順は省略します。"
+
+msgid ""
+"The ``groonga-suggest-learner`` process opens two endpoints at ``1234`` port "
+"and ``1235`` port:"
+msgstr ""
+"``groonga-suggest-learner`` プロセスは2つのエンドポイントを提供します。それぞ"
+"れ ``1234`` 番ポートと ``1235`` 番ポートを使います。"
+
+msgid ""
+"``1234`` port: Endpoint that accepts user input data from ``groonga-suggest-"
+"httpd``"
+msgstr ""
+"``1234`` 番ポート： ``groonga-suggest-httpd`` からユーザーの入力を受け付ける"
+"エンドポイント"
+
+msgid ""
+"``1235`` port: Endpoint that sends learned suggestion data to ``groonga-"
+"suggest-httpd``"
+msgstr ""
+"``1235`` 番ポート： ``groonga-suggest-httpd`` に学習したサジェストデータを送"
+"信するエンドポイント"
+
+msgid "Launch ``groonga-suggest-httpd``"
+msgstr "``groonga-suggest-httpd`` を起動"
+
+msgid ""
+"You need to launch ``groonga-suggest-httpd`` for the following proposes:"
+msgstr "次の目的のため、 ``groonga-suggest-httpd`` を起動します。"
+
+msgid "Learning suggestion data from user inputs"
+msgstr "ユーザーの入力からサジェストデータを学習するため"
+
+msgid "Providing suggestion result to clients"
+msgstr "サジェスト結果をクライアントに提供するため"
+
+msgid ""
+"Here is an example that launches ``groonga-suggest-httpd`` that "
+"communicates :doc:`groonga-suggest-learner`:"
+msgstr ""
+"以下は :doc:`groonga-suggest-learner` と通信する ``groonga-suggest-httpd`` を"
+"起動する例です。"
+
+msgid ""
+"The ``groonga-suggest-httpd`` process accepts HTTP requests on ``8080`` port."
+msgstr ""
+"``groonga-suggest-httpd`` プロセスは ``8080`` 番ポートでHTTPリクエストを受け"
+"付けます。"
+
+msgid ""
+"If you want to save requests into log file, use :option:`--log-base-path` "
+"option."
+msgstr ""
+"リクエストをログファイルに保存したい場合は :option:`--log-base-path` オプショ"
+"ンを指定してください。"
+
+msgid ""
+"Here is an example to save log files under ``logs`` directory with ``log`` "
+"prefix for each file::"
+msgstr ""
+"以下は各ログファイルに ``log`` というプレフィックスをつけて ``logs`` ディレク"
+"トリーに保存する例です。::"
+
+msgid ""
+"``groonga-suggest-httpd`` creates log files such as ``logYYYYmmddHHMMSS-00`` "
+"under ``logs`` directory."
+msgstr ""
+"``groonga-suggest-httpd`` は ``logYYYYmmddHHMMSS-00`` という名前のログファイ"
+"ルを作成し、 ``logs`` ディレクトリー以下に保存します。"
+
+msgid "Learn from user inputs"
+msgstr "ユーザーの入力から学習"
+
+msgid "You can learn suggestion data from user inputs."
+msgstr "ユーザーの入力からサジェストデータを学習できます。"
+
+msgid "You need to specify the following parameters to learn suggestion data:"
+msgstr ""
+"サジェストデータを学習するには次のパラメーターを指定する必要があります。"
+
+msgid "``i``: The ID of the user (You may use IP address of client)"
+msgstr ""
+
+msgid "``l``: The dataset name"
+msgstr "``l`` ：データセット名"
+
+msgid "``s``: The timestamp of the input in seconds"
+msgstr "``s`` ：入力のタイムスタンプ。単位は秒。"
+
+msgid ""
+"``t``: The query type (It's optional. You must specify ``submit`` only when "
+"the user input is submitted.)"
+msgstr ""
+"``t`` ：クエリーの種類。（省略可能。ユーザーの入力がサブミットされたときだけ "
+"``submit`` を指定します。）"
+
+msgid "``q``: The user input"
+msgstr "``q`` ：ユーザーの入力"
+
+msgid ""
+"Here are example requests to learn user input \"Groonga\" in ``query`` "
+"dataset::"
+msgstr ""
+"以下は ``query`` データセットで「Groonga」というユーザーの入力を学習するリク"
+"エスト例です。"
+
+msgid ""
+"Inputting data must not use ``t=submit`` parameter. In the above example, "
+"you just learn user inputs but you can learn and get complete candidates at "
+"once. It's described at the next section."
+msgstr ""
+"入力中のデータに ``t=submit`` パラメーターをつけてはいけません。上の例では、"
+"ユーザーの入力を学習しているだけですが、ユーザーの入力を学習しながら同時に補"
+"完候補を取得することもできます。これは次のセクションで説明します。"
+
+msgid "Submitted data must use ``t=submit`` parameter."
+msgstr "サブミットされたデータには ``t=submit`` パラメーターをつけます。"
+
+msgid "Use suggested response"
+msgstr "サジェスト結果を使う"
+
+msgid "You can get suggested result from ``groonga-suggest-httpd``."
+msgstr "``groonga-suggest-httpd`` からのサジェスト結果を使えます。"
+
+msgid "You need to specify the following parameters to get suggested result:"
+msgstr "サジェスト結果を取得するには次のパラメーターを指定します。"
+
+msgid "``n``: The dataset name"
+msgstr "``n`` ：データセット名"
+
+msgid "``t``: The query type (``complete``, ``correct`` and/or ``suggest``)"
+msgstr ""
+"``t`` ：クエリーの種類（ ``complete`` 、 ``correct`` 、 ``suggest`` のどれ"
+"か。複数指定も可。）"
+
+msgid ""
+"You can also specify parameters for :doc:`/reference/commands/suggest` as "
+"option."
+msgstr ""
+":doc:`/reference/commands/suggest` のパラメーターを指定することもできます。"
+
+msgid ""
+"Here is an example that gets :doc:`/reference/suggest/completion` result. "
+"The result is computed by using learned data at the previous section. "
+"``frequency_threshold=1`` parameter is used because this is an example. The "
+"parameter enables input data that are occurred one or more times. Normally, "
+"you should not use the parameter for production. The parameter will increase "
+"noises:"
+msgstr ""
+"以下は :doc:`/reference/suggest/completion` 結果を取得する例です。この結果は"
+"前のセクションで学習したデータを使って計算しています。 "
+"``frequency_threshold=1`` パラメーターを使っているのはこれが例だからです。こ"
+"のパラメーターは1回以上出現した入力データも有効なデータとします。通常、プロダ"
+"クション環境ではこのパラメーターを指定するべきではありません。ノイズが増える"
+"可能性が高いからです。"
+
+msgid ""
+"You can combine completion and learning by specifying parameters for both:"
+msgstr ""
+"補完用と学習用のどちらのパラメーターも指定することで補完と学習を組み合わせる"
+"ことができます。"
+
+msgid "Command line parameters"
+msgstr "コマンドライン引数"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is only one required parameter."
+msgstr "必須の引数は1つです。"
+
+msgid "``DATABASE_PATH``"
+msgstr ""
+
+msgid ""
+"Specifies the path to a Groonga database. This database must have one or "
+"more datasets. Each dataset must be created by :doc:`groonga-suggest-create-"
+"dataset`."
+msgstr ""
+"Groongaのデータベースのパスを指定します。このデータベースには1つ以上のデータ"
+"セットを作っておいてください。各データセットは :doc:`groonga-suggest-create-"
+"dataset` で作ります。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "Specify HTTP server port number."
+msgstr "HTTPサーバーのポート番号を指定します。"
+
+msgid "The default port number is ``8080``."
+msgstr "デフォルトのポート番号は ``8080`` です。"
+
+msgid "Specify number of threads."
+msgstr "最大スレッド数を指定します。"
+
+msgid ""
+"This option accepts ``128`` as the max value, but use the number of CPU "
+"cores for performance."
+msgstr ""
+"最大で128を指定できますが、パフォーマンスを出すためには最大でもCPUコア数を指"
+"定する方がよいです。"
+
+msgid "The default value is the number of CPU cores."
+msgstr "デフォルトはコア数です。"
+
+msgid ""
+"Specify endpoint URI of :doc:`groonga-suggest-learner` for sending user "
+"inputs."
+msgstr ""
+"ユーザーの入力送信先になる :doc:`groonga-suggest-learner` のエンドポイントURI"
+"を指定します。"
+
+msgid ""
+"The format is ``tcp://${HOST}:${PORT}`` such as ``tcp://192.168.0.1:2929``."
+msgstr ""
+"フォーマットは ``tcp://${HOST}:${PORT}`` です。たとえば、 "
+"``tcp://192.168.0.1:2929`` のように指定します。"
+
+msgid "The default value is none."
+msgstr "デフォルト値はありません。"
+
+msgid ""
+"Specify endpoint URI of :doc:`groonga-suggest-learner` for receiving learned "
+"suggestion data."
+msgstr ""
+":doc:`groonga-suggest-learner` が学習済みのサジェストデータを受信するために使"
+"用するURIを指定します。"
+
+msgid "Specify path prefix of log."
+msgstr "ログのパス名のプレフィックスを指定します。"
+
+msgid "Specify the max number of lines in a log file."
+msgstr "1つのログファイルの最大行数を指定します。"
+
+msgid "The default value is ``1000000``."
+msgstr "デフォルトは ``1000000`` （100万行）です。"
+
+msgid "Specify this option to daemonize."
+msgstr "デーモン化する場合に指定します。"
+
+msgid "Don't daemonize by default."
+msgstr "デフォルトではデーモン化しません。"
+
+msgid ""
+"Specify this option to disable checking the max number of file descriptors "
+"on start."
+msgstr ""
+"起動時の最大ファイルディスクリプター数のチェックを無効化する場合に指定しま"
+"す。"
+
+msgid "Check by default."
+msgstr "デフォルトはチェックします。"
+
+msgid "GET parameters"
+msgstr "GETの引数"
+
+msgid "``groonga-suggest-httpd`` accepts some GET parameters."
+msgstr "``groonga-suggest-httpd`` GETパラメーターを受け付けます。"
+
+msgid "There are required parameters which depend on query type."
+msgstr "必須の引数があります。どれが必須かはクエリーの種類に依存します。"
+
+msgid ""
+"In ``complete``, ``correct`` or ``suggest`` query type, unhandled parameters "
+"are passed through :doc:`/reference/commands/suggest`. It means that you can "
+"use parameters of :doc:`/reference/commands/suggest`."
+msgstr ""
+"クエリーの種類が ``complete`` 、 ``correct`` 、 ``suggest`` のどれかのとき"
+"は、道のパラメーターは :doc:`/reference/commands/suggest` にそのまま渡しま"
+"す。つまり、 :doc:`/reference/commands/suggest` のパラメーターを使うことがで"
+"きます。"
+
+msgid "You must specify the following parameters."
+msgstr "次のパラメーターを指定する必要があります。"
+
+msgid "Key"
+msgstr "キー"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "Note"
+msgstr "備考"
+
+msgid "``q``"
+msgstr ""
+
+msgid "Input by user. It must be UTF-8 encoded string."
+msgstr "ユーザーの入力。UTF-8でエンコードされた文字列です。"
+
+msgid "Required parameters for learning"
+msgstr "学習時に必須の引数"
+
+msgid ""
+"You must specify the following parameters when you specify :option:`--send-"
+"endpoint`."
+msgstr ""
+":option:`--send-endpoint` を指定したときは次のパラメーターを指定しなければい"
+"けません。"
+
+msgid "``s``"
+msgstr ""
+
+msgid "Elapsed time since ``1970-01-01T00:00:00Z``."
+msgstr "``1970-01-01T00:00:00Z`` から経過時間。"
+
+msgid "The unit is millisecond."
+msgstr "単位はミリ秒。"
+
+msgid "``i``"
+msgstr ""
+
+msgid "Unique ID to distinct each user"
+msgstr "各ユーザーを識別するユニークなID。"
+
+msgid "Session ID, IP address and so on will be usable for this value."
+msgstr "セッションID、IPアドレスなどを使うことができるでしょう。"
+
+msgid "``l``"
+msgstr ""
+
+msgid ""
+"One or more learn target dataset names. You need to use ``|`` as separator "
+"such as ``dataset1|dataset2|dataset3``."
+msgstr ""
+"1つ以上の学習対象のデータセット名。複数のデータセットを指定する場合は "
+"``dataset1|dataset2|dataset3`` のように区切り文字として ``|`` を使います。"
+
+msgid ""
+"Dataset name is the name that you specify to :doc:`groonga-suggest-create-"
+"dataset`."
+msgstr ""
+"データセット名は :doc:`groonga-suggest-create-dataset` で指定した名前です。"
+
+msgid "Required parameters for suggestion"
+msgstr "サジェスト時に必須の引数"
+
+msgid ""
+"You must specify the following parameters when you specify one of "
+"``complete``, ``correct`` and ``suggest`` to ``t`` parameter."
+msgstr ""
+"``t`` パラメータに ``complete`` 、 ``correct`` 、 ``suggest`` のどれかを指定"
+"したときは次のパラメーターを指定する必要があります。"
+
+msgid "``n``"
+msgstr ""
+
+msgid "The dataset name to use computing suggestion result."
+msgstr "サジェスト結果を計算するときに使うデータセット名。"
+
+msgid "``t``"
+msgstr ""
+
+msgid "The query type."
+msgstr "クエリーの種類。"
+
+msgid "Available values are ``complete``, ``correct``, ``suggest``."
+msgstr "``complete`` 、 ``correct`` 、 ``suggest`` のどれか。"
+
+msgid ""
+"You can specify multiple types. You need to use ``|`` as separator such as "
+"``complete|correct``."
+msgstr ""
+"複数の種類を指定することもできます。複数指定するときは ``complete|correct`` "
+"のように ``|`` で区切ってください。"
+
+msgid "Here are optional parameters."
+msgstr "いくつか省略可能な引数があります。"
+
+msgid "``callback``"
+msgstr ""
+
+msgid "Function name for JSONP"
+msgstr "JSONPの関数名"
+
+msgid "Optional parameters for learning"
+msgstr "学習時に指定可能な引数"
+
+msgid ""
+"Here are optional parameters when you specify :option:`--send-endpoint`."
+msgstr ""
+":option:`--send-endpoint` オプションを指定したときに指定可能なパラメーターは"
+"次の通りです。"
+
+msgid "Available value is only ``submit``."
+msgstr "指定可能な値は ``submit`` だけです。"
+
+msgid ""
+"You must specify ``submit`` when user submits the input specified as ``q``."
+msgstr ""
+"ユーザーが ``q`` で指定した入力をサブミットしたときは ``submit`` を指定してく"
+"ださい。"
+
+msgid ""
+"You must not specify ``submit`` for user inputs that aren't submitted yet. "
+"You can use suggestion by specifying ``complete``, ``correct`` and/or "
+"``suggest`` to ``t`` when you doesn't specify ``submit``. See :ref:`groonga-"
+"suggest-httpd-required-parameters-suggestion` for details about these values."
+msgstr ""
+"まだサブミットされていないユーザーの入力を指定するときは ``submit`` を指定し"
+"ないでください。 ``submit`` を指定していないときに ``t`` に ``complete`` 、 "
+"``correct`` 、 ``suggest`` のうち1つ以上を指定するとサジェスト結果を使えま"
+"す。これらの ``t`` に指定する値については :ref:`groonga-suggest-httpd-"
+"required-parameters-suggestion` を参照してください。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid ""
+"``groonga-suggest-httpd`` returns the following format response. It's the "
+"same format as body of :doc:`/reference/commands/suggest`::"
+msgstr ""
+"``groonga-suggest-httpd`` のレスポンスは次のフォーマットになります。 :doc:`/"
+"reference/commands/suggest` のボディ部分と同じです。::"
+
+msgid "Here is the response when ``t`` is ``submit``::"
+msgstr "``t`` に ``submit`` を指定したときのレスポンスは次の通りです。::"
+
+msgid "``TYPE``"
+msgstr ""
+
+msgid "One of ``complete``, ``correct`` and ``suggest``."
+msgstr "``complete`` 、 ``correct`` 、 ``suggest`` のどれか。"
+
+msgid "``CANDIDATE_N``"
+msgstr ""
+
+msgid "The string of candidate in UTF-8."
+msgstr "UTF-8でエンコードされた候補文字列。"
+
+msgid "``SCORE_N``"
+msgstr ""
+
+msgid "The score of the candidate."
+msgstr "候補のスコアー。"
+
+msgid "Candidates are sorted by score descendant."
+msgstr "スコアーの降順でソートされた候補リスト。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/commands/suggest`"
+msgstr ""

@@ -1,0 +1,238 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "QueryExpanderTSV"
+msgstr "QueryExpanderTSV"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"``QueryExpanderTSV`` is a query expander plugin that reads synonyms from TSV "
+"(Tab Separated Values) file. This plugin provides poor feature than the "
+"embedded query expansion feature. For example, it doesn't support word "
+"normalization. But it may be easy to use because you can manage your "
+"synonyms by TSV file. You can edit your synonyms by spreadsheet application "
+"such as Excel. With the embedded query expansion feature, you manage your "
+"synonyms by Groonga's table."
+msgstr ""
+"``QueryExpanderTSV`` is a query expander plugin that reads synonyms from TSV "
+"(Tab Separated Values) file. This plugin provides poor feature than the "
+"embedded query expansion feature. For example, it doesn't support word "
+"normalization. But it may be easy to use because you can manage your "
+"synonyms by TSV file. You can edit your synonyms by spreadsheet application "
+"such as Excel. With the embedded query expansion feature, you manage your "
+"synonyms by Groonga's table."
+
+msgid "Install"
+msgstr "Install"
+
+msgid ""
+"You need to register ``query_expanders/tsv`` as a plugin before you use "
+"``QueryExpanderTSV``::"
+msgstr ""
+"You need to register ``query_expanders/tsv`` as a plugin before you use "
+"``QueryExpanderTSV``::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid ""
+"You just add ``--query_expander QueryExpanderTSV`` parameter to ``select`` "
+"command::"
+msgstr ""
+"You just add ``--query_expander QueryExpanderTSV`` parameter to ``select`` "
+"command::"
+
+msgid ""
+"If ``QUERY`` has registered synonyms, they are expanded. For example, there "
+"are the following synonyms."
+msgstr ""
+"If ``QUERY`` has registered synonyms, they are expanded. For example, there "
+"are the following synonyms."
+
+msgid "word"
+msgstr "word"
+
+msgid "synonym 1"
+msgstr "synonym 1"
+
+msgid "synonym 2"
+msgstr "synonym 2"
+
+msgid "groonga"
+msgstr "groonga"
+
+msgid "Senna"
+msgstr "Senna"
+
+msgid "mroonga"
+msgstr "mroonga"
+
+msgid "groonga MySQL"
+msgstr "groonga MySQL"
+
+msgid ""
+"The table means that ``synonym 1`` and ``synonym 2`` are synonyms of "
+"``word``. For example, ``groonga`` and ``Senna`` are synonyms of "
+"``groonga``. And ``mroonga`` and ``groonga MySQL`` are synonyms of "
+"``mroonga``."
+msgstr ""
+"The table means that ``synonym 1`` and ``synonym 2`` are synonyms of "
+"``word``. For example, ``groonga`` and ``Senna`` are synonyms of "
+"``groonga``. And ``mroonga`` and ``groonga MySQL`` are synonyms of "
+"``mroonga``."
+
+msgid "Here is an example of query expnasion that uses ``groonga`` as query::"
+msgstr "Here is an example of query expnasion that uses ``groonga`` as query::"
+
+msgid "The above command equals to the following command::"
+msgstr "The above command equals to the following command::"
+
+msgid ""
+"Here is another example of query expnasion that uses ``mroonga search`` as "
+"query::"
+msgstr ""
+"Here is another example of query expnasion that uses ``mroonga search`` as "
+"query::"
+
+msgid ""
+"It is important that registered words (``groonga`` and ``mroonga``) are only "
+"expanded to synonyms and not registered words (``search``) are not expanded. "
+"Query expansion isn't occurred recursively. ``groonga`` is appeared in "
+"``(mroonga OR (groonga MySQL))`` as query expansion result but it isn't "
+"expanded."
+msgstr ""
+"It is important that registered words (``groonga`` and ``mroonga``) are only "
+"expanded to synonyms and not registered words (``search``) are not expanded. "
+"Query expansion isn't occurred recursively. ``groonga`` is appeared in "
+"``(mroonga OR (groonga MySQL))`` as query expansion result but it isn't "
+"expanded."
+
+msgid ""
+"Normally, you need to include ``word`` itself into synonyms. For example, "
+"``groonga`` and ``mroonga`` are included in synonyms of themselves. If you "
+"want to ignore ``word`` itself, you don't include ``word`` itself into "
+"synonyms. For example, if you want to use query expansion as spelling "
+"correction, you should use the following synonyms."
+msgstr ""
+"Normally, you need to include ``word`` itself into synonyms. For example, "
+"``groonga`` and ``mroonga`` are included in synonyms of themselves. If you "
+"want to ignore ``word`` itself, you don't include ``word`` itself into "
+"synonyms. For example, if you want to use query expansion as spelling "
+"correction, you should use the following synonyms."
+
+msgid "synonym"
+msgstr "synonym"
+
+msgid "gronga"
+msgstr "gronga"
+
+msgid ""
+"``gronga`` in ``word`` has a typo. A ``o`` is missing. ``groonga`` in "
+"``synonym`` is the correct word."
+msgstr ""
+"``gronga`` in ``word`` has a typo. A ``o`` is missing. ``groonga`` in "
+"``synonym`` is the correct word."
+
+msgid "Here is an example of using query expnasion as spelling correction::"
+msgstr "Here is an example of using query expnasion as spelling correction::"
+
+msgid ""
+"The former command has a typo in ``--query`` value but the latter command "
+"doesn't have any typos."
+msgstr ""
+"The former command has a typo in ``--query`` value but the latter command "
+"doesn't have any typos."
+
+msgid "TSV File"
+msgstr "TSV File"
+
+msgid ""
+"Synonyms are defined in TSV format file. This section describes about it."
+msgstr ""
+"Synonyms are defined in TSV format file. This section describes about it."
+
+msgid "Location"
+msgstr "Location"
+
+msgid ""
+"The file name should be ``synonyms.tsv`` and it is located at configuration "
+"directory. For example, ``/etc/groonga/synonyms.tsv`` is a TSV file "
+"location. The location is decided at build time."
+msgstr ""
+"The file name should be ``synonyms.tsv`` and it is located at configuration "
+"directory. For example, ``/etc/groonga/synonyms.tsv`` is a TSV file "
+"location. The location is decided at build time."
+
+msgid ""
+"You can change the location by environment variable "
+"``GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE`` at run time::"
+msgstr ""
+"You can change the location by environment variable "
+"``GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE`` at run time::"
+
+msgid "With the above command, ``/tmp/synonyms.tsv`` file is used."
+msgstr "With the above command, ``/tmp/synonyms.tsv`` file is used."
+
+msgid "Format"
+msgstr "Format"
+
+msgid ""
+"You can define zero or more synonyms in a TSV file. You define a ``word`` "
+"and ``synonyms`` pair by a line. ``word`` is expanded to ``synonyms`` in ``--"
+"query`` value. ``Synonyms`` are combined by ``OR``. For example, ``groonga`` "
+"and ``Senna`` synonyms are expanded as ``groonga OR Senna``."
+msgstr ""
+"You can define zero or more synonyms in a TSV file. You define a ``word`` "
+"and ``synonyms`` pair by a line. ``word`` is expanded to ``synonyms`` in ``--"
+"query`` value. ``Synonyms`` are combined by ``OR``. For example, ``groonga`` "
+"and ``Senna`` synonyms are expanded as ``groonga OR Senna``."
+
+msgid ""
+"The first column is ``word`` and the rest columns are ``synonyms`` of the "
+"``word``. Here is a sample line for ``word`` is ``groonga`` and ``synonyms`` "
+"are ``groonga`` and ``Senna``. ``(TAB)`` means a tab character (``U+0009``)::"
+msgstr ""
+"The first column is ``word`` and the rest columns are ``synonyms`` of the "
+"``word``. Here is a sample line for ``word`` is ``groonga`` and ``synonyms`` "
+"are ``groonga`` and ``Senna``. ``(TAB)`` means a tab character (``U+0009``)::"
+
+msgid ""
+"Comment line is supported. Lines that start with ``#`` are ignored. Here is "
+"an example for comment line. ``groonga`` line is ignored as comment line::"
+msgstr ""
+"Comment line is supported. Lines that start with ``#`` are ignored. Here is "
+"an example for comment line. ``groonga`` line is ignored as comment line::"
+
+msgid "Limitation"
+msgstr "Limitation"
+
+msgid ""
+"You need to restart groonga to reload your synonyms. TSV file is loaded only "
+"at the plugin load time."
+msgstr ""
+"You need to restart groonga to reload your synonyms. TSV file is loaded only "
+"at the plugin load time."
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":ref:`select-query-expansion`"
+msgstr ":ref:`select-query-expansion`"

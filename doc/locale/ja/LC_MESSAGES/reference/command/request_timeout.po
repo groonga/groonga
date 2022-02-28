@@ -1,0 +1,131 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Request timeout"
+msgstr "リクエストタイムアウト"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "You can set timeout to each request."
+msgstr "各リクエストにタイムアウトを設定できます。"
+
+msgid ""
+"If a request isn't completed until the specified timeout, the request is "
+"canceled. If you don't set timeout, the request is processed until the "
+"request is completed."
+msgstr ""
+"指定したタイムアウトまでにリクエストが完了しなかった場合、そのリクエストは"
+"キャンセルされます。タイムアウトを設定しない場合、そのリクエストが完了するま"
+"で処理をします。"
+
+msgid ""
+"Request timeout feature is useful when you implement timeout on client side. "
+"If you only implement timeout only on client side, the request keeps "
+"processing after client stops waiting response. It uses needless resources. "
+"If you set timeout to the request, the request will be canceled soon."
+msgstr ""
+"リクエストタイムアウト機能はクライアントサイドでタイムアウトを実装していると"
+"きに有用です。もし、クライアントサイドだけでタイムアウトを実装していると、ク"
+"ライアントがレスポンスを待つことをやめたあともリクエストを処理し続けます。こ"
+"れは不必要にリソースを消費しています。このリクエストにタイムアウトを設定して"
+"いれば、じきにこのリクエストはキャンセルされます。"
+
+msgid "How to set timeout to request"
+msgstr "リクエストにタイムアウトを設定する方法"
+
+msgid ""
+"All commands accept ``request_timeout`` parameter. You can set timeout to "
+"request by adding ``request_timeout`` parameter."
+msgstr ""
+"すべてのコマンドは ``request_timeout`` パラメーターを受け付けます。 "
+"``request_timeout`` パラメーターを追加することでリクエストにタイムアウトを設"
+"定できます。"
+
+msgid ""
+"Unit of timeout out value is second. You can set timeout less than 1 second "
+"by using decimal such as ``0.1``. ``0.1`` means 100 milliseconds."
+msgstr ""
+"タイムアウト値の単位は秒です。 ``0.1`` のように小数で指定することで1秒未満の"
+"タイムアウトを設定できます。 ``0.1`` は100ミリ秒のタイムアウトという意味で"
+"す。"
+
+msgid "Here is an example to set ``5.5`` seconds timeout to a request::"
+msgstr "以下はリクエストに ``5.5`` 秒のタイムアウトを設定する例です。::"
+
+msgid "Return code on timeout"
+msgstr "タイムアウト時のリターンコード"
+
+msgid ""
+"If the request is timed out, ``GRN_CANCEL`` (``-77``) :doc:`return_code` is "
+"returned in response header."
+msgstr ""
+"リクエストがタイムアウトすると、レスポンスヘッダーの :doc:`return_code` は "
+"``GRN_CANCEL`` （ ``-77`` ）になります。"
+
+msgid "Here is an example response on timeout::"
+msgstr "以下はタイムアウト時にレスポンス例です。::"
+
+msgid "See :doc:`/reference/command/output_format` for response header."
+msgstr ""
+"レスポンスヘッダーについては :doc:`/reference/command/output_format` を参照し"
+"てください。"
+
+msgid "Enable request timeout by default"
+msgstr "デフォルトでリクエストタイムアウトを有効にする"
+
+msgid ""
+":doc:`/reference/executables/groonga` supports enabling request timeout by "
+"default. You can specify the default request timeout by :option:`groonga --"
+"default-request-timeout`."
+msgstr ""
+":doc:`/reference/executables/groonga` はデフォルトのリクエストタイムアウトを"
+"設定する機能があります。デフォルトのリクエストタイムアウトは :option:"
+"`groonga --default-request-timeout` で指定します。"
+
+msgid ""
+"If the default request timeout is larger than 0 second, the default request "
+"timeout is used as request timeout for all requests."
+msgstr ""
+"デフォルトのリクエストタイムアウトが0より大きい場合、すべてのリクエストはその"
+"値をリクエストタイムアウトに使います。"
+
+msgid ""
+"You can overwrite the default request timeout by specifying "
+"``request_timeout`` parameter to request. If the default request timeout is "
+"3 seconds and ``request_timeout`` parameter is 1 second, the request is "
+"canceled after 1 second."
+msgstr ""
+"リクエストに ``request_timeout`` パラメーターを指定するとデフォルトのリクエス"
+"トタイムアウトを上書きできます。もし、デフォルトのリクエストタイムアウトが3秒"
+"で ``request_timeout`` パラメーターが1秒なら、そのリクエストは1秒後にキャンセ"
+"ルされます。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/command/return_code`"
+msgstr ""
+
+msgid ":doc:`/reference/command/output_format`"
+msgstr ""
+
+msgid ":doc:`/reference/commands/request_cancel`"
+msgstr ""

@@ -1,0 +1,148 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2019-09-26 09:22+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Fedora"
+msgstr ""
+
+msgid ""
+"This section describes how to install Groonga related RPM packages on "
+"Fedora. You can install them by ``yum``."
+msgstr ""
+"このセクションではFedora上でGroonga関連のRPMパッケージをインストールする方法"
+"を説明します。これらのパッケージは ``yum`` でインストールできます。"
+
+msgid ""
+"Since Groonga 3.0.2 release, Groonga related RPM pakcages are in the "
+"official Fedora yum repository (Fedora 18). So you can use them instead of "
+"the Groonga yum repository now. There is some exceptions to use the Groonga "
+"yum repository because mecab dictionaries (mecab-ipadic or mecab-jumandic) "
+"are provided by the Groonga yum repository."
+msgstr ""
+"3.0.2のリリースから、Groonga関連のRPMパッケージはFedoraの公式yumリポジトリで"
+"リリースしています。GroongaのyumリポジトリのかわりにFedoraの公式リポジトリを"
+"使います。ただ、いくつか例外があって、MeCabの辞書（ ``mecab-ipadic`` や "
+"``mecab-jumandic`` ）パッケージを使うにはGroongaのyumリポジトリを使います。"
+
+msgid ""
+"We distribute both 32-bit and 64-bit packages but we strongly recommend a 64-"
+"bit package for server. You should use a 32-bit package just only for tests "
+"or development. You will encounter an out of memory error with a 32-bit "
+"package even if you just process medium size data."
+msgstr ""
+"32-bit用と64-bit用のパッケージを配布していますが、サーバ用途には64-bitパッ"
+"ケージを利用することをオススメします。32-bit用パッケージはテスト用か開発用に"
+"だけ使って下さい。32-bit用パッケージを使った場合は、中程度のサイズのデータで"
+"もメモリ不足エラーになることがあります。"
+
+msgid "Fedora 21"
+msgstr ""
+
+msgid "Install::"
+msgstr "インストール::"
+
+msgid ""
+"Note that additional packages such as ``mecab-dic`` and ``mecab-jumandic`` "
+"packages require to install ``groonga-release`` package which provides the "
+"Groonga yum repository beforehand::"
+msgstr ""
+"``mecab-ipadic`` 、 ``mecab-jumandic`` といったパッケージを使うには Groongaの"
+"yumリポジトリを提供する ``groonga-release`` パッケージをあらかじめインストー"
+"ルします。"
+
+msgid ""
+"If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a "
+"tokenizer, install groonga-tokenizer-mecab package."
+msgstr ""
+"`MeCab <https://taku910.github.io/mecab/>`_ をトークナイザーとして使いたいと"
+"きは、groonga-tokenizer-mecabパッケージをインストールしてください。"
+
+msgid "Install groonga-tokenizer-mecab package::"
+msgstr "groonga-tokenizer-mecabパッケージのインストール::"
+
+msgid "Then install MeCab dictionary. (mecab-ipadic or mecab-jumandic)"
+msgstr ""
+"それからMeCabの辞書をインストールします。(mecab-ipadicもしくはmecab-jumandic)"
+
+msgid "Install IPA dictionary::"
+msgstr "IPA辞書をインストールします::"
+
+msgid "Or install Juman dictionary::"
+msgstr "あるいはJuman辞書をインストールします::"
+
+msgid ""
+"There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
+"plugins. If you want to monitor Groonga status by Munin, install groonga-"
+"munin-plugins package."
+msgstr ""
+"`Munin <http://munin-monitoring.org/>`_ プラグインを提供するパッケージもあり"
+"ます。MuninでGroongaの状態をモニターしたい場合は、groonga-munin-pluginsパッ"
+"ケージをインストールしてください。"
+
+msgid "Install groonga-munin-plugins package::"
+msgstr "groonga-munin-pluginsパッケージのインストール::"
+
+msgid ""
+"There is a package that provides MySQL compatible normalizer as a Groonga "
+"plugin. If you want to use that one, install groonga-normalizer-mysql "
+"package."
+msgstr ""
+"MySQL互換のノーマライザーをGroongaのプラグインとして提供するパッケージがあり"
+"ます。MySQL互換のノーマライザーを使うには ``groonga-normalizer-mysql`` パッ"
+"ケージをインストールしてください。"
+
+msgid "Install groonga-normalizer-mysql package::"
+msgstr "groonga-normalizer-mysqlパッケージのインストール::"
+
+msgid "Build from source"
+msgstr "ソースからビルド"
+
+msgid "Install required packages to build Groonga::"
+msgstr "Groongaをビルドするために必要なパッケージをインストールします::"
+
+msgid "Download source::"
+msgstr "ソースをダウンロードします::"
+
+msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
+msgstr ""
+"configureを実行します（ ``configure`` のオプションについては :ref:`source-"
+"configure` を参照してください）::"
+
+msgid "Build::"
+msgstr "ビルド::"
+
+msgid ""
+"``groonga`` package is the minimum set of fulltext search engine. If you "
+"want to use Groonga for server use, you can install additional preconfigured "
+"packages."
+msgstr ""
+"``groonga`` パッケージは全文検索のための最小構成パッケージです。Groongaをサー"
+"バー用途で使うなら、設定済みの追加パッケージをインストールすることができま"
+"す。"
+
+msgid "There are two packages for server use."
+msgstr "サーバー用途のための2つのパッケージがあります。"
+
+msgid "groonga-httpd (nginx and HTTP protocol based server package)"
+msgstr "groonga-httpd (nginxを元にしたHTTPサーバー)"
+
+msgid "groonga-server-gqtp (GQTP protocol based server package)"
+msgstr "groonga-server-gqtp (GQTPサーバー)"
+
+msgid "See :doc:`/server` section about details."
+msgstr "詳細は :doc:`/server` を参照してください。"

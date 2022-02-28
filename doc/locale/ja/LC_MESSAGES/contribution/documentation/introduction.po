@@ -1,0 +1,104 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2016-03-23 13:57+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Introduction"
+msgstr "導入"
+
+msgid ""
+"This documentation describes about how to write, generate and manage Groonga "
+"documentation."
+msgstr ""
+"この文書では、Groongaドキュメントの執筆・生成・管理の方法について説明します。"
+
+msgid "Install depended software"
+msgstr "必要なソフトウェアのインストール"
+
+msgid "Groonga uses Sphinx_ as documentation tool."
+msgstr "Groongaはドキュメントツールとして Sphinx_ を使います。"
+
+msgid "Here are command lines to install Sphinx."
+msgstr "以下はSphinxをインストールするコマンドラインです。"
+
+msgid "Debian GNU/Linux, Ubuntu::"
+msgstr ""
+
+msgid "CentOS, Fedora::"
+msgstr ""
+
+msgid "OS X::"
+msgstr ""
+
+msgid ""
+"If the version of Python on your platform is too old, you'll need to install "
+"a newer version of Python 2.7 by your hand. For example, here are "
+"installation steps based on `pyenv <https://github.com/yyuu/pyenv>`_::"
+msgstr ""
+"プラットフォームに存在するPythonのバージョンが古すぎる場合は、Python 2.7のよ"
+"り新しいバージョンを手動でインストールする必要があります。例えば、 `pyenv "
+"<https://github.com/yyuu/pyenv>`_ を使ったインストール手順は以下の通りです::"
+
+msgid "Run ``configure`` with ``--enable-document``"
+msgstr "``configure`` を ``--enable-document`` 付きで実行"
+
+msgid ""
+"Groonga disables documentation generation by default. You need to enable it "
+"explicitly by adding ``--enable-document`` option to ``configure``::"
+msgstr ""
+"Groonga は、デフォルトではドキュメントの生成を無効化しています。 "
+"``configure`` に ``--enable-document`` オプションを追加して明示的に有効にする"
+"必要があります。::"
+
+msgid "Now, your Groonga build is documentation ready."
+msgstr "これで、 Groonga ドキュメントをビルドする準備が出来ました。"
+
+msgid "Generate HTML"
+msgstr "HTMLファイルを生成"
+
+msgid "You can generate HTML by the following command::"
+msgstr "以下のコマンドでHTMLファイルを生成できます。::"
+
+msgid "You can find generated HTML documentation at ``doc/locale/en/html/``."
+msgstr "生成されたHTMLドキュメントは ``doc/locale/ja/html/`` にあります。"
+
+msgid "Update"
+msgstr "更新"
+
+msgid ""
+"You can find sources of documentation at ``doc/source/``. The sources should "
+"be written in English. See :doc:`i18n` about how to translate documentation."
+msgstr ""
+"ドキュメントのソースは ``doc/source/`` にあります。ソースは英語で書かれている"
+"はずです。ドキュメントの翻訳方法については、 :doc:`i18n` をご覧ください。"
+
+msgid ""
+"You can update the target file when you update the existing documentation "
+"file."
+msgstr ""
+"既に存在するドキュメントのファイルを更新すると、翻訳対象のファイルを更新でき"
+"ます。"
+
+msgid ""
+"You need to update file list after you add a new file, change file path and "
+"delete existing file. You can update file list by the following command::"
+msgstr ""
+"新規ファイル追加・ファイル位置変更・ファイル削除の後は、ファイル一覧を更新す"
+"る必要があります。以下のコマンドでファイル一覧を更新できます。::"
+
+msgid "The command updates ``doc/files.am``."
+msgstr "このコマンドは ``doc/files.am`` を更新します。"

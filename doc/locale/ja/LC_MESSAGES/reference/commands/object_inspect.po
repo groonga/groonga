@@ -1,0 +1,1022 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``object_inspect``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``object_inspect`` inspects an object. You can confirm details of an object."
+msgstr ""
+"``object_inspect`` はオブジェクトを調査します。オブジェクトの詳細を確認するこ"
+"とができます。"
+
+msgid "For example:"
+msgstr "例："
+
+msgid ""
+"If the object is a table, you can confirm the number of records in the table."
+msgstr "オブジェクトがテーブルの場合、テーブル内のレコード数を確認できます。"
+
+msgid ""
+"If the object is a column, you can confirm the type of value of the column."
+msgstr "オブジェクトがカラムの場合、値の型を確認できます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes only one optional parameter::"
+msgstr "このコマンドの引数は1つで省略できます::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "You can inspect an object in the database specified by ``name``:"
+msgstr "``name`` で指定したデータベース内のオブジェクトを調査できます。"
+
+msgid "The ``object_inspect Users`` returns the following information:"
+msgstr "``object_inspect Users`` は以下の情報を返します。"
+
+msgid "The name of the table: ``\"name\": Users``"
+msgstr "テーブル名： ``\"name\": Users``"
+
+msgid ""
+"The total used key size: ``\"key\": {\"total_size\": 5}`` (``\"Alice\"`` is "
+"5 byte data)"
+msgstr ""
+"総キーサイズ： ``\"key\": {\"total_size\": 5}`` （ ``\"Alice\"`` は5バイトの"
+"データです。）"
+
+msgid ""
+"The maximum total key size: ``\"key\": {\"max_total_size\": 4294967295}``"
+msgstr "最大総キーサイズ： ``\"key\": {\"max_total_size\": 4294967295}``"
+
+msgid "and so on."
+msgstr "などなど。"
+
+msgid "You can inspect the database by not specifying ``name``:"
+msgstr "``name`` を指定しないとデータベースを調査できます。"
+
+msgid "The ``object_inspect`` returns the following information:"
+msgstr "``object_inspect`` は以下の情報を返します。"
+
+msgid ""
+"The table type for object name management: ``\"key\": {\"type\": {\"name\": "
+"\"table:dat_key\"}}``"
+msgstr ""
+"オブジェクトの名前管理をしているテーブルの種類： ``\"key\": {\"type\": "
+"{\"name\": \"table:dat_key\"}}``"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes all parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is no required parameter."
+msgstr "必須の引数はありません。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There is only one optional parameter."
+msgstr "省略可能な引数が1つあります。"
+
+msgid "``name``"
+msgstr ""
+
+msgid "Specifies the object name to be inspected."
+msgstr "調査対象のオブジェクト名を指定してください。"
+
+msgid "If ``name`` isn't specified, the database is inspected."
+msgstr "``name`` を指定しないとデータベースを調査します。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid ""
+"The command returns an object (nested key and value pairs) that includes "
+"details of the object (such as table) as body::"
+msgstr ""
+"このコマンドはボディとしてオブジェクト（たとえばテーブル）の詳細を含んだオブ"
+"ジェクト（ネストしたキーと値のペア）を返します。::"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid ""
+"The format of the details is depends on object type. For example, table has "
+"key information but function doesn't have key information."
+msgstr ""
+"オブジェクトの詳細のフォーマットはオブジェクトの種類に依存します。たとえば、"
+"テーブルはキーの情報を含みますが、関数はキーの情報を含みません。"
+
+msgid "Database"
+msgstr "データベース"
+
+msgid "Database inspection returns the following information::"
+msgstr "データベースを調査すると次の情報を返します。::"
+
+msgid "``DATABASE_TYPE_ID``"
+msgstr ""
+
+msgid "``DATABASE_TYPE_ID`` is always ``55``."
+msgstr "``DATABASE_TYPE_ID`` は常に ``55`` です。"
+
+msgid "``DATABASE_TYPE_NAME``"
+msgstr ""
+
+msgid "``DATABASE_TYPE_NAME`` is always ``\"db\"``."
+msgstr "``DATABASE_TYPE_NAME`` は常に ``\"db\"`` です。"
+
+msgid "``DATABASE_NAME_TABLE``"
+msgstr ""
+
+msgid ""
+"``DATABASE_NAME_TABLE`` is a table for managing object names in the "
+"database. The table is :ref:`table-pat-key` or :ref:`table-dat-key`. "
+"Normally, it's :ref:`table-dat-key`."
+msgstr ""
+"``DATABASE_NAME_TABLE`` はデータベース内のオブジェクト名を管理するテーブルで"
+"す。このテーブルは :ref:`table-pat-key` または :ref:`table-dat-key` です。通"
+"常、 :ref:`table-dat-key` です。"
+
+msgid "See :ref:`object-inspect-return-value-table` for format details."
+msgstr ""
+"フォーマットの詳細は :ref:`object-inspect-return-value-table` を参照してくだ"
+"さい。"
+
+msgid "Table"
+msgstr "テーブル"
+
+msgid "Table inspection returns the following information::"
+msgstr "テーブルを調査すると次の情報を返します。::"
+
+msgid "There are some exceptions:"
+msgstr "いくつか例外があります。"
+
+msgid ""
+":ref:`table-no-key` doesn't return key information because it doesn't have "
+"key."
+msgstr ""
+":ref:`table-no-key` はキーの情報を返しません。なぜならキーを持っていないから"
+"です。"
+
+msgid ""
+":ref:`table-dat-key` doesn't return value information because it doesn't "
+"have value."
+msgstr ""
+":ref:`table-dat-key` は値の情報を返しません。なぜなら値を持っていないからで"
+"す。"
+
+msgid "``TABLE_ID``"
+msgstr ""
+
+msgid "The ID of the inspected table."
+msgstr "調査対象のテーブルのID。"
+
+msgid "``TABLE_NAME``"
+msgstr ""
+
+msgid "The name of the inspected table."
+msgstr "調査対象のテーブルの名前。"
+
+msgid "``TABLE_TYPE_ID``"
+msgstr ""
+
+msgid "The type ID of the inspected table."
+msgstr "調査対象のテーブルの種類のID"
+
+msgid "Here is a list of type IDs:"
+msgstr "以下は種類のIDのリストです。"
+
+msgid "Table type"
+msgstr "テーブルの種類"
+
+msgid "ID"
+msgstr ""
+
+msgid ":ref:`table-hash-key`"
+msgstr ""
+
+msgid "``48``"
+msgstr ""
+
+msgid ":ref:`table-pat-key`"
+msgstr ""
+
+msgid "``49``"
+msgstr ""
+
+msgid ":ref:`table-dat-key`"
+msgstr ""
+
+msgid "``50``"
+msgstr ""
+
+msgid ":ref:`table-no-key`"
+msgstr ""
+
+msgid "``51``"
+msgstr ""
+
+msgid "``TABLE_TYPE_NAME``"
+msgstr ""
+
+msgid "The type name of the inspected table."
+msgstr "調査対象のテーブルの種類の名前。"
+
+msgid "Here is a list of type names:"
+msgstr "以下は種類の名前のリストです。"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "``\"table:hash_key\"``"
+msgstr ""
+
+msgid "``\"table:pat_key\"``"
+msgstr ""
+
+msgid "``\"table:dat_key\"``"
+msgstr ""
+
+msgid "``\"table:no_key\"``"
+msgstr ""
+
+msgid "``TABLE_KEY_TYPE``"
+msgstr ""
+
+msgid "The type of key of the inspected table."
+msgstr "調査対象のテーブルのキーの型。"
+
+msgid "See :ref:`object-inspect-return-value-type` for format details."
+msgstr ""
+"フォーマットの詳細は :ref:`object-inspect-return-value-type` を参照してくださ"
+"い。"
+
+msgid "``TABLE_KEY_TOTAL_SIZE``"
+msgstr ""
+
+msgid "The total key size of the inspected table in bytes."
+msgstr "調査対象のテーブルの総キーサイズ。単位はバイト。"
+
+msgid "``TABLE_KEY_MAX_TOTAL_SIZE``"
+msgstr ""
+
+msgid "The maximum total key size of the inspected table in bytes."
+msgstr "調査対象のテーブルの最大総キーサイズ。単位はバイト。"
+
+msgid "``TABLE_VALUE_TYPE``"
+msgstr ""
+
+msgid "The type of value of the inspected table."
+msgstr "調査対象のテーブルの値の型。"
+
+msgid "``TABLE_N_RECORDS``"
+msgstr ""
+
+msgid "The number of records of the inspected table."
+msgstr "調査対象のテーブルのレコード数。"
+
+msgid "It's a 64bit unsigned integer value."
+msgstr "64bitの正の整数です。"
+
+msgid "Column"
+msgstr "カラム"
+
+msgid ""
+"Data column (scalar column and vector column) returns the following "
+"information::"
+msgstr ""
+"データカラム（スカラーカラムとベクターカラム）を調査すると次の情報を返しま"
+"す。::"
+
+msgid "Index column is similar to data column but there are some differences."
+msgstr "インデックスカラムはデータカラムと似ていますがいくつか違いがあります。"
+
+msgid "Index column doesn't have ``value.compress`` key."
+msgstr "インデックスカラムの情報にはキー ``value.compress`` がありません。"
+
+msgid "Index column has ``value.section`` key."
+msgstr "インデックスカラムの情報にはキー ``value.section`` があります。"
+
+msgid "Index column has ``value.weight`` key."
+msgstr "インデックスカラムの情報にはキー ``value.weight`` があります。"
+
+msgid "Index column has ``value.position`` key."
+msgstr "インデックスカラムの情報にはキー ``value.position`` があります。"
+
+msgid "Index column has ``value.size`` key."
+msgstr "インデックスカラムの情報にはキー ``value.size`` があります。"
+
+msgid "Index column has ``value.statistics`` key."
+msgstr "インデックスカラムの情報にはキー ``value.statistics`` があります。"
+
+msgid "Index column has ``sources`` key."
+msgstr "インデックスカラムの情報にはキー ``sources`` があります。"
+
+msgid "Index column returns the following information::"
+msgstr "インデックスカラムを調査すると次の情報を返します。"
+
+msgid "``COLUMN_ID``"
+msgstr ""
+
+msgid "The ID of the inspected column."
+msgstr "調査対象のカラムのID。"
+
+msgid "``COLUMN_NAME``"
+msgstr ""
+
+msgid "The name of the inspected column."
+msgstr "調査対象のカラムの名前。"
+
+msgid "It doesn't include table name. It's just only column name."
+msgstr "テーブル名は含みません。カラム名のみを含みます。"
+
+msgid ""
+"If you want full column name (``TABLE_NAME.COLUMN_NAME`` style), use :ref:"
+"`object-inspect-return-value-column-full-name` instead."
+msgstr ""
+"``TABLE_NAME.COLUMN_NAME`` スタイルの完全なカラム名を欲しい場合は代わりに :"
+"ref:`object-inspect-return-value-column-full-name` を使ってください。"
+
+msgid "``COLUMN_TABLE``"
+msgstr ""
+
+msgid "The table of the inspected column."
+msgstr "調査対象のカラムのテーブル。"
+
+msgid "``COLUMN_FULL_NAME``"
+msgstr ""
+
+msgid "The full name of the inspected column."
+msgstr "調査対象のカラムの完全な名前。"
+
+msgid ""
+"It includes both table name and column name as ``TABLE_NAME.COLUMN_NAME`` "
+"format."
+msgstr ""
+"``テーブル名.カラム名`` という書式でテーブル名とカラム名を両方含みます。"
+
+msgid ""
+"If you just want only column name, use :ref:`object-inspect-return-value-"
+"column-name` instead."
+msgstr ""
+"カラム名だけが欲しい場合は代わりに :ref:`object-inspect-return-value-column-"
+"name` を使ってください。"
+
+msgid "``COLUMN_TYPE_NAME``"
+msgstr ""
+
+msgid "The type name of the inspected column."
+msgstr "調査対象のカラムの種類の名前。"
+
+msgid "Column type"
+msgstr "カラムの種類"
+
+msgid ":doc:`/reference/columns/scalar`"
+msgstr ""
+
+msgid "``\"scalar\"``"
+msgstr ""
+
+msgid ":doc:`/reference/columns/vector`"
+msgstr ""
+
+msgid "``\"vector\"``"
+msgstr ""
+
+msgid ":doc:`/reference/columns/index`"
+msgstr ""
+
+msgid "``\"index\"``"
+msgstr ""
+
+msgid "``COLUMN_TYPE_RAW_ID``"
+msgstr ""
+
+msgid "The raw type ID of the inspected column."
+msgstr "調査対象のカラムの未加工の種類のID"
+
+msgid "Here is a list of raw type IDs:"
+msgstr "以下は未加工の種類のIDのリストです。"
+
+msgid "Raw column type"
+msgstr "カラムの未加工の種類"
+
+msgid "Fix size column"
+msgstr "固定長サイズカラム"
+
+msgid "``64``"
+msgstr ""
+
+msgid "Variable size column"
+msgstr "可変長サイズカラム"
+
+msgid "``65``"
+msgstr ""
+
+msgid "Index column"
+msgstr "インデックスカラム"
+
+msgid "``72``"
+msgstr ""
+
+msgid "``COLUMN_TYPE_RAW_NAME``"
+msgstr ""
+
+msgid "The raw type name of the inspected column."
+msgstr "調査対象のカラムの未加工の種類の名前。"
+
+msgid "Here is a list of raw type names:"
+msgstr "以下は未加工の種類の名前のリストです。"
+
+msgid "``\"column:fix_size\"``"
+msgstr ""
+
+msgid "``\"column:var_size\"``"
+msgstr ""
+
+msgid "``\"column:index\"``"
+msgstr ""
+
+msgid "``COLUMN_VALUE_TYPE``"
+msgstr ""
+
+msgid "The type of value of the inspected column."
+msgstr "調査対象のカラムの値の型。"
+
+msgid "``DATA_COLUMN_VALUE_COMPRESS_METHOD``"
+msgstr ""
+
+msgid "The compress method of value of the inspected data column."
+msgstr "調査対象のデータカラムの値の圧縮方法です。"
+
+msgid "Here is a list of compress methods:"
+msgstr "以下は圧縮方法のリストです。"
+
+msgid "Compress method"
+msgstr "圧縮方法"
+
+msgid "Value"
+msgstr "値"
+
+msgid "zlib"
+msgstr ""
+
+msgid "``\"zlib\"``"
+msgstr ""
+
+msgid "LZ4"
+msgstr ""
+
+msgid "``\"lz4\"``"
+msgstr ""
+
+msgid "Zstandard"
+msgstr ""
+
+msgid "``\"zstd\"``"
+msgstr ""
+
+msgid "None"
+msgstr "なし"
+
+msgid "``null``"
+msgstr ""
+
+msgid "``INDEX_COLUMN_VALUE_SECTION``"
+msgstr ""
+
+msgid ""
+"Whether the inspected column is created with ``WITH_SECTION`` flag or not.  "
+"The value is ``true`` if ``WITH_SECTION`` was specified, ``false`` otherwise."
+msgstr ""
+"調査対象のカラムが ``WITH_SECTION`` フラグ付きで作ったカラムかどうかを返しま"
+"す。 ``WITH_SECTION`` フラグ付きでカラムを作ったときは ``true`` 、そうでない"
+"ときは ``false`` になります。"
+
+msgid ":ref:`column-create-flags`"
+msgstr ""
+
+msgid "``INDEX_COLUMN_VALUE_WEIGHT``"
+msgstr ""
+
+msgid ""
+"Whether the inspected column is created with ``WITH_WEIGHT`` flag or not.  "
+"The value is ``true`` if ``WITH_WEIGHT`` was specified, ``false`` otherwise."
+msgstr ""
+"調査対象のカラムが ``WITH_WEIGHT`` フラグ付きで作ったカラムかどうかを返しま"
+"す。 ``WITH_WEIGHT`` フラグ付きでカラムを作ったときは ``true`` 、そうでないと"
+"きは ``false`` になります。"
+
+msgid "``INDEX_COLUMN_VALUE_POSITION``"
+msgstr ""
+
+msgid ""
+"Whether the inspected column is created with ``WITH_POSITION`` flag or not.  "
+"The value is ``true`` if ``WITH_POSITION`` was specified, ``false`` "
+"otherwise."
+msgstr ""
+"調査対象のカラムが ``WITH_POSITION`` フラグ付きで作ったカラムかどうかを返しま"
+"す。 ``WITH_POSITION`` フラグ付きでカラムを作ったときは ``true`` 、そうでない"
+"ときは ``false`` になります。"
+
+msgid "``INDEX_COLUMN_VALUE_SIZE``"
+msgstr ""
+
+msgid ""
+"The size of the inspected index column. Index size can be specified by :ref:"
+"`column-create-flags`."
+msgstr ""
+"調査対象のインデックスカラムのサイズ。インデックスのサイズは :ref:`column-"
+"create-flags` で指定できます。"
+
+msgid "Here is a list of index column sizes:"
+msgstr "以下がインデックスカラムのサイズのリストです。"
+
+msgid "Index column size"
+msgstr "インデックスカラムのサイズ"
+
+msgid "``INDEX_SMALL``"
+msgstr ""
+
+msgid "``\"small\"``"
+msgstr ""
+
+msgid "``INDEX_MEDIUM``"
+msgstr ""
+
+msgid "``\"medium\"``"
+msgstr ""
+
+msgid "``INDEX_LARGE``"
+msgstr ""
+
+msgid "``\"large\"``"
+msgstr ""
+
+msgid "Default"
+msgstr "デフォルト"
+
+msgid "``\"normal\"``"
+msgstr ""
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_MAX_SECTION_ID``"
+msgstr ""
+
+msgid "The max section ID in the inspected index column."
+msgstr "調査対象のインデックスカラム最大セクションID。"
+
+msgid ""
+"It's always ``0`` for index column that is created without ``WITH_SECTION`` "
+"flag."
+msgstr ""
+"``WITH_SECTION`` フラグなしで作ったインデックスの場合は常に ``0`` になりま"
+"す。"
+
+msgid ""
+"It's ``0`` or larger for index column that is created with ``WITH_SECTION`` "
+"flag. It's ``0`` for empty ``WITH_SECTION`` index column. It's ``1`` or "
+"larger for non-empty ``WITH_SECTION`` index column."
+msgstr ""
+"``WITH_SECTION`` フラグ付きで作ったインデックスカラムの場合は ``0`` 以上にな"
+"ります。空の ``WITH_SECTION`` 指定のインデックスカラムは ``0`` になります。空"
+"でない ``WITH_SECTION`` 指定のインデックスカラムは ``1`` 以上になります。"
+
+msgid ""
+"The max value for ``WITH_SECTION`` index column is the number of source "
+"columns."
+msgstr ""
+"``WITH_SECTION`` 指定のインデックスカラムの最大値はソースカラム数です。"
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_N_GARBAGE_SEGMENTS``"
+msgstr ""
+
+msgid "The number of garbage segments in the inspected index column."
+msgstr "調査対象のインデックスカラム内のゴミセグメントの数。"
+
+msgid ""
+"Index column reuses segment (internal allocated space) that is no longer "
+"used. It's called \"garbage segment\"."
+msgstr ""
+"インデックスカラムは使われなくなったセグメント（内部で確保している領域）を再"
+"利用します。このセグメントのことを「ゴミセグメント」と呼びます。"
+
+msgid ""
+"The max value is the max number of segments. See :ref:`object-inspect-return-"
+"value-index-column-value-statistics-n-physical-segments` for the max number "
+"of segments."
+msgstr ""
+"最大値は最大セグメント数です。最大セグメント数は :ref:`object-inspect-return-"
+"value-index-column-value-statistics-n-physical-segments` を見てください。"
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_MAX_ARRAY_SEGMENT_ID``"
+msgstr ""
+
+msgid "The max ID of segment used for \"array\" in the inspected index column."
+msgstr ""
+"調査対象のインデックスカラム内の「array」に使用しているセグメントのうち一番大"
+"きいIDの値。"
+
+msgid "\"array\" is used for managing \"buffer\"."
+msgstr "「array」は「buffer」を管理するために使っています。"
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_N_ARRAY_SEGMENTS``"
+msgstr ""
+
+msgid ""
+"The number of segments used for \"array\" in the inspected index column."
+msgstr "調査対象のインデックスカラム内の「array」に使っているセグメント数。"
+
+msgid ""
+"The max value is ``the max number of segments - the number of segments used "
+"for \"buffer\"``. See :ref:`object-inspect-return-value-index-column-value-"
+"statistics-n-physical-segments` for the max number of segments."
+msgstr ""
+"最大値は ``最大セグメント数 - 「buffer」に使っているセグメント数`` です。最大"
+"セグメント数は :ref:`object-inspect-return-value-index-column-value-"
+"statistics-n-physical-segments` を見てください。"
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_MAX_BUFFER_SEGMENT_ID``"
+msgstr ""
+
+msgid ""
+"The max ID of segment used for \"buffer\" in the inspected index column."
+msgstr ""
+"調査対象のインデックスカラム内の「buffer」に使っている最大セグメントID。"
+
+msgid "\"buffer\" is used for storing posting lists."
+msgstr "「buffer」はポスティングリストを保存する場所です。"
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_N_BUFFER_SEGMENTS``"
+msgstr ""
+
+msgid ""
+"The number of segments used for \"buffer\" in the inspected index column."
+msgstr ""
+"調査対象のインデックスカラム内の「buffer」に使っている最大セグメント数。"
+
+msgid ""
+"The max value is ``the max number of segments - the number of segments used "
+"for \"array\"``. See :ref:`object-inspect-return-value-index-column-value-"
+"statistics-n-physical-segments` for the max number of segments."
+msgstr ""
+"最大値は ``最大セグメント数 - 「array」に使っているセグメント数`` です。最大"
+"セグメント数は :ref:`object-inspect-return-value-index-column-value-"
+"statistics-n-physical-segments` を見てください。"
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_MAX_IN_USE_PHYSICAL_SEGMENT_ID``"
+msgstr ""
+
+msgid ""
+"The max segment ID in use as \"garbage\", \"array\" or \"buffer\" in the "
+"inspected index column."
+msgstr ""
+"調査対象のインデックスカラム内の「ゴミセグメント」、「arrayセグメント」"
+"「bufferセグメント」全体で使っているセグメントの最大ID。"
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_N_UNMANAGED_SEGMENTS``"
+msgstr ""
+
+msgid "The number of unmanaged segments in the inspected index column."
+msgstr "調査対象のインデックスカラム内の未管理のセグメント数。"
+
+msgid "It must be ``0``."
+msgstr "``0`` であるべきです。"
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_TOTAL_CHUNK_SIZE``"
+msgstr ""
+
+msgid "The total \"chunk\" size in the inspected index column."
+msgstr "調査対象のインデックスカラム内の総「チャンク」サイズ。"
+
+msgid ""
+"\"chunk\" is used for storing posting lists. \"buffer\" is mutable but "
+"\"chunk\" is immutable. \"chunk\" is more space effective than \"buffer\". "
+"\"buffer\" is more update effective than \"chunk\"."
+msgstr ""
+"「chunk」はポスティングリストを保存する場所です。「buffer」は変更可能ですが、"
+"「chunk」は変更不可です。「chunk」は「buffer」よりも空間効率がよいです。"
+"「buffer」は「chunk」よりも更新効率がよいです。"
+
+msgid ""
+"Small posting lists are stored into \"buffer\". Posting lists in \"buffer\" "
+"are moved to \"chunk\" when these posting lists are grew."
+msgstr ""
+"小さなポスティングリストは「buffer」に保存します。「buffer」内のポスティング"
+"リストが大きくなると「chunk」に移動します。"
+
+msgid ""
+"The max value is ``the max size of a chunk * the max number of chunks``. But "
+"you will not be able to use all spaces because there are overheads."
+msgstr ""
+"最大値は ``1チャンクあたりの最大サイズ * 最大チャンク数`` 数です。ただし、"
+"オーバーヘッドがあるためすべての領域を使い切ることはできないでしょう。"
+
+msgid ""
+"The max size of a chunk is ``2 ** 22`` bytes (4MiB). The max number of "
+"chunks depend on index size:"
+msgstr ""
+"1チャンクあたりの最大サイズは ``2 ** 22`` バイト（4MiB）です。最大チャンク数"
+"はインデックスサイズに依存します。"
+
+msgid "The max number of chunks"
+msgstr "最大チャンク数"
+
+msgid "``2**10`` (1024)"
+msgstr ""
+
+msgid "``2**14`` (16384)"
+msgstr ""
+
+msgid "``2**18`` (262144)"
+msgstr ""
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_MAX_IN_USE_CHUNK_ID``"
+msgstr ""
+
+msgid "The max \"chunk\" ID in use in the inspected index column."
+msgstr "調査対象のインデックスカラム内で使っている最大「chunk」ID。"
+
+msgid ""
+"The max value is the max number of chunks. See :ref:`object-inspect-return-"
+"value-index-column-value-statistics-total-chunk-size` for the max number of "
+"chunks."
+msgstr ""
+"最大値は最大チャンク数です。最大チャンク数は :ref:`object-inspect-return-"
+"value-index-column-value-statistics-total-chunk-size` を見てください。"
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_N_GARBAGE_CHUNKS``"
+msgstr ""
+
+msgid ""
+"The array of the number of garbage \"chunks\" in the inspected index column."
+msgstr "調査対象のインデックスカラム内のゴミ「chunk」の配列です。"
+
+msgid ""
+"Garbage \"chunks\" are managed by separated 14 spaces. It shows all the "
+"number of garbage \"chunks\" as an array like the following::"
+msgstr ""
+"ゴミ「chunk」は14個の領域で管理されています。次のように配列ですべての領域のゴ"
+"ミ「chunk」の数を示します。::"
+
+msgid ""
+"The max value of each space is the max number of chunks. See :ref:`object-"
+"inspect-return-value-index-column-value-statistics-total-chunk-size` for the "
+"max number of chunks."
+msgstr ""
+"各領域の最大値は最大チャンク数です。最大チャンク数は :ref:`object-inspect-"
+"return-value-index-column-value-statistics-total-chunk-size` を見てください。"
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_NEXT_PHYSICAL_SEGMENT_ID``"
+msgstr ""
+
+msgid ""
+"This value is the ID of the segment. The inspected index column use it as "
+"the next segment ID. The max value is the max number of segments. See :ref:"
+"`object-inspect-return-value-index-column-value-statistics-n-physical-"
+"segments` for the max number of segments."
+msgstr ""
+"この値は、調査対象のインデックスカラムが次に使うセグメントIDです。最大値は最"
+"大セグメント数です。最大セグメント数は :ref:`object-inspect-return-value-"
+"index-column-value-statistics-n-physical-segments` を見てください。"
+
+msgid "``INDEX_COLUMN_VALUE_STATISTICS_N_PHYSICAL_SEGMENTS``"
+msgstr ""
+
+msgid "This value the max number of segments. It depends on index size:"
+msgstr ""
+"この値は、最大セグメント数です。最大セグメント数はインデックスサイズに依りま"
+"す。"
+
+msgid "The max number of segments"
+msgstr "最大セグメント数"
+
+msgid "``2**9`` (512)"
+msgstr ""
+
+msgid "``2**16`` (65536)"
+msgstr ""
+
+msgid "``2**17 * 2`` (262144)"
+msgstr ""
+
+msgid "``2**17`` (131072)"
+msgstr ""
+
+msgid ""
+"If the number of segments tend to exceeds near the future, you need to "
+"consider to adopt ``INDEX_XXX`` flags."
+msgstr ""
+"近い将来、セグメント数を超過する傾向がある場合は、 ``INDEX_XXX`` フラグの採用"
+"を検討する必要があります。"
+
+msgid "``INDEX_COLUMN_SOURCE_ID``"
+msgstr ""
+
+msgid "The ID of a source column of the inspected index column."
+msgstr "調査対象のインデックスカラム内のソースカラムのID。"
+
+msgid "``INDEX_COLUMN_SOURCE_NAME``"
+msgstr ""
+
+msgid "The name of a source column of the inspected index column."
+msgstr "調査対象のインデックスカラムのソースカラムの名前。"
+
+msgid ""
+"If you want full column name (``TABLE_NAME.COLUMN_NAME`` style), use :ref:"
+"`object-inspect-return-value-index-column-source-full-name` instead."
+msgstr ""
+"``TABLE_NAME.COLUMN_NAME`` スタイルの完全なカラム名を欲しい場合は代わりに :"
+"ref:`object-inspect-return-value-index-column-source-full-name` を使ってくだ"
+"さい。"
+
+msgid "``INDEX_COLUMN_SOURCE_TABLE``"
+msgstr ""
+
+msgid "The table of a source column of the inspected index column."
+msgstr "調査対象のインデックスカラム内のソースカラムのテーブル。"
+
+msgid "``INDEX_COLUMN_SOURCE_FULL_NAME``"
+msgstr ""
+
+msgid "The full name of a source column of the inspected index column."
+msgstr "調査対象のインデックスカラム内のソースカラムの完全な名前。"
+
+msgid ""
+"If you just want only column name, use :ref:`object-inspect-return-value-"
+"index-column-source-name` instead."
+msgstr ""
+"カラム名だけが必要な場合は代わりに :ref:`object-inspect-return-value-index-"
+"column-source-name` を使ってください。"
+
+msgid "Type"
+msgstr "型"
+
+msgid "Type inspection returns the following information::"
+msgstr "型を調査すると次の情報を返します。"
+
+msgid "``TYPE_ID``"
+msgstr ""
+
+msgid "The ID of the inspected type."
+msgstr "対象の型のIDです。"
+
+msgid "Here is an ID list of builtin types:"
+msgstr "以下は組み込みの型のIDのリストです。"
+
+msgid ":ref:`builtin-type-bool`"
+msgstr ""
+
+msgid "``3``"
+msgstr ""
+
+msgid ":ref:`builtin-type-int8`"
+msgstr ""
+
+msgid "``4``"
+msgstr ""
+
+msgid ":ref:`builtin-type-uint8`"
+msgstr ""
+
+msgid "``5``"
+msgstr ""
+
+msgid ":ref:`builtin-type-int16`"
+msgstr ""
+
+msgid "``6``"
+msgstr ""
+
+msgid ":ref:`builtin-type-uint16`"
+msgstr ""
+
+msgid "``7``"
+msgstr ""
+
+msgid ":ref:`builtin-type-int32`"
+msgstr ""
+
+msgid "``8``"
+msgstr ""
+
+msgid ":ref:`builtin-type-uint32`"
+msgstr ""
+
+msgid "``9``"
+msgstr ""
+
+msgid ":ref:`builtin-type-int64`"
+msgstr ""
+
+msgid "``10``"
+msgstr ""
+
+msgid ":ref:`builtin-type-uint64`"
+msgstr ""
+
+msgid "``11``"
+msgstr ""
+
+msgid ":ref:`builtin-type-float`"
+msgstr ""
+
+msgid "``12``"
+msgstr ""
+
+msgid ":ref:`builtin-type-time`"
+msgstr ""
+
+msgid "``13``"
+msgstr ""
+
+msgid ":ref:`builtin-type-short-text`"
+msgstr ""
+
+msgid "``14``"
+msgstr ""
+
+msgid ":ref:`builtin-type-text`"
+msgstr ""
+
+msgid "``15``"
+msgstr ""
+
+msgid ":ref:`builtin-type-long-text`"
+msgstr ""
+
+msgid "``16``"
+msgstr ""
+
+msgid ":ref:`builtin-type-tokyo-geo-point`"
+msgstr ""
+
+msgid "``17``"
+msgstr ""
+
+msgid ":ref:`builtin-type-wgs84-geo-point`"
+msgstr ""
+
+msgid "``18``"
+msgstr ""
+
+msgid "``TYPE_NAME``"
+msgstr ""
+
+msgid "The name of the inspected type."
+msgstr "調査対象の型の名前。"
+
+msgid "Here is a name list of builtin types:"
+msgstr "以下は組み込みの型の名前のリストです。"
+
+msgid "``TYPE_ID_OF_TYPE``"
+msgstr ""
+
+msgid "``TYPE_ID_OF_TYPE`` is always ``32``."
+msgstr "``TYPE_ID_OF_TYPE`` は常に ``32`` です。"
+
+msgid "``TYPE_NAME_OF_TYPE``"
+msgstr ""
+
+msgid "``TYPE_NAME_OF_TYPE`` is always ``type``."
+msgstr "``TYPE_NAME_OF_TYPE`` は常に ``type`` です。"
+
+msgid "``TYPE_SIZE``"
+msgstr ""
+
+msgid ""
+"``TYPE_SIZE`` is the size of the inspected type in bytes. If the inspected "
+"type is variable size type, the size means the maximum size."
+msgstr ""
+"``TYPE_SIZE`` は調査対象の型のサイズです。単位はバイトです。調査対象の型が可"
+"変長型の場合は、サイズは最大サイズという意味です。"

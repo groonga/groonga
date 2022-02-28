@@ -1,0 +1,361 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "パラメータ"
+msgstr ""
+
+msgid "戻り値"
+msgstr ""
+
+msgid "``grn_obj``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "TODO..."
+msgstr "TODO..."
+
+msgid "Example"
+msgstr "例"
+
+msgid "Reference"
+msgstr "リファレンス"
+
+msgid ""
+"nameがカラム名の場合、それに対応するtableのカラムを返します。対応するカラムが"
+"存在しなければNULLを返します。"
+msgstr ""
+
+msgid ""
+"nameがアクセサ文字列の場合、それに対応するaccessorを返します。アクセサ文字列"
+"とは、カラム名等を'.'で連結した文字列です。'_id', '_key'は特殊なアクセサで、"
+"それぞれレコードID/keyを返します。例) 'col1' / 'col2.col3' / 'col2._id'"
+msgstr ""
+
+msgid "対象tableを指定します。"
+msgstr ""
+
+msgid "カラム名を指定します。"
+msgstr ""
+
+msgid "Check whether Groonga built-in object."
+msgstr ""
+
+msgid "context"
+msgstr ""
+
+msgid "target object"
+msgstr ""
+
+msgid "``GRN_TRUE`` for built-in groonga object, ``GRN_FALSE`` otherwise."
+msgstr ""
+
+msgid "Check whether index column."
+msgstr "インデックスカラムかどうかを判定します。"
+
+msgid "The context object."
+msgstr "その時点のコンテキスト。"
+
+msgid "The target object."
+msgstr "対象のオブジェクト"
+
+msgid ""
+"``GRN_TRUE`` for if the target object is index column, ``GRN_FALSE`` "
+"otherwise. Even if the target object isn't column, return ``GRN_FALSE``."
+msgstr ""
+"対象のオブジェクトがインデックスカラムの場合には、 ``GRN_TRUE`` です。それ以"
+"外の場合は、 ``GRN_FALSE`` です。対象のオブジェクトがカラム以外の場合も "
+"``GRN_FALSE`` を返します。"
+
+msgid "Check whether vector column."
+msgstr "ベクターカラムかどうかを判定します。"
+
+msgid ""
+"``GRN_TRUE`` for if the target object is vector column, ``GRN_FALSE`` "
+"otherwise. Even if the target object isn't column, return ``GRN_FALSE``."
+msgstr ""
+"対象のオブジェクトがベクターカラムの場合には、 ``GRN_TRUE`` です。それ以外の"
+"場合は、 ``GRN_FALSE`` です。対象のオブジェクトがカラム以外の場合も "
+"``GRN_FALSE`` を返します。"
+
+msgid ""
+"objのIDに対応するレコードのvalueを取得します。valueを戻り値として返します。"
+msgstr ""
+
+msgid "対象objectを指定します。"
+msgstr ""
+
+msgid "対象レコードのIDを指定します。"
+msgstr ""
+
+msgid "値を格納するバッファ（呼出側で準備する）を指定します。"
+msgstr ""
+
+msgid ""
+"objに指定されたカラムについて、offsetに指定されたレコードIDを開始位置として、"
+"IDが連続するレコードに対応するカラム値が昇順に格納された配列へのポインタを"
+"valuesにセットします。"
+msgstr ""
+
+msgid ""
+"取得できた件数が戻り値として返されます。エラーが発生した場合は -1 が返されま"
+"す。"
+msgstr ""
+
+msgid ""
+"値が固定長であるカラムのみがobjに指定できます。範囲内のIDに対応するレコードが"
+"有効であるとは限りません。delete操作を実行したことのあるテーブルに対しては、:"
+"c:func:`grn_table_at()` などによって各レコードの存否を別途確認しなければなり"
+"ません。"
+msgstr ""
+
+msgid "値を取得する範囲の開始位置となるレコードIDを指定します。"
+msgstr ""
+
+msgid "値の配列がセットされます。"
+msgstr ""
+
+msgid ""
+"objのIDに対応するレコードの値を更新します。対応するレコードが存在しない場合"
+"は ``GRN_INVALID_ARGUMENT`` を返します。"
+msgstr ""
+
+msgid "格納する値を指定します。"
+msgstr ""
+
+msgid ""
+"以下の値を指定できます。  .. hlist::    :columns: 3     * :c:macro:"
+"`GRN_OBJ_SET`    * :c:macro:`GRN_OBJ_INCR`    * :c:macro:`GRN_OBJ_DECR`    "
+"* :c:macro:`GRN_OBJ_APPEND`    * :c:macro:`GRN_OBJ_PREPEND`    * :c:macro:"
+"`GRN_OBJ_GET`    * :c:macro:`GRN_OBJ_COMPARE`    * :c:macro:"
+"`GRN_OBJ_LOCK`    * :c:macro:`GRN_OBJ_UNLOCK`"
+msgstr ""
+
+msgid "以下の値を指定できます。"
+msgstr ""
+
+msgid ":c:macro:`GRN_OBJ_SET`"
+msgstr ""
+
+msgid ":c:macro:`GRN_OBJ_INCR`"
+msgstr ""
+
+msgid ":c:macro:`GRN_OBJ_DECR`"
+msgstr ""
+
+msgid ":c:macro:`GRN_OBJ_APPEND`"
+msgstr ""
+
+msgid ":c:macro:`GRN_OBJ_PREPEND`"
+msgstr ""
+
+msgid ":c:macro:`GRN_OBJ_GET`"
+msgstr ""
+
+msgid ":c:macro:`GRN_OBJ_COMPARE`"
+msgstr ""
+
+msgid ":c:macro:`GRN_OBJ_LOCK`"
+msgstr ""
+
+msgid ":c:macro:`GRN_OBJ_UNLOCK`"
+msgstr ""
+
+msgid "レコードの値をvalueと置き換えます。"
+msgstr ""
+
+msgid "レコードの値にvalueを加算します。"
+msgstr ""
+
+msgid "レコードの値にvalueを減算します。"
+msgstr ""
+
+msgid "レコードの値の末尾にvalueを追加します。"
+msgstr ""
+
+msgid "レコードの値の先頭にvalueを追加します。"
+msgstr ""
+
+msgid "新しいレコードの値をvalueにセットします。"
+msgstr ""
+
+msgid "レコードの値とvalueが等しいか調べます。"
+msgstr ""
+
+msgid ""
+"当該レコードをロックします。:c:macro:`GRN_OBJ_COMPARE` と共に指定された場合"
+"は、レコードの値とvalueが等しい場合に限ってロックします。"
+msgstr ""
+
+msgid "当該レコードのロックを解除します。"
+msgstr ""
+
+msgid ""
+"objをメモリから解放し、それが永続オブジェクトであった場合は、該当するファイル"
+"一式を削除します。"
+msgstr ""
+
+msgid ""
+"ctxが使用するdbにおいてobjに対応する名前をnameに更新します。objは永続オブジェ"
+"クトでなければいけません。"
+msgstr ""
+
+msgid "新しい名前を指定します。"
+msgstr ""
+
+msgid "nameパラメータのsize（byte）を指定します。"
+msgstr ""
+
+msgid ""
+"一時的なobjectであるobjをメモリから解放します。objに属するobjectも再帰的にメ"
+"モリから解放されます。"
+msgstr ""
+
+msgid ""
+"永続的な、table, column, exprなどは解放してはいけません。一般的には、一時的か"
+"永続的かを気にしなくてよい :c:func:`grn_obj_unlink()` を用いるべきです。"
+msgstr ""
+
+msgid "objの型を変更します。"
+msgstr ""
+
+msgid ""
+"objは :c:func:`GRN_OBJ_INIT()` マクロなどで初期化済みでなければいけません。"
+msgstr ""
+
+msgid "変更後のobjの型を指定します。"
+msgstr ""
+
+msgid ""
+"``GRN_OBJ_VECTOR`` を指定するとdomain型の値のベクタを格納するオブジェクトにな"
+"ります。"
+msgstr ""
+
+msgid ""
+"objをメモリから解放します。objに属するobjectも再帰的にメモリから解放されま"
+"す。"
+msgstr ""
+
+msgid "objに対応するファイルパスを返します。一時objectならNULLを返します。"
+msgstr ""
+
+msgid "objの名前の長さを返します。無名objectなら0を返します。"
+msgstr ""
+
+msgid ""
+"名前付きのobjectであり、buf_sizeの長さが名前の長以上であった場合は、namebufに"
+"該当する名前をコピーします。"
+msgstr ""
+
+msgid "名前を格納するバッファ（呼出側で準備する）を指定します。"
+msgstr ""
+
+msgid "namebufのサイズ（byte長）を指定します。"
+msgstr ""
+
+msgid ""
+"objパラメータのとる値の範囲を表わしているオブジェクトのIDを返します。例え"
+"ば、:c:type:`grn_builtin_type` にある ``GRN_DB_INT`` などを返します。"
+msgstr ""
+
+msgid ""
+"objの占有するメモリのうち、可能な領域をthresholdを指標として解放します。"
+msgstr ""
+
+msgid "objに対応するファイルの整合性を検査します。"
+msgstr ""
+
+msgid ""
+"objをlockします。timeout（秒）経過してもlockを取得できない場合は "
+"``GRN_RESOURCE_DEADLOCK_AVOIDED`` を返します。"
+msgstr ""
+
+msgid "objをunlockします。"
+msgstr ""
+
+msgid "強制的にロックをクリアします。"
+msgstr ""
+
+msgid "objが現在lockされていれば0以外の値を返します。"
+msgstr ""
+
+msgid ""
+"objの占有するDBファイル領域のうち、可能な領域をthresholdを指標としてフラグメ"
+"ントの解消を行います。"
+msgstr ""
+
+msgid "フラグメント解消が実行されたセグメントの数を返します。"
+msgstr ""
+
+msgid "objのidを返します。"
+msgstr ""
+
+msgid ""
+"dbからidに対応するテーブルやカラムなどを削除します。mroonga向けに用意した内部"
+"APIです。"
+msgstr ""
+
+msgid "The target database."
+msgstr ""
+
+msgid "The object (table, column and so on) ID to be deleted."
+msgstr ""
+
+msgid ""
+"If ``GRN_TRUE``, clear object cache and remove relation between ID and key "
+"in database. Otherwise, just clear object cache."
+msgstr ""
+
+msgid "dbのidに対応するpathを返します。mroonga向けに用意した内部APIです。"
+msgstr ""
+
+msgid "path string corresponding to the id will be set in this buffer."
+msgstr ""
+
+msgid ""
+"It casts value of ``source`` to value with type of ``destination``. Casted "
+"value is appended to ``destination``."
+msgstr ""
+
+msgid "Both ``source`` and ``destination`` must be bulk."
+msgstr ""
+
+msgid ""
+"If ``destination`` is a reference type bulk. (Reference type bulk means that "
+"type of ``destination`` is a table.) ``add_record_if_not_exist`` is used. If "
+"``source`` value doesn't exist in the table that is a type of "
+"``destination``. The ``source`` value is added to the table."
+msgstr ""
+
+msgid "The bulk to be casted."
+msgstr ""
+
+msgid "The bulk to specify cast target type and store casted value."
+msgstr ""
+
+msgid ""
+"Whether adding a new record if ``source`` value doesn't exist in cast target "
+"table. This parameter is only used when ``destination`` is a reference type "
+"bulk."
+msgstr ""
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"

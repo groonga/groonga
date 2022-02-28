@@ -1,0 +1,738 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "News - 1.2.x"
+msgstr "News - 1.2.x"
+
+msgid "Release 1.2.9 - 2011-12-29"
+msgstr "Release 1.2.9 - 2011-12-29"
+
+msgid "Improvements"
+msgstr "Improvements"
+
+msgid "Supported Fedora 16."
+msgstr "Supported Fedora 16."
+
+msgid "Dropped Fedora 15 support."
+msgstr "Dropped Fedora 15 support."
+
+msgid ""
+"[groonga] Improved the default server ID address to work on unresolved host "
+"name environment. [Reported by @uzulla]"
+msgstr ""
+"[groonga] Improved the default server ID address to work on unresolved host "
+"name environment. [Reported by @uzulla]"
+
+msgid "Supported MAP_HUGETLB."
+msgstr "Supported MAP_HUGETLB."
+
+msgid "[admin] Supported throughput chart."
+msgstr "[admin] Supported throughput chart."
+
+msgid ""
+"Stopped adding nul character in ``grn_itoh()``. [#1194] [Reported by SHIDARA "
+"Yoji]"
+msgstr ""
+"Stopped adding nul character in ``grn_itoh()``. [#1194] [Reported by SHIDARA "
+"Yoji]"
+
+msgid "Added ``grn_obj_get_values()``."
+msgstr "Added ``grn_obj_get_values()``."
+
+msgid "Added ``grn_obj_delete_by_id()``."
+msgstr "Added ``grn_obj_delete_by_id()``."
+
+msgid "Supported string vector column for query expansion. [#1216]"
+msgstr "Supported string vector column for query expansion. [#1216]"
+
+msgid ""
+"Added ``--filter`` option to :doc:`/reference/commands/delete` to delete "
+"many record at once. [#1225]"
+msgstr ""
+"Added ``--filter`` option to :doc:`/reference/commands/delete` to delete "
+"many record at once. [#1225]"
+
+msgid ""
+"Supported approximate type customization for :doc:`/reference/functions/"
+"geo_in_circle` and :doc:`/reference/functions/geo_distance`. [#1226]"
+msgstr ""
+"Supported approximate type customization for :doc:`/reference/functions/"
+"geo_in_circle` and :doc:`/reference/functions/geo_distance`. [#1226]"
+
+msgid "Made ``geo_distance2()`` and ``geo_distance3()`` are deprecated."
+msgstr "Made ``geo_distance2()`` and ``geo_distance3()`` are deprecated."
+
+msgid ""
+"Changed to use ``null`` instead of ``\"\"`` for empty geo point value in "
+"JSON output."
+msgstr ""
+"Changed to use ``null`` instead of ``\"\"`` for empty geo point value in "
+"JSON output."
+
+msgid "Almost supported MessagePack output. [#1215] [Worked by SHIDARA Yoji]"
+msgstr "Almost supported MessagePack output. [#1215] [Worked by SHIDARA Yoji]"
+
+msgid "Added missing newlines after drilldown result tags in XML output."
+msgstr "Added missing newlines after drilldown result tags in XML output."
+
+msgid "Supported truncate for grn_dat."
+msgstr "Supported truncate for grn_dat."
+
+msgid "Supported longest common prefix search by grn_dat."
+msgstr "Supported longest common prefix search by grn_dat."
+
+msgid "Fixes"
+msgstr "Fixes"
+
+msgid "[windows] Fixed inverted map type."
+msgstr "[windows] Fixed inverted map type."
+
+msgid "Fixed -Wno- compiler flag detection. [Patch by Arnaud Fontaine]"
+msgstr "Fixed -Wno- compiler flag detection. [Patch by Arnaud Fontaine]"
+
+msgid ""
+"Fixed a problem that ``groonga --version`` reports wrongly about MeCab. "
+"[#1209] [Patch by SHIDARA Yoji]"
+msgstr ""
+"Fixed a problem that ``groonga --version`` reports wrongly about MeCab. "
+"[#1209] [Patch by SHIDARA Yoji]"
+
+msgid "Added missing lock into ``grn_obj_remove()``."
+msgstr "Added missing lock into ``grn_obj_remove()``."
+
+msgid "Fixed Content-Type on error. [#1220] [Patch by SHIDARA Yoji]"
+msgstr "Fixed Content-Type on error. [#1220] [Patch by SHIDARA Yoji]"
+
+msgid ""
+"Fixed a problem that deleting SIS (Semi Infinite String) may keep a garbage."
+msgstr ""
+"Fixed a problem that deleting SIS (Semi Infinite String) may keep a garbage."
+
+msgid "Thanks"
+msgstr "Thanks"
+
+msgid "@uzulla"
+msgstr "@uzulla"
+
+msgid "Arnaud Fontaine"
+msgstr "Arnaud Fontaine"
+
+msgid "SHIDARA Yoji"
+msgstr "SHIDARA Yoji"
+
+msgid "Release 1.2.8 - 2011-11-29"
+msgstr "Release 1.2.8 - 2011-11-29"
+
+msgid ""
+"Object, table and column renamings are supported! These features require "
+"database re-creation. You can re-create your database by the following "
+"command::"
+msgstr ""
+"Object, table and column renamings are supported! These features require "
+"database re-creation. You can re-create your database by the following "
+"command::"
+
+msgid ""
+"Groonga 1.2.8 can open databases created by groonga 1.2.7 or earlier. But "
+"groonga 1.2.7 or earlier can't open databases created by groonga 1.2.8 or "
+"later."
+msgstr ""
+"Groonga 1.2.8 can open databases created by groonga 1.2.7 or earlier. But "
+"groonga 1.2.7 or earlier can't open databases created by groonga 1.2.8 or "
+"later."
+
+msgid "[grntest] Removed the upper limit to the number of bytes in one line."
+msgstr "[grntest] Removed the upper limit to the number of bytes in one line."
+
+msgid "[grntest] Added ``--pid-path`` option."
+msgstr "[grntest] Added ``--pid-path`` option."
+
+msgid "[deb] Enabled experimental zlib and lzo support."
+msgstr "[deb] Enabled experimental zlib and lzo support."
+
+msgid "[rpm] Enabled experimental zlib and lzo support."
+msgstr "[rpm] Enabled experimental zlib and lzo support."
+
+msgid "Supports truncation. [#892]"
+msgstr "Supports truncation. [#892]"
+
+msgid "Enabled grn_dat that is a read lock free double array implementation."
+msgstr "Enabled grn_dat that is a read lock free double array implementation."
+
+msgid "[pkg-config] Added groonga_version variable to groonga.pc."
+msgstr "[pkg-config] Added groonga_version variable to groonga.pc."
+
+msgid ""
+"Re-supported ``--disable-static``. [groonga-dev,00612] [Suggested by Kenichi "
+"Aramaki]"
+msgstr ""
+"Re-supported ``--disable-static``. [groonga-dev,00612] [Suggested by Kenichi "
+"Aramaki]"
+
+msgid "[munin] Stopped to install Munin plugins by default."
+msgstr "[munin] Stopped to install Munin plugins by default."
+
+msgid "Stopped to install RedHat platform related files by default."
+msgstr "Stopped to install RedHat platform related files by default."
+
+msgid "Supports object renaming. This requires DB re-creation. [#1167]"
+msgstr "Supports object renaming. This requires DB re-creation. [#1167]"
+
+msgid "[munin] Added a Munin plugin that measures throughput. [#1171]"
+msgstr "[munin] Added a Munin plugin that measures throughput. [#1171]"
+
+msgid ""
+"[geo] Improved geo_in_rectangle performance. The new implementation will be "
+"2x faster than the old implementation in many cases. [#1173]"
+msgstr ""
+"[geo] Improved geo_in_rectangle performance. The new implementation will be "
+"2x faster than the old implementation in many cases. [#1173]"
+
+msgid ""
+"[macports] Moved groonga's MacPorts to the official repository. [Imported by "
+"Hiroshi Umemoto]"
+msgstr ""
+"[macports] Moved groonga's MacPorts to the official repository. [Imported by "
+"Hiroshi Umemoto]"
+
+msgid ""
+"[geo] Changed the geo literal degree-to-msec conversion algorithm to round-"
+"off from truncation."
+msgstr ""
+"[geo] Changed the geo literal degree-to-msec conversion algorithm to round-"
+"off from truncation."
+
+msgid ""
+"Supports a table defrag. It defrags variable size value columns in the "
+"table. [#1175]"
+msgstr ""
+"Supports a table defrag. It defrags variable size value columns in the "
+"table. [#1175]"
+
+msgid "Removed associated path on remove. [#1180]"
+msgstr "Removed associated path on remove. [#1180]"
+
+msgid "[deb] Supports i386."
+msgstr "[deb] Supports i386."
+
+msgid "[rpm] Supports i386."
+msgstr "[rpm] Supports i386."
+
+msgid "[windows] Supports x86."
+msgstr "[windows] Supports x86."
+
+msgid ""
+"Fixed a bug that groonga crashes when accessing a zlib/lzo compressed "
+"column. Note that a compressed column access causes a memory leak. To "
+"resolve this, we need to improve API. We will do it in the future. [GtiHub#5]"
+"[GtiHub#6] [Reported by Takayuki Yamaguchi]"
+msgstr ""
+"Fixed a bug that groonga crashes when accessing a zlib/lzo compressed "
+"column. Note that a compressed column access causes a memory leak. To "
+"resolve this, we need to improve API. We will do it in the future. [GtiHub#5]"
+"[GtiHub#6] [Reported by Takayuki Yamaguchi]"
+
+msgid "Fixed a bug that unrelated column values are cleared in deletion."
+msgstr "Fixed a bug that unrelated column values are cleared in deletion."
+
+msgid ""
+"Fixed a bug that a wrong index is used in sorting. [#766] [Reported by "
+"Horikoshi Yuki]"
+msgstr ""
+"Fixed a bug that a wrong index is used in sorting. [#766] [Reported by "
+"Horikoshi Yuki]"
+
+msgid ""
+"[libedit] Fixed a bug that necessary initialization is omitted. [GitHub#7] "
+"[Patch by SHIDARA Yoji]"
+msgstr ""
+"[libedit] Fixed a bug that necessary initialization is omitted. [GitHub#7] "
+"[Patch by SHIDARA Yoji]"
+
+msgid "[doc] Fixed a typo in documentation. [GitHub#8] [Patch by zunda]"
+msgstr "[doc] Fixed a typo in documentation. [GitHub#8] [Patch by zunda]"
+
+msgid "Takayuki Yamaguchi"
+msgstr "Takayuki Yamaguchi"
+
+msgid "Horikoshi Yuki"
+msgstr "Horikoshi Yuki"
+
+msgid "zunda"
+msgstr "zunda"
+
+msgid "Hiroshi Umemoto"
+msgstr "Hiroshi Umemoto"
+
+msgid "Release 1.2.7 - 2011-10-29"
+msgstr "Release 1.2.7 - 2011-10-29"
+
+msgid ""
+"[libedit] Added error check for wide character to multibyte sequence "
+"conversion. [Reported by SHIDARA Yoji]"
+msgstr ""
+"[libedit] Added error check for wide character to multibyte sequence "
+"conversion. [Reported by SHIDARA Yoji]"
+
+msgid "Added grn_geo_estimate_in_rectangle()."
+msgstr "Added grn_geo_estimate_in_rectangle()."
+
+msgid "Added cursor API to geo search in rectangle."
+msgstr "Added cursor API to geo search in rectangle."
+
+msgid "Improved geo search in rectangle speed."
+msgstr "Improved geo search in rectangle speed."
+
+msgid "Added packages for Ubuntu 11.10 Oneiric Ocelot"
+msgstr "Added packages for Ubuntu 11.10 Oneiric Ocelot"
+
+msgid ""
+"[experimental] Supported Oracle Solaris 10 8/11. (just buildable with system "
+"gcc.)"
+msgstr ""
+"[experimental] Supported Oracle Solaris 10 8/11. (just buildable with system "
+"gcc.)"
+
+msgid "Fixed a typo in document. [Reported by @soundkitchen]"
+msgstr "Fixed a typo in document. [Reported by @soundkitchen]"
+
+msgid "@soundkitchen"
+msgstr "@soundkitchen"
+
+msgid "Release 1.2.6 - 2011-09-29"
+msgstr "Release 1.2.6 - 2011-09-29"
+
+msgid "Improved error message on type cast."
+msgstr "Improved error message on type cast."
+
+msgid "Added geo point value validation on type cast."
+msgstr "Added geo point value validation on type cast."
+
+msgid "Supported :doc:`/tutorial/query_expansion`."
+msgstr "Supported :doc:`/tutorial/query_expansion`."
+
+msgid ""
+"Added `--query_expansion` option to :doc:`/reference/commands/select` for "
+"query expansion."
+msgstr ""
+"Added `--query_expansion` option to :doc:`/reference/commands/select` for "
+"query expansion."
+
+msgid "Added geometry conversion macro between degree and msec."
+msgstr "Added geometry conversion macro between degree and msec."
+
+msgid "Supported type cast in :doc:`/reference/functions/geo_distance` ()."
+msgstr "Supported type cast in :doc:`/reference/functions/geo_distance` ()."
+
+msgid "Don't split tokens with full width space in command line. #986"
+msgstr "Don't split tokens with full width space in command line. #986"
+
+msgid "Supported conversion between TokyoGeoPoint and WGS84GeoPoint."
+msgstr "Supported conversion between TokyoGeoPoint and WGS84GeoPoint."
+
+msgid "Exported grn_geo_select_in_circle() and grn_geo_select_in_rectangle()."
+msgstr "Exported grn_geo_select_in_circle() and grn_geo_select_in_rectangle()."
+
+msgid "Supported CentOS 6."
+msgstr "Supported CentOS 6."
+
+msgid ""
+"Supported the current Debian GNU/Linux sid. Patch by SATOH Fumiyasu. GitHub#3"
+msgstr ""
+"Supported the current Debian GNU/Linux sid. Patch by SATOH Fumiyasu. GitHub#3"
+
+msgid "Fixed a bug that geo point is loaded as broken value."
+msgstr "Fixed a bug that geo point is loaded as broken value."
+
+msgid "SATOH Fumiyasu"
+msgstr "SATOH Fumiyasu"
+
+msgid "Release 1.2.5 - 2011-08-29"
+msgstr "Release 1.2.5 - 2011-08-29"
+
+msgid "Added experimental Windows installer support."
+msgstr "Added experimental Windows installer support."
+
+msgid "Accepted \"#\" and \"-\" as a valid name characters. #1043"
+msgstr "Accepted \"#\" and \"-\" as a valid name characters. #1043"
+
+msgid ""
+"Accepted all valid characters except \"_\" as the first character. #1043"
+msgstr ""
+"Accepted all valid characters except \"_\" as the first character. #1043"
+
+msgid ""
+"Supported `--each` for `[...]` form :doc:`/reference/commands/load`. #1044"
+msgstr ""
+"Supported `--each` for `[...]` form :doc:`/reference/commands/load`. #1044"
+
+msgid "Added documentation for :doc:`/reference/suggest`."
+msgstr "Added documentation for :doc:`/reference/suggest`."
+
+msgid ""
+"Supported threshold as `--frequency_threshold` and `--"
+"conditional_probability_threshold` options in all :doc:`/reference/commands/"
+"suggest` types. #1042"
+msgstr ""
+"Supported threshold as `--frequency_threshold` and `--"
+"conditional_probability_threshold` options in all :doc:`/reference/commands/"
+"suggest` types. #1042"
+
+msgid "[groonga-suggest-httpd] Supported log reopen by SIGUSR1. #1048"
+msgstr "[groonga-suggest-httpd] Supported log reopen by SIGUSR1. #1048"
+
+msgid "Supported string input for reference vector column value. #1051"
+msgstr "Supported string input for reference vector column value. #1051"
+
+msgid ""
+"[groonga-suggest-httpd] Added `--n-lines-per-log-file` option that changes "
+"log line limitation for a file."
+msgstr ""
+"[groonga-suggest-httpd] Added `--n-lines-per-log-file` option that changes "
+"log line limitation for a file."
+
+msgid ""
+"[groonga-suggest-httpd] Added `p` parameter for `--"
+"conditional_probability_threshold`."
+msgstr ""
+"[groonga-suggest-httpd] Added `p` parameter for `--"
+"conditional_probability_threshold`."
+
+msgid "Added GRN_CTX_PER_DB flag for grn_ctx_init() and grn_ctx_open(). #1053"
+msgstr "Added GRN_CTX_PER_DB flag for grn_ctx_init() and grn_ctx_open(). #1053"
+
+msgid "Exported grn_ctx_close(). #1035"
+msgstr "Exported grn_ctx_close(). #1035"
+
+msgid ""
+"Fixed a crash bug that invalid value is passed as match expression argument "
+"in :doc:`/reference/commands/select`. #1047"
+msgstr ""
+"Fixed a crash bug that invalid value is passed as match expression argument "
+"in :doc:`/reference/commands/select`. #1047"
+
+msgid "Fixed a bug that hash table cursor returns garbage records."
+msgstr "Fixed a bug that hash table cursor returns garbage records."
+
+msgid "Release 1.2.4 - 2011-07-29"
+msgstr "Release 1.2.4 - 2011-07-29"
+
+msgid "Re-supported ``*BSD``. (Reported by OBATA Akio)"
+msgstr "Re-supported ``*BSD``. (Reported by OBATA Akio)"
+
+msgid "Improved sed related portability. (Suggested by OBATA Akio)"
+msgstr "Improved sed related portability. (Suggested by OBATA Akio)"
+
+msgid "Re-supported Visual C++ 2008."
+msgstr "Re-supported Visual C++ 2008."
+
+msgid "Supported :doc:`/reference/commands/check` for hash table."
+msgstr "Supported :doc:`/reference/commands/check` for hash table."
+
+msgid ""
+"Ignored invalid _score in --sortby of :doc:`/reference/commands/select` for "
+"convenience. #1030"
+msgstr ""
+"Ignored invalid _score in --sortby of :doc:`/reference/commands/select` for "
+"convenience. #1030"
+
+msgid "Added document about :doc:`/reference/log`."
+msgstr "Added document about :doc:`/reference/log`."
+
+msgid "Supported ~/.editrc."
+msgstr "Supported ~/.editrc."
+
+msgid "Supported ~/.groonga-history."
+msgstr "Supported ~/.groonga-history."
+
+msgid "Fixed broken libedit support. (Reported by Daiki Ueno)"
+msgstr "Fixed broken libedit support. (Reported by Daiki Ueno)"
+
+msgid "Fixed source URL in ``*.spec`` (Reported by Daiki Ueno)"
+msgstr "Fixed source URL in ``*.spec`` (Reported by Daiki Ueno)"
+
+msgid "Fixed patricia trie cursor returns wrong records."
+msgstr "Fixed patricia trie cursor returns wrong records."
+
+msgid ""
+"Added missing database lock clear for grn_obj_clear_lock() for database."
+msgstr ""
+"Added missing database lock clear for grn_obj_clear_lock() for database."
+
+msgid ""
+"Fixed wrong record's column values deletion possible on record deletion."
+msgstr ""
+"Fixed wrong record's column values deletion possible on record deletion."
+
+msgid "OBATA Akio"
+msgstr "OBATA Akio"
+
+msgid "Daiki Ueno"
+msgstr "Daiki Ueno"
+
+msgid "Release 1.2.3 - 2011-06-29"
+msgstr "Release 1.2.3 - 2011-06-29"
+
+msgid "Added invalid table name check. #912"
+msgstr "Added invalid table name check. #912"
+
+msgid "Added groonga-query-log-analyzer that analyze query log."
+msgstr "Added groonga-query-log-analyzer that analyze query log."
+
+msgid "groonga command shows failed command on error."
+msgstr "groonga command shows failed command on error."
+
+msgid "groonga command shows file name and line no on error."
+msgstr "groonga command shows file name and line no on error."
+
+msgid ""
+"Improved error message of :doc:`/reference/commands/column_create`. #952"
+msgstr ""
+"Improved error message of :doc:`/reference/commands/column_create`. #952"
+
+msgid "Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)"
+msgstr "Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)"
+
+msgid "fix get command crash. (Reported by OBATA Akio)"
+msgstr "fix get command crash. (Reported by OBATA Akio)"
+
+msgid "fix elapsed time overflow in query log. #944"
+msgstr "fix elapsed time overflow in query log. #944"
+
+msgid "Release 1.2.2 - 2011-05-29"
+msgstr "Release 1.2.2 - 2011-05-29"
+
+msgid "Added packages for Ubuntu 11.04 Natty Narwhal."
+msgstr "Added packages for Ubuntu 11.04 Natty Narwhal."
+
+msgid "Removed packages for Ubuntu 10.10 Maverick Meerkat."
+msgstr "Removed packages for Ubuntu 10.10 Maverick Meerkat."
+
+msgid "RPM: Split server related packages to groonga-server package."
+msgstr "RPM: Split server related packages to groonga-server package."
+
+msgid "suggest: Added target object name into error messages."
+msgstr "suggest: Added target object name into error messages."
+
+msgid "document: Started English support. (not completed yet.)"
+msgstr "document: Started English support. (not completed yet.)"
+
+msgid "groonga-suggest-httpd: Added --disable-max-fd-check option."
+msgstr "groonga-suggest-httpd: Added --disable-max-fd-check option."
+
+msgid ""
+"groonga: Renamed :option:`groonga -a` and :option:`groonga --address` "
+"options to :option:`groonga --bind-address` option."
+msgstr ""
+"groonga: Renamed :option:`groonga -a` and :option:`groonga --address` "
+"options to :option:`groonga --bind-address` option."
+
+msgid "groonga-suggest-httpd: Renamed --address option to --bind-address."
+msgstr "groonga-suggest-httpd: Renamed --address option to --bind-address."
+
+msgid ""
+"Changed admin HTML install directory to $PREFIX/share/groonga/html/admin/ "
+"from $PREFIX/share/groonga/admin_html/."
+msgstr ""
+"Changed admin HTML install directory to $PREFIX/share/groonga/html/admin/ "
+"from $PREFIX/share/groonga/admin_html/."
+
+msgid ""
+"groonga-suggest-httpd: Used \"application/json\" for JSON response instead "
+"of \"text/javascript\"."
+msgstr ""
+"groonga-suggest-httpd: Used \"application/json\" for JSON response instead "
+"of \"text/javascript\"."
+
+msgid ""
+"Windows: Used DLL relative path instead of executable file relative path."
+msgstr ""
+"Windows: Used DLL relative path instead of executable file relative path."
+
+msgid "MeCab: Added error message from MeCab on MeCab initialize error."
+msgstr "MeCab: Added error message from MeCab on MeCab initialize error."
+
+msgid "suggest: Added prefix_search parameter to suggest command. #909"
+msgstr "suggest: Added prefix_search parameter to suggest command. #909"
+
+msgid ""
+"plugin: Added grn_plugin_get_system_plugins_dir() and "
+"grn_plugin_get_suffix() API."
+msgstr ""
+"plugin: Added grn_plugin_get_system_plugins_dir() and "
+"grn_plugin_get_suffix() API."
+
+msgid "Added grn_obj_is_builtin() API."
+msgstr "Added grn_obj_is_builtin() API."
+
+msgid ":doc:`/reference/commands/load`: Added table name check. #934"
+msgstr ":doc:`/reference/commands/load`: Added table name check. #934"
+
+msgid "Showed invalid name context in error message. #935"
+msgstr "Showed invalid name context in error message. #935"
+
+msgid "Fixed a data breaking bug on multi process update. #890"
+msgstr "Fixed a data breaking bug on multi process update. #890"
+
+msgid "1.2.1リリース - 2011-04-29"
+msgstr "1.2.1リリース - 2011-04-29"
+
+msgid "改良"
+msgstr "改良"
+
+msgid "suggestコマンドにthresholdパラメーターを追加。#895"
+msgstr "suggestコマンドにthresholdパラメーターを追加。#895"
+
+msgid "suggestのHTTPサーバにlimitパラメーターを追加。#899"
+msgstr "suggestのHTTPサーバにlimitパラメーターを追加。#899"
+
+msgid "grntest: SIGINTでの中断に対応。"
+msgstr "grntest: SIGINTでの中断に対応。"
+
+msgid "修正"
+msgstr "修正"
+
+msgid ""
+"同時に複数のデータベースを開いているとき、1つでもデータベー スを閉じると関連"
+"するプラグインも閉じられてしまう問題を修正。 #894"
+msgstr ""
+"同時に複数のデータベースを開いているとき、1つでもデータベー スを閉じると関連"
+"するプラグインも閉じられてしまう問題を修正。 #894"
+
+msgid ""
+"configureの--helpで出力される--with-deafult-encodingの値が 間違っていた問題を"
+"修正。（ICHII Takashiさんが報告）"
+msgstr ""
+"configureの--helpで出力される--with-deafult-encodingの値が 間違っていた問題を"
+"修正。（ICHII Takashiさんが報告）"
+
+msgid "チュートリアル中のtypoを修正。（moozさんが修正）"
+msgstr "チュートリアル中のtypoを修正。（moozさんが修正）"
+
+msgid "感謝"
+msgstr "感謝"
+
+msgid "ICHII Takashiさん"
+msgstr "ICHII Takashiさん"
+
+msgid "moozさん"
+msgstr "moozさん"
+
+msgid "1.2.0リリース - 2011-03-29"
+msgstr "1.2.0リリース - 2011-03-29"
+
+msgid "MacPortsでのインストールドキュメントを追加。"
+msgstr "MacPortsでのインストールドキュメントを追加。"
+
+msgid "Homebrewでのインストールドキュメントを追加。"
+msgstr "Homebrewでのインストールドキュメントを追加。"
+
+msgid "WindowsではMinGWでもpthreadを使わないようにした。"
+msgstr "WindowsではMinGWでもpthreadを使わないようにした。"
+
+msgid "オーバーフローチェックを強化。"
+msgstr "オーバーフローチェックを強化。"
+
+msgid "位置情報の入力値チェックを強化。"
+msgstr "位置情報の入力値チェックを強化。"
+
+msgid "インデックスを用いたジオサーチの例をチュートリアルに追加。 #438"
+msgstr "インデックスを用いたジオサーチの例をチュートリアルに追加。 #438"
+
+msgid "Debian GNU/Linux wheezyのパッケージを追加。"
+msgstr "Debian GNU/Linux wheezyのパッケージを追加。"
+
+msgid "Debian GNU/Linux lennyのパッケージを削除。"
+msgstr "Debian GNU/Linux lennyのパッケージを削除。"
+
+msgid ""
+"Debianパッケージをcdbsベースからdebhelperベースへ移行。 パッケージ名の変更あ"
+"り。 #887"
+msgstr ""
+"Debianパッケージをcdbsベースからdebhelperベースへ移行。 パッケージ名の変更あ"
+"り。 #887"
+
+msgid ""
+"MeCabトークナイザーの読み込みエラーを無視するようにした。た だし、ログには残"
+"る。 #893"
+msgstr ""
+"MeCabトークナイザーの読み込みエラーを無視するようにした。た だし、ログには残"
+"る。 #893"
+
+msgid ""
+"autoconf 2.59環境において、ファイルシステムのルート直下に groongaディレクトリ"
+"を作成しようとする問題を修正。 #833"
+msgstr ""
+"autoconf 2.59環境において、ファイルシステムのルート直下に groongaディレクトリ"
+"を作成しようとする問題を修正。 #833"
+
+msgid "JSONPが動作しなくなっていた問題を修正。"
+msgstr "JSONPが動作しなくなっていた問題を修正。"
+
+msgid ""
+"MeCabトークナイザーの読み込みに失敗したときにクラッシュする問題を修正。 "
+"（@tomotaka_itoさんが報告）"
+msgstr ""
+"MeCabトークナイザーの読み込みに失敗したときにクラッシュする問題を修正。 "
+"（@tomotaka_itoさんが報告）"
+
+msgid "[非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。"
+msgstr "[非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。"
+
+msgid ""
+":doc:`/reference/functions/geo_in_rectangle` の ``top_left`` と "
+"``bottom_right`` に同じ位置を指定するとクラッシュする問題を修正。"
+msgstr ""
+":doc:`/reference/functions/geo_in_rectangle` の ``top_left`` と "
+"``bottom_right`` に同じ位置を指定するとクラッシュする問題を修正。"
+
+msgid "メモリリークを修正。"
+msgstr "メモリリークを修正。"
+
+msgid "小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880"
+msgstr ""
+"小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880"
+
+msgid ":doc:`/reference/commands/column_list` のドキュメントを修正。 #758"
+msgstr ":doc:`/reference/commands/column_list` のドキュメントを修正。 #758"
+
+msgid ":doc:`/reference/commands/table_list` のドキュメントを修正。"
+msgstr ":doc:`/reference/commands/table_list` のドキュメントを修正。"
+
+msgid ""
+":doc:`/reference/commands/load` で_valueを指定するとメモリリークする問題を修"
+"正。 #878"
+msgstr ""
+":doc:`/reference/commands/load` で_valueを指定するとメモリリークする問題を修"
+"正。 #878"
+
+msgid ":doc:`/reference/commands/load` でクラッシュする問題を修正。 #661"
+msgstr ":doc:`/reference/commands/load` でクラッシュする問題を修正。 #661"
+
+msgid "実験的"
+msgstr "実験的"
+
+msgid "grn_table_truncate()を追加。（実験的。問題あり）"
+msgstr "grn_table_truncate()を追加。（実験的。問題あり）"
+
+msgid "truncateコマンドを追加。（実験的。問題あり） #888"
+msgstr "truncateコマンドを追加。（実験的。問題あり） #888"
+
+msgid "@tomotaka_itoさん"
+msgstr "@tomotaka_itoさん"

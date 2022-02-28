@@ -1,0 +1,50 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2016-03-23 13:57+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "How to report a bug"
+msgstr "バグレポートの送り方"
+
+msgid "There are two ways to report a bug:"
+msgstr "バグレポートを送るには2つやり方があります:"
+
+msgid "Submit a bug to the issue tracker"
+msgstr "課題追跡システムへ登録する"
+
+msgid "Report a bug to the mailing list"
+msgstr "メーリングリストへ報告する"
+
+msgid "You can use either way It makes no difference to us."
+msgstr "どちらのやり方でも大丈夫です。"
+
+msgid ""
+"Groonga project uses `GitHub issue tracker <https://github.com/groonga/"
+"groonga/issues>`_."
+msgstr ""
+"Groongaプロジェクトは `Github issue tracker <https://github.com/groonga/"
+"groonga/issues>`_ を使っています。"
+
+msgid "You can use English or Japanese to report a bug."
+msgstr "GitHub issue tracker へのバグレポートは英語または日本語で大丈夫です。"
+
+msgid ""
+"Groonga project has :doc:`/community` for discussing about groonga. Please "
+"send a mail that describes a bug."
+msgstr ""
+"GroongaプロジェクトではGroongaについて議論するための :doc:`/community` があり"
+"ます。バグを説明したメールを送ってください。"

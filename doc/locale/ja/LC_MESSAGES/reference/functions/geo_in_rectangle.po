@@ -1,0 +1,88 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "geo_in_rectangle"
+msgstr ""
+
+msgid "名前"
+msgstr ""
+
+msgid "geo_in_rectangle - 座標が矩形の範囲内に存在するかどうかを調べます。"
+msgstr ""
+
+msgid "書式"
+msgstr ""
+
+msgid "説明"
+msgstr ""
+
+msgid ""
+"Groonga組込関数の一つであるgeo_in_rectangleについて説明します。組込関数は、"
+"script形式のgrn_expr中で呼び出すことができます。"
+msgstr ""
+
+msgid ""
+"geo_in_rectangle() 関数は、pointに指定した座標が、top_leftとbottom_rightがな"
+"す矩形の範囲内にあるかどうかを調べます。"
+msgstr ""
+
+msgid "引数"
+msgstr ""
+
+msgid "``point``"
+msgstr ""
+
+msgid ""
+"矩形の範囲内に存在するかどうかを調べる座標を指定します。Point型の値を指定でき"
+"ます。 [#]_"
+msgstr ""
+
+msgid "``top_left``"
+msgstr ""
+
+msgid ""
+"矩形の左上隅となる座標を指定します。Point型の値、あるいは座標を示す文字列を指"
+"定できます。"
+msgstr ""
+
+msgid "``bottom_right``"
+msgstr ""
+
+msgid ""
+"矩形の右下隅となる座標を指定します。Point型の値、あるいは座標を示す文字列を指"
+"定できます。"
+msgstr ""
+
+msgid "返値"
+msgstr ""
+
+msgid "pointに指定した座標が矩形の範囲内にあるかどうかをBool型の値で返します。"
+msgstr ""
+
+msgid "例"
+msgstr ""
+
+msgid "脚注"
+msgstr ""
+
+msgid ""
+"TokyoGeoPoint(日本測地系座標)かWGS84GeoPoint(世界測地系座標)のいずれかを指定"
+"できます。"
+msgstr ""

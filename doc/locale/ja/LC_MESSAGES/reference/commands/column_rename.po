@@ -1,0 +1,131 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``column_rename``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``column_rename`` command renames a column."
+msgstr "``column_rename`` コマンドはカラム名を変更します。"
+
+msgid ""
+"It is a light operation. It just changes a relationship between name and the "
+"column object. It doesn't copy column values."
+msgstr ""
+"これは軽い操作です。名前とカラムオブジェクト間の関係を変更するだけです。カラ"
+"ムの値をコピーしません。"
+
+msgid ""
+"It is a dangerous operation. You must stop all operations including read "
+"operations while you run ``column_rename``. If the following case is "
+"occurred, Groonga process may be crashed:"
+msgstr ""
+"これは危険な操作です。 ``column_rename`` を実行している間、読み取り操作を含む"
+"全ての操作を停止しなければいけません。以下のケースが起こった場合、Groongaプロ"
+"セスはクラッシュするかもしれません。"
+
+msgid ""
+"Starts an operation (like ``select``) that accesses the column to be renamed "
+"by the current column name. The current column name is called as ``the old "
+"column name`` in the below because the column name is renamed."
+msgstr ""
+"現在のカラム名で名前を変更しようとしているカラムにアクセスする操作（たとえば "
+"``select`` ）を開始します。以降、現在のカラム名を ``古いカラム名`` と呼ぶこと"
+"にします。これは、今、このカラム名を変更しようとしているからです。"
+
+msgid "Runs ``column_rename``. The ``select`` is still running."
+msgstr "``column_rename`` を実行します。 ``select`` は実行中です。"
+
+msgid ""
+"The ``select`` accesses the column to be renamed by the old column name. But "
+"the ``select`` can't find the column by the old name because the column has "
+"been renamed to the new column name. It may crash the Groonga process."
+msgstr ""
+"``select`` は古いカラム名で名前が変更されたカラムにアクセスします。しかし、カ"
+"ラムはすでに新しいカラム名に変更されているため、 ``select`` は古いカラム名で"
+"カラムを見つけることができません。このときGroongaプロセスがクラッシュするかも"
+"しれません。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes three parameters."
+msgstr "このコマンドの引数は3つです。"
+
+msgid "All parameters are required::"
+msgstr "すべての引数は必須です::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is a simple example of ``column_rename`` command."
+msgstr "以下は ``column_rename`` コマンドの簡単な使用例です。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes parameters of ``column_rename``."
+msgstr "このセクションでは ``column_rename`` の引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "All parameters are required."
+msgstr "すべての引数は必須です。"
+
+msgid "``table``"
+msgstr ""
+
+msgid "Specifies the name of table that has the column to be renamed."
+msgstr "名前を変更したいカラムが所属するテーブルの名前を指定します。"
+
+msgid "``name``"
+msgstr ""
+
+msgid "Specifies the column name to be renamed."
+msgstr "名前を変更するカラムの名前を指定します。"
+
+msgid "``new_name``"
+msgstr ""
+
+msgid "Specifies the new column name."
+msgstr "新しいカラム名を指定します。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "``HEADER``"
+msgstr ""
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "``SUCCEEDED_OR_NOT``"
+msgstr ""
+
+msgid "It is ``true`` on success, ``false`` otherwise."
+msgstr "コマンドの実行が成功するとtrueを返します。失敗するとfalseを返します。"

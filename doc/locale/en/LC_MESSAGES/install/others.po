@@ -1,0 +1,431 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Others"
+msgstr "Others"
+
+msgid ""
+"This section describes how to install Groonga from source on UNIX like "
+"environment."
+msgstr ""
+"This section describes how to install Groonga from source on UNIX like "
+"environment."
+
+msgid ""
+"To get more detail about installing Groonga from source on the specific "
+"environment, find the document for the specific environment from :doc:`/"
+"install`."
+msgstr ""
+"To get more detail about installing Groonga from source on the specific "
+"environment, find the document for the specific environment from :doc:`/"
+"install`."
+
+msgid "Dependencies"
+msgstr "Dependencies"
+
+msgid ""
+"Groonga doesn't require any special libraries but requires some tools for "
+"build."
+msgstr ""
+"Groonga doesn't require any special libraries but requires some tools for "
+"build."
+
+msgid "Tools"
+msgstr "Tools"
+
+msgid "Here are required tools:"
+msgstr "Here are required tools:"
+
+msgid "``wget``, ``curl`` or Web browser for downloading source archive"
+msgstr "``wget``, ``curl`` or Web browser for downloading source archive"
+
+msgid "``tar`` and ``gzip`` for extracting source archive"
+msgstr "``tar`` and ``gzip`` for extracting source archive"
+
+msgid "shell (many shells such as ``dash``, ``bash`` and ``zsh`` will work)"
+msgstr "shell (many shells such as ``dash``, ``bash`` and ``zsh`` will work)"
+
+msgid ""
+"C compiler and C++ compiler (``gcc`` and ``g++`` are supported but other "
+"compilers may work)"
+msgstr ""
+"C compiler and C++ compiler (``gcc`` and ``g++`` are supported but other "
+"compilers may work)"
+
+msgid "``make`` (GNU make is supported but other make like BSD make will work)"
+msgstr ""
+"``make`` (GNU make is supported but other make like BSD make will work)"
+
+msgid "You must get them ready."
+msgstr "You must get them ready."
+
+msgid ""
+"You can use `CMake <http://www.cmake.org/>`_ instead of shell but this "
+"document doesn't describe about building with CMake."
+msgstr ""
+"You can use `CMake <http://www.cmake.org/>`_ instead of shell but this "
+"document doesn't describe about building with CMake."
+
+msgid "Here are optional tools:"
+msgstr "Here are optional tools:"
+
+msgid ""
+"`pkg-config <http://www.freedesktop.org/wiki/Software/pkg-config>`_ for "
+"detecting libraries"
+msgstr ""
+"`pkg-config <http://www.freedesktop.org/wiki/Software/pkg-config>`_ for "
+"detecting libraries"
+
+msgid "`sudo <http://www.gratisoft.us/sudo/>`_ for installing built Groonga"
+msgstr "`sudo <http://www.gratisoft.us/sudo/>`_ for installing built Groonga"
+
+msgid "You must get them ready if you want to use optional libraries."
+msgstr "You must get them ready if you want to use optional libraries."
+
+msgid "Libraries"
+msgstr "Libraries"
+
+msgid "All libraries are optional. Here are optional libraries:"
+msgstr "All libraries are optional. Here are optional libraries:"
+
+msgid ""
+"`MeCab <https://taku910.github.io/mecab/>`_ for tokenizing full-text search "
+"target document by morphological analysis"
+msgstr ""
+"`MeCab <https://taku910.github.io/mecab/>`_ for tokenizing full-text search "
+"target document by morphological analysis"
+
+msgid ""
+"`KyTea <http://www.phontron.com/kytea/>`_ for tokenizing full-text search "
+"target document by morphological analysis"
+msgstr ""
+"`KyTea <http://www.phontron.com/kytea/>`_ for tokenizing full-text search "
+"target document by morphological analysis"
+
+msgid "`ZeroMQ <http://www.zeromq.org/>`_ for :doc:`/reference/suggest`"
+msgstr "`ZeroMQ <http://www.zeromq.org/>`_ for :doc:`/reference/suggest`"
+
+msgid "`libevent <http://libevent.org/>`_ for :doc:`/reference/suggest`"
+msgstr "`libevent <http://libevent.org/>`_ for :doc:`/reference/suggest`"
+
+msgid ""
+"`MessagePack <http://msgpack.org/>`_ for supporting MessagePack output and :"
+"doc:`/reference/suggest`"
+msgstr ""
+"`MessagePack <http://msgpack.org/>`_ for supporting MessagePack output and :"
+"doc:`/reference/suggest`"
+
+msgid ""
+"`libedit <http://www.thrysoee.dk/editline/>`_ for command line editing in :"
+"doc:`/reference/executables/groonga`"
+msgstr ""
+"`libedit <http://www.thrysoee.dk/editline/>`_ for command line editing in :"
+"doc:`/reference/executables/groonga`"
+
+msgid "`zlib <http://zlib.net/>`_ for compressing column value"
+msgstr "`zlib <http://zlib.net/>`_ for compressing column value"
+
+msgid "`LZ4 <https://lz4.github.io/lz4/>`_ for compressing column value"
+msgstr "`LZ4 <https://lz4.github.io/lz4/>`_ for compressing column value"
+
+msgid ""
+"`Zstandard <https://facebook.github.io/zstd/>`_ for compressing column value"
+msgstr ""
+"`Zstandard <https://facebook.github.io/zstd/>`_ for compressing column value"
+
+msgid ""
+"If you want to use those all or some libraries, you need to install them "
+"before installing Groonga."
+msgstr ""
+"If you want to use those all or some libraries, you need to install them "
+"before installing Groonga."
+
+msgid "Build from source"
+msgstr "Build from source"
+
+msgid ""
+"Groonga uses GNU build system. So the following is the simplest build steps::"
+msgstr ""
+"Groonga uses GNU build system. So the following is the simplest build steps::"
+
+msgid ""
+"After the above steps, :doc:`/reference/executables/groonga` is found in ``/"
+"usr/local/bin/groonga``."
+msgstr ""
+"After the above steps, :doc:`/reference/executables/groonga` is found in ``/"
+"usr/local/bin/groonga``."
+
+msgid ""
+"The default build will work well but you can customize Groonga at "
+"``configure`` step."
+msgstr ""
+"The default build will work well but you can customize Groonga at "
+"``configure`` step."
+
+msgid "The following describes details about each step."
+msgstr "The following describes details about each step."
+
+msgid "``configure``"
+msgstr "``configure``"
+
+msgid ""
+"First, you need to run ``configure``. Here are important ``configure`` "
+"options:"
+msgstr ""
+"First, you need to run ``configure``. Here are important ``configure`` "
+"options:"
+
+msgid "``--prefix=PATH``"
+msgstr "``--prefix=PATH``"
+
+msgid ""
+"Specifies the install base directory. Groonga related files are installed "
+"under ``${PATH}/`` directory."
+msgstr ""
+"Specifies the install base directory. Groonga related files are installed "
+"under ``${PATH}/`` directory."
+
+msgid ""
+"The default is ``/usr/local``. In this case, :doc:`/reference/executables/"
+"groonga` is installed into ``/usr/local/bin/groonga``."
+msgstr ""
+"The default is ``/usr/local``. In this case, :doc:`/reference/executables/"
+"groonga` is installed into ``/usr/local/bin/groonga``."
+
+msgid ""
+"Here is an example that installs Groonga into ``~/local`` for an user use "
+"instead of system wide use::"
+msgstr ""
+"Here is an example that installs Groonga into ``~/local`` for an user use "
+"instead of system wide use::"
+
+msgid "``--localstatedir=PATH``"
+msgstr "``--localstatedir=PATH``"
+
+msgid ""
+"Specifies the base directory to place modifiable file such as log file, PID "
+"file and database files. For example, log file is placed at ``${PATH}/log/"
+"groonga.log``."
+msgstr ""
+"Specifies the base directory to place modifiable file such as log file, PID "
+"file and database files. For example, log file is placed at ``${PATH}/log/"
+"groonga.log``."
+
+msgid "The default is ``/usr/local/var``."
+msgstr "The default is ``/usr/local/var``."
+
+msgid ""
+"Here is an example that system wide ``/var`` is used for modifiable files::"
+msgstr ""
+"Here is an example that system wide ``/var`` is used for modifiable files::"
+
+msgid "``--with-log-path=PATH``"
+msgstr "``--with-log-path=PATH``"
+
+msgid ""
+"Specifies the default log file path. You can override the default log path "
+"is :doc:`/reference/executables/groonga` command's ``--log-path`` command "
+"line option. So this option is not critical build option. It's just for "
+"convenient."
+msgstr ""
+"Specifies the default log file path. You can override the default log path "
+"is :doc:`/reference/executables/groonga` command's ``--log-path`` command "
+"line option. So this option is not critical build option. It's just for "
+"convenient."
+
+msgid ""
+"The default is ``/usr/local/var/log/groonga.log``. The ``/usr/local/var`` "
+"part is changed by ``--localstatedir`` option."
+msgstr ""
+"The default is ``/usr/local/var/log/groonga.log``. The ``/usr/local/var`` "
+"part is changed by ``--localstatedir`` option."
+
+msgid ""
+"Here is an example that log file is placed into shared NFS directory ``/nfs/"
+"log/groonga.log``::"
+msgstr ""
+"Here is an example that log file is placed into shared NFS directory ``/nfs/"
+"log/groonga.log``::"
+
+msgid "``--with-default-encoding=ENCODING``"
+msgstr "``--with-default-encoding=ENCODING``"
+
+msgid ""
+"Specifies the default encoding. Available encodings are ``euc_jp``, "
+"``sjis``, ``utf8``, ``latin1``, ``koi8r`` and ``none``."
+msgstr ""
+"Specifies the default encoding. Available encodings are ``euc_jp``, "
+"``sjis``, ``utf8``, ``latin1``, ``koi8r`` and ``none``."
+
+msgid "The default is ``utf8``."
+msgstr "The default is ``utf8``."
+
+msgid "Here is an example that Shift_JIS is used as the default encoding::"
+msgstr "Here is an example that Shift_JIS is used as the default encoding::"
+
+msgid "``--with-match-escalation-threshold=NUMBER``"
+msgstr "``--with-match-escalation-threshold=NUMBER``"
+
+msgid ""
+"Specifies the default match escalation threshold. See :ref:`select-match-"
+"escalation-threshold` about match escalation threshold. -1 means that match "
+"operation never escalate."
+msgstr ""
+"Specifies the default match escalation threshold. See :ref:`select-match-"
+"escalation-threshold` about match escalation threshold. -1 means that match "
+"operation never escalate."
+
+msgid "The default is 0."
+msgstr "The default is 0."
+
+msgid "Here is an example that match escalation isn't used by default::"
+msgstr "Here is an example that match escalation isn't used by default::"
+
+msgid "``--with-zlib``"
+msgstr "``--with-zlib``"
+
+msgid "Enables column value compression by zlib."
+msgstr "Enables column value compression by zlib."
+
+msgid "The default is disabled."
+msgstr "The default is disabled."
+
+msgid "Here is an example that enables column value compression by zlib::"
+msgstr "Here is an example that enables column value compression by zlib::"
+
+msgid "``--with-lz4``"
+msgstr "``--with-lz4``"
+
+msgid "Enables column value compression by LZ4."
+msgstr "Enables column value compression by LZ4."
+
+msgid "Here is an example that enables column value compression by LZ4::"
+msgstr "Here is an example that enables column value compression by LZ4::"
+
+msgid "``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``"
+msgstr "``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``"
+
+msgid ""
+"Specifies where MessagePack is installed. If MessagePack isn't installed "
+"with ``--prefix=/usr``, you need to specify this option with path that you "
+"use for building MessagePack."
+msgstr ""
+"Specifies where MessagePack is installed. If MessagePack isn't installed "
+"with ``--prefix=/usr``, you need to specify this option with path that you "
+"use for building MessagePack."
+
+msgid ""
+"If you installed MessagePack with ``--prefix=$HOME/local`` option, you "
+"should specify ``--with-message-pack=$HOME/local`` to Groonga's "
+"``configure``."
+msgstr ""
+"If you installed MessagePack with ``--prefix=$HOME/local`` option, you "
+"should specify ``--with-message-pack=$HOME/local`` to Groonga's "
+"``configure``."
+
+msgid "The default is ``/usr``."
+msgstr "The default is ``/usr``."
+
+msgid ""
+"Here is an example that uses MessagePack built with ``--prefix=$HOME/local`` "
+"option::"
+msgstr ""
+"Here is an example that uses MessagePack built with ``--prefix=$HOME/local`` "
+"option::"
+
+msgid "``--with-munin-plugins``"
+msgstr "``--with-munin-plugins``"
+
+msgid ""
+"Installs Munin plugins for Groonga. They are installed into ``${PREFIX}/"
+"share/groonga/munin/plugins/``."
+msgstr ""
+"Installs Munin plugins for Groonga. They are installed into ``${PREFIX}/"
+"share/groonga/munin/plugins/``."
+
+msgid "Those plugins are not installed by default."
+msgstr "Those plugins are not installed by default."
+
+msgid "Here is an example that installs Munin plugins for Groonga::"
+msgstr "Here is an example that installs Munin plugins for Groonga::"
+
+msgid "``--with-package-platform=PLATFORM``"
+msgstr "``--with-package-platform=PLATFORM``"
+
+msgid ""
+"Installs platform specific system management files such as init script. "
+"Available platforms are ``centos``, ``centos5``, ``centos6``, ``centos7`` "
+"and ``fedora``. Platform starts with ``centos`` are for Red Hat and Red Hat "
+"clone distributions such as CentOS. If ``centos`` is specified, distribution "
+"version is guessed. ``fedora`` is for Fedora."
+msgstr ""
+"Installs platform specific system management files such as init script. "
+"Available platforms are ``centos``, ``centos5``, ``centos6``, ``centos7`` "
+"and ``fedora``. Platform starts with ``centos`` are for Red Hat and Red Hat "
+"clone distributions such as CentOS. If ``centos`` is specified, distribution "
+"version is guessed. ``fedora`` is for Fedora."
+
+msgid "Those system management files are not installed by default."
+msgstr "Those system management files are not installed by default."
+
+msgid ""
+"Here is an example that installs CentOS specific system management files::"
+msgstr ""
+"Here is an example that installs CentOS specific system management files::"
+
+msgid "``--help``"
+msgstr "``--help``"
+
+msgid "Shows all ``configure`` options."
+msgstr "Shows all ``configure`` options."
+
+msgid "``make``"
+msgstr "``make``"
+
+msgid "``configure`` is succeeded, you can build Groonga by ``make``::"
+msgstr "``configure`` is succeeded, you can build Groonga by ``make``::"
+
+msgid ""
+"If you have multi cores CPU, you can make faster by using ``-j`` option. If "
+"you have 4 cores CPU, it's good for using ``-j4`` option::"
+msgstr ""
+"If you have multi cores CPU, you can make faster by using ``-j`` option. If "
+"you have 4 cores CPU, it's good for using ``-j4`` option::"
+
+msgid ""
+"If you get some errors by ``make``, please report them to us: :doc:`/"
+"contribution/report`"
+msgstr ""
+"If you get some errors by ``make``, please report them to us: :doc:`/"
+"contribution/report`"
+
+msgid "``make install``"
+msgstr "``make install``"
+
+msgid "Now, you can install built Groonga!::"
+msgstr "Now, you can install built Groonga!::"
+
+msgid ""
+"If you have write permission for ``${PREFIX}``, you don't need to use "
+"``sudo``. e.g. ``--prefix=$HOME/local`` case. In this case, use ``make "
+"install``::"
+msgstr ""
+"If you have write permission for ``${PREFIX}``, you don't need to use "
+"``sudo``. e.g. ``--prefix=$HOME/local`` case. In this case, use ``make "
+"install``::"

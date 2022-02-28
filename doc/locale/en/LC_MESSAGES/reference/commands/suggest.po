@@ -1,0 +1,297 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``suggest``"
+msgstr "``suggest``"
+
+msgid ""
+"The suggest feature specification isn't stable. The specification may be "
+"changed."
+msgstr ""
+"The suggest feature specification isn't stable. The specification may be "
+"changed."
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "suggest - returns completion, correction and/or suggestion for a query."
+msgstr ""
+"suggest - returns completion, correction and/or suggestion for a query."
+
+msgid ""
+"The suggest command returns completion, correction and/or suggestion for a "
+"specified query."
+msgstr ""
+"The suggest command returns completion, correction and/or suggestion for a "
+"specified query."
+
+msgid ""
+"See :doc:`/reference/suggest/introduction` about completion, correction and "
+"suggestion."
+msgstr ""
+"See :doc:`/reference/suggest/introduction` about completion, correction and "
+"suggestion."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Here are learned data for completion."
+msgstr "Here are learned data for completion."
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "Here are learned data for correction."
+msgstr "Here are learned data for correction."
+
+msgid "Here are learned data for suggestion."
+msgstr "Here are learned data for suggestion."
+
+msgid "Here is a completion example."
+msgstr "Here is a completion example."
+
+msgid "Here is a correction example."
+msgstr "Here is a correction example."
+
+msgid "Here is a suggestion example."
+msgstr "Here is a suggestion example."
+
+msgid "Here is a mixed example."
+msgstr "Here is a mixed example."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "``types``"
+msgstr "``types``"
+
+msgid "Specifies what types are returned by the suggest command."
+msgstr "Specifies what types are returned by the suggest command."
+
+msgid "Here are available types:"
+msgstr "Here are available types:"
+
+msgid "``complete``"
+msgstr "``complete``"
+
+msgid "The suggest command does completion."
+msgstr "The suggest command does completion."
+
+msgid "``correct``"
+msgstr "``correct``"
+
+msgid "The suggest command does correction."
+msgstr "The suggest command does correction."
+
+msgid "The suggest command does suggestion."
+msgstr "The suggest command does suggestion."
+
+msgid ""
+"You can specify one or more types separated by ``|``. Here are examples:"
+msgstr ""
+"You can specify one or more types separated by ``|``. Here are examples:"
+
+msgid "It returns correction::"
+msgstr "It returns correction::"
+
+msgid "It returns correction and suggestion::"
+msgstr "It returns correction and suggestion::"
+
+msgid "It returns complete, correction and suggestion::"
+msgstr "It returns complete, correction and suggestion::"
+
+msgid "``table``"
+msgstr "``table``"
+
+msgid ""
+"Specifies table name that has ``item_${DATA_SET_NAME}`` format. For example, "
+"``item_query`` is a table name if you created dataset by the following "
+"command::"
+msgstr ""
+"Specifies table name that has ``item_${DATA_SET_NAME}`` format. For example, "
+"``item_query`` is a table name if you created dataset by the following "
+"command::"
+
+msgid "``column``"
+msgstr "``column``"
+
+msgid ""
+"Specifies a column name that has furigana in Katakana in ``table`` table."
+msgstr ""
+"Specifies a column name that has furigana in Katakana in ``table`` table."
+
+msgid "``query``"
+msgstr "``query``"
+
+msgid "Specifies query for completion, correction and/or suggestion."
+msgstr "Specifies query for completion, correction and/or suggestion."
+
+msgid "``sortby``"
+msgstr "``sortby``"
+
+msgid "Specifies sort key."
+msgstr "Specifies sort key."
+
+msgid "Default:"
+msgstr "Default:"
+
+msgid "``-_score``"
+msgstr "``-_score``"
+
+msgid "``output_columns``"
+msgstr "``output_columns``"
+
+msgid "Specifies output columns."
+msgstr "Specifies output columns."
+
+msgid "``_key,_score``"
+msgstr "``_key,_score``"
+
+msgid "``offset``"
+msgstr "``offset``"
+
+msgid "Specifies returned records offset."
+msgstr "Specifies returned records offset."
+
+msgid "``0``"
+msgstr "``0``"
+
+msgid "``limit``"
+msgstr "``limit``"
+
+msgid "Specifies number of returned records."
+msgstr "Specifies number of returned records."
+
+msgid "``10``"
+msgstr "``10``"
+
+msgid "``frequency_threshold``"
+msgstr "``frequency_threshold``"
+
+msgid ""
+"Specifies threshold for item frequency. Returned records must have "
+"``_score`` that is greater than or equal to ``frequency_threshold``."
+msgstr ""
+"Specifies threshold for item frequency. Returned records must have "
+"``_score`` that is greater than or equal to ``frequency_threshold``."
+
+msgid "``100``"
+msgstr "``100``"
+
+msgid "``conditional_probability_threshold``"
+msgstr "``conditional_probability_threshold``"
+
+msgid ""
+"Specifies threshold for conditional probability. Conditional probability is "
+"used for learned data. It is probability of query submission when ``query`` "
+"is occurred. Returned records must have conditional probability that is "
+"greater than or equal to ``conditional_probability_threshold``."
+msgstr ""
+"Specifies threshold for conditional probability. Conditional probability is "
+"used for learned data. It is probability of query submission when ``query`` "
+"is occurred. Returned records must have conditional probability that is "
+"greater than or equal to ``conditional_probability_threshold``."
+
+msgid "``0.2``"
+msgstr "``0.2``"
+
+msgid "``prefix_search``"
+msgstr "``prefix_search``"
+
+msgid "Specifies whether optional prefix search is used or not in completion."
+msgstr "Specifies whether optional prefix search is used or not in completion."
+
+msgid "Here are available values:"
+msgstr "Here are available values:"
+
+msgid "``yes``"
+msgstr "``yes``"
+
+msgid "Prefix search is always used."
+msgstr "Prefix search is always used."
+
+msgid "``no``"
+msgstr "``no``"
+
+msgid "Prefix search is never used."
+msgstr "Prefix search is never used."
+
+msgid "``auto``"
+msgstr "``auto``"
+
+msgid "Prefix search is used only when other search can't find any records."
+msgstr "Prefix search is used only when other search can't find any records."
+
+msgid "``similar_search``"
+msgstr "``similar_search``"
+
+msgid "Specifies whether optional similar search is used or not in correction."
+msgstr ""
+"Specifies whether optional similar search is used or not in correction."
+
+msgid "Similar search is always used."
+msgstr "Similar search is always used."
+
+msgid "Similar search is never used."
+msgstr "Similar search is never used."
+
+msgid "Similar search is used only when other search can't find any records."
+msgstr "Similar search is used only when other search can't find any records."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "Here is a returned JSON format::"
+msgstr "Here is a returned JSON format::"
+
+msgid "``type``"
+msgstr "``type``"
+
+msgid "A type specified by ``types``."
+msgstr "A type specified by ``types``."
+
+msgid "``candidate``"
+msgstr "``candidate``"
+
+msgid "A candidate for completion, correction or suggestion."
+msgstr "A candidate for completion, correction or suggestion."
+
+msgid "``score of candidate``"
+msgstr "``score of candidate``"
+
+msgid ""
+"A score of corresponding ``candidate``. It means that higher score candidate "
+"is more likely candidate for completion, correction or suggestion. Returned "
+"candidates are sorted by ``score of candidate`` descending by default."
+msgstr ""
+"A score of corresponding ``candidate``. It means that higher score candidate "
+"is more likely candidate for completion, correction or suggestion. Returned "
+"candidates are sorted by ``score of candidate`` descending by default."
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`/reference/suggest`"
+msgstr ":doc:`/reference/suggest`"
+
+msgid ":doc:`/reference/executables/groonga-suggest-create-dataset`"
+msgstr ":doc:`/reference/executables/groonga-suggest-create-dataset`"

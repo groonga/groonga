@@ -1,0 +1,77 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``TokenBigramIgnoreBlankSplitSymbol``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbol`` is similar to :ref:`token-bigram`. The "
+"differences between them are the followings:"
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbol`` は :ref:`token-bigram` と似ています。違"
+"いは次の通りです。"
+
+msgid "Blank handling"
+msgstr "空白文字の扱い"
+
+msgid "Symbol handling"
+msgstr "記号の扱い"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``TokenBigramIgnoreBlankSplitSymbol`` hasn't parameter::"
+msgstr "``TokenBigramIgnoreBlankSplitSymbol`` には、引数がありません。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbol`` ignores white-spaces in continuous "
+"symbols and non-ASCII characters."
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbol`` は連続した記号と非ASCII文字の間の空白文"
+"字を無視します。"
+
+msgid ""
+"``TokenBigramIgnoreBlankSplitSymbol`` tokenizes symbols by bigram tokenize "
+"method."
+msgstr ""
+"``TokenBigramIgnoreBlankSplitSymbol`` は記号をバイグラムでトークナイズしま"
+"す。"
+
+msgid ""
+"You can find difference of them by ``日 本 語 ! ! !`` text because it has "
+"symbols and non-ASCII characters."
+msgstr ""
+"``日 本 語 ! ! !`` というテキストを使うと違いがわかります。なぜならこのテキス"
+"トは記号と非ASCII文字を両方含んでいるからです。"
+
+msgid "Here is a result by :ref:`token-bigram` :"
+msgstr ":ref:`token-bigram` での実行結果です。"
+
+msgid "Here is a result by ``TokenBigramIgnoreBlankSplitSymbol``:"
+msgstr "``TokenBigramIgnoreBlankSplitSymbol`` の実行結果です。"

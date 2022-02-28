@@ -1,0 +1,168 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Groonga HTTP server"
+msgstr "Groonga HTTPサーバー"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"You can communicate by HTTP if you specify ``http`` to ``--protocol`` "
+"option. And output a file that is put under the path, and correspond to "
+"specified URI to HTTP request if you specify static page path by ``--"
+"document-root``."
+msgstr ""
+"Groongaサーバを起動する時に ``--protocol`` オプションに ``http`` を指定する"
+"と、HTTPで通信可能になります。また、 ``--document-root`` によって静的ページの"
+"パスを指定すると、HTTPリクエストに指定されたURIに対応する、パス配下に置かれた"
+"ファイルを出力します。"
+
+msgid ""
+"Groonga has an Web-based administration tool implemented with HTML and "
+"JavaScript. If you don't specify ``--document-root``, regarded as "
+"administration tool installed path is specified, so you can use "
+"administration tool to access ``http://HOSTNAME:PORT/`` in Web browser."
+msgstr ""
+"GroongaにはHTML + JavaScriptで実装された管理ツールが標準で付属しています。 "
+"``--document-root`` を指定しない場合は管理ツールがインストールされているパス"
+"が指定されたとみなされますので、ウェブブラウザで ``http://HOSTNAME:PORT/`` に"
+"アクセスすると、管理ツールを利用できます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "You must specify ``--protocol http``::"
+msgstr "``--protocol http`` を指定してください。::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"You can use HTTP GET or HTTP POST to send a request. One request runs only "
+"one command. You can't run multiple commands by one request."
+msgstr ""
+"リクエストを送るときはHTTP GETまたはHTTP POSTを使えます。1つのリクエストで1つ"
+"のコマンドだけ実行できます。1つのリクエストで複数のコマンドを実行することはで"
+"きません。"
+
+msgid "You must use ``/d/${COMMAND_NAME}`` path for request."
+msgstr "リクエストには ``/d/${コマンド名}`` というパスを使います。"
+
+msgid "Here is an example URL to run :doc:`/reference/commands/status`::"
+msgstr "以下のURLは :doc:`/reference/commands/status` を実行します。::"
+
+msgid "If you use HTTP GET, you must specify parameters as URL \"query\"."
+msgstr "HTTP GETを使うときはパラメーターはURLの「クエリー」で指定します。"
+
+msgid "Here is an example URL to specify ``3`` as ``command_version``::"
+msgstr "以下のURLは ``command_version`` に ``3`` を指定しています。::"
+
+msgid "You can also specify multiple parameters::"
+msgstr "複数のパラメーターを指定することもできます。::"
+
+msgid ""
+"If you use HTTP POST, you can specify parameters by URL \"query\" and HTTP "
+"request body. If you use HTTP request body, you must specify ``application/x-"
+"www-form-urlencoded`` as ``Content-Type`` header value."
+msgstr ""
+"HTTP POSTを使うときは、URLの「クエリー」とHTTPリクエストのボディでパラメー"
+"ターを指定できます。もし、HTTPリクエストのボディを使うときは ``Content-"
+"Type`` ヘッダーの値には ``application/x-www-form-urlencoded`` を指定しなけれ"
+"ばいけません。"
+
+msgid ""
+"Here is an example HTTP POST request to specify multiple parameters by HTTP "
+"request body::"
+msgstr ""
+"以下のHTTP POSTリクエストは複数のパラメーターをHTTPリクエストボディで指定して"
+"います。::"
+
+msgid "You can mix URL \"query\" and HTTP request body::"
+msgstr ""
+"URLの「クエリー」とHTTPリクエストのボディを一緒に使うこともできます。::"
+
+msgid ""
+"You can also use HTTP POST to specify data for :doc:`/reference/commands/"
+"load`. If you send data by HTTP POST, you can't specify parameters as HTTP "
+"body. You must specify parameters by URL \"path\"."
+msgstr ""
+":doc:`/reference/commands/load` のデータを指定するためにHTTP POSTを使うことも"
+"できます。もし、HTTP POSTでデータを送る場合はHTTPリクエストのボディでパラメー"
+"ターを指定することはできません。パラメーターはURLの「パス」で指定しなければい"
+"けません。"
+
+msgid ""
+"You must specify suitable HTTP ``Content-Type`` header value and :doc:`/"
+"reference/commands/load` ``input_type`` parameter value for your data. Here "
+"are available values:"
+msgstr ""
+"指定するデータにあわせて適切なHTTP ``Content-Type`` ヘッダーの値と :doc:`/"
+"reference/commands/load` の ``input_type`` パラメーターの値を指定しなければい"
+"けません。利用可能な値は次の通りです。"
+
+msgid "``Content-Type``"
+msgstr ""
+
+msgid "``input_type``"
+msgstr ""
+
+msgid "Description"
+msgstr "説明"
+
+msgid "``application/json``"
+msgstr ""
+
+msgid "``json``"
+msgstr ""
+
+msgid "Send JSON data."
+msgstr "JSONデータを送ります。"
+
+msgid "``application/x-apache-arrow-streaming``"
+msgstr ""
+
+msgid "``apache-arrow``"
+msgstr ""
+
+msgid "Send Apache Arrow data."
+msgstr "Apache Arrowデータを送ります。"
+
+msgid ""
+"You can specify :doc:`/reference/command/output_format` as URL \"path\" "
+"extension."
+msgstr ""
+"URLの「パス」の拡張子で :doc:`/reference/command/output_format` を指定できま"
+"す。"
+
+msgid "Here is an example HTTP request to get response as JSON::"
+msgstr "以下はJSONでレスポンスを受け取るHTTPリクエストです。::"
+
+msgid "Here is an example HTTP request to get response as XML::"
+msgstr "以下はXMLでレスポンスを受け取るHTTPリクエストです。::"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`groonga-httpd`"
+msgstr ""
+
+msgid ":doc:`/reference/commands/load`"
+msgstr ""

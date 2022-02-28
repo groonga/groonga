@@ -1,0 +1,141 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``delete``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``delete`` command deletes specified record of table."
+msgstr "``delete`` コマンドは指定したテーブルのレコードを削除します。"
+
+msgid "Cascade delete"
+msgstr "カスケード削除"
+
+msgid ""
+"There is a case that multiple table is associated. For example, the key of "
+"one table are referenced by other table's records. In such a case, if you "
+"delete the key of one table, other table's records are also removed."
+msgstr ""
+"複数のテーブルが関連付けられていることがあります。例えば、あるテーブルのキー"
+"が他のテーブルのレコードで参照されているような場合です。そのような場合にその"
+"テーブルのキーを削除するなら、他のテーブルのレコードも削除されます。"
+
+msgid ""
+"Note that the type of other table's column is COLUMN_VECTOR, only the value "
+"of referencing key is removed from the vector value."
+msgstr ""
+"他のテーブルのカラムの型がCOLUMN_VECTORなら、ベクターで参照しているキーだけが"
+"削除されます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid "Delete the record from Entry table which has \"2\" as the key."
+msgstr "\"2\"をキーとしてもつEntryテーブルからレコードを削除します。"
+
+msgid "Here is the example about cascaded delete."
+msgstr "以下はカスケード削除の例です。"
+
+msgid "The country column of Users table associates with Country table."
+msgstr "UsersテーブルのcountryカラムはCountryテーブルと関連しています。"
+
+msgid ""
+"\"Cascaded delete\" removes the records which matches specified key and "
+"refers that key."
+msgstr ""
+"\"カスケード削除\"は指定されたキーやそのキーを参照しているレコードを削除しま"
+"す。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "``table``"
+msgstr ""
+
+msgid "Specifies the name of table to delete the records."
+msgstr "レコードを削除するテーブルの名前を指定します。"
+
+msgid "``key``"
+msgstr ""
+
+msgid ""
+"Specifies the key of record to delete. If you use the table with "
+"TABLE_NO_KEY, the key is just ignored. (Use ``id`` parameter in such a case)"
+msgstr ""
+"削除するレコードのキーを指定します。TABLE_NO_KEYを対象となるテーブルに使用し"
+"ているなら、指定したキーは無視されます。(そのような場合には 引数 ``id`` を使"
+"います。)"
+
+msgid "``id``"
+msgstr ""
+
+msgid ""
+"Specifies the id of record to delete. If you specify ``id`` parameter, you "
+"must not specify ``key`` parameter."
+msgstr ""
+"削除するレコードのIDを指定します。 引数 ``id`` を指定する場合、引数 ``key`` "
+"を指定してはいけません。"
+
+msgid "``filter``"
+msgstr ""
+
+msgid ""
+"Specifies the expression of grn_expr to identify the record. If you specify "
+"``filter`` parameter, you must not specify ``key`` and ``id`` parameter."
+msgstr ""
+"レコードを特定するためのgrn_exprの式を指定します。引数 ``filter`` を指定する"
+"なら、引数 ``key`` や ``id`` を指定してはいけません。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "``HEADER``"
+msgstr ""
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "``SUCCEEDED_OR_NOT``"
+msgstr ""
+
+msgid ""
+"If command succeeded, it returns true, otherwise it returns false on error."
+msgstr ""
+"コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返しま"
+"す。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`load`"
+msgstr ""

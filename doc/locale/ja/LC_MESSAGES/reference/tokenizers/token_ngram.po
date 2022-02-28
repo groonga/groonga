@@ -1,0 +1,255 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``TokenNgram``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``TokenNgram`` can change define its behavior dynamically via its options. "
+"For example, we can use it as unigram, bigram, trigram on with changing "
+"``n`` option value as below."
+msgstr ""
+"``TokenNgram`` はオプションによって、動的に動作を定義できます。例えば、以下の"
+"ように ``n`` オプションの値を変更する事によって、ユニグラム、バイグラム、トリ"
+"グラムとして使えます。"
+
+msgid "Uni-gram:"
+msgstr "ユニグラム:"
+
+msgid "Bi-gram:"
+msgstr "バイグラム:"
+
+msgid "Tri-gram:"
+msgstr "トリグラム:"
+
+msgid "This tokenizer also has options other than the above."
+msgstr "このトークナイザーには、上記以外のオプションもあります。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``TokenNgram`` has optional parameter."
+msgstr "``TokenNgram`` は、省略可能な引数があります。"
+
+msgid "No options::"
+msgstr "オプションなし::"
+
+msgid ""
+"If we don't use options, ``TokenNgram`` is the same behavior for "
+"``TokenBigram``."
+msgstr ""
+"オプションを使わない場合、 ``TokenNgram`` は ``TokenBigram`` と同じ動作になり"
+"ます。"
+
+msgid "Specify option::"
+msgstr "オプション指定::"
+
+msgid "Specify multiple options::"
+msgstr "複数のオプション指定::"
+
+msgid ""
+"We can also specify multiple options at the same time except the above "
+"examples."
+msgstr "上記の例以外にも複数のオプションを組み合わせて指定できます。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Simple usage"
+msgstr "簡単な使い方"
+
+msgid "Here is an example of ``TokenNgram``."
+msgstr "以下は ``TokenNgram`` の例です。"
+
+msgid ""
+"If we use ``TokenNgram`` in the nothing of option. ``TokenNgram`` behavior "
+"is the same as ``TokenBigram`` as below:"
+msgstr ""
+"``TokenNgram`` をオプション無しで使った場合、以下のように ``TokenNgram`` は "
+"``TokenBigram`` と同じ動作をします。:"
+
+msgid "If no normalizer is used."
+msgstr "ノーマライザーを使用しない場合。"
+
+msgid "If normalizer is used."
+msgstr "ノーマライザーを使用する場合。"
+
+msgid "Advanced usage"
+msgstr "高度な使い方"
+
+msgid "We can specify multiple options for ``TokenNgram``."
+msgstr "``TokenNgram`` は複数のオプションを指定できます。"
+
+msgid ""
+"For example, we can deal with variantsas as phone number by using "
+"``loose_symbol`` and ``loose_blank`` as below."
+msgstr ""
+"例えば、以下のように ``loose_symbol`` と ``loose_blank`` を使って、電話番号の"
+"表記ゆれに対処できます。"
+
+msgid ""
+"We can search ``0123(45)6789``, ``0123-45-6789`` and, ``0123 45 6789`` by "
+"using ``0123456789`` as below example."
+msgstr ""
+"以下の例のように、 ``0123456789`` で ``0123(45)6789`` 、 ``0123-45-6789`` 、 "
+"``0123 45 6789`` を検索できます。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "Optional parameter"
+msgstr "省略可能引数"
+
+msgid "There are eight optional parameters."
+msgstr "8つの省略可能な引数があります。"
+
+msgid "``n``"
+msgstr ""
+
+msgid ""
+"This option shows ``N`` of Ngram. For example, ``n`` is ``3`` for trigram."
+msgstr ""
+"このオプションは、Ngramの ``N`` を表します。例えば、trigramでは、 ``n`` が "
+"``3`` です。"
+
+msgid "``loose_symbol``"
+msgstr ""
+
+msgid ""
+"Tokenize keywords including symbols, to be searched by both queries with/"
+"without symbols. For example, a keyword ``090-1111-2222`` will be found by "
+"any of ``09011112222``, ``090``, ``1111``, ``2222`` and ``090-1111-2222``."
+msgstr ""
+"記号を含むクエリー、含まないクエリーの両方で検索されるよう、記号を含むキー"
+"ワードをトークナイズします。例えば、キーワード ``090-1111-2222`` は "
+"``09011112222`` 、 ``090`` 、 ``1111`` 、 ``2222`` 、 ``090-1111-2222`` で見"
+"つけられます。"
+
+msgid "``loose_blank``"
+msgstr ""
+
+msgid ""
+"Tokenize keywords including blanks, to be searched by both queries with/"
+"without blanks. For example, a keyword ``090 1111 2222`` will be found by "
+"any of ``09011112222``, ``090``, ``1111``, ``2222`` and ``090 1111 2222``."
+msgstr ""
+"空白を含むクエリー、含まないクエリーの両方で検索されるように、空白を含むキー"
+"ワードをトークナイズします。例えば、キーワード ``090 1111 2222`` は "
+"``09011112222`` 、 ``090`` 、 ``1111`` 、 ``2222``　、 ``090 1111 2222`` で見"
+"つけられます。"
+
+msgid "``remove_blank``"
+msgstr ""
+
+msgid ""
+"Tokenize keywords including blanks, to be searched by queries without "
+"blanks. For example, a keyword ``090 1111 2222`` will be found by any of "
+"``09011112222``, ``090``, ``1111`` or ``2222``."
+msgstr ""
+"空白を含まないクエリーで検索できるよう、空白を含むキーワードをトークナイズし"
+"ます。例えば、キーワード ``090 1111 2222`` は ``09011112222`` 、 ``090`` 、 "
+"``1111`` 、 ``2222`` でも見つけられます。"
+
+msgid ""
+"Note that the keyword won’t be found by a query including blanks like ``090 "
+"1111 2222``."
+msgstr ""
+"``090 1111 2222`` のような空白を含むクエリーでは、キーワードを見つけられない"
+"ことに注意して下さい。"
+
+msgid "``report_source_location``"
+msgstr ""
+
+msgid ""
+"This option tells us a location of token of highlight target when we "
+"highlight token by ``highlight_html``."
+msgstr ""
+"このオプションは、 ``highlight_html`` によってトークンをハイライトする際、ハ"
+"イライト対象のトークンの位置を教えてくれます。"
+
+msgid ""
+"We only use this option when we want to highlight token by "
+"``highlight_html``."
+msgstr ""
+"このオプションは、 ``highlight_html`` を使ってトークンをハイライトしたい時の"
+"み使用します。"
+
+msgid ""
+"When Groonga tokenize texts that target highlight, always used "
+"``NormalizerAuto`` to normalizer until now. Therefore, if we use "
+"``NormalizerNFKC100`` to normalizer, sometimes it can't find the position of "
+"the highlight as below."
+msgstr ""
+"Groongaがハイライト対象のテキストをトークナイズするとき、いままでは、常に "
+"``NormalizerAuto`` が使われていました。そのため、 ``NormalizerNFKC100`` を"
+"使ってノーマライズすると、ハイライトの位置が見つけられないことがあります。"
+
+msgid "Because we use different normalizer to normalize token."
+msgstr "異なるノーマライザーを使ってトークンをノーマライズするためです。"
+
+msgid ""
+"This option is used to reduce the shift of the position of the highlight as "
+"below."
+msgstr "このオプションは、ハイライト位置のズレを減らすためのものです。"
+
+msgid "``unify_alphabet``"
+msgstr ""
+
+msgid ""
+"If we set false, ``TokenNgram`` uses bigram tokenize method for ASCII "
+"character."
+msgstr ""
+"falseを設定すると、 ``TokenNgram`` はASCII文字にトークナイズ方法としてバイグ"
+"ラムを使います。"
+
+msgid "Default value of this option is true."
+msgstr "デフォルト値はtrueです。"
+
+msgid "``unify_symbol``"
+msgstr ""
+
+msgid ""
+"If we set false, ``TokenNgram`` uses bigram tokenize method for symbols. "
+"``TokenNgram(\"unify_symbol\", false)`` is same behavior of "
+"``TokenBigramSplitSymbol``."
+msgstr ""
+"falseを設定すると、 ``TokenNgram`` は記号にトークナイズ方法としてバイグラムを"
+"使います。``TokenNgram(\"unify_symbol\", false)`` は "
+"``TokenBigramSplitSymbol`` と同じ動作になります。"
+
+msgid "``unify_digit``"
+msgstr ""
+
+msgid "If we set false, ``TokenNgram`` uses bigram tokenize method for digits."
+msgstr ""
+"falseを設定すると、 ``TokenNgram`` は数字にトークナイズ方法としてバイグラムを"
+"使います。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`../commands/tokenize`"
+msgstr ""

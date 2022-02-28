@@ -1,0 +1,190 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``highlight_full``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``highlight_full`` tags target text. It can use to highlight the search "
+"keyword. It can specify use/not use HTML escape, the normalizer name and "
+"change the tag for each keyword."
+msgstr ""
+"``highlight_full`` は対象テキストをタグ付けします。検索文字列をハイライトさせ"
+"るために利用することができます。HTMLエスケープの有無、ノーマライザー名を指定"
+"することができ、キーワードごとにタグを変更することができます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``highlight_full`` has required parameter and optional parameter::"
+msgstr "``highlight_full`` には必須引数と省略可能引数とがあります::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid ""
+"``highlight_full`` can be used in only ``--output_columns`` in :doc:`/"
+"reference/commands/select` before version 10.0.6 (exclusive). However, it "
+"can be also used in ``--output_columns`` in :doc:`/reference/commands/"
+"logical_select` since version 10.0.6."
+msgstr ""
+"10.0.6より前のバージョンでは、``highlight_full`` は :doc:`/reference/"
+"commands/select` コマンドの ``--output_columns`` 内でのみ指定できますが、 "
+"10.0.6以降は :doc:`/reference/commands/logical_select` コマンドの ``--"
+"output_columns`` 内でも使用できます。"
+
+msgid ""
+"``highlight_full`` requires :doc:`/reference/command/command_version` 2 or "
+"later."
+msgstr ""
+"``highlight_full`` を使うには :doc:`/reference/command/command_version` 2以降"
+"を使う必要があります。"
+
+msgid ""
+"The following example uses HTML escape and normalzier is ``NormalizeAuto``. "
+"It specifies the tags ``<span class=\"keyword1\">`` and ``</span>`` of the "
+"keyword ``groonga``, and the tags ``<span class=\"keyword2\">`` and ``</"
+"span>`` of the keyword ``mysql``."
+msgstr ""
+"以下の例はHTMLエスケープを使用し、ノーマライザーに ``NormalizerAuto`` を指定"
+"しています。この例では キーワード ``groonga`` に ``<span "
+"class=\"keyword1\">``  と ``</span>`` のタグを指定し、キーワード ``mysql`` "
+"に ``<span class=\"keyword2\">`` と ``</span>`` のタグを指定しています。"
+
+msgid ""
+"The text are scanned by the keywords for tagging after they are normalized "
+"by ``NormalizerAuto`` normalizer."
+msgstr ""
+"キーワードとテキストは ``NormalizerAuto`` ノーマライザーで正規化されてタグ付"
+"けのためにスキャンされます。"
+
+msgid ""
+"``--query \"groonga mysql\"`` matches to the first record's body. "
+"``highight_full`` surrounds the keywords ``groonga`` contained in the text "
+"with ``<span class=\"keyword1\">`` and ``</span>``, and the keywords "
+"``mysql`` contained in the text with with ``<span class=\"keyword2\">`` and "
+"``</span>``."
+msgstr ""
+"``--query \"groonga mysql\"`` は最初のレコードにマッチします。 "
+"``highlight_full`` は、テキスト中に含まれるキーワード ``groonga`` を ``<span "
+"class=\"keyword1\">`` と ``</span>`` で囲み、 キーワード ``mysql`` を "
+"``<span class=\"keyword2\">`` と ``</span>`` で囲みます。"
+
+msgid ""
+"Special characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and "
+"``&gt;``."
+msgstr ""
+"``<`` や ``>`` などの特殊文字は &lt; や &gt; にエスケープされています。"
+
+msgid "You can specify string literal instead of column."
+msgstr "カラムの代わりに文字列リテラルを指定することもできます。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid ""
+"There are three required parameters, ``column``, ``normalizer_name`` and "
+"``use_html_escape``. There are three or over optional parameters, "
+"``keywordN``, ``open_tagN`` and ``end_tagN``."
+msgstr ""
+"必須引数は3つあります。 ``column`` と ``normalizer_name`` と "
+"``use_html_escape`` です。省略可能引数は3つ以上あります。 ``keywordN`` と "
+"``open_tagN`` と ``end_tagN`` です。"
+
+msgid "``column``"
+msgstr ""
+
+msgid "Specifies a column of the table."
+msgstr "テーブルのカラムを指定します。"
+
+msgid "``normalizer_name``"
+msgstr ""
+
+msgid "Specifies a normalizer name."
+msgstr "ノーマライザー名を指定します。"
+
+msgid "``use_html_escape``"
+msgstr ""
+
+msgid ""
+"Specifies use or not use HTML escape. If it is ``true`` , use HTML escape. "
+"If it is ``false`` , not use HTML escape."
+msgstr ""
+"HTMLエスケープの有無を指定します。 ``true`` を指定すればHTMLエスケープされま"
+"す。 ``false`` を指定すればHTMLエスケープされません。"
+
+msgid "``keywordN``"
+msgstr ""
+
+msgid ""
+"Specifies a keyword for tagging. You can specify multiple keywords for each "
+"three arguments."
+msgstr ""
+"タグ付けするキーワードを指定します。3つの引数ごとに複数のキーワードを指定する"
+"ことができます。"
+
+msgid "``open_tagN``"
+msgstr ""
+
+msgid ""
+"Specifies a open tag. You can specify multiple open tags for each three "
+"arguments."
+msgstr ""
+"開始タグを指定します。3つの引数ごとに複数の開始タグを指定することができます。"
+
+msgid "``close_tagN``"
+msgstr ""
+
+msgid ""
+"Specifies a close tag. You can specify multiple close tags for each three "
+"arguments."
+msgstr ""
+"終了タグを指定します。3つの引数ごとに複数の終了タグを指定することができます。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid ""
+"``highlight_full`` returns a tagged string or ``null``. If "
+"``highlight_full`` can't find any keywords, it returns ``null``."
+msgstr ""
+"``highlight_full`` はタグ付の文字列もしくは null を返します。"
+"``highlight_full`` は該当するキーワードがない場合に null を返します。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/commands/select`"
+msgstr ""
+
+msgid ":doc:`/reference/commands/logical_select`"
+msgstr ""
+
+msgid ":doc:`/reference/functions/highlight_html`"
+msgstr ""

@@ -1,0 +1,179 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "パラメータ"
+msgstr ""
+
+msgid "戻り値"
+msgstr ""
+
+msgid "grn_expr"
+msgstr "grn_expr"
+
+msgid ""
+"`grn_expr` is an :c:type:`grn_obj` that represents an expression. Here is a "
+"list of what expression can do:"
+msgstr ""
+"`grn_expr` は「式」を表現した :c:type:`grn_obj` です。以下は式が何をできるか"
+"のリストです。"
+
+msgid ""
+"Expression can apply some operations to a record by :c:func:`grn_expr_exec`."
+msgstr ""
+"式は :c:func:`grn_expr_exec` を使うと1つのレコードに複数の操作を適用できま"
+"す。"
+
+msgid ""
+"Expression can represents search condition. :c:func:`grn_table_select` can "
+"select records that match against the search condition represented by "
+"expression."
+msgstr ""
+"式は検索条件を表現できます。 :c:func:`grn_table_select` を使うと、式で表現し"
+"た検索条件にマッチしたレコードだけを選択できます。"
+
+msgid "There are two string representations of expression:"
+msgstr "文字列を式で表現する手段は2種類あります。"
+
+msgid ":doc:`/reference/grn_expr/query_syntax`"
+msgstr ""
+
+msgid ":doc:`/reference/grn_expr/script_syntax`"
+msgstr ""
+
+msgid ""
+":c:func:`grn_expr_parse` parses string represented expression and appends "
+"the parsed expression to another expression."
+msgstr ""
+":c:func:`grn_expr_parse` は式の文字列表現をパースし、パースした式を別の式に追"
+"加します。"
+
+msgid "Example"
+msgstr "例"
+
+msgid "TODO..."
+msgstr "TODO..."
+
+msgid "Reference"
+msgstr "リファレンス"
+
+msgid ""
+"Extracts keywords from ``expr`` and stores to ``keywords``. Keywords in "
+"``keywords`` are owned by ``expr``. Don't unlink them. Each keyword is "
+"``GRN_BULK`` and its domain is ``GRN_DB_TEXT``."
+msgstr ""
+
+msgid "``keywords`` must be ``GRN_PVECTOR``."
+msgstr ""
+
+msgid "Here is an example code::"
+msgstr "以下はスキーマの例です。"
+
+msgid "The context that creates the ``expr``."
+msgstr ""
+
+msgid "The expression to be extracted."
+msgstr ""
+
+msgid "The container to store extracted keywords. It must be ``GRN_PVECTOR``."
+msgstr ""
+
+msgid ""
+"The container to store extracted keywords. It must be ``GRN_PVECTOR``.  Each "
+"extracted keyword is ``GRN_BULK`` and its domain is ``GRN_DB_TEXT``.  "
+"Extracted keywords are owned by ``expr``. Don't unlink them."
+msgstr ""
+
+msgid ""
+"Each extracted keyword is ``GRN_BULK`` and its domain is ``GRN_DB_TEXT``."
+msgstr ""
+
+msgid "Extracted keywords are owned by ``expr``. Don't unlink them."
+msgstr ""
+
+msgid "``GRN_SUCCESS`` on success, not ``GRN_SUCCESS`` on error."
+msgstr "成功時は ``GRN_SUCCESS`` 、エラー時は ``GRN_SUCCESS`` 以外。"
+
+msgid "Escapes ``target_characters`` in ``string`` by ``escape_character``."
+msgstr ""
+"``string`` 中の ``target_characters`` を ``escape_character`` でエスケープし"
+"ます。"
+
+msgid ""
+"Its encoding must be the same encoding of ``string``. It is used for "
+"allocating buffer for ``escaped_string``."
+msgstr ""
+"エンコーディングは ``string`` と同じでなければいけません。 "
+"``escaped_string`` 用のバッファを確保するために使います。"
+
+msgid "String expression representation."
+msgstr "文字列式表現"
+
+msgid ""
+"The byte size of ``string``. ``-1`` means ``string`` is NULL terminated "
+"string."
+msgstr ""
+"``string`` のバイトサイズです。 ``-1`` を指定した場合は ``string`` がNULL終端"
+"文字列であるという意味になります。"
+
+msgid ""
+"NULL terminated escape target characters. For example, ``\"+-><~*()\\\"\\\\:"
+"\"`` is ``target_characters`` for :doc:`/reference/grn_expr/query_syntax`."
+msgstr ""
+"NULL終端されたエスケープ対象文字。たとえば、 :doc:`/reference/grn_expr/"
+"query_syntax` 用の ``target_characters`` は ``\"+-><~*()\\\"\\\\:\"`` になり"
+"ます。"
+
+msgid ""
+"The character to use escape a character in ``target_characters``. For "
+"example, ``\\\\`` (backslash) is ``escaped_character`` for :doc:`/reference/"
+"grn_expr/query_syntax`."
+msgstr ""
+"``target_characters`` の文字をエスケープする文字です。たとえば、 :doc:`/"
+"reference/grn_expr/query_syntax` 用の ``escaped_character`` は ``\\\\`` "
+"（バックスラッシュ）になります。"
+
+msgid "The output of escaped ``string``. It should be text typed bulk."
+msgstr ""
+"エスケープされた ``string`` の出力先です。テキスト型のbulkでなければいけませ"
+"ん。"
+
+msgid "Escapes special characters in :doc:`/reference/grn_expr/query_syntax`."
+msgstr ""
+":doc:`/reference/grn_expr/query_syntax` にある特別な文字をエスケープします。"
+
+msgid ""
+"Its encoding must be the same encoding of ``query``. It is used for "
+"allocating buffer for ``escaped_query``."
+msgstr ""
+"このエンコーディングは ``query`` のエンコーディングと同じでなければなりませ"
+"ん。 ``escaped_query`` 用のバッファを確保するために使います。"
+
+msgid ""
+"String expression representation in :doc:`/reference/grn_expr/query_syntax`."
+msgstr ":doc:`/reference/grn_expr/query_syntax` にある文字列式の表現。"
+
+msgid ""
+"The byte size of ``query``. ``-1`` means ``query`` is NULL terminated string."
+msgstr ""
+"``query`` のバイトサイズです。 ``-1`` を指定した場合は ``query`` がNULL終端文"
+"字列であるという意味になります。"
+
+msgid "The output of escaped ``query``. It should be text typed bulk."
+msgstr "エスケープされた ``query`` の出力。テキスト型用のbulkを返す。"

@@ -1,0 +1,46 @@
+# -*- po -*-
+# Japanese translations for groonga package.
+# Copyright (C) 2009-2012, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: groonga 2.0.6\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2016-02-06 22:27+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Memcached binary protocol"
+msgstr "Memcachedバイナリプロトコル"
+
+msgid ""
+"Groonga supports the memcached binary protocol. The following form shows how "
+"to run Groonga as a memcached binary protocol server daemon."
+msgstr ""
+"Groongaはmemcachedバイナリプロトコルをサポートしています。以下の書式は"
+"memcachedバイナリプロトコルのサーバをデーモンとして起動する方法を示していま"
+"す。"
+
+msgid "Form::"
+msgstr ""
+
+msgid ""
+"The `--protocol` option and its argument specify the protocol of the server. "
+"\"memcached\" specifies to use the memcached binary protocol."
+msgstr ""
+"`--protocol` オプションとその引数により、サーバのプロトコルを指定することがで"
+"きます。\"memcached\"はmemcachedバイナリプロトコルを示しています。"
+
+msgid ""
+"You don't need to create a table. When Groonga receives a request, it "
+"creates a table automatically. The table name will be `Memcache` ."
+msgstr ""
+"テーブルの作成は不要です。Groongaは要求を受けつけると自動的にテーブルを作成す"
+"るからです。テーブルの名前は `Memcache` になります。"

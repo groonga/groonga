@@ -1,0 +1,117 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2012, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2019-05-23 14:19+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 1.7.7\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "Remote access"
+msgstr "リモートアクセス"
+
+msgid ""
+"You can use Groonga as a server which allows remote access. Groonga supports "
+"the original protocol (GQTP), the memcached binary protocol and HTTP."
+msgstr ""
+"Groongaをサーバとして起動することにより、ネットワークを介してデータベースにア"
+"クセスできるようになります。Groongaがサポートしているプロトコルは、Groongaの"
+"専用プロトコルであるGQTP、memcachedバイナリプロトコル、HTTPの三種類です。"
+
+msgid "Hypertext transfer protocol (HTTP)"
+msgstr "HTTP"
+
+msgid "How to run an HTTP server"
+msgstr "HTTPサーバの起動"
+
+msgid ""
+"Groonga supports the hypertext transfer protocol (HTTP). The following form "
+"shows how to run Groonga as an HTTP server daemon."
+msgstr ""
+"GroongaはHTTPをサポートしています。以下の書式はHTTPサーバをデーモンとして起動"
+"する方法を示しています。"
+
+msgid "Form::"
+msgstr "書式::"
+
+msgid ""
+"The `--protocol` option and its argument specify the protocol of the server. "
+"\"http\" specifies to use HTTP. If the `-p` option is not specified, Groonga "
+"uses the default port number 10041."
+msgstr ""
+"`--protocol` オプションとその引数により、サーバのプロトコルを指定することがで"
+"きます。\"http\"はHTTPサーバの起動を指示しています。`-p` オプションを省略した"
+"場合は10041のポート番号が使用されます。"
+
+msgid ""
+"The following command runs an HTTP server that listens on the port number 80."
+msgstr ""
+"以下のコマンドは、ポート番号80で待ち受けるHTTPサーバをデーモンとして起動しま"
+"す。"
+
+msgid ""
+"You must have root privileges if you listen on the port number 80 (well "
+"known port). There is no such a limitation about the port number 1024 or "
+"over."
+msgstr ""
+"80番ポートで待ち受けるにはroot権限が必須です。1024番以降のポート番号にはその"
+"ような制限はありません。"
+
+msgid "How to send a command to an HTTP server"
+msgstr "HTTPサーバへのコマンド送信"
+
+msgid ""
+"You can send a command to an HTTP server by sending a GET request to /d/"
+"COMMAND_NAME. Command parameters can be passed as parameters of the GET "
+"request. The format is \"?NAME_1=VALUE_1&NAME_2=VALUE_2&...\"."
+msgstr ""
+"GroongaがHTTPサーバとして起動されているときは、/d/COMMAND_NAME というURLにア"
+"クセスすることにより、コマンドを実行することができます。コマンドの引数は、"
+"HTTPのGETパラメータとして渡します。引数の書式は \"?"
+"NAME_1=VALUE_1&NAME_2=VALUE_2&...\" となります。"
+
+msgid "The following example shows how to send commands to an HTTP server."
+msgstr "以下の例は、HTTPサーバに対するコマンドの送り方を示しています。"
+
+msgid "Administration tool (HTTP)"
+msgstr "ブラウザベースの管理ツール"
+
+msgid ""
+"An HTTP server of Groonga provides a browser based administration tool that "
+"makes database management easy. After starting an HTTP server, you can use "
+"the administration tool by accessing http://HOST_NAME_OR_IP_ADDRESS[:"
+"PORT_NUMBER]/. Note that Javascript must be enabled for the tool to work "
+"properly."
+msgstr ""
+"GroongaをHTTPサーバとして起動しているときは、ブラウザベースの管理ツールを使う"
+"ことにより、データベースを簡単に管理することができます。管理ツールを使いたい"
+"ときは、ブラウザを使って http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/ へとア"
+"クセスしてください。管理ツールの使用には、JavaScriptの実行が有効になっている"
+"必要があります。"
+
+msgid "Security issues"
+msgstr "セキュリティ"
+
+msgid ""
+"Groonga servers don't support user authentication. Everyone can view and "
+"modify databases hosted by Groonga servers. You are recommended to restrict "
+"IP addresses that can access Groonga servers. You can use iptables or "
+"similar for this purpose."
+msgstr ""
+"Groongaのサーバには認証機能がありません。誰でもデータベースの内容を閲覧・修正"
+"することができます。iptablesなどを用いてアクセス元IPアドレスを制限することを"
+"推奨します。"

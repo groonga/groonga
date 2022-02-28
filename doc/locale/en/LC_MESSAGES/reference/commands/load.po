@@ -1,0 +1,340 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``load``"
+msgstr "``load``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"``load`` loads data as records in the current database and updates values of "
+"each columns."
+msgstr ""
+"``load`` loads data as records in the current database and updates values of "
+"each columns."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid ""
+"The required parameters are only ``values`` and ``table``. Other parameters "
+"are optional::"
+msgstr ""
+"The required parameters are only ``values`` and ``table``. Other parameters "
+"are optional::"
+
+msgid ""
+"This command is a special command. Other commands need to pass all "
+"parameters to one line but this command can accept ``values`` as followed "
+"data."
+msgstr ""
+"This command is a special command. Other commands need to pass all "
+"parameters to one line but this command can accept ``values`` as followed "
+"data."
+
+msgid ""
+"If you use command line style, you can pass ``values`` like the following::"
+msgstr ""
+"If you use command line style, you can pass ``values`` like the following::"
+
+msgid "``[...]`` is value of ``values``."
+msgstr "``[...]`` is value of ``values``."
+
+msgid "If you use HTTP style, you can pass ``values`` as body::"
+msgstr "If you use HTTP style, you can pass ``values`` as body::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Here is a schema definition to show usage:"
+msgstr "Here is a schema definition to show usage:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "Here is an example to add records to ``Entries`` table by parameter:"
+msgstr "Here is an example to add records to ``Entries`` table by parameter:"
+
+msgid ""
+"Here is an example to add records to ``Entries`` table from standard input:"
+msgstr ""
+"Here is an example to add records to ``Entries`` table from standard input:"
+
+msgid "Here is an example to lock table while updating columns:"
+msgstr "Here is an example to lock table while updating columns:"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "This section describes all parameters. Parameters are categorized."
+msgstr "This section describes all parameters. Parameters are categorized."
+
+msgid "Required parameters"
+msgstr "Required parameters"
+
+msgid "There are some required parameters."
+msgstr "There are some required parameters."
+
+msgid "``values``"
+msgstr "``values``"
+
+msgid "Specifies values to be loaded."
+msgstr "Specifies values to be loaded."
+
+msgid ""
+"Values should satisfy ``input_type`` format. If you specify ``json`` as "
+"``input_type``, you can choose a format from below:"
+msgstr ""
+"Values should satisfy ``input_type`` format. If you specify ``json`` as "
+"``input_type``, you can choose a format from below:"
+
+msgid "Bracket style::"
+msgstr "Bracket style::"
+
+msgid "Brace style::"
+msgstr "Brace style::"
+
+msgid ""
+"``[COLUMN_NAME1, COLUMN_NAME2, ...]`` in bracket style is effective only "
+"when :ref:`load-columns` parameter isn't specified."
+msgstr ""
+"``[COLUMN_NAME1, COLUMN_NAME2, ...]`` in bracket style is effective only "
+"when :ref:`load-columns` parameter isn't specified."
+
+msgid ""
+"When a target table contains primary key, you must specify ``_key`` column "
+"(pseudo column associated primary key) as the one of ``COLUMN_NAME``."
+msgstr ""
+"When a target table contains primary key, you must specify ``_key`` column "
+"(pseudo column associated primary key) as the one of ``COLUMN_NAME``."
+
+msgid ""
+"If you specify ``apache-arrow`` as ``input_type``, you must use `Apache "
+"Arrow IPC Streaming Format`_. You can't use `Apache Arrow IPC File Format`_."
+msgstr ""
+"If you specify ``apache-arrow`` as ``input_type``, you must use `Apache "
+"Arrow IPC Streaming Format`_. You can't use `Apache Arrow IPC File Format`_."
+
+msgid ""
+"You must use HTTP interface to use Apache Arrow. You can't use Apache Arrow "
+"in command line interface."
+msgstr ""
+"You must use HTTP interface to use Apache Arrow. You can't use Apache Arrow "
+"in command line interface."
+
+msgid ""
+"You must set ``application/x-apache-arrow-streaming`` to ``Content-Type`` "
+"HTTP request header."
+msgstr ""
+"You must set ``application/x-apache-arrow-streaming`` to ``Content-Type`` "
+"HTTP request header."
+
+msgid ""
+"You must choose suitable record batch size. Groonga loads data per record "
+"batch. If you choose very large record batch size, Groonga can't start "
+"loading until whole data of a record batch are received. If you choose very "
+"small record batch size, Groonga can load data incrementally but overhead "
+"will be large. Suitable record batch size depends on your system but 1024 or "
+"so will be suitable."
+msgstr ""
+"You must choose suitable record batch size. Groonga loads data per record "
+"batch. If you choose very large record batch size, Groonga can't start "
+"loading until whole data of a record batch are received. If you choose very "
+"small record batch size, Groonga can load data incrementally but overhead "
+"will be large. Suitable record batch size depends on your system but 1024 or "
+"so will be suitable."
+
+msgid ""
+"If ``values`` isn't specified any values, they are read from the standard "
+"input in command line style or body in HTTP style."
+msgstr ""
+"If ``values`` isn't specified any values, they are read from the standard "
+"input in command line style or body in HTTP style."
+
+msgid "``table``"
+msgstr "``table``"
+
+msgid "Specifies a table name you want to add records."
+msgstr "Specifies a table name you want to add records."
+
+msgid "Optional parameters"
+msgstr "Optional parameters"
+
+msgid "There are some optional parameters."
+msgstr "There are some optional parameters."
+
+msgid "``columns``"
+msgstr "``columns``"
+
+msgid "Specifies column names in added records with comma separations."
+msgstr "Specifies column names in added records with comma separations."
+
+msgid "``ifexists``"
+msgstr "``ifexists``"
+
+msgid ""
+"Specifies executed expression in :doc:`/reference/grn_expr/script_syntax` "
+"when the same primary key as added records already exists in your table."
+msgstr ""
+"Specifies executed expression in :doc:`/reference/grn_expr/script_syntax` "
+"when the same primary key as added records already exists in your table."
+
+msgid ""
+"If ``ifexists`` specifies expression and its value is ``true``, values in "
+"other (all columns excluding ``_key`` column) columns is updated."
+msgstr ""
+"If ``ifexists`` specifies expression and its value is ``true``, values in "
+"other (all columns excluding ``_key`` column) columns is updated."
+
+msgid "``input_type``"
+msgstr "``input_type``"
+
+msgid "Specifies an input format for ``values``."
+msgstr "Specifies an input format for ``values``."
+
+msgid ""
+"Note that you must also specify suitable HTTP ``Content-Type`` header value "
+"when you use ``input_type`` with HTTP interface."
+msgstr ""
+"Note that you must also specify suitable HTTP ``Content-Type`` header value "
+"when you use ``input_type`` with HTTP interface."
+
+msgid "Here are available types and ``Content-Type`` values:"
+msgstr "Here are available types and ``Content-Type`` values:"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "``Content-Type``"
+msgstr "``Content-Type``"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "``json``"
+msgstr "``json``"
+
+msgid "``application/json``"
+msgstr "``application/json``"
+
+msgid "Use JSON for ``values`` format."
+msgstr "Use JSON for ``values`` format."
+
+msgid "This is the default."
+msgstr "This is the default."
+
+msgid "``apache-arrow``"
+msgstr "``apache-arrow``"
+
+msgid "``application/x-apache-arrow-streaming``"
+msgstr "``application/x-apache-arrow-streaming``"
+
+msgid "Use Apache Arrow for ``values`` format."
+msgstr "Use Apache Arrow for ``values`` format."
+
+msgid "``each``"
+msgstr "``each``"
+
+msgid "TODO"
+msgstr "TODO"
+
+msgid "``output_ids``"
+msgstr "``output_ids``"
+
+msgid "``output_errors``"
+msgstr "``output_errors``"
+
+msgid "``lock_table``"
+msgstr "``lock_table``"
+
+msgid "Specifies whether locking table while updating columns."
+msgstr "Specifies whether locking table while updating columns."
+
+msgid "The default is ``no``."
+msgstr "The default is ``no``."
+
+msgid ""
+"If you may run destructive commands such as ``load``, ``delete`` and so on "
+"concurrently, it may break database. For example, if you're updating a "
+"record by ``load`` and deleting the updating record by ``delete``, the "
+"``load`` may refer the delete record."
+msgstr ""
+"If you may run destructive commands such as ``load``, ``delete`` and so on "
+"concurrently, it may break database. For example, if you're updating a "
+"record by ``load`` and deleting the updating record by ``delete``, the "
+"``load`` may refer the delete record."
+
+msgid ""
+"You can guard the update conflict by locking the target table but it reduces "
+"load performance."
+msgstr ""
+"You can guard the update conflict by locking the target table but it reduces "
+"load performance."
+
+msgid ""
+"If you specify ``yes`` to this parameter, you can lock the target table "
+"while updating columns. Here is the update sequence of each record:"
+msgstr ""
+"If you specify ``yes`` to this parameter, you can lock the target table "
+"while updating columns. Here is the update sequence of each record:"
+
+msgid "Lock the target table"
+msgstr "Lock the target table"
+
+msgid "Add or refer a record to the target table"
+msgstr "Add or refer a record to the target table"
+
+msgid "Unlock the target table"
+msgstr "Unlock the target table"
+
+msgid "Lock the target table when ``lock_table`` is ``yes``"
+msgstr "Lock the target table when ``lock_table`` is ``yes``"
+
+msgid "Update columns of the target record"
+msgstr "Update columns of the target record"
+
+msgid "Unlock the target table when ``lock_table`` is ``yes``"
+msgstr "Unlock the target table when ``lock_table`` is ``yes``"
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "The command returns a response with the following format::"
+msgstr "The command returns a response with the following format::"
+
+msgid ""
+"The command returns a response with the following format with :doc:`/"
+"reference/command/command_version` 3 or later::"
+msgstr ""
+"The command returns a response with the following format with :doc:`/"
+"reference/command/command_version` 3 or later::"
+
+msgid "``loaded_ids`` is only included when :ref:`load-output-ids` is ``yes``."
+msgstr ""
+"``loaded_ids`` is only included when :ref:`load-output-ids` is ``yes``."
+
+msgid "``errors`` is only included when :ref:`load-output-errors` is ``yes``."
+msgstr "``errors`` is only included when :ref:`load-output-errors` is ``yes``."
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`/reference/grn_expr/script_syntax`"
+msgstr ":doc:`/reference/grn_expr/script_syntax`"

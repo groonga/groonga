@@ -1,0 +1,743 @@
+# -*- po -*-
+# Japanese translations for 1.2.4 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.4\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2020-04-24 08:59+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.1.1\n"
+
+msgid "News - 1.2.x"
+msgstr ""
+
+msgid "Release 1.2.9 - 2011-12-29"
+msgstr "1.2.9リリース - 2011-12-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "Supported Fedora 16."
+msgstr "Fedora 16をサポート。"
+
+msgid "Dropped Fedora 15 support."
+msgstr "Fedora 15サポートを削除。"
+
+msgid ""
+"[groonga] Improved the default server ID address to work on unresolved host "
+"name environment. [Reported by @uzulla]"
+msgstr ""
+"[groonga] ホスト名を解決できない環境でも動作するようにサーバーIDのアドレスを"
+"デフォルト値をlocalhostにした。 [@uzullaさんが報告]"
+
+msgid "Supported MAP_HUGETLB."
+msgstr "MAP_HUGETLB対応。"
+
+msgid "[admin] Supported throughput chart."
+msgstr "[admin] スループットチャート対応。"
+
+msgid ""
+"Stopped adding nul character in ``grn_itoh()``. [#1194] [Reported by SHIDARA "
+"Yoji]"
+msgstr ""
+"``grn_itoh()`` 内でnul文字を使いするのをやめた。 [#1194] [設樂洋爾さんが報告]"
+
+msgid "Added ``grn_obj_get_values()``."
+msgstr "``grn_obj_get_values()`` を追加。"
+
+msgid "Added ``grn_obj_delete_by_id()``."
+msgstr "``grn_obj_delete_by_id()`` を追加。"
+
+msgid "Supported string vector column for query expansion. [#1216]"
+msgstr "クエリ展開で文字列のベクター型のカラムをサポート。 [#1216]"
+
+msgid ""
+"Added ``--filter`` option to :doc:`/reference/commands/delete` to delete "
+"many record at once. [#1225]"
+msgstr ""
+"一度にたくさんのレコードを削除できるように :doc:`/reference/commands/delete` "
+"に ``--filter`` オプションを追加。 [#1225]"
+
+msgid ""
+"Supported approximate type customization for :doc:`/reference/functions/"
+"geo_in_circle` and :doc:`/reference/functions/geo_distance`. [#1226]"
+msgstr ""
+":doc:`/reference/functions/geo_in_circle` と :doc:`/reference/functions/"
+"geo_distance` で近似方法指定をサポート。 [#1226]"
+
+msgid "Made ``geo_distance2()`` and ``geo_distance3()`` are deprecated."
+msgstr "``geo_distance2()`` と ``geo_distance3()`` を非推奨にした。"
+
+msgid ""
+"Changed to use ``null`` instead of ``\"\"`` for empty geo point value in "
+"JSON output."
+msgstr ""
+"JSON出力内で、値のない位置情報データは ``\"\"`` ではなく ``null`` と出力する"
+"ようにした。"
+
+msgid "Almost supported MessagePack output. [#1215] [Worked by SHIDARA Yoji]"
+msgstr "MessagePack出力をだいたいサポート。 [#1215] [設樂洋爾さんが実装]"
+
+msgid "Added missing newlines after drilldown result tags in XML output."
+msgstr "XML出力内のドリルダウン結果タグの後に改行を追加。"
+
+msgid "Supported truncate for grn_dat."
+msgstr "grn_datのtruncation対応。 [#892]"
+
+msgid "Supported longest common prefix search by grn_dat."
+msgstr ""
+"grn_datが最長共通接頭辞検索（longest common prefix search）をサポート。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[windows] Fixed inverted map type."
+msgstr "[windows] mapの種類を間違っていた問題を修正。"
+
+msgid "Fixed -Wno- compiler flag detection. [Patch by Arnaud Fontaine]"
+msgstr ""
+"コンパイラの-Wno-というフラグの検出に失敗していた問題を修正。 [Arnaud "
+"Fontaineさんがパッチを作成]"
+
+msgid ""
+"Fixed a problem that ``groonga --version`` reports wrongly about MeCab. "
+"[#1209] [Patch by SHIDARA Yoji]"
+msgstr ""
+"``groonga --version`` がMeCabについて間違って報告していた問題を修正。 "
+"[#1209] [設樂洋爾さんがパッチ作成]"
+
+msgid "Added missing lock into ``grn_obj_remove()``."
+msgstr "``grn_obj_remove()`` 内でロックが足りない問題を修正。"
+
+msgid "Fixed Content-Type on error. [#1220] [Patch by SHIDARA Yoji]"
+msgstr "エラー時のContent-Typeを修正。 [#1220] [設樂洋爾さんがパッチ作成]"
+
+msgid ""
+"Fixed a problem that deleting SIS (Semi Infinite String) may keep a garbage."
+msgstr "SIS（半無限文字列）削除時にゴミが残る問題を修正。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "@uzulla"
+msgstr "@uzullaさん"
+
+msgid "Arnaud Fontaine"
+msgstr "Arnaud Fontaineさん"
+
+msgid "SHIDARA Yoji"
+msgstr "設樂洋爾さん"
+
+msgid "Release 1.2.8 - 2011-11-29"
+msgstr "1.2.8リリース - 2011-11-29"
+
+msgid ""
+"Object, table and column renamings are supported! These features require "
+"database re-creation. You can re-create your database by the following "
+"command::"
+msgstr ""
+"オブジェクト（テーブルまたはカラム）のリネームがサポートされました！この機能"
+"を使うためにはデータベースを再構築する必要があります。以下のコマンドでデータ"
+"ベースを再構築することができます。::"
+
+msgid ""
+"Groonga 1.2.8 can open databases created by groonga 1.2.7 or earlier. But "
+"groonga 1.2.7 or earlier can't open databases created by groonga 1.2.8 or "
+"later."
+msgstr ""
+"groonga 1.2.8はgroonga 1.2.7以前のバージョンで作ったデータベースを開くことが"
+"できます。しかし、groonga 1.2.7以前のバージョンではgroonga 1.2.8以降で作った"
+"データベースを開くことはできません。"
+
+msgid "[grntest] Removed the upper limit to the number of bytes in one line."
+msgstr "[grntest] 1行あたりの最大バイト数の制限を撤去。"
+
+msgid "[grntest] Added ``--pid-path`` option."
+msgstr "[grntest] ``--pid-path`` オプションを追加。"
+
+msgid "[deb] Enabled experimental zlib and lzo support."
+msgstr "[deb] 実験的にzlibとlzoを有効化。"
+
+msgid "[rpm] Enabled experimental zlib and lzo support."
+msgstr "[rpm] 実験的にzlibとlzoを有効化。"
+
+msgid "Supports truncation. [#892]"
+msgstr "truncation対応。 [#892]"
+
+msgid "Enabled grn_dat that is a read lock free double array implementation."
+msgstr "参照ロックフリーのダブル配列実装であるgrn_datを有効化。"
+
+msgid "[pkg-config] Added groonga_version variable to groonga.pc."
+msgstr "[pkg-config] groonga.pcにgroonga_version変数を追加。"
+
+msgid ""
+"Re-supported ``--disable-static``. [groonga-dev,00612] [Suggested by Kenichi "
+"Aramaki]"
+msgstr ""
+"``--disable-static`` を再サポート。 [groonga-dev,00612] [Kenichi Aramakiさん"
+"が提案]"
+
+msgid "[munin] Stopped to install Munin plugins by default."
+msgstr "[munin] デフォルトではMuninプラグインをインストールしないようにした。"
+
+msgid "Stopped to install RedHat platform related files by default."
+msgstr ""
+"RedHatプラットフォーム関連のファイルはデフォルトではインストールしないように"
+"した。"
+
+msgid "Supports object renaming. This requires DB re-creation. [#1167]"
+msgstr "オブジェクトのリネームに対応。DBの再構築が必要です。 [#1167]"
+
+msgid "[munin] Added a Munin plugin that measures throughput. [#1171]"
+msgstr "[munin] スループットを計測するMuninプラグインを追加。 [#1171]"
+
+msgid ""
+"[geo] Improved geo_in_rectangle performance. The new implementation will be "
+"2x faster than the old implementation in many cases. [#1173]"
+msgstr ""
+"[geo] geo_in_rectangleの高速化。新しい実装では、多くの場合、以前の実装よりも2"
+"倍程度高速になります。 [#1173]"
+
+msgid ""
+"[macports] Moved groonga's MacPorts to the official repository. [Imported by "
+"Hiroshi Umemoto]"
+msgstr ""
+"[macports] groongaのMacPortsが公式リポジトリに移動しました。 [Hiroshi Umemoto"
+"さんが取り込み]"
+
+msgid ""
+"[geo] Changed the geo literal degree-to-msec conversion algorithm to round-"
+"off from truncation."
+msgstr ""
+"[geo] 位置情報の値のリテラルを度数からミリ秒へ変換するときに切り捨てではなく"
+"四捨五入するようにした。"
+
+msgid ""
+"Supports a table defrag. It defrags variable size value columns in the "
+"table. [#1175]"
+msgstr ""
+"デフラグ対象としてテーブルをサポート。テーブルを指定した場合はテーブルが持つ"
+"カラムのうち可変長サイズ値用のカラムをデフラグ対象とする。 [#1175]"
+
+msgid "Removed associated path on remove. [#1180]"
+msgstr "削除時に関連するパスも削除するようにした。 [#1180]"
+
+msgid "[deb] Supports i386."
+msgstr "[deb] i386対応。"
+
+msgid "[rpm] Supports i386."
+msgstr "[rpm] i386対応。"
+
+msgid "[windows] Supports x86."
+msgstr "[windows] x86対応。"
+
+msgid ""
+"Fixed a bug that groonga crashes when accessing a zlib/lzo compressed "
+"column. Note that a compressed column access causes a memory leak. To "
+"resolve this, we need to improve API. We will do it in the future. [GtiHub#5]"
+"[GtiHub#6] [Reported by Takayuki Yamaguchi]"
+msgstr ""
+"zlib/lzo圧縮カラムにアクセスするとクラッシュするバグを修正。圧縮カラムにアク"
+"セスするとメモリリークするので注意。これを修正するためにはAPIを改良する必要が"
+"あるため、今後修正予定。 [GtiHub#5][GtiHub#6] [Takayuki Yamaguchiさんが報告]"
+
+msgid "Fixed a bug that unrelated column values are cleared in deletion."
+msgstr "レコード削除時に必要のないカラムの値もクリアしてしまうバグを修正。"
+
+msgid ""
+"Fixed a bug that a wrong index is used in sorting. [#766] [Reported by "
+"Horikoshi Yuki]"
+msgstr ""
+"ソート時に間違ったインデックスを使うバグを修正。 [#766] [Horikoshi Yukiさんが"
+"報告]"
+
+msgid ""
+"[libedit] Fixed a bug that necessary initialization is omitted. [GitHub#7] "
+"[Patch by SHIDARA Yoji]"
+msgstr ""
+"[libedit] 必要な初期化処理が抜けていたバグを修正。 [GitHub#7] [SHIDARA Yojiさ"
+"んがパッチを提供]"
+
+msgid "[doc] Fixed a typo in documentation. [GitHub#8] [Patch by zunda]"
+msgstr "[doc] ドキュメントの誤字を修正。 [GitHub#8] [zundaさんがパッチを提供]"
+
+msgid "Takayuki Yamaguchi"
+msgstr "Takayuki Yamaguchiさん"
+
+msgid "Horikoshi Yuki"
+msgstr "Horikoshi Yukiさん"
+
+msgid "zunda"
+msgstr "zundaさん"
+
+msgid "Hiroshi Umemoto"
+msgstr "Hiroshi Umemotoさん"
+
+msgid "Release 1.2.7 - 2011-10-29"
+msgstr "1.2.7リリース - 2011-10-29"
+
+msgid ""
+"[libedit] Added error check for wide character to multibyte sequence "
+"conversion. [Reported by SHIDARA Yoji]"
+msgstr ""
+"[libedit] ワイド文字からマルチバイト列への変換時のエラーチェックを追加。 [設"
+"樂洋爾さんが報告]"
+
+msgid "Added grn_geo_estimate_in_rectangle()."
+msgstr "grn_geo_estimate_in_rectangle()を追加。"
+
+msgid "Added cursor API to geo search in rectangle."
+msgstr "長方形での位置情報検索にカーソルAPIを追加。"
+
+msgid "Improved geo search in rectangle speed."
+msgstr "長方形での位置情報検索速度を向上。"
+
+msgid "Added packages for Ubuntu 11.10 Oneiric Ocelot"
+msgstr "Ubuntu 11.10 Oneiric Ocelotのパッケージを追加。"
+
+msgid ""
+"[experimental] Supported Oracle Solaris 10 8/11. (just buildable with system "
+"gcc.)"
+msgstr ""
+"[実験的] Oracle Solaris 10 8/11をサポート。（まだシステムにインストール済みの"
+"gccでビルドできるだけ。）"
+
+msgid "Fixed a typo in document. [Reported by @soundkitchen]"
+msgstr "ドキュメントの誤字を修正。 [@soundkitchenさんが報告]"
+
+msgid "@soundkitchen"
+msgstr "@soundkitchenさん"
+
+msgid "Release 1.2.6 - 2011-09-29"
+msgstr "1.2.6リリース - 2011-09-29"
+
+msgid "Improved error message on type cast."
+msgstr "型変換時のエラーメッセージを改善。"
+
+msgid "Added geo point value validation on type cast."
+msgstr "型変換時の座標の値チェックを追加。"
+
+msgid "Supported :doc:`/tutorial/query_expansion`."
+msgstr ":doc:`/tutorial/query_expansion` をサポート。"
+
+msgid ""
+"Added `--query_expansion` option to :doc:`/reference/commands/select` for "
+"query expansion."
+msgstr ""
+"クエリ展開用に :doc:`/reference/commands/select` に `--query_expansion` オプ"
+"ションを追加。"
+
+msgid "Added geometry conversion macro between degree and msec."
+msgstr "座標の値の単位を度とミリ秒間で変換するマクロを追加。"
+
+msgid "Supported type cast in :doc:`/reference/functions/geo_distance` ()."
+msgstr ":doc:`/reference/functions/geo_distance` ()内での型変換をサポート。"
+
+msgid "Don't split tokens with full width space in command line. #986"
+msgstr ""
+"コマンドラインのパース時に全角スペースでトークンを区切らないようにした。 #986"
+
+msgid "Supported conversion between TokyoGeoPoint and WGS84GeoPoint."
+msgstr "TokyoGeoPointとWGS84GeoPoint間での変換をサポート。"
+
+msgid "Exported grn_geo_select_in_circle() and grn_geo_select_in_rectangle()."
+msgstr ""
+"grn_geo_select_in_circle()とgrn_geo_select_in_rectangle()をAPIとして公開し"
+"た。"
+
+msgid "Supported CentOS 6."
+msgstr "CentOS 6をサポート。"
+
+msgid ""
+"Supported the current Debian GNU/Linux sid. Patch by SATOH Fumiyasu. GitHub#3"
+msgstr ""
+"最新のDebian GNU/Linux sidをサポート。SATOH Fumiyasuさんによるパッチ。 "
+"GitHub#3"
+
+msgid "Fixed a bug that geo point is loaded as broken value."
+msgstr "座標値がロード時に壊れてしまう問題を修正。"
+
+msgid "SATOH Fumiyasu"
+msgstr "SATOH Fumiyasuさん"
+
+msgid "Release 1.2.5 - 2011-08-29"
+msgstr "1.2.5リリース - 2011-08-29"
+
+msgid "Added experimental Windows installer support."
+msgstr "実験的にWindowsインストーラの提供を開始。"
+
+msgid "Accepted \"#\" and \"-\" as a valid name characters. #1043"
+msgstr "名前に使える文字に\"#\"と\"-\"を追加。#1043"
+
+msgid ""
+"Accepted all valid characters except \"_\" as the first character. #1043"
+msgstr ""
+"名前に使える文字のうち、\"_\"以外はすべて最初の文字にも使えるようになった。 "
+"#1043"
+
+msgid ""
+"Supported `--each` for `[...]` form :doc:`/reference/commands/load`. #1044"
+msgstr ""
+":doc:`/reference/commands/load` の `--each` オプションが `[...]` 形式のデータ"
+"でも動くようになった。 #1044"
+
+msgid "Added documentation for :doc:`/reference/suggest`."
+msgstr ":doc:`/reference/suggest` のドキュメントを追加。"
+
+msgid ""
+"Supported threshold as `--frequency_threshold` and `--"
+"conditional_probability_threshold` options in all :doc:`/reference/commands/"
+"suggest` types. #1042"
+msgstr ""
+"すべての :doc:`/reference/commands/suggest` のタイプで閾値を利用できるようし"
+"た。閾値を利用する場合は `--frequency_threshold` と `--"
+"conditional_probability_threshold` オプションを使う。 #1042"
+
+msgid "[groonga-suggest-httpd] Supported log reopen by SIGUSR1. #1048"
+msgstr ""
+"[groonga-suggest-httpd] SIGUSR1シグナルでのログの再オープンに対応。 #1048"
+
+msgid "Supported string input for reference vector column value. #1051"
+msgstr ""
+"参照ベクタカラムの値として文字列を指定すると自動的にトークナイズして格納する"
+"ようにした。 #1051"
+
+msgid ""
+"[groonga-suggest-httpd] Added `--n-lines-per-log-file` option that changes "
+"log line limitation for a file."
+msgstr ""
+"[groonga-suggest-httpd] 1ファイル中の最大ログ行数を指定する `--n-lines-per-"
+"log-file` オプションを追加。"
+
+msgid ""
+"[groonga-suggest-httpd] Added `p` parameter for `--"
+"conditional_probability_threshold`."
+msgstr ""
+"[groonga-suggest-httpd] `--conditional_probability_threshold` に対応する `p` "
+"パラメータを追加。"
+
+msgid "Added GRN_CTX_PER_DB flag for grn_ctx_init() and grn_ctx_open(). #1053"
+msgstr "grn_ctx_init()とgrn_ctx_open()用にGRN_CTX_PER_DBフラグを追加。 #1053"
+
+msgid "Exported grn_ctx_close(). #1035"
+msgstr "grn_ctx_close()を公開。 #1035"
+
+msgid ""
+"Fixed a crash bug that invalid value is passed as match expression argument "
+"in :doc:`/reference/commands/select`. #1047"
+msgstr ""
+":doc:`/reference/commands/select` でマッチ式の右辺に不正な値を指定するとク"
+"ラッシュする問題を修正。 #1047"
+
+msgid "Fixed a bug that hash table cursor returns garbage records."
+msgstr "ハッシュテーブルのカーソルが間違ったレコードを返す問題を修正。"
+
+msgid "Release 1.2.4 - 2011-07-29"
+msgstr "1.2.4リリース - 2011-07-29"
+
+msgid "Re-supported ``*BSD``. (Reported by OBATA Akio)"
+msgstr "``*BSD`` をサポートを再サポート。（おばたさんが報告）"
+
+msgid "Improved sed related portability. (Suggested by OBATA Akio)"
+msgstr "sed関連のポータビリティを改善。（おばたさんが提案）"
+
+msgid "Re-supported Visual C++ 2008."
+msgstr "Visual C++ 2008を再サポート。"
+
+msgid "Supported :doc:`/reference/commands/check` for hash table."
+msgstr ":doc:`/reference/commands/check` がハッシュテーブルをサポート。"
+
+msgid ""
+"Ignored invalid _score in --sortby of :doc:`/reference/commands/select` for "
+"convenience. #1030"
+msgstr ""
+":doc:`/reference/commands/select` の--sortby内で_scoreを使えないときに_score"
+"を指定しても無視するようにした。 #1030"
+
+msgid "Added document about :doc:`/reference/log`."
+msgstr ":doc:`/reference/log` に関するドキュメントを追加。"
+
+msgid "Supported ~/.editrc."
+msgstr "~/.editrcをサポート。"
+
+msgid "Supported ~/.groonga-history."
+msgstr "~/.groonga-historyをサポート。"
+
+msgid "Fixed broken libedit support. (Reported by Daiki Ueno)"
+msgstr "libeditサポートが壊れていた問題を修正。（うえのさんが報告）"
+
+msgid "Fixed source URL in ``*.spec`` (Reported by Daiki Ueno)"
+msgstr "``*.spec`` のソースURLを修正。（うえのさんが報告）"
+
+msgid "Fixed patricia trie cursor returns wrong records."
+msgstr "パトリシアトライのカーソルが間違ったレコードを返す問題を修正。"
+
+msgid ""
+"Added missing database lock clear for grn_obj_clear_lock() for database."
+msgstr ""
+"データベースに対するgrn_obj_clear_lock()がデータベース自身のロックをクリアし"
+"忘れていたのでクリアするようにした。"
+
+msgid ""
+"Fixed wrong record's column values deletion possible on record deletion."
+msgstr ""
+"レコード削除時に他のレコードのデータを削除してしまう可能性があるという問題を"
+"修正。"
+
+msgid "OBATA Akio"
+msgstr "おばたさん"
+
+msgid "Daiki Ueno"
+msgstr "うえのさん"
+
+msgid "Release 1.2.3 - 2011-06-29"
+msgstr "1.2.3リリース - 2011-06-29"
+
+msgid "Added invalid table name check. #912"
+msgstr "不正なテーブル名チェックを追加。#912"
+
+msgid "Added groonga-query-log-analyzer that analyze query log."
+msgstr "クエリログを解析するgroonga-query-log-analyzerを追加。"
+
+msgid "groonga command shows failed command on error."
+msgstr "groongaコマンドのエラー時に失敗したコマンドを表示するようになった。"
+
+msgid "groonga command shows file name and line no on error."
+msgstr "groongaコマンドのエラー時にファイル名と行番号を表示するようになった。"
+
+msgid ""
+"Improved error message of :doc:`/reference/commands/column_create`. #952"
+msgstr ""
+":doc:`/reference/commands/column_create` のエラーメッセージを改善。#952"
+
+msgid "Added GRN_OBJ_TABLE_DAT_KEY, double array trie, table. (experimental)"
+msgstr "GRN_OBJ_TABLE_DAT_KEY（ダブル配列トライ）テーブルを追加。（実験的）"
+
+msgid "fix get command crash. (Reported by OBATA Akio)"
+msgstr "getコマンドでクラッシュする問題を修正。（おばたさんが報告）"
+
+msgid "fix elapsed time overflow in query log. #944"
+msgstr "クエリログで経過時間がオーバーフローする問題を修正。#944"
+
+msgid "Release 1.2.2 - 2011-05-29"
+msgstr "1.2.2リリース - 2011-05-29"
+
+msgid "Added packages for Ubuntu 11.04 Natty Narwhal."
+msgstr "Ubuntu 11.04 Natty Narwhalのパッケージを追加。"
+
+msgid "Removed packages for Ubuntu 10.10 Maverick Meerkat."
+msgstr "Ubuntu 10.10 Maverick Meerkatのパッケージを削除。"
+
+msgid "RPM: Split server related packages to groonga-server package."
+msgstr "RPM: サーバー関連のパッケージをgroonga-serverパッケージに分割。"
+
+msgid "suggest: Added target object name into error messages."
+msgstr "suggest: エラーメッセージに対象オブジェクト名を加えるようにした。"
+
+msgid "document: Started English support. (not completed yet.)"
+msgstr "ドキュメント: 英語のサポートを開始。（ただし、まだ不完全。）"
+
+msgid "groonga-suggest-httpd: Added --disable-max-fd-check option."
+msgstr "groonga-suggest-httpd: --disable-max-fd-checkオプションを追加。"
+
+msgid ""
+"groonga: Renamed :option:`groonga -a` and :option:`groonga --address` "
+"options to :option:`groonga --bind-address` option."
+msgstr ""
+"groonga: :option:`groonga -a` オプションと :option:`groonga --address` オプ"
+"ションを :option:`groonga --bind-address` に改名。"
+
+msgid "groonga-suggest-httpd: Renamed --address option to --bind-address."
+msgstr "groonga-suggest-httpd: --address オプションを --bind-address に改名。"
+
+msgid ""
+"Changed admin HTML install directory to $PREFIX/share/groonga/html/admin/ "
+"from $PREFIX/share/groonga/admin_html/."
+msgstr ""
+"管理用HTMLのインストールディレクトリを$PREFIX/share/groonga/admin_html/から"
+"$PREFIX/share/groonga/html/admin/へ変更。"
+
+msgid ""
+"groonga-suggest-httpd: Used \"application/json\" for JSON response instead "
+"of \"text/javascript\"."
+msgstr ""
+"groonga-suggest-httpd: JSONレスポンス時には\"text/javascript\"ではなく"
+"\"application/json\"を使うようにした。"
+
+msgid ""
+"Windows: Used DLL relative path instead of executable file relative path."
+msgstr ""
+"Windows: 実行ファイルからの相対パスではなく、DLLからの相対パスを使うようにし"
+"た。"
+
+msgid "MeCab: Added error message from MeCab on MeCab initialize error."
+msgstr ""
+"MeCab: MeCab初期化時のMeCabのエラーメッセージもgroongaのエラーメッセージに加"
+"えるようにした。"
+
+msgid "suggest: Added prefix_search parameter to suggest command. #909"
+msgstr "suggest: suggestコマンドにprefix_searchパラメータを追加。"
+
+msgid ""
+"plugin: Added grn_plugin_get_system_plugins_dir() and "
+"grn_plugin_get_suffix() API."
+msgstr ""
+"plugin: grn_plugin_get_system_plugins_dir()とgrn_plugin_get_suffix() APIを追"
+"加。"
+
+msgid "Added grn_obj_is_builtin() API."
+msgstr "grn_obj_is_builtin() APIを追加。"
+
+msgid ":doc:`/reference/commands/load`: Added table name check. #934"
+msgstr ""
+":doc:`/reference/commands/load`: テーブル名をチェックするようにした。 #934"
+
+msgid "Showed invalid name context in error message. #935"
+msgstr ""
+"不正な名前が指定された時のエラーメッセージにどこで指定されたかの情報を含める"
+"ようにした。 #935"
+
+msgid "Fixed a data breaking bug on multi process update. #890"
+msgstr ""
+"マルチプロセスでデータを更新した場合にShortText型などの可変長データが壊れる問"
+"題を修正。 #890"
+
+msgid "1.2.1リリース - 2011-04-29"
+msgstr ""
+
+msgid "改良"
+msgstr ""
+
+msgid "suggestコマンドにthresholdパラメーターを追加。#895"
+msgstr ""
+
+msgid "suggestのHTTPサーバにlimitパラメーターを追加。#899"
+msgstr ""
+
+msgid "grntest: SIGINTでの中断に対応。"
+msgstr ""
+
+msgid "修正"
+msgstr ""
+
+msgid ""
+"同時に複数のデータベースを開いているとき、1つでもデータベー スを閉じると関連"
+"するプラグインも閉じられてしまう問題を修正。 #894"
+msgstr ""
+
+msgid ""
+"configureの--helpで出力される--with-deafult-encodingの値が 間違っていた問題を"
+"修正。（ICHII Takashiさんが報告）"
+msgstr ""
+
+msgid "チュートリアル中のtypoを修正。（moozさんが修正）"
+msgstr ""
+
+msgid "感謝"
+msgstr ""
+
+msgid "ICHII Takashiさん"
+msgstr ""
+
+msgid "moozさん"
+msgstr ""
+
+msgid "1.2.0リリース - 2011-03-29"
+msgstr ""
+
+msgid "MacPortsでのインストールドキュメントを追加。"
+msgstr ""
+
+msgid "Homebrewでのインストールドキュメントを追加。"
+msgstr ""
+
+msgid "WindowsではMinGWでもpthreadを使わないようにした。"
+msgstr ""
+
+msgid "オーバーフローチェックを強化。"
+msgstr ""
+
+msgid "位置情報の入力値チェックを強化。"
+msgstr ""
+
+msgid "インデックスを用いたジオサーチの例をチュートリアルに追加。 #438"
+msgstr ""
+
+msgid "Debian GNU/Linux wheezyのパッケージを追加。"
+msgstr ""
+
+msgid "Debian GNU/Linux lennyのパッケージを削除。"
+msgstr ""
+
+msgid ""
+"Debianパッケージをcdbsベースからdebhelperベースへ移行。 パッケージ名の変更あ"
+"り。 #887"
+msgstr ""
+
+msgid ""
+"MeCabトークナイザーの読み込みエラーを無視するようにした。た だし、ログには残"
+"る。 #893"
+msgstr ""
+
+msgid ""
+"autoconf 2.59環境において、ファイルシステムのルート直下に groongaディレクトリ"
+"を作成しようとする問題を修正。 #833"
+msgstr ""
+
+msgid "JSONPが動作しなくなっていた問題を修正。"
+msgstr ""
+
+msgid ""
+"MeCabトークナイザーの読み込みに失敗したときにクラッシュする問題を修正。 "
+"（@tomotaka_itoさんが報告）"
+msgstr ""
+
+msgid "[非互換] 位置情報の小数表記からミリ秒への変換誤差が大きい問題を修正。"
+msgstr ""
+
+msgid ""
+":doc:`/reference/functions/geo_in_rectangle` の ``top_left`` と "
+"``bottom_right`` に同じ位置を指定するとクラッシュする問題を修正。"
+msgstr ""
+
+msgid "メモリリークを修正。"
+msgstr ""
+
+msgid "小数形式のTimeリテラルをロードするとミリ秒情報が落ちる問題を修正。 #880"
+msgstr ""
+
+msgid ":doc:`/reference/commands/column_list` のドキュメントを修正。 #758"
+msgstr ""
+
+msgid ":doc:`/reference/commands/table_list` のドキュメントを修正。"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/load` で_valueを指定するとメモリリークする問題を修"
+"正。 #878"
+msgstr ""
+
+msgid ":doc:`/reference/commands/load` でクラッシュする問題を修正。 #661"
+msgstr ""
+
+msgid "実験的"
+msgstr ""
+
+msgid "grn_table_truncate()を追加。（実験的。問題あり）"
+msgstr ""
+
+msgid "truncateコマンドを追加。（実験的。問題あり） #888"
+msgstr ""
+
+msgid "@tomotaka_itoさん"
+msgstr ""

@@ -1,0 +1,121 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``config_get``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``config_get`` command returns the value of the specified configuration item."
+msgstr "``config_get`` コマンドは指定した設定項目の値を返します。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes only one required parameter::"
+msgstr "このコマンドの引数は1つで必須です::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"Here is an example to set a value to ``alias.column`` configuration item and "
+"get the value:"
+msgstr ""
+"以下は ``alias.column`` 設定項目に値を設定して、設定した値を取得する例です。"
+
+msgid "Here is an example to get nonexistent configuration item value:"
+msgstr "以下は存在しない設定項目の値を取得する例です。"
+
+msgid ""
+"``config_get`` returns an empty string for nonexistent configuration item "
+"key."
+msgstr "``config_get`` は存在しない設定項目の場合は空文字列を返します。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes all parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is only one required parameter."
+msgstr "必須の引数は1つです。"
+
+msgid "``key``"
+msgstr ""
+
+msgid "Specifies the key of target configuration item."
+msgstr "対象設定項目のキーを指定します。"
+
+msgid "The max key size is 4KiB."
+msgstr "最大キーサイズは4KiBです。"
+
+msgid "You can't use an empty string as key."
+msgstr "キーには空文字列を使うことはできません。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There is no optional parameter."
+msgstr "省略可能な引数はありません。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid ""
+"``config_get`` command returns the value of the specified configuration "
+"item::"
+msgstr "``config_get`` コマンドは指定した設定項目の値を返します。::"
+
+msgid "``HEADER``"
+msgstr ""
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "``VALUE``"
+msgstr ""
+
+msgid ""
+"``VALUE`` is the value of the configuration item specified by ``key``. It's "
+"a string."
+msgstr "``VALUE`` は ``key`` で指定した設定項目の値です。文字列です。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/configuration`"
+msgstr ""
+
+msgid ":doc:`config_set`"
+msgstr ""
+
+msgid ":doc:`config_delete`"
+msgstr ""

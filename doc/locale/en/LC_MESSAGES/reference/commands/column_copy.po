@@ -1,0 +1,396 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``column_copy``"
+msgstr "``column_copy``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "``column_copy`` copies all column values to other column."
+msgstr "``column_copy`` copies all column values to other column."
+
+msgid "You can implement the following features with this command:"
+msgstr "You can implement the following features with this command:"
+
+msgid "Changing column configuration"
+msgstr "Changing column configuration"
+
+msgid "Changing table configuration"
+msgstr "Changing table configuration"
+
+msgid "You can change column configuration by the following steps:"
+msgstr "You can change column configuration by the following steps:"
+
+msgid "Create a new column with new configuration"
+msgstr "Create a new column with new configuration"
+
+msgid "Copy all values from the current column to the new column"
+msgstr "Copy all values from the current column to the new column"
+
+msgid "Remove the current column"
+msgstr "Remove the current column"
+
+msgid "Rename the new column to the current column"
+msgstr "Rename the new column to the current column"
+
+msgid "You can change table configuration by the following steps:"
+msgstr "You can change table configuration by the following steps:"
+
+msgid "Create a new table with new configuration"
+msgstr "Create a new table with new configuration"
+
+msgid "Create all same columns to the new table"
+msgstr "Create all same columns to the new table"
+
+msgid "Copy all column values from the current table to the new table"
+msgstr "Copy all column values from the current table to the new table"
+
+msgid "Remove the current table"
+msgstr "Remove the current table"
+
+msgid "Rename the new table to the current table"
+msgstr "Rename the new table to the current table"
+
+msgid "Concrete examples are showed later."
+msgstr "Concrete examples are showed later."
+
+msgid ""
+"You can't copy column values from a ``TABLE_NO_KEY`` table to another table. "
+"And you can't copy column values to a ``TABLE_NO_KEY`` table from another "
+"table. Because Groonga can't map records without record key."
+msgstr ""
+"You can't copy column values from a ``TABLE_NO_KEY`` table to another table. "
+"And you can't copy column values to a ``TABLE_NO_KEY`` table from another "
+"table. Because Groonga can't map records without record key."
+
+msgid ""
+"You can copy column values from a ``TABLE_NO_KEY`` table to the same "
+"``TABLE_NO_KEY`` table."
+msgstr ""
+"You can copy column values from a ``TABLE_NO_KEY`` table to the same "
+"``TABLE_NO_KEY`` table."
+
+msgid ""
+"You can copy column values from a ``TABLE_HASH_KEY`` / ``TABLE_PAT_KEY`` / "
+"``TABLE_DAT_KEY`` table to the same or another ``TABLE_HASH_KEY`` / "
+"``TABLE_PAT_KEY`` / ``TABLE_DAT_KEY`` table."
+msgstr ""
+"You can copy column values from a ``TABLE_HASH_KEY`` / ``TABLE_PAT_KEY`` / "
+"``TABLE_DAT_KEY`` table to the same or another ``TABLE_HASH_KEY`` / "
+"``TABLE_PAT_KEY`` / ``TABLE_DAT_KEY`` table."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "This command takes four parameters."
+msgstr "This command takes four parameters."
+
+msgid "All parameters are required::"
+msgstr "All parameters are required::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Here are use cases of this command:"
+msgstr "Here are use cases of this command:"
+
+msgid "How to change column configuration"
+msgstr "How to change column configuration"
+
+msgid ""
+"You can change column value type. For example, you can change ``UInt32`` "
+"column value to ``ShortText`` column value."
+msgstr ""
+"You can change column value type. For example, you can change ``UInt32`` "
+"column value to ``ShortText`` column value."
+
+msgid ""
+"You can change column type. For example, you can change ``COLUMN_SCALAR`` "
+"column to ``COLUMN_VECTOR`` column."
+msgstr ""
+"You can change column type. For example, you can change ``COLUMN_SCALAR`` "
+"column to ``COLUMN_VECTOR`` column."
+
+msgid ""
+"You can move a column to other table. For example, you can move "
+"``high_score`` column to ``Users`` table from ``Players`` table."
+msgstr ""
+"You can move a column to other table. For example, you can move "
+"``high_score`` column to ``Users`` table from ``Players`` table."
+
+msgid "Here are basic steps to change column configuration:"
+msgstr "Here are basic steps to change column configuration:"
+
+msgid ""
+"Here is an example to change column value type to ``Int32`` from "
+"``ShortText``."
+msgstr ""
+"Here is an example to change column value type to ``Int32`` from "
+"``ShortText``."
+
+msgid "Here are schema and data:"
+msgstr "Here are schema and data:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"The following commands change ``Logs.serial`` column value type to "
+"``ShortText`` from ``Int32``:"
+msgstr ""
+"The following commands change ``Logs.serial`` column value type to "
+"``ShortText`` from ``Int32``:"
+
+msgid ""
+"You can find ``Logs.serial`` stores ``ShortText`` value from the response of "
+"``select``."
+msgstr ""
+"You can find ``Logs.serial`` stores ``ShortText`` value from the response of "
+"``select``."
+
+msgid ""
+"Here is an example to change column type to ``COLUMN_VECTOR`` from "
+"``COLUMN_SCALAR``."
+msgstr ""
+"Here is an example to change column type to ``COLUMN_VECTOR`` from "
+"``COLUMN_SCALAR``."
+
+msgid ""
+"The following commands change ``Entries.tag`` column to ``COLUMN_VECTOR`` "
+"from ``COLUMN_SCALAR``:"
+msgstr ""
+"The following commands change ``Entries.tag`` column to ``COLUMN_VECTOR`` "
+"from ``COLUMN_SCALAR``:"
+
+msgid ""
+"You can find ``Entries.tag`` stores ``COLUMN_VECTOR`` value from the "
+"response of ``select``."
+msgstr ""
+"You can find ``Entries.tag`` stores ``COLUMN_VECTOR`` value from the "
+"response of ``select``."
+
+msgid ""
+"Here is an example to move ``high_score`` column to ``Users`` table from "
+"``Players`` table."
+msgstr ""
+"Here is an example to move ``high_score`` column to ``Users`` table from "
+"``Players`` table."
+
+msgid ""
+"The following commands move ``high_score`` column to ``Users`` table from "
+"``Players`` table:"
+msgstr ""
+"The following commands move ``high_score`` column to ``Users`` table from "
+"``Players`` table:"
+
+msgid ""
+"You can find ``Users.high_score`` is moved from ``Players.high_score`` from "
+"the response of ``select``."
+msgstr ""
+"You can find ``Users.high_score`` is moved from ``Players.high_score`` from "
+"the response of ``select``."
+
+msgid "How to change table configuration"
+msgstr "How to change table configuration"
+
+msgid ""
+"You can change table key type. For example, you can change key type to "
+"``ShortText`` from ``Int32``."
+msgstr ""
+"You can change table key type. For example, you can change key type to "
+"``ShortText`` from ``Int32``."
+
+msgid ""
+"You can change table type. For example, you can change ``TABLE_HASH_KEY`` "
+"table to ``TABLE_PAT_KEY`` table."
+msgstr ""
+"You can change table type. For example, you can change ``TABLE_HASH_KEY`` "
+"table to ``TABLE_PAT_KEY`` table."
+
+msgid ""
+"You can also change other options such as default tokenizer and normalizer. "
+"For example, you can change default tokenizer to "
+"``TokenBigramSplitSymbolAlphaDigit`` from ``TokenBigrm``."
+msgstr ""
+"You can also change other options such as default tokenizer and normalizer. "
+"For example, you can change default tokenizer to "
+"``TokenBigramSplitSymbolAlphaDigit`` from ``TokenBigrm``."
+
+msgid ""
+"You can't change ``TABLE_NO_KEY`` table. Because ``TABLE_NO_KEY`` doesn't "
+"have record key. Groonga can't identify copy destination record without "
+"record key."
+msgstr ""
+"You can't change ``TABLE_NO_KEY`` table. Because ``TABLE_NO_KEY`` doesn't "
+"have record key. Groonga can't identify copy destination record without "
+"record key."
+
+msgid "Here are basic steps to change table configuration:"
+msgstr "Here are basic steps to change table configuration:"
+
+msgid ""
+"Here is an example to change table key type to ``ShortText`` from ``Int32``."
+msgstr ""
+"Here is an example to change table key type to ``ShortText`` from ``Int32``."
+
+msgid ""
+"The following commands change ``IDs`` table key type to ``ShortText`` from "
+"``Int32``:"
+msgstr ""
+"The following commands change ``IDs`` table key type to ``ShortText`` from "
+"``Int32``:"
+
+msgid ""
+"You can find ``IDs`` stores ``ShortText`` key from the response of "
+"``select``."
+msgstr ""
+"You can find ``IDs`` stores ``ShortText`` key from the response of "
+"``select``."
+
+msgid ""
+"Here is an example to change table type to ``TABLE_PAT_KEY`` from "
+"``TABLE_HASH_KEY``."
+msgstr ""
+"Here is an example to change table type to ``TABLE_PAT_KEY`` from "
+"``TABLE_HASH_KEY``."
+
+msgid ""
+"The following commands change ``Names`` table to ``TABLE_PAT_KEY`` from "
+"``TABLE_HASH_KEY``:"
+msgstr ""
+"The following commands change ``Names`` table to ``TABLE_PAT_KEY`` from "
+"``TABLE_HASH_KEY``:"
+
+msgid ""
+"You can find ``Names`` is a ``TABLE_PAT_KEY`` because ``select`` can use :"
+"ref:`script-syntax-prefix-search-operator`. You can't use :ref:`script-"
+"syntax-prefix-search-operator` with ``TABLE_HASH_KEY``."
+msgstr ""
+"You can find ``Names`` is a ``TABLE_PAT_KEY`` because ``select`` can use :"
+"ref:`script-syntax-prefix-search-operator`. You can't use :ref:`script-"
+"syntax-prefix-search-operator` with ``TABLE_HASH_KEY``."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "This section describes parameters."
+msgstr "This section describes parameters."
+
+msgid "Required parameters"
+msgstr "Required parameters"
+
+msgid "All parameters are required."
+msgstr "All parameters are required."
+
+msgid "``from_table``"
+msgstr "``from_table``"
+
+msgid "Specifies the table name of source column."
+msgstr "Specifies the table name of source column."
+
+msgid "You can specify any table including ``TABLE_NO_KEY`` table."
+msgstr "You can specify any table including ``TABLE_NO_KEY`` table."
+
+msgid ""
+"If you specify ``TABLE_NO_KEY`` table, :ref:`column-copy-to-table` must be "
+"the same table."
+msgstr ""
+"If you specify ``TABLE_NO_KEY`` table, :ref:`column-copy-to-table` must be "
+"the same table."
+
+msgid "Here is an example to use ``from_table``."
+msgstr "Here is an example to use ``from_table``."
+
+msgid "You can copy all values to ``to_column`` from ``from_column``:"
+msgstr "You can copy all values to ``to_column`` from ``from_column``:"
+
+msgid "``from_name``"
+msgstr "``from_name``"
+
+msgid "Specifies the column name to be copied values."
+msgstr "Specifies the column name to be copied values."
+
+msgid "See :ref:`column-copy-from-table` for example."
+msgstr "See :ref:`column-copy-from-table` for example."
+
+msgid "``to_table``"
+msgstr "``to_table``"
+
+msgid "Specifies the table name of destination column."
+msgstr "Specifies the table name of destination column."
+
+msgid ""
+"You can specify the same table name as :ref:`column-copy-from-table` when "
+"you want to copy column values in the same table."
+msgstr ""
+"You can specify the same table name as :ref:`column-copy-from-table` when "
+"you want to copy column values in the same table."
+
+msgid ""
+"You can't specify ``TABLE_NO_KEY`` table to ``to_table`` because Groonga "
+"can't identify destination records without record key."
+msgstr ""
+"You can't specify ``TABLE_NO_KEY`` table to ``to_table`` because Groonga "
+"can't identify destination records without record key."
+
+msgid ""
+"There is one exception. If you specify the same name as ``from_table`` to "
+"``to_table``, you can use ``TABLE_NO_KEY`` table as ``to_table``. Because "
+"Groonga can identify destination records when source table and destination "
+"table is the same table."
+msgstr ""
+"There is one exception. If you specify the same name as ``from_table`` to "
+"``to_table``, you can use ``TABLE_NO_KEY`` table as ``to_table``. Because "
+"Groonga can identify destination records when source table and destination "
+"table is the same table."
+
+msgid "Here is an example to use ``to_table``."
+msgstr "Here is an example to use ``to_table``."
+
+msgid "You can copy all values to ``ToTable.to_column`` from ``Table.column``:"
+msgstr ""
+"You can copy all values to ``ToTable.to_column`` from ``Table.column``:"
+
+msgid "``to_name``"
+msgstr "``to_name``"
+
+msgid "Specifies the destination column name."
+msgstr "Specifies the destination column name."
+
+msgid "See :ref:`column-copy-to-table` for example."
+msgstr "See :ref:`column-copy-to-table` for example."
+
+msgid "Optional parameters"
+msgstr "Optional parameters"
+
+msgid "There is no optional parameter."
+msgstr "There is no optional parameter."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "The command returns ``true`` as body on success such as::"
+msgstr "The command returns ``true`` as body on success such as::"
+
+msgid "If the command fails, error details are in ``HEADER``."
+msgstr "If the command fails, error details are in ``HEADER``."
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr "See :doc:`/reference/command/output_format` for ``HEADER``."

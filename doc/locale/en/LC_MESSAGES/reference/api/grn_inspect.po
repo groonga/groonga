@@ -1,0 +1,243 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``grn_inspect``"
+msgstr "``grn_inspect``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"There are two kind of functions to inspect :c:type:`grn_obj`. One is "
+"``grn_inspect`` function, The other is ``grn_p`` function."
+msgstr ""
+"There are two kind of functions to inspect :c:type:`grn_obj`. One is "
+"``grn_inspect`` function, The other is ``grn_p`` function."
+
+msgid ""
+"Here is the list of ``grn_inspect`` function series. It sets inspected text "
+"into specified object."
+msgstr ""
+"Here is the list of ``grn_inspect`` function series. It sets inspected text "
+"into specified object."
+
+msgid ":c:func:`grn_inspect()`"
+msgstr ":c:func:`grn_inspect()`"
+
+msgid ":c:func:`grn_inspect_indented()`"
+msgstr ":c:func:`grn_inspect_indented()`"
+
+msgid ":c:func:`grn_inspect_limited()`"
+msgstr ":c:func:`grn_inspect_limited()`"
+
+msgid ":c:func:`grn_inspect_name()`"
+msgstr ":c:func:`grn_inspect_name()`"
+
+msgid ":c:func:`grn_inspect_encoding()`"
+msgstr ":c:func:`grn_inspect_encoding()`"
+
+msgid ":c:func:`grn_inspect_type()`"
+msgstr ":c:func:`grn_inspect_type()`"
+
+msgid ":c:func:`grn_inspect_query_log_flags()`"
+msgstr ":c:func:`grn_inspect_query_log_flags()`"
+
+msgid ""
+"Here is the list of ``grn_p`` function series. It prints inspected text into "
+"console."
+msgstr ""
+"Here is the list of ``grn_p`` function series. It prints inspected text into "
+"console."
+
+msgid ":c:func:`grn_p()`"
+msgstr ":c:func:`grn_p()`"
+
+msgid ":c:func:`grn_p_geo_point()`"
+msgstr ":c:func:`grn_p_geo_point()`"
+
+msgid ":c:func:`grn_p_ii_values()`"
+msgstr ":c:func:`grn_p_ii_values()`"
+
+msgid "Example"
+msgstr "Example"
+
+msgid "Here is an example which inspects specified target object."
+msgstr "Here is an example which inspects specified target object."
+
+msgid "Reference"
+msgstr "Reference"
+
+msgid "Inspect specified target ``obj`` object."
+msgstr "Inspect specified target ``obj`` object."
+
+msgid ""
+"A table is specified and it's table type is ``TABLE_PAT_KEY``, all keys are "
+"shown. If you do not want to this behavior, use :c:func:"
+"`grn_inspect_limited` instead."
+msgstr ""
+"A table is specified and it's table type is ``TABLE_PAT_KEY``, all keys are "
+"shown. If you do not want to this behavior, use :c:func:"
+"`grn_inspect_limited` instead."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "The context object"
+msgstr "The context object"
+
+msgid "The buffer object which is inspected text will be stored."
+msgstr "The buffer object which is inspected text will be stored."
+
+msgid "The inspect target object."
+msgstr "The inspect target object."
+
+msgid "Returns"
+msgstr "Returns"
+
+msgid "``buffer`` object which is inspected text is set."
+msgstr "``buffer`` object which is inspected text is set."
+
+msgid "If obj is ``TABLE_PAT_KEY`` table, it prints like the following::"
+msgstr "If obj is ``TABLE_PAT_KEY`` table, it prints like the following::"
+
+msgid ""
+"``indent`` is only added if inspected text contains newline (inspected text "
+"must be multiple lines)."
+msgstr ""
+"``indent`` is only added if inspected text contains newline (inspected text "
+"must be multiple lines)."
+
+msgid "The pre-pended indentation text."
+msgstr "The pre-pended indentation text."
+
+msgid "``buffer`` object which is inspected text is set with indent."
+msgstr "``buffer`` object which is inspected text is set with indent."
+
+msgid "If inspected text is too long, it will be truncated."
+msgstr "If inspected text is too long, it will be truncated."
+
+msgid "The buffer object which is inspected(truncated) text will be stored."
+msgstr "The buffer object which is inspected(truncated) text will be stored."
+
+msgid ""
+"``buffer`` object which is object detail is set. If inspected text is longer "
+"than 64 characters, inspected text is truncated to it. Otherwise, inspected "
+"text will not be truncated."
+msgstr ""
+"``buffer`` object which is object detail is set. If inspected text is longer "
+"than 64 characters, inspected text is truncated to it. Otherwise, inspected "
+"text will not be truncated."
+
+msgid ""
+"Even though if obj is ``TABLE_PAT_KEY`` table, it prints truncated result "
+"like the following::"
+msgstr ""
+"Even though if obj is ``TABLE_PAT_KEY`` table, it prints truncated result "
+"like the following::"
+
+msgid "The buffer object which is object name will be stored."
+msgstr "The buffer object which is object name will be stored."
+
+msgid ""
+"``buffer`` object which is name of object is set. If target object is nil, "
+"``(nil)`` is set to buffer, if target object is internally used object, "
+"``(anonymouse: ID)`` is set to buffer."
+msgstr ""
+"``buffer`` object which is name of object is set. If target object is nil, "
+"``(nil)`` is set to buffer, if target object is internally used object, "
+"``(anonymouse: ID)`` is set to buffer."
+
+msgid "Specified object name is printed like this::"
+msgstr "Specified object name is printed like this::"
+
+msgid "The buffer object which is encoding name will be stored."
+msgstr "The buffer object which is encoding name will be stored."
+
+msgid ""
+"The inspect target encoding. encoding must be ``GRN_ENC_DEFAULT``, "
+"``GRN_ENC_NONE``, ``GRN_ENC_EUC_JP``, ``GRN_ENC_UTF8``, ``GRN_ENC_SJIS``, "
+"``GRN_ENC_LATIN1`` or ``GRN_ENC_KOI8R``"
+msgstr ""
+"The inspect target encoding. encoding must be ``GRN_ENC_DEFAULT``, "
+"``GRN_ENC_NONE``, ``GRN_ENC_EUC_JP``, ``GRN_ENC_UTF8``, ``GRN_ENC_SJIS``, "
+"``GRN_ENC_LATIN1`` or ``GRN_ENC_KOI8R``"
+
+msgid ""
+"``buffer`` object which is encoding name is set. If invalid ``encoding`` is "
+"given, ``(unknown: ENCODING)`` is set to ``buffer``."
+msgstr ""
+"``buffer`` object which is encoding name is set. If invalid ``encoding`` is "
+"given, ``(unknown: ENCODING)`` is set to ``buffer``."
+
+msgid "Specified encoding name is printed like the following::"
+msgstr "Specified encoding name is printed like the following::"
+
+msgid "The buffer object which is type name will be stored."
+msgstr "The buffer object which is type name will be stored."
+
+msgid "The inspect target type."
+msgstr "The inspect target type."
+
+msgid ""
+"``buffer`` object which is type name is set. If invalid ``type`` is given, "
+"``(unknown: TYPE_IN_HEX)`` is set to ``buffer``."
+msgstr ""
+"``buffer`` object which is type name is set. If invalid ``type`` is given, "
+"``(unknown: TYPE_IN_HEX)`` is set to ``buffer``."
+
+msgid "If obj is builtin type, type name is printed like the following::"
+msgstr "If obj is builtin type, type name is printed like the following::"
+
+msgid "Inspect specified target ``flag``."
+msgstr "Inspect specified target ``flag``."
+
+msgid "The buffer object which is flag name will be stored."
+msgstr "The buffer object which is flag name will be stored."
+
+msgid ""
+"``buffer`` object which is flag name is set. If invalid ``flags`` is given, "
+"empty string is set to ``buffer``."
+msgstr ""
+"``buffer`` object which is flag name is set. If invalid ``flags`` is given, "
+"empty string is set to ``buffer``."
+
+msgid "The query logger flags are printed like the following::"
+msgstr "The query logger flags are printed like the following::"
+
+msgid "Inspect specified target ``obj`` object. It prints inspected text."
+msgstr "Inspect specified target ``obj`` object. It prints inspected text."
+
+msgid "If obj is ``ShortText``, it prints like the following::"
+msgstr "If obj is ``ShortText``, it prints like the following::"
+
+msgid ""
+"Inspect specified target ``obj`` object. It prints inspected geo point text."
+msgstr ""
+"Inspect specified target ``obj`` object. It prints inspected geo point text."
+
+msgid "If ``point`` indicates New York City, it prints like the following::"
+msgstr "If ``point`` indicates New York City, it prints like the following::"
+
+msgid ""
+"Inspect specified target ``obj`` object. It prints inspected index values."
+msgstr ""
+"Inspect specified target ``obj`` object. It prints inspected index values."
+
+msgid "If ``obj`` is an index column, it prints like the following::"
+msgstr "If ``obj`` is an index column, it prints like the following::"

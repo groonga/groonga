@@ -1,0 +1,559 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``logical_table_remove``"
+msgstr "``logical_table_remove``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"``logical_table_remove`` removes tables and their columns for the specified "
+"logical table. If there are one or more indexes against key of the tables "
+"and their columns, they are also removed."
+msgstr ""
+"``logical_table_remove`` removes tables and their columns for the specified "
+"logical table. If there are one or more indexes against key of the tables "
+"and their columns, they are also removed."
+
+msgid ""
+"If you specify the part of a shard, table of the shard isn't removed. "
+"``logical_table_remove`` just deletes records in the table."
+msgstr ""
+"If you specify the part of a shard, table of the shard isn't removed. "
+"``logical_table_remove`` just deletes records in the table."
+
+msgid "For example, there are the following records in a table:"
+msgstr "For example, there are the following records in a table:"
+
+msgid "Record1: ``2016-03-18 00:30:00``"
+msgstr "Record1: ``2016-03-18 00:30:00``"
+
+msgid "Record2: ``2016-03-18 01:00:00``"
+msgstr "Record2: ``2016-03-18 01:00:00``"
+
+msgid "Record3: ``2016-03-18 02:00:00``"
+msgstr "Record3: ``2016-03-18 02:00:00``"
+
+msgid ""
+"``logical_table_remove`` deletes \"Record1\" and \"Record2\" when you "
+"specify range as between ``2016-03-18 00:00:00`` and ``2016-03-18 "
+"01:30:00``. ``logical_table_remove`` doesn't delete \"Record3\". "
+"``logical_table_remove`` doesn't remove the table."
+msgstr ""
+"``logical_table_remove`` deletes \"Record1\" and \"Record2\" when you "
+"specify range as between ``2016-03-18 00:00:00`` and ``2016-03-18 "
+"01:30:00``. ``logical_table_remove`` doesn't delete \"Record3\". "
+"``logical_table_remove`` doesn't remove the table."
+
+msgid ""
+"You can also remove tables and columns that reference the target table and "
+"tables related with the target shard by using ``dependent`` parameter."
+msgstr ""
+"You can also remove tables and columns that reference the target table and "
+"tables related with the target shard by using ``dependent`` parameter."
+
+msgid ""
+"You can remove broken tables and columns as much as possible by using "
+"``force`` parameter."
+msgstr ""
+"You can remove broken tables and columns as much as possible by using "
+"``force`` parameter."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "This command takes many parameters."
+msgstr "This command takes many parameters."
+
+msgid "The required parameters are ``logical_table`` and ``shard_key``::"
+msgstr "The required parameters are ``logical_table`` and ``shard_key``::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "You specify logical table name and shard key what you want to remove."
+msgstr "You specify logical table name and shard key what you want to remove."
+
+msgid "This section describes about the followings:"
+msgstr "This section describes about the followings:"
+
+msgid "Basic usage"
+msgstr "Basic usage"
+
+msgid "Removes parts of a logical table"
+msgstr "Removes parts of a logical table"
+
+msgid "Unremovable cases"
+msgstr "Unremovable cases"
+
+msgid "Removes with related tables"
+msgstr "Removes with related tables"
+
+msgid "Removes broken tables as much as possible"
+msgstr "Removes broken tables as much as possible"
+
+msgid "Decreases used resources"
+msgstr "Decreases used resources"
+
+msgid "Register ``sharding`` plugin to use this command in advance."
+msgstr "Register ``sharding`` plugin to use this command in advance."
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"You can remove all tables for the logical table by specifying only "
+"``logical_table`` and ``shard_key``."
+msgstr ""
+"You can remove all tables for the logical table by specifying only "
+"``logical_table`` and ``shard_key``."
+
+msgid "Here are commands to create 2 shards:"
+msgstr "Here are commands to create 2 shards:"
+
+msgid "You can confirm existing shards by :doc:`logical_shard_list`:"
+msgstr "You can confirm existing shards by :doc:`logical_shard_list`:"
+
+msgid "You can remove all shards:"
+msgstr "You can remove all shards:"
+
+msgid "There are no shards after you remove all shards:"
+msgstr "There are no shards after you remove all shards:"
+
+msgid "You can specify range of shards by the following parameters:"
+msgstr "You can specify range of shards by the following parameters:"
+
+msgid "``min``"
+msgstr "``min``"
+
+msgid "``min_border``"
+msgstr "``min_border``"
+
+msgid "``max``"
+msgstr "``max``"
+
+msgid "``max_border``"
+msgstr "``max_border``"
+
+msgid ""
+"See the following documents of :doc:`logical_select` for each parameter:"
+msgstr ""
+"See the following documents of :doc:`logical_select` for each parameter:"
+
+msgid ":ref:`logical-select-min`"
+msgstr ":ref:`logical-select-min`"
+
+msgid ":ref:`logical-select-min-border`"
+msgstr ":ref:`logical-select-min-border`"
+
+msgid ":ref:`logical-select-max`"
+msgstr ":ref:`logical-select-max`"
+
+msgid ":ref:`logical-select-max-border`"
+msgstr ":ref:`logical-select-max-border`"
+
+msgid ""
+"If the specified range doesn't cover all records in a shard, table for the "
+"shard isn't removed. Target records in the table are only deleted."
+msgstr ""
+"If the specified range doesn't cover all records in a shard, table for the "
+"shard isn't removed. Target records in the table are only deleted."
+
+msgid ""
+"If the specified range covers all records in a shard, table for the shard is "
+"removed."
+msgstr ""
+"If the specified range covers all records in a shard, table for the shard is "
+"removed."
+
+msgid ""
+"Here is a logical table to show the behavior. The logical table has two "
+"shards:"
+msgstr ""
+"Here is a logical table to show the behavior. The logical table has two "
+"shards:"
+
+msgid "There are the following records in ``Logs_20160318`` table:"
+msgstr "There are the following records in ``Logs_20160318`` table:"
+
+msgid "Record1: ``\"2016-03-18 00:30:00\"``"
+msgstr "Record1: ``\"2016-03-18 00:30:00\"``"
+
+msgid "Record2: ``\"2016-03-18 01:00:00\"``"
+msgstr "Record2: ``\"2016-03-18 01:00:00\"``"
+
+msgid "Record3: ``\"2016-03-18 02:00:00\"``"
+msgstr "Record3: ``\"2016-03-18 02:00:00\"``"
+
+msgid "There are the following records in ``Logs_20160319`` table:"
+msgstr "There are the following records in ``Logs_20160319`` table:"
+
+msgid "Record1: ``\"2016-03-19 00:30:00\"``"
+msgstr "Record1: ``\"2016-03-19 00:30:00\"``"
+
+msgid "Record2: ``\"2016-03-19 01:00:00\"``"
+msgstr "Record2: ``\"2016-03-19 01:00:00\"``"
+
+msgid ""
+"The following range doesn't cover \"Record1\" in ``Logs_20160318`` table but "
+"covers all records in ``Logs_20160319`` table:"
+msgstr ""
+"The following range doesn't cover \"Record1\" in ``Logs_20160318`` table but "
+"covers all records in ``Logs_20160319`` table:"
+
+msgid "Parameter"
+msgstr "Parameter"
+
+msgid "Value"
+msgstr "Value"
+
+msgid "``\"2016-03-18 01:00:00\"``"
+msgstr "``\"2016-03-18 01:00:00\"``"
+
+msgid "``\"include\"``"
+msgstr "``\"include\"``"
+
+msgid "``\"2016-03-19 01:30:00\"``"
+msgstr "``\"2016-03-19 01:30:00\"``"
+
+msgid ""
+"``logical_table_remove`` with the range deletes \"Record2\" and \"Record3\" "
+"in ``Logs_20160318`` table but doesn't remove ``Logs_20160318`` table. "
+"Because there is \"Record1\" in ``Logs_20160318`` table."
+msgstr ""
+"``logical_table_remove`` with the range deletes \"Record2\" and \"Record3\" "
+"in ``Logs_20160318`` table but doesn't remove ``Logs_20160318`` table. "
+"Because there is \"Record1\" in ``Logs_20160318`` table."
+
+msgid ""
+"``logical_table_remove`` with the range removes ``Logs_20160319`` table "
+"because the range covers all records in ``Logs_20160319`` table."
+msgstr ""
+"``logical_table_remove`` with the range removes ``Logs_20160319`` table "
+"because the range covers all records in ``Logs_20160319`` table."
+
+msgid "Here is an example to use ``logical_table_remove`` with the range:"
+msgstr "Here is an example to use ``logical_table_remove`` with the range:"
+
+msgid ":doc:`dump` shows that there is \"Record1\" in ``Logs_20160318`` table:"
+msgstr ""
+":doc:`dump` shows that there is \"Record1\" in ``Logs_20160318`` table:"
+
+msgid ""
+"There are some unremovable cases. See :ref:`table-remove-unremovable-cases` "
+"for details. Because ``logical_table_remove`` uses the same checks."
+msgstr ""
+"There are some unremovable cases. See :ref:`table-remove-unremovable-cases` "
+"for details. Because ``logical_table_remove`` uses the same checks."
+
+msgid ""
+"If you understand what you'll do, you can also remove tables and columns "
+"that depend on the target shard with one ``logical_table_remove`` command by "
+"using ``--dependent yes`` parameter."
+msgstr ""
+"If you understand what you'll do, you can also remove tables and columns "
+"that depend on the target shard with one ``logical_table_remove`` command by "
+"using ``--dependent yes`` parameter."
+
+msgid ""
+"Here are conditions for dependent. If table or column satisfies one of the "
+"conditions, the table or column depends on the target shard:"
+msgstr ""
+"Here are conditions for dependent. If table or column satisfies one of the "
+"conditions, the table or column depends on the target shard:"
+
+msgid "Tables and columns that reference the target shard"
+msgstr "Tables and columns that reference the target shard"
+
+msgid ""
+"Tables for the shard (= The table has the same ``_YYYYMMDD`` postfix as the "
+"target shard and is referenced from the target shard)"
+msgstr ""
+"Tables for the shard (= The table has the same ``_YYYYMMDD`` postfix as the "
+"target shard and is referenced from the target shard)"
+
+msgid ""
+"If there are one or more tables and columns that reference the target shard, "
+"``logical_table_remove`` is failed. It's for avoiding dangling references."
+msgstr ""
+"If there are one or more tables and columns that reference the target shard, "
+"``logical_table_remove`` is failed. It's for avoiding dangling references."
+
+msgid ""
+"``Bookmarks.log_20160320`` column in the following is the column that "
+"references the target shard:"
+msgstr ""
+"``Bookmarks.log_20160320`` column in the following is the column that "
+"references the target shard:"
+
+msgid ""
+"You can't remove ``Logs_20160320`` by ``logical_table_remove`` by default:"
+msgstr ""
+"You can't remove ``Logs_20160320`` by ``logical_table_remove`` by default:"
+
+msgid ""
+"You can remove ``Logs_20160320`` by ``logical_table_remove`` with ``--"
+"dependent yes`` parameter. ``Bookmarks.log_20160320`` is also removed:"
+msgstr ""
+"You can remove ``Logs_20160320`` by ``logical_table_remove`` with ``--"
+"dependent yes`` parameter. ``Bookmarks.log_20160320`` is also removed:"
+
+msgid ""
+":doc:`object_exist` shows that ``Logs_20160320`` table and ``Bookmarks."
+"log_20160320`` column are removed:"
+msgstr ""
+":doc:`object_exist` shows that ``Logs_20160320`` table and ``Bookmarks."
+"log_20160320`` column are removed:"
+
+msgid ""
+"If there is one or more tables for the target shard, "
+"``logical_table_remove`` with ``--dependent yes`` also removes them. Tables "
+"that have the same ``_YYYYMMDD`` postfix as the target shard are treated as "
+"tables for the target shard."
+msgstr ""
+"If there is one or more tables for the target shard, "
+"``logical_table_remove`` with ``--dependent yes`` also removes them. Tables "
+"that have the same ``_YYYYMMDD`` postfix as the target shard are treated as "
+"tables for the target shard."
+
+msgid ""
+"Here are two tables that have ``_20160320`` postfix. ``NotRelated_20160320`` "
+"table isn't used by ``Logs_20160320`` table. ``Users_20160320`` table is "
+"used by ``Logs_20160320`` table. ``Servers`` table exists and used by "
+"``Logs_20160320`` table:"
+msgstr ""
+"Here are two tables that have ``_20160320`` postfix. ``NotRelated_20160320`` "
+"table isn't used by ``Logs_20160320`` table. ``Users_20160320`` table is "
+"used by ``Logs_20160320`` table. ``Servers`` table exists and used by "
+"``Logs_20160320`` table:"
+
+msgid ""
+"``logical_table_remove`` with ``--dependent yes`` parameter removes only "
+"``Logs_20160320`` table and ``Users_20160320`` table. Because "
+"``Users_20160320`` table has ``_20160320`` postfix and used by "
+"``Logs_20160320``. ``NotRelated_20160320`` table and ``Servers`` table "
+"aren't removed. Because ``NotRelated_20160320`` table has ``_20160320`` "
+"postfix but isn't used by ``Logs_20160320``. ``Servers`` table is used by "
+"``Logs_20160320`` but doesn't have ``_20160320`` postfix:"
+msgstr ""
+"``logical_table_remove`` with ``--dependent yes`` parameter removes only "
+"``Logs_20160320`` table and ``Users_20160320`` table. Because "
+"``Users_20160320`` table has ``_20160320`` postfix and used by "
+"``Logs_20160320``. ``NotRelated_20160320`` table and ``Servers`` table "
+"aren't removed. Because ``NotRelated_20160320`` table has ``_20160320`` "
+"postfix but isn't used by ``Logs_20160320``. ``Servers`` table is used by "
+"``Logs_20160320`` but doesn't have ``_20160320`` postfix:"
+
+msgid ""
+"You can confirm that ``Logs_20160320`` table and ``Users_20160320`` table "
+"are removed but ``NotRelated_20160320`` table and ``Servers`` table aren't "
+"removed:"
+msgstr ""
+"You can confirm that ``Logs_20160320`` table and ``Users_20160320`` table "
+"are removed but ``NotRelated_20160320`` table and ``Servers`` table aren't "
+"removed:"
+
+msgid ""
+"If the target tables are broken, you can't remove them. But you can remove "
+"them as much as possible by using ``force`` parameter."
+msgstr ""
+"If the target tables are broken, you can't remove them. But you can remove "
+"them as much as possible by using ``force`` parameter."
+
+msgid ""
+"If you specify ``--force yes``, they are removed as much as possible. You "
+"can also use ``--dependent yes`` with ``--force yes``."
+msgstr ""
+"If you specify ``--force yes``, they are removed as much as possible. You "
+"can also use ``--dependent yes`` with ``--force yes``."
+
+msgid "Here is a sample schema to show how ``--force yes`` behavior:"
+msgstr "Here is a sample schema to show how ``--force yes`` behavior:"
+
+msgid ""
+"You can't remove ``Logs_20160320`` when ``Timestamps."
+"logs_20160320_timestamp`` is broken:"
+msgstr ""
+"You can't remove ``Logs_20160320`` when ``Timestamps."
+"logs_20160320_timestamp`` is broken:"
+
+msgid ""
+"You can remove ``Logs_20160320`` and its columns by using ``--force yes`` "
+"parameter even when ``Timestamps.logs_20160320_timestamp`` is broken:"
+msgstr ""
+"You can remove ``Logs_20160320`` and its columns by using ``--force yes`` "
+"parameter even when ``Timestamps.logs_20160320_timestamp`` is broken:"
+
+msgid ""
+"``Logs_20160320``, its columns and ``Timestamps.logs_20160320_timestamp`` "
+"are removed:"
+msgstr ""
+"``Logs_20160320``, its columns and ``Timestamps.logs_20160320_timestamp`` "
+"are removed:"
+
+msgid ""
+"``--force yes`` parameter is a dangerous parameter. Normally, you don't need "
+"to use it."
+msgstr ""
+"``--force yes`` parameter is a dangerous parameter. Normally, you don't need "
+"to use it."
+
+msgid ""
+"You can decrease resources for this command. See :ref:`table-remove-"
+"decreases-used-resources` for details. Because ``logical_table_remove`` uses "
+"the same logic as :doc:`table_remove`."
+msgstr ""
+"You can decrease resources for this command. See :ref:`table-remove-"
+"decreases-used-resources` for details. Because ``logical_table_remove`` uses "
+"the same logic as :doc:`table_remove`."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "This section describes parameters of ``logical_table_remove``."
+msgstr "This section describes parameters of ``logical_table_remove``."
+
+msgid "Required parameters"
+msgstr "Required parameters"
+
+msgid "There are required parameters."
+msgstr "There are required parameters."
+
+msgid "``logical_table``"
+msgstr "``logical_table``"
+
+msgid ""
+"Specifies logical table name. It means table name without ``_YYYYMMDD`` "
+"postfix.  If you use actual table such as ``Logs_20150203``, "
+"``Logs_20150203`` and so on, logical table name is ``Logs``."
+msgstr ""
+"Specifies logical table name. It means table name without ``_YYYYMMDD`` "
+"postfix.  If you use actual table such as ``Logs_20150203``, "
+"``Logs_20150203`` and so on, logical table name is ``Logs``."
+
+msgid "See also :ref:`logical-select-logical-table`."
+msgstr "See also :ref:`logical-select-logical-table`."
+
+msgid "``shard_key``"
+msgstr "``shard_key``"
+
+msgid "Specifies column name which is treated as shared key."
+msgstr "Specifies column name which is treated as shared key."
+
+msgid "See also :ref:`logical-select-shard-key`."
+msgstr "See also :ref:`logical-select-shard-key`."
+
+msgid "Optional parameters"
+msgstr "Optional parameters"
+
+msgid "There are optional parameters."
+msgstr "There are optional parameters."
+
+msgid "Specifies the minimum value of ``shard_key`` column."
+msgstr "Specifies the minimum value of ``shard_key`` column."
+
+msgid "See also :ref:`logical-select-min`."
+msgstr "See also :ref:`logical-select-min`."
+
+msgid ""
+"Specifies whether the minimum value is included or not. ``include`` and "
+"``exclude`` are available. The default is ``include``."
+msgstr ""
+"Specifies whether the minimum value is included or not. ``include`` and "
+"``exclude`` are available. The default is ``include``."
+
+msgid "See also :ref:`logical-select-min-border`."
+msgstr "See also :ref:`logical-select-min-border`."
+
+msgid "Specifies the maximum value of ``shard_key`` column."
+msgstr "Specifies the maximum value of ``shard_key`` column."
+
+msgid "See also :ref:`logical-select-max`."
+msgstr "See also :ref:`logical-select-max`."
+
+msgid ""
+"Specifies whether the maximum value is included or not. ``include`` and "
+"``exclude`` are available. The default is ``include``."
+msgstr ""
+"Specifies whether the maximum value is included or not. ``include`` and "
+"``exclude`` are available. The default is ``include``."
+
+msgid "See also :ref:`logical-select-max-border`."
+msgstr "See also :ref:`logical-select-max-border`."
+
+msgid "``dependent``"
+msgstr "``dependent``"
+
+msgid ""
+"Specifies whether tables and columns that depend on the target shard are "
+"also removed or not."
+msgstr ""
+"Specifies whether tables and columns that depend on the target shard are "
+"also removed or not."
+
+msgid ""
+"If this value is ``yes``, tables and columns that depend on the target shard "
+"are also removed. Otherwise, they aren't removed. If there are one or more "
+"tables that reference the target shard, an error is returned. If there are "
+"tables for the shared, they are not touched."
+msgstr ""
+"If this value is ``yes``, tables and columns that depend on the target shard "
+"are also removed. Otherwise, they aren't removed. If there are one or more "
+"tables that reference the target shard, an error is returned. If there are "
+"tables for the shared, they are not touched."
+
+msgid "You should use this parameter carefully. This is a danger parameter."
+msgstr "You should use this parameter carefully. This is a danger parameter."
+
+msgid ""
+"See :ref:`logical-table-remove-removes-with-related-tables` how to use this "
+"parameter."
+msgstr ""
+"See :ref:`logical-table-remove-removes-with-related-tables` how to use this "
+"parameter."
+
+msgid "``force``"
+msgstr "``force``"
+
+msgid ""
+"Specifies whether you want to remove target tables and columns even if some "
+"problems exist."
+msgstr ""
+"Specifies whether you want to remove target tables and columns even if some "
+"problems exist."
+
+msgid ""
+"See :ref:`logical-table-remove-removes-broken-tables-as-much-as-possible` "
+"how to use this parameter."
+msgstr ""
+"See :ref:`logical-table-remove-removes-broken-tables-as-much-as-possible` "
+"how to use this parameter."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "The command returns ``true`` as body on success such as::"
+msgstr "The command returns ``true`` as body on success such as::"
+
+msgid "If the command fails, error details are in ``HEADER``."
+msgstr "If the command fails, error details are in ``HEADER``."
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr "See :doc:`/reference/command/output_format` for ``HEADER``."

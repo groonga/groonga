@@ -1,0 +1,128 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``cache_limit``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``cache_limit`` gets or sets the max number of query cache entries. Query "
+"cache is used only by :doc:`select` command."
+msgstr ""
+"``cache_limit`` は最大クエリーキャッシュエントリー数を取得・設定します。クエ"
+"リーキャッシュを使っているのは :doc:`select` コマンドだけです。"
+
+msgid ""
+"If the max number of query cache entries is 100, the recent 100 ``select`` "
+"commands are only cached. The cache expire algorithm is LRU (least recently "
+"used)."
+msgstr ""
+"最大クエリーキャッシュエントリー数が100の場合は、最新の100 ``select`` コマン"
+"ドの結果だけキャッシュします。キャッシュを失効するアルゴリズムはLRU（Least "
+"Recently Used）です。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes only one optional parameter::"
+msgstr "このコマンドの引数は1つで省略できます::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"You can get the current max number of cache entries by executing "
+"``cache_limit`` without parameter."
+msgstr ""
+"引数なしで ``cache_limit`` を実行すると現在の最大キャッシュエントリー数を取得"
+"できます。"
+
+msgid ""
+"You can set the max number of cache entries by executing ``cache_limit`` "
+"with ``max`` parameter."
+msgstr ""
+"``max`` 引数つきで ``cache_limit`` を実行すると最大キャッシュエントリー数を設"
+"定できます。"
+
+msgid "Here is an example that sets ``10`` as the max number of cache entries."
+msgstr "次の例は最大キャッシュエントリー数を ``10`` に設定する例です。"
+
+msgid ""
+"If ``max`` parameter is used, the return value is the max number of cache "
+"entries before ``max`` parameter is set."
+msgstr ""
+"``max`` 引数を使うと、指定した値に設定される前の最大キャッシュエントリー数が"
+"戻り値になります。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes all parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+msgid "``max``"
+msgstr ""
+
+msgid "Specifies the max number of query cache entries as a number."
+msgstr "数値で最大クエリーキャッシュエントリー数を指定します。"
+
+msgid ""
+"If ``max`` parameter isn't specified, the current max number of query cache "
+"entries isn't changed. ``cache_limit`` just returns the current max number "
+"of query cache entries."
+msgstr ""
+"``max`` 引数が指定されていない場合は、現在の最大クエリーキャッシュエントリー"
+"数は変わりません。 ``cache_limit`` は単に現在の最大クエリーキャッシュエント"
+"リー数を返します。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "``cache_limit`` returns the current max number of query cache entries::"
+msgstr "``cache_limit`` は現在の最大クエリーキャッシュエントリー数を返します::"
+
+msgid "``HEADER``"
+msgstr ""
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "``N_ENTRIES``"
+msgstr ""
+
+msgid ""
+"``N_ENTRIES`` is the current max number of query cache entries. It is a "
+"number."
+msgstr ""
+"``N_ENTRIES`` は現在の最大クエリーキャッシュエントリー数です。これは数値で"
+"す。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`select`"
+msgstr ""

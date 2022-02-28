@@ -1,0 +1,153 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2019-09-26 09:22+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid ""
+"``groonga`` package is the minimum set of fulltext search engine. If you "
+"want to use Groonga for server use, you can install additional preconfigured "
+"packages."
+msgstr ""
+"``groonga`` パッケージは全文検索のための最小構成パッケージです。Groongaをサー"
+"バー用途で使うなら、設定済みの追加パッケージをインストールすることができま"
+"す。"
+
+msgid "There are two packages for server use."
+msgstr "サーバー用途のための2つのパッケージがあります。"
+
+msgid "groonga-httpd (nginx and HTTP protocol based server package)"
+msgstr "groonga-httpd (nginxを元にしたHTTPサーバー)"
+
+msgid "groonga-server-gqtp (GQTP protocol based server package)"
+msgstr "groonga-server-gqtp (GQTPサーバー)"
+
+msgid "See :doc:`/server` section about details."
+msgstr "詳細は :doc:`/server` を参照してください。"
+
+msgid "Ubuntu"
+msgstr ""
+
+msgid ""
+"This section describes how to install Groonga related deb packages on "
+"Ubuntu. You can install them by ``apt``."
+msgstr ""
+"このセクションではUbuntu上でGroonga関連のdebパッケージをインストールする方法"
+"を説明します。これらのパッケージは ``apt`` でインストールできます。"
+
+msgid ""
+"We distribute both 32-bit and 64-bit packages but we strongly recommend a 64-"
+"bit package for server. You should use a 32-bit package just only for tests "
+"or development. You will encounter an out of memory error with a 32-bit "
+"package even if you just process medium size data."
+msgstr ""
+"32-bit用と64-bit用のパッケージを配布していますが、サーバ用途には64-bitパッ"
+"ケージを利用することをオススメします。32-bit用パッケージはテスト用か開発用に"
+"だけ使って下さい。32-bit用パッケージを使った場合は、中程度のサイズのデータで"
+"もメモリ不足エラーになることがあります。"
+
+msgid "PPA (Personal Package Archive)"
+msgstr "PPA（Personal Package Archive）"
+
+msgid ""
+"The Groonga APT repository for Ubuntu uses PPA (Personal Package Archive) on "
+"Launchpad. You can install Groonga by APT from the PPA."
+msgstr ""
+"Ubuntu用のGroongaのAPTリポジトリーはLaunchpad上のPPA（Personal Package "
+"Archive）を使っています。このPPAからAPTでGroongaをインストールできます。"
+
+msgid "Here are supported Ubuntu versions:"
+msgstr "サポートしているUbuntuのバージョンは次の通りです。"
+
+msgid "18.04 LTS Bionic Beaver"
+msgstr ""
+
+msgid "20.04 Focal Fossa"
+msgstr ""
+
+msgid "21.10 Impish Indri"
+msgstr ""
+
+msgid "Enable the universe repository to install Groonga::"
+msgstr ""
+"Groongaをインストールするためにuniverseリポジトリを有効にしてください::"
+
+msgid "Add the ``ppa:groonga/ppa`` PPA to your system::"
+msgstr "``ppa:groonga/ppa`` PPAをシステムに登録します::"
+
+msgid "Install::"
+msgstr "インストール::"
+
+msgid ""
+"If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a "
+"tokenizer, install groonga-tokenizer-mecab package."
+msgstr ""
+"`MeCab <https://taku910.github.io/mecab/>`_ をトークナイザーとして使いたいと"
+"きは、groonga-tokenizer-mecabパッケージをインストールしてください。"
+
+msgid "Install groonga-tokenizer-mecab package::"
+msgstr "groonga-tokenizer-mecabパッケージのインストール::"
+
+msgid ""
+"If you want to use ``TokenFilterStem`` as a token filter, install groonga-"
+"token-filter-stem package."
+msgstr ""
+"``TokenFilterStem`` をトークンフィルターとして使いたいときはgroonga-"
+"tokenizer-filter-stemパッケージをインストールしてください。"
+
+msgid "Install groonga-token-filter-stem package::"
+msgstr "groonga-token-filter-stemパッケージのインストール::"
+
+msgid ""
+"There is a package that provides `Munin <http://munin-monitoring.org/>`_ "
+"plugins. If you want to monitor Groonga status by Munin, install groonga-"
+"munin-plugins package."
+msgstr ""
+"`Munin <http://munin-monitoring.org/>`_ プラグインを提供するパッケージもあり"
+"ます。MuninでGroongaの状態をモニターしたい場合は、groonga-munin-pluginsパッ"
+"ケージをインストールしてください。"
+
+msgid "Install groonga-munin-plugins package::"
+msgstr "groonga-munin-pluginsパッケージのインストール::"
+
+msgid ""
+"There is a package that provides MySQL compatible normalizer as a Groonga "
+"plugin. If you want to use that one, install groonga-normalizer-mysql "
+"package."
+msgstr ""
+"MySQL互換のノーマライザーをGroongaのプラグインとして提供するパッケージがあり"
+"ます。MySQL互換のノーマライザーを使うには ``groonga-normalizer-mysql`` パッ"
+"ケージをインストールしてください。"
+
+msgid "Install groonga-normalizer-mysql package::"
+msgstr "groonga-normalizer-mysqlパッケージのインストール::"
+
+msgid "Build from source"
+msgstr "ソースからビルド"
+
+msgid "Install required packages to build Groonga::"
+msgstr "Groongaをビルドするために必要なパッケージをインストールします::"
+
+msgid "Download source::"
+msgstr "ソースをダウンロードします::"
+
+msgid "Configure (see :ref:`source-configure` about ``configure`` options)::"
+msgstr ""
+"configureを実行します（ ``configure`` のオプションについては :ref:`source-"
+"configure` を参照してください）::"
+
+msgid "Build::"
+msgstr "ビルド::"

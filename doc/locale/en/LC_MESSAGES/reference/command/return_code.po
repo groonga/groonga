@@ -1,0 +1,323 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Return code"
+msgstr "Return code"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"Return code is used to show whether a processing is succeeded or not. If the "
+"processing is not succeeded, return code shows error type."
+msgstr ""
+"Return code is used to show whether a processing is succeeded or not. If the "
+"processing is not succeeded, return code shows error type."
+
+msgid ""
+"Return code is used in C API and query API. You can check return code via "
+"``grn_ctx_t::rc`` in C API. You can check return code by looking the header "
+"element in query API. See :doc:`output_format` about the header element in "
+"query API."
+msgstr ""
+"Return code is used in C API and query API. You can check return code via "
+"``grn_ctx_t::rc`` in C API. You can check return code by looking the header "
+"element in query API. See :doc:`output_format` about the header element in "
+"query API."
+
+msgid "List"
+msgstr "List"
+
+msgid ""
+"Here is a list of return codes. ``GRN_SUCCESS`` (= 0) means that the "
+"processing is succeeded. Return codes that have negative value show error "
+"type. ``GRN_END_OF_DATA`` is a special return code. It is used only C API. "
+"It is not showen in query API."
+msgstr ""
+"Here is a list of return codes. ``GRN_SUCCESS`` (= 0) means that the "
+"processing is succeeded. Return codes that have negative value show error "
+"type. ``GRN_END_OF_DATA`` is a special return code. It is used only C API. "
+"It is not showen in query API."
+
+msgid "0: ``GRN_SUCCESS``"
+msgstr "0: ``GRN_SUCCESS``"
+
+msgid "1: ``GRN_END_OF_DATA``"
+msgstr "1: ``GRN_END_OF_DATA``"
+
+msgid "-1: ``GRN_UNKNOWN_ERROR``"
+msgstr "-1: ``GRN_UNKNOWN_ERROR``"
+
+msgid "-2: ``GRN_OPERATION_NOT_PERMITTED``"
+msgstr "-2: ``GRN_OPERATION_NOT_PERMITTED``"
+
+msgid "-3: ``GRN_NO_SUCH_FILE_OR_DIRECTORY``"
+msgstr "-3: ``GRN_NO_SUCH_FILE_OR_DIRECTORY``"
+
+msgid "-4: ``GRN_NO_SUCH_PROCESS``"
+msgstr "-4: ``GRN_NO_SUCH_PROCESS``"
+
+msgid "-5: ``GRN_INTERRUPTED_FUNCTION_CALL``"
+msgstr "-5: ``GRN_INTERRUPTED_FUNCTION_CALL``"
+
+msgid "-6: ``GRN_INPUT_OUTPUT_ERROR``"
+msgstr "-6: ``GRN_INPUT_OUTPUT_ERROR``"
+
+msgid "-7: ``GRN_NO_SUCH_DEVICE_OR_ADDRESS``"
+msgstr "-7: ``GRN_NO_SUCH_DEVICE_OR_ADDRESS``"
+
+msgid "-8: ``GRN_ARG_LIST_TOO_LONG``"
+msgstr "-8: ``GRN_ARG_LIST_TOO_LONG``"
+
+msgid "-9: ``GRN_EXEC_FORMAT_ERROR``"
+msgstr "-9: ``GRN_EXEC_FORMAT_ERROR``"
+
+msgid "-10: ``GRN_BAD_FILE_DESCRIPTOR``"
+msgstr "-10: ``GRN_BAD_FILE_DESCRIPTOR``"
+
+msgid "-11: ``GRN_NO_CHILD_PROCESSES``"
+msgstr "-11: ``GRN_NO_CHILD_PROCESSES``"
+
+msgid "-12: ``GRN_RESOURCE_TEMPORARILY_UNAVAILABLE``"
+msgstr "-12: ``GRN_RESOURCE_TEMPORARILY_UNAVAILABLE``"
+
+msgid "-13: ``GRN_NOT_ENOUGH_SPACE``"
+msgstr "-13: ``GRN_NOT_ENOUGH_SPACE``"
+
+msgid "-14: ``GRN_PERMISSION_DENIED``"
+msgstr "-14: ``GRN_PERMISSION_DENIED``"
+
+msgid "-15: ``GRN_BAD_ADDRESS``"
+msgstr "-15: ``GRN_BAD_ADDRESS``"
+
+msgid "-16: ``GRN_RESOURCE_BUSY``"
+msgstr "-16: ``GRN_RESOURCE_BUSY``"
+
+msgid "-17: ``GRN_FILE_EXISTS``"
+msgstr "-17: ``GRN_FILE_EXISTS``"
+
+msgid "-18: ``GRN_IMPROPER_LINK``"
+msgstr "-18: ``GRN_IMPROPER_LINK``"
+
+msgid "-19: ``GRN_NO_SUCH_DEVICE``"
+msgstr "-19: ``GRN_NO_SUCH_DEVICE``"
+
+msgid "-20: ``GRN_NOT_A_DIRECTORY``"
+msgstr "-20: ``GRN_NOT_A_DIRECTORY``"
+
+msgid "-21: ``GRN_IS_A_DIRECTORY``"
+msgstr "-21: ``GRN_IS_A_DIRECTORY``"
+
+msgid "-22: ``GRN_INVALID_ARGUMENT``"
+msgstr "-22: ``GRN_INVALID_ARGUMENT``"
+
+msgid "-23: ``GRN_TOO_MANY_OPEN_FILES_IN_SYSTEM``"
+msgstr "-23: ``GRN_TOO_MANY_OPEN_FILES_IN_SYSTEM``"
+
+msgid "-24: ``GRN_TOO_MANY_OPEN_FILES``"
+msgstr "-24: ``GRN_TOO_MANY_OPEN_FILES``"
+
+msgid "-25: ``GRN_INAPPROPRIATE_I_O_CONTROL_OPERATION``"
+msgstr "-25: ``GRN_INAPPROPRIATE_I_O_CONTROL_OPERATION``"
+
+msgid "-26: ``GRN_FILE_TOO_LARGE``"
+msgstr "-26: ``GRN_FILE_TOO_LARGE``"
+
+msgid "-27: ``GRN_NO_SPACE_LEFT_ON_DEVICE``"
+msgstr "-27: ``GRN_NO_SPACE_LEFT_ON_DEVICE``"
+
+msgid "-28: ``GRN_INVALID_SEEK``"
+msgstr "-28: ``GRN_INVALID_SEEK``"
+
+msgid "-29: ``GRN_READ_ONLY_FILE_SYSTEM``"
+msgstr "-29: ``GRN_READ_ONLY_FILE_SYSTEM``"
+
+msgid "-30: ``GRN_TOO_MANY_LINKS``"
+msgstr "-30: ``GRN_TOO_MANY_LINKS``"
+
+msgid "-31: ``GRN_BROKEN_PIPE``"
+msgstr "-31: ``GRN_BROKEN_PIPE``"
+
+msgid "-32: ``GRN_DOMAIN_ERROR``"
+msgstr "-32: ``GRN_DOMAIN_ERROR``"
+
+msgid "-33: ``GRN_RESULT_TOO_LARGE``"
+msgstr "-33: ``GRN_RESULT_TOO_LARGE``"
+
+msgid "-34: ``GRN_RESOURCE_DEADLOCK_AVOIDED``"
+msgstr "-34: ``GRN_RESOURCE_DEADLOCK_AVOIDED``"
+
+msgid "-35: ``GRN_NO_MEMORY_AVAILABLE``"
+msgstr "-35: ``GRN_NO_MEMORY_AVAILABLE``"
+
+msgid "-36: ``GRN_FILENAME_TOO_LONG``"
+msgstr "-36: ``GRN_FILENAME_TOO_LONG``"
+
+msgid "-37: ``GRN_NO_LOCKS_AVAILABLE``"
+msgstr "-37: ``GRN_NO_LOCKS_AVAILABLE``"
+
+msgid "-38: ``GRN_FUNCTION_NOT_IMPLEMENTED``"
+msgstr "-38: ``GRN_FUNCTION_NOT_IMPLEMENTED``"
+
+msgid "-39: ``GRN_DIRECTORY_NOT_EMPTY``"
+msgstr "-39: ``GRN_DIRECTORY_NOT_EMPTY``"
+
+msgid "-40: ``GRN_ILLEGAL_BYTE_SEQUENCE``"
+msgstr "-40: ``GRN_ILLEGAL_BYTE_SEQUENCE``"
+
+msgid "-41: ``GRN_SOCKET_NOT_INITIALIZED``"
+msgstr "-41: ``GRN_SOCKET_NOT_INITIALIZED``"
+
+msgid "-42: ``GRN_OPERATION_WOULD_BLOCK``"
+msgstr "-42: ``GRN_OPERATION_WOULD_BLOCK``"
+
+msgid "-43: ``GRN_ADDRESS_IS_NOT_AVAILABLE``"
+msgstr "-43: ``GRN_ADDRESS_IS_NOT_AVAILABLE``"
+
+msgid "-44: ``GRN_NETWORK_IS_DOWN``"
+msgstr "-44: ``GRN_NETWORK_IS_DOWN``"
+
+msgid "-45: ``GRN_NO_BUFFER``"
+msgstr "-45: ``GRN_NO_BUFFER``"
+
+msgid "-46: ``GRN_SOCKET_IS_ALREADY_CONNECTED``"
+msgstr "-46: ``GRN_SOCKET_IS_ALREADY_CONNECTED``"
+
+msgid "-47: ``GRN_SOCKET_IS_NOT_CONNECTED``"
+msgstr "-47: ``GRN_SOCKET_IS_NOT_CONNECTED``"
+
+msgid "-48: ``GRN_SOCKET_IS_ALREADY_SHUTDOWNED``"
+msgstr "-48: ``GRN_SOCKET_IS_ALREADY_SHUTDOWNED``"
+
+msgid "-49: ``GRN_OPERATION_TIMEOUT``"
+msgstr "-49: ``GRN_OPERATION_TIMEOUT``"
+
+msgid "-50: ``GRN_CONNECTION_REFUSED``"
+msgstr "-50: ``GRN_CONNECTION_REFUSED``"
+
+msgid "-51: ``GRN_RANGE_ERROR``"
+msgstr "-51: ``GRN_RANGE_ERROR``"
+
+msgid "-52: ``GRN_TOKENIZER_ERROR``"
+msgstr "-52: ``GRN_TOKENIZER_ERROR``"
+
+msgid "-53: ``GRN_FILE_CORRUPT``"
+msgstr "-53: ``GRN_FILE_CORRUPT``"
+
+msgid "-54: ``GRN_INVALID_FORMAT``"
+msgstr "-54: ``GRN_INVALID_FORMAT``"
+
+msgid "-55: ``GRN_OBJECT_CORRUPT``"
+msgstr "-55: ``GRN_OBJECT_CORRUPT``"
+
+msgid "-56: ``GRN_TOO_MANY_SYMBOLIC_LINKS``"
+msgstr "-56: ``GRN_TOO_MANY_SYMBOLIC_LINKS``"
+
+msgid "-57: ``GRN_NOT_SOCKET``"
+msgstr "-57: ``GRN_NOT_SOCKET``"
+
+msgid "-58: ``GRN_OPERATION_NOT_SUPPORTED``"
+msgstr "-58: ``GRN_OPERATION_NOT_SUPPORTED``"
+
+msgid "-59: ``GRN_ADDRESS_IS_IN_USE``"
+msgstr "-59: ``GRN_ADDRESS_IS_IN_USE``"
+
+msgid "-60: ``GRN_ZLIB_ERROR``"
+msgstr "-60: ``GRN_ZLIB_ERROR``"
+
+msgid "-61: ``GRN_LZO_ERROR``"
+msgstr "-61: ``GRN_LZO_ERROR``"
+
+msgid "-62: ``GRN_STACK_OVER_FLOW``"
+msgstr "-62: ``GRN_STACK_OVER_FLOW``"
+
+msgid "-63: ``GRN_SYNTAX_ERROR``"
+msgstr "-63: ``GRN_SYNTAX_ERROR``"
+
+msgid "-64: ``GRN_RETRY_MAX``"
+msgstr "-64: ``GRN_RETRY_MAX``"
+
+msgid "-65: ``GRN_INCOMPATIBLE_FILE_FORMAT``"
+msgstr "-65: ``GRN_INCOMPATIBLE_FILE_FORMAT``"
+
+msgid "-66: ``GRN_UPDATE_NOT_ALLOWED``"
+msgstr "-66: ``GRN_UPDATE_NOT_ALLOWED``"
+
+msgid "-67: ``GRN_TOO_SMALL_OFFSET``"
+msgstr "-67: ``GRN_TOO_SMALL_OFFSET``"
+
+msgid "-68: ``GRN_TOO_LARGE_OFFSET``"
+msgstr "-68: ``GRN_TOO_LARGE_OFFSET``"
+
+msgid "-69: ``GRN_TOO_SMALL_LIMIT``"
+msgstr "-69: ``GRN_TOO_SMALL_LIMIT``"
+
+msgid "-70: ``GRN_CAS_ERROR``"
+msgstr "-70: ``GRN_CAS_ERROR``"
+
+msgid "-71: ``GRN_UNSUPPORTED_COMMAND_VERSION``"
+msgstr "-71: ``GRN_UNSUPPORTED_COMMAND_VERSION``"
+
+msgid "-72: ``GRN_NORMALIZER_ERROR``"
+msgstr "-72: ``GRN_NORMALIZER_ERROR``"
+
+msgid "-73: ``GRN_TOKEN_FILTER_ERROR``"
+msgstr "-73: ``GRN_TOKEN_FILTER_ERROR``"
+
+msgid "-74: ``GRN_COMMAND_ERROR``"
+msgstr "-74: ``GRN_COMMAND_ERROR``"
+
+msgid "-75: ``GRN_PLUGIN_ERROR``"
+msgstr "-75: ``GRN_PLUGIN_ERROR``"
+
+msgid "-76: ``GRN_SCORER_ERROR``"
+msgstr "-76: ``GRN_SCORER_ERROR``"
+
+msgid "-77: ``GRN_CANCEL``"
+msgstr "-77: ``GRN_CANCEL``"
+
+msgid "-78: ``GRN_WINDOW_FUNCTION_ERROR``"
+msgstr "-78: ``GRN_WINDOW_FUNCTION_ERROR``"
+
+msgid "-79: ``GRN_ZSTD_ERROR``"
+msgstr "-79: ``GRN_ZSTD_ERROR``"
+
+msgid "-80: ``GRN_CONNECTION_RESET``"
+msgstr "-80: ``GRN_CONNECTION_RESET``"
+
+msgid "See also"
+msgstr "See also"
+
+msgid ""
+":doc:`output_format` shows where return code is appeared in query API "
+"response."
+msgstr ""
+":doc:`output_format` shows where return code is appeared in query API "
+"response."
+
+msgid ""
+":doc:`/spec/gqtp`: GQTP protocol also uses return code as status but it uses "
+"2byte unsigned integer. So return codes that have negative value are "
+"statuses that have positive value in GQTP protocol. You can convert status "
+"value in GQTP protocol to return code by handling it as 2byte signed integer."
+msgstr ""
+":doc:`/spec/gqtp`: GQTP protocol also uses return code as status but it uses "
+"2byte unsigned integer. So return codes that have negative value are "
+"statuses that have positive value in GQTP protocol. You can convert status "
+"value in GQTP protocol to return code by handling it as 2byte signed integer."

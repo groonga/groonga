@@ -1,0 +1,284 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Data types"
+msgstr "データ型"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "Groonga data types"
+msgstr "Groonga データ型"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "Groonga identifies data types to store."
+msgstr "Groonga は、格納するデータの型を区別します。"
+
+msgid ""
+"A primary key of table and column value belong to some kind of data types in "
+"Groonga database. And normally, column values become in common with all "
+"records in one table."
+msgstr ""
+"Groongaのデータベースでは、テーブルの主キーや、カラムの値はいずれも何らかの型"
+"に属します。また通常は、一つのテーブルの中の全てのレコードについて、カラムの"
+"値は共通となります。"
+
+msgid ""
+"A primary key type and column type can be specified Groonga defined types, "
+"user defined types or user defined table."
+msgstr ""
+"主キーの型とカラムの型には、Groongaで予め定義済みの型か、ユーザが定義する型、"
+"またはユーザが定義したテーブルを指定することができます。"
+
+msgid ""
+"If you specify other table to primary key type, this table becomes subset of "
+"the table of primary key type."
+msgstr ""
+"主キーの型に他のテーブルを指定する場合は、そのテーブルは、主キーの型となる"
+"テーブルのサブセットとなります。"
+
+msgid ""
+"If you specify other table to column type, this column becomes reference key "
+"of the table of column type."
+msgstr ""
+"カラムの型に他のテーブルを指定する場合は、そのカラムは、カラムの型となるテー"
+"ブルの参照キーとなります。"
+
+msgid "Builtin types"
+msgstr "組込型"
+
+msgid "The following types are defined as builtin types."
+msgstr "以下の型が組込型としてあらかじめ定義されています。"
+
+msgid "``Bool``"
+msgstr ""
+
+msgid "Boolean type. The possible values are true and false. (default: false)"
+msgstr ""
+"ブーリアン型やブール型などと呼ばれる型であり、真偽値を表します。取り得る値は"
+"trueとfalseです。（デフォルト値: false）"
+
+msgid ""
+"To store a value by :doc:`/reference/commands/load` command, becomes false "
+"if you specify false, 0 or empty string, becomes true if you specify others."
+msgstr ""
+":doc:`/reference/commands/load` コマンドで値を格納するときは、false、0、空文"
+"字列のいずれかを指定するとfalseになり、それ以外を指定するとtrueになります。"
+
+msgid "``Int8``"
+msgstr ""
+
+msgid "Signed 8bit integer. It's -128 or more and 127 or less. (default: 0)"
+msgstr ""
+"8bit符号付き整数であり、-128以上127以下の整数を表します。（デフォルト値: 0）"
+
+msgid "``UInt8``"
+msgstr ""
+
+msgid "Unsigned 8bit integer. Is't 0 or more and 255 or less. (default: 0)"
+msgstr ""
+"8bit符号なし整数であり、0以上255以下の整数を表します。（デフォルト値: 0）"
+
+msgid "``Int16``"
+msgstr ""
+
+msgid ""
+"Signed 16bit integer. It's -32,768 or more and 32,767 or less. (default: 0)"
+msgstr ""
+"16bit符号付き整数であり、-32,768以上32,767以下の整数を表します。（デフォルト"
+"値: 0）"
+
+msgid "``UInt16``"
+msgstr ""
+
+msgid "Unsigned 16bit integer. It's 0 or more and 65,535 or less. (default: 0)"
+msgstr ""
+"16bit符号なし整数であり、0以上65,535以下の整数を表します。（デフォルト値: 0）"
+
+msgid "``Int32``"
+msgstr ""
+
+msgid ""
+"Signed 32bit integer. It's -2,147,483,648 or more and 2,147,483,647 or less. "
+"(default: 0)"
+msgstr ""
+"32bit符号付き整数であり、-2,147,483,648以上2,147,483,647以下の整数を表しま"
+"す。（デフォルト値: 0）"
+
+msgid "``UInt32``"
+msgstr ""
+
+msgid ""
+"Unsigned 32bit integer. It's 0 or more and 4,294,967,295 or less. (default: "
+"0)"
+msgstr ""
+"32bit符号なし整数であり、0以上4,294,967,295以下の整数を表します。（デフォルト"
+"値: 0）"
+
+msgid "``Int64``"
+msgstr ""
+
+msgid ""
+"Signed 64bit integer. It's -9,223,372,036,854,775,808 or more and "
+"9,223,372,036,854,775,807 or less. (default: 0)"
+msgstr ""
+"64bit符号付き整数であり、-9,223,372,036,854,775,808以上"
+"9,223,372,036,854,775,807以下の整数を表します。（デフォルト値: 0）"
+
+msgid "``UInt64``"
+msgstr ""
+
+msgid ""
+"Unsigned 64bit integer. It's 0 or more and 18,446,744,073,709,551,615 or "
+"less. (default: 0)"
+msgstr ""
+"64bit符号なし整数であり、0以上18,446,744,073,709,551,615以下の整数を表しま"
+"す。（デフォルト値: 0）"
+
+msgid "``Float32``"
+msgstr "``Float32``"
+
+msgid ""
+"Single-precision floating-point number of IEEE 754 as a real number. "
+"(default: 0.0)"
+msgstr ""
+"IEEE 754形式の単精度浮動小数点数であり、実数を表します。（デフォルト値: 0.0）"
+
+msgid ""
+"See `IEEE floating point - Wikipedia, the free encyclopedia <http://en."
+"wikipedia.org/wiki/IEEE_floating_point>`_ or `IEEE 754: Standard for Binary "
+"Floating-Point <http://grouper.ieee.org/groups/754/>`_ for details of IEEE "
+"754 format."
+msgstr ""
+"IEEE 754形式の詳細については、 `IEEE 754 - Wikipedia <http://ja.wikipedia."
+"org/wiki/IEEE_754>`_ や `IEEE 754: Standard for Binary Floating-Point "
+"<http://grouper.ieee.org/groups/754/>`_ を参照してください。"
+
+msgid "``Float``"
+msgstr "``Float``"
+
+msgid ""
+"Double-precision floating-point number of IEEE 754 as a real number. "
+"(default: 0.0)"
+msgstr ""
+"IEEE 754形式の倍精度浮動小数点数であり、実数を表します。（デフォルト値: 0.0）"
+
+msgid "``Time``"
+msgstr "``Time``"
+
+msgid ""
+"Date and Time, the number of seconds that have elapsed since 1970-01-01 "
+"00:00:00 by 64 bit signed integer. (default: 0)"
+msgstr ""
+"日時を表す型であり、1970年1月1日0時0分0秒からの経過時間を、マイクロ秒単位で"
+"64bit符号付き整数により表現します。（デフォルト値: 0）"
+
+msgid ""
+"To store a value by :doc:`/reference/commands/load` command, specifies the "
+"number of elapsed seconds since 1970-01-01 00:00:00. To specify the detailed "
+"date and time than seconds, use the decimal."
+msgstr ""
+":doc:`/reference/commands/load` コマンドで値を格納するときは、1970年1月1日0時"
+"0分0秒からの経過秒数を指定します。秒単位より詳細な日時を指定するには、小数を"
+"使います。"
+
+msgid "``ShortText``"
+msgstr ""
+
+msgid "String of 4,095 or less bytes. (default: \"\")"
+msgstr "4,095バイト以下の文字列を表します。（デフォルト値: \"\"）"
+
+msgid "``Text``"
+msgstr ""
+
+msgid "String of 65,535 or less bytes. (default: \"\")"
+msgstr "65,535バイト以下の文字列を表します。（デフォルト値: \"\"）"
+
+msgid "``LongText``"
+msgstr ""
+
+msgid "String of 2,147,483,647 or less bytes. (default: \"\")"
+msgstr "2,147,483,647バイト以下の文字列を表します。（デフォルト値: \"\"）"
+
+msgid "``TokyoGeoPoint``"
+msgstr ""
+
+msgid ""
+"旧日本測地系による経緯度であり、経度と緯度をミリ秒単位で表現した整数の組によ"
+"り表現します。（デフォルト値: 0x0）"
+msgstr ""
+
+msgid ""
+"度分秒形式でx度y分z秒となる経度・緯度は、(((x * 60) + y) * 60 + z) * 1000とい"
+"う計算式でミリ秒単位へと変換されます。"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/load` コマンドで値を格納するときは、\"ミリ秒単位の"
+"経度xミリ秒単位の緯度\" もしくは \"経度の小数表記x緯度の小数表記\" という文字"
+"列表現を使って指定します。経度と緯度の区切りとしては、'x' のほかに ',' を使う"
+"ことができます。"
+msgstr ""
+
+msgid ""
+"測地系の詳細については、 `測地系 - Wikipedia <http://ja.wikipedia.org/wiki/"
+"%E6%B8%AC%E5%9C%B0%E7%B3%BB>`_ を参照してください。"
+msgstr ""
+
+msgid "``WGS84GeoPoint``"
+msgstr ""
+
+msgid ""
+"世界測地系（World Geodetic System, WGS 84）による経緯度であり、経度と緯度をミ"
+"リ秒単位で表現した整数の組により表現します。（デフォルト値: 0x0）"
+msgstr ""
+
+msgid ""
+"度分秒形式からミリ秒形式への変換方法や :doc:`/reference/commands/load` コマン"
+"ドにおける指定方法はTokyoGeoPointと同じです。"
+msgstr ""
+
+msgid "Limitations about types"
+msgstr "型に関する制限事項"
+
+msgid "Types that can't be specified in primary key of table"
+msgstr "テーブルの主キーに指定できない型"
+
+msgid "``Text`` and ``LongText`` can't be specified in primary key of table."
+msgstr ""
+"Text型とLongText型については、テーブルの主キーに指定することはできません。"
+
+msgid "ベクターとして格納できない型"
+msgstr ""
+
+msgid ""
+"Groongaのカラムは、ある型のベクターを保存することができます。しかし、"
+"ShortText, Text, LongTextの３つの型についてはベクターとして保存したり出力した"
+"りすることはできますが、検索条件やドリルダウン条件に指定することができませ"
+"ん。"
+msgstr ""
+
+msgid ""
+"テーブル型は、ベクターとして格納することができます。よって、ShortTextのベク"
+"ターを検索条件やドリルダウン条件に使用したい場合には、主キーがShortText型の"
+"テーブルを別途作成し、そのテーブルを型として利用します。"
+msgstr ""

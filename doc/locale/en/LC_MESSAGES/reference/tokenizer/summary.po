@@ -1,0 +1,183 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid ""
+"Groonga has tokenizer module that tokenizes text. It is used when the "
+"following cases:"
+msgstr ""
+"Groonga has tokenizer module that tokenizes text. It is used when the "
+"following cases:"
+
+msgid "Indexing text"
+msgstr "Indexing text"
+
+msgid "Tokenizer is used when indexing text."
+msgstr "Tokenizer is used when indexing text."
+
+msgid "Searching by query"
+msgstr "Searching by query"
+
+msgid "Tokenizer is used when searching by query."
+msgstr "Tokenizer is used when searching by query."
+
+msgid ""
+"Tokenizer is an important module for full-text search. You can change trade-"
+"off between `precision and recall <http://en.wikipedia.org/wiki/"
+"Precision_and_recall>`_ by changing tokenizer."
+msgstr ""
+"Tokenizer is an important module for full-text search. You can change trade-"
+"off between `precision and recall <http://en.wikipedia.org/wiki/"
+"Precision_and_recall>`_ by changing tokenizer."
+
+msgid ""
+"Normally, :ref:`token-bigram` is a suitable tokenizer. If you don't know "
+"much about tokenizer, it's recommended that you choose :ref:`token-bigram`."
+msgstr ""
+"Normally, :ref:`token-bigram` is a suitable tokenizer. If you don't know "
+"much about tokenizer, it's recommended that you choose :ref:`token-bigram`."
+
+msgid ""
+"You can try a tokenizer by :doc:`/reference/commands/tokenize` and :doc:`/"
+"reference/commands/table_tokenize`. Here is an example to try :ref:`token-"
+"bigram` tokenizer by :doc:`/reference/commands/tokenize`:"
+msgstr ""
+"You can try a tokenizer by :doc:`/reference/commands/tokenize` and :doc:`/"
+"reference/commands/table_tokenize`. Here is an example to try :ref:`token-"
+"bigram` tokenizer by :doc:`/reference/commands/tokenize`:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"\"tokenize\" is the process that extracts zero or more tokens from a text. "
+"There are some \"tokenize\" methods."
+msgstr ""
+"\"tokenize\" is the process that extracts zero or more tokens from a text. "
+"There are some \"tokenize\" methods."
+
+msgid ""
+"For example, ``Hello World`` is tokenized to the following tokens by bigram "
+"tokenize method:"
+msgstr ""
+"For example, ``Hello World`` is tokenized to the following tokens by bigram "
+"tokenize method:"
+
+msgid "``He``"
+msgstr "``He``"
+
+msgid "``el``"
+msgstr "``el``"
+
+msgid "``ll``"
+msgstr "``ll``"
+
+msgid "``lo``"
+msgstr "``lo``"
+
+msgid "``o_`` (``_`` means a white-space)"
+msgstr "``o_`` (``_`` means a white-space)"
+
+msgid "``_W`` (``_`` means a white-space)"
+msgstr "``_W`` (``_`` means a white-space)"
+
+msgid "``Wo``"
+msgstr "``Wo``"
+
+msgid "``or``"
+msgstr "``or``"
+
+msgid "``rl``"
+msgstr "``rl``"
+
+msgid "``ld``"
+msgstr "``ld``"
+
+msgid ""
+"In the above example, 10 tokens are extracted from one text ``Hello World``."
+msgstr ""
+"In the above example, 10 tokens are extracted from one text ``Hello World``."
+
+msgid ""
+"For example, ``Hello World`` is tokenized to the following tokens by white-"
+"space-separate tokenize method:"
+msgstr ""
+"For example, ``Hello World`` is tokenized to the following tokens by white-"
+"space-separate tokenize method:"
+
+msgid "``Hello``"
+msgstr "``Hello``"
+
+msgid "``World``"
+msgstr "``World``"
+
+msgid ""
+"In the above example, 2 tokens are extracted from one text ``Hello World``."
+msgstr ""
+"In the above example, 2 tokens are extracted from one text ``Hello World``."
+
+msgid ""
+"Token is used as search key. You can find indexed documents only by tokens "
+"that are extracted by used tokenize method. For example, you can find "
+"``Hello World`` by ``ll`` with bigram tokenize method but you can't find "
+"``Hello World`` by ``ll`` with white-space-separate tokenize method. Because "
+"white-space-separate tokenize method doesn't extract ``ll`` token. It just "
+"extracts ``Hello`` and ``World`` tokens."
+msgstr ""
+"Token is used as search key. You can find indexed documents only by tokens "
+"that are extracted by used tokenize method. For example, you can find "
+"``Hello World`` by ``ll`` with bigram tokenize method but you can't find "
+"``Hello World`` by ``ll`` with white-space-separate tokenize method. Because "
+"white-space-separate tokenize method doesn't extract ``ll`` token. It just "
+"extracts ``Hello`` and ``World`` tokens."
+
+msgid ""
+"In general, tokenize method that generates small tokens increases recall but "
+"decreases precision. Tokenize method that generates large tokens increases "
+"precision but decreases recall."
+msgstr ""
+"In general, tokenize method that generates small tokens increases recall but "
+"decreases precision. Tokenize method that generates large tokens increases "
+"precision but decreases recall."
+
+msgid ""
+"For example, we can find ``Hello World`` and ``A or B`` by ``or`` with "
+"bigram tokenize method. ``Hello World`` is a noise for people who wants to "
+"search \"logical and\". It means that precision is decreased. But recall is "
+"increased."
+msgstr ""
+"For example, we can find ``Hello World`` and ``A or B`` by ``or`` with "
+"bigram tokenize method. ``Hello World`` is a noise for people who wants to "
+"search \"logical and\". It means that precision is decreased. But recall is "
+"increased."
+
+msgid ""
+"We can find only ``A or B`` by ``or`` with white-space-separate tokenize "
+"method. Because ``World`` is tokenized to one token ``World`` with white-"
+"space-separate tokenize method. It means that precision is increased for "
+"people who wants to search \"logical and\". But recall is decreased because "
+"``Hello World`` that contains ``or`` isn't found."
+msgstr ""
+"We can find only ``A or B`` by ``or`` with white-space-separate tokenize "
+"method. Because ``World`` is tokenized to one token ``World`` with white-"
+"space-separate tokenize method. It means that precision is increased for "
+"people who wants to search \"logical and\". But recall is decreased because "
+"``Hello World`` that contains ``or`` isn't found."

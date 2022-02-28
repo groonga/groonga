@@ -1,0 +1,116 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``table_list``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "table_list - DBに定義されているテーブルをリスト表示"
+msgstr ""
+
+msgid ""
+"Groonga組込コマンドの一つであるtable_listについて説明します。組込コマンドは、"
+"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
+"エストを送信することによって実行します。"
+msgstr ""
+
+msgid "table_listは、DBに定義されているテーブルのリストを表示します。"
+msgstr ""
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "ありません。"
+msgstr ""
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "テーブル名一覧が以下の形式で返却されます。::"
+msgstr ""
+
+msgid "``テーブル情報名n``"
+msgstr ""
+
+msgid ""
+"``テーブル情報n`` には複数の情報が含まれますが、そこに入る情報がどんな内容か"
+"を示す名前を出力します。 情報名は以下の通りです。"
+msgstr ""
+
+msgid "``id``"
+msgstr ""
+
+msgid "テーブルオブジェクトに割り当てられたID"
+msgstr ""
+
+msgid "``name``"
+msgstr ""
+
+msgid "テーブル名"
+msgstr ""
+
+msgid "``path``"
+msgstr ""
+
+msgid "テーブルのレコードを格納するファイル名"
+msgstr ""
+
+msgid "``flags``"
+msgstr ""
+
+msgid "テーブルのflags属性"
+msgstr ""
+
+msgid "``domain``"
+msgstr ""
+
+msgid "主キー値の属する型"
+msgstr ""
+
+msgid "``range``"
+msgstr ""
+
+msgid "valueが属する型"
+msgstr ""
+
+msgid "``テーブル情報型n``"
+msgstr ""
+
+msgid "テーブル情報の型を出力します。"
+msgstr ""
+
+msgid "``テーブル情報n``"
+msgstr ""
+
+msgid ""
+"``テーブル情報名n`` で示された情報の配列を出力します。 情報の順序は ``テーブ"
+"ル情報名n`` の順序と同じです。"
+msgstr ""

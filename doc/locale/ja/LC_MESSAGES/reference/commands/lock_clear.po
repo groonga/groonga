@@ -1,0 +1,118 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``lock_clear``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``lock_clear`` command clear the lock of the target object recursively. The "
+"target object is one of database, table and column."
+msgstr ""
+"``lock_clear`` コマンドは対象オブジェクトのロックを再帰的に解除します。対象オ"
+"ブジェクトはデータベース、テーブル、カラムのどれかです。"
+
+msgid ""
+"This is a dangerous command. You must not use this command while other "
+"process or thread is doing a write operation to the target object. If you do "
+"it, your database may be broken and/or your process may be crashed."
+msgstr ""
+"これは危険なコマンドです。他のプロセスまたは他のスレッドが対象オブジェクトに"
+"書き込み処理を実行している間はこのコマンドを使ってはいけません。もし使ったな"
+"ら、データベースは壊れるかもしれませんし、実行中のプロセスはクラッシュするか"
+"もしれません。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes only one optional parameter::"
+msgstr "このコマンドの引数は1つで省略できます::"
+
+msgid ""
+"If ``target_name`` parameters is omitted, database is used for the target "
+"object. It means that all locks in the database are cleared."
+msgstr ""
+"``target_name`` パラメーターを省略した場合は対象オブジェクトはデータベースに"
+"なります。これはデータベース中のすべてのロックを解除するという意味です。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is an example to clear all locks in the database:"
+msgstr "以下はデータベースの中のすべてのロックを解除する例です。"
+
+msgid ""
+"Here is an example to clear locks of ``Entries`` table and ``Entries`` table "
+"columns:"
+msgstr ""
+"以下は ``Entries`` テーブルと ``Entries`` テーブルのカラムのロックを解除する"
+"例です。"
+
+msgid "Here is an example to clear the lock of ``Sites.title`` column:"
+msgstr "以下は ``Sites.title`` カラムのロックを解除する例です。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes all parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+msgid "``target_name``"
+msgstr ""
+
+msgid "Specifies the name of table or column."
+msgstr "テーブル名またはカラム名を指定します。"
+
+msgid "If you don't specify it, database is used for the target object."
+msgstr "指定しなかったら対象オブジェクトはデータベースになります。"
+
+msgid "The default is none. It means that the target object is database."
+msgstr ""
+"デフォルト値はありません。これは対象オブジェクトはデータベースになるというこ"
+"とです。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid ""
+"``lock_clear`` command returns whether lock is cleared successfully or not::"
+msgstr "``lock_clear`` コマンドはロックを解除できたかどうかを返します。::"
+
+msgid "``HEADER``"
+msgstr ""
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "``SUCCEEDED_OR_NOT``"
+msgstr ""
+
+msgid ""
+"If command succeeded, it returns true, otherwise it returns false on error."
+msgstr ""
+"コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返しま"
+"す。"

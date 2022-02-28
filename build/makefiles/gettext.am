@@ -45,7 +45,10 @@ SUFFIXES += .pot .po .mo .edit
 	rm $@.tmp
 
 .edit.po:
-	msgcat --no-location --output $(srcdir)/$@ $<
+	grep -v '^#~' $< > $<.no-comment
+	mkdir -p $$(dirname $(srcdir)/$@)
+	msgattrib --no-fuzzy --no-location --output $(srcdir)/$@ $<.no-comment
+	rm $<.no-comment
 
 .po.mo:
 	msgfmt -o $@ $(srcdir)/$<

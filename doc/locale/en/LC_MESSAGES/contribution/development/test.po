@@ -1,0 +1,176 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "テスト方法"
+msgstr "テスト方法"
+
+msgid "TODO: Write in English."
+msgstr "TODO: Write in English."
+
+msgid "TODO: Write about ``test/command/run-test.sh``."
+msgstr "TODO: Write about ``test/command/run-test.sh``."
+
+msgid "テスト環境の構築"
+msgstr "テスト環境の構築"
+
+msgid "Cutterのインストール"
+msgstr "Cutterのインストール"
+
+msgid "Groongaは、テストのフレームワークとして Cutter_ を用いています。"
+msgstr "Groongaは、テストのフレームワークとして Cutter_ を用いています。"
+
+msgid ""
+"Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご"
+"覧下さい。"
+msgstr ""
+"Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご"
+"覧下さい。"
+
+msgid "lcovのインストール"
+msgstr "lcovのインストール"
+
+msgid ""
+"カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは"
+"以下のようにしてインストールできます。::"
+msgstr ""
+"カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは"
+"以下のようにしてインストールできます。::"
+
+msgid "clangのインストール"
+msgstr "clangのインストール"
+
+msgid ""
+"ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要"
+"があります。DebianやUbuntuでは以下のようにしてインストールできます。::"
+msgstr ""
+"ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要"
+"があります。DebianやUbuntuでは以下のようにしてインストールできます。::"
+
+msgid "libmemcachedのインストール"
+msgstr "libmemcachedのインストール"
+
+msgid ""
+"memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入"
+"が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインス"
+"トールできます。::"
+msgstr ""
+"memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入"
+"が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインス"
+"トールできます。::"
+
+msgid "テストの動作"
+msgstr "テストの動作"
+
+msgid "Groongaのトップディレクトリで、以下のコマンドを実行します。::"
+msgstr "Groongaのトップディレクトリで、以下のコマンドを実行します。::"
+
+msgid "カバレッジ情報"
+msgstr "カバレッジ情報"
+
+msgid ""
+"すると、coverageディレクトリ以下に、カバレッジ情報が入ったhtmlが出力されま"
+"す。"
+msgstr ""
+"すると、coverageディレクトリ以下に、カバレッジ情報が入ったhtmlが出力されま"
+"す。"
+
+msgid ""
+"カバレッジには、Lines/Functions/Branchesの3つの対象があります。それぞれ、行／"
+"関数／分岐に対応します。Functionsがもっとも重要な対象です。すべての関数がテス"
+"トされるようになっていることを心がけてください。"
+msgstr ""
+"カバレッジには、Lines/Functions/Branchesの3つの対象があります。それぞれ、行／"
+"関数／分岐に対応します。Functionsがもっとも重要な対象です。すべての関数がテス"
+"トされるようになっていることを心がけてください。"
+
+msgid ""
+"テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカ"
+"バーしている部分を増やすことも重要です。"
+msgstr ""
+"テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカ"
+"バーしている部分を増やすことも重要です。"
+
+msgid "様々なテスト"
+msgstr "様々なテスト"
+
+msgid ""
+"テストは、test/unitディレクトリにおいて、./run-test.shを実行することによって"
+"も行えます。run-test.shはいくつかのオプションをとります。詳細は、./run-test."
+"sh --helpを実行しヘルプをご覧ください。"
+msgstr ""
+"テストは、test/unitディレクトリにおいて、./run-test.shを実行することによって"
+"も行えます。run-test.shはいくつかのオプションをとります。詳細は、./run-test."
+"sh --helpを実行しヘルプをご覧ください。"
+
+msgid "特定のテスト関数のみテストする"
+msgstr "特定のテスト関数のみテストする"
+
+msgid ""
+"特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
+msgstr ""
+"特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
+
+msgid "実行例::"
+msgstr "実行例::"
+
+msgid "特定のテストファイルのみテストする"
+msgstr "特定のテストファイルのみテストする"
+
+msgid ""
+"特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができま"
+"す。"
+msgstr ""
+"特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができま"
+"す。"
+
+msgid "不正メモリアクセス・メモリリーク検出"
+msgstr "不正メモリアクセス・メモリリーク検出"
+
+msgid ""
+"環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセ"
+"スやメモリリークを検出しつつ、テストを動作させることができます。"
+msgstr ""
+"環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセ"
+"スやメモリリークを検出しつつ、テストを動作させることができます。"
+
+msgid "run-test.shのみならず、make checkでも利用可能です。"
+msgstr "run-test.shのみならず、make checkでも利用可能です。"
+
+msgid "デバッガ上でのテスト実行"
+msgstr "デバッガ上でのテスト実行"
+
+msgid ""
+"環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
+"行されます。gdb上でrunを行うと、テストの実行が開始されます。"
+msgstr ""
+"環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
+"行されます。gdb上でrunを行うと、テストの実行が開始されます。"
+
+msgid "静的解析"
+msgstr "静的解析"
+
+msgid ""
+"scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildと"
+"いうディレクトリに解析結果のhtmlが出力されます。::"
+msgstr ""
+"scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildと"
+"いうディレクトリに解析結果のhtmlが出力されます。::"
+
+msgid "configureは１度のみ実行する必要があります。"
+msgstr "configureは１度のみ実行する必要があります。"

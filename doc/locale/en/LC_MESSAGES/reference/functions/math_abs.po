@@ -1,0 +1,100 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``math_abs``"
+msgstr "``math_abs``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "``math_abs`` returns the absolute value of value."
+msgstr "``math_abs`` returns the absolute value of value."
+
+msgid ""
+"To enable this function, register ``functions/math`` plugin by following the "
+"command::"
+msgstr ""
+"To enable this function, register ``functions/math`` plugin by following the "
+"command::"
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "``math_abs`` requires one argument - ``target``."
+msgstr "``math_abs`` requires one argument - ``target``."
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Here is a schema definition and sample data."
+msgstr "Here is a schema definition and sample data."
+
+msgid "Sample schema:"
+msgstr "Sample schema:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "Sample data:"
+msgstr "Sample data:"
+
+msgid ""
+"Here is the simple usage of ``math_abs`` function which returns nearest "
+"shops from office."
+msgstr ""
+"Here is the simple usage of ``math_abs`` function which returns nearest "
+"shops from office."
+
+msgid ""
+"To detect nearest shops, we need to calculate distance. If the distance of "
+"your office from station is 250 meters, you can calculate it by "
+"``math_abs(250 - from_station)``."
+msgstr ""
+"To detect nearest shops, we need to calculate distance. If the distance of "
+"your office from station is 250 meters, you can calculate it by "
+"``math_abs(250 - from_station)``."
+
+msgid ""
+"By specifying ``--sort_keys from_office``, you can show nearest shops by "
+"ascending order."
+msgstr ""
+"By specifying ``--sort_keys from_office``, you can show nearest shops by "
+"ascending order."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "There is only one required parameter."
+msgstr "There is only one required parameter."
+
+msgid "``target``"
+msgstr "``target``"
+
+msgid ""
+"Specifies a column of table that is specified by ``table`` parameter in "
+"``select``."
+msgstr ""
+"Specifies a column of table that is specified by ``table`` parameter in "
+"``select``."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "``math_abs`` returns the absolute value of target column value."
+msgstr "``math_abs`` returns the absolute value of target column value."

@@ -1,0 +1,60 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``TokenTrigram``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``TokenTrigram`` is similar to :ref:`token-bigram`. The differences between "
+"them is token unit."
+msgstr ""
+"``TokenTrigram`` は :ref:`token-bigram` と似ています。違いはトークンの単位で"
+"す。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``TokenTrigram`` hasn't parameter::"
+msgstr "``TokenTrigram`` には、引数がありません。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"If normalizer is used, ``TokenTrigram`` uses white-space-separate like "
+"tokenize method for ASCII characters. ``TokenTrigram`` uses trigram tokenize "
+"method for non-ASCII characters."
+msgstr ""
+"ノーマライザーを使っている場合は ``TokenTrigram`` はASCIIの文字には空白区切り"
+"のようなトークナイズ方法を使います。非ASCII文字にはトリグラムのトークナイズ方"
+"法を使います。"
+
+msgid ""
+"If ``TokenTrigram`` tokenize non-ASCII charactors, ``TokenTrigram`` uses 3 "
+"character per token as below example."
+msgstr ""
+"``TokenTrigram`` が非ASCII文字をトークナイズすると、以下の例のように "
+"``TokenTrigram`` は各トークンが3文字となります。"

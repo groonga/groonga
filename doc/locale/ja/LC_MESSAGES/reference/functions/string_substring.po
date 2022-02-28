@@ -1,0 +1,140 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``string_substring``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``string_substring`` extracts a substring of a string by position."
+msgstr "``string_substring`` は文字列の部分文字列を抽出します。"
+
+msgid ""
+"To enable this function, register ``functions/string`` plugin by following "
+"the command::"
+msgstr ""
+"この関数を有効にするには、以下のコマンドで ``functions/string`` プラグインを"
+"登録します::"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``string_substring`` requires two to four parameters."
+msgstr "``string_substring`` は2つから4つの引数を指定できます。"
+
+msgid ""
+"``options`` uses the following format. All of key-value pairs are optional::"
+msgstr ""
+"``options`` には以下のキーを指定します。すべてのキー・値のペアは省略可能で"
+"す。::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid "Sample schema:"
+msgstr "サンプルスキーマ:"
+
+msgid "Sample data:"
+msgstr "サンプルデータ:"
+
+msgid "Here is a simple example."
+msgstr "以下は簡単な使用例です。"
+
+msgid "In the following example, specifying the negative value for ``nth``."
+msgstr "以下の例では、 ``nth`` に負の値を指定しています。"
+
+msgid "In the following example, specifying the default value."
+msgstr "以下の例では、デフォルト値を指定しています。"
+
+msgid "You can specify string literal instead of column."
+msgstr "カラムの代わりに文字列リテラルを指定することもできます。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "``target``"
+msgstr ""
+
+msgid "Specify a string literal or a string type column."
+msgstr "対象となる文字列または文字列型カラムを指定します。"
+
+msgid "``nth``"
+msgstr ""
+
+msgid ""
+"Specify a 0-based index number of charactors where to start the extraction "
+"from ``target``."
+msgstr "``target`` から抽出を開始する位置を0始まりの文字数単位で指定します。"
+
+msgid "If you specify a negative value, it counts from the end of ``target``."
+msgstr "負の値を指定した場合は終端から数えます。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "``length``"
+msgstr ""
+
+msgid "Specify a number of characters to extract from ``nth``."
+msgstr "``nth`` から抽出する文字数を指定します。"
+
+msgid ""
+"If you omit or specify a negative value, this function extracts from ``nth`` "
+"to the end."
+msgstr ""
+"省略するか、負の値を指定した場合は、 ``nth`` から終端までを抽出します。"
+
+msgid "``options``"
+msgstr ""
+
+msgid "Specify the following key."
+msgstr "以下のキーを指定します。"
+
+msgid ""
+"Specify a string to be returned when a substring is an empty string except "
+"when specifying 0 for ``length``."
+msgstr ""
+"``length`` に0を指定した場合を除いて、部分文字列が空文字列になった場合に返さ"
+"れる文字列を指定します。"
+
+msgid "The default is an empty string."
+msgstr "省略時は空文字列です。"
+
+msgid "``default_value``"
+msgstr ""
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid ""
+"``string_substring`` returns a substring extracted under the specified "
+"conditions from ``target``."
+msgstr ""
+"``string_substring`` は指定した条件で抽出された部分文字列を返却します。"

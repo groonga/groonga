@@ -1,0 +1,299 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``column_list``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``column_list`` command lists columns in a table."
+msgstr "``column_list`` コマンドはテーブルにあるカラムの一覧を返します。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes only one required parameter::"
+msgstr "このコマンドの引数は1つで必須です::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is a simple example of ``column_list`` command."
+msgstr "以下は ``column_list`` コマンドの簡単な使用例です。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes parameters of ``column_list``."
+msgstr "このセクションでは ``column_list`` の引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "All parameters are required."
+msgstr "すべての引数は必須です。"
+
+msgid "``table``"
+msgstr ""
+
+msgid "Specifies the name of table to be listed columns."
+msgstr "カラムの一覧を取得するテーブルの名前を指定します。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "``column_list`` returns the list of column information in the table::"
+msgstr "``column_list`` はテーブルのカラム一覧を返します。"
+
+msgid "``HEADER``"
+msgstr ""
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "``COLUMN_LIST_HEADER``"
+msgstr ""
+
+msgid ""
+"``COLUMN_LIST_HEADER`` describes about content of each "
+"``COLUMN_INFORMATION``."
+msgstr ""
+"``COLUMN_LIST_HEADER`` は 各 ``COLUMN_INFORMATION`` の内容を説明します。"
+
+msgid "``COLUMN_LIST_HEADER`` is the following format::"
+msgstr "``COLUMN_LIST_HEADER`` は以下の形式です::"
+
+msgid "It means the following:"
+msgstr "以下のことを意味します。"
+
+msgid ""
+"The first content in ``COLUMN_INFORMATION`` is ``id`` value and the value "
+"type is ``UInt32``."
+msgstr ""
+"``COLUMN_INFORMATION`` の1番目の要素は ``id`` の値で、その値の型は "
+"``UInt32`` です。"
+
+msgid ""
+"The second content in ``COLUMN_INFORMATION`` is ``name`` value and the value "
+"type is ``ShortText``."
+msgstr ""
+"``COLUMN_INFORMATION`` の2番目の要素は ``name`` の値で、その値の型は "
+"``ShortText`` です。"
+
+msgid "The third content ...."
+msgstr "``COLUMN_INFORMATION`` の3番目の要素は…"
+
+msgid "See the following ``COLUMN_INFORMATION`` description for details."
+msgstr "詳細については、次の ``COLUMN_INFORMATION`` の説明を参照して下さい。"
+
+msgid ""
+"This field provides meta-data of column information. So this field will be "
+"useful for programs rather than humans."
+msgstr ""
+"このフィールドはカラムの情報のメタデータを提供します。したがって、このフィー"
+"ルドは人ではなくプログラムに有用です。"
+
+msgid "``COLUMN_INFORMATION``"
+msgstr ""
+
+msgid "Each ``COLUMN_INFORMATION`` is the following format::"
+msgstr "各 ``COLUMN_INFORMATION`` は以下の形式です::"
+
+msgid "``ID``"
+msgstr ""
+
+msgid ""
+"The column ID in the Groonga database. Normally, you don't care about it."
+msgstr ""
+"GroongaデータベースのカラムIDです。通常、それを気にする必要はありません。"
+
+msgid "``NAME``"
+msgstr ""
+
+msgid "The column name."
+msgstr "カラム名。"
+
+msgid "``PATH``"
+msgstr ""
+
+msgid "The path for storing column data."
+msgstr "カラムのデータを保存しているパス。"
+
+msgid "``TYPE``"
+msgstr ""
+
+msgid "The type of the column. It is one of the followings:"
+msgstr "カラムの型。次のうちのどれかです。"
+
+msgid "Value"
+msgstr "値"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "``fix``"
+msgstr ""
+
+msgid ""
+"The column is a fixed size column. Scalar column that its type is fixed size "
+"type is fixed size column."
+msgstr ""
+"このカラムは、固定長カラムです。固定長型のスカラーカラムは、固定長カラムで"
+"す。"
+
+msgid "``var``"
+msgstr ""
+
+msgid ""
+"The column is a variable size column. Vector column or scalar column that "
+"its type is variable size type are variable size column."
+msgstr ""
+"このカラムは、可変長カラムです。ベクターカラムまたは可変長型のスカラーカラム"
+"は、可変長カラムです。"
+
+msgid "``index``"
+msgstr ""
+
+msgid "The column is an index column."
+msgstr "このカラムはインデックスカラムです。"
+
+msgid "``FLAGS``"
+msgstr ""
+
+msgid ""
+"The flags of the column. Each flag is separated by ``|`` like "
+"``COLUMN_VECTOR|WITH_WEIGHT``. ``FLAGS`` must include one of "
+"``COLUMN_SCALAR``, ``COLUMN_VECTOR`` or ``COLUMN_INDEX``. Other flags are "
+"optional."
+msgstr ""
+"カラムのフラグです。各フラグは、``COLUMN_VECTOR|WITH_WEIGHT`` のように ``|`` "
+"で分けられています。 ``FLAGS`` は、``COLUMN_SCALAR`` , ``COLUMN_VECTOR`` , "
+"``COLUMN_INDEX`` のいずれか１つを含まなければいけません。他のフラグは省略可能"
+"です。"
+
+msgid "Here is the available flags:"
+msgstr "有効なフラグは以下の通りです。"
+
+msgid "Flag"
+msgstr "フラグ"
+
+msgid "``COLUMN_SCALAR``"
+msgstr ""
+
+msgid "The column is a scalar column."
+msgstr "このカラムはスカラーカラムです。"
+
+msgid "``COLUMN_VECTOR``"
+msgstr ""
+
+msgid "The column is a vector column."
+msgstr "このカラムはベクターカラムです。"
+
+msgid "``COLUMN_INDEX``"
+msgstr ""
+
+msgid "``WITH_WEIGHT``"
+msgstr ""
+
+msgid ""
+"The column can have weight. ``COLUMN_VECTOR`` and ``COLUMN_INDEX`` may have "
+"it. ``COLUMN_SCALAR`` doesn't have it."
+msgstr ""
+"このカラムは、重みを持つことができます。 ``COLUMN_VECTOR`` と "
+"``COLUMN_INDEX`` は重みを持てます。 ``COLUMN_SCALAR`` は、重みを持ちません。"
+
+msgid "``WITH_SECTION``"
+msgstr ""
+
+msgid ""
+"The column can have section information. ``COLUMN_INDEX`` may have it.  "
+"``COLUMN_SCALAR`` and ``COLUMN_VECTOR`` don't have it."
+msgstr ""
+"このカラムはセクション(段落)情報を持つことができます。 ``COLUMN_INDEX`` はセ"
+"クション(段落)情報を持てます。 ``COLUMN_SCALAR`` と ``COLUMN_VECTOR`` はセク"
+"ション(段落)情報を持ちません。"
+
+msgid "Multiple column index has it."
+msgstr "マルチカラムインデックスはこのフラグを持ちます。"
+
+msgid "``WITH_POSITION``"
+msgstr ""
+
+msgid ""
+"The column can have position information. ``COLUMN_INDEX`` may have it.  "
+"``COLUMN_SCALAR`` and ``COLUMN_VECTOR`` don't have it."
+msgstr ""
+"このカラムは出現位置情報を持つことができます。 ``COLUMN_INDEX`` は出現位置情"
+"報を持てます。 ``COLUMN_SCALAR`` と ``COLUMN_VECTOR`` は出現位置情報を持ちま"
+"せん。"
+
+msgid "Full text search index must has it."
+msgstr "全文検索インデックスはこのフラグを持つべきです。"
+
+msgid "``PERSISTENT``"
+msgstr ""
+
+msgid ""
+"The column is a persistent column. It means that the column isn't a :doc:`/"
+"reference/columns/pseudo`."
+msgstr ""
+"このカラムは永続カラムです。それは :doc:`/reference/columns/pseudo` ではない"
+"ことを意味します。"
+
+msgid "``DOMAIN``"
+msgstr ""
+
+msgid "The name of table that has the column."
+msgstr "カラムを持っているテーブルの名前です。"
+
+msgid "``RANGE``"
+msgstr ""
+
+msgid "The value type name of the column. It is a type name or a table name."
+msgstr "カラムの型名です。型名かテーブル名です。"
+
+msgid "``SOURCES``"
+msgstr ""
+
+msgid ""
+"An array of the source column names of the index. If the index column is "
+"multiple column index, the array has two or more source column names."
+msgstr ""
+"インデックスのソースカラム名の配列です。インデックスカラムがマルチカラムイン"
+"デックスの場合、配列は2つまたはそれ以上のソースカラム名を有します。"
+
+msgid ""
+"It is always an empty array for ``COLUMN_SCALAR`` and ``COLUMN_VECTOR``."
+msgstr "``COLUMN_SCALAR`` と ``COLUMN_VECTOR`` では常に空の配列です。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/commands/column_create`"
+msgstr ""
+
+msgid ":doc:`/reference/column`"
+msgstr ""

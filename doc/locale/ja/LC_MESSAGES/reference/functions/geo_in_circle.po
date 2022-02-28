@@ -1,0 +1,135 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "geo_in_circle"
+msgstr ""
+
+msgid "名前"
+msgstr ""
+
+msgid "geo_in_circle - 座標が円の範囲内に存在するかどうかを調べます。"
+msgstr ""
+
+msgid "書式"
+msgstr ""
+
+msgid "説明"
+msgstr ""
+
+msgid ""
+"Groonga組込関数の一つであるgeo_in_circleについて説明します。組込関数は、"
+"script形式のgrn_expr中で呼び出すことができます。"
+msgstr ""
+
+msgid ""
+"geo_in_circle() 関数は、pointに指定した座標が、centerに指定した座標を中心とす"
+"る円の範囲内にあるかどうかを調べます。"
+msgstr ""
+
+msgid "引数"
+msgstr ""
+
+msgid "``point``"
+msgstr ""
+
+msgid ""
+"円の範囲内に存在するかどうかを調べる座標を指定します。Point型の値を指定できま"
+"す。 [#]_"
+msgstr ""
+
+msgid "``center``"
+msgstr ""
+
+msgid ""
+"円の中心となる座標を指定します。Point型の値、あるいは座標を示す文字列を指定で"
+"きます。"
+msgstr ""
+
+msgid "``radious_or_point``"
+msgstr ""
+
+msgid ""
+"円の半径を指定します。数値を指定した場合には、半径(単位:メートル)が指定された"
+"ものとみなします。 Point型の値、あるいは座標を示す文字列を指定した場合は、円"
+"周上の点の一つの座標が指定されたものとみなします。"
+msgstr ""
+
+msgid "``approximate_type``"
+msgstr ""
+
+msgid ""
+"半径からの距離を求めるために地形をどのように近似するかを指定します。指定でき"
+"る値は以下の通りです。"
+msgstr ""
+
+msgid "``\"rectangle\"``"
+msgstr ""
+
+msgid ""
+"方形近似で近似します。単純な計算式で距離を求めることができるため高速ですが、"
+"極付近では誤差が大きくなります。"
+msgstr ""
+
+msgid "``\"rect\"`` と省略して指定することもできます。"
+msgstr ""
+
+msgid ""
+"この近似方法がデフォルト値です。 ``approximate_type`` を省略した場合は方形近"
+"似になります。"
+msgstr ""
+
+msgid "``\"sphere\"``"
+msgstr ""
+
+msgid ""
+"球面近似で近似します。 ``\"rectangle\"`` よりも遅くなりますが、誤差は小さいで"
+"す。"
+msgstr ""
+
+msgid "``\"sphr\"`` と省略して指定することもできます。"
+msgstr ""
+
+msgid "``\"ellipsoid\"``"
+msgstr ""
+
+msgid ""
+"楕円体近似で近似します。距離の計算にはヒュベニの距離計算式を用います。 "
+"``\"sphere\"`` よりも遅くなりますが、誤差は小さくなります。"
+msgstr ""
+
+msgid "``\"ellip\"`` と省略して指定することもできます。"
+msgstr ""
+
+msgid "返値"
+msgstr ""
+
+msgid "pointに指定した座標が円の範囲内にあるかどうかをBool型の値で返します。"
+msgstr ""
+
+msgid "例"
+msgstr ""
+
+msgid "脚注"
+msgstr ""
+
+msgid ""
+"TokyoGeoPoint(日本測地系座標)かWGS84GeoPoint(世界測地系座標)のいずれかを指定"
+"できます。"
+msgstr ""

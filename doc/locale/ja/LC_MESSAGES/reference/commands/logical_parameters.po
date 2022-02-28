@@ -1,0 +1,171 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``logical_parameters``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``logical_parameters`` is a command for test. Normally, you don't need to "
+"use this command."
+msgstr ""
+"``logical_parameters`` はテスト用のコマンドです。通常はこのコマンドを使う必要"
+"はありません。"
+
+msgid "``logical_parameters`` provides the following two features:"
+msgstr "``logical_parameters`` は次の2つの機能を提供します。"
+
+msgid "It returns the current parameters for ``logical_*`` commands."
+msgstr "``logical_*`` コマンドが使うパラメーターの現在値を返します。"
+
+msgid "It sets new parameters for ``logical_*`` commands."
+msgstr "``logical_*`` コマンドが使うパラメーターを新しく設定します。"
+
+msgid "Here is a list of parameters:"
+msgstr "以下はパラメーターのリストです。"
+
+msgid ":ref:`logical-parameters-range-index`"
+msgstr ""
+
+msgid ""
+"The parameters are independent in each thread. (To be exact, each :c:type:"
+"`grn_ctx`.) If you want to control the parameters perfectly, you should "
+"reduce the max number of threads to ``1`` by :doc:`/reference/commands/"
+"thread_limit` while you're using the parameters."
+msgstr ""
+"これらのパラメーターの値は各スレッドごとで独立しています。（正確に言うと、 :"
+"c:type:`grn_ctx` 毎に独立しています。）これらのパラメーターを完全に制御したい"
+"場合は、これらのパラメーターを使っている間は :doc:`/reference/commands/"
+"thread_limit` を使って最大スレッド数を ``1`` にしてください。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes only one optional parameter::"
+msgstr "このコマンドの引数は1つで省略できます::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "You need to register ``sharding`` plugin to use this command:"
+msgstr "このコマンドを使うには事前に ``sharding`` プラグインを登録します。"
+
+msgid ""
+"You can get the all current parameter values by calling without parameters:"
+msgstr "引数無しで呼び出すとすべてのパラメーターの現在の値を返します。"
+
+msgid "You can set new values by calling with parameters:"
+msgstr "引数を指定して呼び出すと新しい値を設定できます。"
+
+msgid ""
+"``logical_parameters`` returns the parameter values before new values are "
+"set when you set new values."
+msgstr ""
+"``logical_parameters`` は、新しい値を設定するときは、新しい値を設定する前の値"
+"を返します。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes parameters."
+msgstr "このセクションでは引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is no required parameter."
+msgstr "必須の引数はありません。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There is one optional parameter."
+msgstr "省略可能な引数が1つあります。"
+
+msgid "``range_index``"
+msgstr ""
+
+msgid ""
+"Specifies how to use range index in :doc:`logical_range_filter` by keyword."
+msgstr ""
+":doc:`logical_range_filter` でどのように範囲インデックスを使うかをキーワード"
+"で指定します。"
+
+msgid "Here are available keywords:"
+msgstr "指定できるキーワードは以下の通りです。"
+
+msgid "``auto`` (default)"
+msgstr "``auto`` （デフォルト）"
+
+msgid "``always``"
+msgstr ""
+
+msgid "``never``"
+msgstr ""
+
+msgid ""
+"If ``auto`` is specified, range index is used only when it'll be efficient. "
+"This is the default value."
+msgstr ""
+"``auto`` を指定すると、効果がでそうなときだけ範囲インデックスを使います。これ"
+"がデフォルトの値です。"
+
+msgid ""
+"If ``always`` is specified, range index is always used. It'll be useful for "
+"testing a case that range index is used."
+msgstr ""
+"``always`` を指定すると、常に範囲インデックスを使います。範囲インデックスが使"
+"われるケースをテストするときに便利です。"
+
+msgid ""
+"If ``never`` is specified, range index is never used. It'll be useful for "
+"testing a case that range index isn't used."
+msgstr ""
+"``never`` を指定すると、範囲インデックスは使いません。範囲インデックスが使わ"
+"れないケースをテストするときに便利です。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "The command returns the current parameters for ``logical_*`` command::"
+msgstr ""
+"このコマンドは ``logical_*`` コマンドが使うパラメーターの現在値を返します::"
+
+msgid "``HOW_TO_USE_RANGE_INDEX`` value is one of the followings:"
+msgstr "``HOW_TO_USE_RANGE_INDEX`` の値は次のどれかです。"
+
+msgid "``\"auto\"``"
+msgstr ""
+
+msgid "``\"always\"``"
+msgstr ""
+
+msgid "``\"never\"``"
+msgstr ""
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"

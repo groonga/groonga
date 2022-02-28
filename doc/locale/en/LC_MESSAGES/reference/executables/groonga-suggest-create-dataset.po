@@ -1,0 +1,110 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "groonga-suggest-create-dataset"
+msgstr "groonga-suggest-create-dataset"
+
+msgid "NAME"
+msgstr "NAME"
+
+msgid ""
+"groonga-suggest-create-dataset - Defines schema for a suggestion dataset"
+msgstr ""
+"groonga-suggest-create-dataset - Defines schema for a suggestion dataset"
+
+msgid "SYNOPSTIS"
+msgstr "SYNOPSTIS"
+
+msgid "DESCTIPION"
+msgstr "DESCTIPION"
+
+msgid ""
+"groonga-suggest-create-dataset creates a dataset for :doc:`/reference/"
+"suggest`. A database has many datasets. This command just defines schema for "
+"a suggestion dataset."
+msgstr ""
+"groonga-suggest-create-dataset creates a dataset for :doc:`/reference/"
+"suggest`. A database has many datasets. This command just defines schema for "
+"a suggestion dataset."
+
+msgid ""
+"This command generates some tables and columns for :doc:`/reference/suggest`."
+msgstr ""
+"This command generates some tables and columns for :doc:`/reference/suggest`."
+
+msgid ""
+"Here is the list of such tables. If you specify 'query' as dataset name, "
+"following '_DATASET' suffix are replaced. Thus, 'item_query', 'pair_query', "
+"'sequence_query', 'event_query' tables are generated."
+msgstr ""
+"Here is the list of such tables. If you specify 'query' as dataset name, "
+"following '_DATASET' suffix are replaced. Thus, 'item_query', 'pair_query', "
+"'sequence_query', 'event_query' tables are generated."
+
+msgid "event_type"
+msgstr "event_type"
+
+msgid "bigram"
+msgstr "bigram"
+
+msgid "kana"
+msgstr "kana"
+
+msgid "item_DATASET"
+msgstr "item_DATASET"
+
+msgid "pair_DATASET"
+msgstr "pair_DATASET"
+
+msgid "sequence_DATASET"
+msgstr "sequence_DATASET"
+
+msgid "event_DATASET"
+msgstr "event_DATASET"
+
+msgid "configuration"
+msgstr "configuration"
+
+msgid "OPTIONS"
+msgstr "OPTIONS"
+
+msgid "None."
+msgstr "None."
+
+msgid "EXIT STATUS"
+msgstr "EXIT STATUS"
+
+msgid "TODO"
+msgstr "TODO"
+
+msgid "FILES"
+msgstr "FILES"
+
+msgid "EXAMPLE"
+msgstr "EXAMPLE"
+
+msgid "SEE ALSO"
+msgstr "SEE ALSO"
+
+msgid ""
+":doc:`/reference/suggest` :doc:`groonga-suggest-httpd` :doc:`groonga-suggest-"
+"learner`"
+msgstr ""
+":doc:`/reference/suggest` :doc:`groonga-suggest-httpd` :doc:`groonga-suggest-"
+"learner`"

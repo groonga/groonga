@@ -1,0 +1,443 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2019-09-26 09:22+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Others"
+msgstr "その他"
+
+msgid ""
+"This section describes how to install Groonga from source on UNIX like "
+"environment."
+msgstr ""
+"このセクションではUNIX系の環境でGroongaをソースコードからインストールする方法"
+"を説明します。"
+
+msgid ""
+"To get more detail about installing Groonga from source on the specific "
+"environment, find the document for the specific environment from :doc:`/"
+"install`."
+msgstr ""
+":doc:`/install` にある特定環境用のドキュメントに、その環境向けのより詳細な情"
+"報があります。特定環境用のドキュメントがある場合は、まずそちらを参照してくだ"
+"さい。"
+
+msgid "Dependencies"
+msgstr "依存関係"
+
+msgid ""
+"Groonga doesn't require any special libraries but requires some tools for "
+"build."
+msgstr ""
+"Groongaは特別なライブラリを必要としませんが、いくつかビルドに必要なツールがあ"
+"ります。"
+
+msgid "Tools"
+msgstr "ツール"
+
+msgid "Here are required tools:"
+msgstr "以下が必要なツールです:"
+
+msgid "``wget``, ``curl`` or Web browser for downloading source archive"
+msgstr ""
+"``wget`` 、 ``curl`` または Web ブラウザ（ソースアーカイブをダウンロードする"
+"ため）"
+
+msgid "``tar`` and ``gzip`` for extracting source archive"
+msgstr "``tar`` と ``gzip`` （ソースアーカイブを展開するため）"
+
+msgid "shell (many shells such as ``dash``, ``bash`` and ``zsh`` will work)"
+msgstr ""
+"シェル（ ``dash`` 、 ``bash`` 、 ``zsh`` など、どのようなシェルでもたぶん大丈"
+"夫）"
+
+msgid ""
+"C compiler and C++ compiler (``gcc`` and ``g++`` are supported but other "
+"compilers may work)"
+msgstr ""
+"CコンパイラーとC++コンパイラー （ ``gcc`` と ``g++`` がサポート対象だが、他の"
+"コンパイラーでもたぶん大丈夫）"
+
+msgid "``make`` (GNU make is supported but other make like BSD make will work)"
+msgstr ""
+"``make`` （GNU makeがサポート対象だが、BSD makeなど他のmakeでもたぶん大丈夫）"
+
+msgid "You must get them ready."
+msgstr "これらを用意してください。"
+
+msgid ""
+"You can use `CMake <http://www.cmake.org/>`_ instead of shell but this "
+"document doesn't describe about building with CMake."
+msgstr ""
+"シェルの代わりに `CMake <http://www.cmake.org/>`_ を使うこともできますが、こ"
+"のドキュメントではCMakeを使ってビルドする方法については説明しません。"
+
+msgid "Here are optional tools:"
+msgstr "以下はあるとよいツールです:"
+
+msgid ""
+"`pkg-config <http://www.freedesktop.org/wiki/Software/pkg-config>`_ for "
+"detecting libraries"
+msgstr ""
+"`pkg-config <http://www.freedesktop.org/wiki/Software/pkg-config>`_ （ライブ"
+"ラリを検出するため）"
+
+msgid "`sudo <http://www.gratisoft.us/sudo/>`_ for installing built Groonga"
+msgstr ""
+"`sudo <http://www.gratisoft.us/sudo/>`_ （ビルドしたGroongaをインストールする"
+"ため）"
+
+msgid "You must get them ready if you want to use optional libraries."
+msgstr ""
+"追加のライブラリを使いたい場合はこれらのツールを用意しておかなければいけませ"
+"ん。"
+
+msgid "Libraries"
+msgstr "ライブラリ"
+
+msgid "All libraries are optional. Here are optional libraries:"
+msgstr ""
+"どのライブラリも必須ではありません。以下はオプションとして使えるライブラリで"
+"す:"
+
+msgid ""
+"`MeCab <https://taku910.github.io/mecab/>`_ for tokenizing full-text search "
+"target document by morphological analysis"
+msgstr ""
+"`MeCab <https://taku910.github.io/mecab/>`_ （全文検索対象のドキュメントを形"
+"態素解析でトークナイズするため）"
+
+msgid ""
+"`KyTea <http://www.phontron.com/kytea/>`_ for tokenizing full-text search "
+"target document by morphological analysis"
+msgstr ""
+"`KyTea <http://www.phontron.com/kytea/>`_ （全文検索対象のドキュメントを形態"
+"素解析でトークナイズするため）"
+
+msgid "`ZeroMQ <http://www.zeromq.org/>`_ for :doc:`/reference/suggest`"
+msgstr "`ZeroMQ <http://www.zeromq.org/>`_ （ :doc:`/reference/suggest` 用）"
+
+msgid "`libevent <http://libevent.org/>`_ for :doc:`/reference/suggest`"
+msgstr "`libevent <http://libevent.org/>`_ （ :doc:`/reference/suggest` 用）"
+
+msgid ""
+"`MessagePack <http://msgpack.org/>`_ for supporting MessagePack output and :"
+"doc:`/reference/suggest`"
+msgstr ""
+"`MessagePack <http://msgpack.org/>`_ （MessagePack出力サポート用および :doc:"
+"`/reference/suggest` 用）"
+
+msgid ""
+"`libedit <http://www.thrysoee.dk/editline/>`_ for command line editing in :"
+"doc:`/reference/executables/groonga`"
+msgstr ""
+"`libedit <http://www.thrysoee.dk/editline/>`_ （ :doc:`/reference/"
+"executables/groonga` のコマンドライン編集用）"
+
+msgid "`zlib <http://zlib.net/>`_ for compressing column value"
+msgstr "`zlib <http://zlib.net/>`_ （カラム値の圧縮用）"
+
+msgid "`LZ4 <https://lz4.github.io/lz4/>`_ for compressing column value"
+msgstr "`LZ4 <https://lz4.github.io/lz4/>`_ （カラム値の圧縮用）"
+
+msgid ""
+"`Zstandard <https://facebook.github.io/zstd/>`_ for compressing column value"
+msgstr "`Zstandard <https://facebook.github.io/zstd/>`_ （カラム値の圧縮用）"
+
+msgid ""
+"If you want to use those all or some libraries, you need to install them "
+"before installing Groonga."
+msgstr ""
+"これらのライブラリを使いたい場合は、Groongaをインストールする前にライブラリを"
+"インストールしてください。"
+
+msgid "Build from source"
+msgstr "ソースからビルド"
+
+msgid ""
+"Groonga uses GNU build system. So the following is the simplest build steps::"
+msgstr ""
+"GroongaはGNUビルドシステムを使っています。以下は一番簡単なビルド手順です::"
+
+msgid ""
+"After the above steps, :doc:`/reference/executables/groonga` is found in ``/"
+"usr/local/bin/groonga``."
+msgstr ""
+"上記の手順を実行すると ``/usr/local/bin/groonga`` に :doc:`/reference/"
+"executables/groonga` がインストールされます。"
+
+msgid ""
+"The default build will work well but you can customize Groonga at "
+"``configure`` step."
+msgstr ""
+"デフォルトのビルドでもうまく動くでしょうが、 ``configure`` のときにGroongaを"
+"カスタマイズすることができます。"
+
+msgid "The following describes details about each step."
+msgstr "以下、それぞれの手順の詳細を説明します。"
+
+msgid "``configure``"
+msgstr ""
+
+msgid ""
+"First, you need to run ``configure``. Here are important ``configure`` "
+"options:"
+msgstr ""
+"まず ``configure`` を実行します。重要な ``configure`` のオプションは以下の通"
+"りです:"
+
+msgid "``--prefix=PATH``"
+msgstr ""
+
+msgid ""
+"Specifies the install base directory. Groonga related files are installed "
+"under ``${PATH}/`` directory."
+msgstr ""
+"インストール先となるディレクトリを指定します。Groonga関連のファイルは  "
+"``${PATH}/`` ディレクトリ以下にインストールされます。"
+
+msgid ""
+"The default is ``/usr/local``. In this case, :doc:`/reference/executables/"
+"groonga` is installed into ``/usr/local/bin/groonga``."
+msgstr ""
+"デフォルトは ``/usr/local`` 。デフォルトの場合は :doc:`/reference/"
+"executables/groonga` は ``/usr/local/bin/groonga`` にインストールされます。"
+
+msgid ""
+"Here is an example that installs Groonga into ``~/local`` for an user use "
+"instead of system wide use::"
+msgstr ""
+"以下はシステム全体にGroongaをインストールするのではなく、ユーザーが個人で使う"
+"目的で ``~/local`` にインストールする例です::"
+
+msgid "``--localstatedir=PATH``"
+msgstr ""
+
+msgid ""
+"Specifies the base directory to place modifiable file such as log file, PID "
+"file and database files. For example, log file is placed at ``${PATH}/log/"
+"groonga.log``."
+msgstr ""
+"ログファイル、PIDファイル、データベースなど頻繁に変更されるファイルを置くディ"
+"レクトリを指定します。たとえば、ログファイルは ``${PATH}/log/groonga.log`` に"
+"置かれます。"
+
+msgid "The default is ``/usr/local/var``."
+msgstr "デフォルトは ``/usr/local/var`` です。"
+
+msgid ""
+"Here is an example that system wide ``/var`` is used for modifiable files::"
+msgstr ""
+"以下は頻繁に変更されるファイルをシステム全体で使う領域である ``/var`` に置く"
+"例です::"
+
+msgid "``--with-log-path=PATH``"
+msgstr ""
+
+msgid ""
+"Specifies the default log file path. You can override the default log path "
+"is :doc:`/reference/executables/groonga` command's ``--log-path`` command "
+"line option. So this option is not critical build option. It's just for "
+"convenient."
+msgstr ""
+"ログファイルのデフォルトのパスを指定します。ログファイルのデフォルトのパス"
+"は :doc:`/reference/executables/groonga` の ``--log-path`` コマンドラインオプ"
+"ションで変更できます。そのため、このオプションはそんなに重要なビルドオプショ"
+"ンではありません。少し便利にするためのオプションです。"
+
+msgid ""
+"The default is ``/usr/local/var/log/groonga.log``. The ``/usr/local/var`` "
+"part is changed by ``--localstatedir`` option."
+msgstr ""
+"デフォルトは ``/usr/local/var/log/groonga.log`` です。 ``/usr/local/var`` の"
+"部分は ``--localstatedir`` オプションで変更できます。"
+
+msgid ""
+"Here is an example that log file is placed into shared NFS directory ``/nfs/"
+"log/groonga.log``::"
+msgstr ""
+"以下はログファイルを共有しているNFSディレクトリ ``/nfs/log/groonga.log`` に置"
+"く例です::"
+
+msgid "``--with-default-encoding=ENCODING``"
+msgstr ""
+
+msgid ""
+"Specifies the default encoding. Available encodings are ``euc_jp``, "
+"``sjis``, ``utf8``, ``latin1``, ``koi8r`` and ``none``."
+msgstr ""
+"デフォルトのエンコーディングを指定します。有効なエンコーディングは "
+"``euc_jp`` 、 ``sjis`` 、 ``utf8`` 、 ``latin1`` 、 ``koi8r`` 、 ``none`` で"
+"す。"
+
+msgid "The default is ``utf8``."
+msgstr "デフォルトは ``utf8`` です。"
+
+msgid "Here is an example that Shift_JIS is used as the default encoding::"
+msgstr "以下はデフォルトのエンコーディングとしてShift_JISを使う例です::"
+
+msgid "``--with-match-escalation-threshold=NUMBER``"
+msgstr ""
+
+msgid ""
+"Specifies the default match escalation threshold. See :ref:`select-match-"
+"escalation-threshold` about match escalation threshold. -1 means that match "
+"operation never escalate."
+msgstr ""
+"マッチ演算でエスカレーションをするかどうかのデフォルトの閾値を指定します。こ"
+"の閾値については :ref:`select-match-escalation-threshold` を参照してくださ"
+"い。-1はマッチ演算でエスカレーションしないという意味です。"
+
+msgid "The default is 0."
+msgstr "デフォルトは0です。"
+
+msgid "Here is an example that match escalation isn't used by default::"
+msgstr "以下はデフォルトではマッチエスカレーションをしないという例です::"
+
+msgid "``--with-zlib``"
+msgstr ""
+
+msgid "Enables column value compression by zlib."
+msgstr "zlibを使ってカラム値を圧縮する機能を有効にします。"
+
+msgid "The default is disabled."
+msgstr "デフォルトでは無効です。"
+
+msgid "Here is an example that enables column value compression by zlib::"
+msgstr "以下はzlibを使ってカラム値を圧縮する機能を有効にする例です::"
+
+msgid "``--with-lz4``"
+msgstr ""
+
+msgid "Enables column value compression by LZ4."
+msgstr "LZ4を使ってカラム値を圧縮する機能を有効にします。"
+
+msgid "Here is an example that enables column value compression by LZ4::"
+msgstr "以下はLZ4を使ってカラム値を圧縮する機能を有効にする例です::"
+
+msgid "``--with-message-pack=MESSAGE_PACK_INSTALL_PREFIX``"
+msgstr ""
+
+msgid ""
+"Specifies where MessagePack is installed. If MessagePack isn't installed "
+"with ``--prefix=/usr``, you need to specify this option with path that you "
+"use for building MessagePack."
+msgstr ""
+"MessagePackがどこにインストールされているかを指定します。MessagePackを ``--"
+"prefix=/usr`` という ``configure`` オプションでインストールしていない場合は、"
+"MessagePackをビルドするときに指定したパスをこのオプションで指定してください。"
+
+msgid ""
+"If you installed MessagePack with ``--prefix=$HOME/local`` option, you "
+"should specify ``--with-message-pack=$HOME/local`` to Groonga's "
+"``configure``."
+msgstr ""
+"もし、MessagePackを ``--prefix=$HOME/local`` という ``configure`` オプション"
+"でインストールした場合は、Groongaの ``configure`` では ``--with-message-"
+"pack=$HOME/local`` と指定してください。"
+
+msgid "The default is ``/usr``."
+msgstr "デフォルトは ``/usr`` です。"
+
+msgid ""
+"Here is an example that uses MessagePack built with ``--prefix=$HOME/local`` "
+"option::"
+msgstr ""
+"以下はMessagePackが ``--prefix=$HOME/local`` という ``configure`` オプション"
+"でインストールされている場合の例です::"
+
+msgid "``--with-munin-plugins``"
+msgstr ""
+
+msgid ""
+"Installs Munin plugins for Groonga. They are installed into ``${PREFIX}/"
+"share/groonga/munin/plugins/``."
+msgstr ""
+"Groonga用のMuninプラグインをインストールします。プラグインは ``${PREFIX}/"
+"share/groonga/munin/plugins/`` 以下にインストールされます。"
+
+msgid "Those plugins are not installed by default."
+msgstr "デフォルトではプラグインはインストールされません。"
+
+msgid "Here is an example that installs Munin plugins for Groonga::"
+msgstr "以下はGroonga用のMuninプラグインをインストールする例です::"
+
+msgid "``--with-package-platform=PLATFORM``"
+msgstr ""
+
+msgid ""
+"Installs platform specific system management files such as init script. "
+"Available platforms are ``centos``, ``centos5``, ``centos6``, ``centos7`` "
+"and ``fedora``. Platform starts with ``centos`` are for Red Hat and Red Hat "
+"clone distributions such as CentOS. If ``centos`` is specified, distribution "
+"version is guessed. ``fedora`` is for Fedora."
+msgstr ""
+"initスクリプトなどプラットフォーム依存のシステム管理ファイルをインストールし"
+"ます。利用可能なプラットフォームは ``centos`` 、 ``centos5`` 、 "
+"``centos6`` 、 ``centos7`` 、 ``fedora`` です。 ``centos`` から始まるプラット"
+"フォームはRed HatおよびCentOSなどのRed Hatクローンのディストリビューション用"
+"です。 ``centos`` を指定した場合はディストリビューションのバージョンを推測し"
+"ます。 ``fedora`` はFedora用です。"
+
+msgid "Those system management files are not installed by default."
+msgstr "デフォルトではシステム管理ファイルはインストールされません。"
+
+msgid ""
+"Here is an example that installs CentOS specific system management files::"
+msgstr "以下はCentOS用のシステム管理ファイルをインストールする例です::"
+
+msgid "``--help``"
+msgstr ""
+
+msgid "Shows all ``configure`` options."
+msgstr "すべての ``configure`` オプションを表示します。"
+
+msgid "``make``"
+msgstr ""
+
+msgid "``configure`` is succeeded, you can build Groonga by ``make``::"
+msgstr "``configure`` が成功したら ``make`` でGroongaをビルドします::"
+
+msgid ""
+"If you have multi cores CPU, you can make faster by using ``-j`` option. If "
+"you have 4 cores CPU, it's good for using ``-j4`` option::"
+msgstr ""
+"マルチコアCPUを使っている場合は ``-j`` オプションを使うとより速くmakeを実行で"
+"きます。もし、4コアのCPUを使っている場合は、 ``-j4`` オプションを使うともっと"
+"速くビルドできます::"
+
+msgid ""
+"If you get some errors by ``make``, please report them to us: :doc:`/"
+"contribution/report`"
+msgstr ""
+"``make`` で何かエラーが発生した場合は、そのエラーをレポートしてください: :"
+"doc:`/contribution/report`"
+
+msgid "``make install``"
+msgstr ""
+
+msgid "Now, you can install built Groonga!::"
+msgstr "これでビルドしたGroongaをインストールできます！::"
+
+msgid ""
+"If you have write permission for ``${PREFIX}``, you don't need to use "
+"``sudo``. e.g. ``--prefix=$HOME/local`` case. In this case, use ``make "
+"install``::"
+msgstr ""
+"``${PREFIX}`` への書き込み権限がある場合は ``sudo`` を使う必要はありません。"
+"例えば、 ``--prefix=$HOME/local`` と指定した場合です。この場合は ``make "
+"install`` を使ってください::"

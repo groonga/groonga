@@ -1,0 +1,126 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "Prefix RK search"
+msgstr "前方一致RK検索"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"Groonga supports prefix RK search. RK means Romaji and Kana (reading). "
+"Prefix RK search can find registered text in katakana by query in romaji, "
+"hiragana or katakana. Found registered texts are started with query."
+msgstr ""
+"Groongaは前方一致RK検索をサポートしています。RKはローマ字（Romaji）と仮名"
+"（Kana、読み）を意味しています。前方一致RK検索はカタカナで登録されているテキ"
+"ストをローマ字、ひらがな、カタカナで指定したクエリーで検索します。ヒットした"
+"テキストは検索したクエリーで始まっています。"
+
+msgid ""
+"Prefix RK search is useful for completing Japanese text. Because romaji is "
+"widely used to input Japanese on computer. See also `Japanese input methods "
+"on Wikipedia <https://en.wikipedia.org/wiki/Japanese_input_methods>`_."
+msgstr ""
+"前方一致RK検索は日本語テキストを補完するときに便利です。なぜなら、コンピュー"
+"ター上で日本語を入力するときはローマ字を使うことが多いからです。詳細は "
+"`Wikipediaの日本語入力システム <https://en.wikipedia.org/wiki/"
+"Japanese_input_methods>`_ を参照してください。"
+
+msgid ""
+"If users can search Japanese text in romaji, users doesn't need to convert "
+"romaji to hiragana, katakana or kanji by themselves. For example, if you "
+"register a reading for \"日本\" as \"ニホン\", users can find \"日本\" by "
+"\"ni\", \"に\" or \"二\"."
+msgstr ""
+"ユーザーがローマ字で日本語テキストを検索することができると、ユーザーは自分で"
+"ローマ字をひらがな、カタカナ、漢字に変換する必要がなくなります。たとえば、"
+"「日本」の読みとして「ニホン」を登録しておけば、「ni」でも「に」でも「二」で"
+"も「日本」を探すことができます。"
+
+msgid ""
+"The feature is helpful because it reduces one or more operations of users."
+msgstr "この機能は便利です。なぜならユーザーの操作が減るからです。"
+
+msgid "This feature is used in :doc:`/reference/suggest/completion`."
+msgstr "この機能は :doc:`/reference/suggest/completion` でも使われています。"
+
+msgid ""
+"You can use this feature in :ref:`select-filter` by :doc:`/reference/"
+"functions/prefix_rk_search`."
+msgstr ""
+":doc:`/reference/functions/prefix_rk_search` を使えば、この機能を :ref:"
+"`select-filter` で使うことができます。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "You need :ref:`table-pat-key` table for using prefix RK search."
+msgstr "前方一致RK検索を使うには :ref:`table-pat-key` テーブルが必要です。"
+
+msgid "You need to put reading in katakana to ``TABLE_PAT_KEY`` as key:"
+msgstr ""
+"読みをカタカナで ``TABLE_PAT_KEY`` のキーとして登録する必要があります。"
+
+msgid ""
+"You can finds ``ニホン`` and ``ニッポン`` by prefix RK search with ``ni`` as "
+"query from the ``Readings`` table."
+msgstr ""
+"クエリーに ``ni`` を指定して前方一致RK検索をすると、 ``Readings`` テーブルか"
+"ら ``ニホン`` と ``ニッポン`` を見つけることができます。"
+
+msgid ""
+"You can finds ``ローマジ`` by prefix RK search with ``r`` as query from the "
+"``Readings`` table."
+msgstr ""
+"クエリーに ``r`` を指定して前方一致RK検索をすると、 ``Readings`` テーブルか"
+"ら ``ローマジ`` を見つけることができます。"
+
+msgid "How to convert romaji to reading"
+msgstr "ローマ字から読みへの変換"
+
+msgid "Prefix RK search is based on JIS X 4063:2000 specification."
+msgstr "前方一致RK検索はJIS X 4063:2000をベースにしています。"
+
+msgid ""
+"The specification was obsoleted. See `ローマ字入力 on Japanese Wikipedia "
+"<https://ja.wikipedia.org/wiki/"
+"%E3%83%AD%E3%83%BC%E3%83%9E%E5%AD%97%E5%85%A5%E5%8A%9B>`_ for JIS X "
+"4063:2000."
+msgstr ""
+"この使用はすでに廃止されています。JIS X 4063:2000については `Wikipediaのロー"
+"マ字入力 <https://ja.wikipedia.org/wiki/"
+"%E3%83%AD%E3%83%BC%E3%83%9E%E5%AD%97%E5%85%A5%E5%8A%9B>`_ を参照してくださ"
+"い。"
+
+msgid "Normally, you can get converted results as expected."
+msgstr "通常、期待した通りの変換結果を得ることができます。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/suggest/completion`"
+msgstr ""
+
+msgid ":doc:`/reference/functions/prefix_rk_search`"
+msgstr ""

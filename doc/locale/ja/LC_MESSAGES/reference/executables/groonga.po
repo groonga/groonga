@@ -1,0 +1,720 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "``groonga`` executable file"
+msgstr "``groonga`` 実行ファイル"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``groonga`` executable file provides the following features:"
+msgstr "``groonga`` 実行ファイルは以下の機能を提供します。:"
+
+msgid "Fulltext search server"
+msgstr "全文検索サーバー"
+
+msgid "Fulltext search shell"
+msgstr "全文検索シェル"
+
+msgid "Client for Groonga fulltext search server"
+msgstr "Groonga全文検索サーバーのクライアント"
+
+msgid ""
+"Groonga can be used as a library. If you want to use Groonga as a library, "
+"you need to write a program in C, C++ and so on. Library use is useful for "
+"embedding fulltext search feature to your application, but it's not easy to "
+"use."
+msgstr ""
+"Groongaはライブラリーとして使えます。Groongaをライブラリーとして使う場合、C、"
+"C++などの言語でプログラムを書く必要があります。ライブラリーとして使う使い方は"
+"アプリケーションに全文検索機能を組み込む場合に便利です。しかし、全文検索サー"
+"バーや全文検索シェルほどは使いやすい使い方ではありません。"
+
+msgid "You can use ``groonga`` executable file to get fulltext search feature."
+msgstr ""
+"全文検索機能を使うために ``groonga`` 実行ファイルを使うことができます。"
+
+msgid ""
+"If you want to try Groonga, fulltext search shell usage is useful. You don't "
+"need any server and client. You just need one terminal. You can try Groonga "
+"like the following::"
+msgstr ""
+"Groongaを試したいときは全文検索シェルの使い方が便利です。サーバーもクライアン"
+"トも必要ありません。ターミナルが1つあれば十分です。次のようにしてGroongaを試"
+"すことができます。::"
+
+msgid ""
+"If you want to create an application that has fulltext search feature, "
+"fulltext search server usage is useful. You can use Groonga as a server like "
+"RDBMS (Relational DataBase Management System). Client-server model is a "
+"popular architecture."
+msgstr ""
+"全文検索機能を持ったアプリケーションを作る場合は全文検索サーバーとして使う使"
+"い方が便利です。RDBMS（リレーショナル・データベース管理システム）のように"
+"Groongaをサーバーとして使うことができます。クライアント・サーバーモデルはよく"
+"あるアーキテクチャーです。"
+
+msgid "Normally, client for Groonga fulltext server usage isn't used."
+msgstr ""
+"Groonga全文検索サーバーのクライアントとして使う使い方はあまり使いません。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``groonga`` executable file has the following four modes:"
+msgstr "``groonga`` 実行ファイルには以下の4つのモードがあります。"
+
+msgid "Standalone mode"
+msgstr "スタンドアローンモード"
+
+msgid "Server mode"
+msgstr "サーバーモード"
+
+msgid "Daemon mode"
+msgstr "デーモンモード"
+
+msgid "Client mode"
+msgstr "クライアントモード"
+
+msgid ""
+"There are common options in these modes. These common options are described "
+"later section."
+msgstr ""
+"これらのモードは共通のオプションを持ちます。これらの共通のオプションについて"
+"は後のセクションで説明します。"
+
+msgid ""
+"In standalone mode, ``groonga`` executable file runs one or more Groonga :"
+"doc:`/reference/command` against a local Groonga database."
+msgstr ""
+
+msgid ""
+"Here is the syntax to run shell that executes Groonga command against "
+"temporary database::"
+msgstr ""
+
+msgid ""
+"Here is the syntax to create a new database and run shell that executes "
+"Groonga command against the new database::"
+msgstr ""
+
+msgid ""
+"Here is the syntax to run shell that executes Groonga command against "
+"existing database::"
+msgstr ""
+
+msgid ""
+"Here is the syntax to run Groonga command against existing database and "
+"exit::"
+msgstr ""
+
+msgid ""
+"In server mode, ``groonga`` executable file runs as a server. The server "
+"accepts connections from other processes at local machine or remote machine "
+"and executes received Groonga :doc:`/reference/command` against a local "
+"Groonga database."
+msgstr ""
+
+msgid ""
+"You can choose one protocol from :doc:`/server/http` and :doc:`/server/"
+"gqtp`. Normally, HTTP is suitable but GQTP is the default protocol. This "
+"section describes only about HTTP protocol usage."
+msgstr ""
+
+msgid ""
+"In server mode, ``groonga`` executable file runs in the foreground. If you "
+"want to run Groonga server in the background, see :ref:`groonga-executable-"
+"file-daemon-mode`."
+msgstr ""
+
+msgid "Here is the syntax to run Groonga server with temporary database::"
+msgstr ""
+
+msgid ""
+"Here is the syntax to create a new database and run Groonga server with the "
+"new database::"
+msgstr ""
+
+msgid "Here is the syntax to run Groonga server with existing database::"
+msgstr ""
+
+msgid ""
+"In daemon mode, ``groonga`` executable file runs as a daemon. Daemon is "
+"similar to server but it runs in the background. See :ref:`groonga-"
+"executable-file-server-mode` about server."
+msgstr ""
+
+msgid "Here is the syntax to run Groonga daemon with temporary database::"
+msgstr ""
+
+msgid ""
+"Here is the syntax to create a new database and run Groonga daemon with the "
+"new database::"
+msgstr ""
+
+msgid "Here is the syntax to run Groonga daemon with existing database::"
+msgstr ""
+
+msgid ":option:`--pid-path` option will be useful for daemon mode."
+msgstr ""
+
+msgid ""
+"In client mode, ``groonga`` executable file runs as a client for GQTP "
+"protocol Groonga server. Its usage is similar to :ref:`groonga-executable-"
+"file-standalone-mode`. You can run shell and execute one command. You need "
+"to specify server address instead of local database."
+msgstr ""
+
+msgid ""
+"Note that you can't use ``groonga`` executable file as a client for Groonga "
+"server that uses HTTP."
+msgstr ""
+"HTTPを使っているGroongaサーバーのクライアントとして ``groonga`` 実行ファイル"
+"を使うことはできないことに注意してください。"
+
+msgid ""
+"Here is the syntax to run shell that executes Groonga command against "
+"Groonga server that is running at ``192.168.0.1:10043``::"
+msgstr ""
+
+msgid ""
+"Here is the syntax to run Groonga command against Groonga server that is "
+"running at ``192.168.0.1:10043`` and exit::"
+msgstr ""
+
+msgid "Options"
+msgstr "オプション"
+
+msgid "Creates new database."
+msgstr "新しいデータベースを作成します。"
+
+msgid "Executes ``groonga`` command in client mode."
+msgstr ""
+
+msgid ""
+"Executes ``groonga`` command in server mode. Use \"Ctrl+C\" to stop the "
+"``groonga`` process."
+msgstr ""
+
+msgid ""
+"Executes ``groonga`` command in daemon mode. In contrast to server mode, "
+"``groonga`` command forks in daemon mode. For example, to stop local daemon "
+"process, use \"curl http://127.0.0.1:10041/d/shutdown\"."
+msgstr ""
+
+msgid ""
+"Specifies encoding which is used for Groonga database. This option is "
+"effective when you create new Groonga database.  This parameter specifies "
+"one of the following values: ``none``, ``euc``, ``utf8``, ``sjis``, "
+"``latin`` or ``koi8r``."
+msgstr ""
+
+msgid ""
+"Specifies log level. Log level must be a log level name or an integer value. "
+"Here are available log levels:"
+msgstr ""
+"ログレベルを指定します。ログレベルはログレベル名または整数値です。利用可能な"
+"ログレベルは以下の通りです。"
+
+msgid "Log level"
+msgstr "ログレベル"
+
+msgid "Name"
+msgstr "名前"
+
+msgid "Integer value"
+msgstr "整数値"
+
+msgid "None"
+msgstr "なし"
+
+msgid "``none``"
+msgstr ""
+
+msgid "``0``"
+msgstr ""
+
+msgid "Emergency"
+msgstr "緊急"
+
+msgid "``E``, ``emerge`` or ``emergency``"
+msgstr "``E``, ``emerge``, ``emergency`` のどれか"
+
+msgid "``1``"
+msgstr ""
+
+msgid "Alert"
+msgstr "アラート"
+
+msgid "``A`` or ``alert``"
+msgstr "``A``, ``alert`` のどれか"
+
+msgid "``2``"
+msgstr ""
+
+msgid "Critical"
+msgstr "危機的"
+
+msgid "``C``, ``crit`` or ``critical``"
+msgstr "``C``, ``crit``, ``critical`` のどれか"
+
+msgid "``3``"
+msgstr ""
+
+msgid "Error"
+msgstr "エラー"
+
+msgid "``e`` or ``error``"
+msgstr "``e``, ``error`` のどれか"
+
+msgid "``4``"
+msgstr ""
+
+msgid "Warning"
+msgstr "警告"
+
+msgid "``w``, ``warn`` or ``warning``"
+msgstr "``w``, ``warn``, ``warning`` のどれか"
+
+msgid "``5``"
+msgstr ""
+
+msgid "Notice"
+msgstr "通知"
+
+msgid "``n`` or ``notice``"
+msgstr "``n``, ``notice`` のどれか"
+
+msgid "``6``"
+msgstr ""
+
+msgid "Information"
+msgstr "情報"
+
+msgid "``i`` or ``info``"
+msgstr "``i``, ``info`` のどれか"
+
+msgid "``7``"
+msgstr ""
+
+msgid "Debug"
+msgstr "デバッグ"
+
+msgid "``d`` or ``debug``"
+msgstr "``d``, ``debug`` のどれか"
+
+msgid "``8``"
+msgstr ""
+
+msgid "Dump"
+msgstr "ダンプ"
+
+msgid "``-`` or ``dump``"
+msgstr "``-``, ``dump`` のどれか"
+
+msgid "``9``"
+msgstr ""
+
+msgid "Use :option:`--bind-address` instead."
+msgstr ""
+
+msgid ""
+"サーバモードかデーモンモードで実行するとき、listenするアドレスを指定します。"
+"(デフォルトは `hostname` の返すホスト名)"
+msgstr ""
+
+msgid ""
+"クライアント、サーバ、またはデーモンモードで使用するTCPポート番号。 (クライア"
+"ントモードのデフォルトは10043番、サーバ、またはデーモンモードのデフォルトは、"
+"HTTPの場合、10041番、GQTPの場合、10043番)"
+msgstr ""
+
+msgid ""
+"サーバモードかデーモンモードで実行するとき、サーバのIDとなるアドレスを指定し"
+"ます。(デフォルトは`hostname`の返すホスト名)"
+msgstr ""
+
+msgid "ヘルプメッセージを出力します。"
+msgstr ""
+
+msgid ""
+"httpサーバとしてgroongaを使用する場合に静的ページを格納するディレクトリを指定"
+"します。"
+msgstr ""
+
+msgid ""
+"デフォルトでは、データベースを管理するための汎用的なページに対応するファイル"
+"が/usr/share/groonga/admin_html以下にインストールされます。このディレクトリを"
+"document-rootオプションの値に指定して起動した場合、ウェブブラウザでhttp://"
+"hostname:port/index.htmlにアクセスすると、ウェブベースのデータベース管理ツー"
+"ルを使用できます。"
+msgstr ""
+
+msgid "http,gqtpのいずれかを指定します。(デフォルトはgqtp)"
+msgstr ""
+
+msgid ""
+"ログを出力するファイルのパスを指定します。(デフォルトは/var/log/groonga/"
+"groonga.logです)"
+msgstr ""
+
+msgid "Specify log flags. Default value is ``time|message``."
+msgstr "ログフラグを指定します。デフォルト値は ``time|message`` です。"
+
+msgid "``+`` prefix means that ``add the flag``."
+msgstr "``+`` 接頭辞は、フラグを追加します。"
+
+msgid "``-`` prefix means that ``remove the flag``."
+msgstr "``-`` 接頭辞は、フラグを削除します。"
+
+msgid "No prefix means that ``replace existing flags``."
+msgstr "接頭辞無しは、既存のフラグを置き換えます。"
+
+msgid "Multiple log flags can be specified by separating flags with ``|``."
+msgstr "``|`` でフラグを区切ることで、複数のログフラグを指定できます。"
+
+msgid "We can specify flags below."
+msgstr "指定できるフラグは以下の通りです。"
+
+msgid "Output nothing into the log."
+msgstr "ログに何も出力しません。"
+
+msgid "Output timestamp into the log."
+msgstr "タイムスタンプをログに出力します。"
+
+msgid "``time``"
+msgstr ""
+
+msgid "Output log message into the log."
+msgstr "ログメッセージをログに出力します。"
+
+msgid "``message``"
+msgstr ""
+
+msgid ""
+"Output process id and a location of an output of the log (file name, line "
+"and function name) into the log."
+msgstr ""
+"プロセスIDとログの出力場所(ファイル名、行数、関数名)をログに出力します。"
+
+msgid "``location``"
+msgstr ""
+
+msgid "Output process id into the log."
+msgstr "プロセスIDをログに出力します。"
+
+msgid "``process_id``"
+msgstr ""
+
+msgid "This flag is an alias of ``process_id``."
+msgstr "このフラグは、 ``process_id`` の別名です。"
+
+msgid "``pid``"
+msgstr ""
+
+msgid "Output thread id into log"
+msgstr "スレッドIDををログに出力します。"
+
+msgid "``thread_id``"
+msgstr ""
+
+msgid "This flag specifies all flags except ``none`` and ``default`` flags."
+msgstr ""
+"このフラグは、 ``none`` と ``default`` フラグ以外の全てのフラグを指定します。"
+
+msgid "``all``"
+msgstr ""
+
+msgid "``default``"
+msgstr ""
+
+msgid "Output timestamp and log message into the log."
+msgstr "タイムスタンプとログメッセージをログに出力します。"
+
+msgid ""
+"Specifies threshold for log rotation. Log file is rotated when log file size "
+"is larger than or equals to the threshold (default: 0; disabled)."
+msgstr ""
+"ログローテーションの閾値を指定します。ログファイルのサイズが閾値に指定した値"
+"以上になると、ローテートされます。（デフォルトは0（無効）です）"
+
+msgid ""
+"クエリーログを出力するファイルのパスを指定します。(デフォルトでは出力されませ"
+"ん)"
+msgstr ""
+
+msgid ""
+"Specifies threshold for query log rotation. Query log file is rotated when "
+"query log file size is larger than or equals to the threshold (default: 0; "
+"disabled)."
+msgstr ""
+"クエリーログのローテーションの閾値を指定します。クエリーログファイルのサイズ"
+"が閾値に指定した値以上になると、ローテートされます。（デフォルトは0（無効）で"
+"す）"
+
+msgid ""
+"最大で利用するスレッド数を指定します。(デフォルトはマシンのCPUコア数と同じ数"
+"です)"
+msgstr ""
+
+msgid "PIDを保存するパスを指定します。(デフォルトでは保存しません)"
+msgstr ""
+
+msgid ""
+"設定ファイルのパスを指定します。設定ファイルは以下のようなフォーマットになり"
+"ます。::"
+msgstr ""
+
+msgid "キャッシュ数の最大値を指定します。(デフォルトは100です)"
+msgstr ""
+
+msgid "検索の挙動をエスカレーションする閾値を指定します。(デフォルトは0です)"
+msgstr ""
+
+msgid "Specifies the default request timeout in seconds."
+msgstr "デフォルトのリクエストタイムアウトを指定します。単位は秒です。"
+
+msgid ""
+"You can specify timeout less than 1 second by decimal such as ``0.1``. "
+"``0.1`` means that 100 milliseconds."
+msgstr ""
+"``0.1`` のように小数で指定することで1秒未満のタイムアウトを設定できます。 "
+"``0.1`` は100ミリ秒のタイムアウトという意味です。"
+
+msgid ""
+"If you specify ``0`` or less value, request timeout is disabled by default."
+msgstr ""
+"``0`` 未満の値を指定するとデフォルトでリクエストタイムアウトは無効になりま"
+"す。"
+
+msgid "The default value is ``0``."
+msgstr "デフォルト値は ``0`` です。"
+
+msgid ":doc:`/reference/command/request_timeout`"
+msgstr ""
+
+msgid "Specifies the base path for cache. It enables persistent cache feature."
+msgstr ""
+"キャッシュの保存先のベースとなるパスを指定します。これを指定すると永続キャッ"
+"シュ機能が有効になります。"
+
+msgid "You can get the following merits by persistent cache feature:"
+msgstr "永続キャッシュ機能を使うと次のメリットがあります。"
+
+msgid ""
+"You can reuse cache after ``groonga`` process is restarted. You don't need "
+"to warm up your cache each restart."
+msgstr ""
+"``groonga`` プロセスが再起動した後もキャッシュを再利用できます。再起動する毎"
+"にキャッシュをウォームアップする必要はありません。"
+
+msgid "You can share cache with multiple ``groonga`` processes."
+msgstr "複数の ``groonga`` プロセス間でキャッシュを共有できます。"
+
+msgid ""
+"You must specify the base path on memory file system. If you specify the "
+"base path on disk, your cache will be slow. It's not make sense."
+msgstr ""
+"このベースとなるパスはメモリーファイルシステム上のパスを指定するべきです。"
+"ディスク上にベースとなるパスを指定するとキャッシュが遅くなります。これでは意"
+"味がありません。"
+
+msgid ""
+"The default is nothing. It means that persistent cache is disabled. On "
+"memory cache is used."
+msgstr ""
+"デフォルト値はありません。これは永続キャッシュは無効だということです。代わり"
+"にメモリーキャッシュが使われます。"
+
+msgid ""
+"Persistent cache is a bit slower than on memory cache. Normally, the "
+"difference has little influence on performance."
+msgstr ""
+"永続キャッシュはメモリーキャッシュよりも少し遅いです。通常、この差によるパ"
+"フォーマンスの影響は軽微です。"
+
+msgid "Command line parameters"
+msgstr "コマンドライン引数"
+
+msgid "使用するデータベースのパス名を指定します。"
+msgstr ""
+
+msgid ""
+"クライアントモードの場合は接続先のホスト名とポート番号を指定します(デフォルト"
+"値は'localhost:10043')。ポート番号を指定しない場合には、10043が指定されたもの"
+"とします。"
+msgstr ""
+
+msgid ""
+"スタンドアロンおよびクライアントモードの場合は、実行するコマンドとその引数を"
+"コマンドライン引数に指定できます。コマンドライン引数にcommandを与えなかった場"
+"合は、標準入力から一行ずつEOFに達するまでコマンド文字列を読み取り、順次実行し"
+"ます。"
+msgstr ""
+
+msgid "Command"
+msgstr "コマンド"
+
+msgid ""
+"groongaコマンドを通してデータベースを操作する命令をコマンドと呼びます。コマン"
+"ドは主にC言語で記述され、groongaプロセスにロードすることによって使用できるよ"
+"うになります。 それぞれのコマンドは一意な名前と、0個以上の引数を持ちます。"
+msgstr ""
+
+msgid "引数は以下の2種類の方法のいずれかで指定することができます。::"
+msgstr ""
+
+msgid ""
+"形式1でコマンドを実行する場合は、定義された順番で値を指定しなければならず、途"
+"中の引数の値を省略することはできません。形式2でコマンドを実行する場合は、「--"
+"引数名」のように引数の名前を明示しなければならない代わりに、任意の順番で引数"
+"を指定することが可能で、途中の引数の指定を省略することもできます。"
+msgstr ""
+
+msgid ""
+"標準入力からコマンド文字列を与える場合は、コマンド名と引数名と値は、空白( )で"
+"区切ります。空白や、記号「\"'()\\」のうちいずれかを含む値を指定したい場合は、"
+"シングルクォート(')かダブルクォート(\")で値を囲みます。値として指定する文字列"
+"の中では、改行文字は'\\n'に置き換えて指定します。また、引用符に使用した文字を"
+"値の中で指定する場合には、その文字の前にバックスラッシュ('\\') を指定します。"
+"バックスラッシュ文字自身を値として指定する場合には、その前にバックスラッシュ"
+"を指定します。"
+msgstr ""
+
+msgid ""
+"You can write command list with continuous line which is represented by '\\"
+"\\' character.::"
+msgstr ""
+"'\\\\'文字で継続行であることを明示してコマンドリストを記述することができま"
+"す。"
+
+msgid "Builtin command"
+msgstr "組み込みコマンド"
+
+msgid "以下のコマンドは組み込みコマンドとして予め定義されています。"
+msgstr ""
+
+msgid "``status``"
+msgstr ""
+
+msgid "groongaプロセスの状態を表示します。"
+msgstr ""
+
+msgid "DBに定義されているテーブルのリストを表示します。"
+msgstr ""
+
+msgid "``table_list``"
+msgstr ""
+
+msgid "``column_list``"
+msgstr ""
+
+msgid "テーブルに定義されているカラムのリストを表示します。"
+msgstr ""
+
+msgid "DBにテーブルを追加します。"
+msgstr ""
+
+msgid "``table_create``"
+msgstr ""
+
+msgid "``column_create``"
+msgstr ""
+
+msgid "テーブルにカラムを追加します。"
+msgstr ""
+
+msgid "DBに定義されているテーブルを削除します。"
+msgstr ""
+
+msgid "``table_remove``"
+msgstr ""
+
+msgid "``column_remove``"
+msgstr ""
+
+msgid "テーブルに定義されているカラムを削除します。"
+msgstr ""
+
+msgid "``load``"
+msgstr ""
+
+msgid "テーブルにレコードを挿入します。"
+msgstr ""
+
+msgid "``select``"
+msgstr ""
+
+msgid "テーブルに含まれるレコードを検索して表示します。"
+msgstr ""
+
+msgid "``define_selector``"
+msgstr ""
+
+msgid "検索条件をカスタマイズした新たな検索コマンドを定義します。"
+msgstr ""
+
+msgid "``quit``"
+msgstr ""
+
+msgid "データベースとのセッションを終了します。"
+msgstr ""
+
+msgid "``shutdown``"
+msgstr ""
+
+msgid "サーバ(デーモン)プロセスを停止します。"
+msgstr ""
+
+msgid "``log_level``"
+msgstr ""
+
+msgid "ログ出力レベルを設定します。"
+msgstr ""
+
+msgid "``log_put``"
+msgstr ""
+
+msgid "ログ出力を行います。"
+msgstr ""
+
+msgid "ロックを解除します。"
+msgstr ""
+
+msgid "``clearlock``"
+msgstr ""
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "新しいデータベースを作成します。::"
+msgstr ""
+
+msgid "作成済みのデータベースにテーブルを定義します。::"
+msgstr ""
+
+msgid "サーバを起動します。::"
+msgstr ""
+
+msgid "httpサーバとして起動します。::"
+msgstr ""
+
+msgid "サーバに接続し、テーブル一覧を表示します。::"
+msgstr ""

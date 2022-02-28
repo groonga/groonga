@@ -1,0 +1,220 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "Correction"
+msgstr "補正"
+
+msgid "This section describes about the following correction features:"
+msgstr "このセクションでは以下の補正機能について説明します。:"
+
+msgid "How it works"
+msgstr "どのように動作するか"
+
+msgid "How to use"
+msgstr "使い方"
+
+msgid "How to learn"
+msgstr "学習方法"
+
+msgid "The correction feature uses three searches to compute corrected words:"
+msgstr "補正機能は補正した語を計算するために3種類の検索を使います。:"
+
+msgid "Cooccurrence search against learned data."
+msgstr "学習したデータを共起検索。"
+
+msgid "Similar search against registered words. (optional)"
+msgstr "登録されている語を類似検索。（実行しないこともある）"
+
+msgid "Cooccurrence search"
+msgstr "共起検索"
+
+msgid ""
+"Cooccurrence search can find registered words from user's wrong input. It "
+"uses user submit sequences that will be learned from query logs, access logs "
+"and so on."
+msgstr ""
+"共起検索はユーザの間違って入力した文字列から登録済みの語を検索します。共起検"
+"索ではユーザがどのように検索を実行したかを使います。ユーザがどのように検索し"
+"たかはクエリログやアクセスログから学習します。"
+
+msgid "For example, there are the following user submissions:"
+msgstr "例えば、ユーザが以下のように検索を実行したとします。:"
+
+msgid "query"
+msgstr ""
+
+msgid "time"
+msgstr "時刻"
+
+msgid "2011-08-10T22:20:50+09:00"
+msgstr ""
+
+msgid "serach (typo!)"
+msgstr "serach （入力ミス！）"
+
+msgid "2011-08-10T22:20:52+09:00"
+msgstr ""
+
+msgid "search (fixed!)"
+msgstr "search （修正！）"
+
+msgid ""
+"Groonga creates the following correction pair from the above submissions:"
+msgstr "上記の検索実行ログから以下のような補正ペアを作ります。"
+
+msgid "corrected word"
+msgstr "補正された語"
+
+msgid "input"
+msgstr "入力"
+
+msgid "search"
+msgstr ""
+
+msgid "serach"
+msgstr ""
+
+msgid ""
+"Groonga treats continuous submissions within a minute as input correction by "
+"user. Not submitted user input sequence between two submissions isn't used "
+"as learned data for correction."
+msgstr ""
+"1分以内の連続して実行された検索をユーザが入力を補正したものとみなします。検索"
+"を実行した間の入力途中の入力シーケンスは、補正用の学習データとしては利用しま"
+"せん。"
+
+msgid ""
+"If an user inputs \"serach\" and cooccurrence search returns \"search\" "
+"because \"serach\" is in input column and corresponding corrected word "
+"column value is \"search\"."
+msgstr ""
+"ユーザが\"serach\"と入力した場合、共起検索は\"saerch\"を返します。なぜな"
+"ら、\"serach\"が「入力」カラムにあり、対応する「補正される語」カラムの値が"
+"\"search\"だからです。"
+
+msgid "Similar search"
+msgstr "類似文書検索"
+
+msgid ""
+"Similar search can find registered words that has one or more the same "
+"tokens as user input. TokenBigram tokenizer is used for tokenization because "
+"suggest dataset schema created by :doc:`/reference/executables/groonga-"
+"suggest-create-dataset` uses TokenBigram tokenizer as the default tokenizer."
+msgstr ""
+"類似検索はユーザの入力をトークナイズし、同じトークンを含んだ登録済みの語を検"
+"索します。トークナイズにはTokenBigramトークナイザーを使います。これは :doc:`/"
+"reference/executables/groonga-suggest-create-dataset` が作るサジェストデータ"
+"セットスキーマではデフォルトトークナイザーとしてTokenBigramトークナイザーを"
+"使っているからです。"
+
+msgid ""
+"For example, there is a registered query \"search engine\". An user can find "
+"\"search engine\" by \"web search service\", \"sound engine\" and so on. "
+"Because \"search engine\" and \"web search engine\" have the same token "
+"\"search\" and \"search engine\" and \"sound engine\" have the same token "
+"\"engine\"."
+msgstr ""
+"例えば、\"search engine\"という語が登録されているとします。ユーザが\"web "
+"search service\"や\"sound engine\"などで検索すると\"search engine\"が補正候補"
+"になります。なぜなら、\"search engine\"と\"web search engine\"は\"search\"と"
+"いう同じトークンを持つからです。また、\"search engine\"と\"sound engine\"は"
+"\"engine\"という同じトークンを持っています。"
+
+msgid ""
+"\"search engine\" is tokenized to \"search\" and \"engine\" tokens. "
+"(Groonga's TokenBigram tokenizer doesn't tokenize two characters for "
+"continuous alphabets and continuous digits for reducing search noise. "
+"TokenBigramSplitSymbolAlphaDigit tokenizer should be used to ensure "
+"tokenizing to two characters.) \"web search service\" is tokenized to "
+"\"web\", \"search\" and \"service\". \"sound engine\" is tokenized to "
+"\"sound\" and \"engine\"."
+msgstr ""
+"\"search engine\"は\"search\"トークンと\"engine\"トークンにトークナイズされま"
+"す。（GroongaのTokenBigramトークナイザーは連続するアルファベットと数字を2文字"
+"にトークナイズしません。これは検索ノイズを減らす為です。確実に2文字でトークナ"
+"イズするためにはTokenBigramSplitSymbolAlphaDigitを使います。）\"web search "
+"service\"は\"web\"トークンと\"search\"トークンと\"service\"トークンにトークナ"
+"イズされます。\"sound engine\"は\"sound\"トークンと\"engine\"トークンにトーク"
+"ナイズされます。"
+
+msgid ""
+"Groonga provides :doc:`/reference/commands/suggest` command to use "
+"correction. `--type correct` option requests corrections."
+msgstr ""
+"Groongaは補正機能を使うために :doc:`/reference/commands/suggest` コマンドを用"
+"意しています。 `--type correct` オプションを使うと補正機能を利用できます。"
+
+msgid ""
+"For example, here is an command to get correction results by \"saerch\":"
+msgstr ""
+"例えば、\"saerch\"と入力した時の補正結果取得するコマンドは以下のようになりま"
+"す。:"
+
+msgid "How it learns"
+msgstr "学習方法"
+
+msgid ""
+"Cooccurrence search uses learned data. They are based on query logs, access "
+"logs and so on. To create learned data, groonga needs user submit inputs "
+"with time stamp."
+msgstr ""
+"共起検索は学習データを使います。学習データはクエリログやアクセスログから作り"
+"ます。学習データを作るためにはユーザが検索を実行したときの検索クエリとタイム"
+"スタンプが必要です。"
+
+msgid ""
+"For example, an user wants to search by \"search\" but the user has typo "
+"\"saerch\" before inputs the correct query. The user inputs the query with "
+"the following sequence:"
+msgstr ""
+"例えば、ユーザが\"search\"で検索したかったとします。しかし、ユーザは正しい"
+"\"search\"というクエリで検索を実行する前に間違って\"saerch\"で検索してしまい"
+"ました。このユーザの入力シーケンスは以下のようになります。:"
+
+msgid "2011-08-10T13:33:23+09:00: s"
+msgstr ""
+
+msgid "2011-08-10T13:33:23+09:00: sa"
+msgstr ""
+
+msgid "2011-08-10T13:33:24+09:00: sae"
+msgstr ""
+
+msgid "2011-08-10T13:33:24+09:00: saer"
+msgstr ""
+
+msgid "2011-08-10T13:33:24+09:00: saerc"
+msgstr ""
+
+msgid "2011-08-10T13:33:25+09:00: saerch (submit!)"
+msgstr "2011-08-10T13:33:25+09:00: saerch （検索実行！）"
+
+msgid "2011-08-10T13:33:29+09:00: serch (correcting...)"
+msgstr "2011-08-10T13:33:29+09:00: serch （修正中…）"
+
+msgid "2011-08-10T13:33:30+09:00: search (submit!)"
+msgstr "2011-08-10T13:33:30+09:00: search （検索実行！）"
+
+msgid ""
+"Groonga can be learned from the input sequence by the following command::"
+msgstr "以下のコマンドでこの入力シーケンスから学習できます。::"

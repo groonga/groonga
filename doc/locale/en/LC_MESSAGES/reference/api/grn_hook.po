@@ -1,0 +1,114 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``grn_hook``"
+msgstr "``grn_hook``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "TODO..."
+msgstr "TODO..."
+
+msgid "Example"
+msgstr "Example"
+
+msgid "Reference"
+msgstr "Reference"
+
+msgid "objに対してhookを追加します。"
+msgstr "objに対してhookを追加します。"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "対象objectを指定します。"
+msgstr "対象objectを指定します。"
+
+msgid ""
+"``GRN_HOOK_GET`` は、objectの参照時に呼び出されるhookを定義します。  "
+"``GRN_HOOK_SET`` は、objectの更新時に呼び出されるhookを定義します。  "
+"``GRN_HOOK_SELECT`` は、検索処理の実行中に適時呼び出され、処理の実行状況を調"
+"べたり、実行の中断を指示することができます。"
+msgstr ""
+"``GRN_HOOK_GET`` は、objectの参照時に呼び出されるhookを定義します。  "
+"``GRN_HOOK_SET`` は、objectの更新時に呼び出されるhookを定義します。  "
+"``GRN_HOOK_SELECT`` は、検索処理の実行中に適時呼び出され、処理の実行状況を調"
+"べたり、実行の中断を指示することができます。"
+
+msgid "``GRN_HOOK_GET`` は、objectの参照時に呼び出されるhookを定義します。"
+msgstr "``GRN_HOOK_GET`` は、objectの参照時に呼び出されるhookを定義します。"
+
+msgid "``GRN_HOOK_SET`` は、objectの更新時に呼び出されるhookを定義します。"
+msgstr "``GRN_HOOK_SET`` は、objectの更新時に呼び出されるhookを定義します。"
+
+msgid ""
+"``GRN_HOOK_SELECT`` は、検索処理の実行中に適時呼び出され、処理の実行状況を調"
+"べたり、実行の中断を指示することができます。"
+msgstr ""
+"``GRN_HOOK_SELECT`` は、検索処理の実行中に適時呼び出され、処理の実行状況を調"
+"べたり、実行の中断を指示することができます。"
+
+msgid ""
+"hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入します。  0を指定"
+"した場合は先頭に挿入されます。-1を指定した場合は末尾に挿入されます。  object"
+"に複数のhookが定義されている場合は順位の順に呼び出されます。"
+msgstr ""
+"hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入します。  0を指定"
+"した場合は先頭に挿入されます。-1を指定した場合は末尾に挿入されます。  object"
+"に複数のhookが定義されている場合は順位の順に呼び出されます。"
+
+msgid "hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入します。"
+msgstr "hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入します。"
+
+msgid ""
+"0を指定した場合は先頭に挿入されます。-1を指定した場合は末尾に挿入されます。"
+msgstr ""
+"0を指定した場合は先頭に挿入されます。-1を指定した場合は末尾に挿入されます。"
+
+msgid "objectに複数のhookが定義されている場合は順位の順に呼び出されます。"
+msgstr "objectに複数のhookが定義されている場合は順位の順に呼び出されます。"
+
+msgid "手続きを指定します。"
+msgstr "手続きを指定します。"
+
+msgid "hook固有情報を指定します。"
+msgstr "hook固有情報を指定します。"
+
+msgid "objに定義されているhookの数を返します。"
+msgstr "objに定義されているhookの数を返します。"
+
+msgid "hookタイプを指定します。"
+msgstr "hookタイプを指定します。"
+
+msgid ""
+"objに定義されているhookの手続き（proc）を返します。hook固有情報が定義されてい"
+"る場合は、その内容をdataにコピーして返します。"
+msgstr ""
+"objに定義されているhookの手続き（proc）を返します。hook固有情報が定義されてい"
+"る場合は、その内容をdataにコピーして返します。"
+
+msgid "実行順位を指定します。"
+msgstr "実行順位を指定します。"
+
+msgid "hook固有情報格納バッファを指定します。"
+msgstr "hook固有情報格納バッファを指定します。"
+
+msgid "objに定義されているhookを削除します。"
+msgstr "objに定義されているhookを削除します。"

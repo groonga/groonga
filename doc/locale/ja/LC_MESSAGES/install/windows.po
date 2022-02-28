@@ -1,0 +1,136 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2019-09-26 09:22+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Windows"
+msgstr ""
+
+msgid ""
+"This section describes how to install Groonga on Windows. You can install "
+"Groonga by extracting a zip package."
+msgstr ""
+"このセクションではWindows上でGroongaをインストールする方法を説明します。"
+"Groongaをインストールするにはzipパッケージを展開する方法があります。"
+
+msgid ""
+"We distribute both 32-bit and 64-bit packages but we strongly recommend a 64-"
+"bit package for server. You should use a 32-bit package just only for tests "
+"or development. You will encounter an out of memory error with a 32-bit "
+"package even if you just process medium size data."
+msgstr ""
+"32-bit用と64-bit用のパッケージを配布していますが、サーバ用途には64-bitパッ"
+"ケージを利用することをオススメします。32-bit用パッケージはテスト用か開発用に"
+"だけ使って下さい。32-bit用パッケージを使った場合は、中程度のサイズのデータで"
+"もメモリ不足エラーになることがあります。"
+
+msgid "zip"
+msgstr ""
+
+msgid ""
+"For 32-bit environment, download x86 zip archive from packages.groonga.org:"
+msgstr ""
+"32-bit環境の場合は、x86のzipアーカイブをpackages.groonga.orgからダウンロード"
+"してください。"
+
+msgid ""
+"https://packages.groonga.org/windows/groonga/groonga-latest-x86-vs2019-with-"
+"vcruntime.zip"
+msgstr ""
+
+msgid ""
+"If we don't need Microsoft Visual C++ Runtime Library, we download from the "
+"following URL:"
+msgstr ""
+"Microsoft Visual C++ ランタイムライブラリーが不要な場合は、以下のURLからダウ"
+"ンロードしてください。"
+
+msgid ""
+"https://packages.groonga.org/windows/groonga/groonga-latest-x86-vs2019.zip"
+msgstr ""
+
+msgid "Then extract it."
+msgstr "その後、アーカイブを展開します。"
+
+msgid ""
+"For 64-bit environment, download x64 zip archive from packages.groonga.org:"
+msgstr ""
+"64-bit環境の場合は、x64のzipアーカイブをpackages.groonga.orgからダウンロード"
+"してください。"
+
+msgid ""
+"https://packages.groonga.org/windows/groonga/groonga-latest-x64-vs2019-with-"
+"vcruntime.zip"
+msgstr ""
+
+msgid ""
+"https://packages.groonga.org/windows/groonga/groonga-latest-x64-vs2019.zip"
+msgstr ""
+
+msgid "You can find :doc:`/reference/executables/groonga` in ``bin`` folder."
+msgstr ""
+"``bin`` フォルダーに :doc:`/reference/executables/groonga` があるのでそれを起"
+"動してください。"
+
+msgid "Build from source"
+msgstr "ソースからビルド"
+
+msgid ""
+"First, you need to install required tools for building Groonga on Windows. "
+"Here are required tools:"
+msgstr ""
+"まずWindows上でGroongaをビルドするために必須のツールをインストールします。以"
+"下が必須のツールです。"
+
+msgid ""
+"`Microsoft Visual Studio Express 2013 for Windows Desktop <https://www."
+"visualstudio.com/downloads/#d-2013-express>`_"
+msgstr ""
+
+msgid "`CMake <http://www.cmake.org/>`_"
+msgstr ""
+
+msgid "Download zipped source from packages.groonga.org:"
+msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
+
+msgid "https://packages.groonga.org/source/groonga/groonga-12.0.0.zip"
+msgstr ""
+
+msgid "Move to the Groonga's source folder::"
+msgstr "Groongaのソースフォルダへと移動します::"
+
+msgid ""
+"Configure by ``cmake``. The following commnad line is for 64-bit version. To "
+"build 32-bit version, use ``-G \"Visual Studio 12 2013\"`` parameter "
+"instead::"
+msgstr ""
+"``cmake`` でビルドオプションを設定します。以下のコマンドラインは64-bit用の"
+"Groongaをビルドするためのものです。32-bit用のGroongaをビルドする場合は代わり"
+"に ``-G \"Visual Studio 12 2013\"`` パラメーターを指定してください::"
+
+msgid "Build::"
+msgstr "ビルド::"
+
+msgid "Install::"
+msgstr "インストール::"
+
+msgid ""
+"After the above steps, :doc:`/reference/executables/groonga` is found at ``c:"
+"\\Groonga\\bin\\groonga.exe``."
+msgstr ""
+"以上の手順で :doc:`/reference/executables/groonga` が ``c:"
+"\\Groonga\\bin\\groonga.exe`` にインストールされます。"

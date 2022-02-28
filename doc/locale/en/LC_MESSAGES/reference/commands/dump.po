@@ -1,0 +1,169 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``dump``"
+msgstr "``dump``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "dump - Output a schema and data of a database."
+msgstr "dump - Output a schema and data of a database."
+
+msgid ""
+"We explain about dump that one of built-in command of Groonga. Built-in "
+"commands of Groonga execute by sending a request to groonga server via "
+"argument of groonga execution file, standard input, and socket."
+msgstr ""
+"We explain about dump that one of built-in command of Groonga. Built-in "
+"commands of Groonga execute by sending a request to groonga server via "
+"argument of groonga execution file, standard input, and socket."
+
+msgid ""
+"The dump command outputs schemas and data of a database as a format that can "
+"read from after."
+msgstr ""
+"The dump command outputs schemas and data of a database as a format that can "
+"read from after."
+
+msgid ""
+"The dump command mainly uses from a command line. Because a dump result is "
+"big. The dump command mainly uses for the backup of databases."
+msgstr ""
+"The dump command mainly uses from a command line. Because a dump result is "
+"big. The dump command mainly uses for the backup of databases."
+
+msgid ""
+"Groonga can directly understand the format of the dump command. Therefore, "
+"we can copy databases as below. ::"
+msgstr ""
+"Groonga can directly understand the format of the dump command. Therefore, "
+"we can copy databases as below. ::"
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Here is the sample schema and data to check dump behaviour::"
+msgstr "Here is the sample schema and data to check dump behaviour::"
+
+msgid "Dump all data in database::"
+msgstr "Dump all data in database::"
+
+msgid "Dump schema and specific table data::"
+msgstr "Dump schema and specific table data::"
+
+msgid "Dump plugin only::"
+msgstr "Dump plugin only::"
+
+msgid "Dump records only::"
+msgstr "Dump records only::"
+
+msgid "Dump schema only::"
+msgstr "Dump schema only::"
+
+msgid "Dump sorted hash table data::"
+msgstr "Dump sorted hash table data::"
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "There are optional parameters."
+msgstr "There are optional parameters."
+
+msgid "Optional parameters"
+msgstr "Optional parameters"
+
+msgid "``tables``"
+msgstr "``tables``"
+
+msgid ""
+"出力対象のテーブルを「,」（カンマ）区切りで指定します。存在しないテーブルを指"
+"定した場合は無視されます。"
+msgstr ""
+"出力対象のテーブルを「,」（カンマ）区切りで指定します。存在しないテーブルを指"
+"定した場合は無視されます。"
+
+msgid "``dump_plugins``"
+msgstr "``dump_plugins``"
+
+msgid ""
+"You can customize the output whether it contains registered plugins or not. "
+"To exclude registered plugins from the output, specify ``no``."
+msgstr ""
+"You can customize the output whether it contains registered plugins or not. "
+"To exclude registered plugins from the output, specify ``no``."
+
+msgid "The default value is ``yes``."
+msgstr "The default value is ``yes``."
+
+msgid "``dump_schema``"
+msgstr "``dump_schema``"
+
+msgid ""
+"You can customize the output whether it contains database schema or not. To "
+"exclude database schema from the output, specify ``no``."
+msgstr ""
+"You can customize the output whether it contains database schema or not. To "
+"exclude database schema from the output, specify ``no``."
+
+msgid "``dump_records``"
+msgstr "``dump_records``"
+
+msgid ""
+"You can customize the output whether it contains records or not. To exclude "
+"records from the output, specify ``no``."
+msgstr ""
+"You can customize the output whether it contains records or not. To exclude "
+"records from the output, specify ``no``."
+
+msgid "``dump_indexes``"
+msgstr "``dump_indexes``"
+
+msgid ""
+"You can customize the output whether it contains indexes or not. To exclude "
+"indexes from the output, specify ``no``."
+msgstr ""
+"You can customize the output whether it contains indexes or not. To exclude "
+"indexes from the output, specify ``no``."
+
+msgid "``sort_hash_table``"
+msgstr "``sort_hash_table``"
+
+msgid ""
+"You can ascending sort by ``_key`` the output of hash table when it contains "
+"hash table. To sort the output of hash table, specify ``yes``."
+msgstr ""
+"You can ascending sort by ``_key`` the output of hash table when it contains "
+"hash table. To sort the output of hash table, specify ``yes``."
+
+msgid "The default value is ``no``."
+msgstr "The default value is ``no``."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid ""
+"データベースのスキーマとデータをGroongaの組み込みコマンド呼び出し形式で出力し"
+"ます。output_type指定は無視されます。"
+msgstr ""
+"データベースのスキーマとデータをGroongaの組み込みコマンド呼び出し形式で出力し"
+"ます。output_type指定は無視されます。"

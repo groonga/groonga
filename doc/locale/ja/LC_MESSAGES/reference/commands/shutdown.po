@@ -1,0 +1,163 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``shutdown``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``shutdown`` stops the Groonga server process."
+msgstr "``shutdown`` はGroongaサーバープロセスを終了します。"
+
+msgid ""
+"``shutdown`` uses graceful shutdown by default. If there are some running "
+"commands, the Groonga server process stops after these running commands are "
+"finished. New command requests aren't processed after ``shutdown`` command "
+"is executed."
+msgstr ""
+"``shutdown`` はデフォルトではgraceful shutdownを使います。もし、実行中のコマ"
+"ンドがあるならそれらのコマンドが終了してからGroongaサーバープロセスを終了しま"
+"す。 ``shutdown`` コマンドを実行した後は新しいコマンドを実行されません。"
+
+msgid ""
+"``shutdown`` uses immediate shutdown by specifying ``immediate`` to ``mode`` "
+"parameter. The Groonga server process stops immediately even when there are "
+"some running commands."
+msgstr ""
+"``shutdown`` は ``mode`` パラメーターに ``immediate`` を指定するとimmediate "
+"shutdownを使います。たとえ実行中のコマンドがあってもGroongaサーバープロセスを"
+"すぐに終了します。"
+
+msgid ""
+"You need to set :doc:`/reference/command/request_id` to all requests to use "
+"immediate shutdown."
+msgstr ""
+"immediate shutdownを使うにはすべてのリクエストに :doc:`/reference/command/"
+"request_id` を設定する必要があります。"
+
+msgid ""
+"The Groonga HTTP server accepts immediate shutdown immediately even when all "
+"threads are used."
+msgstr ""
+"Groonga HTTPサーバーは全てのスレッドが使用中であってもimmediate shutdownを受"
+"け付けます。"
+
+msgid "This feature can only use on the Groonga HTTP server."
+msgstr "この機能はGroonga HTTPサーバでのみ使えます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes only one optional parameter::"
+msgstr "このコマンドの引数は1つで省略できます::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "``shutdown`` use graceful shutdown by default:"
+msgstr "``shutdown`` はデフォルトではgraceful shutdownを使います。"
+
+msgid "You can specify ``graceful`` to ``mode`` parameter explicitly:"
+msgstr ""
+"明示的に ``mode`` パラメーターに ``graceful`` を指定することもできます。"
+
+msgid ""
+"You can choose immediate shutdown by specifying ``immediate`` to ``mode`` "
+"parameter:"
+msgstr ""
+"``mode`` パラメーターに ``immediate`` を指定することでimmediate shutdownを使"
+"うことができます。"
+
+msgid ""
+"Immediate shutdown is useful when you don't have time for graceful shutdown. "
+"For example, Windows kills service that takes long time to stop on Windows "
+"shutdown."
+msgstr ""
+"immediate shutdownはgraceful shutdownする時間がないときに便利です。たとえば、"
+"WindowsはWindowsをシャットダウンするときに時間内に終了しないサービスを強制終"
+"了します。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes parameters of this command."
+msgstr "このセクションではこのコマンドのパラメーターを説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is no required parameter."
+msgstr "必須の引数はありません。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There are optional parameters."
+msgstr "いくつか省略可能な引数があります。"
+
+msgid "``mode``"
+msgstr ""
+
+msgid "Specifies shutdown mode. Here are available shutdown modes:"
+msgstr "シャットダウンのモードを指定します。利用可能なモードは次の通りです。"
+
+msgid "Value"
+msgstr "値"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "``graceful``"
+msgstr ""
+
+msgid "Stops after running commands are finished."
+msgstr "実行中のコマンドが終了してから終了します。"
+
+msgid "This is the default."
+msgstr "これがデフォルトです。"
+
+msgid "``immediate``"
+msgstr ""
+
+msgid "Stops immediately even if there are some running commands."
+msgstr "実行中のコマンドがあってもすぐに終了します。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "``shutdown`` returns ``true`` as body when shutdown is accepted::"
+msgstr ""
+"``shutdown`` はシャットダウンを受け付けたときは以下のようにボディが ``true`` "
+"になります。::"
+
+msgid ""
+"If ``shutdown`` doesn't accept shutdown, error details are in ``HEADER``."
+msgstr ""
+"``shutdown`` がシャットダウンを受け付けなかったら ``HEADER`` にエラーの詳細が"
+"含まれます。"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"

@@ -1,0 +1,108 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``register``"
+msgstr ""
+
+msgid "Use :doc:`plugin_register` instead."
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``register`` command registers a plugin. You need to register a plugin "
+"before you use a plugin."
+msgstr ""
+"``register`` コマンドはプラグインを登録します。プラグインを使う前にプラグイン"
+"を登録する必要があります。"
+
+msgid ""
+"You need just one ``register`` command for a plugin in the same database "
+"because registered plugin information is written into the database.  When "
+"you restart your ``groonga`` process, ``groonga`` process loads all "
+"registered plugins without ``register`` command."
+msgstr ""
+"同じデータベースに対しては1つのプラグインについて一度だけ `register`` コマン"
+"ドを実行すれば十分です。これは、登録されたプラグイン情報はデータベースに記録"
+"されているからです。 ``groonga`` プロセスを再起動したときは、 ``register`` コ"
+"マンドを実行しなくてもすでに登録されているプラグインを読み込みます。"
+
+msgid ""
+"Registered plugins can be removed since Groonga 5.0.1. Use :doc:"
+"`plugin_unregister` in such a case."
+msgstr ""
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes only one required parameter::"
+msgstr "このコマンドの引数は1つで必須です::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"Here is a sample that registers ``QueryExpanderTSV`` query expander that is "
+"included in ``${PREFIX}/lib/groonga/plugins/query_expanders/tsv.so``."
+msgstr ""
+"これは ``${PREFIX}/lib/groonga/plugins/query_expanders/tsv.so`` に含まれてい"
+"る ``QueryExpanderTSV`` クエリー展開オブジェクトを登録する例です。"
+
+msgid ""
+"You can omit ``${PREFIX}/lib/groonga/plugins/`` and suffix (``.so``). They "
+"are completed automatically."
+msgstr ""
+"``${PREFIX}/lib/groonga/plugins/`` と拡張子（ ``.so`` ）は省略可能です。これ"
+"らは自動で補完されます。"
+
+msgid ""
+"You can specify absolute path such as ``register /usr/lib/groonga/plugins/"
+"query_expanders/tsv.so``."
+msgstr ""
+"``register /usr/lib/groonga/plugins/query_expanders/tsv.so`` というように絶対"
+"パスを指定することもできます。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "``register`` returns ``true`` as body on success such as::"
+msgstr ""
+"``register`` が成功したときは以下のようにボディは ``true`` になります::"
+
+msgid "If ``register`` fails, error details are in ``HEADER``."
+msgstr "``register`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`plugin_register`"
+msgstr ""
+
+msgid ":doc:`plugin_unregister`"
+msgstr ""

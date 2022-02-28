@@ -1,0 +1,62 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "Groonga has token filter module that some processes tokenized token."
+msgstr ""
+"Groongaにはトークナイズされたトークンに所定の処理を行うトークンフィルターモ"
+"ジュールがあります。"
+
+msgid "Token filter module can be added as a plugin."
+msgstr "トークンフィルターモジュールはプラグインとして追加できます。"
+
+msgid ""
+"You can customize tokenized token by registering your token filters plugins "
+"to Groonga."
+msgstr ""
+"トークンフィルタープラグインをGroongaに追加することでトークナイズされたトーク"
+"ンをカスタマイズできます。"
+
+msgid ""
+"A table can have zero or more token filters. You can attach token filters to "
+"a table by :ref:`table-create-token-filters` option in :doc:`/reference/"
+"commands/table_create`."
+msgstr ""
+"テーブルは0個以上のトークンフィルターを持てます。テーブルにトークンフィルター"
+"を付けるには :doc:`/reference/commands/table_create` の :ref:`table-create-"
+"token-filters` オプションを使います。"
+
+msgid ""
+"Here is an example ``table_create`` that uses ``TokenFilterStopWord`` token "
+"filter module:"
+msgstr ""
+"以下は ``TokenFilterStopWord`` トークンフィルターモジュールを使う "
+"``table_create`` の例です。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/commands/table_create`"
+msgstr ""

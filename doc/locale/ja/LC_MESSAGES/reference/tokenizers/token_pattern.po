@@ -1,0 +1,111 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``TokenPattern``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``TokenPattern`` is a tokenizer which is used to extract tokens by regular "
+"expression. This tokenizer extracts only token that matches the specified "
+"regular expression."
+msgstr ""
+"``TokenPattern`` は正規表現でトークンを抽出するのに使われるトークナイザーで"
+"す。このトークナイザーは指定した正規表現にマッチしたトークンだけを抽出しま"
+"す。"
+
+msgid "You can also specify multiple patterns of regular expression."
+msgstr "複数の正規表現を指定することもできます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``TokenPattern`` has optional parameter."
+msgstr "``TokenPattern`` は、省略可能な引数があります。"
+
+msgid "Specify one pattern::"
+msgstr "パターンを1つ指定::"
+
+msgid "Specify multiple patterns::"
+msgstr "複数のパターンを指定::"
+
+msgid "``TokenPattern`` can accept multiple patterns as above."
+msgstr "``TokenPattern`` は上記のように複数のパターンを受け付けます。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"Here is an example of ``TokenPattern``. As ``TokenPattern`` only extracts "
+"the token which matches the specified regular expression, it is able to "
+"filter search results which only matches the extracted token."
+msgstr ""
+"``TokenPattern`` の例です。``TokenPattern`` は指定した正規表現にマッチする"
+"トークンのみを抽出します。そのため抽出したトークンにのみマッチした検索結果に"
+"なります。"
+
+msgid ""
+"For example, let's compare search results by specific keywords. One is "
+"listed in ``TokenPattern`` pattern, and the other is not listed in "
+"``TokenPattern`` pattern."
+msgstr ""
+"例として、特定のキーワードによる検索結果を比較してみましょう。1つは "
+"``TokenPattern`` に指定されているキーワードで、もう1つは ``TokenPattern`` に"
+"指定されていないキーワードとします。"
+
+msgid ""
+"There are menus which contains both of specific keywords in ``Foods`` table."
+msgstr "``Foods`` テーブルには特定のキーワードを含むメニューが両方あります。"
+
+msgid "Here is the sample schema and data:"
+msgstr "スキーマ定義とサンプルデータは以下の通りです。"
+
+msgid "Then search ``Apple Pie`` with ``--query Apple``."
+msgstr "``--query Apple`` で ``Apple Pie`` を検索します。"
+
+msgid ""
+"In above example, ``Apple`` matches pattern which is specified as "
+"``TokenPattern`` pattern, ``select`` matches ``Apple Pie``."
+msgstr ""
+"上記の例では、 ``Apple`` は ``TokenPattern`` で指定したパターンにマッチしま"
+"す。そのため ``select`` は ``Apple Pie`` にマッチします。"
+
+msgid "Then search ``Raspberry Pie`` with ``--query Raspberry``."
+msgstr "``--query Raspberry`` で ``Raspberry Pie`` を検索します。"
+
+msgid ""
+"In above example, even though ``Foods`` table contains ``Raspberry Pie`` "
+"record, ``select`` doesn't match it because ``Raspberry`` doesn't match to "
+"``TokenPattern`` pattern.."
+msgstr ""
+"上記の例では、 ``Foods`` テーブルに ``Raspberry Pie`` が含まれているにもかか"
+"わらず、 ``select`` ではヒットしません。これは ``Raspberry`` は "
+"``TokenPattern`` のパターンにマッチしないからです。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`../commands/tokenize`"
+msgstr ""

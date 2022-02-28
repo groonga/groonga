@@ -1,0 +1,44 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Column"
+msgstr "Column"
+
+msgid "Column is a data store object or an index object for fast search."
+msgstr "Column is a data store object or an index object for fast search."
+
+msgid "A column belongs to a table. Table has zero or more columns."
+msgstr "A column belongs to a table. Table has zero or more columns."
+
+msgid ""
+"Both data store column and index column have type. Type of data store column "
+"specifies data range. In other words, it is \"value type\". Type of index "
+"column specifies set of documents to be indexed. A set of documents is a "
+"table in Groonga. In other words, type of index column must be a table."
+msgstr ""
+"Both data store column and index column have type. Type of data store column "
+"specifies data range. In other words, it is \"value type\". Type of index "
+"column specifies set of documents to be indexed. A set of documents is a "
+"table in Groonga. In other words, type of index column must be a table."
+
+msgid "Here are data store columns:"
+msgstr "Here are data store columns:"
+
+msgid "Here is an index column:"
+msgstr "Here is an index column:"

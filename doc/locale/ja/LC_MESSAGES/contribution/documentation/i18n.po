@@ -1,0 +1,265 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2016-03-23 13:57+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "I18N"
+msgstr "国際化"
+
+msgid ""
+"We only had documentation in Japanese.  We start to support I18N "
+"documentation by gettext based `Sphinx I18N feature`_. We'll use English as "
+"base language and translate English into other languages such as Japanese. "
+"We'll put all documentations into doc/source/ and process them by Sphinx."
+msgstr ""
+"今のところ、Groongaには日本語でのドキュメントしかありません。1.2.2からgettext"
+"ベースの `Sphinx I18N feature`_ を使ってドキュメントの国際化対応を始めまし"
+"た。この仕組みではベースの言語として英語を使い、日本語などの他の言語には英語"
+"からその言語に翻訳します。すべてのドキュメントはdoc/source/以下において、それ"
+"をSphinxで処理します。"
+
+msgid ""
+"But we still use Japanese in doc/source/ for now. We need to translate "
+"Japanese documentation in doc/source/ into English. We welcome to you help "
+"us by translating documentation."
+msgstr ""
+"しかし、今のところ、doc/source/では日本語を使っています。そのため、まずは、"
+"doc/source/以下にある日本語のドキュメントを英語に翻訳する必要があります。ド"
+"キュメントを翻訳して、パッチを送ってくれるととても喜びます。"
+
+msgid "Translation flow"
+msgstr "翻訳の流れ"
+
+msgid "After doc/source/\\*.txt are updated, we can start translation."
+msgstr "doc/source/\\*.txtを更新したら、翻訳を始めます。"
+
+msgid "Here is a translation flow:"
+msgstr "これが翻訳の流れです:"
+
+msgid "Install Sphinx, if it is not installed."
+msgstr "Sphinxをインストールします。（インストールされていない場合）"
+
+msgid "Clone Groonga repository."
+msgstr "Groongaのリポジトリをcloneします。"
+
+msgid "Update .po files."
+msgstr ".poファイルを更新します。"
+
+msgid "Edit .po files."
+msgstr ".poファイルを編集します。"
+
+msgid "Generate HTML files."
+msgstr "HTMLファイルを生成します。"
+
+msgid "Confirm HTML output."
+msgstr "HTMLの出力を確認します。"
+
+msgid "Repeat 2.-4. until you get good result."
+msgstr "翻訳が完了するまで、2.-4.を繰り返します。"
+
+msgid "Send your works to us!"
+msgstr "翻訳作業の成果をGroongaプロジェクトに送ってください！"
+
+msgid ""
+"Here are command lines to do the above flow. Following sections describes "
+"details."
+msgstr ""
+"上記の流れを実行するコマンドラインです。詳細は以降のセクションで説明します。"
+
+msgid "How to install Sphinx"
+msgstr "Sphinxのインストール方法"
+
+msgid "See the :doc:`introduction`."
+msgstr ":doc:`introduction` を参照してください。"
+
+msgid "How to clone Groonga repository"
+msgstr "Groongaリポジトリのcloneの仕方"
+
+msgid ""
+"First, please fork Groonga repository on GitHub. You just access https://"
+"github.com/groonga/groonga and press `Fork` button. Now you can clone your "
+"Groonga repository::"
+msgstr ""
+"はじめに、GitHub上のGroongaリポジトリをforkしてください。 https://github.com/"
+"groonga/groonga にアクセスして `Fork` ボタンを押すだけです。これで自分の"
+"Groongaリポジトリをcloneすることができます。::"
+
+msgid "Then you need to configure your cloned repository::"
+msgstr "cloneした後はconfigureする必要があります。::"
+
+msgid "The above steps are just needed at the first setup."
+msgstr "この作業は初回セットアップ時のみだけの作業です。"
+
+msgid ""
+"If you have troubles on the above steps, you can use source files available "
+"on http://packages.groonga.org/source/groonga/ ."
+msgstr ""
+"以上の作業で問題があった場合は、 http://packages.groonga.org/source/groonga/ "
+"にあるソースファイルを利用してもよいです。"
+
+msgid "How to update .po files"
+msgstr ".poファイルの更新の仕方"
+
+msgid ""
+"You can update .po files by running `make update` on doc/locale/${LANGUAGE}/"
+"LC_MESSAGES. (Please substitute `${LANGUAGE}` with your language code such "
+"as 'ja'.)::"
+msgstr ""
+"doc/locale/${LANGUAGE}/LC_MESSAGESディレクトリで `make update` を実行すると."
+"poファイルを更新できます。（`${LANGUAGE}` は'ja'など自分の言語の言語コードに"
+"置き換えてください。）::"
+
+msgid "How to edit .po"
+msgstr ".poの編集の仕方"
+
+msgid ""
+"There are some tools to edit .po files. .po files are just text. So you can "
+"use your favorite editor. Here is a specialized editor for .po file edit "
+"list."
+msgstr ""
+".poファイルを編集するためのツールがあります。.poファイルは単なるテキストなの"
+"で好きなエディタで編集できます。以下は.poファイルの編集に特化したエディタのリ"
+"ストです。"
+
+msgid "Emacs's po-mode_"
+msgstr ""
+
+msgid "It is bundled in gettext."
+msgstr "gettextに同梱されています。"
+
+msgid "It is a .po editor and works on many platform."
+msgstr ".po専用エディタです。たくさんのプラットフォームで動作します。"
+
+msgid "Poedit_"
+msgstr ""
+
+msgid "It is also a .po editor and is implemented as Eclipse plugin."
+msgstr "これも.po専用エディタです。Eclipseプラグインとして実装されています。"
+
+msgid "gted"
+msgstr ""
+
+msgid "How to generate HTML files"
+msgstr "HTMLファイルの生成方法"
+
+msgid ""
+"You can generate HTML files with updated .po files by running `make html` on "
+"doc/locale/${LANGUAGE}. (Please substitute `${LANGUAGE}` with your language "
+"code such as 'ja'.)::"
+msgstr ""
+"doc/locale/${LANGUAGE}ディレクトリで `make html` を実行すると更新した.poファ"
+"イルを使ってHTMLファイルを生成できます。（`${LANGUAGE}` は'ja'など自分の言語"
+"の言語コードに置き換えてください。）::"
+
+msgid ""
+"You can also generate HTML files for all languages by running `make html` on "
+"doc/locale::"
+msgstr ""
+"全ての言語のHTMLファイルを生成するにはdoc/locale/ディレクトリで `make html` "
+"を実行します。::"
+
+msgid ""
+".mo files are updated automatically by `make html`. So you don't care about ."
+"mo files."
+msgstr ""
+".moファイルは `make html` で自動的に更新されるので、.moファイルのことを気にす"
+"る必要はありません。"
+
+msgid "How to confirm HTML output"
+msgstr "HTML出力の確認の仕方"
+
+msgid ""
+"HTML files are generated in doc/locale/${LANGUAGE}/html/. (Please substitute "
+"`${LANGUAGE}` with your language code such as 'ja'.) You can confirm HTML "
+"output by your favorite browser::"
+msgstr ""
+"HTMLファイルはdoc/locale/${LANGUAGE}/html/以下に出力されます。（`${LANGUAGE}"
+"` は'ja'など自分の言語の言語コードに置き換えてください。）好きなブラウザで出"
+"力されたHTMLを確認してください。::"
+
+msgid "How to send your works"
+msgstr "翻訳の成果の送り方"
+
+msgid ""
+"We can receive your works via pull request on GitHub or E-mail attachment "
+"patch or .po files themselves."
+msgstr ""
+"翻訳の成果はGitHubのpull requestかメールで送ってください。メールで送る場合は"
+"パッチでも.poファイルそのものでも構いません。"
+
+msgid "How to send pull request"
+msgstr "pull requestの送り方"
+
+msgid "Here are command lines to send pull request::"
+msgstr "pull requestを送るためのコマンドライン::"
+
+msgid ""
+"Now you can send pull request on GitHub. You just access your repository "
+"page on GitHub and press `Pull Request` button."
+msgstr ""
+"これでGitHub上でpull requestを送る準備ができました。あとは、GitHub上の自分の"
+"リポジトリのページへアクセスして `Pull Request` ボタンを押すだけです。"
+
+msgid ""
+"`Help.GitHub - Sending pull requests <http://help.github.com/pull-requests/"
+">`_."
+msgstr ""
+"`Help.GitHub - pull requestを送る <http://help.github.com/pull-requests/>`_."
+
+msgid "How to send patch"
+msgstr "パッチの送り方"
+
+msgid "Here are command lines to create patch::"
+msgstr "パッチを作るためのコマンドライン"
+
+msgid ""
+"You can find 000X-YYY.patch files in the current directory. Please send "
+"those files to us!"
+msgstr ""
+"カレントディレクトリに000X-YYY.patchという名前のファイルができていると思いま"
+"す。これをGroongaプロジェクトに送ってください！"
+
+msgid ":doc:`/community` describes our contact information."
+msgstr ":doc:`/community` に連絡先の情報があります。"
+
+msgid "How to send .po files"
+msgstr ".poファイルの送り方"
+
+msgid ""
+"Please archive doc/locale/${LANGUAGE}/LC_MESSAGES/ (Please substitute "
+"`${LANGUAGE}` with your language code such as 'ja'.) and send it to us! We "
+"extract and merge them to the Groonga repository."
+msgstr ""
+"doc/locale/${LANGUAGE}/LC_MESSAGES/以下を.tar.gzや.zipなどでアーカイブにして"
+"Groongaプロジェクトに送ってください！（`${LANGUAGE}` は'ja'など自分の言語の言"
+"語コードに置き換えてください。）こちらでアーカイブの中の内容をマージします。"
+
+msgid "How to add new language"
+msgstr "新しい言語の追加方法"
+
+msgid "Here are command lines to add new translation language::"
+msgstr "新しい翻訳対象の言語を追加するコマンドライン::"
+
+msgid "Please substitute `${LANGUAGE}` with your language code such as 'ja'."
+msgstr "`${LANGUAGE}` は'ja'などの自分の言語の言語コードに置き換えてください。"
+
+msgid ""
+"`Codes for the Representation of Names of Languages <http://www.loc.gov/"
+"standards/iso639-2/php/English_list.php>`_."
+msgstr ""
+"`言語名を表記するためのコードの一覧 <http://www.loc.gov/standards/iso639-2/"
+"php/English_list.php>`_."

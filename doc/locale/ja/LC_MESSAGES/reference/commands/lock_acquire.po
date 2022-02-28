@@ -1,0 +1,128 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``lock_acquire``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``lock_acquire`` command acquires the lock of the target object. The target "
+"object is one of database, table and column."
+msgstr ""
+"``lock_acquire`` コマンドは対象オブジェクトのロックを獲得します。対象オブジェ"
+"クトはデータベース、テーブル、カラムのどれかです。"
+
+msgid ""
+"This is a dangerous command. You must release locks by :doc:`lock_release` "
+"that you acquire when these locks are no longer needed. If you forget to "
+"release these locks, your database may be broken."
+msgstr ""
+"これは危険なコマンドです。獲得したロックはロックが必要なくなったときに :doc:"
+"`lock_release` で解放してください。もし、解放し忘れるとデータベースが壊れるか"
+"もしれません。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes only one optional parameter::"
+msgstr "このコマンドの引数は1つで省略できます::"
+
+msgid ""
+"If ``target_name`` parameters is omitted, database is used for the target "
+"object."
+msgstr ""
+"``target_name`` パラメーターを省略した場合は対象オブジェクトはデータベースに"
+"なります。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is an example to acquire the lock of the database:"
+msgstr "以下はデータベースのロックを獲得する例です。"
+
+msgid ""
+"If the database is locked, you can't create a new table and column. Release "
+"the lock of the database to show another examples."
+msgstr ""
+"もし、データベースがロックされていると、新しいテーブル・カラムを作れなくなり"
+"ます。ここでは、他の例を示すためにデータベースのロックを解放します。"
+
+msgid "Here is an example to acquire the lock of ``Entries`` table:"
+msgstr "以下は ``Entries`` テーブルのロックを獲得する例です。"
+
+msgid "Here is an example to acquire the lock of ``Sites.title`` column:"
+msgstr "以下は ``Sites.title`` カラムのロックを獲得する例です。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes all parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+msgid "``target_name``"
+msgstr ""
+
+msgid "Specifies the name of table or column."
+msgstr "テーブル名またはカラム名を指定します。"
+
+msgid "If you don't specify it, database is used for the target object."
+msgstr "指定しなかったら対象オブジェクトはデータベースになります。"
+
+msgid "The default is none. It means that the target object is database."
+msgstr ""
+"デフォルト値はありません。これは対象オブジェクトはデータベースになるというこ"
+"とです。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "``lock_acquire`` command returns whether lock is acquired or not::"
+msgstr "``lock_acquire`` コマンドはロックを獲得できたかどうかを返します。::"
+
+msgid "``HEADER``"
+msgstr ""
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "``SUCCEEDED_OR_NOT``"
+msgstr ""
+
+msgid ""
+"If command succeeded, it returns true, otherwise it returns false on error."
+msgstr ""
+"コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返しま"
+"す。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`lock_release`"
+msgstr ""
+
+msgid ":doc:`lock_clear`"
+msgstr ""

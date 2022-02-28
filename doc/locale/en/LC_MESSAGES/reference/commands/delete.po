@@ -1,0 +1,136 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``delete``"
+msgstr "``delete``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "``delete`` command deletes specified record of table."
+msgstr "``delete`` command deletes specified record of table."
+
+msgid "Cascade delete"
+msgstr "Cascade delete"
+
+msgid ""
+"There is a case that multiple table is associated. For example, the key of "
+"one table are referenced by other table's records. In such a case, if you "
+"delete the key of one table, other table's records are also removed."
+msgstr ""
+"There is a case that multiple table is associated. For example, the key of "
+"one table are referenced by other table's records. In such a case, if you "
+"delete the key of one table, other table's records are also removed."
+
+msgid ""
+"Note that the type of other table's column is COLUMN_VECTOR, only the value "
+"of referencing key is removed from the vector value."
+msgstr ""
+"Note that the type of other table's column is COLUMN_VECTOR, only the value "
+"of referencing key is removed from the vector value."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "Here are a schema definition and sample data to show usage."
+
+msgid "Delete the record from Entry table which has \"2\" as the key."
+msgstr "Delete the record from Entry table which has \"2\" as the key."
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "Here is the example about cascaded delete."
+msgstr "Here is the example about cascaded delete."
+
+msgid "The country column of Users table associates with Country table."
+msgstr "The country column of Users table associates with Country table."
+
+msgid ""
+"\"Cascaded delete\" removes the records which matches specified key and "
+"refers that key."
+msgstr ""
+"\"Cascaded delete\" removes the records which matches specified key and "
+"refers that key."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "``table``"
+msgstr "``table``"
+
+msgid "Specifies the name of table to delete the records."
+msgstr "Specifies the name of table to delete the records."
+
+msgid "``key``"
+msgstr "``key``"
+
+msgid ""
+"Specifies the key of record to delete. If you use the table with "
+"TABLE_NO_KEY, the key is just ignored. (Use ``id`` parameter in such a case)"
+msgstr ""
+"Specifies the key of record to delete. If you use the table with "
+"TABLE_NO_KEY, the key is just ignored. (Use ``id`` parameter in such a case)"
+
+msgid "``id``"
+msgstr "``id``"
+
+msgid ""
+"Specifies the id of record to delete. If you specify ``id`` parameter, you "
+"must not specify ``key`` parameter."
+msgstr ""
+"Specifies the id of record to delete. If you specify ``id`` parameter, you "
+"must not specify ``key`` parameter."
+
+msgid "``filter``"
+msgstr "``filter``"
+
+msgid ""
+"Specifies the expression of grn_expr to identify the record. If you specify "
+"``filter`` parameter, you must not specify ``key`` and ``id`` parameter."
+msgstr ""
+"Specifies the expression of grn_expr to identify the record. If you specify "
+"``filter`` parameter, you must not specify ``key`` and ``id`` parameter."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "``HEADER``"
+msgstr "``HEADER``"
+
+msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
+msgstr "See :doc:`/reference/command/output_format` about ``HEADER``."
+
+msgid "``SUCCEEDED_OR_NOT``"
+msgstr "``SUCCEEDED_OR_NOT``"
+
+msgid ""
+"If command succeeded, it returns true, otherwise it returns false on error."
+msgstr ""
+"If command succeeded, it returns true, otherwise it returns false on error."
+
+msgid "See also"
+msgstr "See also"
+
+msgid ":doc:`load`"
+msgstr ":doc:`load`"

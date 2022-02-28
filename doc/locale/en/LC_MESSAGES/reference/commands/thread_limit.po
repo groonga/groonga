@@ -1,0 +1,148 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "``thread_limit``"
+msgstr "``thread_limit``"
+
+msgid "Summary"
+msgstr "Summary"
+
+msgid "``thread_limit`` has the following two features:"
+msgstr "``thread_limit`` has the following two features:"
+
+msgid "It returns the max number of threads."
+msgstr "It returns the max number of threads."
+
+msgid "It sets the max number of threads."
+msgstr "It sets the max number of threads."
+
+msgid ""
+":doc:`/reference/executables/groonga` is the only Groonga server that "
+"supports full ``thread_limit`` features."
+msgstr ""
+":doc:`/reference/executables/groonga` is the only Groonga server that "
+"supports full ``thread_limit`` features."
+
+msgid ""
+":doc:`/reference/executables/groonga-httpd` supports only one feature that "
+"returns the max number of threads. The max number of threads of :doc:`/"
+"reference/executables/groonga-httpd` always returns ``1`` because :doc:`/"
+"reference/executables/groonga-httpd` uses single thread model."
+msgstr ""
+":doc:`/reference/executables/groonga-httpd` supports only one feature that "
+"returns the max number of threads. The max number of threads of :doc:`/"
+"reference/executables/groonga-httpd` always returns ``1`` because :doc:`/"
+"reference/executables/groonga-httpd` uses single thread model."
+
+msgid ""
+"If you're using Groonga as a library, ``thread_limit`` doesn't work without "
+"you set custom functions by :c:func:`grn_thread_set_get_limit_func()` and :c:"
+"func:`grn_thread_set_set_limit_func()`. If you set a function by :c:func:"
+"`grn_thread_set_get_limit_func()`, the feature that returns the max number "
+"of threads works. If you set a function by :c:func:"
+"`grn_thread_set_set_limit_func()`, the feature that sets the max number of "
+"threads works."
+msgstr ""
+"If you're using Groonga as a library, ``thread_limit`` doesn't work without "
+"you set custom functions by :c:func:`grn_thread_set_get_limit_func()` and :c:"
+"func:`grn_thread_set_set_limit_func()`. If you set a function by :c:func:"
+"`grn_thread_set_get_limit_func()`, the feature that returns the max number "
+"of threads works. If you set a function by :c:func:"
+"`grn_thread_set_set_limit_func()`, the feature that sets the max number of "
+"threads works."
+
+msgid "Syntax"
+msgstr "Syntax"
+
+msgid "This command takes only one optional parameter::"
+msgstr "This command takes only one optional parameter::"
+
+msgid "Usage"
+msgstr "Usage"
+
+msgid ""
+"You can get the max number of threads by calling without any parameters:"
+msgstr ""
+"You can get the max number of threads by calling without any parameters:"
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid "If it returns ``0``, your Groonga server doesn't support the feature."
+msgstr "If it returns ``0``, your Groonga server doesn't support the feature."
+
+msgid "You can set the max number of threads by calling ``max`` parameter:"
+msgstr "You can set the max number of threads by calling ``max`` parameter:"
+
+msgid ""
+"It returns the previous max number of threads when you pass ``max`` "
+"parameter."
+msgstr ""
+"It returns the previous max number of threads when you pass ``max`` "
+"parameter."
+
+msgid "Parameters"
+msgstr "Parameters"
+
+msgid "This section describes all parameters."
+msgstr "This section describes all parameters."
+
+msgid "Required parameters"
+msgstr "Required parameters"
+
+msgid "There is no required parameter."
+msgstr "There is no required parameter."
+
+msgid "Optional parameters"
+msgstr "Optional parameters"
+
+msgid "There is one optional parameter."
+msgstr "There is one optional parameter."
+
+msgid "``max``"
+msgstr "``max``"
+
+msgid "Specifies the new max number of threads."
+msgstr "Specifies the new max number of threads."
+
+msgid "You must specify positive integer:"
+msgstr "You must specify positive integer:"
+
+msgid ""
+"If you specify ``max`` parameter, ``thread_limit`` returns the max number of "
+"threads before ``max`` is applied."
+msgstr ""
+"If you specify ``max`` parameter, ``thread_limit`` returns the max number of "
+"threads before ``max`` is applied."
+
+msgid "Return value"
+msgstr "Return value"
+
+msgid "The command returns the max number of threads as body::"
+msgstr "The command returns the max number of threads as body::"
+
+msgid ""
+"If ``max`` is specified, ``N_MAX_THREADS`` is the max number of threads "
+"before ``max`` is applied."
+msgstr ""
+"If ``max`` is specified, ``N_MAX_THREADS`` is the max number of threads "
+"before ``max`` is applied."
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr "See :doc:`/reference/command/output_format` for ``HEADER``."

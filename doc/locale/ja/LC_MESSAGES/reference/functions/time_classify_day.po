@@ -1,0 +1,96 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``time_classify_day``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "``time_classify_day`` rounds time to a day unit."
+msgstr "``time_classify_day`` は時刻を日単位に丸めます。"
+
+msgid ""
+"This rounded ``2020-01-30 11:50:11.000000`` and ``2020-01-30 "
+"22:50:11.000000`` to ``2020-01-30 00:00:00.000000``."
+msgstr ""
+"これは、``2020-01-30 11:50:11.000000`` や ``2020-01-30 22:50:11.000000`` を "
+"``2020-01-30 00:00:00.000000`` に丸めます。"
+
+msgid ""
+"To enable this function, register ``functions/time`` plugin by the following "
+"command::"
+msgstr ""
+"この関数を有効にするには、以下のコマンドで ``functions/time`` プラグインを登"
+"録します。::"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This function has only one parameter::"
+msgstr "この関数の引数は1つです。::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid "You need to register ``functions/time`` plugin at first:"
+msgstr "まず ``functions/time`` プラグインを登録します。"
+
+msgid "Here is a schema definition and sample data."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid "Sample schema:"
+msgstr "サンプルスキーマ:"
+
+msgid "Sample data:"
+msgstr "サンプルデータ:"
+
+msgid "Here is a simple usage of ``time_classify_day``:"
+msgstr "以下は簡単な ``time_classify_day`` の使用例です。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is only one required parameter."
+msgstr "必須の引数は1つです。"
+
+msgid "``column``"
+msgstr ""
+
+msgid "Specify a target column."
+msgstr "対象のカラムを指定します。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "It returns a value that rounded time to a day unit."
+msgstr "日単位に丸めた時刻を返します。"
+
+msgid "The return value is UNIX time."
+msgstr "戻り値はUNIX時間です。"

@@ -1,0 +1,228 @@
+# -*- po -*-
+# English translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-28 11:57+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Drilldown"
+msgstr "Drilldown"
+
+msgid ""
+"You learned how to search and sort searched results in the previous "
+"sections. Now that you can search as you likes, but how do you summarize the "
+"number of records which has specific value in the column?"
+msgstr ""
+"You learned how to search and sort searched results in the previous "
+"sections. Now that you can search as you likes, but how do you summarize the "
+"number of records which has specific value in the column?"
+
+msgid ""
+"As you know, there is a naive solution to execute query by every the value "
+"of column, then you can get the number of records as a result. It is a "
+"simple way, but it is not reasonable to many records."
+msgstr ""
+"As you know, there is a naive solution to execute query by every the value "
+"of column, then you can get the number of records as a result. It is a "
+"simple way, but it is not reasonable to many records."
+
+msgid ""
+"If you are familiar with SQL, you will doubt with \"Is there a similar SQL "
+"functionality to ``GROUP BY`` in Groonga?\"."
+msgstr ""
+"If you are familiar with SQL, you will doubt with \"Is there a similar SQL "
+"functionality to ``GROUP BY`` in Groonga?\"."
+
+msgid ""
+"Of course, Groonga provides such a functionality. It's called as "
+"``drilldown``."
+msgstr ""
+"Of course, Groonga provides such a functionality. It's called as "
+"``drilldown``."
+
+msgid ""
+"``drilldown`` enables you to get the number of records which belongs to "
+"specific the value of column at once."
+msgstr ""
+"``drilldown`` enables you to get the number of records which belongs to "
+"specific the value of column at once."
+
+msgid ""
+"To illustrate this feature, imagine the case that classification by domain "
+"and grouping by country that domain belongs to."
+msgstr ""
+"To illustrate this feature, imagine the case that classification by domain "
+"and grouping by country that domain belongs to."
+
+msgid "Here is the concrete examples how to use this feature."
+msgstr "Here is the concrete examples how to use this feature."
+
+msgid ""
+"In this example, we add two columns to ``Site`` table. ``domain`` column is "
+"used for TLD (top level domain). ``country`` column is used for country "
+"name. The type of these columns are ``SiteDomain`` table which uses domain "
+"name as a primary key and ``SiteCountry`` table which uses country name as a "
+"primary key."
+msgstr ""
+"In this example, we add two columns to ``Site`` table. ``domain`` column is "
+"used for TLD (top level domain). ``country`` column is used for country "
+"name. The type of these columns are ``SiteDomain`` table which uses domain "
+"name as a primary key and ``SiteCountry`` table which uses country name as a "
+"primary key."
+
+msgid "Execution example::"
+msgstr "Execution example::"
+
+msgid ""
+"Here is a example of drilldown with ``domain`` column. Three kind of values "
+"are used in ``domain`` column - \".org\", \".net\" and \".com\"."
+msgstr ""
+"Here is a example of drilldown with ``domain`` column. Three kind of values "
+"are used in ``domain`` column - \".org\", \".net\" and \".com\"."
+
+msgid "Here is a summary of above query."
+msgstr "Here is a summary of above query."
+
+msgid "Drilldown by ``domain`` column"
+msgstr "Drilldown by ``domain`` column"
+
+msgid "Group by"
+msgstr "Group by"
+
+msgid "The number of group records"
+msgstr "The number of group records"
+
+msgid "Group records means following records"
+msgstr "Group records means following records"
+
+msgid ".org"
+msgstr ".org"
+
+msgid "3"
+msgstr "3"
+
+msgid "http://example.org/"
+msgstr "http://example.org/"
+
+msgid "http://example.org/aba"
+msgstr "http://example.org/aba"
+
+msgid "http://example.org/gat"
+msgstr "http://example.org/gat"
+
+msgid ".net"
+msgstr ".net"
+
+msgid "http://example.net/"
+msgstr "http://example.net/"
+
+msgid "http://example.net/afr"
+msgstr "http://example.net/afr"
+
+msgid "http://example.net/atv"
+msgstr "http://example.net/atv"
+
+msgid ".com"
+msgstr ".com"
+
+msgid "http://example.com/"
+msgstr "http://example.com/"
+
+msgid "http://example.com/rab"
+msgstr "http://example.com/rab"
+
+msgid "http://example.com/vdw"
+msgstr "http://example.com/vdw"
+
+msgid ""
+"The value of drilldown are returned as the value of ``_nsubrecs`` column. In "
+"this case, ``Site`` table is grouped by \".org\", \".net\", \".com\" domain. "
+"``_nsubrecs`` shows that each three domain has three records."
+msgstr ""
+"The value of drilldown are returned as the value of ``_nsubrecs`` column. In "
+"this case, ``Site`` table is grouped by \".org\", \".net\", \".com\" domain. "
+"``_nsubrecs`` shows that each three domain has three records."
+
+msgid ""
+"If you execute drildown to the column which has table as a type, you can get "
+"the value of column which is stored in referenced table. ``_nsubrecs`` "
+"pseudo column is added to the table which is used for drilldown. this pseudo "
+"column stores the number of records which is grouped by."
+msgstr ""
+"If you execute drildown to the column which has table as a type, you can get "
+"the value of column which is stored in referenced table. ``_nsubrecs`` "
+"pseudo column is added to the table which is used for drilldown. this pseudo "
+"column stores the number of records which is grouped by."
+
+msgid ""
+"Then, investigate referenced table in detail. As ``Site`` table use "
+"``SiteDomain`` table as column type of ``domain``, you can use ``--"
+"drilldown_output_columns`` to know detail of referenced column."
+msgstr ""
+"Then, investigate referenced table in detail. As ``Site`` table use "
+"``SiteDomain`` table as column type of ``domain``, you can use ``--"
+"drilldown_output_columns`` to know detail of referenced column."
+
+msgid ""
+"Now, you can see detail of each grouped domain, drilldown by ``country`` "
+"column which has \".org\" as column value."
+msgstr ""
+"Now, you can see detail of each grouped domain, drilldown by ``country`` "
+"column which has \".org\" as column value."
+
+msgid "Drilldown with multiple column"
+msgstr "Drilldown with multiple column"
+
+msgid ""
+"Drilldown feature supports multiple column. Use comma separated multiple "
+"column names as ``drildown`` parameter. You can get the each result of "
+"drilldown at once."
+msgstr ""
+"Drilldown feature supports multiple column. Use comma separated multiple "
+"column names as ``drildown`` parameter. You can get the each result of "
+"drilldown at once."
+
+msgid "Sorting drildown results"
+msgstr "Sorting drildown results"
+
+msgid ""
+"Use ``--drilldown_sort_keys`` if you want to sort the result of drilldown. "
+"For example, specify ``_nsubrecs`` as ascending order."
+msgstr ""
+"Use ``--drilldown_sort_keys`` if you want to sort the result of drilldown. "
+"For example, specify ``_nsubrecs`` as ascending order."
+
+msgid "limits drildown results"
+msgstr "limits drildown results"
+
+msgid ""
+"The number of drilldown results is limited to 10 as a default. Use "
+"``drilldown_limit`` and ``drilldown_offset`` parameter to customize "
+"orilldown results."
+msgstr ""
+"The number of drilldown results is limited to 10 as a default. Use "
+"``drilldown_limit`` and ``drilldown_offset`` parameter to customize "
+"orilldown results."
+
+msgid ""
+"Note that drilldown to the column which stores string is slower than the "
+"columns which stores the other types. If you drilldown to string type of "
+"column, create the table that type of primary key is string, then create the "
+"column which refers that table."
+msgstr ""
+"Note that drilldown to the column which stores string is slower than the "
+"columns which stores the other types. If you drilldown to string type of "
+"column, create the table that type of primary key is string, then create the "
+"column which refers that table."

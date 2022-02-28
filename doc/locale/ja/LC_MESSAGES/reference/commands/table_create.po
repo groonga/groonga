@@ -1,0 +1,638 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``table_create``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``table_create`` creates a new table in the current database. You need to "
+"create one or more tables to store and search data."
+msgstr ""
+"``table_create`` は現在のデータベースに新しいテーブルを作成します。データを保"
+"存したり検索したりするために、1つ以上のテーブルを作成する必要があります。"
+
+msgid "See :doc:`/reference/tables` for table details."
+msgstr "テーブルの詳細は :doc:`/reference/tables` を見てください。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes many parameters."
+msgstr "このコマンドにはたくさんの引数があります。"
+
+msgid "The required parameter is only ``name`` and otehrs are optional::"
+msgstr "必須の引数は ``name`` だけで、残りは省略できます::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "This section describes about the followings:"
+msgstr "このセクションでは次のことについて説明します。"
+
+msgid ":ref:`table-create-data-store`"
+msgstr ""
+
+msgid ":ref:`table-create-large-data-store`"
+msgstr ""
+
+msgid ":ref:`table-create-lexicon`"
+msgstr ""
+
+msgid ":ref:`table-create-tag-index-table`"
+msgstr ""
+
+msgid ":ref:`table-create-range-index-table`"
+msgstr ""
+
+msgid "Create data store table"
+msgstr "データ保存用テーブルの作成"
+
+msgid ""
+"You can use all table types for data store table. See :doc:`/reference/"
+"tables` for all table types."
+msgstr ""
+"データ保存用のテーブルにはどの種類のテーブルでも使えます。テーブルの種類につ"
+"いては :doc:`/reference/tables` を参照してください。"
+
+msgid "Table type is specified as ``TABLE_${TYPE}`` to ``flags`` parameter."
+msgstr "テーブルの型は ``TABLE_${TYPE}`` を ``flags`` 引数に指定します。"
+
+msgid "Here is an example to create ``TABLE_NO_KEY`` table:"
+msgstr "以下は ``TABLE_NO_KEY`` テーブルを使う例です。"
+
+msgid ""
+"The ``table_create`` command creates a table that is named ``Logs`` and is "
+"``TABLE_NO_KEY`` type."
+msgstr ""
+"この ``table_create`` コマンドは ``Logs`` という名前で ``TABLE_NO_KEY`` 型の"
+"テーブルを作成します。"
+
+msgid ""
+"If your records aren't searched by key, ``TABLE_NO_KEY`` type table is "
+"suitable. Because ``TABLE_NO_KEY`` doesn't support key but it is fast and "
+"small table. Storing logs into Groonga database is the case."
+msgstr ""
+"キーでレコードを検索しないのであれば、 ``TABLE_NO_KEY`` 型のテーブルが適切で"
+"す。なぜなら、 ``TABLE_NO_KEY`` はキーをサポートしていませんが、速くて小さい"
+"サイズのテーブルだからです。ログをGroongaのデータベースに保存するという使い方"
+"はこのケースです。"
+
+msgid ""
+"If your records are searched by key or referenced by one or more columns, "
+"``TABLE_NO_KEY`` type isn't suitable. Lexicon for fulltext search is the "
+"case."
+msgstr ""
+"キーでレコードを検索したり、カラムからレコードを参照したりする場合は、 "
+"``TABLE_NO_KEY`` 型は適していません。全文検索用の語彙表として使うケースはこの"
+"ケースです。"
+
+msgid "Create large data store table"
+msgstr "大きなデータ保存用テーブルの作成"
+
+msgid ""
+"If you want to store many large keys, your table may not be able to store "
+"them. If total key data is larger than 4GiB, you can't store all key data "
+"into your table by default."
+msgstr ""
+"たくさんの大きなキーを保存したいとき、テーブルにすべてのキーを保存できないか"
+"もしれません。もし、総キーデータが4GiBより大きいなら、デフォルトではすべての"
+"キーデータをテーブルに保存できません。"
+
+msgid ""
+"You can expand the maximum total key size to 1TiB from 4GiB by ``KEY_LARGE`` "
+"flag. ``KEY_LARGE`` flag can be used with only ``TABLE_HASH_KEY``. You can't "
+"use ``KEY_LARGE`` flag with ``TABLE_NO_KEY``, ``TABLE_PAT_KEY`` nor "
+"``TABLE_DAT_KEY``."
+msgstr ""
+"``KEY_LARGE`` フラグを使うと4GiBから1TiBに最大総キーサイズを拡張できます。 "
+"``KEY_LARGE`` フラグは ``TABLE_HASH_KEY`` を使っているときだけ使えます。 "
+"``KEY_LARGE`` フラグは ``TABLE_NO_KEY`` 、 ``TABLE_PAT_KEY`` 、 "
+"``TABLE_DAT_KEY`` と一緒に使えません。"
+
+msgid "Here is an example to create a table that can store many large keys:"
+msgstr "以下はたくさんの大きなキーを保存することができるテーブルを作る例です。"
+
+msgid ""
+"The ``table_create`` command creates a table that is named ``Paths`` and is "
+"``TABLE_HASH_KEY`` type. The ``Paths`` table can store many large keys."
+msgstr ""
+"この ``table_create`` コマンドは、名前が ``Paths`` で ``TABLE_HASH_KEY`` 型の"
+"テーブルを作成します。 ``Paths`` テーブルはたくさんの大きなキーを保存できま"
+"す。"
+
+msgid "Create lexicon"
+msgstr "語彙表の作成"
+
+msgid ""
+"You can use all table types except ``TABLE_NO_KEY`` for lexicon. Lexicon "
+"needs key support but ``TABLE_NO_KEY`` doesn't support key."
+msgstr ""
+"語彙表用のテーブルには ``TABLE_NO_KEY`` 以外の型のテーブルを使います。語彙表"
+"はキーをサポートしていないといけませんが、 ``TABLE_NO_KEY`` はキーをサポート"
+"していません。"
+
+msgid "Here is an example to create ``TABLE_PAT_KEY`` table:"
+msgstr "以下は ``TABLE_PAT_KEY`` テーブルを作る例です。"
+
+msgid "The ``table_create`` command creates the following table:"
+msgstr "この ``table_create`` コマンドは以下のテーブルを作成します。"
+
+msgid "The table is named ``Lexicon``."
+msgstr "このテーブルは ``Lexicon`` という名前です。"
+
+msgid "The table is ``TABLE_PAT_KEY`` type table."
+msgstr "このテーブルは ``TABLE_PAT_KEY`` 型のテーブルです。"
+
+msgid "The table's key is ``ShortText`` type."
+msgstr "このテーブルのキーは ``ShortText`` 型です。"
+
+msgid ""
+"The table uses ``TokenBigram`` tokenizer to extract tokens from a normalized "
+"text."
+msgstr ""
+"このテーブルは正規化されたテキストからトークンを抽出するために "
+"``TokenBigram`` トークナイザーを使います。"
+
+msgid "The table uses ``NormalizerAuto`` normalizer to normalize a text."
+msgstr ""
+"このテーブルはテキストを正規化するために ``NormalizerAuto`` ノーマライザーを"
+"使います。"
+
+msgid ""
+"``TABLE_PAT_KEY`` is suitable table type for lexicon. Lexicon is used for "
+"fulltext search."
+msgstr ""
+"語彙表には ``TABLE_PAT_KEY`` が適切なテーブルの型です。語彙表は全文検索に使わ"
+"れます。"
+
+msgid ""
+"In fulltext search, predictive search may be used for fuzzy search. "
+"Predictive search is supported by ``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY``."
+msgstr ""
+"全文検索では、あいまい検索をするために前方一致検索を使っています。前方一致検"
+"索は ``TABLE_PAT_KEY`` と ``TABLE_DAT_KEY`` がサポートしています。"
+
+msgid ""
+"Lexicon has many keys because a fulltext target text has many tokens. Table "
+"that has many keys should consider table size because large table requires "
+"large memory. Requiring large memory causes disk I/O. It blocks fast search. "
+"So table size is important for a table that has many keys. ``TABLE_PAT_KEY`` "
+"is less table size than ``TABLE_DAT_KEY``."
+msgstr ""
+"全文検索対象のテキストには大量のトークンが含まれるので、語彙表のキーも大量に"
+"なります。大量のキーを格納するテーブルの場合はテーブルのサイズを意識する必要"
+"があります。これは、大きなテーブルはそれだけ多くのメモリーを必要とするからで"
+"す。多くのメモリーが必要になると、ディスクI/Oが発生することもあります。ディス"
+"クI/Oが発生すると高速に検索できなくなります。そのため、大量のキーがあるテーブ"
+"ルの場合はテーブルのサイズが重要になります。 ``TABLE_PAT_KEY`` は "
+"``TABLE_DAT_KEY`` よりもテーブルのサイズが小さいです。"
+
+msgid ""
+"Because of the above reasons, ``TABLE_PAT_KEY`` is suitable table type for "
+"lexicon."
+msgstr "上記の理由から、 ``TABLE_PAT_KEY`` が語彙表に適したテーブルの型です。"
+
+msgid "Create tag index table"
+msgstr "タグインデックス用テーブルの作成"
+
+msgid ""
+"You can use all table types except ``TABLE_NO_KEY`` for tag index table. Tag "
+"index table needs key support but ``TABLE_NO_KEY`` doesn't support key."
+msgstr ""
+"タグインデックス用のテーブルには ``TABLE_NO_KEY`` 以外の型のテーブルを使えま"
+"す。タグインデックス用のテーブルはキーのサポートが必要ですが、 "
+"``TABLE_NO_KEY`` はキーをサポートしていません。"
+
+msgid "Here is an example to create ``TABLE_HASH_KEY`` table:"
+msgstr "以下は ``TABLE_HASH_KEY`` 型のテーブルを作る例です。"
+
+msgid ""
+"The ``table_create`` command creates a table that is named ``Tags``, is "
+"``TABLE_HASH_KEY`` type and has ``ShortText`` type key."
+msgstr ""
+"この ``table_create`` コマンドは ``Tags`` という名前で ``TABLE_HASH_KEY`` 型"
+"のテーブルを作ります。このテーブルのキーは ``ShortText`` 型です。"
+
+msgid ""
+"``TABLE_HASH_KEY`` or ``TABLE_DAT_KEY`` are suitable table types for tag "
+"index table."
+msgstr ""
+"タグインデックス用のテーブルには ``TABLE_HASH_KEY`` あるいは "
+"``TABLE_DAT_KEY`` が適切なテーブルの型です。"
+
+msgid ""
+"If you need only exact match tag search feature, ``TABLE_HASH_KEY`` is "
+"suitable. It is the common case."
+msgstr ""
+"完全一致でタグを検索する機能だけが必要なら、 ``TABLE_HASH_KEY`` が適切です。"
+"多くの場合はこのケースです。"
+
+msgid ""
+"If you also need predictive tag search feature (for example, searching "
+"``\"groonga\"`` by ``\"gr\"`` keyword.), ``TABLE_DAT_KEY`` is suitable. "
+"``TABLE_DAT_KEY`` is large table size but it is not important because the "
+"number of tags will not be large."
+msgstr ""
+"もし、前方一致検索機能も必要な場合（例えば、 ``\"gr\"`` というキーワードで "
+"``\"groonga\"`` を検索する場合）は、 ``TABLE_DAT_KEY`` が適切です。 "
+"``TABLE_DAT_KEY`` はサイズの大きなテーブルですが、タグの数はそれほど多くなら"
+"ないので、サイズは重要ではありません。"
+
+msgid "Create range index table"
+msgstr "範囲検索用のインデックステーブルの作成"
+
+msgid ""
+"You can use ``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY`` table types for range "
+"index table. Range index table needs range search support but "
+"``TABLE_NO_KEY`` and ``TABLE_HASH_KEY`` don't support it."
+msgstr ""
+"範囲検索用のインデックステーブルには ``TABLE_PAT_KEY`` 型と "
+"``TABLE_DAT_KEY`` 型を使えます。範囲検索用のインデックステーブルは範囲検索を"
+"サポートしている必要がありますが、 ``TABLE_NO_KEY`` 型と ``TABLE_HASH_KEY`` "
+"型はサポートしていません。"
+
+msgid "Here is an example to create ``TABLE_DAT_KEY`` table:"
+msgstr "以下は ``TABLE_DAT_KEY`` テーブルを作成する例です。"
+
+msgid ""
+"The ``table_create`` command creates a table that is named ``Ages``, is "
+"``TABLE_DAT_KEY`` type and has ``UInt32`` type key."
+msgstr ""
+"この ``table_create`` コマンドは ``Ages`` という名前で ``TABLE_DAT_KEY`` 型の"
+"テーブルを作成します。このテーブルのキーの型は ``UInt32`` です。"
+
+msgid ""
+"``TABLE_PAT_KEY`` and ``TABLE_DAT_KEY`` are suitable table types for range "
+"index table."
+msgstr ""
+"範囲検索用のインデックステーブルには ``TABLE_PAT_KEY`` 型と "
+"``TABLE_DAT_KEY`` 型が適切なテーブルの型です。"
+
+msgid ""
+"If you don't have many indexed items, ``TABLE_DAT_KEY`` is suitable. Index "
+"for age is the case in the above example. Index for age will have only 0-100 "
+"items because human doesn't live so long."
+msgstr ""
+"インデックス対象の項目が少なければ、 ``TABLE_DAT_KEY`` 型が適切です。前述の例"
+"では、年齢（age）用のインデックスがこのケースになります。年齢のインデックスは"
+"せいぜい0から100項目くらいにしかなりません。これは、人はそんなに長生きできな"
+"いからです。"
+
+msgid ""
+"If you have many indexed items, ``TABLE_PAT_KEY`` is suitable. Because "
+"``TABLE_PAT_KEY`` is smaller than ``TABLE_DAT_KEY``."
+msgstr ""
+"インデックス対象が大量にある場合は、 ``TABLE_PAT_KEY`` 型が適切です。なぜな"
+"ら、 ``TABLE_PAT_KEY`` 型は ``TABLE_DAT_KEY`` 型よりもサイズが小さいからで"
+"す。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes all parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is only one required parameter."
+msgstr "必須の引数は1つです。"
+
+msgid "``name``"
+msgstr ""
+
+msgid "Specifies a table name to be created. ``name`` must be specified."
+msgstr ""
+"作成するテーブル名を指定します。 ``name`` は必ず指定しなければいけません。"
+
+msgid "Here are available characters:"
+msgstr "利用可能な文字は以下の通りです。"
+
+msgid "``0`` .. ``9`` (digit)"
+msgstr "``0`` .. ``9`` （数字）"
+
+msgid "``a`` .. ``z`` (alphabet, lower case)"
+msgstr "``a`` .. ``z`` （アルファベット。小文字）"
+
+msgid "``A`` .. ``Z`` (alphabet, upper case)"
+msgstr "``A`` .. ``Z`` （アルファベット。大文字）"
+
+msgid "``#`` (hash)"
+msgstr "``#`` （シャープ）"
+
+msgid "``@`` (at mark)"
+msgstr "``@`` （アットマーク）"
+
+msgid "``-`` (hyphen)"
+msgstr "``-`` （ハイフン）"
+
+msgid ""
+"``_`` (underscore) (NOTE: Underscore can't be used as the first character.)"
+msgstr ""
+"``_`` （アンダースコア）（注: 最初の文字としてアンダースコアを使うことはでき"
+"ません。）"
+
+msgid ""
+"You need to create a name with one or more the above characters. Note that "
+"you can't use ``_`` as the first character such as ``_name``."
+msgstr ""
+"上記の文字を1つ以上使って名前を決めます。 ``_name`` というように、最初の文字"
+"に ``_`` を使えないことに注意してください。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There are some optional parameters."
+msgstr "いくつか省略可能な引数があります。"
+
+msgid "``flags``"
+msgstr ""
+
+msgid "Specifies a table type and table customize options."
+msgstr "テーブルの型とテーブルをカスタマイズするオプションを指定します。"
+
+msgid "Here are available flags:"
+msgstr "指定可能なフラグは以下の通りです。"
+
+msgid "Flag"
+msgstr "フラグ"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "``TABLE_NO_KEY``"
+msgstr ""
+
+msgid "Array table. See also :ref:`table-no-key`."
+msgstr "配列テーブル。 :ref:`table-no-key` 参照。"
+
+msgid "``TABLE_HASH_KEY``"
+msgstr ""
+
+msgid "Hash table. See also :ref:`table-hash-key`."
+msgstr "ハッシュテーブル。 :ref:`table-hash-key` 参照。"
+
+msgid "``TABLE_PAT_KEY``"
+msgstr ""
+
+msgid "Patricia trie. See also :ref:`table-pat-key`."
+msgstr "パトリシアトライ。 :ref:`table-pat-key` 参照。"
+
+msgid "``TABLE_DAT_KEY``"
+msgstr ""
+
+msgid "Double array trie. See also :ref:`table-dat-key`."
+msgstr "ダブル配列トライ。 :ref:`table-dat-key` 参照。"
+
+msgid "``KEY_WITH_SIS``"
+msgstr ""
+
+msgid "Enable Semi Infinite String. Require ``TABLE_PAT_KEY``."
+msgstr "半無限文字列を有効にします。 ``TABLE_PAT_KEY`` と使う必要があります。"
+
+msgid "``KEY_LARGE``"
+msgstr ""
+
+msgid ""
+"Expand the maximum total key size to 1TiB from 4GiB. Require "
+"``TABLE_HASH_KEY``."
+msgstr ""
+"最大総キーサイズを4GiBから1TiBへ拡張します。 ``TABLE_HASH_KEY`` と使う必要が"
+"あります。"
+
+msgid ""
+"Since Groonga 2.1.0 ``KEY_NORMALIZE`` flag is deprecated. Use ``normalizer`` "
+"option with ``NormalizerAuto`` instead."
+msgstr ""
+"Groonga 2.1.0から ``KEY_NORMALIZE`` フラグは非推奨になりました。代わりに、 "
+"``normalizer`` オプションに ``NormalizerAuto`` を指定してください。"
+
+msgid ""
+"You must specify one of ``TABLE_${TYPE}`` flags. You can't specify two or "
+"more ``TABLE_${TYPE}`` flags. For example, ``TABLE_NO_KEY|TABLE_HASH_KEY`` "
+"is invalid."
+msgstr ""
+"``TABLE_${TYPE}`` フラグのどれか1つを指定します。 ``TABLE_${TYPE}`` フラグを2"
+"つ以上指定することはできません。例えば、 ``TABLE_NO_KEY|TABLE_HASH_KEY`` は不"
+"正な指定方法です。"
+
+msgid ""
+"You can combine flags with ``|`` (vertical bar) such as ``TABLE_PAT_KEY|"
+"KEY_WITH_SIS``."
+msgstr ""
+"``TABLE_PAT_KEY|KEY_WITH_SIS`` というように、 ``|`` （縦棒）で複数のフラグを"
+"組み合わせることができます。"
+
+msgid "See :doc:`/reference/tables` for difference between table types."
+msgstr ""
+"それぞれのテーブルの型の違いは :doc:`/reference/tables` を参照してください。"
+
+msgid "The default flags are ``TABLE_HASH_KEY``."
+msgstr "デフォルトのフラグは ``TABLE_HASH_KEY`` です。"
+
+msgid "``key_type``"
+msgstr ""
+
+msgid "Specifies key type."
+msgstr "キーの型を指定します。"
+
+msgid ""
+"If you specify ``TABLE_HASH_KEY``, ``TABLE_PAT_KEY`` or ``TABLE_DAT_KEY`` as "
+"``flags`` parameter, you need to specify ``key_type`` option."
+msgstr ""
+"``flags`` パラメーターに ``TABLE_HASH_KEY`` 、 ``TABLE_PAT_KEY`` または "
+"``TABLE_DAT_KEY`` を指定した場合は、 ``key_type`` オプションを指定する必要が"
+"あります。"
+
+msgid "See :doc:`/reference/types` for all types."
+msgstr "型の一覧は :doc:`/reference/types` にあります。"
+
+msgid "The default value is none."
+msgstr "デフォルト値はありません。"
+
+msgid "``value_type``"
+msgstr ""
+
+msgid "Specifies value type."
+msgstr "値の型を指定します。"
+
+msgid ""
+"You can use value when you specify ``TABLE_NO_KEY``, ``TABLE_HASH_KEY`` or "
+"``TABLE_PAT_KEY`` as ``flags`` parameter. Value type must be a fixed size "
+"type. For example, ``UInt32`` can be used but ``ShortText`` cannot be used. "
+"Use columns instead of value."
+msgstr ""
+"``flags`` パラメーターに ``TABLE_NO_KEY`` 、 ``TABLE_HASH_KEY`` または "
+"``TABLE_PAT_KEY`` を指定した場合は「値」を使うことができます。「値」の型は固"
+"定長でなければいけません。例えば、 ``UInt32`` は使えますが、 ``ShortText`` は"
+"使えません。この場合は値ではなく、カラムを使ってください。"
+
+msgid "``default_tokenizer``"
+msgstr ""
+
+msgid ""
+"Specifies the default tokenizer that is used on searching and data loading."
+msgstr ""
+"デフォルトトークナイザーを指定します。これは、検索時とデータロード時に使われ"
+"ます。"
+
+msgid ""
+"You must specify ``default_tokenizer`` for a table that is used for lexicon "
+"of fulltext search index. See :doc:`/reference/tokenizers` for available "
+"tokenizers. You must choose a tokenizer from the list for fulltext search."
+msgstr ""
+"テーブルを全文検索インデックスの語彙表として使う場合は ``default_tokenizer`` "
+"を指定しなければいけません。利用可能なトークナイザーは :doc:`/reference/"
+"tokenizers` を参照してください。全文検索する場合はこのリストの中からトークナ"
+"イザーを選んでください。"
+
+msgid "You don't need to specify ``default_tokenizer`` in the following cases:"
+msgstr "次の場合は ``default_tokenizer`` を指定する必要はありません。"
+
+msgid "You don't use the table as a lexicon."
+msgstr "テーブルを語彙表として使わないとき。"
+
+msgid ""
+"You use the table as a lexicon but you don't need fulltext search. For "
+"example:"
+msgstr "テーブルを語彙表として使うが、全文検索をしないとき。例："
+
+msgid "Index target data isn't text data such as ``Int32`` and ``Time``."
+msgstr ""
+"インデックス対象のデータが ``Int32`` や ``Time`` のようにテキストデータでない"
+"とき。"
+
+msgid "You just need exact match search, prefix search and so on."
+msgstr "完全一致検索や前方一致検索などだけが必要なとき。"
+
+msgid ""
+"You can't use ``default_tokenizer`` with ``TABLE_NO_KEY`` flag because a "
+"table that uses ``TABLE_NO_KEY`` flag can't be used as lexicon."
+msgstr ""
+"``TABLE_NO_KEY`` フラグと一緒に ``default_tokenizer`` を使うことはできませ"
+"ん。これは、 ``TABLE_NO_KEY`` フラグを使っているテーブルは語彙表として使うこ"
+"とはできないからです。"
+
+msgid ""
+"You must specify ``TABLE_HASH_KEY``, ``TABLE_PAT_KEY``, ``TABLE_DAT_KEY`` "
+"to :ref:`table-create-flags` when you want to use the table as a lexicon."
+msgstr ""
+"テーブルを語彙表として使いたいときは、 :ref:`table-create-flags` に "
+"``TABLE_HASH_KEY`` 、 ``TABLE_PAT_KEY`` 、 ``TABLE_DAT_KEY`` のどれかを指定し"
+"てください。"
+
+msgid "``normalizer``"
+msgstr ""
+
+msgid "Specifies a normalizer that is used to normalize key."
+msgstr "キーを正規化するために使うノーマライザーを指定します。"
+
+msgid ""
+"You cannot use ``normalizer`` with ``TABLE_NO_KEY`` because ``TABLE_NO_KEY`` "
+"doesn't support key."
+msgstr ""
+"``TABLE_NO_KEY`` はキーをサポートしていないので、 ``TABLE_NO_KEY`` と "
+"``normalizer`` を一緒に指定することはできません。"
+
+msgid "See :doc:`/reference/normalizers` for all normalizsers."
+msgstr "ノーマライザーの一覧は :doc:`/reference/normalizers` にあります。"
+
+msgid "``token_filters``"
+msgstr ""
+
+msgid ""
+"Specifies token filters separated by ``,``. Token filters are used to "
+"process tokens."
+msgstr ""
+"トークンフィルターを「,」（カンマ）区切りで指定します。トークンフィルターは"
+"トークンに所定の処理を行うために使われます。"
+
+msgid ""
+"You cannot use ``token_filters`` with ``TABLE_NO_KEY`` because "
+"``TABLE_NO_KEY`` doesn't support key."
+msgstr ""
+"``TABLE_NO_KEY`` はキーをサポートしていないので、 ``TABLE_NO_KEY`` と "
+"``token_filters`` を一緒に指定することはできません。"
+
+msgid "See :doc:`/reference/token_filters` for all token filters."
+msgstr ""
+"トークンフィルターの一覧は :doc:`/reference/token_filters` にあります。"
+
+msgid "``path``"
+msgstr ""
+
+msgid "Specifies a path for storing a table."
+msgstr "テーブルを格納するパスを指定します。"
+
+msgid ""
+"This option is useful if you want to store a table that you often use to "
+"fast storage (e.g. SSD) and store it that you don't often use to slow "
+"storage (e.g. HDD)."
+msgstr ""
+"このオプションは、高速なストレージ(SSDなど)によく使うテーブルを格納し、低速な"
+"ストレージ(HDDなど)にあまり使わないテーブルを格納したいときに有用です。"
+
+msgid ""
+"You can use a relative path or an absolute path in this option. If you "
+"specify a relative path, it is resolved from the current directory for the "
+"``groonga`` process."
+msgstr ""
+"このオプションでは、絶対パスまたは相対パスを使えます。相対パスを指定した場合"
+"は、 ``groonga`` プロセスのカレントディレクトリーからパスを解決します。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "``table_create`` returns ``true`` as body on success such as::"
+msgstr ""
+"``table_create`` が成功したときは以下のようにボディは ``true`` になります::"
+
+msgid "If ``table_create`` fails, error details are in ``HEADER``."
+msgstr ""
+"``table_create`` が失敗すると、エラーの詳細は ``HEADER`` に含まれます。"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid ":doc:`/reference/tables`"
+msgstr ""
+
+msgid ":doc:`/reference/commands/column_create`"
+msgstr ""
+
+msgid ":doc:`/reference/tokenizers`"
+msgstr ""
+
+msgid ":doc:`/reference/normalizers`"
+msgstr ""
+
+msgid ":doc:`/reference/command/output_format`"
+msgstr ""

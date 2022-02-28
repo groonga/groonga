@@ -1,0 +1,441 @@
+# -*- po -*-
+# Japanese translations for 1.2.4 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.4\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2020-04-24 08:59+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.1.1\n"
+
+msgid "バージョン1.0.xのお知らせ"
+msgstr ""
+
+msgid "1.0.8リリース - 2011-02-02"
+msgstr ""
+
+msgid "修正"
+msgstr ""
+
+msgid ""
+"ShortText型カラムへデータ追加・削除を繰り返すとデータが壊れ ることがある問題"
+"を修正。 （Mitsuhiro Shibuyaさんが報告）"
+msgstr ""
+
+msgid "感謝"
+msgstr ""
+
+msgid "Mitsuhiro Shibuyaさん"
+msgstr ""
+
+msgid "1.0.7リリース - 2011-01-29"
+msgstr ""
+
+msgid "改良"
+msgstr ""
+
+msgid "automake 1.9.6でも動作するようにした。 #508"
+msgstr ""
+
+msgid "configureの最後に検出したMeCabの情報も表示するようにした。"
+msgstr ""
+
+msgid "エラーメッセージをわかりやすくした。"
+msgstr ""
+
+msgid ""
+"--enable-memory-debug付きでビルドしたときに終了時に未開放のメモリが 割り当て"
+"られた場所を表示するようにした。"
+msgstr ""
+
+msgid ""
+"ベクタの値を :doc:`/reference/commands/load` するときにキャストに失敗したら、"
+"そ のことを報告するようにした。"
+msgstr ""
+
+msgid ""
+"groongaのメモリリークを検出するユーティリティツール groonga-check-memory-"
+"leak.rbを追加。（インストールはされない。）"
+msgstr ""
+
+msgid ":doc:`/reference/commands/dump` がテーブル単位のダンプに対応。"
+msgstr ""
+
+msgid ""
+"Mac OS Xでモジュールの拡張子の検出に失敗する問題を修正。 （ongaeshiさんが報"
+"告）"
+msgstr ""
+
+msgid "Mac OS Xではrealloc(ptr, 0)ではなくfree()を使うように修正。"
+msgstr ""
+
+msgid "grntestで結果の比較が常に失敗していた問題を修正。"
+msgstr ""
+
+msgid "groonga-suggest-learnerのメモリリークを修正。"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/load` 時のメモリリークを修正。 （Kenichi Aramakiさ"
+"んが報告）"
+msgstr ""
+
+msgid "ベクタの値を出力するときのメモリリークを修正。"
+msgstr ""
+
+msgid "ongaeshiさん"
+msgstr ""
+
+msgid "Kenichi Aramakiさん"
+msgstr ""
+
+msgid "1.0.6リリース - 2010-12-31"
+msgstr ""
+
+msgid "\\*BSDでビルドできない問題を修正。（OBATA Akioさんが報告）"
+msgstr ""
+
+msgid "OBATA Akioさん"
+msgstr ""
+
+msgid "1.0.5リリース - 2010-12-29"
+msgstr ""
+
+msgid "サジェスト機能用の学習プログラムを追加。"
+msgstr ""
+
+msgid "groongaスクリプト内での行コメントに対応。（「#」以降を無視） #723"
+msgstr ""
+
+msgid ":doc:`/reference/commands/column_list` のXML出力対応。 #748"
+msgstr ""
+
+msgid "主キーが数値のテーブルを参照しているカラムでの比較演算に対応。 #776"
+msgstr ""
+
+msgid "grntestがmlockの情報出力に対応。"
+msgstr ""
+
+msgid "NetBSDでのビルドに対応。 （OBATA Akioさんがパッチ作成）"
+msgstr ""
+
+msgid ""
+"MeCabトークナイザーが見つからない時のエラーメッセージをより親切にした。 #790"
+msgstr ""
+
+msgid ""
+"開いているファイルディスクリプタが多すぎてacceptできない状態の負荷を低減。 "
+"#802"
+msgstr ""
+
+msgid "DragonFlyでのビルドに対応。 （OBATA Akioさんが報告）"
+msgstr ""
+
+msgid "変更"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/table_list` のXML出力のタグ名をより適切な名前に変"
+"更。 #757"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/load` で存在しないカラムを--columnsで指定するとク"
+"ラッシュする問題を修正。 （Masahiro Tomitaさんが報告） #751"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/load` で配列でTABLE_NO_KEYなテーブルにレコードを"
+"ロードできない問題を修正。 （Masahiro Tomitaさんが報告） #750"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/delete` でTABLE_NO_KEYなテーブルのレコードを削除す"
+"るとテーブルが壊れる 問題を修正。 （Masahiro Tomitaさんがパッチ作成） #794"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/load` で不正なJSONを指定した場合にそれ以降コマンド"
+"を受け付けなくなる 問題を修正。 #807"
+msgstr ""
+
+msgid "Tomita Masahiroさん"
+msgstr ""
+
+msgid "1.0.4リリース - 2010-11-29"
+msgstr ""
+
+msgid "すべてのモジュールで同じ名前の関数をエクスポートするようにした。#624"
+msgstr ""
+
+msgid "不正な名前を指定したときに指定された名前も報告するようにした。"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/select` の--filter内での数値比較演算をサポート。 "
+"（@s3kiさんが報告）"
+msgstr ""
+
+msgid "``grntest`` の一行あたりの最大バイト数の制限を撤廃。 #608, #690"
+msgstr ""
+
+msgid "Int8/UInt8/Int16/UInt16の等値比較にC言語の比較演算子を使用。 #660"
+msgstr ""
+
+msgid ""
+"HTTP経由で存在しないパスにアクセスした時に存在しないパスを報告するように し"
+"た。"
+msgstr ""
+
+msgid "grn_table_cursor_next()をGRN_CURSOR_COLUMN_INDEX対応にした。"
+msgstr ""
+
+msgid "右辺が式の演算代入演算子をサポート。 #669"
+msgstr ""
+
+msgid "zlib/LZOサポート付きでビルドされているかをチェックするAPIを追加。 #686"
+msgstr ""
+
+msgid "grn_table_at()を公開。"
+msgstr ""
+
+msgid "grn_db_touch()を公開。 #703"
+msgstr ""
+
+msgid "コメント行に対応。 #723"
+msgstr ""
+
+msgid "grn_bool型を追加。 #713"
+msgstr ""
+
+msgid ""
+"プラグインの置き場所を変更: lib/groonga/modules/ -> lib/groonga/plugins/ #624"
+msgstr ""
+
+msgid "ドキュメントの誤字を修正。（OBATA Akioさんが報告）"
+msgstr ""
+
+msgid "GRN_CURSOR_PREFIXが動作しない問題を修正。"
+msgstr ""
+
+msgid "索引が不正に大きくなる問題を修正。（Tomoatsu Shimadaさんが報告） #689"
+msgstr ""
+
+msgid "@s3kiさん"
+msgstr ""
+
+msgid "Tomoatsu Shimadaさん"
+msgstr ""
+
+msgid "1.0.3リリース - 2010-10-29"
+msgstr ""
+
+msgid ""
+"CentOS/Fedora用パッケージをディストリビューションのルールに従うように改良。 "
+"（上野乃毅さん）"
+msgstr ""
+
+msgid "Fedoraのオフィシャルリポジトリに登録。（Daiki Uenoさん）"
+msgstr ""
+
+msgid "GeoPointのキャストに対応。#515"
+msgstr ""
+
+msgid "groongaコマンドに、--defalt-command-versionオプションの追加。"
+msgstr ""
+
+msgid "statusの出力結果にコマンドバージョンを追加。"
+msgstr ""
+
+msgid ":doc:`/spec/search` の仕様を追加。"
+msgstr ""
+
+msgid ":doc:`/troubleshooting` を追加。"
+msgstr ""
+
+msgid "辞書検索のサンプルアプリケーションを追加。"
+msgstr ""
+
+msgid "pkg-configがない場合はlibeditを検出しないようにした。 #540"
+msgstr ""
+
+msgid "メモリデバッグ用オプション--enable-memory-debugを追加。"
+msgstr ""
+
+msgid "不正な関数呼び出しをチェックするようにした。#596"
+msgstr ""
+
+msgid ""
+"テキストから数値へのキャスト処理を強化。#612, #613 （Itagaki Takahiroさんが報"
+"告）"
+msgstr ""
+
+msgid "クライアントモードでの--fileオプションのサポート。#578"
+msgstr ""
+
+msgid ""
+":doc:`/spec/search` の挙動を動的に変更する ``--match-escalation-threshold`` "
+"起動オプションと ``--match_escalation_threshold`` selectオプションを追加。 "
+"#628"
+msgstr ""
+
+msgid "記号でトークンを区切るTokenBigramSplitSymbolを使用。 #225"
+msgstr ""
+
+msgid "時間の解像度をナノ秒に変更。"
+msgstr ""
+
+msgid ""
+"パッケージを提供するUbuntuのバージョンをHardy, Lucidから Lucid, Marverickに変"
+"更。"
+msgstr ""
+
+msgid "grn_table_cursor_open()のドキュメントを修正。"
+msgstr ""
+
+msgid "メモリリークを修正。"
+msgstr ""
+
+msgid ""
+"--disable-libeditオプションがヘルプメッセージと違う問題の修正。 （MATSUU "
+"Takutoさんが報告）"
+msgstr ""
+
+msgid "警告を除去。（MATSUU Takutoさんが報告）"
+msgstr ""
+
+msgid ""
+"grn_pat_at()でエンコードされたキーが常にGRN_NILになってしまう問題を修正。#514"
+msgstr ""
+
+msgid ""
+"固定長カラムにカラム長より短いデータを設定するとゴミが残ってしまう問題を修"
+"正。"
+msgstr ""
+
+msgid "不正なレコードがあるときにdumpすると落ちてしまう問題を修正。"
+msgstr ""
+
+msgid "geo_in_rectangle()が無限ループする問題を修正。#563"
+msgstr ""
+
+msgid ""
+"インデックスがついたカラムでソートすると結果がおかしくなる問題を修正。#571"
+msgstr ""
+
+msgid "deleteが常に失敗する問題を修正。#541"
+msgstr ""
+
+msgid ""
+"レコードを追加・削除したパトリシアトライからID順に取り出すカーソルが おかしな"
+"結果を返す問題を修正。#538"
+msgstr ""
+
+msgid "値が存在しないレコードがあるカラムでソートすると落ちる問題を修正。"
+msgstr ""
+
+msgid "モジュールの初期化関数が複数回呼ばれる問題を修正。#567"
+msgstr ""
+
+msgid "shutdownで終了しない問題を修正。#114"
+msgstr ""
+
+msgid "全文検索時に削除したレコードが返る問題を修正。#617"
+msgstr ""
+
+msgid "必要な時以外にMeCabの辞書チェックをしてしまう問題を修正。#555"
+msgstr ""
+
+msgid "存在しないパトリシアトライのレコードを参照すると落ちる問題を修正。#630"
+msgstr ""
+
+msgid "インストールドキュメントの誤字を修正。（SHIMODA Hiroshiさんが報告）"
+msgstr ""
+
+msgid "Daiki Uenoさん"
+msgstr ""
+
+msgid "MATSUU Takutoさん"
+msgstr ""
+
+msgid "Itagaki Takahiroさん"
+msgstr ""
+
+msgid "SHIMODA Hiroshiさん"
+msgstr ""
+
+msgid "1.0.2リリース - 2010-09-09"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/suggest` コマンドのサンプルを追加。（examples/"
+"dictionary/）"
+msgstr ""
+
+msgid ""
+"HTTPで公開するディレクトリを指定する--admin-html-pathを--document-rootに変"
+"更。"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/select` コマンドのデフォルトの--output_columnsから"
+"_valueを削除。"
+msgstr ""
+
+msgid "パッケージミスを修正。 （OBATA Akioさんが報告）"
+msgstr ""
+
+msgid "GeoPointの度表記の解釈を修正。 #460"
+msgstr ""
+
+msgid "1.0.1リリース - 2010-09-06"
+msgstr ""
+
+msgid "CentOS 5/Fedora 13用RPMの提供。（Daiki Uenoさん作成のspecがベース）"
+msgstr ""
+
+msgid "ログパスのデフォルト値に--localstatedirを使用。（OBATA Akioさんが提案）"
+msgstr ""
+
+msgid "BOM付きUTF-8に対応。"
+msgstr ""
+
+msgid "JSON JQueryプラグインが同梱されていない問題の修正。"
+msgstr ""
+
+msgid "テストが失敗する問題の修正。（OBATA Akioさんが報告）"
+msgstr ""
+
+msgid "1.0.0リリース - 2010-08-29"
+msgstr ""
+
+msgid ""
+"指定したクエリに対する補完・修正・提案を行う :doc:`/reference/commands/"
+"suggest` コマンドを追加。"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/delete` コマンドが失敗したらfalseを返すように変更。"
+"（Itagaki Takahiroさんが提案）"
+msgstr ""
+
+msgid "関数もコマンドとして呼び出してしまう問題を修正。#431"
+msgstr ""
+
+msgid "索引付きカラムを等価条件で検索できない問題を修正。"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/delete` コマンドでキーがShortText以外のレコードを削"
+"除できない問題の修正。（Itagaki Takahiroさんが報告）"
+msgstr ""

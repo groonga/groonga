@@ -1,0 +1,643 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "Regular expression"
+msgstr "正規表現"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "Regular expression support is an experimental feature."
+msgstr "正規表現は実験的な機能です。"
+
+msgid ""
+"Groonga supports pattern match by regular expression. Regular expression is "
+"widely used format to describe a pattern. Regular expression is useful to "
+"represent complex pattern."
+msgstr ""
+"Groongaは正規表現を用いたパターンマッチをサポートしています。正規表現はパター"
+"ンを表現するために広く使われています。正規表現は複雑なパターンを表現するとき"
+"に便利です。"
+
+msgid ""
+"In most cases, pattern match by regular expression is evaluated as "
+"sequential search. It'll be slow for many records and many texts."
+msgstr ""
+"多くの場合は、正規表現検索は逐次検索で実行します。これはたくさんのレコードが"
+"あったり、たくさんのテキストがある場合は遅くなります。"
+
+msgid ""
+"In some cases, pattern match by regular expression can be evaluated by "
+"index. It's very fast rather than sequential search. Patterns that can be "
+"evaluated by index are described later."
+msgstr ""
+"いくつかの場合では、正規表現を使ったパターンマッチをインデックスを使って実現"
+"します。これは逐次検索よりも非常に高速です。インデックスを使って評価できるパ"
+"ターンについては後述します。"
+
+msgid ""
+"Groonga normalizes match target text by :ref:`normalizer-auto` normalizer "
+"when Groonga doesn't use index for regular expression search. It means that "
+"regular expression that has upper case such as ``Groonga`` never match. "
+"Because :ref:`normalizer-auto` normalizer normalizes all alphabets to lower "
+"case. ``groonga`` matches to both ``Groonga`` and ``groonga``."
+msgstr ""
+"Groongaは正規表現検索にインデックスを使わないときは、 :ref:`normalizer-auto` "
+"ノーマライザーでマッチ対象のテキストを正規化します。これは、 ``Groonga`` とい"
+"うような大文字を使った正規表現は必ずマッチに失敗するということです。なぜな"
+"ら、 :ref:`normalizer-auto` ノーマライザーはすべてのアルファベットを小文字に"
+"正規化するからです。 ``groonga`` は ``Groonga`` にも ``groonga`` にも両方に"
+"マッチします。"
+
+msgid ""
+"Why is match target text normalizered? It's for increasing index search-able "
+"patterns. If Groonga doesn't normalize match target text, you need to write "
+"complex regular expression such as ``[Dd][Ii][Ss][Kk]`` and ``(?i)disk`` for "
+"case-insensitive match. Groonga can't use index against complex regular "
+"expression."
+msgstr ""
+"なぜマッチ対象のテキストを正規化するのでしょうか？それは、インデックスを使っ"
+"て検索できるパターンを増やすためです。もし、Groongaがマッチ対象のテキストを正"
+"規化しなかった場合、大文字小文字を区別しないマッチをするために、 ``[Dd][Ii]"
+"[Ss][Kk]`` や ``(?i)disk`` のような複雑な正規表現を書く必要があります。"
+"Groongaは複雑な正規表現に対してインデックスを使うことができません。"
+
+msgid ""
+"If you write ``disk`` regular expression for case-insensitive match, Groonga "
+"can search the pattern with index. It's fast."
+msgstr ""
+"もし、大文字小文字を区別しないマッチに ``disk`` という正規表現を使うなら、"
+"Groongaはインデックスを使ってこのパターンを検索できます。これは高速です。"
+
+msgid ""
+"By full text search normally, Groonga normalize search keywords using the "
+"normalizer specified in a lexicon. By using regular expression search, "
+"Groonga doesn't normalize search keywords. Because the regular expression "
+"has specified meaning in uppercase and lowercase."
+msgstr ""
+"全文検索では通常、Groongaは検索キーワードを語彙表に指定されているノーマライ"
+"ザーを使って正規化します。正規表現を使った検索では、Groongaは、検索キーワード"
+"を正規化しません。これは、正規表現は大文字と小文字に意味があるためです。"
+
+msgid ""
+"So, if you regular expression search that doesn't use the index, we suggest "
+"that use :doc:`/reference/commands/normalize` command to normalize search "
+"keywords before a search. By using :doc:`/reference/commands/normalize` "
+"command, you don't have to need to think about how to normalize search "
+"keywords."
+msgstr ""
+"したがって、インデックスを使えない正規表現検索では、 :doc:`/reference/"
+"commands/normalize` コマンドで検索前に検索キーワードを正規化することをおすす"
+"めします。:doc:`/reference/commands/normalize` コマンドを使うことで、検索キー"
+"ワードをどのように正規化するか考る必要がなくなります。"
+
+msgid ""
+"You may feel the behavior is strange. But fast search based on this behavior "
+"will help you."
+msgstr ""
+"この挙動を奇妙に思うかもしれません。しかし、この挙動のおかげで高速に検索でき"
+"ることはきっとあなたの役に立つはずです。"
+
+msgid ""
+"There are many regular expression syntaxes. Groonga uses the same syntax in "
+"Ruby. Because Groonga uses the same regular expression engine as Ruby. The "
+"regular expression engine is `Onigmo <https://github.com/k-takata/Onigmo/"
+">`_. Characteristic difference with other regular expression syntax is ``^`` "
+"and ``$``. The regular expression syntax in Ruby, ``^`` means the beginning "
+"of line and ``$`` means the end of line. ``^`` means the beginning of text "
+"and ``$`` means the end of text in other most regular expression syntaxes. "
+"The regular expression syntax in Ruby uses ``\\A`` for the beginning of text "
+"and ``\\z`` for the end of text."
+msgstr ""
+"正規表現の構文はたくさんあります。GroongaはRubyと同じ構文を使います。なぜな"
+"ら、Groongaが使っている正規表現エンジンはRubyが使っている正規表現エンジンと同"
+"じだからです。この正規表現エンジンは `Onigmo <https://github.com/k-takata/"
+"Onigmo/>`_ といいます。他の正規表現の構文との特徴的な違いは ``^`` と ``$`` で"
+"す。Rubyの正規表現の構文では ``^`` は行頭を表し、 ``$`` は行末を表します。他"
+"の多くの正規表現の構文では、 ``^`` はテキストの先頭を表し、 ``$`` はテキスト"
+"の最後を表します。Rubyの正規表現の構文ではテキストの先頭を表す場合は ``\\A`` "
+"を使い、テキストの最後を表す場合は ``\\z`` を使います。"
+
+msgid ""
+"Groonga uses multiline mode since 5.0.6. It means that ``.`` matches on "
+"``\\n``."
+msgstr ""
+"Groongaは5.0.6からマルチラインモードを有効にしています。これは、 ``.`` が "
+"``\\n`` にマッチするということです。"
+
+msgid ""
+"But it's meaningless. Because ``\\n`` is removed by :ref:`normalizer-auto` "
+"normalizer."
+msgstr ""
+"しかし、この挙動は意味がありません。なぜなら、 ``\\n`` は :ref:`normalizer-"
+"auto` ノーマライザーが削除するからです。"
+
+msgid ""
+"You can use regular expression in :ref:`select-query` and :ref:`select-"
+"filter` options of :doc:`/reference/commands/select` command."
+msgstr ""
+":doc:`/reference/commands/select` コマンドの :ref:`select-query` オプション"
+"と :ref:`select-filter` オプションで正規表現を使えます。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid ""
+"Here are a schema definition and sample data to show usage. There is only "
+"one table, ``Logs``. ``Logs`` table has only ``message`` column. Log "
+"messages are stored into the ``message`` column."
+msgstr ""
+"以下は使い方を説明するためのスキーマ定義とサンプルデータです。このスキーマに"
+"はテーブルは1つだけです。 ``Logs`` というテーブルです。 ``Logs`` テーブルは1"
+"つだけカラムを持ちます。 ``message`` というカラムです。ログメッセージは "
+"``message`` カラムに保存されています。"
+
+msgid ""
+"Here is an example that uses regular expression in :ref:`select-query`. You "
+"need to use ``${COLUMN}:~${REGULAR_EXPRESSION}`` syntax."
+msgstr ""
+":ref:`select-query` で正規表現を使う例です。 ``${COLUMN}:"
+"~${REGULAR_EXPRESSION}`` という構文を使います。"
+
+msgid ""
+"Here is an example that uses regular expression in :ref:`select-filter`. You "
+"need to use ``${COLUMN} @~ ${REGULAR_EXPRESSION}`` syntax."
+msgstr ""
+":ref:`select-filter` で正規表現を使う例です。 ``${COLUMN} @~ "
+"${REGULAR_EXPRESSION}`` という構文を使います。"
+
+msgid "Index"
+msgstr "インデックス"
+
+msgid ""
+"Groonga can search records by regular expression with index. It's very fast "
+"rather than sequential search."
+msgstr ""
+"Groongaは正規表現を使った検索をインデックスを使って実現することができます。こ"
+"れは逐次検索より非常に高速です。"
+
+msgid ""
+"But it doesn't support all regular expression patterns. It supports only the "
+"following regular expression patterns. The patterns will be increased in the "
+"future."
+msgstr ""
+"しかし、すべての正規表現には対応していません。以下の正規表現にのみ対応してい"
+"ます。対応している正規表現は今後増えていく予定です。"
+
+msgid "Literal only pattern such as ``disk``"
+msgstr "``disk`` のようにリテラルしかないパターン"
+
+msgid "The begging of text and literal only pattern such as ``\\Adisk``"
+msgstr "``\\A/disk`` のようにテキストの最初でのマッチとリテラルのみのケース"
+
+msgid "The end of text and literal only pattern such as ``disk\\z``"
+msgstr "``disk\\z`` のようにテキストの最後でのマッチとリテラルのみのケース"
+
+msgid ""
+"You need to create an index for fast regular expression search. Here are "
+"requirements of index:"
+msgstr ""
+"高速に正規表現検索を実現するためにはインデックスを作る必要があります。以下は"
+"正規表現用のインデックスが満たさなければいけないことのリストです。"
+
+msgid "Lexicon must be :ref:`table-pat-key` table."
+msgstr "語彙表は :ref:`table-pat-key` テーブルであること。"
+
+msgid "Lexicon must use :ref:`token-regexp` tokenizer."
+msgstr "語彙表は :ref:`token-regexp` トークナイザーを使っていること。"
+
+msgid "Index column must has ``WITH_POSITION`` flag."
+msgstr "インデックスカラムは ``WITH_POSITION`` フラグ付きであること。"
+
+msgid ""
+"Other configurations such as lexicon's normalizer are optional. You can "
+"choose what you like. If you want to use case-insensitive search, use :ref:"
+"`normalizer-auto` normalizer."
+msgstr ""
+"語彙表のノーマライザーといった他の設定は用途に応じて適切なものを設定してくだ"
+"さい。もし、大文字小文字を区別せずに検索したい場合は :ref:`normalizer-auto` "
+"ノーマライザーを使ってください。"
+
+msgid ""
+"Here are recommended index definitions. In general, it's reasonable index "
+"definitions."
+msgstr ""
+"以下はオススメのインデックス定義です。多くの場合はこのインデックス定義が適切"
+"です。"
+
+msgid ""
+"Now, you can use index for regular expression search. The following regular "
+"expression can be evaluated by index because it uses only \"the beginning of "
+"text\" and \"literal\"."
+msgstr ""
+"これでインデックスを使って正規表現検索をできるようになりました。以下の正規表"
+"現は「テキストの先頭」と「リテラル」しか使っていないのでインデックスを使って"
+"検索できます。"
+
+msgid ""
+"Here is an example that uses :ref:`select-filter` instead of :ref:`select-"
+"query`. It uses the same regular expression as the previous example."
+msgstr ""
+"以下は :ref:`select-query` の代わりに :ref:`select-filter` を使った例です。前"
+"の例と同じ正規表現を使っています。"
+
+msgid ""
+"``\\`` escape will confuse you because there are some steps that require "
+"escape between you and Groonga. Here are steps that require ``\\`` escape:"
+msgstr ""
+"``\\`` エスケープは紛らわしいかもしれません。あなたが書いたクエリーをGroonga"
+"が実行するまでにエスケープが必要なステップがいくつもあるからです。以下は "
+"``\\`` エスケープが必要なステップです。"
+
+msgid ""
+"Shell only when you pass Groonga command from command line the following::"
+msgstr ""
+"シェル。ただし、次のようにGroongaのコマンドをコマンドラインで指定した場合の"
+"み::"
+
+msgid ""
+"``--filter '\"message @~ \\\"\\\\\\\\Ahost1:\\\"\"'`` is evaluated as the "
+"following two arguments by shell:"
+msgstr ""
+"``--filter '\"message @~ \\\"\\\\\\\\Ahost1:\\\"\"'`` はシェルが評価して次の2"
+"つの引数になります。"
+
+msgid "``--filter``"
+msgstr ""
+
+msgid "``\"message @~ \\\"\\\\\\\\Ahost1:\\\"\"``"
+msgstr ""
+
+msgid ""
+"Groonga command parser only when you pass Groonga command by command line "
+"style (``COMMAND ARG1_VALUE ARG2_VALUE ...``) not HTTP path style (``/d/"
+"COMMAND?ARG1_NAME=ARG1_VALUE&ARG2_NAME=ARG3_VALUE``)."
+msgstr ""
+"Groongaコマンドパーサー。ただし、GroongaのコマンドをHTTPパススタイル （ ``/d/"
+"COMMAND?ARG1_NAME=ARG1_VALUE&ARG2_NAME=ARG3_VALUE`` ） ではなく、コマンドライ"
+"ンスタイル （ ``COMMAND ARG1_VALUE ARG2_VALUE ...`` ）で指定した場合のみ。"
+
+msgid ""
+"``\"message @~ \\\"\\\\\\\\Ahost1:\\\"\"`` is evaluated as the following "
+"value by Groonga command parser:"
+msgstr ""
+"``\"message @~ \\\"\\\\\\\\Ahost1:\\\"\"`` はGroongaコマンドパーサーが評価し"
+"て次の値になります。"
+
+msgid "``message @~ \"\\\\Ahost1:\"``"
+msgstr ""
+
+msgid ""
+":doc:`/reference/grn_expr` parser. ``\\`` escape is required in both :doc:`/"
+"reference/grn_expr/query_syntax` and :doc:`/reference/grn_expr/"
+"script_syntax`."
+msgstr ""
+":doc:`/reference/grn_expr` パーサー。 :doc:`/reference/grn_expr/"
+"query_syntax` でも :doc:`/reference/grn_expr/script_syntax` でも ``\\`` エス"
+"ケープが必要です。"
+
+msgid ""
+"``\"\\\\Ahost1:\"`` string literal in script syntax is evaluated as the "
+"following value:"
+msgstr ""
+"スクリプト構文で ``\"\\\\Ahost1:\"`` という文字列リテラルを評価すると次の値に"
+"なります。"
+
+msgid "``\\Ahost1``"
+msgstr ""
+
+msgid "The value is evaluated as regular expression."
+msgstr "この値が正規表現として評価されます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid ""
+"This section describes about only commonly used syntaxes. See `Onigmo syntax "
+"documentation <https://github.com/k-takata/Onigmo/blob/master/doc/RE>`_ for "
+"other syntaxes and details."
+msgstr ""
+"このセクションでは広く使われている構文だけ説明します。他の構文と詳細は "
+"`Onigmoの構文ドキュメント <https://github.com/k-takata/Onigmo/blob/master/"
+"doc/RE.ja>`_ を参照してください。"
+
+msgid "Escape"
+msgstr "エスケープ"
+
+msgid "In regular expression, there are the following special characters:"
+msgstr "正規表現で特別な文字は次の通りです。"
+
+msgid "``\\``"
+msgstr ""
+
+msgid "``|``"
+msgstr ""
+
+msgid "``(``"
+msgstr ""
+
+msgid "``)``"
+msgstr ""
+
+msgid "``[``"
+msgstr ""
+
+msgid "``]``"
+msgstr ""
+
+msgid "``.``"
+msgstr ""
+
+msgid "``*``"
+msgstr ""
+
+msgid "``+``"
+msgstr ""
+
+msgid "``?``"
+msgstr ""
+
+msgid "``{``"
+msgstr ""
+
+msgid "``}``"
+msgstr ""
+
+msgid "``^``"
+msgstr ""
+
+msgid "``$``"
+msgstr ""
+
+msgid ""
+"If you want to write pattern that matches these special character as is, you "
+"need to escape them."
+msgstr ""
+"これらの特別な文字そのものにマッチするパターンを書きたいときはこれらの文字を"
+"エスケープする必要があります。"
+
+msgid ""
+"You can escape them by putting ``\\`` before special character. Here are "
+"regular expressions that match special character itself:"
+msgstr ""
+"特別な文字の前に ``\\`` を入れることでエスケープできます。以下は特別な文字そ"
+"のものにマッチする正規表現です。"
+
+msgid "``\\\\``"
+msgstr ""
+
+msgid "``\\|``"
+msgstr ""
+
+msgid "``\\(``"
+msgstr ""
+
+msgid "``\\)``"
+msgstr ""
+
+msgid "``\\[``"
+msgstr ""
+
+msgid "``\\]``"
+msgstr ""
+
+msgid "``\\.``"
+msgstr ""
+
+msgid "``\\*``"
+msgstr ""
+
+msgid "``\\+``"
+msgstr ""
+
+msgid "``\\?``"
+msgstr ""
+
+msgid "``\\{``"
+msgstr ""
+
+msgid "``\\}``"
+msgstr ""
+
+msgid "``\\^``"
+msgstr ""
+
+msgid "``\\$``"
+msgstr ""
+
+msgid ""
+"If your regular expression doesn't work as you expected, confirm that some "
+"special characters are used without escaping."
+msgstr ""
+"正規表現が期待した通りに動かないときはエスケープ無しで特別な文字が使われてい"
+"ないか確認してください。"
+
+msgid "Choice"
+msgstr "選択"
+
+msgid ""
+"Choice syntax is ``A|B``. The regular expression matches when either ``A`` "
+"pattern or ``B`` pattern is matched."
+msgstr ""
+"選択の構文は ``A|B`` です。 ``A`` パターンまたは ``B`` パターンにマッチすると"
+"この正規表現にマッチしたことになります。"
+
+msgid "Regular expression that uses this syntax can't be evaluated by index."
+msgstr "この構文を使った正規表現はインデックスを使って評価できません。"
+
+msgid "Group"
+msgstr "グループ"
+
+msgid "Group syntax is ``(...)``. Group provides the following features:"
+msgstr "グループの構文は ``(...)`` です。グループは次の機能を提供します。"
+
+msgid "Back reference"
+msgstr "後方参照"
+
+msgid "Scope reducing"
+msgstr "スケープの限定"
+
+msgid ""
+"You can refer matched groups by ``\\n`` (``n`` is the group number) syntax. "
+"For example, ``e(r)\\1o\\1`` matches ``error``. Because ``\\1`` is replaced "
+"with match result (``r``) of the first group ``(r)``."
+msgstr ""
+"マッチしたグループを ``\\n`` （ ``n`` はグループの番号とする） という構文で参"
+"照できます。例えば、 ``e(r)\\1o\\1`` は ``error`` にマッチします。なぜなら、 "
+"``\\1`` は1番目ののグループ ``(r)`` のマッチ結果（ ``r`` ）に置き換えられるか"
+"らです。"
+
+msgid ""
+"You can also use more powerful back reference features. See `\"8. Back "
+"reference\" section in Onigmo documentation <https://github.com/k-takata/"
+"Onigmo/blob/master/doc/RE#L302>`_ for details."
+msgstr ""
+"より強力な後方参照機能を使うこともできます。詳細は `Onigmoのドキュメントの"
+"「8. 後方参照」セクション <https://github.com/k-takata/Onigmo/blob/master/"
+"doc/RE.ja#L299>`_ を参照してください。"
+
+msgid ""
+"Group syntax reduces scope. For example, ``\\[(warning|info)\\]`` reduces "
+"choice syntax scope. The regular expression matches ``[warning]`` and "
+"``[info]``."
+msgstr ""
+"グループ構文はスコープを小さくします。例えば、 ``\\[(warning|info)\\]`` は選"
+"択構文のスコープを小さくしています。この正規表現は ``[warning]`` と "
+"``[info]`` にマッチします。"
+
+msgid ""
+"You can also use more powerful group related features. See `\"7. Extended "
+"groups\" section in Onigmo documentation <https://github.com/k-takata/Onigmo/"
+"blob/master/doc/RE#L225>`_ for details."
+msgstr ""
+"より強力なグループ関連の機能を使うこともできます。詳細は `Onigmoのドキュメン"
+"トの「7. 拡張式集合」セクション <https://github.com/k-takata/Onigmo/blob/"
+"master/doc/RE.ja#L224>`_ を参照してください。"
+
+msgid "Character class"
+msgstr "文字クラス"
+
+msgid ""
+"Character class syntax is ``[...]``. Character class is useful to specify "
+"multiple characters to be matched."
+msgstr ""
+"文字クラスの構文は ``[...]`` です。文字クラスはマッチする文字を複数指定すると"
+"きに便利です。"
+
+msgid "For example, ``[12]`` matches ``1`` or ``2``."
+msgstr "たとえば、 ``[12]`` は ``1`` または ``2`` にマッチします。"
+
+msgid ""
+"You can specify characters by range. For example, ``[0-9]`` matches one "
+"digit."
+msgstr ""
+"範囲で文字を指定することもできます。たとえば、 ``[0-9]`` は1文字の数字にマッ"
+"チします。"
+
+msgid ""
+"You can also use more powerful character class related features. See `\"6. "
+"Character class\" section in Onigmo documentation <https://github.com/k-"
+"takata/Onigmo/blob/master/doc/RE#L164>`_ for details."
+msgstr ""
+"より強力な文字クラス関連の機能も使うことができます。詳細は `Onigmoのドキュメ"
+"ントの「6. 文字集合」セクション <https://github.com/k-takata/Onigmo/blob/"
+"master/doc/RE.ja#L164>`_ を参照してください。"
+
+msgid "Anchor"
+msgstr "アンカー"
+
+msgid ""
+"There are the following commonly used anchor syntaxes. Some anchors can be "
+"evaluated by index."
+msgstr ""
+"以下はよく使われるアンカーの構文です。いくつかのアンカーはインデックスを使っ"
+"て評価できます。"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "Index ready"
+msgstr "インデックスを使えるか"
+
+msgid "The beginning of line"
+msgstr "行頭"
+
+msgid "o"
+msgstr ""
+
+msgid "The end of line"
+msgstr "行末"
+
+msgid "x"
+msgstr ""
+
+msgid "``\\A``"
+msgstr ""
+
+msgid "The beginning of text"
+msgstr "テキストの先頭"
+
+msgid "``\\z``"
+msgstr ""
+
+msgid "The end of text"
+msgstr "テキストの末尾"
+
+msgid "Here is an example that uses ``\\z``."
+msgstr "以下は ``\\z`` を使った例です。"
+
+msgid ""
+"You can also use more anchors. See `\"5. Anchors\" section in Onigmo "
+"documentation <https://github.com/k-takata/Onigmo/blob/master/doc/RE#L152>`_ "
+"for details."
+msgstr ""
+"他にも使えるアンカーがあります。詳細は `Onigmoのドキュメントの「5. 錨」セク"
+"ション <https://github.com/k-takata/Onigmo/blob/master/doc/RE.ja#L152>`_ を参"
+"照してください。"
+
+msgid ""
+"Regular expression that uses this syntax except ``\\A`` and ``\\z`` can't be "
+"evaluated by index."
+msgstr ""
+"``\\A`` と ``\\z`` 以外のアンカーを使った正規表現はインデックスを使って評価で"
+"きません。"
+
+msgid "Quantifier"
+msgstr "量指定子"
+
+msgid "There are the following commonly used quantifier syntaxes."
+msgstr "以下はよく使われる量指定子の構文です。"
+
+msgid "0 or 1 time"
+msgstr "0回か1回"
+
+msgid "0 or more times"
+msgstr "0回以上"
+
+msgid "1 or more times"
+msgstr "1回以上"
+
+msgid "For example, ``er+or`` matches ``error``, ``errror`` and so on."
+msgstr "例えば、 ``er+or`` は ``error`` 、 ``errror`` などにマッチします。"
+
+msgid ""
+"You can also use more quantifiers. See `\"4. Quantifier\" section in Onigmo "
+"documentation <https://github.com/k-takata/Onigmo/blob/master/doc/RE#L119>`_ "
+"for details."
+msgstr ""
+"他の量指定子を使うこともできます。詳細は `Onigmoのドキュメントの「4. 量指定"
+"子」セクション <https://github.com/k-takata/Onigmo/blob/master/doc/RE."
+"ja#L119>`_ を参照してください。"
+
+msgid "Others"
+msgstr "その他"
+
+msgid ""
+"There are more syntaxes. If you're interested in them, see `Onigmo "
+"documentation <https://github.com/k-takata/Onigmo/blob/master/doc/RE>`_ for "
+"details. You may be interested in \"character type\" and \"character\" "
+"syntaxes."
+msgstr ""
+"他にも構文があります。それらに興味がある場合は `Onigmoのドキュメント "
+"<https://github.com/k-takata/Onigmo/blob/master/doc/RE.ja>`_ を参照してくださ"
+"い。「文字種」や「文字」の構文に興味があるかもしれません。"

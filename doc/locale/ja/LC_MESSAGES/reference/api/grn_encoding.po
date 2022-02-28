@@ -1,0 +1,72 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "パラメータ"
+msgstr ""
+
+msgid "``grn_encoding``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "TODO..."
+msgstr "TODO..."
+
+msgid "Example"
+msgstr "例"
+
+msgid "Reference"
+msgstr "リファレンス"
+
+msgid "デフォルトのencodingを返します。"
+msgstr ""
+
+msgid "デフォルトのencodingを変更します。"
+msgstr ""
+
+msgid "変更後のデフォルトのencodingを指定します。"
+msgstr ""
+
+msgid ""
+"Returns string representation for the encoding. For example, "
+"'grn_encoding_to_string(``GRN_ENC_UTF8``)' returns '\"utf8\"'."
+msgstr ""
+"エンコーディングの形式を文字列で返します。たとえ"
+"ば'grn_encoding_to_string(``GRN_ENC_UTF8``)' は\"utf8\"を返します。"
+
+msgid "\"unknown\" is returned for invalid encoding."
+msgstr "無効なエンコーディングの場合は\"unknown\"を返します。"
+
+msgid "The encoding."
+msgstr "その時点のエンコーディング。"
+
+msgid ""
+"Parses encoding name and returns grn_encoding. For example, "
+"'grn_encoding_parse(\"UTF8\")' returns '``GRN_ENC_UTF8``'."
+msgstr ""
+"エンコーディング名をパースし、grn_encodingを返します。たとえ"
+"ば、'grn_encoding_parse(\"UTF8\")' は'``GRN_ENC_UTF8``'を返します。"
+
+msgid "``GRN_ENC_UTF8`` is returned for invalid encoding name."
+msgstr "``GRN_ENC_UTF8`` は無効なエンコーディング名が与えた時に返されます。"
+
+msgid "The encoding name."
+msgstr "エンコーディング名。"

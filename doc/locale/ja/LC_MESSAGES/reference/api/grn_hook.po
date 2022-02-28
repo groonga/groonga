@@ -1,0 +1,103 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "パラメータ"
+msgstr ""
+
+msgid "``grn_hook``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "TODO..."
+msgstr "TODO..."
+
+msgid "Example"
+msgstr "例"
+
+msgid "Reference"
+msgstr "リファレンス"
+
+msgid "objに対してhookを追加します。"
+msgstr ""
+
+msgid "対象objectを指定します。"
+msgstr ""
+
+msgid ""
+"``GRN_HOOK_GET`` は、objectの参照時に呼び出されるhookを定義します。  "
+"``GRN_HOOK_SET`` は、objectの更新時に呼び出されるhookを定義します。  "
+"``GRN_HOOK_SELECT`` は、検索処理の実行中に適時呼び出され、処理の実行状況を調"
+"べたり、実行の中断を指示することができます。"
+msgstr ""
+
+msgid "``GRN_HOOK_GET`` は、objectの参照時に呼び出されるhookを定義します。"
+msgstr ""
+
+msgid "``GRN_HOOK_SET`` は、objectの更新時に呼び出されるhookを定義します。"
+msgstr ""
+
+msgid ""
+"``GRN_HOOK_SELECT`` は、検索処理の実行中に適時呼び出され、処理の実行状況を調"
+"べたり、実行の中断を指示することができます。"
+msgstr ""
+
+msgid ""
+"hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入します。  0を指定"
+"した場合は先頭に挿入されます。-1を指定した場合は末尾に挿入されます。  object"
+"に複数のhookが定義されている場合は順位の順に呼び出されます。"
+msgstr ""
+
+msgid "hookの実行順位。offsetに対応するhookの直前に新たなhookを挿入します。"
+msgstr ""
+
+msgid ""
+"0を指定した場合は先頭に挿入されます。-1を指定した場合は末尾に挿入されます。"
+msgstr ""
+
+msgid "objectに複数のhookが定義されている場合は順位の順に呼び出されます。"
+msgstr ""
+
+msgid "手続きを指定します。"
+msgstr ""
+
+msgid "hook固有情報を指定します。"
+msgstr ""
+
+msgid "objに定義されているhookの数を返します。"
+msgstr ""
+
+msgid "hookタイプを指定します。"
+msgstr ""
+
+msgid ""
+"objに定義されているhookの手続き（proc）を返します。hook固有情報が定義されてい"
+"る場合は、その内容をdataにコピーして返します。"
+msgstr ""
+
+msgid "実行順位を指定します。"
+msgstr ""
+
+msgid "hook固有情報格納バッファを指定します。"
+msgstr ""
+
+msgid "objに定義されているhookを削除します。"
+msgstr ""

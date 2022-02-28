@@ -1,0 +1,232 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2015-03-27 23:47+0900\n"
+"Last-Translator: Kouhei Sutou <kou@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "検索"
+msgstr ""
+
+msgid ""
+":doc:`/reference/commands/select` コマンドがqueryパラメータを使ってどのように"
+"検索するのかを説明します。"
+msgstr ""
+
+msgid "検索の挙動"
+msgstr ""
+
+msgid "検索の挙動には以下の3種類あり、検索結果によって動的に使い分けています。"
+msgstr ""
+
+msgid "完全一致検索"
+msgstr ""
+
+msgid "非わかち書き検索"
+msgstr ""
+
+msgid "部分一致検索"
+msgstr ""
+
+msgid ""
+"どのように検索の挙動を使い分けているかを説明する前に、まず、それぞれの検索の"
+"挙動を説明します。"
+msgstr ""
+
+msgid ""
+"検索対象文書は複数の語彙にトークナイズ(分割)され、それぞれを単位とした語彙表"
+"に索引を管理します。 検索キーワードも同一の方法でトークナイズされます。"
+msgstr ""
+
+msgid ""
+"このとき、検索キーワードをトークナイズした結果得られる語彙の配列と同一の配列"
+"を含む文書を検索する処理を完全一致検索と呼んでいます。"
+msgstr ""
+
+msgid ""
+"たとえば、TokenMecabトークナイザを使用した索引では「東京都民」という文字列は"
+msgstr ""
+
+msgid "東京 / 都民"
+msgstr ""
+
+msgid ""
+"という二つの語彙の配列として格納されます。この索引に対して「東京都」という"
+"キーワードで検索した時、このキーワードは、"
+msgstr ""
+
+msgid "東京 / 都"
+msgstr ""
+
+msgid ""
+"という二つの語彙の配列として処理されます。この語彙の並びは、「東京 / 都民」と"
+"いう語彙の並びには一致しませんので、完全一致検索ではヒットしません。"
+msgstr ""
+
+msgid ""
+"これに対して、TokenBigramトークナイザを使用した索引では「東京都民」という文字"
+"列は"
+msgstr ""
+
+msgid "東京 / 京都 / 都民 / 民"
+msgstr ""
+
+msgid ""
+"という四つの語彙の配列として格納されます。この索引に対して「東京都」という"
+"キーワードで検索した時、このキーワードは、"
+msgstr ""
+
+msgid "東京 / 京都"
+msgstr ""
+
+msgid ""
+"という二つの語彙の配列として処理されます。この語彙の並びは、「東京 / 京都 / "
+"都民」という語彙の並びに含まれますので、完全一致検索でヒットします。"
+msgstr ""
+
+msgid ""
+"なお、TokenBigramトークナイザでは、アルファベット・数値・記号文字列については"
+"bigramを生成せず、一つの連続したトークンとして扱います。たとえば、「楽しい"
+"billiard」という文字列は、"
+msgstr ""
+
+msgid "楽し / しい / billiard"
+msgstr ""
+
+msgid ""
+"という三つの語彙の配列として格納されます。これに対して「bill」というキーワー"
+"ドで検索した時、このキーワードは、"
+msgstr ""
+
+msgid "bill"
+msgstr ""
+
+msgid ""
+"という一つの語彙として処理されます。この語彙の並びは「楽し / しい / "
+"billiard」という語彙の並びには含まれないので、完全一致でヒットしません。"
+msgstr ""
+
+msgid ""
+"これに対して、TokenBigramSplitSymbolAlphaトークナイザではアルファベット文字列"
+"についてもbigramを生成し、「楽しいbilliard」という文字列は、"
+msgstr ""
+
+msgid "楽し / しい / いb / bi / il / ll / li / ia / ar / rd / d"
+msgstr ""
+
+msgid ""
+"という十一の語彙の配列として格納されます。これに対して「bill」というキーワー"
+"ドで検索した時、このキーワードは、"
+msgstr ""
+
+msgid "bi / il / ll"
+msgstr ""
+
+msgid ""
+"という三つの語彙として処理されます。この語彙の並びは「楽し / しい / いb / "
+"bi / il / ll / li / ia / ar / rd / d」という語彙の並びに含まれるので、完全一"
+"致でヒットします。"
+msgstr ""
+
+msgid ""
+"非わかち書き検索はパトリシア木で語彙表を構築している場合のみ利用可能です。"
+msgstr ""
+
+msgid ""
+"非わかち書き検索の挙動はTokenBigramなどN-gram系のトークナイザーを利用している"
+"場合とTokenMecabトークナイザーを利用している場合で挙動が変わります。"
+msgstr ""
+
+msgid ""
+"N-gram系のトークナイザーを利用している場合はキーワードで前方一致検索をしま"
+"す。"
+msgstr ""
+
+msgid ""
+"例えば、「bill」というキーワードで検索した場合、「bill」も「billiard」もヒッ"
+"トします。"
+msgstr ""
+
+msgid ""
+"TokenMeCabトークナイザーの場合はわかち書き前のキーワードで前方一致検索をしま"
+"す。"
+msgstr ""
+
+msgid ""
+"例えば、「スープカレー」というキーワードで検索した場合、「スープカレーバー」"
+"（1単語扱い）にヒットしますが、「スープカレー」（\"スープ\"と\"カレー\"の2単"
+"語扱い）や「スープカレーライス」（\"スープ\"と\"カレーライス\"の2単語扱い）に"
+"はヒットしません。"
+msgstr ""
+
+msgid ""
+"部分一致検索はパトリシア木で語彙表を構築していて、かつ、KEY_WITH_SISオプショ"
+"ンを指定している場合のみ利用可能です。KEY_WITH_SISオプションが指定されていな"
+"い場合は非わかち書き検索と同等です。"
+msgstr ""
+
+msgid ""
+"部分一致検索の挙動はTokenBigramなどN-gram系のトークナイザーを利用している場合"
+"とTokenMecabトークナイザーを利用している場合で挙動が変わります。"
+msgstr ""
+
+msgid "Bigramの場合は前方一致検索と中間一致検索と後方一致検索を行います。"
+msgstr ""
+
+msgid ""
+"例えば、「ill」というキーワードで検索した場合、「bill」も「billiard」もヒット"
+"します。"
+msgstr ""
+
+msgid ""
+"TokenMeCabトークナイザーの場合はわかち書き後のキーワードで前方一致検索と中間"
+"一致検索と後方一致検索をします。"
+msgstr ""
+
+msgid ""
+"例えば、「スープカレー」というキーワードで検索した場合、「スープカレー」"
+"（\"スープ\"と\"カレー\"の2単語扱い）や「スープカレーライス」（\"スープ\"と"
+"\"カレーライス\"の2単語扱い）、「スープカレーバー」（1単語扱い）にもヒットし"
+"ます。"
+msgstr ""
+
+msgid "検索の使い分け"
+msgstr ""
+
+msgid ""
+"Groongaは基本的に完全一致検索のみを行います。完全一致検索でのヒット件数が所定"
+"の閾値以下の場合に限り、非わかち書き検索を行い、それでもヒット件数が閾値以下"
+"の場合は部分一致検索を行います。（閾値のデフォルト値は0です。）"
+msgstr ""
+
+msgid ""
+"ただし、すでに検索結果セットが存在する場合はたとえヒット件数が閾値以下でも完"
+"全一致検索のみを行います。"
+msgstr ""
+
+msgid ""
+"例えば、以下のようなクエリの場合は、それぞれの検索でヒット件数が閾値以下の場"
+"合は完全一致検索、非わかち書き検索、部分一致検索を順に行います。::"
+msgstr ""
+
+msgid ""
+"しかし、以下のように全文検索を行う前に検索結果セットが存在する場合は完全一致"
+"検索のみを行います。（point > 3で閾値の件数よりヒットしている場合）::"
+msgstr ""
+
+msgid ""
+"そのため、descriptionに「スープカレーライス」が含まれていても、「スープカレー"
+"ライス」は「スープカレー」に完全一致しないのでヒットしません。"
+msgstr ""

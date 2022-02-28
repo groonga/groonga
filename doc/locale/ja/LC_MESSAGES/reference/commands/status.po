@@ -1,0 +1,234 @@
+# -*- po -*-
+# Japanese translations for 1.2.1 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.1\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-POOTLE-MTIME: 1411061943.000000\n"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "``status``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid ""
+"``status`` returns the current status of the context that processes the "
+"request."
+msgstr ""
+"``status`` はこのリクエストを処理しているコンテキストの現在のステータスを返し"
+"ます。"
+
+msgid ""
+"Context is an unit that processes requests. Normally, context is created for "
+"each thread."
+msgstr ""
+"コンテキストはリクエストを処理する単位です。通常、各スレッドごとにコンテキス"
+"トを作ります。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "This command takes no parameters::"
+msgstr "このコマンドに引数はありません::"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here is a simple example:"
+msgstr "以下は簡単な使用例です。"
+
+msgid ""
+"It returns the current status of the context that processes the request. "
+"See :ref:`status-return-value` for details."
+msgstr ""
+"このリクエストを処理しているコンテキストの現在のステータスを返します。詳細"
+"は :ref:`status-return-value` を参照してください。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "This section describes all parameters."
+msgstr "このセクションではすべての引数について説明します。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "There is no required parameter."
+msgstr "必須の引数はありません。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "There is no optional parameter."
+msgstr "省略可能な引数はありません。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "The command returns the current status as an object::"
+msgstr "このコマンドはオブジェクトとして現在のステータスを返します。::"
+
+msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
+msgstr ""
+"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
+"さい。"
+
+msgid ""
+"Here are descriptions about values. See :ref:`status-usage` for real values:"
+msgstr ""
+"以下は値の説明です。実際の値は :ref:`status-usage` を参照してください。"
+
+msgid "Key"
+msgstr "キー"
+
+msgid "Description"
+msgstr "説明"
+
+msgid "Example"
+msgstr "例"
+
+msgid "``alloc_count``"
+msgstr ""
+
+msgid ""
+"The number of allocated memory blocks that aren't freed.  If this value is "
+"continuously increased, there may be a memory leak."
+msgstr ""
+"まだ解放されていないメモリーブロックの数です。もし、この値が継続的に増えて"
+"いっているならメモリーリークがあるかもしれません。"
+
+msgid "``1400``"
+msgstr ""
+
+msgid "``cache_hit_rate``"
+msgstr ""
+
+msgid ""
+"Percentage of cache used responses in the Groonga process. If there are 10 "
+"requests and 7 responses are created from cache, ``cache_hit_rate`` is "
+"``70.0``. The percentage is computed from only requests that use commands "
+"that support cache."
+msgstr ""
+"このGroongaプロセスがキャッシュを使って返したレスポンスの割合です。もし、10リ"
+"クエストのうち7つのレスポンスはキャッシュを使ったなら、 ``cache_hit_rate`` "
+"は ``70.0`` になります。この割合はキャッシュをサポートしているコマンドを使っ"
+"たリクエストのみで計算します。"
+
+msgid "Here are commands that support cache:"
+msgstr "以下はキャッシュをサポートしているコマンドです。"
+
+msgid ":doc:`select`"
+msgstr ""
+
+msgid ":doc:`logical_select`"
+msgstr ""
+
+msgid ":doc:`logical_range_filter`"
+msgstr ""
+
+msgid ":doc:`logical_count`"
+msgstr ""
+
+msgid "``29.4``"
+msgstr ""
+
+msgid "``command_version``"
+msgstr ""
+
+msgid ""
+"The :doc:`/reference/command/command_version` that is used by the context."
+msgstr ""
+"このコンテキストが使っている :doc:`/reference/command/command_version` です。"
+
+msgid "``1``"
+msgstr ""
+
+msgid "``default_command_version``"
+msgstr ""
+
+msgid ""
+"The default :doc:`/reference/command/command_version` of the Groonga process."
+msgstr ""
+"このGroongaプロセスのデフォルト :doc:`/reference/command/command_version` で"
+"す。"
+
+msgid "``max_command_version``"
+msgstr ""
+
+msgid ""
+"The max :doc:`/reference/command/command_version` of the Groonga process."
+msgstr ""
+"このGroongaプロセスがサポートしている最大 :doc:`/reference/command/"
+"command_version` です。"
+
+msgid "``2``"
+msgstr ""
+
+msgid "``n_queries``"
+msgstr ""
+
+msgid ""
+"The number of requests processed by the Groonga process. It counts only "
+"requests that use commands that support cache."
+msgstr ""
+"このGroongaプロセスが処理したリクエスト数です。ただし、キャッシュをサポートし"
+"たコマンドを使ったリクエストだけを数えます。"
+
+msgid "``29``"
+msgstr ""
+
+msgid "``start_time``"
+msgstr ""
+
+msgid "The time that the Groonga process started in UNIX time."
+msgstr "このGroongaプロセスが起動した時間です。UNIX時間です。"
+
+msgid "``1441761403``"
+msgstr ""
+
+msgid "``starttime``"
+msgstr ""
+
+msgid "Use ``start_time`` instead."
+msgstr "代わりに ``start_time`` を使ってください。"
+
+msgid "``uptime``"
+msgstr ""
+
+msgid "The elapsed time since the Groonga process started in second."
+msgstr "このGroongaプロセスが起動してから経過した時間です。単位は秒です。"
+
+msgid ""
+"For example, ``216639`` means that ``2.5`` (= ``216639 / 60 / 60 / 24 = "
+"2.507``) days."
+msgstr ""
+"たとえば、 ``216639`` は ``2.5`` （= ``216639 / 60 / 60 / 24 = 2.507`` ）日と"
+"いう意味です。"
+
+msgid "``216639``"
+msgstr ""
+
+msgid "``version``"
+msgstr ""
+
+msgid "The version of the Groonga process."
+msgstr "このGroongaプロセスのバージョンです。"
+
+msgid "``5.0.7``"
+msgstr ""
