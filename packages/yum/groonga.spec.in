@@ -106,7 +106,6 @@ Requires:	%{name}-server-common = %{version}-%{release}
 Requires:	curl
 Requires(pre):	shadow-utils
 %systemd_requires
-Conflicts:	%{name}-httpd
 
 %description server-http
 This package contains the Groonga HTTP server
@@ -117,7 +116,6 @@ Group:		Applications/Text
 License:	LGPLv2 and BSD
 Requires:	%{name}-server-common = %{version}-%{release}
 %systemd_requires
-Conflicts:	%{name}-server-http
 
 %description httpd
 This package contains the Groonga HTTP server. It has
