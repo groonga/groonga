@@ -3836,6 +3836,10 @@ typedef struct {
       int32_t max_interval;
       int32_t additional_last_interval;
       grn_obj *max_element_intervals;
+/* near is defined by Visual C++. */
+#ifdef near
+# undef near
+#endif
     } near;
     struct {
       int32_t policy;
