@@ -84,14 +84,10 @@ CMakeFiles
 /doc/locale/*/*-stamp
 /doc/locale/*/doctrees/
 /doc/locale/*/html/
-/doc/locale/*/LC_MESSAGES/*.mo
-/doc/locale/*/LC_MESSAGES/*.pot
-/doc/locale/*/LC_MESSAGES/*.edit
 /doc/locale/*/LC_MESSAGES/doctrees/
 /doc/locale/*/LC_MESSAGES/pot-build-stamp
 /doc/locale/*/LC_MESSAGES/edit-po-build-stamp
 /doc/locale/*/LC_MESSAGES/mo-build-stamp
-/doc/locale/en/LC_MESSAGES/*.po
 /doc/commands_not_implemented/
 /doc/sphinx/
 /lib/icudump
