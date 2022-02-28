@@ -3856,8 +3856,7 @@ parse_near_options(efs_info *q,
                    parse_query_op_data *data)
 {
   const char *end;
-  data->options.near.max_interval =
-    grn_atoi(start, q->str_end, (const char **)&end);
+  data->options.near.max_interval = grn_atoi(start, q->str_end, &end);
   if (start == end) {
     data->options.near.max_interval = DEFAULT_MAX_INTERVAL;
     data->options.near.additional_last_interval =
@@ -3872,7 +3871,7 @@ parse_near_options(efs_info *q,
       data->options.near.additional_last_interval =
         grn_atoi(additional_last_interval_start,
                  q->str_end,
-                 (const char **)&end);
+                 &end);
       if (additional_last_interval_start == end) {
         data->options.near.additional_last_interval =
           DEFAULT_ADDITIONAL_LAST_INTERVAL;
@@ -3894,7 +3893,7 @@ parse_near_options(efs_info *q,
       int32_t max_element_interval =
         grn_atoi(max_element_interval_start,
                  q->str_end,
-                 (const char **)&end);
+                 &end);
       if (max_element_interval_start == end) {
         break;
       }
