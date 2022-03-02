@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1097,9 +1097,9 @@ grn_pat_next_location(grn_ctx *ctx,
   if (PAT_CHECK_IS_TERMINATED(check)) {
     /* check + 1: delete terminated flag and increment bit differences */
     if (check + 1 < check_max) {
-      return &(node->lr[1]);
+      return &(node->lr[DIRECTION_RIGHT]);
     } else {
-      return &(node->lr[0]);
+      return &(node->lr[DIRECTION_LEFT]);
     }
   } else {
     return &(node->lr[nth_bit(key, check)]);
