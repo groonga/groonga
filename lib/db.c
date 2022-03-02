@@ -344,9 +344,7 @@ grn_db_wal_recover_keys(grn_ctx *ctx, grn_db *db)
 {
   const char *tag = grn_db_wal_recover_tag;
 
-  GRN_LOG(ctx, GRN_LOG_NOTICE,
-          "%s rebuild broken DB keys",
-          tag);
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "%s rebuild broken DB keys", tag);
 
   bool success = false;
 
@@ -1003,6 +1001,8 @@ static void
 grn_db_wal_recover_remove_recovering_objects(grn_ctx *ctx,
                                              grn_db *db)
 {
+  const char *tag = grn_db_wal_recover_tag;
+
   GRN_TABLE_EACH_BEGIN_MIN(ctx,
                            db->keys,
                            cursor,
@@ -1013,6 +1013,15 @@ grn_db_wal_recover_remove_recovering_objects(grn_ctx *ctx,
     grn_ctx_push_temporary_open_space(ctx);
     grn_obj *object = grn_ctx_at(ctx, id);
     if (object) {
+      if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+        GRN_DEFINE_NAME(object);
+        GRN_LOG(ctx,
+                GRN_LOG_DEBUG,
+                "%s remove recovering object: <%.*s>(%u)",
+                tag,
+                name_size, name,
+                DB_OBJ(object)->id);
+      }
       grn_obj_remove(ctx, object);
     }
     grn_ctx_pop_temporary_open_space(ctx);
@@ -1027,7 +1036,9 @@ grn_db_wal_recover_copy_table(grn_ctx *ctx,
   GRN_DEFINE_NAME(table);
   GRN_LOG(ctx, GRN_LOG_NOTICE,
           "%s rebuild broken table: <%.*s>(%u)",
-          grn_db_wal_recover_tag, name_size, name, DB_OBJ(table)->id);
+          grn_db_wal_recover_tag,
+          name_size, name,
+          DB_OBJ(table)->id);
   grn_obj new_name;
   GRN_TEXT_INIT(&new_name, 0);
   grn_text_printf(ctx, &new_name,
@@ -1055,11 +1066,13 @@ grn_db_wal_recover_copy_data_column(grn_ctx *ctx,
   if (grn_obj_have_source(ctx, column)) {
     return;
   }
-  {
+  if (grn_logger_pass(ctx, GRN_LOG_NOTICE)) {
     GRN_DEFINE_NAME(column);
     GRN_LOG(ctx, GRN_LOG_NOTICE,
             "%s rebuild broken column: <%.*s>(%u)",
-            grn_db_wal_recover_tag, name_size, name, DB_OBJ(column)->id);
+            grn_db_wal_recover_tag,
+            name_size, name,
+            DB_OBJ(column)->id);
   }
   char name[GRN_TABLE_MAX_KEY_SIZE];
   int name_size = grn_column_name(ctx, column, name, sizeof(name));
@@ -1200,7 +1213,7 @@ grn_db_wal_recover_copy_auto_generated_column(grn_ctx *ctx,
   if (!grn_obj_have_source(ctx, column)) {
     return;
   }
-  {
+  if (grn_logger_pass(ctx, GRN_LOG_NOTICE)) {
     GRN_DEFINE_NAME(column);
     GRN_LOG(ctx, GRN_LOG_NOTICE,
             "%s rebuild broken column: <%.*s>(%u)",
@@ -1293,7 +1306,7 @@ grn_db_wal_recover_rename_column(grn_ctx *ctx,
                     new_column,
                     column_name + strlen(recovering_name_prefix),
                     column_name_size - strlen(recovering_name_prefix));
-  {
+  if (grn_logger_pass(ctx, GRN_LOG_NOTICE)) {
     GRN_DEFINE_NAME(new_column);
     GRN_LOG(ctx, GRN_LOG_NOTICE,
             "%s succeeded to rebuild broken column: <%.*s>(%u)",
@@ -1443,13 +1456,32 @@ grn_db_wal_recover_copy_rename(grn_ctx *ctx,
   grn_id_map_close(ctx, id_map);
 }
 
+static bool
+grn_db_wal_recover_is_target_object(grn_ctx *ctx, grn_obj *object)
+{
+  if (!object) {
+    return false;
+  }
+
+  if (grn_obj_is_table(ctx, object)) {
+    return true;
+  }
+  if (grn_obj_is_column(ctx, object)) {
+    return true;
+  }
+  return false;
+}
+
 void
 grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
 {
+  const char *tag = grn_db_wal_recover_tag;
+
   if (GRN_CTX_GET_WAL_ROLE(ctx) != GRN_WAL_ROLE_PRIMARY) {
     return;
   }
 
+  GRN_LOG(ctx, GRN_LOG_DEBUG, "%s recover DB keys", tag);
   switch (db->keys->header.type) {
   case GRN_TABLE_PAT_KEY :
     grn_pat_wal_recover(ctx, (grn_pat *)(db->keys));
@@ -1468,12 +1500,15 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
     }
   }
 
+  GRN_LOG(ctx, GRN_LOG_DEBUG, "%s recover DB specs", tag);
   grn_ja_wal_recover(ctx, db->specs);
   ERRCLR(ctx);
 
+  GRN_LOG(ctx, GRN_LOG_DEBUG, "%s recover DB config", tag);
   grn_hash_wal_recover(ctx, db->config);
   ERRCLR(ctx);
 
+  GRN_LOG(ctx, GRN_LOG_DEBUG, "%s recover DB options", tag);
   grn_options_wal_recover(ctx, db->options);
   ERRCLR(ctx);
 
@@ -1488,9 +1523,19 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
 
     grn_ctx_push_temporary_open_space(ctx);
     grn_obj *object = grn_ctx_at(ctx, id);
-    if (object) {
+    if (grn_db_wal_recover_is_target_object(ctx, object)) {
       bool is_table = false;
       bool is_column = false;
+      if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+        GRN_DEFINE_NAME(object);
+        GRN_LOG(ctx,
+                GRN_LOG_DEBUG,
+                "%s recover %s: <%.*s>(%u)",
+                tag,
+                grn_obj_type_to_string(object->header.type),
+                name_size, name,
+                DB_OBJ(object)->id);
+      }
       switch (object->header.type) {
       case GRN_TABLE_HASH_KEY :
         is_table = true;
@@ -1523,7 +1568,28 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
       default :
         break;
       }
-      if (ctx->rc != GRN_SUCCESS) {
+      if (ctx->rc == GRN_SUCCESS) {
+        if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+          GRN_DEFINE_NAME(object);
+          GRN_LOG(ctx,
+                  GRN_LOG_DEBUG,
+                  "%s succeeded to recover %s: <%.*s>(%u)",
+                  tag,
+                  grn_obj_type_to_string(object->header.type),
+                  name_size, name,
+                  DB_OBJ(object)->id);
+        }
+      } else {
+        if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+          GRN_DEFINE_NAME(object);
+          GRN_LOG(ctx,
+                  GRN_LOG_DEBUG,
+                  "%s failed to recover %s: <%.*s>(%u)",
+                  tag,
+                  grn_obj_type_to_string(object->header.type),
+                  name_size, name,
+                  DB_OBJ(object)->id);
+        }
         if (is_table) {
           grn_broken_ids_add(ctx, broken_table_ids, id);
         } else if (is_column) {
@@ -1531,6 +1597,8 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
         }
         ERRCLR(ctx);
       }
+    }
+    if (object) {
       grn_obj_unref(ctx, object);
     }
     grn_ctx_pop_temporary_open_space(ctx);
