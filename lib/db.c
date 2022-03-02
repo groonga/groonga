@@ -1623,6 +1623,8 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
   grn_broken_ids_close(ctx, broken_column_ids);
 
   grn_db_wal_recover_remove_recovering_objects(ctx, db);
+
+  GRN_LOG(ctx, GRN_LOG_DEBUG, "%s recovered", tag);
 }
 
 #define GRN_TYPE_FLOAT32_NAME "Float32"
