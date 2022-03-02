@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -183,11 +183,11 @@ typedef struct {
   grn_wal_segment_type segment_type;
   uint32_t segment_info;
   uint32_t garbage_segment;
+  uint32_t previous_garbage_segment;
+  uint32_t next_garbage_segment;
   uint32_t garbage_segment_head;
   uint32_t garbage_segment_tail;
   uint32_t garbage_segment_n_records;
-  uint32_t previous_garbage_segment;
-  uint32_t next_garbage_segment;
   grn_id next_garbage_record_id;
   uint32_t n_garbages;
   uint32_t n_entries;
