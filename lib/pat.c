@@ -1736,7 +1736,7 @@ grn_pat_add_internal_find(grn_ctx *ctx,
   pat_node *node;
   PAT_AT(pat, id, node);
   grn_id *id_location_previous = NULL;
-  grn_id *id_location = &(node->lr[1]);
+  grn_id *id_location = &(node->lr[DIRECTION_RIGHT]);
   data->wal_data.record_direction = DIRECTION_RIGHT;
   grn_pat_wal_add_entry_data_set_record_direction(ctx,
                                                   &(data->wal_data),
