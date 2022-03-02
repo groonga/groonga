@@ -1927,11 +1927,11 @@ grn_pat_enable_node(grn_ctx *ctx,
        * delete terminated flag and increment bit differences */
       (check + 1 < check_max) :
       nth_bit(key, check)) {
-    node->lr[1] = id;
-    node->lr[0] = *parent_id_location;
+    node->lr[DIRECTION_RIGHT] = id;
+    node->lr[DIRECTION_LEFT] = *parent_id_location;
   } else {
-    node->lr[1] = *parent_id_location;
-    node->lr[0] = id;
+    node->lr[DIRECTION_RIGHT] = *parent_id_location;
+    node->lr[DIRECTION_LEFT] = id;
   }
   // smp_wmb();
   *parent_id_location = id;
