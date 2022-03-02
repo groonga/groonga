@@ -169,6 +169,7 @@ typedef struct {
   uint32_t delete_info_phase1_index;
   uint32_t delete_info_phase2_index;
   uint32_t delete_info_phase3_index;
+  grn_id previous_record_id;
 } grn_pat_wal_add_entry_data;
 
 typedef struct {
@@ -195,6 +196,7 @@ typedef struct {
   bool delete_info_phase1_index;
   bool delete_info_phase2_index;
   bool delete_info_phase3_index;
+  bool previous_record_id;
 } grn_pat_wal_add_entry_used;
 
 static grn_rc
@@ -210,6 +212,7 @@ grn_pat_wal_add_entry_add_entry(grn_ctx *ctx,
   used->check = true;
   used->parent_record_id = true;
   used->n_entries = true;
+  used->previous_record_id = true;
   const void *key = data->key;
   size_t key_size = data->key_size;
   uint32_t record_direction = data->record_direction;
@@ -253,6 +256,10 @@ grn_pat_wal_add_entry_add_entry(grn_ctx *ctx,
                            GRN_WAL_VALUE_UINT32,
                            data->n_entries,
 
+                           GRN_WAL_KEY_PREVIOUS_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->previous_record_id,
+
                            GRN_WAL_KEY_END);
 }
 
@@ -269,6 +276,7 @@ grn_pat_wal_add_entry_add_shared_entry(grn_ctx *ctx,
   used->check = true;
   used->parent_record_id = true;
   used->n_entries = true;
+  used->previous_record_id = true;
   const void *key = data->key;
   size_t key_size = data->key_size;
   uint32_t check = data->check;
@@ -312,6 +320,10 @@ grn_pat_wal_add_entry_add_shared_entry(grn_ctx *ctx,
                            GRN_WAL_VALUE_UINT32,
                            data->n_entries,
 
+                           GRN_WAL_KEY_PREVIOUS_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->previous_record_id,
+
                            GRN_WAL_KEY_END);
 }
 
@@ -329,6 +341,7 @@ grn_pat_wal_add_entry_reuse_entry(grn_ctx *ctx,
   used->next_garbage_record_id = true;
   used->n_garbages = true;
   used->n_entries = true;
+  used->previous_record_id = true;
   const void *key = data->key;
   size_t key_size = data->key_size;
   uint32_t record_direction = data->record_direction;
@@ -375,6 +388,10 @@ grn_pat_wal_add_entry_reuse_entry(grn_ctx *ctx,
                            GRN_WAL_KEY_N_ENTRIES,
                            GRN_WAL_VALUE_UINT32,
                            data->n_entries,
+
+                           GRN_WAL_KEY_PREVIOUS_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->previous_record_id,
 
                            GRN_WAL_KEY_END);
 }
@@ -394,6 +411,7 @@ grn_pat_wal_add_entry_reuse_shared_entry(grn_ctx *ctx,
   used->next_garbage_record_id = true;
   used->n_garbages = true;
   used->n_entries = true;
+  used->previous_record_id = true;
   const void *key = data->key;
   size_t key_size = data->key_size;
   uint32_t check = data->check;
@@ -444,6 +462,10 @@ grn_pat_wal_add_entry_reuse_shared_entry(grn_ctx *ctx,
                            GRN_WAL_KEY_N_ENTRIES,
                            GRN_WAL_VALUE_UINT32,
                            data->n_entries,
+
+                           GRN_WAL_KEY_PREVIOUS_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->previous_record_id,
 
                            GRN_WAL_KEY_END);
 }
@@ -808,6 +830,12 @@ grn_pat_wal_add_entry_format_deatils(grn_ctx *ctx,
                     "delete-info-phase3-index:%u ",
                     data->delete_info_phase3_index);
   }
+  if (used->previous_record_id) {
+    grn_text_printf(ctx,
+                    details,
+                    "previous-record-id:%u ",
+                    data->previous_record_id);
+  }
 }
 
 grn_inline static grn_rc
@@ -899,6 +927,7 @@ grn_pat_wal_add_entry_data_set_record_direction(
   } else {
     data->record_direction = DIRECTION_RIGHT;
   }
+  data->previous_record_id = *id_location;
 }
 
 /* bit operation */
@@ -1854,6 +1883,7 @@ grn_pat_add_internal_find(grn_ctx *ctx,
         data->wal_data.record_direction = data->wal_data.parent_record_direction;
         data->wal_data.parent_record_id = data->wal_data.grandparent_record_id;
         id = id_previous;
+        data->wal_data.previous_record_id = id_previous;
         id_location = id_location_previous;
       } else {
         id = GRN_ID_NIL;
@@ -5238,6 +5268,7 @@ grn_pat_wal_recover_add_entry(grn_ctx *ctx,
   }
   grn_id *id_location =
     &(parent_node->lr[entry->record_direction]);
+  *id_location = entry->previous_record_id;
   uint16_t check_max =
     PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
   grn_pat_add_node(ctx,
@@ -5281,6 +5312,7 @@ grn_pat_wal_recover_add_shared_entry(grn_ctx *ctx,
   }
   grn_id *id_location =
     &(parent_node->lr[entry->record_direction]);
+  *id_location = entry->previous_record_id;
   uint16_t check_max =
     PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
   grn_pat_add_shared_node(ctx,
@@ -5328,6 +5360,7 @@ grn_pat_wal_recover_reuse_entry(grn_ctx *ctx,
   }
   grn_id *id_location =
     &(parent_node->lr[entry->record_direction]);
+  *id_location = entry->previous_record_id;
   uint16_t check_max =
     PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
   grn_pat_reuse_node(ctx,
@@ -5371,6 +5404,7 @@ grn_pat_wal_recover_reuse_shared_entry(grn_ctx *ctx,
   }
   grn_id *id_location =
     &(parent_node->lr[entry->record_direction]);
+  *id_location = entry->previous_record_id;
   uint16_t check_max =
     PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
   pat->header->n_garbages = entry->n_garbages;
@@ -5384,7 +5418,7 @@ grn_pat_wal_recover_reuse_shared_entry(grn_ctx *ctx,
                             entry->shared_key_offset,
                             entry->check,
                             check_max,
-                            parent_id_location);
+                            id_location);
 }
 
 static void

@@ -104,6 +104,7 @@ typedef enum {
   GRN_WAL_KEY_DELETE_INFO_PHASE1_INDEX,
   GRN_WAL_KEY_DELETE_INFO_PHASE2_INDEX,
   GRN_WAL_KEY_DELETE_INFO_PHASE3_INDEX,
+  GRN_WAL_KEY_PREVIOUS_RECORD_ID,
 } grn_wal_key;
 
 const char *
@@ -198,6 +199,7 @@ typedef struct {
   uint32_t delete_info_phase1_index;
   uint32_t delete_info_phase2_index;
   uint32_t delete_info_phase3_index;
+  grn_id previous_record_id;
 } grn_wal_reader_entry;
 
 uint64_t

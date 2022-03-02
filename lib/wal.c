@@ -254,6 +254,9 @@ grn_wal_key_to_string(grn_wal_key key)
   case GRN_WAL_KEY_DELETE_INFO_PHASE3_INDEX :
     string = "delete-info-phase3-index";
     break;
+  case GRN_WAL_KEY_PREVIOUS_RECORD_ID :
+    string = "previous-record-id";
+    break;
   }
   return string;
 }
@@ -1288,6 +1291,12 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
                         entry->delete_info_phase3_index);
       }
       break;
+    case GRN_WAL_KEY_PREVIOUS_RECORD_ID :
+      entry->previous_record_id = value->via.u64;
+      if (need_log) {
+        grn_text_printf(ctx, &dump_buffer, "%u", entry->previous_record_id);
+      }
+      break;
     default :
       grn_obj_set_error(ctx,
                         reader->obj,
@@ -1377,6 +1386,7 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       "delete-info-phase1-index:%u "
       "delete-info-phase2-index:%u "
       "delete-info-phase3-index:%u "
+      "previous-record-id:%u "
       "path:<%s>",
       tag,
       name_size, name,
@@ -1427,6 +1437,7 @@ grn_wal_set_recover_error(grn_ctx *ctx,
       entry->delete_info_phase1_index,
       entry->delete_info_phase2_index,
       entry->delete_info_phase3_index,
+      entry->previous_record_id,
       path);
 }
 
