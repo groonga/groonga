@@ -115,11 +115,13 @@ module Groonga
         attr_reader :large_shard_threshold
         attr_reader :time_classify_types
         attr_reader :result_sets
-        attr_reader :referred_objects
+
         def initialize(input)
           @input = input
           @use_range_index = parse_use_range_index(@input[:use_range_index])
-          @enumerator = LogicalEnumerator.new("logical_range_filter", @input)
+          @enumerator = LogicalEnumerator.new("logical_range_filter", 
+                                              @input,
+                                              {:unref_immediately => true})
           @order = parse_order(@input, :order)
           @filter = @input[:filter]
           @offset = (@input[:offset] || 0).to_i
@@ -141,23 +143,29 @@ module Groonga
 
           @time_classify_types = detect_time_classify_types
 
-          @referred_objects = []
+          @referred_objects_stack = []
         end
 
         def temporary_tables
           @temporary_tables_stack.last
         end
 
+        def referred_objects
+          @referred_objects_stack.last
+        end
+
         def push
           @temporary_tables_stack << []
+          @referred_objects_stack << []
         end
 
         def shift
           temporary_tables = @temporary_tables_stack.shift
-          temporary_tables.each do |table|
-            table.close
-          end
+          temporary_tables.each(&:close)
           temporary_tables.clear
+          referred_objects = @referred_objects_stack.shift
+          referred_objects.each(&:unref)
+          referred_objects.clear
         end
 
         def close
@@ -165,7 +173,6 @@ module Groonga
             shift
           end
           @result_sets.clear
-          @referred_objects.each(&:unref)
           @enumerator.unref
         end
 
@@ -259,7 +266,10 @@ module Groonga
           first_shard = nil
           have_result_set = false
           each_shard_executor do |shard_executor|
-            first_shard ||= shard_executor.shard
+            if first_shard.nil?
+              first_shard = shard_executor.shard.copy
+              @context.referred_objects << first_shard
+            end
             shard_executor.execute
             @context.consume_result_sets do |result_set|
               have_result_set = true
@@ -292,33 +302,39 @@ module Groonga
         def each_shard_executor(&block)
           enumerator = @context.enumerator
           target_range = enumerator.target_range
-          if @context.order == :descending
-            each_method = :reverse_each
-          else
-            each_method = :each
-          end
           if @context.need_look_ahead?
+            if @context.order == :descending
+              each_method = :reverse_each_with_index
+            else
+              each_method = :each_with_index
+            end
+            last_index = enumerator.size - 1
             executors = []
             previous_executor = nil
-            enumerator.send(each_method) do |shard, shard_range|
+            is_first_executor = true
+            enumerator.send(each_method) do |shard, shard_range, i|
               @context.push
               current_executor = ShardExecutor.new(@context, shard, shard_range)
               if previous_executor
                 previous_executor.next_executor = current_executor
                 current_executor.previous_executor = previous_executor
-                executors << previous_executor
+                yield(previous_executor)
+                @context.shift unless is_first_executor
+                is_first_executor &&= false
               end
               previous_executor = current_executor
-            end
-            executors << previous_executor if previous_executor
-            return if executors.empty?
-            executors.each_with_index do |executor, i|
-              yield(executor)
-              # Keep the previous data for window function
-              @context.shift if i > 0
-            end
-            @context.shift
+              if i >= last_index
+                yield(previous_executor)
+                @context.shift
+                @context.shift unless is_first_executor
+              end
+            end            
           else
+            if @context.order == :descending
+              each_method = :reverse_each
+            else
+              each_method = :each
+            end
             enumerator.send(each_method) do |shard, shard_range|
               @context.push
               yield(ShardExecutor.new(@context, shard, shard_range))
