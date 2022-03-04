@@ -5573,67 +5573,74 @@ grn_pat_wal_recover_delete_entry(grn_ctx *ctx,
 grn_rc
 grn_pat_wal_recover(grn_ctx *ctx, grn_pat *pat)
 {
-  if (pat->io->path[0] == '\0') {
-    return GRN_SUCCESS;
+  if (ctx->rc != GRN_SUCCESS) {
+    return ctx->rc;
   }
 
   const char *wal_error_tag = "[pat]";
   const char *tag = "[pat][recover]";
   grn_wal_reader *reader = grn_wal_reader_open(ctx, (grn_obj *)pat, tag);
-  if (!reader) {
+  if (ctx->rc != GRN_SUCCESS) {
     return ctx->rc;
   }
 
-  grn_io_clear_lock(pat->io);
-
-  while (true) {
-    grn_wal_reader_entry entry = {0};
-    grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &entry);
-    if (rc != GRN_SUCCESS) {
-      break;
-    }
-    switch (entry.event) {
-    case GRN_WAL_EVENT_ADD_ENTRY :
-      grn_pat_wal_recover_add_entry(ctx, pat, &entry, tag, wal_error_tag);
-      break;
-    case GRN_WAL_EVENT_ADD_SHARED_ENTRY :
-      grn_pat_wal_recover_add_shared_entry(ctx, pat, &entry, wal_error_tag);
-      break;
-    case GRN_WAL_EVENT_REUSE_ENTRY :
-      grn_pat_wal_recover_reuse_entry(ctx, pat, &entry, tag, wal_error_tag);
-      break;
-    case GRN_WAL_EVENT_REUSE_SHARED_ENTRY :
-      grn_pat_wal_recover_reuse_shared_entry(ctx, pat, &entry, wal_error_tag);
-      break;
-    case GRN_WAL_EVENT_DELETE_INFO_PHASE1 :
-      grn_pat_wal_recover_delete_info_phase1(ctx, pat, &entry, wal_error_tag);
-      break;
-    case GRN_WAL_EVENT_DELETE_INFO_PHASE2 :
-      grn_pat_wal_recover_delete_info_phase2(ctx, pat, &entry, wal_error_tag);
-      break;
-    case GRN_WAL_EVENT_DELETE_INFO_PHASE3 :
-      grn_pat_wal_recover_delete_info_phase3(ctx, pat, &entry, wal_error_tag);
-      break;
-    case GRN_WAL_EVENT_DELETE_ENTRY :
-      grn_pat_wal_recover_delete_entry(ctx, pat, &entry, wal_error_tag);
-      break;
-    default :
-      grn_wal_set_recover_error(ctx,
-                                GRN_FUNCTION_NOT_IMPLEMENTED,
-                                (grn_obj *)pat,
-                                &entry,
-                                wal_error_tag,
-                                "not implemented yet");
-      break;
-    }
-    if (ctx->rc != GRN_SUCCESS) {
-      break;
-    }
-    pat->header->wal_id = entry.id;
+  bool need_flush = false;
+  if (grn_io_is_locked(pat->io)) {
+    grn_io_clear_lock(pat->io);
+    need_flush = true;
   }
-  grn_wal_reader_close(ctx, reader);
 
-  if (ctx->rc == GRN_SUCCESS) {
+  if (reader) {
+    while (true) {
+      grn_wal_reader_entry entry = {0};
+      grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &entry);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+      switch (entry.event) {
+      case GRN_WAL_EVENT_ADD_ENTRY :
+        grn_pat_wal_recover_add_entry(ctx, pat, &entry, tag, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_ADD_SHARED_ENTRY :
+        grn_pat_wal_recover_add_shared_entry(ctx, pat, &entry, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_REUSE_ENTRY :
+        grn_pat_wal_recover_reuse_entry(ctx, pat, &entry, tag, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_REUSE_SHARED_ENTRY :
+        grn_pat_wal_recover_reuse_shared_entry(ctx, pat, &entry, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_DELETE_INFO_PHASE1 :
+        grn_pat_wal_recover_delete_info_phase1(ctx, pat, &entry, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_DELETE_INFO_PHASE2 :
+        grn_pat_wal_recover_delete_info_phase2(ctx, pat, &entry, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_DELETE_INFO_PHASE3 :
+        grn_pat_wal_recover_delete_info_phase3(ctx, pat, &entry, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_DELETE_ENTRY :
+        grn_pat_wal_recover_delete_entry(ctx, pat, &entry, wal_error_tag);
+        break;
+      default :
+        grn_wal_set_recover_error(ctx,
+                                  GRN_FUNCTION_NOT_IMPLEMENTED,
+                                  (grn_obj *)pat,
+                                  &entry,
+                                  wal_error_tag,
+                                  "not implemented yet");
+        break;
+      }
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+      pat->header->wal_id = entry.id;
+      need_flush = true;
+    }
+    grn_wal_reader_close(ctx, reader);
+  }
+
+  if (need_flush && ctx->rc == GRN_SUCCESS) {
     grn_obj_touch(ctx, (grn_obj *)pat, NULL);
     grn_obj_flush(ctx, (grn_obj *)pat);
   }

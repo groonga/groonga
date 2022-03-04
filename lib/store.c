@@ -448,34 +448,44 @@ grn_ra_set_value(grn_ctx *ctx,
 grn_rc
 grn_ra_wal_recover(grn_ctx *ctx, grn_ra *ra)
 {
-  const char *tag = "[ra][recover]";
-  grn_wal_reader *reader = grn_wal_reader_open(ctx, (grn_obj *)ra, tag);
-  if (!reader) {
+  if (ctx->rc != GRN_SUCCESS) {
     return ctx->rc;
   }
 
-  grn_io_clear_lock(ra->io);
-
-  while (true) {
-    grn_wal_reader_entry entry = {0};
-    grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &entry);
-    if (rc != GRN_SUCCESS) {
-      break;
-    }
-    grn_ra_set_value_raw(ctx,
-                         ra,
-                         entry.record_id,
-                         entry.value.content.binary.data,
-                         entry.value.content.binary.size);
-    if (ctx->rc != GRN_SUCCESS) {
-      break;
-    }
-    ra->header->wal_id = entry.id;
+  const char *tag = "[ra][recover]";
+  grn_wal_reader *reader = grn_wal_reader_open(ctx, (grn_obj *)ra, tag);
+  if (ctx->rc != GRN_SUCCESS) {
+    return ctx->rc;
   }
 
-  grn_wal_reader_close(ctx, reader);
+  bool need_flush = false;
+  if (grn_io_is_locked(ra->io)) {
+    grn_io_clear_lock(ra->io);
+    need_flush = true;
+  }
 
-  if (ctx->rc == GRN_SUCCESS) {
+  if (reader) {
+    while (true) {
+      grn_wal_reader_entry entry = {0};
+      grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &entry);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+      grn_ra_set_value_raw(ctx,
+                           ra,
+                           entry.record_id,
+                           entry.value.content.binary.data,
+                           entry.value.content.binary.size);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+      ra->header->wal_id = entry.id;
+      need_flush = true;
+    }
+    grn_wal_reader_close(ctx, reader);
+  }
+
+  if (need_flush && ctx->rc == GRN_SUCCESS) {
     grn_obj_touch(ctx, (grn_obj *)ra, NULL);
     grn_obj_flush(ctx, (grn_obj *)ra);
   }
@@ -6522,55 +6532,65 @@ grn_ja_wal_recover_set_value(grn_ctx *ctx,
 grn_rc
 grn_ja_wal_recover(grn_ctx *ctx, grn_ja *ja)
 {
-  const char *wal_error_tag = "[ja]";
-  const char *reader_tag = "[ja][recover]";
-  grn_wal_reader *reader = grn_wal_reader_open(ctx, (grn_obj *)ja, reader_tag);
-  if (!reader) {
+  if (ctx->rc != GRN_SUCCESS) {
     return ctx->rc;
   }
 
-  grn_io_clear_lock(ja->io);
-
-  while (true) {
-    grn_wal_reader_entry entry = {0};
-    grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &entry);
-    if (rc != GRN_SUCCESS) {
-      break;
-    }
-    switch (entry.event) {
-    case GRN_WAL_EVENT_NEW_SEGMENT :
-      grn_ja_wal_recover_new_segment(ctx, ja, &entry, wal_error_tag);
-      break;
-    case GRN_WAL_EVENT_USE_SEGMENT :
-      grn_ja_wal_recover_use_segment(ctx, ja, &entry, wal_error_tag);
-      break;
-    case GRN_WAL_EVENT_REUSE_SEGMENT :
-      grn_ja_wal_recover_reuse_segment(ctx, ja, &entry, wal_error_tag);
-      break;
-    case GRN_WAL_EVENT_FREE_SEGMENT :
-      grn_ja_wal_recover_free_segment(ctx, ja, &entry, wal_error_tag);
-      break;
-    case GRN_WAL_EVENT_SET_VALUE :
-      grn_ja_wal_recover_set_value(ctx, ja, &entry, wal_error_tag);
-      break;
-    default :
-      grn_wal_set_recover_error(ctx,
-                                GRN_FUNCTION_NOT_IMPLEMENTED,
-                                (grn_obj *)ja,
-                                &entry,
-                                wal_error_tag,
-                                "not implemented yet");
-      break;
-    }
-    if (ctx->rc != GRN_SUCCESS) {
-      break;
-    }
-    *(ja->header->wal_id) = entry.id;
+  const char *wal_error_tag = "[ja]";
+  const char *reader_tag = "[ja][recover]";
+  grn_wal_reader *reader = grn_wal_reader_open(ctx, (grn_obj *)ja, reader_tag);
+  if (ctx->rc != GRN_SUCCESS) {
+    return ctx->rc;
   }
 
-  grn_wal_reader_close(ctx, reader);
+  bool need_flush = false;
+  if (grn_io_is_locked(ja->io)) {
+    grn_io_clear_lock(ja->io);
+    need_flush = true;
+  }
 
-  if (ctx->rc == GRN_SUCCESS) {
+  if (reader) {
+    while (true) {
+      grn_wal_reader_entry entry = {0};
+      grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &entry);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+      switch (entry.event) {
+      case GRN_WAL_EVENT_NEW_SEGMENT :
+        grn_ja_wal_recover_new_segment(ctx, ja, &entry, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_USE_SEGMENT :
+        grn_ja_wal_recover_use_segment(ctx, ja, &entry, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_REUSE_SEGMENT :
+        grn_ja_wal_recover_reuse_segment(ctx, ja, &entry, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_FREE_SEGMENT :
+        grn_ja_wal_recover_free_segment(ctx, ja, &entry, wal_error_tag);
+        break;
+      case GRN_WAL_EVENT_SET_VALUE :
+        grn_ja_wal_recover_set_value(ctx, ja, &entry, wal_error_tag);
+        break;
+      default :
+        grn_wal_set_recover_error(ctx,
+                                  GRN_FUNCTION_NOT_IMPLEMENTED,
+                                  (grn_obj *)ja,
+                                  &entry,
+                                  wal_error_tag,
+                                  "not implemented yet");
+        break;
+      }
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+      *(ja->header->wal_id) = entry.id;
+      need_flush = true;
+    }
+    grn_wal_reader_close(ctx, reader);
+  }
+
+  if (need_flush && ctx->rc == GRN_SUCCESS) {
     grn_obj_touch(ctx, (grn_obj *)ja, NULL);
     grn_obj_flush(ctx, (grn_obj *)ja);
   }

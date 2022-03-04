@@ -778,6 +778,9 @@ grn_wal_reader_open_internal(grn_ctx *ctx,
                              const char *tag)
 {
   grn_io *io = grn_obj_get_io(ctx, obj);
+  if (!io) {
+    return NULL;
+  }
   if (io->path[0] == '\0') {
     return NULL;
   }

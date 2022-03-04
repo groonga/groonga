@@ -711,85 +711,88 @@ class WALRecoverer {
   }
 
   grn_rc recover() {
-    if (!dat_->io) {
-      return GRN_SUCCESS;
-    }
-    if (dat_->io->path[0] == '\0') {
-      return GRN_SUCCESS;
+    if (ctx_->rc != GRN_SUCCESS) {
+      return ctx_->rc;
     }
 
     auto reader = grn_wal_reader_open(ctx_,
                                       reinterpret_cast<grn_obj *>(dat_),
                                       tag_);
-    if (!reader) {
+    if (ctx_->rc != GRN_SUCCESS) {
       return ctx_->rc;
     }
 
-    grn_io_clear_lock(dat_->io);
-
-    while (true) {
-      grn_wal_reader_entry entry = {};
-      grn_rc rc = grn_wal_reader_read_entry(ctx_, reader, &entry);
-      if (rc != GRN_SUCCESS) {
-        break;
-      }
-      switch (entry.event) {
-      case GRN_WAL_EVENT_ADD_ENTRY :
-        grn_dat_add_internal(ctx_,
-                             dat_,
-                             entry.key.content.binary.data,
-                             entry.key.content.binary.size,
-                             nullptr);
-        break;
-      case GRN_WAL_EVENT_DELETE_ENTRY :
-        if (!grn_dat_open_trie_if_needed(ctx_, dat_)) {
-          break;
-        }
-        if (entry.record_id == GRN_ID_NIL) {
-          grn_dat_delete_internal(ctx_,
-                                  dat_,
-                                  entry.key.content.binary.data,
-                                  entry.key.content.binary.size);
-        } else {
-          grn_dat_delete_by_id_internal(ctx_,
-                                        dat_,
-                                        entry.record_id);
-        }
-        break;
-      case GRN_WAL_EVENT_UPDATE_ENTRY :
-        if (entry.record_id == GRN_ID_NIL) {
-          grn_dat_update_internal(ctx_,
-                                  dat_,
-                                  entry.key.content.binary.data,
-                                  entry.key.content.binary.size,
-                                  entry.new_key.content.binary.data,
-                                  entry.new_key.content.binary.size);
-        } else {
-          grn_dat_update_by_id_internal(ctx_,
-                                        dat_,
-                                        entry.record_id,
-                                        entry.new_key.content.binary.data,
-                                        entry.new_key.content.binary.size);
-        }
-        break;
-      default :
-        grn_wal_set_recover_error(ctx_,
-                                  GRN_FUNCTION_NOT_IMPLEMENTED,
-                                  reinterpret_cast<grn_obj *>(dat_),
-                                  &entry,
-                                  wal_error_tag_,
-                                  "not implemented yet");
-        break;
-      }
-      if (ctx_->rc != GRN_SUCCESS) {
-        break;
-      }
-      grn_dat_wal_set_wal_id(ctx_, dat_, entry.id);
+    bool need_flush = false;
+    if (grn_io_is_locked(dat_->io)) {
+      grn_io_clear_lock(dat_->io);
+      need_flush = true;
     }
 
-    grn_wal_reader_close(ctx_, reader);
+    if (reader) {
+      while (true) {
+        grn_wal_reader_entry entry = {};
+        grn_rc rc = grn_wal_reader_read_entry(ctx_, reader, &entry);
+        if (rc != GRN_SUCCESS) {
+          break;
+        }
+        switch (entry.event) {
+        case GRN_WAL_EVENT_ADD_ENTRY :
+          grn_dat_add_internal(ctx_,
+                               dat_,
+                               entry.key.content.binary.data,
+                               entry.key.content.binary.size,
+                               nullptr);
+          break;
+        case GRN_WAL_EVENT_DELETE_ENTRY :
+          if (!grn_dat_open_trie_if_needed(ctx_, dat_)) {
+            break;
+          }
+          if (entry.record_id == GRN_ID_NIL) {
+            grn_dat_delete_internal(ctx_,
+                                    dat_,
+                                    entry.key.content.binary.data,
+                                    entry.key.content.binary.size);
+          } else {
+            grn_dat_delete_by_id_internal(ctx_,
+                                          dat_,
+                                          entry.record_id);
+          }
+          break;
+        case GRN_WAL_EVENT_UPDATE_ENTRY :
+          if (entry.record_id == GRN_ID_NIL) {
+            grn_dat_update_internal(ctx_,
+                                    dat_,
+                                    entry.key.content.binary.data,
+                                    entry.key.content.binary.size,
+                                    entry.new_key.content.binary.data,
+                                    entry.new_key.content.binary.size);
+          } else {
+            grn_dat_update_by_id_internal(ctx_,
+                                          dat_,
+                                          entry.record_id,
+                                          entry.new_key.content.binary.data,
+                                          entry.new_key.content.binary.size);
+          }
+          break;
+        default :
+          grn_wal_set_recover_error(ctx_,
+                                    GRN_FUNCTION_NOT_IMPLEMENTED,
+                                    reinterpret_cast<grn_obj *>(dat_),
+                                    &entry,
+                                    wal_error_tag_,
+                                    "not implemented yet");
+          break;
+        }
+        if (ctx_->rc != GRN_SUCCESS) {
+          break;
+        }
+        grn_dat_wal_set_wal_id(ctx_, dat_, entry.id);
+        need_flush = true;
+      }
+      grn_wal_reader_close(ctx_, reader);
+    }
 
-    if (ctx_->rc == GRN_SUCCESS) {
+    if (need_flush && ctx_->rc == GRN_SUCCESS) {
       grn_obj_touch(ctx_, reinterpret_cast<grn_obj *>(dat_), NULL);
       grn_obj_flush(ctx_, reinterpret_cast<grn_obj *>(dat_));
     }

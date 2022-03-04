@@ -5038,31 +5038,33 @@ grn_hash_max_total_key_size(grn_ctx *ctx, grn_hash *hash)
 grn_rc
 grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
 {
-  if (!hash->io) {
-    return GRN_SUCCESS;
-  }
-  if (hash->io->path[0] == '\0') {
-    return GRN_SUCCESS;
+  if (ctx->rc != GRN_SUCCESS) {
+    return ctx->rc;
   }
 
   const char *wal_error_tag = "[hash]";
   const char *tag = "[hash][recover]";
   grn_wal_reader *reader = grn_wal_reader_open(ctx, (grn_obj *)hash, tag);
-  if (!reader) {
+  if (ctx->rc != GRN_SUCCESS) {
     return ctx->rc;
   }
 
-  grn_io_clear_lock(hash->io);
+  bool need_flush = false;
+  if (grn_io_is_locked(hash->io)) {
+    grn_io_clear_lock(hash->io);
+    need_flush = true;
+  }
 
-  grn_id partial_record_id = GRN_ID_NIL;
-  while (true) {
-    grn_wal_reader_entry entry = {0};
-    grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &entry);
-    if (rc != GRN_SUCCESS) {
-      break;
-    }
-    switch (entry.event) {
-    case GRN_WAL_EVENT_ADD_ENTRY :
+  if (reader) {
+    grn_id partial_record_id = GRN_ID_NIL;
+    while (true) {
+      grn_wal_reader_entry entry = {0};
+      grn_rc rc = grn_wal_reader_read_entry(ctx, reader, &entry);
+      if (rc != GRN_SUCCESS) {
+        break;
+      }
+      switch (entry.event) {
+      case GRN_WAL_EVENT_ADD_ENTRY :
       {
         grn_id *index = grn_hash_idx_at(ctx, hash, entry.index_hash_value);
         if (!index) {
@@ -5084,7 +5086,7 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
         }
       }
       break;
-    case GRN_WAL_EVENT_REUSE_ENTRY :
+      case GRN_WAL_EVENT_REUSE_ENTRY :
       {
         grn_id *index = grn_hash_idx_at(ctx, hash, entry.index_hash_value);
         if (!index) {
@@ -5109,7 +5111,7 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
         }
       }
       break;
-    case GRN_WAL_EVENT_RESET_ENTRY :
+      case GRN_WAL_EVENT_RESET_ENTRY :
       {
         grn_hash_entry *hash_entry =
           grn_io_hash_entry_at(ctx, hash, entry.record_id, GRN_TABLE_ADD);
@@ -5130,13 +5132,13 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
                                 tag);
       }
       break;
-    case GRN_WAL_EVENT_ENABLE_ENTRY :
-      grn_io_hash_enable_entry(ctx,
-                               hash,
-                               entry.record_id,
-                               tag);
-      break;
-    case GRN_WAL_EVENT_SET_ENTRY_KEY :
+      case GRN_WAL_EVENT_ENABLE_ENTRY :
+        grn_io_hash_enable_entry(ctx,
+                                 hash,
+                                 entry.record_id,
+                                 tag);
+        break;
+      case GRN_WAL_EVENT_SET_ENTRY_KEY :
       {
         grn_hash_entry *hash_entry =
           grn_io_hash_entry_at(ctx, hash, entry.record_id, GRN_TABLE_ADD);
@@ -5165,7 +5167,7 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
         }
       }
       break;
-    case GRN_WAL_EVENT_DELETE_ENTRY :
+      case GRN_WAL_EVENT_DELETE_ENTRY :
       {
         grn_hash_delete_data data;
         data.hash = hash;
@@ -5202,12 +5204,12 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
         }
       }
       break;
-    case GRN_WAL_EVENT_REHASH :
-      *(hash->n_entries) = entry.n_entries;
-      *(hash->max_offset) = entry.max_offset;
-      grn_hash_rehash(ctx, hash, entry.expected_n_entries);
-      break;
-    case GRN_WAL_EVENT_SET_VALUE :
+      case GRN_WAL_EVENT_REHASH :
+        *(hash->n_entries) = entry.n_entries;
+        *(hash->max_offset) = entry.max_offset;
+        grn_hash_rehash(ctx, hash, entry.expected_n_entries);
+        break;
+      case GRN_WAL_EVENT_SET_VALUE :
       {
         grn_hash_entry *hash_entry =
           grn_io_hash_entry_at(ctx, hash, entry.record_id, GRN_TABLE_ADD);
@@ -5236,43 +5238,45 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
                                entry.value.content.binary.data);
       }
       break;
-    default :
-      grn_wal_set_recover_error(ctx,
-                                GRN_FUNCTION_NOT_IMPLEMENTED,
-                                (grn_obj *)hash,
-                                &entry,
-                                wal_error_tag,
-                                "not implemented yet");
-      break;
+      default :
+        grn_wal_set_recover_error(ctx,
+                                  GRN_FUNCTION_NOT_IMPLEMENTED,
+                                  (grn_obj *)hash,
+                                  &entry,
+                                  wal_error_tag,
+                                  "not implemented yet");
+        break;
+      }
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+      grn_hash_wal_set_wal_id(ctx, hash, entry.id);
+      need_flush = true;
     }
-    if (ctx->rc != GRN_SUCCESS) {
-      break;
-    }
-    grn_hash_wal_set_wal_id(ctx, hash, entry.id);
-  }
-  grn_wal_reader_close(ctx, reader);
+    grn_wal_reader_close(ctx, reader);
 
-  if (partial_record_id != GRN_ID_NIL) {
-    grn_obj_log(ctx,
-                (grn_obj *)hash,
-                GRN_LOG_WARNING,
-                partial_record_id,
-                tag,
-                "there is a partially added record");
-    /* This adds a WAL entry but it will be removed by the following
-     * grn_obj_flush(). */
-    grn_rc rc = grn_hash_delete_by_id(ctx, hash, partial_record_id, NULL);
-    if (rc != GRN_SUCCESS) {
-      grn_obj_set_error(ctx,
-                        (grn_obj *)hash,
-                        rc,
-                        partial_record_id,
-                        tag,
-                        "failed to delete a partially added record");
+    if (partial_record_id != GRN_ID_NIL) {
+      grn_obj_log(ctx,
+                  (grn_obj *)hash,
+                  GRN_LOG_WARNING,
+                  partial_record_id,
+                  tag,
+                  "there is a partially added record");
+      /* This adds a WAL entry but it will be removed by the following
+       * grn_obj_flush(). */
+      grn_rc rc = grn_hash_delete_by_id(ctx, hash, partial_record_id, NULL);
+      if (rc != GRN_SUCCESS) {
+        grn_obj_set_error(ctx,
+                          (grn_obj *)hash,
+                          rc,
+                          partial_record_id,
+                          tag,
+                          "failed to delete a partially added record");
+      }
     }
   }
 
-  if (ctx->rc == GRN_SUCCESS) {
+  if (need_flush && ctx->rc == GRN_SUCCESS) {
     grn_obj_touch(ctx, (grn_obj *)hash, NULL);
     grn_obj_flush(ctx, (grn_obj *)hash);
   }

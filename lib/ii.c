@@ -17325,11 +17325,16 @@ grn_ii_build2(grn_ctx *ctx, grn_ii *ii, const grn_ii_builder_options *options)
 grn_rc
 grn_ii_wal_recover(grn_ctx *ctx, grn_ii *ii)
 {
-  if (GRN_CTX_GET_WAL_ROLE(ctx) == GRN_WAL_ROLE_NONE) {
+  if (GRN_CTX_GET_WAL_ROLE(ctx) != GRN_WAL_ROLE_PRIMARY) {
     return GRN_SUCCESS;
   }
 
   if (!grn_wal_exist(ctx, (grn_obj *)ii)) {
+    if (grn_io_is_locked(ii->seg)) {
+      grn_io_clear_lock(ii->seg);
+      grn_obj_touch(ctx, (grn_obj *)ii, NULL);
+      grn_obj_flush(ctx, (grn_obj *)ii);
+    }
     return GRN_SUCCESS;
   }
 
