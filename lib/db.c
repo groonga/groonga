@@ -995,7 +995,40 @@ grn_column_create_similar_internal(grn_ctx *ctx,
   return column;
 }
 
-static const char *recovering_name_prefix = "#recovering#";
+static const char recovering_name_prefix[] = "#recovering#";
+static const int recovering_name_prefix_length =
+  sizeof(recovering_name_prefix) - 1;
+
+static bool
+grn_db_wal_recover_is_recovering_object_name(grn_ctx *ctx,
+                                             const char *name,
+                                             int name_length)
+{
+  if (name_length < recovering_name_prefix_length) {
+    return false;
+  }
+  if (strncmp(name,
+              recovering_name_prefix,
+              recovering_name_prefix_length) == 0) {
+    return true;
+  }
+  const char *column_name = NULL;
+  int column_name_length = 0;
+  int i;
+  for (i = 0; i < name_length; i++) {
+    if (name[i] == '.') {
+      column_name = name + i + 1;
+      column_name_length = name_length - i - 1;
+      break;
+    }
+  }
+  if (column_name_length < recovering_name_prefix_length) {
+    return false;
+  }
+  return strncmp(column_name,
+                 recovering_name_prefix,
+                 recovering_name_prefix_length) == 0;
+}
 
 static void
 grn_db_wal_recover_remove_recovering_objects(grn_ctx *ctx,
@@ -1003,13 +1036,12 @@ grn_db_wal_recover_remove_recovering_objects(grn_ctx *ctx,
 {
   const char *tag = grn_db_wal_recover_tag;
 
-  GRN_TABLE_EACH_BEGIN_MIN(ctx,
-                           db->keys,
-                           cursor,
-                           id,
-                           recovering_name_prefix,
-                           strlen(recovering_name_prefix),
-                           GRN_CURSOR_PREFIX) {
+  GRN_TABLE_EACH_BEGIN(ctx, db->keys, cursor, id) {
+    void *key;
+    int key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+    if (!grn_db_wal_recover_is_recovering_object_name(ctx, key, key_size)) {
+      continue;
+    }
     grn_ctx_push_temporary_open_space(ctx);
     grn_obj *object = grn_ctx_at(ctx, id);
     if (object) {
