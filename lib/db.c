@@ -1023,6 +1023,10 @@ grn_db_wal_recover_remove_recovering_objects(grn_ctx *ctx,
                 DB_OBJ(object)->id);
       }
       grn_obj_remove(ctx, object);
+      /* Ensure removing the record from db->keys. */
+      if (grn_table_at(ctx, db->keys, id) == id) {
+        grn_table_delete_by_id(ctx, db->keys, id);
+      }
     }
     /* Disable WAL flush on close. */
     grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_NONE);
