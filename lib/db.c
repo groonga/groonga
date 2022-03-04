@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
   Copyright(C) 2021       Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -1024,7 +1024,11 @@ grn_db_wal_recover_remove_recovering_objects(grn_ctx *ctx,
       }
       grn_obj_remove(ctx, object);
     }
+    /* Disable WAL flush on close. */
+    grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_NONE);
     grn_ctx_pop_temporary_open_space(ctx);
+    /* Enable WAL feature again. */
+    grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_PRIMARY);
   } GRN_TABLE_EACH_END(ctx, cursor);
 }
 
@@ -1598,10 +1602,14 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
         ERRCLR(ctx);
       }
     }
+    /* Disable WAL flush on close. */
+    grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_NONE);
     if (object) {
       grn_obj_unref(ctx, object);
     }
     grn_ctx_pop_temporary_open_space(ctx);
+    /* Enable WAL feature again. */
+    grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_PRIMARY);
     if (ctx->rc != GRN_SUCCESS) {
       break;
     }
@@ -1616,7 +1624,7 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
                                  db,
                                  broken_table_ids,
                                  broken_column_ids);
-  /* Enable WAL generation. */
+  /* Enable WAL feature again. */
   grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_PRIMARY);
 
   grn_broken_ids_close(ctx, broken_table_ids);
