@@ -41,7 +41,7 @@ _database_close
 _database_reopen
 [[0,0.0,0.0],true]
 #|e| [reader][read-entry][ja][recover][Data.tags] must be map: <positive-integer>(2): path:<db/db.0000102>
-#|n| [db][wal][recover] rebuild broken column: <Data.tags>(258)
+#|n| [db][wal][recover] rebuild broken data column: <Data.tags>(258)
 #|n| DDL:259:column_create Data #recovering#tags
 #|n| spec:259:update:Data.#recovering#tags:65(column:var_size):256(Tags)
 #|n| DDL:258:obj_remove Data.tags

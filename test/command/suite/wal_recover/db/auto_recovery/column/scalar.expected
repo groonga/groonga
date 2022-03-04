@@ -26,7 +26,7 @@ _database_close
 _database_reopen
 [[0,0.0,0.0],true]
 #|e| [reader][read-entry][ra][recover][Data.count] must be map: <positive-integer>(2): path:<db/db.0000101>
-#|n| [db][wal][recover] rebuild broken column: <Data.count>(257)
+#|n| [db][wal][recover] rebuild broken data column: <Data.count>(257)
 #|n| DDL:258:column_create Data #recovering#count
 #|n| spec:258:update:Data.#recovering#count:64(column:fix_size):9(UInt32)
 #|n| DDL:257:obj_remove Data.count

@@ -78,7 +78,7 @@ _database_close
 _database_reopen
 [[0,0.0,0.0],true]
 #|e| [ii][wal][recover][Terms.memos_content] not implemented: path:<db/db.0000103>
-#|n| [db][wal][recover] rebuild broken column: <Terms.memos_content>(259)
+#|n| [db][wal][recover] rebuild broken auto generated column: <Terms.memos_content>(259)
 #|n| DDL:260:column_create Terms #recovering#memos_content
 #|n| spec:260:update:Terms.#recovering#memos_content:72(column:index):256(Memos)
 #|n| DDL:260:set_source Terms.#recovering#memos_content Memos.content

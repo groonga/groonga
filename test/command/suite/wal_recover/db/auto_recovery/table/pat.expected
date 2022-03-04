@@ -29,7 +29,7 @@ _database_reopen
 #|n| [db][wal][recover] rebuild broken table: <Data>(256)
 #|n| DDL:258:table_create #recovering#Data
 #|n| spec:258:update:#recovering#Data:49(table:pat_key):0
-#|n| [db][wal][recover] rebuild broken column: <Data.content>(257)
+#|n| [db][wal][recover] rebuild broken data column: <Data.content>(257)
 #|n| DDL:259:column_create #recovering#Data content
 #|n| spec:259:update:#recovering#Data.content:65(column:var_size):14(ShortText)
 #|n| DDL:256:obj_remove Data

@@ -45,7 +45,7 @@ _database_reopen
 #|n| [db][wal][recover] rebuild broken table: <Data>(256)
 #|n| DDL:259:table_create #recovering#Data
 #|n| spec:259:update:#recovering#Data:49(table:pat_key):0
-#|n| [db][wal][recover] rebuild broken column: <Referer.data>(258)
+#|n| [db][wal][recover] rebuild broken data column: <Referer.data>(258)
 #|n| DDL:260:column_create Referer #recovering#data
 #|n| spec:260:update:Referer.#recovering#data:64(column:fix_size):259(#recovering#Data)
 #|n| DDL:258:obj_remove Referer.data

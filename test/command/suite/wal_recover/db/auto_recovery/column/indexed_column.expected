@@ -34,10 +34,10 @@ _database_close
 _database_reopen
 [[0,0.0,0.0],true]
 #|e| [reader][read-entry][ja][recover][Data.content] must be map: <positive-integer>(2): path:<db/db.0000102>
-#|n| [db][wal][recover] rebuild broken column: <Data.content>(258)
+#|n| [db][wal][recover] rebuild broken data column: <Data.content>(258)
 #|n| DDL:260:column_create Data #recovering#content
 #|n| spec:260:update:Data.#recovering#content:65(column:var_size):14(ShortText)
-#|n| [db][wal][recover] rebuild broken column: <Terms.data_content>(259)
+#|n| [db][wal][recover] rebuild broken auto generated column: <Terms.data_content>(259)
 #|n| DDL:261:column_create Terms #recovering#data_content
 #|n| spec:261:update:Terms.#recovering#data_content:72(column:index):257(Data)
 #|n| DDL:261:set_source Terms.#recovering#data_content Data.#recovering#content

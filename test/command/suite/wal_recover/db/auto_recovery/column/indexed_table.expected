@@ -34,7 +34,7 @@ _database_reopen
 #|n| [db][wal][recover] rebuild broken table: <Data>(257)
 #|n| DDL:259:table_create #recovering#Data
 #|n| spec:259:update:#recovering#Data:49(table:pat_key):0
-#|n| [db][wal][recover] rebuild broken column: <Terms.data_key>(258)
+#|n| [db][wal][recover] rebuild broken auto generated column: <Terms.data_key>(258)
 #|n| DDL:260:column_create Terms #recovering#data_key
 #|n| spec:260:update:Terms.#recovering#data_key:72(column:index):259(#recovering#Data)
 #|n| DDL:260:set_source Terms.#recovering#data_key #recovering#Data

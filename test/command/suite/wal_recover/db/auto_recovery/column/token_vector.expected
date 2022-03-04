@@ -46,7 +46,7 @@ _database_close
 _database_reopen
 [[0,0.0,0.0],true]
 #|e| [reader][read-entry][ja][recover][Data.content_terms] must be map: <positive-integer>(2): path:<db/db.0000103>
-#|n| [db][wal][recover] rebuild broken column: <Data.content_terms>(259)
+#|n| [db][wal][recover] rebuild broken auto generated column: <Data.content_terms>(259)
 #|n| DDL:260:column_create Data #recovering#content_terms
 #|n| spec:260:update:Data.#recovering#content_terms:65(column:var_size):256(Terms)
 #|n| DDL:260:set_source Data.#recovering#content_terms Data.content
