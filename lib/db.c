@@ -1263,8 +1263,10 @@ grn_db_wal_recover_copy_auto_generated_column(grn_ctx *ctx,
                                        column,
                                        id_map);
   GRN_OBJ_FIN(ctx, &new_name);
-  grn_id_map_add(ctx, id_map, DB_OBJ(column)->id, DB_OBJ(new_column)->id);
-  grn_obj_unref(ctx, new_column);
+  if (new_column) {
+    grn_id_map_add(ctx, id_map, DB_OBJ(column)->id, DB_OBJ(new_column)->id);
+    grn_obj_unref(ctx, new_column);
+  }
   if (need_new_table_unref) {
     grn_obj_unref(ctx, new_table);
   }
