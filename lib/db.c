@@ -1065,19 +1065,31 @@ grn_db_wal_recover_copy_table(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &new_name);
 }
 
+static bool
+grn_db_wal_recover_is_data_column(grn_ctx *ctx, grn_obj *column)
+{
+  if (grn_obj_have_source(ctx, column)) {
+    return false;
+  }
+  if (grn_obj_is_index_column(ctx, column)) {
+    return false;
+  }
+  return true;
+}
+
 static void
 grn_db_wal_recover_copy_data_column(grn_ctx *ctx,
                                     grn_obj *column,
                                     grn_obj *new_table,
                                     grn_hash *id_map)
 {
-  if (grn_obj_have_source(ctx, column)) {
+  if (!grn_db_wal_recover_is_data_column(ctx, column)) {
     return;
   }
   if (grn_logger_pass(ctx, GRN_LOG_NOTICE)) {
     GRN_DEFINE_NAME(column);
     GRN_LOG(ctx, GRN_LOG_NOTICE,
-            "%s rebuild broken column: <%.*s>(%u)",
+            "%s rebuild broken data column: <%.*s>(%u)",
             grn_db_wal_recover_tag,
             name_size, name,
             DB_OBJ(column)->id);
@@ -1218,13 +1230,13 @@ grn_db_wal_recover_copy_auto_generated_column(grn_ctx *ctx,
                                               grn_obj *new_table,
                                               grn_hash *id_map)
 {
-  if (!grn_obj_have_source(ctx, column)) {
+  if (grn_db_wal_recover_is_data_column(ctx, column)) {
     return;
   }
   if (grn_logger_pass(ctx, GRN_LOG_NOTICE)) {
     GRN_DEFINE_NAME(column);
     GRN_LOG(ctx, GRN_LOG_NOTICE,
-            "%s rebuild broken column: <%.*s>(%u)",
+            "%s rebuild broken auto generated column: <%.*s>(%u)",
             grn_db_wal_recover_tag, name_size, name, DB_OBJ(column)->id);
   }
   char name[GRN_TABLE_MAX_KEY_SIZE];
