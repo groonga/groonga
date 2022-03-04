@@ -45,7 +45,7 @@ endif
 FORCE:
 
 $(srcdir)/version.sh: FORCE
-	@$(SHELL_PATH) $(srcdir)/version-gen.sh
+	cd "$(srcdir)" && $(SHELL) version-gen.sh
 
 include $(srcdir)/version.sh
 
