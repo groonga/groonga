@@ -782,7 +782,6 @@ grn_wal_reader_open_internal(grn_ctx *ctx,
     return NULL;
   }
 
-#ifdef GRN_WITH_MESSAGE_PACK
   char path[PATH_MAX];
   grn_wal_generate_path(ctx, io->path, path);
   FILE *input = grn_fopen(path, "rb");
@@ -790,8 +789,10 @@ grn_wal_reader_open_internal(grn_ctx *ctx,
     return NULL;
   }
 
+#ifdef GRN_WITH_MESSAGE_PACK
   grn_wal_reader *reader = GRN_CALLOC(sizeof(grn_wal_reader));
   if (!reader) {
+    fclose(reader->input);
     GRN_DEFINE_NAME(obj);
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[wal][reader][open][%.*s]%s failed to allocate grn_wal_reader",
@@ -820,6 +821,14 @@ grn_wal_reader_open_internal(grn_ctx *ctx,
 
   return reader;
 #else
+  {
+    fclose(reader->input);
+    GRN_DEFINE_NAME(obj);
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[wal][reader][open][%.*s]%s MessagePack isn't enabled",
+        name_size, name,
+        tag);
+  }
   return NULL;
 #endif
 }
