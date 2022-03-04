@@ -732,7 +732,7 @@ grn_wal_clear(grn_ctx *ctx,
               bool need_lock,
               const char *tag)
 {
-  if (ctx->impl->wal.role == GRN_WAL_ROLE_NONE) {
+  if (ctx->impl->wal.role != GRN_WAL_ROLE_PRIMARY) {
     return GRN_SUCCESS;
   }
 
@@ -829,7 +829,7 @@ grn_wal_reader_open(grn_ctx *ctx,
                     grn_obj *obj,
                     const char *tag)
 {
-  if (ctx->impl->wal.role == GRN_WAL_ROLE_NONE) {
+  if (ctx->impl->wal.role != GRN_WAL_ROLE_PRIMARY) {
     return NULL;
   }
 
