@@ -5,8 +5,10 @@ set -exu
 os=$(cut -d: -f4 /etc/system-release-cpe)
 case ${os} in
   amazon)
+    os=amazon-linux
     version=$(cut -d: -f6 /etc/system-release-cpe)
     amazon-linux-extras install -y epel
+    yum install -y ca-certificates
     ;;
   centos)
     version=$(cut -d: -f5 /etc/system-release-cpe)
