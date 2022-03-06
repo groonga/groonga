@@ -69,6 +69,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     [
       "almalinux-8",
       "almalinux-8-aarch64",
+      "amazon-linux-2",
       "centos-7",
     ]
   end

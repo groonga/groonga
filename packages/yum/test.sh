@@ -4,6 +4,10 @@ set -exu
 
 os=$(cut -d: -f4 /etc/system-release-cpe)
 case ${os} in
+  amzon)
+    version=$(cut -d: -f6 /etc/system-release-cpe)
+    amazon-linux-extras install -y epel
+    ;;
   centos)
     version=$(cut -d: -f5 /etc/system-release-cpe)
     ;;
@@ -13,6 +17,9 @@ case ${os} in
 esac
 
 case ${version} in
+  2)
+    DNF=yum
+    ;;
   7)
     DNF=yum
     ;;
@@ -47,6 +54,10 @@ if [ "${run_test}" = "yes" ]; then
   cp -a /groonga/test/command ./
 
   case ${version} in
+    2)
+      amazon-linux-extras install -y ruby3.0
+      ${DNF} install -y ruby-devel
+      ;;
     7)
       ${DNF} install -y centos-release-scl-rh
       ${DNF} install -y rh-ruby30-ruby-devel

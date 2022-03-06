@@ -82,6 +82,7 @@ jobs:
           - Debian GNU/Linux buster arm64
           - Debian GNU/Linux buster i386
           - CentOS 7 x86_64
+          - Amazon Linux 2 x86_64
           - AlmaLinux 8 x86_64
           - AlmaLinux 8 aarch64
         include:
@@ -115,6 +116,10 @@ jobs:
             task-namespace: yum
             target: centos-7
             test-docker-image: centos:7
+            id: amazon-linux-2-x86_64
+            task-namespace: yum
+            target: amazon-linux-2
+            test-docker-image: amazonlinux:2
           - label: AlmaLinux 8 x86_64
             id: almalinux-8-x86_64
             task-namespace: yum
