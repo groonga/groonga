@@ -4,7 +4,7 @@ set -exu
 
 os=$(cut -d: -f4 /etc/system-release-cpe)
 case ${os} in
-  amzon)
+  amazon)
     version=$(cut -d: -f6 /etc/system-release-cpe)
     amazon-linux-extras install -y epel
     ;;
