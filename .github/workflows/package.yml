@@ -116,6 +116,7 @@ jobs:
             task-namespace: yum
             target: centos-7
             test-docker-image: centos:7
+          - label: Amazon Linux 2 x86_64
             id: amazon-linux-2-x86_64
             task-namespace: yum
             target: amazon-linux-2
