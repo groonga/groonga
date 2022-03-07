@@ -48,11 +48,11 @@ _database_reopen
 #|n| [db][wal][recover] rebuild broken data column: <Referer.data>(258)
 #|n| DDL:260:column_create Referer #recovering#data
 #|n| spec:260:update:Referer.#recovering#data:64(column:fix_size):259(#recovering#Data)
-#|n| DDL:258:obj_remove Referer.data
-#|n| spec:258:remove:Referer.data:64(column:fix_size)
+#|n| DDL:258:obj_remove Referer.#broken#data
+#|n| spec:258:remove:Referer.#broken#data:64(column:fix_size)
 #|n| [db][wal][recover] succeeded to rebuild broken column: <Referer.data>(260)
-#|n| DDL:256:obj_remove Data
-#|n| spec:256:remove:Data:49(table:pat_key)
+#|n| DDL:256:obj_remove #broken#Data
+#|n| spec:256:remove:#broken#Data:49(table:pat_key)
 #|n| [db][wal][recover] succeeded to rebuild broken table: <Data>(259)
 dump
 table_create Data TABLE_PAT_KEY ShortText

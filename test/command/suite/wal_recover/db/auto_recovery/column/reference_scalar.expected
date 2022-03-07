@@ -41,8 +41,8 @@ _database_reopen
 #|n| [db][wal][recover] rebuild broken data column: <Data.tag>(258)
 #|n| DDL:259:column_create Data #recovering#tag
 #|n| spec:259:update:Data.#recovering#tag:64(column:fix_size):256(Tags)
-#|n| DDL:258:obj_remove Data.tag
-#|n| spec:258:remove:Data.tag:64(column:fix_size)
+#|n| DDL:258:obj_remove Data.#broken#tag
+#|n| spec:258:remove:Data.#broken#tag:64(column:fix_size)
 #|n| [db][wal][recover] succeeded to rebuild broken column: <Data.tag>(259)
 dump
 table_create Data TABLE_PAT_KEY ShortText

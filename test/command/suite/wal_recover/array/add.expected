@@ -19,8 +19,8 @@ _database_reopen
 #|n| [db][wal][recover] rebuild broken table: <Data>(256)
 #|n| DDL:257:table_create #recovering#Data
 #|n| spec:257:update:#recovering#Data:51(table:no_key):0
-#|n| DDL:256:obj_remove Data
-#|n| spec:256:remove:Data:51(table:no_key)
+#|n| DDL:256:obj_remove #broken#Data
+#|n| spec:256:remove:#broken#Data:51(table:no_key)
 #|n| [db][wal][recover] succeeded to rebuild broken table: <Data>(257)
 select Data --output_columns _id
 [[0,0.0,0.0],[[[3],[["_id","UInt32"]],[1],[2],[3]]]]

@@ -48,14 +48,14 @@ _database_reopen
 #|n| DDL:2147483649:set_normalizers NormalizerNFKC130
 #|n| DDL:2147483649:set_normalizers NormalizerNFKC130
 #|n| spec:262:update:Terms.#recovering#data_content:72(column:index):260(#recovering#Data)
-#|n| DDL:259:obj_remove Terms.data_content
+#|n| DDL:259:obj_remove Terms.#broken#data_content
 #|n| spec:257:update:Data.content:65(column:var_size):14(ShortText)
-#|n| spec:259:remove:Terms.data_content:72(column:index)
+#|n| spec:259:remove:Terms.#broken#data_content:72(column:index)
 #|n| [db][wal][recover] succeeded to rebuild broken column: <Terms.data_content>(262)
-#|n| DDL:256:obj_remove Data
-#|n| DDL:257:obj_remove Data.content
-#|n| spec:257:remove:Data.content:65(column:var_size)
-#|n| spec:256:remove:Data:49(table:pat_key)
+#|n| DDL:256:obj_remove #broken#Data
+#|n| DDL:257:obj_remove #broken#Data.content
+#|n| spec:257:remove:#broken#Data.content:65(column:var_size)
+#|n| spec:256:remove:#broken#Data:49(table:pat_key)
 #|n| [db][wal][recover] succeeded to rebuild broken table: <Data>(260)
 dump
 table_create Data TABLE_PAT_KEY ShortText

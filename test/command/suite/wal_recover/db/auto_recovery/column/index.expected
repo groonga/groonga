@@ -42,9 +42,9 @@ _database_reopen
 #|n| DDL:2147483649:set_normalizers NormalizerNFKC130
 #|n| DDL:2147483649:set_normalizers NormalizerNFKC130
 #|n| spec:260:update:Terms.#recovering#data_content:72(column:index):257(Data)
-#|n| DDL:259:obj_remove Terms.data_content
+#|n| DDL:259:obj_remove Terms.#broken#data_content
 #|n| spec:258:update:Data.content:65(column:var_size):14(ShortText)
-#|n| spec:259:remove:Terms.data_content:72(column:index)
+#|n| spec:259:remove:Terms.#broken#data_content:72(column:index)
 #|n| [db][wal][recover] succeeded to rebuild broken column: <Terms.data_content>(260)
 dump
 table_create Data TABLE_PAT_KEY ShortText

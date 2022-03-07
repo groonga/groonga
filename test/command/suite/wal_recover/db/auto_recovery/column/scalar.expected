@@ -29,8 +29,8 @@ _database_reopen
 #|n| [db][wal][recover] rebuild broken data column: <Data.count>(257)
 #|n| DDL:258:column_create Data #recovering#count
 #|n| spec:258:update:Data.#recovering#count:64(column:fix_size):9(UInt32)
-#|n| DDL:257:obj_remove Data.count
-#|n| spec:257:remove:Data.count:64(column:fix_size)
+#|n| DDL:257:obj_remove Data.#broken#count
+#|n| spec:257:remove:Data.#broken#count:64(column:fix_size)
 #|n| [db][wal][recover] succeeded to rebuild broken column: <Data.count>(258)
 dump
 table_create Data TABLE_PAT_KEY ShortText

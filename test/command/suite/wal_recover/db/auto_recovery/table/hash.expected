@@ -32,10 +32,10 @@ _database_reopen
 #|n| [db][wal][recover] rebuild broken data column: <Data.content>(257)
 #|n| DDL:259:column_create #recovering#Data content
 #|n| spec:259:update:#recovering#Data.content:65(column:var_size):14(ShortText)
-#|n| DDL:256:obj_remove Data
-#|n| DDL:257:obj_remove Data.content
-#|n| spec:257:remove:Data.content:65(column:var_size)
-#|n| spec:256:remove:Data:48(table:hash_key)
+#|n| DDL:256:obj_remove #broken#Data
+#|n| DDL:257:obj_remove #broken#Data.content
+#|n| spec:257:remove:#broken#Data.content:65(column:var_size)
+#|n| spec:256:remove:#broken#Data:48(table:hash_key)
 #|n| [db][wal][recover] succeeded to rebuild broken table: <Data>(258)
 dump
 table_create Data TABLE_HASH_KEY ShortText
