@@ -1874,7 +1874,7 @@ grn_pat_add_internal_find(grn_ctx *ctx,
     }
   }
   if (check == check_node && *id_location == GRN_ID_NIL) {
-    if (check < PAT_CHECK_ADD_BIT_DIFFERENCES(check_max, -1)) {
+    if (check < (check_max - (1 << PAT_CHECK_BIT_DIFFERENCES_SHIFT))) {
       check = PAT_CHECK_ADD_BIT_DIFFERENCES(check, 1);
     }
   } else {
