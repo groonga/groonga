@@ -233,11 +233,18 @@ void FileImpl::create_(const char *path, UInt64 size) {
     GRN_DAT_THROW_IF(IO_ERROR, ::ftruncate(fd_, file_size) == -1);
   }
 
-#ifdef MAP_ANONYMOUS
-  const int flags = (fd_ == -1) ? (MAP_PRIVATE | MAP_ANONYMOUS) : MAP_SHARED;
-#else  // MAP_ANONYMOUS
-  const int flags = (fd_ == -1) ? (MAP_PRIVATE | MAP_ANON) : MAP_SHARED;
-#endif  // MAP_ANONYMOUS
+  int flags;
+  if (fd_ == -1) {
+#if defined(MAP_ANON) && !defined(MAP_ANONYMOUS)
+# define MAP_ANONYMOUS MAP_ANON
+#endif
+    flags = MAP_PRIVATE | MAP_ANONYMOUS;
+#ifdef MAP_ALIGNED_SUPER
+    flags |= MAP_ALIGNED_SUPER;
+#endif
+  } else {
+    flags = MAP_SHARED;
+  }
 
   length_ = static_cast< ::size_t>(size);
 #ifdef USE_MAP_HUGETLB

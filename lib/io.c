@@ -2263,6 +2263,9 @@ grn_mmap(grn_ctx *ctx,
     } else {
       fd = -1;
       flags = MAP_PRIVATE|MAP_ANONYMOUS;
+#ifdef MAP_ALIGNED_SUPER
+      flags |= MAP_ALIGNED_SUPER;
+#endif
     }
     res = mmap(NULL, length, PROT_READ|PROT_WRITE, flags, fd, offset);
     if (MAP_FAILED == res) {
