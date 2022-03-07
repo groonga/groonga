@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2016-2018  Brazil
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -658,7 +658,7 @@ func_time_format_iso8601(grn_ctx *ctx, int n_args, grn_obj **args,
                     formatted_time,
                     "%+03d:%02d",
                     (int32_t)(tm.tm_gmtoff / 3600),
-                    abs(tm.tm_gmtoff % 3600));
+                    abs((int32_t)(tm.tm_gmtoff % 3600)));
 #elif defined(HAVE_TIMEGM) /* HAVE_STRUCT_TM_TM_GMTOFF */
     {
       time_t gmtoff = timegm(&tm) - time_sec;
@@ -666,7 +666,7 @@ func_time_format_iso8601(grn_ctx *ctx, int n_args, grn_obj **args,
                       formatted_time,
                       "%+03d:%02d",
                       (int32_t)(gmtoff / 3600),
-                      abs(gmtoff % 3600));
+                      abs((int32_t)(gmtoff % 3600)));
     }
 #endif /* HAVE_STRUCT_TM_TM_GMTOFF */
     return formatted_time;
