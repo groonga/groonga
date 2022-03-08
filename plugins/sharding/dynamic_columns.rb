@@ -252,8 +252,8 @@ module Groonga
           executor.sort_keys = @window_sort_keys.join(", ")
           executor.group_keys = @window_group_keys.join(", ")
           executor.output_column_name = @label
-          targets.each do |table, options|
-            is_context_table = context_target?(options)
+          targets.each do |table, target_options|
+            is_context_table = context_target?(target_options)
             column = table.find_column(@label)
             column ||= table.create_column(@label, @flags, @type)
             next if table.empty?
