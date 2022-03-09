@@ -669,10 +669,14 @@ grn_db_wal_recover_collect_related_broken_object_ids(
   grn_hash *broken_table_ids,
   grn_hash *broken_column_ids)
 {
+  /* Don't touch WAL. */
+  grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_NONE);
   grn_db_wal_recover_collect_depended_object_ids(
     ctx, db, broken_table_ids, broken_column_ids);
   grn_db_wal_recover_remove_duplicated_broken_column_ids(
     ctx, db, broken_table_ids, broken_column_ids);
+  /* Enable WAL feature again. */
+  grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_PRIMARY);
 }
 
 static grn_hash *
