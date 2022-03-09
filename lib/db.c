@@ -1797,7 +1797,11 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
 
   grn_db_wal_recover_remove_recovering_objects(ctx, db);
 
-  GRN_LOG(ctx, GRN_LOG_DEBUG, "%s recovered", tag);
+  if (ctx->rc == GRN_SUCCESS) {
+    GRN_LOG(ctx, GRN_LOG_DEBUG, "%s succeeded to recover", tag);
+  } else {
+    GRN_LOG(ctx, GRN_LOG_ERROR, "%s failed to recover: %s", tag, ctx->errbuf);
+  }
 }
 
 #define GRN_TYPE_FLOAT32_NAME "Float32"
