@@ -1003,16 +1003,16 @@ static const int grn_db_wal_broken_name_prefix_length =
   sizeof(grn_db_wal_broken_name_prefix) - 1;
 
 static bool
-grn_db_wal_recover_is_recovering_object_name(grn_ctx *ctx,
-                                             const char *name,
-                                             int name_length)
+grn_db_wal_recover_is_prefixed_name(grn_ctx *ctx,
+                                    const char *name,
+                                    int name_length,
+                                    const char *prefix,
+                                    int prefix_length)
 {
-  if (name_length < grn_db_wal_recovering_name_prefix_length) {
+  if (name_length < prefix_length) {
     return false;
   }
-  if (strncmp(name,
-              grn_db_wal_recovering_name_prefix,
-              grn_db_wal_recovering_name_prefix_length) == 0) {
+  if (strncmp(name, prefix, prefix_length) == 0) {
     return true;
   }
   const char *column_name = NULL;
@@ -1025,20 +1025,125 @@ grn_db_wal_recover_is_recovering_object_name(grn_ctx *ctx,
       break;
     }
   }
-  if (column_name_length < grn_db_wal_recovering_name_prefix_length) {
+  if (column_name_length < prefix_length) {
     return false;
   }
-  return strncmp(column_name,
-                 grn_db_wal_recovering_name_prefix,
-                 grn_db_wal_recovering_name_prefix_length) == 0;
+  return strncmp(column_name, prefix, prefix_length) == 0;
+}
+
+static bool
+grn_db_wal_recover_is_recovering_object_name(grn_ctx *ctx,
+                                             const char *name,
+                                             int name_length)
+{
+  return grn_db_wal_recover_is_prefixed_name(
+    ctx,
+    name,
+    name_length,
+    grn_db_wal_recovering_name_prefix,
+    grn_db_wal_recovering_name_prefix_length);
+}
+
+static void
+grn_db_wal_recover_remove_recovering_object(grn_ctx *ctx,
+                                            grn_db *db,
+                                            grn_id id,
+                                            const char *name,
+                                            int name_length)
+{
+  const char *tag = grn_db_wal_recover_tag;
+
+  grn_obj *object = grn_ctx_at(ctx, id);
+  if (!object) {
+    if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "%s remove unopenable recovering object: <%.*s>(%u): %s",
+              tag,
+              name_length, name,
+              DB_OBJ(object)->id,
+              ctx->errbuf);
+    }
+    ERRCLR(ctx);
+    grn_table_delete_by_id(ctx, db->keys, id);
+    return;
+  }
+
+  if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+    GRN_LOG(ctx,
+            GRN_LOG_DEBUG,
+            "%s remove recovering object: <%.*s>(%u)",
+            tag,
+            name_length, name,
+            DB_OBJ(object)->id);
+  }
+  grn_obj_remove(ctx, object);
+  /* Ensure removing the record from db->keys. */
+  if (grn_table_at(ctx, db->keys, id) == id) {
+    grn_table_delete_by_id(ctx, db->keys, id);
+  }
+
+  const char *original_name =
+    name - grn_db_wal_recovering_name_prefix_length;
+  int original_name_length =
+    name_length - grn_db_wal_recovering_name_prefix_length;
+  grn_obj broken_name;
+  GRN_TEXT_INIT(&broken_name, 0);
+  GRN_TEXT_PUT(ctx,
+               &broken_name,
+               grn_db_wal_broken_name_prefix,
+               grn_db_wal_broken_name_prefix_length);
+  GRN_TEXT_PUT(ctx,
+               &broken_name,
+               original_name,
+               original_name_length);
+  grn_obj *original_object = grn_ctx_get(ctx,
+                                         original_name,
+                                         original_name_length);
+  grn_obj *broken_object = grn_ctx_get(ctx,
+                                       GRN_TEXT_VALUE(&broken_name),
+                                       GRN_TEXT_LEN(&broken_name));
+  if (broken_object) {
+    grn_id broken_object_id = DB_OBJ(broken_object)->id;
+    if (original_object) {
+      if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+        GRN_LOG(ctx,
+                GRN_LOG_DEBUG,
+                "%s remove broken object: <%.*s>(%u)",
+                tag,
+                (int)GRN_TEXT_LEN(&broken_name),
+                GRN_TEXT_VALUE(&broken_name),
+                broken_object_id);
+      }
+      grn_obj_remove(ctx, broken_object);
+      /* Ensure removing the record from db->keys. */
+      if (grn_table_at(ctx, db->keys, broken_object_id) ==
+          broken_object_id) {
+        grn_table_delete_by_id(ctx, db->keys, broken_object_id);
+      }
+    } else {
+      if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+        GRN_LOG(ctx,
+                GRN_LOG_DEBUG,
+                "%s reuse broken object: <%.*s>(%u)",
+                tag,
+                (int)GRN_TEXT_LEN(&broken_name),
+                GRN_TEXT_VALUE(&broken_name),
+                broken_object_id);
+      }
+      grn_obj_rename(ctx,
+                     broken_object,
+                     original_name,
+                     original_name_length);
+    }
+  }
+  GRN_OBJ_FIN(ctx, &broken_name);
 }
 
 static void
 grn_db_wal_recover_remove_recovering_objects(grn_ctx *ctx,
                                              grn_db *db)
 {
-  const char *tag = grn_db_wal_recover_tag;
-
   GRN_TABLE_EACH_BEGIN(ctx, db->keys, cursor, id) {
     void *key;
     int key_size = grn_table_cursor_get_key(ctx, cursor, &key);
@@ -1046,79 +1151,80 @@ grn_db_wal_recover_remove_recovering_objects(grn_ctx *ctx,
       continue;
     }
     grn_ctx_push_temporary_open_space(ctx);
-    grn_obj *object = grn_ctx_at(ctx, id);
-    if (object) {
-      GRN_DEFINE_NAME(object);
-      if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
-        GRN_LOG(ctx,
-                GRN_LOG_DEBUG,
-                "%s remove recovering object: <%.*s>(%u)",
-                tag,
-                name_size, name,
-                DB_OBJ(object)->id);
-      }
-      grn_obj_remove(ctx, object);
-      /* Ensure removing the record from db->keys. */
-      if (grn_table_at(ctx, db->keys, id) == id) {
-        grn_table_delete_by_id(ctx, db->keys, id);
-      }
+    grn_db_wal_recover_remove_recovering_object(ctx, db, id, key, key_size);
+    /* Disable WAL flush on close. */
+    grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_NONE);
+    grn_ctx_pop_temporary_open_space(ctx);
+    /* Enable WAL feature again. */
+    grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_PRIMARY);
+  } GRN_TABLE_EACH_END(ctx, cursor);
+}
 
-      const char *original_name =
-        name - grn_db_wal_recovering_name_prefix_length;
-      int original_name_length =
-        name_size - grn_db_wal_recovering_name_prefix_length;
-      grn_obj broken_name;
-      GRN_TEXT_INIT(&broken_name, 0);
-      GRN_TEXT_PUT(ctx,
-                   &broken_name,
-                   grn_db_wal_broken_name_prefix,
-                   grn_db_wal_broken_name_prefix_length);
-      GRN_TEXT_PUT(ctx,
-                   &broken_name,
-                   original_name,
-                   original_name_length);
-      grn_obj *original_object = grn_ctx_get(ctx,
-                                             original_name,
-                                             original_name_length);
-      grn_obj *broken_object = grn_ctx_get(ctx,
-                                           GRN_TEXT_VALUE(&broken_name),
-                                           GRN_TEXT_LEN(&broken_name));
-      if (broken_object) {
-        grn_id broken_object_id = DB_OBJ(broken_object)->id;
-        if (original_object) {
-          if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
-            GRN_LOG(ctx,
-                    GRN_LOG_DEBUG,
-                    "%s remove broken object: <%.*s>(%u)",
-                    tag,
-                    (int)GRN_TEXT_LEN(&broken_name),
-                    GRN_TEXT_VALUE(&broken_name),
-                    broken_object_id);
-          }
-          grn_obj_remove(ctx, broken_object);
-          /* Ensure removing the record from db->keys. */
-          if (grn_table_at(ctx, db->keys, broken_object_id) ==
-              broken_object_id) {
-            grn_table_delete_by_id(ctx, db->keys, broken_object_id);
-          }
-        } else {
-          if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
-            GRN_LOG(ctx,
-                    GRN_LOG_DEBUG,
-                    "%s reuse broken object: <%.*s>(%u)",
-                    tag,
-                    (int)GRN_TEXT_LEN(&broken_name),
-                    GRN_TEXT_VALUE(&broken_name),
-                    broken_object_id);
-          }
-          grn_obj_rename(ctx,
-                         broken_object,
-                         original_name,
-                         original_name_length);
-        }
-      }
-      GRN_OBJ_FIN(ctx, &broken_name);
+static bool
+grn_db_wal_recover_is_broken_object_name(grn_ctx *ctx,
+                                         const char *name,
+                                         int name_length)
+{
+  return grn_db_wal_recover_is_prefixed_name(
+    ctx,
+    name,
+    name_length,
+    grn_db_wal_broken_name_prefix,
+    grn_db_wal_broken_name_prefix_length);
+}
+
+static void
+grn_db_wal_recover_remove_broken_object(grn_ctx *ctx,
+                                        grn_db *db,
+                                        grn_id id,
+                                        const char *name,
+                                        int name_length)
+{
+  const char *tag = grn_db_wal_recover_tag;
+
+  grn_obj *object = grn_ctx_at(ctx, id);
+  if (!object) {
+    if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "%s remove unopenable broken object: <%.*s>(%u): %s",
+              tag,
+              name_length, name,
+              DB_OBJ(object)->id,
+              ctx->errbuf);
     }
+    ERRCLR(ctx);
+    grn_table_delete_by_id(ctx, db->keys, id);
+    return;
+  }
+
+  if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+    GRN_LOG(ctx,
+            GRN_LOG_DEBUG,
+            "%s remove broken object: <%.*s>(%u)",
+            tag,
+            name_length, name,
+            DB_OBJ(object)->id);
+  }
+  grn_obj_remove(ctx, object);
+  /* Ensure removing the record from db->keys. */
+  if (grn_table_at(ctx, db->keys, id) == id) {
+    grn_table_delete_by_id(ctx, db->keys, id);
+  }
+}
+
+static void
+grn_db_wal_recover_remove_broken_objects(grn_ctx *ctx,
+                                         grn_db *db)
+{
+  GRN_TABLE_EACH_BEGIN(ctx, db->keys, cursor, id) {
+    void *key;
+    int key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+    if (!grn_db_wal_recover_is_broken_object_name(ctx, key, key_size)) {
+      continue;
+    }
+    grn_ctx_push_temporary_open_space(ctx);
+    grn_db_wal_recover_remove_broken_object(ctx, db, id, key, key_size);
     /* Disable WAL flush on close. */
     grn_ctx_set_wal_role(ctx, GRN_WAL_ROLE_NONE);
     grn_ctx_pop_temporary_open_space(ctx);
@@ -1682,6 +1788,7 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
   ERRCLR(ctx);
 
   grn_db_wal_recover_remove_recovering_objects(ctx, db);
+  grn_db_wal_recover_remove_broken_objects(ctx, db);
 
   grn_hash *broken_table_ids = grn_broken_ids_open(ctx);
   grn_hash *broken_column_ids = grn_broken_ids_open(ctx);
@@ -1796,6 +1903,7 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
   grn_broken_ids_close(ctx, broken_column_ids);
 
   grn_db_wal_recover_remove_recovering_objects(ctx, db);
+  grn_db_wal_recover_remove_broken_objects(ctx, db);
 
   if (ctx->rc == GRN_SUCCESS) {
     GRN_LOG(ctx, GRN_LOG_DEBUG, "%s succeeded to recover", tag);
