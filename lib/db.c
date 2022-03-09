@@ -652,7 +652,8 @@ grn_db_wal_recover_remove_duplicated_broken_column_ids(
     grn_ctx_push_temporary_open_space(ctx);
     grn_id broken_column_id = grn_broken_ids_cursor_get(ctx, cursor);
     grn_obj *broken_column = grn_ctx_at(ctx, broken_column_id);
-    if (grn_broken_ids_exist(ctx,
+    if (broken_column &&
+        grn_broken_ids_exist(ctx,
                              broken_table_ids,
                              broken_column->header.domain)) {
       grn_hash_cursor_delete(ctx, cursor, NULL);
