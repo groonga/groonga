@@ -612,7 +612,7 @@ if(NOT ${GRN_WITH_RAPIDJSON} STREQUAL "no")
     else()
       message(STATUS "RapidJSON: (system)")
     endif()
-  else()
+  elseif(CMAKE_VERSION VERSION_GREATER 3.0) # This is rough check
     set(RAPIDJSON_SOURCE_URL
       "https://github.com/Tencent/rapidjson/archive/v${GRN_RAPIDJSON_EP_VERSION}.tar.gz")
     set(RAPIDJSON_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/rapidjson-ep-install")
@@ -644,6 +644,8 @@ if(NOT ${GRN_WITH_RAPIDJSON} STREQUAL "no")
       rapidjson
       INTERFACE_INCLUDE_DIRECTORIES)
     message(STATUS "RapidJSON: ${GRN_RAPIDJSON_INCLUDE_DIRS} (bundled)")
+  else()
+    set(GRN_WITH_RAPIDJSON FALSE)
   endif()
 else()
   set(GRN_WITH_RAPIDJSON FALSE)
