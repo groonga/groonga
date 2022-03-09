@@ -1066,7 +1066,7 @@ grn_db_wal_recover_remove_recovering_object(grn_ctx *ctx,
               "%s remove unopenable recovering object: <%.*s>(%u): %s",
               tag,
               name_length, name,
-              DB_OBJ(object)->id,
+              id,
               ctx->errbuf);
     }
     ERRCLR(ctx);
@@ -1080,7 +1080,7 @@ grn_db_wal_recover_remove_recovering_object(grn_ctx *ctx,
             "%s remove recovering object: <%.*s>(%u)",
             tag,
             name_length, name,
-            DB_OBJ(object)->id);
+            id);
   }
   grn_obj_remove(ctx, object);
   /* Ensure removing the record from db->keys. */
@@ -1195,7 +1195,7 @@ grn_db_wal_recover_remove_broken_object(grn_ctx *ctx,
               "%s remove unopenable broken object: <%.*s>(%u): %s",
               tag,
               name_length, name,
-              DB_OBJ(object)->id,
+              id,
               ctx->errbuf);
     }
     ERRCLR(ctx);
@@ -1209,7 +1209,7 @@ grn_db_wal_recover_remove_broken_object(grn_ctx *ctx,
             "%s remove broken object: <%.*s>(%u)",
             tag,
             name_length, name,
-            DB_OBJ(object)->id);
+            id);
   }
   grn_obj_remove(ctx, object);
   /* Ensure removing the record from db->keys. */
