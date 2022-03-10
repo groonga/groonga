@@ -115,7 +115,6 @@ module Groonga
         attr_reader :large_shard_threshold
         attr_reader :time_classify_types
         attr_reader :result_sets
-
         def initialize(input)
           @input = input
           @use_range_index = parse_use_range_index(@input[:use_range_index])
@@ -136,40 +135,40 @@ module Groonga
           @current_limit = @limit
 
           @result_sets = []
-          @temporary_tables_stack = []
+          @temporary_tables_queue = []
 
           @threshold = compute_threshold
           @large_shard_threshold = compute_large_shard_threshold
 
           @time_classify_types = detect_time_classify_types
 
-          @referred_objects_stack = []
+          @referred_objects_queue = []
         end
 
         def temporary_tables
-          @temporary_tables_stack.last
+          @temporary_tables_queue.last
         end
 
         def referred_objects
-          @referred_objects_stack.last
+          @referred_objects_queue.last
         end
 
         def push
-          @temporary_tables_stack << []
-          @referred_objects_stack << []
+          @temporary_tables_queue << []
+          @referred_objects_queue << []
         end
 
         def shift
-          temporary_tables = @temporary_tables_stack.shift
+          temporary_tables = @temporary_tables_queue.shift
           temporary_tables.each(&:close)
           temporary_tables.clear
-          referred_objects = @referred_objects_stack.shift
+          referred_objects = @referred_objects_queue.shift
           referred_objects.each(&:unref)
           referred_objects.clear
         end
 
         def close
-          until @temporary_tables_stack.empty?
+          until @temporary_tables_queue.empty?
             shift
           end
           @result_sets.clear
