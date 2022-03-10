@@ -1050,6 +1050,23 @@ grn_db_wal_recover_is_recovering_object_name(grn_ctx *ctx,
 }
 
 static void
+grn_db_wal_recover_ensure_remove_by_id(grn_ctx *ctx, grn_db *db, grn_id id)
+{
+  if (grn_table_at(ctx, db->keys, id) != id) {
+    return;
+  }
+
+  grn_obj_delete_by_id(ctx, (grn_obj *)db, id, true);
+
+  char path[PATH_MAX];
+  grn_obj_path_by_id(ctx, (grn_obj *)db, id, path);
+  grn_io_remove_if_exist(ctx, path);
+  grn_wal_remove(ctx, path, grn_db_wal_recover_tag);
+  grn_strcat(path, PATH_MAX, ".c");
+  grn_io_remove_if_exist(ctx, path);
+}
+
+static void
 grn_db_wal_recover_remove_recovering_object(grn_ctx *ctx,
                                             grn_db *db,
                                             grn_id id,
@@ -1070,7 +1087,7 @@ grn_db_wal_recover_remove_recovering_object(grn_ctx *ctx,
               ctx->errbuf);
     }
     ERRCLR(ctx);
-    grn_table_delete_by_id(ctx, db->keys, id);
+    grn_db_wal_recover_ensure_remove_by_id(ctx, db, id);
     return;
   }
 
@@ -1083,10 +1100,7 @@ grn_db_wal_recover_remove_recovering_object(grn_ctx *ctx,
             id);
   }
   grn_obj_remove(ctx, object);
-  /* Ensure removing the record from db->keys. */
-  if (grn_table_at(ctx, db->keys, id) == id) {
-    grn_table_delete_by_id(ctx, db->keys, id);
-  }
+  grn_db_wal_recover_ensure_remove_by_id(ctx, db, id);
 
   const char *original_name =
     name - grn_db_wal_recovering_name_prefix_length;
@@ -1121,11 +1135,7 @@ grn_db_wal_recover_remove_recovering_object(grn_ctx *ctx,
                 broken_object_id);
       }
       grn_obj_remove(ctx, broken_object);
-      /* Ensure removing the record from db->keys. */
-      if (grn_table_at(ctx, db->keys, broken_object_id) ==
-          broken_object_id) {
-        grn_table_delete_by_id(ctx, db->keys, broken_object_id);
-      }
+      grn_db_wal_recover_ensure_remove_by_id(ctx, db, broken_object_id);
     } else {
       if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
         GRN_LOG(ctx,
@@ -1212,10 +1222,7 @@ grn_db_wal_recover_remove_broken_object(grn_ctx *ctx,
             id);
   }
   grn_obj_remove(ctx, object);
-  /* Ensure removing the record from db->keys. */
-  if (grn_table_at(ctx, db->keys, id) == id) {
-    grn_table_delete_by_id(ctx, db->keys, id);
-  }
+  grn_db_wal_recover_ensure_remove_by_id(ctx, db, id);
 }
 
 static void
