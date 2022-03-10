@@ -1,6 +1,8 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
 table_create Memos TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
-column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT ShortText
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
 [[0,0.0,0.0],true]
 load --table Memos
 [
@@ -25,8 +27,6 @@ load --table Memos
 }
 ]
 [[0,0.0,0.0],3]
-table_create Tags TABLE_PAT_KEY ShortText
-[[0,0.0,0.0],true]
 column_create Tags memos_tags COLUMN_INDEX|WITH_WEIGHT Memos tags
 [[0,0.0,0.0],true]
 select Memos   --match_columns tags   --query groonga   --output_columns _key,_score
