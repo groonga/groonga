@@ -310,6 +310,7 @@ module Groonga
             last_index = enumerator.size - 1
             executors = []
             previous_executor = nil
+            # Keep the previous data for window function
             is_first_executor = true
             enumerator.send(each_method) do |shard, shard_range, i|
               @context.push
