@@ -890,7 +890,7 @@ GRN_API grn_rc grn_column_get_all_index_columns(grn_ctx *ctx,
                                                 grn_obj *column,
                                                 grn_obj *index_columns);
 
-GRN_API grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, grn_bool removep);
+GRN_API grn_rc grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, bool remove_p);
 GRN_API grn_rc grn_obj_path_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, char *buffer);
 
 /* query & snippet */
