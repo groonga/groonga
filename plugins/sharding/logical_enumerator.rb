@@ -24,11 +24,11 @@ module Groonga
       end
 
       def each_with_index(&block)
-        each_internal_with_index(:ascending, &block)
+        each_with_index_internal(:ascending, &block)
       end
 
       def reverse_each_with_index(&block)
-        each_internal_with_index(:descending, &block)
+        each_with_index_internal(:descending, &block)
       end
 
       def unref
@@ -73,7 +73,7 @@ module Groonga
       end
 
       private
-      def each_internal_with_index(order)
+      def each_with_index_internal(order)
         index = 0
         each_internal(order) do |shard, shard_range| 
           yield(shard, shard_range, index)
