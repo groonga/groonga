@@ -7374,7 +7374,7 @@ grn_obj_cast_to_record(grn_ctx *ctx,
     grn_obj key;
     GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);
     if (src->header.domain != table->header.domain) {
-      rc = grn_obj_cast(ctx, src, &key, GRN_TRUE);
+      rc = grn_obj_cast(ctx, src, &key, add_record_if_not_exist);
       p_key = &key;
     }
     if (!rc) {
