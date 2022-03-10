@@ -52,7 +52,7 @@ load --table Logs_20170317
 {"timestamp": "2017/03/17 20:00:00", "items": ["Drink", "Note"]}
 ]
 [[0,0.0,0.0],2]
-logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0   --drilldowns[item].keys items   --drilldowns[item].sort_keys price   --drilldowns[item].columns[price_with_tax].stage initial   --drilldowns[item].columns[price_with_tax].type ShortText   --drilldowns[item].columns[price_with_tax].flags COLUMN_VECTOR   --drilldowns[item].columns[price_with_tax].value 'vector_new()'   --drilldowns[item].output_columns _key,price_with_tax 
+logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0   --drilldowns[item].keys items   --drilldowns[item].sort_keys price   --drilldowns[item].columns[price_with_tax].stage initial   --drilldowns[item].columns[price_with_tax].type ShortText   --drilldowns[item].columns[price_with_tax].flags COLUMN_VECTOR   --drilldowns[item].columns[price_with_tax].value 'vector_new()'   --drilldowns[item].output_columns _key,price_with_tax
 [
   [
     0,
@@ -126,7 +126,7 @@ logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0  
     }
   ]
 ]
-logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0   --drilldowns[item].keys items   --drilldowns[item].sort_keys price   --drilldowns[item].columns[price_with_tax].stage initial   --drilldowns[item].columns[price_with_tax].type ShortText   --drilldowns[item].columns[price_with_tax].flags COLUMN_VECTOR|WITH_WEIGHT   --drilldowns[item].columns[price_with_tax].value 'vector_new()'   --drilldowns[item].output_columns _key,price_with_tax 
+logical_select Logs   --shard_key timestamp   --output_columns _id   --limit 0   --drilldowns[item].keys items   --drilldowns[item].sort_keys price   --drilldowns[item].columns[price_with_tax].stage initial   --drilldowns[item].columns[price_with_tax].type ShortText   --drilldowns[item].columns[price_with_tax].flags COLUMN_VECTOR|WITH_WEIGHT   --drilldowns[item].columns[price_with_tax].value 'vector_new()'   --drilldowns[item].output_columns _key,price_with_tax
 [
   [
     0,

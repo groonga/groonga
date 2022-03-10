@@ -57,7 +57,7 @@ logical_select Logs \
   --drilldowns[item].columns[price_with_tax].type ShortText \
   --drilldowns[item].columns[price_with_tax].flags COLUMN_VECTOR \
   --drilldowns[item].columns[price_with_tax].value 'vector_new()' \
-  --drilldowns[item].output_columns _key,price_with_tax 
+  --drilldowns[item].output_columns _key,price_with_tax
 
 logical_select Logs \
   --shard_key timestamp \
@@ -69,4 +69,4 @@ logical_select Logs \
   --drilldowns[item].columns[price_with_tax].type ShortText \
   --drilldowns[item].columns[price_with_tax].flags COLUMN_VECTOR|WITH_WEIGHT \
   --drilldowns[item].columns[price_with_tax].value 'vector_new()' \
-  --drilldowns[item].output_columns _key,price_with_tax 
+  --drilldowns[item].output_columns _key,price_with_tax
