@@ -7397,7 +7397,7 @@ grn_obj_cast_to_record(grn_ctx *ctx,
   } else {
     grn_obj record_id;
     GRN_UINT32_INIT(&record_id, 0);
-    rc = grn_obj_cast(ctx, src, &record_id, GRN_TRUE);
+    rc = grn_obj_cast(ctx, src, &record_id, false);
     if (!rc) {
       id = GRN_UINT32_VALUE(&record_id);
       if (id) {
