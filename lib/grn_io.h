@@ -342,7 +342,7 @@ grn_io_array_at(grn_ctx *ctx,
                 int *flags)
 {
   grn_io_array_info *ainfo = &(io->ainfo[array]);
-  uint32_t lseg = offset >> ainfo->w_of_elm_in_a_segment;
+  uint32_t lseg = (uint32_t)(offset >> ainfo->w_of_elm_in_a_segment);
   if (lseg >= ainfo->max_n_segments) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[io][array][at] too large offset: %" GRN_FMT_INT64D
