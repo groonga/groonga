@@ -8,8 +8,6 @@ table_create Memos TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 column_create Memos tags COLUMN_VECTOR Tags
 [[0,0.0,0.0],true]
-column_create Categories tags_categories COLUMN_INDEX|WITH_WEIGHT   Tags categories
-[[0,0.0,0.0],true]
 load --table Tags
 [
 {"_key": "groonga", "categories": {"full-text-search": 100}},
@@ -33,6 +31,8 @@ load --table Memos
 }
 ]
 [[0,0.0,0.0],3]
+column_create Categories tags_categories COLUMN_INDEX|WITH_WEIGHT   Tags categories
+[[0,0.0,0.0],true]
 select Memos   --limit 0   --output_columns _id   --drilldown tags   --drilldown_adjuster 'categories @ "full-text-search" * 2 + categories @ "mysql"'   --drilldown_output_columns _key,_nsubrecs,_score
 [
   [

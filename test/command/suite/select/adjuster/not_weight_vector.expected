@@ -4,8 +4,6 @@ table_create Memos TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 column_create Memos tags COLUMN_VECTOR Tags
 [[0,0.0,0.0],true]
-column_create Tags memos_tags COLUMN_INDEX|WITH_WEIGHT Memos tags
-[[0,0.0,0.0],true]
 load --table Memos
 [
 {
@@ -29,6 +27,8 @@ load --table Memos
 }
 ]
 [[0,0.0,0.0],3]
+column_create Tags memos_tags COLUMN_INDEX|WITH_WEIGHT Memos tags
+[[0,0.0,0.0],true]
 select Memos   --filter true   --adjuster 'tags @ "groonga" * 10'   --output_columns _key,_score
 [
   [

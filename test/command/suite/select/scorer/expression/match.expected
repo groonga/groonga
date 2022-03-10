@@ -2,14 +2,14 @@ table_create Users TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 column_create Users tags COLUMN_VECTOR|WITH_WEIGHT ShortText
 [[0,0.0,0.0],true]
-table_create Tags TABLE_HASH_KEY ShortText
-[[0,0.0,0.0],true]
-column_create Tags users_tags COLUMN_INDEX|WITH_WEIGHT Users tags
-[[0,0.0,0.0],true]
 load --table Users
 [
 {"_key": "alice", "tags": {"wonder": 100}}
 ]
 [[0,0.0,0.0],1]
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Tags users_tags COLUMN_INDEX|WITH_WEIGHT Users tags
+[[0,0.0,0.0],true]
 select Users   --filter true   --scorer '_score = (tags @ "wonder")'   --output_columns _score
 [[0,0.0,0.0],[[[1],[["_score","Int32"]],[1]]]]

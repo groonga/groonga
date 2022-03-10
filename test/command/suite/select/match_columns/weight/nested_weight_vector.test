@@ -3,12 +3,8 @@ table_create Tags TABLE_PAT_KEY ShortText
 table_create Products TABLE_HASH_KEY ShortText
 column_create Products tags COLUMN_VECTOR|WITH_WEIGHT Tags
 
-column_create Tags products_tags COLUMN_INDEX|WITH_WEIGHT Products tags
-
 table_create Programmers TABLE_PAT_KEY ShortText
 column_create Programmers products COLUMN_VECTOR Products
-
-column_create Products programmers_products COLUMN_INDEX Programmers products
 
 load --table Products
 [
@@ -71,6 +67,9 @@ load --table Programmers
 }
 ]
 
+column_create Tags products_tags COLUMN_INDEX|WITH_WEIGHT Products tags
+
+column_create Products programmers_products COLUMN_INDEX Programmers products
 
 select Programmers \
   --match_columns 'products.tags * 10' \

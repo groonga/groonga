@@ -4,13 +4,9 @@ table_create Products TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 column_create Products tags COLUMN_VECTOR|WITH_WEIGHT Tags
 [[0,0.0,0.0],true]
-column_create Tags products_tags COLUMN_INDEX|WITH_WEIGHT Products tags
-[[0,0.0,0.0],true]
 table_create Programmers TABLE_PAT_KEY ShortText
 [[0,0.0,0.0],true]
 column_create Programmers products COLUMN_VECTOR Products
-[[0,0.0,0.0],true]
-column_create Products programmers_products COLUMN_INDEX Programmers products
 [[0,0.0,0.0],true]
 load --table Products
 [
@@ -73,6 +69,10 @@ load --table Programmers
 }
 ]
 [[0,0.0,0.0],4]
+column_create Tags products_tags COLUMN_INDEX|WITH_WEIGHT Products tags
+[[0,0.0,0.0],true]
+column_create Products programmers_products COLUMN_INDEX Programmers products
+[[0,0.0,0.0],true]
 select Programmers   --match_columns 'products.tags * 10'   --query groonga   --output_columns _key,_score
 [
   [

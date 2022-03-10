@@ -6,9 +6,6 @@ column_create Tags categories COLUMN_VECTOR|WITH_WEIGHT Categories
 table_create Memos TABLE_HASH_KEY ShortText
 column_create Memos tags COLUMN_VECTOR Tags
 
-column_create Categories tags_categories COLUMN_INDEX|WITH_WEIGHT \
-  Tags categories
-
 load --table Tags
 [
 {"_key": "groonga", "categories": {"full-text-search": 100}},
@@ -31,6 +28,9 @@ load --table Memos
   "tags": ["ruby"]
 }
 ]
+
+column_create Categories tags_categories COLUMN_INDEX|WITH_WEIGHT \
+  Tags categories
 
 #@collect-query-log true
 select Memos \

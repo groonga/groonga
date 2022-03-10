@@ -195,9 +195,6 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
     break;
   }
   const grn_column_flags flags = grn_ii_get_flags(ctx, ii);
-  if ((flags & GRN_OBJ_WITH_WEIGHT)) {
-    use_grn_ii_build = GRN_FALSE;
-  }
   if ((flags & GRN_OBJ_WITH_POSITION) &&
       (!tokenizer &&
        !GRN_TYPE_IS_TEXT_FAMILY(ii->lexicon->header.domain))) {
@@ -222,11 +219,6 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
       GRN_FREE(columns);
       return ctx->rc;
     }
-    grn_obj *range = grn_ctx_at(ctx, DB_OBJ(*cp)->range);
-    if (GRN_OBJ_TABLEP(range)) {
-      use_grn_ii_build = GRN_FALSE;
-    }
-    grn_obj_unlink(ctx, range);
   }
   grn_obj_set_visibility(ctx, index_column, false);
   if (use_grn_ii_build) {

@@ -1,13 +1,13 @@
 table_create Users TABLE_HASH_KEY ShortText
 column_create Users tags COLUMN_VECTOR|WITH_WEIGHT ShortText
 
-table_create Tags TABLE_HASH_KEY ShortText
-column_create Tags users_tags COLUMN_INDEX|WITH_WEIGHT Users tags
-
 load --table Users
 [
 {"_key": "alice", "tags": {"wonder": 100}}
 ]
+
+table_create Tags TABLE_HASH_KEY ShortText
+column_create Tags users_tags COLUMN_INDEX|WITH_WEIGHT Users tags
 
 select Users \
   --filter true \
