@@ -56,8 +56,6 @@ logical_table_remove Logs timestamp   --min "2015-02-04 00:00:00"   --min_border
 #|e| [io][open] file size is too small: <8>(required: >= 64): <db/db.0000111>
 #|e| grn_ctx_at: failed to open object: <273>(<Logs_20150204.timestamp>):<64>(<column:fix_size>)
 #|e| grn_ctx_at: failed to open object: <273>(<Logs_20150204.timestamp>):<64>(<column:fix_size>)
-#|e| system call error: No such file or directory: [io][open] failed to open path: <db/db.0000111>
-#|e| grn_ctx_at: failed to open object: <273>(<>):<64>(<column:fix_size>)
 object_exist Times_20150204.timestamp_index
 [[0,0.0,0.0],false]
 dump
