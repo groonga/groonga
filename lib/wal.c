@@ -825,7 +825,6 @@ grn_wal_reader_open_internal(grn_ctx *ctx,
   return reader;
 #else
   {
-    fclose(reader->input);
     GRN_DEFINE_NAME(obj);
     ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
         "[wal][reader][open][%.*s]%s MessagePack isn't enabled",
