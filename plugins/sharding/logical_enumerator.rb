@@ -133,10 +133,9 @@ module Groonga
           yield(shards[0], shards[1], nil)
         end
         if unref_immediately
-          @shards.each(&:unref) if unref_immediately
+          @shards.each(&:unref)
           @shards.clear
         end
-        
       end
 
       def initialize_parameters
