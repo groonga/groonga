@@ -1209,7 +1209,7 @@ grn_db_wal_recover_remove_broken_object(grn_ctx *ctx,
               ctx->errbuf);
     }
     ERRCLR(ctx);
-    grn_table_delete_by_id(ctx, db->keys, id);
+    grn_db_wal_recover_ensure_remove_by_id(ctx, db, id);
     return;
   }
 
