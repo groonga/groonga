@@ -185,6 +185,7 @@ jobs:
         run: |
           bash -x test/command/run-test.sh \
             --n-retries=3 \
+            --timeout=10 \
             --read-timeout=30 \
             --reporter=mark \
             --interface=http \
