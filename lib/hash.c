@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1814,6 +1814,7 @@ typedef struct _grn_hash_wal_add_entry_data {
   uint64_t key_offset;
   uint32_t index_hash_value;
   const void *value;
+  grn_id garbage_record_id;
   grn_id next_garbage_record_id;
   uint32_t n_entries;
   uint32_t n_garbages;
@@ -2248,6 +2249,7 @@ typedef struct {
   bool key_offset;
   bool index_hash_value;
   bool value;
+  bool garbage_record_id;
   bool next_garbage_record_id;
   bool n_garbages;
   bool n_entries;
@@ -2442,6 +2444,7 @@ grn_hash_wal_add_entry_delete_entry(grn_ctx *ctx,
   used->record_id = true;
   used->key_size = true;
   used->index_hash_value = true;
+  used->garbage_record_id = true;
   used->n_garbages = true;
   used->n_entries = true;
   return grn_wal_add_entry(ctx,
@@ -2465,6 +2468,10 @@ grn_hash_wal_add_entry_delete_entry(grn_ctx *ctx,
                            GRN_WAL_KEY_INDEX_HASH_VALUE,
                            GRN_WAL_VALUE_UINT32,
                            data->index_hash_value,
+
+                           GRN_WAL_KEY_GARBAGE_RECORD_ID,
+                           GRN_WAL_VALUE_RECORD_ID,
+                           data->garbage_record_id,
 
                            GRN_WAL_KEY_N_GARBAGES,
                            GRN_WAL_VALUE_UINT32,
@@ -2574,6 +2581,12 @@ grn_hash_wal_add_entry_format_deatils(grn_ctx *ctx,
   }
   if (used->value) {
     grn_text_printf(ctx, details, "value-size:%u ", data->hash->value_size);
+  }
+  if (used->garbage_record_id) {
+    grn_text_printf(ctx,
+                    details,
+                    "garbage-record-id:%u ",
+                    data->garbage_record_id);
   }
   if (used->next_garbage_record_id) {
     grn_text_printf(ctx,
@@ -4073,6 +4086,14 @@ grn_hash_delete_internal(grn_ctx *ctx, grn_hash_delete_data *data)
     wal_data->record_id = data->id;
     wal_data->key_size = data->key_size;
     wal_data->index_hash_value = data->index_hash_value;
+    grn_id *garbages;
+    if (GRN_HASH_IS_LARGE_KEY(data->hash)) {
+      garbages = data->hash->header.large->garbages;
+    } else {
+      garbages = data->hash->header.normal->garbages;
+    }
+    uint32_t garbage_index = wal_data->key_size - 1;
+    wal_data->garbage_record_id = garbages[garbage_index];
     wal_data->n_garbages = *(data->hash->n_garbages);
     wal_data->n_entries = *(data->hash->n_entries);
     if (grn_hash_wal_add_entry(ctx, wal_data) != GRN_SUCCESS) {
@@ -5195,6 +5216,14 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
           break;
         }
         data.key_size = entry.key.content.uint64;
+        grn_id *garbages;
+        if (GRN_HASH_IS_LARGE_KEY(hash)) {
+          garbages = hash->header.large->garbages;
+        } else {
+          garbages = hash->header.normal->garbages;
+        }
+        uint32_t garbage_index = data.key_size - 1;
+        garbages[garbage_index] = entry.garbage_record_id;
         *(hash->n_garbages) = entry.n_garbages;
         *(hash->n_entries) = entry.n_entries;
         if (grn_hash_delete_entry(ctx, &data) == GRN_SUCCESS) {

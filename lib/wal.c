@@ -224,6 +224,9 @@ grn_wal_key_to_string(grn_wal_key key)
   case GRN_WAL_KEY_GARBAGE_SEGMENT_N_RECORDS :
     string = "garbage-n-records";
     break;
+  case GRN_WAL_KEY_GARBAGE_RECORD_ID :
+    string = "garbage-record-id";
+    break;
   case GRN_WAL_KEY_NEXT_GARBAGE_RECORD_ID :
     string = "next-garbage-record-id";
     break;
@@ -1226,6 +1229,15 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
                         &dump_buffer,
                         "%u",
                         entry->garbage_segment_n_records);
+      }
+      break;
+    case GRN_WAL_KEY_GARBAGE_RECORD_ID :
+      entry->garbage_record_id = value->via.u64;
+      if (need_log) {
+        grn_text_printf(ctx,
+                        &dump_buffer,
+                        "%u",
+                        entry->garbage_record_id);
       }
       break;
     case GRN_WAL_KEY_NEXT_GARBAGE_RECORD_ID :

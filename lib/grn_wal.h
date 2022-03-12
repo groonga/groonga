@@ -94,6 +94,7 @@ typedef enum {
   GRN_WAL_KEY_GARBAGE_SEGMENT_HEAD,
   GRN_WAL_KEY_GARBAGE_SEGMENT_TAIL,
   GRN_WAL_KEY_GARBAGE_SEGMENT_N_RECORDS,
+  GRN_WAL_KEY_GARBAGE_RECORD_ID,
   GRN_WAL_KEY_NEXT_GARBAGE_RECORD_ID,
   GRN_WAL_KEY_N_GARBAGES,
   GRN_WAL_KEY_N_ENTRIES,
@@ -189,6 +190,7 @@ typedef struct {
   uint32_t garbage_segment_head;
   uint32_t garbage_segment_tail;
   uint32_t garbage_segment_n_records;
+  grn_id garbage_record_id;
   grn_id next_garbage_record_id;
   uint32_t n_garbages;
   uint32_t n_entries;
