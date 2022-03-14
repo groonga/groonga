@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2011-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -728,6 +728,11 @@ class WALRecoverer {
       need_flush = true;
     }
 
+    if (grn_dat_is_changing(ctx_, dat_)) {
+      grn_dat_clear_status_flags(ctx_, dat_);
+      need_flush = true;
+    }
+
     if (reader) {
       while (true) {
         grn_wal_reader_entry entry = {};
@@ -790,6 +795,14 @@ class WALRecoverer {
         need_flush = true;
       }
       grn_wal_reader_close(ctx_, reader);
+    }
+
+    if (ctx_->rc != GRN_SUCCESS) {
+      grn_rc repair_rc = grn_dat_repair(ctx_, dat_);
+      if (repair_rc == GRN_SUCCESS) {
+        ERRCLR(ctx_);
+        need_flush = true;
+      }
     }
 
     if (need_flush && ctx_->rc == GRN_SUCCESS) {
@@ -1629,6 +1642,19 @@ grn_dat_at(grn_ctx *ctx, grn_dat *dat, grn_id id)
     return GRN_ID_NIL;
   }
   return id;
+}
+
+bool
+grn_dat_is_changing(grn_ctx *ctx, grn_dat *dat)
+{
+  if (!grn_dat_open_trie_if_needed(ctx, dat)) {
+    return false;
+  }
+  grn::dat::Trie * const trie = static_cast<grn::dat::Trie *>(dat->trie);
+  if (!trie) {
+    return false;
+  }
+  return trie->is_changing();
 }
 
 grn_rc

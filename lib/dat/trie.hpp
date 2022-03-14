@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2011-2016 Brazil
+  Copyright(C) 2011-2016  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -184,6 +185,9 @@ class GRN_DAT_API Trie {
     return header_->status_flags();
   }
 
+  bool is_changing() {
+    return (status_flags() & CHANGING_MASK) == 0;
+  }
   void clear_status_flags() {
     header_->set_status_flags(status_flags() & ~CHANGING_MASK);
   }
