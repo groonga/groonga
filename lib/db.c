@@ -1847,25 +1847,47 @@ grn_db_wal_recover(grn_ctx *ctx, grn_db *db)
   default :
     break;
   }
-  if (ctx->rc != GRN_SUCCESS) {
+  if (ctx->rc == GRN_SUCCESS) {
+    GRN_LOG(ctx, GRN_LOG_DEBUG, "%s succeeded to recover DB keys", tag);
+  } else {
     ERRCLR(ctx);
     grn_db_wal_recover_keys(ctx, db);
     if (ctx->rc != GRN_SUCCESS) {
+      GRN_LOG(ctx, GRN_LOG_ERROR, "%s failed to recover DB keys: %s",
+              tag, ctx->errbuf);
       return;
     }
   }
 
   GRN_LOG(ctx, GRN_LOG_DEBUG, "%s recover DB specs", tag);
   grn_ja_wal_recover(ctx, db->specs);
-  ERRCLR(ctx);
+  if (ctx->rc == GRN_SUCCESS) {
+    GRN_LOG(ctx, GRN_LOG_DEBUG, "%s succeeded to recover DB specs", tag);
+  } else {
+    GRN_LOG(ctx, GRN_LOG_ERROR, "%s failed to recover DB specs: %s",
+            tag, ctx->errbuf);
+    return;
+  }
 
   GRN_LOG(ctx, GRN_LOG_DEBUG, "%s recover DB config", tag);
   grn_hash_wal_recover(ctx, db->config);
-  ERRCLR(ctx);
+  if (ctx->rc == GRN_SUCCESS) {
+    GRN_LOG(ctx, GRN_LOG_DEBUG, "%s succeeded to recover DB config", tag);
+  } else {
+    GRN_LOG(ctx, GRN_LOG_ERROR, "%s failed to recover DB config: %s",
+            tag, ctx->errbuf);
+    return;
+  }
 
   GRN_LOG(ctx, GRN_LOG_DEBUG, "%s recover DB options", tag);
   grn_options_wal_recover(ctx, db->options);
-  ERRCLR(ctx);
+  if (ctx->rc == GRN_SUCCESS) {
+    GRN_LOG(ctx, GRN_LOG_DEBUG, "%s succeeded to recover DB options", tag);
+  } else {
+    GRN_LOG(ctx, GRN_LOG_ERROR, "%s failed to recover DB options: %s",
+            tag, ctx->errbuf);
+    return;
+  }
 
   grn_db_wal_recover_remove_recovering_objects(ctx, db);
   grn_db_wal_recover_remove_broken_objects(ctx, db);
