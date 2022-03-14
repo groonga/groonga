@@ -336,9 +336,9 @@ _database_close
 [[0,0.0,0.0],true]
 _database_reopen
 [[0,0.0,0.0],true]
-#|e| [reader][read-entry][dat][recover][(temporary)] must be map: <positive-integer>(2): path:<db/db>
-#|n| [db][wal][recover] rebuild broken DB keys
-#|n| [db][wal][recover] succeeded to rebuild broken DB keys
+#|e| [reader][read-entry][dat][wal][recover][(temporary)] must be map: <positive-integer>(2): path:<db/db>
+#|n| [dat][wal][recover] repair broken double array trie: <(temporary)>(0)
+#|n| [dat][wal][recover] succeeded to repair broken double array trie: <(temporary)>(0)
 schema
 [
   [

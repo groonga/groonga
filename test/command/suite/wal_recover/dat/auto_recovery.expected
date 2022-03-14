@@ -13,12 +13,8 @@ _database_close
 [[0,0.0,0.0],true]
 _database_reopen
 [[0,0.0,0.0],true]
-#|e| [reader][read-entry][dat][recover][Data] must be map: <positive-integer>(2): path:<db/db.0000100>
-#|n| [db][wal][recover] rebuild broken table: <Data>(256)
-#|n| DDL:257:table_create #recovering#Data
-#|n| spec:257:update:#recovering#Data:50(table:dat_key):0
-#|n| DDL:256:obj_remove #broken#Data
-#|n| spec:256:remove:#broken#Data:50(table:dat_key)
-#|n| [db][wal][recover] succeeded to rebuild broken table: <Data>(257)
+#|e| [reader][read-entry][dat][wal][recover][Data] must be map: <positive-integer>(2): path:<db/db.0000100>
+#|n| [dat][wal][recover] repair broken double array trie: <Data>(256)
+#|n| [dat][wal][recover] succeeded to repair broken double array trie: <Data>(256)
 select Data
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"1"]]]]

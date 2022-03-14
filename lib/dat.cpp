@@ -707,7 +707,7 @@ class WALRecoverer {
     ctx_(ctx),
     dat_(dat),
     wal_error_tag_("[dat]"),
-    tag_("[dat][recover]") {
+    tag_("[dat][wal][recover]") {
   }
 
   grn_rc recover() {
@@ -798,10 +798,32 @@ class WALRecoverer {
     }
 
     if (ctx_->rc != GRN_SUCCESS) {
+      auto ctx = ctx_;
+      GRN_DEFINE_NAME(dat_);
+      GRN_LOG(ctx_, GRN_LOG_NOTICE,
+              "%s repair broken double array trie: <%.*s>(%u)",
+              tag_,
+              name_size,
+              name,
+              DB_OBJ(dat_)->id);
       grn_rc repair_rc = grn_dat_repair(ctx_, dat_);
       if (repair_rc == GRN_SUCCESS) {
         ERRCLR(ctx_);
+        GRN_LOG(ctx_, GRN_LOG_NOTICE,
+                "%s succeeded to repair broken double array trie: <%.*s>(%u)",
+                tag_,
+                name_size,
+                name,
+                DB_OBJ(dat_)->id);
         need_flush = true;
+      } else {
+        GRN_LOG(ctx_, GRN_LOG_ERROR,
+                "%s failed to recover double array trie: <%.*s>(%u): %s",
+                tag_,
+                name_size,
+                name,
+                DB_OBJ(dat_)->id,
+                ctx->errbuf);
       }
     }
 

@@ -25,18 +25,9 @@ _database_close
 [[0,0.0,0.0],true]
 _database_reopen
 [[0,0.0,0.0],true]
-#|e| [reader][read-entry][dat][recover][Data] must be map: <positive-integer>(2): path:<db/db.0000100>
-#|n| [db][wal][recover] rebuild broken table: <Data>(256)
-#|n| DDL:258:table_create #recovering#Data
-#|n| spec:258:update:#recovering#Data:50(table:dat_key):0
-#|n| [db][wal][recover] rebuild broken data column: <Data.content>(257)
-#|n| DDL:259:column_create #recovering#Data content
-#|n| spec:259:update:#recovering#Data.content:65(column:var_size):14(ShortText)
-#|n| DDL:256:obj_remove #broken#Data
-#|n| DDL:257:obj_remove #broken#Data.content
-#|n| spec:257:remove:#broken#Data.content:65(column:var_size)
-#|n| spec:256:remove:#broken#Data:50(table:dat_key)
-#|n| [db][wal][recover] succeeded to rebuild broken table: <Data>(258)
+#|e| [reader][read-entry][dat][wal][recover][Data] must be map: <positive-integer>(2): path:<db/db.0000100>
+#|n| [dat][wal][recover] repair broken double array trie: <Data>(256)
+#|n| [dat][wal][recover] succeeded to repair broken double array trie: <Data>(256)
 dump
 table_create Data TABLE_DAT_KEY ShortText
 column_create Data content COLUMN_SCALAR ShortText
