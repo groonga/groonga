@@ -30,7 +30,7 @@ load --table Logs_20150205
 }
 ]
 [[0,0.0,0.0],4]
-log_level --level debug
+log_level --level dump
 [[0,0.0,0.0],true]
 logical_range_filter Logs timestamp   --limit 1   --filter 'between(timestamp, "2015-02-05 13:50:00", "include", "2015-02-05 13:52:00", "exclude")'
 [
@@ -56,7 +56,17 @@ logical_range_filter Logs timestamp   --limit 1   --filter 'between(timestamp, "
     ]
   ]
 ]
+#|-| [obj][open] <263>(<Logs_20150205.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <262>(<Logs_20150205>):<51>(<table:no_key>)
+#|-| [obj][open] <265>(<Timestamp_20150205>):<49>(<table:pat_key>)
+#|-| [obj][open] <266>(<Timestamp_20150205.index>):<72>(<column:index>)
 #|d| [logical_range_filter][range-index] <Logs_20150205>: hit ratio (0.75=3/4) >= threshold (0.3)
+#|-| [obj][open] <264>(<Logs_20150205.memo>):<65>(<column:var_size>)
+#|-| [obj][close] <264>(<Logs_20150205.memo>):<65>(<column:var_size>)
+#|-| [obj][open] <264>(<Logs_20150205.memo>):<65>(<column:var_size>)
+#|-| [obj][close] <264>(<Logs_20150205.memo>):<65>(<column:var_size>)
+#|-| [obj][close] <262>(<Logs_20150205>):<51>(<table:no_key>)
+#|-| [obj][close] <263>(<Logs_20150205.timestamp>):<64>(<column:fix_size>)
 #>logical_range_filter --filter "between(timestamp, \"2015-02-05 13:50:00\", \"include\", \"2015-02-05 13:52:00\", \"exclude\")" --limit "1" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(1)[Logs_20150205]: between(timestamp, "2015-02-05 13:50:00", "include", "2015-02-05 13:52:00", "exclude")
 #:000000000000000 output(1)

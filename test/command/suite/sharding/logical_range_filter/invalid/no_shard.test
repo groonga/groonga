@@ -1,3 +1,4 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
 #@disable-logging
 #@on-error omit
 plugin_register sharding

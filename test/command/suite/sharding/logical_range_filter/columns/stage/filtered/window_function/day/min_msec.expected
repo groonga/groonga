@@ -41,7 +41,7 @@ column_create Times logs_20170315 COLUMN_INDEX Logs_20170315 timestamp
 [[0,0.0,0.0],true]
 column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
 [[0,0.0,0.0],true]
-log_level --level debug
+log_level --level dump
 [[0,0.0,0.0],true]
 logical_range_filter Logs   --min '2017/03/15 07:01:00.001'   --min_border include   --shard_key timestamp   --columns[five_minute].stage filtered   --columns[five_minute].type Time   --columns[five_minute].flags COLUMN_SCALAR   --columns[five_minute].value 'time_classify_minute(timestamp, 5)'   --columns[n_records_per_five_minute].stage filtered   --columns[n_records_per_five_minute].type UInt32   --columns[n_records_per_five_minute].flags COLUMN_SCALAR   --columns[n_records_per_five_minute].value 'window_count()'   --columns[n_records_per_five_minute].window.group_keys 'five_minute'   --filter 'price >= 300'   --post_filter 'n_records_per_five_minute >= 3'   --offset 1   --limit 3   --output_columns _id,n_records_per_five_minute,price
 [
@@ -82,8 +82,21 @@ logical_range_filter Logs   --min '2017/03/15 07:01:00.001'   --min_border inclu
     ]
   ]
 ]
+#|-| [obj][open] <273>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <272>(<Logs_20170315>):<51>(<table:no_key>)
+#|-| [obj][open] <278>(<Times>):<49>(<table:pat_key>)
+#|-| [obj][open] <279>(<Times.logs_20170315>):<72>(<column:index>)
 #|d| [logical_range_filter][select] <Logs_20170315>: dynamic columns are used
+#|-| [obj][open] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
 #|d| [logical_range_filter][window] <Logs_20170315>: [2017/03/15 07:01:00.001000,2017/03/15 08:00:00)
+#|-| [obj][open] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
+#|-| [obj][open] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <279>(<Times.logs_20170315>):<72>(<column:index>)
+#|-| [obj][close] <278>(<Times>):<49>(<table:pat_key>)
+#|-| [obj][close] <273>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
 #>logical_range_filter --columns[five_minute].flags "COLUMN_SCALAR" --columns[five_minute].stage "filtered" --columns[five_minute].type "Time" --columns[five_minute].value "time_classify_minute(timestamp, 5)" --columns[n_records_per_five_minute].flags "COLUMN_SCALAR" --columns[n_records_per_five_minute].stage "filtered" --columns[n_records_per_five_minute].type "UInt32" --columns[n_records_per_five_minute].value "window_count()" --columns[n_records_per_five_minute].window.group_keys "five_minute" --filter "price >= 300" --limit "3" --logical_table "Logs" --min "2017/03/15 07:01:00.001" --min_border "include" --offset "1" --output_columns "_id,n_records_per_five_minute,price" --post_filter "n_records_per_five_minute >= 3" --shard_key "timestamp"
 #:000000000000000 filter(8): Logs_20170315.timestamp greater_equal 1489528860.1000
 #:000000000000000 filter(6): Logs_20170315.price greater_equal 300

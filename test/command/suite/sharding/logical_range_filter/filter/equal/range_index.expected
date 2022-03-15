@@ -40,7 +40,7 @@ load --table Logs_20150205
 }
 ]
 [[0,0.0,0.0],4]
-log_level --level debug
+log_level --level dump
 [[0,0.0,0.0],true]
 logical_range_filter Logs timestamp   --limit 1   --filter 'user_id == 2'
 [
@@ -71,7 +71,32 @@ logical_range_filter Logs timestamp   --limit 1   --filter 'user_id == 2'
     ]
   ]
 ]
+#|-| [obj][open] <264>(<Logs_20150205.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <263>(<Logs_20150205>):<51>(<table:no_key>)
+#|-| [obj][open] <267>(<Timestamp_20150205>):<49>(<table:pat_key>)
+#|-| [obj][open] <268>(<Timestamp_20150205.index>):<72>(<column:index>)
+#|-| [obj][open] <266>(<Logs_20150205.user_id>):<64>(<column:fix_size>)
+#|-| [obj][open] <262>(<UserIDs>):<49>(<table:pat_key>)
+#|-| [obj][close] <262>(<UserIDs>):<49>(<table:pat_key>)
+#|-| [obj][open] <262>(<UserIDs>):<49>(<table:pat_key>)
+#|-| [obj][open] <269>(<UserIDs.index_20150205>):<72>(<column:index>)
+#|-| [obj][close] <269>(<UserIDs.index_20150205>):<72>(<column:index>)
+#|-| [obj][close] <266>(<Logs_20150205.user_id>):<64>(<column:fix_size>)
 #|d| [logical_range_filter][range-index] <Logs_20150205>: the max number of unmatched records (4) <= the number of estimated records (4)
+#|-| [obj][open] <266>(<Logs_20150205.user_id>):<64>(<column:fix_size>)
+#|-| [obj][close] <266>(<Logs_20150205.user_id>):<64>(<column:fix_size>)
+#|-| [obj][open] <265>(<Logs_20150205.memo>):<65>(<column:var_size>)
+#|-| [obj][open] <266>(<Logs_20150205.user_id>):<64>(<column:fix_size>)
+#|-| [obj][close] <265>(<Logs_20150205.memo>):<65>(<column:var_size>)
+#|-| [obj][close] <266>(<Logs_20150205.user_id>):<64>(<column:fix_size>)
+#|-| [obj][open] <265>(<Logs_20150205.memo>):<65>(<column:var_size>)
+#|-| [obj][open] <266>(<Logs_20150205.user_id>):<64>(<column:fix_size>)
+#|-| [obj][close] <265>(<Logs_20150205.memo>):<65>(<column:var_size>)
+#|-| [obj][close] <266>(<Logs_20150205.user_id>):<64>(<column:fix_size>)
+#|-| [obj][close] <268>(<Timestamp_20150205.index>):<72>(<column:index>)
+#|-| [obj][close] <267>(<Timestamp_20150205>):<49>(<table:pat_key>)
+#|-| [obj][close] <263>(<Logs_20150205>):<51>(<table:no_key>)
+#|-| [obj][close] <264>(<Logs_20150205.timestamp>):<64>(<column:fix_size>)
 #>logical_range_filter --filter "user_id == 2" --limit "1" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(1)[Logs_20150205]: user_id == 2
 #:000000000000000 output(1)

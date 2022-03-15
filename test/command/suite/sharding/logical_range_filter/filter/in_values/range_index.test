@@ -1,3 +1,4 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
 #@on-error omit
 plugin_register sharding
 #@on-error default
@@ -39,9 +40,9 @@ load --table Logs_20150205
 }
 ]
 
-#@add-important-log-levels debug
+#@add-important-log-levels dump debug
 #@add-ignore-log-pattern /\A\[io\]/
-log_level --level debug
+log_level --level dump
 #@collect-query-log true
 logical_range_filter Logs timestamp \
   --limit 2 \
@@ -49,4 +50,4 @@ logical_range_filter Logs timestamp \
 #@collect-query-log false
 log_level --level notice
 #@remove-ignore-log-pattern /\A\[io\]/
-#@remove-important-log-levels debug
+#@remove-important-log-levels dump debug

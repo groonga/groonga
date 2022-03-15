@@ -1,3 +1,4 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
 #@require-testee groonga
 
 #@include fixture/sharding/logical_range_filter/index/schema.grn

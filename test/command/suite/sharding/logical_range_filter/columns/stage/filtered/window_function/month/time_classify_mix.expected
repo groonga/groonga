@@ -29,7 +29,7 @@ table_create Times TABLE_PAT_KEY Time
 [[0,0.0,0.0],true]
 column_create Times logs_201703 COLUMN_INDEX Logs_201703 timestamp
 [[0,0.0,0.0],true]
-log_level --level debug
+log_level --level dump
 [[0,0.0,0.0],true]
 logical_range_filter Logs   --shard_key timestamp   --columns[day].stage filtered   --columns[day].type Time   --columns[day].flags COLUMN_SCALAR   --columns[day].value 'time_classify_day(timestamp)'   --columns[five_minute].stage filtered   --columns[five_minute].type Time   --columns[five_minute].flags COLUMN_SCALAR   --columns[five_minute].value 'time_classify_minute(timestamp, 5)'   --columns[n_records_per_day].stage filtered   --columns[n_records_per_day].type UInt32   --columns[n_records_per_day].flags COLUMN_SCALAR   --columns[n_records_per_day].value 'window_count()'   --columns[n_records_per_day].window.group_keys 'day'   --columns[n_records_per_five_minute].stage filtered   --columns[n_records_per_five_minute].type UInt32   --columns[n_records_per_five_minute].flags COLUMN_SCALAR   --columns[n_records_per_five_minute].value 'window_count()'   --columns[n_records_per_five_minute].window.group_keys 'five_minute'   --filter 'price >= 300'   --post_filter 'n_records_per_day >= 4 || n_records_per_five_minute >= 3'   --offset 1   --limit 3   --output_columns _id,n_records_per_day,n_records_per_five_minute,price
 [
@@ -77,9 +77,24 @@ logical_range_filter Logs   --shard_key timestamp   --columns[day].stage filtere
     ]
   ]
 ]
+#|-| [obj][open] <273>(<Logs_201703.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <272>(<Logs_201703>):<51>(<table:no_key>)
+#|-| [obj][open] <275>(<Times>):<49>(<table:pat_key>)
+#|-| [obj][open] <276>(<Times.logs_201703>):<72>(<column:index>)
 #|d| [logical_range_filter][select] <Logs_201703>: dynamic columns are used
+#|-| [obj][open] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
 #|d| [logical_range_filter][window] <Logs_201703>: [2017/03/15 00:00:00,2017/03/16 00:00:00)
 #|d| [logical_range_filter][window] <Logs_201703>: [2017/03/16 00:00:00,2017/03/17 00:00:00)
+#|-| [obj][open] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
+#|-| [obj][open] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
+#|-| [obj][open] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <276>(<Times.logs_201703>):<72>(<column:index>)
+#|-| [obj][close] <275>(<Times>):<49>(<table:pat_key>)
+#|-| [obj][close] <273>(<Logs_201703.timestamp>):<64>(<column:fix_size>)
 #>logical_range_filter --columns[day].flags "COLUMN_SCALAR" --columns[day].stage "filtered" --columns[day].type "Time" --columns[day].value "time_classify_day(timestamp)" --columns[five_minute].flags "COLUMN_SCALAR" --columns[five_minute].stage "filtered" --columns[five_minute].type "Time" --columns[five_minute].value "time_classify_minute(timestamp, 5)" --columns[n_records_per_day].flags "COLUMN_SCALAR" --columns[n_records_per_day].stage "filtered" --columns[n_records_per_day].type "UInt32" --columns[n_records_per_day].value "window_count()" --columns[n_records_per_day].window.group_keys "day" --columns[n_records_per_five_minute].flags "COLUMN_SCALAR" --columns[n_records_per_five_minute].stage "filtered" --columns[n_records_per_five_minute].type "UInt32" --columns[n_records_per_five_minute].value "window_count()" --columns[n_records_per_five_minute].window.group_keys "five_minute" --filter "price >= 300" --limit "3" --logical_table "Logs" --offset "1" --output_columns "_id,n_records_per_day,n_records_per_five_minute,price" --post_filter "n_records_per_day >= 4 || n_records_per_five_minute >= 3" --shard_key "timestamp"
 #:000000000000000 filter(11): Logs_201703.price greater_equal 300
 #:000000000000000 filter(0): between(#<accessor _key(anonymous).timestamp(Logs_201703)>, "2017/03/01 00:00:00", "include", "2017/03/02 00:00:00", "exclude")

@@ -1,3 +1,4 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
 #$GRN_OUTPUT_AUTO_FLUSH_INTERVAL=1
 
 #@require-apache-arrow
