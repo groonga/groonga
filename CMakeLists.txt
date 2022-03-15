@@ -45,11 +45,11 @@ if(MSVC)
   endif()
 endif()
 
-if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
-  set(CMAKE_COMPILER_IS_CLANGCC ON)
-endif()
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  set(CMAKE_COMPILER_IS_CLANGCXX ON)
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR
+    CMAKE_C_COMPILER_ID STREQUAL "Clang")
+  set(GRN_C_COMPILER_GNU_LIKE TRUE)
+else()
+  set(GRN_C_COMPILER_GNU_LIKE FALSE)
 endif()
 
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/base_version" VERSION)
@@ -163,18 +163,29 @@ set(GRN_RUBY_SCRIPTS_DIR
   "${CMAKE_INSTALL_PREFIX}/${GRN_RELATIVE_RUBY_SCRIPTS_DIR}")
 
 
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-  set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} -std=gnu99")
+if(GRN_C_COMPILER_GNU_LIKE)
+  set(GRN_C_COMPILE_FLAGS
+    "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:Debug>:-g3 -O0>")
+  set(GRN_CXX_COMPILE_FLAGS
+    "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:Debug>:-g3 -O0>")
+  set(GRN_C_COMPILE_FLAGS
+    "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-g3>")
+  set(GRN_CXX_COMPILE_FLAGS
+    "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-g3>")
+  if(CMAKE_VERSION VERSION_LESS 3.1)
+    set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} -std=gnu99")
+  else()
+    set(CMAKE_C_STANDARD 99)
+    set(CMAKE_C_STANDARD_REQUIRED TRUE)
+  endif()
 endif()
 
 # /Ob1 is used with RelWithDebInfo by default but it's slower than
 # /Ob2 which is the default with Release. We need performance with
 # debug information.
-if("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
+if(MSVC)
   set(GRN_C_COMPILE_FLAGS
     "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:/Ob2>")
-endif()
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   set(GRN_CXX_COMPILE_FLAGS
     "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:/Ob2>")
 endif()
@@ -205,7 +216,7 @@ macro(check_build_flag flag)
   check_cxxflag(${flag})
 endmacro()
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)
+if(GRN_C_COMPILER_GNU_LIKE)
   check_build_flag("-Wall")
   check_build_flag("-Wno-unused-but-set-variable")
   check_build_flag("-Wno-unused-parameter")
@@ -217,10 +228,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)
   check_build_flag("-Wno-disabled-optimization")
   check_build_flag("-Wpointer-arith")
   check_cflag("-Wbad-function-cast")
-  # if(NOT CMAKE_COMPILER_IS_CLANGCXX)
-  #   check_build_flag("-Wcast-align")
-  # endif()
-  # check_build_flag("-Wredundant-decls")
   check_build_flag("-Wwrite-strings")
   check_build_flag("-Wsign-compare")
   check_build_flag("-Wmissing-field-initializers")
@@ -228,21 +235,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)
   check_cxxflag("-fexceptions")
   check_cxxflag("-fimplicit-templates")
   check_build_flag("-Wno-implicit-fallthrough")
-endif()
-
-if(NOT DEFINED CMAKE_C_COMPILE_OPTIONS_PIC)
-  # For old CMake
-  if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)
-    check_build_flag("-fPIC")
-  endif()
-endif()
-
-option(GRN_WITH_DEBUG "enable debug build." OFF)
-if(GRN_WITH_DEBUG)
-  if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)
-    set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} -g3 -O0")
-    set(GRN_CXX_COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS} -g3 -O0")
-  endif()
 endif()
 
 option(GRN_WITH_WINDOWS_BACK_TRACE "enable back trace on Windows." ON)
@@ -254,7 +246,7 @@ if(GRN_EMBED)
   add_definitions(-DGRN_EMBEDDED)
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)
+if(GRN_C_COMPILER_GNU_LIKE)
   set(_GNU_SOURCE TRUE)
 endif()
 
