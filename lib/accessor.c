@@ -84,14 +84,14 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
     index = accessor->obj;
     next_res_domain_id = index->header.domain;
 
-    GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
+    GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_DB_VOID);
     grn_obj_get_info(ctx, index, GRN_INFO_SOURCE, &source_ids);
-    n_ids = GRN_BULK_VSIZE(&source_ids) / sizeof(grn_id);
+    n_ids = GRN_RECORD_VECTOR_SIZE(&source_ids);
     for (i = 0; i < n_ids; i++) {
       grn_id source_id;
       grn_obj *source;
 
-      source_id = GRN_UINT32_VALUE_AT(&source_ids, i);
+      source_id = GRN_RECORD_VALUE_AT(&source_ids, i);
       source = grn_ctx_at(ctx, source_id);
       if (DB_OBJ(source)->range == next_res_domain_id) {
         column = source;
