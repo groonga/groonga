@@ -1,3 +1,4 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
 #@on-error omit
 plugin_register sharding
 plugin_register functions/time
@@ -40,6 +41,9 @@ load --table Logs_20170317
 {"timestamp": "2017/03/17 23:00:00", "price":  300}
 ]
 
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level dump
 #@collect-query-log true
 logical_range_filter Logs \
   --shard_key timestamp \
@@ -57,3 +61,5 @@ logical_range_filter Logs \
   --columns[price_per_day].window.group_keys 'day' \
   --output_columns _id,day,price_per_day
 #@collect-query-log false
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels dump

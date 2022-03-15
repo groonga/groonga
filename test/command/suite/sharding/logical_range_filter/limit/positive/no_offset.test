@@ -1,3 +1,4 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
 #@include fixture/sharding/logical_range_filter/index/schema.grn
 
 load --table Logs_20150203
@@ -26,6 +27,9 @@ load --table Logs_20150205
 {"timestamp": "2015-02-05 00:00:01", "memo": "2015-02-05 00:00:01", "message": "Shutdown"}
 ]
 
+#@add-important-log-levels dump 
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level dump
 #@collect-query-log true
 logical_range_filter Logs timestamp \
   --filter 'message == "Shutdown"' \
@@ -35,3 +39,6 @@ logical_range_filter Logs timestamp \
   --max_border "include" \
   --limit 4
 #@collect-query-log false
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels dump

@@ -67,7 +67,6 @@ module Groonga
       end
 
       private
-
       def stream_output?(input)
         context.command_version >= 3
       end
@@ -116,7 +115,6 @@ module Groonga
         attr_reader :large_shard_threshold
         attr_reader :time_classify_types
         attr_reader :result_sets
-
         def initialize(input)
           @input = input
           @use_range_index = parse_use_range_index(@input[:use_range_index])
@@ -190,7 +188,6 @@ module Groonga
         end
 
         private
-
         def parse_use_range_index(use_range_index)
           case use_range_index
           when "yes"
@@ -302,7 +299,6 @@ module Groonga
         end
 
         private
-
         def each_shard_executor(&block)
           enumerator = @context.enumerator
           target_range = enumerator.target_range
@@ -345,7 +341,6 @@ module Groonga
 
         attr_reader :unit
         attr_reader :step
-
         def initialize(context, shard, shard_range, unit, step)
           @context = context
           @shard = shard
@@ -423,7 +418,6 @@ module Groonga
         end
 
         private
-
         def create_min_edge
           min = @target_range.min
           if min
@@ -540,7 +534,6 @@ module Groonga
         attr_reader :second
         attr_reader :microsecond
         attr_reader :border
-
         def initialize(year, month, day, hour, minute, second, microsecond,
                        border)
           @year = year
@@ -584,7 +577,6 @@ module Groonga
         attr_reader :shard
         attr_writer :previous_executor
         attr_writer :next_executor
-
         def initialize(context, shard, shard_range)
           @context = context
           @shard = shard
@@ -643,18 +635,17 @@ module Groonga
         def add_initial_stage_context(apply_targets)
           ensure_prepared
           return unless @initial_table
-          apply_targets << [@initial_table, { context: true }]
+          apply_targets << [@initial_table, {context: true}]
         end
 
         def add_filtered_stage_context(apply_targets)
           ensure_filtered
           @filtered_result_sets.each do |table|
-            apply_targets << [table, { context: true }]
+            apply_targets << [table, {context: true}]
           end
         end
 
         private
-
         def have_record?
           return false if @cover_type == :none
           return false if @target_table.empty?
@@ -1211,7 +1202,7 @@ module Groonga
                 key = sort_key
                 order = :ascending
               end
-              { :key => key, :order => order }
+              {:key => key, :order => order}
             end
           end
           if @context.current_limit > 0
