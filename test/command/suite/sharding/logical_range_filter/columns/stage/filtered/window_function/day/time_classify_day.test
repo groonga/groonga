@@ -1,4 +1,3 @@
-#$GRN_ENABLE_REFERENCE_COUNT=yes
 #@on-error omit
 plugin_register sharding
 #@on-error default
@@ -48,9 +47,9 @@ column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
 column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
 
 #@timeout 30
-#@add-important-log-levels dump debug
+#@add-important-log-levels debug
 #@add-ignore-log-pattern /\A\[io\]/
-log_level --level dump
+log_level --level debug
 #@collect-query-log true
 logical_range_filter Logs \
   --shard_key timestamp \
@@ -71,4 +70,4 @@ logical_range_filter Logs \
 #@collect-query-log false
 log_level --level notice
 #@remove-ignore-log-pattern /\A\[io\]/
-#@remove-important-log-levels dump debug
+#@remove-important-log-levels debug

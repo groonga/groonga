@@ -47,41 +47,13 @@ column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
 [[0,0.0,0.0],true]
 column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
 [[0,0.0,0.0],true]
-log_level --level dump
+log_level --level debug
 [[0,0.0,0.0],true]
 logical_range_filter Logs   --shard_key timestamp   --post_filter '_id < 3'   --offset 4   --limit 1   --output_columns _id,price
 [[0,0.0,0.0],[[["_id","UInt32"],["price","UInt32"]],[1,800]]]
-#|-| [obj][open] <263>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <262>(<Logs_20170315>):<51>(<table:no_key>)
-#|-| [obj][open] <271>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][open] <272>(<Times.logs_20170315>):<72>(<column:index>)
 #|d| [logical_range_filter][select] <Logs_20170315>: post_filter is used
-#|-| [obj][close] <272>(<Times.logs_20170315>):<72>(<column:index>)
-#|-| [obj][close] <271>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][open] <266>(<Logs_20170316.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <265>(<Logs_20170316>):<51>(<table:no_key>)
-#|-| [obj][open] <271>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][open] <273>(<Times.logs_20170316>):<72>(<column:index>)
 #|d| [logical_range_filter][select] <Logs_20170316>: post_filter is used
-#|-| [obj][close] <273>(<Times.logs_20170316>):<72>(<column:index>)
-#|-| [obj][close] <271>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][close] <262>(<Logs_20170315>):<51>(<table:no_key>)
-#|-| [obj][close] <263>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <269>(<Logs_20170317.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <268>(<Logs_20170317>):<51>(<table:no_key>)
-#|-| [obj][open] <271>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][open] <274>(<Times.logs_20170317>):<72>(<column:index>)
 #|d| [logical_range_filter][select] <Logs_20170317>: post_filter is used
-#|-| [obj][open] <270>(<Logs_20170317.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <270>(<Logs_20170317.price>):<64>(<column:fix_size>)
-#|-| [obj][open] <270>(<Logs_20170317.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <270>(<Logs_20170317.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <274>(<Times.logs_20170317>):<72>(<column:index>)
-#|-| [obj][close] <271>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][close] <265>(<Logs_20170316>):<51>(<table:no_key>)
-#|-| [obj][close] <266>(<Logs_20170316.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][close] <268>(<Logs_20170317>):<51>(<table:no_key>)
-#|-| [obj][close] <269>(<Logs_20170317.timestamp>):<64>(<column:fix_size>)
 #>logical_range_filter --limit "1" --logical_table "Logs" --offset "4" --output_columns "_id,price" --post_filter "_id < 3" --shard_key "timestamp"
 #:000000000000000 filter(2): #<accessor _id(Logs_20170315)> less 3
 #:000000000000000 filter(2): #<accessor _id(Logs_20170316)> less 3

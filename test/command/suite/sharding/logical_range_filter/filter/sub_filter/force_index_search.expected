@@ -49,7 +49,7 @@ load --table Logs_20150205
 }
 ]
 [[0,0.0,0.0],3]
-log_level --level dump
+log_level --level debug
 [[0,0.0,0.0],true]
 logical_range_filter Logs timestamp   --limit 1   --filter 'sub_filter(action.errors_action, "level == \\"critical\\"")'
 [
@@ -80,71 +80,8 @@ logical_range_filter Logs timestamp   --limit 1   --filter 'sub_filter(action.er
     ]
   ]
 ]
-#|-| [obj][open] <269>(<Logs_20150203.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <268>(<Logs_20150203>):<51>(<table:no_key>)
-#|-| [obj][open] <272>(<Timestamp_20150203>):<49>(<table:pat_key>)
-#|-| [obj][open] <273>(<Timestamp_20150203.index>):<72>(<column:index>)
 #|d| [logical_range_filter][select] <Logs_20150203>: the number of required records (1) >= the number of records in shard (1)
-#|-| [obj][open] <271>(<Logs_20150203.action>):<64>(<column:fix_size>)
-#|-| [obj][open] <262>(<Actions>):<49>(<table:pat_key>)
-#|-| [obj][open] <266>(<Actions.errors_action>):<72>(<column:index>)
-#|-| [obj][open] <275>(<Actions.index_20150203>):<72>(<column:index>)
-#|-| [obj][close] <275>(<Actions.index_20150203>):<72>(<column:index>)
-#|-| [obj][open] <263>(<Errors>):<49>(<table:pat_key>)
-#|-| [obj][open] <264>(<Errors.level>):<65>(<column:var_size>)
-#|-| [obj][open] <265>(<Errors.action>):<64>(<column:fix_size>)
-#|-| [obj][open] <275>(<Actions.index_20150203>):<72>(<column:index>)
-#|-| [obj][close] <275>(<Actions.index_20150203>):<72>(<column:index>)
-#|-| [obj][close] <263>(<Errors>):<49>(<table:pat_key>)
-#|-| [obj][close] <264>(<Errors.level>):<65>(<column:var_size>)
-#|-| [obj][close] <271>(<Logs_20150203.action>):<64>(<column:fix_size>)
-#|-| [obj][close] <266>(<Actions.errors_action>):<72>(<column:index>)
-#|-| [obj][close] <262>(<Actions>):<49>(<table:pat_key>)
-#|-| [obj][close] <273>(<Timestamp_20150203.index>):<72>(<column:index>)
-#|-| [obj][close] <272>(<Timestamp_20150203>):<49>(<table:pat_key>)
-#|-| [obj][open] <277>(<Logs_20150204.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <276>(<Logs_20150204>):<51>(<table:no_key>)
-#|-| [obj][open] <280>(<Timestamp_20150204>):<49>(<table:pat_key>)
-#|-| [obj][open] <281>(<Timestamp_20150204.index>):<72>(<column:index>)
-#|-| [obj][open] <279>(<Logs_20150204.action>):<64>(<column:fix_size>)
-#|-| [obj][open] <262>(<Actions>):<49>(<table:pat_key>)
-#|-| [obj][open] <266>(<Actions.errors_action>):<72>(<column:index>)
 #|d| [logical_range_filter][select] <Logs_20150204>: selector only procedure can't be used: <sub_filter>
-#|-| [obj][close] <279>(<Logs_20150204.action>):<64>(<column:fix_size>)
-#|-| [obj][close] <266>(<Actions.errors_action>):<72>(<column:index>)
-#|-| [obj][close] <262>(<Actions>):<49>(<table:pat_key>)
-#|-| [obj][open] <279>(<Logs_20150204.action>):<64>(<column:fix_size>)
-#|-| [obj][open] <262>(<Actions>):<49>(<table:pat_key>)
-#|-| [obj][open] <266>(<Actions.errors_action>):<72>(<column:index>)
-#|-| [obj][open] <283>(<Actions.index_20150204>):<72>(<column:index>)
-#|-| [obj][close] <283>(<Actions.index_20150204>):<72>(<column:index>)
-#|-| [obj][open] <263>(<Errors>):<49>(<table:pat_key>)
-#|-| [obj][open] <264>(<Errors.level>):<65>(<column:var_size>)
-#|-| [obj][open] <283>(<Actions.index_20150204>):<72>(<column:index>)
-#|-| [obj][close] <283>(<Actions.index_20150204>):<72>(<column:index>)
-#|-| [obj][close] <263>(<Errors>):<49>(<table:pat_key>)
-#|-| [obj][close] <264>(<Errors.level>):<65>(<column:var_size>)
-#|-| [obj][close] <279>(<Logs_20150204.action>):<64>(<column:fix_size>)
-#|-| [obj][close] <266>(<Actions.errors_action>):<72>(<column:index>)
-#|-| [obj][close] <262>(<Actions>):<49>(<table:pat_key>)
-#|-| [obj][open] <279>(<Logs_20150204.action>):<64>(<column:fix_size>)
-#|-| [obj][open] <278>(<Logs_20150204.memo>):<65>(<column:var_size>)
-#|-| [obj][open] <262>(<Actions>):<49>(<table:pat_key>)
-#|-| [obj][close] <262>(<Actions>):<49>(<table:pat_key>)
-#|-| [obj][close] <279>(<Logs_20150204.action>):<64>(<column:fix_size>)
-#|-| [obj][close] <278>(<Logs_20150204.memo>):<65>(<column:var_size>)
-#|-| [obj][open] <279>(<Logs_20150204.action>):<64>(<column:fix_size>)
-#|-| [obj][open] <278>(<Logs_20150204.memo>):<65>(<column:var_size>)
-#|-| [obj][open] <262>(<Actions>):<49>(<table:pat_key>)
-#|-| [obj][close] <262>(<Actions>):<49>(<table:pat_key>)
-#|-| [obj][close] <279>(<Logs_20150204.action>):<64>(<column:fix_size>)
-#|-| [obj][close] <278>(<Logs_20150204.memo>):<65>(<column:var_size>)
-#|-| [obj][close] <281>(<Timestamp_20150204.index>):<72>(<column:index>)
-#|-| [obj][close] <280>(<Timestamp_20150204>):<49>(<table:pat_key>)
-#|-| [obj][close] <268>(<Logs_20150203>):<51>(<table:no_key>)
-#|-| [obj][close] <269>(<Logs_20150203.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][close] <276>(<Logs_20150204>):<51>(<table:no_key>)
-#|-| [obj][close] <277>(<Logs_20150204.timestamp>):<64>(<column:fix_size>)
 #>logical_range_filter --filter "sub_filter(action.errors_action, \"level == \\\"critical\\\"\")" --limit "1" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(1): Errors.level equal "critical"
 #:000000000000000 filter(0): sub_filter(#<accessor action(Logs_20150203).errors_action(Actions)>, "level == \"critical\"")

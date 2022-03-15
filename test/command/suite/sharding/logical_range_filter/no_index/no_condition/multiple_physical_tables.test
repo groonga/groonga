@@ -1,4 +1,3 @@
-#$GRN_ENABLE_REFERENCE_COUNT=yes
 #@include fixture/sharding/logical_range_filter/no_index/schema.grn
 
 load --table Logs_20150203

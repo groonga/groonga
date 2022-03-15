@@ -14,21 +14,10 @@ table_create Times TABLE_PAT_KEY Time
 [[0,0.0,0.0],true]
 column_create Times logs_20170315 COLUMN_INDEX Logs_20170315 timestamp
 [[0,0.0,0.0],true]
-log_level --level dump
+log_level --level debug
 [[0,0.0,0.0],true]
 logical_range_filter Logs   --shard_key timestamp   --columns[price_with_tax].stage initial   --columns[price_with_tax].type UInt32   --columns[price_with_tax].flags COLUMN_SCALAR   --columns[price_with_tax].value 'price * 1.08'   --offset 1   --limit 3   --output_columns price,price_with_tax
 [[0,0.0,0.0],[[["price","UInt32"],["price_with_tax","UInt32"]]]]
-#|-| [obj][open] <263>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <262>(<Logs_20170315>):<51>(<table:no_key>)
-#|-| [obj][close] <262>(<Logs_20170315>):<51>(<table:no_key>)
-#|-| [obj][close] <263>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <263>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <262>(<Logs_20170315>):<51>(<table:no_key>)
-#|-| [obj][open] <264>(<Logs_20170315.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <264>(<Logs_20170315.price>):<64>(<column:fix_size>)
-#|-| [obj][open] <264>(<Logs_20170315.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <264>(<Logs_20170315.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <263>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
 #>logical_range_filter --columns[price_with_tax].flags "COLUMN_SCALAR" --columns[price_with_tax].stage "initial" --columns[price_with_tax].type "UInt32" --columns[price_with_tax].value "price * 1.08" --limit "3" --logical_table "Logs" --offset "1" --output_columns "price,price_with_tax" --shard_key "timestamp"
 #:000000000000000 columns[price_with_tax](0)
 #:000000000000000 output(0)

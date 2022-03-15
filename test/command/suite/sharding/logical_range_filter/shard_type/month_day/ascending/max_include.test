@@ -1,4 +1,3 @@
-#$GRN_ENABLE_REFERENCE_COUNT=yes
 #@include fixture/sharding/logical_range_filter/shard_type/month_day.grn
 
 #@collect-query-log true

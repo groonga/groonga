@@ -29,7 +29,7 @@ table_create Times TABLE_PAT_KEY Time
 [[0,0.0,0.0],true]
 column_create Times logs_201703 COLUMN_INDEX Logs_201703 timestamp
 [[0,0.0,0.0],true]
-log_level --level dump
+log_level --level debug
 [[0,0.0,0.0],true]
 logical_range_filter Logs   --shard_key timestamp   --min '2017/03/15 01:00:00'   --min_border include   --max '2017/03/17 23:00:00'   --max_border exclude   --columns[day].stage filtered   --columns[day].type Time   --columns[day].flags COLUMN_SCALAR   --columns[day].value 'time_classify_day(timestamp)'   --columns[n_records_per_day].stage filtered   --columns[n_records_per_day].type UInt32   --columns[n_records_per_day].flags COLUMN_SCALAR   --columns[n_records_per_day].value 'window_count()'   --columns[n_records_per_day].window.group_keys 'day'   --filter 'price >= 300'   --post_filter 'n_records_per_day >= 3'   --offset 3   --limit 4   --output_columns _id,n_records_per_day,price
 [
@@ -75,25 +75,10 @@ logical_range_filter Logs   --shard_key timestamp   --min '2017/03/15 01:00:00' 
     ]
   ]
 ]
-#|-| [obj][open] <273>(<Logs_201703.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <272>(<Logs_201703>):<51>(<table:no_key>)
-#|-| [obj][open] <275>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][open] <276>(<Times.logs_201703>):<72>(<column:index>)
 #|d| [logical_range_filter][select] <Logs_201703>: dynamic columns are used
-#|-| [obj][open] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
 #|d| [logical_range_filter][window] <Logs_201703>: [2017/03/15 01:00:00,2017/03/16 00:00:00)
 #|d| [logical_range_filter][window] <Logs_201703>: [2017/03/16 00:00:00,2017/03/17 00:00:00)
 #|d| [logical_range_filter][window] <Logs_201703>: [2017/03/17 00:00:00,2017/03/17 23:00:00)
-#|-| [obj][open] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
-#|-| [obj][open] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
-#|-| [obj][open] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <274>(<Logs_201703.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <276>(<Times.logs_201703>):<72>(<column:index>)
-#|-| [obj][close] <275>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][close] <273>(<Logs_201703.timestamp>):<64>(<column:fix_size>)
 #>logical_range_filter --columns[day].flags "COLUMN_SCALAR" --columns[day].stage "filtered" --columns[day].type "Time" --columns[day].value "time_classify_day(timestamp)" --columns[n_records_per_day].flags "COLUMN_SCALAR" --columns[n_records_per_day].stage "filtered" --columns[n_records_per_day].type "UInt32" --columns[n_records_per_day].value "window_count()" --columns[n_records_per_day].window.group_keys "day" --filter "price >= 300" --limit "4" --logical_table "Logs" --max "2017/03/17 23:00:00" --max_border "exclude" --min "2017/03/15 01:00:00" --min_border "include" --offset "3" --output_columns "_id,n_records_per_day,price" --post_filter "n_records_per_day >= 3" --shard_key "timestamp"
 #:000000000000000 filter(11): between(Logs_201703.timestamp, 1489507200.0, "include", 1489759200.0, "exclude")
 #:000000000000000 filter(9): Logs_201703.price greater_equal 300

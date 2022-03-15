@@ -1,4 +1,3 @@
-#$GRN_ENABLE_REFERENCE_COUNT=yes
 #$GRN_EXPR_OPTIMIZE=yes
 #@include fixture/sharding/logical_range_filter/index/schema.grn
 

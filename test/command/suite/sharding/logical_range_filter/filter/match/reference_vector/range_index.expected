@@ -54,7 +54,7 @@ load --table Logs_20150205
 }
 ]
 [[0,0.0,0.0],4]
-log_level --level dump
+log_level --level debug
 [[0,0.0,0.0],true]
 logical_range_filter Logs timestamp   --limit 2   --filter 'user.tags @ "search"'
 [
@@ -90,63 +90,7 @@ logical_range_filter Logs timestamp   --limit 2   --filter 'user.tags @ "search"
     ]
   ]
 ]
-#|-| [obj][open] <267>(<Logs_20150205.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <266>(<Logs_20150205>):<51>(<table:no_key>)
-#|-| [obj][open] <270>(<Timestamp_20150205>):<49>(<table:pat_key>)
-#|-| [obj][open] <271>(<Timestamp_20150205.index>):<72>(<column:index>)
-#|-| [obj][open] <269>(<Logs_20150205.user>):<64>(<column:fix_size>)
-#|-| [obj][open] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][open] <263>(<Users.tags>):<65>(<column:var_size>)
-#|-| [obj][close] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][open] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][open] <272>(<Users.index_20150205>):<72>(<column:index>)
-#|-| [obj][open] <264>(<Tags>):<49>(<table:pat_key>)
-#|-| [obj][open] <265>(<Tags.users>):<72>(<column:index>)
-#|-| [obj][close] <272>(<Users.index_20150205>):<72>(<column:index>)
-#|-| [obj][close] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][close] <265>(<Tags.users>):<72>(<column:index>)
-#|-| [obj][close] <264>(<Tags>):<49>(<table:pat_key>)
-#|-| [obj][open] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][open] <272>(<Users.index_20150205>):<72>(<column:index>)
-#|-| [obj][open] <264>(<Tags>):<49>(<table:pat_key>)
-#|-| [obj][open] <265>(<Tags.users>):<72>(<column:index>)
-#|-| [obj][close] <272>(<Users.index_20150205>):<72>(<column:index>)
-#|-| [obj][close] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][close] <265>(<Tags.users>):<72>(<column:index>)
-#|-| [obj][close] <264>(<Tags>):<49>(<table:pat_key>)
-#|-| [obj][open] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][close] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][open] <264>(<Tags>):<49>(<table:pat_key>)
-#|-| [obj][open] <265>(<Tags.users>):<72>(<column:index>)
-#|-| [obj][close] <265>(<Tags.users>):<72>(<column:index>)
-#|-| [obj][close] <264>(<Tags>):<49>(<table:pat_key>)
-#|-| [obj][close] <269>(<Logs_20150205.user>):<64>(<column:fix_size>)
-#|-| [obj][close] <263>(<Users.tags>):<65>(<column:var_size>)
 #|d| [logical_range_filter][range-index] <Logs_20150205>: the max number of unmatched records (4) <= the number of estimated records (4)
-#|-| [obj][open] <269>(<Logs_20150205.user>):<64>(<column:fix_size>)
-#|-| [obj][open] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][open] <263>(<Users.tags>):<65>(<column:var_size>)
-#|-| [obj][close] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][close] <269>(<Logs_20150205.user>):<64>(<column:fix_size>)
-#|-| [obj][close] <263>(<Users.tags>):<65>(<column:var_size>)
-#|-| [obj][open] <268>(<Logs_20150205.memo>):<65>(<column:var_size>)
-#|-| [obj][open] <269>(<Logs_20150205.user>):<64>(<column:fix_size>)
-#|-| [obj][open] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][close] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][close] <268>(<Logs_20150205.memo>):<65>(<column:var_size>)
-#|-| [obj][close] <269>(<Logs_20150205.user>):<64>(<column:fix_size>)
-#|-| [obj][open] <268>(<Logs_20150205.memo>):<65>(<column:var_size>)
-#|-| [obj][open] <269>(<Logs_20150205.user>):<64>(<column:fix_size>)
-#|-| [obj][open] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][close] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][open] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][close] <262>(<Users>):<49>(<table:pat_key>)
-#|-| [obj][close] <268>(<Logs_20150205.memo>):<65>(<column:var_size>)
-#|-| [obj][close] <269>(<Logs_20150205.user>):<64>(<column:fix_size>)
-#|-| [obj][close] <271>(<Timestamp_20150205.index>):<72>(<column:index>)
-#|-| [obj][close] <270>(<Timestamp_20150205>):<49>(<table:pat_key>)
-#|-| [obj][close] <266>(<Logs_20150205>):<51>(<table:no_key>)
-#|-| [obj][close] <267>(<Logs_20150205.timestamp>):<64>(<column:fix_size>)
 #>logical_range_filter --filter "user.tags @ \"search\"" --limit "2" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(2)[Logs_20150205]: user.tags @ "search"
 #:000000000000000 output(2)

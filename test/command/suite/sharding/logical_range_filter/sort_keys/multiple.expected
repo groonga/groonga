@@ -49,7 +49,7 @@ column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
 [[0,0.0,0.0],true]
 column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
 [[0,0.0,0.0],true]
-log_level --level dump
+log_level --level debug
 [[0,0.0,0.0],true]
 logical_range_filter Logs   --shard_key timestamp   --columns[hour2].stage initial   --columns[hour2].type Time   --columns[hour2].flags COLUMN_SCALAR   --columns[hour2].value 'time_classify_hour(timestamp, 2)'   --sort_keys 'hour2,-price'   --output_columns _id,hour2,price
 [
@@ -120,44 +120,9 @@ logical_range_filter Logs   --shard_key timestamp   --columns[hour2].stage initi
     ]
   ]
 ]
-#|-| [obj][open] <273>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <272>(<Logs_20170315>):<51>(<table:no_key>)
-#|-| [obj][open] <281>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][open] <282>(<Times.logs_20170315>):<72>(<column:index>)
 #|d| [logical_range_filter][select] <Logs_20170315>: dynamic columns are used
-#|-| [obj][open] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
-#|-| [obj][open] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
-#|-| [obj][open] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <282>(<Times.logs_20170315>):<72>(<column:index>)
-#|-| [obj][close] <281>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][open] <276>(<Logs_20170316.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <275>(<Logs_20170316>):<51>(<table:no_key>)
-#|-| [obj][open] <281>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][open] <283>(<Times.logs_20170316>):<72>(<column:index>)
 #|d| [logical_range_filter][select] <Logs_20170316>: dynamic columns are used
-#|-| [obj][open] <277>(<Logs_20170316.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <277>(<Logs_20170316.price>):<64>(<column:fix_size>)
-#|-| [obj][open] <277>(<Logs_20170316.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <277>(<Logs_20170316.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <283>(<Times.logs_20170316>):<72>(<column:index>)
-#|-| [obj][close] <281>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][close] <273>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <279>(<Logs_20170317.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][open] <278>(<Logs_20170317>):<51>(<table:no_key>)
-#|-| [obj][open] <281>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][open] <284>(<Times.logs_20170317>):<72>(<column:index>)
 #|d| [logical_range_filter][select] <Logs_20170317>: dynamic columns are used
-#|-| [obj][open] <280>(<Logs_20170317.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <280>(<Logs_20170317.price>):<64>(<column:fix_size>)
-#|-| [obj][open] <280>(<Logs_20170317.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <280>(<Logs_20170317.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <284>(<Times.logs_20170317>):<72>(<column:index>)
-#|-| [obj][close] <281>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][close] <276>(<Logs_20170316.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][close] <279>(<Logs_20170317.timestamp>):<64>(<column:fix_size>)
 #>logical_range_filter --columns[hour2].flags "COLUMN_SCALAR" --columns[hour2].stage "initial" --columns[hour2].type "Time" --columns[hour2].value "time_classify_hour(timestamp, 2)" --logical_table "Logs" --output_columns "_id,hour2,price" --shard_key "timestamp" --sort_keys "hour2,-price"
 #:000000000000000 filter(3): true
 #:000000000000000 columns[hour2](3)
