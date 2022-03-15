@@ -1,0 +1,14 @@
+table_create Tags TABLE_PAT_KEY ShortText --normalizer NormalizerNFKC130
+
+table_create Data TABLE_NO_KEY
+column_create Data tag COLUMN_SCALAR Tags
+
+load --table Data
+[
+{"tag": "a B c"}
+]
+
+column_create Tags data_tag COLUMN_INDEX Data tag
+
+index_column_diff Tags data_tag
+
