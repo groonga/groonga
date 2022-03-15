@@ -1,4 +1,5 @@
-# Copyright(C) 2015-2018 Brazil
+# Copyright(C) 2015-2018  Brazil
+# Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -107,7 +108,7 @@ if(GRN_WITH_BUNDLED_MECAB)
     )
 
   set(MECAB_CXX_COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
-  if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGCXX)
+  if(GRN_C_COMPILER_GNU_LIKE)
     set(MECAB_CXX_COMPILE_FLAGS
       "${MECAB_CXX_COMPILE_FLAGS} -Wno-type-limits")
     set(MECAB_CXX_COMPILE_FLAGS
@@ -116,6 +117,20 @@ if(GRN_WITH_BUNDLED_MECAB)
       "${MECAB_CXX_COMPILE_FLAGS} -Wno-ignored-qualifiers")
     set(MECAB_CXX_COMPILE_FLAGS
       "${MECAB_CXX_COMPILE_FLAGS} -Wno-unused-function")
+  elseif(MSVC)
+    # unary minus operator applied to unsigned type, result still unsigned
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4146
+    set(MECAB_CXX_COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS} /wdc4146")
+    # 'var' : conversion from 'size_t' to 'type', possible loss of data
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
+    set(MECAB_CXX_COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS} /wdc4267")
+    # Your code uses a function, class member, variable, or typedef
+    # that's marked deprecated.
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
+    set(MECAB_CXX_COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS} /wdc4996")
+    # 'context' : truncation from 'type1' to 'type2'
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4305
+    set(MECAB_CXX_COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS} /wdc4305")
   endif()
 
   add_definitions("-DPACKAGE=\"mecab\"")
