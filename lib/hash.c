@@ -1802,7 +1802,7 @@ grn_io_hash_create_io(grn_ctx *ctx, const char *path,
                                   array_spec);
 }
 
-typedef struct _grn_hash_wal_add_entry_data {
+struct _grn_hash_wal_add_entry_data {
   grn_hash *hash;
   uint64_t wal_id;
   const char *tag;
@@ -1821,7 +1821,7 @@ typedef struct _grn_hash_wal_add_entry_data {
   bool found_garbage;
   uint32_t max_offset;
   uint32_t expected_n_entries;
-} grn_hash_wal_add_entry_data;
+};
 
 static grn_rc
 grn_io_hash_init(grn_ctx *ctx, grn_hash *hash, const char *path,
