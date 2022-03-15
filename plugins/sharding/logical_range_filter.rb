@@ -67,6 +67,7 @@ module Groonga
       end
 
       private
+
       def stream_output?(input)
         context.command_version >= 3
       end
@@ -115,12 +116,13 @@ module Groonga
         attr_reader :large_shard_threshold
         attr_reader :time_classify_types
         attr_reader :result_sets
+
         def initialize(input)
           @input = input
           @use_range_index = parse_use_range_index(@input[:use_range_index])
-          @enumerator = LogicalEnumerator.new("logical_range_filter", 
+          @enumerator = LogicalEnumerator.new("logical_range_filter",
                                               @input,
-                                              {:unref_immediately => true})
+                                              { :unref_immediately => true })
           @order = parse_order(@input, :order)
           @filter = @input[:filter]
           @offset = (@input[:offset] || 0).to_i
@@ -188,6 +190,7 @@ module Groonga
         end
 
         private
+
         def parse_use_range_index(use_range_index)
           case use_range_index
           when "yes"
@@ -262,13 +265,10 @@ module Groonga
         end
 
         def execute
-          first_shard = nil
+          have_shard = false
           have_result_set = false
           each_shard_executor do |shard_executor|
-            if first_shard.nil?
-              first_shard = shard_executor.shard.copy
-              @context.referred_objects << first_shard
-            end
+            have_shard = true
             shard_executor.execute
             @context.consume_result_sets do |result_set|
               have_result_set = true
@@ -276,7 +276,7 @@ module Groonga
             end
             break if @context.current_limit.zero?
           end
-          if first_shard.nil?
+          unless have_shard
             enumerator = @context.enumerator
             message =
               "[logical_range_filter] no shard exists: " +
@@ -284,9 +284,12 @@ module Groonga
               "shard_key: <#{enumerator.shard_key_name}>"
             raise InvalidArgument, message
           end
-          unless have_result_set
+          return if have_result_set
+
+          each_shard_executor do |shard_executor|
+            shard = shard_executor.shard
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
-                                          :key_type => first_shard.table)
+                                          :key_type => shard.table)
             @context.push
             @context.temporary_tables << result_set
             targets = [[result_set]]
@@ -294,47 +297,39 @@ module Groonga
             @context.dynamic_columns.apply_filtered(targets)
             yield(result_set)
             @context.shift
+            break
           end
         end
 
         private
+
         def each_shard_executor(&block)
           enumerator = @context.enumerator
           target_range = enumerator.target_range
+          if @context.order == :descending
+            each_method = :reverse_each
+          else
+            each_method = :each
+          end
           if @context.need_look_ahead?
-            if @context.order == :descending
-              each_method = :reverse_each_with_index
-            else
-              each_method = :each_with_index
-            end
-            last_index = enumerator.size - 1
-            executors = []
             previous_executor = nil
-            # Keep the previous data for window function
-            is_first_executor = true
-            enumerator.send(each_method) do |shard, shard_range, i|
+            enumerator.send(each_method) do |shard, shard_range|
               @context.push
               current_executor = ShardExecutor.new(@context, shard, shard_range)
               if previous_executor
                 previous_executor.next_executor = current_executor
                 current_executor.previous_executor = previous_executor
                 yield(previous_executor)
-                @context.shift unless is_first_executor
-                is_first_executor &&= false
+                @context.shift unless previous_executor.shard.first?
+              end
+              if shard.last?
+                yield(current_executor)
+                @context.shift
+                break
               end
               previous_executor = current_executor
-              if i >= last_index
-                yield(previous_executor)
-                @context.shift
-                @context.shift unless is_first_executor
-              end
-            end            
-          else
-            if @context.order == :descending
-              each_method = :reverse_each
-            else
-              each_method = :each
             end
+          else
             enumerator.send(each_method) do |shard, shard_range|
               @context.push
               yield(ShardExecutor.new(@context, shard, shard_range))
@@ -350,6 +345,7 @@ module Groonga
 
         attr_reader :unit
         attr_reader :step
+
         def initialize(context, shard, shard_range, unit, step)
           @context = context
           @shard = shard
@@ -388,7 +384,7 @@ module Groonga
           shard_key = table.find_column(@context.enumerator.shard_key_name)
           begin
             current_min = min
-            while current_min < max do
+            while current_min < max
               next_min = compute_next_min_edge(current_min)
               if next_min > max
                 current_max = max
@@ -427,6 +423,7 @@ module Groonga
         end
 
         private
+
         def create_min_edge
           min = @target_range.min
           if min
@@ -543,6 +540,7 @@ module Groonga
         attr_reader :second
         attr_reader :microsecond
         attr_reader :border
+
         def initialize(year, month, day, hour, minute, second, microsecond,
                        border)
           @year = year
@@ -586,6 +584,7 @@ module Groonga
         attr_reader :shard
         attr_writer :previous_executor
         attr_writer :next_executor
+
         def initialize(context, shard, shard_range)
           @context = context
           @shard = shard
@@ -644,17 +643,18 @@ module Groonga
         def add_initial_stage_context(apply_targets)
           ensure_prepared
           return unless @initial_table
-          apply_targets << [@initial_table, {context: true}]
+          apply_targets << [@initial_table, { context: true }]
         end
 
         def add_filtered_stage_context(apply_targets)
           ensure_filtered
           @filtered_result_sets.each do |table|
-            apply_targets << [table, {context: true}]
+            apply_targets << [table, { context: true }]
           end
         end
 
         private
+
         def have_record?
           return false if @cover_type == :none
           return false if @target_table.empty?
@@ -853,8 +853,8 @@ module Groonga
           end
 
           max_n_unmatched_records =
-              compute_max_n_unmatched_records(max_n_records,
-                                              required_n_records)
+            compute_max_n_unmatched_records(max_n_records,
+                                            required_n_records)
           if estimated_n_records >= max_n_unmatched_records
             reason = "the max number of unmatched records (#{max_n_unmatched_records}) "
             reason << "<= "
@@ -1211,7 +1211,7 @@ module Groonga
                 key = sort_key
                 order = :ascending
               end
-              {:key => key, :order => order}
+              { :key => key, :order => order }
             end
           end
           if @context.current_limit > 0

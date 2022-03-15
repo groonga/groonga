@@ -6,7 +6,6 @@ module Groonga
       attr_reader :target_range
       attr_reader :logical_table
       attr_reader :shard_key_name
-      attr_reader :size
       def initialize(command_name, input, options={})
         @command_name = command_name
         @input = input
@@ -23,20 +22,13 @@ module Groonga
         each_internal(:descending, &block)
       end
 
-      def each_with_index(&block)
-        each_with_index_internal(:ascending, &block)
-      end
-
-      def reverse_each_with_index(&block)
-        each_with_index_internal(:descending, &block)
-      end
-
       def unref
         @shards.each(&:unref)
       end
 
       private
       def each_internal(order)
+        return enum_for(__method__, order) unless block_given?
         context = Context.instance
         each_shard_with_around(order) do |prev_shard, current_shard, next_shard|
           shard_range_data = current_shard.range_data
@@ -72,35 +64,10 @@ module Groonga
         end
       end
 
-      private
-      def each_with_index_internal(order)
-        index = 0
-        each_internal(order) do |shard, shard_range| 
-          yield(shard, shard_range, index)
-          index += 1
-        end
-      end
-
-      private
-      def compute_size
-        context = Context.instance
-        prefix = "#{@logical_table}_"
-        size = 0
-        context.database.each_name(:prefix => prefix) do |name|
-          shard_range_raw = name[prefix.size..-1]
-  
-          if shard_range_raw =~ /\A(\d{4})(\d{2})\z/ ||
-             shard_range_raw =~ /\A(\d{4})(\d{2})(\d{2})\z/
-            size += 1
-          end
-        end
-        size
-      end
-
       def each_shard_with_around(order)
         context = Context.instance
         prefix = "#{@logical_table}_"
-        unref_immediately = @options[:unref_immediately] || false
+        unref_immediately = @options.fetch(:unref_immediately, false)
 
         shards = [nil]
         context.database.each_name(:prefix => prefix,
@@ -118,6 +85,11 @@ module Groonga
           end
 
           shard = Shard.new(name, @shard_key_name, shard_range_data)
+          previous_shard = shards.last
+          if previous_shard
+            shard.previous_shard = previous_shard
+            previous_shard.next_shard = shard
+          end
           shards << shard
           @shards << shard
           next if shards.size < 3
@@ -154,7 +126,6 @@ module Groonga
         end
 
         @target_range = TargetRange.new(@command_name, @input)
-        @size = compute_size
       end
 
       def compute_month_shard_max_day(year, month, next_shard_range)
@@ -167,12 +138,16 @@ module Groonga
 
       class Shard
         attr_reader :table_name, :key_name, :range_data
+        attr_accessor :previous_shard
+        attr_accessor :next_shard
         def initialize(table_name, key_name, range_data)
           @table_name = table_name
           @key_name = key_name
           @range_data = range_data
           @table = nil
           @key = nil
+          @previous_shard = nil
+          @next_shard = nil
         end
 
         def table
@@ -187,8 +162,12 @@ module Groonga
           @key ||= Context.instance[full_key_name]
         end
 
-        def copy
-          Shard.new(@table_name, @key_name, @range_data)
+        def first?
+          @previous_shard.nil?
+        end
+
+        def last?
+          @next_shard.nil?
         end
 
         def unref
