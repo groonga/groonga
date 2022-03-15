@@ -100,10 +100,10 @@ if(GRN_WITH_MRUBY)
   elseif(MSVC)
     # 'argument' : conversion from 'type1' to 'type2', possible loss of data
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
-    set(MRUBY_C_COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS} /wdc4244")
+    set(MRUBY_C_COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS} /wd4244")
     # 'var' : conversion from 'size_t' to 'type', possible loss of data
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4267
-    set(MRUBY_C_COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS} /wdc4267")
+    set(MRUBY_C_COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS} /wd4267")
   endif()
   if(WIN32)
     list(APPEND MRUBY_DEFINITIONS "MRB_BUILD_AS_DLL" "MRB_CORE")
