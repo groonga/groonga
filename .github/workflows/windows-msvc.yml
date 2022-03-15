@@ -20,8 +20,6 @@ jobs:
           - Visual Studio 2022 x64
           - Visual Studio 2019 x64
           - Visual Studio 2019 x86
-          - Visual Studio 2017 x64
-          - Visual Studio 2017 x86
         include:
           - label: Visual Studio 2022 x64
             architecture: x64
@@ -47,20 +45,6 @@ jobs:
             vc-architecture: x64_x86
             vc-toolset-version: 142
             vs-version: 2019
-          - label: Visual Studio 2017 x64
-            architecture: x64
-            cmake-generator: Visual Studio 15 2017 Win64
-            runs-on: windows-2016
-            vc-architecture: x64
-            vc-toolset-version: 141
-            vs-version: 2017
-          - label: Visual Studio 2017 x86
-            architecture: x86
-            cmake-generator: Visual Studio 15 2017
-            runs-on: windows-2016
-            vc-architecture: x64_x86
-            vc-toolset-version: 141
-            vs-version: 2017
     runs-on: ${{ matrix.runs-on }}
     steps:
       - name: Disable crash dialog
