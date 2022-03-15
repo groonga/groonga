@@ -954,20 +954,6 @@ pat_get(grn_ctx *ctx, grn_pat *pat, grn_id id)
   return grn_io_array_at(ctx, pat->io, SEGMENT_PAT, id, &flags);
 }
 
-grn_inline static pat_node *
-pat_node_new(grn_ctx *ctx, grn_pat *pat, grn_id *id)
-{
-  uint32_t n = pat->header->curr_rec + 1;
-  pat_node *res;
-  if (n > GRN_ID_MAX) { return NULL; }
-  if ((res = pat_get(ctx, pat, n))) {
-    pat->header->curr_rec = n;
-    pat->header->n_entries++;
-  }
-  if (id) { *id = n; }
-  return res;
-}
-
 /* sis operation */
 
 grn_inline static sis_node *

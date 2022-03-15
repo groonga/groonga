@@ -94,12 +94,6 @@ grn_tiny_array_at_inline(grn_tiny_array *array, grn_id id)
   return id ? grn_tiny_array_put(array, id) : NULL;
 }
 
-grn_inline static void *
-grn_tiny_array_next(grn_tiny_array *array)
-{
-  return grn_tiny_array_put(array, array->max + 1);
-}
-
 void
 grn_tiny_array_init(grn_ctx *ctx, grn_tiny_array *array,
                     uint16_t element_size, uint16_t flags)
@@ -212,15 +206,6 @@ grn_tiny_bitmap_put_byte(grn_tiny_bitmap *bitmap, grn_id bit_id) {
 
 /* Requirements: bit_id != GRN_ID_NIL. */
 /* Return value: 1/0 on success, -1 on failure. */
-grn_inline static int
-grn_tiny_bitmap_get(grn_tiny_bitmap *bitmap, grn_id bit_id)
-{
-  uint8_t * const ptr = grn_tiny_bitmap_get_byte(bitmap, bit_id);
-  return ptr ? ((*ptr >> (bit_id & 7)) & 1) : -1;
-}
-
-/* Requirements: bit_id != GRN_ID_NIL. */
-/* Return value: 1/0 on success, -1 on failure. */
 /* Note: A bitmap is extended if needed. */
 grn_inline static int
 grn_tiny_bitmap_put(grn_tiny_bitmap *bitmap, grn_id bit_id)
@@ -329,18 +314,6 @@ grn_io_array_bit_off(grn_ctx *ctx, grn_io *io,
       ctx, io, segment_id, (offset >> 3) + 1, GRN_TABLE_ADD);
   if (ptr) {
     *ptr &= ~(1 << (offset & 7));
-  }
-  return ptr;
-}
-
-grn_inline static void *
-grn_io_array_bit_flip(grn_ctx *ctx, grn_io *io,
-                      uint32_t segment_id, uint64_t offset)
-{
-  uint8_t * const ptr = (uint8_t *)grn_io_array_at_inline(
-      ctx, io, segment_id, (offset >> 3) + 1, GRN_TABLE_ADD);
-  if (ptr) {
-    *ptr ^= 1 << (offset & 7);
   }
   return ptr;
 }
