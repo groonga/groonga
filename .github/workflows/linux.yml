@@ -264,8 +264,8 @@ jobs:
           sudo gem install bundler
       - name: CMake
         run: |
-          export CC=%{{ matrix.cc }}
-          export CXX=%{{ matrix.cxx }}
+          export CC=${{ matrix.cc }}
+          export CXX=${{ matrix.cxx }}
           cmake \
             -B ../groonga.build \
             -S . \
