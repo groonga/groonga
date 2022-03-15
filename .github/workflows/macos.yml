@@ -64,8 +64,9 @@ jobs:
               -B ../groonga.build \
               -S . \
               -DCMAKE_INSTALL_PREFIX=/tmp/local \
+              -DCMAKE_BUILD_TYPE=Debug \
+              -DGRN_ALLOW_WARNING=OFF \
               -DGRN_WITH_APACHE_ARROW=yes \
-              -DGRN_WITH_DEBUG=yes \
               -DGRN_WITH_MRUBY=yes \
               -DRUBY=$(which ruby)
       - name: Build

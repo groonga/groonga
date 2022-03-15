@@ -237,6 +237,18 @@ if(GRN_C_COMPILER_GNU_LIKE)
   check_build_flag("-Wno-implicit-fallthrough")
 endif()
 
+option(GRN_ALLOW_WARNING "allow warning." ON)
+if(NOT GRN_ALLOW_WARNING)
+  if(GRN_C_COMPILER_GNU_LIKE)
+    set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} -Werror")
+    set(GRN_CXX_COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS} -Werror")
+  elseif(MSVC)
+    set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} /WX")
+    set(GRN_CXX_COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS} /WX")
+  endif()
+endif()
+
+
 option(GRN_WITH_WINDOWS_BACK_TRACE "enable back trace on Windows." ON)
 
 add_definitions(

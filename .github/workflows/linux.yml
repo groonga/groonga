@@ -44,7 +44,7 @@ jobs:
               CXX=clang++
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
       - name: Enable Apache Arrow repository
@@ -209,3 +209,130 @@ jobs:
       - name: Install
         run: |
           make install
+
+  cmake:
+    name: CMake
+    strategy:
+      fail-fast: false
+      matrix:
+        label:
+          - "GCC"
+          - "Clang"
+        include:
+          - label: "GCC"
+            cc: gcc
+            cxx: g++
+          - label: "Clang"
+            cc: clang
+            cxx: clang++
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Enable Apache Arrow repository
+        run: |
+          sudo apt update
+          sudo apt install -y -V \
+            lsb-release \
+            wget
+          wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+      - name: Install packages
+        run: |
+          sudo apt update
+          sudo apt install -y -V \
+            cmake \
+            gdb \
+            gettext \
+            libarrow-dev \
+            libevent-dev \
+            libluajit-5.1-dev \
+            liblz4-dev \
+            libmecab-dev \
+            libmsgpack-dev \
+            libstemmer-dev \
+            libxxhash-dev \
+            libzstd-dev \
+            mecab-naist-jdic \
+            ninja-build \
+            rapidjson-dev \
+            ruby-dev \
+            zlib1g-dev
+      - name: Install Bundler
+        run: |
+          sudo gem install bundler
+      - name: CMake
+        run: |
+          export CC=%{{ matrix.cc }}
+          export CXX=%{{ matrix.cxx }}
+          cmake \
+            -B ../groonga.build \
+            -S . \
+            -GNinja \
+            -DCMAKE_INSTALL_PREFIX=/tmp/local \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DGRN_ALLOW_WARNING=OFF \
+            -DGRN_WITH_APACHE_ARROW=yes \
+            -DGRN_WITH_MRUBY=yes
+      - name: Build
+        run: |
+          ninja -C ../groonga.build
+      - name: Install test dependencies
+        run: |
+          sudo env MAKEFLAGS=-j$(nproc) gem install \
+            groonga-client \
+            groonga-synonym \
+            json \
+            pkg-config \
+            red-arrow
+      - name: Set environment variables
+        run: |
+          echo "COLUMNS=79" >> ${GITHUB_ENV}
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/red-datasets
+          key: red-datasets-ubuntu
+      - name: "Test: stdio"
+        run: |
+          cd ../groonga.build
+          BUILD_DIR=$PWD/test/command \
+            bash -x ../groonga/test/command/run-test.sh \
+              --n-retries=3 \
+              --read-timeout=30 \
+              --reporter=mark
+      - name: "Test: HTTP: load: Apache Arrow"
+        run: |
+          cd ../groonga.build
+          BUILD_DIR=$PWD/test/command \
+            bash -x ../groonga/test/command/run-test.sh \
+              --n-retries=3 \
+              --read-timeout=30 \
+              --reporter=mark \
+              --input-type=apache-arrow \
+              --interface=http
+      - name: "Test: HTTP: command: POST"
+        run: |
+          cd ../groonga.build
+          BUILD_DIR=$PWD/test/command \
+            bash -x ../groonga/test/command/run-test.sh \
+              --n-retries=3 \
+              --read-timeout=30 \
+              --reporter=mark \
+              --interface=http \
+              --use-http-post
+      - name: "Test: HTTP: command: chunked"
+        run: |
+          cd ../groonga.build
+          BUILD_DIR=$PWD/test/command \
+            bash -x ../groonga/test/command/run-test.sh \
+              --n-retries=3 \
+              --timeout=10 \
+              --read-timeout=30 \
+              --reporter=mark \
+              --interface=http \
+              --use-http-chunked
+      - name: Install
+        run: |
+          ninja -C ../groonga.build install
