@@ -92,11 +92,13 @@ if(GRN_WITH_MRUBY)
   set(MRUBY_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   if(GRN_C_COMPILER_GNU_LIKE)
     set(MRUBY_C_COMPILE_FLAGS
-      "${MRUBY_C_COMPILE_FLAGS} -Wno-float-equal")
-    set(MRUBY_C_COMPILE_FLAGS
       "${MRUBY_C_COMPILE_FLAGS} -Wno-bad-function-cast")
     set(MRUBY_C_COMPILE_FLAGS
+      "${MRUBY_C_COMPILE_FLAGS} -Wno-float-equal")
+    set(MRUBY_C_COMPILE_FLAGS
       "${MRUBY_C_COMPILE_FLAGS} -Wno-missing-field-initializers")
+    set(MRUBY_C_COMPILE_FLAGS
+      "${MRUBY_C_COMPILE_FLAGS} -Wno-sign-compare")
   elseif(MSVC)
     # 'argument' : conversion from 'type1' to 'type2', possible loss of data
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-2-c4244
