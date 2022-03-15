@@ -1,0 +1,15 @@
+table_create Tags TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"tags": "a b c"}
+]
+[[0,0.0,0.0],1]
+column_create Tags data_tags COLUMN_INDEX Data tags
+[[0,0.0,0.0],true]
+index_column_diff Tags data_tags
+[[0,0.0,0.0],[]]

@@ -16364,13 +16364,15 @@ grn_ii_builder_append_tokens(grn_ctx *ctx,
 static grn_rc
 grn_ii_builder_append_value(grn_ctx *ctx, grn_ii_builder *builder,
                             grn_id rid, uint32_t sid, uint32_t weight,
-                            const char *value, uint32_t value_size)
+                            const char *value, uint32_t value_size,
+                            bool force_as_is)
 {
   uint32_t pos = 0;
   grn_token_cursor *cursor;
   grn_ii_builder_start_value(ctx, builder, rid, sid);
   if (value_size) {
-    if (!builder->have_tokenizer && !builder->have_normalizers) {
+    if (force_as_is ||
+        (!builder->have_tokenizer && !builder->have_normalizers)) {
       grn_id tid;
       switch (builder->lexicon->header.type) {
       case GRN_TABLE_PAT_KEY :
@@ -16458,12 +16460,19 @@ grn_ii_builder_append_obj(grn_ctx *ctx, grn_ii_builder *builder,
                                               sid,
                                               0,
                                               key,
-                                              key_size);
+                                              key_size,
+                                              true);
       GRN_OBJ_FIN(ctx, &key_buffer);
       return rc;
     } else {
-      return grn_ii_builder_append_value(ctx, builder, rid, sid, 0,
-                                         GRN_TEXT_VALUE(obj), GRN_TEXT_LEN(obj));
+      return grn_ii_builder_append_value(ctx,
+                                         builder,
+                                         rid,
+                                         sid,
+                                         0,
+                                         GRN_TEXT_VALUE(obj),
+                                         GRN_TEXT_LEN(obj),
+                                         false);
     }
   case GRN_UVECTOR :
     {
@@ -16492,7 +16501,8 @@ grn_ii_builder_append_obj(grn_ctx *ctx, grn_ii_builder *builder,
                                            sid,
                                            weight,
                                            key,
-                                           key_size);
+                                           key_size,
+                                           true);
           if (rc != GRN_SUCCESS) {
             break;
           }
@@ -16502,8 +16512,14 @@ grn_ii_builder_append_obj(grn_ctx *ctx, grn_ii_builder *builder,
         const char *p = GRN_BULK_HEAD(obj);
         uint32_t value_size = grn_uvector_element_size(ctx, obj);
         for (i = 0; i < n_values; i++) {
-          rc = grn_ii_builder_append_value(ctx, builder, rid, sid, 0,
-                                           p, value_size);
+          rc = grn_ii_builder_append_value(ctx,
+                                           builder,
+                                           rid,
+                                           sid,
+                                           0,
+                                           p,
+                                           value_size,
+                                           false);
           if (rc != GRN_SUCCESS) {
             break;
           }
@@ -16531,8 +16547,14 @@ grn_ii_builder_append_obj(grn_ctx *ctx, grn_ii_builder *builder,
             builder->have_tokenizer) {
           sid = i + 1;
         }
-        rc = grn_ii_builder_append_value(ctx, builder, rid, sid, sec->weight,
-                                         head + sec->offset, sec->length);
+        rc = grn_ii_builder_append_value(ctx,
+                                         builder,
+                                         rid,
+                                         sid,
+                                         sec->weight,
+                                         head + sec->offset,
+                                         sec->length,
+                                         false);
         if (rc != GRN_SUCCESS) {
           return rc;
         }
