@@ -15582,6 +15582,7 @@ typedef struct {
   grn_obj  *lexicon;    /* Block lexicon (to be closed) */
   grn_bool have_tokenizer;  /* Whether lexicon has tokenizer */
   bool have_normalizers; /* Whether lexicon has at least one normalizers */
+  bool get_key_optimizable; /* Whether grn_table_get_key() is optimizable */
 
   uint32_t n;   /* Number of integers appended to the current block */
   grn_id   rid; /* Record ID */
@@ -15637,6 +15638,7 @@ grn_ii_builder_init(grn_ctx *ctx, grn_ii_builder *builder,
   builder->lexicon = NULL;
   builder->have_tokenizer = GRN_FALSE;
   builder->have_normalizers = false;
+  builder->get_key_optimizable = false;
 
   builder->n = 0;
   builder->rid = GRN_ID_NIL;
@@ -15845,6 +15847,8 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
     return rc;
   }
   if ((flags & GRN_OBJ_TABLE_TYPE_MASK) == GRN_OBJ_TABLE_PAT_KEY) {
+    builder->get_key_optimizable =
+      !grn_pat_is_key_encoded(ctx, (grn_pat *)(builder->lexicon));
     if (builder->options.lexicon_cache_size) {
       rc = grn_pat_cache_enable(ctx, (grn_pat *)builder->lexicon,
                                 builder->options.lexicon_cache_size);
@@ -15852,6 +15856,8 @@ grn_ii_builder_create_lexicon(grn_ctx *ctx, grn_ii_builder *builder)
         return rc;
       }
     }
+  } else {
+    builder->get_key_optimizable = true;
   }
   return GRN_SUCCESS;
 }
@@ -16433,18 +16439,28 @@ grn_ii_builder_append_obj(grn_ctx *ctx, grn_ii_builder *builder,
   switch (obj->header.type) {
   case GRN_BULK :
     if (grn_id_maybe_table(ctx, obj->header.domain)) {
+      grn_id id = GRN_RECORD_VALUE(obj);
+      grn_obj key_buffer;
+      GRN_VOID_INIT(&key_buffer);
       uint32_t key_size;
-      const char *key = _grn_table_key(ctx,
-                                       builder->ii->lexicon,
-                                       GRN_RECORD_VALUE(obj),
-                                       &key_size);
-      return grn_ii_builder_append_value(ctx,
-                                         builder,
-                                         rid,
-                                         sid,
-                                         0,
-                                         key,
-                                         key_size);
+      const char *key;
+      if (builder->get_key_optimizable) {
+        key = _grn_table_key(ctx, builder->ii->lexicon, id, &key_size);
+      } else {
+        GRN_BULK_REWIND(&key_buffer);
+        grn_table_get_key2(ctx, builder->ii->lexicon, id, &key_buffer);
+        key = GRN_BULK_HEAD(&key_buffer);
+        key_size = GRN_BULK_VSIZE(&key_buffer);
+      }
+      grn_rc rc = grn_ii_builder_append_value(ctx,
+                                              builder,
+                                              rid,
+                                              sid,
+                                              0,
+                                              key,
+                                              key_size);
+      GRN_OBJ_FIN(ctx, &key_buffer);
+      return rc;
     } else {
       return grn_ii_builder_append_value(ctx, builder, rid, sid, 0,
                                          GRN_TEXT_VALUE(obj), GRN_TEXT_LEN(obj));
@@ -16454,13 +16470,22 @@ grn_ii_builder_append_obj(grn_ctx *ctx, grn_ii_builder *builder,
       grn_rc rc = GRN_SUCCESS;
       uint32_t i, n_values = grn_uvector_size(ctx, obj);
       if (grn_id_maybe_table(ctx, obj->header.domain)) {
+        grn_obj key_buffer;
+        GRN_VOID_INIT(&key_buffer);
         for (i = 0; i < n_values; i++) {
           grn_id id;
           float weight;
           id = grn_uvector_get_element_record(ctx, obj, i, &weight);
           uint32_t key_size;
-          const char *key =
-            _grn_table_key(ctx, builder->ii->lexicon, id, &key_size);
+          const char *key;
+          if (builder->get_key_optimizable) {
+            key = _grn_table_key(ctx, builder->ii->lexicon, id, &key_size);
+          } else {
+            GRN_BULK_REWIND(&key_buffer);
+            grn_table_get_key2(ctx, builder->ii->lexicon, id, &key_buffer);
+            key = GRN_BULK_HEAD(&key_buffer);
+            key_size = GRN_BULK_VSIZE(&key_buffer);
+          }
           rc = grn_ii_builder_append_value(ctx,
                                            builder,
                                            rid,
@@ -16472,6 +16497,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx, grn_ii_builder *builder,
             break;
           }
         }
+        GRN_OBJ_FIN(ctx, &key_buffer);
       } else {
         const char *p = GRN_BULK_HEAD(obj);
         uint32_t value_size = grn_uvector_element_size(ctx, obj);

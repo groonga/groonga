@@ -1,0 +1,13 @@
+table_create Times TABLE_PAT_KEY Time
+
+table_create Data TABLE_NO_KEY
+column_create Data times COLUMN_VECTOR Times
+
+load --table Data
+[
+{"times": ["2022-03-15T00:00:00", "2022-03-16T00:00:00"]}
+]
+
+column_create Times data_times COLUMN_INDEX Data times
+
+index_column_diff Times data_times
