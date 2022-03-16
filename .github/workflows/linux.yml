@@ -301,7 +301,7 @@ jobs:
           fi
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
 
-          echo "PATH=$PWD/install/bin" >> ${GITHUB_PATH}
+          echo "$PWD/install/bin" >> ${GITHUB_PATH}
       - uses: actions/cache@v2
         with:
           path: |
