@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -610,7 +610,7 @@ grn_logger_putv(grn_ctx *ctx,
         }
 #ifdef HAVE_PTHREAD_H
         grn_snprintf(lbuf_current, lbuf_rest_size, lbuf_rest_size,
-                     "%s%08x", prefix, (uint32_t)pthread_self());
+                     "%s%08lx", prefix, (uintptr_t)pthread_self());
 #elif defined(WIN32) /* HAVE_PTHREAD_H */
         grn_snprintf(lbuf_current, lbuf_rest_size, lbuf_rest_size,
                      "%s%08ld", prefix, GetCurrentThreadId());
