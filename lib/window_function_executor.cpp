@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -580,7 +580,7 @@ namespace {
                            status,
                            executor_tag_,
                            tag_,
-                           " failed to make builder for source id")) {
+                           " failed to make builder for source ID")) {
         return nullptr;
       }
 
@@ -592,8 +592,18 @@ namespace {
         grn_obj *table = GRN_PTR_VALUE_AT(&(executor_->tables), i);
         GRN_TABLE_EACH_BEGIN(ctx_, table, cursor, id) {
           uint64_t source_id = pack_source_id(static_cast<uint32_t>(i), id);
-          id_builder_raw->Append(source_id);
+          status = id_builder_raw->Append(source_id);
+          if (!grnarrow::check(ctx_,
+                               status,
+                               executor_tag_,
+                               tag_,
+                               " failed to append a source ID")) {
+            break;
+          }
         } GRN_TABLE_EACH_END(ctx_, cursor);
+        if (ctx_->rc != GRN_SUCCESS) {
+          return nullptr;
+        }
         if (!parse_keys(table,
                         &(executor_->group_keys),
                         "group",

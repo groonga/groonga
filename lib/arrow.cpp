@@ -68,6 +68,12 @@ namespace grnarrow {
     }
   }
 
+  arrow::Status check(grn_ctx *ctx,
+                      grn_rc rc,
+                      std::string context) {
+    return check(ctx, rc, context.c_str());
+  }
+
   bool check(grn_ctx *ctx,
              const arrow::Status &status,
              const char *context) {
@@ -1186,7 +1192,8 @@ namespace grnarrow {
       : ctx_(ctx),
         grn_table_(grn_table),
         grn_columns_(grn_columns),
-        object_cache_(ctx_) {
+        object_cache_(ctx_),
+        tag_("[arrow][dump]") {
     }
 
     ~FileDumper() {
@@ -1224,7 +1231,7 @@ namespace grnarrow {
 
       if (!check(ctx_,
                  writer_result,
-                 "[arrow][dump] failed to create file format writer")) {
+                 tag_ + " failed to create file format writer")) {
         return ctx_->rc;
       }
       auto writer = *writer_result;
@@ -1236,15 +1243,21 @@ namespace grnarrow {
         if (ids.size() == n_records_per_batch) {
           write_record_batch(ids, schema, writer);
           ids.clear();
+          if (ctx_->rc != GRN_SUCCESS) {
+            break;
+          }
         }
       } GRN_TABLE_EACH_END(ctx_, table_cursor);
       if (!ids.empty()) {
         write_record_batch(ids, schema, writer);
       }
+      if (ctx_->rc != GRN_SUCCESS) {
+        return ctx_->rc;
+      }
       auto status = writer->Close();
       if (!check(ctx_,
                  status,
-                 "[arrow][dump] failed to close writer file format writer")) {
+                 tag_ + " failed to close writer file format writer")) {
         return ctx_->rc;
       }
 
@@ -1256,6 +1269,7 @@ namespace grnarrow {
     grn_obj *grn_table_;
     grn_obj *grn_columns_;
     ObjectCache object_cache_;
+    std::string tag_;
 
     void write_record_batch(std::vector<grn_id> &ids,
                             std::shared_ptr<arrow::Schema> &schema,
@@ -1322,7 +1336,9 @@ namespace grnarrow {
       }
 
       auto record_batch = arrow::RecordBatch::Make(schema, ids.size(), columns);
-      writer->WriteRecordBatch(*record_batch);
+      check(ctx_,
+            writer->WriteRecordBatch(*record_batch),
+            tag_ + " failed to write record batch");
     }
 
     arrow::Status build_boolean_array(std::vector<grn_id> &ids,
@@ -1607,7 +1623,8 @@ namespace grnarrow {
         grn_loader_(loader),
         decoder_(std::shared_ptr<StreamLoader>(this, [](void*) {})),
         buffer_(nullptr),
-        object_cache_(ctx_) {
+        object_cache_(ctx_),
+        tag_("[arrow][stream-loader]") {
     }
 
     grn_rc consume(const char *data, size_t data_size) {
@@ -1619,10 +1636,7 @@ namespace grnarrow {
     }
 
     arrow::Status OnRecordBatchDecoded(std::shared_ptr<arrow::RecordBatch> record_batch) override {
-      process_record_batch(std::move(record_batch));
-      return check(ctx_,
-                   ctx_->rc,
-                   "[arrow][stream-loader][consume][record-batch-decoded]");
+      return process_record_batch(std::move(record_batch));
     }
 
   private:
@@ -1631,8 +1645,7 @@ namespace grnarrow {
         auto buffer = arrow::AllocateResizableBuffer(0);
         if (!check(ctx_,
                    buffer,
-                   "[arrow][stream-loader][consume] "
-                   "failed to allocate buffer")) {
+                   tag_ + "[consume] failed to allocate buffer")) {
           return ctx_->rc;
         }
         buffer_ = std::move(*buffer);
@@ -1641,7 +1654,7 @@ namespace grnarrow {
       auto current_buffer_size = buffer_->size();
       if (!check(ctx_,
                  buffer_->Resize(current_buffer_size + data_size),
-                 "[arrow][stream-loader][consume] failed to resize buffer")) {
+                 tag_ + "[consume] failed to resize buffer")) {
         return ctx_->rc;
       }
       grn_memcpy(buffer_->mutable_data() + current_buffer_size,
@@ -1655,13 +1668,14 @@ namespace grnarrow {
       std::shared_ptr<arrow::Buffer> chunk(buffer_.release());
       if (!check(ctx_,
                  decoder_.Consume(chunk),
-                 "[arrow][stream-loader][consume] failed to consume")) {
+                 tag_ + "[consume] failed to consume")) {
         return ctx_->rc;
       }
       return ctx_->rc;
     }
 
-    void process_record_batch(std::shared_ptr<arrow::RecordBatch> record_batch) {
+    arrow::Status process_record_batch(
+      std::shared_ptr<arrow::RecordBatch> record_batch) {
       auto grn_table = grn_loader_->table;
       const auto &key_column = record_batch->GetColumnByName("_key");
       const auto &id_column = record_batch->GetColumnByName("_id");
@@ -1672,13 +1686,13 @@ namespace grnarrow {
                                  grn_loader_,
                                  &record_ids,
                                  true);
-        key_column->Accept(&visitor);
+        ARROW_RETURN_NOT_OK(key_column->Accept(&visitor));
       } else if (id_column) {
         RecordAddVisitor visitor(ctx_,
                                  grn_loader_,
                                  &record_ids,
                                  false);
-        id_column->Accept(&visitor);
+        ARROW_RETURN_NOT_OK(id_column->Accept(&visitor));
       } else {
         for (int64_t i = 0; i < n_records; ++i) {
           const auto record_id = grn_table_add(ctx_, grn_table, NULL, 0, NULL);
@@ -1700,7 +1714,7 @@ namespace grnarrow {
                                   schema->field(i),
                                   record_ids.data(),
                                   &object_cache_);
-        column->Accept(&visitor);
+        ARROW_RETURN_NOT_OK(column->Accept(&visitor));
       }
       for (const auto record_id : record_ids) {
         if (record_id == GRN_ID_NIL) {
@@ -1708,6 +1722,9 @@ namespace grnarrow {
         }
         grn_loader_apply_each(ctx_, grn_loader_, record_id);
       }
+      return check(ctx_,
+                   ctx_->rc,
+                   tag_ + "[consume][record-batch-decoded]");
     }
 
     grn_ctx *ctx_;
@@ -1715,6 +1732,7 @@ namespace grnarrow {
     arrow::ipc::StreamDecoder decoder_;
     std::unique_ptr<arrow::ResizableBuffer> buffer_;
     ObjectCache object_cache_;
+    std::string tag_;
   };
 
   class BulkOutputStream : public arrow::io::OutputStream {
@@ -1787,15 +1805,16 @@ namespace grnarrow {
         record_batch_builder_(),
         n_records_(0),
         current_column_index_(0),
-        object_cache_(ctx_) {
+        object_cache_(ctx_),
+        tag_("[arrow][stream-writer]") {
     }
 
     ~StreamWriter() {
       flush();
       if (writer_) {
-        writer_->Close();
+        std::ignore = writer_->Close();
       }
-      output_.Close();
+      std::ignore = output_.Close();
     }
 
     void add_metadata(const char *key, const char *value) {
@@ -1807,7 +1826,8 @@ namespace grnarrow {
         check(ctx_,
               status,
               context <<
-              "[arrow][stream-writer][add-meatadata] " <<
+              tag_ <<
+              "[add-meatadata] " <<
               "failed to add metadata: <" <<
               key <<
               ">: <" <<
@@ -1824,8 +1844,8 @@ namespace grnarrow {
         GRN_TEXT_INIT(&inspected, 0);
         grn_inspect(ctx_, &inspected, column);
         ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
-            "[arrow][stream-writer][add-field] "
-            "unsupported column: <%.*s>",
+            "%s[add-field] unsupported column: <%.*s>",
+            tag_.c_str(),
             (int)GRN_TEXT_LEN(&inspected),
             GRN_TEXT_VALUE(&inspected));
         GRN_OBJ_FIN(ctx_, &inspected);
@@ -1838,7 +1858,8 @@ namespace grnarrow {
         check(ctx_,
               status,
               context <<
-              "[arrow][stream-writer][add-field] " <<
+              tag_ <<
+              "[add-field] " <<
               "failed to add field: <" <<
               field->ToString() <<
               ">");
@@ -1846,38 +1867,34 @@ namespace grnarrow {
     }
 
     void write_schema() {
-      auto schema = schema_builder_.Finish();
+      auto schema_result = schema_builder_.Finish();
       if (!check(ctx_,
-                 schema,
-                 "[arrow][stream-writer][write-schema] "
-                 "failed to create schema")) {
+                 schema_result,
+                 tag_ + "[write-schema] failed to create schema")) {
           return;
       }
       schema_builder_.Reset();
-      schema_ = *schema;
+      schema_ = *schema_result;
 
       auto option = arrow::ipc::IpcWriteOptions::Defaults();
       option.emit_dictionary_deltas = true;
-      auto writer = arrow::ipc::MakeStreamWriter(&output_, schema_, option);
+      auto writer_result =
+        arrow::ipc::MakeStreamWriter(&output_, schema_, option);
 
       if (!check(ctx_,
-                 writer,
-                 "[arrow][stream-writer][write-schema] "
-                 "failed to create writer")) {
+                 writer_result,
+                 tag_ + "[write-schema] failed to create writer")) {
         return;
       }
-      writer_ = *writer;
+      writer_ = *writer_result;
 
       auto status =
         arrow::RecordBatchBuilder::Make(schema_,
                                         arrow::default_memory_pool(),
                                         &record_batch_builder_);
-      if (!check(ctx_,
-                 status,
-                 "[arrow][stream-writer][write-schema] "
-                 "failed to create record batch builder")) {
-        return;
-      }
+      check(ctx_,
+             status,
+            tag_ + "[write-schema] failed to create record batch builder");
     }
 
     void open_record() {
@@ -1903,7 +1920,8 @@ namespace grnarrow {
       check(ctx_,
             status,
             context <<
-            "[arrow][stream-writer][add-column][string] " <<
+            tag_ <<
+            "[add-column][string] " <<
             "failed to add a column value: <" <<
             arrow::util::string_view(value, value_length) <<
             ">");
@@ -1921,7 +1939,8 @@ namespace grnarrow {
       check(ctx_,
             status,
             context <<
-            "[arrow][stream-writer][add-column][int8] " <<
+            tag_ <<
+            "[add-column][int8] " <<
             "failed to add a column value: <" << value << ">");
     }
 
@@ -1937,7 +1956,8 @@ namespace grnarrow {
       check(ctx_,
             status,
             context <<
-            "[arrow][stream-writer][add-column][int32] " <<
+            tag_ <<
+            "[add-column][int32] " <<
             "failed to add a column value: <" << value << ">");
     }
 
@@ -1953,7 +1973,8 @@ namespace grnarrow {
       check(ctx_,
             status,
             context <<
-            "[arrow][stream-writer][add-column][uint32] " <<
+            tag_ <<
+            "[add-column][uint32] " <<
             "failed to add a column value: <" << value << ">");
     }
 
@@ -1969,7 +1990,8 @@ namespace grnarrow {
       check(ctx_,
             status,
             context <<
-            "[arrow][stream-writer][add-column][int64] " <<
+            tag_ <<
+            "[add-column][int64] " <<
             "failed to add a column value: <" << value << ">");
     }
 
@@ -1985,7 +2007,8 @@ namespace grnarrow {
       check(ctx_,
             status,
             context <<
-            "[arrow][stream-writer][add-column][uint64] " <<
+            tag_ <<
+            "[add-column][uint64] " <<
             "failed to add a column value: <" << value << ">");
     }
 
@@ -2001,7 +2024,8 @@ namespace grnarrow {
       check(ctx_,
             status,
             context <<
-            "[arrow][stream-writer][add-column][float32] " <<
+            tag_ <<
+            "[add-column][float32] " <<
             "failed to add a column value: <" << value << ">");
     }
 
@@ -2017,7 +2041,8 @@ namespace grnarrow {
       check(ctx_,
             status,
             context <<
-            "[arrow][stream-writer][add-column][float] " <<
+            tag_ <<
+            "[add-column][float] " <<
             "failed to add a column value: <" << value << ">");
     }
 
@@ -2033,7 +2058,8 @@ namespace grnarrow {
       check(ctx_,
             status,
             context <<
-            "[arrow][stream-writer][add-column][timestamp] " <<
+            tag_ <<
+            "[add-column][timestamp] " <<
             "failed to add a column value: <" <<
             (value.tv_sec + (value.tv_nsec / GRN_TIME_NSEC_PER_SEC_F)) <<
             ">");
@@ -2051,7 +2077,8 @@ namespace grnarrow {
       check(ctx_,
             status,
             context <<
-            "[arrow][stream-writer][add-column][double] " <<
+            tag_ <<
+            "[add-column][double] " <<
             "failed to add a column value: <" <<
             value <<
             ">");
@@ -2087,7 +2114,8 @@ namespace grnarrow {
       check(ctx_,
             status,
             context <<
-            "[arrow][stream-writer][add-column][record] " <<
+            tag_ <<
+            "[add-column][record] " <<
             "failed to add a column value: <" <<
             arrow::util::string_view(GRN_TEXT_VALUE(&inspected),
                                      GRN_TEXT_LEN(&inspected)) <<
@@ -2148,7 +2176,8 @@ namespace grnarrow {
       check(ctx_,
             status,
             context <<
-            "[arrow][stream-writer][add-column][uvector] " <<
+            tag_ <<
+            "[add-column][uvector] " <<
             "failed to add a column value: <" <<
             arrow::util::string_view(GRN_TEXT_VALUE(&inspected),
                                      GRN_TEXT_LEN(&inspected)) <<
@@ -2165,19 +2194,20 @@ namespace grnarrow {
       auto status = record_batch_builder_->Flush(&record_batch);
       if (check(ctx_,
                 status,
-                "[arrow][stream-writer][flush] failed to flush record batch")) {
+                tag_ + "[flush] failed to flush record batch")) {
         status = writer_->WriteRecordBatch(*record_batch);
         check(ctx_,
               status,
-              "[arrow][stream-writer][flush] "
-              "failed to write flushed record batch");
+              tag_ + "[flush] failed to write flushed record batch");
       }
 
       auto n_fields = record_batch_builder_->num_fields();
       for (int i = 0; i < n_fields; ++i) {
         auto builder = record_batch_builder_->GetField(i);
         auto visitor = ArrayBuilderResetFullVisitor(ctx_, builder);
-        builder->type()->Accept(&visitor);
+        check(ctx_,
+              builder->type()->Accept(&visitor),
+              tag_ + "[flush] failed to reset a builder");
       }
 
       n_records_ = 0;
@@ -2193,6 +2223,7 @@ namespace grnarrow {
     size_t n_records_;
     int current_column_index_;
     ObjectCache object_cache_;
+    std::string tag_;
   };
 }
 
