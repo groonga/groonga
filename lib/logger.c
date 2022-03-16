@@ -610,7 +610,7 @@ grn_logger_putv(grn_ctx *ctx,
         }
 #ifdef HAVE_PTHREAD_H
         grn_snprintf(lbuf_current, lbuf_rest_size, lbuf_rest_size,
-                     "%s%08lx", prefix, (uintptr_t)pthread_self());
+                     "%s%08lx", prefix, (uintptr_t)(pthread_self()));
 #elif defined(WIN32) /* HAVE_PTHREAD_H */
         grn_snprintf(lbuf_current, lbuf_rest_size, lbuf_rest_size,
                      "%s%08ld", prefix, GetCurrentThreadId());
