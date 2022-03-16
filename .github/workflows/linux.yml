@@ -297,6 +297,20 @@ jobs:
             grntest \
             pkg-config \
             red-arrow
+
+          # No -dev version is OK but specifying shared object version
+          # in package name bothers us...
+          sudo apt install -y -V \
+            libevent-dev \
+            libluajit-5.1-dev \
+            liblz4-dev \
+            libmecab-dev \
+            libmsgpack-dev \
+            libstemmer-dev \
+            libxxhash-dev \
+            libzstd-dev \
+            mecab-naist-jdic \
+            zlib1g-dev
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
