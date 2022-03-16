@@ -130,6 +130,11 @@ jobs:
       - name: "Test: API"
         run: |
           bash -x test/unit/run-test.sh
+      - name: Install test dependencies
+        run: |
+          sudo env MAKEFLAGS=-j$(nproc) gem install \
+            native-package-installer \
+            pkg-config
       - name: "Test: mruby"
         if: |
           matrix.use-mruby
