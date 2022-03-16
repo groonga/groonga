@@ -223,7 +223,7 @@ jobs:
       - name: Install
         run: |
           ninja -C ../groonga.build install
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.id }}
           path: install/
@@ -266,7 +266,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: ${{ matrix.id }}
       - name: Enable Apache Arrow repository
