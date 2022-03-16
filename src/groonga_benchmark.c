@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2010-2014  Brazil
-  Copyright(C) 2018-2021  Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2022  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1466,11 +1466,13 @@ get_sysinfo(grn_ctx *ctx, const char *path, grn_obj *result)
     }
 
     if (grntest_outtype == OUT_TSV) {
-      grn_text_printf(ctx, result, "%" GRN_FMT_INT64U "KBytes\n", vfsbuf.f_blocks * 4);
+      grn_text_printf(ctx, result,
+                      "%" GRN_FMT_INT64U "KBytes\n",
+                      (uint64_t)(vfsbuf.f_blocks * 4));
     } else {
       grn_text_printf(ctx, result,
                       "  \"HDD\": \"%" GRN_FMT_INT64U "KBytes\",\n",
-                      vfsbuf.f_blocks * 4);
+                      (uint64_t)(vfsbuf.f_blocks * 4));
     }
   }
 
