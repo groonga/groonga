@@ -2416,7 +2416,7 @@ grn_ctx_output_cstr(grn_ctx *ctx, const char *value)
 }
 
 void
-grn_ctx_output_str(grn_ctx *ctx, const char *value, unsigned int value_len)
+grn_ctx_output_str(grn_ctx *ctx, const char *value, size_t value_len)
 {
   grn_output_str(ctx,
                  ctx->impl->output.buf,

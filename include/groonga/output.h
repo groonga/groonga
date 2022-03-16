@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2018  Brazil
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -157,7 +157,8 @@ GRN_API void grn_ctx_output_float32(grn_ctx *ctx, float value);
 GRN_API void grn_ctx_output_float(grn_ctx *ctx, double value);
 GRN_API void grn_ctx_output_cstr(grn_ctx *ctx, const char *value);
 GRN_API void grn_ctx_output_str(grn_ctx *ctx,
-                                const char *value, unsigned int value_len);
+                                const char *value,
+                                size_t value_len);
 GRN_API void grn_ctx_output_bool(grn_ctx *ctx, grn_bool value);
 GRN_API void grn_ctx_output_obj(grn_ctx *ctx,
                                 grn_obj *value, grn_obj_format *format);
