@@ -240,45 +240,6 @@ namespace grnarrow {
     return dictionary_data_type->value_type();
   }
 
-  class ArrayBuilderResetFullVisitor : public arrow::TypeVisitor {
-    // We need to execute ResetFull() with an appropriate dictionary length
-    // in order to avoid memory exhaustion and so on.
-    // - Dictionary data in DictionaryBuilder are held in memory until
-    //   ResetFull() is executed.
-    // - Some Apache Arrow implementations (clients) have a 2GB limitation on
-    //   the value size of array: C#.
-  public:
-    ArrayBuilderResetFullVisitor(grn_ctx *ctx,
-                                 arrow::ArrayBuilder *builder)
-      : ctx_(ctx),
-      builder_(builder) {
-    }
-
-    arrow::Status Visit(const arrow::DictionaryType &type) override
-    {
-      const int64_t dictionary_length_threshold = 10000;
-
-      // The value type of Dictionary is always string for now.
-      auto builder = static_cast<arrow::StringDictionaryBuilder *>(builder_);
-      if (builder->dictionary_length() > dictionary_length_threshold) {
-        builder->ResetFull();
-      }
-      return arrow::Status::OK();
-    }
-
-    arrow::Status Visit(const arrow::ListType &type) override
-    {
-      auto builder = static_cast<arrow::ListBuilder *>(builder_);
-      auto value_builder = builder->value_builder();
-      ArrayBuilderResetFullVisitor value_visitor(ctx_, value_builder);
-      return value_builder->type()->Accept(&value_visitor);
-    }
-
-  private:
-    grn_ctx *ctx_;
-    arrow::ArrayBuilder *builder_;
-  };
-
   class RecordAddVisitor : public arrow::ArrayVisitor {
   public:
     RecordAddVisitor(grn_ctx *ctx,
@@ -2203,11 +2164,7 @@ namespace grnarrow {
 
       auto n_fields = record_batch_builder_->num_fields();
       for (int i = 0; i < n_fields; ++i) {
-        auto builder = record_batch_builder_->GetField(i);
-        auto visitor = ArrayBuilderResetFullVisitor(ctx_, builder);
-        check(ctx_,
-              builder->type()->Accept(&visitor),
-              tag_ + "[flush] failed to reset a builder");
+        reset_full(record_batch_builder_->GetField(i));
       }
 
       n_records_ = 0;
@@ -2224,6 +2181,39 @@ namespace grnarrow {
     int current_column_index_;
     ObjectCache object_cache_;
     std::string tag_;
+
+    // We need to execute ResetFull() with an appropriate dictionary length
+    // in order to avoid memory exhaustion and so on.
+    // - Dictionary data in DictionaryBuilder are held in memory until
+    //   ResetFull() is executed.
+    // - Some Apache Arrow implementations (clients) have a 2GB limitation on
+    //   the value size of array: C#.
+    void reset_full(arrow::ArrayBuilder *builder) {
+      switch (builder->type()->id()) {
+      case arrow::Type::DICTIONARY :
+        {
+          const int64_t dictionary_length_threshold = 10000;
+
+          // The value type of Dictionary is always string for now.
+          auto dictionary_builder =
+            static_cast<arrow::StringDictionaryBuilder *>(builder);
+          if (dictionary_builder->dictionary_length() >
+              dictionary_length_threshold) {
+            dictionary_builder->ResetFull();
+          }
+        }
+        break;
+      case arrow::Type::LIST :
+        {
+          auto list_builder = static_cast<arrow::ListBuilder *>(builder);
+          auto value_builder = list_builder->value_builder();
+          reset_full(value_builder);
+        }
+        break;
+      default :
+        break;
+      }
+    }
   };
 }
 
