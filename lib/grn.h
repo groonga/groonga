@@ -398,7 +398,7 @@ typedef int grn_cond;
 # define GRN_FMT_SIZE  "zu"
 # define GRN_FMT_SSIZE "zd"
 # define GRN_FMT_SOCKET "d"
-# define GRN_FMT_OFF64_T "jd"
+# define GRN_FMT_OFF64_T GRN_FMT_INT64D
 #endif /* WIN32 */
 
 #ifdef __GNUC__
