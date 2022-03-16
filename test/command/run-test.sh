@@ -140,6 +140,7 @@ fi
 
 have_targets="false"
 use_gdb="false"
+use_rr="false"
 use_valgrind="false"
 next_argument_is_long_option_value="false"
 for argument in "$@"; do
@@ -152,6 +153,10 @@ for argument in "$@"; do
     --gdb)
       # no argument options
       use_gdb="true"
+      ;;
+    --rr)
+      # no argument options
+      use_rr="true"
       ;;
     --valgrind)
       # no argument options
@@ -173,7 +178,9 @@ for argument in "$@"; do
 done
 
 grntest_options=("$@")
-if test "$use_gdb" = "true" -o "$use_valgrind" = "true"; then
+if test "$use_gdb" = "true" -o \
+        "$use_rr" = "true" -o \
+        "$use_valgrind" = "true"; then
   grntest_options=("--reporter" "stream" "${grntest_options[@]}")
 else
   grntest_options=("--n-workers" "${n_processors}" "${grntest_options[@]}")
