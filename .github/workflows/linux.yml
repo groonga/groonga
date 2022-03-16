@@ -241,7 +241,7 @@ jobs:
           - "Autotools: GCC: mruby"
           - "Autotools: GCC: mruby: optimize"
           - "Autotools: GCC: mruby: Apache Arrow RC"
-          - "Autotools: Clang: mruby: Apache Arrow"
+          - "Autotools: Clang: mruby"
           - "CMake: GCC"
           - "CMake: Clang"
         include:
@@ -257,9 +257,9 @@ jobs:
             use-apache-arrow-rc: true
           - label: "Autotools: Clang: mruby"
             id: autotools-clang-mruby
-          - label: "Clang: GCC"
+          - label: "CMake: GCC"
             id: cmake-gcc
-          - label: "Clang: Clang"
+          - label: "CMake: Clang"
             id: cmake-clang
     runs-on: ubuntu-20.04
     steps:
