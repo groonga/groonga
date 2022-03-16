@@ -130,6 +130,9 @@ if(GRN_WITH_BUNDLED_MECAB)
     # 'context' : truncation from 'type1' to 'type2'
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4305
     set(MECAB_CXX_COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS} /wd4305")
+    # 'function' : destructor never returns, potential memory leak
+    # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-1-c4722
+    set(MECAB_CXX_COMPILE_FLAGS "${MECAB_CXX_COMPILE_FLAGS} /wd4722")
     # Your code uses a function, class member, variable, or typedef
     # that's marked deprecated.
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
