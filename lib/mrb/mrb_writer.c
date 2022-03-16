@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2015 Brazil
-  Copyright(C) 2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2015  Brazil
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -61,7 +61,7 @@ writer_write(mrb_state *mrb, mrb_value self)
       mrb_int name_length;
 
       name = mrb_sym2name_len(mrb, mrb_symbol(target), &name_length);
-      GRN_OUTPUT_STR(name, name_length);
+      GRN_OUTPUT_STR(name, (size_t)name_length);
     }
     break;
   case MRB_TT_STRING :
@@ -95,7 +95,7 @@ writer_open_array(mrb_state *mrb, mrb_value self)
   mrb_int n_elements;
 
   mrb_get_args(mrb, "zi", &name, &n_elements);
-  GRN_OUTPUT_ARRAY_OPEN(name, n_elements);
+  GRN_OUTPUT_ARRAY_OPEN(name, (int)n_elements);
 
   return mrb_nil_value();
 }
@@ -118,7 +118,7 @@ writer_open_map(mrb_state *mrb, mrb_value self)
   mrb_int n_elements;
 
   mrb_get_args(mrb, "zi", &name, &n_elements);
-  GRN_OUTPUT_MAP_OPEN(name, n_elements);
+  GRN_OUTPUT_MAP_OPEN(name, (int)n_elements);
 
   return mrb_nil_value();
 }
@@ -153,18 +153,18 @@ writer_open_result_set(mrb_state *mrb, mrb_value self)
                &n_additional_elements);
 
   table = DATA_PTR(mrb_table);
-  GRN_OBJ_FORMAT_INIT(&format, n_hits, offset, limit, hits_offset);
+  GRN_OBJ_FORMAT_INIT(&format, (int)n_hits, offset, limit, hits_offset);
   format.flags |= GRN_OBJ_FORMAT_WITH_COLUMN_NAMES;
   {
     grn_rc rc;
     rc = grn_obj_format_set_columns(ctx, &format,
-                                    table, columns, columns_size);
+                                    table, columns, (int)columns_size);
     if (rc != GRN_SUCCESS) {
       grn_obj_format_fin(ctx, &format);
       grn_mrb_ctx_check(mrb);
     }
   }
-  GRN_OUTPUT_RESULT_SET_OPEN(table, &format, n_additional_elements);
+  GRN_OUTPUT_RESULT_SET_OPEN(table, &format, (uint32_t)n_additional_elements);
   grn_obj_format_fin(ctx, &format);
 
   return mrb_nil_value();
@@ -186,7 +186,7 @@ writer_open_table_records(mrb_state *mrb, mrb_value self)
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   mrb_int mrb_n_records;
   mrb_get_args(mrb, "i", &mrb_n_records);
-  grn_ctx_output_table_records_open(ctx, mrb_n_records);
+  grn_ctx_output_table_records_open(ctx, (int)mrb_n_records);
 
   return mrb_nil_value();
 }
@@ -216,12 +216,12 @@ writer_write_table_records_content_internal(mrb_state *mrb,
   if (!mrb_nil_p(mrb_options)) {
     mrb_value mrb_offset = grn_mrb_options_get_lit(mrb, mrb_options, "offset");
     if (!mrb_nil_p(mrb_offset)) {
-      offset = mrb_integer(mrb_offset);
+      offset = (int)mrb_integer(mrb_offset);
     }
 
     mrb_value mrb_limit = grn_mrb_options_get_lit(mrb, mrb_options, "limit");
     if (!mrb_nil_p(mrb_limit)) {
-      limit = mrb_integer(mrb_limit);
+      limit = (int)mrb_integer(mrb_limit);
     }
 
     mrb_value mrb_auto_flush =
@@ -246,7 +246,7 @@ writer_write_table_records_content_internal(mrb_state *mrb,
   {
     grn_rc rc;
     rc = grn_obj_format_set_columns(ctx, &format,
-                                    table, columns, columns_size);
+                                    table, columns, (int)columns_size);
     if (rc != GRN_SUCCESS) {
       grn_obj_format_fin(ctx, &format);
       grn_mrb_ctx_check(mrb);
