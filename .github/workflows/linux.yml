@@ -318,7 +318,8 @@ jobs:
             --base-dir test/command \
             --n-retries=3 \
             --read-timeout=30 \
-            --reporter=mark
+            --reporter=mark \
+            test/command/suite
       - name: "Test: HTTP: load: Apache Arrow"
         run: |
           grntest \
@@ -327,7 +328,8 @@ jobs:
             --read-timeout=30 \
             --reporter=mark \
             --input-type=apache-arrow \
-            --interface=http
+            --interface=http \
+            test/command/suite
       - name: "Test: HTTP: command: POST"
         run: |
           grntest \
@@ -337,7 +339,8 @@ jobs:
             --reporter=mark \
             --input-type=apache-arrow \
             --interface=http \
-            --use-http-post
+            --use-http-post \
+            test/command/suite
       - name: "Test: HTTP: command: chunked"
         run: |
           grntest \
@@ -348,7 +351,8 @@ jobs:
             --reporter=mark \
             --input-type=apache-arrow \
             --interface=http \
-            --use-http-chunked
+            --use-http-chunked \
+            test/command/suite
       - name: "Test: HTTP: groonga-httpd"
         run: |
           if type groonga-httpd; then
@@ -358,7 +362,8 @@ jobs:
               --n-retries=3 \
               --read-timeout=30 \
               --reporter=mark \
-              --testee groonga-httpd
+              --testee groonga-httpd \
+              test/command/suite
           fi
       - name: "Test: HTTP: reference count"
         run: |
@@ -368,4 +373,5 @@ jobs:
             --n-retries=3 \
             --read-timeout=30 \
             --reporter=mark \
-            --interface=http
+            --interface=http \
+            test/command/suite
