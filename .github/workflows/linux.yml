@@ -269,6 +269,10 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: ${{ matrix.id }}
+          path: install/
+      - name: Set executable bit
+        run: |
+          chmod +x install/bin/*
       - name: Enable Apache Arrow repository
         run: |
           sudo apt update
