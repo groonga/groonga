@@ -133,6 +133,8 @@ jobs:
       - name: Install test dependencies
         run: |
           sudo env MAKEFLAGS=-j$(nproc) gem install \
+            groonga-client \
+            json \
             native-package-installer \
             pkg-config
       - name: "Test: mruby"
