@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2017 Brazil
+  Copyright(C) 2017  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -94,9 +95,9 @@ mrb_grn_window_definition_set_sort_keys(mrb_state *mrb, mrb_value self)
     definition->sort_keys = NULL;
     definition->n_sort_keys = 0;
   } else {
-    mrb_int i, n;
-    n = RARRAY_LEN(mrb_keys);
+    size_t n = (size_t)RARRAY_LEN(mrb_keys);
     definition->sort_keys = mrb_calloc(mrb, n, sizeof(grn_table_sort_key));
+    size_t i;
     for (i = 0; i < n; i++) {
       grn_table_sort_key *sort_key = DATA_PTR(RARRAY_PTR(mrb_keys)[i]);
       definition->sort_keys[i] = *sort_key;
@@ -124,9 +125,9 @@ mrb_grn_window_definition_set_group_keys(mrb_state *mrb, mrb_value self)
     definition->group_keys = NULL;
     definition->n_group_keys = 0;
   } else {
-    mrb_int i, n;
-    n = RARRAY_LEN(mrb_keys);
+    size_t n = (size_t)RARRAY_LEN(mrb_keys);
     definition->group_keys = mrb_calloc(mrb, n, sizeof(grn_table_sort_key));
+    size_t i;
     for (i = 0; i < n; i++) {
       grn_table_sort_key *group_key = DATA_PTR(RARRAY_PTR(mrb_keys)[i]);
       definition->group_keys[i] = *group_key;
