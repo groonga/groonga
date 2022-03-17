@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2016  Brazil
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ thread_set_limit(mrb_state *mrb, mrb_value self)
                "thread limit must be 1 or larger: %S",
                mrb_int_value(mrb, limit));
   }
-  grn_thread_set_limit_with_ctx(ctx, limit);
+  grn_thread_set_limit_with_ctx(ctx, (uint32_t)limit);
   return mrb_nil_value();
 }
 
