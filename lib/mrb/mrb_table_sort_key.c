@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2015  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -114,7 +114,7 @@ mrb_grn_table_sort_key_set_flags(mrb_state *mrb, mrb_value self)
   sort_key = DATA_PTR(self);
   mrb_get_args(mrb, "i", &flags);
 
-  sort_key->flags = flags;
+  sort_key->flags = (grn_table_sort_flags)flags;
 
   return mrb_nil_value();
 }
@@ -128,7 +128,7 @@ mrb_grn_table_sort_key_set_offset(mrb_state *mrb, mrb_value self)
   sort_key = DATA_PTR(self);
   mrb_get_args(mrb, "i", &offset);
 
-  sort_key->offset = offset;
+  sort_key->offset = (int)offset;
 
   return mrb_nil_value();
 }
