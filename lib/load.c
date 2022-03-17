@@ -347,7 +347,7 @@ grn_loader_bracket_set_value(grn_ctx *ctx,
         if (sub_data.id == GRN_ID_NIL) {
           goto exit;
         }
-        GRN_UINT32_PUT(ctx, &vector, sub_data.id);
+        GRN_RECORD_PUT(ctx, &vector, sub_data.id);
       } else if (element->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
         GRN_DEFINE_NAME(data->table);
         grn_obj inspected;
@@ -363,7 +363,7 @@ grn_loader_bracket_set_value(grn_ctx *ctx,
         GRN_OBJ_FIN(ctx, &inspected);
         goto exit;
       } else if (element->header.domain == range_id) {
-        GRN_UINT32_PUT(ctx, &vector, GRN_RECORD_VALUE(element));
+        GRN_RECORD_PUT(ctx, &vector, GRN_RECORD_VALUE(element));
       } else {
         grn_obj record;
         GRN_RECORD_INIT(&record, 0, range_id);
@@ -372,7 +372,7 @@ grn_loader_bracket_set_value(grn_ctx *ctx,
           GRN_OBJ_FIN(ctx, &record);
           goto exit;
         }
-        GRN_UINT32_PUT(ctx, &vector, GRN_RECORD_VALUE(&record));
+        GRN_RECORD_PUT(ctx, &vector, GRN_RECORD_VALUE(&record));
         GRN_OBJ_FIN(ctx, &record);
       }
     }
