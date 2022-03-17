@@ -317,6 +317,7 @@ jobs:
           if [ "${{ matrix.optimize }}" = "true" ]; then
             echo "GRN_EXPR_OPTIMIZE=yes" >> ${GITHUB_ENV}
           fi
+          echo "LD_LIBRARY_PATH=$PWD/install/lib" >> ${GITHUB_ENV}
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
 
           echo "$PWD/install/bin" >> ${GITHUB_PATH}
