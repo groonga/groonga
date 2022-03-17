@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -79,7 +79,10 @@ mrb_grn_window_function_executor_set_source(mrb_state *mrb, mrb_value self)
 
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_window_function_executor *executor = DATA_PTR(self);
-  grn_window_function_executor_set_source(ctx, executor, source, source_size);
+  grn_window_function_executor_set_source(ctx,
+                                          executor,
+                                          source,
+                                          (int)source_size);
   grn_mrb_ctx_check(mrb);
 
   return mrb_nil_value();
@@ -124,7 +127,10 @@ mrb_grn_window_function_executor_set_sort_keys(mrb_state *mrb, mrb_value self)
 
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_window_function_executor *executor = DATA_PTR(self);
-  grn_window_function_executor_set_sort_keys(ctx, executor, keys, keys_size);
+  grn_window_function_executor_set_sort_keys(ctx,
+                                             executor,
+                                             keys,
+                                             (int)keys_size);
   grn_mrb_ctx_check(mrb);
 
   return mrb_nil_value();
@@ -139,7 +145,10 @@ mrb_grn_window_function_executor_set_group_keys(mrb_state *mrb, mrb_value self)
 
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
   grn_window_function_executor *executor = DATA_PTR(self);
-  grn_window_function_executor_set_group_keys(ctx, executor, keys, keys_size);
+  grn_window_function_executor_set_group_keys(ctx,
+                                              executor,
+                                              keys,
+                                              (int)keys_size);
   grn_mrb_ctx_check(mrb);
 
   return mrb_nil_value();
@@ -158,7 +167,7 @@ mrb_grn_window_function_executor_set_output_column_name(mrb_state *mrb,
   grn_window_function_executor_set_output_column_name(ctx,
                                                       executor,
                                                       name,
-                                                      name_size);
+                                                      (int)name_size);
   grn_mrb_ctx_check(mrb);
 
   return mrb_nil_value();
