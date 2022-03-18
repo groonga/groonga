@@ -7489,9 +7489,7 @@ grn_obj_cast_to_record(grn_ctx *ctx,
     }
   }
 
-  if (grn_enable_reference_count) {
-    grn_obj_unlink(ctx, table);
-  }
+  grn_obj_unref(ctx, table);
 
   return rc;
 }
