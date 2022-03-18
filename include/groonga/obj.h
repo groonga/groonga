@@ -50,6 +50,7 @@ GRN_API bool grn_obj_is_table_with_value(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_lexicon(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_lexicon_without_data_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_tiny_hash_table(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool grn_obj_is_patricia_trie(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_result_set(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_column(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool grn_obj_is_scalar_column(grn_ctx *ctx, grn_obj *obj);
