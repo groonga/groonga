@@ -300,7 +300,7 @@ struct _grn_table_group_result {
   int limit;
   grn_table_group_flags flags;
   grn_operator op;
-  unsigned int max_n_subrecs;
+  uint32_t max_n_subrecs;
   grn_obj *calc_target;
   grn_table_group_aggregator **aggregators;
   uint32_t n_aggregators;
@@ -358,7 +358,7 @@ GRN_API grn_obj *grn_table_create_for_group(grn_ctx *ctx,
                                             const char *path,
                                             grn_obj *group_key,
                                             grn_obj *value_type,
-                                            unsigned int max_n_subrecs);
+                                            uint32_t max_n_subrecs);
 
 GRN_API unsigned int grn_table_get_subrecs(grn_ctx *ctx, grn_obj *table,
                                            grn_id id, grn_id *subrecbuf,
