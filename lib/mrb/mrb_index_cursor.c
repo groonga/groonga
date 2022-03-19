@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2015  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -157,18 +157,18 @@ mrb_grn_index_cursor_select(mrb_state *mrb, mrb_value self)
 
     mrb_offset = grn_mrb_options_get_lit(mrb, mrb_options, "offset");
     if (!mrb_nil_p(mrb_offset)) {
-      offset = mrb_integer(mrb_offset);
+      offset = (int)mrb_integer(mrb_offset);
     }
 
     mrb_limit = grn_mrb_options_get_lit(mrb, mrb_options, "limit");
     if (!mrb_nil_p(mrb_limit)) {
-      limit = mrb_integer(mrb_limit);
+      limit = (int)mrb_integer(mrb_limit);
     }
 
     mrb_max_n_unmatched_records =
       grn_mrb_options_get_lit(mrb, mrb_options, "max_n_unmatched_records");
     if (!mrb_nil_p(mrb_max_n_unmatched_records)) {
-      max_n_unmatched_records = mrb_integer(mrb_max_n_unmatched_records);
+      max_n_unmatched_records = (int)mrb_integer(mrb_max_n_unmatched_records);
     }
   }
 
