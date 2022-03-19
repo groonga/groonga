@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2014-2015  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -47,7 +48,7 @@ mrb_grn_array_class_create(mrb_state *mrb, mrb_value klass)
   }
 
   array = grn_table_create(ctx,
-                           name, name_length,
+                           name, (unsigned int)name_length,
                            path,
                            GRN_TABLE_NO_KEY,
                            NULL,
