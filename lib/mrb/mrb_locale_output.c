@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2018 Brazil
+  Copyright(C) 2018  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -52,7 +53,7 @@ mrb_grn_locale_output_write(mrb_state *mrb, mrb_value self)
   locale_message =
     grn_encoding_convert_to_locale_from_utf8(ctx,
                                              utf8_message,
-                                             utf8_message_size,
+                                             (ssize_t)utf8_message_size,
                                              &locale_message_size);
   mrb_locale_message = mrb_str_new(mrb, locale_message, locale_message_size);
   grn_encoding_converted_free(ctx, locale_message);
