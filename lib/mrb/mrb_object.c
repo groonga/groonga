@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ object_remove_force(mrb_state *mrb, mrb_value self)
   mrb_int name_size;
 
   mrb_get_args(mrb, "s", &name, &name_size);
-  grn_obj_remove_force(ctx, name, name_size);
+  grn_obj_remove_force(ctx, name, (int)name_size);
   grn_mrb_ctx_check(mrb);
 
   return mrb_nil_value();
