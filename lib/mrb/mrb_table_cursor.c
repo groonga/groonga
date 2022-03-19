@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright(C) 2014-2015  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -82,7 +83,7 @@ mrb_grn_table_cursor_class_open_raw(mrb_state *mrb, mrb_value klass)
 
     mrb_flags = grn_mrb_options_get_lit(mrb, mrb_options, "flags");
     if (!mrb_nil_p(mrb_flags)) {
-      flags = mrb_integer(mrb_flags);
+      flags = (int)mrb_integer(mrb_flags);
     }
   }
   table_cursor = grn_table_cursor_open(ctx, table,
