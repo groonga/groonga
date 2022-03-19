@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -71,7 +72,7 @@ mrb_grn_cache_fetch(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "s", &key, &key_size);
 
   GRN_TEXT_INIT(&cache_value, 0);
-  rc = grn_cache_fetch(ctx, cache, key, key_size, &cache_value);
+  rc = grn_cache_fetch(ctx, cache, key, (uint32_t)key_size, &cache_value);
   if (rc == GRN_SUCCESS) {
     mrb_cache_value = grn_mrb_value_from_bulk(mrb, &cache_value);
   } else {
@@ -98,7 +99,7 @@ mrb_grn_cache_update(mrb_state *mrb, mrb_value self)
 
   GRN_TEXT_INIT(&value_buffer, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_TEXT_SET(ctx, &value_buffer, value, value_size);
-  grn_cache_update(ctx, cache, key, key_size, &value_buffer);
+  grn_cache_update(ctx, cache, key, (uint32_t)key_size, &value_buffer);
   GRN_OBJ_FIN(ctx, &value_buffer);
 
   return mrb_nil_value();
