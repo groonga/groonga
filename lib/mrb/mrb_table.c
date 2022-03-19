@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2014-2018 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2014-2018  Brazil
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -71,7 +71,7 @@ mrb_grn_table_find_column(mrb_state *mrb, mrb_value self)
       mrb_int name_length;
 
       name = mrb_sym2name_len(mrb, mrb_symbol(mrb_column_name), &name_length);
-      column = grn_obj_column(ctx, table, name, name_length);
+      column = grn_obj_column(ctx, table, name, (uint32_t)name_length);
     }
     break;
   case MRB_TT_STRING :
@@ -141,7 +141,7 @@ mrb_grn_table_create_column(mrb_state *mrb, mrb_value self)
                              RSTRING_PTR(mrb_name),
                              RSTRING_LEN(mrb_name),
                              NULL,
-                             flags,
+                             (grn_column_flags)flags,
                              type);
   grn_mrb_ctx_check(mrb);
 
@@ -260,7 +260,7 @@ mrb_grn_table_sort_raw(mrb_state *mrb, mrb_value self)
                sizeof(grn_table_sort_key));
   }
   result = DATA_PTR(mrb_result);
-  grn_table_sort(ctx, table, offset, limit, result, keys, n_keys);
+  grn_table_sort(ctx, table, (int)offset, (int)limit, result, keys, n_keys);
   GRN_FREE(keys);
   grn_mrb_ctx_check(mrb);
 
@@ -314,7 +314,7 @@ mrb_grn_table_delete(mrb_state *mrb, mrb_value self)
 
   mrb_id = grn_mrb_options_get_lit(mrb, mrb_options, "id");
   if (!mrb_nil_p(mrb_id)) {
-    grn_table_delete_by_id(ctx, table, mrb_integer(mrb_id));
+    grn_table_delete_by_id(ctx, table, (grn_id)mrb_integer(mrb_id));
     grn_mrb_ctx_check(mrb);
     return mrb_nil_value();
   }
