@@ -625,7 +625,7 @@ typedef enum {
 } grn_operator;
 
 GRN_API grn_obj *grn_obj_column(grn_ctx *ctx, grn_obj *table,
-                                const char *name, unsigned int name_size);
+                                const char *name, uint32_t name_size);
 
 /*-------------------------------------------------------------
  * API for db, table and/or column

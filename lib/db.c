@@ -6325,10 +6325,10 @@ grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
 }
 
 static grn_obj *grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj,
-                                     const char *name, unsigned int name_size);
+                                     const char *name, uint32_t name_size);
 
 static grn_obj *
-grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int name_size)
+grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, uint32_t name_size)
 {
   grn_id table_id = DB_OBJ(table)->id;
   grn_obj *column = NULL;
@@ -6337,7 +6337,7 @@ grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int nam
     char column_name[GRN_TABLE_MAX_KEY_SIZE];
     void *value = NULL;
     grn_snprintf(column_name, GRN_TABLE_MAX_KEY_SIZE, GRN_TABLE_MAX_KEY_SIZE,
-                 "%u%c%.*s", table_id, GRN_DB_DELIMITER, name_size, name);
+                 "%u%c%.*s", table_id, GRN_DB_DELIMITER, (int)name_size, name);
     grn_pat_get(ctx, ctx->impl->temporary_columns,
                 column_name, strlen(column_name),
                 &value);
@@ -6386,7 +6386,7 @@ grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int nam
 }
 
 grn_obj *
-grn_obj_column(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int name_size)
+grn_obj_column(grn_ctx *ctx, grn_obj *table, const char *name, uint32_t name_size)
 {
   grn_obj *column = NULL;
   GRN_API_ENTER;
