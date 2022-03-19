@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2015-2016  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -37,7 +38,7 @@ config_array_reference(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "s", &key, &key_size);
 
-  rc = grn_config_get(ctx, key, key_size, &value, &value_size);
+  rc = grn_config_get(ctx, key, (int32_t)key_size, &value, &value_size);
   if (rc != GRN_SUCCESS) {
     grn_mrb_ctx_check(mrb);
   }
@@ -61,7 +62,7 @@ config_array_set(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "sS", &key, &key_size, &mrb_value_);
 
   rc = grn_config_set(ctx,
-                      key, key_size,
+                      key, (int32_t)key_size,
                       RSTRING_PTR(mrb_value_), RSTRING_LEN(mrb_value_));
   if (rc != GRN_SUCCESS) {
     grn_mrb_ctx_check(mrb);
