@@ -295,8 +295,8 @@ grn_table_group_aggregator_get_expression(grn_ctx *ctx,
 
 struct _grn_table_group_result {
   grn_obj *table;
-  unsigned char key_begin;
-  unsigned char key_end;
+  uint8_t key_begin;
+  uint8_t key_end;
   int limit;
   grn_table_group_flags flags;
   grn_operator op;
