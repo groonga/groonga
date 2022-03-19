@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1138,10 +1138,10 @@ ngram_next(grn_ctx *ctx,
     if (offsets) {
       grn_token_set_source_offset(ctx, token, offsets[0]);
       if (checks) {
-        size_t i;
         uint32_t source_first_character_length = 0;
         if (checks[0] == -1) {
-          size_t n_leading_bytes = p - tokenizer->start;
+          ssize_t n_leading_bytes = p - tokenizer->start;
+          ssize_t i;
           for (i = 1; i <= n_leading_bytes; i++) {
             if (checks[-i] > 0) {
               source_first_character_length = checks[-i];
@@ -1150,6 +1150,7 @@ ngram_next(grn_ctx *ctx,
           }
         }
         {
+          size_t i;
           for (i = 0; i < data_size; i++) {
             if (checks[i] > 0) {
               if (source_first_character_length == 0) {
@@ -1167,13 +1168,13 @@ ngram_next(grn_ctx *ctx,
       }
     } else {
       if (checks) {
-        size_t i;
         uint32_t source_length = 0;
         uint32_t source_first_character_length = 0;
         uint64_t next_offset = tokenizer->source_offset;
         grn_token_set_source_offset(ctx, token, tokenizer->source_offset);
         if (checks[0] == -1) {
-          size_t n_leading_bytes = p - tokenizer->start;
+          ssize_t n_leading_bytes = p - tokenizer->start;
+          ssize_t i;
           for (i = 1; i <= n_leading_bytes; i++) {
             if (checks[-i] > 0) {
               source_length = source_first_character_length = checks[-i];
@@ -1186,6 +1187,7 @@ ngram_next(grn_ctx *ctx,
         }
         {
           uint64_t first_offset = 0;
+          size_t i;
           for (i = 0; i < data_size; i++) {
             if (checks[i] > 0) {
               if ((tokenizer->overlap && first_offset == 0) ||
@@ -2661,7 +2663,7 @@ document_vector_idf_base_tokenizer_init_token_ids(
         /* Use the formula in Wikipedia:
          * https://en.wikipedia.org/wiki/Okapi_BM25 */
         const float idf =
-          logf(((metadata->n_documents - df + 0.5) / (df + 0.5)) + 1);
+          logf(((metadata->n_documents - df + 0.5) / (df + (float)0.5)) + 1);
         const float k1 = tokenizer->options->k1;
         const float b = tokenizer->options->b;
         const float bm25 =
