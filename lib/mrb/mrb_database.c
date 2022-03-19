@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2014-2018 Brazil
+  Copyright(C) 2014-2018  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -159,7 +160,7 @@ mrb_grn_database_array_reference(mrb_state *mrb, mrb_value self)
 
     name_size = grn_table_get_key(ctx,
                                   grn_ctx_db(ctx),
-                                  mrb_integer(mrb_id_or_key),
+                                  (grn_id)mrb_integer(mrb_id_or_key),
                                   name,
                                   GRN_TABLE_MAX_KEY_SIZE);
     if (name_size == 0) {
