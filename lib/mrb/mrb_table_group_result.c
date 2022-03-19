@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -119,7 +120,7 @@ mrb_grn_table_group_result_set_key_begin(mrb_state *mrb, mrb_value self)
   result = DATA_PTR(self);
   mrb_get_args(mrb, "i", &key_begin);
 
-  result->key_begin = key_begin;
+  result->key_begin = (uint8_t)key_begin;
 
   return mrb_nil_value();
 }
@@ -133,7 +134,7 @@ mrb_grn_table_group_result_set_key_end(mrb_state *mrb, mrb_value self)
   result = DATA_PTR(self);
   mrb_get_args(mrb, "i", &key_end);
 
-  result->key_end = key_end;
+  result->key_end = (uint8_t)key_end;
 
   return mrb_nil_value();
 }
@@ -147,7 +148,7 @@ mrb_grn_table_group_result_set_limit(mrb_state *mrb, mrb_value self)
   result = DATA_PTR(self);
   mrb_get_args(mrb, "i", &limit);
 
-  result->limit = limit;
+  result->limit = (int)limit;
 
   return mrb_nil_value();
 }
@@ -161,7 +162,7 @@ mrb_grn_table_group_result_set_flags(mrb_state *mrb, mrb_value self)
   result = DATA_PTR(self);
   mrb_get_args(mrb, "i", &flags);
 
-  result->flags = flags;
+  result->flags = (grn_table_group_flags)flags;
 
   return mrb_nil_value();
 }
@@ -189,7 +190,7 @@ mrb_grn_table_group_result_set_max_n_sub_records(mrb_state *mrb, mrb_value self)
   result = DATA_PTR(self);
   mrb_get_args(mrb, "i", &max_n_sub_records);
 
-  result->max_n_subrecs = max_n_sub_records;
+  result->max_n_subrecs = (uint32_t)max_n_sub_records;
 
   return mrb_nil_value();
 }
