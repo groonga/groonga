@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -51,14 +51,14 @@ extern "C" {
 } while (0)
 
 /* CAUTION!! : pass only variables or constants as r */
-#define GRN_API_RETURN(r) do {\
+#define GRN_API_RETURN(...) do {\
   if (ctx->subno) {\
     ctx->subno--;\
   } else {\
     ctx->seqno++;\
   }\
   GRN_TEST_YIELD();\
-  return r;\
+  return __VA_ARGS__;\
 } while (0)
 
 #ifdef DEBUG
