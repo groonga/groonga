@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -123,7 +124,7 @@ mrb_grn_command_class_register(mrb_state *mrb, mrb_value klass)
       mrb_arguments[i] = mrb_convert_type(mrb, mrb_arguments[i],
                                           MRB_TT_STRING, "String", "to_str");
     }
-    vars = GRN_MALLOCN(grn_expr_var, n_arguments);
+    vars = GRN_MALLOCN(grn_expr_var, (size_t)n_arguments);
     for (i = 0; i < n_arguments; i++) {
       mrb_value mrb_argument = mrb_arguments[i];
       grn_expr_var *var = &vars[i];
@@ -137,7 +138,7 @@ mrb_grn_command_class_register(mrb_state *mrb, mrb_value klass)
                          RSTRING_LEN(mrb_name),
                          mrb_grn_command_run_wrapper,
                          vars,
-                         n_arguments,
+                         (unsigned int)n_arguments,
                          NULL);
 
     for (i = 0; i < n_arguments; i++) {
