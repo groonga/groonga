@@ -914,7 +914,7 @@ grn_wal_reader_read_data(grn_ctx *ctx,
     break;
   case MSGPACK_OBJECT_FLOAT32 :
     data->type = GRN_WAL_READER_DATA_FLOAT32;
-    data->content.float32 = value->via.f64;
+    data->content.float32 = (float)(value->via.f64);
     break;
   case MSGPACK_OBJECT_FLOAT64 :
     data->type = GRN_WAL_READER_DATA_FLOAT64;
@@ -1014,19 +1014,19 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_RECORD_ID :
-      entry->record_id = value->via.u64;
+      entry->record_id = (grn_id)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->record_id);
       }
       break;
     case GRN_WAL_KEY_RECORD_DIRECTION :
-      entry->record_direction = value->via.u64;
+      entry->record_direction = (uint8_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->record_direction);
       }
       break;
     case GRN_WAL_KEY_ELEMENT_SIZE :
-      entry->element_size = value->via.u64;
+      entry->element_size = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->element_size);
       }
@@ -1049,7 +1049,7 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_KEY_HASH_VALUE :
-      entry->key_hash_value = value->via.u64;
+      entry->key_hash_value = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->key_hash_value);
       }
@@ -1079,7 +1079,7 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_CHECK :
-      entry->check = value->via.u64;
+      entry->check = (uint16_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->check);
       }
@@ -1093,49 +1093,49 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_PARENT_RECORD_ID :
-      entry->parent_record_id = value->via.u64;
+      entry->parent_record_id = (grn_id)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->parent_record_id);
       }
       break;
     case GRN_WAL_KEY_PARENT_RECORD_DIRECTION :
-      entry->parent_record_direction = value->via.u64;
+      entry->parent_record_direction = (uint8_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->parent_record_direction);
       }
       break;
     case GRN_WAL_KEY_PARENT_CHECK :
-      entry->parent_check = value->via.u64;
+      entry->parent_check = (uint16_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->parent_check);
       }
       break;
     case GRN_WAL_KEY_GRANDPARENT_RECORD_ID :
-      entry->grandparent_record_id = value->via.u64;
+      entry->grandparent_record_id = (grn_id)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->grandparent_record_id);
       }
       break;
     case GRN_WAL_KEY_OTHERSIDE_RECORD_ID :
-      entry->otherside_record_id = value->via.u64;
+      entry->otherside_record_id = (grn_id)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->otherside_record_id);
       }
       break;
     case GRN_WAL_KEY_OTHERSIDE_CHECK :
-      entry->otherside_check = value->via.u64;
+      entry->otherside_check = (uint16_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->otherside_check);
       }
       break;
     case GRN_WAL_KEY_LEFT_RECORD_ID :
-      entry->left_record_id = value->via.u64;
+      entry->left_record_id = (grn_id)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->left_record_id);
       }
       break;
     case GRN_WAL_KEY_RIGHT_RECORD_ID :
-      entry->right_record_id = value->via.u64;
+      entry->right_record_id = (grn_id)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->right_record_id);
       }
@@ -1149,19 +1149,19 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_INDEX_HASH_VALUE :
-      entry->index_hash_value = value->via.u64;
+      entry->index_hash_value = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->index_hash_value);
       }
       break;
     case GRN_WAL_KEY_SEGMENT :
-      entry->segment = value->via.u64;
+      entry->segment = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->segment);
       }
       break;
     case GRN_WAL_KEY_POSITION :
-      entry->position = value->via.u64;
+      entry->position = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->position);
       }
@@ -1175,19 +1175,19 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_SEGMENT_INFO :
-      entry->segment_info = value->via.u64;
+      entry->segment_info = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->segment_info);
       }
       break;
     case GRN_WAL_KEY_GARBAGE_SEGMENT :
-      entry->garbage_segment = value->via.u64;
+      entry->garbage_segment = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->garbage_segment);
       }
       break;
     case GRN_WAL_KEY_PREVIOUS_GARBAGE_SEGMENT :
-      entry->previous_garbage_segment = value->via.u64;
+      entry->previous_garbage_segment = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx,
                         &dump_buffer,
@@ -1196,7 +1196,7 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_NEXT_GARBAGE_SEGMENT :
-      entry->next_garbage_segment = value->via.u64;
+      entry->next_garbage_segment = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx,
                         &dump_buffer,
@@ -1205,7 +1205,7 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_GARBAGE_SEGMENT_HEAD :
-      entry->garbage_segment_head = value->via.u64;
+      entry->garbage_segment_head = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx,
                         &dump_buffer,
@@ -1214,7 +1214,7 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_GARBAGE_SEGMENT_TAIL :
-      entry->garbage_segment_tail = value->via.u64;
+      entry->garbage_segment_tail = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx,
                         &dump_buffer,
@@ -1223,7 +1223,7 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_GARBAGE_SEGMENT_N_RECORDS :
-      entry->garbage_segment_n_records = value->via.u64;
+      entry->garbage_segment_n_records = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx,
                         &dump_buffer,
@@ -1232,7 +1232,7 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_GARBAGE_RECORD_ID :
-      entry->garbage_record_id = value->via.u64;
+      entry->garbage_record_id = (grn_id)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx,
                         &dump_buffer,
@@ -1241,7 +1241,7 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_NEXT_GARBAGE_RECORD_ID :
-      entry->next_garbage_record_id = value->via.u64;
+      entry->next_garbage_record_id = (grn_id)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx,
                         &dump_buffer,
@@ -1250,13 +1250,13 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_N_GARBAGES :
-      entry->n_garbages = value->via.u64;
+      entry->n_garbages = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->n_garbages);
       }
       break;
     case GRN_WAL_KEY_N_ENTRIES :
-      entry->n_entries = value->via.u64;
+      entry->n_entries = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->n_entries);
       }
@@ -1276,19 +1276,19 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_EXPECTED_N_ENTRIES :
-      entry->expected_n_entries = value->via.u64;
+      entry->expected_n_entries = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->expected_n_entries);
       }
       break;
     case GRN_WAL_KEY_DELETE_INFO_INDEX :
-      entry->delete_info_index = value->via.u64;
+      entry->delete_info_index = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->delete_info_index);
       }
       break;
     case GRN_WAL_KEY_DELETE_INFO_PHASE1_INDEX :
-      entry->delete_info_phase1_index = value->via.u64;
+      entry->delete_info_phase1_index = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx,
                         &dump_buffer,
@@ -1297,7 +1297,7 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_DELETE_INFO_PHASE2_INDEX :
-      entry->delete_info_phase2_index = value->via.u64;
+      entry->delete_info_phase2_index = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx,
                         &dump_buffer,
@@ -1306,7 +1306,7 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_DELETE_INFO_PHASE3_INDEX :
-      entry->delete_info_phase3_index = value->via.u64;
+      entry->delete_info_phase3_index = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx,
                         &dump_buffer,
@@ -1315,7 +1315,7 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_PREVIOUS_RECORD_ID :
-      entry->previous_record_id = value->via.u64;
+      entry->previous_record_id = (grn_id)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->previous_record_id);
       }
@@ -1522,7 +1522,7 @@ grn_wal_dump(grn_ctx *ctx, grn_obj *obj)
           break;
         case GRN_WAL_KEY_SEGMENT_INFO :
           {
-            uint32_t info = kv->val.via.u64;
+            uint32_t info = (uint32_t)(kv->val.via.u64);
             printf("segment-info(%s)(%u)<%u>",
                    grn_ja_segment_info_type_name(ctx, info),
                    grn_ja_segment_info_value(ctx, info),
