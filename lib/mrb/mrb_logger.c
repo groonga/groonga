@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2014-2018 Brazil
+  Copyright(C) 2014-2018  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -107,9 +108,9 @@ logger_log_raw(mrb_state *mrb, mrb_value self)
                &level, &file, &line, &method, &utf8_message, &utf8_message_size);
   message = grn_encoding_convert_from_utf8(ctx,
                                            utf8_message,
-                                           utf8_message_size,
+                                           (ssize_t)utf8_message_size,
                                            &message_size);
-  grn_logger_put(ctx, level, file, line, method,
+  grn_logger_put(ctx, level, file, (int)line, method,
                  "%.*s",
                  (int)message_size,
                  message);
