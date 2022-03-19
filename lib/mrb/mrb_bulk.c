@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2014-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -203,7 +203,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
       if (MRB_INT_MIN <= value && value <= MRB_INT_MAX) {
         mrb_value_ = mrb_int_value(mrb, value);
       } else {
-        mrb_value_ = mrb_float_value(mrb, value);
+        mrb_value_ = mrb_float_value(mrb, (mrb_float)value);
       }
     }
     break;
@@ -214,7 +214,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
       if (value <= MRB_INT_MAX) {
         mrb_value_ = mrb_int_value(mrb, value);
       } else {
-        mrb_value_ = mrb_float_value(mrb, value);
+        mrb_value_ = mrb_float_value(mrb, (mrb_float)value);
       }
     }
     break;
@@ -242,7 +242,7 @@ grn_mrb_value_from_bulk(mrb_state *mrb, grn_obj *bulk)
       value = GRN_TIME_VALUE(bulk);
       GRN_TIME_UNPACK(value, sec, usec);
       if (sec > MRB_INT_MAX) {
-        mrb_sec = mrb_float_value(mrb, sec);
+        mrb_sec = mrb_float_value(mrb, (mrb_float)sec);
       } else {
         mrb_sec = mrb_int_value(mrb, sec);
       }
