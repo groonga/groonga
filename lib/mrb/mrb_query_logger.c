@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015-2018 Brazil
+  Copyright(C) 2015-2018  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -37,7 +38,7 @@ query_logger_need_log_p(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &flag);
 
-  return mrb_bool_value(grn_query_logger_pass(ctx, flag));
+  return mrb_bool_value(grn_query_logger_pass(ctx, (unsigned int)flag));
 }
 
 static mrb_value
@@ -54,9 +55,9 @@ query_logger_log_raw(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "izs", &flag, &mark, &utf8_message, &utf8_message_size);
   message = grn_encoding_convert_from_utf8(ctx,
                                            utf8_message,
-                                           utf8_message_size,
+                                           (ssize_t)utf8_message_size,
                                            &message_size);
-  grn_query_logger_put(ctx, flag, mark,
+  grn_query_logger_put(ctx, (unsigned int)flag, mark,
                        "%.*s",
                        (int)message_size,
                        message);
