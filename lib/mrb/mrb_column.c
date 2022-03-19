@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -63,7 +63,7 @@ mrb_grn_column_array_reference(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "i", &record_id);
 
   GRN_VOID_INIT(&column_value);
-  grn_obj_get_value(ctx, column, record_id, &column_value);
+  grn_obj_get_value(ctx, column, (grn_id)record_id, &column_value);
   if (grn_obj_is_bulk(ctx, &column_value)) {
     rb_column_value = grn_mrb_value_from_bulk(mrb, &column_value);
   } else if (grn_obj_is_vector(ctx, &column_value)) {
