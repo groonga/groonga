@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2014-2015  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -96,7 +96,7 @@ mrb_grn_index_column_estimate_size_for_term_id(mrb_state *mrb, mrb_value self)
   index_column = DATA_PTR(self);
   mrb_get_args(mrb, "i", &term_id);
 
-  size = grn_ii_estimate_size(ctx, (grn_ii *)index_column, term_id);
+  size = grn_ii_estimate_size(ctx, (grn_ii *)index_column, (grn_id)term_id);
   return mrb_int_value(mrb, size);
 }
 
