@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2015  Brazil
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -69,7 +69,7 @@ mrb_grn_record_initialize(mrb_state *mrb, mrb_value self)
   if (mrb_nil_p(mrb_id)) {
     record->id = GRN_ID_NIL;
   } else {
-    record->id = mrb_integer(mrb_id);
+    record->id = (grn_id)mrb_integer(mrb_id);
   }
 
   switch (record->table->header.domain) {
@@ -102,7 +102,7 @@ mrb_grn_record_set_id(mrb_state *mrb, mrb_value self)
   if (mrb_nil_p(mrb_id)) {
     record->id = GRN_ID_NIL;
   } else {
-    record->id = mrb_integer(mrb_id);
+    record->id = (grn_id)mrb_integer(mrb_id);
   }
   mrb_iv_set(mrb, self, mrb_intern_lit(mrb, "@id"), mrb_id);
 
