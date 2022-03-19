@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016 Brazil
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2016  Brazil
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -46,7 +46,7 @@ eval_context_compile(mrb_state *mrb, mrb_value self)
   }
   compile_ctx->capture_errors = TRUE;
 
-  parser = mrb_parse_nstring(mrb, script, script_length, compile_ctx);
+  parser = mrb_parse_nstring(mrb, script, (size_t)script_length, compile_ctx);
   if (!parser) {
     mrbc_context_free(mrb, compile_ctx);
     mrb_raise(mrb, E_RUNTIME_ERROR,
