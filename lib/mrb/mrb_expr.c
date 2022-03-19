@@ -127,10 +127,10 @@ mrb_grn_scan_info_put_index(mrb_state *mrb, mrb_value self)
   if (!mrb_nil_p(mrb_scorer_args_expr)) {
     scorer_args_expr = DATA_PTR(mrb_scorer_args_expr);
   }
-  grn_scan_info_put_index(ctx, si, index, sid, weight,
+  grn_scan_info_put_index(ctx, si, index, (uint32_t)sid, (float)weight,
                           scorer,
                           scorer_args_expr,
-                          scorer_args_expr_offset);
+                          (uint32_t)scorer_args_expr_offset);
   return self;
 }
 
@@ -173,7 +173,7 @@ mrb_grn_scan_info_set_weight_factor(mrb_state *mrb, mrb_value self)
   mrb_float factor;
   mrb_get_args(mrb, "f", &factor);
   scan_info *si = DATA_PTR(self);
-  grn_scan_info_set_weight_factor(si, factor);
+  grn_scan_info_set_weight_factor(si, (float)factor);
   return self;
 }
 
@@ -185,7 +185,7 @@ mrb_grn_scan_info_set_end(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &end);
   si = DATA_PTR(self);
-  grn_scan_info_set_end(si, end);
+  grn_scan_info_set_end(si, (uint32_t)end);
   return self;
 }
 
@@ -213,7 +213,7 @@ mrb_grn_scan_info_set_flags(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &flags);
   si = DATA_PTR(self);
-  grn_scan_info_set_flags(si, flags);
+  grn_scan_info_set_flags(si, (int)flags);
   return self;
 }
 
@@ -261,7 +261,7 @@ mrb_grn_scan_info_set_max_interval(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &max_interval);
   si = DATA_PTR(self);
-  grn_scan_info_set_max_interval(si, max_interval);
+  grn_scan_info_set_max_interval(si, (int)max_interval);
   return self;
 }
 
@@ -284,7 +284,7 @@ mrb_grn_scan_info_set_additional_last_interval(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &additional_last_interval);
   si = DATA_PTR(self);
-  grn_scan_info_set_additional_last_interval(si, additional_last_interval);
+  grn_scan_info_set_additional_last_interval(si, (int)additional_last_interval);
   return self;
 }
 
@@ -354,7 +354,7 @@ mrb_grn_scan_info_set_similarity_threshold(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &similarity_threshold);
   si = DATA_PTR(self);
-  grn_scan_info_set_similarity_threshold(si, similarity_threshold);
+  grn_scan_info_set_similarity_threshold(si, (int)similarity_threshold);
   return self;
 }
 
@@ -377,7 +377,7 @@ mrb_grn_scan_info_set_quorum_threshold(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &quorum_threshold);
   si = DATA_PTR(self);
-  grn_scan_info_set_quorum_threshold(si, quorum_threshold);
+  grn_scan_info_set_quorum_threshold(si, (int)quorum_threshold);
   return self;
 }
 
@@ -403,7 +403,7 @@ mrb_grn_scan_info_get_arg(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "i", &index);
 
   si = DATA_PTR(self);
-  arg = grn_scan_info_get_arg(ctx, si, index);
+  arg = grn_scan_info_get_arg(ctx, si, (int)index);
 
   return grn_mrb_value_from_grn_obj(mrb, arg);
 }
@@ -443,7 +443,7 @@ mrb_grn_scan_info_set_start_position(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &start_position);
   si = DATA_PTR(self);
-  grn_scan_info_set_start_position(si, start_position);
+  grn_scan_info_set_start_position(si, (uint32_t)start_position);
   return self;
 }
 
@@ -682,7 +682,7 @@ mrb_grn_expression_array_reference(mrb_state *mrb, mrb_value self)
       mrb_int name_length;
 
       name = mrb_sym2name_len(mrb, mrb_symbol(mrb_key), &name_length);
-      var = grn_expr_get_var(ctx, expr, name, name_length);
+      var = grn_expr_get_var(ctx, expr, name, (unsigned int)name_length);
     }
     break;
   case MRB_TT_STRING :
@@ -690,7 +690,9 @@ mrb_grn_expression_array_reference(mrb_state *mrb, mrb_value self)
                            RSTRING_PTR(mrb_key), RSTRING_LEN(mrb_key));
     break;
   case MRB_TT_INTEGER :
-    var = grn_expr_get_var_by_offset(ctx, expr, mrb_integer(mrb_key));
+    var = grn_expr_get_var_by_offset(ctx,
+                                     expr,
+                                     (unsigned int)mrb_integer(mrb_key));
     break;
   default :
     mrb_raisef(mrb, E_ARGUMENT_ERROR,
@@ -796,11 +798,11 @@ mrb_grn_expression_parse(mrb_state *mrb, mrb_value self)
 
     mrb_flags = grn_mrb_options_get_lit(mrb, mrb_options, "flags");
     if (!mrb_nil_p(mrb_flags)) {
-      flags = mrb_integer(mrb_flags);
+      flags = (grn_expr_flags)mrb_integer(mrb_flags);
     }
   }
 
-  grn_expr_parse(ctx, expr, query, query_size, default_column,
+  grn_expr_parse(ctx, expr, query, (unsigned int)query_size, default_column,
                  default_mode, default_operator, flags);
   grn_mrb_ctx_check(mrb);
 
@@ -816,13 +818,15 @@ mrb_grn_expression_append_object(mrb_state *mrb, mrb_value self)
   grn_obj *object;
   mrb_value mrb_op;
   grn_operator op;
-  mrb_int n_args;
+  mrb_int mrb_n_args;
+  int n_args;
 
   expr = DATA_PTR(self);
-  mrb_get_args(mrb, "ooi", &mrb_object, &mrb_op, &n_args);
+  mrb_get_args(mrb, "ooi", &mrb_object, &mrb_op, &mrb_n_args);
 
   object = DATA_PTR(mrb_object);
   op = grn_mrb_value_to_operator(mrb, mrb_op);
+  n_args = (int)mrb_n_args;
   grn_expr_append_obj(ctx, expr, object, op, n_args);
   grn_mrb_ctx_check(mrb);
 
@@ -837,12 +841,14 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
   mrb_value mrb_constant;
   mrb_value mrb_op;
   grn_operator op;
-  mrb_int n_args;
+  mrb_int mrb_n_args;
+  int n_args;
 
   expr = DATA_PTR(self);
-  mrb_get_args(mrb, "ooi", &mrb_constant, &mrb_op, &n_args);
+  mrb_get_args(mrb, "ooi", &mrb_constant, &mrb_op, &mrb_n_args);
 
   op = grn_mrb_value_to_operator(mrb, mrb_op);
+  n_args = (int)mrb_n_args;
   switch (mrb_type(mrb_constant)) {
   case MRB_TT_FALSE :
     if (mrb_nil_p(mrb_constant)) {
@@ -971,7 +977,7 @@ mrb_grn_expression_append_operator(mrb_state *mrb, mrb_value self)
   mrb_get_args(mrb, "oi", &mrb_op, &n_args);
 
   op = grn_mrb_value_to_operator(mrb, mrb_op);
-  grn_expr_append_op(ctx, expr, op, n_args);
+  grn_expr_append_op(ctx, expr, op, (int)n_args);
   grn_mrb_ctx_check(mrb);
 
   return mrb_nil_value();
@@ -1195,7 +1201,7 @@ grn_mrb_scan_info_build(grn_ctx *ctx,
     int start;
 
     mrb_si_data = RARRAY_PTR(mrb_sis)[i];
-    start = mrb_integer(mrb_funcall(mrb, mrb_si_data, "start", 0));
+    start = (int)mrb_integer(mrb_funcall(mrb, mrb_si_data, "start", 0));
     si = grn_scan_info_open(ctx, start);
     mrb_si = mrb_grn_scan_info_new(mrb, si);
     mrb_funcall(mrb, mrb_si, "apply", 1, mrb_si_data);
@@ -1227,7 +1233,7 @@ grn_mrb_expr_estimate_size(grn_ctx *ctx, grn_obj *expr, grn_obj *table)
   if (mrb->exc) {
     size = grn_table_size(ctx, table);
   } else {
-    size = mrb_integer(mrb_size);
+    size = (unsigned int)mrb_integer(mrb_size);
   }
 
   mrb_gc_arena_restore(mrb, arena_index);
