@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2013-2018 Brazil
-  Copyright(C) 2018-2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2013-2018  Brazil
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -66,7 +66,7 @@ ctx_array_reference(mrb_state *mrb, mrb_value self)
   }
 
   if (mrb_integer_p(mrb_id_or_name)) {
-    grn_id id = mrb_integer(mrb_id_or_name);
+    grn_id id = (grn_id)mrb_integer(mrb_id_or_name);
     object = grn_ctx_at(ctx, id);
   } else {
     mrb_value mrb_name;
@@ -115,7 +115,7 @@ ctx_set_error_level(mrb_state *mrb, mrb_value self)
   mrb_int error_level;
 
   mrb_get_args(mrb, "i", &error_level);
-  ctx->errlvl = error_level;
+  ctx->errlvl = (unsigned char)error_level;
 
   return mrb_int_value(mrb, ctx->errlvl);
 }
@@ -156,7 +156,7 @@ ctx_set_error_line(mrb_state *mrb, mrb_value self)
   mrb_int error_line;
 
   mrb_get_args(mrb, "i", &error_line);
-  ctx->errline = error_line;
+  ctx->errline = (unsigned int)error_line;
 
   return mrb_int_value(mrb, ctx->errline);
 }
@@ -306,7 +306,7 @@ ctx_is_opened(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &mrb_id);
 
-  return mrb_bool_value(grn_ctx_is_opened(ctx, mrb_id));
+  return mrb_bool_value(grn_ctx_is_opened(ctx, (grn_id)mrb_id));
 }
 
 static mrb_value
