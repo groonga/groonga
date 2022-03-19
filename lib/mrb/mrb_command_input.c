@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -60,7 +61,7 @@ mrb_grn_command_input_array_reference(mrb_state *mrb, mrb_value self)
   case MRB_TT_INTEGER :
     {
       mrb_int offset = mrb_integer(mrb_key_or_offset);
-      argument = grn_command_input_at(ctx, input, offset);
+      argument = grn_command_input_at(ctx, input, (unsigned int)offset);
     }
     break;
   case MRB_TT_SYMBOL :
@@ -71,7 +72,7 @@ mrb_grn_command_input_array_reference(mrb_state *mrb, mrb_value self)
 
       mrb_key_symbol = mrb_symbol(mrb_key_or_offset);
       key = mrb_sym2name_len(mrb, mrb_key_symbol, &key_length);
-      argument = grn_command_input_get(ctx, input, key, key_length);
+      argument = grn_command_input_get(ctx, input, key, (int)key_length);
     }
     break;
   case MRB_TT_STRING :
