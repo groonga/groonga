@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2016 Brazil
-  Copyright(C) 2020 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2009-2016  Brazil
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -38,11 +38,9 @@ grn_rc
 grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
 {
 #ifdef WIN32
-  grn_time_t t;
-  struct _timeb tb;
-  grn_time(&t);
-  _ftime(&tb);
-  tv->tv_sec = t;
+  struct __timeb64 tb;
+  _ftime64_s(&tb);
+  tv->tv_sec = tb.time;
   tv->tv_nsec = tb.millitm * (GRN_TIME_NSEC_PER_SEC / 1000);
   return GRN_SUCCESS;
 #else /* WIN32 */
