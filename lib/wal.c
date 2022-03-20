@@ -1270,7 +1270,7 @@ grn_wal_reader_read_entry(grn_ctx *ctx,
       }
       break;
     case GRN_WAL_KEY_MAX_OFFSET :
-      entry->max_offset = value->via.u64;
+      entry->max_offset = (uint32_t)(value->via.u64);
       if (need_log) {
         grn_text_printf(ctx, &dump_buffer, "%u", entry->max_offset);
       }
