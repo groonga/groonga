@@ -2663,7 +2663,9 @@ document_vector_idf_base_tokenizer_init_token_ids(
         /* Use the formula in Wikipedia:
          * https://en.wikipedia.org/wiki/Okapi_BM25 */
         const float idf =
-          logf(((metadata->n_documents - df + 0.5) / (df + (float)0.5)) + 1);
+          logf(((metadata->n_documents - df + (float)0.5) /
+                (df + (float)0.5)) +
+               1);
         const float k1 = tokenizer->options->k1;
         const float b = tokenizer->options->b;
         const float bm25 =
