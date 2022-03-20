@@ -876,16 +876,17 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
   case MRB_TT_INTEGER:
     grn_expr_append_const_int32(ctx,
                                 expr,
-                                mrb_integer(mrb_constant),
+                                (int32_t)mrb_integer(mrb_constant),
                                 op,
                                 n_args);
     break;
   case MRB_TT_SYMBOL :
     {
       const char *value;
-      mrb_int value_length;
+      mrb_int mrb_value_length;
 
       value = mrb_sym2name_len(mrb, mrb_symbol(mrb_constant), &value_length);
+      unsigned int value_length = (unsigned int)mrb_value_length;
       grn_expr_append_const_str(ctx, expr, value, value_length, op, n_args);
     }
     break;
@@ -895,7 +896,7 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
       if (sizeof(mrb_float) == sizeof(float)) {
         grn_expr_append_const_float32(ctx,
                                       expr,
-                                      value,
+                                      (float)value,
                                       op,
                                       n_args);
       } else {
@@ -937,7 +938,7 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
         mrb_value mrb_table;
         grn_obj *domain;
 
-        id = mrb_integer(mrb_funcall(mrb, mrb_constant, "id", 0));
+        id = (grn_id)mrb_integer(mrb_funcall(mrb, mrb_constant, "id", 0));
         mrb_table = mrb_funcall(mrb, mrb_constant, "table", 0);
         domain = DATA_PTR(mrb_table);
         GRN_RECORD_INIT(&constant, 0, grn_obj_id(ctx, domain));
