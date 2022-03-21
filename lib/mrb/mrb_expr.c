@@ -885,7 +885,7 @@ mrb_grn_expression_append_constant(mrb_state *mrb, mrb_value self)
       const char *value;
       mrb_int mrb_value_length;
 
-      value = mrb_sym2name_len(mrb, mrb_symbol(mrb_constant), &value_length);
+      value = mrb_sym2name_len(mrb, mrb_symbol(mrb_constant), &mrb_value_length);
       unsigned int value_length = (unsigned int)mrb_value_length;
       grn_expr_append_const_str(ctx, expr, value, value_length, op, n_args);
     }
