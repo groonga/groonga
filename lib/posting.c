@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -83,12 +83,12 @@ void
 grn_posting_set_weight(grn_ctx *ctx, grn_posting *posting, uint32_t weight)
 {
   posting->weight = weight;
-  ((grn_posting_internal *)posting)->weight_float = weight;
+  ((grn_posting_internal *)posting)->weight_float = (float)weight;
 }
 
 void
 grn_posting_set_weight_float(grn_ctx *ctx, grn_posting *posting, float weight)
 {
-  posting->weight = weight;
+  posting->weight = (uint32_t)weight;
   ((grn_posting_internal *)posting)->weight_float = weight;
 }
