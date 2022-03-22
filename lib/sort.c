@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -657,7 +657,7 @@ grn_table_sort_value_body(grn_ctx *ctx,
                         e,
                         data);
       }
-      if (m < e) {
+      if (m < (intptr_t)e) {
         sort_value_body(ctx,
                         ep + 1,
                         entries + n - 1,
