@@ -114,9 +114,9 @@ pat_key_storage_size(uint32_t key_size)
 #define PAT_CHECK_BYTE_DIFFERENCES_SHIFT 4
 #define PAT_CHECK_BIT_DIFFERENCES_SHIFT 1
 #define PAT_CHECK_PACK(byte_differences, bit_differences, terminated) \
-  ((byte_differences) << PAT_CHECK_BYTE_DIFFERENCES_SHIFT) +          \
-  ((bit_differences) << PAT_CHECK_BIT_DIFFERENCES_SHIFT) +            \
-  ((terminated) ? 1 : 0)
+  (((byte_differences) << PAT_CHECK_BYTE_DIFFERENCES_SHIFT) +         \
+   ((bit_differences) << PAT_CHECK_BIT_DIFFERENCES_SHIFT) +           \
+   ((terminated) ? 1 : 0))
 #define PAT_CHECK_BYTE_DIFFERENCES(check)       \
   ((check) >> PAT_CHECK_BYTE_DIFFERENCES_SHIFT)
 #define PAT_CHECK_BIT_DIFFERENCES(check)                  \
@@ -2769,7 +2769,7 @@ calc_edit_distance_by_offset(grn_ctx *ctx,
 
   /* Skip already calculated rows */
   for (py = sy, y = 1; py < ey && (cy = grn_charlen(ctx, py, ey)); py += cy, y++) {
-    if (py - sy >= offset) {
+    if ((uint32_t)(py - sy) >= offset) {
       break;
     }
   }
@@ -5227,7 +5227,7 @@ grn_pat_wal_recover_add_entry(grn_ctx *ctx,
                               const char *tag,
                               const char *wal_error_tag)
 {
-  pat->header->curr_key = entry->key_offset;
+  pat->header->curr_key = (uint32_t)(entry->key_offset);
   pat->header->n_entries = entry->n_entries;
   pat_node *node = pat_get(ctx, pat, entry->record_id);
   if (!node) {
@@ -5256,7 +5256,7 @@ grn_pat_wal_recover_add_entry(grn_ctx *ctx,
     &(parent_node->lr[entry->record_direction]);
   *id_location = entry->previous_record_id;
   uint16_t check_max =
-    PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
+    (uint16_t)PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
   grn_pat_add_node(ctx,
                    pat,
                    node,
@@ -5300,14 +5300,14 @@ grn_pat_wal_recover_add_shared_entry(grn_ctx *ctx,
     &(parent_node->lr[entry->record_direction]);
   *id_location = entry->previous_record_id;
   uint16_t check_max =
-    PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
+    (uint16_t)PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
   grn_pat_add_shared_node(ctx,
                           pat,
                           node,
                           entry->record_id,
                           entry->key.content.binary.data,
                           entry->key.content.binary.size,
-                          entry->shared_key_offset,
+                          (uint32_t)(entry->shared_key_offset),
                           entry->check,
                           check_max,
                           id_location);
@@ -5348,7 +5348,7 @@ grn_pat_wal_recover_reuse_entry(grn_ctx *ctx,
     &(parent_node->lr[entry->record_direction]);
   *id_location = entry->previous_record_id;
   uint16_t check_max =
-    PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
+    (uint16_t)PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
   grn_pat_reuse_node(ctx,
                      pat,
                      node,
@@ -5392,7 +5392,7 @@ grn_pat_wal_recover_reuse_shared_entry(grn_ctx *ctx,
     &(parent_node->lr[entry->record_direction]);
   *id_location = entry->previous_record_id;
   uint16_t check_max =
-    PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
+    (uint16_t)PAT_CHECK_PACK(entry->key.content.binary.size, 0, false);
   pat->header->n_garbages = entry->n_garbages;
   pat->header->n_entries = entry->n_entries;
   grn_pat_reuse_shared_node(ctx,
@@ -5401,7 +5401,7 @@ grn_pat_wal_recover_reuse_shared_entry(grn_ctx *ctx,
                             entry->record_id,
                             entry->key.content.binary.data,
                             entry->key.content.binary.size,
-                            entry->shared_key_offset,
+                            (uint32_t)(entry->shared_key_offset),
                             entry->check,
                             check_max,
                             id_location);
@@ -5453,7 +5453,7 @@ grn_pat_wal_recover_delete_info_phase2(grn_ctx *ctx,
                               "failed to refer parent node");
     return;
   }
-  PAT_LEN_SET(node, entry->key.content.uint64);
+  PAT_LEN_SET(node, (uint16_t)(entry->key.content.uint64));
   PAT_CHK_SET(node, entry->check);
   node->lr[0] = entry->left_record_id;
   node->lr[1] = entry->right_record_id;
