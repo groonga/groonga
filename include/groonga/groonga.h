@@ -1554,7 +1554,8 @@ GRN_API void grn_ctx_recv_handler_set(grn_ctx *,
 
 #define GRN_BULK_POP(obj, value, type, default) do {\
   if (GRN_BULK_VSIZE(obj) >= sizeof(type)) {\
-    GRN_BULK_INCR_LEN((obj), -(sizeof(type)));\
+    ssize_t value_size = (ssize_t)(sizeof(type));\
+    GRN_BULK_INCR_LEN((obj), -value_size);\
     value = *(type *)(GRN_BULK_CURR(obj));\
   } else {\
     value = default;\
