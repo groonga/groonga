@@ -1159,9 +1159,8 @@ ngram_next(grn_ctx *ctx,
             }
           }
         }
-        grn_token_set_source_length(ctx,
-                                    token,
-                                    offsets[n_characters] - offsets[0]);
+        uint32_t token_length = (uint32_t)(offsets[n_characters] - offsets[0]);
+        grn_token_set_source_length(ctx, token, token_length);
         grn_token_set_source_first_character_length(ctx,
                                                     token,
                                                     source_first_character_length);
