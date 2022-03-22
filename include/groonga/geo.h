@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015-2016 Brazil
+  Copyright(C) 2015-2016  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,8 +24,8 @@ extern "C" {
 #endif
 
 typedef struct {
-  int latitude;
-  int longitude;
+  int32_t latitude;
+  int32_t longitude;
 } grn_geo_point;
 
 GRN_API grn_rc grn_geo_select_in_rectangle(grn_ctx *ctx,
