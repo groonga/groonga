@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015 Brazil
+  Copyright(C) 2015  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,9 +27,9 @@ scorer_tf_idf(grn_ctx *ctx, grn_scorer_matched_record *record)
 {
   double min_score = 1.0;
   double tf;
-  double n_all_documents;
-  double n_candidates;
-  double n_tokens;
+  uint64_t n_all_documents;
+  uint64_t n_candidates;
+  uint32_t n_tokens;
   double n_estimated_match_documents;
 
   tf = grn_scorer_matched_record_get_n_occurrences(ctx, record) +
@@ -36,7 +37,7 @@ scorer_tf_idf(grn_ctx *ctx, grn_scorer_matched_record *record)
   n_all_documents = grn_scorer_matched_record_get_n_documents(ctx, record);
   n_candidates = grn_scorer_matched_record_get_n_candidates(ctx, record);
   n_tokens = grn_scorer_matched_record_get_n_tokens(ctx, record);
-  n_estimated_match_documents = n_candidates / n_tokens;
+  n_estimated_match_documents = n_candidates / (double)n_tokens;
 
   if (n_estimated_match_documents >= n_all_documents) {
     return min_score;
