@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2070,7 +2070,7 @@ grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, size_t len)
         memset(GRN_BULK_CURR(bulk), 0, len - GRN_BULK_VSIZE(bulk));
       }
       bulk->header.flags &= ~GRN_BULK_BUFSIZE_MAX;
-      bulk->header.flags += len;
+      bulk->header.flags += (grn_obj_flags)len;
     }
   }
   return GRN_SUCCESS;
@@ -2715,7 +2715,7 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_id id)
       case GRN_ACCESSOR_GET_SCORE :
         {
           double score = grn_table_get_score(ctx, a->obj, id);
-          int32_t int32_score = score;
+          int32_t int32_score = (int32_t)score;
           GRN_INT32_PUT(ctx, &buf, int32_score);
         }
         buf.header.domain = GRN_DB_INT32;
@@ -2848,7 +2848,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       break;
     case GRN_DB_TIME :
       {
-        double dv = *((int64_t *)GRN_BULK_HEAD(obj));
+        double dv = (double)(*((int64_t *)GRN_BULK_HEAD(obj)));
         dv /= 1000000.0;
         grn_text_ftoa(ctx, bulk, dv);
       }
@@ -2969,7 +2969,7 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
           if (format->flags & GRN_OBJ_FORMAT_WEIGHT_FLOAT32) {
             grn_text_f32toa(ctx, bulk, weight);
           } else {
-            grn_text_ulltoa(ctx, bulk, weight);
+            grn_text_ulltoa(ctx, bulk, (uint64_t)weight);
           }
         }
         GRN_TEXT_PUTS(ctx, bulk, "}");

@@ -1165,7 +1165,7 @@ GRN_API off_t grn_default_query_logger_get_rotate_threshold_size(void);
   if (GRN_BULK_OUTP(buf)) {\
     (buf)->u.b.curr = (char *)(p);\
   } else {\
-    (buf)->header.flags = (char *)(p) - GRN_BULK_HEAD(buf);\
+    (buf)->header.flags = (grn_obj_flags)((char *)(p) - GRN_BULK_HEAD(buf));\
   }\
 } while (0)
 #define GRN_BULK_INCR_LEN(bulk,len) do {\
