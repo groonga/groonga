@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -637,8 +637,8 @@ grn_str_greater(const uint8_t *ap, uint32_t as, const uint8_t *bp, uint32_t bs)
   lo_ = (lo_ | (lo_ >>  4)) & 0x00FF00FF00FF00FFULL;\
   lo_ = (lo_ | (lo_ >>  8)) & 0x0000FFFF0000FFFFULL;\
   lo_ = (lo_ | (lo_ >> 16)) & 0x00000000FFFFFFFFULL;\
-  point_->latitude = la_;\
-  point_->longitude = lo_;\
+  point_->latitude = (int32_t)la_;\
+  point_->longitude = (int32_t)lo_;\
 } while (0)
 
 #ifdef HAVE__STRTOUI64
