@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2015-2018  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -66,28 +66,28 @@ grn_scorer_matched_record_get_total_term_weights(grn_ctx *ctx,
   return record->total_term_weights;
 }
 
-long long unsigned int
+uint64_t
 grn_scorer_matched_record_get_n_documents(grn_ctx *ctx,
                                           grn_scorer_matched_record *record)
 {
   return record->n_documents;
 }
 
-unsigned int
+uint32_t
 grn_scorer_matched_record_get_n_occurrences(grn_ctx *ctx,
                                             grn_scorer_matched_record *record)
 {
   return record->n_occurrences;
 }
 
-long long unsigned int
+uint64_t
 grn_scorer_matched_record_get_n_candidates(grn_ctx *ctx,
                                            grn_scorer_matched_record *record)
 {
   return record->n_candidates;
 }
 
-unsigned int
+uint32_t
 grn_scorer_matched_record_get_n_tokens(grn_ctx *ctx,
                                        grn_scorer_matched_record *record)
 {
@@ -187,4 +187,3 @@ grn_scorer_register(grn_ctx *ctx,
 
   return GRN_SUCCESS;
 }
-

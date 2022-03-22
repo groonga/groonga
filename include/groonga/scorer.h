@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2015-2016  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,45 +27,45 @@ extern "C" {
 typedef struct _grn_scorer_matched_record grn_scorer_matched_record;
 
 GRN_API grn_obj *
-  grn_scorer_matched_record_get_table(grn_ctx *ctx,
-                                      grn_scorer_matched_record *record);
+grn_scorer_matched_record_get_table(grn_ctx *ctx,
+                                    grn_scorer_matched_record *record);
 GRN_API grn_obj *
-  grn_scorer_matched_record_get_lexicon(grn_ctx *ctx,
-                                        grn_scorer_matched_record *record);
+grn_scorer_matched_record_get_lexicon(grn_ctx *ctx,
+                                      grn_scorer_matched_record *record);
 GRN_API grn_id
-  grn_scorer_matched_record_get_id(grn_ctx *ctx,
-                                   grn_scorer_matched_record *record);
+grn_scorer_matched_record_get_id(grn_ctx *ctx,
+                                 grn_scorer_matched_record *record);
 GRN_API grn_obj *
-  grn_scorer_matched_record_get_terms(grn_ctx *ctx,
-                                      grn_scorer_matched_record *record);
+grn_scorer_matched_record_get_terms(grn_ctx *ctx,
+                                    grn_scorer_matched_record *record);
 GRN_API grn_obj *
-  grn_scorer_matched_record_get_term_weights(grn_ctx *ctx,
-                                             grn_scorer_matched_record *record);
+grn_scorer_matched_record_get_term_weights(grn_ctx *ctx,
+                                           grn_scorer_matched_record *record);
 GRN_API uint32_t
-  grn_scorer_matched_record_get_total_term_weights(grn_ctx *ctx,
-                                                   grn_scorer_matched_record *record);
-GRN_API long long unsigned int
-  grn_scorer_matched_record_get_n_documents(grn_ctx *ctx,
+grn_scorer_matched_record_get_total_term_weights(grn_ctx *ctx,
+                                                 grn_scorer_matched_record *record);
+GRN_API uint64_t
+grn_scorer_matched_record_get_n_documents(grn_ctx *ctx,
+                                          grn_scorer_matched_record *record);
+GRN_API uint32_t
+grn_scorer_matched_record_get_n_occurrences(grn_ctx *ctx,
                                             grn_scorer_matched_record *record);
-GRN_API unsigned int
-  grn_scorer_matched_record_get_n_occurrences(grn_ctx *ctx,
-                                              grn_scorer_matched_record *record);
-GRN_API long long unsigned int
-  grn_scorer_matched_record_get_n_candidates(grn_ctx *ctx,
-                                             grn_scorer_matched_record *record);
-GRN_API unsigned int
-  grn_scorer_matched_record_get_n_tokens(grn_ctx *ctx,
-                                         grn_scorer_matched_record *record);
-GRN_API int
-  grn_scorer_matched_record_get_weight(grn_ctx *ctx,
+GRN_API uint64_t
+grn_scorer_matched_record_get_n_candidates(grn_ctx *ctx,
+                                           grn_scorer_matched_record *record);
+GRN_API uint32_t
+grn_scorer_matched_record_get_n_tokens(grn_ctx *ctx,
                                        grn_scorer_matched_record *record);
+GRN_API int
+grn_scorer_matched_record_get_weight(grn_ctx *ctx,
+                                     grn_scorer_matched_record *record);
 GRN_API grn_obj *
-  grn_scorer_matched_record_get_arg(grn_ctx *ctx,
-                                    grn_scorer_matched_record *record,
+grn_scorer_matched_record_get_arg(grn_ctx *ctx,
+                                  grn_scorer_matched_record *record,
                                     unsigned int i);
 GRN_API unsigned int
-  grn_scorer_matched_record_get_n_args(grn_ctx *ctx,
-                                       grn_scorer_matched_record *record);
+grn_scorer_matched_record_get_n_args(grn_ctx *ctx,
+                                     grn_scorer_matched_record *record);
 
 
 
