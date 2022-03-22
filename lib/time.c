@@ -70,7 +70,8 @@ grn_timeval
 grn_timeval_from_double(grn_ctx *ctx, double value)
 {
   grn_timeval timeval;
-  timeval.tv_sec = (int64_t)(trunc(value));
+  double sec = trunc(value);
+  timeval.tv_sec = (int64_t)sec;
   timeval.tv_nsec =
     (int64_t)((value - timeval.tv_sec) * GRN_TIME_NSEC_PER_SEC) %
     GRN_TIME_NSEC_PER_SEC;
