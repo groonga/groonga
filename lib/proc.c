@@ -718,11 +718,11 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_OUTPUT_CSTR("alloc_count");
   GRN_OUTPUT_INT32(grn_alloc_count());
   GRN_OUTPUT_CSTR("starttime");
-  GRN_OUTPUT_INT32(grn_starttime.tv_sec);
+  GRN_OUTPUT_INT64(grn_starttime.tv_sec);
   GRN_OUTPUT_CSTR("start_time");
-  GRN_OUTPUT_INT32(grn_starttime.tv_sec);
+  GRN_OUTPUT_INT64(grn_starttime.tv_sec);
   GRN_OUTPUT_CSTR("uptime");
-  GRN_OUTPUT_INT32(now.tv_sec - grn_starttime.tv_sec);
+  GRN_OUTPUT_INT64(now.tv_sec - grn_starttime.tv_sec);
   GRN_OUTPUT_CSTR("version");
   GRN_OUTPUT_CSTR(grn_get_version());
   GRN_OUTPUT_CSTR("n_queries");
@@ -1434,7 +1434,7 @@ grn_proc_get_value_int32(grn_ctx *ctx,
   if (value->header.domain == GRN_DB_INT32) {
     value_raw = GRN_INT32_VALUE(value);
   } else if (value->header.domain == GRN_DB_INT64) {
-    value_raw = GRN_INT64_VALUE(value);
+    value_raw = (int32_t)GRN_INT64_VALUE(value);
   } else {
     grn_obj buffer;
     grn_rc rc;
@@ -1494,11 +1494,11 @@ grn_proc_get_value_uint32(grn_ctx *ctx,
   if (value->header.domain == GRN_DB_UINT32) {
     value_raw = GRN_UINT32_VALUE(value);
   } else if (value->header.domain == GRN_DB_INT32) {
-    value_raw = GRN_INT32_VALUE(value);
+    value_raw = (uint32_t)GRN_INT32_VALUE(value);
   } else if (value->header.domain == GRN_DB_UINT64) {
-    value_raw = GRN_UINT64_VALUE(value);
+    value_raw = (uint32_t)GRN_UINT64_VALUE(value);
   } else if (value->header.domain == GRN_DB_INT64) {
-    value_raw = GRN_INT64_VALUE(value);
+    value_raw = (uint32_t)GRN_INT64_VALUE(value);
   } else {
     grn_obj buffer;
     grn_rc rc;
