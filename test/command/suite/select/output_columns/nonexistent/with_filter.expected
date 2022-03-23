@@ -1,0 +1,24 @@
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000},
+{"timestamp": "2017/03/15 11:00:00", "price":  900},
+{"timestamp": "2017/03/15 12:00:00", "price":  300},
+{"timestamp": "2017/03/15 13:00:00", "price":  200}
+]
+[[0,0.0,0.0],4]
+log_level --level dump
+[[0,0.0,0.0],true]
+select Logs   --filter 'price >= 300' --output_columns '_id, nonexistent'
+[[0,0.0,0.0],[[[3],[["_id","UInt32"]],[1],[2],[3]]]]
+#|-| [obj][open] <256>(<Logs>):<51>(<table:no_key>)
+#|-| [obj][open] <258>(<Logs.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <258>(<Logs.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <256>(<Logs>):<51>(<table:no_key>)
+log_level --level notice
+[[0,0.0,0.0],true]

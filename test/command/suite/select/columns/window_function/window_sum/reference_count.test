@@ -1,0 +1,26 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+plugin_register functions/time
+table_create Logs TABLE_NO_KEY
+column_create Logs timestamp COLUMN_SCALAR Time
+column_create Logs price COLUMN_SCALAR UInt32
+load --table Logs
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000},
+{"timestamp": "2017/03/15 11:00:00", "price":  900},
+{"timestamp": "2017/03/15 12:00:00", "price":  300},
+{"timestamp": "2017/03/15 13:00:00", "price":  200}
+]
+
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level dump
+select Logs \
+  --columns[price_per_day].stage filtered \
+  --columns[price_per_day].type UInt32 \
+  --columns[price_per_day].flags COLUMN_SCALAR \
+  --columns[price_per_day].value 'window_sum(price)' \
+  --columns[price_per_day].window.group_keys 'timestamp' \
+  --output_columns _id
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels dump

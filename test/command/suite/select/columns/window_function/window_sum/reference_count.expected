@@ -1,0 +1,28 @@
+plugin_register functions/time
+[[0,0.0,0.0],true]
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs timestamp COLUMN_SCALAR Time
+[[0,0.0,0.0],true]
+column_create Logs price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+load --table Logs
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000},
+{"timestamp": "2017/03/15 11:00:00", "price":  900},
+{"timestamp": "2017/03/15 12:00:00", "price":  300},
+{"timestamp": "2017/03/15 13:00:00", "price":  200}
+]
+[[0,0.0,0.0],4]
+log_level --level dump
+[[0,0.0,0.0],true]
+select Logs   --columns[price_per_day].stage filtered   --columns[price_per_day].type UInt32   --columns[price_per_day].flags COLUMN_SCALAR   --columns[price_per_day].value 'window_sum(price)'   --columns[price_per_day].window.group_keys 'timestamp'   --output_columns _id
+[[0,0.0,0.0],[[[4],[["_id","UInt32"]],[1],[2],[3],[4]]]]
+#|-| [obj][open] <266>(<Logs>):<51>(<table:no_key>)
+#|-| [obj][open] <268>(<Logs.price>):<64>(<column:fix_size>)
+#|-| [obj][open] <267>(<Logs.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <268>(<Logs.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <267>(<Logs.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <266>(<Logs>):<51>(<table:no_key>)
+log_level --level notice
+[[0,0.0,0.0],true]
