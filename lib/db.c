@@ -7085,6 +7085,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
                 (*rp)->action = GRN_ACCESSOR_GET_VALUE;
                 done++;
               } else {
+                grn_obj_unref(ctx, obj);
                 grn_obj_close(ctx, (grn_obj *)res);
                 res = NULL;
                 goto exit;
@@ -7130,9 +7131,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
             goto exit;
           }
         } else {
-          if (!obj_is_referred) {
-            grn_obj_unref(ctx, obj);
-          }
+          grn_obj_unref(ctx, obj);
           goto exit;
         }
         break;
@@ -7184,9 +7183,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
             goto exit;
           }
         } else {
-          if (!obj_is_referred) {
-            grn_obj_unref(ctx, obj);
-          }
+          grn_obj_unref(ctx, obj);
           goto exit;
         }
         break;
@@ -7204,9 +7201,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
             goto exit;
           }
         } else {
-          if (!obj_is_referred) {
-            grn_obj_unref(ctx, obj);
-          }
+          grn_obj_unref(ctx, obj);
           goto exit;
         }
         break;
