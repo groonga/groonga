@@ -1,0 +1,362 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Logs TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Logs tag COLUMN_SCALAR|INVALID_WARN Tags
+[[0,0.0,0.0],true]
+schema
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "plugins": {
+    },
+    "types": {
+      "Bool": {
+        "id": 3,
+        "name": "Bool",
+        "size": 1,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "Float": {
+        "id": 12,
+        "name": "Float",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "Float32": {
+        "id": 19,
+        "name": "Float32",
+        "size": 4,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "Int16": {
+        "id": 6,
+        "name": "Int16",
+        "size": 2,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "Int32": {
+        "id": 8,
+        "name": "Int32",
+        "size": 4,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "Int64": {
+        "id": 10,
+        "name": "Int64",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "Int8": {
+        "id": 4,
+        "name": "Int8",
+        "size": 1,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "LongText": {
+        "id": 16,
+        "name": "LongText",
+        "size": 2147483648,
+        "can_be_key_type": false,
+        "can_be_value_type": false
+      },
+      "Object": {
+        "id": 2,
+        "name": "Object",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "ShortText": {
+        "id": 14,
+        "name": "ShortText",
+        "size": 4096,
+        "can_be_key_type": true,
+        "can_be_value_type": false
+      },
+      "Text": {
+        "id": 15,
+        "name": "Text",
+        "size": 65536,
+        "can_be_key_type": false,
+        "can_be_value_type": false
+      },
+      "Time": {
+        "id": 13,
+        "name": "Time",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "TokyoGeoPoint": {
+        "id": 17,
+        "name": "TokyoGeoPoint",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "UInt16": {
+        "id": 7,
+        "name": "UInt16",
+        "size": 2,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "UInt32": {
+        "id": 9,
+        "name": "UInt32",
+        "size": 4,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "UInt64": {
+        "id": 11,
+        "name": "UInt64",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "UInt8": {
+        "id": 5,
+        "name": "UInt8",
+        "size": 1,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      },
+      "WGS84GeoPoint": {
+        "id": 18,
+        "name": "WGS84GeoPoint",
+        "size": 8,
+        "can_be_key_type": true,
+        "can_be_value_type": true
+      }
+    },
+    "tokenizers": {
+      "TokenBigram": {
+        "id": 67,
+        "name": "TokenBigram"
+      },
+      "TokenBigramIgnoreBlank": {
+        "id": 72,
+        "name": "TokenBigramIgnoreBlank"
+      },
+      "TokenBigramIgnoreBlankSplitSymbol": {
+        "id": 73,
+        "name": "TokenBigramIgnoreBlankSplitSymbol"
+      },
+      "TokenBigramIgnoreBlankSplitSymbolAlpha": {
+        "id": 74,
+        "name": "TokenBigramIgnoreBlankSplitSymbolAlpha"
+      },
+      "TokenBigramIgnoreBlankSplitSymbolAlphaDigit": {
+        "id": 75,
+        "name": "TokenBigramIgnoreBlankSplitSymbolAlphaDigit"
+      },
+      "TokenBigramSplitSymbol": {
+        "id": 69,
+        "name": "TokenBigramSplitSymbol"
+      },
+      "TokenBigramSplitSymbolAlpha": {
+        "id": 70,
+        "name": "TokenBigramSplitSymbolAlpha"
+      },
+      "TokenBigramSplitSymbolAlphaDigit": {
+        "id": 71,
+        "name": "TokenBigramSplitSymbolAlphaDigit"
+      },
+      "TokenDelimit": {
+        "id": 65,
+        "name": "TokenDelimit"
+      },
+      "TokenDelimitNull": {
+        "id": 76,
+        "name": "TokenDelimitNull"
+      },
+      "TokenDocumentVectorBM25": {
+        "id": 82,
+        "name": "TokenDocumentVectorBM25"
+      },
+      "TokenDocumentVectorTFIDF": {
+        "id": 81,
+        "name": "TokenDocumentVectorTFIDF"
+      },
+      "TokenMecab": {
+        "id": 64,
+        "name": "TokenMecab"
+      },
+      "TokenNgram": {
+        "id": 78,
+        "name": "TokenNgram"
+      },
+      "TokenPattern": {
+        "id": 79,
+        "name": "TokenPattern"
+      },
+      "TokenRegexp": {
+        "id": 77,
+        "name": "TokenRegexp"
+      },
+      "TokenTable": {
+        "id": 80,
+        "name": "TokenTable"
+      },
+      "TokenTrigram": {
+        "id": 68,
+        "name": "TokenTrigram"
+      },
+      "TokenUnigram": {
+        "id": 66,
+        "name": "TokenUnigram"
+      }
+    },
+    "normalizers": {
+      "NormalizerAuto": {
+        "id": 83,
+        "name": "NormalizerAuto"
+      },
+      "NormalizerNFKC100": {
+        "id": 85,
+        "name": "NormalizerNFKC100"
+      },
+      "NormalizerNFKC121": {
+        "id": 86,
+        "name": "NormalizerNFKC121"
+      },
+      "NormalizerNFKC130": {
+        "id": 87,
+        "name": "NormalizerNFKC130"
+      },
+      "NormalizerNFKC51": {
+        "id": 84,
+        "name": "NormalizerNFKC51"
+      },
+      "NormalizerTable": {
+        "id": 88,
+        "name": "NormalizerTable"
+      }
+    },
+    "token_filters": {
+      "TokenFilterNFKC100": {
+        "id": 224,
+        "name": "TokenFilterNFKC100"
+      },
+      "TokenFilterNFKC121": {
+        "id": 225,
+        "name": "TokenFilterNFKC121"
+      },
+      "TokenFilterNFKC130": {
+        "id": 226,
+        "name": "TokenFilterNFKC130"
+      }
+    },
+    "tables": {
+      "Logs": {
+        "id": 257,
+        "name": "Logs",
+        "type": "array",
+        "key_type": null,
+        "value_type": null,
+        "tokenizer": null,
+        "normalizer": null,
+        "normalizers": [
+
+        ],
+        "token_filters": [
+
+        ],
+        "indexes": [
+
+        ],
+        "command": {
+          "name": "table_create",
+          "arguments": {
+            "name": "Logs",
+            "flags": "TABLE_NO_KEY"
+          },
+          "command_line": "table_create --name Logs --flags TABLE_NO_KEY"
+        },
+        "columns": {
+          "tag": {
+            "id": 258,
+            "name": "tag",
+            "table": "Logs",
+            "full_name": "Logs.tag",
+            "type": "scalar",
+            "value_type": {
+              "id": 256,
+              "name": "Tags",
+              "type": "reference"
+            },
+            "compress": null,
+            "missing": "add",
+            "invalid": "warn",
+            "section": false,
+            "weight": false,
+            "weight_float32": false,
+            "position": false,
+            "sources": [
+
+            ],
+            "indexes": [
+
+            ],
+            "command": {
+              "name": "column_create",
+              "arguments": {
+                "table": "Logs",
+                "name": "tag",
+                "flags": "COLUMN_SCALAR|INVALID_WARN",
+                "type": "Tags"
+              },
+              "command_line": "column_create --table Logs --name tag --flags COLUMN_SCALAR|INVALID_WARN --type Tags"
+            }
+          }
+        }
+      },
+      "Tags": {
+        "id": 256,
+        "name": "Tags",
+        "type": "hash table",
+        "key_type": {
+          "id": 14,
+          "name": "ShortText",
+          "type": "type"
+        },
+        "value_type": null,
+        "tokenizer": null,
+        "normalizer": null,
+        "normalizers": [
+
+        ],
+        "token_filters": [
+
+        ],
+        "indexes": [
+
+        ],
+        "command": {
+          "name": "table_create",
+          "arguments": {
+            "name": "Tags",
+            "flags": "TABLE_HASH_KEY",
+            "key_type": "ShortText"
+          },
+          "command_line": "table_create --name Tags --flags TABLE_HASH_KEY --key_type ShortText"
+        },
+        "columns": {
+        }
+      }
+    }
+  }
+]

@@ -63,7 +63,10 @@ extern "C" {
   char prefix ## _buffer[GRN_TABLE_MAX_KEY_SIZE];                       \
   int prefix ## _size;                                                  \
   do {                                                                  \
-    if (DB_OBJ(obj)->id == GRN_ID_NIL) {                                \
+    if (!obj) {                                                         \
+      prefix = "(NULL)";                                                \
+      prefix ## _size = strlen(prefix);                                 \
+    } else if (DB_OBJ(obj)->id == GRN_ID_NIL) {                         \
       prefix = "(temporary)";                                           \
       prefix ## _size = strlen(prefix);                                 \
     } else {                                                            \

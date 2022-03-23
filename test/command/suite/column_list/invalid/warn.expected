@@ -1,0 +1,60 @@
+table_create Counts TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Counts data COLUMN_SCALAR|INVALID_WARN UInt8
+[[0,0.0,0.0],true]
+column_list Counts
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "id",
+        "UInt32"
+      ],
+      [
+        "name",
+        "ShortText"
+      ],
+      [
+        "path",
+        "ShortText"
+      ],
+      [
+        "type",
+        "ShortText"
+      ],
+      [
+        "flags",
+        "ShortText"
+      ],
+      [
+        "domain",
+        "ShortText"
+      ],
+      [
+        "range",
+        "ShortText"
+      ],
+      [
+        "source",
+        "ShortText"
+      ]
+    ],
+    [
+      257,
+      "data",
+      "db/db.0000101",
+      "fix",
+      "COLUMN_SCALAR|INVALID_WARN|PERSISTENT",
+      "Counts",
+      "UInt8",
+      [
+
+      ]
+    ]
+  ]
+]

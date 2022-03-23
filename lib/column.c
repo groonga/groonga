@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ grn_column_get_flags(grn_ctx *ctx, grn_obj *column)
 
   switch (column->header.type) {
   case GRN_COLUMN_FIX_SIZE :
-    flags = column->header.flags;
+    flags = grn_ra_get_flags(ctx, (grn_ra *)column);
     break;
   case GRN_COLUMN_VAR_SIZE :
     flags = grn_ja_get_flags(ctx, (grn_ja *)column);
@@ -47,6 +47,24 @@ grn_column_get_flags(grn_ctx *ctx, grn_obj *column)
     break;
   }
 
+  GRN_API_RETURN(flags);
+}
+
+grn_column_flags
+grn_column_get_missing_mode(grn_ctx *ctx, grn_obj *column)
+{
+  GRN_API_ENTER;
+  grn_column_flags flags =
+    grn_column_get_flags(ctx, column) & GRN_OBJ_MISSING_MASK;
+  GRN_API_RETURN(flags);
+}
+
+grn_column_flags
+grn_column_get_invalid_mode(grn_ctx *ctx, grn_obj *column)
+{
+  GRN_API_ENTER;
+  grn_column_flags flags =
+    grn_column_get_flags(ctx, column) & GRN_OBJ_INVALID_MASK;
   GRN_API_RETURN(flags);
 }
 
@@ -549,4 +567,53 @@ grn_column_copy(grn_ctx *ctx, grn_obj *from, grn_obj *to)
 
 exit :
   GRN_API_RETURN(ctx->rc);
+}
+
+grn_obj *
+grn_column_cast_value(grn_ctx *ctx,
+                      grn_obj *column,
+                      grn_obj *value,
+                      grn_obj *buffer,
+                      int set_flags)
+{
+  GRN_API_ENTER;
+
+  const char *tag = "[column][cast-value]";
+
+  if (!column) {
+    ERR(GRN_INVALID_ARGUMENT, "%s column must not be NULL", tag);
+    GRN_API_RETURN(NULL);
+  }
+
+  grn_obj *casted_value = NULL;
+  switch (column->header.type) {
+  case GRN_COLUMN_FIX_SIZE :
+    casted_value = grn_ra_cast_value(ctx,
+                                     (grn_ra *)column,
+                                     value,
+                                     buffer,
+                                     set_flags);
+    break;
+  case GRN_COLUMN_VAR_SIZE :
+    casted_value = grn_ja_cast_value(ctx,
+                                     (grn_ja *)column,
+                                     value,
+                                     buffer,
+                                     set_flags);
+    break;
+  default :
+    {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, column);
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s must be data column: %.*s",
+          tag,
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+    }
+    break;
+  }
+  GRN_API_RETURN(casted_value);
 }

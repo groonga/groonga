@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -47,9 +47,13 @@ struct grn_ra_header {
   uint32_t reserved[7];
 };
 
-grn_ra *grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size);
+grn_ra *grn_ra_create(grn_ctx *ctx,
+                      const char *path,
+                      uint32_t element_size,
+                      grn_column_flags flags);
 grn_ra *grn_ra_open(grn_ctx *ctx, const char *path);
-grn_rc grn_ra_info(grn_ctx *ctx, grn_ra *ra, unsigned int *element_size);
+grn_rc grn_ra_info(grn_ctx *ctx, grn_ra *ra, uint32_t *element_size);
+grn_column_flags grn_ra_get_flags(grn_ctx *ctx, grn_ra *ra);
 grn_rc grn_ra_close(grn_ctx *ctx, grn_ra *ra);
 grn_rc grn_ra_remove(grn_ctx *ctx, const char *path);
 void *grn_ra_ref(grn_ctx *ctx, grn_ra *ra, grn_id id);
@@ -59,6 +63,11 @@ grn_rc grn_ra_set_value(grn_ctx *ctx,
                         grn_id id,
                         grn_obj *value,
                         int flags);
+grn_obj *grn_ra_cast_value(grn_ctx *ctx,
+                           grn_ra *ra,
+                           grn_obj *value,
+                           grn_obj *buffer,
+                           int set_flags);
 grn_rc grn_ra_wal_recover(grn_ctx *ctx, grn_ra *ra);
 grn_rc grn_ra_warm(grn_ctx *ctx, grn_ra *ra);
 

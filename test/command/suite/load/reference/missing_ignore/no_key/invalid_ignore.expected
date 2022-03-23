@@ -1,0 +1,23 @@
+table_create Records TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data record COLUMN_SCALAR|MISSING_IGNORE|INVALID_IGNORE Records
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"record": 1}
+]
+[[0,0.0,0.0],1]
+dump
+table_create Data TABLE_NO_KEY
+
+table_create Records TABLE_NO_KEY
+
+column_create Data record COLUMN_SCALAR|MISSING_IGNORE|INVALID_IGNORE Records
+
+load --table Data
+[
+["_id","record"],
+[1,0]
+]

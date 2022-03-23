@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2015-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -889,6 +889,62 @@ command_schema_column_output_compress(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
+command_schema_column_output_missing(grn_ctx *ctx, grn_obj *column)
+{
+  const char *missing = NULL;
+
+  if (column->header.type != GRN_COLUMN_INDEX) {
+    switch (grn_column_get_flags(ctx, column) & GRN_OBJ_MISSING_MASK) {
+    case GRN_OBJ_MISSING_ADD :
+      missing = "add";
+      break;
+    case GRN_OBJ_MISSING_IGNORE :
+      missing = "ignore";
+      break;
+    case GRN_OBJ_MISSING_NIL :
+      missing = "nil";
+      break;
+    default :
+      break;
+    }
+  }
+
+  if (missing) {
+    grn_ctx_output_cstr(ctx, missing);
+  } else {
+    grn_ctx_output_null(ctx);
+  }
+}
+
+static void
+command_schema_column_output_invalid(grn_ctx *ctx, grn_obj *column)
+{
+  const char *invalid = NULL;
+
+  if (column->header.type != GRN_COLUMN_INDEX) {
+    switch (grn_column_get_flags(ctx, column) & GRN_OBJ_INVALID_MASK) {
+    case GRN_OBJ_INVALID_ERROR :
+      invalid = "error";
+      break;
+    case GRN_OBJ_INVALID_WARN :
+      invalid = "warn";
+      break;
+    case GRN_OBJ_INVALID_IGNORE :
+      invalid = "ignore";
+      break;
+    default :
+      break;
+    }
+  }
+
+  if (invalid) {
+    grn_ctx_output_cstr(ctx, invalid);
+  } else {
+    grn_ctx_output_null(ctx);
+  }
+}
+
+static void
 command_schema_column_output_sources(grn_ctx *ctx, grn_obj *column)
 {
   grn_obj *source_table;
@@ -1141,6 +1197,12 @@ command_schema_column_output(grn_ctx *ctx, grn_obj *table, grn_obj *column)
 
   grn_ctx_output_cstr(ctx, "compress");
   command_schema_column_output_compress(ctx, column);
+
+  grn_ctx_output_cstr(ctx, "missing");
+  command_schema_column_output_missing(ctx, column);
+
+  grn_ctx_output_cstr(ctx, "invalid");
+  command_schema_column_output_invalid(ctx, column);
 
   grn_column_flags flags = grn_column_get_flags(ctx, column);
   grn_ctx_output_cstr(ctx, "section");

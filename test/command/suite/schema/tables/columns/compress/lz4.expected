@@ -297,6 +297,8 @@ schema
               "type": "type"
             },
             "compress": "lz4",
+            "missing": "add",
+            "invalid": "error",
             "section": false,
             "weight": false,
             "weight_float32": false,

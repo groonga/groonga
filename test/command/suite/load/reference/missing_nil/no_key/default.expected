@@ -1,0 +1,25 @@
+table_create Records TABLE_NO_KEY
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data record COLUMN_SCALAR|MISSING_NIL Records
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"record": 1}
+]
+[[[-22,0.0,0.0],"<Data.record>: failed to cast to <Records>: <1>"],1]
+#|e| <Data.record>: failed to cast to <Records>: <1>
+#|e| [table][load][Data][record] failed to set column value: <Data.record>: failed to cast to <Records>: <1>: id: <1>: value: <1>
+dump
+table_create Data TABLE_NO_KEY
+
+table_create Records TABLE_NO_KEY
+
+column_create Data record COLUMN_SCALAR|MISSING_NIL Records
+
+load --table Data
+[
+["_id","record"],
+[1,0]
+]

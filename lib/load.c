@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,8 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "grn_cast.h"
+#include "grn_column.h"
 #include "grn_ctx_impl.h"
 #include "grn_db.h"
 #include "grn_load.h"
@@ -312,6 +314,273 @@ grn_loader_brace_add_record(grn_ctx *ctx,
                             grn_loader_add_record_data *data);
 
 static void
+grn_loader_bracket_set_value_reference(grn_ctx *ctx,
+                                       grn_loader *loader,
+                                       grn_loader_add_record_data *data)
+{
+  grn_obj *bracket_element = data->current.value;
+  grn_obj *element = bracket_element + 1;
+  grn_obj *element_end = element + GRN_UINT32_VALUE(bracket_element);
+
+  grn_id range_id = DB_OBJ(data->current.column)->range;
+  grn_obj *range = grn_ctx_at(ctx, range_id);
+
+  grn_obj vector;
+  GRN_RECORD_INIT(&vector, GRN_OBJ_VECTOR, range_id);
+  for (; element < element_end; element = values_next(ctx, element)) {
+    if (element->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
+      grn_loader_add_record_data sub_data;
+      sub_data.table = range;
+      sub_data.depth = data->depth + 1;
+      sub_data.record_value = element;
+      sub_data.id = GRN_ID_NIL;
+      sub_data.key = NULL;
+      grn_loader_brace_add_record(ctx, loader, &sub_data);
+      if (sub_data.id == GRN_ID_NIL) {
+        goto exit;
+      }
+      GRN_RECORD_PUT(ctx, &vector, sub_data.id);
+    } else if (element->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
+      GRN_DEFINE_NAME(data->table);
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, element);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[table][load][%.*s][%.*s] can't use [...] for reference column: "
+          "%.*s",
+          name_size, name,
+          data->current.column_name_size,
+          data->current.column_name,
+          (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      goto exit;
+    } else if (element->header.domain == range_id) {
+      GRN_RECORD_PUT(ctx, &vector, GRN_RECORD_VALUE(element));
+    } else {
+      grn_obj values;
+      if (grn_obj_is_text_family_bulk(ctx, element)) {
+        GRN_TEXT_INIT(&values, GRN_OBJ_VECTOR);
+        grn_vector_add_element_float(ctx,
+                                     &values,
+                                     GRN_TEXT_VALUE(element),
+                                     GRN_TEXT_LEN(element),
+                                     0.0,
+                                     element->header.domain);
+      } else {
+        GRN_VALUE_FIX_SIZE_INIT(&values,
+                                GRN_OBJ_VECTOR,
+                                element->header.domain);
+        grn_bulk_write(ctx,
+                       &values,
+                       GRN_BULK_HEAD(element),
+                       GRN_BULK_VSIZE(element));
+      }
+      grn_obj records;
+      GRN_RECORD_INIT(&records, 0, range_id);
+      grn_obj *casted_records =
+        grn_column_cast_value(ctx,
+                              data->current.column,
+                              &values,
+                              &records,
+                              GRN_OBJ_SET);
+      if (casted_records) {
+        grn_uvector_copy(ctx, &records, &vector);
+      }
+      GRN_OBJ_FIN(ctx, &values);
+      GRN_OBJ_FIN(ctx, &records);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+    }
+  }
+
+  grn_obj_set_value(ctx,
+                    data->current.column,
+                    data->id,
+                    &vector,
+                    GRN_OBJ_SET);
+
+exit :
+  grn_obj_unlink(ctx, range);
+  GRN_OBJ_FIN(ctx, &vector);
+}
+
+static void
+grn_loader_bracket_set_value_text(grn_ctx *ctx,
+                                  grn_loader *loader,
+                                  grn_loader_add_record_data *data)
+{
+  grn_obj *bracket_element = data->current.value;
+  grn_obj *element = bracket_element + 1;
+  grn_obj *element_end = element + GRN_UINT32_VALUE(bracket_element);
+
+  grn_id range_id = DB_OBJ(data->current.column)->range;
+
+  grn_obj vector;
+  GRN_TEXT_INIT(&vector, GRN_OBJ_VECTOR);
+  for (; element < element_end; element = values_next(ctx, element)) {
+    if (element->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
+      grn_loader_brace_add_weight_vector_element(ctx,
+                                                 loader,
+                                                 data,
+                                                 &vector,
+                                                 element);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+    } else if (element->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
+      GRN_DEFINE_NAME(data->table);
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, element);
+      ERR(GRN_INVALID_ARGUMENT,
+          "[table][load][%.*s][%.*s] "
+          "can't use [...] for variable size data column: "
+          "%.*s",
+          name_size, name,
+          data->current.column_name_size,
+          data->current.column_name,
+          (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      goto exit;
+    } else if (grn_obj_is_text_family_bulk(ctx, element)) {
+      grn_vector_add_element(ctx,
+                             &vector,
+                             GRN_TEXT_VALUE(element),
+                             GRN_TEXT_LEN(element),
+                             0,
+                             range_id);
+    } else {
+      grn_obj values;
+      GRN_VALUE_FIX_SIZE_INIT(&values,
+                              GRN_OBJ_VECTOR,
+                              element->header.domain);
+      grn_bulk_write(ctx,
+                     &values,
+                     GRN_BULK_HEAD(element),
+                     GRN_BULK_VSIZE(element));
+      grn_obj buffer;
+      GRN_VOID_INIT(&buffer);
+      grn_obj *casted_values =
+        grn_column_cast_value(ctx,
+                              data->current.column,
+                              &values,
+                              &buffer,
+                              GRN_OBJ_SET);
+      if (casted_values) {
+        grn_vector_copy(ctx, casted_values, &vector);
+      }
+      GRN_OBJ_FIN(ctx, &values);
+      GRN_OBJ_FIN(ctx, &buffer);
+      if (ctx->rc != GRN_SUCCESS) {
+        grn_loader_save_error(ctx, loader);
+        ERRCLR(ctx);
+      }
+    }
+  }
+
+  grn_obj_set_value(ctx,
+                    data->current.column,
+                    data->id,
+                    &vector,
+                    GRN_OBJ_SET);
+
+exit :
+  GRN_OBJ_FIN(ctx, &vector);
+}
+
+static void
+grn_loader_bracket_set_value_fix_size(grn_ctx *ctx,
+                                      grn_loader *loader,
+                                      grn_loader_add_record_data *data)
+{
+  grn_obj *bracket_element = data->current.value;
+  grn_obj *element = bracket_element + 1;
+  grn_obj *element_end = element + GRN_UINT32_VALUE(bracket_element);
+
+  grn_id range_id = DB_OBJ(data->current.column)->range;
+
+  grn_obj vector;
+  GRN_VALUE_FIX_SIZE_INIT(&vector, GRN_OBJ_VECTOR, range_id);
+  for (; element < element_end; element = values_next(ctx, element)) {
+    if (element->header.domain == GRN_JSON_LOAD_OPEN_BRACE ||
+        element->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
+      GRN_DEFINE_NAME(data->table);
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, element);
+      const char *example;
+      if (element->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
+        example = "{...}";
+      } else {
+        example = "[...]";
+      }
+      ERR(GRN_INVALID_ARGUMENT,
+          "[table][load][%.*s][%.*s] "
+          "can't use %s for fixed size data column: "
+          "%.*s",
+          name_size, name,
+          data->current.column_name_size,
+          data->current.column_name,
+          example,
+          (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      goto exit;
+    } else if (element->header.domain == range_id) {
+      grn_bulk_write(ctx,
+                     &vector,
+                     GRN_BULK_HEAD(element),
+                     GRN_BULK_VSIZE(element));
+    } else {
+      grn_obj values;
+      if (grn_obj_is_text_family_bulk(ctx, element)) {
+        GRN_TEXT_INIT(&values, GRN_OBJ_VECTOR);
+        grn_vector_add_element_float(ctx,
+                                     &values,
+                                     GRN_TEXT_VALUE(element),
+                                     GRN_TEXT_LEN(element),
+                                     0.0,
+                                     element->header.domain);
+      } else {
+        GRN_VALUE_FIX_SIZE_INIT(&values,
+                                GRN_OBJ_VECTOR,
+                                element->header.domain);
+        grn_bulk_write(ctx,
+                       &values,
+                       GRN_BULK_HEAD(element),
+                       GRN_BULK_VSIZE(element));
+      }
+      grn_obj buffer;
+      GRN_VOID_INIT(&buffer);
+      grn_obj *casted_values =
+        grn_column_cast_value(ctx,
+                              data->current.column,
+                              &values,
+                              &buffer,
+                              GRN_OBJ_SET);
+      if (casted_values) {
+        grn_uvector_copy(ctx, casted_values, &vector);
+      }
+      GRN_OBJ_FIN(ctx, &values);
+      GRN_OBJ_FIN(ctx, &buffer);
+      if (ctx->rc != GRN_SUCCESS) {
+        grn_loader_save_error(ctx, loader);
+        ERRCLR(ctx);
+      }
+    }
+  }
+
+  grn_obj_set_value(ctx,
+                    data->current.column,
+                    data->id,
+                    &vector,
+                    GRN_OBJ_SET);
+
+exit :
+  GRN_OBJ_FIN(ctx, &vector);
+}
+
+static void
 grn_loader_bracket_set_value(grn_ctx *ctx,
                              grn_loader *loader,
                              grn_loader_add_record_data *data)
@@ -326,167 +595,14 @@ grn_loader_bracket_set_value(grn_ctx *ctx,
     return;
   }
 
-  grn_obj *bracket_element = data->current.value;
-  grn_obj *element = bracket_element + 1;
-  grn_obj *element_end = element + GRN_UINT32_VALUE(bracket_element);
-
   grn_id range_id = DB_OBJ(data->current.column)->range;
-  grn_obj *range = grn_ctx_at(ctx, range_id);
-  grn_obj vector;
-  if (grn_obj_is_table(ctx, range)) {
-    GRN_RECORD_INIT(&vector, GRN_OBJ_VECTOR, range_id);
-    for (; element < element_end; element = values_next(ctx, element)) {
-      if (element->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
-        grn_loader_add_record_data sub_data;
-        sub_data.table = range;
-        sub_data.depth = data->depth + 1;
-        sub_data.record_value = element;
-        sub_data.id = GRN_ID_NIL;
-        sub_data.key = NULL;
-        grn_loader_brace_add_record(ctx, loader, &sub_data);
-        if (sub_data.id == GRN_ID_NIL) {
-          goto exit;
-        }
-        GRN_RECORD_PUT(ctx, &vector, sub_data.id);
-      } else if (element->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
-        GRN_DEFINE_NAME(data->table);
-        grn_obj inspected;
-        GRN_TEXT_INIT(&inspected, 0);
-        grn_inspect(ctx, &inspected, element);
-        ERR(GRN_INVALID_ARGUMENT,
-            "[table][load][%.*s][%.*s] can't use [...] for reference column: "
-            "%.*s",
-            name_size, name,
-            data->current.column_name_size,
-            data->current.column_name,
-            (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
-        GRN_OBJ_FIN(ctx, &inspected);
-        goto exit;
-      } else if (element->header.domain == range_id) {
-        GRN_RECORD_PUT(ctx, &vector, GRN_RECORD_VALUE(element));
-      } else {
-        grn_obj record;
-        GRN_RECORD_INIT(&record, 0, range_id);
-        if (grn_obj_cast(ctx, element, &record, true) != GRN_SUCCESS) {
-          ERR_CAST(data->current.column, range, element);
-          GRN_OBJ_FIN(ctx, &record);
-          goto exit;
-        }
-        GRN_RECORD_PUT(ctx, &vector, GRN_RECORD_VALUE(&record));
-        GRN_OBJ_FIN(ctx, &record);
-      }
-    }
+  if (grn_id_maybe_table(ctx, range_id)) {
+    grn_loader_bracket_set_value_reference(ctx, loader, data);
+  } else if (grn_type_id_is_text_family(ctx, range_id)) {
+    grn_loader_bracket_set_value_text(ctx, loader, data);
   } else {
-    if (range->header.flags & GRN_OBJ_KEY_VAR_SIZE) {
-      GRN_TEXT_INIT(&vector, GRN_OBJ_VECTOR);
-      for (; element < element_end; element = values_next(ctx, element)) {
-        if (element->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
-          grn_loader_brace_add_weight_vector_element(ctx,
-                                                     loader,
-                                                     data,
-                                                     &vector,
-                                                     element);
-          if (ctx->rc != GRN_SUCCESS) {
-            goto exit;
-          }
-        } else if (element->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
-          GRN_DEFINE_NAME(data->table);
-          grn_obj inspected;
-          GRN_TEXT_INIT(&inspected, 0);
-          grn_inspect(ctx, &inspected, element);
-          ERR(GRN_INVALID_ARGUMENT,
-              "[table][load][%.*s][%.*s] "
-              "can't use [...] for variable size data column: "
-              "%.*s",
-              name_size, name,
-              data->current.column_name_size,
-              data->current.column_name,
-              (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
-          GRN_OBJ_FIN(ctx, &inspected);
-          goto exit;
-        } else {
-          if (grn_obj_is_text_family_bulk(ctx, element) &&
-              grn_type_id_is_text_family(ctx, range_id)) {
-            grn_vector_add_element(ctx,
-                                   &vector,
-                                   GRN_TEXT_VALUE(element),
-                                   GRN_TEXT_LEN(element),
-                                   0,
-                                   range_id);
-          } else {
-            grn_obj casted_element;
-            GRN_OBJ_INIT(&casted_element, GRN_BULK, 0, range_id);
-            if (grn_obj_cast(ctx, element, &casted_element, true) ==
-                GRN_SUCCESS) {
-              grn_vector_add_element(ctx,
-                                     &vector,
-                                     GRN_TEXT_VALUE(&casted_element),
-                                     GRN_TEXT_LEN(&casted_element),
-                                     0,
-                                     range_id);
-            } else {
-              ERR_CAST(data->current.column, range, element);
-            }
-            GRN_OBJ_FIN(ctx, &casted_element);
-          }
-        }
-      }
-    } else {
-      grn_id value_size = GRN_TYPE_SIZE(DB_OBJ(range));
-      GRN_VALUE_FIX_SIZE_INIT(&vector, GRN_OBJ_VECTOR, range_id);
-      for (; element < element_end; element = values_next(ctx, element)) {
-        if (element->header.domain == GRN_JSON_LOAD_OPEN_BRACE ||
-            element->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
-          GRN_DEFINE_NAME(data->table);
-          grn_obj inspected;
-          GRN_TEXT_INIT(&inspected, 0);
-          grn_inspect(ctx, &inspected, element);
-          const char *example;
-          if (element->header.domain == GRN_JSON_LOAD_OPEN_BRACE) {
-            example = "{...}";
-          } else {
-            example = "[...]";
-          }
-          ERR(GRN_INVALID_ARGUMENT,
-              "[table][load][%.*s][%.*s] "
-              "can't use %s for fixed size data column: "
-              "%.*s",
-              name_size, name,
-              data->current.column_name_size,
-              data->current.column_name,
-              example,
-              (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
-          GRN_OBJ_FIN(ctx, &inspected);
-          goto exit;
-        } else {
-          if (element->header.domain == range_id) {
-            grn_bulk_write(ctx, &vector, GRN_TEXT_VALUE(element), value_size);
-          } else {
-            grn_obj casted_element;
-            GRN_OBJ_INIT(&casted_element, GRN_BULK, 0, range_id);
-            if (grn_obj_cast(ctx, element, &casted_element, true) ==
-                GRN_SUCCESS) {
-              grn_bulk_write(ctx,
-                             &vector,
-                             GRN_TEXT_VALUE(&casted_element),
-                             value_size);
-            } else {
-              ERR_CAST(data->current.column, range, element);
-            }
-            GRN_OBJ_FIN(ctx, &casted_element);
-          }
-        }
-      }
-    }
+    grn_loader_bracket_set_value_fix_size(ctx, loader, data);
   }
-  grn_obj_set_value(ctx,
-                    data->current.column,
-                    data->id,
-                    &vector,
-                    GRN_OBJ_SET);
-exit :
-  grn_obj_unlink(ctx, range);
-  GRN_OBJ_FIN(ctx, &vector);
 }
 
 static void

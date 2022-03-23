@@ -19,6 +19,7 @@
 #include "grn.h"
 #include "grn_db.h"
 #include "grn_arrow.h"
+#include "grn_cast.h"
 #include "grn_output.h"
 
 #ifdef GRN_WITH_APACHE_ARROW

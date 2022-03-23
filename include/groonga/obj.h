@@ -95,11 +95,6 @@ GRN_API grn_rc grn_obj_set_visibility(grn_ctx *ctx,
 GRN_API bool grn_obj_have_source(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool grn_obj_is_token_column(grn_ctx *ctx, grn_obj *obj);
 
-GRN_API grn_rc grn_obj_cast(grn_ctx *ctx,
-                            grn_obj *src,
-                            grn_obj *dest,
-                            grn_bool add_record_if_not_exist);
-
 GRN_API grn_rc grn_obj_reindex(grn_ctx *ctx, grn_obj *obj);
 
 GRN_API void grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv);

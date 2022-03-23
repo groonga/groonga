@@ -1,0 +1,35 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data tags COLUMN_VECTOR|MISSING_NIL Tags
+[[0,0.0,0.0],true]
+load --table Tags
+[
+{"_key": "existent"}
+]
+[[0,0.0,0.0],1]
+load --table Data
+[
+{"tags": ["existent", "nonexistent", "existent"]}
+]
+[[0,0.0,0.0],1]
+#|e| <Data.tags>: failed to cast to <Tags>: <"nonexistent">
+dump
+table_create Data TABLE_NO_KEY
+
+table_create Tags TABLE_HASH_KEY ShortText
+
+column_create Data tags COLUMN_VECTOR|MISSING_NIL Tags
+
+load --table Data
+[
+["_id","tags"],
+[1,["existent","existent"]]
+]
+
+load --table Tags
+[
+["_key"],
+["existent"]
+]

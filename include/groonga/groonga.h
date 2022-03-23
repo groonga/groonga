@@ -382,6 +382,16 @@ typedef uint32_t grn_column_flags;
 #define GRN_OBJ_INDEX_LARGE            (0x01<<18)
 #define GRN_OBJ_WEIGHT_FLOAT32         (0x01<<19)
 
+#define GRN_OBJ_MISSING_MASK           (0x03<<20)
+#define GRN_OBJ_MISSING_ADD            (0x00<<20)
+#define GRN_OBJ_MISSING_IGNORE         (0x01<<20)
+#define GRN_OBJ_MISSING_NIL            (0x02<<20)
+
+#define GRN_OBJ_INVALID_MASK           (0x03<<22)
+#define GRN_OBJ_INVALID_ERROR          (0x00<<22)
+#define GRN_OBJ_INVALID_WARN           (0x01<<22)
+#define GRN_OBJ_INVALID_IGNORE         (0x02<<22)
+
 /* flags only for grn_table_flags and grn_column_flags */
 
 /* GRN_COLUMN_INDEX only uses this for now */

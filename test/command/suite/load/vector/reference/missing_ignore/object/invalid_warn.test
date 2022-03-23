@@ -1,0 +1,16 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Data TABLE_NO_KEY
+column_create Data tags COLUMN_VECTOR|WITH_WEIGHT|MISSING_IGNORE|INVALID_WARN Tags
+
+load --table Tags
+[
+{"_key": "existent"}
+]
+
+load --table Data
+[
+{"tags": {"existent": 1, "nonexistent": 2, "existent": 3}}
+]
+
+dump

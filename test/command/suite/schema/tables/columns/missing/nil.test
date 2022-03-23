@@ -1,0 +1,6 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Logs TABLE_NO_KEY
+column_create Logs tag COLUMN_SCALAR|MISSING_NIL Tags
+
+schema

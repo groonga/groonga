@@ -1,0 +1,6 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Memos TABLE_NO_KEY
+column_create Memos tag COLUMN_SCALAR|MISSING_NIL Tags
+
+column_list Memos

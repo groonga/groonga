@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -62,6 +62,12 @@ grn_proc_column_parse_flags(grn_ctx *ctx,
     CHECK_FLAG(INDEX_MEDIUM);
     CHECK_FLAG(INDEX_LARGE);
     CHECK_FLAG(WEIGHT_FLOAT32);
+    CHECK_FLAG(MISSING_ADD);
+    CHECK_FLAG(MISSING_IGNORE);
+    CHECK_FLAG(MISSING_NIL);
+    CHECK_FLAG(INVALID_ERROR);
+    CHECK_FLAG(INVALID_WARN);
+    CHECK_FLAG(INVALID_IGNORE);
 
 #undef CHECK_FLAG
 

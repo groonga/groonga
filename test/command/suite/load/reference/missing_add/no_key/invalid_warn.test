@@ -1,0 +1,11 @@
+table_create Records TABLE_NO_KEY
+
+table_create Data TABLE_NO_KEY
+column_create Data record COLUMN_SCALAR|MISSING_ADD|INVALID_WARN Records
+
+load --table Data
+[
+{"record": 1073741824}
+]
+
+dump

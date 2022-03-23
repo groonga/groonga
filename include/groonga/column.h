@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -69,6 +69,10 @@ GRN_API grn_obj *grn_column_table(grn_ctx *ctx, grn_obj *column);
 GRN_API grn_rc grn_column_truncate(grn_ctx *ctx, grn_obj *column);
 
 GRN_API grn_column_flags grn_column_get_flags(grn_ctx *ctx, grn_obj *column);
+GRN_API grn_column_flags
+grn_column_get_missing_mode(grn_ctx *ctx, grn_obj *column);
+GRN_API grn_column_flags
+grn_column_get_invalid_mode(grn_ctx *ctx, grn_obj *column);
 
 GRN_API grn_column_cache *grn_column_cache_open(grn_ctx *ctx, grn_obj *column);
 GRN_API void grn_column_cache_close(grn_ctx *ctx, grn_column_cache *cache);

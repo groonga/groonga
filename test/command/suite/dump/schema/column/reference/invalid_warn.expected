@@ -1,0 +1,12 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Bookmarks TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Bookmarks tags COLUMN_VECTOR|INVALID_WARN Tags
+[[0,0.0,0.0],true]
+dump
+table_create Bookmarks TABLE_HASH_KEY ShortText
+
+table_create Tags TABLE_HASH_KEY ShortText
+
+column_create Bookmarks tags COLUMN_VECTOR|INVALID_WARN Tags

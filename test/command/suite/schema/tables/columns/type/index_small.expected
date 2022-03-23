@@ -314,6 +314,8 @@ schema
               "type": "type"
             },
             "compress": null,
+            "missing": "add",
+            "invalid": "error",
             "section": false,
             "weight": false,
             "weight_float32": false,
@@ -353,6 +355,8 @@ schema
               "type": "type"
             },
             "compress": null,
+            "missing": "add",
+            "invalid": "error",
             "section": false,
             "weight": false,
             "weight_float32": false,
@@ -439,6 +443,8 @@ schema
               "type": "reference"
             },
             "compress": null,
+            "missing": null,
+            "invalid": null,
             "section": true,
             "weight": true,
             "weight_float32": false,

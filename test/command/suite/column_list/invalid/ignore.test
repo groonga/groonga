@@ -1,0 +1,4 @@
+table_create Counts TABLE_NO_KEY
+column_create Counts data COLUMN_SCALAR|INVALID_IGNORE UInt8
+
+column_list Counts

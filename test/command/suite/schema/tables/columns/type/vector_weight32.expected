@@ -304,6 +304,8 @@ schema
               "type": "reference"
             },
             "compress": null,
+            "missing": "add",
+            "invalid": "error",
             "section": false,
             "weight": true,
             "weight_float32": true,

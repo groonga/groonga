@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2010-2018  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -570,6 +570,34 @@ grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
       GRN_TEXT_PUTS(ctx, buf, " weight:float32");
     } else {
       GRN_TEXT_PUTS(ctx, buf, " weight:uint32");
+    }
+  }
+
+  if ((flags & GRN_OBJ_MISSING_MASK) != GRN_OBJ_MISSING_ADD) {
+    GRN_TEXT_PUTS(ctx, buf, " missing:");
+    switch (flags & GRN_OBJ_MISSING_MASK) {
+    case GRN_OBJ_MISSING_IGNORE :
+      GRN_TEXT_PUTS(ctx, buf, "ignore");
+      break;
+    case GRN_OBJ_MISSING_NIL :
+      GRN_TEXT_PUTS(ctx, buf, "nil");
+      break;
+    default:
+      break;
+    }
+  }
+
+  if ((flags & GRN_OBJ_INVALID_MASK) != GRN_OBJ_INVALID_ERROR) {
+    GRN_TEXT_PUTS(ctx, buf, " invalid:");
+    switch (flags & GRN_OBJ_INVALID_MASK) {
+    case GRN_OBJ_INVALID_WARN :
+      GRN_TEXT_PUTS(ctx, buf, "warn");
+      break;
+    case GRN_OBJ_INVALID_IGNORE :
+      GRN_TEXT_PUTS(ctx, buf, "ignore");
+      break;
+    default:
+      break;
     }
   }
 

@@ -1,0 +1,62 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos tag COLUMN_SCALAR|MISSING_NIL Tags
+[[0,0.0,0.0],true]
+column_list Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "id",
+        "UInt32"
+      ],
+      [
+        "name",
+        "ShortText"
+      ],
+      [
+        "path",
+        "ShortText"
+      ],
+      [
+        "type",
+        "ShortText"
+      ],
+      [
+        "flags",
+        "ShortText"
+      ],
+      [
+        "domain",
+        "ShortText"
+      ],
+      [
+        "range",
+        "ShortText"
+      ],
+      [
+        "source",
+        "ShortText"
+      ]
+    ],
+    [
+      258,
+      "tag",
+      "db/db.0000102",
+      "fix",
+      "COLUMN_SCALAR|MISSING_NIL|PERSISTENT",
+      "Memos",
+      "Tags",
+      [
+
+      ]
+    ]
+  ]
+]

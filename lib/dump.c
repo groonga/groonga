@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2016  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -111,6 +111,26 @@ grn_dump_column_create_flags(grn_ctx *ctx,
     break;
   case GRN_OBJ_COMPRESS_ZSTD:
     GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_ZSTD");
+    break;
+  }
+  switch (flags & GRN_OBJ_MISSING_MASK) {
+  case GRN_OBJ_MISSING_ADD:
+    break;
+  case GRN_OBJ_MISSING_IGNORE:
+    GRN_TEXT_PUTS(ctx, buffer, "|MISSING_IGNORE");
+    break;
+  case GRN_OBJ_MISSING_NIL:
+    GRN_TEXT_PUTS(ctx, buffer, "|MISSING_NIL");
+    break;
+  }
+  switch (flags & GRN_OBJ_INVALID_MASK) {
+  case GRN_OBJ_INVALID_ERROR:
+    break;
+  case GRN_OBJ_INVALID_WARN:
+    GRN_TEXT_PUTS(ctx, buffer, "|INVALID_WARN");
+    break;
+  case GRN_OBJ_INVALID_IGNORE:
+    GRN_TEXT_PUTS(ctx, buffer, "|INVALID_IGNORE");
     break;
   }
   if (flags & GRN_OBJ_PERSISTENT) {

@@ -1,0 +1,11 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Data TABLE_NO_KEY
+column_create Data tag COLUMN_SCALAR|MISSING_IGNORE|INVALID_IGNORE Tags
+
+load --table Data
+[
+{"tag": "nonexistent"}
+]
+
+dump

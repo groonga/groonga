@@ -1,0 +1,6 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Bookmarks TABLE_HASH_KEY ShortText
+column_create Bookmarks tags COLUMN_VECTOR|INVALID_IGNORE Tags
+
+dump

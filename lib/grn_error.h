@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2013-2016  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -88,33 +88,6 @@ GRN_API void grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
 #define WARN(rc,...) ERRSET(ctx, GRN_WARN, (rc),  __VA_ARGS__)
 #define MERR(...) ERRSET(ctx, GRN_ALERT, GRN_NO_MEMORY_AVAILABLE,  __VA_ARGS__)
 #define ALERT(...) ERRSET(ctx, GRN_ALERT, GRN_SUCCESS,  __VA_ARGS__)
-
-#define ERR_CAST(column, range, element) do {\
-  grn_obj inspected;\
-  char column_name[GRN_TABLE_MAX_KEY_SIZE];\
-  int column_name_size;\
-  char range_name[GRN_TABLE_MAX_KEY_SIZE];\
-  int range_name_size;\
-  GRN_TEXT_INIT(&inspected, 0);\
-  grn_inspect(ctx, &inspected, element);\
-  if (grn_obj_is_id_accessor(ctx, column)) {\
-    grn_strncpy(column_name,\
-                GRN_TABLE_MAX_KEY_SIZE,\
-                GRN_COLUMN_NAME_ID,\
-                GRN_COLUMN_NAME_ID_LEN + 1);\
-    column_name_size = GRN_COLUMN_NAME_ID_LEN;\
-  } else {\
-    column_name_size = grn_obj_name(ctx, column, column_name,\
-                                    GRN_TABLE_MAX_KEY_SIZE);\
-  }\
-  range_name_size = grn_obj_name(ctx, range, range_name,\
-                                 GRN_TABLE_MAX_KEY_SIZE);\
-  ERR(GRN_INVALID_ARGUMENT, "<%.*s>: failed to cast to <%.*s>: <%.*s>",\
-      column_name_size, column_name,\
-      range_name_size, range_name,\
-      (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));\
-  GRN_OBJ_FIN(ctx, &inspected);\
-} while (0)
 
 #define USER_MESSAGE_SIZE 1024
 

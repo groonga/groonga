@@ -1,0 +1,16 @@
+table_create Tags TABLE_HASH_KEY ShortText --default_tokenizer TokenDelimit
+
+table_create Data TABLE_NO_KEY
+column_create Data tags COLUMN_VECTOR|MISSING_IGNORE Tags
+
+load --table Tags
+[
+{"_key": "existent"}
+]
+
+load --table Data
+[
+{"tags": "existent nonexistent existent"}
+]
+
+dump

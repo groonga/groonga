@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -36,7 +36,11 @@
 #define GRN_RA_SEGMENT_SIZE (1 << GRN_RA_W_SEGMENT)
 
 static grn_ra *
-_grn_ra_create(grn_ctx *ctx, grn_ra *ra, const char *path, unsigned int element_size)
+_grn_ra_create(grn_ctx *ctx,
+               grn_ra *ra,
+               const char *path,
+               uint32_t element_size,
+               grn_column_flags flags)
 {
   grn_io *io;
   int max_segments, n_elm, w_elm;
@@ -55,6 +59,7 @@ _grn_ra_create(grn_ctx *ctx, grn_ra *ra, const char *path, unsigned int element_
   header = grn_io_header(io);
   grn_io_set_type(io, GRN_COLUMN_FIX_SIZE);
   header->element_size = actual_size;
+  header->flags = flags;
   n_elm = GRN_RA_SEGMENT_SIZE / header->element_size;
   for (w_elm = GRN_RA_W_SEGMENT; (1 << w_elm) > n_elm; w_elm--);
   ra->io = io;
@@ -65,14 +70,17 @@ _grn_ra_create(grn_ctx *ctx, grn_ra *ra, const char *path, unsigned int element_
 }
 
 grn_ra *
-grn_ra_create(grn_ctx *ctx, const char *path, unsigned int element_size)
+grn_ra_create(grn_ctx *ctx,
+              const char *path,
+              uint32_t element_size,
+              grn_column_flags flags)
 {
   grn_ra *ra = (grn_ra *)GRN_CALLOC(sizeof(grn_ra));
   if (!ra) {
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(ra, GRN_COLUMN_FIX_SIZE);
-  if (!_grn_ra_create(ctx, ra, path, element_size)) {
+  if (!_grn_ra_create(ctx, ra, path, element_size, flags)) {
     GRN_FREE(ra);
     return NULL;
   }
@@ -114,11 +122,21 @@ grn_ra_open(grn_ctx *ctx, const char *path)
 }
 
 grn_rc
-grn_ra_info(grn_ctx *ctx, grn_ra *ra, unsigned int *element_size)
+grn_ra_info(grn_ctx *ctx, grn_ra *ra, uint32_t *element_size)
 {
   if (!ra) { return GRN_INVALID_ARGUMENT; }
   if (element_size) { *element_size = ra->header->element_size; }
   return GRN_SUCCESS;
+}
+
+grn_column_flags
+grn_ra_get_flags(grn_ctx *ctx, grn_ra *ra)
+{
+  if (!ra) {
+    return 0;
+  }
+
+  return ra->header->flags;
 }
 
 grn_rc
@@ -154,7 +172,6 @@ grn_ra_truncate(grn_ctx *ctx, grn_ra *ra)
   grn_rc rc;
   const char *io_path;
   char *path;
-  unsigned int element_size;
   if ((io_path = grn_io_path(ra->io)) && *io_path != '\0') {
     if (!(path = GRN_STRDUP(io_path))) {
       ERR(GRN_NO_MEMORY_AVAILABLE, "cannot duplicate path: <%s>", io_path);
@@ -163,14 +180,15 @@ grn_ra_truncate(grn_ctx *ctx, grn_ra *ra)
   } else {
     path = NULL;
   }
-  element_size = ra->header->element_size;
+  uint32_t element_size = ra->header->element_size;
+  grn_column_flags flags = ra->header->flags;
   if ((rc = grn_io_close(ctx, ra->io))) { goto exit; }
   ra->io = NULL;
   if (path) {
     rc = grn_ra_remove(ctx, path);
   }
   if (rc == GRN_SUCCESS) {
-    if (!_grn_ra_create(ctx, ra, path, element_size)) {
+    if (!_grn_ra_create(ctx, ra, path, element_size, flags)) {
       rc = GRN_UNKNOWN_ERROR;
     }
   }
@@ -443,6 +461,48 @@ grn_ra_set_value(grn_ctx *ctx,
   }
 
   return rc;
+}
+
+grn_obj *
+grn_ra_cast_value(grn_ctx *ctx,
+                  grn_ra *ra,
+                  grn_obj *value,
+                  grn_obj *buffer,
+                  int set_flags)
+{
+  grn_id range_id = DB_OBJ(ra)->range;
+  if (value->header.domain == range_id) {
+    return value;
+  }
+
+  grn_obj_reinit(ctx, buffer, range_id, 0);
+  grn_column_flags missing_mode =
+    grn_column_get_missing_mode(ctx, (grn_obj *)ra);
+  grn_column_flags invalid_mode =
+    grn_column_get_invalid_mode(ctx, (grn_obj *)ra);
+  grn_caster caster = {
+    value,
+    buffer,
+    missing_mode | invalid_mode,
+    (grn_obj *)ra,
+  };
+  grn_rc rc = grn_caster_cast(ctx, &caster);
+  if (rc != GRN_SUCCESS) {
+    if (invalid_mode != GRN_OBJ_INVALID_ERROR) {
+      ERRCLR(ctx);
+    }
+    CAST_FAILED(&caster);
+    if (ctx->rc != GRN_SUCCESS) {
+      return NULL;
+    }
+    if (missing_mode == GRN_OBJ_MISSING_NIL &&
+        grn_id_maybe_table(ctx, buffer->header.domain)) {
+      GRN_RECORD_SET(ctx, buffer, GRN_ID_NIL);
+    } else {
+      GRN_BULK_REWIND(buffer);
+    }
+  }
+  return buffer;
 }
 
 grn_rc
@@ -4712,16 +4772,33 @@ grn_ja_cast_value_scalar(grn_ctx *ctx,
   }
 
 
+  grn_column_flags missing_mode =
+    grn_column_get_missing_mode(ctx, (grn_obj *)ja);
+  grn_column_flags invalid_mode =
+    grn_column_get_invalid_mode(ctx, (grn_obj *)ja);
+
   grn_obj_reinit(ctx, buffer, buffer_domain_id, 0);
-  grn_rc rc = grn_obj_cast(ctx, value, buffer, true);
+  grn_caster caster = {
+    value,
+    buffer,
+    missing_mode || invalid_mode,
+    (grn_obj *)ja,
+  };
+  grn_rc rc = grn_caster_cast(ctx, &caster);
   if (rc != GRN_SUCCESS) {
-    grn_ja_cast_value_set_error(ctx,
-                                ja,
-                                rc,
-                                value,
-                                "[scalar]",
-                                "failed to cast");
-    return NULL;
+    if (invalid_mode != GRN_OBJ_INVALID_ERROR) {
+      ERRCLR(ctx);
+    }
+    CAST_FAILED(&caster);
+    if (ctx->rc != GRN_SUCCESS) {
+      return NULL;
+    }
+    if (missing_mode == GRN_OBJ_MISSING_NIL &&
+        grn_id_maybe_table(ctx, buffer->header.domain)) {
+      GRN_RECORD_SET(ctx, buffer, GRN_ID_NIL);
+    } else {
+      GRN_BULK_REWIND(buffer);
+    }
   }
 
   return buffer;
@@ -4747,7 +4824,13 @@ grn_ja_cast_value_vector_var_bulk(grn_ctx *ctx,
     return buffer;
   }
 
-  if (grn_obj_cast_text_to_text_vector(ctx, value, buffer) == GRN_SUCCESS) {
+  grn_caster caster = {
+    value,
+    buffer,
+    flags & (GRN_OBJ_MISSING_MASK | GRN_OBJ_INVALID_MASK),
+    (grn_obj *)ja,
+  };
+  if (grn_caster_cast_text_to_text_vector(ctx, &caster) == GRN_SUCCESS) {
     return buffer;
   }
 
@@ -4793,6 +4876,11 @@ grn_ja_cast_value_vector_var_uvector(grn_ctx *ctx,
     element_size += sizeof(float);
   }
 
+  grn_column_flags missing_mode =
+    grn_column_get_missing_mode(ctx, (grn_obj *)ja);
+  grn_column_flags invalid_mode =
+    grn_column_get_invalid_mode(ctx, (grn_obj *)ja);
+
   grn_obj element;
   grn_obj casted_element;
   GRN_VALUE_FIX_SIZE_INIT(&element,
@@ -4800,17 +4888,30 @@ grn_ja_cast_value_vector_var_uvector(grn_ctx *ctx,
                           value->header.domain);
   GRN_VALUE_VAR_SIZE_INIT(&casted_element, 0, ja->obj.range);
   const char *value_raw = GRN_BULK_HEAD(value);
+  grn_caster caster = {
+    &element,
+    &casted_element,
+    missing_mode | invalid_mode,
+    (grn_obj *)ja,
+  };
   uint32_t i;
   for (i = 0; i < n; i++) {
     size_t offset = (element_size * i);
     GRN_TEXT_SET(ctx, &element, value_raw + offset, element_value_size);
     GRN_BULK_REWIND(&casted_element);
-    grn_rc rc = grn_obj_cast(ctx, &element, &casted_element, true);
+    grn_rc rc = grn_caster_cast(ctx, &caster);
     if (rc != GRN_SUCCESS) {
-      ERR_CAST((grn_obj *)ja, range, &element);
-      GRN_OBJ_FIN(ctx, &element);
-      GRN_OBJ_FIN(ctx, &casted_element);
-      return NULL;
+      CAST_FAILED(&caster);
+      if (ctx->rc != GRN_SUCCESS) {
+        ERRCLR(ctx);
+        continue;
+      }
+      if (missing_mode == GRN_OBJ_MISSING_NIL &&
+          grn_id_maybe_table(ctx, casted_element.header.domain)) {
+        GRN_RECORD_SET(ctx, &casted_element, GRN_ID_NIL);
+      } else {
+        continue;
+      }
     }
     float weight = *((float *)(value_raw + offset + element_value_size));
     grn_vector_add_element_float(ctx,
@@ -4867,10 +4968,21 @@ grn_ja_cast_value_vector_var_vector(grn_ctx *ctx,
     return value;
   }
 
+  grn_column_flags missing_mode =
+    grn_column_get_missing_mode(ctx, (grn_obj *)ja);
+  grn_column_flags invalid_mode =
+    grn_column_get_invalid_mode(ctx, (grn_obj *)ja);
+
   grn_obj element;
   grn_obj casted_element;
   GRN_OBJ_INIT(&element, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, GRN_ID_NIL);
   GRN_OBJ_INIT(&casted_element, GRN_BULK, 0, ja->obj.range);
+  grn_caster caster = {
+    &element,
+    &casted_element,
+    missing_mode | invalid_mode,
+    (grn_obj *)ja,
+  };
   for (i = 0; i < n; i++) {
     const char *element_raw;
     float weight;
@@ -4892,12 +5004,23 @@ grn_ja_cast_value_vector_var_vector(grn_ctx *ctx,
       GRN_TEXT_SET(ctx, &element, element_raw, element_size);
       element.header.domain = domain;
       GRN_BULK_REWIND(&casted_element);
-      grn_rc rc = grn_obj_cast(ctx, &element, &casted_element, true);
+      grn_rc rc = grn_caster_cast(ctx, &caster);
       if (rc != GRN_SUCCESS) {
-        ERR_CAST((grn_obj *)ja, range, &element);
-        GRN_OBJ_FIN(ctx, &element);
-        GRN_OBJ_FIN(ctx, &casted_element);
-        return NULL;
+        if (invalid_mode != GRN_OBJ_INVALID_ERROR) {
+          ERRCLR(ctx);
+        }
+        CAST_FAILED(&caster);
+        if (ctx->rc != GRN_SUCCESS) {
+          GRN_OBJ_FIN(ctx, &casted_element);
+          GRN_OBJ_FIN(ctx, &element);
+          return NULL;
+        }
+        if (missing_mode == GRN_OBJ_MISSING_NIL &&
+            grn_id_maybe_table(ctx, casted_element.header.domain)) {
+          GRN_RECORD_SET(ctx, &casted_element, GRN_ID_NIL);
+        } else {
+          continue;
+        }
       }
       grn_vector_add_element_float(ctx,
                                    buffer,
@@ -4907,8 +5030,8 @@ grn_ja_cast_value_vector_var_vector(grn_ctx *ctx,
                                    casted_element.header.domain);
     }
   }
-  GRN_OBJ_FIN(ctx, &element);
   GRN_OBJ_FIN(ctx, &casted_element);
+  GRN_OBJ_FIN(ctx, &element);
 
   return buffer;
 }
@@ -4934,7 +5057,10 @@ grn_ja_cast_value_vector_fixed_bulk(grn_ctx *ctx,
   }
 
   if (value->header.domain == ja->obj.range) {
-    grn_uvector_add_element_record(ctx, buffer, GRN_RECORD_VALUE(value), 0);
+    GRN_TEXT_PUT(ctx, buffer, GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+    if (with_weight) {
+      GRN_FLOAT32_PUT(ctx, buffer, 0.0);
+    }
     return buffer;
   }
 
@@ -4948,28 +5074,73 @@ grn_ja_cast_value_vector_fixed_bulk(grn_ctx *ctx,
     }
   }
 
+  grn_column_flags missing_mode =
+    grn_column_get_missing_mode(ctx, (grn_obj *)ja);
+  grn_column_flags invalid_mode =
+    grn_column_get_invalid_mode(ctx, (grn_obj *)ja);
+
   if (need_tokenize) {
     /* TODO: Should we move this logic to grn_obj_cast()? */
+    grn_tokenize_mode tokenize_mode;
+    if (missing_mode == GRN_OBJ_MISSING_ADD) {
+      tokenize_mode = GRN_TOKEN_ADD;
+    } else {
+      tokenize_mode = GRN_TOKEN_GET;
+    }
     unsigned int token_flags = 0;
     grn_token_cursor *token_cursor;
     token_cursor = grn_token_cursor_open(ctx,
                                          range,
                                          GRN_BULK_HEAD(value),
                                          GRN_BULK_VSIZE(value),
-                                         GRN_TOKEN_ADD,
+                                         tokenize_mode,
                                          token_flags);
     if (token_cursor) {
-      while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
+      while (token_cursor->status != GRN_TOKEN_CURSOR_DONE) {
         grn_id tid = grn_token_cursor_next(ctx, token_cursor);
-        grn_uvector_add_element_record(ctx, buffer, tid, 0);
+        if (token_cursor->status == GRN_TOKEN_CURSOR_NOT_FOUND) {
+          grn_token *token = grn_token_cursor_get_token(ctx, token_cursor);
+          grn_caster caster = {
+            grn_token_get_data(ctx, token),
+            buffer,
+            missing_mode | invalid_mode,
+            (grn_obj *)ja,
+          };
+          CAST_FAILED(&caster);
+          if (ctx->rc != GRN_SUCCESS) {
+            ERRCLR(ctx);
+            continue;
+          }
+          if (missing_mode == GRN_OBJ_MISSING_NIL) {
+            grn_uvector_add_element_record(ctx, buffer, GRN_ID_NIL, 0);
+          }
+        } else {
+          grn_uvector_add_element_record(ctx, buffer, tid, 0);
+        }
       }
       grn_token_cursor_close(ctx, token_cursor);
     }
   } else {
-    grn_rc rc = grn_obj_cast(ctx, value, buffer, true);
+    grn_caster caster = {
+      value,
+      buffer,
+      missing_mode | invalid_mode,
+      (grn_obj *)ja,
+    };
+    grn_rc rc = grn_caster_cast(ctx, &caster);
     if (rc != GRN_SUCCESS) {
-      ERR_CAST((grn_obj *)ja, range, value);
-      return NULL;
+      if (invalid_mode != GRN_OBJ_INVALID_ERROR) {
+        ERRCLR(ctx);
+      }
+      CAST_FAILED(&caster);
+      if (ctx->rc != GRN_SUCCESS) {
+        return NULL;
+      }
+      GRN_BULK_REWIND(buffer);
+      if (missing_mode == GRN_OBJ_MISSING_NIL &&
+          grn_id_maybe_table(ctx, buffer->header.domain)) {
+        grn_uvector_add_element_record(ctx, buffer, GRN_ID_NIL, 0);
+      }
     }
   }
 
@@ -5030,12 +5201,23 @@ grn_ja_cast_value_vector_fixed_uvector(grn_ctx *ctx,
     element_size += sizeof(float);
   }
 
+  grn_column_flags missing_mode =
+    grn_column_get_missing_mode(ctx, (grn_obj *)ja);
+  grn_column_flags invalid_mode =
+    grn_column_get_invalid_mode(ctx, (grn_obj *)ja);
+
   grn_obj element;
   grn_obj casted_element;
   GRN_VALUE_FIX_SIZE_INIT(&element,
                           GRN_OBJ_DO_SHALLOW_COPY,
                           value->header.domain);
   GRN_VALUE_FIX_SIZE_INIT(&casted_element, 0, ja->obj.range);
+  grn_caster caster = {
+    &element,
+    &casted_element,
+    missing_mode | invalid_mode,
+    (grn_obj *)ja,
+  };
   const char *value_raw = GRN_BULK_HEAD(value);
   uint32_t i;
   for (i = 0; i < n; i++) {
@@ -5043,12 +5225,25 @@ grn_ja_cast_value_vector_fixed_uvector(grn_ctx *ctx,
     if (need_cast) {
       GRN_TEXT_SET(ctx, &element, value_raw + offset, element_value_size);
       GRN_BULK_REWIND(&casted_element);
-      grn_rc rc = grn_obj_cast(ctx, &element, &casted_element, true);
+      grn_rc rc = grn_caster_cast(ctx, &caster);
       if (rc != GRN_SUCCESS) {
-        ERR_CAST((grn_obj *)ja, range, &element);
-        GRN_OBJ_FIN(ctx, &element);
-        GRN_OBJ_FIN(ctx, &casted_element);
-        return NULL;
+        if (invalid_mode != GRN_OBJ_INVALID_ERROR) {
+          ERRCLR(ctx);
+        }
+        if (invalid_mode != GRN_OBJ_INVALID_IGNORE) {
+          CAST_FAILED(&caster);
+          if (ctx->rc != GRN_SUCCESS) {
+            GRN_OBJ_FIN(ctx, &casted_element);
+            GRN_OBJ_FIN(ctx, &element);
+            return NULL;
+          }
+        }
+        if (missing_mode == GRN_OBJ_MISSING_NIL &&
+            grn_id_maybe_table(ctx, casted_element.header.domain)) {
+          GRN_RECORD_SET(ctx, &casted_element, GRN_ID_NIL);
+        } else {
+          continue;
+        }
       }
       grn_bulk_write(ctx,
                      buffer,
@@ -5088,11 +5283,22 @@ grn_ja_cast_value_vector_fixed_vector(grn_ctx *ctx,
     return buffer;
   }
 
+  grn_column_flags missing_mode =
+    grn_column_get_missing_mode(ctx, (grn_obj *)ja);
+  grn_column_flags invalid_mode =
+    grn_column_get_invalid_mode(ctx, (grn_obj *)ja);
+
   uint32_t i;
   grn_obj element;
   grn_obj casted_element;
   GRN_TEXT_INIT(&element, GRN_OBJ_DO_SHALLOW_COPY);
   GRN_OBJ_INIT(&casted_element, GRN_BULK, 0, ja->obj.range);
+  grn_caster caster = {
+    &element,
+    &casted_element,
+    missing_mode | invalid_mode,
+    (grn_obj *)ja,
+  };
   for (i = 0; i < n; i++) {
     const char *element_raw;
     float weight;
@@ -5109,10 +5315,22 @@ grn_ja_cast_value_vector_fixed_vector(grn_ctx *ctx,
       GRN_TEXT_SET(ctx, &element, element_raw, element_size);
       element.header.domain = element_domain;
       GRN_BULK_REWIND(&casted_element);
-      grn_rc rc = grn_obj_cast(ctx, &element, &casted_element, true);
+      grn_rc rc = grn_caster_cast(ctx, &caster);
       if (rc != GRN_SUCCESS) {
-        ERR_CAST((grn_obj *)ja, range, &element);
-        return NULL;
+        CAST_FAILED(&caster);
+        if (ctx->rc != GRN_SUCCESS) {
+          ERRCLR(ctx);
+          continue;
+        }
+        if (missing_mode == GRN_OBJ_MISSING_NIL &&
+            grn_id_maybe_table(ctx, buffer->header.domain)) {
+          GRN_RECORD_SET(ctx, &casted_element, GRN_ID_NIL);
+        } else {
+          continue;
+        }
+      }
+      if (GRN_BULK_VSIZE(&casted_element) == 0) {
+        continue;
       }
       grn_bulk_write(ctx,
                      buffer,

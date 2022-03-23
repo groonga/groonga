@@ -1,0 +1,18 @@
+#@require-input-type json
+
+table_create Records TABLE_NO_KEY
+
+table_create Data TABLE_NO_KEY
+column_create Data record COLUMN_SCALAR|MISSING_ADD Records
+
+load --table Records
+[
+{}
+]
+
+load --table Data
+[
+{"record": 1}
+]
+
+dump

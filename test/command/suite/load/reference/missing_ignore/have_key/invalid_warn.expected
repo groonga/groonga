@@ -1,0 +1,24 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data tag COLUMN_SCALAR|MISSING_IGNORE|INVALID_WARN Tags
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"tag": "nonexistent"}
+]
+[[0,0.0,0.0],1]
+#|w| <Data.tag>: failed to cast to <Tags>: <"nonexistent">
+dump
+table_create Data TABLE_NO_KEY
+
+table_create Tags TABLE_HASH_KEY ShortText
+
+column_create Data tag COLUMN_SCALAR|MISSING_IGNORE|INVALID_WARN Tags
+
+load --table Data
+[
+["_id","tag"],
+[1,""]
+]
