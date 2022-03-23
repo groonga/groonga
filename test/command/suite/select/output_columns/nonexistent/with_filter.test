@@ -1,0 +1,18 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+table_create Logs TABLE_NO_KEY
+column_create Logs timestamp COLUMN_SCALAR Time
+column_create Logs price COLUMN_SCALAR UInt32
+load --table Logs
+[
+{"timestamp": "2017/03/15 00:00:00", "price": 1000},
+{"timestamp": "2017/03/15 11:00:00", "price":  900},
+{"timestamp": "2017/03/15 12:00:00", "price":  300},
+{"timestamp": "2017/03/15 13:00:00", "price":  200}
+]
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level dump
+select Logs   --filter 'price >= 300' --output_columns '_id, nonexistent'
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels dump

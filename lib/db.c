@@ -7242,6 +7242,9 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int 
           next_obj_id = obj->header.domain;
           if (!next_obj_id) {
             // ERR(GRN_INVALID_ARGUMENT, "no such column: <%s>", name);
+            if (obj_is_referred) {
+              grn_obj_unref(ctx, obj);
+            }
             if (!is_chained) {
               grn_obj_close(ctx, (grn_obj *)res);
             }
