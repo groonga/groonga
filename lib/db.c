@@ -6896,7 +6896,7 @@ exit :
 }
 
 static grn_obj *
-grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, unsigned int name_size)
+grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, uint32_t name_size)
 {
   grn_accessor *res = NULL, **rp = NULL, **rp0 = NULL;
   grn_bool is_chained = GRN_FALSE;
