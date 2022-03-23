@@ -1,0 +1,93 @@
+table_create Items TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Items price COLUMN_SCALAR UInt32
+[[0,0.0,0.0],true]
+table_create Prices TABLE_PAT_KEY UInt32
+[[0,0.0,0.0],true]
+column_create Prices item_index COLUMN_INDEX Items price
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"_key": "Book",  "price": 1000},
+{"_key": "Note",  "price": 1000},
+{"_key": "Box",   "price":  520},
+{"_key": "Pen",   "price":  510},
+{"_key": "Food",  "price":  500},
+{"_key": "Drink", "price":  300}
+]
+[[0,0.0,0.0],6]
+log_level --level dump
+[[0,0.0,0.0],true]
+select Items   --column[price_with_tax].stage initial   --column[price_with_tax].type UInt32   --column[price_with_tax].flags COLUMN_SCALAR   --column[price_with_tax].value 'price * 1.08'   --filter 'price >= 510'   --sort_keys _id
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        4
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "price_with_tax",
+          "UInt32"
+        ],
+        [
+          "price",
+          "UInt32"
+        ]
+      ],
+      [
+        1,
+        "Book",
+        1080,
+        1000
+      ],
+      [
+        2,
+        "Note",
+        1080,
+        1000
+      ],
+      [
+        3,
+        "Box",
+        561,
+        520
+      ],
+      [
+        4,
+        "Pen",
+        550,
+        510
+      ]
+    ]
+  ]
+]
+#|-| [obj][open] <256>(<Items>):<48>(<table:hash_key>)
+#|-| [obj][open] <257>(<Items.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <257>(<Items.price>):<64>(<column:fix_size>)
+#|-| [obj][open] <257>(<Items.price>):<64>(<column:fix_size>)
+#|-| [obj][open] <258>(<Prices>):<49>(<table:pat_key>)
+#|-| [obj][open] <259>(<Prices.item_index>):<72>(<column:index>)
+#|-| [obj][close] <259>(<Prices.item_index>):<72>(<column:index>)
+#|-| [obj][close] <258>(<Prices>):<49>(<table:pat_key>)
+#|-| [obj][open] <258>(<Prices>):<49>(<table:pat_key>)
+#|-| [obj][open] <259>(<Prices.item_index>):<72>(<column:index>)
+#|-| [obj][close] <259>(<Prices.item_index>):<72>(<column:index>)
+#|-| [obj][close] <258>(<Prices>):<49>(<table:pat_key>)
+#|-| [obj][close] <257>(<Items.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <256>(<Items>):<48>(<table:hash_key>)
+log_level --level notice
+[[0,0.0,0.0],true]

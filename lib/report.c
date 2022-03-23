@@ -87,6 +87,9 @@ grn_report_table(grn_ctx *ctx,
       GRN_TEXT_PUT(ctx, &description, name, name_size);
       GRN_TEXT_PUTS(ctx, &description, ">");
     }
+    if (target != table) {
+      grn_obj_unref(ctx, target);
+    }
   }
   GRN_LOG(ctx, GRN_REPORT_INDEX_LOG_LEVEL,
           "%s[table]%s %.*s",
