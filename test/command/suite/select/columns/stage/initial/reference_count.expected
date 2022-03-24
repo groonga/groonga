@@ -18,7 +18,7 @@ load --table Items
 [[0,0.0,0.0],6]
 log_level --level dump
 [[0,0.0,0.0],true]
-select Items   --column[price_with_tax].stage initial   --column[price_with_tax].type UInt32   --column[price_with_tax].flags COLUMN_SCALAR   --column[price_with_tax].value 'price * 1.08'   --filter 'price >= 510'   --sort_keys _id
+select Items   --columns[price_with_tax].stage initial   --columns[price_with_tax].type UInt32   --columns[price_with_tax].flags COLUMN_SCALAR   --columns[price_with_tax].value 'price * 1.08'   --filter 'price >= 510'   --sort_keys _id
 [
   [
     0,

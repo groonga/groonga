@@ -65,7 +65,7 @@ grn_report_table(grn_ctx *ctx,
                  grn_obj *table)
 {
   grn_obj description;
-  grn_obj *target;
+  grn_obj *target, *previous_target = NULL;
 
   if (!grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
     return;
@@ -87,9 +87,13 @@ grn_report_table(grn_ctx *ctx,
       GRN_TEXT_PUT(ctx, &description, name, name_size);
       GRN_TEXT_PUTS(ctx, &description, ">");
     }
-    if (target != table) {
-      grn_obj_unref(ctx, target);
+    if (previous_target && previous_target != table) {
+      grn_obj_unref(ctx, previous_target);
     }
+    previous_target = target;
+  }
+  if (previous_target && previous_target != table) {
+    grn_obj_unref(ctx, previous_target);
   }
   GRN_LOG(ctx, GRN_REPORT_INDEX_LOG_LEVEL,
           "%s[table]%s %.*s",

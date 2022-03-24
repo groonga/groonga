@@ -19,10 +19,10 @@ load --table Items
 #@add-ignore-log-pattern /\A\[io\]/
 log_level --level dump
 select Items \
-  --column[price_with_tax].stage initial \
-  --column[price_with_tax].type UInt32 \
-  --column[price_with_tax].flags COLUMN_SCALAR \
-  --column[price_with_tax].value 'price * 1.08' \
+  --columns[price_with_tax].stage initial \
+  --columns[price_with_tax].type UInt32 \
+  --columns[price_with_tax].flags COLUMN_SCALAR \
+  --columns[price_with_tax].value 'price * 1.08' \
   --filter 'price >= 510' \
   --sort_keys _id
 log_level --level notice
