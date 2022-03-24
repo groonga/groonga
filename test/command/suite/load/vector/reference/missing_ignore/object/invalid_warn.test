@@ -5,12 +5,13 @@ column_create Data tags COLUMN_VECTOR|WITH_WEIGHT|MISSING_IGNORE|INVALID_WARN Ta
 
 load --table Tags
 [
-{"_key": "existent"}
+{"_key": "existent1"},
+{"_key": "existent2"}
 ]
 
 load --table Data
 [
-{"tags": {"existent": 1, "nonexistent": 2, "existent": 3}}
+{"tags": {"existent1": 1, "nonexistent": 2, "existent2": 3}}
 ]
 
 dump

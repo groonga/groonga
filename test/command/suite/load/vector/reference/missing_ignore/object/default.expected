@@ -6,12 +6,13 @@ column_create Data tags COLUMN_VECTOR|WITH_WEIGHT|MISSING_IGNORE Tags
 [[0,0.0,0.0],true]
 load --table Tags
 [
-{"_key": "existent"}
+{"_key": "existent1"},
+{"_key": "existent2"}
 ]
-[[0,0.0,0.0],1]
+[[0,0.0,0.0],2]
 load --table Data
 [
-{"tags": {"existent": 1, "nonexistent": 2, "existent": 3}}
+{"tags": {"existent1": 1, "nonexistent": 2, "existent2": 3}}
 ]
 [[0,0.0,0.0],1]
 #|e| <Data.tags>: failed to cast to <Tags>: <"nonexistent">
@@ -25,11 +26,12 @@ column_create Data tags COLUMN_VECTOR|WITH_WEIGHT|MISSING_IGNORE Tags
 load --table Data
 [
 ["_id","tags"],
-[1,{"existent":1,"existent":3}]
+[1,{"existent1":1,"existent2":3}]
 ]
 
 load --table Tags
 [
 ["_key"],
-["existent"]
+["existent1"],
+["existent2"]
 ]
