@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -48,6 +48,19 @@ grn_bool
 grn_type_id_is_text_family(grn_ctx *ctx, grn_id id)
 {
   return GRN_DB_SHORT_TEXT <= id && id <= GRN_DB_LONG_TEXT;
+}
+
+bool
+grn_type_id_is_compatible(grn_ctx *ctx, grn_id id1, grn_id id2)
+{
+  if (id1 == id2) {
+    return true;
+  }
+  if (grn_type_id_is_text_family(ctx, id1) &&
+      grn_type_id_is_text_family(ctx, id2)) {
+    return true;
+  }
+  return false;
 }
 
 size_t

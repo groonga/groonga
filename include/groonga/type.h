@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,7 @@ GRN_API grn_bool grn_type_id_is_builtin(grn_ctx *ctx, grn_id id);
 GRN_API grn_bool grn_type_id_is_number_family(grn_ctx *ctx, grn_id id);
 GRN_API bool grn_type_id_is_float_family(grn_ctx *ctx, grn_id id);
 GRN_API grn_bool grn_type_id_is_text_family(grn_ctx *ctx, grn_id id);
+GRN_API bool grn_type_id_is_compatible(grn_ctx *ctx, grn_id id1, grn_id id2);
 GRN_API size_t grn_type_id_size(grn_ctx *ctx, grn_id id);
 
 GRN_API grn_obj *grn_type_create(grn_ctx *ctx, const char *name, unsigned int name_size,
