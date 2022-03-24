@@ -33,7 +33,7 @@ load --table Packages
 {"_key": "mroonga", "files": ["ha_mroonga.cc", "ha_mroonga.hpp"]}
 ]
 [[0,0.0,0.0],3]
-log_level --level info
+log_level --level dump
 [[0,0.0,0.0],true]
 select Packages   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 10 && revision < 40")'   --output_columns '_key, files, files.revision'
 [
@@ -75,15 +75,41 @@ select Packages   --filter '_key @ "rroonga" && sub_filter(files, "revision >= 1
     ]
   ]
 ]
+#|-| [obj][open] <258>(<Packages>):<49>(<table:pat_key>)
+#|-| [obj][open] <259>(<Packages.files>):<65>(<column:var_size>)
+#|-| [obj][open] <263>(<Names>):<49>(<table:pat_key>)
+#|-| [obj][open] <264>(<Names.packages_key_index>):<72>(<column:index>)
 #|i| [object][search][index][key][exact] <Names.packages_key_index>
 #|i| grn_ii_sel > (rroonga)
 #|i| [ii][select] n=6 (rroonga)
 #|i| exact: 1
 #|i| hits=1
 #|i| [table-selector][select][index][selector][no-index][sub_filter] <Packages>
+#|-| [obj][open] <256>(<Files>):<49>(<table:pat_key>)
+#|-| [obj][open] <257>(<Files.revision>):<64>(<column:fix_size>)
 #|i| [sub-filter][pre-filter][column][vector] <Packages.files> -> <Files>
+#|-| [obj][open] <261>(<Revisions>):<49>(<table:pat_key>)
+#|-| [obj][open] <262>(<Revisions.files_revision_index>):<72>(<column:index>)
 #|i| [table-selector][select][index][range] <Revisions.files_revision_index>
 #|i| [table-selector][select][index][range] <Revisions.files_revision_index>
+#|-| [obj][close] <262>(<Revisions.files_revision_index>):<72>(<column:index>)
+#|-| [obj][close] <261>(<Revisions>):<49>(<table:pat_key>)
+#|-| [obj][open] <260>(<Files.packages_files_index>):<72>(<column:index>)
 #|i| [accessor][resolve][data-column][index] <Files.packages_files_index>
+#|-| [obj][close] <260>(<Files.packages_files_index>):<72>(<column:index>)
+#|-| [obj][close] <256>(<Files>):<49>(<table:pat_key>)
+#|-| [obj][close] <257>(<Files.revision>):<64>(<column:fix_size>)
+#|-| [obj][close] <264>(<Names.packages_key_index>):<72>(<column:index>)
+#|-| [obj][close] <263>(<Names>):<49>(<table:pat_key>)
+#|-| [obj][open] <256>(<Files>):<49>(<table:pat_key>)
+#|-| [obj][open] <257>(<Files.revision>):<64>(<column:fix_size>)
+#|-| [obj][close] <256>(<Files>):<49>(<table:pat_key>)
+#|-| [obj][open] <256>(<Files>):<49>(<table:pat_key>)
+#|-| [obj][close] <256>(<Files>):<49>(<table:pat_key>)
+#|-| [obj][open] <256>(<Files>):<49>(<table:pat_key>)
+#|-| [obj][close] <256>(<Files>):<49>(<table:pat_key>)
+#|-| [obj][close] <257>(<Files.revision>):<64>(<column:fix_size>)
+#|-| [obj][close] <259>(<Packages.files>):<65>(<column:var_size>)
+#|-| [obj][close] <258>(<Packages>):<49>(<table:pat_key>)
 log_level --level notice
 [[0,0.0,0.0],true]
