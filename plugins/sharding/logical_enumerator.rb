@@ -24,10 +24,12 @@ module Groonga
 
       def unref
         @shards.each(&:unref)
+        @shards.clear
       end
 
       private
       def each_internal(order)
+        return enum_for(__method__, order) unless block_given?
         context = Context.instance
         each_shard_with_around(order) do |prev_shard, current_shard, next_shard|
           shard_range_data = current_shard.range_data
@@ -66,32 +68,46 @@ module Groonga
       def each_shard_with_around(order)
         context = Context.instance
         prefix = "#{@logical_table}_"
+        unref_immediately = @options.fetch(:unref_immediately, false)
 
         shards = [nil]
-        context.database.each_name(:prefix => prefix,
-                                   :order_by => :key,
-                                   :order => order) do |name|
-          shard_range_raw = name[prefix.size..-1]
+        begin
+          context.database.each_name(:prefix => prefix,
+                                     :order_by => :key,
+                                     :order => order) do |name|
+            shard_range_raw = name[prefix.size..-1]
 
-          case shard_range_raw
-          when /\A(\d{4})(\d{2})\z/
-            shard_range_data = ShardRangeData.new($1.to_i, $2.to_i, nil)
-          when /\A(\d{4})(\d{2})(\d{2})\z/
-            shard_range_data = ShardRangeData.new($1.to_i, $2.to_i, $3.to_i)
-          else
-            next
+            case shard_range_raw
+            when /\A(\d{4})(\d{2})\z/
+              shard_range_data = ShardRangeData.new($1.to_i, $2.to_i, nil)
+            when /\A(\d{4})(\d{2})(\d{2})\z/
+              shard_range_data = ShardRangeData.new($1.to_i, $2.to_i, $3.to_i)
+            else
+              next
+            end
+
+            shard = Shard.new(name, @shard_key_name, shard_range_data)
+            previous_shard = shards.last
+            if previous_shard
+              shard.previous_shard = previous_shard
+              previous_shard.next_shard = shard
+            end
+            shards << shard
+            @shards << shard
+            next if shards.size < 3
+            yield(*shards)
+            shifted_shard = shards.shift
+            next unless unref_immediately
+            next if shifted_shard.nil?
+            shifted_shard.unref
+            @shards.shift
           end
 
-          shard = Shard.new(name, @shard_key_name, shard_range_data)
-          shards << shard
-          @shards << shard
-          next if shards.size < 3
-          yield(*shards)
-          shards.shift
-        end
-
-        if shards.size == 2
-          yield(shards[0], shards[1], nil)
+          if shards.size == 2
+            yield(shards[0], shards[1], nil)
+          end
+        ensure
+          unref if unref_immediately
         end
       end
 
@@ -123,12 +139,16 @@ module Groonga
 
       class Shard
         attr_reader :table_name, :key_name, :range_data
+        attr_accessor :previous_shard
+        attr_accessor :next_shard
         def initialize(table_name, key_name, range_data)
           @table_name = table_name
           @key_name = key_name
           @range_data = range_data
           @table = nil
           @key = nil
+          @previous_shard = nil
+          @next_shard = nil
         end
 
         def table
@@ -141,6 +161,14 @@ module Groonga
 
         def key
           @key ||= Context.instance[full_key_name]
+        end
+
+        def first?
+          @previous_shard.nil?
+        end
+
+        def last?
+          @next_shard.nil?
         end
 
         def unref

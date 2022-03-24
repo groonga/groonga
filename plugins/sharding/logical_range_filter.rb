@@ -115,11 +115,12 @@ module Groonga
         attr_reader :large_shard_threshold
         attr_reader :time_classify_types
         attr_reader :result_sets
-        attr_reader :referred_objects
         def initialize(input)
           @input = input
           @use_range_index = parse_use_range_index(@input[:use_range_index])
-          @enumerator = LogicalEnumerator.new("logical_range_filter", @input)
+          @enumerator = LogicalEnumerator.new("logical_range_filter",
+                                              @input,
+                                              {:unref_immediately => true})
           @order = parse_order(@input, :order)
           @filter = @input[:filter]
           @offset = (@input[:offset] || 0).to_i
@@ -134,38 +135,43 @@ module Groonga
           @current_limit = @limit
 
           @result_sets = []
-          @temporary_tables_stack = []
+          @temporary_tables_queue = []
 
           @threshold = compute_threshold
           @large_shard_threshold = compute_large_shard_threshold
 
           @time_classify_types = detect_time_classify_types
 
-          @referred_objects = []
+          @referred_objects_queue = []
         end
 
         def temporary_tables
-          @temporary_tables_stack.last
+          @temporary_tables_queue.last
+        end
+
+        def referred_objects
+          @referred_objects_queue.last
         end
 
         def push
-          @temporary_tables_stack << []
+          @temporary_tables_queue << []
+          @referred_objects_queue << []
         end
 
         def shift
-          temporary_tables = @temporary_tables_stack.shift
-          temporary_tables.each do |table|
-            table.close
-          end
+          temporary_tables = @temporary_tables_queue.shift
+          temporary_tables.each(&:close)
           temporary_tables.clear
+          referred_objects = @referred_objects_queue.shift
+          referred_objects.each(&:unref)
+          referred_objects.clear
         end
 
         def close
-          until @temporary_tables_stack.empty?
+          until @temporary_tables_queue.empty?
             shift
           end
           @result_sets.clear
-          @referred_objects.each(&:unref)
           @enumerator.unref
         end
 
@@ -256,10 +262,10 @@ module Groonga
         end
 
         def execute
-          first_shard = nil
+          have_shard = false
           have_result_set = false
           each_shard_executor do |shard_executor|
-            first_shard ||= shard_executor.shard
+            have_shard = true
             shard_executor.execute
             @context.consume_result_sets do |result_set|
               have_result_set = true
@@ -267,7 +273,7 @@ module Groonga
             end
             break if @context.current_limit.zero?
           end
-          if first_shard.nil?
+          unless have_shard
             enumerator = @context.enumerator
             message =
               "[logical_range_filter] no shard exists: " +
@@ -275,9 +281,12 @@ module Groonga
               "shard_key: <#{enumerator.shard_key_name}>"
             raise InvalidArgument, message
           end
-          unless have_result_set
+          return if have_result_set
+
+          each_shard_executor do |shard_executor|
+            shard = shard_executor.shard
             result_set = HashTable.create(:flags => ObjectFlags::WITH_SUBREC,
-                                          :key_type => first_shard.table)
+                                          :key_type => shard.table)
             @context.push
             @context.temporary_tables << result_set
             targets = [[result_set]]
@@ -285,6 +294,7 @@ module Groonga
             @context.dynamic_columns.apply_filtered(targets)
             yield(result_set)
             @context.shift
+            break
           end
         end
 
@@ -298,7 +308,6 @@ module Groonga
             each_method = :each
           end
           if @context.need_look_ahead?
-            executors = []
             previous_executor = nil
             enumerator.send(each_method) do |shard, shard_range|
               @context.push
@@ -306,18 +315,15 @@ module Groonga
               if previous_executor
                 previous_executor.next_executor = current_executor
                 current_executor.previous_executor = previous_executor
-                executors << previous_executor
+                yield(previous_executor)
+                @context.shift unless previous_executor.shard.first?
+              end
+              if shard.last?
+                yield(current_executor)
+                @context.shift
               end
               previous_executor = current_executor
             end
-            executors << previous_executor if previous_executor
-            return if executors.empty?
-            executors.each_with_index do |executor, i|
-              yield(executor)
-              # Keep the previous data for window function
-              @context.shift if i > 0
-            end
-            @context.shift
           else
             enumerator.send(each_method) do |shard, shard_range|
               @context.push
@@ -372,7 +378,7 @@ module Groonga
           shard_key = table.find_column(@context.enumerator.shard_key_name)
           begin
             current_min = min
-            while current_min < max do
+            while current_min < max
               next_min = compute_next_min_edge(current_min)
               if next_min > max
                 current_max = max
@@ -837,8 +843,8 @@ module Groonga
           end
 
           max_n_unmatched_records =
-              compute_max_n_unmatched_records(max_n_records,
-                                              required_n_records)
+            compute_max_n_unmatched_records(max_n_records,
+                                            required_n_records)
           if estimated_n_records >= max_n_unmatched_records
             reason = "the max number of unmatched records (#{max_n_unmatched_records}) "
             reason << "<= "
