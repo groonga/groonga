@@ -33,7 +33,7 @@ load --table Packages
 {"_key": "mroonga", "files": ["ha_mroonga.cc", "ha_mroonga.hpp"]}
 ]
 
-#@add-important-log-levels info dump
+#@add-important-log-levels dump info
 #@add-ignore-log-pattern /\A\[io\]/
 log_level --level dump
 select Packages \
@@ -41,4 +41,4 @@ select Packages \
   --output_columns '_key, files, files.revision'
 log_level --level notice
 #@remove-ignore-log-pattern /\A\[io\]/
-#@remove-important-log-levels info dump
+#@remove-important-log-levels dump info
