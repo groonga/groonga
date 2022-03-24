@@ -8,8 +8,9 @@ load --table Data
 [
 {"tag": "nonexistent"}
 ]
-[[0,0.0,0.0],1]
+[[[-22,0.0,0.0],"<Data.tag>: failed to cast to <Tags>: <\"nonexistent\">"],1]
 #|e| <Data.tag>: failed to cast to <Tags>: <"nonexistent">
+#|e| [table][load][Data][tag] failed to set column value: <Data.tag>: failed to cast to <Tags>: <"nonexistent">: id: <1>: value: <"nonexistent">
 dump
 table_create Data TABLE_NO_KEY
 

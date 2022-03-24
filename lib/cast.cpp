@@ -1123,9 +1123,10 @@ grn_caster_cast_to_record(grn_ctx *ctx, grn_caster *caster)
         }
         if (id == GRN_ID_NIL) {
           if (invalid_mode == GRN_OBJ_INVALID_ERROR) {
-            if (missing_mode == GRN_OBJ_MISSING_ADD) {
-              rc = GRN_INVALID_ARGUMENT;
-            } else {
+            rc = GRN_INVALID_ARGUMENT;
+            bool called_from_grn_obj_cast = (caster->target == NULL);
+            if (missing_mode != GRN_OBJ_MISSING_ADD &&
+                !called_from_grn_obj_cast /* For backward compatibility */) {
               CAST_FAILED(caster);
               ERRCLR(ctx);
             }
@@ -1995,7 +1996,7 @@ grn_obj_cast(grn_ctx *ctx, grn_obj *src, grn_obj *dest,
   if (add_record_if_not_exist) {
     flags |= GRN_OBJ_MISSING_ADD | GRN_OBJ_INVALID_ERROR;
   } else {
-    flags |= GRN_OBJ_MISSING_IGNORE | GRN_OBJ_INVALID_IGNORE;
+    flags |= GRN_OBJ_MISSING_NIL | GRN_OBJ_INVALID_ERROR;
   }
   grn_caster caster = {
     src,
