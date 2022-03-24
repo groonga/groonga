@@ -66,13 +66,16 @@ grn_report_table(grn_ctx *ctx,
 {
   grn_obj description;
   grn_obj *target;
+  grn_obj *previous_target = NULL;
 
   if (!grn_logger_pass(ctx, GRN_REPORT_INDEX_LOG_LEVEL)) {
     return;
   }
 
   GRN_TEXT_INIT(&description, 0);
-  for (target = table; target; target = grn_ctx_at(ctx, target->header.domain)) {
+  for (target = table; 
+       target; 
+       previous_target = target, target = grn_ctx_at(ctx, target->header.domain)) {
     char name[GRN_TABLE_MAX_KEY_SIZE];
     int name_size;
 
@@ -87,6 +90,12 @@ grn_report_table(grn_ctx *ctx,
       GRN_TEXT_PUT(ctx, &description, name, name_size);
       GRN_TEXT_PUTS(ctx, &description, ">");
     }
+    if (previous_target && previous_target != table) {
+      grn_obj_unref(ctx, previous_target);
+    }
+  }
+  if (previous_target && previous_target != table) {
+    grn_obj_unref(ctx, previous_target);
   }
   GRN_LOG(ctx, GRN_REPORT_INDEX_LOG_LEVEL,
           "%s[table]%s %.*s",

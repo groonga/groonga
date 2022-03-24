@@ -627,9 +627,11 @@ grn_accessor_execute(grn_ctx *ctx,
                  execute_data);
   } else {
     grn_obj *base_table = NULL;
+    bool base_table_need_unref = false;
     if (grn_obj_is_table(ctx, last_a->obj)) {
       base_table = last_a->obj;
     } else {
+      base_table_need_unref = true;
       base_table = grn_ctx_at(ctx, last_a->obj->header.domain);
     }
 
@@ -674,6 +676,9 @@ grn_accessor_execute(grn_ctx *ctx,
                                 logical_op);
     }
     grn_obj_close(ctx, base_res);
+    if (base_table_need_unref) {
+      grn_obj_unref(ctx, base_table);
+    }
   }
 
   if (n_index_datum > 0) {

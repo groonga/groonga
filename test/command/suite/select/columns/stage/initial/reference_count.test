@@ -1,0 +1,30 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR UInt32
+
+table_create Prices TABLE_PAT_KEY UInt32
+column_create Prices item_index COLUMN_INDEX Items price
+
+load --table Items
+[
+{"_key": "Book",  "price": 1000},
+{"_key": "Note",  "price": 1000},
+{"_key": "Box",   "price":  520},
+{"_key": "Pen",   "price":  510},
+{"_key": "Food",  "price":  500},
+{"_key": "Drink", "price":  300}
+]
+
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level dump
+select Items \
+  --columns[price_with_tax].stage initial \
+  --columns[price_with_tax].type UInt32 \
+  --columns[price_with_tax].flags COLUMN_SCALAR \
+  --columns[price_with_tax].value 'price * 1.08' \
+  --filter 'price >= 510' \
+  --sort_keys _id
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels dump
