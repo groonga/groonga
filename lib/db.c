@@ -7347,7 +7347,10 @@ grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
   } else if (GRN_DB_OBJP(obj)) {
     *range_id = DB_OBJ(obj)->range;
     if (grn_column_is_vector(ctx, obj)) {
-      *range_flags = GRN_OBJ_VECTOR;
+      *range_flags |= GRN_OBJ_VECTOR;
+    }
+    if (grn_obj_is_weight_vector_column(ctx, obj)) {
+      *range_flags |= GRN_OBJ_WITH_WEIGHT;
     }
   } else if (obj->header.type == GRN_ACCESSOR) {
     grn_accessor *a;

@@ -1572,7 +1572,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
           GRN_OBJ_FIN(ctx, &inspected);
           goto exit;
         }
-        if (range_flags == GRN_OBJ_VECTOR) {
+        if (range_flags & GRN_OBJ_VECTOR) {
           have_vector = GRN_TRUE;
           break;
         }
