@@ -1104,7 +1104,9 @@ grn_caster_cast_to_record(grn_ctx *ctx, grn_caster *caster)
     grn_obj *p_key = caster->src;
     grn_obj key;
     GRN_OBJ_INIT(&key, GRN_BULK, 0, table->header.domain);
-    if (caster->src->header.domain != table->header.domain) {
+    if (!grn_type_id_is_compatible(ctx,
+                                   caster->src->header.domain,
+                                   table->header.domain)) {
       grn_caster key_caster = {
         caster->src,
         &key,

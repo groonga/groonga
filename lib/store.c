@@ -4959,7 +4959,7 @@ grn_ja_cast_value_vector_var_vector(grn_ctx *ctx,
                                  &element_raw,
                                  NULL,
                                  &domain);
-    if (domain != ja->obj.range) {
+    if (!grn_type_id_is_compatible(ctx, domain, ja->obj.range)) {
       need_convert = true;
       break;
     }

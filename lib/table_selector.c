@@ -789,9 +789,9 @@ select_index_fix_column_prefix(grn_ctx *ctx,
   grn_obj *query;
   grn_table_cursor *table_cursor = NULL;
   grn_obj *index_cursor = NULL;
-  if (lexicon->header.domain == si->query->header.domain ||
-      (grn_type_id_is_text_family(ctx, lexicon->header.domain) &&
-       grn_type_id_is_text_family(ctx, si->query->header.domain))) {
+  if (grn_type_id_is_compatible(ctx,
+                                lexicon->header.domain,
+                                si->query->header.domain)) {
     query = si->query;
   } else {
     GRN_OBJ_INIT(&query_buffer,

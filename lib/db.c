@@ -3710,9 +3710,7 @@ grn_id
 grn_table_get_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key)
 {
   grn_id id = GRN_ID_NIL;
-  if (table->header.domain == key->header.domain ||
-      (grn_type_id_is_text_family(ctx, table->header.domain) &&
-       grn_type_id_is_text_family(ctx, key->header.domain))) {
+  if (grn_type_id_is_compatible(ctx, table->header.domain, key->header.domain)) {
     id = grn_table_get(ctx, table, GRN_TEXT_VALUE(key), GRN_TEXT_LEN(key));
   } else {
     grn_rc rc;
@@ -3733,9 +3731,7 @@ grn_id
 grn_table_add_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key, int *added)
 {
   grn_id id = GRN_ID_NIL;
-  if (table->header.domain == key->header.domain ||
-      (grn_type_id_is_text_family(ctx, table->header.domain) &&
-       grn_type_id_is_text_family(ctx, key->header.domain))) {
+  if (grn_type_id_is_compatible(ctx, table->header.domain, key->header.domain)) {
     id = grn_table_add(ctx, table, GRN_TEXT_VALUE(key), GRN_TEXT_LEN(key), added);
   } else {
     grn_rc rc;
@@ -5768,8 +5764,9 @@ grn_obj_search(grn_ctx *ctx, grn_obj *obj, grn_obj *query,
         uint32_t key_size = GRN_BULK_VSIZE(query);
         bool need_cast = false;
         grn_obj casted_query;
-        if (!grn_type_id_is_text_family(ctx, obj->header.domain) &&
-            obj->header.domain != query->header.domain) {
+        if (!grn_type_id_is_compatible(ctx,
+                                       obj->header.domain,
+                                       query->header.domain)) {
           need_cast = true;
           GRN_VALUE_FIX_SIZE_INIT(&casted_query, 0, obj->header.domain);
           if (grn_obj_cast(ctx, query, &casted_query, false) == GRN_SUCCESS) {
@@ -9354,9 +9351,9 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
             source);
         }
       } else {
-        if (!(lexicon_domain_id == source_type_id ||
-              (grn_type_id_is_text_family(ctx, lexicon_domain_id) &&
-               grn_type_id_is_text_family(ctx, source_type_id)))) {
+        if (!grn_type_id_is_compatible(ctx,
+                                       lexicon_domain_id,
+                                       source_type_id)) {
           grn_obj_set_info_source_invalid_lexicon_error(
             ctx,
             "index table's key must equal source type",
