@@ -108,12 +108,12 @@ logical_range_filter Logs timestamp   --filter 'message == "Shutdown"'   --min "
 #|-| [obj][open] <273>(<Logs_20150204.message>):<65>(<column:var_size>)
 #|-| [obj][close] <272>(<Logs_20150204.memo>):<65>(<column:var_size>)
 #|-| [obj][close] <273>(<Logs_20150204.message>):<65>(<column:var_size>)
-#|-| [obj][close] <275>(<Timestamp_20150204.index>):<72>(<column:index>)
-#|-| [obj][close] <274>(<Timestamp_20150204>):<49>(<table:pat_key>)
 #|-| [obj][close] <263>(<Logs_20150203>):<51>(<table:no_key>)
 #|-| [obj][close] <264>(<Logs_20150203.timestamp>):<64>(<column:fix_size>)
-#|-| [obj][close] <270>(<Logs_20150204>):<51>(<table:no_key>)
 #|-| [obj][close] <271>(<Logs_20150204.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <275>(<Timestamp_20150204.index>):<72>(<column:index>)
+#|-| [obj][close] <274>(<Timestamp_20150204>):<49>(<table:pat_key>)
+#|-| [obj][close] <270>(<Logs_20150204>):<51>(<table:no_key>)
 #>logical_range_filter --filter "message == \"Shutdown\"" --limit "4" --logical_table "Logs" --max "2015-02-05 00:00:00" --max_border "include" --min "2015-02-03 23:59:59" --min_border "include" --shard_key "timestamp"
 #:000000000000000 filter(1)[Logs_20150203]: message == "Shutdown"
 #:000000000000000 filter(3)[Logs_20150204]: message == "Shutdown"

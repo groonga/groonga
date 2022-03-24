@@ -120,7 +120,7 @@ module Groonga
           @use_range_index = parse_use_range_index(@input[:use_range_index])
           @enumerator = LogicalEnumerator.new("logical_range_filter",
                                               @input,
-                                              { :unref_immediately => true })
+                                              {:unref_immediately => true})
           @order = parse_order(@input, :order)
           @filter = @input[:filter]
           @offset = (@input[:offset] || 0).to_i
@@ -321,7 +321,6 @@ module Groonga
               if shard.last?
                 yield(current_executor)
                 @context.shift
-                break
               end
               previous_executor = current_executor
             end

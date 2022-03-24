@@ -110,12 +110,12 @@ logical_range_filter Logs   --shard_key timestamp   --columns[filtered_id].stage
 #|-| [obj][close] <267>(<Logs_20170316.price>):<64>(<column:fix_size>)
 #|-| [obj][open] <267>(<Logs_20170316.price>):<64>(<column:fix_size>)
 #|-| [obj][close] <267>(<Logs_20170316.price>):<64>(<column:fix_size>)
-#|-| [obj][close] <273>(<Times.logs_20170316>):<72>(<column:index>)
-#|-| [obj][close] <271>(<Times>):<49>(<table:pat_key>)
 #|-| [obj][close] <262>(<Logs_20170315>):<51>(<table:no_key>)
 #|-| [obj][close] <263>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
 #|-| [obj][close] <265>(<Logs_20170316>):<51>(<table:no_key>)
 #|-| [obj][close] <266>(<Logs_20170316.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <273>(<Times.logs_20170316>):<72>(<column:index>)
+#|-| [obj][close] <271>(<Times>):<49>(<table:pat_key>)
 #>logical_range_filter --columns[filtered_id].flags "COLUMN_SCALAR" --columns[filtered_id].stage "filtered" --columns[filtered_id].type "UInt32" --columns[filtered_id].value "_id" --filter "price <= 900" --limit "3" --logical_table "Logs" --offset "1" --output_columns "_id,filtered_id,price" --shard_key "timestamp"
 #:000000000000000 filter(2): Logs_20170315.price less_equal 900
 #:000000000000000 columns[filtered_id](2)

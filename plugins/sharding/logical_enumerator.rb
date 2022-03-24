@@ -24,6 +24,7 @@ module Groonga
 
       def unref
         @shards.each(&:unref)
+        @shards.clear
       end
 
       private
@@ -70,43 +71,43 @@ module Groonga
         unref_immediately = @options.fetch(:unref_immediately, false)
 
         shards = [nil]
-        context.database.each_name(:prefix => prefix,
-                                   :order_by => :key,
-                                   :order => order) do |name|
-          shard_range_raw = name[prefix.size..-1]
+        begin
+          context.database.each_name(:prefix => prefix,
+                                     :order_by => :key,
+                                     :order => order) do |name|
+            shard_range_raw = name[prefix.size..-1]
 
-          case shard_range_raw
-          when /\A(\d{4})(\d{2})\z/
-            shard_range_data = ShardRangeData.new($1.to_i, $2.to_i, nil)
-          when /\A(\d{4})(\d{2})(\d{2})\z/
-            shard_range_data = ShardRangeData.new($1.to_i, $2.to_i, $3.to_i)
-          else
-            next
+            case shard_range_raw
+            when /\A(\d{4})(\d{2})\z/
+              shard_range_data = ShardRangeData.new($1.to_i, $2.to_i, nil)
+            when /\A(\d{4})(\d{2})(\d{2})\z/
+              shard_range_data = ShardRangeData.new($1.to_i, $2.to_i, $3.to_i)
+            else
+              next
+            end
+
+            shard = Shard.new(name, @shard_key_name, shard_range_data)
+            previous_shard = shards.last
+            if previous_shard
+              shard.previous_shard = previous_shard
+              previous_shard.next_shard = shard
+            end
+            shards << shard
+            @shards << shard
+            next if shards.size < 3
+            yield(*shards)
+            shifted_shard = shards.shift
+            next unless unref_immediately
+            next if shifted_shard.nil?
+            shifted_shard.unref
+            @shards.shift
           end
 
-          shard = Shard.new(name, @shard_key_name, shard_range_data)
-          previous_shard = shards.last
-          if previous_shard
-            shard.previous_shard = previous_shard
-            previous_shard.next_shard = shard
+          if shards.size == 2
+            yield(shards[0], shards[1], nil)
           end
-          shards << shard
-          @shards << shard
-          next if shards.size < 3
-          yield(*shards)
-          shifted_shard = shards.shift
-          next unless unref_immediately
-          next if shifted_shard.nil?
-          shifted_shard.unref
-          @shards.shift
-        end
-
-        if shards.size == 2
-          yield(shards[0], shards[1], nil)
-        end
-        if unref_immediately
-          @shards.each(&:unref)
-          @shards.clear
+        ensure
+          unref if unref_immediately
         end
       end
 
