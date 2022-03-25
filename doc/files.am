@@ -933,7 +933,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/index.rst \
 	$(top_srcdir)/doc/source/install.rst \
 	$(top_srcdir)/doc/source/install/almalinux.rst \
-	$(top_srcdir)/doc/source/install/amazonlinux.rst \
+	$(top_srcdir)/doc/source/install/amazon-linux.rst \
 	$(top_srcdir)/doc/source/install/centos.rst \
 	$(top_srcdir)/doc/source/install/debian.rst \
 	$(top_srcdir)/doc/source/install/docker.rst \
@@ -2139,7 +2139,7 @@ source_files_relative_from_doc_dir = \
 	source/index.rst \
 	source/install.rst \
 	source/install/almalinux.rst \
-	source/install/amazonlinux.rst \
+	source/install/amazon-linux.rst \
 	source/install/centos.rst \
 	source/install/debian.rst \
 	source/install/docker.rst \
@@ -2437,6 +2437,7 @@ po_files = \
 	index.po \
 	install.po \
 	install/almalinux.po \
+	install/amazon-linux.po \
 	install/amazonlinux.po \
 	install/centos.po \
 	install/debian.po \
@@ -2732,6 +2733,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/index.po \
 	LC_MESSAGES/install.po \
 	LC_MESSAGES/install/almalinux.po \
+	LC_MESSAGES/install/amazon-linux.po \
 	LC_MESSAGES/install/amazonlinux.po \
 	LC_MESSAGES/install/centos.po \
 	LC_MESSAGES/install/debian.po \
@@ -3027,6 +3029,7 @@ edit_po_files = \
 	index.edit \
 	install.edit \
 	install/almalinux.edit \
+	install/amazon-linux.edit \
 	install/amazonlinux.edit \
 	install/centos.edit \
 	install/debian.edit \
@@ -3322,6 +3325,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/index.edit \
 	LC_MESSAGES/install.edit \
 	LC_MESSAGES/install/almalinux.edit \
+	LC_MESSAGES/install/amazon-linux.edit \
 	LC_MESSAGES/install/amazonlinux.edit \
 	LC_MESSAGES/install/centos.edit \
 	LC_MESSAGES/install/debian.edit \
@@ -3617,6 +3621,7 @@ mo_files = \
 	index.mo \
 	install.mo \
 	install/almalinux.mo \
+	install/amazon-linux.mo \
 	install/amazonlinux.mo \
 	install/centos.mo \
 	install/debian.mo \
@@ -3912,6 +3917,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/index.mo \
 	LC_MESSAGES/install.mo \
 	LC_MESSAGES/install/almalinux.mo \
+	LC_MESSAGES/install/amazon-linux.mo \
 	LC_MESSAGES/install/amazonlinux.mo \
 	LC_MESSAGES/install/centos.mo \
 	LC_MESSAGES/install/debian.mo \
@@ -4247,7 +4253,7 @@ html_files_relative_from_locale_dir = \
 	html/index.html \
 	html/install.html \
 	html/install/almalinux.html \
-	html/install/amazonlinux.html \
+	html/install/amazon-linux.html \
 	html/install/centos.html \
 	html/install/debian.html \
 	html/install/docker.html \

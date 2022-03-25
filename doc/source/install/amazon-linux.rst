@@ -1,7 +1,7 @@
 .. -*- rst -*-
 
 Amazon Linux
-===========
+============
 
 This section describes how to install Groonga related RPM packages on
 AmazonLinux. You can install them by ``yum``.
