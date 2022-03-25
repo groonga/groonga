@@ -114,6 +114,7 @@ module Groonga
         return table.size unless @right.is_a?(Constant)
 
         is_table_search = false
+        index_column_need_unref = false
         column = @left.column
         value = @right.value
         case column
@@ -137,36 +138,42 @@ module Groonga
           return table.size if index_info.nil?
 
           index_column = index_info.index
+          index_column_need_unref = true
           lexicon = index_column.lexicon
         end
-        n_terms = lexicon.size
-        return 0 if n_terms.zero?
 
-        options = {
-          limit: sampling_cursor_limit(n_terms),
-        }
-        case @operator
-        when Operator::LESS
-          options[:max] = value
-          options[:flags] = TableCursorFlags::LT
-        when Operator::LESS_EQUAL
-          options[:max] = value
-          options[:flags] = TableCursorFlags::LE
-        when Operator::GREATER
-          options[:min] = value
-          options[:flags] = TableCursorFlags::GT
-        when Operator::GREATER_EQUAL
-          options[:min] = value
-          options[:flags] = TableCursorFlags::GE
-        end
-        TableCursor.open(lexicon, options) do |cursor|
-          if is_table_search
-            size = 1
-          else
-            size = index_column.estimate_size(:lexicon_cursor => cursor)
+        begin
+          n_terms = lexicon.size
+          return 0 if n_terms.zero?
+
+          options = {
+            limit: sampling_cursor_limit(n_terms),
+          }
+          case @operator
+          when Operator::LESS
+            options[:max] = value
+            options[:flags] = TableCursorFlags::LT
+          when Operator::LESS_EQUAL
+            options[:max] = value
+            options[:flags] = TableCursorFlags::LE
+          when Operator::GREATER
+            options[:min] = value
+            options[:flags] = TableCursorFlags::GT
+          when Operator::GREATER_EQUAL
+            options[:min] = value
+            options[:flags] = TableCursorFlags::GE
           end
-          size += 1 if cursor.next != ID::NIL
-          size
+          TableCursor.open(lexicon, options) do |cursor|
+            if is_table_search
+              size = 1
+            else
+              size = index_column.estimate_size(:lexicon_cursor => cursor)
+            end
+            size += 1 if cursor.next != ID::NIL
+            size
+          end
+        ensure
+          index_column.unref if index_column_need_unref
         end
       end
 
