@@ -22,6 +22,7 @@ size data.
    install/ubuntu
    install/centos
    install/almalinux
+   install/amazon-linux
    install/fedora
    install/solaris
    install/docker
