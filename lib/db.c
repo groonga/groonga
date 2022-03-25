@@ -13487,7 +13487,12 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
         if (obj->header.type != GRN_VECTOR) { grn_bulk_fin(ctx, obj); }
         obj->header.type = GRN_VECTOR;
         if (obj->u.v.body) {
-          grn_obj_reinit(ctx, obj->u.v.body, domain, 0);
+          if (obj->header.impl_flags & GRN_OBJ_DO_SHALLOW_COPY) {
+            obj->u.v.body = NULL;
+            obj->header.impl_flags &= ~GRN_OBJ_DO_SHALLOW_COPY;
+          } else {
+            grn_obj_reinit(ctx, obj->u.v.body, domain, 0);
+          }
         }
         obj->u.v.n_sections = 0;
       } else {
