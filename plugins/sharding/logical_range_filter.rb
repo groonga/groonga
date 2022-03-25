@@ -999,14 +999,15 @@ module Groonga
 
         def detect_window
           # TODO: return nil if result_set is small enough
+          tag = "[logical_range_filter]"
           windows = []
           @context.time_classify_types.each do |type|
             case type
             when "minute", "second"
-              windows << Window.new(@context, @shard, @shard_range, :hour, 1, "[logical_range_filter]")
+              windows << Window.new(@context, @shard, @shard_range, :hour, 1, tag)
             when "day", "hour"
               unless @shard_range.is_a?(LogicalEnumerator::DayShardRange)
-                windows << Window.new(@context, @shard, @shard_range, :day, 1, "[logical_range_filter]")
+                windows << Window.new(@context, @shard, @shard_range, :day, 1, tag)
               end
             end
           end
