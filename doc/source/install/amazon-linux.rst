@@ -4,10 +4,10 @@ Amazon Linux
 ============
 
 This section describes how to install Groonga related RPM packages on
-AmazonLinux. You can install them by ``yum``.
+Amazon Linux. You can install them by ``yum``.
 
-AmazonLinux 2
--------------
+Amazon Linux 2
+--------------
 
 Install::
 
