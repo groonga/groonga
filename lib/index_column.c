@@ -1374,16 +1374,12 @@ grn_index_column_is_usable_range(grn_ctx *ctx,
   case GRN_TABLE_DAT_KEY :
     break;
   default :
-    if (grn_enable_reference_count) {
-      grn_obj_unlink(ctx, lexicon);
-    }
+    grn_obj_unref(ctx, lexicon);
     return false;
   }
 
   grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
-  if (grn_enable_reference_count) {
-    grn_obj_unlink(ctx, lexicon);
-  }
+  grn_obj_unref(ctx, lexicon);
   return tokenizer == NULL;
 }
 
