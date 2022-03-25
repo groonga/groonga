@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2015  Brazil
-  Copyright(C) 2018-2020  Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2022  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -378,8 +378,8 @@ grn_index_column_diff_init_progress(grn_ctx *ctx,
   data->progress.i = 0;
   data->progress.interval = 10000;
   data->progress.log_level = GRN_LOG_DEBUG;
-  data->progress.n_records_digits =
-    ceil(log10(data->progress.n_records + 1));
+  double n_records_digits = ceil(log10(data->progress.n_records + 1));
+  data->progress.n_records_digits = (int)n_records_digits;
   grn_timeval_now(ctx, &(data->progress.start_time));
   data->progress.previous_time = data->progress.start_time;
 }
@@ -411,7 +411,7 @@ grn_index_column_diff_format_memory(grn_ctx *ctx,
 {
   if (usage < 1024) {
     *unit = "B";
-    return usage;
+    return (double)usage;
   } else if (usage < (1024 * 1024)) {
     *unit = "KiB";
     return usage / 1024.0;
@@ -548,7 +548,8 @@ grn_index_column_diff_token_id_width(grn_ctx *ctx,
   if (n_tokens == 0) {
     return 0;
   } else {
-    return floor(log10(n_tokens)) + 1;
+    double width = floor(log10(n_tokens)) + 1;
+    return (int)width;
   }
 }
 
