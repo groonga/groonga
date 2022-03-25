@@ -14155,7 +14155,7 @@ merge_hit_blocks(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       ii_buffer->data_vectors[j].data_size = (uint32_t)nrecs;
       ii_buffer->data_vectors[j++].flags = f_d;
       if ((flags & GRN_OBJ_WITH_SECTION)) {
-        ii_buffer->data_vectors[j].data_size = nrecs;
+        ii_buffer->data_vectors[j].data_size = (uint32_t)nrecs;
         ii_buffer->data_vectors[j++].flags = f_s;
       }
       ii_buffer->data_vectors[j].data_size = (uint32_t)nrecs;
