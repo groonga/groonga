@@ -2093,15 +2093,15 @@ get_weight(grn_ctx *ctx, grn_expr_code *ec, uint32_t *offset)
       *offset = 2;
     }
     if (ec[1].value->header.domain == GRN_DB_INT32) {
-      return GRN_INT32_VALUE(ec[1].value);
+      return (float)GRN_INT32_VALUE(ec[1].value);
     } else if (ec[1].value->header.domain == GRN_DB_UINT32) {
-      return GRN_UINT32_VALUE(ec[1].value);
+      return (float)GRN_UINT32_VALUE(ec[1].value);
     } else if (ec[1].value->header.domain == GRN_DB_FLOAT32) {
       return GRN_FLOAT32_VALUE(ec[1].value);
     } else if (ec[1].value->header.domain == GRN_DB_FLOAT) {
-      return GRN_FLOAT_VALUE(ec[1].value);
+      return (float)GRN_FLOAT_VALUE(ec[1].value);
     } else {
-      float weight = 1;
+      float weight = 1.0;
       grn_obj weight_buffer;
       GRN_FLOAT32_INIT(&weight_buffer, 0);
       if (!grn_obj_cast(ctx, ec[1].value, &weight_buffer, GRN_FALSE)) {
@@ -2114,7 +2114,7 @@ get_weight(grn_ctx *ctx, grn_expr_code *ec, uint32_t *offset)
     if (offset) {
       *offset = 0;
     }
-    return 1;
+    return 1.0;
   }
 }
 
@@ -2861,22 +2861,22 @@ static float
 grn_weight_bulk_get(grn_ctx *ctx, grn_obj *bulk)
 {
   if (!bulk) {
-    return 0;
+    return 0.0;
   }
   if (bulk->header.domain == GRN_DB_INT32) {
-    return GRN_INT32_VALUE(bulk);
+    return (float)GRN_INT32_VALUE(bulk);
   } else if (bulk->header.domain == GRN_DB_UINT32) {
-    return GRN_UINT32_VALUE(bulk);
+    return (float)GRN_UINT32_VALUE(bulk);
   } else if (bulk->header.domain == GRN_DB_INT64) {
-    return GRN_INT64_VALUE(bulk);
+    return (float)GRN_INT64_VALUE(bulk);
   } else if (bulk->header.domain == GRN_DB_UINT64) {
-    return GRN_UINT64_VALUE(bulk);
+    return (float)GRN_UINT64_VALUE(bulk);
   } else if (bulk->header.domain == GRN_DB_FLOAT32) {
     return GRN_FLOAT32_VALUE(bulk);
   } else if (bulk->header.domain == GRN_DB_FLOAT) {
-    return GRN_FLOAT_VALUE(bulk);
+    return (float)GRN_FLOAT_VALUE(bulk);
   } else {
-    return 0;
+    return 0.0;
   }
 }
 
