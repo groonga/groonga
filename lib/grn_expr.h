@@ -41,8 +41,8 @@ struct _grn_expr {
   grn_obj *values;
   grn_expr_code *codes;
   uint32_t nconsts;
-  uint32_t values_curr;
-  uint32_t values_tail;
+  ptrdiff_t values_curr;
+  ptrdiff_t values_tail;
   uint32_t values_size;
   uint32_t codes_curr;
   uint32_t codes_size;
