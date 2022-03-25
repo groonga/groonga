@@ -1555,7 +1555,7 @@ grn_io_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
       if (is_large_mode) {
         header->curr_key_large = key_offset;
       } else {
-        header->curr_key_normal = key_offset;
+        header->curr_key_normal = (uint32_t)key_offset;
       }
     }
     if (is_large_mode) {
@@ -1563,7 +1563,7 @@ grn_io_hash_entry_put_key(grn_ctx *ctx, grn_hash *hash,
       io_entry_large->key.offset = key_offset;
     } else {
       header->curr_key_normal += key_size;
-      io_entry_normal->key.offset = key_offset;
+      io_entry_normal->key.offset = (uint32_t)key_offset;
     }
   }
 
@@ -3620,7 +3620,7 @@ grn_hash_add_table_cursor(grn_ctx *ctx,
   }
 
   grn_posting_internal posting = {0};
-  posting.weight_float = score;
+  posting.weight_float = (float)score;
   posting.scale = 1.0;
   while ((posting.rid = grn_table_cursor_next(ctx, cursor))) {
     rc = grn_hash_add_record(ctx, hash, &posting, op, tag);
@@ -3663,8 +3663,8 @@ grn_hash_add_index_cursor(grn_ctx *ctx,
   grn_posting *posting;
   while ((posting = grn_index_cursor_next(ctx, cursor, &term_id))) {
     grn_posting_internal posting_new = *((grn_posting_internal *)posting);
-    posting_new.weight_float += additional_score;
-    posting_new.weight_float *= weight;
+    posting_new.weight_float += (float)additional_score;
+    posting_new.weight_float *= (float)weight;
     rc = grn_hash_add_record(ctx, hash, &posting_new, op, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -3704,8 +3704,8 @@ grn_hash_add_ii_cursor(grn_ctx *ctx,
   grn_posting *posting;
   while ((posting = grn_ii_cursor_next(ctx, cursor))) {
     grn_posting_internal posting_new = *((grn_posting_internal *)posting);
-    posting_new.weight_float += additional_score;
-    posting_new.weight_float *= weight;
+    posting_new.weight_float += (float)additional_score;
+    posting_new.weight_float *= (float)weight;
     rc = grn_hash_add_record(ctx, hash, &posting_new, op, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -3746,7 +3746,7 @@ grn_hash_add_ii_select_cursor(grn_ctx *ctx,
     posting_new.rid = posting->rid;
     posting_new.sid = posting->sid;
     posting_new.pos = posting->pos;
-    posting_new.weight_float = posting->score;
+    posting_new.weight_float = (float)(posting->score);
     posting_new.scale = 1.0;
     rc = grn_hash_add_record(ctx, hash, &posting_new, op, tag);
     if (rc != GRN_SUCCESS) {
@@ -5097,7 +5097,7 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
         if (grn_io_hash_reuse_entry(ctx,
                                     hash,
                                     entry.record_id,
-                                    entry.key.content.uint64,
+                                    (uint32_t)(entry.key.content.uint64),
                                     index,
                                     entry.found_garbage,
                                     tag)) {
@@ -5122,7 +5122,7 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
                                 hash,
                                 hash_entry,
                                 entry.next_garbage_record_id,
-                                entry.key.content.uint64,
+                                (uint32_t)(entry.key.content.uint64),
                                 tag);
       }
       break;
@@ -5148,7 +5148,7 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
         if (grn_hash_is_large_total_key_size(ctx, hash)) {
           hash->header.common->curr_key_large = entry.key_offset;
         } else {
-          hash->header.common->curr_key_normal = entry.key_offset;
+          hash->header.common->curr_key_normal = (uint32_t)(entry.key_offset);
         }
         rc = grn_hash_entry_put_key(ctx,
                                     hash,
@@ -5188,7 +5188,7 @@ grn_hash_wal_recover(grn_ctx *ctx, grn_hash *hash)
                                     "failed to refer hash entry");
           break;
         }
-        data.key_size = entry.key.content.uint64;
+        data.key_size = (uint32_t)(entry.key.content.uint64);
         grn_id *garbages;
         if (GRN_HASH_IS_LARGE_KEY(hash)) {
           garbages = hash->header.large->garbages;
