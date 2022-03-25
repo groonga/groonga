@@ -33,11 +33,152 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 12.0.1 - 2022-02-28"
-msgstr "12.0.1リリース - 2022-02-28"
+msgid "Release 12.0.2 - 2022-03-29"
+msgstr "12.0.2リリース - 2022-03-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[:doc:`reference/commands/logical_range_filter`] Added support for reducing "
+"reference immediately after processing a shard."
+msgstr ""
+"[:doc:`/reference/commands/logical_range_filter`] シャードを処理した直後に参"
+"照を減らすようにしました。"
+
+msgid ""
+"Groonga had reduced reference all shards when the finish of "
+"``logical_range_filter`` until now. Groonga reduces reference immediately "
+"after processing a shard by this feature. The usage of memory may reduce "
+"while ``logical_range_filter`` executes by this feature."
+msgstr ""
+"今までGroongaは、 ``logical_range_filter`` 終了時にすべてのシャードの参照を減"
+"らしていました。この機能によって、Groongaは、シャードを処理した後すぐに参照を"
+"減らします。この機能によって、 ``logical_range_filter`` 実行中のメモリー使用"
+"量を削減できることがあります。"
+
+msgid ""
+"This feature is only valid for the reference count mode. We can valid the "
+"reference count mode by setting ``GRN_ENABLE_REFERENCE_COUNT=yes``."
+msgstr ""
+"この機能は参照カウントモードのときのみ有効です。"
+"``GRN_ENABLE_REFERENCE_COUNT=yes`` と設定することで、参照カウントモードを有効"
+"にできます。"
+
+msgid ""
+"Normally, Groonga keep objects(tables and column and index, and so on) that "
+"Groonga opened even once on memory. However, if we open many objects, "
+"Groonga uses much memory. In the reference count mode release objects that "
+"are not referenced anywhere from memory. The usage of memory of Groonga may "
+"reduce by this."
+msgstr ""
+"通常、Groongaは一度でも開いたオブジェクト(テーブル、カラム、インデックスなど)"
+"をメモリ上に保持し続けますが、たくさんのオブジェクトを開いた場合、Groongaはた"
+"くさんのメモリーを使用します。参照カウントモードでは、どこからも参照されてな"
+"いオブジェクトをメモリーから開放します。これにより、Groongaのメモリー使用量が"
+"減ることがあります。"
+
+msgid "We increased the stability of the feature of recovering on crashes."
+msgstr "クラッシュリカバリー機能の安定性が向上しました。"
+
+msgid ""
+"This feature is experimental and it is disabled by default. Therefore, the "
+"following improvements are no influence on ordinary users."
+msgstr ""
+"この機能は実験的で、デフォルトで無効です。したがって、以下の改良は。一般的な"
+"ユーザーには影響ありません。"
+
+msgid "We fixed a bug that the index was broken when Groonga crashed."
+msgstr ""
+"Groongaがクラッシュしたときにインデックスが破損する問題を修正しました。"
+
+msgid "We fixed a bug that might remain a lock."
+msgstr "ロックが残留する問題を修正しました。"
+
+msgid "We fixed a bug that Groonga crashed while it was recovering the crash."
+msgstr "クラッシュリカバリー中にGroongaがクラッシュする問題を修正しました。"
+
+msgid ""
+"Improved performance for mmap if anonymous mmap available.[GitHub:MariaDB/"
+"server#1999][Suggested by David CARLIER]"
+msgstr ""
+"無名マッピングが利用可能な時のmmapのパフォーマンスを向上しました。[GitHub:"
+"MariaDB/server#1999][David CARLIERさんの提案]"
+
+msgid "The performance of Groonga is improved a bit by this improvement."
+msgstr "この改善によって、Groongaのパフォーマンスが少し向上します。"
+
+msgid ""
+"[:doc:`/reference/indexing`] Added support for the static index construction "
+"against the following types of columns."
+msgstr ""
+"[:doc:`/reference/indexing`] 以下のタイプのカラムで静的インデックス構築をサ"
+"ポートしました。サポートしました。"
+
+msgid "The non-reference vector column with weight"
+msgstr "非参照重み付きベクターカラム"
+
+msgid "The reference vector column with weight"
+msgstr "参照重み付きベクターカラム"
+
+msgid "The reference scalar column"
+msgstr "参照スカラーカラム"
+
+msgid ""
+"These columns have not supported the static index construction until now. "
+"Therefore, the time of making the index has longed even if we set the index "
+"against these columns after we loaded data into them. By this improvement, "
+"the time of making the index is short in this case."
+msgstr ""
+"これらのカラムは、いままで、静的インデックス構築をサポートしていませんでし"
+"た。そのため、これらのカラムにデータをロードしたあとに、インデックスを構築し"
+"ても、インデックスの構築時間が長くなっていました。この改良によって、このケー"
+"スでインデックス構築時間が短くなります。"
+
+msgid "We provided the package of Amazon Linux 2."
+msgstr "Amazon Linux 2向けのパッケージを提供するようにしました。"
+
+msgid "[Windows] Dropped support for building with Visual Studio 2017."
+msgstr "[Windows] Visual Studio 2017 でのビルドをやめました。"
+
+msgid "Because we could not use windows-2016 image on GitHub Actions."
+msgstr "GitHub Actionsで windows-2016 のイメージが使えなくなったためです。"
+
+msgid "Known Issues"
+msgstr "既知の問題"
+
+msgid ""
+"Currently, Groonga has a bug that there is possible that data is corrupt "
+"when we execute many additions, delete, and update data to vector column."
+msgstr ""
+"現在Groongaには、ベクターカラムに対してデータを大量に追加、削除、更新した際に"
+"データが破損することがある問題があります。"
+
+msgid ""
+"``*<`` and ``*>`` only valid when we use ``query()`` the right side of "
+"filter condition. If we specify as below, ``*<`` and ``*>`` work as ``&&``."
+msgstr ""
+"``*<`` と ``*>`` は、filter条件の右辺に ``query()`` を使う時のみ有効です。も"
+"し、以下のように指定した場合、 ``*<`` と ``*>`` は ``&&`` として機能します。"
+
+msgid "``'content @ \"Groonga\" *< content @ \"Mroonga\"'``"
+msgstr ""
+
+msgid ""
+"Groonga may not return records that should match caused by "
+"``GRN_II_CURSOR_SET_MIN_ENABLE``."
+msgstr ""
+"``GRN_II_CURSOR_SET_MIN_ENABLE`` が原因でマッチするはずのレコードを返さないこ"
+"とがあります。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "David CARLIER"
+msgstr "David CARLIERさん"
+
+msgid "Release 12.0.1 - 2022-02-28"
+msgstr "12.0.1リリース - 2022-02-28"
 
 msgid ""
 "[:doc:`/reference/commands/query_expand`] Added a support for synonym group."
@@ -181,33 +322,6 @@ msgstr "修正"
 msgid "[Windows] Fixed a crash bug when Groonga output backtrace."
 msgstr ""
 "[Windows] Groongaがバックトレースを出力時にクラッシュする問題を修正しました。"
-
-msgid "Known Issues"
-msgstr "既知の問題"
-
-msgid ""
-"Currently, Groonga has a bug that there is possible that data is corrupt "
-"when we execute many additions, delete, and update data to vector column."
-msgstr ""
-"現在Groongaには、ベクターカラムに対してデータを大量に追加、削除、更新した際に"
-"データが破損することがある問題があります。"
-
-msgid ""
-"``*<`` and ``*>`` only valid when we use ``query()`` the right side of "
-"filter condition. If we specify as below, ``*<`` and ``*>`` work as ``&&``."
-msgstr ""
-"``*<`` と ``*>`` は、filter条件の右辺に ``query()`` を使う時のみ有効です。も"
-"し、以下のように指定した場合、 ``*<`` と ``*>`` は ``&&`` として機能します。"
-
-msgid "``'content @ \"Groonga\" *< content @ \"Mroonga\"'``"
-msgstr ""
-
-msgid ""
-"Groonga may not return records that should match caused by "
-"``GRN_II_CURSOR_SET_MIN_ENABLE``."
-msgstr ""
-"``GRN_II_CURSOR_SET_MIN_ENABLE`` が原因でマッチするはずのレコードを返さないこ"
-"とがあります。"
 
 msgid "Release 12.0.0 - 2022-02-09"
 msgstr "12.0.0リリース - 2022-02-09"
@@ -651,9 +765,6 @@ msgstr ""
 
 msgid "groonga-x.x.x-x64.exe"
 msgstr ""
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "naoa"
 msgstr "naoaさん"

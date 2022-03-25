@@ -5,6 +5,74 @@
 News
 ====
 
+.. _release-12-0-2:
+
+Release 12.0.2 - 2022-03-29
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`reference/commands/logical_range_filter`] Added support for reducing reference immediately after processing a shard.
+
+  Groonga had reduced reference all shards when the finish of ``logical_range_filter`` until now.
+  Groonga reduces reference immediately after processing a shard by this feature.
+  The usage of memory may reduce while ``logical_range_filter`` executes by this feature.  
+
+  This feature is only valid for the reference count mode.
+  We can valid the reference count mode by setting ``GRN_ENABLE_REFERENCE_COUNT=yes``.
+
+  Normally, Groonga keep objects(tables and column and index, and so on) that Groonga opened even once on memory.
+  However, if we open many objects, Groonga uses much memory.
+  In the reference count mode release objects that are not referenced anywhere from memory.
+  The usage of memory of Groonga may reduce by this.
+
+* We increased the stability of the feature of recovering on crashes.
+
+  This feature is experimental and it is disabled by default.
+  Therefore, the following improvements are no influence on ordinary users.
+
+  * We fixed a bug that the index was broken when Groonga crashed.
+  * We fixed a bug that might remain a lock.
+  * We fixed a bug that Groonga crashed while it was recovering the crash.
+
+* Improved performance for mmap if anonymous mmap available.[GitHub:MariaDB/server#1999][Suggested by David CARLIER]
+
+  The performance of Groonga is improved a bit by this improvement.
+
+* [:doc:`/reference/indexing`] Added support for the static index construction against the following types of columns.
+
+  * The non-reference vector column with weight
+  * The reference vector column with weight
+  * The reference scalar column
+
+  These columns have not supported the static index construction until now.
+  Therefore, the time of making the index has longed even if we set the index against these columns after we loaded data into them.
+  By this improvement, the time of making the index is short in this case.
+
+* We provided the package of Amazon Linux 2.
+
+* [Windows] Dropped support for building with Visual Studio 2017.
+
+  Because we could not use windows-2016 image on GitHub Actions.
+
+Known Issues
+------------
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
+
+Thanks
+------
+
+* David CARLIER
+
 .. _release-12-0-1:
 
 Release 12.0.1 - 2022-02-28
