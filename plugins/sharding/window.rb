@@ -3,7 +3,7 @@ module Groonga
     class Window
       include Comparable
       include Loggable
-      
+
       attr_reader :unit
       attr_reader :step
       def initialize(context, shard, shard_range, unit, step, tag)
@@ -13,8 +13,8 @@ module Groonga
         @unit = unit
         @step = step
         @tag = tag
-        @between = Groonga::Context.instance["between"]  
-        @target_range = @context.enumerator.target_range  
+        @between = Groonga::Context.instance["between"]
+        @target_range = @context.enumerator.target_range
         case @unit
         when :day
           @step_second = (60 * 60 * 24) * @step
@@ -24,7 +24,7 @@ module Groonga
           raise InvalidArgument "Unexpected unit: #{@unit.inspect}"
         end
       end
-    
+
       def <=>(other)
         case @unit
         when other.unit
@@ -35,7 +35,7 @@ module Groonga
           -1
         end
       end
-    
+
       def each(table)
         min = create_min_edge
         max = create_max_edge(min)
@@ -79,7 +79,7 @@ module Groonga
           shard_key.close
         end
       end
-    
+
       private
       def create_min_edge
         min = @target_range.min
@@ -105,7 +105,7 @@ module Groonga
         WindowEdge.new(year, month, day, hour, minute, second, microsecond,
                        border)
       end
-    
+
       def create_max_edge(min)
         max = @target_range.max
         if max
@@ -149,7 +149,7 @@ module Groonga
           WindowEdge.new(year, month, day, hour, minute, second, microsecond,
                          border)
       end
-    
+
       def select_by_range(table, shard_key, min, max)
         expression = Expression.create(table)
         begin
@@ -166,7 +166,7 @@ module Groonga
           expression.close
         end
       end
-    
+
       def inspect_range(min, max)
         range = ""
         if min.border == :include
@@ -185,10 +185,10 @@ module Groonga
         range
       end
     end
-    
+
     class WindowEdge
       include Comparable
-      
+
       attr_reader :year
       attr_reader :month
       attr_reader :day
@@ -208,7 +208,7 @@ module Groonga
         @microsecond = microsecond
         @border = border
       end
-      
+
       def to_s
         format = "%04d/%02d/%02d %02d:%02d:%02d"
         format_values = [@year, @month, @day, @hour, @minute, @second]
@@ -218,15 +218,15 @@ module Groonga
         end
         format % format_values
       end
-      
+
       def to_time
         Time.local(@year, @month, @day, @hour, @minute, @second, @microsecond)
       end
-      
+
       def values
         [@year, @month, @day, @hour, @minute, @second, @microsecond]
       end
-      
+
       def <=>(other)
         (values + [@border == :include ? 1 : 0]) <=>
           (other.values + [other.border == :include ? 1 : 0])
