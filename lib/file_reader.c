@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2015 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2015  Brazil
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -111,7 +111,7 @@ grn_file_reader_read_line(grn_ctx *ctx,
     }
     if (!fgets(GRN_BULK_CURR(buffer), BUFFER_SIZE, reader->file)) {
       if (errno == EAGAIN || errno == EWOULDBLOCK) {
-        int fd = fileno(reader->file);
+        int fd = grn_fileno(reader->file);
         int n_fds = 1;
         fd_set read_fds;
         FD_ZERO(&read_fds);
