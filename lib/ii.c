@@ -6841,7 +6841,7 @@ grn_ii_cursor_open(grn_ctx *ctx, grn_ii *ii, grn_id tid,
       }
       c->pb.tf = 1;
       c->pb.weight = 0;
-      c->pb.weight_float = c->pb.weight;
+      c->pb.weight_float = (float)(c->pb.weight);
       c->pb.pos = a[1];
       c->pb.scale = c->scale;
     } else {
@@ -7067,7 +7067,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
             } else {
               c->pc.weight = 0;
             }
-            c->pc.weight_float = c->pc.weight;
+            c->pc.weight_float = (float)(c->pc.weight);
             c->pc.pos = 0;
             c->pc.scale = grn_ii_cursor_resolve_scale(ctx, c, c->pc.sid);
             /*
@@ -7354,7 +7354,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx, grn_ii_cursor *c,
             } else {
               c->pb.weight = 0;
             }
-            c->pb.weight_float = c->pb.weight;
+            c->pb.weight_float = (float)(c->pb.weight);
             c->pb.rest = c->pb.tf;
             c->pb.pos = 0;
           } else {
@@ -8174,7 +8174,10 @@ grn_vector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
                 return ctx->rc;
               }
             }
-            if (grn_ii_updspec_add(ctx, *u, token_cursor->pos, v->weight)) {
+            if (grn_ii_updspec_add(ctx,
+                                   *u,
+                                   token_cursor->pos,
+                                   (int32_t)(v->weight))) {
               GRN_DEFINE_NAME(ii);
               MERR("[ii][update][spec] failed to add to update spec: "
                    "<%.*s>: "
@@ -9025,7 +9028,7 @@ token_info_open(grn_ctx *ctx,
                                data->ii,
                                *tp,
                                0,
-                               ri->score - 1,
+                               (int)(ri->score - 1),
                                data->previous_min);
               ti->ntoken++;
               ti->size += s;
@@ -10486,7 +10489,7 @@ get_weight(grn_ctx *ctx, grn_ii_select_data *data)
   case GRN_WV_STATIC :
     if (data->sid <= (uint32_t)(data->optarg->vector_size)) {
       if (data->optarg->weight_vector) {
-        return data->optarg->weight_vector[data->sid - 1];
+        return (float)(data->optarg->weight_vector[data->sid - 1]);
       } else {
         return data->optarg->weight_vector_float[data->sid - 1];
       }
@@ -10503,16 +10506,19 @@ get_weight(grn_ctx *ctx, grn_ii_select_data *data)
     }
     */
     /* todo : cast */
-    return data->optarg->func(ctx,
-                              data->result_set,
-                              (void *)(intptr_t)(data->rid),
-                              data->sid,
-                              data->optarg->func_arg);
+    {
+      int weight = data->optarg->func(ctx,
+                                      data->result_set,
+                                      (void *)(intptr_t)(data->rid),
+                                      data->sid,
+                                      data->optarg->func_arg);
+      return (float)weight;
+    }
   case GRN_WV_CONSTANT :
     if (data->optarg->vector_size < 0) {
       return data->optarg->weight_float;
     } else {
-      return data->optarg->vector_size;
+      return (float)(data->optarg->vector_size);
     }
   default :
     return 1;
@@ -10870,7 +10876,8 @@ grn_ii_similar_search_internal(grn_ctx *ctx, grn_ii_select_data *data)
     : (GRN_HASH_SIZE(h) >> 3) + 1;
   if (GRN_HASH_SIZE(h)) {
     grn_id j, id;
-    int w2, rep;
+    float w2;
+    int rep;
     grn_ii_cursor *c;
     grn_posting *pos;
     grn_table_sort_optarg arg = {
@@ -11911,7 +11918,7 @@ grn_ii_select_cursor_next(grn_ctx *ctx,
     double record_score;
     if (data->score_func) {
       data->record.id = data->rid;
-      data->record.weight = weight;
+      data->record.weight = (int)weight;
       data->record.n_occurrences = data->n_occurrences;
       data->record.total_term_weights = data->total_score;
       record_score = data->score_func(ctx, &(data->record)) * (double)weight;
@@ -12472,7 +12479,7 @@ grn_ii_quorum_match(grn_ctx *ctx, grn_ii *ii, grn_ii_select_data *data)
           grn_memcpy(&posinfo, posting, record_key_size);
           if (data->score_func) {
             data->record.id = posting->rid;
-            data->record.weight = score / record_data->n_occurs;
+            data->record.weight = (int)(score / record_data->n_occurs);
             data->record.n_occurrences = record_data->n_occurs;
             data->record.total_term_weights = data->record.weight;
             score = data->score_func(ctx, &(data->record)) * data->record.weight;
@@ -13163,7 +13170,7 @@ grn_ii_estimate_size_for_query(grn_ctx *ctx, grn_ii *ii,
 
   grn_ii_select_data_fin(ctx, &data);
 
-  return estimated_size;
+  return (uint32_t)estimated_size;
 }
 
 uint32_t
@@ -14078,11 +14085,11 @@ merge_hit_blocks(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
     nrecs += block->nrecs;
     nposts += block->nposts;
   }
-  ii_buffer->curr_size += nrecs + nposts;
-  max_size = nrecs * (ii_buffer->ii->n_elements);
-  if (flags & GRN_OBJ_WITH_POSITION) { max_size += nposts - nrecs; }
+  ii_buffer->curr_size += (size_t)(nrecs + nposts);
+  max_size = (size_t)(nrecs * (ii_buffer->ii->n_elements));
+  if (flags & GRN_OBJ_WITH_POSITION) { max_size += (size_t)(nposts - nrecs); }
   datavec_reset(ctx, ii_buffer->data_vectors,
-                ii_buffer->ii->n_elements, nrecs, max_size);
+                ii_buffer->ii->n_elements, (size_t)nrecs, max_size);
   {
     int i;
     uint32_t lr = 0; /* Last rid */
@@ -14145,22 +14152,22 @@ merge_hit_blocks(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
       int j = 0;
       uint32_t f_s = (nrecs < 3) ? 0 : USE_P_ENC;
       uint32_t f_d = ((nrecs < 16) || (nrecs <= (lr >> 8))) ? 0 : USE_P_ENC;
-      ii_buffer->data_vectors[j].data_size = nrecs;
+      ii_buffer->data_vectors[j].data_size = (uint32_t)nrecs;
       ii_buffer->data_vectors[j++].flags = f_d;
       if ((flags & GRN_OBJ_WITH_SECTION)) {
         ii_buffer->data_vectors[j].data_size = nrecs;
         ii_buffer->data_vectors[j++].flags = f_s;
       }
-      ii_buffer->data_vectors[j].data_size = nrecs;
+      ii_buffer->data_vectors[j].data_size = (uint32_t)nrecs;
       ii_buffer->data_vectors[j++].flags = f_s;
       if ((flags & GRN_OBJ_WITH_WEIGHT)) {
-        ii_buffer->data_vectors[j].data_size = nrecs;
+        ii_buffer->data_vectors[j].data_size = (uint32_t)nrecs;
         ii_buffer->data_vectors[j++].flags = f_s;
       }
       if ((flags & GRN_OBJ_WITH_POSITION)) {
         uint32_t f_p = (((nposts < 32) ||
                          (nposts <= (spos >> 13))) ? 0 : USE_P_ENC);
-        ii_buffer->data_vectors[j].data_size = nposts;
+        ii_buffer->data_vectors[j].data_size = (uint32_t)nposts;
         ii_buffer->data_vectors[j++].flags = f_p|ODD;
       }
     }
@@ -14690,9 +14697,13 @@ grn_ii_buffer_parse(grn_ctx *ctx, grn_ii_buffer *ii_buffer,
                 if (section->length == 0) {
                   continue;
                 }
-                ii_buffer_values_append(ctx, ii_buffer, sid, section->weight,
+                ii_buffer_values_append(ctx,
+                                        ii_buffer,
+                                        sid,
+                                        (uint32_t)(section->weight),
                                         head + section->offset,
-                                        section->length, GRN_FALSE);
+                                        section->length,
+                                        GRN_FALSE);
               }
             }
             break;
@@ -16347,7 +16358,7 @@ grn_ii_builder_append_tokens(grn_ctx *ctx,
                                             builder,
                                             rid,
                                             sid,
-                                            weight,
+                                            (uint32_t)weight,
                                             tid,
                                             pos);
     if (rc != GRN_SUCCESS) {
@@ -16499,7 +16510,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx, grn_ii_builder *builder,
                                            builder,
                                            rid,
                                            sid,
-                                           weight,
+                                           (uint32_t)weight,
                                            key,
                                            key_size,
                                            true);
@@ -16551,7 +16562,7 @@ grn_ii_builder_append_obj(grn_ctx *ctx, grn_ii_builder *builder,
                                          builder,
                                          rid,
                                          sid,
-                                         sec->weight,
+                                         (uint32_t)(sec->weight),
                                          head + sec->offset,
                                          sec->length,
                                          false);
@@ -17104,7 +17115,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx, grn_ii_builder *builder,
     }
 
     /* Read record ID. */
-    gap = value >> builder->sid_bits; /* In-block gap */
+    gap = (uint32_t)(value >> builder->sid_bits); /* In-block gap */
     if (gap) {
       if (chunk->n >= builder->options.chunk_threshold) {
         const double threshold_scale = 1 + log(builder->df + 1);
@@ -17149,7 +17160,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx, grn_ii_builder *builder,
 
     /* Read section ID. */
     if (ii_flags & GRN_OBJ_WITH_SECTION) {
-      uint32_t sid = (value & builder->sid_mask) + 1;
+      uint32_t sid = (uint32_t)((value & builder->sid_mask) + 1);
       chunk->sid_buf[chunk->offset] = sid - last_sid - 1;
       chunk->n++;
       last_sid = sid;
@@ -17162,7 +17173,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx, grn_ii_builder *builder,
       if (rc != GRN_SUCCESS) {
         return rc;
       }
-      weight = value;
+      weight = (uint32_t)value;
       chunk->weight_buf[chunk->offset] = weight;
       chunk->n++;
     }
@@ -17186,14 +17197,14 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx, grn_ii_builder *builder,
           }
         }
         if (pos == (uint32_t)-1) {
-          chunk->pos_buf[chunk->pos_offset] = value - 1;
+          chunk->pos_buf[chunk->pos_offset] = (uint32_t)(value - 1);
           chunk->pos_sum += value - 1;
         } else {
-          chunk->pos_buf[chunk->pos_offset] = value;
+          chunk->pos_buf[chunk->pos_offset] = (uint32_t)value;
           chunk->pos_sum += value;
         }
         chunk->n++;
-        pos += value;
+        pos += (uint32_t)value;
         chunk->pos_offset++;
         freq++;
       }
@@ -17202,7 +17213,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx, grn_ii_builder *builder,
       if (rc != GRN_SUCCESS) {
         return rc;
       }
-      freq = value;
+      freq = (uint32_t)value;
     }
     chunk->freq_buf[chunk->offset] = freq - 1;
     chunk->n++;
@@ -17210,7 +17221,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx, grn_ii_builder *builder,
   }
   rc = grn_ii_builder_read_from_block(ctx, builder, block_id, &value);
   if (rc == GRN_SUCCESS) {
-    builder->blocks[block_id].tid = value;
+    builder->blocks[block_id].tid = (grn_id)value;
   } else if (rc == GRN_END_OF_DATA) {
     builder->blocks[block_id].tid = GRN_ID_NIL;
   } else {
@@ -17335,7 +17346,7 @@ grn_ii_builder_commit(grn_ctx *ctx, grn_ii_builder *builder)
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    builder->blocks[i].tid = value;
+    builder->blocks[i].tid = (grn_id)value;
   }
 
   cursor = grn_table_cursor_open(ctx, builder->ii->lexicon,
