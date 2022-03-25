@@ -1,6 +1,6 @@
 .. -*- rst -*-
 
-AmazonLinux
+Amazon Linux
 ===========
 
 This section describes how to install Groonga related RPM packages on
