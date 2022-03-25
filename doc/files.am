@@ -2438,7 +2438,6 @@ po_files = \
 	install.po \
 	install/almalinux.po \
 	install/amazon-linux.po \
-	install/amazonlinux.po \
 	install/centos.po \
 	install/debian.po \
 	install/docker.po \
@@ -2734,7 +2733,6 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install.po \
 	LC_MESSAGES/install/almalinux.po \
 	LC_MESSAGES/install/amazon-linux.po \
-	LC_MESSAGES/install/amazonlinux.po \
 	LC_MESSAGES/install/centos.po \
 	LC_MESSAGES/install/debian.po \
 	LC_MESSAGES/install/docker.po \
@@ -3030,7 +3028,6 @@ edit_po_files = \
 	install.edit \
 	install/almalinux.edit \
 	install/amazon-linux.edit \
-	install/amazonlinux.edit \
 	install/centos.edit \
 	install/debian.edit \
 	install/docker.edit \
@@ -3326,7 +3323,6 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install.edit \
 	LC_MESSAGES/install/almalinux.edit \
 	LC_MESSAGES/install/amazon-linux.edit \
-	LC_MESSAGES/install/amazonlinux.edit \
 	LC_MESSAGES/install/centos.edit \
 	LC_MESSAGES/install/debian.edit \
 	LC_MESSAGES/install/docker.edit \
@@ -3622,7 +3618,6 @@ mo_files = \
 	install.mo \
 	install/almalinux.mo \
 	install/amazon-linux.mo \
-	install/amazonlinux.mo \
 	install/centos.mo \
 	install/debian.mo \
 	install/docker.mo \
@@ -3918,7 +3913,6 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/install.mo \
 	LC_MESSAGES/install/almalinux.mo \
 	LC_MESSAGES/install/amazon-linux.mo \
-	LC_MESSAGES/install/amazonlinux.mo \
 	LC_MESSAGES/install/centos.mo \
 	LC_MESSAGES/install/debian.mo \
 	LC_MESSAGES/install/docker.mo \
