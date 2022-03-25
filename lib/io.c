@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -831,7 +831,7 @@ grn_io_n_files(grn_ctx *ctx, grn_io *io)
 {
   unsigned long file_size;
   file_size = grn_io_compute_file_size(io->header->version);
-  return ((io->header->curr_size + file_size - 1) / file_size);
+  return (uint32_t)((io->header->curr_size + file_size - 1) / file_size);
 }
 
 grn_rc
@@ -969,7 +969,7 @@ grn_io_read_ja(grn_io *io, grn_ctx *ctx, grn_io_ja_einfo *einfo, uint32_t epos,
     *value_len = 0;
     return GRN_NO_MEMORY_AVAILABLE;
   }
-  if (pos + size > (off_t)file_size) {
+  if (pos + (off_t)size > (off_t)file_size) {
     rest = pos + size - file_size;
     size = file_size - pos;
   }
@@ -1065,7 +1065,7 @@ grn_io_write_ja(grn_io *io, grn_ctx *ctx, uint32_t key,
   fileinfo *fi = &io->fis[fno];
   off_t base = fno ? 0 : io->base - (uint64_t)segment_size * io->base_seg;
   off_t pos = (uint64_t)segment_size * (bseg % segments_per_file) + offset + base;
-  if (pos + size > (off_t)file_size) {
+  if (pos + (off_t)size > (off_t)file_size) {
     rest = pos + size - file_size;
     size = file_size - pos;
   }
@@ -1312,8 +1312,9 @@ grn_io_seg_expire(grn_ctx *ctx, grn_io *io, uint32_t segno, uint32_t nretry)
       }
     } else {
       GRN_ATOMIC_ADD_EX(pnref, GRN_IO_MAX_REF, nref);
+      uint32_t reset_max_ref_by_overflow = GRN_IO_MAX_REF - 1;
       if (nref > 1) {
-        GRN_ATOMIC_ADD_EX(pnref, -(GRN_IO_MAX_REF + 1), nref);
+        GRN_ATOMIC_ADD_EX(pnref, reset_max_ref_by_overflow, nref);
         GRN_FUTEX_WAKE(pnref);
         if (retry >= GRN_IO_MAX_RETRY) {
           GRN_LOG(ctx, GRN_LOG_CRIT,
@@ -1327,7 +1328,7 @@ grn_io_seg_expire(grn_ctx *ctx, grn_io *io, uint32_t segno, uint32_t nretry)
         GRN_MUNMAP(ctx, &grn_gctx, io, &info->fmo, fi,
                    info->map, io->header->segment_size);
         info->map = NULL;
-        GRN_ATOMIC_ADD_EX(pnref, -(GRN_IO_MAX_REF + 1), nref);
+        GRN_ATOMIC_ADD_EX(pnref, reset_max_ref_by_overflow, nref);
         GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
         GRN_FUTEX_WAKE(pnref);
         return GRN_SUCCESS;
@@ -1636,7 +1637,12 @@ grn_mmap_v1(grn_ctx *ctx, grn_ctx *owner_ctx, HANDLE *fmo, fileinfo *fi,
   /* CRITICAL_SECTION_ENTER(fi->cs); */
   /* try to create fmo */
   /* TODO: Add support for 32bit over offset by using dwMaximumSizeHigh. */
-  *fmo = CreateFileMapping(fi->fh, NULL, PAGE_READWRITE, 0, offset + length, NULL);
+  *fmo = CreateFileMapping(fi->fh,
+                           NULL,
+                           PAGE_READWRITE,
+                           0,
+                           (DWORD)(offset + length),
+                           NULL);
   if (!*fmo) {
     SERR("CreateFileMapping(%lu + %" GRN_FMT_SIZE ") failed "
          "<%" GRN_FMT_SIZE ">",
