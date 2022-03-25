@@ -14783,15 +14783,11 @@ grn_column_find_index_data_column_range(grn_ctx *ctx,
     }
     /* FIXME: GRN_TABLE_DAT_KEY should be supported */
     if (lexicon->header.type != GRN_TABLE_PAT_KEY) {
-      if (grn_enable_reference_count) {
-        grn_obj_unlink(ctx, lexicon);
-      }
+      grn_obj_unref(ctx, lexicon);
       continue;
     }
     grn_table_get_info(ctx, lexicon, NULL, NULL, &tokenizer, NULL, NULL);
-    if (grn_enable_reference_count) {
-      grn_obj_unlink(ctx, lexicon);
-    }
+    grn_obj_unref(ctx, lexicon);
     if (tokenizer) {
       continue;
     }
