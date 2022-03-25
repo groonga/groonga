@@ -9,4 +9,5 @@ sharding_scripts =				\
 	parameters.rb				\
 	range_expression_builder.rb		\
 	keys_parsable.rb			\
-	dynamic_columns.rb
+	dynamic_columns.rb			\
+	window.rb
