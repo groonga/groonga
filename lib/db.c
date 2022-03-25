@@ -2805,7 +2805,7 @@ grn_obj_is_corrupt(grn_ctx *ctx, grn_obj *obj)
 static grn_inline void
 grn_obj_touch_db(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
 {
-  grn_obj_get_io(ctx, obj)->header->last_modified = tv->tv_sec;
+  grn_obj_get_io(ctx, obj)->header->last_modified = (uint32_t)(tv->tv_sec);
   grn_db_dirty(ctx, obj);
 }
 
@@ -2830,7 +2830,7 @@ grn_obj_touch(grn_ctx *ctx, grn_obj *obj, grn_timeval *tv)
     case GRN_COLUMN_FIX_SIZE :
     case GRN_COLUMN_INDEX :
       if (!IS_TEMP(obj)) {
-        grn_obj_get_io(ctx, obj)->header->last_modified = tv->tv_sec;
+        grn_obj_get_io(ctx, obj)->header->last_modified = (uint32_t)(tv->tv_sec);
         grn_obj_touch(ctx, DB_OBJ(obj)->db, tv);
       }
       break;
@@ -12117,7 +12117,9 @@ grn_obj_open(grn_ctx *ctx, unsigned char type, grn_obj_flags flags, grn_id domai
 {
   grn_obj *obj = GRN_CALLOC(sizeof(grn_obj));
   if (obj) {
-    GRN_OBJ_INIT(obj, type, flags, domain);
+    uint8_t init_flags =
+      (uint8_t)(flags & (GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY));
+    GRN_OBJ_INIT(obj, type, init_flags, domain);
     obj->header.impl_flags |= GRN_OBJ_ALLOCATED;
   }
   return obj;
@@ -13119,6 +13121,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
                               current_lock,
                               current_reference_count);
       GRN_ATOMIC_ADD_EX(lock_pointer, GRN_IO_MAX_REF, current_lock);
+      uint32_t reset_max_ref_by_overflow = GRN_IO_MAX_REF - 1;
 #ifdef GRN_REFERENCE_COUNT_DEBUG
       current_reference_count = vp->lock;
 #endif
@@ -13137,7 +13140,7 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
                                 obj,
                                 current_lock,
                                 current_reference_count);
-        GRN_ATOMIC_ADD_EX(lock_pointer, -GRN_IO_MAX_REF, current_lock);
+        GRN_ATOMIC_ADD_EX(lock_pointer, reset_max_ref_by_overflow, current_lock);
 #ifdef GRN_REFERENCE_COUNT_DEBUG
         current_reference_count = vp->lock;
 #endif
@@ -13420,7 +13423,7 @@ grn_obj_ensure_bulk(grn_ctx *ctx, grn_obj *obj)
 }
 
 grn_rc
-grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags)
+grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags)
 {
   if (!GRN_OBJ_MUTABLE(obj)) {
     ERR(GRN_INVALID_ARGUMENT, "invalid obj assigned");
@@ -13555,7 +13558,9 @@ grn_obj_reinit_for(grn_ctx *ctx, grn_obj *obj, grn_obj *domain_obj)
       domain = domain_obj->header.domain;
     }
   }
-  return grn_obj_reinit(ctx, obj, domain, flags);
+  uint8_t reinit_flags =
+    (uint8_t)(flags & (GRN_OBJ_VECTOR | GRN_OBJ_DO_SHALLOW_COPY));
+  return grn_obj_reinit(ctx, obj, domain, reinit_flags);
 }
 
 const char *

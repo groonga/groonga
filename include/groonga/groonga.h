@@ -730,7 +730,7 @@ GRN_API grn_rc grn_column_rename(grn_ctx *ctx, grn_obj *column,
                                  const char *name, unsigned int name_size);
 
 GRN_API grn_rc grn_obj_close(grn_ctx *ctx, grn_obj *obj);
-GRN_API grn_rc grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, unsigned char flags);
+GRN_API grn_rc grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags);
 /* On non reference count mode (default):
  * This closes the following objects immediately:
  *
