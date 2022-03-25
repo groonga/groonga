@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -977,12 +977,12 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
     on_circle.longitude = center->longitude;
     break;
   case GRN_DB_INT64 :
-    d = GRN_INT64_VALUE(distance);
+    d = (double)GRN_INT64_VALUE(distance);
     on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
     break;
   case GRN_DB_UINT64 :
-    d = GRN_UINT64_VALUE(distance);
+    d = (double)GRN_UINT64_VALUE(distance);
     on_circle.latitude = center->latitude + GRN_GEO_RAD2INT(d / (double)GRN_GEO_RADIUS);
     on_circle.longitude = center->longitude;
     break;
@@ -2110,7 +2110,8 @@ grn_geo_select_in_rectangle_callback(grn_ctx *ctx,
   grn_geo_select_in_rectangle_data *data = user_data;
   grn_posting_internal add_posting = *((grn_posting_internal *)posting);
   if (data->use_distance) {
-    add_posting.weight_float = (add_posting.weight_float + 1.0) * distance;
+    add_posting.weight_float =
+      (float)((add_posting.weight_float + 1.0) * distance);
   } else {
     add_posting.weight_float += 1.0;
   }
