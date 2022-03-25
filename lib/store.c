@@ -3452,7 +3452,7 @@ grn_ja_ref_packed(grn_ctx *ctx,
   *compressed_value_len = raw_value_len - sizeof(uint64_t);
 
   *uncompressed_value_len =
-    COMPRESSED_VALUE_META_UNCOMPRESSED_LEN(compressed_value_meta);
+    (uint32_t)COMPRESSED_VALUE_META_UNCOMPRESSED_LEN(compressed_value_meta);
   switch (COMPRESSED_VALUE_META_FLAG(compressed_value_meta)) {
   case COMPRESSED_VALUE_META_FLAG_RAW :
     iw->uncompressed_value = NULL;
@@ -5501,8 +5501,10 @@ grn_ja_pack_value(grn_ctx *ctx,
   size_t element_value_size = element_size - sizeof(float);
   uint32_t i;
   for (i = 0; i < n; i++) {
-    *((uint32_t *)(value_raw + (element_size * i) + element_value_size)) =
-      *((float *)(value_raw + (element_size * i) + element_value_size));
+    const void *weight_location =
+      value_raw + (element_size * i) + element_value_size;
+    float weight_float = *((const float *)weight_location);
+    *((uint32_t *)weight_location) = (uint32_t)weight_float;
   }
 
   return GRN_SUCCESS;
@@ -5532,8 +5534,10 @@ grn_ja_unpack_value(grn_ctx *ctx,
   size_t element_value_size = element_size - sizeof(float);
   uint32_t i;
   for (i = 0; i < n; i++) {
-    *((float *)(value_raw + (element_size * i) + element_value_size)) =
-      *((uint32_t *)(value_raw + (element_size * i) + element_value_size));
+    const void *weight_location =
+      value_raw + (element_size * i) + element_value_size;
+    uint32_t weight_uint32 = *((const uint32_t *)weight_location);
+    *((float *)weight_location) = (float)weight_uint32;
   }
 
   return GRN_SUCCESS;
