@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2018 Brazil
-  Copyright(C) 2018 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018  Brazil
+  Copyright(C) 2018-2022  Kouhei Sutou <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -38,7 +38,7 @@ grn_highlighter_location_compare(const void *data1, const void *data2)
   if (location1->offset == location2->offset) {
     return location1->length - location2->length;
   } else {
-    return location1->offset - location2->offset;
+    return (int)(location1->offset - location2->offset);
   }
 }
 
@@ -509,7 +509,7 @@ grn_highlighter_highlight_lexicon_flush(grn_ctx *ctx,
     grn_text_escape_xml(ctx,
                         output,
                         text + offset,
-                        location->offset - offset);
+                        (size_t)(location->offset - offset));
   }
   GRN_TEXT_PUT(ctx,
                output,
@@ -810,7 +810,7 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
               current->offset + current->length) {
             current->length = previous->length;
           } else {
-            current->length += current->offset - previous->offset;
+            current->length += (uint32_t)(current->offset - previous->offset);
           }
           current->offset = previous->offset;
           previous = current;
@@ -842,7 +842,7 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
         grn_text_escape_xml(ctx,
                             output,
                             text + offset,
-                            text_length - offset);
+                            (size_t)(text_length - offset));
       }
     }
     GRN_LOG(ctx,
@@ -929,7 +929,7 @@ grn_highlighter_highlight(grn_ctx *ctx,
       grn_text_escape_xml(ctx,
                           output,
                           text,
-                          text_length);
+                          (size_t)text_length);
     } else {
       GRN_TEXT_PUT(ctx, output, text, text_length);
     }
@@ -947,13 +947,13 @@ grn_highlighter_highlight(grn_ctx *ctx,
     grn_highlighter_highlight_lexicon(ctx,
                                       highlighter,
                                       text,
-                                      text_length,
+                                      (size_t)text_length,
                                       output);
   } else {
     grn_highlighter_highlight_patricia_trie(ctx,
                                             highlighter,
                                             text,
-                                            text_length,
+                                            (size_t)text_length,
                                             output);
   }
 
@@ -1024,7 +1024,7 @@ grn_highlighter_add_keyword(grn_ctx *ctx,
   grn_vector_add_element(ctx,
                          raw_keywords,
                          keyword,
-                         keyword_length,
+                         (uint32_t)keyword_length,
                          0,
                          GRN_DB_TEXT);
   highlighter->need_prepared = GRN_TRUE;
