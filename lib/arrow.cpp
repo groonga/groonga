@@ -17,9 +17,10 @@
 */
 
 #include "grn.h"
-#include "grn_db.h"
 #include "grn_arrow.h"
 #include "grn_cast.h"
+#include "grn_column.h"
+#include "grn_db.h"
 #include "grn_output.h"
 
 #ifdef GRN_WITH_APACHE_ARROW
@@ -503,6 +504,7 @@ namespace grnarrow {
         bulk_(bulk),
         index_(index),
         buffer_(),
+        loaded_value_(nullptr),
         object_cache_(object_cache) {
       GRN_VOID_INIT(&buffer_);
     }
@@ -656,9 +658,11 @@ namespace grnarrow {
         {
           grn_obj sub_buffer;
           if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
-            GRN_TEXT_INIT(&sub_buffer, 0);
+            GRN_TEXT_INIT(&sub_buffer, GRN_OBJ_VECTOR);
           } else {
-            GRN_VALUE_FIX_SIZE_INIT(&sub_buffer, 0, bulk_->header.domain);
+            GRN_VALUE_FIX_SIZE_INIT(&sub_buffer,
+                                    GRN_OBJ_VECTOR,
+                                    bulk_->header.domain);
           }
           for (int64_t i = 0; i < value_array->length(); ++i) {
             GRN_BULK_REWIND(&sub_buffer);
@@ -671,22 +675,30 @@ namespace grnarrow {
             if (ctx_->rc != GRN_SUCCESS) {
               continue;
             }
-            if (grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
-              uint32_t weight = 0;
-              grn_id domain = GRN_DB_SHORT_TEXT;
-              const auto sub_buffer_size =
-                static_cast<unsigned int>(GRN_TEXT_LEN(&sub_buffer));
-              grn_vector_add_element(ctx_,
-                                     bulk_,
-                                     GRN_TEXT_VALUE(&sub_buffer),
-                                     sub_buffer_size,
-                                     weight,
-                                     domain);
+            auto loaded_value = sub_visitor.loaded_value();
+            if (grn_obj_is_vector(ctx_, bulk_)) {
+              auto original_value = sub_visitor.original_value();
+              if (grn_obj_is_text_family_bulk(ctx_, original_value) &&
+                  GRN_TEXT_LEN(original_value) == 0 &&
+                  grn_type_id_is_text_family(ctx_, bulk_->header.domain)) {
+                grn_vector_add_element_float(ctx_,
+                                             bulk_,
+                                             NULL,
+                                             0,
+                                             0.0,
+                                             bulk_->header.domain);
+              } else {
+                grn_vector_copy(ctx_, loaded_value, bulk_);
+              }
             } else {
-              grn_bulk_write(ctx_,
-                             bulk_,
-                             GRN_BULK_HEAD(&sub_buffer),
-                             GRN_BULK_VSIZE(&sub_buffer));
+              auto original_value = sub_visitor.original_value();
+              if (grn_obj_is_text_family_bulk(ctx_, original_value) &&
+                  GRN_TEXT_LEN(original_value) == 0 &&
+                  grn_id_maybe_table(ctx_, bulk_->header.domain)) {
+                grn_uvector_add_element_record(ctx_, bulk_, GRN_ID_NIL, 0.0);
+              } else {
+                grn_uvector_copy(ctx_, loaded_value, bulk_);
+              }
             }
           }
           GRN_OBJ_FIN(ctx_, &sub_buffer);
@@ -725,40 +737,43 @@ namespace grnarrow {
       const grn_id domain = bulk_->header.domain;
       const auto raw_value = value.data();
       const auto raw_value_size = value.size();
+      grn_obj *value_bulk;
       grn_obj value_buffer;
       if (grn_type_id_is_text_family(ctx_, domain)) {
         GRN_TEXT_INIT(&value_buffer, GRN_OBJ_DO_SHALLOW_COPY);
         GRN_TEXT_SET(ctx_, &value_buffer, raw_value, raw_value_size);
+        value_bulk = &value_buffer;
       } else {
         grn_obj raw_value_buffer;
         GRN_TEXT_INIT(&raw_value_buffer, GRN_OBJ_DO_SHALLOW_COPY);
         GRN_TEXT_SET(ctx_, &raw_value_buffer, raw_value, raw_value_size);
         GRN_VALUE_FIX_SIZE_INIT(&value_buffer, 0, domain);
-        if (grn_obj_cast(ctx_,
-                         &raw_value_buffer,
-                         &value_buffer,
-                         true) != GRN_SUCCESS) {
-          auto ctx = ctx_;
-          auto domain_object = (*object_cache_)[domain];
-          ERR_CAST(grn_column_, domain_object, &raw_value_buffer);
+        value_bulk = grn_column_cast_value(ctx_,
+                                           grn_column_,
+                                           &raw_value_buffer,
+                                           &value_buffer,
+                                           GRN_OBJ_SET);
+        if (ctx_->rc != GRN_SUCCESS &&
+            (grn_obj_is_vector(ctx_, bulk_) ||
+             grn_obj_is_uvector(ctx_, bulk_))) {
+          ERRCLR(ctx_);
         }
+        GRN_OBJ_FIN(ctx_, &raw_value_buffer);
       }
-      if (GRN_BULK_VSIZE(&value_buffer) > 0) {
+      if (value_bulk && GRN_BULK_VSIZE(value_bulk) > 0) {
         if (grn_type_id_is_text_family(ctx_, domain)) {
-          const auto value_buffer_size =
-            static_cast<unsigned int>(GRN_BULK_VSIZE(&value_buffer));
+          const auto value_bulk_size =
+            static_cast<unsigned int>(GRN_BULK_VSIZE(value_bulk));
           grn_vector_add_element_float(ctx_,
                                        bulk_,
-                                       GRN_BULK_HEAD(&value_buffer),
-                                       value_buffer_size,
+                                       GRN_BULK_HEAD(value_bulk),
+                                       value_bulk_size,
                                        weight,
                                        domain);
         } else {
           // TODO: Support weight vector for number such as Int64
-          grn_uvector_add_element_record(ctx_,
-                                         bulk_,
-                                         GRN_RECORD_VALUE(&value_buffer),
-                                         weight);
+          auto id = grn_uvector_get_element_record(ctx_, value_bulk, 0, nullptr);
+          grn_uvector_add_element_record(ctx_, bulk_, id, weight);
         }
       }
       GRN_OBJ_FIN(ctx_, &value_buffer);
@@ -769,23 +784,50 @@ namespace grnarrow {
       return &buffer_;
     }
 
+    grn_obj *loaded_value() {
+      if (loaded_value_) {
+        return loaded_value_;
+      }
+      return bulk_;
+    }
+
   private:
     grn_ctx *ctx_;
     grn_obj *grn_column_;
     grn_obj *bulk_;
     int64_t index_;
     grn_obj buffer_;
+    grn_obj *loaded_value_;
     ObjectCache *object_cache_;
 
     template <typename LoadBulk>
     arrow::Status
     load_value(LoadBulk load_bulk) {
       load_bulk();
-      if (bulk_->header.domain != GRN_DB_VOID) {
+      loaded_value_ = &buffer_;
+      if (bulk_->header.domain == GRN_DB_VOID) {
+        return arrow::Status::OK();
+      }
+      if (!grn_column_) {
+        return arrow::Status::OK();
+      }
+      if (grn_obj_is_accessor(ctx_, grn_column_)) {
         if (grn_obj_cast(ctx_, &buffer_, bulk_, true) != GRN_SUCCESS) {
           auto ctx = ctx_;
           auto range = (*object_cache_)[bulk_->header.domain];
           ERR_CAST(grn_column_, range, &buffer_);
+        }
+        loaded_value_ = bulk_;
+      } else {
+        loaded_value_ = grn_column_cast_value(ctx_,
+                                              grn_column_,
+                                              &buffer_,
+                                              bulk_,
+                                              GRN_OBJ_SET);
+        if (ctx_->rc != GRN_SUCCESS &&
+            (grn_obj_is_vector(ctx_, bulk_) ||
+             grn_obj_is_uvector(ctx_, bulk_))) {
+          ERRCLR(ctx_);
         }
       }
       return arrow::Status::OK();
@@ -842,13 +884,16 @@ namespace grnarrow {
                               (*object_cache_)[arrow_type_id]);
         }
       }
-      if (grn_type_id_is_text_family(ctx_, arrow_type_id)) {
-        GRN_VALUE_VAR_SIZE_INIT(&buffer_, flags, arrow_type_id);
+      grn_id range_id = GRN_ID_NIL;
+      if (grn_column_) {
+        grn_obj_get_range_info(ctx, grn_column_, &range_id, &flags);
+      }
+      if (range_id == GRN_ID_NIL) {
+        range_id = arrow_type_id;
+      }
+      if (grn_type_id_is_text_family(ctx_, range_id)) {
+        GRN_VALUE_VAR_SIZE_INIT(&buffer_, flags, range_id);
       } else {
-        grn_id range_id = GRN_ID_NIL;
-        if (grn_column_) {
-          range_id = grn_obj_get_range(ctx, grn_column_);
-        }
         GRN_VALUE_FIX_SIZE_INIT(&buffer_, flags, range_id);
         if (flags & GRN_OBJ_WITH_WEIGHT) {
           buffer_.header.flags |= GRN_OBJ_WITH_WEIGHT;
@@ -1049,13 +1094,14 @@ namespace grnarrow {
           continue;
         }
 
-        grn_obj_set_value(ctx_, grn_column_,record_id, &buffer_, GRN_OBJ_SET);
+        auto value = visitor.loaded_value();
+        grn_obj_set_value(ctx_, grn_column_, record_id, value, GRN_OBJ_SET);
         if (ctx_->rc != GRN_SUCCESS) {
           if (grn_loader_) {
             grn_loader_add_record_data data;
             init_grn_loader_add_record_data(&data,
                                             record_id,
-                                            &buffer_);
+                                            value);
             grn_loader_on_column_set(ctx_, grn_loader_, &data);
           }
         }

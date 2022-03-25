@@ -18,8 +18,8 @@ load --table Numbers --command_version 3
     "elapsed_time": 0.0,
     "error": {
       "message": "<Numbers.value2>: failed to cast to <Int32>: <\"string2\">",
-      "function": "grn_obj_set_value_column_fix_size",
-      "file": "db.c",
+      "function": "grn_ra_cast_value",
+      "file": "store.c",
       "line": 0
     }
   },
