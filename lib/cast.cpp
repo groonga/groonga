@@ -1013,25 +1013,28 @@ namespace {
                                              GRN_TEXT_LEN(caster->src));
     document.ParseStream(stream);
     if (document.HasParseError()) {
-      auto domain = grn_ctx_at(ctx, caster->dest->header.domain);
-      grn_rc rc = GRN_INVALID_ARGUMENT;
-      if (grn_obj_is_table_with_key(ctx, domain)) {
-        grn_obj dest_record;
-        GRN_RECORD_INIT(&dest_record, GRN_BULK, caster->dest->header.domain);
-        grn_caster record_caster = {
-          caster->src,
-          &dest_record,
-          caster->flags,
-          caster->target,
-        };
-        rc = grn_caster_cast(ctx, &record_caster);
-        if (rc == GRN_SUCCESS && GRN_BULK_VSIZE(&dest_record) > 0) {
-          auto id = GRN_RECORD_VALUE(&dest_record);
-          GRN_RECORD_PUT(ctx, caster->dest, id);
+      auto domain_id = caster->dest->header.domain;
+      grn_obj dest;
+      GRN_VALUE_FIX_SIZE_INIT(&dest, 0, domain_id);
+      grn_caster sub_caster = {
+        caster->src,
+        &dest,
+        caster->flags,
+        caster->target,
+      };
+      auto rc = grn_caster_cast(ctx, &sub_caster);
+      if (rc == GRN_SUCCESS) {
+        if (GRN_BULK_VSIZE(&dest) > 0) {
+          grn_bulk_write(ctx,
+                         caster->dest,
+                         GRN_BULK_HEAD(&dest),
+                         GRN_BULK_VSIZE(&dest));
+          if (grn_obj_is_weight_uvector(ctx, caster->dest)) {
+            GRN_FLOAT32_PUT(ctx, caster->dest, 0.0);
+          }
         }
-        GRN_OBJ_FIN(ctx, &dest_record);
       }
-      grn_obj_unref(ctx, domain);
+      GRN_OBJ_FIN(ctx, &dest);
       return rc;
     }
     switch (caster->dest->header.domain) {
