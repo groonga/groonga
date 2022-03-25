@@ -853,7 +853,7 @@ grn_output_bulk_void(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type
 void
 grn_output_time(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type, int64_t value)
 {
-  double dv = value;
+  double dv = (double)value;
   dv /= GRN_TIME_USEC_PER_SEC_F;
   put_delimiter(ctx, outbuf, output_type);
   switch (output_type) {
@@ -1134,7 +1134,7 @@ grn_output_table_column_value(grn_ctx *ctx,
         {
           double score = grn_table_get_score(ctx, a->obj, id);
           if (grn_ctx_get_command_version(ctx) == GRN_COMMAND_VERSION_1) {
-            int32_t int32_score = score;
+            int32_t int32_score = (int32_t)score;
             GRN_INT32_PUT(ctx, bulk, int32_score);
             bulk->header.domain = GRN_DB_INT32;
           } else {
@@ -1667,7 +1667,7 @@ grn_output_uvector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
         if (is_weight_float32) {
           grn_output_float32(ctx, outbuf, output_type, weight);
         } else {
-          grn_output_uint64(ctx, outbuf, output_type, weight);
+          grn_output_uint64(ctx, outbuf, output_type, (uint64_t)weight);
         }
       }
     }
@@ -3506,9 +3506,9 @@ grn_output_envelope(grn_ctx *ctx,
 
   grn_timeval tv_now;
   grn_timeval_now(ctx, &tv_now);
-  started = ctx->impl->tv.tv_sec;
+  started = (double)(ctx->impl->tv.tv_sec);
   started += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
-  finished = tv_now.tv_sec;
+  finished = (double)(tv_now.tv_sec);
   finished += tv_now.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
   elapsed = finished - started;
 
@@ -3712,9 +3712,9 @@ grn_output_envelope_close(grn_ctx *ctx,
 
   grn_timeval tv_now;
   grn_timeval_now(ctx, &tv_now);
-  started = ctx->impl->tv.tv_sec;
+  started = (double)(ctx->impl->tv.tv_sec);
   started += ctx->impl->tv.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
-  finished = tv_now.tv_sec;
+  finished = (double)(tv_now.tv_sec);
   finished += tv_now.tv_nsec / GRN_TIME_NSEC_PER_SEC_F;
   elapsed = finished - started;
 
