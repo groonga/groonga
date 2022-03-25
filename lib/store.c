@@ -4843,7 +4843,7 @@ grn_ja_cast_value_vector_var_bulk(grn_ctx *ctx,
 
   buffer->header.impl_flags = GRN_OBJ_DO_SHALLOW_COPY;
   buffer->u.v.body = value;
-  grn_vector_delimit(ctx, buffer, 0, GRN_ID_NIL);
+  grn_vector_delimit(ctx, buffer, 0, value->header.domain);
 
   return buffer;
 }
