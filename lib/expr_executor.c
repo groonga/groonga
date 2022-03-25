@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2010-2018  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -205,7 +205,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
 
 #define ARITHMETIC_OPERATION_NO_CHECK(y) do {} while (0)
 #define ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y) do {        \
-  if ((long long int)y == 0) {                                  \
+  if ((int64_t)y == 0) {                                        \
     ERR(GRN_INVALID_ARGUMENT, "divisor should not be 0");       \
     goto exit;                                                  \
   }                                                             \
@@ -595,7 +595,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
   switch (y->header.domain) {                                           \
   case GRN_DB_INT8 :                                                    \
     {                                                                   \
-      int y_;                                                           \
+      int8_t y_;                                                        \
       y_ = GRN_INT8_VALUE(y);                                           \
       ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                     \
       set(ctx, res, signed_integer_operation(x_, y_));                  \
@@ -603,7 +603,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_UINT8 :                                                   \
     {                                                                   \
-      int y_;                                                           \
+      uint8_t y_;                                                       \
       y_ = GRN_UINT8_VALUE(y);                                          \
       ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                     \
       set(ctx, res, unsigned_integer_operation(x_, y_));                \
@@ -611,7 +611,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_INT16 :                                                   \
     {                                                                   \
-      int y_;                                                           \
+      int16_t y_;                                                       \
       y_ = GRN_INT16_VALUE(y);                                          \
       ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                     \
       set(ctx, res, signed_integer_operation(x_, y_));                  \
@@ -619,7 +619,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_UINT16 :                                                  \
     {                                                                   \
-      int y_;                                                           \
+      uint16_t y_;                                                      \
       y_ = GRN_UINT16_VALUE(y);                                         \
       ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                     \
       set(ctx, res, unsigned_integer_operation(x_, y_));                \
@@ -627,7 +627,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_INT32 :                                                   \
     {                                                                   \
-      int y_;                                                           \
+      int32_t y_;                                                       \
       y_ = GRN_INT32_VALUE(y);                                          \
       ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                     \
       set(ctx, res, signed_integer_operation(x_, y_));                  \
@@ -635,7 +635,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_UINT32 :                                                  \
     {                                                                   \
-      unsigned int y_;                                                  \
+      uint32_t y_;                                                      \
       y_ = GRN_UINT32_VALUE(y);                                         \
       ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                     \
       set(ctx, res, unsigned_integer_operation(x_, y_));                \
@@ -643,7 +643,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_TIME :                                                    \
     {                                                                   \
-      long long int y_;                                                 \
+      int64_t y_;                                                       \
       y_ = GRN_TIME_VALUE(y);                                           \
       ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                     \
       set(ctx, res, signed_integer_operation(x_, y_));                  \
@@ -651,7 +651,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_INT64 :                                                   \
     {                                                                   \
-      long long int y_;                                                 \
+      int64_t y_;                                                       \
       y_ = GRN_INT64_VALUE(y);                                          \
       ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                     \
       set(ctx, res, signed_integer_operation(x_, y_));                  \
@@ -659,7 +659,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_UINT64 :                                                  \
     {                                                                   \
-      long long unsigned int y_;                                        \
+      uint64_t y_;                                                      \
       y_ = GRN_UINT64_VALUE(y);                                         \
       ARITHMETIC_OPERATION_ZERO_DIVISION_CHECK(y_);                     \
       set(ctx, res, unsigned_integer_operation(x_, y_));                \
@@ -710,7 +710,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
   switch (x->header.domain) {                                           \
   case GRN_DB_INT8 :                                                    \
     {                                                                   \
-      int x_;                                                           \
+      int8_t x_;                                                        \
       x_ = GRN_INT8_VALUE(x);                                           \
       DIVISION_OPERATION_DISPATCH_RIGHT(GRN_INT8_SET,                   \
                                         GRN_INT8_VALUE,                 \
@@ -722,7 +722,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_UINT8 :                                                   \
     {                                                                   \
-      int x_;                                                           \
+      uint8_t x_;                                                       \
       x_ = GRN_UINT8_VALUE(x);                                          \
       DIVISION_OPERATION_DISPATCH_RIGHT(GRN_UINT8_SET,                  \
                                         (int)GRN_UINT8_VALUE,           \
@@ -734,7 +734,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_INT16 :                                                   \
     {                                                                   \
-      int x_;                                                           \
+      int16_t x_;                                                       \
       x_ = GRN_INT16_VALUE(x);                                          \
       DIVISION_OPERATION_DISPATCH_RIGHT(GRN_INT16_SET,                  \
                                         GRN_INT16_VALUE,                \
@@ -746,7 +746,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_UINT16 :                                                  \
     {                                                                   \
-      int x_;                                                           \
+      uint16_t x_;                                                      \
       x_ = GRN_UINT16_VALUE(x);                                         \
       DIVISION_OPERATION_DISPATCH_RIGHT(GRN_UINT16_SET,                 \
                                         (int)GRN_UINT16_VALUE,          \
@@ -758,7 +758,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_INT32 :                                                   \
     {                                                                   \
-      int x_;                                                           \
+      int32_t x_;                                                       \
       x_ = GRN_INT32_VALUE(x);                                          \
       DIVISION_OPERATION_DISPATCH_RIGHT(GRN_INT32_SET,                  \
                                         GRN_INT32_VALUE,                \
@@ -770,7 +770,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_UINT32 :                                                  \
     {                                                                   \
-      unsigned int x_;                                                  \
+      uint32_t x_;                                                      \
       x_ = GRN_UINT32_VALUE(x);                                         \
       DIVISION_OPERATION_DISPATCH_RIGHT(GRN_UINT32_SET,                 \
                                         GRN_UINT32_VALUE,               \
@@ -782,7 +782,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_INT64 :                                                   \
     {                                                                   \
-      long long int x_;                                                 \
+      int64_t x_;                                                       \
       x_ = GRN_INT64_VALUE(x);                                          \
       DIVISION_OPERATION_DISPATCH_RIGHT(GRN_INT64_SET,                  \
                                         GRN_INT64_VALUE,                \
@@ -794,7 +794,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_TIME :                                                    \
     {                                                                   \
-      long long int x_;                                                 \
+      int64_t x_;                                                       \
       x_ = GRN_TIME_VALUE(x);                                           \
       DIVISION_OPERATION_DISPATCH_RIGHT(GRN_TIME_SET,                   \
                                         GRN_TIME_VALUE,                 \
@@ -806,7 +806,7 @@ grn_expr_executor_init_general(grn_ctx *ctx,
     break;                                                              \
   case GRN_DB_UINT64 :                                                  \
     {                                                                   \
-      long long unsigned int x_;                                        \
+      uint64_t x_;                                                      \
       x_ = GRN_UINT64_VALUE(x);                                         \
       DIVISION_OPERATION_DISPATCH_RIGHT(GRN_UINT64_SET,                 \
                                         GRN_UINT64_VALUE,               \
