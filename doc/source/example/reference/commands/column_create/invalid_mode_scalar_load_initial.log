@@ -1,0 +1,48 @@
+Execution example::
+
+  load --table InvalidModeScalar
+  [
+    {
+      "_key": "key",
+      "invalid_error":  29,
+      "invalid_warn":   29,
+      "invalid_ignore": 29
+    }
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 1]
+  select \
+    --table InvalidModeScalar \
+    --output_columns invalid_error,invalid_warn,invalid_ignore
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ], 
+  #       [
+  #         [
+  #           "invalid_error", 
+  #           "Int32"
+  #         ], 
+  #         [
+  #           "invalid_warn", 
+  #           "Int32"
+  #         ], 
+  #         [
+  #           "invalid_ignore", 
+  #           "Int32"
+  #         ]
+  #       ], 
+  #       [
+  #         29, 
+  #         29, 
+  #         29
+  #       ]
+  #     ]
+  #   ]
+  # ]

@@ -1,0 +1,30 @@
+Execution example::
+
+  table_create \
+    --name MissingModeVectorReferred \
+    --flags TABLE_HASH_KEY \
+    --key_type ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  table_create \
+    --name MissingModeVector \
+    --flags TABLE_HASH_KEY \
+    --key_type ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create \
+    --table MissingModeVector \
+    --name missing_add \
+    --flags COLUMN_VECTOR|MISSING_ADD \
+    --type MissingModeVectorReferred
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create \
+    --table MissingModeVector \
+    --name missing_ignore \
+    --flags COLUMN_VECTOR|MISSING_IGNORE|INVALID_IGNORE \
+    --type MissingModeVectorReferred
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create \
+    --table MissingModeVector \
+    --name missing_nil \
+    --flags COLUMN_VECTOR|MISSING_NIL|INVALID_IGNORE \
+    --type MissingModeVectorReferred
+  # [[0, 1337566253.89858, 0.000355720520019531], true]

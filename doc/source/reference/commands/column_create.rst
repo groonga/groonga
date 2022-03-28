@@ -50,6 +50,8 @@ This section describes about the followings:
   * :ref:`column-create-index-small`
   * :ref:`column-create-index-medium`
   * :ref:`column-create-index-large`
+  * :ref:`column-create-missing-mode`
+  * :ref:`column-create-invalid-mode`
 
 Here is the ``People`` table definition. The ``People`` table is used
 in examples:
@@ -601,6 +603,458 @@ Here is an example to create a large index column:
 ..   --type People \
 ..   --source roles
 
+.. _column-create-missing-mode:
+
+Missing mode
+^^^^^^^^^^^^
+
+.. versionadded:: 12.0.2
+
+You can control how to process a nonexistent key in the specified new
+value of a reference column by a ``MISSING_*`` flag. Here are
+available ``MISSING_*`` flags:
+
+* ``MISSING_ADD`` (default)
+* ``MISSING_IGNORE``
+* ``MISSING_NIL``
+
+You can't specify multiple ``MISSING_*`` flags for a column.
+
+``MISSING_*`` flags are meaningful only for a reference column.
+
+The following table describes the differences between ``MISSING_*``
+flags when a nonexistent key is specified to a reference scalar
+column:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Flag
+     - Description
+     - An example given value
+     - An example set value
+
+   * - ``MISSING_ADD``
+     - The given nonexistent key is added to the referred table
+       automatically and the ID of the newly added record is set.
+
+       This is the default.
+     - ``"nonexistent"``
+     - The record ID of the newly added record whose key is
+       ``"nonexistent"``.
+   * - ``MISSING_IGNORE``
+     - The given nonexistent key is ignored and ``0`` is set.
+
+       There is no difference between ``MISSING_IGNORE`` and
+       ``MISSING_NIL`` for a reference scalar column.
+     - ``"nonexistent"``
+     - ``0``
+   * - ``MISSING_NIL``
+     - The given nonexistent key is ignored and ``0`` is set.
+
+       There is no difference between ``MISSING_IGNORE`` and
+       ``MISSING_NIL`` for a reference scalar column.
+     - ``"nonexistent"``
+     - ``0``
+
+Here is an example to show differences between ``MISSING_*`` flags for
+a reference scalar column.
+
+First this example defines columns for all ``MISSING_*`` flags:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/missing_mode_scalar_schema.log
+.. table_create \
+..   --name MissingModeScalarReferred \
+..   --flags TABLE_HASH_KEY \
+..   --key_type ShortText
+.. table_create \
+..   --name MissingModeScalar \
+..   --flags TABLE_HASH_KEY \
+..   --key_type ShortText
+.. column_create \
+..   --table MissingModeScalar \
+..   --name missing_add \
+..   --flags COLUMN_SCALAR|MISSING_ADD \
+..   --type MissingModeScalarReferred
+.. column_create \
+..   --table MissingModeScalar \
+..   --name missing_ignore \
+..   --flags COLUMN_SCALAR|MISSING_IGNORE \
+..   --type MissingModeScalarReferred
+.. column_create \
+..   --table MissingModeScalar \
+..   --name missing_nil \
+..   --flags COLUMN_SCALAR|MISSING_NIL \
+..   --type MissingModeScalarReferred
+
+Then this example loads nonexistent keys to all columns. The specified
+nonexistent key for ``MISSING_ADD`` is only added to
+``MissingModeScalarReferred`` automatically and the specified
+nonexistent keys for ``MISSING_IGNORE`` and ``MISSING_NIL`` aren't
+added to ``MissingModeScalarReferred``. ``missing_ignore``'s value and
+``missing_nil``'s value are showed as ``""`` because they refer a
+record whose ID is ``0`` and record whose ID is ``0`` never exist:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/missing_mode_scalar_load.log
+.. load --table MissingModeScalar
+.. [
+.. {"_key": "key", "missing_add":    "nonexistent1"}
+.. ]
+.. load --table MissingModeScalar
+.. [
+.. {"_key": "key", "missing_ignore": "nonexistent2"}
+.. ]
+.. load --table MissingModeScalar
+.. [
+.. {"_key": "key", "missing_nil":    "nonexistent3"}
+.. ]
+.. select --table MissingModeScalar
+.. select --table MissingModeScalarReferred
+
+The following table describes the differences between ``MISSING_*``
+flags when a vector value that has a nonexistent key element is
+specified to a reference vector column:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Flag
+     - Description
+     - An example given value
+     - An example set value
+
+   * - ``MISSING_ADD``
+     - The given nonexistent key is added to the referred table
+       automatically and the ID of the newly added record is used for
+       the element.
+
+       This is the default.
+     - ``["existent1", "nonexistent", "existent2"]``
+     - The record IDs of ``"existent1"``, ``"nonexistent"`` and
+       ``"existent2"``.
+   * - ``MISSING_IGNORE``
+     - The given nonexistent key element is ignored.
+     - ``["existent1", "nonexistent", "existent2"]``
+     - The record IDs of ``"existent1"`` and ``"existent2"``.
+   * - ``MISSING_NIL``
+     - The given nonexistent key element is ignored.
+
+       If ``INVALID_WARN`` or ``INVALID_IGNORE`` are also specified,
+       the element is replaced with ``0``. If ``INVALID_ERROR`` is
+       specified or no ``INVALID_*`` are specified, the element is
+       ignored.
+
+       See also :ref:`column-create-invalid-mode`.
+     - ``["existent1", "nonexistent", "existent2"]``
+     - The record ID of ``"existent1"`` and ``0`` and the record ID of
+       ``"existent2"`` for ``INVALID_WARN`` and ``INVALID_IGNORE``.
+
+       The record IDs of ``"existent1"`` and ``"existent2"`` for
+       ``INVALID_ERROR`` and no ``INVALID_*``.
+
+Here is an example to show differences between ``MISSING_*`` flags for
+a reference vector column.
+
+First this example defines columns for all ``MISSING_*`` flags:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/missing_mode_vector_schema.log
+.. table_create \
+..   --name MissingModeVectorReferred \
+..   --flags TABLE_HASH_KEY \
+..   --key_type ShortText
+.. table_create \
+..   --name MissingModeVector \
+..   --flags TABLE_HASH_KEY \
+..   --key_type ShortText
+.. column_create \
+..   --table MissingModeVector \
+..   --name missing_add \
+..   --flags COLUMN_VECTOR|MISSING_ADD \
+..   --type MissingModeVectorReferred
+.. column_create \
+..   --table MissingModeVector \
+..   --name missing_ignore \
+..   --flags COLUMN_VECTOR|MISSING_IGNORE|INVALID_IGNORE \
+..   --type MissingModeVectorReferred
+.. column_create \
+..   --table MissingModeVector \
+..   --name missing_nil \
+..   --flags COLUMN_VECTOR|MISSING_NIL|INVALID_IGNORE \
+..   --type MissingModeVectorReferred
+
+Then this example loads a vector that includes a nonexistent key to
+all columns. The specified nonexistent key for ``MISSING_ADD`` is only
+added to ``MissingModeVectorReferred`` automatically and the specified
+nonexistent keys for ``MISSING_IGNORE`` and ``MISSING_NIL`` aren't
+added to ``MissingModeVectorReferred``. The specified nonexistent key
+element is removed from ``missing_ignore``'s value. The specified
+nonexistent key element is replaced with ``0`` in ``missing_nil``'s
+value because ``INVALID_IGNORE`` is also specified. And the element
+replaced with ``0`` is showed as ``""`` because it refers a record
+whose ID is ``0`` and record whose ID is ``0`` never exist:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/missing_mode_vector_load.log
+.. load --table MissingModeVectorReferred
+.. [
+.. {"_key": "existent1"},
+.. {"_key": "existent2"}
+.. ]
+.. load --table MissingModeVector
+.. [
+.. {"_key": "key", "missing_add":    ["existent1", "nonexistent1", "existent2"]}
+.. ]
+.. load --table MissingModeVector
+.. [
+.. {"_key": "key", "missing_ignore": ["existent1", "nonexistent2", "existent2"]}
+.. ]
+.. load --table MissingModeVector
+.. [
+.. {"_key": "key", "missing_nil":    ["existent1", "nonexistent3", "existent2"]}
+.. ]
+.. select --table MissingModeVector
+.. select --table MissingModeVectorReferred
+
+.. _column-create-invalid-mode:
+
+Invalid mode
+^^^^^^^^^^^^
+
+.. versionadded:: 12.0.2
+
+You can control how to process an invalid value in the specified new
+value of a data column by a ``INVALID_*`` flag. Here are available
+``INVALID_*`` flags:
+
+* ``INVALID_ERROR`` (default)
+* ``INVALID_WARN``
+* ``INVALID_IGNORE``
+
+You can't specify multiple ``INVALID_*`` flags for a column.
+
+``INVALID_*`` flags are meaningful only for a ``COLUMN_SCALAR`` column
+and a ``COLUMN_VECTOR`` column.
+
+If the target column is a reference column, an invalid value depends
+on :ref:`column-create-missing-mode`. If you specify
+``MISSING_IGNORE`` or ``MISSING_NIL``, a nonexistent key is an invalid
+value. Note that an empty string key and string keys that are empty
+strings by normalization aren't an invalid value with all
+``MISSING_*`` flags. They are special.
+
+If the target column isn't a reference column, an invalid value
+depends on column's value type. For example, ``"invalid"`` is an
+invalid value for an ``Int32`` scalar column.
+
+The following table describes the differences between ``INVALID_*``
+flags when an invalid value is specified to an ``Int32`` scalar column:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Flag
+     - Description
+     - An example given value
+     - An example set value
+
+   * - ``INVALID_ERROR``
+     - The given invalid value is reported as an error in
+       :ref:`process-log` and by :doc:`load`.
+
+       The given invalid value isn't set.
+
+       This is the default.
+     - ``"invalid"``
+     - The column isn't updated.
+   * - ``INVALID_WARN``
+     - The given invalid value is reported as a warning in
+       :ref:`process-log`.
+
+       The given invalid value is replaced with the default value of
+       the target scalar column. For example, ``0`` is the default
+       value for an ``Int32`` scalar column.
+     - ``"nonexistent"``
+     - ``0``
+   * - ``INVALID_IGNORE``
+     - The given invalid value is ignored.
+
+       The given invalid value is replaced with the default value of
+       the target scalar column. For example, ``0`` is the default
+       value for an ``Int32`` scalar column.
+     - ``"invalid"``
+     - ``0``
+
+Here is an example to show differences between ``INVALID_*`` flags for
+an ``Int32`` scalar column.
+
+First this example defines columns for all ``INVALID_*`` flags:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/invalid_mode_scalar_schema.log
+.. table_create \
+..   --name InvalidModeScalar \
+..   --flags TABLE_HASH_KEY \
+..   --key_type ShortText
+.. column_create \
+..   --table InvalidModeScalar \
+..   --name invalid_error \
+..   --flags COLUMN_SCALAR|INVALID_ERROR \
+..   --type Int32
+.. column_create \
+..   --table InvalidModeScalar \
+..   --name invalid_warn \
+..   --flags COLUMN_SCALAR|INVALID_WARN \
+..   --type Int32
+.. column_create \
+..   --table InvalidModeScalar \
+..   --name invalid_ignore \
+..   --flags COLUMN_SCALAR|INVALID_IGNORE \
+..   --type Int32
+
+Then this example loads ``29`` as initial values for all columns to
+show differences between them on update:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/invalid_mode_scalar_load_initial.log
+.. load --table InvalidModeScalar
+.. [
+..   {
+..     "_key": "key",
+..     "invalid_error":  29,
+..     "invalid_warn":   29,
+..     "invalid_ignore": 29
+..   }
+.. ]
+.. select \
+..   --table InvalidModeScalar \
+..   --output_columns invalid_error,invalid_warn,invalid_ignore
+
+Then this example update existing column values with invalid values.
+The specified invalid value is reported as an error by :doc:`load`
+only with ``INVALID_ERROR``. And the existing value isn't updated only
+with ``INVALID_ERROR``. The existing value is updated with ``0`` with
+``INVALID_WARN`` and ``INVALID_IGNORE``. You can't see differences
+between ``INVALID_WARN`` and ``INVALID_IGNORE`` with this example but
+a warning message is logged in :ref:`process-log` only with
+``INVALID_WARN``:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/invalid_mode_scalar_load_update.log
+.. load --table InvalidModeScalar
+.. [
+.. {"_key": "key", "invalid_error":  "invalid"},
+.. ]
+.. load --table InvalidModeScalar
+.. [
+.. {"_key": "key", "invalid_warn":   "invalid"},
+.. ]
+.. load --table InvalidModeScalar
+.. [
+.. {"_key": "key", "invalid_ignore": "invalid"},
+.. ]
+.. select \
+..   --table InvalidModeScalar \
+..   --output_columns invalid_error,invalid_warn,invalid_ignore
+
+The following table describes the differences between ``INVALID_*``
+flags when a vector value that has an invalid element is specified to
+an ``Int32`` vector column:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Flag
+     - Description
+     - An example given value
+     - An example set value
+
+   * - ``INVALID_ERROR``
+     - The given invalid element is reported as an error in
+       :ref:`process-log` but :doc:`load` doesn't report an error.
+
+       If the target column is a reference vector column and
+       ``MISSING_NIL`` flag is specified, invalid elements are
+       replaced with ``0``. Invalid elements are ignored otherwise.
+
+     - ``[1, "invalid", 3]``
+     - ``[1, 3]``
+   * - ``INVALID_WARN``
+     - The given invalid element is reported as a warning in
+       :ref:`process-log`.
+
+       If the target column is a reference vector column and
+       ``MISSING_NIL`` flag is specified, invalid elements are
+       replaced with ``0``. Invalid elements are ignored otherwise.
+
+     - ``[1, "invalid", 3]``
+     - ``[1, 3]``
+   * - ``INVALID_IGNORE``
+     - The given invalid element is ignored.
+
+       If the target column is a reference vector column and
+       ``MISSING_NIL`` flag is specified, invalid elements are
+       replaced with ``0``. Invalid elements are ignored otherwise.
+
+     - ``[1, "invalid", 3]``
+     - ``[1, 3]``
+
+Here is an example to show differences between ``INVALID_*`` flags for
+a reference vector column.
+
+First this example defines columns for all ``INVALID_*`` flags:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/invalid_mode_vector_schema.log
+.. table_create \
+..   --name InvalidModeVector \
+..   --flags TABLE_HASH_KEY \
+..   --key_type ShortText
+.. column_create \
+..   --table InvalidModeVector \
+..   --name invalid_error \
+..   --flags COLUMN_VECTOR|INVALID_ERROR \
+..   --type Int32
+.. column_create \
+..   --table InvalidModeVector \
+..   --name invalid_warn \
+..   --flags COLUMN_VECTOR|INVALID_WARN \
+..   --type Int32
+.. column_create \
+..   --table InvalidModeVector \
+..   --name invalid_ignore \
+..   --flags COLUMN_VECTOR|INVALID_IGNORE \
+..   --type Int32
+
+Then this example loads a vector that includes an invalid element to
+all columns. The all specified invalid elements are ignored regardless
+of ``INVALID_*`` flags. Messages in :ref:`process-log` are different
+by ``INVALID_*`` flags. If ``INVALID_ERROR`` is specified, an error
+message is logged in :ref:`process-log`. If ``INVALID_WARN`` is
+specified, a warning message is logged in
+:ref:`process-log`. ``INVALID_IGNORE`` is specified, no message is
+logged in :ref:`process-log`:
+
+.. groonga-command
+.. include:: ../../example/reference/commands/column_create/invalid_mode_vector_load.log
+.. load --table InvalidModeVector
+.. [
+.. {"_key": "key", "invalid_error":  [1, "invalid", 3]}
+.. ]
+.. load --table InvalidModeVector
+.. [
+.. {"_key": "key", "invalid_warn":   [1, "invalid", 3]}
+.. ]
+.. load --table InvalidModeVector
+.. [
+.. {"_key": "key", "invalid_ignore": [1, "invalid", 3]}
+.. ]
+.. select \
+..   --table InvalidModeVector \
+..   --output_columns invalid_error,invalid_warn,invalid_ignore
+
 Parameters
 ----------
 
@@ -804,6 +1258,145 @@ Here are available flags:
        "large data" and how to use this flag.
 
        This flag is available only for ``COLUMN_INDEX``.
+
+   * - ``MISSING_ADD``
+     - .. versionadded:: 12.0.2
+
+       You can't specify multiple ``MISSING_*`` flags. They are
+       exclusive.
+
+       This is meaningful only for reference scalar and vector
+       columns.
+
+       If this flag is specified and nonexistent key in the referred
+       table is specified to the column's value, a new record is
+       created in the referred table automatically.
+
+       If you don't specify any ``MISSING_*`` flag, ``MISSING_ADD`` is
+       used as the default.
+
+       See also :ref:`column-create-missing-mode`.
+
+       This flag is available only for ``COLUMN_SCALAR`` and
+       ``COLUMN_VECTOR``.
+
+   * - ``MISSING_IGNORE``
+     - .. versionadded:: 12.0.2
+
+       You can't specify multiple ``MISSING_*`` flags. They are
+       exclusive.
+
+       This is meaningful only for reference scalar and vector
+       columns.
+
+       If this flag is specified and nonexistent key in the referred
+       table is specified to the column's value, the value is just
+       ignored. If the column is a scalar column, ``GRN_ID_NIL``
+       (``0``) is stored because Groonga doesn't support the NULL
+       value. If the column is a vector column, the element is just
+       removed from the value. For example, ``["existent1",
+       "nonexistent", "existent2"]`` is set to the vector column and
+       ``"nonexistent"`` record doesn't exist in the referred table,
+       ``["existent1", "existent2"]`` are set to the vector column.
+
+       See also :ref:`column-create-missing-mode`.
+
+       This flag is available only for ``COLUMN_SCALAR`` and
+       ``COLUMN_VECTOR``.
+
+   * - ``MISSING_NIL``
+     - .. versionadded:: 12.0.2
+
+       You can't specify multiple ``MISSING_*`` flags. They are
+       exclusive.
+
+       This is meaningful only for reference scalar and vector
+       columns.
+
+       If this flag is specified and nonexistent key in the referred
+       table is specified to the column's value, the value is replaced
+       with ``GRN_ID_NIL`` (``0``).
+
+       See also :ref:`column-create-missing-mode`.
+
+       This flag is available only for ``COLUMN_SCALAR`` and
+       ``COLUMN_VECTOR``.
+
+   * - ``INVALID_ERROR``
+     - .. versionadded:: 12.0.2
+
+       You can't specify multiple ``INVALID_*`` flags. They are
+       exclusive.
+
+       If this flag is specified and an invalid value is specified, an
+       error is reported to :ref:`process-log`.
+
+       For example, ``"STRING"`` for ``Int32`` column is an invalid
+       value.
+
+       If the column is a scalar column, :doc:`load` also reports an
+       error.
+
+       If the column is a vector column, :doc:`load` doesn't reports
+       an error but invalid values in a vector value are removed or
+       replaced with ``GRN_ID_NIL`` (``0``) depending on ``MISSING_*``
+       flag of the column.
+
+       .. note::
+
+          This is an incompatible change at 12.0.2. :doc:`load`
+          also reports an error for a vector column before 12.0.2.
+
+       If you don't specify any ``INVALID_*`` flag, ``INVALID_ERROR`` is
+       used as the default.
+
+       See also :ref:`column-create-invalid-mode`.
+
+       This flag is available only for ``COLUMN_SCALAR`` and
+       ``COLUMN_VECTOR``.
+
+   * - ``INVALID_WARN``
+     - .. versionadded:: 12.0.2
+
+       You can't specify multiple ``INVALID_*`` flags. They are
+       exclusive.
+
+       If this flag is specified and an invalid value is specified, a
+       warning is reported to :ref:`process-log` but no error is
+       reported.
+
+       For example, ``"STRING"`` for ``Int32`` column is an invalid
+       value.
+
+       If the column is a vector column, invalid values in a vector
+       value are removed or replaced with ``GRN_ID_NIL`` (``0``)
+       depending on ``MISSING_*`` flag of the column.
+
+       See also :ref:`column-create-invalid-mode`.
+
+       This flag is available only for ``COLUMN_SCALAR`` and
+       ``COLUMN_VECTOR``.
+
+   * - ``INVALID_IGNORE``
+     - .. versionadded:: 12.0.2
+
+       You can't specify multiple ``INVALID_*`` flags. They are
+       exclusive.
+
+       If this flag is specified and an invalid value is specified,
+       it's just ignored.
+
+       For example, ``"STRING"`` for ``Int32`` column is an invalid
+       value.
+
+       If the column is a vector column, invalid values in a vector
+       value are removed or replaced with ``GRN_ID_NIL`` (``0``)
+       depending on ``MISSING_*`` flag of the column.
+
+       See also :ref:`column-create-invalid-mode`.
+
+       This flag is available only for ``COLUMN_SCALAR`` and
+       ``COLUMN_VECTOR``.
 
 You must specify one of ``COLUMN_${TYPE}`` flags. You can't specify
 two or more ``COLUMN_${TYPE}`` flags. For example,

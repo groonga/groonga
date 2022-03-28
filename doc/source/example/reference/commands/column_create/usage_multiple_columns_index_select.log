@@ -46,6 +46,6 @@ Execution example::
   #     ]
   #   ]
   # ]
-  # log: 2019-04-02 18:35:33.728665|i| [table][select][index][prefix] <Names.people_key_roles_index>
+  # log: 2022-03-28 15:41:01.320091|i| [table-selector][select][index][prefix] <Names.people_key_roles_index>
   log_level --level notice
   # [[0, 1337566253.89858, 0.000355720520019531], true]

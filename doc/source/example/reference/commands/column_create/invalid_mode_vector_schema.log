@@ -1,0 +1,25 @@
+Execution example::
+
+  table_create \
+    --name InvalidModeVector \
+    --flags TABLE_HASH_KEY \
+    --key_type ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create \
+    --table InvalidModeVector \
+    --name invalid_error \
+    --flags COLUMN_VECTOR|INVALID_ERROR \
+    --type Int32
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create \
+    --table InvalidModeVector \
+    --name invalid_warn \
+    --flags COLUMN_VECTOR|INVALID_WARN \
+    --type Int32
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create \
+    --table InvalidModeVector \
+    --name invalid_ignore \
+    --flags COLUMN_VECTOR|INVALID_IGNORE \
+    --type Int32
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
