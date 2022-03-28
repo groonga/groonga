@@ -83,7 +83,9 @@ struct _grn_ra_cache {
 } while (0)
 
 #define GRN_RA_CACHE_FIN(ctx,ra,c) do {\
-  if ((c)->seg != -1) { grn_io_seg_unref(ctx, (ra)->io, (c)->seg); }\
+  if ((c)->seg != -1) {\
+    grn_io_seg_unref(ctx, (ra)->io, (uint32_t)((c)->seg));\
+  }\
 } while (0);
 
 void *grn_ra_ref_cache(grn_ctx *ctx, grn_ra *ra, grn_id id, grn_ra_cache *cache);
