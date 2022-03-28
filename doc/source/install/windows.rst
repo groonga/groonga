@@ -52,27 +52,27 @@ Windows. Here are required tools:
 
 Download zipped source from packages.groonga.org:
 
-  * https://packages.groonga.org/source/groonga/groonga-12.0.1.zip
+  * https://packages.groonga.org/source/groonga/groonga-12.0.2.zip
 
 Then extract it.
 
 Move to the Groonga's source folder::
 
-  > cd c:\Users\%USERNAME%\Downloads\groonga-12.0.1
+  > cd c:\Users\%USERNAME%\Downloads\groonga-12.0.2
 
 Configure by ``cmake``. The following commnad line is for 64-bit
 version. To build 32-bit version, use ``-G "Visual Studio 12 2013"``
 parameter instead::
 
-  groonga-12.0.1> cmake . -G "Visual Studio 12 2013 Win64" -DCMAKE_INSTALL_PREFIX=C:\Groonga
+  groonga-12.0.2> cmake . -G "Visual Studio 12 2013 Win64" -DCMAKE_INSTALL_PREFIX=C:\Groonga
 
 Build::
 
-  groonga-12.0.1> cmake --build . --config Release
+  groonga-12.0.2> cmake --build . --config Release
 
 Install::
 
-  groonga-12.0.1> cmake --build . --config Release --target Install
+  groonga-12.0.2> cmake --build . --config Release --target Install
 
 After the above steps, :doc:`/reference/executables/groonga` is found at
 ``c:\Groonga\bin\groonga.exe``.
