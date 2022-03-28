@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015 Brazil
+  Copyright (C) 2015  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -75,11 +76,14 @@ grn_command_input_add(grn_ctx *ctx,
 
   GRN_API_ENTER;
 
+  uint32_t real_name_size;
   if (name_size == -1) {
-    name_size = strlen(name);
+    real_name_size = (uint32_t)strlen(name);
+  } else {
+    real_name_size = (uint32_t)name_size;
   }
   if (input->arguments) {
-    grn_hash_add(ctx, input->arguments, name, name_size, (void **)&argument,
+    grn_hash_add(ctx, input->arguments, name, real_name_size, (void **)&argument,
                  &internal_added);
     if (internal_added) {
       GRN_TEXT_INIT(argument, 0);
@@ -102,11 +106,18 @@ grn_command_input_get(grn_ctx *ctx,
 
   GRN_API_ENTER;
 
+  uint32_t real_name_size;
   if (name_size == -1) {
-    name_size = strlen(name);
+    real_name_size = (uint32_t)strlen(name);
+  } else {
+    real_name_size = (uint32_t)name_size;
   }
   if (input->arguments) {
-    grn_hash_get(ctx, input->arguments, name, name_size, (void **)&argument);
+    grn_hash_get(ctx,
+                 input->arguments,
+                 name,
+                 real_name_size,
+                 (void **)&argument);
   }
 
   GRN_API_RETURN(argument);
@@ -147,7 +158,7 @@ grn_command_register(grn_ctx *ctx,
   GRN_API_ENTER;
 
   if (command_name_size == -1) {
-    command_name_size = strlen(command_name);
+    command_name_size = (int)strlen(command_name);
   }
 
   {
