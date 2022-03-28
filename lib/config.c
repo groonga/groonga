@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2015-2016  Brazil
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2015-2016  Brazil
+  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -37,23 +37,29 @@ grn_config_set(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-  if (key_size == -1) {
-    key_size = strlen(key);
+  uint32_t real_key_size;
+  if (key_size < 0) {
+    real_key_size = (uint32_t)strlen(key);
+  } else {
+    real_key_size = (uint32_t)key_size;
   }
-  if (key_size > GRN_CONFIG_MAX_KEY_SIZE) {
+  if (real_key_size > GRN_CONFIG_MAX_KEY_SIZE) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[config][set] too large key: max=<%d>: <%d>",
-        GRN_CONFIG_MAX_KEY_SIZE, key_size);
+        "[config][set] too large key: max=<%u>: <%u>",
+        GRN_CONFIG_MAX_KEY_SIZE, real_key_size);
     GRN_API_RETURN(ctx->rc);
   }
 
-  if (value_size == -1) {
-    value_size = strlen(value);
+  uint32_t real_value_size;
+  if (value_size < 0) {
+    real_value_size = (uint32_t)strlen(value);
+  } else {
+    real_value_size = (uint32_t)value_size;
   }
   if ((size_t)value_size > GRN_CONFIG_MAX_VALUE_SIZE) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[config][set] too large value: max=<%" GRN_FMT_SIZE ">: <%d>",
-        GRN_CONFIG_MAX_VALUE_SIZE, value_size);
+        "[config][set] too large value: max=<%" GRN_FMT_SIZE ">: <%u>",
+        GRN_CONFIG_MAX_VALUE_SIZE, real_value_size);
     GRN_API_RETURN(ctx->rc);
   }
 
@@ -67,13 +73,13 @@ grn_config_set(grn_ctx *ctx,
       }
       GRN_API_RETURN(rc);
     }
-    id = grn_hash_add(ctx, config, key, key_size, NULL, NULL);
+    id = grn_hash_add(ctx, config, key, real_key_size, NULL, NULL);
     if (id != GRN_ID_NIL) {
       grn_obj packed_value;
       GRN_TEXT_INIT(&packed_value, 0);
       grn_bulk_reserve(ctx, &packed_value, GRN_CONFIG_MAX_VALUE_SIZE);
-      GRN_UINT32_PUT(ctx, &packed_value, value_size);
-      GRN_TEXT_PUT(ctx, &packed_value, value, value_size);
+      GRN_UINT32_PUT(ctx, &packed_value, real_value_size);
+      GRN_TEXT_PUT(ctx, &packed_value, value, real_value_size);
       GRN_TEXT_PUTC(ctx, &packed_value, '\0');
       grn_hash_set_value(ctx,
                          config,
@@ -86,8 +92,8 @@ grn_config_set(grn_ctx *ctx,
   }
   if (id == GRN_ID_NIL || ctx->rc != GRN_SUCCESS) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[config][set] failed to set: name=<%.*s>: <%d>",
-        key_size, key, value_size);
+        "[config][set] failed to set: name=<%.*s>: <%u>",
+        (int)real_key_size, key, real_value_size);
   }
 
   GRN_API_RETURN(ctx->rc);
@@ -110,18 +116,21 @@ grn_config_get(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-  if (key_size == -1) {
-    key_size = strlen(key);
+  uint32_t real_key_size;
+  if (key_size < 0) {
+    real_key_size = (uint32_t)strlen(key);
+  } else {
+    real_key_size = (uint32_t)key_size;
   }
-  if (key_size > GRN_CONFIG_MAX_KEY_SIZE) {
+  if (real_key_size > GRN_CONFIG_MAX_KEY_SIZE) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[config][get] too large key: max=<%d>: <%d>",
-        GRN_CONFIG_MAX_KEY_SIZE, key_size);
+        "[config][get] too large key: max=<%u>: <%u>",
+        GRN_CONFIG_MAX_KEY_SIZE, real_key_size);
     GRN_API_RETURN(ctx->rc);
   }
 
   config = ((grn_db *)db)->config;
-  id = grn_hash_get(ctx, config, key, key_size, &packed_value);
+  id = grn_hash_get(ctx, config, key, real_key_size, &packed_value);
   if (id == GRN_ID_NIL) {
     *value = NULL;
     *value_size = 0;
@@ -147,13 +156,16 @@ grn_config_delete(grn_ctx *ctx,
     GRN_API_RETURN(ctx->rc);
   }
 
-  if (key_size == -1) {
-    key_size = strlen(key);
+  uint32_t real_key_size;
+  if (key_size < 0) {
+    real_key_size = (uint32_t)strlen(key);
+  } else {
+    real_key_size = (uint32_t)key_size;
   }
-  if (key_size > GRN_CONFIG_MAX_KEY_SIZE) {
+  if (real_key_size > GRN_CONFIG_MAX_KEY_SIZE) {
     ERR(GRN_INVALID_ARGUMENT,
-        "[config][delete] too large key: max=<%d>: <%d>",
-        GRN_CONFIG_MAX_KEY_SIZE, key_size);
+        "[config][delete] too large key: max=<%u>: <%u>",
+        GRN_CONFIG_MAX_KEY_SIZE, real_key_size);
     GRN_API_RETURN(ctx->rc);
   }
 
@@ -165,17 +177,17 @@ grn_config_delete(grn_ctx *ctx,
       if (ctx->rc == GRN_SUCCESS) {
         ERR(rc,
             "[config][delete] failed to lock: <%.*s>",
-            key_size, key);
+            (int)real_key_size, key);
       }
       GRN_API_RETURN(rc);
     }
-    rc = grn_hash_delete(ctx, config, key, key_size, NULL);
+    rc = grn_hash_delete(ctx, config, key, real_key_size, NULL);
     grn_io_unlock(ctx, config->io);
     if (rc != GRN_SUCCESS) {
       if (ctx->rc == GRN_SUCCESS) {
         ERR(rc,
             "[config][delete] failed to delete: <%.*s>",
-            key_size, key);
+            (int)real_key_size, key);
       }
     }
   }
@@ -208,8 +220,8 @@ grn_config_cursor_open(grn_ctx *ctx)
 
   GRN_DB_OBJ_SET_TYPE(cursor, GRN_CURSOR_CONFIG);
   cursor->hash_cursor = grn_hash_cursor_open(ctx, config,
-                                             NULL, -1,
-                                             NULL, -1,
+                                             NULL, 0,
+                                             NULL, 0,
                                              0, -1, 0);
   if (!cursor->hash_cursor) {
     GRN_FREE(cursor);
@@ -253,11 +265,15 @@ grn_config_cursor_get_key(grn_ctx *ctx, grn_obj *cursor, const char **key)
 {
   void *key_raw;
   uint32_t key_size;
+  int key_size_raw;
   grn_config_cursor *config_cursor = (grn_config_cursor *)cursor;
 
   GRN_API_ENTER;
 
-  key_size = grn_hash_cursor_get_key(ctx, config_cursor->hash_cursor, &key_raw);
+  key_size_raw = grn_hash_cursor_get_key(ctx,
+                                         config_cursor->hash_cursor,
+                                         &key_raw);
+  key_size = (uint32_t)key_size_raw;
   *key = key_raw;
 
   GRN_API_RETURN(key_size);
@@ -268,7 +284,7 @@ grn_config_cursor_get_value(grn_ctx *ctx, grn_obj *cursor, const char **value)
 {
   void *value_raw;
   uint32_t value_size;
-  uint32_t value_size_raw;
+  int value_size_raw;
   grn_config_cursor *config_cursor = (grn_config_cursor *)cursor;
 
   GRN_API_ENTER;
