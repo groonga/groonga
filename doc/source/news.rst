@@ -50,6 +50,76 @@ Improvements
   Therefore, the time of making the index has longed even if we set the index against these columns after we loaded data into them.
   By this improvement, the time of making the index is short in this case.
 
+* [:doc:`reference/commands/column_create`] Added new flags ``MISSING_*`` and ``INVALID_*``.
+
+  We added the following new flags for ``column_create``.
+
+    * ``MISSING_ADD``
+    * ``MISSING_IGNORE``
+    * ``MISSING_NIL``
+
+    * ``INVALID_ERROR``
+    * ``INVALID_WARN``
+    * ``INVALID_IGNORE``
+
+  Normally, if the data column is a reference data column and the nonexistent key is specified, a new record for the nonexistent key is newly created automatically.
+
+  The behavior that Groonga adds the key automatically into the column of reference destination is useful in the search like tag search.
+  Because Groonga adds data automatically when we load data.
+
+  However, this behavior is inconvenient if we need the other data except for the key.
+  Because a record that only has the key exists.
+
+  We can change this behavior by using flags that are added in this release.
+
+    * ``MISSING_ADD``: This is the default value. This is the same behavior as the current.
+
+      If the data column is a reference data column and the nonexistent key is specified, a new record for the nonexistent key is newly created automatically.
+
+    * ``MISSING_IGNORE``:
+
+      If the data column is a reference data column and the nonexistent key is specified, the nonexistent key is ignored.
+      If the reference data column is a scalar column, the value is ``GRN_ID_NIL``.
+      If the reference data column is a vector column, the element is just ignored as below ::
+
+        ["existent1", "nonexistent", "existent2"] ->
+        ["existent1" "existent2"]
+
+    * ``MISSING_NIL``:
+
+      If the data column is a reference data column and the nonexistent key is specified, the nonexistent key in a scalar column and a vector column is treated as ``GRN_ID_NIL`` ::
+
+        ["existent1", "nonexistent", "existent2"] ->
+        ["existent1", "" (GRN_ID_NIL), "existent2"]
+
+
+    * ``INVALID_ERROR``: This is the default value. This is the same behavior as the current except an error response of a vector column case.
+
+      If we set the invalid value (e.g.: ``XXX`` for ``UInt8`` scalar column), the set operation is treated as an error.
+      If the data column is a scalar column, ``load`` reports an error in log and response.
+      If the data column is a vector column, ``load`` reports an error in log but doesn't report an error in response.
+      This is an incompatible change.
+
+    * ``INVALID_WARN``:
+
+      If we set the invalid value (e.g.: ``XXX`` for ``UInt8`` scalar column), a warning message is logged and the set operation is ignored.
+      If the target data column is a reference vector data column, ``MISSING_IGNORE`` and ``MISSING_NIL`` are used to determine the behavior.
+
+    * ``INVALID_IGNORE``:
+
+      If we set the invalid value (e.g.: ``XXX`` for ``UInt8`` scalar column), the set operation is ignored.
+      If the target data column is a reference vector data column, ``MISSING_IGNORE`` and ``MISSING_NIL`` are used to determine the behavior.
+
+* [:doc:`/reference/commands/dump`][:doc:`/reference/commands/column_list`] Added support for ``MISSING_*`` and ``INVALID_*`` flags.
+
+  These commands doesn't show ``MISSING_ADD`` and ``INVALID_ERROR`` flags to keep backward compatibility.
+  Because these flags show the default behavior.
+
+* [:doc:`/reference/commands/schema`] Added support for ``MISSING_*`` and ``INVALID_*`` flags.
+
+  ``MISSING_AND`` and ``INVALID_ERROR`` flags aren't shown in ``flags`` to keep backward compatibility.
+  However, new ``missing`` and ``invalid`` keys are added to each column.
+
 * We provided the package of Amazon Linux 2.
 
 * [Windows] Dropped support for building with Visual Studio 2017.
