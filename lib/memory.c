@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,7 @@ grn_memory_get_usage(grn_ctx *ctx)
     SERR("getrusage");
     return 0;
   }
-  return usage.ru_maxrss * 1024;
+  return (uint64_t)(usage.ru_maxrss) * 1024;
 #else
   return 0;
 #endif
