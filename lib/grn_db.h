@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -285,7 +285,7 @@ grn_table_add_subrec(grn_ctx *ctx,
     /* This is a duplicated check but it reduces the number of
      * function calls. It improves performance when many records are
      * matched. */
-    int limit = DB_OBJ(table)->max_n_subrecs;
+    uint32_t limit = DB_OBJ(table)->max_n_subrecs;
     if (limit > 0) {
       grn_rset_add_subrec(ctx, ri, table, score, pi, dir);
     }
