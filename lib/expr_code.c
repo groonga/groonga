@@ -1,4 +1,6 @@
-/* Copyright(C) 2014-2015 Brazil
+/*
+  Copyright(C) 2014-2015  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,7 +18,7 @@
 
 #include "grn_expr_code.h"
 
-unsigned int
+uint32_t
 grn_expr_code_n_used_codes(grn_ctx *ctx,
                            grn_expr_code *start,
                            grn_expr_code *target)
@@ -40,7 +42,7 @@ grn_expr_code_n_used_codes(grn_ctx *ctx,
   n_codes = 1;
   sub_code = target - 1;
   for (i = 0; i < n_args; i++) {
-    int sub_n_codes;
+    uint32_t sub_n_codes;
     sub_n_codes = grn_expr_code_n_used_codes(ctx, start, sub_code);
     n_codes += sub_n_codes;
     sub_code -= sub_n_codes;

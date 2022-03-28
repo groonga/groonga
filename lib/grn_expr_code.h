@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015-2018 Brazil
+  Copyright(C) 2015-2018  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -33,9 +34,9 @@ typedef struct {
   int32_t modify;
 } grn_expr_code;
 
-unsigned int grn_expr_code_n_used_codes(grn_ctx *ctx,
-                                        grn_expr_code *start,
-                                        grn_expr_code *target);
+uint32_t grn_expr_code_n_used_codes(grn_ctx *ctx,
+                                    grn_expr_code *start,
+                                    grn_expr_code *target);
 
 #ifdef __cplusplus
 }
