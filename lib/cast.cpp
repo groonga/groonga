@@ -1089,6 +1089,23 @@ namespace {
 }
 #endif
 
+// NOTE: We may need to change the following current design:
+//
+// This is called for a whole value of a scalar column and an element
+// value of a vector column.
+//
+// If this is called for a whole value of a scalar column, an error is
+// reported as both of an error log and an return value with
+// GRN_OBJ_INVALID_ERROR.
+//
+// If this is called for an element value for a vector column, an
+// error is reported as only an error log with
+// GRN_OBJ_INVALID_ERROR. Return value is GRN_SUCCESS.
+//
+// Calling a cast function only for a whole value may be better for
+// consistent implementation but there are custom cast processes in
+// load.c and arrow.cpp for a vector value. We can reconsider the
+// current design later.
 grn_inline static grn_rc
 grn_caster_cast_to_record(grn_ctx *ctx, grn_caster *caster)
 {
