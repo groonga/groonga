@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2010-2015  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2010-2015  Brazil
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -296,7 +296,7 @@ grn_index_cursor_next_internal(grn_ctx *ctx,
                                  ic->term_id,
                                  ic->rid_min,
                                  ic->rid_max,
-                                 ii->n_elements,
+                                 (int)(ii->n_elements),
                                  ic->flags);
     if (ic->iic) {
       if (ic->n_scales > 0) {
