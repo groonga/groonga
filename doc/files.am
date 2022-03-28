@@ -64,6 +64,15 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/column_copy/move_column_setup.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_copy/to_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_copy/to_table_setup.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/invalid_mode_scalar_load_initial.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/invalid_mode_scalar_load_update.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/invalid_mode_scalar_schema.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/invalid_mode_vector_load.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/invalid_mode_vector_schema.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/missing_mode_scalar_load.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/missing_mode_scalar_schema.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/missing_mode_vector_load.log \
+	$(top_srcdir)/doc/source/example/reference/commands/column_create/missing_mode_vector_schema.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_full_text_search_index_create_column.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_full_text_search_index_create_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/column_create/usage_full_text_search_index_select.log \
@@ -1270,6 +1279,15 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/column_copy/move_column_setup.log \
 	source/example/reference/commands/column_copy/to_table.log \
 	source/example/reference/commands/column_copy/to_table_setup.log \
+	source/example/reference/commands/column_create/invalid_mode_scalar_load_initial.log \
+	source/example/reference/commands/column_create/invalid_mode_scalar_load_update.log \
+	source/example/reference/commands/column_create/invalid_mode_scalar_schema.log \
+	source/example/reference/commands/column_create/invalid_mode_vector_load.log \
+	source/example/reference/commands/column_create/invalid_mode_vector_schema.log \
+	source/example/reference/commands/column_create/missing_mode_scalar_load.log \
+	source/example/reference/commands/column_create/missing_mode_scalar_schema.log \
+	source/example/reference/commands/column_create/missing_mode_vector_load.log \
+	source/example/reference/commands/column_create/missing_mode_vector_schema.log \
 	source/example/reference/commands/column_create/usage_full_text_search_index_create_column.log \
 	source/example/reference/commands/column_create/usage_full_text_search_index_create_table.log \
 	source/example/reference/commands/column_create/usage_full_text_search_index_select.log \
