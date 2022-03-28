@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2018 Brazil
+  Copyright(C) 2018  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -240,7 +241,7 @@ grn_encoding_convert_to_locale(grn_ctx *ctx,
     if (grn_encoding_string_size < 0) {
       *converted_string_size = strlen(grn_encoding_string);
     } else {
-      *converted_string_size = grn_encoding_string_size;
+      *converted_string_size = (size_t)grn_encoding_string_size;
     }
   }
   return grn_encoding_string;
@@ -256,7 +257,7 @@ grn_encoding_convert_to_utf8(grn_ctx *ctx,
     if (grn_encoding_string_size < 0) {
       *converted_string_size = strlen(grn_encoding_string);
     } else {
-      *converted_string_size = grn_encoding_string_size;
+      *converted_string_size = (size_t)grn_encoding_string_size;
     }
   }
   return grn_encoding_string;
@@ -272,7 +273,7 @@ grn_encoding_convert_from_locale(grn_ctx *ctx,
     if (locale_string_size < 0) {
       *converted_string_size = strlen(locale_string);
     } else {
-      *converted_string_size = locale_string_size;
+      *converted_string_size = (size_t)locale_string_size;
     }
   }
   return locale_string;
@@ -288,7 +289,7 @@ grn_encoding_convert_from_utf8(grn_ctx *ctx,
     if (utf8_string_size < 0) {
       *converted_string_size = strlen(utf8_string);
     } else {
-      *converted_string_size = utf8_string_size;
+      *converted_string_size = (size_t)utf8_string_size;
     }
   }
   return utf8_string;
@@ -304,7 +305,7 @@ grn_encoding_convert_to_utf8_from_locale(grn_ctx *ctx,
     if (locale_string_size < 0) {
       *converted_string_size = strlen(locale_string);
     } else {
-      *converted_string_size = locale_string_size;
+      *converted_string_size = (size_t)locale_string_size;
     }
   }
   return locale_string;
@@ -320,7 +321,7 @@ grn_encoding_convert_to_locale_from_utf8(grn_ctx *ctx,
     if (utf8_string_size < 0) {
       *converted_string_size = strlen(utf8_string);
     } else {
-      *converted_string_size = utf8_string_size;
+      *converted_string_size = (size_t)utf8_string_size;
     }
   }
   return utf8_string;
