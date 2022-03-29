@@ -41,5 +41,27 @@ load --table Logs_20170427
 {"timestamp": "2017/04/27 02:00:00", "price":  300}
 ]
 [[0,0.0,0.0],3]
+log_level --level dump
+[[0,0.0,0.0],true]
 logical_count Logs   --shard_key timestamp   --columns[month].stage initial   --columns[month].type Time   --columns[month].flags COLUMN_SCALAR   --columns[month].value 'time_classify_month(timestamp)'   --filter 'price > 300'   --columns[price_per_month].stage filtered   --columns[price_per_month].type UInt32   --columns[price_per_month].flags COLUMN_SCALAR   --columns[price_per_month].value 'window_sum(price)'   --columns[price_per_month].window.group_keys 'month'   --post_filter 'price_per_month > 1500'
 [[0,0.0,0.0],4]
+#|-| [obj][open] <273>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <272>(<Logs_20170315>):<51>(<table:no_key>)
+#|-| [obj][open] <276>(<Logs_20170316.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <275>(<Logs_20170316>):<51>(<table:no_key>)
+#|-| [obj][open] <279>(<Logs_20170427.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <278>(<Logs_20170427>):<51>(<table:no_key>)
+#|-| [obj][open] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
+#|-| [obj][open] <277>(<Logs_20170316.price>):<64>(<column:fix_size>)
+#|-| [obj][open] <280>(<Logs_20170427.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <274>(<Logs_20170315.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <277>(<Logs_20170316.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <280>(<Logs_20170427.price>):<64>(<column:fix_size>)
+#|-| [obj][close] <272>(<Logs_20170315>):<51>(<table:no_key>)
+#|-| [obj][close] <273>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <275>(<Logs_20170316>):<51>(<table:no_key>)
+#|-| [obj][close] <276>(<Logs_20170316.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <278>(<Logs_20170427>):<51>(<table:no_key>)
+#|-| [obj][close] <279>(<Logs_20170427.timestamp>):<64>(<column:fix_size>)
+log_level --level notice
+[[0,0.0,0.0],true]

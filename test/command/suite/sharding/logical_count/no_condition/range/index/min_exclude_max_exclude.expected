@@ -49,5 +49,17 @@ load --table Logs_20150205
 {"timestamp": "2015-02-05 13:53:00"}
 ]
 [[0,0.0,0.0],6]
+log_level --level dump
+[[0,0.0,0.0],true]
 logical_count Logs timestamp   --min "2015-02-04 00:00:00"   --min_border "exclude"   --max "2015-02-05 00:00:00"   --max_border "exclude"
 [[0,0.0,0.0],4]
+#|-| [obj][open] <267>(<Logs_20150204.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <268>(<Times_20150204>):<49>(<table:pat_key>)
+#|-| [obj][open] <269>(<Times_20150204.timestamp_index>):<72>(<column:index>)
+#|-| [obj][open] <266>(<Logs_20150204>):<51>(<table:no_key>)
+#|-| [obj][close] <269>(<Times_20150204.timestamp_index>):<72>(<column:index>)
+#|-| [obj][close] <268>(<Times_20150204>):<49>(<table:pat_key>)
+#|-| [obj][close] <266>(<Logs_20150204>):<51>(<table:no_key>)
+#|-| [obj][close] <267>(<Logs_20150204.timestamp>):<64>(<column:fix_size>)
+log_level --level notice
+[[0,0.0,0.0],true]

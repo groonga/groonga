@@ -1,3 +1,4 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
 #@on-error omit
 plugin_register sharding
 #@on-error default
@@ -12,4 +13,10 @@ load --table Logs_20150203
 {"timestamp": "2015-02-03 12:51:00"}
 ]
 
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level dump
 logical_count Logs timestamp
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels dump

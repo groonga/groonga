@@ -11,5 +11,13 @@ load --table Logs_20150203
 {"timestamp": "2015-02-03 12:51:00"}
 ]
 [[0,0.0,0.0],3]
+log_level --level dump
+[[0,0.0,0.0],true]
 logical_count Logs timestamp
 [[0,0.0,0.0],3]
+#|-| [obj][open] <263>(<Logs_20150203.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <262>(<Logs_20150203>):<51>(<table:no_key>)
+#|-| [obj][close] <262>(<Logs_20150203>):<51>(<table:no_key>)
+#|-| [obj][close] <263>(<Logs_20150203.timestamp>):<64>(<column:fix_size>)
+log_level --level notice
+[[0,0.0,0.0],true]
