@@ -10,13 +10,13 @@ column_create Times_20150709 timestamp_index COLUMN_INDEX Logs_20150709 timestam
 [[0,0.0,0.0],true]
 load --table Logs_20150709
 [
-{"timestamp": "2015-02-05 13:49:00"}
+{"timestamp": "2015-07-09 20:00:00"}
 ]
 [[0,0.0,0.0],1]
 log_level --level debug
 [[0,0.0,0.0],true]
 logical_count Logs timestamp   --min "2015/07/09 00:00:00"   --max "2015/07/09 12:00:00"
-[[0,0.0,0.0],1]
+[[0,0.0,0.0],0]
 #|d| [logical_count][range-index] <Logs_20150709>: range index is available
 log_level --level notice
 [[0,0.0,0.0],true]

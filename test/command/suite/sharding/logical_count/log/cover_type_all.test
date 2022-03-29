@@ -8,7 +8,7 @@ table_create Times_20150709 TABLE_PAT_KEY Time
 column_create Times_20150709 timestamp_index COLUMN_INDEX Logs_20150709 timestamp
 load --table Logs_20150709
 [
-{"timestamp": "2015-02-05 13:49:00"}
+{"timestamp": "2015-07-09 20:00:00"}
 ]
 
 log_level --level debug
