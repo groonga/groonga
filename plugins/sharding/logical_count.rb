@@ -15,17 +15,14 @@ module Groonga
 
         def run_body(input)
           context = ShardCountContext.new(input)
-                    total = 0
           begin
-            n_elements = 0
-            is_first = true
             counter = Counter.new(context)
             count_result = counter.count
+            query_logger.log(:size, ":", "count(#{count_result})")
+            writer.write(count_result)
           ensure
             context.close
           end
-          query_logger.log(:size, ":", "count(#{count_result})")
-          writer.write(count_result)
         end
 
         private
