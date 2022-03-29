@@ -97,94 +97,40 @@ module Groonga
         key
       end
 
-      class ExecuteContext
+      class ExecuteContext < ExecuteContextBase
         include KeysParsable
 
         attr_reader :use_range_index
-        attr_reader :enumerator
         attr_reader :order
-        attr_reader :filter
         attr_reader :offset
         attr_reader :limit
-        attr_reader :post_filter
         attr_reader :sort_keys
-        attr_reader :dynamic_columns
         attr_accessor :current_offset
         attr_accessor :current_limit
         attr_reader :threshold
         attr_reader :large_shard_threshold
-        attr_reader :time_classify_types
         attr_reader :result_sets
         def initialize(input)
-          @input = input
+          super("logical_range_filter", input)
           @use_range_index = parse_use_range_index(@input[:use_range_index])
-          @enumerator = LogicalEnumerator.new("logical_range_filter",
-                                              @input,
-                                              {:unref_immediately => true})
           @order = parse_order(@input, :order)
-          @filter = @input[:filter]
           @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
-          @post_filter = @input[:post_filter]
           @sort_keys = parse_keys(@input[:sort_keys])
-
-          @dynamic_columns = DynamicColumns.parse("[logical_range_filter]",
-                                                  @input)
 
           @current_offset = @offset
           @current_limit = @limit
 
           @result_sets = []
-          @temporary_tables_queue = []
 
           @threshold = compute_threshold
           @large_shard_threshold = compute_large_shard_threshold
-
-          @time_classify_types = detect_time_classify_types
-
-          @referred_objects_queue = []
-        end
-
-        def temporary_tables
-          @temporary_tables_queue.last
-        end
-
-        def referred_objects
-          @referred_objects_queue.last
-        end
-
-        def push
-          @temporary_tables_queue << []
-          @referred_objects_queue << []
-        end
-
-        def shift
-          temporary_tables = @temporary_tables_queue.shift
-          temporary_tables.each(&:close)
-          temporary_tables.clear
-          referred_objects = @referred_objects_queue.shift
-          referred_objects.each(&:unref)
-          referred_objects.clear
-        end
-
-        def close
-          until @temporary_tables_queue.empty?
-            shift
-          end
-          @result_sets.clear
-          @enumerator.unref
         end
 
         def consume_result_sets
           while (result_set = @result_sets.shift)
             yield(result_set)
           end
-        end
-
-        def need_look_ahead?
-          return false unless @dynamic_columns.have_window_function?
-          return false unless @time_classify_types.empty?
-          true
         end
 
         private
@@ -226,33 +172,6 @@ module Groonga
           threshold_env = ENV["GRN_LOGICAL_RANGE_FILTER_LARGE_SHARD_THRESHOLD"]
           default_threshold = "10_000"
           (threshold_env || default_threshold).to_i(10)
-        end
-
-        def detect_time_classify_types
-          window_group_keys = []
-          @dynamic_columns.each_filtered do |dynamic_column|
-            window_group_keys.concat(dynamic_column.window_group_keys)
-          end
-          return [] if window_group_keys.empty?
-
-          types = []
-          @dynamic_columns.each do |dynamic_column|
-            next unless window_group_keys.include?(dynamic_column.label)
-            case dynamic_column.value.strip
-            when /\Atime_classify_(.+?)\s*\(\s*([a-zA-Z\d_]+)\s*[,)]/
-              type = $1
-              column = $2
-              next if column != @enumerator.shard_key_name
-
-              case type
-              when "minute", "second"
-                types << type
-              when "day", "hour"
-                types << type
-              end
-            end
-          end
-          types
         end
       end
 
