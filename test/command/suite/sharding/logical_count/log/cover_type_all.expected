@@ -8,10 +8,15 @@ table_create Times_20150709 TABLE_PAT_KEY Time
 [[0,0.0,0.0],true]
 column_create Times_20150709 timestamp_index COLUMN_INDEX Logs_20150709 timestamp
 [[0,0.0,0.0],true]
+load --table Logs_20150709
+[
+{"timestamp": "2015-02-05 13:49:00"}
+]
+[[0,0.0,0.0],1]
 log_level --level debug
 [[0,0.0,0.0],true]
 logical_count Logs timestamp
-[[0,0.0,0.0],0]
+[[0,0.0,0.0],1]
 #|d| [logical_count][select] <Logs_20150709>: covered
 log_level --level notice
 [[0,0.0,0.0],true]

@@ -4,10 +4,15 @@ table_create Logs_20150709 TABLE_NO_KEY
 [[0,0.0,0.0],true]
 column_create Logs_20150709 timestamp COLUMN_SCALAR Time
 [[0,0.0,0.0],true]
+load --table Logs_20150709
+[
+{"timestamp": "2015-02-05 13:49:00"}
+]
+[[0,0.0,0.0],1]
 log_level --level debug
 [[0,0.0,0.0],true]
 logical_count Logs timestamp   --min "2015/07/09 00:00:00"   --max "2015/07/09 12:00:00"
-[[0,0.0,0.0],0]
+[[0,0.0,0.0],1]
 #|d| [logical_count][select] <Logs_20150709>: no range index
 log_level --level notice
 [[0,0.0,0.0],true]

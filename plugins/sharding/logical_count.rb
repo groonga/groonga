@@ -280,7 +280,7 @@ module Groonga
           private
           def have_record?
             return false if @cover_type == :none
-            #return false if @target_table.empty?
+            return false if @target_table.empty?
             true
           end
 
