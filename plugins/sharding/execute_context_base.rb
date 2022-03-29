@@ -6,7 +6,6 @@ module Groonga
       attr_reader :post_filter
       attr_reader :dynamic_columns
       attr_reader :time_classify_types
-
       def initialize(command_name, input)
         @input = input
         @enumerator = LogicalEnumerator.new(command_name,
