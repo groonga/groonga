@@ -56,7 +56,7 @@ grn_config_set(grn_ctx *ctx,
   } else {
     real_value_size = (uint32_t)value_size;
   }
-  if ((size_t)value_size > GRN_CONFIG_MAX_VALUE_SIZE) {
+  if (real_value_size > GRN_CONFIG_MAX_VALUE_SIZE) {
     ERR(GRN_INVALID_ARGUMENT,
         "[config][set] too large value: max=<%" GRN_FMT_SIZE ">: <%u>",
         GRN_CONFIG_MAX_VALUE_SIZE, real_value_size);
