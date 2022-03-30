@@ -1,6 +1,6 @@
 module Groonga
   module Sharding
-    class ShardExecutorBase
+    class StreamShardExecutor
       # Derived class must imprement methods below.
       # - execute_filter(context)
       # - use_range_index?

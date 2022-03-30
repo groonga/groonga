@@ -258,7 +258,7 @@ module Groonga
         end
       end
 
-      class ShardExecutor < ShardExecutorBase
+      class ShardExecutor < StreamShardExecutor
         include Loggable
         include QueryLoggable
 
