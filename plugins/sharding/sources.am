@@ -12,4 +12,4 @@ sharding_scripts =				\
 	dynamic_columns.rb			\
 	window.rb			\
 	stream_execute_context.rb		\
-	shard_executor_base.rb
+	stream_shard_executor.rb

@@ -4,7 +4,7 @@ require "sharding/logical_enumerator"
 require "sharding/keys_parsable"
 require "sharding/window"
 require "sharding/stream_execute_context"
-require "sharding/shard_executor_base"
+require "sharding/stream_shard_executor"
 
 require "sharding/dynamic_columns"
 
