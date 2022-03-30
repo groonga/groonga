@@ -3,7 +3,7 @@ require "sharding/range_expression_builder"
 require "sharding/logical_enumerator"
 require "sharding/keys_parsable"
 require "sharding/window"
-require "sharding/execute_context_base"
+require "sharding/stream_execute_context"
 
 require "sharding/dynamic_columns"
 
