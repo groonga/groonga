@@ -2,7 +2,7 @@ module Groonga
   module Sharding
     class StreamShardExecutor
       # Derived class must imprement methods below.
-      # - execute_filter(context)
+      # - execute_filter(range_index)
       # - use_range_index?
 
       attr_reader :shard
