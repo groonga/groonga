@@ -1,6 +1,10 @@
 module Groonga
   module Sharding
     class ShardExecutorBase
+      # Derived class must imprement methods below.
+      # - execute_filter(context)
+      # - use_range_index?
+
       attr_reader :shard
       attr_writer :previous_executor
       attr_writer :next_executor
