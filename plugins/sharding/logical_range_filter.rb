@@ -301,23 +301,6 @@ module Groonga
           end
         end
 
-        def decide_use_range_index(use, reason, line, method)
-          message = "[logical_range_filter]"
-          if use
-            message << "[range-index] "
-          else
-            message << "[select] "
-          end
-          message << "<#{@shard.table_name}>: "
-          message << reason
-          logger.log(Logger::Level::DEBUG,
-                     __FILE__,
-                     line,
-                     method.to_s,
-                     message)
-          use
-        end
-
         def use_range_index?
           use_range_index_parameter_message =
             "force by use_range_index parameter"

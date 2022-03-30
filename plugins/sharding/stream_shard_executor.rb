@@ -143,6 +143,23 @@ module Groonga
         end
       end
 
+      def decide_use_range_index(use, reason, line, method)
+        message = "[#{@command_name}]"
+        if use
+          message << "[range-index] "
+        else
+          message << "[select] "
+        end
+        message << "<#{@shard.table_name}>: "
+        message << reason
+        logger.log(Logger::Level::DEBUG,
+                   __FILE__,
+                   line,
+                   method.to_s,
+                   message)
+        use
+      end
+
       def apply_post_filter(table)
         create_expression(table) do |expression|
           expression.parse(@post_filter)
