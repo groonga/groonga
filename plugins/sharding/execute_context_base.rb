@@ -1,6 +1,6 @@
 module Groonga
   module Sharding
-    class ExecuteContextBase
+    class StreamExecuteContext
       attr_reader :enumerator
       attr_reader :filter
       attr_reader :post_filter
@@ -10,7 +10,7 @@ module Groonga
         @input = input
         @enumerator = LogicalEnumerator.new(command_name,
                                             @input,
-                                            { :unref_immediately => true })
+                                            {:unref_immediately => true})
         @filter = @input[:filter]
         @post_filter = @input[:post_filter]
 

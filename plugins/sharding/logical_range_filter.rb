@@ -97,7 +97,7 @@ module Groonga
         key
       end
 
-      class ExecuteContext < ExecuteContextBase
+      class ExecuteContext < StreamExecuteContext
         include KeysParsable
 
         attr_reader :use_range_index
