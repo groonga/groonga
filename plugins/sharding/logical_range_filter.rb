@@ -127,6 +127,11 @@ module Groonga
           @large_shard_threshold = compute_large_shard_threshold
         end
 
+        def close
+          super
+          @result_sets.clear
+        end
+
         def consume_result_sets
           while (result_set = @result_sets.shift)
             yield(result_set)
