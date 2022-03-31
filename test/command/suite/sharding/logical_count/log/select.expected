@@ -13,6 +13,5 @@ log_level --level debug
 [[0,0.0,0.0],true]
 logical_count Logs timestamp   --min "2015/07/09 00:00:00"   --max "2015/07/09 12:00:00"
 [[0,0.0,0.0],0]
-#|d| [logical_count][select] <Logs_20150709>: no range index
 log_level --level notice
 [[0,0.0,0.0],true]
