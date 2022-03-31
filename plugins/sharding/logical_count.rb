@@ -82,13 +82,14 @@ module Groonga
         end
 
         def execute
-          ensure_filtered
-
+          ensure_prepared
           if @range_index
             return count_n_records_in_range
           end
 
+          ensure_filtered
           return 0 if @filtered_result_sets.empty?
+
           total = 0
           each_result_set do |result_set|
             unless @post_filter.nil?
@@ -114,7 +115,6 @@ module Groonga
         end
 
         def execute_filter(range_index)
-          return if range_index
           if @cover_type == :all and @filter.nil?
             if @post_filter and @context.dynamic_columns.have_filtered?
               filtered_table = @target_table.select_all
