@@ -43,6 +43,28 @@ module Groonga
         true
       end
 
+      protected
+      def enumerate_result_sets
+        if @window
+          @filtered_result_sets.each do |result_set|
+            @window.each(result_set) do |windowed_result_set|
+              @temporary_tables << windowed_result_set
+              if @context.dynamic_columns.have_filtered?
+                apply_targets = [[windowed_result_set]]
+                @context.dynamic_columns.apply_filtered(apply_targets)
+              end
+              yield(windowed_result_set)
+              return if @context.current_limit.zero?
+            end
+          end
+        else
+          apply_filtered_dynamic_columns
+          @filtered_result_sets.each do |result_set|
+            yield(result_set)
+          end
+        end
+      end
+
       def add_initial_stage_context(apply_targets)
         ensure_prepared
         return unless @initial_table

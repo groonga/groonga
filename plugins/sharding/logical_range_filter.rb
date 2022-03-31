@@ -237,23 +237,8 @@ module Groonga
 
           return if @filtered_result_sets.empty?
 
-          if @window
-            @filtered_result_sets.each do |result_set|
-              @window.each(result_set) do |windowed_result_set|
-                @temporary_tables << windowed_result_set
-                if @context.dynamic_columns.have_filtered?
-                  apply_targets = [[windowed_result_set]]
-                  @context.dynamic_columns.apply_filtered(apply_targets)
-                end
-                sort_result_set(windowed_result_set)
-                return if @context.current_limit.zero?
-              end
-            end
-          else
-            apply_filtered_dynamic_columns
-            @filtered_result_sets.each do |result_set|
-              sort_result_set(result_set)
-            end
+          enumerate_result_sets do |result_set|
+            sort_result_set(result_set)
           end
         end
 
