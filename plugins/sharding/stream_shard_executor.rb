@@ -43,8 +43,7 @@ module Groonga
         true
       end
 
-      protected
-      def enumerate_result_sets
+      def each_result_set
         if @window
           @filtered_result_sets.each do |result_set|
             @window.each(result_set) do |windowed_result_set|
