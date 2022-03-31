@@ -89,32 +89,13 @@ module Groonga
           end
 
           return 0 if @filtered_result_sets.empty?
-
           total = 0
-          if @window
-            @filtered_result_sets.each do |result_set|
-              @window.each(result_set) do |windowed_result_set|
-                @temporary_tables << windowed_result_set
-                if @context.dynamic_columns.have_filtered?
-                  apply_targets = [[windowed_result_set]]
-                  @context.dynamic_columns.apply_filtered(apply_targets)
-                end
-                unless @post_filter.nil?
-                  windowed_result_set = apply_post_filter(windowed_result_set)
-                  @temporary_tables << windowed_result_set
-                end
-                total += windowed_result_set.size
-              end
+          each_result_set do |result_set|
+            unless @post_filter.nil?
+              result_set = apply_post_filter(result_set)
+              @temporary_tables << result_set
             end
-          else
-            apply_filtered_dynamic_columns
-            @filtered_result_sets.each do |result_set|
-              unless @post_filter.nil?
-                result_set = apply_post_filter(result_set)
-                @temporary_tables << result_set
-              end
-              total += result_set.size
-            end
+            total += result_set.size
           end
           return total
         end
