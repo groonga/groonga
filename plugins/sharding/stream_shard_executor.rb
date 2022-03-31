@@ -99,11 +99,15 @@ module Groonga
         @expression_builder = RangeExpressionBuilder.new(@shard_key,
                                                          @target_range)
         @expression_builder.filter = @filter
-        index_info = @shard_key.find_index(Operator::LESS)
-        if index_info
-          index = index_info.index
-          @context.referred_objects << index
-          @range_index = index if use_range_index?
+        if use_range_index?
+          index_info = @shard_key.find_index(Operator::LESS)
+          if index_info
+            index = index_info.index
+            @context.referred_objects << index
+            @range_index = index
+          else
+            decide_use_range_index(false, "no range index", __LINE__, __method__)
+          end
         end
 
         if @context.dynamic_columns.have_initial?
