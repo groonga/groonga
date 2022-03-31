@@ -22,9 +22,6 @@ require "faker"
 
 @db_dir = "/tmp/db"
 
-FileUtils.rm_rf(@db_dir)
-FileUtils.mkdir_p(@db_dir)
-
 def groonga(input=nil)
   command_line = [
     "groonga",
@@ -50,61 +47,104 @@ def groonga(input=nil)
         input_write.close
         output_read.read
       ensure
+        input_write.close unless input_write.closed?
         Process.waitpid(pid)
       end
     end
   end
 end
 
-groonga("table_create Tags TABLE_HASH_KEY ShortText")
-groonga("table_create Entries TABLE_HASH_KEY ShortText")
-groonga("column_create Entries tags COLUMN_VECTOR Tags")
-groonga("column_create Tags entries COLUMN_INDEX Entries tags")
+loaded_db_dir = "#{@db_dir}.loaded"
+if File.exist?(loaded_db_dir)
+  FileUtils.rm_rf(@db_dir)
+  FileUtils.cp_r(loaded_db_dir, @db_dir)
+else
+  FileUtils.rm_rf(@db_dir)
+  FileUtils.mkdir_p(@db_dir)
 
-n_records = 150000
-Faker::Config.random = Random.new(29)
+  n_records = 150000
+  n_duplicated_bases = (n_records * 0.15).round
+  Faker::Config.random = Random.new(29)
 
-def generate_date
-  Faker::Date.between(from: "2000-01-01", to: "2022-12-31")
-end
+  def generate_date
+    Faker::Date.between(from: "2000-01-01", to: "2022-12-31")
+  end
 
-keys = []
-groonga do |input|
-  input.puts("load --table Entries")
-  input.puts("[")
-  input.print("[\"_key\", \"tags\"]")
-  n_records.times do |i|
-    base = Faker::Alphanumeric.alphanumeric(number: 7)
-    key = [
-      base,
-      generate_date.strftime("%Y%M"),
-      Faker::Number.within(range: -1..99).to_s,
-      Faker::Number.within(range: -1..99).to_s,
-      Faker::Number.within(range: -1..99).to_s,
-    ].join("_")
-    keys << key
-    n_tags = Faker::Number.within(range: 0..512)
-    n_tags = (n_tags * Faker::Number.normal.abs).round
-    tags = n_tags.times.collect do
-      tag = [
+  groonga("table_create Tags TABLE_HASH_KEY ShortText")
+  groonga("table_create Entries TABLE_HASH_KEY ShortText")
+  groonga("column_create Entries tags COLUMN_VECTOR Tags")
+  groonga("column_create Tags entries COLUMN_INDEX Entries tags")
+
+  bases = []
+  tags_for_base = {}
+  groonga do |input|
+    input.puts("load --table Entries")
+    input.puts("[")
+    input.print("[\"_key\", \"tags\"]")
+    n_records.times do |i|
+      if bases.size >= n_duplicated_bases
+        base = bases[Faker::Number.within(range: 0...bases.size)]
+      else
+        base = Faker::Alphanumeric.alphanumeric(number: 7)
+        bases << base
+      end
+      key = [
         base,
-        generate_date.strftime("%Y%M%d"),
+        generate_date.strftime("%Y%M"),
+        Faker::Number.within(range: -1..99).to_s,
         Faker::Number.within(range: -1..99).to_s,
         Faker::Number.within(range: -1..99).to_s,
       ].join("_")
+      n_tags = Faker::Number.within(range: 0..512)
+      n_tags = (n_tags * Faker::Number.normal.abs).round
+      tags = tags_for_base[base]
+      unless tags
+        tags = n_tags.times.collect do
+          tag = [
+            base,
+            generate_date.strftime("%Y%M%d"),
+            Faker::Number.within(range: -1..99).to_s,
+            Faker::Number.within(range: -1..99).to_s,
+          ].join("_")
+        end
+        tags_for_base[base] = tags
+      end
+      input.puts(",")
+      input.print([key, tags].to_json)
     end
-    input.puts(",")
-    input.print([key, tags].to_json)
+    input.puts
+    input.puts("]")
   end
-  input.puts
-  input.puts("]")
+
+  FileUtils.cp_r(@db_dir, loaded_db_dir)
 end
 
+Faker::Config.random = Random.new(29)
+
+groonga("table_create CopiedEntries TABLE_HASH_KEY ShortText")
+groonga("column_create CopiedEntries tags COLUMN_VECTOR Tags")
+
+groonga("select Entries " +
+        "--limit 0 " +
+        "--load_table CopiedEntries " +
+        "--load_columns _key,tags " +
+        "--load_values _key,tags")
+
+selected = JSON.parse(groonga("select Entries --output_columns _key --limit -1"))
+keys = selected[1][0][2..-1].collect(&:first)
 keys = keys.sort_by {Faker::Base.rand}
-keys.each_with_index do |key, i|
-  groonga("delete Entries #{key}")
-  if (i % 1000).zero?
-    inspected = JSON.parse(groonga("object_inspect Tags.entries"))
-    puts(inspected[1]["value"]["statistics"]["n_buffer_segments"])
+keys.each_slice(1000) do |sliced_keys|
+  filter = "in_values(_key"
+  sliced_keys.each do |key|
+    filter << ", \"#{key}\""
   end
+  filter << ")"
+  groonga("delete Entries --filter '#{filter}'")
+  groonga("select CopiedEntries " +
+          "--limit 0 " +
+          "--load_table Entries " +
+          "--load_columns _key,tags " +
+          "--load_values _key,tags")
+  inspected = JSON.parse(groonga("object_inspect Tags.entries"))
+  puts(inspected[1]["value"]["statistics"]["n_buffer_segments"])
 end
