@@ -239,7 +239,7 @@ module Groonga
 
           each_result_set do |result_set|
             sort_result_set(result_set)
-            return if @window && @context.current_limit.zero?
+            return if @context.current_limit.zero?
           end
         end
 
