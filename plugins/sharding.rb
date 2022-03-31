@@ -5,6 +5,7 @@ require "sharding/keys_parsable"
 require "sharding/window"
 require "sharding/stream_execute_context"
 require "sharding/stream_shard_executor"
+require "sharding/stream_executor"
 
 require "sharding/dynamic_columns"
 
