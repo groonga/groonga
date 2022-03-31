@@ -2,16 +2,16 @@ module Groonga
   module Sharding
     class LogicalCountCommand < Command
       register("logical_count",
-              [
-                "logical_table",
-                "shard_key",
-                "min",
-                "min_border",
-                "max",
-                "max_border",
-                "filter",
-                "post_filter",
-              ])
+               [
+                 "logical_table",
+                 "shard_key",
+                 "min",
+                 "min_border",
+                 "max",
+                 "max_border",
+                 "filter",
+                 "post_filter",
+               ])
 
       def run_body(input)
         context = ShardCountContext.new(input)
