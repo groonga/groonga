@@ -180,9 +180,9 @@ module Groonga
         end
       end
 
-      class Executor
+      class Executor < StreamExecutor
         def initialize(context)
-          @context = context
+          super(context, ShardExecutor)
         end
 
         def execute
@@ -219,41 +219,6 @@ module Groonga
             yield(result_set)
             @context.shift
             break
-          end
-        end
-
-        private
-        def each_shard_executor(&block)
-          enumerator = @context.enumerator
-          target_range = enumerator.target_range
-          if @context.order == :descending
-            each_method = :reverse_each
-          else
-            each_method = :each
-          end
-          if @context.need_look_ahead?
-            previous_executor = nil
-            enumerator.send(each_method) do |shard, shard_range|
-              @context.push
-              current_executor = ShardExecutor.new(@context, shard, shard_range)
-              if previous_executor
-                previous_executor.next_executor = current_executor
-                current_executor.previous_executor = previous_executor
-                yield(previous_executor)
-                @context.shift unless previous_executor.shard.first?
-              end
-              if shard.last?
-                yield(current_executor)
-                @context.shift
-              end
-              previous_executor = current_executor
-            end
-          else
-            enumerator.send(each_method) do |shard, shard_range|
-              @context.push
-              yield(ShardExecutor.new(@context, shard, shard_range))
-              @context.shift
-            end
           end
         end
       end
