@@ -54,7 +54,6 @@ module Groonga
                 @context.dynamic_columns.apply_filtered(apply_targets)
               end
               yield(windowed_result_set)
-              return if @context.current_limit.zero?
             end
           end
         else

@@ -239,6 +239,7 @@ module Groonga
 
           enumerate_result_sets do |result_set|
             sort_result_set(result_set)
+            return if @window && @context.current_limit.zero?
           end
         end
 
