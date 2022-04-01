@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ grn_output_columns_parse(grn_ctx *ctx,
     grn_expr_parse(ctx,
                    output_columns,
                    raw_output_columns,
-                   raw_output_columns_size,
+                   (unsigned int)raw_output_columns_size,
                    NULL,
                    GRN_OP_MATCH,
                    GRN_OP_AND,
@@ -54,7 +54,7 @@ grn_output_columns_get_offsets(grn_ctx *ctx,
                                grn_obj *output_columns,
                                grn_obj *offsets)
 {
-  int previous_comma_offset = -1;
+  ptrdiff_t previous_comma_offset = -1;
   grn_bool is_first_comma = GRN_TRUE;
   grn_bool have_comma = GRN_FALSE;
   grn_expr *expr = (grn_expr *)output_columns;
@@ -64,7 +64,7 @@ grn_output_columns_get_offsets(grn_ctx *ctx,
   GRN_API_ENTER;
 
   for (code = expr->codes; code < code_end; code++) {
-    int code_start_offset;
+    ptrdiff_t code_start_offset;
 
     if (code->op != GRN_OP_COMMA) {
       continue;
@@ -73,7 +73,7 @@ grn_output_columns_get_offsets(grn_ctx *ctx,
     have_comma = GRN_TRUE;
     if (is_first_comma) {
       unsigned int n_used_codes;
-      int code_end_offset;
+      ptrdiff_t code_end_offset;
 
       n_used_codes = grn_expr_code_n_used_codes(ctx, expr->codes, code - 1);
       code_end_offset = code - expr->codes - n_used_codes;
@@ -298,7 +298,7 @@ grn_output_columns_apply_add_records_key(grn_ctx *ctx,
       target_id = grn_table_add(ctx,
                                 target_table,
                                 GRN_BULK_HEAD(&target_key_buffer),
-                                GRN_BULK_VSIZE(&target_key_buffer),
+                                (unsigned int)GRN_BULK_VSIZE(&target_key_buffer),
                                 NULL);
       if (target_id == GRN_ID_NIL) {
         continue;
