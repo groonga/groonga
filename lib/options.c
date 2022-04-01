@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2018  Brazil
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018  Brazil
+  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -206,7 +206,7 @@ grn_options_set(grn_ctx *ctx,
   unsigned int i, n;
 
   if (name_length < 0) {
-    name_length = strlen(name);
+    name_length = (int)strlen(name);
   }
 
   GRN_TEXT_INIT(&buffer, 0);
@@ -239,7 +239,7 @@ grn_options_set(grn_ctx *ctx,
           msgpack_object *key = &(kv->key);
           if (key->type == MSGPACK_OBJECT_STR &&
               MSGPACK_OBJECT_STR_SIZE(key) == (size_t)name_length &&
-              memcmp(name, MSGPACK_OBJECT_STR_PTR(key), name_length) == 0) {
+              memcmp(name, MSGPACK_OBJECT_STR_PTR(key), (size_t)name_length) == 0) {
             have_same_key = GRN_TRUE;
             same_key_index = i;
             break;
@@ -269,8 +269,8 @@ grn_options_set(grn_ctx *ctx,
     msgpack_pack_map(&packer, 1);
   }
 
-  msgpack_pack_str(&packer, name_length);
-  msgpack_pack_str_body(&packer, name, name_length);
+  msgpack_pack_str(&packer, (size_t)name_length);
+  msgpack_pack_str_body(&packer, name, (size_t)name_length);
 
   n = grn_vector_size(ctx, values);
   msgpack_pack_array(&packer, n);
@@ -296,7 +296,7 @@ grn_options_set(grn_ctx *ctx,
                options->values,
                id,
                GRN_TEXT_VALUE(&buffer),
-               GRN_TEXT_LEN(&buffer),
+               (uint32_t)GRN_TEXT_LEN(&buffer),
                GRN_OBJ_SET,
                NULL);
   }
@@ -335,7 +335,7 @@ grn_options_get(grn_ctx *ctx,
   }
 
   if (name_length < 0) {
-    name_length = strlen(name);
+    name_length = (int)strlen(name);
   }
 
   msgpack_unpacker_init(&unpacker, MSGPACK_UNPACKER_INIT_BUFFER_SIZE);
@@ -354,7 +354,8 @@ grn_options_get(grn_ctx *ctx,
         msgpack_object_kv *kv = &(map->ptr[i]);
         if (kv->key.type == MSGPACK_OBJECT_STR &&
             MSGPACK_OBJECT_STR_SIZE(&(kv->key)) == (size_t)name_length &&
-            memcmp(MSGPACK_OBJECT_STR_PTR(&(kv->key)), name, name_length) == 0) {
+            memcmp(MSGPACK_OBJECT_STR_PTR(&(kv->key)), name,
+                   (size_t)name_length) == 0) {
           if (kv->val.type == MSGPACK_OBJECT_ARRAY) {
             grn_msgpack_unpack_array_internal(ctx,
                                               &(kv->val.via.array),
