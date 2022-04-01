@@ -6,7 +6,9 @@ module Groonga
       attr_reader :post_filter
       attr_reader :dynamic_columns
       attr_reader :time_classify_types
+      attr_reader :order
       def initialize(command_name, input)
+        @command_name = command_name
         @input = input
         @enumerator = LogicalEnumerator.new(command_name,
                                             @input,
@@ -19,6 +21,7 @@ module Groonga
         @temporary_tables_queue = []
         @time_classify_types = detect_time_classify_types
         @referred_objects_queue = []
+        @order = parse_order(@input, :order)
       end
 
       def temporary_tables
@@ -54,6 +57,23 @@ module Groonga
         return false unless @dynamic_columns.have_window_function?
         return false unless @time_classify_types.empty?
         true
+      end
+
+      def parse_order(input, name)
+        order = input[name]
+        return :ascending if order.nil?
+
+        case order
+        when "ascending"
+          :ascending
+        when "descending"
+          :descending
+        else
+          message =
+            "[#{@command_name}] #{name} must be " +
+            "\"ascending\" or \"descending\": <#{order}>"
+          raise InvalidArgument, message
+        end
       end
 
       def detect_time_classify_types

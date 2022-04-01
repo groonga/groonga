@@ -101,7 +101,6 @@ module Groonga
         include KeysParsable
 
         attr_reader :use_range_index
-        attr_reader :order
         attr_reader :offset
         attr_reader :limit
         attr_reader :sort_keys
@@ -113,7 +112,6 @@ module Groonga
         def initialize(input)
           super("logical_range_filter", input)
           @use_range_index = parse_use_range_index(@input[:use_range_index])
-          @order = parse_order(@input, :order)
           @offset = (@input[:offset] || 0).to_i
           @limit = (@input[:limit] || 10).to_i
           @sort_keys = parse_keys(@input[:sort_keys])
@@ -147,23 +145,6 @@ module Groonga
             false
           else
             nil
-          end
-        end
-
-        def parse_order(input, name)
-          order = input[name]
-          return :ascending if order.nil?
-
-          case order
-          when "ascending"
-            :ascending
-          when "descending"
-            :descending
-          else
-            message =
-              "[logical_range_filter] #{name} must be " +
-              "\"ascending\" or \"descending\": <#{order}>"
-            raise InvalidArgument, message
           end
         end
 
