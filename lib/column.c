@@ -222,7 +222,7 @@ grn_column_copy_same_table_report_invalid_reference_value(grn_ctx *ctx,
   }
   grn_obj inspected_key;
   GRN_TEXT_INIT(&inspected_key, 0);
-  grn_inspect_key(ctx, &inspected_key, table, key, key_size);
+  grn_inspect_key(ctx, &inspected_key, table, key, (uint32_t)key_size);
   GRN_LOG(ctx,
           GRN_LOG_WARNING,
           "[column][copy][%.*s] "
@@ -379,7 +379,7 @@ grn_column_copy_same_key_type(grn_ctx *ctx,
     grn_id to_id;
 
     key_size = grn_table_cursor_get_key(ctx, cursor, &key);
-    to_id = grn_table_add(ctx, to_table, key, key_size, NULL);
+    to_id = grn_table_add(ctx, to_table, key, (uint32_t)key_size, NULL);
     if (to_id == GRN_ID_NIL) {
       char from_name[GRN_TABLE_MAX_KEY_SIZE];
       int from_name_size;
@@ -401,7 +401,7 @@ grn_column_copy_same_key_type(grn_ctx *ctx,
       } else {
         GRN_VALUE_FIX_SIZE_INIT(&key_buffer, 0, from_table->header.domain);
       }
-      grn_bulk_write(ctx, &key_buffer, key, key_size);
+      grn_bulk_write(ctx, &key_buffer, key, (size_t)key_size);
       grn_inspect(ctx, &inspected_key, &key_buffer);
       ERR(GRN_INVALID_ARGUMENT,
           "[column][copy] failed to copy key: <%.*s>: "
@@ -465,7 +465,7 @@ grn_column_copy_different(grn_ctx *ctx,
     GRN_BULK_REWIND(&to_key_buffer);
 
     key_size = grn_table_cursor_get_key(ctx, cursor, &key);
-    grn_bulk_write(ctx, &from_key_buffer, key, key_size);
+    grn_bulk_write(ctx, &from_key_buffer, key, (size_t)key_size);
     cast_rc = grn_obj_cast(ctx, &from_key_buffer, &to_key_buffer, GRN_FALSE);
     if (cast_rc != GRN_SUCCESS) {
       char from_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -504,7 +504,7 @@ grn_column_copy_different(grn_ctx *ctx,
     }
     to_id = grn_table_add(ctx, to_table,
                           GRN_BULK_HEAD(&to_key_buffer),
-                          GRN_BULK_VSIZE(&to_key_buffer),
+                          (unsigned int)GRN_BULK_VSIZE(&to_key_buffer),
                           NULL);
     if (to_id == GRN_ID_NIL) {
       continue;
