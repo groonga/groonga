@@ -79,7 +79,7 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
   {
     grn_obj *index;
     grn_obj source_ids;
-    unsigned int i, n_ids;
+    size_t i, n_ids;
 
     index = accessor->obj;
     next_res_domain_id = index->header.domain;
