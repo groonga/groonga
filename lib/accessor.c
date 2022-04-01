@@ -142,13 +142,13 @@ grn_accessor_resolve_one_index_column(grn_ctx *ctx, grn_accessor *accessor,
       grn_id *tid = key;
       grn_rset_recinfo *recinfo = value;
 
-      add_posting.weight_float = recinfo->score;
+      add_posting.weight_float = (float)(recinfo->score);
 
       GRN_BULK_REWIND(&column_value);
       grn_obj_get_value(ctx, column, *tid, &column_value);
 
-      int n_elements = GRN_BULK_VSIZE(&column_value) / sizeof(grn_id);
-      for (int i = 0; i < n_elements; i++) {
+      size_t n_elements = GRN_BULK_VSIZE(&column_value) / sizeof(grn_id);
+      for (size_t i = 0; i < n_elements; i++) {
         add_posting.rid = GRN_RECORD_VALUE_AT(&column_value, i);
         rc = grn_ii_posting_add_float(ctx,
                                       (grn_posting *)(&add_posting),
@@ -215,7 +215,7 @@ grn_accessor_resolve_one_table(grn_ctx *ctx, grn_accessor *accessor,
       }
 
       posting.rid = next_record_id;
-      posting.weight_float = recinfo->score;
+      posting.weight_float = (float)(recinfo->score);
       rc = grn_ii_posting_add_float(ctx,
                                     (grn_posting *)(&posting),
                                     (grn_hash *)*next_res,
@@ -262,11 +262,12 @@ grn_accessor_resolve_one_data_column_sequential(grn_ctx *ctx,
       grn_obj_get_value(ctx, column, id, &value);
       bool found = false;
       switch (value.header.type) {
-      case GRN_BULK :
-        found = (grn_table_get(ctx,
-                               current_res,
-                               GRN_BULK_HEAD(&value),
-                               GRN_BULK_VSIZE(&value)) != GRN_ID_NIL);
+      case GRN_BULK:
+        found =
+          (grn_table_get(ctx,
+                         current_res,
+                         GRN_BULK_HEAD(&value),
+                         (unsigned int)GRN_BULK_VSIZE(&value)) != GRN_ID_NIL);
 
         break;
       case GRN_UVECTOR :
@@ -499,7 +500,7 @@ grn_accessor_resolve(grn_ctx *ctx, grn_obj *accessor, int depth,
       posting.rid = *record_id;
       posting.sid = 1;
       posting.pos = 0;
-      posting.weight_float = recinfo->score;
+      posting.weight_float = (float)(recinfo->score);
       grn_ii_posting_add_float(ctx,
                                (grn_posting *)(&posting),
                                (grn_hash *)res,
@@ -648,11 +649,11 @@ grn_accessor_execute(grn_ctx *ctx,
               grn_table_size(ctx, second_to_last_a->obj));
       GRN_TABLE_EACH_BEGIN(ctx, second_to_last_a->obj, cursor, id) {
         void *key;
-        uint32_t key_size = grn_table_cursor_get_key(ctx, cursor, &key);
+        int key_size = grn_table_cursor_get_key(ctx, cursor, &key);
         grn_hash_add(ctx,
                      (grn_hash *)base_res,
                      key,
-                     key_size,
+                     (unsigned int)key_size,
                      NULL,
                      NULL);
       } GRN_TABLE_EACH_END(ctx, cursor);
@@ -803,13 +804,13 @@ grn_accessor_estimate_size_for_query_prepare(
 
   if (data->query->header.domain == lexicon->header.domain) {
     data->query_raw = GRN_BULK_HEAD(data->query);
-    data->query_raw_len = GRN_BULK_VSIZE(data->query);
+    data->query_raw_len = (uint32_t)(GRN_BULK_VSIZE(data->query));
   } else {
     grn_obj_reinit_for(ctx, &(data->query_casted), lexicon);
     grn_rc rc = grn_obj_cast(ctx, data->query, &(data->query_casted), false);
     if (rc == GRN_SUCCESS) {
       data->query_raw = GRN_BULK_HEAD(&(data->query_casted));
-      data->query_raw_len = GRN_BULK_VSIZE(&(data->query_casted));
+      data->query_raw_len = (uint32_t)(GRN_BULK_VSIZE(&(data->query_casted)));
     } else {
       grn_accessor_estimate_size_for_query_cast_failed(ctx, data);
     }
@@ -895,8 +896,8 @@ grn_accessor_estimate_size_for_query(grn_ctx *ctx,
       estimated_size = data.n_target_records;
     } else {
       estimated_size =
-        data.n_target_records *
-        (base_estimated_size / (double)(data.n_base_records));
+        (uint32_t)(data.n_target_records *
+                   (base_estimated_size / (double)(data.n_base_records)));
     }
   }
 

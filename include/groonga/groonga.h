@@ -1159,7 +1159,7 @@ GRN_API off_t grn_default_query_logger_get_rotate_threshold_size(void);
       if (GRN_BULK_OUTP(_body)) {\
         (_body)->u.b.curr = (_body)->u.b.head;\
       } else {\
-        (_body)->header.flags &= ~GRN_BULK_BUFSIZE_MAX;\
+        (_body)->header.flags &= (grn_obj_flags)(~GRN_BULK_BUFSIZE_MAX);\
       }\
     }\
     (bulk)->u.v.n_sections = 0;\
@@ -1167,7 +1167,7 @@ GRN_API off_t grn_default_query_logger_get_rotate_threshold_size(void);
     if (GRN_BULK_OUTP(bulk)) {\
       (bulk)->u.b.curr = (bulk)->u.b.head;\
     } else {\
-      (bulk)->header.flags &= ~GRN_BULK_BUFSIZE_MAX;\
+      (bulk)->header.flags &= (grn_obj_flags)(~GRN_BULK_BUFSIZE_MAX);\
     }\
   }\
 } while (0)
