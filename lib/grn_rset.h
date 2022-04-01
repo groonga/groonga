@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,7 @@ extern "C" {
 
 typedef struct {
   double score;
-  int n_subrecs;
+  uint32_t n_subrecs;
   int subrecs[1];
 } grn_rset_recinfo;
 
@@ -56,7 +56,7 @@ typedef union {
 #define GRN_RSET_N_SUBRECS(ri) ((ri)->n_subrecs & ~GRN_RSET_UTIL_BIT)
 
 #define GRN_RSET_SUBREC_SIZE(subrec_size) \
-  (GRN_RSET_SCORE_SIZE + subrec_size)
+  (GRN_RSET_SCORE_SIZE + (subrec_size))
 #define GRN_RSET_SUBRECS_CMP(a,b,dir) (((a) - (b))*(dir))
 #define GRN_RSET_SUBRECS_NTH(subrecs,size,n) \
   ((double *)((byte *)subrecs + n * GRN_RSET_SUBREC_SIZE(size)))

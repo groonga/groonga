@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2015  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2015  Brazil
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -20,16 +20,17 @@
 
 grn_inline static void
 grn_rset_subrecs_push(byte *subrecs,
-                      int size,
-                      int n_subrecs,
+                      size_t size,
+                      size_t n_subrecs,
                       double score,
                       void *body,
                       int dir)
 {
   byte *v;
   double *c2;
-  int n = n_subrecs - 1, n2;
-  while (n) {
+  size_t n = n_subrecs - 1;
+  size_t n2;
+  while (n > 0) {
     n2 = (n - 1) >> 1;
     c2 = GRN_RSET_SUBRECS_NTH(subrecs,size,n2);
     if (GRN_RSET_SUBRECS_CMP(score, *c2, dir) >= 0) { break; }
@@ -43,14 +44,16 @@ grn_rset_subrecs_push(byte *subrecs,
 
 grn_inline static void
 grn_rset_subrecs_replace_min(byte *subrecs,
-                             int size,
-                             int n_subrecs,
+                             size_t size,
+                             size_t n_subrecs,
                              double score,
                              void *body,
                              int dir)
 {
   byte *v;
-  int n = 0, n1, n2;
+  size_t n = 0;
+  size_t n1;
+  size_t n2;
   double *c1, *c2;
   for (;;) {
     n1 = n * 2 + 1;
@@ -89,7 +92,7 @@ grn_rset_add_subrec(grn_ctx *ctx,
                     grn_rset_posinfo *pi,
                     int dir)
 {
-  int limit = DB_OBJ(table)->max_n_subrecs;
+  uint32_t limit = DB_OBJ(table)->max_n_subrecs;
   if (limit == 0) {
     return;
   }
@@ -98,8 +101,8 @@ grn_rset_add_subrec(grn_ctx *ctx,
     return;
   }
 
-  int subrec_size = DB_OBJ(table)->subrec_size;
-  int n_subrecs = GRN_RSET_N_SUBRECS(ri);
+  size_t subrec_size = DB_OBJ(table)->subrec_size;
+  size_t n_subrecs = GRN_RSET_N_SUBRECS(ri);
   byte *body = (byte *)pi + DB_OBJ(table)->subrec_offset;
   if (limit < n_subrecs) {
     if (GRN_RSET_SUBRECS_CMP(score, *((double *)(ri->subrecs)), dir) > 0) {
@@ -228,7 +231,7 @@ grn_rset_recinfo_update_calc_values_bulk(
     uint64_t *n_values = (uint64_t *)(((double *)values) + 1);
     double value_raw = GRN_FLOAT_VALUE(value_float);
     (*n_values)++;
-    *current_mean += (value_raw - *current_mean) / *n_values;
+    *current_mean += (value_raw - *current_mean) / (double)(*n_values);
     values += GRN_RSET_MEAN_SIZE;
   }
 }
@@ -241,7 +244,7 @@ grn_rset_recinfo_update_calc_values_uvector(
 {
   grn_obj element_value;
   unsigned int element_size;
-  int i, n_elements;
+  size_t i, n_elements;
 
   element_size = grn_uvector_element_size(ctx, value);
   if (element_size == 0) {
