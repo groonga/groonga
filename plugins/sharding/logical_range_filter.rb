@@ -616,11 +616,6 @@ module Groonga
         end
 
         def sort_result_set(result_set)
-          unless @post_filter.nil?
-            result_set = apply_post_filter(result_set)
-            @temporary_tables << result_set
-          end
-
           if result_set.size <= @context.current_offset
             @context.current_offset -= result_set.size
             return

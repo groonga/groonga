@@ -52,12 +52,20 @@ module Groonga
                 apply_targets = [[windowed_result_set]]
                 @context.dynamic_columns.apply_filtered(apply_targets)
               end
+              unless @post_filter.nil?
+                windowed_result_set = apply_post_filter(windowed_result_set)
+                @temporary_tables << windowed_result_set
+              end
               yield(windowed_result_set)
             end
           end
         else
           apply_filtered_dynamic_columns
           @filtered_result_sets.each do |result_set|
+            unless @post_filter.nil?
+              result_set = apply_post_filter(result_set)
+              @temporary_tables << result_set
+            end
             yield(result_set)
           end
         end
