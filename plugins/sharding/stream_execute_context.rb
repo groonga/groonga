@@ -8,6 +8,7 @@ module Groonga
       attr_reader :time_classify_types
       attr_reader :order
       def initialize(command_name, input)
+        @command_name = command_name
         @input = input
         @enumerator = LogicalEnumerator.new(command_name,
                                             @input,
@@ -69,7 +70,7 @@ module Groonga
           :descending
         else
           message =
-            "[logical_range_filter] #{name} must be " +
+            "[#{@command_name}] #{name} must be " +
             "\"ascending\" or \"descending\": <#{order}>"
           raise InvalidArgument, message
         end
