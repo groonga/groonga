@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016-2017  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2016-2017  Brazil
+  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ grn_raw_string_lstrip(grn_ctx *ctx,
       break;
     }
     string->value += space_len;
-    string->length -= space_len;
+    string->length -= (size_t)space_len;
   }
 }
 
@@ -72,7 +72,9 @@ grn_raw_string_have_sub_string(grn_ctx *ctx,
     }
 
     if (string_char_len == sub_string_char_len &&
-        memcmp(string_current, sub_string_current, string_char_len) == 0) {
+        memcmp(string_current,
+               sub_string_current,
+               (size_t)string_char_len) == 0) {
       sub_string_current += sub_string_char_len;
       if (sub_string_current == sub_string_end) {
         return true;
