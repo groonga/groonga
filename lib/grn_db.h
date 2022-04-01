@@ -65,10 +65,10 @@ extern "C" {
   do {                                                                  \
     if (!obj) {                                                         \
       prefix = "(NULL)";                                                \
-      prefix ## _size = strlen(prefix);                                 \
+      prefix ## _size = (int)strlen(prefix);                            \
     } else if (DB_OBJ(obj)->id == GRN_ID_NIL) {                         \
       prefix = "(temporary)";                                           \
-      prefix ## _size = strlen(prefix);                                 \
+      prefix ## _size = (int)strlen(prefix);                            \
     } else {                                                            \
       prefix ## _size = grn_obj_name(ctx, (grn_obj *)obj,               \
                                      prefix ## _buffer,                 \
@@ -76,7 +76,7 @@ extern "C" {
       prefix = prefix ## _buffer;                                       \
       if (prefix ## _size == 0) {                                       \
         prefix = "(anonymous)";                                         \
-        prefix ## _size = strlen(prefix);                               \
+        prefix ## _size = (int)strlen(prefix);                          \
       } else if (prefix ## _size < GRN_TABLE_MAX_KEY_SIZE) {            \
         prefix ## _buffer[prefix ## _size] = '\0';                      \
       }                                                                 \
