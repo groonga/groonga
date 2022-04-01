@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -76,7 +76,7 @@ grn_msgpack_object_type_to_string(msgpack_object_type type);
 grn_rc grn_msgpack_pack_raw_internal(grn_ctx *ctx,
                                      msgpack_packer *packer,
                                      const char *value,
-                                     unsigned int value_size,
+                                     size_t value_size,
                                      grn_id value_domain);
 grn_rc grn_msgpack_pack_internal(grn_ctx *ctx,
                                  msgpack_packer *packer,

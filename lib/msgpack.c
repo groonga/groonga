@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2018  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -72,7 +72,7 @@ grn_rc
 grn_msgpack_pack_raw_internal(grn_ctx *ctx,
                               msgpack_packer *packer,
                               const char *value,
-                              unsigned int value_size,
+                              size_t value_size,
                               grn_id value_domain)
 {
   if (value_size == 0) {
