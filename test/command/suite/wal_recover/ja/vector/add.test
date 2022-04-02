@@ -6,6 +6,7 @@
 
 #$GROONGA_ALLOW_DATABASE_REOPEN=yes
 #$GRN_WAL_ROLE=primary
+#$GRN_ENABLE_REFERENCE_COUNT=no
 
 #@disable-logging
 cache_limit --max 0

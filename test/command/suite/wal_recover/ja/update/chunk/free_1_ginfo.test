@@ -5,6 +5,7 @@
 #@require-feature message_pack
 
 #$GROONGA_ALLOW_DATABASE_REOPEN=yes
+#$GRN_ENABLE_REFERENCE_COUNT=no
 #$GRN_WAL_ROLE=primary
 #$GRN_JA_N_GARBAGES_IN_A_SEGMENT=100
 

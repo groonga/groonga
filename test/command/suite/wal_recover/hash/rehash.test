@@ -5,6 +5,7 @@
 #@require-feature message_pack
 
 #$GROONGA_ALLOW_DATABASE_REOPEN=yes
+#$GRN_ENABLE_REFERENCE_COUNT=no
 #$GRN_HASH_INITIAL_MAX_OFFSET=16
 #$GRN_WAL_ROLE=primary
 
