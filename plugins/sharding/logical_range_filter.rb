@@ -545,8 +545,8 @@ module Groonga
                 "fallback because there are too much unmatched records: "
               fallback_message << "<#{max_n_unmatched_records}>"
               log_use_range_index(false,
-                                     fallback_message,
-                                     __LINE__, __method__)
+                                  fallback_message,
+                                  __LINE__, __method__)
               execute_filter(nil)
               return
             end
