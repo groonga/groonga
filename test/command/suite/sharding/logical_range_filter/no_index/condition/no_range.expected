@@ -76,11 +76,8 @@ logical_range_filter Logs timestamp --filter 'message == "Shutdown"'
     ]
   ]
 ]
-#|d| [logical_range_filter][range-index] <Logs_20150203>: the max number of unmatched records (0) <= the number of estimated records (1)
 #|d| [logical_range_filter][select] <Logs_20150203>: no range index
-#|d| [logical_range_filter][range-index] <Logs_20150204>: the max number of unmatched records (2) <= the number of estimated records (2)
 #|d| [logical_range_filter][select] <Logs_20150204>: no range index
-#|d| [logical_range_filter][range-index] <Logs_20150205>: the max number of unmatched records (3) <= the number of estimated records (3)
 #|d| [logical_range_filter][select] <Logs_20150205>: no range index
 #>logical_range_filter --filter "message == \"Shutdown\"" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(0): Logs_20150203.message equal "Shutdown"
