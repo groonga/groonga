@@ -105,7 +105,7 @@ module Groonga
                                 __LINE__, __method__)
             nil
           else
-            find_range_index_raw("range index is available", 
+            find_range_index_raw("range index is available",
                                 __LINE__, __method__)
           end
         end
