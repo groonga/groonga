@@ -6,6 +6,10 @@ table_create Logs_20150709 TABLE_NO_KEY
 column_create Logs_20150709 timestamp COLUMN_SCALAR Time
 table_create Times_20150709 TABLE_PAT_KEY Time
 column_create Times_20150709 timestamp_index COLUMN_INDEX Logs_20150709 timestamp
+load --table Logs_20150709
+[
+{"timestamp": "2015-07-09 20:00:00"}
+]
 
 log_level --level debug
 #@add-important-log-levels debug

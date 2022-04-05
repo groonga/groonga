@@ -49,5 +49,27 @@ load --table Logs_20150205
 {"timestamp": "2015-02-05 13:53:00"}
 ]
 [[0,0.0,0.0],6]
+log_level --level dump
+[[0,0.0,0.0],true]
 logical_count Logs timestamp   --min "2015-02-04 00:00:00"   --min_border "include"   --max "2015-02-05 00:00:00"   --max_border "include"
 [[0,0.0,0.0],6]
+#|-| [obj][open] <263>(<Logs_20150203.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <262>(<Logs_20150203>):<51>(<table:no_key>)
+#|-| [obj][open] <267>(<Logs_20150204.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <266>(<Logs_20150204>):<51>(<table:no_key>)
+#|d| [logical_count][select] <Logs_20150204>: covered
+#|-| [obj][close] <262>(<Logs_20150203>):<51>(<table:no_key>)
+#|-| [obj][close] <263>(<Logs_20150203.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <271>(<Logs_20150205.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][open] <270>(<Logs_20150205>):<51>(<table:no_key>)
+#|-| [obj][open] <272>(<Times_20150205>):<49>(<table:pat_key>)
+#|-| [obj][open] <273>(<Times_20150205.timestamp_index>):<72>(<column:index>)
+#|d| [logical_count][range-index] <Logs_20150205>: range index is available
+#|-| [obj][close] <273>(<Times_20150205.timestamp_index>):<72>(<column:index>)
+#|-| [obj][close] <272>(<Times_20150205>):<49>(<table:pat_key>)
+#|-| [obj][close] <266>(<Logs_20150204>):<51>(<table:no_key>)
+#|-| [obj][close] <267>(<Logs_20150204.timestamp>):<64>(<column:fix_size>)
+#|-| [obj][close] <270>(<Logs_20150205>):<51>(<table:no_key>)
+#|-| [obj][close] <271>(<Logs_20150205.timestamp>):<64>(<column:fix_size>)
+log_level --level notice
+[[0,0.0,0.0],true]

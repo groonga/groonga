@@ -1,3 +1,4 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
 #@on-error omit
 plugin_register sharding
 plugin_register functions/time
@@ -36,6 +37,9 @@ load --table Logs_20170427
 {"timestamp": "2017/04/27 02:00:00", "price":  300}
 ]
 
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level dump
 logical_count Logs \
   --shard_key timestamp \
   --columns[month].stage initial \
@@ -49,3 +53,6 @@ logical_count Logs \
   --columns[price_per_month].value 'window_sum(price)' \
   --columns[price_per_month].window.group_keys 'month' \
   --post_filter 'price_per_month > 1500'
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels dump
