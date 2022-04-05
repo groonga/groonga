@@ -3,7 +3,7 @@ module Groonga
     class StreamShardExecutor
       # Derived class must imprement methods below.
       # - execute_filter(range_index)
-      # - use_range_index?
+      # - find_range_index
 
       attr_reader :shard
       attr_writer :previous_executor
@@ -99,12 +99,7 @@ module Groonga
         @expression_builder = RangeExpressionBuilder.new(@shard_key,
                                                          @target_range)
         @expression_builder.filter = @filter
-        index_info = @shard_key.find_index(Operator::LESS)
-        if index_info
-          index = index_info.index
-          @context.referred_objects << index
-          @range_index = index if use_range_index?
-        end
+        @range_index = find_range_index
 
         if @context.dynamic_columns.have_initial?
           if @cover_type == :all
@@ -123,6 +118,19 @@ module Groonga
         end
 
         @window = detect_window
+      end
+
+      def find_range_index_raw(use_reason, line, method)
+        index_info = @shard_key.find_index(Operator::LESS)
+        if index_info.nil?
+          log_use_range_index(false, "no range index", __LINE__, __method__)
+          return nil
+        end
+
+        index = index_info.index
+        @context.referred_objects << index
+        log_use_range_index(true, use_reason, line, method)
+        index
       end
 
       def ensure_filtered
@@ -171,7 +179,7 @@ module Groonga
         end
       end
 
-      def decide_use_range_index(use, reason, line, method)
+      def log_use_range_index(use, reason, line, method)
         message = "[#{@command_name}]"
         if use
           message << "[range-index] "
@@ -185,7 +193,6 @@ module Groonga
                    line,
                    method.to_s,
                    message)
-        use
       end
 
       def apply_post_filter(table)

@@ -233,52 +233,56 @@ module Groonga
           end
         end
 
-        def use_range_index?
+        def find_range_index
           use_range_index_parameter_message =
             "force by use_range_index parameter"
           case @context.use_range_index
           when true
-            return decide_use_range_index(true,
-                                          use_range_index_parameter_message,
-                                          __LINE__, __method__)
+            return find_range_index_raw(use_range_index_parameter_message,
+                                        __LINE__, __method__)
           when false
-            return decide_use_range_index(false,
-                                          use_range_index_parameter_message,
-                                          __LINE__, __method__)
+            log_use_range_index(false,
+                                use_range_index_parameter_message,
+                                __LINE__, __method__)
+            return nil
           end
 
           range_index_logical_parameter_message =
             "force by range_index logical parameter"
           case Parameters.range_index
           when :always
-            return decide_use_range_index(true,
-                                          range_index_logical_parameter_message,
-                                          __LINE__, __method__)
+            return find_range_index_raw(range_index_logical_parameter_message,
+                                        __LINE__, __method__)
           when :never
-            return decide_use_range_index(false,
-                                          range_index_logical_parameter_message,
-                                          __LINE__, __method__)
+            log_use_range_index(false,
+                                range_index_logical_parameter_message,
+                                __LINE__, __method__)
+            return nil
           end
 
           unless @context.dynamic_columns.empty?
             reason = "dynamic columns are used"
-            return decide_use_range_index(false, reason, __LINE__, __method__)
+            log_use_range_index(false, reason, __LINE__, __method__)
+            return nil
           end
 
           unless @context.post_filter.nil?
             reason = "post_filter is used"
-            return decide_use_range_index(false, reason, __LINE__, __method__)
+            log_use_range_index(false, reason, __LINE__, __method__)
+            return nil
           end
 
           unless @context.sort_keys.empty?
             reason = "sort_keys is used"
-            return decide_use_range_index(false, reason, __LINE__, __method__)
+            log_use_range_index(false, reason, __LINE__, __method__)
+            return nil
           end
 
           current_limit = @context.current_limit
           if current_limit < 0
             reason = "limit is negative: <#{current_limit}>"
-            return decide_use_range_index(false, reason, __LINE__, __method__)
+            log_use_range_index(false, reason, __LINE__, __method__)
+            return nil
           end
 
           required_n_records = @context.current_offset + current_limit
@@ -288,20 +292,19 @@ module Groonga
             reason = "the number of required records (#{required_n_records}) "
             reason << ">= "
             reason << "the number of records in shard (#{max_n_records})"
-            return decide_use_range_index(false, reason,
-                                          __LINE__, __method__)
+            log_use_range_index(false, reason,__LINE__, __method__)
+            return nil
           end
 
           threshold = @context.threshold
           if threshold <= 0.0
             reason = "threshold is negative: <#{threshold}>"
-            return decide_use_range_index(true, reason,
-                                          __LINE__, __method__)
+            return find_range_index_raw(reason, __LINE__, __method__)
           end
           if threshold >= 1.0
             reason = "threshold (#{threshold}) >= 1.0"
-            return decide_use_range_index(false, reason,
-                                          __LINE__, __method__)
+            log_use_range_index(false, reason, __LINE__, __method__)
+            return nil
           end
 
           table = @shard.table
@@ -313,7 +316,7 @@ module Groonga
                 @expression_builder.build_all(expression)
                 unless range_index_available_expression?(expression,
                                                          __LINE__, __method__)
-                  return false
+                  return nil
                 end
                 estimated_n_records = expression.estimate_size(table)
               end
@@ -325,7 +328,7 @@ module Groonga
               @expression_builder.build_partial_min(expression)
               unless range_index_available_expression?(expression,
                                                        __LINE__, __method__)
-                return false
+                return nil
               end
               estimated_n_records = expression.estimate_size(table)
             end
@@ -334,7 +337,7 @@ module Groonga
               @expression_builder.build_partial_max(expression)
               unless range_index_available_expression?(expression,
                                                        __LINE__, __method__)
-                return false
+                return nil
               end
               estimated_n_records = expression.estimate_size(table)
             end
@@ -343,7 +346,7 @@ module Groonga
               @expression_builder.build_partial_min_and_max(expression)
               unless range_index_available_expression?(expression,
                                                        __LINE__, __method__)
-                return false
+                return nil
               end
               estimated_n_records = expression.estimate_size(table)
             end
@@ -353,8 +356,8 @@ module Groonga
             reason = "the number of required records (#{required_n_records}) "
             reason << ">= "
             reason << "the number of estimated records (#{estimated_n_records})"
-            return decide_use_range_index(false, reason,
-                                          __LINE__, __method__)
+            log_use_range_index(false, reason, __LINE__, __method__)
+            return nil
           end
 
           max_n_unmatched_records =
@@ -364,8 +367,7 @@ module Groonga
             reason = "the max number of unmatched records (#{max_n_unmatched_records}) "
             reason << "<= "
             reason << "the number of estimated records (#{estimated_n_records})"
-            return decide_use_range_index(true, reason,
-                                          __LINE__, __method__)
+            return find_range_index_raw(reason, __LINE__, __method__)
           end
 
           hit_ratio = estimated_n_records / max_n_records.to_f
@@ -378,8 +380,12 @@ module Groonga
           reason = "hit ratio "
           reason << "(#{hit_ratio}=#{estimated_n_records}/#{max_n_records}) "
           reason << "#{relation} threshold (#{threshold})"
-          decide_use_range_index(use_range_index_by_hit_ratio, reason,
-                                 __LINE__, __method__)
+          if use_range_index_by_hit_ratio
+            find_range_index_raw(reason, __LINE__, __method__)
+          else
+            log_use_range_index(false, reason, __LINE__, __method__)
+            nil
+          end
         end
 
         def range_index_available_expression?(expression, line, method_name)
@@ -388,14 +394,16 @@ module Groonga
           if nested_reference_vector_column_accessor
             reason = "nested reference vector column accessor can't be used: "
             reason << "<#{nested_reference_vector_column_accessor.name}>"
-            return decide_use_range_index(false, reason, line, method_name)
+            log_use_range_index(false, reason, line, method_name)
+            return false
           end
 
           selector_only_procedure = find_selector_only_procedure(expression)
           if selector_only_procedure
             reason = "selector only procedure can't be used: "
             reason << "<#{selector_only_procedure.name}>"
-            return decide_use_range_index(false, reason, line, method_name)
+            log_use_range_index(false, reason, line, method_name)
+            return false
           end
 
           true
@@ -536,9 +544,9 @@ module Groonga
               fallback_message =
                 "fallback because there are too much unmatched records: "
               fallback_message << "<#{max_n_unmatched_records}>"
-              decide_use_range_index(false,
-                                     fallback_message,
-                                     __LINE__, __method__)
+              log_use_range_index(false,
+                                  fallback_message,
+                                  __LINE__, __method__)
               execute_filter(nil)
               return
             end

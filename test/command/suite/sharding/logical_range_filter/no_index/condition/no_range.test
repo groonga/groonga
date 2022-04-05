@@ -42,8 +42,12 @@ load --table Logs_20150205
 }
 ]
 
-
+#@add-important-log-levels debug
+#@add-ignore-log-pattern /\A\[io\]/
+log_level --level debug
 #@collect-query-log true
 logical_range_filter Logs timestamp --filter 'message == "Shutdown"'
 #@collect-query-log false
-
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels debug
