@@ -205,7 +205,6 @@ module Groonga
       end
 
       class ShardExecutor < StreamShardExecutor
-        include Loggable
         include QueryLoggable
 
         def initialize(context, shard, shard_range)

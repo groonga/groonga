@@ -5,6 +5,8 @@ module Groonga
       # - execute_filter(range_index)
       # - find_range_index
 
+      include Loggable
+
       attr_reader :shard
       attr_writer :previous_executor
       attr_writer :next_executor

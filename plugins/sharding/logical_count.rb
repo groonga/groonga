@@ -72,8 +72,6 @@ module Groonga
       end
 
       class ShardCountExecutor < StreamShardExecutor
-        include Loggable
-
         def initialize(context, shard, shard_range)
           super("logical_count", context, shard, shard_range)
         end
