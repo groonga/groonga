@@ -42,10 +42,8 @@ module Groonga
       end
 
       class ShardCountContext < StreamExecuteContext
-        attr_reader :order
         def initialize(input)
           super("logical_count", input)
-          @order = :ascending
         end
       end
 
@@ -92,24 +90,22 @@ module Groonga
 
           total = 0
           each_result_set do |result_set|
-            unless @post_filter.nil?
-              result_set = apply_post_filter(result_set)
-              @temporary_tables << result_set
-            end
             total += result_set.size
           end
           return total
         end
 
-        def use_range_index?
+        def find_range_index
           if @filter or @post_filter
-            decide_use_range_index(false, "need filter",
+            log_use_range_index(false, "need filter",
                                 __LINE__, __method__)
+            nil
           elsif @cover_type == :all
-            decide_use_range_index(false, "covered",
+            log_use_range_index(false, "covered",
                                 __LINE__, __method__)
+            nil
           else
-            decide_use_range_index(true, "range index is available",
+            find_range_index_raw("range index is available", 
                                 __LINE__, __method__)
           end
         end

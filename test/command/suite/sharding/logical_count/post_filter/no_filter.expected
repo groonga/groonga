@@ -53,27 +53,15 @@ logical_count Logs   --shard_key timestamp   --post_filter '_id < 3'
 [[0,0.0,0.0],6]
 #|-| [obj][open] <263>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
 #|-| [obj][open] <262>(<Logs_20170315>):<51>(<table:no_key>)
-#|-| [obj][open] <271>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][open] <272>(<Times.logs_20170315>):<72>(<column:index>)
 #|d| [logical_count][select] <Logs_20170315>: need filter
-#|-| [obj][close] <272>(<Times.logs_20170315>):<72>(<column:index>)
-#|-| [obj][close] <271>(<Times>):<49>(<table:pat_key>)
 #|-| [obj][open] <266>(<Logs_20170316.timestamp>):<64>(<column:fix_size>)
 #|-| [obj][open] <265>(<Logs_20170316>):<51>(<table:no_key>)
-#|-| [obj][open] <271>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][open] <273>(<Times.logs_20170316>):<72>(<column:index>)
 #|d| [logical_count][select] <Logs_20170316>: need filter
-#|-| [obj][close] <273>(<Times.logs_20170316>):<72>(<column:index>)
-#|-| [obj][close] <271>(<Times>):<49>(<table:pat_key>)
 #|-| [obj][close] <262>(<Logs_20170315>):<51>(<table:no_key>)
 #|-| [obj][close] <263>(<Logs_20170315.timestamp>):<64>(<column:fix_size>)
 #|-| [obj][open] <269>(<Logs_20170317.timestamp>):<64>(<column:fix_size>)
 #|-| [obj][open] <268>(<Logs_20170317>):<51>(<table:no_key>)
-#|-| [obj][open] <271>(<Times>):<49>(<table:pat_key>)
-#|-| [obj][open] <274>(<Times.logs_20170317>):<72>(<column:index>)
 #|d| [logical_count][select] <Logs_20170317>: need filter
-#|-| [obj][close] <274>(<Times.logs_20170317>):<72>(<column:index>)
-#|-| [obj][close] <271>(<Times>):<49>(<table:pat_key>)
 #|-| [obj][close] <265>(<Logs_20170316>):<51>(<table:no_key>)
 #|-| [obj][close] <266>(<Logs_20170316.timestamp>):<64>(<column:fix_size>)
 #|-| [obj][close] <268>(<Logs_20170317>):<51>(<table:no_key>)
