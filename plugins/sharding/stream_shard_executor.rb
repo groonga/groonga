@@ -201,7 +201,7 @@ module Groonga
           table.select(expression)
         end
       end
-      
+
       def filter_table
         table = @target_table
         create_expression(table) do |expression|
