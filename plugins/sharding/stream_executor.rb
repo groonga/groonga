@@ -6,7 +6,7 @@ module Groonga
         @shard_executor_class = shard_executor_class
       end
 
-      protected
+      private
       def each_shard_executor(&block)
         enumerator = @context.enumerator
         target_range = enumerator.target_range
