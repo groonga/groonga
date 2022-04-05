@@ -1,4 +1,5 @@
 #$GRN_ENABLE_REFERENCE_COUNT=yes
+#$GRN_EXPR_OPTIMIZE=yes
 #@on-error omit
 plugin_register sharding
 #@on-error default
