@@ -1,0 +1,17 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+table_create Sites TABLE_HASH_KEY ShortText
+column_create Sites uri COLUMN_SCALAR ShortText
+
+load --table Sites
+[
+["_key","uri"],
+["groonga","http://groonga.org/"]
+]
+
+log_level --level dump 
+#@add-important-log-levels dump 
+#@add-ignore-log-pattern /\A\[io\]/
+select Sites  --output_columns '_a_non_existent'
+log_level --level notice
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels dump
