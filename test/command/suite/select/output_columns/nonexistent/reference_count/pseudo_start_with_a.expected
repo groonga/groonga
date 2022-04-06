@@ -13,5 +13,6 @@ log_level --level dump
 select Sites  --output_columns '_a_non_existent'
 [[0,0.0,0.0],[[[1],[],[]]]]
 #|-| [obj][open] <256>(<Sites>):<48>(<table:hash_key>)
+#|-| [obj][close] <256>(<Sites>):<48>(<table:hash_key>)
 log_level --level notice
 [[0,0.0,0.0],true]
