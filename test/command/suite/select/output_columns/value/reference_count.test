@@ -1,0 +1,5 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+table_create Sites TABLE_HASH_KEY ShortText
+
+select Sites --output_columns '_value'
+object_list
