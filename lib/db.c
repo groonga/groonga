@@ -7083,6 +7083,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, uint32_t name
               } else {
                 grn_obj_close(ctx, (grn_obj *)res);
                 res = NULL;
+                grn_obj_unref(ctx, obj);
                 goto exit;
               }
               break;

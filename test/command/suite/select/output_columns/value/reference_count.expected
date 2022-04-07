@@ -205,7 +205,7 @@ object_list
     "ShortText": {
       "id": 14,
       "name": "ShortText",
-      "opened": true,
+      "opened": false,
       "n_elements": 4,
       "type": {
         "id": 32,
