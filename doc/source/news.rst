@@ -5,6 +5,237 @@
 News
 ====
 
+.. _release-12-0-3:
+
+Release 12.0.3 - 2022-04-29
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`reference/commands/logical_count`] Improved memory usage while ``logical_count`` executed.
+
+  Up to now, Groonga had been keeping objects(objects are tables and columns and indexes, and so on) and temporary tables that were allocated while ``logical_count`` executed until the execution of ``logical_count`` finished.
+
+  Groonga reduces reference immediately after processing a shard by this feature.
+  Therefore, Groonga can release memory while ``logical_count`` executed.
+  The usage of memory of Groonga may reduce because of these reasons.
+
+  This improvement is only valid for the reference count mode.
+  We can valid the reference count mode by setting ``GRN_ENABLE_REFERENCE_COUNT=yes``.
+
+  In addition, Groonga releases temporary tables dynamically while ``logical_count`` is executed by this feature.
+  Therefore, the usage of memory of Groonga reduces.
+  This improvement is valid even if we don't set the reference count mode.
+
+* [:doc:`/reference/commands/dump`] Added support for ``MISSING_IGNORE/MISSING_NIL``.
+
+  If columns had ``MISSING_IGNORE/MISSING_NIL``, the dump of these columns had failed until now.
+  ``dump`` command supports these columns since this release.
+
+* [:doc:`reference/functions/snippet`],[:doc:`reference/functions/snippet_html`] Added support for text vector as input. [groonga-dev,04956][Reported by shinonon]
+
+  For example, we can extract snippets of target text around search keywords against vector in JSON data as below.
+
+  .. code-block::
+
+     table_create Entries TABLE_NO_KEY
+     column_create Entries title COLUMN_SCALAR ShortText
+     column_create Entries contents COLUMN_VECTOR ShortText
+
+     table_create Tokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC130
+     column_create Tokens entries_title COLUMN_INDEX|WITH_POSITION Entries title
+     column_create Tokens entries_contents COLUMN_INDEX|WITH_SECTION|WITH_POSITION   Entries contents
+
+     load --table Entries
+     [
+     {
+       "title": "Groonga and MySQL",
+       "contents": [
+         "Groonga is a full text search engine",
+         "MySQL is a RDBMS",
+         "Mroonga is a MySQL storage engine based on Groonga"
+       ]
+     }
+     ]
+
+     select Entries\
+       --output_columns 'snippet_html(contents), contents'\
+       --match_columns 'title'\
+       --query Groonga
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "snippet_html",
+               null
+             ],
+             [
+               "contents",
+               "ShortText"
+             ]
+           ],
+           [
+             [
+               "<span class=\"keyword\">Groonga</span> is a full text search engine",
+               "Mroonga is a MySQL storage engine based on <span class=\"keyword\">Groonga</span>"
+             ],
+             [
+               "Groonga is a full text search engine",
+               "MySQL is a RDBMS",
+               "Mroonga is a MySQL storage engine based on Groonga"
+             ]
+           ]
+         ]
+       ]
+     ]
+
+  Until now, if we specified ``snippet*`` like ``--output_columns 'snippet_html(contents[1])``,
+  we could extract snippets of target text around search keywords against the vector as below.
+
+  .. code-block::
+
+     select Entries\
+       --output_columns 'snippet_html(contents[0]), contents'\
+       --match_columns 'title'\
+       --query Groonga
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "snippet_html",
+               null
+             ],
+             [
+               "contents",
+               "ShortText"
+             ]
+           ],
+           [
+             [
+               "<span class=\"keyword\">Groonga</span> is a full text search engine"
+             ],
+             [
+               "Groonga is a full text search engine",
+               "MySQL is a RDBMS",
+               "Mroonga is a MySQL storage engine based on Groonga"
+             ]
+           ]
+         ]
+       ]
+     ]
+
+  However, we didn't know which we should output elements. Because we didn't know which element was hit on search.
+
+  In addition, we could execute ``snippet()`` and ``snippet_html()`` against vector that concatenate each elements by using ``vector_join()``.
+
+* [``vector_join``] Added a new function ``vector_join()``.[groonga-dev,04956][Reported by shinonon]
+
+  This function can concatenate each elements.
+  We can specify delimiter in the second argument in this function.
+
+  For example, we could execute ``snippet()`` and ``snippet_html()`` against vector that concatenate each elements as below.
+
+  .. code-block::
+
+     plugin_register functions/vector
+
+     table_create Entries TABLE_NO_KEY
+     column_create Entries title COLUMN_SCALAR ShortText
+     column_create Entries contents COLUMN_VECTOR ShortText
+
+     table_create Tokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC130
+     column_create Tokens entries_title COLUMN_INDEX|WITH_POSITION Entries title
+     column_create Tokens entries_contents COLUMN_INDEX|WITH_SECTION|WITH_POSITION   Entries contents
+
+     load --table Entries
+     [
+     {
+       "title": "Groonga and MySQL",
+       "contents": [
+         "Groonga is a full text search engine",
+         "MySQL is a RDBMS",
+         "Mroonga is a MySQL storage engine based on Groonga"
+       ]
+     }
+     ]
+
+     select Entries\
+       --output_columns 'snippet_html(vector_join(contents, "\n")), contents'\
+       --match_columns 'title'\
+       --query Groonga --output_pretty yes
+     [
+       [
+         0,
+         1650849001.524027,
+         0.0003361701965332031
+       ],
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "snippet_html",
+               null
+             ],
+             [
+               "contents",
+               "ShortText"
+             ]
+           ],
+           [
+             [
+               "<span class=\"keyword\">Groonga</span> is a full text search engine\nMySQL is a RDBMS\nMroonga is a MySQL storage engine based on <span class=\"keyword\">Groonga</span>"
+             ],
+             [
+               "Groonga is a full text search engine","MySQL is a RDBMS","Mroonga is a MySQL storage engine based on Groonga"
+             ]
+           ]
+         ]
+       ]
+     ]
+
+* [:doc:`/reference/indexing`] Ignore too large a token like online index construction. [GitHub:pgroonga/pgroonga#209][Reported by Zhanzhao (Deo) Liang]
+
+  Groonga doesn't occur error, but Groonga ignores too large a token when we execute static index construction.
+  However, Groonga output warning in this case.
+
+Fixes
+-----
+
+* Fixed a bug that we may be not able to add a key to a table of patricia trie.
+
+  This bug occurs in the following conditon.
+
+  * If a table of patricia trie already has a key.
+  * If the additional key is 4096 bytes.
+
+Thanks
+------
+
+* shinonon
+* Zhanzhao (Deo) Liang
+
 .. _release-12-0-2:
 
 Release 12.0.2 - 2022-03-29
