@@ -163,7 +163,7 @@ grn_scorer_register(grn_ctx *ctx,
                     grn_scorer_score_func *score)
 {
   if (scorer_name_length == -1) {
-    scorer_name_length = strlen(scorer_name_ptr);
+    scorer_name_length = (int)strlen(scorer_name_ptr);
   }
 
   {
