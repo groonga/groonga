@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@
 static int alloc_count = 0;
 
 static grn_bool grn_fail_malloc_enable = GRN_FALSE;
-static int grn_fail_malloc_prob = 0;
+static double grn_fail_malloc_prob = 0.0;
 static grn_bool grn_fail_malloc_location = GRN_FALSE;
 static char *grn_fail_malloc_func = NULL;
 static char *grn_fail_malloc_file = NULL;
@@ -368,7 +368,7 @@ grn_alloc_fin_ctx_impl(grn_ctx *ctx)
     if (mi->map) {
       //GRN_LOG(ctx, GRN_LOG_NOTICE, "unmap in ctx_fin(%d,%d,%d)", i, (mi->count & GRN_CTX_SEGMENT_MASK), mi->nref);
       if (mi->count & GRN_CTX_SEGMENT_VLEN) {
-        grn_io_anon_unmap(ctx, mi, mi->nref * grn_pagesize);
+        grn_io_anon_unmap(ctx, mi, (size_t)((int64_t)(mi->nref) * grn_pagesize));
       } else {
         grn_io_anon_unmap(ctx, mi, GRN_CTX_SEGMENT_SIZE);
       }
@@ -377,7 +377,7 @@ grn_alloc_fin_ctx_impl(grn_ctx *ctx)
 }
 
 #define ALIGN_SIZE (1<<3)
-#define ALIGN_MASK (ALIGN_SIZE-1)
+#define ALIGN_MASK ((size_t)(ALIGN_SIZE-1))
 #define GRN_CTX_ALLOC_CLEAR 1
 
 static void *
@@ -396,7 +396,8 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
     grn_io_mapinfo *mi;
     size = ((size + ALIGN_MASK) & ~ALIGN_MASK) + ALIGN_SIZE;
     if (size > GRN_CTX_SEGMENT_SIZE) {
-      uint64_t npages = (size + (grn_pagesize - 1)) / grn_pagesize;
+      uint64_t npages =
+        (uint64_t)(((int64_t)size + (grn_pagesize - 1)) / grn_pagesize);
       size_t aligned_size;
       if (npages >= (1LL<<32)) {
         MERR("too long request size=%" GRN_FMT_SIZE, size);
@@ -409,7 +410,7 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
         }
         if (!mi->map) { break; }
       }
-      aligned_size = grn_pagesize * ((size_t)npages);
+      aligned_size = (size_t)(grn_pagesize * ((int64_t)npages));
       if (!grn_io_anon_map(ctx, mi, aligned_size)) { goto exit; }
       /* GRN_LOG(ctx, GRN_LOG_NOTICE, "map i=%d (%d)", i, npages * grn_pagesize); */
       mi->nref = (uint32_t) npages;
@@ -438,7 +439,7 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
         ctx->impl->currseg = i;
       }
       header = (int32_t *)((byte *)mi->map + mi->nref);
-      mi->nref += size;
+      mi->nref += (uint32_t)size;
       mi->count++;
       header[0] = i;
       header[1] = (int32_t) size;
@@ -484,7 +485,7 @@ grn_ctx_realloc(grn_ctx *ctx, void *ptr, size_t size,
     res = grn_ctx_alloc(ctx, size, 0, file, line, func);
     if (res && ptr) {
       int32_t *header = &((int32_t *)ptr)[-2];
-      size_t size_ = header[1];
+      size_t size_ = (size_t)(header[1]);
       grn_memcpy(res, ptr, size_ > size ? size : size_);
       grn_ctx_free(ctx, ptr, file, line, func);
     }
@@ -544,7 +545,7 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
           goto exit;
         }
         //GRN_LOG(ctx, GRN_LOG_NOTICE, "umap i=%d (%d)", i, mi->nref * grn_pagesize);
-        grn_io_anon_unmap(ctx, mi, mi->nref * grn_pagesize);
+        grn_io_anon_unmap(ctx, mi, (size_t)((int64_t)(mi->nref) * grn_pagesize));
         mi->map = NULL;
       } else {
         if (!mi->map) {
@@ -581,7 +582,8 @@ grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,
     int32_t i = ctx->impl->lifoseg;
     grn_io_mapinfo *mi = &ctx->impl->segs[i];
     if (size > GRN_CTX_SEGMENT_SIZE) {
-      uint64_t npages = (size + (grn_pagesize - 1)) / grn_pagesize;
+      uint64_t npages =
+        (uint64_t)(((int64_t)size + (grn_pagesize - 1)) / grn_pagesize);
       size_t aligned_size;
       if (npages >= (1LL<<32)) {
         MERR("too long request size=%" GRN_FMT_SIZE, size);
@@ -595,7 +597,7 @@ grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,
         mi++;
         if (!mi->map) { break; }
       }
-      aligned_size = grn_pagesize * ((size_t)npages);
+      aligned_size = (size_t)(grn_pagesize * (int64_t)npages);
       if (!grn_io_anon_map(ctx, mi, aligned_size)) { return NULL; }
       mi->nref = (uint32_t) npages;
       mi->count = GRN_CTX_SEGMENT_VLEN|GRN_CTX_SEGMENT_LIFO;
@@ -618,7 +620,7 @@ grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,
       }
       {
         uint32_t u = mi->nref;
-        mi->nref += size;
+        mi->nref += (uint32_t)size;
         return (byte *)mi->map + u;
       }
     }
@@ -646,7 +648,7 @@ grn_ctx_free_lifo(grn_ctx *ctx, void *ptr,
       if (done) { break; }
       if (mi->count & GRN_CTX_SEGMENT_VLEN) {
         if (mi->map == ptr) { done = 1; }
-        grn_io_anon_unmap(ctx, mi, mi->nref * grn_pagesize);
+        grn_io_anon_unmap(ctx, mi, (size_t)((int64_t)(mi->nref) * grn_pagesize));
         mi->map = NULL;
       } else {
         if (mi->map == ptr) {
@@ -860,7 +862,7 @@ grn_fail_malloc_should_fail(size_t size,
     return GRN_TRUE;
   }
 
-  if (grn_fail_malloc_prob > 0 && grn_fail_malloc_prob >= rand()) {
+  if (grn_fail_malloc_prob > 0.0 && grn_fail_malloc_prob >= rand()) {
     return GRN_TRUE;
   }
 
