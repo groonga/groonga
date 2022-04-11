@@ -26,7 +26,7 @@ typedef struct {
   uint64_t offset;
   uint32_t length;
   grn_bool have_overlap;
-  uint8_t first_character_length;
+  uint32_t first_character_length;
 } grn_highlighter_location;
 
 static int
@@ -36,7 +36,7 @@ grn_highlighter_location_compare(const void *data1, const void *data2)
   const grn_highlighter_location *location2 = data2;
 
   if (location1->offset == location2->offset) {
-    return location1->length - location2->length;
+    return (int)(location1->length - location2->length);
   } else {
     return (int)(location1->offset - location2->offset);
   }
@@ -283,7 +283,7 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx,
 
     keyword_length = grn_vector_get_element(ctx,
                                             &(highlighter->raw_keywords),
-                                            i,
+                                            (uint32_t)i,
                                             &keyword,
                                             NULL,
                                             NULL);
@@ -323,7 +323,7 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx,
         grn_vector_add_element(ctx,
                                lazy_keywords,
                                data,
-                               data_length,
+                               (uint32_t)data_length,
                                0,
                                GRN_DB_TEXT);
       }
@@ -337,11 +337,12 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx,
         grn_encoding encoding = ctx->encoding;
         /* token_id_chunk is a binary data */
         ctx->encoding = GRN_ENC_NONE;
-        token_id_chunk_id = grn_table_add(ctx,
-                                          highlighter->lexicon.token_id_chunks,
-                                          GRN_TEXT_VALUE(token_id_chunk),
-                                          GRN_TEXT_LEN(token_id_chunk),
-                                          NULL);
+        token_id_chunk_id =
+          grn_table_add(ctx,
+                        highlighter->lexicon.token_id_chunks,
+                        GRN_TEXT_VALUE(token_id_chunk),
+                        (unsigned int)GRN_TEXT_LEN(token_id_chunk),
+                        NULL);
         ctx->encoding = encoding;
       }
       if (!have_token_id_chunks) {
@@ -601,7 +602,7 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
 
       keyword_length = grn_vector_get_element(ctx,
                                               lazy_keywords,
-                                              i,
+                                              (uint32_t)i,
                                               &keyword,
                                               NULL,
                                               NULL);
@@ -682,10 +683,11 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
         grn_encoding encoding = ctx->encoding;
         /* token_id_chunk is a binary data */
         ctx->encoding = GRN_ENC_NONE;
-        chunk_id = grn_pat_lcp_search(ctx,
-                                      chunks,
-                                      raw_token_ids + i,
-                                      (n_token_ids - i) * sizeof(grn_id));
+        chunk_id =
+          grn_pat_lcp_search(ctx,
+                             chunks,
+                             raw_token_ids + i,
+                             (unsigned int)(n_token_ids - i) * sizeof(grn_id));
         ctx->encoding = encoding;
       }
       if (chunk_id == GRN_ID_NIL) {
@@ -873,8 +875,10 @@ grn_highlighter_highlight_patricia_trie(grn_ctx *ctx,
 
     n_hits = grn_pat_scan(ctx,
                           (grn_pat *)(highlighter->pat.keywords),
-                          current, current_length,
-                          hits, MAX_N_HITS,
+                          current,
+                          (unsigned int)current_length,
+                          hits,
+                          MAX_N_HITS,
                           &rest);
     for (i = 0; i < n_hits; i++) {
       if ((hits[i].offset - previous_length) > 0) {
@@ -898,7 +902,7 @@ grn_highlighter_highlight_patricia_trie(grn_ctx *ctx,
       previous_length = hits[i].offset + hits[i].length;
     }
 
-    chunk_length = rest - current;
+    chunk_length = (size_t)(rest - current);
     if ((chunk_length - previous_length) > 0) {
       grn_text_escape_xml(ctx,
                           output,
@@ -921,7 +925,7 @@ grn_highlighter_highlight(grn_ctx *ctx,
   GRN_API_ENTER;
 
   if (text_length < 0) {
-    text_length = strlen(text);
+    text_length = (int64_t)strlen(text);
   }
 
   if (grn_vector_size(ctx, &(highlighter->raw_keywords)) == 0) {
@@ -997,7 +1001,7 @@ grn_highlighter_add_keyword(grn_ctx *ctx,
   GRN_API_ENTER;
 
   if (keyword_length < 0) {
-    keyword_length = strlen(keyword);
+    keyword_length = (int64_t)strlen(keyword);
   }
 
   if (keyword_length == 0) {
