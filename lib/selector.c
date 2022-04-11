@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -82,7 +82,7 @@ grn_selector_run(grn_ctx *ctx,
   grn_rc rc = proc->callbacks.function.selector(ctx,
                                                 table,
                                                 index,
-                                                n_args,
+                                                (int)n_args,
                                                 args,
                                                 result_set,
                                                 op);
@@ -207,7 +207,7 @@ grn_selector_data_parse_score_column_option_value(grn_ctx *ctx,
       data->score_column = grn_obj_column(ctx,
                                           data->result_set,
                                           GRN_TEXT_VALUE(value),
-                                          GRN_TEXT_LEN(value));
+                                          (uint32_t)GRN_TEXT_LEN(value));
       data->score_table = data->result_set;
     } else {
       grn_obj inspected;
@@ -248,7 +248,7 @@ grn_selector_data_set_tags_internal(grn_ctx *ctx,
       grn_vector_add_element(ctx,
                              tags,
                              GRN_TEXT_VALUE(new_tags),
-                             GRN_TEXT_LEN(new_tags),
+                             (uint32_t)GRN_TEXT_LEN(new_tags),
                              0,
                              GRN_DB_TEXT);
     }
@@ -344,7 +344,7 @@ grn_selector_data_parse_tags_column_option_value(grn_ctx *ctx,
       data->tags_column = grn_obj_column(ctx,
                                          data->result_set,
                                          GRN_TEXT_VALUE(value),
-                                         GRN_TEXT_LEN(value));
+                                         (uint32_t)GRN_TEXT_LEN(value));
       data->tags_table = data->result_set;
     } else {
       grn_obj inspected;
@@ -533,7 +533,7 @@ grn_selector_data_on_token_found(grn_ctx *ctx,
                                              token_id,
                                              GRN_ID_NIL,
                                              GRN_ID_MAX,
-                                             ii->n_elements - 1,
+                                             (int)(ii->n_elements - 1),
                                              0);
   if (!cursor) {
     GRN_API_RETURN(ctx->rc);
