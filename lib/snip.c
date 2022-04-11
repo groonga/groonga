@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2014  Brazil
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2014  Brazil
+  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -86,17 +86,18 @@ grn_bm_preBmBc(const unsigned char *x, size_t m, size_t *bmBc)
 
 #define GRN_BM_COMPARE do { \
   if (string_checks[found]) { \
-    size_t offset = cond->last_offset, found_alpha_head = cond->found_alpha_head; \
+    size_t offset = cond->last_offset; \
+    ptrdiff_t found_alpha_head = cond->found_alpha_head; \
     /* calc real offset */\
     for (i = cond->last_found; i < found; i++) { \
       if (string_checks[i] > 0) { \
         found_alpha_head = i; \
-        offset += string_checks[i]; \
+        offset += (size_t)(string_checks[i]); \
       } \
     } \
     /* if real offset is in a character, move it the head of the character */ \
     if (string_checks[found] < 0) { \
-      offset -= string_checks[found_alpha_head]; \
+      offset -= (size_t)(string_checks[found_alpha_head]); \
       cond->last_found = found_alpha_head; \
     } else { \
       cond->last_found = found; \
@@ -105,11 +106,13 @@ grn_bm_preBmBc(const unsigned char *x, size_t m, size_t *bmBc)
     if (flags & GRN_SNIP_SKIP_LEADING_SPACES) { \
       while (cond->start_offset < string_original_length_in_bytes && \
              (i = grn_isspace(string_original + cond->start_offset, \
-                              string_encoding))) { cond->start_offset += i; } \
+                              string_encoding))) { \
+        cond->start_offset += (size_t)(i); \
+      } \
     } \
     for (i = cond->last_found; i < found + m; i++) { \
       if (string_checks[i] > 0) { \
-        offset += string_checks[i]; \
+        offset += (size_t)(string_checks[i]); \
       } \
     } \
     cond->end_offset = offset; \
@@ -136,11 +139,13 @@ grn_bm_tunedbm(grn_ctx *ctx, snip_cond *cond, grn_obj *string, int flags)
 {
   register unsigned char *limit, ck;
   register const unsigned char *p, *cp;
-  register size_t *bmBc, delta1, i;
+  register size_t *bmBc, delta1;
+  register ptrdiff_t i;
 
   const unsigned char *x;
   unsigned char *y;
-  size_t shift, found;
+  ptrdiff_t shift;
+  ptrdiff_t found;
 
   const char *string_original;
   unsigned int string_original_length_in_bytes;
@@ -160,7 +165,7 @@ grn_bm_tunedbm(grn_ctx *ctx, snip_cond *cond, grn_obj *string, int flags)
   if (m == 1) {
     if (n > cond->found) {
       shift = 1;
-      p = memchr(y + cond->found, keyword_norm[0], n - cond->found);
+      p = memchr(y + cond->found, keyword_norm[0], (size_t)(n - cond->found));
       if (p != NULL) {
         found = p - y;
         GRN_BM_COMPARE;
@@ -300,7 +305,7 @@ grn_snip_cond_reinit(snip_cond *cond)
 }
 
 grn_inline static char *
-grn_snip_strndup(grn_ctx *ctx, const char *string, unsigned int string_len)
+grn_snip_strndup(grn_ctx *ctx, const char *string, size_t string_len)
 {
    char *copied_string;
 
@@ -316,8 +321,8 @@ grn_snip_strndup(grn_ctx *ctx, const char *string, unsigned int string_len)
 grn_inline static grn_rc
 grn_snip_cond_set_tag(grn_ctx *ctx,
                       const char **dest_tag, size_t *dest_tag_len,
-                      const char *tag, unsigned int tag_len,
-                      const char *default_tag, unsigned int default_tag_len,
+                      const char *tag, size_t tag_len,
+                      const char *default_tag, size_t default_tag_len,
                       int copy_tag)
 {
   if (tag) {
@@ -391,7 +396,7 @@ grn_snip_set_delimiter_regexp(grn_ctx *ctx,
     if (pattern_length < 0) {
       snip_->delimiter_pattern_length = strlen(pattern);
     } else {
-      snip_->delimiter_pattern_length = pattern_length;
+      snip_->delimiter_pattern_length = (size_t)pattern_length;
     }
     snip_->delimiter_pattern =
       grn_snip_strndup(ctx,
@@ -400,7 +405,7 @@ grn_snip_set_delimiter_regexp(grn_ctx *ctx,
     if (snip_->delimiter_pattern) {
       snip_->delimiter_regex = grn_onigmo_new(ctx,
                                               pattern,
-                                              pattern_length,
+                                              snip_->delimiter_pattern_length,
                                               GRN_ONIGMO_OPTION_DEFAULT,
                                               GRN_ONIGMO_SYNTAX_DEFAULT,
                                               tag);
@@ -516,20 +521,20 @@ grn_snip_add_cond(grn_ctx *ctx, grn_obj *snip,
 
 static size_t
 grn_snip_find_firstbyte(const char *string, grn_encoding encoding, size_t offset,
-                        size_t doffset)
+                        ssize_t doffset)
 {
   switch (encoding) {
   case GRN_ENC_EUC_JP:
     while (!(grn_bm_check_euc((unsigned char *) string, offset)))
-      offset += doffset;
+      offset = (size_t)((ssize_t)offset + doffset);
     break;
   case GRN_ENC_SJIS:
     if (!(grn_bm_check_sjis((unsigned char *) string, offset)))
-      offset += doffset;
+      offset = (size_t)((ssize_t)offset + doffset);
     break;
   case GRN_ENC_UTF8:
     while ((signed char)string[offset] <= (signed char)0xc0)
-      offset += doffset;
+      offset = (size_t)((ssize_t)offset + doffset);
     break;
   default:
     break;
@@ -683,7 +688,7 @@ grn_snip_close(grn_ctx *ctx, grn_snip *snip)
     GRN_FREE(snip->delimiter_pattern);
   }
   if (snip->flags & GRN_SNIP_COPY_TAG) {
-    int i;
+    size_t i;
     snip_cond *sc;
     const char *dot = snip->defaultopentag, *dct = snip->defaultclosetag;
     for (i = snip->cond_len, sc = snip->cond; i; i--, sc++) {
@@ -733,7 +738,7 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
     _snip_tag_result *tag_result = snip_->tag_result;
     _snip_result *snip_result = snip_->snip_result;
     size_t last_end_offset = 0, last_last_end_offset = 0;
-    unsigned int unfound_cond_count = snip_->cond_len;
+    size_t unfound_cond_count = snip_->cond_len;
 
     *max_tagged_len = 0;
     while (1) {
@@ -973,7 +978,7 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
                                                 &region,
                                                 ONIG_OPTION_NONE);
             if (position != ONIG_MISMATCH) {
-              start_offset_min = region.end[0];
+              start_offset_min = (size_t)(region.end[0]);
               onig_region_free(&region, 0);
             }
           }
@@ -1013,7 +1018,7 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
                                                 &region,
                                                 ONIG_OPTION_NONE);
             if (position != ONIG_MISMATCH) {
-              end_offset_max = region.beg[0];
+              end_offset_max = (size_t)(region.beg[0]);
               onig_region_free(&region, 0);
             }
           }
@@ -1039,7 +1044,7 @@ grn_snip_exec(grn_ctx *ctx, grn_obj *snip, const char *string, unsigned int stri
         tagged_len += snip_result->end_offset - snip_result->start_offset + 1;
       }
 
-      *max_tagged_len = MAX(*max_tagged_len, tagged_len);
+      *max_tagged_len = MAX(*max_tagged_len, (unsigned int)tagged_len);
 
       snip_result->last_tag_result_idx = snip_->tag_count - 1;
       (*nresults)++;

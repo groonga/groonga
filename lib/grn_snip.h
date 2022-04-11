@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -49,16 +49,16 @@ typedef struct _snip_cond
   grn_obj *keyword;
 
   /* Tuned BM pre */
-  size_t bmBc[ASIZE];
-  size_t shift;
+  ptrdiff_t bmBc[ASIZE];
+  ptrdiff_t shift;
 
   /* Tuned BM temporal result */
-  size_t found;
-  size_t last_found;
+  ptrdiff_t found;
+  ptrdiff_t last_found;
   size_t last_offset;
   size_t start_offset;
   size_t end_offset;
-  size_t found_alpha_head;
+  ptrdiff_t found_alpha_head;
 
   /* search result */
   int count;
