@@ -37,15 +37,15 @@ scorer_tf_idf(grn_ctx *ctx, grn_scorer_matched_record *record)
   n_all_documents = grn_scorer_matched_record_get_n_documents(ctx, record);
   n_candidates = grn_scorer_matched_record_get_n_candidates(ctx, record);
   n_tokens = grn_scorer_matched_record_get_n_tokens(ctx, record);
-  n_estimated_match_documents = n_candidates / (double)n_tokens;
+  n_estimated_match_documents = (double)n_candidates / (double)n_tokens;
 
-  if (n_estimated_match_documents >= n_all_documents) {
+  if (n_estimated_match_documents >= (double)n_all_documents) {
     return min_score;
   } else {
     double idf;
     double tf_idf;
 
-    idf = log(n_all_documents / n_estimated_match_documents);
+    idf = log((double)n_all_documents / n_estimated_match_documents);
     tf_idf = tf * idf;
     return fmax(tf_idf, min_score);
   }
