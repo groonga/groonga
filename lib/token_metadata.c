@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -43,14 +43,12 @@ grn_token_metadata_copy(grn_ctx *ctx,
                         grn_obj *metadata,
                         grn_obj *source)
 {
-  int i;
-  int n;
-
-  n = grn_vector_size(ctx, source);
+  uint32_t n = grn_vector_size(ctx, source);
+  uint32_t i;
   for (i = 0; i < n; i++) {
     const char *value;
     unsigned int value_length;
-    int domain;
+    grn_id domain;
     value_length = grn_vector_get_element(ctx, source, i, &value, NULL, &domain);
     grn_vector_add_element(ctx,
                            metadata,
@@ -107,7 +105,7 @@ grn_token_metadata_at(grn_ctx *ctx,
 
   raw_name_length = grn_vector_get_element(ctx,
                                            metadata,
-                                           i * 2,
+                                           (uint32_t)(i * 2),
                                            &raw_name,
                                            NULL,
                                            &name_domain);
@@ -116,7 +114,7 @@ grn_token_metadata_at(grn_ctx *ctx,
 
   raw_value_length = grn_vector_get_element(ctx,
                                             metadata,
-                                            i * 2 + 1,
+                                            (uint32_t)(i * 2 + 1),
                                             &raw_value,
                                             NULL,
                                             &value_domain);
@@ -144,7 +142,7 @@ grn_token_metadata_get(grn_ctx *ctx,
   }
 
   if (name_length < 0) {
-    name_length = strlen(name);
+    name_length = (int)strlen(name);
   }
 
   n = grn_vector_size(ctx, metadata) / 2;
@@ -154,19 +152,19 @@ grn_token_metadata_get(grn_ctx *ctx,
 
     current_name_length = grn_vector_get_element(ctx,
                                                  metadata,
-                                                 i * 2,
+                                                 (uint32_t)(i * 2),
                                                  &current_name,
                                                  NULL,
                                                  NULL);
     if ((unsigned int)name_length == current_name_length &&
-        memcmp(name, current_name, name_length) == 0) {
+        memcmp(name, current_name, (size_t)name_length) == 0) {
       const char *raw_value;
       unsigned int raw_value_length;
       grn_id domain;
 
       raw_value_length = grn_vector_get_element(ctx,
                                                 metadata,
-                                                i * 2 + 1,
+                                                (uint32_t)(i * 2 + 1),
                                                 &raw_value,
                                                 NULL,
                                                 &domain);
@@ -195,15 +193,20 @@ grn_token_metadata_add(grn_ctx *ctx,
   }
 
   if (name_length < 0) {
-    name_length = strlen(name);
+    name_length = (int)strlen(name);
   }
 
-  grn_vector_add_element(ctx, metadata, name, name_length, 0, GRN_DB_TEXT);
+  grn_vector_add_element(ctx,
+                         metadata,
+                         name,
+                         (uint32_t)name_length,
+                         0,
+                         GRN_DB_TEXT);
   if (ctx->rc == GRN_SUCCESS) {
     grn_vector_add_element(ctx,
                            metadata,
                            GRN_BULK_HEAD(value),
-                           GRN_BULK_VSIZE(value),
+                           (uint32_t)GRN_BULK_VSIZE(value),
                            0,
                            value->header.domain);
   }
