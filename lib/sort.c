@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -138,7 +138,7 @@ grn_sort_key_set_size(uint8_t *size_raw,
   if (key_offset == KEY_BULK) {
     *((uint32_t *)size_raw) = size;
   } else {
-    *((uint8_t *)size_raw) = size;
+    *((uint8_t *)size_raw) = (uint8_t)size;
   }
 }
 
@@ -278,14 +278,14 @@ sort_value_get_value(grn_ctx *ctx,
       GRN_TEXT_PUT(ctx, copy->values, value, value_size);
       grn_sort_key_set_size(copy->sizes + compare_data->sizes_offset,
                             key->offset,
-                            value_size);
+                            (uint32_t)value_size);
     } else {
       size_t value_size_before = GRN_BULK_VSIZE(copy->values);
       grn_obj_get_value(ctx, key->key, id, copy->values);
       size_t value_size = GRN_BULK_VSIZE(copy->values) - value_size_before;
       grn_sort_key_set_size(copy->sizes + compare_data->sizes_offset,
                             key->offset,
-                            value_size);
+                            (uint32_t)value_size);
     }
     entry->value.n_cached_values++;
   }
@@ -320,7 +320,7 @@ sort_value_execute_expr(grn_ctx *ctx,
                    GRN_BULK_VSIZE(value));
     grn_sort_key_set_size(copy->sizes + compare_data->sizes_offset,
                           key->offset,
-                          GRN_BULK_VSIZE(value));
+                          (uint32_t)GRN_BULK_VSIZE(value));
     entry->value.n_cached_values++;
   }
   {
@@ -485,7 +485,7 @@ sort_value_body(grn_ctx *ctx,
       sort_value_body(ctx, head, c - 1, from, to, data);
     }
     if (m < to) {
-      sort_value_body(ctx, c + 1, tail, from - m, to - m, data);
+      sort_value_body(ctx, c + 1, tail, (int)(from - m), (int)(to - m), data);
     }
   }
 }
@@ -588,7 +588,7 @@ grn_table_sort_value_body(grn_ctx *ctx,
   const int offset = data->offset;
   const int limit = data->limit;
   int n_sorted_records = 0;
-  uint32_t e = offset + limit;
+  int e = offset + limit;
   uint32_t n = grn_table_size(ctx, table);
 
   const sort_key *keys = data->keys;
@@ -657,12 +657,12 @@ grn_table_sort_value_body(grn_ctx *ctx,
                         e,
                         data);
       }
-      if (m < (intptr_t)e) {
+      if (m < e) {
         sort_value_body(ctx,
                         ep + 1,
                         entries + n - 1,
-                        offset - m,
-                        e - m,
+                        (int)(offset - m),
+                        (int)(e - m),
                         data);
       }
     }
@@ -810,7 +810,7 @@ grn_table_sort_value(grn_ctx *ctx,
                      int limit,
                      grn_obj *result,
                      grn_table_sort_key *raw_keys,
-                     int n_keys,
+                     uint32_t n_keys,
                      const char *tag)
 {
   int n_sorted_records = 0;
@@ -825,7 +825,7 @@ grn_table_sort_value(grn_ctx *ctx,
    * resolution optimization. */
   const bool is_table_with_key = grn_obj_is_table_with_key(ctx, table);
 
-  int i;
+  uint32_t i;
   uint32_t index_refer = 0;
   uint32_t index_value = 0;
   uint32_t n_need_resolved_id_keys = 0;
@@ -1032,7 +1032,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
 {
   const char *tag = "[table][sort]";
   grn_rc rc;
-  int n;
+  unsigned int n;
   int n_sorted_records = 0;
   GRN_API_ENTER;
   if (!n_keys || !keys) {
@@ -1048,7 +1048,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     goto exit;
   }
   n = grn_table_size(ctx, table);
-  if ((rc = grn_output_range_normalize(ctx, n, &offset, &limit))) {
+  if ((rc = grn_output_range_normalize(ctx, (int)n, &offset, &limit))) {
     ERR(rc, "%s grn_output_range_normalize failed", tag);
     goto exit;
   }
@@ -1096,7 +1096,7 @@ grn_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
                                             limit,
                                             result,
                                             keys,
-                                            n_keys,
+                                            (uint32_t)n_keys,
                                             tag);
   }
 exit :
@@ -1113,12 +1113,13 @@ grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned int str_
   while ((*p++ != '(')) { if (p == pe) { return NULL; } }
   str = p;
   while ((*p != ')')) { if (++p == pe) { return NULL; } }
-  str_size = p - str;
+  str_size = (unsigned int)(p - str);
   p = str;
   if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
     grn_id domain = GRN_ID_NIL;
-    int i, n = grn_tokenize(str, str_size, tokbuf, str_size, NULL);
-    if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
+    int i;
+    int n = grn_tokenize(str, str_size, tokbuf, (int)str_size, NULL);
+    if ((keys = GRN_MALLOCN(grn_table_sort_key, (size_t)n))) {
       k = keys;
       for (i = 0; i < n; i++) {
         const char *r = tokbuf[i];
@@ -1133,7 +1134,7 @@ grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned int str_
             p++;
           }
           if (k == keys) {
-            if (!(k->key = grn_obj_column(ctx, table, p, r - p))) {
+            if (!(k->key = grn_obj_column(ctx, table, p, (uint32_t)(r - p)))) {
               GRN_LOG(ctx, GRN_WARN,
                       "[table-sort-key][geo] "
                       "ignore invalid sort key: <%.*s>(<%.*s>)",
@@ -1159,9 +1160,9 @@ grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned int str_
     GRN_FREE((void *)tokbuf);
   }
   if (!ctx->rc && k - keys > 0) {
-    *nkeys = k - keys;
+    *nkeys = (unsigned int)(k - keys);
   } else {
-    grn_table_sort_key_close(ctx, keys, k - keys);
+    grn_table_sort_key_close(ctx, keys, (uint32_t)(k - keys));
     *nkeys = 0;
     keys = NULL;
   }
@@ -1184,8 +1185,9 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size
     return keys;
   }
   if ((tokbuf = GRN_MALLOCN(const char *, str_size))) {
-    int i, n = grn_tokenize(str, str_size, tokbuf, str_size, NULL);
-    if ((keys = GRN_MALLOCN(grn_table_sort_key, n))) {
+    int i;
+    int n = grn_tokenize(str, str_size, tokbuf, (int)str_size, NULL);
+    if ((keys = GRN_MALLOCN(grn_table_sort_key, (size_t)n))) {
       k = keys;
       for (i = 0; i < n; i++) {
         const char *r = tokbuf[i];
@@ -1199,7 +1201,7 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size
             k->flags = GRN_TABLE_SORT_DESC;
             p++;
           }
-          if ((k->key = grn_obj_column(ctx, table, p, r - p))) {
+          if ((k->key = grn_obj_column(ctx, table, p, (uint32_t)(r - p)))) {
             k++;
           } else {
             GRN_DEFINE_NAME(table);
@@ -1219,9 +1221,9 @@ grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size
     GRN_FREE((void *)tokbuf);
   }
   if (!ctx->rc && k - keys > 0) {
-    *nkeys = k - keys;
+    *nkeys = (unsigned int)(k - keys);
   } else {
-    grn_table_sort_key_close(ctx, keys, k - keys);
+    grn_table_sort_key_close(ctx, keys, (uint32_t)(k - keys));
     *nkeys = 0;
     keys = NULL;
   }
@@ -1275,7 +1277,7 @@ grn_table_sort_keys_parse_internal(grn_ctx *ctx,
 {
   GRN_API_ENTER;
   if (raw_keys_length < 0) {
-    raw_keys_length = strlen(raw_keys);
+    raw_keys_length = (int32_t)strlen(raw_keys);
   }
   grn_table_sort_key *keys = NULL;
   grn_expr_v1_format_type type;
@@ -1287,7 +1289,7 @@ grn_table_sort_keys_parse_internal(grn_ctx *ctx,
   if (grn_expr_is_v1_format(ctx, raw_keys, raw_keys_length, type)) {
     keys = grn_table_sort_key_from_str(ctx,
                                        raw_keys,
-                                       raw_keys_length,
+                                       (unsigned int)(raw_keys_length),
                                        table,
                                        n_keys);
     GRN_API_RETURN(keys);
@@ -1305,7 +1307,7 @@ grn_table_sort_keys_parse_internal(grn_ctx *ctx,
   grn_expr_parse(ctx,
                  keys_expression,
                  raw_keys,
-                 raw_keys_length,
+                 (unsigned int)raw_keys_length,
                  NULL,
                  GRN_OP_MATCH,
                  GRN_OP_AND,
@@ -1390,7 +1392,7 @@ grn_table_sort_keys_parse_internal(grn_ctx *ctx,
       goto exit;
     }
   }
-  *n_keys = n_offsets;
+  *n_keys = (int)n_offsets;
 
 exit :
   if (ctx->rc != GRN_SUCCESS || *n_keys == 0) {
