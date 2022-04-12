@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2012-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2012-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -88,7 +88,7 @@ grn_token_set_data(grn_ctx *ctx,
     goto exit;
   }
   if (str_length == -1) {
-    str_length = strlen(str_ptr);
+    str_length = (int)strlen(str_ptr);
   }
   GRN_TEXT_SET(ctx, &(token->data), str_ptr, str_length);
 exit:
