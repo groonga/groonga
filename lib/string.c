@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -100,14 +100,15 @@ grn_fake_string_open(grn_ctx *ctx, grn_string *string)
     const char *source_current = str;
     const char *source_end = str + str_len;
     char *destination = nstr->normalized;
-    unsigned int destination_length = 0;
+    uint32_t destination_length = 0;
     while ((char_length = grn_charlen(ctx, source_current, source_end)) > 0) {
       if (!grn_tokenizer_is_tokenized_delimiter(ctx,
-                                                source_current, char_length,
+                                                source_current,
+                                                (unsigned int)char_length,
                                                 ctx->encoding)) {
-        grn_memcpy(destination, source_current, char_length);
+        grn_memcpy(destination, source_current, (size_t)char_length);
         destination += char_length;
-        destination_length += char_length;
+        destination_length += (uint32_t)char_length;
       }
       source_current += char_length;
     }
@@ -281,7 +282,7 @@ grn_string_open_(grn_ctx *ctx,
     size_t i;
     for (i = 0; i < n; i++) {
       grn_obj *normalizer = GRN_PTR_VALUE_AT(&normalizers, i);
-      string_->normalizer_index = i;
+      string_->normalizer_index = (uint32_t)i;
       if (i > 0) {
         previous_normalized = string_->normalized;
         previous_normalized_length_in_bytes =
@@ -308,7 +309,7 @@ grn_string_open_(grn_ctx *ctx,
               if (previous_check > 0) {
                 int16_t original_check = previous_checks[previous_i];
                 string_->checks[current_i] = original_check;
-                previous_i += previous_check;
+                previous_i += (unsigned int)previous_check;
               }
             }
           }
@@ -340,7 +341,7 @@ grn_string_open_(grn_ctx *ctx,
                   break;
                 }
                 previous_start += previous_character_length;
-                previous_offset += previous_character_length;
+                previous_offset += (uint64_t)previous_character_length;
                 previous_i++;
               }
               if (ctx->rc != GRN_SUCCESS) {
@@ -609,7 +610,7 @@ grn_string_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *string)
                string_->original_length_in_bytes);
   GRN_TEXT_PUTS(ctx, buffer, ">");
   GRN_TEXT_PUTS(ctx, buffer, "(");
-  grn_text_itoa(ctx, buffer, string_->original_length_in_bytes);
+  grn_text_ulltoa(ctx, buffer, string_->original_length_in_bytes);
   GRN_TEXT_PUTS(ctx, buffer, ")");
 
   GRN_TEXT_PUTS(ctx, buffer, " normalized:<");
@@ -618,11 +619,11 @@ grn_string_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *string)
                string_->normalized_length_in_bytes);
   GRN_TEXT_PUTS(ctx, buffer, ">");
   GRN_TEXT_PUTS(ctx, buffer, "(");
-  grn_text_itoa(ctx, buffer, string_->normalized_length_in_bytes);
+  grn_text_ulltoa(ctx, buffer, string_->normalized_length_in_bytes);
   GRN_TEXT_PUTS(ctx, buffer, ")");
 
   GRN_TEXT_PUTS(ctx, buffer, " n_characters:");
-  grn_text_itoa(ctx, buffer, string_->n_characters);
+  grn_text_ulltoa(ctx, buffer, string_->n_characters);
 
   GRN_TEXT_PUTS(ctx, buffer, " encoding:");
   grn_inspect_encoding(ctx, buffer, string_->encoding);
