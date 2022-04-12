@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -38,7 +39,7 @@ grn_rc grn_cache_fetch(grn_ctx *ctx, grn_cache *cache,
                        grn_obj *output);
 void grn_cache_update(grn_ctx *ctx, grn_cache *cache,
                       const char *str, uint32_t str_size, grn_obj *value);
-void grn_cache_expire(grn_cache *cache, int32_t size);
+void grn_cache_expire(grn_cache *cache, uint32_t size);
 void grn_cache_fin(void);
 void grn_cache_get_statistics(grn_ctx *ctx, grn_cache *cache,
                               grn_cache_statistics *statistics);

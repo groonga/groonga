@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2017  Brazil
+  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -524,7 +524,7 @@ grn_cache_expire_entry_persistent(grn_cache *cache,
 }
 
 static void
-grn_cache_expire_memory_without_lock(grn_cache *cache, int32_t size)
+grn_cache_expire_memory_without_lock(grn_cache *cache, uint32_t size)
 {
   grn_cache_entry_memory *ce0 =
     (grn_cache_entry_memory *)(&(cache->impl.memory));
@@ -537,7 +537,7 @@ grn_cache_expire_memory_without_lock(grn_cache *cache, int32_t size)
 }
 
 static void
-grn_cache_expire_persistent_without_lock(grn_cache *cache, int32_t size)
+grn_cache_expire_persistent_without_lock(grn_cache *cache, uint32_t size)
 {
   grn_ctx *ctx = cache->ctx;
   grn_hash *keys = cache->impl.persistent.keys;
@@ -949,7 +949,7 @@ grn_cache_update_persistent(grn_ctx *ctx, grn_cache *cache,
     entry->data.modified_time = ctx->impl->tv;
 
     grn_ja_put(cache->ctx, values, cache_id,
-               GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value),
+               GRN_TEXT_VALUE(value), (uint32_t)GRN_TEXT_LEN(value),
                GRN_OBJ_SET, NULL);
 
     head_entry =
@@ -993,7 +993,7 @@ grn_cache_update(grn_ctx *ctx, grn_cache *cache,
 }
 
 static void
-grn_cache_expire_memory(grn_cache *cache, int32_t size)
+grn_cache_expire_memory(grn_cache *cache, uint32_t size)
 {
   MUTEX_LOCK(cache->impl.memory.mutex);
   grn_cache_expire_memory_without_lock(cache, size);
@@ -1001,7 +1001,7 @@ grn_cache_expire_memory(grn_cache *cache, int32_t size)
 }
 
 static void
-grn_cache_expire_persistent(grn_cache *cache, int32_t size)
+grn_cache_expire_persistent(grn_cache *cache, uint32_t size)
 {
   grn_rc rc;
   grn_ctx *ctx = cache->ctx;
@@ -1018,7 +1018,7 @@ grn_cache_expire_persistent(grn_cache *cache, int32_t size)
 }
 
 void
-grn_cache_expire(grn_cache *cache, int32_t size)
+grn_cache_expire(grn_cache *cache, uint32_t size)
 {
   if (cache->is_memory) {
     grn_cache_expire_memory(cache, size);
