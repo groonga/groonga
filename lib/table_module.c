@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2017-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2017-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -407,7 +407,7 @@ grn_table_get_module_string_raw(grn_ctx *ctx,
                                 const char *module_name)
 {
   char name[GRN_TABLE_MAX_KEY_SIZE];
-  unsigned int name_size;
+  int name_size;
   grn_obj options;
   unsigned int n = 0;
 
