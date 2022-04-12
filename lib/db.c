@@ -7076,7 +7076,6 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, uint32_t name
               goto exit;
             }
             switch (obj->header.type) {
-            case GRN_DB :
             case GRN_TYPE :
               if (DB_OBJ((*rp)->obj)->range) {
                 (*rp)->action = GRN_ACCESSOR_GET_VALUE;
