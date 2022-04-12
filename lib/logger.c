@@ -951,7 +951,7 @@ grn_query_logger_put(grn_ctx *ctx, unsigned int flag, const char *mark,
     elapsed_time =
       (uint64_t)(tv.tv_sec - target_ctx->impl->tv.tv_sec) *
       GRN_TIME_NSEC_PER_SEC +
-      (tv.tv_nsec - target_ctx->impl->tv.tv_nsec);
+      (uint64_t)(tv.tv_nsec - target_ctx->impl->tv.tv_nsec);
 
     grn_snprintf(info, INFO_BUFFER_SIZE, INFO_BUFFER_SIZE,
                  "%p|%s%015" GRN_FMT_INT64U " ", target_ctx, mark, elapsed_time);
