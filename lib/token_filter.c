@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2014-2015 Brazil
+  Copyright (C) 2014-2015  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,7 +31,7 @@ grn_token_filter_register(grn_ctx *ctx,
                           grn_token_filter_fin_func *fin)
 {
   if (plugin_name_length == -1) {
-    plugin_name_length = strlen(plugin_name_ptr);
+    plugin_name_length = (int)strlen(plugin_name_ptr);
   }
 
   {
@@ -74,7 +75,7 @@ grn_token_filter_create(grn_ctx *ctx, const char *name, int length)
                                  NULL);
   if (!token_filter) {
     if (length < 0) {
-      length = strlen(name);
+      length = (int)strlen(name);
     }
     GRN_PLUGIN_ERROR(ctx,
                      GRN_TOKEN_FILTER_ERROR,
