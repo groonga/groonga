@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -50,7 +50,7 @@ grn_timeval_now(grn_ctx *ctx, grn_timeval *tv)
     SERR("clock_gettime");
   } else {
     tv->tv_sec = t.tv_sec;
-    tv->tv_nsec = t.tv_nsec;
+    tv->tv_nsec = (int32_t)(t.tv_nsec);
   }
   return ctx->rc;
 # else /* HAVE_CLOCK_GETTIME */
@@ -73,8 +73,9 @@ grn_timeval_from_double(grn_ctx *ctx, double value)
   double sec = trunc(value);
   timeval.tv_sec = (int64_t)sec;
   timeval.tv_nsec =
-    (int64_t)((value - timeval.tv_sec) * GRN_TIME_NSEC_PER_SEC) %
-    GRN_TIME_NSEC_PER_SEC;
+    (int32_t)(
+      ((int64_t)((value - (double)(timeval.tv_sec)) * GRN_TIME_NSEC_PER_SEC) %
+       GRN_TIME_NSEC_PER_SEC));
   return timeval;
 }
 
@@ -290,7 +291,7 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
   r1 = r2;
 
   if ((r1 + 1) < rend && *r1 == '.') {
-    uv = grn_atoi(++r1, rend, &r2);
+    uv = grn_atoui(++r1, rend, &r2);
 
     for (int i = 0; r2 + i < r1 + 6; i++) {
       uv *= 10;
@@ -320,6 +321,6 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
     if (tm.tm_yday == -1) { return GRN_INVALID_ARGUMENT; }
   }
 
-  tv->tv_nsec = GRN_TIME_USEC_TO_NSEC(uv);
+  tv->tv_nsec = (int32_t)GRN_TIME_USEC_TO_NSEC(uv);
   return GRN_SUCCESS;
 }

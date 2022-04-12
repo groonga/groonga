@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2016 Brazil
+  Copyright (C) 2016  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -50,7 +51,7 @@ extern "C" {
 #define GRN_TIME_PACK(sec, usec) ((int64_t)(sec) * GRN_TIME_USEC_PER_SEC + (usec))
 #define GRN_TIME_UNPACK(time_value, sec, usec) do {\
   sec = (time_value) / GRN_TIME_USEC_PER_SEC;\
-  usec = (time_value) % GRN_TIME_USEC_PER_SEC;\
+  usec = (int32_t)((time_value) % GRN_TIME_USEC_PER_SEC);\
 } while (0)
 
 GRN_API grn_rc grn_timeval_now(grn_ctx *ctx, grn_timeval *tv);
