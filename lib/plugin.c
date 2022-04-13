@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2012-2018 Brazil
+  Copyright (C) 2012-2018  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -107,7 +108,7 @@ compute_name_size(const char *name, int name_size)
 {
   if (name_size < 0) {
     if (name) {
-      name_size = strlen(name);
+      name_size = (int)strlen(name);
     } else {
       name_size = 0;
     }
@@ -123,7 +124,8 @@ grn_plugin_reference(grn_ctx *ctx, const char *filename)
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
   id = grn_hash_get(&grn_plugins_ctx, grn_plugins,
-                    filename, GRN_PLUGIN_KEY_SIZE(filename),
+                    filename,
+                    (unsigned int)GRN_PLUGIN_KEY_SIZE(filename),
                     (void **)&plugin);
   if (plugin) {
     (*plugin)->refcount++;
@@ -373,9 +375,9 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
   grn_id id = GRN_ID_NIL;
   grn_dl dl;
   grn_plugin **plugin = NULL;
-  size_t filename_size;
+  unsigned int filename_size;
 
-  filename_size = GRN_PLUGIN_KEY_SIZE(filename);
+  filename_size = (unsigned int)GRN_PLUGIN_KEY_SIZE(filename);
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
   if ((id = grn_hash_get(plugins_ctx, grn_plugins, filename, filename_size,
@@ -536,7 +538,7 @@ grn_plugins_init_path(grn_ctx *ctx, grn_obj *path, const char *path_env)
         grn_vector_add_element(&grn_plugins_ctx,
                                &grn_plugins_path,
                                start,
-                               current - start,
+                               (uint32_t)(current - start),
                                0,
                                GRN_DB_TEXT);
       }
@@ -548,7 +550,7 @@ grn_plugins_init_path(grn_ctx *ctx, grn_obj *path, const char *path_env)
     grn_vector_add_element(&grn_plugins_ctx,
                            &grn_plugins_path,
                            start,
-                           current - start,
+                           (uint32_t)(current - start),
                            0,
                            GRN_DB_TEXT);
   }
@@ -618,7 +620,7 @@ grn_plugins_init(void)
     grn_vector_add_element(&grn_plugins_ctx,
                            &grn_plugins_path,
                            system_plugins_dir,
-                           strlen(system_plugins_dir),
+                           (uint32_t)strlen(system_plugins_dir),
                            0,
                            GRN_DB_TEXT);
   }
@@ -767,7 +769,7 @@ grn_plugin_find_path_libs_so(grn_ctx *ctx, const char *path, size_t path_len)
 
   so_suffix = grn_plugin_get_suffix();
   libs_so_path_len =
-    base_name - path +
+    (size_t)(base_name - path) +
     strlen(libs_path) +
     strlen(base_name) +
     strlen(so_suffix);
@@ -779,7 +781,7 @@ grn_plugin_find_path_libs_so(grn_ctx *ctx, const char *path, size_t path_len)
   }
 
   libs_so_path[0] = '\0';
-  grn_strncat(libs_so_path, PATH_MAX, path, base_name - path);
+  grn_strncat(libs_so_path, PATH_MAX, path, (size_t)(base_name - path));
   grn_strcat(libs_so_path, PATH_MAX, libs_path);
   grn_strcat(libs_so_path, PATH_MAX, base_name);
   grn_strcat(libs_so_path, PATH_MAX, so_suffix);
@@ -859,7 +861,7 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
     GRN_PLUGINS_DIR_EACH_BEGIN(dir, dir_length) {
       char dir_last_char;
       char path[PATH_MAX];
-      int name_length, max_name_length;
+      size_t name_length, max_name_length;
 
       grn_strncpy(path, PATH_MAX, dir, dir_length);
       path[dir_length] = '\0';
@@ -872,8 +874,8 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
       name_length = strlen(name);
       max_name_length = PATH_MAX - strlen(path) - 1;
       if (name_length > max_name_length) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "plugin name is too long: %d (max: %d) <%s%s>",
+        ERR(GRN_INVALID_ARGUMENT, "plugin name is too long: %" GRN_FMT_SIZE
+            " (max: %" GRN_FMT_SIZE ") <%s%s>",
             name_length, max_name_length,
             path, name);
         break;
@@ -968,7 +970,7 @@ grn_plugin_unregister_by_path(grn_ctx *ctx, const char *path)
 
   CRITICAL_SECTION_ENTER(grn_plugins_lock);
   plugin_id = grn_hash_get(&grn_plugins_ctx, grn_plugins,
-                           path, GRN_PLUGIN_KEY_SIZE(path),
+                           path, (uint32_t)GRN_PLUGIN_KEY_SIZE(path),
                            NULL);
   CRITICAL_SECTION_LEAVE(grn_plugins_lock);
 
@@ -1149,14 +1151,14 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
     }
 
     processed_path_id = grn_hash_get(ctx, processed_paths,
-                                     path, strlen(path),
+                                     path, (uint32_t)strlen(path),
                                      NULL);
     if (processed_path_id != GRN_ID_NIL) {
       goto next_loop;
     }
 
     grn_hash_add(ctx, processed_paths,
-                 path, strlen(path),
+                 path, (uint32_t)strlen(path),
                  NULL, NULL);
 
     {
@@ -1173,7 +1175,10 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
       }
       start_libs = strstr(relative_path, libs_path);
       if (start_libs) {
-        grn_strncat(name, PATH_MAX, relative_path, start_libs - relative_path);
+        grn_strncat(name,
+                    PATH_MAX,
+                    relative_path,
+                    (size_t)(start_libs - relative_path));
         grn_strcat(name, PATH_MAX, "/");
         grn_strcat(name, PATH_MAX, start_libs + strlen(libs_path));
       } else {
@@ -1189,7 +1194,7 @@ grn_plugin_get_names(grn_ctx *ctx, grn_obj *names)
         name[strlen(name) - strlen(ruby_plugin_suffix)] = '\0';
       }
       grn_vector_add_element(ctx, names,
-                             name, strlen(name),
+                             name, (uint32_t)strlen(name),
                              0, GRN_DB_TEXT);
     }
 
@@ -1239,10 +1244,10 @@ grn_plugin_set_error(grn_ctx *ctx, grn_log_level level, grn_rc error_code,
 {
   char old_error_message[GRN_CTX_MSGSIZE];
 
-  ctx->errlvl = level;
+  ctx->errlvl = (unsigned char)level;
   ctx->rc = error_code;
   ctx->errfile = file;
-  ctx->errline = line;
+  ctx->errline = (unsigned int)line;
   ctx->errfunc = func;
 
   grn_strcpy(old_error_message, GRN_CTX_MSGSIZE, ctx->errbuf);
@@ -1361,7 +1366,7 @@ grn_plugin_proc_get_var(grn_ctx *ctx, grn_user_data *user_data,
                         const char *name, int name_size)
 {
   name_size = compute_name_size(name, name_size);
-  return grn_proc_get_var(ctx, user_data, name, name_size);
+  return grn_proc_get_var(ctx, user_data, name, (unsigned int)name_size);
 }
 
 grn_bool
@@ -1508,7 +1513,7 @@ grn_plugin_expr_var_init(grn_ctx *ctx,
                          int name_size)
 {
   var->name = name;
-  var->name_size = compute_name_size(name, name_size);
+  var->name_size = (unsigned int)compute_name_size(name, name_size);
   GRN_TEXT_INIT(&var->value, 0);
   return GRN_SUCCESS;
 }
