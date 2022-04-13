@@ -20,13 +20,6 @@ table_create Tags TABLE_HASH_KEY ShortText
 
 column_create Data tags COLUMN_VECTOR Tags
 
-load --table Data
-[
-["_key","tags"],
-["abc",["A","B","C"]],
-["abcdef",["F"]]
-]
-
 load --table Tags
 [
 ["_key"],
@@ -35,6 +28,13 @@ load --table Tags
 ["C"],
 ["D"],
 ["F"]
+]
+
+load --table Data
+[
+["_key","tags"],
+["abc",["A","B","C"]],
+["abcdef",["F"]]
 ]
 _database_close
 [[0,0.0,0.0],true]
@@ -54,13 +54,6 @@ table_create Tags TABLE_HASH_KEY ShortText
 
 column_create Data tags COLUMN_VECTOR Tags
 
-load --table Data
-[
-["_key","tags"],
-["abc",["A","B","C"]],
-["abcdef",["F"]]
-]
-
 load --table Tags
 [
 ["_key"],
@@ -69,4 +62,11 @@ load --table Tags
 ["C"],
 ["D"],
 ["F"]
+]
+
+load --table Data
+[
+["_key","tags"],
+["abc",["A","B","C"]],
+["abcdef",["F"]]
 ]

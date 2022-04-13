@@ -16,15 +16,15 @@ load --table Memos
 ]
 [[0,0.0,0.0],1]
 dump   --dump_plugins no   --dump_schema no
-load --table Memos
-[
-["_key","tags"],
-["Groonga is fast",{"groonga":100,"mroonga":200}]
-]
-
 load --table Tags
 [
 ["_key"],
 ["groonga"],
 ["mroonga"]
+]
+
+load --table Memos
+[
+["_key","tags"],
+["Groonga is fast",{"groonga":100,"mroonga":200}]
 ]

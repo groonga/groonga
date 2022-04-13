@@ -21,14 +21,14 @@ table_create Tags TABLE_HASH_KEY ShortText --default_tokenizer TokenDelimit
 
 column_create Data tags COLUMN_VECTOR|MISSING_NIL|INVALID_IGNORE Tags
 
-load --table Data
-[
-["_id","tags"],
-[1,["existent","","existent"]]
-]
-
 load --table Tags
 [
 ["_key"],
 ["existent"]
+]
+
+load --table Data
+[
+["_id","tags"],
+[1,["existent","","existent"]]
 ]

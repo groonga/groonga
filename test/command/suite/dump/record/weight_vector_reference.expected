@@ -22,15 +22,15 @@ table_create Tags TABLE_PAT_KEY ShortText
 
 column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
 
-load --table Memos
-[
-["_key","tags"],
-["Groonga is fast",{"groonga":100,"full text search":10}]
-]
-
 load --table Tags
 [
 ["_key"],
 ["full text search"],
 ["groonga"]
+]
+
+load --table Memos
+[
+["_key","tags"],
+["Groonga is fast",{"groonga":100,"full text search":10}]
 ]

@@ -20,18 +20,18 @@ table_create Tags TABLE_HASH_KEY ShortText
 
 column_create Data tag COLUMN_SCALAR Tags
 
-load --table Data
-[
-["_key","tag"],
-["abc","A"],
-["abcdef","B"]
-]
-
 load --table Tags
 [
 ["_key"],
 ["A"],
 ["B"]
+]
+
+load --table Data
+[
+["_key","tag"],
+["abc","A"],
+["abcdef","B"]
 ]
 _database_close
 [[0,0.0,0.0],true]
@@ -51,16 +51,16 @@ table_create Tags TABLE_HASH_KEY ShortText
 
 column_create Data tag COLUMN_SCALAR Tags
 
-load --table Data
-[
-["_key","tag"],
-["abc","A"],
-["abcdef","B"]
-]
-
 load --table Tags
 [
 ["_key"],
 ["A"],
 ["B"]
+]
+
+load --table Data
+[
+["_key","tag"],
+["abc","A"],
+["abcdef","B"]
 ]

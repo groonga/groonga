@@ -21,14 +21,14 @@ table_create Records TABLE_NO_KEY
 
 column_create Data record COLUMN_SCALAR Records
 
-load --table Data
-[
-["_id","record"],
-[1,1]
-]
-
 load --table Records
 [
 ["_id"],
 [1]
+]
+
+load --table Data
+[
+["_id","record"],
+[1,1]
 ]

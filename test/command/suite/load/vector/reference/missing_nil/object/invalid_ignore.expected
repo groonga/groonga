@@ -22,15 +22,15 @@ table_create Tags TABLE_HASH_KEY ShortText
 
 column_create Data tags COLUMN_VECTOR|WITH_WEIGHT|MISSING_NIL|INVALID_IGNORE Tags
 
-load --table Data
-[
-["_id","tags"],
-[1,{"existent1":1,"":2,"existent2":3}]
-]
-
 load --table Tags
 [
 ["_key"],
 ["existent1"],
 ["existent2"]
+]
+
+load --table Data
+[
+["_id","tags"],
+[1,{"existent1":1,"":2,"existent2":3}]
 ]

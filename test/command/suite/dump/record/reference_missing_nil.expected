@@ -1,0 +1,34 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+load --table Tags
+[
+{"_key": "Groonga"}
+]
+[[0,0.0,0.0],1]
+table_create Bookmarks TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Bookmarks tags COLUMN_VECTOR|MISSING_NIL|INVALID_IGNORE Tags
+[[0,0.0,0.0],true]
+load --table Bookmarks
+[
+{"_key": "https://mroonga.org/", "tags": ["Groonga", "Mroonga"]}
+]
+[[0,0.0,0.0],1]
+dump
+table_create Bookmarks TABLE_HASH_KEY ShortText
+
+table_create Tags TABLE_HASH_KEY ShortText
+
+column_create Bookmarks tags COLUMN_VECTOR|MISSING_NIL|INVALID_IGNORE Tags
+
+load --table Tags
+[
+["_key"],
+["Groonga"]
+]
+
+load --table Bookmarks
+[
+["_key","tags"],
+["https://mroonga.org/",["Groonga",""]]
+]

@@ -28,17 +28,17 @@ column_create Users bookmarks COLUMN_VECTOR ShortText
 
 column_create URLs author COLUMN_SCALAR Users
 
+load --table Users
+[
+["_key","bookmarks"],
+["mori",["http://mroonga.org/","http://groonga.org/","http://ranguba.org/"]]
+]
+
 load --table URLs
 [
 ["_key","author"],
 ["http://mroonga.org/",""],
 ["http://ranguba.org/",""]
-]
-
-load --table Users
-[
-["_key","bookmarks"],
-["mori",["http://mroonga.org/","http://groonga.org/","http://ranguba.org/"]]
 ]
 
 column_create URLs bookmarks_index COLUMN_INDEX Users bookmarks

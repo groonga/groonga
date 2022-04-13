@@ -16,14 +16,14 @@ table_create Tags TABLE_HASH_KEY ShortText
 
 column_create Data tag COLUMN_SCALAR Tags
 
-load --table Data
-[
-["_id","tag"],
-[1,"nonexistent"]
-]
-
 load --table Tags
 [
 ["_key"],
 ["nonexistent"]
+]
+
+load --table Data
+[
+["_id","tag"],
+[1,"nonexistent"]
 ]

@@ -1,0 +1,16 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+load --table Tags
+[
+{"_key": "Groonga"}
+]
+
+table_create Bookmarks TABLE_HASH_KEY ShortText
+column_create Bookmarks tags COLUMN_VECTOR|MISSING_NIL|INVALID_IGNORE Tags
+
+load --table Bookmarks
+[
+{"_key": "https://mroonga.org/", "tags": ["Groonga", "Mroonga"]}
+]
+
+dump

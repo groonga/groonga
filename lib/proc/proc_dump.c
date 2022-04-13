@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,18 @@
 static const size_t DUMP_FLUSH_THRESHOLD_SIZE = 256 * 1024;
 
 typedef struct {
+  bool is_referred;
+  bool have_data_column;
+  bool have_reference_column;
+} grn_dumper_table_statistics;
+
+static void
+grn_dumper_table_statistics_fin(grn_ctx *ctx,
+                                grn_dumper_table_statistics *statistics)
+{
+}
+
+typedef struct {
   grn_obj *output;
   bool is_close_opened_object_mode;
   bool have_reference_column;
@@ -33,6 +45,7 @@ typedef struct {
   bool is_sort_hash_table;
   bool is_dump_paths;
   grn_obj column_name_buffer;
+  grn_hash *table_statistics;
 } grn_dumper;
 
 static void
@@ -40,10 +53,19 @@ dumper_collect_statistics_table(grn_ctx *ctx,
                                 grn_dumper *dumper,
                                 grn_obj *table)
 {
-  grn_hash *columns;
+  grn_dumper_table_statistics *statistics = NULL;
+  void *value;
+  if (grn_hash_add(ctx,
+                   dumper->table_statistics,
+                   &(DB_OBJ(table)->id),
+                   sizeof(grn_id),
+                   &value,
+                   NULL) != GRN_ID_NIL) {
+    statistics = value;
+  }
 
-  columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                            GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+  grn_hash *columns = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
+                                      GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
   if (!columns) {
     return;
   }
@@ -68,9 +90,28 @@ dumper_collect_statistics_table(grn_ctx *ctx,
     }
 
     if (grn_obj_is_index_column(ctx, column)) {
-      dumper->have_index_column = GRN_TRUE;
-    } else if (grn_obj_is_reference_column(ctx, column)) {
-      dumper->have_reference_column = GRN_TRUE;
+      dumper->have_index_column = true;
+    } else {
+      if (statistics) {
+        statistics->have_data_column = !grn_obj_is_token_column(ctx, column);
+      }
+      if (grn_obj_is_reference_column(ctx, column)) {
+        dumper->have_reference_column = true;
+        if (statistics) {
+          statistics->have_reference_column = true;
+        }
+
+        void *value;
+        if (grn_hash_add(ctx,
+                         dumper->table_statistics,
+                         &(DB_OBJ(column)->range),
+                         sizeof(grn_id),
+                         &value,
+                         NULL) != GRN_ID_NIL) {
+          grn_dumper_table_statistics *referred_statistics = value;
+          referred_statistics->is_referred = true;
+        }
+      }
     }
 
   next_loop :
@@ -84,6 +125,13 @@ dumper_collect_statistics_table(grn_ctx *ctx,
 static void
 dumper_collect_statistics(grn_ctx *ctx, grn_dumper *dumper)
 {
+  dumper->table_statistics =
+    grn_hash_create(ctx,
+                    NULL,
+                    sizeof(grn_id),
+                    sizeof(grn_dumper_table_statistics),
+                    GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
+
   GRN_DB_EACH_BEGIN_BY_ID(ctx, cursor, id) {
     void *name;
     int name_size;
@@ -533,7 +581,10 @@ dump_record(grn_ctx *ctx, grn_dumper *dumper,
 }
 
 static void
-dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
+dump_records(grn_ctx *ctx,
+             grn_dumper *dumper,
+             grn_obj *table,
+             bool dump_real_columns)
 {
   grn_table_cursor *cursor;
   int i, n_columns;
@@ -604,7 +655,9 @@ dump_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *table)
           }
         } else {
           have_data_column = true;
-          GRN_PTR_PUT(ctx, &columns, column);
+          if (dump_real_columns) {
+            GRN_PTR_PUT(ctx, &columns, column);
+          }
           if (dumper->is_close_opened_object_mode) {
             grn_ctx_merge_temporary_open_space(ctx);
           }
@@ -941,15 +994,68 @@ dump_schema(grn_ctx *ctx, grn_dumper *dumper)
 }
 
 static void
+dump_records_maybe_defer(grn_ctx *ctx,
+                         grn_dumper *dumper,
+                         grn_obj *table,
+                         grn_obj *deferred_table_ids)
+{
+  const grn_dumper_table_statistics *statistics = NULL;
+  void *value;
+  if (grn_hash_get(ctx,
+                   dumper->table_statistics,
+                   &(DB_OBJ(table)->id),
+                   sizeof(grn_id),
+                   &value) != GRN_ID_NIL) {
+    statistics = (const grn_dumper_table_statistics *)value;
+  }
+  if (statistics) {
+    if (statistics->is_referred &&
+        grn_obj_is_table_with_key(ctx, table)) {
+      if (statistics->have_reference_column) {
+        dump_records(ctx, dumper, table, false);
+        if (statistics->have_data_column) {
+          GRN_UINT32_PUT(ctx, deferred_table_ids, DB_OBJ(table)->id);
+        }
+      } else {
+        dump_records(ctx, dumper, table, true);
+      }
+    } else {
+      if (statistics->have_reference_column) {
+        GRN_UINT32_PUT(ctx, deferred_table_ids, DB_OBJ(table)->id);
+      } else {
+        dump_records(ctx, dumper, table, true);
+      }
+    }
+  } else {
+    GRN_UINT32_PUT(ctx, deferred_table_ids, DB_OBJ(table)->id);
+  }
+}
+
+static void
+dump_records_deferred(grn_ctx *ctx,
+                      grn_dumper *dumper,
+                      grn_obj *deferred_table_ids)
+{
+  size_t n_deferred_table_ids = GRN_UINT32_VECTOR_SIZE(deferred_table_ids);
+  size_t i;
+  for (i = 0; i < n_deferred_table_ids; i++) {
+    grn_id table_id = GRN_UINT32_VALUE_AT(deferred_table_ids, i);
+    grn_obj *table = grn_ctx_at(ctx, table_id);
+    dump_records(ctx, dumper, table, true);
+    grn_obj_unref(ctx, table);
+  }
+}
+
+static void
 dump_selected_tables_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *tables)
 {
-  const char *p, *e;
+  grn_obj deferred_table_ids;
+  GRN_UINT32_INIT(&deferred_table_ids, GRN_OBJ_VECTOR);
 
-  p = GRN_TEXT_VALUE(tables);
-  e = p + GRN_TEXT_LEN(tables);
+  const char *p = GRN_TEXT_VALUE(tables);
+  const char *e = p + GRN_TEXT_LEN(tables);
   while (p < e) {
     int len;
-    grn_obj *table;
     const char *token, *token_e;
 
     if ((len = grn_isspace(p, ctx->encoding))) {
@@ -984,7 +1090,7 @@ dump_selected_tables_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *tables)
       p++;
     }
 
-    table = grn_ctx_get(ctx, token, token_e - token);
+    grn_obj *table = grn_ctx_get(ctx, token, token_e - token);
     if (!table) {
       GRN_LOG(ctx, GRN_LOG_WARNING,
               "nonexistent table name is ignored: <%.*s>\n",
@@ -993,19 +1099,24 @@ dump_selected_tables_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *tables)
     }
 
     if (grn_obj_is_table(ctx, table)) {
-      dump_records(ctx, dumper, table);
+      dump_records_maybe_defer(ctx, dumper, table, &deferred_table_ids);
     }
-    grn_obj_unlink(ctx, table);
+    grn_obj_unref(ctx, table);
   }
+
+  dump_records_deferred(ctx, dumper, &deferred_table_ids);
+  GRN_OBJ_FIN(ctx, &deferred_table_ids);
 }
 
 static void
 dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
 {
+  grn_obj deferred_table_ids;
+  GRN_UINT32_INIT(&deferred_table_ids, GRN_OBJ_VECTOR);
+
   GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
     void *name;
     int name_size;
-    grn_obj *table;
 
     if (grn_id_is_builtin(ctx, id)) {
       continue;
@@ -1020,7 +1131,7 @@ dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
       grn_ctx_push_temporary_open_space(ctx);
     }
 
-    table = grn_ctx_at(ctx, id);
+    grn_obj *table = grn_ctx_at(ctx, id);
     if (!table) {
       /* XXX: this clause is executed when MeCab tokenizer is enabled in
          database but the groonga isn't supported MeCab.
@@ -1031,7 +1142,7 @@ dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
     }
 
     if (grn_obj_is_table(ctx, table)) {
-      dump_records(ctx, dumper, table);
+      dump_records_maybe_defer(ctx, dumper, table, &deferred_table_ids);
     }
 
   next_loop :
@@ -1039,6 +1150,9 @@ dump_all_records(grn_ctx *ctx, grn_dumper *dumper)
       grn_ctx_pop_temporary_open_space(ctx);
     }
   } GRN_DB_EACH_END(ctx, cursor);
+
+  dump_records_deferred(ctx, dumper, &deferred_table_ids);
+  GRN_OBJ_FIN(ctx, &deferred_table_ids);
 }
 
 static void
@@ -1170,6 +1284,12 @@ command_dump(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
 
   GRN_OBJ_FIN(ctx, &(dumper.column_name_buffer));
+  GRN_HASH_EACH_BEGIN(ctx, dumper.table_statistics, cursor, id) {
+    void *value;
+    grn_hash_cursor_get_value(ctx, cursor, &value);
+    grn_dumper_table_statistics_fin(ctx, value);
+  } GRN_HASH_EACH_END(ctx, cursor);
+  grn_hash_close(ctx, dumper.table_statistics);
 
   return NULL;
 }

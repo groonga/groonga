@@ -24,15 +24,15 @@ table_create Tags TABLE_HASH_KEY ShortText --normalizer NormalizerAuto
 
 column_create Data tags COLUMN_VECTOR|INVALID_WARN Tags
 
-load --table Data
-[
-["_id","tags"],
-[1,["existent","nonexistent"]]
-]
-
 load --table Tags
 [
 ["_key"],
 ["existent"],
 ["nonexistent"]
+]
+
+load --table Data
+[
+["_id","tags"],
+[1,["existent","nonexistent"]]
 ]

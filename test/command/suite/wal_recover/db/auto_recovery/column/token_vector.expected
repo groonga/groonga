@@ -23,13 +23,6 @@ table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenNgram --norm
 
 column_create Data content_terms COLUMN_VECTOR Terms content
 
-load --table Data
-[
-["_key","content"],
-["abc","a and b and c"],
-["abcdef","a and b and c and d and e and f"]
-]
-
 load --table Terms
 [
 ["_key"],
@@ -40,6 +33,13 @@ load --table Terms
 ["d"],
 ["e"],
 ["f"]
+]
+
+load --table Data
+[
+["_key","content"],
+["abc","a and b and c"],
+["abcdef","a and b and c and d and e and f"]
 ]
 _database_close
 [[0,0.0,0.0],true]
@@ -127,13 +127,6 @@ table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenNgram --norm
 
 column_create Data content_terms COLUMN_VECTOR Terms content
 
-load --table Data
-[
-["_key","content"],
-["abc","a and b and c"],
-["abcdef","a and b and c and d and e and f"]
-]
-
 load --table Terms
 [
 ["_key"],
@@ -144,4 +137,11 @@ load --table Terms
 ["d"],
 ["e"],
 ["f"]
+]
+
+load --table Data
+[
+["_key","content"],
+["abc","a and b and c"],
+["abcdef","a and b and c and d and e and f"]
 ]

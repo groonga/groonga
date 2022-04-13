@@ -24,15 +24,6 @@ table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenNgram --norm
 
 column_create Notes title_terms COLUMN_VECTOR Terms title
 
-load --table Notes
-[
-["_id","title"],
-[1,"Hello Groonga"],
-[2," "],
-[3,"Hello Mroonga"],
-[4,"Hello Rroonga"]
-]
-
 load --table Terms
 [
 ["_key"],
@@ -40,6 +31,15 @@ load --table Terms
 ["hello"],
 ["mroonga"],
 ["rroonga"]
+]
+
+load --table Notes
+[
+["_id","title"],
+[1,"Hello Groonga"],
+[2," "],
+[3,"Hello Mroonga"],
+[4,"Hello Rroonga"]
 ]
 column_create Terms notes_title COLUMN_INDEX|WITH_POSITION Notes title
 [[0,0.0,0.0],true]

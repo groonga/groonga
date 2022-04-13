@@ -67,18 +67,18 @@ table_create Times_20150203 TABLE_PAT_KEY Time
 
 column_create Logs_20150203 path COLUMN_SCALAR Paths_20150203
 
-load --table Logs_20150203
-[
-["_id","path","timestamp"],
-[1,"/tmp/log",1422935340.0],
-[2,"/var/",1422975599.0]
-]
-
 load --table Paths_20150203
 [
 ["_key"],
 ["/tmp/log"],
 ["/var/"]
+]
+
+load --table Logs_20150203
+[
+["_id","path","timestamp"],
+[1,"/tmp/log",1422935340.0],
+[2,"/var/",1422975599.0]
 ]
 
 column_create PathTerms_20150203 index COLUMN_INDEX|WITH_POSITION Paths_20150203 _key

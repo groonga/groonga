@@ -38,6 +38,20 @@ column_create Users bookmarks COLUMN_VECTOR URLs
 
 load --table URLs
 [
+["_key"],
+["http://mroonga.org/"],
+["https://pgroonga.github.io"],
+["http://ranguba.org/"]
+]
+
+load --table Users
+[
+["_key"],
+["mori"]
+]
+
+load --table URLs
+[
 ["_key","author"],
 ["http://mroonga.org/",""],
 ["https://pgroonga.github.io",""],
