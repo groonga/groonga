@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -129,7 +129,7 @@ nfkc_filter(grn_ctx *ctx,
   grn_string_set_original(ctx,
                           string,
                           GRN_TEXT_VALUE(data),
-                          GRN_TEXT_LEN(data));
+                          (unsigned int)GRN_TEXT_LEN(data));
   grn_nfkc_normalize(ctx,
                      string,
                      token_filter->options);
@@ -141,7 +141,7 @@ nfkc_filter(grn_ctx *ctx,
                               &normalized,
                               &normalized_length,
                               NULL);
-    grn_token_set_data(ctx, next_token, normalized, normalized_length);
+    grn_token_set_data(ctx, next_token, normalized, (int)normalized_length);
   }
 }
 
