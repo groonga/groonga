@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -36,13 +36,13 @@ namespace grn {
       case GRN_DB_UINT32 :
         return GRN_UINT32_VALUE(bulk);
       case GRN_DB_INT64 :
-        return GRN_INT64_VALUE(bulk);
+        return static_cast<NUMERIC>(GRN_INT64_VALUE(bulk));
       case GRN_DB_UINT64 :
-        return GRN_UINT64_VALUE(bulk);
+        return static_cast<NUMERIC>(GRN_UINT64_VALUE(bulk));
       case GRN_DB_FLOAT32 :
-        return GRN_FLOAT32_VALUE(bulk);
+        return static_cast<NUMERIC>(GRN_FLOAT32_VALUE(bulk));
       case GRN_DB_FLOAT :
-        return GRN_FLOAT_VALUE(bulk);
+        return static_cast<NUMERIC>(GRN_FLOAT_VALUE(bulk));
       default :
         return default_value;
       }
