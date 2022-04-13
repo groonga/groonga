@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -304,8 +304,8 @@ grn_wal_generate_id(grn_ctx *ctx)
 {
   grn_timeval tv;
   grn_timeval_now(ctx, &tv);
-  return GRN_TIME_PACK(tv.tv_sec,
-                       GRN_TIME_NSEC_TO_USEC(tv.tv_nsec));
+  return (uint64_t)GRN_TIME_PACK(tv.tv_sec,
+                                 GRN_TIME_NSEC_TO_USEC(tv.tv_nsec));
 }
 
 grn_rc
@@ -354,7 +354,7 @@ grn_wal_msgpack_write(void *data, const char *buf, msgpack_size_t len)
     return 0;
   }
 # else
-  return fwrite(buf, len, 1, write_data->output);
+  return (int)fwrite(buf, len, 1, write_data->output);
 # endif
 }
 #endif
