@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2017-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2017-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -182,7 +182,7 @@ grn_table_copy_same_key_type(grn_ctx *ctx, grn_obj *from, grn_obj *to)
     grn_id  to_id;
 
     key_size = grn_table_cursor_get_key(ctx, cursor, &key);
-    to_id    = grn_table_add(ctx, to, key, key_size, NULL);
+    to_id    = grn_table_add(ctx, to, key, (unsigned int)key_size, NULL);
     if (to_id == GRN_ID_NIL) {
       char from_name[GRN_TABLE_MAX_KEY_SIZE];
       int from_name_size;
@@ -198,7 +198,7 @@ grn_table_copy_same_key_type(grn_ctx *ctx, grn_obj *from, grn_obj *to)
       } else {
         GRN_VALUE_FIX_SIZE_INIT(&key_buffer, 0, from->header.domain);
       }
-      grn_bulk_write(ctx, &key_buffer, key, key_size);
+      grn_bulk_write(ctx, &key_buffer, key, (size_t)key_size);
       GRN_TEXT_INIT(&inspected_key, 0);
       grn_inspect(ctx, &inspected_key, &key_buffer);
       ERR(GRN_INVALID_ARGUMENT,
@@ -243,7 +243,7 @@ grn_table_copy_different(grn_ctx *ctx, grn_obj *from, grn_obj *to)
     GRN_BULK_REWIND(&to_key_buffer);
 
     key_size = grn_table_cursor_get_key(ctx, cursor, &key);
-    grn_bulk_write(ctx, &from_key_buffer, key, key_size);
+    grn_bulk_write(ctx, &from_key_buffer, key, (size_t)key_size);
     cast_rc = grn_obj_cast(ctx, &from_key_buffer, &to_key_buffer, GRN_FALSE);
     if (cast_rc != GRN_SUCCESS) {
       char from_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -277,7 +277,7 @@ grn_table_copy_different(grn_ctx *ctx, grn_obj *from, grn_obj *to)
 
     to_id = grn_table_add(ctx, to,
                           GRN_BULK_HEAD(&to_key_buffer),
-                          GRN_BULK_VSIZE(&to_key_buffer),
+                          (unsigned int)GRN_BULK_VSIZE(&to_key_buffer),
                           NULL);
     if (to_id == GRN_ID_NIL) {
       char from_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -476,7 +476,8 @@ grn_table_get_duplicated_keys(grn_ctx *ctx,
   const char *records_name = "records";
   grn_obj *records = grn_column_create(ctx,
                                        keys,
-                                       records_name, strlen(records_name),
+                                       records_name,
+                                       (unsigned int)strlen(records_name),
                                        NULL,
                                        GRN_OBJ_COLUMN_VECTOR,
                                        table);
@@ -505,7 +506,7 @@ grn_table_get_duplicated_keys(grn_ctx *ctx,
     void *key;
     int key_size;
     key_size = grn_table_cursor_get_key(ctx, cursor, &key);
-    grn_id keys_id = grn_table_add(ctx, keys, key, key_size, NULL);
+    grn_id keys_id = grn_table_add(ctx, keys, key, (unsigned int)key_size, NULL);
     if (keys_id == GRN_ID_NIL) {
       char name[GRN_TABLE_MAX_KEY_SIZE];
       int name_size;
@@ -656,7 +657,11 @@ grn_table_have_duplicated_keys(grn_ctx *ctx, grn_obj *table)
     int key_size;
     key_size = grn_table_cursor_get_key(ctx, cursor, &key);
     int added = 0;
-    grn_id keys_id = grn_table_add(ctx, keys, key, key_size, &added);
+    grn_id keys_id = grn_table_add(ctx,
+                                   keys,
+                                   key,
+                                   (unsigned int)key_size,
+                                   &added);
     if (keys_id == GRN_ID_NIL) {
       char name[GRN_TABLE_MAX_KEY_SIZE];
       int name_size;
