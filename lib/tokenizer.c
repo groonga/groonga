@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2012-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2012-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -86,7 +86,8 @@ grn_tokenizer_have_tokenized_delimiter(grn_ctx *ctx,
 
   while ((char_length = grn_charlen_(ctx, current, end, encoding)) > 0) {
     if (grn_tokenizer_is_tokenized_delimiter(ctx,
-                                             current, char_length,
+                                             current,
+                                             (unsigned int)char_length,
                                              encoding)) {
       return GRN_TRUE;
     }
@@ -111,7 +112,7 @@ grn_tokenizer_query_ensure_normalized(grn_ctx *ctx, grn_tokenizer_query *query)
                                              query->ptr,
                                              query->length,
                                              query->lexicon,
-                                             query->normalize_flags,
+                                             (int)(query->normalize_flags),
                                              query->encoding);
   if (!query->normalized_query) {
     query->have_tokenized_delimiter = GRN_FALSE;
@@ -325,7 +326,7 @@ grn_tokenizer_query_set_raw_string(grn_ctx *ctx,
     grn_memcpy(query->query_buf, string, string_length);
     query->query_buf[string_length] = '\0';
     query->ptr = query->query_buf;
-    query->length = string_length;
+    query->length = (unsigned int)string_length;
   }
 
   GRN_API_RETURN(ctx->rc);
@@ -555,33 +556,38 @@ grn_tokenizer_tokenized_delimiter_next(grn_ctx *ctx,
                                        unsigned int str_length,
                                        grn_encoding encoding)
 {
-  size_t char_length = 0;
   const char *start = str_ptr;
   const char *current;
   const char *end = str_ptr + str_length;
   const char *next_start = NULL;
-  unsigned int token_length;
-  grn_token_status status;
 
+  int char_length = 0;
   for (current = start; current < end; current += char_length) {
     char_length = grn_charlen_(ctx, current, end, encoding);
     if (char_length == 0) {
       break;
     }
-    if (grn_tokenizer_is_tokenized_delimiter(ctx, current, char_length,
+    if (grn_tokenizer_is_tokenized_delimiter(ctx,
+                                             current,
+                                             (unsigned int)char_length,
                                              encoding)) {
       next_start = str_ptr + (current - start + char_length);
       break;
     }
   }
 
-  token_length = current - start;
+  ptrdiff_t token_length = current - start;
+  grn_token_status status;
   if (current == end) {
     status = GRN_TOKENIZER_LAST;
   } else {
     status = GRN_TOKENIZER_CONTINUE;
   }
-  grn_tokenizer_token_push(ctx, token, start, token_length, status);
+  grn_tokenizer_token_push(ctx,
+                           token,
+                           start,
+                           (unsigned int)token_length,
+                           status);
 
   return next_start;
 }
@@ -593,25 +599,27 @@ grn_tokenizer_next_by_tokenized_delimiter(grn_ctx *ctx,
                                           unsigned int str_length,
                                           grn_encoding encoding)
 {
-  size_t char_length = 0;
   const char *start = str_ptr;
   const char *current;
   const char *end = str_ptr + str_length;
   const char *next_start = NULL;
 
+  int char_length = 0;
   for (current = start; current < end; current += char_length) {
     char_length = grn_charlen_(ctx, current, end, encoding);
     if (char_length == 0) {
       break;
     }
-    if (grn_tokenizer_is_tokenized_delimiter(ctx, current, char_length,
+    if (grn_tokenizer_is_tokenized_delimiter(ctx,
+                                             current,
+                                             (unsigned int)char_length,
                                              encoding)) {
       next_start = str_ptr + (current - start + char_length);
       break;
     }
   }
 
-  grn_token_set_data(ctx, token, start, current - start);
+  grn_token_set_data(ctx, token, start, (int)(current - start));
   if (current == end) {
     grn_token_set_status(ctx, token, GRN_TOKEN_LAST);
   } else {
@@ -639,7 +647,7 @@ grn_tokenizer_register(grn_ctx *ctx, const char *plugin_name_ptr,
       with `ctx'. A returned object must not be finalized here.
      */
     grn_obj * const obj = grn_proc_create(ctx, plugin_name_ptr,
-                                          plugin_name_length,
+                                          (int)plugin_name_length,
                                           GRN_PROC_TOKENIZER,
                                           init, next, fin, 3, vars);
     if (obj == NULL) {
@@ -669,7 +677,7 @@ grn_tokenizer_create(grn_ctx *ctx,
                               NULL);
   if (!tokenizer) {
     if (name_length < 0) {
-      name_length = strlen(name);
+      name_length = (int)strlen(name);
     }
     GRN_PLUGIN_ERROR(ctx,
                      GRN_TOKENIZER_ERROR,
