@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2015-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2015-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1249,10 +1249,10 @@ grn_obj_name_is_column(grn_ctx *ctx, const char *name, int name_len)
   }
 
   if (name_len < 0) {
-    name_len = strlen(name);
+    name_len = (int)strlen(name);
   }
 
-  return memchr(name, GRN_DB_DELIMITER, name_len) != NULL;
+  return memchr(name, GRN_DB_DELIMITER, (size_t)name_len) != NULL;
 }
 
 grn_io *
