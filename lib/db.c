@@ -7126,9 +7126,7 @@ grn_obj_get_accessor(grn_ctx *ctx, grn_obj *obj, const char *name, uint32_t name
             goto exit;
           }
         } else {
-          if (!obj_is_referred) {
-            grn_obj_unref(ctx, obj);
-          }
+          grn_obj_unref(ctx, obj);
           goto exit;
         }
         break;
