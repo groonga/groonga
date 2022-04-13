@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2010-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2010-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -274,7 +274,7 @@ selector_create_result_set(grn_ctx *ctx,
     grn_column_create(ctx,
                       result_set,
                       name,
-                      name_size,
+                      (unsigned int)name_size,
                       NULL,
                       grn_column_get_flags(ctx, column),
                       range);
@@ -454,8 +454,8 @@ select_index_use_sequential_search(grn_ctx *ctx,
   }
 
   grn_obj *table = grn_ctx_at(ctx, result_set->header.domain);
-  int n_records = grn_table_size(ctx, table);
-  int n_filtered_records = grn_table_size(ctx, result_set);
+  unsigned int n_records = grn_table_size(ctx, table);
+  unsigned int n_filtered_records = grn_table_size(ctx, result_set);
   grn_obj_unref(ctx, table);
   double filtered_ratio;
   if (n_records == 0) {
@@ -503,7 +503,7 @@ select_index_resolve_key(grn_ctx *ctx,
     return grn_table_get(ctx,
                          domain,
                          GRN_BULK_HEAD(key),
-                         GRN_BULK_VSIZE(key));
+                         (unsigned int)GRN_BULK_VSIZE(key));
   } else {
     grn_id id = GRN_ID_NIL;
     grn_obj casted_key;
@@ -512,7 +512,7 @@ select_index_resolve_key(grn_ctx *ctx,
       id = grn_table_get(ctx,
                          domain,
                          GRN_BULK_HEAD(&casted_key),
-                         GRN_BULK_VSIZE(&casted_key));
+                         (unsigned int)GRN_BULK_VSIZE(&casted_key));
     }
     GRN_OBJ_FIN(ctx, &casted_key);
     return id;
@@ -600,7 +600,7 @@ select_index_equal(grn_ctx *ctx,
               rc = grn_index_cursor_set_scales(ctx,
                                                index_cursor,
                                                options->weight_vector_float,
-                                               options->vector_size);
+                                               (size_t)(options->vector_size));
             } else {
               rc = grn_index_cursor_set_scale(ctx,
                                               index_cursor,
@@ -692,7 +692,7 @@ select_index_not_equal(grn_ctx *ctx,
         id = grn_table_get(ctx,
                            a->obj,
                            GRN_BULK_HEAD(&dest),
-                           GRN_BULK_VSIZE(&dest));
+                           (unsigned int)GRN_BULK_VSIZE(&dest));
         if (id != GRN_ID_NIL) {
           grn_hash_delete(ctx,
                           (grn_hash *)result_set,
@@ -721,14 +721,15 @@ select_index_not_equal(grn_ctx *ctx,
 
         ii_cursor = grn_ii_cursor_open(ctx, ii, tid,
                                        GRN_ID_NIL, GRN_ID_MAX,
-                                       ii->n_elements, 0);
+                                       (int)(ii->n_elements),
+                                       0);
         if (ii_cursor) {
           grn_search_optarg *options = &(table_selector->data.search_options);
           if (options->weight_vector_float) {
             rc = grn_ii_cursor_set_scales(ctx,
                                           ii_cursor,
                                           options->weight_vector_float,
-                                          options->vector_size);
+                                          (size_t)(options->vector_size));
           } else {
             rc = grn_ii_cursor_set_scale(ctx,
                                          ii_cursor,
@@ -826,7 +827,7 @@ select_index_fix_column_prefix(grn_ctx *ctx,
   table_cursor = grn_table_cursor_open(ctx,
                                        lexicon,
                                        GRN_BULK_HEAD(si->query),
-                                       GRN_BULK_VSIZE(si->query),
+                                       (unsigned int)GRN_BULK_VSIZE(si->query),
                                        NULL,
                                        0,
                                        0,
@@ -868,7 +869,7 @@ select_index_fix_column_prefix(grn_ctx *ctx,
     grn_index_cursor_set_scales(ctx,
                                 index_cursor,
                                 options->weight_vector_float,
-                                options->vector_size);
+                                (size_t)(options->vector_size));
   } else {
     grn_index_cursor_set_scale(ctx,
                                index_cursor,
@@ -934,7 +935,7 @@ select_index_fix(grn_ctx *ctx,
         grn_table_search(ctx,
                          index,
                          GRN_BULK_HEAD(&dest),
-                         GRN_BULK_VSIZE(&dest),
+                         (uint32_t)GRN_BULK_VSIZE(&dest),
                          op,
                          (grn_obj *)pres,
                          GRN_OP_OR);
@@ -974,7 +975,7 @@ select_index_fix(grn_ctx *ctx,
         select_index_report(ctx, "[suffix]", index);
         grn_table_search(ctx, lexicon,
                          GRN_BULK_HEAD(si->query),
-                         GRN_BULK_VSIZE(si->query),
+                         (uint32_t)GRN_BULK_VSIZE(si->query),
                          op, (grn_obj *)keys, GRN_OP_OR);
         GRN_HASH_EACH_BEGIN(ctx, keys, cursor, id) {
           void *key;
@@ -1028,7 +1029,7 @@ select_index_extract(grn_ctx *ctx,
     grn_table_search(ctx,
                      a->obj,
                      GRN_TEXT_VALUE(si->query),
-                     GRN_TEXT_LEN(si->query),
+                     (uint32_t)GRN_TEXT_LEN(si->query),
                      GRN_OP_TERM_EXTRACT,
                      result_set,
                      logical_op);
@@ -1106,7 +1107,7 @@ select_index_call(grn_ctx *ctx,
                           data->expr,
                           table,
                           index_datum.index,
-                          si->nargs,
+                          (size_t)(si->nargs),
                           si->args,
                           si->weight_factor,
                           result_set,
@@ -1246,22 +1247,22 @@ select_index_range_key(grn_ctx *ctx,
     case GRN_OP_LESS :
       flags |= GRN_CURSOR_LT;
       max = GRN_BULK_HEAD(&key);
-      max_size = GRN_BULK_VSIZE(&key);
+      max_size = (unsigned int)GRN_BULK_VSIZE(&key);
       break;
     case GRN_OP_GREATER :
       flags |= GRN_CURSOR_GT;
       min = GRN_BULK_HEAD(&key);
-      min_size = GRN_BULK_VSIZE(&key);
+      min_size = (unsigned int)GRN_BULK_VSIZE(&key);
       break;
     case GRN_OP_LESS_EQUAL :
       flags |= GRN_CURSOR_LE;
       max = GRN_BULK_HEAD(&key);
-      max_size = GRN_BULK_VSIZE(&key);
+      max_size = (unsigned int)GRN_BULK_VSIZE(&key);
       break;
     case GRN_OP_GREATER_EQUAL :
       flags |= GRN_CURSOR_GE;
       min = GRN_BULK_HEAD(&key);
-      min_size = GRN_BULK_VSIZE(&key);
+      min_size = (unsigned int)GRN_BULK_VSIZE(&key);
       break;
     default :
       break;
@@ -1337,22 +1338,22 @@ select_index_range_column(grn_ctx *ctx,
     case GRN_OP_LESS :
       flags |= GRN_CURSOR_LT;
       max = GRN_BULK_HEAD(&range);
-      max_size = GRN_BULK_VSIZE(&range);
+      max_size = (unsigned int)GRN_BULK_VSIZE(&range);
       break;
     case GRN_OP_GREATER :
       flags |= GRN_CURSOR_GT;
       min = GRN_BULK_HEAD(&range);
-      min_size = GRN_BULK_VSIZE(&range);
+      min_size = (unsigned int)GRN_BULK_VSIZE(&range);
       break;
     case GRN_OP_LESS_EQUAL :
       flags |= GRN_CURSOR_LE;
       max = GRN_BULK_HEAD(&range);
-      max_size = GRN_BULK_VSIZE(&range);
+      max_size = (unsigned int)GRN_BULK_VSIZE(&range);
       break;
     case GRN_OP_GREATER_EQUAL :
       flags |= GRN_CURSOR_GE;
       min = GRN_BULK_HEAD(&range);
-      min_size = GRN_BULK_VSIZE(&range);
+      min_size = (unsigned int)GRN_BULK_VSIZE(&range);
       break;
     default :
       break;
@@ -1373,7 +1374,7 @@ select_index_range_column(grn_ctx *ctx,
           grn_index_cursor_set_scales(ctx,
                                       index_cursor,
                                       options->weight_vector_float,
-                                      options->vector_size);
+                                      (size_t)(options->vector_size));
         } else {
           grn_index_cursor_set_scale(ctx,
                                      index_cursor,
@@ -1590,8 +1591,8 @@ select_index(grn_ctx *ctx,
         options->vector_size = -1;
         options->weight_float = weight;
       } else {
-        int weight_index = section - 1;
-        int current_vector_size;
+        uint32_t weight_index = section - 1;
+        size_t current_vector_size;
         current_vector_size = GRN_FLOAT32_VECTOR_SIZE(&weights_buffer);
         if (weight_index < current_vector_size) {
           GRN_FLOAT32_VALUE_AT(&weights_buffer, weight_index) = weight;
@@ -1600,7 +1601,7 @@ select_index(grn_ctx *ctx,
         }
         options->weight_vector = NULL;
         options->weight_vector_float = &GRN_FLOAT32_VALUE(&weights_buffer);
-        options->vector_size = GRN_FLOAT32_VECTOR_SIZE(&weights_buffer);
+        options->vector_size = (int)GRN_FLOAT32_VECTOR_SIZE(&weights_buffer);
         options->weight_float = 0.0;
       }
       options->scorer = GRN_PTR_VALUE_AT(&(si->scorers), i);
@@ -1714,7 +1715,7 @@ select_index(grn_ctx *ctx,
                               data->expr,
                               table_selector->table,
                               NULL,
-                              si->nargs,
+                              (size_t)(si->nargs),
                               si->args,
                               si->weight_factor,
                               data->result_set,
@@ -1870,16 +1871,13 @@ inspect_condition(grn_ctx *ctx,
           GRN_TEXT_PUTS(ctx, buffer, ", ");
         }
         if (code->modify > 0 && code[code->modify].op == GRN_OP_CALL) {
-          inspect_condition_call(ctx,
-                                 buffer,
-                                 code,
-                                 0,
-                                 code->modify);
-          if (i + code->modify < si->end &&
+          uint32_t modify = (uint32_t)(code->modify);
+          inspect_condition_call(ctx, buffer, code, 0, modify);
+          if (i + modify < si->end &&
               code[code->modify + 1].op == GRN_OP_PUSH) {
-            i += code->modify;
+            i += modify;
           } else {
-            i += code->modify - 1;
+            i += modify - 1;
           }
         } else {
           if (code->value) {
@@ -2027,7 +2025,7 @@ grn_table_selector_select(grn_ctx *ctx,
           if (grn_table_add_v(ctx,
                               base_result_set,
                               key,
-                              key_size,
+                              (int)key_size,
                               &base_value,
                               NULL)) {
             grn_rset_recinfo *ri = value;
@@ -2049,7 +2047,7 @@ grn_table_selector_select(grn_ctx *ctx,
     uint32_t i;
     for (i = 0; i < data->scanner->n_sis; i++) {
       scan_info *si = data->scanner->sis[i];
-      data->nth_scan_info = i;
+      data->nth_scan_info = (int)i;
       data->scan_info = si;
       if (i > 0 && data->is_first_unskipped_scan_info) {
         if (data->is_skipped) {
