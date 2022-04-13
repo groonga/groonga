@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018 Brazil
-  Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -184,7 +184,7 @@ struct _grn_com_header {
 
 GRN_API grn_com *grn_com_copen(grn_ctx *ctx, grn_com_event *ev, const char *dest, int port);
 GRN_API grn_rc grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
-                             const char *bind_address, int port,
+                             const char *bind_address, uint16_t port,
                              grn_msg_handler *func, struct hostent *he);
 
 GRN_API void grn_com_close_(grn_ctx *ctx, grn_com *com);
@@ -216,7 +216,7 @@ GRN_API grn_rc grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags);
 GRN_API grn_obj *grn_msg_open_for_reply(grn_ctx *ctx, grn_obj *query, grn_com_queue *old);
 GRN_API grn_obj *grn_msg_open(grn_ctx *ctx, grn_com *com, grn_com_queue *old);
 GRN_API grn_rc grn_msg_set_property(grn_ctx *ctx, grn_obj *obj,
-                                    uint16_t status, uint32_t key_size, uint8_t extra_size);
+                                    uint16_t status, uint16_t key_size, uint8_t extra_size);
 GRN_API grn_rc grn_msg_close(grn_ctx *ctx, grn_obj *msg);
 
 /******* grn_edge ********/

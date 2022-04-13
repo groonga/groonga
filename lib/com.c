@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -161,7 +161,7 @@ grn_msg_close(grn_ctx *ctx, grn_obj *obj)
 
 grn_rc
 grn_msg_set_property(grn_ctx *ctx, grn_obj *obj,
-                     uint16_t status, uint32_t key_size, uint8_t extra_size)
+                     uint16_t status, uint16_t key_size, uint8_t extra_size)
 {
   grn_com_header *header = &((grn_msg *)obj)->header;
   header->status = htons(status);
@@ -197,13 +197,13 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
         header->qtype = (uint8_t) ctx->impl->output.type;
         header->keylen = 0;
         header->level = 0;
-        header->flags = flags;
+        header->flags = (uint8_t)flags;
         header->status = htons((uint16_t)ctx->rc);
         header->opaque = 0;
         header->cas = 0;
         //todo : MSG_DONTWAIT
         rc = grn_com_send(ctx, peer, header,
-                          GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg), 0);
+                          GRN_BULK_HEAD(msg), (uint32_t)GRN_BULK_VSIZE(msg), 0);
         if (rc != GRN_OPERATION_WOULD_BLOCK) {
           grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
           return rc;
@@ -214,7 +214,7 @@ grn_msg_send(grn_ctx *ctx, grn_obj *msg, int flags)
       return GRN_FUNCTION_NOT_IMPLEMENTED;
     case GRN_COM_PROTO_MBRES :
       rc = grn_com_send(ctx, peer, header,
-                        GRN_BULK_HEAD(msg), GRN_BULK_VSIZE(msg),
+                        GRN_BULK_HEAD(msg), (uint32_t)GRN_BULK_VSIZE(msg),
                         (flags & GRN_CTX_MORE) ? MSG_MORE :0);
       if (rc != GRN_OPERATION_WOULD_BLOCK) {
         grn_com_queue_enque(ctx, m->old, (grn_com_queue_entry *)msg);
@@ -266,7 +266,10 @@ grn_rc
 grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_size)
 {
   ev->max_nevents = max_nevents;
-  if ((ev->hash = grn_hash_create(ctx, NULL, sizeof(grn_sock), data_size, 0))) {
+  if ((ev->hash = grn_hash_create(ctx, NULL,
+                                  sizeof(grn_sock),
+                                  (unsigned int)data_size,
+                                  0))) {
     CRITICAL_SECTION_INIT(ev->critical_section);
     COND_INIT(ev->cond);
     GRN_COM_QUEUE_INIT(&ev->recv_old);
@@ -277,7 +280,8 @@ grn_com_event_init(grn_ctx *ctx, grn_com_event *ev, int max_nevents, int data_si
     ev->opaque = NULL;
 #ifndef USE_SELECT
 # ifdef USE_EPOLL
-    if ((ev->events = GRN_MALLOC(sizeof(struct epoll_event) * max_nevents))) {
+    if ((ev->events = GRN_MALLOC(sizeof(struct epoll_event) *
+                                 (size_t)max_nevents))) {
       if ((ev->epfd = epoll_create(max_nevents)) != -1) {
         goto exit;
       } else {
@@ -443,7 +447,7 @@ grn_com_event_del(grn_ctx *ctx, grn_com_event *ev, grn_sock fd)
         struct epoll_event e;
         memset(&e, 0, sizeof(struct epoll_event));
         e.data.fd = fd;
-        e.events = c->events;
+        e.events = (uint32_t)(c->events);
         if (epoll_ctl(ev->epfd, EPOLL_CTL_DEL, fd, &e) == -1) {
           SERR("epoll_ctl");
           return ctx->rc;
@@ -800,11 +804,11 @@ grn_com_recv_text(grn_ctx *ctx, grn_com *com,
 {
   const char *p;
   int retry = 0;
-  grn_bulk_write(ctx, buf, (char *)header, ret);
+  grn_bulk_write(ctx, buf, (char *)header, (size_t)ret);
   if ((p = scan_delimiter(GRN_BULK_HEAD(buf), GRN_BULK_CURR(buf)))) {
-    header->qtype = *GRN_BULK_HEAD(buf);
+    header->qtype = (uint8_t)(*GRN_BULK_HEAD(buf));
     header->proto = GRN_COM_PROTO_HTTP;
-    header->size = GRN_BULK_VSIZE(buf);
+    header->size = (uint32_t)GRN_BULK_VSIZE(buf);
     goto exit;
   }
   for (;;) {
@@ -819,7 +823,7 @@ grn_com_recv_text(grn_ctx *ctx, grn_com *com,
       goto exit;
     }
     if (ret) {
-      off_t o = GRN_BULK_VSIZE(buf);
+      off_t o = (off_t)GRN_BULK_VSIZE(buf);
       p = GRN_BULK_CURR(buf);
       GRN_BULK_INCR_LEN(buf, ret);
       if (scan_delimiter(p - (o > 3 ? 3 : o), p + ret)) {
@@ -832,9 +836,9 @@ grn_com_recv_text(grn_ctx *ctx, grn_com *com,
       }
     }
   }
-  header->qtype = *GRN_BULK_HEAD(buf);
+  header->qtype = (uint8_t)*GRN_BULK_HEAD(buf);
   header->proto = GRN_COM_PROTO_HTTP;
-  header->size = GRN_BULK_VSIZE(buf);
+  header->size = (uint32_t)GRN_BULK_VSIZE(buf);
 exit :
   if (header->qtype == 'H') {
     //todo : refine
@@ -873,7 +877,8 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
       if (header->proto < 0x80) {
         return grn_com_recv_text(ctx, com, header, buf, ret);
       }
-      rest -= ret, p += ret;
+      rest -= (size_t)ret;
+      p += ret;
     } else {
       if (++retry > RETRY_MAX) {
         // ERR(GRN_RETRY_MAX, "retry max in recv header (%d)", com->fd);
@@ -913,7 +918,7 @@ grn_com_recv(grn_ctx *ctx, grn_com *com, grn_com_header *header, grn_obj *buf)
           goto exit;
         }
         if (ret) {
-          rest -= ret;
+          rest -= (size_t)ret;
           GRN_BULK_INCR_LEN(buf, ret);
         } else {
           if (++retry > RETRY_MAX) {
@@ -1053,7 +1058,7 @@ grn_com_close(grn_ctx *ctx, grn_com *com)
 
 grn_rc
 grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
-              const char *bind_address, int port, grn_msg_handler *func,
+              const char *bind_address, uint16_t port, grn_msg_handler *func,
               struct hostent *he)
 {
   grn_sock lfd = -1;
@@ -1068,7 +1073,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
     bind_address = "0.0.0.0";
   }
   grn_snprintf(port_string, sizeof(port_string), sizeof(port_string),
-               "%d", port);
+               "%u", port);
   memset(&hints, 0, sizeof(struct addrinfo));
   hints.ai_family = PF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
@@ -1103,7 +1108,7 @@ grn_com_sopen(grn_ctx *ctx, grn_com_event *ev,
     SOERR("socket");
     goto exit;
   }
-  grn_memcpy(&ev->curr_edge_id.addr, he->h_addr, he->h_length);
+  grn_memcpy(&ev->curr_edge_id.addr, he->h_addr, (size_t)(he->h_length));
   ev->curr_edge_id.port = htons(port);
   ev->curr_edge_id.sid = 0;
   {
