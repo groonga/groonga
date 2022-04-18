@@ -165,7 +165,7 @@ grn_table_group_aggregator_set_output_column_name(grn_ctx *ctx,
   }
   if (name_len < 0) {
     if (name) {
-      name_len = strlen(name);
+      name_len = (int32_t)strlen(name);
     } else {
       name_len = 0;
     }
@@ -174,7 +174,7 @@ grn_table_group_aggregator_set_output_column_name(grn_ctx *ctx,
     aggregator->output_column_name = NULL;
     aggregator->output_column_name_len = 0;
   } else {
-    aggregator->output_column_name = GRN_MALLOCN(char, name_len);
+    aggregator->output_column_name = GRN_MALLOCN(char, (size_t)name_len);
     if (!aggregator->output_column_name) {
       aggregator->output_column_name_len = 0;
       ERR(ctx->rc,
@@ -182,8 +182,8 @@ grn_table_group_aggregator_set_output_column_name(grn_ctx *ctx,
           ctx->errbuf);
       GRN_API_RETURN(ctx->rc);
     }
-    grn_memcpy(aggregator->output_column_name, name, name_len);
-    aggregator->output_column_name_len = name_len;
+    grn_memcpy(aggregator->output_column_name, name, (size_t)name_len);
+    aggregator->output_column_name_len = (uint32_t)name_len;
   }
   GRN_API_RETURN(ctx->rc);
 }
@@ -252,7 +252,7 @@ grn_table_group_aggregator_set_expression(grn_ctx *ctx,
   }
   if (expression_len < 0) {
     if (expression) {
-      expression_len = strlen(expression);
+      expression_len = (int32_t)strlen(expression);
     } else {
       expression_len = 0;
     }
@@ -261,7 +261,7 @@ grn_table_group_aggregator_set_expression(grn_ctx *ctx,
     aggregator->expression = NULL;
     aggregator->expression_len = 0;
   } else {
-    aggregator->expression = GRN_MALLOCN(char, expression_len);
+    aggregator->expression = GRN_MALLOCN(char, (size_t)expression_len);
     if (!aggregator->expression) {
       aggregator->expression_len = 0;
       ERR(ctx->rc,
@@ -269,8 +269,8 @@ grn_table_group_aggregator_set_expression(grn_ctx *ctx,
           ctx->errbuf);
       GRN_API_RETURN(ctx->rc);
     }
-    grn_memcpy(aggregator->expression, expression, expression_len);
-    aggregator->expression_len = expression_len;
+    grn_memcpy(aggregator->expression, expression, (size_t)expression_len);
+    aggregator->expression_len = (uint32_t)expression_len;
   }
   GRN_API_RETURN(ctx->rc);
 }
@@ -479,8 +479,8 @@ grn_table_group_aggregator_prepare(grn_ctx *ctx,
     return;
   }
 
-  int32_t n = expr->codes_curr - 1;
-  for (int32_t i = 1; i < n; i++) {
+  uint32_t n = expr->codes_curr - 1;
+  for (uint32_t i = 1; i < n; i++) {
     /* TODO: Check op. */
     GRN_PTR_PUT(ctx, &(aggregator->data.args), expr->codes[i].value);
   }
@@ -537,7 +537,7 @@ grn_aggregator_create(grn_ctx *ctx,
   GRN_API_ENTER;
 
   if (name_size == -1) {
-    name_size = strlen(name);
+    name_size = (int)strlen(name);
   }
 
   grn_obj *aggregator = grn_proc_create(ctx,
@@ -719,7 +719,7 @@ grn_table_group_single_key_records_foreach_fix_size(grn_ctx *ctx,
     group_id = grn_table_add_v(ctx,
                                data->res,
                                column_value,
-                               ra->header->element_size,
+                               (int)(ra->header->element_size),
                                &value,
                                NULL);
   }
@@ -820,7 +820,7 @@ grn_table_group_single_key_records_foreach(grn_ctx *ctx,
     {
       unsigned int element_size;
       uint8_t *elements;
-      int i, n_elements;
+      size_t i, n_elements;
 
       element_size = grn_uvector_element_size(ctx, bulk);
       elements = GRN_BULK_HEAD(bulk);
@@ -835,8 +835,12 @@ grn_table_group_single_key_records_foreach(grn_ctx *ctx,
           }
         }
 
-        grn_id group_id =
-          grn_table_add_v(ctx, data->res, element, element_size, &value, NULL);
+        grn_id group_id = grn_table_add_v(ctx,
+                                          data->res,
+                                          element,
+                                          (int)element_size,
+                                          &value,
+                                          NULL);
         if (group_id == GRN_ID_NIL) {
           return ctx->rc;
         }
@@ -858,8 +862,12 @@ grn_table_group_single_key_records_foreach(grn_ctx *ctx,
         unsigned int content_length;
         content_length = grn_vector_get_element(ctx, bulk, i,
                                                 &content, NULL, NULL);
-        grn_id group_id =
-        grn_table_add_v(ctx, data->res, content, content_length, &value, NULL);
+        grn_id group_id = grn_table_add_v(ctx,
+                                          data->res,
+                                          content,
+                                          (int)content_length,
+                                          &value,
+                                          NULL);
         if (group_id == GRN_ID_NIL) {
           return ctx->rc;
         }
@@ -877,7 +885,7 @@ grn_table_group_single_key_records_foreach(grn_ctx *ctx,
            *((grn_id *)GRN_BULK_HEAD(bulk))) &&
           (group_id = grn_table_add_v(ctx, data->res,
                                       GRN_BULK_HEAD(bulk),
-                                      GRN_BULK_VSIZE(bulk),
+                                      (int)GRN_BULK_VSIZE(bulk),
                                       &value, NULL))) {
         grn_table_group_add_subrec(ctx, data->res, group_id, value,
                                    ri ? ri->score : 0,
@@ -1040,10 +1048,10 @@ grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
                   uint32_t quantized = (*(uint32_t *)v);
                   quantized -= quantized % range_gap;
                   id = grn_table_add_v(ctx, res, &quantized,
-                                       element_size, &value, NULL);
+                                       (int)element_size, &value, NULL);
                 } else {
                   id = grn_table_add_v(ctx, res, v,
-                                       element_size, &value, NULL);
+                                       (int)element_size, &value, NULL);
                 }
                 if (id) {
                   grn_table_add_subrec(ctx,
@@ -1085,7 +1093,7 @@ grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
                                          0);
                   }
                   v++;
-                  len -= sizeof(grn_id);
+                  len -= (unsigned int)(sizeof(grn_id));
                 }
                 grn_ja_unref(ctx, &jw);
               }
@@ -1151,7 +1159,7 @@ grn_table_group_multi_keys_add_record(grn_ctx *ctx,
     grn_obj *body = grn_vector_pack(ctx,
                                     vector,
                                     result->key_begin,
-                                    end - result->key_begin,
+                                    (uint32_t)(end - result->key_begin),
                                     0,
                                     vector_pack_header,
                                     vector_pack_footer);
@@ -1200,7 +1208,7 @@ grn_table_group_multi_keys_add_record(grn_ctx *ctx,
     grn_id group_id = grn_table_add_v(ctx,
                                       result->table,
                                       GRN_BULK_HEAD(bulk),
-                                      GRN_BULK_VSIZE(bulk),
+                                      (int)GRN_BULK_VSIZE(bulk),
                                       &value,
                                       NULL);
     if (group_id != GRN_ID_NIL) {
@@ -1245,7 +1253,7 @@ grn_table_group_multi_keys_scalar_records(grn_ctx *ctx,
       grn_obj *value = group_key_get_value(ctx, data->keys + i, data->id, bulk);
       grn_vector_add_element(ctx, vector,
                              GRN_BULK_HEAD(value),
-                             GRN_BULK_VSIZE(value),
+                             (uint32_t)GRN_BULK_VSIZE(value),
                              0,
                              value->header.domain);
     }
@@ -1275,7 +1283,7 @@ grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
         unsigned int element_size;
         grn_id domain;
         uint8_t *elements;
-        unsigned int j, n_elements;
+        size_t j, n_elements;
 
         n_vector_elements = grn_vector_size(ctx, vector);
         domain = key_buffer->header.domain;
@@ -1331,7 +1339,7 @@ grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
     default :
       grn_vector_add_element(ctx, vector,
                              GRN_BULK_HEAD(key_buffer),
-                             GRN_BULK_VSIZE(key_buffer),
+                             (uint32_t)GRN_BULK_VSIZE(key_buffer),
                              0,
                              key_buffer->header.domain);
     }
@@ -1356,7 +1364,7 @@ grn_table_group_multi_keys_vector_records(grn_ctx *ctx,
     return;
   }
 
-  grn_obj *key_buffers = GRN_MALLOCN(grn_obj, data->n_keys);
+  grn_obj *key_buffers = GRN_MALLOCN(grn_obj, (size_t)(data->n_keys));
   if (!key_buffers) {
     grn_table_cursor_close(ctx, tc);
     return;
@@ -1579,7 +1587,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
       }
       grn_table_group_multi_keys_data data;
       data.table = table;
-      data.keys = GRN_MALLOCN(group_key, n_keys);
+      data.keys = GRN_MALLOCN(group_key, (size_t)n_keys);
       if (!data.keys) {
         ERR(GRN_NO_MEMORY_AVAILABLE,
             "[table][group] failed to allocate group_keys: %s",
@@ -1599,7 +1607,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
         if (results[i].flags & GRN_TABLE_GROUP_LIMIT) {
           int limit = results[i].limit;
           if (limit < 0) {
-            limit += data.n_records + 1;
+            limit += (int)(data.n_records + 1);
             if (limit < 0) {
               limit = 0;
             }
@@ -1609,11 +1617,11 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
             data.max_n_target_records = limit;
           }
         } else {
-          results[i].limit = data.n_records;
+          results[i].limit = (int)(data.n_records);
         }
       }
       if (data.max_n_target_records == -1) {
-        data.max_n_target_records = data.n_records;
+        data.max_n_target_records = (int)(data.n_records);
       }
       data.nth_record = 0;
       GRN_TEXT_INIT(&(data.bulk), 0);
