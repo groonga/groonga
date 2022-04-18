@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2016-2017  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -38,8 +38,8 @@ grn_window_shard_init(grn_ctx *ctx,
   grn_expr *expr = (grn_expr *)(window_function_call);
   shard->window_function = (grn_proc *)(expr->codes[0].value);
   GRN_PTR_INIT(&(shard->arguments), GRN_OBJ_VECTOR, GRN_ID_NIL);
-  int32_t n_arguments = expr->codes_curr - 1;
-  for (int32_t i = 1; i < n_arguments; i++) {
+  uint32_t n_arguments = expr->codes_curr - 1;
+  for (uint32_t i = 1; i < n_arguments; i++) {
     /* TODO: Check op. */
     GRN_PTR_PUT(ctx, &(shard->arguments), expr->codes[i].value);
   }
@@ -173,10 +173,11 @@ grn_window_rewind(grn_ctx *ctx, grn_window *window)
       shard->current_index = 0;
     }
   } else {
-    window->current_shard = window->n_shards - 1;
+    window->current_shard = (ssize_t)(window->n_shards - 1);
     for (size_t i = 0; i < window->n_shards; i++) {
       grn_window_shard *shard = &(window->shards[i]);
-      shard->current_index = GRN_RECORD_VECTOR_SIZE(&(shard->ids)) - 1;
+      shard->current_index =
+        (ssize_t)(GRN_RECORD_VECTOR_SIZE(&(shard->ids)) - 1);
     }
   }
 
@@ -652,7 +653,7 @@ grn_window_function_create(grn_ctx *ctx,
   GRN_API_ENTER;
 
   if (name_size == -1) {
-    name_size = strlen(name);
+    name_size = (int)strlen(name);
   }
 
   window_function = grn_proc_create(ctx,
@@ -706,7 +707,7 @@ grn_window_execute(grn_ctx *ctx, grn_window *window)
                                    shard->output_column,
                                    window,
                                    (grn_obj **)GRN_BULK_HEAD(&(shard->arguments)),
-                                   GRN_PTR_VECTOR_SIZE(&(shard->arguments)));
+                                   (int)GRN_PTR_VECTOR_SIZE(&(shard->arguments)));
 
   GRN_API_RETURN(rc);
 }
@@ -778,7 +779,7 @@ grn_table_apply_window_function(grn_ctx *ctx,
                  table,
                  0, -1,
                  sorted,
-                 sort_keys, n_sort_keys);
+                 sort_keys, (int)n_sort_keys);
 
   grn_window window;
   grn_window_init(ctx, &window);
