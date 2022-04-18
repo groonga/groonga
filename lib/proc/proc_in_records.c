@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2017-2018 Brazil
+  Copyright (C) 2017-2018  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,7 +24,7 @@
 #include <groonga/plugin.h>
 
 typedef struct {
-  int n_conditions;
+  size_t n_conditions;
   grn_obj *condition_table;
   grn_obj condition_columns;
   grn_operator *condition_modes;
@@ -33,8 +34,8 @@ typedef struct {
 static void
 grn_in_records_data_free(grn_ctx *ctx, grn_in_records_data *data)
 {
-  int i;
-  int n_condition_columns;
+  size_t i;
+  size_t n_condition_columns;
 
   if (!data) {
     return;
@@ -69,11 +70,11 @@ func_in_records_init(grn_ctx *ctx,
   grn_in_records_data *data;
   grn_obj *condition_table;
   grn_expr_code *codes;
-  int n_arg_codes;
-  int n_logical_args;
-  int n_conditions;
-  int i;
-  int nth;
+  size_t n_arg_codes;
+  size_t n_logical_args;
+  size_t n_conditions;
+  size_t i;
+  size_t nth;
 
   {
     grn_obj *caller;
@@ -83,28 +84,28 @@ func_in_records_init(grn_ctx *ctx,
     caller = grn_plugin_proc_get_caller(ctx, user_data);
     expr = (grn_expr *)caller;
     call_code = expr->codes + expr->codes_curr - 1;
-    n_logical_args = call_code->nargs - 1;
+    n_logical_args = (size_t)(call_code->nargs - 1);
     codes = expr->codes + 1;
     n_arg_codes = expr->codes_curr - 2;
   }
 
   if (n_logical_args < 4) {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "in_records(): wrong number of arguments (%d for 4..)",
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "in_records(): wrong number of arguments "
+                     "(%" GRN_FMT_SIZE " for 4..)",
                      n_logical_args);
     return NULL;
   }
 
   if ((n_logical_args % 3) != 1) {
-    GRN_PLUGIN_ERROR(ctx,
-                     GRN_INVALID_ARGUMENT,
-                     "in_records(): the number of arguments must be 1 + 3n (%d)",
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "in_records(): the number of arguments "
+                     "must be 1 + 3n (%" GRN_FMT_SIZE ")",
                      n_logical_args);
     return NULL;
   }
 
-  n_conditions = (n_logical_args - 1) / 3;
+  n_conditions = (size_t)((n_logical_args - 1) / 3);
 
   condition_table = codes[0].value;
   if (!grn_obj_is_table(ctx, condition_table)) {
@@ -142,7 +143,7 @@ func_in_records_init(grn_ctx *ctx,
   }
 
   for (i = 1, nth = 0; i < n_arg_codes; nth++) {
-    int value_i = i;
+    int value_i = (int)i;
     int mode_name_i;
     grn_obj *mode_name;
     int column_name_i;
@@ -181,7 +182,7 @@ func_in_records_init(grn_ctx *ctx,
 
     condition_column = grn_obj_column(ctx, condition_table,
                                       GRN_TEXT_VALUE(column_name),
-                                      GRN_TEXT_LEN(column_name));
+                                      (uint32_t)GRN_TEXT_LEN(column_name));
     if (!condition_column) {
       grn_obj inspected;
       GRN_TEXT_INIT(&inspected, 0);
@@ -201,7 +202,7 @@ func_in_records_init(grn_ctx *ctx,
     }
     GRN_PTR_PUT(ctx, &(data->condition_columns), condition_column);
 
-    i = column_name_i + 1;
+    i = (size_t)(column_name_i + 1);
   }
 
   return NULL;
@@ -369,7 +370,9 @@ selector_in_records(grn_ctx *ctx,
     return ctx->rc;
   }
 
-  condition_modes = GRN_PLUGIN_MALLOCN(ctx, grn_operator, (n_args - 2) / 3);
+  condition_modes = GRN_PLUGIN_MALLOCN(ctx,
+                                       grn_operator,
+                                       (size_t)((n_args - 2) / 3));
   GRN_PTR_INIT(&condition_columns, GRN_OBJ_VECTOR, GRN_ID_NIL);
   for (i = 2, nth = 0; i < n_args; i += 3, nth++) {
     int mode_name_i = i + 1;
@@ -409,7 +412,7 @@ selector_in_records(grn_ctx *ctx,
 
     condition_column = grn_obj_column(ctx, condition_table,
                                       GRN_TEXT_VALUE(column_name),
-                                      GRN_TEXT_LEN(column_name));
+                                      (uint32_t)GRN_TEXT_LEN(column_name));
     if (!condition_column) {
       grn_obj inspected;
       GRN_TEXT_INIT(&inspected, 0);
