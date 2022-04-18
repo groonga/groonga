@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2018  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ namespace grn {
     template <typename NUMERIC, typename FLOAT>
     NUMERIC
     cast_value(const char *raw_value) {
-      return *reinterpret_cast<const FLOAT *>(raw_value);
+      return static_cast<NUMERIC>(*reinterpret_cast<const FLOAT *>(raw_value));
     }
 
     template <>
@@ -73,28 +73,36 @@ namespace grn {
         value = *reinterpret_cast<const grn_bool *>(raw_value);
         break;
       case GRN_DB_INT8 :
-        value = *reinterpret_cast<const int8_t *>(raw_value);
+        value =
+          static_cast<NUMERIC>(*reinterpret_cast<const int8_t *>(raw_value));
         break;
       case GRN_DB_UINT8 :
-        value = *reinterpret_cast<const uint8_t *>(raw_value);
+        value =
+          static_cast<NUMERIC>(*reinterpret_cast<const uint8_t *>(raw_value));
         break;
       case GRN_DB_INT16 :
-        value = *reinterpret_cast<const int16_t *>(raw_value);
+        value =
+          static_cast<NUMERIC>(*reinterpret_cast<const int16_t *>(raw_value));
         break;
       case GRN_DB_UINT16 :
-        value = *reinterpret_cast<const uint16_t *>(raw_value);
+        value =
+          static_cast<NUMERIC>(*reinterpret_cast<const uint16_t *>(raw_value));
         break;
       case GRN_DB_INT32 :
-        value = *reinterpret_cast<const int32_t *>(raw_value);
+        value =
+          static_cast<NUMERIC>(*reinterpret_cast<const int32_t *>(raw_value));
         break;
       case GRN_DB_UINT32 :
-        value = *reinterpret_cast<const uint32_t *>(raw_value);
+        value =
+          static_cast<NUMERIC>(*reinterpret_cast<const uint32_t *>(raw_value));
         break;
       case GRN_DB_INT64 :
-        value = *reinterpret_cast<const int64_t *>(raw_value);
+        value =
+          static_cast<NUMERIC>(*reinterpret_cast<const int64_t *>(raw_value));
         break;
       case GRN_DB_UINT64 :
-        value = *reinterpret_cast<const uint64_t *>(raw_value);
+        value =
+          static_cast<NUMERIC>(*reinterpret_cast<const uint64_t *>(raw_value));
         break;
       case GRN_DB_FLOAT32 :
         value = cast_value<NUMERIC, float>(raw_value);
@@ -214,18 +222,18 @@ extern "C" {
   static uint32_t
   grn_uvector_element_size_internal(grn_ctx *ctx, grn_obj *uvector)
   {
-    uint32_t element_size = grn_type_id_size(ctx, uvector->header.domain);
+    size_t element_size = grn_type_id_size(ctx, uvector->header.domain);
     if (grn_obj_is_weight_uvector(ctx, uvector)) {
       element_size += sizeof(float);
     }
-    return element_size;
+    return static_cast<uint32_t>(element_size);
   }
 
   static uint32_t
   grn_uvector_size_internal(grn_ctx *ctx, grn_obj *uvector)
   {
     uint32_t element_size = grn_uvector_element_size_internal(ctx, uvector);
-    return GRN_BULK_VSIZE(uvector) / element_size;
+    return static_cast<uint32_t>(GRN_BULK_VSIZE(uvector) / element_size);
   }
 
   uint32_t
@@ -239,13 +247,13 @@ extern "C" {
     GRN_API_ENTER;
     switch (vector->header.type) {
     case GRN_BULK :
-      size = GRN_BULK_VSIZE(vector);
+      size = static_cast<uint32_t>(GRN_BULK_VSIZE(vector));
       break;
     case GRN_UVECTOR :
       size = grn_uvector_size_internal(ctx, vector);
       break;
     case GRN_PVECTOR :
-      size = GRN_BULK_VSIZE(vector) / sizeof(grn_obj *);
+      size = static_cast<uint32_t>(GRN_BULK_VSIZE(vector) / sizeof(grn_obj *));
       break;
     case GRN_VECTOR :
       size = vector->u.v.n_sections;
@@ -304,7 +312,7 @@ extern "C" {
                                                    &weight_float,
                                                    domain);
     if (weight) {
-      *weight = weight_float;
+      *weight = static_cast<uint32_t>(weight_float);
     }
     return length;
   }
@@ -353,7 +361,7 @@ extern "C" {
                                                    &weight_float,
                                                    domain);
     if (weight) {
-      *weight = weight_float;
+      *weight = static_cast<uint32_t>(weight_float);
     }
     return length;
   }
@@ -411,7 +419,7 @@ extern "C" {
       grn_obj *body = grn_vector_body(ctx, v);
       grn_section *vp = &v->u.v.sections[v->u.v.n_sections];
       vp->offset = v->u.v.n_sections ? vp[-1].offset + vp[-1].length : 0;
-      vp->length = GRN_BULK_VSIZE(body) - vp->offset;
+      vp->length = static_cast<uint32_t>(GRN_BULK_VSIZE(body) - vp->offset);
       vp->weight = weight;
       vp->domain = domain;
     }
@@ -443,7 +451,9 @@ extern "C" {
         if (flags & GRN_VECTOR_PACK_WEIGHT_FLOAT32) {
           GRN_FLOAT32_PUT(ctx, footer, section->weight);
         } else {
-          grn_text_benc(ctx, footer, section->weight);
+          grn_text_benc(ctx,
+                        footer,
+                        static_cast<unsigned int>(section->weight));
         }
         grn_text_benc(ctx, footer, section->domain);
       }
@@ -474,7 +484,7 @@ extern "C" {
     }
     {
       grn_obj *body = grn_vector_body(ctx, vector);
-      uint32_t offset = GRN_BULK_VSIZE(body);
+      uint32_t offset = static_cast<uint32_t>(GRN_BULK_VSIZE(body));
       uint32_t o = 0;
       for (uint32_t i = 0; i < n; ++i) {
         grn_section *section = vector->u.v.sections + n0 + i;
@@ -498,7 +508,9 @@ extern "C" {
             grn_memcpy(&(section->weight), p, sizeof(float));
             p += sizeof(float);
           } else {
-            GRN_B_DEC(section->weight, p);
+            uint32_t weight;
+            GRN_B_DEC(weight, p);
+            section->weight = static_cast<float>(weight);
           }
           GRN_B_DEC(section->domain, p);
         }
@@ -520,7 +532,7 @@ extern "C" {
                                         vector,
                                         str,
                                         str_len,
-                                        weight,
+                                        static_cast<float>(weight),
                                         domain);
   }
 
@@ -594,7 +606,7 @@ extern "C" {
 
     GRN_API_ENTER;
     size_t size = grn_uvector_size_internal(ctx, uvector);
-    GRN_API_RETURN(size);
+    GRN_API_RETURN(static_cast<uint32_t>(size));
   }
 
   uint32_t
@@ -628,7 +640,10 @@ extern "C" {
                           grn_id id,
                           uint32_t weight)
   {
-    return grn_uvector_add_element_record(ctx, uvector, id, weight);
+    return grn_uvector_add_element_record(ctx,
+                                          uvector,
+                                          id,
+                                          static_cast<float>(weight));
   }
 
   grn_rc
@@ -665,7 +680,7 @@ extern "C" {
                                                offset,
                                                &weight_float);
     if (weight) {
-      *weight = weight_float;
+      *weight = static_cast<uint32_t>(weight_float);
     }
     return id;
   }
