@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2011-2016 Brazil
+  Copyright (C) 2011-2016  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -70,7 +71,7 @@ class GRN_DAT_API Key {
 
     *buf = (key_id << 4) | (key_length & 0x0F);
     UInt8 *ptr = reinterpret_cast<UInt8 *>(buf + 1);
-    *ptr++ = key_length >> 4;
+    *ptr++ = static_cast<UInt8>(key_length >> 4);
     for (UInt32 i = 0; i < key_length; ++i) {
       ptr[i] = static_cast<const UInt8 *>(key_ptr)[i];
     }
@@ -80,7 +81,7 @@ class GRN_DAT_API Key {
   // Calculates how many UInt32s are required for a string. It is guaranteed
   // that the estimated size is not less than the actual size.
   static UInt32 estimate_size(UInt32 length) {
-    return 2 + (length / sizeof(UInt32));
+    return static_cast<UInt32>(2 + (length / sizeof(UInt32)));
   }
 
   // Returns a reference to an invalid key.
