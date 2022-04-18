@@ -1,4 +1,6 @@
-/* Copyright(C) 2011 Brazil
+/*
+  Copyright (C) 2011  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -191,7 +193,7 @@ const Key &PredictiveCursor::descending_next() {
       }
     } else {
       buf_.back() |= POST_ORDER_FLAG;
-      UInt16 label = trie_->ith_node(node_id).child();
+      UInt32 label = trie_->ith_node(node_id).child();
       while (label != INVALID_LABEL) {
         buf_.push_back(base.offset() ^ label);
         label = trie_->ith_node(base.offset() ^ label).sibling();
