@@ -1,0 +1,27 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries title COLUMN_SCALAR ShortText
+column_create Entries contents COLUMN_VECTOR ShortText
+
+table_create Tokens TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC130
+column_create Tokens entries_title COLUMN_INDEX|WITH_POSITION Entries title
+column_create Tokens entries_contents COLUMN_INDEX|WITH_SECTION|WITH_POSITION \
+  Entries contents
+
+load --table Entries
+[
+{
+  "title": "Groonga and MySQL",
+  "contents": [
+    "Groonga is a full text search engine",
+    "MySQL is a RDBMS",
+    "Mroonga is a MySQL storage engine based on Groonga"
+  ]
+}
+]
+
+select Entries \
+  --output_columns 'snippet_html(contents), contents' \
+  --match_columns 'title' \
+  --query Groonga

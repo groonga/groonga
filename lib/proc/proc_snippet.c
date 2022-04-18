@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,66 +25,118 @@
 #define GRN_FUNC_SNIPPET_HTML_CACHE_NAME "$snippet_html"
 
 static grn_obj *
-snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *text,
+snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *target,
              grn_obj *default_return_value,
              grn_user_data *user_data,
              const char *prefix, int prefix_length,
              const char *suffix, int suffix_length)
 {
-  grn_rc rc;
-  unsigned int i, n_results, max_tagged_length;
-  grn_obj snippet_buffer;
-  grn_obj *snippets;
-
-  if (GRN_TEXT_LEN(text) == 0) {
+  uint32_t n_texts = 0;
+  bool is_vector = false;
+  if (grn_obj_is_text_family_vector(ctx, target)) {
+    is_vector = true;
+    n_texts = grn_vector_size(ctx, target);
+    if (n_texts == 0) {
+      return NULL;
+    }
+  } else if (grn_obj_is_text_family_bulk(ctx, target)) {
+    if (GRN_TEXT_LEN(target) == 0) {
+      return NULL;
+    }
+    n_texts = 1;
+  } else {
     return NULL;
   }
 
-  rc = grn_snip_exec(ctx, snip,
-                     GRN_TEXT_VALUE(text), GRN_TEXT_LEN(text),
-                     &n_results, &max_tagged_length);
+  grn_obj *snippets = grn_plugin_proc_alloc(ctx,
+                                            user_data,
+                                            GRN_DB_SHORT_TEXT,
+                                            GRN_OBJ_VECTOR);
+  if (!snippets) {
+    return NULL;
+  }
+
+  grn_obj snippet_buffer;
+  GRN_TEXT_INIT(&snippet_buffer, 0);
+
+  grn_rc rc = GRN_SUCCESS;
+  uint32_t i;
+  for (i = 0; i < n_texts; i++) {
+    const char *text;
+    uint32_t text_length;
+    if (is_vector) {
+      grn_id domain;
+      text_length = grn_vector_get_element_float(ctx,
+                                                 target,
+                                                 i,
+                                                 &text,
+                                                 NULL,
+                                                 &domain);
+      if (!grn_type_id_is_text_family(ctx, domain)) {
+        continue;
+      }
+      if (text_length == 0) {
+        continue;
+      }
+    } else {
+      text = GRN_TEXT_VALUE(target);
+      text_length = (uint32_t)GRN_TEXT_LEN(target);
+    }
+
+    unsigned int i, n_results, max_tagged_length;
+    rc = grn_snip_exec(ctx, snip,
+                       text, text_length,
+                       &n_results, &max_tagged_length);
+    if (rc != GRN_SUCCESS) {
+      break;
+    }
+
+    if (n_results == 0) {
+      continue;
+    }
+
+    grn_bulk_space(ctx, &snippet_buffer,
+                   (size_t)prefix_length +
+                   max_tagged_length +
+                   (size_t)suffix_length);
+    for (i = 0; i < n_results; i++) {
+      unsigned int snippet_length;
+
+      GRN_BULK_REWIND(&snippet_buffer);
+      if (prefix_length > 0) {
+        GRN_TEXT_PUT(ctx, &snippet_buffer, prefix, prefix_length);
+      }
+      rc = grn_snip_get_result(ctx, snip, i,
+                               GRN_TEXT_VALUE(&snippet_buffer) + prefix_length,
+                               &snippet_length);
+      if (rc != GRN_SUCCESS) {
+        continue;
+      }
+      grn_strncat(GRN_TEXT_VALUE(&snippet_buffer),
+                  GRN_BULK_WSIZE(&snippet_buffer),
+                  suffix,
+                  (size_t)suffix_length);
+      grn_vector_add_element(ctx, snippets,
+                             GRN_TEXT_VALUE(&snippet_buffer),
+                             (uint32_t)prefix_length +
+                             snippet_length +
+                             (uint32_t)suffix_length,
+                             0, GRN_DB_SHORT_TEXT);
+    }
+  }
+  GRN_OBJ_FIN(ctx, &snippet_buffer);
+
   if (rc != GRN_SUCCESS) {
     return NULL;
   }
 
-  if (n_results == 0) {
+  if (grn_vector_size(ctx, snippets) == 0) {
     if (default_return_value) {
       return default_return_value;
     } else {
       return grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
     }
   }
-
-  snippets = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_SHORT_TEXT, GRN_OBJ_VECTOR);
-  if (!snippets) {
-    return NULL;
-  }
-
-  GRN_TEXT_INIT(&snippet_buffer, 0);
-  grn_bulk_space(ctx, &snippet_buffer,
-                 prefix_length + max_tagged_length + suffix_length);
-  for (i = 0; i < n_results; i++) {
-    unsigned int snippet_length;
-
-    GRN_BULK_REWIND(&snippet_buffer);
-    if (prefix_length) {
-      GRN_TEXT_PUT(ctx, &snippet_buffer, prefix, prefix_length);
-    }
-    rc = grn_snip_get_result(ctx, snip, i,
-                             GRN_TEXT_VALUE(&snippet_buffer) + prefix_length,
-                             &snippet_length);
-    if (rc == GRN_SUCCESS) {
-      grn_strncat(GRN_TEXT_VALUE(&snippet_buffer),
-                  GRN_BULK_WSIZE(&snippet_buffer),
-                  suffix,
-                  suffix_length);
-      grn_vector_add_element(ctx, snippets,
-                             GRN_TEXT_VALUE(&snippet_buffer),
-                             prefix_length + snippet_length + suffix_length,
-                             0, GRN_DB_SHORT_TEXT);
-    }
-  }
-  GRN_OBJ_FIN(ctx, &snippet_buffer);
 
   return snippets;
 }
@@ -109,7 +161,7 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     goto exit;
   }
 
-  grn_obj *text = args[0];
+  grn_obj *target = args[0];
   grn_proc_func_generate_cache_key(ctx, "snippet", args + 1, nargs - 1, &cache_key);
 
   grn_obj *snip_ptr = NULL;
@@ -307,7 +359,7 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
   snippets = snippet_exec(ctx,
                           snip,
-                          text,
+                          target,
                           default_return_value,
                           user_data,
                           prefix ? GRN_TEXT_VALUE(prefix) : NULL,
@@ -340,7 +392,7 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_obj *snippets = NULL;
 
   if (nargs > 0) {
-    grn_obj *text = args[0];
+    grn_obj *target = args[0];
     grn_obj *expression = NULL;
     grn_obj *condition = NULL;
     grn_obj *snip = NULL;
@@ -417,7 +469,7 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
     }
 
     if (snip) {
-      snippets = snippet_exec(ctx, snip, text,
+      snippets = snippet_exec(ctx, snip, target,
                               default_return_value,
                               user_data, NULL, 0, NULL, 0);
     }

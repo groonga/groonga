@@ -1,0 +1,48 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Entries contents COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+table_create Tokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC130
+[[0,0.0,0.0],true]
+column_create Tokens entries_title COLUMN_INDEX|WITH_POSITION Entries title
+[[0,0.0,0.0],true]
+column_create Tokens entries_contents COLUMN_INDEX|WITH_SECTION|WITH_POSITION   Entries contents
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"title": "Groonga and MySQL", "contents": []}
+]
+[[0,0.0,0.0],1]
+select Entries   --output_columns 'snippet_html(contents), contents'   --match_columns 'title'   --query Groonga
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "snippet_html",
+          null
+        ],
+        [
+          "contents",
+          "ShortText"
+        ]
+      ],
+      [
+        null,
+        [
+
+        ]
+      ]
+    ]
+  ]
+]
