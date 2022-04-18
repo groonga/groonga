@@ -22,6 +22,6 @@ load --table Entries
 ]
 
 select Entries \
-  --output_columns 'snippet_html(contents), contents' \
+  --output_columns 'snippet(contents, {"default": ["default"]}), contents' \
   --match_columns 'title' \
   --query Groonga

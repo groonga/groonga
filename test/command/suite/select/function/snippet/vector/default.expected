@@ -22,7 +22,7 @@ load --table Entries
 }
 ]
 [[0,0.0,0.0],1]
-select Entries   --output_columns 'snippet_html(contents), contents'   --match_columns 'title'   --query Groonga
+select Entries   --output_columns 'snippet(contents, {"default": ["default"]}), contents'   --match_columns 'title'   --query Groonga
 [
   [
     0,
@@ -36,7 +36,7 @@ select Entries   --output_columns 'snippet_html(contents), contents'   --match_c
       ],
       [
         [
-          "snippet_html",
+          "snippet",
           null
         ],
         [
@@ -45,7 +45,9 @@ select Entries   --output_columns 'snippet_html(contents), contents'   --match_c
         ]
       ],
       [
-        null,
+        [
+          "default"
+        ],
         [
           "It is a full text search engine",
           "MySQL is a RDBMS",
