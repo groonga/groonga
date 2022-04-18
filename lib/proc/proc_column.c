@@ -84,7 +84,7 @@ static grn_rc
 command_column_create_resolve_source_name(grn_ctx *ctx,
                                           grn_obj *table,
                                           const char *source_name,
-                                          int source_name_length,
+                                          uint32_t source_name_length,
                                           grn_obj *source_ids)
 {
   grn_obj *column;
@@ -121,8 +121,8 @@ command_column_create_resolve_source_names(grn_ctx *ctx,
                                            grn_obj *source_names,
                                            grn_obj *source_ids)
 {
-  int i, names_length;
-  int start, source_name_length;
+  size_t i, names_length;
+  size_t start, source_name_length;
   const char *names;
 
   names = GRN_TEXT_VALUE(source_names);
@@ -143,7 +143,7 @@ command_column_create_resolve_source_names(grn_ctx *ctx,
         rc = command_column_create_resolve_source_name(ctx,
                                                        table,
                                                        source_name,
-                                                       source_name_length,
+                                                       (uint32_t)source_name_length,
                                                        source_ids);
         if (rc) {
           return rc;
@@ -164,7 +164,7 @@ command_column_create_resolve_source_names(grn_ctx *ctx,
     rc = command_column_create_resolve_source_name(ctx,
                                                    table,
                                                    source_name,
-                                                   source_name_length,
+                                                   (uint32_t)source_name_length,
                                                    source_ids);
     if (rc) {
       return rc;
@@ -197,7 +197,9 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
   source_raw = grn_plugin_proc_get_var(ctx, user_data, "source", -1);
   path_raw   = grn_plugin_proc_get_var(ctx, user_data, "path", -1);
 
-  table = grn_ctx_get(ctx, GRN_TEXT_VALUE(table_raw), GRN_TEXT_LEN(table_raw));
+  table = grn_ctx_get(ctx,
+                      GRN_TEXT_VALUE(table_raw),
+                      (int)GRN_TEXT_LEN(table_raw));
   if (!table) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -210,9 +212,9 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
 
   {
     const char *rest;
-    flags = grn_atoi(GRN_TEXT_VALUE(flags_raw),
-                     GRN_BULK_CURR(flags_raw),
-                     &rest);
+    flags = (grn_column_flags)(grn_atoi(GRN_TEXT_VALUE(flags_raw),
+                                        GRN_BULK_CURR(flags_raw),
+                                        &rest));
     if (GRN_TEXT_VALUE(flags_raw) == rest) {
       flags = grn_proc_column_parse_flags(ctx,
                                           "[column][create][flags]",
@@ -227,7 +229,7 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
 
   type = grn_ctx_get(ctx,
                      GRN_TEXT_VALUE(type_raw),
-                     GRN_TEXT_LEN(type_raw));
+                     (int)GRN_TEXT_LEN(type_raw));
   if (!type) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -255,7 +257,7 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
   column = grn_column_create(ctx,
                              table,
                              GRN_TEXT_VALUE(name),
-                             GRN_TEXT_LEN(name),
+                             (unsigned int)GRN_TEXT_LEN(name),
                              path,
                              flags,
                              type);
@@ -329,14 +331,14 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_obj *table;
   grn_obj *column;
   char fullname[GRN_TABLE_MAX_KEY_SIZE];
-  unsigned int fullname_len;
+  int fullname_len;
 
   table_raw = grn_plugin_proc_get_var(ctx, user_data, "table", -1);
   name      = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
 
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(table_raw),
-                      GRN_TEXT_LEN(table_raw));
+                      (int)GRN_TEXT_LEN(table_raw));
   if (!table) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -361,7 +363,7 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
 
   fullname[fullname_len] = GRN_DB_DELIMITER;
   fullname_len++;
-  if (fullname_len + GRN_TEXT_LEN(name) > GRN_TABLE_MAX_KEY_SIZE) {
+  if ((size_t)fullname_len + GRN_TEXT_LEN(name) > GRN_TABLE_MAX_KEY_SIZE) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
                      "[column][remove] column name is too long: <%d> > <%u>: "
@@ -377,7 +379,7 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_memcpy(fullname + fullname_len,
              GRN_TEXT_VALUE(name),
              GRN_TEXT_LEN(name));
-  fullname_len += GRN_TEXT_LEN(name);
+  fullname_len += (int)GRN_TEXT_LEN(name);
   column = grn_ctx_get(ctx, fullname, fullname_len);
   if (!column) {
     GRN_PLUGIN_ERROR(ctx,
@@ -436,7 +438,9 @@ command_column_rename(grn_ctx *ctx, int nargs, grn_obj **args,
     goto exit;
   }
 
-  table = grn_ctx_get(ctx, GRN_TEXT_VALUE(table_raw), GRN_TEXT_LEN(table_raw));
+  table = grn_ctx_get(ctx,
+                      GRN_TEXT_VALUE(table_raw),
+                      (int)GRN_TEXT_LEN(table_raw));
   if (!table) {
     rc = GRN_INVALID_ARGUMENT;
     GRN_PLUGIN_ERROR(ctx,
@@ -459,7 +463,7 @@ command_column_rename(grn_ctx *ctx, int nargs, grn_obj **args,
 
   column = grn_obj_column(ctx, table,
                           GRN_TEXT_VALUE(name),
-                          GRN_TEXT_LEN(name));
+                          (uint32_t)GRN_TEXT_LEN(name));
   if (!column) {
     rc = GRN_INVALID_ARGUMENT;
     GRN_PLUGIN_ERROR(ctx,
@@ -489,7 +493,7 @@ command_column_rename(grn_ctx *ctx, int nargs, grn_obj **args,
 
   rc = grn_column_rename(ctx, column,
                          GRN_TEXT_VALUE(new_name),
-                         GRN_TEXT_LEN(new_name));
+                         (unsigned int)GRN_TEXT_LEN(new_name));
   if (rc != GRN_SUCCESS && ctx->rc == GRN_SUCCESS) {
     GRN_PLUGIN_ERROR(ctx,
                      rc,
@@ -582,8 +586,8 @@ output_column_info(grn_ctx *ctx, grn_obj *column)
   {
     grn_db_obj *obj = (grn_db_obj *)column;
     grn_id *s = obj->source;
-    int i = 0, n = obj->source_size / sizeof(grn_id);
-    grn_ctx_output_array_open(ctx, "SOURCES", n);
+    size_t i = 0, n = obj->source_size / sizeof(grn_id);
+    grn_ctx_output_array_open(ctx, "SOURCES", (int)n);
     for (i = 0; i < n; i++, s++) {
       grn_proc_output_object_id_name(ctx, *s);
     }
@@ -610,7 +614,7 @@ command_column_list(grn_ctx *ctx, int nargs, grn_obj **args,
 
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(table_raw),
-                      GRN_TEXT_LEN(table_raw));
+                      (int)GRN_TEXT_LEN(table_raw));
   if (!table) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -705,7 +709,7 @@ command_column_list(grn_ctx *ctx, int nargs, grn_obj **args,
     grn_dump_column_create_flags(ctx, 0, &buf);
     grn_ctx_output_obj(ctx, &buf, NULL);
     name_len = grn_obj_name(ctx, table, name_buf, GRN_TABLE_MAX_KEY_SIZE);
-    grn_ctx_output_str(ctx, name_buf, name_len);
+    grn_ctx_output_str(ctx, name_buf, (size_t)name_len);
     grn_proc_output_object_id_name(ctx, table->header.domain);
     grn_ctx_output_array_open(ctx, "SOURCES", 0);
     grn_ctx_output_array_close(ctx);
@@ -858,7 +862,7 @@ command_column_create_similar(grn_ctx *ctx,
   column = grn_column_create_similar(ctx,
                                      table,
                                      GRN_TEXT_VALUE(name),
-                                     GRN_TEXT_LEN(name),
+                                     (uint32_t)GRN_TEXT_LEN(name),
                                      NULL,
                                      base_column);
 
