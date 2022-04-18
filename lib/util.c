@@ -42,7 +42,7 @@ grn_inspect_name(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
 
   name_size = grn_obj_name(ctx, obj, NULL, 0);
   if (name_size > 0) {
-    grn_bulk_space(ctx, buf, name_size);
+    grn_bulk_space(ctx, buf, (size_t)name_size);
     grn_obj_name(ctx, obj, GRN_BULK_CURR(buf) - name_size, name_size);
   } else {
     grn_id id;
@@ -364,7 +364,7 @@ grn_expr_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *expr)
     for (i = 0, code = e->codes; i < e->codes_curr; i++, code++) {
       if (i) { GRN_TEXT_PUTC(ctx, buffer, ','); }
       GRN_TEXT_PUTS(ctx, buffer, "\n    ");
-      grn_text_itoa(ctx, buffer, i);
+      grn_text_ulltoa(ctx, buffer, i);
       GRN_TEXT_PUTS(ctx, buffer, ":");
       grn_expr_code_inspect_indented(ctx, buffer, code, "      ");
     }
@@ -403,7 +403,7 @@ grn_ptr_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *ptr)
 static grn_rc
 grn_pvector_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *pvector)
 {
-  int i, n;
+  size_t i, n;
 
   GRN_TEXT_PUTS(ctx, buffer, "[");
   n = GRN_BULK_VSIZE(pvector) / sizeof(grn_obj *);
@@ -626,10 +626,10 @@ grn_ja_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   grn_obj source_ids;
   GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
   grn_obj_get_info(ctx, obj, GRN_INFO_SOURCE, &source_ids);
-  int n = GRN_UINT32_VECTOR_SIZE(&source_ids);
+  size_t n = GRN_UINT32_VECTOR_SIZE(&source_ids);
   if (n > 0) {
     GRN_TEXT_PUTS(ctx, buf, " sources:[");
-    int i;
+    size_t i;
     for (i = 0; i < n; i++) {
       grn_id source_id;
       grn_obj *source;
@@ -662,9 +662,9 @@ grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   grn_obj source_ids;
   GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
   grn_obj_get_info(ctx, obj, GRN_INFO_SOURCE, &source_ids);
-  int n = GRN_UINT32_VECTOR_SIZE(&source_ids);
+  size_t n = GRN_UINT32_VECTOR_SIZE(&source_ids);
   GRN_TEXT_PUTS(ctx, buf, " sources:[");
-  int i;
+  size_t i;
   for (i = 0; i < n; i++) {
     grn_id source_id;
     grn_obj *source;
@@ -802,7 +802,7 @@ grn_table_ids_and_values_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     grn_text_lltoa(ctx, buf, id);
     GRN_TEXT_PUTS(ctx, buf, ":");
     value_size = grn_table_cursor_get_value(ctx, cursor, &value_buffer);
-    grn_bulk_write_from(ctx, &value, value_buffer, 0, value_size);
+    grn_bulk_write_from(ctx, &value, value_buffer, 0, (size_t)value_size);
     grn_inspect(ctx, buf, &value);
   } GRN_TABLE_EACH_END(ctx, cursor);
   GRN_TEXT_PUTS(ctx, buf, "\n]");
@@ -1513,7 +1513,7 @@ grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
   if (GRN_TEXT_LEN(&sub_buffer) > max_size) {
     GRN_TEXT_PUT(ctx, buffer, GRN_TEXT_VALUE(&sub_buffer), max_size);
     GRN_TEXT_PUTS(ctx, buffer, "...(");
-    grn_text_lltoa(ctx, buffer, GRN_TEXT_LEN(&sub_buffer));
+    grn_text_ulltoa(ctx, buffer, GRN_TEXT_LEN(&sub_buffer));
     GRN_TEXT_PUTS(ctx, buffer, ")");
   } else {
     GRN_TEXT_PUT(ctx,
@@ -1703,5 +1703,5 @@ grn_tokenize(const char *str, size_t str_len,
     }
   }
   if (rest) { *rest = str; }
-  return tok - tokbuf;
+  return (int)(tok - tokbuf);
 }
