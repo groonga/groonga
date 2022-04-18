@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -32,7 +33,7 @@ command_lock_clear(grn_ctx *ctx,
   grn_obj *obj;
 
   target_name = grn_plugin_proc_get_var(ctx, user_data, "target_name", -1);
-  target_name_len = GRN_TEXT_LEN(target_name);
+  target_name_len = (int)GRN_TEXT_LEN(target_name);
 
   if (target_name_len) {
     obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(target_name), target_name_len);
@@ -91,7 +92,7 @@ command_lock_acquire(grn_ctx *ctx,
   grn_obj *obj;
 
   target_name = grn_plugin_proc_get_var(ctx, user_data, "target_name", -1);
-  target_name_len = GRN_TEXT_LEN(target_name);
+  target_name_len = (int)GRN_TEXT_LEN(target_name);
 
   if (target_name_len) {
     obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(target_name), target_name_len);
@@ -136,7 +137,7 @@ command_lock_release(grn_ctx *ctx,
   grn_obj *obj;
 
   target_name = grn_plugin_proc_get_var(ctx, user_data, "target_name", -1);
-  target_name_len = GRN_TEXT_LEN(target_name);
+  target_name_len = (int)GRN_TEXT_LEN(target_name);
 
   if (target_name_len) {
     obj = grn_ctx_get(ctx, GRN_TEXT_VALUE(target_name), target_name_len);
