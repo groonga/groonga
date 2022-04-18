@@ -135,14 +135,16 @@ grn_window_function_executor_fin(grn_ctx *ctx,
     GRN_FREE(executor->context.window_sort_keys);
   }
   if (executor->context.group_keys) {
-    grn_table_sort_key_close(ctx,
-                             executor->context.group_keys,
-                             executor->context.n_group_keys);
+    grn_table_sort_key_close(
+      ctx,
+      executor->context.group_keys,
+      static_cast<uint32_t>(executor->context.n_group_keys));
   }
   if (executor->context.sort_keys) {
-    grn_table_sort_key_close(ctx,
-                             executor->context.sort_keys,
-                             executor->context.n_sort_keys);
+    grn_table_sort_key_close(
+      ctx,
+      executor->context.sort_keys,
+      static_cast<uint32_t>(executor->context.n_sort_keys));
   }
 
   GRN_OBJ_FIN(ctx, &(executor->output_column_name));
@@ -811,11 +813,12 @@ grn_window_function_executor_execute_per_table(
     grn_table_sort_key *sort_keys = NULL;
     if (GRN_TEXT_LEN(&(executor->sort_keys)) > 0) {
       sort_keys =
-        grn_table_sort_key_from_str(ctx,
-                                    GRN_TEXT_VALUE(&(executor->sort_keys)),
-                                    GRN_TEXT_LEN(&(executor->sort_keys)),
-                                    table,
-                                    &n_sort_keys);
+        grn_table_sort_key_from_str(
+          ctx,
+          GRN_TEXT_VALUE(&(executor->sort_keys)),
+          static_cast<unsigned int>(GRN_TEXT_LEN(&(executor->sort_keys))),
+          table,
+          &n_sort_keys);
       if (!sort_keys) {
         ERR(ctx->rc,
             "%.*s%s failed to parse sort keys: <%.*s>",
@@ -827,9 +830,10 @@ grn_window_function_executor_execute_per_table(
         return;
       }
       if (executor->context.sort_keys) {
-        grn_table_sort_key_close(ctx,
-                                 executor->context.sort_keys,
-                                 executor->context.n_sort_keys);
+        grn_table_sort_key_close(
+          ctx,
+          executor->context.sort_keys,
+          static_cast<uint32_t>(executor->context.n_sort_keys));
       }
       executor->context.sort_keys = sort_keys;
       executor->context.n_sort_keys = n_sort_keys;
@@ -839,11 +843,12 @@ grn_window_function_executor_execute_per_table(
     grn_table_sort_key *group_keys = NULL;
     if (GRN_TEXT_LEN(&(executor->group_keys)) > 0) {
       group_keys =
-        grn_table_sort_key_from_str(ctx,
-                                    GRN_TEXT_VALUE(&(executor->group_keys)),
-                                    GRN_TEXT_LEN(&(executor->group_keys)),
-                                    table,
-                                    &n_group_keys);
+        grn_table_sort_key_from_str(
+          ctx,
+          GRN_TEXT_VALUE(&(executor->group_keys)),
+          static_cast<unsigned int>(GRN_TEXT_LEN(&(executor->group_keys))),
+          table,
+          &n_group_keys);
       if (!group_keys) {
         ERR(ctx->rc,
             "%.*s%s failed to parse group keys: <%.*s>",
@@ -855,9 +860,10 @@ grn_window_function_executor_execute_per_table(
         return;
       }
       if (executor->context.group_keys) {
-        grn_table_sort_key_close(ctx,
-                                 executor->context.group_keys,
-                                 executor->context.n_group_keys);
+        grn_table_sort_key_close(
+          ctx,
+          executor->context.group_keys,
+          static_cast<uint32_t>(executor->context.n_group_keys));
       }
       executor->context.group_keys = group_keys;
       executor->context.n_group_keys = n_group_keys;
@@ -927,7 +933,7 @@ grn_window_function_executor_execute_per_table(
                    0, -1,
                    sorted,
                    window_sort_keys,
-                   n_window_sort_keys);
+                   static_cast<int>(n_window_sort_keys));
 
     grn_window_set_is_sorted(ctx, &(executor->window), n_sort_keys > 0);
     if (n_group_keys > 0) {
@@ -1085,10 +1091,11 @@ grn_window_function_executor_execute(grn_ctx *ctx,
 
   for (size_t i = 0; i < n_tables; i++) {
     grn_obj *table = GRN_PTR_VALUE_AT(&(executor->tables), i);
-    grn_obj *output_column = grn_obj_column(ctx,
-                                            table,
-                                            GRN_TEXT_VALUE(output_column_name),
-                                            GRN_TEXT_LEN(output_column_name));
+    grn_obj *output_column =
+      grn_obj_column(ctx,
+                     table,
+                     GRN_TEXT_VALUE(output_column_name),
+                     static_cast<uint32_t>(GRN_TEXT_LEN(output_column_name)));
     if (!output_column) {
       char table_name[GRN_TABLE_MAX_KEY_SIZE];
       int table_name_size;
@@ -1098,7 +1105,7 @@ grn_window_function_executor_execute(grn_ctx *ctx,
                                      GRN_TABLE_MAX_KEY_SIZE);
       if (table_name_size == 0) {
         grn_strcpy(table_name, GRN_TABLE_MAX_KEY_SIZE, "(anonymous)");
-        table_name_size = strlen(table_name);
+        table_name_size = static_cast<int>(strlen(table_name));
       }
       ERR(GRN_INVALID_ARGUMENT,
           "%.*s%s output column doesn't exist: <%.*s>: <%.*s>",
@@ -1132,7 +1139,7 @@ grn_window_function_executor_execute(grn_ctx *ctx,
     grn_expr_parse(ctx,
                    window_function_call,
                    GRN_TEXT_VALUE(source),
-                   GRN_TEXT_LEN(source),
+                   static_cast<unsigned int>(GRN_TEXT_LEN(source)),
                    NULL,
                    GRN_OP_MATCH,
                    GRN_OP_AND,
