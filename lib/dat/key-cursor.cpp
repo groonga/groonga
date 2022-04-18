@@ -1,4 +1,6 @@
-/* Copyright(C) 2011 Brazil
+/*
+  Copyright (C) 2011  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -162,7 +164,7 @@ void KeyCursor::ascending_init(const String &min_str, const String &max_str) {
 
     node_id = node.offset() ^ min_str[i];
     if (trie_->ith_node(node_id).label() != min_str[i]) {
-      UInt16 label = node.child();
+      UInt32 label = node.child();
       if (label == TERMINAL_LABEL) {
         label = trie_->ith_node(node.offset() ^ label).sibling();
       }
@@ -191,7 +193,7 @@ void KeyCursor::ascending_init(const String &min_str, const String &max_str) {
     buf_.push_back(node_id ^ node.label() ^ node.sibling());
   }
 
-  UInt16 label = node.child();
+  UInt32 label = node.child();
   if ((label == TERMINAL_LABEL) &&
       ((flags_ & EXCEPT_LOWER_BOUND) == EXCEPT_LOWER_BOUND)) {
     label = trie_->ith_node(node.offset() ^ label).sibling();
@@ -260,7 +262,7 @@ void KeyCursor::descending_init(const String &min_str, const String &max_str) {
     return;
   }
 
-  UInt16 label = trie_->ith_node(node_id).child();
+  UInt32 label = trie_->ith_node(node_id).child();
   if ((label == TERMINAL_LABEL) &&
       ((flags_ & EXCEPT_UPPER_BOUND) != EXCEPT_UPPER_BOUND)) {
     buf_.push_back((base.offset() ^ label) | POST_ORDER_FLAG);
@@ -334,7 +336,7 @@ const Key &KeyCursor::descending_next() {
       }
     } else {
       buf_.back() |= POST_ORDER_FLAG;
-      UInt16 label = trie_->ith_node(node_id).child();
+      UInt32 label = trie_->ith_node(node_id).child();
       while (label != INVALID_LABEL) {
         buf_.push_back(base.offset() ^ label);
         label = trie_->ith_node(base.offset() ^ label).sibling();
