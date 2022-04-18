@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2016 Brazil
+  Copyright (C) 2016  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -37,7 +38,7 @@ command_config_get(grn_ctx *ctx,
   }
 
   grn_config_get(ctx,
-                 GRN_TEXT_VALUE(key), GRN_TEXT_LEN(key),
+                 GRN_TEXT_VALUE(key), (int32_t)GRN_TEXT_LEN(key),
                  &value, &value_size);
   if (ctx->rc) {
     return NULL;
@@ -66,8 +67,8 @@ command_config_set(grn_ctx *ctx,
 
   value = grn_plugin_proc_get_var(ctx, user_data, "value", -1);
   grn_config_set(ctx,
-                 GRN_TEXT_VALUE(key), GRN_TEXT_LEN(key),
-                 GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value));
+                 GRN_TEXT_VALUE(key), (int32_t)GRN_TEXT_LEN(key),
+                 GRN_TEXT_VALUE(value), (int32_t)GRN_TEXT_LEN(value));
 
   grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
 
@@ -89,8 +90,7 @@ command_config_delete(grn_ctx *ctx,
     return NULL;
   }
 
-  grn_config_delete(ctx,
-                    GRN_TEXT_VALUE(key), GRN_TEXT_LEN(key));
+  grn_config_delete(ctx, GRN_TEXT_VALUE(key), (int32_t)GRN_TEXT_LEN(key));
 
   grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
 
