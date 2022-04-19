@@ -392,8 +392,24 @@ object_list
       "path": "functions/vector.so",
       "plugin_id": 2
     },
-    "Users": {
+    "vector_join": {
       "id": 260,
+      "name": "vector_join",
+      "opened": true,
+      "n_elements": 4,
+      "type": {
+        "id": 33,
+        "name": "proc"
+      },
+      "flags": {
+        "value": 4096,
+        "names": "CUSTOM_NAME"
+      },
+      "path": "functions/vector.so",
+      "plugin_id": 2
+    },
+    "Users": {
+      "id": 261,
       "name": "Users",
       "opened": true,
       "n_elements": 6,
@@ -405,7 +421,7 @@ object_list
         "value": 49154,
         "names": "TABLE_DAT_KEY|PERSISTENT"
       },
-      "path": "db/db.0000104",
+      "path": "db/db.0000105",
       "range": {
         "id": 0,
         "name": null
@@ -415,7 +431,7 @@ object_list
       ]
     },
     "Users.description": {
-      "id": 261,
+      "id": 262,
       "name": "Users.description",
       "opened": false,
       "n_elements": 4,
@@ -427,14 +443,14 @@ object_list
         "value": 49152,
         "names": "COLUMN_SCALAR|PERSISTENT"
       },
-      "path": "db/db.0000105",
+      "path": "db/db.0000106",
       "range": {
         "id": 14,
         "name": "ShortText"
       }
     },
     "Users.tags": {
-      "id": 262,
+      "id": 263,
       "name": "Users.tags",
       "opened": true,
       "n_elements": 4,
@@ -446,14 +462,14 @@ object_list
         "value": 49153,
         "names": "COLUMN_VECTOR|PERSISTENT"
       },
-      "path": "db/db.0000106",
+      "path": "db/db.0000107",
       "range": {
         "id": 14,
         "name": "ShortText"
       }
     },
     "Terms": {
-      "id": 263,
+      "id": 264,
       "name": "Terms",
       "opened": false,
       "n_elements": 6,
@@ -465,7 +481,7 @@ object_list
         "value": 49153,
         "names": "TABLE_PAT_KEY|PERSISTENT"
       },
-      "path": "db/db.0000107",
+      "path": "db/db.0000108",
       "range": {
         "id": 0,
         "name": null
@@ -475,7 +491,7 @@ object_list
       ]
     },
     "Terms.users": {
-      "id": 264,
+      "id": 265,
       "name": "Terms.users",
       "opened": false,
       "n_elements": 4,
@@ -487,24 +503,24 @@ object_list
         "value": 33410,
         "names": "COLUMN_INDEX|WITH_SECTION|WITH_POSITION|PERSISTENT"
       },
-      "path": "db/db.0000108",
+      "path": "db/db.0000109",
       "range": {
-        "id": 260,
+        "id": 261,
         "name": "Users"
       },
       "sources": [
         {
-          "id": 260,
+          "id": 261,
           "name": "Users"
         },
         {
-          "id": 261,
+          "id": 262,
           "name": "Users.description"
         }
       ]
     },
     "Tags": {
-      "id": 265,
+      "id": 266,
       "name": "Tags",
       "opened": true,
       "n_elements": 6,
@@ -516,7 +532,7 @@ object_list
         "value": 49152,
         "names": "TABLE_HASH_KEY|PERSISTENT"
       },
-      "path": "db/db.0000109",
+      "path": "db/db.000010A",
       "range": {
         "id": 0,
         "name": null
@@ -526,7 +542,7 @@ object_list
       ]
     },
     "Tags.users": {
-      "id": 266,
+      "id": 267,
       "name": "Tags.users",
       "opened": true,
       "n_elements": 4,
@@ -538,14 +554,14 @@ object_list
         "value": 32770,
         "names": "COLUMN_INDEX|PERSISTENT"
       },
-      "path": "db/db.000010A",
+      "path": "db/db.000010B",
       "range": {
-        "id": 260,
+        "id": 261,
         "name": "Users"
       },
       "sources": [
         {
-          "id": 262,
+          "id": 263,
           "name": "Users.tags"
         }
       ]
