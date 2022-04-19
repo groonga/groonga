@@ -1,0 +1,14 @@
+plugin_register functions/vector
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos numbers COLUMN_VECTOR UInt32
+
+load --table Memos
+[
+{"_key": "Groonga", "numbers": [29]},
+{"_key": "Rroonga", "numbers": [11, 29]},
+{"_key": "Nothing"}
+]
+
+select Memos \
+  --output_columns 'numbers, vector_join(numbers)'

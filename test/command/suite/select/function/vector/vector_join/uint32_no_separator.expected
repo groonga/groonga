@@ -1,0 +1,57 @@
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos numbers COLUMN_VECTOR UInt32
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga", "numbers": [29]},
+{"_key": "Rroonga", "numbers": [11, 29]},
+{"_key": "Nothing"}
+]
+[[0,0.0,0.0],3]
+select Memos   --output_columns 'numbers, vector_join(numbers)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "numbers",
+          "UInt32"
+        ],
+        [
+          "vector_join",
+          null
+        ]
+      ],
+      [
+        [
+          29
+        ],
+        "29"
+      ],
+      [
+        [
+          11,
+          29
+        ],
+        "1129"
+      ],
+      [
+        [
+
+        ],
+        ""
+      ]
+    ]
+  ]
+]

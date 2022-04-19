@@ -1,0 +1,58 @@
+plugin_register functions/vector
+[[0,0.0,0.0],true]
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga", "tags": {"Groonga": 100}},
+{"_key": "Rroonga", "tags": {"Groonga": 10, "Ruby": 90}},
+{"_key": "Nothing"}
+]
+[[0,0.0,0.0],3]
+select Memos   --output_columns 'tags, vector_join(tags)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "tags",
+          "Tags"
+        ],
+        [
+          "vector_join",
+          null
+        ]
+      ],
+      [
+        {
+          "Groonga": 100
+        },
+        "Groonga"
+      ],
+      [
+        {
+          "Groonga": 10,
+          "Ruby": 90
+        },
+        "GroongaRuby"
+      ],
+      [
+        {
+        },
+        ""
+      ]
+    ]
+  ]
+]

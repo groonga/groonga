@@ -674,6 +674,98 @@ func_vector_find(grn_ctx *ctx, int n_args, grn_obj **args,
   return found_element;
 }
 
+static grn_obj *
+func_vector_join(grn_ctx *ctx, int n_args, grn_obj **args,
+                 grn_user_data *user_data)
+{
+  const char *context = "vector_join()";
+  grn_obj *target;
+  grn_obj *separator = NULL;
+
+  if (n_args < 1 || n_args > 2) {
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s: wrong number of arguments (%d for 1..2)",
+                     context,
+                     n_args);
+    return NULL;
+  }
+
+  target = args[0];
+  if (n_args == 2) {
+    separator = args[1];
+  }
+
+  switch (target->header.type) {
+  case GRN_VECTOR :
+  case GRN_UVECTOR :
+  case GRN_PVECTOR :
+    break;
+  default :
+    {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, target, &inspected);
+      GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                       "%s: target object must be vector: <%.*s>",
+                       context,
+                       (int)GRN_TEXT_LEN(&inspected),
+                       GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+    }
+    return NULL;
+  }
+
+  if (separator && !grn_obj_is_text_family_bulk(ctx, separator)) {
+    grn_obj inspected;
+    GRN_TEXT_INIT(&inspected, 0);
+    grn_inspect(ctx, separator, &inspected);
+    GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
+                     "%s: separator must be text family bulk: <%.*s>",
+                     context,
+                     (int)GRN_TEXT_LEN(&inspected),
+                     GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    return NULL;
+  }
+
+  grn_obj *joined_target = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_TEXT, 0);
+  if (!joined_target) {
+    return NULL;
+  }
+  const char *separator_data = NULL;
+  size_t separator_length = 0;
+  if (separator) {
+    separator_data = GRN_TEXT_VALUE(separator);
+    separator_length = GRN_TEXT_LEN(separator);
+  }
+  switch (target->header.type) {
+  case GRN_VECTOR :
+    grn_vector_join(ctx,
+                    target,
+                    separator_data,
+                    (int)separator_length,
+                    joined_target);
+    break;
+  case GRN_UVECTOR :
+    grn_uvector_join(ctx,
+                     target,
+                     separator_data,
+                     (int)separator_length,
+                     joined_target);
+    break;
+  case GRN_PVECTOR :
+    grn_pvector_join(ctx,
+                     target,
+                     separator_data,
+                     (int)separator_length,
+                     joined_target);
+    break;
+  default :
+    break;
+  }
+  return joined_target;
+}
+
 grn_rc
 GRN_PLUGIN_INIT(grn_ctx *ctx)
 {
@@ -695,6 +787,9 @@ GRN_PLUGIN_REGISTER(grn_ctx *ctx)
                   NULL, NULL, 0, NULL);
 
   grn_proc_create(ctx, "vector_find", -1, GRN_PROC_FUNCTION, func_vector_find,
+                  NULL, NULL, 0, NULL);
+
+  grn_proc_create(ctx, "vector_join", -1, GRN_PROC_FUNCTION, func_vector_join,
                   NULL, NULL, 0, NULL);
 
   return rc;
