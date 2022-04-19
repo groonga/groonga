@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015-2018 Brazil
+  Copyright (C) 2015-2018  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -579,7 +580,6 @@ func_vector_find_pvector(grn_ctx *ctx,
 {
   grn_obj *found_element = NULL;
   grn_operator_exec_func *exec;
-  grn_obj **elements;
   unsigned int i;
   unsigned int n_elements = 0;
 
@@ -590,10 +590,9 @@ func_vector_find_pvector(grn_ctx *ctx,
                      grn_operator_to_string(mode));
     return NULL;
   }
-  elements = (grn_obj **)GRN_BULK_HEAD(target);
-  n_elements = sizeof(grn_id) / GRN_BULK_VSIZE(target);
+  n_elements = GRN_PTR_VECTOR_SIZE(target);
   for (i = 0; i < n_elements; i++) {
-    grn_obj *element = elements[i];
+    grn_obj *element = GRN_PTR_VALUE_AT(target, i);
     if (exec(ctx, element, query)) {
       found_element =
         grn_plugin_proc_alloc(ctx, user_data, element->header.domain, 0);
