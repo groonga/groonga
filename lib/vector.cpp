@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2018  Brazil
-  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018  Brazil
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -586,6 +586,58 @@ extern "C" {
     GRN_API_RETURN(ctx->rc);
   }
 
+  grn_obj *
+  grn_vector_join(grn_ctx *ctx,
+                  grn_obj *vector,
+                  const char *separator,
+                  int separator_length,
+                  grn_obj *destination)
+  {
+    GRN_API_ENTER;
+    if (!vector) {
+      ERR(GRN_INVALID_ARGUMENT, "[vector][join] vector is NULL");
+      GRN_API_RETURN(NULL);
+    }
+    if (vector->header.type != GRN_VECTOR) {
+      grn_obj type_name;
+      GRN_TEXT_INIT(&type_name, 0);
+      grn_inspect_type(ctx, &type_name, vector->header.type);
+      ERR(GRN_INVALID_ARGUMENT, "[vector][join] must be GRN_UVECTOR: %.*s",
+          (int)GRN_TEXT_LEN(&type_name), GRN_TEXT_VALUE(&type_name));
+      GRN_OBJ_FIN(ctx, &type_name);
+      GRN_API_RETURN(NULL);
+    }
+    if (separator_length < 0) {
+      separator_length = (int)strlen(separator);
+    }
+    if (!destination) {
+      destination = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
+    }
+    uint32_t n_elements = grn_vector_size(ctx, vector);
+    uint32_t i;
+    grn_obj element;
+    GRN_TEXT_INIT(&element, GRN_OBJ_DO_SHALLOW_COPY);
+    for (i = 0; i < n_elements; i++) {
+      if (i > 0 && separator_length > 0) {
+        GRN_TEXT_PUT(ctx, destination, separator, separator_length);
+      }
+      const char *content;
+      grn_id domain;
+      uint32_t content_size = grn_vector_get_element_float(ctx,
+                                                           vector,
+                                                           i,
+                                                           &content,
+                                                           NULL,
+                                                           &domain);
+      GRN_TEXT_SET(ctx, &element, content, content_size);
+      element.header.domain = domain;
+      grn_obj_cast(ctx, &element, destination, false);
+      element.header.domain = GRN_DB_TEXT;
+    }
+    GRN_OBJ_FIN(ctx, &element);
+    GRN_API_RETURN(destination);
+  }
+
   uint32_t
   grn_uvector_size(grn_ctx *ctx, grn_obj *uvector)
   {
@@ -766,5 +818,96 @@ extern "C" {
     }
     grn_bulk_write(ctx, dest, GRN_BULK_HEAD(src), GRN_BULK_VSIZE(src));
     GRN_API_RETURN(ctx->rc);
+  }
+
+  grn_obj *
+  grn_uvector_join(grn_ctx *ctx,
+                   grn_obj *uvector,
+                   const char *separator,
+                   int separator_length,
+                   grn_obj *destination)
+  {
+    GRN_API_ENTER;
+    if (!uvector) {
+      ERR(GRN_INVALID_ARGUMENT, "[uvector][join] uvector is NULL");
+      GRN_API_RETURN(NULL);
+    }
+    if (uvector->header.type != GRN_UVECTOR) {
+      grn_obj type_name;
+      GRN_TEXT_INIT(&type_name, 0);
+      grn_inspect_type(ctx, &type_name, uvector->header.type);
+      ERR(GRN_INVALID_ARGUMENT, "[uvector][join] must be GRN_UVECTOR: %.*s",
+          (int)GRN_TEXT_LEN(&type_name), GRN_TEXT_VALUE(&type_name));
+      GRN_OBJ_FIN(ctx, &type_name);
+      GRN_API_RETURN(NULL);
+    }
+    if (separator_length < 0) {
+      separator_length = (int)strlen(separator);
+    }
+    if (!destination) {
+      destination = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
+    }
+    uint32_t element_size = grn_uvector_element_size_internal(ctx, uvector);
+    uint32_t element_content_size = element_size;
+    if (grn_obj_is_weight_uvector(ctx, uvector)) {
+      element_content_size -= sizeof(float);
+    }
+    uint32_t n_elements = grn_uvector_size_internal(ctx, uvector);
+    uint32_t i;
+    grn_obj element;
+    GRN_VALUE_FIX_SIZE_INIT(&element,
+                            GRN_OBJ_DO_SHALLOW_COPY,
+                            uvector->header.domain);
+    for (i = 0; i < n_elements; i++) {
+      if (i > 0 && separator_length > 0) {
+        GRN_TEXT_PUT(ctx, destination, separator, separator_length);
+      }
+      GRN_TEXT_SET(ctx,
+                   &element,
+                   GRN_BULK_HEAD(uvector) + (element_size * i),
+                   element_content_size);
+      grn_obj_cast(ctx, &element, destination, false);
+    }
+    GRN_OBJ_FIN(ctx, &element);
+    GRN_API_RETURN(destination);
+  }
+
+  grn_obj *
+  grn_pvector_join(grn_ctx *ctx,
+                   grn_obj *pvector,
+                   const char *separator,
+                   int separator_length,
+                   grn_obj *destination)
+  {
+    GRN_API_ENTER;
+    if (!pvector) {
+      ERR(GRN_INVALID_ARGUMENT, "[pvector][join] pvector is NULL");
+      GRN_API_RETURN(NULL);
+    }
+    if (pvector->header.type != GRN_PVECTOR) {
+      grn_obj type_name;
+      GRN_TEXT_INIT(&type_name, 0);
+      grn_inspect_type(ctx, &type_name, pvector->header.type);
+      ERR(GRN_INVALID_ARGUMENT, "[pvector][join] must be GRN_PVECTOR: %.*s",
+          (int)GRN_TEXT_LEN(&type_name), GRN_TEXT_VALUE(&type_name));
+      GRN_OBJ_FIN(ctx, &type_name);
+      GRN_API_RETURN(NULL);
+    }
+    if (separator_length < 0) {
+      separator_length = (int)strlen(separator);
+    }
+    if (!destination) {
+      destination = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
+    }
+    size_t n_elements = GRN_PTR_VECTOR_SIZE(pvector);
+    size_t i;
+    for (i = 0; i < n_elements; i++) {
+      if (i > 0 && separator_length > 0) {
+        GRN_TEXT_PUT(ctx, destination, separator, separator_length);
+      }
+      grn_obj *element = GRN_PTR_VALUE_AT(pvector, i);
+      grn_obj_cast(ctx, element, destination, false);
+    }
+    GRN_API_RETURN(destination);
   }
 }

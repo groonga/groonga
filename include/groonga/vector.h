@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -111,6 +111,12 @@ GRN_API grn_rc grn_vector_copy(grn_ctx *ctx,
                                grn_obj *src,
                                grn_obj *dest);
 
+GRN_API grn_obj *grn_vector_join(grn_ctx *ctx,
+                                 grn_obj *vector,
+                                 const char *separator,
+                                 int separator_length,
+                                 grn_obj *destination);
+
 GRN_API uint32_t grn_uvector_size(grn_ctx *ctx, grn_obj *uvector);
 GRN_API uint32_t grn_uvector_element_size(grn_ctx *ctx, grn_obj *uvector);
 
@@ -135,6 +141,18 @@ GRN_API grn_id grn_uvector_get_element_record(grn_ctx *ctx,
 GRN_API grn_rc grn_uvector_copy(grn_ctx *ctx,
                                 grn_obj *src,
                                 grn_obj *dest);
+
+GRN_API grn_obj *grn_uvector_join(grn_ctx *ctx,
+                                  grn_obj *uvector,
+                                  const char *separator,
+                                  int separator_length,
+                                  grn_obj *destination);
+
+GRN_API grn_obj *grn_pvector_join(grn_ctx *ctx,
+                                  grn_obj *pvector,
+                                  const char *separator,
+                                  int separator_length,
+                                  grn_obj *destination);
 
 #ifdef __cplusplus
 }
