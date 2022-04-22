@@ -18,7 +18,13 @@ module Groonga
       rewritten = nil
       begin
         source = self
-        ExpressionRewriters.classes.each do |rewriter_class|
+        classes = ExpressionRewriters.classes
+        # This is a little optimization for the current mruby
+        # implementation. Array#each allocates one memory even when
+        # the array is empty. This line avoids the memory allocation.
+        # We can confirm it by checking grn_alloc_count() value.
+        return nil if classes.empty?
+        classes.each do |rewriter_class|
           rewriter = rewriter_class.new(source)
           new_rewritten = rewriter.rewrite
           if new_rewritten
