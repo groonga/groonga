@@ -1916,9 +1916,11 @@ grn_pat_add_internal_find(grn_ctx *ctx,
                       data->wal_data.tag,
                       "BUG: computed check is too large: "
                       "check:%u "
-                      "check_max:%u",
+                      "check_max:%u "
+                      "key_size:%u",
                       check,
-                      check_max);
+                      check_max,
+                      key_size);
     return false;
   }
   data->last_id_location = id_location;
