@@ -1,0 +1,6 @@
+table_create Data TABLE_PAT_KEY ShortText
+
+#@generate-series 0 1 Data '{"_key" => "a" * 4096}'
+#@generate-series 0 1 Data '{"_key" => "b" * 4096}'
+
+select Data

@@ -1735,7 +1735,7 @@ typedef struct {
   uint32_t cache_id;
   grn_id found_id;
   grn_id *last_id_location;
-  uint16_t check_max;
+  int32_t check_max;
 } grn_pat_add_data;
 
 grn_inline static bool
@@ -1745,7 +1745,7 @@ grn_pat_add_internal_find(grn_ctx *ctx,
   grn_pat *pat = data->wal_data.pat;
   const uint8_t *key = data->wal_data.key;
   uint32_t key_size = data->wal_data.key_size;
-  uint16_t check_max = data->check_max;
+  int32_t check_max = data->check_max;
 
   grn_id id = GRN_ID_NIL;
   pat_node *node;
@@ -1840,7 +1840,7 @@ grn_pat_add_internal_find(grn_ctx *ctx,
     }
   }
 
-  uint16_t check;
+  int32_t check;
   {
     uint32_t min = key_size > found_key_size ? found_key_size : key_size;
     uint16_t byte_differences = 0;
