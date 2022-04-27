@@ -28,8 +28,8 @@ static grn_obj *
 snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *target,
              grn_obj *default_return_value,
              grn_user_data *user_data,
-             const char *prefix, int prefix_length,
-             const char *suffix, int suffix_length)
+             const char *prefix, size_t prefix_length,
+             const char *suffix, size_t suffix_length)
 {
   uint32_t n_texts = 0;
   bool is_vector = false;
@@ -96,9 +96,9 @@ snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *target,
     }
 
     grn_bulk_space(ctx, &snippet_buffer,
-                   (size_t)prefix_length +
+                   prefix_length +
                    max_tagged_length +
-                   (size_t)suffix_length);
+                   suffix_length);
     for (i = 0; i < n_results; i++) {
       unsigned int snippet_length;
 
@@ -115,7 +115,7 @@ snippet_exec(grn_ctx *ctx, grn_obj *snip, grn_obj *target,
       grn_strncat(GRN_TEXT_VALUE(&snippet_buffer),
                   GRN_BULK_WSIZE(&snippet_buffer),
                   suffix,
-                  (size_t)suffix_length);
+                  suffix_length);
       grn_vector_add_element(ctx, snippets,
                              GRN_TEXT_VALUE(&snippet_buffer),
                              (uint32_t)prefix_length +
@@ -171,14 +171,14 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     snip_ptr = grn_expr_get_var(ctx,
                                 expression,
                                 GRN_TEXT_VALUE(&cache_key),
-                                GRN_TEXT_LEN(&cache_key));
+                                (unsigned int)GRN_TEXT_LEN(&cache_key));
     if (snip_ptr) {
       snip = GRN_PTR_VALUE(snip_ptr);
     } else {
       snip_ptr = grn_expr_get_or_add_var(ctx,
                                          expression,
                                          GRN_TEXT_VALUE(&cache_key),
-                                         GRN_TEXT_LEN(&cache_key));
+                                         (unsigned int)GRN_TEXT_LEN(&cache_key));
       if (ctx->rc != GRN_SUCCESS) {
         goto exit;
       }
@@ -188,8 +188,8 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
 
   grn_obj *end_arg = args[nargs - 1];
-  int64_t width = 200;
-  int64_t max_n_results = 3;
+  uint32_t width = 200;
+  uint32_t max_n_results = 3;
   bool skip_leading_spaces = true;
   bool html_escape = false;
   grn_obj *prefix = NULL;
@@ -208,10 +208,10 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                                        options,
                                        tag,
                                        "width",
-                                       GRN_PROC_OPTION_VALUE_INT64,
+                                       GRN_PROC_OPTION_VALUE_UINT32,
                                        &width,
                                        "max_n_results",
-                                       GRN_PROC_OPTION_VALUE_INT64,
+                                       GRN_PROC_OPTION_VALUE_UINT32,
                                        &max_n_results,
                                        "skip_leading_spaces",
                                        GRN_PROC_OPTION_VALUE_BOOL,
@@ -263,10 +263,14 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
                          flags,
                          width,
                          max_n_results,
-                         default_open_tag ? GRN_TEXT_VALUE(default_open_tag) : NULL,
-                         default_open_tag ? GRN_TEXT_LEN(default_open_tag) : 0,
-                         default_close_tag ? GRN_TEXT_VALUE(default_close_tag) : NULL,
-                         default_close_tag ? GRN_TEXT_LEN(default_close_tag) : 0,
+                         default_open_tag ?
+                           GRN_TEXT_VALUE(default_open_tag) : NULL,
+                         default_open_tag ?
+                           (unsigned int)GRN_TEXT_LEN(default_open_tag) : 0,
+                         default_close_tag ?
+                           GRN_TEXT_VALUE(default_close_tag) : NULL,
+                         default_close_tag ?
+                           (unsigned int)GRN_TEXT_LEN(default_close_tag) : 0,
                          mapping);
     if (!snip) {
       goto exit;
@@ -277,7 +281,7 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       grn_obj *normalizer;
       normalizer = grn_ctx_get(ctx,
                                GRN_TEXT_VALUE(normalizer_name),
-                               GRN_TEXT_LEN(normalizer_name));
+                               (int)GRN_TEXT_LEN(normalizer_name));
       if (!grn_obj_is_normalizer_proc(ctx, normalizer)) {
         grn_obj inspected;
         GRN_TEXT_INIT(&inspected, 0);
@@ -298,24 +302,27 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         (!default_close_tag || GRN_TEXT_LEN(default_close_tag) == 0)) {
       unsigned int i;
       unsigned int n_keyword_sets =
-        (n_args_without_option - N_REQUIRED_ARGS) / KEYWORD_SET_SIZE;
+        (unsigned int)((n_args_without_option - N_REQUIRED_ARGS) /
+                       KEYWORD_SET_SIZE);
       grn_obj **keyword_set_args = args + N_REQUIRED_ARGS;
       for (i = 0; i < n_keyword_sets; i++) {
         unsigned int index = i * KEYWORD_SET_SIZE;
-        grn_rc rc = grn_snip_add_cond(ctx,
-                                      snip,
-                                      GRN_TEXT_VALUE(keyword_set_args[index]),
-                                      GRN_TEXT_LEN(keyword_set_args[index]),
-                                      GRN_TEXT_VALUE(keyword_set_args[index + 1]),
-                                      GRN_TEXT_LEN(keyword_set_args[index + 1]),
-                                      GRN_TEXT_VALUE(keyword_set_args[index + 2]),
-                                      GRN_TEXT_LEN(keyword_set_args[index + 2]));
+        grn_rc rc =
+          grn_snip_add_cond(ctx,
+                            snip,
+                            GRN_TEXT_VALUE(keyword_set_args[index]),
+                            (unsigned int)GRN_TEXT_LEN(keyword_set_args[index]),
+                            GRN_TEXT_VALUE(keyword_set_args[index + 1]),
+                            (unsigned int)GRN_TEXT_LEN(keyword_set_args[index + 1]),
+                            GRN_TEXT_VALUE(keyword_set_args[index + 2]),
+                            (unsigned int)GRN_TEXT_LEN(keyword_set_args[index + 2]));
         if (rc != GRN_SUCCESS) {
           goto exit;
         }
       }
     } else {
-      unsigned int n_keywords = n_args_without_option - N_REQUIRED_ARGS;
+      unsigned int n_keywords =
+        (unsigned int)(n_args_without_option - N_REQUIRED_ARGS);
       if (n_keywords == 0) {
         grn_obj *condition = grn_expr_get_condition(ctx, expression);
         for (; condition; condition = grn_expr_get_parent(ctx, condition)) {
@@ -332,11 +339,12 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         unsigned int i;
         grn_obj **keyword_args = args + N_REQUIRED_ARGS;
         for (i = 0; i < n_keywords; i++) {
-          grn_rc rc = grn_snip_add_cond(ctx, snip,
-                                        GRN_TEXT_VALUE(keyword_args[i]),
-                                        GRN_TEXT_LEN(keyword_args[i]),
-                                        NULL, 0,
-                                        NULL, 0);
+          grn_rc rc =
+            grn_snip_add_cond(ctx, snip,
+                              GRN_TEXT_VALUE(keyword_args[i]),
+                              (unsigned int)GRN_TEXT_LEN(keyword_args[i]),
+                              NULL, 0,
+                              NULL, 0);
           if (rc != GRN_SUCCESS) {
             goto exit;
           }
@@ -347,7 +355,7 @@ func_snippet(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       grn_snip_set_delimiter_regexp(ctx,
                                     snip,
                                     GRN_TEXT_VALUE(delimiter_regexp),
-                                    GRN_TEXT_LEN(delimiter_regexp));
+                                    (int)GRN_TEXT_LEN(delimiter_regexp));
       if (ctx->rc != GRN_SUCCESS) {
         goto exit;
       }
@@ -454,8 +462,8 @@ func_snippet_html(grn_ctx *ctx, int nargs, grn_obj **args,
         GRN_PTR_INIT(snip_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
 
         snip = grn_snip_open(ctx, flags, width, max_n_results,
-                             open_tag, strlen(open_tag),
-                             close_tag, strlen(close_tag),
+                             open_tag, (unsigned int)strlen(open_tag),
+                             close_tag, (unsigned int)strlen(close_tag),
                              mapping);
         if (snip) {
           grn_snip_set_normalizer(ctx, snip, GRN_NORMALIZER_AUTO);
