@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -39,8 +39,8 @@ grn_pat_tag_keys_put_original_text(grn_ctx *ctx, grn_obj *output,
 static grn_rc
 grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
                  const char *string, unsigned int string_length,
-                 const char **open_tags, unsigned int *open_tag_lengths,
-                 const char **close_tags, unsigned int *close_tag_lengths,
+                 const char **open_tags, uint32_t *open_tag_lengths,
+                 const char **close_tags, uint32_t *close_tag_lengths,
                  unsigned int n_tags,
                  grn_obj *highlighted,
                  grn_bool use_html_escape)
@@ -49,9 +49,9 @@ grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
 #define MAX_N_HITS 16
     grn_pat_scan_hit hits[MAX_N_HITS];
     const char *rest;
-    unsigned int i, n_hits;
+    int i, n_hits;
     unsigned int previous = 0;
-    size_t chunk_length;
+    unsigned int chunk_length;
 
     n_hits = grn_pat_scan(ctx, (grn_pat *)keywords,
                           string, string_length,
@@ -78,7 +78,7 @@ grn_pat_tag_keys(grn_ctx *ctx, grn_obj *keywords,
       previous = hits[i].offset + hits[i].length;
     }
 
-    chunk_length = rest - string;
+    chunk_length = (unsigned int)(rest - string);
     if (chunk_length - previous > 0) {
       grn_pat_tag_keys_put_original_text(ctx,
                                          highlighted,
@@ -141,9 +141,9 @@ highlight_keyword_sets(grn_ctx *ctx, grn_user_data *user_data,
     n_keyword_sets = n_keyword_args / KEYWORD_SET_SIZE;
 
     GRN_OBJ_INIT(&open_tags, GRN_BULK, 0, GRN_DB_VOID);
-    GRN_OBJ_INIT(&open_tag_lengths, GRN_BULK, 0, GRN_DB_VOID);
+    GRN_UINT32_INIT(&open_tag_lengths, GRN_OBJ_VECTOR);
     GRN_OBJ_INIT(&close_tags, GRN_BULK, 0, GRN_DB_VOID);
-    GRN_OBJ_INIT(&close_tag_lengths, GRN_BULK, 0, GRN_DB_VOID);
+    GRN_UINT32_INIT(&close_tag_lengths, GRN_OBJ_VECTOR);
 
     for (i = 0; i < n_keyword_sets; i++) {
       grn_obj *keyword   = keyword_set_args[i * KEYWORD_SET_SIZE + 0];
@@ -152,7 +152,7 @@ highlight_keyword_sets(grn_ctx *ctx, grn_user_data *user_data,
 
       grn_table_add(ctx, keywords,
                     GRN_TEXT_VALUE(keyword),
-                    GRN_TEXT_LEN(keyword),
+                    (unsigned int)GRN_TEXT_LEN(keyword),
                     NULL);
       {
         const char *open_tag_content = GRN_TEXT_VALUE(open_tag);
@@ -160,33 +160,24 @@ highlight_keyword_sets(grn_ctx *ctx, grn_user_data *user_data,
                        (const char *)(&open_tag_content),
                        sizeof(char *));
       }
-      {
-        unsigned int open_tag_length = GRN_TEXT_LEN(open_tag);
-        grn_bulk_write(ctx, &open_tag_lengths,
-                       (const char *)(&open_tag_length),
-                       sizeof(unsigned int));
-      }
+      GRN_UINT32_PUT(ctx, &open_tag_lengths, GRN_TEXT_LEN(open_tag));
       {
         const char *close_tag_content = GRN_TEXT_VALUE(close_tag);
         grn_bulk_write(ctx, &close_tags,
                        (const char *)(&close_tag_content),
                        sizeof(char *));
       }
-      {
-        unsigned int close_tag_length = GRN_TEXT_LEN(close_tag);
-        grn_bulk_write(ctx, &close_tag_lengths,
-                       (const char *)(&close_tag_length),
-                       sizeof(unsigned int));
-      }
+      GRN_UINT32_PUT(ctx, &close_tag_lengths, GRN_TEXT_LEN(close_tag));
     }
 
     highlighted = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_TEXT, 0);
     grn_pat_tag_keys(ctx, keywords,
-                     GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
+                     GRN_TEXT_VALUE(string),
+                     (unsigned int)GRN_TEXT_LEN(string),
                      (const char **)GRN_BULK_HEAD(&open_tags),
-                     (unsigned int *)GRN_BULK_HEAD(&open_tag_lengths),
+                     (uint32_t *)GRN_BULK_HEAD(&open_tag_lengths),
                      (const char **)GRN_BULK_HEAD(&close_tags),
-                     (unsigned int *)GRN_BULK_HEAD(&close_tag_lengths),
+                     (uint32_t *)GRN_BULK_HEAD(&close_tag_lengths),
                      n_keyword_sets,
                      highlighted,
                      use_html_escape);
@@ -207,9 +198,9 @@ highlight_keywords(grn_ctx *ctx, grn_user_data *user_data,
 {
   grn_obj *highlighted = NULL;
   const char *open_tags[1];
-  unsigned int open_tag_lengths[1];
+  uint32_t open_tag_lengths[1];
   const char *close_tags[1];
-  unsigned int close_tag_lengths[1];
+  uint32_t close_tag_lengths[1];
   unsigned int n_keyword_sets = 1;
 
   open_tags[0] = default_open_tag;
@@ -219,7 +210,8 @@ highlight_keywords(grn_ctx *ctx, grn_user_data *user_data,
 
   highlighted = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_TEXT, 0);
   grn_pat_tag_keys(ctx, keywords,
-                   GRN_TEXT_VALUE(string), GRN_TEXT_LEN(string),
+                   GRN_TEXT_VALUE(string),
+                   (unsigned int)GRN_TEXT_LEN(string),
                    open_tags,
                    open_tag_lengths,
                    close_tags,
@@ -245,9 +237,9 @@ func_highlight(grn_ctx *ctx, int nargs, grn_obj **args,
     const char *normalizer_name = "NormalizerAuto";
     unsigned int normalizer_name_length = 14;
     const char *default_open_tag = NULL;
-    unsigned int default_open_tag_length = 0;
+    uint32_t default_open_tag_length = 0;
     const char *default_close_tag = NULL;
-    unsigned int default_close_tag_length = 0;
+    uint32_t default_close_tag_length = 0;
     grn_obj *end_arg = args[nargs - 1];
     int n_args_without_option = nargs;
 
@@ -272,17 +264,17 @@ func_highlight(grn_ctx *ctx, int nargs, grn_obj **args,
                                       (void **)&value);
         if (key_size == 10 && !memcmp(key, "normalizer", 10)) {
           normalizer_name = GRN_TEXT_VALUE(value);
-          normalizer_name_length = GRN_TEXT_LEN(value);
+          normalizer_name_length = (unsigned int)GRN_TEXT_LEN(value);
         } else if (key_size == 11 && !memcmp(key, "html_escape", 11)) {
           if (GRN_BOOL_VALUE(value)) {
             use_html_escape = GRN_TRUE;
           }
         } else if (key_size == 16 && !memcmp(key, "default_open_tag", 16)) {
           default_open_tag = GRN_TEXT_VALUE(value);
-          default_open_tag_length = GRN_TEXT_LEN(value);
+          default_open_tag_length = (uint32_t)GRN_TEXT_LEN(value);
         } else if (key_size == 17 && !memcmp(key, "default_close_tag", 17)) {
           default_close_tag = GRN_TEXT_VALUE(value);
-          default_close_tag_length = GRN_TEXT_LEN(value);
+          default_close_tag_length = (uint32_t)GRN_TEXT_LEN(value);
         } else {
           GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT, "invalid option name: <%.*s>",
                            key_size, (char *)key);
@@ -300,7 +292,8 @@ func_highlight(grn_ctx *ctx, int nargs, grn_obj **args,
 
     if (keywords) {
       grn_obj **keyword_args = args + N_REQUIRED_ARGS;
-      unsigned int n_keyword_args = n_args_without_option - N_REQUIRED_ARGS;
+      unsigned int n_keyword_args =
+        (unsigned int)(n_args_without_option - N_REQUIRED_ARGS);
       if (default_open_tag_length == 0 && default_close_tag_length == 0) {
         highlighted = highlight_keyword_sets(ctx, user_data,
                                              keyword_args, n_keyword_args,
@@ -310,7 +303,7 @@ func_highlight(grn_ctx *ctx, int nargs, grn_obj **args,
         for (i = 0; i < n_keyword_args; i++) {
           grn_table_add(ctx, keywords,
                         GRN_TEXT_VALUE(keyword_args[i]),
-                        GRN_TEXT_LEN(keyword_args[i]),
+                        (unsigned int)GRN_TEXT_LEN(keyword_args[i]),
                         NULL);
         }
         highlighted = highlight_keywords(ctx, user_data,
@@ -351,7 +344,8 @@ func_highlight_full(grn_ctx *ctx, int nargs, grn_obj **args,
     grn_obj *string = args[0];
     grn_obj *keywords;
     const char *normalizer_name = GRN_TEXT_VALUE(args[1]);
-    unsigned int normalizer_name_length = GRN_TEXT_LEN(args[1]);
+    unsigned int normalizer_name_length =
+      (unsigned int)GRN_TEXT_LEN(args[1]);
     grn_bool use_html_escape = GRN_BOOL_VALUE(args[2]);
 
     keywords =
@@ -359,11 +353,12 @@ func_highlight_full(grn_ctx *ctx, int nargs, grn_obj **args,
                                            normalizer_name,
                                            normalizer_name_length);
     if (keywords) {
-      highlighted = highlight_keyword_sets(ctx, user_data,
-                                           args + N_REQUIRED_ARGS,
-                                           nargs - N_REQUIRED_ARGS,
-                                           string, keywords,
-                                           use_html_escape);
+      highlighted =
+        highlight_keyword_sets(ctx, user_data,
+                               args + N_REQUIRED_ARGS,
+                               (unsigned int)(nargs - N_REQUIRED_ARGS),
+                               string, keywords,
+                               use_html_escape);
       grn_obj_unlink(ctx, keywords);
     }
   }
@@ -395,7 +390,7 @@ func_highlight_html_create_highlighter(grn_ctx *ctx, grn_obj *expression)
   condition = grn_expr_get_condition(ctx, expression);
 
   for (; condition; condition = grn_expr_get_parent(ctx, condition)) {
-    size_t i, n_keywords;
+    uint32_t i, n_keywords;
     grn_obj current_keywords;
     GRN_TEXT_INIT(&current_keywords, GRN_OBJ_VECTOR);
     grn_expr_get_keywords(ctx, condition, &current_keywords);
@@ -470,7 +465,7 @@ func_highlight_html(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_highlighter_highlight(ctx,
                             highlighter,
                             GRN_TEXT_VALUE(string),
-                            GRN_TEXT_LEN(string),
+                            (int64_t)GRN_TEXT_LEN(string),
                             highlighted);
 
   return highlighted;
