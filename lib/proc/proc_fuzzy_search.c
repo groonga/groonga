@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,11 +31,19 @@
 static uint32_t
 calc_edit_distance(grn_ctx *ctx, char *sx, char *ex, char *sy, char *ey, int flags)
 {
-  int d = 0;
-  uint32_t cx, lx, cy, ly, *dists;
+  uint32_t d = 0;
+  int cx;
+  int cy;
+  uint32_t lx, ly, *dists;
   char *px, *py;
-  for (px = sx, lx = 0; px < ex && (cx = grn_charlen(ctx, px, ex)); px += cx, lx++);
-  for (py = sy, ly = 0; py < ey && (cy = grn_charlen(ctx, py, ey)); py += cy, ly++);
+  for (px = sx, lx = 0;
+       px < ex && (cx = grn_charlen(ctx, px, ex));
+       px += cx, lx++) {
+  }
+  for (py = sy, ly = 0;
+       py < ey && (cy = grn_charlen(ctx, py, ey));
+       py += cy, ly++) {
+  }
   if ((dists = GRN_PLUGIN_MALLOC(ctx, (lx + 1) * (ly + 1) * sizeof(uint32_t)))) {
     uint32_t x, y;
     for (x = 0; x <= lx; x++) { DIST(x, 0) = x; }
@@ -44,7 +52,7 @@ calc_edit_distance(grn_ctx *ctx, char *sx, char *ex, char *sy, char *ey, int fla
       cx = grn_charlen(ctx, px, ex);
       for (y = 1, py = sy; y <= ly; y++, py += cy) {
         cy = grn_charlen(ctx, py, ey);
-        if (cx == cy && !memcmp(px, py, cx)) {
+        if (cx == cy && !memcmp(px, py, (size_t)cx)) {
           DIST(x, y) = DIST(x - 1, y - 1);
         } else {
           uint32_t a = DIST(x - 1, y) + 1;
@@ -53,8 +61,8 @@ calc_edit_distance(grn_ctx *ctx, char *sx, char *ex, char *sy, char *ey, int fla
           DIST(x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
           if (flags & GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION &&
               x > 1 && y > 1 && cx == cy &&
-              memcmp(px, py - cy, cx) == 0 &&
-              memcmp(px - cx, py, cx) == 0) {
+              memcmp(px, py - cy, (size_t)cx) == 0 &&
+              memcmp(px - cx, py, (size_t)cx) == 0) {
             uint32_t t = DIST(x - 2, y - 2) + 1;
             DIST(x, y) = ((DIST(x, y) < t) ? DIST(x, y) : t);
           }
@@ -72,15 +80,19 @@ func_edit_distance(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_
 {
 #define N_REQUIRED_ARGS 2
 #define MAX_ARGS 3
-  int d = 0;
+  uint32_t d = 0;
   int flags = 0;
   grn_obj *obj;
   if (nargs >= N_REQUIRED_ARGS && nargs <= MAX_ARGS) {
     if (nargs == MAX_ARGS && GRN_BOOL_VALUE(args[2])) {
       flags |= GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION;
     }
-    d = calc_edit_distance(ctx, GRN_TEXT_VALUE(args[0]), GRN_BULK_CURR(args[0]),
-                           GRN_TEXT_VALUE(args[1]), GRN_BULK_CURR(args[1]), flags);
+    d = calc_edit_distance(ctx,
+                           GRN_TEXT_VALUE(args[0]),
+                           GRN_BULK_CURR(args[0]),
+                           GRN_TEXT_VALUE(args[1]),
+                           GRN_BULK_CURR(args[1]),
+                           flags);
   }
   if ((obj = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_UINT32, 0))) {
     GRN_UINT32_SET(ctx, obj, d);
@@ -105,13 +117,13 @@ typedef struct {
 } score_heap_node;
 
 typedef struct {
-  int n_entries;
-  int limit;
+  uint32_t n_entries;
+  uint32_t limit;
   score_heap_node *nodes;
 } score_heap;
 
 static grn_inline score_heap *
-score_heap_open(grn_ctx *ctx, int max)
+score_heap_open(grn_ctx *ctx, uint32_t max)
 {
   score_heap *h = GRN_PLUGIN_MALLOC(ctx, sizeof(score_heap));
   if (!h) { return NULL; }
@@ -128,11 +140,11 @@ score_heap_open(grn_ctx *ctx, int max)
 static grn_inline grn_bool
 score_heap_push(grn_ctx *ctx, score_heap *h, grn_id id, uint32_t score)
 {
-  int n, n2;
+  uint32_t n, n2;
   score_heap_node node = {id, score};
   score_heap_node node2;
   if (h->n_entries >= h->limit) {
-    int max = h->limit * 2;
+    uint32_t max = h->limit * 2;
     score_heap_node *nodes;
     nodes = GRN_PLUGIN_REALLOC(ctx, h->nodes, sizeof(score_heap) * max);
     if (!nodes) {
@@ -179,7 +191,7 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
     grn_id id;
     grn_obj value;
     score_heap *heap;
-    int i, n;
+    uint32_t i, n;
     GRN_TEXT_INIT(&value, 0);
 
     heap = score_heap_open(ctx, SCORE_HEAP_SIZE);
@@ -289,7 +301,7 @@ sequential_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *column, grn_obj *
         posting.rid = heap->nodes[i].id;
         posting.sid = 1;
         posting.pos = 0;
-        posting.weight_float = max_distance - heap->nodes[i].score + 1;
+        posting.weight_float = (float)(max_distance - heap->nodes[i].score + 1);
         grn_ii_posting_add_float(ctx,
                                  (grn_posting *)(&posting),
                                  (grn_hash *)res,
@@ -353,7 +365,7 @@ selector_fuzzy_search_execute(grn_ctx *ctx,
     const char *s = GRN_TEXT_VALUE(data->query);
     const char *e = GRN_BULK_CURR(data->query);
     const char *p;
-    unsigned int cl = 0;
+    int cl = 0;
     unsigned int length = 0;
     for (p = s; p < e && (cl = grn_charlen(ctx, p, e)); p += cl) {
       length++;
@@ -361,7 +373,7 @@ selector_fuzzy_search_execute(grn_ctx *ctx,
         break;
       }
     }
-    data->prefix_match_size = p - s;
+    data->prefix_match_size = (uint32_t)(p - s);
   }
 
   if (use_sequential_search) {
@@ -440,22 +452,19 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
       break;
     case GRN_TABLE_HASH_KEY :
       {
-        int64_t max_distance = data.max_distance;
-        int64_t prefix_length = data.prefix_length;
-        int64_t max_expansion = data.max_expansion;
         bool with_transposition = false;
         rc = grn_proc_options_parse(ctx,
                                     options,
                                     tag,
                                     "max_distance",
-                                    GRN_PROC_OPTION_VALUE_INT64,
-                                    &max_distance,
+                                    GRN_PROC_OPTION_VALUE_UINT32,
+                                    &(data.max_distance),
                                     "prefix_length",
-                                    GRN_PROC_OPTION_VALUE_INT64,
-                                    &prefix_length,
+                                    GRN_PROC_OPTION_VALUE_UINT32,
+                                    &(data.prefix_length),
                                     "max_expansion",
-                                    GRN_PROC_OPTION_VALUE_INT64,
-                                    &max_expansion,
+                                    GRN_PROC_OPTION_VALUE_UINT32,
+                                    &(data.max_expansion),
                                     "with_transposition",
                                     GRN_PROC_OPTION_VALUE_BOOL,
                                     &with_transposition,
@@ -463,9 +472,6 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
         if (rc != GRN_SUCCESS) {
           goto exit;
         }
-        data.max_distance = max_distance;
-        data.prefix_length = prefix_length;
-        data.max_expansion = max_expansion;
         if (with_transposition) {
           data.flags |= GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION;
         }
