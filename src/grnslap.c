@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2012  Brazil
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2012  Brazil
+  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -51,7 +51,7 @@ lprint(grn_ctx *ctx, const char *fmt, ...)
 {
   char buf[1024];
   grn_timeval tv;
-  int len;
+  size_t len;
   va_list argp;
   grn_timeval_now(ctx, &tv);
   grn_timeval2str(ctx, &tv, buf, 1024);
@@ -73,7 +73,7 @@ parse_dest(char *deststr, grn_slap_dest *dest)
     if ((p = atoi(d + 1))) {
       *d = '\0';
       dest->host = deststr;
-      dest->port = p;
+      dest->port = (uint16_t)p;
       return;
     }
   }
@@ -163,7 +163,8 @@ msg_handler(grn_ctx *ctx, grn_obj *msg)
   session *s = com->opaque;
   s->stat = 3;
   gettimeofday(&tv, NULL);
-  etime = (tv.tv_sec - s->tv.tv_sec) * 1000000 + (tv.tv_usec - s->tv.tv_usec);
+  etime = (uint32_t)((tv.tv_sec - s->tv.tv_sec) * 1000000 +
+                     (tv.tv_usec - s->tv.tv_usec));
   if (etime > etime_max) { etime_max = etime; }
   if (etime < etime_min) { etime_min = etime; }
   if (ctx->rc) { m->header.proto = 0; }
@@ -247,7 +248,7 @@ do_client()
         gettimeofday(&tvb, NULL);
         lprint(ctx, "begin: procotol=%c max_concurrency=%d max_tp=%d", proto, max_con, max_tp);
         while (fgets(buf, BUFSIZE, stdin)) {
-          uint32_t size = strlen(buf) - 1;
+          size_t size = strlen(buf) - 1;
           session *s = session_alloc(ctx, dests + (cnt++ % dest_cnt));
           if (s) {
             gettimeofday(&s->tv, NULL);
@@ -257,7 +258,7 @@ do_client()
             switch (proto) {
             case 'H' :
             case 'h' :
-              if (grn_com_send_http(ctx, s->com, buf, size, 0)) {
+              if (grn_com_send_http(ctx, s->com, buf, (uint32_t)size, 0)) {
                 fprintf(stderr, "grn_com_send_http failed\n");
               }
               s->stat = 2;
@@ -267,7 +268,7 @@ do_client()
               */
               break;
             default :
-              if (grn_com_send(ctx, s->com, &sheader, buf, size, 0)) {
+              if (grn_com_send(ctx, s->com, &sheader, buf, (uint32_t)size, 0)) {
                 fprintf(stderr, "grn_com_send failed\n");
               }
               break;
@@ -291,10 +292,10 @@ do_client()
         gettimeofday(&tve, NULL);
         {
           double qps;
-          uint64_t etime = (tve.tv_sec - tvb.tv_sec);
+          uint64_t etime = (uint64_t)(tve.tv_sec - tvb.tv_sec);
           etime *= 1000000;
-          etime += (tve.tv_usec - tvb.tv_usec);
-          qps = (double)nsent * 1000000 / etime;
+          etime = (uint64_t)((int64_t)etime + (tve.tv_usec - tvb.tv_usec));
+          qps = (double)nsent * 1000000 / (double)etime;
           lprint(ctx, "end  : n=%d min=%u max=%u avg=%d qps=%f etime=%u.%06u", nsent, etime_min, etime_max, (int)(etime_amount / nsent), qps, etime / 1000000, etime % 1000000);
         }
         {
