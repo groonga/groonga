@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2016  Brazil
+  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,7 @@ command_object_exist(grn_ctx *ctx,
 
   id = grn_table_get(ctx, db,
                      GRN_TEXT_VALUE(name),
-                     GRN_TEXT_LEN(name));
+                     (unsigned int)GRN_TEXT_LEN(name));
   grn_ctx_output_bool(ctx, id != GRN_ID_NIL);
   return NULL;
 }
@@ -88,7 +88,7 @@ command_object_remove(grn_ctx *ctx,
 
   target = grn_ctx_get(ctx,
                        GRN_TEXT_VALUE(name),
-                       GRN_TEXT_LEN(name));
+                       (int)GRN_TEXT_LEN(name));
   if (target) {
     grn_obj_remove(ctx, target);
     if (!force || ctx->rc == GRN_SUCCESS) {
@@ -102,7 +102,7 @@ command_object_remove(grn_ctx *ctx,
   }
 
   if (force) {
-    grn_obj_remove_force(ctx, GRN_TEXT_VALUE(name), GRN_TEXT_LEN(name));
+    grn_obj_remove_force(ctx, GRN_TEXT_VALUE(name), (int)GRN_TEXT_LEN(name));
     grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
   } else {
     if (failed_to_open) {
@@ -158,7 +158,7 @@ command_object_set_visibility(grn_ctx *ctx,
     return NULL;
   }
 
-  object = grn_ctx_get(ctx, name.value, name.length);
+  object = grn_ctx_get(ctx, name.value, (int)(name.length));
   if (!object) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -224,7 +224,7 @@ command_object_warm(grn_ctx *ctx,
   } else {
     target = grn_ctx_get(ctx,
                          GRN_TEXT_VALUE(name),
-                         GRN_TEXT_LEN(name));
+                         (int)GRN_TEXT_LEN(name));
     if (!target) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
