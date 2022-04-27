@@ -1,4 +1,6 @@
-/* Copyright(C) 2011-2015 Brazil
+/*
+  Copyright (C) 2011-2015  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -192,10 +194,12 @@ void Trie::create_file(const char *file_name,
         + (1.0 * sizeof(Block) / BLOCK_SIZE * num_nodes_per_key)
         + sizeof(Entry)
         + sizeof(UInt32) + sizeof(UInt8) + average_key_length + 1.5;
-    if ((avail / num_bytes_per_key) > MAX_NUM_KEYS) {
+    const UInt32 available_num_keys =
+      static_cast<UInt32>(static_cast<double>(avail) / num_bytes_per_key);
+    if (available_num_keys > MAX_NUM_KEYS) {
       max_num_keys = MAX_NUM_KEYS;
     } else {
-      max_num_keys = (UInt32)(avail / num_bytes_per_key);
+      max_num_keys = available_num_keys;
     }
     GRN_DAT_THROW_IF(PARAM_ERROR, max_num_keys == 0);
   }
@@ -329,7 +333,7 @@ void Trie::build_from_trie(const Trie &trie, UInt32 src, UInt32 dest) {
       const UInt32 child = src_offset ^ label;
       if (trie.ith_node(child).is_linker() ||
           (trie.ith_node(child).child() != INVALID_LABEL)) {
-        labels[num_labels++] = label;
+        labels[num_labels++] = static_cast<UInt16>(label);
       }
       label = trie.ith_node(child).sibling();
     }
@@ -969,7 +973,7 @@ void Trie::resolve(UInt32 node_id, UInt16 label) {
     GRN_DAT_DEBUG_THROW_IF(next_label == INVALID_LABEL);
     while (next_label != INVALID_LABEL) {
       GRN_DAT_DEBUG_THROW_IF(next_label > MAX_LABEL);
-      labels[num_labels++] = next_label;
+      labels[num_labels++] = static_cast<UInt16>(next_label);
       next_label = ith_node(offset ^ next_label).sibling();
     }
     GRN_DAT_DEBUG_THROW_IF(num_labels == 0);
