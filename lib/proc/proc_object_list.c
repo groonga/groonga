@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2016  Brazil
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -81,7 +81,7 @@ command_object_list(grn_ctx *ctx,
                     grn_user_data *user_data)
 {
   grn_db *db;
-  uint32_t n_objects = 0;
+  int n_objects = 0;
   grn_obj vector;
 
   db = (grn_db *)grn_ctx_db(ctx);
@@ -123,7 +123,7 @@ command_object_list(grn_ctx *ctx,
 
     name_size = grn_table_cursor_get_key(ctx, cursor, &name);
 
-    grn_ctx_output_str(ctx, name, name_size);
+    grn_ctx_output_str(ctx, name, (size_t)name_size);
 
     GRN_BULK_REWIND(&vector);
     grn_rc rc = grn_vector_unpack(ctx, &vector, value, value_len, 0);
@@ -133,7 +133,7 @@ command_object_list(grn_ctx *ctx,
         grn_ctx_output_cstr(ctx, "id");
         grn_ctx_output_int64(ctx, id);
         grn_ctx_output_cstr(ctx, "name");
-        grn_ctx_output_str(ctx, name, name_size);
+        grn_ctx_output_str(ctx, name, (size_t)name_size);
         grn_ctx_output_cstr(ctx, "opened");
         grn_ctx_output_bool(ctx, grn_ctx_is_opened(ctx, id));
         grn_ctx_output_cstr(ctx, "value_size");
@@ -148,7 +148,7 @@ command_object_list(grn_ctx *ctx,
     {
       uint32_t element_size;
       grn_obj_spec *spec;
-      uint32_t n_properties = 8;
+      int n_properties = 8;
       grn_bool need_sources = GRN_FALSE;
       grn_bool need_token_filters = GRN_FALSE;
 
@@ -164,7 +164,7 @@ command_object_list(grn_ctx *ctx,
           grn_ctx_output_cstr(ctx, "id");
           grn_ctx_output_int64(ctx, id);
           grn_ctx_output_cstr(ctx, "name");
-          grn_ctx_output_str(ctx, name, name_size);
+          grn_ctx_output_str(ctx, name, (size_t)name_size);
           grn_ctx_output_cstr(ctx, "opened");
           grn_ctx_output_bool(ctx, grn_ctx_is_opened(ctx, id));
           grn_ctx_output_cstr(ctx, "n_elements");
@@ -193,7 +193,7 @@ command_object_list(grn_ctx *ctx,
         grn_ctx_output_uint64(ctx, id);
 
         grn_ctx_output_cstr(ctx, "name");
-        grn_ctx_output_str(ctx, name, name_size);
+        grn_ctx_output_str(ctx, name, (size_t)name_size);
 
         grn_ctx_output_cstr(ctx, "opened");
         grn_ctx_output_bool(ctx, grn_ctx_is_opened(ctx, id));
@@ -260,7 +260,7 @@ command_object_list(grn_ctx *ctx,
             if (name_size == 0) {
               grn_ctx_output_null(ctx);
             } else {
-              grn_ctx_output_str(ctx, name, name_size);
+              grn_ctx_output_str(ctx, name, (size_t)name_size);
             }
           }
           grn_ctx_output_map_close(ctx);
@@ -269,8 +269,8 @@ command_object_list(grn_ctx *ctx,
 
         if (need_sources) {
           const grn_id *source_ids;
-          uint32_t n_source_ids;
-          uint32_t i;
+          int n_source_ids;
+          int i;
 
           if (n_elements > GRN_SERIALIZED_SPEC_INDEX_SOURCE) {
             uint32_t element_size;
@@ -281,7 +281,7 @@ command_object_list(grn_ctx *ctx,
                                                   (const char **)&source_ids,
                                                   NULL,
                                                   NULL);
-            n_source_ids = element_size / sizeof(grn_id);
+            n_source_ids = (int)(element_size / sizeof(grn_id));
           } else {
             source_ids = NULL;
             n_source_ids = 0;
@@ -310,7 +310,7 @@ command_object_list(grn_ctx *ctx,
               if (name_size == 0) {
                 grn_ctx_output_null(ctx);
               } else {
-                grn_ctx_output_str(ctx, name, name_size);
+                grn_ctx_output_str(ctx, name, (size_t)name_size);
               }
             }
             grn_ctx_output_map_close(ctx);
@@ -320,8 +320,8 @@ command_object_list(grn_ctx *ctx,
 
         if (need_token_filters) {
           const grn_id *token_filter_ids;
-          uint32_t n_token_filter_ids;
-          uint32_t i;
+          int n_token_filter_ids;
+          int i;
 
           if (n_elements > GRN_SERIALIZED_SPEC_INDEX_TOKEN_FILTERS) {
             uint32_t element_size;
@@ -332,7 +332,7 @@ command_object_list(grn_ctx *ctx,
                                                   (const char **)&token_filter_ids,
                                                   NULL,
                                                   NULL);
-            n_token_filter_ids = element_size / sizeof(grn_id);
+            n_token_filter_ids = (int)(element_size / sizeof(grn_id));
           } else {
             token_filter_ids = NULL;
             n_token_filter_ids = 0;
@@ -361,7 +361,7 @@ command_object_list(grn_ctx *ctx,
               if (name_size == 0) {
                 grn_ctx_output_null(ctx);
               } else {
-                grn_ctx_output_str(ctx, name, name_size);
+                grn_ctx_output_str(ctx, name, (size_t)name_size);
               }
             }
             grn_ctx_output_map_close(ctx);
