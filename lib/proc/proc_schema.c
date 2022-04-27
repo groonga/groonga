@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2015-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2015-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -43,9 +43,9 @@ command_schema_output_name(grn_ctx *ctx, grn_obj *obj)
 {
   if (obj) {
     char name[GRN_TABLE_MAX_KEY_SIZE];
-    unsigned int name_size;
+    int name_size;
     name_size = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
-    grn_ctx_output_str(ctx, name, name_size);
+    grn_ctx_output_str(ctx, name, (size_t)name_size);
   } else {
     grn_ctx_output_null(ctx);
   }
@@ -55,9 +55,9 @@ static void
 command_schema_output_column_name(grn_ctx *ctx, grn_obj *column)
 {
   char name[GRN_TABLE_MAX_KEY_SIZE];
-  unsigned int name_size;
+  int name_size;
   name_size = grn_column_name(ctx, column, name, GRN_TABLE_MAX_KEY_SIZE);
-  grn_ctx_output_str(ctx, name, name_size);
+  grn_ctx_output_str(ctx, name, (size_t)name_size);
 }
 
 static void
@@ -133,10 +133,10 @@ command_schema_output_command(grn_ctx *ctx,
 
   grn_ctx_output_cstr(ctx, "arguments");
   {
-    int i, n;
+    uint32_t i, n;
 
     n = grn_vector_size(ctx, arguments);
-    grn_ctx_output_map_open(ctx, "arguments", n / 2);
+    grn_ctx_output_map_open(ctx, "arguments", (int)(n / 2));
     for (i = 0; i < n; i += 2) {
       const char *name;
       unsigned int name_size;
@@ -155,7 +155,7 @@ command_schema_output_command(grn_ctx *ctx,
 
   grn_ctx_output_cstr(ctx, "command_line");
   {
-    int i, n;
+    uint32_t i, n;
     grn_obj command_line;
 
     GRN_TEXT_INIT(&command_line, 0);
@@ -197,7 +197,7 @@ static void
 command_schema_output_plugins(grn_ctx *ctx)
 {
   grn_obj plugin_names;
-  unsigned int i, n;
+  uint32_t i, n;
 
   GRN_TEXT_INIT(&plugin_names, GRN_OBJ_VECTOR);
 
@@ -206,7 +206,7 @@ command_schema_output_plugins(grn_ctx *ctx)
   grn_ctx_output_cstr(ctx, "plugins");
 
   n = grn_vector_size(ctx, &plugin_names);
-  grn_ctx_output_map_open(ctx, "plugins", n);
+  grn_ctx_output_map_open(ctx, "plugins", (int)n);
   for (i = 0; i < n; i++) {
     const char *name;
     unsigned int name_size;
@@ -227,9 +227,7 @@ command_schema_output_plugins(grn_ctx *ctx)
 static void
 command_schema_output_types(grn_ctx *ctx)
 {
-  unsigned int n_types;
-
-  n_types = 0;
+  int n_types = 0;
   GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
     if (grn_id_is_builtin_type(ctx, id)) {
       n_types++;
@@ -276,7 +274,6 @@ static void
 command_schema_output_tokenizers(grn_ctx *ctx, grn_schema_data *data)
 {
   grn_obj tokenizer_ids;
-  unsigned int i, n;
 
   GRN_RECORD_INIT(&tokenizer_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
@@ -313,8 +310,9 @@ command_schema_output_tokenizers(grn_ctx *ctx, grn_schema_data *data)
 
   grn_ctx_output_cstr(ctx, "tokenizers");
 
+  size_t i, n;
   n = GRN_BULK_VSIZE(&tokenizer_ids) / sizeof(grn_id);
-  grn_ctx_output_map_open(ctx, "tokenizers", n);
+  grn_ctx_output_map_open(ctx, "tokenizers", (int)n);
   for (i = 0; i < n; i++) {
     grn_id tokenizer_id;
     grn_obj *tokenizer;
@@ -343,7 +341,6 @@ static void
 command_schema_output_normalizers(grn_ctx *ctx, grn_schema_data *data)
 {
   grn_obj normalizer_ids;
-  unsigned int i, n;
 
   GRN_RECORD_INIT(&normalizer_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
@@ -380,8 +377,9 @@ command_schema_output_normalizers(grn_ctx *ctx, grn_schema_data *data)
 
   grn_ctx_output_cstr(ctx, "normalizers");
 
+  size_t i, n;
   n = GRN_BULK_VSIZE(&normalizer_ids) / sizeof(grn_id);
-  grn_ctx_output_map_open(ctx, "normalizers", n);
+  grn_ctx_output_map_open(ctx, "normalizers", (int)n);
   for (i = 0; i < n; i++) {
     grn_id normalizer_id;
     grn_obj *normalizer;
@@ -410,7 +408,6 @@ static void
 command_schema_output_token_filters(grn_ctx *ctx, grn_schema_data *data)
 {
   grn_obj token_filter_ids;
-  unsigned int i, n;
 
   GRN_RECORD_INIT(&token_filter_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
@@ -447,8 +444,9 @@ command_schema_output_token_filters(grn_ctx *ctx, grn_schema_data *data)
 
   grn_ctx_output_cstr(ctx, "token_filters");
 
+  size_t i, n;
   n = GRN_BULK_VSIZE(&token_filter_ids) / sizeof(grn_id);
-  grn_ctx_output_map_open(ctx, "token_filters", n);
+  grn_ctx_output_map_open(ctx, "token_filters", (int)n);
   for (i = 0; i < n; i++) {
     grn_id token_filter_id;
     grn_obj *token_filter;
@@ -533,12 +531,12 @@ command_schema_table_output_options(grn_ctx *ctx, grn_obj *options)
   if (options->header.type == GRN_VOID) {
     grn_ctx_output_null(ctx);
   } else {
-    unsigned int i;
-    unsigned int n;
+    uint32_t i;
+    uint32_t n;
     grn_obj option;
 
     n = grn_vector_size(ctx, options);
-    grn_ctx_output_array_open(ctx, "options", n);
+    grn_ctx_output_array_open(ctx, "options", (int)n);
     GRN_VOID_INIT(&option);
     for (i = 0; i < n; i++) {
       const char *value;
@@ -634,7 +632,7 @@ command_schema_table_output_normalizers(grn_ctx *ctx, grn_obj *table)
   }
 
   size_t n = GRN_PTR_VECTOR_SIZE(&normalizers);
-  grn_ctx_output_array_open(ctx, "normalizers", n);
+  grn_ctx_output_array_open(ctx, "normalizers", (int)n);
   size_t i;
   for (i = 0; i < n; i++) {
     grn_obj *normalizer = GRN_PTR_VALUE_AT(&normalizers, i);
@@ -651,7 +649,7 @@ command_schema_table_output_normalizers(grn_ctx *ctx, grn_obj *table)
       {
         grn_obj options;
         GRN_VOID_INIT(&options);
-        grn_table_get_normalizers_options(ctx, table, i, &options);
+        grn_table_get_normalizers_options(ctx, table, (uint32_t)i, &options);
         command_schema_table_output_options(ctx, &options);
         GRN_OBJ_FIN(ctx, &options);
       }
@@ -665,15 +663,15 @@ static void
 command_schema_table_output_token_filters(grn_ctx *ctx, grn_obj *table)
 {
   grn_obj token_filters;
-  int i, n;
 
   GRN_PTR_INIT(&token_filters, GRN_OBJ_VECTOR, GRN_DB_OBJECT);
   if (grn_obj_is_table_with_key(ctx, table)) {
     grn_obj_get_info(ctx, table, GRN_INFO_TOKEN_FILTERS, &token_filters);
   }
 
+  size_t i, n;
   n = GRN_BULK_VSIZE(&token_filters) / sizeof(grn_obj *);
-  grn_ctx_output_array_open(ctx, "token_filters", n);
+  grn_ctx_output_array_open(ctx, "token_filters", (int)n);
   for (i = 0; i < n; i++) {
     grn_obj *token_filter;
 
@@ -692,7 +690,7 @@ command_schema_table_output_token_filters(grn_ctx *ctx, grn_obj *table)
       grn_obj options;
 
       GRN_VOID_INIT(&options);
-      grn_table_get_token_filters_options(ctx, table, i, &options);
+      grn_table_get_token_filters_options(ctx, table, (uint32_t)i, &options);
       command_schema_table_output_options(ctx, &options);
       GRN_OBJ_FIN(ctx, &options);
     }
@@ -709,17 +707,17 @@ command_schema_table_command_collect_arguments(grn_ctx *ctx,
                                                grn_obj *table,
                                                grn_obj *arguments)
 {
-#define ADD(name_, value_)                              \
-  grn_vector_add_element(ctx, arguments,                \
-                         name_, strlen(name_),          \
-                         0, GRN_DB_TEXT);               \
-  grn_vector_add_element(ctx, arguments,                \
-                         value_, strlen(value_),        \
+#define ADD(name_, value_)                                  \
+  grn_vector_add_element(ctx, arguments,                    \
+                         name_, (uint32_t)strlen(name_),    \
+                         0, GRN_DB_TEXT);                   \
+  grn_vector_add_element(ctx, arguments,                    \
+                         value_, (uint32_t)strlen(value_),  \
                          0, GRN_DB_TEXT)
 
 #define ADD_OBJECT_NAME(name_, object_) do {                    \
     char object_name[GRN_TABLE_MAX_KEY_SIZE];                   \
-    unsigned int object_name_size;                              \
+    int object_name_size;                                       \
     object_name_size = grn_obj_name(ctx, object_,               \
                                     object_name,                \
                                     GRN_TABLE_MAX_KEY_SIZE);    \
@@ -949,14 +947,14 @@ command_schema_column_output_sources(grn_ctx *ctx, grn_obj *column)
 {
   grn_obj *source_table;
   grn_obj source_ids;
-  unsigned int i, n_ids;
+  size_t i, n_ids;
 
   source_table = grn_ctx_at(ctx, grn_obj_get_range(ctx, column));
 
   GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
   grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
   n_ids = GRN_BULK_VSIZE(&source_ids) / sizeof(grn_id);
-  grn_ctx_output_array_open(ctx, "sources", n_ids);
+  grn_ctx_output_array_open(ctx, "sources", (int)n_ids);
   for (i = 0; i < n_ids; i++) {
     grn_id source_id;
     grn_obj *source;
@@ -986,7 +984,7 @@ command_schema_column_output_sources(grn_ctx *ctx, grn_obj *column)
     grn_ctx_output_cstr(ctx, "full_name");
     if (grn_obj_is_table(ctx, source)) {
       char name[GRN_TABLE_MAX_KEY_SIZE];
-      unsigned int name_size;
+      int name_size;
       name_size = grn_obj_name(ctx, source, name, GRN_TABLE_MAX_KEY_SIZE);
       name[name_size] = '\0';
       grn_strcat(name, GRN_TABLE_MAX_KEY_SIZE, "._key");
@@ -1021,7 +1019,7 @@ command_schema_output_indexes(grn_ctx *ctx, grn_obj *object)
     grn_column_get_all_index_data(ctx, object, index_data, n_index_data);
   }
 
-  grn_ctx_output_array_open(ctx, "indexes", n_index_data);
+  grn_ctx_output_array_open(ctx, "indexes", (int)n_index_data);
   for (i = 0; i < n_index_data; i++) {
     grn_obj *lexicon;
 
@@ -1058,17 +1056,17 @@ command_schema_column_command_collect_arguments(grn_ctx *ctx,
                                                 grn_obj *column,
                                                 grn_obj *arguments)
 {
-#define ADD(name_, value_)                              \
-  grn_vector_add_element(ctx, arguments,                \
-                         name_, strlen(name_),          \
-                         0, GRN_DB_TEXT);               \
-  grn_vector_add_element(ctx, arguments,                \
-                         value_, strlen(value_),        \
+#define ADD(name_, value_)                                        \
+  grn_vector_add_element(ctx, arguments,                          \
+                         name_, (uint32_t)strlen(name_),          \
+                         0, GRN_DB_TEXT);                         \
+  grn_vector_add_element(ctx, arguments,                          \
+                         value_, (uint32_t)strlen(value_),        \
                          0, GRN_DB_TEXT)
 
 #define ADD_OBJECT_NAME(name_, object_) do {                    \
     char object_name[GRN_TABLE_MAX_KEY_SIZE];                   \
-    unsigned int object_name_size;                              \
+    int object_name_size;                                       \
     object_name_size = grn_obj_name(ctx, object_,               \
                                     object_name,                \
                                     GRN_TABLE_MAX_KEY_SIZE);    \
@@ -1079,7 +1077,7 @@ command_schema_column_command_collect_arguments(grn_ctx *ctx,
   ADD_OBJECT_NAME("table", table);
   {
     char column_name[GRN_TABLE_MAX_KEY_SIZE];
-    unsigned int column_name_size;
+    int column_name_size;
     column_name_size = grn_column_name(ctx, column,
                                        column_name, GRN_TABLE_MAX_KEY_SIZE);
     column_name[column_name_size] = '\0';
@@ -1092,9 +1090,8 @@ command_schema_column_command_collect_arguments(grn_ctx *ctx,
 
     GRN_TEXT_INIT(&flags, 0);
     column_flags = grn_column_get_flags(ctx, column);
-    grn_dump_column_create_flags(ctx,
-                                 column_flags & ~GRN_OBJ_PERSISTENT,
-                                 &flags);
+    column_flags &= ~((grn_column_flags)GRN_OBJ_PERSISTENT);
+    grn_dump_column_create_flags(ctx, column_flags, &flags);
     GRN_TEXT_PUTC(ctx, &flags, '\0');
     ADD("flags", GRN_TEXT_VALUE(&flags));
     GRN_OBJ_FIN(ctx, &flags);
@@ -1109,7 +1106,7 @@ command_schema_column_command_collect_arguments(grn_ctx *ctx,
 
   {
     grn_obj source_ids;
-    unsigned int n_ids;
+    size_t n_ids;
 
     GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
     grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
@@ -1117,14 +1114,14 @@ command_schema_column_command_collect_arguments(grn_ctx *ctx,
     n_ids = GRN_BULK_VSIZE(&source_ids) / sizeof(grn_id);
     if (n_ids > 0) {
       grn_obj sources;
-      unsigned int i;
+      size_t i;
 
       GRN_TEXT_INIT(&sources, 0);
       for (i = 0; i < n_ids; i++) {
         grn_id source_id;
         grn_obj *source;
         char name[GRN_TABLE_MAX_KEY_SIZE];
-        unsigned int name_size;
+        size_t name_size;
 
         source_id = GRN_RECORD_VALUE_AT(&source_ids, i);
         source = grn_ctx_at(ctx, source_id);
@@ -1133,7 +1130,8 @@ command_schema_column_command_collect_arguments(grn_ctx *ctx,
           grn_strcpy(name, GRN_TABLE_MAX_KEY_SIZE, "_key");
           name_size = strlen(name);
         } else {
-          name_size = grn_column_name(ctx, source, name, GRN_TABLE_MAX_KEY_SIZE);
+          name_size =
+            (size_t)grn_column_name(ctx, source, name, GRN_TABLE_MAX_KEY_SIZE);
         }
         if (i > 0) {
           GRN_TEXT_PUTC(ctx, &sources, ',');
@@ -1245,7 +1243,7 @@ command_schema_table_output_columns(grn_ctx *ctx,
   }
 
   grn_table_columns(ctx, table, "", 0, (grn_obj *)columns);
-  grn_ctx_output_map_open(ctx, "columns", grn_hash_size(ctx, columns));
+  grn_ctx_output_map_open(ctx, "columns", (int)grn_hash_size(ctx, columns));
   {
     grn_id *key;
     GRN_HASH_EACH(ctx, columns, id, &key, NULL, NULL, {
@@ -1319,7 +1317,6 @@ static void
 command_schema_output_tables(grn_ctx *ctx, grn_schema_data *data)
 {
   grn_obj table_ids;
-  unsigned int i, n;
 
   GRN_RECORD_INIT(&table_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_DB_EACH_BEGIN_BY_KEY(ctx, cursor, id) {
@@ -1360,10 +1357,11 @@ command_schema_output_tables(grn_ctx *ctx, grn_schema_data *data)
     }
   } GRN_TABLE_EACH_END(ctx, cursor);
 
+  size_t i, n;
   n = GRN_BULK_VSIZE(&table_ids) / sizeof(grn_id);
 
   grn_ctx_output_cstr(ctx, "tables");
-  grn_ctx_output_map_open(ctx, "tables", n);
+  grn_ctx_output_map_open(ctx, "tables", (int)n);
   for (i = 0; i < n; i++) {
     grn_id table_id;
     grn_obj *table;
