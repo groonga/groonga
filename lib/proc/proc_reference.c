@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ command_reference_acquire(grn_ctx *ctx,
   grn_obj *obj;
   bool need_unref = false;
   if (target_name.length > 0) {
-    obj = grn_ctx_get(ctx, target_name.value, target_name.length);
+    obj = grn_ctx_get(ctx, target_name.value, (int)(target_name.length));
     need_unref = true;
   } else {
     obj = grn_ctx_db(ctx);
@@ -63,7 +63,7 @@ command_reference_acquire(grn_ctx *ctx,
     uint32_t auto_release_count = 0;
     if (auto_release_count_arg > 0) {
       /* Don't count this command */
-      auto_release_count = auto_release_count_arg + 1;
+      auto_release_count = (uint32_t)auto_release_count_arg + 1;
     }
     if (GRN_RAW_STRING_EQUAL_CSTRING(recursive, "dependent")) {
       grn_obj_refer_recursive_dependent_auto_release(ctx,
@@ -126,7 +126,7 @@ command_reference_release(grn_ctx *ctx,
   grn_obj *obj;
   bool need_unref = false;
   if (target_name.length > 0) {
-    obj = grn_ctx_get(ctx, target_name.value, target_name.length);
+    obj = grn_ctx_get(ctx, target_name.value, (int)(target_name.length));
     need_unref = true;
   } else {
     obj = grn_ctx_db(ctx);
