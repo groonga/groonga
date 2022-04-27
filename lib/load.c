@@ -53,7 +53,7 @@ grn_loader_on_record_added(grn_ctx *ctx,
     grn_vector_add_element(ctx,
                            &(loader->error_messages),
                            ctx->errbuf,
-                           strlen(ctx->errbuf),
+                           (uint32_t)strlen(ctx->errbuf),
                            0,
                            GRN_DB_TEXT);
   }
@@ -157,17 +157,29 @@ grn_loader_get_column(grn_ctx *ctx,
   }
 
   void *value;
-  grn_id id = grn_hash_get(ctx, loader->columns, name, name_length, &value);
+  grn_id id = grn_hash_get(ctx,
+                           loader->columns,
+                           name,
+                           (unsigned int)name_length,
+                           &value);
   if (id != GRN_ID_NIL) {
     return *((grn_obj **)value);
   }
 
-  grn_obj *column = grn_obj_column(ctx, loader->table, name, name_length);
+  grn_obj *column = grn_obj_column(ctx,
+                                   loader->table,
+                                   name,
+                                   (uint32_t)name_length);
   if (!column) {
     return NULL;
   }
 
-  id = grn_hash_add(ctx, loader->columns, name, name_length, &value, NULL);
+  id = grn_hash_add(ctx,
+                    loader->columns,
+                    name,
+                    (unsigned int)name_length,
+                    &value,
+                    NULL);
   grn_memcpy(value, &column, sizeof(grn_obj *));
   grn_obj *range = grn_ctx_at(ctx, DB_OBJ(column)->range);
   if (grn_obj_is_table(ctx, range)) {
@@ -301,7 +313,7 @@ grn_loader_brace_add_weight_vector_element(grn_ctx *ctx,
     grn_vector_add_element_float(ctx,
                                  vector,
                                  GRN_BULK_HEAD(key),
-                                 GRN_BULK_VSIZE(key),
+                                 (uint32_t)GRN_BULK_VSIZE(key),
                                  GRN_FLOAT32_VALUE(&weight_buffer),
                                  key->header.domain);
   }
@@ -363,7 +375,7 @@ grn_loader_bracket_set_value_reference(grn_ctx *ctx,
         grn_vector_add_element_float(ctx,
                                      &values,
                                      GRN_TEXT_VALUE(element),
-                                     GRN_TEXT_LEN(element),
+                                     (uint32_t)GRN_TEXT_LEN(element),
                                      0.0,
                                      element->header.domain);
       } else {
@@ -447,7 +459,7 @@ grn_loader_bracket_set_value_text(grn_ctx *ctx,
       grn_vector_add_element(ctx,
                              &vector,
                              GRN_TEXT_VALUE(element),
-                             GRN_TEXT_LEN(element),
+                             (uint32_t)GRN_TEXT_LEN(element),
                              0,
                              range_id);
     } else {
@@ -538,7 +550,7 @@ grn_loader_bracket_set_value_fix_size(grn_ctx *ctx,
         grn_vector_add_element_float(ctx,
                                      &values,
                                      GRN_TEXT_VALUE(element),
-                                     GRN_TEXT_LEN(element),
+                                     (uint32_t)GRN_TEXT_LEN(element),
                                      0.0,
                                      element->header.domain);
       } else {
@@ -660,7 +672,7 @@ grn_loader_brace_set_value(grn_ctx *ctx,
 }
 
 static grn_inline int
-name_equal(const char *p, unsigned int size, const char *name)
+name_equal(const char *p, size_t size, const char *name)
 {
   if (strlen(name) != size) { return 0; }
   if (*p != GRN_DB_PSEUDO_COLUMN_PREFIX) { return 0; }
@@ -678,7 +690,8 @@ grn_loader_brace_set_values(grn_ctx *ctx,
 
   for (; value < value_end; value = values_next(ctx, value)) {
     const char *name = data->current.column_name = GRN_TEXT_VALUE(value);
-    uint32_t name_size = data->current.column_name_size = GRN_TEXT_LEN(value);
+    size_t name_size = GRN_TEXT_LEN(value);
+    data->current.column_name_size = (uint32_t)name_size;
     value++;
     data->current.value = value;
     if (name_equal(name, name_size, GRN_COLUMN_NAME_ID) ||
@@ -688,12 +701,12 @@ grn_loader_brace_set_values(grn_ctx *ctx,
     }
     grn_obj *column =
       data->current.column =
-      grn_obj_column(ctx, data->table, name, name_size);
+      grn_obj_column(ctx, data->table, name, (uint32_t)name_size);
     if (!column) {
       GRN_DEFINE_NAME(data->table);
       ERR(GRN_INVALID_ARGUMENT,
           "[table][load][%.*s] nonexistent column: <%.*s>",
-          name_size, name,
+          (int)name_size, name,
           (int)(data->current.column_name_size),
           data->current.column_name);
       grn_loader_on_column_set(ctx, loader, data);
@@ -736,7 +749,7 @@ grn_loader_parse_id_value(grn_ctx *ctx,
     data->id = GRN_UINT32_VALUE(value);
     break;
   case GRN_DB_INT32 :
-    data->id = GRN_INT32_VALUE(value);
+    data->id = (grn_id)GRN_INT32_VALUE(value);
     break;
   default :
     {
@@ -790,7 +803,7 @@ grn_loader_brace_add_record(grn_ctx *ctx,
     }
 
     const char *name = GRN_TEXT_VALUE(value);
-    unsigned int name_size = GRN_TEXT_LEN(value);
+    size_t name_size = GRN_TEXT_LEN(value);
     value = values_next(ctx, value);
     if (name_equal(name, name_size, GRN_COLUMN_NAME_ID)) {
       if (id_bulk || key) {
@@ -925,7 +938,7 @@ grn_loader_bracket_set_columns(grn_ctx *ctx,
     }
 
     const char *column_name = GRN_TEXT_VALUE(value);
-    uint32_t column_name_size = GRN_TEXT_LEN(value);
+    size_t column_name_size = GRN_TEXT_LEN(value);
     if (name_equal(column_name, column_name_size, GRN_COLUMN_NAME_ID)) {
       if (loader->id_offset != -1 || loader->key_offset != -1) {
         /* _id and _key must not appear more than once. */
@@ -948,7 +961,7 @@ grn_loader_bracket_set_columns(grn_ctx *ctx,
         loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
         return;
       }
-      loader->id_offset = i;
+      loader->id_offset = (int32_t)i;
     } else if (name_equal(column_name, column_name_size, GRN_COLUMN_NAME_KEY)) {
       if (loader->table->header.type == GRN_TABLE_NO_KEY) {
         GRN_DEFINE_NAME(loader->table);
@@ -972,7 +985,7 @@ grn_loader_bracket_set_columns(grn_ctx *ctx,
         loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
         return;
       }
-      loader->key_offset = i;
+      loader->key_offset = (int32_t)i;
     }
     grn_obj *column = grn_loader_get_column(ctx,
                                             loader,
@@ -983,7 +996,7 @@ grn_loader_bracket_set_columns(grn_ctx *ctx,
       ERR(GRN_INVALID_ARGUMENT,
           "[table][load][%.*s] nonexistent column: <%.*s>",
           name_size, name,
-          column_name_size, column_name);
+          (int)column_name_size, column_name);
       grn_loader_save_error(ctx, loader);
       loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
       return;
@@ -1040,7 +1053,8 @@ grn_loader_bracket_set_values(grn_ctx *ctx,
       }
     }
     data->current.column_name = column_only_name;
-    data->current.column_name_size = name_size - (column_only_name - name);
+    data->current.column_name_size =
+      (uint32_t)(name_size - (column_only_name - name));
     data->current.value = value;
 
     if (value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET) {
@@ -1099,7 +1113,7 @@ grn_loader_bracket_add_record(grn_ctx *ctx,
   if (loader->id_offset != -1) {
     grn_obj *id_bulk = grn_loader_bracket_get(ctx,
                                               bracket_value,
-                                              loader->id_offset);
+                                              (uint32_t)(loader->id_offset));
     grn_loader_parse_id_value(ctx, loader, data, id_bulk);
     if (ctx->rc != GRN_SUCCESS) {
       return;
@@ -1140,7 +1154,7 @@ bracket_close(grn_ctx *ctx, grn_loader *loader)
   grn_obj *bracket_value = values + begin;
   GRN_ASSERT(bracket_value->header.domain == GRN_JSON_LOAD_OPEN_BRACKET);
   GRN_UINT32_SET(ctx, bracket_value, loader->values_size - begin - 1);
-  uint32_t depth = GRN_UINT32_VECTOR_SIZE(&(loader->level));
+  size_t depth = GRN_UINT32_VECTOR_SIZE(&(loader->level));
   if (depth > loader->emit_level) {
     return;
   }
@@ -1183,7 +1197,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
   grn_obj *brace_value = values + begin;
   GRN_ASSERT(brace_value->header.domain == GRN_JSON_LOAD_OPEN_BRACE);
   GRN_UINT32_SET(ctx, brace_value, loader->values_size - begin - 1);
-  uint32_t depth = GRN_UINT32_VECTOR_SIZE(&(loader->level));
+  size_t depth = GRN_UINT32_VECTOR_SIZE(&(loader->level));
   if (depth > loader->emit_level) {
     return;
   }
@@ -1221,7 +1235,7 @@ brace_close(grn_ctx *ctx, grn_loader *loader)
 } while (0)
 
 static void
-json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_len)
+json_read(grn_ctx *ctx, grn_loader *loader, const char *str, size_t str_len)
 {
   const char *const beg = str;
   char c;
@@ -1244,7 +1258,7 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_le
         break;
       default :
         ERR(GRN_INVALID_ARGUMENT,
-            "JSON must start with '[' or '{': <%.*s>", str_len, beg);
+            "JSON must start with '[' or '{': <%.*s>", (int)str_len, beg);
         loader->stat = GRN_LOADER_END;
         break;
       }
@@ -1448,13 +1462,13 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_le
       switch (c) {
       case '0' : case '1' : case '2' : case '3' : case '4' :
       case '5' : case '6' : case '7' : case '8' : case '9' :
-        loader->unichar = (c - '0') * 0x1000;
+        loader->unichar = (uint32_t)((c - '0') * 0x1000);
         break;
       case 'a' : case 'b' : case 'c' : case 'd' : case 'e' : case 'f' :
-        loader->unichar = (c - 'a' + 10) * 0x1000;
+        loader->unichar = (uint32_t)((c - 'a' + 10) * 0x1000);
         break;
       case 'A' : case 'B' : case 'C' : case 'D' : case 'E' : case 'F' :
-        loader->unichar = (c - 'A' + 10) * 0x1000;
+        loader->unichar = (uint32_t)((c - 'A' + 10) * 0x1000);
         break;
       default :
         ;// todo : error
@@ -1466,13 +1480,13 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_le
       switch (c) {
       case '0' : case '1' : case '2' : case '3' : case '4' :
       case '5' : case '6' : case '7' : case '8' : case '9' :
-        loader->unichar += (c - '0') * 0x100;
+        loader->unichar += (uint32_t)((c - '0') * 0x100);
         break;
       case 'a' : case 'b' : case 'c' : case 'd' : case 'e' : case 'f' :
-        loader->unichar += (c - 'a' + 10) * 0x100;
+        loader->unichar += (uint32_t)((c - 'a' + 10) * 0x100);
         break;
       case 'A' : case 'B' : case 'C' : case 'D' : case 'E' : case 'F' :
-        loader->unichar += (c - 'A' + 10) * 0x100;
+        loader->unichar += (uint32_t)((c - 'A' + 10) * 0x100);
         break;
       default :
         ;// todo : error
@@ -1484,13 +1498,13 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_le
       switch (c) {
       case '0' : case '1' : case '2' : case '3' : case '4' :
       case '5' : case '6' : case '7' : case '8' : case '9' :
-        loader->unichar += (c - '0') * 0x10;
+        loader->unichar += (uint32_t)((c - '0') * 0x10);
         break;
       case 'a' : case 'b' : case 'c' : case 'd' : case 'e' : case 'f' :
-        loader->unichar += (c - 'a' + 10) * 0x10;
+        loader->unichar += (uint32_t)((c - 'a' + 10) * 0x10);
         break;
       case 'A' : case 'B' : case 'C' : case 'D' : case 'E' : case 'F' :
-        loader->unichar += (c - 'A' + 10) * 0x10;
+        loader->unichar += (uint32_t)((c - 'A' + 10) * 0x10);
         break;
       default :
         ;// todo : error
@@ -1502,13 +1516,13 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_le
       switch (c) {
       case '0' : case '1' : case '2' : case '3' : case '4' :
       case '5' : case '6' : case '7' : case '8' : case '9' :
-        loader->unichar += (c - '0');
+        loader->unichar += (uint32_t)(c - '0');
         break;
       case 'a' : case 'b' : case 'c' : case 'd' : case 'e' : case 'f' :
-        loader->unichar += (c - 'a' + 10);
+        loader->unichar += (uint32_t)(c - 'a' + 10);
         break;
       case 'A' : case 'B' : case 'C' : case 'D' : case 'E' : case 'F' :
-        loader->unichar += (c - 'A' + 10);
+        loader->unichar += (uint32_t)(c - 'A' + 10);
         break;
       default :
         ;// todo : error
@@ -1525,20 +1539,23 @@ json_read(grn_ctx *ctx, grn_loader *loader, const char *str, unsigned int str_le
           u = 0x10000 + (loader->unichar_hi - 0xd800) * 0x400 + u - 0xdc00;
         }
         if (u < 0x80) {
-          GRN_TEXT_PUTC(ctx, loader->last, u);
+          GRN_TEXT_PUTC(ctx, loader->last, (char)u);
         } else {
           if (u < 0x800) {
-            GRN_TEXT_PUTC(ctx, loader->last, (u >> 6) | 0xc0);
+            GRN_TEXT_PUTC(ctx, loader->last, (char)((u >> 6) | 0xc0));
           } else {
             if (u < 0x10000) {
-              GRN_TEXT_PUTC(ctx, loader->last, (u >> 12) | 0xe0);
+              GRN_TEXT_PUTC(ctx, loader->last, (char)((u >> 12) | 0xe0));
             } else {
-              GRN_TEXT_PUTC(ctx, loader->last, (u >> 18) | 0xf0);
-              GRN_TEXT_PUTC(ctx, loader->last, ((u >> 12) & 0x3f) | 0x80);
+              GRN_TEXT_PUTC(ctx, loader->last,
+                            (char)((u >> 18) | 0xf0));
+              GRN_TEXT_PUTC(ctx, loader->last,
+                            (char)(((u >> 12) & 0x3f) | 0x80));
             }
-            GRN_TEXT_PUTC(ctx, loader->last, ((u >> 6) & 0x3f) | 0x80);
+            GRN_TEXT_PUTC(ctx, loader->last,
+                          (char)(((u >> 6) & 0x3f) | 0x80));
           }
-          GRN_TEXT_PUTC(ctx, loader->last, (u & 0x3f) | 0x80);
+          GRN_TEXT_PUTC(ctx, loader->last, (char)((u & 0x3f) | 0x80));
         }
       }
       loader->stat = GRN_LOADER_STRING;
@@ -1566,14 +1583,14 @@ grn_loader_parse_columns(grn_ctx *ctx, grn_loader *loader,
   const char *ptr = str, *ptr_end = ptr + str_size, *rest;
   const char *tokens[256], *token_end;
   while (ptr < ptr_end) {
-    int i, n = grn_tokenize(ptr, ptr_end - ptr, tokens, 256, &rest);
+    int i, n = grn_tokenize(ptr, (size_t)(ptr_end - ptr), tokens, 256, &rest);
     for (i = 0; i < n; i++) {
       grn_obj *column;
       token_end = tokens[i];
       while (ptr < token_end && (' ' == *ptr || ',' == *ptr)) {
         ptr++;
       }
-      if (name_equal(ptr, token_end - ptr, GRN_COLUMN_NAME_ID)) {
+      if (name_equal(ptr, (size_t)(token_end - ptr), GRN_COLUMN_NAME_ID)) {
         if (loader->id_offset != -1 || loader->key_offset != -1) {
           /* _id and _key must not appear more than once. */
           if (loader->id_offset != -1) {
@@ -1590,7 +1607,9 @@ grn_loader_parse_columns(grn_ctx *ctx, grn_loader *loader,
           return ctx->rc;
         }
         loader->id_offset = i;
-      } else if (name_equal(ptr, token_end - ptr, GRN_COLUMN_NAME_KEY)) {
+      } else if (name_equal(ptr,
+                            (size_t)(token_end - ptr),
+                            GRN_COLUMN_NAME_KEY)) {
         if (loader->id_offset != -1 || loader->key_offset != -1) {
           /* _id and _key must not appear more than once. */
           if (loader->id_offset != -1) {
@@ -1608,7 +1627,10 @@ grn_loader_parse_columns(grn_ctx *ctx, grn_loader *loader,
         }
         loader->key_offset = i;
       }
-      column = grn_loader_get_column(ctx, loader, ptr, token_end - ptr);
+      column = grn_loader_get_column(ctx,
+                                     loader,
+                                     ptr,
+                                     (size_t)(token_end - ptr));
       if (!column) {
         ERR(GRN_INVALID_ARGUMENT, "nonexistent column: <%.*s>",
             (int)(token_end - ptr), ptr);
@@ -1648,14 +1670,18 @@ grn_load_internal(grn_ctx *ctx, grn_load_input *input)
   if (input->table.length > 0) {
     grn_ctx_loader_clear(ctx);
     loader->input_type = input->type;
-    if (grn_db_check_name(ctx, input->table.value, input->table.length)) {
+    if (grn_db_check_name(ctx,
+                          input->table.value,
+                          (unsigned int)(input->table.length))) {
       GRN_DB_CHECK_NAME_ERR("[table][load]",
                             input->table.value,
                             (int)(input->table.length));
       loader->stat = GRN_LOADER_END;
       return;
     }
-    loader->table = grn_ctx_get(ctx, input->table.value, input->table.length);
+    loader->table = grn_ctx_get(ctx,
+                                input->table.value,
+                                (int)(input->table.length));
     if (!loader->table) {
       ERR(GRN_INVALID_ARGUMENT,
           "nonexistent table: <%.*s>",
@@ -1665,10 +1691,11 @@ grn_load_internal(grn_ctx *ctx, grn_load_input *input)
       return;
     }
     if (input->columns.length > 0) {
-      grn_rc rc = grn_loader_parse_columns(ctx,
-                                           loader,
-                                           input->columns.value,
-                                           input->columns.length);
+      grn_rc rc =
+        grn_loader_parse_columns(ctx,
+                                 loader,
+                                 input->columns.value,
+                                 (unsigned int)(input->columns.length));
       if (rc != GRN_SUCCESS) {
         loader->columns_status = GRN_LOADER_COLUMNS_BROKEN;
         loader->stat = GRN_LOADER_END;
@@ -1683,8 +1710,10 @@ grn_load_internal(grn_ctx *ctx, grn_load_input *input)
         grn_expr_parse(ctx,
                        loader->ifexists,
                        input->if_exists.value,
-                       input->if_exists.length,
-                       NULL, GRN_OP_EQUAL, GRN_OP_AND,
+                       (unsigned int)(input->if_exists.length),
+                       NULL,
+                       GRN_OP_EQUAL,
+                       GRN_OP_AND,
                        GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
       }
     }
@@ -1692,10 +1721,13 @@ grn_load_internal(grn_ctx *ctx, grn_load_input *input)
       grn_obj *v;
       GRN_EXPR_CREATE_FOR_QUERY(ctx, loader->table, loader->each, v);
       if (loader->each && v) {
-        grn_expr_parse(ctx, loader->each,
+        grn_expr_parse(ctx,
+                       loader->each,
                        input->each.value,
-                       input->each.length,
-                       NULL, GRN_OP_EQUAL, GRN_OP_AND,
+                       (unsigned int)(input->each.length),
+                       NULL,
+                       GRN_OP_EQUAL,
+                       GRN_OP_AND,
                        GRN_EXPR_SYNTAX_SCRIPT|GRN_EXPR_ALLOW_UPDATE);
       }
     }
@@ -1787,13 +1819,13 @@ grn_p_loader(grn_ctx *ctx, grn_loader *loader)
          (int)GRN_TEXT_LEN(&buffer),
          GRN_TEXT_VALUE(&buffer));
   printf("  values:[\n");
-  uint32_t n_values = GRN_BULK_VSIZE(&(loader->values)) / sizeof(grn_obj);
-  uint32_t i;
+  size_t n_values = GRN_BULK_VSIZE(&(loader->values)) / sizeof(grn_obj);
+  size_t i;
   for (i = 0; i < n_values; i++) {
     grn_obj *value = ((grn_obj *)GRN_BULK_HEAD(&(loader->values))) + i;
     GRN_BULK_REWIND(&buffer);
     grn_inspect(ctx, &buffer, value);
-    printf("    %d: %.*s,\n",
+    printf("    %" GRN_FMT_SIZE ": %.*s,\n",
            i,
            (int)GRN_TEXT_LEN(&buffer),
            GRN_TEXT_VALUE(&buffer));
