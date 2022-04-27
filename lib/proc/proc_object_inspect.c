@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016-2017  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2016-2017  Brazil
+  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -33,7 +33,7 @@ command_object_inspect_obj_name(grn_ctx *ctx, grn_obj *obj)
   int name_size;
 
   name_size = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
-  grn_ctx_output_str(ctx, name, name_size);
+  grn_ctx_output_str(ctx, name, (size_t)name_size);
 }
 
 static void
@@ -198,7 +198,7 @@ command_object_inspect_column_name(grn_ctx *ctx, grn_obj *column)
 
   name_size = grn_column_name(ctx, column, name, GRN_TABLE_MAX_KEY_SIZE);
   name[name_size] = '\0';
-  grn_ctx_output_str(ctx, name, name_size);
+  grn_ctx_output_str(ctx, name, (size_t)name_size);
 }
 
 static void
@@ -464,14 +464,14 @@ command_object_inspect_column_sources(grn_ctx *ctx, grn_obj *column)
 {
   grn_obj *source_table;
   grn_obj source_ids;
-  unsigned int i, n_ids;
+  int i, n_ids;
 
   source_table = grn_ctx_at(ctx, grn_obj_get_range(ctx, column));
 
   GRN_RECORD_INIT(&source_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
   grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
 
-  n_ids = GRN_BULK_VSIZE(&source_ids) / sizeof(grn_id);
+  n_ids = (int)(GRN_BULK_VSIZE(&source_ids) / sizeof(grn_id));
   grn_ctx_output_array_open(ctx, "sources", n_ids);
   for (i = 0; i < n_ids; i++) {
     grn_id source_id;
@@ -502,7 +502,7 @@ command_object_inspect_column_sources(grn_ctx *ctx, grn_obj *column)
       grn_ctx_output_cstr(ctx, "full_name");
       if (grn_obj_is_table(ctx, source)) {
         char name[GRN_TABLE_MAX_KEY_SIZE];
-        unsigned int name_size;
+        int name_size;
         name_size = grn_obj_name(ctx, source, name, GRN_TABLE_MAX_KEY_SIZE);
         name[name_size] = '\0';
         grn_strcat(name, GRN_TABLE_MAX_KEY_SIZE, "._key");
@@ -625,7 +625,7 @@ command_object_inspect(grn_ctx *ctx,
   } else {
     target = grn_ctx_get(ctx,
                          GRN_TEXT_VALUE(name),
-                         GRN_TEXT_LEN(name));
+                         (int)GRN_TEXT_LEN(name));
     if (!target) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
