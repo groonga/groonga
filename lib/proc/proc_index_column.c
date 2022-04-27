@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2019 Kouhei Sutou <kou@clear-code.com>
+  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -53,7 +53,7 @@ index_column_data_init(grn_ctx *ctx, index_column_data *data)
 
   data->table = grn_ctx_get(ctx,
                             data->table_name.value,
-                            data->table_name.length);
+                            (int)(data->table_name.length));
   if (!data->table) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -77,7 +77,7 @@ index_column_data_init(grn_ctx *ctx, index_column_data *data)
   data->column = grn_obj_column(ctx,
                                 data->table,
                                 data->column_name.value,
-                                data->column_name.length);
+                                (uint32_t)(data->column_name.length));
   if (!data->column) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -129,9 +129,9 @@ index_column_diff_output_postings(grn_ctx *ctx,
     n_elements++;
   }
   size_t n = GRN_UINT32_VECTOR_SIZE(postings);
-  grn_ctx_output_array_open(ctx, name, n / n_elements);
+  grn_ctx_output_array_open(ctx, name, (int)(n / n_elements));
   for (i = 0; i < n; i += n_elements) {
-    grn_ctx_output_map_open(ctx, "posting", n_elements);
+    grn_ctx_output_map_open(ctx, "posting", (int)n_elements);
     {
       size_t j = i;
       grn_ctx_output_cstr(ctx, "record_id");
@@ -165,19 +165,19 @@ index_column_diff_output(grn_ctx *ctx,
     grn_obj_column(ctx,
                    diff,
                    remains_column_name,
-                   strlen(remains_column_name));
+                   (uint32_t)strlen(remains_column_name));
   grn_obj *missings_column =
     grn_obj_column(ctx,
                    diff,
                    missings_column_name,
-                   strlen(missings_column_name));
+                   (uint32_t)strlen(missings_column_name));
   grn_obj key;
   GRN_OBJ_INIT(&key, GRN_BULK, GRN_OBJ_DO_SHALLOW_COPY, lexicon->header.domain);
   grn_obj remains;
   GRN_UINT32_INIT(&remains, GRN_OBJ_VECTOR);
   grn_obj missings;
   GRN_UINT32_INIT(&missings, GRN_OBJ_VECTOR);
-  grn_ctx_output_array_open(ctx, "diffs", grn_table_size(ctx, diff));
+  grn_ctx_output_array_open(ctx, "diffs", (int)grn_table_size(ctx, diff));
   {
     GRN_TABLE_EACH_BEGIN(ctx, diff, cursor, id) {
       grn_ctx_output_map_open(ctx, "diff", 3);
