@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -121,7 +121,7 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 
     grn_string = grn_string_open(ctx,
                                  string_raw.value,
-                                 string_raw.length,
+                                 (unsigned int)(string_raw.length),
                                  lexicon,
                                  flags);
 
@@ -149,7 +149,7 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       grn_ctx_output_cstr(ctx, "types");
       if (types) {
         unsigned int i;
-        grn_ctx_output_array_open(ctx, "types", normalized_n_characters);
+        grn_ctx_output_array_open(ctx, "types", (int)normalized_n_characters);
         for (i = 0; i < normalized_n_characters; i++) {
           grn_ctx_output_cstr(ctx, grn_char_type_to_string(types[i]));
         }
@@ -166,7 +166,7 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       grn_ctx_output_cstr(ctx, "checks");
       if (checks) {
         unsigned int i;
-        grn_ctx_output_array_open(ctx, "checks", normalized_length_in_bytes);
+        grn_ctx_output_array_open(ctx, "checks", (int)normalized_length_in_bytes);
         for (i = 0; i < normalized_length_in_bytes; i++) {
           grn_ctx_output_int32(ctx, checks[i]);
         }
@@ -180,7 +180,7 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       unsigned int i;
 
       grn_ctx_output_cstr(ctx, "offsets");
-      grn_ctx_output_array_open(ctx, "offsets", normalized_n_characters);
+      grn_ctx_output_array_open(ctx, "offsets", (int)normalized_n_characters);
       for (i = 0; i < normalized_n_characters; i++) {
         grn_ctx_output_uint64(ctx, offsets[i]);
       }
