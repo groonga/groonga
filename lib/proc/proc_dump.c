@@ -174,14 +174,17 @@ next_loop :
 }
 
 static void
-dump_value_raw(grn_ctx *ctx, grn_obj *output, const char *value, int value_len)
+dump_value_raw(grn_ctx *ctx,
+               grn_obj *output,
+               const char *value,
+               size_t value_len)
 {
   grn_obj escaped_value;
   GRN_TEXT_INIT(&escaped_value, 0);
   grn_text_esc(ctx, &escaped_value, value, value_len);
   /* is no character escaped? */
   /* TODO false positive with spaces inside values */
-  if (GRN_TEXT_LEN(&escaped_value) == (size_t)(value_len + 2)) {
+  if (GRN_TEXT_LEN(&escaped_value) == (value_len + 2)) {
     GRN_TEXT_PUT(ctx, output, value, value_len);
   } else {
     GRN_TEXT_PUT(ctx, output,
@@ -191,7 +194,7 @@ dump_value_raw(grn_ctx *ctx, grn_obj *output, const char *value, int value_len)
 }
 
 static void
-dump_value(grn_ctx *ctx, grn_dumper *dumper, const char *value, int value_len)
+dump_value(grn_ctx *ctx, grn_dumper *dumper, const char *value, size_t value_len)
 {
   dump_value_raw(ctx, dumper->output, value, value_len);
 }
@@ -261,7 +264,7 @@ dump_obj_name_raw(grn_ctx *ctx, grn_obj *output, grn_obj *obj)
   char name[GRN_TABLE_MAX_KEY_SIZE];
   int name_len;
   name_len = grn_obj_name(ctx, obj, name, GRN_TABLE_MAX_KEY_SIZE);
-  dump_value_raw(ctx, output, name, name_len);
+  dump_value_raw(ctx, output, name, (size_t)name_len);
 }
 
 static void
@@ -276,7 +279,7 @@ dump_column_name(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
   char name[GRN_TABLE_MAX_KEY_SIZE];
   int name_len;
   name_len = grn_column_name(ctx, column, name, GRN_TABLE_MAX_KEY_SIZE);
-  dump_value(ctx, dumper, name, name_len);
+  dump_value(ctx, dumper, name, (size_t)name_len);
 }
 
 static void
@@ -284,7 +287,7 @@ dump_column_sources(grn_ctx *ctx, grn_dumper *dumper, grn_obj *column)
 {
   grn_obj sources;
   grn_id *source_ids;
-  int i, n;
+  size_t i, n;
 
   GRN_OBJ_INIT(&sources, GRN_BULK, 0, GRN_ID_NIL);
   grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &sources);
@@ -501,18 +504,19 @@ static void
 dump_record(grn_ctx *ctx, grn_dumper *dumper,
             grn_obj *table,
             grn_id id,
-            grn_obj *columns, int n_columns)
+            grn_obj *columns,
+            size_t n_columns)
 {
-  int j;
+  size_t i;
   grn_obj buf;
   grn_obj *column_name = &(dumper->column_name_buffer);
 
   GRN_TEXT_PUTC(ctx, dumper->output, '[');
-  for (j = 0; j < n_columns; j++) {
+  for (i = 0; i < n_columns; i++) {
     grn_bool is_value_column;
     grn_id range;
     grn_obj *column;
-    column = GRN_PTR_VALUE_AT(columns, j);
+    column = GRN_PTR_VALUE_AT(columns, i);
     /* TODO: use grn_obj_is_value_accessor() */
     GRN_BULK_REWIND(column_name);
     grn_column_name_(ctx, column, column_name);
@@ -526,7 +530,7 @@ dump_record(grn_ctx *ctx, grn_dumper *dumper,
     }
     range = grn_obj_get_range(ctx, column);
 
-    if (j) { GRN_TEXT_PUTC(ctx, dumper->output, ','); }
+    if (i > 0) { GRN_TEXT_PUTC(ctx, dumper->output, ','); }
     switch (column->header.type) {
     case GRN_COLUMN_VAR_SIZE:
     case GRN_COLUMN_FIX_SIZE:
@@ -587,7 +591,6 @@ dump_records(grn_ctx *ctx,
              bool dump_real_columns)
 {
   grn_table_cursor *cursor;
-  int i, n_columns;
   grn_obj columns;
   bool have_auto_generated_value_column = false;
   bool have_data_column = false;
@@ -672,7 +675,7 @@ dump_records(grn_ctx *ctx,
     grn_hash_close(ctx, real_columns);
   }
 
-  n_columns = GRN_BULK_VSIZE(&columns) / sizeof(grn_obj *);
+  size_t n_columns = GRN_BULK_VSIZE(&columns) / sizeof(grn_obj *);
 
   if (have_auto_generated_value_column && !have_data_column) {
     goto exit;
@@ -687,6 +690,7 @@ dump_records(grn_ctx *ctx,
   GRN_TEXT_PUTS(ctx, dumper->output, "\n[\n");
 
   GRN_TEXT_PUTC(ctx, dumper->output, '[');
+  size_t i;
   for (i = 0; i < n_columns; i++) {
     grn_obj *column;
     grn_obj *column_name = &(dumper->column_name_buffer);
@@ -702,7 +706,7 @@ dump_records(grn_ctx *ctx,
   if (table->header.type == GRN_TABLE_HASH_KEY && dumper->is_sort_hash_table) {
     grn_obj *sorted;
     grn_table_sort_key sort_keys[1];
-    uint32_t n_sort_keys = 1;
+    int n_sort_keys = 1;
     grn_bool is_first_record = GRN_TRUE;
 
     sort_keys[0].key = grn_obj_column(ctx, table,
@@ -1090,7 +1094,7 @@ dump_selected_tables_records(grn_ctx *ctx, grn_dumper *dumper, grn_obj *tables)
       p++;
     }
 
-    grn_obj *table = grn_ctx_get(ctx, token, token_e - token);
+    grn_obj *table = grn_ctx_get(ctx, token, (int)(token_e - token));
     if (!table) {
       GRN_LOG(ctx, GRN_LOG_WARNING,
               "nonexistent table name is ignored: <%.*s>\n",
