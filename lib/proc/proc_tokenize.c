@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -43,8 +43,8 @@ static void
 fin_tokens(grn_ctx *ctx,
            grn_obj *tokens)
 {
-  int i;
-  int n_tokens;
+  size_t i;
+  size_t n_tokens;
 
   n_tokens = GRN_BULK_VSIZE(tokens) / sizeof(tokenize_token);
   for (i = 0; i < n_tokens; i++) {
@@ -61,7 +61,7 @@ output_tokens(grn_ctx *ctx,
               grn_obj *lexicon,
               grn_obj *index_column)
 {
-  int i, n_tokens, n_elements;
+  size_t i, n_tokens, n_elements;
   grn_obj estimated_size;
   grn_bool have_source_location = GRN_FALSE;
   grn_bool have_metadata = GRN_FALSE;
@@ -89,20 +89,20 @@ output_tokens(grn_ctx *ctx,
     n_elements += 1;
   }
 
-  grn_ctx_output_array_open(ctx, "TOKENS", n_tokens);
+  grn_ctx_output_array_open(ctx, "TOKENS", (int)n_tokens);
   for (i = 0; i < n_tokens; i++) {
     tokenize_token *token;
     char value[GRN_TABLE_MAX_KEY_SIZE];
-    unsigned int value_size;
+    int value_size;
 
     token = ((tokenize_token *)(GRN_BULK_HEAD(tokens))) + i;
 
-    grn_ctx_output_map_open(ctx, "TOKEN", n_elements);
+    grn_ctx_output_map_open(ctx, "TOKEN", (int)n_elements);
 
     grn_ctx_output_cstr(ctx, "value");
     value_size = grn_table_get_key(ctx, lexicon, token->id,
                                    value, GRN_TABLE_MAX_KEY_SIZE);
-    grn_ctx_output_str(ctx, value, value_size);
+    grn_ctx_output_str(ctx, value, (size_t)value_size);
 
     grn_ctx_output_cstr(ctx, "position");
     grn_ctx_output_int32(ctx, token->position);
@@ -140,7 +140,7 @@ output_tokens(grn_ctx *ctx,
       n_metadata = grn_vector_size(ctx, &(token->metadata)) / 2;
       GRN_VOID_INIT(&value);
       grn_ctx_output_cstr(ctx, "metadata");
-      grn_ctx_output_map_open(ctx, "METADATA", n_metadata);
+      grn_ctx_output_map_open(ctx, "METADATA", (int)n_metadata);
       for (i = 0; i < n_metadata; i++) {
         const char *raw_name;
         unsigned int raw_name_length;
@@ -150,7 +150,7 @@ output_tokens(grn_ctx *ctx,
 
         raw_name_length = grn_vector_get_element(ctx,
                                                  &(token->metadata),
-                                                 i * 2,
+                                                 (uint32_t)(i * 2),
                                                  &raw_name,
                                                  NULL,
                                                  NULL);
@@ -158,7 +158,7 @@ output_tokens(grn_ctx *ctx,
 
         raw_value_length = grn_vector_get_element(ctx,
                                                   &(token->metadata),
-                                                  i * 2 + 1,
+                                                  (uint32_t)(i * 2 + 1),
                                                   &raw_value,
                                                   NULL,
                                                   &value_domain);
@@ -214,7 +214,7 @@ tokenize(grn_ctx *ctx,
     grn_bulk_space(ctx, tokens, sizeof(tokenize_token));
     current_token = ((tokenize_token *)(GRN_BULK_CURR(tokens))) - 1;
     current_token->id = token_id;
-    current_token->position = grn_token_get_position(ctx, token);
+    current_token->position = (int32_t)grn_token_get_position(ctx, token);
     current_token->force_prefix_search =
       grn_token_get_force_prefix_search(ctx, token);
     current_token->source_offset = grn_token_get_source_offset(ctx, token);
@@ -244,13 +244,13 @@ tokenize(grn_ctx *ctx,
         grn_vector_add_element(ctx,
                                &(current_token->metadata),
                                GRN_BULK_HEAD(&name),
-                               GRN_BULK_VSIZE(&name),
+                               (uint32_t)GRN_BULK_VSIZE(&name),
                                0,
                                name.header.domain);
         grn_vector_add_element(ctx,
                                &(current_token->metadata),
                                GRN_BULK_HEAD(&value),
-                               GRN_BULK_VSIZE(&value),
+                               (uint32_t)GRN_BULK_VSIZE(&value),
                                0,
                                value.header.domain);
       }
@@ -313,7 +313,7 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
 
     lexicon = grn_ctx_get(ctx,
                           table_raw.value,
-                          table_raw.length);
+                          (int)(table_raw.length));
     if (!lexicon) {
       GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                        "[table_tokenize] nonexistent lexicon: <%.*s>",
@@ -325,7 +325,7 @@ command_table_tokenize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *u
     if (index_column_raw.length > 0) {
       index_column = grn_obj_column(ctx, lexicon,
                                     index_column_raw.value,
-                                    index_column_raw.length);
+                                    (uint32_t)(index_column_raw.length));
       if (!index_column) {
         GRN_PLUGIN_ERROR(ctx, GRN_INVALID_ARGUMENT,
                          "[table_tokenize] nonexistent index column: <%.*s>",
