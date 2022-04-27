@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -131,9 +131,9 @@ command_table_create(grn_ctx *ctx,
 
 #undef GET_VALUE
 
-  flags = grn_atoi(flags_raw.value,
-                   flags_raw.value + flags_raw.length,
-                   &rest);
+  flags = (grn_table_flags)grn_atoi(flags_raw.value,
+                                    flags_raw.value + flags_raw.length,
+                                    &rest);
   if (flags_raw.value == rest) {
     flags = command_table_create_parse_flags(ctx,
                                              flags_raw.value,
@@ -152,7 +152,7 @@ command_table_create(grn_ctx *ctx,
     if (key_type_raw.length > 0) {
       key_type = grn_ctx_get(ctx,
                              key_type_raw.value,
-                             key_type_raw.length);
+                             (int)(key_type_raw.length));
       if (!key_type) {
         GRN_PLUGIN_ERROR(ctx,
                          GRN_INVALID_ARGUMENT,
@@ -169,7 +169,7 @@ command_table_create(grn_ctx *ctx,
     if (value_type_raw.length > 0) {
       value_type = grn_ctx_get(ctx,
                                value_type_raw.value,
-                               value_type_raw.length);
+                               (int)(value_type_raw.length));
       if (!value_type) {
         GRN_PLUGIN_ERROR(ctx,
                          GRN_INVALID_ARGUMENT,
@@ -191,7 +191,7 @@ command_table_create(grn_ctx *ctx,
     flags |= GRN_OBJ_PERSISTENT;
     table = grn_table_create(ctx,
                              name_raw.value,
-                             name_raw.length,
+                             (unsigned int)(name_raw.length),
                              path,
                              flags,
                              key_type,
@@ -348,10 +348,7 @@ command_table_list(grn_ctx *ctx, int nargs, grn_obj **args,
 {
   grn_obj *db;
   grn_obj tables;
-  int n_top_level_elements;
   int n_elements_for_header = 1;
-  int n_tables;
-  int i;
 
   db = grn_ctx_db(ctx);
 
@@ -366,7 +363,7 @@ command_table_list(grn_ctx *ctx, int nargs, grn_obj **args,
     prefix = grn_plugin_proc_get_var(ctx, user_data, "prefix", -1);
     if (GRN_TEXT_LEN(prefix) > 0) {
       min = GRN_TEXT_VALUE(prefix);
-      min_size = GRN_TEXT_LEN(prefix);
+      min_size = (unsigned int)GRN_TEXT_LEN(prefix);
       flags |= GRN_CURSOR_PREFIX;
     }
     cursor = grn_table_cursor_open(ctx, db,
@@ -412,8 +409,8 @@ command_table_list(grn_ctx *ctx, int nargs, grn_obj **args,
     }
     grn_table_cursor_close(ctx, cursor);
   }
-  n_tables = GRN_BULK_VSIZE(&tables) / sizeof(grn_obj *);
-  n_top_level_elements = n_elements_for_header + n_tables;
+  size_t n_tables = GRN_BULK_VSIZE(&tables) / sizeof(grn_obj *);
+  int n_top_level_elements = n_elements_for_header + (int)n_tables;
   grn_ctx_output_array_open(ctx, "TABLE_LIST", n_top_level_elements);
 
   grn_ctx_output_array_open(ctx, "HEADER", 8);
@@ -451,6 +448,7 @@ command_table_list(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_ctx_output_array_close(ctx);
   grn_ctx_output_array_close(ctx);
 
+  size_t i;
   for (i = 0; i < n_tables; i++) {
     grn_obj *table = GRN_PTR_VALUE_AT(&tables, i);
     output_table_info(ctx, table);
@@ -491,7 +489,7 @@ command_table_remove(grn_ctx *ctx,
                                            GRN_FALSE);
   table = grn_ctx_get(ctx,
                       GRN_TEXT_VALUE(name),
-                      GRN_TEXT_LEN(name));
+                      (int)GRN_TEXT_LEN(name));
   if (!table) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -557,7 +555,7 @@ command_table_rename(grn_ctx *ctx,
     GRN_PLUGIN_ERROR(ctx, rc, "[table][rename] table name isn't specified");
     goto exit;
   }
-  table = grn_ctx_get(ctx, GRN_TEXT_VALUE(name), GRN_TEXT_LEN(name));
+  table = grn_ctx_get(ctx, GRN_TEXT_VALUE(name), (int)GRN_TEXT_LEN(name));
   if (!table) {
     rc = GRN_INVALID_ARGUMENT;
     GRN_PLUGIN_ERROR(ctx,
@@ -578,7 +576,7 @@ command_table_rename(grn_ctx *ctx,
   }
   rc = grn_table_rename(ctx, table,
                         GRN_TEXT_VALUE(new_name),
-                        GRN_TEXT_LEN(new_name));
+                        (unsigned int)GRN_TEXT_LEN(new_name));
   if (rc != GRN_SUCCESS && ctx->rc == GRN_SUCCESS) {
     GRN_PLUGIN_ERROR(ctx,
                      rc,
@@ -683,7 +681,7 @@ command_table_create_similar(grn_ctx *ctx,
 
   table = grn_table_create_similar(ctx,
                                    GRN_TEXT_VALUE(name),
-                                   GRN_TEXT_LEN(name),
+                                   (uint32_t)GRN_TEXT_LEN(name),
                                    NULL,
                                    base_table);
 
