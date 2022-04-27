@@ -1,4 +1,6 @@
-/* Copyright(C) 2010- Brazil
+/*
+  Copyright (C) 2010-2012  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -88,7 +90,7 @@ atouint64_t(const char *s)
   uint64_t r;
   for (r = 0; *s; s++) {
     r *= 10;
-    r += (*s - '0');
+    r += (uint64_t)(*s - '0');
   }
   return r;
 }
