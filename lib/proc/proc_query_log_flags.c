@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2017 Brazil
+  Copyright (C) 2017  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -77,7 +78,7 @@ grn_query_log_flags_update(grn_ctx *ctx,
   }
 
   if (!grn_query_log_flags_parse(GRN_TEXT_VALUE(flags_text),
-                                 GRN_TEXT_LEN(flags_text),
+                                 (int)GRN_TEXT_LEN(flags_text),
                                  &flags)) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
