@@ -2147,9 +2147,9 @@ grn_table_selector_select(grn_ctx *ctx,
   }
 
   {
-    int i = 0;
+    size_t i = 0;
     if (!result_set_created) { i++; }
-    int n_result_sets = GRN_PTR_VECTOR_SIZE(&result_set_stack);
+    size_t n_result_sets = GRN_PTR_VECTOR_SIZE(&result_set_stack);
     for (; i < n_result_sets; i++) {
       grn_obj *result_set_ = GRN_PTR_VALUE_AT(&result_set_stack, i);
       grn_obj_close(ctx, result_set_);
