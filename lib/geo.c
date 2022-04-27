@@ -59,15 +59,16 @@ typedef struct {
 typedef struct {
   grn_geo_point min;
   grn_geo_point max;
-  int rectangle_common_bit;
+  uint8_t rectangle_common_bit;
   uint8_t rectangle_common_key[sizeof(grn_geo_point)];
 } in_rectangle_area_data;
 
-static int
+static uint8_t
 compute_diff_bit(uint8_t *geo_key1, uint8_t *geo_key2)
 {
-  size_t i;
-  int j, diff_bit = 0;
+  uint8_t i;
+  uint8_t j;
+  uint8_t diff_bit = 0;
 
   for (i = 0; i < sizeof(grn_geo_point); i++) {
     if (geo_key1[i] != geo_key2[i]) {
@@ -82,14 +83,15 @@ compute_diff_bit(uint8_t *geo_key1, uint8_t *geo_key2)
     }
   }
 
-  return i * 8 + diff_bit;
+  uint8_t n_bits_per_byte = 8;
+  return (uint8_t)(i * n_bits_per_byte) + diff_bit;
 }
 
 static void
-compute_min_and_max_key(uint8_t *key_base, int diff_bit,
+compute_min_and_max_key(uint8_t *key_base, uint8_t diff_bit,
                         uint8_t *key_min, uint8_t *key_max)
 {
-  int diff_byte, diff_bit_mask;
+  uint8_t diff_byte, diff_bit_mask;
 
   diff_byte = diff_bit / 8;
   diff_bit_mask = 0xff >> (diff_bit % 8);
@@ -115,7 +117,7 @@ compute_min_and_max_key(uint8_t *key_base, int diff_bit,
 }
 
 static void
-compute_min_and_max(grn_geo_point *base_point, int diff_bit,
+compute_min_and_max(grn_geo_point *base_point, uint8_t diff_bit,
                     grn_geo_point *geo_min, grn_geo_point *geo_max)
 {
   uint8_t geo_key_base[sizeof(grn_geo_point)];
@@ -264,9 +266,11 @@ grn_geo_table_sort_detect_far_point(grn_ctx *ctx, grn_obj *table, grn_obj *index
                                     grn_pat_cursor *pc, int n,
                                     grn_bool accessorp,
                                     grn_geo_point *base_point,
-                                    double *d_far, int *diff_bit)
+                                    double *d_far, uint8_t *diff_bit)
 {
-  int i = 0, diff_bit_prev, diff_bit_current;
+  int i = 0;
+  uint8_t diff_bit_prev;
+  uint8_t diff_bit_current;
   grn_id tid;
   geo_entry *ep, *p;
   double d;
@@ -348,7 +352,7 @@ typedef enum {
 */
 static int
 grn_geo_get_meshes_for_circle(grn_ctx *ctx, grn_geo_point *base_point,
-                              double d_far, int diff_bit,
+                              double d_far, uint8_t diff_bit,
                               int include_base_point_mesh,
                               mesh_entry *meshes)
 {
@@ -532,7 +536,7 @@ grn_geo_table_sort_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                   geo_entry *entries, int n_entries,
                                   int n, grn_bool accessorp,
                                   grn_geo_point *base_point,
-                                  double d_far, int diff_bit)
+                                  double d_far, uint8_t diff_bit)
 {
   int n_meshes;
   mesh_entry meshes[86];
@@ -544,12 +548,13 @@ grn_geo_table_sort_collect_points(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   ep = entries + n_entries;
   while (n_meshes--) {
     grn_id tid;
-    grn_pat_cursor *pc = grn_pat_cursor_open(ctx, pat,
-                                             &(meshes[n_meshes].key),
-                                             meshes[n_meshes].key_size,
-                                             NULL, 0,
-                                             0, -1,
-                                             GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
+    grn_pat_cursor *pc =
+      grn_pat_cursor_open(ctx, pat,
+                          &(meshes[n_meshes].key),
+                          (uint32_t)(meshes[n_meshes].key_size),
+                          NULL, 0,
+                          0, -1,
+                          GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
     inspect_mesh_entry(ctx, meshes, n_meshes);
     if (pc) {
       while ((tid = grn_pat_cursor_next(ctx, pc))) {
@@ -629,8 +634,9 @@ grn_geo_table_sort_by_distance(grn_ctx *ctx,
   int n_entries = 0, e = offset + limit;
   geo_entry *entries;
 
-  if ((entries = GRN_MALLOC(sizeof(geo_entry) * (e + 1)))) {
-    int n, diff_bit;
+  if ((entries = GRN_MALLOC(sizeof(geo_entry) * (size_t)(e + 1)))) {
+    int n;
+    uint8_t diff_bit;
     double d_far;
     geo_entry *ep;
     grn_bool need_not_indexed_records;
@@ -701,7 +707,7 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     unsigned int size;
     grn_rc rc;
     size = grn_table_size(ctx, table);
-    rc = grn_output_range_normalize(ctx, size, &offset, &limit);
+    rc = grn_output_range_normalize(ctx, (int)size, &offset, &limit);
     if (rc != GRN_SUCCESS) {
       ERR(rc,
           "[sort][geo] failed to normalize offset and limit: "
@@ -738,7 +744,7 @@ grn_geo_table_sort(grn_ctx *ctx, grn_obj *table, int offset, int limit,
     grn_id domain = pat->obj.header.domain;
     grn_pat_cursor *pc = grn_pat_cursor_open(ctx, pat, NULL, 0,
                                              GRN_BULK_HEAD(geo_point),
-                                             GRN_BULK_VSIZE(geo_point),
+                                             (uint32_t)GRN_BULK_VSIZE(geo_point),
                                              0, -1, GRN_CURSOR_PREFIX);
     if (pc) {
       if (domain != GRN_DB_TOKYO_GEO_POINT && domain != GRN_DB_WGS84_GEO_POINT) {
@@ -783,7 +789,7 @@ grn_geo_resolve_approximate_type(grn_ctx *ctx, grn_obj *type_name,
   rc = grn_obj_cast(ctx, type_name, &approximate_type, GRN_FALSE);
   if (rc == GRN_SUCCESS) {
     const char *name;
-    unsigned int size;
+    size_t size;
     name = GRN_TEXT_VALUE(&approximate_type);
     size = GRN_TEXT_LEN(&approximate_type);
     if ((strncmp("rectangle", name, size) == 0) ||
@@ -800,7 +806,7 @@ grn_geo_resolve_approximate_type(grn_ctx *ctx, grn_obj *type_name,
           "geo distance approximate type must be one of "
           "[rectangle, rect, sphere, sphr, ellipsoid, ellip]"
           ": <%.*s>",
-          size, name);
+          (int)size, name);
     }
   }
   GRN_OBJ_FIN(ctx, &approximate_type);
@@ -938,7 +944,7 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
       grn_obj_unlink(ctx, domain_object);
     } else {
       grn_strcpy(name, GRN_TABLE_MAX_KEY_SIZE, "(null)");
-      name_size = strlen(name);
+      name_size = (int)strlen(name);
     }
     ERR(GRN_INVALID_ARGUMENT,
         "geo_in_circle(): index table must be "
@@ -1026,7 +1032,8 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
        (grn_selector_data_have_score_column(ctx, data) ||
         grn_selector_data_have_tags_column(ctx, data)));
 
-    int n_meshes, diff_bit;
+    int n_meshes;
+    uint8_t diff_bit;
     double d_far;
     mesh_entry meshes[87];
     uint8_t geo_key1[sizeof(grn_geo_point)];
@@ -1053,7 +1060,7 @@ grn_geo_select_in_circle(grn_ctx *ctx, grn_obj *index,
       grn_table_cursor *tc;
       tc = grn_table_cursor_open(ctx, pat,
                                  &(meshes[n_meshes].key),
-                                 meshes[n_meshes].key_size,
+                                 (unsigned int)(meshes[n_meshes].key_size),
                                  NULL, 0,
                                  0, -1,
                                  GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
@@ -1181,7 +1188,7 @@ in_rectangle_data_fill(grn_ctx *ctx, grn_obj *index,
       grn_obj_unlink(ctx, domain_object);
     } else {
       grn_strcpy(name, GRN_TABLE_MAX_KEY_SIZE, "(null)");
-      name_size = strlen(name);
+      name_size = (int)strlen(name);
     }
     ERR(GRN_INVALID_ARGUMENT,
         "%s: index table must be "
@@ -1340,7 +1347,7 @@ in_rectangle_area_data_compute(grn_ctx *ctx,
                                in_rectangle_area_data *data)
 {
   int latitude_distance, longitude_distance;
-  int diff_bit;
+  uint8_t diff_bit;
   grn_geo_point base;
   grn_geo_point *geo_point_input;
   uint8_t geo_key_input[sizeof(grn_geo_point)];
@@ -1699,7 +1706,7 @@ grn_geo_cursor_entry_next_push(grn_ctx *ctx,
   pat_cursor = grn_table_cursor_open(ctx,
                                      cursor->pat,
                                      &entry_base,
-                                     entry->target_bit + 1,
+                                     (unsigned int)(entry->target_bit + 1),
                                      NULL, 0,
                                      0, -1,
                                      GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT);
@@ -1996,7 +2003,7 @@ grn_geo_cursor_each(grn_ctx *ctx,
             grn_table_cursor_open(ctx,
                                   pat,
                                   &entry_base,
-                                  entry.target_bit + 1,
+                                  (unsigned int)(entry.target_bit + 1),
                                   NULL, 0,
                                   0, -1,
                                   GRN_CURSOR_PREFIX|GRN_CURSOR_SIZE_BY_BIT))) {
@@ -2019,7 +2026,7 @@ grn_geo_cursor_each(grn_ctx *ctx,
                                    index_id,
                                    GRN_ID_NIL,
                                    GRN_ID_MAX,
-                                   ii->n_elements,
+                                   (int)(ii->n_elements),
                                    0))) {
             continue;
           }
@@ -2113,7 +2120,7 @@ grn_geo_select_in_rectangle_callback(grn_ctx *ctx,
     add_posting.weight_float =
       (float)((add_posting.weight_float + 1.0) * distance);
   } else {
-    add_posting.weight_float += 1.0;
+    add_posting.weight_float += 1.0f;
   }
   grn_ii_posting_add_float(ctx,
                            (grn_posting *)(&add_posting),
@@ -2179,7 +2186,7 @@ geo_point_get(grn_ctx *ctx, grn_obj *pat, int flags, grn_geo_point *geo_point)
     void *key;
     int key_size;
     key_size = grn_table_cursor_get_key(ctx, cursor, &key);
-    grn_memcpy(geo_point, key, key_size);
+    grn_memcpy(geo_point, key, (size_t)key_size);
   }
 
 exit:
@@ -2196,7 +2203,7 @@ grn_geo_estimate_size_in_rectangle(grn_ctx *ctx,
                                    grn_obj *bottom_right_point)
 {
   uint32_t n = 0;
-  int total_records;
+  unsigned int total_records;
   grn_rc rc;
   in_rectangle_data data;
 
@@ -2274,7 +2281,7 @@ grn_geo_estimate_in_rectangle(grn_ctx *ctx,
     return -1;
   }
 
-  return size;
+  return (int)size;
 }
 
 grn_bool
