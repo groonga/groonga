@@ -1,4 +1,6 @@
-/* Copyright(C) 2010-2015 Brazil
+/*
+  Copyright (C) 2010-2015  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -87,7 +89,10 @@ send_command(grn_ctx *ctx, grn_obj *buffer, const char *command,
   }
   GRN_TEXT_PUTS(ctx, buffer, p);
   printf("> %.*s\n", (int)GRN_TEXT_LEN(buffer), GRN_TEXT_VALUE(buffer));
-  grn_ctx_send(ctx, GRN_TEXT_VALUE(buffer), GRN_TEXT_LEN(buffer), 0);
+  grn_ctx_send(ctx,
+               GRN_TEXT_VALUE(buffer),
+               (unsigned int)GRN_TEXT_LEN(buffer),
+               0);
   output(ctx);
 }
 
