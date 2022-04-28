@@ -180,6 +180,33 @@ msgstr "パトリシアトライのテーブルにすでにキーがある場合
 msgid "If the additional key is 4096 bytes."
 msgstr "4096バイトのキーを追加する場合。"
 
+msgid "Known Issues"
+msgstr "既知の問題"
+
+msgid ""
+"Currently, Groonga has a bug that there is possible that data is corrupt "
+"when we execute many additions, delete, and update data to vector column."
+msgstr ""
+"現在Groongaには、ベクターカラムに対してデータを大量に追加、削除、更新した際に"
+"データが破損することがある問題があります。"
+
+msgid ""
+"``*<`` and ``*>`` only valid when we use ``query()`` the right side of "
+"filter condition. If we specify as below, ``*<`` and ``*>`` work as ``&&``."
+msgstr ""
+"``*<`` と ``*>`` は、filter条件の右辺に ``query()`` を使う時のみ有効です。も"
+"し、以下のように指定した場合、 ``*<`` と ``*>`` は ``&&`` として機能します。"
+
+msgid "``'content @ \"Groonga\" *< content @ \"Mroonga\"'``"
+msgstr ""
+
+msgid ""
+"Groonga may not return records that should match caused by "
+"``GRN_II_CURSOR_SET_MIN_ENABLE``."
+msgstr ""
+"``GRN_II_CURSOR_SET_MIN_ENABLE`` が原因でマッチするはずのレコードを返さないこ"
+"とがあります。"
+
 msgid "Thanks"
 msgstr "感謝"
 
@@ -467,33 +494,6 @@ msgstr "[Windows] Visual Studio 2017 でのビルドをやめました。"
 
 msgid "Because we could not use windows-2016 image on GitHub Actions."
 msgstr "GitHub Actionsで windows-2016 のイメージが使えなくなったためです。"
-
-msgid "Known Issues"
-msgstr "既知の問題"
-
-msgid ""
-"Currently, Groonga has a bug that there is possible that data is corrupt "
-"when we execute many additions, delete, and update data to vector column."
-msgstr ""
-"現在Groongaには、ベクターカラムに対してデータを大量に追加、削除、更新した際に"
-"データが破損することがある問題があります。"
-
-msgid ""
-"``*<`` and ``*>`` only valid when we use ``query()`` the right side of "
-"filter condition. If we specify as below, ``*<`` and ``*>`` work as ``&&``."
-msgstr ""
-"``*<`` と ``*>`` は、filter条件の右辺に ``query()`` を使う時のみ有効です。も"
-"し、以下のように指定した場合、 ``*<`` と ``*>`` は ``&&`` として機能します。"
-
-msgid "``'content @ \"Groonga\" *< content @ \"Mroonga\"'``"
-msgstr ""
-
-msgid ""
-"Groonga may not return records that should match caused by "
-"``GRN_II_CURSOR_SET_MIN_ENABLE``."
-msgstr ""
-"``GRN_II_CURSOR_SET_MIN_ENABLE`` が原因でマッチするはずのレコードを返さないこ"
-"とがあります。"
 
 msgid "David CARLIER"
 msgstr "David CARLIERさん"
