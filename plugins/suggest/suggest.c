@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2010-2014  Brazil
-  Copyright(C) 2019-2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2010-2014  Brazil
+  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -33,8 +33,7 @@
 #include <groonga/plugin.h>
 
 #define VAR GRN_PROC_GET_VAR_BY_OFFSET
-#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0
-#define TEXT_VALUE_LEN(x) GRN_TEXT_VALUE(x), GRN_TEXT_LEN(x)
+#define CONST_STR_LEN(x) x, sizeof(x) - 1
 
 #define MIN_LEARN_DISTANCE (60 * GRN_TIME_USEC_PER_SEC)
 
@@ -161,8 +160,13 @@ cooccurrence_search(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_id i
     default :
       return max_score;
     }
-    if ((c = grn_ii_cursor_open(ctx, (grn_ii *)co, id, GRN_ID_NIL, GRN_ID_MAX,
-                                ((grn_ii *)co)->n_elements - 1, 0))) {
+    if ((c = grn_ii_cursor_open(ctx,
+                                (grn_ii *)co,
+                                id,
+                                GRN_ID_NIL,
+                                GRN_ID_MAX,
+                                (int)(((grn_ii *)co)->n_elements - 1),
+                                0))) {
       grn_posting *p;
       grn_obj post, pair_freq, item_freq, item_freq2, item_boost;
       GRN_RECORD_INIT(&post, 0, grn_obj_id(ctx, items));
@@ -236,13 +240,13 @@ output(grn_ctx *ctx, grn_obj *table, grn_obj *res, grn_id tid,
 {
   grn_obj *sorted;
   if ((sorted = grn_table_create(ctx, NULL, 0, NULL, GRN_OBJ_TABLE_NO_KEY, NULL, res))) {
-    uint32_t nkeys;
+    unsigned int nkeys;
     grn_obj_format format;
     grn_table_sort_key *keys;
     const char *sortby_val = GRN_TEXT_VALUE(sortby);
-    unsigned int sortby_len = GRN_TEXT_LEN(sortby);
+    size_t sortby_len = GRN_TEXT_LEN(sortby);
     const char *oc_val = GRN_TEXT_VALUE(output_columns);
-    unsigned int oc_len = GRN_TEXT_LEN(output_columns);
+    size_t oc_len = GRN_TEXT_LEN(output_columns);
     if (!sortby_val || !sortby_len) {
       sortby_val = DEFAULT_SORTBY;
       sortby_len = sizeof(DEFAULT_SORTBY) - 1;
@@ -251,17 +255,25 @@ output(grn_ctx *ctx, grn_obj *table, grn_obj *res, grn_id tid,
       oc_val = DEFAULT_OUTPUT_COLUMNS;
       oc_len = sizeof(DEFAULT_OUTPUT_COLUMNS) - 1;
     }
-    if ((keys = grn_table_sort_key_from_str(ctx, sortby_val, sortby_len, res, &nkeys))) {
+    if ((keys = grn_table_sort_key_from_str(ctx,
+                                            sortby_val,
+                                            (unsigned int)sortby_len,
+                                            res,
+                                            &nkeys))) {
       const unsigned int n_hits = grn_table_size(ctx, res);
-      grn_output_range_normalize(ctx, n_hits, &offset, &limit);
-      grn_table_sort(ctx, res, offset, limit, sorted, keys, nkeys);
+      grn_output_range_normalize(ctx, (int)n_hits, &offset, &limit);
+      grn_table_sort(ctx, res, offset, limit, sorted, keys, (int)nkeys);
       GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                     ":", "sort(%d)", limit);
-      GRN_OBJ_FORMAT_INIT(&format, grn_table_size(ctx, res), 0, limit, offset);
+      GRN_OBJ_FORMAT_INIT(&format,
+                          (int)grn_table_size(ctx, res),
+                          0,
+                          limit,
+                          offset);
       format.flags =
         GRN_OBJ_FORMAT_WITH_COLUMN_NAMES|
         GRN_OBJ_FORMAT_XML_ELEMENT_RESULTSET;
-      grn_obj_columns(ctx, sorted, oc_val, oc_len, &format.columns);
+      grn_obj_columns(ctx, sorted, oc_val, (unsigned int)oc_len, &format.columns);
       GRN_OUTPUT_OBJ(sorted, &format);
       GRN_OBJ_FORMAT_FIN(ctx, &format);
       grn_table_sort_key_close(ctx, keys, nkeys);
@@ -312,7 +324,10 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
   GRN_INT32_INIT(&item_boost, 0);
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, items, NULL))) {
-    grn_id tid = grn_table_get(ctx, items, TEXT_VALUE_LEN(query));
+    grn_id tid = grn_table_get(ctx,
+                               items,
+                               GRN_TEXT_VALUE(query),
+                               (unsigned int)GRN_TEXT_LEN(query));
     if (GRN_TEXT_LEN(query)) {
       grn_table_cursor *cur;
       /* RK search + prefix search */
@@ -321,7 +336,7 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
       if (grn_column_index(ctx, col, GRN_OP_PREFIX, &index, 1, NULL)) {
         if ((cur = grn_table_cursor_open(ctx, grn_ctx_at(ctx, index->header.domain),
                                          GRN_TEXT_VALUE(query),
-                                         GRN_TEXT_LEN(query),
+                                         (unsigned int)GRN_TEXT_LEN(query),
                                          NULL, 0, 0, -1,
                                          GRN_CURSOR_PREFIX|GRN_CURSOR_RK))) {
           grn_id id;
@@ -353,7 +368,7 @@ complete(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost, grn_obj *col,
             !grn_table_size(ctx, res))) &&
           (cur = grn_table_cursor_open(ctx, items,
                                        GRN_TEXT_VALUE(query),
-                                       GRN_TEXT_LEN(query),
+                                       (unsigned int)GRN_TEXT_LEN(query),
                                        NULL, 0, 0, -1, GRN_CURSOR_PREFIX))) {
         grn_id id;
         while ((id = grn_table_cursor_next(ctx, cur))) {
@@ -386,7 +401,10 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
   GRN_INT32_INIT(&item_boost, 0);
   if ((res = grn_table_create(ctx, NULL, 0, NULL,
                               GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, items, NULL))) {
-    grn_id tid = grn_table_get(ctx, items, TEXT_VALUE_LEN(query));
+    grn_id tid = grn_table_get(ctx,
+                               items,
+                               GRN_TEXT_VALUE(query),
+                               (unsigned int)GRN_TEXT_LEN(query));
     double max_score;
     max_score = cooccurrence_search(ctx, items, items_boost, tid, res, CORRECT,
                                     frequency_threshold,
@@ -407,8 +425,13 @@ correct(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
           optarg.mode = GRN_OP_SIMILAR;
           optarg.similarity_threshold = 0;
           optarg.max_size = 2;
-          grn_ii_select(ctx, (grn_ii *)index, TEXT_VALUE_LEN(query),
-                        (grn_hash *)res, GRN_OP_OR, &optarg);
+          grn_ii_select(ctx,
+                        (grn_ii *)index,
+                        GRN_TEXT_VALUE(query),
+                        (unsigned int)GRN_TEXT_LEN(query),
+                        (grn_hash *)res,
+                        GRN_OP_OR,
+                        &optarg);
           grn_obj_unlink(ctx, index);
           GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                         ":", "similar(%d)", grn_table_size(ctx, res));
@@ -515,9 +538,17 @@ suggest(grn_ctx *ctx, grn_obj *items, grn_obj *items_boost,
         int frequency_threshold, double conditional_probability_threshold)
 {
   grn_obj *res;
-  if ((res = grn_table_create(ctx, NULL, 0, NULL,
-                              GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC, items, NULL))) {
-    grn_id tid = grn_table_get(ctx, items, TEXT_VALUE_LEN(query));
+  if ((res = grn_table_create(ctx,
+                              NULL,
+                              0,
+                              NULL,
+                              GRN_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                              items,
+                              NULL))) {
+    grn_id tid = grn_table_get(ctx,
+                               items,
+                               GRN_TEXT_VALUE(query),
+                               (unsigned int)GRN_TEXT_LEN(query));
     cooccurrence_search(ctx, items, items_boost, tid, res, SUGGEST,
                         frequency_threshold, conditional_probability_threshold);
     output(ctx, items, res, tid, sortby, output_columns, offset, limit);
@@ -531,7 +562,7 @@ static grn_suggest_search_mode
 parse_search_mode(grn_ctx *ctx, grn_obj *mode_text)
 {
   grn_suggest_search_mode mode;
-  int mode_length;
+  size_t mode_length;
 
   mode_length = GRN_TEXT_LEN(mode_text);
   if (mode_length == 3 &&
@@ -578,7 +609,9 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
   prefix_search_mode = parse_search_mode(ctx, VAR(10));
   similar_search_mode = parse_search_mode(ctx, VAR(11));
 
-  if ((items = grn_ctx_get(ctx, TEXT_VALUE_LEN(VAR(1))))) {
+  if ((items = grn_ctx_get(ctx,
+                           GRN_TEXT_VALUE(VAR(1)),
+                           (int)GRN_TEXT_LEN(VAR(1))))) {
     if ((items_boost = grn_obj_column(ctx, items, CONST_STR_LEN("boost")))) {
       int n_outputs = 0;
       if (types & COMPLETE) {
@@ -593,7 +626,10 @@ command_suggest(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_dat
       GRN_OUTPUT_MAP_OPEN("RESULT_SET", n_outputs);
 
       if (types & COMPLETE) {
-        if ((col = grn_obj_column(ctx, items, TEXT_VALUE_LEN(VAR(2))))) {
+        if ((col = grn_obj_column(ctx,
+                                  items,
+                                  GRN_TEXT_VALUE(VAR(2)),
+                                  (uint32_t)GRN_TEXT_LEN(VAR(2))))) {
           GRN_OUTPUT_CSTR("complete");
           complete(ctx, items, items_boost, col, VAR(3), VAR(4),
                    VAR(5), offset, limit,
@@ -728,7 +764,7 @@ learner_init_weight(grn_ctx *ctx, grn_suggest_learner *learner)
     grn_id id;
     id = grn_table_get(ctx, learner->configuration,
                        GRN_TEXT_VALUE(&(learner->dataset_name)),
-                       GRN_TEXT_LEN(&(learner->dataset_name)));
+                       (unsigned int)GRN_TEXT_LEN(&(learner->dataset_name)));
     if (id != GRN_ID_NIL) {
       grn_obj weight_value;
       GRN_UINT32_INIT(&weight_value, 0);
@@ -747,8 +783,8 @@ static void
 learner_init_dataset_name(grn_ctx *ctx, grn_suggest_learner *learner)
 {
   char events_name[GRN_TABLE_MAX_KEY_SIZE];
-  unsigned int events_name_size;
-  unsigned int events_name_prefix_size;
+  int events_name_size;
+  int events_name_prefix_size;
 
   events_name_size = grn_obj_name(ctx, learner->events,
                                   events_name, GRN_TABLE_MAX_KEY_SIZE);
@@ -907,8 +943,12 @@ learner_learn_for_suggest(grn_ctx *ctx, grn_suggest_learner *learner)
                                  keybuf, GRN_TABLE_MAX_KEY_SIZE);
   unsigned int token_flags = 0;
   grn_token_cursor *token_cursor =
-    grn_token_cursor_open(ctx, learner->items, keybuf, keylen,
-                          GRN_TOKEN_ADD, token_flags);
+    grn_token_cursor_open(ctx,
+                          learner->items,
+                          keybuf,
+                          (size_t)keylen,
+                          GRN_TOKEN_ADD,
+                          token_flags);
   if (token_cursor) {
     grn_id tid;
     grn_obj *pre_item = &(learner->pre_item);
