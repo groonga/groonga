@@ -15,9 +15,9 @@ Install required packages to build Groonga::
 
 Download source::
 
-  % wget https://packages.groonga.org/source/groonga/groonga-12.0.2.tar.gz
-  % gtar xvzf groonga-12.0.2.tar.gz
-  % cd groonga-12.0.2
+  % wget https://packages.groonga.org/source/groonga/groonga-12.0.3.tar.gz
+  % gtar xvzf groonga-12.0.3.tar.gz
+  % cd groonga-12.0.3
 
 Configure with ``CFLAGS="-m64" CXXFLAGS="-m64"`` variables. They are
 needed for building 64-bit version. To build 32-bit version, just
