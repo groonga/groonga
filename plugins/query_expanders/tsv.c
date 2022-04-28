@@ -113,7 +113,7 @@ detect_coding_part(grn_ctx *ctx, const char *line, size_t line_length)
 static grn_encoding
 guess_encoding(grn_ctx *ctx, const char **line, size_t *line_length)
 {
-  const char bom[] = {0xef, 0xbb, 0xbf};
+  const char bom[] = {(char)0xef, (char)0xbb, (char)0xbf};
   size_t bom_length = sizeof(bom);
 
   if (*line_length >= bom_length && memcmp(*line, bom, bom_length) == 0) {
@@ -168,8 +168,12 @@ parse_synonyms_file_line(grn_ctx *ctx, const char *line, size_t line_length,
     grn_id id;
     void *value_location = NULL;
 
-    id = grn_hash_add(ctx, synonyms, GRN_TEXT_VALUE(key), GRN_TEXT_LEN(key),
-                      &value_location, NULL);
+    id = grn_hash_add(ctx,
+                      synonyms,
+                      GRN_TEXT_VALUE(key),
+                      (unsigned int)GRN_TEXT_LEN(key),
+                      &value_location,
+                      NULL);
     if (id == GRN_ID_NIL) {
       GRN_PLUGIN_LOG(ctx, GRN_LOG_WARNING,
                      "[plugin][query-expander][tsv] "
@@ -259,8 +263,10 @@ func_query_expander_tsv(grn_ctx *ctx, int nargs, grn_obj **args,
 
   term = args[0];
   expanded_term = args[1];
-  id = grn_hash_get(ctx, synonyms,
-                    GRN_TEXT_VALUE(term), GRN_TEXT_LEN(term),
+  id = grn_hash_get(ctx,
+                    synonyms,
+                    GRN_TEXT_VALUE(term),
+                    (unsigned int)GRN_TEXT_LEN(term),
                     &value);
   if (id != GRN_ID_NIL) {
     const char *query = value;
