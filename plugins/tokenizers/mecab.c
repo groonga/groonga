@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -362,7 +362,7 @@ static bool
 chunked_tokenize_utf8_chunk(grn_ctx *ctx,
                             grn_mecab_tokenizer *tokenizer,
                             const char *chunk,
-                            unsigned int chunk_bytes)
+                            size_t chunk_bytes)
 {
   const char *tokenized_chunk;
   size_t tokenized_chunk_length;
@@ -372,7 +372,8 @@ chunked_tokenize_utf8_chunk(grn_ctx *ctx,
   if (!mecab_parse_lattice(tokenizer->mecab->mecab, tokenizer->lattice)) {
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer][mecab][chunk] "
-                     "mecab_parse_lattice() failed len=%d err=%s",
+                     "mecab_parse_lattice() failed "
+                     "len=%" GRN_FMT_SIZE " err=%s",
                      chunk_bytes,
                      mecab_lattice_strerror(tokenizer->lattice));
     return false;
@@ -381,7 +382,8 @@ chunked_tokenize_utf8_chunk(grn_ctx *ctx,
   if (!tokenized_chunk) {
     GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                      "[tokenizer][mecab][chunk] "
-                     "mecab_sparse_tostr2() failed len=%d err=%s",
+                     "mecab_sparse_tostr2() failed "
+                     "len=%" GRN_FMT_SIZE " err=%s",
                      chunk_bytes,
                      mecab_lattice_strerror(tokenizer->lattice));
     return false;
@@ -404,7 +406,7 @@ chunked_tokenize_utf8_chunk(grn_ctx *ctx,
   return true;
 }
 
-static grn_bool
+static bool
 chunked_tokenize_utf8(grn_ctx *ctx,
                       grn_mecab_tokenizer *tokenizer,
                       const char *string,
@@ -434,11 +436,11 @@ chunked_tokenize_utf8(grn_ctx *ctx,
     space_bytes = grn_isspace(current, encoding);
     if (space_bytes > 0) {
       if (chunk_start != current) {
-        grn_bool succeeded;
-        succeeded = chunked_tokenize_utf8_chunk(ctx,
-                                                tokenizer,
-                                                chunk_start,
-                                                current - chunk_start);
+        bool succeeded =
+          chunked_tokenize_utf8_chunk(ctx,
+                                      tokenizer,
+                                      chunk_start,
+                                      (size_t)(current - chunk_start));
         if (!succeeded) {
           return succeeded;
         }
@@ -455,7 +457,7 @@ chunked_tokenize_utf8(grn_ctx *ctx,
                        "[tokenizer][mecab][chunk] "
                        "invalid byte sequence: position=%d",
                        (int)(current - string));
-      return GRN_FALSE;
+      return false;
     }
 
     current_character = current;
@@ -465,18 +467,19 @@ chunked_tokenize_utf8(grn_ctx *ctx,
     }
 
     if ((current - chunk_start) >= tokenizer->options->chunk_size_threshold) {
-      grn_bool succeeded;
+      bool succeeded;
       if (last_delimiter) {
-        succeeded = chunked_tokenize_utf8_chunk(ctx,
-                                                tokenizer,
-                                                chunk_start,
-                                                last_delimiter - chunk_start);
+        succeeded =
+          chunked_tokenize_utf8_chunk(ctx,
+                                      tokenizer,
+                                      chunk_start,
+                                      (size_t)(last_delimiter - chunk_start));
         chunk_start = last_delimiter;
       } else {
         succeeded = chunked_tokenize_utf8_chunk(ctx,
                                                 tokenizer,
                                                 chunk_start,
-                                                current - chunk_start);
+                                                (size_t)(current - chunk_start));
         chunk_start = current;
       }
       if (!succeeded) {
@@ -487,12 +490,12 @@ chunked_tokenize_utf8(grn_ctx *ctx,
   }
 
   if (current == chunk_start) {
-    return GRN_TRUE;
+    return true;
   } else {
     return chunked_tokenize_utf8_chunk(ctx,
                                        tokenizer,
                                        chunk_start,
-                                       current - chunk_start);
+                                       (size_t)(current - chunk_start));
   }
 }
 
@@ -675,7 +678,7 @@ mecab_get_feature(grn_ctx *ctx,
   start = (const char *)(GRN_UINT64_VALUE_AT(feature_locations, i));
   end = ((const char *)(GRN_UINT64_VALUE_AT(feature_locations, i + 1))) - 1;
   *value = start;
-  return end - start;
+  return (size_t)(end - start);
 }
 
 static void
@@ -743,7 +746,7 @@ mecab_next_default_format_consume_token(grn_ctx *ctx,
     if (length == 1) {
       if (current[0] == '\r') {
         if (surface_length == 0) {
-          surface_length = current - surface;
+          surface_length = (size_t)(current - surface);
         } else {
           GRN_UINT64_PUT(ctx, feature_locations, current);
         }
@@ -756,7 +759,7 @@ mecab_next_default_format_consume_token(grn_ctx *ctx,
         break;
       } else if (current[0] == '\n') {
         if (surface_length == 0) {
-          surface_length = current - surface;
+          surface_length = (size_t)(current - surface);
         } else {
           GRN_UINT64_PUT(ctx, feature_locations, current);
         }
@@ -767,7 +770,7 @@ mecab_next_default_format_consume_token(grn_ctx *ctx,
 
     if (surface_length == 0) {
       if (length == 1 && current[0] == '\t') {
-        surface_length = current - surface;
+        surface_length = (size_t)(current - surface);
         if (current + 1 < end) {
           GRN_UINT64_PUT(ctx, feature_locations, current + 1);
         }
@@ -857,7 +860,7 @@ mecab_next_default_format_consume_needless_tokens(grn_ctx *ctx,
                                          &(classes[3]));
     for (i = 0; i < n_target_classes; i++) {
       const char *target_class;
-      unsigned int target_class_length;
+      size_t target_class_length;
       grn_bool positive = GRN_TRUE;
       size_t j;
       grn_bool matched = GRN_FALSE;
@@ -944,9 +947,9 @@ mecab_next_default_format(grn_ctx *ctx,
                                        GRN_MECAB_FEATURE_LOCATION_READING,
                                        &reading);
     if (reading_length > 0) {
-      grn_token_set_data(ctx, token, reading, reading_length);
+      grn_token_set_data(ctx, token, reading, (int)reading_length);
     } else {
-      grn_token_set_data(ctx, token, surface, surface_length);
+      grn_token_set_data(ctx, token, surface, (int)surface_length);
     }
   } else if (tokenizer->options->use_base_form) {
     grn_obj *feature_locations = &(tokenizer->feature_locations);
@@ -957,12 +960,12 @@ mecab_next_default_format(grn_ctx *ctx,
                                          GRN_MECAB_FEATURE_LOCATION_BASE_FORM,
                                          &base_form);
     if (base_form_length > 0) {
-      grn_token_set_data(ctx, token, base_form, base_form_length);
+      grn_token_set_data(ctx, token, base_form, (int)base_form_length);
     } else {
-      grn_token_set_data(ctx, token, surface, surface_length);
+      grn_token_set_data(ctx, token, surface, (int)surface_length);
     }
   } else {
-    grn_token_set_data(ctx, token, surface, surface_length);
+    grn_token_set_data(ctx, token, surface, (int)surface_length);
   }
   if (tokenizer->options->include_class) {
     add_feature_data data;
@@ -1026,7 +1029,7 @@ mecab_next_wakati_format(grn_ctx *ctx,
                          grn_token *token)
 {
   grn_encoding encoding = tokenizer->query->encoding;
-  size_t cl;
+  int cl;
   const char *p = tokenizer->next, *r;
   const char *e = tokenizer->end;
   grn_tokenizer_status status;
@@ -1061,7 +1064,7 @@ mecab_next_wakati_format(grn_ctx *ctx,
   } else {
     status = GRN_TOKEN_CONTINUE;
   }
-  grn_token_set_data(ctx, token, p, r - p);
+  grn_token_set_data(ctx, token, p, (int)(r - p));
   grn_token_set_status(ctx, token, status);
 }
 
@@ -1200,7 +1203,7 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
         tokenizer->end = tokenizer->next + GRN_TEXT_LEN(&(tokenizer->buf));
       } else {
         char *buf, *p;
-        unsigned int bufsize;
+        size_t bufsize;
 
         buf = GRN_TEXT_VALUE(&(tokenizer->buf));
         bufsize = GRN_TEXT_LEN(&(tokenizer->buf));
@@ -1235,11 +1238,12 @@ mecab_next(grn_ctx *ctx,
   if (grn_tokenizer_query_have_tokenized_delimiter(ctx, tokenizer->query)) {
     grn_encoding encoding = tokenizer->query->encoding;
     tokenizer->next =
-      grn_tokenizer_next_by_tokenized_delimiter(ctx,
-                                                token,
-                                                tokenizer->next,
-                                                tokenizer->end - tokenizer->next,
-                                                encoding);
+      grn_tokenizer_next_by_tokenized_delimiter(
+        ctx,
+        token,
+        tokenizer->next,
+        (unsigned int)(tokenizer->end - tokenizer->next),
+        encoding);
   } else if (mecab_tokenizer_options_need_default_output(ctx, tokenizer->options)) {
     mecab_next_default_format(ctx, tokenizer, token);
   } else {
