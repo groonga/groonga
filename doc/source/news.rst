@@ -101,6 +101,7 @@ Improvements
 
   Until now, if we specified ``snippet*`` like ``--output_columns 'snippet_html(contents[1])``,
   we could extract snippets of target text around search keywords against the vector as below.
+  However, we didn't know which we should output elements. Because we didn't know which element was hit on search.
 
   .. code-block::
 
@@ -142,10 +143,6 @@ Improvements
          ]
        ]
      ]
-
-  However, we didn't know which we should output elements. Because we didn't know which element was hit on search.
-
-  In addition, we could execute ``snippet()`` and ``snippet_html()`` against vector that concatenate each elements by using ``vector_join()``.
 
 * [``vector_join``] Added a new function ``vector_join()``.[groonga-dev,04956][Reported by shinonon]
 
