@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2014  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2014  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -240,7 +240,7 @@ normalize(grn_ctx *ctx,
       if (current > unwritten) {
         GRN_TEXT_PUT(ctx, normalized, unwritten, current - unwritten);
       }
-      GRN_TEXT_PUTC(ctx, normalized, tolower((unsigned char)*current));
+      GRN_TEXT_PUTC(ctx, normalized, (char)tolower((unsigned char)*current));
       unwritten = current + 1;
     }
   }
@@ -266,7 +266,7 @@ unnormalize(grn_ctx *ctx,
       if (current > unwritten) {
         GRN_TEXT_PUT(ctx, normalized, unwritten, current - unwritten);
       }
-      GRN_TEXT_PUTC(ctx, normalized, toupper((unsigned char)*current));
+      GRN_TEXT_PUTC(ctx, normalized, (char)toupper((unsigned char)*current));
       unwritten = current + 1;
     }
   }
@@ -308,10 +308,11 @@ stem_filter(grn_ctx *ctx,
       GRN_BULK_REWIND(buffer);
       normalize(ctx,
                 GRN_TEXT_VALUE(data),
-                GRN_TEXT_LEN(data),
+                (unsigned int)GRN_TEXT_LEN(data),
                 buffer);
       stemmed = sb_stemmer_stem(token_filter->stemmer,
-                                GRN_TEXT_VALUE(buffer), GRN_TEXT_LEN(buffer));
+                                GRN_TEXT_VALUE(buffer),
+                                (int)GRN_TEXT_LEN(buffer));
       if (!stemmed) {
         GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
                          "[token-filter][stem] "
@@ -324,13 +325,16 @@ stem_filter(grn_ctx *ctx,
       GRN_BULK_REWIND(buffer);
       unnormalize(ctx,
                   stemmed,
-                  sb_stemmer_length(token_filter->stemmer),
+                  (unsigned int)sb_stemmer_length(token_filter->stemmer),
                   buffer);
-      grn_token_set_data(ctx, next_token,
-                         GRN_TEXT_VALUE(buffer), GRN_TEXT_LEN(buffer));
+      grn_token_set_data(ctx,
+                         next_token,
+                         GRN_TEXT_VALUE(buffer),
+                         (int)GRN_TEXT_LEN(buffer));
     } else {
       stemmed = sb_stemmer_stem(token_filter->stemmer,
-                                GRN_TEXT_VALUE(data), GRN_TEXT_LEN(data));
+                                GRN_TEXT_VALUE(data),
+                                (int)GRN_TEXT_LEN(data));
       if (!stemmed) {
         GRN_PLUGIN_ERROR(ctx, GRN_NO_MEMORY_AVAILABLE,
                          "[token-filter][stem] "
