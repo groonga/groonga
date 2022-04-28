@@ -77,10 +77,10 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
   grn_obj *target;
   grn_obj *from_raw = NULL;
   grn_obj *length_raw = NULL;
-  int64_t from = 0;
-  int64_t length = -1;
-  uint32_t to = 0;
-  uint32_t size = 0;
+  int32_t from = 0;
+  int32_t length = -1;
+  int32_t to = 0;
+  int32_t size = 0;
   grn_obj *slice;
 
   if (n_args < 2 || n_args > 3) {
@@ -99,7 +99,7 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
   case GRN_VECTOR :
   case GRN_PVECTOR :
   case GRN_UVECTOR :
-    size = grn_vector_size(ctx, target);
+    size = (int32_t)grn_vector_size(ctx, target);
     break;
   default :
     {
@@ -132,15 +132,15 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
   if (from_raw->header.domain == GRN_DB_INT32) {
     from = GRN_INT32_VALUE(from_raw);
   } else if (from_raw->header.domain == GRN_DB_INT64) {
-    from = GRN_INT64_VALUE(from_raw);
+    from = (int32_t)GRN_INT64_VALUE(from_raw);
   } else {
     grn_obj buffer;
     grn_rc rc;
 
-    GRN_INT64_INIT(&buffer, 0);
+    GRN_INT32_INIT(&buffer, 0);
     rc = grn_obj_cast(ctx, from_raw, &buffer, GRN_FALSE);
     if (rc == GRN_SUCCESS) {
-      from = GRN_INT64_VALUE(&buffer);
+      from = GRN_INT32_VALUE(&buffer);
     }
     GRN_OBJ_FIN(ctx, &buffer);
 
@@ -175,15 +175,15 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
     if (length_raw->header.domain == GRN_DB_INT32) {
       length = GRN_INT32_VALUE(length_raw);
     } else if (length_raw->header.domain == GRN_DB_INT64) {
-      length = GRN_INT64_VALUE(length_raw);
+      length = (int32_t)GRN_INT64_VALUE(length_raw);
     } else {
       grn_obj buffer;
       grn_rc rc;
 
-      GRN_INT64_INIT(&buffer, 0);
+      GRN_INT32_INIT(&buffer, 0);
       rc = grn_obj_cast(ctx, length_raw, &buffer, GRN_FALSE);
       if (rc == GRN_SUCCESS) {
-        length = GRN_INT64_VALUE(&buffer);
+        length = GRN_INT32_VALUE(&buffer);
       }
       GRN_OBJ_FIN(ctx, &buffer);
 
@@ -236,13 +236,13 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
   switch (target->header.type) {
   case GRN_VECTOR :
     {
-      unsigned int i;
+      int32_t i;
       for (i = from; i < to; i++) {
         const char *content;
         unsigned int content_length;
         float weight;
         grn_id domain;
-        content_length = grn_vector_get_element_float(ctx, target, i,
+        content_length = grn_vector_get_element_float(ctx, target, (uint32_t)i,
                                                       &content, &weight, &domain);
         grn_vector_add_element_float(ctx, slice,
                                      content, content_length, weight, domain);
@@ -251,7 +251,7 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
     break;
   case GRN_PVECTOR :
     {
-      unsigned int i;
+      int32_t i;
       for (i = from; i < to; i++) {
         grn_obj *element = GRN_PTR_VALUE_AT(target, i);
         GRN_PTR_PUT(ctx, slice, element);
@@ -264,16 +264,16 @@ func_vector_slice(grn_ctx *ctx, int n_args, grn_obj **args,
 
       domain = grn_ctx_at(ctx, target->header.domain);
       if (grn_obj_is_table(ctx, domain)) {
-        unsigned int i;
+        int32_t i;
         for (i = from; i < to; i++) {
           grn_id id;
           float weight;
-          id = grn_uvector_get_element_record(ctx, target, i, &weight);
+          id = grn_uvector_get_element_record(ctx, target, (uint32_t)i, &weight);
           grn_uvector_add_element_record(ctx, slice, id, weight);
         }
       } else {
 #define PUT_SLICE_VALUES(type) do {                                     \
-          unsigned int i;                                               \
+          int32_t i;                                                    \
           for (i = from; i < to; i++) {                                 \
             GRN_ ## type ## _PUT(ctx,                                   \
                                  slice,                                 \
@@ -353,7 +353,7 @@ func_vector_new(grn_ctx *ctx, int n_args, grn_obj **args,
       grn_vector_add_element(ctx,
                              vector,
                              GRN_BULK_HEAD(element),
-                             GRN_BULK_VSIZE(element),
+                             (uint32_t)GRN_BULK_VSIZE(element),
                              0,
                              element->header.domain);
       break;
@@ -580,8 +580,8 @@ func_vector_find_pvector(grn_ctx *ctx,
 {
   grn_obj *found_element = NULL;
   grn_operator_exec_func *exec;
-  unsigned int i;
-  unsigned int n_elements = 0;
+  size_t i;
+  size_t n_elements = 0;
 
   exec = grn_operator_to_exec_func(mode);
   if (!exec) {
