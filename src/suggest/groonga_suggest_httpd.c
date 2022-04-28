@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2010-2015  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2010-2015  Brazil
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -48,7 +48,7 @@
 #define DEFAULT_PORT 8080
 #define DEFAULT_MAX_THREADS 8
 
-#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0
+#define CONST_STR_LEN(x) x, sizeof(x) - 1
 
 #define LISTEN_BACKLOG 756
 #define MIN_MAX_FDS 2048
@@ -98,7 +98,7 @@ static volatile sig_atomic_t loop = 1;
 static grn_obj *db;
 static uint32_t n_lines_per_log_file = 1000000;
 
-static int
+static uint32_t
 suggest_result(grn_ctx *ctx,
                struct evbuffer *res_buf, const char *types, const char *query,
                const char *target_name, int frequency_threshold,
@@ -130,7 +130,10 @@ suggest_result(grn_ctx *ctx,
       int flags;
       unsigned int res_len;
 
-      grn_ctx_send(ctx, GRN_TEXT_VALUE(cmd_buf), GRN_TEXT_LEN(cmd_buf), 0);
+      grn_ctx_send(ctx,
+                   GRN_TEXT_VALUE(cmd_buf),
+                   (unsigned int)GRN_TEXT_LEN(cmd_buf),
+                   0);
       grn_ctx_recv(ctx, &res, &res_len, &flags);
 
       evbuffer_add(res_buf, res, res_len);
@@ -164,7 +167,8 @@ log_send(struct evkeyvalq *output_headers, struct evbuffer *res_buf,
     size_t l;
     msgpack_packer pk;
     msgpack_sbuffer sbuf;
-    int cnt, submit_flag = 0;
+    size_t cnt;
+    int submit_flag = 0;
 
     msgpack_sbuffer_init(&sbuf);
     msgpack_packer_init(&pk, &sbuf, msgpack_sbuffer_write);
@@ -223,7 +227,7 @@ log_send(struct evkeyvalq *output_headers, struct evbuffer *res_buf,
   }
   /* make result */
   {
-    int content_length;
+    size_t content_length;
     if (callback) {
       evhttp_add_header(output_headers,
                         "Content-Type", "text/javascript; charset=UTF-8");
@@ -249,10 +253,14 @@ log_send(struct evkeyvalq *output_headers, struct evbuffer *res_buf,
                                       &(thd->cmd_buf),
                                       &(thd->pass_through_parameters));
     }
-    if (content_length >= 0) {
+    {
 #define NUM_BUF_SIZE 16
       char num_buf[NUM_BUF_SIZE];
-      grn_snprintf(num_buf, NUM_BUF_SIZE, NUM_BUF_SIZE, "%d", content_length);
+      grn_snprintf(num_buf,
+                   NUM_BUF_SIZE,
+                   NUM_BUF_SIZE,
+                   "%" GRN_FMT_SIZE,
+                   content_length);
       evhttp_add_header(output_headers, "Content-Length", num_buf);
 #undef NUM_BUF_SIZE
     }
@@ -358,7 +366,7 @@ generic_handler(struct evhttp_request *req, void *arg)
 }
 
 static int
-bind_socket(int port)
+bind_socket(uint16_t port)
 {
   int nfd;
   if ((nfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -473,7 +481,10 @@ load_from_learner(msgpack_object *o, grn_ctx *ctx, grn_obj *cmd_buf)
         GRN_TEXT_PUT(ctx, cmd_buf,
                      MSGPACK_OBJECT_STR_PTR(value),
                      MSGPACK_OBJECT_STR_SIZE(value));
-        grn_ctx_send(ctx, GRN_TEXT_VALUE(cmd_buf), GRN_TEXT_LEN(cmd_buf), GRN_CTX_MORE);
+        grn_ctx_send(ctx,
+                     GRN_TEXT_VALUE(cmd_buf),
+                     (unsigned int)GRN_TEXT_LEN(cmd_buf),
+                     GRN_CTX_MORE);
         grn_ctx_send(ctx, CONST_STR_LEN("["), GRN_CTX_MORE);
         if (MSGPACK_OBJECT_STR_SIZE(value) > 5) {
           if (!memcmp(MSGPACK_OBJECT_STR_PTR(value), CONST_STR_LEN("item_")) ||
@@ -490,7 +501,10 @@ load_from_learner(msgpack_object *o, grn_ctx *ctx, grn_obj *cmd_buf)
             }
             GRN_TEXT_PUTC(ctx, cmd_buf, '}');
             /* printf("msg: %.*s\n", GRN_TEXT_LEN(cmd_buf), GRN_TEXT_VALUE(cmd_buf)); */
-            grn_ctx_send(ctx, GRN_TEXT_VALUE(cmd_buf), GRN_TEXT_LEN(cmd_buf), GRN_CTX_MORE);
+            grn_ctx_send(ctx,
+                         GRN_TEXT_VALUE(cmd_buf),
+                         (unsigned int)GRN_TEXT_LEN(cmd_buf),
+                         GRN_CTX_MORE);
           }
         }
         grn_ctx_send(ctx, CONST_STR_LEN("]"), 0);
@@ -579,7 +593,7 @@ recv_from_learner(void *arg)
 }
 
 static int
-serve_threads(uint32_t nthreads, int port, const char *db_path, void *zmq_ctx,
+serve_threads(uint32_t nthreads, uint16_t port, const char *db_path, void *zmq_ctx,
               const char *send_endpoint, const char *recv_endpoint,
               const char *log_base_path)
 {
@@ -731,7 +745,7 @@ usage(FILE *output)
 int
 main(int argc, char **argv)
 {
-  int port_no = DEFAULT_PORT;
+  uint16_t port_no = DEFAULT_PORT;
   const char *max_threads_string = NULL, *port_string = NULL;
   const char *address;
   const char *send_endpoint = NULL, *recv_endpoint = NULL, *log_base_path = NULL;
@@ -787,7 +801,7 @@ main(int argc, char **argv)
     void *zmq_ctx;
 
     if (max_threads_string) {
-      max_threads = atoi(max_threads_string);
+      max_threads = (uint32_t)atoi(max_threads_string);
       if (max_threads > MAX_THREADS) {
         print_error("too many threads. limit to %d.", MAX_THREADS);
         max_threads = MAX_THREADS;
@@ -797,7 +811,7 @@ main(int argc, char **argv)
     }
 
     if (port_string) {
-      port_no = atoi(port_string);
+      port_no = (uint16_t)atoi(port_string);
     }
 
     if (flags & RUN_MODE_ENABLE_MAX_FD_CHECK) {
