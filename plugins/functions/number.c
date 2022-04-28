@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2016 Brazil
+  Copyright (C) 2016  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -90,26 +91,26 @@ func_number_classify(grn_ctx *ctx, int n_args, grn_obj **args,
                                                                         \
     number_raw = getter(number);                                        \
     interval_raw = getter(&casted_interval);                            \
-    class_raw = classifier(number_raw, interval_raw);                   \
+    class_raw = classifier(type, number_raw, interval_raw);             \
     classed_number_raw = class_raw * interval_raw;                      \
     setter(ctx, classed_number, classed_number_raw);                    \
   }
 
-#define CLASSIFIER_INT(number_raw, interval_raw)        \
+#define CLASSIFIER_INT(type, number_raw, interval_raw)  \
   (number_raw) < 0 ?                                    \
-    ((((number_raw) + 1) / (interval_raw)) - 1) :       \
-    (((number_raw) / (interval_raw)))
+    (type)((((number_raw) + 1) / (interval_raw)) - 1) : \
+    (type)(((number_raw) / (interval_raw)))
 
 #define CLASSIFY_INT(type, getter, setter)              \
   CLASSIFY_RAW(type, getter, setter, CLASSIFIER_INT)
 
-#define CLASSIFIER_UINT(number_raw, interval_raw)       \
+#define CLASSIFIER_UINT(type, number_raw, interval_raw) \
   ((number_raw) / (interval_raw))
 
 #define CLASSIFY_UINT(type, getter, setter)             \
   CLASSIFY_RAW(type, getter, setter, CLASSIFIER_UINT)
 
-#define CLASSIFIER_FLOAT(number_raw, interval_raw)      \
+#define CLASSIFIER_FLOAT(type, number_raw, interval_raw) \
   floor((number_raw) / (interval_raw))
 
 #define CLASSIFY_FLOAT(getter, setter)                          \
