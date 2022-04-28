@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2014  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2014  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -132,13 +132,14 @@ stop_word_init(grn_ctx *ctx, grn_tokenizer_query *query)
 
   token_filter->options = options;
   token_filter->lexicon = lexicon;
-  token_filter->column = grn_obj_column(ctx,
-                                        token_filter->lexicon,
-                                        GRN_TEXT_VALUE(&(options->column)),
-                                        GRN_TEXT_LEN(&(options->column)));
+  token_filter->column =
+    grn_obj_column(ctx,
+                   token_filter->lexicon,
+                   GRN_TEXT_VALUE(&(options->column)),
+                   (uint32_t)GRN_TEXT_LEN(&(options->column)));
   if (!token_filter->column) {
     char lexicon_name[GRN_TABLE_MAX_KEY_SIZE];
-    unsigned int lexicon_name_size;
+    int lexicon_name_size;
 
     lexicon_name_size = grn_obj_name(ctx,
                                      token_filter->lexicon,
@@ -201,7 +202,7 @@ stop_word_filter(grn_ctx *ctx,
   id = grn_table_get(ctx,
                      token_filter->lexicon,
                      GRN_TEXT_VALUE(data),
-                     GRN_TEXT_LEN(data));
+                     (unsigned int)GRN_TEXT_LEN(data));
   if (id != GRN_ID_NIL) {
     GRN_BULK_REWIND(&(token_filter->value));
     grn_obj_get_value(ctx,
