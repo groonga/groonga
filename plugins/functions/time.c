@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016-2018  Brazil
-  Copyright(C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2016-2018  Brazil
+  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -85,14 +85,14 @@ func_time_classify_raw_compute(grn_ctx *ctx,
 
   switch (unit) {
   case GRN_TIME_CLASSIFY_UNIT_SECOND :
-    tm.tm_sec = (tm.tm_sec / interval_raw) * interval_raw;
+    tm.tm_sec = (tm.tm_sec / (int)interval_raw) * (int)interval_raw;
     break;
   case GRN_TIME_CLASSIFY_UNIT_MINUTE :
-    tm.tm_min = (tm.tm_min / interval_raw) * interval_raw;
+    tm.tm_min = (tm.tm_min / (int)interval_raw) * (int)interval_raw;
     tm.tm_sec = 0;
     break;
   case GRN_TIME_CLASSIFY_UNIT_HOUR :
-    tm.tm_hour = (tm.tm_hour / interval_raw) * interval_raw;
+    tm.tm_hour = (tm.tm_hour / (int)interval_raw) * (int)interval_raw;
     tm.tm_min = tm_timezone_offset.tm_min;
     tm.tm_sec = 0;
     timezone_offset = GRN_TIME_PACK((tm_timezone_offset.tm_min * 60),
@@ -138,7 +138,7 @@ func_time_classify_raw_compute(grn_ctx *ctx,
                                     0);
     break;
   case GRN_TIME_CLASSIFY_UNIT_MONTH :
-    tm.tm_mon = (tm.tm_mon / interval_raw) * interval_raw;
+    tm.tm_mon = (tm.tm_mon / (int)interval_raw) * (int)interval_raw;
     tm.tm_mday = 1;
     tm.tm_hour = tm_timezone_offset.tm_hour;
     tm.tm_min = tm_timezone_offset.tm_min;
@@ -148,7 +148,9 @@ func_time_classify_raw_compute(grn_ctx *ctx,
                                     0);
     break;
   case GRN_TIME_CLASSIFY_UNIT_YEAR :
-    tm.tm_year = (((1900 + tm.tm_year) / interval_raw) * interval_raw) - 1900;
+    tm.tm_year =
+      (((1900 + tm.tm_year) / (int)interval_raw) * (int)interval_raw) -
+      1900;
     tm.tm_mon = 0;
     tm.tm_mday = 1;
     tm.tm_hour = tm_timezone_offset.tm_hour;
