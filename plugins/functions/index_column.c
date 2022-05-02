@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2017  Brazil
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2017  Brazil
+  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -194,10 +194,11 @@ caller_index_info_init(grn_ctx *ctx,
     return ctx->rc;
   }
 
-  caller_index_info->index_column = grn_obj_column(ctx,
-                                                   caller_index_info->term_table,
-                                                   GRN_TEXT_VALUE(index_column_name),
-                                                   GRN_TEXT_LEN(index_column_name));
+  caller_index_info->index_column =
+    grn_obj_column(ctx,
+                   caller_index_info->term_table,
+                   GRN_TEXT_VALUE(index_column_name),
+                   (uint32_t)GRN_TEXT_LEN(index_column_name));
   if (!caller_index_info->index_column) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -375,9 +376,13 @@ func_index_column_source_records(grn_ctx *ctx,
       grn_ii_cursor *ii_cursor;
       grn_posting *posting;
       int64_t n_records = 0;
-      ii_cursor = grn_ii_cursor_open(ctx, ii, caller_index_info.term_id,
-                                     GRN_ID_NIL, GRN_ID_MAX,
-                                     grn_ii_get_n_elements(ctx, ii), 0);
+      ii_cursor = grn_ii_cursor_open(ctx,
+                                     ii,
+                                     caller_index_info.term_id,
+                                     GRN_ID_NIL,
+                                     GRN_ID_MAX,
+                                     (int)grn_ii_get_n_elements(ctx, ii),
+                                     0);
       if (ii_cursor) {
         while ((posting = grn_ii_cursor_next(ctx, ii_cursor))) {
           if (limit > 0 && n_records >= limit) {
@@ -436,7 +441,7 @@ func_index_column_have_source_record(grn_ctx *ctx,
                                    caller_index_info.term_id,
                                    GRN_ID_NIL,
                                    GRN_ID_MAX,
-                                   grn_ii_get_n_elements(ctx, ii),
+                                   (int)grn_ii_get_n_elements(ctx, ii),
                                    0);
     if (ii_cursor) {
       grn_posting *posting;
