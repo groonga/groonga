@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2010-2015  Brazil
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2010-2015  Brazil
+  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,7 @@
 #define DEFAULT_SEND_ENDPOINT "tcp://*:1235"
 #define SEND_WAIT 1000 /* 0.001sec */
 
-#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0
+#define CONST_STR_LEN(x) x, sizeof(x) - 1
 
 typedef enum {
   RUN_MODE_NONE   = 0x00,
@@ -62,9 +62,9 @@ static volatile sig_atomic_t loop = 1;
 static void
 load_to_groonga(grn_ctx *ctx,
                 grn_obj *buf,
-                const char *query, uint32_t query_len,
-                const char *client_id, uint32_t client_id_len,
-                const char *learn_target_name, uint32_t learn_target_name_len,
+                const char *query, size_t query_len,
+                const char *client_id, size_t client_id_len,
+                const char *learn_target_name, size_t learn_target_name_len,
                 uint64_t millisec,
                 int submit)
 {
@@ -74,8 +74,11 @@ load_to_groonga(grn_ctx *ctx,
   GRN_TEXT_PUTS(ctx, buf, " --each 'suggest_preparer(_id,type,item,sequence,time,pair_");
   GRN_TEXT_PUT(ctx, buf, learn_target_name, learn_target_name_len);
   GRN_TEXT_PUTS(ctx, buf, ")'");
-  grn_ctx_send(ctx, GRN_TEXT_VALUE(buf), GRN_TEXT_LEN(buf), GRN_CTX_MORE);
-  grn_ctx_send(ctx, CONST_STR_LEN("["), GRN_CTX_MORE);
+  grn_ctx_send(ctx,
+               GRN_TEXT_VALUE(buf),
+               (unsigned int)GRN_TEXT_LEN(buf),
+               GRN_CTX_MORE);
+  grn_ctx_send(ctx, CONST_STR_LEN("["), 0);
 
   GRN_BULK_REWIND(buf);
   GRN_TEXT_PUTS(ctx, buf, "{\"item\":");
@@ -90,8 +93,10 @@ load_to_groonga(grn_ctx *ctx,
     GRN_TEXT_PUTS(ctx, buf, "}");
   }
   /* printf("%.*s\n", GRN_TEXT_LEN(buf), GRN_TEXT_VALUE(buf)); */
-  grn_ctx_send(ctx, GRN_TEXT_VALUE(buf), GRN_TEXT_LEN(buf), GRN_CTX_MORE);
-
+  grn_ctx_send(ctx,
+               GRN_TEXT_VALUE(buf),
+               (unsigned int)GRN_TEXT_LEN(buf),
+               GRN_CTX_MORE);
   grn_ctx_send(ctx, CONST_STR_LEN("]"), 0);
 
   {
@@ -105,15 +110,15 @@ load_to_groonga(grn_ctx *ctx,
 void
 load_to_multi_targets(grn_ctx *ctx,
                       grn_obj *buf,
-                      const char *query, uint32_t query_len,
-                      const char *client_id, uint32_t client_id_len,
+                      const char *query, size_t query_len,
+                      const char *client_id, size_t client_id_len,
                       const char *learn_target_names,
-                      uint32_t learn_target_names_len,
+                      size_t learn_target_names_len,
                       uint64_t millisec,
                       int submit)
 {
   if (millisec && query && client_id && learn_target_names) {
-    unsigned int tn_len;
+    ptrdiff_t tn_len;
     const char *tn, *tnp, *tne;
     tn = tnp = learn_target_names;
     tne = learn_target_names + learn_target_names_len;
@@ -128,8 +133,16 @@ load_to_multi_targets(grn_ctx *ctx,
           client_id_len, client_id,
           tn_len, tn);
         */
-        load_to_groonga(ctx, buf, query, query_len, client_id, client_id_len,
-                        tn, tn_len, millisec, submit);
+        load_to_groonga(ctx,
+                        buf,
+                        query,
+                        query_len,
+                        client_id,
+                        client_id_len,
+                        tn,
+                        (size_t)tn_len,
+                        millisec,
+                        submit);
 
         tn = ++tnp;
       } else {
@@ -143,8 +156,8 @@ load_to_multi_targets(grn_ctx *ctx,
   int _k_len; \
   char _k_buf[GRN_TABLE_MAX_KEY_SIZE]; \
   _k_len = grn_table_get_key(ctx, ref_table, (id), _k_buf, GRN_TABLE_MAX_KEY_SIZE); \
-  msgpack_pack_str(&pk, _k_len); \
-  msgpack_pack_str_body(&pk, _k_buf, _k_len); \
+  msgpack_pack_str(&pk, (size_t)_k_len); \
+  msgpack_pack_str_body(&pk, _k_buf, (size_t)_k_len); \
 } while (0)
 
 #define PACK_MAP_ITEM(col_name) do { \
@@ -188,7 +201,7 @@ load_to_multi_targets(grn_ctx *ctx,
   case GRN_UVECTOR: /* ref.s to ShortText key */ \
     { \
       grn_id *_idv = (grn_id *)GRN_BULK_HEAD(&_v), *_idve = (grn_id *)GRN_BULK_CURR(&_v); \
-      msgpack_pack_array(&pk, _idve - _idv); \
+      msgpack_pack_array(&pk, (size_t)(_idve - _idv)); \
       for (; _idv < _idve; _idv++) { \
         PACK_KEY_FROM_ID(*_idv); \
       } \
@@ -259,7 +272,7 @@ send_handler(void *zmq_send_sock, grn_ctx *ctx)
               while (loop && (rec_id = grn_table_cursor_next(ctx, tc))
                      != GRN_ID_NIL) {
                 char *key;
-                size_t key_len;
+                int key_len;
                 msgpack_packer pk;
                 msgpack_sbuffer sbuf;
 
@@ -271,16 +284,16 @@ send_handler(void *zmq_send_sock, grn_ctx *ctx)
                 /* ["_key","ShortText"],["last","Time"],["kana","kana"],["freq2","Int32"],["freq","Int32"],["co","pair_all"],["buzz","Int32"],["boost","Int32"] */
                 msgpack_pack_str(&pk, 6);
                 msgpack_pack_str_body(&pk, "target", strlen("target"));
-                msgpack_pack_str(&pk, name_len);
-                msgpack_pack_str_body(&pk, name_buf, name_len);
+                msgpack_pack_str(&pk, (size_t)name_len);
+                msgpack_pack_str_body(&pk, name_buf, (size_t)name_len);
 
                 msgpack_pack_str(&pk, 4);
                 msgpack_pack_str_body(&pk,
                                       GRN_COLUMN_NAME_KEY,
                                       GRN_COLUMN_NAME_KEY_LEN);
                 key_len = grn_table_cursor_get_key(ctx, tc, (void **)&key);
-                msgpack_pack_str(&pk, key_len);
-                msgpack_pack_str_body(&pk, key, key_len);
+                msgpack_pack_str(&pk, (size_t)key_len);
+                msgpack_pack_str_body(&pk, key, (size_t)key_len);
 
                 PACK_MAP_ITEM(last);
                 PACK_MAP_ITEM(kana);
@@ -342,8 +355,8 @@ send_handler(void *zmq_send_sock, grn_ctx *ctx)
 
                 msgpack_pack_str(&pk, 6);
                 msgpack_pack_str_body(&pk, "target", strlen("target"));
-                msgpack_pack_str(&pk, name_len);
-                msgpack_pack_str_body(&pk, name_buf, name_len);
+                msgpack_pack_str(&pk, (size_t)name_len);
+                msgpack_pack_str_body(&pk, name_buf, (size_t)name_len);
 
                 msgpack_pack_str(&pk, 4);
                 msgpack_pack_str_body(&pk,
@@ -617,7 +630,7 @@ sort_log_file_list(suggest_log_file **list)
 #define PATH_SEPARATOR '/'
 
 static suggest_log_file *
-gather_log_file(const char *dir_path, unsigned int dir_path_len)
+gather_log_file(const char *dir_path, size_t dir_path_len)
 {
   DIR *dir;
   struct dirent *dirent;
@@ -631,7 +644,7 @@ gather_log_file(const char *dir_path, unsigned int dir_path_len)
   path[dir_path_len] = PATH_SEPARATOR;
   while ((dirent = readdir(dir))) {
     struct stat fstat;
-    unsigned int d_namlen, path_len;
+    size_t d_namlen, path_len;
     if (*(dirent->d_name) == '.' && (
       dirent->d_name[1] == '\0' ||
         (dirent->d_name[1] == '.' && dirent->d_name[2] == '\0'))) {
