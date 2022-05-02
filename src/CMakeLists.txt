@@ -1,4 +1,5 @@
-# Copyright(C) 2012-2018 Brazil
+# Copyright (C) 2012-2018  Brazil
+# Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -60,18 +61,3 @@ if(NOT WIN32)
   target_link_libraries(grnslap libgroonga)
   install(TARGETS grnslap DESTINATION ${BIN_DIR})
 endif()
-
-read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/groonga_benchmark_sources.am
-  GROONGA_BENCHMARK_SOURCES)
-add_executable(groonga-benchmark ${GROONGA_BENCHMARK_SOURCES})
-set_source_files_properties(${GROONGA_BENCHMARK_SOURCES}
-  PROPERTIES
-  COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
-target_link_libraries(groonga-benchmark libgroonga)
-install(TARGETS groonga-benchmark DESTINATION ${BIN_DIR})
-if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
-  install(FILES $<TARGET_PDB_FILE:groonga-benchmark>
-    DESTINATION "${BIN_DIR}"
-    OPTIONAL)
-endif()
-

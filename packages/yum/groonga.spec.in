@@ -305,7 +305,6 @@ fi
 %files
 %defattr(-,root,root,-)
 %{_bindir}/groonga
-%{_bindir}/groonga-benchmark
 %{_bindir}/grndb
 
 %files libs

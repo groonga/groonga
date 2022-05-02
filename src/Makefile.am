@@ -4,7 +4,7 @@ SUBDIRS =					\
 
 NONEXISTENT_CXX_SOURCE = nonexistent.cpp
 
-bin_PROGRAMS = groonga groonga-benchmark
+bin_PROGRAMS = groonga
 noinst_PROGRAMS = grnslap
 if WITH_MRUBY
 bin_PROGRAMS += grndb
@@ -47,12 +47,6 @@ groonga_LDADD =					\
 include grnslap_sources.am
 nodist_EXTRA_grnslap_SOURCES = $(NONEXISTENT_CXX_SOURCE)
 grnslap_LDADD =					\
-	$(top_builddir)/lib/libgroonga.la	\
-	$(MESSAGE_PACK_LIBS)
-
-include groonga_benchmark_sources.am
-nodist_EXTRA_groonga_benchmark_SOURCES = $(NONEXISTENT_CXX_SOURCE)
-groonga_benchmark_LDADD =			\
 	$(top_builddir)/lib/libgroonga.la	\
 	$(MESSAGE_PACK_LIBS)
 
