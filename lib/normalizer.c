@@ -38,7 +38,7 @@ grn_normalizer_register(grn_ctx *ctx,
   GRN_PTR_INIT(&vars[0].value, 0, GRN_ID_NIL);
 
   if (name_length < 0) {
-    name_length = strlen(name_ptr);
+    name_length = (int)strlen(name_ptr);
   }
 
   {
@@ -151,7 +151,8 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
                 if (ch) { ch[-1] += 2; s_ += 2; }
                 continue;
               } else {
-                *d++ = c >> 8; *d = c & 0xff;
+                *d++ = (unsigned char)(c >> 8);
+                *d = (unsigned char)(c & 0xff);
               }
               break;
             case 0xa1eb :
@@ -161,11 +162,13 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
                 if (ch) { ch[-1] += 2; s_ += 2; }
                 continue;
               } else {
-                *d++ = c >> 8; *d = c & 0xff;
+                *d++ = (unsigned char)(c >> 8);
+                *d = (unsigned char)(c & 0xff);
               }
               break;
             default :
-              *d++ = c >> 8; *d = c & 0xff;
+              *d++ = (unsigned char)(c >> 8);
+              *d = (unsigned char)(c & 0xff);
               break;
             }
             ctype = GRN_CHAR_KATAKANA;
@@ -318,8 +321,9 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
-  nstr->n_characters = length;
-  nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);
+  nstr->n_characters = (unsigned int)length;
+  nstr->normalized_length_in_bytes =
+    (unsigned int)(d - (unsigned char *)nstr->normalized);
   return NULL;
 }
 
@@ -392,7 +396,8 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
             if (ch) { ch[-1]++; s_++; }
             continue;
           } else {
-            *d++ = c >> 8; *d = c & 0xff;
+            *d++ = (unsigned char)(c >> 8);
+            *d = (unsigned char)(c & 0xff);
           }
           break;
         case 0x814b :
@@ -402,11 +407,13 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
             if (ch) { ch[-1]++; s_++; }
             continue;
           } else {
-            *d++ = c >> 8; *d = c & 0xff;
+            *d++ = (unsigned char)(c >> 8);
+            *d = (unsigned char)(c & 0xff);
           }
           break;
         default :
-          *d++ = c >> 8; *d = c & 0xff;
+          *d++ = (unsigned char)(c >> 8);
+          *d = (unsigned char)(c & 0xff);
           break;
         }
         ctype = GRN_CHAR_KATAKANA;
@@ -554,8 +561,9 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
-  nstr->n_characters = length;
-  nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);
+  nstr->n_characters = (unsigned int)length;
+  nstr->normalized_length_in_bytes =
+    (unsigned int)(d - (unsigned char *)nstr->normalized);
   return NULL;
 }
 
@@ -919,7 +927,7 @@ grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(const unsigned char *utf8_ch
                                          utf8_char[2] <= 0xbd))) {
       /* U+3070 HIRAGANA LETTER BA ..
        * U+307D HIRAGANA LETTER PO */
-      unsigned char mod3 = (utf8_char[2] - 1) % 3;
+      unsigned char mod3 = (unsigned char)((utf8_char[2] - 1) % 3);
       if (mod3 != 0) {
         unified[0] = utf8_char[0];
         unified[1] = utf8_char[1];
@@ -967,7 +975,7 @@ grn_nfkc_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_ch
                                          utf8_char[2] <= 0x9d))) {
       /* U+30D0 KATAKANA LETTER BA ..
        * U+30DD KATAKANA LETTER PO */
-      unsigned char mod3 = (utf8_char[2] - 2) % 3;
+      unsigned char mod3 = (unsigned char)((utf8_char[2] - 2) % 3);
       if (mod3 != 0) {
         unified[0] = utf8_char[0];
         unified[1] = utf8_char[1];
@@ -1170,7 +1178,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
     size_t unified_char_length;
     grn_char_type char_type;
 
-    char_length = grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+    char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
     unified_char_length = char_length;
 
     if (data->context.t) {
@@ -1286,7 +1294,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
     unify->d += unified_char_length;
     unify->n_characters++;
     if (unify->t) {
-      *(unify->t++) = char_type;
+      *(unify->t++) = (uint8_t)char_type;
     }
     if (unify->c) {
       size_t i;
@@ -1332,7 +1340,7 @@ grn_nfkc_normalize_unify_katakana_v_sounds(grn_ctx *ctx,
 {
   size_t char_length;
 
-  char_length = grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+  char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
 
   *n_used_bytes = char_length;
   *n_used_characters = 1;
@@ -1345,7 +1353,7 @@ grn_nfkc_normalize_unify_katakana_v_sounds(grn_ctx *ctx,
     const unsigned char *next = current + char_length;
     size_t next_char_length;
 
-    next_char_length = grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
+    next_char_length = (size_t)grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
     if (next_char_length == 3 &&
         next[0] == 0xe3 &&
         next[1] == 0x82) {
@@ -1424,7 +1432,7 @@ grn_nfkc_normalize_unify_katakana_bu_sound(grn_ctx *ctx,
 {
   size_t char_length;
 
-  char_length = grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+  char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
   *n_used_bytes = char_length;
   *n_used_characters = 1;
 
@@ -1442,7 +1450,7 @@ grn_nfkc_normalize_unify_katakana_bu_sound(grn_ctx *ctx,
     unified_buffer[(*n_unified_bytes)++] = 0x96;
     (*n_unified_characters)++;
 
-    next_char_length = grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
+    next_char_length = (size_t)grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
     if (next_char_length == 3 &&
         next[0] == 0xe3 &&
         next[1] == 0x82 &&
@@ -1506,7 +1514,7 @@ grn_nfkc_normalize_strip(grn_ctx *ctx,
   const bool from_start = (start == current);
   const unsigned char *current_keep = current;
   while (current < end) {
-    size_t char_length = grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+    size_t char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
     (*n_used_bytes) += char_length;
     (*n_used_characters)++;
 
@@ -1602,12 +1610,14 @@ grn_nfkc_normalize_unify_stateful(grn_ctx *ctx,
           while (unified_current < unified_end) {
             size_t unified_char_length;
 
-            unified_char_length = grn_charlen_(ctx,
-                                               unified_current,
-                                               unified_end,
-                                               GRN_ENC_UTF8);
+            unified_char_length = (size_t)grn_charlen_(ctx,
+                                                       unified_current,
+                                                       unified_end,
+                                                       GRN_ENC_UTF8);
             if (unify->t) {
-              *(unify->t++) = data->options->char_type_func(unified_current);
+              grn_char_type unified_char_type =
+                data->options->char_type_func(unified_current);
+              *(unify->t++) = (uint8_t)unified_char_type;
             }
             if (unify->c) {
               size_t i;
@@ -1853,14 +1863,15 @@ grn_nfkc_normalize(grn_ctx *ctx,
   source = source_ = (unsigned char *)(data.string->original);
   source_end = source + data.string->original_length_in_bytes;
   for (; source < source_end; source += source_char_length) {
-    source_char_length = grn_charlen_(ctx, source, source_end, GRN_ENC_UTF8);
+    source_char_length =
+      (size_t)grn_charlen_(ctx, source, source_end, GRN_ENC_UTF8);
     if (source_char_length == 0) {
       break;
     }
     if (data.remove_tokenized_delimiter_p &&
         grn_tokenizer_is_tokenized_delimiter(ctx,
                                              (const char *)source,
-                                             source_char_length,
+                                             (unsigned int)source_char_length,
                                              GRN_ENC_UTF8)) {
       continue;
     }
@@ -1899,7 +1910,8 @@ grn_nfkc_normalize(grn_ctx *ctx,
         }
       }
       for (; current < current_end; current += current_length) {
-        current_length = grn_charlen_(ctx, current, current_end, GRN_ENC_UTF8);
+        current_length =
+          (size_t)grn_charlen_(ctx, current, current_end, GRN_ENC_UTF8);
         if (current_length == 0) {
           break;
         }
@@ -1961,9 +1973,10 @@ grn_nfkc_normalize(grn_ctx *ctx,
   if (context->t) { *(context->t) = GRN_CHAR_NULL; }
   if (context->o) { *(context->o) = data.string->original_length_in_bytes; }
   *(context->d) = '\0';
-  data.string->n_characters = context->n_characters;
+  data.string->n_characters = (unsigned int)(context->n_characters);
   data.string->normalized = context->dest;
-  data.string->normalized_length_in_bytes = (size_t)(context->d - context->dest);
+  data.string->normalized_length_in_bytes =
+    (unsigned int)(context->d - context->dest);
   data.string->checks = context->checks;
   data.string->ctypes = context->types;
   data.string->offsets = context->offsets;
@@ -2075,8 +2088,9 @@ ascii_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
-  nstr->n_characters = length;
-  nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);
+  nstr->n_characters = (unsigned int)length;
+  nstr->normalized_length_in_bytes =
+    (unsigned int)(d - (unsigned char *)nstr->normalized);
   return NULL;
 }
 
@@ -2211,8 +2225,9 @@ latin1_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
-  nstr->n_characters = length;
-  nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);
+  nstr->n_characters = (unsigned int)length;
+  nstr->normalized_length_in_bytes =
+    (unsigned int)(d - (unsigned char *)nstr->normalized);
   return NULL;
 }
 
@@ -2335,8 +2350,9 @@ koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
-  nstr->n_characters = length;
-  nstr->normalized_length_in_bytes = (size_t)(d - (unsigned char *)nstr->normalized);
+  nstr->n_characters = (unsigned int)length;
+  nstr->normalized_length_in_bytes =
+    (unsigned int)(d - (unsigned char *)nstr->normalized);
   return NULL;
 }
 
@@ -2708,7 +2724,7 @@ table_options_open(grn_ctx *ctx,
             (int)(name_raw.length), name_raw.value);
         break;
       }
-      options->normalized_column = grn_ctx_get(ctx, name, name_length);
+      options->normalized_column = grn_ctx_get(ctx, name, (int)name_length);
       if (!options->normalized_column) {
         ERR(GRN_INVALID_ARGUMENT,
             "%s[%.*s] nonexistent column: <%.*s>",
@@ -2898,7 +2914,7 @@ table_options_open(grn_ctx *ctx,
     grn_obj *target_column = grn_table_column(ctx,
                                               normalized_table,
                                               raw_target_name.value,
-                                              raw_target_name.length);
+                                              (ssize_t)(raw_target_name.length));
     grn_obj_unref(ctx, normalized_table);
     if (!target_column) {
       ERR(GRN_INVALID_ARGUMENT,
@@ -3036,7 +3052,7 @@ table_normalize_add_checks_and_offsets(grn_ctx *ctx,
     if (data->need_offsets) {
       GRN_UINT64_PUT(ctx,
                      offsets,
-                     source_current - source + current_source_offset);
+                     (uint64_t)(source_current - source) + current_source_offset);
     }
     previous_source_current = source_current;
     source_current += source_char_length;
@@ -3067,7 +3083,7 @@ table_normalize_add_checks_and_offsets(grn_ctx *ctx,
             source_current);
         return;
       }
-      GRN_INT16_VALUE_AT(checks, last_check_index) += source_char_length;
+      GRN_INT16_VALUE_AT(checks, last_check_index) += (int16_t)source_char_length;
       source_current += source_char_length;
     }
   } else if (normalized_current < normalized_end) {
@@ -3093,7 +3109,8 @@ table_normalize_add_checks_and_offsets(grn_ctx *ctx,
       if (data->need_offsets) {
         GRN_UINT64_PUT(ctx,
                        offsets,
-                       previous_source_current - source + current_source_offset);
+                       (uint64_t)(previous_source_current - source) +
+                       current_source_offset);
       }
       normalized_current += normalized_char_length;
       if (data->count_n_normalized_characters_in_checks) {
@@ -3199,13 +3216,14 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
 #define MAX_N_HITS 16
     grn_pat_scan_hit hits[MAX_N_HITS];
     const char *rest;
-    unsigned int i, n_hits;
+    int i, n_hits;
     unsigned int previous = 0;
     size_t chunk_length;
 
     n_hits = grn_pat_scan(ctx,
                           (grn_pat *)(options->target_table),
-                          source, source_end - source,
+                          source,
+                          (unsigned int)(source_end - source),
                           hits,
                           MAX_N_HITS,
                           &rest);
@@ -3233,7 +3251,7 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
                                                    hits[i].id,
                                                    GRN_ID_NIL,
                                                    GRN_ID_MAX,
-                                                   ii->n_elements,
+                                                   (int)(ii->n_elements),
                                                    0);
         if (cursor) {
           grn_posting *ii_posting;
@@ -3274,10 +3292,10 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
       previous = hits[i].offset + hits[i].length;
     }
 
-    chunk_length = rest - source;
+    chunk_length = (size_t)(rest - source);
     if (chunk_length - previous > 0) {
       const char *source_previous = source + previous;
-      size_t source_previous_length = source_end - source - previous;
+      size_t source_previous_length = (size_t)(source_end - source - previous);
       GRN_TEXT_PUT(ctx, normalized, source_previous, source_previous_length);
       table_normalize_added(ctx,
                             &data,
@@ -3312,8 +3330,8 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
     }
   }
 
-  string->n_characters = data.n_normalized_characters;
-  string->normalized_length_in_bytes = GRN_TEXT_LEN(normalized);
+  string->n_characters = (unsigned int)(data.n_normalized_characters);
+  string->normalized_length_in_bytes = (unsigned int)GRN_TEXT_LEN(normalized);
   string->normalized = grn_bulk_detach(ctx, normalized);
 
   if (data.need_checks) {
