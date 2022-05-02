@@ -1623,7 +1623,7 @@ GRN_API grn_rc grn_load(grn_ctx *ctx, grn_content_type input_type,
 
 GRN_API grn_rc grn_ctx_connect(grn_ctx *ctx, const char *host, int port, int flags);
 GRN_API unsigned int grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags);
-GRN_API unsigned int grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
+GRN_API grn_rc grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags);
 
 typedef struct _grn_ctx_info grn_ctx_info;
 

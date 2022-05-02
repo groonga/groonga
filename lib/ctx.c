@@ -270,7 +270,9 @@ grn_ctx_loader_clear(grn_ctx *ctx)
   grn_loader_init(loader);
 }
 
-#define IMPL_SIZE ((sizeof(struct _grn_ctx_impl) + (grn_pagesize - 1)) & ~(grn_pagesize - 1))
+#define IMPL_SIZE                                                       \
+  (size_t)((((int)sizeof(struct _grn_ctx_impl)) + (grn_pagesize - 1)) & \
+           ~(grn_pagesize - 1))
 
 #ifdef GRN_WITH_MESSAGE_PACK
 static int
@@ -615,7 +617,7 @@ grn_ctx_impl_fin(grn_ctx *ctx)
   {
     grn_obj *stack;
     grn_obj *spaces;
-    unsigned int i, n_spaces;
+    size_t i, n_spaces;
 
     stack = &(ctx->impl->temporary_open_spaces.stack);
     spaces = (grn_obj *)GRN_BULK_HEAD(stack);
@@ -876,7 +878,7 @@ grn_init(void)
     grn_pagesize = si.dwAllocationGranularity;
   }
 #else /* WIN32 */
-  if ((grn_pagesize = sysconf(_SC_PAGESIZE)) == -1) {
+  if ((grn_pagesize = (int)sysconf(_SC_PAGESIZE)) == -1) {
     SERR("_SC_PAGESIZE");
     rc = ctx->rc;
     goto fail_page_size;
@@ -1245,7 +1247,7 @@ grn_ctx_set_variable(grn_ctx *ctx,
     goto exit;
   }
   if (name_size < 0) {
-    name_size = strlen(name);
+    name_size = (int)strlen(name);
   }
   if (data) {
     void *value;
@@ -1253,7 +1255,7 @@ grn_ctx_set_variable(grn_ctx *ctx,
     grn_id id = grn_hash_add(ctx,
                              ctx->impl->variables,
                              name,
-                             name_size,
+                             (unsigned int)name_size,
                              &value,
                              &added);
     if (id == GRN_ID_NIL) {
@@ -1277,7 +1279,7 @@ grn_ctx_set_variable(grn_ctx *ctx,
     grn_id id = grn_hash_get(ctx,
                              ctx->impl->variables,
                              name,
-                             name_size,
+                             (unsigned int)name_size,
                              &value);
     if (id != GRN_ID_NIL) {
       grn_ctx_local_variable *variable = value;
@@ -1304,13 +1306,13 @@ grn_ctx_get_variable(grn_ctx *ctx,
     goto exit;
   }
   if (name_size < 0) {
-    name_size = strlen(name);
+    name_size = (int)strlen(name);
   }
   void *value;
   grn_id id = grn_hash_get(ctx,
                            ctx->impl->variables,
                            name,
-                           name_size,
+                           (unsigned int)name_size,
                            &value);
   if (id == GRN_ID_NIL) {
     goto exit;
@@ -1379,7 +1381,7 @@ get_content_mime_type(grn_ctx *ctx, const char *p, const char *pe)
 
   grn_raw_string type;
   type.value = p;
-  type.length = pe - p;
+  type.length = (size_t)(pe - p);
 
   if (type.length < 2) {
     return;
@@ -1541,11 +1543,11 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
   grn_str_get_mime_type(ctx, v, GRN_BULK_CURR(&buf), &key_end, &filename_end);
   if ((GRN_TEXT_LEN(&buf) >= 2 && v[0] == 'd' && v[1] == '/')) {
     const char *command_name = v + 2;
-    int command_name_size = key_end - command_name;
-    expr = grn_ctx_get(ctx, command_name, command_name_size);
+    ptrdiff_t command_name_size = key_end - command_name;
+    expr = grn_ctx_get(ctx, command_name, (int)command_name_size);
     if (expr && command_proc_p(expr)) {
       while (p < e) {
-        int l;
+        size_t l;
         GRN_BULK_REWIND(&buf);
         p = grn_text_cgidec(ctx, &buf, p, e, HTTP_QUERY_PAIR_DELIMITER);
         v = GRN_TEXT_VALUE(&buf);
@@ -1583,7 +1585,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
             ctx->impl->output.is_pretty = GRN_FALSE;
           }
         } else {
-          if (!(val = grn_expr_get_or_add_var(ctx, expr, v, l))) {
+          if (!(val = grn_expr_get_or_add_var(ctx, expr, v, (unsigned int)l))) {
             val = &buf;
           }
           grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
@@ -1599,11 +1601,11 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
                      GRN_TEXT_LEN(&request_id));
         grn_request_canceler_register(ctx,
                                       GRN_TEXT_VALUE(&request_id),
-                                      GRN_TEXT_LEN(&request_id));
+                                      (unsigned int)GRN_TEXT_LEN(&request_id));
         if (request_timeout > 0.0) {
           ctx->impl->current_request_timer_id =
             grn_request_timer_register(GRN_TEXT_VALUE(&request_id),
-                                       GRN_TEXT_LEN(&request_id),
+                                       (unsigned int)GRN_TEXT_LEN(&request_id),
                                        request_timeout);
         }
       }
@@ -1611,7 +1613,7 @@ grn_ctx_qe_exec_uri(grn_ctx *ctx, const char *path, uint32_t path_len)
       grn_expr_exec(ctx, expr, 0);
     } else {
       ERR(GRN_INVALID_ARGUMENT, "invalid command name: %.*s",
-          command_name_size, command_name);
+          (int)command_name_size, command_name);
     }
   } else if ((expr = grn_ctx_get(ctx, GRN_EXPR_MISSING_NAME,
                                  strlen(GRN_EXPR_MISSING_NAME)))) {
@@ -1633,7 +1635,7 @@ grn_obj *
 grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
 {
   char tok_type;
-  int offset = 0;
+  unsigned int offset = 0;
   grn_obj buf, *expr = NULL, *val = NULL;
   grn_obj request_id;
   double request_timeout;
@@ -1644,7 +1646,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
   GRN_TEXT_INIT(&buf, 0);
   GRN_TEXT_INIT(&request_id, 0);
   p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
-  expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf));
+  expr = grn_ctx_get(ctx, GRN_TEXT_VALUE(&buf), (int)GRN_TEXT_LEN(&buf));
   while (p < e) {
     GRN_BULK_REWIND(&buf);
     p = grn_text_unesc_tok(ctx, &buf, p, e, &tok_type);
@@ -1655,7 +1657,7 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
       break;
     case GRN_TOK_SYMBOL :
       if (GRN_TEXT_LEN(&buf) > 2 && v[0] == '-' && v[1] == '-') {
-        int l = GRN_TEXT_LEN(&buf) - 2;
+        size_t l = GRN_TEXT_LEN(&buf) - 2;
         v += 2;
         if (l == OUTPUT_TYPE_LEN && !memcmp(v, OUTPUT_TYPE, OUTPUT_TYPE_LEN)) {
           GRN_BULK_REWIND(&buf);
@@ -1688,7 +1690,11 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
           } else {
             ctx->impl->output.is_pretty = GRN_FALSE;
           }
-        } else if (expr && (val = grn_expr_get_or_add_var(ctx, expr, v, l))) {
+        } else if (expr &&
+                   (val = grn_expr_get_or_add_var(ctx,
+                                                  expr,
+                                                  v,
+                                                  (unsigned int)l))) {
           grn_obj_reinit(ctx, val, GRN_DB_TEXT, 0);
           p = grn_text_unesc_tok(ctx, val, p, e, &tok_type);
         } else {
@@ -1717,11 +1723,11 @@ grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
                  GRN_TEXT_LEN(&request_id));
     grn_request_canceler_register(ctx,
                                   GRN_TEXT_VALUE(&request_id),
-                                  GRN_TEXT_LEN(&request_id));
+                                  (unsigned int)GRN_TEXT_LEN(&request_id));
     if (request_timeout > 0.0) {
       ctx->impl->current_request_timer_id =
         grn_request_timer_register(GRN_TEXT_VALUE(&request_id),
-                                   GRN_TEXT_LEN(&request_id),
+                                   (unsigned int)GRN_TEXT_LEN(&request_id),
                                    request_timeout);
     }
   }
@@ -1755,7 +1761,10 @@ grn_ctx_sendv(grn_ctx *ctx, int argc, char **argv, int flags)
     argv++;
     if (argc) { GRN_TEXT_PUTC(ctx, &buf, ' '); }
   }
-  grn_ctx_send(ctx, GRN_TEXT_VALUE(&buf), GRN_TEXT_LEN(&buf), flags);
+  grn_ctx_send(ctx,
+               GRN_TEXT_VALUE(&buf),
+               (unsigned int)GRN_TEXT_LEN(&buf),
+               flags);
   GRN_OBJ_FIN(ctx, &buf);
   GRN_API_RETURN(ctx->rc);
 }
@@ -1798,7 +1807,7 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
       sheader.qtype = 0;
       sheader.keylen = 0;
       sheader.level = 0;
-      sheader.flags = flags;
+      sheader.flags = (uint8_t)flags;
       sheader.status = 0;
       sheader.opaque = 0;
       sheader.cas = 0;
@@ -1852,9 +1861,10 @@ grn_ctx_send(grn_ctx *ctx, const char *str, unsigned int str_len, int flags)
           }
           if (GRN_TEXT_LEN(&ctx->impl->current_request_id) > 0) {
             grn_obj *request_id = &ctx->impl->current_request_id;
-            grn_request_canceler_unregister(ctx,
-                                            GRN_TEXT_VALUE(request_id),
-                                            GRN_TEXT_LEN(request_id));
+            grn_request_canceler_unregister(
+              ctx,
+              GRN_TEXT_VALUE(request_id),
+              (unsigned int)GRN_TEXT_LEN(request_id));
             GRN_BULK_REWIND(&ctx->impl->current_request_id);
           }
           processed = true;
@@ -1881,7 +1891,7 @@ exit :
   GRN_API_RETURN(0);
 }
 
-unsigned int
+grn_rc
 grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
 {
   if (!ctx) { return GRN_INVALID_ARGUMENT; }
@@ -1901,7 +1911,7 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
     if (!have_buffer) {
       *str = NULL;
       *str_len = 0;
-      return 0;
+      return GRN_SUCCESS;
     }
   }
 
@@ -1915,7 +1925,7 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
         *flags = 0;
       } else {
         *str = GRN_BULK_HEAD(ctx->impl->output.buf);
-        *str_len = GRN_BULK_VSIZE(ctx->impl->output.buf);
+        *str_len = (unsigned int)GRN_BULK_VSIZE(ctx->impl->output.buf);
         if (header.flags & GRN_CTX_QUIT) {
           ctx->stat = GRN_CTX_QUIT;
           *flags |= GRN_CTX_QUIT;
@@ -1934,16 +1944,17 @@ grn_ctx_recv(grn_ctx *ctx, char **str, unsigned int *str_len, int *flags)
       goto exit;
     } else {
       grn_obj *buf = ctx->impl->output.buf;
-      unsigned int head = 0, tail = GRN_BULK_VSIZE(buf);
+      size_t head = 0;
+      size_t tail = GRN_BULK_VSIZE(buf);
       *str = GRN_BULK_HEAD(buf) + head;
-      *str_len = tail - head;
+      *str_len = (unsigned int)(tail - head);
       GRN_BULK_REWIND(ctx->impl->output.buf);
       goto exit;
     }
   }
   ERR(GRN_INVALID_ARGUMENT, "invalid ctx assigned");
 exit :
-  GRN_API_RETURN(0);
+  GRN_API_RETURN(GRN_SUCCESS);
 }
 
 void
@@ -1951,7 +1962,7 @@ grn_ctx_stream_out_func(grn_ctx *ctx, int flags, void *stream)
 {
   if (ctx && ctx->impl) {
     grn_obj *buf = ctx->impl->output.buf;
-    uint32_t size = GRN_BULK_VSIZE(buf);
+    size_t size = GRN_BULK_VSIZE(buf);
     if (size) {
       if (fwrite(GRN_BULK_HEAD(buf), 1, size, (FILE *)stream)) {
         fputc('\n', (FILE *)stream);
