@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2016  Brazil
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -65,7 +65,7 @@ func_string_length(grn_ctx *ctx, int n_args, grn_obj **args,
     const char *s = GRN_TEXT_VALUE(target);
     const char *e = GRN_TEXT_VALUE(target) + GRN_TEXT_LEN(target);
     const char *p;
-    unsigned int cl = 0;
+    int cl = 0;
     for (p = s; p < e && (cl = grn_charlen(ctx, p, e)); p += cl) {
       length++;
     }
@@ -195,7 +195,7 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
   }
 
   while (from < 0) {
-    from += GRN_TEXT_LEN(target);
+    from += (int64_t)GRN_TEXT_LEN(target);
   }
 
   {
@@ -208,7 +208,7 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
     if (from == 0) {
       start = p;
     } else {
-      unsigned int char_length = 0;
+      int char_length = 0;
       size_t n_chars = 0;
 
       for (;
@@ -222,7 +222,7 @@ func_string_substring(grn_ctx *ctx, int n_args, grn_obj **args,
     }
 
     if (start && length > 0) {
-      unsigned int char_length = 0;
+      int char_length = 0;
       size_t n_chars = 0;
 
       for (;
@@ -439,7 +439,7 @@ string_regexp_slice(grn_ctx *ctx, int n_args, grn_obj **args, grn_user_data *use
   }
 
   const char *target = GRN_TEXT_VALUE(target_raw);
-  int64_t target_length = GRN_TEXT_LEN(target_raw);
+  size_t target_length = GRN_TEXT_LEN(target_raw);
 
   OnigRegion region;
   onig_region_init(&region);
@@ -459,7 +459,7 @@ string_regexp_slice(grn_ctx *ctx, int n_args, grn_obj **args, grn_user_data *use
 
     if (grn_obj_is_text_family_bulk(ctx, nth_or_name)) {
       const char *name = GRN_TEXT_VALUE(nth_or_name);
-      int64_t name_length = GRN_TEXT_LEN(nth_or_name);
+      size_t name_length = GRN_TEXT_LEN(nth_or_name);
 
       nth = onig_name_to_backref_number(regexp,
                                         name,
