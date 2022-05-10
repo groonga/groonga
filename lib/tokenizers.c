@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -213,7 +213,7 @@ delimit_open_options(grn_ctx *ctx,
     grn_vector_add_element(ctx,
                            &(options->delimiters),
                            options_default->delimiter,
-                           options_default->delimiter_length,
+                           (uint32_t)(options_default->delimiter_length),
                            0,
                            GRN_DB_TEXT);
   }
@@ -264,7 +264,7 @@ delimit_init_raw(grn_ctx *ctx,
     tokenizer->have_tokenized_delimiter =
       grn_tokenizer_have_tokenized_delimiter(ctx,
                                              raw_string,
-                                             raw_string_length,
+                                             (unsigned int)raw_string_length,
                                              encoding);
     tokenizer->encoding = encoding;
   }
@@ -317,14 +317,14 @@ delimit_next(grn_ctx *ctx,
   grn_delimit_tokenizer *tokenizer = user_data;
 
   if (tokenizer->have_tokenized_delimiter) {
-    unsigned int rest_length;
+    ptrdiff_t rest_length;
     rest_length = tokenizer->end - tokenizer->next;
     tokenizer->next =
       (unsigned char *)grn_tokenizer_next_by_tokenized_delimiter(
         ctx,
         token,
         (const char *)tokenizer->next,
-        rest_length,
+        (unsigned int)rest_length,
         tokenizer->encoding);
 #ifdef GRN_SUPPORT_REGEXP
   } else if (tokenizer->options->regex) {
@@ -343,20 +343,21 @@ delimit_next(grn_ctx *ctx,
       grn_token_set_data(ctx,
                          token,
                          tokenizer->next,
-                         tokenizer->end - tokenizer->next);
+                         (int)(tokenizer->end - tokenizer->next));
       grn_token_set_status(ctx, token, GRN_TOKEN_LAST);
     } else {
-      grn_token_set_data(ctx,
-                         token,
-                         tokenizer->next,
-                         (tokenizer->start + region.beg[0]) - tokenizer->next);
+      grn_token_set_data(
+        ctx,
+        token,
+        tokenizer->next,
+        (int)((tokenizer->start + region.beg[0]) - tokenizer->next));
       grn_token_set_status(ctx, token, GRN_TOKEN_CONTINUE);
       tokenizer->next = tokenizer->start + region.end[0];
       onig_region_free(&region, 0);
     }
 #endif /* GRN_SUPPORT_REGEXP */
   } else {
-    size_t cl;
+    int cl;
     const unsigned char *p = tokenizer->next, *r;
     const unsigned char *e = tokenizer->end;
     grn_token_status status;
@@ -408,7 +409,7 @@ delimit_next(grn_ctx *ctx,
     grn_token_set_data(ctx,
                        token,
                        (const char *)p,
-                       r - p);
+                       (int)(r - p));
     grn_token_set_status(ctx, token, status);
   }
 }
@@ -477,7 +478,7 @@ typedef struct {
     int16_t *checks;
     uint64_t *offsets;
   } loose;
-  int32_t pos;
+  uint32_t pos;
   uint32_t skip;
   unsigned int n_chars;
   const unsigned char *start;
@@ -569,7 +570,7 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
     loose_checks = tokenizer->loose.checks;
     loose_offsets = tokenizer->loose.offsets;
     while (normalized < normalized_end) {
-      size_t length;
+      int length;
       length = grn_charlen_(ctx,
                             (char *)normalized,
                             (char *)normalized_end,
@@ -594,11 +595,11 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
         GRN_TEXT_PUT(ctx, &(tokenizer->loose.text), normalized, length);
         *loose_types = *types;
         if (tokenizer->options.loose_blank && GRN_STR_ISBLANK(*types)) {
-          *loose_types &= ~GRN_STR_BLANK;
+          *loose_types &= (uint_least8_t)(~GRN_STR_BLANK);
         }
         loose_types++;
         if (loose_checks) {
-          size_t i;
+          int i;
           if (tokenizer->options.include_removed_source_location) {
             for (; removed_checks && removed_checks < checks; removed_checks++) {
               if (*removed_checks > 0) {
@@ -671,7 +672,7 @@ ngram_init_raw(grn_ctx *ctx,
   grn_ngram_tokenizer *tokenizer;
 
   if (!options->remove_blank) {
-    normalize_flags &= ~GRN_STRING_REMOVE_BLANK;
+    normalize_flags &= (unsigned int)(~GRN_STRING_REMOVE_BLANK);
   }
   if (options->report_source_location) {
     normalize_flags |= GRN_STRING_WITH_CHECKS;
@@ -758,7 +759,7 @@ ngram_init_deprecated(grn_ctx *ctx,
   grn_tokenizer_query *query;
 
   if (!options->remove_blank) {
-    normalize_flags &= ~GRN_STRING_REMOVE_BLANK;
+    normalize_flags &= (unsigned int)(~GRN_STRING_REMOVE_BLANK);
   }
   query = grn_tokenizer_query_open(ctx, nargs, args, normalize_flags);
   if (!query) {
@@ -980,10 +981,10 @@ ngram_next(grn_ctx *ctx,
            void *user_data)
 {
   grn_ngram_tokenizer *tokenizer = user_data;
-  size_t cl;
+  int cl;
   const unsigned char *p = tokenizer->next, *r = p, *e = tokenizer->end;
-  int32_t n_characters = 0;
-  int32_t pos = tokenizer->pos + tokenizer->skip;
+  uint32_t n_characters = 0;
+  uint32_t pos = tokenizer->pos + tokenizer->skip;
   grn_token_status status = 0;
   const uint_least8_t *cp = tokenizer->ctypes ? tokenizer->ctypes + pos : NULL;
   const int16_t *checks = NULL;
@@ -1124,21 +1125,21 @@ ngram_next(grn_ctx *ctx,
   if (r == e) { status |= GRN_TOKEN_REACH_END; }
 
   {
-    size_t data_size = r - p;
+    ptrdiff_t data_size = r - p;
     if ((status & (GRN_TOKEN_LAST | GRN_TOKEN_REACH_END)) &&
         !tokenizer->loose.ing && tokenizer->loose.need) {
-      status &= ~(GRN_TOKEN_LAST | GRN_TOKEN_REACH_END);
+      status &= (grn_token_status)(~(GRN_TOKEN_LAST | GRN_TOKEN_REACH_END));
       tokenizer->loose.ing = GRN_TRUE;
       tokenizer->loose.need_end_mark = GRN_TRUE;
     }
-    grn_token_set_data(ctx, token, p, data_size);
+    grn_token_set_data(ctx, token, p, (int)data_size);
     grn_token_set_status(ctx, token, status);
     grn_token_set_overlap(ctx, token, tokenizer->overlap);
     /* TODO: Clean and complete... */
     if (offsets) {
       grn_token_set_source_offset(ctx, token, offsets[0]);
       if (checks) {
-        uint32_t source_first_character_length = 0;
+        int16_t source_first_character_length = 0;
         if (checks[0] == -1) {
           ssize_t n_leading_bytes = p - tokenizer->start;
           ssize_t i;
@@ -1150,7 +1151,7 @@ ngram_next(grn_ctx *ctx,
           }
         }
         {
-          size_t i;
+          ptrdiff_t i;
           for (i = 0; i < data_size; i++) {
             if (checks[i] > 0) {
               if (source_first_character_length == 0) {
@@ -1161,14 +1162,15 @@ ngram_next(grn_ctx *ctx,
         }
         uint32_t token_length = (uint32_t)(offsets[n_characters] - offsets[0]);
         grn_token_set_source_length(ctx, token, token_length);
-        grn_token_set_source_first_character_length(ctx,
-                                                    token,
-                                                    source_first_character_length);
+        grn_token_set_source_first_character_length(
+          ctx,
+          token,
+          (uint32_t)source_first_character_length);
       }
     } else {
       if (checks) {
-        uint32_t source_length = 0;
-        uint32_t source_first_character_length = 0;
+        int16_t source_length = 0;
+        int16_t source_first_character_length = 0;
         uint64_t next_offset = tokenizer->source_offset;
         grn_token_set_source_offset(ctx, token, tokenizer->source_offset);
         if (checks[0] == -1) {
@@ -1178,15 +1180,15 @@ ngram_next(grn_ctx *ctx,
             if (checks[-i] > 0) {
               source_length = source_first_character_length = checks[-i];
               if (!tokenizer->overlap) {
-                next_offset += checks[-i];
+                next_offset += (uint64_t)checks[-i];
               }
               break;
             }
           }
         }
         {
-          uint64_t first_offset = 0;
-          size_t i;
+          int16_t first_offset = 0;
+          ptrdiff_t i;
           for (i = 0; i < data_size; i++) {
             if (checks[i] > 0) {
               if ((tokenizer->overlap && first_offset == 0) ||
@@ -1194,7 +1196,7 @@ ngram_next(grn_ctx *ctx,
                 if (first_offset == 0) {
                   first_offset = checks[i];
                 }
-                next_offset += checks[i];
+                next_offset += (uint64_t)checks[i];
               }
               if (source_first_character_length == 0) {
                 source_first_character_length = checks[i];
@@ -1202,15 +1204,16 @@ ngram_next(grn_ctx *ctx,
               source_length += checks[i];
             } else if (checks[i] < 0) {
               if (tokenizer->overlap) {
-                next_offset -= first_offset;
+                next_offset -= (uint64_t)first_offset;
               }
             }
           }
         }
-        grn_token_set_source_length(ctx, token, source_length);
-        grn_token_set_source_first_character_length(ctx,
-                                                    token,
-                                                    source_first_character_length);
+        grn_token_set_source_length(ctx, token, (uint32_t)source_length);
+        grn_token_set_source_first_character_length(
+          ctx,
+          token,
+          (uint32_t)source_first_character_length);
         tokenizer->source_offset = next_offset;
       }
     }
@@ -1233,7 +1236,7 @@ ngram_next_deprecated(grn_ctx *ctx,
   grn_tokenizer_token_push(ctx,
                            &(tokenizer->token),
                            GRN_TEXT_VALUE(token_data),
-                           GRN_TEXT_LEN(token_data),
+                           (unsigned int)GRN_TEXT_LEN(token_data),
                            grn_token_get_status(ctx, &token));
   grn_token_fin(ctx, &token);
   return NULL;
@@ -1281,7 +1284,7 @@ typedef struct {
   grn_tokenizer_token token;
   grn_tokenizer_query *query;
   struct {
-    int32_t n_skip_tokens;
+    uint32_t n_skip_tokens;
   } get;
   grn_bool is_begin;
   grn_bool is_end;
@@ -1413,7 +1416,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   if (mode == GRN_TOKEN_GET) {
     if (is_begin &&
         char_len == GRN_TOKENIZER_BEGIN_MARK_UTF8_LEN &&
-        memcmp(current, GRN_TOKENIZER_BEGIN_MARK_UTF8, char_len) == 0) {
+        memcmp(current, GRN_TOKENIZER_BEGIN_MARK_UTF8, (size_t)char_len) == 0) {
       tokenizer->is_start_token = GRN_TRUE;
       n_characters++;
       GRN_TEXT_PUT(ctx, buffer, current, char_len);
@@ -1433,7 +1436,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
     if (current + char_len == end &&
         char_len == GRN_TOKENIZER_END_MARK_UTF8_LEN &&
-        memcmp(current, GRN_TOKENIZER_END_MARK_UTF8, char_len) == 0) {
+        memcmp(current, GRN_TOKENIZER_END_MARK_UTF8, (size_t)char_len) == 0) {
       status |= GRN_TOKEN_LAST | GRN_TOKEN_REACH_END;
       grn_tokenizer_token_push(ctx,
                                &(tokenizer->token),
@@ -1473,7 +1476,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
     if (mode == GRN_TOKEN_GET &&
         current + char_len == end &&
         char_len == GRN_TOKENIZER_END_MARK_UTF8_LEN &&
-        memcmp(current, GRN_TOKENIZER_END_MARK_UTF8, char_len) == 0) {
+        memcmp(current, GRN_TOKENIZER_END_MARK_UTF8, (size_t)char_len) == 0) {
       break_by_end_mark = GRN_TRUE;
     }
 
@@ -1528,7 +1531,7 @@ regexp_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_tokenizer_token_push(ctx,
                            &(tokenizer->token),
                            GRN_TEXT_VALUE(buffer),
-                           GRN_TEXT_LEN(buffer),
+                           (unsigned int)GRN_TEXT_LEN(buffer),
                            status);
 
   return NULL;
@@ -1689,7 +1692,7 @@ pattern_init(grn_ctx *ctx, grn_tokenizer_query *query)
     tokenizer->have_tokenized_delimiter =
       grn_tokenizer_have_tokenized_delimiter(ctx,
                                              raw_string,
-                                             raw_string_length,
+                                             (unsigned int)raw_string_length,
                                              encoding);
     tokenizer->encoding = encoding;
   }
@@ -1735,7 +1738,7 @@ pattern_search(grn_ctx *ctx,
     tokenizer->next = tokenizer->end;
   } else {
     tokenizer->current = tokenizer->start + region.beg[0];
-    tokenizer->current_length = region.end[0] - region.beg[0];
+    tokenizer->current_length = (size_t)(region.end[0] - region.beg[0]);
     tokenizer->next = tokenizer->start + region.end[0];
   }
   onig_region_free(&region, 0);
@@ -1751,14 +1754,14 @@ pattern_next(grn_ctx *ctx,
   grn_pattern_tokenizer *tokenizer = user_data;
 
   if (tokenizer->have_tokenized_delimiter) {
-    unsigned int rest_length;
+    ptrdiff_t rest_length;
     rest_length = tokenizer->end - tokenizer->next;
     tokenizer->next =
       (unsigned char *)grn_tokenizer_next_by_tokenized_delimiter(
         ctx,
         token,
         (const char *)tokenizer->next,
-        rest_length,
+        (unsigned int)rest_length,
         tokenizer->encoding);
 #ifdef GRN_SUPPORT_REGEXP
   } else if (tokenizer->options->regex) {
@@ -1769,7 +1772,7 @@ pattern_next(grn_ctx *ctx,
     grn_token_set_data(ctx,
                        token,
                        tokenizer->current,
-                       tokenizer->current_length);
+                       (int)(tokenizer->current_length));
     if (tokenizer->next != tokenizer->end) {
       pattern_search(ctx, tokenizer);
     }
@@ -1856,7 +1859,7 @@ table_open_options(grn_ctx *ctx,
                                            NULL,
                                            &domain);
       if (grn_type_id_is_text_family(ctx, domain) && name_length > 0) {
-        options->table = grn_ctx_get(ctx, name, name_length);
+        options->table = grn_ctx_get(ctx, name, (int)name_length);
         if (!options->table) {
           ERR(GRN_INVALID_ARGUMENT,
               "[tokenizer][table] nonexistent table: <%.*s>",
@@ -1939,7 +1942,7 @@ table_init(grn_ctx *ctx, grn_tokenizer_query *query)
     tokenizer->have_tokenized_delimiter =
       grn_tokenizer_have_tokenized_delimiter(ctx,
                                              raw_string,
-                                             raw_string_length,
+                                             (unsigned int)raw_string_length,
                                              encoding);
     tokenizer->encoding = encoding;
   }
@@ -1970,14 +1973,15 @@ table_scan(grn_ctx *ctx,
            grn_table_tokenizer *tokenizer)
 {
   const char *rest;
-  tokenizer->n_hits = grn_pat_scan(ctx,
-                                   (grn_pat *)(tokenizer->options->table),
-                                   tokenizer->next,
-                                   tokenizer->end - tokenizer->next,
-                                   tokenizer->hits,
-                                   sizeof(tokenizer->hits) /
-                                   sizeof(*(tokenizer->hits)),
-                                   &rest);
+  tokenizer->n_hits =
+    grn_pat_scan(ctx,
+                 (grn_pat *)(tokenizer->options->table),
+                 tokenizer->next,
+                 (unsigned int)(tokenizer->end - tokenizer->next),
+                 tokenizer->hits,
+                 sizeof(tokenizer->hits) /
+                 sizeof(*(tokenizer->hits)),
+                 &rest);
   tokenizer->current = tokenizer->next;
   tokenizer->next = rest;
   tokenizer->current_hit = 0;
@@ -1992,14 +1996,14 @@ table_next(grn_ctx *ctx,
   grn_table_tokenizer *tokenizer = user_data;
 
   if (tokenizer->have_tokenized_delimiter) {
-    unsigned int rest_length;
+    ptrdiff_t rest_length;
     rest_length = tokenizer->end - tokenizer->next;
     tokenizer->next =
       (unsigned char *)grn_tokenizer_next_by_tokenized_delimiter(
         ctx,
         token,
         (const char *)tokenizer->next,
-        rest_length,
+        (unsigned int)rest_length,
         tokenizer->encoding);
   } else {
     if (tokenizer->current_hit == -1) {
@@ -2010,7 +2014,7 @@ table_next(grn_ctx *ctx,
       grn_token_set_data(ctx,
                          token,
                          tokenizer->current + hit->offset,
-                         hit->length);
+                         (int)(hit->length));
       tokenizer->current_hit++;
       if (tokenizer->current_hit == tokenizer->n_hits) {
         grn_token_status status = GRN_TOKEN_CONTINUE;
@@ -2365,7 +2369,7 @@ document_vector_idf_base_tokenizer_init_metadata(
                                                   source_id,
                                                   GRN_ID_NIL,
                                                   GRN_ID_MAX,
-                                                  ii->n_elements,
+                                                  (int)(ii->n_elements),
                                                   0);
     if (ii_cursor) {
       while (grn_ii_cursor_next(ctx, ii_cursor)) {
@@ -2402,7 +2406,7 @@ document_vector_idf_base_tokenizer_init_metadata(
     if (metadata->algorithm == DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_BM25) {
       metadata->average_dl = 0.0;
       if (metadata->n_documents > 0) {
-        metadata->average_dl = total_tf / (float)(metadata->n_documents);
+        metadata->average_dl = (float)total_tf / (float)(metadata->n_documents);
       }
       grn_vector_add_element(ctx,
                              &metadata_vector,
@@ -2656,21 +2660,22 @@ document_vector_idf_base_tokenizer_init_token_ids(
       if (metadata->algorithm == DOCUMENT_VECTOR_IDF_BASE_ALGORITHM_TF_IDF) {
         /* Use the same formula as gensim:
          * https://radimrehurek.com/gensim/models/tfidfmodel.html */
-        const float tf_idf = tf * log2f(metadata->n_documents / (float)df);
+        const float tf_idf =
+          (float)tf * log2f((float)(metadata->n_documents) / (float)df);
         weight = tf_idf;
       } else {
         /* Use the formula in Wikipedia:
          * https://en.wikipedia.org/wiki/Okapi_BM25 */
         const float idf =
-          logf(((metadata->n_documents - df + (float)0.5) /
-                (df + (float)0.5)) +
+          logf((((float)(metadata->n_documents) - (float)df + (float)0.5) /
+                ((float)df + (float)0.5)) +
                1);
         const float k1 = tokenizer->options->k1;
         const float b = tokenizer->options->b;
         const float bm25 =
-          idf * ((tf * (k1 + 1)) /
-                 (tf + k1 *
-                  (1 - b + b * (metadata->dl / metadata->average_dl))));
+          idf * (((float)tf * (k1 + 1)) /
+                 ((float)tf + k1 *
+                  (1 - b + b * ((float)(metadata->dl) / metadata->average_dl))));
         weight = bm25;
       }
       grn_uvector_add_element_record(ctx,
@@ -2690,7 +2695,7 @@ document_vector_idf_base_tokenizer_init_token_ids(
       float weight = 0.0;
       grn_uvector_get_element_record(ctx,
                                      &(tokenizer->token_ids),
-                                     i,
+                                     (uint32_t)i,
                                      &weight);
       l2_norm += weight * weight;
     }
@@ -2699,7 +2704,7 @@ document_vector_idf_base_tokenizer_init_token_ids(
       float weight = 0.0;
       grn_id id = grn_uvector_get_element_record(ctx,
                                                  &(tokenizer->token_ids),
-                                                 i,
+                                                 (uint32_t)i,
                                                  &weight);
       grn_uvector_add_element_record(ctx,
                                      &(tokenizer->normalized_token_ids),
@@ -2731,7 +2736,7 @@ document_vector_idf_base_tokenizer_next(
   tokenizer->current_token_id =
     grn_uvector_get_element_record(ctx,
                                    token_ids,
-                                   tokenizer->token_id_offset,
+                                   (uint32_t)(tokenizer->token_id_offset),
                                    &weight);
   grn_token_set_data(ctx,
                      token,
