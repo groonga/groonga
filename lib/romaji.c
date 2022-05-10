@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -370,6 +370,7 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
           default :
             break;
           }
+          break;
         case 0x83 :
           switch (next[2]) {
           case 0xa3 : /* U+30E3 KATAKANA LETTER SMALL YA */
@@ -381,9 +382,11 @@ grn_romaji_hepburn_convert(grn_ctx *ctx,
           default :
             break;
           }
+          break;
         default :
           break;
         }
+        break;
       default :
         break;
       }
