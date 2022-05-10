@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -80,7 +80,7 @@ static uint32_t grn_io_version_default = GRN_IO_VERSION_DEFAULT;
 
 grn_inline static grn_rc grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi,
                                        const char *path, int flags);
-grn_inline static void grn_fileinfo_init(fileinfo *fis, int nfis);
+grn_inline static void grn_fileinfo_init(fileinfo *fis, uint32_t nfis);
 grn_inline static int grn_fileinfo_opened(fileinfo *fi);
 grn_inline static grn_rc grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi);
 #ifdef WIN32
@@ -144,7 +144,7 @@ grn_io_init_from_env(void)
                version_env,
                GRN_ENV_BUFFER_SIZE);
     if (version_env[0]) {
-      grn_io_version_default = atoi(version_env);
+      grn_io_version_default = (uint32_t)atoi(version_env);
     }
   }
 }
@@ -154,7 +154,8 @@ grn_io_compute_base(uint32_t header_size)
 {
   uint32_t total_header_size;
   total_header_size = IO_HEADER_SIZE + header_size;
-  return (total_header_size + grn_pagesize - 1) & ~(grn_pagesize - 1);
+  return (total_header_size + (uint32_t)grn_pagesize - 1) &
+    (uint32_t)(~(grn_pagesize - 1));
 }
 
 static grn_inline uint32_t
@@ -172,7 +173,7 @@ grn_io_compute_max_n_files(uint32_t segment_size, uint32_t max_segment,
   return (uint32_t)((last_segment_end + file_size - 1) / file_size);
 }
 
-static grn_inline unsigned long
+static grn_inline uint32_t
 grn_io_compute_file_size(uint32_t version)
 {
   if (version == 0) {
@@ -208,15 +209,15 @@ static grn_inline uint32_t
 grn_io_compute_nth_file_info(grn_io *io, uint32_t nth_segment)
 {
   uint32_t segment_size;
-  unsigned long file_size;
-  uint32_t segments_per_file;
+  uint32_t file_size;
+  uint32_t n_segments_per_file;
   uint32_t resolved_nth_segment;
 
   segment_size = io->header->segment_size;
   file_size = grn_io_compute_file_size(io->header->version);
-  segments_per_file = file_size / segment_size;
+  n_segments_per_file = file_size / segment_size;
   resolved_nth_segment = nth_segment + io->base_seg;
-  return resolved_nth_segment / segments_per_file;
+  return resolved_nth_segment / n_segments_per_file;
 }
 
 static grn_io *
@@ -272,8 +273,12 @@ grn_io_register(grn_ctx *ctx, grn_io *io)
     grn_bool succeeded = GRN_FALSE;
     CRITICAL_SECTION_ENTER(grn_glock);
     if (grn_gctx.impl && grn_gctx.impl->ios &&
-        grn_hash_add(&grn_gctx, grn_gctx.impl->ios, io->path, strlen(io->path),
-                     (void **)&io, NULL)) {
+        grn_hash_add(&grn_gctx,
+                     grn_gctx.impl->ios,
+                     io->path,
+                     (unsigned int)strlen(io->path),
+                     (void **)&io,
+                     NULL)) {
       succeeded = GRN_TRUE;
     }
     CRITICAL_SECTION_LEAVE(grn_glock);
@@ -291,8 +296,11 @@ grn_io_unregister(grn_ctx *ctx, grn_io *io)
     grn_bool succeeded = GRN_FALSE;
     CRITICAL_SECTION_ENTER(grn_glock);
     if (grn_gctx.impl && grn_gctx.impl->ios) {
-      grn_hash_delete(&grn_gctx, grn_gctx.impl->ios,
-                      io->path, strlen(io->path), NULL);
+      grn_hash_delete(&grn_gctx,
+                      grn_gctx.impl->ios,
+                      io->path,
+                      (unsigned int)strlen(io->path),
+                      NULL);
       succeeded = GRN_TRUE;
     }
     CRITICAL_SECTION_LEAVE(grn_glock);
@@ -382,9 +390,9 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size,
 }
 
 static grn_rc
-array_init_(grn_ctx *ctx, grn_io *io, int n_arrays, size_t hsize, size_t msize)
+array_init_(grn_ctx *ctx, grn_io *io, uint32_t n_arrays, size_t hsize, size_t msize)
 {
-  int i;
+  uint32_t i;
   uint32_t ws;
   byte *hp, *mp;
   grn_io_array_spec *array_specs = (grn_io_array_spec *)io->user_header;
@@ -399,7 +407,7 @@ array_init_(grn_ctx *ctx, grn_io *io, int n_arrays, size_t hsize, size_t msize)
   for (i = 0; i < n_arrays; i++) {
     uint32_t we = ws - array_specs[i].w_of_element;
     io->ainfo[i].w_of_elm_in_a_segment = we;
-    io->ainfo[i].elm_mask_in_a_segment = (1 << we) - 1;
+    io->ainfo[i].elm_mask_in_a_segment = (1U << we) - 1U;
     io->ainfo[i].max_n_segments = array_specs[i].max_n_segments;
     io->ainfo[i].element_size = 1 << array_specs[i].w_of_element;
     io->ainfo[i].segments = (uint32_t *)hp;
@@ -412,10 +420,10 @@ array_init_(grn_ctx *ctx, grn_io *io, int n_arrays, size_t hsize, size_t msize)
 }
 
 static grn_rc
-array_init(grn_ctx *ctx, grn_io *io, int n_arrays)
+array_init(grn_ctx *ctx, grn_io *io, uint32_t n_arrays)
 {
   if (n_arrays) {
-    int i;
+    uint32_t i;
     grn_io_array_spec *array_specs = (grn_io_array_spec *)io->user_header;
     size_t hsize = sizeof(grn_io_array_spec) * n_arrays;
     size_t msize = sizeof(grn_io_array_info) * n_arrays;
@@ -431,11 +439,11 @@ array_init(grn_ctx *ctx, grn_io *io, int n_arrays)
 grn_io *
 grn_io_create_with_array(grn_ctx *ctx, const char *path,
                          uint32_t header_size, uint32_t segment_size,
-                         grn_io_mode mode, int n_arrays,
+                         grn_io_mode mode, uint32_t n_arrays,
                          grn_io_array_spec *array_specs)
 {
   if (n_arrays) {
-    int i;
+    uint32_t i;
     grn_io *io;
     byte *hp;
     uint32_t nsegs = 0;
@@ -446,7 +454,7 @@ grn_io_create_with_array(grn_ctx *ctx, const char *path,
       hsize += sizeof(uint32_t) * array_specs[i].max_n_segments;
       msize += sizeof(void *) * array_specs[i].max_n_segments;
     }
-    if ((io = grn_io_create(ctx, path, header_size + hsize,
+    if ((io = grn_io_create(ctx, path, (uint32_t)(header_size + hsize),
                             segment_size, nsegs, mode, GRN_IO_EXPIRE_GTICK))) {
       grn_rc rc;
       hp = io->user_header;
@@ -740,13 +748,13 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
     uint32_t i;
     uint32_t max_segment;
     uint32_t segment_size;
-    unsigned long file_size;
-    uint32_t segments_per_file;
+    uint32_t file_size;
+    uint32_t n_segments_per_file;
 
     max_segment = grn_io_max_segment(io);
     segment_size = io->header->segment_size;
     file_size = grn_io_compute_file_size(io->header->version);
-    segments_per_file = file_size / segment_size;
+    n_segments_per_file = file_size / segment_size;
     for (i = 0; i < max_segment; i++) {
       grn_io_mapinfo *mi;
       mi = &(io->maps[i]);
@@ -755,7 +763,7 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
         /* if (atomic_read(mi->nref)) { return STILL_IN_USE ; } */
         if (io->fis) {
           uint32_t bseg = i + io->base_seg;
-          uint32_t fno = bseg / segments_per_file;
+          uint32_t fno = bseg / n_segments_per_file;
           fi = &io->fis[fno];
         }
         GRN_MUNMAP(ctx, &grn_gctx, io, &mi->fmo, fi, mi->map, segment_size);
@@ -813,7 +821,7 @@ grn_io_get_type(grn_io *io)
 }
 
 grn_inline static void
-gen_pathname(const char *path, char *buffer, int fno)
+gen_pathname(const char *path, char *buffer, uint32_t fno)
 {
   size_t len = strlen(path);
   grn_memcpy(buffer, path, len);
@@ -850,7 +858,7 @@ grn_io_size(grn_ctx *ctx, grn_io *io, uint64_t *size)
       SERR("failed to stat path to compute size: <%s>",
            buffer);
     } else {
-      tsize += s.st_size;
+      tsize += (uint64_t)(s.st_size);
     }
   }
   *size = tsize;
@@ -861,7 +869,7 @@ grn_rc
 grn_io_remove_raw(grn_ctx *ctx, const char *path)
 {
   grn_rc rc = GRN_SUCCESS;
-  int fno;
+  uint32_t fno;
   char buffer[PATH_MAX];
 
   if (grn_unlink(path) != 0) {
@@ -926,7 +934,7 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
          tag, old_name, new_name);
     return ctx->rc;
   } else {
-    int fno;
+    uint32_t fno;
     char old_buffer[PATH_MAX];
     char new_buffer[PATH_MAX];
     for (fno = 1; ; fno++) {
@@ -954,15 +962,16 @@ grn_io_read_ja(grn_io *io, grn_ctx *ctx, grn_io_ja_einfo *einfo, uint32_t epos,
                uint32_t key, uint32_t segment, uint32_t offset, void **value,
                uint32_t *value_len)
 {
-  uint32_t rest = 0, size = *value_len + sizeof(grn_io_ja_ehead);
+  size_t rest = 0;
+  size_t size = *value_len + sizeof(grn_io_ja_ehead);
   uint32_t segment_size = io->header->segment_size;
-  unsigned long file_size = grn_io_compute_file_size(io->header->version);
-  uint32_t segments_per_file = file_size / segment_size;
+  uint32_t file_size = grn_io_compute_file_size(io->header->version);
+  uint32_t n_segments_per_file = file_size / segment_size;
   uint32_t bseg = segment + io->base_seg;
-  int fno = bseg / segments_per_file;
+  uint32_t fno = bseg / n_segments_per_file;
   fileinfo *fi = &io->fis[fno];
-  off_t base = fno ? 0 : io->base - (uint64_t)segment_size * io->base_seg;
-  off_t pos = (uint64_t)segment_size * (bseg % segments_per_file) + offset + base;
+  off_t base = fno ? 0 : (off_t)(io->base - segment_size * io->base_seg);
+  off_t pos = segment_size * (bseg % n_segments_per_file) + offset + base;
   ja_element *v = GRN_CALLOC(size);
   if (!v) {
     *value = NULL;
@@ -970,8 +979,8 @@ grn_io_read_ja(grn_io *io, grn_ctx *ctx, grn_io_ja_einfo *einfo, uint32_t epos,
     return GRN_NO_MEMORY_AVAILABLE;
   }
   if (pos + (off_t)size > (off_t)file_size) {
-    rest = pos + size - file_size;
-    size = file_size - pos;
+    rest = (size_t)(pos + (off_t)size - file_size);
+    size = (size_t)(file_size - pos);
   }
   if (!grn_fileinfo_opened(fi)) {
     char path[PATH_MAX];
@@ -1056,18 +1065,19 @@ grn_io_write_ja(grn_io *io, grn_ctx *ctx, uint32_t key,
                 uint32_t value_len)
 {
   grn_rc rc;
-  uint32_t rest = 0, size = value_len + sizeof(grn_io_ja_ehead);
+  size_t rest = 0;
+  size_t size = value_len + sizeof(grn_io_ja_ehead);
   uint32_t segment_size = io->header->segment_size;
-  unsigned long file_size = grn_io_compute_file_size(io->header->version);
-  uint32_t segments_per_file = file_size / segment_size;
+  uint32_t file_size = grn_io_compute_file_size(io->header->version);
+  uint32_t n_segments_per_file = file_size / segment_size;
   uint32_t bseg = segment + io->base_seg;
-  int fno = bseg / segments_per_file;
+  uint32_t fno = bseg / n_segments_per_file;
   fileinfo *fi = &io->fis[fno];
-  off_t base = fno ? 0 : io->base - (uint64_t)segment_size * io->base_seg;
-  off_t pos = (uint64_t)segment_size * (bseg % segments_per_file) + offset + base;
+  off_t base = fno ? 0 : (off_t)(io->base - segment_size * io->base_seg);
+  off_t pos = segment_size * (bseg % n_segments_per_file) + offset + base;
   if (pos + (off_t)size > (off_t)file_size) {
-    rest = pos + size - file_size;
-    size = file_size - pos;
+    rest = (size_t)(pos + (off_t)size - file_size);
+    size = (size_t)(file_size - pos);
   }
   if (!grn_fileinfo_opened(fi)) {
     char path[PATH_MAX];
@@ -1087,7 +1097,7 @@ grn_io_write_ja(grn_io *io, grn_ctx *ctx, uint32_t key,
     if ((rc = grn_pwrite(ctx, fi, &eh, sizeof(grn_io_ja_ehead), pos))) {
       return rc;
     }
-    pos += sizeof(grn_io_ja_ehead);
+    pos += (off_t)sizeof(grn_io_ja_ehead);
     rc = grn_pwrite(ctx, fi, value, size - sizeof(grn_io_ja_ehead), pos);
   }
   if (rc) { return rc; }
@@ -1117,13 +1127,13 @@ grn_io_write_ja_ehead(grn_io *io, grn_ctx *ctx, uint32_t key,
 {
   grn_rc rc;
   uint32_t segment_size = io->header->segment_size;
-  unsigned long file_size = grn_io_compute_file_size(io->header->version);
-  uint32_t segments_per_file = file_size / segment_size;
+  uint32_t file_size = grn_io_compute_file_size(io->header->version);
+  uint32_t n_segments_per_file = file_size / segment_size;
   uint32_t bseg = segment + io->base_seg;
-  int fno = bseg / segments_per_file;
+  uint32_t fno = bseg / n_segments_per_file;
   fileinfo *fi = &io->fis[fno];
-  off_t base = fno ? 0 : io->base - (uint64_t)segment_size + io->base_seg;
-  off_t pos = (uint64_t)segment_size * (bseg % segments_per_file) + offset + base;
+  off_t base = fno ? 0 : (off_t)(io->base - segment_size + io->base_seg);
+  off_t pos = segment_size * (bseg % n_segments_per_file) + offset + base;
   if (!grn_fileinfo_opened(fi)) {
     char path[PATH_MAX];
     gen_pathname(io->path, path, fno);
@@ -1158,7 +1168,7 @@ grn_io_win_map(grn_ctx *ctx,
   iw->ctx = ctx;
   iw->diff = 0;
   iw->io = io;
-  iw->mode = mode;
+  iw->mode = (uint8_t)mode;
   iw->tiny_p = 0;
   iw->segment = segment;
   iw->offset = offset;
@@ -1258,12 +1268,12 @@ grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info)
   if ((io->flags & GRN_IO_TEMPORARY)) {
     DO_MAP(io, &info->fmo, NULL, 0, segment_size, segno, info->map);
   } else {
-    unsigned long file_size = grn_io_compute_file_size(io->header->version);
-    uint32_t segments_per_file = file_size / segment_size;
+    uint32_t file_size = grn_io_compute_file_size(io->header->version);
+    uint32_t n_segments_per_file = file_size / segment_size;
     uint32_t bseg = segno + io->base_seg;
-    uint32_t fno = bseg / segments_per_file;
-    off_t base = fno ? 0 : io->base - (uint64_t)segment_size * io->base_seg;
-    off_t pos = (uint64_t)segment_size * (bseg % segments_per_file) + base;
+    uint32_t fno = bseg / n_segments_per_file;
+    off_t base = fno ? 0 : (off_t)(io->base - segment_size * io->base_seg);
+    off_t pos = segment_size * (bseg % n_segments_per_file) + base;
     fileinfo *fi = &io->fis[fno];
     if (!grn_fileinfo_opened(fi)) {
       char path[PATH_MAX];
@@ -1600,7 +1610,7 @@ grn_io_get_disk_usage(grn_ctx *ctx, grn_io *io)
     if (stat(path, &s) != 0) {
       continue;
     }
-    usage += s.st_size;
+    usage += (size_t)(s.st_size);
   }
 
   return usage;
@@ -2058,7 +2068,7 @@ grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
 }
 
 grn_inline static void
-grn_fileinfo_init(fileinfo *fis, int nfis)
+grn_fileinfo_init(fileinfo *fis, uint32_t nfis)
 {
   for (; nfis--; fis++) {
     fis->path = NULL;
@@ -2189,7 +2199,7 @@ grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 }
 
 grn_inline static void
-grn_fileinfo_init(fileinfo *fis, int nfis)
+grn_fileinfo_init(fileinfo *fis, uint32_t nfis)
 {
   for (; nfis--; fis++) {
     fis->path = NULL;
@@ -2259,7 +2269,7 @@ grn_mmap(grn_ctx *ctx,
     int fd, flags;
     if (fi) {
       struct stat s;
-      int64_t tail = offset + length;
+      int64_t tail = offset + (int64_t)length;
       fd = fi->fd;
       if ((fstat(fd, &s) == -1) || (s.st_size < tail && ftruncate(fd, tail) == -1)) {
         SERR("fstat");

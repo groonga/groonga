@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2017  Brazil
+  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -106,7 +106,7 @@ struct _grn_io {
   uint32_t nmaps;
   uint32_t nref;
   uint32_t count;
-  uint8_t flags;
+  uint32_t flags;
   uint32_t *lock;
 };
 
@@ -322,7 +322,7 @@ struct _grn_io_array_info {
 
 grn_io *grn_io_create_with_array(grn_ctx *ctx, const char *path, uint32_t header_size,
                                  uint32_t segment_size, grn_io_mode mode,
-                                 int n_arrays, grn_io_array_spec *array_specs);
+                                 uint32_t n_arrays, grn_io_array_spec *array_specs);
 
 void grn_io_segment_alloc(grn_ctx *ctx, grn_io *io, grn_io_array_info *ai,
                           uint32_t lseg, int *flags, void **p);
