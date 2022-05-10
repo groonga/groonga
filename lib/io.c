@@ -166,7 +166,7 @@ grn_io_compute_base_segment(uint32_t base, uint32_t segment_size)
 
 static uint32_t
 grn_io_compute_max_n_files(uint32_t segment_size, uint32_t max_segment,
-                           unsigned int base_segument, unsigned long file_size)
+                           unsigned int base_segument, uint32_t file_size)
 {
   uint64_t last_segment_end;
   last_segment_end = ((uint64_t)segment_size) * (max_segment + base_segument);
@@ -196,9 +196,7 @@ grn_io_max_segment(grn_io *io)
 static uint32_t
 grn_io_max_n_files(grn_io *io)
 {
-  unsigned long file_size;
-
-  file_size = grn_io_compute_file_size(io->header->version);
+  uint32_t file_size = grn_io_compute_file_size(io->header->version);
   return grn_io_compute_max_n_files(io->header->segment_size,
                                     grn_io_max_segment(io),
                                     io->base_seg,
@@ -323,7 +321,7 @@ grn_io_create(grn_ctx *ctx, const char *path, uint32_t header_size,
   uint32_t bs;
   struct _grn_io_header *header;
   uint32_t version = grn_io_version_default;
-  unsigned long file_size;
+  uint32_t file_size;
 
   if (!path) {
     return grn_io_create_tmp(ctx, header_size, segment_size, max_segment,
@@ -665,11 +663,11 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     return NULL;
   }
 
-  unsigned long file_size = grn_io_compute_file_size(header->version);
-  unsigned int max_nfiles = grn_io_compute_max_n_files(segment_size,
-                                                       max_segment,
-                                                       bs,
-                                                       file_size);
+  uint32_t file_size = grn_io_compute_file_size(header->version);
+  uint32_t max_nfiles = grn_io_compute_max_n_files(segment_size,
+                                                   max_segment,
+                                                   bs,
+                                                   file_size);
   fileinfo *fis = GRN_MALLOCN(fileinfo, max_nfiles);
   if (!fis) {
     GRN_MUNMAP(ctx, &grn_gctx, NULL, &(fi.fmo), &fi, header, b);
