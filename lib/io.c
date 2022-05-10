@@ -1073,7 +1073,7 @@ grn_io_write_ja(grn_io *io, grn_ctx *ctx, uint32_t key,
   uint32_t bseg = segment + io->base_seg;
   uint32_t fno = bseg / n_segments_per_file;
   fileinfo *fi = &io->fis[fno];
-  off_t base = fno ? 0 : (off_t)(io->base - segment_size * io->base_seg);
+  off_t base = fno ? 0 : (off_t)(io->base) - segment_size * io->base_seg;
   off_t pos = segment_size * (bseg % n_segments_per_file) + offset + base;
   if (pos + (off_t)size > (off_t)file_size) {
     rest = (size_t)(pos + (off_t)size - file_size);
@@ -1132,7 +1132,7 @@ grn_io_write_ja_ehead(grn_io *io, grn_ctx *ctx, uint32_t key,
   uint32_t bseg = segment + io->base_seg;
   uint32_t fno = bseg / n_segments_per_file;
   fileinfo *fi = &io->fis[fno];
-  off_t base = fno ? 0 : (off_t)(io->base - segment_size + io->base_seg);
+  off_t base = fno ? 0 : (off_t)(io->base) - segment_size + io->base_seg;
   off_t pos = segment_size * (bseg % n_segments_per_file) + offset + base;
   if (!grn_fileinfo_opened(fi)) {
     char path[PATH_MAX];
@@ -1272,7 +1272,7 @@ grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info)
     uint32_t n_segments_per_file = file_size / segment_size;
     uint32_t bseg = segno + io->base_seg;
     uint32_t fno = bseg / n_segments_per_file;
-    off_t base = fno ? 0 : (off_t)(io->base - segment_size * io->base_seg);
+    off_t base = fno ? 0 : (off_t)(io->base) - segment_size * io->base_seg;
     off_t pos = segment_size * (bseg % n_segments_per_file) + base;
     fileinfo *fi = &io->fis[fno];
     if (!grn_fileinfo_opened(fi)) {
