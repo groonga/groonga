@@ -2448,6 +2448,10 @@ do_htreq(grn_ctx *ctx, ht_context *hc)
     do_htreq_post(ctx, hc);
     break;
   }
+  ERRCLR(ctx);
+  if (ctx->rc == GRN_CANCEL) {
+    ctx->rc = GRN_SUCCESS;
+  }
   /* if (ctx->rc != GRN_OPERATION_WOULD_BLOCK) {...} */
   grn_msg_close(ctx, (grn_obj *)msg);
   /* if not keep alive connection */
