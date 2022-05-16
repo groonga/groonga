@@ -41,10 +41,6 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     detect_target_apache_arrow_version.split(".", 2)[0]
   end
 
-  def detect_target_apache_arrow_next_major_version
-    detect_target_apache_arrow_version.split(".", 2)[0].succ
-  end
-
   def define_archive_task
     file @original_archive_name do
       File.symlink("../#{@original_archive_name}",
@@ -84,8 +80,6 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       detect_target_apache_arrow_version
     when "APACHE_ARROW_MAJOR_VERSION"
       detect_target_apache_arrow_major_version
-    when "APACHE_ARROW_NEXT_MAJOR_VERSION"
-      detect_target_apache_arrow_next_major_version
     else
       super
     end
