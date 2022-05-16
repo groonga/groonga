@@ -12330,6 +12330,10 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
         grn_rset_posinfo pi = {posting->rid, posting->sid, pos};
         double record_score = 1.0;
         res_add(ctx, s, &pi, record_score, op);
+        if (ctx->rc != GRN_SUCCESS) {
+          rc = ctx->rc;
+          break;
+        }
       }
     }
 
