@@ -12252,7 +12252,7 @@ grn_ii_select_regexp(grn_ctx *ctx, grn_ii *ii,
       chunks[i].next_start_pos_offset = next_start_pos_offset;
     }
 
-    if (!have_error) {
+    while (!have_error) {
       grn_ii_select_cursor_posting *posting;
 
       posting = grn_ii_select_cursor_next(ctx, chunks[0].cursor);
