@@ -1618,6 +1618,12 @@ grn_io_get_disk_usage(grn_ctx *ctx, grn_io *io)
 
 static size_t mmap_size = 0;
 
+size_t
+grn_get_memory_map_size(void)
+{
+  return mmap_size;
+}
+
 #ifdef WIN32
 
 grn_inline static grn_rc

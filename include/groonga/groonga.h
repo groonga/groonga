@@ -300,6 +300,8 @@ GRN_API grn_rc grn_unset_variable(const char *name,
 GRN_API int grn_get_lock_timeout(void);
 GRN_API grn_rc grn_set_lock_timeout(int timeout);
 
+GRN_API size_t grn_get_memory_map_size(void);
+
 /* grn_encoding */
 
 GRN_API const char *grn_encoding_to_string(grn_encoding encoding);
