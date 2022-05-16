@@ -6,6 +6,8 @@
 
 %define _additional_configure_options %{?additional_configure_options:%{additional_configure_options}}
 
+%define _arrow_libs arrow@APACHE_ARROW_MAJOR_VERSION@-libs
+
 Name:		groonga
 Version:	@VERSION@
 Release:	1%{?dist}
@@ -47,7 +49,7 @@ on relational data model.
 Summary:	Runtime libraries for Groonga
 Group:		System Environment/Libraries
 License:	LGPLv2 and (MIT or GPLv2)
-Requires:	arrow-libs >= @APACHE_ARROW_VERSION@, arrow-libs < @APACHE_ARROW_NEXT_MAJOR_VERSION@.0.0
+Requires:	%{_arrow_libs} >= @APACHE_ARROW_VERSION@, %{_arrow_libs} < @APACHE_ARROW_NEXT_MAJOR_VERSION@.0.0
 Requires:	zlib
 Requires:	lz4
 Requires:	libzstd
