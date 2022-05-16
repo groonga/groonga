@@ -37,8 +37,8 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     end
   end
 
-  def detect_target_apache_arrow_next_major_version
-    detect_target_apache_arrow_version.split(".", 2)[0].succ
+  def detect_target_apache_arrow_major_version
+    detect_target_apache_arrow_version.split(".", 2)[0]
   end
 
   def define_archive_task
@@ -78,8 +78,8 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     case key
     when "APACHE_ARROW_VERSION"
       detect_target_apache_arrow_version
-    when "APACHE_ARROW_NEXT_MAJOR_VERSION"
-      detect_target_apache_arrow_next_major_version
+    when "APACHE_ARROW_MAJOR_VERSION"
+      detect_target_apache_arrow_major_version
     else
       super
     end
