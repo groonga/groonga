@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2014-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2014-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -53,6 +53,7 @@
 #include "groonga/output_columns.h"
 #include "groonga/pat.h"
 #include "groonga/proc.h"
+#include "groonga/progress.h"
 #include "groonga/raw_string.h"
 #include "groonga/request_canceler.h"
 #include "groonga/request_timer.h"

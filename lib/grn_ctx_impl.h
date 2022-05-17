@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -201,6 +201,11 @@ struct _grn_ctx_impl {
     grn_obj pool;
   } children;
   grn_ctx *parent;
+
+  struct {
+    grn_progress_callback_func callback;
+    void *user_data;
+  } progress;
 };
 
 #define GRN_CTX_GET_WAL_ROLE(ctx) ((ctx)->impl->wal.role)

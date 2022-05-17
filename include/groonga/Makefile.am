@@ -36,6 +36,7 @@ groonga_include_HEADERS =			\
 	portability.h				\
 	posting.h				\
 	proc.h					\
+	progress.h				\
 	raw_string.h				\
 	request_canceler.h			\
 	request_timer.h				\

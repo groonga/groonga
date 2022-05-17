@@ -65,6 +65,7 @@ libgroonga_c_sources =				\
 	grn_plugin.h				\
 	grn_posting.h				\
 	grn_proc.h				\
+	grn_progress.h				\
 	grn_report.h				\
 	grn_request_canceler.h			\
 	grn_request_timer.h			\
@@ -127,6 +128,7 @@ libgroonga_c_sources =				\
 	plugin.c				\
 	posting.c				\
 	proc.c					\
+	progress.c				\
 	raw_string.c				\
 	report.c				\
 	request_canceler.c			\

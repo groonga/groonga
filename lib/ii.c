@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -39,6 +39,7 @@
 #include "grn_db.h"
 #include "grn_obj.h"
 #include "grn_output.h"
+#include "grn_progress.h"
 #include "grn_report.h"
 #include "grn_scorer.h"
 #include "grn_util.h"
@@ -15584,6 +15585,9 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx, grn_ii_builder_chunk *chunk,
 }
 
 typedef struct {
+  bool progress_needed; /* Whether progress callback is needed for performance */
+  grn_progress progress; /* Progress information */
+
   grn_ii                 *ii;     /* Building inverted index */
   grn_ii_builder_options options; /* Options */
 
@@ -15636,6 +15640,17 @@ static grn_rc
 grn_ii_builder_init(grn_ctx *ctx, grn_ii_builder *builder,
                     grn_ii *ii, const grn_ii_builder_options *options)
 {
+  builder->progress_needed = (grn_ctx_get_progress_callback(ctx) != NULL);
+  if (builder->progress_needed) {
+    builder->progress.type = GRN_PROGRESS_INDEX;
+    builder->progress.value.index.phase = GRN_PROGRESS_INDEX_INITIALIZE;
+    builder->progress.value.index.n_target_records = 0;
+    builder->progress.value.index.n_processed_records = 0;
+    builder->progress.value.index.n_target_terms = 0;
+    builder->progress.value.index.n_processed_terms = 0;
+    grn_ctx_call_progress_callback(ctx, &(builder->progress));
+  }
+
   builder->ii = ii;
   builder->options = *options;
   if (grn_ii_builder_block_threshold_force > 0) {
@@ -15705,6 +15720,11 @@ grn_ii_builder_fin_terms(grn_ctx *ctx, grn_ii_builder *builder)
 static grn_rc
 grn_ii_builder_fin(grn_ctx *ctx, grn_ii_builder *builder)
 {
+  if (builder->progress_needed) {
+    builder->progress.value.index.phase = GRN_PROGRESS_INDEX_FINALIZE;
+    grn_ctx_call_progress_callback(ctx, &(builder->progress));
+  }
+
   if (builder->cinfos) {
     GRN_FREE(builder->cinfos);
   }
@@ -15791,6 +15811,10 @@ grn_ii_builder_close(grn_ctx *ctx, grn_ii_builder *builder)
     return ctx->rc;
   }
   rc = grn_ii_builder_fin(ctx, builder);
+  if (builder->progress_needed) {
+    builder->progress.value.index.phase = GRN_PROGRESS_INDEX_DONE;
+    grn_ctx_call_progress_callback(ctx, &(builder->progress));
+  }
   GRN_FREE(builder);
   return rc;
 }
@@ -16717,6 +16741,10 @@ grn_ii_builder_append_srcs(grn_ctx *ctx, grn_ii_builder *builder)
     if (rc == GRN_SUCCESS && builder->n >= builder->options.block_threshold) {
       rc = grn_ii_builder_flush_block(ctx, builder);
     }
+    if (builder->progress_needed) {
+      builder->progress.value.index.n_processed_records++;
+      grn_ctx_call_progress_callback(ctx, &(builder->progress));
+    }
   }
   if (rc == GRN_SUCCESS) {
     rc = grn_ii_builder_flush_block(ctx, builder);
@@ -16857,7 +16885,13 @@ grn_ii_builder_append_source(grn_ctx *ctx, grn_ii_builder *builder)
   if (rc != GRN_SUCCESS) {
     return rc;
   }
-  if (grn_table_size(ctx, builder->src_table) == 0) {
+  unsigned int n_records = grn_table_size(ctx, builder->src_table);
+  if (builder->progress_needed) {
+    builder->progress.value.index.phase = GRN_PROGRESS_INDEX_LOAD;
+    builder->progress.value.index.n_target_records = n_records;
+    grn_ctx_call_progress_callback(ctx, &(builder->progress));
+  }
+  if (n_records == 0) {
     /* Nothing to do because there are no values. */
     return ctx->rc;
   }
@@ -17387,6 +17421,13 @@ grn_ii_builder_register_chunks(grn_ctx *ctx, grn_ii_builder *builder)
 static grn_rc
 grn_ii_builder_commit(grn_ctx *ctx, grn_ii_builder *builder)
 {
+  if (builder->progress_needed) {
+    builder->progress.value.index.phase = GRN_PROGRESS_INDEX_COMMIT;
+    builder->progress.value.index.n_target_terms =
+      grn_table_size(ctx, builder->ii->lexicon);
+    grn_ctx_call_progress_callback(ctx, &(builder->progress));
+  }
+
   uint32_t i;
   grn_rc rc;
   grn_table_cursor *cursor;
@@ -17435,6 +17476,10 @@ grn_ii_builder_commit(grn_ctx *ctx, grn_ii_builder *builder)
     rc = grn_ii_builder_register_chunks(ctx, builder);
     if (rc != GRN_SUCCESS) {
       return rc;
+    }
+    if (builder->progress_needed) {
+      builder->progress.value.index.n_processed_terms++;
+      grn_ctx_call_progress_callback(ctx, &(builder->progress));
     }
   }
   grn_table_cursor_close(ctx, cursor);

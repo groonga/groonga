@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -423,6 +423,9 @@ grn_ctx_impl_init(grn_ctx *ctx)
   GRN_PTR_INIT(&(ctx->impl->children.pool), GRN_OBJ_VECTOR, GRN_ID_NIL);
   ctx->impl->parent = NULL;
 
+  ctx->impl->progress.callback = NULL;
+  ctx->impl->progress.user_data = NULL;
+
 exit :
   if (ctx->rc != GRN_SUCCESS) {
     if (ctx->impl->variables) {
@@ -511,6 +514,48 @@ grn_ctx_release_child(grn_ctx *ctx, grn_ctx *child_ctx)
   GRN_PTR_PUT(ctx, &(ctx->impl->children.pool), child_ctx);
   CRITICAL_SECTION_LEAVE(ctx->impl->children.lock);
   return ctx->rc;
+}
+
+grn_rc
+grn_ctx_set_progress_callback(grn_ctx *ctx,
+                              grn_progress_callback_func func,
+                              void *user_data)
+{
+  if (!ctx) {
+    return GRN_INVALID_ARGUMENT;
+  }
+  if (!ctx->impl) {
+    return GRN_INVALID_ARGUMENT;
+  }
+
+  ctx->impl->progress.callback = func;
+  ctx->impl->progress.user_data = user_data;
+
+  return GRN_SUCCESS;
+}
+
+grn_progress_callback_func
+grn_ctx_get_progress_callback(grn_ctx *ctx)
+{
+  if (!ctx) {
+    return NULL;
+  }
+  if (!ctx->impl) {
+    return NULL;
+  }
+  return ctx->impl->progress.callback;
+}
+
+void
+grn_ctx_call_progress_callback(grn_ctx *ctx, grn_progress *progress)
+{
+  if (!ctx) {
+    return;
+  }
+  if (!ctx->impl) {
+    return;
+  }
+  ctx->impl->progress.callback(ctx, progress, ctx->impl->progress.user_data);
 }
 
 static void
