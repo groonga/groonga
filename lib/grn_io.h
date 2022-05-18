@@ -338,14 +338,14 @@ static grn_inline void *
 grn_io_array_at(grn_ctx *ctx,
                 grn_io *io,
                 uint32_t array,
-                int64_t offset,
+                uint64_t offset,
                 int *flags)
 {
   grn_io_array_info *ainfo = &(io->ainfo[array]);
   uint32_t lseg = (uint32_t)(offset >> ainfo->w_of_elm_in_a_segment);
   if (lseg >= ainfo->max_n_segments) {
     ERR(GRN_NO_MEMORY_AVAILABLE,
-        "[io][array][at] too large offset: %" GRN_FMT_INT64D
+        "[io][array][at] too large offset: %" GRN_FMT_INT64U
         ": max=%" GRN_FMT_INT64D
         ": nth=%u"
         ": path=<%s>",

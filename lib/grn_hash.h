@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -157,7 +157,7 @@ struct _grn_array {
   grn_db_obj obj;
   grn_ctx *ctx;
   uint32_t value_size;
-  int32_t n_keys;
+  size_t n_keys;
   grn_table_sort_key *keys;
   uint32_t *n_garbages;
   uint32_t *n_entries;
@@ -197,7 +197,7 @@ uint32_t grn_array_get_flags(grn_ctx *ctx, grn_array *array);
 
 grn_rc grn_array_truncate(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_copy_sort_key(grn_ctx *ctx, grn_array *array,
-                               grn_table_sort_key *keys, int n_keys);
+                               grn_table_sort_key *keys, size_t n_keys);
 grn_rc grn_array_wal_recover(grn_ctx *ctx, grn_array *array);
 grn_rc grn_array_warm(grn_ctx *ctx, grn_array *array);
 
