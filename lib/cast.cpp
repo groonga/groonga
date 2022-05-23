@@ -1012,66 +1012,78 @@ namespace {
     RAPIDJSON_NAMESPACE::MemoryStream stream(GRN_TEXT_VALUE(caster->src),
                                              GRN_TEXT_LEN(caster->src));
     document.ParseStream(stream);
-    if (document.HasParseError()) {
-      auto domain_id = caster->dest->header.domain;
-      grn_obj dest;
-      GRN_VALUE_FIX_SIZE_INIT(&dest, 0, domain_id);
-      grn_caster sub_caster = {
-        caster->src,
-        &dest,
-        caster->flags,
-        caster->target,
-      };
-      auto rc = grn_caster_cast(ctx, &sub_caster);
-      if (rc == GRN_SUCCESS) {
-        if (GRN_BULK_VSIZE(&dest) > 0) {
-          grn_bulk_write(ctx,
-                         caster->dest,
-                         GRN_BULK_HEAD(&dest),
-                         GRN_BULK_VSIZE(&dest));
+    if (!document.HasParseError()) {
+      grn_rc rc = GRN_INVALID_ARGUMENT;
+      switch (caster->dest->header.domain) {
+      case GRN_DB_INT8 :
+        rc = json_to_uvector<Int8Handler>(ctx, &document, caster);
+        break;
+      case GRN_DB_UINT8 :
+        rc = json_to_uvector<UInt8Handler>(ctx, &document, caster);
+        break;
+      case GRN_DB_INT16 :
+        rc = json_to_uvector<Int16Handler>(ctx, &document, caster);
+        break;
+      case GRN_DB_UINT16 :
+        rc = json_to_uvector<UInt16Handler>(ctx, &document, caster);
+        break;
+      case GRN_DB_INT32 :
+        rc = json_to_uvector<Int32Handler>(ctx, &document, caster);
+        break;
+      case GRN_DB_UINT32 :
+        rc = json_to_uvector<UInt32Handler>(ctx, &document, caster);
+        break;
+      case GRN_DB_INT64 :
+        rc = json_to_uvector<Int64Handler>(ctx, &document, caster);
+        break;
+      case GRN_DB_UINT64 :
+        rc = json_to_uvector<UInt64Handler>(ctx, &document, caster);
+        break;
+      default :
+        {
+          auto domain = grn_ctx_at(ctx, caster->dest->header.domain);
           if (grn_obj_is_weight_uvector(ctx, caster->dest)) {
-            GRN_FLOAT32_PUT(ctx, caster->dest, 0.0);
+            if (grn_obj_is_table_with_key(ctx, domain)) {
+              rc = json_to_uvector<TableWeightHandler>(ctx, &document, caster);
+            }
+          } else {
+            TableHandler handler(ctx, caster);
+            if (document.Accept(handler)) {
+              rc = GRN_SUCCESS;
+            }
           }
+          grn_obj_unref(ctx, domain);
+          break;
         }
       }
-      GRN_OBJ_FIN(ctx, &dest);
-      return rc;
-    }
-    switch (caster->dest->header.domain) {
-    case GRN_DB_INT8 :
-      return json_to_uvector<Int8Handler>(ctx, &document, caster);
-    case GRN_DB_UINT8 :
-      return json_to_uvector<UInt8Handler>(ctx, &document, caster);
-    case GRN_DB_INT16 :
-      return json_to_uvector<Int16Handler>(ctx, &document, caster);
-    case GRN_DB_UINT16 :
-      return json_to_uvector<UInt16Handler>(ctx, &document, caster);
-    case GRN_DB_INT32 :
-      return json_to_uvector<Int32Handler>(ctx, &document, caster);
-    case GRN_DB_UINT32 :
-      return json_to_uvector<UInt32Handler>(ctx, &document, caster);
-    case GRN_DB_INT64 :
-      return json_to_uvector<Int64Handler>(ctx, &document, caster);
-    case GRN_DB_UINT64 :
-      return json_to_uvector<UInt64Handler>(ctx, &document, caster);
-    default :
-      {
-        grn_rc rc = GRN_INVALID_ARGUMENT;
-        auto domain = grn_ctx_at(ctx, caster->dest->header.domain);
-        if (grn_obj_is_weight_uvector(ctx, caster->dest)) {
-          if (grn_obj_is_table_with_key(ctx, domain)) {
-            rc = json_to_uvector<TableWeightHandler>(ctx, &document, caster);
-          }
-        } else {
-          TableHandler handler(ctx, caster);
-          if (document.Accept(handler)) {
-            rc = GRN_SUCCESS;
-          }
-        }
-        grn_obj_unref(ctx, domain);
+      if (rc == GRN_SUCCESS) {
         return rc;
       }
     }
+
+    auto domain_id = caster->dest->header.domain;
+    grn_obj dest;
+    GRN_VALUE_FIX_SIZE_INIT(&dest, 0, domain_id);
+    grn_caster sub_caster = {
+      caster->src,
+      &dest,
+      caster->flags,
+      caster->target,
+    };
+    auto rc = grn_caster_cast(ctx, &sub_caster);
+    if (rc == GRN_SUCCESS) {
+      if (GRN_BULK_VSIZE(&dest) > 0) {
+        grn_bulk_write(ctx,
+                       caster->dest,
+                       GRN_BULK_HEAD(&dest),
+                       GRN_BULK_VSIZE(&dest));
+        if (grn_obj_is_weight_uvector(ctx, caster->dest)) {
+          GRN_FLOAT32_PUT(ctx, caster->dest, 0.0);
+        }
+      }
+    }
+    GRN_OBJ_FIN(ctx, &dest);
+    return rc;
   }
 
   grn_rc

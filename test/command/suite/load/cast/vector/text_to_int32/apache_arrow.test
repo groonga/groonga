@@ -1,0 +1,13 @@
+#@require-input-type apache-arrow
+
+table_create Numbers TABLE_PAT_KEY Int32
+column_create Numbers value COLUMN_VECTOR Int32
+
+load --table Numbers
+[
+{"_key": 1, "value": ["10", "100"]},
+{"_key": 2, "value": ["20"]},
+{"_key": 3, "value": ["30", "300", "3000"]}
+]
+
+select Numbers

@@ -1,0 +1,64 @@
+table_create Numbers TABLE_PAT_KEY Int32
+[[0,0.0,0.0],true]
+column_create Numbers value COLUMN_VECTOR Int32
+[[0,0.0,0.0],true]
+load --table Numbers
+[
+{"_key": 1, "value": ["10", "100"]},
+{"_key": 2, "value": ["20"]},
+{"_key": 3, "value": ["30", "300", "3000"]}
+]
+[[0,0.0,0.0],3]
+select Numbers
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "Int32"
+        ],
+        [
+          "value",
+          "Int32"
+        ]
+      ],
+      [
+        1,
+        1,
+        [
+          10,
+          100
+        ]
+      ],
+      [
+        2,
+        2,
+        [
+          20
+        ]
+      ],
+      [
+        3,
+        3,
+        [
+          30,
+          300,
+          3000
+        ]
+      ]
+    ]
+  ]
+]
