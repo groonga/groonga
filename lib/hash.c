@@ -3622,9 +3622,12 @@ grn_hash_add_table_cursor(grn_ctx *ctx,
   }
 
   /* lock */
+  grn_obj *table = grn_table_cursor_table(ctx, cursor);
+  const uint32_t target_table_size = grn_table_size(ctx, table);
+  const uint32_t reset_threshold =
+    ((target_table_size / 2) == 0) ? target_table_size : (target_table_size / 2);
+
   if (op == GRN_OP_OR) {
-    grn_obj *table = grn_table_cursor_table(ctx, cursor);
-    const uint32_t reset_threshold = grn_table_size(ctx, table);
     rc = grn_hash_ensure_rehash(ctx, hash, reset_threshold, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -3635,6 +3638,12 @@ grn_hash_add_table_cursor(grn_ctx *ctx,
   posting.weight_float = (float)score;
   posting.scale = 1.0;
   while ((posting.rid = grn_table_cursor_next(ctx, cursor))) {
+    if (grn_hash_size(ctx, hash) > reset_threshold) {
+      rc = grn_hash_ensure_rehash(ctx, hash, target_table_size, tag);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+    }
     rc = grn_hash_add_record(ctx, hash, &posting, op, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -3660,11 +3669,14 @@ grn_hash_add_index_cursor(grn_ctx *ctx,
   }
 
   /* lock */
+  grn_obj *index_column = grn_index_cursor_get_index_column(ctx, cursor);
+  grn_obj *table = grn_ctx_at(ctx, DB_OBJ(index_column)->range);
+  const uint32_t target_table_size = grn_table_size(ctx, table);
+  const uint32_t reset_threshold =
+    ((target_table_size / 2) == 0) ? target_table_size : (target_table_size / 2);
+  grn_obj_unref(ctx, table);
+
   if (op == GRN_OP_OR) {
-    grn_obj *index_column = grn_index_cursor_get_index_column(ctx, cursor);
-    grn_obj *table = grn_ctx_at(ctx, DB_OBJ(index_column)->range);
-    const uint32_t reset_threshold = grn_table_size(ctx, table);
-    grn_obj_unref(ctx, table);
     rc = grn_hash_ensure_rehash(ctx, hash, reset_threshold, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -3674,6 +3686,12 @@ grn_hash_add_index_cursor(grn_ctx *ctx,
   grn_id term_id;
   grn_posting *posting;
   while ((posting = grn_index_cursor_next(ctx, cursor, &term_id))) {
+    if (grn_hash_size(ctx, hash) > reset_threshold) {
+      rc = grn_hash_ensure_rehash(ctx, hash, target_table_size, tag);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+    }
     grn_posting_internal posting_new = *((grn_posting_internal *)posting);
     posting_new.weight_float += (float)additional_score;
     posting_new.weight_float *= (float)weight;
@@ -3702,11 +3720,14 @@ grn_hash_add_ii_cursor(grn_ctx *ctx,
   }
 
   /* lock */
+  grn_ii *ii = grn_ii_cursor_get_ii(ctx, cursor);
+  grn_obj *table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
+  const uint32_t target_table_size = grn_table_size(ctx, table);
+  const uint32_t reset_threshold =
+    ((target_table_size / 2) == 0) ? target_table_size : (target_table_size / 2);
+  grn_obj_unref(ctx, table);
+
   if (op == GRN_OP_OR) {
-    grn_ii *ii = grn_ii_cursor_get_ii(ctx, cursor);
-    grn_obj *table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
-    const uint32_t reset_threshold = grn_table_size(ctx, table);
-    grn_obj_unref(ctx, table);
     rc = grn_hash_ensure_rehash(ctx, hash, reset_threshold, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -3715,6 +3736,12 @@ grn_hash_add_ii_cursor(grn_ctx *ctx,
 
   grn_posting *posting;
   while ((posting = grn_ii_cursor_next(ctx, cursor))) {
+    if (grn_hash_size(ctx, hash) > reset_threshold) {
+      rc = grn_hash_ensure_rehash(ctx, hash, target_table_size, tag);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+    }
     grn_posting_internal posting_new = *((grn_posting_internal *)posting);
     posting_new.weight_float += (float)additional_score;
     posting_new.weight_float *= (float)weight;
@@ -3741,11 +3768,14 @@ grn_hash_add_ii_select_cursor(grn_ctx *ctx,
   }
 
   /* lock */
+  grn_ii *ii = grn_ii_select_cursor_get_ii(ctx, cursor);
+  grn_obj *table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
+  const uint32_t target_table_size = grn_table_size(ctx, table);
+  const uint32_t reset_threshold =
+    ((target_table_size / 2) == 0) ? target_table_size : (target_table_size / 2);
+  grn_obj_unref(ctx, table);
+
   if (op == GRN_OP_OR) {
-    grn_ii *ii = grn_ii_select_cursor_get_ii(ctx, cursor);
-    grn_obj *table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
-    const uint32_t reset_threshold = grn_table_size(ctx, table);
-    grn_obj_unref(ctx, table);
     rc = grn_hash_ensure_rehash(ctx, hash, reset_threshold, tag);
     if (rc != GRN_SUCCESS) {
       return rc;
@@ -3754,6 +3784,12 @@ grn_hash_add_ii_select_cursor(grn_ctx *ctx,
 
   grn_ii_select_cursor_posting *posting;
   while ((posting = grn_ii_select_cursor_next(ctx, cursor))) {
+    if (grn_hash_size(ctx, hash) > reset_threshold) {
+      rc = grn_hash_ensure_rehash(ctx, hash, target_table_size, tag);
+      if (rc != GRN_SUCCESS) {
+        return rc;
+      }
+    }
     grn_posting_internal posting_new;
     posting_new.rid = posting->rid;
     posting_new.sid = posting->sid;
