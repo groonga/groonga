@@ -158,7 +158,7 @@ writer_open_result_set(mrb_state *mrb, mrb_value self)
   {
     grn_rc rc;
     rc = grn_obj_format_set_columns(ctx, &format,
-                                    table, columns, (int)columns_size);
+                                    table, columns, (unsigned int)columns_size);
     if (rc != GRN_SUCCESS) {
       grn_obj_format_fin(ctx, &format);
       grn_mrb_ctx_check(mrb);
@@ -246,7 +246,7 @@ writer_write_table_records_content_internal(mrb_state *mrb,
   {
     grn_rc rc;
     rc = grn_obj_format_set_columns(ctx, &format,
-                                    table, columns, (int)columns_size);
+                                    table, columns, (unsigned int)columns_size);
     if (rc != GRN_SUCCESS) {
       grn_obj_format_fin(ctx, &format);
       grn_mrb_ctx_check(mrb);

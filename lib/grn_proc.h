@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -171,7 +171,7 @@ grn_bool grn_proc_select_output_columns_open(grn_ctx *ctx,
                                              int offset,
                                              int limit,
                                              const char *columns,
-                                             int columns_len,
+                                             unsigned int columns_len,
                                              grn_obj *condition,
                                              uint32_t n_additional_elements);
 grn_bool grn_proc_select_output_columns_close(grn_ctx *ctx,
@@ -183,7 +183,7 @@ grn_bool grn_proc_select_output_columns(grn_ctx *ctx,
                                         int offset,
                                         int limit,
                                         const char *columns,
-                                        int columns_len,
+                                        unsigned int columns_len,
                                         grn_obj *condition);
 
 grn_rc grn_proc_syntax_expand_query(grn_ctx *ctx,

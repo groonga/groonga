@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2010-2018  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2010-2018  Brazil
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -70,7 +70,7 @@ grn_rc grn_obj_format_set_columns(grn_ctx *ctx,
                                   grn_obj_format *format,
                                   grn_obj *table,
                                   const char *columns,
-                                  int columns_len);
+                                  unsigned int columns_len);
 
 #define GRN_OUTPUT_ARRAY_OPEN(name,nelements) \
   (grn_ctx_output_array_open(ctx, name, nelements))
