@@ -44,7 +44,7 @@ DEFAULT_FILE=/etc/default/$NAME
 if [ -z "$PID_FILE" ]; then
   PID_FILE=$(grep '^\s*pid\s' /etc/groonga/httpd/groonga-httpd.conf | sed -re 's/^\s*pid\s+(.+);$/\1/g' | head -n1)
   if [ -z "$PID_FILE" ]; then
-    PID_FILE=/var/run/groonga/groonga-httpd.pid
+    PID_FILE=/run/groonga/groonga-httpd.pid
   fi
 fi
 
