@@ -9,7 +9,15 @@ Type=simple
 EnvironmentFile=-/etc/default/groonga-server-gqtp
 User=groonga
 Group=groonga
-ExecStart=/usr/bin/groonga --protocol gqtp --bind-address $ADDRESS --log-path $LOG_PATH --query-log-path $QUERY_LOG_PATH --port $PORT -s $DATABASE
+ExecStart=/usr/bin/groonga \
+  --bind-address $ADDRESS \
+  --log-path $LOG_PATH \
+  --pid-path $PID_PATH \
+  --port $PORT \
+  --protocol gqtp \
+  --query-log-path $QUERY_LOG_PATH \
+  -s \
+  $DATABASE
 
 [Install]
 WantedBy=multi-user.target
