@@ -1,10 +1,14 @@
 # Default
 ADDRESS=127.0.0.1
-DATABASE=/var/lib/groonga/db/db
-LOG_PATH=/var/log/groonga/groonga-gqtp.log
-QUERY_LOG_PATH=/var/log/groonga/query-gqtp.log
-PROTOCOL=gqtp
 PORT=10043
+PROTOCOL=gqtp
+
+DATABASE=/var/lib/groonga/db/db
+
+LOG_PATH=/var/log/groonga/groonga-gqtp.log
+PID_PATH=/run/groonga/groonga-gqtp.pid
+QUERY_LOG_PATH=/var/log/groonga/query-gqtp.log
+
 GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=/usr/share/groonga/synonyms.tsv
 # Set the max N segments for tiny index column (default: 512)
 #GRN_II_MAX_N_SEGMENTS_TINY=512
