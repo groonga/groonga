@@ -169,7 +169,7 @@ elapsed_times = []
 File.open(target_query_log_path) do |log_file|
   ReverseLineReader.new(log_file).each do |line|
     case line
-    when /\A(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)\.(\d+)\|([\da-f])+\|<(\d+) rc=0$/
+    when /\A(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)\.(\d+)\|((?:0x)?[\da-f]+)\|<(\d+) rc=0$/
       _, year, month, day, hour, minutes, seconds, milliseconds,
         context, elapsed = $LAST_MATCH_INFO.to_a
       time_stamp = Time.local(year, month, day,
