@@ -56,7 +56,11 @@
 # include <sys/uio.h>
 #endif /* WIN32 */
 
-#ifdef HAVE_SIGNAL_H
+#if !defined(WIN32) && defined(HAVE_SIGNAL_H)
+# define ENABLE_LOG_REOPEN_BY_SIGNAL
+#endif
+
+#ifdef ENABLE_LOG_REOPEN_BY_SIGNAL
 # include <signal.h>
 #endif
 
@@ -115,7 +119,7 @@ static grn_wal_role worker_wal_role = GRN_WAL_ROLE_NONE;
 
 static grn_bool running_event_loop = GRN_FALSE;
 
-#ifdef HAVE_SIGNAL_H
+#ifdef ENABLE_LOG_REOPEN_BY_SIGNAL
 static bool usr1_received = false;
 
 static void
@@ -1109,7 +1113,7 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
   running_event_loop = GRN_TRUE;
   while (!grn_com_event_poll(ctx, ev, request_timer_get_poll_timeout()) &&
          grn_gctx.stat != GRN_CTX_QUIT) {
-#ifdef HAVE_SIGNAL_H
+#ifdef ENABLE_LOG_REOPEN_BY_SIGNAL
     reopen_log_by_signal(ctx);
 #endif
     grn_edge *edge;
@@ -4607,7 +4611,7 @@ main(int argc, char **argv)
   grn_set_segv_handler();
   grn_set_int_handler();
   grn_set_term_handler();
-#ifdef HAVE_SIGNAL_H
+#ifdef ENABLE_LOG_REOPEN_BY_SIGNAL
   set_usr1_handler();
 #endif
 
