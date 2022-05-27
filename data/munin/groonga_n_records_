@@ -169,7 +169,7 @@ def setup
   setup_gqtp
 end
 
-def autoconf
+def pid_files_esists?
   pid_path_variable_names = [
     "pid_path",
     "pid_file", # For backward compatibility. Remove me when 5.0.0.
@@ -188,13 +188,19 @@ def autoconf
     variable_names_label = variable_names[0..-2].join(", ")
     variable_names_label << " and/or #{variable_names.last}"
     puts("no (No PID path is specified. Specify #{variable_names_label}.)")
-    exit(false)
+    return false
   end
-  pid_file_exist = false
   pid_paths.each do |pid_path|
     next unless File.exist?(pid_path)
-    pid_file_exist = true
+    return true
   end
+  pid_paths_label = pid_paths.join(", ")
+  puts("no (All PID paths don't exist: #{pid_paths_label})")
+  return false
+end
+
+def autoconf
+  exit(false) unless pid_files_esists?
 
   results = []
 
@@ -234,6 +240,8 @@ def autoconf
 end
 
 def suggest
+  exit(false) unless pid_files_esists?
+
   if @http_host and @http_port
     success, _ = run_http(@http_host, @http_port, "status")
     puts("http") if success
