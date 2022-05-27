@@ -53,20 +53,15 @@ Package: groonga-server-http
 Architecture: all
 Replaces: groonga-server (<< 2.0.7-1)
 Breaks: groonga-server (<< 2.0.7-1)
-Section: oldlibs
-Priority: extra
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
-  adduser,
-  curl,
-  groonga-server-common (= ${binary:Version}),
-  groonga-httpd (>= 4.0.8-1)
+  groonga-server-common (= ${binary:Version})
 Description: Fulltext search engine (metapackage for HTTP server use)
  Groonga is an open-source fulltext search engine and column store.
  It lets you write high-performance applications that requires fulltext search.
  .
- This is a transitional package to groonga-httpd.
+ This package depends all Groonga related package for HTTP server use.
 
 Package: groonga-server-gqtp
 Architecture: all
@@ -75,8 +70,6 @@ Breaks: groonga-server (<< 2.0.7-1)
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
-  adduser,
-  lsb-base,
   groonga-server-common (= ${binary:Version})
 Description: Fulltext search engine (metapackage for GQTP server use)
  Groonga is an open-source fulltext search engine and column store.
@@ -182,12 +175,10 @@ Package: groonga-httpd
 Architecture: any
 Replaces: groonga (<< 1.2.0-1), groonga-server-http (<< 4.0.8-1)
 Breaks: groonga (<< 1.2.0-1), groonga-server-http (<< 4.0.8-1)
-Provides: groonga-server-http
 Depends:
   ${misc:Depends},
   ${shlibs:Depends},
   curl,
-  lsb-base,
   groonga-server-common (= ${source:Version})
 Description: Groonga HTTP server
  Groonga is an open-source fulltext search engine and column store.

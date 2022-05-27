@@ -1,0 +1,34 @@
+# Default
+
+#USER=groonga
+#GROUP=groonga
+
+ADDRESS=127.0.0.1
+PORT=10043
+
+DATABASE=/var/lib/groonga/db/db
+
+LOG_PATH=/var/log/groonga/groonga-http.log
+PID_PATH=/run/groonga/groonga-http.pid
+QUERY_LOG_PATH=/var/log/groonga/query-http.log
+
+#GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE=/usr/share/groonga/synonyms.tsv
+
+# Comment out this to disable groonga daemon.
+ENABLE=yes
+# Set the threshold value to force sequential search for in_values()
+GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO=0.01
+# Set the threshold value to force sequential search for between()
+GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO=0.01
+# Define this variable to disable skipping posting list (default: yes)
+#GRN_II_CURSOR_SET_MIN_ENABLE=no
+# Define this variable to disable chunk split on offline index construction (default: yes)
+#GRN_INDEX_CHUNK_SPLIT_ENABLE=no
+# Set "yes" to enable chunked tokenize feature
+GRN_MECAB_CHUNKED_TOKENIZE_ENABLED=no
+# Set the threshold value for chunk size (default: 8192)
+GRN_MECAB_CHUNK_SIZE_THRESHOLD=8192
+# Set the max N segments for tiny index column (default: 512)
+#GRN_II_MAX_N_SEGMENTS_TINY=512
+# Set the max N chunks for tiny index column (default: 1024)
+#GRN_II_MAX_N_CHUNKS_TINY=1024

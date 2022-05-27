@@ -1,12 +1,12 @@
 [Unit]
-Description=Groonga full text search GQTP server
-Documentation=https://groonga.org/docs/server/package.html#groonga-server-gqtp
+Description=Groonga full text search HTTP server
+Documentation=https://groonga.org/docs/server/package.html#groonga-server-http
 Wants=network-online.target
 After=network-online.target
 
 [Service]
 Type=simple
-EnvironmentFile=-/etc/default/groonga-server-gqtp
+EnvironmentFile=-/etc/default/groonga-server-http
 User=groonga
 Group=groonga
 ExecStart=/usr/bin/groonga \
@@ -14,7 +14,7 @@ ExecStart=/usr/bin/groonga \
   --log-path $LOG_PATH \
   --pid-path $PID_PATH \
   --port $PORT \
-  --protocol gqtp \
+  --protocol http \
   --query-log-path $QUERY_LOG_PATH \
   -s \
   $DATABASE

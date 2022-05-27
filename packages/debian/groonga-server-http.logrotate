@@ -1,0 +1,16 @@
+/var/log/groonga/*-http.log {
+    daily
+    missingok
+    rotate 30
+    compress
+    delaycompress
+    notifempty
+    create 640 groonga groonga
+    sharedscripts
+    postrotate
+        . /etc/default/groonga-server-http
+        if [ -f "${PID_PATH}" ]; then
+            kill -USR1 $(cat "${PID_PATH}")
+        fi
+    endscript
+}
