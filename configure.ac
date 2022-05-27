@@ -1468,14 +1468,9 @@ fi
 AC_MSG_RESULT($package_platform)
 
 centos_platform=no
-centos_init_platform=no
 centos_systemd_platform=no
 case "${package_platform}" in
   no)
-    ;;
-  centos6)
-    centos_platform=yes
-    centos_init_platform=yes
     ;;
   *)
     centos_platform=yes
@@ -1484,8 +1479,6 @@ case "${package_platform}" in
 esac
 AM_CONDITIONAL([CENTOS_PLATFORM],
                [test "${centos_platform}" = "yes"])
-AM_CONDITIONAL([CENTOS_INIT_PLATFORM],
-               [test "${centos_init_platform}" = "yes"])
 AM_CONDITIONAL([CENTOS_SYSTEMD_PLATFORM],
                [test "${centos_systemd_platform}" = "yes"])
 
@@ -1817,9 +1810,6 @@ AC_CONFIG_FILES([
   data/Makefile
   data/groonga-httpd.conf
   data/html/Makefile
-  data/init.d/Makefile
-  data/init.d/centos/Makefile
-  data/init.d/centos/sysconfig/Makefile
   data/logrotate.d/Makefile
   data/logrotate.d/centos/Makefile
   data/logrotate.d/centos/groonga-httpd

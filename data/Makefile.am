@@ -1,7 +1,6 @@
 SUBDIRS =			\
 	html			\
 	munin			\
-	init.d			\
 	logrotate.d		\
 	systemd			\
 	scripts			\
