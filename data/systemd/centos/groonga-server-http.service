@@ -13,7 +13,7 @@ ExecStart=/usr/bin/groonga \
   --log-path $LOG_PATH \
   --pid-path $PID_PATH \
   --port $PORT \
-  --protocol $PROTOCOL \
+  --protocol http \
   --query-log-path $QUERY_LOG_PATH \
   -s \
   $DATABASE

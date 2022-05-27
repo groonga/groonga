@@ -2,7 +2,6 @@
 
 ADDRESS=127.0.0.1
 PORT=10041
-PROTOCOL=http
 
 DATABASE=/var/lib/groonga/db/db
 
