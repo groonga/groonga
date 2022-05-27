@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -56,6 +56,10 @@
 # include <sys/uio.h>
 #endif /* WIN32 */
 
+#ifdef HAVE_SIGNAL_H
+# include <signal.h>
+#endif
+
 #ifndef USE_MSG_NOSIGNAL
 # ifdef MSG_NOSIGNAL
 #  undef MSG_NOSIGNAL
@@ -110,6 +114,37 @@ static grn_wal_role wal_role = GRN_WAL_ROLE_NONE;
 static grn_wal_role worker_wal_role = GRN_WAL_ROLE_NONE;
 
 static grn_bool running_event_loop = GRN_FALSE;
+
+#ifdef HAVE_SIGNAL_H
+static bool usr1_received = false;
+
+static void
+usr1_handler(int signal_number, siginfo_t *info, void *context)
+{
+  usr1_received = true;
+}
+
+static void
+set_usr1_handler(void)
+{
+  struct sigaction action;
+  sigemptyset(&action.sa_mask);
+  action.sa_sigaction = usr1_handler;
+  action.sa_flags = SA_SIGINFO | SA_ONSTACK;
+  sigaction(SIGUSR1, &action, NULL);
+}
+
+static void
+reopen_log_by_signal(grn_ctx *ctx)
+{
+  if (!usr1_received) {
+    return;
+  }
+
+  usr1_received = false;
+  grn_log_reopen(ctx);
+}
+#endif
 
 static int
 grn_rc_to_exit_code(grn_rc rc)
@@ -1074,6 +1109,9 @@ run_server_loop(grn_ctx *ctx, grn_com_event *ev)
   running_event_loop = GRN_TRUE;
   while (!grn_com_event_poll(ctx, ev, request_timer_get_poll_timeout()) &&
          grn_gctx.stat != GRN_CTX_QUIT) {
+#ifdef HAVE_SIGNAL_H
+    reopen_log_by_signal(ctx);
+#endif
     grn_edge *edge;
     while ((edge = (grn_edge *)grn_com_queue_deque(ctx, &ctx_old))) {
       grn_obj *msg;
@@ -4569,6 +4607,9 @@ main(int argc, char **argv)
   grn_set_segv_handler();
   grn_set_int_handler();
   grn_set_term_handler();
+#ifdef HAVE_SIGNAL_H
+  set_usr1_handler();
+#endif
 
   if (cache_limit_arg) {
     grn_cache *cache;
