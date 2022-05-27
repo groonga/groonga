@@ -39,8 +39,12 @@ end
 
 def run_http(host, port, command)
   path = "/d/#{command}"
-  response = Net::HTTP.start(host, port) do |http|
-    http.get(path)
+  begin
+    response = Net::HTTP.start(host, port) do |http|
+      http.get(path)
+    end
+  rescue SystemCallError, TimeoutError
+    return [false, "#{$!.class}: #{$!}"]
   end
   if response.is_a?(Net::HTTPSuccess)
     parse(true, response.body)
