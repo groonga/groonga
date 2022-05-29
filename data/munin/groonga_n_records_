@@ -146,18 +146,21 @@ end
 def setup_http
   @http_host = ENV["http_host"] || @default_host
   @http_port = (ENV["http_port"] || @default_http_port).to_i
+  @http_pid_path = File.exist?(ENV["http_pid_path"]) || nil
   @http_exclude_tables = parse_exclude_tables(ENV["http_exclude_tables"])
 end
 
 def setup_httpd
   @httpd_host = ENV["httpd_host"] || @default_host
   @httpd_port = (ENV["httpd_port"] || @default_http_port).to_i
+  @httpd_pid_path = File.exist?(ENV["httpd_pid_path"]) || nil
   @httpd_exclude_tables = parse_exclude_tables(ENV["httpd_exclude_tables"])
 end
 
 def setup_gqtp
   @gqtp_host = ENV["gqtp_host"] || @default_host
   @gqtp_port = (ENV["gqtp_port"] || @default_gqtp_port).to_i
+  @gqtp_pid_path = File.exist?(ENV["gqtp_pid_path"]) || nil
   @gqtp_exclude_tables = parse_exclude_tables(ENV["gqtp_exclude_tables"])
 end
 
@@ -236,15 +239,15 @@ end
 def suggest
   exit(false) unless pid_files_esists?
 
-  if @http_host and @http_port
+  if @http_host and @http_port and @http_pid_path
     success, _ = run_http(@http_host, @http_port, "status")
     puts("http") if success
   end
-  if @httpd_host and @httpd_port
+  if @httpd_host and @httpd_port and @httpd_pid_path
     success, _ = run_http(@httpd_host, @httpd_port, "status")
     puts("httpd") if success
   end
-  if @gqtp_host and @gqtp_port
+  if @gqtp_host and @gqtp_port and @gqtp_pid_path
     success, _ = run_gqtp(@gqtp_host, @gqtp_port, "status")
     puts("gqtp") if success
   end
