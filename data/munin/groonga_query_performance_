@@ -63,16 +63,10 @@ def autoconf
     puts("no (No query log path is specified. Specify #{variable_names_label}.)")
     exit(false)
   end
-  if pid_file_exist
-    query_log_paths.each do |query_log_path|
-      next unless File.exist?(query_log_path)
-      puts("yes")
-      exit(true)
-    end
-  else
-    pid_paths_label = pid_paths.join(", ")
-    puts("no (All PID paths don't exist: #{pid_paths_label})")
-    exit(false)
+  query_log_paths.each do |query_log_path|
+    next unless File.exist?(query_log_path)
+    puts("yes")
+    exit(true)
   end
   query_log_paths_label = query_log_paths.join(", ")
   puts("no (All query log paths don't exist: #{query_log_paths_label})")
