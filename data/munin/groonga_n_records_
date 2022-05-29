@@ -220,21 +220,15 @@ def autoconf
     results << run_gqtp(@gqtp_host, @gqtp_port, "status")
   end
 
-  if pid_file_exist
-    if results.any? {|success, _| success}
-      puts("yes")
-      exit(true)
-    else
-      errors = results.collect do |_, result|
-        result
-      end
-      error_detail = errors.join(", ")
-      puts("no (#{error_detail})")
-      exit(false)
-    end
+  if results.any? {|success, _| success}
+    puts("yes")
+    exit(true)
   else
-    pid_paths_label = pid_paths.join(", ")
-    puts("no (All PID paths don't exist: #{pid_paths_label})")
+    errors = results.collect do |_, result|
+      result
+    end
+    error_detail = errors.join(", ")
+    puts("no (#{error_detail})")
     exit(false)
   end
 end
