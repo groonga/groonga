@@ -157,17 +157,16 @@ def autoconf
 end
 
 def suggest
-  exist_p = lambda do |variable_name|
-    database_path = ENV[variable_name]
-    database_path and File.exist?(database_path)
+  exist_p = lambda do |database_path, pid_file_path|
+    File.exist?(ENV[database_path]) and File.exist?(ENV[pid_file_path])
   end
-  if exist_p.call("http_database_path")
+  if exist_p.call("http_database_path", "http_pid_path")
     puts("http")
   end
-  if exist_p.call("httpd_database_path")
+  if exist_p.call("httpd_database_path", "httpd_pid_path")
     puts("httpd")
   end
-  if exist_p.call("gqtp_database_path")
+  if exist_p.call("gqtp_database_path", "gqtp_pid_path")
     puts("gqtp")
   end
   exit(true)
