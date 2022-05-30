@@ -29,6 +29,7 @@ jobs:
             devscripts \
             python3-pip \
             ruby
+          sudo pip3 install -U pip
       - name: Install Sphinx
         run: |
           sudo pip3 install -U \
