@@ -159,7 +159,7 @@ end
 def suggest
   env_path_exist_p = lambda do |variable_name|
     path = ENV[variable_name]
-    path = and File.exist?(path)
+    path and File.exist?(path)
   end
   exist_p = lambda do |database_path_name, pid_file_path_name|
     env_path_exist_p.call(database_path_name) and
