@@ -119,7 +119,7 @@ def autoconf
     results << run_http(@httpd_host, @httpd_port, "status")
   end
 
-  if @gqtp_host and @gqtp_port and gqtp_running
+  if @gqtp_host and @gqtp_port and @gqtp_running
     results << run_gqtp(@gqtp_host, @gqtp_port, "status")
   end
 
