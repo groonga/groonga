@@ -16,6 +16,9 @@ label = ENV["label"]
 @default_host = ENV["host"] || "127.0.0.1"
 @default_http_port = 10041
 @default_gqtp_port = 10043
+@default_http_pid_path = "/run/groonga/groonga-http.pid"
+@default_httpd_pid_path = "/run/groonga/groonga-httpd.pid"
+@default_gqtp_pid_path = "/run/groonga/groonga-gptp.pid"
 
 command = ARGV.shift
 
@@ -83,16 +86,19 @@ end
 def setup_http
   @http_host = ENV["http_host"] || @default_host
   @http_port = (ENV["http_port"] || @default_http_port).to_i
+  @http_running = File.exist?(ENV["http_pid_path"] || @default_http_pid_path)
 end
 
 def setup_httpd
   @httpd_host = ENV["httpd_host"] || @default_host
   @httpd_port = (ENV["httpd_port"] || @default_http_port).to_i
+  @httpd_running = File.exist?(ENV["httpd_pid_path"] || @default_httpd_pid_path)
 end
 
 def setup_gqtp
   @gqtp_host = ENV["gqtp_host"] || @default_host
   @gqtp_port = (ENV["gqtp_port"] || @default_gqtp_port).to_i
+  @gqtp_running = File.exist?(ENV["gqtp_pid_path"] || @default_gqtp_pid_path)
 end
 
 def setup
@@ -105,15 +111,15 @@ end
 def autoconf
   results = []
 
-  if @http_host and @http_port
+  if @http_host and @http_port and @http_running
     results << run_http(@http_host, @http_port, "status")
   end
 
-  if @httpd_host and @httpd_port
+  if @httpd_host and @httpd_port and @httpd_running
     results << run_http(@httpd_host, @httpd_port, "status")
   end
 
-  if @gqtp_host and @gqtp_port
+  if @gqtp_host and @gqtp_port and @gqtp_running
     results << run_gqtp(@gqtp_host, @gqtp_port, "status")
   end
 
@@ -131,15 +137,15 @@ def autoconf
 end
 
 def suggest
-  if @http_host and @http_port
+  if @http_host and @http_port and @http_running
     success, _ = run_http(@http_host, @http_port, "status")
     puts("http") if success
   end
-  if @httpd_host and @httpd_port
+  if @httpd_host and @httpd_port and @httpd_running
     success, _ = run_http(@httpd_host, @httpd_port, "status")
     puts("httpd") if success
   end
-  if @gqtp_host and @gqtp_port
+  if @gqtp_host and @gqtp_port and @gqtp_running
     success, _ = run_gqtp(@gqtp_host, @gqtp_port, "status")
     puts("gqtp") if success
   end
