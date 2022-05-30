@@ -156,7 +156,7 @@ end
 def setup_httpd
   @httpd_host = ENV["httpd_host"] || @default_host
   @httpd_port = (ENV["httpd_port"] || @default_http_port).to_i
-  @httpd_running = File.exist?(ENV["httpd_pid_path"]) || @default_httpd_pid_path
+  @httpd_running = File.exist?(ENV["httpd_pid_path"] || @default_httpd_pid_path)
   @httpd_exclude_tables = parse_exclude_tables(ENV["httpd_exclude_tables"])
 end
 
