@@ -43,7 +43,10 @@ end
 
 def suggest
   exist_p = lambda do |query_log_path_name, pid_file_path_name|
-    File.exist?(ENV[query_log_path_name]) and File.exist?(ENV[pid_file_path_name])
+    query_log_path = ENV[query_log_path_name]
+    pid_file_path = ENV[pid_file_path_name]
+
+    (query_log_path and File.exist?(ENV[query_log_path_name])) and (pid_file_path and File.exist?(ENV[pid_file_path_name]))
   end
   if exist_p.call("http_query_log_path", "http_pid_path")
     puts("http")

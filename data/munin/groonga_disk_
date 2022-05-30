@@ -158,7 +158,10 @@ end
 
 def suggest
   exist_p = lambda do |database_path_name, pid_file_path_name|
-    File.exist?(ENV[database_path_name]) and File.exist?(ENV[pid_file_path_name])
+    database_path = ENV[database_path_name]
+    pid_file_path = ENV[pid_file_path_name]
+
+    (database_path and File.exist?(ENV[database_path_name])) and (pid_file_path and File.exist?(ENV[pid_file_path_name]))
   end
   if exist_p.call("http_database_path", "http_pid_path")
     puts("http")
