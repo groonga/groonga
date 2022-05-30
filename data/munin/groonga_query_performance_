@@ -50,17 +50,16 @@ def autoconf
 end
 
 def suggest
-  exist_p = lambda do |variable_name|
-    query_log_path = ENV[variable_name]
-    query_log_path and File.exist?(query_log_path)
+  exist_p = lambda do |query_log_path_name, pid_file_path_name|
+    File.exist?(ENV[query_log_path_name]) and File.exist?(ENV[pid_file_path_name])
   end
-  if exist_p.call("http_query_log_path") and @http_running
+  if exist_p.call("http_query_log_path", "http_pid_path")
     puts("http")
   end
-  if exist_p.call("httpd_query_log_path") and @httpd_running
+  if exist_p.call("httpd_query_log_path", "httpd_pid_path")
     puts("httpd")
   end
-  if exist_p.call("gqtp_query_log_path") and @gqtp_running
+  if exist_p.call("gqtp_query_log_path", "gqtp_pid_path")
     puts("gqtp")
   end
   exit(true)
