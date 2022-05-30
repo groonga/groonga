@@ -10,38 +10,16 @@ label = ENV["label"]
 
 command = ARGV.shift
 
-def pid_files_esists?
-  pid_path_variable_names = [
-    "pid_path",
-    "pid_file", # For backward compatibility. Remove me when 5.0.0.
-    "http_pid_path",
-    "httpd_pid_path",
-    "gqtp_pid_path",
-  ]
-  pid_paths = pid_path_variable_names.collect do |variable_name|
-    ENV[variable_name]
-  end
-  pid_paths = pid_paths.compact
-  if pid_paths.empty?
-    variable_names = pid_path_variable_names.collect do |name|
-      "env.#{name}"
-    end
-    variable_names_label = variable_names[0..-2].join(", ")
-    variable_names_label << " and/or #{variable_names.last}"
-    puts("no (No PID path is specified. Specify #{variable_names_label}.)")
-    return false
-  end
-  pid_paths.each do |pid_path|
-    next unless File.exist?(pid_path)
-    return true
-  end
-  pid_paths_label = pid_paths.join(", ")
-  puts("no (All PID paths don't exist: #{pid_paths_label})")
-  return false
-end
+@default_http_pid_path = "/run/groonga/groonga-http.pid"
+@default_httpd_pid_path = "/run/groonga/groonga-httpd.pid"
+@default_gqtp_pid_path = "/run/groonga/groonga-gptp.pid"
+
+@http_running = File.exist?(ENV["http_pid_path"] || @default_http_pid_path)
+@httpd_running = File.exist?(ENV["httpd_pid_path"] || @default_httpd_pid_path)
+@gqtp_running = File.exist?(ENV["gqtp_pid_path"] || @default_gqtp_pid_path)
 
 def autoconf
-  exit(false) unless pid_files_esists?
+  exit(false) unless (@http_running or @httpd_running or @gqtp_running)
 
   query_log_path_variable_names = [
     "query_log_path",
@@ -74,19 +52,17 @@ def autoconf
 end
 
 def suggest
-  exit(false) unless pid_files_esists?
-
   exist_p = lambda do |variable_name|
     query_log_path = ENV[variable_name]
     query_log_path and File.exist?(query_log_path)
   end
-  if exist_p.call("http_query_log_path")
+  if exist_p.call("http_query_log_path") and @http_running
     puts("http")
   end
-  if exist_p.call("httpd_query_log_path")
+  if exist_p.call("httpd_query_log_path") and @httpd_running
     puts("httpd")
   end
-  if exist_p.call("gqtp_query_log_path")
+  if exist_p.call("gqtp_query_log_path") and @gqtp_running
     puts("gqtp")
   end
   exit(true)
