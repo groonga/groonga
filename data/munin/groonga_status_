@@ -105,50 +105,18 @@ def setup
   setup_gqtp
 end
 
-def pid_files_esists?
-  pid_path_variable_names = [
-    "pid_path",
-    "pid_file", # For backward compatibility. Remove me when 5.0.0.
-    "http_pid_path",
-    "httpd_pid_path",
-    "gqtp_pid_path",
-  ]
-  pid_paths = pid_path_variable_names.collect do |variable_name|
-    ENV[variable_name]
-  end
-  pid_paths = pid_paths.compact
-  if pid_paths.empty?
-    variable_names = pid_path_variable_names.collect do |name|
-      "env.#{name}"
-    end
-    variable_names_label = variable_names[0..-2].join(", ")
-    variable_names_label << " and/or #{variable_names.last}"
-    puts("no (No PID path is specified. Specify #{variable_names_label}.)")
-    return false
-  end
-  pid_paths.each do |pid_path|
-    next unless File.exist?(pid_path)
-    return true
-  end
-  pid_paths_label = pid_paths.join(", ")
-  puts("no (All PID paths don't exist: #{pid_paths_label})")
-  return false
-end
-
 def autoconf
-  exit(false) unless pid_files_esists?
-
   results = []
 
-  if @http_host and @http_port
+  if @http_host and @http_port and @http_running
     results << run_http(@http_host, @http_port, "status")
   end
 
-  if @httpd_host and @httpd_port
+  if @httpd_host and @httpd_port and @httpd_running
     results << run_http(@httpd_host, @httpd_port, "status")
   end
 
-  if @gqtp_host and @gqtp_port
+  if @gqtp_host and @gqtp_port and @gqtp_running
     results << run_gqtp(@gqtp_host, @gqtp_port, "status")
   end
 
@@ -166,8 +134,6 @@ def autoconf
 end
 
 def suggest
-  exit(false) unless pid_files_esists?
-
   if @http_host and @http_port and @http_running
     success, _ = run_http(@http_host, @http_port, "status")
     puts("http") if success
