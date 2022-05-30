@@ -19,8 +19,6 @@ command = ARGV.shift
 @gqtp_running = File.exist?(ENV["gqtp_pid_path"] || @default_gqtp_pid_path)
 
 def autoconf
-  exit(false) unless (@http_running or @httpd_running or @gqtp_running)
-
   query_log_path_variable_names = [
     "query_log_path",
     "log_path", # For backward compatibility. Remove me when 5.0.0.
