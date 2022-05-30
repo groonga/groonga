@@ -42,11 +42,13 @@ def autoconf
 end
 
 def suggest
+  env_path_exist_p = lambda do |variable_name|
+    path = ENV[variable_name]
+    path and File.exist?(path)
+  end
   exist_p = lambda do |query_log_path_name, pid_file_path_name|
-    query_log_path = ENV[query_log_path_name]
-    pid_file_path = ENV[pid_file_path_name]
-
-    (query_log_path and File.exist?(ENV[query_log_path_name])) and (pid_file_path and File.exist?(ENV[pid_file_path_name]))
+    env_path_exist_p.call(query_log_path_name) and
+      env_path_exist_p.call(pid_file_path_name)
   end
   if exist_p.call("http_query_log_path", "http_pid_path")
     puts("http")
