@@ -10,14 +10,6 @@ label = ENV["label"]
 
 command = ARGV.shift
 
-@default_http_pid_path = "/run/groonga/groonga-http.pid"
-@default_httpd_pid_path = "/run/groonga/groonga-httpd.pid"
-@default_gqtp_pid_path = "/run/groonga/groonga-gptp.pid"
-
-@http_running = File.exist?(ENV["http_pid_path"] || @default_http_pid_path)
-@httpd_running = File.exist?(ENV["httpd_pid_path"] || @default_httpd_pid_path)
-@gqtp_running = File.exist?(ENV["gqtp_pid_path"] || @default_gqtp_pid_path)
-
 def autoconf
   query_log_path_variable_names = [
     "query_log_path",
