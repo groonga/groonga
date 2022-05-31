@@ -33,11 +33,67 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 12.0.3 - 2022-04-29"
-msgstr "12.0.3リリース - 2022-04-29"
+msgid "Release 12.0.4 - 2022-05-31"
+msgstr "12.0.4リリース - 2022-05-31"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[:doc:`/install/ubuntu`] Added support for Ubuntu 22.04 (Jammy Jellyfish)."
+msgstr ""
+"[:doc:`/install/ubuntu`] Ubuntu 22.04 (Jammy Jellyfish)をサポートしました。"
+
+msgid "We don't provide `groonga-benchmark`."
+msgstr "`groonga-benchmark` の提供をやめました。"
+
+msgid "Because nobody will not use it and we can't maintain it."
+msgstr "誰も使用しておらず、メンテナンスもできないためです。"
+
+msgid ""
+"[:doc:`reference/commands/status`] Added a new item ``memory_map_size``."
+msgstr ""
+"[:doc:`reference/commands/status`] 新しい項目 ``memory_map_size`` を追加しま"
+"した。"
+
+msgid "This item returns the total memory mapped size in byte."
+msgstr "この項目は、メモリーマップサイズの合計をバイト単位で返します。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"Fixed a bug that Groonga's response is slow when the search target is many "
+"and failing to add the result set of the search."
+msgstr ""
+"検索対象が多く、検索結果セットの追加に失敗すると、Groongaの応答が遅くなる問題"
+"を修正しました。"
+
+msgid "Fixed a bug that string list can't be casted to int32 vector."
+msgstr "文字列リストをint32のベクターにキャストできない問題を修正しました。"
+
+msgid "For example, the following cast had failed."
+msgstr "例えば、以下のキャストは失敗していました。"
+
+msgid "[\"10\", \"100\"] -> [10, 100]"
+msgstr ""
+
+msgid ""
+"This bug only occurs when we specify ``apache-arrow`` into ``input_type`` as "
+"the argument of ``load``."
+msgstr ""
+"この問題は、 ``load`` の引数として、 ``input_type`` に ``apache-arrow`` を指"
+"定したときのみ発生します。"
+
+msgid ""
+"Fixed a bug that Groonga Munin Plugins do not work on AlmaLinux 8 and CentOS "
+"7."
+msgstr ""
+"GroongaのMuninプラグインがAlmaLinux 8 とCentOS 7上で動作しない問題を修正しま"
+"した。"
+
+msgid "Release 12.0.3 - 2022-04-29"
+msgstr "12.0.3リリース - 2022-04-29"
 
 msgid ""
 "[:doc:`reference/commands/logical_count`] Improved memory usage while "
@@ -161,9 +217,6 @@ msgid ""
 msgstr ""
 "Groongaはエラーを発生しなくなり、静的インデックス構築を実行する時に大きなトー"
 "クンを無視し警告を出力します。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid ""
 "Fixed a bug that we may be not able to add a key to a table of patricia trie."
@@ -1279,13 +1332,6 @@ msgid ""
 msgstr ""
 "[:doc:`/reference/commands/load`] 存在しないカラムを指定してロードした時にク"
 "ラッシュする問題を修正しました。"
-
-msgid ""
-"This bug only occurs when we specify ``apache-arrow`` into ``input_type`` as "
-"the argument of ``load``."
-msgstr ""
-"この問題は、 ``load`` の引数として、 ``input_type`` に ``apache-arrow`` を指"
-"定したときのみ発生します。"
 
 msgid ""
 "Fixed a bug that the version up of Groonga failed Because the version up of "

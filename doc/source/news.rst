@@ -5,6 +5,39 @@
 News
 ====
 
+.. _release-12-0-4:
+
+Release 12.0.4 - 2022-05-31
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`/install/ubuntu`] Added support for Ubuntu 22.04 (Jammy Jellyfish).
+
+* We don't provide `groonga-benchmark`.
+
+  Because nobody will not use it and we can't maintain it.
+
+* [:doc:`reference/commands/status`] Added a new item ``memory_map_size``.
+
+  * This item returns the total memory mapped size in byte.
+
+Fixes
+-----
+
+* Fixed a bug that Groonga's response is slow when the search target is many and failing to add the result set of the search.
+
+* Fixed a bug that string list can't be casted to int32 vector.
+
+  For example, the following cast had failed.
+
+  * ["10", "100"] -> [10, 100]
+
+  This bug only occurs when we specify ``apache-arrow`` into ``input_type`` as the argument of ``load``.
+
+* Fixed a bug that Groonga Munin Plugins do not work on AlmaLinux 8 and CentOS 7.
+
 .. _release-12-0-3:
 
 Release 12.0.3 - 2022-04-29
