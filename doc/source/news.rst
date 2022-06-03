@@ -7,7 +7,7 @@ News
 
 .. _release-12-0-4:
 
-Release 12.0.4 - 2022-05-31
+Release 12.0.4 - 2022-06-06
 ---------------------------
 
 Improvements
@@ -21,12 +21,32 @@ Improvements
 
 * [:doc:`reference/commands/status`] Added a new item ``memory_map_size``.
 
-  * This item returns the total memory mapped size in byte.
+  We can get the total memory map size in bytes of Groonga with ``status`` command.
+
+  .. code-block::
+
+      status
+      [
+        [
+          0,
+          1654237168.304533,
+          0.0001480579376220703
+        ],
+        {
+          (omitted)
+          "memory_map_size": 70098944
+        }
+      ]
+
+  For example, in Windows, if Groonga uses up physical memory and swap area, Groonga can't more mapping memory than that.
+  Therefore, we can control properly memory map size by monitoring this value even if the environment does have not enough memory.
 
 Fixes
 -----
 
-* Fixed a bug that Groonga's response is slow when the search target is many and failing to add the result set of the search.
+* Fixed a bug Groonga's response may be slow when we execute ``request_cancel`` while executing a search.
+
+  Especially, when the number of records of the search target is many, Groonga's response may be very slow.
 
 * Fixed a bug that string list can't be casted to int32 vector.
 
@@ -35,6 +55,7 @@ Fixes
   * ["10", "100"] -> [10, 100]
 
   This bug only occurs when we specify ``apache-arrow`` into ``input_type`` as the argument of ``load``.
+  This bug occurs in Groonga 12.0.2 or later.
 
 * Fixed a bug that Groonga Munin Plugins do not work on AlmaLinux 8 and CentOS 7.
 
