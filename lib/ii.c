@@ -9512,20 +9512,20 @@ token_info_build_phrase(grn_ctx *ctx,
     }
   } else {
     grn_id tid;
-    int ef;
+    int default_ef = EX_NONE;
     grn_token *token;
     switch (data->mode) {
     case GRN_OP_PREFIX :
-      ef = EX_PREFIX;
+      default_ef = EX_PREFIX;
       break;
     case GRN_OP_SUFFIX :
-      ef = EX_SUFFIX;
+      default_ef = EX_SUFFIX;
       break;
     case GRN_OP_PARTIAL :
-      ef = EX_BOTH;
+      default_ef = EX_BOTH;
       break;
     default :
-      ef = EX_NONE;
+      default_ef = EX_NONE;
       break;
     }
     tid = grn_token_cursor_next(ctx, token_cursor);
@@ -9534,6 +9534,7 @@ token_info_build_phrase(grn_ctx *ctx,
       goto exit;
     }
     token = grn_token_cursor_get_token(ctx, token_cursor);
+    int ef = default_ef;
     if (grn_token_get_force_prefix_search(ctx, token)) { ef |= EX_PREFIX; }
     switch (token_cursor->status) {
     case GRN_TOKEN_CURSOR_DOING :
@@ -9579,6 +9580,7 @@ token_info_build_phrase(grn_ctx *ctx,
       grn_token *token;
       tid = grn_token_cursor_next(ctx, token_cursor);
       token = grn_token_cursor_get_token(ctx, token_cursor);
+      ef = default_ef;
       if (grn_token_get_force_prefix_search(ctx, token)) { ef |= EX_PREFIX; }
       switch (token_cursor->status) {
       case GRN_TOKEN_CURSOR_DONE_SKIP :
