@@ -8845,6 +8845,7 @@ token_info_expand_both(grn_ctx *ctx, grn_ii_select_data *data,
     if (data->lexicon->header.type == GRN_TABLE_HASH_KEY) {
       mode = GRN_OP_EXACT;
     }
+    /* TODO: use cursor like EX_PREFIX */
     grn_table_search(ctx, data->lexicon, key, key_size,
                      mode, (grn_obj *)h, GRN_OP_OR);
     if (GRN_HASH_SIZE(h)) {
@@ -8873,6 +8874,7 @@ token_info_expand_both(grn_ctx *ctx, grn_ii_select_data *data,
             } else {
               if ((g = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
                                        GRN_HASH_TINY))) {
+                /* TODO: use cursor like EX_PREFIX */
                 grn_pat_suffix_search(ctx,
                                       (grn_pat *)(data->lexicon),
                                       key2,
@@ -8952,31 +8954,54 @@ token_info_open(grn_ctx *ctx,
     }
     break;
   case EX_PREFIX :
-    if ((h = grn_hash_create(ctx, NULL, sizeof(grn_id), 0, 0))) {
-      grn_operator mode = GRN_OP_PREFIX;
-      if (data->lexicon->header.type == GRN_TABLE_HASH_KEY) {
-        mode = GRN_OP_EXACT;
-      }
-      grn_table_search(ctx, data->lexicon, key, key_size,
-                       mode, (grn_obj *)h, GRN_OP_OR);
-      if (GRN_HASH_SIZE(h)) {
-        if ((ti->cursors = cursor_heap_open(ctx, GRN_HASH_SIZE(h)))) {
-          GRN_HASH_EACH(ctx, h, id, &tp, NULL, NULL, {
-            if ((s = grn_ii_estimate_size(ctx, data->ii, *tp))) {
-              cursor_heap_push(ctx,
-                               ti->cursors,
-                               data->ii,
-                               *tp,
-                               0,
-                               0,
-                               data->previous_min);
-              ti->ntoken++;
-              ti->size += s;
-            }
-          });
+    if (data->lexicon->header.type == GRN_TABLE_HASH_KEY) {
+      grn_id token_id = grn_table_get(ctx, data->lexicon, key, key_size);
+      if (token_id != GRN_ID_NIL) {
+        ti->cursors = cursor_heap_open(ctx, 1);
+        /* TODO: report error on !ti->cursors */
+        if (ti->cursors) {
+          s = grn_ii_estimate_size(ctx, data->ii, token_id);
+          if (s > 0) {
+            cursor_heap_push(ctx,
+                             ti->cursors,
+                             data->ii,
+                             token_id,
+                             0,
+                             0,
+                             data->previous_min);
+            ti->ntoken++;
+            ti->size += s;
+          }
         }
       }
-      grn_hash_close(ctx, h);
+    } else {
+      GRN_TABLE_EACH_BEGIN_MIN(ctx,
+                               data->lexicon,
+                               cursor,
+                               id,
+                               key,
+                               key_size,
+                               GRN_CURSOR_PREFIX) {
+        if (!ti->cursors) {
+          ti->cursors = cursor_heap_open(ctx, 1);
+          if (!ti->cursors) {
+            /* TODO: report error */
+            break;
+          }
+        }
+        s = grn_ii_estimate_size(ctx, data->ii, id);
+        if (s > 0) {
+          cursor_heap_push(ctx,
+                           ti->cursors,
+                           data->ii,
+                           id,
+                           0,
+                           0,
+                           data->previous_min);
+          ti->ntoken++;
+          ti->size += s;
+        }
+      } GRN_TABLE_EACH_END(ctx, cursor);
     }
     break;
   case EX_SUFFIX :
@@ -8985,6 +9010,7 @@ token_info_open(grn_ctx *ctx,
       if (data->lexicon->header.type == GRN_TABLE_HASH_KEY) {
         mode = GRN_OP_EXACT;
       }
+      /* TODO: use cursor like EX_PREFIX */
       grn_table_search(ctx, data->lexicon, key, key_size,
                        mode, (grn_obj *)h, GRN_OP_OR);
       if (GRN_HASH_SIZE(h)) {
@@ -9012,6 +9038,7 @@ token_info_open(grn_ctx *ctx,
     if ((h = (grn_hash *)grn_table_create(ctx, NULL, 0, NULL,
         GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
         grn_ctx_at(ctx, GRN_DB_UINT32), NULL))) {
+      /* TODO: use cursor like EX_PREFIX */
       grn_table_fuzzy_search(ctx,
                              data->lexicon,
                              key,
