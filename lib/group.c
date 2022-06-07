@@ -755,11 +755,19 @@ grn_table_group_single_key_records_foreach_var_size_reference(
     grn_table_group_single_key_records_resolve_id(ctx, data, cursor, id);
   grn_io_win jw;
   uint32_t value_size;
-  grn_id *references = grn_ja_ref(ctx, ja, value_id, &jw, &value_size);
-  uint32_t n_references = value_size / sizeof(grn_id);
+  uint8_t *value = grn_ja_ref(ctx, ja, value_id, &jw, &value_size);
+  uint32_t element_size;
+  bool with_weight = grn_obj_is_weight_vector_column(ctx, data->key.object);
+  if (with_weight) {
+    element_size = sizeof(grn_id) + sizeof(float);
+  } else {
+    element_size = sizeof(grn_id);
+  }
+  uint32_t n_references = value_size / element_size;
   uint32_t i;
   for (i = 0; i < n_references; i++) {
-    grn_id reference = references[i];
+    uint8_t *element = value + (element_size * i);
+    grn_id reference = *((grn_id *)element);
     if (reference == GRN_ID_NIL) {
       continue;
     }
