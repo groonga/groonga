@@ -608,6 +608,7 @@ grn_table_group_add_subrec(grn_ctx *ctx,
 
 typedef struct {
   grn_obj *object;
+  grn_obj *accessor;
   grn_obj *range;
   bool is_expr;
   grn_expr_executor expr_executor;
@@ -617,9 +618,11 @@ typedef struct {
 static grn_inline void
 group_key_init(grn_ctx *ctx,
                group_key *key,
-               grn_obj *object)
+               grn_obj *object,
+               grn_obj *accessor)
 {
   key->object = object;
+  key->accessor = accessor;
   grn_id range_id = grn_obj_get_range(ctx, key->object);
   key->range = grn_ctx_at(ctx, range_id);
   key->is_expr = grn_obj_is_expr(ctx, key->object);
@@ -673,9 +676,7 @@ grn_table_group_single_key_records_resolve_id(grn_ctx *ctx,
                                               grn_id id)
 {
   if (data->need_resolved_id) {
-    void *key;
-    grn_table_cursor_get_key(ctx, cursor, &key);
-    return *((grn_id *)key);
+    return grn_accessor_resolve_id(ctx, data->key.accessor, id);
   } else {
     return id;
   }
@@ -929,17 +930,25 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
                                       NULL, 0,
                                       0, limit, 0))) {
     grn_obj *real_key = key;
+    grn_obj *accessor = NULL;
     data.need_resolved_id = false;
     if (key->header.type == GRN_ACCESSOR) {
-      grn_accessor *a = (grn_accessor *)key;
-      if (a->action == GRN_ACCESSOR_GET_KEY &&
-          a->next && a->next->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
-          a->next->obj && !a->next->next) {
-        real_key = a->next->obj;
-        data.need_resolved_id = true;
+      grn_accessor *a;
+      accessor = key;
+      for (a = (grn_accessor *)accessor;
+           a->next;
+           a = a->next) {
+        if (a->action != GRN_ACCESSOR_GET_KEY) {
+          break;
+        }
+        if (a->next->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
+            a->next->obj && !a->next->next) {
+          real_key = a->next->obj;
+          data.need_resolved_id = true;
+        }
       }
     }
-    group_key_init(ctx, &(data.key), real_key);
+    group_key_init(ctx, &(data.key), real_key, accessor);
     data.with_subrec = (DB_OBJ(table)->header.flags & GRN_OBJ_WITH_SUBREC);
     if (data.key.object->header.type == GRN_COLUMN_FIX_SIZE) {
       GRN_RA_CACHE_INIT((grn_ra *)(data.key.object), &(data.cache));
@@ -1605,7 +1614,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
       data.n_keys = n_keys;
       int i;
       for (i = 0; i < n_keys; i++) {
-        group_key_init(ctx, data.keys + i, keys[i].key);
+        group_key_init(ctx, data.keys + i, keys[i].key, NULL);
       }
       data.results = results;
       data.n_results = n_results;
