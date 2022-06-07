@@ -8983,7 +8983,11 @@ token_info_open(grn_ctx *ctx,
                                key_size,
                                GRN_CURSOR_PREFIX) {
         if (!ti->cursors) {
-          ti->cursors = cursor_heap_open(ctx, 1);
+          /* This is heuristic. 0.1% tokens may be matched. Must be
+           * greater than 0. */
+          unsigned int initial_capacity =
+            (grn_table_size(ctx, data->lexicon) / 1000) + 1;
+          ti->cursors = cursor_heap_open(ctx, initial_capacity);
           if (!ti->cursors) {
             /* TODO: report error */
             break;
