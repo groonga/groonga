@@ -936,16 +936,16 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
       grn_accessor *a;
       accessor = key;
       for (a = (grn_accessor *)accessor;
-           a->next;
+           a->action == GRN_ACCESSOR_GET_KEY && a->next;
            a = a->next) {
-        if (a->action != GRN_ACCESSOR_GET_KEY) {
-          break;
-        }
-        if (a->next->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
-            a->next->obj && !a->next->next) {
-          real_key = a->next->obj;
-          data.need_resolved_id = true;
-        }
+        /* do nothing */
+      }
+      if (a &&
+          a->action == GRN_ACCESSOR_GET_COLUMN_VALUE &&
+          a->obj &&
+          !a->next) {
+        real_key = a->obj;
+        data.need_resolved_id = true;
       }
     }
     group_key_init(ctx, &(data.key), real_key, accessor);
