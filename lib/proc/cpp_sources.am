@@ -1,2 +1,3 @@
 libgrnproc_cpp_sources =			\
-	proc_query.cpp
+	proc_query.cpp				\
+	proc_select.cpp

@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2015-2017 Brazil
+  Copyright (C) 2015-2017  Brazil
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,7 +27,7 @@
 # endif /* __cplusplus */
 #else /* WIN32 */
 # ifdef __cplusplus
-#  define grn_memcpy(dest, src, n) std::memcpy((dest), (src), (n))
+#  define grn_memcpy(dest, src, n) ::memcpy((dest), (src), (n))
 # else /* __cplusplus */
 #  define grn_memcpy(dest, src, n) memcpy((dest), (src), (n))
 # endif /* __cplusplus */

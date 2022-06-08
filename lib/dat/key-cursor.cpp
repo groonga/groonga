@@ -23,6 +23,8 @@
 
 #include "trie.hpp"
 
+#include <groonga/portability.h>
+
 namespace grn {
 namespace dat {
 
