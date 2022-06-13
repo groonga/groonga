@@ -36,20 +36,20 @@
 #define DEFAULT_DRILLDOWN_LIMIT           10
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key, _nsubrecs"
 
-typedef enum {
-  GRN_DYNAMIC_COLUMN_STAGE_INITIAL,
-  GRN_DYNAMIC_COLUMN_STAGE_RESULT_SET,
-  GRN_DYNAMIC_COLUMN_STAGE_FILTERED,
-  GRN_DYNAMIC_COLUMN_STAGE_OUTPUT,
-  GRN_DYNAMIC_COLUMN_STAGE_GROUP,
-} grn_dynamic_column_stage;
-
 namespace {
+  enum class DynamicColumnStage {
+    INITIAL,
+    RESULT_SET,
+    FILTERED,
+    OUTPUT,
+    GROUP,
+  };
+
   struct DynamicColumn {
     DynamicColumn(grn_ctx *ctx,
                   const char *label,
                   size_t label_len,
-                  grn_dynamic_column_stage stage)
+                  DynamicColumnStage stage)
       : ctx_(ctx),
         label({label, label_len}),
         stage(stage),
@@ -70,7 +70,7 @@ namespace {
     grn_ctx *ctx_;
 
     grn_raw_string label;
-    grn_dynamic_column_stage stage;
+    DynamicColumnStage stage;
     grn_obj *type;
     grn_column_flags flags;
     grn_raw_string value;
@@ -516,18 +516,18 @@ grn_parse_table_group_calc_types(grn_ctx *ctx,
 }
 
 static const char *
-grn_dynamic_column_stage_name(grn_dynamic_column_stage stage)
+grn_dynamic_column_stage_name(DynamicColumnStage stage)
 {
   switch (stage) {
-  case GRN_DYNAMIC_COLUMN_STAGE_INITIAL :
+  case DynamicColumnStage::INITIAL :
     return "initial";
-  case GRN_DYNAMIC_COLUMN_STAGE_RESULT_SET :
+  case DynamicColumnStage::RESULT_SET :
     return "result_set";
-  case GRN_DYNAMIC_COLUMN_STAGE_FILTERED :
+  case DynamicColumnStage::FILTERED :
     return "filtered";
-  case GRN_DYNAMIC_COLUMN_STAGE_OUTPUT :
+  case DynamicColumnStage::OUTPUT :
     return "output";
-  case GRN_DYNAMIC_COLUMN_STAGE_GROUP :
+  case DynamicColumnStage::GROUP :
     return "group";
   default :
     return "unknown";
@@ -538,7 +538,7 @@ static bool
 grn_dynamic_columns_add(grn_ctx *ctx,
                         const char *label,
                         size_t label_len,
-                        grn_dynamic_column_stage stage,
+                        DynamicColumnStage stage,
                         grn_hash **dynamic_columns)
 {
   if (!*dynamic_columns) {
@@ -815,22 +815,22 @@ grn_dynamic_columns_collect(grn_ctx *ctx,
     void *value_raw;
     grn_table_cursor_get_value(ctx, cursor, &value_raw);
     auto value = static_cast<grn_obj *>(value_raw);
-    grn_dynamic_column_stage stage;
+    DynamicColumnStage stage;
     grn_hash **target_columns;
     if (GRN_TEXT_EQUAL_CSTRING(value, "initial")) {
-      stage = GRN_DYNAMIC_COLUMN_STAGE_INITIAL;
+      stage = DynamicColumnStage::INITIAL;
       target_columns = &(dynamic_columns->initial);
     } else if (GRN_TEXT_EQUAL_CSTRING(value, "result_set")) {
-      stage = GRN_DYNAMIC_COLUMN_STAGE_RESULT_SET;
+      stage = DynamicColumnStage::RESULT_SET;
       target_columns = &(dynamic_columns->result_set);
     } else if (GRN_TEXT_EQUAL_CSTRING(value, "filtered")) {
-      stage = GRN_DYNAMIC_COLUMN_STAGE_FILTERED;
+      stage = DynamicColumnStage::FILTERED;
       target_columns = &(dynamic_columns->filtered);
     } else if (GRN_TEXT_EQUAL_CSTRING(value, "output")) {
-      stage = GRN_DYNAMIC_COLUMN_STAGE_OUTPUT;
+      stage = DynamicColumnStage::OUTPUT;
       target_columns = &(dynamic_columns->output);
     } else if (GRN_TEXT_EQUAL_CSTRING(value, "group")) {
-      stage = GRN_DYNAMIC_COLUMN_STAGE_GROUP;
+      stage = DynamicColumnStage::GROUP;
       target_columns = &(dynamic_columns->group);
     } else {
       continue;
@@ -1136,7 +1136,7 @@ static bool
 grn_select_apply_dynamic_column(grn_ctx *ctx,
                                 grn_select_data *data,
                                 grn_obj *table,
-                                grn_dynamic_column_stage stage,
+                                DynamicColumnStage stage,
                                 DynamicColumn *dynamic_column,
                                 grn_obj *condition,
                                 const char *log_tag_prefix,
@@ -1169,7 +1169,7 @@ grn_select_apply_dynamic_column(grn_ctx *ctx,
     goto exit;
   }
 
-  if (stage == GRN_DYNAMIC_COLUMN_STAGE_RESULT_SET) {
+  if (stage == DynamicColumnStage::RESULT_SET) {
     succeeded = true;
     goto exit;
   }
@@ -1292,7 +1292,7 @@ static void
 grn_select_apply_dynamic_columns(grn_ctx *ctx,
                                  grn_select_data *data,
                                  grn_obj *table,
-                                 grn_dynamic_column_stage stage,
+                                 DynamicColumnStage stage,
                                  grn_hash *dynamic_columns,
                                  grn_obj *condition,
                                  const char *log_tag_prefix,
@@ -1575,7 +1575,7 @@ grn_filter_data_execute(grn_ctx *ctx,
     grn_select_apply_dynamic_columns(ctx,
                                      data,
                                      filter_data->filtered,
-                                     GRN_DYNAMIC_COLUMN_STAGE_RESULT_SET,
+                                     DynamicColumnStage::RESULT_SET,
                                      dynamic_columns->result_set,
                                      filter_data->condition.expression,
                                      log_tag_prefix,
@@ -2178,7 +2178,7 @@ grn_select_apply_initial_columns(grn_ctx *ctx,
   grn_select_apply_dynamic_columns(ctx,
                                    data,
                                    data->tables.initial,
-                                   GRN_DYNAMIC_COLUMN_STAGE_INITIAL,
+                                   DynamicColumnStage::INITIAL,
                                    data->dynamic_columns.initial,
                                    data->filter.condition.expression,
                                    "[select]",
@@ -2237,7 +2237,7 @@ grn_select_apply_filtered_dynamic_columns(grn_ctx *ctx,
   grn_select_apply_dynamic_columns(ctx,
                                    data,
                                    data->tables.result,
-                                   GRN_DYNAMIC_COLUMN_STAGE_FILTERED,
+                                   DynamicColumnStage::FILTERED,
                                    data->dynamic_columns.filtered,
                                    data->filter.condition.expression,
                                    "[select]",
@@ -2740,7 +2740,7 @@ grn_select_apply_output_dynamic_columns(grn_ctx *ctx,
   grn_select_apply_dynamic_columns(ctx,
                                    data,
                                    data->tables.sorted,
-                                   GRN_DYNAMIC_COLUMN_STAGE_OUTPUT,
+                                   DynamicColumnStage::OUTPUT,
                                    data->dynamic_columns.output,
                                    data->filter.condition.expression,
                                    "[select]",
@@ -3074,7 +3074,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     grn_select_apply_dynamic_columns(ctx,
                                      data,
                                      result->table,
-                                     GRN_DYNAMIC_COLUMN_STAGE_INITIAL,
+                                     DynamicColumnStage::INITIAL,
                                      drilldown->dynamic_columns.initial,
                                      condition,
                                      GRN_TEXT_VALUE(&log_tag_prefix),
@@ -3150,7 +3150,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     grn_select_apply_dynamic_columns(ctx,
                                      data,
                                      drilldown->filtered_result,
-                                     GRN_DYNAMIC_COLUMN_STAGE_FILTERED,
+                                     DynamicColumnStage::FILTERED,
                                      drilldown->dynamic_columns.filtered,
                                      condition,
                                      GRN_TEXT_VALUE(&log_tag_prefix),
@@ -3602,7 +3602,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
             grn_select_apply_dynamic_columns(ctx,
                                              data,
                                              sorted,
-                                             GRN_DYNAMIC_COLUMN_STAGE_OUTPUT,
+                                             DynamicColumnStage::OUTPUT,
                                              drilldown->dynamic_columns.output,
                                              condition,
                                              drilldown_log_tag_prefix,
@@ -3642,7 +3642,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
           grn_select_apply_dynamic_columns(ctx,
                                            data,
                                            sorted,
-                                           GRN_DYNAMIC_COLUMN_STAGE_OUTPUT,
+                                           DynamicColumnStage::OUTPUT,
                                            drilldown->dynamic_columns.output,
                                            condition,
                                            drilldown_log_tag_prefix,
@@ -3724,7 +3724,7 @@ grn_select_slice_execute(grn_ctx *ctx,
     grn_select_apply_dynamic_columns(ctx,
                                      data,
                                      slice->tables.initial,
-                                     GRN_DYNAMIC_COLUMN_STAGE_INITIAL,
+                                     DynamicColumnStage::INITIAL,
                                      slice->dynamic_columns.initial,
                                      filter->condition.expression,
                                      log_tag,
@@ -3759,7 +3759,7 @@ grn_select_slice_execute(grn_ctx *ctx,
     grn_select_apply_dynamic_columns(ctx,
                                      data,
                                      slice->tables.result,
-                                     GRN_DYNAMIC_COLUMN_STAGE_FILTERED,
+                                     DynamicColumnStage::FILTERED,
                                      slice->dynamic_columns.filtered,
                                      slice->filter.condition.expression,
                                      log_tag,
@@ -3943,7 +3943,7 @@ grn_select_output_slices(grn_ctx *ctx,
       grn_select_apply_dynamic_columns(ctx,
                                        data,
                                        slice->tables.output,
-                                       GRN_DYNAMIC_COLUMN_STAGE_OUTPUT,
+                                       DynamicColumnStage::OUTPUT,
                                        slice->dynamic_columns.output,
                                        slice->filter.condition.expression,
                                        log_tag_prefix,
@@ -4300,7 +4300,7 @@ grn_select_prepare_cache_key(grn_ctx *ctx,
       GRN_TEXT_PUT(ctx,                                                 \
                    *cache_key,                                          \
                    &(dynamic_column->stage),                            \
-                   sizeof(grn_dynamic_column_stage));                   \
+                   sizeof(DynamicColumnStage));                         \
       GRN_RECORD_PUT(ctx,                                               \
                      *cache_key,                                        \
                      DB_OBJ(dynamic_column->type)->id);                 \
