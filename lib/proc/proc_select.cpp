@@ -36,10 +36,20 @@
 #define DEFAULT_DRILLDOWN_LIMIT           10
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key, _nsubrecs"
 
-static void
-grn_drilldowns_fin(grn_ctx *ctx, grn_hash *drilldowns);
-
 namespace {
+  template <typename Class>
+  void
+  close_objects(grn_ctx *ctx, grn_hash *objects)
+  {
+    GRN_HASH_EACH_BEGIN(ctx, objects, cursor, id) {
+      void *value;
+      grn_hash_cursor_get_value(ctx, cursor, &value);
+      auto object = static_cast<Class *>(value);
+      object->~Class();
+    } GRN_HASH_EACH_END(ctx, cursor);
+    grn_hash_close(ctx, objects);
+  }
+
   enum class DynamicColumnStage {
     INITIAL,
     RESULT_SET,
@@ -108,14 +118,7 @@ namespace {
       if (!stage) {
         return;
       }
-      GRN_HASH_EACH_BEGIN(ctx_, stage, cursor, id) {
-        DynamicColumn *dynamic_column;
-        grn_hash_cursor_get_value(ctx_,
-                                  cursor,
-                                  reinterpret_cast<void **>(&dynamic_column));
-        dynamic_column->~DynamicColumn();
-      } GRN_HASH_EACH_END(ctx_, cursor);
-      grn_hash_close(ctx_, stage);
+      close_objects<DynamicColumn>(ctx_, stage);
     }
 
   public:
@@ -126,6 +129,74 @@ namespace {
     grn_hash *filtered;
     grn_hash *output;
     grn_hash *group;
+  };
+
+
+  struct Drilldown {
+    Drilldown(grn_ctx *ctx, const char *label, size_t label_len)
+      : ctx_(ctx),
+        label({label, label_len}),
+        keys({nullptr, 0}),
+        parsed_keys(nullptr),
+        n_parsed_keys(0),
+        sort_keys({nullptr, 0}),
+        output_columns({nullptr, 0}),
+        offset(0),
+        limit(DEFAULT_DRILLDOWN_LIMIT),
+        calc_types(0),
+        calc_target_name({nullptr, 0}),
+        filter({nullptr, 0}),
+        adjuster({nullptr, 0}),
+        table_name({nullptr, 0}),
+        max_n_target_records(-1),
+        dynamic_columns(ctx),
+        result(),
+        filtered_result(nullptr) {
+    }
+
+    ~Drilldown() {
+      if (filtered_result) {
+        grn_obj_close(ctx_, filtered_result);
+      }
+
+      if (result.table) {
+        if (result.calc_target) {
+          grn_obj_unlink(ctx_, result.calc_target);
+        }
+        if (result.table) {
+          grn_obj_unlink(ctx_, result.table);
+        }
+        if (result.n_aggregators > 0) {
+          uint32_t i;
+          for (i = 0; i < result.n_aggregators; i++) {
+            auto *aggregator = result.aggregators[i];
+            grn_table_group_aggregator_close(ctx_, aggregator);
+          }
+          auto ctx = ctx_;
+          GRN_FREE(result.aggregators);
+        }
+      }
+    }
+
+    grn_ctx *ctx_;
+
+    grn_raw_string label;
+    grn_raw_string keys;
+    grn_table_sort_key *parsed_keys;
+    int n_parsed_keys;
+    grn_raw_string sort_keys;
+    grn_raw_string output_columns;
+    int offset;
+    int limit;
+    grn_table_group_flags calc_types;
+    grn_raw_string calc_target_name;
+    grn_raw_string filter;
+    grn_raw_string adjuster;
+    grn_raw_string table_name;
+    int32_t max_n_target_records;
+    DynamicColumns dynamic_columns;
+    grn_table_group_result result;
+    grn_obj *filtered_result;
   };
 
   struct Filter {
@@ -202,7 +273,7 @@ namespace {
 
     ~Slice() {
       if (drilldowns) {
-        grn_drilldowns_fin(ctx_, drilldowns);
+        close_objects<Drilldown>(ctx_, drilldowns);
       }
       if (tables.sorted) {
         grn_obj_unlink(ctx_, tables.sorted);
@@ -230,85 +301,6 @@ namespace {
     grn_hash *drilldowns;
     DynamicColumns dynamic_columns;
   };
-
-  struct Drilldown {
-    Drilldown(grn_ctx *ctx, const char *label, size_t label_len)
-      : ctx_(ctx),
-        label({label, label_len}),
-        keys({nullptr, 0}),
-        parsed_keys(nullptr),
-        n_parsed_keys(0),
-        sort_keys({nullptr, 0}),
-        output_columns({nullptr, 0}),
-        offset(0),
-        limit(DEFAULT_DRILLDOWN_LIMIT),
-        calc_types(0),
-        calc_target_name({nullptr, 0}),
-        filter({nullptr, 0}),
-        adjuster({nullptr, 0}),
-        table_name({nullptr, 0}),
-        max_n_target_records(-1),
-        dynamic_columns(ctx),
-        result(),
-        filtered_result(nullptr) {
-    }
-
-    ~Drilldown() {
-      if (filtered_result) {
-        grn_obj_close(ctx_, filtered_result);
-      }
-
-      if (result.table) {
-        if (result.calc_target) {
-          grn_obj_unlink(ctx_, result.calc_target);
-        }
-        if (result.table) {
-          grn_obj_unlink(ctx_, result.table);
-        }
-        if (result.n_aggregators > 0) {
-          uint32_t i;
-          for (i = 0; i < result.n_aggregators; i++) {
-            auto *aggregator = result.aggregators[i];
-            grn_table_group_aggregator_close(ctx_, aggregator);
-          }
-          auto ctx = ctx_;
-          GRN_FREE(result.aggregators);
-        }
-      }
-    }
-
-    grn_ctx *ctx_;
-
-    grn_raw_string label;
-    grn_raw_string keys;
-    grn_table_sort_key *parsed_keys;
-    int n_parsed_keys;
-    grn_raw_string sort_keys;
-    grn_raw_string output_columns;
-    int offset;
-    int limit;
-    grn_table_group_flags calc_types;
-    grn_raw_string calc_target_name;
-    grn_raw_string filter;
-    grn_raw_string adjuster;
-    grn_raw_string table_name;
-    int32_t max_n_target_records;
-    DynamicColumns dynamic_columns;
-    grn_table_group_result result;
-    grn_obj *filtered_result;
-  };
-}
-
-static void
-grn_drilldowns_fin(grn_ctx *ctx, grn_hash *drilldowns)
-{
-  GRN_HASH_EACH_BEGIN(ctx, drilldowns, cursor, id) {
-    void *value;
-    grn_hash_cursor_get_value(ctx, cursor, &value);
-    auto drilldown = static_cast<Drilldown *>(value);
-    drilldown->~Drilldown();
-  } GRN_HASH_EACH_END(ctx, cursor);
-  grn_hash_close(ctx, drilldowns);
 }
 
 typedef struct _grn_select_output_formatter grn_select_output_formatter;
@@ -388,6 +380,14 @@ namespace {
     }
 
     ~SelectExecutor() {
+      if (drilldowns) {
+        close_objects<Drilldown>(ctx_, drilldowns);
+      }
+
+      if (slices) {
+        close_objects<Slice>(ctx_, slices);
+      }
+
       if (tables.result == filter.post_filtered) {
         tables.result = nullptr;
       }
@@ -1837,18 +1837,6 @@ grn_drilldown_data_fill(grn_ctx *ctx,
     grn_proc_option_value_int32(ctx,
                                 max_n_target_records,
                                 drilldown->max_n_target_records);
-}
-
-static void
-grn_slices_fin(grn_ctx *ctx, grn_hash *slices)
-{
-  GRN_HASH_EACH_BEGIN(ctx, slices, cursor, id) {
-    void *value;
-    grn_hash_cursor_get_value(ctx, cursor, &value);
-    auto slice = static_cast<Slice *>(value);
-    slice->~Slice();
-  } GRN_HASH_EACH_END(ctx, cursor);
-  grn_hash_close(ctx, slices);
 }
 
 static void
@@ -5105,18 +5093,10 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   grn_select(ctx, &data);
 
 exit :
-  if (data.drilldowns) {
-    grn_drilldowns_fin(ctx, data.drilldowns);
-  }
-
   if (data.drilldown.parsed_keys) {
     grn_table_sort_key_close(ctx,
                              data.drilldown.parsed_keys,
                              data.drilldown.n_parsed_keys);
-  }
-
-  if (data.slices) {
-    grn_slices_fin(ctx, data.slices);
   }
 
   return NULL;
