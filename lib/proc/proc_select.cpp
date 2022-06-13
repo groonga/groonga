@@ -37,19 +37,19 @@
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key, _nsubrecs"
 
 typedef enum {
-  GRN_COLUMN_STAGE_INITIAL,
-  GRN_COLUMN_STAGE_RESULT_SET,
-  GRN_COLUMN_STAGE_FILTERED,
-  GRN_COLUMN_STAGE_OUTPUT,
-  GRN_COLUMN_STAGE_GROUP,
-} grn_column_stage;
+  GRN_DYNAMIC_COLUMN_STAGE_INITIAL,
+  GRN_DYNAMIC_COLUMN_STAGE_RESULT_SET,
+  GRN_DYNAMIC_COLUMN_STAGE_FILTERED,
+  GRN_DYNAMIC_COLUMN_STAGE_OUTPUT,
+  GRN_DYNAMIC_COLUMN_STAGE_GROUP,
+} grn_dynamic_column_stage;
 
 namespace {
-  struct Column {
-    Column(grn_ctx *ctx,
-           const char *label,
-           size_t label_len,
-           grn_column_stage stage)
+  struct DynamicColumn {
+    DynamicColumn(grn_ctx *ctx,
+                  const char *label,
+                  size_t label_len,
+                  grn_dynamic_column_stage stage)
       : ctx_(ctx),
         label({label, label_len}),
         stage(stage),
@@ -57,20 +57,20 @@ namespace {
         flags(GRN_OBJ_COLUMN_SCALAR),
         value({nullptr, 0}),
         window({{nullptr, 0}, {nullptr, 0}}),
-        dependency_column_names() {
-      GRN_TEXT_INIT(&dependency_column_names, GRN_OBJ_VECTOR);
+        dependency_names() {
+      GRN_TEXT_INIT(&dependency_names, GRN_OBJ_VECTOR);
     }
 
-    ~Column() {
+    ~DynamicColumn() {
       grn_obj_unref(ctx_, type);
       auto ctx = ctx_;
-      GRN_OBJ_FIN(ctx, &dependency_column_names);
+      GRN_OBJ_FIN(ctx, &dependency_names);
     }
 
     grn_ctx *ctx_;
 
     grn_raw_string label;
-    grn_column_stage stage;
+    grn_dynamic_column_stage stage;
     grn_obj *type;
     grn_column_flags flags;
     grn_raw_string value;
@@ -78,12 +78,12 @@ namespace {
       grn_raw_string sort_keys;
       grn_raw_string group_keys;
     } window;
-    grn_obj dependency_column_names;
+    grn_obj dependency_names;
   };
 
-  struct Columns {
+  struct DynamicColumns {
   public:
-    Columns(grn_ctx *ctx)
+    DynamicColumns(grn_ctx *ctx)
         : ctx_(ctx),
           initial(nullptr),
           result_set(nullptr),
@@ -92,7 +92,7 @@ namespace {
           group(nullptr) {
     }
 
-    ~Columns() {
+    ~DynamicColumns() {
       close_stage(initial);
       close_stage(result_set);
       close_stage(filtered);
@@ -106,11 +106,11 @@ namespace {
         return;
       }
       GRN_HASH_EACH_BEGIN(ctx_, stage, cursor, id) {
-        Column *column;
+        DynamicColumn *dynamic_column;
         grn_hash_cursor_get_value(ctx_,
                                   cursor,
-                                  reinterpret_cast<void **>(&column));
-        column->~Column();
+                                  reinterpret_cast<void **>(&dynamic_column));
+        dynamic_column->~DynamicColumn();
       } GRN_HASH_EACH_END(ctx_, cursor);
       grn_hash_close(ctx_, stage);
     }
@@ -161,7 +161,7 @@ typedef struct {
     grn_obj *output;
   } tables;
   grn_hash *drilldowns;
-  Columns columns;
+  DynamicColumns dynamic_columns;
 } grn_slice_data;
 
 namespace {
@@ -182,7 +182,7 @@ namespace {
         adjuster({nullptr, 0}),
         table_name({nullptr, 0}),
         max_n_target_records(-1),
-        columns(ctx),
+        dynamic_columns(ctx),
         result(),
         filtered_result(nullptr) {
     }
@@ -227,7 +227,7 @@ namespace {
     grn_raw_string adjuster;
     grn_raw_string table_name;
     int32_t max_n_target_records;
-    Columns columns;
+    DynamicColumns dynamic_columns;
     grn_table_group_result result;
     grn_obj *filtered_result;
   };
@@ -260,7 +260,7 @@ namespace {
         match_escalation_threshold({nullptr, 0}),
         adjuster({nullptr, 0}),
         match_escalation({nullptr, 0}),
-        columns(ctx),
+        dynamic_columns(ctx),
         tables({
           nullptr,
           nullptr,
@@ -295,7 +295,7 @@ namespace {
     grn_raw_string match_escalation_threshold;
     grn_raw_string adjuster;
     grn_raw_string match_escalation;
-    Columns columns;
+    DynamicColumns dynamic_columns;
 
     /* for processing */
     struct {
@@ -516,18 +516,18 @@ grn_parse_table_group_calc_types(grn_ctx *ctx,
 }
 
 static const char *
-grn_column_stage_name(grn_column_stage stage)
+grn_dynamic_column_stage_name(grn_dynamic_column_stage stage)
 {
   switch (stage) {
-  case GRN_COLUMN_STAGE_INITIAL :
+  case GRN_DYNAMIC_COLUMN_STAGE_INITIAL :
     return "initial";
-  case GRN_COLUMN_STAGE_RESULT_SET :
+  case GRN_DYNAMIC_COLUMN_STAGE_RESULT_SET :
     return "result_set";
-  case GRN_COLUMN_STAGE_FILTERED :
+  case GRN_DYNAMIC_COLUMN_STAGE_FILTERED :
     return "filtered";
-  case GRN_COLUMN_STAGE_OUTPUT :
+  case GRN_DYNAMIC_COLUMN_STAGE_OUTPUT :
     return "output";
-  case GRN_COLUMN_STAGE_GROUP :
+  case GRN_DYNAMIC_COLUMN_STAGE_GROUP :
     return "group";
   default :
     return "unknown";
@@ -535,46 +535,46 @@ grn_column_stage_name(grn_column_stage stage)
 }
 
 static bool
-grn_column_data_init(grn_ctx *ctx,
-                     const char *label,
-                     size_t label_len,
-                     grn_column_stage stage,
-                     grn_hash **columns)
+grn_dynamic_columns_add(grn_ctx *ctx,
+                        const char *label,
+                        size_t label_len,
+                        grn_dynamic_column_stage stage,
+                        grn_hash **dynamic_columns)
 {
-  if (!*columns) {
-    *columns = grn_hash_create(ctx,
-                               NULL,
-                               GRN_TABLE_MAX_KEY_SIZE,
-                               sizeof(Column),
-                               GRN_OBJ_TABLE_HASH_KEY |
-                               GRN_OBJ_KEY_VAR_SIZE |
-                               GRN_HASH_TINY);
+  if (!*dynamic_columns) {
+    *dynamic_columns = grn_hash_create(ctx,
+                                       NULL,
+                                       GRN_TABLE_MAX_KEY_SIZE,
+                                       sizeof(DynamicColumn),
+                                       GRN_OBJ_TABLE_HASH_KEY |
+                                       GRN_OBJ_KEY_VAR_SIZE |
+                                       GRN_HASH_TINY);
   }
-  if (!*columns) {
+  if (!*dynamic_columns) {
     return false;
   }
 
-  void *column_raw;
+  void *dynamic_column;
   int added;
   grn_hash_add(ctx,
-               *columns,
+               *dynamic_columns,
                label,
                static_cast<unsigned int>(label_len),
-               &column_raw,
+               &dynamic_column,
                &added);
   if (!added) {
     return GRN_TRUE;
   }
 
-  new(column_raw) Column(ctx, label, label_len, stage);
+  new(dynamic_column) DynamicColumn(ctx, label, label_len, stage);
 
   return true;
 }
 
 static bool
-grn_column_data_extract_dependency_column_names(grn_ctx *ctx,
-                                                Column *column,
-                                                grn_raw_string *keys)
+grn_dynamic_column_extract_dependency_column_names(grn_ctx *ctx,
+                                                   DynamicColumn *dynamic_column,
+                                                   grn_raw_string *keys)
 {
   if (keys->length == 0) {
     return true;
@@ -596,7 +596,7 @@ grn_column_data_extract_dependency_column_names(grn_ctx *ctx,
       start++;
     } else {
       grn_vector_add_element(ctx,
-                             &(column->dependency_column_names),
+                             &(dynamic_column->dependency_names),
                              keys->value + start,
                              current - start,
                              0,
@@ -607,7 +607,7 @@ grn_column_data_extract_dependency_column_names(grn_ctx *ctx,
 
   if (start != current) {
     grn_vector_add_element(ctx,
-                           &(column->dependency_column_names),
+                           &(dynamic_column->dependency_names),
                            keys->value + start,
                            current - start,
                            0,
@@ -618,13 +618,13 @@ grn_column_data_extract_dependency_column_names(grn_ctx *ctx,
 }
 
 static grn_bool
-grn_column_data_fill(grn_ctx *ctx,
-                     Column *column,
-                     grn_obj *type_raw,
-                     grn_obj *flags,
-                     grn_obj *value,
-                     grn_obj *window_sort_keys,
-                     grn_obj *window_group_keys)
+grn_dynamic_column_fill(grn_ctx *ctx,
+                        DynamicColumn *dynamic_column,
+                        grn_obj *type_raw,
+                        grn_obj *flags,
+                        grn_obj *value,
+                        grn_obj *window_sort_keys,
+                        grn_obj *window_group_keys)
 {
   if (type_raw && GRN_TEXT_LEN(type_raw) > 0) {
     grn_obj *type;
@@ -634,9 +634,9 @@ grn_column_data_fill(grn_ctx *ctx,
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
                        "[select][columns][%s][%.*s] unknown type: <%.*s>",
-                       grn_column_stage_name(column->stage),
-                       (int)(column->label.length),
-                       column->label.value,
+                       grn_dynamic_column_stage_name(dynamic_column->stage),
+                       (int)(dynamic_column->label.length),
+                       dynamic_column->label.value,
                        (int)(GRN_TEXT_LEN(type_raw)),
                        GRN_TEXT_VALUE(type_raw));
       return GRN_FALSE;
@@ -648,19 +648,19 @@ grn_column_data_fill(grn_ctx *ctx,
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
                        "[select][columns][%s][%.*s] invalid type: %.*s",
-                       grn_column_stage_name(column->stage),
-                       (int)(column->label.length),
-                       column->label.value,
+                       grn_dynamic_column_stage_name(dynamic_column->stage),
+                       (int)(dynamic_column->label.length),
+                       dynamic_column->label.value,
                        (int)(GRN_TEXT_LEN(&inspected)),
                        GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
       grn_obj_unlink(ctx, type);
       return GRN_FALSE;
     }
-    if (column->type && grn_enable_reference_count) {
-      grn_obj_unlink(ctx, column->type);
+    if (dynamic_column->type) {
+      grn_obj_unref(ctx, dynamic_column->type);
     }
-    column->type = type;
+    dynamic_column->type = type;
   }
 
   if (flags && GRN_TEXT_LEN(flags) > 0) {
@@ -670,10 +670,10 @@ grn_column_data_fill(grn_ctx *ctx,
                  GRN_TABLE_MAX_KEY_SIZE,
                  GRN_TABLE_MAX_KEY_SIZE,
                  "[select][columns][%s][%.*s]",
-                 grn_column_stage_name(column->stage),
-                 (int)(column->label.length),
-                 column->label.value);
-    column->flags =
+                 grn_dynamic_column_stage_name(dynamic_column->stage),
+                 (int)(dynamic_column->label.length),
+                 dynamic_column->label.value);
+    dynamic_column->flags =
       grn_proc_column_parse_flags(ctx,
                                   error_message_tag,
                                   GRN_TEXT_VALUE(flags),
@@ -683,17 +683,17 @@ grn_column_data_fill(grn_ctx *ctx,
     }
   }
 
-  GRN_RAW_STRING_FILL(column->value, value);
-  GRN_RAW_STRING_FILL(column->window.sort_keys, window_sort_keys);
-  GRN_RAW_STRING_FILL(column->window.group_keys, window_group_keys);
+  GRN_RAW_STRING_FILL(dynamic_column->value, value);
+  GRN_RAW_STRING_FILL(dynamic_column->window.sort_keys, window_sort_keys);
+  GRN_RAW_STRING_FILL(dynamic_column->window.group_keys, window_group_keys);
 
-  GRN_BULK_REWIND(&(column->dependency_column_names));
-  if (!grn_column_data_extract_dependency_column_names(
-        ctx, column, &(column->window.sort_keys))) {
+  GRN_BULK_REWIND(&(dynamic_column->dependency_names));
+  if (!grn_dynamic_column_extract_dependency_column_names(
+        ctx, dynamic_column, &(dynamic_column->window.sort_keys))) {
     return false;
   }
-  if (!grn_column_data_extract_dependency_column_names(
-        ctx, column, &(column->window.group_keys))) {
+  if (!grn_dynamic_column_extract_dependency_column_names(
+        ctx, dynamic_column, &(dynamic_column->window.group_keys))) {
     return false;
   }
 
@@ -701,11 +701,11 @@ grn_column_data_fill(grn_ctx *ctx,
 }
 
 static grn_bool
-grn_column_data_collect(grn_ctx *ctx,
-                        grn_user_data *user_data,
-                        grn_hash *columns,
-                        const char *prefix_label,
-                        size_t prefix_label_len)
+grn_dynamic_column_collect(grn_ctx *ctx,
+                           grn_user_data *user_data,
+                           grn_hash *columns,
+                           const char *prefix_label,
+                           size_t prefix_label_len)
 {
   GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
     char key_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -720,8 +720,10 @@ grn_column_data_collect(grn_ctx *ctx,
     window.sort_keys = NULL;
     window.group_keys = NULL;
 
-    Column *column;
-    grn_hash_cursor_get_value(ctx, cursor, reinterpret_cast<void **>(&column));
+    DynamicColumn *dynamic_column;
+    grn_hash_cursor_get_value(ctx,
+                              cursor,
+                              reinterpret_cast<void **>(&dynamic_column));
 
 #define GET_VAR_RAW(parameter_key, name)                                \
     if (!name) {                                                        \
@@ -732,8 +734,8 @@ grn_column_data_collect(grn_ctx *ctx,
                    (int)prefix_label_len,                               \
                    prefix_label,                                        \
                    parameter_key,                                       \
-                   (int)(column->label.length),                         \
-                   column->label.value);                                \
+                   (int)(dynamic_column->label.length),                 \
+                   dynamic_column->label.value);                        \
       name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);     \
     }
 
@@ -753,22 +755,22 @@ grn_column_data_collect(grn_ctx *ctx,
 
 #undef GET_VAR_RAW
 
-    grn_column_data_fill(ctx, column,
-                         type, flags, value,
-                         window.sort_keys,
-                         window.group_keys);
+    grn_dynamic_column_fill(ctx, dynamic_column,
+                            type, flags, value,
+                            window.sort_keys,
+                            window.group_keys);
   } GRN_HASH_EACH_END(ctx, cursor);
 
   return true;
 }
 
 static bool
-grn_columns_collect(grn_ctx *ctx,
-                    grn_user_data *user_data,
-                    Columns *columns,
-                    const char *prefix,
-                    const char *base_prefix,
-                    size_t base_prefix_len)
+grn_dynamic_columns_collect(grn_ctx *ctx,
+                            grn_user_data *user_data,
+                            DynamicColumns *dynamic_columns,
+                            const char *prefix,
+                            const char *base_prefix,
+                            size_t base_prefix_len)
 {
   grn_obj *vars;
   grn_table_cursor *cursor;
@@ -813,23 +815,23 @@ grn_columns_collect(grn_ctx *ctx,
     void *value_raw;
     grn_table_cursor_get_value(ctx, cursor, &value_raw);
     auto value = static_cast<grn_obj *>(value_raw);
-    grn_column_stage stage;
+    grn_dynamic_column_stage stage;
     grn_hash **target_columns;
     if (GRN_TEXT_EQUAL_CSTRING(value, "initial")) {
-      stage = GRN_COLUMN_STAGE_INITIAL;
-      target_columns = &(columns->initial);
+      stage = GRN_DYNAMIC_COLUMN_STAGE_INITIAL;
+      target_columns = &(dynamic_columns->initial);
     } else if (GRN_TEXT_EQUAL_CSTRING(value, "result_set")) {
-      stage = GRN_COLUMN_STAGE_RESULT_SET;
-      target_columns = &(columns->result_set);
+      stage = GRN_DYNAMIC_COLUMN_STAGE_RESULT_SET;
+      target_columns = &(dynamic_columns->result_set);
     } else if (GRN_TEXT_EQUAL_CSTRING(value, "filtered")) {
-      stage = GRN_COLUMN_STAGE_FILTERED;
-      target_columns = &(columns->filtered);
+      stage = GRN_DYNAMIC_COLUMN_STAGE_FILTERED;
+      target_columns = &(dynamic_columns->filtered);
     } else if (GRN_TEXT_EQUAL_CSTRING(value, "output")) {
-      stage = GRN_COLUMN_STAGE_OUTPUT;
-      target_columns = &(columns->output);
+      stage = GRN_DYNAMIC_COLUMN_STAGE_OUTPUT;
+      target_columns = &(dynamic_columns->output);
     } else if (GRN_TEXT_EQUAL_CSTRING(value, "group")) {
-      stage = GRN_COLUMN_STAGE_GROUP;
-      target_columns = &(columns->group);
+      stage = GRN_DYNAMIC_COLUMN_STAGE_GROUP;
+      target_columns = &(dynamic_columns->group);
     } else {
       continue;
     }
@@ -840,11 +842,11 @@ grn_columns_collect(grn_ctx *ctx,
       base_prefix_len -
       prefix_len -
       suffix_len;
-    if (!grn_column_data_init(ctx,
-                              column_name,
-                              column_name_len,
-                              stage,
-                              target_columns)) {
+    if (!grn_dynamic_columns_add(ctx,
+                                 column_name,
+                                 column_name_len,
+                                 stage,
+                                 target_columns)) {
       grn_table_cursor_close(ctx, cursor);
       return false;
     }
@@ -855,69 +857,69 @@ grn_columns_collect(grn_ctx *ctx,
 }
 
 static bool
-grn_columns_fill(grn_ctx *ctx,
-                 grn_user_data *user_data,
-                 Columns *columns,
-                 const char *prefix,
-                 size_t prefix_length)
+grn_dynamic_columns_fill(grn_ctx *ctx,
+                         grn_user_data *user_data,
+                         DynamicColumns *dynamic_columns,
+                         const char *prefix,
+                         size_t prefix_length)
 {
-  if (!grn_columns_collect(ctx, user_data, columns,
-                           "columns[", prefix, prefix_length)) {
+  if (!grn_dynamic_columns_collect(ctx, user_data, dynamic_columns,
+                                   "columns[", prefix, prefix_length)) {
     return false;
   }
 
   /* For backward compatibility */
-  if (!grn_columns_collect(ctx, user_data, columns,
-                           "column[", prefix, prefix_length)) {
+  if (!grn_dynamic_columns_collect(ctx, user_data, dynamic_columns,
+                                   "column[", prefix, prefix_length)) {
     return false;
   }
 
-  if (columns->initial) {
-    if (!grn_column_data_collect(ctx,
-                                 user_data,
-                                 columns->initial,
-                                 prefix,
-                                 prefix_length)) {
+  if (dynamic_columns->initial) {
+    if (!grn_dynamic_column_collect(ctx,
+                                    user_data,
+                                    dynamic_columns->initial,
+                                    prefix,
+                                    prefix_length)) {
       return false;
     }
   }
 
-  if (columns->result_set) {
-    if (!grn_column_data_collect(ctx,
-                                 user_data,
-                                 columns->result_set,
-                                 prefix,
-                                 prefix_length)) {
+  if (dynamic_columns->result_set) {
+    if (!grn_dynamic_column_collect(ctx,
+                                    user_data,
+                                    dynamic_columns->result_set,
+                                    prefix,
+                                    prefix_length)) {
       return false;
     }
   }
 
-  if (columns->filtered) {
-    if (!grn_column_data_collect(ctx,
-                                 user_data,
-                                 columns->filtered,
-                                 prefix,
-                                 prefix_length)) {
+  if (dynamic_columns->filtered) {
+    if (!grn_dynamic_column_collect(ctx,
+                                    user_data,
+                                    dynamic_columns->filtered,
+                                    prefix,
+                                    prefix_length)) {
       return false;
     }
   }
 
-  if (columns->output) {
-    if (!grn_column_data_collect(ctx,
-                                 user_data,
-                                 columns->output,
-                                 prefix,
-                                 prefix_length)) {
+  if (dynamic_columns->output) {
+    if (!grn_dynamic_column_collect(ctx,
+                                    user_data,
+                                    dynamic_columns->output,
+                                    prefix,
+                                    prefix_length)) {
       return false;
     }
   }
 
-  if (columns->group) {
-    if (!grn_column_data_collect(ctx,
-                                 user_data,
-                                 columns->group,
-                                 prefix,
-                                 prefix_length)) {
+  if (dynamic_columns->group) {
+    if (!grn_dynamic_column_collect(ctx,
+                                    user_data,
+                                    dynamic_columns->group,
+                                    prefix,
+                                    prefix_length)) {
       return false;
     }
   }
@@ -1000,12 +1002,12 @@ typedef enum {
 } tsort_status;
 
 static bool
-columns_tsort_visit(grn_ctx *ctx,
-                    grn_hash *columns,
-                    tsort_status *statuses,
-                    grn_obj *ids,
-                    grn_id id,
-                    const char *log_tag_prefix)
+dynamic_columns_tsort_visit(grn_ctx *ctx,
+                            grn_hash *dynamic_columns,
+                            tsort_status *statuses,
+                            grn_obj *ids,
+                            grn_id id,
+                            const char *log_tag_prefix)
 {
   bool cycled = true;
   uint32_t index = id - 1;
@@ -1021,42 +1023,42 @@ columns_tsort_visit(grn_ctx *ctx,
     cycled = false;
     statuses[index] = TSORT_STATUS_VISITING;
     {
-      auto *column =
-        const_cast<Column *>(
-          reinterpret_cast<const Column *>(
-            grn_hash_get_value_(ctx, columns, id, NULL)));
-      size_t i;
-      size_t n_dependencies =
-        grn_vector_size(ctx, &(column->dependency_column_names));
+      auto *dynamic_column =
+        const_cast<DynamicColumn *>(
+          reinterpret_cast<const DynamicColumn *>(
+            grn_hash_get_value_(ctx, dynamic_columns, id, NULL)));
+      uint32_t i;
+      uint32_t n_dependencies =
+        grn_vector_size(ctx, &(dynamic_column->dependency_names));
       for (i = 0; i < n_dependencies; i++) {
         const char *name;
         unsigned int name_length =
           grn_vector_get_element(ctx,
-                                 &(column->dependency_column_names),
+                                 &(dynamic_column->dependency_names),
                                  i,
                                  &name,
                                  NULL,
                                  NULL);
         grn_id dependent_id;
         dependent_id = grn_hash_get(ctx,
-                                    columns,
+                                    dynamic_columns,
                                     name,
                                     name_length,
                                     NULL);
         if (dependent_id != GRN_ID_NIL) {
-          cycled = columns_tsort_visit(ctx,
-                                       columns,
-                                       statuses,
-                                       ids,
-                                       dependent_id,
-                                       log_tag_prefix);
+          cycled = dynamic_columns_tsort_visit(ctx,
+                                               dynamic_columns,
+                                               statuses,
+                                               ids,
+                                               dependent_id,
+                                               log_tag_prefix);
           if (cycled) {
             GRN_PLUGIN_ERROR(ctx,
                              GRN_INVALID_ARGUMENT,
                              "%s[column][%.*s] cycled dependency: <%.*s>",
                              log_tag_prefix,
-                             (int)(column->label.length),
-                             column->label.value,
+                             (int)(dynamic_column->label.length),
+                             dynamic_column->label.value,
                              (int)name_length,
                              name);
           }
@@ -1074,16 +1076,21 @@ columns_tsort_visit(grn_ctx *ctx,
 }
 
 static bool
-columns_tsort_body(grn_ctx *ctx,
-                   grn_hash *columns,
-                   tsort_status *statuses,
-                   grn_obj *ids,
-                   const char *log_tag_prefix)
+dynamic_columns_tsort_body(grn_ctx *ctx,
+                           grn_hash *dynamic_columns,
+                           tsort_status *statuses,
+                           grn_obj *ids,
+                           const char *log_tag_prefix)
 {
   grn_bool succeeded = GRN_TRUE;
 
-  GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
-    if (columns_tsort_visit(ctx, columns, statuses, ids, id, log_tag_prefix)) {
+  GRN_HASH_EACH_BEGIN(ctx, dynamic_columns, cursor, id) {
+    if (dynamic_columns_tsort_visit(ctx,
+                                    dynamic_columns,
+                                    statuses,
+                                    ids,
+                                    id,
+                                    log_tag_prefix)) {
       succeeded = true;
       break;
     }
@@ -1093,9 +1100,9 @@ columns_tsort_body(grn_ctx *ctx,
 }
 
 static void
-columns_tsort_init(grn_ctx *ctx,
-                   tsort_status *statuses,
-                   size_t n_statuses)
+dynamic_columns_tsort_init(grn_ctx *ctx,
+                           tsort_status *statuses,
+                           size_t n_statuses)
 {
   size_t i;
   for (i = 0; i < n_statuses; i++) {
@@ -1104,36 +1111,36 @@ columns_tsort_init(grn_ctx *ctx,
 }
 
 static bool
-columns_tsort(grn_ctx *ctx,
-              grn_hash *columns,
-              grn_obj *ids,
-              const char *log_tag_prefix)
+dynamic_columns_tsort(grn_ctx *ctx,
+                      grn_hash *dynamic_columns,
+                      grn_obj *ids,
+                      const char *log_tag_prefix)
 {
-  size_t n_statuses = grn_hash_size(ctx, columns);
+  size_t n_statuses = grn_hash_size(ctx, dynamic_columns);
   tsort_status *statuses = GRN_PLUGIN_MALLOCN(ctx, tsort_status, n_statuses);
   if (!statuses) {
     return false;
   }
 
-  columns_tsort_init(ctx, statuses, n_statuses);
-  bool succeeded = columns_tsort_body(ctx,
-                                      columns,
-                                      statuses,
-                                      ids,
-                                      log_tag_prefix);
+  dynamic_columns_tsort_init(ctx, statuses, n_statuses);
+  auto succeeded = dynamic_columns_tsort_body(ctx,
+                                              dynamic_columns,
+                                              statuses,
+                                              ids,
+                                              log_tag_prefix);
   GRN_PLUGIN_FREE(ctx, statuses);
   return succeeded;
 }
 
 static bool
-grn_select_apply_column(grn_ctx *ctx,
-                        grn_select_data *data,
-                        grn_obj *table,
-                        grn_column_stage stage,
-                        Column *column_data,
-                        grn_obj *condition,
-                        const char *log_tag_prefix,
-                        const char *query_log_tag_prefix)
+grn_select_apply_dynamic_column(grn_ctx *ctx,
+                                grn_select_data *data,
+                                grn_obj *table,
+                                grn_dynamic_column_stage stage,
+                                DynamicColumn *dynamic_column,
+                                grn_obj *condition,
+                                const char *log_tag_prefix,
+                                const char *query_log_tag_prefix)
 {
   bool succeeded = false;
   grn_obj tag;
@@ -1142,16 +1149,16 @@ grn_select_apply_column(grn_ctx *ctx,
                   &tag,
                   "%s[columns][%s][%.*s]",
                   log_tag_prefix,
-                  grn_column_stage_name(column_data->stage),
-                  (int)(column_data->label.length),
-                  column_data->label.value);
+                  grn_dynamic_column_stage_name(dynamic_column->stage),
+                  (int)(dynamic_column->label.length),
+                  dynamic_column->label.value);
   grn_obj *column = grn_column_create(ctx,
                                       table,
-                                      column_data->label.value,
-                                      column_data->label.length,
+                                      dynamic_column->label.value,
+                                      dynamic_column->label.length,
                                       NULL,
-                                      column_data->flags,
-                                      column_data->type);
+                                      dynamic_column->flags,
+                                      dynamic_column->type);
   if (!column) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -1162,13 +1169,13 @@ grn_select_apply_column(grn_ctx *ctx,
     goto exit;
   }
 
-  if (stage == GRN_COLUMN_STAGE_RESULT_SET) {
+  if (stage == GRN_DYNAMIC_COLUMN_STAGE_RESULT_SET) {
     succeeded = true;
     goto exit;
   }
 
-  if (column_data->window.sort_keys.length > 0 ||
-      column_data->window.group_keys.length > 0) {
+  if (dynamic_column->window.sort_keys.length > 0 ||
+      dynamic_column->window.group_keys.length > 0) {
     grn_window_function_executor executor;
     grn_window_function_executor_init(ctx, &executor);
     if (ctx->rc == GRN_SUCCESS) {
@@ -1183,31 +1190,31 @@ grn_select_apply_column(grn_ctx *ctx,
     if (ctx->rc == GRN_SUCCESS) {
       grn_window_function_executor_set_source(ctx,
                                               &executor,
-                                              column_data->value.value,
-                                              column_data->value.length);
+                                              dynamic_column->value.value,
+                                              dynamic_column->value.length);
     }
     if (ctx->rc == GRN_SUCCESS) {
       grn_window_function_executor_set_output_column_name(
         ctx,
         &executor,
-        column_data->label.value,
-        column_data->label.length);
+        dynamic_column->label.value,
+        dynamic_column->label.length);
     }
     if (ctx->rc == GRN_SUCCESS &&
-        column_data->window.sort_keys.length > 0) {
+        dynamic_column->window.sort_keys.length > 0) {
       grn_window_function_executor_set_sort_keys(
         ctx,
         &executor,
-        column_data->window.sort_keys.value,
-        column_data->window.sort_keys.length);
+        dynamic_column->window.sort_keys.value,
+        dynamic_column->window.sort_keys.length);
     }
     if (ctx->rc == GRN_SUCCESS &&
-        column_data->window.group_keys.length > 0) {
+        dynamic_column->window.group_keys.length > 0) {
       grn_window_function_executor_set_group_keys(
         ctx,
         &executor,
-        column_data->window.group_keys.value,
-        column_data->window.group_keys.length);
+        dynamic_column->window.group_keys.value,
+        dynamic_column->window.group_keys.length);
     }
     if (ctx->rc == GRN_SUCCESS) {
       grn_window_function_executor_execute(ctx, &executor);
@@ -1233,8 +1240,8 @@ grn_select_apply_column(grn_ctx *ctx,
     }
     grn_expr_parse(ctx,
                    expression,
-                   column_data->value.value,
-                   column_data->value.length,
+                   dynamic_column->value.value,
+                   dynamic_column->value.length,
                    NULL,
                    GRN_OP_MATCH,
                    GRN_OP_AND,
@@ -1247,8 +1254,8 @@ grn_select_apply_column(grn_ctx *ctx,
                        "%.*s failed to parse value: <%.*s>: %s",
                        (int)GRN_TEXT_LEN(&tag),
                        GRN_TEXT_VALUE(&tag),
-                       (int)(column_data->value.length),
-                       column_data->value.value,
+                       (int)(dynamic_column->value.length),
+                       dynamic_column->value.value,
                        ctx->errbuf);
       succeeded = false;
       goto exit;
@@ -1282,18 +1289,21 @@ exit :
 }
 
 static void
-grn_select_apply_columns(grn_ctx *ctx,
-                         grn_select_data *data,
-                         grn_obj *table,
-                         grn_column_stage stage,
-                         grn_hash *columns,
-                         grn_obj *condition,
-                         const char *log_tag_prefix,
-                         const char *query_log_tag_prefix)
+grn_select_apply_dynamic_columns(grn_ctx *ctx,
+                                 grn_select_data *data,
+                                 grn_obj *table,
+                                 grn_dynamic_column_stage stage,
+                                 grn_hash *dynamic_columns,
+                                 grn_obj *condition,
+                                 const char *log_tag_prefix,
+                                 const char *query_log_tag_prefix)
 {
   grn_obj tsorted_ids;
   GRN_RECORD_INIT(&tsorted_ids, GRN_OBJ_VECTOR, GRN_ID_NIL);
-  if (!columns_tsort(ctx, columns, &tsorted_ids, log_tag_prefix)) {
+  if (!dynamic_columns_tsort(ctx,
+                             dynamic_columns,
+                             &tsorted_ids,
+                             log_tag_prefix)) {
     GRN_OBJ_FIN(ctx, &tsorted_ids);
     return;
   }
@@ -1302,26 +1312,26 @@ grn_select_apply_columns(grn_ctx *ctx,
   size_t n_columns = GRN_RECORD_VECTOR_SIZE(&tsorted_ids);
   for (i = 0; i < n_columns; i++) {
     grn_id id = GRN_RECORD_VALUE_AT(&tsorted_ids, i);
-    auto column =
-      const_cast<Column *>(
-        reinterpret_cast<const Column *>(
-          grn_hash_get_value_(ctx, columns, id, NULL)));
-    if (!grn_select_apply_column(ctx,
-                                 data,
-                                 table,
-                                 stage,
-                                 column,
-                                 condition,
-                                 log_tag_prefix,
-                                 query_log_tag_prefix)) {
+    auto dynamic_column =
+      const_cast<DynamicColumn *>(
+        reinterpret_cast<const DynamicColumn *>(
+          grn_hash_get_value_(ctx, dynamic_columns, id, NULL)));
+    if (!grn_select_apply_dynamic_column(ctx,
+                                         data,
+                                         table,
+                                         stage,
+                                         dynamic_column,
+                                         condition,
+                                         log_tag_prefix,
+                                         query_log_tag_prefix)) {
       break;
     }
 
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                   ":", "%scolumns[%.*s](%d)",
                   query_log_tag_prefix ? query_log_tag_prefix : "",
-                  (int)(column->label.length),
-                  column->label.value,
+                  (int)(dynamic_column->label.length),
+                  dynamic_column->label.value,
                   grn_table_size(ctx, table));
   }
 
@@ -1394,7 +1404,7 @@ grn_filter_data_execute(grn_ctx *ctx,
                         grn_select_data *data,
                         grn_filter_data *filter_data,
                         grn_obj *table,
-                        Columns *columns,
+                        DynamicColumns *dynamic_columns,
                         const char *log_tag_prefix,
                         const char *query_log_tag_prefix)
 {
@@ -1561,15 +1571,15 @@ grn_filter_data_execute(grn_ctx *ctx,
     return false;
   }
 
-  if (columns->result_set) {
-    grn_select_apply_columns(ctx,
-                             data,
-                             filter_data->filtered,
-                             GRN_COLUMN_STAGE_RESULT_SET,
-                             columns->result_set,
-                             filter_data->condition.expression,
-                             log_tag_prefix,
-                             query_log_tag_prefix);
+  if (dynamic_columns->result_set) {
+    grn_select_apply_dynamic_columns(ctx,
+                                     data,
+                                     filter_data->filtered,
+                                     GRN_DYNAMIC_COLUMN_STAGE_RESULT_SET,
+                                     dynamic_columns->result_set,
+                                     filter_data->condition.expression,
+                                     log_tag_prefix,
+                                     query_log_tag_prefix);
     if (ctx->rc != GRN_SUCCESS) {
       return false;
     }
@@ -1786,7 +1796,7 @@ grn_slice_data_init(grn_ctx *ctx,
   slice->tables.sorted = NULL;
   slice->tables.output = NULL;
   slice->drilldowns = NULL;
-  new(&(slice->columns)) Columns(ctx);
+  new(&(slice->dynamic_columns)) DynamicColumns(ctx);
 }
 
 static void
@@ -1796,7 +1806,7 @@ grn_slice_data_fin(grn_ctx *ctx, grn_slice_data *slice)
   if (slice->drilldowns) {
     grn_drilldowns_fin(ctx, slice->drilldowns);
   }
-  slice->columns.~Columns();
+  slice->dynamic_columns.~DynamicColumns();
   if (slice->tables.sorted) {
     grn_obj_unlink(ctx, slice->tables.sorted);
   }
@@ -2155,7 +2165,7 @@ static grn_bool
 grn_select_apply_initial_columns(grn_ctx *ctx,
                                  grn_select_data *data)
 {
-  if (!data->columns.initial) {
+  if (!data->dynamic_columns.initial) {
     return GRN_TRUE;
   }
 
@@ -2165,14 +2175,14 @@ grn_select_apply_initial_columns(grn_ctx *ctx,
     return GRN_FALSE;
   }
 
-  grn_select_apply_columns(ctx,
-                           data,
-                           data->tables.initial,
-                           GRN_COLUMN_STAGE_INITIAL,
-                           data->columns.initial,
-                           data->filter.condition.expression,
-                           "[select]",
-                           NULL);
+  grn_select_apply_dynamic_columns(ctx,
+                                   data,
+                                   data->tables.initial,
+                                   GRN_DYNAMIC_COLUMN_STAGE_INITIAL,
+                                   data->dynamic_columns.initial,
+                                   data->filter.condition.expression,
+                                   "[select]",
+                                   NULL);
 
   return ctx->rc == GRN_SUCCESS;
 }
@@ -2185,7 +2195,7 @@ grn_select_filter(grn_ctx *ctx,
                                data,
                                &(data->filter),
                                data->tables.initial,
-                               &(data->columns),
+                               &(data->dynamic_columns),
                                "[select]",
                                "")) {
     return GRN_FALSE;
@@ -2209,10 +2219,10 @@ grn_select_filter(grn_ctx *ctx,
 }
 
 static grn_bool
-grn_select_apply_filtered_columns(grn_ctx *ctx,
-                                  grn_select_data *data)
+grn_select_apply_filtered_dynamic_columns(grn_ctx *ctx,
+                                          grn_select_data *data)
 {
-  if (!data->columns.filtered) {
+  if (!data->dynamic_columns.filtered) {
     return GRN_TRUE;
   }
 
@@ -2224,14 +2234,14 @@ grn_select_apply_filtered_columns(grn_ctx *ctx,
     }
   }
 
-  grn_select_apply_columns(ctx,
-                           data,
-                           data->tables.result,
-                           GRN_COLUMN_STAGE_FILTERED,
-                           data->columns.filtered,
-                           data->filter.condition.expression,
-                           "[select]",
-                           NULL);
+  grn_select_apply_dynamic_columns(ctx,
+                                   data,
+                                   data->tables.result,
+                                   GRN_DYNAMIC_COLUMN_STAGE_FILTERED,
+                                   data->dynamic_columns.filtered,
+                                   data->filter.condition.expression,
+                                   "[select]",
+                                   NULL);
 
   return ctx->rc == GRN_SUCCESS;
 }
@@ -2710,10 +2720,10 @@ exit :
 }
 
 static grn_bool
-grn_select_apply_output_columns(grn_ctx *ctx,
-                                grn_select_data *data)
+grn_select_apply_output_dynamic_columns(grn_ctx *ctx,
+                                        grn_select_data *data)
 {
-  if (!data->columns.output) {
+  if (!data->dynamic_columns.output) {
     return GRN_TRUE;
   }
 
@@ -2727,14 +2737,14 @@ grn_select_apply_output_columns(grn_ctx *ctx,
     }
   }
 
-  grn_select_apply_columns(ctx,
-                           data,
-                           data->tables.sorted,
-                           GRN_COLUMN_STAGE_OUTPUT,
-                           data->columns.output,
-                           data->filter.condition.expression,
-                           "[select]",
-                           NULL);
+  grn_select_apply_dynamic_columns(ctx,
+                                   data,
+                                   data->tables.sorted,
+                                   GRN_DYNAMIC_COLUMN_STAGE_OUTPUT,
+                                   data->dynamic_columns.output,
+                                   data->filter.condition.expression,
+                                   "[select]",
+                                   NULL);
 
   return ctx->rc == GRN_SUCCESS;
 }
@@ -2939,8 +2949,8 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     result->flags |= drilldown->calc_types;
   }
 
-  if (drilldown->columns.group) {
-    result->n_aggregators = grn_hash_size(ctx, drilldown->columns.group);
+  if (drilldown->dynamic_columns.group) {
+    result->n_aggregators = grn_hash_size(ctx, drilldown->dynamic_columns.group);
     if (result->n_aggregators > 0) {
       result->aggregators =
         GRN_MALLOCN(grn_table_group_aggregator *, result->n_aggregators);
@@ -2955,10 +2965,10 @@ grn_select_drilldown_execute(grn_ctx *ctx,
         goto exit;
       }
       uint32_t i = 0;
-      GRN_HASH_EACH_BEGIN(ctx, drilldown->columns.group, cursor, id) {
+      GRN_HASH_EACH_BEGIN(ctx, drilldown->dynamic_columns.group, cursor, id) {
         void *value;
         grn_hash_cursor_get_value(ctx, cursor, &value);
-        auto column_data = static_cast<Column *>(value);
+        auto dynamic_column = static_cast<DynamicColumn *>(value);
         result->aggregators[i] = grn_table_group_aggregator_open(ctx);
         if (!result->aggregators[i]) {
           GRN_PLUGIN_ERROR(ctx,
@@ -2970,20 +2980,23 @@ grn_select_drilldown_execute(grn_ctx *ctx,
           success = false;
           break;
         }
-        grn_table_group_aggregator_set_output_column_name(ctx,
-                                                          result->aggregators[i],
-                                                          column_data->label.value,
-                                                          column_data->label.length);
-        grn_table_group_aggregator_set_output_column_type(ctx,
-                                                          result->aggregators[i],
-                                                          column_data->type);
-        grn_table_group_aggregator_set_output_column_flags(ctx,
-                                                           result->aggregators[i],
-                                                           column_data->flags);
+        grn_table_group_aggregator_set_output_column_name(
+          ctx,
+          result->aggregators[i],
+          dynamic_column->label.value,
+          dynamic_column->label.length);
+        grn_table_group_aggregator_set_output_column_type(
+          ctx,
+          result->aggregators[i],
+          dynamic_column->type);
+        grn_table_group_aggregator_set_output_column_flags(
+          ctx,
+          result->aggregators[i],
+          dynamic_column->flags);
         grn_table_group_aggregator_set_expression(ctx,
                                                   result->aggregators[i],
-                                                  column_data->value.value,
-                                                  column_data->value.length);
+                                                  dynamic_column->value.value,
+                                                  dynamic_column->value.length);
         i++;
       } GRN_HASH_EACH_END(ctx, cursor);
       if (!success) {
@@ -3057,15 +3070,15 @@ grn_select_drilldown_execute(grn_ctx *ctx,
     GRN_OBJ_FIN(ctx, &keys_inspected);
   }
 
-  if (drilldown->columns.initial) {
-    grn_select_apply_columns(ctx,
-                             data,
-                             result->table,
-                             GRN_COLUMN_STAGE_INITIAL,
-                             drilldown->columns.initial,
-                             condition,
-                             GRN_TEXT_VALUE(&log_tag_prefix),
-                             GRN_TEXT_VALUE(&full_query_log_tag_prefix));
+  if (drilldown->dynamic_columns.initial) {
+    grn_select_apply_dynamic_columns(ctx,
+                                     data,
+                                     result->table,
+                                     GRN_DYNAMIC_COLUMN_STAGE_INITIAL,
+                                     drilldown->dynamic_columns.initial,
+                                     condition,
+                                     GRN_TEXT_VALUE(&log_tag_prefix),
+                                     GRN_TEXT_VALUE(&full_query_log_tag_prefix));
   }
 
   if (drilldown->filter.length > 0) {
@@ -3133,15 +3146,15 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                   grn_table_size(ctx, drilldown->filtered_result));
   }
 
-  if (drilldown->columns.filtered) {
-    grn_select_apply_columns(ctx,
-                             data,
-                             drilldown->filtered_result,
-                             GRN_COLUMN_STAGE_FILTERED,
-                             drilldown->columns.filtered,
-                             condition,
-                             GRN_TEXT_VALUE(&log_tag_prefix),
-                             GRN_TEXT_VALUE(&full_query_log_tag_prefix));
+  if (drilldown->dynamic_columns.filtered) {
+    grn_select_apply_dynamic_columns(ctx,
+                                     data,
+                                     drilldown->filtered_result,
+                                     GRN_DYNAMIC_COLUMN_STAGE_FILTERED,
+                                     drilldown->dynamic_columns.filtered,
+                                     condition,
+                                     GRN_TEXT_VALUE(&log_tag_prefix),
+                                     GRN_TEXT_VALUE(&full_query_log_tag_prefix));
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -3585,15 +3598,15 @@ grn_select_output_drilldowns(grn_ctx *ctx,
                         (int)(drilldown->sort_keys.length),
                         drilldown->sort_keys.value);
 
-          if (drilldown->columns.output) {
-            grn_select_apply_columns(ctx,
-                                     data,
-                                     sorted,
-                                     GRN_COLUMN_STAGE_OUTPUT,
-                                     drilldown->columns.output,
-                                     condition,
-                                     drilldown_log_tag_prefix,
-                                     drilldown_query_log_tag_prefix);
+          if (drilldown->dynamic_columns.output) {
+            grn_select_apply_dynamic_columns(ctx,
+                                             data,
+                                             sorted,
+                                             GRN_DYNAMIC_COLUMN_STAGE_OUTPUT,
+                                             drilldown->dynamic_columns.output,
+                                             condition,
+                                             drilldown_log_tag_prefix,
+                                             drilldown_query_log_tag_prefix);
             succeeded = (ctx->rc == GRN_SUCCESS);
           }
 
@@ -3618,7 +3631,7 @@ grn_select_output_drilldowns(grn_ctx *ctx,
       }
     } else {
       grn_obj *sorted = NULL;
-      if (drilldown->columns.output) {
+      if (drilldown->dynamic_columns.output) {
         sorted =
           grn_select_create_no_sort_keys_sorted_table(ctx,
                                                       data,
@@ -3626,14 +3639,14 @@ grn_select_output_drilldowns(grn_ctx *ctx,
         if (!sorted) {
           succeeded = false;
         } else {
-          grn_select_apply_columns(ctx,
-                                   data,
-                                   sorted,
-                                   GRN_COLUMN_STAGE_OUTPUT,
-                                   drilldown->columns.output,
-                                   condition,
-                                   drilldown_log_tag_prefix,
-                                   drilldown_query_log_tag_prefix);
+          grn_select_apply_dynamic_columns(ctx,
+                                           data,
+                                           sorted,
+                                           GRN_DYNAMIC_COLUMN_STAGE_OUTPUT,
+                                           drilldown->dynamic_columns.output,
+                                           condition,
+                                           drilldown_log_tag_prefix,
+                                           drilldown_query_log_tag_prefix);
           succeeded = (ctx->rc == GRN_SUCCESS);
         }
         target_table = sorted;
@@ -3702,20 +3715,20 @@ grn_select_slice_execute(grn_ctx *ctx,
                slice->label.value);
 
   slice->tables.target = table;
-  if (slice->columns.initial) {
+  if (slice->dynamic_columns.initial) {
     slice->tables.initial =
       grn_select_create_all_selected_result_table(ctx, slice->tables.target);
     if (!slice->tables.initial) {
       return false;
     }
-    grn_select_apply_columns(ctx,
-                             data,
-                             slice->tables.initial,
-                             GRN_COLUMN_STAGE_INITIAL,
-                             slice->columns.initial,
-                             filter->condition.expression,
-                             log_tag,
-                             query_log_tag_prefix);
+    grn_select_apply_dynamic_columns(ctx,
+                                     data,
+                                     slice->tables.initial,
+                                     GRN_DYNAMIC_COLUMN_STAGE_INITIAL,
+                                     slice->dynamic_columns.initial,
+                                     filter->condition.expression,
+                                     log_tag,
+                                     query_log_tag_prefix);
     if (ctx->rc != GRN_SUCCESS) {
       return false;
     }
@@ -3726,7 +3739,7 @@ grn_select_slice_execute(grn_ctx *ctx,
                                data,
                                filter,
                                slice->tables.target,
-                               &(slice->columns),
+                               &(slice->dynamic_columns),
                                log_tag,
                                query_log_tag_prefix)) {
     return false;
@@ -3742,15 +3755,15 @@ grn_select_slice_execute(grn_ctx *ctx,
                 query_log_tag_prefix,
                 grn_table_size(ctx, slice->tables.result));
 
-  if (slice->columns.filtered) {
-    grn_select_apply_columns(ctx,
-                             data,
-                             slice->tables.result,
-                             GRN_COLUMN_STAGE_FILTERED,
-                             slice->columns.filtered,
-                             slice->filter.condition.expression,
-                             log_tag,
-                             query_log_tag_prefix);
+  if (slice->dynamic_columns.filtered) {
+    grn_select_apply_dynamic_columns(ctx,
+                                     data,
+                                     slice->tables.result,
+                                     GRN_DYNAMIC_COLUMN_STAGE_FILTERED,
+                                     slice->dynamic_columns.filtered,
+                                     slice->filter.condition.expression,
+                                     log_tag,
+                                     query_log_tag_prefix);
     if (ctx->rc != GRN_SUCCESS) {
       return false;
     }
@@ -3926,15 +3939,15 @@ grn_select_output_slices(grn_ctx *ctx,
       }
     }
 
-    if (slice->columns.output) {
-      grn_select_apply_columns(ctx,
-                               data,
-                               slice->tables.output,
-                               GRN_COLUMN_STAGE_OUTPUT,
-                               slice->columns.output,
-                               slice->filter.condition.expression,
-                               log_tag_prefix,
-                               query_log_tag_prefix);
+    if (slice->dynamic_columns.output) {
+      grn_select_apply_dynamic_columns(ctx,
+                                       data,
+                                       slice->tables.output,
+                                       GRN_DYNAMIC_COLUMN_STAGE_OUTPUT,
+                                       slice->dynamic_columns.output,
+                                       slice->filter.condition.expression,
+                                       log_tag_prefix,
+                                       query_log_tag_prefix);
       if (ctx->rc != GRN_SUCCESS) {
         succeeded = false;
         break;
@@ -4277,32 +4290,37 @@ grn_select_prepare_cache_key(grn_ctx *ctx,
       }
     } GRN_HASH_EACH_END(ctx, cursor);
   }
-#define PUT_CACHE_KEY_COLUMNS(columns)                                  \
+#define PUT_CACHE_KEY_COLUMNS(dynamic_columns)                          \
   do {                                                                  \
-    GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {                     \
-      Column *column;                                                   \
-      grn_hash_cursor_get_value(ctx,                                    \
-                                cursor,                                 \
-                                reinterpret_cast<void **>(&column));    \
-      PUT_CACHE_KEY(column->label);                                     \
-      GRN_TEXT_PUT(ctx, *cache_key,                                     \
-                   &(column->stage), sizeof(grn_column_stage));         \
-      GRN_RECORD_PUT(ctx, *cache_key, DB_OBJ(column->type)->id);        \
-      GRN_TEXT_PUT(ctx, *cache_key,                                     \
-                   &(column->flags), sizeof(grn_column_flags));         \
-      PUT_CACHE_KEY(column->value);                                     \
-      PUT_CACHE_KEY(column->window.sort_keys);                          \
-      PUT_CACHE_KEY(column->window.group_keys);                         \
+    GRN_HASH_EACH_BEGIN(ctx, dynamic_columns, cursor, id) {             \
+      void *value;                                                      \
+      grn_hash_cursor_get_value(ctx, cursor, &value);                   \
+      auto dynamic_column = static_cast<DynamicColumn *>(value);        \
+      PUT_CACHE_KEY(dynamic_column->label);                             \
+      GRN_TEXT_PUT(ctx,                                                 \
+                   *cache_key,                                          \
+                   &(dynamic_column->stage),                            \
+                   sizeof(grn_dynamic_column_stage));                   \
+      GRN_RECORD_PUT(ctx,                                               \
+                     *cache_key,                                        \
+                     DB_OBJ(dynamic_column->type)->id);                 \
+      GRN_TEXT_PUT(ctx,                                                 \
+                   *cache_key,                                          \
+                   &(dynamic_column->flags),                            \
+                   sizeof(grn_column_flags));                           \
+      PUT_CACHE_KEY(dynamic_column->value);                             \
+      PUT_CACHE_KEY(dynamic_column->window.sort_keys);                  \
+      PUT_CACHE_KEY(dynamic_column->window.group_keys);                 \
     } GRN_HASH_EACH_END(ctx, cursor);                                   \
   } while (false)
-  if (data->columns.initial) {
-    PUT_CACHE_KEY_COLUMNS(data->columns.initial);
+  if (data->dynamic_columns.initial) {
+    PUT_CACHE_KEY_COLUMNS(data->dynamic_columns.initial);
   }
-  if (data->columns.filtered) {
-    PUT_CACHE_KEY_COLUMNS(data->columns.filtered);
+  if (data->dynamic_columns.filtered) {
+    PUT_CACHE_KEY_COLUMNS(data->dynamic_columns.filtered);
   }
-  if (data->columns.output) {
-    PUT_CACHE_KEY_COLUMNS(data->columns.output);
+  if (data->dynamic_columns.output) {
+    PUT_CACHE_KEY_COLUMNS(data->dynamic_columns.output);
   }
 #undef PUT_CACHE_KEY_COLUMNS
   if (data->drilldown.keys.length > 0) {
@@ -4440,7 +4458,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                   ":", "select(%d)", nhits);
 
-    if (!grn_select_apply_filtered_columns(ctx, data)) {
+    if (!grn_select_apply_filtered_dynamic_columns(ctx, data)) {
       goto exit;
     }
 
@@ -4479,7 +4497,7 @@ grn_select(grn_ctx *ctx, grn_select_data *data)
         goto exit;
       }
 
-      if (!grn_select_apply_output_columns(ctx, data)) {
+      if (!grn_select_apply_output_dynamic_columns(ctx, data)) {
         goto exit;
       }
 
@@ -4585,11 +4603,11 @@ grn_select_fill_drilldown_columns(grn_ctx *ctx,
                parameter_key,
                (int)(drilldown->label.length),
                drilldown->label.value);
-  return grn_columns_fill(ctx,
-                          user_data,
-                          &(drilldown->columns),
-                          prefix,
-                          strlen(prefix));
+  return grn_dynamic_columns_fill(ctx,
+                                  user_data,
+                                  &(drilldown->dynamic_columns),
+                                  prefix,
+                                  strlen(prefix));
 }
 
 static bool
@@ -4944,11 +4962,11 @@ grn_select_data_fill_slices(grn_ctx *ctx,
       break;
     }
 
-    success = grn_columns_fill(ctx,
-                               user_data,
-                               &(slice->columns),
-                               slice_prefix,
-                               strlen(slice_prefix));
+    success = grn_dynamic_columns_fill(ctx,
+                                       user_data,
+                                       &(slice->dynamic_columns),
+                                       slice_prefix,
+                                       strlen(slice_prefix));
     if (!success) {
       break;
     }
@@ -5053,7 +5071,11 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     goto exit;
   }
 
-  if (!grn_columns_fill(ctx, user_data, &(data.columns), NULL, 0)) {
+  if (!grn_dynamic_columns_fill(ctx,
+                                user_data,
+                                &(data.dynamic_columns),
+                                NULL,
+                                0)) {
     goto exit;
   }
 
