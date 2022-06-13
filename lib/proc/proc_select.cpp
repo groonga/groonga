@@ -125,45 +125,51 @@ typedef struct {
 
 typedef struct _grn_select_output_formatter grn_select_output_formatter;
 
-typedef struct {
-  /* inputs */
-  grn_raw_string table;
-  grn_filter_data filter;
-  grn_raw_string scorer;
-  grn_raw_string sort_keys;
-  grn_raw_string output_columns;
-  grn_raw_string default_output_columns;
-  int offset;
-  int limit;
-  grn_hash *slices;
-  grn_drilldown_data drilldown;
-  grn_hash *drilldowns;
-  grn_raw_string cache;
-  grn_raw_string match_escalation_threshold;
-  grn_raw_string adjuster;
-  grn_raw_string match_escalation;
-  grn_columns columns;
-
-  /* for processing */
-  struct {
-    grn_obj *target;
-    grn_obj *initial;
-    grn_obj *result;
-    grn_obj *sorted;
-    grn_obj *output;
-  } tables;
-  uint16_t cacheable;
-  uint16_t taintable;
-  struct {
-    int n_elements;
-    grn_select_output_formatter *formatter;
-  } output;
-  struct {
+namespace {
+  class SelectExecutor {
+  public:
+    /* inputs */
     grn_raw_string table;
-    grn_raw_string columns;
-    grn_raw_string values;
-  } load;
-} grn_select_data;
+    grn_filter_data filter;
+    grn_raw_string scorer;
+    grn_raw_string sort_keys;
+    grn_raw_string output_columns;
+    grn_raw_string default_output_columns;
+    int offset;
+    int limit;
+    grn_hash *slices;
+    grn_drilldown_data drilldown;
+    grn_hash *drilldowns;
+    grn_raw_string cache;
+    grn_raw_string match_escalation_threshold;
+    grn_raw_string adjuster;
+    grn_raw_string match_escalation;
+    grn_columns columns;
+
+    /* for processing */
+    struct {
+      grn_obj *target;
+      grn_obj *initial;
+      grn_obj *result;
+      grn_obj *sorted;
+      grn_obj *output;
+    } tables;
+    uint16_t cacheable;
+    uint16_t taintable;
+    struct {
+      int n_elements;
+      grn_select_output_formatter *formatter;
+    } output;
+    struct {
+      grn_raw_string table;
+      grn_raw_string columns;
+      grn_raw_string values;
+    } load;
+  };
+}
+
+using grn_select_data = SelectExecutor;
+
 
 typedef void grn_select_output_slices_label_func(grn_ctx *ctx,
                                                  grn_select_data *data);
