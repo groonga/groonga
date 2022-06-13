@@ -44,24 +44,43 @@ typedef enum {
   GRN_COLUMN_STAGE_GROUP,
 } grn_column_stage;
 
-typedef struct {
-  grn_raw_string label;
-  grn_column_stage stage;
-  grn_obj *type;
-  grn_column_flags flags;
-  grn_raw_string value;
-  struct {
-    grn_raw_string sort_keys;
-    grn_raw_string group_keys;
-  } window;
-  grn_obj dependency_column_names;
-} grn_column_data;
-
-static void
-grn_column_data_fin(grn_ctx *ctx,
-                    grn_column_data *column);
-
 namespace {
+  struct Column {
+    Column(grn_ctx *ctx,
+           const char *label,
+           size_t label_len,
+           grn_column_stage stage)
+      : ctx_(ctx),
+        label({label, label_len}),
+        stage(stage),
+        type(grn_ctx_at(ctx, GRN_DB_TEXT)),
+        flags(GRN_OBJ_COLUMN_SCALAR),
+        value({nullptr, 0}),
+        window({{nullptr, 0}, {nullptr, 0}}),
+        dependency_column_names() {
+      GRN_TEXT_INIT(&dependency_column_names, GRN_OBJ_VECTOR);
+    }
+
+    ~Column() {
+      grn_obj_unref(ctx_, type);
+      auto ctx = ctx_;
+      GRN_OBJ_FIN(ctx, &dependency_column_names);
+    }
+
+    grn_ctx *ctx_;
+
+    grn_raw_string label;
+    grn_column_stage stage;
+    grn_obj *type;
+    grn_column_flags flags;
+    grn_raw_string value;
+    struct {
+      grn_raw_string sort_keys;
+      grn_raw_string group_keys;
+    } window;
+    grn_obj dependency_column_names;
+  };
+
   struct Columns {
   public:
     Columns(grn_ctx *ctx)
@@ -87,9 +106,11 @@ namespace {
         return;
       }
       GRN_HASH_EACH_BEGIN(ctx_, stage, cursor, id) {
-        grn_column_data *column_data;
-        grn_hash_cursor_get_value(ctx_, cursor, (void **)&column_data);
-        grn_column_data_fin(ctx_, column_data);
+        Column *column;
+        grn_hash_cursor_get_value(ctx_,
+                                  cursor,
+                                  reinterpret_cast<void **>(&column));
+        column->~Column();
       } GRN_HASH_EACH_END(ctx_, cursor);
       grn_hash_close(ctx_, stage);
     }
@@ -524,7 +545,7 @@ grn_column_data_init(grn_ctx *ctx,
     *columns = grn_hash_create(ctx,
                                NULL,
                                GRN_TABLE_MAX_KEY_SIZE,
-                               sizeof(grn_column_data),
+                               sizeof(Column),
                                GRN_OBJ_TABLE_HASH_KEY |
                                GRN_OBJ_KEY_VAR_SIZE |
                                GRN_HASH_TINY);
@@ -545,34 +566,14 @@ grn_column_data_init(grn_ctx *ctx,
     return GRN_TRUE;
   }
 
-  auto column = static_cast<grn_column_data *>(column_raw);
-  column->label.value = label;
-  column->label.length = label_len;
-  column->stage = stage;
-  column->type = grn_ctx_at(ctx, GRN_DB_TEXT);
-  column->flags = GRN_OBJ_COLUMN_SCALAR;
-  GRN_RAW_STRING_INIT(column->value);
-  GRN_RAW_STRING_INIT(column->window.sort_keys);
-  GRN_RAW_STRING_INIT(column->window.group_keys);
-  GRN_TEXT_INIT(&(column->dependency_column_names), GRN_OBJ_VECTOR);
+  new(column_raw) Column(ctx, label, label_len, stage);
 
   return true;
 }
 
-static void
-grn_column_data_fin(grn_ctx *ctx,
-                    grn_column_data *column)
-{
-  if (grn_enable_reference_count) {
-    grn_obj_unlink(ctx, column->type);
-  }
-
-  GRN_OBJ_FIN(ctx, &(column->dependency_column_names));
-}
-
 static bool
 grn_column_data_extract_dependency_column_names(grn_ctx *ctx,
-                                                grn_column_data *column,
+                                                Column *column,
                                                 grn_raw_string *keys)
 {
   if (keys->length == 0) {
@@ -618,7 +619,7 @@ grn_column_data_extract_dependency_column_names(grn_ctx *ctx,
 
 static grn_bool
 grn_column_data_fill(grn_ctx *ctx,
-                     grn_column_data *column,
+                     Column *column,
                      grn_obj *type_raw,
                      grn_obj *flags,
                      grn_obj *value,
@@ -707,7 +708,6 @@ grn_column_data_collect(grn_ctx *ctx,
                         size_t prefix_label_len)
 {
   GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {
-    grn_column_data *column;
     char key_name[GRN_TABLE_MAX_KEY_SIZE];
     grn_obj *type = NULL;
     grn_obj *flags = NULL;
@@ -720,7 +720,8 @@ grn_column_data_collect(grn_ctx *ctx,
     window.sort_keys = NULL;
     window.group_keys = NULL;
 
-    grn_hash_cursor_get_value(ctx, cursor, (void **)&column);
+    Column *column;
+    grn_hash_cursor_get_value(ctx, cursor, reinterpret_cast<void **>(&column));
 
 #define GET_VAR_RAW(parameter_key, name)                                \
     if (!name) {                                                        \
@@ -1020,8 +1021,10 @@ columns_tsort_visit(grn_ctx *ctx,
     cycled = false;
     statuses[index] = TSORT_STATUS_VISITING;
     {
-      grn_column_data *column =
-        (grn_column_data *)grn_hash_get_value_(ctx, columns, id, NULL);
+      auto *column =
+        const_cast<Column *>(
+          reinterpret_cast<const Column *>(
+            grn_hash_get_value_(ctx, columns, id, NULL)));
       size_t i;
       size_t n_dependencies =
         grn_vector_size(ctx, &(column->dependency_column_names));
@@ -1127,7 +1130,7 @@ grn_select_apply_column(grn_ctx *ctx,
                         grn_select_data *data,
                         grn_obj *table,
                         grn_column_stage stage,
-                        grn_column_data *column_data,
+                        Column *column_data,
                         grn_obj *condition,
                         const char *log_tag_prefix,
                         const char *query_log_tag_prefix)
@@ -1299,13 +1302,15 @@ grn_select_apply_columns(grn_ctx *ctx,
   size_t n_columns = GRN_RECORD_VECTOR_SIZE(&tsorted_ids);
   for (i = 0; i < n_columns; i++) {
     grn_id id = GRN_RECORD_VALUE_AT(&tsorted_ids, i);
-    grn_column_data *column_data =
-      (grn_column_data *)grn_hash_get_value_(ctx, columns, id, NULL);
+    auto column =
+      const_cast<Column *>(
+        reinterpret_cast<const Column *>(
+          grn_hash_get_value_(ctx, columns, id, NULL)));
     if (!grn_select_apply_column(ctx,
                                  data,
                                  table,
                                  stage,
-                                 column_data,
+                                 column,
                                  condition,
                                  log_tag_prefix,
                                  query_log_tag_prefix)) {
@@ -1315,8 +1320,8 @@ grn_select_apply_columns(grn_ctx *ctx,
     GRN_QUERY_LOG(ctx, GRN_QUERY_LOG_SIZE,
                   ":", "%scolumns[%.*s](%d)",
                   query_log_tag_prefix ? query_log_tag_prefix : "",
-                  (int)(column_data->label.length),
-                  column_data->label.value,
+                  (int)(column->label.length),
+                  column->label.value,
                   grn_table_size(ctx, table));
   }
 
@@ -2953,7 +2958,7 @@ grn_select_drilldown_execute(grn_ctx *ctx,
       GRN_HASH_EACH_BEGIN(ctx, drilldown->columns.group, cursor, id) {
         void *value;
         grn_hash_cursor_get_value(ctx, cursor, &value);
-        auto column_data = static_cast<grn_column_data *>(value);
+        auto column_data = static_cast<Column *>(value);
         result->aggregators[i] = grn_table_group_aggregator_open(ctx);
         if (!result->aggregators[i]) {
           GRN_PLUGIN_ERROR(ctx,
@@ -4275,8 +4280,10 @@ grn_select_prepare_cache_key(grn_ctx *ctx,
 #define PUT_CACHE_KEY_COLUMNS(columns)                                  \
   do {                                                                  \
     GRN_HASH_EACH_BEGIN(ctx, columns, cursor, id) {                     \
-      grn_column_data *column;                                          \
-      grn_hash_cursor_get_value(ctx, cursor, (void **)&column);         \
+      Column *column;                                                   \
+      grn_hash_cursor_get_value(ctx,                                    \
+                                cursor,                                 \
+                                reinterpret_cast<void **>(&column));    \
       PUT_CACHE_KEY(column->label);                                     \
       GRN_TEXT_PUT(ctx, *cache_key,                                     \
                    &(column->stage), sizeof(grn_column_stage));         \
