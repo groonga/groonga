@@ -105,8 +105,6 @@ namespace {
   };
 }
 
-using grn_columns = Columns;
-
 typedef struct {
   grn_raw_string match_columns;
   grn_raw_string query;
@@ -142,7 +140,7 @@ typedef struct {
     grn_obj *output;
   } tables;
   grn_hash *drilldowns;
-  grn_columns columns;
+  Columns columns;
 } grn_slice_data;
 
 namespace {
@@ -208,7 +206,7 @@ namespace {
     grn_raw_string adjuster;
     grn_raw_string table_name;
     int32_t max_n_target_records;
-    grn_columns columns;
+    Columns columns;
     grn_table_group_result result;
     grn_obj *filtered_result;
   };
@@ -276,7 +274,7 @@ namespace {
     grn_raw_string match_escalation_threshold;
     grn_raw_string adjuster;
     grn_raw_string match_escalation;
-    grn_columns columns;
+    Columns columns;
 
     /* for processing */
     struct {
@@ -766,7 +764,7 @@ grn_column_data_collect(grn_ctx *ctx,
 static bool
 grn_columns_collect(grn_ctx *ctx,
                     grn_user_data *user_data,
-                    grn_columns *columns,
+                    Columns *columns,
                     const char *prefix,
                     const char *base_prefix,
                     size_t base_prefix_len)
@@ -858,7 +856,7 @@ grn_columns_collect(grn_ctx *ctx,
 static bool
 grn_columns_fill(grn_ctx *ctx,
                  grn_user_data *user_data,
-                 grn_columns *columns,
+                 Columns *columns,
                  const char *prefix,
                  size_t prefix_length)
 {
@@ -1391,7 +1389,7 @@ grn_filter_data_execute(grn_ctx *ctx,
                         grn_select_data *data,
                         grn_filter_data *filter_data,
                         grn_obj *table,
-                        grn_columns *columns,
+                        Columns *columns,
                         const char *log_tag_prefix,
                         const char *query_log_tag_prefix)
 {
