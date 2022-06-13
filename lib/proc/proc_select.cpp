@@ -36,6 +36,9 @@
 #define DEFAULT_DRILLDOWN_LIMIT           10
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key, _nsubrecs"
 
+static void
+grn_drilldowns_fin(grn_ctx *ctx, grn_hash *drilldowns);
+
 namespace {
   enum class DynamicColumnStage {
     INITIAL,
@@ -182,27 +185,52 @@ namespace {
     grn_obj *filtered;
     grn_obj *post_filtered;
   };
-}
 
-typedef struct {
-  grn_raw_string label;
-  Filter filter;
-  grn_raw_string sort_keys;
-  grn_raw_string output_columns;
-  int offset;
-  int limit;
-  struct {
-    grn_obj *target;
-    grn_obj *initial;
-    grn_obj *result;
-    grn_obj *sorted;
-    grn_obj *output;
-  } tables;
-  grn_hash *drilldowns;
-  DynamicColumns dynamic_columns;
-} grn_slice_data;
+  struct Slice {
+    Slice(grn_ctx *ctx, const char *label, size_t label_len)
+      : ctx_(ctx),
+        label({label, label_len}),
+        filter(ctx),
+        sort_keys({nullptr, 0}),
+        output_columns({nullptr, 0}),
+        offset(0),
+        limit(GRN_SELECT_DEFAULT_LIMIT),
+        tables({nullptr, nullptr, nullptr, nullptr, nullptr}),
+        drilldowns(nullptr),
+        dynamic_columns(ctx) {
+    }
 
-namespace {
+    ~Slice() {
+      if (drilldowns) {
+        grn_drilldowns_fin(ctx_, drilldowns);
+      }
+      if (tables.sorted) {
+        grn_obj_unlink(ctx_, tables.sorted);
+      }
+      if (tables.initial) {
+        grn_obj_unlink(ctx_, tables.initial);
+      }
+    }
+
+    grn_ctx *ctx_;
+
+    grn_raw_string label;
+    Filter filter;
+    grn_raw_string sort_keys;
+    grn_raw_string output_columns;
+    int offset;
+    int limit;
+    struct {
+      grn_obj *target;
+      grn_obj *initial;
+      grn_obj *result;
+      grn_obj *sorted;
+      grn_obj *output;
+    } tables;
+    grn_hash *drilldowns;
+    DynamicColumns dynamic_columns;
+  };
+
   struct Drilldown {
     Drilldown(grn_ctx *ctx, const char *label, size_t label_len)
       : ctx_(ctx),
@@ -269,6 +297,18 @@ namespace {
     grn_table_group_result result;
     grn_obj *filtered_result;
   };
+}
+
+static void
+grn_drilldowns_fin(grn_ctx *ctx, grn_hash *drilldowns)
+{
+  GRN_HASH_EACH_BEGIN(ctx, drilldowns, cursor, id) {
+    void *value;
+    grn_hash_cursor_get_value(ctx, cursor, &value);
+    auto drilldown = static_cast<Drilldown *>(value);
+    drilldown->~Drilldown();
+  } GRN_HASH_EACH_END(ctx, cursor);
+  grn_hash_close(ctx, drilldowns);
 }
 
 typedef struct _grn_select_output_formatter grn_select_output_formatter;
@@ -407,7 +447,7 @@ typedef void grn_select_output_slices_close_func(grn_ctx *ctx,
                                                  grn_select_data *data);
 typedef void grn_select_output_slice_label_func(grn_ctx *ctx,
                                                 grn_select_data *data,
-                                                grn_slice_data *slice);
+                                                Slice *slice);
 typedef void grn_select_output_drilldowns_label_func(grn_ctx *ctx,
                                                      grn_select_data *data);
 typedef void grn_select_output_drilldowns_open_func(grn_ctx *ctx,
@@ -1738,19 +1778,6 @@ grn_filter_execute_post_filter(grn_ctx *ctx,
 }
 
 static void
-grn_drilldowns_fin(grn_ctx *ctx, grn_hash *drilldowns)
-{
-  GRN_HASH_EACH_BEGIN(ctx, drilldowns, cursor, id) {
-    Drilldown *drilldown;
-    grn_hash_cursor_get_value(ctx,
-                              cursor,
-                              reinterpret_cast<void **>(&drilldown));
-    drilldown->~Drilldown();
-  } GRN_HASH_EACH_END(ctx, cursor);
-  grn_hash_close(ctx, drilldowns);
-}
-
-static void
 grn_drilldown_data_fill(grn_ctx *ctx,
                         Drilldown *drilldown,
                         grn_obj *keys,
@@ -1813,68 +1840,31 @@ grn_drilldown_data_fill(grn_ctx *ctx,
 }
 
 static void
-grn_slice_data_init(grn_ctx *ctx,
-                    grn_slice_data *slice,
-                    const char *label,
-                    size_t label_len)
-{
-  slice->label.value = label;
-  slice->label.length = label_len;
-  new(&(slice->filter)) Filter(ctx);
-  GRN_RAW_STRING_INIT(slice->sort_keys);
-  GRN_RAW_STRING_INIT(slice->output_columns);
-  slice->offset = 0;
-  slice->limit = GRN_SELECT_DEFAULT_LIMIT;
-  slice->tables.target = NULL;
-  slice->tables.initial = NULL;
-  slice->tables.result = NULL;
-  slice->tables.sorted = NULL;
-  slice->tables.output = NULL;
-  slice->drilldowns = NULL;
-  new(&(slice->dynamic_columns)) DynamicColumns(ctx);
-}
-
-static void
-grn_slice_data_fin(grn_ctx *ctx, grn_slice_data *slice)
-{
-  slice->filter.~Filter();
-  if (slice->drilldowns) {
-    grn_drilldowns_fin(ctx, slice->drilldowns);
-  }
-  slice->dynamic_columns.~DynamicColumns();
-  if (slice->tables.sorted) {
-    grn_obj_unlink(ctx, slice->tables.sorted);
-  }
-  if (slice->tables.initial) {
-    grn_obj_unlink(ctx, slice->tables.initial);
-  }
-}
-
-static void
 grn_slices_fin(grn_ctx *ctx, grn_hash *slices)
 {
   GRN_HASH_EACH_BEGIN(ctx, slices, cursor, id) {
-    grn_slice_data *slice;
-    grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
-    grn_slice_data_fin(ctx, slice);
+    void *value;
+    grn_hash_cursor_get_value(ctx, cursor, &value);
+    auto slice = static_cast<Slice *>(value);
+    slice->~Slice();
   } GRN_HASH_EACH_END(ctx, cursor);
   grn_hash_close(ctx, slices);
 }
 
 static void
-grn_slice_data_fill(grn_ctx *ctx,
-                    grn_slice_data *slice,
-                    grn_obj *match_columns,
-                    grn_obj *query,
-                    grn_obj *query_expander,
-                    grn_obj *query_flags,
-                    grn_obj *query_options,
-                    grn_obj *filter,
-                    grn_obj *post_filter,
-                    grn_obj *sort_keys,
-                    grn_obj *output_columns,
-                    grn_obj *offset,
-                    grn_obj *limit)
+grn_slice_fill(grn_ctx *ctx,
+               Slice *slice,
+               grn_obj *match_columns,
+               grn_obj *query,
+               grn_obj *query_expander,
+               grn_obj *query_flags,
+               grn_obj *query_options,
+               grn_obj *filter,
+               grn_obj *post_filter,
+               grn_obj *sort_keys,
+               grn_obj *output_columns,
+               grn_obj *offset,
+               grn_obj *limit)
 {
   grn_filter_fill(ctx,
                   &(slice->filter),
@@ -2921,18 +2911,15 @@ grn_select_drilldown_execute(grn_ctx *ctx,
                                 NULL);
     if (dependent_id == GRN_ID_NIL) {
       if (slices) {
-        grn_slice_data *slice;
         dependent_id = grn_hash_get(ctx,
                                     slices,
                                     drilldown->table_name.value,
                                     drilldown->table_name.length,
                                     NULL);
         if (dependent_id) {
-          slice =
-            (grn_slice_data *)grn_hash_get_value_(ctx,
-                                                  slices,
-                                                  dependent_id,
-                                                  NULL);
+          auto slice =
+            reinterpret_cast<const Slice *>(
+              grn_hash_get_value_(ctx, slices, dependent_id, NULL));
           target_table = slice->tables.result;
         }
       }
@@ -3723,7 +3710,7 @@ static bool
 grn_select_slice_execute(grn_ctx *ctx,
                          grn_select_data *data,
                          grn_obj *table,
-                         grn_slice_data *slice)
+                         Slice *slice)
 {
   char log_tag[GRN_TABLE_MAX_KEY_SIZE];
   Filter *filter;
@@ -3843,9 +3830,9 @@ grn_select_slices_execute(grn_ctx *ctx,
   grn_bool succeeded = GRN_TRUE;
 
   GRN_HASH_EACH_BEGIN(ctx, slices, cursor, id) {
-    grn_slice_data *slice;
-
-    grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
+    void *value;
+    grn_hash_cursor_get_value(ctx, cursor, &value);
+    auto slice = static_cast<Slice *>(value);
     if (!grn_select_slice_execute(ctx, data, table, slice)) {
       succeeded = GRN_FALSE;
       break;
@@ -3886,9 +3873,9 @@ grn_select_output_slices(grn_ctx *ctx,
   data->output.formatter->slices_label(ctx, data);
 
   GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
-    grn_slice_data *slice;
-
-    grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
+    void *value;
+    grn_hash_cursor_get_value(ctx, cursor, &value);
+    auto slice = static_cast<Slice *>(value);
     if (slice->tables.result) {
       n_available_results++;
     }
@@ -3897,12 +3884,13 @@ grn_select_output_slices(grn_ctx *ctx,
   data->output.formatter->slices_open(ctx, data, n_available_results);
 
   GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
-    grn_slice_data *slice;
     uint32_t n_hits;
     int offset;
     int limit;
 
-    grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
+    void *value;
+    grn_hash_cursor_get_value(ctx, cursor, &value);
+    auto slice = static_cast<Slice *>(value);
     if (!slice->tables.result) {
       continue;
     }
@@ -4122,7 +4110,7 @@ grn_select_output_slices_close_v1(grn_ctx *ctx, grn_select_data *data)
 static void
 grn_select_output_slice_label_v1(grn_ctx *ctx,
                                  grn_select_data *data,
-                                 grn_slice_data *slice)
+                                 Slice *slice)
 {
   GRN_OUTPUT_STR(slice->label.value, slice->label.length);
 }
@@ -4194,7 +4182,7 @@ grn_select_output_slices_close_v3(grn_ctx *ctx, grn_select_data *data)
 static void
 grn_select_output_slice_label_v3(grn_ctx *ctx,
                                  grn_select_data *data,
-                                 grn_slice_data *slice)
+                                 Slice *slice)
 {
   GRN_OUTPUT_STR(slice->label.value, slice->label.length);
 }
@@ -4301,8 +4289,9 @@ grn_select_prepare_cache_key(grn_ctx *ctx,
   } while (false)
   if (data->slices) {
     GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
-      grn_slice_data *slice;
-      grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
+      void *value;
+      grn_hash_cursor_get_value(ctx, cursor, &value);
+      auto slice = static_cast<Slice *>(value);
       PUT_CACHE_KEY(slice->filter.match_columns);
       PUT_CACHE_KEY(slice->filter.query);
       PUT_CACHE_KEY(slice->filter.query_expander);
@@ -4827,20 +4816,20 @@ grn_select_data_fill_drilldowns(grn_ctx *ctx,
   }
 }
 
-static grn_slice_data *
+static Slice *
 grn_select_data_slices_add(grn_ctx *ctx,
                            grn_select_data *data,
                            const char *label,
                            size_t label_len)
 {
-  grn_slice_data *slice = NULL;
+  Slice *slice = NULL;
   int added;
 
   if (!data->slices) {
     data->slices = grn_hash_create(ctx,
                                    NULL,
                                    GRN_TABLE_MAX_KEY_SIZE,
-                                   sizeof(grn_slice_data),
+                                   sizeof(Slice),
                                    GRN_OBJ_TABLE_HASH_KEY |
                                    GRN_OBJ_KEY_VAR_SIZE |
                                    GRN_HASH_TINY);
@@ -4858,10 +4847,10 @@ grn_select_data_slices_add(grn_ctx *ctx,
                data->slices,
                label,
                label_len,
-               (void **)&slice,
+               reinterpret_cast<void **>(&slice),
                &added);
   if (added) {
-    grn_slice_data_init(ctx, slice, label, label_len);
+    new(slice) Slice(ctx, label, label_len);
   }
 
   return slice;
@@ -4921,7 +4910,6 @@ grn_select_data_fill_slices(grn_ctx *ctx,
 
   bool success = true;
   GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
-    grn_slice_data *slice;
     char slice_prefix[GRN_TABLE_MAX_KEY_SIZE];
     char key_name[GRN_TABLE_MAX_KEY_SIZE];
     grn_obj *match_columns;
@@ -4936,7 +4924,9 @@ grn_select_data_fill_slices(grn_ctx *ctx,
     grn_obj *offset;
     grn_obj *limit;
 
-    grn_hash_cursor_get_value(ctx, cursor, (void **)&slice);
+    void *value;
+    grn_hash_cursor_get_value(ctx, cursor, &value);
+    auto slice = static_cast<Slice *>(value);
 
     grn_snprintf(slice_prefix,
                  GRN_TABLE_MAX_KEY_SIZE,
@@ -4966,19 +4956,19 @@ grn_select_data_fill_slices(grn_ctx *ctx,
 
 #undef GET_VAR
 
-    grn_slice_data_fill(ctx,
-                        slice,
-                        match_columns,
-                        query,
-                        query_expander,
-                        query_flags,
-                        query_options,
-                        filter,
-                        post_filter,
-                        sort_keys,
-                        output_columns,
-                        offset,
-                        limit);
+    grn_slice_fill(ctx,
+                   slice,
+                   match_columns,
+                   query,
+                   query_expander,
+                   query_flags,
+                   query_options,
+                   filter,
+                   post_filter,
+                   sort_keys,
+                   output_columns,
+                   offset,
+                   limit);
 
     char log_tag[GRN_TABLE_MAX_KEY_SIZE];
     grn_snprintf(log_tag,
