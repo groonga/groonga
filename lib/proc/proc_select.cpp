@@ -128,6 +128,48 @@ typedef struct _grn_select_output_formatter grn_select_output_formatter;
 namespace {
   class SelectExecutor {
   public:
+    SelectExecutor(grn_ctx *ctx,
+                   int n_args,
+                   grn_obj **args,
+                   grn_user_data *user_data)
+      : ctx_(ctx),
+        n_args_(n_args),
+        args_(args),
+        user_data_(user_data),
+        table({nullptr, 0}),
+        filter(),
+        scorer({nullptr, 0}),
+        sort_keys({nullptr, 0}),
+        output_columns({nullptr, 0}),
+        default_output_columns({nullptr, 0}),
+        offset(0),
+        limit(0),
+        slices(nullptr),
+        drilldown(),
+        drilldowns(nullptr),
+        cache({nullptr, 0}),
+        match_escalation_threshold({nullptr, 0}),
+        adjuster({nullptr, 0}),
+        match_escalation({nullptr, 0}),
+        columns(),
+        tables({
+          nullptr,
+          nullptr,
+          nullptr,
+          nullptr,
+          nullptr,
+        }),
+        cacheable(0),
+        taintable(0),
+        output({0, nullptr}),
+        load({{nullptr, 0}, {nullptr, 0}, {nullptr, 0}}) {
+    }
+
+    grn_ctx *ctx_;
+    int n_args_;
+    grn_obj **args_;
+    grn_user_data *user_data_;
+
     /* inputs */
     grn_raw_string table;
     grn_filter_data filter;
@@ -4918,19 +4960,12 @@ grn_select_data_fill_slices(grn_ctx *ctx,
 static grn_obj *
 command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  grn_select_data data;
+  SelectExecutor data(ctx, nargs, args, user_data);
 
   grn_columns_init(ctx, &(data.columns));
   grn_filter_data_init(ctx, &(data.filter));
 
-  data.tables.target = NULL;
-  data.tables.initial = NULL;
-  data.tables.result = NULL;
-  data.tables.sorted = NULL;
-
-  data.slices = NULL;
   grn_drilldown_data_init(ctx, &(data.drilldown), NULL, 0);
-  data.drilldowns = NULL;
 
   data.table.value = grn_plugin_proc_get_var_string(ctx, user_data,
                                                     "table", -1,
