@@ -124,31 +124,69 @@ namespace {
     grn_hash *output;
     grn_hash *group;
   };
+
+  struct Filter {
+    Filter(grn_ctx *ctx)
+      : ctx_(ctx),
+        match_columns({nullptr, 0}),
+        query({nullptr, 0}),
+        query_expander({nullptr, 0}),
+        query_flags({nullptr, 0}),
+        query_options({nullptr, 0}),
+        filter({nullptr, 0}),
+        post_filter({nullptr, 0}),
+        condition({nullptr, nullptr, nullptr}),
+        post_condition({nullptr}),
+        filtered(nullptr),
+        post_filtered(nullptr) {
+    }
+
+    ~Filter() {
+      if (post_filtered) {
+        grn_obj_unlink(ctx_, post_filtered);
+      }
+      if (post_condition.expression) {
+        grn_obj_close(ctx_, post_condition.expression);
+      }
+      if (filtered) {
+        grn_obj_unlink(ctx_, filtered);
+      }
+      if (condition.expression) {
+        grn_obj_close(ctx_, condition.expression);
+      }
+      if (condition.match_columns) {
+        grn_obj_close(ctx_, condition.match_columns);
+      }
+      if (condition.query_options_expression) {
+        grn_obj_close(ctx_, condition.query_options_expression);
+      }
+    }
+
+    grn_ctx *ctx_;
+
+    grn_raw_string match_columns;
+    grn_raw_string query;
+    grn_raw_string query_expander;
+    grn_raw_string query_flags;
+    grn_raw_string query_options;
+    grn_raw_string filter;
+    grn_raw_string post_filter;
+    struct {
+      grn_obj *match_columns;
+      grn_obj *expression;
+      grn_obj *query_options_expression;
+    } condition;
+    struct {
+      grn_obj *expression;
+    } post_condition;
+    grn_obj *filtered;
+    grn_obj *post_filtered;
+  };
 }
 
 typedef struct {
-  grn_raw_string match_columns;
-  grn_raw_string query;
-  grn_raw_string query_expander;
-  grn_raw_string query_flags;
-  grn_raw_string query_options;
-  grn_raw_string filter;
-  grn_raw_string post_filter;
-  struct {
-    grn_obj *match_columns;
-    grn_obj *expression;
-    grn_obj *query_options_expression;
-  } condition;
-  struct {
-    grn_obj *expression;
-  } post_condition;
-  grn_obj *filtered;
-  grn_obj *post_filtered;
-} grn_filter_data;
-
-typedef struct {
   grn_raw_string label;
-  grn_filter_data filter;
+  Filter filter;
   grn_raw_string sort_keys;
   grn_raw_string output_columns;
   int offset;
@@ -236,6 +274,45 @@ namespace {
 typedef struct _grn_select_output_formatter grn_select_output_formatter;
 
 namespace {
+  struct Tables {
+    Tables(grn_ctx *ctx)
+      : ctx_(ctx),
+        target(nullptr),
+        initial(nullptr),
+        result(nullptr),
+        sorted(nullptr),
+        output(nullptr) {
+    }
+
+    ~Tables() {
+      if (sorted) {
+        grn_obj_unlink(ctx_, sorted);
+      }
+
+      if (result &&
+          result != initial &&
+          result != target) {
+        grn_obj_unlink(ctx_, result);
+      }
+
+      if (initial && initial != target) {
+        grn_obj_unlink(ctx_, initial);
+      }
+
+      if (target) {
+        grn_obj_unlink(ctx_, target);
+      }
+    }
+
+    grn_ctx *ctx_;
+
+    grn_obj *target;
+    grn_obj *initial;
+    grn_obj *result;
+    grn_obj *sorted;
+    grn_obj *output;
+  };
+
   struct SelectExecutor {
     SelectExecutor(grn_ctx *ctx,
                    int n_args,
@@ -245,8 +322,15 @@ namespace {
         n_args_(n_args),
         args_(args),
         user_data_(user_data),
+
+        tables(ctx),
+        cacheable(0),
+        taintable(0),
+        output({0, nullptr}),
+        load({{nullptr, 0}, {nullptr, 0}, {nullptr, 0}}),
+
         table({nullptr, 0}),
-        filter(),
+        filter(ctx),
         scorer({nullptr, 0}),
         sort_keys({nullptr, 0}),
         output_columns({nullptr, 0}),
@@ -260,18 +344,16 @@ namespace {
         match_escalation_threshold({nullptr, 0}),
         adjuster({nullptr, 0}),
         match_escalation({nullptr, 0}),
-        dynamic_columns(ctx),
-        tables({
-          nullptr,
-          nullptr,
-          nullptr,
-          nullptr,
-          nullptr,
-        }),
-        cacheable(0),
-        taintable(0),
-        output({0, nullptr}),
-        load({{nullptr, 0}, {nullptr, 0}, {nullptr, 0}}) {
+        dynamic_columns(ctx) {
+    }
+
+    ~SelectExecutor() {
+      if (tables.result == filter.post_filtered) {
+        tables.result = nullptr;
+      }
+      if (tables.result == filter.filtered) {
+        tables.result = nullptr;
+      }
     }
 
     grn_ctx *ctx_;
@@ -279,9 +361,23 @@ namespace {
     grn_obj **args_;
     grn_user_data *user_data_;
 
+    /* for processing */
+    Tables tables;
+    uint16_t cacheable;
+    uint16_t taintable;
+    struct {
+      int n_elements;
+      grn_select_output_formatter *formatter;
+    } output;
+    struct {
+      grn_raw_string table;
+      grn_raw_string columns;
+      grn_raw_string values;
+    } load;
+
     /* inputs */
     grn_raw_string table;
-    grn_filter_data filter;
+    Filter filter;
     grn_raw_string scorer;
     grn_raw_string sort_keys;
     grn_raw_string output_columns;
@@ -296,26 +392,6 @@ namespace {
     grn_raw_string adjuster;
     grn_raw_string match_escalation;
     DynamicColumns dynamic_columns;
-
-    /* for processing */
-    struct {
-      grn_obj *target;
-      grn_obj *initial;
-      grn_obj *result;
-      grn_obj *sorted;
-      grn_obj *output;
-    } tables;
-    uint16_t cacheable;
-    uint16_t taintable;
-    struct {
-      int n_elements;
-      grn_select_output_formatter *formatter;
-    } output;
-    struct {
-      grn_raw_string table;
-      grn_raw_string columns;
-      grn_raw_string values;
-    } load;
   };
 }
 
@@ -1339,86 +1415,45 @@ grn_select_apply_dynamic_columns(grn_ctx *ctx,
 }
 
 static void
-grn_filter_data_init(grn_ctx *ctx, grn_filter_data *data)
+grn_filter_fill(grn_ctx *ctx,
+                Filter *filter,
+                grn_obj *match_columns,
+                grn_obj *query,
+                grn_obj *query_expander,
+                grn_obj *query_flags,
+                grn_obj *query_options,
+                grn_obj *filter_raw,
+                grn_obj *post_filter)
 {
-  GRN_RAW_STRING_INIT(data->match_columns);
-  GRN_RAW_STRING_INIT(data->query);
-  GRN_RAW_STRING_INIT(data->query_expander);
-  GRN_RAW_STRING_INIT(data->query_flags);
-  GRN_RAW_STRING_INIT(data->query_options);
-  GRN_RAW_STRING_INIT(data->filter);
-  GRN_RAW_STRING_INIT(data->post_filter);
-  data->condition.match_columns = NULL;
-  data->condition.expression = NULL;
-  data->condition.query_options_expression = NULL;
-  data->post_condition.expression = NULL;
-  data->filtered = NULL;
-  data->post_filtered = NULL;
-}
-
-static void
-grn_filter_data_fin(grn_ctx *ctx, grn_filter_data *data)
-{
-  if (data->post_filtered) {
-    grn_obj_unlink(ctx, data->post_filtered);
-  }
-  if (data->post_condition.expression) {
-    grn_obj_close(ctx, data->post_condition.expression);
-  }
-  if (data->filtered) {
-    grn_obj_unlink(ctx, data->filtered);
-  }
-  if (data->condition.expression) {
-    grn_obj_close(ctx, data->condition.expression);
-  }
-  if (data->condition.match_columns) {
-    grn_obj_close(ctx, data->condition.match_columns);
-  }
-  if (data->condition.query_options_expression) {
-    grn_obj_close(ctx, data->condition.query_options_expression);
-  }
-}
-
-static void
-grn_filter_data_fill(grn_ctx *ctx,
-                     grn_filter_data *data,
-                     grn_obj *match_columns,
-                     grn_obj *query,
-                     grn_obj *query_expander,
-                     grn_obj *query_flags,
-                     grn_obj *query_options,
-                     grn_obj *filter,
-                     grn_obj *post_filter)
-{
-  GRN_RAW_STRING_FILL(data->match_columns, match_columns);
-  GRN_RAW_STRING_FILL(data->query, query);
-  GRN_RAW_STRING_FILL(data->query_expander, query_expander);
-  GRN_RAW_STRING_FILL(data->query_flags, query_flags);
-  GRN_RAW_STRING_FILL(data->query_options, query_options);
-  GRN_RAW_STRING_FILL(data->filter, filter);
-  GRN_RAW_STRING_FILL(data->post_filter, post_filter);
+  GRN_RAW_STRING_FILL(filter->match_columns, match_columns);
+  GRN_RAW_STRING_FILL(filter->query, query);
+  GRN_RAW_STRING_FILL(filter->query_expander, query_expander);
+  GRN_RAW_STRING_FILL(filter->query_flags, query_flags);
+  GRN_RAW_STRING_FILL(filter->query_options, query_options);
+  GRN_RAW_STRING_FILL(filter->filter, filter_raw);
+  GRN_RAW_STRING_FILL(filter->post_filter, post_filter);
 }
 
 static bool
-grn_filter_data_execute(grn_ctx *ctx,
-                        grn_select_data *data,
-                        grn_filter_data *filter_data,
-                        grn_obj *table,
-                        DynamicColumns *dynamic_columns,
-                        const char *log_tag_prefix,
-                        const char *query_log_tag_prefix)
+grn_filter_execute(grn_ctx *ctx,
+                   grn_select_data *data,
+                   Filter *filter,
+                   grn_obj *table,
+                   DynamicColumns *dynamic_columns,
+                   const char *log_tag_prefix,
+                   const char *query_log_tag_prefix)
 {
   grn_obj *variable;
 
-  if (filter_data->query.length == 0 && filter_data->filter.length == 0) {
+  if (filter->query.length == 0 && filter->filter.length == 0) {
     return true;
   }
 
   GRN_EXPR_CREATE_FOR_QUERY(ctx,
                             table,
-                            filter_data->condition.expression,
+                            filter->condition.expression,
                             variable);
-  if (!filter_data->condition.expression) {
+  if (!filter->condition.expression) {
     grn_rc rc = ctx->rc;
     if (rc == GRN_SUCCESS) {
       rc = GRN_NO_MEMORY_AVAILABLE;
@@ -1432,13 +1467,13 @@ grn_filter_data_execute(grn_ctx *ctx,
     return false;
   }
 
-  if (filter_data->query.length > 0) {
-    if (filter_data->match_columns.length > 0) {
+  if (filter->query.length > 0) {
+    if (filter->match_columns.length > 0) {
       GRN_EXPR_CREATE_FOR_QUERY(ctx,
                                 table,
-                                filter_data->condition.match_columns,
+                                filter->condition.match_columns,
                                 variable);
-      if (!filter_data->condition.match_columns) {
+      if (!filter->condition.match_columns) {
         grn_rc rc = ctx->rc;
         if (rc == GRN_SUCCESS) {
           rc = GRN_NO_MEMORY_AVAILABLE;
@@ -1449,16 +1484,16 @@ grn_filter_data_execute(grn_ctx *ctx,
                          "failed to create expression for match columns: "
                          "<%.*s>: %s",
                          log_tag_prefix,
-                         (int)(filter_data->match_columns.length),
-                         filter_data->match_columns.value,
+                         (int)(filter->match_columns.length),
+                         filter->match_columns.value,
                          ctx->errbuf);
         return false;
       }
 
       grn_expr_parse(ctx,
-                     filter_data->condition.match_columns,
-                     filter_data->match_columns.value,
-                     filter_data->match_columns.length,
+                     filter->condition.match_columns,
+                     filter->match_columns.value,
+                     filter->match_columns.length,
                      NULL, GRN_OP_MATCH, GRN_OP_AND,
                      GRN_EXPR_SYNTAX_SCRIPT);
       if (ctx->rc != GRN_SUCCESS) {
@@ -1469,17 +1504,17 @@ grn_filter_data_execute(grn_ctx *ctx,
     {
       grn_expr_flags flags;
       grn_obj query_expander_buf;
-      const char *query = filter_data->query.value;
-      unsigned int query_len = filter_data->query.length;
+      const char *query = filter->query.value;
+      unsigned int query_len = filter->query.length;
 
       flags = GRN_EXPR_SYNTAX_QUERY;
-      if (filter_data->query_flags.length) {
+      if (filter->query_flags.length) {
         grn_obj query_flags;
         GRN_TEXT_INIT(&query_flags, GRN_OBJ_DO_SHALLOW_COPY);
         GRN_TEXT_SET(ctx,
                      &query_flags,
-                     filter_data->query_flags.value,
-                     filter_data->query_flags.length);
+                     filter->query_flags.value,
+                     filter->query_flags.length);
         flags |= grn_proc_expr_query_flags_parse(ctx,
                                                  &query_flags,
                                                  log_tag_prefix);
@@ -1492,14 +1527,14 @@ grn_filter_data_execute(grn_ctx *ctx,
       }
 
       GRN_TEXT_INIT(&query_expander_buf, 0);
-      if (filter_data->query_expander.length > 0) {
+      if (filter->query_expander.length > 0) {
         grn_rc rc;
         rc = grn_proc_syntax_expand_query(ctx,
-                                          filter_data->query.value,
-                                          filter_data->query.length,
+                                          filter->query.value,
+                                          filter->query.length,
                                           flags,
-                                          filter_data->query_expander.value,
-                                          filter_data->query_expander.length,
+                                          filter->query_expander.value,
+                                          filter->query_expander.length,
                                           NULL, 0,
                                           NULL, 0,
                                           &query_expander_buf,
@@ -1514,10 +1549,10 @@ grn_filter_data_execute(grn_ctx *ctx,
       }
 
       grn_expr_parse(ctx,
-                     filter_data->condition.expression,
+                     filter->condition.expression,
                      query,
                      query_len,
-                     filter_data->condition.match_columns,
+                     filter->condition.match_columns,
                      GRN_OP_MATCH,
                      GRN_OP_AND,
                      flags);
@@ -1529,12 +1564,12 @@ grn_filter_data_execute(grn_ctx *ctx,
     }
   }
 
-  if (filter_data->filter.length > 0) {
+  if (filter->filter.length > 0) {
     grn_expr_parse(ctx,
-                   filter_data->condition.expression,
-                   filter_data->filter.value,
-                   filter_data->filter.length,
-                   filter_data->condition.match_columns,
+                   filter->condition.expression,
+                   filter->filter.value,
+                   filter->filter.length,
+                   filter->condition.match_columns,
                    GRN_OP_MATCH,
                    GRN_OP_AND,
                    GRN_EXPR_SYNTAX_SCRIPT);
@@ -1542,8 +1577,8 @@ grn_filter_data_execute(grn_ctx *ctx,
       return false;
     }
 
-    if (filter_data->query.length > 0) {
-      grn_expr_append_op(ctx, filter_data->condition.expression, GRN_OP_AND, 2);
+    if (filter->query.length > 0) {
+      grn_expr_append_op(ctx, filter->condition.expression, GRN_OP_AND, 2);
     }
 
     if (ctx->rc != GRN_SUCCESS) {
@@ -1552,17 +1587,17 @@ grn_filter_data_execute(grn_ctx *ctx,
   }
 
   grn_expr_set_query_log_tag_prefix(ctx,
-                                    filter_data->condition.expression,
+                                    filter->condition.expression,
                                     query_log_tag_prefix,
                                     -1);
-  filter_data->filtered =
+  filter->filtered =
     grn_table_create(ctx,
                      NULL, 0,
                      NULL,
                      GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_WITH_SUBREC,
                      table,
                      NULL);
-  if (!filter_data->filtered) {
+  if (!filter->filtered) {
     GRN_PLUGIN_ERROR(ctx,
                      ctx->rc,
                      "%s[filter] failed to create result set table: %s",
@@ -1574,10 +1609,10 @@ grn_filter_data_execute(grn_ctx *ctx,
   if (dynamic_columns->result_set) {
     grn_select_apply_dynamic_columns(ctx,
                                      data,
-                                     filter_data->filtered,
+                                     filter->filtered,
                                      DynamicColumnStage::RESULT_SET,
                                      dynamic_columns->result_set,
-                                     filter_data->condition.expression,
+                                     filter->condition.expression,
                                      log_tag_prefix,
                                      query_log_tag_prefix);
     if (ctx->rc != GRN_SUCCESS) {
@@ -1585,12 +1620,12 @@ grn_filter_data_execute(grn_ctx *ctx,
     }
   }
 
-  if (filter_data->query_options.length > 0) {
+  if (filter->query_options.length > 0) {
     GRN_EXPR_CREATE_FOR_QUERY(ctx,
                               table,
-                              filter_data->condition.query_options_expression,
+                              filter->condition.query_options_expression,
                               variable);
-    if (!filter_data->condition.expression) {
+    if (!filter->condition.expression) {
       grn_rc rc = ctx->rc;
       if (rc == GRN_SUCCESS) {
         rc = GRN_NO_MEMORY_AVAILABLE;
@@ -1604,9 +1639,9 @@ grn_filter_data_execute(grn_ctx *ctx,
       return false;
     }
     grn_expr_parse(ctx,
-                   filter_data->condition.query_options_expression,
-                   filter_data->query_options.value,
-                   filter_data->query_options.length,
+                   filter->condition.query_options_expression,
+                   filter->query_options.value,
+                   filter->query_options.length,
                    NULL,
                    GRN_OP_MATCH,
                    GRN_OP_AND,
@@ -1615,39 +1650,39 @@ grn_filter_data_execute(grn_ctx *ctx,
       return false;
     }
     grn_expr *query_options_expression =
-      (grn_expr *)(filter_data->condition.query_options_expression);
+      (grn_expr *)(filter->condition.query_options_expression);
     grn_expr_set_query_options(ctx,
-                               filter_data->condition.expression,
+                               filter->condition.expression,
                                query_options_expression->codes[0].value);
   }
 
   grn_table_select(ctx,
                    table,
-                   filter_data->condition.expression,
-                   filter_data->filtered,
+                   filter->condition.expression,
+                   filter->filtered,
                    GRN_OP_OR);
 
   return ctx->rc == GRN_SUCCESS;
 }
 
 static bool
-grn_filter_data_execute_post_filter(grn_ctx *ctx,
-                                    grn_select_data *data,
-                                    grn_filter_data *filter_data,
-                                    grn_obj *table,
-                                    const char *log_tag_prefix,
-                                    const char *query_log_tag_prefix)
+grn_filter_execute_post_filter(grn_ctx *ctx,
+                               grn_select_data *data,
+                               Filter *filter,
+                               grn_obj *table,
+                               const char *log_tag_prefix,
+                               const char *query_log_tag_prefix)
 {
-  if (filter_data->post_filter.length == 0) {
+  if (filter->post_filter.length == 0) {
     return true;
   }
 
   grn_obj *variable;
   GRN_EXPR_CREATE_FOR_QUERY(ctx,
                             table,
-                            filter_data->post_condition.expression,
+                            filter->post_condition.expression,
                             variable);
-  if (!filter_data->post_condition.expression) {
+  if (!filter->post_condition.expression) {
     grn_rc rc = ctx->rc;
     if (rc == GRN_SUCCESS) {
       rc = GRN_NO_MEMORY_AVAILABLE;
@@ -1662,9 +1697,9 @@ grn_filter_data_execute_post_filter(grn_ctx *ctx,
   }
 
   grn_expr_parse(ctx,
-                 filter_data->post_condition.expression,
-                 filter_data->post_filter.value,
-                 filter_data->post_filter.length,
+                 filter->post_condition.expression,
+                 filter->post_filter.value,
+                 filter->post_filter.length,
                  NULL,
                  GRN_OP_MATCH,
                  GRN_OP_AND,
@@ -1674,17 +1709,17 @@ grn_filter_data_execute_post_filter(grn_ctx *ctx,
   }
 
   grn_expr_set_query_log_tag_prefix(ctx,
-                                    filter_data->post_condition.expression,
+                                    filter->post_condition.expression,
                                     query_log_tag_prefix,
                                     -1);
-  filter_data->post_filtered =
+  filter->post_filtered =
     grn_table_create(ctx,
                      NULL, 0,
                      NULL,
                      GRN_OBJ_TABLE_HASH_KEY | GRN_OBJ_WITH_SUBREC,
                      table,
                      NULL);
-  if (!filter_data->post_filtered) {
+  if (!filter->post_filtered) {
     GRN_PLUGIN_ERROR(ctx,
                      ctx->rc,
                      "%s[post-filter] failed to create result set table: %s",
@@ -1695,8 +1730,8 @@ grn_filter_data_execute_post_filter(grn_ctx *ctx,
 
   grn_table_select(ctx,
                    table,
-                   filter_data->post_condition.expression,
-                   filter_data->post_filtered,
+                   filter->post_condition.expression,
+                   filter->post_filtered,
                    GRN_OP_OR);
 
   return ctx->rc == GRN_SUCCESS;
@@ -1785,7 +1820,7 @@ grn_slice_data_init(grn_ctx *ctx,
 {
   slice->label.value = label;
   slice->label.length = label_len;
-  grn_filter_data_init(ctx, &(slice->filter));
+  new(&(slice->filter)) Filter(ctx);
   GRN_RAW_STRING_INIT(slice->sort_keys);
   GRN_RAW_STRING_INIT(slice->output_columns);
   slice->offset = 0;
@@ -1802,7 +1837,7 @@ grn_slice_data_init(grn_ctx *ctx,
 static void
 grn_slice_data_fin(grn_ctx *ctx, grn_slice_data *slice)
 {
-  grn_filter_data_fin(ctx, &(slice->filter));
+  slice->filter.~Filter();
   if (slice->drilldowns) {
     grn_drilldowns_fin(ctx, slice->drilldowns);
   }
@@ -1841,15 +1876,15 @@ grn_slice_data_fill(grn_ctx *ctx,
                     grn_obj *offset,
                     grn_obj *limit)
 {
-  grn_filter_data_fill(ctx,
-                       &(slice->filter),
-                       match_columns,
-                       query,
-                       query_expander,
-                       query_flags,
-                       query_options,
-                       filter,
-                       post_filter);
+  grn_filter_fill(ctx,
+                  &(slice->filter),
+                  match_columns,
+                  query,
+                  query_expander,
+                  query_flags,
+                  query_options,
+                  filter,
+                  post_filter);
 
   GRN_RAW_STRING_FILL(slice->sort_keys, sort_keys);
 
@@ -2191,13 +2226,13 @@ static grn_bool
 grn_select_filter(grn_ctx *ctx,
                   grn_select_data *data)
 {
-  if (!grn_filter_data_execute(ctx,
-                               data,
-                               &(data->filter),
-                               data->tables.initial,
-                               &(data->dynamic_columns),
-                               "[select]",
-                               "")) {
+  if (!grn_filter_execute(ctx,
+                          data,
+                          &(data->filter),
+                          data->tables.initial,
+                          &(data->dynamic_columns),
+                          "[select]",
+                          "")) {
     return GRN_FALSE;
   }
 
@@ -2250,12 +2285,12 @@ static bool
 grn_select_post_filter(grn_ctx *ctx,
                        grn_select_data *data)
 {
-  if (!grn_filter_data_execute_post_filter(ctx,
-                                           data,
-                                           &(data->filter),
-                                           data->tables.result,
-                                           "[select]",
-                                           NULL)) {
+  if (!grn_filter_execute_post_filter(ctx,
+                                      data,
+                                      &(data->filter),
+                                      data->tables.result,
+                                      "[select]",
+                                      NULL)) {
     return false;
   }
 
@@ -3691,7 +3726,7 @@ grn_select_slice_execute(grn_ctx *ctx,
                          grn_slice_data *slice)
 {
   char log_tag[GRN_TABLE_MAX_KEY_SIZE];
-  grn_filter_data *filter;
+  Filter *filter;
 
   grn_snprintf(log_tag, GRN_TABLE_MAX_KEY_SIZE, GRN_TABLE_MAX_KEY_SIZE,
                "[select][slices][%.*s]",
@@ -3735,13 +3770,13 @@ grn_select_slice_execute(grn_ctx *ctx,
     slice->tables.target = slice->tables.initial;
   }
 
-  if (!grn_filter_data_execute(ctx,
-                               data,
-                               filter,
-                               slice->tables.target,
-                               &(slice->dynamic_columns),
-                               log_tag,
-                               query_log_tag_prefix)) {
+  if (!grn_filter_execute(ctx,
+                          data,
+                          filter,
+                          slice->tables.target,
+                          &(slice->dynamic_columns),
+                          log_tag,
+                          query_log_tag_prefix)) {
     return false;
   }
   grn_expr_set_parent(ctx,
@@ -3769,12 +3804,12 @@ grn_select_slice_execute(grn_ctx *ctx,
     }
   }
 
-  if (!grn_filter_data_execute_post_filter(ctx,
-                                           data,
-                                           &(slice->filter),
-                                           slice->tables.result,
-                                           log_tag,
-                                           query_log_tag_prefix)) {
+  if (!grn_filter_execute_post_filter(ctx,
+                                      data,
+                                      &(slice->filter),
+                                      slice->tables.result,
+                                      log_tag,
+                                      query_log_tag_prefix)) {
     return false;
   }
 
@@ -4980,8 +5015,6 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
 {
   SelectExecutor data(ctx, nargs, args, user_data);
 
-  grn_filter_data_init(ctx, &(data.filter));
-
   data.table.value = grn_plugin_proc_get_var_string(ctx, user_data,
                                                     "table", -1,
                                                     &(data.table.length));
@@ -4996,15 +5029,15 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
       query_expander = GET_VAR("query_expansion");
     }
 
-    grn_filter_data_fill(ctx,
-                         &(data.filter),
-                         GET_VAR("match_columns"),
-                         GET_VAR("query"),
-                         query_expander,
-                         GET_VAR("query_flags"),
-                         GET_VAR("query_options"),
-                         GET_VAR("filter"),
-                         GET_VAR("post_filter"));
+    grn_filter_fill(ctx,
+                    &(data.filter),
+                    GET_VAR("match_columns"),
+                    GET_VAR("query"),
+                    query_expander,
+                    GET_VAR("query_flags"),
+                    GET_VAR("query_options"),
+                    GET_VAR("filter"),
+                    GET_VAR("post_filter"));
   }
 #undef GET_VAR
 
@@ -5094,32 +5127,6 @@ exit :
 
   if (data.slices) {
     grn_slices_fin(ctx, data.slices);
-  }
-
-  if (data.tables.sorted) {
-    grn_obj_unlink(ctx, data.tables.sorted);
-  }
-
-  if (data.tables.result == data.filter.post_filtered) {
-    data.tables.result = NULL;
-  }
-  if (data.tables.result == data.filter.filtered) {
-    data.tables.result = NULL;
-  }
-  grn_filter_data_fin(ctx, &(data.filter));
-
-  if (data.tables.result &&
-      data.tables.result != data.tables.initial &&
-      data.tables.result != data.tables.target) {
-    grn_obj_unlink(ctx, data.tables.result);
-  }
-
-  if (data.tables.initial && data.tables.initial != data.tables.target) {
-    grn_obj_unlink(ctx, data.tables.initial);
-  }
-
-  if (data.tables.target) {
-    grn_obj_unlink(ctx, data.tables.target);
   }
 
   return NULL;
