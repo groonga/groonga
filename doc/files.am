@@ -4208,7 +4208,7 @@ html_files_relative_from_locale_dir = \
 	html/_static/favicon.ico \
 	html/_static/file.png \
 	html/_static/groonga.png \
-	html/_static/jquery-3.5.1.js \
+	html/_static/jquery-3.6.0.js \
 	html/_static/jquery.js \
 	html/_static/language_data.js \
 	html/_static/minus.png \
