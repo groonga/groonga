@@ -117,11 +117,11 @@ html_theme = "pydata_sphinx_theme"
 # documentation.
 if language == "en":
   language_prefix = "/"
-  switcher_version = "English"
+  switcher_version = "english"
   use_edit_page_button = True
 else:
   language_prefix = f"/{language}/"
-  switcher_version = "日本語"
+  switcher_version = "japanese"
   use_edit_page_button = False
 
 html_theme_options = {
@@ -138,7 +138,6 @@ html_theme_options = {
   "switcher": {
     # "json_url": "/_static/switcher.json",
     "json_url": "https://groonga.org/docs/_static/switcher.json",
-    "url_template": "https://groonga.org/{version}docs/",
     "version_match": switcher_version,
   },
   "navbar_center": [

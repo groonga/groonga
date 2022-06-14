@@ -1,10 +1,12 @@
 [
     {
         "name": "English",
-        "version": ""
+        "url": "https://groonga.org/docs/",
+        "version": "english"
     },
     {
         "name": "日本語",
-        "version": "ja/"
+        "url": "https://groonga.org/ja/docs/",
+        "version": "japanese"
     }
 ]
