@@ -37,6 +37,38 @@
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key, _nsubrecs"
 
 namespace {
+  grn_raw_string
+  string_arg(grn_ctx *ctx,
+             grn_user_data *user_data,
+             const char *prefix,
+             const char *name,
+             const char *fallback_name=nullptr) {
+    std::string name_buffer;
+    const char *full_name;
+    if (prefix) {
+      name_buffer += prefix;
+      name_buffer += name;
+      full_name = name_buffer.c_str();
+    } else {
+      full_name = name;
+    }
+    auto arg = grn_plugin_proc_get_var(ctx, user_data, full_name, -1);
+    if ((!arg || GRN_TEXT_LEN(arg) == 0) && fallback_name) {
+      const char *full_fallback_name;
+      if (prefix) {
+        name_buffer = prefix;
+        name_buffer += fallback_name;
+        full_fallback_name = name_buffer.c_str();
+      } else {
+        full_fallback_name = fallback_name;
+      }
+      arg = grn_plugin_proc_get_var(ctx, user_data, full_fallback_name, -1);
+    }
+    grn_raw_string string = {nullptr, 0};
+    GRN_RAW_STRING_FILL(string, arg);
+    return string;
+  }
+
   template <typename Class>
   void
   close_objects(grn_ctx *ctx, grn_hash *objects)
@@ -214,15 +246,19 @@ namespace {
   };
 
   struct Filter {
-    Filter(grn_ctx *ctx)
+    Filter(grn_ctx *ctx, grn_user_data *user_data, const char *prefix=nullptr)
       : ctx_(ctx),
-        match_columns({nullptr, 0}),
-        query({nullptr, 0}),
-        query_expander({nullptr, 0}),
-        query_flags({nullptr, 0}),
-        query_options({nullptr, 0}),
-        filter({nullptr, 0}),
-        post_filter({nullptr, 0}),
+        match_columns(string_arg(ctx, user_data, prefix, "match_columns")),
+        query(string_arg(ctx, user_data, prefix, "query")),
+        query_expander(string_arg(ctx,
+                                  user_data,
+                                  prefix,
+                                  "query_expander",
+                                  "query_expansion")),
+        query_flags(string_arg(ctx, user_data, prefix, "query_flags")),
+        query_options(string_arg(ctx, user_data, prefix, "query_options")),
+        filter(string_arg(ctx, user_data, prefix, "filter")),
+        post_filter(string_arg(ctx, user_data, prefix, "post_filter")),
         condition({nullptr, nullptr, nullptr}),
         post_condition({nullptr}),
         filtered(nullptr),
@@ -282,10 +318,14 @@ namespace {
   };
 
   struct Slice {
-    Slice(grn_ctx *ctx, const char *label, size_t label_len)
+    Slice(grn_ctx *ctx,
+          grn_user_data *user_data,
+          const char *label,
+          size_t label_len,
+          const char *prefix)
       : ctx_(ctx),
         label({label, label_len}),
-        filter(ctx),
+        filter(ctx, user_data, prefix),
         sort_keys({nullptr, 0}),
         output_columns({nullptr, 0}),
         offset(0),
@@ -399,7 +439,7 @@ namespace {
         load({{nullptr, 0}, {nullptr, 0}, {nullptr, 0}}),
 
         table({nullptr, 0}),
-        filter(ctx),
+        filter(ctx, user_data),
         scorer({nullptr, 0}),
         sort_keys({nullptr, 0}),
         output_columns({nullptr, 0}),
@@ -1509,26 +1549,6 @@ grn_select_apply_dynamic_columns(grn_ctx *ctx,
   GRN_OBJ_FIN(ctx, &tsorted_ids);
 }
 
-static void
-grn_filter_fill(grn_ctx *ctx,
-                Filter *filter,
-                grn_obj *match_columns,
-                grn_obj *query,
-                grn_obj *query_expander,
-                grn_obj *query_flags,
-                grn_obj *query_options,
-                grn_obj *filter_raw,
-                grn_obj *post_filter)
-{
-  GRN_RAW_STRING_FILL(filter->match_columns, match_columns);
-  GRN_RAW_STRING_FILL(filter->query, query);
-  GRN_RAW_STRING_FILL(filter->query_expander, query_expander);
-  GRN_RAW_STRING_FILL(filter->query_flags, query_flags);
-  GRN_RAW_STRING_FILL(filter->query_options, query_options);
-  GRN_RAW_STRING_FILL(filter->filter, filter_raw);
-  GRN_RAW_STRING_FILL(filter->post_filter, post_filter);
-}
-
 static bool
 grn_filter_execute(grn_ctx *ctx,
                    grn_select_data *data,
@@ -1897,28 +1917,11 @@ grn_drilldown_data_fill(grn_ctx *ctx,
 static void
 grn_slice_fill(grn_ctx *ctx,
                Slice *slice,
-               grn_obj *match_columns,
-               grn_obj *query,
-               grn_obj *query_expander,
-               grn_obj *query_flags,
-               grn_obj *query_options,
-               grn_obj *filter,
-               grn_obj *post_filter,
                grn_obj *sort_keys,
                grn_obj *output_columns,
                grn_obj *offset,
                grn_obj *limit)
 {
-  grn_filter_fill(ctx,
-                  &(slice->filter),
-                  match_columns,
-                  query,
-                  query_expander,
-                  query_flags,
-                  query_options,
-                  filter,
-                  post_filter);
-
   GRN_RAW_STRING_FILL(slice->sort_keys, sort_keys);
 
   GRN_RAW_STRING_FILL(slice->output_columns, output_columns);
@@ -4897,7 +4900,14 @@ grn_select_data_slices_add(grn_ctx *ctx,
                reinterpret_cast<void **>(&slice),
                &added);
   if (added) {
-    new(slice) Slice(ctx, label, label_len);
+    char slice_prefix[GRN_TABLE_MAX_KEY_SIZE];
+    grn_snprintf(slice_prefix,
+                 GRN_TABLE_MAX_KEY_SIZE,
+                 GRN_TABLE_MAX_KEY_SIZE,
+                 "slices[%.*s].",
+                 (int)(label_len),
+                 label);
+    new(slice) Slice(ctx, data->user_data_, label, label_len, slice_prefix);
   }
 
   return slice;
@@ -4959,13 +4969,6 @@ grn_select_data_fill_slices(grn_ctx *ctx,
   GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
     char slice_prefix[GRN_TABLE_MAX_KEY_SIZE];
     char key_name[GRN_TABLE_MAX_KEY_SIZE];
-    grn_obj *match_columns;
-    grn_obj *query;
-    grn_obj *query_expander;
-    grn_obj *query_flags;
-    grn_obj *query_options;
-    grn_obj *filter;
-    grn_obj *post_filter;
     grn_obj *sort_keys;
     grn_obj *output_columns;
     grn_obj *offset;
@@ -4989,13 +4992,6 @@ grn_select_data_fill_slices(grn_ctx *ctx,
                  "%s%s", slice_prefix, #name);                          \
     name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);
 
-    GET_VAR(match_columns);
-    GET_VAR(query);
-    GET_VAR(query_expander);
-    GET_VAR(query_flags);
-    GET_VAR(query_options);
-    GET_VAR(filter);
-    GET_VAR(post_filter);
     GET_VAR(sort_keys);
     GET_VAR(output_columns);
     GET_VAR(offset);
@@ -5005,13 +5001,6 @@ grn_select_data_fill_slices(grn_ctx *ctx,
 
     grn_slice_fill(ctx,
                    slice,
-                   match_columns,
-                   query,
-                   query_expander,
-                   query_flags,
-                   query_options,
-                   filter,
-                   post_filter,
                    sort_keys,
                    output_columns,
                    offset,
@@ -5055,29 +5044,6 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   data.table.value = grn_plugin_proc_get_var_string(ctx, user_data,
                                                     "table", -1,
                                                     &(data.table.length));
-#define GET_VAR(name)                                           \
-  grn_plugin_proc_get_var(ctx, user_data, name, strlen(name))
-
-  {
-    grn_obj *query_expander;
-
-    query_expander = GET_VAR("query_expander");
-    if (GRN_TEXT_LEN(query_expander) == 0) {
-      query_expander = GET_VAR("query_expansion");
-    }
-
-    grn_filter_fill(ctx,
-                    &(data.filter),
-                    GET_VAR("match_columns"),
-                    GET_VAR("query"),
-                    query_expander,
-                    GET_VAR("query_flags"),
-                    GET_VAR("query_options"),
-                    GET_VAR("filter"),
-                    GET_VAR("post_filter"));
-  }
-#undef GET_VAR
-
   data.scorer.value =
     grn_plugin_proc_get_var_string(ctx, user_data,
                                    "scorer", -1,
