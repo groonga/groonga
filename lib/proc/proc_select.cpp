@@ -449,6 +449,8 @@ namespace {
       dynamic_columns.close();
     }
 
+    grn_rc execute();
+
     grn_ctx *ctx_;
     int n_args_;
     grn_obj **args_;
@@ -4422,9 +4424,12 @@ grn_select_prepare_cache_key(grn_ctx *ctx,
 #undef PUT_CACHE_KEY
 }
 
-static grn_rc
-grn_select(grn_ctx *ctx, grn_select_data *data)
+namespace {
+grn_rc SelectExecutor::execute()
 {
+  auto ctx = ctx_;
+  auto data = this;
+
   uint32_t nhits;
   grn_obj *outbuf = ctx->impl->output.buf;
   grn::TextBulk cache_key(ctx);
@@ -4605,6 +4610,7 @@ exit :
   /* GRN_LOG(ctx, GRN_LOG_NONE, "%d", ctx->seqno); */
 
   return ctx->rc;
+}
 }
 
 static bool
@@ -5143,7 +5149,7 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
     return NULL;
   }
 
-  grn_select(ctx, &data);
+  data.execute();
 
   return NULL;
 }
