@@ -69,6 +69,28 @@ namespace {
     return string;
   }
 
+  int32_t
+  int32_arg(grn_ctx *ctx,
+            grn_user_data *user_data,
+            const char *prefix,
+            const char *name,
+            int32_t default_value) {
+    std::string name_buffer;
+    const char *full_name;
+    if (prefix) {
+      name_buffer += prefix;
+      name_buffer += name;
+      full_name = name_buffer.c_str();
+    } else {
+      full_name = name;
+    }
+    return grn_plugin_proc_get_var_int32(ctx,
+                                         user_data,
+                                         full_name,
+                                         -1,
+                                         default_value);
+  }
+
   template <typename Class>
   void
   close_objects(grn_ctx *ctx, grn_hash *objects)
@@ -326,10 +348,14 @@ namespace {
       : ctx_(ctx),
         label({label, label_len}),
         filter(ctx, user_data, prefix),
-        sort_keys({nullptr, 0}),
-        output_columns({nullptr, 0}),
-        offset(0),
-        limit(GRN_SELECT_DEFAULT_LIMIT),
+        sort_keys(string_arg(ctx, user_data, prefix, "sort_keys")),
+        output_columns(string_arg(ctx, user_data, prefix, "output_columns")),
+        offset(int32_arg(ctx, user_data, prefix, "offset", 0)),
+        limit(int32_arg(ctx,
+                        user_data,
+                        prefix,
+                        "limit",
+                        GRN_SELECT_DEFAULT_LIMIT)),
         tables({nullptr, nullptr, nullptr, nullptr, nullptr}),
         drilldowns(nullptr),
         dynamic_columns(ctx) {
@@ -1912,24 +1938,6 @@ grn_drilldown_data_fill(grn_ctx *ctx,
     grn_proc_option_value_int32(ctx,
                                 max_n_target_records,
                                 drilldown->max_n_target_records);
-}
-
-static void
-grn_slice_fill(grn_ctx *ctx,
-               Slice *slice,
-               grn_obj *sort_keys,
-               grn_obj *output_columns,
-               grn_obj *offset,
-               grn_obj *limit)
-{
-  GRN_RAW_STRING_FILL(slice->sort_keys, sort_keys);
-
-  GRN_RAW_STRING_FILL(slice->output_columns, output_columns);
-
-  slice->offset = grn_proc_option_value_int32(ctx, offset, 0);
-  slice->limit = grn_proc_option_value_int32(ctx,
-                                             limit,
-                                             GRN_SELECT_DEFAULT_LIMIT);
 }
 
 grn_expr_flags
@@ -4967,44 +4975,17 @@ grn_select_data_fill_slices(grn_ctx *ctx,
 
   bool success = true;
   GRN_HASH_EACH_BEGIN(ctx, data->slices, cursor, id) {
-    char slice_prefix[GRN_TABLE_MAX_KEY_SIZE];
-    char key_name[GRN_TABLE_MAX_KEY_SIZE];
-    grn_obj *sort_keys;
-    grn_obj *output_columns;
-    grn_obj *offset;
-    grn_obj *limit;
-
     void *value;
     grn_hash_cursor_get_value(ctx, cursor, &value);
     auto slice = static_cast<Slice *>(value);
 
+    char slice_prefix[GRN_TABLE_MAX_KEY_SIZE];
     grn_snprintf(slice_prefix,
                  GRN_TABLE_MAX_KEY_SIZE,
                  GRN_TABLE_MAX_KEY_SIZE,
                  "slices[%.*s].",
                  (int)(slice->label.length),
                  slice->label.value);
-
-#define GET_VAR(name)                                                   \
-    grn_snprintf(key_name,                                              \
-                 GRN_TABLE_MAX_KEY_SIZE,                                \
-                 GRN_TABLE_MAX_KEY_SIZE,                                \
-                 "%s%s", slice_prefix, #name);                          \
-    name = grn_plugin_proc_get_var(ctx, user_data, key_name, -1);
-
-    GET_VAR(sort_keys);
-    GET_VAR(output_columns);
-    GET_VAR(offset);
-    GET_VAR(limit);
-
-#undef GET_VAR
-
-    grn_slice_fill(ctx,
-                   slice,
-                   sort_keys,
-                   output_columns,
-                   offset,
-                   limit);
 
     char log_tag[GRN_TABLE_MAX_KEY_SIZE];
     grn_snprintf(log_tag,
