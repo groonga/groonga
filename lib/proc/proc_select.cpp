@@ -5193,7 +5193,7 @@ init_vars(grn_ctx *ctx, grn_expr_var *vars)
   grn_plugin_expr_var_init(ctx, &(vars[33]), "drilldown_max_n_target_records", -1);
 }
 
-void
+extern "C" void
 grn_proc_init_select(grn_ctx *ctx)
 {
   DEFINE_VARS;
@@ -5236,7 +5236,7 @@ command_define_selector(grn_ctx *ctx, int nargs, grn_obj **args,
   return NULL;
 }
 
-void
+extern "C" void
 grn_proc_init_define_selector(grn_ctx *ctx)
 {
   DEFINE_VARS;
