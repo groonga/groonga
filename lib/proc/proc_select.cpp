@@ -106,6 +106,10 @@ namespace {
     }
 
     ~DynamicColumns() {
+      close();
+    }
+
+    void close () {
       close_stage(initial);
       close_stage(result_set);
       close_stage(filtered);
@@ -114,11 +118,12 @@ namespace {
     }
 
   private:
-    void close_stage(grn_hash *stage) {
+    void close_stage(grn_hash *&stage) {
       if (!stage) {
         return;
       }
       close_objects<DynamicColumn>(ctx_, stage);
+      stage = nullptr;
     }
 
   public:
@@ -155,16 +160,23 @@ namespace {
     }
 
     ~Drilldown() {
+      close();
+    }
+
+    void close() {
       if (filtered_result) {
         grn_obj_close(ctx_, filtered_result);
+        filtered_result = nullptr;
       }
 
       if (result.table) {
         if (result.calc_target) {
           grn_obj_unlink(ctx_, result.calc_target);
+          result.calc_target = nullptr;
         }
         if (result.table) {
           grn_obj_unlink(ctx_, result.table);
+          result.table = nullptr;
         }
         if (result.n_aggregators > 0) {
           uint32_t i;
@@ -174,6 +186,8 @@ namespace {
           }
           auto ctx = ctx_;
           GRN_FREE(result.aggregators);
+          result.aggregators = nullptr;
+          result.n_aggregators = 0;
         }
       }
     }
@@ -216,23 +230,33 @@ namespace {
     }
 
     ~Filter() {
+      close();
+    }
+
+    void close() {
       if (post_filtered) {
         grn_obj_unlink(ctx_, post_filtered);
+        post_filtered = nullptr;
       }
       if (post_condition.expression) {
         grn_obj_close(ctx_, post_condition.expression);
+        post_condition.expression = nullptr;
       }
       if (filtered) {
         grn_obj_unlink(ctx_, filtered);
+        filtered = nullptr;
       }
       if (condition.expression) {
         grn_obj_close(ctx_, condition.expression);
+        condition.expression = nullptr;
       }
       if (condition.match_columns) {
         grn_obj_close(ctx_, condition.match_columns);
+        condition.match_columns = nullptr;
       }
       if (condition.query_options_expression) {
         grn_obj_close(ctx_, condition.query_options_expression);
+        condition.query_options_expression = nullptr;
       }
     }
 
@@ -317,23 +341,36 @@ namespace {
     }
 
     ~Tables() {
-      if (sorted) {
-        grn_obj_unlink(ctx_, sorted);
-      }
+      close();
+    }
+
+    void close() {
+      close_sorted();
 
       if (result &&
           result != initial &&
           result != target) {
         grn_obj_unlink(ctx_, result);
       }
+      result = nullptr;
 
       if (initial && initial != target) {
         grn_obj_unlink(ctx_, initial);
       }
+      initial = nullptr;
 
       if (target) {
         grn_obj_unlink(ctx_, target);
       }
+      target = nullptr;
+    }
+
+    void close_sorted() {
+      if (!sorted) {
+        return;
+      }
+      grn_obj_unlink(ctx_, sorted);
+      sorted = nullptr;
     }
 
     grn_ctx *ctx_;
@@ -384,9 +421,20 @@ namespace {
         close_objects<Drilldown>(ctx_, drilldowns);
       }
 
+      if (drilldown.parsed_keys) {
+        grn_table_sort_key_close(ctx_,
+                                 drilldown.parsed_keys,
+                                 static_cast<uint32_t>(drilldown.n_parsed_keys));
+        drilldown.parsed_keys = nullptr;
+        drilldown.n_parsed_keys = 0;
+      }
+      drilldown.close();
+
       if (slices) {
         close_objects<Slice>(ctx_, slices);
       }
+
+      tables.close_sorted();
 
       if (tables.result == filter.post_filtered) {
         tables.result = nullptr;
@@ -394,6 +442,11 @@ namespace {
       if (tables.result == filter.filtered) {
         tables.result = nullptr;
       }
+      filter.close();
+
+      tables.close();
+
+      dynamic_columns.close();
     }
 
     grn_ctx *ctx_;
@@ -5075,11 +5128,11 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                                    &(data.load.values.length));
 
   if (!grn_select_data_fill_slices(ctx, user_data, &data)) {
-    goto exit;
+    return NULL;
   }
 
   if (!grn_select_data_fill_drilldowns(ctx, user_data, &data)) {
-    goto exit;
+    return NULL;
   }
 
   if (!grn_dynamic_columns_fill(ctx,
@@ -5087,17 +5140,10 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
                                 &(data.dynamic_columns),
                                 NULL,
                                 0)) {
-    goto exit;
+    return NULL;
   }
 
   grn_select(ctx, &data);
-
-exit :
-  if (data.drilldown.parsed_keys) {
-    grn_table_sort_key_close(ctx,
-                             data.drilldown.parsed_keys,
-                             data.drilldown.n_parsed_keys);
-  }
 
   return NULL;
 }
