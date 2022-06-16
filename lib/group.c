@@ -660,7 +660,7 @@ group_key_get_value(grn_ctx *ctx,
 typedef struct {
   grn_obj bulk;
   grn_obj value_buffer;
-  bool need_resolved_id;
+  int resolve_id_depth;
   grn_obj *table;
   group_key key;
   grn_obj *range;
@@ -675,7 +675,11 @@ grn_table_group_single_key_records_resolve_id(grn_ctx *ctx,
                                               grn_table_cursor *cursor,
                                               grn_id id)
 {
-  if (data->need_resolved_id) {
+  if (data->resolve_id_depth == 1) {
+    void *key;
+    grn_table_cursor_get_key(ctx, cursor, &key);
+    return *((grn_id *)key);
+  } else if (data->resolve_id_depth > 1) {
     return grn_accessor_resolve_id(ctx, data->key.accessor, id);
   } else {
     return id;
@@ -931,13 +935,14 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
                                       0, limit, 0))) {
     grn_obj *real_key = key;
     grn_obj *accessor = NULL;
-    data.need_resolved_id = false;
+    data.resolve_id_depth = 0;
     if (key->header.type == GRN_ACCESSOR) {
       grn_accessor *a;
+      int depth = 0;
       accessor = key;
       for (a = (grn_accessor *)accessor;
            a->action == GRN_ACCESSOR_GET_KEY && a->next;
-           a = a->next) {
+           a = a->next, depth++) {
         /* do nothing */
       }
       if (a &&
@@ -945,7 +950,7 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
           a->obj &&
           !a->next) {
         real_key = a->obj;
-        data.need_resolved_id = true;
+        data.resolve_id_depth = depth;
       }
     }
     group_key_init(ctx, &(data.key), real_key, accessor);
