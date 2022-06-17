@@ -164,6 +164,8 @@ namespace {
     }
 
     void close() {
+      dynamic_columns.close();
+
       if (filtered_result) {
         grn_obj_close(ctx_, filtered_result);
         filtered_result = nullptr;
@@ -303,9 +305,11 @@ namespace {
     }
 
     ~Slice() {
+      filter.close();
       if (drilldowns) {
         close_objects<Drilldown>(ctx_, drilldowns);
       }
+      dynamic_columns.close();
       if (tables.sorted) {
         grn_obj_unlink(ctx_, tables.sorted);
       }
