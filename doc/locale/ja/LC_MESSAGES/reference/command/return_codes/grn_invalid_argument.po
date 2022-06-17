@@ -1,0 +1,40 @@
+# -*- po -*-
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-06-24 14:39+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "``-22: GRN_INVALID_ARGUMENT``"
+msgstr ""
+
+msgid "Major cause"
+msgstr "主な原因"
+
+msgid ""
+"If we set invalid arguments or invalid options into functions or commands or "
+"tokenizers or normalizers, or so on."
+msgstr ""
+"関数やコマンド、トークナイザー、ノーマライザーに無効な引数や無効なオプション"
+"を設定した場合。"
+
+msgid "Major action on this error"
+msgstr "主な対策"
+
+msgid ""
+"We confirm correct arguments or correct options with the official document "
+"of Groonga."
+msgstr ""
+"Groongaの公式ドキュメントを参照して正しい引数やオプションを確認します。"

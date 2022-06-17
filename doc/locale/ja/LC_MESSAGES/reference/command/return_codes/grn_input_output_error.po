@@ -1,0 +1,37 @@
+# -*- po -*-
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-06-23 14:33+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "``-6: GRN_INPUT_OUTPUT_ERROR``"
+msgstr ""
+
+msgid "Major cause"
+msgstr "主な原因"
+
+msgid "This error causes when Groonga can't write to storage."
+msgstr "このエラーは、Groongaがストレージに書き込みできないときに発生します。"
+
+msgid "Major action on this error"
+msgstr "主な対策"
+
+msgid "We confirm the storage capacity is enough."
+msgstr "ストレージの容量が十分かを確認します。"
+
+msgid ""
+"We confirm that the other process can write files correctly to the storage."
+msgstr "他のプロセスが正常にストレージにファイルを書き込めるかを確認します。"

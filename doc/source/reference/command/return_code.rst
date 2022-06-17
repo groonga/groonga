@@ -105,6 +105,19 @@ only C API. It is not showen in query API.
 * -79: ``GRN_ZSTD_ERROR``
 * -80: ``GRN_CONNECTION_RESET``
 
+Detail
+------
+
+.. toctree::
+   :maxdepth: 1
+
+   return_codes/grn_operation_not_permitted.rst
+   return_codes/grn_no_such_file_or_directory.rst
+   return_codes/grn_input_output_error.rst
+   return_codes/grn_not_enough_space.rst
+   return_codes/grn_invalid_argument.rst
+   return_codes/grn_resource_deadlock_avoided.rst
+
 See also
 --------
 

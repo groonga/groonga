@@ -302,6 +302,9 @@ msgstr ""
 msgid "-80: ``GRN_CONNECTION_RESET``"
 msgstr ""
 
+msgid "Detail"
+msgstr "詳細"
+
 msgid "See also"
 msgstr "参考"
 

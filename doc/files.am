@@ -1008,6 +1008,12 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/command/request_id.rst \
 	$(top_srcdir)/doc/source/reference/command/request_timeout.rst \
 	$(top_srcdir)/doc/source/reference/command/return_code.rst \
+	$(top_srcdir)/doc/source/reference/command/return_codes/grn_input_output_error.rst \
+	$(top_srcdir)/doc/source/reference/command/return_codes/grn_invalid_argument.rst \
+	$(top_srcdir)/doc/source/reference/command/return_codes/grn_no_such_file_or_directory.rst \
+	$(top_srcdir)/doc/source/reference/command/return_codes/grn_not_enough_space.rst \
+	$(top_srcdir)/doc/source/reference/command/return_codes/grn_operation_not_permitted.rst \
+	$(top_srcdir)/doc/source/reference/command/return_codes/grn_resource_deadlock_avoided.rst \
 	$(top_srcdir)/doc/source/reference/commands/cache_limit.rst \
 	$(top_srcdir)/doc/source/reference/commands/check.rst \
 	$(top_srcdir)/doc/source/reference/commands/clearlock.rst \
@@ -2223,6 +2229,12 @@ source_files_relative_from_doc_dir = \
 	source/reference/command/request_id.rst \
 	source/reference/command/request_timeout.rst \
 	source/reference/command/return_code.rst \
+	source/reference/command/return_codes/grn_input_output_error.rst \
+	source/reference/command/return_codes/grn_invalid_argument.rst \
+	source/reference/command/return_codes/grn_no_such_file_or_directory.rst \
+	source/reference/command/return_codes/grn_not_enough_space.rst \
+	source/reference/command/return_codes/grn_operation_not_permitted.rst \
+	source/reference/command/return_codes/grn_resource_deadlock_avoided.rst \
 	source/reference/commands/cache_limit.rst \
 	source/reference/commands/check.rst \
 	source/reference/commands/clearlock.rst \
@@ -2520,6 +2532,12 @@ po_files = \
 	reference/command/request_id.po \
 	reference/command/request_timeout.po \
 	reference/command/return_code.po \
+	reference/command/return_codes/grn_input_output_error.po \
+	reference/command/return_codes/grn_invalid_argument.po \
+	reference/command/return_codes/grn_no_such_file_or_directory.po \
+	reference/command/return_codes/grn_not_enough_space.po \
+	reference/command/return_codes/grn_operation_not_permitted.po \
+	reference/command/return_codes/grn_resource_deadlock_avoided.po \
 	reference/commands/cache_limit.po \
 	reference/commands/check.po \
 	reference/commands/clearlock.po \
@@ -2815,6 +2833,12 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/command/request_id.po \
 	LC_MESSAGES/reference/command/request_timeout.po \
 	LC_MESSAGES/reference/command/return_code.po \
+	LC_MESSAGES/reference/command/return_codes/grn_input_output_error.po \
+	LC_MESSAGES/reference/command/return_codes/grn_invalid_argument.po \
+	LC_MESSAGES/reference/command/return_codes/grn_no_such_file_or_directory.po \
+	LC_MESSAGES/reference/command/return_codes/grn_not_enough_space.po \
+	LC_MESSAGES/reference/command/return_codes/grn_operation_not_permitted.po \
+	LC_MESSAGES/reference/command/return_codes/grn_resource_deadlock_avoided.po \
 	LC_MESSAGES/reference/commands/cache_limit.po \
 	LC_MESSAGES/reference/commands/check.po \
 	LC_MESSAGES/reference/commands/clearlock.po \
@@ -3110,6 +3134,12 @@ edit_po_files = \
 	reference/command/request_id.edit \
 	reference/command/request_timeout.edit \
 	reference/command/return_code.edit \
+	reference/command/return_codes/grn_input_output_error.edit \
+	reference/command/return_codes/grn_invalid_argument.edit \
+	reference/command/return_codes/grn_no_such_file_or_directory.edit \
+	reference/command/return_codes/grn_not_enough_space.edit \
+	reference/command/return_codes/grn_operation_not_permitted.edit \
+	reference/command/return_codes/grn_resource_deadlock_avoided.edit \
 	reference/commands/cache_limit.edit \
 	reference/commands/check.edit \
 	reference/commands/clearlock.edit \
@@ -3405,6 +3435,12 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/command/request_id.edit \
 	LC_MESSAGES/reference/command/request_timeout.edit \
 	LC_MESSAGES/reference/command/return_code.edit \
+	LC_MESSAGES/reference/command/return_codes/grn_input_output_error.edit \
+	LC_MESSAGES/reference/command/return_codes/grn_invalid_argument.edit \
+	LC_MESSAGES/reference/command/return_codes/grn_no_such_file_or_directory.edit \
+	LC_MESSAGES/reference/command/return_codes/grn_not_enough_space.edit \
+	LC_MESSAGES/reference/command/return_codes/grn_operation_not_permitted.edit \
+	LC_MESSAGES/reference/command/return_codes/grn_resource_deadlock_avoided.edit \
 	LC_MESSAGES/reference/commands/cache_limit.edit \
 	LC_MESSAGES/reference/commands/check.edit \
 	LC_MESSAGES/reference/commands/clearlock.edit \
@@ -3700,6 +3736,12 @@ mo_files = \
 	reference/command/request_id.mo \
 	reference/command/request_timeout.mo \
 	reference/command/return_code.mo \
+	reference/command/return_codes/grn_input_output_error.mo \
+	reference/command/return_codes/grn_invalid_argument.mo \
+	reference/command/return_codes/grn_no_such_file_or_directory.mo \
+	reference/command/return_codes/grn_not_enough_space.mo \
+	reference/command/return_codes/grn_operation_not_permitted.mo \
+	reference/command/return_codes/grn_resource_deadlock_avoided.mo \
 	reference/commands/cache_limit.mo \
 	reference/commands/check.mo \
 	reference/commands/clearlock.mo \
@@ -3995,6 +4037,12 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/command/request_id.mo \
 	LC_MESSAGES/reference/command/request_timeout.mo \
 	LC_MESSAGES/reference/command/return_code.mo \
+	LC_MESSAGES/reference/command/return_codes/grn_input_output_error.mo \
+	LC_MESSAGES/reference/command/return_codes/grn_invalid_argument.mo \
+	LC_MESSAGES/reference/command/return_codes/grn_no_such_file_or_directory.mo \
+	LC_MESSAGES/reference/command/return_codes/grn_not_enough_space.mo \
+	LC_MESSAGES/reference/command/return_codes/grn_operation_not_permitted.mo \
+	LC_MESSAGES/reference/command/return_codes/grn_resource_deadlock_avoided.mo \
 	LC_MESSAGES/reference/commands/cache_limit.mo \
 	LC_MESSAGES/reference/commands/check.mo \
 	LC_MESSAGES/reference/commands/clearlock.mo \
@@ -4202,6 +4250,7 @@ html_files_relative_from_locale_dir = \
 	html/_images/geo-points.png \
 	html/_images/used-when-indexing.png \
 	html/_images/used-when-searching.png \
+	html/_static/_sphinx_javascript_frameworks_compat.js \
 	html/_static/basic.css \
 	html/_static/doctools.js \
 	html/_static/documentation_options.js \
@@ -4331,6 +4380,12 @@ html_files_relative_from_locale_dir = \
 	html/reference/command/request_id.html \
 	html/reference/command/request_timeout.html \
 	html/reference/command/return_code.html \
+	html/reference/command/return_codes/grn_input_output_error.html \
+	html/reference/command/return_codes/grn_invalid_argument.html \
+	html/reference/command/return_codes/grn_no_such_file_or_directory.html \
+	html/reference/command/return_codes/grn_not_enough_space.html \
+	html/reference/command/return_codes/grn_operation_not_permitted.html \
+	html/reference/command/return_codes/grn_resource_deadlock_avoided.html \
 	html/reference/commands/cache_limit.html \
 	html/reference/commands/check.html \
 	html/reference/commands/clearlock.html \
