@@ -1,6 +1,5 @@
 /*
-  Copyright(C) 2017  Brazil
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,9 +16,14 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#pragma once
+#include <groonga.hpp>
 
-#include "groonga.h"
-#include "groonga/bulk.hpp"
-#include "groonga/command_arguments.hpp"
-#include "groonga/smart_obj.hpp"
+#include "grn_proc.h"
+
+namespace grn {
+  int32_t CommandArguments::arg_to_int32(grn_obj *arg,
+                                         int32_t default_value)
+  {
+    return grn_proc_option_value_int32(ctx_, arg, default_value);
+  }
+}

@@ -37,60 +37,6 @@
 #define DEFAULT_DRILLDOWN_OUTPUT_COLUMNS  "_key, _nsubrecs"
 
 namespace {
-  grn_raw_string
-  string_arg(grn_ctx *ctx,
-             grn_user_data *user_data,
-             const char *prefix,
-             const char *name,
-             const char *fallback_name=nullptr) {
-    std::string name_buffer;
-    const char *full_name;
-    if (prefix) {
-      name_buffer += prefix;
-      name_buffer += name;
-      full_name = name_buffer.c_str();
-    } else {
-      full_name = name;
-    }
-    auto arg = grn_plugin_proc_get_var(ctx, user_data, full_name, -1);
-    if ((!arg || GRN_TEXT_LEN(arg) == 0) && fallback_name) {
-      const char *full_fallback_name;
-      if (prefix) {
-        name_buffer = prefix;
-        name_buffer += fallback_name;
-        full_fallback_name = name_buffer.c_str();
-      } else {
-        full_fallback_name = fallback_name;
-      }
-      arg = grn_plugin_proc_get_var(ctx, user_data, full_fallback_name, -1);
-    }
-    grn_raw_string string = {nullptr, 0};
-    GRN_RAW_STRING_FILL(string, arg);
-    return string;
-  }
-
-  int32_t
-  int32_arg(grn_ctx *ctx,
-            grn_user_data *user_data,
-            const char *prefix,
-            const char *name,
-            int32_t default_value) {
-    std::string name_buffer;
-    const char *full_name;
-    if (prefix) {
-      name_buffer += prefix;
-      name_buffer += name;
-      full_name = name_buffer.c_str();
-    } else {
-      full_name = name;
-    }
-    return grn_plugin_proc_get_var_int32(ctx,
-                                         user_data,
-                                         full_name,
-                                         -1,
-                                         default_value);
-  }
-
   template <typename Class>
   void
   close_objects(grn_ctx *ctx, grn_hash *objects)
@@ -268,19 +214,18 @@ namespace {
   };
 
   struct Filter {
-    Filter(grn_ctx *ctx, grn_user_data *user_data, const char *prefix=nullptr)
+    Filter(grn_ctx *ctx, grn::CommandArguments *args, const char *prefix=nullptr)
       : ctx_(ctx),
-        match_columns(string_arg(ctx, user_data, prefix, "match_columns")),
-        query(string_arg(ctx, user_data, prefix, "query")),
-        query_expander(string_arg(ctx,
-                                  user_data,
-                                  prefix,
-                                  "query_expander",
-                                  "query_expansion")),
-        query_flags(string_arg(ctx, user_data, prefix, "query_flags")),
-        query_options(string_arg(ctx, user_data, prefix, "query_options")),
-        filter(string_arg(ctx, user_data, prefix, "filter")),
-        post_filter(string_arg(ctx, user_data, prefix, "post_filter")),
+        match_columns(args->get_string(prefix, "match_columns")),
+        query(args->get_string(prefix, "query")),
+        query_expander(args->get_string(prefix,
+                                        nullptr,
+                                        "query_expander",
+                                        "query_expansion")),
+        query_flags(args->get_string(prefix, "query_flags")),
+        query_options(args->get_string(prefix, "query_options")),
+        filter(args->get_string(prefix, "filter")),
+        post_filter(args->get_string(prefix, "post_filter")),
         condition({nullptr, nullptr, nullptr}),
         post_condition({nullptr}),
         filtered(nullptr),
@@ -341,21 +286,17 @@ namespace {
 
   struct Slice {
     Slice(grn_ctx *ctx,
-          grn_user_data *user_data,
+          grn::CommandArguments *args,
           const char *label,
           size_t label_len,
           const char *prefix)
       : ctx_(ctx),
         label({label, label_len}),
-        filter(ctx, user_data, prefix),
-        sort_keys(string_arg(ctx, user_data, prefix, "sort_keys")),
-        output_columns(string_arg(ctx, user_data, prefix, "output_columns")),
-        offset(int32_arg(ctx, user_data, prefix, "offset", 0)),
-        limit(int32_arg(ctx,
-                        user_data,
-                        prefix,
-                        "limit",
-                        GRN_SELECT_DEFAULT_LIMIT)),
+        filter(ctx, args, prefix),
+        sort_keys(args->get_string(prefix, "sort_keys")),
+        output_columns(args->get_string(prefix, "output_columns")),
+        offset(args->get_int32( prefix, "offset", 0)),
+        limit(args->get_int32(prefix, "limit", GRN_SELECT_DEFAULT_LIMIT)),
         tables({nullptr, nullptr, nullptr, nullptr, nullptr}),
         drilldowns(nullptr),
         dynamic_columns(ctx) {
@@ -450,13 +391,9 @@ namespace {
 
   struct SelectExecutor {
     SelectExecutor(grn_ctx *ctx,
-                   int n_args,
-                   grn_obj **args,
-                   grn_user_data *user_data)
+                   grn::CommandArguments *args)
       : ctx_(ctx),
-        n_args_(n_args),
         args_(args),
-        user_data_(user_data),
 
         tables(ctx),
         cacheable(0),
@@ -465,7 +402,7 @@ namespace {
         load({{nullptr, 0}, {nullptr, 0}, {nullptr, 0}}),
 
         table({nullptr, 0}),
-        filter(ctx, user_data),
+        filter(ctx, args),
         scorer({nullptr, 0}),
         sort_keys({nullptr, 0}),
         output_columns({nullptr, 0}),
@@ -518,9 +455,7 @@ namespace {
     grn_rc execute();
 
     grn_ctx *ctx_;
-    int n_args_;
-    grn_obj **args_;
-    grn_user_data *user_data_;
+    grn::CommandArguments *args_;
 
     /* for processing */
     Tables tables;
@@ -4915,7 +4850,7 @@ grn_select_data_slices_add(grn_ctx *ctx,
                  "slices[%.*s].",
                  (int)(label_len),
                  label);
-    new(slice) Slice(ctx, data->user_data_, label, label_len, slice_prefix);
+    new(slice) Slice(ctx, data->args_, label, label_len, slice_prefix);
   }
 
   return slice;
@@ -5020,7 +4955,8 @@ grn_select_data_fill_slices(grn_ctx *ctx,
 static grn_obj *
 command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
-  SelectExecutor data(ctx, nargs, args, user_data);
+  grn::CommandArguments command_args(ctx, user_data);
+  SelectExecutor data(ctx, &command_args);
 
   data.table.value = grn_plugin_proc_get_var_string(ctx, user_data,
                                                     "table", -1,

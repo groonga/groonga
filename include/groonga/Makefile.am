@@ -10,6 +10,7 @@ groonga_include_HEADERS =			\
 	cast.h					\
 	column.h				\
 	command.h				\
+	command_arguments.hpp			\
 	config.h				\
 	dat.h					\
 	db.h					\

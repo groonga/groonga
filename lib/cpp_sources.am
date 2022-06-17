@@ -2,6 +2,7 @@ libgroonga_cpp_source =				\
 	arrow.cpp				\
 	bulk.cpp				\
 	cast.cpp				\
+	command_arguments.cpp			\
 	dat.cpp					\
 	grn_arrow.h				\
 	grn_arrow.hpp				\
