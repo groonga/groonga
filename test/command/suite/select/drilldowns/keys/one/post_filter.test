@@ -1,0 +1,20 @@
+table_create Tags TABLE_PAT_KEY ShortText
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
+column_create Memos date COLUMN_SCALAR Time
+
+load --table Memos
+[
+{"_key": "Groonga is fast!", "tags": {"full-text-search": 100}, "date": "2014-11-16 00:00:00"},
+{"_key": "Mroonga is fast!", "tags": {"mysql": 100, "full-text-search": 80}, "date": "2014-11-16 00:00:00"},
+{"_key": "Groonga sticker!", "tags": {"full-text-search": 100, "sticker": 10}, "date": "2014-11-16 00:00:00"},
+{"_key": "Rroonga is fast!", "tags": {"full-text-search": 100, "ruby": 20}, "date": "2014-11-17 00:00:00"},
+{"_key": "Groonga is good!", "tags": {"full-text-search": 100}, "date": "2014-11-17 00:00:00"}
+]
+
+select Memos \
+  --filter true \
+  --post_filter true \
+  --drilldowns[tags].keys tags \
+  --drilldowns[tags].output_columns _key,_nsubrecs
