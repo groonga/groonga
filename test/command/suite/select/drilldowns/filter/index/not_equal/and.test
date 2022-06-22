@@ -1,0 +1,32 @@
+table_create Tags TABLE_PAT_KEY ShortText
+column_create Tags is_stop_word COLUMN_SCALAR Bool
+
+table_create Booleans TABLE_PAT_KEY Bool
+column_create Booleans index COLUMN_INDEX Tags is_stop_word
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos tag COLUMN_SCALAR Tags
+
+load --table Memos
+[
+{"_key": "Groonga is fast!", "tag": "Groonga"},
+{"_key": "Mroonga is fast!", "tag": "Mroonga"},
+{"_key": "Groonga sticker!", "tag": "Groonga"},
+{"_key": "Rroonga is fast!", "tag": "Rroonga"}
+]
+
+load --table Tags
+[
+{"_key": "Mroonga", "is_stop_word": true}
+]
+
+log_level --level info
+#@add-important-log-levels info
+#@add-ignore-log-pattern /\A\[io\]/
+select Memos \
+  --drilldowns[tag].keys tag \
+  --drilldowns[tag].filter '_key != "Groonga" && is_stop_word != true' \
+  --drilldowns[tag].output_columns _key,_nsubrecs,is_stop_word
+#@remove-ignore-log-pattern /\A\[io\]/
+#@remove-important-log-levels info
+log_level --level notice

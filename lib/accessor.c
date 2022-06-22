@@ -641,7 +641,8 @@ grn_accessor_execute(grn_ctx *ctx,
                        GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
                        base_table, NULL);
     grn_operator base_logical_op = GRN_OP_OR;
-    if (second_to_last_a &&
+    if (execute_op != GRN_OP_NOT_EQUAL &&
+        second_to_last_a &&
         grn_obj_is_result_set(ctx, second_to_last_a->obj) &&
         second_to_last_a->obj->header.domain == base_res->header.domain) {
       GRN_LOG(ctx, GRN_REPORT_INDEX_LOG_LEVEL,
