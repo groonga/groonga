@@ -1131,13 +1131,13 @@ mecab_init(grn_ctx *ctx, grn_tokenizer_query *query)
   {
     grn_encoding encoding = grn_tokenizer_query_get_encoding(ctx, query);
     if (encoding != tokenizer->mecab->encoding) {
-      GRN_PLUGIN_FREE(ctx, tokenizer);
       GRN_PLUGIN_ERROR(ctx, GRN_TOKENIZER_ERROR,
                        "[tokenizer][mecab] "
                        "MeCab dictionary charset (%s) does not match "
                        "the table encoding: <%s>",
                        grn_encoding_to_string(tokenizer->mecab->encoding),
                        grn_encoding_to_string(encoding));
+      GRN_PLUGIN_FREE(ctx, tokenizer);
       return NULL;
     }
   }
