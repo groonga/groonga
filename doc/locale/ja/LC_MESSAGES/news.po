@@ -33,11 +33,99 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 12.0.4 - 2022-06-06"
-msgstr "12.0.4リリース - 2022-06-06"
+msgid "Release 12.0.5 - 2022-06-29"
+msgstr "12.0.5リリース - 2022-06-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[:doc:`reference/commands/select`] Improved a little bit of performance for "
+"prefix search by search escalation."
+msgstr ""
+"[:doc:`reference/commands/select`] 検索エスカレーションによる前方一致検索のパ"
+"フォーマンスを少し改善しました。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added support for specifying a reference "
+"vector column with weight in ``drilldowns[LABEL]._key``. [GitHub#1366]"
+"[Patched by naoa]"
+msgstr ""
+"[:doc:`/reference/commands/select`] ``drilldowns[LABEL]._key`` に重み付き参照"
+"ベクターカラムを指定できるようになりました。 [GitHub#1366][naoaさんがパッチ提"
+"供]"
+
+msgid ""
+"If we specified a reference vector column with weight in drilldown's key, "
+"Groonga had returned incorrect results until now."
+msgstr ""
+"今までは、ドリルダウンのキーに重み付き参照ベクターカラムを指定すると、Groonga"
+"が誤った結果を返していました。"
+
+msgid ""
+"For example, the following tag search had returned incorrect results until "
+"now."
+msgstr "例えば、以下のタグ検索は、今まで誤った結果を返していました。"
+
+msgid "The above query returns correct results as below since this release."
+msgstr "今回のリリースから上記のクエリーは、以下のように正しい結果を返します。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added support for doing drilldown with a "
+"reference vector with weight even if we use ``query`` or ``filter``, or "
+"``post_filter``. [GitHub#1367][Patched by naoa]"
+msgstr ""
+"[:doc:`/reference/commands/select`] ``query`` や ``filter`` や "
+"``post_filter`` を使っていても、ドリルダウンのキーに重み付き参照ベクターカラ"
+"ムを指定できるようになりました。 [GitHub#1367][naoaさんがパッチ提供]"
+
+msgid ""
+"If we specified a reference vector column with weight in drilldown's key "
+"when we use ``query`` or ``filter``, or ``post_filter``, Groonga had "
+"returned incorrect results or errors until now."
+msgstr ""
+"今までは、 ``query`` や ``filter`` や ``post_filter`` を使っているときに、ド"
+"リルダウンのキーに重み付き参照ベクターカラムを指定するｔ，Groongaは誤った結"
+"果、またはエラーを返していました。"
+
+msgid "For example, the following query had been erred until now."
+msgstr "例えば、今まで以下のクエリーはエラーを返していました。"
+
+msgid "Known Issues"
+msgstr "既知の問題"
+
+msgid ""
+"Currently, Groonga has a bug that there is possible that data is corrupt "
+"when we execute many additions, delete, and update data to vector column."
+msgstr ""
+"現在Groongaには、ベクターカラムに対してデータを大量に追加、削除、更新した際に"
+"データが破損することがある問題があります。"
+
+msgid ""
+"``*<`` and ``*>`` only valid when we use ``query()`` the right side of "
+"filter condition. If we specify as below, ``*<`` and ``*>`` work as ``&&``."
+msgstr ""
+"``*<`` と ``*>`` は、filter条件の右辺に ``query()`` を使う時のみ有効です。も"
+"し、以下のように指定した場合、 ``*<`` と ``*>`` は ``&&`` として機能します。"
+
+msgid "``'content @ \"Groonga\" *< content @ \"Mroonga\"'``"
+msgstr ""
+
+msgid ""
+"Groonga may not return records that should match caused by "
+"``GRN_II_CURSOR_SET_MIN_ENABLE``."
+msgstr ""
+"``GRN_II_CURSOR_SET_MIN_ENABLE`` が原因でマッチするはずのレコードを返さないこ"
+"とがあります。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "naoa"
+msgstr "naoaさん"
+
+msgid "Release 12.0.4 - 2022-06-06"
+msgstr "12.0.4リリース - 2022-06-06"
 
 msgid ""
 "[:doc:`/install/ubuntu`] Added support for Ubuntu 22.04 (Jammy Jellyfish)."
@@ -254,36 +342,6 @@ msgstr "パトリシアトライのテーブルにすでにキーがある場合
 
 msgid "If the additional key is 4096 bytes."
 msgstr "4096バイトのキーを追加する場合。"
-
-msgid "Known Issues"
-msgstr "既知の問題"
-
-msgid ""
-"Currently, Groonga has a bug that there is possible that data is corrupt "
-"when we execute many additions, delete, and update data to vector column."
-msgstr ""
-"現在Groongaには、ベクターカラムに対してデータを大量に追加、削除、更新した際に"
-"データが破損することがある問題があります。"
-
-msgid ""
-"``*<`` and ``*>`` only valid when we use ``query()`` the right side of "
-"filter condition. If we specify as below, ``*<`` and ``*>`` work as ``&&``."
-msgstr ""
-"``*<`` と ``*>`` は、filter条件の右辺に ``query()`` を使う時のみ有効です。も"
-"し、以下のように指定した場合、 ``*<`` と ``*>`` は ``&&`` として機能します。"
-
-msgid "``'content @ \"Groonga\" *< content @ \"Mroonga\"'``"
-msgstr ""
-
-msgid ""
-"Groonga may not return records that should match caused by "
-"``GRN_II_CURSOR_SET_MIN_ENABLE``."
-msgstr ""
-"``GRN_II_CURSOR_SET_MIN_ENABLE`` が原因でマッチするはずのレコードを返さないこ"
-"とがあります。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "shinonon"
 msgstr "shinononさん"
@@ -1158,9 +1216,6 @@ msgstr ""
 
 msgid "groonga-x.x.x-x64.exe"
 msgstr ""
-
-msgid "naoa"
-msgstr "naoaさん"
 
 msgid "Anthony M. Cook"
 msgstr "Anthony M. Cookさん"
