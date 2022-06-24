@@ -24,7 +24,75 @@
 #include <string>
 
 namespace grn {
-  class CommandArguments {
+  struct CommandArgument
+  {
+    CommandArgument(grn_raw_string name, grn_obj *value)
+      : name(name),
+        value(value)
+    {
+    }
+
+    grn_raw_string name;
+    grn_obj *value;
+  };
+
+  class CommandArguments
+  {
+    class Cursor
+    {
+    public:
+      Cursor(grn_ctx *ctx,
+             grn_table_cursor *cursor)
+        : ctx_(ctx),
+          cursor_(cursor),
+          id_(cursor ? grn_table_cursor_next(ctx_, cursor_) : GRN_ID_NIL)
+      {
+      }
+
+      ~Cursor()
+      {
+        if (cursor_) {
+          grn_table_cursor_close(ctx_, cursor_);
+        }
+      }
+
+      Cursor &
+      operator++()
+      {
+        id_ = grn_table_cursor_next(ctx_, cursor_);
+        return *this;
+      }
+
+      CommandArgument
+      operator*() const
+      {
+        void *key;
+        uint32_t key_size;
+        void *value;
+        grn_table_cursor_get_key_value(ctx_, cursor_, &key, &key_size, &value);
+        return CommandArgument(
+          grn_raw_string {static_cast<const char *>(key), key_size},
+          static_cast<grn_obj *>(value));
+      }
+
+      bool
+      operator==(Cursor &other)
+      {
+        return id_ == other.id_;
+      }
+
+      bool
+      operator!=(Cursor &other)
+      {
+        return id_ != other.id_;
+      }
+
+    private:
+      grn_ctx *ctx_;
+      grn_table_cursor *cursor_;
+      grn_id id_;
+    };
+
   public:
     CommandArguments(grn_ctx *ctx,
                      grn_user_data *user_data)
@@ -35,6 +103,24 @@ namespace grn {
 
     ~CommandArguments()
     {
+    }
+
+    Cursor
+    begin() {
+      auto vars = grn_plugin_proc_get_vars(ctx_, user_data_);
+      auto cursor = grn_table_cursor_open(ctx_,
+                                          vars,
+                                          NULL, 0,
+                                          NULL, 0,
+                                          0, -1,
+                                          GRN_CURSOR_ASCENDING);
+      return Cursor(ctx_, cursor);
+    }
+
+    Cursor
+    end()
+    {
+      return Cursor(ctx_, nullptr);
     }
 
     grn_obj *
