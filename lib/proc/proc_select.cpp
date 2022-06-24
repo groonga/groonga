@@ -174,7 +174,7 @@ namespace {
                      GRN_TABLE_MAX_KEY_SIZE,
                      "[select][columns][%s][%.*s]",
                      grn_dynamic_column_stage_name(stage),
-                     (int)(label.length),
+                     static_cast<int>(label.length),
                      label.value);
         flags = grn_proc_column_parse_flags(ctx_,
                                             error_message_tag,
