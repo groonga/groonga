@@ -114,3 +114,22 @@ grn_raw_string_have_sub_string_cstring(grn_ctx *ctx,
 
   return grn_raw_string_have_sub_string(ctx, string, &sub_string);
 }
+
+grn_raw_string
+grn_raw_string_substring(grn_ctx *ctx,
+                         const grn_raw_string *string,
+                         size_t start,
+                         ssize_t length)
+{
+  grn_raw_string substring;
+  substring.value = string->value + start;
+  if (length < 0) {
+    substring.length = (size_t)((ssize_t)(string->length - start) + length + 1);
+  } else {
+    substring.length = (size_t)length;
+  }
+  if (substring.length < 0) {
+    substring.length = 0;
+  }
+  return substring;
+}
