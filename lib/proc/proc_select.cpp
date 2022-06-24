@@ -349,7 +349,7 @@ namespace {
           grn_raw_string_substring(ctx_,
                                    &(arg.name),
                                    name_prefix_length,
-                                   static_cast<ssize_t>(column_name_length));
+                                   static_cast<int64_t>(column_name_length));
         if (!add(prefix, &column_name, stage, target_columns)) {
           return false;
         }

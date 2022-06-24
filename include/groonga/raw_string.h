@@ -90,7 +90,7 @@ GRN_API grn_raw_string
 grn_raw_string_substring(grn_ctx *ctx,
                          const grn_raw_string *string,
                          size_t start,
-                         ssize_t length);
+                         int64_t length);
 
 #ifdef __cplusplus
 }

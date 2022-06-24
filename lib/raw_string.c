@@ -119,12 +119,12 @@ grn_raw_string
 grn_raw_string_substring(grn_ctx *ctx,
                          const grn_raw_string *string,
                          size_t start,
-                         ssize_t length)
+                         int64_t length)
 {
   grn_raw_string substring;
   substring.value = string->value + start;
   if (length < 0) {
-    substring.length = (size_t)((ssize_t)(string->length - start) + length + 1);
+    substring.length = (size_t)((int64_t)(string->length - start) + length + 1);
   } else {
     substring.length = (size_t)length;
   }
