@@ -25,52 +25,59 @@ extern "C" {
 #define GRN_RAW_STRING_INIT(string) do {        \
     string.value = NULL;                        \
     string.length = 0;                          \
-  } while (GRN_FALSE)
+  } while (false)
 
-#define GRN_RAW_STRING_SET(string, bulk)         \
-  if (bulk && GRN_TEXT_LEN(bulk) > 0) {          \
-    string.value = GRN_TEXT_VALUE(bulk);         \
-    string.length = GRN_TEXT_LEN(bulk);          \
-  } else {                                       \
-    string.value = NULL;                         \
-    string.length = 0;                           \
-  }
+#define GRN_RAW_STRING_SET(string, bulk) do {      \
+    if (bulk && GRN_TEXT_LEN(bulk) > 0) {          \
+      string.value = GRN_TEXT_VALUE(bulk);         \
+      string.length = GRN_TEXT_LEN(bulk);          \
+    } else {                                       \
+      string.value = NULL;                         \
+      string.length = 0;                           \
+    }                                              \
+  } while (false)
 
-#define GRN_RAW_STRING_FILL(string, bulk)        \
-  if (bulk && GRN_TEXT_LEN(bulk) > 0) {          \
-    string.value = GRN_TEXT_VALUE(bulk);         \
-    string.length = GRN_TEXT_LEN(bulk);          \
-  }
+#define GRN_RAW_STRING_SET_CSTRING(string, cstring) do {     \
+    string.value = cstring;                                  \
+    string.length = (cstring == NULL) ? 0 : strlen(cstring); \
+  } while (false)
+
+#define GRN_RAW_STRING_FILL(string, bulk) do {     \
+    if (bulk && GRN_TEXT_LEN(bulk) > 0) {          \
+      string.value = GRN_TEXT_VALUE(bulk);         \
+      string.length = GRN_TEXT_LEN(bulk);          \
+    }                                              \
+  } while (false)
 
 #define GRN_RAW_STRING_EQUAL(string, other_string)                      \
   (string.length == other_string.length &&                              \
    memcmp(string.value, other_string.value, string.length) == 0)
 
 #define GRN_RAW_STRING_EQUAL_CSTRING(string, cstring)           \
-  (cstring ?                                                    \
+  (cstring == NULL ?                                            \
+   (string.length == 0) :                                       \
    (string.length == strlen(cstring) &&                         \
-    memcmp(string.value, cstring, string.length) == 0) :        \
-   (string.length == 0))
+    memcmp(string.value, cstring, string.length) == 0))
 
 #define GRN_RAW_STRING_EQUAL_CSTRING_CI(string, cstring)                \
-  (cstring ?                                                            \
+  (cstring == NULL ?                                                    \
+   (string.length == 0) :                                               \
    (string.length == strlen(cstring) &&                                 \
-    grn_strncasecmp(string.value, cstring, string.length) == 0) :       \
-   (string.length == 0))
+    grn_strncasecmp(string.value, cstring, string.length) == 0))
 
 #define GRN_RAW_STRING_START_WITH_CSTRING(string, cstring)              \
-  (cstring ?                                                            \
+  (cstring == NULL ?                                                    \
+   true :                                                               \
    (string.length >= strlen(cstring) &&                                 \
-    memcmp(string.value, cstring, strlen(cstring)) == 0) :              \
-   true)
+    memcmp(string.value, cstring, strlen(cstring)) == 0))
 
 #define GRN_RAW_STRING_END_WITH_CSTRING(string, cstring)                \
-  (cstring ?                                                            \
+  (cstring == NULL ?                                                    \
+   true :                                                               \
    (string.length >= strlen(cstring) &&                                 \
     memcmp(string.value + string.length - strlen(cstring),              \
            cstring,                                                     \
-           strlen(cstring)) == 0) :                                     \
-   true)
+           strlen(cstring)) == 0))
 
 typedef struct {
   const char *value;
