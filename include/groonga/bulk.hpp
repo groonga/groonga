@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2020-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,19 +23,26 @@
 namespace grn {
   class TextBulk {
   public:
-    TextBulk(grn_ctx *ctx) : ctx_(ctx) {
+    TextBulk(grn_ctx *ctx) :
+      ctx_(ctx)
+    {
       GRN_TEXT_INIT(&bulk_, 0);
     }
 
-    ~TextBulk() {
+    ~TextBulk()
+    {
       GRN_OBJ_FIN(ctx_, &bulk_);
     }
 
-    grn_obj *operator*() {
+    grn_obj *
+    operator*()
+    {
       return &bulk_;
     }
 
-    std::string value() {
+    std::string
+    value()
+    {
       return std::string(GRN_TEXT_VALUE(&bulk_),
                          GRN_TEXT_LEN(&bulk_));
     };
