@@ -1171,7 +1171,7 @@ grn_table_sort_key_from_str_geo(grn_ctx *ctx, const char *str, unsigned int str_
 
 grn_table_sort_key *
 grn_table_sort_key_from_str(grn_ctx *ctx, const char *str, unsigned int str_size,
-                            grn_obj *table, unsigned int *nkeys)
+                            grn_obj *table, uint32_t *nkeys)
 {
   const char *p = str;
   const char **tokbuf;
@@ -1272,7 +1272,7 @@ grn_table_sort_keys_parse_internal(grn_ctx *ctx,
                                    grn_obj *table,
                                    const char *raw_keys,
                                    int32_t raw_keys_length,
-                                   int *n_keys,
+                                   uint32_t *n_keys,
                                    grn_table_sort_keys_parse_mode mode)
 {
   GRN_API_ENTER;
@@ -1392,7 +1392,7 @@ grn_table_sort_keys_parse_internal(grn_ctx *ctx,
       goto exit;
     }
   }
-  *n_keys = (int)n_offsets;
+  *n_keys = (uint32_t)n_offsets;
 
 exit :
   if (ctx->rc != GRN_SUCCESS || *n_keys == 0) {
@@ -1425,7 +1425,7 @@ grn_table_sort_keys_parse(grn_ctx *ctx,
                           grn_obj *table,
                           const char *raw_keys,
                           int32_t raw_keys_length,
-                          int *n_keys)
+                          uint32_t *n_keys)
 {
   return
     grn_table_sort_keys_parse_internal(ctx,

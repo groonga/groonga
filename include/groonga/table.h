@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -314,7 +314,7 @@ grn_table_group_keys_parse(grn_ctx *ctx,
                            grn_obj *table,
                            const char *raw_sort_keys,
                            int32_t raw_sort_keys_size,
-                           int *n_keys);
+                           uint32_t *n_keys);
 GRN_API grn_rc grn_table_setoperation(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
                                       grn_obj *res, grn_operator op);
 GRN_API grn_rc grn_table_difference(grn_ctx *ctx, grn_obj *table1, grn_obj *table2,
@@ -337,13 +337,13 @@ GRN_API grn_obj *grn_table_select(grn_ctx *ctx,
 GRN_API grn_table_sort_key *
 grn_table_sort_key_from_str(grn_ctx *ctx,
                             const char *str, unsigned int str_size,
-                            grn_obj *table, unsigned int *nkeys);
+                            grn_obj *table, uint32_t *nkeys);
 GRN_API grn_table_sort_key *
 grn_table_sort_keys_parse(grn_ctx *ctx,
                           grn_obj *table,
                           const char *raw_sort_keys,
                           int32_t raw_sort_keys_size,
-                          int *n_keys);
+                          uint32_t *n_keys);
 GRN_API grn_rc grn_table_sort_key_close(grn_ctx *ctx,
                                         grn_table_sort_key *keys,
                                         uint32_t nkeys);

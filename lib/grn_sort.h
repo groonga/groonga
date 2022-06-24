@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -33,7 +33,7 @@ grn_table_sort_keys_parse_internal(grn_ctx *ctx,
                                    grn_obj *table,
                                    const char *raw_keys,
                                    int32_t raw_keys_length,
-                                   int *n_keys,
+                                   uint32_t *n_keys,
                                    grn_table_sort_keys_parse_mode mode);
 
 #ifdef __cplusplus
