@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2017  Brazil
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2017  Brazil
+  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1896,12 +1896,22 @@ namespace grnarrow {
       }
       writer_ = *writer_result;
 
+#if ARROW_VERSION_MAJOR >= 9
+      auto record_batch_builder_result =
+        arrow::RecordBatchBuilder::Make(schema_,
+                                        arrow::default_memory_pool());
+      if (record_batch_builder_result.ok()) {
+        record_batch_builder_.swap(*record_batch_builder_result);
+      }
+      auto status = record_batch_builder_result.status();
+#else
       auto status =
         arrow::RecordBatchBuilder::Make(schema_,
                                         arrow::default_memory_pool(),
                                         &record_batch_builder_);
+#endif
       check(ctx_,
-             status,
+            status,
             tag_ + "[write-schema] failed to create record batch builder");
     }
 
@@ -2199,7 +2209,15 @@ namespace grnarrow {
       }
 
       std::shared_ptr<arrow::RecordBatch> record_batch;
+#if ARROW_VERSION_MAJOR >= 9
+      auto record_batch_result = record_batch_builder_->Flush();
+      if (record_batch_result.ok()) {
+        record_batch = *record_batch_result;
+      }
+      auto status = record_batch_result.status();
+#else
       auto status = record_batch_builder_->Flush(&record_batch);
+#endif
       if (check(ctx_,
                 status,
                 tag_ + "[flush] failed to flush record batch")) {
