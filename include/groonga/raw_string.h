@@ -64,6 +64,14 @@ extern "C" {
     memcmp(string.value, cstring, strlen(cstring)) == 0) :              \
    true)
 
+#define GRN_RAW_STRING_END_WITH_CSTRING(string, cstring)                \
+  (cstring ?                                                            \
+   (string.length >= strlen(cstring) &&                                 \
+    memcmp(string.value + string.length - strlen(cstring),              \
+           cstring,                                                     \
+           strlen(cstring)) == 0) :                                     \
+   true)
+
 typedef struct {
   const char *value;
   size_t length;
