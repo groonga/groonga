@@ -176,10 +176,11 @@ namespace {
                      grn_dynamic_column_stage_name(stage),
                      static_cast<int>(label.length),
                      label.value);
-        flags = grn_proc_column_parse_flags(ctx_,
-                                            error_message_tag,
-                                            flag_names.value,
-                                            flag_names.value + flag_names.length);
+        flags =
+          grn_proc_column_parse_flags(ctx_,
+                                      error_message_tag,
+                                      flag_names.value,
+                                      flag_names.value + flag_names.length);
         if (ctx_->rc != GRN_SUCCESS) {
           return false;
         }
