@@ -183,37 +183,48 @@ namespace grn {
       if (arg && GRN_TEXT_LEN(arg) > 0) {
         return arg;
       }
+      if (!fallback_prefix) {
+        return arg;
+      }
       return get(fallback_prefix, name, fallback_name);
     }
 
     grn_raw_string
-    get_string(const char *name)
+    get_string(const char *name,
+               grn_raw_string default_value=default_string_value())
     {
-      return arg_to_string(get(name));
-    }
-
-    grn_raw_string
-    get_string(const char *prefix,
-               const char *name)
-    {
-      return arg_to_string(get(prefix, name));
+      return arg_to_string(get(name),
+                           default_value);
     }
 
     grn_raw_string
     get_string(const char *prefix,
                const char *name,
-               const char *fallback_name)
+               grn_raw_string default_value=default_string_value())
     {
-      return arg_to_string(get(prefix, name, fallback_name));
+      return arg_to_string(get(prefix, name),
+                           default_value);
+    }
+
+    grn_raw_string
+    get_string(const char *prefix,
+               const char *name,
+               const char *fallback_name,
+               grn_raw_string default_value=default_string_value())
+    {
+      return arg_to_string(get(prefix, name, fallback_name),
+                           default_value);
     }
 
     grn_raw_string
     get_string(const char *prefix,
                const char *fallback_prefix,
                const char *name,
-               const char *fallback_name)
+               const char *fallback_name,
+               grn_raw_string default_value=default_string_value())
     {
-      return arg_to_string(get(prefix, fallback_prefix, name, fallback_name));
+      return arg_to_string(get(prefix, fallback_prefix, name, fallback_name),
+                           default_value);
     }
 
     int32_t
@@ -258,12 +269,21 @@ namespace grn {
     grn_ctx *ctx_;
     grn_user_data *user_data_;
 
-    grn_raw_string
-    arg_to_string(grn_obj *arg)
+    static grn_raw_string
+    default_string_value()
     {
-      grn_raw_string string = {nullptr, 0};
-      GRN_RAW_STRING_FILL(string, arg);
-      return string;
+      return grn_raw_string {nullptr, 0};
+    }
+
+    grn_raw_string
+    arg_to_string(grn_obj *arg,
+                  grn_raw_string default_value)
+    {
+      if (arg && GRN_TEXT_LEN(arg) > 0) {
+        return grn_raw_string {GRN_TEXT_VALUE(arg), GRN_TEXT_LEN(arg)};
+      } else {
+        return default_value;
+      }
     }
 
     int32_t
