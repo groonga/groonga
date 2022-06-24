@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2016-2018  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2016-2018  Brazil
+  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -62,7 +62,7 @@ extern "C" {
   (cstring ?                                                            \
    (string.length >= strlen(cstring) &&                                 \
     memcmp(string.value, cstring, strlen(cstring)) == 0) :              \
-   (string.length == 0))
+   true)
 
 typedef struct {
   const char *value;
