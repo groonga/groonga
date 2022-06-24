@@ -16,9 +16,9 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <groonga.hpp>
-
 #include "grn_proc.h"
+
+#include <groonga.hpp>
 
 namespace grn {
   int32_t CommandArguments::arg_to_int32(grn_obj *arg,
