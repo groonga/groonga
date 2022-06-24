@@ -96,8 +96,7 @@ namespace {
       if (grn_obj_is_table(ctx_, type)) {
         grn_obj_unref(ctx_, type);
       }
-      auto ctx = ctx_;
-      GRN_OBJ_FIN(ctx, &dependency_names);
+      GRN_OBJ_FIN(ctx_, &dependency_names);
     }
 
     bool
