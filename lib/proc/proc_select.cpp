@@ -849,38 +849,6 @@ namespace {
     }
 
     bool
-    prepare(grn_obj *result_set)
-    {
-      if (keys_.length == 0) {
-        return true;
-      }
-
-      parsed_keys_ =
-        grn_table_group_keys_parse(ctx_,
-                                   result_set,
-                                   keys_.value,
-                                   static_cast<int32_t>(keys_.length),
-                                   &n_parsed_keys_);
-      if (!parsed_keys_) {
-        return false;
-      }
-
-      grn::TextBulk buffer(ctx_);
-      for (uint32_t i = 0; i < n_parsed_keys_; i++) {
-        GRN_BULK_REWIND(*buffer);
-        grn_text_printf(ctx_, *buffer, "drilldown%d", i);
-        grn_raw_string label = {GRN_TEXT_VALUE(*buffer), GRN_TEXT_LEN(*buffer)};
-        auto drilldown = add("drilldown_", nullptr, &label);
-        if (!drilldown) {
-          continue;
-        }
-        drilldown->parsed_keys_ = parsed_keys_ + i;
-        drilldown->n_parsed_keys_ = 1;
-      }
-      return true;
-    }
-
-    bool
     empty()
     {
       return drilldowns_ == nullptr;
@@ -892,46 +860,13 @@ namespace {
       return keys_.length == 0;
     }
 
-    int32_t
+    bool
     execute(SelectExecutor *executor,
             grn_obj *table,
             Slices *slices,
             grn_obj *condition,
             const char *log_tag_context,
-            const char *query_log_tag_prefix)
-    {
-      if (!drilldowns_) {
-        return 0;
-      }
-
-      std::vector<grn_id> tsorted_ids;
-      if (!tsort(tsorted_ids)) {
-        return -1;
-      }
-
-      for (const auto &id : tsorted_ids) {
-        auto drilldown = (*this)[id];
-        if (!drilldown->execute(executor,
-                                this,
-                                table,
-                                slices,
-                                condition,
-                                log_tag_context,
-                                query_log_tag_prefix)) {
-          if (ctx_->rc != GRN_SUCCESS) {
-            return -1;
-          }
-        }
-      }
-
-      int32_t n_available_results = 0;
-      for (auto drilldown : *this) {
-        if (drilldown->result.table) {
-          n_available_results++;
-        }
-      }
-      return n_available_results;
-    }
+            const char *query_log_tag_prefix);
 
   private:
     grn_ctx *ctx_;
@@ -1063,6 +998,38 @@ namespace {
         }
       }
       return drilldown;
+    }
+
+    bool
+    process_keys(grn_obj *table)
+    {
+      if (keys_.length == 0) {
+        return true;
+      }
+
+      parsed_keys_ =
+        grn_table_group_keys_parse(ctx_,
+                                   table,
+                                   keys_.value,
+                                   static_cast<int32_t>(keys_.length),
+                                   &n_parsed_keys_);
+      if (!parsed_keys_) {
+        return false;
+      }
+
+      grn::TextBulk buffer(ctx_);
+      for (uint32_t i = 0; i < n_parsed_keys_; i++) {
+        GRN_BULK_REWIND(*buffer);
+        grn_text_printf(ctx_, *buffer, "drilldown%d", i);
+        grn_raw_string label = {GRN_TEXT_VALUE(*buffer), GRN_TEXT_LEN(*buffer)};
+        auto drilldown = add("drilldown_", nullptr, &label);
+        if (!drilldown) {
+          continue;
+        }
+        drilldown->parsed_keys_ = parsed_keys_ + i;
+        drilldown->n_parsed_keys_ = 1;
+      }
+      return true;
     }
 
     enum class TSortStatus {
@@ -1303,7 +1270,8 @@ namespace {
     }
 
     ObjectCursor<Slice>
-    begin() {
+    begin()
+    {
       if (slices_) {
         auto cursor = grn_hash_cursor_open(ctx_,
                                            slices_,
@@ -1351,21 +1319,7 @@ namespace {
 
     bool
     execute(SelectExecutor *executor,
-            grn_obj *table)
-    {
-      if (!slices_) {
-        return true;
-      }
-
-      for (auto slice : *this) {
-        if (!slice->execute(executor, table)) {
-          if (ctx_->rc != GRN_SUCCESS) {
-            return false;
-          }
-        }
-      }
-      return true;
-    }
+            grn_obj *table);
 
   private:
     grn_ctx *ctx_;
@@ -1579,9 +1533,47 @@ namespace {
     grn_rc execute();
 
     bool
-    prepare()
+    execute_olap_operations()
     {
-      return prepare_slices() && prepare_drilldowns();
+      if (!slices.execute(this, tables.result)) {
+        return false;
+      }
+      if (!drilldowns.execute(this,
+                              tables.result,
+                              &slices,
+                              filter.condition.expression,
+                              "",
+                              "")) {
+        return false;
+      }
+      return true;
+    }
+
+    void
+    executed(Slice *executed_slice)
+    {
+    }
+
+    void
+    executed(Slices *executed_slices)
+    {
+      ++(output.n_elements);
+    }
+
+    void
+    executed(Drilldown *executed_drilldown)
+    {
+      if (!drilldowns.is_labeled()) {
+        ++(output.n_elements);
+      }
+    }
+
+    void
+    executed(Drilldowns *executed_drilldowns)
+    {
+      if (drilldowns.is_labeled()) {
+        ++(output.n_elements);
+      }
     }
 
     grn_ctx *ctx_;
@@ -1595,13 +1587,13 @@ namespace {
       int n_elements;
       grn_select_output_formatter *formatter;
     } output;
+
+    /* inputs */
     struct {
       grn_raw_string table;
       grn_raw_string columns;
       grn_raw_string values;
     } load;
-
-    /* inputs */
     grn_raw_string table;
     Filter filter;
     grn_raw_string scorer;
@@ -1617,55 +1609,6 @@ namespace {
     grn_raw_string adjuster;
     grn_raw_string match_escalation;
     DynamicColumns dynamic_columns;
-
-  private:
-    bool
-    prepare_slices()
-    {
-      if (slices.empty()) {
-        return true;
-      }
-
-      if (slices.execute(this, tables.result)) {
-        ++(output.n_elements);
-        return true;
-      } else {
-        return false;
-      }
-    }
-
-    bool
-    prepare_drilldowns()
-    {
-      if (!drilldowns.prepare(tables.result)) {
-        return false;
-      }
-
-      if (drilldowns.empty()) {
-        return true;
-      }
-
-      auto n_available_results =
-        drilldowns.execute(this,
-                           tables.result,
-                           &slices,
-                           filter.condition.expression,
-                           "",
-                           "");
-      if (n_available_results < 0) {
-        return false;
-      }
-
-      if (drilldowns.is_labeled()) {
-        if (n_available_results > 0) {
-          ++(output.n_elements);
-        }
-      } else {
-        output.n_elements += n_available_results;
-      }
-
-      return true;
-    }
   };
 
   bool
@@ -2025,6 +1968,53 @@ namespace {
       }
     }
 
+    executor->executed(this);
+
+    return true;
+  }
+
+  bool
+  Drilldowns::execute(SelectExecutor *executor,
+                      grn_obj *table,
+                      Slices *slices,
+                      grn_obj *condition,
+                      const char *log_tag_context,
+                      const char *query_log_tag_prefix)
+  {
+    if (!process_keys(table)) {
+      return false;
+    }
+
+    if (!drilldowns_) {
+      return true;
+    }
+
+    std::vector<grn_id> tsorted_ids;
+    if (!tsort(tsorted_ids)) {
+      return false;
+    }
+
+    for (const auto &id : tsorted_ids) {
+      auto drilldown = (*this)[id];
+      if (!drilldown->execute(executor,
+                              this,
+                              table,
+                              slices,
+                              condition,
+                              log_tag_context,
+                              query_log_tag_prefix)) {
+        if (ctx_->rc != GRN_SUCCESS) {
+          return false;
+        }
+      }
+    }
+
+    for (auto drilldown : *this) {
+      if (drilldown->result.table) {
+        executor->executed(this);
+        break;
+      }
+    }
     return true;
   }
 
@@ -2127,9 +2117,32 @@ namespace {
                            nullptr,
                            filter.condition.expression,
                            log_tag,
-                           query_log_tag_prefix) < 0) {
+                           query_log_tag_prefix)) {
       return false;
     }
+
+    executor->executed(this);
+
+    return true;
+  }
+
+  bool
+  Slices::execute(SelectExecutor *executor,
+                  grn_obj *table)
+  {
+    if (!slices_) {
+      return true;
+    }
+
+    for (auto slice : *this) {
+      if (!slice->execute(executor, table)) {
+        if (ctx_->rc != GRN_SUCCESS) {
+          return false;
+        }
+      }
+    }
+
+    executor->executed(this);
 
     return true;
   }
@@ -4793,7 +4806,7 @@ grn_rc SelectExecutor::execute()
         goto exit;
       }
 
-      if (!data->prepare()) {
+      if (!data->execute_olap_operations()) {
         goto exit;
       }
 
