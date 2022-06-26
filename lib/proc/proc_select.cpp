@@ -1525,27 +1525,34 @@ namespace {
         cacheable(0),
         taintable(0),
         output({0, nullptr}),
-        load({{nullptr, 0}, {nullptr, 0}, {nullptr, 0}}),
+        load({
+                args->get_string("load_table"),
+                args->get_string("load_columns"),
+                args->get_string("load_values"),
+             }),
 
-        table({nullptr, 0}),
+        table(args->get_string("table")),
         filter(ctx, args),
-        scorer({nullptr, 0}),
-        sort_keys({nullptr, 0}),
-        output_columns({nullptr, 0}),
+        scorer(args->get_string("scorer")),
+        sort_keys(args->get_string(nullptr, nullptr, "sort_keys", "sortby")),
+        output_columns(args->get_string("output_columns")),
         default_output_columns({nullptr, 0}),
-        offset(0),
-        limit(0),
+        offset(args->get_int32("offset", 0)),
+        limit(args->get_int32("limit", GRN_SELECT_DEFAULT_LIMIT)),
         slices(ctx, args),
         drilldowns(ctx, args, nullptr, true, ""),
-        cache({nullptr, 0}),
-        match_escalation_threshold({nullptr, 0}),
-        adjuster({nullptr, 0}),
-        match_escalation({nullptr, 0}),
+        cache(args->get_string("cache")),
+        match_escalation_threshold(
+          args->get_string("match_escalation_threshold")),
+        adjuster(args->get_string("adjuster")),
+        match_escalation(args->get_string("match_escalation")),
         dynamic_columns(ctx, args)
     {
       if (ctx_->rc != GRN_SUCCESS) {
         return;
       }
+
+      dynamic_columns.fill(nullptr);
     }
 
     ~SelectExecutor()
@@ -4830,68 +4837,6 @@ command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data
   grn::CommandArguments command_args(ctx, user_data);
   SelectExecutor data(ctx, &command_args);
   if (ctx->rc != GRN_SUCCESS) {
-    return NULL;
-  }
-
-  data.table.value = grn_plugin_proc_get_var_string(ctx, user_data,
-                                                    "table", -1,
-                                                    &(data.table.length));
-  data.scorer.value =
-    grn_plugin_proc_get_var_string(ctx, user_data,
-                                   "scorer", -1,
-                                   &(data.scorer.length));
-  data.sort_keys.value =
-    grn_plugin_proc_get_var_string(ctx, user_data,
-                                   "sort_keys", -1,
-                                   &(data.sort_keys.length));
-  if (data.sort_keys.length == 0) {
-    /* For backward compatibility */
-    data.sort_keys.value =
-      grn_plugin_proc_get_var_string(ctx, user_data,
-                                     "sortby", -1,
-                                     &(data.sort_keys.length));
-  }
-  data.output_columns.value =
-    grn_plugin_proc_get_var_string(ctx, user_data,
-                                   "output_columns", -1,
-                                   &(data.output_columns.length));
-  data.offset = grn_plugin_proc_get_var_int32(ctx, user_data,
-                                              "offset", -1,
-                                              0);
-  data.limit = grn_plugin_proc_get_var_int32(ctx, user_data,
-                                             "limit", -1,
-                                             GRN_SELECT_DEFAULT_LIMIT);
-
-  data.cache.value = grn_plugin_proc_get_var_string(ctx, user_data,
-                                                    "cache", -1,
-                                                    &(data.cache.length));
-  data.match_escalation_threshold.value =
-    grn_plugin_proc_get_var_string(ctx, user_data,
-                                   "match_escalation_threshold", -1,
-                                   &(data.match_escalation_threshold.length));
-
-  data.adjuster.value =
-    grn_plugin_proc_get_var_string(ctx, user_data,
-                                   "adjuster", -1,
-                                   &(data.adjuster.length));
-  data.match_escalation.value =
-    grn_plugin_proc_get_var_string(ctx, user_data,
-                                   "match_escalation", -1,
-                                   &(data.match_escalation.length));
-  data.load.table.value =
-    grn_plugin_proc_get_var_string(ctx, user_data,
-                                   "load_table", -1,
-                                   &(data.load.table.length));
-  data.load.columns.value =
-    grn_plugin_proc_get_var_string(ctx, user_data,
-                                   "load_columns", -1,
-                                   &(data.load.columns.length));
-  data.load.values.value =
-    grn_plugin_proc_get_var_string(ctx, user_data,
-                                   "load_values", -1,
-                                   &(data.load.values.length));
-
-  if (!data.dynamic_columns.fill(nullptr)) {
     return NULL;
   }
 
