@@ -4835,13 +4835,10 @@ static grn_obj *
 command_select(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 {
   grn::CommandArguments command_args(ctx, user_data);
-  SelectExecutor data(ctx, &command_args);
-  if (ctx->rc != GRN_SUCCESS) {
-    return NULL;
+  SelectExecutor executor(ctx, &command_args);
+  if (ctx->rc == GRN_SUCCESS) {
+    executor.execute();
   }
-
-  data.execute();
-
   return NULL;
 }
 
