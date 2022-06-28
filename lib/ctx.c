@@ -422,6 +422,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
    * sizeof(grn_ctx *) is same. So we reuse GRN_PVECTOR here. */
   GRN_PTR_INIT(&(ctx->impl->children.pool), GRN_OBJ_VECTOR, GRN_ID_NIL);
   ctx->impl->parent = NULL;
+  CRITICAL_SECTION_INIT(ctx->impl->temporary_objects_lock);
 
   ctx->impl->progress.callback = NULL;
   ctx->impl->progress.user_data = NULL;
@@ -649,6 +650,7 @@ grn_ctx_impl_fin(grn_ctx *ctx)
     GRN_OBJ_FIN(ctx, &(ctx->impl->children.pool));
     CRITICAL_SECTION_FIN(ctx->impl->children.lock);
   }
+  CRITICAL_SECTION_FIN(ctx->impl->temporary_objects_lock);
 
   GRN_HASH_EACH_BEGIN(ctx, ctx->impl->variables, cursor, id) {
     void *value;

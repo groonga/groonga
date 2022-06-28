@@ -1,7 +1,7 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
-  Copyright(C) 2021       Horimoto Yasuhiro <horimoto@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2021       Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -11358,8 +11358,22 @@ grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned int name_
           name_size, name);
       id = GRN_ID_NIL;
     }
-  } else if (ctx->impl && ctx->impl->values) {
-    id = grn_array_add(ctx, ctx->impl->values, NULL) | GRN_OBJ_TMP_OBJECT;
+  } else {
+    grn_ctx *target_ctx = ctx;
+    while (target_ctx->impl->parent) {
+      target_ctx = target_ctx->impl->parent;
+    }
+    if (target_ctx->impl && target_ctx->impl->values) {
+      if (target_ctx != ctx) {
+        CRITICAL_SECTION_ENTER(target_ctx->impl->temporary_objects_lock);
+      }
+      id =
+        grn_array_add(target_ctx, target_ctx->impl->values, NULL) |
+        GRN_OBJ_TMP_OBJECT;
+      if (target_ctx != ctx) {
+        CRITICAL_SECTION_LEAVE(target_ctx->impl->temporary_objects_lock);
+      }
+    }
   }
   return id;
 }
@@ -11371,19 +11385,38 @@ grn_obj_delete_by_id(grn_ctx *ctx, grn_obj *db, grn_id id, bool remove_p)
   GRN_API_ENTER;
   if (id) {
     if (id & GRN_OBJ_TMP_OBJECT) {
-      if (ctx->impl) {
+      grn_ctx *target_ctx = ctx;
+      while (target_ctx->impl->parent) {
+        target_ctx = target_ctx->impl->parent;
+      }
+      if (target_ctx->impl) {
         if (id & GRN_OBJ_TMP_COLUMN) {
-          if (ctx->impl->temporary_columns) {
-            grn_log_reference_count("%p: delete: %u\n", ctx, id);
-            rc = grn_pat_delete_by_id(ctx, ctx->impl->temporary_columns,
+          if (target_ctx->impl->temporary_columns) {
+            if (target_ctx != ctx) {
+              CRITICAL_SECTION_ENTER(target_ctx->impl->temporary_objects_lock);
+            }
+            grn_log_reference_count("%p: delete: %u\n", target_ctx, id);
+            rc = grn_pat_delete_by_id(target_ctx,
+                                      target_ctx->impl->temporary_columns,
                                       id & ~(GRN_OBJ_TMP_COLUMN | GRN_OBJ_TMP_OBJECT),
                                       NULL);
+            if (target_ctx != ctx) {
+              CRITICAL_SECTION_LEAVE(target_ctx->impl->temporary_objects_lock);
+            }
           }
         } else {
-          if (ctx->impl->values) {
+          if (target_ctx->impl->values) {
+            if (target_ctx != ctx) {
+              CRITICAL_SECTION_ENTER(target_ctx->impl->temporary_objects_lock);
+            }
             grn_log_reference_count("%p: delete: %u\n", ctx, id);
-            rc = grn_array_delete_by_id(ctx, ctx->impl->values,
-                                        id & ~GRN_OBJ_TMP_OBJECT, NULL);
+            rc = grn_array_delete_by_id(target_ctx,
+                                        target_ctx->impl->values,
+                                        id & ~GRN_OBJ_TMP_OBJECT,
+                                        NULL);
+            if (target_ctx != ctx) {
+              CRITICAL_SECTION_LEAVE(target_ctx->impl->temporary_objects_lock);
+            }
           }
         }
       }
@@ -11440,16 +11473,38 @@ grn_db_obj_init(grn_ctx *ctx, grn_obj *db, grn_id id, grn_db_obj *obj)
   grn_rc rc = GRN_SUCCESS;
   if (id) {
     if (id & GRN_OBJ_TMP_OBJECT) {
+      grn_ctx *target_ctx = ctx;
+      while (target_ctx->impl->parent) {
+        target_ctx = target_ctx->impl->parent;
+      }
       if (id & GRN_OBJ_TMP_COLUMN) {
-        if (ctx->impl && ctx->impl->temporary_columns) {
+        if (target_ctx->impl && target_ctx->impl->temporary_columns) {
           grn_id real_id = id & ~(GRN_OBJ_TMP_COLUMN | GRN_OBJ_TMP_OBJECT);
-          rc = grn_pat_set_value(ctx, ctx->impl->temporary_columns,
-                                 real_id, &obj, GRN_OBJ_SET);
+          if (target_ctx != ctx) {
+            CRITICAL_SECTION_ENTER(target_ctx->impl->temporary_objects_lock);
+          }
+          rc = grn_pat_set_value(target_ctx,
+                                 target_ctx->impl->temporary_columns,
+                                 real_id,
+                                 &obj,
+                                 GRN_OBJ_SET);
+          if (target_ctx != ctx) {
+            CRITICAL_SECTION_LEAVE(target_ctx->impl->temporary_objects_lock);
+          }
         }
       } else {
-        if (ctx->impl && ctx->impl->values) {
-          rc = grn_array_set_value(ctx, ctx->impl->values,
-                                   id & ~GRN_OBJ_TMP_OBJECT, &obj, GRN_OBJ_SET);
+        if (target_ctx->impl && target_ctx->impl->values) {
+          if (target_ctx != ctx) {
+            CRITICAL_SECTION_ENTER(target_ctx->impl->temporary_objects_lock);
+          }
+          rc = grn_array_set_value(target_ctx,
+                                   target_ctx->impl->values,
+                                   id & ~GRN_OBJ_TMP_OBJECT,
+                                   &obj,
+                                   GRN_OBJ_SET);
+          if (target_ctx != ctx) {
+            CRITICAL_SECTION_LEAVE(target_ctx->impl->temporary_objects_lock);
+          }
         }
       }
     } else {
@@ -11748,26 +11803,31 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
   if (!ctx || !ctx->impl || !id) { return res; }
   GRN_API_ENTER;
   if (id & GRN_OBJ_TMP_OBJECT) {
+    grn_ctx *target_ctx = ctx;
+    while (target_ctx->impl->parent) {
+      target_ctx = target_ctx->impl->parent;
+    }
     if (id & GRN_OBJ_TMP_COLUMN) {
-      if (ctx->impl->temporary_columns) {
+      if (target_ctx->impl->temporary_columns) {
         grn_id real_id = id & ~(GRN_OBJ_TMP_COLUMN | GRN_OBJ_TMP_OBJECT);
-        grn_log_reference_count("%p: at: start: %u\n", ctx, real_id);
+        grn_log_reference_count("%p: at: start: %u\n", target_ctx, real_id);
         grn_obj **tmp_obj;
         uint32_t size;
-        tmp_obj = (grn_obj **)grn_pat_get_value_(ctx,
-                                                 ctx->impl->temporary_columns,
-                                                 real_id,
-                                                 &size);
+        tmp_obj =
+          (grn_obj **)grn_pat_get_value_(target_ctx,
+                                         target_ctx->impl->temporary_columns,
+                                         real_id,
+                                         &size);
         if (tmp_obj) {
           res = *tmp_obj;
         }
       }
     } else {
-      if (ctx->impl->values) {
+      if (target_ctx->impl->values) {
         grn_id real_id = id & ~GRN_OBJ_TMP_OBJECT;
-        grn_log_reference_count("%p: at: start: %u\n", ctx, real_id);
+        grn_log_reference_count("%p: at: start: %u\n", target_ctx, real_id);
         grn_obj **tmp_obj;
-        tmp_obj = _grn_array_get_value(ctx, ctx->impl->values, real_id);
+        tmp_obj = _grn_array_get_value(ctx, target_ctx->impl->values, real_id);
         if (tmp_obj) {
           res = *tmp_obj;
         }
@@ -11776,7 +11836,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
     if (res) {
       DB_OBJ(res)->reference_count++;
       grn_log_reference_count("%p: at: done: %u: %u\n",
-                              ctx,
+                              target_ctx,
                               DB_OBJ(res)->id,
                               DB_OBJ(res)->reference_count);
     }

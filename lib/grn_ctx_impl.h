@@ -201,6 +201,7 @@ struct _grn_ctx_impl {
     grn_obj pool;
   } children;
   grn_ctx *parent;
+  grn_critical_section temporary_objects_lock;
 
   struct {
     grn_progress_callback_func callback;

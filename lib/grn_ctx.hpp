@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2021-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,9 @@ namespace grn {
     };
 
     ~ChildCtxReleaser() {
-      grn_ctx_release_child(ctx_, child_ctx_);
+      if (child_ctx_) {
+        grn_ctx_release_child(ctx_, child_ctx_);
+      }
     }
 
   private:
