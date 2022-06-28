@@ -19,7 +19,7 @@ Japanese Dictionary <http://osdn.jp/projects/naist-jdic/>`_
 for Japanese.
 
 You need to install an additional package to using TokenMecab.
-For more detail of how to installing an additional package, see `how to install each OS <http://groonga.org/docs/install.html>`_ .
+For more detail of how to installing an additional package, see :doc:`/install` .
 
 ``TokenMecab`` is good for precision rather than recall. You can find
 ``東京都`` and ``京都`` texts by ``京都`` query with

@@ -546,7 +546,7 @@ Improvements
   ``--admin-html-path``.
 * Added more return value checks. [GitHub#9] [Reported by Markus Elfring]
 * [dat] Supported term extract operation.
-* Added `logos <http://groonga.org/logo/>`_ .
+* Added `logos <https://groonga.org/logo/>`_ .
 * Updated HTML design.
 * Renamed ``grntest`` to ``groonga-benchmark``.
 * Supported ``autogen.sh`` on CentOS 5.

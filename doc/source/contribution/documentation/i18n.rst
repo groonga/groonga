@@ -75,7 +75,7 @@ Then you need to configure your cloned repository::
 The above steps are just needed at the first setup.
 
 If you have troubles on the above steps, you can use source
-files available on http://packages.groonga.org/source/groonga/ .
+files available on https://packages.groonga.org/source/groonga/ .
 
 How to update .po files
 -----------------------

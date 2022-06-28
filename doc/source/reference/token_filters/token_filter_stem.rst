@@ -13,7 +13,7 @@ Summary
 
 ``TokenFilterStem`` stems tokenized token.
 
-You need to install an additional package to using ``TokenFilterStem``. For more detail of how to installing an additional package, see `how to install each OS <http://groonga.org/docs/install.html>`_ .
+You need to install an additional package to using ``TokenFilterStem``. For more detail of how to installing an additional package, see :doc:`/install` .
 
 Syntax
 ------

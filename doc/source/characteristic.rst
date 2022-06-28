@@ -11,7 +11,7 @@ Groonga is a fast and accurate full text search engine based on inverted index. 
 
 Groonga is also a column-oriented database management system (DBMS). Compared with well-known row-oriented systems, such as MySQL and PostgreSQL, column-oriented systems are more suited for aggregate queries. Due to this advantage, Groonga can cover weakness of row-oriented systems.
 
-The basic functions of Groonga are provided in a C library. Also, libraries for using Groonga in other languages, such as Ruby, are provided by related projects. In addition, groonga-based storage engines are provided for MySQL and PostgreSQL. These libraries and storage engines allow any application to use Groonga. See `usage examples <http://groonga.org/users/>`_.
+The basic functions of Groonga are provided in a C library. Also, libraries for using Groonga in other languages, such as Ruby, are provided by related projects. In addition, groonga-based storage engines are provided for MySQL and PostgreSQL. These libraries and storage engines allow any application to use Groonga. See `usage examples <https://groonga.org/users/>`_.
 
 Full text search and Instant update
 -----------------------------------
@@ -55,7 +55,7 @@ Groonga provides inverted index-based fast geo-location search, which supports a
 Groonga library
 ---------------
 
-The basic functions of Groonga are provided in a C library and any application can use Groonga as a full text search engine or a column-oriented database. Also, libraries for languages other than C/C++, such as Ruby, are provided in related projects. See `related projects <http://groonga.org/related-projects.html>`_ for details.
+The basic functions of Groonga are provided in a C library and any application can use Groonga as a full text search engine or a column-oriented database. Also, libraries for languages other than C/C++, such as Ruby, are provided in related projects. See `related projects <https://groonga.org/related-projects.html>`_ for details.
 
 Groonga server
 --------------
@@ -65,4 +65,4 @@ Groonga provides a built-in server command which supports HTTP, the memcached bi
 Mroonga storage engine
 ----------------------
 
-Groonga works not only as an independent column-oriented DBMS but also as storage engines of well-known DBMSs. For example, `Mroonga <http://mroonga.org/>`_ is a MySQL pluggable storage engine using Groonga. By using Mroonga, you can use Groonga for column-oriented storage and full text search. A combination of a built-in storage engine, MyISAM or InnoDB, and a Groonga-based full text search engine is also available. All the combinations have good and bad points and the best one depends on the application. See `related projects <http://groonga.org/related-projects.html>`_ for details.
+Groonga works not only as an independent column-oriented DBMS but also as storage engines of well-known DBMSs. For example, `Mroonga <https://mroonga.org/>`_ is a MySQL pluggable storage engine using Groonga. By using Mroonga, you can use Groonga for column-oriented storage and full text search. A combination of a built-in storage engine, MyISAM or InnoDB, and a Groonga-based full text search engine is also available. All the combinations have good and bad points and the best one depends on the application. See `related projects <https://groonga.org/related-projects.html>`_ for details.

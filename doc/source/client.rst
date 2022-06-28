@@ -12,6 +12,6 @@ existing client libraries.
 
 There are some client libraries which provides convenient API to connect
 to Groonga server in some program languages. See `Client libraries
-<http://groonga.org/related-projects.html#libraries>`_ for details.
+<https://groonga.org/related-projects.html#libraries>`_ for details.
 
 

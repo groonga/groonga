@@ -601,7 +601,7 @@ news.rstに変更点をまとめましたが、それを元にリリースアナ
 blogroonga(ブログ)の更新
 ------------------------
 
-http://groonga.org/blog/ および http://groonga.org/blog/ にて公開されているリリース案内を作成します。
+https://groonga.org/blog/ および https://groonga.org/blog/ にて公開されているリリース案内を作成します。
 
 基本的にはリリースアナウンスの内容をそのまま記載します。
 

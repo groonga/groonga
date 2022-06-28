@@ -6939,7 +6939,7 @@ Release 9.0.5 - 2019-07-30
    There are some critical bugs are found in this release. ``select`` command returns wrong search results.
    We will release the new version (9.0.6) which fixes the issues.
    Please do not use Groonga 9.0.5, and recommends to upgrade to 9.0.6 in the future.
-   The detail of this issues are explained at http://groonga.org/en/blog/2019/07/30/groonga-9.0.5.html.
+   The detail of this issues are explained at https://groonga.org/en/blog/2019/07/30/groonga-9.0.5.html.
 
 Improvements
 ------------
