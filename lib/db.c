@@ -13792,7 +13792,20 @@ grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
     if (id & GRN_OBJ_TMP_OBJECT) {
       if (id & GRN_OBJ_TMP_COLUMN) {
         grn_id real_id = id & ~(GRN_OBJ_TMP_OBJECT | GRN_OBJ_TMP_COLUMN);
-        p = _grn_pat_key(ctx, ctx->impl->temporary_columns, real_id, &len);
+        grn_ctx *target_ctx = ctx;
+        while (target_ctx->impl->parent) {
+          target_ctx = target_ctx->impl->parent;
+        }
+        if (target_ctx != ctx) {
+          CRITICAL_SECTION_ENTER(target_ctx->impl->temporary_objects_lock);
+        }
+        p = _grn_pat_key(target_ctx,
+                         target_ctx->impl->temporary_columns,
+                         real_id,
+                         &len);
+        if (target_ctx != ctx) {
+          CRITICAL_SECTION_LEAVE(target_ctx->impl->temporary_objects_lock);
+        }
       }
     } else if (id && id < GRN_ID_MAX) {
       grn_db *s = (grn_db *)DB_OBJ(obj)->db;
