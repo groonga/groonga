@@ -6335,9 +6335,20 @@ grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, uint32_t name_si
     void *value = NULL;
     grn_snprintf(column_name, GRN_TABLE_MAX_KEY_SIZE, GRN_TABLE_MAX_KEY_SIZE,
                  "%u%c%.*s", table_id, GRN_DB_DELIMITER, (int)name_size, name);
-    grn_pat_get(ctx, ctx->impl->temporary_columns,
+    grn_ctx *target_ctx = ctx;
+    while (target_ctx->impl->parent) {
+      target_ctx = target_ctx->impl->parent;
+    }
+    if (target_ctx != ctx) {
+      CRITICAL_SECTION_ENTER(target_ctx->impl->temporary_objects_lock);
+    }
+    grn_pat_get(target_ctx,
+                target_ctx->impl->temporary_columns,
                 column_name, strlen(column_name),
                 &value);
+    if (target_ctx != ctx) {
+      CRITICAL_SECTION_LEAVE(target_ctx->impl->temporary_objects_lock);
+    }
     if (value) {
       column = *((grn_obj **)value);
       DB_OBJ(column)->reference_count++;
