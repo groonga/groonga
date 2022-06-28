@@ -765,14 +765,15 @@ grn_table_columns_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
                               GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY))) {
     if (grn_table_columns(ctx, obj, "", 0, (grn_obj *)cols)) {
       int i = 0;
-      grn_id *key;
-      GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
-          grn_obj *col = grn_ctx_at(ctx, *key);
-          if (col) {
-            if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
-            grn_column_name_(ctx, col, buf);
-          }
-        });
+      GRN_HASH_EACH_BEGIN(ctx, cols, cursor, id) {
+        void *key;
+        grn_hash_cursor_get_key(ctx, cursor, &key);
+        grn_obj *col = grn_ctx_at(ctx, *((grn_id *)key));
+        if (col) {
+          if (i++ > 0) { GRN_TEXT_PUTS(ctx, buf, ", "); }
+          grn_column_name_(ctx, col, buf);
+        }
+      } GRN_HASH_EACH_END(ctx, cursor);
     }
     grn_hash_close(ctx, cols);
   }
