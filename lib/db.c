@@ -6339,16 +6339,10 @@ grn_obj_column_(grn_ctx *ctx, grn_obj *table, const char *name, uint32_t name_si
     while (target_ctx->impl->parent) {
       target_ctx = target_ctx->impl->parent;
     }
-    if (target_ctx != ctx) {
-      CRITICAL_SECTION_ENTER(target_ctx->impl->temporary_objects_lock);
-    }
     grn_pat_get(target_ctx,
                 target_ctx->impl->temporary_columns,
                 column_name, strlen(column_name),
                 &value);
-    if (target_ctx != ctx) {
-      CRITICAL_SECTION_LEAVE(target_ctx->impl->temporary_objects_lock);
-    }
     if (value) {
       column = *((grn_obj **)value);
       DB_OBJ(column)->reference_count++;
@@ -6439,9 +6433,6 @@ grn_table_columns(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int n
     while (target_ctx->impl->parent) {
       target_ctx = target_ctx->impl->parent;
     }
-    if (target_ctx != ctx) {
-      CRITICAL_SECTION_ENTER(target_ctx->impl->temporary_objects_lock);
-    }
     cursor = grn_pat_cursor_open(target_ctx,
                                  target_ctx->impl->temporary_columns,
                                  search_key, strlen(search_key),
@@ -6457,9 +6448,6 @@ grn_table_columns(grn_ctx *ctx, grn_obj *table, const char *name, unsigned int n
         n++;
       }
       grn_pat_cursor_close(target_ctx, cursor);
-    }
-    if (target_ctx != ctx) {
-      CRITICAL_SECTION_LEAVE(target_ctx->impl->temporary_objects_lock);
     }
   } else {
     grn_db *s = (grn_db *)DB_OBJ(table)->db;
@@ -13807,16 +13795,10 @@ grn_column_name_(grn_ctx *ctx, grn_obj *obj, grn_obj *buf)
         while (target_ctx->impl->parent) {
           target_ctx = target_ctx->impl->parent;
         }
-        if (target_ctx != ctx) {
-          CRITICAL_SECTION_ENTER(target_ctx->impl->temporary_objects_lock);
-        }
         p = _grn_pat_key(target_ctx,
                          target_ctx->impl->temporary_columns,
                          real_id,
                          &len);
-        if (target_ctx != ctx) {
-          CRITICAL_SECTION_LEAVE(target_ctx->impl->temporary_objects_lock);
-        }
       }
     } else if (id && id < GRN_ID_MAX) {
       grn_db *s = (grn_db *)DB_OBJ(obj)->db;
