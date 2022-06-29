@@ -31,6 +31,7 @@
 #include <groonga/plugin.h>
 #include <groonga.hpp>
 
+#include <atomic>
 #include <vector>
 
 #ifdef GRN_WITH_APACHE_ARROW
