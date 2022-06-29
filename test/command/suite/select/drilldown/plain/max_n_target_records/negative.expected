@@ -61,7 +61,7 @@ select Memos   --limit 0   --output_columns _id   --drilldown tags   --drilldown
 ]
 #>select --drilldown "tags" --drilldown_max_n_target_records "-2" --drilldown_output_columns "_key,_nsubrecs" --limit "0" --output_columns "_id" --table "Memos"
 #:000000000000000 select(5)
-#:000000000000000 drilldown(3): Memos.tags
+#:000000000000000 drilldown(3): tags
 #:000000000000000 output(0)
 #:000000000000000 output.drilldown(3)
 #:000000000000000 send(0)

@@ -80,7 +80,7 @@ select Memos   --limit 0   --output_columns _id   --drilldown tags   --drilldown
 ]
 #>select --drilldown "tags" --drilldown_adjuster "categories @ \"full-text-search\" * 2 + categories @ \"mysql\"" --drilldown_filter "_key == \"groonga\"" --drilldown_output_columns "_key,_nsubrecs,_score" --limit "0" --output_columns "_id" --table "Memos"
 #:000000000000000 select(3)
-#:000000000000000 drilldown(3): Memos.tags
+#:000000000000000 drilldown(3): tags
 #:000000000000000 filter(1): #<accessor _key(anonymous)._key(Tags)> equal "groonga"
 #:000000000000000 drilldown.filter(1)
 #:000000000000000 drilldown.adjust(1)

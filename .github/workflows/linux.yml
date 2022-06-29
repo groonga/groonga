@@ -339,6 +339,15 @@ jobs:
             --read-timeout=30 \
             --reporter=mark \
             test/command/suite
+      - name: "Test: stdio: n_workers"
+        run: |
+          export GRN_SELECT_N_WORKERS_DEFAULT=-1
+          grntest \
+            --base-dir test/command \
+            --n-retries=3 \
+            --read-timeout=30 \
+            --reporter=mark \
+            test/command/suite
       - name: "Test: HTTP: load: Apache Arrow"
         run: |
           grntest \

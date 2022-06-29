@@ -38,7 +38,7 @@ static bool grn_query_min_id_skip_enable = false;
 static int grn_query_parallel_or_n_conditions_threshold = 4;
 static int grn_query_parallel_or_n_threads_limit = -1;
 
-void
+extern "C" void
 grn_proc_query_init_from_env(void)
 {
   {
