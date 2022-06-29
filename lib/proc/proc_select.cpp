@@ -32,6 +32,7 @@
 #include <groonga.hpp>
 
 #include <atomic>
+#include <unordered_map>
 #include <vector>
 
 #ifdef GRN_WITH_APACHE_ARROW
