@@ -17,6 +17,7 @@
 */
 
 #include "../grn_cache.h"
+#include "../grn_ctx.hpp"
 #include "../grn_ctx_impl.h"
 #include "../grn_expr.h"
 #include "../grn_group.h"
@@ -37,7 +38,6 @@
 
 #ifdef GRN_WITH_APACHE_ARROW
 # include "../grn_arrow.hpp"
-# include "../grn_ctx.hpp"
 # include <arrow/util/thread_pool.h>
 # include <mutex>
 # include <unordered_map>
