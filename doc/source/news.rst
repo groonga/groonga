@@ -5,6 +5,450 @@
 News
 ====
 
+.. _release-12-0-5:
+
+Release 12.0.5 - 2022-06-29
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`reference/commands/select`] Improved a little bit of performance for prefix search by search escalation.
+
+* [:doc:`reference/commands/select`] Added support for specifying a reference vector column with weight in ``drilldowns[LABEL]._key``. [GitHub#1366][Patched by naoa]
+
+  If we specified a reference vector column with weight in drilldown's key, Groonga had returned incorrect results until now.
+
+  For example, the following tag search had returned incorrect results until now.
+
+  .. code-block::
+
+     table_create Tags TABLE_PAT_KEY ShortText
+
+     table_create Memos TABLE_HASH_KEY ShortText
+     column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
+     column_create Memos date COLUMN_SCALAR Time
+
+     load --table Memos
+     [
+     {"_key": "Groonga is fast!", "tags": {"full-text-search": 100}, "date": "2014-11-16 00:00:00"},
+     {"_key": "Mroonga is fast!", "tags": {"mysql": 100, "full-text-search": 80}, "date": "2014-11-16 00:00:00"},
+     {"_key": "Groonga sticker!", "tags": {"full-text-search": 100, "sticker": 10}, "date": "2014-11-16 00:00:00"},
+     {"_key": "Rroonga is fast!", "tags": {"full-text-search": 100, "ruby": 20}, "date": "2014-11-17 00:00:00"},
+     {"_key": "Groonga is good!", "tags": {"full-text-search": 100}, "date": "2014-11-17 00:00:00"}
+     ]
+
+     select Memos \
+       --drilldowns[tags].keys tags \
+       --drilldowns[tags].output_columns _key,_nsubrecs
+     [
+       [
+         0,
+         1656480220.591901,
+         0.0005342960357666016
+       ],
+       [
+         [
+           [
+             5
+           ],
+           [
+             [
+               "_id",
+               "UInt32"
+             ],
+             [
+               "_key",
+               "ShortText"
+             ],
+             [
+               "date",
+               "Time"
+             ],
+             [
+               "tags",
+               "Tags"
+             ]
+           ],
+           [
+             1,
+             "Groonga is fast!",
+             1416063600.0,
+             {"full-text-search":100}
+           ],
+           [
+             2,
+             "Mroonga is fast!",
+             1416063600.0,
+             {"mysql":100,"full-text-search":80}
+           ],
+           [
+             3,
+             "Groonga sticker!",
+             1416063600.0,
+             {"full-text-search":100,"sticker":10}
+           ],
+           [
+             4,
+             "Rroonga is fast!",
+             1416150000.0,
+             {"full-text-search":100,"ruby":20}
+           ],
+           [
+             5,
+             "Groonga is good!",
+             1416150000.0,
+             {"full-text-search":100}
+           ]
+         ],
+         {
+           "tags": [
+             [
+               8
+             ],
+             [
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "_nsubrecs",
+                 "Int32"
+               ]
+             ],
+             [
+               "full-text-search",
+               5
+             ],
+             [
+               "f",
+               5
+             ],
+             [
+               "mysql",
+               1
+             ],
+             [
+               "f",
+               1
+             ],
+             [
+               "sticker",
+               1
+             ],
+             [
+               "f",
+               1
+             ],
+             [
+               "ruby",
+               1
+             ],
+             [
+               "f",
+               1
+             ]
+           ]
+         }
+       ]
+
+  The above query returns correct results as below since this release.
+
+  .. code-block::
+
+     select Memos   --drilldowns[tags].keys tags   --drilldowns[tags].output_columns _key,_nsubrecs
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             5
+           ],
+           [
+             [
+               "_id",
+               "UInt32"
+             ],
+             [
+               "_key",
+               "ShortText"
+             ],
+             [
+               "date",
+               "Time"
+             ],
+             [
+               "tags",
+               "Tags"
+             ]
+           ],
+           [
+             1,
+             "Groonga is fast!",
+             1416063600.0,
+             {
+               "full-text-search": 100
+             }
+           ],
+           [
+             2,
+             "Mroonga is fast!",
+             1416063600.0,
+             {
+               "mysql": 100,
+               "full-text-search": 80
+             }
+           ],
+           [
+             3,
+             "Groonga sticker!",
+             1416063600.0,
+             {
+               "full-text-search": 100,
+               "sticker": 10
+             }
+           ],
+           [
+             4,
+             "Rroonga is fast!",
+             1416150000.0,
+             {
+               "full-text-search": 100,
+               "ruby": 20
+             }
+           ],
+           [
+             5,
+             "Groonga is good!",
+             1416150000.0,
+             {
+               "full-text-search": 100
+             }
+           ]
+         ],
+         {
+           "tags": [
+             [
+               4
+             ],
+             [
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "_nsubrecs",
+                 "Int32"
+               ]
+             ],
+             [
+               "full-text-search",
+               5
+             ],
+             [
+               "mysql",
+               1
+             ],
+             [
+               "sticker",
+               1
+             ],
+             [
+               "ruby",
+               1
+             ]
+           ]
+         }
+       ]
+     ]
+
+* [:doc:`reference/commands/select`] Added support for doing drilldown with a reference vector with weight even if we use ``query`` or ``filter``, or ``post_filter``. [GitHub#1367][Patched by naoa]
+
+  If we specified a reference vector column with weight in drilldown's key when we use ``query`` or ``filter``, or ``post_filter``, Groonga had returned incorrect results or errors until now.
+
+  For example, the following query had been erred until now.
+
+  .. code-block::
+
+     table_create Tags TABLE_PAT_KEY ShortText
+
+     table_create Memos TABLE_HASH_KEY ShortText
+     column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT Tags
+     column_create Memos date COLUMN_SCALAR Time
+
+     load --table Memos
+     [
+     {"_key": "Groonga is fast!", "tags": {"full-text-search": 100}, "date": "2014-11-16 00:00:00"},
+     {"_key": "Mroonga is fast!", "tags": {"mysql": 100, "full-text-search": 80}, "date": "2014-11-16 00:00:00"},
+     {"_key": "Groonga sticker!", "tags": {"full-text-search": 100, "sticker": 10}, "date": "2014-11-16 00:00:00"},
+     {"_key": "Rroonga is fast!", "tags": {"full-text-search": 100, "ruby": 20}, "date": "2014-11-17 00:00:00"},
+     {"_key": "Groonga is good!", "tags": {"full-text-search": 100}, "date": "2014-11-17 00:00:00"}
+     ]
+
+     select Memos \
+       --filter true \
+       --post_filter true \
+       --drilldowns[tags].keys tags \
+       --drilldowns[tags].output_columns _key,_nsubrecs
+     [
+       [
+         -22,
+         1656473820.734894,
+         0.03771400451660156,
+         "[hash][add][           ] key size unmatch",
+         [
+           [
+             "grn_hash_add",
+             "hash.c",
+             3405
+           ]
+         ]
+       ],
+       [
+         [
+         ]
+       ]
+     ]
+
+  The above query returns correct results as below since this release.
+
+  .. code-block::
+
+     select Memos \
+       --filter true \
+       --post_filter true \
+       --drilldowns[tags].keys tags \
+       --drilldowns[tags].output_columns _key,_nsubrecs
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             5
+           ],
+           [
+             [
+               "_id",
+               "UInt32"
+             ],
+             [
+               "_key",
+               "ShortText"
+             ],
+             [
+               "date",
+               "Time"
+             ],
+             [
+               "tags",
+               "Tags"
+             ]
+           ],
+           [
+             1,
+             "Groonga is fast!",
+             1416063600.0,
+             {
+               "full-text-search": 100
+             }
+           ],
+           [
+             2,
+             "Mroonga is fast!",
+             1416063600.0,
+             {
+               "mysql": 100,
+               "full-text-search": 80
+             }
+           ],
+           [
+             3,
+             "Groonga sticker!",
+             1416063600.0,
+             {
+               "full-text-search": 100,
+               "sticker": 10
+             }
+           ],
+           [
+             4,
+             "Rroonga is fast!",
+             1416150000.0,
+             {
+               "full-text-search": 100,
+               "ruby": 20
+             }
+           ],
+           [
+             5,
+             "Groonga is good!",
+             1416150000.0,
+             {
+               "full-text-search": 100
+             }
+           ]
+         ],
+         {
+           "tags": [
+             [
+               4
+             ],
+             [
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "_nsubrecs",
+                 "Int32"
+               ]
+             ],
+             [
+               "full-text-search",
+               5
+             ],
+             [
+               "mysql",
+               1
+             ],
+             [
+               "sticker",
+               1
+             ],
+             [
+               "ruby",
+               1
+             ]
+           ]
+         }
+       ]
+     ]
+
+Known Issues
+------------
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
+
+Thanks
+------
+
+* naoa
+
 .. _release-12-0-4:
 
 Release 12.0.4 - 2022-06-06
