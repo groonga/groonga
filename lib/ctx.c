@@ -489,6 +489,7 @@ grn_ctx_pull_child(grn_ctx *ctx)
   }
   grn_ctx_use(child_ctx, grn_ctx_db(ctx));
   child_ctx->impl->parent = ctx;
+  child_ctx->impl->command.version = ctx->impl->command.version;
   CRITICAL_SECTION_LEAVE(ctx->impl->children.lock);
   return child_ctx;
 }
