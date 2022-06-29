@@ -13665,7 +13665,12 @@ grn_obj_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
       if (id & GRN_OBJ_TMP_OBJECT) {
         if (id & GRN_OBJ_TMP_COLUMN) {
           grn_id real_id = id & ~(GRN_OBJ_TMP_OBJECT | GRN_OBJ_TMP_COLUMN);
-          len = grn_pat_get_key(ctx, ctx->impl->temporary_columns,
+          grn_ctx *target_ctx = ctx;
+          while (target_ctx->impl->parent) {
+            target_ctx = target_ctx->impl->parent;
+          }
+          len = grn_pat_get_key(target_ctx,
+                                target_ctx->impl->temporary_columns,
                                 real_id, namebuf, buf_size);
         }
       } else {
