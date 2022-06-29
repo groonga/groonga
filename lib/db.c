@@ -6615,10 +6615,22 @@ grn_column_create(grn_ctx *ctx, grn_obj *table,
               name_size, name);
     }
   } else {
+    grn_ctx *target_ctx = ctx;
+    while (target_ctx->impl->parent) {
+      target_ctx = target_ctx->impl->parent;
+    }
+    if (target_ctx != ctx) {
+      CRITICAL_SECTION_ENTER(target_ctx->impl->temporary_objects_lock);
+    }
     int added;
-    id = grn_pat_add(ctx, ctx->impl->temporary_columns,
-                     fullname, fullname_size, NULL,
+    id = grn_pat_add(target_ctx,
+                     target_ctx->impl->temporary_columns,
+                     fullname, fullname_size,
+                     NULL,
                      &added);
+    if (target_ctx != ctx) {
+      CRITICAL_SECTION_LEAVE(target_ctx->impl->temporary_objects_lock);
+    }
     if (!id) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[column][create][temporary] "
