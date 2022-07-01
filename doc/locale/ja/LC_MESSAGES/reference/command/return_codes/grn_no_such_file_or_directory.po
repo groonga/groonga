@@ -1,0 +1,50 @@
+# -*- po -*-
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-06-22 12:20+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "``-3: GRN_NO_SUCH_FILE_OR_DIRECTORY``"
+msgstr ""
+
+msgid "Major cause"
+msgstr "主な原因"
+
+msgid ""
+"If we registered the plugin that we didn't install yet with "
+"``plugin_register``."
+msgstr ""
+"まだインストールしていないプラグインを ``plugin_register`` で登録した場合。"
+
+msgid ""
+"For example, if we executed ``plugin_register normalizers/mysql`` on Groonga "
+"when we didn't install `` groonga-normalizer-mysql`` yet."
+msgstr ""
+"例えば、 ``groonga-normalizer-mysql`` をまだインストールしていないときに、"
+"Groonga上で ``plugin_register normalizers/mysql`` した場合です。"
+
+msgid "If we used ``TokenMecab`` when ``mecab`` didn't install yet."
+msgstr ""
+"``mecab`` をまだインストールしていないときに、 ``TokenMecab`` を使った場合。"
+
+msgid "Major action on this error"
+msgstr "主な対策"
+
+msgid "We install the target plugin."
+msgstr "対象のプラグインをインストールします。"
+
+msgid "We install ``mecab``."
+msgstr "``mecab`` をインストールします。"

@@ -1,0 +1,51 @@
+# -*- po -*-
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-06-23 14:33+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "``-13: GRN_NOT_ENOUGH_SPACE``"
+msgstr ""
+
+msgid "Major cause"
+msgstr "主な原因"
+
+msgid ""
+"If the total key size is over the limit of a hash table or a patricia trie "
+"table."
+msgstr ""
+"キーサイズの合計が、ハッシュテーブルやパトリシアトライの制限を超えている場"
+"合。"
+
+msgid "please see :doc:`/limitations` for the detail of these limitations."
+msgstr "これらの制限については、 :doc:`/limitations` を参照してください。"
+
+msgid "If the space to store the index is not enough."
+msgstr "インデックスを格納する領域が不足している場合。"
+
+msgid "Major action on this error"
+msgstr "主な対策"
+
+msgid ""
+"We reduce the number of records of the target table by such as a split table."
+msgstr "テーブルを分割するなどで、対象のテーブルのレコード数を少なくします。"
+
+msgid ""
+"We reduce the number of records that set the target index by such as a split "
+"table."
+msgstr ""
+"テーブルを分割するなどで、対象のインデックスを設定しているレコード数を少なく"
+"します。"
