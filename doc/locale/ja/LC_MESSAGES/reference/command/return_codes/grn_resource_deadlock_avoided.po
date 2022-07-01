@@ -21,7 +21,7 @@ msgid "``-34: GRN_RESOURCE_DEADLOCK_AVOIDED``"
 msgstr ""
 
 msgid "Major cause"
-msgstr ""
+msgstr "主な原因"
 
 msgid ""
 "Groonga gets a lock to block write to object when we execute ``load`` or "
