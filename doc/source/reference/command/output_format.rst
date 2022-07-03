@@ -156,7 +156,7 @@ same as success case.
 
 ``ERROR_LOCATION`` is optional. If error location is collected,
 ``ERROR_LOCATION`` is included. ``ERROR_LOCATION`` is an
-array. ``ERROR_LOCATION`` has one ore two elements::
+array. ``ERROR_LOCATION`` has one or two elements::
 
   [
     LOCATION_IN_GROONGA,
@@ -185,8 +185,8 @@ is occurred.
 ``LOCATION_IN_INPUT`` is optional. ``LOCATION_IN_INPUT`` is included
 when the location that error is occurred in input file is
 collected. Input file can be specified by ``--file`` command line
-option for ``groonga`` command. ``LOCATION_IN_GROONGA`` is an
-array. ``LOCATION_IN_GROONGA`` has three elements::
+option for ``groonga`` command. ``LOCATION_IN_INPUT`` is an
+array. ``LOCATION_IN_INPUT`` has three elements::
 
   [
     INPUT_FILE_NAME,
