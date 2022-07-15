@@ -80,9 +80,6 @@ jobs:
         label:
           - Debian GNU/Linux bullseye amd64
           - Debian GNU/Linux bullseye arm64
-          - Debian GNU/Linux buster amd64
-          - Debian GNU/Linux buster arm64
-          - Debian GNU/Linux buster i386
           - CentOS 7 x86_64
           - Amazon Linux 2 x86_64
           - AlmaLinux 8 x86_64
@@ -98,21 +95,6 @@ jobs:
             task-namespace: apt
             target: debian-bullseye-arm64
             test-docker-image: arm64v8/debian:bullseye
-          - label: Debian GNU/Linux buster amd64
-            id: debian-buster-amd64
-            task-namespace: apt
-            target: debian-buster
-            test-docker-image: debian:buster
-          - label: Debian GNU/Linux buster arm64
-            id: debian-buster-arm64
-            task-namespace: apt
-            target: debian-buster-arm64
-            test-docker-image: arm64v8/debian:buster
-          - label: Debian GNU/Linux buster i386
-            id: debian-buster-i386
-            task-namespace: apt
-            target: debian-buster-i386
-            test-docker-image: i386/debian:buster
           - label: CentOS 7 x86_64
             id: centos-7-x86_64
             task-namespace: yum

@@ -38,7 +38,7 @@ msgstr ""
 "だけ使って下さい。32-bit用パッケージを使った場合は、中程度のサイズのデータで"
 "もメモリ不足エラーになることがあります。"
 
-msgid "buster"
+msgid "bullseye"
 msgstr ""
 
 msgid "Install ``groonga-apt-source``::"
@@ -113,17 +113,13 @@ msgstr "groonga-server-gtqp向け:"
 msgid "% sudo systemctl enable groonga-server-gqtp"
 msgstr ""
 
-msgid "bullseye"
-msgstr ""
-
 msgid "Build from source"
 msgstr "ソースからビルド"
 
-msgid ""
-"Install required packages to build Groonga for Debian buster and bullseye::"
+msgid "Install required packages to build Groonga for Debian bullseye::"
 msgstr ""
-"Debian busterとbullseyeでGroongaをビルドするために必要なパッケージをインス"
-"トールします::"
+"Debian bullseyeでGroongaをビルドするために必要なパッケージをインストールしま"
+"す::"
 
 msgid "Download source::"
 msgstr "ソースをダウンロードします::"
