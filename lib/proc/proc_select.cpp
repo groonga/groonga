@@ -2248,7 +2248,6 @@ namespace {
                                               log_tag_context)) {
         return false;
       }
-      executor_->task_executor().wait(drilldown, log_tag_context);
     }
     return true;
   }
