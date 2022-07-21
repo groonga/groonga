@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2016  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -834,6 +834,14 @@ namespace {
                         GRN_OP_OR,
                         min_id,
                         &sub_result)) {
+          return ::arrow::Status::OK();
+        }
+        if (!sub_result) {
+          GRN_PLUGIN_ERROR(ctx_,
+                           GRN_UNKNOWN_ERROR,
+                           "%s failed to create sub result: <%s>",
+                           tag_,
+                           query.c_str());
           return ::arrow::Status::OK();
         }
         auto merge_future = merge_pool->Submit(merge, sub_result);
