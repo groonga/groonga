@@ -843,14 +843,6 @@ namespace {
                         &sub_result)) {
           return ::arrow::Status::OK();
         }
-        if (!sub_result) {
-          GRN_PLUGIN_ERROR(ctx_,
-                           GRN_UNKNOWN_ERROR,
-                           "%s failed to create sub result: <%s>",
-                           tag_,
-                           query.c_str());
-          return ::arrow::Status::OK();
-        }
         auto merge_future = merge_pool->Submit(merge, sub_result);
         if (!merge_future.ok()) {
           std::lock_guard<std::mutex> lock(mutex);
