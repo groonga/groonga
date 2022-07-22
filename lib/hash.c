@@ -1982,19 +1982,39 @@ grn_hash *
 grn_hash_create(grn_ctx *ctx, const char *path, uint32_t key_size, uint32_t value_size,
                 uint32_t flags)
 {
+  const char *tag = "[hash][create]";
   grn_hash *hash;
   if (!ctx) {
+    grn_ctx tmp_ctx;
+    grn_ctx_init(&tmp_ctx, 0);
+    ctx = &tmp_ctx;
+    ERR(GRN_INVALID_ARGUMENT, "%s ctx must not NULL", tag);
+    grn_ctx_fin(&tmp_ctx);
     return NULL;
   }
   if (key_size > GRN_HASH_MAX_KEY_SIZE_LARGE) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s too large key size: %u > %u",
+        tag,
+        key_size,
+        GRN_HASH_MAX_KEY_SIZE_LARGE);
     return NULL;
   }
   hash = (grn_hash *)GRN_CALLOC(sizeof(grn_hash));
   if (!hash) {
+    grn_rc rc = ctx->rc;
+    if (rc == GRN_SUCCESS) {
+      rc = GRN_NO_MEMORY_AVAILABLE;
+    }
+    ERR(rc,
+        "%s failed to allocate grn_hash%s%s",
+        tag,
+        ctx->errbuf[0] == '\0' ? "" : ": ",
+        ctx->errbuf[0] == '\0' ? "" : ctx->errbuf);
     return NULL;
   }
   GRN_DB_OBJ_SET_TYPE(hash, GRN_TABLE_HASH_KEY);
-  if (grn_hash_init(ctx, hash, path, key_size, value_size, flags)) {
+  if (grn_hash_init(ctx, hash, path, key_size, value_size, flags) != GRN_SUCCESS) {
     GRN_FREE(hash);
     return NULL;
   }
