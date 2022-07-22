@@ -5,6 +5,105 @@
 News
 ====
 
+.. _release-12-0-6:
+
+Release 12.0.6 - 2022-08-04
+---------------------------
+
+Improvements
+------------
+
+* Added new Munin plugins for groonga-delta.
+
+  We can monitoring the following items by plugins for groonga-delta.
+
+    * Whether ``groonga-delta-import`` can import or not ``.grn`` file on local storage.
+    * Whether ``groonga-delta-import`` can import or not difference data of MySQL.
+    * Whether ``groonga-delta-apply`` can apply imported data or not.
+    * The total size of applying data.
+
+* [:doc:`reference/commands/column_copy`] Added support for weight vector.
+
+  We can copy the value of weight vector by ``column_copy`` as below.
+
+  .. code-block::
+
+     table_create Tags TABLE_HASH_KEY ShortText
+     [[0,0.0,0.0],true]
+     table_create CopyFloat32Value TABLE_HASH_KEY ShortText
+     [[0,0.0,0.0],true]
+     column_create CopyFloat32Value source_tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 Tags
+     [[0,0.0,0.0],true]
+     column_create CopyFloat32Value destination_tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 Tags
+     [[0,0.0,0.0],true]
+     load --table CopyFloat32Value
+     [
+     {
+       "_key": "Groonga is fast!!!",
+       "source_tags": {
+         "Groonga": 2.8,
+         "full text search": 1.5
+       }
+     }
+     ]
+     [[0,0.0,0.0],1]
+     column_copy CopyFloat32Value source_tags CopyFloat32Value destination_tags
+     [[0,0.0,0.0],true]
+     select CopyFloat32Value
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "_id",
+               "UInt32"
+             ],
+             [
+               "_key",
+               "ShortText"
+             ],
+             [
+               "destination_tags",
+               "Tags"
+             ],
+             [
+               "source_tags",
+               "Tags"
+             ]
+           ],
+           [
+             1,
+             "Groonga is fast!!!",
+             {
+               "Groonga": 2.8,
+               "full text search": 1.5
+             },
+             {
+               "Groonga": 2.8,
+               "full text search": 1.5
+             }
+           ]
+         ]
+       ]
+     ]
+
+Fixes
+-----
+
+* Fixed a bug that Groonga may crash when we execute drilldown in a parallel by ``n_workers`` option.
+
+* [:doc:`reference/commands/select`] Fixed a bug that the syntax error occurred when we specify a very long expression in ``--filter``.
+
+  Because the max stack size for the expression of ``--filter`` was 100 until now.
+
 .. _release-12-0-5:
 
 Release 12.0.5 - 2022-06-29
