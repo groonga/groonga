@@ -841,6 +841,12 @@ namespace {
                         GRN_OP_OR,
                         min_id,
                         &sub_result)) {
+          std::lock_guard<std::mutex> lock(mutex);
+          GRN_PLUGIN_ERROR(ctx_,
+                           GRN_UNKNOWN_ERROR,
+                           "%s failed to select a query: <%s>",
+                           tag_,
+                           query.c_str());
           return ::arrow::Status::OK();
         }
         auto merge_future = merge_pool->Submit(merge, sub_result);
