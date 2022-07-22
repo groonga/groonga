@@ -434,9 +434,16 @@ namespace {
                           condition,
                           op,
                           min_id);
-      *result_set = grn_table_selector_select(ctx,
-                                              &table_selector,
-                                              *result_set);
+      auto new_result_set = grn_table_selector_select(ctx,
+                                                      &table_selector,
+                                                      *result_set);
+      if (new_result_set) {
+        if (ctx->rc == GRN_SUCCESS) {
+          *result_set = new_result_set;
+        } else {
+          grn_obj_close(ctx, new_result_set);
+        }
+      }
       grn_table_selector_fin(ctx, &table_selector);
       return ctx->rc == GRN_SUCCESS;
     }
