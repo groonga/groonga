@@ -438,7 +438,7 @@ namespace {
                                               &table_selector,
                                               *result_set);
       grn_table_selector_fin(ctx, &table_selector);
-      return ctx_->rc == GRN_SUCCESS;
+      return ctx->rc == GRN_SUCCESS;
     }
 
     grn_ctx *ctx_;
