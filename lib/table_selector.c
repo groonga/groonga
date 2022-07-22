@@ -1981,7 +1981,7 @@ grn_table_selector_select(grn_ctx *ctx,
                                 &sequential_table_selector,
                                 result_set);
       grn_table_selector_fin(ctx, &sequential_table_selector);
-      if (ctx->rc) {
+      if (ctx->rc != GRN_SUCCESS) {
         if (result_set_created) {
           grn_obj_close(ctx, result_set);
         }
