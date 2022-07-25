@@ -420,6 +420,20 @@ namespace {
                grn_operator op,
                grn_id min_id,
                grn_obj **result_set) {
+      if (ctx->rc != GRN_SUCCESS) {
+        GRN_LOG(ctx,
+                GRN_LOG_DEBUG,
+                "%s[select-one] "
+                "ctx->rc != GRN_SUCCESS before build_condition(): "
+                "<%.*s>: %d: %s:%d: %s",
+                tag_,
+                static_cast<int>(query_length),
+                query,
+                ctx->rc,
+                ctx->errfile,
+                ctx->errline,
+                ctx->errbuf);
+      }
       auto condition = build_condition(ctx,
                                        match_columns,
                                        query,
@@ -437,6 +451,20 @@ namespace {
                          query);
         return false;
       }
+      if (ctx->rc != GRN_SUCCESS) {
+        GRN_LOG(ctx,
+                GRN_LOG_DEBUG,
+                "%s[select-one] "
+                "ctx->rc != GRN_SUCCESS before init_table_selector(): "
+                "<%.*s>: %d: %s:%d: %s",
+                tag_,
+                static_cast<int>(query_length),
+                query,
+                ctx->rc,
+                ctx->errfile,
+                ctx->errline,
+                ctx->errbuf);
+      }
       grn::UniqueObj unique_condition(ctx, condition);
       grn_table_selector table_selector;
       init_table_selector(ctx,
@@ -444,6 +472,20 @@ namespace {
                           condition,
                           op,
                           min_id);
+      if (ctx->rc != GRN_SUCCESS) {
+        GRN_LOG(ctx,
+                GRN_LOG_DEBUG,
+                "%s[select-one] "
+                "ctx->rc != GRN_SUCCESS before grn_table_selector_select(): "
+                "<%.*s>: %d: %s:%d: %s",
+                tag_,
+                static_cast<int>(query_length),
+                query,
+                ctx->rc,
+                ctx->errfile,
+                ctx->errline,
+                ctx->errbuf);
+      }
       auto new_result_set = grn_table_selector_select(ctx,
                                                       &table_selector,
                                                       *result_set);
@@ -453,6 +495,20 @@ namespace {
         } else {
           grn_obj_close(ctx, new_result_set);
         }
+      }
+      if (ctx->rc != GRN_SUCCESS) {
+        GRN_LOG(ctx,
+                GRN_LOG_DEBUG,
+                "%s[select-one] "
+                "ctx->rc != GRN_SUCCESS before grn_table_selector_fin(): "
+                "<%.*s>: %d: %s:%d: %s",
+                tag_,
+                static_cast<int>(query_length),
+                query,
+                ctx->rc,
+                ctx->errfile,
+                ctx->errline,
+                ctx->errbuf);
       }
       grn_table_selector_fin(ctx, &table_selector);
       return ctx->rc == GRN_SUCCESS;
