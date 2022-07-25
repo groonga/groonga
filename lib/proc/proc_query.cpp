@@ -425,6 +425,16 @@ namespace {
                                        query,
                                        query_length);
       if (!condition) {
+        grn_rc rc = ctx->rc;
+        if (rc == GRN_SUCCESS) {
+          rc = GRN_UNKNOWN_ERROR;
+        }
+        GRN_PLUGIN_ERROR(ctx,
+                         rc,
+                         "%s failed to build a condition: <%.*s>",
+                         tag_,
+                         static_cast<int>(query_length),
+                         query);
         return false;
       }
       grn::UniqueObj unique_condition(ctx, condition);
