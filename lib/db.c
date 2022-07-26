@@ -11849,7 +11849,9 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
         grn_id real_id = id & ~GRN_OBJ_TMP_OBJECT;
         grn_log_reference_count("%p: at: start: %u\n", target_ctx, real_id);
         grn_obj **tmp_obj;
-        tmp_obj = _grn_array_get_value(ctx, target_ctx->impl->values, real_id);
+        tmp_obj = _grn_array_get_value(target_ctx,
+                                       target_ctx->impl->values,
+                                       real_id);
         if (tmp_obj) {
           res = *tmp_obj;
         }
