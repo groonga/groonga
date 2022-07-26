@@ -12168,9 +12168,14 @@ grn_ctx_is_opened(grn_ctx *ctx, grn_id id)
 
   GRN_API_ENTER;
   if (id & GRN_OBJ_TMP_OBJECT) {
-    if (ctx->impl->values) {
+    grn_ctx *target_ctx = ctx;
+    while (target_ctx->impl->parent) {
+      target_ctx = target_ctx->impl->parent;
+    }
+    if (target_ctx->impl->values) {
       grn_obj **tmp_obj;
-      tmp_obj = _grn_array_get_value(ctx, ctx->impl->values,
+      tmp_obj = _grn_array_get_value(target_ctx,
+                                     target_ctx->impl->values,
                                      id & ~GRN_OBJ_TMP_OBJECT);
       if (tmp_obj) {
         is_opened = GRN_TRUE;
