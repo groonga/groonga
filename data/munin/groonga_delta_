@@ -1,0 +1,173 @@
+#!/usr/bin/env ruby
+
+#%# family=auto
+#%# capabilities=autoconf suggest
+
+require "find"
+require "yaml"
+
+label = ENV["label"]
+
+command = ARGV.shift
+type = File.basename($0).gsub(/\Agroonga_delta_/, "")
+
+def apply_status_path
+  ENV["apply_status_path"]
+end
+
+def import_status_path
+  ENV["import_status_path"]
+end
+
+def delta_dir
+  ENV["delta_dir"]
+end
+
+def autoconf
+  invalid_messages = []
+  path = apply_status_path
+  if path and not File.exist?(path)
+    invalid_messages << "apply_status_path doesn't exist: #{path}"
+  end
+  path = import_status_path
+  if path and not File.exist?(path)
+    invalid_messages << "import_status_path doesn't exist: #{path}"
+  end
+  path = delta_dir
+  if path and not File.directory?(path)
+    invalid_messages << "delta_dir isn't directory: #{path}"
+  end
+  unless invalid_messages.empty?
+    message = invalid_messages.join(", ")
+    puts("no (#{message})")
+    exit(false)
+  end
+  puts("yes")
+  exit(true)
+end
+
+def suggest
+  path = apply_status_path
+  if path and File.exist?(path)
+    puts("apply_local")
+  end
+  path = import_status_path
+  if path and File.exist?(path)
+    status = YAML.load(File.read(path))
+    if status.key?("local")
+      puts("import_local")
+    end
+    if status.key?("mysql")
+      puts("import_mysql")
+    end
+  end
+  path = delta_dir
+  if path and File.directory?(path)
+    puts("storage")
+  end
+  exit(true)
+end
+
+case command
+when "autoconf", "detect"
+  autoconf
+when "suggest"
+  suggest
+when "config"
+  title = "groonga-delta"
+  title << ": #{label}" if label
+  case type
+  when "apply_local"
+    puts(<<-CONFIG)
+graph_title #{title}: apply local delta
+graph_vlabel The last applied ID
+graph_category groonga-delta
+graph_info groonga-delta apply local delta
+
+id.label ID
+id.type GAUGE
+    CONFIG
+  when "import_local"
+    puts(<<-CONFIG)
+graph_title #{title}: import local source
+graph_vlabel The last imported ID
+graph_category groonga-delta
+graph_info groonga-delta import local source
+
+id.label ID
+id.type GAUGE
+    CONFIG
+  when "import_mysql"
+    puts(<<-CONFIG)
+graph_title #{title}: import MySQL source
+graph_vlabel Location
+graph_category groonga-delta
+graph_info groonga-delta import MySQL source
+
+last_event.label Last event location
+last_event.type GAUGE
+last_table_map_event.label Last table map event location
+last_table_map_event.type GAUGE
+    CONFIG
+  when "storage"
+    puts(<<-CONFIG)
+graph_title #{title}: storage usage
+graph_vlabel Bytes
+graph_category groonga-delta
+graph_info groonga-delta storage usage
+
+schema.label Schema
+schema.type GAUGE
+    CONFIG
+    Dir.glob(File.join(delta_dir, "data", "*")) do |table_dir|
+      next unless File.directory?(table_dir)
+      name = File.basename(table_dir)
+      key = "table_#{name}"
+      puts("#{key}.label #{name}")
+      puts("#{key}.type GAUGE")
+    end
+  end
+  exit(true)
+end
+
+case type
+when "apply_local"
+  status = YAML.load(File.read(apply_status_path))
+  sec, nsec = start_time = status.dig("start_time") || [0, 0]
+  puts("id.value #{sec}.#{nsec}")
+when "import_local"
+  status = YAML.load(File.read(import_status_path))
+  id = status.dig("local", "number") || 0
+  puts("id.value #{id}")
+when "import_mysql"
+  status = YAML.load(File.read(import_status_path))
+  def pack_location(file, position)
+    index = file.split(".").last.to_i(10)
+    index + "0.#{position}".to_f
+  end
+  last_event = pack_location(status.dig("mysql", "last_file") || "",
+                             status.dig("mysql", "last_position") || 0)
+  last_table_map_event =
+    pack_location(status.dig("mysql", "last_table_map_file") || "",
+                  status.dig("mysql", "last_table_map_position") || 0)
+  puts("last_event.value #{last_event}")
+  puts("last_table_map_event.value #{last_table_map_event}")
+when "storage"
+  def compute_storage_usage(dir)
+    return 0 unless File.exist?(dir)
+    usage = 0
+    Dir.glob(File.join(dir, "**", "*")) do |path|
+      next unless File.file?(path)
+      usage += File.size(path)
+    end
+    usage
+  end
+  schema_storage_usage = compute_storage_usage(File.join(delta_dir, "schema"))
+  puts("schema.value #{schema_storage_usage}")
+  Dir.glob(File.join(delta_dir, "data", "*")) do |table_dir|
+    next unless File.directory?(table_dir)
+    usage = compute_storage_usage(table_dir)
+    key = "table_#{File.basename(table_dir)}"
+    puts("#{key}.value #{usage}")
+  end
+end
