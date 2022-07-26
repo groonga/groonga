@@ -11389,9 +11389,19 @@ grn_obj_register(grn_ctx *ctx, grn_obj *db, const char *name, unsigned int name_
       if (target_ctx != ctx) {
         CRITICAL_SECTION_ENTER(target_ctx->impl->temporary_objects_lock);
       }
-      id =
-        grn_array_add(target_ctx, target_ctx->impl->values, NULL) |
-        GRN_OBJ_TMP_OBJECT;
+      id = grn_array_add(target_ctx, target_ctx->impl->values, NULL);
+      if (id == GRN_ID_NIL) {
+        grn_rc rc = ctx->rc;
+        if (rc == GRN_SUCCESS) {
+          rc = GRN_NO_MEMORY_AVAILABLE;
+        }
+        ERR(rc,
+            "[object][register] failed to register a temporary object: %p(%p)",
+            target_ctx,
+            ctx);
+      } else {
+        id |= GRN_OBJ_TMP_OBJECT;
+      }
       if (target_ctx != ctx) {
         CRITICAL_SECTION_LEAVE(target_ctx->impl->temporary_objects_lock);
       }
