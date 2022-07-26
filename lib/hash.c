@@ -886,12 +886,17 @@ grn_array_delete_by_id(grn_ctx *ctx, grn_array *array, grn_id id,
         void * const entry = grn_tiny_array_get(&array->array, id);
         if (!entry) {
           rc = GRN_INVALID_ARGUMENT;
+          ERR(rc,
+              "[array][delete][tiny] failed to get garbage entry: %p: %u(%u)",
+              array,
+              id,
+              *(array->n_garbages));
         } else {
           *((grn_id *)entry) = array->garbages;
           array->garbages = id;
         }
       }
-      if (!rc) {
+      if (rc == GRN_SUCCESS) {
         (*array->n_entries)--;
         (*array->n_garbages)++;
         /*
@@ -1085,26 +1090,47 @@ grn_array_add_to_tiny_array(grn_ctx *ctx, grn_array *array, void **value)
     /* These operations fail iff the array is broken. */
     entry = grn_tiny_array_get(&array->array, id);
     if (!entry) {
+      ERR(GRN_UNKNOWN_ERROR,
+          "[array][add][tiny] failed to get garbage entry: %p: %u(%u)",
+          array,
+          id,
+          *(array->n_garbages));
       return GRN_ID_NIL;
     }
-    array->garbages = *(grn_id *)entry;
-    memset(entry, 0, array->value_size);
-    (*array->n_garbages)--;
-    if (!grn_tiny_bitmap_get_and_set(&array->bitmap, id, 1)) {
+    if (grn_tiny_bitmap_get_and_set(&array->bitmap, id, 1)) {
+      array->garbages = *(grn_id *)entry;
+      memset(entry, 0, array->value_size);
+      (*array->n_garbages)--;
+    } else {
       /* Actually, it is difficult to recover from this error. */
-      *(grn_id *)entry = array->garbages;
-      array->garbages = id;
-      (*array->n_garbages)++;
+      ERR(GRN_UNKNOWN_ERROR,
+          "[array][add][tiny] failed to reuse garbage ID: %p: %u(%u)",
+          array,
+          id,
+          *(array->n_garbages));
       return GRN_ID_NIL;
     }
   } else {
     id = array->array.max + 1;
     if (!grn_tiny_bitmap_put_and_set(&array->bitmap, id, 1)) {
+      ERR(GRN_UNKNOWN_ERROR,
+          "[array][add][tiny] failed to initialize ID: %p: %u",
+          array,
+          id);
       return GRN_ID_NIL;
     }
     entry = grn_tiny_array_put(&array->array, id);
     if (!entry) {
-      grn_tiny_bitmap_get_and_set(&array->bitmap, id, 0);
+      ERR(GRN_UNKNOWN_ERROR,
+          "[array][add][tiny] failed to create an entry: %p: %u",
+          array,
+          id);
+      if (!grn_tiny_bitmap_get_and_set(&array->bitmap, id, 0)) {
+        ERR(GRN_UNKNOWN_ERROR,
+            "[array][add][tiny] failed to deinitialize ID: %p: %u",
+            array,
+            id);
+      }
       return GRN_ID_NIL;
     }
     array->array.max = id;
