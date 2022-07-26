@@ -863,11 +863,13 @@ namespace {
       std::vector<grn::UniqueObj> unique_sub_results;
       auto merge = [&](grn_obj *sub_result) {
         std::lock_guard<std::mutex> lock(mutex);
+        auto sub_ctx = grn_ctx_pull_child(ctx_);
+        grn::ChildCtxReleaser releaser(ctx_, sub_ctx);
         if (unique_sub_results.empty()) {
           unique_sub_results.emplace_back(ctx_, sub_result);
         } else {
           if (ctx_->rc == GRN_SUCCESS) {
-            grn_table_setoperation(ctx_,
+            grn_table_setoperation(sub_ctx,
                                    unique_sub_results[0].get(),
                                    sub_result,
                                    unique_sub_results[0].get(),
@@ -887,7 +889,7 @@ namespace {
           auto n_unique_sub_results = unique_sub_results.size();
           if (n_unique_sub_results < 2) {
             sub_result =
-              grn_table_create(ctx_,
+              grn_table_create(sub_ctx,
                                nullptr, 0,
                                nullptr,
                                GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
