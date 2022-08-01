@@ -4131,6 +4131,7 @@ section_weight_cb(grn_ctx *ctx, grn_hash *r, const void *rid, int sid, void *arg
 }
 #endif
 
+#define YYSTACKDEPTH 0
 #include "grn_ecmascript.h"
 #include "grn_ecmascript.c"
 
