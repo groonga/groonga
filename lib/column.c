@@ -266,8 +266,9 @@ grn_column_copy_same_table(grn_ctx *ctx,
     grn_obj *range = grn_ctx_at(ctx, to_range_id);
     GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
       GRN_BULK_REWIND(&value);
-      grn_obj_get_value(ctx, from_column, id, &value);
       GRN_BULK_REWIND(&validated_value);
+      grn_obj_get_value(ctx, from_column, id, &value);
+      grn_obj_get_value(ctx, from_column, id, &validated_value);
       if (is_uvector) {
         uint32_t n_elements = grn_uvector_size(ctx, &value);
         uint32_t i;
