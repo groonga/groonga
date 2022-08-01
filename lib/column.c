@@ -262,13 +262,15 @@ grn_column_copy_same_table(grn_ctx *ctx,
   if (need_validate) {
     grn_obj validated_value;
     GRN_RECORD_INIT(&validated_value, to_range_flags, to_range_id);
+    if (to_range_flags & GRN_OBJ_WITH_WEIGHT) {
+      validated_value.header.flags |= GRN_OBJ_WITH_WEIGHT;
+    }
     bool is_uvector = grn_obj_is_uvector(ctx, &validated_value);
     grn_obj *range = grn_ctx_at(ctx, to_range_id);
     GRN_TABLE_EACH_BEGIN(ctx, table, cursor, id) {
       GRN_BULK_REWIND(&value);
-      GRN_BULK_REWIND(&validated_value);
       grn_obj_get_value(ctx, from_column, id, &value);
-      grn_obj_get_value(ctx, from_column, id, &validated_value);
+      GRN_BULK_REWIND(&validated_value);
       if (is_uvector) {
         uint32_t n_elements = grn_uvector_size(ctx, &value);
         uint32_t i;
