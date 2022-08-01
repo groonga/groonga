@@ -16,7 +16,6 @@
 
 add_definitions(
   -DGRN_DAT_EXPORT
-  -DYYSTACKDEPTH=0
   ${LIBXXHASH_DEFINITIONS}
   )
 

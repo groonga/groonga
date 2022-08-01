@@ -51,7 +51,7 @@ DEFAULT_INCLUDES =				\
 	-I$(top_srcdir)/include			\
 	$(BUNDLED_LIBRARIES_CFLAGS)
 
-DEFS += -D_REENTRANT $(GRN_DEFS) -DGRN_DAT_EXPORT -DYYSTACKDEPTH=0
+DEFS += -D_REENTRANT $(GRN_DEFS) -DGRN_DAT_EXPORT
 
 include c_sources.am
 include cpp_sources.am
