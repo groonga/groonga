@@ -1,0 +1,9 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs is_critical COLUMN_SCALAR Bool
+
+load --table Logs
+[
+{"is_critical": true}
+]
+
+select Logs --filter '(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((is_critical)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))'
