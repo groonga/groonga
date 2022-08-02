@@ -1,0 +1,19 @@
+table_create Tags TABLE_HASH_KEY ShortText
+table_create CopyFloat32Value TABLE_HASH_KEY ShortText
+column_create CopyFloat32Value source_tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 Tags
+column_create CopyFloat32Value destination_tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 Tags
+
+load --table CopyFloat32Value
+[
+{
+  "_key": "Groonga is fast!!!",
+  "source_tags": {
+    "Groonga": 2.8,
+    "full text search": 1.5
+  }
+}
+]
+
+column_copy CopyFloat32Value source_tags CopyFloat32Value destination_tags
+
+select CopyFloat32Value

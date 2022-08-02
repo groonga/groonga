@@ -1,0 +1,66 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create CopyValueWithWeight TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create CopyValueWithWeight source_tags COLUMN_VECTOR|WITH_WEIGHT Tags
+[[0,0.0,0.0],true]
+column_create CopyValueWithWeight destination_tags COLUMN_VECTOR|WITH_WEIGHT Tags
+[[0,0.0,0.0],true]
+load --table CopyValueWithWeight
+[
+{
+  "_key": "Groonga is fast!!!",
+  "source_tags": {
+    "Groonga": 2,
+    "full text search": 1
+  }
+}
+]
+[[0,0.0,0.0],1]
+column_copy CopyValueWithWeight source_tags CopyValueWithWeight destination_tags
+[[0,0.0,0.0],true]
+select CopyValueWithWeight
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "destination_tags",
+          "Tags"
+        ],
+        [
+          "source_tags",
+          "Tags"
+        ]
+      ],
+      [
+        1,
+        "Groonga is fast!!!",
+        {
+          "Groonga": 2,
+          "full text search": 1
+        },
+        {
+          "Groonga": 2,
+          "full text search": 1
+        }
+      ]
+    ]
+  ]
+]
