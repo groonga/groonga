@@ -1,0 +1,19 @@
+table_create Tags TABLE_HASH_KEY ShortText
+table_create CopyValueWithWeight TABLE_HASH_KEY ShortText
+column_create CopyValueWithWeight source_tags COLUMN_VECTOR|WITH_WEIGHT Tags
+column_create CopyValueWithWeight destination_tags COLUMN_VECTOR|WITH_WEIGHT Tags
+
+load --table CopyValueWithWeight
+[
+{
+  "_key": "Groonga is fast!!!",
+  "source_tags": {
+    "Groonga": 2,
+    "full text search": 1
+  }
+}
+]
+
+column_copy CopyValueWithWeight source_tags CopyValueWithWeight destination_tags
+
+select CopyValueWithWeight
