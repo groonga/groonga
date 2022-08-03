@@ -75,10 +75,10 @@ msgstr "サポートしているUbuntuのバージョンは次の通りです。
 msgid "18.04 LTS Bionic Beaver"
 msgstr ""
 
-msgid "20.04 Focal Fossa"
+msgid "20.04 LTS Focal Fossa"
 msgstr ""
 
-msgid "21.10 Impish Indri"
+msgid "22.04 LTS Jammy Jellyfish"
 msgstr ""
 
 msgid "Enable the universe repository to install Groonga::"

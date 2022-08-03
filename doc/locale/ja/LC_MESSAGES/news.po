@@ -73,6 +73,11 @@ msgid "We can copy the value of weight vector by ``column_copy`` as below."
 msgstr ""
 "以下のように、重み付きベクターの値を ``column_copy`` でコピーできます。"
 
+msgid ""
+"[:doc:`/install/ubuntu`] Dropped support for Ubuntu 21.10 (Impish Indri)."
+msgstr ""
+"[:doc:`/install/ubuntu`] Ubuntu 21.10 (Impish Indri) のサポートをやめました。"
+
 msgid "Fixes"
 msgstr "修正"
 

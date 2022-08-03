@@ -95,6 +95,8 @@ Improvements
        ]
      ]
 
+* [:doc:`/install/ubuntu`] Dropped support for Ubuntu 21.10 (Impish Indri).
+
 Fixes
 -----
 
