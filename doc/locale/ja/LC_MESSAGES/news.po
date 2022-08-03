@@ -33,11 +33,71 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 12.0.5 - 2022-06-29"
-msgstr "12.0.5リリース - 2022-06-29"
+msgid "Release 12.0.6 - 2022-08-04"
+msgstr "12.0.6リリース - 2022-08-04"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "Added new Munin plugins for groonga-delta."
+msgstr "groonga-delta用の新しいMuninプラグインを追加しました。"
+
+msgid "We can monitoring the following items by plugins for groonga-delta."
+msgstr "このプラグインによって、以下の項目を監視できます。"
+
+msgid ""
+"Whether ``groonga-delta-import`` can import or not ``.grn`` file on local "
+"storage."
+msgstr ""
+"``groonga-delta-import`` がローカルのストレージ上の ``.grn`` ファイルをイン"
+"ポートできているかどうか。"
+
+msgid ""
+"Whether ``groonga-delta-import`` can import or not difference data of MySQL."
+msgstr ""
+"``groonga-delta-import`` がMySQLの差分データをインポートできているかどうか。"
+
+msgid "Whether ``groonga-delta-apply`` can apply imported data or not."
+msgstr ""
+"``groonga-delta-apply`` がインポートしたデータを適用できているかどうか。"
+
+msgid "The total size of applying data."
+msgstr "適用したデータの総サイズ。"
+
+msgid ""
+"[:doc:`reference/commands/column_copy`] Added support for weight vector."
+msgstr ""
+"[:doc:`reference/commands/column_copy`] 重み付きベクターをサポートしました。"
+
+msgid "We can copy the value of weight vector by ``column_copy`` as below."
+msgstr ""
+"以下のように、重み付きベクターの値を ``column_copy`` でコピーできます。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"Fixed a bug that Groonga may crash when we execute drilldown in a parallel "
+"by ``n_workers`` option."
+msgstr ""
+"``n_workers`` オプションを使ってドリルダウンを並行して実行したときにGroongaが"
+"クラッシュすることがある問題を修正しました。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Fixed a bug that the syntax error "
+"occurred when we specify a very long expression in ``--filter``."
+msgstr ""
+"[:doc:`/reference/commands/select`] ``--filter`` に非常に長い式を指定するとシ"
+"ンタックスエラーになる問題を修正しました。"
+
+msgid ""
+"Because the max stack size for the expression of ``--filter`` was 100 until "
+"now."
+msgstr ""
+"今まで ``--filter`` 用のスタックサイズを100にしていたため発生していました。"
+
+msgid "Release 12.0.5 - 2022-06-29"
+msgstr "12.0.5リリース - 2022-06-29"
 
 msgid ""
 "[:doc:`reference/commands/select`] Improved a little bit of performance for "
@@ -161,9 +221,6 @@ msgstr ""
 "れ以上メモリーをマップすることができません。そのため、この値を監視すること"
 "で、メモリーが十分でない環境でもメモリーマップサイズを適切にコントロールでき"
 "ます。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid ""
 "Fixed a bug Groonga's response may be slow when we execute "
