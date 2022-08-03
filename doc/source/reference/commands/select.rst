@@ -53,6 +53,7 @@ optional::
          [load_columns=null]
          [load_values=null]
          [drilldown_max_n_target_records=-1]
+         [n_workers=0]
 
 This command has the following named parameters for dynamic columns:
 
@@ -1087,6 +1088,31 @@ more liked entries.
 
 The ``select`` command outputs records that ``n_likes`` column value
 is equal to or more than ``10`` from ``Entries`` table.
+
+.. _select-n-worksers:
+
+``n_workers``
+""""""""""""""""""""
+
+TODO: translate
+
+これは試験的な機能です。
+
+Apache Arrowが有効である必要があります。
+comannd_versionに3を指定する必要があります。
+
+このパラメータを指定すると、selectの中で drilldowns のグループの作成と slice 機能の各sliceの作成が並列で実行されるようになります。
+ただし、各グループ間/slice間に依存関係がないことが条件です。依存関係がある部分については並列実行されません。
+ここでいう依存関係とは、
+
+各selectごとに並列実行します。
+
+n_workers = 0 または n_workers = 1 の場合、並列実行されません。
+n_workers > 1 の場合、指定した並列数で実行されます。ただしCPUのコア数が上限となります。
+n_workers = -1 の場合、CPUのコア数分のスレッドを起動します。
+
+このパラメータを指定しない場合、環境変数で指定した値が使用されます。
+このパラメータを指定せず、環境変数も指定されていない場合、drilldownとsliceは並列実行されません。
 
 Output related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
