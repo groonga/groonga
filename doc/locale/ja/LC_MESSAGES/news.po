@@ -78,6 +78,15 @@ msgid ""
 msgstr ""
 "[:doc:`/install/ubuntu`] Ubuntu 21.10 (Impish Indri) のサポートをやめました。"
 
+msgid "Because Ubuntu 21.10 reached EOL in July 2022."
+msgstr "Ubuntu 21.10 は、2022年7月でEOLとなったためです。"
+
+msgid "[:doc:`/install/debian`] Dropped Debian 10 (buster) support."
+msgstr "[:doc:`/install/debian`] Debian 10 (buster) のサポートをやめました。"
+
+msgid "Because Debian 10 reaches EOL in August 2022."
+msgstr "Debian 10 は、2022年8月でEOLとなるためです。"
+
 msgid "Fixes"
 msgstr "修正"
 

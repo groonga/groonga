@@ -97,6 +97,12 @@ Improvements
 
 * [:doc:`/install/ubuntu`] Dropped support for Ubuntu 21.10 (Impish Indri).
 
+  Because Ubuntu 21.10 reached EOL in July 2022.
+
+* [:doc:`/install/debian`] Dropped Debian 10 (buster) support.
+
+  Because Debian 10 reaches EOL in August 2022.
+
 Fixes
 -----
 
