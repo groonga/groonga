@@ -493,10 +493,7 @@ msgstr ""
 msgid "Debian GNU/Linux"
 msgstr ""
 
-msgid "stretch i386/amd64"
-msgstr ""
-
-msgid "buster i386/amd64"
+msgid "bullseye amd64"
 msgstr ""
 
 msgid ""
