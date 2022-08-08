@@ -1092,39 +1092,57 @@ is equal to or more than ``10`` from ``Entries`` table.
 .. _select-n-worksers:
 
 ``n_workers``
-""""""""""""""""""""
+"""""""""""""
 
 TODO: translate
 
-これは試験的な機能です。
+.. note::
 
-Apache Arrowが有効である必要があります。
+  これは試験的な機能です。
 
-comannd_versionに3を指定する必要があります。
+  :doc:`/reference/command/command_version` 3 以降を指定する必要があります。
+  
+  Apache Arrow が有効である必要があります。
 
-selectの処理を並列実行する最大スレッド数を指定します。
+``select`` コマンドの内部の処理を並列実行する最大のスレッド数を指定します。
 
-このパラメータを指定すると、drilldowns の各ラベルに対する結果の作成と slice の各ラベルに対する結果の作成が並列で実行されるようになります。
+:ref:`drilldowns <select-advanced-drilldown-related-parameters>` と :ref:`slices <select-slice-related-parameters>` 
+の各ラベルに対する結果の作成が並列で実行されるようになります。
 
-* n_workers = 0 または n_workers = 1 の場合
-  * drilldownとsliceは並列実行されません。
+たくさんの ``drilldowns`` や ``slices`` が指定されているクエリの処理時間を改善することができます。
+その分CPU使用率が増加します。
 
-* n_workers > 1 の場合
+依存関係のない ``drilldowns`` と ``slices`` が並列実行されます。
+
+依存関係がないとは、 ``dorilldowns.table`` を使用して他の ``drilldowns`` や ``slices`` の結果を参照していないことです。
+
+依存関係がある場合、つまり、 ``drilldowns.table`` を使用している場合、依存する ``drilldowns`` や ``slices`` の処理の終了を待ちます。
+したがって依存関係がある場合は並列度が下がります。
+
+* ``0`` を指定した場合
+
+  * 並列実行されません。 ``1`` を指定した場合と同様です。
+
+* ``1`` 以上を指定した場合
+  
   * 最大で指定したスレッド数で並列実行します。
   * ただし、CPUのコア数が上限となります。
 
-* n_workers = -1 の場合
+* ``-1`` 以下を指定した場合
+  
   * 最大でCPUのコア数分のスレッドで並列実行します。
+
+``n_workers`` を指定しない場合、環境変数 ``GRN_SELECT_N_WORKERS_DEFAULT`` で指定した値が使用されます。
+
+デフォルト値は0です。つまり、並列実行されません。
 
 .. note::
 
-  selectごとに最大でn_workersで指定したスレッドが立ち上がります。
+  ``select`` コマンドごとに ``n_workers`` で指定した数のスレッドが最大で起動します。
 
-  drilldownやsliceの数が多いselectを並列で実行すると、CPUのコア数以上のスレッドが立ち上がり、CPUが高負荷になる可能性があります。
+  ``drilldowns`` や ``slices`` の数が多い ``select`` コマンドを並列で実行すると、大量のスレッドが立ち上がり、CPUが高負荷になる可能性があります。
 
-このパラメータを指定しない場合、環境変数 `GRN_SELECT_N_WORKERS_DEFAULT` で指定した値が使用されます。
-
-デフォルト値は0です。つまり、並列実行されません。
+  指定する値には十分注意してください。
 
 Output related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
