@@ -1106,6 +1106,12 @@ TODO: translate
   
   Apache Arrow が有効である必要があります。
 
+  パッケージの提供元によりApache Arrowが有効かどうかは異なります。
+
+  Apache Arrow が有効かどうかは、 :doc:`/reference/command/status` コマンドの結果で ``apache_arrow`` が ``true`` かどうかで確認することができます。
+
+  Apache Arrow が無効な場合、 :doc:`/install` の手順にしたがい、Apache Arrowを有効にしてソースコードからビルドするか、パッケージの提供元に提供依頼をしてください。
+
 このパラメータの値に ``-1`` または ``2`` 以上を指定すると、 :ref:`_select-drilldown` と :ref:`スライス <select-slice-related-parameters>` を並列で実行します。
 
 デフォルトでは各 ``drilldown`` 、 ``drilldowns`` 、 ``slices`` を直列に実行します。
