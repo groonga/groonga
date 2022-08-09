@@ -1106,17 +1106,17 @@ TODO: translate
 
 ``select`` コマンドの内部の処理を並列実行する最大のスレッド数を指定します。
 
-:ref:`drilldowns <select-advanced-drilldown-related-parameters>` と :ref:`slices <select-slice-related-parameters>` 
+:ref:`_select-drilldown` と :ref:`スライス <select-slice-related-parameters>` 
 の各ラベルに対する結果の作成が並列で実行されるようになります。
 
-たくさんの ``drilldowns`` や ``slices`` が指定されているクエリの処理時間を改善することができます。
+たくさんのドリルダウンやスライスが指定されているクエリの処理時間を改善することができます。
 その分CPU使用率が増加します。
 
-依存関係のない ``drilldowns`` と ``slices`` が並列実行されます。
+依存関係のないスライスとドリルダウンが並列実行されます。
 
-依存関係がないとは、 ``dorilldowns.table`` を使用して他の ``drilldowns`` や ``slices`` の結果を参照していないことです。
+依存関係がないとは、 ``dorilldowns.table`` を使用して他のドリルダウンやスライスの結果を参照していないことです。
 
-依存関係がある場合、つまり、 ``drilldowns.table`` を使用している場合、依存する ``drilldowns`` や ``slices`` の処理の終了を待ちます。
+依存関係がある場合、つまり、 ``drilldowns.table`` を使用している場合、依存するドリルダウンやスライスの処理の終了を待ちます。
 したがって依存関係がある場合は並列度が下がります。
 
 * ``0`` または ``1`` を指定した場合
@@ -1139,7 +1139,7 @@ TODO: translate
 
   ``select`` コマンドごとに ``n_workers`` で指定した数のスレッドが最大で起動します。
 
-  ``drilldowns`` や ``slices`` の数が多い ``select`` コマンドを並列で実行すると、大量のスレッドが立ち上がり、CPUが高負荷になる可能性があります。
+  ドリルダウンやスライスの数が多い ``select`` コマンドを並列で実行すると、大量のスレッドが立ち上がり、CPUが高負荷になる可能性があります。
 
   指定する値には十分注意してください。
 
