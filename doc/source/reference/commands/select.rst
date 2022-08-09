@@ -1094,6 +1094,8 @@ is equal to or more than ``10`` from ``Entries`` table.
 ``n_workers``
 """""""""""""
 
+.. versionadded:: 12.0.5
+
 TODO: translate
 
 .. note::
