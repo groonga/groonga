@@ -1157,7 +1157,7 @@ CPUのリソースに空きがあるかどうか、どのくらいの ``n_worker
 
 .. note::
     
-    環境変数 ``GRN_SELECT_N_WORKERS_DEFAULT`` で指定することでデフォルト値を変更することができます。
+    環境変数 ``GRN_SELECT_N_WORKERS_DEFAULT`` を指定することでデフォルト値を変更することができます。
 
 Output related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
