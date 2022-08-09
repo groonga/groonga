@@ -1112,7 +1112,7 @@ TODO: translate
 
   Apache Arrow が無効な場合、 :doc:`/install` の手順にしたがい、Apache Arrowを有効にしてソースコードからビルドするか、パッケージの提供元に提供依頼をしてください。
 
-このパラメータの値に ``-1`` または ``2`` 以上を指定すると、 :ref:`_select-drilldown` と :ref:`スライス <select-slice-related-parameters>` を並列で実行します。
+このパラメータの値に ``-1`` または ``2`` 以上を指定すると、 :ref:`select-drilldown` と :ref:`スライス <select-slice-related-parameters>` を並列で実行します。
 
 デフォルトでは各 ``drilldown`` 、 ``drilldowns`` 、 ``slices`` を直列に実行します。
 つまり、1つの処理が終わったら次の処理を実行します。
