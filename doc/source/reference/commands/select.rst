@@ -1104,10 +1104,7 @@ TODO: translate
   
   Apache Arrow が有効である必要があります。
 
-``select`` コマンドの内部の処理を並列実行する最大のスレッド数を指定します。
-
-:ref:`_select-drilldown` と :ref:`スライス <select-slice-related-parameters>` 
-の各ラベルに対する結果の作成を並列で実行します。
+このパラメータの値に ``-1`` または ``2`` 以上を指定すると、 :ref:`_select-drilldown` と :ref:`スライス <select-slice-related-parameters>` を並列で実行します。
 
 デフォルトでは各 ``drilldown`` 、 ``drilldowns`` 、 ``slices`` を直列に実行します。
 つまり、1つの処理が終わったら次の処理を実行します。
