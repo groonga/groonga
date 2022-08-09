@@ -1108,7 +1108,7 @@ TODO: translate
 
   パッケージの提供元によりApache Arrowが有効かどうかは異なります。
 
-  Apache Arrow が有効かどうかは、 :doc:`/reference/command/status` コマンドの結果で ``apache_arrow`` が ``true`` かどうかで確認することができます。
+  Apache Arrow が有効かどうかは、 :doc:`/reference/commands/status` コマンドの結果で ``apache_arrow`` が ``true`` かどうかで確認することができます。
 
   Apache Arrow が無効な場合、 :doc:`/install` の手順にしたがい、Apache Arrowを有効にしてソースコードからビルドするか、パッケージの提供元に提供依頼をしてください。
 
