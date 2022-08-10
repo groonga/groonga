@@ -1162,7 +1162,7 @@ When specifying larger than ``2``, the degree of parallelism can be higher than 
   
   * Executes the `select` command in parallel with the threads of at most the number of CPU cores.
 
-The default value of this parameter is ``0``.
+The default value of this parameter is ``0`` .
 It means that the `select` command is executed in serial in default.
 
 .. note::
