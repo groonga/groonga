@@ -1100,17 +1100,17 @@ TODO: translate
 
 .. note::
 
-  これは試験的な機能です。
+   これは試験的な機能です。
 
-  :doc:`/reference/command/command_version` 3 以降を指定する必要があります。
+   :doc:`/reference/command/command_version` 3 以降を指定する必要があります。
   
-  Apache Arrow が有効である必要があります。
+   Apache Arrow が有効である必要があります。
 
-  パッケージの提供元によりApache Arrowが有効かどうかは異なります。
+   パッケージの提供元によりApache Arrowが有効かどうかは異なります。
 
-  Apache Arrow が有効かどうかは、 :doc:`/reference/commands/status` コマンドの結果で ``apache_arrow`` が ``true`` かどうかで確認することができます。
+   Apache Arrow が有効かどうかは、 :doc:`/reference/commands/status` コマンドの結果で ``apache_arrow`` が ``true`` かどうかで確認することができます。
 
-  Apache Arrow が無効な場合、 :doc:`/install` の手順にしたがい、Apache Arrowを有効にしてソースコードからビルドするか、パッケージの提供元に提供依頼をしてください。
+   Apache Arrow が無効な場合、 :doc:`/install` の手順にしたがい、Apache Arrowを有効にしてソースコードからビルドするか、パッケージの提供元に提供依頼をしてください。
 
 このパラメータの値に ``-1`` または ``2`` 以上を指定すると、 :ref:`select-drilldown` と :ref:`drilldowns <select-advanced-drilldown-related-parameters>` 
 および :ref:`スライス <select-slice-related-parameters>` を並列で実行します。
@@ -1163,8 +1163,8 @@ CPUのリソースに空きがあるかどうか、どのくらいの ``n_worker
 デフォルト値は0です。つまり、並列実行しません。
 
 .. note::
-    
-    環境変数 ``GRN_SELECT_N_WORKERS_DEFAULT`` を指定することでデフォルト値を変更することができます。
+   
+   環境変数 ``GRN_SELECT_N_WORKERS_DEFAULT`` を指定することでデフォルト値を変更することができます。
 
 Output related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
