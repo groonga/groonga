@@ -1100,71 +1100,74 @@ TODO: translate
 
 .. note::
 
-   これは試験的な機能です。
+   This is a experimental feature. Currently, this feature is still not stable.
 
-   :doc:`/reference/command/command_version` 3 以降を指定する必要があります。
+   This feature requires :doc:`/reference/command/command_version` 3 or later.
   
-   Apache Arrow が有効である必要があります。
+   This feature requires that Apache Arrow is valid in Groonga.
 
-   パッケージの提供元によりApache Arrowが有効かどうかは異なります。
+   It depends on package provider whether Apache Arrow is valid or not.
 
-   Apache Arrow が有効かどうかは、 :doc:`/reference/commands/status` コマンドの結果で ``apache_arrow`` が ``true`` かどうかで確認することができます。
+   You can check whether Apache Arrow is valid by checking whether ``apache_arrow`` is ``true`` or not in the result of the :doc:`/reference/commands/status` command.
 
-   Apache Arrow が無効な場合、 :doc:`/install` の手順にしたがい、Apache Arrowを有効にしてソースコードからビルドするか、パッケージの提供元にApache Arrowを有効にするよう依頼をしてください。
+   If Apache Arrow is invalid, you should build Groonga from the source code with enabling Apache Arrow following the steps in :doc:`/install` or
+   request to enable Apache Arrow to the package provider.
 
-このパラメータの値に ``-1`` または ``2`` 以上を指定すると、 :ref:`select-drilldown` と :ref:`drilldowns <select-advanced-drilldown-related-parameters>` 
-および :ref:`スライス <select-slice-related-parameters>` を並列で実行します。
+:ref:`select-drilldown` , :ref:`drilldowns <select-advanced-drilldown-related-parameters>` and :ref:`slices <select-slice-related-parameters>` 
+are executed in parallel when this parameter is specified ``-1`` or ``2`` or more.
 
-デフォルトでは各 ``drilldown`` 、 ``drilldowns`` 、 ``slices`` を直列に実行します。
-つまり、1つの処理が終わったら次の処理を実行します。
-そのため、 ``drilldown`` 、 ``drilldowns`` 、 ``slices`` がたくさんある場合は、クエリーの実行時間が長くなる傾向にあります。
+``drilldown``, ``drilldowns`` and ``slices`` are executed in serial in default.
+In other words, a next process is executed after a current process is finished.
+So, queries tend to take a long time if there are a lot of ``drilldown``, ``drilldowns`` and ``slices``.
 
-``n_workers`` を使うと依存関係のない複数の ``drilldown`` 、 ``drilldowns`` 、 ``slices``  を並列に実行できます。
-そのため、従来はすべての処理の総和分の実行時間がかかっていたところが並列に実行する分短縮できます。
-この並列実行は、 ``select`` コマンドごとに行います。
+``n_workers`` enables to executing independent ``drilldown``, ``drilldowns`` and ``slices`` in parallel.
+The execution time of the total sum of processes can be shourtend by executing them in parallel.
+This parallel execution is done for each ``select`` command.
 
-依存関係がないとは、 ``dorilldowns.table`` を使用して他のドリルダウンやスライスの結果を参照していないことです。
+"independent" means not using ``dorilldowns.table`` to reference the results of other drilldowns or slices.
 
-依存関係がある場合、つまり、 ``drilldowns.table`` を使用している場合、依存するドリルダウンやスライスの処理の終了を待ちます。
-したがって依存関係がある場合は並列度が下がります。
+If they have dependencies, in other words, if using ``dorilldowns.table``, it wait for finish the dependent drilldowns or slices.
+Therefore, the degree of parallelism is reduced if they have dependencies.
 
-並列に実行するということは、複数のCPUを同時に使用するということです。
-CPUのリソースに空きがないのに並列に実行しようとするとかえって遅くなることがあります。
-対象のCPUが実行している別処理が終わるのを待たないといけないからです。
+Executing in parallel means using multiple CPUs at the same time.
+If executing in parallel even though there is no free CPU resource, it may actually slow down the execution time.
+This is because they have to wait for the other process being executed by the target CPU to finish.
 
-CPUのリソースに空きがあるかどうか、どのくらいの ``n_workers`` を指定すべきかの判断基準はどのようなシステム構成かに依存します。
+It depends on a system configuration whether or not there are free CPU resources and how many ``n_workers`` should be specified.
 
-たとえば、CPUが6個のシステムで :doc:`/reference/executables/groonga-server-http` を使うケースを考えます。
+For example, consider using :doc:`/reference/executables/groonga-server-http` on a system with 6 CPUs.
 
-:doc:`/reference/executables/groonga-server-http` は各リクエストごとに1スレッド（= 1CPU）を割り当てて処理します。
+:doc:`/reference/executables/groonga-server-http` allocates 1 thread (= 1CPU) for each request.
 
-平均同時接続数が6のとき、CPUを既に6つ使用しているのでCPUのリソースに空きはありません。
-各リクエストを処理するためにすべてのCPUが使われているからです。
+When the average number of concurrent connections is 6, there are no free CPU resources because 6 CPUs are already in use.
+All the CPU is used to process each request.
 
-平均同時接続数が2のとき、リクエストを処理するためにはCPUを2つしか使用していないので、4つ空きがあります。
-``n_workers`` に ``2`` を指定すると、 ``select`` コマンドはリクエストを処理するためのスレッドを含んで最大で3つのCPUを使用します。
-そのため、 ``n_workers`` に ``2`` を指定した ``select`` コマンドが2つ同時にリクエストされると、合計で最大で6つのCPUを使用することになりリソースをすべて使って高速に処理できます。
-``2`` より大きな値を指定すると、CPUのリソースよりも高い並列度になってしまうので、かえって実行が遅くなる可能性があります。
+When the average number of concurrent connections is 2, there are 4 free CPU resources because only 2 CPUs are already in use.
+When specifying ``2`` for ``n_workers``, the ``select`` command will use at most 3 CPUs, including the thread for processing requests.
+Therefore, if two ``select`` commands with ``2`` specified for ``n_workers`` are requested at the same time,
+they will use at most 6 CPUs in total, and use all of the resources, and process fastly.
+When specifying larger than ``2``, the degree of parallelism can be higher than the CPU resources, so it may actually slow down the execution time.
 
-``n_workers`` は指定した値に応じて以下の動作をします。
+``n_workers`` behaves as follows depending on the specified value.
 
-* ``0`` または ``1`` を指定した場合
+* When specifying ``0`` or ``1``
 
-  * 並列実行しません。
+  * Executes the `select` command in serial
 
-* ``2`` 以上を指定した場合
+* When specifying ``2`` or more
   
-  * 最大で指定したスレッド数で並列実行します。
+  * Executes the `select` command in parallel with at most the specified number of threads.
 
-* ``-1`` 以下を指定した場合
+* When specifying ``-1`` or less
   
-  * 最大でCPUのコア数分のスレッドで並列実行します。
+  * Executes the `select` command in parallel with the threads of at most the number of CPU cores.
 
-デフォルト値は ``0`` です。つまり、並列実行しません。
+The default value of this parameter is ``0``.
+It means that the `select` command is executed in serial in default.
 
 .. note::
    
-   環境変数 ``GRN_SELECT_N_WORKERS_DEFAULT`` を指定することでデフォルト値を変更することができます。
+   The default value can be changed by specifying the environment variable ``GRN_SELECT_N_WORKERS_DEFAULT``.
 
 Output related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
