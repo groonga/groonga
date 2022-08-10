@@ -1110,7 +1110,7 @@ TODO: translate
 
    Apache Arrow が有効かどうかは、 :doc:`/reference/commands/status` コマンドの結果で ``apache_arrow`` が ``true`` かどうかで確認することができます。
 
-   Apache Arrow が無効な場合、 :doc:`/install` の手順にしたがい、Apache Arrowを有効にしてソースコードからビルドするか、パッケージの提供元に提供依頼をしてください。
+   Apache Arrow が無効な場合、 :doc:`/install` の手順にしたがい、Apache Arrowを有効にしてソースコードからビルドするか、パッケージの提供元にApache Arrowを有効にするよう依頼をしてください。
 
 このパラメータの値に ``-1`` または ``2`` 以上を指定すると、 :ref:`select-drilldown` と :ref:`drilldowns <select-advanced-drilldown-related-parameters>` 
 および :ref:`スライス <select-slice-related-parameters>` を並列で実行します。
