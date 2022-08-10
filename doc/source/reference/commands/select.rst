@@ -1145,8 +1145,8 @@ All the CPU is used to process each request.
 When the average number of concurrent connections is 2, there are 4 free CPU resources because only 2 CPUs are already in use.
 When specifying ``2`` for ``n_workers``, the ``select`` command will use at most 3 CPUs, including the thread for processing requests.
 Therefore, if two ``select`` commands with ``2`` specified for ``n_workers`` are requested at the same time,
-they will use at most 6 CPUs in total, and use all of the resources, and process fastly.
-When specifying larger than ``2``, the degree of parallelism can be higher than the CPU resources, so it may actually slow down the execution time.
+they will use at most 6 CPUs in total, and will use all of the resources, and will be processed fastly.
+When specifying greater than ``2``, the degree of parallelism can be higher than the CPU resources, so it may actually slow down the execution time.
 
 ``n_workers`` behaves as follows depending on the specified value.
 
