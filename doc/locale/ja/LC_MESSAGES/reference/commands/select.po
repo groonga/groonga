@@ -3241,9 +3241,6 @@ msgstr ""
 msgid "``--slices[${LABEL}].limit``"
 msgstr ""
 
-msgid "``--slices[${LABEL}].table``"
-msgstr ""
-
 msgid "``slices[${LABEL}].match_columns``"
 msgstr ""
 
@@ -3269,9 +3266,6 @@ msgid "``slices[${LABEL}].offset``"
 msgstr ""
 
 msgid "``slices[${LABEL}].limit``"
-msgstr ""
-
-msgid "``slices[${LABEL}].table``"
 msgstr ""
 
 msgid "Cache related parameter"
