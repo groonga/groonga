@@ -70,7 +70,9 @@ The command returns the current status as an object::
       "start_time": START_TIME,
       "starttime": STARTTIME,
       "uptime": UPTIME,
-      "version": VERSION
+      "version": VERSION,
+      "features": FEATURES,
+      "apache_arrow": APACHE_ARROW_VERSION
     }
   ]
 
@@ -147,3 +149,39 @@ values:
    * - ``version``
      - The version of the Groonga process.
      - ``5.0.7``
+
+   * - ``features``
+     - .. versionadded:: 10.0.1
+     
+       The list of features that Groonga has and whether they are enabled or not.
+     - .. code-block::
+
+          {
+             "nfkc": true,
+             "mecab": true,
+             "message_pack": true,
+             "mruby": true,
+             "onigmo": true,
+             "zlib": true,
+             "lz4": false,
+             "zstandard": false,
+             "kqueue": false,
+             "epoll": true,
+             "poll": false,
+             "rapidjson": false,
+             "apache_arrow": false,
+             "xxhash": false
+          }
+  
+   * - ``apache_arrow``
+     - .. versionadded:: 10.0.1
+     
+       The version of Apache Arrow that Groonga uses. This item only displays when Apache Arrow is valid in Groonga. 
+     - .. code-block::
+
+          {
+             "version_major": 2,
+             "version_minor": 0,
+             "version_patch": 0,
+             "version": "2.0.0"
+          }
