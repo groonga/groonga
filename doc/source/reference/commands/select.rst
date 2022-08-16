@@ -1126,7 +1126,7 @@ This parallel execution is done for each ``select`` command.
 
 "independent" means not using ``dorilldowns.table`` to reference the results of other drilldowns or slices.
 
-If they have dependencies, in other words, if using ``dorilldowns.table``, it wait for finish the dependent drilldowns or slices.
+If there are dependencies as same meaning as using ``dorilldowns.table``, it wait for finish the dependent drilldowns or slices.
 Therefore, the degree of parallelism is reduced if they have dependencies.
 
 Executing in parallel means using multiple CPUs at the same time.
