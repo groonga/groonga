@@ -1098,7 +1098,7 @@ is equal to or more than ``10`` from ``Entries`` table.
 
 .. note::
 
-   This is a experimental feature. Currently, this feature is still not stable.
+   This is an experimental feature. Currently, this feature is still not stable.
 
    This feature requires :doc:`/reference/command/command_version` 3 or later.
   
