@@ -1108,7 +1108,7 @@ TODO: translate
 
    It depends on package provider whether Apache Arrow is valid or not.
 
-   You can check whether Apache Arrow is valid by checking whether ``apache_arrow`` is ``true`` or not in the result of the :doc:`/reference/commands/status` command.
+To check whether Apache Arrow is valid, you can use doc:`/reference/commands/status` command that show the result of  ``apache_arrow`` is ``true`` or not.
 
    If Apache Arrow is invalid, you should build Groonga from the source code with enabling Apache Arrow following the steps in :doc:`/install` or
    request to enable Apache Arrow to the package provider.
