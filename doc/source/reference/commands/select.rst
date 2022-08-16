@@ -53,6 +53,7 @@ optional::
          [load_columns=null]
          [load_values=null]
          [drilldown_max_n_target_records=-1]
+         [n_workers=0]
 
 This command has the following named parameters for dynamic columns:
 
@@ -1087,6 +1088,84 @@ more liked entries.
 
 The ``select`` command outputs records that ``n_likes`` column value
 is equal to or more than ``10`` from ``Entries`` table.
+
+.. _select-n-worksers:
+
+``n_workers``
+"""""""""""""
+
+.. versionadded:: 12.0.5
+
+.. note::
+
+   This is an experimental feature. Currently, this feature is still not stable.
+
+   This feature requires :doc:`/reference/command/command_version` 3 or later.
+  
+   This feature requires that Apache Arrow is enabled in Groonga.
+
+   It depends on package provider whether Apache Arrow is enabled or not.
+
+   To check whether Apache Arrow is enabled, you can use doc:`/reference/commands/status` command that show the result of  ``apache_arrow`` is ``true`` or not.
+
+   If Apache Arrow is disabled, you should build Groonga from the source code with enabling Apache Arrow following the steps in :doc:`/install` or
+   request to enable Apache Arrow to the package provider.
+
+:ref:`select-drilldown` , :ref:`drilldowns <select-advanced-drilldown-related-parameters>` and :ref:`slices <select-slice-related-parameters>` 
+are executed in parallel when this parameter is specified ``-1`` or ``2`` or more.
+
+In a default setting, ``drilldown``, ``drilldowns`` and ``slices`` are executed in serial.
+In other words, a next process is executed after a current process is finished.
+So, queries tend to take a long time if there are a lot of ``drilldown``, ``drilldowns`` and ``slices``.
+
+``n_workers`` enables to execute independent ``drilldown``, ``drilldowns`` and ``slices`` in parallel.
+The execution time of the total sum of processes can be shourtend by executing them in parallel.
+This parallel execution is done for each ``select`` command.
+
+"independent" means not using ``dorilldowns.table`` to reference the results of other drilldowns or slices.
+
+If there are dependencies as same meaning as using ``dorilldowns.table``, it wait for finish the dependent drilldowns or slices.
+Therefore, the degree of parallelism is reduced if they have dependencies.
+
+Executing in parallel means using multiple CPUs at the same time.
+If executing in parallel without free CPU resource, it may actually slow down the execution time.
+This is because they have to wait for the other process being executed by the target CPU to finish.
+
+It depends on a system configuration whether or not there are free CPU resources and how many ``n_workers`` should be specified.
+
+For example, consider using :doc:`/reference/executables/groonga-server-http` on a system with 6 CPUs.
+
+:doc:`/reference/executables/groonga-server-http` allocates 1 thread (= 1CPU) for each request.
+
+When the average number of concurrent connections is 6, there are no free CPU resources because 6 CPUs are already in use.
+All the CPU is used to process each request.
+
+When the average number of concurrent connections is 2, there are 4 free CPU resources because only 2 CPUs are already in use.
+When specifying ``2`` for ``n_workers``, the ``select`` command will use at most 3 CPUs, including the thread for processing requests.
+Therefore, if two ``select`` commands with ``2`` specified for ``n_workers`` are requested at the same time,
+they will use at most 6 CPUs in total and will be processed fastly by using all of the resources.
+When specifying greater than ``2``, the degree of parallelism can be higher than the CPU resources, so it may actually slow down the execution time.
+
+``n_workers`` behaves as follows depending on the specified value.
+
+* When specifying ``0`` or ``1``
+
+  * Executes the `select` command in serial
+
+* When specifying ``2`` or more
+  
+  * Executes the `select` command in parallel with at most the specified number of threads.
+
+* When specifying ``-1`` or less
+  
+  * Executes the `select` command in parallel with the threads of at most the number of CPU cores.
+
+The default value of this parameter is ``0`` .
+It means that the `select` command is executed in serial in default.
+
+.. note::
+   
+   The default value can be changed by specifying the environment variable ``GRN_SELECT_N_WORKERS_DEFAULT``.
 
 Output related parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^
