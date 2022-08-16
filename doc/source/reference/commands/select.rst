@@ -1116,7 +1116,7 @@ TODO: translate
 :ref:`select-drilldown` , :ref:`drilldowns <select-advanced-drilldown-related-parameters>` and :ref:`slices <select-slice-related-parameters>` 
 are executed in parallel when this parameter is specified ``-1`` or ``2`` or more.
 
-``drilldown``, ``drilldowns`` and ``slices`` are executed in serial in default.
+In a default setting, ``drilldown``, ``drilldowns`` and ``slices`` are executed in serial.
 In other words, a next process is executed after a current process is finished.
 So, queries tend to take a long time if there are a lot of ``drilldown``, ``drilldowns`` and ``slices``.
 
