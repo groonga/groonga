@@ -2586,8 +2586,6 @@ Here are parameters for slice:
      - Optional
    * - ``--slices[${LABEL}].limit``
      - Optional
-   * - ``--slices[${LABEL}].table``
-     - Optional
 
 .. _select-slices-label-match-columns:
 
@@ -2648,13 +2646,6 @@ TODO
 .. _select-slices-label-limit:
 
 ``slices[${LABEL}].limit``
-""""""""""""""""""""""""""
-
-TODO
-
-.. _select-slices-label-table:
-
-``slices[${LABEL}].table``
 """"""""""""""""""""""""""
 
 TODO
