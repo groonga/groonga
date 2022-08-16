@@ -1096,21 +1096,19 @@ is equal to or more than ``10`` from ``Entries`` table.
 
 .. versionadded:: 12.0.5
 
-TODO: translate
-
 .. note::
 
    This is a experimental feature. Currently, this feature is still not stable.
 
    This feature requires :doc:`/reference/command/command_version` 3 or later.
   
-   This feature requires that Apache Arrow is valid in Groonga.
+   This feature requires that Apache Arrow is enabled in Groonga.
 
-   It depends on package provider whether Apache Arrow is valid or not.
+   It depends on package provider whether Apache Arrow is enabled or not.
 
-To check whether Apache Arrow is valid, you can use doc:`/reference/commands/status` command that show the result of  ``apache_arrow`` is ``true`` or not.
+   To check whether Apache Arrow is enabled, you can use doc:`/reference/commands/status` command that show the result of  ``apache_arrow`` is ``true`` or not.
 
-   If Apache Arrow is invalid, you should build Groonga from the source code with enabling Apache Arrow following the steps in :doc:`/install` or
+   If Apache Arrow is disabled, you should build Groonga from the source code with enabling Apache Arrow following the steps in :doc:`/install` or
    request to enable Apache Arrow to the package provider.
 
 :ref:`select-drilldown` , :ref:`drilldowns <select-advanced-drilldown-related-parameters>` and :ref:`slices <select-slice-related-parameters>` 
@@ -1120,7 +1118,7 @@ In a default setting, ``drilldown``, ``drilldowns`` and ``slices`` are executed 
 In other words, a next process is executed after a current process is finished.
 So, queries tend to take a long time if there are a lot of ``drilldown``, ``drilldowns`` and ``slices``.
 
-``n_workers`` enables to executing independent ``drilldown``, ``drilldowns`` and ``slices`` in parallel.
+``n_workers`` enables to execute independent ``drilldown``, ``drilldowns`` and ``slices`` in parallel.
 The execution time of the total sum of processes can be shourtend by executing them in parallel.
 This parallel execution is done for each ``select`` command.
 
