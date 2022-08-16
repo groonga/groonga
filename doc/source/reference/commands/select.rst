@@ -1130,7 +1130,7 @@ If they have dependencies, in other words, if using ``dorilldowns.table``, it wa
 Therefore, the degree of parallelism is reduced if they have dependencies.
 
 Executing in parallel means using multiple CPUs at the same time.
-If executing in parallel even though there is no free CPU resource, it may actually slow down the execution time.
+If executing in parallel without free CPU resource, it may actually slow down the execution time.
 This is because they have to wait for the other process being executed by the target CPU to finish.
 
 It depends on a system configuration whether or not there are free CPU resources and how many ``n_workers`` should be specified.
