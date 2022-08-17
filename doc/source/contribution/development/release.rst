@@ -638,11 +638,9 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 
 そのためにはまず ``groonga`` のリポジトリをカレントディレクトリにして以下のコマンドを実行します。::
 
-    % GROONGA_VERSION=$(git tag --list | tail -n 1 | tr -d v)
-    % make update-document DOCUMENT_VERSION=$GROONGA_VERSION DOCUMENT_VERSION_FULL=$GROONGA_VERSION
+    % make update-document
 
-ここでは最新のtagに基づいてリリースバージョンを調べ、明示的にそのバージョンを指定してドキュメントを更新するようにしています。
-これによりcloneしておいたgroonga.orgのdoc/locale以下に更新したドキュメントがコピーされます。
+これによりcloneしておいたgroonga.orgのdocsおよびja/docs以下に更新したドキュメントがコピーされます。
 
 生成されているドキュメントに問題のないことを確認できたら、コミット、pushしてgroonga.orgへと反映します。
 

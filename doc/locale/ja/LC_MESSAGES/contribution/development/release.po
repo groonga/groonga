@@ -382,8 +382,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"`GitHub Actions <https://github.com/groonga/groonga/actions?"
-"query=workflow%3APackage>`_"
+"`GitHub Actions <https://github.com/groonga/groonga/actions?query=workflow"
+"%3APackage>`_"
 msgstr ""
 
 msgid "`TravisCI <https://travis-ci.org/github/groonga/groonga>`_"
@@ -804,8 +804,8 @@ msgid "blogroonga(ブログ)の更新"
 msgstr ""
 
 msgid ""
-"http://groonga.org/blog/ および http://groonga.org/blog/ にて公開されているリ"
-"リース案内を作成します。"
+"https://groonga.org/blog/ および https://groonga.org/blog/ にて公開されている"
+"リリース案内を作成します。"
 msgstr ""
 
 msgid "基本的にはリリースアナウンスの内容をそのまま記載します。"
@@ -855,9 +855,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"ここでは最新のtagに基づいてリリースバージョンを調べ、明示的にそのバージョンを"
-"指定してドキュメントを更新するようにしています。 これによりcloneしておいた"
-"groonga.orgのdoc/locale以下に更新したドキュメントがコピーされます。"
+"これによりcloneしておいたgroonga.orgのdocsおよびja/docs以下に更新したドキュメ"
+"ントがコピーされます。"
 msgstr ""
 
 msgid ""
