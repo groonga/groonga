@@ -1089,7 +1089,7 @@ more liked entries.
 The ``select`` command outputs records that ``n_likes`` column value
 is equal to or more than ``10`` from ``Entries`` table.
 
-.. _select-n-worksers:
+.. _select-n-workers:
 
 ``n_workers``
 """""""""""""
