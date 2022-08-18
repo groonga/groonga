@@ -176,7 +176,7 @@ values:
    * - ``apache_arrow``
      - .. versionadded:: 10.0.1
      
-       The version of Apache Arrow that Groonga uses. This item only displays when Apache Arrow is valid in Groonga. 
+       The version of Apache Arrow that Groonga uses. This item displays only when Apache Arrow is enabled in Groonga. 
      - .. code-block::
 
           {
