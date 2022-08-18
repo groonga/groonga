@@ -72,7 +72,7 @@ The command returns the current status as an object::
       "uptime": UPTIME,
       "version": VERSION,
       "features": FEATURES,
-      "apache_arrow": APACHE_ARROW_VERSION
+      "apache_arrow": APACHE_ARROW_INFORMATION
     }
   ]
 
@@ -176,7 +176,7 @@ values:
    * - ``apache_arrow``
      - .. versionadded:: 10.0.1
      
-       The version of Apache Arrow that Groonga uses. This item displays only when Apache Arrow is enabled in Groonga. 
+       The information about Apache Arrow that Groonga uses. This item is displayed only when Apache Arrow is enabled in Groonga.
      - .. code-block::
 
           {
