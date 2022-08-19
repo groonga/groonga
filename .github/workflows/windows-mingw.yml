@@ -107,6 +107,7 @@ jobs:
         shell: msys2 {0}
         run: |
           MAKEFLAGS=-j$(nproc) gem install red-arrow
+          ruby -e "require 'arrow'"
       - name: Prepare setup-extpp.rb
         shell: msys2 {0}
         run: |
