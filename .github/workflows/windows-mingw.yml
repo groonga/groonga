@@ -99,6 +99,8 @@ jobs:
         shell: msys2 {0}
         run: |
           pacman --sync --needed --noconfirm ${{ matrix.package-prefix }}-ruby
+          # Ensure using the installed system libffi
+          gem install fiddle
           gem install bundler
           cd grntest
           bundle install
