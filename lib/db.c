@@ -6075,7 +6075,9 @@ grn_table_setoperation_or(grn_ctx *ctx,
                                               key_src_size,
                                               &value_dest,
                                               &added);
-      if (id_dest != GRN_ID_NIL) {
+      if (id_dest == GRN_ID_NIL) {
+        break;
+      } else {
         if (added) {
           grn_memcpy(value_dest, value_src, data->value_size);
           grn_rset_recinfo *ri_dest = value_dest;
