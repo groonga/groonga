@@ -6081,23 +6081,22 @@ grn_table_setoperation_or(grn_ctx *ctx,
         } else {
           break;
         }
-      } else {
-        if (added) {
-          grn_memcpy(value_dest, value_src, data->value_size);
-          grn_rset_recinfo *ri_dest = value_dest;
-          ri_dest->score *= data->weight_factor;
-        } else {
-          grn_rset_recinfo *ri_dest = value_dest;
-          grn_rset_recinfo *ri_src = value_src;
-          grn_table_add_subrec(ctx,
-                               data->table_dest,
-                               ri_dest,
-                               ri_src->score * data->weight_factor,
-                               NULL,
-                               0);
-        }
-        grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
       }
+      if (added) {
+        grn_memcpy(value_dest, value_src, data->value_size);
+        grn_rset_recinfo *ri_dest = value_dest;
+        ri_dest->score *= data->weight_factor;
+      } else {
+        grn_rset_recinfo *ri_dest = value_dest;
+        grn_rset_recinfo *ri_src = value_src;
+        grn_table_add_subrec(ctx,
+                             data->table_dest,
+                             ri_dest,
+                             ri_src->score * data->weight_factor,
+                             NULL,
+                             0);
+      }
+      grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
     } GRN_TABLE_EACH_END(ctx, cursor);
   } else {
     GRN_TABLE_EACH_BEGIN(ctx, data->table_src, cursor, id_src) {
@@ -6116,9 +6115,8 @@ grn_table_setoperation_or(grn_ctx *ctx,
         } else {
           break;
         }
-      } else {
-        grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
       }
+      grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
     } GRN_TABLE_EACH_END(ctx, cursor);
   }
 }
