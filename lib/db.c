@@ -6110,7 +6110,13 @@ grn_table_setoperation_or(grn_ctx *ctx,
                                               key_src_size,
                                               &value_dest,
                                               NULL);
-      if (id_dest != GRN_ID_NIL) {
+      if (id_dest == GRN_ID_NIL) {
+        if (ctx->rc == GRN_SUCCESS) {
+          continue;
+        } else {
+          break;
+        }
+      } else {
         grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
       }
     } GRN_TABLE_EACH_END(ctx, cursor);
