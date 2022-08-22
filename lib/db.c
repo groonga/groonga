@@ -6076,7 +6076,11 @@ grn_table_setoperation_or(grn_ctx *ctx,
                                               &value_dest,
                                               &added);
       if (id_dest == GRN_ID_NIL) {
-        break;
+        if (ctx->rc == GRN_SUCCESS) {
+          continue;
+        } else {
+          break;
+        }
       } else {
         if (added) {
           grn_memcpy(value_dest, value_src, data->value_size);
