@@ -6075,23 +6075,28 @@ grn_table_setoperation_or(grn_ctx *ctx,
                                               key_src_size,
                                               &value_dest,
                                               &added);
-      if (id_dest != GRN_ID_NIL) {
-        if (added) {
-          grn_memcpy(value_dest, value_src, data->value_size);
-          grn_rset_recinfo *ri_dest = value_dest;
-          ri_dest->score *= data->weight_factor;
+      if (id_dest == GRN_ID_NIL) {
+        if (ctx->rc == GRN_SUCCESS) {
+          continue;
         } else {
-          grn_rset_recinfo *ri_dest = value_dest;
-          grn_rset_recinfo *ri_src = value_src;
-          grn_table_add_subrec(ctx,
-                               data->table_dest,
-                               ri_dest,
-                               ri_src->score * data->weight_factor,
-                               NULL,
-                               0);
+          break;
         }
-        grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
       }
+      if (added) {
+        grn_memcpy(value_dest, value_src, data->value_size);
+        grn_rset_recinfo *ri_dest = value_dest;
+        ri_dest->score *= data->weight_factor;
+      } else {
+        grn_rset_recinfo *ri_dest = value_dest;
+        grn_rset_recinfo *ri_src = value_src;
+        grn_table_add_subrec(ctx,
+                             data->table_dest,
+                             ri_dest,
+                             ri_src->score * data->weight_factor,
+                             NULL,
+                             0);
+      }
+      grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
     } GRN_TABLE_EACH_END(ctx, cursor);
   } else {
     GRN_TABLE_EACH_BEGIN(ctx, data->table_src, cursor, id_src) {
@@ -6104,9 +6109,14 @@ grn_table_setoperation_or(grn_ctx *ctx,
                                               key_src_size,
                                               &value_dest,
                                               NULL);
-      if (id_dest != GRN_ID_NIL) {
-        grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
+      if (id_dest == GRN_ID_NIL) {
+        if (ctx->rc == GRN_SUCCESS) {
+          continue;
+        } else {
+          break;
+        }
       }
+      grn_table_setoperation_merge_columns(ctx, data, id_dest, id_src);
     } GRN_TABLE_EACH_END(ctx, cursor);
   }
 }
