@@ -153,7 +153,7 @@ values:
    * - ``features``
      - .. versionadded:: 10.0.1
      
-       The list of features that Groonga has and whether they are enabled or not.
+       The list of Groonga's features and status(enabled or disabled).
      - .. code-block::
 
           {
@@ -176,7 +176,7 @@ values:
    * - ``apache_arrow``
      - .. versionadded:: 10.0.1
      
-       The information about Apache Arrow that Groonga uses. This item is displayed only when Apache Arrow is enabled in Groonga.
+       The version information of Apache Arrow that Groonga currently uses. Only displayed when Apache Arrow is enabled.
      - .. code-block::
 
           {
