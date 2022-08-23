@@ -153,7 +153,7 @@ values:
    * - ``features``
      - .. versionadded:: 10.0.1
      
-       The list of Groonga's features and status(enabled or disabled).
+       The list of Groonga's features and status (enabled or disabled).
      - .. code-block::
 
           {
