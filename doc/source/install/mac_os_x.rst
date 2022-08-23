@@ -1,9 +1,9 @@
 .. -*- rst -*-
 
-Mac OS X
-========
+macOS
+=====
 
-This section describes how to install Groonga on Mac OS X. You can
+This section describes how to install Groonga on macOS. You can
 install Groonga by `MacPorts <http://www.macports.org/>`__ or
 `Homebrew <http://mxcl.github.com/homebrew/>`__.
 
