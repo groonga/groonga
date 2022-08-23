@@ -236,15 +236,15 @@ msgstr ""
 msgid "``features``"
 msgstr ""
 
-msgid "The list of Groonga's features and status(enabled or disabled)."
+msgid "The list of Groonga's features and status (enabled or disabled)."
 msgstr "Groongaの機能と、その機能が有効かどうかの一覧です。"
 
 msgid "``apache_arrow``"
 msgstr ""
 
 msgid ""
-"The version information of Apache Arrow that Groonga currently uses. Only "
-"displayed when Apache Arrow is enabled."
+"The version information of Apache Arrow that Groonga currently uses. It's "
+"only displayed when Apache Arrow is enabled."
 msgstr ""
 "Groongaの使用しているApache Arrowのバージョンです。Apache Arrowが有効な場合の"
 "み表示されます。"
