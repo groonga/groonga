@@ -1106,7 +1106,7 @@ is equal to or more than ``10`` from ``Entries`` table.
 
    It depends on package provider whether Apache Arrow is enabled or not.
 
-   To check whether Apache Arrow is enabled, you can use doc:`/reference/commands/status` command that show the result of  ``apache_arrow`` is ``true`` or not.
+   To check whether Apache Arrow is enabled, you can use :doc:`/reference/commands/status` command that show the result of  ``apache_arrow`` is ``true`` or not.
 
    If Apache Arrow is disabled, you should build Groonga from the source code with enabling Apache Arrow following the steps in :doc:`/install` or
    request to enable Apache Arrow to the package provider.

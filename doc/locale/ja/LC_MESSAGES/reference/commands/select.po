@@ -1515,7 +1515,7 @@ msgid "It depends on package provider whether Apache Arrow is enabled or not."
 msgstr "パッケージの提供元によりApache Arrowが有効かどうかは異なります。"
 
 msgid ""
-"To check whether Apache Arrow is enabled, you can use doc:`/reference/"
+"To check whether Apache Arrow is enabled, you can use :doc:`/reference/"
 "commands/status` command that show the result of  ``apache_arrow`` is "
 "``true`` or not."
 msgstr ""
