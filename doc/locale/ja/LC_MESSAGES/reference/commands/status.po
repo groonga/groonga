@@ -244,7 +244,7 @@ msgid "``apache_arrow``"
 msgstr ""
 
 msgid ""
-"The information about Apache Arrow that Groonga uses. This item is displayed "
+"The version information of Apache Arrow that Groonga currently uses. Only displayed when Apache Arrow is enabled. "
 "only when Apache Arrow is enabled in Groonga."
 msgstr ""
 "Groongaの使用しているApache Arrowのバージョンです。Apache Arrowが有効な場合の"
