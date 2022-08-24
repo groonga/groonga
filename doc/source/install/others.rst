@@ -247,7 +247,7 @@ Shows all ``configure`` options.
 
 Enables Apache Arrow features.
 
-The default is ``auto``. the features are enabled if Apache Arrow is installed on the system, otherwise disabled.
+The default is ``auto``. The features are enabled if Apache Arrow is installed on the system, otherwise disabled.
 
 When this parameter is expressly specified, Apache Arrow should be install on the system.
 
