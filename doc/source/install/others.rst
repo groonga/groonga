@@ -242,6 +242,37 @@ files::
 
 Shows all ``configure`` options.
 
+``enable-apache-arrow``
++++++++++++++++++++++++
+
+Enables Apache Arrow features.
+
+The default is ``auto``. the features are enabled if Apache Arrow is installed on the system, otherwise disabled.
+
+When this parameter is expressly specified, Apache Arrow should be install on the system.
+
+You can install Apache Arrow according to official installation procedure.
+Groonga requires either ``libarrow-dev`` or ``arrow-devel`` depending on the system.
+
+`Install Apache Arrow <https://arrow.apache.org/install/>`_
+
+Here is an example that enables Apache Arrow features expressly::
+
+  % ./configure --enable-apache-arrow
+
+``disable-apache-arrow``
+++++++++++++++++++++++++
+
+Disables Apache Arrow features.
+
+The default is false.
+
+When this parameter is specified, Groonga does not enable Apache Arrow features even if Apache Arrow is install on the system.
+
+Here is an example that disables Apache Arrow features::
+
+  % ./configure --enable-apache-arrow
+
 ``make``
 ^^^^^^^^
 
