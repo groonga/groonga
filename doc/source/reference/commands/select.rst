@@ -2477,7 +2477,7 @@ However, in that way, each of drilldowns had been independent and not to be able
 Here is an example to execute nested drilldown by category and then by tag.
 
 .. groonga-command
-.. include:: ../../example/reference/commands/select/drilldowns_label_keys_multiple.log
+.. include:: ../../example/reference/commands/select/drilldowns_label_table.log
 .. table_create Tags TABLE_PAT_KEY ShortText
 .. column_create Tags category COLUMN_SCALAR ShortText
 .. table_create Memos TABLE_HASH_KEY ShortText

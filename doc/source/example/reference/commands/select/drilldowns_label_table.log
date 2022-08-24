@@ -1,0 +1,153 @@
+Execution example::
+
+  table_create Tags TABLE_PAT_KEY ShortText
+  # [
+  #   [
+  #     -22, 
+  #     1337566253.89858, 
+  #     0.000355720520019531, 
+  #     "[object][register] already used name was assigned: <Tags>", 
+  #     [
+  #       [
+  #         "grn_obj_register", 
+  #         "db.c", 
+  #         11388
+  #       ]
+  #     ]
+  #   ], 
+  #   false
+  # ]
+  column_create Tags category COLUMN_SCALAR ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  table_create Memos TABLE_HASH_KEY ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create Memos tag COLUMN_SCALAR Tags
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  load --table Memos
+  [
+  {"_key": "Groonga is fast!", "tag": "Groonga"},
+  {"_key": "Mroonga is fast!", "tag": "Mroonga"},
+  {"_key": "Groonga sticker!", "tag": "Groonga"},
+  {"_key": "Rroonga is fast!", "tag": "Rroonga"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 4]
+  load --table Tags
+  [
+  {"_key": "Groonga", "category": "C/C++"},
+  {"_key": "Mroonga", "category": "C/C++"},
+  {"_key": "Rroonga", "category": "Ruby"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  select Memos \
+    --drilldown[label1].table label2 \
+    --drilldown[label1].keys category \
+    --drilldown[label1].output_columns _key,_nsubrecs \
+    --drilldown[label2].keys tag \
+    --drilldown[label2].output_columns _key,_nsubrecs,category
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         4
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "tag", 
+  #           "Tags"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "Groonga is fast!", 
+  #         "groonga"
+  #       ], 
+  #       [
+  #         2, 
+  #         "Mroonga is fast!", 
+  #         "mroonga"
+  #       ], 
+  #       [
+  #         3, 
+  #         "Groonga sticker!", 
+  #         "groonga"
+  #       ], 
+  #       [
+  #         4, 
+  #         "Rroonga is fast!", 
+  #         "rroonga"
+  #       ]
+  #     ], 
+  #     {
+  #       "label1": [
+  #         [
+  #           2
+  #         ], 
+  #         [
+  #           [
+  #             "_key", 
+  #             "ShortText"
+  #           ], 
+  #           [
+  #             "_nsubrecs", 
+  #             "Int32"
+  #           ]
+  #         ], 
+  #         [
+  #           "C/C++", 
+  #           2
+  #         ], 
+  #         [
+  #           "Ruby", 
+  #           1
+  #         ]
+  #       ], 
+  #       "label2": [
+  #         [
+  #           3
+  #         ], 
+  #         [
+  #           [
+  #             "_key", 
+  #             "ShortText"
+  #           ], 
+  #           [
+  #             "_nsubrecs", 
+  #             "Int32"
+  #           ], 
+  #           [
+  #             "category", 
+  #             "ShortText"
+  #           ]
+  #         ], 
+  #         [
+  #           "groonga", 
+  #           2, 
+  #           "C/C++"
+  #         ], 
+  #         [
+  #           "mroonga", 
+  #           1, 
+  #           "C/C++"
+  #         ], 
+  #         [
+  #           "rroonga", 
+  #           1, 
+  #           "Ruby"
+  #         ]
+  #       ]
+  #     }
+  #   ]
+  # ]
