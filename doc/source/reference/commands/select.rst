@@ -2425,8 +2425,6 @@ Output format is different a bit. It's also needed more description.
 
 .. versionadded:: 4.0.8
 
-Either :ref:`select-drilldowns-label-keys` or :ref:`select-drilldowns-label-table` is required for each ``${LABLE}``.
-
 :ref:`select-drilldown` can specify multiple keys for multiple
 drilldowns. But it can't specify multiple keys for one drilldown.
 
@@ -2460,21 +2458,16 @@ tag``. You should use ``_key`` for the case. It's the same rule in
 .. _select-drilldowns-label-table:
 
 ``drilldowns[${LABEL}].table``
-"""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""
 
 .. versionadded:: 6.0.2
 
-Either :ref:`select-drilldowns-label-keys` or :ref:`select-drilldowns-label-table` is required for each ``${LABLE}``.
-
 Specifies ``${LABLE}`` of other ``drilldown``, ``drilldowns`` or ``slices``.
 
-This paramter drilldowns a result of other ``drilldown``, ``drilldowns`` or ``slices``, 
-which means this paramter enables nested aggregate calculations and groups in drilldown.
+The result of the specified ``${LABLE}`` is drilldowned,
+which means that this paramter enables nested aggregate calculations and groups in drilldown.
 
-It is able to execute multiple drilldowns by ``${LABLE}`` with specifying multiple keys in :ref:`_select-drilldowns-label-keys`. 
-However, in that way, each of drilldowns had been independent and not to be able to construct nested drilldown.
-
-Here is an example to execute nested drilldown by category and then by tag.
+Here is an example to execute nested drilldown by tag and then by category.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldowns_label_table.log
@@ -2485,27 +2478,31 @@ Here is an example to execute nested drilldown by category and then by tag.
 .. load --table Memos
 .. [
 .. {"_key": "Groonga is fast!", "tag": "Groonga"},
-.. {"_key": "Mroonga is fast!", "tag": "Mroonga"},
 .. {"_key": "Groonga sticker!", "tag": "Groonga"},
+.. {"_key": "Mroonga sticker!", "tag": "Mroonga"},
 .. {"_key": "Rroonga is fast!", "tag": "Rroonga"}
 .. ]
 .. load --table Tags
 .. [
 .. {"_key": "Groonga", "category": "C/C++"},
 .. {"_key": "Mroonga", "category": "C/C++"},
+.. {"_key": "PGroonga", "category": "C/C++"},
 .. {"_key": "Rroonga", "category": "Ruby"}
 .. ]
 .. select Memos \
-..   --drilldown[label1].table label2 \
-..   --drilldown[label1].keys category \
-..   --drilldown[label1].output_columns _key,_nsubrecs \
-..   --drilldown[label2].keys tag \
-..   --drilldown[label2].output_columns _key,_nsubrecs,category
+..   --drilldowns[label_tag].keys tag \
+..   --drilldowns[label_tag].output_columns _key \
+..   --drilldowns[label_category].table label_tag \
+..   --drilldowns[label_category].keys category \
+..   --drilldowns[label_category].output_columns _key,_nsubrecs
 
-In this example, the schema contains the table named as ``Memo`` which has the column named as ``tag`` and the table named as ``Tags`` which has the columns named as ``category``.
+In this example, the schema contains the table named as ``Memo`` which has the column named as ``tag`` 
+and the table named as ``Tags`` which has the columns named as ``category``.
 
-``label1`` is drilldowned by ``category``, thus, the result of drilldowned by ``label1`` contains two records of ``C/C++`` and one record of ``Ruby``.
-And then, after drilldowning by ``label2``, it reveals that the drilldowned result by ``category`` of ``C/C++`` contains two records of ``Groonga``.
+``label_tag`` is drilldowned by ``tag``, thus, the drilldowned result by ``label_tag`` contains one record 
+each for ``Groonga``, ``Mroonga`` and ``rroonga``.
+And then, after drilldowning ``label_tag`` by ``label_category``, it reveals that the drilldowned result by ``label_tag`` 
+contains two records whose ``category`` is ``C/C++`` and one record whose ``category`` is ``Ruby``.
 
 .. _select-drilldowns-label-output-columns:
 

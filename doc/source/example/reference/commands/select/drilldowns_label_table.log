@@ -26,8 +26,8 @@ Execution example::
   load --table Memos
   [
   {"_key": "Groonga is fast!", "tag": "Groonga"},
-  {"_key": "Mroonga is fast!", "tag": "Mroonga"},
   {"_key": "Groonga sticker!", "tag": "Groonga"},
+  {"_key": "Mroonga sticker!", "tag": "Mroonga"},
   {"_key": "Rroonga is fast!", "tag": "Rroonga"}
   ]
   # [[0, 1337566253.89858, 0.000355720520019531], 4]
@@ -35,15 +35,16 @@ Execution example::
   [
   {"_key": "Groonga", "category": "C/C++"},
   {"_key": "Mroonga", "category": "C/C++"},
+  {"_key": "PGroonga", "category": "C/C++"},
   {"_key": "Rroonga", "category": "Ruby"}
   ]
-  # [[0, 1337566253.89858, 0.000355720520019531], 3]
+  # [[0, 1337566253.89858, 0.000355720520019531], 4]
   select Memos \
-    --drilldown[label1].table label2 \
-    --drilldown[label1].keys category \
-    --drilldown[label1].output_columns _key,_nsubrecs \
-    --drilldown[label2].keys tag \
-    --drilldown[label2].output_columns _key,_nsubrecs,category
+    --drilldowns[label_tag].keys tag \
+    --drilldowns[label_tag].output_columns _key \
+    --drilldowns[label_category].table label_tag \
+    --drilldowns[label_category].keys category \
+    --drilldowns[label_category].output_columns _key,_nsubrecs
   # [
   #   [
   #     0, 
@@ -76,13 +77,13 @@ Execution example::
   #       ], 
   #       [
   #         2, 
-  #         "Mroonga is fast!", 
-  #         "mroonga"
+  #         "Groonga sticker!", 
+  #         "groonga"
   #       ], 
   #       [
   #         3, 
-  #         "Groonga sticker!", 
-  #         "groonga"
+  #         "Mroonga sticker!", 
+  #         "mroonga"
   #       ], 
   #       [
   #         4, 
@@ -91,7 +92,27 @@ Execution example::
   #       ]
   #     ], 
   #     {
-  #       "label1": [
+  #       "label_tag": [
+  #         [
+  #           3
+  #         ], 
+  #         [
+  #           [
+  #             "_key", 
+  #             "ShortText"
+  #           ]
+  #         ], 
+  #         [
+  #           "groonga"
+  #         ], 
+  #         [
+  #           "mroonga"
+  #         ], 
+  #         [
+  #           "rroonga"
+  #         ]
+  #       ], 
+  #       "label_category": [
   #         [
   #           2
   #         ], 
@@ -112,40 +133,6 @@ Execution example::
   #         [
   #           "Ruby", 
   #           1
-  #         ]
-  #       ], 
-  #       "label2": [
-  #         [
-  #           3
-  #         ], 
-  #         [
-  #           [
-  #             "_key", 
-  #             "ShortText"
-  #           ], 
-  #           [
-  #             "_nsubrecs", 
-  #             "Int32"
-  #           ], 
-  #           [
-  #             "category", 
-  #             "ShortText"
-  #           ]
-  #         ], 
-  #         [
-  #           "groonga", 
-  #           2, 
-  #           "C/C++"
-  #         ], 
-  #         [
-  #           "mroonga", 
-  #           1, 
-  #           "C/C++"
-  #         ], 
-  #         [
-  #           "rroonga", 
-  #           1, 
-  #           "Ruby"
   #         ]
   #       ]
   #     }
