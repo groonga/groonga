@@ -34,6 +34,10 @@
 # include <lualib.h>
 #endif
 
+#ifdef GRN_WITH_DUCKDB
+# include <duckdb.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -93,6 +97,15 @@ struct _grn_lua_data {
   grn_bool initialized;
 #ifdef GRN_WITH_LUAJIT
   lua_State *state;
+#endif
+};
+
+typedef struct _grn_duckdb_data grn_duckdb_data;
+struct _grn_duckdb_data {
+  bool initialized;
+#ifdef GRN_WITH_DUCKDB
+  duckdb_database *db;
+  duckdb_connection *connection;
 #endif
 };
 
@@ -184,6 +197,7 @@ struct _grn_ctx_impl {
 
   grn_mrb_data mrb;
   grn_lua_data lua;
+  grn_duckdb_data duckdb;
 
   struct {
     grn_obj stack;
