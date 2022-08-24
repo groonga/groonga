@@ -2425,7 +2425,7 @@ Output format is different a bit. It's also needed more description.
 
 .. versionadded:: 4.0.8
 
-Either :ref:`_select-drilldowns-label-keys` or :ref:`_select-drilldowns-label-table` is required for each ``${LABLE}``.
+Either :ref:`select-drilldowns-label-keys` or :ref:`select-drilldowns-label-table` is required for each ``${LABLE}``.
 
 :ref:`select-drilldown` can specify multiple keys for multiple
 drilldowns. But it can't specify multiple keys for one drilldown.
@@ -2464,7 +2464,7 @@ tag``. You should use ``_key`` for the case. It's the same rule in
 
 .. versionadded:: 6.0.2
 
-Either :ref:`_select-drilldowns-label-keys` or :ref:`_select-drilldowns-label-table` is required for each ``${LABLE}``.
+Either :ref:`select-drilldowns-label-keys` or :ref:`select-drilldowns-label-table` is required for each ``${LABLE}``.
 
 Specifies ``${LABLE}`` of other ``drilldown``, ``drilldowns`` or ``slices``.
 
