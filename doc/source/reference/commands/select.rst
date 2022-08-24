@@ -1106,7 +1106,7 @@ is equal to or more than ``10`` from ``Entries`` table.
 
    It depends on package provider whether Apache Arrow is enabled or not.
 
-   To check whether Apache Arrow is enabled, you can use :doc:`/reference/commands/status` command that show the result of  ``apache_arrow`` is ``true`` or not.
+   To check whether Apache Arrow is enabled, you can use doc:`/reference/commands/status` command that show the result of  ``apache_arrow`` is ``true`` or not.
 
    If Apache Arrow is disabled, you should build Groonga from the source code with enabling Apache Arrow following the steps in :doc:`/install` or
    request to enable Apache Arrow to the package provider.
@@ -2328,6 +2328,7 @@ You can use a configuration for each drilldown by the following
 parameters:
 
   * ``drilldowns[${LABEL}].keys``
+  * ``drilldowns[${LABEL}].table``
   * ``drilldowns[${LABEL}].sort_keys``
   * ``drilldowns[${LABEL}].output_columns``
   * ``drilldowns[${LABEL}].offset``
@@ -2411,6 +2412,7 @@ know how to use it for the following parameters:
 The following parameters are needed more description:
 
   * ``drilldowns[${LABEL}].keys``
+  * ``drilldowns[${LABEL}].table``
   * ``drilldowns[${LABEL}].output_columns``
   * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
 
@@ -2422,6 +2424,8 @@ Output format is different a bit. It's also needed more description.
 """""""""""""""""""""""""""""
 
 .. versionadded:: 4.0.8
+
+Either :ref:`_select-drilldowns-label-keys` or :ref:`_select-drilldowns-label-table` is required for each ``${LABLE}``.
 
 :ref:`select-drilldown` can specify multiple keys for multiple
 drilldowns. But it can't specify multiple keys for one drilldown.
@@ -2452,6 +2456,56 @@ Note that you can't use ``_value.${KEY_NAME}`` syntax when you just
 specify one key as ``drilldowns[${LABEL}].keys`` like ``--drilldowns[tag].keys
 tag``. You should use ``_key`` for the case. It's the same rule in
 :ref:`select-drilldown-output-columns`.
+
+.. _select-drilldowns-label-table:
+
+``drilldowns[${LABEL}].table``
+"""""""""""""""""""""""""""""
+
+.. versionadded:: 6.0.2
+
+Either :ref:`_select-drilldowns-label-keys` or :ref:`_select-drilldowns-label-table` is required for each ``${LABLE}``.
+
+Specifies ``${LABLE}`` of other ``drilldown``, ``drilldowns`` or ``slices``.
+
+This paramter drilldowns a result of other ``drilldown``, ``drilldowns`` or ``slices``, 
+which means this paramter enables nested aggregate calculations and groups in drilldown.
+
+It is able to execute multiple drilldowns by ``${LABLE}`` with specifying multiple keys in :ref:`_select-drilldowns-label-keys`. 
+However, in that way, each of drilldowns had been independent and not to be able to construct nested drilldown.
+
+Here is an example to execute nested drilldown by category and then by tag.
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldowns_label_keys_multiple.log
+.. table_create Tags TABLE_PAT_KEY ShortText
+.. column_create Tags category COLUMN_SCALAR ShortText
+.. table_create Memos TABLE_HASH_KEY ShortText
+.. column_create Memos tag COLUMN_SCALAR Tags
+.. load --table Memos
+.. [
+.. {"_key": "Groonga is fast!", "tag": "Groonga"},
+.. {"_key": "Mroonga is fast!", "tag": "Mroonga"},
+.. {"_key": "Groonga sticker!", "tag": "Groonga"},
+.. {"_key": "Rroonga is fast!", "tag": "Rroonga"}
+.. ]
+.. load --table Tags
+.. [
+.. {"_key": "Groonga", "category": "C/C++"},
+.. {"_key": "Mroonga", "category": "C/C++"},
+.. {"_key": "Rroonga", "category": "Ruby"}
+.. ]
+.. select Memos \
+..   --drilldown[label1].table label2 \
+..   --drilldown[label1].keys category \
+..   --drilldown[label1].output_columns _key,_nsubrecs \
+..   --drilldown[label2].keys tag \
+..   --drilldown[label2].output_columns _key,_nsubrecs,category
+
+In this example, the schema contains the table named as ``Memo`` which has the column named as ``tag`` and the table named as ``Tags`` which has the columns named as ``category``.
+
+``label1`` is drilldowned by ``category``, thus, the result of drilldowned by ``label1`` contains two records of ``C/C++`` and one record of ``Ruby``.
+And then, after drilldowning by ``label2``, it reveals that the drilldowned result by ``category`` of ``C/C++`` contains two records of ``Groonga``.
 
 .. _select-drilldowns-label-output-columns:
 
