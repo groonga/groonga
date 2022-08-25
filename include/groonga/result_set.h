@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -56,6 +56,11 @@ grn_result_set_add_ii_cursor(grn_ctx *ctx,
                              double additional_score,
                              double weight,
                              grn_operator op);
+
+GRN_API grn_rc
+grn_result_set_copy(grn_ctx *ctx,
+                    grn_hash *result_set,
+                    grn_hash *output_result_set);
 
 #ifdef __cplusplus
 }

@@ -10484,6 +10484,41 @@ grn_result_set_add_ii_select_cursor(grn_ctx *ctx,
   GRN_API_RETURN(rc);
 }
 
+grn_rc
+grn_result_set_copy(grn_ctx *ctx,
+                    grn_hash *result_set,
+                    grn_hash *output_result_set)
+{
+  GRN_API_ENTER;
+
+  GRN_HASH_EACH_BEGIN(ctx, result_set, cursor, id) {
+    void *key = NULL;
+    uint32_t key_size = 0;
+    void *value = NULL;
+    grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, &value);
+    void *output_value = NULL;
+    grn_id id = grn_hash_add(ctx,
+                             output_result_set,
+                             key,
+                             (int)key_size,
+                             &output_value,
+                             NULL);
+    if (id == GRN_ID_NIL) {
+      if (ctx->rc == GRN_SUCCESS) {
+        continue;
+      } else {
+        break;
+      }
+    }
+    grn_rset_recinfo *ri = value;
+    grn_rset_recinfo *output_ri = output_value;
+    grn_memcpy(output_ri, ri, (output_result_set)->value_size);
+    output_ri->score = 0;
+  } GRN_HASH_EACH_END(ctx, cursor);
+
+  GRN_API_RETURN(ctx->rc);
+}
+
 grn_inline static void
 res_add(grn_ctx *ctx,
         grn_hash *s,

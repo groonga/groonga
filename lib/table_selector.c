@@ -2016,24 +2016,9 @@ grn_table_selector_select(grn_ctx *ctx,
     if (have_push) {
       base_result_set = selector_create_result_set(ctx, table_selector);
       if (base_result_set) {
-        GRN_HASH_EACH_BEGIN(ctx, (grn_hash *)result_set, cursor, id) {
-          void *key = NULL;
-          uint32_t key_size = 0;
-          void *value = NULL;
-          grn_hash_cursor_get_key_value(ctx, cursor, &key, &key_size, &value);
-          void *base_value = NULL;
-          if (grn_table_add_v(ctx,
-                              base_result_set,
-                              key,
-                              (int)key_size,
-                              &base_value,
-                              NULL)) {
-            grn_rset_recinfo *ri = value;
-            grn_rset_recinfo *base_ri = base_value;
-            grn_memcpy(base_ri, ri, ((grn_hash *)base_result_set)->value_size);
-            base_ri->score = 0;
-          }
-        } GRN_HASH_EACH_END(ctx, cursor);
+        grn_result_set_copy(ctx,
+                            (grn_hash *)result_set,
+                            (grn_hash *)base_result_set);
       }
     }
   }
