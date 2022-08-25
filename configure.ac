@@ -950,7 +950,7 @@ fi
 # Apache Arrow
 AC_ARG_ENABLE(apache-arrow,
   [AS_HELP_STRING([--disable-apache-arrow],
-    [enable Apache Arrow support. [default=auto-detect]])],
+    [disable Apache Arrow support. [default=auto-detect]])],
   [enable_apache_arrow="$enableval"],
   [enable_apache_arrow="auto"])
 if test "x$enable_apache_arrow" != "xno"; then
