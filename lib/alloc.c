@@ -773,13 +773,13 @@ grn_free_default(grn_ctx *ctx, void *ptr,
   if (!ctx) { return; }
   grn_alloc_info_check(ctx, ptr);
   {
-    free(ptr);
     if (ptr) {
       GRN_ADD_ALLOC_COUNT(-1);
     } else {
       GRN_LOG(ctx, GRN_LOG_ALERT, "free fail (%p) (%s:%d) <%d>",
               ptr, file, line, alloc_count);
     }
+    free(ptr);
   }
 }
 
