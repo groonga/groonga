@@ -3,6 +3,7 @@ libgrnproc_c_sources =				\
 	proc_column.c				\
 	proc_config.c				\
 	proc_dump.c				\
+	proc_escalate.c				\
 	proc_fuzzy_search.c			\
 	proc_highlight.c			\
 	proc_in_records.c			\

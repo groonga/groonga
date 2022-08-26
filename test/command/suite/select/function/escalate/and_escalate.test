@@ -1,0 +1,25 @@
+table_create Numbers TABLE_NO_KEY
+column_create Numbers data1 COLUMN_SCALAR Int32
+column_create Numbers data2 COLUMN_SCALAR Int32
+column_create Numbers data3 COLUMN_SCALAR Int32
+
+load --table Numbers
+[
+["data1", "data2", "data3"],
+[1, 10, 100],
+[2, 20, 200],
+[3, 30, 300],
+[4, 40, 400],
+[5, 50, 500],
+[6, 60, 600],
+[7, 70, 700],
+[8, 80, 800],
+[9, 90, 900],
+[10, 100, 1000]
+]
+
+select Numbers \
+  --filter "data1 <= 9 && \
+            escalate(9, 'data1 <= 1', \
+                     2, 'data2 > 50', \
+                     4, 'NOT USED')"

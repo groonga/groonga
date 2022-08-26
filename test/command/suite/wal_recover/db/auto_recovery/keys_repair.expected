@@ -250,15 +250,15 @@ schema
     },
     "token_filters": {
       "TokenFilterNFKC100": {
-        "id": 224,
+        "id": 225,
         "name": "TokenFilterNFKC100"
       },
       "TokenFilterNFKC121": {
-        "id": 225,
+        "id": 226,
         "name": "TokenFilterNFKC121"
       },
       "TokenFilterNFKC130": {
-        "id": 226,
+        "id": 227,
         "name": "TokenFilterNFKC130"
       }
     },
@@ -585,15 +585,15 @@ schema
     },
     "token_filters": {
       "TokenFilterNFKC100": {
-        "id": 224,
+        "id": 225,
         "name": "TokenFilterNFKC100"
       },
       "TokenFilterNFKC121": {
-        "id": 225,
+        "id": 226,
         "name": "TokenFilterNFKC121"
       },
       "TokenFilterNFKC130": {
-        "id": 226,
+        "id": 227,
         "name": "TokenFilterNFKC130"
       }
     },

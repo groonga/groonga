@@ -49,6 +49,7 @@ void grn_proc_init_config_delete(grn_ctx *ctx);
 void grn_proc_init_define_selector(grn_ctx *ctx);
 void grn_proc_init_dump(grn_ctx *ctx);
 void grn_proc_init_edit_distance(grn_ctx *ctx);
+void grn_proc_init_escalate(grn_ctx *ctx);
 void grn_proc_init_fuzzy_search(grn_ctx *ctx);
 void grn_proc_init_highlight(grn_ctx *ctx);
 void grn_proc_init_highlight_full(grn_ctx *ctx);
