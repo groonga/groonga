@@ -2496,7 +2496,9 @@ Here is an example to execute nested drilldown by tag and then by category.
 ..   --drilldowns[label_category].keys category \
 ..   --drilldowns[label_category].output_columns _key,_nsubrecs
 
-In this example, the schema contains the table named as ``Memo`` which has the column named as ``tag`` 
+In this example; 
+The schema contains the table named as ``Memo`` which has the column named as ``tag``.
+the table named as ``Tags`` which has the columns named as ``category``.
 and the table named as ``Tags`` which has the columns named as ``category``.
 
 ``label_tag`` is drilldowned by ``tag``, thus, the drilldowned result by ``label_tag`` contains one record 
