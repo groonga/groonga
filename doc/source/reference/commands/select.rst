@@ -2462,7 +2462,7 @@ tag``. You should use ``_key`` for the case. It's the same rule in
 
 .. versionadded:: 6.0.2
 
-Specifies ``${LABLE}`` of other ``drilldown``, ``drilldowns`` or ``slices``.
+Specify ``${LABLE}`` of other ``drilldown``, ``drilldowns`` or ``slices``.
 
 You can drilldown the result specified ``${LABLE}``. It means that this paramter enables nested drilldown in aggregate calculations and groups.
 which means that this paramter enables nested aggregate calculations and groups in drilldown.
@@ -2496,10 +2496,11 @@ Here is an example to execute nested drilldown by tag and then by category.
 ..   --drilldowns[label_category].keys category \
 ..   --drilldowns[label_category].output_columns _key,_nsubrecs
 
-In this example; 
+In this example;
+
 The schema contains the table named as ``Memo`` which has the column named as ``tag``.
-the table named as ``Tags`` which has the columns named as ``category``.
-and the table named as ``Tags`` which has the columns named as ``category``.
+
+The table named as ``Tags`` which has the columns named as ``category``.
 
 ``label_tag`` is drilldowned by ``tag``, thus, the drilldowned result by ``label_tag`` contains one record 
 each for ``Groonga``, ``Mroonga`` and ``Rroonga``.
