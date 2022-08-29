@@ -5,6 +5,63 @@
 News
 ====
 
+.. _release-12-0-7:
+
+Release 12.0.7 - 2022-08-29
+---------------------------
+
+Improvements
+------------
+
+* Added a new function ``escalate()``. (experimental)
+
+  The ``escalate()`` function is similar to the existing match escalation ( :doc:`spec/search` ).
+  We can use this function for any conditions. (The existing match escalation is just for one full text search by invert index.)
+
+  The ``escalate()`` function is useful when we want to limit the number of results of a search.
+  Even if we use ``--limit``, we can limit the number of results of a search. However, ``--limit`` is evaluated after evaluating all conditions in our query.
+  The ``escalate()`` function finish the evaluation of conditions at that point when the result set has greater than ``THRESHOLD`` records. In other words, The ``escalate()`` function may reduce the number of evaluating conditions.
+
+  The syntax of the ``escalate()`` function as below::
+
+    escalate(THRESHOLD_1, CONDITION_1,
+             THRESHOLD_2, CONDITION_2,
+             ...,
+             THRESHOLD_N, CONDITION_N)
+
+  ``THRESHOLD_N`` is a positive number such as 0 and 29.
+  ``CONDITION_N`` is a string that uses :doc:`reference/grn_expr/script_syntax` such as ``number_column > 29``.
+
+  If the current result set has less than or equal to ``THRESHOLD_1`` records, the corresponding ``CONDITION_1`` is executed.
+  Similarly, if the next result set has less than or equal to ``THRESHOLD_2`` records, the corresponding ``CONDITION_2`` is executed.
+  If the next result set has greater than ``THRESHOLD_3`` records, the ``escalate()`` function is finished.
+
+  If all ``CONDITION`` s are executed, ``escalate(THRESHOLD_1, CONDITION_1, ..., THRESHOLD_N, CONDITION_N)`` is same as ``CONDITION_1 || ... || CONDITION_N``.
+
+  The ``escalate()`` function can be worked with logical operators such as ``&&`` and ``&!`` ::
+
+    number_column > 10 && escalate(THRESHOLD_1, CONDITION_1,
+                                   ...,
+                                   THRESHOLD_N, CONDITION_N)
+    number_column > 10 &! escalate(THRESHOLD_1, CONDITION_1,
+                                   ...,
+                                   THRESHOLD_N, CONDITION_N)
+
+  They are same as ``number_column > 10 && (CONDITION_1 || ... || CONDITION_N)`` and ``number_column > 10 &! (CONDITION_1 || ... || CONDITION_N)`` .
+
+  However, these behaviors may be changed because they may not be useful.
+
+* [httpd] Updated bundled nginx to 1.23.1.
+
+* [:doc:`reference/commands/select`] Add a document for the ``--n_workers`` option.
+
+Fixes
+-----
+
+* Fixed a bug Groonga's response may be slow when we execute the ``request_cancel`` while executing a OR search.
+
+  When the number of results of the OR search is many and a query has many OR conditions, Groonga may response slow with the "request_cancel" command.
+
 .. _release-12-0-6:
 
 Release 12.0.6 - 2022-08-04
