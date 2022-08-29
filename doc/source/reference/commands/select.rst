@@ -2465,9 +2465,9 @@ tag``. You should use ``_key`` for the case. It's the same rule in
 Specify ``${LABLE}`` of other ``drilldown``, ``drilldowns`` or ``slices``.
 
 You can drilldown the result specified ``${LABLE}``.
-It means that this paramter enables nested drilldown in aggregate calculations and groups.
+It means that you can execute a nested drilldown in aggregate calculations and groups by using this parameter.
 
-Here is an example to execute nested drilldown by tag and then by category.
+Here is an example to execute the nested drilldown by tag and then by category.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldowns_label_table.log
@@ -2502,9 +2502,9 @@ The schema contains the table named as ``Memo`` which has the column named as ``
 
 The table named as ``Tags`` which has the columns named as ``category``.
 
-``Tag`` is drilldowned by ``tag``, thus, the drilldowned result by ``Tag`` contains one record 
-each for ``Groonga``, ``Mroonga`` and ``Rroonga``.
-And then, after drilldowning ``Tag`` by ``Category``, it reveals that the drilldowned result by ``Tag`` 
+``Tag`` drilldowns ``Memos`` by ``tag``, thus, the drilldowned result of ``Tag`` contains one record each for 
+``Groonga``, ``Mroonga`` and ``Rroonga``.
+``Category`` drilldowns ``Tag`` by ``category``, and it reveals that the drilldowned result of ``Tag`` 
 contains two records whose ``category`` is ``C/C++`` and one record whose ``category`` is ``Ruby``.
 
 .. _select-drilldowns-label-output-columns:
