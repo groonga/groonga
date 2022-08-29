@@ -2464,7 +2464,7 @@ tag``. You should use ``_key`` for the case. It's the same rule in
 
 Specifies ``${LABLE}`` of other ``drilldown``, ``drilldowns`` or ``slices``.
 
-The result of the specified ``${LABLE}`` is drilldowned,
+You can drilldown the result specified ``${LABLE}``. It means that this paramter enables nested drilldown in aggregate calculations and groups.
 which means that this paramter enables nested aggregate calculations and groups in drilldown.
 
 Here is an example to execute nested drilldown by tag and then by category.
