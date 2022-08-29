@@ -2500,10 +2500,10 @@ In this example;
 The schema contains the table named as ``Memo`` which has the column named as ``tag``,
 the table named as ``Tags`` which has the columns named as ``category``.
 
-``Tag`` drilldowns ``Memos`` by ``tag``, thus, the drilldowned result of ``Tag`` contains one record each for 
-``Groonga``, ``Mroonga`` and ``Rroonga``.
-``Category`` drilldowns ``Tag`` by ``category``, and it reveals that the drilldowned result of ``Tag`` 
-contains two records whose ``category`` is ``C/C++`` and one record whose ``category`` is ``Ruby``.
+``Tag`` drilldowns ``Memos`` by ``tag``.
+Thus, the result of ``Tag`` contains one row each for ``Groonga``, ``Mroonga`` and ``Rroonga``.
+And then, ``Category`` drilldowns ``Tag`` by ``category``. 
+Thus the result of ``Category`` contains two records has ``C/C++`` and one records has ``Ruby``.
 
 .. _select-drilldowns-label-output-columns:
 
