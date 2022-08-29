@@ -2500,7 +2500,7 @@ In this example, the schema contains the table named as ``Memo`` which has the c
 and the table named as ``Tags`` which has the columns named as ``category``.
 
 ``label_tag`` is drilldowned by ``tag``, thus, the drilldowned result by ``label_tag`` contains one record 
-each for ``Groonga``, ``Mroonga`` and ``rroonga``.
+each for ``Groonga``, ``Mroonga`` and ``Rroonga``.
 And then, after drilldowning ``label_tag`` by ``label_category``, it reveals that the drilldowned result by ``label_tag`` 
 contains two records whose ``category`` is ``C/C++`` and one record whose ``category`` is ``Ruby``.
 
