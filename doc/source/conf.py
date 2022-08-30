@@ -145,6 +145,7 @@ html_theme_options = {
   "navbar_center": [
   ],
   "navbar_end": [
+    "theme-switcher.html",
     "navbar-icon-links.html",
     "version-switcher.html",
   ],
