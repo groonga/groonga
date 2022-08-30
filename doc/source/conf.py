@@ -125,7 +125,9 @@ else:
   use_edit_page_button = False
 
 html_theme_options = {
-  "logo_link": f"https://groonga.org{language_prefix}",
+  "logo": {
+    "link": f"https://groonga.org{language_prefix}",
+  },
   "github_url": "https://github.com/groonga/groonga",
   "twitter_url": "https://twitter.com/groonga",
   "icon_links": [
