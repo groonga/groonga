@@ -84,6 +84,7 @@ jobs:
           - Amazon Linux 2 x86_64
           - AlmaLinux 8 x86_64
           - AlmaLinux 8 aarch64
+          - Oracle Linux 8 x86_64
         include:
           - label: Debian GNU/Linux bullseye amd64
             id: debian-bullseye-amd64
@@ -115,6 +116,11 @@ jobs:
             task-namespace: yum
             target: almalinux-8-aarch64
             test-docker-image: arm64v8/almalinux:8
+          - label: Oracle Linux 8 x86_64
+            id: oracle-linux-8-x86_64
+            task-namespace: yum
+            target: oracle-linux-8
+            test-docker-image: oraclelinux:8
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
