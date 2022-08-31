@@ -2467,7 +2467,7 @@ Specify ``${LABLE}`` of other ``drilldowns`` or ``slices``.
 You can drilldown the result of specified ``${LABLE}``.
 It means that this parameter enables a nested drilldown.
 
-Here is an example to execute the nested drilldown. The final result takes first drilldown by ``tag`` and then 2nd drilldown by ``category`` against first result.a
+Here is an example to execute the nested drilldown. The final result takes first drilldown by ``tag`` and then 2nd drilldown by ``category`` against first result.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldowns_label_table.log
@@ -2498,12 +2498,12 @@ Here is an example to execute the nested drilldown. The final result takes first
 
 In this example;
 The schema contains the table named as ``NestedDrilldownMemo`` which has the column named as ``tag``,
-the table named as ``NestedDrilldownTags`` which has the columns named as ``category``.a
+the table named as ``NestedDrilldownTags`` which has the columns named as ``category``.
 
 ``Tag`` drilldowns ``NestedDrilldownMemos`` by ``tag``.
 Thus, the result of ``Tag`` contains one row each for ``Groonga``, ``Mroonga`` and ``Rroonga``.
 And then, ``Category`` drilldowns ``Tag`` by ``category``. 
-Thus the result of ``Category`` contains two records has ``C/C++`` and one records has ``Ruby``.a
+Thus the result of ``Category`` contains two records has ``C/C++`` and one records has ``Ruby``.
 
 .. _select-drilldowns-label-output-columns:
 
