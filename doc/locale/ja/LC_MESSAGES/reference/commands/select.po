@@ -3222,7 +3222,7 @@ msgid ""
 msgstr ""
 "``Tag`` は ``NestedDrilldownMemos`` を ``tag`` でドリルダウンしています。した"
 "がって、 ``Tag`` の結果には ``Groonga`` 、 ``Mroonga`` および ``Rroonga`` が1"
-"件ずつ含まれています。そして``Category`` は ``Tag`` を ``category`` でドリル"
+"件ずつ含まれています。そして ``Category`` は ``Tag`` を ``category`` でドリル"
 "ダウンしています。したがって、 ``Category`` の結果には ``C/C++`` が2件、 "
 "``Ruby`` が1件含まれています。"
 
