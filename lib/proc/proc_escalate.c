@@ -32,40 +32,33 @@ selector_escalate(grn_ctx *ctx,
 {
   const char *tag = "[escalate]";
 
-  if (((n_args - 1) % 2) != 0) {
+  if (n_args < 2) {
     ERR(GRN_INVALID_ARGUMENT,
-        "%s wrong number of arguments (%d for 0, 2, 4, 6, ...)",
+        "%s wrong number of arguments (%d for 1..)",
         tag,
         n_args - 1);
     return ctx->rc;
   }
 
-  if (n_args == 1) {
+  if (((n_args - 1) % 2) != 1) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s wrong number of arguments (%d for 1, 3, 5, ...)",
+        tag,
+        n_args - 1);
     return ctx->rc;
   }
 
-  grn_obj *current_result_set = result_set;
-  grn_obj *aggregated_result_set = NULL;
+  grn_obj *sub_result_set =
+    grn_table_create(ctx,
+                     NULL, 0,
+                     NULL,
+                     GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
+                     table,
+                     NULL);
 
   int i;
   for (i = 1; i < n_args; i += 2) {
-    grn_obj *threashold = args[i];
-    grn_obj *condition_text = args[i + 1];
-
-    if (!grn_obj_is_number_family_bulk(ctx, threashold)) {
-      grn_obj inspected;
-      GRN_TEXT_INIT(&inspected, 0);
-      grn_inspect(ctx, &inspected, threashold);
-      ERR(GRN_INVALID_ARGUMENT,
-          "%s the %dth argument must be threshold as number: %.*s",
-          tag,
-          i - 1,
-          (int)GRN_TEXT_LEN(&inspected),
-          GRN_TEXT_VALUE(&inspected));
-      GRN_OBJ_FIN(ctx, &inspected);
-      goto exit;
-    }
-
+    grn_obj *condition_text = args[i];
     if (!grn_obj_is_text_family_bulk(ctx, condition_text)) {
       grn_obj inspected;
       GRN_TEXT_INIT(&inspected, 0);
@@ -73,23 +66,11 @@ selector_escalate(grn_ctx *ctx,
       ERR(GRN_INVALID_ARGUMENT,
           "%s the %dth argument must be condition as string: %.*s",
           tag,
-          (i - 1) + 1,
+          (i - 1),
           (int)GRN_TEXT_LEN(&inspected),
           GRN_TEXT_VALUE(&inspected));
       GRN_OBJ_FIN(ctx, &inspected);
       goto exit;
-    }
-
-    grn_obj casted_threshold;
-    GRN_INT64_INIT(&casted_threshold, 0);
-    grn_obj_cast(ctx, threashold, &casted_threshold, false);
-    int64_t raw_threshold = GRN_INT64_VALUE(&casted_threshold);
-    GRN_OBJ_FIN(ctx, &casted_threshold);
-    bool need_to_evaluate_condition =
-      (raw_threshold < 0 ||
-       (int64_t)grn_table_size(ctx, current_result_set) <= raw_threshold);
-    if (!need_to_evaluate_condition) {
-      break;
     }
 
     grn_obj *dummy_variable;
@@ -112,119 +93,53 @@ selector_escalate(grn_ctx *ctx,
       goto exit;
     }
 
-    grn_obj *target_result_set = NULL;
-    if (op == GRN_OP_OR) {
-      target_result_set = result_set;
-    } else {
-      /* We use a copy of the original result set as the base result set
-       * to reduce result set size as much as possible. It's for
-       * performance. */
-      target_result_set =
-        grn_table_create(ctx,
-                         NULL, 0,
-                         NULL,
-                         GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                         table,
-                         NULL);
-      if (!target_result_set) {
-        grn_obj_close(ctx, condition);
-        goto exit;
-      }
-      grn_rc rc = grn_result_set_copy(ctx,
-                                      (grn_hash *)result_set,
-                                      (grn_hash *)target_result_set);
-      if (rc != GRN_SUCCESS) {
-        grn_obj_close(ctx, target_result_set);
-        grn_obj_close(ctx, condition);
-        goto exit;
-      }
-    }
-    grn_operator select_op = op;
-    if (op == GRN_OP_AND_NOT) {
-      /* We need to use AND for AND_NOT because
-       *
-       *   (BASE &! (((BASE &! A) || (BASE &! B))))
-       *
-       * doesn't equal to
-       *
-       *   (BASE &! (A || B))
-       *
-       * . If we use AND here, the expression is the following:
-       *
-       *   (BASE &! ((BASE && A) || (BASE && B)))
-       *
-       * And it equals to
-       *
-       *   (BASE &! (A || B))
-       *
-       * . */
-      select_op = GRN_OP_AND;
-    }
-    grn_table_select(ctx, table, condition, target_result_set, select_op);
+    grn_table_select(ctx, table, condition, sub_result_set, GRN_OP_OR);
     grn_obj_close(ctx, condition);
     if (ctx->rc != GRN_SUCCESS) {
-      grn_obj_close(ctx, target_result_set);
       goto exit;
     }
 
-    if (op != GRN_OP_OR) {
-      if (!aggregated_result_set) {
-        aggregated_result_set = target_result_set;
-      } else {
-        grn_table_setoperation(ctx,
-                               aggregated_result_set,
-                               target_result_set,
-                               aggregated_result_set,
-                               GRN_OP_OR);
-        grn_obj_close(ctx, target_result_set);
-        if (ctx->rc != GRN_SUCCESS) {
-          goto exit;
-        }
-      }
-      if (current_result_set != result_set) {
-        grn_obj_close(ctx, current_result_set);
-      }
-      current_result_set =
-        grn_table_create(ctx,
-                         NULL, 0,
-                         NULL,
-                         GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
-                         table,
-                         NULL);
-      grn_rc rc = grn_result_set_copy(ctx,
-                                      (grn_hash *)result_set,
-                                      (grn_hash *)current_result_set);
-      if (rc != GRN_SUCCESS) {
-        goto exit;
-      }
-      grn_table_setoperation(ctx,
-                             current_result_set,
-                             aggregated_result_set,
-                             current_result_set,
-                             op);
-      if (ctx->rc != GRN_SUCCESS) {
-        goto exit;
-      }
+    if ((i + 1) == n_args) {
+      break;
+    }
+
+    grn_obj *threashold = args[i + 1];
+    if (!grn_obj_is_number_family_bulk(ctx, threashold)) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect(ctx, &inspected, threashold);
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s the %dth argument must be threshold as number: %.*s",
+          tag,
+          (i - 1) + 1,
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      goto exit;
+    }
+
+    grn_obj casted_threshold;
+    GRN_INT64_INIT(&casted_threshold, 0);
+    grn_obj_cast(ctx, threashold, &casted_threshold, false);
+    int64_t raw_threshold = GRN_INT64_VALUE(&casted_threshold);
+    GRN_OBJ_FIN(ctx, &casted_threshold);
+    bool need_to_evaluate_condition =
+      (raw_threshold < 0 ||
+       (int64_t)grn_table_size(ctx, sub_result_set) <= raw_threshold);
+    if (!need_to_evaluate_condition) {
+      break;
     }
   }
 
-  if (op != GRN_OP_OR && aggregated_result_set) {
-    grn_table_setoperation(ctx,
-                           result_set,
-                           aggregated_result_set,
-                           result_set,
-                           op);
-    if (ctx->rc != GRN_SUCCESS) {
-      goto exit;
-    }
-  }
+  grn_table_setoperation(ctx,
+                         result_set,
+                         sub_result_set,
+                         result_set,
+                         op);
 
 exit :
-  if (aggregated_result_set) {
-    grn_obj_close(ctx, aggregated_result_set);
-  }
-  if (current_result_set != result_set) {
-    grn_obj_close(ctx, current_result_set);
+  if (sub_result_set) {
+    grn_obj_close(ctx, sub_result_set);
   }
 
   return ctx->rc;

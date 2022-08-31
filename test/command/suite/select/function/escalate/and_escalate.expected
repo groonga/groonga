@@ -21,7 +21,7 @@ load --table Numbers
 [10, 100, 1000]
 ]
 [[0,0.0,0.0],10]
-select Numbers   --filter "data1 <= 9 &&             escalate(9, 'data1 <= 1',                      2, 'data2 > 50',                      4, 'NOT USED')"
+select Numbers   --filter "data1 <= 9 &&             escalate('data1 <= 1',                      2, 'data2 > 50',                      4, 'NOT USED')"
 [
   [
     0,

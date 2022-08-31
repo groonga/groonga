@@ -20,6 +20,6 @@ load --table Numbers
 
 select Numbers \
   --filter "data1 == 2 || \
-            escalate(1, 'data1 <= 1', \
+            escalate('data1 <= 1', \
                      2, 'data2 > 50', \
                      4, 'NOT USED')"
