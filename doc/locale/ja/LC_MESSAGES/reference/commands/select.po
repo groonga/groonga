@@ -3197,7 +3197,7 @@ msgstr ""
 "うと多段ドリルダウンができます。"
 
 msgid ""
-"Here is an example to execute the nested drilldown by tag and then by "
+"Here is an example to execute the nested drilldown. The final result takes first drilldown by tag and then 2nd drilldown by category against first result."
 "category."
 msgstr "以下は、タグ、カテゴリの順で多段ドリルダウンを行う例です。"
 
