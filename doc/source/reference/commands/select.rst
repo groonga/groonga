@@ -2498,7 +2498,7 @@ Here is an example to execute the nested drilldown. The final result takes first
 
 In this example;
 The schema contains the table named as ``NestedDrilldownMemo`` which has the column named as ``tag``,
-the table named as ``NestedDrilldownTags`` which has the columns named as ``category``.
+the table named as ``NestedDrilldownTags`` which has the column named as ``category``.
 
 ``Tag`` drilldowns ``NestedDrilldownMemos`` by ``tag``.
 Thus, the result of ``Tag`` contains one row each for ``Groonga``, ``Mroonga`` and ``Rroonga``.
