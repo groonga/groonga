@@ -1,0 +1,125 @@
+Execution example::
+
+  table_create NestedDrilldownTags TABLE_PAT_KEY ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create NestedDrilldownTags category COLUMN_SCALAR ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  table_create NestedDrilldownMemos TABLE_HASH_KEY ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create NestedDrilldownMemos tag COLUMN_SCALAR NestedDrilldownTags
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  load --table NestedDrilldownMemos
+  [
+  {"_key": "Groonga is fast!", "tag": "Groonga"},
+  {"_key": "Groonga sticker!", "tag": "Groonga"},
+  {"_key": "Mroonga sticker!", "tag": "Mroonga"},
+  {"_key": "Rroonga is fast!", "tag": "Rroonga"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 4]
+  load --table NestedDrilldownTags
+  [
+  {"_key": "Groonga", "category": "C/C++"},
+  {"_key": "Mroonga", "category": "C/C++"},
+  {"_key": "PGroonga", "category": "C/C++"},
+  {"_key": "Rroonga", "category": "Ruby"}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 4]
+  select NestedDrilldownMemos \
+    --drilldowns[Tag].keys tag \
+    --drilldowns[Tag].output_columns _key \
+    --drilldowns[Category].table Tag \
+    --drilldowns[Category].keys category \
+    --drilldowns[Category].output_columns _key,_nsubrecs
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         4
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "tag", 
+  #           "NestedDrilldownTags"
+  #         ]
+  #       ], 
+  #       [
+  #         1, 
+  #         "Groonga is fast!", 
+  #         "Groonga"
+  #       ], 
+  #       [
+  #         2, 
+  #         "Groonga sticker!", 
+  #         "Groonga"
+  #       ], 
+  #       [
+  #         3, 
+  #         "Mroonga sticker!", 
+  #         "Mroonga"
+  #       ], 
+  #       [
+  #         4, 
+  #         "Rroonga is fast!", 
+  #         "Rroonga"
+  #       ]
+  #     ], 
+  #     {
+  #       "Category": [
+  #         [
+  #           2
+  #         ], 
+  #         [
+  #           [
+  #             "_key", 
+  #             "ShortText"
+  #           ], 
+  #           [
+  #             "_nsubrecs", 
+  #             "Int32"
+  #           ]
+  #         ], 
+  #         [
+  #           "C/C++", 
+  #           2
+  #         ], 
+  #         [
+  #           "Ruby", 
+  #           1
+  #         ]
+  #       ], 
+  #       "Tag": [
+  #         [
+  #           3
+  #         ], 
+  #         [
+  #           [
+  #             "_key", 
+  #             "ShortText"
+  #           ]
+  #         ], 
+  #         [
+  #           "Groonga"
+  #         ], 
+  #         [
+  #           "Mroonga"
+  #         ], 
+  #         [
+  #           "Rroonga"
+  #         ]
+  #       ]
+  #     }
+  #   ]
+  # ]
