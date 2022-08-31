@@ -247,9 +247,11 @@ Shows all ``configure`` options.
 
 Enables Apache Arrow features.
 
-The default is ``auto``. The features are enabled if Apache Arrow is installed on the system, otherwise disabled.
+The default is ``auto``. The features are enabled if Apache Arrow 
+is installed on the system, otherwise disabled.
 
-When this parameter is expressly specified, Apache Arrow should be install on the system.
+When you specify this parameter expressly, you should install Apache
+Arrow on the system beforehand.
 
 You can install Apache Arrow according to official installation procedure.
 Groonga requires either ``libarrow-dev`` or ``arrow-devel`` depending on the system.
@@ -260,6 +262,10 @@ Here is an example that enables Apache Arrow features expressly::
 
   % ./configure --enable-apache-arrow
 
+.. note::
+
+   If you install Apache Arrow manually, use the :ref:`install-others-configure-pkg-config-path` option.
+
 ``disable-apache-arrow``
 ++++++++++++++++++++++++
 
@@ -267,11 +273,46 @@ Disables Apache Arrow features.
 
 The default is false.
 
-When this parameter is specified, Groonga does not enable Apache Arrow features even if Apache Arrow is install on the system.
+When this parameter is specified, Groonga does not enable Apache Arrow 
+features even if Apache Arrow is install on the system.
 
 Here is an example that disables Apache Arrow features::
 
   % ./configure --enable-apache-arrow
+
+.. _install-others-configure-pkg-config-path:
+
+``PKG_CONFIG_PATH=PATHS``
++++++++++++++++++++++++++
+
+Adds search paths of ``.pc`` files for ``pkg-config``.
+
+Groonga uses ``pkg-config`` to use external libraries.
+
+``pkg-config`` is a tool that sets flags and paths required for using
+external libraries by simply preparing ``.pc`` files.
+
+When using libraries installed via a package manager, you do not need
+to specify this parameter because ``.pc`` files for the libraries are in
+the default search paths of ``pkg-config``.
+
+When you use manual built libraries, you need to specify ``.pc`` file paths 
+of the libraries for this parameter.
+
+You can use ``PKG_CONFIG_PATH`` as environment variable, but we recommend to
+use it as ``configure`` parameter because of the following reason.
+
+``configure.ac`` generates ``configure``. And when ``make`` detects that
+``configure.ac`` has changed, ``make`` automatically regenerates ``configure``
+and re-executes it.
+If you specify ``PKG_CONFIG_PATH`` as a ``configure`` parameter, it is specified
+automatically when that re-execution of ``configure``. On the other hand, if
+you specify ``PKG_CONFIG_PATH`` as a environment variable, it is not specified
+automatically.
+
+Here is an example that specifies a ``.pc`` file path for ``/tmp/local/lib/hoge/pkgconfig/hoge.pc``.
+
+  % ./configure PKG_CONFIG_PATH=/tmp/local/lib/hoge/pkgconfig/
 
 ``make``
 ^^^^^^^^
