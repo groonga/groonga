@@ -242,8 +242,8 @@ files::
 
 Shows all ``configure`` options.
 
-``enable-apache-arrow``
-+++++++++++++++++++++++
+``--enable-apache-arrow``
++++++++++++++++++++++++++
 
 Enables Apache Arrow features.
 
@@ -266,19 +266,19 @@ Here is an example that enables Apache Arrow features expressly::
 
    If you install Apache Arrow manually, use the :ref:`install-others-configure-pkg-config-path` option.
 
-``disable-apache-arrow``
-++++++++++++++++++++++++
+``--disable-apache-arrow``
+++++++++++++++++++++++++++
 
 Disables Apache Arrow features.
 
-The default is false.
+The default is ``false``.
 
-When this parameter is specified, Groonga does not enable Apache Arrow 
+When this parameter is specified, Groonga disables Apache Arrow 
 features even if Apache Arrow is install on the system.
 
 Here is an example that disables Apache Arrow features::
 
-  % ./configure --enable-apache-arrow
+  % ./configure --disable-apache-arrow
 
 .. _install-others-configure-pkg-config-path:
 
@@ -299,18 +299,18 @@ the default search paths of ``pkg-config``.
 When you use manual built libraries, you need to specify ``.pc`` file paths 
 of the libraries for this parameter.
 
-You can use ``PKG_CONFIG_PATH`` as environment variable, but we recommend to
-use it as ``configure`` parameter because of the following reason.
+You can use ``PKG_CONFIG_PATH`` as an environment variable, but we recommend
+to use it as a ``configure`` parameter because of the following reason.
 
 ``configure.ac`` generates ``configure``. And when ``make`` detects that
 ``configure.ac`` has changed, ``make`` automatically regenerates ``configure``
-and re-executes it.
-If you specify ``PKG_CONFIG_PATH`` as a ``configure`` parameter, it is specified
-automatically when that re-execution of ``configure``. On the other hand, if
-you specify ``PKG_CONFIG_PATH`` as a environment variable, it is not specified
-automatically.
+and re-executes it. If you specify ``PKG_CONFIG_PATH`` as a ``configure`` 
+parameter, ``PKG_CONFIG_PATH`` is specified automatically when ``configure`` 
+is re-executed. On the other hand, if you specify ``PKG_CONFIG_PATH`` as an 
+environment variable, ``PKG_CONFIG_PATH`` is not specified automatically.
 
-Here is an example that specifies a ``.pc`` file path for ``/tmp/local/lib/hoge/pkgconfig/hoge.pc``.
+Here is an example that specifies a ``.pc`` file path for 
+``/tmp/local/lib/hoge/pkgconfig/hoge.pc``.
 
   % ./configure PKG_CONFIG_PATH=/tmp/local/lib/hoge/pkgconfig/
 
