@@ -1,29 +1,14 @@
 Execution example::
 
-  table_create Tags TABLE_PAT_KEY ShortText
-  # [
-  #   [
-  #     -22, 
-  #     1337566253.89858, 
-  #     0.000355720520019531, 
-  #     "[object][register] already used name was assigned: <Tags>", 
-  #     [
-  #       [
-  #         "grn_obj_register", 
-  #         "db.c", 
-  #         11388
-  #       ]
-  #     ]
-  #   ], 
-  #   false
-  # ]
-  column_create Tags category COLUMN_SCALAR ShortText
+  table_create NestedDrilldownTags TABLE_PAT_KEY ShortText
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  table_create Memos TABLE_HASH_KEY ShortText
+  column_create NestedDrilldownTags category COLUMN_SCALAR ShortText
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  column_create Memos tag COLUMN_SCALAR Tags
+  table_create NestedDrilldownMemos TABLE_HASH_KEY ShortText
   # [[0, 1337566253.89858, 0.000355720520019531], true]
-  load --table Memos
+  column_create NestedDrilldownMemos tag COLUMN_SCALAR NestedDrilldownTags
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  load --table NestedDrilldownMemos
   [
   {"_key": "Groonga is fast!", "tag": "Groonga"},
   {"_key": "Groonga sticker!", "tag": "Groonga"},
@@ -31,7 +16,7 @@ Execution example::
   {"_key": "Rroonga is fast!", "tag": "Rroonga"}
   ]
   # [[0, 1337566253.89858, 0.000355720520019531], 4]
-  load --table Tags
+  load --table NestedDrilldownTags
   [
   {"_key": "Groonga", "category": "C/C++"},
   {"_key": "Mroonga", "category": "C/C++"},
@@ -39,12 +24,12 @@ Execution example::
   {"_key": "Rroonga", "category": "Ruby"}
   ]
   # [[0, 1337566253.89858, 0.000355720520019531], 4]
-  select Memos \
-    --drilldowns[label_tag].keys tag \
-    --drilldowns[label_tag].output_columns _key \
-    --drilldowns[label_category].table label_tag \
-    --drilldowns[label_category].keys category \
-    --drilldowns[label_category].output_columns _key,_nsubrecs
+  select NestedDrilldownMemos \
+    --drilldowns[Tag].keys tag \
+    --drilldowns[Tag].output_columns _key \
+    --drilldowns[Category].table Tag \
+    --drilldowns[Category].keys category \
+    --drilldowns[Category].output_columns _key,_nsubrecs
   # [
   #   [
   #     0, 
@@ -67,52 +52,32 @@ Execution example::
   #         ], 
   #         [
   #           "tag", 
-  #           "Tags"
+  #           "NestedDrilldownTags"
   #         ]
   #       ], 
   #       [
   #         1, 
   #         "Groonga is fast!", 
-  #         "groonga"
+  #         "Groonga"
   #       ], 
   #       [
   #         2, 
   #         "Groonga sticker!", 
-  #         "groonga"
+  #         "Groonga"
   #       ], 
   #       [
   #         3, 
   #         "Mroonga sticker!", 
-  #         "mroonga"
+  #         "Mroonga"
   #       ], 
   #       [
   #         4, 
   #         "Rroonga is fast!", 
-  #         "rroonga"
+  #         "Rroonga"
   #       ]
   #     ], 
   #     {
-  #       "label_tag": [
-  #         [
-  #           3
-  #         ], 
-  #         [
-  #           [
-  #             "_key", 
-  #             "ShortText"
-  #           ]
-  #         ], 
-  #         [
-  #           "groonga"
-  #         ], 
-  #         [
-  #           "mroonga"
-  #         ], 
-  #         [
-  #           "rroonga"
-  #         ]
-  #       ], 
-  #       "label_category": [
+  #       "Category": [
   #         [
   #           2
   #         ], 
@@ -133,6 +98,26 @@ Execution example::
   #         [
   #           "Ruby", 
   #           1
+  #         ]
+  #       ], 
+  #       "Tag": [
+  #         [
+  #           3
+  #         ], 
+  #         [
+  #           [
+  #             "_key", 
+  #             "ShortText"
+  #           ]
+  #         ], 
+  #         [
+  #           "Groonga"
+  #         ], 
+  #         [
+  #           "Mroonga"
+  #         ], 
+  #         [
+  #           "Rroonga"
   #         ]
   #       ]
   #     }

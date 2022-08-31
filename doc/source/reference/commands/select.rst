@@ -2467,29 +2467,29 @@ Specify ``${LABLE}`` of other ``drilldowns`` or ``slices``.
 You can drilldown the result of specified ``${LABLE}``.
 It means that this parameter enables a nested drilldown.
 
-Here is an example to execute the nested drilldown by tag and then by category.
+Here is an example to execute the nested drilldown. The final result takes first drilldown by ``tag`` and then 2nd drilldown by ``category`` against first result.a
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldowns_label_table.log
-.. table_create Tags TABLE_PAT_KEY ShortText
-.. column_create Tags category COLUMN_SCALAR ShortText
-.. table_create Memos TABLE_HASH_KEY ShortText
-.. column_create Memos tag COLUMN_SCALAR Tags
-.. load --table Memos
+.. table_create NestedDrilldownTags TABLE_PAT_KEY ShortText
+.. column_create NestedDrilldownTags category COLUMN_SCALAR ShortText
+.. table_create NestedDrilldownMemos TABLE_HASH_KEY ShortText
+.. column_create NestedDrilldownMemos tag COLUMN_SCALAR NestedDrilldownTags
+.. load --table NestedDrilldownMemos
 .. [
 .. {"_key": "Groonga is fast!", "tag": "Groonga"},
 .. {"_key": "Groonga sticker!", "tag": "Groonga"},
 .. {"_key": "Mroonga sticker!", "tag": "Mroonga"},
 .. {"_key": "Rroonga is fast!", "tag": "Rroonga"}
 .. ]
-.. load --table Tags
+.. load --table NestedDrilldownTags
 .. [
 .. {"_key": "Groonga", "category": "C/C++"},
 .. {"_key": "Mroonga", "category": "C/C++"},
 .. {"_key": "PGroonga", "category": "C/C++"},
 .. {"_key": "Rroonga", "category": "Ruby"}
 .. ]
-.. select Memos \
+.. select NestedDrilldownMemos \
 ..   --drilldowns[Tag].keys tag \
 ..   --drilldowns[Tag].output_columns _key \
 ..   --drilldowns[Category].table Tag \
@@ -2497,13 +2497,13 @@ Here is an example to execute the nested drilldown by tag and then by category.
 ..   --drilldowns[Category].output_columns _key,_nsubrecs
 
 In this example;
-The schema contains the table named as ``Memo`` which has the column named as ``tag``,
-the table named as ``Tags`` which has the columns named as ``category``.
+The schema contains the table named as ``NestedDrilldownMemo`` which has the column named as ``tag``,
+the table named as ``NestedDrilldownTags`` which has the columns named as ``category``.a
 
-``Tag`` drilldowns ``Memos`` by ``tag``.
+``Tag`` drilldowns ``NestedDrilldownMemos`` by ``tag``.
 Thus, the result of ``Tag`` contains one row each for ``Groonga``, ``Mroonga`` and ``Rroonga``.
 And then, ``Category`` drilldowns ``Tag`` by ``category``. 
-Thus the result of ``Category`` contains two records has ``C/C++`` and one records has ``Ruby``.
+Thus the result of ``Category`` contains two records has ``C/C++`` and one records has ``Ruby``.a
 
 .. _select-drilldowns-label-output-columns:
 
