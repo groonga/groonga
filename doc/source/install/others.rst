@@ -245,16 +245,16 @@ Shows all ``configure`` options.
 ``--enable-apache-arrow``
 +++++++++++++++++++++++++
 
-Enables Apache Arrow features.
+Enables Apache Arrow support. You can use not only Apache Arrow IPC streaming format output but also multithreading processing that is used in :ref:`select-n-workers` and :doc:`/reference/functions/query_parallel_or` with Apache Arrow support.
 
-The default is ``auto``. The features are enabled if Apache Arrow 
+The default is ``auto``. Apache Arrow support is enabled if Apache Arrow 
 is installed on the system, otherwise disabled.
 
 When you specify this parameter expressly, you should install Apache
 Arrow on the system beforehand.
 
-You can install Apache Arrow according to official installation procedure.
-Groonga requires either ``libarrow-dev`` or ``arrow-devel`` depending on the system.
+You can install Apache Arrow according to `the official installation procedure <https://arrow.apache.org/install/>`__.
+Groonga requires ``libarrow-dev`` on Debian based system or ``arrow-devel`` on Red Hat Enterprise Linux based system.
 
 `Install Apache Arrow <https://arrow.apache.org/install/>`_
 
@@ -287,10 +287,10 @@ Here is an example that disables Apache Arrow features::
 
 Adds search paths of ``.pc`` files for ``pkg-config``.
 
-Groonga uses ``pkg-config`` to use external libraries.
+Groonga uses ``pkg-config`` to find external libraries.
 
-``pkg-config`` is a tool that sets flags and paths required for using
-external libraries by simply preparing ``.pc`` files.
+``pkg-config`` is a tool that collects flags and paths required for using
+external libraries from ``.pc`` files.
 
 When using libraries installed via a package manager, you do not need
 to specify this parameter because ``.pc`` files for the libraries are in
@@ -310,9 +310,9 @@ is re-executed. On the other hand, if you specify ``PKG_CONFIG_PATH`` as an
 environment variable, ``PKG_CONFIG_PATH`` is not specified automatically.
 
 Here is an example that specifies a ``.pc`` file path for 
-``/tmp/local/lib/hoge/pkgconfig/hoge.pc``.
+``/tmp/local/lib/pkgconfig/arrow.pc``::
 
-  % ./configure PKG_CONFIG_PATH=/tmp/local/lib/hoge/pkgconfig/
+  % ./configure PKG_CONFIG_PATH=/tmp/local/lib/pkgconfig/
 
 ``make``
 ^^^^^^^^
