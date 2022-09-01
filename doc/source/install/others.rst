@@ -245,20 +245,22 @@ Shows all ``configure`` options.
 ``--enable-apache-arrow``
 +++++++++++++++++++++++++
 
-Enables Apache Arrow support. You can use not only Apache Arrow IPC streaming format output but also multithreading processing that is used in :ref:`select-n-workers` and :doc:`/reference/functions/query_parallel_or` with Apache Arrow support.
+Enables Apache Arrow support.
 
-The default is ``auto``. Apache Arrow support is enabled if Apache Arrow 
+You can use not only Apache Arrow IPC streaming format output but also
+multithreading processing that is used in :ref:`select-n-workers` and
+:doc:`/reference/functions/query_parallel_or` with the Apache Arrow support.
+
+The default is ``auto``. The Apache Arrow support is enabled if Apache Arrow 
 is installed on the system, otherwise disabled.
 
-When you specify this parameter expressly, you should install Apache
+When you specify this parameter expressly, you must install Apache
 Arrow on the system beforehand.
 
-You can install Apache Arrow according to `the official installation procedure <https://arrow.apache.org/install/>`__.
-Groonga requires ``libarrow-dev`` on Debian based system or ``arrow-devel`` on Red Hat Enterprise Linux based system.
+You can install Apache Arrow according to `the official installation procedure <https://arrow.apache.org/install/>`_.
+Groonga requires ``libarrow-dev`` on a Debian based system or ``arrow-devel`` on a Red Hat Enterprise Linux based system.
 
-`Install Apache Arrow <https://arrow.apache.org/install/>`_
-
-Here is an example that enables Apache Arrow features expressly::
+Here is an example that enables the Apache Arrow support expressly::
 
   % ./configure --enable-apache-arrow
 
@@ -269,14 +271,14 @@ Here is an example that enables Apache Arrow features expressly::
 ``--disable-apache-arrow``
 ++++++++++++++++++++++++++
 
-Disables Apache Arrow features.
+Disables Apache Arrow support.
 
 The default is ``false``.
 
-When this parameter is specified, Groonga disables Apache Arrow 
-features even if Apache Arrow is install on the system.
+When this parameter is specified, Groonga disables the Apache Arrow 
+support even if Apache Arrow is installed on the system.
 
-Here is an example that disables Apache Arrow features::
+Here is an example that disables the Apache Arrow support::
 
   % ./configure --disable-apache-arrow
 
@@ -286,6 +288,8 @@ Here is an example that disables Apache Arrow features::
 +++++++++++++++++++++++++
 
 Adds search paths of ``.pc`` files for ``pkg-config``.
+
+You can specify multiple paths with separating them with ``:``.
 
 Groonga uses ``pkg-config`` to find external libraries.
 
@@ -297,7 +301,7 @@ to specify this parameter because ``.pc`` files for the libraries are in
 the default search paths of ``pkg-config``.
 
 When you use manual built libraries, you need to specify ``.pc`` file paths 
-of the libraries for this parameter.
+of those libraries by this parameter.
 
 You can use ``PKG_CONFIG_PATH`` as an environment variable, but we recommend
 to use it as a ``configure`` parameter because of the following reason.
