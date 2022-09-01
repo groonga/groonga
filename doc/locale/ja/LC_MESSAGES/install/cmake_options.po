@@ -1,0 +1,154 @@
+# -*- po -*-
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.8\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-09-02 03:00+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "CMake options"
+msgstr "CMake オプション"
+
+msgid "This section describes important CMake options."
+msgstr "このセクションはCMakeの重要なオプションについて記載しています。"
+
+msgid ""
+"To get more details about installing Groonga from the source by CMake on a "
+"specific environment, find the document for the specific environment from :"
+"doc:`/install`."
+msgstr ""
+":doc:`/install` にある特定環境用のドキュメントに、その環境向けのより詳細な情"
+"報があります。特定環境用のドキュメントがある場合は、まずそちらを参照してくだ"
+"さい。"
+
+msgid "``-G GENERATOR``"
+msgstr ""
+
+msgid "Specify a generator."
+msgstr "ジェネレータを指定します。"
+
+msgid "This is a mandatory option."
+msgstr "必須オプションです。"
+
+msgid "You can check available generators by ``cmake --help``."
+msgstr "``cmake --help`` で利用可能なジェネレータを確認することができます。"
+
+msgid ""
+"Here is an example of specifying ``Visual Studio 12 2013 Win64`` as a "
+"generator::"
+msgstr ""
+"以下はジェネレータに ``Visual Studio 12 2013 Win64`` を指定する例です。"
+
+msgid "``-DCMAKE_INSTALL_PREFIX``"
+msgstr ""
+
+msgid "Specify a directory/folder to install Groonga."
+msgstr "Groongaのインストール先のディレクトリ/フォルダを指定します。"
+
+msgid ""
+"The default is depending on the system, e.g. `/usr/local` or `C:/Program "
+"Files (x86)/groonga`."
+msgstr ""
+"デフォルトはシステムにより異なります。例えば、 `/usr/local` や `C:/Program "
+"Files (x86)/groonga` です。"
+
+msgid "Here is an example of specifying ``C:\\Groonga`` as an install folder::"
+msgstr "以下は ``C:\\Groonga`` をインストール先に指定する例です。::"
+
+msgid "``-DGRN_WITH_MRUBY``"
+msgstr ""
+
+msgid "Enables mruby support."
+msgstr "mrubyサポートを有効化します。"
+
+msgid ""
+"You can use the :doc:`/reference/sharding` plugin and :doc:`/reference/"
+"commands/ruby_eval` with the mruby support."
+msgstr ""
+"mrubyサポートを有効にすることで :doc:`/reference/sharding` プラグインと :doc:"
+"`/reference/commands/ruby_eval`が使用可能になります。"
+
+msgid "The default is ``off``."
+msgstr "デフォルトは ``off`` です。"
+
+msgid ""
+"Groonga builds bundled mruby if the mruby support is enabled, so you must "
+"install some required libraries to build mruby. See the `mruby compile guide "
+"<https://github.com/mruby/mruby/blob/master/doc/guides/compile.md>`_ for "
+"more details."
+msgstr ""
+"mrubyサポートが有効な場合、Groongaは同梱しているmrubyをビルドします。そのた"
+"め、mrubyをビルドするのに必要なライブラリをインストールする必要があります。詳"
+"細は`mrubyのコンパイルガイド <https://github.com/mruby/mruby/blob/master/doc/"
+"guides/compile.md>`_ を参照してください。"
+
+msgid "Here is an example of enabling the mruby support::"
+msgstr "以下はmrubyサポートを有効にする例です::"
+
+msgid "``-DGRN_WITH_APACHE_ARROW``"
+msgstr ""
+
+msgid "Enables Apache Arrow support."
+msgstr "Apache Arrowサポートを有効化します。"
+
+msgid ""
+"You can use not only Apache Arrow IPC streaming format output but also "
+"multithreading processing that is used in :ref:`select-n-workers` and :doc:`/"
+"reference/functions/query_parallel_or` with the Apache Arrow support."
+msgstr ""
+"Apache Arrowサポートを有効化すると、Apache ArrowのIPC streaming formatが使え"
+"るだけでなく、 :ref:`select-n-workers` や :doc:`/reference/functions/"
+"query_parallel_or` でマルチスレッドで処理できるようになります。"
+
+msgid ""
+"You can install Apache Arrow according to `the official installation "
+"procedure <https://arrow.apache.org/install/>`_."
+msgstr ""
+"Apache Arrowは `公式のドキュメントの手順 <https://arrow.apache.org/install/"
+">`_ にしたがってインストールしてください。"
+
+msgid "Here is an example of enabling the Apache Arrow support::"
+msgstr "以下はApache Arrowサポートを有効にする例です::"
+
+msgid ""
+"If you install Apache Arrow manually, use the :ref:`windows-cmake-cmake-"
+"prefix-path` option."
+msgstr ""
+"Apache Arrowを手動でインストールしている場合、 :ref:`windows-cmake-cmake-"
+"prefix-path` オプションを指定してください。"
+
+msgid "``-DCMAKE_PREFIX_PATH=PATHS``"
+msgstr ""
+
+msgid "Adds search paths of ``.cmake`` files."
+msgstr ""
+
+msgid "You can specify multiple paths with separating them with ``:``."
+msgstr ""
+
+msgid ""
+"When using libraries installed via a package manager, you do not need to "
+"specify this parameter because ``.cmake`` files for the libraries are in the "
+"default search paths of CMake."
+msgstr ""
+
+msgid ""
+"When using manual built libraries, you need to specify ``.cmake`` file paths "
+"of those libraries by this parameter."
+msgstr ""
+
+msgid ""
+"Here is an example of specifying a ``.cmake`` file path for ``C:\\arrow"
+"\\cmake\\arrowConfig.cmake``::"
+msgstr ""
