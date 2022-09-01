@@ -254,13 +254,13 @@ multithreading processing that is used in :ref:`select-n-workers` and
 The default is ``auto``. The Apache Arrow support is enabled if Apache Arrow 
 is installed on the system, otherwise disabled.
 
-When you specify this parameter expressly, you must install Apache
+When you specify this parameter explicitly, you must install Apache
 Arrow on the system beforehand.
 
 You can install Apache Arrow according to `the official installation procedure <https://arrow.apache.org/install/>`_.
 Groonga requires ``libarrow-dev`` on a Debian based system or ``arrow-devel`` on a Red Hat Enterprise Linux based system.
 
-Here is an example that enables the Apache Arrow support expressly::
+Here is an example that enables the Apache Arrow support explicitly::
 
   % ./configure --enable-apache-arrow
 
