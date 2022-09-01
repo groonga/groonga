@@ -74,6 +74,10 @@ Here are descriptions of these options:
     It enables mruby support. The feature isn't enabled by default
     but developers should enable the feature.
 
+.. seealso::
+
+  See :doc:`/install/cmake_options` for details of ``cmake`` options.
+
 Build Groonga
 -------------
 

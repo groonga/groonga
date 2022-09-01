@@ -953,6 +953,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/solaris.rst \
 	$(top_srcdir)/doc/source/install/ubuntu.rst \
 	$(top_srcdir)/doc/source/install/windows.rst \
+	$(top_srcdir)/doc/source/install/cmake_options.rst \
 	$(top_srcdir)/doc/source/limitations.rst \
 	$(top_srcdir)/doc/source/news.rst \
 	$(top_srcdir)/doc/source/news/0.x.rst \
@@ -2174,6 +2175,7 @@ source_files_relative_from_doc_dir = \
 	source/install/solaris.rst \
 	source/install/ubuntu.rst \
 	source/install/windows.rst \
+	source/install/cmake_options.rst \
 	source/limitations.rst \
 	source/news.rst \
 	source/news/0.x.rst \

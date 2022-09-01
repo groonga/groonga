@@ -66,6 +66,10 @@ parameter instead::
 
   groonga-12.0.7> cmake . -G "Visual Studio 12 2013 Win64" -DCMAKE_INSTALL_PREFIX=C:\Groonga
 
+.. seealso::
+
+  See :doc:`/install/cmake_options` for details of ``cmake`` options.
+
 Build::
 
   groonga-12.0.7> cmake --build . --config Release
