@@ -6,7 +6,11 @@ on:
       - 'maintenance/**'
     tags:
       - '*'
+    paths-ignore:
+      - 'doc/**'
   pull_request:
+    paths-ignore:
+      - 'doc/**'
 concurrency:
   group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
   cancel-in-progress: true
