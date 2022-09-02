@@ -66,7 +66,7 @@ Here are descriptions of these options:
 
 ``-DCMAKE_INSTALL_PREFIX=C:\Groonga``
 
-    It specifies that you install your Groonga into ``C:\\Groonga``
+    It specifies that you install your Groonga into ``C:\Groonga``
     folder.
 
 ``-DGRN_WITH_MRUBY=on``
