@@ -300,7 +300,7 @@ When using libraries installed via a package manager, you do not need
 to specify this parameter because ``.pc`` files for the libraries are in
 the default search paths of ``pkg-config``.
 
-When you use manual built libraries, you need to specify ``.pc`` file paths 
+When using manual built libraries, you need to specify ``.pc`` file paths 
 of those libraries by this parameter.
 
 You can use ``PKG_CONFIG_PATH`` as an environment variable, but we recommend
