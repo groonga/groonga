@@ -76,7 +76,7 @@ Here are descriptions of these options:
 
 .. seealso::
 
-  See :doc:`/install/cmake_options` for details of ``cmake`` options.
+  See :doc:`/install/cmake_options` for more details about CMake options.
 
 Build Groonga
 -------------

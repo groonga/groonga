@@ -5,8 +5,8 @@ CMake options
 
 This section describes important CMake options.
 
-To get more details about installing Groonga from the source on a specific environment 
-by ``cmake``, find the document for the specific environment from :doc:`/install`.
+To get more details about installing Groonga from the source by CMake on a specific environment,
+find the document for the specific environment from :doc:`/install`.
 
 ``-G GENERATOR``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -79,7 +79,7 @@ Adds search paths of ``.cmake`` files.
 You can specify multiple paths with separating them with ``:``.
 
 When using libraries installed via a package manager, you do not need to specify this 
-parameter because ``.cmake`` files for the libraries are in the default search paths of cmake.
+parameter because ``.cmake`` files for the libraries are in the default search paths of CMake.
 
 When using manual built libraries, you need to specify ``.cmake`` file paths of those libraries by this parameter.
 
