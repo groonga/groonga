@@ -126,8 +126,7 @@ msgstr ""
 msgid "``-DCMAKE_INSTALL_PREFIX=C:\\Groonga``"
 msgstr ""
 
-msgid ""
-"It specifies that you install your Groonga into ``C:\\Groonga`` folder."
+msgid "It specifies ``C:\\Groonga`` for the install folder of your Groonga."
 msgstr ""
 "ビルドしたGroongaを ``C:\\Groonga`` にインストールする、と指定しています。"
 

@@ -3,9 +3,9 @@
 CMake options
 =============
 
-This section describes important CMake options.
+This section describes important options of CMake.
 
-To get more details about installing Groonga from the source by CMake on a specific environment,
+To get more details about installing Groonga from the source with CMake on a specific environment,
 find the document for the specific environment from :doc:`/install`.
 
 ``-G GENERATOR``
@@ -38,12 +38,13 @@ Here is an example of specifying ``C:\Groonga`` as an install folder::
 Enables mruby support.
 
 You can use the :doc:`/reference/sharding` plugin and :doc:`/reference/commands/ruby_eval` 
-with the mruby support.
+with the mruby support enabled.
 
 The default is ``off``.
 
-Groonga builds bundled mruby if the mruby support is enabled, so you must install some required libraries to build mruby.
-See the `mruby compile guide <https://github.com/mruby/mruby/blob/master/doc/guides/compile.md>`_ for more details.
+Groonga builds bundled mruby if the mruby support is enabled. In order to build mruby, you must 
+install some requierd libraries. See the `mruby compile guide <https://github.com/mruby/mruby/blob/master/doc/guides/compile.md>`_ 
+for more details.
 
 Here is an example of enabling the mruby support::
 
@@ -54,12 +55,12 @@ Here is an example of enabling the mruby support::
 
 Enables Apache Arrow support.
 
-You can use not only Apache Arrow IPC streaming format output but also multithreading processing that is used in :ref:`select-n-workers` 
+In addition to using Apache Arrow IPC streaming format output, you can also use multithreading processing that is used in :ref:`select-n-workers` 
 and :doc:`/reference/functions/query_parallel_or` with the Apache Arrow support.   
 
 The default is ``off``.
 
-You can install Apache Arrow according to `the official installation procedure <https://arrow.apache.org/install/>`_. 
+You can install Apache Arrow following to `the official installation procedure <https://arrow.apache.org/install/>`_. 
 
 Here is an example of enabling the Apache Arrow support::
 
@@ -67,7 +68,7 @@ Here is an example of enabling the Apache Arrow support::
 
 .. note::
 
-   If you install Apache Arrow manually, use the :ref:`windows-cmake-cmake-prefix-path` option.
+   If you install Apache Arrow manually, you need to use the :ref:`windows-cmake-cmake-prefix-path` option.
 
 .. _windows-cmake-cmake-prefix-path:
 
@@ -76,7 +77,7 @@ Here is an example of enabling the Apache Arrow support::
 
 Adds search paths of ``.cmake`` files.
 
-You can specify multiple paths with separating them with ``:``.
+You can specify multiple paths using ``:`` to separate.
 
 When using libraries installed via a package manager, you do not need to specify this 
 parameter because ``.cmake`` files for the libraries are in the default search paths of CMake.
