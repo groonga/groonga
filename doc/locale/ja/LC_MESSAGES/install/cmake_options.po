@@ -134,7 +134,7 @@ msgstr ""
 msgid "Adds search paths of ``.cmake`` files."
 msgstr "``.cmake`` ファイルの検索パスを追加します。"
 
-msgid "You can specify multiple paths with separating them with ``:``."
+msgid "You can specify multiple paths using  ``:`` to separate."
 msgstr "``:`` で区切ることで複数のパスを指定することができます。"
 
 msgid ""
