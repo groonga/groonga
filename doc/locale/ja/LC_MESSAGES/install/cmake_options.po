@@ -112,7 +112,7 @@ msgstr ""
 "query_parallel_or` でマルチスレッドで処理できるようになります。"
 
 msgid ""
-"You can install Apache Arrow according to `the official installation "
+"You can install Apache Arrow following to `the official installation "
 "procedure <https://arrow.apache.org/install/>`_."
 msgstr ""
 "Apache Arrowは `公式のドキュメントの手順 <https://arrow.apache.org/install/"
