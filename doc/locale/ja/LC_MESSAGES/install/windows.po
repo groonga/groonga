@@ -122,6 +122,11 @@ msgstr ""
 "Groongaをビルドするためのものです。32-bit用のGroongaをビルドする場合は代わり"
 "に ``-G \"Visual Studio 12 2013\"`` パラメーターを指定してください::"
 
+msgid "See :doc:`/install/cmake_options` for more details about CMake options."
+msgstr ""
+"CMakeのオプションに関する詳細は :doc:`/install/cmake_options` を参照してくだ"
+"さい。"
+
 msgid "Build::"
 msgstr "ビルド::"
 
