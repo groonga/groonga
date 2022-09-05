@@ -115,10 +115,9 @@ gted
 How to update .po files
 -----------------------
 
-You can update .po files by running `make` on
+After editing .edit files, you can update .po files by running `make` on
 doc/locale/${LANGUAGE}/LC_MESSAGES. (Please substitute
-`${LANGUAGE}` with your language code such as 'ja'.)
-after editting .edit files::
+`${LANGUAGE}` with your language code such as 'ja'.)::
 
   % cd doc/locale/ja/LC_MESSAGES
   % make
