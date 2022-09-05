@@ -5,6 +5,22 @@
 News
 ====
 
+.. _release-12-0-8:
+
+Release 12.0.8 - 2022-09-29
+---------------------------
+
+Improvements
+------------
+
+* Added a new function ``escalate()``.
+
+  We change specification of the ``escalate()`` function as below.
+
+    * The first condition is always executed.
+    * Threshold of the first condition isn't required. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
+    * Don't allow empty arguments call. 1 or more arguments are required.
+
 .. _release-12-0-7:
 
 Release 12.0.7 - 2022-08-29
