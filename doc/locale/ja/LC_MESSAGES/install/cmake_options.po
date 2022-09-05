@@ -103,7 +103,7 @@ msgid "Enables Apache Arrow support."
 msgstr "Apache Arrowサポートを有効化します。"
 
 msgid ""
-"You can use not only Apache Arrow IPC streaming format output but also "
+"In addition to using Apache Arrow IPC streaming format output, you can also use "
 "multithreading processing that is used in :ref:`select-n-workers` and :doc:`/"
 "reference/functions/query_parallel_or` with the Apache Arrow support."
 msgstr ""
