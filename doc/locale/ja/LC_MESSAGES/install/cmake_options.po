@@ -20,7 +20,7 @@ msgstr ""
 msgid "CMake options"
 msgstr "CMake オプション"
 
-msgid "This section describes important CMake options."
+msgid "This section describes important options of CMake."
 msgstr "このセクションはCMakeの重要なオプションについて記載しています。"
 
 msgid ""
