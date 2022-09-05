@@ -72,7 +72,7 @@ msgid "Confirm HTML output."
 msgstr "HTMLの出力を確認します。"
 
 msgid "Repeat 3.-7. until you get good result."
-msgstr ""
+msgstr "翻訳が完了するまで、3.-7.を繰り返します。"
 
 msgid "Send your works to us!"
 msgstr "翻訳作業の成果をGroongaプロジェクトに送ってください！"
