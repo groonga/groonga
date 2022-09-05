@@ -74,7 +74,7 @@ msgstr "mrubyサポートを有効化します。"
 
 msgid ""
 "You can use the :doc:`/reference/sharding` plugin and :doc:`/reference/"
-"commands/ruby_eval` with the mruby support."
+"commands/ruby_eval` with the mruby support enabled."
 msgstr ""
 "mrubyサポートを有効にすることで :doc:`/reference/sharding` プラグインと :doc:"
 "`/reference/commands/ruby_eval`が使用可能になります。"
