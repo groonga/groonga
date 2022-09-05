@@ -24,7 +24,7 @@ msgid "This section describes important options of CMake."
 msgstr "このセクションはCMakeの重要なオプションについて記載しています。"
 
 msgid ""
-"To get more details about installing Groonga from the source by CMake on a "
+"To get more details about installing Groonga from the source with CMake on a "
 "specific environment, find the document for the specific environment from :"
 "doc:`/install`."
 msgstr ""
