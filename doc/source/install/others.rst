@@ -247,7 +247,7 @@ Shows all ``configure`` options.
 
 Enables Apache Arrow support.
 
-You can use not only Apache Arrow IPC streaming format output but also
+In addition to using Apache Arrow IPC streaming format output, you can also use
 multithreading processing that is used in :ref:`select-n-workers` and
 :doc:`/reference/functions/query_parallel_or` with the Apache Arrow support.
 
@@ -257,7 +257,7 @@ is installed on the system, otherwise disabled.
 When you specify this parameter explicitly, you must install Apache
 Arrow on the system beforehand.
 
-You can install Apache Arrow according to `the official installation procedure <https://arrow.apache.org/install/>`_.
+You can install Apache Arrow following to `the official installation procedure <https://arrow.apache.org/install/>`_.
 Groonga requires ``libarrow-dev`` on a Debian based system or ``arrow-devel`` on a Red Hat Enterprise Linux based system.
 
 Here is an example that enables the Apache Arrow support explicitly::
@@ -266,7 +266,7 @@ Here is an example that enables the Apache Arrow support explicitly::
 
 .. note::
 
-   If you install Apache Arrow manually, use the :ref:`install-others-configure-pkg-config-path` option.
+   If you install Apache Arrow manually, you need to the :ref:`install-others-configure-pkg-config-path` option.
 
 ``--disable-apache-arrow``
 ++++++++++++++++++++++++++
@@ -289,7 +289,7 @@ Here is an example that disables the Apache Arrow support::
 
 Adds search paths of ``.pc`` files for ``pkg-config``.
 
-You can specify multiple paths with separating them with ``:``.
+You can specify multiple paths using ``:`` to separating.
 
 Groonga uses ``pkg-config`` to find external libraries.
 
