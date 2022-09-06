@@ -39,9 +39,12 @@ You can check the default generator and available generators by ``cmake --help``
      Sublime Text 2 - Ninja       = Generates Sublime Text 2 project files.
      Sublime Text 2 - Unix Makefiles
 
-Here is an example of specifying ``Visual Studio 12 2013 Win64`` as a generator::
+Here is an example how to specify ``Visual Studio 17 2022 Win64`` as a generator.
+You can specify a target platform name (architecture) with the ``-A`` option.
 
-  > cmake . -G "Visual Studio 12 2013 Win64" 
+.. code-block:: pwsh-session
+
+  > cmake . -G "Visual Studio 17 2022" -A x86
 
 ``-DCMAKE_INSTALL_PREFIX``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -50,11 +53,11 @@ Specify a directory to install Groonga.
 
 The default is depending on the system, e.g. ``/usr/local`` or ``C:/Program Files/groonga``.
 
-Here is an example of specifying ``C:\Groonga`` as an install directory::
+Here is an example how to specify ``/tmp/local/`` as an install directory.
 
-.. code-block:: pwsh-session
+.. code-block:: console
 
-   > cmake . -DCMAKE_INSTALL_PREFIX=C:\Groonga
+   $ cmake . -DCMAKE_INSTALL_PREFIX=/tmp/local/
 
 ``-DGRN_WITH_MRUBY``
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -70,9 +73,9 @@ Groonga builds bundled mruby if the mruby support is enabled. In order to build 
 install some requierd libraries. See the `mruby compile guide <https://github.com/mruby/mruby/blob/master/doc/guides/compile.md>`_ 
 for more details.
 
-Here is an example of enabling the mruby support::
+Here is an example how to enable the mruby support.
 
-.. code-block:: pwsh-session
+.. code-block:: console
 
    > cmake . -DGRN_WITH_MRUBY=on
 
@@ -88,9 +91,9 @@ The default is ``OFF``.
 
 You can install Apache Arrow following to `the official installation procedure <https://arrow.apache.org/install/>`_. 
 
-Here is an example of enabling the Apache Arrow support::
+Here is an example how to enable the Apache Arrow support.
 
-.. code-block:: pwsh-session
+.. code-block:: console
 
    > cmake . -DGRN_WITH_APACHE_ARROW=on
 
@@ -110,10 +113,10 @@ You can specify multiple paths using ``:`` on UNIX or ``;`` on Windows to separa
 In case of using libraries installed via a package manager, you do not need to specify this 
 parameter. It is because ``.cmake`` files for those libraries are in the default search paths of CMake.
 
-In case of using manual built libraries, you need to specify ``.cmake`` file paths of those libraries by this parameter.
+In case of using libraries installed in non-system directories such as ``/usr``, you need to specify ``.cmake`` file paths of those libraries by this parameter.
 
-Here is an example of specifying a ``.cmake`` file path for ``C:\arrow\cmake\arrowConfig.cmake``::
+Here is an example how to specify a ``.cmake`` file path for ``/tmp/local/lib/arrow/cmake/arrowConfig.cmake``.
 
-.. code-block:: pwsh-session
+.. code-block:: console
 
-   > cmake . -DCMAKE_PREFIX_PATH="C:\arrow\cmake"
+   > cmake . -DCMAKE_PREFIX_PATH="/tmp/local/lib/arrow/cmake"
