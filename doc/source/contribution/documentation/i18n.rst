@@ -31,7 +31,7 @@ Here is a translation flow:
 5. Update .po files.
 6. Generate HTML files.
 7. Confirm HTML output.
-8. Repeat 3.-7. until you get good result.
+8. Repeat 3.-7. until you finish to translate.
 9. Send your works to us!
 
 Here are command lines to do the above flow. Following
@@ -83,7 +83,7 @@ How to update .edit files
 -------------------------
 
 You can update .edit files by running `make` on
-doc/locale/${LANGUAGE}/LC_MESSAGES. (Please substitute
+doc/locale/${LANGUAGE}/LC_MESSAGES. (Please replace
 `${LANGUAGE}` with your language code such as 'ja'.)::
 
   % cd doc/locale/ja/LC_MESSAGES
@@ -95,9 +95,12 @@ How to edit .edit
 .edit is a alias of .po, so .edit files are actually .po files. 
 .edit files are for editing and .po files are for versioning.
 
-There are some tools to edit .po(.edit) files. .po(.edit) files
-are just text. So you can use your favorite editor. Here is 
-a list of editors specialized for editing .po(.edit) files.
+In order to edit .edit files, there are some tools to edit.
+.edit files are just text, so you can use your favorite editor.
+
+Here is a list of editors specialized for editing .po files.
+You can use these editors to edit .edit files because they are actually 
+.po files.
 
 Emacs's po-mode_
   It is bundled in gettext.
@@ -116,7 +119,7 @@ How to update .po files
 -----------------------
 
 After editing .edit files, you can update .po files by running `make` on
-doc/locale/${LANGUAGE}/LC_MESSAGES. (Please substitute
+doc/locale/${LANGUAGE}/LC_MESSAGES. (Please replace
 `${LANGUAGE}` with your language code such as 'ja'.)::
 
   % cd doc/locale/ja/LC_MESSAGES
