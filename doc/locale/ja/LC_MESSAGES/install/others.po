@@ -458,8 +458,8 @@ msgstr ""
 "``--disable-apache-arrow`` を明示的に指定すると、システムにApache Arrowがイン"
 "ストールされていても、Apache Arrowサポートを無効化します。"
 
-msgid "Here is an example that enables the Apache Arrow support explicitly::"
-msgstr "以下は明示的にApache Arrowサポートを有効にする例です::"
+msgid "Here is an example that enables the Apache Arrow support explicitly."
+msgstr "以下は明示的にApache Arrowサポートを有効にする例です。"
 
 msgid ""
 "If you install Apache Arrow into a non-standard directory, you need to "
@@ -527,10 +527,10 @@ msgstr ""
 
 msgid ""
 "Here is an example how to specify a ``.pc`` file path for ``/tmp/local/lib/"
-"pkgconfig/arrow.pc``::"
+"pkgconfig/arrow.pc``."
 msgstr ""
 "以下は ``/tmp/local/lib/pkgconfig/arrow.pc`` の ``.pc`` ファイルを指定する例"
-"です::"
+"です。"
 
 msgid "``make``"
 msgstr ""

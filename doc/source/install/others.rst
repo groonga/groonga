@@ -263,9 +263,11 @@ Groonga requires ``libarrow-dev`` on a Debian based system or ``arrow-devel`` on
 When you specify ``--disable-apache-arrow`` explicitly, Groonga disables the Apache Arrow 
 support even if Apache Arrow is installed on the system.
 
-Here is an example that enables the Apache Arrow support explicitly::
+Here is an example that enables the Apache Arrow support explicitly.
 
-  % ./configure --enable-apache-arrow
+.. code-block:: console
+
+   % ./configure --enable-apache-arrow
 
 .. note::
 
@@ -303,9 +305,11 @@ is re-executed. On the other hand, if you specify ``PKG_CONFIG_PATH`` as an
 environment variable, ``PKG_CONFIG_PATH`` is not specified automatically.
 
 Here is an example how to specify a ``.pc`` file path for 
-``/tmp/local/lib/pkgconfig/arrow.pc``::
+``/tmp/local/lib/pkgconfig/arrow.pc``.
 
-  % ./configure PKG_CONFIG_PATH=/tmp/local/lib/pkgconfig/
+.. code-block:: console
+
+   % ./configure PKG_CONFIG_PATH=/tmp/local/lib/pkgconfig/
 
 ``make``
 ^^^^^^^^
