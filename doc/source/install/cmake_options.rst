@@ -48,7 +48,7 @@ Here is an example of specifying ``Visual Studio 12 2013 Win64`` as a generator:
 
 Specify a directory to install Groonga.
 
-The default is depending on the system, e.g. `/usr/local` or `C:/Program Files/groonga`.
+The default is depending on the system, e.g. ``/usr/local`` or ``C:/Program Files/groonga``.
 
 Here is an example of specifying ``C:\Groonga`` as an install directory::
 
