@@ -115,8 +115,8 @@ parameter. It is because ``.cmake`` files for those libraries are in the default
 
 In case of using libraries installed in non-system directories such as ``/usr``, you need to specify ``.cmake`` file paths of those libraries by this parameter.
 
-Here is an example how to specify a ``.cmake`` file path for ``/tmp/local/lib/arrow/cmake/arrowConfig.cmake``.
+Here is an example how to specify a ``.cmake`` file path for ``/tmp/arrow/cmake/arrowConfig.cmake``.
 
 .. code-block:: console
 
-   $ cmake . -DCMAKE_PREFIX_PATH="/tmp/local/lib/arrow/cmake"
+   $ cmake . -DCMAKE_PREFIX_PATH="/tmp/arrow/cmake"
