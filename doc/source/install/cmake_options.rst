@@ -39,12 +39,12 @@ You can check the default generator and available generators by ``cmake --help``
      Sublime Text 2 - Ninja       = Generates Sublime Text 2 project files.
      Sublime Text 2 - Unix Makefiles
 
-Here is an example how to specify ``Visual Studio 17 2022 Win64`` as a generator.
+Here is an example how to specify ``Visual Studio 17 2022 x64`` as a generator.
 You can specify a target platform name (architecture) with the ``-A`` option.
 
 .. code-block:: pwsh-session
 
-  > cmake . -G "Visual Studio 17 2022" -A x86
+  > cmake . -G "Visual Studio 17 2022" -A x64
 
 ``-DCMAKE_INSTALL_PREFIX``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
