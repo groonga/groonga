@@ -269,7 +269,7 @@ Here is an example that enables the Apache Arrow support explicitly::
 
 .. note::
 
-   If you install Apache Arrow manually, you need to the :ref:`install-others-configure-pkg-config-path` option.
+   If you install Apache Arrow into a non-standard directory, you need to specify the :ref:`install-others-configure-pkg-config-path` option.
 
 .. _install-others-configure-pkg-config-path:
 
