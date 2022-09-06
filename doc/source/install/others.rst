@@ -242,23 +242,26 @@ files::
 
 Shows all ``configure`` options.
 
-``--enable-apache-arrow``
-+++++++++++++++++++++++++
+``--enable-apache-arrow`` and ``--disable-apache-arrow``
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Enables Apache Arrow support.
+Enables or disables Apache Arrow support.
 
 In addition to using Apache Arrow IPC streaming format output, you can also use
 multithreading processing that is used in :ref:`select-n-workers` and
 :doc:`/reference/functions/query_parallel_or` with the Apache Arrow support.
 
-The default is ``auto``. The Apache Arrow support is enabled if Apache Arrow 
-is installed on the system, otherwise disabled.
+In case of not specifing ``--enable-apache-arrow`` nor ``--disable-apache-arrow``, the Apache Arrow support is enabled if Apache Arrow 
+is installed on the system, otherwise disabled. This default behaviour is same as to specify ``--enable-apache-arrow=auto``.
 
-When you specify this parameter explicitly, you must install Apache
+When you specify ``--enable-apache-arrow`` explicitly, you must install Apache
 Arrow on the system beforehand.
 
 You can install Apache Arrow following to `the official installation procedure <https://arrow.apache.org/install/>`_.
 Groonga requires ``libarrow-dev`` on a Debian based system or ``arrow-devel`` on a Red Hat Enterprise Linux based system.
+
+When you specify ``--disable-apache-arrow`` explicitly, Groonga disables the Apache Arrow 
+support even if Apache Arrow is installed on the system.
 
 Here is an example that enables the Apache Arrow support explicitly::
 
@@ -267,20 +270,6 @@ Here is an example that enables the Apache Arrow support explicitly::
 .. note::
 
    If you install Apache Arrow manually, you need to the :ref:`install-others-configure-pkg-config-path` option.
-
-``--disable-apache-arrow``
-++++++++++++++++++++++++++
-
-Disables Apache Arrow support.
-
-The default is ``false``.
-
-When this parameter is specified, Groonga disables the Apache Arrow 
-support even if Apache Arrow is installed on the system.
-
-Here is an example that disables the Apache Arrow support::
-
-  % ./configure --disable-apache-arrow
 
 .. _install-others-configure-pkg-config-path:
 
