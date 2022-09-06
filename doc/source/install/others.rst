@@ -313,7 +313,7 @@ parameter, ``PKG_CONFIG_PATH`` is specified automatically when ``configure``
 is re-executed. On the other hand, if you specify ``PKG_CONFIG_PATH`` as an 
 environment variable, ``PKG_CONFIG_PATH`` is not specified automatically.
 
-Here is an example that specifies a ``.pc`` file path for 
+Here is an example how to specify a ``.pc`` file path for 
 ``/tmp/local/lib/pkgconfig/arrow.pc``::
 
   % ./configure PKG_CONFIG_PATH=/tmp/local/lib/pkgconfig/

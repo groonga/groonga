@@ -534,7 +534,7 @@ msgstr ""
 "環境変数を使用した場合は ``PKG_CONFIG_PATH`` は自動で指定されません。"
 
 msgid ""
-"Here is an example that specifies a ``.pc`` file path for ``/tmp/local/lib/"
+"Here is an example how to specify a ``.pc`` file path for ``/tmp/local/lib/"
 "pkgconfig/arrow.pc``::"
 msgstr ""
 "以下は ``/tmp/local/lib/pkgconfig/arrow.pc`` の ``.pc`` ファイルを指定する例"
