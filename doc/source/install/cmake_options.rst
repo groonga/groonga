@@ -77,7 +77,7 @@ Here is an example how to enable the mruby support.
 
 .. code-block:: console
 
-   > cmake . -DGRN_WITH_MRUBY=on
+   $ cmake . -DGRN_WITH_MRUBY=on
 
 ``-DGRN_WITH_APACHE_ARROW``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -95,7 +95,7 @@ Here is an example how to enable the Apache Arrow support.
 
 .. code-block:: console
 
-   > cmake . -DGRN_WITH_APACHE_ARROW=on
+   $ cmake . -DGRN_WITH_APACHE_ARROW=on
 
 .. note::
 
@@ -119,4 +119,4 @@ Here is an example how to specify a ``.cmake`` file path for ``/tmp/local/lib/ar
 
 .. code-block:: console
 
-   > cmake . -DCMAKE_PREFIX_PATH="/tmp/local/lib/arrow/cmake"
+   $ cmake . -DCMAKE_PREFIX_PATH="/tmp/local/lib/arrow/cmake"
