@@ -49,7 +49,7 @@ msgstr ""
 "ることができます。"
 
 msgid ""
-"Here is an example how to specify ``Visual Studio 17 2022 Win64`` as a "
+"Here is an example how to specify ``Visual Studio 17 2022 x64`` as a "
 "generator. You can specify a target platform name (architecture) with the ``-"
 "A`` option."
 msgstr ""
@@ -99,7 +99,6 @@ msgstr ""
 "doc/guides/compile.md>`_ を参照してください。"
 
 msgid "Here is an example how to enable the mruby support."
-msgstr ""
 msgstr "以下はmrubyサポートを有効にする例です。"
 
 msgid "``-DGRN_WITH_APACHE_ARROW``"
@@ -127,12 +126,11 @@ msgstr ""
 msgid "Here is an example how to enable the Apache Arrow support."
 msgstr "以下はApache Arrowサポートを有効にする例です。"
 
-
 msgid ""
 "If you install Apache Arrow manually, you need to use the :ref:`cmake-"
 "options-cmake-prefix-path` option."
 msgstr ""
-"Apache Arrowを手動でインストールしている場合、 :ref:`windows-cmake-cmake-"
+"Apache Arrowを手動でインストールしている場合、 :ref:`cmake-options-cmake-"
 "prefix-path` オプションを指定してください。"
 
 msgid "``-DCMAKE_PREFIX_PATH=PATHS``"
