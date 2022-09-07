@@ -263,7 +263,7 @@ Groonga requires ``libarrow-dev`` on a Debian based system or ``arrow-devel`` on
 When you specify ``--disable-apache-arrow`` explicitly, Groonga disables the Apache Arrow 
 support even if Apache Arrow is installed on the system.
 
-Here is an example that enables the Apache Arrow support explicitly.
+Here is an example how to enable the Apache Arrow support explicitly.
 
 .. code-block:: console
 

@@ -458,7 +458,7 @@ msgstr ""
 "``--disable-apache-arrow`` を明示的に指定すると、システムにApache Arrowがイン"
 "ストールされていても、Apache Arrowサポートを無効化します。"
 
-msgid "Here is an example that enables the Apache Arrow support explicitly."
+msgid "Here is an example how to enable the Apache Arrow support explicitly."
 msgstr "以下は明示的にApache Arrowサポートを有効にする例です。"
 
 msgid ""
