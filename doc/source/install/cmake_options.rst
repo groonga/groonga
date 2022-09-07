@@ -1,12 +1,75 @@
 .. -*- rst -*-
 
-CMake options
-=============
+How to build Groonga with CMake
+===============================
 
-This section describes important options of CMake.
+This document describes how to build Groonga from source with CMake.
 
 To get more details about installing Groonga from the source with CMake on a specific environment,
 find the document for the specific environment from :doc:`/install`.
+
+Install depended software
+-------------------------
+
+Here is lists of depended software for UNIX and Windows.
+
+UNIX
+++++
+
+TODO
+
+  * `CMake <http://www.cmake.org/>`_
+  * `Ruby <https://www.ruby-lang.org/>`_
+  
+    * Needed if you enable mruby support.
+ 
+  * ...
+
+Windows
++++++++
+
+  * `Microsoft Visual Studio Community
+    <https://visualstudio.microsoft.com/ja/vs/community>`_
+  * `CMake <http://www.cmake.org/>`_
+  * `Ruby <https://www.ruby-lang.org/>`_
+
+    * Needed if you enable mruby support.
+    * `RubyInstaller for Windows <http://rubyinstaller.org/>`_ is
+      recommended.
+
+Download source
+---------------
+
+You can get the latest source from `packages.groonga.org <https://packages.groonga.org/source/groonga>`_.
+
+Windows
++++++++
+
+Download the latest zipped source from packages.groonga.org:
+
+  * https://packages.groonga.org/source/groonga/groonga-12.0.7.zip
+
+Then extract it.
+
+UNIX
+++++
+
+.. code-block:: console
+
+   $ wget https://packages.groonga.org/source/groonga/groonga-12.0.7.tar.gz
+   $ tar xvzf groonga-12.0.7.tar.gz
+
+Run ``cmake``
+-------------
+
+You need to create ``Makefile`` for your environment.
+
+You can custom your build configuration by passing options to ``cmake``.
+
+CMake options
++++++++++++++
+
+This section describes important options of CMake.
 
 ``-G GENERATOR``
 ^^^^^^^^^^^^^^^^
@@ -138,3 +201,32 @@ Here is an example how to specify a ``.cmake`` file path for ``C:\arrow\lib\cmak
 .. code-block:: pwsh-session
 
    > cmake . -DCMAKE_PREFIX_PATH="C:\arrow\lib\cmake\Arrow"
+
+Build and install Groonga
+-------------------------
+
+Now, you can build Groonga.
+
+UNIX
+++++
+
+you can use ``make``.
+
+Here is a command line to build and install Groonga by ``make``.
+
+.. code-block:: console
+
+  $ make
+  $ sudo make install
+
+Windows
++++++++
+
+You can use Visual Studio or ``cmake --build``.
+
+Here is a command line to build and install Groonga by ``cmake --build``.
+
+.. code-block:: pwsh-session
+
+   > cmake --build . --config release
+   > cmake --build . --config Release --target Install
