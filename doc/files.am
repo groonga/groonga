@@ -953,7 +953,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/solaris.rst \
 	$(top_srcdir)/doc/source/install/ubuntu.rst \
 	$(top_srcdir)/doc/source/install/windows.rst \
-	$(top_srcdir)/doc/source/install/cmake_options.rst \
+	$(top_srcdir)/doc/source/install/cmake.rst \
 	$(top_srcdir)/doc/source/limitations.rst \
 	$(top_srcdir)/doc/source/news.rst \
 	$(top_srcdir)/doc/source/news/0.x.rst \
@@ -2175,7 +2175,7 @@ source_files_relative_from_doc_dir = \
 	source/install/solaris.rst \
 	source/install/ubuntu.rst \
 	source/install/windows.rst \
-	source/install/cmake_options.rst \
+	source/install/cmake.rst \
 	source/limitations.rst \
 	source/news.rst \
 	source/news/0.x.rst \
@@ -2479,7 +2479,7 @@ po_files = \
 	install/solaris.po \
 	install/ubuntu.po \
 	install/windows.po \
-	install/cmake_options.po \
+	install/cmake.po \
 	limitations.po \
 	news.po \
 	news/0.x.po \
@@ -2781,7 +2781,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/solaris.po \
 	LC_MESSAGES/install/ubuntu.po \
 	LC_MESSAGES/install/windows.po \
-	LC_MESSAGES/install/cmake_options.po \
+	LC_MESSAGES/install/cmake.po \
 	LC_MESSAGES/limitations.po \
 	LC_MESSAGES/news.po \
 	LC_MESSAGES/news/0.x.po \
@@ -3083,7 +3083,7 @@ edit_po_files = \
 	install/solaris.edit \
 	install/ubuntu.edit \
 	install/windows.edit \
-	install/cmake_options.edit \
+	install/cmake.edit \
 	limitations.edit \
 	news.edit \
 	news/0.x.edit \
@@ -3385,7 +3385,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/solaris.edit \
 	LC_MESSAGES/install/ubuntu.edit \
 	LC_MESSAGES/install/windows.edit \
-	LC_MESSAGES/install/cmake_options.edit \
+	LC_MESSAGES/install/cmake.edit \
 	LC_MESSAGES/limitations.edit \
 	LC_MESSAGES/news.edit \
 	LC_MESSAGES/news/0.x.edit \
@@ -3687,7 +3687,7 @@ mo_files = \
 	install/solaris.mo \
 	install/ubuntu.mo \
 	install/windows.mo \
-	install/cmake_options.mo \
+	install/cmake.mo \
 	limitations.mo \
 	news.mo \
 	news/0.x.mo \
@@ -3989,7 +3989,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/solaris.mo \
 	LC_MESSAGES/install/ubuntu.mo \
 	LC_MESSAGES/install/windows.mo \
-	LC_MESSAGES/install/cmake_options.mo \
+	LC_MESSAGES/install/cmake.mo \
 	LC_MESSAGES/limitations.mo \
 	LC_MESSAGES/news.mo \
 	LC_MESSAGES/news/0.x.mo \
@@ -4325,7 +4325,7 @@ html_files_relative_from_locale_dir = \
 	html/install/solaris.html \
 	html/install/ubuntu.html \
 	html/install/windows.html \
-	html/install/cmake_options.html \
+	html/install/cmake.html \
 	html/limitations.html \
 	html/news.html \
 	html/news/0.x.html \
