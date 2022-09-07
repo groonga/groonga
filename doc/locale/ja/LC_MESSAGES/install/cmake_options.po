@@ -18,10 +18,12 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "How to build Groonga with CMake"
-msgstr ""
+msgstr "CMakeを使ってGroongaをビルドする方法"
 
 msgid "This document describes how to build Groonga from source with CMake."
 msgstr ""
+"このドキュメントはCMakeを使ってソースコードからGroongaをビルドする方法を説明"
+"します。"
 
 msgid ""
 "To get more details about installing Groonga from the source with CMake on a "
@@ -33,16 +35,16 @@ msgstr ""
 "そちらを参照してください。"
 
 msgid "Install depended software"
-msgstr ""
+msgstr "必要なソフトウェアのインストール"
 
-msgid "Here is lists of depended software for UNIX and Windows."
-msgstr ""
-
-msgid "UNIX"
-msgstr ""
+msgid "Here is lists of depended software for GNU/Linux, UNIX and Windows."
+msgstr "以下は、GNU/Linux、UNIX、Windows向けの必要なソフトウェアの一覧です。"
 
 msgid "TODO"
 msgstr ""
+
+msgid "GNU/Linux or UNIX"
+msgstr "GNU/LinuxまたはUNIX"
 
 msgid "`CMake <http://www.cmake.org/>`_"
 msgstr ""
@@ -50,8 +52,8 @@ msgstr ""
 msgid "`Ruby <https://www.ruby-lang.org/>`_"
 msgstr ""
 
-msgid "..."
-msgstr ""
+msgid "Needed if you enable mruby support."
+msgstr "mrubyサポートを有効化する場合に必要です。"
 
 msgid "Windows"
 msgstr ""
@@ -66,31 +68,35 @@ msgid ""
 msgstr ""
 
 msgid "Download source"
-msgstr ""
+msgstr "ソースコードのダウンロード"
 
 msgid ""
 "You can get the latest source from `packages.groonga.org <https://packages."
 "groonga.org/source/groonga>`_."
 msgstr ""
+"`packages.groonga.org <https://packages.groonga.org/source/groonga>`_ から最"
+"新のソースコードをダウンロードできます。"
 
-msgid "Download the latest zipped source from packages.groonga.org:"
+msgid "Download the latest zipped source from packages.groonga.org."
 msgstr ""
+"最新のzipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
 msgid "https://packages.groonga.org/source/groonga/groonga-12.0.7.zip"
 msgstr ""
 
 msgid "Then extract it."
-msgstr ""
+msgstr "その後、アーカイブを展開します。"
 
 msgid "Run ``cmake``"
-msgstr ""
+msgstr "``cmake`` を実行"
 
 msgid "You need to create ``Makefile`` for your environment."
-msgstr ""
+msgstr "あなたの環境用の ``Makefile`` を作る必要があります。"
 
 msgid ""
 "You can custom your build configuration by passing options to ``cmake``."
 msgstr ""
+"``cmake`` へオプションを渡してビルドパラメーターをカスタマイズできます。"
 
 msgid "CMake options"
 msgstr "CMake オプション"
@@ -114,8 +120,11 @@ msgstr ""
 "``cmake --help`` でデフォルトのジェネレータと、利用可能なジェネレータを確認す"
 "ることができます。"
 
-msgid "Here is an example how to specify ``Unix Makefiles`` on Unix."
-msgstr "以下はUNIXで ``Unix Makefiles`` をジェネレータに指定する例です。"
+msgid ""
+"Here is an example how to specify ``Unix Makefiles`` on GNU/Linux or UNIX."
+msgstr ""
+"以下はGNU/LinuxまたはUNIXで ``Unix Makefiles`` をジェネレータに指定する例で"
+"す。"
 
 msgid ""
 "Here is an example how to specify ``Visual Studio 17 2022 x64`` as a "
@@ -140,8 +149,10 @@ msgstr ""
 
 msgid ""
 "Here is an example how to specify ``/tmp/local/`` as an install directory on "
-"UNIX."
-msgstr "以下はUNIXで `/tmp/local/`` をインストール先として指定する例です。"
+"GNU/Linux or UNIX."
+msgstr ""
+"以下はGNU/LinuxまたはUNIXで `/tmp/local/`` をインストール先として指定する例で"
+"す。"
 
 msgid ""
 "Here is an example how to specify ``C:\\Groonga`` as an install directory on "
@@ -217,10 +228,11 @@ msgid "Adds search paths for ``.cmake`` files."
 msgstr "``.cmake`` ファイルの検索パスを追加します。"
 
 msgid ""
-"You can specify multiple paths using ``:`` on UNIX or ``;`` on Windows to "
-"separate."
+"You can specify multiple path separating them with ``:`` on GNU/Linux or "
+"UNIX, ``;`` on Windows."
 msgstr ""
-"UNIXでは ``:`` で、Windowsでは ``;`` 区切ることで複数のパスを指定できます。"
+"GNU/LinuxまたはUNIXでは ``:`` で、Windowsでは ``;`` 区切ることで複数のパスを"
+"指定できます。"
 
 msgid ""
 "In case of using libraries installed via a package manager, you do not need "
@@ -242,10 +254,10 @@ msgstr ""
 
 msgid ""
 "Here is an example how to specify a ``.cmake`` file path for ``/tmp/local/"
-"lib/cmake/Arrow/ArrowConfig.cmake`` on UNIX."
+"lib/cmake/Arrow/ArrowConfig.cmake`` on GNU/Linux or UNIX."
 msgstr ""
-"以下はUNIXで ``/tmp/arrow/cmake/arrowConfig.cmake`` の ``.cmake`` ファイルを"
-"指定する例です。"
+"以下はGNU/LinuxまたはUNIXで ``/tmp/arrow/cmake/arrowConfig.cmake`` の ``."
+"cmake`` ファイルを指定する例です。"
 
 msgid ""
 "Here is an example how to specify a ``.cmake`` file path for ``C:\\arrow\\lib"
@@ -254,18 +266,24 @@ msgstr ""
 "以下はWindowsで ``C:\\arrow\\lib\\cmake\\Arrow\\ArrowConfig.cmake`` の ``."
 "cmake`` ファイルを指定する例です。"
 
+msgid "Build and install Groonga"
+msgstr "ビルドおよびインストール"
+
 msgid "Now, you can build Groonga."
-msgstr ""
+msgstr "これで、Groongaをビルドできるようになりました。"
 
 msgid "you can use ``make``."
-msgstr ""
+msgstr "``make`` が使用できます。"
 
 msgid "Here is a command line to build and install Groonga by ``make``."
 msgstr ""
+"以下は ``make`` を使ってGroongaをビルド、インストールするコマンドラインです。"
 
 msgid "You can use Visual Studio or ``cmake --build``."
-msgstr ""
+msgstr "Visual Studioか ``cmake --build`` を使用できます。"
 
 msgid ""
 "Here is a command line to build and install Groonga by ``cmake --build``."
 msgstr ""
+"以下は ``cmake --build`` を使ってGroongaをビルド、インストールするコマンドラ"
+"インです。"

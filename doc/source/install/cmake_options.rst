@@ -11,19 +11,17 @@ find the document for the specific environment from :doc:`/install`.
 Install depended software
 -------------------------
 
-Here is lists of depended software for UNIX and Windows.
-
-UNIX
-++++
+Here is lists of depended software for GNU/Linux, UNIX and Windows.
 
 TODO
+
+GNU/Linux or UNIX
++++++++++++++++++
 
   * `CMake <http://www.cmake.org/>`_
   * `Ruby <https://www.ruby-lang.org/>`_
   
     * Needed if you enable mruby support.
- 
-  * ...
 
 Windows
 +++++++
@@ -45,14 +43,14 @@ You can get the latest source from `packages.groonga.org <https://packages.groon
 Windows
 +++++++
 
-Download the latest zipped source from packages.groonga.org:
+Download the latest zipped source from packages.groonga.org.
 
   * https://packages.groonga.org/source/groonga/groonga-12.0.7.zip
 
 Then extract it.
 
-UNIX
-++++
+GNU/Linux or UNIX
++++++++++++++++++
 
 .. code-block:: console
 
@@ -102,7 +100,7 @@ You can check the default generator and available generators by ``cmake --help``
      Sublime Text 2 - Ninja       = Generates Sublime Text 2 project files.
      Sublime Text 2 - Unix Makefiles
 
-Here is an example how to specify ``Unix Makefiles`` on Unix.
+Here is an example how to specify ``Unix Makefiles`` on GNU/Linux or UNIX.
 
 .. code-block:: console
 
@@ -122,7 +120,7 @@ Specify a directory to install Groonga.
 
 The default is depending on the system, e.g. ``/usr/local`` or ``C:/Program Files/groonga``.
 
-Here is an example how to specify ``/tmp/local/`` as an install directory on UNIX.
+Here is an example how to specify ``/tmp/local/`` as an install directory on GNU/Linux or UNIX.
 
 .. code-block:: console
 
@@ -183,14 +181,14 @@ Here is an example how to enable the Apache Arrow support.
 
 Adds search paths for ``.cmake`` files.
 
-You can specify multiple paths using ``:`` on UNIX or ``;`` on Windows to separate.
+You can specify multiple path separating them with ``:`` on GNU/Linux or UNIX, ``;`` on Windows.
 
 In case of using libraries installed via a package manager, you do not need to specify this 
 parameter. It is because ``.cmake`` files for those libraries are in the default search paths of CMake.
 
 In case of using libraries installed in non-system directories such as ``/usr``, you need to specify ``.cmake`` file paths of those libraries by this parameter.
 
-Here is an example how to specify a ``.cmake`` file path for ``/tmp/local/lib/cmake/Arrow/ArrowConfig.cmake`` on UNIX.
+Here is an example how to specify a ``.cmake`` file path for ``/tmp/local/lib/cmake/Arrow/ArrowConfig.cmake`` on GNU/Linux or UNIX.
 
 .. code-block:: console
 
@@ -207,8 +205,8 @@ Build and install Groonga
 
 Now, you can build Groonga.
 
-UNIX
-++++
+GNU/Linux or UNIX
++++++++++++++++++
 
 you can use ``make``.
 
