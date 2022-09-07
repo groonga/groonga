@@ -39,12 +39,18 @@ You can check the default generator and available generators by ``cmake --help``
      Sublime Text 2 - Ninja       = Generates Sublime Text 2 project files.
      Sublime Text 2 - Unix Makefiles
 
-Here is an example how to specify ``Visual Studio 17 2022 x64`` as a generator.
+Here is an example how to specify ``Unix Makefiles`` on Unix.
+
+.. code-block:: console
+
+   $ cmake . -G "Unix Makefiles"
+
+Here is an example how to specify ``Visual Studio 17 2022 x64`` as a generator on Windows.
 You can specify a target platform name (architecture) with the ``-A`` option.
 
 .. code-block:: pwsh-session
 
-  > cmake . -G "Visual Studio 17 2022" -A x64
+   > cmake . -G "Visual Studio 17 2022" -A x64
 
 ``-DCMAKE_INSTALL_PREFIX``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -53,14 +59,20 @@ Specify a directory to install Groonga.
 
 The default is depending on the system, e.g. ``/usr/local`` or ``C:/Program Files/groonga``.
 
-Here is an example how to specify ``/tmp/local/`` as an install directory.
+Here is an example how to specify ``/tmp/local/`` as an install directory on UNIX.
 
 .. code-block:: console
 
-   $ cmake . -DCMAKE_INSTALL_PREFIX=/tmp/local/
+   $ cmake . -DCMAKE_INSTALL_PREFIX="/tmp/local/"
+
+Here is an example how to specify ``C:\Groonga`` as an install directory on Windows.
+
+.. code-block:: 
+
+   > cmake . -DCMAKE_INSTALL_PREFIX="C:\Groonga"
 
 ``-DGRN_WITH_MRUBY``
-^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^
 
 Enables mruby support.
 
@@ -115,8 +127,14 @@ parameter. It is because ``.cmake`` files for those libraries are in the default
 
 In case of using libraries installed in non-system directories such as ``/usr``, you need to specify ``.cmake`` file paths of those libraries by this parameter.
 
-Here is an example how to specify a ``.cmake`` file path for ``/tmp/arrow/cmake/arrowConfig.cmake``.
+Here is an example how to specify a ``.cmake`` file path for ``/tmp/local/lib/cmake/Arrow/ArrowConfig.cmake`` on UNIX.
 
 .. code-block:: console
 
-   $ cmake . -DCMAKE_PREFIX_PATH="/tmp/arrow/cmake"
+   $ cmake . -DCMAKE_PREFIX_PATH="/tmp/local/lib/cmake/Arrow"
+
+Here is an example how to specify a ``.cmake`` file path for ``C:\arrow\lib\cmake\Arrow\ArrowConfig.cmake`` on Windows.
+
+.. code-block:: pwsh-session
+
+   > cmake . -DCMAKE_PREFIX_PATH="C:\arrow\lib\cmake\Arrow"
