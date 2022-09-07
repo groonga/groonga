@@ -49,22 +49,12 @@ msgstr "GNU/LinuxまたはUNIX"
 msgid "`CMake <http://www.cmake.org/>`_"
 msgstr ""
 
-msgid "`Ruby <https://www.ruby-lang.org/>`_"
-msgstr ""
-
-msgid "Needed if you enable mruby support."
-msgstr "mrubyサポートを有効化する場合に必要です。"
-
 msgid "Windows"
 msgstr ""
 
 msgid ""
 "`Microsoft Visual Studio Community <https://visualstudio.microsoft.com/ja/vs/"
 "community>`_"
-msgstr ""
-
-msgid ""
-"`RubyInstaller for Windows <http://rubyinstaller.org/>`_ is recommended."
 msgstr ""
 
 msgid "Download source"

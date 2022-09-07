@@ -19,9 +19,6 @@ GNU/Linux or UNIX
 +++++++++++++++++
 
   * `CMake <http://www.cmake.org/>`_
-  * `Ruby <https://www.ruby-lang.org/>`_
-  
-    * Needed if you enable mruby support.
 
 Windows
 +++++++
@@ -29,16 +26,19 @@ Windows
   * `Microsoft Visual Studio Community
     <https://visualstudio.microsoft.com/ja/vs/community>`_
   * `CMake <http://www.cmake.org/>`_
-  * `Ruby <https://www.ruby-lang.org/>`_
-
-    * Needed if you enable mruby support.
-    * `RubyInstaller for Windows <http://rubyinstaller.org/>`_ is
-      recommended.
 
 Download source
 ---------------
 
 You can get the latest source from `packages.groonga.org <https://packages.groonga.org/source/groonga>`_.
+
+GNU/Linux or UNIX
++++++++++++++++++
+
+.. code-block:: console
+
+   $ wget https://packages.groonga.org/source/groonga/groonga-12.0.7.tar.gz
+   $ tar xvzf groonga-12.0.7.tar.gz
 
 Windows
 +++++++
@@ -48,14 +48,6 @@ Download the latest zipped source from packages.groonga.org.
   * https://packages.groonga.org/source/groonga/groonga-12.0.7.zip
 
 Then extract it.
-
-GNU/Linux or UNIX
-+++++++++++++++++
-
-.. code-block:: console
-
-   $ wget https://packages.groonga.org/source/groonga/groonga-12.0.7.tar.gz
-   $ tar xvzf groonga-12.0.7.tar.gz
 
 Run ``cmake``
 -------------
