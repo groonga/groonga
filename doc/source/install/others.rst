@@ -297,12 +297,12 @@ of those libraries by this parameter.
 You can use ``PKG_CONFIG_PATH`` as an environment variable, but we recommend
 to use it as a ``configure`` parameter because of the following reason.
 
-``configure.ac`` generates ``configure``. And when ``make`` detects that
-``configure.ac`` has changed, ``make`` automatically regenerates ``configure``
-and re-executes it. If you specify ``PKG_CONFIG_PATH`` as a ``configure`` 
-parameter, ``PKG_CONFIG_PATH`` is specified automatically when ``configure`` 
-is re-executed. On the other hand, if you specify ``PKG_CONFIG_PATH`` as an 
-environment variable, ``PKG_CONFIG_PATH`` is not specified automatically.
+``configure`` is generated from ``configure.ac`` by GNU Autotools. And when 
+``make`` detects that ``configure.ac`` has changed, GNU Autotools automatically 
+regenerates ``configure`` and re-executes it. If you specify ``PKG_CONFIG_PATH`` 
+as a ``configure`` parameter, ``PKG_CONFIG_PATH`` is specified automatically 
+when ``configure`` is re-executed. On the other hand, if you specify ``PKG_CONFIG_PATH``
+as an environment variable, ``PKG_CONFIG_PATH`` is not specified automatically.
 
 Here is an example how to specify a ``.pc`` file path for 
 ``/tmp/local/lib/pkgconfig/arrow.pc``.
