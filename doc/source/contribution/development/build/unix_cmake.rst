@@ -42,53 +42,15 @@ code from the repository::
 Run ``cmake``
 -------------
 
-You need to create ``Makefile`` for your environment.
-
-You can custom your build configuration by passing options to
-``cmake``.
-
-Here are recommended ``cmake`` options for developers::
-
-  % cmake . -DCMAKE_INSTALL_PREFIX=/tmp/local -DGRN_WITH_DEBUG=on -DGRN_WITH_MRUBY=on
-
-Here are descriptions of these options:
-
-``-DCMAKE_INSTALL_PREFIX=/tmp/local``
-
-    It specifies that you install your Groonga into temporary
-    directory. You can do "clean install" by removing
-    ``/tmp/local`` directory. It'll be useful for debugging install.
-
-``-DGRN_WITH_DEBUG=on``
-
-    It enables debug options for C/C++ compiler. It's useful for
-    debugging on debugger such as GDB and LLDB.
-
-``-DGRN_WITH_MRUBY=on``
-
-    It enables mruby support. The feature isn't enabled by default
-    but developers should enable the feature.
-
-.. seealso::
-
-  See :doc:`/install/cmake_options` for more details about CMake options.
+See :ref:`cmake_run`.
 
 Run ``make``
 ------------
 
-Now, you can build Groonga.
+See :ref:`cmake-build-and-install`.
 
-Here is a recommended ``make`` command line for developers::
-
-  % make -j8 > /dev/null
-
-``-j8`` decreases build time. It enables parallel build. If you have 8
-or more CPU cores, you can increase ``8`` to decreases more build
-time.
-
-You can just see only warning and error messages by ``>
-/dev/null``. Developers shouldn't add new warnings and errors in new
-commit.
+We recommend to add ``> /deb/null`` to ``make`` in order to see only warning and error messages.
+Developers shouldn't add new warnings and errors in new commit.
 
 See also
 --------

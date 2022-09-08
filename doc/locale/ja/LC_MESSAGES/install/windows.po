@@ -107,7 +107,7 @@ msgstr ""
 msgid "Download zipped source from packages.groonga.org:"
 msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-msgid "https://packages.groonga.org/source/groonga/groonga-12.0.1.zip"
+msgid "https://packages.groonga.org/source/groonga/groonga-12.0.7.zip"
 msgstr ""
 
 msgid "Move to the Groonga's source folder::"
@@ -122,11 +122,6 @@ msgstr ""
 "Groongaをビルドするためのものです。32-bit用のGroongaをビルドする場合は代わり"
 "に ``-G \"Visual Studio 12 2013\"`` パラメーターを指定してください::"
 
-msgid "See :doc:`/install/cmake_options` for more details about CMake options."
-msgstr ""
-"CMakeのオプションに関する詳細は :doc:`/install/cmake_options` を参照してくだ"
-"さい。"
-
 msgid "Build::"
 msgstr "ビルド::"
 
@@ -137,5 +132,5 @@ msgid ""
 "After the above steps, :doc:`/reference/executables/groonga` is found at ``c:"
 "\\Groonga\\bin\\groonga.exe``."
 msgstr ""
-"以上の手順で :doc:`/reference/executables/groonga` が ``c:"
-"\\Groonga\\bin\\groonga.exe`` にインストールされます。"
+"以上の手順で :doc:`/reference/executables/groonga` が ``c:\\Groonga\\bin"
+"\\groonga.exe`` にインストールされます。"

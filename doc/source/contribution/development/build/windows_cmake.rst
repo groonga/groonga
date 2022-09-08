@@ -46,49 +46,16 @@ code from the repository::
 Run ``cmake``
 -------------
 
-You need to create ``Makefile`` for your environment.
-
-You can custom your build configuration by passing options to
-``cmake``.
-
-You must to pass ``-G`` option. Here are available ``-G`` value:
-
-  * ``"Visual Studio 12 2013"``: For 32bit build.
-  * ``"Visual Studio 12 2013 Win64"``: For 64bit build.
-
-Here are recommended ``cmake`` options for developers::
-
-  > cmake . -G "Visual Studio 12 2013 Win64" -DCMAKE_INSTALL_PREFIX=C:\Groonga -DGRN_WITH_MRUBY=on
-
-Here are descriptions of these options:
-
-``-G "Visual Studio 12 2013 Win64"``
-
-``-DCMAKE_INSTALL_PREFIX=C:\Groonga``
-
-    It specifies ``C:\Groonga`` for the install folder of your Groonga.
-
-``-DGRN_WITH_MRUBY=on``
-
-    It enables mruby support. The feature isn't enabled by default
-    but developers should enable the feature.
-
-.. seealso::
-
-  See :doc:`/install/cmake_options` for more details about CMake options.
+See :ref:`cmake_run`.
 
 Build Groonga
 -------------
 
-Now, you can build Groonga.
+See :ref:`cmake-build-and-install`.
 
-You can use Visual Studio or ``cmake --build``.
-
-Here is a command line to build Groonga by ``cmake --build``::
-
-  > cmake --build . --config Debug
+Developers should specify ``--config Debug`` for debugging.
 
 See also
---------
+---------
 
   * :doc:`/contribution/development/test`

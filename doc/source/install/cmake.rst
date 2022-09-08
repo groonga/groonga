@@ -49,12 +49,16 @@ Download the latest zipped source from packages.groonga.org.
 
 Then extract it.
 
+.. _cmake_run:
+
 Run ``cmake``
 -------------
 
 You need to create ``Makefile`` for your environment.
 
 You can custom your build configuration by passing options to ``cmake``.
+
+.. _cmake-options:
 
 CMake options
 +++++++++++++
@@ -142,7 +146,20 @@ Here is an example how to enable the mruby support.
 
 .. code-block:: console
 
-   $ cmake . -DGRN_WITH_MRUBY=on
+   $ cmake . -DGRN_WITH_MRUBY=ON
+
+``-DGRN_WITH_DEBUG``
+^^^^^^^^^^^^^^^^^^^^
+
+Enables debug options for C/C++ compiler. It's useful for debugging on debugger such as GDB and LLDB.
+
+The default is ``OFF``.
+
+Here is an example how to enable debug options.
+
+.. code-block:: console
+
+   $ cmake . -DGRN_WITH_DEBUG=ON
 
 ``-DGRN_WITH_APACHE_ARROW``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -160,7 +177,7 @@ Here is an example how to enable the Apache Arrow support.
 
 .. code-block:: console
 
-   $ cmake . -DGRN_WITH_APACHE_ARROW=on
+   $ cmake . -DGRN_WITH_APACHE_ARROW=ON
 
 .. note::
 
@@ -192,6 +209,8 @@ Here is an example how to specify a ``.cmake`` file path for ``C:\arrow\lib\cmak
 
    > cmake . -DCMAKE_PREFIX_PATH="C:\arrow\lib\cmake\Arrow"
 
+.. _cmake-build-and-install:
+
 Build and install Groonga
 -------------------------
 
@@ -206,8 +225,18 @@ Here is a command line to build and install Groonga by ``make``.
 
 .. code-block:: console
 
-  $ make
+  $ make -j8
   $ sudo make install
+
+``-j8`` decreases build time. It enables parallel build. If you have 8
+or more CPU cores, you can increase ``8`` to decreases more build
+time.
+
+You can just see only warning and error messages by ``> /dev/null``.
+
+.. code-block:: console
+
+  $ make -j8 > /dev/null
 
 Windows
 +++++++
@@ -218,5 +247,7 @@ Here is a command line to build and install Groonga by ``cmake --build``.
 
 .. code-block:: pwsh-session
 
-   > cmake --build . --config release
+   > cmake --build . --config Release
    > cmake --build . --config Release --target Install
+
+You should specify ``--config Debug`` instead of ``--config Release`` when debugging.

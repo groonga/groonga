@@ -179,6 +179,19 @@ msgstr ""
 msgid "Here is an example how to enable the mruby support."
 msgstr "以下はmrubyサポートを有効にする例です。"
 
+msgid "``-DGRN_WITH_DEBUG``"
+msgstr ""
+
+msgid ""
+"Enables debug options for C/C++ compiler. It's useful for debugging on "
+"debugger such as GDB and LLDB."
+msgstr ""
+"C/C++コンパイラーのデバッグオプションを有効にします。GDBやLLDBなどのデバッ"
+"ガーでデバッグするときに便利です。"
+
+msgid "Here is an example how to enable debug options."
+msgstr "以下はデバッグオプションを有効にする例です。"
+
 msgid "``-DGRN_WITH_APACHE_ARROW``"
 msgstr ""
 
@@ -269,6 +282,19 @@ msgid "Here is a command line to build and install Groonga by ``make``."
 msgstr ""
 "以下は ``make`` を使ってGroongaをビルド、インストールするコマンドラインです。"
 
+msgid ""
+"``-j8`` decreases build time. It enables parallel build. If you have 8 or "
+"more CPU cores, you can increase ``8`` to decreases more build time."
+msgstr ""
+"``-j8`` はビルド時間を短縮します。並列ビルドが有効になっているためです。も"
+"し、CPUコアが8よりもたくさんあるのであれば、``8`` をもっと増やすとさらにビル"
+"ドタイムを短縮できるでしょう。"
+
+msgid "You can just see only warning and error messages by ``> /dev/null``."
+msgstr ""
+"``> /dev/null`` をつけることで警告メッセージとエラーメッセージだけが見えるよ"
+"うになります。"
+
 msgid "You can use Visual Studio or ``cmake --build``."
 msgstr "Visual Studioか ``cmake --build`` を使用できます。"
 
@@ -277,3 +303,10 @@ msgid ""
 msgstr ""
 "以下は ``cmake --build`` を使ってGroongaをビルド、インストールするコマンドラ"
 "インです。"
+
+msgid ""
+"You should specify ``--config Debug`` instead of ``--config Release`` when "
+"debugging."
+msgstr ""
+"デバッグをする場合は、 ``--config Release`` の代わりに ``--config Debug`` を"
+"指定してください。"

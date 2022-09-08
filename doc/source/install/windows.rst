@@ -68,7 +68,7 @@ parameter instead::
 
 .. seealso::
 
-  See :doc:`/install/cmake_options` for more details about CMake options.
+  See :ref:`cmake-options` for more details about CMake options.
 
 Build::
 
