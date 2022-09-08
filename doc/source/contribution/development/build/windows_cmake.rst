@@ -14,8 +14,8 @@ Unix is \*BSD, Solaris, OS X and so on.
 Install depended software
 -------------------------
 
-  * `Microsoft Visual Studio Express 2013 for Windows Desktop
-    <https://www.visualstudio.com/downloads/#d-2013-express>`_
+  * `Microsoft Visual Studio Community
+    <https://visualstudio.microsoft.com/vs/community/>`_
   * `CMake <http://www.cmake.org/>`_
   * `Ruby <https://www.ruby-lang.org/>`_
 

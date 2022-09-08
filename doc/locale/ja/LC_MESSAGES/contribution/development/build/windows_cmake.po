@@ -41,8 +41,8 @@ msgid "Install depended software"
 msgstr "必要なソフトウェアのインストール"
 
 msgid ""
-"`Microsoft Visual Studio Express 2013 for Windows Desktop <https://www."
-"visualstudio.com/downloads/#d-2013-express>`_"
+"`Microsoft Visual Studio Community <https://visualstudio.microsoft.com/vs/"
+"community/>`_"
 msgstr ""
 
 msgid "`CMake <http://www.cmake.org/>`_"

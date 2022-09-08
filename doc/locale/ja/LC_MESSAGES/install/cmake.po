@@ -53,9 +53,11 @@ msgid "Windows"
 msgstr ""
 
 msgid ""
-"`Microsoft Visual Studio Community <https://visualstudio.microsoft.com/ja/vs/"
-"community>`_"
+"`Microsoft Visual Studio Community <https://visualstudio.microsoft.com/vs/"
+"community/>`_"
 msgstr ""
+"`Microsoft Visual Studio Community <https://visualstudio.microsoft.com/ja/vs/"
+"community/>`_"
 
 msgid "Download source"
 msgstr "ソースコードのダウンロード"

@@ -89,48 +89,8 @@ msgstr ""
 msgid "Build from source"
 msgstr "ソースからビルド"
 
-msgid ""
-"First, you need to install required tools for building Groonga on Windows. "
-"Here are required tools:"
-msgstr ""
-"まずWindows上でGroongaをビルドするために必須のツールをインストールします。以"
-"下が必須のツールです。"
+msgid "You can build Groonga from the source with CMake."
+msgstr "CMake を使ってソースコードからビルドすることができます。"
 
-msgid ""
-"`Microsoft Visual Studio Express 2013 for Windows Desktop <https://www."
-"visualstudio.com/downloads/#d-2013-express>`_"
-msgstr ""
-
-msgid "`CMake <http://www.cmake.org/>`_"
-msgstr ""
-
-msgid "Download zipped source from packages.groonga.org:"
-msgstr "zipアーカイブをpackages.groonga.orgからダウンロードしてください。"
-
-msgid "https://packages.groonga.org/source/groonga/groonga-12.0.7.zip"
-msgstr ""
-
-msgid "Move to the Groonga's source folder::"
-msgstr "Groongaのソースフォルダへと移動します::"
-
-msgid ""
-"Configure by ``cmake``. The following commnad line is for 64-bit version. To "
-"build 32-bit version, use ``-G \"Visual Studio 12 2013\"`` parameter "
-"instead::"
-msgstr ""
-"``cmake`` でビルドオプションを設定します。以下のコマンドラインは64-bit用の"
-"Groongaをビルドするためのものです。32-bit用のGroongaをビルドする場合は代わり"
-"に ``-G \"Visual Studio 12 2013\"`` パラメーターを指定してください::"
-
-msgid "Build::"
-msgstr "ビルド::"
-
-msgid "Install::"
-msgstr "インストール::"
-
-msgid ""
-"After the above steps, :doc:`/reference/executables/groonga` is found at ``c:"
-"\\Groonga\\bin\\groonga.exe``."
-msgstr ""
-"以上の手順で :doc:`/reference/executables/groonga` が ``c:\\Groonga\\bin"
-"\\groonga.exe`` にインストールされます。"
+msgid "See :doc:`/install/cmake`."
+msgstr ":doc:`/install/cmake` を参照してください。"

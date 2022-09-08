@@ -24,7 +24,7 @@ Windows
 +++++++
 
   * `Microsoft Visual Studio Community
-    <https://visualstudio.microsoft.com/ja/vs/community>`_
+    <https://visualstudio.microsoft.com/vs/community/>`_
   * `CMake <http://www.cmake.org/>`_
 
 Download source
