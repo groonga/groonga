@@ -56,6 +56,6 @@ See :ref:`cmake-build-and-install`.
 Developers should specify ``--config Debug`` for debugging.
 
 See also
----------
+--------
 
   * :doc:`/contribution/development/test`
