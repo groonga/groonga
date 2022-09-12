@@ -92,8 +92,7 @@ doc/locale/${LANGUAGE}/LC_MESSAGES. (Please replace
 How to edit .edit
 -----------------
 
-.edit is a alias of .po, so .edit files are actually .po files. 
-.edit files are for editing and .po files are for versioning.
+Both of ``.edit`` files and ``.po`` files are `PO files <https://www.gnu.org/software/gettext/manual/html_node/PO-Files.html>`__. ``.edit`` files are for editing and ``.po`` files are for versioning.
 
 In order to edit .edit files, there are some tools to edit.
 .edit files are just text, so you can use your favorite editor.
@@ -118,8 +117,8 @@ gted
 How to update .po files
 -----------------------
 
-After editing .edit files, you can update .po files by running `make` on
-doc/locale/${LANGUAGE}/LC_MESSAGES. (Please replace
+After editing .edit files, you can update .po files by running ``make`` on
+``doc/locale/${LANGUAGE}/LC_MESSAGES``. (Please replace
 `${LANGUAGE}` with your language code such as 'ja'.)::
 
   % cd doc/locale/ja/LC_MESSAGES
