@@ -242,6 +242,75 @@ files::
 
 Shows all ``configure`` options.
 
+``--enable-apache-arrow`` and ``--disable-apache-arrow``
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Enables or disables Apache Arrow support.
+
+In addition to using Apache Arrow IPC streaming format output, you can also use
+multithreading processing that is used in :ref:`select-n-workers` and
+:doc:`/reference/functions/query_parallel_or` with the Apache Arrow support.
+
+In case of not specifing ``--enable-apache-arrow`` nor ``--disable-apache-arrow``, the Apache Arrow support is enabled if Apache Arrow 
+is installed on the system, otherwise disabled. This default behaviour is same as to specify ``--enable-apache-arrow=auto``.
+
+When you specify ``--enable-apache-arrow`` explicitly, you must install Apache
+Arrow on the system beforehand.
+
+You can install Apache Arrow following to `the official installation procedure <https://arrow.apache.org/install/>`_.
+Groonga requires ``libarrow-dev`` on a Debian based system or ``arrow-devel`` on a Red Hat Enterprise Linux based system.
+
+When you specify ``--disable-apache-arrow`` explicitly, Groonga disables the Apache Arrow 
+support even if Apache Arrow is installed on the system.
+
+Here is an example how to enable the Apache Arrow support explicitly.
+
+.. code-block:: console
+
+   % ./configure --enable-apache-arrow
+
+.. note::
+
+   If you install Apache Arrow into a non-standard directory, you need to specify the :ref:`install-others-configure-pkg-config-path` option.
+
+.. _install-others-configure-pkg-config-path:
+
+``PKG_CONFIG_PATH=PATHS``
++++++++++++++++++++++++++
+
+Adds search paths of ``.pc`` files for ``pkg-config``.
+
+You can specify multiple paths using ``:`` to separating.
+
+Groonga uses ``pkg-config`` to find external libraries.
+
+``pkg-config`` is a tool that collects flags and paths required for using
+external libraries from ``.pc`` files.
+
+When using libraries installed via a package manager, you do not need
+to specify this parameter because ``.pc`` files for the libraries are in
+the default search paths of ``pkg-config``.
+
+When using manual built libraries, you need to specify ``.pc`` file paths 
+of those libraries by this parameter.
+
+You can use ``PKG_CONFIG_PATH`` as an environment variable, but we recommend
+to use it as a ``configure`` parameter because of the following reason.
+
+``configure`` is generated from ``configure.ac`` by GNU Autotools. And when 
+``make`` detects that ``configure.ac`` has changed, GNU Autotools automatically 
+regenerates ``configure`` and re-executes it. If you specify ``PKG_CONFIG_PATH`` 
+as a ``configure`` parameter, ``PKG_CONFIG_PATH`` is specified automatically 
+when ``configure`` is re-executed. On the other hand, if you specify ``PKG_CONFIG_PATH``
+as an environment variable, ``PKG_CONFIG_PATH`` is not specified automatically.
+
+Here is an example how to specify a ``.pc`` file path for 
+``/tmp/local/lib/pkgconfig/arrow.pc``.
+
+.. code-block:: console
+
+   % ./configure PKG_CONFIG_PATH=/tmp/local/lib/pkgconfig/
+
 ``make``
 ^^^^^^^^
 
