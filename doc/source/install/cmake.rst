@@ -223,14 +223,11 @@ Here is a command line to build and install Groonga by ``make``.
 
 .. code-block:: console
 
-   $ make -j$(nproc || PATH="/sbin:$PATH" sysctl -n hw.ncpu)
+   $ make -j$(nproc || PATH="/sbin:$PATH" sysctl -n hw.ncpu) > /dev/null
    $ sudo make install
 
-You can just see only warning and error messages by ``> /dev/null``.
-
-.. code-block:: console
-
-   $ make -j$(nproc || PATH="/sbin:$PATH" sysctl -n hw.ncpu) > /dev/null
+We recommend to add ``> /deb/null`` to ``make`` in order to see only warning and error messages.
+Developers shouldn't add new warnings and errors in new commit.
 
 Windows
 +++++++

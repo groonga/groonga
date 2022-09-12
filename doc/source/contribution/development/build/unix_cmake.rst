@@ -49,9 +49,6 @@ Run ``make``
 
 See :ref:`cmake-build-and-install`.
 
-We recommend to add ``> /deb/null`` to ``make`` in order to see only warning and error messages.
-Developers shouldn't add new warnings and errors in new commit.
-
 See also
 --------
 

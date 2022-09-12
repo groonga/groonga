@@ -325,6 +325,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_keys_multiple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_output_columns_multiple_group_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_equal.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_less_than.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/limit_negative.log \
@@ -944,6 +945,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/almalinux.rst \
 	$(top_srcdir)/doc/source/install/amazon_linux.rst \
 	$(top_srcdir)/doc/source/install/centos.rst \
+	$(top_srcdir)/doc/source/install/cmake.rst \
 	$(top_srcdir)/doc/source/install/debian.rst \
 	$(top_srcdir)/doc/source/install/docker.rst \
 	$(top_srcdir)/doc/source/install/fedora.rst \
@@ -953,7 +955,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/solaris.rst \
 	$(top_srcdir)/doc/source/install/ubuntu.rst \
 	$(top_srcdir)/doc/source/install/windows.rst \
-	$(top_srcdir)/doc/source/install/cmake.rst \
 	$(top_srcdir)/doc/source/limitations.rst \
 	$(top_srcdir)/doc/source/news.rst \
 	$(top_srcdir)/doc/source/news/0.x.rst \
@@ -1547,6 +1548,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/drilldowns_label_keys_multiple.log \
 	source/example/reference/commands/select/drilldowns_label_output_columns_multiple_group_key.log \
 	source/example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log \
+	source/example/reference/commands/select/drilldowns_label_table.log \
 	source/example/reference/commands/select/filter_equal.log \
 	source/example/reference/commands/select/filter_less_than.log \
 	source/example/reference/commands/select/limit_negative.log \
@@ -2166,6 +2168,7 @@ source_files_relative_from_doc_dir = \
 	source/install/almalinux.rst \
 	source/install/amazon_linux.rst \
 	source/install/centos.rst \
+	source/install/cmake.rst \
 	source/install/debian.rst \
 	source/install/docker.rst \
 	source/install/fedora.rst \
@@ -2175,7 +2178,6 @@ source_files_relative_from_doc_dir = \
 	source/install/solaris.rst \
 	source/install/ubuntu.rst \
 	source/install/windows.rst \
-	source/install/cmake.rst \
 	source/limitations.rst \
 	source/news.rst \
 	source/news/0.x.rst \
@@ -2471,6 +2473,7 @@ po_files = \
 	install/almalinux.po \
 	install/amazon_linux.po \
 	install/centos.po \
+	install/cmake.po \
 	install/debian.po \
 	install/docker.po \
 	install/fedora.po \
@@ -2479,7 +2482,6 @@ po_files = \
 	install/solaris.po \
 	install/ubuntu.po \
 	install/windows.po \
-	install/cmake.po \
 	limitations.po \
 	news.po \
 	news/0.x.po \
@@ -2773,6 +2775,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/almalinux.po \
 	LC_MESSAGES/install/amazon_linux.po \
 	LC_MESSAGES/install/centos.po \
+	LC_MESSAGES/install/cmake.po \
 	LC_MESSAGES/install/debian.po \
 	LC_MESSAGES/install/docker.po \
 	LC_MESSAGES/install/fedora.po \
@@ -2781,7 +2784,6 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/solaris.po \
 	LC_MESSAGES/install/ubuntu.po \
 	LC_MESSAGES/install/windows.po \
-	LC_MESSAGES/install/cmake.po \
 	LC_MESSAGES/limitations.po \
 	LC_MESSAGES/news.po \
 	LC_MESSAGES/news/0.x.po \
@@ -3075,6 +3077,7 @@ edit_po_files = \
 	install/almalinux.edit \
 	install/amazon_linux.edit \
 	install/centos.edit \
+	install/cmake.edit \
 	install/debian.edit \
 	install/docker.edit \
 	install/fedora.edit \
@@ -3083,7 +3086,6 @@ edit_po_files = \
 	install/solaris.edit \
 	install/ubuntu.edit \
 	install/windows.edit \
-	install/cmake.edit \
 	limitations.edit \
 	news.edit \
 	news/0.x.edit \
@@ -3377,6 +3379,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/almalinux.edit \
 	LC_MESSAGES/install/amazon_linux.edit \
 	LC_MESSAGES/install/centos.edit \
+	LC_MESSAGES/install/cmake.edit \
 	LC_MESSAGES/install/debian.edit \
 	LC_MESSAGES/install/docker.edit \
 	LC_MESSAGES/install/fedora.edit \
@@ -3385,7 +3388,6 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/solaris.edit \
 	LC_MESSAGES/install/ubuntu.edit \
 	LC_MESSAGES/install/windows.edit \
-	LC_MESSAGES/install/cmake.edit \
 	LC_MESSAGES/limitations.edit \
 	LC_MESSAGES/news.edit \
 	LC_MESSAGES/news/0.x.edit \
@@ -3679,6 +3681,7 @@ mo_files = \
 	install/almalinux.mo \
 	install/amazon_linux.mo \
 	install/centos.mo \
+	install/cmake.mo \
 	install/debian.mo \
 	install/docker.mo \
 	install/fedora.mo \
@@ -3687,7 +3690,6 @@ mo_files = \
 	install/solaris.mo \
 	install/ubuntu.mo \
 	install/windows.mo \
-	install/cmake.mo \
 	limitations.mo \
 	news.mo \
 	news/0.x.mo \
@@ -3981,6 +3983,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/almalinux.mo \
 	LC_MESSAGES/install/amazon_linux.mo \
 	LC_MESSAGES/install/centos.mo \
+	LC_MESSAGES/install/cmake.mo \
 	LC_MESSAGES/install/debian.mo \
 	LC_MESSAGES/install/docker.mo \
 	LC_MESSAGES/install/fedora.mo \
@@ -3989,7 +3992,6 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/solaris.mo \
 	LC_MESSAGES/install/ubuntu.mo \
 	LC_MESSAGES/install/windows.mo \
-	LC_MESSAGES/install/cmake.mo \
 	LC_MESSAGES/limitations.mo \
 	LC_MESSAGES/news.mo \
 	LC_MESSAGES/news/0.x.mo \
@@ -4278,16 +4280,23 @@ html_files_relative_from_locale_dir = \
 	html/_static/switcher.json \
 	html/_static/underscore-1.13.1.js \
 	html/_static/underscore.js \
-	html/_static/vendor/fontawesome/6.1.2/LICENSE.txt \
-	html/_static/vendor/fontawesome/6.1.2/css/all.min.css \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.ttf \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2 \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.ttf \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2 \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.ttf \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2 \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-v4compatibility.ttf \
-	html/_static/vendor/fontawesome/6.1.2/webfonts/fa-v4compatibility.woff2 \
+	html/_static/vendor/fontawesome/5.13.0/LICENSE.txt \
+	html/_static/vendor/fontawesome/5.13.0/css/all.min.css \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.eot \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.svg \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.ttf \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2 \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-regular-400.eot \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-regular-400.svg \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-regular-400.ttf \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-regular-400.woff \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-regular-400.woff2 \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.eot \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.svg \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.ttf \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff \
+	html/_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2 \
 	html/_static/webpack-macros.html \
 	html/characteristic.html \
 	html/client.html \
@@ -4317,6 +4326,7 @@ html_files_relative_from_locale_dir = \
 	html/install/almalinux.html \
 	html/install/amazon_linux.html \
 	html/install/centos.html \
+	html/install/cmake.html \
 	html/install/debian.html \
 	html/install/docker.html \
 	html/install/fedora.html \
@@ -4325,7 +4335,6 @@ html_files_relative_from_locale_dir = \
 	html/install/solaris.html \
 	html/install/ubuntu.html \
 	html/install/windows.html \
-	html/install/cmake.html \
 	html/limitations.html \
 	html/news.html \
 	html/news/0.x.html \

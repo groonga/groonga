@@ -97,15 +97,6 @@ msgstr "``make`` を実行"
 msgid "See :ref:`cmake-build-and-install`."
 msgstr ":ref:`cmake-build-and-install` を参照してください。"
 
-msgid ""
-"We recommend to add ``> /deb/null`` to ``make`` in order to see only warning "
-"and error messages. Developers shouldn't add new warnings and errors in new "
-"commit."
-msgstr ""
-"警告メッセージとエラーメッセージだけが見えるように ``make`` 時に ``> /dev/"
-"null`` をつけることを推奨します。開発者は新しいコミットで警告メッセージもエ"
-"ラーメッセージも増やすべきではありません。"
-
 msgid "See also"
 msgstr "参考"
 
