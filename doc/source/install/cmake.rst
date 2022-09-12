@@ -1,3 +1,5 @@
+:orphan:
+
 How to build Groonga with CMake
 ===============================
 

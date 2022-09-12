@@ -26,5 +26,4 @@ size data.
    install/fedora
    install/solaris
    install/docker
-   install/cmake
    install/others
