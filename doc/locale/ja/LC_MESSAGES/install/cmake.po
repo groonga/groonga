@@ -37,7 +37,7 @@ msgstr ""
 msgid "Install depended software"
 msgstr "必要なソフトウェアのインストール"
 
-msgid "Here is lists of depended software for GNU/Linux, UNIX and Windows."
+msgid "Here is depended software for GNU/Linux, UNIX and Windows."
 msgstr "以下は、GNU/Linux、UNIX、Windows向けの必要なソフトウェアの一覧です。"
 
 msgid "TODO"
@@ -82,8 +82,10 @@ msgstr "その後、アーカイブを展開します。"
 msgid "Run ``cmake``"
 msgstr "``cmake`` を実行"
 
-msgid "You need to create ``Makefile`` for your environment."
-msgstr "あなたの環境用の ``Makefile`` を作る必要があります。"
+msgid ""
+"You need to generate build files such as ``Makefile`` for your environment."
+msgstr ""
+"``Makefile`` のような、あなたの環境用のビルド用ファイルを作る必要があります。"
 
 msgid ""
 "You can custom your build configuration by passing options to ``cmake``."
@@ -277,20 +279,12 @@ msgstr "ビルドおよびインストール"
 msgid "Now, you can build Groonga."
 msgstr "これで、Groongaをビルドできるようになりました。"
 
-msgid "you can use ``make``."
+msgid "You can use ``make``."
 msgstr "``make`` が使用できます。"
 
 msgid "Here is a command line to build and install Groonga by ``make``."
 msgstr ""
 "以下は ``make`` を使ってGroongaをビルド、インストールするコマンドラインです。"
-
-msgid ""
-"``-j8`` decreases build time. It enables parallel build. If you have 8 or "
-"more CPU cores, you can increase ``8`` to decreases more build time."
-msgstr ""
-"``-j8`` はビルド時間を短縮します。並列ビルドが有効になっているためです。も"
-"し、CPUコアが8よりもたくさんあるのであれば、``8`` をもっと増やすとさらにビル"
-"ドタイムを短縮できるでしょう。"
 
 msgid "You can just see only warning and error messages by ``> /dev/null``."
 msgstr ""

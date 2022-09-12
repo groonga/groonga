@@ -9,7 +9,7 @@ find the document for the specific environment from :doc:`/install`.
 Install depended software
 -------------------------
 
-Here is lists of depended software for GNU/Linux, UNIX and Windows.
+Here is depended software for GNU/Linux, UNIX and Windows.
 
 TODO
 
@@ -52,7 +52,7 @@ Then extract it.
 Run ``cmake``
 -------------
 
-You need to create ``Makefile`` for your environment.
+You need to generate build files such as ``Makefile`` for your environment.
 
 You can custom your build configuration by passing options to ``cmake``.
 
@@ -199,13 +199,13 @@ Here is an example how to specify a ``.cmake`` file path for ``/tmp/local/lib/cm
 
 .. code-block:: console
 
-   $ cmake . -DCMAKE_PREFIX_PATH="/tmp/local/lib/cmake/Arrow"
+   $ cmake . -DCMAKE_PREFIX_PATH="/tmp/local"
 
 Here is an example how to specify a ``.cmake`` file path for ``C:\arrow\lib\cmake\Arrow\ArrowConfig.cmake`` on Windows.
 
 .. code-block:: pwsh-session
 
-   > cmake . -DCMAKE_PREFIX_PATH="C:\arrow\lib\cmake\Arrow"
+   > cmake . -DCMAKE_PREFIX_PATH="C:\arrow"
 
 .. _cmake-build-and-install:
 
@@ -217,24 +217,20 @@ Now, you can build Groonga.
 GNU/Linux or UNIX
 +++++++++++++++++
 
-you can use ``make``.
+You can use ``make``.
 
 Here is a command line to build and install Groonga by ``make``.
 
 .. code-block:: console
 
-  $ make -j8
-  $ sudo make install
-
-``-j8`` decreases build time. It enables parallel build. If you have 8
-or more CPU cores, you can increase ``8`` to decreases more build
-time.
+   $ make -j$(nproc || PATH="/sbin:$PATH" sysctl -n hw.ncpu)
+   $ sudo make install
 
 You can just see only warning and error messages by ``> /dev/null``.
 
 .. code-block:: console
 
-  $ make -j8 > /dev/null
+   $ make -j$(nproc || PATH="/sbin:$PATH" sysctl -n hw.ncpu) > /dev/null
 
 Windows
 +++++++
