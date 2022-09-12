@@ -26,9 +26,9 @@ Here is a translation flow:
 
 1. Install Sphinx, if it is not installed.
 2. Clone Groonga repository.
-3. Update .edit files
-4. Edit .edit files
-5. Update .po files.
+3. Update ``.edit`` files
+4. Edit ``.edit`` files
+5. Update ``.po`` files.
 6. Generate HTML files.
 7. Confirm HTML output.
 8. Repeat 3.-7. until you finish to translate.
@@ -79,50 +79,50 @@ The above steps are just needed at the first setup.
 If you have troubles on the above steps, you can use source
 files available on https://packages.groonga.org/source/groonga/ .
 
-How to update .edit files
--------------------------
+How to update ``.edit`` files
+-----------------------------
 
-You can update .edit files by running ``make`` on
+You can update ``.edit`` files by running ``make`` on
 ``doc/locale/${LANGUAGE}/LC_MESSAGES``. (Please replace
 `${LANGUAGE}` with your language code such as 'ja'.)::
 
   % cd doc/locale/ja/LC_MESSAGES
   % make
 
-How to edit .edit
------------------
+How to edit ``.edit``
+---------------------
 
 Both of ``.edit`` files and ``.po`` files are `PO files <https://www.gnu.org/software/gettext/manual/html_node/PO-Files.html>`_. 
 ``.edit`` files are for editing and ``.po`` files are for versioning.
 
-In order to edit .edit files, there are some tools to edit.
-.edit files are just text, so you can use your favorite editor.
+In order to edit ``.edit`` files, there are some tools to edit.
+``.edit`` files are just text, so you can use your favorite editor.
 
-Here is a list of editors specialized for editing .po files.
-You can use these editors to edit .edit files because they are actually 
-.po files.
+Here is a list of editors specialized for editing ``.po`` files.
+You can use these editors to edit ``.edit`` files because they are actually 
+``.po`` files.
 
 Emacs's po-mode_
   It is bundled in gettext.
 
 Poedit_
-  It is a .po editor and works on many platform.
+  It is a ``.po`` editor and works on many platform.
 
 gted
-  It is also a .po editor and is implemented as Eclipse plugin.
+  It is also a ``.po`` editor and is implemented as Eclipse plugin.
 
 .. _po-mode: http://www.gnu.org/s/hello/manual/gettext/PO-Mode.html
 .. _Poedit: http://www.poedit.net/
 .. _gted: http://www.gted.org/
 
-How to update .po files
------------------------
+How to update ``.po`` files
+---------------------------
 
-After editing .edit files, you can update .po files by running ``make`` on
+After editing ``.edit`` files, you can update ``.po`` files by running ``make`` on
 ``doc/locale/${LANGUAGE}/LC_MESSAGES``. (Please replace
 `${LANGUAGE}` with your language code such as 'ja'.)
 
-..code-block ::
+.. code-block ::
 
    % cd doc/locale/ja/LC_MESSAGES
    % make
@@ -130,7 +130,7 @@ After editing .edit files, you can update .po files by running ``make`` on
 How to generate HTML files
 --------------------------
 
-You can generate HTML files with updated .po files by
+You can generate HTML files with updated ``.po`` files by
 running `make html` on doc/locale/${LANGUAGE}. (Please
 substitute `${LANGUAGE}` with your language code such as
 'ja'.)::
@@ -163,7 +163,7 @@ How to send your works
 ----------------------
 
 We can receive your works via pull request on GitHub or
-E-mail attachment patch or .po files themselves.
+E-mail attachment patch or ``.po`` files themselves.
 
 How to send pull request
 ++++++++++++++++++++++++
@@ -194,8 +194,8 @@ directory. Please send those files to us!
 
 .. seealso:: :doc:`/community` describes our contact information.
 
-How to send .po files
-+++++++++++++++++++++
+How to send ``.po`` files
++++++++++++++++++++++++++
 
 Please archive doc/locale/${LANGUAGE}/LC_MESSAGES/ (Please
 substitute `${LANGUAGE}` with your language code such as
