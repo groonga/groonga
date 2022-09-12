@@ -42,7 +42,7 @@ code from the repository::
 Run ``cmake``
 -------------
 
-See :ref:`cmake_run`.
+See :ref:`cmake-run`.
 
 Run ``make``
 ------------

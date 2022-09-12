@@ -96,8 +96,8 @@ msgstr ""
 msgid "Run ``cmake``"
 msgstr "``cmake`` を実行"
 
-msgid "See :ref:`cmake_run`."
-msgstr ":ref:`cmake_run` を参照してください。"
+msgid "See :ref:`cmake-run`."
+msgstr ":ref:`cmake-run` を参照してください。"
 
 msgid "Build Groonga"
 msgstr "Groongaをビルド"

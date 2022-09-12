@@ -46,7 +46,7 @@ code from the repository::
 Run ``cmake``
 -------------
 
-See :ref:`cmake_run`.
+See :ref:`cmake-run`.
 
 Build Groonga
 -------------

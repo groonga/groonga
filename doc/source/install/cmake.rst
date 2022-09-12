@@ -1,5 +1,3 @@
-.. -*- rst -*-
-
 How to build Groonga with CMake
 ===============================
 
@@ -49,7 +47,7 @@ Download the latest zipped source from packages.groonga.org.
 
 Then extract it.
 
-.. _cmake_run:
+.. _cmake-run:
 
 Run ``cmake``
 -------------
