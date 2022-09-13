@@ -43,36 +43,6 @@ You can find :doc:`/reference/executables/groonga` in ``bin`` folder.
 Build from source
 -----------------
 
-First, you need to install required tools for building Groonga on
-Windows. Here are required tools:
+You can build Groonga from the source with CMake.
 
-  * `Microsoft Visual Studio Express 2013 for Windows Desktop
-    <https://www.visualstudio.com/downloads/#d-2013-express>`_
-  * `CMake <http://www.cmake.org/>`_
-
-Download zipped source from packages.groonga.org:
-
-  * https://packages.groonga.org/source/groonga/groonga-12.0.7.zip
-
-Then extract it.
-
-Move to the Groonga's source folder::
-
-  > cd c:\Users\%USERNAME%\Downloads\groonga-12.0.7
-
-Configure by ``cmake``. The following commnad line is for 64-bit
-version. To build 32-bit version, use ``-G "Visual Studio 12 2013"``
-parameter instead::
-
-  groonga-12.0.7> cmake . -G "Visual Studio 12 2013 Win64" -DCMAKE_INSTALL_PREFIX=C:\Groonga
-
-Build::
-
-  groonga-12.0.7> cmake --build . --config Release
-
-Install::
-
-  groonga-12.0.7> cmake --build . --config Release --target Install
-
-After the above steps, :doc:`/reference/executables/groonga` is found at
-``c:\Groonga\bin\groonga.exe``.
+See :doc:`/install/cmake`.

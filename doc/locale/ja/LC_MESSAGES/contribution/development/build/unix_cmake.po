@@ -88,76 +88,14 @@ msgstr ""
 msgid "Run ``cmake``"
 msgstr "``cmake`` を実行"
 
-msgid "You need to create ``Makefile`` for your environment."
-msgstr "あなたの環境用の ``Makefile`` を作る必要があります。"
-
-msgid ""
-"You can custom your build configuration by passing options to ``cmake``."
-msgstr ""
-"``cmake`` へオプションを渡してビルドパラメーターをカスタマイズできます。"
-
-msgid "Here are recommended ``cmake`` options for developers::"
-msgstr "開発者向けのオススメ ``cmake`` オプションは次の通りです::"
-
-msgid "Here are descriptions of these options:"
-msgstr "それぞれのオプションの説明です。"
-
-msgid "``-DCMAKE_INSTALL_PREFIX=/tmp/local``"
-msgstr ""
-
-msgid ""
-"It specifies that you install your Groonga into temporary directory. You can "
-"do \"clean install\" by removing ``/tmp/local`` directory. It'll be useful "
-"for debugging install."
-msgstr ""
-"あなたのGroongaを一時ディレクトリーにインストールように指定しています。 ``/"
-"tmp/local`` ディレクトリーを削除することで「クリーンインストール」を試すこと"
-"ができます。インストール処理をデバッグするときに便利です。"
-
-msgid "``-DGRN_WITH_DEBUG=on``"
-msgstr ""
-
-msgid ""
-"It enables debug options for C/C++ compiler. It's useful for debugging on "
-"debugger such as GDB and LLDB."
-msgstr ""
-"C/C++コンパイラーのデバッグオプションを有効にします。GDBやLLDBなどのデバッ"
-"ガーでデバッグするときに便利です。"
-
-msgid "``-DGRN_WITH_MRUBY=on``"
-msgstr ""
-
-msgid ""
-"It enables mruby support. The feature isn't enabled by default but "
-"developers should enable the feature."
-msgstr ""
-"mrubyサポートを有効にします。この機能はデフォルトで無効になっていますが、開発"
-"者はこの機能を有効にするべきです。"
+msgid "See :ref:`cmake-run`."
+msgstr ":ref:`cmake-run` を参照してください。"
 
 msgid "Run ``make``"
 msgstr "``make`` を実行"
 
-msgid "Now, you can build Groonga."
-msgstr "これでGroongaをビルドできるようになりました。"
-
-msgid "Here is a recommended ``make`` command line for developers::"
-msgstr "開発者向けのオススメの ``make`` のコマンドラインです::"
-
-msgid ""
-"``-j8`` decreases build time. It enables parallel build. If you have 8 or "
-"more CPU cores, you can increase ``8`` to decreases more build time."
-msgstr ""
-"``-j8`` はビルド時間を短縮します。並列ビルドが有効になっているためです。も"
-"し、CPUコアが8よりもたくさんあるのであれば、 ``8`` をもっと増やすとさらにビル"
-"ドタイムを短縮できるでしょう。"
-
-msgid ""
-"You can just see only warning and error messages by ``> /dev/null``. "
-"Developers shouldn't add new warnings and errors in new commit."
-msgstr ""
-"``> /dev/null`` をつけることで警告メッセージとエラーメッセージだけが見えるよ"
-"うになります。開発者は新しいコミットで警告メッセージもエラーメッセージも増や"
-"すべきではありません。"
+msgid "See :ref:`cmake-build-and-install`."
+msgstr ":ref:`cmake-build-and-install` を参照してください。"
 
 msgid "See also"
 msgstr "参考"

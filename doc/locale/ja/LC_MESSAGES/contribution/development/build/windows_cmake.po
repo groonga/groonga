@@ -41,8 +41,8 @@ msgid "Install depended software"
 msgstr "必要なソフトウェアのインストール"
 
 msgid ""
-"`Microsoft Visual Studio Express 2013 for Windows Desktop <https://www."
-"visualstudio.com/downloads/#d-2013-express>`_"
+"`Microsoft Visual Studio Community <https://visualstudio.microsoft.com/vs/"
+"community/>`_"
 msgstr ""
 
 msgid "`CMake <http://www.cmake.org/>`_"
@@ -96,62 +96,17 @@ msgstr ""
 msgid "Run ``cmake``"
 msgstr "``cmake`` を実行"
 
-msgid "You need to create ``Makefile`` for your environment."
-msgstr "あなたの環境用の ``Makefile`` を作る必要があります。"
-
-msgid ""
-"You can custom your build configuration by passing options to ``cmake``."
-msgstr ""
-"``cmake`` へオプションを渡してビルドパラメーターをカスタマイズできます。"
-
-msgid "You must to pass ``-G`` option. Here are available ``-G`` value:"
-msgstr ""
-"``-G`` オプションを指定する必要があります。有効な ``-G`` の値は次の通りです。"
-
-msgid "``\"Visual Studio 12 2013\"``: For 32bit build."
-msgstr "``\"Visual Studio 12 2013\"``: 32bitビルド用。"
-
-msgid "``\"Visual Studio 12 2013 Win64\"``: For 64bit build."
-msgstr "``\"Visual Studio 12 2013 Win64\"``: 64bitビルド用。"
-
-msgid "Here are recommended ``cmake`` options for developers::"
-msgstr "開発者向けのオススメ ``cmake`` オプションは次の通りです::"
-
-msgid "Here are descriptions of these options:"
-msgstr "それぞれのオプションの説明です。"
-
-msgid "``-G \"Visual Studio 12 2013 Win64\"``"
-msgstr ""
-
-msgid "``-DCMAKE_INSTALL_PREFIX=C:\\Groonga``"
-msgstr ""
-
-msgid ""
-"It specifies that you install your Groonga into ``C:\\\\Groonga`` folder."
-msgstr ""
-"ビルドしたGroongaを ``C:\\\\Groonga`` にインストールする、と指定しています。"
-
-msgid "``-DGRN_WITH_MRUBY=on``"
-msgstr ""
-
-msgid ""
-"It enables mruby support. The feature isn't enabled by default but "
-"developers should enable the feature."
-msgstr ""
-"mrubyサポートを有効にします。この機能はデフォルトで無効になっていますが、開発"
-"者はこの機能を有効にするべきです。"
+msgid "See :ref:`cmake-run`."
+msgstr ":ref:`cmake-run` を参照してください。"
 
 msgid "Build Groonga"
 msgstr "Groongaをビルド"
 
-msgid "Now, you can build Groonga."
-msgstr "これでGroongaをビルドできるようになりました。"
+msgid "See :ref:`cmake-build-and-install`."
+msgstr ":ref:`cmake-build-and-install` を参照してください。"
 
-msgid "You can use Visual Studio or ``cmake --build``."
-msgstr "Visual Studioまたは ``cmake --build`` を使えます。"
-
-msgid "Here is a command line to build Groonga by ``cmake --build``::"
-msgstr "``cmake --build`` でGroongaをビルドするコマンドラインは次の通りです::"
+msgid "Developers should specify ``--config Debug`` for debugging."
+msgstr "開発者はデバッグのために ``--config Debug`` を指定すべきです。"
 
 msgid "See also"
 msgstr "参考"

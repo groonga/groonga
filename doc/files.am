@@ -325,6 +325,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_keys_multiple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_output_columns_multiple_group_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_equal.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_less_than.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/limit_negative.log \
@@ -944,6 +945,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/almalinux.rst \
 	$(top_srcdir)/doc/source/install/amazon_linux.rst \
 	$(top_srcdir)/doc/source/install/centos.rst \
+	$(top_srcdir)/doc/source/install/cmake.rst \
 	$(top_srcdir)/doc/source/install/debian.rst \
 	$(top_srcdir)/doc/source/install/docker.rst \
 	$(top_srcdir)/doc/source/install/fedora.rst \
@@ -1546,6 +1548,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/drilldowns_label_keys_multiple.log \
 	source/example/reference/commands/select/drilldowns_label_output_columns_multiple_group_key.log \
 	source/example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log \
+	source/example/reference/commands/select/drilldowns_label_table.log \
 	source/example/reference/commands/select/filter_equal.log \
 	source/example/reference/commands/select/filter_less_than.log \
 	source/example/reference/commands/select/limit_negative.log \
@@ -2165,6 +2168,7 @@ source_files_relative_from_doc_dir = \
 	source/install/almalinux.rst \
 	source/install/amazon_linux.rst \
 	source/install/centos.rst \
+	source/install/cmake.rst \
 	source/install/debian.rst \
 	source/install/docker.rst \
 	source/install/fedora.rst \
@@ -2469,6 +2473,7 @@ po_files = \
 	install/almalinux.po \
 	install/amazon_linux.po \
 	install/centos.po \
+	install/cmake.po \
 	install/debian.po \
 	install/docker.po \
 	install/fedora.po \
@@ -2770,6 +2775,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/almalinux.po \
 	LC_MESSAGES/install/amazon_linux.po \
 	LC_MESSAGES/install/centos.po \
+	LC_MESSAGES/install/cmake.po \
 	LC_MESSAGES/install/debian.po \
 	LC_MESSAGES/install/docker.po \
 	LC_MESSAGES/install/fedora.po \
@@ -3071,6 +3077,7 @@ edit_po_files = \
 	install/almalinux.edit \
 	install/amazon_linux.edit \
 	install/centos.edit \
+	install/cmake.edit \
 	install/debian.edit \
 	install/docker.edit \
 	install/fedora.edit \
@@ -3372,6 +3379,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/almalinux.edit \
 	LC_MESSAGES/install/amazon_linux.edit \
 	LC_MESSAGES/install/centos.edit \
+	LC_MESSAGES/install/cmake.edit \
 	LC_MESSAGES/install/debian.edit \
 	LC_MESSAGES/install/docker.edit \
 	LC_MESSAGES/install/fedora.edit \
@@ -3673,6 +3681,7 @@ mo_files = \
 	install/almalinux.mo \
 	install/amazon_linux.mo \
 	install/centos.mo \
+	install/cmake.mo \
 	install/debian.mo \
 	install/docker.mo \
 	install/fedora.mo \
@@ -3974,6 +3983,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/almalinux.mo \
 	LC_MESSAGES/install/amazon_linux.mo \
 	LC_MESSAGES/install/centos.mo \
+	LC_MESSAGES/install/cmake.mo \
 	LC_MESSAGES/install/debian.mo \
 	LC_MESSAGES/install/docker.mo \
 	LC_MESSAGES/install/fedora.mo \
@@ -4309,6 +4319,7 @@ html_files_relative_from_locale_dir = \
 	html/install/almalinux.html \
 	html/install/amazon_linux.html \
 	html/install/centos.html \
+	html/install/cmake.html \
 	html/install/debian.html \
 	html/install/docker.html \
 	html/install/fedora.html \
