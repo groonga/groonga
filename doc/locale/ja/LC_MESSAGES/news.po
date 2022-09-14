@@ -603,7 +603,7 @@ msgid ""
 "against the following types of columns."
 msgstr ""
 "[:doc:`/reference/indexing`] 以下のタイプのカラムで静的インデックス構築をサ"
-"ポートしました。サポートしました。"
+"ポートしました。"
 
 msgid "The non-reference vector column with weight"
 msgstr "非参照重み付きベクターカラム"
