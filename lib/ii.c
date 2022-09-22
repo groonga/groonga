@@ -3929,6 +3929,15 @@ merger_merge(grn_ctx *ctx, merger_data *data)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
   merger_chunk_data *chunk_data = &(data->source.chunk);
+
+  GRN_LOG(ctx, 
+          GRN_LOG_DUMP,
+          "[ii][merger][merge] "
+          "<buffer_data>(%u,%u),"
+          "<chunk_data>(%u,%u)",
+          buffer_data->id.rid, buffer_data->id.sid,
+          chunk_data->id.rid, chunk_data->id.sid);
+
   if (buffer_data->id.rid > 0) {
     if (chunk_data->id.rid > 0) {
       if (chunk_data->id.rid < buffer_data->id.rid) {
@@ -4024,6 +4033,15 @@ chunk_merge(grn_ctx *ctx,
     WIN_MAP(ctx, ii->chunk, &sw, segno, 0, size, GRN_IO_RDONLY);
   datavec rdv[MAX_N_ELEMENTS + 1];
   size_t bufsize = S_SEGMENT * ii->n_elements;
+
+  GRN_LOG(ctx, 
+          GRN_LOG_DUMP,
+          "[ii][chunk][merge] start: "
+          "tarm_id:<%u>, record:<%u>, segment:<%u>, size:<%u>",
+          data->term_id,
+          rid,
+          segno,
+          size);
 
   if (!scp) {
     grn_obj term;
@@ -4283,6 +4301,15 @@ exit :
   datavec_fin(ctx, rdv);
   grn_io_win_unmap(ctx, &sw);
 
+  GRN_LOG(ctx, 
+          GRN_LOG_DUMP,
+          "[ii][chunk][merge] end: "
+          "tarm_id:<%u>, record:<%u>, segment:<%u>, size:<%u>",
+          data->term_id,
+          rid,
+          segno,
+          size);
+
   return ctx->rc;
 }
 
@@ -4405,6 +4432,10 @@ buffer_merge(grn_ctx *ctx,
   size_t unitsize = (S_SEGMENT + sb->header.chunk_size / sb->header.nterms) * 2;
   // size_t unitsize = (S_SEGMENT + sb->header.chunk_size) * 2 + (1<<24);
   size_t totalsize = unitsize * ii->n_elements;
+
+  GRN_LOG(ctx,
+          GRN_LOG_DUMP,
+          "[ii][buffer][merge] start");
 
   //todo : realloc
   datavec_init(ctx, dv, ii->n_elements, unitsize, totalsize);
@@ -4898,6 +4929,9 @@ exit :
   }
   datavec_fin(ctx, dv);
   datavec_fin(ctx, rdv);
+  GRN_LOG(ctx,
+          GRN_LOG_DUMP,
+          "[ii][buffer][merge] end");
   return ctx->rc;
 }
 
