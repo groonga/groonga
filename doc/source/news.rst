@@ -16,10 +16,19 @@ Improvements
 * Added a new function ``escalate()``.
 
   We change specification of the ``escalate()`` function as below.
+  
+  * The first condition is always executed.
+  * Threshold of the first condition isn't required. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
+  * Don't allow empty arguments call. 1 or more arguments are required.
 
-    * The first condition is always executed.
-    * Threshold of the first condition isn't required. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
-    * Don't allow empty arguments call. 1 or more arguments are required.
+* [:doc:`install`] Updated installation documents.
+
+  * Added a document about how to install Groonga with CMake.
+  * Added descriptions about GNU Autotools configure options for Groonga.
+
+* [:doc:`contribution/documentation/i18n`] Updated the document translation procedure.
+
+* [:doc:`reference/commands/select`] Add a document about ``drilldowns.table``.
 
 .. _release-12-0-7:
 
