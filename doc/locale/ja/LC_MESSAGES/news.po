@@ -33,11 +33,50 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 12.0.7 - 2022-08-29"
-msgstr "12.0.7リリース - 2022-08-29"
-
 msgid "Improvements"
 msgstr "改良"
+
+msgid "Added a new function ``escalate()``."
+msgstr "新しい関数 ``escalate()`` を追加しました。"
+
+msgid "We change specification of the ``escalate()`` function as below."
+msgstr "``escalate()`` の仕様を以下の通り変更しました。"
+
+msgid "The first condition is always executed."
+msgstr "最初の条件が常に実行されます。"
+
+msgid ""
+"Threshold of the first condition isn't required. (e.g. "
+"``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)"
+msgstr ""
+"最初の条件に対するしきい値が不要なように変更しました。（例: "
+"``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)`` ）"
+
+msgid "Don't allow empty arguments call. 1 or more arguments are required."
+msgstr "引数の指定を必須としました。１つ以上の引数が必須となります。"
+
+msgid "[:doc:`install`] Updated installation documents."
+msgstr "[:doc:`install`] インストールドキュメントを更新しました。"
+
+msgid "Added a document about how to install Groonga with CMake."
+msgstr "CMakeを使ってインストールする方法を追加しました。"
+
+msgid "Added descriptions about GNU Autotools configure options for Groonga."
+msgstr "GNU Autotoolsのconfigureオプションに関する説明を追加しました。"
+
+msgid ""
+"[:doc:`contribution/documentation/i18n`] Updated the document translation "
+"procedure."
+msgstr "ドキュメントの翻訳方法を更新しました。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Add a document about ``drilldowns.table``."
+msgstr ""
+"[:doc:`/reference/commands/select`] ``drilldowns.table`` のドキュメントを追加"
+"しました。"
+
+msgid "Release 12.0.7 - 2022-08-29"
+msgstr "12.0.7リリース - 2022-08-29"
 
 msgid "Added a new function ``escalate()``. (experimental)"
 msgstr "新しい関数 ``escalate()`` を追加しました。(実験的)"
