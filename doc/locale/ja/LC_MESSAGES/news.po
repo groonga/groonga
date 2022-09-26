@@ -56,10 +56,9 @@ msgid "Don't allow empty arguments call. 1 or more arguments are required."
 msgstr "引数の指定を必須としました。１つ以上の引数が必須となります。"
 
 msgid ""
-"[:doc:`install/cmake`] Added a document about how to install Groonga with "
+"[:doc:`install/cmake`] Added a document about how to build Groonga with "
 "CMake."
-msgstr ""
-"[:doc:`install/cmake`] CMakeを使ってインストールする方法を追加しました。"
+msgstr "[:doc:`install/cmake`] CMakeを使ってビルドする方法を追加しました。"
 
 msgid ""
 "[:doc:`install/others`] Added descriptions about how to enable/disable "
