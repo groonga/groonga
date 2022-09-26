@@ -21,14 +21,13 @@ Improvements
   * Threshold of the first condition isn't required. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
   * Don't allow empty arguments call. 1 or more arguments are required.
 
-* [:doc:`install`] Updated installation documents.
+* [:doc:`install/cmake`] Added a document about how to install Groonga with CMake.
 
-  * Added a document about how to install Groonga with CMake.
-  * Added descriptions about GNU Autotools configure options for Groonga.
-
-* [:doc:`contribution/documentation/i18n`] Updated the document translation procedure.
+* [:doc:`install/others`] Added descriptions about how to enable/disable Apache Arrow support when building with GNU Autotools.
 
 * [:doc:`reference/commands/select`] Add a document about ``drilldowns.table``.
+
+* [:doc:`contribution/documentation/i18n`] Updated the translation procedure.
 
 .. _release-12-0-7:
 
