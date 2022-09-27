@@ -186,6 +186,7 @@ Munin plugins for Groonga
   --disable-static \
   --with-package-platform=centos%{?centos_ver} \
   --with-rapidjson=bundled \
+  --with-mecab=no \
   --with-munin-plugins \
   --enable-mruby \
   %{_additional_configure_options:%{additional_configure_options}}
