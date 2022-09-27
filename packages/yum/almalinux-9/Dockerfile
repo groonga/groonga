@@ -19,6 +19,7 @@ RUN \
     ccache \
     gcc-c++ \
     intltool \
+    mecab-devel \
     libedit-devel \
     libevent-devel \
     libstemmer-devel \
