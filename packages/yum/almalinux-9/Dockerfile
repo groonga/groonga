@@ -28,7 +28,6 @@ RUN \
     pcre-devel \
     php-devel \
     pkgconfig \
-    python2-devel \
     ruby \
     tar \
     xxhash-devel \
