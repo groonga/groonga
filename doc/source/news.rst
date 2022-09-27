@@ -17,6 +17,10 @@ Improvements
 
   We changed specification of the ``escalate()`` function as below.
   
+  * Only use result sets inside ``escalate()`` for threshold.
+
+    * Don't use the current result set out of ``escalate()``.
+  
   * Threshold for the first condition isn't required. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
   * Don't allow empty arguments call. The first condition is required.
   * The first condition is always executed.
