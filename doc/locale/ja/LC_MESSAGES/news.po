@@ -33,6 +33,9 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
+msgid "Release 12.0.8 - 2022-09-29"
+msgstr "12.0.8リリース - 2022-09-29"
+
 msgid "Improvements"
 msgstr "改良"
 
@@ -41,6 +44,14 @@ msgstr "新しい関数 ``escalate()`` を追加しました。"
 
 msgid "We changed specification of the ``escalate()`` function as below."
 msgstr "``escalate()`` の仕様を以下の通り変更しました。"
+
+msgid "Only use result sets inside ``escalate()`` for threshold."
+msgstr ""
+"しきい値の比較に ``escalate()`` の内部の結果セットのみを使うように変更しまし"
+"た。"
+
+msgid "Don't use the current result set out of ``escalate()``."
+msgstr "``escalate()`` の外部の現在の結果セットは使用しません。"
 
 msgid ""
 "Threshold for the first condition isn't required. (e.g. "
