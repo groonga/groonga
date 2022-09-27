@@ -15,11 +15,11 @@ Improvements
 
 * Added a new function ``escalate()``.
 
-  We change specification of the ``escalate()`` function as below.
+  We changed specification of the ``escalate()`` function as below.
   
+  * Threshold for the first condition isn't required. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
+  * Don't allow empty arguments call. The first condition is required.
   * The first condition is always executed.
-  * Threshold of the first condition isn't required. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
-  * Don't allow empty arguments call. 1 or more arguments are required.
 
 * [:doc:`install/cmake`] Added a document about how to build Groonga with CMake.
 

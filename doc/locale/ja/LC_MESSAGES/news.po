@@ -39,21 +39,21 @@ msgstr "改良"
 msgid "Added a new function ``escalate()``."
 msgstr "新しい関数 ``escalate()`` を追加しました。"
 
-msgid "We change specification of the ``escalate()`` function as below."
+msgid "We changed specification of the ``escalate()`` function as below."
 msgstr "``escalate()`` の仕様を以下の通り変更しました。"
 
-msgid "The first condition is always executed."
-msgstr "最初の条件が常に実行されます。"
-
 msgid ""
-"Threshold of the first condition isn't required. (e.g. "
+"Threshold for the first condition isn't required. (e.g. "
 "``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)"
 msgstr ""
 "最初の条件に対するしきい値が不要なように変更しました。（例: "
 "``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)`` ）"
 
-msgid "Don't allow empty arguments call. 1 or more arguments are required."
-msgstr "引数の指定を必須としました。１つ以上の引数が必須となります。"
+msgid "Don't allow empty arguments call. The first condition is required."
+msgstr "引数の指定を必須としました。最初の条件が必須となります。"
+
+msgid "The first condition is always executed."
+msgstr "最初の条件が常に実行されます。"
 
 msgid ""
 "[:doc:`install/cmake`] Added a document about how to build Groonga with "
