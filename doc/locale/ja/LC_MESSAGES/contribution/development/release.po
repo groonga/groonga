@@ -125,7 +125,7 @@ msgid "この作業は、新規にリリースを行うことになった担当�
 msgstr ""
 
 msgid ""
-"[Launchpad](https://launchpad.net/)にアカウントを作成し、自分の普段使いの秘密"
+"[Launchpad](https://launchpad.net/)にアカウントを作成し、自分の普段使いの公開"
 "鍵を登録した上で、他のリリース担当者に依頼して[Groongaチーム](https://"
 "launchpad.net/~groonga)に追加してもらって下さい。"
 msgstr ""

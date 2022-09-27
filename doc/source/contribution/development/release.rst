@@ -82,7 +82,7 @@ PPA用の鍵の登録
 
 この作業は、新規にリリースを行うことになった担当者のみ行います。
 
-[Launchpad](https://launchpad.net/)にアカウントを作成し、自分の普段使いの秘密鍵を登録した上で、他のリリース担当者に依頼して[Groongaチーム](https://launchpad.net/~groonga)に追加してもらって下さい。
+[Launchpad](https://launchpad.net/)にアカウントを作成し、自分の普段使いの公開鍵を登録した上で、他のリリース担当者に依頼して[Groongaチーム](https://launchpad.net/~groonga)に追加してもらって下さい。
 
 
 リリース作業用ディレクトリの作成
