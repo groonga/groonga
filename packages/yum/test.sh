@@ -25,8 +25,11 @@ case ${version} in
   7)
     DNF=yum
     ;;
-  *)
+  8)
     DNF="dnf --enablerepo=powertools"
+    ;;
+  *)
+    DNF="dnf --enablerepo=crb"
     ;;
 esac
 
