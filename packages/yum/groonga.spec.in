@@ -18,7 +18,7 @@ Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildRequires:	arrow-devel >= @APACHE_ARROW_VERSION@
-BuildRequires:	mecab-devel
+# BuildRequires:	mecab-devel
 BuildRequires:	zlib-devel
 BuildRequires:	lz4-devel
 BuildRequires:	libzstd-devel
@@ -140,14 +140,14 @@ Requires:	arrow-devel >= @APACHE_ARROW_VERSION@
 %description devel
 Libraries and header files for Groonga
 
-%package tokenizer-mecab
-Summary:	MeCab tokenizer for Groonga
-Group:		Applications/Text
-Requires:	%{name}-libs = %{version}-%{release}
-Requires:	mecab-ipadic
-
-%description tokenizer-mecab
-MeCab tokenizer for Groonga
+# %package tokenizer-mecab
+# Summary:	MeCab tokenizer for Groonga
+# Group:		Applications/Text
+# Requires:	%{name}-libs = %{version}-%{release}
+# Requires:	mecab-ipadic
+# 
+# %description tokenizer-mecab
+# MeCab tokenizer for Groonga
 
 %package token-filter-stem
 Summary:	Stemming token filter for Groonga
@@ -185,7 +185,6 @@ Munin plugins for Groonga
 %configure \
   --disable-static \
   --with-package-platform=centos%{?centos_ver} \
-  --with-mecab \
   --with-rapidjson=bundled \
   --with-munin-plugins \
   --enable-mruby \
@@ -415,9 +414,9 @@ fi
 %dir %{_libdir}/groonga/plugins
 %{_libdir}/groonga/plugins/suggest/suggest.so
 
-%files tokenizer-mecab
-%defattr(-,root,root,-)
-%{_libdir}/groonga/plugins/tokenizers/mecab.so
+# %files tokenizer-mecab
+# %defattr(-,root,root,-)
+# %{_libdir}/groonga/plugins/tokenizers/mecab.so
 
 %files token-filter-stem
 %defattr(-,root,root,-)
