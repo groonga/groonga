@@ -3749,6 +3749,34 @@ grn_table_add_by_key(grn_ctx *ctx, grn_obj *table, grn_obj *key, int *added)
 }
 
 grn_id
+grn_table_get_without_normalize(grn_ctx *ctx,
+                                grn_obj *table,
+                                const void *key,
+                                unsigned int key_size)
+{
+  grn_id id = GRN_ID_NIL;
+  GRN_API_ENTER;
+  if (table) {
+    if (table->header.type == GRN_DB) {
+      grn_db *db = (grn_db *)table;
+      table = db->keys;
+    }
+    switch (table->header.type) {
+    case GRN_TABLE_PAT_KEY :
+      id = grn_pat_get(ctx, (grn_pat *)table, key, key_size, NULL);
+      break;
+    case GRN_TABLE_DAT_KEY :
+      id = grn_dat_get(ctx, (grn_dat *)table, key, key_size, NULL);
+      break;
+    case GRN_TABLE_HASH_KEY :
+      id = grn_hash_get(ctx, (grn_hash *)table, key, key_size, NULL);
+      break;
+    }
+  }
+  GRN_API_RETURN(id);
+}
+
+grn_id
 grn_table_get(grn_ctx *ctx, grn_obj *table, const void *key, unsigned int key_size)
 {
   grn_id id = GRN_ID_NIL;

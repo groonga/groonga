@@ -8939,7 +8939,7 @@ token_info_open(grn_ctx *ctx,
     token_info_expand_both(ctx, data, key, key_size, ti);
     break;
   case EX_NONE :
-    if ((tid = grn_table_get(ctx, data->lexicon, key, key_size)) &&
+    if ((tid = grn_table_get_without_normalize(ctx, data->lexicon, key, key_size)) &&
         (s = grn_ii_estimate_size(ctx, data->ii, tid)) &&
         (ti->cursors = cursor_heap_open(ctx, 1))) {
       cursor_heap_push(ctx,
@@ -8955,7 +8955,7 @@ token_info_open(grn_ctx *ctx,
     break;
   case EX_PREFIX :
     if (data->lexicon->header.type == GRN_TABLE_HASH_KEY) {
-      grn_id token_id = grn_table_get(ctx, data->lexicon, key, key_size);
+      grn_id token_id = grn_table_get_without_normalize(ctx, data->lexicon, key, key_size);
       if (token_id != GRN_ID_NIL) {
         ti->cursors = cursor_heap_open(ctx, 1);
         /* TODO: report error on !ti->cursors */

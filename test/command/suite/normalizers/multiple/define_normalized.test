@@ -1,0 +1,47 @@
+table_create --name ColumnNormalizations --flags TABLE_NO_KEY
+
+column_create --table ColumnNormalizations --name target_column --flags COLUMN_SCALAR --type ShortText
+
+column_create --table ColumnNormalizations --name normalized --flags COLUMN_SCALAR --type ShortText
+
+table_create --name Targets --flags TABLE_PAT_KEY --key_type ShortText
+
+column_create --table Targets --name column_normalizations_target_column --flags COLUMN_INDEX --type ColumnNormalizations --source target_column
+
+load --table ColumnNormalizations
+[
+{"target_column": "c", "normalized": "k"},
+{"target_column": "ＣＤ", "normalized": "cd"}
+]
+
+table_create --name Memos --flags TABLE_NO_KEY
+
+column_create --table Memos --name content --type ShortText
+
+load --table Memos
+[
+{"content":"ABCD"},
+]
+
+table_create \
+  --name Terms \
+  --flags TABLE_PAT_KEY \
+  --key_type ShortText \
+  --default_tokenizer 'TokenNgram("unify_alphabet", false, \
+                                  "unify_digit", false, \
+                                  "unify_symbol", false, \
+                                  "report_source_location", true, \
+                                  "loose_symbol", true, \
+                                  "loose_blank", true)' \
+  --normalizer 'NormalizerTable("normalized", \
+                                "ColumnNormalizations.normalized", \
+                                "target", \
+                                "target_column"), \
+                NormalizerNFKC130("unify_kana", true, \
+                                  "unify_kana_case", true, \
+                                  "unify_hyphen_and_prolonged_sound_mark", true, \
+                                  "unify_kana_voiced_sound_mark", false)'
+
+column_create --table Terms --name index_content --flags COLUMN_INDEX|WITH_POSITION --type Memos --source content
+
+select --table Memos --query content:@BCD
