@@ -83,6 +83,7 @@ jobs:
           - CentOS 7 x86_64
           - Amazon Linux 2 x86_64
           - AlmaLinux 9 x86_64
+          - AlmaLinux 9 aarch64
           - AlmaLinux 8 x86_64
           - AlmaLinux 8 aarch64
         include:
@@ -120,6 +121,11 @@ jobs:
             id: almalinux-8-aarch64
             task-namespace: yum
             target: almalinux-8-aarch64
+            test-docker-image: arm64v8/almalinux:8
+          - label: AlmaLinux 9 aarch64
+            id: almalinux-9-aarch64
+            task-namespace: yum
+            target: almalinux-9-aarch64
             test-docker-image: arm64v8/almalinux:8
     runs-on: ubuntu-20.04
     steps:
