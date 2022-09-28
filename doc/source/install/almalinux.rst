@@ -8,6 +8,19 @@ AlmaLinux OS. You can install them by ``dnf``.
 
 We distribute only 64-bit packages.
 
+.. include:: server-use.inc
+
+AlmaLinux 9
+-----------
+
+Install
+
+.. code-block:: console
+
+   % sudo dnf install -y https://apache.jfrog.io/artifactory/arrow/almalinux/9/apache-arrow-release-latest.rpm
+   % sudo dnf install -y https://packages.groonga.org/almalinux/9/groonga-release-latest.noarch.rpm
+   % sudo dnf install -y --enablerepo=epel --enablerepo=crb groonga
+
 AlmaLinux 8
 -----------
 
@@ -15,8 +28,6 @@ Install::
 
   % sudo dnf install -y https://packages.groonga.org/almalinux/8/groonga-release-latest.noarch.rpm
   % sudo dnf install -y --enablerepo=epel --enablerepo=powertools groonga
-
-.. include:: server-use.inc
 
 Build from source
 -----------------

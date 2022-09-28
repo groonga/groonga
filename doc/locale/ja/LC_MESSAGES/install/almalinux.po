@@ -30,6 +30,12 @@ msgstr ""
 msgid "We distribute only 64-bit packages."
 msgstr "64-bit用のパッケージのみ配布しています。"
 
+msgid "AlmaLinux 9"
+msgstr ""
+
+msgid "Install"
+msgstr "インストール"
+
 msgid "AlmaLinux 8"
 msgstr ""
 
