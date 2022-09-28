@@ -126,7 +126,7 @@ jobs:
             id: almalinux-9-aarch64
             task-namespace: yum
             target: almalinux-9-aarch64
-            test-docker-image: arm64v8/almalinux:8
+            test-docker-image: arm64v8/almalinux:9
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
