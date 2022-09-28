@@ -82,6 +82,7 @@ jobs:
           - Debian GNU/Linux bullseye arm64
           - CentOS 7 x86_64
           - Amazon Linux 2 x86_64
+          - AlmaLinux 9 x86_64
           - AlmaLinux 8 x86_64
           - AlmaLinux 8 aarch64
         include:
@@ -110,6 +111,11 @@ jobs:
             task-namespace: yum
             target: almalinux-8
             test-docker-image: almalinux:8
+          - label: AlmaLinux 9 x86_64
+            id: almalinux-9-x86_64
+            task-namespace: yum
+            target: almalinux-9
+            test-docker-image: almalinux:9
           - label: AlmaLinux 8 aarch64
             id: almalinux-8-aarch64
             task-namespace: yum

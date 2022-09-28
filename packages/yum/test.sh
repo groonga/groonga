@@ -25,8 +25,13 @@ case ${version} in
   7)
     DNF=yum
     ;;
-  *)
+  8)
     DNF="dnf --enablerepo=powertools"
+    ;;
+  *)
+    DNF="dnf --enablerepo=crb"
+    ${DNF} install -y \
+      https://apache.jfrog.io/artifactory/arrow/${os}/${version}/apache-arrow-release-latest.rpm
     ;;
 esac
 
