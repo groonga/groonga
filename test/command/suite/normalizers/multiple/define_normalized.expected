@@ -20,39 +20,12 @@ column_create --table Memos --name content --type ShortText
 [[0,0.0,0.0],true]
 load --table Memos
 [
-{"content":"ABCD"},
+{"content":"ABCD"}
 ]
 [[0,0.0,0.0],1]
-table_create    --name Terms    --flags TABLE_PAT_KEY    --key_type ShortText    --default_tokenizer 'TokenNgram("unify_alphabet", false,    "unify_digit", false,    "unify_symbol", false,    "report_source_location", true,    "loose_symbol", true,    "loose_blank", true)'    --normalizer 'NormalizerTable("normalized",    "ColumnNormalizations.normalized",    "target",    "target_column"),    NormalizerNFKC130("unify_kana", true,    "unify_kana_case", true,    "unify_hyphen_and_prolonged_sound_mark", true,    "unify_kana_voiced_sound_mark", false)'
-[0,0.0,0.0],true]
+table_create   --name Terms   --flags TABLE_PAT_KEY   --key_type ShortText   --default_tokenizer 'TokenNgram("unify_alphabet", false,                                   "unify_digit", false,                                   "unify_symbol", false,                                   "report_source_location", true,                                   "loose_symbol", true,                                   "loose_blank", true)'   --normalizer 'NormalizerTable("normalized",                                 "ColumnNormalizations.normalized",                                 "target",                                 "target_column"),                 NormalizerNFKC130("unify_kana", true,                                   "unify_kana_case", true,                                   "unify_hyphen_and_prolonged_sound_mark", true,                                   "unify_kana_voiced_sound_mark", false)'
+[[0,0.0,0.0],true]
 column_create --table Terms --name index_content --flags COLUMN_INDEX|WITH_POSITION --type Memos --source content
-[0,0.0,0.0],true]
+[[0,0.0,0.0],true]
 select --table Memos --query content:@BCD
-[
-  [
-    0,
-    0.0,
-    0.0
-  ],
-  [
-    [
-      [
-        1
-      ],
-      [
-        [
-          "_id",
-          "UInt32"
-        ],
-        [
-          "content",
-          "ShortText"
-        ]
-      ],
-      [
-        1,
-        "ABCD"
-      ]
-    ]
-  ]
-]
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["content","ShortText"]],[1,"ABCD"]]]]

@@ -20,7 +20,7 @@ column_create --table Memos --name content --type ShortText
 
 load --table Memos
 [
-{"content":"ABCD"},
+{"content":"ABCD"}
 ]
 
 table_create \
