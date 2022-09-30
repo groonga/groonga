@@ -34,6 +34,12 @@
 #include <map>
 #include <sstream>
 
+#if ARROW_VERSION_MAJOR >= 10
+using string_view = std::string_view;
+#else
+using string_view = arrow::util::string_view;
+#endif
+
 namespace grnarrow {
   grn_rc status_to_rc(const arrow::Status &status) {
     switch (status.code()) {
@@ -1570,15 +1576,15 @@ namespace grnarrow {
       return closed_;
     }
 
-    arrow::util::string_view peek(int64_t nbytes) {
+    string_view peek(int64_t nbytes) {
       const int64_t bytes_available =
         std::min(nbytes,
                  static_cast<int64_t>(buffer_.size() - offset_));
-      return arrow::util::string_view(buffer_.data() + offset_,
-                                      static_cast<size_t>(bytes_available));
+      return string_view(buffer_.data() + offset_,
+                         static_cast<size_t>(bytes_available));
     }
 
-    arrow::Result<arrow::util::string_view> Peek(int64_t nbytes) override {
+    arrow::Result<string_view> Peek(int64_t nbytes) override {
       return peek(nbytes);
     }
 
@@ -1941,7 +1947,7 @@ namespace grnarrow {
             tag_ <<
             "[add-column][string] " <<
             "failed to add a column value: <" <<
-            arrow::util::string_view(value, value_length) <<
+            string_view(value, value_length) <<
             ">");
     }
 
@@ -2121,7 +2127,7 @@ namespace grnarrow {
         record_batch_builder_->GetFieldAs<arrow::StringDictionaryBuilder>(
           current_column_index_++);
       auto status =
-        column_builder->Append(arrow::util::string_view(key, key_size));
+        column_builder->Append(string_view(key, key_size));
       if (status.ok()) {
         return;
       }
@@ -2135,8 +2141,8 @@ namespace grnarrow {
             tag_ <<
             "[add-column][record] " <<
             "failed to add a column value: <" <<
-            arrow::util::string_view(GRN_TEXT_VALUE(&inspected),
-                                     GRN_TEXT_LEN(&inspected)) <<
+            string_view(GRN_TEXT_VALUE(&inspected),
+                        GRN_TEXT_LEN(&inspected)) <<
             ">");
       GRN_OBJ_FIN(ctx_, &inspected);
     }
@@ -2165,7 +2171,7 @@ namespace grnarrow {
                                               key,
                                               sizeof(key));
             status =
-              value_builder->Append(arrow::util::string_view(key, key_size));
+              value_builder->Append(string_view(key, key_size));
             if (!status.ok()) {
               break;
             }
@@ -2197,8 +2203,8 @@ namespace grnarrow {
             tag_ <<
             "[add-column][uvector] " <<
             "failed to add a column value: <" <<
-            arrow::util::string_view(GRN_TEXT_VALUE(&inspected),
-                                     GRN_TEXT_LEN(&inspected)) <<
+            string_view(GRN_TEXT_VALUE(&inspected),
+                        GRN_TEXT_LEN(&inspected)) <<
             ">");
       GRN_OBJ_FIN(ctx_, &inspected);
     }

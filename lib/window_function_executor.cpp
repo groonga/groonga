@@ -22,7 +22,14 @@
 # include "grn_arrow.hpp"
 # include <groonga/arrow.hpp>
 # include <arrow/compute/api.h>
-# include <arrow/util/make_unique.h>
+# if ARROW_VERSION_MAJOR >= 10
+#  define GRN_MAKE_UNIQUE std::make_unique
+using string_view = std::string_view;
+# else
+#  include <arrow/util/make_unique.h>
+#  define GRN_MAKE_UNIQUE arrow::internal::make_unique;
+using string_view = arrow::util::string_view;
+# endif
 #endif
 
 extern "C" {
@@ -676,8 +683,7 @@ namespace {
         const auto& sort_key = sort_keys[i];
         GRN_PTR_PUT(ctx_, &(executor_->context.key_columns), sort_key.key);
         if (builders.size() < n_sort_keys) {
-          builders.push_back(
-            ::arrow::internal::make_unique<grn::arrow::ArrayBuilder>(ctx));
+          builders.push_back(GRN_MAKE_UNIQUE<grn::arrow::ArrayBuilder>(ctx));
           grn::TextBulk name(ctx);
           grn_obj_to_script_syntax(ctx, sort_key.key, *name);
           arrow_sort_keys_.emplace_back(
@@ -755,7 +761,7 @@ namespace {
 
     grn_ctx *ctx_;
     grn_window_function_executor *executor_;
-    ::arrow::util::string_view executor_tag_;
+    string_view executor_tag_;
     const char *tag_;
     std::vector<std::unique_ptr<grn::arrow::ArrayBuilder>> sort_keys_builders_;
     std::vector<std::unique_ptr<grn::arrow::ArrayBuilder>> group_keys_builders_;
