@@ -28,12 +28,6 @@ double grn_table_get_score(grn_ctx *ctx,
                            grn_obj *table,
                            grn_id id);
 
-grn_id
-grn_table_get_without_normalize(grn_ctx *ctx,
-                                grn_obj *table,
-                                const void *key,
-                                unsigned int key_size);
-
 grn_obj *
 grn_table_create_with_max_n_subrecs(grn_ctx *ctx,
                                     const char *name,

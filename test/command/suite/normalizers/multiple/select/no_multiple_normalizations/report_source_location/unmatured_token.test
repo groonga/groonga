@@ -1,0 +1,39 @@
+table_create ColumnNormalizations TABLE_NO_KEY
+column_create ColumnNormalizations target_column COLUMN_SCALAR ShortText
+column_create ColumnNormalizations normalized COLUMN_SCALAR ShortText
+
+# BC -(normalize)-> bc (by NormalizerNFKC130)
+# bc -(normalize)-> bk (by NormalizerTable)
+load --table ColumnNormalizations
+[
+{"target_column": "c", "normalized": "k"}
+]
+
+table_create Targets TABLE_PAT_KEY ShortText
+column_create Targets column_normalizations_target_column COLUMN_INDEX \
+  ColumnNormalizations target_column
+
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+load --table Memos
+[
+{"content":"ABCD"}
+]
+
+table_create \
+  Terms \
+  TABLE_PAT_KEY \
+  ShortText \
+  --default_tokenizer 'TokenNgram("unify_alphabet", false, \
+                                  "report_source_location", true)' \
+  --normalizers 'NormalizerTable("normalized", \
+                                 "ColumnNormalizations.normalized", \
+                                 "target", \
+                                 "target_column"), \
+                 NormalizerNFKC130'
+
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+# C -(tokenize)-> C (This token doesn't have 2 characters)
+select Memos --query content:@C
