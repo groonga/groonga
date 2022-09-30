@@ -1,0 +1,30 @@
+table_create ColumnNormalizations TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create ColumnNormalizations target_column COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create ColumnNormalizations normalized COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table ColumnNormalizations
+[
+{"target_column": "c", "normalized": "k"}
+]
+[[0,0.0,0.0],1]
+table_create Targets TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Targets column_normalizations_target_column COLUMN_INDEX   ColumnNormalizations target_column
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"content":"ABCD"}
+]
+[[0,0.0,0.0],1]
+table_create   Terms   TABLE_PAT_KEY   ShortText   --default_tokenizer 'TokenNgram("unify_alphabet", false)'   --normalizers 'NormalizerTable("normalized",                                  "ColumnNormalizations.normalized",                                  "target",                                  "target_column"),                  NormalizerNFKC130'
+[[0,0.0,0.0],true]
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+select Memos --query content:@BCD
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["content","ShortText"]],[1,"ABCD"]]]]

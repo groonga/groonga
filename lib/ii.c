@@ -8913,9 +8913,24 @@ token_info_close(grn_ctx *ctx, token_info *ti)
   return GRN_SUCCESS;
 }
 
+/*
+ * If tid is GRN_ID_NIL, caller must specify valid key and key_size
+ * (not NULL and 0). tid may be retrieved by grn_table_get(ctx,
+ * data->lexicon, key, key_size) if tid is needed and tid is GRN_ID_NIL.
+ *
+ * If key is NULL, caller must specify valid tid (not GRN_ID_NIL). key
+ * and key_size may be retrieved by _grn_table_key(ctx, data->lexicon,
+ * tid, &key_size) if key is needed and key is NULL.
+ *
+ * Note that we should not normalize the input multiple times. Some
+ * normalizers such as NormalizerTable aren't idempotent. If we
+ * normalize the input multipe times with a non-idempotent normalizer,
+ * the tokenized result is broken.
+ */
 grn_inline static token_info *
 token_info_open(grn_ctx *ctx,
                 grn_ii_select_data *data,
+                grn_id tid,
                 const char *key,
                 unsigned int key_size,
                 uint32_t offset,
@@ -8924,9 +8939,8 @@ token_info_open(grn_ctx *ctx,
   uint32_t s = 0;
   grn_hash *h;
   token_info *ti;
-  grn_id tid;
   grn_id *tp;
-  if (!key) { return NULL; }
+  if (tid == GRN_ID_NIL && !key) { return NULL; }
   if (!(ti = GRN_CALLOC(sizeof(token_info)))) { return NULL; }
   ti->cursors = NULL;
   ti->size = 0;
@@ -8936,10 +8950,16 @@ token_info_open(grn_ctx *ctx,
   ti->must_last = false;
   switch (mode) {
   case EX_BOTH :
+    if (!key) {
+      key = _grn_table_key(ctx, data->lexicon, tid, &key_size);
+    }
     token_info_expand_both(ctx, data, key, key_size, ti);
     break;
   case EX_NONE :
-    if ((tid = grn_table_get(ctx, data->lexicon, key, key_size)) &&
+    if (tid == GRN_ID_NIL) {
+      tid = grn_table_get(ctx, data->lexicon, key, key_size);
+    }
+    if (tid != GRN_ID_NIL &&
         (s = grn_ii_estimate_size(ctx, data->ii, tid)) &&
         (ti->cursors = cursor_heap_open(ctx, 1))) {
       cursor_heap_push(ctx,
@@ -8955,17 +8975,19 @@ token_info_open(grn_ctx *ctx,
     break;
   case EX_PREFIX :
     if (data->lexicon->header.type == GRN_TABLE_HASH_KEY) {
-      grn_id token_id = grn_table_get(ctx, data->lexicon, key, key_size);
-      if (token_id != GRN_ID_NIL) {
+      if (tid == GRN_ID_NIL) {
+        tid = grn_table_get(ctx, data->lexicon, key, key_size);
+      }
+      if (tid != GRN_ID_NIL) {
         ti->cursors = cursor_heap_open(ctx, 1);
         /* TODO: report error on !ti->cursors */
         if (ti->cursors) {
-          s = grn_ii_estimate_size(ctx, data->ii, token_id);
+          s = grn_ii_estimate_size(ctx, data->ii, tid);
           if (s > 0) {
             cursor_heap_push(ctx,
                              ti->cursors,
                              data->ii,
-                             token_id,
+                             tid,
                              0,
                              0,
                              data->previous_min);
@@ -8975,6 +8997,9 @@ token_info_open(grn_ctx *ctx,
         }
       }
     } else {
+      if (!key) {
+        key = _grn_table_key(ctx, data->lexicon, tid, &key_size);
+      }
       GRN_TABLE_EACH_BEGIN_MIN(ctx,
                                data->lexicon,
                                cursor,
@@ -9014,6 +9039,9 @@ token_info_open(grn_ctx *ctx,
       if (data->lexicon->header.type == GRN_TABLE_HASH_KEY) {
         mode = GRN_OP_EXACT;
       }
+      if (!key) {
+        key = _grn_table_key(ctx, data->lexicon, tid, &key_size);
+      }
       /* TODO: use cursor like EX_PREFIX */
       grn_table_search(ctx, data->lexicon, key, key_size,
                        mode, (grn_obj *)h, GRN_OP_OR);
@@ -9042,6 +9070,9 @@ token_info_open(grn_ctx *ctx,
     if ((h = (grn_hash *)grn_table_create(ctx, NULL, 0, NULL,
         GRN_OBJ_TABLE_HASH_KEY|GRN_OBJ_WITH_SUBREC,
         grn_ctx_at(ctx, GRN_DB_UINT32), NULL))) {
+      if (!key) {
+        key = _grn_table_key(ctx, data->lexicon, tid, &key_size);
+      }
       /* TODO: use cursor like EX_PREFIX */
       grn_table_fuzzy_search(ctx,
                              data->lexicon,
@@ -9147,6 +9178,8 @@ typedef struct {
   grn_id tid;
   const unsigned char *token;
   uint32_t token_size;
+  const unsigned char *source_token;
+  uint32_t source_token_size;
   int32_t pos;
   grn_token_cursor_status status;
   int ef;
@@ -9213,9 +9246,17 @@ token_candidate_init(grn_ctx *ctx,
   token_candidate_node *curr = top;
 
 #define TOKEN_CANDIDATE_NODE_SET() { \
+  grn_token *token = grn_token_cursor_get_token(ctx, token_cursor); \
   curr->tid = tid; \
   curr->token = token_cursor->curr; \
   curr->token_size = token_cursor->curr_size; \
+  curr->source_token_size = grn_token_get_source_length(ctx, token); \
+  if (curr->source_token_size > 0) { \
+    curr->source_token = NULL; \
+  } else { \
+    curr->source_token = \
+      token_cursor->orig + grn_token_get_source_offset(ctx, token); \
+  } \
   curr->pos = token_cursor->pos; \
   curr->status = token_cursor->status; \
   curr->ef = ef; \
@@ -9421,31 +9462,21 @@ token_candidate_build(grn_ctx *ctx,
       token_candidate_node *node = data->nodes + i + offset;
       switch (node->status) {
       case GRN_TOKEN_CURSOR_DOING :
-        {
-          uint32_t size;
-          const char *key = _grn_table_key(ctx,
-                                           data->select_data->lexicon,
-                                           node->tid,
-                                           &size);
-          ti = token_info_open(ctx,
-                               data->select_data,
-                               key,
-                               size,
-                               node->pos,
-                               EX_NONE);
-        }
+        ti = token_info_open(ctx,
+                             data->select_data,
+                             node->tid,
+                             node->source_token,
+                             node->source_token_size,
+                             node->pos,
+                             EX_NONE);
         break;
       case GRN_TOKEN_CURSOR_DONE :
-        if (node->tid) {
-          uint32_t size;
-          const char *key = _grn_table_key(ctx,
-                                           data->select_data->lexicon,
-                                           node->tid,
-                                           &size);
+        if (node->tid != GRN_ID_NIL) {
           ti = token_info_open(ctx,
                                data->select_data,
-                               key,
-                               size,
+                               node->tid,
+                               (const char *)(node->source_token),
+                               node->source_token_size,
                                node->pos,
                                node->ef & EX_PREFIX);
           break;
@@ -9453,7 +9484,8 @@ token_candidate_build(grn_ctx *ctx,
       default :
         ti = token_info_open(ctx,
                              data->select_data,
-                             (char *)node->token,
+                             node->tid,
+                             (const char *)(node->token),
                              node->token_size,
                              node->pos,
                              node->ef & EX_PREFIX);
@@ -9522,8 +9554,6 @@ token_info_build_phrase(grn_ctx *ctx,
 {
   token_info *ti;
   grn_rc rc = GRN_END_OF_DATA;
-  const char *key;
-  uint32_t size;
   grn_token_cursor *token_cursor =
     grn_ii_select_data_open_token_cursor(ctx,
                                          data,
@@ -9534,6 +9564,7 @@ token_info_build_phrase(grn_ctx *ctx,
   if (data->mode == GRN_OP_UNSPLIT) {
     if ((ti = token_info_open(ctx,
                               data,
+                              GRN_ID_NIL,
                               (char *)token_cursor->orig,
                               token_cursor->orig_blen,
                               0,
@@ -9565,31 +9596,36 @@ token_info_build_phrase(grn_ctx *ctx,
       goto exit;
     }
     token = grn_token_cursor_get_token(ctx, token_cursor);
+    const char *key = NULL;
+    uint32_t size = 0;
+    if (tid == GRN_ID_NIL) {
+      key = token_cursor->orig;
+      size = token_cursor->orig_blen;
+    } else {
+      size = grn_token_get_source_length(ctx, token);
+      if (size > 0) {
+        key = token_cursor->orig + grn_token_get_source_offset(ctx, token);
+      }
+    }
     int ef = default_ef;
     if (grn_token_get_force_prefix_search(ctx, token)) { ef |= EX_PREFIX; }
     switch (token_cursor->status) {
     case GRN_TOKEN_CURSOR_DOING :
-      key = _grn_table_key(ctx, data->lexicon, tid, &size);
       ti = token_info_open(ctx,
                            data,
+                           tid,
                            key,
                            size,
                            token_cursor->pos,
                            ef & EX_SUFFIX);
       break;
     case GRN_TOKEN_CURSOR_DONE :
-      ti = token_info_open(ctx,
-                           data,
-                           (const char *)token_cursor->curr,
-                           token_cursor->curr_size,
-                           0,
-                           ef);
-      break;
     case GRN_TOKEN_CURSOR_NOT_FOUND :
       ti = token_info_open(ctx,
                            data,
-                           (char *)token_cursor->orig,
-                           token_cursor->orig_blen,
+                           tid,
+                           key,
+                           size,
                            0,
                            ef);
       break;
@@ -9611,31 +9647,37 @@ token_info_build_phrase(grn_ctx *ctx,
       grn_token *token;
       tid = grn_token_cursor_next(ctx, token_cursor);
       token = grn_token_cursor_get_token(ctx, token_cursor);
+      const char *key = NULL;
+      uint32_t size = 0;
+      if (tid == GRN_ID_NIL) {
+        key = token_cursor->curr;
+        size = token_cursor->curr_size;
+      } else {
+        size = grn_token_get_source_length(ctx, token);
+        if (size > 0) {
+          key = token_cursor->orig + grn_token_get_source_offset(ctx, token);
+        }
+      }
       ef = default_ef;
       if (grn_token_get_force_prefix_search(ctx, token)) { ef |= EX_PREFIX; }
       switch (token_cursor->status) {
       case GRN_TOKEN_CURSOR_DONE_SKIP :
         continue;
       case GRN_TOKEN_CURSOR_DOING :
-        key = _grn_table_key(ctx, data->lexicon, tid, &size);
-        ti = token_info_open(ctx, data, key, size, token_cursor->pos, EX_NONE);
+        ti = token_info_open(ctx,
+                             data,
+                             tid,
+                             key,
+                             size,
+                             token_cursor->pos,
+                             EX_NONE);
         break;
-      case GRN_TOKEN_CURSOR_DONE :
-        if (tid) {
-          key = _grn_table_key(ctx, data->lexicon, tid, &size);
-          ti = token_info_open(ctx,
-                               data,
-                               key,
-                               size,
-                               token_cursor->pos,
-                               ef & EX_PREFIX);
-          break;
-        } /* else fallthru */
       default :
         ti = token_info_open(ctx,
                              data,
-                             (char *)token_cursor->curr,
-                             token_cursor->curr_size,
+                             tid,
+                             key,
+                             size,
                              token_cursor->pos,
                              ef & EX_PREFIX);
         break;
@@ -9675,7 +9717,7 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_ii_select_data *data)
                                          GRN_TOKENIZE_ONLY);
   data->only_skip_token = false;
   if (!token_cursor) { return ctx->rc; }
-  grn_token_cursor_next(ctx, token_cursor);
+  grn_id tid = grn_token_cursor_next(ctx, token_cursor);
   switch (token_cursor->status) {
   case GRN_TOKEN_CURSOR_DONE_SKIP :
     data->only_skip_token = true;
@@ -9684,6 +9726,7 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_ii_select_data *data)
   case GRN_TOKEN_CURSOR_DONE :
     ti = token_info_open(ctx,
                          data,
+                         tid,
                          (const char *)token_cursor->curr,
                          token_cursor->curr_size,
                          token_cursor->pos,
@@ -9698,7 +9741,19 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_ii_select_data *data)
   }
   data->token_infos[data->n_token_infos++] = ti;
   while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
-    grn_token_cursor_next(ctx, token_cursor);
+    tid = grn_token_cursor_next(ctx, token_cursor);
+    const char *key = NULL;
+    uint32_t key_size = 0;
+    if (tid == GRN_ID_NIL) {
+      key = token_cursor->curr;
+      key_size = token_cursor->curr_size;
+    } else {
+      grn_token *token = grn_token_cursor_get_token(ctx, token_cursor);
+      key_size = grn_token_get_source_length(ctx, token);
+      if (key_size > 0) {
+        key = token_cursor->orig + grn_token_get_source_offset(ctx, token);
+      }
+    }
     switch (token_cursor->status) {
     case GRN_TOKEN_CURSOR_DONE_SKIP :
       continue;
@@ -9706,8 +9761,9 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_ii_select_data *data)
     case GRN_TOKEN_CURSOR_DONE :
       ti = token_info_open(ctx,
                            data,
-                           (const char *)token_cursor->curr,
-                           token_cursor->curr_size,
+                           tid,
+                           key,
+                           key_size,
                            token_cursor->pos,
                            EX_FUZZY);
       break;
