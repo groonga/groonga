@@ -27,7 +27,7 @@
 using string_view = std::string_view;
 # else
 #  include <arrow/util/make_unique.h>
-#  define GRN_MAKE_UNIQUE arrow::internal::make_unique;
+#  define GRN_MAKE_UNIQUE arrow::internal::make_unique
 using string_view = arrow::util::string_view;
 # endif
 #endif
