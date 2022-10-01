@@ -850,7 +850,7 @@ extern "C" {
     uint32_t element_size = grn_uvector_element_size_internal(ctx, uvector);
     uint32_t element_content_size = element_size;
     if (grn_obj_is_weight_uvector(ctx, uvector)) {
-      element_content_size -= sizeof(float);
+      element_content_size -= static_cast<uint32_t>(sizeof(float));
     }
     uint32_t n_elements = grn_uvector_size_internal(ctx, uvector);
     uint32_t i;
