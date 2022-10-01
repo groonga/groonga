@@ -32,6 +32,7 @@ RUN \
     pkgconfig \
     ruby \
     tar \
+    which \
     xxhash-devel \
     zlib-devel && \
   dnf clean ${quiet} all
