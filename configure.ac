@@ -87,9 +87,11 @@ AC_MSG_RESULT([$solaris])
 AC_C_BIGENDIAN
 AC_PROG_CXX
 m4_ifdef([AX_CXX_COMPILE_STDCXX_17],
-         [AX_CXX_COMPILE_STDCXX_17([ext], [optional])],
-         [m4_ifdef([AX_CXX_COMPILE_STDCXX_11],
-                   [AX_CXX_COMPILE_STDCXX_11([ext], [optional])])])
+         [AX_CXX_COMPILE_STDCXX_17([ext], [optional])])
+if test "$HAVE_CXX17" != "1"; then
+  m4_ifdef([AX_CXX_COMPILE_STDCXX_11],
+           [AX_CXX_COMPILE_STDCXX_11([ext], [optional])])
+fi
 AC_PROG_CC
 m4_ifdef([AC_PROG_CC_C99],
          [AC_PROG_CC_C99])
