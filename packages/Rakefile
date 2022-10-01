@@ -99,6 +99,10 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     true
   end
 
+  def docker_image(os, architecture)
+    "ghcr.io/groonga/#{super}"
+  end
+
   def github_repository
     "groonga/groonga"
   end

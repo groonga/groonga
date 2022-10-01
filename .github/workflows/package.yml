@@ -149,16 +149,31 @@ jobs:
         run: |
           cd packages
           rake version:update RELEASE_DATE=$(date +%Y-%m-%d)
+      - name: Login to GitHub Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache ccache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: packages/${{ matrix.task-namespace }}/build/${{ matrix.target }}/ccache
-          key: package-${{ matrix.id }}-ccache-${{ hashFiles('lib/**/*.c', 'lib/**/*.cpp', 'lib/**/*.h') }}
+          key: package-${{ matrix.id }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
           restore-keys: package-${{ matrix.id }}-ccache-
       - name: Build with docker
         run: |
           cd packages
+          rake docker:pull || :
           rake ${{ matrix.task-namespace }}:build BUILD_DIR=build
+        env:
+          APT_TARGETS: ${{ matrix.target }}
+          YUM_TARGETS: ${{ matrix.target }}
+      - name: Push the built Docker image
+        continue-on-error: true
+        run: |
+          cd package
+          rake docker:push
         env:
           APT_TARGETS: ${{ matrix.target }}
           YUM_TARGETS: ${{ matrix.target }}

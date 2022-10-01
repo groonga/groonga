@@ -71,6 +71,7 @@ jobs:
             autoconf-archive \
             automake1.11 \
             autotools-dev \
+            ccache \
             cmake \
             gdb \
             gettext \
@@ -92,6 +93,13 @@ jobs:
             sudo apt install -y -V \
               python3-pip
           fi
+          echo "/usr/lib/ccache" >> $GITHUB_PATH
+      - name: Cache ccache
+        uses: actions/cache@v3
+        with:
+          path: ~/.ccache
+          key: source-${{ matrix.id }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: source-${{ matrix.id }}-ccache-
       - name: Install Cutter
         run: |
           curl \
@@ -321,7 +329,7 @@ jobs:
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
 
           echo "$PWD/install/bin" >> ${GITHUB_PATH}
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cache/red-datasets
