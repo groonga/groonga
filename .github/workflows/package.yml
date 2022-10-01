@@ -172,7 +172,7 @@ jobs:
       - name: Push the built Docker image
         continue-on-error: true
         run: |
-          cd package
+          cd packages
           rake docker:push
         env:
           APT_TARGETS: ${{ matrix.target }}
