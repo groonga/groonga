@@ -33,11 +33,101 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 12.0.7 - 2022-08-29"
-msgstr "12.0.7リリース - 2022-08-29"
+msgid "Release 12.0.8 - 2022-10-03"
+msgstr "12.0.8リリース - 2022-10-03"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "Added a new function ``escalate()``."
+msgstr "新しい関数 ``escalate()`` を追加しました。"
+
+msgid "We changed specification of the ``escalate()`` function as below."
+msgstr "``escalate()`` の仕様を以下の通り変更しました。"
+
+msgid "Only use result sets inside ``escalate()`` for threshold."
+msgstr ""
+"しきい値の比較に ``escalate()`` の内部の結果セットのみを使うように変更しまし"
+"た。"
+
+msgid "Don't use the current result set out of ``escalate()``."
+msgstr "``escalate()`` の外部の現在の結果セットは使用しません。"
+
+msgid ""
+"Don't require the threshold for the first condition. (e.g. "
+"``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)"
+msgstr ""
+"最初の条件のためのしきい値は不要となりました。 (例: ``escalate(CONDITION1, "
+"THRESHOLD2, CONDITION2, ...)``)"
+
+msgid "Don't allow empty arguments call. The first condition is required."
+msgstr "引数の指定を必須としました。最初の条件が必須となります。"
+
+msgid "Always execute the first condition."
+msgstr "最初の引数を常に実行します。"
+
+msgid ""
+"[:doc:`install/cmake`] Added a document about how to build Groonga with "
+"CMake."
+msgstr "[:doc:`install/cmake`] CMakeを使ってビルドする方法を追加しました。"
+
+msgid ""
+"[:doc:`install/others`] Added descriptions about how to enable/disable "
+"Apache Arrow support when building with GNU Autotools."
+msgstr ""
+"[:doc:`install/others`] GNU Autotoolsを使ってビルドする場合に、Apache Arrowの"
+"機能を有効化/無効化する方法について追加しました。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added a document about ``drilldowns."
+"table``."
+msgstr ""
+"[:doc:`/reference/commands/select`] ``drilldown_filter`` のドキュメントを追加"
+"しました。"
+
+msgid ""
+"[:doc:`contribution/documentation/i18n`] Updated the translation procedure."
+msgstr "[:doc:`contribution/documentation/i18n`] 翻訳方法を更新しました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"Fixed a bug that Groonga could return incorrect results when we use :doc:"
+"`reference/normalizers/normalizer_table` and it contains a non-idempotent "
+"(results can be changed when executed repeatedly) definition."
+msgstr ""
+":doc:`reference/normalizers/normalizer_table` で冪等でない（繰り返し実行する"
+"と結果が変わることがある）定義をした時に、Groongaが誤った結果を返すことがある"
+"問題を修正しました。"
+
+msgid ""
+"This was caused by that we normalized a search value multiple times: after "
+"the value was input and after the value was tokenized."
+msgstr ""
+"これは、検索する値について、値を受け取った後と、トークナイズした後の二回ノー"
+"マライズしていたことが原因です。"
+
+msgid "Here is a example."
+msgstr "以下はこのバグの例です。"
+
+msgid ""
+"The expected result of ``select Memos --query content:@a`` is ``a``, but "
+"Groonga returned ``c`` as a result. This was because we normalized the input "
+"``a`` to ``b`` by definitions of ``ColumnNormalizations``, and after that, "
+"we normalized the normalized ``b`` again and it was normalized to ``c``. As "
+"a result, the input ``a`` was converted to ``c`` and matched to ``{\"content"
+"\":\"c\"}`` of the ``Memos`` table."
+msgstr ""
+"``select Memos --query content:@a`` の結果の期待値は ``a`` ですが、Groongaは "
+"``c`` を返していました。これは、入力された ``a`` が ``ColumnNormalizations`` "
+"の定義にしたがって ``b`` にノーマライズされ、その後、 ノーマライズされた "
+"``b`` を更に ``c`` にノーマライズしていたためです。結果的に、入力された "
+"``a`` は ``c`` に変換され、 ``Memos`` テーブルの ``{\"content\":\"c\"}`` に"
+"マッチしていました。"
+
+msgid "Release 12.0.7 - 2022-08-29"
+msgstr "12.0.7リリース - 2022-08-29"
 
 msgid "Added a new function ``escalate()``. (experimental)"
 msgstr "新しい関数 ``escalate()`` を追加しました。(実験的)"
@@ -127,9 +217,6 @@ msgid ""
 msgstr ""
 "[:doc:`/reference/commands/select`] ``--n_workers`` オプションのドキュメント"
 "を追加しました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid ""
 "Fixed a bug Groonga's response may be slow when we execute the "

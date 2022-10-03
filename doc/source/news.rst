@@ -5,6 +5,88 @@
 News
 ====
 
+.. _release-12-0-8:
+
+Release 12.0.8 - 2022-10-03
+---------------------------
+
+Improvements
+------------
+
+* Added a new function ``escalate()``.
+
+  We changed specification of the ``escalate()`` function as below.
+  
+  * Only use result sets inside ``escalate()`` for threshold.
+
+    Don't use the current result set out of ``escalate()``.
+  
+  * Don't require the threshold for the first condition. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
+  * Don't allow empty arguments call. The first condition is required.
+  * Always execute the first condition.
+
+* [:doc:`install/cmake`] Added a document about how to build Groonga with CMake.
+
+* [:doc:`install/others`] Added descriptions about how to enable/disable Apache Arrow support when building with GNU Autotools.
+
+* [:doc:`reference/commands/select`] Added a document about ``drilldowns.table``.
+
+* [:doc:`contribution/documentation/i18n`] Updated the translation procedure.
+
+Fixes
+-----
+
+* Fixed a bug that Groonga could return incorrect results when we use :doc:`reference/normalizers/normalizer_table`
+  and it contains a non-idempotent (results can be changed when executed repeatedly) definition.
+  
+  This was caused by that we normalized a search value multiple times: after the value was input and after the value was tokenized.
+
+  Here is a example.
+
+  .. code-block::
+
+     table_create ColumnNormalizations TABLE_NO_KEY
+     column_create ColumnNormalizations target_column COLUMN_SCALAR ShortText
+     column_create ColumnNormalizations normalized COLUMN_SCALAR ShortText
+
+     load --table ColumnNormalizations
+     [
+     {"target_column": "a", "normalized": "b"},
+     {"target_column": "b", "normalized": "c"}
+     ]
+
+     table_create Targets TABLE_PAT_KEY ShortText
+     column_create Targets column_normalizations_target_column COLUMN_INDEX \
+       ColumnNormalizations target_column
+
+     table_create Memos TABLE_NO_KEY
+     column_create Memos content COLUMN_SCALAR ShortText
+
+     load --table Memos
+     [
+     {"content":"a"},
+     {"content":"c"},
+     ]
+
+     table_create \
+       Terms \
+       TABLE_PAT_KEY \
+       ShortText \
+       --default_tokenizer 'TokenNgram' \
+       --normalizers 'NormalizerTable("normalized", \
+                                     "ColumnNormalizations.normalized", \
+                                     "target", \
+                                     "target_column")'
+
+     column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+     select Memos --query content:@a
+     [[0,1664781132.892326,0.03527212142944336],[[[1],[["_id","UInt32"],["content","ShortText"]],[2,"c"]]]]
+
+  The expected result of ``select Memos --query content:@a`` is ``a``, but Groonga returned ``c`` as a result.
+  This was because we normalized the input ``a`` to ``b`` by definitions of ``ColumnNormalizations``, and after that, we normalized the normalized ``b``
+  again and it was normalized to ``c``. As a result, the input ``a`` was converted to ``c`` and matched to ``{"content":"c"}`` of the ``Memos`` table.
+
 .. _release-12-0-7:
 
 Release 12.0.7 - 2022-08-29
