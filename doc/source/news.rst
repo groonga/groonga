@@ -72,8 +72,7 @@ Fixes
        Terms \
        TABLE_PAT_KEY \
        ShortText \
-       --default_tokenizer 'TokenNgram("unify_alphabet", false, \
-                                       "report_source_location", true)' \
+       --default_tokenizer 'TokenNgram' \
        --normalizers 'NormalizerTable("normalized", \
                                      "ColumnNormalizations.normalized", \
                                      "target", \
