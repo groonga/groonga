@@ -19,7 +19,7 @@ Improvements
   
   * Only use result sets inside ``escalate()`` for threshold.
 
-    * Don't use the current result set out of ``escalate()``.
+    Don't use the current result set out of ``escalate()``.
   
   * Don't require the threshold for the first condition. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
   * Don't allow empty arguments call. The first condition is required.
