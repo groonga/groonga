@@ -21,17 +21,25 @@ Improvements
 
     * Don't use the current result set out of ``escalate()``.
   
-  * Threshold for the first condition isn't required. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
+  * Don't require the threshold for the first condition. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
   * Don't allow empty arguments call. The first condition is required.
-  * The first condition is always executed.
+  * Always execute the first condition.
 
 * [:doc:`install/cmake`] Added a document about how to build Groonga with CMake.
 
 * [:doc:`install/others`] Added descriptions about how to enable/disable Apache Arrow support when building with GNU Autotools.
 
-* [:doc:`reference/commands/select`] Add a document about ``drilldowns.table``.
+* [:doc:`reference/commands/select`] Added a document about ``drilldowns.table``.
 
 * [:doc:`contribution/documentation/i18n`] Updated the translation procedure.
+
+Fixes
+-----
+
+* Fixed a bug that Groonga returned incorrect results when we use :refs:`normalizertable`
+  and it contains a non-idempotent (results can be changed when executed repeatedly) definition.
+  
+  This was caused by that Groonga normalized a search value multiple times: after the value was input and after the value was tokenized.
 
 .. _release-12-0-7:
 
