@@ -42,7 +42,7 @@ Fixes
   This was caused by that we normalized a search value multiple times: after the value was input and after the value was tokenized.
 
   Built-in normalizers like :doc:`reference/normalizers/normalizer_auto` don't cause this bug 
-  because they are idempotent (results aren't changed if they executed repeatedly).
+  because they are idempotent (results aren't changed if they are executed repeatedly).
 
   Here is a example.
 
