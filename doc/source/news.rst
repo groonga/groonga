@@ -13,9 +13,7 @@ Release 12.0.8 - 2022-10-03
 Improvements
 ------------
 
-* Added a new function ``escalate()``.
-
-  We changed specification of the ``escalate()`` function as below.
+* Changed specification of the ``escalate()`` function (Experimental).
   
   * Only use result sets inside ``escalate()`` for threshold.
 
@@ -25,11 +23,13 @@ Improvements
   * Don't allow empty arguments call. The first condition is required.
   * Always execute the first condition.
 
+  This function is experimental. These behaviors may be changed in the future.
+
 * [:doc:`install/cmake`] Added a document about how to build Groonga with CMake.
 
 * [:doc:`install/others`] Added descriptions about how to enable/disable Apache Arrow support when building with GNU Autotools.
 
-* [:doc:`reference/commands/select`] Added a document about ``drilldowns.table``.
+* [:doc:`reference/commands/select`] Added a document about :ref:`select-drilldowns-label-table`.
 
 * [:doc:`contribution/documentation/i18n`] Updated the translation procedure.
 
@@ -40,6 +40,9 @@ Fixes
   and it contains a non-idempotent (results can be changed when executed repeatedly) definition.
   
   This was caused by that we normalized a search value multiple times: after the value was input and after the value was tokenized.
+
+  Built-in normalizers like :doc:`reference/normalizers/normalizer_auto` don't cause this bug 
+  because they are idempotent (results aren't changed if they executed repeatedly).
 
   Here is a example.
 
