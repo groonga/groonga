@@ -121,7 +121,7 @@ msgstr ""
 "ん。"
 
 msgid "Here is a example."
-msgstr "以下はこのバグの例です。"
+msgstr "以下はこの問題の例です。"
 
 msgid ""
 "The expected result of ``select Memos --query content:@a`` is ``a``, but "
