@@ -13,7 +13,7 @@ Release 12.0.8 - 2022-10-03
 Improvements
 ------------
 
-* Changed specification of the ``escalate()`` function (Experimental).
+* Changed specification of the ``escalate()`` function (Experimental) to make it easier to use.
   
   * Only use result sets inside ``escalate()`` for threshold.
 
@@ -22,6 +22,9 @@ Improvements
   * Don't require the threshold for the first condition. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
   * Don't allow empty arguments call. The first condition is required.
   * Always execute the first condition.
+
+  In the previous specification, users had to guess how many results would be passed to ``escalate()`` to determin the first threshold, which was incovenient.
+  From this release, the users don't need to guess how many results would be passed to ``escalate()``, making it easier to set thresholds.
 
   This function is experimental. These behaviors may be changed in the future.
 
@@ -41,8 +44,21 @@ Fixes
   
   This was caused by that we normalized a search value multiple times: after the value was input and after the value was tokenized.
 
-  Built-in normalizers like :doc:`reference/normalizers/normalizer_auto` don't cause this bug 
-  because they are idempotent (results aren't changed if they are executed repeatedly).
+  Groonga tokenizes and normalizes the data to be registered using the tokenizer and normalizer set in the index table when adding a record.
+  The search value is also tokenized and normalized using the tokenizer and normalizer set in the index table, and then the search value and the index are matched.
+  If the search value is the same as the data registered in the index, it will be in the same state as stored in the index because both use the same tokenizer and normalizer.
+
+  However, Groonga had normalized extra only search keywords.
+
+  Built-in normalizers like :doc:`reference/normalizers/normalizer_auto` did't cause this bug because 
+  they are idempotent (results aren't changed if they are executed repeatedly).
+  On the other hand, :doc:`reference/normalizers/normalizer_table` allows the users specify their own normalization definitions, 
+  so they can specify non-idempotent (results can be changed when executed repeatedly) definitions.
+
+  If there were non-idempotent definitions in :doc:`reference/normalizers/normalizer_table`, 
+  the indexed data and the search value did not match in some cases because the search value was normalized extra.
+  
+  In such cases, the data that should hit was not hit or the data that should not hit was hit.
 
   Here is a example.
 
