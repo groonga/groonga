@@ -13,23 +13,53 @@ Release 12.0.8 - 2022-10-03
 Improvements
 ------------
 
-* Added a new function ``escalate()``.
+* Changed specification of the ``escalate()`` function (Experimental) to make it easier to use.
 
-  We changed specification of the ``escalate()`` function as below.
+  We changed to not use results out of ``escalate()``.
   
-  * Only use result sets inside ``escalate()`` for threshold.
+  In the previous specification, users had to guess how many results would be passed to ``escalate()`` to determin the first threshold, which was incovenient.
 
-    Don't use the current result set out of ``escalate()``.
-  
-  * Don't require the threshold for the first condition. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
+  Here is a example for the previous ``escalate()``.
+
+  .. code-block::
+
+     number_column > 10 && escalate(THRESHOLD_1, CONDITION_1,
+                                    ...,
+                                    THRESHOLD_N, CONDITION_N)
+
+  ``CONDITION1`` was executed when the results of ``number_column > 10`` was less or equal to ``THRESHOLD_1`` . 
+  Users had to guess how many results would they get from ``number_column > 10`` to determine ``THRESHOLD_1``.
+
+  From this release, the users don't need to guess how many results will they get from ``number_column > 10``, making it easier to set the thresholds.
+
+  With this change, the syntax of ``escalate()`` changed as follow.
+
+  The previous syntax
+
+  .. code-block::
+
+     escalate(THRESHOLD_1, CONDITION_1,THRESHOLD_2, CONDITION_2, ..., THRESHOLD_N, CONDITION_N)
+
+  The new syntax
+
+  .. code-block::
+     
+     escalate(CONDITION_1, THRESHOLD_2, CONDITION_2, ..., THRESHOLD_N, CONDITION_N)
+
+
+  Here are details of the syntax changes.
+
+  * Don't require the threshold for the first condition.
   * Don't allow empty arguments call. The first condition is required.
   * Always execute the first condition.
+
+  This function is experimental. These behaviors may be changed in the future.
 
 * [:doc:`install/cmake`] Added a document about how to build Groonga with CMake.
 
 * [:doc:`install/others`] Added descriptions about how to enable/disable Apache Arrow support when building with GNU Autotools.
 
-* [:doc:`reference/commands/select`] Added a document about ``drilldowns.table``.
+* [:doc:`reference/commands/select`] Added a document about :ref:`select-drilldowns-label-table`.
 
 * [:doc:`contribution/documentation/i18n`] Updated the translation procedure.
 
@@ -40,6 +70,22 @@ Fixes
   and it contains a non-idempotent (results can be changed when executed repeatedly) definition.
   
   This was caused by that we normalized a search value multiple times: after the value was input and after the value was tokenized.
+
+  Groonga tokenizes and normalizes the data to be registered using the tokenizer and normalizer set in the index table when adding a record.
+  The search value is also tokenized and normalized using the tokenizer and normalizer set in the index table, and then the search value and the index are matched.
+  If the search value is the same as the data registered in the index, it will be in the same state as stored in the index because both use the same tokenizer and normalizer.
+
+  However, Groonga had normalized extra only search keywords.
+
+  Built-in normalizers like :doc:`reference/normalizers/normalizer_auto` did't cause this bug because 
+  they are idempotent (results aren't changed if they are executed repeatedly).
+  On the other hand, :doc:`reference/normalizers/normalizer_table` allows the users specify their own normalization definitions, 
+  so they can specify non-idempotent (results can be changed when executed repeatedly) definitions.
+
+  If there were non-idempotent definitions in :doc:`reference/normalizers/normalizer_table`, 
+  the indexed data and the search value did not match in some cases because the search value was normalized extra.
+  
+  In such cases, the data that should hit was not hit or the data that should not hit was hit.
 
   Here is a example.
 
