@@ -14,17 +14,44 @@ Improvements
 ------------
 
 * Changed specification of the ``escalate()`` function (Experimental) to make it easier to use.
-  
-  * Only use result sets inside ``escalate()`` for threshold.
 
-    Don't use the current result set out of ``escalate()``.
+  We changed to not use results out of ``escalate()``.
   
-  * Don't require the threshold for the first condition. (e.g. ``escalate(CONDITION1, THRESHOLD2, CONDITION2, ...)``)
+  In the previous specification, users had to guess how many results would be passed to ``escalate()`` to determin the first threshold, which was incovenient.
+
+  Here is a example for the previous ``escalate()``.
+
+  .. code-block::
+
+     number_column > 10 && escalate(THRESHOLD_1, CONDITION_1,
+                                    ...,
+                                    THRESHOLD_N, CONDITION_N)
+
+  ``CONDITION1`` was executed when the results of ``number_column > 10`` was less or equal to ``THRESHOLD_1`` . 
+  Users had to guess how many results would they get from ``number_column > 10`` to determine ``THRESHOLD_1``.
+
+  From this release, the users don't need to guess how many results will they get from ``number_column > 10``, making it easier to set the thresholds.
+
+  With this change, the syntax of ``escalate()`` changed as follow.
+
+  The previous syntax
+
+  .. code-block::
+
+     escalate(THRESHOLD_1, CONDITION_1,THRESHOLD_2, CONDITION_2, ..., THRESHOLD_N, CONDITION_N)
+
+  The new syntax
+
+  .. code-block::
+     
+     escalate(CONDITION_1, THRESHOLD_2, CONDITION_2, ..., THRESHOLD_N, CONDITION_N)
+
+
+  Here are details of the syntax changes.
+
+  * Don't require the threshold for the first condition.
   * Don't allow empty arguments call. The first condition is required.
   * Always execute the first condition.
-
-  In the previous specification, users had to guess how many results would be passed to ``escalate()`` to determin the first threshold, which was incovenient.
-  From this release, the users don't need to guess how many results would be passed to ``escalate()``, making it easier to set thresholds.
 
   This function is experimental. These behaviors may be changed in the future.
 
