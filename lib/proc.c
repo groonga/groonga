@@ -5170,4 +5170,6 @@ grn_db_init_builtin_commands(grn_ctx *ctx)
   grn_proc_init_thread_dump(ctx);
 
   grn_proc_init_escalate(ctx);
+
+  grn_proc_init_sleep(ctx);
 }

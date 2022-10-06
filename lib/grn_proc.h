@@ -80,6 +80,7 @@ void grn_proc_init_reference_acquire(grn_ctx *ctx);
 void grn_proc_init_reference_release(grn_ctx *ctx);
 void grn_proc_init_schema(grn_ctx *ctx);
 void grn_proc_init_select(grn_ctx *ctx);
+void grn_proc_init_sleep(grn_ctx *ctx);
 void grn_proc_init_snippet(grn_ctx *ctx);
 void grn_proc_init_snippet_html(grn_ctx *ctx);
 void grn_proc_init_table_copy(grn_ctx *ctx);

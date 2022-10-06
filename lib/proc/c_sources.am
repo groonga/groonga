@@ -18,6 +18,7 @@ libgrnproc_c_sources =				\
 	proc_query_log_flags.c			\
 	proc_reference.c			\
 	proc_schema.c				\
+	proc_sleep.c				\
 	proc_snippet.c				\
 	proc_table.c				\
 	proc_thread.c				\
