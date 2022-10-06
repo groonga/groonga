@@ -1336,6 +1336,31 @@ grn_proc_option_value_int32(grn_ctx *ctx,
   }
 }
 
+double
+grn_proc_option_value_double(grn_ctx *ctx,
+                             grn_obj *option,
+                             double default_value)
+{
+  if (!option) {
+    return default_value;
+  }
+
+  if (GRN_TEXT_LEN(option) == 0) {
+    return default_value;
+  }
+
+  double value = default_value;
+  grn_obj buffer;
+  GRN_FLOAT_INIT(&buffer, 0);
+  grn_rc rc = grn_obj_cast(ctx, option, &buffer, false);
+  if (rc == GRN_SUCCESS) {
+    value = GRN_FLOAT_VALUE(&buffer);
+  }
+  GRN_OBJ_FIN(ctx, &buffer);
+
+  return value;
+}
+
 const char *
 grn_proc_option_value_string(grn_ctx *ctx,
                              grn_obj *option,

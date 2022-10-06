@@ -99,6 +99,9 @@ grn_bool grn_proc_option_value_bool(grn_ctx *ctx,
 int32_t grn_proc_option_value_int32(grn_ctx *ctx,
                                     grn_obj *option,
                                     int32_t default_value);
+double grn_proc_option_value_double(grn_ctx *ctx,
+                                    grn_obj *option,
+                                    double default_value);
 const char *grn_proc_option_value_string(grn_ctx *ctx,
                                          grn_obj *option,
                                          size_t *size);
