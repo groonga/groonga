@@ -1552,6 +1552,15 @@ grn_plugin_proc_get_value_int64(grn_ctx *ctx,
   return grn_proc_get_value_int64(ctx, value, default_value_raw, tag);
 }
 
+double
+grn_plugin_proc_get_value_double(grn_ctx *ctx,
+                                 grn_obj *value,
+                                 double default_value_raw,
+                                 const char *tag)
+{
+  return grn_proc_get_value_double(ctx, value, default_value_raw, tag);
+}
+
 grn_operator
 grn_plugin_proc_get_value_mode(grn_ctx *ctx,
                                grn_obj *value,

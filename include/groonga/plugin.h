@@ -221,6 +221,11 @@ grn_plugin_proc_get_value_int64(grn_ctx *ctx,
                                 grn_obj *value,
                                 int64_t default_value_raw,
                                 const char *tag);
+GRN_API double
+grn_plugin_proc_get_value_double(grn_ctx *ctx,
+                                 grn_obj *value,
+                                 double default_value_raw,
+                                 const char *tag);
 GRN_API grn_operator
 grn_plugin_proc_get_value_mode(grn_ctx *ctx,
                                grn_obj *value,
