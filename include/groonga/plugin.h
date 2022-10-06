@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2010-2017 Brazil
+  Copyright(C) 2010-2017  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -170,6 +171,11 @@ GRN_API int32_t grn_plugin_proc_get_var_int32(grn_ctx *ctx,
                                               const char *name,
                                               int name_size,
                                               int32_t default_value);
+GRN_API double grn_plugin_proc_get_var_double(grn_ctx *ctx,
+                                              grn_user_data *user_data,
+                                              const char *name,
+                                              int name_size,
+                                              double default_value);
 GRN_API const char *grn_plugin_proc_get_var_string(grn_ctx *ctx,
                                                    grn_user_data *user_data,
                                                    const char *name,
