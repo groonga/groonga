@@ -121,6 +121,20 @@ jobs:
           Write-Output "::set-output name=install-folder-with-vcruntime::${INSTALL_FOLDER_WITH_VCRUNTIME}"
           Write-Output "::set-output name=install-parent-folder-with-vcruntime::${INSTALL_PARENT_FOLDER_WITH_VCRUNTIME}"
           Write-Output "::set-output name=relative-install-folder-with-vcruntime::${RELATIVE_INSTALL_FOLDER_WITH_VCRUNTIME}"
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ${{ env.APPDATA }}/ccache/
+          key: source-${{ matrix.vs-version }}-${{ matrix.vc-architecture }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: source-${{ matrix.vs-version }}-${{ matrix.vc-architecture }}-ccache-
+      - name: Prepare ccache
+        run: |
+          choco install ccache
+          ccache --show-stats --verbose
+          Write-Output "CMAKE_C_COMPILER_LAUNCHER=ccache" | `
+            Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Output "CMAKE_CXX_COMPILER_LAUNCHER=ccache" | `
+            Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Set version
         run: |
           "GRN_VERSION=${Env:GROONGA_VERSION}" | Set-Content version.sh
@@ -145,6 +159,7 @@ jobs:
           cmake ${CMAKE_ARGS}
           cmake --build ..\apache-arrow-build --config Release
           cmake --build ..\apache-arrow-build --config Release --target Install
+          ccache --show-stats --verbose
       - name: Install Groonga
         shell: cmd
         run: |
@@ -169,6 +184,7 @@ jobs:
           type ..\groonga-build\CMakeFiles\CMakeError.log
           cmake --build ..\groonga-build --config RelWithDebInfo
           cmake --build ..\groonga-build --config RelWithDebInfo --target Install
+          ccache --show-stats --verbose
       - name: Install Groonga Admin
         run: |
           cd "${Env:FULL_INSTALL_FOLDER}\share\groonga\html"
