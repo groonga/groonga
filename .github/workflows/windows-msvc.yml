@@ -157,7 +157,7 @@ jobs:
             $CMAKE_ARGS += ("-A", "${{ matrix.cmake-architecture }}")
           }
           cmake ${CMAKE_ARGS}
-          cmake --build ..\apache-arrow-build --config Release
+          cmake --build ..\apache-arrow-build --config Release --verbose
           cmake --build ..\apache-arrow-build --config Release --target Install
           ccache --show-stats --verbose
       - name: Install Groonga
@@ -182,7 +182,7 @@ jobs:
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_ZSTD=bundled
           cmake %CMAKE_ARGS%
           type ..\groonga-build\CMakeFiles\CMakeError.log
-          cmake --build ..\groonga-build --config RelWithDebInfo
+          cmake --build ..\groonga-build --config RelWithDebInfo --verbose
           cmake --build ..\groonga-build --config RelWithDebInfo --target Install
           ccache --show-stats --verbose
       - name: Install Groonga Admin
