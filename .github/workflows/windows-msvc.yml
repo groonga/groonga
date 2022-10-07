@@ -124,7 +124,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: |
-            ${{ env.APPDATA }}/ccache/
+            ccache
           key: source-${{ matrix.vs-version }}-${{ matrix.vc-architecture }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
           restore-keys: source-${{ matrix.vs-version }}-${{ matrix.vc-architecture }}-ccache-
       - name: Prepare ccache
