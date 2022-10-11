@@ -19,12 +19,6 @@ set(LZ4_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../lz4-${LZ4_VERSION}")
 set(LZ4_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/../lz4-${LZ4_VERSION}")
 
 if(GRN_WITH_BUNDLED_LZ4)
-  include_directories(
-    BEFORE
-    ${LZ4_BINARY_DIR}
-    "${LZ4_SOURCE_DIR}/lib"
-    )
-
   set(LIBLZ4_SOURCES
     "${LZ4_SOURCE_DIR}/lib/lz4.c"
     "${LZ4_SOURCE_DIR}/lib/lz4.h"
@@ -70,6 +64,7 @@ if(GRN_WITH_BUNDLED_LZ4)
   else()
     add_library(liblz4 SHARED ${LIBLZ4_SOURCES})
   endif()
+  target_include_directories(liblz4 BEFORE PUBLIC "${LZ4_SOURCE_DIR}/lib")
   if(NOT MSVC)
     set_target_properties(liblz4 PROPERTIES OUTPUT_NAME "lz4")
   endif()
