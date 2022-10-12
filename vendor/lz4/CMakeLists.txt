@@ -43,10 +43,6 @@ if(GRN_WITH_BUNDLED_LZ4)
 
   set(LZ4_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 
-  add_definitions("-DXXH_NAMESPACE=LZ4_")
-  if(MSVC)
-    add_definitions("-DLZ4_DLL_EXPORT=1")
-  endif()
   set_source_files_properties(${LIBLZ4_SOURCES}
     PROPERTIES
     COMPILE_FLAGS "${LZ4_C_COMPILE_FLAGS}")
@@ -64,6 +60,11 @@ if(GRN_WITH_BUNDLED_LZ4)
     add_library(liblz4 SHARED ${LIBLZ4_SOURCES})
   endif()
   target_include_directories(liblz4 BEFORE PUBLIC "${LZ4_SOURCE_DIR}/lib")
+  target_compile_definitions(liblz4 PUBLIC "-DXXH_NAMESPACE=LZ4_")
+  if(MSVC)
+    target_compile_definitions(liblz4 PUBLIC "-DLZ4_DLL_EXPORT=1")
+  endif()
+
   if(NOT MSVC)
     set_target_properties(liblz4 PROPERTIES OUTPUT_NAME "lz4")
   endif()
