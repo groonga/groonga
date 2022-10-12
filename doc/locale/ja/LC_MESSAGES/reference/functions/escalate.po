@@ -1,0 +1,176 @@
+# -*- po -*-
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2022 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 12.0.9\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2022-10-12 17:35+0900\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "``escalate``"
+msgstr ""
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "This function is experimental."
+msgstr "この関数は実験的です。"
+
+msgid ""
+"It's similar to the existing match escalation mechanism but this is more "
+"generic. The existing match escalation mechanism is just for one full text "
+"search by inverted index. Therefore, for example, if we can't get record in "
+"a search with a index that execute search strictly, we need to search with a "
+"index that execute search loosely once again. This procedure has many "
+"overhead."
+msgstr ""
+"これは、既存のマッチエスカレーションの仕組みと似ていますが、より一般的です。"
+"既存のマッチエスカレーションでは、一つの全文検索インデックスが対象です。その"
+"ため、例えば、厳密に検索するインデックスで検索して結果が取得できなかった場"
+"合、もう一度ゆるく検索するインデックスで検索を実行する必要がありました。この"
+"方法はオーバヘッドが大きい方法です。"
+
+msgid ""
+"However, ``escalte`` is for any full text search by inverted index. "
+"Therefore, we can execute a search with a index that execute search strictly "
+"and a search with a index that execute search loosely in one query. We can "
+"reduce overhead by using ``escalate``."
+msgstr ""
+"しかし、 ``escalte`` は複数のインデックスにも対応しています。そのため、厳密に"
+"検索するインデックスを使った検索とゆるく検索するインデックスを使った検索を一"
+"つのクエリーで実行できます。``escalte`` を使うことによって、オーバーヘッドを"
+"減らすことができます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "``escalate`` is require one or more parameters::"
+msgstr "``escalate`` は一つ以上の引数を持ちます::"
+
+msgid ""
+"``CONDITION_N`` and ``THRESHOLD_N`` are pair. However, the last condition "
+"has not a threshold as pair."
+msgstr ""
+"``CONDITION_N`` と ``THRESHOLD_N`` はペアですが、最後の条件はペアとなるしきい"
+"値はありません。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "使い方を示すために使うスキーマ定義とサンプルデータは以下の通りです。"
+
+msgid "Sample schema:"
+msgstr "サンプルスキーマ:"
+
+msgid "Execution example::"
+msgstr "実行例::"
+
+msgid "Sample data:"
+msgstr "サンプルデータ:"
+
+msgid "Here is a simple example."
+msgstr "以下は簡単な使用例です。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "``CONDITION_1``"
+msgstr ""
+
+msgid "``CONDITION_1`` is required."
+msgstr "``CONDITION_1`` は必須です。"
+
+msgid ""
+"A condition that we specify ``CONDITION_1`` is always executed. Normally, we "
+"specify the condition that we can the most narrow down search results."
+msgstr ""
+"``CONDITION_1`` に指定した条件は常に実行されます。通常、最も検索結果を絞り込"
+"める条件を指定します。"
+
+msgid ""
+"``CONDITION_1`` is a string that uses script syntax such as \"number_column "
+"> 29\"."
+msgstr ""
+"``CONDITION_1`` は \"number_column > 29\" のようなスクリプト構文の文字列で"
+"す。"
+
+msgid "``THRESHOLD_1``"
+msgstr ""
+
+msgid "``THRESHOLD_1`` is optional."
+msgstr "``THRESHOLD_1`` は省略可能です。"
+
+msgid ""
+"If the number of results that we search with ``CONDITION_1`` in "
+"``THRESHOLD_1`` or less, ``escalate`` evaluate next condition. If the number "
+"of results that we search with ``CONDITION_1`` in more than ``THRESHOLD_1``, "
+"``escalate`` doesn't evaluate next condition."
+msgstr ""
+"``CONDITION_1`` で検索した結果が ``THRESHOLD_1`` 以下の場合、 ``escalte`` は"
+"次の条件を評価します。``CONDITION_1`` で検索した結果が ``THRESHOLD_1`` より大"
+"きい場合、 ``escalte`` は次の条件を評価しません。"
+
+msgid "``THRESHOLD_1`` is a positive number such 0 and 29."
+msgstr "``THRESHOLD_1`` は 0 や 29 のような正の数です。"
+
+msgid "``CONDITION_N``"
+msgstr ""
+
+msgid "``CONDITION_N`` is optional."
+msgstr "``CONDITION_N`` は省略可能です。"
+
+msgid ""
+"If the number of results that we search with the one before condition in "
+"threshold or less, ``escalate`` evaluate ``CONDITION_N``."
+msgstr ""
+"一つ前の条件での検索結果がしきい値以下だった場合に、 ``escalate`` は "
+"``CONDITION_N`` を評価します。"
+
+msgid ""
+"``CONDITION_N`` is a string that uses script syntax such as \"number_column "
+"> 29\"."
+msgstr ""
+"``CONDITION_N`` は \"number_column > 29\" のようなスクリプト構文の文字列で"
+"す。"
+
+msgid "``THRESHOLD_N``"
+msgstr ""
+
+msgid ""
+"``THRESHOLD_N`` is optional. However, when ``CONDITION_N`` exist "
+"``THRESHOLD_N`` is required. (However, the last condition has not a "
+"threshold as pair.)"
+msgstr ""
+"``THRESHOLD_N`` は省略可能ですが、 ``CONDITION_N`` がある場合は、 "
+"``THRESHOLD_N`` は必須です。(ただし、最後の条件はペアとなるしきい値はありませ"
+"ん。)"
+
+msgid ""
+"If the number of results that we search with ``CONDITION_N`` in "
+"``THRESHOLD_N`` or less, ``escalate`` evaluate next condition. If the number "
+"of results that we search with ``CONDITION_N`` in more than ``THRESHOLD_N``, "
+"``escalate`` doesn't evaluate next condition."
+msgstr ""
+"``CONDITION_N`` で検索した結果が ``THRESHOLD_N`` 以下の場合、 ``escalte`` は"
+"次の条件を評価します。``CONDITION_N`` で検索した結果が ``THRESHOLD_N`` より大"
+"きい場合、 ``escalte`` は次の条件を評価しません。"
+
+msgid "``THRESHOLD_N`` is a positive number such 0 and 29."
+msgstr "``THRESHOLD_N`` は 0 や 29 のような正の数です。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "``escalate`` returns whether a record is matched or not as boolean."
+msgstr "``escalte`` は対象レコードがマッチしたかどうかを真偽値で返します。"
