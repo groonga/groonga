@@ -432,6 +432,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/between/usage_value.log \
 	$(top_srcdir)/doc/source/example/reference/functions/cast_loose/usage_basic.log \
 	$(top_srcdir)/doc/source/example/reference/functions/cast_loose/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/functions/escalate/usage_age.log \
+	$(top_srcdir)/doc/source/example/reference/functions/escalate/usage_setup_data.log \
+	$(top_srcdir)/doc/source/example/reference/functions/escalate/usage_setup_schema.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_ellipsoid.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_rectangle.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_distance_rectangle_across_equator.log \
@@ -1095,6 +1098,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/between.rst \
 	$(top_srcdir)/doc/source/reference/functions/cast_loose.rst \
 	$(top_srcdir)/doc/source/reference/functions/edit_distance.rst \
+	$(top_srcdir)/doc/source/reference/functions/escalate.rst \
 	$(top_srcdir)/doc/source/reference/functions/fuzzy_search.rst \
 	$(top_srcdir)/doc/source/reference/functions/geo_distance.rst \
 	$(top_srcdir)/doc/source/reference/functions/geo_in_circle.rst \
@@ -1655,6 +1659,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/between/usage_value.log \
 	source/example/reference/functions/cast_loose/usage_basic.log \
 	source/example/reference/functions/cast_loose/usage_setup.log \
+	source/example/reference/functions/escalate/usage_age.log \
+	source/example/reference/functions/escalate/usage_setup_data.log \
+	source/example/reference/functions/escalate/usage_setup_schema.log \
 	source/example/reference/functions/geo_distance_distance_ellipsoid.log \
 	source/example/reference/functions/geo_distance_distance_rectangle.log \
 	source/example/reference/functions/geo_distance_distance_rectangle_across_equator.log \
@@ -2318,6 +2325,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/between.rst \
 	source/reference/functions/cast_loose.rst \
 	source/reference/functions/edit_distance.rst \
+	source/reference/functions/escalate.rst \
 	source/reference/functions/fuzzy_search.rst \
 	source/reference/functions/geo_distance.rst \
 	source/reference/functions/geo_in_circle.rst \
@@ -2622,6 +2630,7 @@ po_files = \
 	reference/functions/between.po \
 	reference/functions/cast_loose.po \
 	reference/functions/edit_distance.po \
+	reference/functions/escalate.po \
 	reference/functions/fuzzy_search.po \
 	reference/functions/geo_distance.po \
 	reference/functions/geo_in_circle.po \
@@ -2924,6 +2933,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/between.po \
 	LC_MESSAGES/reference/functions/cast_loose.po \
 	LC_MESSAGES/reference/functions/edit_distance.po \
+	LC_MESSAGES/reference/functions/escalate.po \
 	LC_MESSAGES/reference/functions/fuzzy_search.po \
 	LC_MESSAGES/reference/functions/geo_distance.po \
 	LC_MESSAGES/reference/functions/geo_in_circle.po \
@@ -3226,6 +3236,7 @@ edit_po_files = \
 	reference/functions/between.edit \
 	reference/functions/cast_loose.edit \
 	reference/functions/edit_distance.edit \
+	reference/functions/escalate.edit \
 	reference/functions/fuzzy_search.edit \
 	reference/functions/geo_distance.edit \
 	reference/functions/geo_in_circle.edit \
@@ -3528,6 +3539,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/between.edit \
 	LC_MESSAGES/reference/functions/cast_loose.edit \
 	LC_MESSAGES/reference/functions/edit_distance.edit \
+	LC_MESSAGES/reference/functions/escalate.edit \
 	LC_MESSAGES/reference/functions/fuzzy_search.edit \
 	LC_MESSAGES/reference/functions/geo_distance.edit \
 	LC_MESSAGES/reference/functions/geo_in_circle.edit \
@@ -3830,6 +3842,7 @@ mo_files = \
 	reference/functions/between.mo \
 	reference/functions/cast_loose.mo \
 	reference/functions/edit_distance.mo \
+	reference/functions/escalate.mo \
 	reference/functions/fuzzy_search.mo \
 	reference/functions/geo_distance.mo \
 	reference/functions/geo_in_circle.mo \
@@ -4132,6 +4145,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/between.mo \
 	LC_MESSAGES/reference/functions/cast_loose.mo \
 	LC_MESSAGES/reference/functions/edit_distance.mo \
+	LC_MESSAGES/reference/functions/escalate.mo \
 	LC_MESSAGES/reference/functions/fuzzy_search.mo \
 	LC_MESSAGES/reference/functions/geo_distance.mo \
 	LC_MESSAGES/reference/functions/geo_in_circle.mo \
@@ -4469,6 +4483,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/between.html \
 	html/reference/functions/cast_loose.html \
 	html/reference/functions/edit_distance.html \
+	html/reference/functions/escalate.html \
 	html/reference/functions/fuzzy_search.html \
 	html/reference/functions/geo_distance.html \
 	html/reference/functions/geo_in_circle.html \
