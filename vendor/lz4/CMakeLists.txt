@@ -60,7 +60,7 @@ if(GRN_WITH_BUNDLED_LZ4)
     add_library(liblz4 SHARED ${LIBLZ4_SOURCES})
   endif()
   target_include_directories(liblz4 BEFORE PUBLIC "${LZ4_SOURCE_DIR}/lib")
-  set(LZ4_XXH_NAMESPACE LZ4_
+  set(LZ4_XXH_NAMESPACE "LZ4_")
   target_compile_definitions(liblz4 PRIVATE "-DXXH_NAMESPACE=${LZ4_XXH_NAMESPACE}")
   if(MSVC)
     target_compile_definitions(liblz4 PUBLIC "-DLZ4_DLL_EXPORT=1")
