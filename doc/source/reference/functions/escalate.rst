@@ -15,14 +15,14 @@ Summary
 
    This function is experimental.
 
-   It's similar to the existing match escalation mechanism but this is more generic.
-   The existing match escalation mechanism is just for one full text search by inverted index.
-   Therefore, for example, if we can't get record in a search with a index that execute search strictly, we need to search with a index that execute search loosely once again.
-   This procedure has many overhead.
+It's similar to the existing match escalation mechanism but this is more generic.
+The existing match escalation mechanism is just for one full text search by inverted index.
+Therefore, for example, if we can't get record in a search with a index that execute search strictly, we need to search with a index that execute search loosely once again.
+This procedure has many overhead.
 
-   However, ``escalte`` is for any full text search by inverted index.
-   Therefore, we can execute a search with a index that execute search strictly and a search with a index that execute search loosely in one query.
-   We can reduce overhead by using ``escalate``.
+However, ``escalte`` is for any full text search by inverted index.
+Therefore, we can execute a search with a index that execute search strictly and a search with a index that execute search loosely in one query.
+We can reduce overhead by using ``escalate``.
 
 Syntax
 ------
