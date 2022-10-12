@@ -39,8 +39,7 @@ if(GRN_WITH_BUNDLED_LZ4)
     "${LZ4_SOURCE_DIR}/programs/datagen.c"
     "${LZ4_SOURCE_DIR}/programs/datagen.h"
     "${LZ4_SOURCE_DIR}/programs/platform.h"
-    "${LZ4_SOURCE_DIR}/programs/util.h"
-    ${LIBLZ4_SOURCES})
+    "${LZ4_SOURCE_DIR}/programs/util.h")
 
   set(LZ4_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 
@@ -71,6 +70,7 @@ if(GRN_WITH_BUNDLED_LZ4)
 
   if(NOT GRN_BUNDLED)
     add_executable(lz4 ${LZ4_SOURCES})
+    target_link_libraries(lz4 PRIVATE liblz4)
 
     install(TARGETS liblz4
       ARCHIVE DESTINATION "${LIB_DIR}"
