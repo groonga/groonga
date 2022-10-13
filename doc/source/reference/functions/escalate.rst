@@ -29,7 +29,7 @@ The existing match escalation mechanism is just for one full text search by inve
 Therefore, for example, if we can't get record in a search with a index that execute search strictly, we need to search with a index that execute search loosely once again.
 Those processes take more.
 
-However, ``escalte`` is for multiple full text search by inverted index.
+However, ``escalate`` is for multiple full text search by inverted index.
 Therefore, we can execute a search with a index that execute search strictly and a search with a index that execute search loosely in one query.
 We can reduce overhead by using ``escalate``.
 
@@ -109,7 +109,7 @@ If the number of searched results with the one before condition in threshold or 
 ``THRESHOLD_N``
 ~~~~~~~~~~~~~~~
 
-``THRESHOLD_N`` is optional. However, when ``CONDITION_N`` exist ``THRESHOLD_N`` is required. (However, ``CONDITION_1`` has not a threshold as pair.)
+``THRESHOLD_N`` is optional. However, when ``CONDITION_N`` exists ``THRESHOLD_N`` is required. (However, ``CONDITION_1`` has not a threshold as pair.)
 
 If the number of results that we search with ``CONDITION_N`` in ``THRESHOLD_N`` or less, ``escalate`` evaluate next condition.
 If the number of results that we search with ``CONDITION_N`` in more than ``THRESHOLD_N``, ``escalate`` doesn't evaluate next condition.
