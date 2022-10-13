@@ -15,7 +15,7 @@ Summary
 
    This function is experimental.
 
-It's similar to the existing match escalation mechanism but this is more generic.
+This `escalate` function is similar to the existing match escalation mechanism but is more close to common approach.
 
 Match escalation is auto loose search.
 If the number of matched records is equal or less than the threshold specified by ``match_escalation_threshold``, loose search is done automatically. It's match escalation.
