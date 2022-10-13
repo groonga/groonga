@@ -102,7 +102,7 @@ Normally, we specify the condition that we can the most narrow down search resul
 
 ``CONDITION_N`` is optional.
 
-If the number of results that we search with the one before condition in threshold or less, ``escalate`` evaluate ``CONDITION_N``.
+If the number of searched results with the one before condition in threshold or less, ``escalate`` evaluate ``CONDITION_N``.
 
 ``CONDITION_N`` is a string that uses script syntax such as "number_column > 29".
 
