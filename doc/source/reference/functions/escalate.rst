@@ -27,7 +27,7 @@ Please refer to :doc:`/reference/commands/select` about ``match_escalation_thres
 
 The existing match escalation mechanism is just for one full text search by inverted index.
 Therefore, for example, if we can't get record in a search with a index that execute search strictly, we need to search with a index that execute search loosely once again.
-This procedure has many overhead.
+Those processes take more.
 
 However, ``escalte`` is for multiple full text search by inverted index.
 Therefore, we can execute a search with a index that execute search strictly and a search with a index that execute search loosely in one query.
