@@ -94,10 +94,11 @@ grn_str_charlen(grn_ctx *ctx, const char *str, grn_encoding encoding)
     return 1;
   case GRN_ENC_UTF8 :
     if (*p & 0x80) {
-      int b, w;
-      size_t size;
+      unsigned int b;
+      unsigned int w;
+      unsigned int size;
       for (b = 0x40, w = 0; b && (*p & b); b >>= 1, w++);
-      if (!w) {
+      if (w == 0) {
         GRN_LOG(ctx, GRN_LOG_WARNING, "invalid utf8 string(1) on grn_str_charlen");
         return 0;
       }
@@ -216,7 +217,8 @@ normalize_euc(grn_ctx *ctx, grn_str *nstr)
   const unsigned char *s, *s_, *e;
   unsigned char *d, *d0, *d_, b;
   uint_least8_t *cp, *ctypes, ctype;
-  size_t size = nstr->orig_blen, length = 0;
+  unsigned int size = nstr->orig_blen;
+  unsigned int length = 0;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
   if (!(nstr->norm = GRN_MALLOC(size * 2 + 1))) {
     return GRN_NO_MEMORY_AVAILABLE;
@@ -257,7 +259,8 @@ normalize_euc(grn_ctx *ctx, grn_str *nstr)
                 if (ch) { ch[-1] += 2; s_ += 2; }
                 continue;
               } else {
-                *d++ = c >> 8; *d = c & 0xff;
+                *d++ = (unsigned char)(c >> 8);
+                *d = (unsigned char)(c & 0xff);
               }
               break;
             case 0xa1eb :
@@ -267,11 +270,13 @@ normalize_euc(grn_ctx *ctx, grn_str *nstr)
                 if (ch) { ch[-1] += 2; s_ += 2; }
                 continue;
               } else {
-                *d++ = c >> 8; *d = c & 0xff;
+                *d++ = (unsigned char)(c >> 8);
+                *d = (unsigned char)(c & 0xff);
               }
               break;
             default :
-              *d++ = c >> 8; *d = c & 0xff;
+              *d++ = (unsigned char)(c >> 8);
+              *d = (unsigned char)(c & 0xff);
               break;
             }
             ctype = GRN_CHAR_KATAKANA;
@@ -425,7 +430,7 @@ normalize_euc(grn_ctx *ctx, grn_str *nstr)
   if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
   nstr->length = length;
-  nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
+  nstr->norm_blen = (unsigned int)(d - (unsigned char *)nstr->norm);
   return GRN_SUCCESS;
 }
 
@@ -437,7 +442,11 @@ normalize_utf8(grn_ctx *ctx, grn_str *nstr)
   const unsigned char *s, *s_, *s__ = NULL, *p, *p2, *pe, *e;
   unsigned char *d, *d_, *de;
   uint_least8_t *cp;
-  size_t length = 0, ls, lp, size = nstr->orig_blen, ds = size * 3;
+  unsigned int length = 0;
+  int ls;
+  int lp;
+  unsigned int size = nstr->orig_blen;
+  unsigned int ds = size * 3;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
   if (!(nstr->norm = GRN_MALLOC(ds + 1))) {
     return GRN_NO_MEMORY_AVAILABLE;
@@ -491,7 +500,7 @@ normalize_utf8(grn_ctx *ctx, grn_str *nstr)
       } else {
         if (de <= d + lp) {
           unsigned char *norm;
-          ds += (ds >> 1) + lp;
+          ds += (ds >> 1) + (unsigned int)lp;
           if (!(norm = GRN_REALLOC(nstr->norm, ds + 1))) {
             if (nstr->ctypes) { GRN_FREE(nstr->ctypes); nstr->ctypes = NULL; }
             if (nstr->checks) { GRN_FREE(nstr->checks); nstr->checks = NULL; }
@@ -524,13 +533,13 @@ normalize_utf8(grn_ctx *ctx, grn_str *nstr)
             nstr->ctypes = ctypes;
           }
         }
-        grn_memcpy(d, p, lp);
+        grn_memcpy(d, p, (size_t)lp);
         d_ = d;
         d += lp;
         length++;
         if (cp) { *cp++ = grn_nfkc_char_type(p); }
         if (ch) {
-          size_t i;
+          int i;
           if (s_ == s + ls) {
             *ch++ = -1;
           } else {
@@ -546,7 +555,7 @@ normalize_utf8(grn_ctx *ctx, grn_str *nstr)
   if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
   nstr->length = length;
-  nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
+  nstr->norm_blen = (unsigned int)(d - (unsigned char *)nstr->norm);
   return GRN_SUCCESS;
 }
 #endif /* GRN_WITH_NFKC */
@@ -577,7 +586,8 @@ normalize_sjis(grn_ctx *ctx, grn_str *nstr)
   const unsigned char *s, *s_;
   unsigned char *d, *d0, *d_, b, *e;
   uint_least8_t *cp, *ctypes, ctype;
-  size_t size = nstr->orig_blen, length = 0;
+  unsigned int size = nstr->orig_blen;
+  unsigned int length = 0;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
   if (!(nstr->norm = GRN_MALLOC(size * 2 + 1))) {
     return GRN_NO_MEMORY_AVAILABLE;
@@ -614,7 +624,8 @@ normalize_sjis(grn_ctx *ctx, grn_str *nstr)
             if (ch) { ch[-1]++; s_++; }
             continue;
           } else {
-            *d++ = c >> 8; *d = c & 0xff;
+            *d++ = (unsigned char)(c >> 8);
+            *d = (unsigned char)(c & 0xff);
           }
           break;
         case 0x814b :
@@ -624,11 +635,13 @@ normalize_sjis(grn_ctx *ctx, grn_str *nstr)
             if (ch) { ch[-1]++; s_++; }
             continue;
           } else {
-            *d++ = c >> 8; *d = c & 0xff;
+            *d++ = (unsigned char)(c >> 8);
+            *d = (unsigned char)(c & 0xff);
           }
           break;
         default :
-          *d++ = c >> 8; *d = c & 0xff;
+          *d++ = (unsigned char)(c >> 8);
+          *d = (unsigned char)(c & 0xff);
           break;
         }
         ctype = GRN_CHAR_KATAKANA;
@@ -777,7 +790,7 @@ normalize_sjis(grn_ctx *ctx, grn_str *nstr)
   if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
   nstr->length = length;
-  nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
+  nstr->norm_blen = (unsigned int)(d - (unsigned char *)nstr->norm);
   return GRN_SUCCESS;
 }
 
@@ -788,7 +801,8 @@ normalize_none(grn_ctx *ctx, grn_str *nstr)
   const unsigned char *s, *s_, *e;
   unsigned char *d, *d0, *d_;
   uint_least8_t *cp, *ctypes, ctype;
-  size_t size = nstr->orig_blen, length = 0;
+  unsigned int size = nstr->orig_blen;
+  unsigned int length = 0;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
   if (!(nstr->norm = GRN_MALLOC(size + 1))) {
     return GRN_NO_MEMORY_AVAILABLE;
@@ -872,7 +886,7 @@ normalize_none(grn_ctx *ctx, grn_str *nstr)
   if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
   nstr->length = length;
-  nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
+  nstr->norm_blen = (unsigned int)(d - (unsigned char *)nstr->norm);
   return GRN_SUCCESS;
 }
 
@@ -884,7 +898,8 @@ normalize_latin1(grn_ctx *ctx, grn_str *nstr)
   const unsigned char *s, *s_, *e;
   unsigned char *d, *d0, *d_;
   uint_least8_t *cp, *ctypes, ctype;
-  size_t size = nstr->orig_blen, length = 0;
+  unsigned int size = nstr->orig_blen;
+  unsigned int length = 0;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
   if (!(nstr->norm = GRN_MALLOC(size + 1))) {
     return GRN_NO_MEMORY_AVAILABLE;
@@ -1002,7 +1017,7 @@ normalize_latin1(grn_ctx *ctx, grn_str *nstr)
   if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
   nstr->length = length;
-  nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
+  nstr->norm_blen = (unsigned int)(d - (unsigned char *)nstr->norm);
   return GRN_SUCCESS;
 }
 
@@ -1013,7 +1028,8 @@ normalize_koi8r(grn_ctx *ctx, grn_str *nstr)
   const unsigned char *s, *s_, *e;
   unsigned char *d, *d0, *d_;
   uint_least8_t *cp, *ctypes, ctype;
-  size_t size = strlen(nstr->orig), length = 0;
+  unsigned int size = nstr->orig_blen;
+  unsigned int length = 0;
   int removeblankp = nstr->flags & GRN_STR_REMOVEBLANK;
   if (!(nstr->norm = GRN_MALLOC(size + 1))) {
     return GRN_NO_MEMORY_AVAILABLE;
@@ -1120,7 +1136,7 @@ normalize_koi8r(grn_ctx *ctx, grn_str *nstr)
   if (cp) { *cp = GRN_CHAR_NULL; }
   *d = '\0';
   nstr->length = length;
-  nstr->norm_blen = (size_t)(d - (unsigned char *)nstr->norm);
+  nstr->norm_blen = (unsigned int)(d - (unsigned char *)nstr->norm);
   return GRN_SUCCESS;
 }
 
@@ -1139,10 +1155,10 @@ grn_fakenstr_open(grn_ctx *ctx, const char *str, size_t str_len, grn_encoding en
     return NULL;
   }
   nstr->orig = str;
-  nstr->orig_blen = str_len;
+  nstr->orig_blen = (unsigned int)str_len;
   grn_memcpy(nstr->norm, str, str_len);
   nstr->norm[str_len] = '\0';
-  nstr->norm_blen = str_len;
+  nstr->norm_blen = (unsigned int)str_len;
   nstr->ctypes = NULL;
   nstr->flags = flags;
 
@@ -1369,7 +1385,7 @@ grn_atoi8(const char *nptr, const char *end, const char **rest)
     o = 1;
   }
   while (p < end && *p >= '0' && *p <= '9') {
-    t = v * 10 - (*p - '0');
+    t = (int8_t)(v * 10 - (*p - '0'));
     if (t > v || (!n && t == INT8_MIN)) { v = 0; break; }
     v = t;
     o = 0;
@@ -1384,7 +1400,7 @@ grn_atoui8(const char *nptr, const char *end, const char **rest)
 {
   uint8_t v = 0, t;
   while (nptr < end && *nptr >= '0' && *nptr <= '9') {
-    t = v * 10 + (*nptr - '0');
+    t = (uint8_t)(v * 10 + (*nptr - '0'));
     if (t < v) { v = 0; break; }
     v = t;
     nptr++;
@@ -1404,7 +1420,7 @@ grn_atoi16(const char *nptr, const char *end, const char **rest)
     o = 1;
   }
   while (p < end && *p >= '0' && *p <= '9') {
-    t = v * 10 - (*p - '0');
+    t = (int16_t)(v * 10 - (*p - '0'));
     if (t > v || (!n && t == INT16_MIN)) { v = 0; break; }
     v = t;
     o = 0;
@@ -1419,7 +1435,7 @@ grn_atoui16(const char *nptr, const char *end, const char **rest)
 {
   uint16_t v = 0, t;
   while (nptr < end && *nptr >= '0' && *nptr <= '9') {
-    t = v * 10 + (*nptr - '0');
+    t = (uint16_t)(v * 10 + (*nptr - '0'));
     if (t < v) { v = 0; break; }
     v = t;
     nptr++;
@@ -1454,7 +1470,7 @@ grn_atoui(const char *nptr, const char *end, const char **rest)
 {
   unsigned int v = 0, t;
   while (nptr < end && *nptr >= '0' && *nptr <= '9') {
-    t = v * 10 + (*nptr - '0');
+    t = v * 10 + (unsigned int)(*nptr - '0');
     if (t < v) { v = 0; break; }
     v = t;
     nptr++;
@@ -1496,7 +1512,7 @@ grn_atoull(const char *nptr, const char *end, const char **rest)
 {
   uint64_t v = 0, t;
   while (nptr < end && *nptr >= '0' && *nptr <= '9') {
-    t = v * 10 + (*nptr - '0');
+    t = v * 10 + (uint64_t)(*nptr - '0');
     if (t < v) { v = 0; break; }
     v = t;
     nptr++;
@@ -1521,7 +1537,7 @@ grn_htoui(const char *nptr, const char *end, const char **rest)
     case '7' :
     case '8' :
     case '9' :
-      t = v * 16 + (*nptr++ - '0');
+      t = v * 16 + (unsigned int)(*nptr++ - '0');
       break;
     case 'a' :
     case 'b' :
@@ -1529,7 +1545,7 @@ grn_htoui(const char *nptr, const char *end, const char **rest)
     case 'd' :
     case 'e' :
     case 'f' :
-      t = v * 16 + (*nptr++ - 'a') + 10;
+      t = v * 16 + (unsigned int)(*nptr++ - 'a') + 10;
       break;
     case 'A' :
     case 'B' :
@@ -1537,7 +1553,7 @@ grn_htoui(const char *nptr, const char *end, const char **rest)
     case 'D' :
     case 'E' :
     case 'F' :
-      t = v * 16 + (*nptr++ - 'A') + 10;
+      t = v * 16 + (unsigned int)(*nptr++ - 'A') + 10;
       break;
     default :
       v = 0; goto exit;
@@ -1572,14 +1588,14 @@ grn_itoa(int i, char *p, char *end, char **rest)
     q = p;
     if (i == INT_MIN) {
       if (p >= end) { return GRN_INVALID_ARGUMENT; }
-      *p++ = (-(i % 10)) + '0';
+      *p++ = (char)((-(i % 10)) + '0');
       i /= 10;
     }
     i = -i;
   }
   do {
     if (p >= end) { return GRN_INVALID_ARGUMENT; }
-    *p++ = i % 10 + '0';
+    *p++ = (char)(i % 10 + '0');
   } while ((i /= 10) > 0);
   if (rest) { *rest = p; }
   for (p--; q < p; q++, p--) {
@@ -1599,7 +1615,7 @@ grn_itoa_padded(int i, char *p, char *end, char ch)
     *p++ = '-';
     if (i == INT_MIN) {
       if (p >= end) { return GRN_INVALID_ARGUMENT; }
-      *p++ = (-(i % 10)) + '0';
+      *p++ = (char)((-(i % 10)) + '0');
       i /= 10;
     }
     i = -i;
@@ -1607,7 +1623,7 @@ grn_itoa_padded(int i, char *p, char *end, char ch)
   q = end - 1;
   do {
     if (q < p) { return GRN_INVALID_ARGUMENT; }
-    *q-- = i % 10 + '0';
+    *q-- = (char)(i % 10 + '0');
   } while ((i /= 10) > 0);
   while (q >= p) {
     *q-- = ch;
@@ -1625,14 +1641,14 @@ grn_lltoa(int64_t i, char *p, char *end, char **rest)
     *p++ = '-';
     q = p;
     if (i == INT64_MIN) {
-      *p++ = (-(i % 10)) + '0';
+      *p++ = (char)((-(i % 10)) + '0');
       i /= 10;
     }
     i = -i;
   }
   do {
     if (p >= end) { return GRN_INVALID_ARGUMENT; }
-    *p++ = i % 10 + '0';
+    *p++ = (char)(i % 10 + '0');
   } while ((i /= 10) > 0);
   if (rest) { *rest = p; }
   for (p--; q < p; q++, p--) {
@@ -1651,7 +1667,7 @@ grn_ulltoa(uint64_t i, char *p, char *end, char **rest)
   q = p;
   do {
     if (p >= end) { return GRN_INVALID_ARGUMENT; }
-    *p++ = i % 10 + '0';
+    *p++ = (char)(i % 10 + '0');
   } while ((i /= 10) > 0);
   if (rest) { *rest = p; }
   for (p--; q < p; q++, p--) {
@@ -1690,7 +1706,7 @@ grn_btoi(char *b)
   int len = 5;
   while (len--) {
     char c = *b++;
-    if ((i = B2I(c)) == 0xff) { return 0; }
+    if ((i = (uint8_t)B2I(c)) == 0xff) { return 0; }
     id = (id << 6) + i;
   }
   return id ^ MASK;
@@ -1828,7 +1844,7 @@ grn_str_tok(const char *str, size_t str_len, char delim, const char **tokbuf, in
     }
   }
   if (rest) { *rest = str; }
-  return tok - tokbuf;
+  return (int)(tok - tokbuf);
 }
 
 grn_inline static int
@@ -1878,7 +1894,7 @@ grn_str_getopt(int argc, char * const argv[], const grn_str_getopt_opt *opts,
         found = 0;
         v++;
         for (eq = v; *eq != '\0' && *eq != '='; eq++) {}
-        len = eq - v;
+        len = (size_t)(eq - v);
         for (o = opts; o->opt != '\0' || o->longopt != NULL; o++) {
           if (o->longopt && strlen(o->longopt) == len &&
               !memcmp(v, o->longopt, len)) {
@@ -1924,7 +1940,7 @@ exit:
 #define UNIT_SIZE (1 << 12)
 #define UNIT_MASK (UNIT_SIZE - 1)
 
-int grn_bulk_margin_size = 0;
+static size_t grn_bulk_margin_size = 0;
 
 grn_rc
 grn_bulk_resize(grn_ctx *ctx, grn_obj *buf, size_t new_size)
@@ -1936,7 +1952,7 @@ grn_bulk_resize(grn_ctx *ctx, grn_obj *buf, size_t new_size)
 
   {
     size_t rounded_new_size;
-    rounded_new_size = (new_size + (UNIT_MASK)) & ~UNIT_MASK;
+    rounded_new_size = (new_size + (UNIT_MASK)) & (size_t)(~UNIT_MASK);
     if (rounded_new_size < new_size) {
       size_t current_size = GRN_BULK_VSIZE(buf);
       grn_rc rc = GRN_NOT_ENOUGH_SPACE;
@@ -2069,7 +2085,7 @@ grn_bulk_truncate(grn_ctx *ctx, grn_obj *bulk, size_t len)
       if (GRN_BULK_VSIZE(bulk) < len) {
         memset(GRN_BULK_CURR(bulk), 0, len - GRN_BULK_VSIZE(bulk));
       }
-      bulk->header.flags &= ~GRN_BULK_BUFSIZE_MAX;
+      bulk->header.flags &= (grn_obj_flags)(~GRN_BULK_BUFSIZE_MAX);
       bulk->header.flags += (grn_obj_flags)len;
     }
   }
@@ -2084,7 +2100,7 @@ grn_text_itoa(grn_ctx *ctx, grn_obj *buf, int i)
     char *curr = GRN_BULK_CURR(buf);
     char *tail = GRN_BULK_TAIL(buf);
     if (grn_itoa(i, curr, tail, &curr)) {
-      unsigned int new_size;
+      size_t new_size;
       new_size = grn_bulk_compute_new_size(ctx,
                                            buf,
                                            GRN_BULK_WSIZE(buf) + UNIT_SIZE);
@@ -2141,7 +2157,7 @@ grn_text_ulltoa(grn_ctx *ctx, grn_obj *buf, unsigned long long int i)
     char *tail = GRN_BULK_TAIL(buf);
     char *end;
     if (grn_ulltoa(i, curr, tail, &end)) {
-      unsigned int new_size;
+      size_t new_size;
       new_size = grn_bulk_compute_new_size(ctx,
                                            buf,
                                            GRN_BULK_WSIZE(buf) + UNIT_SIZE);
@@ -2169,7 +2185,7 @@ grn_text_ftoa_adjust(grn_ctx *ctx, grn_obj *buf, size_t before_size)
       for (q = p; *(q - 2) != '.' && *(q - 1) == '0'; q--) {
         length--;
       }
-      grn_memmove(q, p, start + length - q);
+      grn_memmove(q, p, (size_t)(start + length - q));
     } else {
       for (q = start + length; *(q - 2) != '.' && *(q - 1) == '0'; q--) {
         length--;
@@ -2212,7 +2228,7 @@ grn_text_itoh(grn_ctx *ctx, grn_obj *buf, unsigned int i, size_t len)
                                          GRN_BULK_VSIZE(buf) + len);
     if ((rc = grn_bulk_resize(ctx, buf, new_size))) { return rc; }
   }
-  grn_itoh(i, GRN_BULK_CURR(buf), len);
+  grn_itoh(i, GRN_BULK_CURR(buf), (unsigned int)len);
   GRN_BULK_INCR_LEN(buf, len);
   return rc;
 }
@@ -2223,7 +2239,7 @@ grn_text_itob(grn_ctx *ctx, grn_obj *buf, grn_id id)
   size_t len = 5;
   grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
-    unsigned int new_size;
+    size_t new_size;
     new_size = grn_bulk_compute_new_size(ctx,
                                          buf,
                                          GRN_BULK_VSIZE(buf) + len);
@@ -2240,7 +2256,7 @@ grn_text_lltob32h(grn_ctx *ctx, grn_obj *buf, long long int i)
   size_t len = 13;
   grn_rc rc = GRN_SUCCESS;
   if (GRN_BULK_REST(buf) < len) {
-    unsigned int new_size;
+    size_t new_size;
     new_size = grn_bulk_compute_new_size(ctx,
                                          buf,
                                          GRN_BULK_VSIZE(buf) + len);
@@ -2255,7 +2271,7 @@ grn_rc
 grn_text_esc(grn_ctx *ctx, grn_obj *buf, const char *s, size_t len)
 {
   const char *e;
-  unsigned int l;
+  int l;
   grn_rc rc = GRN_SUCCESS;
 
   GRN_TEXT_PUTC(ctx, buf, '"');
@@ -2301,7 +2317,7 @@ grn_text_esc(grn_ctx *ctx, grn_obj *buf, const char *s, size_t len)
       case '\x17': case '\x18': case '\x19': case '\x1a': case '\x1b': case '\x1c':
       case '\x1d': case '\x1e': case '\x1f': case '\x7f':
         if (!(rc = grn_bulk_write(ctx, buf, "\\u", 2))) {
-          if ((rc = grn_text_itoh(ctx, buf, *s, 4))) {
+          if ((rc = grn_text_itoh(ctx, buf, (unsigned int)(*s), 4))) {
             GRN_BULK_INCR_LEN(buf, -2);
             return rc;
           }
@@ -2322,13 +2338,13 @@ grn_text_esc(grn_ctx *ctx, grn_obj *buf, const char *s, size_t len)
           grn_bulk_write(ctx, buf, "\\u2029", 6);
           break;
         default:
-          grn_bulk_write(ctx, buf, s, l);
+          grn_bulk_write(ctx, buf, s, (size_t)l);
         }
       } else {
-        grn_bulk_write(ctx, buf, s, l);
+        grn_bulk_write(ctx, buf, s, (size_t)l);
       }
     } else {
-      grn_bulk_write(ctx, buf, s, l);
+      grn_bulk_write(ctx, buf, s, (size_t)l);
     }
   }
   GRN_TEXT_PUTC(ctx, buf, '"');
@@ -2339,7 +2355,7 @@ grn_rc
 grn_text_escape_xml(grn_ctx *ctx, grn_obj *buf, const char *s, size_t len)
 {
   const char *e;
-  unsigned int l;
+  int l;
   grn_rc rc = GRN_SUCCESS;
 
   for (e = s + len; s < e; s += l) {
@@ -2362,7 +2378,7 @@ grn_text_escape_xml(grn_ctx *ctx, grn_obj *buf, const char *s, size_t len)
         GRN_TEXT_PUTC(ctx, buf, *s);
       }
     } else {
-      grn_bulk_write(ctx, buf, s, l);
+      grn_bulk_write(ctx, buf, s, (size_t)l);
     }
   }
   return rc;
@@ -2371,15 +2387,15 @@ grn_text_escape_xml(grn_ctx *ctx, grn_obj *buf, const char *s, size_t len)
 #define TOK_ESC                        (0x80)
 
 const char *
-grn_text_unesc_tok(grn_ctx *ctx, grn_obj *buf, const char *s, const char *e, char *tok_type)
+grn_text_unesc_tok(grn_ctx *ctx, grn_obj *buf, const char *s, const char *e, uint8_t *tok_type)
 {
   const char *p;
-  unsigned int len;
+  int len;
   uint8_t stat = GRN_TOK_VOID;
   for (p = s; p < e; p += len) {
     if (!(len = grn_charlen(ctx, p, e))) {
       p = e;
-      stat &= ~TOK_ESC;
+      stat &= (uint8_t)(~TOK_ESC);
       goto exit;
     }
     switch (stat) {
@@ -2472,7 +2488,7 @@ grn_text_unesc_tok(grn_ctx *ctx, grn_obj *buf, const char *s, const char *e, cha
         GRN_TEXT_PUT(ctx, buf, p, len);
         break;
       }
-      stat &= ~TOK_ESC;
+      stat &= (uint8_t)(~TOK_ESC);
       break;
     }
   }
@@ -2519,7 +2535,7 @@ grn_text_urlenc(grn_ctx *ctx, grn_obj *buf, const char *s, size_t len)
   for (e = s + len; s < e; s++) {
     if ((signed char)*s < 0 || urlenc_tbl[(int)*s]) {
       if (!grn_bulk_write(ctx, buf, &c, 1)) {
-        if (grn_text_itoh(ctx, buf, *s, 2)) {
+        if (grn_text_itoh(ctx, buf, (unsigned int)(*s), 2)) {
           GRN_BULK_INCR_LEN(buf, -1);
         }
       }
@@ -2591,7 +2607,7 @@ grn_rc
 grn_text_printfv(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
 {
   int written_size = -1;
-  const int rest_size = GRN_BULK_REST(bulk);
+  const size_t rest_size = GRN_BULK_REST(bulk);
 
 #ifdef WIN32
   bool is_written = false;
@@ -2601,7 +2617,7 @@ grn_text_printfv(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
     written_size = vsnprintf(GRN_BULK_CURR(bulk), rest_size,
                              format, copied_args);
     va_end(copied_args);
-    is_written = (written_size >= 0 && (written_size + 1 <= rest_size));
+    is_written = (written_size >= 0 && ((size_t)written_size + 1 <= rest_size));
   }
 
   if (!is_written) {
@@ -2613,7 +2629,7 @@ grn_text_printfv(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
     if (to_be_written_size < 0) {
       return GRN_INVALID_ARGUMENT;
     }
-    const int required_size = to_be_written_size + 1; /* for terminate '\0'. */
+    const size_t required_size = (size_t)to_be_written_size + 1; /* for terminate '\0'. */
     const grn_rc rc = grn_bulk_reserve(ctx, bulk, required_size);
     if (rc) {
       return rc;
@@ -2628,9 +2644,9 @@ grn_text_printfv(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)
   va_copy(copied_args, args);
   written_size = vsnprintf(GRN_BULK_CURR(bulk), rest_size, format, copied_args);
   va_end(copied_args);
-  const bool is_written = (written_size >= 0 && (written_size + 1 <= rest_size));
+  const bool is_written = (written_size >= 0 && ((size_t)written_size + 1 <= rest_size));
   if (!is_written) {
-    const int required_size = written_size + 1; /* "+ 1" for terminate '\0'. */
+    const size_t required_size = (size_t)written_size + 1; /* "+ 1" for terminate '\0'. */
     const grn_rc rc = grn_bulk_reserve(ctx, bulk, required_size);
     if (rc) {
       return rc;
@@ -2665,7 +2681,7 @@ grn_bulk_fin(grn_ctx *ctx, grn_obj *buf)
     }
   }
   buf->header.flags = 0;
-  buf->header.impl_flags &= ~GRN_OBJ_DO_SHALLOW_COPY;
+  buf->header.impl_flags &= (uint8_t)(~GRN_OBJ_DO_SHALLOW_COPY);
   memset(&(buf->u), 0, sizeof(buf->u));
   return GRN_SUCCESS;
 }
@@ -2674,7 +2690,7 @@ grn_rc
 grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int end, grn_encoding encoding)
 {
   int i;
-  size_t l;
+  int l;
   char *s = *str, *e = *str_end;
   for (i = 0; s < e; i++, s += l) {
     if (i == start) { *str = s; }
@@ -2692,7 +2708,6 @@ grn_substring(grn_ctx *ctx, char **str, char **str_end, int start, int end, grn_
 static void
 grn_text_atoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_id id)
 {
-  uint32_t vs;
   grn_obj buf;
   if (obj->header.type == GRN_ACCESSOR) {
     grn_accessor *a = (grn_accessor *)obj;
@@ -2722,6 +2737,7 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_id id)
         break;
       case GRN_ACCESSOR_GET_NSUBRECS :
         {
+          uint32_t vs;
           grn_rset_recinfo *ri = (grn_rset_recinfo *)grn_obj_get_value_(ctx, a->obj, id, &vs);
           GRN_INT32_PUT(ctx, &buf, ri->n_subrecs);
         }
@@ -2734,6 +2750,7 @@ grn_text_atoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_id id)
             grn_obj_get_value(ctx, a->obj, id, &buf);
             idp = (grn_id *)GRN_BULK_HEAD(&buf);
             GRN_TEXT_PUTC(ctx, bulk, '[');
+            size_t vs;
             for (vs = GRN_BULK_VSIZE(&buf) / sizeof(grn_id); vs--; idp++) {
               grn_text_atoj(ctx, bulk, (grn_obj *)a->next, *idp);
               if (vs) { GRN_TEXT_PUTC(ctx, bulk, ','); }
@@ -2868,22 +2885,22 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       break;
     default :
       if (format) {
-        int j;
-        int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
+        size_t j;
+        size_t ncolumns = GRN_PTR_VECTOR_SIZE(&format->columns);
         grn_id id = GRN_RECORD_VALUE(obj);
-        grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
         if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
           GRN_TEXT_PUTS(ctx, bulk, "[");
           for (j = 0; j < ncolumns; j++) {
+            grn_obj *column = GRN_PTR_VALUE_AT(&format->columns, j);
             grn_id range_id;
             if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
             GRN_TEXT_PUTS(ctx, bulk, "[");
             GRN_BULK_REWIND(&buf);
-            grn_column_name_(ctx, columns[j], &buf);
+            grn_column_name_(ctx, column, &buf);
             grn_text_otoj(ctx, bulk, &buf, NULL);
             GRN_TEXT_PUTC(ctx, bulk, ',');
             /* column range */
-            range_id = grn_obj_get_range(ctx, columns[j]);
+            range_id = grn_obj_get_range(ctx, column);
             if (range_id == GRN_ID_NIL) {
               GRN_TEXT_PUTS(ctx, bulk, "null");
             } else {
@@ -2904,8 +2921,9 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         }
         GRN_TEXT_PUTC(ctx, bulk, '[');
         for (j = 0; j < ncolumns; j++) {
+          grn_obj *column = GRN_PTR_VALUE_AT(&format->columns, j);
           if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
-          grn_text_atoj(ctx, bulk, columns[j], id);
+          grn_text_atoj(ctx, bulk, column, id);
         }
         GRN_TEXT_PUTC(ctx, bulk, ']');
       } else {
@@ -2936,7 +2954,8 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
   case GRN_UVECTOR :
     if (format) {
       if (format->flags & GRN_OBJ_FORMAT_WITH_WEIGHT) {
-        int i, n;
+        uint32_t i;
+        uint32_t n;
         grn_obj *domain;
 
         n = grn_uvector_size(ctx, obj);
@@ -2976,26 +2995,27 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       } else {
         /* TODO: Does we still need this code? If we don't need this, we should
            remove this. */
-        int i, j;
+        int i;
         grn_id *v = (grn_id *)GRN_BULK_HEAD(obj), *ve = (grn_id *)GRN_BULK_CURR(obj);
-        int ncolumns = GRN_BULK_VSIZE(&format->columns) / sizeof(grn_obj *);
-        grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
+        size_t j;
+        size_t ncolumns = GRN_PTR_VECTOR_SIZE(&format->columns);
         GRN_TEXT_PUTS(ctx, bulk, "[[");
-        grn_text_itoa(ctx, bulk, ve - v);
+        grn_text_itoa(ctx, bulk, (int)(ve - v));
         GRN_TEXT_PUTC(ctx, bulk, ']');
         if (v < ve) {
           if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
             GRN_TEXT_PUTS(ctx, bulk, ",[");
             for (j = 0; j < ncolumns; j++) {
+              grn_obj *column = GRN_PTR_VALUE_AT(&format->columns, j);
               grn_id range_id;
               if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
               GRN_TEXT_PUTS(ctx, bulk, "[");
               GRN_BULK_REWIND(&buf);
-              grn_column_name_(ctx, columns[j], &buf);
+              grn_column_name_(ctx, column, &buf);
               grn_text_otoj(ctx, bulk, &buf, NULL);
               GRN_TEXT_PUTC(ctx, bulk, ',');
               /* column range */
-              range_id = grn_obj_get_range(ctx, columns[j]);
+              range_id = grn_obj_get_range(ctx, column);
               if (range_id == GRN_ID_NIL) {
                 GRN_TEXT_PUTS(ctx, bulk, "null");
               } else {
@@ -3017,9 +3037,10 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
           for (i = 0;; i++) {
             GRN_TEXT_PUTS(ctx, bulk, ",[");
             for (j = 0; j < ncolumns; j++) {
+              grn_obj *column = GRN_PTR_VALUE_AT(&format->columns, j);
               if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
               GRN_BULK_REWIND(&buf);
-              grn_obj_get_value(ctx, columns[j], *v, &buf);
+              grn_obj_get_value(ctx, column, *v, &buf);
               grn_text_otoj(ctx, bulk, &buf, NULL);
             }
             GRN_TEXT_PUTC(ctx, bulk, ']');
@@ -3153,9 +3174,9 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
           "cannot print GRN_PVECTOR using grn_obj_format");
     } else {
-      unsigned int i, n;
       GRN_TEXT_PUTC(ctx, bulk, '[');
-      n = GRN_BULK_VSIZE(obj) / sizeof(grn_obj *);
+      size_t n = GRN_PTR_VECTOR_SIZE(obj);
+      size_t i;
       for (i = 0; i < n; i++) {
         grn_obj *value;
 
@@ -3170,9 +3191,8 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
   case GRN_TABLE_PAT_KEY :
   case GRN_TABLE_NO_KEY :
     if (format) {
-      int i, j;
-      int ncolumns = GRN_BULK_VSIZE(&format->columns)/sizeof(grn_obj *);
-      grn_obj **columns = (grn_obj **)GRN_BULK_HEAD(&format->columns);
+      int i;
+      size_t ncolumns = GRN_PTR_VECTOR_SIZE(&format->columns);
       grn_table_cursor *tc = grn_table_cursor_open(ctx, obj, NULL, 0, NULL, 0,
                                                    format->offset, format->limit,
                                                    GRN_CURSOR_ASCENDING);
@@ -3182,16 +3202,18 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
       GRN_TEXT_PUTC(ctx, bulk, ']');
       if (format->flags & GRN_OBJ_FORMAT_WITH_COLUMN_NAMES) {
         GRN_TEXT_PUTS(ctx, bulk, ",[");
+        size_t j;
         for (j = 0; j < ncolumns; j++) {
+          grn_obj *column = GRN_PTR_VALUE_AT(&format->columns, j);
           grn_id range_id;
           if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
           GRN_TEXT_PUTS(ctx, bulk, "[");
           GRN_BULK_REWIND(&buf);
-          grn_column_name_(ctx, columns[j], &buf);
+          grn_column_name_(ctx, column, &buf);
           grn_text_otoj(ctx, bulk, &buf, NULL);
           GRN_TEXT_PUTC(ctx, bulk, ',');
           /* column range */
-          range_id = grn_obj_get_range(ctx, columns[j]);
+          range_id = grn_obj_get_range(ctx, column);
           if (range_id == GRN_ID_NIL) {
             GRN_TEXT_PUTS(ctx, bulk, "null");
           } else {
@@ -3214,9 +3236,11 @@ grn_text_otoj(grn_ctx *ctx, grn_obj *bulk, grn_obj *obj, grn_obj_format *format)
         grn_id id;
         for (i = 0; (id = grn_table_cursor_next(ctx, tc)) != GRN_ID_NIL; i++) {
           GRN_TEXT_PUTS(ctx, bulk, ",[");
+          size_t j;
           for (j = 0; j < ncolumns; j++) {
+            grn_obj *column = GRN_PTR_VALUE_AT(&format->columns, j);
             if (j) { GRN_TEXT_PUTC(ctx, bulk, ','); }
-            grn_text_atoj(ctx, bulk, columns[j], id);
+            grn_text_atoj(ctx, bulk, column, id);
           }
           GRN_TEXT_PUTC(ctx, bulk, ']');
         }
@@ -3260,7 +3284,7 @@ grn_text_urldec(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e, char d
       const char *r;
       unsigned int c = grn_htoui(p + 1, p + 3, &r);
       if (p + 3 == r) {
-        GRN_TEXT_PUTC(ctx, buf, c);
+        GRN_TEXT_PUTC(ctx, buf, (char)c);
         p += 3;
       } else {
         GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid %% sequence (%c%c)", p[1], p[2]);
@@ -3300,7 +3324,7 @@ grn_text_cgidec(grn_ctx *ctx, grn_obj *buf, const char *p, const char *e,
       const char *r;
       unsigned int c = grn_htoui(p + 1, p + 3, &r);
       if (p + 3 == r) {
-        GRN_TEXT_PUTC(ctx, buf, c);
+        GRN_TEXT_PUTC(ctx, buf, (char)c);
         p += 3;
       } else {
         GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid %% sequence (%c%c)", p[1], p[2]);
@@ -3345,7 +3369,7 @@ grn_str_url_path_normalize(grn_ctx *ctx, const char *path, size_t path_len,
       }
     }
     if (be - b >= pc - p) {
-      grn_memcpy(b, p, (pc - p));
+      grn_memcpy(b, p, (size_t)(pc - p));
       b += pc - p;
       p = pc;
       if (p < pe && *pc == '/' && be > b) {
@@ -3361,7 +3385,7 @@ grn_bool
 grn_bulk_is_zero(grn_ctx *ctx, grn_obj *obj)
 {
   const char *v = GRN_BULK_HEAD(obj);
-  unsigned int s = GRN_BULK_VSIZE(obj);
+  size_t s = GRN_BULK_VSIZE(obj);
   for (; s; s--, v++) {
     if (*v) { return GRN_FALSE; }
   }
@@ -3378,7 +3402,7 @@ grn_bulk_detach(grn_ctx *ctx, grn_obj *bulk)
   char *data;
   if (GRN_BULK_OUTP(bulk)) {
     data = GRN_BULK_HEAD(bulk);
-    bulk->header.impl_flags &= ~GRN_OBJ_OUTPLACE;
+    bulk->header.impl_flags &= (uint8_t)(~GRN_OBJ_OUTPLACE);
   } else {
     data = GRN_MALLOC(GRN_BULK_VSIZE(bulk));
     if (!data) {

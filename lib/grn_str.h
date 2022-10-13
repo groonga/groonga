@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2009-2016 Brazil
+  Copyright(C) 2009-2016  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -87,7 +88,7 @@ GRN_API const char *grn_text_cgidec(grn_ctx *ctx, grn_obj *buf,
 
 GRN_API const char *grn_text_unesc_tok(grn_ctx *ctx, grn_obj *buf,
                                        const char *p, const char *e,
-                                       char *tok_type);
+                                       uint8_t *tok_type);
 
 GRN_API void grn_str_url_path_normalize(grn_ctx *ctx,
                                         const char *path, size_t path_len,

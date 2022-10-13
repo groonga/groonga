@@ -1683,7 +1683,7 @@ exit :
 grn_obj *
 grn_ctx_qe_exec(grn_ctx *ctx, const char *str, uint32_t str_len)
 {
-  char tok_type;
+  uint8_t tok_type;
   unsigned int offset = 0;
   grn_obj buf, *expr = NULL, *val = NULL;
   grn_obj request_id;

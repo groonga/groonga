@@ -412,19 +412,19 @@ grn_rc grn_io_warm(grn_ctx *ctx, grn_io *io);
   uint8_t *_p = (uint8_t *)p; \
   uint32_t _v = v; \
   if (_v < 0x8f) { \
-    *_p++ = _v; \
+    *_p++ = (uint8_t)_v; \
   } else if (_v < 0x408f) { \
     _v -= 0x8f; \
-    *_p++ = 0xc0 + (_v >> 8); \
+    *_p++ = (uint8_t)(0xc0 + (_v >> 8)); \
     *_p++ = _v & 0xff; \
   } else if (_v < 0x20408f) { \
     _v -= 0x408f; \
-    *_p++ = 0xa0 + (_v >> 16); \
+    *_p++ = (uint8_t)(0xa0 + (_v >> 16)); \
     *_p++ = (_v >> 8) & 0xff; \
     *_p++ = _v & 0xff; \
   } else if (_v < 0x1020408f) { \
     _v -= 0x20408f; \
-    *_p++ = 0x90 + (_v >> 24); \
+    *_p++ = (uint8_t)(0x90 + (_v >> 24)); \
     *_p++ = (_v >> 16) & 0xff; \
     *_p++ = (_v >> 8) & 0xff; \
     *_p++ = _v & 0xff; \
