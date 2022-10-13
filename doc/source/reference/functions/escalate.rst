@@ -20,7 +20,7 @@ The existing match escalation mechanism is just for one full text search by inve
 Therefore, for example, if we can't get record in a search with a index that execute search strictly, we need to search with a index that execute search loosely once again.
 This procedure has many overhead.
 
-However, ``escalte`` is for any full text search by inverted index.
+However, ``escalte`` is for multiple full text search by inverted index.
 Therefore, we can execute a search with a index that execute search strictly and a search with a index that execute search loosely in one query.
 We can reduce overhead by using ``escalate``.
 
