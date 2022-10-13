@@ -28,25 +28,11 @@ if(GRN_WITH_BUNDLED_LZ4)
     "${LZ4_SOURCE_DIR}/lib/lz4hc.c"
     "${LZ4_SOURCE_DIR}/lib/lz4hc.h"
     "${LZ4_SOURCE_DIR}/lib/xxhash.c"
-    "${LZ4_SOURCE_DIR}/lib/xxhash.h"
-    )
-  set(LZ4_SOURCES
-    "${LZ4_SOURCE_DIR}/programs/lz4cli.c"
-    "${LZ4_SOURCE_DIR}/programs/lz4io.c"
-    "${LZ4_SOURCE_DIR}/programs/lz4io.h"
-    "${LZ4_SOURCE_DIR}/programs/bench.c"
-    "${LZ4_SOURCE_DIR}/programs/bench.h"
-    "${LZ4_SOURCE_DIR}/programs/datagen.c"
-    "${LZ4_SOURCE_DIR}/programs/datagen.h"
-    "${LZ4_SOURCE_DIR}/programs/platform.h"
-    "${LZ4_SOURCE_DIR}/programs/util.h")
+    "${LZ4_SOURCE_DIR}/lib/xxhash.h")
 
   set(LZ4_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 
   set_source_files_properties(${LIBLZ4_SOURCES}
-    PROPERTIES
-    COMPILE_FLAGS "${LZ4_C_COMPILE_FLAGS}")
-  set_source_files_properties(${LZ4_SOURCES}
     PROPERTIES
     COMPILE_FLAGS "${LZ4_C_COMPILE_FLAGS}")
 
@@ -64,29 +50,21 @@ if(GRN_WITH_BUNDLED_LZ4)
     endif()
   endif()
   target_include_directories(liblz4 BEFORE PUBLIC "${LZ4_SOURCE_DIR}/lib")
-  set(LZ4_XXH_NAMESPACE "LZ4_")
-  target_compile_definitions(liblz4 PRIVATE "-DXXH_NAMESPACE=${LZ4_XXH_NAMESPACE}")
+  target_compile_definitions(liblz4 PRIVATE "-DXXH_NAMESPACE=LZ4_")
 
   if(NOT MSVC)
     set_target_properties(liblz4 PROPERTIES OUTPUT_NAME "lz4")
   endif()
 
   if(NOT GRN_BUNDLED)
-    add_executable(lz4 ${LZ4_SOURCES})
-    target_link_libraries(lz4 PRIVATE liblz4)
-    target_compile_definitions(lz4 PRIVATE "-DXXH_NAMESPACE=${LZ4_XXH_NAMESPACE}")
-
     install(TARGETS liblz4
       ARCHIVE DESTINATION "${LIB_DIR}"
       LIBRARY DESTINATION "${LIB_DIR}"
       RUNTIME DESTINATION "${BIN_DIR}")
-    install(TARGETS lz4
-      DESTINATION "${BIN_DIR}")
     if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
       install(
 	FILES
 	$<TARGET_PDB_FILE:liblz4>
-	$<TARGET_PDB_FILE:lz4>
 	DESTINATION "${BIN_DIR}"
 	OPTIONAL)
     endif()
