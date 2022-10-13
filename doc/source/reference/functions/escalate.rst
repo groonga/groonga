@@ -46,7 +46,7 @@ Syntax
              THRESHOLD_N, CONDITION_N)
 
 ``CONDITION_N`` and ``THRESHOLD_N`` are pair.
-However, ``CONDITION_1`` has not a threshold as pair. Because this condition is always executed.
+However, ``CONDITION_1`` doesn't have a threshold as pair. Because this condition is always executed.
 
 Usage
 -----
@@ -91,7 +91,7 @@ Parameters
 ``CONDITION_1`` is required.
 
 A condition that we specify ``CONDITION_1`` is always executed.
-Therefore, ``CONDITION_1`` has not a threshold as pair.
+Therefore, ``CONDITION_1`` doesn't have a threshold as pair.
 
 Normally, we specify the condition that we can the most narrow down search results.
 
@@ -109,7 +109,7 @@ If the number of searched results with the one before condition in threshold or 
 ``THRESHOLD_N``
 ~~~~~~~~~~~~~~~
 
-``THRESHOLD_N`` is optional. However, when ``CONDITION_N`` exists ``THRESHOLD_N`` is required. (However, ``CONDITION_1`` has not a threshold as pair.)
+``THRESHOLD_N`` is optional. However, when ``CONDITION_N`` exists ``THRESHOLD_N`` is required. (However, ``CONDITION_1`` doesn't have a threshold as pair.)
 
 If the number of results that we search with ``CONDITION_N-1`` in ``THRESHOLD_N`` or less, ``escalate`` evaluate ``CONDITION_N``.
 If the number of results that we search with ``CONDITION_N-1`` in more than ``THRESHOLD_N``, ``escalate`` doesn't evaluate ``CONDITION_N``.
