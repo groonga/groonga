@@ -27,12 +27,14 @@ We can reduce overhead by using ``escalate``.
 Syntax
 ------
 
-``escalate`` is require one or more parameters::
+``escalate`` is require one or more parameters.
 
-  escalate(CONDITION_1,
-           THRESHOLD_1, CONDITION_2,
-           ...,
-           THRESHOLD_N, CONDITION_N+1)
+  .. code-block::
+
+    escalate(CONDITION_1,
+             THRESHOLD_1, CONDITION_2,
+             ...,
+             THRESHOLD_N, CONDITION_N+1)
 
 ``CONDITION_N`` and ``THRESHOLD_N`` are pair. However, the last condition has not a threshold as pair.
 
