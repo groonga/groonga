@@ -32,11 +32,12 @@ Syntax
   .. code-block::
 
     escalate(CONDITION_1,
-             THRESHOLD_1, CONDITION_2,
+             THRESHOLD_2, CONDITION_2,
              ...,
-             THRESHOLD_N, CONDITION_N+1)
+             THRESHOLD_N, CONDITION_N)
 
-``CONDITION_N`` and ``THRESHOLD_N`` are pair. However, the last condition has not a threshold as pair.
+``CONDITION_N`` and ``THRESHOLD_N`` are pair.
+However, ``CONDITION_1`` has not a threshold as pair. Because this condition is always executed.
 
 Usage
 -----
@@ -81,19 +82,11 @@ Parameters
 ``CONDITION_1`` is required.
 
 A condition that we specify ``CONDITION_1`` is always executed.
+Therefore, ``CONDITION_1`` has not a threshold as pair.
+
 Normally, we specify the condition that we can the most narrow down search results.
 
 ``CONDITION_1`` is a string that uses script syntax such as "number_column > 29".
-
-``THRESHOLD_1``
-~~~~~~~~~~~~~~~
-
-``THRESHOLD_1`` is optional.
-
-If the number of results that we search with ``CONDITION_1`` in ``THRESHOLD_1`` or less, ``escalate`` evaluate next condition.
-If the number of results that we search with ``CONDITION_1`` in more than ``THRESHOLD_1``, ``escalate`` doesn't evaluate next condition.
-
-``THRESHOLD_1`` is a positive number such 0 and 29.
 
 ``CONDITION_N``
 ~~~~~~~~~~~~~~~
@@ -107,7 +100,7 @@ If the number of results that we search with the one before condition in thresho
 ``THRESHOLD_N``
 ~~~~~~~~~~~~~~~
 
-``THRESHOLD_N`` is optional. However, when ``CONDITION_N`` exist ``THRESHOLD_N`` is required. (However, the last condition has not a threshold as pair.)
+``THRESHOLD_N`` is optional. However, when ``CONDITION_N`` exist ``THRESHOLD_N`` is required. (However, ``CONDITION_1`` has not a threshold as pair.)
 
 If the number of results that we search with ``CONDITION_N`` in ``THRESHOLD_N`` or less, ``escalate`` evaluate next condition.
 If the number of results that we search with ``CONDITION_N`` in more than ``THRESHOLD_N``, ``escalate`` doesn't evaluate next condition.
