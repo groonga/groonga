@@ -111,7 +111,7 @@ If the number of searched results with the one before condition in threshold or 
 
 ``THRESHOLD_N`` is optional. However, when ``CONDITION_N`` exists ``THRESHOLD_N`` is required. (However, ``CONDITION_1`` has not a threshold as pair.)
 
-If the number of results that we search with ``CONDITION_N`` in ``THRESHOLD_N`` or less, ``escalate`` evaluate next condition.
+If the number of results that we search with ``CONDITION_N-1`` in ``THRESHOLD_N`` or less, ``escalate`` evaluate ``CONDITION_N``.
 If the number of results that we search with ``CONDITION_N`` in more than ``THRESHOLD_N``, ``escalate`` doesn't evaluate next condition.
 
 ``THRESHOLD_N`` is a positive number such 0 and 29.
