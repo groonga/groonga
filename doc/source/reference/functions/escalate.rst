@@ -36,7 +36,7 @@ We can reduce overhead by using ``escalate``.
 Syntax
 ------
 
-``escalate`` is require one or more parameters.
+``escalate`` requires one or more parameters.
 
   .. code-block::
 
