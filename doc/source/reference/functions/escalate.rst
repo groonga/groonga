@@ -16,6 +16,15 @@ Summary
    This function is experimental.
 
 It's similar to the existing match escalation mechanism but this is more generic.
+
+Match escalation is auto loose search.
+If the number of matched records is equal or less than the threshold specified by ``match_escalation_threshold``, loose search is done automatically. It's match escalation.
+
+Please refer to :doc:`/spec/search` about the search storategy escalation.
+
+``match_escalation_threshold`` is ``select``'s argument. In addition, the default value of ``match_escalation_threshold`` is `0`.
+Please refer to :doc:`/reference/commands/select` about ``match_escalation_threshold``.
+
 The existing match escalation mechanism is just for one full text search by inverted index.
 Therefore, for example, if we can't get record in a search with a index that execute search strictly, we need to search with a index that execute search loosely once again.
 This procedure has many overhead.
