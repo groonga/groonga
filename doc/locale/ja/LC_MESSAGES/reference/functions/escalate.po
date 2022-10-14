@@ -179,8 +179,9 @@ msgstr ""
 "は次の条件を評価します。``CONDITION_N-1`` で検索した結果が ``THRESHOLD_N`` よ"
 "り大きい場合、 ``escalate`` は次の条件を評価しません。"
 
-msgid "``THRESHOLD_N`` is a positive number such 0 and 29."
-msgstr "``THRESHOLD_N`` は 0 や 29 のような正の数です。"
+msgid ""
+"``THRESHOLD_N`` is an integer not less than ``0`` such as ``0`` and ``29``."
+msgstr "``THRESHOLD_N`` は ``0`` や ``29`` のような ``0`` 以上の正の整数です。"
 
 msgid "Return value"
 msgstr "戻り値"

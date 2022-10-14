@@ -114,7 +114,7 @@ If the number of searched results with the one before condition in threshold or 
 If the number of results that we search with ``CONDITION_N-1`` in ``THRESHOLD_N`` or less, ``escalate`` evaluate ``CONDITION_N``.
 If the number of results that we search with ``CONDITION_N-1`` in more than ``THRESHOLD_N``, ``escalate`` doesn't evaluate ``CONDITION_N``.
 
-``THRESHOLD_N`` is a positive number such 0 and 29.
+``THRESHOLD_N`` is an integer not less than ``0`` such as ``0`` and ``29``.
 
 Return value
 ------------
