@@ -1,0 +1,12 @@
+Execution example::
+
+  load --table Users
+  [
+  {"_key": "Alice",  "age": 12},
+  {"_key": "Bob",    "age": 13},
+  {"_key": "Calros", "age": 15},
+  {"_key": "Dave",   "age": 16},
+  {"_key": "Eric",   "age": 20},
+  {"_key": "Frank",  "age": 21}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 6]
