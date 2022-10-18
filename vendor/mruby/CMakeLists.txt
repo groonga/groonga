@@ -48,6 +48,8 @@ if(GRN_WITH_MRUBY)
 	  ${CMAKE_COMMAND}
 	  -E
 	  env
+	  "CC=\"${CMAKE_C_COMPILER}\""
+	  "CXX=\"${CMAKE_CXX_COMPILER}\""
 	  "MRUBY_VC=yes")
       endif()
       list(APPEND MRUBY_BUILD_COMMAND
