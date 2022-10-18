@@ -180,7 +180,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
     htaccess_path = "#{repositories_dir}/.htaccess"
 
     if (target_namespace == :windows)
-      htaccesss_value = "RewriteRule groonga-((1[2-9]|[2-9][0-9])[\\d\\.]+?)-.+?-vs(?!.*(2012|2013|2015|2017)).+?\\.zip"\
+      htaccesss_value = "RewriteRule groonga-((1[2-9]|[2-9][0-9])[\\d\\.]+?)-.+?-vs(?!(2012|2013|2015|2017)).+?\\.zip"\
                         " #{github_releases_base_url}/v$1/$0\n"
       File.write(htaccess_path, htaccesss_value, mode: "w")
       chmod(0604, htaccess_path)
