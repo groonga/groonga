@@ -22,8 +22,8 @@ Fixes
 
   This had occured when using :ref:`select-n-workers` with a value greater than ``1`` and ``drilldowns[{LABEL}].filter`` at the same time.
 
-  This was because exclusive processing of parallel processing was not working correctly.
-  So if the condition was satisfied, Groonga did not always crach but it sometimes crashed depending on the timing of the parallel processing.
+  This was because referencing incorrect values when performing internal parallel processing.
+  So if the condition above was satisfied, Groonga sometimes crashed depending on the timing of the parallel processing.
 
 .. _release-12-0-8:
 
