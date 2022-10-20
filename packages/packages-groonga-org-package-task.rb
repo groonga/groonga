@@ -175,32 +175,19 @@ class PackagesGroongaOrgPackageTask < PackageTask
     mkdir_p(repositories_dir)
     download_dir = "#{base_dir}/tmp/downloads/#{@version}"
     mkdir_p(download_dir)
-    
-    github_releases_base_url = "https://github.com/groonga/groonga/releases/download"
-    htaccess_path = "#{repositories_dir}/.htaccess"
-
-    if (target_namespace == :windows)
-      htaccesss_value = "RewriteRule groonga-((1[2-9]|[2-9][0-9])[\\d\\.]+?)-.+?-vs(?!.*(2012|2013|2015|2017)).+?\\.zip"\
-                        " #{github_releases_base_url}/v$1/$0\n"
-      File.write(htaccess_path, htaccesss_value, mode: "w")
-      chmod(0604, htaccess_path)
-    end
-
     __send__("#{target_namespace}_targets").each do |target|
       branch = ENV["BRANCH"]
-      unless target_namespace == :windows
-        if branch
-          artifact_name = github_actions_artifact_name(target_namespace, target)
-          url = detect_built_package_url_github_actions(target_namespace,
-                                                        target,
-                                                        branch,
-                                                        artifact_name)
-          download_path = "#{download_dir}/#{artifact_name}.zip"
-          archive = download(url, download_path)
-        else
-          url = built_package_url(target_namespace, target)
-          archive = download(url, download_dir)
-        end
+      if branch
+        artifact_name = github_actions_artifact_name(target_namespace, target)
+        url = detect_built_package_url_github_actions(target_namespace,
+                                                      target,
+                                                      branch,
+                                                      artifact_name)
+        download_path = "#{download_dir}/#{artifact_name}.zip"
+        archive = download(url, download_path)
+      else
+        url = built_package_url(target_namespace, target)
+        archive = download(url, download_dir)
       end
       case target_namespace
       when :apt, :yum
@@ -215,9 +202,12 @@ class PackagesGroongaOrgPackageTask < PackageTask
           end
         end
       when :windows
-        latest_link_base_name = target.gsub(@version, "latest")
-        htaccesss_value = "RewriteRule #{latest_link_base_name} #{github_releases_base_url}/v#{@version}/#{target}\n"
-        File.write(htaccess_path, htaccesss_value, mode: "a+")
+        cd(repositories_dir) do
+          cp(archive, ".")
+          archive_base_name = File.basename(archive)
+          latest_link_base_name = archive_base_name.gsub(@version, "latest")
+          ln_sf(archive_base_name, latest_link_base_name)
+        end
       end
     end
   end
