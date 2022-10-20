@@ -222,6 +222,9 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
   end
 
+  def create_htaccess(target_namespace)
+  end
+
   def release(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
@@ -253,6 +256,12 @@ class PackagesGroongaOrgPackageTask < PackageTask
             download_packages(target_namespace) if enabled
           end
           tasks << "#{target_namespace}:download"
+
+          desc "Make .htaccess for #{target_namespace} packages"
+          task :create_htaccess do
+            create_htaccess(target_namespace) if enabled
+          end
+          tasks << "#{target_namespace}:create_htaccess"
         end
 
         desc "Release #{target_namespace} packages"
