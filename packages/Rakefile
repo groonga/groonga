@@ -171,17 +171,16 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
 
   def create_htaccess(target_namespace)
     return unless target_namespace == :windows
-
+    
     repositories_dir = download_repositories_dir(target_namespace)
     mkdir_p(repositories_dir)
-    htaccess_path = "#{repositories_dir}/.htaccess"
-    rm_rf(htaccess_path)
-    
-    __send__("#{target_namespace}_targets").each do |target|
-      redirect_url = built_package_url(target_namespace, target)
-      redirect_target = target.gsub(@version, "latest")
-      htaccesss_value = "RewriteRule #{redirect_target} #{redirect_url}\n"
-      File.write(htaccess_path, htaccesss_value, mode: "a+")  
+
+    File.open("#{repositories_dir}/.htaccess", "w") do |htaccess|
+      __send__("#{target_namespace}_targets").each do |target|
+        redirect_url = built_package_url(target_namespace, target)
+        redirect_target = target.gsub(@version, "latest")
+        htaccess.puts("RewriteRule #{redirect_target} #{redirect_url}")  
+      end
     end
   end
 end
