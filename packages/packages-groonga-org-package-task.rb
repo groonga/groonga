@@ -212,7 +212,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
   end
 
-  def create_htaccess(target_namespace)
+  def prepare(target_namespace)
   end
 
   def release(target_namespace)
@@ -246,13 +246,13 @@ class PackagesGroongaOrgPackageTask < PackageTask
             download_packages(target_namespace) if enabled
           end
           tasks << "#{target_namespace}:download"
-
-          desc "Make .htaccess for #{target_namespace} packages"
-          task :create_htaccess do
-            create_htaccess(target_namespace) if enabled
-          end
-          tasks << "#{target_namespace}:create_htaccess"
         end
+        
+        desc "Prepare for #{target_namespace} packages"
+        task :prepare do
+          prepare(target_namespace) if enabled
+        end
+        tasks << "#{target_namespace}:prepare"
 
         desc "Release #{target_namespace} packages"
         task :release do

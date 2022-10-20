@@ -169,7 +169,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     super
   end
 
-  def create_htaccess(target_namespace)
+  def prepare(target_namespace)
     return unless target_namespace == :windows
     
     repositories_dir = download_repositories_dir(target_namespace)
