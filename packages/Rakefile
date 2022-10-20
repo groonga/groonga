@@ -178,7 +178,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       __send__("#{target_namespace}_targets").each do |target|
         redirect_url = built_package_url(target_namespace, target)
         redirect_target_base = target.gsub(@version, "latest")
-        redirect_target = "^(.+)/#{Regexp.escape(redirect_target_base)}$"
+        redirect_target = "^.+/#{Regexp.escape(redirect_target_base)}$"
         htaccess.puts("RedirectMatch #{redirect_target} #{redirect_url}")  
       end
     end
