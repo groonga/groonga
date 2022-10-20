@@ -165,8 +165,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
   end
 
   def download_packages(target_namespace)
-    return if target_namespace == :windows
-    super
+    super unless target_namespace == :windows
   end
 
   def prepare(target_namespace)
