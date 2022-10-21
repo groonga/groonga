@@ -212,6 +212,9 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
   end
 
+  def prepare(target_namespace)
+  end
+
   def release(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
@@ -244,6 +247,12 @@ class PackagesGroongaOrgPackageTask < PackageTask
           end
           tasks << "#{target_namespace}:download"
         end
+        
+        desc "Prepare #{target_namespace} packages"
+        task :prepare do
+          prepare(target_namespace) if enabled
+        end
+        tasks << "#{target_namespace}:prepare"
 
         desc "Release #{target_namespace} packages"
         task :release do
