@@ -205,9 +205,17 @@ grn_io_seg_ref(grn_ctx *ctx, grn_io *io, uint32_t segno)
           if (!info->map) {
             grn_io_seg_map_(ctx, io, segno, info);
             if (!info->map) {
-              GRN_LOG(ctx, GRN_LOG_CRIT,
-                      "mmap failed! in grn_io_seg_ref(%p, %u): %s",
-                      io, segno, grn_current_error_message());
+              CRIT(GRN_NO_MEMORY_AVAILABLE,
+                   "%s failed to mmap with expire-segment & expire-gtick: "
+                   "id:%u, "
+                   "max:%u, "
+                   "path:<%s>, "
+                   "message:%s",
+                   tag,
+                   segno,
+                   io->header->max_segment,
+                   io->path,
+                   grn_current_error_message());
             }
           }
           GRN_ATOMIC_ADD_EX(pnref, -1, nref);
@@ -249,9 +257,19 @@ grn_io_seg_ref(grn_ctx *ctx, grn_io *io, uint32_t segno)
             grn_io_seg_map_(ctx, io, segno, info);
             if (!info->map) {
               GRN_ATOMIC_ADD_EX(pnref, -1, nref);
-              GRN_LOG(ctx, GRN_LOG_CRIT,
-                      "mmap failed!!! in grn_io_seg_ref(%p, %u, %u): %s",
-                      io, segno, nref, grn_current_error_message());
+              CRIT(GRN_NO_MEMORY_AVAILABLE,
+                   "%s failed to mmap with expire-segment: "
+                   "id:%u, "
+                   "nref:%u, "
+                   "max:%u, "
+                   "path:<%s>, "
+                   "message:%s",
+                   tag,
+                   segno,
+                   nref,
+                   io->header->max_segment,
+                   io->path,
+                   grn_current_error_message());
             }
             GRN_FUTEX_WAKE(pnref);
           }
@@ -276,9 +294,17 @@ grn_io_seg_ref(grn_ctx *ctx, grn_io *io, uint32_t segno)
         if (!info->map) {
           grn_io_seg_map_(ctx, io, segno, info);
           if (!info->map) {
-            GRN_LOG(ctx, GRN_LOG_CRIT,
-                    "mmap failed!!!! in grn_io_seg_ref(%p, %u): %s",
-                    io, segno, grn_current_error_message());
+            CRIT(GRN_NO_MEMORY_AVAILABLE,
+                 "%s failed to mmap: "
+                 "id:%u, "
+                 "max:%u, "
+                 "path:<%s>, "
+                 "message:%s",
+                 tag,
+                 segno,
+                 io->header->max_segment,
+                 io->path,
+                 grn_current_error_message());
           }
         }
         GRN_ATOMIC_ADD_EX(pnref, -1, nref);
