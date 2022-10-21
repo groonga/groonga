@@ -732,8 +732,17 @@ grn_malloc_default(grn_ctx *ctx, size_t size,
       grn_alloc_info_add(res, size, file, line, func);
     } else {
       if (!(res = malloc(size))) {
-        MERR("malloc fail (%" GRN_FMT_SIZE ")=%p (%s:%d) <%d>",
-             size, res, file, line, alloc_count);
+        MERR("[alloc][malloc] failed to allocate: "
+             "size:%" GRN_FMT_SIZE ", "
+             "file:%s, "
+             "line:%d, "
+             "alloc_count:%d, "
+             "message:%s",
+             size,
+             file,
+             line,
+             alloc_count,
+             grn_current_error_message());
       } else {
         GRN_ADD_ALLOC_COUNT(1);
         grn_alloc_info_add(res, size, file, line, func);
@@ -755,8 +764,17 @@ grn_calloc_default(grn_ctx *ctx, size_t size,
       grn_alloc_info_add(res, size, file, line, func);
     } else {
       if (!(res = calloc(size, 1))) {
-        MERR("calloc fail (%" GRN_FMT_SIZE ")=%p (%s:%d) <%d>",
-             size, res, file, line, alloc_count);
+        MERR("[alloc][calloc] failed to allocate: "
+             "size:%" GRN_FMT_SIZE ", "
+             "file:%s, "
+             "line:%d, "
+             "alloc_count:%d, "
+             "message:%s",
+             size,
+             file,
+             line,
+             alloc_count,
+             grn_current_error_message());
       } else {
         GRN_ADD_ALLOC_COUNT(1);
         grn_alloc_info_add(res, size, file, line, func);
@@ -792,8 +810,19 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size,
   if (size) {
     if (!(res = realloc(ptr, size))) {
       if (!(res = realloc(ptr, size))) {
-        MERR("realloc fail (%p,%" GRN_FMT_SIZE ")=%p (%s:%d) <%d>",
-             ptr, size, res, file, line, alloc_count);
+        MERR("[alloc][realloc] failed to allocate: "
+             "address:%p, "
+             "size:%" GRN_FMT_SIZE ", "
+             "file:%s, "
+             "line:%d, "
+             "alloc_count:%d, "
+             "message:%s",
+             ptr,
+             size,
+             file,
+             line,
+             alloc_count,
+             grn_current_error_message());
         return NULL;
       }
     }
@@ -825,7 +854,17 @@ grn_strdup_default(grn_ctx *ctx, const char *s,
       grn_alloc_info_add(res, strlen(res) + 1, file, line, func);
     } else {
       if (!(res = grn_strdup_raw(s))) {
-        MERR("strdup(%p)=%p (%s:%d) <%d>", s, res, file, line, alloc_count);
+        MERR("[alloc][strdup] failed to duplicate: "
+             "address:%p, "
+             "file:%s, "
+             "line:%d, "
+             "alloc_count:%d, "
+             "message:%s",
+             s,
+             file,
+             line,
+             alloc_count,
+             grn_current_error_message());
       } else {
         GRN_ADD_ALLOC_COUNT(1);
         grn_alloc_info_add(res, strlen(res) + 1, file, line, func);
