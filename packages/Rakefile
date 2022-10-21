@@ -169,7 +169,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
   end
 
   def prepare(target_namespace)
-    return unless target_namespace == :windows
+    return super unless target_namespace == :windows
     
     repositories_dir = download_repositories_dir(target_namespace)
     mkdir_p(repositories_dir)
