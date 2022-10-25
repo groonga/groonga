@@ -1241,6 +1241,9 @@ GRN_API grn_rc grn_text_itob(grn_ctx *ctx, grn_obj *bulk, grn_id id);
 GRN_API grn_rc grn_text_lltob32h(grn_ctx *ctx, grn_obj *bulk, long long int i);
 GRN_API grn_rc grn_text_benc(grn_ctx *ctx, grn_obj *bulk, unsigned int v);
 GRN_API grn_rc grn_text_esc(grn_ctx *ctx, grn_obj *bulk, const char *s, size_t len);
+GRN_API grn_rc grn_text_code_point(grn_ctx *ctx,
+                                   grn_obj *buffer,
+                                   uint32_t code_point);
 GRN_API grn_rc grn_text_urlenc(grn_ctx *ctx, grn_obj *buf,
                                const char *str, size_t len);
 GRN_API const char *grn_text_urldec(grn_ctx *ctx, grn_obj *buf,

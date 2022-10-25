@@ -2352,6 +2352,46 @@ grn_text_esc(grn_ctx *ctx, grn_obj *buf, const char *s, size_t len)
 }
 
 grn_rc
+grn_text_code_point(grn_ctx *ctx, grn_obj *buffer, uint32_t code_point)
+{
+  GRN_API_ENTER;
+
+  if (ctx->encoding != GRN_ENC_UTF8) {
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[text][code-point] UTF-8 is only supported: %s",
+        grn_encoding_to_string(ctx->encoding));
+  }
+
+  if (code_point == 0x00 ||
+      code_point > 0x10FFFF ||
+      /* surrogate */
+      (0xD800 <= code_point && code_point <= 0xDFFF)) {
+    code_point = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
+  }
+  if (code_point <= 0x7F) {
+    GRN_TEXT_PUTC(ctx, buffer, (char)code_point);
+  } else if (code_point <= 0x07FF) {
+    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x0007C0) >>  6) | 0x60));
+    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x00003F)      ) | 0x80));
+  } else if (code_point <= 0xFFFF) {
+    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x00F000) >> 12) | 0xE0));
+    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x000FC0) >>  6) | 0x80));
+    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x00003F)      ) | 0x80));
+  } else if (code_point <= 0x10FFFF) {
+    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x1C0000) >> 18) | 0xE0));
+    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x03F000) >> 12) | 0xE0));
+    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x000FC0) >>  6) | 0x80));
+    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x00003F)      ) | 0x80));
+  } else {
+    ERR(GRN_FUNCTION_NOT_IMPLEMENTED,
+        "[text][code-point] out of range: %#x",
+        code_point);
+  }
+
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
 grn_text_escape_xml(grn_ctx *ctx, grn_obj *buf, const char *s, size_t len)
 {
   const char *e;
