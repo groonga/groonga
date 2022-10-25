@@ -1,0 +1,23 @@
+normalize   'NormalizerHTML'   "a&lt;b&#x80;c&#x3042;d"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "a<b€cあd",
+    "types": [
+      "alpha",
+      "symbol",
+      "alpha",
+      "symbol",
+      "alpha",
+      "hiragana",
+      "alpha"
+    ],
+    "checks": [
+
+    ]
+  }
+]

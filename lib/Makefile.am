@@ -121,11 +121,14 @@ libgroonga_la_SOURCES +=			\
 	  $(RC) $(RCFLAGS) -o $@ $<
 endif
 
-EXTRA_DIST =					\
-	grn_ecmascript.c			\
-	grn_ecmascript.h			\
-	grn_ecmascript.lemon			\
-	CMakeLists.txt
+EXTRA_DIST =						\
+	CMakeLists.txt					\
+	grn_ecmascript.c				\
+	grn_ecmascript.h				\
+	grn_ecmascript.lemon				\
+	nfkc.rb						\
+	normalizer_html_expand_named_char_ref.c		\
+	normalizer_html_expand_named_char_ref.rb
 
 CLEANFILES = *.gcno *.gcda
 
@@ -157,3 +160,11 @@ update-nfkc: tmp/icu-$(ICU_VERSION)/local/
 	ICU_HOME=$$PWD/tmp/icu-$(ICU_VERSION)/local \
 	  $(RUBY) $(srcdir)/nfkc.rb \
 	    --source-directory=$(srcdir)
+
+# TODO: Implement this in CMakeLists.txt too
+entities.json:
+	wget https://html.spec.whatwg.org/entities.json
+
+update-normalizer-html-expand-named-char-ref: entities.json
+	$(RUBY) $(srcdir)/normalizer_html_expand_named_char_ref.rb > \
+	    $(srcdir)/normalizer_html_expand_named_char_ref.c

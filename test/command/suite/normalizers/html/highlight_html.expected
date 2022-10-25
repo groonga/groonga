@@ -1,0 +1,37 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("report_source_location", true)'   --normalizer 'NormalizerHTML("report_source_offset", true)'
+[[0,0.0,0.0],true]
+column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"body": "a&lt;b&gt;c"}
+]
+[[0,0.0,0.0],1]
+select Entries   --match_columns body   --query '"<b>"'   --output_columns 'highlight_html(body, Terms)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "highlight_html",
+          null
+        ]
+      ],
+      [
+        "a<span class=\"keyword\">&amp;lt;b&amp;gt;</span>c"
+      ]
+    ]
+  ]
+]

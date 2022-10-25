@@ -3451,6 +3451,364 @@ table_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   return NULL;
 }
 
+typedef struct {
+  bool expand_character_reference;
+  grn_get_char_type_func get_char_type;
+  bool report_source_offset;
+} html_options;
+
+static void
+html_options_init(grn_ctx *ctx, html_options *options)
+{
+  options->expand_character_reference = true;
+  options->get_char_type = grn_nfkc_char_type;
+  options->report_source_offset = false;
+}
+
+static void
+html_options_fin(grn_ctx *ctx, html_options *options)
+{
+}
+
+static void
+html_options_close(grn_ctx *ctx, void *data)
+{
+  html_options *options = data;
+  html_options_fin(ctx, options);
+  GRN_FREE(options);
+}
+
+static void *
+html_options_open(grn_ctx *ctx,
+                  grn_obj *normalizer,
+                  grn_obj *raw_options,
+                  void *user_data)
+{
+  const char *tag = "[normalizer][html]";
+
+  html_options *options = GRN_CALLOC(sizeof(html_options));
+  if (!options) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "%s failed to allocate memory for options",
+        tag);
+    return NULL;
+  }
+
+  html_options_init(ctx, options);
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+    grn_raw_string name_raw;
+    name_raw.value = name;
+    name_raw.length = name_length;
+
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "expand_character_reference")) {
+      options->expand_character_reference =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->expand_character_reference);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unicode_version")) {
+      options->get_char_type =
+        unicode_version_option_process(ctx,
+                                       raw_options,
+                                       i,
+                                       &name_raw,
+                                       tag);
+      if (ctx->rc != GRN_SUCCESS) {
+        break;
+      }
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "report_source_offset")) {
+      options->report_source_offset =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->report_source_offset);
+    }
+  } GRN_OPTION_VALUES_EACH_END();
+
+  if (ctx->rc != GRN_SUCCESS) {
+    html_options_fin(ctx, options);
+    html_options_close(ctx, options);
+    return NULL;
+  }
+
+  return options;
+}
+
+static bool
+html_expand_numeric_char_ref(grn_ctx *ctx,
+                             grn_obj *buffer,
+                             uint32_t code_point)
+{
+  /* Special code points.
+   * See also:
+   * https://html.spec.whatwg.org/multipage/parsing.html#numeric-character-reference-end-state */
+  switch (code_point) {
+  case 0x80 :
+    code_point = 0x20AC;
+    break;
+  case 0x82 :
+    code_point = 0x201A;
+    break;
+  case 0x83 :
+    code_point = 0x0192;
+    break;
+  case 0x84 :
+    code_point = 0x201E;
+    break;
+  case 0x85 :
+    code_point = 0x2026;
+    break;
+  case 0x86 :
+    code_point = 0x2020;
+    break;
+  case 0x87 :
+    code_point = 0x2021;
+    break;
+  case 0x88 :
+    code_point = 0x02C6;
+    break;
+  case 0x89 :
+    code_point = 0x2030;
+    break;
+  case 0x8A :
+    code_point = 0x0160;
+    break;
+  case 0x8B :
+    code_point = 0x2039;
+    break;
+  case 0x8C :
+    code_point = 0x0152;
+    break;
+  case 0x8E :
+    code_point = 0x017D;
+    break;
+  case 0x91 :
+    code_point = 0x2018;
+    break;
+  case 0x92 :
+    code_point = 0x2019;
+    break;
+  case 0x93 :
+    code_point = 0x201C;
+    break;
+  case 0x94 :
+    code_point = 0x201D;
+    break;
+  case 0x95 :
+    code_point = 0x2022;
+    break;
+  case 0x96 :
+    code_point = 0x2013;
+    break;
+  case 0x97 :
+    code_point = 0x2014;
+    break;
+  case 0x98 :
+    code_point = 0x02DC;
+    break;
+  case 0x99 :
+    code_point = 0x2122;
+    break;
+  case 0x9A :
+    code_point = 0x0161;
+    break;
+  case 0x9B :
+    code_point = 0x203A;
+    break;
+  case 0x9C :
+    code_point = 0x0153;
+    break;
+  case 0x9E :
+    code_point = 0x017E;
+    break;
+  case 0x9F :
+    code_point = 0x0178;
+    break;
+  default :
+    break;
+  }
+  grn_text_code_point(ctx, buffer, code_point);
+  return true;
+}
+
+#include "normalizer_html_expand_named_char_ref.c"
+
+static void
+html_normalize(grn_ctx *ctx, grn_string *string, html_options *options)
+{
+  const char *tag = "[normalizer][html]";
+  substitutor_data data;
+  substitutor_data_init(ctx,
+                        &data,
+                        tag,
+                        options->get_char_type,
+                        string,
+                        options->report_source_offset);
+
+  string->n_characters = 0;
+  string->normalized = NULL;
+  string->normalized_length_in_bytes = 0;
+  string->checks = NULL;
+  string->ctypes = NULL;
+  string->offsets = NULL;
+
+  grn_obj *normalized = &(data.normalized);
+  const char *current = string->original;
+  const char *end = current + string->original_length_in_bytes;
+
+  const char *start_char_ref = NULL;
+  bool in_char_ref = false;
+
+  int char_length = 0;
+  for (; current < end; current += char_length) {
+    char_length = grn_charlen(ctx, current, end);
+    if (char_length == 0) {
+      /* Set error? */
+      break;
+    }
+
+    if (char_length == 1) {
+      if (in_char_ref) {
+        if (*current == ';') {
+          bool valid = false;
+          size_t normalized_length_before = GRN_TEXT_LEN(normalized);
+          if (start_char_ref[1] == '#') {
+            long code_point = -1;
+            if (start_char_ref[2] == 'x' || start_char_ref[2] == 'X') {
+              /* "&#xH...;" */
+              const char *code_point_end = NULL;
+              code_point = grn_htoui(start_char_ref + 3,
+                                     current,
+                                     &code_point_end);
+              if (code_point_end != current) {
+                code_point = -1;
+              }
+            } else {
+              /* "&#D...;" */
+              const char *code_point_end = NULL;
+              code_point = grn_atoll(start_char_ref + 2,
+                                     current,
+                                     &code_point_end);
+              if (code_point_end != current) {
+                code_point = -1;
+              }
+            }
+            if (code_point >= 0) {
+              valid = html_expand_numeric_char_ref(ctx,
+                                                   normalized,
+                                                   (uint32_t)code_point);
+            }
+          } else {
+            /* "&NAME;" */
+            valid =
+              html_expand_named_char_ref(ctx,
+                                         normalized,
+                                         start_char_ref + 1,
+                                         (size_t)(current - start_char_ref - 1));
+          }
+          if (valid) {
+            const char *current_normalized =
+              GRN_TEXT_VALUE(normalized) + normalized_length_before;
+            size_t current_normalized_length =
+              GRN_TEXT_LEN(normalized) - normalized_length_before;
+            substitutor_normalized(ctx,
+                                   &data,
+                                   start_char_ref,
+                                   (size_t)(current - start_char_ref + 1),
+                                   current_normalized,
+                                   current_normalized_length);
+            if (ctx->rc != GRN_SUCCESS) {
+              goto exit;
+            }
+            in_char_ref = false;
+            start_char_ref = NULL;
+            continue;
+          }
+        } else if (((current - start_char_ref) == 1 && *current == '#') ||
+                   ('A' <= *current && *current <= 'Z') ||
+                   ('a' <= *current && *current <= 'z') ||
+                   ('0' <= *current && *current <= '9')) {
+          continue;
+        }
+      } else {
+        if (options->expand_character_reference && *current == '&') {
+          in_char_ref = true;
+          start_char_ref = current;
+          continue;
+        }
+      }
+    }
+
+    if (in_char_ref) {
+      /* "&...(any multibyte character)...;" case: Write it as-is. */
+      size_t normalized_length =
+        (size_t)(current - start_char_ref) + (size_t)char_length;
+      grn_bulk_write(ctx,
+                     normalized,
+                     start_char_ref,
+                     normalized_length);
+      substitutor_normalized(ctx,
+                             &data,
+                             start_char_ref,
+                             normalized_length,
+                             start_char_ref,
+                             normalized_length);
+      in_char_ref = false;
+      start_char_ref = NULL;
+    } else {
+      grn_bulk_write(ctx, normalized, current, (size_t)char_length);
+      substitutor_normalized(ctx,
+                             &data,
+                             current,
+                             (size_t)char_length,
+                             current,
+                             (size_t)char_length);
+    }
+  }
+
+  substitutor_finished(ctx, &data, string);
+
+exit :
+  substitutor_data_fin(ctx, &data);
+}
+
+static grn_obj *
+html_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
+{
+  grn_obj *string = args[0];
+  grn_obj *table;
+  html_options *options;
+  html_options options_raw;
+
+  table = grn_string_get_table(ctx, string);
+  if (table) {
+    uint32_t i = grn_string_get_normalizer_index(ctx, string);
+    options = grn_table_cache_normalizers_options(ctx,
+                                                  table,
+                                                  i,
+                                                  html_options_open,
+                                                  html_options_close,
+                                                  NULL);
+    if (ctx->rc != GRN_SUCCESS) {
+      return NULL;
+    }
+  } else {
+    html_options_init(ctx, &options_raw);
+    if (ctx->rc != GRN_SUCCESS) {
+      html_options_fin(ctx, &options_raw);
+      return NULL;
+    }
+    options = &options_raw;
+  }
+
+  html_normalize(ctx, (grn_string *)string, options);
+
+  if (!table) {
+    html_options_fin(ctx, options);
+  }
+  return NULL;
+}
+
 grn_rc
 grn_normalizer_normalize(grn_ctx *ctx, grn_obj *normalizer, grn_obj *string)
 {
@@ -3498,6 +3856,9 @@ grn_db_init_builtin_normalizers(grn_ctx *ctx)
 
   grn_normalizer_register(ctx, "NormalizerTable", -1,
                           NULL, table_next, NULL);
+
+  grn_normalizer_register(ctx, "NormalizerHTML", -1,
+                          NULL, html_next, NULL);
 
 /*
   grn_normalizer_register(ctx, "NormalizerUCA", -1,

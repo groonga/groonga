@@ -1,0 +1,4 @@
+normalize \
+  'NormalizerHTML("unicode_version", "13.0.0")' \
+  "©" \
+  WITH_TYPES

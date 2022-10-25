@@ -1,0 +1,25 @@
+normalize   'NormalizerHTML'   "a&lt;b&amp;c&#65;d&#x5A;e"   WITH_CHECKS
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "a<b&cAdZe",
+    "types": [
+
+    ],
+    "checks": [
+      1,
+      4,
+      1,
+      5,
+      1,
+      5,
+      1,
+      6,
+      1
+    ]
+  }
+]

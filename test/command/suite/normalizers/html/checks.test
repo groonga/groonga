@@ -1,0 +1,4 @@
+normalize \
+  'NormalizerHTML' \
+  "a&lt;b&amp;c&#65;d&#x5A;e" \
+  WITH_CHECKS

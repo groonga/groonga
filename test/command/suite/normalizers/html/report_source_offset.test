@@ -1,0 +1,3 @@
+normalize \
+  'NormalizerHTML("report_source_offset", true)' \
+  "a&lt;b&amp;c&#65;d&#x5A;e"
