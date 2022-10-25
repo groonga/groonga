@@ -2606,6 +2606,286 @@ nfkc130_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
 typedef grn_char_type (*grn_get_char_type_func)(const unsigned char *character);
 
+/* This is for general substitute based normalizers. */
+typedef struct {
+  const char *tag;
+  grn_get_char_type_func get_char_type;
+  grn_obj normalized;
+  grn_obj checks;
+  bool need_checks;
+  grn_obj types;
+  bool need_types;
+  size_t current_source_offset;
+  grn_obj offsets;
+  bool need_offsets;
+  size_t n_normalized_characters;
+  bool count_n_normalized_characters_in_checks;
+  bool count_n_normalized_characters_in_types;
+} substitutor_data;
+
+static void
+substitutor_data_init(grn_ctx *ctx,
+                      substitutor_data *data,
+                      const char *tag,
+                      grn_get_char_type_func get_char_type,
+                      grn_string *string,
+                      bool report_source_offset)
+{
+  data->tag = tag;
+  data->get_char_type = get_char_type;
+  GRN_TEXT_INIT(&(data->normalized), 0);
+  GRN_INT16_INIT(&(data->checks), GRN_OBJ_VECTOR);
+  data->need_checks = (string->flags & GRN_STRING_WITH_CHECKS);
+  GRN_UINT8_INIT(&(data->types), GRN_OBJ_VECTOR);
+  data->need_types =
+    (string->flags & GRN_STRING_WITH_TYPES) &&
+    (ctx->encoding == GRN_ENC_UTF8);
+  data->current_source_offset = 0;
+  GRN_UINT64_INIT(&(data->offsets), GRN_OBJ_VECTOR);
+  data->need_offsets = report_source_offset;
+  data->n_normalized_characters = 0;
+  data->count_n_normalized_characters_in_checks = false;
+  data->count_n_normalized_characters_in_types = false;
+  if (data->need_checks) {
+    data->count_n_normalized_characters_in_checks = true;
+  } else if (data->need_types) {
+    data->count_n_normalized_characters_in_types = true;
+  }
+}
+
+static void
+substitutor_data_fin(grn_ctx *ctx, substitutor_data *data)
+{
+  GRN_OBJ_FIN(ctx, &(data->normalized));
+  GRN_OBJ_FIN(ctx, &(data->checks));
+  GRN_OBJ_FIN(ctx, &(data->types));
+  GRN_OBJ_FIN(ctx, &(data->offsets));
+}
+
+static void
+substitutor_add_checks_and_offsets(grn_ctx *ctx,
+                                   substitutor_data *data,
+                                   const char *source,
+                                   size_t source_length,
+                                   const char *normalized,
+                                   size_t normalized_length)
+{
+  grn_obj *checks = &(data->checks);
+  grn_obj *offsets = &(data->offsets);
+
+  size_t current_source_offset = data->current_source_offset;
+  const char *source_current = source;
+  const char *previous_source_current = source;
+  const char *source_end = source_current + source_length;
+  const char *normalized_current = normalized;
+  const char *normalized_end = normalized_current + normalized_length;
+  while (source_current < source_end &&
+         normalized_current < normalized_end) {
+    int source_char_length = grn_charlen(ctx, source_current, source_end);
+    if (source_char_length == 0) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s invalid character in source text: <%.*s>",
+          data->tag,
+          (int)(source_end - source_current),
+          source_current);
+      return;
+    }
+    int normalized_char_length;
+    if (source_current == normalized_current) {
+      normalized_char_length = source_char_length;
+    } else {
+      normalized_char_length = grn_charlen(ctx,
+                                           normalized_current,
+                                           normalized_end);
+      if (normalized_char_length == 0) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s invalid character in normalized text: <%.*s>",
+            data->tag,
+            (int)(normalized_end - normalized_current),
+            normalized_current);
+        return;
+      }
+    }
+    if (data->need_checks) {
+      GRN_INT16_PUT(ctx, checks, source_char_length);
+      int i;
+      for (i = 1; i < normalized_char_length; i++) {
+        GRN_INT16_PUT(ctx, checks, 0);
+      }
+    }
+    if (data->need_offsets) {
+      GRN_UINT64_PUT(ctx,
+                     offsets,
+                     (uint64_t)(source_current - source) + current_source_offset);
+    }
+    previous_source_current = source_current;
+    source_current += source_char_length;
+    normalized_current += normalized_char_length;
+    if (data->count_n_normalized_characters_in_checks) {
+      data->n_normalized_characters++;
+    }
+  }
+  if (source_current < source_end) {
+    size_t last_check_index = GRN_INT16_VECTOR_SIZE(checks);
+    if (last_check_index == 0) {
+      return;
+    }
+    for (last_check_index--; last_check_index > 0; last_check_index--) {
+      if (GRN_INT16_VALUE_AT(checks, last_check_index) != 0) {
+        break;
+      }
+    }
+    while (source_current < source_end) {
+      int source_char_length = grn_charlen(ctx,
+                                             source_current,
+                                             source_end);
+      if (source_char_length == 0) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s invalid character in source text: <%.*s>",
+            data->tag,
+            (int)(source_end - source_current),
+            source_current);
+        return;
+      }
+      GRN_INT16_VALUE_AT(checks, last_check_index) +=
+        (int16_t)source_char_length;
+      source_current += source_char_length;
+    }
+  } else if (normalized_current < normalized_end) {
+    while (normalized_current < normalized_end) {
+      int normalized_char_length = grn_charlen(ctx,
+                                               normalized_current,
+                                               normalized_end);
+      if (normalized_char_length == 0) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s invalid character in normalized text: <%.*s>",
+            data->tag,
+            (int)(normalized_end - normalized_current),
+            normalized_current);
+        return;
+      }
+      if (data->need_checks) {
+        GRN_INT16_PUT(ctx, checks, -1);
+        int i;
+        for (i = 1; i < normalized_char_length; i++) {
+          GRN_INT16_PUT(ctx, checks, 0);
+        }
+      }
+      if (data->need_offsets) {
+        GRN_UINT64_PUT(ctx,
+                       offsets,
+                       (uint64_t)(previous_source_current - source) +
+                       current_source_offset);
+      }
+      normalized_current += normalized_char_length;
+      if (data->count_n_normalized_characters_in_checks) {
+        data->n_normalized_characters++;
+      }
+    }
+  }
+}
+
+static void
+substitutor_add_types(grn_ctx *ctx,
+                      substitutor_data *data,
+                      const char *normalized,
+                      size_t normalized_length)
+{
+  grn_obj *types = &(data->types);
+  const char *normalized_end = normalized + normalized_length;
+  while (normalized < normalized_end) {
+    int normalized_char_length = grn_charlen(ctx, normalized, normalized_end);
+    if (normalized_char_length == 0) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s invalid character in normalized text: <%.*s>",
+          data->tag,
+          (int)(normalized_end - normalized),
+          normalized);
+      return;
+    }
+    grn_char_type char_type = data->get_char_type(normalized);
+    GRN_UINT8_PUT(ctx, types, char_type);
+    normalized += normalized_char_length;
+    if (data->count_n_normalized_characters_in_types) {
+      data->n_normalized_characters++;
+    }
+  }
+}
+
+static void
+substitutor_normalized(grn_ctx *ctx,
+                       substitutor_data *data,
+                       const char *source,
+                       size_t source_length,
+                       const char *normalized,
+                       size_t normalized_length)
+{
+  if (data->need_checks || data->need_offsets) {
+    substitutor_add_checks_and_offsets(ctx,
+                                    data,
+                                    source,
+                                    source_length,
+                                    normalized,
+                                    normalized_length);
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
+  }
+
+  if (data->need_types) {
+    substitutor_add_types(ctx, data, normalized, normalized_length);
+    if (ctx->rc != GRN_SUCCESS) {
+      return;
+    }
+  }
+
+  data->current_source_offset += source_length;
+}
+
+static void
+substitutor_finished(grn_ctx *ctx,
+                     substitutor_data *data,
+                     grn_string *string)
+{
+  if (!data->count_n_normalized_characters_in_checks &&
+      !data->count_n_normalized_characters_in_types) {
+    const char *current = GRN_TEXT_VALUE(&(data->normalized));
+    const char *end = current + GRN_TEXT_LEN(&(data->normalized));
+    while (current < end) {
+      int char_length = grn_charlen(ctx, current, end);
+      if (char_length == 0) {
+        ERR(GRN_INVALID_ARGUMENT,
+            "%s invalid character in normalized text: <%.*s>",
+            data->tag,
+            (int)(end - current),
+            current);
+        return;
+      }
+      data->n_normalized_characters++;
+      current += char_length;
+    }
+  }
+
+  string->n_characters = (unsigned int)(data->n_normalized_characters);
+  string->normalized_length_in_bytes =
+    (unsigned int)GRN_TEXT_LEN(&(data->normalized));
+  string->normalized = grn_bulk_detach(ctx, &(data->normalized));
+
+  if (data->need_checks) {
+    string->checks = (int16_t *)grn_bulk_detach(ctx, &(data->checks));
+  }
+
+  if (data->need_types) {
+    GRN_UINT64_PUT(ctx, &(data->types), GRN_CHAR_NULL);
+    string->ctypes = (uint_least8_t *)grn_bulk_detach(ctx, &(data->types));
+  }
+
+  if (data->need_offsets) {
+    GRN_UINT64_PUT(ctx, &(data->offsets), string->original_length_in_bytes);
+    string->offsets = (uint64_t *)grn_bulk_detach(ctx, &(data->offsets));
+  }
+}
+
 typedef struct {
   grn_obj *target_table;
   grn_obj *target_index_column;
@@ -2657,6 +2937,65 @@ table_options_close(grn_ctx *ctx, void *data)
   table_options *options = data;
   table_options_fin(ctx, options);
   GRN_FREE(options);
+}
+
+static grn_get_char_type_func
+unicode_version_option_process(grn_ctx *ctx,
+                               grn_obj *raw_options,
+                               unsigned int i,
+                               grn_raw_string *name_raw,
+                               const char *tag)
+{
+  const char *version;
+  grn_id domain;
+  unsigned int version_length = grn_vector_get_element(ctx,
+                                                       raw_options,
+                                                       i,
+                                                       &version,
+                                                       NULL,
+                                                       &domain);
+  if (!grn_type_id_is_text_family(ctx, domain)) {
+    grn_obj value;
+    GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
+    GRN_TEXT_SET(ctx, &value, version, version_length);
+    grn_obj inspected;
+    grn_inspect(ctx, &inspected, &value);
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s[%.*s] must be a text: <%.*s>",
+        tag,
+        (int)(name_raw->length), name_raw->value,
+        (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+    GRN_OBJ_FIN(ctx, &inspected);
+    GRN_OBJ_FIN(ctx, &value);
+    return NULL;
+  }
+  if (version_length == 0) {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s[%.*s] must not be empty",
+        tag,
+        (int)(name_raw->length), name_raw->value);
+    return NULL;
+  }
+  grn_raw_string version_raw;
+  version_raw.value = version;
+  version_raw.length = version_length;
+  if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "5.0.0")) {
+    return grn_nfkc_char_type;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "10.0.0")) {
+    return grn_nfkc100_char_type;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "12.1.0")) {
+    return grn_nfkc121_char_type;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "13.0.0")) {
+    return grn_nfkc130_char_type;
+  } else {
+    ERR(GRN_INVALID_ARGUMENT,
+        "%s[%.*s] must be one of \"5.0.0\", \"10.0.0\", \"12.1.0\" or "
+        "\"13.0.0\": <%.*s>",
+        tag,
+        (int)(name_raw->length), name_raw->value,
+        (int)(version_raw.length), version_raw.value);
+    return NULL;
+  }
 }
 
 static void *
@@ -2780,54 +3119,13 @@ table_options_open(grn_ctx *ctx,
       }
       GRN_TEXT_SET(ctx, target_name, name, name_length);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unicode_version")) {
-      const char *version;
-      grn_id domain;
-      unsigned int version_length = grn_vector_get_element(ctx,
-                                                           raw_options,
-                                                           i,
-                                                           &version,
-                                                           NULL,
-                                                           &domain);
-      if (!grn_type_id_is_text_family(ctx, domain)) {
-        grn_obj value;
-        GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
-        GRN_TEXT_SET(ctx, &value, version, version_length);
-        grn_obj inspected;
-        grn_inspect(ctx, &inspected, &value);
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] must be a text: <%.*s>",
-            tag,
-            (int)(name_raw.length), name_raw.value,
-            (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
-        GRN_OBJ_FIN(ctx, &inspected);
-        GRN_OBJ_FIN(ctx, &value);
-        break;
-      }
-      if (version_length == 0) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] must not be empty",
-            tag,
-            (int)(name_raw.length), name_raw.value);
-        break;
-      }
-      grn_raw_string version_raw;
-      version_raw.value = version;
-      version_raw.length = version_length;
-      if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "5.0.0")) {
-        options->get_char_type = grn_nfkc_char_type;
-      } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "10.0.0")) {
-        options->get_char_type = grn_nfkc100_char_type;
-      } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "12.1.0")) {
-        options->get_char_type = grn_nfkc121_char_type;
-      } else if (GRN_RAW_STRING_EQUAL_CSTRING(version_raw, "13.0.0")) {
-        options->get_char_type = grn_nfkc130_char_type;
-      } else {
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] must be one of \"5.0.0\", \"10.0.0\", \"12.1.0\" or "
-            "\"13.0.0\": <%.*s>",
-            tag,
-            (int)(name_raw.length), name_raw.value,
-            (int)(version_raw.length), version_raw.value);
+      options->get_char_type =
+        unicode_version_option_process(ctx,
+                                       raw_options,
+                                       i,
+                                       &name_raw,
+                                       tag);
+      if (ctx->rc != GRN_SUCCESS) {
         break;
       }
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "report_source_offset")) {
@@ -2985,197 +3283,8 @@ exit :
 typedef struct {
   const char *tag;
   table_options *options;
-  grn_obj normalized;
-  grn_obj checks;
-  bool need_checks;
-  grn_obj types;
-  bool need_types;
-  size_t current_source_offset;
-  grn_obj offsets;
-  bool need_offsets;
-  size_t n_normalized_characters;
-  bool count_n_normalized_characters_in_checks;
-  bool count_n_normalized_characters_in_types;
+  substitutor_data substitutor_data;
 } table_data;
-
-static void
-table_normalize_add_checks_and_offsets(grn_ctx *ctx,
-                                       table_data *data,
-                                       const char *source,
-                                       size_t source_length,
-                                       const char *normalized,
-                                       size_t normalized_length)
-{
-  grn_obj *checks = &(data->checks);
-  grn_obj *offsets = &(data->offsets);
-
-  size_t current_source_offset = data->current_source_offset;
-  const char *source_current = source;
-  const char *previous_source_current = source;
-  const char *source_end = source_current + source_length;
-  const char *normalized_current = normalized;
-  const char *normalized_end = normalized_current + normalized_length;
-  while (source_current < source_end &&
-         normalized_current < normalized_end) {
-    int source_char_length = grn_charlen(ctx, source_current, source_end);
-    if (source_char_length == 0) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "%s invalid character in source text: <%.*s>",
-          data->tag,
-          (int)(source_end - source_current),
-          source_current);
-      return;
-    }
-    int normalized_char_length;
-    if (source_current == normalized_current) {
-      normalized_char_length = source_char_length;
-    } else {
-      normalized_char_length = grn_charlen(ctx,
-                                           normalized_current,
-                                           normalized_end);
-      if (normalized_char_length == 0) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s invalid character in normalized text: <%.*s>",
-            data->tag,
-            (int)(normalized_end - normalized_current),
-            normalized_current);
-        return;
-      }
-    }
-    if (data->need_checks) {
-      GRN_INT16_PUT(ctx, checks, source_char_length);
-      int i;
-      for (i = 1; i < normalized_char_length; i++) {
-        GRN_INT16_PUT(ctx, checks, 0);
-      }
-    }
-    if (data->need_offsets) {
-      GRN_UINT64_PUT(ctx,
-                     offsets,
-                     (uint64_t)(source_current - source) + current_source_offset);
-    }
-    previous_source_current = source_current;
-    source_current += source_char_length;
-    normalized_current += normalized_char_length;
-    if (data->count_n_normalized_characters_in_checks) {
-      data->n_normalized_characters++;
-    }
-  }
-  if (source_current < source_end) {
-    size_t last_check_index = GRN_INT16_VECTOR_SIZE(checks);
-    if (last_check_index == 0) {
-      return;
-    }
-    for (last_check_index--; last_check_index > 0; last_check_index--) {
-      if (GRN_INT16_VALUE_AT(checks, last_check_index) != 0) {
-        break;
-      }
-    }
-    while (source_current < source_end) {
-      int source_char_length = grn_charlen(ctx,
-                                             source_current,
-                                             source_end);
-      if (source_char_length == 0) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s invalid character in source text: <%.*s>",
-            data->tag,
-            (int)(source_end - source_current),
-            source_current);
-        return;
-      }
-      GRN_INT16_VALUE_AT(checks, last_check_index) += (int16_t)source_char_length;
-      source_current += source_char_length;
-    }
-  } else if (normalized_current < normalized_end) {
-    while (normalized_current < normalized_end) {
-      int normalized_char_length = grn_charlen(ctx,
-                                               normalized_current,
-                                               normalized_end);
-      if (normalized_char_length == 0) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s invalid character in normalized text: <%.*s>",
-            data->tag,
-            (int)(normalized_end - normalized_current),
-            normalized_current);
-        return;
-      }
-      if (data->need_checks) {
-        GRN_INT16_PUT(ctx, checks, -1);
-        int i;
-        for (i = 1; i < normalized_char_length; i++) {
-          GRN_INT16_PUT(ctx, checks, 0);
-        }
-      }
-      if (data->need_offsets) {
-        GRN_UINT64_PUT(ctx,
-                       offsets,
-                       (uint64_t)(previous_source_current - source) +
-                       current_source_offset);
-      }
-      normalized_current += normalized_char_length;
-      if (data->count_n_normalized_characters_in_checks) {
-        data->n_normalized_characters++;
-      }
-    }
-  }
-}
-
-static void
-table_normalize_add_types(grn_ctx *ctx,
-                          table_data *data,
-                          const char *normalized,
-                          size_t normalized_length)
-{
-  grn_obj *types = &(data->types);
-  const char *normalized_end = normalized + normalized_length;
-  while (normalized < normalized_end) {
-    int normalized_char_length = grn_charlen(ctx, normalized, normalized_end);
-    if (normalized_char_length == 0) {
-      ERR(GRN_INVALID_ARGUMENT,
-          "%s invalid character in normalized text: <%.*s>",
-          data->tag,
-          (int)(normalized_end - normalized),
-          normalized);
-      return;
-    }
-    grn_char_type char_type = data->options->get_char_type(normalized);
-    GRN_UINT8_PUT(ctx, types, char_type);
-    normalized += normalized_char_length;
-    if (data->count_n_normalized_characters_in_types) {
-      data->n_normalized_characters++;
-    }
-  }
-}
-
-static void
-table_normalize_added(grn_ctx *ctx,
-                      table_data *data,
-                      const char *source,
-                      size_t source_length,
-                      const char *normalized,
-                      size_t normalized_length)
-{
-  if (data->need_checks || data->need_offsets) {
-    table_normalize_add_checks_and_offsets(ctx,
-                                           data,
-                                           source,
-                                           source_length,
-                                           normalized,
-                                           normalized_length);
-    if (ctx->rc != GRN_SUCCESS) {
-      return;
-    }
-  }
-
-  if (data->need_types) {
-    table_normalize_add_types(ctx, data, normalized, normalized_length);
-    if (ctx->rc != GRN_SUCCESS) {
-      return;
-    }
-  }
-
-  data->current_source_offset += source_length;
-}
 
 static void
 table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
@@ -3183,24 +3292,12 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
   table_data data;
   data.tag = "[normalizer][table]";
   data.options = options;
-  GRN_TEXT_INIT(&(data.normalized), 0);
-  GRN_INT16_INIT(&(data.checks), GRN_OBJ_VECTOR);
-  data.need_checks = (string->flags & GRN_STRING_WITH_CHECKS);
-  GRN_UINT8_INIT(&(data.types), GRN_OBJ_VECTOR);
-  data.need_types =
-    (string->flags & GRN_STRING_WITH_TYPES) &&
-    (ctx->encoding == GRN_ENC_UTF8);
-  data.current_source_offset = 0;
-  GRN_UINT64_INIT(&(data.offsets), GRN_OBJ_VECTOR);
-  data.need_offsets = options->report_source_offset;
-  data.n_normalized_characters = 0;
-  data.count_n_normalized_characters_in_checks = false;
-  data.count_n_normalized_characters_in_types = false;
-  if (data.need_checks) {
-    data.count_n_normalized_characters_in_checks = true;
-  } else if (data.need_types) {
-    data.count_n_normalized_characters_in_types = true;
-  }
+  substitutor_data_init(ctx,
+                     &(data.substitutor_data),
+                     data.tag,
+                     options->get_char_type,
+                     string,
+                     options->report_source_offset);
 
   string->n_characters = 0;
   string->normalized = NULL;
@@ -3209,7 +3306,7 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
   string->ctypes = NULL;
   string->offsets = NULL;
 
-  grn_obj *normalized = &(data.normalized);
+  grn_obj *normalized = &(data.substitutor_data.normalized);
   const char *source = string->original;
   const char *source_end = source + string->original_length_in_bytes;
   while (source < source_end) {
@@ -3232,12 +3329,12 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
         const char *source_previous = source + previous;
         size_t source_previous_length = hits[i].offset - previous;
         GRN_TEXT_PUT(ctx, normalized, source_previous, source_previous_length);
-        table_normalize_added(ctx,
-                              &data,
-                              source_previous,
-                              source_previous_length,
-                              source_previous,
-                              source_previous_length);
+        substitutor_normalized(ctx,
+                               &(data.substitutor_data),
+                               source_previous,
+                               source_previous_length,
+                               source_previous,
+                               source_previous_length);
         if (ctx->rc != GRN_SUCCESS) {
           goto exit;
         }
@@ -3280,12 +3377,12 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
                           hits[i].id,
                           normalized);
       }
-      table_normalize_added(ctx,
-                            &data,
-                            source + hits[i].offset,
-                            hits[i].length,
-                            GRN_TEXT_VALUE(normalized) + before_offset,
-                            GRN_TEXT_LEN(normalized) - before_offset);
+      substitutor_normalized(ctx,
+                             &(data.substitutor_data),
+                             source + hits[i].offset,
+                             hits[i].length,
+                             GRN_TEXT_VALUE(normalized) + before_offset,
+                             GRN_TEXT_LEN(normalized) - before_offset);
       if (ctx->rc != GRN_SUCCESS) {
         goto exit;
       }
@@ -3297,12 +3394,12 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
       const char *source_previous = source + previous;
       size_t source_previous_length = (size_t)(source_end - source - previous);
       GRN_TEXT_PUT(ctx, normalized, source_previous, source_previous_length);
-      table_normalize_added(ctx,
-                            &data,
-                            source_previous,
-                            source_previous_length,
-                            source_previous,
-                            source_previous_length);
+      substitutor_normalized(ctx,
+                             &(data.substitutor_data),
+                             source_previous,
+                             source_previous_length,
+                             source_previous,
+                             source_previous_length);
       if (ctx->rc != GRN_SUCCESS) {
         goto exit;
       }
@@ -3311,48 +3408,10 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
 #undef MAX_N_HITS
   }
 
-  if (!data.count_n_normalized_characters_in_checks &&
-      !data.count_n_normalized_characters_in_types) {
-    const char *current = GRN_TEXT_VALUE(normalized);
-    const char *end = current + GRN_TEXT_LEN(normalized);
-    while (current < end) {
-      int char_length = grn_charlen(ctx, current, end);
-      if (char_length == 0) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s invalid character in normalized text: <%.*s>",
-            data.tag,
-            (int)(end - current),
-            current);
-        goto exit;
-      }
-      data.n_normalized_characters++;
-      current += char_length;
-    }
-  }
+  substitutor_finished(ctx, &(data.substitutor_data), string);
 
-  string->n_characters = (unsigned int)(data.n_normalized_characters);
-  string->normalized_length_in_bytes = (unsigned int)GRN_TEXT_LEN(normalized);
-  string->normalized = grn_bulk_detach(ctx, normalized);
-
-  if (data.need_checks) {
-    string->checks = (int16_t *)grn_bulk_detach(ctx, &(data.checks));
-  }
-
-  if (data.need_types) {
-    GRN_UINT64_PUT(ctx, &(data.types), GRN_CHAR_NULL);
-    string->ctypes = (uint_least8_t *)grn_bulk_detach(ctx, &(data.types));
-  }
-
-  if (data.need_offsets) {
-    GRN_UINT64_PUT(ctx, &(data.offsets), string->original_length_in_bytes);
-    string->offsets = (uint64_t *)grn_bulk_detach(ctx, &(data.offsets));
-  }
-
-exit :
-  GRN_OBJ_FIN(ctx, &(data.normalized));
-  GRN_OBJ_FIN(ctx, &(data.checks));
-  GRN_OBJ_FIN(ctx, &(data.types));
-  GRN_OBJ_FIN(ctx, &(data.offsets));
+exit:
+  substitutor_data_fin(ctx, &(data.substitutor_data));
 }
 
 static grn_obj *
