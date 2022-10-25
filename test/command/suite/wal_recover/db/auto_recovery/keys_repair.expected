@@ -227,6 +227,10 @@ schema
         "id": 83,
         "name": "NormalizerAuto"
       },
+      "NormalizerHTML": {
+        "id": 89,
+        "name": "NormalizerHTML"
+      },
       "NormalizerNFKC100": {
         "id": 85,
         "name": "NormalizerNFKC100"
@@ -561,6 +565,10 @@ schema
       "NormalizerAuto": {
         "id": 83,
         "name": "NormalizerAuto"
+      },
+      "NormalizerHTML": {
+        "id": 89,
+        "name": "NormalizerHTML"
       },
       "NormalizerNFKC100": {
         "id": 85,
