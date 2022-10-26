@@ -82,6 +82,7 @@
 #define CHUNK_SPLIT_THRESHOLD    0x60000
 
 #define MAX_N_ELEMENTS           5
+#define LONG_TIME_THRESHOLD      GRN_TIME_PACK(1, 0)
 
 #ifndef S_IRUSR
 # define S_IRUSR 0400
@@ -6152,6 +6153,8 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   buffer_rec *br = NULL;
   buffer_term *bt;
   uint32_t pseg = 0, pos = 0, size, *a;
+  grn_timeval start_time, end_time;
+  grn_timeval_now(ctx, &start_time);
   if (!tid) { return ctx->rc; }
   if (!u->tf || !u->sid) { return grn_ii_delete_one(ctx, ii, tid, u, h); }
   if (u->sid > ii->header.common->smax) { ii->header.common->smax = u->sid; }
@@ -6538,6 +6541,33 @@ exit :
     }
   }
   grn_ii_expire(ctx, ii);
+
+  grn_timeval_now(ctx, &end_time);
+  int64_t execution_time = GRN_TIME_PACK(end_time.tv_sec, GRN_TIME_NSEC_TO_USEC(end_time.tv_nsec)) -
+                           GRN_TIME_PACK(start_time.tv_sec, GRN_TIME_NSEC_TO_USEC(start_time.tv_nsec));
+
+  if (execution_time > LONG_TIME_THRESHOLD) {
+    grn_obj term;
+    int64_t sec;
+    int32_t usec;
+    GRN_TIME_UNPACK(execution_time, sec, usec);
+    GRN_DEFINE_NAME(ii);
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, tid, &term);
+    GRN_LOG(ctx, GRN_LOG_DEBUG, "%s took a long time: "
+            "<%.*s>: "
+            "<%.*s>(%u): "
+            "(%u:%u)"
+            "(%" GRN_FMT_INT64D ".%" GRN_FMT_INT32D ")",
+            tag,
+            name_size, name,
+            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+            tid,
+            u->rid, u->sid,
+            sec, usec);
+    GRN_OBJ_FIN(ctx, &term);
+  }
+
   return ctx->rc;
 }
 
@@ -6550,6 +6580,8 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   buffer_rec *br;
   buffer_term *bt;
   uint32_t pseg, size, *a;
+  grn_timeval start_time, end_time;
+  grn_timeval_now(ctx, &start_time);
   if (!tid) { return ctx->rc; }
   if (!(a = array_at(ctx, ii, tid))) {
     return ctx->rc;
@@ -6700,6 +6732,32 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
 exit :
   array_unref(ctx, ii, tid);
   if (bs) { GRN_FREE(bs); }
+
+  grn_timeval_now(ctx, &end_time);
+  int64_t execution_time = GRN_TIME_PACK(end_time.tv_sec, GRN_TIME_NSEC_TO_USEC(end_time.tv_nsec)) -
+                           GRN_TIME_PACK(start_time.tv_sec, GRN_TIME_NSEC_TO_USEC(start_time.tv_nsec));
+
+  if (execution_time > LONG_TIME_THRESHOLD) {
+    grn_obj term;
+    int64_t sec;
+    int32_t usec;
+    GRN_TIME_UNPACK(execution_time, sec, usec);
+    GRN_DEFINE_NAME(ii);
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, tid, &term);
+    GRN_LOG(ctx, GRN_LOG_DEBUG, "%s took a long time: "
+            "<%.*s>: "
+            "<%.*s>(%u): "
+            "(%u:%u)"
+            "(%" GRN_FMT_INT64D ".%" GRN_FMT_INT32D ")",
+            tag,
+            name_size, name,
+            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+            tid,
+            u->rid, u->sid,
+            sec, usec);
+    GRN_OBJ_FIN(ctx, &term);
+  }
   return ctx->rc;
 }
 
@@ -8378,6 +8436,8 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
   grn_ii_updspec **u, **un;
   grn_obj *old_, *old = oldvalue, *new_, *new = newvalue, oldv, newv;
   grn_obj buf, *post = NULL;
+  grn_timeval start_time, end_time;
+  grn_timeval_now(ctx, &start_time);
 
   if (!ii) {
     ERR(GRN_INVALID_ARGUMENT, "[ii][column][update] ii is NULL");
@@ -8709,6 +8769,25 @@ exit :
       grn_ii_updspec_close(ctx, *u);
     });
     if (new != newvalue) { grn_obj_close(ctx, new); }
+  }
+
+  grn_timeval_now(ctx, &end_time);
+  int64_t execution_time = GRN_TIME_PACK(end_time.tv_sec, GRN_TIME_NSEC_TO_USEC(end_time.tv_nsec)) -
+                           GRN_TIME_PACK(start_time.tv_sec, GRN_TIME_NSEC_TO_USEC(start_time.tv_nsec));
+
+  if (execution_time > LONG_TIME_THRESHOLD) {
+    int64_t sec;
+    int32_t usec;
+    GRN_TIME_UNPACK(execution_time, sec, usec);
+    GRN_DEFINE_NAME(ii);
+    GRN_LOG(ctx, GRN_LOG_DEBUG, 
+            "[ii][column][update] took a long time: "
+             "<%.*s>: "
+            "record:<%u>:<%u>,"
+            "(%" GRN_FMT_INT64D ".%" GRN_FMT_INT32D ")",
+            name_size, name,
+            rid, section,
+            sec, usec);
   }
   return ctx->rc;
 }
