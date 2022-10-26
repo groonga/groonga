@@ -893,7 +893,7 @@ endif()
 
 option(GRN_WITH_APACHE_ARROW "use Apache Arrow" OFF)
 if(GRN_WITH_APACHE_ARROW)
-  find_package(Arrow "3.0.0" REQUIRED)
+  find_package(Arrow REQUIRED)
 endif()
 
 
