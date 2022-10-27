@@ -36,6 +36,11 @@ Improvements
 
   Please refer to https://nginx.org/en/CHANGES about the changes of nginx 1.23.2. 
 
+* Suppressed logging a lot of same messages when no memory available.
+
+  Groonga could log a lot of ``mmap failed!!!!`` when no memory available.
+  We fixed to log the above message as less duplicates as possible.
+
 Fixes
 -----
 
@@ -45,11 +50,6 @@ Fixes
 
   This was because referencing incorrect values (objects) when performing internal parallel processing.
   So if the condition above was satisfied, Groonga sometimes crashed or returned incorrect results depending on the timing of the parallel processing.
-
-* Suppressed logging a lot of same messages when no memory available.
-
-  Groonga could log a lot of ``mmap failed!!!!`` when no memory available.
-  We fixed to log the above message as less duplicates as possible.
 
 .. _release-12-0-8:
 
