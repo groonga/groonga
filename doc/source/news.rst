@@ -32,6 +32,10 @@ Improvements
 
 * [httpd] Updated bundled nginx to 1.23.2.
 
+  Contains security fix of CVE-2022-41741 and CVE-2022-41742.
+
+  Please refer to https://nginx.org/en/CHANGES about the changes of nginx 1.23.2. 
+
 Fixes
 -----
 
