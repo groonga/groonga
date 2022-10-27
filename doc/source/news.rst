@@ -15,7 +15,7 @@ Improvements
 
 * [:doc:`reference/functions/escalate`] Added a document for the ``escalate()`` function.
 
-* [:doc:`reference/functions/escalate`] Added a document for the ``escalate()`` function.
+* [httpd] Updated bundled nginx to 1.23.2.
 
 Fixes
 -----
