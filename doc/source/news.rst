@@ -15,15 +15,17 @@ Improvements
 
 * [:doc:`reference/functions/escalate`] Added a document for the ``escalate()`` function.
 
+* [:doc:`reference/functions/escalate`] Added a document for the ``escalate()`` function.
+
 Fixes
 -----
 
-* [:doc:`reference/commands/select`] Fixed a bug that Groonga could crash when specifying :ref:`select-n-workers`.
+* [:doc:`reference/commands/select`] Fixed a bug that Groonga could crash or return incorrect results when specifying :ref:`select-n-workers`.
 
   This had occured when using :ref:`select-n-workers` with a value greater than ``1`` and ``drilldowns[{LABEL}].filter`` at the same time.
 
-  This was because referencing incorrect values when performing internal parallel processing.
-  So if the condition above was satisfied, Groonga sometimes crashed depending on the timing of the parallel processing.
+  This was because referencing incorrect values (objects) when performing internal parallel processing.
+  So if the condition above was satisfied, Groonga sometimes crashed or returned incorrect results depending on the timing of the parallel processing.
 
 .. _release-12-0-8:
 
