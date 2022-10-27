@@ -15,7 +15,7 @@ Improvements
 
 * [:doc:`reference/functions/escalate`] Added a document for the ``escalate()`` function.
 
-* [:doc:`reference/normalizers`] Added NormalizerHTML.(Experimental)
+* [:doc:`reference/normalizers`] Added NormalizerHTML. (Experimental)
 
   This is a normalizer for HTML.
 
