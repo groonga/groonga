@@ -15,6 +15,21 @@ Improvements
 
 * [:doc:`reference/functions/escalate`] Added a document for the ``escalate()`` function.
 
+* [:doc:`reference/normalizers`] Added NormalizerHTML.(Experimental)
+
+  This is a normalizer for HTML.
+
+  Currently this supports only unescaping reference characters like ``&amp;`` or ``&#38;``.
+
+  Here is a sample query for NormalizerHTML.
+
+  .. code-block::
+  
+     normalize NormalizerHTML "Groonga &amp; Mroonga &#38; Rroonga"
+     [[0,1666854852.063215,0.0006151199340820312],{"normalized":"Groonga & Mroonga & Rroonga","types":[],"checks":[]}]
+  
+  In this sample, ``&amp;`` and ``&#38;`` are unescaped to ``&``.
+
 * [httpd] Updated bundled nginx to 1.23.2.
 
 Fixes
