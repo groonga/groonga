@@ -82,7 +82,6 @@
 #define CHUNK_SPLIT_THRESHOLD    0x60000
 
 #define MAX_N_ELEMENTS           5
-#define LONG_TIME_THRESHOLD      GRN_TIME_PACK(1, 0)
 
 #ifndef S_IRUSR
 # define S_IRUSR 0400
@@ -101,6 +100,7 @@ static uint32_t grn_ii_max_n_segments_small = MAX_PSEG_SMALL;
 static uint32_t grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK_SMALL;
 static int64_t grn_ii_reduce_expire_threshold = 32;
 static grn_bool grn_ii_dump_index_source_on_merge = GRN_FALSE;
+static int64_t grn_ii_long_time_threshold_usec = GRN_TIME_USEC_PER_SEC;
 
 void
 grn_ii_init_from_env(void)
@@ -245,6 +245,20 @@ grn_ii_init_from_env(void)
       grn_ii_dump_index_source_on_merge = GRN_TRUE;
     } else {
       grn_ii_dump_index_source_on_merge = GRN_FALSE;
+    }
+  }
+
+  {
+    char grn_ii_long_time_threshold_usec_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_LONG_TIME_THRESHOLD_USEC",
+               grn_ii_long_time_threshold_usec_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (grn_ii_long_time_threshold_usec_env[0]) {
+      grn_ii_long_time_threshold_usec =
+        grn_atoll(grn_ii_long_time_threshold_usec_env,
+                  grn_ii_long_time_threshold_usec_env +
+                  strlen(grn_ii_long_time_threshold_usec_env),
+                  NULL);
     }
   }
 }
@@ -6546,7 +6560,7 @@ exit :
   int64_t execution_time = GRN_TIME_PACK(end_time.tv_sec, GRN_TIME_NSEC_TO_USEC(end_time.tv_nsec)) -
                            GRN_TIME_PACK(start_time.tv_sec, GRN_TIME_NSEC_TO_USEC(start_time.tv_nsec));
 
-  if (execution_time > LONG_TIME_THRESHOLD) {
+  if (execution_time > grn_ii_long_time_threshold_usec) {
     grn_obj term;
     int64_t sec;
     int32_t usec;
@@ -6737,7 +6751,7 @@ exit :
   int64_t execution_time = GRN_TIME_PACK(end_time.tv_sec, GRN_TIME_NSEC_TO_USEC(end_time.tv_nsec)) -
                            GRN_TIME_PACK(start_time.tv_sec, GRN_TIME_NSEC_TO_USEC(start_time.tv_nsec));
 
-  if (execution_time > LONG_TIME_THRESHOLD) {
+  if (execution_time > grn_ii_long_time_threshold_usec) {
     grn_obj term;
     int64_t sec;
     int32_t usec;
@@ -8775,7 +8789,7 @@ exit :
   int64_t execution_time = GRN_TIME_PACK(end_time.tv_sec, GRN_TIME_NSEC_TO_USEC(end_time.tv_nsec)) -
                            GRN_TIME_PACK(start_time.tv_sec, GRN_TIME_NSEC_TO_USEC(start_time.tv_nsec));
 
-  if (execution_time > LONG_TIME_THRESHOLD) {
+  if (execution_time > grn_ii_long_time_threshold_usec) {
     int64_t sec;
     int32_t usec;
     GRN_TIME_UNPACK(execution_time, sec, usec);
