@@ -67,7 +67,7 @@ Fixes
 
   This bug had occurred when using :ref:`select-n-workers` with a value greater than ``1`` and ``drilldowns[{LABEL}].filter`` at the same time.
 
-  The reason why this bug occurred is because referencing incorrect values (objects) when performing internal parallel processing.
+  The reason why this bug occurred was because Groonga referenced incorrect values (objects) when performing internal parallel processing.
   So if the condition above was satisfied, Groonga sometimes crashed or returned incorrect results depending on the timing of the parallel processing.
 
 .. _release-12-0-8:
