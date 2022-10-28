@@ -5,6 +5,71 @@
 News
 ====
 
+.. _release-12-0-9:
+
+Release 12.0.9 - 2022-10-28
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`reference/functions/escalate`] Added a document for the ``escalate()`` function.
+
+* [:doc:`reference/normalizers`] Added ``NormalizerHTML``. (Experimental)
+
+  ``NormalizerHTML`` is a normalizer for HTML.
+
+  Currently ``NormalizerHTML`` supports removing tags like ``<span>`` or ``</span>`` and expanding character references like ``&amp;`` or ``&#38;``.
+
+  Here are sample queries for ``NormalizerHTML``.
+
+  .. code-block::
+
+    normalize NormalizerHTML "<span> Groonga &amp; Mroonga &#38; Rroonga </span>"
+    [[0,1666923364.883798,0.0005481243133544922],{"normalized":" Groonga & Mroonga & Rroonga ","types":[],"checks":[]}]
+
+  In this sample ``<span>`` and ``</span>`` are removed, and ``&amp;`` and ``&#38;`` are expanded to ``&``.
+
+  We can specify whether removing the tags with the ``remove_tag`` option.
+  (The default value of the ``remove_tag`` option is ``true``.)
+
+  .. code-block::
+
+     normalize 'NormalizerHTML("remove_tag", false)' "<span> Groonga &amp; Mroonga &#38; Rroonga </span>"
+     [[0,1666924069.278549,0.0001978874206542969],{"normalized":"<span> Groonga & Mroonga & Rroonga </span>","types":[],"checks":[]}]
+
+  In this sample, ``<span>`` and ``</span>`` are not removed.
+
+  We can specify whether expanding the character references with the ``expand_character_reference`` option.
+  (The default value of the ``expand_character_reference`` option is ``true``.)
+
+  .. code-block::
+
+     normalize 'NormalizerHTML("expand_character_reference", false)' "<span> Groonga &amp; Mroonga &#38; Rroonga </span>"
+     [[0,1666924357.099782,0.0002346038818359375],{"normalized":" Groonga &amp; Mroonga &#38; Rroonga ","types":[],"checks":[]}]
+
+  In this sample, ``&amp;`` and ``&#38;`` are not expanded.
+
+* [httpd] Updated bundled nginx to 1.23.2.
+
+  Contains security fixes of CVE-2022-41741 and CVE-2022-41742.
+  Please refer to https://nginx.org/en/CHANGES about these security fixes.
+
+* Suppressed logging a lot of same messages when no memory is available.
+
+  Groonga could log a lot of ``mmap failed!!!!`` when no memory is available.
+  We improved to log the above message as less duplicates as possible.
+
+Fixes
+-----
+
+* [:doc:`reference/commands/select`] Fixed a bug that Groonga could crash or return incorrect results when specifying :ref:`select-n-workers`.
+
+  This bug had occurred when using :ref:`select-n-workers` with a value greater than ``1`` and ``drilldowns[{LABEL}].filter`` at the same time.
+
+  The reason why this bug occurred is because referencing incorrect values (objects) when performing internal parallel processing.
+  So if the condition above was satisfied, Groonga sometimes crashed or returned incorrect results depending on the timing of the parallel processing.
+
 .. _release-12-0-8:
 
 Release 12.0.8 - 2022-10-03
