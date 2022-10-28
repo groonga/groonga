@@ -3452,6 +3452,7 @@ table_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 }
 
 typedef struct {
+  bool remove_tag;
   bool expand_character_reference;
   grn_get_char_type_func get_char_type;
   bool report_source_offset;
@@ -3460,6 +3461,7 @@ typedef struct {
 static void
 html_options_init(grn_ctx *ctx, html_options *options)
 {
+  options->remove_tag = true;
   options->expand_character_reference = true;
   options->get_char_type = grn_nfkc_char_type;
   options->report_source_offset = false;
@@ -3500,7 +3502,14 @@ html_options_open(grn_ctx *ctx,
     name_raw.value = name;
     name_raw.length = name_length;
 
-    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "expand_character_reference")) {
+    if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "remove_tag")) {
+      options->remove_tag =
+        grn_vector_get_element_bool(ctx,
+                                    raw_options,
+                                    i,
+                                    options->remove_tag);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
+                                            "expand_character_reference")) {
       options->expand_character_reference =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
@@ -3633,6 +3642,12 @@ html_expand_numeric_char_ref(grn_ctx *ctx,
 
 #include "normalizer_html_expand_named_char_ref.c"
 
+typedef enum {
+  HTML_STATE_TEXT,
+  HTML_STATE_IN_TAG,
+  HTML_STATE_IN_CHAR_REF,
+} html_state;
+
 static void
 html_normalize(grn_ctx *ctx, grn_string *string, html_options *options)
 {
@@ -3656,8 +3671,9 @@ html_normalize(grn_ctx *ctx, grn_string *string, html_options *options)
   const char *current = string->original;
   const char *end = current + string->original_length_in_bytes;
 
+  html_state state = HTML_STATE_TEXT;
+  const char *start_tag = NULL;
   const char *start_char_ref = NULL;
-  bool in_char_ref = false;
 
   int char_length = 0;
   for (; current < end; current += char_length) {
@@ -3668,7 +3684,22 @@ html_normalize(grn_ctx *ctx, grn_string *string, html_options *options)
     }
 
     if (char_length == 1) {
-      if (in_char_ref) {
+      bool processed = false;
+      switch (state) {
+      case HTML_STATE_IN_TAG:
+        if (*current == '>') {
+          substitutor_normalized(ctx,
+                                 &data,
+                                 start_tag,
+                                 (size_t)(current - start_tag + 1),
+                                 NULL,
+                                 0);
+          state = HTML_STATE_TEXT;
+          start_tag = NULL;
+          processed = true;
+        }
+        break;
+      case HTML_STATE_IN_CHAR_REF :
         if (*current == ';') {
           bool valid = false;
           size_t normalized_length_before = GRN_TEXT_LEN(normalized);
@@ -3720,42 +3751,55 @@ html_normalize(grn_ctx *ctx, grn_string *string, html_options *options)
             if (ctx->rc != GRN_SUCCESS) {
               goto exit;
             }
-            in_char_ref = false;
+            state = HTML_STATE_TEXT;
             start_char_ref = NULL;
-            continue;
+            processed = true;
           }
         } else if (((current - start_char_ref) == 1 && *current == '#') ||
                    ('A' <= *current && *current <= 'Z') ||
                    ('a' <= *current && *current <= 'z') ||
                    ('0' <= *current && *current <= '9')) {
-          continue;
+          processed = true;
         }
-      } else {
-        if (options->expand_character_reference && *current == '&') {
-          in_char_ref = true;
+      default:
+        if (options->remove_tag && *current == '<') {
+          state = HTML_STATE_IN_TAG;
+          start_tag = current;
+          processed = true;
+        } else if (options->expand_character_reference && *current == '&') {
+          state = HTML_STATE_IN_CHAR_REF;
           start_char_ref = current;
-          continue;
+          processed = true;
         }
+        break;
+      }
+      if (processed) {
+        continue;
       }
     }
 
-    if (in_char_ref) {
-      /* "&...(any multibyte character)...;" case: Write it as-is. */
-      size_t normalized_length =
-        (size_t)(current - start_char_ref) + (size_t)char_length;
-      grn_bulk_write(ctx,
-                     normalized,
-                     start_char_ref,
-                     normalized_length);
-      substitutor_normalized(ctx,
-                             &data,
-                             start_char_ref,
-                             normalized_length,
-                             start_char_ref,
-                             normalized_length);
-      in_char_ref = false;
-      start_char_ref = NULL;
-    } else {
+    switch (state) {
+    case HTML_STATE_IN_TAG:
+      break;
+    case HTML_STATE_IN_CHAR_REF:
+      {
+        /* "&...(any multibyte character)...;" case: Write it as-is. */
+        size_t normalized_length =
+          (size_t)(current - start_char_ref) + (size_t)char_length;
+        grn_bulk_write(ctx,
+                       normalized,
+                       start_char_ref,
+                       normalized_length);
+        substitutor_normalized(ctx,
+                               &data,
+                               start_char_ref,
+                               normalized_length,
+                               start_char_ref,
+                               normalized_length);
+        state = HTML_STATE_TEXT;
+        start_char_ref = NULL;
+      }
+    default :
       grn_bulk_write(ctx, normalized, current, (size_t)char_length);
       substitutor_normalized(ctx,
                              &data,
@@ -3763,7 +3807,16 @@ html_normalize(grn_ctx *ctx, grn_string *string, html_options *options)
                              (size_t)char_length,
                              current,
                              (size_t)char_length);
+      break;
     }
+  }
+  if (state == HTML_STATE_IN_TAG) {
+    substitutor_normalized(ctx,
+                           &data,
+                           start_tag,
+                           (size_t)(current - start_tag),
+                           NULL,
+                           0);
   }
 
   substitutor_finished(ctx, &data, string);

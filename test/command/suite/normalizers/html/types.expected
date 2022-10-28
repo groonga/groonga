@@ -1,4 +1,4 @@
-normalize   'NormalizerHTML'   "a&lt;b&#x80;c&#x3042;d"   WITH_TYPES
+normalize   'NormalizerHTML'   "a&lt;b&#x80;<b>c</b>&#x3042;d"   WITH_TYPES
 [
   [
     0,

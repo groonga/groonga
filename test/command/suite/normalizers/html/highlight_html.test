@@ -8,10 +8,10 @@ column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
 
 load --table Entries
 [
-{"body": "a&lt;b&gt;c"}
+{"body": "a&lt;<b>b</b>&gt;c"}
 ]
 
 select Entries \
   --match_columns body \
-  --query '"<b>"' \
+  --query '"&lt;b&gt;"' \
   --output_columns 'highlight_html(body, Terms)'

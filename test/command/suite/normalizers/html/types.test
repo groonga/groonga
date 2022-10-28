@@ -1,5 +1,5 @@
 # U+3042 HIRAGANA LETTER A
 normalize \
   'NormalizerHTML' \
-  "a&lt;b&#x80;c&#x3042;d" \
+  "a&lt;b&#x80;<b>c</b>&#x3042;d" \
   WITH_TYPES

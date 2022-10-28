@@ -8,10 +8,10 @@ column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
 [[0,0.0,0.0],true]
 load --table Entries
 [
-{"body": "a&lt;b&gt;c"}
+{"body": "a&lt;<b>b</b>&gt;c"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --match_columns body   --query '"<b>"'   --output_columns 'highlight_html(body, Terms)'
+select Entries   --match_columns body   --query '"&lt;b&gt;"'   --output_columns 'highlight_html(body, Terms)'
 [
   [
     0,
@@ -30,7 +30,7 @@ select Entries   --match_columns body   --query '"<b>"'   --output_columns 'high
         ]
       ],
       [
-        "a<span class=\"keyword\">&amp;lt;b&amp;gt;</span>c"
+        "a<span class=\"keyword\">&amp;lt;&lt;b&gt;b&lt;/b&gt;&amp;gt;</span>c"
       ]
     ]
   ]

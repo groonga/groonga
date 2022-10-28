@@ -1,4 +1,4 @@
-normalize   'NormalizerHTML("report_source_offset", true)'   "a&lt;b&amp;c&#65;d&#x5A;e"
+normalize   'NormalizerHTML("report_source_offset", true)'   "a&lt;b&amp;<b>c</b>&#65;d&#x5A;e"
 [
   [
     0,
@@ -18,11 +18,11 @@ normalize   'NormalizerHTML("report_source_offset", true)'   "a&lt;b&amp;c&#65;d
       1,
       5,
       6,
-      11,
-      12,
-      17,
-      18,
-      24
+      14,
+      19,
+      24,
+      25,
+      31
     ]
   }
 ]

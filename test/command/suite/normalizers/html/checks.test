@@ -1,4 +1,4 @@
 normalize \
   'NormalizerHTML' \
-  "a&lt;b&amp;c&#65;d&#x5A;e" \
+  "a&lt;b&amp;<b>c</b>&#65;d&#x5A;e<b" \
   WITH_CHECKS
