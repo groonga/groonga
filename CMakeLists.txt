@@ -412,6 +412,11 @@ else()
   endif()
 endif()
 
+option(GRN_WITH_APACHE_ARROW "use Apache Arrow" OFF)
+if(GRN_WITH_APACHE_ARROW)
+  find_package(Arrow REQUIRED)
+endif()
+
 set(GRN_WITH_ZLIB "auto"
   CACHE STRING "Support data compression by zlib.")
 if(NOT ${GRN_WITH_ZLIB} STREQUAL "no")
@@ -889,11 +894,6 @@ if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
   endif()
 else()
   set(GRN_WITH_MESSAGE_PACK FALSE)
-endif()
-
-option(GRN_WITH_APACHE_ARROW "use Apache Arrow" OFF)
-if(GRN_WITH_APACHE_ARROW)
-  find_package(Arrow REQUIRED)
 endif()
 
 
