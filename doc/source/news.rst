@@ -59,7 +59,7 @@ Improvements
 * Suppressed logging a lot of same messages when no memory is available.
 
   Groonga could log a lot of ``mmap failed!!!!`` when no memory is available.
-  We fixed to log the above message as less duplicates as possible.
+  We improved to log the above message as less duplicates as possible.
 
 Fixes
 -----
