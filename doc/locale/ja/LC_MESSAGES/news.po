@@ -95,14 +95,13 @@ msgstr "この例では、 ``&amp;`` と ``&#38;`` は展開されていませ�
 msgid "[httpd] Updated bundled nginx to 1.23.2."
 msgstr "[httpd] バンドルしているnginxのバージョンを1.23.2に更新しました。"
 
-msgid "Contains security fixes of CVE-2022-41741 and CVE-2022-41742."
-msgstr "CVE-2022-41741とCVE-2022-41742のセキュリティの修正が含まれています。"
-
 msgid ""
-"Please refer to https://nginx.org/en/CHANGES about these security fixes."
+"Contains security fixes of CVE-2022-41741 and CVE-2022-41742. Please refer "
+"to https://nginx.org/en/CHANGES about these security fixes."
 msgstr ""
-"これらのセキュリティーの修正の詳細については、https://nginx.org/en/CHANGES を"
-"参照してください。"
+"CVE-2022-41741とCVE-2022-41742のセキュリティの修正が含まれています。これらの"
+"セキュリティーの修正の詳細については、https://nginx.org/en/CHANGES を参照して"
+"ください。"
 
 msgid "Suppressed logging a lot of same messages when no memory is available."
 msgstr ""
