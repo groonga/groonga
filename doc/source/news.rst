@@ -19,16 +19,34 @@ Improvements
 
   This is a normalizer for HTML.
 
-  Currently this supports only unescaping reference characters like ``&amp;`` or ``&#38;``.
+  Currently this supports removing tags like ``<span>`` or ``</span>`` and unescaping reference characters like ``&amp;`` or ``&#38;``.
 
-  Here is a sample query for NormalizerHTML.
+  Here are sample queries for NormalizerHTML.
 
   .. code-block::
   
-     normalize NormalizerHTML "Groonga &amp; Mroonga &#38; Rroonga"
-     [[0,1666854852.063215,0.0006151199340820312],{"normalized":"Groonga & Mroonga & Rroonga","types":[],"checks":[]}]
+    normalize NormalizerHTML "<span> Groonga &amp; Mroonga &#38; Rroonga </span>"
+    [[0,1666923364.883798,0.0005481243133544922],{"normalized":" Groonga & Mroonga & Rroonga ","types":[],"checks":[]}]
   
-  In this sample, ``&amp;`` and ``&#38;`` are unescaped to ``&``.
+  In this sample ``<span>`` and ``</span>`` are removed, and ``&amp;`` and ``&#38;`` are unescaped to ``&``.
+
+  We can specify whether removing the tags with the ``remove_tag`` option.
+
+  .. code-block::
+
+     normalize 'NormalizerHTML("remove_tag", false)' "<span> Groonga &amp; Mroonga &#38; Rroonga </span>"
+     [[0,1666924069.278549,0.0001978874206542969],{"normalized":"<span> Groonga & Mroonga & Rroonga </span>","types":[],"checks":[]}]
+
+  In this sample, ``<span>`` and ``</span>`` are not removed.
+
+  We can specify whether unescaping the reference characters with the ``expand_character_reference`` option.
+
+  .. code-block::
+
+     normalize 'NormalizerHTML("expand_character_reference", false)' "<span> Groonga &amp; Mroonga &#38; Rroonga </span>"
+     [[0,1666924357.099782,0.0002346038818359375],{"normalized":" Groonga &amp; Mroonga &#38; Rroonga ","types":[],"checks":[]}]
+
+  In this sample, ``&amp;`` and ``&#38;`` are not unescaped.
 
 * [httpd] Updated bundled nginx to 1.23.2.
 
