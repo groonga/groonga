@@ -15,13 +15,13 @@ Improvements
 
 * [:doc:`reference/functions/escalate`] Added a document for the ``escalate()`` function.
 
-* [:doc:`reference/normalizers`] Added NormalizerHTML. (Experimental)
+* [:doc:`reference/normalizers`] Added ``NormalizerHTML``. (Experimental)
 
-  This is a normalizer for HTML.
+  ``NormalizerHTML`` is a normalizer for HTML.
 
-  Currently this supports removing tags like ``<span>`` or ``</span>`` and unescaping reference characters like ``&amp;`` or ``&#38;``.
+  Currently ``NormalizerHTML`` supports removing tags like ``<span>`` or ``</span>`` and unescaping reference characters like ``&amp;`` or ``&#38;``.
 
-  Here are sample queries for NormalizerHTML.
+  Here are sample queries for ``NormalizerHTML``.
 
   .. code-block::
   
@@ -56,7 +56,7 @@ Improvements
 
 * Suppressed logging a lot of same messages when no memory is available.
 
-  Groonga could log a lot of ``mmap failed!!!!`` when no memory available.
+  Groonga could log a lot of ``mmap failed!!!!`` when no memory is available.
   We fixed to log the above message as less duplicates as possible.
 
 Fixes
@@ -64,9 +64,9 @@ Fixes
 
 * [:doc:`reference/commands/select`] Fixed a bug that Groonga could crash or return incorrect results when specifying :ref:`select-n-workers`.
 
-  This crash had occurred when using :ref:`select-n-workers` with a value greater than ``1`` and ``drilldowns[{LABEL}].filter`` at the same time.
+  This bug had occurred when using :ref:`select-n-workers` with a value greater than ``1`` and ``drilldowns[{LABEL}].filter`` at the same time.
 
-  This was because referencing incorrect values (objects) when performing internal parallel processing.
+  The reason why this bug occurred is because referencing incorrect values (objects) when performing internal parallel processing.
   So if the condition above was satisfied, Groonga sometimes crashed or returned incorrect results depending on the timing of the parallel processing.
 
 .. _release-12-0-8:
