@@ -31,6 +31,7 @@ Improvements
   In this sample ``<span>`` and ``</span>`` are removed, and ``&amp;`` and ``&#38;`` are expanded to ``&``.
 
   We can specify whether removing the tags with the ``remove_tag`` option.
+  (The default value of the ``remove_tag`` option is ``true``.)
 
   .. code-block::
 
@@ -40,6 +41,7 @@ Improvements
   In this sample, ``<span>`` and ``</span>`` are not removed.
 
   We can specify whether expanding the character references with the ``expand_character_reference`` option.
+  (The default value of the ``expand_character_reference`` option is ``true``.)
 
   .. code-block::
 
