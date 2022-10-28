@@ -24,10 +24,10 @@ Improvements
   Here are sample queries for ``NormalizerHTML``.
 
   .. code-block::
-  
+
     normalize NormalizerHTML "<span> Groonga &amp; Mroonga &#38; Rroonga </span>"
     [[0,1666923364.883798,0.0005481243133544922],{"normalized":" Groonga & Mroonga & Rroonga ","types":[],"checks":[]}]
-  
+
   In this sample ``<span>`` and ``</span>`` are removed, and ``&amp;`` and ``&#38;`` are expanded to ``&``.
 
   We can specify whether removing the tags with the ``remove_tag`` option.
