@@ -33,11 +33,115 @@ msgstr ""
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 12.0.8 - 2022-10-03"
-msgstr "12.0.8リリース - 2022-10-03"
+msgid "Release 12.0.9 - 2022-10-28"
+msgstr "12.0.9リリース - 2022-10-28"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[:doc:`reference/functions/escalate`] Added a document for the "
+"``escalate()`` function."
+msgstr ""
+"[:doc:`reference/functions/escalate`] ``escalate`` 関数のドキュメントを追加し"
+"ました。"
+
+msgid "[:doc:`reference/normalizers`] Added ``NormalizerHTML``. (Experimental)"
+msgstr ""
+"[:doc:`reference/normalizers`] ``NormalizerHTML`` を追加しました。（実験的）"
+
+msgid "``NormalizerHTML`` is a normalizer for HTML."
+msgstr "``NormalizerHTML`` はHTML用のノーマライザーです。"
+
+msgid ""
+"Currently ``NormalizerHTML`` supports removing tags like ``<span>`` or ``</"
+"span>`` and unescaping reference characters like ``&amp;`` or ``&#38;``."
+msgstr ""
+"現在 ``NormalizerHTML`` は ``<span>`` や ``</span>`` といったタグの削除と、"
+"``&amp;`` や ``&#38;`` といった文字参照の展開を行います。"
+
+msgid "Here are sample queries for ``NormalizerHTML``."
+msgstr "以下は ``NormalizerHTML`` の例です。"
+
+msgid ""
+"In this sample ``<span>`` and ``</span>`` are removed, and ``&amp;`` and "
+"``&#38;`` are unescaped to ``&``."
+msgstr ""
+"この例では、 ``<span>`` と ``</span>`` は削除され、 ``&amp;`` と ``&#38;`` "
+"は ``&`` に展開されています。"
+
+msgid ""
+"We can specify whether removing the tags with the ``remove_tag`` option."
+msgstr "タグを削除するかどうかは ``remove_tag`` オプションで指定できます。"
+
+msgid "In this sample, ``<span>`` and ``</span>`` are not removed."
+msgstr "この例では、 ``<span>`` と ``</span>`` は削除されていません。"
+
+msgid ""
+"We can specify whether unescaping the reference characters with the "
+"``expand_character_reference`` option."
+msgstr ""
+"文字参照を展開するかどうかは ``expand_character_reference`` オプションで指定"
+"できます。"
+
+msgid "In this sample, ``&amp;`` and ``&#38;`` are not unescaped."
+msgstr "この例では、 ``&amp;`` と ``&#38;`` は展開されていません。"
+
+msgid "[httpd] Updated bundled nginx to 1.23.2."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.23.2に更新しました。"
+
+msgid "Contains security fix of CVE-2022-41741 and CVE-2022-41742."
+msgstr "VE-2022-41741とCVE-2022-41742のセキュリティの修正が含まれています。"
+
+msgid ""
+"Please refer to https://nginx.org/en/CHANGES about the changes of nginx "
+"1.23.2."
+msgstr ""
+"nginx 1.23.2の変更の詳細については、https://nginx.org/en/CHANGES を参照してく"
+"ださい。"
+
+msgid "Suppressed logging a lot of same messages when no memory is available."
+msgstr ""
+"メモリーが不足したさいに、同じログが大量に出力されないように変更しました。"
+
+msgid ""
+"Groonga could log a lot of ``mmap failed!!!!`` when no memory is available. "
+"We fixed to log the above message as less duplicates as possible."
+msgstr ""
+"メモリーが不足した際に、 ``mmap failed!!!!`` というメッセージが大量にログが記"
+"載されることがありました。このメッセージが可能な限り重複してログ出力されない"
+"ように修正しました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"[:doc:`reference/commands/select`] Fixed a bug that Groonga could crash or "
+"return incorrect results when specifying :ref:`select-n-workers`."
+msgstr ""
+"[:doc:`/reference/commands/select`] :ref:`select-n-workers` を指定したとき、"
+"Groongaがクラッシュしたり、誤った結果を返すことがある問題を修正しました。"
+
+msgid ""
+"This bug had occurred when using :ref:`select-n-workers` with a value "
+"greater than ``1`` and ``drilldowns[{LABEL}].filter`` at the same time."
+msgstr ""
+"この問題は、 :ref:`select-n-workers` に ``1`` より大きい値を指定し、かつ同時"
+"に ``drilldowns[{LABEL}].filter`` を使用している場合に発生していました。"
+
+msgid ""
+"The reason why this bug occurred is because referencing incorrect values "
+"(objects) when performing internal parallel processing. So if the condition "
+"above was satisfied, Groonga sometimes crashed or returned incorrect results "
+"depending on the timing of the parallel processing."
+msgstr ""
+"この問題は内部的な並列処理の際に、誤った値（オブジェクト）を参照していたこと"
+"が原因で発生していました。そのため、上記の条件が満たされたとき、内部的に並列"
+"処理のタイミングによって、Groongaがクラッシュしたり誤った値を返すことがありま"
+"した。"
+
+msgid "Release 12.0.8 - 2022-10-03"
+msgstr "12.0.8リリース - 2022-10-03"
 
 msgid ""
 "Changed specification of the ``escalate()`` function (Experimental) to make "
@@ -123,9 +227,6 @@ msgstr ""
 msgid ""
 "[:doc:`contribution/documentation/i18n`] Updated the translation procedure."
 msgstr "[:doc:`contribution/documentation/i18n`] 翻訳方法を更新しました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid ""
 "Fixed a bug that Groonga could return incorrect results when we use :doc:"
