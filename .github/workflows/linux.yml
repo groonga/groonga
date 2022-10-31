@@ -304,7 +304,8 @@ jobs:
           sudo env MAKEFLAGS=-j$(nproc) gem install \
             grntest \
             pkg-config \
-            red-arrow
+            red-arrow \
+            -- --with-cxxflags=-std=c++17
 
           # No -dev version is OK but specifying shared object version
           # in package name bothers us...
