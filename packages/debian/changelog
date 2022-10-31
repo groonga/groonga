@@ -1,3 +1,9 @@
+groonga (12.0.9-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Takashi Hashida <hashida@clear-code.com>  Mon, 31 Oct 2022 04:28:24 -0000
+
 groonga (12.0.8-1) unstable; urgency=low
 
   * New upstream release.

@@ -85,9 +85,9 @@ Install required packages to build Groonga for Debian bullseye::
 
 Download source::
 
-  % wget https://packages.groonga.org/source/groonga/groonga-12.0.8.tar.gz
-  % tar xvzf groonga-12.0.8.tar.gz
-  % cd groonga-12.0.8
+  % wget https://packages.groonga.org/source/groonga/groonga-12.0.9.tar.gz
+  % tar xvzf groonga-12.0.9.tar.gz
+  % cd groonga-12.0.9
 
 Configure (see :ref:`source-configure` about ``configure`` options)::
 
