@@ -13,6 +13,10 @@ Release 12.0.9 - 2022-10-28
 Improvements
 ------------
 
+* [:doc:`install/almalinux`] Added support for AlmaLinux 9.
+  
+  We had added this support at :ref:`release-12-0-8` but haven't announced it.
+
 * [:doc:`reference/functions/escalate`] Added a document for the ``escalate()`` function.
 
 * [:doc:`reference/normalizers`] Added ``NormalizerHTML``. (Experimental)
