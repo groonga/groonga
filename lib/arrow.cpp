@@ -1663,7 +1663,7 @@ namespace grnarrow {
         int32_t usec;
         GRN_TIME_UNPACK(wait_time, sec, usec);
         GRN_LOG(ctx_, GRN_LOG_DEBUG, "[Arrow][StreamLoader][OnRecordBatchDecoded] took a long time to wait for a next recordbatch: "
-                "(%" GRN_FMT_INT64D ".%" GRN_FMT_INT32D ")",
+                "(%" GRN_FMT_INT64D ".%.6" GRN_FMT_INT32D ")",
                 sec, usec);
       }
       auto result = process_record_batch(std::move(record_batch));

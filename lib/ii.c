@@ -6489,7 +6489,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
               "<%.*s>: "
               "<%.*s>(%u): "
               "(%u:%u)"
-              "(%" GRN_FMT_INT64D ".%" GRN_FMT_INT32D ")",
+              "(%" GRN_FMT_INT64D ".%.6" GRN_FMT_INT32D ")",
               tag,
               name_size, name,
               (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
@@ -6601,7 +6601,7 @@ exit :
             "<%.*s>: "
             "<%.*s>(%u): "
             "(%u:%u)"
-            "(%" GRN_FMT_INT64D ".%" GRN_FMT_INT32D ")",
+            "(%" GRN_FMT_INT64D ".%.6" GRN_FMT_INT32D ")",
             tag,
             name_size, name,
             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
@@ -6792,7 +6792,7 @@ exit :
             "<%.*s>: "
             "<%.*s>(%u): "
             "(%u:%u)"
-            "(%" GRN_FMT_INT64D ".%" GRN_FMT_INT32D ")",
+            "(%" GRN_FMT_INT64D ".%.6" GRN_FMT_INT32D ")",
             tag,
             name_size, name,
             (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
@@ -8827,7 +8827,7 @@ exit :
             "[ii][column][update] took a long time: "
              "<%.*s>: "
             "record:<%u>:<%u>,"
-            "(%" GRN_FMT_INT64D ".%" GRN_FMT_INT32D ")",
+            "(%" GRN_FMT_INT64D ".%.6" GRN_FMT_INT32D ")",
             name_size, name,
             rid, section,
             sec, usec);
