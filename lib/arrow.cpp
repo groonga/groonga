@@ -1662,7 +1662,7 @@ namespace grnarrow {
         int64_t sec;
         int32_t usec;
         GRN_TIME_UNPACK(wait_time, sec, usec);
-        GRN_LOG(ctx_, GRN_LOG_DEBUG, "[Arrow][StreamLoader][OnRecordBatchDecoded] took a long time to wait for next recordbatch: "
+        GRN_LOG(ctx_, GRN_LOG_DEBUG, "[Arrow][StreamLoader][OnRecordBatchDecoded] took a long time to wait for a next recordbatch: "
                 "(%" GRN_FMT_INT64D ".%" GRN_FMT_INT32D ")",
                 sec, usec);
       }
