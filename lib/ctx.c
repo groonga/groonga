@@ -145,6 +145,7 @@ grn_init_from_env(void)
   grn_window_function_executor_init_from_env();
   grn_table_selector_init_from_env();
   grn_slow_log_init_from_env();
+  grn_arrow_init_from_env();
 }
 
 static void

@@ -26,6 +26,9 @@ extern "C" {
 
 typedef struct _grn_arrow_stream_loader grn_arrow_stream_loader;
 
+void
+grn_arrow_init_from_env(void);
+
 grn_arrow_stream_loader *
 grn_arrow_stream_loader_open(grn_ctx *ctx,
                              grn_loader *loader);
