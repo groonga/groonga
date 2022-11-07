@@ -1656,8 +1656,8 @@ namespace grnarrow {
     arrow::Status OnRecordBatchDecoded(std::shared_ptr<arrow::RecordBatch> record_batch) override {
       grn_timeval current_time;
       grn_timeval_now(ctx_, &current_time);
-      int64_t wait_time = GRN_TIME_PACK(last_recordbatch_decoded_time_.tv_sec, GRN_TIME_NSEC_TO_USEC(last_recordbatch_decoded_time_.tv_nsec)) -
-                          GRN_TIME_PACK(current_time.tv_sec, GRN_TIME_NSEC_TO_USEC(current_time.tv_nsec));
+      int64_t wait_time = GRN_TIME_PACK(current_time.tv_sec, GRN_TIME_NSEC_TO_USEC(current_time.tv_nsec)) -
+                          GRN_TIME_PACK(last_recordbatch_decoded_time_.tv_sec, GRN_TIME_NSEC_TO_USEC(last_recordbatch_decoded_time_.tv_nsec));
       if (wait_time > grn_arrow_long_time_threshold_usec) {
         int64_t sec;
         int32_t usec;
