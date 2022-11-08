@@ -6474,8 +6474,8 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
       break;
     }
     grn_timeval_now(ctx, &end_time_for);
-    int64_t execution_time = GRN_TIME_PACK(start_time_for.tv_sec, GRN_TIME_NSEC_TO_USEC(start_time_for.tv_nsec)) -
-                           GRN_TIME_PACK(end_time_for.tv_sec, GRN_TIME_NSEC_TO_USEC(end_time_for.tv_nsec));
+    int64_t execution_time = GRN_TIME_PACK(end_time_for.tv_sec, GRN_TIME_NSEC_TO_USEC(end_time_for.tv_nsec)) -
+                             GRN_TIME_PACK(start_time_for.tv_sec, GRN_TIME_NSEC_TO_USEC(start_time_for.tv_nsec));
 
     if (execution_time > grn_ii_long_time_threshold_usec) {
       grn_obj term;
