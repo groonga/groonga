@@ -1,0 +1,57 @@
+table_create Tags TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 Tags
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{
+  "_key": "Groonga is fast",
+  "tags": {
+    "groonga": 2.8,
+    "full text search": 1.2
+  }
+}
+]
+[[0,0.0,0.0],1]
+select Memos --columns[text_tags].stage output              --columns[text_tags].type ShortText              --columns[text_tags].flags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32              --columns[text_tags].value 'tags'              --output_columns _key,tags,text_tags
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "tags",
+          "Tags"
+        ],
+        [
+          "text_tags",
+          "ShortText"
+        ]
+      ],
+      [
+        "Groonga is fast",
+        {
+          "groonga": 2.8,
+          "full text search": 1.2
+        },
+        {
+          "groonga": 2.8,
+          "full text search": 1.2
+        }
+      ]
+    ]
+  ]
+]
