@@ -1691,10 +1691,14 @@ grn_output_vector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
                   grn_obj *vector, grn_obj_format *format)
 {
   grn_bool with_weight = GRN_FALSE;
+  bool is_weight_float32 = false;
 
   if (format) {
     if (format->flags & GRN_OBJ_FORMAT_WITH_WEIGHT) {
       with_weight = GRN_TRUE;
+    }
+    if (format->flags & GRN_OBJ_FORMAT_WEIGHT_FLOAT32) {
+      is_weight_float32 = true;
     }
   }
 
@@ -1708,11 +1712,18 @@ grn_output_vector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
     for (i = 0; i < n; i++) {
       const char *_value;
       uint32_t weight;
+      float weight_float;
       unsigned int length;
       grn_id domain;
 
-      length = grn_vector_get_element(ctx, vector, i,
-                                      &_value, &weight, &domain);
+      if (is_weight_float32) {
+        length = grn_vector_get_element_float(ctx, vector, i,
+                                              &_value, &weight_float, &domain);
+      } else {
+        length = grn_vector_get_element(ctx, vector, i,
+                                        &_value, &weight, &domain);
+      }
+
       if (domain != GRN_DB_VOID) {
         grn_obj_reinit(ctx, &value, domain, 0);
       } else {
@@ -1720,7 +1731,11 @@ grn_output_vector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
       }
       grn_bulk_write(ctx, &value, _value, length);
       grn_output_obj(ctx, outbuf, output_type, &value, NULL);
-      grn_output_uint64(ctx, outbuf, output_type, weight);
+      if (is_weight_float32) {
+        grn_output_float32(ctx, outbuf, output_type, weight_float);
+      } else {
+        grn_output_uint64(ctx, outbuf, output_type, weight);
+      }
     }
     grn_output_map_close(ctx, outbuf, output_type);
     GRN_OBJ_FIN(ctx, &value);

@@ -1,0 +1,16 @@
+table_create Memos TABLE_HASH_KEY ShortText
+
+column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 ShortText
+
+load --table Memos
+[
+{
+  "_key": "Groonga is fast",
+  "tags": {
+    "groonga": 2.8,
+    "full text search": 1.2
+  }
+}
+]
+
+select Memos
