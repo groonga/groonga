@@ -1718,7 +1718,7 @@ grn_output_vector(grn_ctx *ctx, grn_obj *outbuf, grn_content_type output_type,
 
       if (is_weight_float32) {
         length = grn_vector_get_element_float(ctx, vector, i,
-                                        &_value, &weight_float, &domain);
+                                              &_value, &weight_float, &domain);
       } else {
         length = grn_vector_get_element(ctx, vector, i,
                                         &_value, &weight, &domain);
