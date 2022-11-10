@@ -43,6 +43,7 @@
 #include "grn_window_function_executor.h"
 #include "grn_windows.h"
 #include "grn_group.h"
+#include "grn_slow_log.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
@@ -143,6 +144,7 @@ grn_init_from_env(void)
   grn_group_init_from_env();
   grn_window_function_executor_init_from_env();
   grn_table_selector_init_from_env();
+  grn_slow_log_init_from_env();
 }
 
 static void
@@ -400,6 +402,8 @@ grn_ctx_impl_init(grn_ctx *ctx)
 
   ctx->impl->previous_errbuf[0] = '\0';
   ctx->impl->n_same_error_messages = 0;
+
+  GRN_TIME_INIT(&(ctx->impl->slow_log.start_times), GRN_OBJ_VECTOR);
 
   grn_ctx_impl_mrb_init(ctx);
   grn_ctx_impl_lua_init(ctx);
@@ -679,6 +683,7 @@ grn_ctx_impl_fin(grn_ctx *ctx)
   }
   grn_ctx_impl_lua_fin(ctx);
   grn_ctx_impl_mrb_fin(ctx);
+  GRN_OBJ_FIN(ctx, &(ctx->impl->slow_log.start_times));
   grn_ctx_loader_clear(ctx);
   if (ctx->impl->parser) {
     grn_expr_parser_close(ctx);

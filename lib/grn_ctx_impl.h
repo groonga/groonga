@@ -182,6 +182,10 @@ struct _grn_ctx_impl {
   char previous_errbuf[GRN_CTX_MSGSIZE];
   unsigned int n_same_error_messages;
 
+  struct {
+    grn_obj start_times;
+  } slow_log;
+
   grn_mrb_data mrb;
   grn_lua_data lua;
 

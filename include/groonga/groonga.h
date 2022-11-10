@@ -1105,6 +1105,27 @@ GRN_API off_t grn_default_logger_get_rotate_threshold_size(void);
   }\
 } while (0)
 
+GRN_API grn_rc grn_slow_log_push(grn_ctx *ctx);
+GRN_API double grn_slow_log_pop(grn_ctx *ctx);
+GRN_API bool grn_slow_log_is_slow(grn_ctx *ctx, double elapsed_time);
+
+#define GRN_SLOW_LOG_PUSH(ctx, level) do {      \
+  if (grn_logger_pass(ctx, level)) {            \
+    grn_slow_log_push(ctx);                     \
+  }                                             \
+} while (false)
+
+#define GRN_SLOW_LOG_POP_BEGIN(ctx, level, elapsed_time) do { \
+  if (grn_logger_pass(ctx, level)) {                          \
+    double elapsed_time = grn_slow_log_pop(ctx);              \
+    if (grn_slow_log_is_slow(ctx, elapsed_time)) {
+
+
+#define GRN_SLOW_LOG_POP_END(ctx)               \
+    }                                           \
+  }                                             \
+} while (false)
+
 typedef struct _grn_query_logger grn_query_logger;
 
 struct _grn_query_logger {
