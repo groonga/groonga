@@ -42,8 +42,6 @@ using string_view = arrow::util::string_view;
 #endif
 
 namespace grnarrow {
-  static int64_t grn_arrow_long_time_threshold_usec = GRN_TIME_USEC_PER_SEC;
-
   grn_rc status_to_rc(const arrow::Status &status) {
     switch (status.code()) {
     case arrow::StatusCode::OK:
@@ -1654,20 +1652,13 @@ namespace grnarrow {
     }
 
     arrow::Status OnRecordBatchDecoded(std::shared_ptr<arrow::RecordBatch> record_batch) override {
-      grn_timeval current_time;
-      grn_timeval_now(ctx_, &current_time);
-      int64_t wait_time = GRN_TIME_PACK(current_time.tv_sec, GRN_TIME_NSEC_TO_USEC(current_time.tv_nsec)) -
-                          GRN_TIME_PACK(last_recordbatch_decoded_time_.tv_sec, GRN_TIME_NSEC_TO_USEC(last_recordbatch_decoded_time_.tv_nsec));
-      if (wait_time > grn_arrow_long_time_threshold_usec) {
-        int64_t sec;
-        int32_t usec;
-        GRN_TIME_UNPACK(wait_time, sec, usec);
-        GRN_LOG(ctx_, GRN_LOG_DEBUG, "[Arrow][StreamLoader][OnRecordBatchDecoded] took a long time to wait for a next recordbatch: "
-                "(%" GRN_FMT_INT64D ".%.6" GRN_FMT_INT32D ")",
-                sec, usec);
-      }
+      GRN_SLOW_LOG_PUSH(ctx_, GRN_LOG_DEBUG);
       auto result = process_record_batch(std::move(record_batch));
-      grn_timeval_now(ctx_, &last_recordbatch_decoded_time_);
+      GRN_SLOW_LOG_POP_BEGIN(ctx_, GRN_LOG_DEBUG, elapsed_time) {
+        GRN_LOG(ctx_, GRN_LOG_DEBUG, "[Arrow][StreamLoader][OnRecordBatchDecoded] took a long time to process a record batch: "
+                "(%f)",
+                elapsed_time);
+      } GRN_SLOW_LOG_POP_END(ctx_);
       return result;
     }
 
@@ -2522,27 +2513,6 @@ namespace grn {
 #endif /* GRN_WITH_APACHE_ARROW */
 
 extern "C" {
-
-void
-grn_arrow_init_from_env(void)
-{
-#ifdef GRN_WITH_APACHE_ARROW
-  {
-    char grn_arrow_long_time_threshold_usec_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_ARROW_LONG_TIME_THRESHOLD_USEC",
-               grn_arrow_long_time_threshold_usec_env,
-               GRN_ENV_BUFFER_SIZE);
-    if (grn_arrow_long_time_threshold_usec_env[0]) {
-      grnarrow::grn_arrow_long_time_threshold_usec =
-        grn_atoll(grn_arrow_long_time_threshold_usec_env,
-                  grn_arrow_long_time_threshold_usec_env +
-                  strlen(grn_arrow_long_time_threshold_usec_env),
-                  NULL);
-    }
-  }
-#endif
-}
-
 grn_rc
 grn_arrow_load(grn_ctx *ctx,
                grn_obj *table,
