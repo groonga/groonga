@@ -1639,7 +1639,6 @@ namespace grnarrow {
         buffer_(nullptr),
         object_cache_(ctx_),
         tag_("[arrow][stream-loader]") {
-      grn_timeval_now(ctx_, &last_recordbatch_decoded_time_);
     }
 
     grn_rc consume(const char *data, size_t data_size) {
