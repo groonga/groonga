@@ -6152,8 +6152,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   buffer_rec *br = NULL;
   buffer_term *bt;
   uint32_t pseg = 0, pos = 0, size, *a;
-  bool in_for_slow_log_check = false;
-  
+  bool in_for_slow_log_check = false;  
   if (!tid) { return ctx->rc; }
   if (!u->tf || !u->sid) { return grn_ii_delete_one(ctx, ii, tid, u, h); }
   if (u->sid > ii->header.common->smax) { ii->header.common->smax = u->sid; }
@@ -6176,7 +6175,6 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     GRN_OBJ_FIN(ctx, &term);
     goto exit_with_only_logging;
   }
-
   if (!(bs = encode_rec(ctx, ii, u, &size, 0))) {
     grn_obj term;
     GRN_DEFINE_NAME(ii);
