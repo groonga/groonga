@@ -6194,7 +6194,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   if (grn_ii_wal_touch(ctx, ii, tag) != GRN_SUCCESS) {
     goto exit;
   }
-  
+
   GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
   for (;;) {
     if (a[0]) {
@@ -6436,16 +6436,16 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
               grn_ii_get_term(ctx, ii, tid, &term);
               grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
               MERR("%s failed to put to buffer: "
-                  "<%.*s>: "
-                  "<%.*s>(%u): "
-                  "(%u:%u): "
-                  "%s",
-                  tag,
-                  name_size, name,
-                  (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-                  tid,
-                  u2.rid, u2.sid,
-                  errbuf);
+                   "<%.*s>: "
+                   "<%.*s>(%u): "
+                   "(%u:%u): "
+                   "%s",
+                   tag,
+                   name_size, name,
+                   (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+                   tid,
+                   u2.rid, u2.sid,
+                   errbuf);
               GRN_OBJ_FIN(ctx, &term);
             }
             goto exit;
