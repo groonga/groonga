@@ -22,7 +22,6 @@
 #include "grn_column.h"
 #include "grn_db.h"
 #include "grn_output.h"
-#include "grn_string.h"
 
 #ifdef GRN_WITH_APACHE_ARROW
 #include "grn_arrow.hpp"
@@ -1653,13 +1652,13 @@ namespace grnarrow {
 
     arrow::Status OnRecordBatchDecoded(std::shared_ptr<arrow::RecordBatch> record_batch) override {
       GRN_SLOW_LOG_PUSH(ctx_, GRN_LOG_DEBUG);
-      auto result = process_record_batch(std::move(record_batch));
+      auto status = process_record_batch(std::move(record_batch));
       GRN_SLOW_LOG_POP_BEGIN(ctx_, GRN_LOG_DEBUG, elapsed_time) {
         GRN_LOG(ctx_, GRN_LOG_DEBUG, "[Arrow][StreamLoader][OnRecordBatchDecoded] took a long time to process a record batch: "
                 "(%f)",
                 elapsed_time);
       } GRN_SLOW_LOG_POP_END(ctx_);
-      return result;
+      return status;
     }
 
   private:
