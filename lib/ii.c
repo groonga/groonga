@@ -6195,7 +6195,6 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     goto exit;
   }
   
-
   GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
   for (;;) {
     if (a[0]) {
