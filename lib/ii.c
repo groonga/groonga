@@ -6619,7 +6619,6 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   buffer_rec *br;
   buffer_term *bt;
   uint32_t pseg, size, *a;
-
   if (!tid) { return ctx->rc; }
   if (!(a = array_at(ctx, ii, tid))) {
     return ctx->rc;
