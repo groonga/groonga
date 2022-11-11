@@ -6152,11 +6152,13 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   buffer_rec *br = NULL;
   buffer_term *bt;
   uint32_t pseg = 0, pos = 0, size, *a;
+  bool in_for_slow_log_check = false;
   
-  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
   if (!tid) { return ctx->rc; }
   if (!u->tf || !u->sid) { return grn_ii_delete_one(ctx, ii, tid, u, h); }
   if (u->sid > ii->header.common->smax) { ii->header.common->smax = u->sid; }
+
+  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
   if (!(a = array_get(ctx, ii, tid))) {
     grn_obj term;
     GRN_DEFINE_NAME(ii);
@@ -6172,8 +6174,9 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
          tid,
          u->rid, u->sid);
     GRN_OBJ_FIN(ctx, &term);
-    return ctx->rc;
+    goto exit_with_only_logging;
   }
+
   if (!(bs = encode_rec(ctx, ii, u, &size, 0))) {
     grn_obj term;
     GRN_DEFINE_NAME(ii);
@@ -6196,6 +6199,7 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   }
 
   GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
+  in_for_slow_log_check = true;
   for (;;) {
     if (a[0]) {
       if (!POS_IS_EMBED(a[0])) {
@@ -6457,6 +6461,8 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
     }
     break;
   }
+  
+  in_for_slow_log_check = false;
   GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time) {
     grn_obj term;
     GRN_DEFINE_NAME(ii);
@@ -6520,6 +6526,27 @@ grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   buffer_close(ctx, ii, pseg);
   if (!a[0] || POS_IS_EMBED(a[0])) { a[0] = pos; }
 exit :
+  if (in_for_slow_log_check) {
+    GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time) {
+      grn_obj term;
+      GRN_DEFINE_NAME(ii);
+      GRN_TEXT_INIT(&term, 0);
+      grn_ii_get_term(ctx, ii, tid, &term);
+      GRN_LOG(ctx, GRN_LOG_DEBUG, "%s[for-loop] took a long time: "
+              "<%.*s>: "
+              "<%.*s>(%u): "
+              "(%u:%u)"
+              "(%f)",
+              tag,
+              name_size, name,
+              (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+              tid,
+              u->rid, u->sid,
+              elapsed_time);
+      GRN_OBJ_FIN(ctx, &term);
+    } GRN_SLOW_LOG_POP_END(ctx);
+  }
+
   array_unref(ctx, ii, tid);
   if (bs) { GRN_FREE(bs); }
   if (u->tf != u->atf) {
@@ -6561,6 +6588,7 @@ exit :
     }
   }
   grn_ii_expire(ctx, ii);
+exit_with_only_logging :
   GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time) {
     grn_obj term;
     GRN_DEFINE_NAME(ii);
@@ -6592,7 +6620,6 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   buffer_term *bt;
   uint32_t pseg, size, *a;
 
-  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
   if (!tid) { return ctx->rc; }
   if (!(a = array_at(ctx, ii, tid))) {
     return ctx->rc;
@@ -6600,6 +6627,7 @@ grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_h
   if (grn_ii_wal_touch(ctx, ii, tag) != GRN_SUCCESS) {
     return ctx->rc;
   }
+  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
   for (;;) {
     const uint32_t pos = a[0];
     if (pos == 0) { goto exit; }
@@ -8442,7 +8470,6 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
   grn_obj *old_, *old = oldvalue, *new_, *new = newvalue, oldv, newv;
   grn_obj buf, *post = NULL;
 
-  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
   if (!ii) {
     ERR(GRN_INVALID_ARGUMENT, "[ii][column][update] ii is NULL");
     return ctx->rc;
@@ -8458,6 +8485,8 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         name_size, name);
     return ctx->rc;
   }
+
+  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
   if (old || new) {
     grn_bool is_text_vector_index = GRN_TRUE;
     if (old) {
@@ -8516,7 +8545,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
         if (new) {
           GRN_OBJ_FIN(ctx, &new_elem);
         }
-        return ctx->rc;
+        goto exit_with_only_logging;
       }
     }
   }
@@ -8524,7 +8553,7 @@ grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
     GRN_RECORD_INIT(&buf, GRN_OBJ_VECTOR, grn_obj_id(ctx, ii->lexicon));
     post = &buf;
   }
-  if (grn_io_lock(ctx, ii->seg, grn_lock_timeout)) { return ctx->rc; }
+  if (grn_io_lock(ctx, ii->seg, grn_lock_timeout)) { goto exit_with_only_logging; }
   if (new) {
     unsigned char type = (ii->obj.header.domain == new->header.domain)
       ? GRN_UVECTOR
@@ -8774,7 +8803,7 @@ exit :
     });
     if (new != newvalue) { grn_obj_close(ctx, new); }
   }
-
+exit_with_only_logging : 
   GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time) {
     GRN_DEFINE_NAME(ii);
     GRN_LOG(ctx, GRN_LOG_DEBUG, 
