@@ -1754,7 +1754,6 @@ namespace grnarrow {
     std::unique_ptr<arrow::ResizableBuffer> buffer_;
     ObjectCache object_cache_;
     std::string tag_;
-    grn_timeval last_recordbatch_decoded_time_;
   };
 
   class BulkOutputStream : public arrow::io::OutputStream {
