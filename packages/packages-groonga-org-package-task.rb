@@ -25,7 +25,6 @@ class PackagesGroongaOrgPackageTask < PackageTask
 
   def define
     super
-    define_source_task
     define_windows_task
     define_release_tasks
     define_ubuntu_tasks
@@ -38,14 +37,6 @@ class PackagesGroongaOrgPackageTask < PackageTask
       Time.parse(release_time_env).utc
     else
       Time.now.utc
-    end
-  end
-
-  def define_source_task
-    desc "Download the latest source archive"
-    task :source do
-      source_archive_url = built_package_url(nil, @archive_base_name)
-      download(source_archive_url, "..")
     end
   end
 
