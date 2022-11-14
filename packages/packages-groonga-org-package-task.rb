@@ -247,7 +247,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
           end
           tasks << "#{target_namespace}:download"
         end
-        
+
         desc "Prepare #{target_namespace} packages"
         task :prepare do
           prepare(target_namespace) if enabled
