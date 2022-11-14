@@ -8369,9 +8369,14 @@ grn_uvector2updspecs(grn_ctx *ctx, grn_ii *ii, grn_id rid,
   }
 }
 
-grn_rc
-grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, unsigned int section,
-                     grn_obj *oldvalue, grn_obj *newvalue, grn_obj *posting)
+static grn_inline grn_rc
+grn_ii_column_update_internal(grn_ctx *ctx,
+                              grn_ii *ii,
+                              grn_id rid,
+                              unsigned int section,
+                              grn_obj *oldvalue,
+                              grn_obj *newvalue,
+                              grn_obj *posting)
 {
   grn_id *tp;
   grn_bool do_grn_ii_updspec_cmp = GRN_TRUE;
@@ -8711,6 +8716,37 @@ exit :
     if (new != newvalue) { grn_obj_close(ctx, new); }
   }
   return ctx->rc;
+}
+
+grn_rc
+grn_ii_column_update(grn_ctx *ctx,
+                     grn_ii *ii,
+                     grn_id rid,
+                     unsigned int section,
+                     grn_obj *oldvalue,
+                     grn_obj *newvalue,
+                     grn_obj *posting)
+{
+  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
+  grn_rc rc = grn_ii_column_update_internal(ctx,
+                                            ii,
+                                            rid,
+                                            section,
+                                            oldvalue,
+                                            newvalue,
+                                            posting);
+  GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time) {
+    GRN_DEFINE_NAME(ii);
+    GRN_LOG(ctx,
+            GRN_LOG_DEBUG,
+            "[ii][column][update][slow][%f] "
+            "<%.*s>: "
+            "record:<%u>:<%u>",
+            elapsed_time,
+            name_size, name,
+            rid, section);
+  } GRN_SLOW_LOG_POP_END(ctx);
+  return rc;
 }
 
 /* token_info */
