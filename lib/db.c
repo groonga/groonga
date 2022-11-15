@@ -8250,6 +8250,7 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
       ERR(GRN_INVALID_ARGUMENT, "not db_obj");
     }
   } else {
+    GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
     switch (obj->header.type) {
     case GRN_TABLE_PAT_KEY :
       rc = grn_obj_set_value_table_pat_key(ctx, obj, id, value, flags);
@@ -8272,7 +8273,19 @@ grn_obj_set_value(grn_ctx *ctx, grn_obj *obj, grn_id id,
     case GRN_COLUMN_INDEX :
       rc = grn_obj_set_value_column_index(ctx, obj, id, value, flags);
       break;
+    default :
+      break;
     }
+    GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time) {
+      GRN_DEFINE_NAME(obj);
+      GRN_LOG(ctx,
+              GRN_LOG_DEBUG,
+              "[obj][set-value][slow][%f] "
+              "<%.*s>(%u)",
+              elapsed_time,
+              name_size, name,
+              id);
+    } GRN_SLOW_LOG_POP_END(ctx);
   }
   GRN_API_RETURN(rc);
 }
