@@ -6143,8 +6143,12 @@ grn_ii_wal_touch(grn_ctx *ctx, grn_ii *ii, const char *tag)
   return rc;
 }
 
-grn_rc
-grn_ii_update_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_hash *h)
+static grn_inline grn_rc
+grn_ii_update_one_internal(grn_ctx *ctx,
+                           grn_ii *ii,
+                           grn_id tid,
+                           grn_ii_updspec *u,
+                           grn_hash *h)
 {
   const char *tag = "[ii][update][one]";
   buffer *b;
