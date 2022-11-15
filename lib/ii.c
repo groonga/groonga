@@ -5706,9 +5706,16 @@ buffer_new_lexicon_other(grn_ctx *ctx,
 }
 
 
-grn_inline static uint32_t
-buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
-           buffer_term **bt, buffer_rec **br, buffer **bp, grn_id id, grn_hash *h)
+static grn_inline uint32_t
+buffer_new_internal(grn_ctx *ctx,
+                    grn_ii *ii,
+                    int size,
+                    uint32_t *pos,
+                    buffer_term **bt,
+                    buffer_rec **br,
+                    buffer **bp,
+                    grn_id id,
+                    grn_hash *h)
 {
   buffer *b = NULL;
   uint16_t offset;
@@ -5764,6 +5771,50 @@ buffer_new(grn_ctx *ctx, grn_ii *ii, int size, uint32_t *pos,
   *bt = &b->terms[offset];
   *br = (buffer_rec *)(((byte *)&b->terms[b->header.nterms]) + b->header.buffer_free);
   *bp = b;
+  return pseg;
+}
+
+static grn_inline uint32_t
+buffer_new(grn_ctx *ctx,
+           grn_ii *ii,
+           int size,
+           uint32_t *pos,
+           buffer_term **bt,
+           buffer_rec **br,
+           buffer **bp,
+           grn_id id,
+           grn_hash *h)
+{
+  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
+  uint32_t pseg = buffer_new_internal(ctx,
+                                      ii,
+                                      size,
+                                      pos,
+                                      bt,
+                                      br,
+                                      bp,
+                                      id,
+                                      h);
+  GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time) {
+    GRN_DEFINE_NAME(ii);
+    grn_obj term;
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, id, &term);
+    GRN_LOG(ctx,
+            GRN_LOG_DEBUG,
+            "[ii][buffer][new][slow][%f] "
+            "<%.*s>: "
+            "<%.*s>(%u): "
+            "size:<%u>, "
+            "physical-segment:<%u>",
+            elapsed_time,
+            name_size, name,
+            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+            id,
+            size,
+            pseg);
+    GRN_OBJ_FIN(ctx, &term);
+  } GRN_SLOW_LOG_POP_END(ctx);
   return pseg;
 }
 
