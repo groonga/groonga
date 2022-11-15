@@ -4385,16 +4385,16 @@ buffer_merge_ensure_dc(grn_ctx *ctx,
   }
 }
 
-static grn_rc
-buffer_merge(grn_ctx *ctx,
-             grn_ii *ii,
-             uint32_t seg,
-             grn_hash *h,
-             buffer *sb,
-             const uint8_t *sc,
-             buffer *db,
-             uint8_t **dc_output,
-             grn_merging_data *merging_data)
+static grn_inline grn_rc
+buffer_merge_internal(grn_ctx *ctx,
+                      grn_ii *ii,
+                      uint32_t seg,
+                      grn_hash *h,
+                      buffer *sb,
+                      const uint8_t *sc,
+                      buffer *db,
+                      uint8_t **dc_output,
+                      grn_merging_data *merging_data)
 {
   buffer_term *bt;
   uint8_t *dc = NULL;
@@ -4899,6 +4899,43 @@ exit :
   datavec_fin(ctx, dv);
   datavec_fin(ctx, rdv);
   return ctx->rc;
+}
+
+static grn_rc
+buffer_merge(grn_ctx *ctx,
+             grn_ii *ii,
+             uint32_t seg,
+             grn_hash *h,
+             buffer *sb,
+             const uint8_t *sc,
+             buffer *db,
+             uint8_t **dc_output,
+             grn_merging_data *merging_data)
+{
+  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
+  grn_rc rc = buffer_merge_internal(ctx,
+                                    ii,
+                                    seg,
+                                    h,
+                                    sb,
+                                    sc,
+                                    db,
+                                    dc_output,
+                                    merging_data);
+  GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time) {
+    GRN_DEFINE_NAME(ii);
+    GRN_LOG(ctx,
+            GRN_LOG_DEBUG,
+            "[ii][buffer][merge][slow][%f] "
+            "<%.*s>: "
+            "physical-segment:<%u>, "
+            "logical-segment:<%u>",
+            elapsed_time,
+            name_size, name,
+            grn_ii_get_buffer_pseg_inline(ii, seg),
+            seg);
+  } GRN_SLOW_LOG_POP_END(ctx);
+  return rc;
 }
 
 static void
