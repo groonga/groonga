@@ -5318,8 +5318,8 @@ array_update(grn_ctx *ctx, grn_ii *ii, uint32_t dls, buffer *db)
   }
 }
 
-static grn_rc
-buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
+static grn_inline grn_rc
+buffer_split_internal(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
 {
   grn_io_win sw, dw0, dw1;
   buffer *sb, *db0 = NULL, *db1 = NULL;
@@ -5516,6 +5516,27 @@ buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
     buffer_close(ctx, ii, sps);
   }
   return ctx->rc;
+}
+
+static grn_rc
+buffer_split(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
+{
+  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
+  grn_rc rc = buffer_split_internal(ctx, ii, lseg, h);
+  GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time) {
+    GRN_DEFINE_NAME(ii);
+    GRN_LOG(ctx,
+            GRN_LOG_DEBUG,
+            "[ii][buffer][split][slow][%f] "
+            "<%.*s>: "
+            "physical-segment:<%u>, "
+            "logical-segment:<%u>",
+            elapsed_time,
+            name_size, name,
+            grn_ii_get_buffer_pseg_inline(ii, lseg),
+            lseg);
+  } GRN_SLOW_LOG_POP_END(ctx);
+  return rc;
 }
 
 #define SCALE_FACTOR 2048
