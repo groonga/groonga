@@ -6500,45 +6500,70 @@ exit :
   array_unref(ctx, ii, tid);
   if (bs) { GRN_FREE(bs); }
   if (u->tf != u->atf) {
-    grn_obj *source_table;
-    char source_table_name[GRN_TABLE_MAX_KEY_SIZE];
-    int source_table_name_size;
-
-    source_table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
-    if (source_table) {
-      source_table_name_size = grn_obj_name(ctx,
-                                            source_table,
-                                            source_table_name,
-                                            GRN_TABLE_MAX_KEY_SIZE);
-    } else {
-      grn_strcpy(source_table_name, GRN_TABLE_MAX_KEY_SIZE, "(null)");
-      source_table_name_size = strlen(source_table_name);
-    }
-    {
-      grn_obj term;
-      GRN_DEFINE_NAME(ii);
-      GRN_TEXT_INIT(&term, 0);
-      grn_ii_get_term(ctx, ii, tid, &term);
-      GRN_LOG(ctx, GRN_LOG_WARNING,
-              "%s too many postings: "
-              "<%.*s>: "
-              "<%.*s>(%u): "
-              "record:<%.*s>(%d), "
-              "n-postings:<%d>, "
-              "n-discarded-postings:<%d>",
-              tag,
-              name_size, name,
-              (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
-              tid,
-              source_table_name_size, source_table_name,
-              u->rid,
-              u->atf,
-              u->atf - u->tf);
-      GRN_OBJ_FIN(ctx, &term);
-    }
+    grn_obj *source_table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
+    GRN_DEFINE_NAME_CUSTOM(source_table, source_table_name);
+    grn_obj_unref(ctx, source_table);
+    GRN_DEFINE_NAME(ii);
+    grn_obj term;
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, tid, &term);
+    GRN_LOG(ctx, GRN_LOG_WARNING,
+            "%s too many postings: "
+            "<%.*s>: "
+            "<%.*s>(%u): "
+            "record:<%.*s>(%u:%u), "
+            "n-postings:<%d>, "
+            "n-discarded-postings:<%d>",
+            tag,
+            name_size, name,
+            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+            tid,
+            source_table_name_size, source_table_name,
+            u->rid, u->sid,
+            u->atf,
+            u->atf - u->tf);
+    GRN_OBJ_FIN(ctx, &term);
   }
   grn_ii_expire(ctx, ii);
   return ctx->rc;
+}
+
+grn_rc
+grn_ii_update_one(grn_ctx *ctx,
+                  grn_ii *ii,
+                  grn_id tid,
+                  grn_ii_updspec *u,
+                  grn_hash *h)
+{
+  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
+  grn_rc rc = grn_ii_update_one_internal(ctx, ii, tid, u, h);
+  GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time) {
+    GRN_DEFINE_NAME(ii);
+    grn_obj *source_table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
+    GRN_DEFINE_NAME_CUSTOM(source_table, source_table_name);
+    grn_obj_unref(ctx, source_table);
+    grn_obj term;
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, tid, &term);
+    GRN_LOG(ctx,
+            GRN_LOG_DEBUG,
+            "[ii][update][one][slow][%f] "
+            "<%.*s>: "
+            "<%.*s>(%u): "
+            "record:<%.*s>(%u:%u), "
+            "n-postings:<%d>, "
+            "n-discarded-postings:<%d>",
+            elapsed_time,
+            name_size, name,
+            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+            tid,
+            source_table_name_size, source_table_name,
+            u->rid, u->sid,
+            u->atf,
+            u->atf - u->tf);
+    GRN_OBJ_FIN(ctx, &term);
+  } GRN_SLOW_LOG_POP_END(ctx);
+  return rc;
 }
 
 grn_rc
