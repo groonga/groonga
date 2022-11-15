@@ -1094,10 +1094,10 @@ grn_loader_bracket_set_values(grn_ctx *ctx,
   } GRN_HASH_EACH_END(ctx, cursor);
 }
 
-static void
-grn_loader_bracket_add_record(grn_ctx *ctx,
-                              grn_loader *loader,
-                              grn_loader_add_record_data *data)
+static grn_inline void
+grn_loader_bracket_add_record_internal(grn_ctx *ctx,
+                                       grn_loader *loader,
+                                       grn_loader_add_record_data *data)
 {
   grn_obj *bracket_value = data->record_value;
   uint32_t n_values = grn_loader_bracket_count(ctx, bracket_value);
@@ -1162,6 +1162,25 @@ grn_loader_bracket_add_record(grn_ctx *ctx,
       grn_loader_apply_each(ctx, loader, data->id);
     }
   }
+}
+
+static void
+grn_loader_bracket_add_record(grn_ctx *ctx,
+                              grn_loader *loader,
+                              grn_loader_add_record_data *data)
+{
+  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
+  grn_loader_bracket_add_record_internal(ctx, loader, data);
+  GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time) {
+    GRN_DEFINE_NAME(loader->table);
+    GRN_LOG(ctx,
+            GRN_LOG_DEBUG,
+            "[loader][bracket][add-record][slow][%f] "
+            "<%.*s>(%u)",
+            elapsed_time,
+            name_size, name,
+            data->id);
+  } GRN_SLOW_LOG_POP_END(ctx);
 }
 
 static void
