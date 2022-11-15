@@ -6570,8 +6570,12 @@ grn_ii_update_one(grn_ctx *ctx,
   return rc;
 }
 
-grn_rc
-grn_ii_delete_one(grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_hash *h)
+static grn_inline grn_rc
+grn_ii_delete_one_internal(grn_ctx *ctx,
+                           grn_ii *ii,
+                           grn_id tid,
+                           grn_ii_updspec *u,
+                           grn_hash *h)
 {
   const char *tag = "[ii][delete][one]";
   buffer *b;
@@ -6730,6 +6734,40 @@ exit :
   array_unref(ctx, ii, tid);
   if (bs) { GRN_FREE(bs); }
   return ctx->rc;
+}
+
+grn_rc
+grn_ii_delete_one(grn_ctx *ctx,
+                  grn_ii *ii,
+                  grn_id tid,
+                  grn_ii_updspec *u,
+                  grn_hash *h)
+{
+  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
+  grn_rc rc = grn_ii_delete_one_internal(ctx, ii, tid, u, h);
+  GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time) {
+    GRN_DEFINE_NAME(ii);
+    grn_obj *source_table = grn_ctx_at(ctx, DB_OBJ(ii)->range);
+    GRN_DEFINE_NAME_CUSTOM(source_table, source_table_name);
+    grn_obj_unref(ctx, source_table);
+    grn_obj term;
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, tid, &term);
+    GRN_LOG(ctx,
+            GRN_LOG_DEBUG,
+            "[ii][delete][one][slow][%f] "
+            "<%.*s>: "
+            "<%.*s>(%u): "
+            "record:<%.*s>(%u:%u)",
+            elapsed_time,
+            name_size, name,
+            (int)GRN_TEXT_LEN(&term), GRN_TEXT_VALUE(&term),
+            tid,
+            source_table_name_size, source_table_name,
+            u->rid, u->sid);
+    GRN_OBJ_FIN(ctx, &term);
+  } GRN_SLOW_LOG_POP_END(ctx);
+  return rc;
 }
 
 #define CHUNK_USED    1
