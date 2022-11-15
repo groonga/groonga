@@ -776,10 +776,10 @@ grn_loader_parse_id_value(grn_ctx *ctx,
   }
 }
 
-static void
-grn_loader_brace_add_record(grn_ctx *ctx,
-                            grn_loader *loader,
-                            grn_loader_add_record_data *data)
+static grn_inline void
+grn_loader_brace_add_record_internal(grn_ctx *ctx,
+                                     grn_loader *loader,
+                                     grn_loader_add_record_data *data)
 {
   grn_obj *brace_value = data->record_value;
   grn_obj *value = brace_value + 1;
@@ -895,6 +895,25 @@ grn_loader_brace_add_record(grn_ctx *ctx,
   }
 
   return;
+}
+
+static void
+grn_loader_brace_add_record(grn_ctx *ctx,
+                            grn_loader *loader,
+                            grn_loader_add_record_data *data)
+{
+  GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
+  grn_loader_brace_add_record_internal(ctx, loader, data);
+  GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time) {
+    GRN_DEFINE_NAME(loader->table);
+    GRN_LOG(ctx,
+            GRN_LOG_DEBUG,
+            "[loader][brace][add-record][slow][%f] "
+            "<%.*s>(%u)",
+            elapsed_time,
+            name_size, name,
+            data->id);
+  } GRN_SLOW_LOG_POP_END(ctx);
 }
 
 void
