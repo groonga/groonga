@@ -31,9 +31,6 @@ jobs:
           submodules: recursive
       - name: Install packages
         run: |
-          brew unlink python@3.8
-          rm -f /usr/local/bin/2to3
-          brew unlink gcc@9
           brew update || :
           brew bundle
       - name: Generate configure
