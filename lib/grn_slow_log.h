@@ -23,6 +23,7 @@
 extern "C" {
 #endif
 
+void grn_slow_log_init(void);
 void grn_slow_log_init_from_env(void);
 
 #ifdef __cplusplus

@@ -403,7 +403,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->previous_errbuf[0] = '\0';
   ctx->impl->n_same_error_messages = 0;
 
-  GRN_TIME_INIT(&(ctx->impl->slow_log.start_times), GRN_OBJ_VECTOR);
+  GRN_INT64_INIT(&(ctx->impl->slow_log.start_times), GRN_OBJ_VECTOR);
 
   grn_ctx_impl_mrb_init(ctx);
   grn_ctx_impl_lua_init(ctx);
@@ -907,6 +907,7 @@ grn_init(void)
 #ifdef WIN32
   grn_windows_init();
 #endif
+  grn_slow_log_init();
   grn_init_from_env();
   grn_init_external_libraries();
   grn_alloc_info_init();

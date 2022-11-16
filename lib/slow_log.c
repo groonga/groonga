@@ -18,7 +18,24 @@
 #include "grn_ctx_impl.h"
 #include "grn_slow_log.h"
 
+#ifdef _WIN32
+static int64_t grn_slow_log_performance_frequency = 1;
+#endif
+
 static double grn_slow_log_threshold = 0.0;
+
+void
+grn_slow_log_init(void)
+{
+#ifdef _WIN32
+  {
+    LARGE_INTEGER frequency;
+    if (QueryPerformanceFrequency(&frequency)) {
+      grn_slow_log_performance_frequency = frequency.QuadPart;
+    }
+  }
+#endif
+}
 
 void
 grn_slow_log_init_from_env(void)
@@ -50,12 +67,25 @@ grn_slow_log_push(grn_ctx *ctx)
     GRN_API_RETURN(ctx->rc);
   }
 
-  grn_timeval start_time;
-  grn_timeval_now(ctx, &start_time);
-  GRN_TIME_PUT(ctx,
-               &(ctx->impl->slow_log.start_times),
-               GRN_TIME_PACK(start_time.tv_sec,
-                             GRN_TIME_NSEC_TO_USEC(start_time.tv_nsec)));
+#ifdef _WIN32
+  {
+    int64_t start_counter = 0;
+    LARGE_INTEGER counter;
+    if (QueryPerformanceCounter(&counter)) {
+      start_counter = counter.QuadPart;
+    }
+    GRN_INT64_PUT(ctx, &(ctx->impl->slow_log.start_times), start_counter);
+  }
+#else
+  {
+    grn_timeval now;
+    grn_timeval_now(ctx, &now);
+    int64_t packed_start_time =
+       GRN_TIME_PACK(now.tv_sec,
+                     GRN_TIME_NSEC_TO_USEC(now.tv_nsec));
+    GRN_INT64_PUT(ctx, &(ctx->impl->slow_log.start_times), packed_start_time);
+  }
+#endif
 
   GRN_API_RETURN(ctx->rc);
 }
@@ -84,20 +114,37 @@ grn_slow_log_pop(grn_ctx *ctx)
     GRN_API_RETURN(0.0);
   }
 
-  int64_t packed_start_time;
-  GRN_TIME_POP(start_times, packed_start_time);
-  grn_timeval end_time;
-  grn_timeval_now(ctx, &end_time);
-  int64_t packed_end_time =
-    GRN_TIME_PACK(end_time.tv_sec,
-                  GRN_TIME_NSEC_TO_USEC(end_time.tv_nsec));
-  int64_t packed_elapsed_time = packed_end_time - packed_start_time;
-  int64_t elapsed_time_sec;
-  int32_t elapsed_time_usec;
-  GRN_TIME_UNPACK(packed_elapsed_time, elapsed_time_sec, elapsed_time_usec);
-  double elapsed_time =
-    (double)elapsed_time_sec +
-    GRN_TIME_USEC_TO_SEC((double)(elapsed_time_usec));
+  double elapsed_time;
+#ifdef _WIN32
+  {
+    int64_t start_counter;
+    GRN_INT64_POP(start_times, start_counter);
+    int64_t end_counter = 0;
+    LARGE_INTEGER counter;
+    if (QueryPerformanceCounter(&counter)) {
+      end_counter = counter.QuadPart;
+    }
+    elapsed_time =
+      (double)(end_counter - start_counter) /
+      (double)grn_slow_log_performance_frequency;
+  }
+#else
+  {
+    int64_t packed_start_time;
+    GRN_INT64_POP(start_times, packed_start_time);
+    grn_timeval now;
+    grn_timeval_now(ctx, &now);
+    int64_t packed_end_time = GRN_TIME_PACK(now.tv_sec,
+                                            GRN_TIME_NSEC_TO_USEC(now.tv_nsec));
+    int64_t packed_elapsed_time = packed_end_time - packed_start_time;
+    int64_t elapsed_time_sec;
+    int32_t elapsed_time_usec;
+    GRN_TIME_UNPACK(packed_elapsed_time, elapsed_time_sec, elapsed_time_usec);
+    elapsed_time =
+      (double)elapsed_time_sec +
+      GRN_TIME_USEC_TO_SEC((double)(elapsed_time_usec));
+  }
+#endif
 
   GRN_API_RETURN(elapsed_time);
 }
