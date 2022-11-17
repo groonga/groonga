@@ -3743,9 +3743,7 @@ grn_select_apply_adjuster_execute_adjust(grn_ctx *ctx,
     grn_obj_search(ctx, index, value, table, GRN_OP_ADJUST, &options);
   }
 
-  if (grn_enable_reference_count) {
-    grn_obj_unlink(ctx, index);
-  }
+  grn_obj_unref(ctx, index);
 }
 
 static void
