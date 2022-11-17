@@ -83,10 +83,8 @@ static mrb_value
 object_refer(mrb_state *mrb, mrb_value self)
 {
   grn_ctx *ctx = (grn_ctx *)mrb->ud;
-  if (grn_enable_reference_count) {
-    grn_obj_refer(ctx, DATA_PTR(self));
-    grn_mrb_ctx_check(mrb);
-  }
+  grn_obj_refer(ctx, DATA_PTR(self));
+  grn_mrb_ctx_check(mrb);
   return mrb_nil_value();
 }
 
