@@ -517,9 +517,7 @@ grn_column_inspect_common(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     GRN_TEXT_PUTS(ctx, buf, " range:");
     if (range) {
       grn_inspect_name(ctx, buf, range);
-      if (grn_enable_reference_count) {
-        grn_obj_unlink(ctx, range);
-      }
+      grn_obj_unref(ctx, range);
     } else {
       grn_text_lltoa(ctx, buf, range_id);
     }
@@ -638,9 +636,7 @@ grn_ja_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
       source = grn_ctx_at(ctx, source_id);
       if (source) {
         grn_inspect_name(ctx, buf, source);
-        if (grn_enable_reference_count) {
-          grn_obj_unlink(ctx, source);
-        }
+        grn_obj_unref(ctx, source);
       } else {
         grn_text_lltoa(ctx, buf, source_id);
       }
@@ -673,9 +669,7 @@ grn_ii_inspect(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
     source = grn_ctx_at(ctx, source_id);
     if (source) {
       grn_inspect_name(ctx, buf, source);
-      if (grn_enable_reference_count) {
-        grn_obj_unlink(ctx, source);
-      }
+      grn_obj_unref(ctx, source);
     } else {
       grn_text_lltoa(ctx, buf, source_id);
     }
