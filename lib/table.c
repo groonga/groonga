@@ -411,13 +411,11 @@ grn_table_get_score(grn_ctx *ctx, grn_obj *table, grn_id id)
     }
 
     grn_id next_parent_domain = parent->header.domain;
-    if (grn_enable_reference_count) {
-      grn_obj_unlink(ctx, parent);
-    }
+    grn_obj_unref(ctx, parent);
     parent = grn_ctx_at(ctx, next_parent_domain);
   }
-  if (parent && grn_enable_reference_count) {
-    grn_obj_unlink(ctx, parent);
+  if (parent) {
+    grn_obj_unref(ctx, parent);
     parent = NULL;
   }
 
