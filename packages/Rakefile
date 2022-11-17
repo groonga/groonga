@@ -42,7 +42,11 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
   end
 
   def define_archive_task
-    file @original_archive_name do
+    file "../#{@original_archive_name}" do
+      source_archive_url = built_package_url(nil, @archive_base_name)
+      download(source_archive_url, "..")
+    end
+    file @original_archive_name => "../#{@original_archive_name}" do
       File.symlink("../#{@original_archive_name}",
                    @original_archive_name)
     end
