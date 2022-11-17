@@ -58,6 +58,7 @@ if(GRN_WITH_ONIGMO)
   endif()
 
   check_cflag("-Wno-missing-field-initializers")
+  check_cflag("-Wno-conversion")
 
   include_directories(
     BEFORE
