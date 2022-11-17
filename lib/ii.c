@@ -6141,9 +6141,7 @@ grn_ii_close(grn_ctx *ctx, grn_ii *ii)
       rc = sub_rc;
     }
   }
-  if (grn_enable_reference_count) {
-    grn_obj_unlink(ctx, ii->lexicon);
-  }
+  grn_obj_unref(ctx, ii->lexicon);
   GRN_FREE(ii);
   /*
   {
