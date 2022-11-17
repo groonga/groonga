@@ -91,8 +91,9 @@ grn_table_cursor_next_inline(grn_ctx *ctx, grn_table_cursor *tc);
 grn_inline static int
 grn_table_cursor_get_value_inline(grn_ctx *ctx, grn_table_cursor *tc, void **value);
 
-bool grn_enable_reference_count = false;
+static bool grn_enable_reference_count = false;
 
+static uint32_t grn_n_opening_dbs = 0;
 static char grn_db_key[GRN_ENV_BUFFER_SIZE];
 
 void
@@ -112,6 +113,22 @@ grn_db_init_from_env(void)
       grn_enable_reference_count = false;
     }
   }
+}
+
+bool
+grn_is_reference_count_enable(void)
+{
+  return grn_enable_reference_count;
+}
+
+grn_rc
+grn_set_reference_count_enable(bool enable)
+{
+  if (grn_n_opening_dbs != 0) {
+    return GRN_OPERATION_NOT_PERMITTED;
+  }
+  grn_enable_reference_count = enable;
+  return GRN_SUCCESS;
 }
 
 grn_inline static void
@@ -299,6 +316,10 @@ grn_db_create(grn_ctx *ctx, const char *path, grn_db_create_optarg *optarg)
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
+  }
+  {
+    uint32_t current_n_opening_dbs;
+    GRN_ATOMIC_ADD_EX(&grn_n_opening_dbs, 1, current_n_opening_dbs);
   }
   GRN_API_RETURN((grn_obj *)s);
 
@@ -2213,6 +2234,10 @@ grn_db_open(grn_ctx *ctx, const char *path)
       grn_obj_flush(ctx, (grn_obj *)s);
     }
   }
+  {
+    uint32_t current_n_opening_dbs;
+    GRN_ATOMIC_ADD_EX(&grn_n_opening_dbs, 1, current_n_opening_dbs);
+  }
   grn_db_wal_recover(ctx, s);
   if (ctx->rc != GRN_SUCCESS) {
     grn_db_close(ctx, (grn_obj *)s);
@@ -2468,6 +2493,11 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
 
   if (ctx_used_db) {
     ctx->impl->db = NULL;
+  }
+
+  {
+    uint32_t current_n_opening_dbs;
+    GRN_ATOMIC_ADD_EX(&grn_n_opening_dbs, -1, current_n_opening_dbs);
   }
 
   GRN_API_RETURN(GRN_SUCCESS);

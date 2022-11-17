@@ -285,6 +285,8 @@ GRN_API int64_t grn_get_default_match_escalation_threshold(void);
 GRN_API grn_rc grn_set_default_match_escalation_threshold(int64_t threshold);
 GRN_API bool grn_is_back_trace_enable(void);
 GRN_API grn_rc grn_set_back_trace_enable(bool enable);
+GRN_API bool grn_is_reference_count_enable(void);
+GRN_API grn_rc grn_set_reference_count_enable(bool enable);
 
 GRN_API grn_rc grn_ctx_set_variable(grn_ctx *ctx,
                                     const char *name,

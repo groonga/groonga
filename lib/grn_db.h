@@ -85,8 +85,6 @@ extern "C" {
 
 #define GRN_DEFINE_NAME(obj) GRN_DEFINE_NAME_CUSTOM(obj, name)
 
-extern bool grn_enable_reference_count;
-
 typedef struct _grn_db grn_db;
 typedef struct _grn_proc grn_proc;
 

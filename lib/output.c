@@ -3805,7 +3805,7 @@ grn_obj_format_fin(grn_ctx *ctx, grn_obj_format *format)
   size_t i;
   for (i = 0; i < n_columns; i++) {
     grn_obj *column = GRN_PTR_VALUE_AT(&(format->columns), i);
-    if (grn_enable_reference_count || column->header.type == GRN_ACCESSOR) {
+    if (grn_is_reference_count_enable() || column->header.type == GRN_ACCESSOR) {
       grn_obj_unlink(ctx, column);
     }
   }

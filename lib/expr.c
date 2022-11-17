@@ -545,7 +545,7 @@ exit :
 static grn_inline bool
 grn_expr_is_takable_obj(grn_ctx *ctx, grn_obj *expr, grn_obj *obj)
 {
-  if (grn_enable_reference_count) {
+  if (grn_is_reference_count_enable()) {
     return true;
   }
 
