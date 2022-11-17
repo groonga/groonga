@@ -235,7 +235,6 @@ if(GRN_C_COMPILER_GNU_LIKE)
   check_cxxflag("-fexceptions")
   check_cxxflag("-fimplicit-templates")
   check_build_flag("-Wno-implicit-fallthrough")
-  check_build_flag("-Wconversion")
 endif()
 
 option(GRN_ALLOW_WARNING "allow warning." ON)

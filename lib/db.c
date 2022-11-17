@@ -8478,7 +8478,9 @@ grn_obj_get_value(grn_ctx *ctx, grn_obj *obj, grn_id id, grn_obj *value)
               processed = GRN_TRUE;
             }
           }
-          grn_obj_unref(ctx, domain);
+          if (grn_enable_reference_count) {
+            grn_obj_unlink(ctx, domain);
+          }
         }
         if (!processed) {
           grn_hash *hash = (grn_hash *)obj;
@@ -8893,7 +8895,9 @@ update_source_hook(grn_ctx *ctx, grn_obj *obj)
         /* invalid target */
         break;
       }
-      grn_obj_unref(ctx, source);
+      if (grn_enable_reference_count) {
+        grn_obj_unlink(ctx, source);
+      }
     }
   }
   grn_obj_close(ctx, &data);
@@ -9401,8 +9405,10 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
         }
       }
     }
-    grn_obj_unref(ctx, source_type);
-    grn_obj_unref(ctx, source);
+    if (grn_enable_reference_count) {
+      grn_obj_unlink(ctx, source_type);
+      grn_obj_unlink(ctx, source);
+    }
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -15635,7 +15641,9 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                         if (a != id_accessor) {
                           ac->action = a->action;
                           ac->obj = a->obj;
-                          grn_obj_refer(ctx, ac->obj);
+                          if (grn_enable_reference_count && ac->obj) {
+                            ac->obj = grn_ctx_at(ctx, DB_OBJ(ac->obj)->id);
+                          }
                           ac->next = grn_accessor_new(ctx);
                           if (!(ac = ac->next)) { break; }
                         } else {
@@ -15652,7 +15660,9 @@ grn_obj_columns(grn_ctx *ctx, grn_obj *table,
                 grn_obj_unlink(ctx, ai);
               }
             }
-            grn_obj_unref(ctx, type);
+            if (grn_enable_reference_count) {
+              grn_obj_unlink(ctx, type);
+            }
           }
         } else if ((col = grn_obj_column(ctx, table, p, r - p))) {
           GRN_PTR_PUT(ctx, res, col);
