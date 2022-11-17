@@ -234,20 +234,16 @@ grn_index_column_build(grn_ctx *ctx, grn_obj *index_column)
     }
   }
   grn_obj_set_visibility(ctx, index_column, true);
-  if (grn_enable_reference_count) {
-    for (i = 0; i < n_columns; i++) {
-      grn_obj_unlink(ctx, columns[i]);
-    }
+  for (i = 0; i < n_columns; i++) {
+    grn_obj_unref(ctx, columns[i]);
   }
   GRN_FREE(columns);
   grn_obj_touch(ctx, index_column, NULL);
 
-  if (target != src && grn_enable_reference_count) {
-    grn_obj_unlink(ctx, target);
+  if (target != src) {
+    grn_obj_unref(ctx, target);
   }
-  if (grn_enable_reference_count) {
-    grn_obj_unlink(ctx, src);
-  }
+  grn_obj_unref(ctx, src);
 
   return ctx->rc;
 }
