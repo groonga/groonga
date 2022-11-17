@@ -1766,11 +1766,11 @@ grn_scan_info_free(grn_ctx *ctx,
 {
   GRN_OBJ_FIN(ctx, &(si->weights));
   GRN_OBJ_FIN(ctx, &(si->sections));
-  if (grn_enable_reference_count) {
+  {
     size_t i;
     size_t n_indexes = GRN_PTR_VECTOR_SIZE(&(si->index));
     for (i = 0; i < n_indexes; i++) {
-      grn_obj_unlink(ctx, GRN_PTR_VALUE_AT(&(si->index), i));
+      grn_obj_unref(ctx, GRN_PTR_VALUE_AT(&(si->index), i));
     }
   }
   GRN_OBJ_FIN(ctx, &(si->index));
@@ -2423,9 +2423,7 @@ scan_info_build_match_expr_codes_find_index(grn_ctx *ctx, scan_info *si,
       uint32_t n_rest_codes;
 
       *index = ec->value;
-      if (grn_enable_reference_count) {
-        *index = grn_ctx_at(ctx, grn_obj_id(ctx, *index));
-      }
+      grn_obj_refer(ctx, *index);
 
       n_rest_codes = expr->codes_curr - i;
       if (n_rest_codes >= 2 &&
@@ -5752,9 +5750,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_OBJ_FIN(ctx, &efsi.column_stack);
     GRN_OBJ_FIN(ctx, &efsi.token_stack);
     GRN_OBJ_FIN(ctx, &efsi.buf);
-    if (grn_enable_reference_count) {
-      grn_obj_unlink(ctx, efsi.table);
-    }
+    grn_obj_unref(ctx, efsi.table);
   } else {
     ERR(GRN_INVALID_ARGUMENT, "variable is not defined correctly");
   }
