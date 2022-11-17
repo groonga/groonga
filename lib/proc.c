@@ -753,7 +753,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   GRN_OUTPUT_CSTR("features");
   {
-    const int n_features = 14;
+    const int n_features = 16;
     GRN_OUTPUT_MAP_OPEN("features", n_features);
 
     GRN_OUTPUT_CSTR("nfkc");
@@ -853,6 +853,12 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 #else
     GRN_OUTPUT_BOOL(false);
 #endif
+
+    GRN_OUTPUT_CSTR("back_trace");
+    GRN_OUTPUT_BOOL(grn_is_back_trace_enable());
+
+    GRN_OUTPUT_CSTR("reference_count");
+    GRN_OUTPUT_BOOL(grn_is_reference_count_enable());
 
     GRN_OUTPUT_MAP_CLOSE();
   }
