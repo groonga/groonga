@@ -107,10 +107,12 @@ grn_db_init_from_env(void)
     grn_getenv("GRN_ENABLE_REFERENCE_COUNT",
                grn_enable_reference_count_env,
                GRN_ENV_BUFFER_SIZE);
-    if (strncmp(grn_enable_reference_count_env, "yes", strlen("yes")) == 0) {
-      grn_enable_reference_count = true;
-    } else {
-      grn_enable_reference_count = false;
+    if (grn_enable_reference_count_env[0]) {
+      if (strncmp(grn_enable_reference_count_env, "yes", strlen("yes")) == 0) {
+        grn_enable_reference_count = true;
+      } else {
+        grn_enable_reference_count = false;
+      }
     }
   }
 }
