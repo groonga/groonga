@@ -802,9 +802,7 @@ output_column(N_STACKED_COLUMNS) ::= STAR. {
       }
     }
 
-    if (grn_enable_reference_count) {
-      grn_obj_unlink(ctx, table);
-    }
+    grn_obj_unref(ctx, table);
     GRN_OBJ_FIN(ctx, &columns_buffer);
 
     N_STACKED_COLUMNS = n_columns;

@@ -945,9 +945,9 @@ struct yyParser {
 };
 typedef struct yyParser yyParser;
 
+#include <assert.h>
 #ifndef NDEBUG
 #include <stdio.h>
-#include <assert.h>
 static FILE *yyTraceFILE = 0;
 static char *yyTracePrompt = 0;
 #endif /* NDEBUG */
@@ -2901,9 +2901,7 @@ static YYACTIONTYPE yy_reduce(
       }
     }
 
-    if (grn_enable_reference_count) {
-      grn_obj_unlink(ctx, table);
-    }
+    grn_obj_unref(ctx, table);
     GRN_OBJ_FIN(ctx, &columns_buffer);
 
     yymsp[0].minor.yy0 = n_columns;
@@ -2912,22 +2910,22 @@ static YYACTIONTYPE yy_reduce(
     yymsp[0].minor.yy0 = 0;
   }
 }
-#line 2915 "../../groonga/lib/grn_ecmascript.c"
+#line 2913 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 93: /* output_column ::= NONEXISTENT_COLUMN */
       case 101: /* sort_key ::= NONEXISTENT_COLUMN */ yytestcase(yyruleno==101);
-#line 816 "../../groonga/lib/grn_ecmascript.lemon"
+#line 814 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[0].minor.yy0 = 0;
 }
-#line 2923 "../../groonga/lib/grn_ecmascript.c"
+#line 2921 "../../groonga/lib/grn_ecmascript.c"
         break;
       case 102: /* sort_key ::= MINUS NONEXISTENT_COLUMN */
-#line 862 "../../groonga/lib/grn_ecmascript.lemon"
+#line 860 "../../groonga/lib/grn_ecmascript.lemon"
 {
   yymsp[-1].minor.yy0 = 0;
 }
-#line 2930 "../../groonga/lib/grn_ecmascript.c"
+#line 2928 "../../groonga/lib/grn_ecmascript.c"
         break;
       default:
       /* (104) input ::= query */ yytestcase(yyruleno==104);
@@ -3060,7 +3058,7 @@ static void yy_syntax_error(
     }
     GRN_OBJ_FIN(ctx, &message);
   }
-#line 3063 "../../groonga/lib/grn_ecmascript.c"
+#line 3061 "../../groonga/lib/grn_ecmascript.c"
 /************ End %syntax_error code ******************************************/
   grn_expr_parserARG_STORE /* Suppress warning about unused %extra_argument variable */
   grn_expr_parserCTX_STORE
@@ -3152,8 +3150,8 @@ void grn_expr_parser(
     yyact = yy_find_shift_action((YYCODETYPE)yymajor,yyact);
     if( yyact >= YY_MIN_REDUCE ){
       unsigned int yyruleno = yyact - YY_MIN_REDUCE; /* Reduce by this rule */
-      assert( yyruleno<(int)(sizeof(yyRuleName)/sizeof(yyRuleName[0])) );
 #ifndef NDEBUG
+      assert( yyruleno<(int)(sizeof(yyRuleName)/sizeof(yyRuleName[0])) );
       if( yyTraceFILE ){
         int yysize = yyRuleInfoNRhs[yyruleno];
         if( yysize ){
@@ -3251,14 +3249,13 @@ void grn_expr_parser(
         yy_destructor(yypParser, (YYCODETYPE)yymajor, &yyminorunion);
         yymajor = YYNOCODE;
       }else{
-        while( yypParser->yytos >= yypParser->yystack
-            && (yyact = yy_find_reduce_action(
-                        yypParser->yytos->stateno,
-                        YYERRORSYMBOL)) > YY_MAX_SHIFTREDUCE
-        ){
+        while( yypParser->yytos > yypParser->yystack ){
+          yyact = yy_find_reduce_action(yypParser->yytos->stateno,
+                                        YYERRORSYMBOL);
+          if( yyact<=YY_MAX_SHIFTREDUCE ) break;
           yy_pop_parser_stack(yypParser);
         }
-        if( yypParser->yytos < yypParser->yystack || yymajor==0 ){
+        if( yypParser->yytos <= yypParser->yystack || yymajor==0 ){
           yy_destructor(yypParser,(YYCODETYPE)yymajor,&yyminorunion);
           yy_parse_failed(yypParser);
 #ifndef YYNOERRORRECOVERY
