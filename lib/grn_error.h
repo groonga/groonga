@@ -341,8 +341,6 @@ GRN_API void grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
 
 GRN_API const char *grn_strerror(int error_code);
 
-GRN_API grn_rc grn_windows_error_code_to_rc(int error_code);
-
 #ifdef __cplusplus
 }
 #endif

@@ -178,6 +178,12 @@ grn_error_get_current_system_message(void)
 # undef ERROR_MESSAGE_BUFFER_SIZE
 }
 #else
+grn_rc
+grn_windows_error_code_to_rc(int error_code)
+{
+  return GRN_UNKNOWN_ERROR;
+}
+
 const char *
 grn_error_get_current_system_message(void)
 {
