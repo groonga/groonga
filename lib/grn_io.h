@@ -215,7 +215,7 @@ grn_io_seg_ref(grn_ctx *ctx, grn_io *io, uint32_t segno)
                    segno,
                    io->header->max_segment,
                    io->path,
-                   grn_current_error_message());
+                   grn_error_get_current_system_message());
             }
           }
           GRN_ATOMIC_ADD_EX(pnref, -1, nref);
@@ -269,7 +269,7 @@ grn_io_seg_ref(grn_ctx *ctx, grn_io *io, uint32_t segno)
                    nref,
                    io->header->max_segment,
                    io->path,
-                   grn_current_error_message());
+                   grn_error_get_current_system_message());
             }
             GRN_FUTEX_WAKE(pnref);
           }
@@ -304,7 +304,7 @@ grn_io_seg_ref(grn_ctx *ctx, grn_io *io, uint32_t segno)
                  segno,
                  io->header->max_segment,
                  io->path,
-                 grn_current_error_message());
+                 grn_error_get_current_system_message());
           }
         }
         GRN_ATOMIC_ADD_EX(pnref, -1, nref);

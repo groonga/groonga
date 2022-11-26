@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2013-2017  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -130,7 +130,7 @@ grn_windows_error_code_to_rc(int error_code)
 # define LANG_ID_SYSTEM_DEFAULT() MAKELANGID(LANG_NEUTRAL, SUBLANG_SYS_DEFAULT)
 
 const char *
-grn_current_error_message(void)
+grn_error_get_current_system_message(void)
 {
 # define ERROR_MESSAGE_BUFFER_SIZE 4096
   int error_code = GetLastError();
@@ -179,7 +179,7 @@ grn_current_error_message(void)
 }
 #else
 const char *
-grn_current_error_message(void)
+grn_error_get_current_system_message(void)
 {
   return strerror(errno);
 }

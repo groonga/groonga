@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2016 Brazil
+  Copyright(C) 2016  Brazil
+  Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,6 +24,7 @@ extern "C" {
 #endif
 
 GRN_API const char *grn_rc_to_string(grn_rc rc);
+GRN_API const char *grn_error_get_current_system_message(void);
 
 #ifdef __cplusplus
 }

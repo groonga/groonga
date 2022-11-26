@@ -742,7 +742,7 @@ grn_malloc_default(grn_ctx *ctx, size_t size,
              file,
              line,
              alloc_count,
-             grn_current_error_message());
+             grn_error_get_current_system_message());
       } else {
         GRN_ADD_ALLOC_COUNT(1);
         grn_alloc_info_add(res, size, file, line, func);
@@ -774,7 +774,7 @@ grn_calloc_default(grn_ctx *ctx, size_t size,
              file,
              line,
              alloc_count,
-             grn_current_error_message());
+             grn_error_get_current_system_message());
       } else {
         GRN_ADD_ALLOC_COUNT(1);
         grn_alloc_info_add(res, size, file, line, func);
@@ -822,7 +822,7 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size,
              file,
              line,
              alloc_count,
-             grn_current_error_message());
+             grn_error_get_current_system_message());
         return NULL;
       }
     }
@@ -864,7 +864,7 @@ grn_strdup_default(grn_ctx *ctx, const char *s,
              file,
              line,
              alloc_count,
-             grn_current_error_message());
+             grn_error_get_current_system_message());
       } else {
         GRN_ADD_ALLOC_COUNT(1);
         grn_alloc_info_add(res, strlen(res) + 1, file, line, func);

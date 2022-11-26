@@ -1782,7 +1782,7 @@ grn_mmap_v0(grn_ctx *ctx, grn_ctx *owner_ctx, fileinfo *fi, int64_t offset,
   res = MapViewOfFile(fi->fmo, FILE_MAP_WRITE, 0, (DWORD)offset, (SIZE_T)length);
   if (!res) {
     MERR("MapViewOfFile failed: <%" GRN_FMT_SIZE ">: %s",
-         mmap_size, grn_current_error_message());
+         mmap_size, grn_error_get_current_system_message());
     return NULL;
   }
   mmap_size += length;
@@ -1898,7 +1898,7 @@ grn_fileinfo_open_common(grn_ctx *ctx, fileinfo *fi, const char *path, int flags
                 "Tried to make file sparse but failed: "
                 "DeviceIoControl(FSCTL_SET_SPARSE): "
                 "<%s>: <%s>",
-                path, grn_current_error_message());
+                path, grn_error_get_current_system_message());
       }
     }
 

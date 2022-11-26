@@ -99,7 +99,7 @@ GRN_API void grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
   const char *system_message;\
   char user_message[USER_MESSAGE_SIZE];\
   error_code = GetLastError();\
-  system_message = grn_current_error_message();\
+  system_message = grn_error_get_current_system_message();\
   rc = grn_windows_error_code_to_rc(error_code);\
   grn_snprintf(user_message,\
                USER_MESSAGE_SIZE, USER_MESSAGE_SIZE,\
@@ -263,7 +263,7 @@ GRN_API void grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
   grn_rc rc;\
   int errno_keep = errno;\
   grn_bool show_errno = GRN_FALSE;\
-  const char *system_message = grn_current_error_message();\
+  const char *system_message = grn_error_get_current_system_message();\
   char user_message[USER_MESSAGE_SIZE];\
   switch (errno_keep) {\
   case ELOOP : rc = GRN_TOO_MANY_SYMBOLIC_LINKS; break;\
@@ -339,7 +339,6 @@ GRN_API void grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
 #define GMERR(...)   ERRSET(&grn_gctx, GRN_ALERT, GRN_NO_MEMORY_AVAILABLE,  __VA_ARGS__)
 
 
-GRN_API const char *grn_current_error_message(void);
 GRN_API const char *grn_strerror(int error_code);
 
 GRN_API grn_rc grn_windows_error_code_to_rc(int error_code);
