@@ -15,6 +15,9 @@ Improvements
 
 * [:doc:`reference/commands/load`] ``load`` のスローログ(slow log)の出力に対応しました。
 
+  この機能は、Groongaのパフォーマンスチューニングに使用します。
+  例えば、 ``load`` が遅いときに、この機能を使うことで平均よりも時間がかかっているレコードを検出でき、ボトルネックを特定できます。
+
   環境変数（Environment variable） ``GRN_SLOW_LOG_THRESHOLD`` を指定することで、スローログの出力が有効になります。
   ``GRN_SLOW_LOG_THRESHOLD`` にはしきい値となる時間を秒単位で指定します。小数を指定することで、1秒よりも短い時間も指定できます。
   内部的に ``GRN_SLOW_LOG_THRESHOLD`` で指定された時間よりも時間がかかっている処理がある場合、デバッグレベルのログを出力します。
@@ -22,7 +25,7 @@ Improvements
   ログレベルは :option:`log-level <groonga --log-level>` オプションまたは :doc:`reference/commands/log_level` コマンドで変更可能です。
 
   ``GRN_SLOW_LOG_THRESHOLD`` にどのような値を指定すべきかは環境や調べたい内容に依存します。
-  一例としては、 ``load`` の件数と所要時間から、1レコードあたりの所要時間を求め、その値を指定することが考えられます。
+  例えば、 ``load`` の件数と所要時間から、1レコードあたりの所要時間を求め、その値を指定することが考えられます。
   こうすることで、平均よりも ``load`` に時間がかかっているレコードを調べることができます。
 
   ``load`` の所要時間は :ref:`query-log` から確認することができます。
@@ -59,8 +62,37 @@ Improvements
 
   参照カウントモード(reference count mode)の有効/無効を切り替えます。
 
-  複数のデータベースを開いている場合、安全のためこのAPIで参照カウントモードを切り替えることはできません。
-  その場合、 :doc:`reference/command/return_codes/grn_operation_not_permitted` が返却されます。
+* [:doc:`reference/api`] 新しいAPI ``grn_is_back_trace_enable()`` を追加しました。
+  
+  バックトレース(back trace)の出力が有効になっているかどうかの真偽値（boolean）を返却（return）します。
+
+* [:doc:`reference/api`] 新しいAPI ``grn_set_back_trace_enable(bool enable)`` を追加しました。
+
+  バックトレース(back trace)の出力の有効/無効を切り替えます。
+
+  バックトレースの出力時にクラッシュする場合があるため、そういった場合に無効化します。
+
+* [:doc:`reference/commands/status`] Added new items: ``back_trace`` and ``reference_count``.
+
+  ``back_trace`` はバックトレースの出力が有効になっているかどうかを真偽値で返却します。
+
+  ``reference_count`` は参照カウントモードが有効になっているかどうかを真偽値で返却します。
+
+  .. code-block::
+
+      status
+      [
+        [
+          0,
+          1654237168.304533,
+          0.0001480579376220703
+        ],
+        {
+          (omitted)
+          "back_trace": true,
+          "reference_count": false,
+        }
+      ]
 
 Fixes
 -----
