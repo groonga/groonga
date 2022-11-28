@@ -13,25 +13,47 @@ Release 12.1.0 - 2022-11-29
 Improvements
 ------------
 
-* [:doc:`reference/commands/load`] ``load`` のログ強化(log enhancement/improve logs)を行いました。
+* [:doc:`reference/commands/load`] ``load`` のスローログ(slow log)の出力に対応しました。
 
-  環境変数（Environment variable） ``GRN_SLOW_LOG_THRESHOLD`` を指定することで、このログ強化が有効になります。
-  ``GRN_SLOW_LOG_THRESHOLD`` にはしきい値となる時間を秒単位で指定します。小数も指定可能です。
+  環境変数（Environment variable） ``GRN_SLOW_LOG_THRESHOLD`` を指定することで、スローログの出力が有効になります。
+  ``GRN_SLOW_LOG_THRESHOLD`` にはしきい値となる時間を秒単位で指定します。小数を指定することで、1秒よりも短い時間も指定できます。
   内部的に ``GRN_SLOW_LOG_THRESHOLD`` で指定された時間よりも時間がかかっている処理がある場合、デバッグレベルのログを出力します。
+
+  ログレベルは :option:`log-level <groonga --log-level>` オプションまたは :doc:`reference/commands/log_level` コマンドで変更可能です。
 
   ``GRN_SLOW_LOG_THRESHOLD`` にどのような値を指定すべきかは環境や調べたい内容に依存します。
   一例としては、 ``load`` の件数と所要時間から、1レコードあたりの所要時間を求め、その値を指定することが考えられます。
-  こうすることで、平均よりも``load``に時間がかかっているレコードを調べることができます。
+  こうすることで、平均よりも ``load`` に時間がかかっているレコードを調べることができます。
 
-  このログ強化を有効にすると、以下の理由によりパフォーマンスの悪化やログサイズが肥大化します。
+  ``load`` の所要時間は :ref:`query-log` から確認することができます。
+
+  
+  .. code-block::
+
+     2022-11-16 16:41:27.139000|000000CE63AFF640|>load --table Memo
+     2022-11-16 16:43:40.841000|000000CE63AFF640|:000133702000000 load(100000): [0][0][100000]
+     2022-11-16 16:43:40.842000|000000CE63AFF640|:000133703000000 send(46)
+     2022-11-16 16:43:40.842000|000000CE63AFF640|<000133703000000 rc=0
+
+  この例では、以下のようになっています。
+  
+  * レコード数は100000件
+  
+    * ``load(100000)`` より
+  * 所要時間は 2分13秒 = 133秒
+
+  したがって、1行あたり 0.00133 秒かかっているため、 ``GRN_SLOW_LOG_THRESHOLD`` に ``0.00133`` を指定します。
+
+  スローログを有効にすると、以下の悪影響があります。
+  
+  * パフォーマンスの悪化
+  * ログサイズの肥大化
+  
   そのため、必要な場合にのみこのログ強化を有効にすることを推奨します。
   
-  * 所要時間の取得をするようになる
-  * 大量のログ出力が行われる可能性がある
-
 * [:doc:`reference/api`] 新しいAPI ``grn_is_reference_count_enable()`` を追加しました。
   
-  参照カウントモード(reference count mode)が有効になっているかどうかの真偽値（boolean）を返却します。
+  参照カウントモード(reference count mode)が有効になっているかどうかの真偽値（boolean）を返却（return）します。
 
 * [:doc:`reference/api`] 新しいAPI ``grn_set_reference_count_enable(bool enable)`` を追加しました。
 
@@ -43,18 +65,20 @@ Improvements
 Fixes
 -----
 
-* [:doc:`reference/columns/vector`] 参照型でない（not reference vector column）重み付きベクターカラム（weight vector column）で ``WEIGHT_FLOAT32`` を指定したとき、結果が整数型(integer)で表示されていた問題を修正しました。
+* [:doc:`reference/commands/select`][:doc:`reference/columns/vector`] 重み付きベクターカラム（weight vector column）で ``WEIGHT_FLOAT32`` を指定したとき、結果が整数(integer)で表示されていた問題を修正しました。
 
-  内部的な処理は ``float32`` で行われていましたが、最終的な結果の表示が整数型(integer)になっていました。
+  参照型の重み付きベクターカラムにはこの問題はなく、参照型ではない重み付きベクターカラムにだけこの問題がありました。
+
+  内部的な処理は浮動小数点数で行われていましたが、最終的な結果の表示が整数になっていました。
 
   以下は、この問題の例です。
 
   .. code-block::
   
      table_create Memos TABLE_HASH_KEY ShortText
-     [[0,0.0,0.0],true]
+     # [[0,0.0,0.0],true]
      column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 ShortText
-     [[0,0.0,0.0],true]
+     # [[0,0.0,0.0],true]
      load --table Memos
      [
      {
@@ -65,44 +89,44 @@ Fixes
        }
      }
      ]
-     [[0,0.0,0.0],1]
+     # [[0,0.0,0.0],1]
      select Memos
-     [
-       [
-         0,
-         0.0,
-         0.0
-       ],
-       [
-         [
-           [
-             1
-           ],
-           [
-             [
-               "_id",
-               "UInt32"
-             ],
-             [
-               "_key",
-               "ShortText"
-             ],
-             [
-               "tags",
-               "ShortText"
-             ]
-           ],
-           [
-             1,
-             "Groonga is fast",
-             {
-               "groonga": 2,
-               "full text search": 1
-             }
-           ]
-         ]
-       ]
-     ]
+     # [
+     #   [
+     #     0,
+     #     0.0,
+     #     0.0
+     #   ],
+     #   [
+     #     [
+     #       [
+     #         1
+     #       ],
+     #       [
+     #         [
+     #           "_id",
+     #           "UInt32"
+     #         ],
+     #         [
+     #           "_key",
+     #           "ShortText"
+     #         ],
+     #         [
+     #           "tags",
+     #           "ShortText"
+     #         ]
+     #       ],
+     #       [
+     #         1,
+     #         "Groonga is fast",
+     #         {
+     #           "groonga": 2,
+     #           "full text search": 1
+     #         }
+     #       ]
+     #     ]
+     #   ]
+     # ]
 
   ``tags`` カラムが ``ShortText`` 型の重み付きベクターカラム（weight vector column）、つまり参照型でない重み付きベクターカラムです。
 
@@ -120,42 +144,42 @@ Fixes
   .. code-block::
      
      select Memos
-     [
-       [
-         0,
-         0.0,
-         0.0
-       ],
-       [
-         [
-           [
-             1
-           ],
-           [
-             [
-               "_id",
-               "UInt32"
-             ],
-             [
-               "_key",
-               "ShortText"
-             ],
-             [
-               "tags",
-               "ShortText"
-             ]
-           ],
-           [
-             1,
-             "Groonga is fast",
-             {
-               "groonga": 2.8,
-               "full text search": 1.2
-             }
-           ]
-         ]
-       ]
-     ]
+     # [
+     #   [
+     #     0,
+     #     0.0,
+     #     0.0
+     #   ],
+     #   [
+     #     [
+     #       [
+     #         1
+     #       ],
+     #       [
+     #         [
+     #           "_id",
+     #           "UInt32"
+     #         ],
+     #         [
+     #           "_key",
+     #           "ShortText"
+     #         ],
+     #         [
+     #           "tags",
+     #           "ShortText"
+     #         ]
+     #       ],
+     #       [
+     #         1,
+     #         "Groonga is fast",
+     #         {
+     #           "groonga": 2.8,
+     #           "full text search": 1.2
+     #         }
+     #       ]
+     #     ]
+     #   ]
+     # ]
 
 .. _release-12-0-9:
 
