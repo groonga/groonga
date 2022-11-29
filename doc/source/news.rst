@@ -13,24 +13,26 @@ Release 12.1.0 - 2022-11-29
 Improvements
 ------------
 
-* [:doc:`reference/commands/load`] ``load`` のスローログ(slow log)の出力に対応しました。
+* [:doc:`reference/commands/load`] Added support for slow log output of ``load``.
 
-  この機能は、Groongaのパフォーマンスチューニングに使用します。
-  例えば、 ``load`` が遅いときに、この機能を使うことで平均よりも時間がかかっているレコードを検出でき、ボトルネックを特定できます。
+  This feature is for Groonga's performance tuning.
+  For example, you can use this feature to detect records that are taking time longer than average when ``load`` is slow.
 
-  環境変数（Environment variable） ``GRN_SLOW_LOG_THRESHOLD`` を指定することで、スローログの出力が有効になります。
-  ``GRN_SLOW_LOG_THRESHOLD`` にはしきい値となる時間を秒単位で指定します。小数を指定することで、1秒よりも短い時間も指定できます。
-  内部的に ``GRN_SLOW_LOG_THRESHOLD`` で指定された時間よりも時間がかかっている処理がある場合、デバッグレベルのログを出力します。
+  Slow log output would be enabled with specifying ``GRN SLOWLOG THRESHOLD`` as the Environment variable.
 
-  ログレベルは :option:`log-level <groonga --log-level>` オプションまたは :doc:`reference/commands/log_level` コマンドで変更可能です。
+  Here is about specifying ``GRN_SLOW_LOG_THRESHOLD``.
 
-  ``GRN_SLOW_LOG_THRESHOLD`` にどのような値を指定すべきかは環境や調べたい内容に依存します。
-  例えば、 ``load`` の件数と所要時間から、1レコードあたりの所要時間を求め、その値を指定することが考えられます。
-  こうすることで、平均よりも ``load`` に時間がかかっているレコードを調べることができます。
+  * ``GRN_SLOW_LOG_THRESHOLD`` requires specifying time in seconds as a threshold. The time of the threshold can shorter than a second with specifying decimal number.
+  * A log with debug level would be output if the processing time takes longer than specifyed time with ``GRN_SLOW_LOG_THRESHOLD``.
 
-  ``load`` の所要時間は :ref:`query-log` から確認することができます。
+  Setting for log level would be controled with :option:`log-level <groonga --log-level>` or :doc:`reference/commands/log_level`.
 
-  
+  What value to specify ``GRN_SLOW_LOG_THRESHOLD`` would depend on its environment and checking purpose.
+  For an example, we can use following setting to check which records are taking longer time for ``load``.
+  For this, we specify the value based on necesarry time per 1 record caliculated with  total number and time of ``load``.
+
+  Necessary time to process `load` would be checked in :ref:`query-log`.
+
   .. code-block::
 
      2022-11-16 16:41:27.139000|000000CE63AFF640|>load --table Memo
@@ -38,45 +40,47 @@ Improvements
      2022-11-16 16:43:40.842000|000000CE63AFF640|:000133703000000 send(46)
      2022-11-16 16:43:40.842000|000000CE63AFF640|<000133703000000 rc=0
 
-  この例では、以下のようになっています。
+  In this example, the time would be as following;
+
+  * Number of records: 100000
+  * Time to process: 2 minutes 13 seconds = 133 seconds ( Based on Time stamp for beginning ``load`` : 16:43:27 and time stamp for end of ``load`` ( ``rc=0`` ): 16:43:40 )
+  * Time to process 1 record:  0.00133 seconds (133 divided with 100000)
+
+  Therefore, we specify ``0.00133`` as a threshold in ``GRN_SLOW_LOG_THRESHOLD`` to check which records are taking longer time for ``load``.
+
+  Note: Enabling slow log may cause following bad effects.
+
+  *  Performance degradation
+  *  Larger log size
   
-  * レコード数は100000件
+  Thus, the slow log is recommended to be enabled only necessary occasion.
   
-    * ``load(100000)`` より
-  * 所要時間は 2分13秒 = 133秒
-
-  したがって、1行あたり 0.00133 秒かかっているため、 ``GRN_SLOW_LOG_THRESHOLD`` に ``0.00133`` を指定します。
-
-  スローログを有効にすると、以下の悪影響があります。
+* [:doc:`reference/api`] Added new API ``grn_is_reference_count_enable()``.
   
-  * パフォーマンスの悪化
-  * ログサイズの肥大化
+  This new API would return boolean weather reference count mode is enabled or not.
+
+* [:doc:`reference/api`] Added new API ``grn_set_reference_count_enable(bool enable)``.
+
+  This new API would enable or disable reference count mode. 
+
+  For secure usage,  this API can't switch reference count mode if there are multiple open database. 
+
+* [:doc:`reference/api`] Added new API  ``grn_is_back_trace_enable()``.
   
-  そのため、必要な場合にのみこのログ強化を有効にすることを推奨します。
-  
-* [:doc:`reference/api`] 新しいAPI ``grn_is_reference_count_enable()`` を追加しました。
-  
-  参照カウントモード(reference count mode)が有効になっているかどうかの真偽値（boolean）を返却（return）します。
+  This new API would return boolean weather logging back trace is enabled or not.
 
-* [:doc:`reference/api`] 新しいAPI ``grn_set_reference_count_enable(bool enable)`` を追加しました。
+* [:doc:`reference/api`] Added new API ``grn_set_back_trace_enable(bool enable)``.
 
-  参照カウントモード(reference count mode)の有効/無効を切り替えます。
+  This new API would enable or disable logging back trace. 
 
-* [:doc:`reference/api`] 新しいAPI ``grn_is_back_trace_enable()`` を追加しました。
-  
-  バックトレース(back trace)の出力が有効になっているかどうかの真偽値（boolean）を返却（return）します。
-
-* [:doc:`reference/api`] 新しいAPI ``grn_set_back_trace_enable(bool enable)`` を追加しました。
-
-  バックトレース(back trace)の出力の有効/無効を切り替えます。
-
-  バックトレースの出力時にクラッシュする場合があるため、そういった場合に無効化します。
+  In some environments, Groonga crashes when logging back trace, 
+  logging back trace should be disabled in such envoronments.
 
 * [:doc:`reference/commands/status`] Added new items: ``back_trace`` and ``reference_count``.
 
-  ``back_trace`` はバックトレースの出力が有効になっているかどうかを真偽値で返却します。
+  ``reference_count`` indicates weather logging back trace is enabled or not as boolean.
 
-  ``reference_count`` は参照カウントモードが有効になっているかどうかを真偽値で返却します。
+  ``back_trace`` indicates weather logging back trace is enabled or not as boolean.
 
   .. code-block::
 
@@ -97,13 +101,13 @@ Improvements
 Fixes
 -----
 
-* [:doc:`reference/commands/select`][:doc:`reference/columns/vector`] 重み付きベクターカラム（weight vector column）で ``WEIGHT_FLOAT32`` を指定したとき、結果が整数(integer)で表示されていた問題を修正しました。
+* [:doc:`reference/commands/select`][:doc:`reference/columns/vector`] Fixed a bug displaying integer in the results when a weight vector column specifies `WEIGHT FLOAT32`.
 
-  参照型の重み付きベクターカラムにはこの問題はなく、参照型ではない重み付きベクターカラムにだけこの問題がありました。
+  This bug was only appeared in use of a weight vector column without reference type. A reference type weight vector column does not have this bug.
 
-  内部的な処理は浮動小数点数で行われていましたが、最終的な結果の表示が整数になっていました。
+  The bug only affected on the final result display even though internal processes was in floating-point number.
 
-  以下は、この問題の例です。
+  An example for this bug as follows;
 
   .. code-block::
   
@@ -160,9 +164,9 @@ Fixes
      #   ]
      # ]
 
-  ``tags`` カラムが ``ShortText`` 型の重み付きベクターカラム（weight vector column）、つまり参照型でない重み付きベクターカラムです。
+  ``tags`` column is a ``ShortText`` type weight vector column, sample of non-reference type weight vector column.
 
-  この例の ``select`` の結果の以下の部分は、それぞれ ``2.8`` 、 ``1.2`` であるべきですが、 ``2`` 、 ``1`` と誤った結果が返却されていました。
+  The results in this sample, the value 2 and 1 are returned as below, evne though the correct value should be 2.8 and 1.2.
 
   .. code-block::
      
@@ -171,7 +175,7 @@ Fixes
        "full text search": 1
      }
 
-  この修正により、以下のように正しい結果が返却されるようになりました。
+  Applying this fix, the results would be returned as follows;
 
   .. code-block::
      
