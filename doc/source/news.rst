@@ -5,6 +5,218 @@
 News
 ====
 
+.. _release-12-1-0:
+
+Release 12.1.0 - 2022-11-29
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`reference/commands/load`] Added support for slow log output of ``load``.
+
+  This feature is for Groonga's performance tuning.
+  For example, you can use this feature to detect records that are taking time longer than average when ``load`` is slow.
+
+  Slow log output would be enabled with specifying ``GRN SLOWLOG THRESHOLD`` as the Environment variable.
+
+  Here is about specifying ``GRN_SLOW_LOG_THRESHOLD``.
+
+  * ``GRN_SLOW_LOG_THRESHOLD`` requires specifying time in seconds as a threshold. The time of the threshold can shorter than a second with specifying decimal number.
+  * A log with debug level would be output if the processing time takes longer than specifyed time with ``GRN_SLOW_LOG_THRESHOLD``.
+
+  Setting for log level would be controled with :option:`log-level <groonga --log-level>` or :doc:`reference/commands/log_level`.
+
+  What value to specify ``GRN_SLOW_LOG_THRESHOLD`` would depend on its environment and checking purpose.
+  For an example, we can use following setting to check which records are taking longer time for ``load``.
+  For this, we specify the value based on necesarry time per 1 record caliculated with  total number and time of ``load``.
+
+  Necessary time to process `load` would be checked in :ref:`query-log`.
+
+  .. code-block::
+
+     2022-11-16 16:41:27.139000|000000CE63AFF640|>load --table Memo
+     2022-11-16 16:43:40.841000|000000CE63AFF640|:000133702000000 load(100000): [0][0][100000]
+     2022-11-16 16:43:40.842000|000000CE63AFF640|:000133703000000 send(46)
+     2022-11-16 16:43:40.842000|000000CE63AFF640|<000133703000000 rc=0
+
+  In this example, the time would be as following;
+
+  * Number of records: 100000
+  * Time to process: 2 minutes 13 seconds = 133 seconds ( Based on Time stamp for beginning ``load`` : 16:43:27 and time stamp for end of ``load`` ( ``rc=0`` ): 16:43:40 )
+  * Time to process 1 record:  0.00133 seconds (133 divided with 100000)
+
+  Therefore, we specify ``0.00133`` as a threshold in ``GRN_SLOW_LOG_THRESHOLD`` to check which records are taking longer time for ``load``.
+
+  Note: Enabling slow log may cause following bad effects.
+
+  *  Performance degradation
+  *  Larger log size
+  
+  Thus, the slow log is recommended to be enabled only necessary occasion.
+  
+* [:doc:`reference/api`] Added new API ``grn_is_reference_count_enable()``.
+  
+  This new API would return boolean weather reference count mode is enabled or not.
+
+* [:doc:`reference/api`] Added new API ``grn_set_reference_count_enable(bool enable)``.
+
+  This new API would enable or disable reference count mode. 
+
+  For secure usage,  this API can't switch reference count mode if there are multiple open database. 
+
+* [:doc:`reference/api`] Added new API  ``grn_is_back_trace_enable()``.
+  
+  This new API would return boolean weather logging back trace is enabled or not.
+
+* [:doc:`reference/api`] Added new API ``grn_set_back_trace_enable(bool enable)``.
+
+  This new API would enable or disable logging back trace. 
+
+  In some environments, Groonga crashes when logging back trace, 
+  logging back trace should be disabled in such envoronments.
+
+* [:doc:`reference/commands/status`] Added new items: ``back_trace`` and ``reference_count``.
+
+  ``reference_count`` indicates weather logging back trace is enabled or not as boolean.
+
+  ``back_trace`` indicates weather logging back trace is enabled or not as boolean.
+
+  .. code-block::
+
+      status
+      [
+        [
+          0,
+          1654237168.304533,
+          0.0001480579376220703
+        ],
+        {
+          (omitted)
+          "back_trace": true,
+          "reference_count": false,
+        }
+      ]
+
+Fixes
+-----
+
+* [:doc:`reference/commands/select`][:doc:`reference/columns/vector`] Fixed a bug displaying integer in the results when a weight vector column specifies `WEIGHT FLOAT32`.
+
+  This bug was only appeared in use of a weight vector column without reference type. A reference type weight vector column does not have this bug.
+
+  The bug only affected on the final result display even though internal processes was in floating-point number.
+
+  An example for this bug as follows;
+
+  .. code-block::
+  
+     table_create Memos TABLE_HASH_KEY ShortText
+     # [[0,0.0,0.0],true]
+     column_create Memos tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 ShortText
+     # [[0,0.0,0.0],true]
+     load --table Memos
+     [
+     {
+       "_key": "Groonga is fast",
+       "tags": {
+         "groonga": 2.8,
+         "full text search": 1.2
+       }
+     }
+     ]
+     # [[0,0.0,0.0],1]
+     select Memos
+     # [
+     #   [
+     #     0,
+     #     0.0,
+     #     0.0
+     #   ],
+     #   [
+     #     [
+     #       [
+     #         1
+     #       ],
+     #       [
+     #         [
+     #           "_id",
+     #           "UInt32"
+     #         ],
+     #         [
+     #           "_key",
+     #           "ShortText"
+     #         ],
+     #         [
+     #           "tags",
+     #           "ShortText"
+     #         ]
+     #       ],
+     #       [
+     #         1,
+     #         "Groonga is fast",
+     #         {
+     #           "groonga": 2,
+     #           "full text search": 1
+     #         }
+     #       ]
+     #     ]
+     #   ]
+     # ]
+
+  ``tags`` column is a ``ShortText`` type weight vector column, sample of non-reference type weight vector column.
+
+  The results in this sample, the value 2 and 1 are returned as below, evne though the correct value should be 2.8 and 1.2.
+
+  .. code-block::
+     
+     {
+       "groonga": 2,
+       "full text search": 1
+     }
+
+  Applying this fix, the results would be returned as follows;
+
+  .. code-block::
+     
+     select Memos
+     # [
+     #   [
+     #     0,
+     #     0.0,
+     #     0.0
+     #   ],
+     #   [
+     #     [
+     #       [
+     #         1
+     #       ],
+     #       [
+     #         [
+     #           "_id",
+     #           "UInt32"
+     #         ],
+     #         [
+     #           "_key",
+     #           "ShortText"
+     #         ],
+     #         [
+     #           "tags",
+     #           "ShortText"
+     #         ]
+     #       ],
+     #       [
+     #         1,
+     #         "Groonga is fast",
+     #         {
+     #           "groonga": 2.8,
+     #           "full text search": 1.2
+     #         }
+     #       ]
+     #     ]
+     #   ]
+     # ]
+
 .. _release-12-0-9:
 
 Release 12.0.9 - 2022-10-28
