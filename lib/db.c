@@ -12999,16 +12999,17 @@ grn_obj_close(grn_ctx *ctx, grn_obj *obj)
   if (obj) {
     if (GRN_DB_OBJP(obj)) {
       grn_id id = DB_OBJ(obj)->id;
+      grn_obj *db = DB_OBJ(obj)->db;
       grn_hook_entry entry;
 
       grn_log_reference_count("%p: close: %u: %p\n", ctx, id, obj);
 
-      if (id != GRN_ID_NIL && !(id & GRN_OBJ_TMP_OBJECT)) {
-        grn_db_remove_deferred_unref(ctx, ctx->impl->db, id);
+      if (id != GRN_ID_NIL && !(id & GRN_OBJ_TMP_OBJECT) && db) {
+        grn_db_remove_deferred_unref(ctx, db, id);
         if (grn_reference_count_should_log(ctx, obj->header.type)) {
           const char *name;
           uint32_t name_size = 0;
-          name = _grn_table_key(ctx, DB_OBJ(obj)->db, id, &name_size);
+          name = _grn_table_key(ctx, db, id, &name_size);
           GRN_LOG(ctx, GRN_LOG_REFERENCE_COUNT,
                   "[obj][close] <%u>(<%.*s>):<%u>(<%s>)",
                   id,
