@@ -137,7 +137,7 @@ msgstr "ログサイズの肥大化"
 
 msgid ""
 "Thus, the slow log is recommended to be enabled only necessary occasion."
-msgstr "そのため、必要な場合にのみこのログ強化を有効にすることを推奨します。"
+msgstr "そのため、必要な場合にのみこのスローログを有効にすることを推奨します。"
 
 msgid ""
 "[:doc:`reference/api`] Added new API ``grn_is_reference_count_enable()``."
