@@ -429,6 +429,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Tue Nov 29 2022 Takashi Hashida <hashida@clear-code.com> - 12.1.0-1
+- New upstream release.
+
 * Mon Oct 31 2022 Takashi Hashida <hashida@clear-code.com> - 12.0.9-1
 - New upstream release.
 
