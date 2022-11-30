@@ -22,6 +22,10 @@ def detect_system_version
   system_release_cpe = "/etc/system-release-cpe"
   if File.exist?(system_release_cpe)
     components = File.read(system_release_cpe).chomp.split(":")
+    if components[-1] == "baseos"
+      components.pop
+      components.pop
+    end
     version = components[-1]
     system_id = components[-3]
     "#{system_id}-#{version}"
@@ -58,6 +62,22 @@ def prepare_system_centos_7(options)
   run_command("yum", "install", "-y", *packages)
 end
 
+def prepare_system_almalinux_8(options)
+  run_command("dnf", "install", "-y",
+              "epel-release",
+              "https://packages.groonga.org/almalinux/8/groonga-release-latest.noarch.rpm")
+  run_command("dnf", "install", "-y", "binutils")
+  packages = []
+  if options.version
+    groonga_package_version = "-#{options.version}-1.el8.x86_64"
+  else
+    groonga_package_version = ""
+  end
+  packages << "groonga-libs#{groonga_package_version}"
+  packages << "groonga-libs-debuginfo#{groonga_package_version}"
+  run_command("dnf", "install", "--enablerepo=powertools", "-y", *packages)
+end
+
 def prepare_system_amazon_2(options)
   run_command("amazon-linux-extras", "install", "epel", "-y")
   prepare_system_centos_7(options)
@@ -67,6 +87,8 @@ def prepare_system(system_version, options)
   case system_version
   when "centos-7"
     prepare_system_centos_7(options)
+  when "almalinux-8"
+    prepare_system_almalinux_8(options)
   when "amazon-2"
     prepare_system_amazon_2(options)
   else
@@ -76,7 +98,7 @@ end
 
 def resolve_debug_path(path, system_version)
   case system_version
-  when /\Acentos-/, /\Aamazon-/
+  when /\Acentos-/, /\Aalmalinux-/, /\Aamazon-/
     Dir.glob("/usr/lib/debug#{path}*.debug").first || path
   else
     raise "unsupported system: #{system_version}"
