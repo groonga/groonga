@@ -114,13 +114,6 @@ jobs:
           }
           Write-Output "VC_PREFIX=${VC_PREFIX}" | `
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-          Write-Output "::set-output name=install-folder::${INSTALL_FOLDER}"
-          Write-Output "::set-output name=install-parent-folder::${INSTALL_PARENT_FOLDER}"
-          Write-Output "::set-output name=relative-install-folder::${RELATIVE_INSTALL_FOLDER}"
-          Write-Output "::set-output name=install-folder-with-vcruntime::${INSTALL_FOLDER_WITH_VCRUNTIME}"
-          Write-Output "::set-output name=install-parent-folder-with-vcruntime::${INSTALL_PARENT_FOLDER_WITH_VCRUNTIME}"
-          Write-Output "::set-output name=relative-install-folder-with-vcruntime::${RELATIVE_INSTALL_FOLDER_WITH_VCRUNTIME}"
       - uses: actions/cache@v3
         with:
           path: |
@@ -199,10 +192,20 @@ jobs:
           Move-Item groonga-admin-* ..\groonga-admin
 
       # Artifact
+      - name: Compress the artifact without VC++ runtime
+        run: |
+          pushd "${Env:FULL_INSTALL_FOLDER}\.."
+          Compress-Archive `
+            -Path ${Env:INSTALL_FOLDER} `
+            -DestinationPath "${Env:FULL_INSTALL_FOLDER}.zip"
+          popd
+          Copy-Item `
+            "${Env:FULL_INSTALL_FOLDER}.zip" `
+            "${Env:INSTALL_FOLDER}.zip"
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.env.outputs.install-folder }}
-          path: ${{ steps.env.outputs.install-parent-folder }}
+          name: ${{ env.INSTALL_FOLDER }}
+          path: ${{ env.INSTALL_FOLDER }}.zip
       - name: Prepare artifacts with VC++ runtime
         run: |
           Set-PSDebug -Trace 2
@@ -246,44 +249,30 @@ jobs:
           Copy-Item `
             "${Env:GITHUB_WORKSPACE}\packages\windows\vcruntime\ucrt-readme.txt" `
             ${GROONGA_VC_REDIST_LICENSE_DIR}
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ${{ steps.env.outputs.install-folder-with-vcruntime }}
-          path: ${{ steps.env.outputs.install-parent-folder-with-vcruntime }}
-
-      # Release
-      - name: Compress the artifact without VC++ runtime
-        if: |
-          startsWith(github.ref, 'refs/tags/')
-        run: |
-          pushd "${Env:FULL_INSTALL_FOLDER}\.."
-          Compress-Archive `
-            -Path ${Env:INSTALL_FOLDER} `
-            -DestinationPath "${Env:FULL_INSTALL_FOLDER}.zip"
-          popd
-      - name: Upload the artifact without VC++ runtime to release
-        uses: softprops/action-gh-release@v1
-        if: |
-          startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            ${{ steps.env.outputs.relative-install-folder }}.zip
       - name: Compress the artifact with VC++ runtime
-        if: |
-          startsWith(github.ref, 'refs/tags/')
         run: |
           pushd "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\.."
           Compress-Archive `
             -Path ${Env:INSTALL_FOLDER_WITH_VCRUNTIME} `
             -DestinationPath "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
           popd
-      - name: Upload the artifact with VC++ runtime to release
+          Copy-Item `
+            "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}.zip" `
+            "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}
+          path: ${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}.zip
+
+      # Release
+      - name: Upload the artifacts to release
         uses: softprops/action-gh-release@v1
         if: |
           startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            ${{ steps.env.outputs.relative-install-folder-with-vcruntime }}.zip
+            ${{ env.INSTALL_FOLDER }}.zip
+            ${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}.zip
 
       # Test
       - name: Update MSYS2
