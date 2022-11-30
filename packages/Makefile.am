@@ -1,6 +1,3 @@
-SUBDIRS =					\
-	source
-
 EXTRA_DIST =					\
 	Rakefile				\
 	launchpad-helper.rb			\

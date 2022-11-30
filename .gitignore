@@ -151,7 +151,7 @@ CMakeFiles
 /packages/yum/tmp/
 /packages/yum/.vagrant/
 /packages/yum/env.sh
-/packages/source/files/
+/packages/source/repositories/
 /packages/windows/.vagrant/
 /packages/windows/LICENSE
 /packages/windows/dist-x64/

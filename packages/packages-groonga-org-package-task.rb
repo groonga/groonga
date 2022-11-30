@@ -25,6 +25,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
 
   def define
     super
+    define_source_task
     define_windows_task
     define_release_tasks
     define_ubuntu_tasks
@@ -60,6 +61,34 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
     task yum: ["yum:clean"]
     super
+  end
+
+  def enable_source?
+    true
+  end
+
+  def source_dir
+    "source"
+  end
+
+  def source_targets
+    return [] unless enable_source?
+
+    targets = (ENV["SOURCE_TARGETS"] || "").split(",")
+    return targets unless targets.empty?
+
+    source_targets_default
+  end
+
+  def define_source_task
+    namespace :source do
+      desc "Clean files for source"
+      task :clean do
+        rm_rf("#{source_dir}/repositories")
+      end
+    end
+    desc "Release files for Source"
+    task source: ["source:clean"]
   end
 
   def enable_windows?
@@ -162,6 +191,8 @@ class PackagesGroongaOrgPackageTask < PackageTask
   def download_repositories_dir(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
     case target_namespace
+    when :source
+      "#{base_dir}/repositories/source/#{@package}"
     when :windows
       "#{base_dir}/repositories/windows/#{@package}"
     else
@@ -201,6 +232,18 @@ class PackagesGroongaOrgPackageTask < PackageTask
                "--strip-components=#{built_package_n_split_components}")
           end
         end
+      when :source
+        cd(repositories_dir) do
+          cp(archive, ".")
+          archive_base_name = File.basename(archive)
+          sh("gpg",
+             "--local-user", repository_gpg_key_ids[0],
+             "--armor",
+             "--detach-sign",
+             archive_base_name)
+          latest_link_base_name = archive_base_name.gsub(@version, "latest")
+          ln_sf(archive_base_name, latest_link_base_name)
+        end
       when :windows
         cd(repositories_dir) do
           cp(archive, ".")
@@ -221,7 +264,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
     destination = "#{repository_rsync_base_path}/"
     rsync_options = ["-av"]
     case target_namespace
-    when :windows
+    when :source, :windows
     else
       rsync_options << "--exclude=*.buildinfo"
       rsync_options << "--exclude=*.changes"
@@ -234,7 +277,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
   end
 
   def define_release_tasks
-    [:apt, :yum, :windows].each do |target_namespace|
+    [:apt, :yum, :source, :windows].each do |target_namespace|
       tasks = []
       namespace target_namespace do
         enabled = __send__("enable_#{target_namespace}?")

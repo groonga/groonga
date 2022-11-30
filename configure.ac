@@ -1859,7 +1859,6 @@ AC_CONFIG_FILES([
   packages/Makefile
   packages/apt/debian/groonga-keyring.postrm
   packages/apt/env.sh
-  packages/source/Makefile
   plugins/Makefile
   plugins/functions/Makefile
   plugins/query_expanders/Makefile

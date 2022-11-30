@@ -28,7 +28,8 @@ jobs:
             autoconf-archive \
             devscripts \
             python3-pip \
-            ruby
+            ruby \
+            zip
           sudo pip3 install -U pip
       - name: Install Sphinx
         run: |
@@ -56,12 +57,27 @@ jobs:
       - name: Build archive
         run: |
           make dist
+      - name: Create zip
+        run: |
+          version=$(cat base_version)
+          tar xzf groonga-${version}.tar.gz
+          pushd groonga-${version}/vendor
+          ruby download_lz4.rb
+          ruby download_mecab.rb
+          ruby download_message_pack.rb
+          ruby download_rapidjson.rb
+          ruby download.rb zstd
+          popd
+          zip -r groonga-${version}.zip groonga-${version}
+          rm -rf groonga-${version}
 
       # Artifact
       - uses: actions/upload-artifact@v2
         with:
           name: source
-          path: groonga-*.tar.gz
+          path: |
+            groonga-*.tar.gz
+            groonga-*.zip
 
       # Release
       - name: Upload to release
@@ -71,6 +87,7 @@ jobs:
         with:
           files: |
             groonga-*.tar.gz
+            groonga-*.zip
   build:
     name: Build
     needs: source

@@ -89,6 +89,13 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     end
   end
 
+  def source_targets_default
+    [
+      "#{@archive_base_name}.tar.gz",
+      "#{@archive_base_name}.zip",
+    ]
+  end
+
   def windows_targets_default
     [
       "#{@package}-#{@version}-x64-vs2022.zip",
@@ -157,6 +164,8 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       else
         url << "#{target}-x86_64.tar.gz"
       end
+    when :source
+      url << "#{target}"
     when :windows
       url << "#{target}"
     else
