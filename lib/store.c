@@ -5069,7 +5069,6 @@ grn_ja_cast_value_vector_fixed_bulk(grn_ctx *ctx,
     grn_obj *tokenizer;
     grn_table_get_info(ctx, range, NULL, NULL, &tokenizer, NULL, NULL);
     if (tokenizer) {
-      grn_obj_unref(ctx, tokenizer);
       need_tokenize = true;
     }
   }
