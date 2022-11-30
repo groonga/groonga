@@ -355,11 +355,11 @@ grn_snip_set_normalizer(grn_ctx *ctx, grn_obj *snip,
 
   snip_ = (grn_snip *)snip;
   if (snip_->normalizer != normalizer) {
-    if (snip_->normalizer) {
+    if (snip_->normalizer && snip_->normalizer != GRN_NORMALIZER_AUTO) {
       grn_obj_unref(ctx, snip_->normalizer);
     }
     snip_->normalizer = normalizer;
-    if (snip_->normalizer) {
+    if (snip_->normalizer && snip_->normalizer != GRN_NORMALIZER_AUTO) {
       grn_obj_refer(ctx, snip_->normalizer);
     }
   }
@@ -695,7 +695,7 @@ grn_snip_close(grn_ctx *ctx, grn_snip *snip)
   if (snip->delimiter_pattern) {
     GRN_FREE(snip->delimiter_pattern);
   }
-  if (snip->normalizer) {
+  if (snip->normalizer && snip->normalizer != GRN_NORMALIZER_AUTO) {
     grn_obj_unref(ctx, snip->normalizer);
   }
   if (snip->flags & GRN_SNIP_COPY_TAG) {
