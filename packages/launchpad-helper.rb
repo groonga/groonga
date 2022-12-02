@@ -36,6 +36,7 @@ module LaunchpadHelper
       ["bionic", "18.04"],
       ["focal", "20.04"],
       ["jammy", "22.04"],
+      ["kinetic", "22.10"],
     ]
   end
 
