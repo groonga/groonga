@@ -68,6 +68,9 @@ grn_table_apply_expr(grn_ctx *ctx,
     if (value) {
       grn_obj_set_value(ctx, output_column, id, value, GRN_OBJ_SET);
     }
+    if (ctx->rc != GRN_SUCCESS) {
+      break;
+    }
   } GRN_TABLE_EACH_END(ctx, cursor);
   grn_expr_executor_fin(ctx, &executor);
 
