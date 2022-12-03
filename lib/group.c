@@ -1077,8 +1077,12 @@ grn_table_group_single_key_records_foreach(grn_ctx *ctx,
       for (i = 0; i < n_elements; i++) {
         const char *content;
         unsigned int content_length;
-        content_length = grn_vector_get_element(ctx, bulk, i,
-                                                &content, NULL, NULL);
+        content_length = grn_vector_get_element(ctx,
+                                                bulk,
+                                                i,
+                                                &content,
+                                                NULL,
+                                                NULL);
         grn_id group_id = grn_table_add_v(ctx,
                                           data->res,
                                           content,
