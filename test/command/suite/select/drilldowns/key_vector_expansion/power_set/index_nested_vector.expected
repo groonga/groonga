@@ -1,0 +1,212 @@
+table_create Tags TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Products TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Purchases TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Purchases product COLUMN_SCALAR Products
+[[0,0.0,0.0],true]
+column_create Purchases tags COLUMN_VECTOR Tags
+[[0,0.0,0.0],true]
+column_create Products purchases COLUMN_INDEX Purchases product
+[[0,0.0,0.0],true]
+load --table Products
+[
+{"_key": "apple"},
+{"_key": "banana"},
+{"_key": "cacao"}
+]
+[[0,0.0,0.0],3]
+load --table Purchases
+[
+{"product": "apple",  "tags": ["man", "one"]},
+{"product": "banana", "tags": ["man", "many"]},
+{"product": "cacao",  "tags": ["woman"]},
+{"product": "apple",  "tags": ["child", "many"]}
+]
+[[0,0.0,0.0],4]
+select Products   --drilldowns[tag].keys purchases.tags   --drilldowns[tag].key_vector_expansion power_set   --drilldowns[tag].columns[keys].stage initial   --drilldowns[tag].columns[keys].value _key   --drilldowns[tag].columns[keys].flags COLUMN_VECTOR   --drilldowns[tag].columns[keys].type Tags   --drilldowns[tag].output_columns keys,_nsubrecs   --drilldowns[tag].limit -1   --output_columns _key,purchases.tags
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "purchases.tags",
+          "Tags"
+        ]
+      ],
+      [
+        "apple",
+        [
+          [
+            "man",
+            "one"
+          ],
+          [
+            "child",
+            "many"
+          ]
+        ]
+      ],
+      [
+        "banana",
+        [
+          [
+            "man",
+            "many"
+          ]
+        ]
+      ],
+      [
+        "cacao",
+        [
+          [
+            "woman"
+          ]
+        ]
+      ]
+    ],
+    {
+      "tag": [
+        [
+          16
+        ],
+        [
+          [
+            "keys",
+            "Tags"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          [
+            "man"
+          ],
+          2
+        ],
+        [
+          [
+            "man",
+            "one"
+          ],
+          1
+        ],
+        [
+          [
+            "man",
+            "one",
+            "child"
+          ],
+          1
+        ],
+        [
+          [
+            "man",
+            "one",
+            "child",
+            "many"
+          ],
+          1
+        ],
+        [
+          [
+            "man",
+            "one",
+            "many"
+          ],
+          1
+        ],
+        [
+          [
+            "man",
+            "child"
+          ],
+          1
+        ],
+        [
+          [
+            "man",
+            "child",
+            "many"
+          ],
+          1
+        ],
+        [
+          [
+            "man",
+            "many"
+          ],
+          2
+        ],
+        [
+          [
+            "one"
+          ],
+          1
+        ],
+        [
+          [
+            "one",
+            "child"
+          ],
+          1
+        ],
+        [
+          [
+            "one",
+            "child",
+            "many"
+          ],
+          1
+        ],
+        [
+          [
+            "one",
+            "many"
+          ],
+          1
+        ],
+        [
+          [
+            "child"
+          ],
+          1
+        ],
+        [
+          [
+            "child",
+            "many"
+          ],
+          1
+        ],
+        [
+          [
+            "many"
+          ],
+          2
+        ],
+        [
+          [
+            "woman"
+          ],
+          1
+        ]
+      ]
+    }
+  ]
+]

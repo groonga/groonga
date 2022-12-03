@@ -1,0 +1,35 @@
+table_create Tags TABLE_HASH_KEY ShortText
+
+table_create Products TABLE_PAT_KEY ShortText
+
+table_create Purchases TABLE_NO_KEY
+column_create Purchases product COLUMN_SCALAR Products
+column_create Purchases tags COLUMN_VECTOR Tags
+
+column_create Products purchases COLUMN_INDEX Purchases product
+
+load --table Products
+[
+{"_key": "apple"},
+{"_key": "banana"},
+{"_key": "cacao"}
+]
+
+load --table Purchases
+[
+{"product": "apple",  "tags": ["man", "one"]},
+{"product": "banana", "tags": ["man", "many"]},
+{"product": "cacao",  "tags": ["woman"]},
+{"product": "apple",  "tags": ["child", "many"]}
+]
+
+select Products \
+  --drilldowns[tag].keys purchases.tags \
+  --drilldowns[tag].key_vector_expansion power_set \
+  --drilldowns[tag].columns[keys].stage initial \
+  --drilldowns[tag].columns[keys].value _key \
+  --drilldowns[tag].columns[keys].flags COLUMN_VECTOR \
+  --drilldowns[tag].columns[keys].type Tags \
+  --drilldowns[tag].output_columns keys,_nsubrecs \
+  --drilldowns[tag].limit -1 \
+  --output_columns _key,purchases.tags

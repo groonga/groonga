@@ -1169,51 +1169,38 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
         grn_table_group_single_key_records_foreach_fix_size,
         &data);
       GRN_RA_CACHE_FIN(ctx, (grn_ra *)(data.key.object), &(data.cache));
-    } else if (data.key.object->header.type == GRN_COLUMN_VAR_SIZE) {
-      bool need_multi_keys_data =
-        (data.key.is_vector &&
-         (result->flags & GRN_TABLE_GROUP_KEY_VECTOR_EXPANSION_POWER_SET));
-      if (need_multi_keys_data) {
-        data.multi_keys_data.table = data.table;
-        data.multi_keys_data.keys = &(data.key);
-        data.multi_keys_data.n_keys = 1;
-        data.multi_keys_data.results = result;
-        data.multi_keys_data.n_results = 1;
-        data.multi_keys_data.n_records = grn_table_size(ctx, data.table);
-        data.multi_keys_data.max_n_target_records =
-          (int)(data.multi_keys_data.n_records);
-        data.multi_keys_data.nth_record = 0;
-        GRN_TEXT_INIT(&(data.multi_keys_data.bulk), 0);
-        GRN_OBJ_INIT(&(data.multi_keys_data.vector), GRN_VECTOR, 0, GRN_DB_VOID);
-        GRN_TEXT_INIT(&(data.multi_keys_data.vector_pack_header), 0);
-        GRN_TEXT_INIT(&(data.multi_keys_data.vector_pack_footer), 0);
-        data.multi_keys_data.id = GRN_ID_NIL;
-        data.multi_keys_data.ri = NULL;
-      }
-      if (data.key.is_reference_column &&
-          !(data.flags & GRN_TABLE_GROUP_KEY_VECTOR_EXPANSION_POWER_SET)) {
-        grn_table_cursor_foreach(
-          ctx,
-          cursor,
-          grn_table_group_single_key_records_foreach_var_size_reference,
-          &data);
-      } else {
-        grn_table_cursor_foreach(ctx,
-                                 cursor,
-                                 grn_table_group_single_key_records_foreach,
-                                 &data);
-      }
-      if (need_multi_keys_data) {
-        GRN_OBJ_FIN(ctx, &(data.multi_keys_data.vector_pack_footer));
-        GRN_OBJ_FIN(ctx, &(data.multi_keys_data.vector_pack_header));
-        GRN_OBJ_FIN(ctx, &(data.multi_keys_data.vector));
-        GRN_OBJ_FIN(ctx, &(data.multi_keys_data.bulk));
-      }
+    } else if (data.key.object->header.type == GRN_COLUMN_VAR_SIZE &&
+               data.key.is_reference_column &&
+               !(data.flags & GRN_TABLE_GROUP_KEY_VECTOR_EXPANSION_POWER_SET)) {
+      grn_table_cursor_foreach(
+        ctx,
+        cursor,
+        grn_table_group_single_key_records_foreach_var_size_reference,
+        &data);
     } else {
+      data.multi_keys_data.table = data.table;
+      data.multi_keys_data.keys = &(data.key);
+      data.multi_keys_data.n_keys = 1;
+      data.multi_keys_data.results = result;
+      data.multi_keys_data.n_results = 1;
+      data.multi_keys_data.n_records = grn_table_size(ctx, data.table);
+      data.multi_keys_data.max_n_target_records =
+        (int)(data.multi_keys_data.n_records);
+      data.multi_keys_data.nth_record = 0;
+      GRN_TEXT_INIT(&(data.multi_keys_data.bulk), 0);
+      GRN_OBJ_INIT(&(data.multi_keys_data.vector), GRN_VECTOR, 0, GRN_DB_VOID);
+      GRN_TEXT_INIT(&(data.multi_keys_data.vector_pack_header), 0);
+      GRN_TEXT_INIT(&(data.multi_keys_data.vector_pack_footer), 0);
+      data.multi_keys_data.id = GRN_ID_NIL;
+      data.multi_keys_data.ri = NULL;
       grn_table_cursor_foreach(ctx,
                                cursor,
                                grn_table_group_single_key_records_foreach,
                                &data);
+      GRN_OBJ_FIN(ctx, &(data.multi_keys_data.vector_pack_footer));
+      GRN_OBJ_FIN(ctx, &(data.multi_keys_data.vector_pack_header));
+      GRN_OBJ_FIN(ctx, &(data.multi_keys_data.vector));
+      GRN_OBJ_FIN(ctx, &(data.multi_keys_data.bulk));
     }
     group_key_fin(ctx, &(data.key));
     grn_table_cursor_close(ctx, cursor);
@@ -1600,22 +1587,27 @@ grn_table_group_results_prepare(grn_ctx *ctx,
         GRN_OBJ_UNIT_USERDEF_DOCUMENT;
       if (n_keys == 0 && n_results == 1) {
         key_type = grn_ctx_at(ctx, GRN_DB_SHORT_TEXT);
-      } else if (n_keys == 1 &&
-                 !(grn_obj_is_vector_column(ctx, keys[0].key) &&
-                   rp->flags & GRN_TABLE_GROUP_KEY_VECTOR_EXPANSION_POWER_SET)) {
-        grn_id key_type_id = grn_obj_get_range(ctx, keys[0].key);
-        if (key_type_id == GRN_ID_NIL) {
-          grn_obj inspected;
-          GRN_TEXT_INIT(&inspected, 0);
-          grn_inspect(ctx, &inspected, keys[0].key);
-          ERR(GRN_INVALID_ARGUMENT,
-              "[table][group] unknown key type: %.*s",
-              (int)GRN_TEXT_LEN(&inspected),
-              GRN_TEXT_VALUE(&inspected));
-          GRN_OBJ_FIN(ctx, &inspected);
-          return ctx->rc;
+      } else if (n_keys == 1) {
+        grn_id key_type_id;
+        grn_obj_flags key_type_flags = 0;
+        grn_obj_get_range_info(ctx, keys[0].key, &key_type_id, &key_type_flags);
+        if ((key_type_flags & GRN_OBJ_VECTOR) &&
+            rp->flags & GRN_TABLE_GROUP_KEY_VECTOR_EXPANSION_POWER_SET) {
+          flags |= GRN_OBJ_KEY_VAR_SIZE;
+        } else {
+          if (key_type_id == GRN_ID_NIL) {
+            grn_obj inspected;
+            GRN_TEXT_INIT(&inspected, 0);
+            grn_inspect(ctx, &inspected, keys[0].key);
+            ERR(GRN_INVALID_ARGUMENT,
+                "[table][group] unknown key type: %.*s",
+                (int)GRN_TEXT_LEN(&inspected),
+                GRN_TEXT_VALUE(&inspected));
+            GRN_OBJ_FIN(ctx, &inspected);
+            return ctx->rc;
+          }
+          key_type = grn_ctx_at(ctx, key_type_id);
         }
-        key_type = grn_ctx_at(ctx, key_type_id);
       } else {
         flags |= GRN_OBJ_KEY_VAR_SIZE;
       }
