@@ -4820,6 +4820,7 @@ grn_select_prepare_cache_key(grn_ctx *ctx,
                  *cache_key,                                            \
                  &(drilldown->calc_types),                              \
                  sizeof(grn_table_group_flags));                        \
+    PUT_CACHE_KEY(drilldown->key_vector_expansion);                     \
   } while (false)
   for (auto slice : data->slices) {
     PUT_CACHE_KEY(slice->filter.match_columns);
