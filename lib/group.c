@@ -1017,6 +1017,7 @@ grn_table_group_single_key_records_foreach(grn_ctx *ctx,
 
   if (data->with_subrec) {
     grn_table_cursor_get_value(ctx, cursor, (void **)&ri);
+    data->multi_keys_data.ri = ri;
   }
   grn_id value_id =
     grn_table_group_single_key_records_resolve_id(ctx, data, cursor, id);
