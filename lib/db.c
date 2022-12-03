@@ -7410,6 +7410,7 @@ grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
       *range_flags |= GRN_OBJ_WITH_WEIGHT;
     }
   } else if (obj->header.type == GRN_ACCESSOR) {
+    bool is_vector = false;
     grn_accessor *a;
     for (a = (grn_accessor *)obj; a; a = a->next) {
       switch (a->action) {
@@ -7438,6 +7439,12 @@ grn_obj_get_range_info(grn_ctx *ctx, grn_obj *obj,
         break;
       case GRN_ACCESSOR_GET_COLUMN_VALUE :
         grn_obj_get_range_info(ctx, a->obj, range_id, range_flags);
+        if (*range_flags & GRN_OBJ_VECTOR) {
+          is_vector = true;
+        }
+        if (is_vector) {
+          *range_flags |= GRN_OBJ_VECTOR;
+        }
         break;
       case GRN_ACCESSOR_GET_KEY :
         if (GRN_DB_OBJP(a->obj)) { *range_id = DB_OBJ(a->obj)->header.domain; }
