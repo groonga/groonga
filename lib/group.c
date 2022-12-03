@@ -676,11 +676,10 @@ typedef struct {
   grn_obj vector_pack_footer;
   grn_id id;
   grn_rset_recinfo *ri;
-} grn_table_group_multi_keys_data;
+} multi_keys_data;
 
 static grn_inline void
-grn_table_group_multi_keys_add_record(grn_ctx *ctx,
-                                      grn_table_group_multi_keys_data *data)
+grn_table_group_multi_keys_add_record(grn_ctx *ctx, multi_keys_data *data)
 {
   grn_obj *bulk = &(data->bulk);
   grn_obj *vector = &(data->vector);
@@ -792,7 +791,7 @@ typedef struct {
   grn_table_flags flags;
   bool with_subrec;
   /* for GRN_TABLE_GROUP_KEY_VECTOR_EXPANSION_* */
-  grn_table_group_multi_keys_data multi_keys_data;
+  multi_keys_data multi_keys_data;
 } single_key_records_data;
 
 static grn_inline grn_id
@@ -813,7 +812,7 @@ grn_table_group_single_key_records_resolve_id(grn_ctx *ctx,
 }
 
 typedef struct {
-  grn_table_group_multi_keys_data *multi_keys_data;
+  multi_keys_data *multi_keys_data;
   grn_obj *vector;
   bool is_uvector;
   uint32_t element_size;
@@ -860,10 +859,9 @@ grn_table_group_key_vector_expand_power_set_internal(grn_ctx *ctx,
 }
 
 static void
-grn_table_group_key_vector_expand_power_set(
-  grn_ctx *ctx,
-  grn_table_group_multi_keys_data *multi_keys_data,
-  grn_obj *vector)
+grn_table_group_key_vector_expand_power_set(grn_ctx *ctx,
+                                            multi_keys_data *multi_keys_data,
+                                            grn_obj *vector)
 {
   power_set_data data;
   data.multi_keys_data = multi_keys_data;
@@ -1368,8 +1366,7 @@ grn_table_group_with_range_gap(grn_ctx *ctx, grn_obj *table,
 }
 
 static void
-grn_table_group_multi_keys_scalar_records(grn_ctx *ctx,
-                                          grn_table_group_multi_keys_data *data)
+grn_table_group_multi_keys_scalar_records(grn_ctx *ctx, multi_keys_data *data)
 {
   grn_table_cursor *tc = grn_table_cursor_open(ctx,
                                                data->table,
@@ -1410,7 +1407,7 @@ grn_table_group_multi_keys_scalar_records(grn_ctx *ctx,
 
 static grn_inline void
 grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
-                                         grn_table_group_multi_keys_data *data,
+                                         multi_keys_data *data,
                                          grn_obj *key_buffers,
                                          int nth_key)
 {
@@ -1494,8 +1491,7 @@ grn_table_group_multi_keys_vector_record(grn_ctx *ctx,
 }
 
 static void
-grn_table_group_multi_keys_vector_records(grn_ctx *ctx,
-                                          grn_table_group_multi_keys_data *data)
+grn_table_group_multi_keys_vector_records(grn_ctx *ctx, multi_keys_data *data)
 {
   grn_table_cursor *tc = grn_table_cursor_open(ctx,
                                                data->table,
@@ -1743,7 +1739,7 @@ grn_table_group(grn_ctx *ctx, grn_obj *table,
           break;
         }
       }
-      grn_table_group_multi_keys_data data;
+      multi_keys_data data;
       data.table = table;
       data.keys = GRN_MALLOCN(group_key, (size_t)n_keys);
       if (!data.keys) {
