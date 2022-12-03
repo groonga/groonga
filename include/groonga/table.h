@@ -246,6 +246,7 @@ typedef uint32_t grn_table_group_flags;
 #define GRN_TABLE_GROUP_CALC_MEAN       (0x01<<7)
 #define GRN_TABLE_GROUP_CALC_AGGREGATOR (0x01<<8)
 #define GRN_TABLE_GROUP_LIMIT           (0x01<<9)
+#define GRN_TABLE_GROUP_KEY_VECTOR_EXPANSION_POWER_SET (0x01<<10)
 
 typedef struct _grn_table_group_aggregator grn_table_group_aggregator;
 

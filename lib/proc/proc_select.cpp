@@ -552,6 +552,10 @@ namespace {
                                               "max_n_target_records",
                                               nullptr,
                                               -1)),
+        key_vector_expansion(args_->get_string(prefix_,
+                                               fallback_prefix_,
+                                               "key_vector_expansion",
+                                               nullptr)),
         dynamic_columns(ctx, args),
         result(),
         filtered_result(nullptr)
@@ -628,6 +632,7 @@ namespace {
     grn_raw_string adjuster;
     grn_raw_string table_name;
     int32_t max_n_target_records;
+    grn_raw_string key_vector_expansion;
     DynamicColumns dynamic_columns;
     grn_table_group_result result;
     grn_obj *filtered_result;
@@ -1957,6 +1962,10 @@ namespace {
       }
       if (result.calc_target) {
         result.flags |= calc_types;
+      }
+
+      if (GRN_RAW_STRING_EQUAL_CSTRING(key_vector_expansion, "power_set")) {
+        result.flags |= GRN_TABLE_GROUP_KEY_VECTOR_EXPANSION_POWER_SET;
       }
 
       if (dynamic_columns.group) {
