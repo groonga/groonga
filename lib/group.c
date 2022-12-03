@@ -1190,7 +1190,8 @@ grn_table_group_single_key_records(grn_ctx *ctx, grn_obj *table,
         data.multi_keys_data.id = GRN_ID_NIL;
         data.multi_keys_data.ri = NULL;
       }
-      if (data.key.is_reference_column) {
+      if (data.key.is_reference_column &&
+          !(data.flags & GRN_TABLE_GROUP_KEY_VECTOR_EXPANSION_POWER_SET)) {
         grn_table_cursor_foreach(
           ctx,
           cursor,
