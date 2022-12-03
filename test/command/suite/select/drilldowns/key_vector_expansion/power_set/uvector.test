@@ -1,0 +1,20 @@
+table_create Items TABLE_NO_KEY
+column_create Items counts COLUMN_VECTOR Int32
+
+load --table Items
+[
+{"counts": [1]},
+{"counts": [1, 2]},
+{"counts": [1, 2, 3]}
+]
+
+select Items \
+  --drilldowns[count].keys counts \
+  --drilldowns[count].key_vector_expansion power_set \
+  --drilldowns[count].columns[keys].stage initial \
+  --drilldowns[count].columns[keys].value _key \
+  --drilldowns[count].columns[keys].flags COLUMN_VECTOR \
+  --drilldowns[count].columns[keys].type Int32 \
+  --drilldowns[count].output_columns keys,_nsubrecs \
+  --limit 0 \
+  --output_columns _id

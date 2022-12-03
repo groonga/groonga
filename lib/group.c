@@ -812,33 +812,47 @@ grn_table_group_single_key_records_resolve_id(grn_ctx *ctx,
   }
 }
 
+typedef struct {
+  grn_table_group_multi_keys_data *multi_keys_data;
+  grn_obj *vector;
+  bool is_uvector;
+  uint32_t element_size;
+  uint32_t n_elements;
+} power_set_data;
+
 static void
-grn_table_group_key_vector_expand_power_set_internal(
-  grn_ctx *ctx,
-  grn_table_group_multi_keys_data *data,
-  grn_obj *vector,
-  uint32_t i,
-  uint32_t n)
+grn_table_group_key_vector_expand_power_set_internal(grn_ctx *ctx,
+                                                     power_set_data *data,
+                                                     uint32_t i)
 {
-  grn_obj *key = &(data->vector);
-  const char *content;
-  unsigned int content_length;
-  grn_id domain;
-  content_length = grn_vector_get_element(ctx,
-                                          vector,
-                                          i,
-                                          &content,
-                                          NULL,
-                                          &domain);
-  grn_vector_add_element(ctx, key, content, content_length, 0, domain);
-  grn_table_group_multi_keys_add_record(ctx, data);
-  if (i == n - 1) {
+  grn_obj *key = &(data->multi_keys_data->vector);
+  if (data->is_uvector) {
+    uint32_t offset = (data->element_size * i);
+    grn_vector_add_element(ctx,
+                           key,
+                           GRN_BULK_HEAD(data->vector) + offset,
+                           data->element_size,
+                           0,
+                           data->vector->header.domain);
+  } else {
+    const char *content;
+    unsigned int content_length;
+    grn_id domain;
+    content_length = grn_vector_get_element(ctx,
+                                            data->vector,
+                                            i,
+                                            &content,
+                                            NULL,
+                                            &domain);
+    grn_vector_add_element(ctx, key, content, content_length, 0, domain);
+  }
+  grn_table_group_multi_keys_add_record(ctx, data->multi_keys_data);
+  if (i == data->n_elements - 1) {
     return;
   }
   uint32_t j;
-  for (j = i + 1; j < n; j++) {
-    grn_table_group_key_vector_expand_power_set_internal(
-      ctx, data, vector, j, n);
+  for (j = i + 1; j < data->n_elements; j++) {
+    grn_table_group_key_vector_expand_power_set_internal(ctx, data, j);
     const char *content;
     grn_vector_pop_element(ctx, key, &content, NULL, NULL);
   }
@@ -848,18 +862,23 @@ grn_table_group_key_vector_expand_power_set_internal(
 static void
 grn_table_group_key_vector_expand_power_set(
   grn_ctx *ctx,
-  grn_table_group_multi_keys_data *data,
+  grn_table_group_multi_keys_data *multi_keys_data,
   grn_obj *vector)
 {
-  uint32_t n = grn_vector_size(ctx, vector);
+  power_set_data data;
+  data.multi_keys_data = multi_keys_data;
+  data.vector = vector;
+  data.is_uvector = grn_obj_is_uvector(ctx, vector);
+  if (data.is_uvector) {
+    data.element_size = grn_uvector_element_size(ctx, vector);
+  } else {
+    data.element_size = 0;
+  }
+  data.n_elements = grn_vector_size(ctx, vector);
   uint32_t i;
-  for (i = 0; i < n; i++) {
-    GRN_BULK_REWIND(&(data->vector));
-    grn_table_group_key_vector_expand_power_set_internal(ctx,
-                                                         data,
-                                                         vector,
-                                                         i,
-                                                         n);
+  for (i = 0; i < data.n_elements; i++) {
+    GRN_BULK_REWIND(&(multi_keys_data->vector));
+    grn_table_group_key_vector_expand_power_set_internal(ctx, &data, i);
   }
 }
 
@@ -1007,7 +1026,12 @@ grn_table_group_single_key_records_foreach(grn_ctx *ctx,
     group_key_get_value(ctx, &(data->key), value_id, &(data->bulk));
   switch (bulk->header.type) {
   case GRN_UVECTOR :
-    {
+    if (data->flags & GRN_TABLE_GROUP_KEY_VECTOR_EXPANSION_POWER_SET) {
+      grn_table_group_key_vector_expand_power_set(ctx,
+                                                  &(data->multi_keys_data),
+                                                  bulk);
+      data->multi_keys_data.n_records++;
+    } else {
       unsigned int element_size;
       uint8_t *elements;
       size_t i, n_elements;
