@@ -1,8 +1,8 @@
-table_create Entries TABLE_NO_KEY
+table_create Entries TABLE_HASH_KEY ShortText
 [[0,0.0,0.0],true]
 load --table Entries
 [
-{}
+{"_key": "a"}
 ]
 [[0,0.0,0.0],1]
 select Entries   --output_columns '_id, ["A", "B"] + ["C", "D"]'  --command_version 3
