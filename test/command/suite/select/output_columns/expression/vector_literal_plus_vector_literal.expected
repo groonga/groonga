@@ -1,0 +1,39 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{}
+]
+[[0,0.0,0.0],1]
+select Entries   --output_columns '_id, ["A", "B"] + ["C", "D"]'  --command_version 3
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": {
+    "n_hits": 1,
+    "columns": [
+      {
+        "name": "_id",
+        "type": "UInt32"
+      },
+      {
+        "name": "([{\"value\":\"A\", \"weight\":0.0}, {\"value\":\"B\", \"weight\":0.0}] + [{\"value\":\"C\", \"weight\":0.0}, {\"value\":\"D\", \"weight\":0.0}])",
+        "type": "Text"
+      }
+    ],
+    "records": [
+      [
+        1,
+        [
+          "A",
+          "B",
+          "C",
+          "D"
+        ]
+      ]
+    ]
+  }
+}

@@ -1,0 +1,40 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries tags COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"tags": ["A", "B"]}
+]
+[[0,0.0,0.0],1]
+select Entries   --output_columns '_id, tags + 1'  --command_version 3
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": {
+    "n_hits": 1,
+    "columns": [
+      {
+        "name": "_id",
+        "type": "UInt32"
+      },
+      {
+        "name": "(tags + 1)",
+        "type": "ShortText"
+      }
+    ],
+    "records": [
+      [
+        1,
+        [
+          "A",
+          "B",
+          1
+        ]
+      ]
+    ]
+  }
+}

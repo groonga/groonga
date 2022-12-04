@@ -2212,34 +2212,110 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
       code++;
       break;
     case GRN_OP_PLUS :
-      ARITHMETIC_BINARY_OPERATION_DISPATCH(
-        "+",
-        INTEGER_ARITHMETIC_OPERATION_PLUS,
-        INTEGER_ARITHMETIC_OPERATION_PLUS,
-        INTEGER_ARITHMETIC_OPERATION_PLUS,
-        INTEGER_ARITHMETIC_OPERATION_PLUS,
-        FLOAT_ARITHMETIC_OPERATION_PLUS,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        ARITHMETIC_OPERATION_NO_CHECK,
-        {
-          if (x == res) {
-            grn_obj_cast(ctx, y, res, GRN_FALSE);
-          } else if (y == res) {
-            grn_obj buffer;
-            GRN_TEXT_INIT(&buffer, 0);
-            grn_obj_cast(ctx, x, &buffer, GRN_FALSE);
-            grn_obj_cast(ctx, y, &buffer, GRN_FALSE);
-            GRN_BULK_REWIND(res);
-            grn_obj_reinit(ctx, res, GRN_DB_TEXT, 0);
-            grn_obj_cast(ctx, &buffer, res, GRN_FALSE);
-            GRN_OBJ_FIN(ctx, &buffer);
-          } else {
-            grn_obj_reinit(ctx, res, GRN_DB_TEXT, 0);
-            grn_obj_cast(ctx, x, res, GRN_FALSE);
-            grn_obj_cast(ctx, y, res, GRN_FALSE);
+      {
+        grn_obj *x = NULL;
+        grn_obj *y = NULL;
+        POP2ALLOC1(x, y, res);
+        if (x->header.type == GRN_VECTOR) {
+          grn_id domain_id = x->header.domain;
+          if (domain_id == GRN_ID_NIL) {
+            domain_id = y->header.domain;
           }
+          if (domain_id == GRN_ID_NIL && grn_vector_size(ctx, x) > 0) {
+            const char *content;
+            grn_vector_get_element(ctx, x, 0, &content, NULL, &domain_id);
+          }
+          if (domain_id == GRN_ID_NIL) {
+            /* TODO: Consider better default for GRN_VECTOR. */
+            domain_id = GRN_DB_SHORT_TEXT;
+          }
+          if (res == y) {
+            grn_obj y_copied;
+            if (y->header.type == GRN_VECTOR) {
+              GRN_OBJ_INIT(&y_copied, GRN_VECTOR, 0, y->header.domain);
+              grn_vector_copy(ctx, y, &y_copied);
+            } else {
+              GRN_OBJ_INIT(&y_copied, GRN_BULK, 0, y->header.domain);
+              grn_bulk_write(ctx,
+                             &y_copied,
+                             GRN_BULK_HEAD(y),
+                             GRN_BULK_VSIZE(y));
+            }
+            grn_obj_reinit(ctx, res, domain_id, GRN_OBJ_VECTOR);
+            grn_vector_copy(ctx, x, res);
+            if (y_copied.header.type == GRN_VECTOR) {
+              grn_vector_copy(ctx, &y_copied, res);
+            } else {
+              grn_vector_add_element(ctx,
+                                     res,
+                                     GRN_BULK_HEAD(&y_copied),
+                                     GRN_BULK_VSIZE(&y_copied),
+                                     0,
+                                     y_copied.header.domain);
+            }
+            GRN_OBJ_FIN(ctx, &y_copied);
+          } else {
+            if (res != x) {
+              grn_obj_reinit(ctx, res, domain_id, GRN_OBJ_VECTOR);
+              grn_vector_copy(ctx, x, res);
+            }
+            if (y->header.type == GRN_VECTOR) {
+              grn_vector_copy(ctx, y, res);
+            } else {
+              grn_vector_add_element(ctx,
+                                     res,
+                                     GRN_BULK_HEAD(y),
+                                     GRN_BULK_VSIZE(y),
+                                     0,
+                                     y->header.domain);
+            }
+          }
+          code++;
+        } else if (y->header.type == GRN_VECTOR) {
+          grn_obj inspected_x;
+          grn_obj inspected_y;
+          GRN_TEXT_INIT(&inspected_x, 0);
+          GRN_TEXT_INIT(&inspected_y, 0);
+          grn_inspect(ctx, &inspected_x, x);
+          grn_inspect(ctx, &inspected_y, y);
+          ERR(GRN_INVALID_ARGUMENT,
+              "<+> doesn't support non-vector + vector: <%.*s> + <%.*s>",
+              (int)GRN_TEXT_LEN(&inspected_x), GRN_TEXT_VALUE(&inspected_x),
+              (int)GRN_TEXT_LEN(&inspected_y), GRN_TEXT_VALUE(&inspected_y));
+          GRN_OBJ_FIN(ctx, &inspected_x);
+          GRN_OBJ_FIN(ctx, &inspected_y);
+          goto exit;
+        } else {
+          ARITHMETIC_OPERATION_DISPATCH(
+            x, y, res,
+            INTEGER_ARITHMETIC_OPERATION_PLUS,
+            INTEGER_ARITHMETIC_OPERATION_PLUS,
+            INTEGER_ARITHMETIC_OPERATION_PLUS,
+            INTEGER_ARITHMETIC_OPERATION_PLUS,
+            FLOAT_ARITHMETIC_OPERATION_PLUS,
+            ARITHMETIC_OPERATION_NO_CHECK,
+            ARITHMETIC_OPERATION_NO_CHECK,
+            {
+              if (x == res) {
+                grn_obj_cast(ctx, y, res, GRN_FALSE);
+              } else if (y == res) {
+                grn_obj buffer;
+                GRN_TEXT_INIT(&buffer, 0);
+                grn_obj_cast(ctx, x, &buffer, GRN_FALSE);
+                grn_obj_cast(ctx, y, &buffer, GRN_FALSE);
+                GRN_BULK_REWIND(res);
+                grn_obj_reinit(ctx, res, GRN_DB_TEXT, 0);
+                grn_obj_cast(ctx, &buffer, res, GRN_FALSE);
+                GRN_OBJ_FIN(ctx, &buffer);
+              } else {
+                grn_obj_reinit(ctx, res, GRN_DB_TEXT, 0);
+                grn_obj_cast(ctx, x, res, GRN_FALSE);
+                grn_obj_cast(ctx, y, res, GRN_FALSE);
+              }
+            },
+            );
         }
-        ,);
+      }
       break;
     case GRN_OP_MINUS :
       if (code->nargs == 1) {

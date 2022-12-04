@@ -1,0 +1,10 @@
+table_create Entries TABLE_NO_KEY
+
+load --table Entries
+[
+{}
+]
+
+select Entries \
+  --output_columns '_id, ["A", "B"] + ["C", "D"]' \
+ --command_version 3

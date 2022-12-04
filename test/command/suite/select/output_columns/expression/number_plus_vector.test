@@ -1,0 +1,11 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries tags COLUMN_VECTOR ShortText
+
+load --table Entries
+[
+{"tags": ["A", "B"]}
+]
+
+select Entries \
+  --output_columns '_id, 1 + tags' \
+ --command_version 3
