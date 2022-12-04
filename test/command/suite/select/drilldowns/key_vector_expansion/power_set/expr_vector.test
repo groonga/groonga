@@ -1,0 +1,21 @@
+table_create Items TABLE_NO_KEY
+column_create Items tags1 COLUMN_VECTOR ShortText
+column_create Items tags2 COLUMN_VECTOR ShortText
+
+load --table Items
+[
+{"tags1": ["A"], "tags2": []},
+{"tags1": ["A"], "tags2": ["B"]},
+{"tags1": ["A"], "tags2": ["B", "C"]}
+]
+
+select Items \
+  --drilldowns[tag].keys tags1+tags2 \
+  --drilldowns[tag].key_vector_expansion power_set \
+  --drilldowns[tag].columns[keys].stage initial \
+  --drilldowns[tag].columns[keys].value _key \
+  --drilldowns[tag].columns[keys].flags COLUMN_VECTOR \
+  --drilldowns[tag].columns[keys].type ShortText \
+  --drilldowns[tag].output_columns keys,_nsubrecs \
+  --limit 0 \
+  --output_columns _id

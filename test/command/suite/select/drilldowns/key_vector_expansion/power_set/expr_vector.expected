@@ -1,0 +1,98 @@
+table_create Items TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Items tags1 COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+column_create Items tags2 COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Items
+[
+{"tags1": ["A"], "tags2": []},
+{"tags1": ["A"], "tags2": ["B"]},
+{"tags1": ["A"], "tags2": ["B", "C"]}
+]
+[[0,0.0,0.0],3]
+select Items   --drilldowns[tag].keys tags1+tags2   --drilldowns[tag].key_vector_expansion power_set   --drilldowns[tag].columns[keys].stage initial   --drilldowns[tag].columns[keys].value _key   --drilldowns[tag].columns[keys].flags COLUMN_VECTOR   --drilldowns[tag].columns[keys].type ShortText   --drilldowns[tag].output_columns keys,_nsubrecs   --limit 0   --output_columns _id
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ]
+      ]
+    ],
+    {
+      "tag": [
+        [
+          7
+        ],
+        [
+          [
+            "keys",
+            "ShortText"
+          ],
+          [
+            "_nsubrecs",
+            "Int32"
+          ]
+        ],
+        [
+          [
+            "A"
+          ],
+          3
+        ],
+        [
+          [
+            "A",
+            "B"
+          ],
+          2
+        ],
+        [
+          [
+            "B"
+          ],
+          2
+        ],
+        [
+          [
+            "A",
+            "B",
+            "C"
+          ],
+          1
+        ],
+        [
+          [
+            "A",
+            "C"
+          ],
+          1
+        ],
+        [
+          [
+            "B",
+            "C"
+          ],
+          1
+        ],
+        [
+          [
+            "C"
+          ],
+          1
+        ]
+      ]
+    }
+  ]
+]
