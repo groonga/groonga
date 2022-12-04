@@ -7805,12 +7805,19 @@ grn_expr_get_range_info(grn_ctx *ctx,
       break;
     case GRN_OP_PUSH :
       {
+        grn_id range_id = code->value->header.domain;
         grn_obj_flags range_flags_ = 0;
         if (grn_obj_is_vector(ctx, code->value) ||
             grn_obj_is_uvector(ctx, code->value)) {
           range_flags_ = GRN_OBJ_VECTOR;
         }
-        PUSH(code->value->header.domain, range_flags_);
+        if (range_id == GRN_ID_NIL &&
+            grn_obj_is_vector(ctx, code->value) &&
+            grn_vector_size(ctx, code->value) > 0) {
+          const char *content;
+          grn_vector_get_element(ctx, code->value, 0, &content, NULL, &range_id);
+        }
+        PUSH(range_id, range_flags_);
       }
       code++;
       break;
