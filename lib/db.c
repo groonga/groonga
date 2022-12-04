@@ -13603,11 +13603,29 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags)
 
     switch (domain) {
     case GRN_DB_VOID :
-      if (obj->header.type == GRN_VECTOR) {
-        grn_vector_clear(ctx, obj);
-      }
-      obj->header.type = GRN_VOID;
       obj->header.domain = domain;
+      if (flags & GRN_OBJ_VECTOR) {
+        if (obj->header.type == GRN_VECTOR) {
+          grn_vector_clear(ctx, obj);
+        } else {
+          grn_bulk_fin(ctx, obj);
+          obj->header.type = GRN_VECTOR;
+          if (obj->u.v.body) {
+            if (obj->header.impl_flags & GRN_OBJ_DO_SHALLOW_COPY) {
+              obj->u.v.body = NULL;
+              obj->header.impl_flags &= ~GRN_OBJ_DO_SHALLOW_COPY;
+            } else {
+              grn_obj_reinit(ctx, obj->u.v.body, domain, 0);
+            }
+          }
+          obj->u.v.n_sections = 0;
+        }
+      } else {
+        if (obj->header.type == GRN_VECTOR) {
+          grn_vector_clear(ctx, obj);
+        }
+        obj->header.type = GRN_VOID;
+      }
       GRN_BULK_REWIND(obj);
       break;
     case GRN_DB_OBJECT :
