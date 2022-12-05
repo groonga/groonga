@@ -86,6 +86,8 @@ update-latest-release: misc
 	cd $(top_srcdir)/packages &&		\
 	  $(RUBY) -S rake version:update	\
 	    RELEASE_DATE=$(NEW_RELEASE_DATE)
+	cd $(top_srcdir) &&								\
+	  git commit -a -m "Update to latest release"
 
 update-po:
 	@for lang in $(LOCALES); do						\
