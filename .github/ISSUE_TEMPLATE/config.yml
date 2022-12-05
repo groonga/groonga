@@ -2,4 +2,4 @@ blank_issues_enabled: false
 contact_links:
   - name: Question
     url: https://github.com/groonga/groonga/discussions/categories/q-a
-    about: 'If you have any questions you have using our discussion forums.'
+    about: 'If you have any questions or need help, please use our discussion forums.'
