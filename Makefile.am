@@ -86,7 +86,7 @@ update-latest-release: misc
 	cd $(top_srcdir)/packages &&		\
 	  $(RUBY) -S rake version:update	\
 	    RELEASE_DATE=$(NEW_RELEASE_DATE)
-	cd $(top_srcdir) &&								\
+	cd $(top_srcdir) &&					\
 	  git commit -a -m "doc package: update version info to ${NEW_RELEASE} - ${NEW_RELEASE_DATE}"
 
 update-po:
