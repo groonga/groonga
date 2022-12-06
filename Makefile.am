@@ -93,7 +93,7 @@ update-latest-release: misc
 	    doc/locale/*/LC_MESSAGES/install.po	\
 	    packages/debian/changelog			\
 	    packages/yum/groonga.spec.in &&		\
-	  git commit -m "doc package: update version info to ${NEW_RELEASE} - ${NEW_RELEASE_DATE}"
+	  git commit -m "doc package: update version info to ${VERSION} - ${NEW_RELEASE_DATE}"
 
 update-po:
 	@for lang in $(LOCALES); do						\
