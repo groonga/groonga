@@ -86,13 +86,13 @@ update-latest-release: misc
 	cd $(top_srcdir)/packages &&		\
 	  $(RUBY) -S rake version:update	\
 	    RELEASE_DATE=$(NEW_RELEASE_DATE)
-	cd $(top_srcdir) &&						\
-	  git add 								\
-	    doc/source/install.rst 				\
-	    doc/source/install/*.rst			\
+	cd $(top_srcdir) &&			\
+	  git add 				\
+	    doc/source/install.rst 		\
+	    doc/source/install/*.rst		\
 	    doc/locale/*/LC_MESSAGES/install.po	\
-	    packages/debian/changelog			\
-	    packages/yum/groonga.spec.in &&		\
+	    packages/debian/changelog		\
+	    packages/yum/groonga.spec.in &&	\
 	  git commit -m "doc package: update version info to ${VERSION} - ${NEW_RELEASE_DATE}"
 
 update-po:
