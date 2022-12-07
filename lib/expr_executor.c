@@ -2216,7 +2216,7 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
         grn_obj *x = NULL;
         grn_obj *y = NULL;
         POP2ALLOC1(x, y, res);
-        if (x->header.type == GRN_VECTOR) {
+        if (x->header.type == GRN_VECTOR && y->header.type == GRN_VECTOR) {
           grn_id domain_id = x->header.domain;
           if (domain_id == GRN_ID_NIL) {
             domain_id = y->header.domain;
@@ -2225,53 +2225,32 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
             const char *content;
             grn_vector_get_element(ctx, x, 0, &content, NULL, &domain_id);
           }
+          if (domain_id == GRN_ID_NIL && grn_vector_size(ctx, y) > 0) {
+            const char *content;
+            grn_vector_get_element(ctx, y, 0, &content, NULL, &domain_id);
+          }
           if (domain_id == GRN_ID_NIL) {
             /* TODO: Consider better default for GRN_VECTOR. */
             domain_id = GRN_DB_SHORT_TEXT;
           }
           if (res == y) {
             grn_obj y_copied;
-            if (y->header.type == GRN_VECTOR) {
-              GRN_OBJ_INIT(&y_copied, GRN_VECTOR, 0, y->header.domain);
-              grn_vector_copy(ctx, y, &y_copied);
-            } else {
-              GRN_OBJ_INIT(&y_copied, GRN_BULK, 0, y->header.domain);
-              grn_bulk_write(ctx,
-                             &y_copied,
-                             GRN_BULK_HEAD(y),
-                             GRN_BULK_VSIZE(y));
-            }
+            GRN_OBJ_INIT(&y_copied, GRN_VECTOR, 0, y->header.domain);
+            grn_vector_copy(ctx, y, &y_copied);
             grn_obj_reinit(ctx, res, domain_id, GRN_OBJ_VECTOR);
             grn_vector_copy(ctx, x, res);
-            if (y_copied.header.type == GRN_VECTOR) {
-              grn_vector_copy(ctx, &y_copied, res);
-            } else {
-              grn_vector_add_element(ctx,
-                                     res,
-                                     GRN_BULK_HEAD(&y_copied),
-                                     GRN_BULK_VSIZE(&y_copied),
-                                     0,
-                                     y_copied.header.domain);
-            }
+            grn_vector_copy(ctx, &y_copied, res);
             GRN_OBJ_FIN(ctx, &y_copied);
           } else {
             if (res != x) {
               grn_obj_reinit(ctx, res, domain_id, GRN_OBJ_VECTOR);
               grn_vector_copy(ctx, x, res);
             }
-            if (y->header.type == GRN_VECTOR) {
-              grn_vector_copy(ctx, y, res);
-            } else {
-              grn_vector_add_element(ctx,
-                                     res,
-                                     GRN_BULK_HEAD(y),
-                                     GRN_BULK_VSIZE(y),
-                                     0,
-                                     y->header.domain);
-            }
+            grn_vector_copy(ctx, y, res);
           }
           code++;
-        } else if (y->header.type == GRN_VECTOR) {
+        } else if (x->header.type == GRN_VECTOR ||
+                   y->header.type == GRN_VECTOR) {
           grn_obj inspected_x;
           grn_obj inspected_y;
           GRN_TEXT_INIT(&inspected_x, 0);
@@ -2279,7 +2258,9 @@ expr_exec(grn_ctx *ctx, grn_obj *expr)
           grn_inspect(ctx, &inspected_x, x);
           grn_inspect(ctx, &inspected_y, y);
           ERR(GRN_INVALID_ARGUMENT,
-              "<+> doesn't support non-vector + vector: <%.*s> + <%.*s>",
+              "<+> doesn't support %s + %s: <%.*s> + <%.*s>",
+              x->header.type == GRN_VECTOR ? "vector" : "non-vector",
+              y->header.type == GRN_VECTOR ? "vector" : "non-vector",
               (int)GRN_TEXT_LEN(&inspected_x), GRN_TEXT_VALUE(&inspected_x),
               (int)GRN_TEXT_LEN(&inspected_y), GRN_TEXT_VALUE(&inspected_y));
           GRN_OBJ_FIN(ctx, &inspected_x);

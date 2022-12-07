@@ -10,9 +10,15 @@ load --table Entries
 select Entries   --output_columns '_id, tags + 1'  --command_version 3
 {
   "header": {
-    "return_code": 0,
+    "return_code": -22,
     "start_time": 0.0,
-    "elapsed_time": 0.0
+    "elapsed_time": 0.0,
+    "error": {
+      "message": "<+> doesn't support vector + non-vector: <[{\"value\":\"A\", \"weight\":0.0}, {\"value\":\"B\", \"weight\":0.0}]> + <1>",
+      "function": "expr_exec",
+      "file": "expr_executor.c",
+      "line": 0
+    }
   },
   "body": {
     "n_hits": 1,
@@ -29,12 +35,9 @@ select Entries   --output_columns '_id, tags + 1'  --command_version 3
     "records": [
       [
         1,
-        [
-          "A",
-          "B",
-          1
-        ]
+        "<+> doesn't support vector + non-vector: <[{\"value\":\"A\", \"weight\":0.0}, {\"value\":\"B\", \"weight\":0.0}]> + <1>"
       ]
     ]
   }
 }
+#|e| <+> doesn't support vector + non-vector: <[{"value":"A", "weight":0.0}, {"value":"B", "weight":0.0}]> + <1>
