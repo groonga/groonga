@@ -12,9 +12,11 @@ RUN \
   yum groupinstall -y ${quiet} "Development Tools" && \
   yum install -y ${quiet} \
     arrow-devel-${APACHE_ARROW_VERSION} \
+    centos-release-scl \
     ccache \
-    gcc-c++ \
+    devtoolset-8 \
     intltool \
+    libcurl-devel \
     libedit-devel \
     libevent-devel \
     libstemmer-devel \
@@ -34,4 +36,5 @@ RUN \
     xxhash-devel \
     zeromq3-devel \
     zlib-devel && \
-  yum clean ${quiet} all
+  yum clean ${quiet} all && \
+  source /opt/rh/devtoolset-8/enable
