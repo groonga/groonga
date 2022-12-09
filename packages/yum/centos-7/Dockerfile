@@ -10,6 +10,8 @@ RUN \
   yum update -y ${quiet} && \
   yum install -y ${quiet} epel-release && \
   yum install -y ${quiet} centos-release-scl && \
+  yum groupinstall -y ${quiet} "Development Tools" && \
+  yum remove -y ${quiet} gcc gcc-c++ && \
   yum install -y ${quiet} \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
