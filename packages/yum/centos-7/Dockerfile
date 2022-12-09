@@ -9,10 +9,10 @@ RUN \
   yum install -y https://packages.groonga.org/centos/7/groonga-release-latest.noarch.rpm && \
   yum update -y ${quiet} && \
   yum install -y ${quiet} epel-release && \
+  yum install -y ${quiet} centos-release-scl && \
   yum groupinstall -y ${quiet} "Development Tools" && \
   yum install -y ${quiet} \
     arrow-devel-${APACHE_ARROW_VERSION} \
-    centos-release-scl \
     ccache \
     devtoolset-8 \
     intltool \
