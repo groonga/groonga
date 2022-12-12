@@ -299,7 +299,7 @@ msgid ""
 "付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。"
 msgstr ""
 
-msgid "2.0.2のリリースを行った際は以下のコマンドを実行しました。:: ::"
+msgid "2.0.2のリリースを行った際は以下のコマンドを実行しました。::"
 msgstr ""
 
 msgid ""
@@ -311,6 +311,9 @@ msgstr ""
 msgid "make update-examplesの実行"
 msgstr ""
 
+msgid "**現在この手順は必要ありません。**"
+msgstr ""
+
 msgid ""
 "ドキュメントに埋め込まれている実行結果を更新するために、以下のコマンドを実行"
 "します。::"
@@ -320,6 +323,11 @@ msgid "doc/source/examples以下が更新されるので、それらをコミッ
 msgstr ""
 
 msgid "make update-filesの実行"
+msgstr ""
+
+msgid ""
+"**各修正の際にこの作業は行っているはずのため、通常この手順は必要ありません。"
+"**"
 msgstr ""
 
 msgid ""
@@ -336,6 +344,11 @@ msgid "リリースに必要なファイルですので漏れなくコミット�
 msgstr ""
 
 msgid "make update-poの実行"
+msgstr ""
+
+msgid ""
+"**各ドキュメント修正の際にこの作業は行っているはずのため、通常この手順は必要"
+"ありません。**"
 msgstr ""
 
 msgid ""
@@ -422,7 +435,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"タグを設定すると、GitHub　Actionsで自動生成されます。 GitHub　Actionsでソース"
+"タグを設定すると、GitHub Actionsで自動生成されます。 GitHub Actionsでソース"
 "アーカイブが自動生成されたのを確認したら以下の手順でアップロードします。::"
 msgstr ""
 
@@ -453,8 +466,8 @@ msgid "Debian系パッケージのビルドとアップロード"
 msgstr ""
 
 msgid ""
-"タグを設定すると、GitHub　Actionsで自動生成されます。 現在サポートしているOS"
-"とバージョンは以下の通りです。"
+"タグを設定すると、GitHub Actionsで自動生成されます。 現在サポートしているOSと"
+"バージョンは以下の通りです。"
 msgstr ""
 
 msgid "Debian GNU/Linux"
@@ -508,6 +521,9 @@ msgstr ""
 msgid "Impish  amd64"
 msgstr ""
 
+msgid "Jammy   amd64"
+msgstr ""
+
 msgid ""
 "アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果が"
 "メールで通知されます。ビルドに成功すると、リリース対象のパッケージが"
@@ -535,16 +551,19 @@ msgstr ""
 msgid "centos-7 x86_64"
 msgstr ""
 
-msgid "almalinux-8 x86_64"
+msgid "almalinux-8 x86_64/arm64"
+msgstr ""
+
+msgid "almalinux-9 x86_64/arm64"
 msgstr ""
 
 msgid "Windows用パッケージのビルドとアップロード"
 msgstr ""
 
 msgid ""
-"タグを設定すると、GitHub　Actionsで自動生成されます。 GitHub Actionsでパッ"
-"ケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアッ"
-"プロードします。::"
+"タグを設定すると、GitHub Actionsで自動生成されます。 GitHub Actionsでパッケー"
+"ジが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップ"
+"ロードします。::"
 msgstr ""
 
 msgid "リリースアナウンスの作成"
@@ -602,7 +621,7 @@ msgid ""
 "の要約を使用します。"
 msgstr ""
 
-msgid "blogroonga(ブログ)の更新"
+msgid "BloGroonga(ブログ)の更新"
 msgstr ""
 
 msgid ""
@@ -667,8 +686,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"また、``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョン"
-"番号と日付を表す情報の指定があるので、これらも更新します。::"
+"また、 ``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョ"
+"ン番号と日付を表す情報の指定があるので、これらも更新します。::"
 msgstr ""
 
 msgid "Homebrewの更新"
@@ -723,18 +742,18 @@ msgid "Twitterでリリースアナウンスをする"
 msgstr ""
 
 msgid ""
-"blogroongaのリリースエントリには「リンクをあなたのフォロワーに共有する」ため"
+"BloGroongaのリリースエントリには「リンクをあなたのフォロワーに共有する」ため"
 "のツイートボタンがあるので、そのボタンを使ってリリースアナウンスします。(画面"
 "下部に配置されている)"
 msgstr ""
 
 msgid ""
 "このボタンを経由する場合、ツイート内容に自動的にリリースタイトル(「groonga "
-"2.0.8リリース」など)とblogroongaのリリースエントリのURLが挿入されます。"
+"2.0.8リリース」など)とBloGroongaのリリースエントリのURLが挿入されます。"
 msgstr ""
 
 msgid ""
-"この作業はblogroongaの英語版、日本語版それぞれで行います。 あらかじめgroonga"
+"この作業はBloGroongaの英語版、日本語版それぞれで行います。 あらかじめgroonga"
 "アカウントでログインしておくとアナウンスを円滑に行うことができます。"
 msgstr ""
 
