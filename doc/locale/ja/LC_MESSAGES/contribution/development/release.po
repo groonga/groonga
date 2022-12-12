@@ -676,8 +676,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"これによりcloneしておいたgroonga.orgのdocsおよびja/docs以下に更新したドキュメ"
-"ントがコピーされます。"
+"ここでは最新のtagに基づいてリリースバージョンを調べ、明示的にそのバージョンを"
+"指定してドキュメントを更新するようにしています。 これによりcloneしておいた"
+"groonga.orgのdoc/locale以下に更新したドキュメントがコピーされます。"
 msgstr ""
 
 msgid ""
