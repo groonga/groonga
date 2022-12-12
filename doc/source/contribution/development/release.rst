@@ -215,7 +215,6 @@ make update-latest-releaseの実行
 make update-latest-releaseコマンドでは、OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。
 
 2.0.2のリリースを行った際は以下のコマンドを実行しました。::
-::
 
    % make update-latest-release OLD_RELEASE=2.0.1 OLD_RELEASE_DATE=2012-03-29 NEW_RELEASE_DATE=2012-04-29
 
@@ -312,8 +311,8 @@ Ubuntu向けのパッケージは、LaunchPadでビルドしています。
 Groongaのリリース用アーカイブファイルは、MroongaやPGroonga、Rroonga等関連プロダクトのリリースにも使用します。
 生成でき次第アップロードしておくと、関連プロダクトのリリース作業がしやすくなります。
 
-タグを設定すると、GitHub　Actionsで自動生成されます。
-GitHub　Actionsでソースアーカイブが自動生成されたのを確認したら以下の手順でアップロードします。::
+タグを設定すると、GitHub Actionsで自動生成されます。
+GitHub Actionsでソースアーカイブが自動生成されたのを確認したら以下の手順でアップロードします。::
 
     % cd packages
     % rake source
@@ -334,7 +333,7 @@ Ubuntu以外のOS向けのパッケージは全てGitHub Actionsで生成され�
 Debian系パッケージのビルドとアップロード
 ----------------------------------------
 
-タグを設定すると、GitHub　Actionsで自動生成されます。
+タグを設定すると、GitHub Actionsで自動生成されます。
 現在サポートしているOSとバージョンは以下の通りです。
 
 * Debian GNU/Linux
@@ -362,6 +361,9 @@ Ubuntu向けパッケージの作成には、作業マシン上にGroongaのビ�
 
 Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::
 
+    % export DPUT_CONFIGUARATION_NAME=groonga-ppa
+    % export DPUT_INCOMING="~groonga/ubuntu/ppa"
+    % export LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
     % cd packages
     % rake ubuntu
 
@@ -371,6 +373,7 @@ Ubuntu向けのパッケージのアップロードには以下のコマンド�
 * Focal   amd64
 * Hirsute amd64
 * Impish  amd64
+* Jammy   amd64
 
 アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果がメールで通知されます。ビルドに成功すると、リリース対象のパッケージがlaunchpad.netのGroongaチームのPPAへと反映されます。公開されているパッケージは以下のURLで確認できます。
 
@@ -386,11 +389,12 @@ LaunchpadのGroongaチームのページで対象のPPAを選択し、バージ�
 Red Hat系パッケージのビルドとアップロード
 -----------------------------------------
 
-タグを設定すると、GitHub　Actionsで自動生成されます。
+タグを設定すると、GitHub Actionsで自動生成されます。
 現在サポートしているOSとバージョンは以下の通りです。
 
 * centos-7 x86_64
-* almalinux-8 x86_64
+* almalinux-8 x86_64/arm64
+* almalinux-9 x86_64/arm64
 
 GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。::
 
@@ -442,7 +446,7 @@ news.rstに変更点をまとめましたが、それを元にリリースアナ
 
 後述しますが、Twitter等でのリリースアナウンスの際はここで用意したアナウンス文の要約を使用します。
 
-blogroonga(ブログ)の更新
+BloGroonga(ブログ)の更新
 ------------------------
 
 https://groonga.org/blog/ および https://groonga.org/blog/ にて公開されているリリース案内を作成します。
@@ -489,7 +493,7 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 
 生成されているドキュメントに問題のないことを確認できたら、コミット、pushしてgroonga.orgへと反映します。
 
-また、``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョン番号と日付を表す情報の指定があるので、これらも更新します。::
+また、 ``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョン番号と日付を表す情報の指定があるので、これらも更新します。::
 
     groonga_version: x.x.x
     groonga_release_date: xxxx-xx-xx
@@ -525,11 +529,11 @@ Groonga 3.0.6のときは以下のように更新してpull requestを送りま�
 Twitterでリリースアナウンスをする
 ---------------------------------
 
-blogroongaのリリースエントリには「リンクをあなたのフォロワーに共有する」ためのツイートボタンがあるので、そのボタンを使ってリリースアナウンスします。(画面下部に配置されている)
+BloGroongaのリリースエントリには「リンクをあなたのフォロワーに共有する」ためのツイートボタンがあるので、そのボタンを使ってリリースアナウンスします。(画面下部に配置されている)
 
-このボタンを経由する場合、ツイート内容に自動的にリリースタイトル(「groonga 2.0.8リリース」など)とblogroongaのリリースエントリのURLが挿入されます。
+このボタンを経由する場合、ツイート内容に自動的にリリースタイトル(「groonga 2.0.8リリース」など)とBloGroongaのリリースエントリのURLが挿入されます。
 
-この作業はblogroongaの英語版、日本語版それぞれで行います。
+この作業はBloGroongaの英語版、日本語版それぞれで行います。
 あらかじめgroongaアカウントでログインしておくとアナウンスを円滑に行うことができます。
 
 Facebookでリリースアナウンスをする
