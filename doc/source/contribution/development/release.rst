@@ -196,7 +196,7 @@ PPAのリポジトリは、同名のパッケージを上書いてアップロ�
 
 前回リリースからの変更履歴を参照するには以下のコマンドを実行します。::
 
-   % git log -p --reverse $(git tag | tail -1)..
+   % git log -p --reverse $(git tag --sort=taggerdate | tail -1)..
 
 ログを^commitで検索しながら、以下の基準を目安として変更点を追記していきます。
 
@@ -495,9 +495,11 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 
 そのためにはまず ``groonga`` のリポジトリをカレントディレクトリにして以下のコマンドを実行します。::
 
-    % make update-document
+    % GROONGA_VERSION=$(git tag --sort=taggerdate | tail -n 1 | tr -d v)
+    % make update-document DOCUMENT_VERSION=$GROONGA_VERSION DOCUMENT_VERSION_FULL=$GROONGA_VERSION
 
-これによりcloneしておいたgroonga.orgのdocsおよびja/docs以下に更新したドキュメントがコピーされます。
+ここでは最新のtagに基づいてリリースバージョンを調べ、明示的にそのバージョンを指定してドキュメントを更新するようにしています。
+これによりcloneしておいたgroonga.orgのdoc/locale以下に更新したドキュメントがコピーされます。
 
 生成されているドキュメントに問題のないことを確認できたら、コミット、pushしてgroonga.orgへと反映します。
 
