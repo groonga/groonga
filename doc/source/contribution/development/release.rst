@@ -181,7 +181,7 @@ configureオプションである--with-cutter-source-pathにはcutterのソー�
 
 Ubuntu向けパッケージをテスト用に公開する時は、 以下の環境変数を設定して不安定版のリポジトリにアップロードするように指定します。::
 
-  export DPUT_CONFIGUARATION_NAME=groonga-ppa-nightly
+  export DPUT_CONFIGURATION_NAME=groonga-ppa-nightly
   export DPUT_INCOMING="~groonga/ubuntu/nightly"
 
 新任のリリース担当者は必ず、この方法でPPAのリポジトリにパッケージをアップロードできる事を確認しておいてください。
@@ -284,7 +284,7 @@ Ubuntu向けパッケージのビルド確認
 Ubuntu向けのパッケージは、LaunchPadでビルドしています。
 リリース前にUbuntu向けパッケージが正常にビルドできるか以下の手順で確認します。::
 
-   % export DPUT_CONFIGUARATION_NAME=groonga-ppa-nightly
+   % export DPUT_CONFIGURATION_NAME=groonga-ppa-nightly
    % export DPUT_INCOMING="~groonga/ubuntu/nightly"
    % export LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
    % make dist
@@ -369,7 +369,7 @@ Ubuntu向けパッケージの作成には、作業マシン上にGroongaのビ�
 
 Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::
 
-    % export DPUT_CONFIGUARATION_NAME=groonga-ppa
+    % export DPUT_CONFIGURATION_NAME=groonga-ppa
     % export DPUT_INCOMING="~groonga/ubuntu/ppa"
     % export LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
     % cd packages
