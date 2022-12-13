@@ -45,7 +45,7 @@ module LaunchpadHelper
   end
 
   def dput_configuration_name
-    env_value("DPUT_CONFIGUARATION_NAME")
+    env_value("DPUT_CONFIGURATION_NAME")
   end
 
   def dput_incoming
