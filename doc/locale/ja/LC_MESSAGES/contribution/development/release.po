@@ -562,8 +562,13 @@ msgstr ""
 
 msgid ""
 "タグを設定すると、GitHub Actionsで自動生成されます。 GitHub Actionsでパッケー"
-"ジが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップ"
-"ロードします。::"
+"ジが自動生成されたのを確認したら以下の手順で、packages.groonga.orgからGitHub "
+"Actionsへのリンクを作成します。::"
+msgstr ""
+
+msgid ""
+"packages.groonga.org上にWindows版の最新パッケージへリダイレクトする ``."
+"htaccess`` が作成されます。"
 msgstr ""
 
 msgid "リリースアナウンスの作成"
