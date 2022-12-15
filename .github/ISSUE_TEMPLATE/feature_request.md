@@ -1,3 +1,4 @@
+---
 name: Feature request
 about: Suggest an idea for this project
 title: Feature Request
@@ -23,4 +24,4 @@ body:
       placeholder: Tell us what you see!
     validations:
       required: false
-
+---
