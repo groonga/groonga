@@ -1,0 +1,48 @@
+name: Bug report
+description: Suggest an idea for this project
+title: "[Bug]: "
+labels: ["Bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happend?
+      description: Tell us what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce it
+      description: Tell us how to reproduce the bug.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: Tell us the expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Tell us your environment.
+      value: |
+        - OS: [e.g. Windows]
+        - OS Version: [e.g. 11]
+        - Groonga version: [e.g. 12.0.1]
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Tell us the additional context if you have.
+    validations:
+      required: false
