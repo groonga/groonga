@@ -571,6 +571,80 @@ msgid ""
 "htaccess`` が作成されます。"
 msgstr ""
 
+msgid "WindowsのMinGW用パッケージのアップロード"
+msgstr ""
+
+msgid ""
+"`MINGW-packages <https://github.com/msys2/MINGW-packages>`_ の、 ``mingw-w64-"
+"groonga/PKGBUILD`` を最新にして、プルリクエストを作成します。"
+msgstr ""
+
+msgid ""
+"MINGW-packagesはforkして自分のリポジトリを作成しておきます。 また、forkしたリ"
+"ポジトリのGitHub Actionsを有効にしておきます。"
+msgstr ""
+
+msgid ""
+"forkしたリポジトリにて ``mingw-w64-groonga/PKGBUILD`` を以下の通り更新しま"
+"す。"
+msgstr ""
+
+msgid "``pkgver`` : 最新のGroongaバージョン"
+msgstr ""
+
+msgid "``pkgrel`` : ``1``"
+msgstr ""
+
+msgid ""
+"``sha256sums`` : 最新の http://packages.groonga.org/source/groonga/groonga-"
+"xx.x.x.tar.gz のsha256sum"
+msgstr ""
+
+msgid ""
+"上記の修正をforkした自分のリポジトリにpushして、GitHub Actionsが成功している"
+"ことを確認します。 これで正しくビルドできているかどうかが確認できます。"
+msgstr ""
+
+msgid "確認後、本家のMINGW-packagesにプルリクエストを作成します。"
+msgstr ""
+
+msgid "過去のプルリクエストの例は以下です。"
+msgstr ""
+
+msgid "https://github.com/msys2/MINGW-packages/pull/14320"
+msgstr ""
+
+msgid "プルリクエストがマージされると、MINGW用のパッケージがリリースされます。"
+msgstr ""
+
+msgid "Dockerイメージの更新"
+msgstr ""
+
+msgid ""
+"`Docker Hub <https://hub.docker.com/r/groonga/groonga>`_ のGroongaのDockerイ"
+"メージを更新します。"
+msgstr ""
+
+msgid ""
+"`GroongaのDockerリポジトリー <https://github.com/groonga/docker>`_ をクローン"
+"し、リポジトリーの中のDockerfileを更新します。"
+msgstr ""
+
+msgid ""
+"以下は、Groongaのバージョンが ``12.0.9`` の場合の例です。作業時には最新のバー"
+"ジョンを指定してください。::"
+msgstr ""
+
+msgid ""
+"`GroongaのDockerリポジトリーのGithub Actions <https://github.com/groonga/"
+"docker/actions>`_ が成功しているのを確認してから、タグをpushします。::"
+msgstr ""
+
+msgid ""
+"pushすると、 GroongaのDockerリポジトリーのGithub Actions が Docker Hubの"
+"Groonga のDockerイメージを自動で更新します。"
+msgstr ""
+
 msgid "リリースアナウンスの作成"
 msgstr ""
 

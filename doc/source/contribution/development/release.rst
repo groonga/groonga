@@ -416,7 +416,7 @@ GitHub Actionsでパッケージが自動生成されたのを確認したら以
 上記のコマンドを実行することで、リポジトリーの同期、パッケージの署名、リポジトリーの更新、アップロードまで実行できます。
 
 Windows用パッケージのビルドとアップロード
-------------------------------------------
+-----------------------------------------
 
 タグを設定すると、GitHub Actionsで自動生成されます。
 GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgからGitHub Actionsへのリンクを作成します。::
@@ -425,6 +425,53 @@ GitHub Actionsでパッケージが自動生成されたのを確認したら以
     % rake windows
 
 packages.groonga.org上にWindows版の最新パッケージへリダイレクトする ``.htaccess`` が作成されます。
+
+WindowsのMinGW用パッケージのアップロード
+----------------------------------------
+
+`MINGW-packages <https://github.com/msys2/MINGW-packages>`_ の、 ``mingw-w64-groonga/PKGBUILD`` を最新にして、プルリクエストを作成します。
+
+MINGW-packagesはforkして自分のリポジトリを作成しておきます。
+また、forkしたリポジトリのGitHub Actionsを有効にしておきます。
+
+forkしたリポジトリにて ``mingw-w64-groonga/PKGBUILD`` を以下の通り更新します。
+
+* ``pkgver`` : 最新のGroongaバージョン
+* ``pkgrel`` : ``1``
+* ``sha256sums`` : 最新の http://packages.groonga.org/source/groonga/groonga-xx.x.x.tar.gz のsha256sum
+
+上記の修正をforkした自分のリポジトリにpushして、GitHub Actionsが成功していることを確認します。
+これで正しくビルドできているかどうかが確認できます。
+
+確認後、本家のMINGW-packagesにプルリクエストを作成します。
+
+過去のプルリクエストの例は以下です。
+
+  https://github.com/msys2/MINGW-packages/pull/14320
+
+プルリクエストがマージされると、MINGW用のパッケージがリリースされます。
+
+Dockerイメージの更新
+--------------------
+
+`Docker Hub <https://hub.docker.com/r/groonga/groonga>`_ のGroongaのDockerイメージを更新します。
+
+`GroongaのDockerリポジトリー <https://github.com/groonga/docker>`_ をクローンし、リポジトリーの中のDockerfileを更新します。
+
+以下は、Groongaのバージョンが ``12.0.9`` の場合の例です。作業時には最新のバージョンを指定してください。::
+
+    % mkdir -p ~/work/groonga
+    % rm -rf ~/work/groonga/docker.clean
+    % git clone --recursive git@github.com:groonga/docker.git ~/work/groonga/docker.clean
+    % cd ~/work/groonga/docker.clean
+    % ./update.sh 12.0.9 #Automatically update Dockerfiles and commit changes and create a tag.
+    % git push
+
+`GroongaのDockerリポジトリーのGithub Actions <https://github.com/groonga/docker/actions>`_ が成功しているのを確認してから、タグをpushします。::
+
+    % git push --tags
+
+pushすると、 GroongaのDockerリポジトリーのGithub Actions が Docker HubのGroonga のDockerイメージを自動で更新します。
 
 リリースアナウンスの作成
 ------------------------
