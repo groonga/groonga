@@ -1,8 +1,7 @@
 name: Feature request
-about: Suggest an idea for this project
-title: Feature Request
-labels: ''
-assignees: ''
+description: Suggest an idea for this project
+title: "[Feature request]: "
+labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
@@ -20,6 +19,5 @@ body:
     attributes:
       label: How to reproduce it
       description: Tell us how to reproduce the problem you want to solve.
-      placeholder: Tell us what you see!
     validations:
       required: false
