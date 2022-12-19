@@ -438,7 +438,7 @@ forkしたリポジトリにて ``mingw-w64-groonga/PKGBUILD`` を以下の通�
 
 * ``pkgver`` : 最新のGroongaバージョン
 * ``pkgrel`` : ``1``
-* ``sha256sums`` : 最新の http://packages.groonga.org/source/groonga/groonga-xx.x.x.tar.gz のsha256sum
+* ``sha256sums`` : 最新の https://packages.groonga.org/source/groonga/groonga-xx.x.x.tar.gz のsha256sum
 
 上記の修正をforkした自分のリポジトリにpushして、GitHub Actionsが成功していることを確認します。
 これで正しくビルドできているかどうかが確認できます。
