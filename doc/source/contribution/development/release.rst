@@ -354,7 +354,7 @@ GitHub Actionsでパッケージが自動生成されたのを確認したら以
     % cd packages
     % rake apt
 
-この段階では、ビルドしたパッケージはまだ未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
+この段階では、ビルドしたパッケージは未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
 
     % rake apt
 
