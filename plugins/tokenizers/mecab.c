@@ -33,6 +33,10 @@
 #include <string.h>
 #include <ctype.h>
 
+#ifdef _WIN32
+# include <fcntl.h>
+#endif
+
 typedef struct {
   mecab_model_t *mecab_model;
   mecab_t *mecab;
@@ -558,7 +562,36 @@ mecab_model_create(grn_ctx *ctx,
   argv[argc++] = GRN_BUNDLED_MECAB_RC_PATH;
 # endif /* WIN32 */
 #endif /* GRN_WITH_BUNDLED_MECAB */
+
+#if _WIN32
+  /* This is a workaround for MariaDB 10.9 or later and MeCab.
+   *
+   * MariaDB 10.9 or later calls _set_fmode(_O_BINARY) in
+   * initialization process on Windows.
+   *
+   * See also:
+   * https://github.com/MariaDB/server/commit/016dd21371961700f1324f204acbc7252a8c1e76
+   *
+   * But mecab_model_new() doesn't work with _O_BINARY on Windows
+   * because "\r" in mecab.rc is processed as a line content. This
+   * causes a parse error.
+   *
+   * We change restore the default file translation mode to _O_TEXT
+   * temporary here. But this is not safe. If some files are open in
+   * other threads, these threads open a file with _O_TEXT not
+   * _O_BINARY.
+   *
+   * MariaDB should not use _set_fmode() because it changes the
+   * default file translation mode globally. But this is the MariaDB's
+   * decision. So we need this workaround. */
+  int current_file_translation_mode = _O_TEXT;
+  _get_fmode(&current_file_translation_mode);
+  _set_fmode(_O_TEXT);
+#endif
   mecab_model = mecab_model_new(argc, (char **)argv);
+#if _WIN32
+  _set_fmode(current_file_translation_mode);
+#endif
 
   if (!mecab_model) {
 #ifdef GRN_WITH_BUNDLED_MECAB
