@@ -220,76 +220,15 @@ make update-latest-releaseコマンドでは、OLD_RELEASE_DATEに前回のリ�
 
 これにより、clone済みのGroongaのWebサイトのトップページのソース(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。
 
-make update-examplesの実行
---------------------------
-
-**現在この手順は必要ありません。**
-
-ドキュメントに埋め込まれている実行結果を更新するために、以下のコマンドを実行します。::
-
-    % cd doc && make update-examples
-
-doc/source/examples以下が更新されるので、それらをコミットします。
-
-make update-filesの実行
------------------------
-
-**各修正の際にこの作業は行っているはずのため、通常この手順は必要ありません。**
-
-ロケールメッセージの更新や変更されたファイルのリスト等を更新するために以下のコマンドを実行します。::
-
-    % make update-files
-
-make update-filesを実行すると新規に追加されたファイルなどが各種.amファイルへとリストアップされます。
-
-リリースに必要なファイルですので漏れなくコミットします。
-
-make update-poの実行
---------------------
-
-**各ドキュメント修正の際にこの作業は行っているはずのため、通常この手順は必要ありません。**
-
-ドキュメントの最新版と各国語版の内容を同期するために、poファイルの更新を以下のコマンドにて実行します。::
-
-    % make update-po
-
-make update-poを実行すると、doc/locale/ja/LC_MESSAGES以下の各種.poファイルが更新されます。
-
-poファイルの翻訳
-----------------
-
-**各ドキュメント修正の際にこの作業は行っているはずのため、通常この手順は必要ありません。**
-
-make update-poコマンドの実行により更新した各種.poファイルを翻訳します。
-
-翻訳結果をHTMLで確認するために、以下のコマンドを実行します。::
-
-    % make -C html
-
-修正が必要な箇所を調べて、 ``***.edit`` というファイルを適宜修正します。::
-
-    % cd groonga/doc/locale
-    % git diff
-
-``***.edit`` というファイルの編集中は、翻訳元のファイルは絶対に編集しないで下さい（編集すると、``***.edit`` に加えた変更が make update-po の実行時に失われます）。
-ファイルを編集したら、再度poファイルとHTMLを更新するために以下のコマンドを実行します。::
-
-    % make -C html
-
-確認が完了したら、翻訳済みpoファイルをコミットします。
-
 Ubuntu向けパッケージのビルド確認
 --------------------------------
 
 Ubuntu向けのパッケージは、LaunchPadでビルドしています。
 リリース前にUbuntu向けパッケージが正常にビルドできるか以下の手順で確認します。::
 
-   % export DPUT_CONFIGURATION_NAME=groonga-ppa-nightly
-   % export DPUT_INCOMING="~groonga/ubuntu/nightly"
-   % export LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
    % make dist
    % cd packages
-   % rake ubuntu
+   % rake ubuntu DPUT_CONFIGURATION_NAME=groonga-ppa-nightly DPUT_INCOMING="~groonga/ubuntu/nightly" LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
 
 各種テストの確認
 ----------------
@@ -331,7 +270,7 @@ GitHub Actionsでソースアーカイブが自動生成されたのを確認し
 パッケージのビルドとアップロード
 --------------------------------
 
-パッケージ化は以下の3種類を対象に行います。
+パッケージングは以下の3種類を対象に行います。
 Ubuntu以外のOS向けのパッケージは全てGitHub Actionsで生成されます。
 
 * Debian系(.deb)
@@ -342,12 +281,6 @@ Debian系パッケージのビルドとアップロード
 ----------------------------------------
 
 タグを設定すると、GitHub Actionsで自動生成されます。
-現在サポートしているOSとバージョンは以下の通りです。
-
-* Debian GNU/Linux
-
-  * buster i386/amd64/arm64
-  * bullseye amd64/arm64
 
 GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。::
 
@@ -369,19 +302,8 @@ Ubuntu向けパッケージの作成には、作業マシン上にGroongaのビ�
 
 Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::
 
-    % export DPUT_CONFIGURATION_NAME=groonga-ppa
-    % export DPUT_INCOMING="~groonga/ubuntu/ppa"
-    % export LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
     % cd packages
-    % rake ubuntu
-
-現在サポートされているのは以下の通りです。
-
-* Bionic  i386/amd64
-* Focal   amd64
-* Hirsute amd64
-* Impish  amd64
-* Jammy   amd64
+    % rake ubuntu LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
 
 アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果がメールで通知されます。ビルドに成功すると、リリース対象のパッケージがlaunchpad.netのGroongaチームのPPAへと反映されます。公開されているパッケージは以下のURLで確認できます。
 
@@ -399,10 +321,6 @@ Red Hat系パッケージのビルドとアップロード
 
 タグを設定すると、GitHub Actionsで自動生成されます。
 現在サポートしているOSとバージョンは以下の通りです。
-
-* centos-7 x86_64
-* almalinux-8 x86_64/arm64
-* almalinux-9 x86_64/arm64
 
 GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。::
 
@@ -426,7 +344,7 @@ GitHub Actionsでパッケージが自動生成されたのを確認したら以
 
 packages.groonga.org上にWindows版の最新パッケージへリダイレクトする ``.htaccess`` が作成されます。
 
-WindowsのMinGW用パッケージのアップロード
+WindowsのMSYS2用パッケージのアップロード
 ----------------------------------------
 
 `MINGW-packages <https://github.com/msys2/MINGW-packages>`_ の、 ``mingw-w64-groonga/PKGBUILD`` を最新にして、プルリクエストを作成します。
@@ -449,7 +367,7 @@ forkしたリポジトリにて ``mingw-w64-groonga/PKGBUILD`` を以下の通�
 
   https://github.com/msys2/MINGW-packages/pull/14320
 
-プルリクエストがマージされると、MINGW用のパッケージがリリースされます。
+プルリクエストがマージされると、MSYS2用のパッケージがリリースされます。
 
 Dockerイメージの更新
 --------------------
