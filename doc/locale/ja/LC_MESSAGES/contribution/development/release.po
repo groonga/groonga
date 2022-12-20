@@ -246,8 +246,8 @@ msgid "ログイン可能であるかの確認は以下のようにコマンド�
 msgstr ""
 
 msgid ""
-"Ubuntu向けパッケージをテスト用に公開する時は、 以下の環境変数を設定して不安定"
-"版のリポジトリにアップロードするように指定します。::"
+"Ubuntu向けパッケージをテスト用に公開する時は、 :ref:`build-for-ubuntu-"
+"nightly` の手順で不安定版のリポジトリにアップロードするように指定します。"
 msgstr ""
 
 msgid ""
@@ -306,82 +306,6 @@ msgid ""
 "これにより、clone済みのGroongaのWebサイトのトップページのソース(index.html,"
 "ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されま"
 "す。"
-msgstr ""
-
-msgid "make update-examplesの実行"
-msgstr ""
-
-msgid "**現在この手順は必要ありません。**"
-msgstr ""
-
-msgid ""
-"ドキュメントに埋め込まれている実行結果を更新するために、以下のコマンドを実行"
-"します。::"
-msgstr ""
-
-msgid "doc/source/examples以下が更新されるので、それらをコミットします。"
-msgstr ""
-
-msgid "make update-filesの実行"
-msgstr ""
-
-msgid ""
-"**各修正の際にこの作業は行っているはずのため、通常この手順は必要ありません。"
-"**"
-msgstr ""
-
-msgid ""
-"ロケールメッセージの更新や変更されたファイルのリスト等を更新するために以下の"
-"コマンドを実行します。::"
-msgstr ""
-
-msgid ""
-"make update-filesを実行すると新規に追加されたファイルなどが各種.amファイルへ"
-"とリストアップされます。"
-msgstr ""
-
-msgid "リリースに必要なファイルですので漏れなくコミットします。"
-msgstr ""
-
-msgid "make update-poの実行"
-msgstr ""
-
-msgid ""
-"**各ドキュメント修正の際にこの作業は行っているはずのため、通常この手順は必要"
-"ありません。**"
-msgstr ""
-
-msgid ""
-"ドキュメントの最新版と各国語版の内容を同期するために、poファイルの更新を以下"
-"のコマンドにて実行します。::"
-msgstr ""
-
-msgid ""
-"make update-poを実行すると、doc/locale/ja/LC_MESSAGES以下の各種.poファイルが"
-"更新されます。"
-msgstr ""
-
-msgid "poファイルの翻訳"
-msgstr ""
-
-msgid "make update-poコマンドの実行により更新した各種.poファイルを翻訳します。"
-msgstr ""
-
-msgid "翻訳結果をHTMLで確認するために、以下のコマンドを実行します。::"
-msgstr ""
-
-msgid ""
-"修正が必要な箇所を調べて、 ``***.edit`` というファイルを適宜修正します。::"
-msgstr ""
-
-msgid ""
-"``***.edit`` というファイルの編集中は、翻訳元のファイルは絶対に編集しないで下"
-"さい（編集すると、``***.edit`` に加えた変更が make update-po の実行時に失われ"
-"ます）。 ファイルを編集したら、再度poファイルとHTMLを更新するために以下のコマ"
-"ンドを実行します。::"
-msgstr ""
-
-msgid "確認が完了したら、翻訳済みpoファイルをコミットします。"
 msgstr ""
 
 msgid "Ubuntu向けパッケージのビルド確認"
@@ -449,8 +373,8 @@ msgid "パッケージのビルドとアップロード"
 msgstr ""
 
 msgid ""
-"パッケージ化は以下の3種類を対象に行います。 Ubuntu以外のOS向けのパッケージは"
-"全てGitHub Actionsで生成されます。"
+"パッケージングは以下の3種類を対象に行います。 Ubuntu以外のOS向けのパッケージ"
+"は全てGitHub Actionsで生成されます。"
 msgstr ""
 
 msgid "Debian系(.deb)"
@@ -465,18 +389,7 @@ msgstr ""
 msgid "Debian系パッケージのビルドとアップロード"
 msgstr ""
 
-msgid ""
-"タグを設定すると、GitHub Actionsで自動生成されます。 現在サポートしているOSと"
-"バージョンは以下の通りです。"
-msgstr ""
-
-msgid "Debian GNU/Linux"
-msgstr ""
-
-msgid "buster i386/amd64/arm64"
-msgstr ""
-
-msgid "bullseye amd64/arm64"
+msgid "タグを設定すると、GitHub Actionsで自動生成されます。"
 msgstr ""
 
 msgid ""
@@ -485,7 +398,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"この段階では、ビルドしたパッケージはまだ未署名なの"
+"この段階では、ビルドしたパッケージは未署名なの"
 "で、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::"
 msgstr ""
 
@@ -504,24 +417,6 @@ msgid ""
 msgstr ""
 
 msgid "Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::"
-msgstr ""
-
-msgid "現在サポートされているのは以下の通りです。"
-msgstr ""
-
-msgid "Bionic  i386/amd64"
-msgstr ""
-
-msgid "Focal   amd64"
-msgstr ""
-
-msgid "Hirsute amd64"
-msgstr ""
-
-msgid "Impish  amd64"
-msgstr ""
-
-msgid "Jammy   amd64"
 msgstr ""
 
 msgid ""
@@ -548,13 +443,14 @@ msgstr ""
 msgid "Red Hat系パッケージのビルドとアップロード"
 msgstr ""
 
-msgid "centos-7 x86_64"
+msgid ""
+"タグを設定すると、GitHub Actionsで自動生成されます。 現在サポートしているOSと"
+"バージョンは以下の通りです。"
 msgstr ""
 
-msgid "almalinux-8 x86_64/arm64"
-msgstr ""
-
-msgid "almalinux-9 x86_64/arm64"
+msgid ""
+"この段階では、ビルドしたパッケージはまだ未署名なの"
+"で、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::"
 msgstr ""
 
 msgid "Windows用パッケージのビルドとアップロード"
@@ -571,7 +467,7 @@ msgid ""
 "htaccess`` が作成されます。"
 msgstr ""
 
-msgid "WindowsのMinGW用パッケージのアップロード"
+msgid "WindowsのMSYS2用パッケージのアップロード"
 msgstr ""
 
 msgid ""
@@ -596,7 +492,7 @@ msgid "``pkgrel`` : ``1``"
 msgstr ""
 
 msgid ""
-"``sha256sums`` : 最新の http://packages.groonga.org/source/groonga/groonga-"
+"``sha256sums`` : 最新の https://packages.groonga.org/source/groonga/groonga-"
 "xx.x.x.tar.gz のsha256sum"
 msgstr ""
 
@@ -614,7 +510,7 @@ msgstr ""
 msgid "https://github.com/msys2/MINGW-packages/pull/14320"
 msgstr ""
 
-msgid "プルリクエストがマージされると、MINGW用のパッケージがリリースされます。"
+msgid "プルリクエストがマージされると、MSYS2用のパッケージがリリースされます。"
 msgstr ""
 
 msgid "Dockerイメージの更新"
