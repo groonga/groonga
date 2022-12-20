@@ -179,10 +179,7 @@ configureオプションである--with-cutter-source-pathにはcutterのソー�
 
     % ssh packages@packages.groonga.org
 
-Ubuntu向けパッケージをテスト用に公開する時は、 以下の環境変数を設定して不安定版のリポジトリにアップロードするように指定します。::
-
-  export DPUT_CONFIGURATION_NAME=groonga-ppa-nightly
-  export DPUT_INCOMING="~groonga/ubuntu/nightly"
+Ubuntu向けパッケージをテスト用に公開する時は、 :ref:`build-for-ubuntu-nightly` の手順で不安定版のリポジトリにアップロードするように指定します。
 
 新任のリリース担当者は必ず、この方法でPPAのリポジトリにパッケージをアップロードできる事を確認しておいてください。
 
@@ -219,6 +216,8 @@ make update-latest-releaseコマンドでは、OLD_RELEASE_DATEに前回のリ�
    % make update-latest-release OLD_RELEASE=2.0.1 OLD_RELEASE_DATE=2012-03-29 NEW_RELEASE_DATE=2012-04-29
 
 これにより、clone済みのGroongaのWebサイトのトップページのソース(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。
+
+.. _build-for-ubuntu-nightly:
 
 Ubuntu向けパッケージのビルド確認
 --------------------------------
