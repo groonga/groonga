@@ -444,8 +444,7 @@ msgid "Red Hat系パッケージのビルドとアップロード"
 msgstr ""
 
 msgid ""
-"タグを設定すると、GitHub Actionsで自動生成されます。 現在サポートしているOSと"
-"バージョンは以下の通りです。"
+"タグを設定すると、GitHub Actionsで自動生成されます。 "
 msgstr ""
 
 msgid ""
