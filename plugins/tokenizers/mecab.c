@@ -33,7 +33,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 # include <fcntl.h>
 #endif
 
@@ -563,7 +563,7 @@ mecab_model_create(grn_ctx *ctx,
 # endif /* WIN32 */
 #endif /* GRN_WITH_BUNDLED_MECAB */
 
-#if _WIN32
+#if _MSC_VER
   /* This is a workaround for MariaDB 10.9 or later and MeCab.
    *
    * MariaDB 10.9 or later calls _set_fmode(_O_BINARY) in
@@ -589,7 +589,7 @@ mecab_model_create(grn_ctx *ctx,
   _set_fmode(_O_TEXT);
 #endif
   mecab_model = mecab_model_new(argc, (char **)argv);
-#if _WIN32
+#if __MSC_VER
   _set_fmode(current_file_translation_mode);
 #endif
 
