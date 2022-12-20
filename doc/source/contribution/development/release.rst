@@ -179,17 +179,7 @@ configureオプションである--with-cutter-source-pathにはcutterのソー�
 
     % ssh packages@packages.groonga.org
 
-デバッグ用や開発用のパッケージをテスト用に公開する時は、 ``--with-launchpad-ppa=groonga-nightly`` を指定して不安定版のリポジトリにアップロードするように指定します。::
-
-    % ./configure \
-          --with-launchpad-ppa=groonga-nightly \
-          --prefix=/tmp/local \
-          --with-launchpad-uploader-pgp-key=(Launchpadに登録したkeyID) \
-          --with-groonga-org-path=$HOME/work/groonga/groonga.org \
-          --enable-document \
-          --with-ruby \
-          --enable-mruby \
-          --with-cutter-source-path=$HOME/work/cutter/cutter
+Ubuntu向けパッケージをテスト用に公開する時は、 :ref:`build-for-ubuntu-nightly` の手順で不安定版のリポジトリにアップロードするように指定します。
 
 新任のリリース担当者は必ず、この方法でPPAのリポジトリにパッケージをアップロードできる事を確認しておいてください。
 
@@ -203,7 +193,7 @@ PPAのリポジトリは、同名のパッケージを上書いてアップロ�
 
 前回リリースからの変更履歴を参照するには以下のコマンドを実行します。::
 
-   % git log -p --reverse $(git tag | tail -1)..
+   % git log -p --reverse $(git tag --sort=taggerdate | tail -1)..
 
 ログを^commitで検索しながら、以下の基準を目安として変更点を追記していきます。
 
@@ -222,64 +212,22 @@ make update-latest-releaseの実行
 make update-latest-releaseコマンドでは、OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。
 
 2.0.2のリリースを行った際は以下のコマンドを実行しました。::
-::
 
    % make update-latest-release OLD_RELEASE=2.0.1 OLD_RELEASE_DATE=2012-03-29 NEW_RELEASE_DATE=2012-04-29
 
 これにより、clone済みのGroongaのWebサイトのトップページのソース(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。
 
-make update-examplesの実行
---------------------------
+.. _build-for-ubuntu-nightly:
 
-ドキュメントに埋め込まれている実行結果を更新するために、以下のコマンドを実行します。::
+Ubuntu向けパッケージのビルド確認
+--------------------------------
 
-    % cd doc && make update-examples
+Ubuntu向けのパッケージは、LaunchPadでビルドしています。
+リリース前にUbuntu向けパッケージが正常にビルドできるか以下の手順で確認します。::
 
-doc/source/examples以下が更新されるので、それらをコミットします。
-
-make update-filesの実行
------------------------
-
-ロケールメッセージの更新や変更されたファイルのリスト等を更新するために以下のコマンドを実行します。::
-
-    % make update-files
-
-make update-filesを実行すると新規に追加されたファイルなどが各種.amファイルへとリストアップされます。
-
-リリースに必要なファイルですので漏れなくコミットします。
-
-make update-poの実行
---------------------
-
-ドキュメントの最新版と各国語版の内容を同期するために、poファイルの更新を以下のコマンドにて実行します。::
-
-    % make update-po
-
-make update-poを実行すると、doc/locale/ja/LC_MESSAGES以下の各種.poファイルが更新されます。
-
-poファイルの翻訳
-----------------
-
-make update-poコマンドの実行により更新した各種.poファイルを翻訳します。
-
-翻訳結果をHTMLで確認するために、以下のコマンドを実行します。::
-
-    % make -C doc/locale/ja html
-    % make -C doc/locale/en html
-
-修正が必要な箇所を調べて、 ``***.edit`` というファイルを適宜修正します。::
-
-    % cd groonga/doc/locale
-    % git diff
-
-``***.edit`` というファイルの編集中は、翻訳元のファイルは絶対に編集しないで下さい（編集すると、``***.edit`` に加えた変更が make update-po の実行時に失われます）。
-ファイルを編集したら、再度poファイルとHTMLを更新するために以下のコマンドを実行します。::
-
-    % make update-po
-    % make -C doc/locale/ja html
-    % make -C doc/locale/en html
-
-確認が完了したら、翻訳済みpoファイルをコミットします。
+   % make dist
+   % cd packages
+   % rake ubuntu DPUT_CONFIGURATION_NAME=groonga-ppa-nightly DPUT_INCOMING="~groonga/ubuntu/nightly" LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
 
 各種テストの確認
 ----------------
@@ -288,8 +236,7 @@ make update-poコマンドの実行により更新した各種.poファイルを
 タグを設定してから問題が発覚すると、再度リリースすることになってしまうので、タグを設定する前に問題がないか確認します。
 
 * `GitHub Actions <https://github.com/groonga/groonga/actions?query=workflow%3APackage>`_
-* `TravisCI <https://travis-ci.org/github/groonga/groonga>`_
-* `AppVeyor <https://ci.appveyor.com/project/groonga/groonga>`_
+* `LaunchPad <https://launchpad.net/~groonga/+archive/ubuntu/nightly/+packages>`_
 
 テストやパッケージの作成に失敗していたら、原因を特定して修正します。
 
@@ -304,80 +251,42 @@ make update-poコマンドの実行により更新した各種.poファイルを
 .. note::
    タグを打った後にconfigureを実行することで、ドキュメント生成時のバージョン番号に反映されます。
 
-リリース用アーカイブファイルの作成
-----------------------------------
-
-リリース用のソースアーカイブファイルを作成するために以下のコマンドを$GROONGA_CLONE_DIRにて実行します。::
-
-    % make dist
-
-これにより$GROONGA_CLONE_DIR/groonga-(バージョン).tar.gzが作成されます。
-
-.. note::
-   タグを打つ前にmake distを行うとversionが古いままになることがあります。
-   するとgroonga --versionで表示されるバージョン表記が更新されないので注意が必要です。
-   make distで生成したtar.gzのversionおよびversion.shがタグと一致することを確認するのが望ましいです。
-
-リリース用アーカイブファイルのアップロード
-------------------------------------------
+リリース用アーカイブファイルの作成とアップロード
+------------------------------------------------
 
 Groongaのリリース用アーカイブファイルは、MroongaやPGroonga、Rroonga等関連プロダクトのリリースにも使用します。
 生成でき次第アップロードしておくと、関連プロダクトのリリース作業がしやすくなります。
 
-リリース用のアーカイブファイルは以下の手順でアップロードします。
+タグを設定すると、GitHub Actionsで自動生成されます。
+GitHub Actionsでソースアーカイブが自動生成されたのを確認したら以下の手順でアップロードします。::
 
-アップロードはrsyncコマンドで行います。
-以下のコマンドを実行して、現在のリポジトリーと同期します。::
+    % cd packages
+    % rake source
 
-    % cd packages/source
-    % make download
+これにより、GitHub Actionsで生成したソースアーカイブを $GROONGA_CLONE_DIR/groonga-(バージョン).tar.gz
+にダウンロードし packages.groonga.org へアップロードします。
 
-これにより過去にリリースしたソースアーカイブ(.tar.gz)が
-packages/source/filesディレクトリ以下へとダウンロードされます。
+パッケージのビルドとアップロード
+--------------------------------
 
-その後、以下のコマンドを実行してリリース用ソースアーカイブをアップロードします。::
-
-    % cd packages/source
-    % make upload
-
-アップロードが正常終了すると、リリース用ソースアーカイブがpackages.groonga.orgへと反映されます。
-
-パッケージのビルド
-------------------
-
-リリース用のアーカイブファイルができたので、パッケージ化する作業を行います。
-
-パッケージ化作業は以下の3種類を対象に行います。
+パッケージングは以下の3種類を対象に行います。
+Ubuntu以外のOS向けのパッケージは全てGitHub Actionsで生成されます。
 
 * Debian系(.deb)
 * Red Hat系(.rpm)
 * Windows系(.exe,.zip)
 
-パッケージのビルドではいくつかのサブタスクから構成されています。
-
 Debian系パッケージのビルドとアップロード
 ----------------------------------------
 
-環境変数 ``APACHE_ARROW_REPOSITORY`` にapache/arrowのリポジトリをcloneしたパスを指定します。
+タグを設定すると、GitHub Actionsで自動生成されます。
 
-現在サポートしているOSのバージョンは以下の通りです。
-
-* Debian GNU/Linux
-
-  * bullseye amd64
-
-正常にビルドが終了すると$GROONGA_CLONE_DIR/packages/apt/repositories配下に.debパッケージが生成されます。
-
-debパッケージをビルドするには以下のコマンドを実行します。::
+GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。::
 
     % cd packages
     % rake apt
 
-パッケージのビルドが完了したら、以下のコマンドを実行してビルドしたパッケージをpackages.groonga.orgへアップロードします。::
-
-    % rake apt:release
-
-この段階では、ビルドしたパッケージはまだ未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
+この段階では、ビルドしたパッケージは未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
 
     % rake apt
 
@@ -393,14 +302,7 @@ Ubuntu向けパッケージの作成には、作業マシン上にGroongaのビ�
 Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::
 
     % cd packages
-    % rake ubuntu
-
-現在サポートされているのは以下の通りです。
-
-* Xenial i386/amd64
-* Bionic i386/amd64
-* Disco  i386/amd64
-* Focal  amd64
+    % rake ubuntu LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
 
 アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果がメールで通知されます。ビルドに成功すると、リリース対象のパッケージがlaunchpad.netのGroongaチームのPPAへと反映されます。公開されているパッケージは以下のURLで確認できます。
 
@@ -416,26 +318,12 @@ LaunchpadのGroongaチームのページで対象のPPAを選択し、バージ�
 Red Hat系パッケージのビルドとアップロード
 -----------------------------------------
 
-現在サポートしているOSのバージョンは以下の通りです。
+タグを設定すると、GitHub Actionsで自動生成されます。
 
-* centos-6 x86_64
-* centos-7 x86_64
-* centos-8 x86_64
-
-ビルドが正常終了すると$GROONGA_CLONE_DIR/packages/yum/repositories配下にRPMパッケージが生成されます。
-
-* repositories/yum/centos/6/x86_64/Packages
-* repositories/yum/centos/7/x86_64/Packages
-* repositories/yum/centos/8/x86_64/Packages
-
-rpmパッケージをビルドするには以下のコマンドを実行します。::
+GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。::
 
     % cd packages
     % rake yum
-
-パッケージのビルドが完了したら、以下のコマンドを実行してビルドしたパッケージをpackages.groonga.orgへアップロードします。::
-
-    % rake yum:release
 
 この段階では、ビルドしたパッケージはまだ未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
 
@@ -446,125 +334,60 @@ rpmパッケージをビルドするには以下のコマンドを実行しま�
 Windows用パッケージのビルドとアップロード
 -----------------------------------------
 
-Windowsパッケージのビルドに必要なファイルを以下のコマンドを実行してダウンロードします。::
+タグを設定すると、GitHub Actionsで自動生成されます。
+GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgからGitHub Actionsへのリンクを作成します。::
 
-    % cd packages/windows
-    % make download
+    % cd packages
+    % rake windows
 
-これにより、Groongaのインストーラやzipアーカイブが packages/windows以下へとダウンロードされます。
+packages.groonga.org上にWindows版の最新パッケージへリダイレクトする ``.htaccess`` が作成されます。
 
-次に、以下のコマンドを実行してWindowsパッケージをビルドします。::
+WindowsのMSYS2用パッケージのアップロード
+----------------------------------------
 
-    % cd packages/windows
-    % make build
-    % make package
-    % make installer
+`MINGW-packages <https://github.com/msys2/MINGW-packages>`_ の、 ``mingw-w64-groonga/PKGBUILD`` を最新にして、プルリクエストを作成します。
 
-make buildでクロスコンパイルを行います。
-正常に終了するとdist-x64/dist-x86ディレクトリ以下にx64/x86バイナリを作成します。
+MINGW-packagesはforkして自分のリポジトリを作成しておきます。
+また、forkしたリポジトリのGitHub Actionsを有効にしておきます。
 
-make packageが正常に終了するとzipアーカイブをfilesディレクトリ以下に作成します。
+forkしたリポジトリにて ``mingw-w64-groonga/PKGBUILD`` を以下の通り更新します。
 
-make installerが正常に終了するとWindowsインストーラをfilesディレクトリ以下に作成します。
+* ``pkgver`` : 最新のGroongaバージョン
+* ``pkgrel`` : ``1``
+* ``sha256sums`` : 最新の https://packages.groonga.org/source/groonga/groonga-xx.x.x.tar.gz のsha256sum
 
-パッケージのビルドが完了したら、以下のコマンドを実行してビルドしたパッケージをpackages.groonga.orgへアップロードします。::
+上記の修正をforkした自分のリポジトリにpushして、GitHub Actionsが成功していることを確認します。
+これで正しくビルドできているかどうかが確認できます。
 
-    % cd packages/windows
-    % make upload
+確認後、本家のMINGW-packagesにプルリクエストを作成します。
 
-パッケージの動作確認
+過去のプルリクエストの例は以下です。
+
+  https://github.com/msys2/MINGW-packages/pull/14320
+
+プルリクエストがマージされると、MSYS2用のパッケージがリリースされます。
+
+Dockerイメージの更新
 --------------------
 
-.. note::
-   パッケージの動作確認はGitHub Actions上で自動で実施できるように改良中で、以下の手順は今後削除する予定です。
+`Docker Hub <https://hub.docker.com/r/groonga/groonga>`_ のGroongaのDockerイメージを更新します。
 
-ビルドしたパッケージに対しリリース前の動作確認を行います。
+`GroongaのDockerリポジトリー <https://github.com/groonga/docker>`_ をクローンし、リポジトリーの中のDockerfileを更新します。
 
-Debian系もしくはRed Hat系の場合には本番環境へとアップロードする前にローカルのaptないしyumのリポジトリを参照して正常に更新できることを確認します。
+以下は、Groongaのバージョンが ``12.0.9`` の場合の例です。作業時には最新のバージョンを指定してください。::
 
-ここでは以下のようにrubyを利用してリポジトリをwebサーバ経由で参照できるようにします。
+    % mkdir -p ~/work/groonga
+    % rm -rf ~/work/groonga/docker.clean
+    % git clone --recursive git@github.com:groonga/docker.git ~/work/groonga/docker.clean
+    % cd ~/work/groonga/docker.clean
+    % ./update.sh 12.0.9 #Automatically update Dockerfiles and commit changes and create a tag.
+    % git push
 
-yumの場合::
+`GroongaのDockerリポジトリーのGithub Actions <https://github.com/groonga/docker/actions>`_ が成功しているのを確認してから、タグをpushします。::
 
-    % ruby -run -e httpd -- packages/yum/repositories
-    % yum update
-    ...
+    % git push --tags
 
-aptの場合::
-
-    % ruby -run -e httpd -- packages/apt/repositories
-    % sudo apt update
-    ...
-
-grntestの準備
-~~~~~~~~~~~~~
-
-TravisCIの結果が正常であれば、この手順はスキップして構いません。
-grntestを実行するためにはGroongaのテストデータとgrntestのソースが必要です。
-
-まずGroongaのソースを任意のディレクトリへと展開します。::
-
-    % tar zxvf groonga-(バージョン).tar.gz
-
-次にGroongaのtest/functionディレクトリ以下にgrntestのソースを展開します。
-つまりtest/function/grntestという名前でgrntestのソースを配置します。::
-
-    % ls test/function/grntest/
-    README.md  binlib  license  test
-
-grntestの実行方法
-~~~~~~~~~~~~~~~~~
-
-grntestではGroongaコマンドを明示的に指定することができます。
-後述のパッケージごとのgrntestによる動作確認では以下のようにして実行します。::
-
-    % GROONGA=(groongaのパス指定) test/function/run-test.sh
-
-最後にgrntestによる実行結果が以下のようにまとめて表示されます。::
-
-    55 tests, 52 passes, 0 failures, 3 not checked tests.
-    94.55% passed.
-
-grntestでエラーが発生しないことを確認します。
-
-
-Debian系の場合
-~~~~~~~~~~~~~~
-
-Debian系の場合の動作確認手順は以下の通りとなります。
-
-* 旧バージョンをテスト環境へとインストールする
-* テスト環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを
-  参照するように変更する
-* ホストでwebサーバを起動してドキュメントルートをビルド環境のもの
-  (repositories/apt/packages)に設定する
-* アップグレード手順を実行する
-* grntestのアーカイブを展開してインストールしたバージョンでテストを実
-  行する
-* grntestの正常終了を確認する
-
-
-Red Hat系の場合
-~~~~~~~~~~~~~~~
-
-Red Hat系の場合の動作確認手順は以下の通りとなります。
-
-* 旧バージョンをテスト環境へとインストール
-* テスト環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを参照するように変更する
-* ホストでwebサーバを起動してドキュメントルートをビルド環境のもの(packages/yum/repositories)に設定する
-* アップグレード手順を実行する
-* grntestのアーカイブを展開してインストールしたバージョンでテストを実行する
-* grntestの正常終了を確認する
-
-
-Windows向けの場合
-~~~~~~~~~~~~~~~~~
-
-* テスト環境で新規インストール/上書きインストールを行う
-* grntestのアーカイブを展開してインストールしたバージョンでテストを実行する
-* grntestの正常終了を確認する
-
-zipアーカイブも同様にしてgrntestを実行し動作確認を行います。
+pushすると、 GroongaのDockerリポジトリーのGithub Actions が Docker HubのGroonga のDockerイメージを自動で更新します。
 
 リリースアナウンスの作成
 ------------------------
@@ -596,8 +419,7 @@ news.rstに変更点をまとめましたが、それを元にリリースアナ
 
 後述しますが、Twitter等でのリリースアナウンスの際はここで用意したアナウンス文の要約を使用します。
 
-
-blogroonga(ブログ)の更新
+BloGroonga(ブログ)の更新
 ------------------------
 
 https://groonga.org/blog/ および https://groonga.org/blog/ にて公開されているリリース案内を作成します。
@@ -638,13 +460,15 @@ doc/source以下のドキュメントを更新、翻訳まで完了している�
 
 そのためにはまず ``groonga`` のリポジトリをカレントディレクトリにして以下のコマンドを実行します。::
 
-    % make update-document
+    % GROONGA_VERSION=$(git tag --sort=taggerdate | tail -n 1 | tr -d v)
+    % make update-document DOCUMENT_VERSION=$GROONGA_VERSION DOCUMENT_VERSION_FULL=$GROONGA_VERSION
 
-これによりcloneしておいたgroonga.orgのdocsおよびja/docs以下に更新したドキュメントがコピーされます。
+ここでは最新のtagに基づいてリリースバージョンを調べ、明示的にそのバージョンを指定してドキュメントを更新するようにしています。
+これによりcloneしておいたgroonga.orgのdoc/locale以下に更新したドキュメントがコピーされます。
 
 生成されているドキュメントに問題のないことを確認できたら、コミット、pushしてgroonga.orgへと反映します。
 
-また、``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョン番号と日付を表す情報の指定があるので、これらも更新します。::
+また、 ``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョン番号と日付を表す情報の指定があるので、これらも更新します。::
 
     groonga_version: x.x.x
     groonga_release_date: xxxx-xx-xx
@@ -680,11 +504,11 @@ Groonga 3.0.6のときは以下のように更新してpull requestを送りま�
 Twitterでリリースアナウンスをする
 ---------------------------------
 
-blogroongaのリリースエントリには「リンクをあなたのフォロワーに共有する」ためのツイートボタンがあるので、そのボタンを使ってリリースアナウンスします。(画面下部に配置されている)
+BloGroongaのリリースエントリには「リンクをあなたのフォロワーに共有する」ためのツイートボタンがあるので、そのボタンを使ってリリースアナウンスします。(画面下部に配置されている)
 
-このボタンを経由する場合、ツイート内容に自動的にリリースタイトル(「groonga 2.0.8リリース」など)とblogroongaのリリースエントリのURLが挿入されます。
+このボタンを経由する場合、ツイート内容に自動的にリリースタイトル(「groonga 2.0.8リリース」など)とBloGroongaのリリースエントリのURLが挿入されます。
 
-この作業はblogroongaの英語版、日本語版それぞれで行います。
+この作業はBloGroongaの英語版、日本語版それぞれで行います。
 あらかじめgroongaアカウントでログインしておくとアナウンスを円滑に行うことができます。
 
 Facebookでリリースアナウンスをする

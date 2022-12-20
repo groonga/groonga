@@ -246,9 +246,8 @@ msgid "ログイン可能であるかの確認は以下のようにコマンド�
 msgstr ""
 
 msgid ""
-"デバッグ用や開発用のパッケージをテスト用に公開する時は、 ``--with-launchpad-"
-"ppa=groonga-nightly`` を指定して不安定版のリポジトリにアップロードするように"
-"指定します。::"
+"Ubuntu向けパッケージをテスト用に公開する時は、 :ref:`build-for-ubuntu-"
+"nightly` の手順で不安定版のリポジトリにアップロードするように指定します。"
 msgstr ""
 
 msgid ""
@@ -300,7 +299,7 @@ msgid ""
 "付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。"
 msgstr ""
 
-msgid "2.0.2のリリースを行った際は以下のコマンドを実行しました。:: ::"
+msgid "2.0.2のリリースを行った際は以下のコマンドを実行しました。::"
 msgstr ""
 
 msgid ""
@@ -309,67 +308,12 @@ msgid ""
 "す。"
 msgstr ""
 
-msgid "make update-examplesの実行"
+msgid "Ubuntu向けパッケージのビルド確認"
 msgstr ""
 
 msgid ""
-"ドキュメントに埋め込まれている実行結果を更新するために、以下のコマンドを実行"
-"します。::"
-msgstr ""
-
-msgid "doc/source/examples以下が更新されるので、それらをコミットします。"
-msgstr ""
-
-msgid "make update-filesの実行"
-msgstr ""
-
-msgid ""
-"ロケールメッセージの更新や変更されたファイルのリスト等を更新するために以下の"
-"コマンドを実行します。::"
-msgstr ""
-
-msgid ""
-"make update-filesを実行すると新規に追加されたファイルなどが各種.amファイルへ"
-"とリストアップされます。"
-msgstr ""
-
-msgid "リリースに必要なファイルですので漏れなくコミットします。"
-msgstr ""
-
-msgid "make update-poの実行"
-msgstr ""
-
-msgid ""
-"ドキュメントの最新版と各国語版の内容を同期するために、poファイルの更新を以下"
-"のコマンドにて実行します。::"
-msgstr ""
-
-msgid ""
-"make update-poを実行すると、doc/locale/ja/LC_MESSAGES以下の各種.poファイルが"
-"更新されます。"
-msgstr ""
-
-msgid "poファイルの翻訳"
-msgstr ""
-
-msgid "make update-poコマンドの実行により更新した各種.poファイルを翻訳します。"
-msgstr ""
-
-msgid "翻訳結果をHTMLで確認するために、以下のコマンドを実行します。::"
-msgstr ""
-
-msgid ""
-"修正が必要な箇所を調べて、 ``***.edit`` というファイルを適宜修正します。::"
-msgstr ""
-
-msgid ""
-"``***.edit`` というファイルの編集中は、翻訳元のファイルは絶対に編集しないで下"
-"さい（編集すると、``***.edit`` に加えた変更が make update-po の実行時に失われ"
-"ます）。 ファイルを編集したら、再度poファイルとHTMLを更新するために以下のコマ"
-"ンドを実行します。::"
-msgstr ""
-
-msgid "確認が完了したら、翻訳済みpoファイルをコミットします。"
+"Ubuntu向けのパッケージは、LaunchPadでビルドしています。 リリース前にUbuntu向"
+"けパッケージが正常にビルドできるか以下の手順で確認します。::"
 msgstr ""
 
 msgid "各種テストの確認"
@@ -382,14 +326,13 @@ msgid ""
 msgstr ""
 
 msgid ""
-"`GitHub Actions <https://github.com/groonga/groonga/actions?query=workflow"
-"%3APackage>`_"
+"`GitHub Actions <https://github.com/groonga/groonga/actions?"
+"query=workflow%3APackage>`_"
 msgstr ""
 
-msgid "`TravisCI <https://travis-ci.org/github/groonga/groonga>`_"
-msgstr ""
-
-msgid "`AppVeyor <https://ci.appveyor.com/project/groonga/groonga>`_"
+msgid ""
+"`LaunchPad <https://launchpad.net/~groonga/+archive/ubuntu/nightly/"
+"+packages>`_"
 msgstr ""
 
 msgid "テストやパッケージの作成に失敗していたら、原因を特定して修正します。"
@@ -406,26 +349,7 @@ msgid ""
 "に反映されます。"
 msgstr ""
 
-msgid "リリース用アーカイブファイルの作成"
-msgstr ""
-
-msgid ""
-"リリース用のソースアーカイブファイルを作成するために以下のコマンドを"
-"$GROONGA_CLONE_DIRにて実行します。::"
-msgstr ""
-
-msgid ""
-"これにより$GROONGA_CLONE_DIR/groonga-(バージョン).tar.gzが作成されます。"
-msgstr ""
-
-msgid ""
-"タグを打つ前にmake distを行うとversionが古いままになることがあります。 すると"
-"groonga --versionで表示されるバージョン表記が更新されないので注意が必要で"
-"す。 make distで生成したtar.gzのversionおよびversion.shがタグと一致することを"
-"確認するのが望ましいです。"
-msgstr ""
-
-msgid "リリース用アーカイブファイルのアップロード"
+msgid "リリース用アーカイブファイルの作成とアップロード"
 msgstr ""
 
 msgid ""
@@ -434,37 +358,23 @@ msgid ""
 "ダクトのリリース作業がしやすくなります。"
 msgstr ""
 
-msgid "リリース用のアーカイブファイルは以下の手順でアップロードします。"
+msgid ""
+"タグを設定すると、GitHub Actionsで自動生成されます。 GitHub Actionsでソース"
+"アーカイブが自動生成されたのを確認したら以下の手順でアップロードします。::"
 msgstr ""
 
 msgid ""
-"アップロードはrsyncコマンドで行います。 以下のコマンドを実行して、現在のリポ"
-"ジトリーと同期します。::"
+"これにより、GitHub Actionsで生成したソースアーカイブを $GROONGA_CLONE_DIR/"
+"groonga-(バージョン).tar.gz にダウンロードし packages.groonga.org へアップ"
+"ロードします。"
+msgstr ""
+
+msgid "パッケージのビルドとアップロード"
 msgstr ""
 
 msgid ""
-"これにより過去にリリースしたソースアーカイブ(.tar.gz)が packages/source/files"
-"ディレクトリ以下へとダウンロードされます。"
-msgstr ""
-
-msgid ""
-"その後、以下のコマンドを実行してリリース用ソースアーカイブをアップロードしま"
-"す。::"
-msgstr ""
-
-msgid ""
-"アップロードが正常終了すると、リリース用ソースアーカイブがpackages.groonga."
-"orgへと反映されます。"
-msgstr ""
-
-msgid "パッケージのビルド"
-msgstr ""
-
-msgid ""
-"リリース用のアーカイブファイルができたので、パッケージ化する作業を行います。"
-msgstr ""
-
-msgid "パッケージ化作業は以下の3種類を対象に行います。"
+"パッケージングは以下の3種類を対象に行います。 Ubuntu以外のOS向けのパッケージ"
+"は全てGitHub Actionsで生成されます。"
 msgstr ""
 
 msgid "Debian系(.deb)"
@@ -476,41 +386,19 @@ msgstr ""
 msgid "Windows系(.exe,.zip)"
 msgstr ""
 
-msgid "パッケージのビルドではいくつかのサブタスクから構成されています。"
-msgstr ""
-
 msgid "Debian系パッケージのビルドとアップロード"
 msgstr ""
 
-msgid ""
-"環境変数 ``APACHE_ARROW_REPOSITORY`` にapache/arrowのリポジトリをcloneしたパ"
-"スを指定します。"
-msgstr ""
-
-msgid "現在サポートしているOSのバージョンは以下の通りです。"
-msgstr ""
-
-msgid "Debian GNU/Linux"
-msgstr ""
-
-msgid "bullseye amd64"
+msgid "タグを設定すると、GitHub Actionsで自動生成されます。"
 msgstr ""
 
 msgid ""
-"正常にビルドが終了すると$GROONGA_CLONE_DIR/packages/apt/repositories配下に."
-"debパッケージが生成されます。"
-msgstr ""
-
-msgid "debパッケージをビルドするには以下のコマンドを実行します。::"
+"GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、"
+"packages.groonga.orgへアップロードします。::"
 msgstr ""
 
 msgid ""
-"パッケージのビルドが完了したら、以下のコマンドを実行してビルドしたパッケージ"
-"をpackages.groonga.orgへアップロードします。::"
-msgstr ""
-
-msgid ""
-"この段階では、ビルドしたパッケージはまだ未署名なの"
+"この段階では、ビルドしたパッケージは未署名なの"
 "で、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::"
 msgstr ""
 
@@ -529,21 +417,6 @@ msgid ""
 msgstr ""
 
 msgid "Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::"
-msgstr ""
-
-msgid "現在サポートされているのは以下の通りです。"
-msgstr ""
-
-msgid "Xenial i386/amd64"
-msgstr ""
-
-msgid "Bionic i386/amd64"
-msgstr ""
-
-msgid "Disco  i386/amd64"
-msgstr ""
-
-msgid "Focal  amd64"
 msgstr ""
 
 msgid ""
@@ -570,179 +443,101 @@ msgstr ""
 msgid "Red Hat系パッケージのビルドとアップロード"
 msgstr ""
 
-msgid "centos-6 x86_64"
-msgstr ""
-
-msgid "centos-7 x86_64"
-msgstr ""
-
-msgid "centos-8 x86_64"
+msgid ""
+"タグを設定すると、GitHub Actionsで自動生成されます。 "
 msgstr ""
 
 msgid ""
-"ビルドが正常終了すると$GROONGA_CLONE_DIR/packages/yum/repositories配下にRPM"
-"パッケージが生成されます。"
-msgstr ""
-
-msgid "repositories/yum/centos/6/x86_64/Packages"
-msgstr ""
-
-msgid "repositories/yum/centos/7/x86_64/Packages"
-msgstr ""
-
-msgid "repositories/yum/centos/8/x86_64/Packages"
-msgstr ""
-
-msgid "rpmパッケージをビルドするには以下のコマンドを実行します。::"
+"この段階では、ビルドしたパッケージはまだ未署名なの"
+"で、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::"
 msgstr ""
 
 msgid "Windows用パッケージのビルドとアップロード"
 msgstr ""
 
 msgid ""
-"Windowsパッケージのビルドに必要なファイルを以下のコマンドを実行してダウンロー"
-"ドします。::"
+"タグを設定すると、GitHub Actionsで自動生成されます。 GitHub Actionsでパッケー"
+"ジが自動生成されたのを確認したら以下の手順で、packages.groonga.orgからGitHub "
+"Actionsへのリンクを作成します。::"
 msgstr ""
 
 msgid ""
-"これにより、Groongaのインストーラやzipアーカイブが packages/windows以下へとダ"
-"ウンロードされます。"
+"packages.groonga.org上にWindows版の最新パッケージへリダイレクトする ``."
+"htaccess`` が作成されます。"
 msgstr ""
 
-msgid "次に、以下のコマンドを実行してWindowsパッケージをビルドします。::"
-msgstr ""
-
-msgid ""
-"make buildでクロスコンパイルを行います。 正常に終了するとdist-x64/dist-x86"
-"ディレクトリ以下にx64/x86バイナリを作成します。"
+msgid "WindowsのMSYS2用パッケージのアップロード"
 msgstr ""
 
 msgid ""
-"make packageが正常に終了するとzipアーカイブをfilesディレクトリ以下に作成しま"
+"`MINGW-packages <https://github.com/msys2/MINGW-packages>`_ の、 ``mingw-w64-"
+"groonga/PKGBUILD`` を最新にして、プルリクエストを作成します。"
+msgstr ""
+
+msgid ""
+"MINGW-packagesはforkして自分のリポジトリを作成しておきます。 また、forkしたリ"
+"ポジトリのGitHub Actionsを有効にしておきます。"
+msgstr ""
+
+msgid ""
+"forkしたリポジトリにて ``mingw-w64-groonga/PKGBUILD`` を以下の通り更新しま"
 "す。"
 msgstr ""
 
-msgid ""
-"make installerが正常に終了するとWindowsインストーラをfilesディレクトリ以下に"
-"作成します。"
+msgid "``pkgver`` : 最新のGroongaバージョン"
 msgstr ""
 
-msgid "パッケージの動作確認"
-msgstr ""
-
-msgid ""
-"パッケージの動作確認はGitHub Actions上で自動で実施できるように改良中で、以下"
-"の手順は今後削除する予定です。"
-msgstr ""
-
-msgid "ビルドしたパッケージに対しリリース前の動作確認を行います。"
+msgid "``pkgrel`` : ``1``"
 msgstr ""
 
 msgid ""
-"Debian系もしくはRed Hat系の場合には本番環境へとアップロードする前にローカルの"
-"aptないしyumのリポジトリを参照して正常に更新できることを確認します。"
+"``sha256sums`` : 最新の https://packages.groonga.org/source/groonga/groonga-"
+"xx.x.x.tar.gz のsha256sum"
 msgstr ""
 
 msgid ""
-"ここでは以下のようにrubyを利用してリポジトリをwebサーバ経由で参照できるように"
-"します。"
+"上記の修正をforkした自分のリポジトリにpushして、GitHub Actionsが成功している"
+"ことを確認します。 これで正しくビルドできているかどうかが確認できます。"
 msgstr ""
 
-msgid "yumの場合::"
+msgid "確認後、本家のMINGW-packagesにプルリクエストを作成します。"
 msgstr ""
 
-msgid "aptの場合::"
+msgid "過去のプルリクエストの例は以下です。"
 msgstr ""
 
-msgid "grntestの準備"
+msgid "https://github.com/msys2/MINGW-packages/pull/14320"
 msgstr ""
 
-msgid ""
-"TravisCIの結果が正常であれば、この手順はスキップして構いません。 grntestを実"
-"行するためにはGroongaのテストデータとgrntestのソースが必要です。"
+msgid "プルリクエストがマージされると、MSYS2用のパッケージがリリースされます。"
 msgstr ""
 
-msgid "まずGroongaのソースを任意のディレクトリへと展開します。::"
-msgstr ""
-
-msgid ""
-"次にGroongaのtest/functionディレクトリ以下にgrntestのソースを展開します。 つ"
-"まりtest/function/grntestという名前でgrntestのソースを配置します。::"
-msgstr ""
-
-msgid "grntestの実行方法"
+msgid "Dockerイメージの更新"
 msgstr ""
 
 msgid ""
-"grntestではGroongaコマンドを明示的に指定することができます。 後述のパッケージ"
-"ごとのgrntestによる動作確認では以下のようにして実行します。::"
-msgstr ""
-
-msgid "最後にgrntestによる実行結果が以下のようにまとめて表示されます。::"
-msgstr ""
-
-msgid "grntestでエラーが発生しないことを確認します。"
-msgstr ""
-
-msgid "Debian系の場合"
-msgstr ""
-
-msgid "Debian系の場合の動作確認手順は以下の通りとなります。"
-msgstr ""
-
-msgid "旧バージョンをテスト環境へとインストールする"
+"`Docker Hub <https://hub.docker.com/r/groonga/groonga>`_ のGroongaのDockerイ"
+"メージを更新します。"
 msgstr ""
 
 msgid ""
-"テスト環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを 参照するよう"
-"に変更する"
+"`GroongaのDockerリポジトリー <https://github.com/groonga/docker>`_ をクローン"
+"し、リポジトリーの中のDockerfileを更新します。"
 msgstr ""
 
 msgid ""
-"ホストでwebサーバを起動してドキュメントルートをビルド環境のもの "
-"(repositories/apt/packages)に設定する"
-msgstr ""
-
-msgid "アップグレード手順を実行する"
+"以下は、Groongaのバージョンが ``12.0.9`` の場合の例です。作業時には最新のバー"
+"ジョンを指定してください。::"
 msgstr ""
 
 msgid ""
-"grntestのアーカイブを展開してインストールしたバージョンでテストを実 行する"
-msgstr ""
-
-msgid "grntestの正常終了を確認する"
-msgstr ""
-
-msgid "Red Hat系の場合"
-msgstr ""
-
-msgid "Red Hat系の場合の動作確認手順は以下の通りとなります。"
-msgstr ""
-
-msgid "旧バージョンをテスト環境へとインストール"
+"`GroongaのDockerリポジトリーのGithub Actions <https://github.com/groonga/"
+"docker/actions>`_ が成功しているのを確認してから、タグをpushします。::"
 msgstr ""
 
 msgid ""
-"テスト環境の/etc/hostsを書き換えてpackages.groonga.orgがホストを参照するよう"
-"に変更する"
-msgstr ""
-
-msgid ""
-"ホストでwebサーバを起動してドキュメントルートをビルド環境のもの(packages/yum/"
-"repositories)に設定する"
-msgstr ""
-
-msgid ""
-"grntestのアーカイブを展開してインストールしたバージョンでテストを実行する"
-msgstr ""
-
-msgid "Windows向けの場合"
-msgstr ""
-
-msgid "テスト環境で新規インストール/上書きインストールを行う"
-msgstr ""
-
-msgid "zipアーカイブも同様にしてgrntestを実行し動作確認を行います。"
+"pushすると、 GroongaのDockerリポジトリーのGithub Actions が Docker Hubの"
+"Groonga のDockerイメージを自動で更新します。"
 msgstr ""
 
 msgid "リリースアナウンスの作成"
@@ -800,7 +595,7 @@ msgid ""
 "の要約を使用します。"
 msgstr ""
 
-msgid "blogroonga(ブログ)の更新"
+msgid "BloGroonga(ブログ)の更新"
 msgstr ""
 
 msgid ""
@@ -855,8 +650,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"これによりcloneしておいたgroonga.orgのdocsおよびja/docs以下に更新したドキュメ"
-"ントがコピーされます。"
+"ここでは最新のtagに基づいてリリースバージョンを調べ、明示的にそのバージョンを"
+"指定してドキュメントを更新するようにしています。 これによりcloneしておいた"
+"groonga.orgのdoc/locale以下に更新したドキュメントがコピーされます。"
 msgstr ""
 
 msgid ""
@@ -865,8 +661,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"また、``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョン"
-"番号と日付を表す情報の指定があるので、これらも更新します。::"
+"また、 ``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョ"
+"ン番号と日付を表す情報の指定があるので、これらも更新します。::"
 msgstr ""
 
 msgid "Homebrewの更新"
@@ -921,18 +717,18 @@ msgid "Twitterでリリースアナウンスをする"
 msgstr ""
 
 msgid ""
-"blogroongaのリリースエントリには「リンクをあなたのフォロワーに共有する」ため"
+"BloGroongaのリリースエントリには「リンクをあなたのフォロワーに共有する」ため"
 "のツイートボタンがあるので、そのボタンを使ってリリースアナウンスします。(画面"
 "下部に配置されている)"
 msgstr ""
 
 msgid ""
 "このボタンを経由する場合、ツイート内容に自動的にリリースタイトル(「groonga "
-"2.0.8リリース」など)とblogroongaのリリースエントリのURLが挿入されます。"
+"2.0.8リリース」など)とBloGroongaのリリースエントリのURLが挿入されます。"
 msgstr ""
 
 msgid ""
-"この作業はblogroongaの英語版、日本語版それぞれで行います。 あらかじめgroonga"
+"この作業はBloGroongaの英語版、日本語版それぞれで行います。 あらかじめgroonga"
 "アカウントでログインしておくとアナウンスを円滑に行うことができます。"
 msgstr ""
 
