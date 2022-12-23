@@ -493,7 +493,9 @@ namespace {
         if (ctx->rc == GRN_SUCCESS) {
           *result_set = new_result_set;
         } else {
-          grn_obj_close(ctx, new_result_set);
+          if (new_result_set != *result_set) {
+            grn_obj_close(ctx, new_result_set);
+          }
         }
       }
       if (ctx->rc != GRN_SUCCESS) {
