@@ -2393,6 +2393,7 @@ scan_info_build_match_expr_codes_find_index(grn_ctx *ctx, scan_info *si,
   uint32_t offset = 1;
   grn_index_datum index_datum;
   unsigned int n_index_data = 0;
+  bool may_use_get_member = false;
 
   ec = &(expr->codes[i]);
   switch (ec->value->header.type) {
@@ -2416,32 +2417,34 @@ scan_info_build_match_expr_codes_find_index(grn_ctx *ctx, scan_info *si,
     if (n_index_data > 0) {
       *index = index_datum.index;
       *sid = index_datum.section;
-    }
-    break;
-  case GRN_COLUMN_INDEX :
-    {
-      uint32_t n_rest_codes;
-
-      *index = ec->value;
-      grn_obj_refer(ctx, *index);
-
-      n_rest_codes = expr->codes_curr - i;
-      if (n_rest_codes >= 2 &&
-          ec[1].value &&
-          (ec[1].value->header.domain == GRN_DB_INT32 ||
-           ec[1].value->header.domain == GRN_DB_UINT32) &&
-          ec[2].op == GRN_OP_GET_MEMBER) {
-        if (ec[1].value->header.domain == GRN_DB_INT32) {
-          *sid = GRN_INT32_VALUE(ec[1].value) + 1;
-        } else {
-          *sid = GRN_UINT32_VALUE(ec[1].value) + 1;
-        }
-        offset += 2;
+      if (grn_obj_is_vector_column(ctx, ec->value) && *sid == 0) {
+        may_use_get_member = true;
       }
     }
     break;
+  case GRN_COLUMN_INDEX :
+    *index = ec->value;
+    grn_obj_refer(ctx, *index);
+    may_use_get_member = true;
+    break;
   default :
     break;
+  }
+
+  if (may_use_get_member) {
+    uint32_t n_rest_codes = expr->codes_curr - i;
+    if (n_rest_codes >= 2 &&
+        ec[1].value &&
+        (ec[1].value->header.domain == GRN_DB_INT32 ||
+         ec[1].value->header.domain == GRN_DB_UINT32) &&
+        ec[2].op == GRN_OP_GET_MEMBER) {
+      if (ec[1].value->header.domain == GRN_DB_INT32) {
+        *sid = GRN_INT32_VALUE(ec[1].value) + 1;
+      } else {
+        *sid = GRN_UINT32_VALUE(ec[1].value) + 1;
+      }
+      offset += 2;
+    }
   }
 
   return offset;

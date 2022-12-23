@@ -1,0 +1,18 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos contents COLUMN_VECTOR ShortText
+
+table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION \
+  Memos contents
+
+load --table Memos
+[
+["contents"],
+[["I like Groonga", "Use Groonga with Ruby"]],
+[["I like Ruby", "Use Groonga"]]
+]
+
+select Memos \
+  --match_columns "contents[1]" \
+  --query Ruby \
+  --output_columns "contents, _score"
