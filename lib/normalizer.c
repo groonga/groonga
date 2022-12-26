@@ -3325,7 +3325,7 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
                           MAX_N_HITS,
                           &rest);
     for (i = 0; i < n_hits; i++) {
-      if (hits[i].offset - previous > 0) {
+      if (hits[i].offset > previous) {
         const char *source_previous = source + previous;
         size_t source_previous_length = hits[i].offset - previous;
         GRN_TEXT_PUT(ctx, normalized, source_previous, source_previous_length);

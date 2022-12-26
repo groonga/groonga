@@ -1,0 +1,14 @@
+table_create Normalizations TABLE_PAT_KEY ShortText \
+  --normalizer NormalizerNFKC130
+column_create Normalizations normalized COLUMN_SCALAR ShortText
+
+load --table Normalizations
+[
+{"_key": "Ⅰ", "normalized": "1"},
+{"_key": "Ⅱ", "normalized": "2"},
+{"_key": "Ⅲ", "normalized": "3"}
+]
+
+normalize \
+  'NormalizerTable("normalized", "Normalizations.normalized")' \
+  "ⅡⅡ"

@@ -1,0 +1,13 @@
+table_create Normalizations TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC130
+[[0,0.0,0.0],true]
+column_create Normalizations normalized COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Normalizations
+[
+{"_key": "Ⅰ", "normalized": "1"},
+{"_key": "Ⅱ", "normalized": "2"},
+{"_key": "Ⅲ", "normalized": "3"}
+]
+[[0,0.0,0.0],3]
+normalize   'NormalizerTable("normalized", "Normalizations.normalized")'   "ⅡⅡ"
+[[0,0.0,0.0],{"normalized":"31","types":[],"checks":[]}]
