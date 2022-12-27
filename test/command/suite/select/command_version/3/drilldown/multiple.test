@@ -1,0 +1,12 @@
+table_create Documents TABLE_NO_KEY
+column_create Documents tag1 COLUMN_SCALAR ShortText
+column_create Documents tag2 COLUMN_SCALAR ShortText
+
+load --table Documents
+[
+{"tag1": "1", "tag2": "2"}
+]
+
+select Documents \
+  --drilldown tag1,tag2 \
+  --command_version 3

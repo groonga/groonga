@@ -820,6 +820,9 @@ namespace {
     ~Drilldowns()
     {
       close();
+      for (auto label : labels_) {
+        delete label;
+      }
     }
 
     void
@@ -914,7 +917,7 @@ namespace {
     const char *log_tag_;
     grn_hash *drilldowns_;
     grn_raw_string keys_;
-    std::vector<std::string> labels_;
+    std::vector<std::string *> labels_;
     uint32_t n_executing_drilldowns_;
     std::atomic<uint32_t> n_executed_drilldowns_;
 
@@ -1079,8 +1082,9 @@ namespace {
           }
           GRN_TEXT_SET(ctx_, *buffer, name, name_len);
         }
-        labels_.emplace_back(GRN_TEXT_VALUE(*buffer), GRN_TEXT_LEN(*buffer));
-        grn_raw_string label = {labels_[i].data(), labels_[i].length()};
+        labels_.push_back(new std::string(GRN_TEXT_VALUE(*buffer),
+                                          GRN_TEXT_LEN(*buffer)));
+        grn_raw_string label = {labels_[i]->data(), labels_[i]->length()};
         auto drilldown = add("drilldown_", nullptr, &label);
         if (!drilldown) {
           continue;

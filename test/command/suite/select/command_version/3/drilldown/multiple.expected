@@ -1,0 +1,83 @@
+table_create Documents TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Documents tag1 COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Documents tag2 COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Documents
+[
+{"tag1": "1", "tag2": "2"}
+]
+[[0,0.0,0.0],1]
+select Documents   --drilldown tag1,tag2   --command_version 3
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": {
+    "n_hits": 1,
+    "columns": [
+      {
+        "name": "_id",
+        "type": "UInt32"
+      },
+      {
+        "name": "tag1",
+        "type": "ShortText"
+      },
+      {
+        "name": "tag2",
+        "type": "ShortText"
+      }
+    ],
+    "records": [
+      [
+        1,
+        "1",
+        "2"
+      ]
+    ],
+    "drilldowns": {
+      "tag1": {
+        "n_hits": 1,
+        "columns": [
+          {
+            "name": "_key",
+            "type": "ShortText"
+          },
+          {
+            "name": "_nsubrecs",
+            "type": "Int32"
+          }
+        ],
+        "records": [
+          [
+            "1",
+            1
+          ]
+        ]
+      },
+      "tag2": {
+        "n_hits": 1,
+        "columns": [
+          {
+            "name": "_key",
+            "type": "ShortText"
+          },
+          {
+            "name": "_nsubrecs",
+            "type": "Int32"
+          }
+        ],
+        "records": [
+          [
+            "2",
+            1
+          ]
+        ]
+      }
+    }
+  }
+}
