@@ -2337,6 +2337,7 @@ parameters:
   * ``drilldowns[${LABEL}].calc_target``
   * ``drilldowns[${LABEL}].filter``
   * ``drilldowns[${LABEL}].max_n_target_records``
+  * ``drilldowns[${LABEL}].key_vector_expansion``
   * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
   * ``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``
   * ``drilldowns[${LABEL}].columns[${NAME}].type=null``
@@ -2504,6 +2505,70 @@ the table named as ``NestedDrilldownTags`` which has the column named as ``categ
 Thus, the result of ``Tag`` contains one row each for ``Groonga``, ``Mroonga`` and ``Rroonga``.
 And then, ``Category`` drilldowns ``Tag`` by ``category``. 
 Thus the result of ``Category`` contains two records has ``C/C++`` and one records has ``Ruby``.
+
+.. _select-drilldowns-label-key-vector-expansions:
+
+``drilldowns[${LABEL}].key_vector_expansion``
+"""""""""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 12.1.1
+
+集計対象のキーがベクターのときに、キーの展開方法を指定します。現状は ``power_set`` のみです。
+
+``power_set``
+~~~~~~~~~~~~~
+
+ベクターをべき集合に展開して集計します。
+
+べき集合とはある集合のすべての部分集合の集合です。
+ただし、Groongaは要素数が0の集合（空集合）は対象にしません。
+
+あるベクター ``[A, B, C]`` を例に考えます。
+
+* 要素数が1の部分集合
+
+  * ``{A}``
+  * ``{B}``
+  * ``{C}``
+
+* 要素数が2の部分集合
+
+  * ``{A, B}``
+  * ``{B, C}``
+  * ``{A, C}``
+
+* 要素数が3の部分集合 
+
+  * ``{A, B, C}``
+
+以上から、 ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` がこのベクターのべき集合となります。
+
+この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` の各部分集合を集計することができます。
+
+例として、 ``[A, B, C]`` と ``[B, C, D]`` をべき集合で集計する場合を考えます。
+
+``[A, B, C]`` のべき集合は前述の通り ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}``  で、 
+``[B, C, D]`` のべき集合は同様に ``{{B}, {C}, {D}, {B, C}, {C, D}, {B, D}, {B, C, D}}``  となります。
+
+この各べき集合で登場した同じ部分集合の登場回数が集計結果になります。つまり、以下のような集計結果になります。
+
+  * ``{A}`` : 1
+  * ``{B}`` : 2
+  * ``{C}`` : 2
+  * ``{D}`` : 1
+  * ``{A, B}`` : 1
+  * ``{A, C}`` : 1
+  * ``{B, C}`` : 2
+  * ``{B, D}`` : 1
+  * ``{C, D}``:  1
+  * ``{A, B, C}`` : 1
+  * ``{B, C, D}`` : 1
+
+TODO: 実際の実行結果を書く
+
+TODO: どういう時に便利か書く
+
+複数のタグの出現回数と、その組み合わせの出現回数を全て一度に集計したい場合など
 
 .. _select-drilldowns-label-output-columns:
 
