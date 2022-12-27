@@ -2519,6 +2519,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 ~~~~~~~~~~~~~
 
 ベクターをべき集合に展開して集計します。
+このとき、対象のベクターを単なる集合とみなします。
 
 べき集合とはある集合のすべての部分集合の集合です。
 ただし、Groongaは要素数が0の集合（空集合）は対象にしません。
