@@ -1079,8 +1079,7 @@ namespace {
           }
           GRN_TEXT_SET(ctx_, *buffer, name, name_len);
         }
-        labels_.emplace_back(std::string(GRN_TEXT_VALUE(*buffer),
-                                         GRN_TEXT_LEN(*buffer)));
+        labels_.emplace_back(GRN_TEXT_VALUE(*buffer), GRN_TEXT_LEN(*buffer));
         grn_raw_string label = {labels_[i].data(), labels_[i].length()};
         auto drilldown = add("drilldown_", nullptr, &label);
         if (!drilldown) {
