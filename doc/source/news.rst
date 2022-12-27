@@ -41,10 +41,198 @@ Improvements
 
   * ``A:1, B:2, C:2, AB:1, BC:2, AC:1, ABC:1, D:1, CD:1, BD:1, BCD:1``
 
+* [:doc:`reference/commands/select`] ベクターカラムの特定のインデックス番号の要素を ``match_columns`` に指定可能になりました
 
+  以下はこの機能の例です。
+
+  .. code-block::
+
+     table_create Memos TABLE_NO_KEY
+     column_create Memos contents COLUMN_VECTOR ShortText
+
+     table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+     column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION Memos contents
+     load --table Memos
+     [
+     ["contents"],
+     [["I like Groonga", "Use Groonga with Ruby"]],
+     [["I like Ruby", "Use Groonga"]]
+     ]
+     select Memos \
+       --match_columns "contents[1]" \
+       --query Ruby \
+       --output_columns "contents, _score"
+     # [
+     #   [
+     #     0,
+     #     0.0,
+     #     0.0
+     #   ],
+     #   [
+     #     [
+     #       [
+     #         1
+     #       ],
+     #       [
+     #         [
+     #           "contents",
+     #           "ShortText"
+     #         ],
+     #         [
+     #           "_score",
+     #           "Int32"
+     #         ]
+     #       ],
+     #       [
+     #         [
+     #           "I like Groonga",
+     #           "Use Groonga with Ruby"
+     #         ],
+     #         1
+     #       ]
+     #     ]
+     #   ]
+     # ]
+
+  ``--match_columns "contents[1]"`` とすることで、 ``contents`` ベクターの第2要素（インデックス番号1番の要素）のみをクエリーの対象にしています。
+  
+  この例では、 ``["I like Groonga", "Use Groonga with Ruby"]`` は第2要素 ``Use Groonga with Ruby`` に ``Ruby`` を含むのでヒットしていますが、 
+  ``["I like Ruby", "Use Groonga"]`` は第2要素 ``Use Groonga`` に ``Ruby`` を含まないのでヒットしていません。
+  
 Fixes
 -----
 
+* [:doc:`reference/commands/select`] ``command_version`` が ``3`` のとき、 ``drilldown`` の結果のラベルが不正になる問題を修正しました。
+
+  以下はこの問題の例です。
+
+  .. code-block::
+
+     table_create Documents TABLE_NO_KEY
+     column_create Documents tag1 COLUMN_SCALAR ShortText
+     column_create Documents tag2 COLUMN_SCALAR ShortText
+     load --table Documents
+     [
+     {"tag1": "1", "tag2": "2"}
+     ]
+     select Documents --drilldown tag1,tag2 --command_version 3
+     # {
+     #   "header": {
+     #     "return_code": 0,
+     #     "start_time": 1672123380.653039,
+     #     "elapsed_time": 0.0005846023559570312
+     #   },
+     #   "body": {
+     #     "n_hits": 1,
+     #     "columns": [
+     #       {
+     #         "name": "_id",
+     #         "type": "UInt32"
+     #       },
+     #       {
+     #         "name": "tag1",
+     #         "type": "ShortText"
+     #       },
+     #       {
+     #         "name": "tag2",
+     #         "type": "ShortText"
+     #       }
+     #     ],
+     #     "records": [
+     #       [
+     #         1,
+     #         "1",
+     #         "2"
+     #       ]
+     #     ],
+     #     "drilldowns": {
+     #       "ctor": {
+     #         "n_hits": 1,
+     #         "columns": [
+     #           {
+     #             "name": "_key",
+     #             "type": "ShortText"
+     #           },
+     #           {
+     #             "name": "_nsubrecs",
+     #             "type": "Int32"
+     #           }
+     #         ],
+     #         "records": [
+     #           [
+     #             "1",
+     #             1
+     #           ]
+     #         ]
+     #       },
+     #       "tag2": {
+     #         "n_hits": 1,
+     #         "columns": [
+     #           {
+     #             "name": "_key",
+     #             "type": "ShortText"
+     #           },
+     #           {
+     #             "name": "_nsubrecs",
+     #             "type": "Int32"
+     #           }
+     #         ],
+     #         "records": [
+     #           [
+     #             "2",
+     #             1
+     #           ]
+     #         ]
+     #       }
+     #     }
+     #   }
+     # }
+
+  最後の実行結果の ``drilldowns`` の直後の ``ctor`` は本来 ``tag1`` であるべきですが、そうなっていませんでした。
+  この例では ``tag1`` ではなく ``ctor`` という値になっていますが、どのような値になるかは不定です。
+
+  この問題はラベルの値が誤ったメモリ領域を参照していたために発生していました。
+
+* [NormalizerTable] ノーマライズすると重複する部分がある定義があるとき、Groongaがクラッシュすることがある問題を修正しました。
+  [GitHub:pgroonga/pgroonga#279][Reported by i10a]
+  
+  この問題は以下の場合に発生します。
+
+  1. 対象となるテーブルのキーがノーマライズされる
+  2. ノーマライズされた1.のキーに重複した部分がある
+  3. 上記の重複した部分があるキーが使用される
+
+  以下の例を考えます。
+
+  .. code-block::
+
+     table_create Normalizations TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC130
+     column_create Normalizations normalized COLUMN_SCALAR ShortText
+     load --table Normalizations
+     [
+     {"_key": "Ⅰ", "normalized": "1"},
+     {"_key": "Ⅱ", "normalized": "2"},
+     {"_key": "Ⅲ", "normalized": "3"}
+     ]
+     normalize 'NormalizerTable("normalized", "Normalizations.normalized")'   "ⅡⅡ"
+
+  ``Ⅰ`` 、 ``Ⅱ`` 、 ``Ⅲ`` はそれぞれNormalizerNFKC130によって ``i`` 、 ``ii`` 、 ``iii`` にノーマライズされます。
+  ``normaize`` の対象である ``ⅡⅡ`` は NormalizerNFKC130によって ``iiii`` にノーマライズされます。
+
+  このNormalizerNFKC130によってノーマライズされた値が、更にNormalizationsの定義にしたがってノーマライズされます。
+
+  ``iiii`` を ``Normalizations`` でノーマライズしようとするときには、以下の順番でノーマライズされます。
+
+  1. 最初の ``iii``
+
+     * NormalizerTableは最長共通接頭辞探索(Longest-Common-Prefix searcg)でノーマライズ対象を決定するため
+
+  2. 残りの ``i``
+
+  このとき、2.は元の文字に対しては ``ⅡⅡ`` の２つ目の ``Ⅱ`` に対応しており、ノーマライズに使用されるのはそれを
+  NormalizerNFKC130 でノーマライズしたあとの ``ii`` の２つ目の ``i`` です。
+
+  この使用している文字の判定方法に誤りがあり、Groongaがクラッシュする場合がありました。
 
 .. _release-12-1-0:
 
