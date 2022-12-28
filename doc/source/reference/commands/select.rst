@@ -2513,7 +2513,9 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 .. versionadded:: 12.1.1
 
-集計対象のキーがベクターのときに、キーの展開方法を指定します。現状は ``power_set`` のみです。
+集計対象のキーがベクターのときに、キーの展開方法を指定します。現状は ``power_set`` のみが指定可能です。
+
+.. _select-drilldowns-label-key-vector-expansions-power-set:
 
 ``power_set``
 ~~~~~~~~~~~~~
@@ -2524,7 +2526,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 べき集合とはある集合のすべての部分集合の集合です。
 ただし、Groongaは要素数が0の集合（空集合）は対象にしません。
 
-あるベクター ``[A, B, C]`` を例に考えます。
+ベクター ``[A, B, C]`` を例に考えます。
 
 * 要素数が1の部分集合
 
@@ -2544,7 +2546,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 以上から、 ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` がこのベクターのべき集合となります。
 
-この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` の各部分集合を集計することができます。
+この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` の各部分集合を集計します。
 
 例として、 ``[A, B, C]`` と ``[B, C, D]`` をべき集合で集計する場合を考えます。
 
@@ -2553,23 +2555,59 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 この各べき集合で登場した同じ部分集合の登場回数が集計結果になります。つまり、以下のような集計結果になります。
 
-  * ``{A}`` : 1
-  * ``{B}`` : 2
-  * ``{C}`` : 2
-  * ``{D}`` : 1
-  * ``{A, B}`` : 1
-  * ``{A, C}`` : 1
-  * ``{B, C}`` : 2
-  * ``{B, D}`` : 1
-  * ``{C, D}``:  1
-  * ``{A, B, C}`` : 1
-  * ``{B, C, D}`` : 1
+.. csv-table::
 
-TODO: 実際の実行結果を書く
+   "部分集合", "集計値"
+   "``{A}``", "1"
+   "``{B}``", "2"
+   "``{C}``", "2"
+   "``{D}``", "1"
+   "``{A, B}``", "1"
+   "``{A, C}``", "1"
+   "``{B, C}``", "2"
+   "``{B, D}``", "1"
+   "``{C, D}``", "1"
+   "``{A, B, C}``", "1"
+   "``{B, C, D}``", "1"
 
-TODO: どういう時に便利か書く
+この集計方法は、例えばタグの出現回数と、タグの組み合わせの出現回数を一度に集計したい場合に便利です。
 
-複数のタグの出現回数と、その組み合わせの出現回数を全て一度に集計したい場合など
+``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの出現回数と、
+これらの組み合わせの出現回数を集計するケースを考えます。
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldowns_label_power_set.log
+.. table_create PowerSetDrilldownMemos TABLE_HASH_KEY ShortText
+.. column_create PowerSetDrilldownMemos tags COLUMN_VECTOR ShortText
+.. load --table PowerSetDrilldownMemos
+.. [
+.. {"_key": "Groonga is fast!", "tags": ["Groonga"]},
+.. {"_key": "Mroonga uses Groonga!", "tags": ["Groonga", "Mroonga"]},
+.. {"_key": "PGroonga uses Groonga!", "tags": ["Groonga", "PGroonga"]},
+.. {"_key": "Mroonga and PGroonga are Groonga family", "tags": ["Groonga", "Mroonga", "PGroonga"]}
+.. ]
+.. select PowerSetDrilldownMemos \
+..   --drilldowns[tags].keys tags \
+..   --drilldowns[tags].key_vector_expansion power_set \
+..   --drilldowns[tags].columns[power_set].stage initial \
+..   --drilldowns[tags].columns[power_set].value _key \
+..   --drilldowns[tags].columns[power_set].flags COLUMN_VECTOR \
+..   --drilldowns[tags].sort_keys 'power_set' \
+..   --drilldowns[tags].output_columns 'power_set, _nsubrecs' \
+..   --limit 0
+
+この集計結果から、以下のことがわかります。
+
+.. csv-table::
+
+   "タグ","出現回数"
+   "``Groonga``", "4"
+   "``Mroonga``", "2"
+   "``PGroonga``", "2"
+   "``Groonga`` かつ ``Mroonga``", "2"
+   "``Groonga`` かつ ``PGroonga``", "2"
+   "``Mroonga`` かつ ``PGroonga``", "1"
+   "``Groonga`` かつ ``Mroonga`` かつ ``PGroonga``", "1"
 
 .. _select-drilldowns-label-output-columns:
 
