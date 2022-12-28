@@ -325,6 +325,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_keys_multiple.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_output_columns_multiple_group_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_power_set.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_table.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_equal.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/filter_less_than.log \
@@ -1552,6 +1553,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/drilldowns_label_keys_multiple.log \
 	source/example/reference/commands/select/drilldowns_label_output_columns_multiple_group_key.log \
 	source/example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log \
+	source/example/reference/commands/select/drilldowns_label_power_set.log \
 	source/example/reference/commands/select/drilldowns_label_table.log \
 	source/example/reference/commands/select/filter_equal.log \
 	source/example/reference/commands/select/filter_less_than.log \
@@ -4289,6 +4291,7 @@ html_files_relative_from_locale_dir = \
 	html/_static/pygments.css \
 	html/_static/scripts/pydata-sphinx-theme.js \
 	html/_static/searchtools.js \
+	html/_static/sphinx_highlight.js \
 	html/_static/styles/pydata-sphinx-theme.css \
 	html/_static/styles/theme.css \
 	html/_static/switcher.json \
