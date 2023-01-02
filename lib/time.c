@@ -268,35 +268,46 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
       tm.tm_mon < 0 || tm.tm_mon >= 12) { return GRN_INVALID_ARGUMENT; }
   r1++;
   tm.tm_mday = (int)grn_atoui(r1, rend, &r1);
-  if ((r1 + 1) >= rend || (*r1 != ' ' && *r1 != 'T' && *r1 != 't') ||
-      tm.tm_mday < 1 || tm.tm_mday > 31) { return GRN_INVALID_ARGUMENT; }
-
-  tm.tm_hour = (int)grn_atoui(++r1, rend, &r2);
-  if ((r2 + 1) >= rend || r1 == r2 || *r2 != ':' ||
-      tm.tm_hour < 0 || tm.tm_hour >= 24) {
+  if (tm.tm_mday < 1 || tm.tm_mday > 31) {
     return GRN_INVALID_ARGUMENT;
   }
-  r1 = r2 + 1;
-  tm.tm_min = (int)grn_atoui(r1, rend, &r2);
-  if ((r2 + 1) >= rend || r1 == r2 || *r2 != ':' ||
-      tm.tm_min < 0 || tm.tm_min >= 60) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  r1 = r2 + 1;
-  tm.tm_sec = (int)grn_atoui(r1, rend, &r2);
-  if (r1 == r2 ||
-      tm.tm_sec < 0 || tm.tm_sec > 61 /* leap 2sec */) {
-    return GRN_INVALID_ARGUMENT;
-  }
-  r1 = r2;
-
-  if ((r1 + 1) < rend && *r1 == '.') {
-    uv = grn_atoui(++r1, rend, &r2);
-
-    for (int i = 0; r2 + i < r1 + 6; i++) {
-      uv *= 10;
+  if (r1 == rend) {
+    /* YYYY-MM-DD */
+    r2 = r1;
+  } else {
+    /* YYYY-MM-DD[ Tt]hh:mm:ss */
+    if ((r1 + 1) >= rend || (*r1 != ' ' && *r1 != 'T' && *r1 != 't')) {
+      return GRN_INVALID_ARGUMENT;
     }
-    if (uv >= GRN_TIME_USEC_PER_SEC) { return GRN_INVALID_ARGUMENT; }
+
+    tm.tm_hour = (int)grn_atoui(++r1, rend, &r2);
+    if ((r2 + 1) >= rend || r1 == r2 || *r2 != ':' ||
+        tm.tm_hour < 0 || tm.tm_hour >= 24) {
+      return GRN_INVALID_ARGUMENT;
+    }
+    r1 = r2 + 1;
+    tm.tm_min = (int)grn_atoui(r1, rend, &r2);
+    if ((r2 + 1) >= rend || r1 == r2 || *r2 != ':' ||
+        tm.tm_min < 0 || tm.tm_min >= 60) {
+      return GRN_INVALID_ARGUMENT;
+    }
+    r1 = r2 + 1;
+    tm.tm_sec = (int)grn_atoui(r1, rend, &r2);
+    if (r1 == r2 ||
+        tm.tm_sec < 0 || tm.tm_sec > 61 /* leap 2sec */) {
+      return GRN_INVALID_ARGUMENT;
+    }
+    r1 = r2;
+
+    if ((r1 + 1) < rend && *r1 == '.') {
+      /* YYYY-MM-DD[ Tt]hh:mm:ss.UUUUUU */
+      uv = grn_atoui(++r1, rend, &r2);
+
+      for (int i = 0; r2 + i < r1 + 6; i++) {
+        uv *= 10;
+      }
+      if (uv >= GRN_TIME_USEC_PER_SEC) { return GRN_INVALID_ARGUMENT; }
+    }
   }
 
   tm.tm_yday = -1;
