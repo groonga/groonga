@@ -3307,11 +3307,10 @@ msgid ""
 msgstr ""
 
 msgid ""
-"べき集合とはある集合のすべての部分集合(subset)の集合です。 ただし、Groongaは"
-"要素数(number of elements)が0の集合（空集合(empty set)）は対象にしません。"
-msgstr ""
-
-msgid "ベクター ``[A, B, C]`` を例に考えます。"
+"ベクター ``[A, B, C]`` を例に考えます。この場合、対象となる集合は ``{A, B, C}"
+"`` です。 べき集合は、集合のすべての部分集合(subset)の集合なので、まず、 "
+"``{A, B, C}`` のすべての部分集合を以下に示します。 ただし、Groongaは要素数"
+"(number of elements)が0の集合（空集合(empty set)）は対象にしません。"
 msgstr ""
 
 msgid "要素数が1の部分集合"
@@ -3329,8 +3328,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` の各部分集合を集"
-"計します。"
+"``power_set``は、この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` "
+"の各部分集合で集計を行います。"
 msgstr ""
 
 msgid ""

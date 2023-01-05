@@ -2523,10 +2523,9 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 ベクターをべき集合(power set)に展開して集計(aggregate)します。
 このとき、対象のベクターを単なる集合(set)とみなします。
 
-べき集合とはある集合のすべての部分集合(subset)の集合です。
+ベクター ``[A, B, C]`` を例に考えます。この場合、対象となる集合は ``{A, B, C}`` です。
+べき集合は、集合のすべての部分集合(subset)の集合なので、まず、 ``{A, B, C}`` のすべての部分集合を以下に示します。
 ただし、Groongaは要素数(number of elements)が0の集合（空集合(empty set)）は対象にしません。
-
-ベクター ``[A, B, C]`` を例に考えます。
 
 * 要素数が1の部分集合
 
@@ -2546,7 +2545,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 以上から、 ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` がこのベクターのべき集合となります。
 
-この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` の各部分集合を集計します。
+``power_set``は、この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` の各部分集合で集計を行います。
 
 例として、 ``[A, B, C]`` と ``[B, C, D]`` をべき集合で集計する場合を考えます。
 
