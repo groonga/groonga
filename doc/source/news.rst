@@ -236,6 +236,7 @@ Fixes
 -----
 
 * [:doc:`reference/commands/select`] ``command_version`` が ``3`` のとき、 ``drilldown`` の結果のラベルが不正になる問題を修正しました。
+  [groonga-dev,05005][Reported by Atsushi Shinoda]
 
   以下はこの問題の例です。
 
@@ -326,7 +327,7 @@ Fixes
 
   この問題はラベルの値が誤ったメモリ領域を参照していたために発生していました。
 
-* [NormalizerTable] ノーマライズすると重複する部分がある定義があるとき、Groongaがクラッシュすることがある問題を修正しました。
+* [:doc:`reference/normalizers/normalizer_table`] ノーマライズすると重複する部分がある定義があるとき、Groongaがクラッシュすることがある問題を修正しました。
   [GitHub:pgroonga/pgroonga#279][Reported by i10a]
   
   この問題は以下の場合に発生します。
@@ -366,6 +367,12 @@ Fixes
   NormalizerNFKC130 でノーマライズしたあとの ``ii`` の２つ目の ``i`` です。
 
   この使用している文字の判定方法に誤りがあり、Groongaがクラッシュする場合がありました。
+
+Thanks
+------
+
+* i10a
+* Atsushi Shinoda
 
 .. _release-12-1-0:
 

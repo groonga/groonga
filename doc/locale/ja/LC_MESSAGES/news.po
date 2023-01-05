@@ -147,7 +147,8 @@ msgstr "修正"
 
 msgid ""
 "[:doc:`reference/commands/select`] ``command_version`` が ``3`` のとき、 "
-"``drilldown`` の結果のラベルが不正になる問題を修正しました。"
+"``drilldown`` の結果のラベルが不正になる問題を修正しました。 [groonga-"
+"dev,05005][Reported by Atsushi Shinoda]"
 msgstr ""
 
 msgid "以下はこの問題の例です。"
@@ -164,9 +165,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"[NormalizerTable] ノーマライズすると重複する部分がある定義があるとき、Groonga"
-"がクラッシュすることがある問題を修正しました。 [GitHub:pgroonga/pgroonga#279]"
-"[Reported by i10a]"
+"[:doc:`reference/normalizers/normalizer_table`] ノーマライズすると重複する部"
+"分がある定義があるとき、Groongaがクラッシュすることがある問題を修正しまし"
+"た。 [GitHub:pgroonga/pgroonga#279][Reported by i10a]"
 msgstr ""
 
 msgid "この問題は以下の場合に発生します。"
@@ -221,6 +222,15 @@ msgid ""
 "この使用している文字の判定方法に誤りがあり、Groongaがクラッシュする場合があり"
 "ました。"
 msgstr ""
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "i10a"
+msgstr "i10aさん"
+
+msgid "Atsushi Shinoda"
+msgstr "篠田さん"
 
 msgid "Release 12.1.0 - 2022-11-29"
 msgstr "12.1.0 リリース - 2022-11-29"
@@ -990,9 +1000,6 @@ msgid ""
 msgstr ""
 "``GRN_II_CURSOR_SET_MIN_ENABLE`` が原因でマッチするはずのレコードを返さないこ"
 "とがあります。"
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "naoa"
 msgstr "naoaさん"
