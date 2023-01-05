@@ -77,8 +77,8 @@ msgstr "改良"
 
 msgid ""
 "[:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-"
-"expansions-power-set`] ドリルダウンでベクターのべき集合を集計できるようになり"
-"ました。"
+"expansions-power-set`] ドリルダウンでベクターのべき集合(power set)を集計でき"
+"るようになりました。"
 msgstr ""
 
 msgid ""
@@ -89,8 +89,8 @@ msgstr ""
 
 msgid ""
 "``key_vector_expansion`` に ``power_set`` を指定することで、べき集合での集計"
-"ができるようになります。 この集計方法は、例えばタグの出現回数と、タグの組み合"
-"わせの出現回数を一度に集計したい場合に便利です。"
+"(aggregate)ができるようになります。 この集計方法は、例えばタグの出現回数と、"
+"タグの組み合わせの出現回数を一度に集計したい場合に便利です。"
 msgstr ""
 
 msgid ""
@@ -111,7 +111,8 @@ msgstr ""
 
 msgid ""
 "[:doc:`reference/commands/select`] ベクターカラムの特定のインデックス番号の要"
-"素を ``match_columns`` に指定可能になりました"
+"素(e.g. an element at a given index number in a vector)を ``match_columns`` "
+"に指定可能になりました"
 msgstr ""
 
 msgid "以下はこの機能の例です。"

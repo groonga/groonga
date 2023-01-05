@@ -14,12 +14,12 @@ Improvements
 ------------
 
 * [:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-expansions-power-set`] 
-  ドリルダウンでベクターのべき集合を集計できるようになりました。
+  ドリルダウンでベクターのべき集合(power set)を集計できるようになりました。
 
   ドリルダウンに ``key_vector_expansion`` オプションを追加しました。
   ``key_vector_expansion`` は、ドリルダウン対象のキーがベクターのときに、キーの展開方法を指定します。
 
-  ``key_vector_expansion`` に ``power_set`` を指定することで、べき集合での集計ができるようになります。
+  ``key_vector_expansion`` に ``power_set`` を指定することで、べき集合での集計(aggregate)ができるようになります。
   この集計方法は、例えばタグの出現回数と、タグの組み合わせの出現回数を一度に集計したい場合に便利です。
 
   ``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの出現回数と、 これらの組み合わせの出現回数を集計するケースを考えます。
@@ -157,7 +157,7 @@ Improvements
 
   この機能の詳細は :ref:`select-drilldowns-label-key-vector-expansions-power-set` を参照してください。
 
-* [:doc:`reference/commands/select`] ベクターカラムの特定のインデックス番号の要素を ``match_columns`` に指定可能になりました
+* [:doc:`reference/commands/select`] ベクターカラムの特定のインデックス番号の要素(e.g. an element at a given index number in a vector)を ``match_columns`` に指定可能になりました
 
   以下はこの機能の例です。
 
