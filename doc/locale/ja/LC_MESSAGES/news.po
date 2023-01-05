@@ -111,9 +111,13 @@ msgid ""
 msgstr ""
 
 msgid ""
-"[:doc:`reference/commands/select`] ベクターカラムの特定のインデックス番号の要"
-"素(e.g. an element at a given index number in a vector)を ``match_columns`` "
-"に指定可能になりました"
+"[:doc:`reference/commands/select`] ベクターカラムの特定の要素のみを対象に検索"
+"できるようになりました。"
+msgstr ""
+
+msgid ""
+"``match_columns`` にベクターカラムの特定の要素をインデックス番号で指定するこ"
+"とで、ベクターカラムの特定の要素のみを対象に検索できるようになりました。"
 msgstr ""
 
 msgid "以下はこの機能の例です。"

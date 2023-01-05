@@ -158,7 +158,9 @@ Improvements
 
   複雑な機能なので、 :ref:`select-drilldowns-label-key-vector-expansions-power-set` も合わせて参照してください。
 
-* [:doc:`reference/commands/select`] ベクターカラムの特定のインデックス番号の要素(e.g. an element at a given index number in a vector)を ``match_columns`` に指定可能になりました
+* [:doc:`reference/commands/select`] ベクターカラムの特定の要素のみを対象に検索できるようになりました。
+
+  ``match_columns`` にベクターカラムの特定の要素をインデックス番号で指定することで、ベクターカラムの特定の要素のみを対象に検索できるようになりました。
 
   以下はこの機能の例です。
 
