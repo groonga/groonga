@@ -2513,18 +2513,18 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 .. versionadded:: 12.1.1
 
-集計対象のキーがベクターのときに、キーの展開方法を指定します。現状は ``power_set`` のみが指定可能です。
+ドリルダウン対象のキーがベクター(vector)のときに、キーの展開方法を指定します。現状は ``power_set`` のみが指定可能です。
 
 .. _select-drilldowns-label-key-vector-expansions-power-set:
 
 ``power_set``
 ~~~~~~~~~~~~~
 
-ベクターをべき集合に展開して集計します。
-このとき、対象のベクターを単なる集合とみなします。
+ベクターをべき集合(power set)に展開して集計(aggregate)します。
+このとき、対象のベクターを単なる集合(set)とみなします。
 
-べき集合とはある集合のすべての部分集合の集合です。
-ただし、Groongaは要素数が0の集合（空集合）は対象にしません。
+べき集合とはある集合のすべての部分集合(subset)の集合です。
+ただし、Groongaは要素数(number of elements)が0の集合（空集合(empty set)）は対象にしません。
 
 ベクター ``[A, B, C]`` を例に考えます。
 
@@ -2553,11 +2553,11 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 ``[A, B, C]`` のべき集合は前述の通り ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}``  で、 
 ``[B, C, D]`` のべき集合は同様に ``{{B}, {C}, {D}, {B, C}, {C, D}, {B, D}, {B, C, D}}``  となります。
 
-この各べき集合で登場した同じ部分集合の登場回数が集計結果になります。つまり、以下のような集計結果になります。
+この各べき集合で登場した同じ部分集合の登場回数が集計値（ ``_nsubrecs`` の値）になります。つまり、以下のような集計結果になります。
 
 .. csv-table::
 
-   "部分集合", "集計値"
+   "部分集合", "集計値（ ``_nsubrecs`` ）"
    "``{A}``", "1"
    "``{B}``", "2"
    "``{C}``", "2"
