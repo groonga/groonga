@@ -112,7 +112,7 @@ jobs:
         run: |
           sudo pip3 install -U \
             Jinja2 \
-            Sphinx \
+            "Sphinx==5.3.0" \
             pydata_sphinx_theme
       - name: Install Bundler
         run: |
