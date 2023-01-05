@@ -13,33 +13,149 @@ Release 12.1.1 - 2022-12-29
 Improvements
 ------------
 
-* [:doc:`reference/commands/select`] drilldownでベクターのべき集合を集計できるようになりました。
+* [:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-expansions-power-set`] 
+  ドリルダウンでベクターのべき集合を集計できるようになりました。
 
-  べき集合とは、集合、ここではベクターの要素を使って作れる全ての組み合わせのことです。順番は考慮しません。
+  ドリルダウンに ``key_vector_expansion`` オプションを追加しました。
+  ``key_vector_expansion`` は、ドリルダウン対象のキーがベクターのときに、キーの展開方法を指定します。
 
-  ``[A, B, C]`` を例に考えます。
+  ``key_vector_expansion`` に ``power_set`` を指定することで、べき集合での集計ができるようになります。
+  この集計方法は、例えばタグの出現回数と、タグの組み合わせの出現回数を一度に集計したい場合に便利です。
 
-  * 要素数が1の組み合わせ
-    * ``A``
-    * ``B``
-    * ``C``
-  * 要素数が2の組み合わせ
-    * ``AB``
-    * ``BC``
-    * ``AC``
-  * 要素数が3の組み合わせ  
-    * ``ABC``
+  ``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの出現回数と、 これらの組み合わせの出現回数を集計するケースを考えます。
 
-  以上から、 ``{A, B, C, AB, BC, AC, ABC}`` がべき集合となります。
-  この ``{A, B, C, AB, BC, AC, ABC}`` の各要素に対して、集計を行うことができます。
+  実行例:
 
-  例として、 ``[A, B, C]`` と ``[B, C, D]`` をべき集合で集計する場合を考えます。
+  .. code-block::
 
-  ``[A, B, C]`` のべき集合は前述の通り ``{A, B, C, AB, BC, AC, ABC}`` で、 ``[B, C, D]`` のべき集合は ``{B, C, D, BC, CD, BD, BCD}`` になります。
+     table_create PowersetDrilldownMemos TABLE_HASH_KEY ShortText
+     # [[0, 1337566253.89858, 0.000355720520019531], true]
+     column_create PowersetDrilldownMemos tags COLUMN_VECTOR ShortText
+     # [[0, 1337566253.89858, 0.000355720520019531], true]
+     load --table PowersetDrilldownMemos
+     [
+     {"_key": "Groonga is fast!", "tags": ["Groonga"]},
+     {"_key": "Mroonga uses Groonga!", "tags": ["Groonga", "Mroonga"]},
+     {"_key": "PGroonga uses Groonga!", "tags": ["Groonga", "PGroonga"]},
+     {"_key": "Mroonga and PGroonga are Groonga family", "tags": ["Groonga", "Mroonga", "PGroonga"]}
+     ]
+     # [[0, 1337566253.89858, 0.000355720520019531], 4]
+     select PowersetDrilldownMemos \
+       --drilldowns[tags].keys tags \
+       --drilldowns[tags].key_vector_expansion power_set \
+       --drilldowns[tags].columns[power_set].stage initial \
+       --drilldowns[tags].columns[power_set].value _key \
+       --drilldowns[tags].columns[power_set].flags COLUMN_VECTOR \
+       --drilldowns[tags].sort_keys 'power_set' \
+       --drilldowns[tags].output_columns 'power_set, _nsubrecs' \
+       --limit 0
+     # [
+     #   [
+     #     0,
+     #     1337566253.89858,
+     #     0.000355720520019531
+     #   ],
+     #   [
+     #     [
+     #       [
+     #         4
+     #       ],
+     #       [
+     #         [
+     #           "_id",
+     #           "UInt32"
+     #         ],
+     #         [
+     #           "_key",
+     #           "ShortText"
+     #         ],
+     #         [
+     #           "tags",
+     #           "ShortText"
+     #         ]
+     #       ]
+     #     ],
+     #     {
+     #       "tags": [
+     #         [
+     #           7
+     #         ],
+     #         [
+     #           [
+     #             "power_set",
+     #             "Text"
+     #           ],
+     #           [
+     #             "_nsubrecs",
+     #             "Int32"
+     #           ]
+     #         ],
+     #         [
+     #           [
+     #             "Groonga"
+     #           ],
+     #           4
+     #         ],
+     #         [
+     #           [
+     #             "Mroonga"
+     #           ],
+     #           2
+     #         ],
+     #         [
+     #           [
+     #             "PGroonga"
+     #           ],
+     #           2
+     #         ],
+     #         [
+     #           [
+     #             "Groonga",
+     #             "Mroonga"
+     #           ],
+     #           2
+     #         ],
+     #         [
+     #           [
+     #             "Groonga",
+     #             "PGroonga"
+     #           ],
+     #           2
+     #         ],
+     #         [
+     #           [
+     #             "Mroonga",
+     #             "PGroonga"
+     #           ],
+     #           1
+     #         ],
+     #         [
+     #           [
+     #             "Groonga",
+     #             "Mroonga",
+     #             "PGroonga"
+     #           ],
+     #           1
+     #         ]
+     #       ]
+     #     }
+     #   ]
+     # ]
 
-  この各べき集合で登場した同じ要素の登場回数が集計結果になります。つまり、以下のような集計結果になります。
+  この集計結果から、以下のことがわかります。
 
-  * ``A:1, B:2, C:2, AB:1, BC:2, AC:1, ABC:1, D:1, CD:1, BD:1, BCD:1``
+  .. csv-table::
+
+     "タグ","出現回数"
+     "``Groonga``", "4"
+     "``Mroonga``", "2"
+     "``PGroonga``", "2"
+     "``Groonga`` かつ ``Mroonga``", "2"
+     "``Groonga`` かつ ``PGroonga``", "2"
+     "``Mroonga`` かつ ``PGroonga``", "1"
+     "``Groonga`` かつ ``Mroonga`` かつ ``PGroonga``", "1"
+
+  この機能の詳細は :ref:`select-drilldowns-label-key-vector-expansions-power-set` を参照してください。
 
 * [:doc:`reference/commands/select`] ベクターカラムの特定のインデックス番号の要素を ``match_columns`` に指定可能になりました
 
@@ -98,7 +214,24 @@ Improvements
   
   この例では、 ``["I like Groonga", "Use Groonga with Ruby"]`` は第2要素 ``Use Groonga with Ruby`` に ``Ruby`` を含むのでヒットしていますが、 
   ``["I like Ruby", "Use Groonga"]`` は第2要素 ``Use Groonga`` に ``Ruby`` を含まないのでヒットしていません。
-  
+
+* [:doc:`/reference/commands/load`] Added support for ``YYYY-MM-DD`` time format.
+
+  ``YYYY-MM-DD`` is a general time format.
+  Supporting this time format made ``load`` more usable.
+
+  .. code-block::
+
+     table_create Logs TABLE_NO_KEY
+     [[0,0.0,0.0],true]
+     column_create Logs created_at COLUMN_SCALAR Time
+     [[0,0.0,0.0],true]
+     load --table Logs
+     [
+     {"created_at": "2000-01-01"}
+     ]
+     [[0,0.0,0.0],1]
+
 Fixes
 -----
 

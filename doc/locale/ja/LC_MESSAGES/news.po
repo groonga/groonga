@@ -30,14 +30,200 @@ msgstr ""
 msgid "#{TIME_STAMP}|#{MESSAGE}"
 msgstr ""
 
+msgid "1"
+msgstr ""
+
+msgid "2"
+msgstr ""
+
+msgid "4"
+msgstr ""
+
+msgid "``Groonga``"
+msgstr ""
+
+msgid "``Groonga`` かつ ``Mroonga``"
+msgstr ""
+
+msgid "``Groonga`` かつ ``Mroonga`` かつ ``PGroonga``"
+msgstr ""
+
+msgid "``Groonga`` かつ ``PGroonga``"
+msgstr ""
+
+msgid "``Mroonga``"
+msgstr ""
+
+msgid "``Mroonga`` かつ ``PGroonga``"
+msgstr ""
+
+msgid "``PGroonga``"
+msgstr ""
+
+msgid "タグ"
+msgstr ""
+
+msgid "出現回数"
+msgstr ""
+
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 12.1.0 - 2022-11-29"
-msgstr "12.1.0 リリース - 2022-11-29"
+msgid "Release 12.1.1 - 2022-12-29"
+msgstr "12.1.1 リリース - 2022-12-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid ""
+"[:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-"
+"expansions-power-set`] ドリルダウンでベクターのべき集合を集計できるようになり"
+"ました。"
+msgstr ""
+
+msgid ""
+"ドリルダウンに ``key_vector_expansion`` オプションを追加しました。 "
+"``key_vector_expansion`` は、ドリルダウン対象のキーがベクターのときに、キーの"
+"展開方法を指定します。"
+msgstr ""
+
+msgid ""
+"``key_vector_expansion`` に ``power_set`` を指定することで、べき集合での集計"
+"ができるようになります。 この集計方法は、例えばタグの出現回数と、タグの組み合"
+"わせの出現回数を一度に集計したい場合に便利です。"
+msgstr ""
+
+msgid ""
+"``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらの"
+"タグの出現回数と、 これらの組み合わせの出現回数を集計するケースを考えます。"
+msgstr ""
+
+msgid "実行例:"
+msgstr ""
+
+msgid "この集計結果から、以下のことがわかります。"
+msgstr ""
+
+msgid ""
+"この機能の詳細は :ref:`select-drilldowns-label-key-vector-expansions-power-"
+"set` を参照してください。"
+msgstr ""
+
+msgid ""
+"[:doc:`reference/commands/select`] ベクターカラムの特定のインデックス番号の要"
+"素を ``match_columns`` に指定可能になりました"
+msgstr ""
+
+msgid "以下はこの機能の例です。"
+msgstr ""
+
+msgid ""
+"``--match_columns \"contents[1]\"`` とすることで、 ``contents`` ベクターの第2"
+"要素（インデックス番号1番の要素）のみをクエリーの対象にしています。"
+msgstr ""
+
+msgid ""
+"この例では、 ``[\"I like Groonga\", \"Use Groonga with Ruby\"]`` は第2要素 "
+"``Use Groonga with Ruby`` に ``Ruby`` を含むのでヒットしていますが、 ``[\"I "
+"like Ruby\", \"Use Groonga\"]`` は第2要素 ``Use Groonga`` に ``Ruby`` を含ま"
+"ないのでヒットしていません。"
+msgstr ""
+
+msgid ""
+"[:doc:`/reference/commands/load`] Added support for ``YYYY-MM-DD`` time "
+"format."
+msgstr ""
+"[:doc:`/reference/commands/load`] ``YYYY-MM-DD`` 形式をサポートしました。"
+
+msgid ""
+"``YYYY-MM-DD`` is a general time format. Supporting this time format made "
+"``load`` more usable."
+msgstr ""
+"``YYYY-MM-DD``は一般的な時間形式です。このフォーマットをサポートしたことで、 "
+"``load`` がより使いやすくなりました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
+"[:doc:`reference/commands/select`] ``command_version`` が ``3`` のとき、 "
+"``drilldown`` の結果のラベルが不正になる問題を修正しました。"
+msgstr ""
+
+msgid "以下はこの問題の例です。"
+msgstr ""
+
+msgid ""
+"最後の実行結果の ``drilldowns`` の直後の ``ctor`` は本来 ``tag1`` であるべき"
+"ですが、そうなっていませんでした。 この例では ``tag1`` ではなく ``ctor`` とい"
+"う値になっていますが、どのような値になるかは不定です。"
+msgstr ""
+
+msgid ""
+"この問題はラベルの値が誤ったメモリ領域を参照していたために発生していました。"
+msgstr ""
+
+msgid ""
+"[NormalizerTable] ノーマライズすると重複する部分がある定義があるとき、Groonga"
+"がクラッシュすることがある問題を修正しました。 [GitHub:pgroonga/pgroonga#279]"
+"[Reported by i10a]"
+msgstr ""
+
+msgid "この問題は以下の場合に発生します。"
+msgstr ""
+
+msgid "対象となるテーブルのキーがノーマライズされる"
+msgstr ""
+
+msgid "ノーマライズされた1.のキーに重複した部分がある"
+msgstr ""
+
+msgid "上記の重複した部分があるキーが使用される"
+msgstr ""
+
+msgid "以下の例を考えます。"
+msgstr ""
+
+msgid ""
+"``Ⅰ`` 、 ``Ⅱ`` 、 ``Ⅲ`` はそれぞれNormalizerNFKC130によって ``i`` 、 "
+"``ii`` 、 ``iii`` にノーマライズされます。 ``normaize`` の対象である ``ⅡⅡ`` "
+"は NormalizerNFKC130によって ``iiii`` にノーマライズされます。"
+msgstr ""
+
+msgid ""
+"このNormalizerNFKC130によってノーマライズされた値が、更にNormalizationsの定義"
+"にしたがってノーマライズされます。"
+msgstr ""
+
+msgid ""
+"``iiii`` を ``Normalizations`` でノーマライズしようとするときには、以下の順番"
+"でノーマライズされます。"
+msgstr ""
+
+msgid "最初の ``iii``"
+msgstr ""
+
+msgid ""
+"NormalizerTableは最長共通接頭辞探索(Longest-Common-Prefix searcg)でノーマライ"
+"ズ対象を決定するため"
+msgstr ""
+
+msgid "残りの ``i``"
+msgstr ""
+
+msgid ""
+"このとき、2.は元の文字に対しては ``ⅡⅡ`` の２つ目の ``Ⅱ`` に対応しており、ノー"
+"マライズに使用されるのはそれを NormalizerNFKC130 でノーマライズしたあとの "
+"``ii`` の２つ目の ``i`` です。"
+msgstr ""
+
+msgid ""
+"この使用している文字の判定方法に誤りがあり、Groongaがクラッシュする場合があり"
+"ました。"
+msgstr ""
+
+msgid "Release 12.1.0 - 2022-11-29"
+msgstr "12.1.0 リリース - 2022-11-29"
 
 msgid ""
 "[:doc:`reference/commands/load`] Added support for slow log output of "
@@ -214,9 +400,6 @@ msgid ""
 msgstr ""
 "``reference_count`` は参照カウントモードが有効になっているかどうかを真偽値で"
 "返却します。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid ""
 "[:doc:`reference/commands/select`][:doc:`reference/columns/vector`] Fixed a "
