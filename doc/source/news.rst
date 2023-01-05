@@ -343,7 +343,7 @@ Fixes
 
   .. code-block::
 
-     table_create Normalizations TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC130
+     table_create Normalizations TABLE_PAT_KEY ShortText --normalizer NormalizerNFKC130
      column_create Normalizations normalized COLUMN_SCALAR ShortText
      load --table Normalizations
      [
@@ -353,21 +353,32 @@ Fixes
      ]
      normalize 'NormalizerTable("normalized", "Normalizations.normalized")'   "ⅡⅡ"
 
-  ``Ⅰ`` 、 ``Ⅱ`` 、 ``Ⅲ`` はそれぞれNormalizerNFKC130によって ``i`` 、 ``ii`` 、 ``iii`` にノーマライズされます。
-  ``normaize`` の対象である ``ⅡⅡ`` は NormalizerNFKC130によって ``iiii`` にノーマライズされます。
+  この例は上記の1.、2.、3.の条件を満たしています。
 
-  このNormalizerNFKC130によってノーマライズされた値が、更にNormalizationsの定義にしたがってノーマライズされます。
+  1. 対象となるテーブルのキーがノーマライズされる
+  
+    ``Normalizations`` に ``--normalizer NormalizerNFKC130`` が指定されているため、この条件を満たしています。
+    ``Ⅰ`` 、 ``Ⅱ`` 、 ``Ⅲ`` はそれぞれ ``NormalizerNFKC130`` によって ``i`` 、 ``ii`` 、 ``iii`` にノーマライズされます。
+  
+  2. ノーマライズされた1.のキーに重複した部分がある
 
-  ``iiii`` を ``Normalizations`` でノーマライズしようとするときには、以下の順番でノーマライズされます。
+    上記のノーマライズ後の値を考えると、 ``iii`` は ``ii`` と ``i`` を含み、 ``ii`` は ``i`` を含むため、この条件を満たしています。
+  
+  3. 重複した部分があるキーが使用される
 
-  1. 最初の ``iii``
+    ``normaize`` の対象である ``ⅡⅡ`` は ``NormalizerNFKC130`` によって ``iiii`` にノーマライズされます。
+    この値に対して、 ``Normalizations`` の ``NormalizerNFKC130`` によるノーマライズ後の値が一致条件として使用されてノーマライズされます。
 
-     * NormalizerTableは最長共通接頭辞探索(Longest-Common-Prefix searcg)でノーマライズ対象を決定するため
+    したがって、 ``iiii`` を ``Normalizations`` でノーマライズしようとするときには、以下の順番でノーマライズされるため、この条件を満たしています。
 
-  2. 残りの ``i``
+    3.1. 最初の ``iii`` （ ``Ⅲ`` に対応）
 
-  このとき、2.は元の文字に対しては ``ⅡⅡ`` の２つ目の ``Ⅱ`` に対応しており、ノーマライズに使用されるのはそれを
-  NormalizerNFKC130 でノーマライズしたあとの ``ii`` の２つ目の ``i`` です。
+     * :doc:`reference/normalizers/normalizer_table` は最長共通接頭辞探索(Longest-Common-Prefix search)でノーマライズ対象を決定するため
+
+    3.2. 残りの ``i`` （ ``Ⅰ`` に対応）
+
+  このとき、3.2.は元の文字に対しては ``ⅡⅡ`` の２つ目の ``Ⅱ`` に対応しており、ノーマライズに使用されるのはそれを
+  ``NormalizerNFKC130`` でノーマライズしたあとの ``ii`` の２つ目の ``i`` です。
 
   この使用している文字の判定方法に誤りがあり、Groongaがクラッシュする場合がありました。
 
