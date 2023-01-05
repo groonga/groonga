@@ -7,7 +7,7 @@ News
 
 .. _release-12-1-1:
 
-Release 12.1.1 - 2022-12-29
+Release 12.1.1 - 2023-01-06
 ---------------------------
 
 Improvements
@@ -18,6 +18,7 @@ Improvements
 
   ドリルダウンに ``key_vector_expansion`` オプションを追加しました。
   ``key_vector_expansion`` は、ドリルダウン対象のキーがベクターのときに、キーの展開方法を指定します。
+  現状は、``key_vector_expansion`` には ``power_set`` のみ指定できます。
 
   ``key_vector_expansion`` に ``power_set`` を指定することで、べき集合での集計(aggregate)ができるようになります。
   この集計方法は、例えばタグの出現回数と、タグの組み合わせの出現回数を一度に集計したい場合に便利です。
@@ -155,7 +156,7 @@ Improvements
      "``Mroonga`` かつ ``PGroonga``", "1"
      "``Groonga`` かつ ``Mroonga`` かつ ``PGroonga``", "1"
 
-  この機能の詳細は :ref:`select-drilldowns-label-key-vector-expansions-power-set` を参照してください。
+  複雑な機能なので、 :ref:`select-drilldowns-label-key-vector-expansions-power-set` も合わせて参照してください。
 
 * [:doc:`reference/commands/select`] ベクターカラムの特定のインデックス番号の要素(e.g. an element at a given index number in a vector)を ``match_columns`` に指定可能になりました
 
