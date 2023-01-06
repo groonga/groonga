@@ -16,7 +16,7 @@ Improvements
 * [:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-expansions-power-set`] Vector's power set is now able to aggregate with the drilldowns.
 
   A new option ``key_vector_expansion`` is added to drilldowns.
-  Currently, ``NONE`` or ``POWER_SET`` can be specified for ``key _vector_ expansion``. 
+  Currently, ``NONE`` or ``POWER_SET`` can be specified for ``key_vector_expansion``. 
   
   Specifying ``POWER_SET`` to ``key_vector_expansion`` allows to aggregate for power set case.
   This method of aggregation is useful to aggregate total number of individual and combination tag occurrence at once.  
@@ -396,7 +396,7 @@ Fixes
      
      * First ``iii`` ( applied for ``Ⅲ`` )
       
-       ``ii`` or ``i`` are not used because :doc:`reference/normalizers/normalizer_table` works 
+       ``ii`` or ``i`` are not used at first because :doc:`reference/normalizers/normalizer_table` works 
        with the Longest-Common-Prefix search.
      
      * Last ``i`` ( applied for  ``Ⅰ`` )
