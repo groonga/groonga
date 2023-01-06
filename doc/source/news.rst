@@ -382,7 +382,7 @@ Fixes
   1. Keys are normalized in the target table. 
 
      In this sample, it meets condition specifying ``--normalizer NormalizerNFKC130`` in ``Normalizations``. 
-     Original keys, ``Ⅰ`` , ``Ⅱ`` ,and ``Ⅲ``, are normalized each into ``i`` 、 ``ii`` 、 ``iii`` with ``NormalizerNFKC130``.
+     Original keys, ``Ⅰ`` , ``Ⅱ`` ,and ``Ⅲ``, are normalized each into ``i``, ``ii``, ``iii`` with ``NormalizerNFKC130``.
   
   2. Same characters in the normalized key are included in the other normalized key. 
   
