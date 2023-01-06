@@ -213,7 +213,8 @@ Improvements
      # ]
 
   ``--match_columns "contents[1]"`` specifies only 2nd vector elements of ``contents`` as the search target. 
-  In this sample, ``["I like Groonga", "Use Groonga with Ruby"]`` is shown in the results because 2nd element ``Ruby`` is in ``Use Groonga with Ruby``. However, ``["I like Ruby", "Use Groonga"]`` is not shown in results because 2nd element ``Ruby`` is not in ``Use Groonga``.
+  In this sample, ``["I like Groonga", "Use Groonga with Ruby"]`` is shown in the results because ``Ruby`` is in 2nd element ``Use Groonga with Ruby``. 
+  However, ``["I like Ruby", "Use Groonga"]`` is not shown in results because ``Ruby`` is not in 2nd element ``Use Groonga``.
 
 * [:doc:`/reference/commands/load`] Added support for ``YYYY-MM-DD`` time format.
 
