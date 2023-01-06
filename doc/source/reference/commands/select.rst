@@ -2513,7 +2513,9 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 .. versionadded:: 12.1.1
 
-ドリルダウン対象のキーがベクター(vector)のときの、キーの展開方法を指定します。現状は ``NONE`` または ``power_set`` のみ指定可能です。
+ドリルダウン対象のキーがベクター(vector)のときの、キーの展開方法を指定します。現状は ``NONE`` または ``power_set`` が指定可能です。
+
+ドリルダウン対象のキーが1つの場合にのみ使用可能です。キーが2つ以上の場合は無視されます。
 
 .. _select-drilldowns-label-key-vector-expansions-none:
 
@@ -2560,8 +2562,6 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 ``power_set``
 ~~~~~~~~~~~~~
-
-ドリルダウン対象のキーが1つの場合にのみ使用可能です。キーが2つ以上の場合は無視されます。
 
 ベクターをべき集合(power set)に展開して集計(aggregate)します。
 このとき、対象のベクターを多重集合(multiset)とみなします。同じ値の要素が複数ある場合、それぞれ別の要素とみなします。
