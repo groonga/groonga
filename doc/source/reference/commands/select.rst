@@ -2525,7 +2525,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 ベクター ``[A, B, C]`` を例に考えます。この場合、対象となる集合は ``{A, B, C}`` です。
 べき集合は、集合のすべての部分集合(subset)の集合なので、まず、 ``{A, B, C}`` のすべての部分集合を以下に示します。
-ただし、Groongaは要素数(number of elements)が0の集合（空集合(empty set)）は対象にしません。
+ただし、Groongaは要素数(number of elements)が0の集合（空集合(empty set)）は使いません。ドリルダウン結果とに使うには有益ではないからです。空集合も使ったほうがよいユースケースがある場合は `issue <https://github.com/groonga/groonga/issues>`_ で報告してください。
 
 * 要素数が1の部分集合
 
