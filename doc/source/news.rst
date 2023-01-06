@@ -16,14 +16,15 @@ Improvements
 * [:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-expansions-power-set`] Vector's power set is now able to aggregate with the drilldowns.
 
   A new option ``key_vector_expansion`` is added to drilldowns.
-  Currently, ``power_set`` can be only specified for ``key _vector_ expansion``. 
+  Currently, ``NONE`` or ``POWER_SET`` can be specified for ``key _vector_ expansion``. 
   
-  Specifying ``power_set`` to ``key_vector_expansion`` allows to aggregate for power set case.
+  Specifying ``POWER_SET`` to ``key_vector_expansion`` allows to aggregate for power set case.
   This method of aggregation is useful to aggregate total number of individual and combination tag occurrence at once.  
 
-  Following example is to see aggregating total number of individual and combination occurrence for following 3 tag, ``Groonga``, ``Mroonga``, and ``PGroonga``.
+  Following example is to see aggregating total number of individual and combination occurrence for following 3 tags,
+  ``Groonga``, ``Mroonga``, and ``PGroonga``.
 
-  Sample case :
+  Sample case:
   
   .. code-block::
 
@@ -41,7 +42,7 @@ Improvements
      # [[0, 1337566253.89858, 0.000355720520019531], 4]
      select PowersetDrilldownMemos \
        --drilldowns[tags].keys tags \
-       --drilldowns[tags].key_vector_expansion power_set \
+       --drilldowns[tags].key_vector_expansion POWER_SET \
        --drilldowns[tags].columns[power_set].stage initial \
        --drilldowns[tags].columns[power_set].value _key \
        --drilldowns[tags].columns[power_set].flags COLUMN_VECTOR \
@@ -156,9 +157,9 @@ Improvements
 
   This feature is complex. For more information, please refer to  :ref:`select-drilldowns-label-key-vector-expansions-power-set`.
 
-* [:doc:`reference/commands/select`] Specific elements of vector column is now able to be search object. 
+* [:doc:`reference/commands/select`] Specific element of vector column is now able to be search target. 
 
-  It allows specific elements of vector column to be search objects that specifying the specific elements to ``match_columns`` with index number. 
+  It allows specific elements of vector column to be search targets that specifying the specific elements to ``match_columns`` with index number. 
 
   Following is a sample case.
   
@@ -211,7 +212,7 @@ Improvements
      #   ]
      # ]
 
-  ``--match_columns "contents[1]"`` specify only 2nd vector elements of ``contents`` as the search object. 
+  ``--match_columns "contents[1]"`` specifies only 2nd vector elements of ``contents`` as the search target. 
   In this sample, ``["I like Groonga", "Use Groonga with Ruby"]`` is shown in the results because 2nd element ``Ruby`` is in ``Use Groonga with Ruby``. However, ``["I like Ruby", "Use Groonga"]`` is not shown in results because 2nd element ``Ruby`` is not in ``Use Groonga``.
 
 * [:doc:`/reference/commands/load`] Added support for ``YYYY-MM-DD`` time format.
@@ -269,7 +270,7 @@ Improvements
 Fixes
 -----
 
-* [:doc:`reference/commands/select`] Fix a bug displaying wrong label in ``drilldown`` results when ``command_version`` is ``3``.
+* [:doc:`reference/commands/select`] Fix a bug displaying a wrong label in ``drilldown`` results when ``command_version`` is ``3``.
   [groonga-dev,05005][Reported by Atsushi Shinoda]
 
   Following is a sample case.
@@ -378,8 +379,8 @@ Fixes
 
   This bug is reported to occur when condition meet following 1., 2., and 3..
   
-  1. Keys are Normalized in the target table. 
-  
+  1. Keys are normalized in the target table. 
+
      In this sample, it meets condition specifying ``--normalizer NormalizerNFKC130`` in ``Normalizations``. 
      Original keys, ``Ⅰ`` , ``Ⅱ`` ,and ``Ⅲ``, are normalized each into ``i`` 、 ``ii`` 、 ``iii`` with ``NormalizerNFKC130``.
   
@@ -393,11 +394,12 @@ Fixes
        
      Normalizing ``iiii`` with ``Normalizations`` takes following steps and it meets the condition.
      
-     3.1. First ``iii`` （ applied for ``Ⅲ`` ）
+     * First ``iii`` ( applied for ``Ⅲ`` )
+      
+       ``ii`` or ``i`` are not used because :doc:`reference/normalizers/normalizer_table` works 
+       with the Longest-Common-Prefix search.
      
-        :doc:`reference/normalizers/normalizer_table` is defined normalization target with Longest-Common-Prefix search. 
-     
-     3.2. Last ``i`` （applied for  ``Ⅰ``）
+     * Last ``i`` ( applied for  ``Ⅰ`` )
   
 Thanks
 ------
