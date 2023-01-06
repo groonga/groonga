@@ -323,6 +323,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldown_with_filter.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_columns_name_stage.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_keys_multiple.log \
+	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_none.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_output_columns_multiple_group_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log \
 	$(top_srcdir)/doc/source/example/reference/commands/select/drilldowns_label_power_set.log \
@@ -1551,6 +1552,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/commands/select/drilldown_with_filter.log \
 	source/example/reference/commands/select/drilldowns_label_columns_name_stage.log \
 	source/example/reference/commands/select/drilldowns_label_keys_multiple.log \
+	source/example/reference/commands/select/drilldowns_label_none.log \
 	source/example/reference/commands/select/drilldowns_label_output_columns_multiple_group_key.log \
 	source/example/reference/commands/select/drilldowns_label_output_columns_single_group_key.log \
 	source/example/reference/commands/select/drilldowns_label_power_set.log \

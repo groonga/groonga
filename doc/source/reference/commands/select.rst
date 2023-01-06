@@ -2513,19 +2513,63 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 .. versionadded:: 12.1.1
 
-ドリルダウン対象のキーがベクター(vector)のときに、キーの展開方法を指定します。現状は ``power_set`` のみが指定可能です。
+ドリルダウン対象のキーがベクター(vector)のときの、キーの展開方法を指定します。現状は ``NONE`` または ``power_set`` のみ指定可能です。
+
+.. _select-drilldowns-label-key-vector-expansions-none:
+
+``NONE``
+~~~~~~~~
+
+``key_vector_expansion`` に何も指定しない場合と同じ動作です。
+
+キーを展開しません。ベクター内の各要素がそれぞれキーとなります。
+
+以下は ``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの登場回数を集計する例です。
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldowns_label_none.log
+.. table_create NoneExpantionDrilldownMemos TABLE_HASH_KEY ShortText
+.. column_create NoneExpantionDrilldownMemos tags COLUMN_VECTOR ShortText
+.. load --table NoneExpantionDrilldownMemos
+.. [
+.. {"_key": "Groonga is fast!", "tags": ["Groonga"]},
+.. {"_key": "Mroonga uses Groonga!", "tags": ["Groonga", "Mroonga"]},
+.. {"_key": "PGroonga uses Groonga!", "tags": ["Groonga", "PGroonga"]},
+.. {"_key": "Mroonga and PGroonga are Groonga family", "tags": ["Groonga", "Mroonga", "PGroonga"]}
+.. ]
+.. select NoneExpantionDrilldownMemos \
+..   --drilldowns[tags].keys tags \
+..   --drilldowns[tags].key_vector_expansion NONE \
+..   --drilldowns[tags].columns[none_expantion].stage initial \
+..   --drilldowns[tags].columns[none_expantion].value _key \
+..   --drilldowns[tags].columns[none_expantion].flags COLUMN_VECTOR \
+..   --drilldowns[tags].sort_keys 'none_expantion' \
+..   --drilldowns[tags].output_columns 'none_expantion, _nsubrecs' \
+..   --limit 0
+
+実行結果から以下のことがわかります。
+
+.. csv-table::
+
+   "タグ","登場回数（ ``_nsubrecs`` ）"
+   "``Groonga``", "4"
+   "``Mroonga``", "2"
+   "``PGroonga``", "2"
 
 .. _select-drilldowns-label-key-vector-expansions-power-set:
 
 ``power_set``
 ~~~~~~~~~~~~~
 
+ドリルダウン対象のキーが1つの場合にのみ使用可能です。キーが2つ以上の場合は無視されます。
+
 ベクターをべき集合(power set)に展開して集計(aggregate)します。
-このとき、対象のベクターを単なる集合(set)とみなします。
+このとき、対象のベクターを多重集合(multiset)とみなします。同じ値の要素が複数ある場合、それぞれ別の要素とみなします。
 
 ベクター ``[A, B, C]`` を例に考えます。この場合、対象となる集合は ``{A, B, C}`` です。
 べき集合は、集合のすべての部分集合(subset)の集合なので、まず、 ``{A, B, C}`` のすべての部分集合を以下に示します。
-ただし、Groongaは要素数(number of elements)が0の集合（空集合(empty set)）は使いません。ドリルダウン結果とに使うには有益ではないからです。空集合も使ったほうがよいユースケースがある場合は `issue <https://github.com/groonga/groonga/issues>`_ で報告してください。
+ただし、Groongaは要素数(number of elements)が0の集合（空集合(empty set)）は使いません。ドリルダウン結果に使うには有益ではないからです。
+空集合も使ったほうがよいユースケースがある場合は `issue <https://github.com/groonga/groonga/issues>`_ で報告してください。
 
 * 要素数が1の部分集合
 
@@ -2570,10 +2614,10 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
    "``{A, B, C}``", "1"
    "``{B, C, D}``", "1"
 
-この集計方法は、例えばタグの出現回数と、タグの組み合わせの出現回数を一度に集計したい場合に便利です。
+この集計方法は、例えばタグの登場回数と、タグの組み合わせの登場回数を一度に集計したい場合に便利です。
 
-``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの出現回数と、
-これらの組み合わせの出現回数を集計するケースを考えます。
+``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの登場回数と、
+これらの組み合わせの登場回数を集計するケースを考えます。
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldowns_label_power_set.log
@@ -2600,7 +2644,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 .. csv-table::
 
-   "タグ","出現回数"
+   "タグ","登場回数"
    "``Groonga``", "4"
    "``Mroonga``", "2"
    "``PGroonga``", "2"
@@ -2608,6 +2652,9 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
    "``Groonga`` かつ ``PGroonga``", "2"
    "``Mroonga`` かつ ``PGroonga``", "1"
    "``Groonga`` かつ ``Mroonga`` かつ ``PGroonga``", "1"
+
+この結果から、どのタグの組み合わせがよく使われているか・使われていないかといった相関関係を分析できます。
+例えば、 ``Groonga`` と ``Mroonga`` が同時に使われている回数は2回で、そのうち更に ``PGroonga`` が同時に使われている回数が1回、というような分析ができます。
 
 .. _select-drilldowns-label-output-columns:
 
