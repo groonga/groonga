@@ -3295,15 +3295,12 @@ msgstr ""
 
 msgid ""
 "ドリルダウン対象のキーがベクター(vector)のときの、キーの展開方法を指定しま"
-"す。現状は ``none`` または ``power_set`` が指定可能です。"
+"す。現状は ``NONE`` または ``POWER_SET`` が指定可能です。"
 msgstr ""
 
 msgid ""
 "ドリルダウン対象のキーが1つの場合にのみ使用可能です。キーが2つ以上の場合は無"
 "視されます。"
-msgstr ""
-
-msgid "``none``"
 msgstr ""
 
 msgid "``key_vector_expansion`` に何も指定しない場合と同じ動作です。"
@@ -3320,7 +3317,7 @@ msgstr ""
 msgid "実行結果から以下のことがわかります。"
 msgstr ""
 
-msgid "``power_set``"
+msgid "``POWER_SET``"
 msgstr ""
 
 msgid ""
@@ -3355,7 +3352,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"``power_set`` は、この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}"
+"``POWER_SET`` は、この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}"
 "`` の各部分集合で集計します。"
 msgstr ""
 

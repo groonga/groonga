@@ -2513,13 +2513,13 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 .. versionadded:: 12.1.1
 
-ドリルダウン対象のキーがベクター(vector)のときの、キーの展開方法を指定します。現状は ``none`` または ``power_set`` が指定可能です。
+ドリルダウン対象のキーがベクター(vector)のときの、キーの展開方法を指定します。現状は ``NONE`` または ``POWER_SET`` が指定可能です。
 
 ドリルダウン対象のキーが1つの場合にのみ使用可能です。キーが2つ以上の場合は無視されます。
 
 .. _select-drilldowns-label-key-vector-expansions-none:
 
-``none``
+``NONE``
 ~~~~~~~~
 
 ``key_vector_expansion`` に何も指定しない場合と同じ動作です。
@@ -2541,7 +2541,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 .. ]
 .. select NoneExpantionDrilldownMemos \
 ..   --drilldowns[tags].keys tags \
-..   --drilldowns[tags].key_vector_expansion none \
+..   --drilldowns[tags].key_vector_expansion NONE \
 ..   --drilldowns[tags].columns[none_expantion].stage initial \
 ..   --drilldowns[tags].columns[none_expantion].value _key \
 ..   --drilldowns[tags].columns[none_expantion].flags COLUMN_VECTOR \
@@ -2560,7 +2560,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 .. _select-drilldowns-label-key-vector-expansions-power-set:
 
-``power_set``
+``POWER_SET``
 ~~~~~~~~~~~~~
 
 ベクターをべき集合(power set)に展開して集計(aggregate)します。
@@ -2591,7 +2591,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 以上が ``{A, B, C}`` のすべての部分集合です。
 べき集合は、これらの部分集合の集合なので、 ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` がこのベクターのべき集合となります。
 
-``power_set`` は、この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` の各部分集合で集計します。
+``POWER_SET`` は、この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` の各部分集合で集計します。
 
 例として、 ``[A, B, C]`` と ``[B, C, D]`` をべき集合で集計する場合を考えます。
 
@@ -2633,7 +2633,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 .. ]
 .. select PowerSetDrilldownMemos \
 ..   --drilldowns[tags].keys tags \
-..   --drilldowns[tags].key_vector_expansion power_set \
+..   --drilldowns[tags].key_vector_expansion POWER_SET \
 ..   --drilldowns[tags].columns[power_set].stage initial \
 ..   --drilldowns[tags].columns[power_set].value _key \
 ..   --drilldowns[tags].columns[power_set].flags COLUMN_VECTOR \
