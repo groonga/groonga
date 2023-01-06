@@ -213,7 +213,7 @@ Improvements
      #   ]
      # ]
 
-  ``--match_columns "contents[1]"`` とすることで、 ``contents`` ベクターの第2要素（インデックス番号1番の要素）のみをクエリーの対象にしています。
+  ``--match_columns "contents[1]"`` とすることで、 ``contents`` ベクターの第2要素のみを ``--query`` の対象にしています。
   
   この例では、 ``["I like Groonga", "Use Groonga with Ruby"]`` は第2要素 ``Use Groonga with Ruby`` に ``Ruby`` を含むのでヒットしていますが、 
   ``["I like Ruby", "Use Groonga"]`` は第2要素 ``Use Groonga`` に ``Ruby`` を含まないのでヒットしていません。
