@@ -429,6 +429,9 @@ fi
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Fri Jan 06 2023 Horimoto Yasuhiro <horimoto@clear-code.com> - 12.1.1-1
+- New upstream release.
+
 * Tue Nov 29 2022 Takashi Hashida <hashida@clear-code.com> - 12.1.0-1
 - New upstream release.
 
