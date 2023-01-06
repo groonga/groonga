@@ -2616,8 +2616,8 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 この集計方法は、例えばタグの登場回数と、タグの組み合わせの登場回数を一度に集計したい場合に便利です。
 
-``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの登場回数と、
-これらの組み合わせの登場回数を集計するケースを考えます。
+以下は ``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの登場回数と、
+これらの組み合わせの登場回数を集計する例です。
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldowns_label_power_set.log
