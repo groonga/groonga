@@ -51,23 +51,11 @@ msgstr "``Groonga`` かつ ``Mroonga`` かつ ``PGroonga``"
 msgid "``Groonga`` and ``PGroonga``"
 msgstr "``Groonga`` かつ ``PGroonga``"
 
-msgid "``Groonga`` かつ ``Mroonga``"
-msgstr ""
-
-msgid "``Groonga`` かつ ``Mroonga`` かつ ``PGroonga``"
-msgstr ""
-
-msgid "``Groonga`` かつ ``PGroonga``"
-msgstr ""
-
 msgid "``Mroonga``"
 msgstr ""
 
 msgid "``Mroonga`` and ``PGroonga``"
 msgstr "``Mroonga`` かつ ``PGroonga``"
-
-msgid "``Mroonga`` かつ ``PGroonga``"
-msgstr ""
 
 msgid "``PGroonga``"
 msgstr ""
@@ -78,12 +66,6 @@ msgstr "登場回数"
 msgid "tag"
 msgstr "タグ"
 
-msgid "タグ"
-msgstr ""
-
-msgid "出現回数"
-msgstr ""
-
 msgid "News"
 msgstr "お知らせ"
 
@@ -92,166 +74,6 @@ msgstr "12.1.1リリース - 2023-01-06"
 
 msgid "Improvements"
 msgstr "改良"
-
-msgid ""
-"[:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-"
-"expansions-power-set`] ドリルダウンでベクターのべき集合(power set)を集計でき"
-"るようになりました。"
-msgstr ""
-
-msgid ""
-"ドリルダウンに 新しいオプション ``key_vector_expansion`` を追加しました。 "
-"``key_vector_expansion`` は、ドリルダウン対象のキーがベクターのときに、キーの"
-"展開方法を指定します。 現状は、``key_vector_expansion`` には ``power_set`` の"
-"み指定できます。"
-msgstr ""
-
-msgid ""
-"``key_vector_expansion`` に ``power_set`` を指定することで、べき集合での集計"
-"(aggregate)ができるようになります。 この集計方法は、例えばタグの出現回数と、"
-"タグの組み合わせの出現回数を一度に集計したい場合に便利です。"
-msgstr ""
-
-msgid ""
-"以下は、 ``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対し"
-"て、これらのタグの出現回数と、 これらの組み合わせの出現回数を集計するケースを"
-"考えます。"
-msgstr ""
-
-msgid "実行例:"
-msgstr ""
-
-msgid "この集計結果から、以下のことがわかります。"
-msgstr ""
-
-msgid ""
-"複雑な機能なので、 :ref:`select-drilldowns-label-key-vector-expansions-power-"
-"set` も合わせて参照してください。"
-msgstr ""
-
-msgid ""
-"[:doc:`reference/commands/select`] ベクターカラムの特定の要素のみを対象に検索"
-"できるようになりました。"
-msgstr ""
-
-msgid ""
-"``match_columns`` にベクターカラムの特定の要素をインデックス番号で指定するこ"
-"とで、ベクターカラムの特定の要素のみを対象に検索できるようになりました。"
-msgstr ""
-
-msgid "以下はこの機能の例です。"
-msgstr ""
-
-msgid ""
-"``--match_columns \"contents[1]\"`` とすることで、 ``contents`` ベクターの第2"
-"要素のみを ``--query`` の対象にしています。"
-msgstr ""
-
-msgid ""
-"この例では、 ``[\"I like Groonga\", \"Use Groonga with Ruby\"]`` は第2要素 "
-"``Use Groonga with Ruby`` に ``Ruby`` を含むのでヒットしていますが、 ``[\"I "
-"like Ruby\", \"Use Groonga\"]`` は第2要素 ``Use Groonga`` に ``Ruby`` を含ま"
-"ないのでヒットしていません。"
-msgstr ""
-
-msgid ""
-"[:doc:`/reference/commands/load`] Added support for ``YYYY-MM-DD`` time "
-"format."
-msgstr ""
-"[:doc:`/reference/commands/load`] ``YYYY-MM-DD`` 形式をサポートしました。"
-
-msgid ""
-"``YYYY-MM-DD`` is a general time format. Supporting this time format made "
-"``load`` more useful."
-msgstr ""
-"``YYYY-MM-DD`` は一般的な時間形式です。この形式をサポートしたことで、 "
-"``load``がより使いやすくなりました。"
-
-msgid "The time of the loaded value is set to ``00:00:00`` on the local time."
-msgstr "ロードされた値の時間部分は、現地時間の ``00:00:00`` になります。"
-
-msgid "Fixes"
-msgstr "修正"
-
-msgid ""
-"[:doc:`reference/commands/select`] ``command_version`` が ``3`` のとき、 "
-"``drilldown`` の結果のラベルが不正になる問題を修正しました。 [groonga-"
-"dev,05005][Reported by Atsushi Shinoda]"
-msgstr ""
-
-msgid "以下はこの問題の例です。"
-msgstr ""
-
-msgid ""
-"``select`` の実行結果の ``drilldowns`` 直後の ``ctor`` は、本来 ``tag1`` であ"
-"るべきです。 この例では ``tag1`` ではなく ``ctor`` という値になっていますが、"
-"どのような値になるかは不定です。"
-msgstr ""
-
-msgid ""
-"[:doc:`reference/normalizers/normalizer_table`] 特定の定義が "
-"``NormalizerTable`` に存在する場合、Groongaがクラッシュすることがある問題を修"
-"正しました。 [GitHub:pgroonga/pgroonga#279][Reported by i10a]"
-msgstr ""
-
-msgid "以下の例を考えます。"
-msgstr ""
-
-msgid "この問題は、以下の1.、2.、3.の条件を満たした時に発生します。"
-msgstr ""
-
-msgid "対象となるテーブルのキーがノーマライズされる"
-msgstr ""
-
-msgid ""
-"``Normalizations`` に ``--normalizer NormalizerNFKC130`` が指定されているた"
-"め、この条件を満たしています。 ``Ⅰ`` 、 ``Ⅱ`` 、 ``Ⅲ`` はそれぞれ "
-"``NormalizerNFKC130`` によって ``i`` 、 ``ii`` 、 ``iii`` にノーマライズされ"
-"ます。"
-msgstr ""
-
-msgid "ノーマライズされた文字列に他のノーマライズされた文字列が含まれている"
-msgstr ""
-
-msgid ""
-"上記のノーマライズ後の値を考えると、 ``iii`` は ``ii`` と ``i`` を含み、 "
-"``ii`` は ``i`` を含むため、この条件を満たしています。"
-msgstr ""
-
-msgid "2.の文字列を複数使用する"
-msgstr ""
-
-msgid ""
-"``normaize`` の対象である ``ⅡⅡ`` は ``NormalizerNFKC130`` によって ``iiii`` "
-"にノーマライズされます。 この値に対して、 ``Normalizations`` の "
-"``NormalizerNFKC130`` によるノーマライズ後の値が一致条件として使用されてノー"
-"マライズされます。"
-msgstr ""
-
-msgid ""
-"したがって、 ``iiii`` を ``Normalizations`` でノーマライズしようとするときに"
-"は、以下の順番でノーマライズされるため、この条件を満たしています。"
-msgstr ""
-
-msgid "3.1. 最初の ``iii`` （ ``Ⅲ`` に対応）"
-msgstr ""
-
-msgid ""
-":doc:`reference/normalizers/normalizer_table` は最長共通接頭辞探索(Longest-"
-"Common-Prefix search)でノーマライズ対象を決定するため"
-msgstr ""
-
-msgid "3.2. 残りの ``i`` （ ``Ⅰ`` に対応）"
-msgstr ""
-
-msgid "Thanks"
-msgstr "感謝"
-
-msgid "i10a"
-msgstr "i10aさん"
-
-msgid "Atsushi Shinoda"
-msgstr "篠田さん"
 
 msgid ""
 "[:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-"
@@ -335,6 +157,25 @@ msgstr ""
 "ません。"
 
 msgid ""
+"[:doc:`/reference/commands/load`] Added support for ``YYYY-MM-DD`` time "
+"format."
+msgstr ""
+"[:doc:`/reference/commands/load`] ``YYYY-MM-DD`` 形式をサポートしました。"
+
+msgid ""
+"``YYYY-MM-DD`` is a general time format. Supporting this time format made "
+"``load`` more useful."
+msgstr ""
+"``YYYY-MM-DD`` は一般的な時間形式です。この形式をサポートしたことで、 "
+"``load``がより使いやすくなりました。"
+
+msgid "The time of the loaded value is set to ``00:00:00`` on the local time."
+msgstr "ロードされた値の時間部分は、現地時間の ``00:00:00`` になります。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid ""
 "[:doc:`reference/commands/select`] Fix a bug displaying wrong label in "
 "``drilldown`` results when ``command_version`` is ``3``. [groonga-dev,05005]"
 "[Reported by Atsushi Shinoda]"
@@ -342,9 +183,6 @@ msgstr ""
 "[:doc:`reference/commands/select`] ``command_version`` が ``3`` のとき、 "
 "``drilldown`` の結果のラベルが不正になる問題を修正しました。 [groonga-"
 "dev,05005][篠田さんの報告]"
-
-msgid "Following is a sample case. .. code-block::"
-msgstr "以下はこの問題の例です。"
 
 msgid ""
 "``ctor``, displaying right after ``drilldowns`` as result of "
@@ -377,17 +215,14 @@ msgstr "対象となるテーブルのキーがノーマライズされる"
 
 msgid ""
 "In this sample, it meets condition specifying ``--normalizer "
-"NormalizerNFKC130`` in ``Normalizations``."
+"NormalizerNFKC130`` in ``Normalizations``. Original keys, ``Ⅰ`` , ``Ⅱ`` ,and "
+"``Ⅲ``, are normalized each into ``i`` 、 ``ii`` 、 ``iii`` with "
+"``NormalizerNFKC130``."
 msgstr ""
 "この例では、 ``Normalizations`` に ``--normalizer NormalizerNFKC130`` が指定"
-"されているため、この条件を満たしています。"
-
-msgid ""
-"Original keys, ``Ⅰ`` , ``Ⅱ`` ,and ``Ⅲ``, are normalized each into ``i`` 、 "
-"``ii`` 、 ``iii`` with ``NormalizerNFKC130``."
-msgstr ""
-"``Ⅰ`` 、 ``Ⅱ`` 、 ``Ⅲ`` はそれぞれ ``NormalizerNFKC130`` によって ``i`` 、 "
-"``ii`` 、 ``iii`` にノーマライズされます。"
+"されているので、この条件を満たしています。``Ⅰ`` 、 ``Ⅱ`` 、 ``Ⅲ`` はそれぞれ "
+"``NormalizerNFKC130`` によって ``i`` 、 ``ii`` 、 ``iii`` にノーマライズされ"
+"ます。"
 
 msgid ""
 "Same characters in the normalized key are included in the other normalized "
@@ -406,9 +241,9 @@ msgid "Same characters of 2nd condition are used multiple times."
 msgstr "2.の文字列を複数使用する"
 
 msgid ""
-"In this sample, it meets condition because normalized key ``iiiii``, "
-"original key ``ⅡⅡ`` with ``NormalizerNFKC130``, is considered as same with "
-"normalized key for ``Ⅲ`` and ``Ⅰ`` with ``NormalizerNFKC130``."
+"In this sample, it meets condition because normalized key ``iiii``, original "
+"key ``ⅡⅡ`` with ``NormalizerNFKC130``, is considered as same with normalized "
+"key for ``Ⅲ`` and ``Ⅰ`` with ``NormalizerNFKC130``."
 msgstr ""
 "``normaize`` の対象である ``ⅡⅡ`` は ``NormalizerNFKC130`` によって ``iiii`` "
 "にノーマライズされます。 この値に対して、 ``Normalizations`` の "
@@ -430,10 +265,19 @@ msgid ""
 "target with Longest-Common-Prefix search."
 msgstr ""
 ":doc:`reference/normalizers/normalizer_table` は最長共通接頭辞探索(Longest-"
-"Common-Prefix search)でノーマライズ対象を決定するため"
+"Common-Prefix search)を使うため"
 
 msgid "3.2. Last ``i`` （applied for  ``Ⅰ``）"
 msgstr "3.2. 残りの ``i`` （ ``Ⅰ`` に対応）"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "i10a"
+msgstr "i10aさん"
+
+msgid "Atsushi Shinoda"
+msgstr "篠田さん"
 
 msgid "Release 12.1.0 - 2022-11-29"
 msgstr "12.1.0 リリース - 2022-11-29"

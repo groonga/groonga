@@ -13,418 +13,6 @@ Release 12.1.1 - 2023-01-06
 Improvements
 ------------
 
-* [:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-expansions-power-set`] 
-  ドリルダウンでベクターのべき集合(power set)を集計できるようになりました。
-
-  ドリルダウンに 新しいオプション ``key_vector_expansion`` を追加しました。
-  ``key_vector_expansion`` は、ドリルダウン対象のキーがベクターのときに、キーの展開方法を指定します。
-  現状は、``key_vector_expansion`` には ``power_set`` のみ指定できます。
-
-  ``key_vector_expansion`` に ``power_set`` を指定することで、べき集合での集計(aggregate)ができるようになります。
-  この集計方法は、例えばタグの出現回数と、タグの組み合わせの出現回数を一度に集計したい場合に便利です。
-
-  以下は、 ``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの出現回数と、 これらの組み合わせの出現回数を集計するケースを考えます。
-
-  実行例:
-
-  .. code-block::
-
-     table_create PowersetDrilldownMemos TABLE_HASH_KEY ShortText
-     # [[0, 1337566253.89858, 0.000355720520019531], true]
-     column_create PowersetDrilldownMemos tags COLUMN_VECTOR ShortText
-     # [[0, 1337566253.89858, 0.000355720520019531], true]
-     load --table PowersetDrilldownMemos
-     [
-     {"_key": "Groonga is fast!", "tags": ["Groonga"]},
-     {"_key": "Mroonga uses Groonga!", "tags": ["Groonga", "Mroonga"]},
-     {"_key": "PGroonga uses Groonga!", "tags": ["Groonga", "PGroonga"]},
-     {"_key": "Mroonga and PGroonga are Groonga family", "tags": ["Groonga", "Mroonga", "PGroonga"]}
-     ]
-     # [[0, 1337566253.89858, 0.000355720520019531], 4]
-     select PowersetDrilldownMemos \
-       --drilldowns[tags].keys tags \
-       --drilldowns[tags].key_vector_expansion power_set \
-       --drilldowns[tags].columns[power_set].stage initial \
-       --drilldowns[tags].columns[power_set].value _key \
-       --drilldowns[tags].columns[power_set].flags COLUMN_VECTOR \
-       --drilldowns[tags].sort_keys 'power_set' \
-       --drilldowns[tags].output_columns 'power_set, _nsubrecs' \
-       --limit 0
-     # [
-     #   [
-     #     0,
-     #     1337566253.89858,
-     #     0.000355720520019531
-     #   ],
-     #   [
-     #     [
-     #       [
-     #         4
-     #       ],
-     #       [
-     #         [
-     #           "_id",
-     #           "UInt32"
-     #         ],
-     #         [
-     #           "_key",
-     #           "ShortText"
-     #         ],
-     #         [
-     #           "tags",
-     #           "ShortText"
-     #         ]
-     #       ]
-     #     ],
-     #     {
-     #       "tags": [
-     #         [
-     #           7
-     #         ],
-     #         [
-     #           [
-     #             "power_set",
-     #             "Text"
-     #           ],
-     #           [
-     #             "_nsubrecs",
-     #             "Int32"
-     #           ]
-     #         ],
-     #         [
-     #           [
-     #             "Groonga"
-     #           ],
-     #           4
-     #         ],
-     #         [
-     #           [
-     #             "Mroonga"
-     #           ],
-     #           2
-     #         ],
-     #         [
-     #           [
-     #             "PGroonga"
-     #           ],
-     #           2
-     #         ],
-     #         [
-     #           [
-     #             "Groonga",
-     #             "Mroonga"
-     #           ],
-     #           2
-     #         ],
-     #         [
-     #           [
-     #             "Groonga",
-     #             "PGroonga"
-     #           ],
-     #           2
-     #         ],
-     #         [
-     #           [
-     #             "Mroonga",
-     #             "PGroonga"
-     #           ],
-     #           1
-     #         ],
-     #         [
-     #           [
-     #             "Groonga",
-     #             "Mroonga",
-     #             "PGroonga"
-     #           ],
-     #           1
-     #         ]
-     #       ]
-     #     }
-     #   ]
-     # ]
-
-  この集計結果から、以下のことがわかります。
-
-  .. csv-table::
-
-     "タグ","出現回数"
-     "``Groonga``", "4"
-     "``Mroonga``", "2"
-     "``PGroonga``", "2"
-     "``Groonga`` かつ ``Mroonga``", "2"
-     "``Groonga`` かつ ``PGroonga``", "2"
-     "``Mroonga`` かつ ``PGroonga``", "1"
-     "``Groonga`` かつ ``Mroonga`` かつ ``PGroonga``", "1"
-
-  複雑な機能なので、 :ref:`select-drilldowns-label-key-vector-expansions-power-set` も合わせて参照してください。
-
-* [:doc:`reference/commands/select`] ベクターカラムの特定の要素のみを対象に検索できるようになりました。
-
-  ``match_columns`` にベクターカラムの特定の要素をインデックス番号で指定することで、ベクターカラムの特定の要素のみを対象に検索できるようになりました。
-
-  以下はこの機能の例です。
-
-  .. code-block::
-
-     table_create Memos TABLE_NO_KEY
-     column_create Memos contents COLUMN_VECTOR ShortText
-
-     table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
-     column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION Memos contents
-     load --table Memos
-     [
-     ["contents"],
-     [["I like Groonga", "Use Groonga with Ruby"]],
-     [["I like Ruby", "Use Groonga"]]
-     ]
-     select Memos \
-       --match_columns "contents[1]" \
-       --query Ruby \
-       --output_columns "contents, _score"
-     # [
-     #   [
-     #     0,
-     #     0.0,
-     #     0.0
-     #   ],
-     #   [
-     #     [
-     #       [
-     #         1
-     #       ],
-     #       [
-     #         [
-     #           "contents",
-     #           "ShortText"
-     #         ],
-     #         [
-     #           "_score",
-     #           "Int32"
-     #         ]
-     #       ],
-     #       [
-     #         [
-     #           "I like Groonga",
-     #           "Use Groonga with Ruby"
-     #         ],
-     #         1
-     #       ]
-     #     ]
-     #   ]
-     # ]
-
-  ``--match_columns "contents[1]"`` とすることで、 ``contents`` ベクターの第2要素のみを ``--query`` の対象にしています。
-  
-  この例では、 ``["I like Groonga", "Use Groonga with Ruby"]`` は第2要素 ``Use Groonga with Ruby`` に ``Ruby`` を含むのでヒットしていますが、 
-  ``["I like Ruby", "Use Groonga"]`` は第2要素 ``Use Groonga`` に ``Ruby`` を含まないのでヒットしていません。
-
-* [:doc:`/reference/commands/load`] Added support for ``YYYY-MM-DD`` time format.
-
-  ``YYYY-MM-DD`` is a general time format.
-  Supporting this time format made ``load`` more useful.
-
-  The time of the loaded value is set to ``00:00:00`` on the local time.
-
-  .. code-block::
-
-     plugin_register functions/time
-     # [[0,0.0,0.0],true]
-     table_create Logs TABLE_NO_KEY
-     # [[0,0.0,0.0],true]
-     column_create Logs created_at COLUMN_SCALAR Time
-     # [[0,0.0,0.0],true]
-     column_create Logs created_at_text COLUMN_SCALAR ShortText
-     # [[0,0.0,0.0],true]
-     load --table Logs
-     [
-     {"created_at": "2000-01-01", "created_at_text": "2000-01-01"}
-     ]
-     # [[0,0.0,0.0],1]
-     select Logs --output_columns "time_format_iso8601(created_at), created_at_text"
-     # [
-     #   [
-     #     0,
-     #     0.0,
-     #     0.0
-     #   ],
-     #   [
-     #     [
-     #       [
-     #         1
-     #       ],
-     #       [
-     #         [
-     #           "time_format_iso8601",
-     #           null
-     #         ],
-     #         [
-     #           "created_at_text",
-     #           "ShortText"
-     #         ]
-     #       ],
-     #       [
-     #         "2000-01-01T00:00:00.000000+09:00",
-     #         "2000-01-01"
-     #       ]
-     #     ]
-     #   ]
-     # ]
-
-Fixes
------
-
-* [:doc:`reference/commands/select`] ``command_version`` が ``3`` のとき、 ``drilldown`` の結果のラベルが不正になる問題を修正しました。
-  [groonga-dev,05005][Reported by Atsushi Shinoda]
-
-  以下はこの問題の例です。
-
-  .. code-block::
-
-     table_create Documents TABLE_NO_KEY
-     column_create Documents tag1 COLUMN_SCALAR ShortText
-     column_create Documents tag2 COLUMN_SCALAR ShortText
-     load --table Documents
-     [
-     {"tag1": "1", "tag2": "2"}
-     ]
-     select Documents --drilldown tag1,tag2 --command_version 3
-     # {
-     #   "header": {
-     #     "return_code": 0,
-     #     "start_time": 1672123380.653039,
-     #     "elapsed_time": 0.0005846023559570312
-     #   },
-     #   "body": {
-     #     "n_hits": 1,
-     #     "columns": [
-     #       {
-     #         "name": "_id",
-     #         "type": "UInt32"
-     #       },
-     #       {
-     #         "name": "tag1",
-     #         "type": "ShortText"
-     #       },
-     #       {
-     #         "name": "tag2",
-     #         "type": "ShortText"
-     #       }
-     #     ],
-     #     "records": [
-     #       [
-     #         1,
-     #         "1",
-     #         "2"
-     #       ]
-     #     ],
-     #     "drilldowns": {
-     #       "ctor": {
-     #         "n_hits": 1,
-     #         "columns": [
-     #           {
-     #             "name": "_key",
-     #             "type": "ShortText"
-     #           },
-     #           {
-     #             "name": "_nsubrecs",
-     #             "type": "Int32"
-     #           }
-     #         ],
-     #         "records": [
-     #           [
-     #             "1",
-     #             1
-     #           ]
-     #         ]
-     #       },
-     #       "tag2": {
-     #         "n_hits": 1,
-     #         "columns": [
-     #           {
-     #             "name": "_key",
-     #             "type": "ShortText"
-     #           },
-     #           {
-     #             "name": "_nsubrecs",
-     #             "type": "Int32"
-     #           }
-     #         ],
-     #         "records": [
-     #           [
-     #             "2",
-     #             1
-     #           ]
-     #         ]
-     #       }
-     #     }
-     #   }
-     # }
-
-  ``select`` の実行結果の ``drilldowns`` 直後の ``ctor`` は、本来 ``tag1`` であるべきです。
-  この例では ``tag1`` ではなく ``ctor`` という値になっていますが、どのような値になるかは不定です。
-
-
-* [:doc:`reference/normalizers/normalizer_table`] 特定の定義が ``NormalizerTable`` に存在する場合、Groongaがクラッシュすることがある問題を修正しました。
-  [GitHub:pgroonga/pgroonga#279][Reported by i10a]
-  
-
-
-  以下の例を考えます。
-
-  .. code-block::
-
-     table_create Normalizations TABLE_PAT_KEY ShortText --normalizer NormalizerNFKC130
-     column_create Normalizations normalized COLUMN_SCALAR ShortText
-     load --table Normalizations
-     [
-     {"_key": "Ⅰ", "normalized": "1"},
-     {"_key": "Ⅱ", "normalized": "2"},
-     {"_key": "Ⅲ", "normalized": "3"}
-     ]
-     normalize 'NormalizerTable("normalized", "Normalizations.normalized")'   "ⅡⅡ"
-
-  この問題は、以下の1.、2.、3.の条件を満たした時に発生します。
-
-  1. 対象となるテーブルのキーがノーマライズされる
-  
-     ``Normalizations`` に ``--normalizer NormalizerNFKC130`` が指定されているため、この条件を満たしています。
-     ``Ⅰ`` 、 ``Ⅱ`` 、 ``Ⅲ`` はそれぞれ ``NormalizerNFKC130`` によって ``i`` 、 ``ii`` 、 ``iii`` にノーマライズされます。
-  
-  2. ノーマライズされた文字列に他のノーマライズされた文字列が含まれている
-  
-     上記のノーマライズ後の値を考えると、 ``iii`` は ``ii`` と ``i`` を含み、 ``ii`` は ``i`` を含むため、この条件を満たしています。
-  
-  3. 2.の文字列を複数使用する
-  
-     ``normaize`` の対象である ``ⅡⅡ`` は ``NormalizerNFKC130`` によって ``iiii`` にノーマライズされます。
-     この値に対して、 ``Normalizations`` の ``NormalizerNFKC130`` によるノーマライズ後の値が一致条件として使用されてノーマライズされます。
-     
-     したがって、 ``iiii`` を ``Normalizations`` でノーマライズしようとするときには、以下の順番でノーマライズされるため、この条件を満たしています。
-     
-     3.1. 最初の ``iii`` （ ``Ⅲ`` に対応）
-     
-        :doc:`reference/normalizers/normalizer_table` は最長共通接頭辞探索(Longest-Common-Prefix search)でノーマライズ対象を決定するため
-     
-     3.2. 残りの ``i`` （ ``Ⅰ`` に対応）
-  
-
-
-Thanks
-------
-
-* i10a
-* Atsushi Shinoda
-News
-====
-
-.. _release-12-1-1:
-
-Release 12.1.1 - 2023-01-06
----------------------------
-
-Improvements
-------------
-
 * [:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-expansions-power-set`] Vector's power set is now able to aggregate with the drilldowns.
 
   A new option ``key_vector_expansion`` is added to drilldowns.
@@ -684,7 +272,8 @@ Fixes
 * [:doc:`reference/commands/select`] Fix a bug displaying wrong label in ``drilldown`` results when ``command_version`` is ``3``.
   [groonga-dev,05005][Reported by Atsushi Shinoda]
 
-  Following is a sample case. 
+  Following is a sample case.
+  
   .. code-block::
 
      table_create Documents TABLE_NO_KEY
@@ -770,14 +359,10 @@ Fixes
   ``ctor``, displaying right after ``drilldowns`` as result of ``select``command, should be ``tag1`` in correct case. 
   In this sample, ``ctor`` is shown instead of ``tag1``. However, what kind of value to be shown is unknown.
 
-
 * [:doc:`reference/normalizers/normalizer_table`] Fix a bug for Groonga to crush with specific definition setting in ``NormalizerTable``.
   [GitHub:pgroonga/pgroonga#279][Reported by i10a]
   
-
-
   Following case as sample.
-
 
   .. code-block::
 
@@ -795,16 +380,16 @@ Fixes
   
   1. Keys are Normalized in the target table. 
   
-    In this sample, it meets condition specifying ``--normalizer NormalizerNFKC130`` in ``Normalizations``. 
+     In this sample, it meets condition specifying ``--normalizer NormalizerNFKC130`` in ``Normalizations``. 
      Original keys, ``Ⅰ`` , ``Ⅱ`` ,and ``Ⅲ``, are normalized each into ``i`` 、 ``ii`` 、 ``iii`` with ``NormalizerNFKC130``.
   
   2. Same characters in the normalized key are included in the other normalized key. 
   
-    In this sample, it meets condition normalized key ``iii`` include the characters ``ii`` and ``i``, same with other normalized key which are original key ``Ⅱ`` and ``Ⅰ``.     
+     In this sample, it meets condition normalized key ``iii`` include the characters ``ii`` and ``i``, same with other normalized key which are original key ``Ⅱ`` and ``Ⅰ``.     
 
   3. Same characters of 2nd condition are used multiple times.
   
-     In this sample, it meets condition because normalized key ``iiiii``, original key ``ⅡⅡ`` with ``NormalizerNFKC130``, is considered as same with normalized key for ``Ⅲ`` and ``Ⅰ`` with ``NormalizerNFKC130``. 
+     In this sample, it meets condition because normalized key ``iiii``, original key ``ⅡⅡ`` with ``NormalizerNFKC130``, is considered as same with normalized key for ``Ⅲ`` and ``Ⅰ`` with ``NormalizerNFKC130``. 
        
      Normalizing ``iiii`` with ``Normalizations`` takes following steps and it meets the condition.
      
@@ -814,15 +399,11 @@ Fixes
      
      3.2. Last ``i`` （applied for  ``Ⅰ``）
   
-
-
 Thanks
 ------
 
 * i10a
 * Atsushi Shinoda
-
-
 
 .. _release-12-1-0:
 
