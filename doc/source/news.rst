@@ -414,6 +414,415 @@ Thanks
 
 * i10a
 * Atsushi Shinoda
+News
+====
+
+.. _release-12-1-1:
+
+Release 12.1.1 - 2023-01-06
+---------------------------
+
+Improvements
+------------
+
+* [:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-expansions-power-set`] Vector's power set is now able to aggregate with the drilldowns.
+
+  A new option ``key_vector_expansion`` is added to drilldowns.
+  Currently, ``power_set`` can be only specified for ``key _vector_ expansion``. 
+  
+  Specifying ``power_set`` to ``key_vector_expansion`` allows to aggregate for power set case.
+  This method of aggregation is useful to aggregate total number of individual and combination tag occurrence at once.  
+
+  Following example is to see aggregating total number of individual and combination occurrence for following 3 tag, ``Groonga``, ``Mroonga``, and ``PGroonga``.
+
+  Sample case :
+  
+  .. code-block::
+
+     table_create PowersetDrilldownMemos TABLE_HASH_KEY ShortText
+     # [[0, 1337566253.89858, 0.000355720520019531], true]
+     column_create PowersetDrilldownMemos tags COLUMN_VECTOR ShortText
+     # [[0, 1337566253.89858, 0.000355720520019531], true]
+     load --table PowersetDrilldownMemos
+     [
+     {"_key": "Groonga is fast!", "tags": ["Groonga"]},
+     {"_key": "Mroonga uses Groonga!", "tags": ["Groonga", "Mroonga"]},
+     {"_key": "PGroonga uses Groonga!", "tags": ["Groonga", "PGroonga"]},
+     {"_key": "Mroonga and PGroonga are Groonga family", "tags": ["Groonga", "Mroonga", "PGroonga"]}
+     ]
+     # [[0, 1337566253.89858, 0.000355720520019531], 4]
+     select PowersetDrilldownMemos \
+       --drilldowns[tags].keys tags \
+       --drilldowns[tags].key_vector_expansion power_set \
+       --drilldowns[tags].columns[power_set].stage initial \
+       --drilldowns[tags].columns[power_set].value _key \
+       --drilldowns[tags].columns[power_set].flags COLUMN_VECTOR \
+       --drilldowns[tags].sort_keys 'power_set' \
+       --drilldowns[tags].output_columns 'power_set, _nsubrecs' \
+       --limit 0
+     # [
+     #   [
+     #     0,
+     #     1337566253.89858,
+     #     0.000355720520019531
+     #   ],
+     #   [
+     #     [
+     #       [
+     #         4
+     #       ],
+     #       [
+     #         [
+     #           "_id",
+     #           "UInt32"
+     #         ],
+     #         [
+     #           "_key",
+     #           "ShortText"
+     #         ],
+     #         [
+     #           "tags",
+     #           "ShortText"
+     #         ]
+     #       ]
+     #     ],
+     #     {
+     #       "tags": [
+     #         [
+     #           7
+     #         ],
+     #         [
+     #           [
+     #             "power_set",
+     #             "Text"
+     #           ],
+     #           [
+     #             "_nsubrecs",
+     #             "Int32"
+     #           ]
+     #         ],
+     #         [
+     #           [
+     #             "Groonga"
+     #           ],
+     #           4
+     #         ],
+     #         [
+     #           [
+     #             "Mroonga"
+     #           ],
+     #           2
+     #         ],
+     #         [
+     #           [
+     #             "PGroonga"
+     #           ],
+     #           2
+     #         ],
+     #         [
+     #           [
+     #             "Groonga",
+     #             "Mroonga"
+     #           ],
+     #           2
+     #         ],
+     #         [
+     #           [
+     #             "Groonga",
+     #             "PGroonga"
+     #           ],
+     #           2
+     #         ],
+     #         [
+     #           [
+     #             "Mroonga",
+     #             "PGroonga"
+     #           ],
+     #           1
+     #         ],
+     #         [
+     #           [
+     #             "Groonga",
+     #             "Mroonga",
+     #             "PGroonga"
+     #           ],
+     #           1
+     #         ]
+     #       ]
+     #     }
+     #   ]
+     # ]
+
+  This result shows following.
+  
+  .. csv-table::
+
+     "tag","number of occurrence"
+     "``Groonga``", "4"
+     "``Mroonga``", "2"
+     "``PGroonga``", "2"
+     "``Groonga`` and ``Mroonga``", "2"
+     "``Groonga`` and ``PGroonga``", "2"
+     "``Mroonga`` and ``PGroonga``", "1"
+     "``Groonga`` and ``Mroonga`` and ``PGroonga``", "1"
+
+  This feature is complex. For more information, please refer to  :ref:`select-drilldowns-label-key-vector-expansions-power-set`.
+
+* [:doc:`reference/commands/select`] Specific elements of vector column is now able to be search object. 
+
+  It allows specific elements of vector column to be search objects that specifying the specific elements to ``match_columns`` with index number. 
+
+  Following is a sample case.
+  
+  .. code-block::
+
+     table_create Memos TABLE_NO_KEY
+     column_create Memos contents COLUMN_VECTOR ShortText
+
+     table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+     column_create Lexicon memo_index COLUMN_INDEX|WITH_POSITION|WITH_SECTION Memos contents
+     load --table Memos
+     [
+     ["contents"],
+     [["I like Groonga", "Use Groonga with Ruby"]],
+     [["I like Ruby", "Use Groonga"]]
+     ]
+     select Memos \
+       --match_columns "contents[1]" \
+       --query Ruby \
+       --output_columns "contents, _score"
+     # [
+     #   [
+     #     0,
+     #     0.0,
+     #     0.0
+     #   ],
+     #   [
+     #     [
+     #       [
+     #         1
+     #       ],
+     #       [
+     #         [
+     #           "contents",
+     #           "ShortText"
+     #         ],
+     #         [
+     #           "_score",
+     #           "Int32"
+     #         ]
+     #       ],
+     #       [
+     #         [
+     #           "I like Groonga",
+     #           "Use Groonga with Ruby"
+     #         ],
+     #         1
+     #       ]
+     #     ]
+     #   ]
+     # ]
+
+  ``--match_columns "contents[1]"`` specify only 2nd vector elements of ``contents`` as the search object. 
+  In this sample, ``["I like Groonga", "Use Groonga with Ruby"]`` is shown in the results because 2nd element ``Ruby`` is in ``Use Groonga with Ruby``. However, ``["I like Ruby", "Use Groonga"]`` is not shown in results because 2nd element ``Ruby`` is not in ``Use Groonga``.
+
+* [:doc:`/reference/commands/load`] Added support for ``YYYY-MM-DD`` time format.
+
+  ``YYYY-MM-DD`` is a general time format.
+  Supporting this time format made ``load`` more useful.
+
+  The time of the loaded value is set to ``00:00:00`` on the local time.
+
+  .. code-block::
+
+     plugin_register functions/time
+     # [[0,0.0,0.0],true]
+     table_create Logs TABLE_NO_KEY
+     # [[0,0.0,0.0],true]
+     column_create Logs created_at COLUMN_SCALAR Time
+     # [[0,0.0,0.0],true]
+     column_create Logs created_at_text COLUMN_SCALAR ShortText
+     # [[0,0.0,0.0],true]
+     load --table Logs
+     [
+     {"created_at": "2000-01-01", "created_at_text": "2000-01-01"}
+     ]
+     # [[0,0.0,0.0],1]
+     select Logs --output_columns "time_format_iso8601(created_at), created_at_text"
+     # [
+     #   [
+     #     0,
+     #     0.0,
+     #     0.0
+     #   ],
+     #   [
+     #     [
+     #       [
+     #         1
+     #       ],
+     #       [
+     #         [
+     #           "time_format_iso8601",
+     #           null
+     #         ],
+     #         [
+     #           "created_at_text",
+     #           "ShortText"
+     #         ]
+     #       ],
+     #       [
+     #         "2000-01-01T00:00:00.000000+09:00",
+     #         "2000-01-01"
+     #       ]
+     #     ]
+     #   ]
+     # ]
+
+Fixes
+-----
+
+* [:doc:`reference/commands/select`] Fix a bug displaying wrong label in ``drilldown`` results when ``command_version`` is ``3``.
+  [groonga-dev,05005][Reported by Atsushi Shinoda]
+
+  Following is a sample case. 
+  .. code-block::
+
+     table_create Documents TABLE_NO_KEY
+     column_create Documents tag1 COLUMN_SCALAR ShortText
+     column_create Documents tag2 COLUMN_SCALAR ShortText
+     load --table Documents
+     [
+     {"tag1": "1", "tag2": "2"}
+     ]
+     select Documents --drilldown tag1,tag2 --command_version 3
+     # {
+     #   "header": {
+     #     "return_code": 0,
+     #     "start_time": 1672123380.653039,
+     #     "elapsed_time": 0.0005846023559570312
+     #   },
+     #   "body": {
+     #     "n_hits": 1,
+     #     "columns": [
+     #       {
+     #         "name": "_id",
+     #         "type": "UInt32"
+     #       },
+     #       {
+     #         "name": "tag1",
+     #         "type": "ShortText"
+     #       },
+     #       {
+     #         "name": "tag2",
+     #         "type": "ShortText"
+     #       }
+     #     ],
+     #     "records": [
+     #       [
+     #         1,
+     #         "1",
+     #         "2"
+     #       ]
+     #     ],
+     #     "drilldowns": {
+     #       "ctor": {
+     #         "n_hits": 1,
+     #         "columns": [
+     #           {
+     #             "name": "_key",
+     #             "type": "ShortText"
+     #           },
+     #           {
+     #             "name": "_nsubrecs",
+     #             "type": "Int32"
+     #           }
+     #         ],
+     #         "records": [
+     #           [
+     #             "1",
+     #             1
+     #           ]
+     #         ]
+     #       },
+     #       "tag2": {
+     #         "n_hits": 1,
+     #         "columns": [
+     #           {
+     #             "name": "_key",
+     #             "type": "ShortText"
+     #           },
+     #           {
+     #             "name": "_nsubrecs",
+     #             "type": "Int32"
+     #           }
+     #         ],
+     #         "records": [
+     #           [
+     #             "2",
+     #             1
+     #           ]
+     #         ]
+     #       }
+     #     }
+     #   }
+     # }
+
+  ``ctor``, displaying right after ``drilldowns`` as result of ``select``command, should be ``tag1`` in correct case. 
+  In this sample, ``ctor`` is shown instead of ``tag1``. However, what kind of value to be shown is unknown.
+
+
+* [:doc:`reference/normalizers/normalizer_table`] Fix a bug for Groonga to crush with specific definition setting in ``NormalizerTable``.
+  [GitHub:pgroonga/pgroonga#279][Reported by i10a]
+  
+
+
+  Following case as sample.
+
+
+  .. code-block::
+
+     table_create Normalizations TABLE_PAT_KEY ShortText --normalizer NormalizerNFKC130
+     column_create Normalizations normalized COLUMN_SCALAR ShortText
+     load --table Normalizations
+     [
+     {"_key": "Ⅰ", "normalized": "1"},
+     {"_key": "Ⅱ", "normalized": "2"},
+     {"_key": "Ⅲ", "normalized": "3"}
+     ]
+     normalize 'NormalizerTable("normalized", "Normalizations.normalized")'   "ⅡⅡ"
+
+  This bug is reported to occur when condition meet following 1., 2., and 3..
+  
+  1. Keys are Normalized in the target table. 
+  
+    In this sample, it meets condition specifying ``--normalizer NormalizerNFKC130`` in ``Normalizations``. 
+     Original keys, ``Ⅰ`` , ``Ⅱ`` ,and ``Ⅲ``, are normalized each into ``i`` 、 ``ii`` 、 ``iii`` with ``NormalizerNFKC130``.
+  
+  2. Same characters in the normalized key are included in the other normalized key. 
+  
+    In this sample, it meets condition normalized key ``iii`` include the characters ``ii`` and ``i``, same with other normalized key which are original key ``Ⅱ`` and ``Ⅰ``.     
+
+  3. Same characters of 2nd condition are used multiple times.
+  
+     In this sample, it meets condition because normalized key ``iiiii``, original key ``ⅡⅡ`` with ``NormalizerNFKC130``, is considered as same with normalized key for ``Ⅲ`` and ``Ⅰ`` with ``NormalizerNFKC130``. 
+       
+     Normalizing ``iiii`` with ``Normalizations`` takes following steps and it meets the condition.
+     
+     3.1. First ``iii`` （ applied for ``Ⅲ`` ）
+     
+        :doc:`reference/normalizers/normalizer_table` is defined normalization target with Longest-Common-Prefix search. 
+     
+     3.2. Last ``i`` （applied for  ``Ⅰ``）
+  
+
+
+Thanks
+------
+
+* i10a
+* Atsushi Shinoda
+
+
 
 .. _release-12-1-0:
 
