@@ -2546,7 +2546,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 以上が ``{A, B, C}`` のすべての部分集合です。
 べき集合は、これらの部分集合の集合なので、 ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` がこのベクターのべき集合となります。
 
-``power_set``は、この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` の各部分集合で集計を行います。
+``power_set`` は、この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` の各部分集合で集計します。
 
 例として、 ``[A, B, C]`` と ``[B, C, D]`` をべき集合で集計する場合を考えます。
 
