@@ -9,7 +9,7 @@ load --table Items
 {"counts": [1, 2, 3]}
 ]
 [[0,0.0,0.0],3]
-select Items   --drilldowns[count].keys counts   --drilldowns[count].key_vector_expansion power_set   --drilldowns[count].columns[keys].stage initial   --drilldowns[count].columns[keys].value _key   --drilldowns[count].columns[keys].flags COLUMN_VECTOR   --drilldowns[count].columns[keys].type Int32   --drilldowns[count].output_columns keys,_nsubrecs   --limit 0   --output_columns _id
+select Items   --drilldowns[count].keys counts   --drilldowns[count].key_vector_expansion POWER_SET   --drilldowns[count].columns[keys].stage initial   --drilldowns[count].columns[keys].value _key   --drilldowns[count].columns[keys].flags COLUMN_VECTOR   --drilldowns[count].columns[keys].type Int32   --drilldowns[count].output_columns keys,_nsubrecs   --limit 0   --output_columns _id
 [
   [
     0,

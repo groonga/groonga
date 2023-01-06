@@ -11,7 +11,7 @@ load --table Items
 {"tags1": ["A"], "tags2": ["B", "C"]}
 ]
 [[0,0.0,0.0],3]
-select Items   --drilldowns[tag].keys tags1+tags2   --drilldowns[tag].key_vector_expansion power_set   --drilldowns[tag].columns[keys].stage initial   --drilldowns[tag].columns[keys].value _key   --drilldowns[tag].columns[keys].flags COLUMN_VECTOR   --drilldowns[tag].columns[keys].type ShortText   --drilldowns[tag].output_columns keys,_nsubrecs   --limit 0   --output_columns _id
+select Items   --drilldowns[tag].keys tags1+tags2   --drilldowns[tag].key_vector_expansion POWER_SET   --drilldowns[tag].columns[keys].stage initial   --drilldowns[tag].columns[keys].value _key   --drilldowns[tag].columns[keys].flags COLUMN_VECTOR   --drilldowns[tag].columns[keys].type ShortText   --drilldowns[tag].output_columns keys,_nsubrecs   --limit 0   --output_columns _id
 [
   [
     0,

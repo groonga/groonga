@@ -10,7 +10,7 @@ load --table Items
 
 select Items \
   --drilldowns[count].keys counts \
-  --drilldowns[count].key_vector_expansion power_set \
+  --drilldowns[count].key_vector_expansion POWER_SET \
   --drilldowns[count].columns[keys].stage initial \
   --drilldowns[count].columns[keys].value _key \
   --drilldowns[count].columns[keys].flags COLUMN_VECTOR \

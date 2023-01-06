@@ -1967,7 +1967,10 @@ namespace {
         result.flags |= calc_types;
       }
 
-      if (GRN_RAW_STRING_EQUAL_CSTRING(key_vector_expansion, "power_set")) {
+      /* "power_set" is only for backward compatibility. It's deprecated.
+       * Use "POWER_SET" instead. */
+      if (GRN_RAW_STRING_EQUAL_CSTRING(key_vector_expansion, "power_set") ||
+          GRN_RAW_STRING_EQUAL_CSTRING(key_vector_expansion, "POWER_SET")) {
         result.flags |= GRN_TABLE_GROUP_KEY_VECTOR_EXPANSION_POWER_SET;
       }
 
