@@ -95,8 +95,9 @@ msgid ""
 msgstr ""
 
 msgid ""
-"``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらの"
-"タグの出現回数と、 これらの組み合わせの出現回数を集計するケースを考えます。"
+"以下は、 ``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対し"
+"て、これらのタグの出現回数と、 これらの組み合わせの出現回数を集計するケースを"
+"考えます。"
 msgstr ""
 
 msgid "実行例:"
@@ -125,7 +126,7 @@ msgstr ""
 
 msgid ""
 "``--match_columns \"contents[1]\"`` とすることで、 ``contents`` ベクターの第2"
-"要素（インデックス番号1番の要素）のみをクエリーの対象にしています。"
+"要素のみを ``--query`` の対象にしています。"
 msgstr ""
 
 msgid ""
@@ -141,12 +142,8 @@ msgid ""
 msgstr ""
 "[:doc:`/reference/commands/load`] ``YYYY-MM-DD`` 形式をサポートしました。"
 
-msgid ""
-"``YYYY-MM-DD`` is a general time format. Supporting this time format made "
-"``load`` more usable."
+msgid "The time of the loaded value is set to ``00:00:00`` on the local time."
 msgstr ""
-"``YYYY-MM-DD``は一般的な時間形式です。このフォーマットをサポートしたことで、 "
-"``load`` がより使いやすくなりました。"
 
 msgid "Fixes"
 msgstr "修正"
@@ -161,37 +158,24 @@ msgid "以下はこの問題の例です。"
 msgstr ""
 
 msgid ""
-"最後の実行結果の ``drilldowns`` の直後の ``ctor`` は本来 ``tag1`` であるべき"
-"ですが、そうなっていませんでした。 この例では ``tag1`` ではなく ``ctor`` とい"
-"う値になっていますが、どのような値になるかは不定です。"
+"``select`` の実行結果の ``drilldowns`` 直後の ``ctor`` は、本来 ``tag1`` であ"
+"るべきです。 この例では ``tag1`` ではなく ``ctor`` という値になっていますが、"
+"どのような値になるかは不定です。"
 msgstr ""
 
 msgid ""
-"この問題はラベルの値が誤ったメモリ領域を参照していたために発生していました。"
-msgstr ""
-
-msgid ""
-"[:doc:`reference/normalizers/normalizer_table`] ノーマライズすると重複する部"
-"分がある定義があるとき、Groongaがクラッシュすることがある問題を修正しまし"
-"た。 [GitHub:pgroonga/pgroonga#279][Reported by i10a]"
-msgstr ""
-
-msgid "この問題は以下の場合に発生します。"
-msgstr ""
-
-msgid "対象となるテーブルのキーがノーマライズされる"
-msgstr ""
-
-msgid "ノーマライズされた1.のキーに重複した部分がある"
-msgstr ""
-
-msgid "上記の重複した部分があるキーが使用される"
+"[:doc:`reference/normalizers/normalizer_table`] 特定の定義が "
+"``NormalizerTable`` に存在する場合、Groongaがクラッシュすることがある問題を修"
+"正しました。 [GitHub:pgroonga/pgroonga#279][Reported by i10a]"
 msgstr ""
 
 msgid "以下の例を考えます。"
 msgstr ""
 
-msgid "この例は上記の1.、2.、3.の条件を満たしています。"
+msgid "この問題は、以下の1.、2.、3.の条件を満たした時に発生します。"
+msgstr ""
+
+msgid "対象となるテーブルのキーがノーマライズされる"
 msgstr ""
 
 msgid ""
@@ -201,12 +185,15 @@ msgid ""
 "ます。"
 msgstr ""
 
+msgid "ノーマライズされた文字列に他のノーマライズされた文字列が含まれている"
+msgstr ""
+
 msgid ""
 "上記のノーマライズ後の値を考えると、 ``iii`` は ``ii`` と ``i`` を含み、 "
 "``ii`` は ``i`` を含むため、この条件を満たしています。"
 msgstr ""
 
-msgid "重複した部分があるキーが使用される"
+msgid "2.の文字列を複数使用する"
 msgstr ""
 
 msgid ""
@@ -230,17 +217,6 @@ msgid ""
 msgstr ""
 
 msgid "3.2. 残りの ``i`` （ ``Ⅰ`` に対応）"
-msgstr ""
-
-msgid ""
-"このとき、3.2.は元の文字に対しては ``ⅡⅡ`` の２つ目の ``Ⅱ`` に対応しており、"
-"ノーマライズに使用されるのはそれを ``NormalizerNFKC130`` でノーマライズしたあ"
-"との ``ii`` の２つ目の ``i`` です。"
-msgstr ""
-
-msgid ""
-"この使用している文字の判定方法に誤りがあり、Groongaがクラッシュする場合があり"
-"ました。"
 msgstr ""
 
 msgid "Thanks"
