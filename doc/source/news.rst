@@ -357,7 +357,7 @@ Fixes
      #   }
      # }
 
-  ``ctor``, displaying right after ``drilldowns`` as result of ``select``command, should be ``tag1`` in correct case. 
+  ``ctor``, displaying right after ``drilldowns`` as result of ``select``, should be ``tag1`` in correct case. 
   In this sample, ``ctor`` is shown instead of ``tag1``. However, what kind of value to be shown is unknown.
 
 * [:doc:`reference/normalizers/normalizer_table`] Fix a bug for Groonga to crush with specific definition setting in ``NormalizerTable``.
@@ -386,7 +386,7 @@ Fixes
   
   2. Same characters in the normalized key are included in the other normalized key. 
   
-     In this sample, it meets condition normalized key ``iii`` include the characters ``ii`` and ``i``, same with other normalized key which are original key ``Ⅱ`` and ``Ⅰ``.     
+     In this sample, it meets condition because normalized key ``iii`` includes the characters ``ii`` and ``i``, same with other normalized keys which are original key ``Ⅱ`` and ``Ⅰ``.     
 
   3. Same characters of 2nd condition are used multiple times.
   
