@@ -167,7 +167,7 @@ msgid ""
 "``load`` more useful."
 msgstr ""
 "``YYYY-MM-DD`` は一般的な時間形式です。この形式をサポートしたことで、 "
-"``load``がより使いやすくなりました。"
+"``load`` がより使いやすくなりました。"
 
 msgid "The time of the loaded value is set to ``00:00:00`` on the local time."
 msgstr "ロードされた値の時間部分は、現地時間の ``00:00:00`` になります。"
