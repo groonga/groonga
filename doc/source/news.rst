@@ -403,7 +403,7 @@ Fixes
      
      3.1. 最初の ``iii`` （ ``Ⅲ`` に対応）
      
-     :doc:`reference/normalizers/normalizer_table` は最長共通接頭辞探索(Longest-Common-Prefix search)でノーマライズ対象を決定するため
+        :doc:`reference/normalizers/normalizer_table` は最長共通接頭辞探索(Longest-Common-Prefix search)でノーマライズ対象を決定するため
      
      3.2. 残りの ``i`` （ ``Ⅰ`` に対応）
   
