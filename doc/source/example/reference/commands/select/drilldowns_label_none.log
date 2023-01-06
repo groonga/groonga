@@ -14,7 +14,7 @@ Execution example::
   # [[0, 1337566253.89858, 0.000355720520019531], 4]
   select NoneExpantionDrilldownMemos \
     --drilldowns[tags].keys tags \
-    --drilldowns[tags].key_vector_expansion NONE \
+    --drilldowns[tags].key_vector_expansion none \
     --drilldowns[tags].columns[none_expantion].stage initial \
     --drilldowns[tags].columns[none_expantion].value _key \
     --drilldowns[tags].columns[none_expantion].flags COLUMN_VECTOR \

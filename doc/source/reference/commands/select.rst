@@ -2513,13 +2513,13 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 .. versionadded:: 12.1.1
 
-ドリルダウン対象のキーがベクター(vector)のときの、キーの展開方法を指定します。現状は ``NONE`` または ``power_set`` が指定可能です。
+ドリルダウン対象のキーがベクター(vector)のときの、キーの展開方法を指定します。現状は ``none`` または ``power_set`` が指定可能です。
 
 ドリルダウン対象のキーが1つの場合にのみ使用可能です。キーが2つ以上の場合は無視されます。
 
 .. _select-drilldowns-label-key-vector-expansions-none:
 
-``NONE``
+``none``
 ~~~~~~~~
 
 ``key_vector_expansion`` に何も指定しない場合と同じ動作です。
@@ -2541,7 +2541,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 .. ]
 .. select NoneExpantionDrilldownMemos \
 ..   --drilldowns[tags].keys tags \
-..   --drilldowns[tags].key_vector_expansion NONE \
+..   --drilldowns[tags].key_vector_expansion none \
 ..   --drilldowns[tags].columns[none_expantion].stage initial \
 ..   --drilldowns[tags].columns[none_expantion].value _key \
 ..   --drilldowns[tags].columns[none_expantion].flags COLUMN_VECTOR \

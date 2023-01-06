@@ -3295,12 +3295,15 @@ msgstr ""
 
 msgid ""
 "ドリルダウン対象のキーがベクター(vector)のときの、キーの展開方法を指定しま"
-"す。現状は ``NONE`` または ``power_set`` が指定可能です。"
+"す。現状は ``none`` または ``power_set`` が指定可能です。"
 msgstr ""
 
 msgid ""
 "ドリルダウン対象のキーが1つの場合にのみ使用可能です。キーが2つ以上の場合は無"
 "視されます。"
+msgstr ""
+
+msgid "``none``"
 msgstr ""
 
 msgid "``key_vector_expansion`` に何も指定しない場合と同じ動作です。"
