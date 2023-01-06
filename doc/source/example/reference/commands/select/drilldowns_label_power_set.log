@@ -1,0 +1,115 @@
+Execution example::
+
+  table_create PowerSetDrilldownMemos TABLE_HASH_KEY ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  column_create PowerSetDrilldownMemos tags COLUMN_VECTOR ShortText
+  # [[0, 1337566253.89858, 0.000355720520019531], true]
+  load --table PowerSetDrilldownMemos
+  [
+  {"_key": "Groonga is fast!", "tags": ["Groonga"]},
+  {"_key": "Mroonga uses Groonga!", "tags": ["Groonga", "Mroonga"]},
+  {"_key": "PGroonga uses Groonga!", "tags": ["Groonga", "PGroonga"]},
+  {"_key": "Mroonga and PGroonga are Groonga family", "tags": ["Groonga", "Mroonga", "PGroonga"]}
+  ]
+  # [[0, 1337566253.89858, 0.000355720520019531], 4]
+  select PowerSetDrilldownMemos \
+    --drilldowns[tags].keys tags \
+    --drilldowns[tags].key_vector_expansion POWER_SET \
+    --drilldowns[tags].columns[power_set].stage initial \
+    --drilldowns[tags].columns[power_set].value _key \
+    --drilldowns[tags].columns[power_set].flags COLUMN_VECTOR \
+    --drilldowns[tags].sort_keys 'power_set' \
+    --drilldowns[tags].output_columns 'power_set, _nsubrecs' \
+    --limit 0
+  # [
+  #   [
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
+  #   [
+  #     [
+  #       [
+  #         4
+  #       ], 
+  #       [
+  #         [
+  #           "_id", 
+  #           "UInt32"
+  #         ], 
+  #         [
+  #           "_key", 
+  #           "ShortText"
+  #         ], 
+  #         [
+  #           "tags", 
+  #           "ShortText"
+  #         ]
+  #       ]
+  #     ], 
+  #     {
+  #       "tags": [
+  #         [
+  #           7
+  #         ], 
+  #         [
+  #           [
+  #             "power_set", 
+  #             "Text"
+  #           ], 
+  #           [
+  #             "_nsubrecs", 
+  #             "Int32"
+  #           ]
+  #         ], 
+  #         [
+  #           [
+  #             "Groonga"
+  #           ], 
+  #           4
+  #         ], 
+  #         [
+  #           [
+  #             "Mroonga"
+  #           ], 
+  #           2
+  #         ], 
+  #         [
+  #           [
+  #             "PGroonga"
+  #           ], 
+  #           2
+  #         ], 
+  #         [
+  #           [
+  #             "Groonga", 
+  #             "Mroonga"
+  #           ], 
+  #           2
+  #         ], 
+  #         [
+  #           [
+  #             "Groonga", 
+  #             "PGroonga"
+  #           ], 
+  #           2
+  #         ], 
+  #         [
+  #           [
+  #             "Mroonga", 
+  #             "PGroonga"
+  #           ], 
+  #           1
+  #         ], 
+  #         [
+  #           [
+  #             "Groonga", 
+  #             "Mroonga", 
+  #             "PGroonga"
+  #           ], 
+  #           1
+  #         ]
+  #       ]
+  #     }
+  #   ]
+  # ]

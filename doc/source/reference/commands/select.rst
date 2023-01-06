@@ -2337,6 +2337,7 @@ parameters:
   * ``drilldowns[${LABEL}].calc_target``
   * ``drilldowns[${LABEL}].filter``
   * ``drilldowns[${LABEL}].max_n_target_records``
+  * ``drilldowns[${LABEL}].key_vector_expansion``
   * ``drilldowns[${LABEL}].columns[${NAME}].stage=null``
   * ``drilldowns[${LABEL}].columns[${NAME}].flags=COLUMN_SCALAR``
   * ``drilldowns[${LABEL}].columns[${NAME}].type=null``
@@ -2504,6 +2505,157 @@ the table named as ``NestedDrilldownTags`` which has the column named as ``categ
 Thus, the result of ``Tag`` contains one row each for ``Groonga``, ``Mroonga`` and ``Rroonga``.
 And then, ``Category`` drilldowns ``Tag`` by ``category``. 
 Thus the result of ``Category`` contains two records has ``C/C++`` and one records has ``Ruby``.
+
+.. _select-drilldowns-label-key-vector-expansions:
+
+``drilldowns[${LABEL}].key_vector_expansion``
+"""""""""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 12.1.1
+
+ドリルダウン対象のキーがベクター(vector)のときの、キーの展開方法を指定します。現状は ``NONE`` または ``POWER_SET`` が指定可能です。
+
+ドリルダウン対象のキーが1つの場合にのみ使用可能です。キーが2つ以上の場合は無視されます。
+
+.. _select-drilldowns-label-key-vector-expansions-none:
+
+``NONE``
+~~~~~~~~
+
+``key_vector_expansion`` に何も指定しない場合と同じ動作です。
+
+キーを展開しません。ベクター内の各要素がそれぞれキーとなります。
+
+以下は ``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの登場回数を集計する例です。
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldowns_label_none.log
+.. table_create NoneExpantionDrilldownMemos TABLE_HASH_KEY ShortText
+.. column_create NoneExpantionDrilldownMemos tags COLUMN_VECTOR ShortText
+.. load --table NoneExpantionDrilldownMemos
+.. [
+.. {"_key": "Groonga is fast!", "tags": ["Groonga"]},
+.. {"_key": "Mroonga uses Groonga!", "tags": ["Groonga", "Mroonga"]},
+.. {"_key": "PGroonga uses Groonga!", "tags": ["Groonga", "PGroonga"]},
+.. {"_key": "Mroonga and PGroonga are Groonga family", "tags": ["Groonga", "Mroonga", "PGroonga"]}
+.. ]
+.. select NoneExpantionDrilldownMemos \
+..   --drilldowns[tags].keys tags \
+..   --drilldowns[tags].key_vector_expansion NONE \
+..   --drilldowns[tags].columns[none_expantion].stage initial \
+..   --drilldowns[tags].columns[none_expantion].value _key \
+..   --drilldowns[tags].columns[none_expantion].flags COLUMN_VECTOR \
+..   --drilldowns[tags].sort_keys 'none_expantion' \
+..   --drilldowns[tags].output_columns 'none_expantion, _nsubrecs' \
+..   --limit 0
+
+実行結果から以下のことがわかります。
+
+.. csv-table::
+
+   "タグ","登場回数（ ``_nsubrecs`` ）"
+   "``Groonga``", "4"
+   "``Mroonga``", "2"
+   "``PGroonga``", "2"
+
+.. _select-drilldowns-label-key-vector-expansions-power-set:
+
+``POWER_SET``
+~~~~~~~~~~~~~
+
+ベクターをべき集合(power set)に展開して集計(aggregate)します。
+このとき、対象のベクターを多重集合(multiset)とみなします。
+多重集合とみなすので、同じ値の要素が複数ある場合、それぞれ別の要素とみなします。
+
+ベクター ``[A, B, C]`` を例に考えます。この場合、対象となる集合は ``{A, B, C}`` です。
+べき集合は、集合のすべての部分集合(subset)の集合なので、まず、 ``{A, B, C}`` のすべての部分集合を以下に示します。
+ただし、Groongaは要素数(number of elements)が0の集合（空集合(empty set)）は使いません。ドリルダウン結果に使うには有益ではないからです。
+空集合も使ったほうがよいユースケースがある場合は `issue <https://github.com/groonga/groonga/issues>`_ で報告してください。
+
+* 要素数が1の部分集合
+
+  * ``{A}``
+  * ``{B}``
+  * ``{C}``
+
+* 要素数が2の部分集合
+
+  * ``{A, B}``
+  * ``{B, C}``
+  * ``{A, C}``
+
+* 要素数が3の部分集合 
+
+  * ``{A, B, C}``
+
+以上が ``{A, B, C}`` のすべての部分集合です。
+べき集合は、これらの部分集合の集合なので、 ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` がこのベクターのべき集合となります。
+
+``POWER_SET`` は、この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` の各部分集合で集計します。
+
+例として、 ``[A, B, C]`` と ``[B, C, D]`` をべき集合で集計する場合を考えます。
+
+``[A, B, C]`` のべき集合は前述の通り ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}``  で、 
+``[B, C, D]`` のべき集合は同様に ``{{B}, {C}, {D}, {B, C}, {C, D}, {B, D}, {B, C, D}}``  となります。
+
+この各べき集合で登場した部分集合ごとに集計します。登場回数を集計した場合は以下の結果になります。
+
+.. csv-table::
+
+   "部分集合", "登場回数（ ``_nsubrecs`` ）"
+   "``{A}``", "1"
+   "``{B}``", "2"
+   "``{C}``", "2"
+   "``{D}``", "1"
+   "``{A, B}``", "1"
+   "``{A, C}``", "1"
+   "``{B, C}``", "2"
+   "``{B, D}``", "1"
+   "``{C, D}``", "1"
+   "``{A, B, C}``", "1"
+   "``{B, C, D}``", "1"
+
+この集計方法は、例えばタグの登場回数と、タグの組み合わせの登場回数を一度に集計したい場合に便利です。
+
+以下は ``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの登場回数と、
+これらの組み合わせの登場回数を集計する例です。
+
+.. groonga-command
+.. include:: ../../example/reference/commands/select/drilldowns_label_power_set.log
+.. table_create PowerSetDrilldownMemos TABLE_HASH_KEY ShortText
+.. column_create PowerSetDrilldownMemos tags COLUMN_VECTOR ShortText
+.. load --table PowerSetDrilldownMemos
+.. [
+.. {"_key": "Groonga is fast!", "tags": ["Groonga"]},
+.. {"_key": "Mroonga uses Groonga!", "tags": ["Groonga", "Mroonga"]},
+.. {"_key": "PGroonga uses Groonga!", "tags": ["Groonga", "PGroonga"]},
+.. {"_key": "Mroonga and PGroonga are Groonga family", "tags": ["Groonga", "Mroonga", "PGroonga"]}
+.. ]
+.. select PowerSetDrilldownMemos \
+..   --drilldowns[tags].keys tags \
+..   --drilldowns[tags].key_vector_expansion POWER_SET \
+..   --drilldowns[tags].columns[power_set].stage initial \
+..   --drilldowns[tags].columns[power_set].value _key \
+..   --drilldowns[tags].columns[power_set].flags COLUMN_VECTOR \
+..   --drilldowns[tags].sort_keys 'power_set' \
+..   --drilldowns[tags].output_columns 'power_set, _nsubrecs' \
+..   --limit 0
+
+この集計結果から、以下のことがわかります。
+
+.. csv-table::
+
+   "タグ","登場回数"
+   "``Groonga``", "4"
+   "``Mroonga``", "2"
+   "``PGroonga``", "2"
+   "``Groonga`` かつ ``Mroonga``", "2"
+   "``Groonga`` かつ ``PGroonga``", "2"
+   "``Mroonga`` かつ ``PGroonga``", "1"
+   "``Groonga`` かつ ``Mroonga`` かつ ``PGroonga``", "1"
+
+この結果から、どのタグの組み合わせがよく使われているか・使われていないかといった相関関係を分析できます。
+例えば、 ``Groonga`` と ``Mroonga`` が同時に使われている回数は2回で、そのうち更に ``PGroonga`` が同時に使われている回数が1回、というような分析ができます。
 
 .. _select-drilldowns-label-output-columns:
 
