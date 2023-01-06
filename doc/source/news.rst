@@ -16,7 +16,7 @@ Improvements
 * [:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-expansions-power-set`] 
   ドリルダウンでベクターのべき集合(power set)を集計できるようになりました。
 
-  ドリルダウンに ``key_vector_expansion`` オプションを追加しました。
+  ドリルダウンに 新しいオプション ``key_vector_expansion`` を追加しました。
   ``key_vector_expansion`` は、ドリルダウン対象のキーがベクターのときに、キーの展開方法を指定します。
   現状は、``key_vector_expansion`` には ``power_set`` のみ指定できます。
 
