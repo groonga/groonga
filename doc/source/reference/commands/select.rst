@@ -2557,7 +2557,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 .. csv-table::
 
-   "部分集合", "集計値（ ``_nsubrecs`` ）"
+   "部分集合", "登場回数（ ``_nsubrecs`` ）"
    "``{A}``", "1"
    "``{B}``", "2"
    "``{C}``", "2"
