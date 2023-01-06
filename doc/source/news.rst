@@ -23,7 +23,7 @@ Improvements
   ``key_vector_expansion`` に ``power_set`` を指定することで、べき集合での集計(aggregate)ができるようになります。
   この集計方法は、例えばタグの出現回数と、タグの組み合わせの出現回数を一度に集計したい場合に便利です。
 
-  ``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの出現回数と、 これらの組み合わせの出現回数を集計するケースを考えます。
+  以下は、 ``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの出現回数と、 これらの組み合わせの出現回数を集計するケースを考えます。
 
   実行例:
 
@@ -221,7 +221,7 @@ Improvements
 * [:doc:`/reference/commands/load`] Added support for ``YYYY-MM-DD`` time format.
 
   ``YYYY-MM-DD`` is a general time format.
-  Supporting this time format made ``load`` more usable.
+  Supporting this time format made ``load`` more useful.
 
   .. code-block::
 
@@ -325,19 +325,14 @@ Fixes
      #   }
      # }
 
-  最後の実行結果の ``drilldowns`` の直後の ``ctor`` は本来 ``tag1`` であるべきですが、そうなっていませんでした。
+  ``select`` の実行結果の ``drilldowns`` 直後の ``ctor`` は、本来 ``tag1`` であるべきです。
   この例では ``tag1`` ではなく ``ctor`` という値になっていますが、どのような値になるかは不定です。
 
-  この問題はラベルの値が誤ったメモリ領域を参照していたために発生していました。
 
-* [:doc:`reference/normalizers/normalizer_table`] ノーマライズすると重複する部分がある定義があるとき、Groongaがクラッシュすることがある問題を修正しました。
+* [:doc:`reference/normalizers/normalizer_table`] 特定の定義が ``NormalizerTable`` に存在する場合、Groongaがクラッシュすることがある問題を修正しました。
   [GitHub:pgroonga/pgroonga#279][Reported by i10a]
   
-  この問題は以下の場合に発生します。
 
-  1. 対象となるテーブルのキーがノーマライズされる
-  2. ノーマライズされた1.のキーに重複した部分がある
-  3. 上記の重複した部分があるキーが使用される
 
   以下の例を考えます。
 
@@ -353,18 +348,18 @@ Fixes
      ]
      normalize 'NormalizerTable("normalized", "Normalizations.normalized")'   "ⅡⅡ"
 
-  この例は上記の1.、2.、3.の条件を満たしています。
+  この問題は、以下の1.、2.、3.の条件を満たした時に発生します。
 
   1. 対象となるテーブルのキーがノーマライズされる
   
      ``Normalizations`` に ``--normalizer NormalizerNFKC130`` が指定されているため、この条件を満たしています。
      ``Ⅰ`` 、 ``Ⅱ`` 、 ``Ⅲ`` はそれぞれ ``NormalizerNFKC130`` によって ``i`` 、 ``ii`` 、 ``iii`` にノーマライズされます。
   
-  2. ノーマライズされた1.のキーに重複した部分がある
+  2. ノーマライズされた文字列に他のノーマライズされた文字列が含まれている
   
      上記のノーマライズ後の値を考えると、 ``iii`` は ``ii`` と ``i`` を含み、 ``ii`` は ``i`` を含むため、この条件を満たしています。
   
-  3. 重複した部分があるキーが使用される
+  3. 2.の文字列を複数使用する
   
      ``normaize`` の対象である ``ⅡⅡ`` は ``NormalizerNFKC130`` によって ``iiii`` にノーマライズされます。
      この値に対して、 ``Normalizations`` の ``NormalizerNFKC130`` によるノーマライズ後の値が一致条件として使用されてノーマライズされます。
@@ -373,14 +368,11 @@ Fixes
      
      3.1. 最初の ``iii`` （ ``Ⅲ`` に対応）
      
-     * :doc:`reference/normalizers/normalizer_table` は最長共通接頭辞探索(Longest-Common-Prefix search)でノーマライズ対象を決定するため
+     :doc:`reference/normalizers/normalizer_table` は最長共通接頭辞探索(Longest-Common-Prefix search)でノーマライズ対象を決定するため
      
      3.2. 残りの ``i`` （ ``Ⅰ`` に対応）
   
-  このとき、3.2.は元の文字に対しては ``ⅡⅡ`` の２つ目の ``Ⅱ`` に対応しており、ノーマライズに使用されるのはそれを
-  ``NormalizerNFKC130`` でノーマライズしたあとの ``ii`` の２つ目の ``i`` です。
 
-  この使用している文字の判定方法に誤りがあり、Groongaがクラッシュする場合がありました。
 
 Thanks
 ------
