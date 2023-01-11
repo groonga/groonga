@@ -4291,9 +4291,11 @@ html_files_relative_from_locale_dir = \
 	html/_static/minus.png \
 	html/_static/plus.png \
 	html/_static/pygments.css \
+	html/_static/scripts/bootstrap.js \
 	html/_static/scripts/pydata-sphinx-theme.js \
 	html/_static/searchtools.js \
 	html/_static/sphinx_highlight.js \
+	html/_static/styles/bootstrap.css \
 	html/_static/styles/pydata-sphinx-theme.css \
 	html/_static/styles/theme.css \
 	html/_static/switcher.json \
