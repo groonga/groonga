@@ -2595,8 +2595,8 @@ Since power set is aggregation of those subsets, ``{{A}, {B}, {C}, {A, B}, {B, C
 
 For example, there is a case to aggregate ``[A, B, C]`` and ``[B, C, D]`` with power set.
 
-Power set for ``[A, B, C]`` is ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` as previously explained.
-Likewise power set for ``[B, C, D]`` is ``{{B}, {C}, {D}, {B, C}, {C, D}, {B, D}, {B, C, D}}``.
+A power set for ``[A, B, C]`` is ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` as previously explained.
+Likewise a power set for ``[B, C, D]`` is ``{{B}, {C}, {D}, {B, C}, {C, D}, {B, D}, {B, C, D}}``.
 
 Aggregating occurrence of each subsets in each power set is shown in result as follows.
 
