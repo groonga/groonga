@@ -3292,7 +3292,7 @@ msgstr ""
 
 msgid ""
 "This specifies how to expand key when keys for drilldown are vector. "
-"Currently, NONE or POWER_SET are able to be specified."
+"Currently, ``NONE`` or ``POWER_SET`` are able to be specified."
 msgstr ""
 "ドリルダウン対象のキーがベクターのときの、キーの展開方法を指定します。現状は "
 "``NONE`` または ``POWER_SET`` が指定可能です。"

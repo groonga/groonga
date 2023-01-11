@@ -2513,7 +2513,7 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 .. versionadded:: 12.1.1
 
-This specifies how to expand key when keys for drilldown are vector. Currently, NONE or POWER_SET are able to be specified.
+This specifies how to expand key when keys for drilldown are vector. Currently, ``NONE`` or ``POWER_SET`` are able to be specified.
 
 This work only time when one key is target for drilldown. This doesn't work time when more than 2 keys are target for drilldown.
 
