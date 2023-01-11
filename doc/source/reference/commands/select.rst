@@ -2513,20 +2513,20 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 
 .. versionadded:: 12.1.1
 
-ドリルダウン対象のキーがベクター(vector)のときの、キーの展開方法を指定します。現状は ``NONE`` または ``POWER_SET`` が指定可能です。
+This specifies how to expand key when keys for drilldown are vector. Currently, NONE or POWER_SET are able to be specified.
 
-ドリルダウン対象のキーが1つの場合にのみ使用可能です。キーが2つ以上の場合は無視されます。
+This work only time when one key is target for drilldown. This doesn't work time when more than 2 keys are target for drilldown.
 
 .. _select-drilldowns-label-key-vector-expansions-none:
 
 ``NONE``
 ~~~~~~~~
 
-``key_vector_expansion`` に何も指定しない場合と同じ動作です。
+This works as same as ``key_vector_expansion`` is not specified.
 
-キーを展開しません。ベクター内の各要素がそれぞれキーとなります。
+Keys would not be expanded. Each elements within vector works as each key.
 
-以下は ``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの登場回数を集計する例です。
+Following is a sample to aggregate total number of individual and combination occurrence for 3 tags, ``Groonga``, ``Mroonga``, and ``PGroonga``.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldowns_label_none.log
@@ -2549,11 +2549,11 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 ..   --drilldowns[tags].output_columns 'none_expantion, _nsubrecs' \
 ..   --limit 0
 
-実行結果から以下のことがわかります。
+Following are facts from the results.
 
 .. csv-table::
 
-   "タグ","登場回数（ ``_nsubrecs`` ）"
+   "tag","number of occurrence（ ``_nsubrecs`` ）"
    "``Groonga``", "4"
    "``Mroonga``", "2"
    "``PGroonga``", "2"
@@ -2563,46 +2563,46 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 ``POWER_SET``
 ~~~~~~~~~~~~~
 
-ベクターをべき集合(power set)に展開して集計(aggregate)します。
-このとき、対象のベクターを多重集合(multiset)とみなします。
-多重集合とみなすので、同じ値の要素が複数ある場合、それぞれ別の要素とみなします。
+This aggregates total with expanding vector to power set.
+In this case, target vector are considered as multi set.
+Thus, each elements are considered as an individual element when there are multiple elements with same value.
 
-ベクター ``[A, B, C]`` を例に考えます。この場合、対象となる集合は ``{A, B, C}`` です。
-べき集合は、集合のすべての部分集合(subset)の集合なので、まず、 ``{A, B, C}`` のすべての部分集合を以下に示します。
-ただし、Groongaは要素数(number of elements)が0の集合（空集合(empty set)）は使いません。ドリルダウン結果に使うには有益ではないからです。
-空集合も使ったほうがよいユースケースがある場合は `issue <https://github.com/groonga/groonga/issues>`_ で報告してください。
+For example, there are vector ``[A, B, C]``. In this case, a target set is ``{A, B, C}``.
+Power set is aggrigation for all of subsets within a set. Following shows all of subset within a set ``{A, B, C}``.
+However, Groonga does not use empty set, that number of elements is 0. It is because empty set is not useful for results of drilldown.
+Please report at `issue <https://github.com/groonga/groonga/issues>`_, if you find a case to use a empty set.
 
-* 要素数が1の部分集合
+* Subset with 1 element
 
   * ``{A}``
   * ``{B}``
   * ``{C}``
 
-* 要素数が2の部分集合
+* Subset with 2 elements
 
   * ``{A, B}``
   * ``{B, C}``
   * ``{A, C}``
 
-* 要素数が3の部分集合 
+* Subset with 3 elements
 
   * ``{A, B, C}``
 
-以上が ``{A, B, C}`` のすべての部分集合です。
-べき集合は、これらの部分集合の集合なので、 ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` がこのベクターのべき集合となります。
+Those are all subsets for ``{A, B, C}``. 
+Since power set is aggregation of those subsets, ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` is power set for the vector.
 
-``POWER_SET`` は、この ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` の各部分集合で集計します。
+``POWER_SET`` aggregates with each subsets for ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}``.
 
-例として、 ``[A, B, C]`` と ``[B, C, D]`` をべき集合で集計する場合を考えます。
+For example, there is a case to aggregate ``[A, B, C]`` and ``[B, C, D]`` with power set.
 
-``[A, B, C]`` のべき集合は前述の通り ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}``  で、 
-``[B, C, D]`` のべき集合は同様に ``{{B}, {C}, {D}, {B, C}, {C, D}, {B, D}, {B, C, D}}``  となります。
+Power set for ``[A, B, C]`` is ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` as previously explained.
+Likewise power set for ``[B, C, D]`` is ``{{B}, {C}, {D}, {B, C}, {C, D}, {B, D}, {B, C, D}}``.
 
-この各べき集合で登場した部分集合ごとに集計します。登場回数を集計した場合は以下の結果になります。
+Aggregating occurrence of each subsets in each power set is shown in result as follows.
 
 .. csv-table::
 
-   "部分集合", "登場回数（ ``_nsubrecs`` ）"
+   "subset", "number of occurrence（ ``_nsubrecs`` ）"
    "``{A}``", "1"
    "``{B}``", "2"
    "``{C}``", "2"
@@ -2615,10 +2615,9 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
    "``{A, B, C}``", "1"
    "``{B, C, D}``", "1"
 
-この集計方法は、例えばタグの登場回数と、タグの組み合わせの登場回数を一度に集計したい場合に便利です。
+This aggregating methods is useful when it is requirement to sum total number of occurrence for individual tag and combination tag at once.
 
-以下は ``Groonga`` 、 ``Mroonga`` 、 ``PGroonga`` という３つのタグに対して、これらのタグの登場回数と、
-これらの組み合わせの登場回数を集計する例です。
+Following is an example to aggregate total occurrence for individual and combination of 3 tags, ``Groonga``, ``Mroonga``, and ``PGroonga``.
 
 .. groonga-command
 .. include:: ../../example/reference/commands/select/drilldowns_label_power_set.log
@@ -2641,21 +2640,22 @@ Thus the result of ``Category`` contains two records has ``C/C++`` and one recor
 ..   --drilldowns[tags].output_columns 'power_set, _nsubrecs' \
 ..   --limit 0
 
-この集計結果から、以下のことがわかります。
+With this aggregation result, following information would be known.
 
 .. csv-table::
 
-   "タグ","登場回数"
+   "tag","number of occurrence（ ``_nsubrecs`` ）"
    "``Groonga``", "4"
    "``Mroonga``", "2"
    "``PGroonga``", "2"
-   "``Groonga`` かつ ``Mroonga``", "2"
-   "``Groonga`` かつ ``PGroonga``", "2"
-   "``Mroonga`` かつ ``PGroonga``", "1"
-   "``Groonga`` かつ ``Mroonga`` かつ ``PGroonga``", "1"
+   "``Groonga`` and ``Mroonga``", "2"
+   "``Groonga`` and ``PGroonga``", "2"
+   "``Mroonga`` and ``PGroonga``", "1"
+   "``Groonga`` and ``Mroonga`` and ``PGroonga``", "1"
 
-この結果から、どのタグの組み合わせがよく使われているか・使われていないかといった相関関係を分析できます。
-例えば、 ``Groonga`` と ``Mroonga`` が同時に使われている回数は2回で、そのうち更に ``PGroonga`` が同時に使われている回数が1回、というような分析ができます。
+This result allows to analyze correlation between each tag and combination such as whether often used.
+For example with this sample, it can be analyzed that ``Groonga`` and ``Mroonga`` are used twice at same time and within those twice,
+``PGroonga`` is also used at same time for once.
 
 .. _select-drilldowns-label-output-columns:
 
