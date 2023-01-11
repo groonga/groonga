@@ -2564,10 +2564,10 @@ Following are facts from the results.
 ~~~~~~~~~~~~~
 
 This aggregates total with expanding vector to power set.
-In this case, target vector are considered as multi set.
+In this case, target vector is considered as multi set.
 Thus, each elements are considered as an individual element when there are multiple elements with same value.
 
-For example, there are vector ``[A, B, C]``. In this case, a target set is ``{A, B, C}``.
+For example, there is a vector ``[A, B, C]``. In this case, a target set is ``{A, B, C}``.
 Power set is aggrigation for all of subsets within a set. Following shows all of subset within a set ``{A, B, C}``.
 However, Groonga does not use empty set, that number of elements is 0. It is because empty set is not useful for results of drilldown.
 Please report at `issue <https://github.com/groonga/groonga/issues>`_, if you find a case to use a empty set.
@@ -2589,7 +2589,7 @@ Please report at `issue <https://github.com/groonga/groonga/issues>`_, if you fi
   * ``{A, B, C}``
 
 Those are all subsets for ``{A, B, C}``. 
-Since power set is aggregation of those subsets, ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` is power set for the vector.
+Since power set is aggregation of those subsets, ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` is a power set for the vector.
 
 ``POWER_SET`` aggregates with each subsets for ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}``.
 
