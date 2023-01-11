@@ -49,8 +49,8 @@ jobs:
           submodules: recursive
       - name: Enable Apache Arrow repository
         run: |
-          sudo apt update
-          sudo apt install -y -V \
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             lsb-release \
             wget
           if [ "${{ matrix.use-apache-arrow-rc }}" = "true" ]; then
@@ -66,8 +66,8 @@ jobs:
           fi
       - name: Install packages
         run: |
-          sudo apt update
-          sudo apt install -y -V \
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             autoconf-archive \
             automake1.11 \
             autotools-dev \
@@ -90,7 +90,7 @@ jobs:
             zlib1g-dev \
             ${{ matrix.packages }}
           if [ "${{ matrix.use-sphinx }}" = "true" ]; then
-            sudo apt install -y -V \
+            sudo apt install -y -V -o="APT::Acquire::Retries=3" \
               python3-pip
           fi
           echo "/usr/lib/ccache" >> $GITHUB_PATH
@@ -182,16 +182,16 @@ jobs:
           submodules: recursive
       - name: Enable Apache Arrow repository
         run: |
-          sudo apt update
-          sudo apt install -y -V \
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             lsb-release \
             wget
           wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
           sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
       - name: Install packages
         run: |
-          sudo apt update
-          sudo apt install -y -V \
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             cmake \
             gdb \
             gettext \
@@ -283,8 +283,8 @@ jobs:
           chmod +x install/bin/*
       - name: Enable Apache Arrow repository
         run: |
-          sudo apt update
-          sudo apt install -y -V \
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             lsb-release \
             wget
           if [ "${{ matrix.use-apache-arrow-rc }}" = "true" ]; then
@@ -298,7 +298,7 @@ jobs:
             wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
             sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
           fi
-          sudo apt update
+          sudo apt update -o="APT::Acquire::Retries=3"
       - name: Install test dependencies
         run: |
           sudo env MAKEFLAGS=-j$(nproc) gem install \
@@ -308,7 +308,7 @@ jobs:
 
           # No -dev version is OK but specifying shared object version
           # in package name bothers us...
-          sudo apt install -y -V \
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             libevent-dev \
             libluajit-5.1-dev \
             liblz4-dev \

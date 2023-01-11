@@ -23,8 +23,8 @@ jobs:
           submodules: recursive
       - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt -V install \
+          sudo apt update -o="APT::Acquire::Retries=3" 
+          sudo apt install -V -o="APT::Acquire::Retries=3" \
             autoconf-archive \
             devscripts \
             python3-pip \
@@ -152,7 +152,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt -V install \
+          sudo apt install -V -o="APT::Acquire::Retries=3" \
             devscripts \
             qemu-user-static \
             ruby
