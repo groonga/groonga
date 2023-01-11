@@ -152,7 +152,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -V -o="APT::Acquire::Retries=3" \
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             devscripts \
             qemu-user-static \
             ruby
