@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update -o="APT::Acquire::Retries=3" 
-          sudo apt install -V -o="APT::Acquire::Retries=3" \
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             autoconf-archive \
             devscripts \
             python3-pip \
