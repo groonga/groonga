@@ -2524,7 +2524,7 @@ This work only time when one key is target for drilldown. This doesn't work time
 
 This works as same as ``key_vector_expansion`` is not specified.
 
-Keys would not be expanded. Each elements within vector works as each key.
+Keys would not be expanded. Each element within vector works as each key.
 
 Following is a sample to aggregate total number of individual and combination occurrence for 3 tags, ``Groonga``, ``Mroonga``, and ``PGroonga``.
 
@@ -2565,12 +2565,12 @@ Following are facts from the results.
 
 This aggregates total with expanding vector to power set.
 In this case, target vector is considered as multi set.
-Thus, each elements are considered as an individual element when there are multiple elements with same value.
+Thus, each element is considered as an individual element when there are multiple elements with same value.
 
 For example, there is a vector ``[A, B, C]``. In this case, a target set is ``{A, B, C}``.
 Power set is aggrigation for all of subsets within a set. Following shows all of subset within a set ``{A, B, C}``.
 However, Groonga does not use empty set, that number of elements is 0. It is because empty set is not useful for results of drilldown.
-Please report at `issue <https://github.com/groonga/groonga/issues>`_, if you find a case to use a empty set.
+Please report at `issue <https://github.com/groonga/groonga/issues>`_, if you find a case to use empty set.
 
 * Subset with 1 element
 
@@ -2591,14 +2591,14 @@ Please report at `issue <https://github.com/groonga/groonga/issues>`_, if you fi
 Those are all subsets for ``{A, B, C}``. 
 Since power set is aggregation of those subsets, ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` is a power set for the vector.
 
-``POWER_SET`` aggregates with each subsets for ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}``.
+``POWER_SET`` aggregates with each subset for ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}``.
 
 For example, there is a case to aggregate ``[A, B, C]`` and ``[B, C, D]`` with power set.
 
 A power set for ``[A, B, C]`` is ``{{A}, {B}, {C}, {A, B}, {B, C}, {A, C}, {A, B, C}}`` as previously explained.
 Likewise a power set for ``[B, C, D]`` is ``{{B}, {C}, {D}, {B, C}, {C, D}, {B, D}, {B, C, D}}``.
 
-Aggregating occurrence of each subsets in each power set is shown in result as follows.
+Aggregating occurrence of each subset in each power set is shown in result as follows.
 
 .. csv-table::
 
@@ -2615,7 +2615,7 @@ Aggregating occurrence of each subsets in each power set is shown in result as f
    "``{A, B, C}``", "1"
    "``{B, C, D}``", "1"
 
-This aggregating methods is useful when it is requirement to sum total number of occurrence for individual tag and combination tag at once.
+This aggregating methods is useful when it is requirement to sum total number of occurrence for individual tags and combination of tags at once.
 
 Following is an example to aggregate total occurrence for individual and combination of 3 tags, ``Groonga``, ``Mroonga``, and ``PGroonga``.
 
