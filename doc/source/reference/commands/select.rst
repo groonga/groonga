@@ -2563,7 +2563,7 @@ Following are facts from the results.
 ``POWER_SET``
 ~~~~~~~~~~~~~
 
-This aggregates total with expanding vector to power set.
+This aggregates total with expanding vectors to the power set.
 In this case, target vector is considered as multi set.
 Thus, each element is considered as an individual element when there are multiple elements with same value.
 
