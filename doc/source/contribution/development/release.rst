@@ -350,13 +350,32 @@ WindowsのMSYS2用パッケージのアップロード
 MINGW-packagesはforkして自分のリポジトリを作成しておきます。
 また、forkしたリポジトリのGitHub Actionsを有効にしておきます。
 
-forkしたリポジトリにて ``mingw-w64-groonga/PKGBUILD`` を以下の通り更新します。
+forkしたリポジトリをローカルにcloneし、upstreamに本家のMINGW-packagesを登録しておきます。この作業は一度だけ行います。::
 
-* ``pkgver`` : 最新のGroongaバージョン
+    % mkdir -p ~/work
+    % git clone --recursive git@github.com:<your-forked-MINGW-packages>.git ~/work/MINGW-packages
+    % git remote add upstream https://github.com/msys2/MINGW-packages.git
+
+以下の手順で必要なファイルの更新と、プルリクエスト用のブランチの作成をします。
+ ``12.0.9`` は最新のGroongaのバージョンを指定します。::
+
+    % cd ~/work/groonga/groonga.clean/packages
+    % ./post-msys2.sh 12.0.9 $HOME/work/MINGW-packages
+
+``post-msys2.sh`` スクリプトは以下の処理を実行します。
+
+* forkしたリポジトリの更新
+* ``mingw-w64-groonga/PKGBUILD`` の更新
+* ``groonga-12.0.9`` ブランチの作成（12.0.9は最新のGroongaバージョンに対応）
+* forkしたリポジトリに ``groonga-12.0.9`` ブランチをpush
+
+このとき、 ``mingw-w64-groonga/PKGBUILD`` は以下の通り更新されます。
+
+* ``pkgver`` : 指定した最新のGroongaバージョン
 * ``pkgrel`` : ``1``
 * ``sha256sums`` : 最新の https://packages.groonga.org/source/groonga/groonga-xx.x.x.tar.gz のsha256sum
 
-上記の修正をforkした自分のリポジトリにpushして、GitHub Actionsが成功していることを確認します。
+forkしたリポジトリにて、pushされたブランチのGitHub Actionsが成功していることを確認します。
 これで正しくビルドできているかどうかが確認できます。
 
 確認後、本家のMINGW-packagesにプルリクエストを作成します。
