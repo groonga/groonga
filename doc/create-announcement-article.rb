@@ -22,25 +22,8 @@ class ArticleGenerator
       }
   end
 
-  def each_latest_release_note_line
-    latest_release = false
-    File.open(@input_file_path, "r") do |file|
-      file.each_line do |line|
-        if not latest_release and line.include?(@start_headline)
-          latest_release = true
-          next
-        end
-        break if latest_release and line.include?(@finish_headline)
-        yield line if latest_release
-      end
-    end
-  end
-
   def generate_latest_release_note
-    latest_release_note = ""
-    each_latest_release_note_line do |line|
-      latest_release_note << line
-    end
+    latest_release_note = File.read(@input_file_path).split(/#{@release_headline_regexp}/)[1]
     latest_release_note.gsub(/^\R\R/, "\n").strip
   end
 
@@ -54,8 +37,7 @@ end
 
 class MarkdownArticleGenerator < ArticleGenerator
   def generate_latest_release_note
-    latest_release_note = super
-    latest_release_note.gsub(/(\[.+?\])\((.+?).md(.*?\))/, "\\1(#{@link_prefix}/\\2.html\\3")
+    super
   end
 end
 
@@ -63,8 +45,7 @@ class MarkdownEnArticleGenerator < MarkdownArticleGenerator
   def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     @input_file_path = "./locale/en/markdown/news.md"
-    @start_headline = "## Release #{groonga_version}"
-    @finish_headline = "## Release #{groonga_previous_version}"
+    @release_headline_regexp = "## Release.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*"
   end
 
   def generate_template
@@ -108,8 +89,7 @@ class MarkdownJaArticleGenerator < MarkdownArticleGenerator
   def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     @input_file_path = "./locale/ja/markdown/news.md"
-    @start_headline = "## #{groonga_version}"
-    @finish_headline = "## #{groonga_previous_version}"
+    @release_headline_regexp = "## .*リリース.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*"
   end
 
   def generate_template
@@ -244,17 +224,7 @@ class FacebookArticleGenerator < ArticleGenerator
   end
 
   def generate_latest_release_note
-    latest_release_note = ""
-    # The first line is "======", which is meaningless and should be skip.
-    first = true
-    each_latest_release_note_line do |line|
-      if first
-        first = false
-        next
-      end
-      latest_release_note << line
-    end
-    latest_release_note.gsub(/^\R\R/, "\n").strip
+    super
   end
 end
 
@@ -263,8 +233,7 @@ class FacebookEnArticleGenerator < FacebookArticleGenerator
     super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     @input_file_path = "./locale/en/text/news.txt"
     @output_file_path = "./tmp/facebook-en-#{release_date}-groonga-#{groonga_version}.txt"
-    @start_headline = "Release #{groonga_version}"
-    @finish_headline = "Release #{groonga_previous_version}"
+    @release_headline_regexp = ".*Release.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*\\n=.+"
   end
 
   def generate_template
@@ -303,6 +272,7 @@ class FacebookJaArticleGenerator < FacebookArticleGenerator
     super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     @input_file_path = "./locale/ja/text/news.txt"
     @output_file_path = "./tmp/facebook-ja-#{release_date}-groonga-#{groonga_version}.txt"
+    @release_headline_regexp = ".*リリース.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*\\n=.+"
     @start_headline = "#{groonga_version}"
     @finish_headline = "#{groonga_previous_version}"
   end
