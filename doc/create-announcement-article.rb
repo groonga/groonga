@@ -12,14 +12,6 @@ class ArticleGenerator
   end
 
   def generate_article
-    template = generate_template
-    latest_release_note = extract_latest_release_note
-    template % {
-        groonga_version:@groonga_version, 
-        groonga_version_in_link:@groonga_version_in_link, 
-        latest_release_note: latest_release_note,
-        link_prefix: @link_prefix
-      }
   end
 
   def extract_latest_release_note
@@ -48,19 +40,19 @@ class MarkdownEnArticleGenerator < MarkdownArticleGenerator
     @release_headline_regexp = "## Release.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*"
   end
 
-  def generate_template
+  def generate_article
     <<-"TEMPLATE"
-## Groonga %<groonga_version>s has been released
+## Groonga #{@groonga_version} has been released
 
-[Groonga %<groonga_version>s](%<link_prefix>s/news.html#release-%<groonga_version_in_link>s) has been released!
+[Groonga #{@groonga_version}](#{@link_prefix}/news.html#release-#{@groonga_version_in_link}) has been released!
 
-How to install: [Install](%<link_prefix>s/install.html)
+How to install: [Install](#{@link_prefix}/install.html)
 
 ### Changes
 
 Here are important changes in this release:
 
-%<latest_release_note>s
+#{extract_latest_release_note}
 
 ### Known Issues
 
@@ -78,7 +70,7 @@ Here are important changes in this release:
 
 Please refert to the following news for more details.
 
-[News Release %<groonga_version>s](%<link_prefix>s/news.html#release-%<groonga_version_in_link>s)
+[News Release #{@groonga_version}](#{@link_prefix}/news.html#release-#{@groonga_version_in_link})
 
 Let's search by Groonga!
     TEMPLATE
@@ -92,19 +84,19 @@ class MarkdownJaArticleGenerator < MarkdownArticleGenerator
     @release_headline_regexp = "## .*リリース.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*"
   end
 
-  def generate_template
+  def generate_article
     <<-"TEMPLATE"
-## Groonga %<groonga_version>sリリース
+## Groonga #{@groonga_version}リリース
 
-[Groonga %<groonga_version>s](%<link_prefix>s/news.html#release-%<groonga_version_in_link>s)をリリースしました！
+[Groonga #{@groonga_version}](#{@link_prefix}/news.html#release-#{@groonga_version_in_link})をリリースしました！
 
-それぞれの環境毎のインストール方法: [インストール](%<link_prefix>s/install.html)
+それぞれの環境毎のインストール方法: [インストール](#{@link_prefix}/install.html)
 
 ### 変更内容
     
 主な変更点は以下の通りです。
 
-%<latest_release_note>s
+#{extract_latest_release_note}
 
 ### 既知の問題
 
@@ -122,7 +114,7 @@ class MarkdownJaArticleGenerator < MarkdownArticleGenerator
 
 詳細については、以下のお知らせ、リリース自慢会も参照してください。
 
-[お知らせ %<groonga_version>sリリース](%<link_prefix>s/news.html#release-%<groonga_version_in_link>s)
+[お知らせ #{@groonga_version}リリース](#{@link_prefix}/news.html#release-#{@groonga_version_in_link})
 
 [リリース自慢会](https://www.youtube.com/playlist?list=PLKb0MEIU7gvRxTDecELqAOzOsa21dSwtU)
 
@@ -143,18 +135,18 @@ class BlogEnArticleGenerator < MarkdownEnArticleGenerator
     @link_prefix = "/docs"
   end
 
-  def generate_template
-    template_base = super
+  def generate_article
+    article_base = super
     prefix = <<"PREFIX"
 ---
 layout: post.en
-title: Groonga %<groonga_version>s has been released
-description: Groonga %<groonga_version>s has been released!
+title: Groonga #{@groonga_version} has been released
+description: Groonga #{@groonga_version} has been released!
 ---
 
 PREFIX
 
-    prefix + template_base
+    prefix + article_base
   end
 end
 
@@ -165,18 +157,18 @@ class BlogJaArticleGenerator < MarkdownJaArticleGenerator
     @link_prefix = "/ja/docs"
   end
 
-  def generate_template
-    template_base = super
+  def generate_article
+    article_base = super
     prefix = <<"PREFIX"
 ---
 layout: post.ja
-title: Groonga %<groonga_version>sリリース
-description: Groonga %<groonga_version>sをリリースしました！
+title: Groonga #{@groonga_version}リリース
+description: Groonga #{@groonga_version}をリリースしました！
 ---
 
 PREFIX
 
-    prefix + template_base
+    prefix + article_base
   end
 end
 
@@ -211,21 +203,6 @@ class FacebookArticleGenerator < ArticleGenerator
     Dir.mkdir("./tmp") unless Dir.exist?("./tmp")
     super
   end
-
-  def generate_article
-    template = generate_template
-    latest_release_note = extract_latest_release_note
-    template % {
-        groonga_version:@groonga_version, 
-        groonga_version_in_link:@groonga_version_in_link, 
-        latest_release_note: latest_release_note,
-        release_date_in_link: @release_date_in_link
-      }
-  end
-
-  def extract_latest_release_note
-    super
-  end
 end
 
 class FacebookEnArticleGenerator < FacebookArticleGenerator
@@ -236,13 +213,13 @@ class FacebookEnArticleGenerator < FacebookArticleGenerator
     @release_headline_regexp = ".*Release.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*\\n=.+"
   end
 
-  def generate_template
+  def generate_article
     <<-"TEMPLATE"
 Hi,
-Groonga %<groonga_version>s has been released!
+Groonga #{@groonga_version} has been released!
     
-https://groonga.org/docs/news.html#release-%<groonga_version_in_link>s
-https://groonga.org/en/blog/%<release_date_in_link>s/groonga-%<groonga_version_in_link>s.html
+https://groonga.org/docs/news.html#release-#{@groonga_version_in_link}
+https://groonga.org/en/blog/#{@release_date_in_link}/groonga-#{@groonga_version_in_link}.html
     
 Install: https://groonga.org/docs/install.html
     
@@ -250,7 +227,7 @@ Characteristics: https://groonga.org/docs/characteristic.html
     
 The topics in this release:
 
-%<latest_release_note>s
+#{extract_latest_release_note}
 
 Known Issues
 ------------
@@ -277,22 +254,22 @@ class FacebookJaArticleGenerator < FacebookArticleGenerator
     @finish_headline = "#{groonga_previous_version}"
   end
 
-  def generate_template
+  def generate_article
     <<-"TEMPLATE"
-Groonga %<groonga_version>s をリリースしました！
+Groonga #{@groonga_version} をリリースしました！
 
-    https://groonga.org/ja/docs/news.html#release-%<groonga_version_in_link>s
+    https://groonga.org/ja/docs/news.html#release-#{@groonga_version_in_link}
 
 変更点一覧:
 
-    https://groonga.org/ja/blog/%<release_date_in_link>s/groonga-%<groonga_version_in_link>s.html
+    https://groonga.org/ja/blog/#{@release_date_in_link}/groonga-#{@groonga_version_in_link}.html
 
 変更内容
 ========
 
 主な変更点は以下の通りです。
 
-%<latest_release_note>s
+#{extract_latest_release_note}
 
 既知の問題
 ----------
@@ -308,38 +285,27 @@ Groonga %<groonga_version>s をリリースしました！
   end
 end
 
-class TwitterArticleBaseGenerator < ArticleGenerator
-  def generate_article
-    template = generate_template
-    template % {
-        groonga_version:@groonga_version, 
-        release_date: @release_date,
-        release_date_in_link: @release_date_in_link
-      }
-  end
-end
-
-class TwitterEnArticleBaseGenerator < TwitterArticleBaseGenerator
+class TwitterEnArticleBaseGenerator < ArticleGenerator
   def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     @output_file_path = "./tmp/twitter-en-#{release_date}-groonga-#{groonga_version}-base.txt"
   end
 
-  def generate_template
-    "Groonga %<groonga_version>s has been released!(%<release_date>s) " + 
-    "https://groonga.org/en/blog/%<release_date_in_link>s/groonga-%<groonga_version>s.html"
+  def generate_article
+    "Groonga #{@groonga_version} has been released!(#{@release_date}) " + 
+    "https://groonga.org/en/blog/#{@release_date_in_link}/groonga-#{@groonga_version}.html"
   end
 end
 
-class TwitterJaArticleBaseGenerator < TwitterArticleBaseGenerator
+class TwitterJaArticleBaseGenerator < ArticleGenerator
   def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     @output_file_path = "./tmp/twitter-ja-#{release_date}-groonga-#{groonga_version}-base.txt"
   end
 
-  def generate_template
-    "Groonga %<groonga_version>sをリリースしました！(%<release_date>s) " +
-    "https://groonga.org/ja/blog/%<release_date_in_link>s/groonga-%<groonga_version>s.html"
+  def generate_article
+    "Groonga #{@groonga_version}をリリースしました！(#{@release_date}) " +
+    "https://groonga.org/ja/blog/#{@release_date_in_link}/groonga-#{@groonga_version}.html"
   end
 end
 
