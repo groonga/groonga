@@ -12,7 +12,7 @@ class ArticleGenerator
   end
 
   def generate_article
-    template = get_template
+    template = generate_template
     latest_release_note = generate_latest_release_note
     template % {
         groonga_version:@groonga_version, 
@@ -67,7 +67,7 @@ class MarkdownEnArticleGenerator < MarkdownArticleGenerator
     @finish_headline = "## Release #{groonga_previous_version}"
   end
 
-  def get_template
+  def generate_template
     <<-"TEMPLATE"
 ## Groonga %<groonga_version>s has been released
 
@@ -112,7 +112,7 @@ class MarkdownJaArticleGenerator < MarkdownArticleGenerator
     @finish_headline = "## #{groonga_previous_version}"
   end
 
-  def get_template
+  def generate_template
     <<-"TEMPLATE"
 ## Groonga %<groonga_version>sリリース
 
@@ -163,7 +163,7 @@ class BlogEnArticleGenerator < MarkdownEnArticleGenerator
     @link_prefix = "/docs"
   end
 
-  def get_template
+  def generate_template
     template_base = super
     prefix = <<"PREFIX"
 ---
@@ -185,7 +185,7 @@ class BlogJaArticleGenerator < MarkdownJaArticleGenerator
     @link_prefix = "/ja/docs"
   end
 
-  def get_template
+  def generate_template
     template_base = super
     prefix = <<"PREFIX"
 ---
@@ -233,7 +233,7 @@ class FacebookArticleGenerator < ArticleGenerator
   end
 
   def generate_article
-    template = get_template
+    template = generate_template
     latest_release_note = generate_latest_release_note
     template % {
         groonga_version:@groonga_version, 
@@ -267,7 +267,7 @@ class FacebookEnArticleGenerator < FacebookArticleGenerator
     @finish_headline = "Release #{groonga_previous_version}"
   end
 
-  def get_template
+  def generate_template
     <<-"TEMPLATE"
 Hi,
 Groonga %<groonga_version>s has been released!
@@ -307,7 +307,7 @@ class FacebookJaArticleGenerator < FacebookArticleGenerator
     @finish_headline = "#{groonga_previous_version}"
   end
 
-  def get_template
+  def generate_template
     <<-"TEMPLATE"
 Groonga %<groonga_version>s をリリースしました！
 
@@ -340,7 +340,7 @@ end
 
 class TwitterArticleBaseGenerator < ArticleGenerator
   def generate_article
-    template = get_template
+    template = generate_template
     template % {
         groonga_version:@groonga_version, 
         release_date: @release_date,
@@ -355,7 +355,7 @@ class TwitterEnArticleBaseGenerator < TwitterArticleBaseGenerator
     @output_file_path = "./tmp/twitter-en-#{release_date}-groonga-#{groonga_version}-base.txt"
   end
 
-  def get_template
+  def generate_template
     "Groonga %<groonga_version>s has been released!(%<release_date>s) " + 
     "https://groonga.org/en/blog/%<release_date_in_link>s/groonga-%<groonga_version>s.html"
   end
@@ -367,7 +367,7 @@ class TwitterJaArticleBaseGenerator < TwitterArticleBaseGenerator
     @output_file_path = "./tmp/twitter-ja-#{release_date}-groonga-#{groonga_version}-base.txt"
   end
 
-  def get_template
+  def generate_template
     "Groonga %<groonga_version>sをリリースしました！(%<release_date>s) " +
     "https://groonga.org/ja/blog/%<release_date_in_link>s/groonga-%<groonga_version>s.html"
   end
