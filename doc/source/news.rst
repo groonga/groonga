@@ -11,7 +11,7 @@ Release 12.1.1 - 2023-01-06
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-expansions-power-set`] Vector's power set is now able to aggregate with the drilldowns.
 
@@ -269,7 +269,7 @@ Improvements
      # ]
 
 Fixes
------
+^^^^^
 
 * [:doc:`reference/commands/select`] Fix a bug displaying a wrong label in ``drilldown`` results when ``command_version`` is ``3``.
   [groonga-dev,05005][Reported by Atsushi Shinoda]
@@ -403,7 +403,7 @@ Fixes
      * Last ``i`` ( applied for  ``Ⅰ`` )
   
 Thanks
-------
+^^^^^^
 
 * i10a
 * Atsushi Shinoda
@@ -414,7 +414,7 @@ Release 12.1.0 - 2022-11-29
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/load`] Added support for slow log output of ``load``.
 
@@ -502,7 +502,7 @@ Improvements
       ]
 
 Fixes
------
+^^^^^
 
 * [:doc:`reference/commands/select`][:doc:`reference/columns/vector`] Fixed a bug displaying integer in the results when a weight vector column specifies `WEIGHT FLOAT32`.
 
@@ -626,7 +626,7 @@ Release 12.0.9 - 2022-10-28
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`install/almalinux`] Added support for AlmaLinux 9.
   
@@ -680,7 +680,7 @@ Improvements
   We improved to log the above message as less duplicates as possible.
 
 Fixes
------
+^^^^^
 
 * [:doc:`reference/commands/select`] Fixed a bug that Groonga could crash or return incorrect results when specifying :ref:`select-n-workers`.
 
@@ -695,7 +695,7 @@ Release 12.0.8 - 2022-10-03
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Changed specification of the ``escalate()`` function (Experimental) to make it easier to use.
 
@@ -748,7 +748,7 @@ Improvements
 * [:doc:`contribution/documentation/i18n`] Updated the translation procedure.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that Groonga could return incorrect results when we use :doc:`reference/normalizers/normalizer_table`
   and it contains a non-idempotent (results can be changed when executed repeatedly) definition.
@@ -823,7 +823,7 @@ Release 12.0.7 - 2022-08-29
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Added a new function ``escalate()``. (experimental)
 
@@ -868,7 +868,7 @@ Improvements
 * [:doc:`reference/commands/select`] Add a document for the ``--n_workers`` option.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug Groonga's response may be slow when we execute the ``request_cancel`` while executing a OR search.
 
@@ -880,7 +880,7 @@ Release 12.0.6 - 2022-08-04
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Added new Munin plugins for groonga-delta.
 
@@ -973,7 +973,7 @@ Improvements
   Because Debian 10 reaches EOL in August 2022.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that Groonga may crash when we execute drilldown in a parallel by ``n_workers`` option.
 
@@ -987,7 +987,7 @@ Release 12.0.5 - 2022-06-29
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/select`] Improved a little bit of performance for prefix search by search escalation.
 
@@ -1409,7 +1409,7 @@ Improvements
      ]
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
@@ -1421,7 +1421,7 @@ Known Issues
 * Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
 
 Thanks
-------
+^^^^^^
 
 * naoa
 
@@ -1431,7 +1431,7 @@ Release 12.0.4 - 2022-06-06
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/install/ubuntu`] Added support for Ubuntu 22.04 (Jammy Jellyfish).
 
@@ -1462,7 +1462,7 @@ Improvements
   Therefore, we can control properly memory map size by monitoring this value even if the environment does have not enough memory.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug Groonga's response may be slow when we execute ``request_cancel`` while executing a search.
 
@@ -1485,7 +1485,7 @@ Release 12.0.3 - 2022-04-29
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/logical_count`] Improved memory usage while ``logical_count`` executed.
 
@@ -1692,7 +1692,7 @@ Improvements
   However, Groonga output warning in this case.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that we may be not able to add a key to a table of patricia trie.
 
@@ -1702,7 +1702,7 @@ Fixes
   * If the additional key is 4096 bytes.
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
@@ -1714,7 +1714,7 @@ Known Issues
 * Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
 
 Thanks
-------
+^^^^^^
 
 * shinonon
 * Zhanzhao (Deo) Liang
@@ -1725,7 +1725,7 @@ Release 12.0.2 - 2022-03-29
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/logical_range_filter`] Added support for reducing reference immediately after processing a shard.
 
@@ -1841,7 +1841,7 @@ Improvements
   Because we could not use windows-2016 image on GitHub Actions.
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
@@ -1853,7 +1853,7 @@ Known Issues
 * Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
 
 Thanks
-------
+^^^^^^
 
 * David CARLIER
 
@@ -1863,7 +1863,7 @@ Release 12.0.1 - 2022-02-28
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/commands/query_expand`] Added a support for synonym group.
 
@@ -1977,7 +1977,7 @@ Fixes
 * [Windows] Fixed a crash bug when Groonga output backtrace.
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
@@ -2000,10 +2000,10 @@ First of all, we introduce the Summary of changes from Groonga 11.0.0 to 11.1.3.
 Then, we introduce the main changes in 12.0.0.
 
 Summary of changes from Groonga 11.0.0 to 11.1.3
-------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 New Features and Improvements
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""""""
 
 * [:doc:`reference/functions/snippet`] Added support for using the keyword of 32 or more.
 
@@ -2122,7 +2122,7 @@ New Features and Improvements
   Note that if we use ``--slices[].post_filter``, the format of the response is different from the normal ``select`` 's response.
 
 Fixes
-^^^^^
+"""""
 
 * Fixed a bug that the version up of Groonga failed Because the version up of arrow-libs on which Groonga depends.
 
@@ -2143,7 +2143,7 @@ Fixes
   See :ref:`release 11.0.0 <release-11-0-0>` for details.
 
 Newly supported OSes
-^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""
 
 * [:doc:`/install/almalinux`] Added support for AlmaLinux 8.
 
@@ -2156,7 +2156,7 @@ Newly supported OSes
 * [:doc:`/install/ubuntu`] Added support for Ubuntu 21.10 (Impish Indri).
 
 Dropped support OSes
-^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""
 
 * [:doc:`/install/centos`] Dropped support for CentOS 8.
 
@@ -2174,7 +2174,7 @@ Dropped support OSes
   * groonga-x.x.x-x86.zip
 
 Thanks
-------
+""""""
 
 * naoa
 * Anthony M. Cook
@@ -2190,7 +2190,7 @@ Thanks
 The main changes in 12.0.0 are as follows.
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/functions/sub_filter`] Added a new option ``pre_filter_threshold``.
 
@@ -2402,7 +2402,7 @@ Release 11.1.3 - 2022-01-29
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/functions/snippet`] Added support for using the keyword of 32 or more. [GitHub#1313][Pathched by Takashi Hashida]
 
@@ -2511,7 +2511,7 @@ Improvements
   * Because Ubuntu 21.04 reached EOL January 20, 2022.
 
 Fixes
------
+^^^^^
 
 * [:doc:`/reference/commands/load`] Fixed a crash bug when we load data with specifying a nonexistent column.
 
@@ -2523,7 +2523,7 @@ Fixes
   In this case, we will handle that by rebuilding the Groonga package.
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
@@ -2535,7 +2535,7 @@ Known Issues
 * Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
 
 Thanks
-------
+^^^^^^
 
 * Takashi Hashida
 * wi24rd
@@ -2549,7 +2549,7 @@ Release 11.1.1 - 2021-12-29
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/select`] Added support for near phrase product search.
 
@@ -2647,7 +2647,7 @@ Improvements
   Because CentOS 8 will reach EOL at 2021-12-31.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that we can't remove a index column with invalid parameter. [GitHub#1301][Patched by Takashi Hashida]
 
@@ -2706,7 +2706,7 @@ Fixes
        ]
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
@@ -2718,7 +2718,7 @@ Known Issues
 * Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
 
 Thanks
-------
+^^^^^^
 
 * Takashi Hashida
 
@@ -2728,7 +2728,7 @@ Release 11.1.0 - 2021-11-29
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/commands/load`] Added support for ISO 8601 time format.[GitHub#1228][Patched by Takashi Hashida]
 
@@ -2934,12 +2934,12 @@ Improvements
     [[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[3,"cab-"]]]]
 
 Fixes
------
+^^^^^
 
 * [The browser based administration tool] Fixed a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list. [GitHub#1186][Patched by Takashi Hashida]
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
@@ -2951,7 +2951,7 @@ Known Issues
 * Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
 
 Thanks
-------
+^^^^^^
 
 * Takashi Hashida
 
@@ -2961,7 +2961,7 @@ Release 11.0.9 - 2021-11-04
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/functions/snippet`] Added a new option ``delimiter_regexp`` for detecting snippet delimiter with regular expression.
 
@@ -3157,7 +3157,7 @@ Improvements
 * [:doc:`/install/ubuntu`] Added support for Ubuntu 21.10 (Impish Indri).
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that Groonga doesn't return a response when an error occurred
   in command (e.g. sytax error in filter).
@@ -3165,7 +3165,7 @@ Fixes
   * This bug only occurs when we use ``--output_type apache-arrow``.
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
@@ -3184,7 +3184,7 @@ Release 11.0.7 - 2021-09-29
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/commands/load`] Added support for casting a string like as "[int, int,...]" to a vector of integer like as [int, int,...].
 
@@ -3303,7 +3303,7 @@ Improvements
 * Updated to 3.0.0 that the version of Apache Arrow that Groonga requires. [GitHub#1265][Patched by Takashi Hashida]
 
 Fixes
------
+^^^^^
 
 * Fixed a memory leak when we created a table with a tokenizer with invalid option.
 
@@ -3319,7 +3319,7 @@ Fixes
 * [Windows] Fixed a resource leak when Groonga fail open a new file caused by out of memory.
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
@@ -3333,7 +3333,7 @@ Known Issues
 * Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
 
 Thanks
-------
+^^^^^^
 
 * Takashi Hashida
 
@@ -3351,7 +3351,7 @@ Release 11.0.6 - 2021-08-29
      you use Groonga 11.0.7 or later.
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Added support for recovering on crash. (experimental)
 
@@ -3374,7 +3374,7 @@ Improvements
   In such cases, We can clear the table for query cache by using ``cache_limit 0``, and Groonga can store query cache 
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that Groonga doesn't clear lock when some threads open the same object around the same time.
 
@@ -3393,7 +3393,7 @@ Fixes
   Even if we use ``query_parallel_or("tags || tags2", "beginner man")``, the above record is match by this modification.
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
@@ -3407,7 +3407,7 @@ Known Issues
 * Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
 
 Thanks
-------
+^^^^^^
 
 * higchi
 
@@ -3417,7 +3417,7 @@ Release 11.0.5 - 2021-07-29
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/normalizers`] Added support for multiple normalizers.
 
@@ -3867,7 +3867,7 @@ Improvements
   * Because Ubuntu 20.10 reached EOL July 22, 2021.
 
 Fixes
------
+^^^^^
 
 * [:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Fixed a bug that if we specify ``query_options`` and the other options, the other options are ignored.
 
@@ -3938,7 +3938,7 @@ Fixes
      ]
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
@@ -3952,7 +3952,7 @@ Known Issues
 * If we repeat that we remove any data and load them again, Groonga may not return records that should match.
 
 Thanks
-------
+^^^^^^
 
 * naoa
 
@@ -4246,7 +4246,7 @@ Improvements
 * [Documentation] Filled missing documentation of ``string_substring``. [GitHub#1209][Patched by Takashi Hashida]
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
@@ -4258,17 +4258,17 @@ Known Issues
     * ``'content @ "Groonga" *< content @ "Mroonga"'``
 
 Thanks
-------
+^^^^^^
 
 * Takashi Hashida
 
 .. _release-11-0-3:
 
 Release 11.0.3 - 2021-05-29
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/functions/query`] Added support for ignoring ``TokenFilterStem`` by the query.
 
@@ -4571,29 +4571,29 @@ Improvements
   * Contains security fix of CVE-2021-23017.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that Groonga may not have returned a result of a search query if we sent many search queries when tokenizer, normalizer, or token_filters that support options were used.
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
 * [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list.
 
 Thanks
-------
+^^^^^^
 
 * Takashi Hashida
 
 .. _release-11-0-2:
 
 Release 11.0.2 - 2021-05-10
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [Documentation] Removed a reference about ``ruby_load`` command. [GitHub#1172][Patched by Anthony M. Cook]
 
@@ -4989,14 +4989,14 @@ Improvements
 * [httpd] Updated bundled nginx to 1.19.10.
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
 * [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list. [Github#1186][Reported by poti]
 
 Thanks
-------
+^^^^^^
 
 * Anthony M. Cook
 
@@ -5007,10 +5007,10 @@ Thanks
 .. _release-11-0-1:
 
 Release 11.0.1 - 2021-03-31
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/install/debian`] Added support for a ARM64 package.
 
@@ -5420,7 +5420,7 @@ Improvements
 * [httpd] Updated bundled nginx to 1.19.8.
 
 Fixes
------
+^^^^^
 
 * [:doc:`reference/commands/reference_acquire`] Fixed a bug that Groonga crash when a table's reference is acquired and a column is added to the table before auto release is happened.
 
@@ -5430,24 +5430,24 @@ Fixes
 
 
 Known Issues
-------------
+^^^^^^^^^^^^
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
 Thanks
-------
+^^^^^^
 
 * naoa
 
 .. _release-11-0-0:
 
 Release 11.0.0 - 2021-02-09
-===========================
+---------------------------
 
 This is a major version up! But It keeps backward compatibility. We can upgrade to 11.0.0 without rebuilding database.
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/select`] Added support for outputting values of scalar column and vector column via nested index.
 
@@ -5615,7 +5615,7 @@ Improvements
     * ``groonga-latest-x64-vs2019.zip``
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that there is possible that index is corrupt when Groonga executes many additions, delete, and update information in it.
 
@@ -5632,10 +5632,10 @@ Fixes
 .. _release-10-1-1:
 
 Release 10.1.1 - 2021-01-25
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/select`] Added support for outputting UInt64 value in Apache Arrow format.
 
@@ -5686,7 +5686,7 @@ Improvements
 * [:doc:`/reference/tokenizers`][TokenMecab] Improved performance for parallel construction fo token column. [GitHub#1158][Patched by naoa]
 
 Fixes
------
+^^^^^
 
 * [:doc:`reference/functions/sub_filter`] Fixed a bug that ``sub_filter`` doesn't work in ``slices[].filter``.
 
@@ -5722,17 +5722,17 @@ Fixes
 * Fixed a bug that it is possible that we can't add data and Groonga crash when we repeat much addition of data and deletion of data against a hash table.
 
 Thanks
-------
+^^^^^^
 
 * naoa
 
 .. _release-10-1-0:
 
 Release 10.1.0 - 2020-12-29
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/functions/highlight_html`] Added support for removing leading full width spaces from highlight target. [PGroonga#GitHub#155][Reported by Hung Nguyen V]
 
@@ -6289,7 +6289,7 @@ Improvements
 * [httpd] Updated bundled nginx to 1.19.6.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that Groonga crash when we use multiple keys drilldown and use multiple accessor as below. [GitHub#1153][Patched by naoa]
 
@@ -6345,7 +6345,7 @@ Fixes
 
 
 Thanks
-------
+^^^^^^
 
 * Hung Nguyen V
 
@@ -6356,10 +6356,10 @@ Thanks
 .. _release-10-0-9:
 
 Release 10.0.9 - 2020-12-01
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Improved performance when we specified ``-1`` to ``limit``.
 
@@ -6522,7 +6522,7 @@ Improvements
 * [httpd] Updated bundled nginx to 1.19.5.
 
 Fixes
------
+^^^^^
 
 * [:doc:`reference/executables/groonga-server-http`] Fixed that Groonga HTTP server finished without waiting all woker threads finished completely.
 
@@ -6532,10 +6532,10 @@ Fixes
 .. _release-10-0-8:
 
 Release 10.0.8 - 2020-10-29
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/select`] Added support for large drilldown keys.
 
@@ -6614,7 +6614,7 @@ Improvements
 * [httpd] Updated bundled nginx to 1.19.4.
 
 Fixes
------
+^^^^^
 
 * Fixed the following bugs related the browser based administration tool. [GitHub#1139][Reported by sutamin]
 
@@ -6624,17 +6624,17 @@ Fixes
 * [:doc:`/reference/functions/between`] Fixed a bug that ``between(_key, ...)`` is always evaluated by sequential search.
 
 Thanks
-------
+^^^^^^
 
 * sutamin
 
 .. _release-10-0-7:
 
 Release 10.0.7 - 2020-09-29
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [highlight], [:doc:`/reference/functions/highlight_full`] Added support for normalizer options.
 
@@ -6693,7 +6693,7 @@ Improvements
 * [:doc:`reference/commands/select`] Added support for near search in same sentence.
 
 Fixes
------
+^^^^^
 
 * [:doc:`/reference/commands/load`] Fixed a bug that ``load`` didn't a return response when we executed it against 257 columns.
 
@@ -6715,10 +6715,10 @@ Fixes
 .. _release-10-0-6:
 
 Release 10.0.6 - 2020-08-29
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/logical_range_filter`] Improved search plan for large data.
 
@@ -6764,7 +6764,7 @@ Improvements
   * The performance when the ``_score`` value calculate by using only function like ``"_score = func(...)"`` improved.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that garbage may be included in response after response send error.
 
@@ -6772,7 +6772,7 @@ Fixes
 
 
 Thanks
-------
+^^^^^^
 
 * gaeeyo
 
@@ -6781,10 +6781,10 @@ Thanks
 .. _release-10-0-5:
 
 Release 10.0.5 - 2020-07-30
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/select`] Added support for storing reference in table that we specify with ``--load_table``.
 
@@ -7172,7 +7172,7 @@ Improvements
 * [Windows] Dropped Visual Studio 2013 support.
 
 Fixes
------
+^^^^^
 
 * [:doc:`reference/executables/groonga-server-http`] Fixed a bug that a request can't halt even if we execute ``shutdown?mode=immediate`` when the response was halted by error occurrence.
 
@@ -7195,17 +7195,17 @@ Fixes
 * Fixed a bug that normalization error occurred while static index construction by ``token_column``. [GitHub#1122][Reported by naoa]
 
 Thanks
-------
+^^^^^^
 
 * naoa
 
 .. _release-10-0-4:
 
 Release 10.0.4 - 2020-06-29
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/tables`] Added support for registering 400M records into a hash table.
 
@@ -7412,7 +7412,7 @@ Improvements
 * [:doc:`reference/commands/select`] Improved performance for ``load_table`` on the reference count mode.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that the database of Groonga was broken when we search by using the dynamic columns that don't specify a ``--filter`` and stridden over shard.
 
@@ -7421,17 +7421,17 @@ Fixes
 * Fixed a bug that we count in surplus to ``_nsubrecs`` when the reference ``uvector`` hasn't element.
 
 Thanks
-------
+^^^^^^
 
 * naoa
 
 .. _release-10-0-3:
 
 Release 10.0.3 - 2020-05-29
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * We came to be able to construct an inverted index from data that are tokenized in advance.
 
@@ -7830,7 +7830,7 @@ Improvements
     * It's for bulk result set insert. It's faster than inserting records by ``grn_ii_posting_add()``.
 
 Fixes
------
+^^^^^
 
 * Fixed a crash bug if the modules (tokenizers, normalizers, and token filters) are used at the same time from multiple threads.
 
@@ -7841,17 +7841,17 @@ Fixes
 * Fixed a bug that Groonga used the wrong cache when the query that just the parameters of dynamic column different was executed. [GitHub#1102 patched by naoa]
 
 Thanks
-------
+^^^^^^
 
 * naoa
 
 .. _release-10-0-2:
 
 Release 10.0.2 - 2020-04-29
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Added support for ``uvector`` for ``time_classify_*`` functions. [GitHub#1089][Patched by naoa]
 
@@ -7946,7 +7946,7 @@ Improvements
         * Because we modify the internal representation of the weight from ``uint32_t`` to ``float`` in the near future.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that Groonga for 32bit on GNU/Linux may crash.
 
@@ -7973,7 +7973,7 @@ Fixes
 * Fixed a bug that Groonga too much unlink ``_key`` accessor when we load data for apache arrow format.
 
 Thanks
-------
+^^^^^^
 
 * sutamin
 
@@ -7982,7 +7982,7 @@ Thanks
 .. _release-10-0-1:
 
 Release 10.0.1 - 2020-03-30
-===========================
+---------------------------
 
 We have been released Groonga 10.0.1.
 Because Ubuntu and Windows(VC++ version) package in Groonga 10.0.0 were mistaken.
@@ -7990,17 +7990,17 @@ Because Ubuntu and Windows(VC++ version) package in Groonga 10.0.0 were mistaken
 If we have already used Groonga 10.0.0 for CentOS, Debian, Windows(MinGW version), no problem with continued use it.
 
 Fixes
------
+^^^^^
 
 * Added a missing runtime(vcruntime140_1.dll) in package for Windows VC++ version.
 
 .. _release-10-0-0:
 
 Release 10.0.0 - 2020-03-29
-===========================
+---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [httpd] Updated bundled nginx to 1.17.9.
 
@@ -8097,10 +8097,10 @@ Improvements
 .. _release-9-1-2:
 
 Release 9.1.2 - 2020-01-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [tools] Added a script for copying only files of specify tables or columns.
 
@@ -8131,10 +8131,10 @@ Improvements
 .. _release-9-1-1:
 
 Release 9.1.1 - 2020-01-07
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/commands/load`] Added support for Apache Arrow format data.
 
@@ -8160,10 +8160,10 @@ Improvements
 .. _release-9-1-0:
 
 Release 9.1.0 - 2019-11-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Improved the performance of the "&&" operation.
 
@@ -8178,7 +8178,7 @@ Improvements
   * For example, if we search "支えた" using this option, "支える" is hit also.
 
 Fixes
------
+^^^^^
 
 * Fix a bug that when the accessor is index, performance decreases.
 
@@ -8197,7 +8197,7 @@ Fixes
   * Because ``index-column-diff-all.sh`` and ``object-inspect-all.sh`` had not bundled in before version.
 
 Thanks
-------
+^^^^^^
 
 * Albert Song
 
@@ -8206,7 +8206,7 @@ Thanks
 .. _release-9-0-9:
 
 Release 9.0.9 - 2019-10-30
-==========================
+--------------------------
 
 .. note::
 
@@ -8214,7 +8214,7 @@ Release 9.0.9 - 2019-10-30
     Therefore, If performance decreases than before, please report us with reproducible steps.
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/log`] Improved that output the sending time of response into query-log.
 
@@ -8244,22 +8244,22 @@ Improvements
   * This script name is object-inspect-all.sh.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that Groonga crash when we specify the value as the first argument of between.[GitHub#1045][Reported by yagisumi]
 
 Thanks
-------
+^^^^^^
 
 * yagisumi
 
 .. _release-9-0-8:
 
 Release 9.0.8 - 2019-09-27
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/log_reopen`] Added a supplementary explanation when we use ``groonga-httpd`` with 2 or more workers.
 
@@ -8279,24 +8279,24 @@ Improvements
 * [:doc:`/install/centos`] Dropped 32-bit package support on CentOS 6.
 
 Fixes
------
+^^^^^
 
 * [:doc:`reference/commands/logical_range_filter`] Fixed a bug that exception about closing the same object twice occurs when we have enough records and the number of records that unmatch filter search criteria is more than the estimated value of it.
 
 .. _release-9-0-7:
 
 Release 9.0.7 - 2019-08-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [httpd] Updated bundled nginx to 1.17.3.
 
   * Contains security fix for CVE-2019-9511, CVE-2019-9513, and CVE-2019-9516.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that Groonga crash when posting lists were huge.
 
@@ -8314,7 +8314,7 @@ Fixes
 * Fixed a bug that doesn't use a suitable index when prefix search and suffix search. [GitHub#1007, PGroonga#GitHub#96][Reported by oknj]
 
 Thanks
-------
+^^^^^^
 
 * oknj
 
@@ -8327,15 +8327,15 @@ Thanks
 .. _release-9-0-6:
 
 Release 9.0.6 - 2019-08-05
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Added support for Debian 10 (buster).
 
 Fixes
------
+^^^^^
 
 * [:doc:`reference/commands/select`] Fixed a bug that search is an error when occurring search escalation.
 
@@ -8346,14 +8346,14 @@ Fixes
 * [:doc:`tutorial/micro_blog`] Fixed an example that has wrong search results. [GutHub#1024][Patched by yagisumi]
 
 Thanks
-------
+^^^^^^
 
 * yagisumi
 
 .. _release-9-0-5:
 
 Release 9.0.5 - 2019-07-30
-==========================
+--------------------------
 
 .. warning::
    There are some critical bugs are found in this release. ``select`` command returns wrong search results.
@@ -8362,7 +8362,7 @@ Release 9.0.5 - 2019-07-30
    The detail of this issues are explained at https://groonga.org/en/blog/2019/07/30/groonga-9.0.5.html.
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/logical_range_filter`] Improved that only apply an optimization when the search target shard is large enough.
 
@@ -8406,7 +8406,7 @@ Improvements
 * Added support for Amazon Linux 2.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that vector values of JSON like ``"[1, 2, 3]"`` are not indexed.
 
@@ -8433,7 +8433,7 @@ Fixes
 * Fix a bug that ``groonga.repo`` is removed when updating 1.5.0 from ``groonga-release`` version before 1.5.0-1. [groonga-talk:429][Reported by Josep Sanz]
 
 Thanks
-------
+^^^^^^
 
 * yagisumi
 
@@ -8444,10 +8444,10 @@ Thanks
 .. _release-9-0-4:
 
 Release 9.0.4 - 2019-06-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Added support for array literal with multiple elements.
 
@@ -8500,7 +8500,7 @@ Improvements
   * We can change "keyword1 keyword2"'s operator except AND.
 
 Fixes
------
+^^^^^
 
 * [optimizer] Fix a bug that execution error when specified multiple filter conditions and like ``xxx.yyy=="keyword"``.
 
@@ -8513,17 +8513,17 @@ Fixes
   * This occurs when multiple windows with sort keys are used. [Patched by Takashi Hashida]
 
 Thanks
-------
+^^^^^^
 
 * Takashi Hashida
 
 .. _release-9-0-3:
 
 Release 9.0.3 - 2019-05-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`reference/commands/select`] Added more query logs.
 
@@ -8584,7 +8584,7 @@ Improvements
 * Dropped Ubuntu 14.04 support.
 
 Fixes
------
+^^^^^
 
 * [index_column_diff] Fixed a bug that too much ``remains`` are reported.
 
@@ -8597,7 +8597,7 @@ Fixes
   * This extended prefix causes a bug that plugin can't be found correctly.
 
 Thanks
-------
+^^^^^^
 
 * Tomohiro KATO
 * Wolfgang Hotwagner
@@ -8606,7 +8606,7 @@ Thanks
 .. _release-9-0-2:
 
 Release 9.0.2 - 2019-04-29
-==========================
+--------------------------
 
 We provide a package for Windows made from VC++ from this release.
 
@@ -8614,7 +8614,7 @@ We also provide a package for Windows made form MinGW as in the past.
 However, we will provide it made from VC++ instead of making from MinGW sooner or later.
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/commands/column_create`] Added a new flag ``INDEX_LARGE`` for index column.
 
@@ -8643,24 +8643,24 @@ Improvements
   * We can all of the specified flush target object, child objects, corresponding table of an index column and corresponding index column are flush target objects.
 
 Fixes
------
+^^^^^
 
 * Fixed "unknown type name 'bool'" compilation error in some environments.
 
 * Fixed a bug that incorrect output number over Int32 by command of execute via mruby (e.g. ``logical_select``, ``logical_range_filter``, ``logical_count``, etc.). [GitHub#936] [Patch by HashidaTKS]
 
 Thanks
-------
+^^^^^^
 
 * HashidaTKS
 
 .. _release-9-0-1:
 
 Release 9.0.1 - 2019-03-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Added support to acccept null for vector value.
 
@@ -8701,7 +8701,7 @@ Improvements
 * Added ``index_column_diff`` command to check broken index column. If you want to log progress of command execution, set log level to debug.
 
 Fixes
------
+^^^^^
 
 * [:doc:`/reference/functions/snippet_html`] Changed to return an empty vector for no match.
 
@@ -8738,7 +8738,7 @@ Fixes
 * Fixed a crash bug that allocated working area is not enough size when updating indexes.
 
 Thanks
-------
+^^^^^^
 
 * shiro615
 
@@ -8751,13 +8751,13 @@ Thanks
 .. _release-9-0-0:
 
 Release 9.0.0 - 2019-02-09
-==========================
+--------------------------
 
 This is a major version up! But It keeps backward compatibility.
 You can upgrade to 9.0.0 without rebuilding database.
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/tokenizers`] Added a new tokenizer ``TokenPattern``.
 
@@ -8788,10 +8788,10 @@ Improvements
 .. _release-8-1-1:
 
 Release 8.1.1 - 2019-01-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/commands/logical_select`] Added new argument ``--load_table``, ``--load_columns`` and ``--load_values``.
 
@@ -8875,7 +8875,7 @@ Improvements
   * We can also specify multiple log flags by separating flags with ``|``.
 
 Fixes
------
+^^^^^
 
 * Fixed a memory leak when occurs index update error.
 
@@ -8900,15 +8900,15 @@ Fixes
 .. _release-8-1-0:
 
 Release 8.1.0 - 2018-12-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [httpd] Updated bundled nginx to 1.15.8.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that unlock against DB is always executed after flush when after execute a ``io_flush`` command.
 
@@ -8917,10 +8917,10 @@ Fixes
 .. _release-8-0-9:
 
 Release 8.0.9 - 2018-11-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/tokenizers`] Improved that output a tokenizer name in error message when create tokenizer fail.
 
@@ -8973,7 +8973,7 @@ Improvements
   * contains security fix for CVE-2018-16843 and CVE-2018-16844.
 
 Fixes
------
+^^^^^
 
 * Fixed a memory leak when evaluating window function.
 
@@ -8994,17 +8994,17 @@ Fixes
 * Fix a bug that hits a value of vector columns deleted by a delete command.[GitHub PGroonga#85][Reported by dodaisuke]
 
 Thanks
-------
+^^^^^^
 
 * dodaisuke
 
 .. _release-8-0-8:
 
 Release 8.0.8 - 2018-10-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/commands/table_list`] Supported output options of default tokenizer.
 
@@ -9046,14 +9046,14 @@ Improvements
 * Supported Ubuntu 18.10 (Cosmic Cuttlefish)
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that the Groonga GQTP server may fail to accept a new connection. [groonga-dev,04688][Reported by Yutaro Shimamura]
 
   * It's caused when interruption client process without using quit.
 
 Thanks
-------
+^^^^^^
 
 * Masatoshi SEKI
 * Yutaro Shimamura
@@ -9061,10 +9061,10 @@ Thanks
 .. _release-8-0-7:
 
 Release 8.0.7 - 2018-09-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/tokenizers`][TokenMecab] support outputting metadata of Mecab.
 
@@ -9108,7 +9108,7 @@ Improvements
 * [httpd] Updated bundled nginx to 1.15.4.
 
 Fixes
------
+^^^^^
 
 * Fixed wrong score calculations on some cases.
 
@@ -9118,10 +9118,10 @@ Fixes
 .. _release-8-0-6:
 
 Release 8.0.6 - 2018-08-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/tokenizers`][TokenMecab] add ``chunked_tokenize`` and ``chunk_size_threshold`` options.
 
@@ -9152,7 +9152,7 @@ Improvements
 * [vector_find] avoid to crash with unsupported modes
 
 Fixes
------
+^^^^^
 
 * [index] fix a bug that offline index construction for text vector with ``HASH_KEY``.
   It creates index with invalid section ID.
@@ -9177,10 +9177,10 @@ Fixes
 .. _release-8-0-5:
 
 Release 8.0.5 - 2018-07-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/grn_expr/script_syntax`] Added complementary explain about similar search against Japanese documents.
   [GitHub#858][Patch by Yasuhiro Horimoto]
@@ -9208,7 +9208,7 @@ Improvements
   Debian's security and release team will no longer produce updates for jessie.
 
 Fixes
------
+^^^^^
 
 * Fixed returning wrong result after unfinished ``/d/load`` data by POST.
 
@@ -9224,10 +9224,10 @@ Fixes
 .. _release-8-0-4:
 
 Release 8.0.4 - 2018-06-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [log] Add sub error for error message ``[ii][update][one]``.
 
@@ -9283,7 +9283,7 @@ Improvements
   Because it's not completed yet.
 
 Fixes
------
+^^^^^
 
 * [:doc:`reference/functions/sub_filter`] Fixed too much score with a too filtered case.
 
@@ -9308,10 +9308,10 @@ Fixes
 .. _release-8-0-3:
 
 Release 8.0.3 - 2018-05-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/functions/highlight_html`] Support highlight of results of
   the search by ``NormalizerNFKC100`` or ``TokenNgram``.
@@ -9357,7 +9357,7 @@ Improvements
 * [httpd] Updated bundled nginx to 1.14.0.
 
 Fixes
------
+^^^^^
 
 * [:doc:`/reference/commands/logical_select`] Fixed memory leak when an error occurs
   in filtered dynamic columns.
@@ -9379,10 +9379,10 @@ Fixes
 .. _release-8-0-2:
 
 Release 8.0.2 - 2018-04-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/executables/grndb`][:ref:`grndb-force-truncate`] Improved
   ``grndb recover --force-truncate`` option that it can be truncated even if
@@ -9448,7 +9448,7 @@ Improvements
 * Supported Ubuntu 18.04 (Bionic Beaver)
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that unexpected record is matched with space only query.
   [groonga-dev,04609][Reported by satouyuzh]
@@ -9460,17 +9460,17 @@ Fixes
 * Fixed a bug that it may also take so much time to change "thread_limit".
 
 Thanks
-------
+^^^^^^
 
 * satouyuzh
 
 .. _release-8-0-1:
 
 Release 8.0.1 - 2018-03-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/log`] Show ``filter`` conditions in query log.
   It's disabled by default. To enable it, you need to set an environment
@@ -9518,7 +9518,7 @@ Improvements
 * [httpd] Updated bundled nginx to 1.13.10.
 
 Fixes
------
+^^^^^
 
 * Fixed memory leak that occurs when a prefix query doesn't match any token.
   [GitHub#820][Patch by Naoya Murakami]
@@ -9534,20 +9534,20 @@ Fixes
   comparison (>,>=,<,<=,==,!=).
 
 Thanks
-------
+^^^^^^
 
 * Naoya Murakami
 
 .. _release-8-0-0:
 
 Release 8.0.0 - 2018-02-09
-==========================
+--------------------------
 
 This is a major version up! But It keeps backward compatibility.
 You can upgrade to 8.0.0 without rebuilding database.
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/commands/select`] Added ``--drilldown_adjuster`` and
   ``--drilldowns[LABEL].adjuster``.
@@ -9569,7 +9569,7 @@ Improvements
   arguments are handled as the inclusive edges. [GitHub#685]
 
 Fixes
------
+^^^^^
 
 * Fixed a memory leak for normal hash table.
   [GitHub:mroonga/mroonga#190][Reported by fuku1]
@@ -9582,17 +9582,17 @@ Fixes
 * [Windows] Fixed wrong value report on ``WSASend`` error.
 
 Thanks
-------
+^^^^^^
 
 * fuku1
 
 .. _release-7-1-1:
 
 Release 7.1.1 - 2018-01-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/install/ubuntu`] Dropped Ubuntu 17.04 (Zesty Zapus) support.
   It has reached EOL at Jan 13, 2018.
@@ -9639,7 +9639,7 @@ Improvements
   It's executed after ``filtered`` stage generated columns are generated.
 
 Fixes
------
+^^^^^
 
 * Reduced resource usage for creating index for reference vector.
   [GitHub#806][Reported by Naoya Murakami]
@@ -9649,7 +9649,7 @@ Fixes
   [GitHub#266]
 
 Thanks
-------
+^^^^^^
 
 * 付超群
 
@@ -9658,10 +9658,10 @@ Thanks
 .. _release-7-1-0:
 
 Release 7.1.0 - 2017-12-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/commands/load`] Improved the ``load``'s
   query-log format.
@@ -9733,7 +9733,7 @@ Improvements
 * [httpd] Updated bundled nginx to 1.13.8.
 
 Fixes
------
+^^^^^
 
 * Fixed a memory leak in ``highlight_full``
 
@@ -9745,7 +9745,7 @@ Fixes
     2. ``grn_expr_append_op(GRN_OP_GET_VALUE)``
 
 Thanks
-------
+^^^^^^
 
 * takagi01
 * Naoya Murakami
@@ -9753,10 +9753,10 @@ Thanks
 .. _release-7-0-9:
 
 Release 7.0.9 - 2017-11-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Supported newer version of Apache Arrow. In this release, 0.8.0 or
   later is required for Apache Arrow support.
@@ -9790,7 +9790,7 @@ Improvements
 * [httpd] Updated bundled nginx to 1.13.7.
 
 Fixes
------
+^^^^^
 
 * [httpd] Fixed build error when old Groonga is already installed.
   [GitHub#775] [Reported by myamanishi3]
@@ -9809,7 +9809,7 @@ Fixes
   [groonga-dev,04533][Reported by Toshio Uchiyama]
 
 Thanks
-------
+^^^^^^
 
 * Murata Satoshi
 * myamanishi3
@@ -9819,10 +9819,10 @@ Thanks
 .. _release-7-0-8:
 
 Release 7.0.8 - 2017-10-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [windows] Supported backtrace on crash.
   This feature not only function call history but also source filename
@@ -9852,7 +9852,7 @@ Improvements
 * Supported Ubuntu 17.10 (Artful Aardvark)
 
 Fixes
------
+^^^^^
 
 * [dat] Fixed a bug that large file is created unexpectedly in the
   worst case during database expansion process. This bug may occurs
@@ -9869,10 +9869,10 @@ Fixes
 .. _release-7-0-7:
 
 Release 7.0.7 - 2017-09-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Supported ``+`` only query (``--query "+"``) for
   ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an
@@ -9900,7 +9900,7 @@ Improvements
   function call is cached and is wrong result for multiple requests.
 
 Fixes
------
+^^^^^
 
 * [windows] Fixed to clean up file handle correctly on failure when
   ``database_unmap`` is executed. There is a case that critical
@@ -9935,10 +9935,10 @@ Fixes
 .. _release-7-0-6:
 
 Release 7.0.6 - 2017-08-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Supported prefix match search using multiple
   indexes. (e.g. ``--query "Foo*" --match_columns
@@ -9980,7 +9980,7 @@ Improvements
 * [httpd] Updated bundled nginx to 1.13.4.
 
 Fixes
------
+^^^^^
 
 * [:doc:`/reference/commands/dump`] Fixed a bug that the 7-th unnamed
   parameter for `--sort_hash_table` option is ignored.
@@ -9993,7 +9993,7 @@ Fixes
   returned syntax error. [GitHub#751] [Patch by ryo-pinus]
 
 Thanks
-------
+^^^^^^
 
 * murata satoshi
 
@@ -10002,10 +10002,10 @@ Thanks
 .. _release-7-0-5:
 
 Release 7.0.5 - 2017-07-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [httpd] Updated bundled nginx to 1.13.3. Note that this version
   contains security fix for CVE-2017-7529.
@@ -10061,7 +10061,7 @@ Improvements
   Yak) support. It has reached EOL at July 20, 2017.
 
 Fixes
------
+^^^^^
 
 * Fixed to construct correct fulltext indexes against vector column
   which type belongs to text family (```ShortText`` and so on). This
@@ -10077,17 +10077,17 @@ Fixes
   sozaki]
 
 Thanks
-------
+^^^^^^
 
 * Naoya Murakami
 
 .. _release-7-0-4:
 
 Release 7.0.4 - 2017-06-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Added physical create/delete operation logs to identify problem for
   troubleshooting. [GitHub#700,#701]
@@ -10122,7 +10122,7 @@ Improvements
   renamed command name from ``inspect`` to ``object_inspect``.
 
 Fixes
------
+^^^^^
 
 * [rpm][centos] Fixed unexpected macro expansion problem with
   customized build. This bug only affects when rebuilding Groonga SRPM
@@ -10133,15 +10133,15 @@ Fixes
   possibility of crash bug when indexes are broken. [GitHub#699]
 
 Thanks
-------
+^^^^^^
 
 .. _release-7-0-3:
 
 Release 7.0.3 - 2017-05-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/commands/select`] Add document about
   :ref:`full-text-search-with-specific-index-name`.
@@ -10170,7 +10170,7 @@ Improvements
   * Added new function: index_column_df_ratio()
 
 Fixes
------
+^^^^^
 
 * [:doc:`/reference/commands/delete`] Fixed a bug that error isn't
   cleared correctly. It affects to following deletions so that it
@@ -10192,7 +10192,7 @@ Fixes
   min. [GitHub#698]
 
 Thanks
-------
+^^^^^^
 
 * Sergei Golubchik
 
@@ -10201,10 +10201,10 @@ Thanks
 .. _release-7-0-2:
 
 Release 7.0.2 - 2017-04-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/commands/logical_select`] Supported multiple
   :ref:`logical-select-drilldowns-label-columns-name-window-sort-keys`
@@ -10248,7 +10248,7 @@ Improvements
   support because of EOL.
 
 Fixes
------
+^^^^^
 
 * [:doc:`/reference/commands/logical_select`] Fixed a bug that wrong
   cache is used. This bug was occurred when dynamic column parameter
@@ -10267,10 +10267,10 @@ Fixes
 .. _release-7-0-1:
 
 Release 7.0.1 - 2017-03-29
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * Exported the following API
 
@@ -10372,7 +10372,7 @@ Improvements
   ``drilldown_filter``.
 
 Fixes
------
+^^^^^
 
 * [:doc:`/reference/commands/lock_clear`] Fixed a crash bug against
   temporary database.
@@ -10392,17 +10392,17 @@ Fixes
   when the max number of threads is 1.
 
 Thanks
-------
+^^^^^^
 
 * Gurunavi, Inc.
 
 .. _release-7-0-0:
 
 Release 7.0.0 - 2017-02-09
-==========================
+--------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [:doc:`/reference/functions/in_values`] Supported sequential search
   for reference vector column. [Patch by Naoya Murakami] [GitHub#629]
@@ -10462,7 +10462,7 @@ Improvements
 * [httpd] Updated bundled nginx to 1.11.9.
 
 Fixes
------
+^^^^^
 
 * Fixed a bug that nonexistent sort keys for ``drilldowns[LABEL]`` or
   ``slices[LABEL]`` causes invalid JSON parse error. [Patch by Naoya
@@ -10482,13 +10482,13 @@ Fixes
   passed. [GitHub#634][Patch by Naoya Murakami]
 
 Thanks
-------
+^^^^^^
 
 * Naoya Murakami
 * aomi-n
 
 The old releases
-================
+----------------
 
 .. toctree::
    :maxdepth: 2
