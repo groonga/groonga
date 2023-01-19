@@ -22,7 +22,7 @@ class ArticleGenerator
       }
   end
 
-  def each_latest_release_note
+  def each_latest_release_note_line
     latest_release = false
     File.open(@input_file_path, "r") do |file|
       file.each_line do |line|
@@ -38,7 +38,7 @@ class ArticleGenerator
 
   def generate_latest_release_note
     latest_release_note = ""
-    each_latest_release_note do |line|
+    each_latest_release_note_line do |line|
       latest_release_note << line
     end
     latest_release_note.gsub(/^\R\R/, "\n").strip
@@ -247,7 +247,7 @@ class FacebookArticleGenerator < ArticleGenerator
     latest_release_note = ""
     # The first line is "======", which is meaningless and should be skip.
     first = true
-    each_latest_release_note do |line|
+    each_latest_release_note_line do |line|
       if first
         first = false
         next
