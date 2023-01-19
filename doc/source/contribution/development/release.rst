@@ -352,7 +352,7 @@ MINGW-packagesはforkして自分のリポジトリを作成しておきます�
 
 forkしたリポジトリをローカルにcloneし、upstreamに本家のMINGW-packagesを登録しておきます。この作業は一度だけ行います。
 
-.. code-block:: shell
+.. code-block:: console
 
    $ mkdir -p ~/work
    $ git clone --recursive git@github.com:<your-forked-MINGW-packages>.git ~/work/MINGW-packages
@@ -361,7 +361,7 @@ forkしたリポジトリをローカルにcloneし、upstreamに本家のMINGW-
 以下の手順で必要なファイルの更新と、プルリクエスト用のブランチの作成をします。
 ``12.0.9`` は最新のGroongaのバージョンを指定します。
 
-.. code-block:: shell
+.. code-block:: console
 
    $ cd ~/work/groonga/groonga.clean/packages
    $ ./post-msys2.sh 12.0.9 $HOME/work/MINGW-packages
