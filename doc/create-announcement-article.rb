@@ -250,8 +250,7 @@ class FacebookJaArticleGenerator < FacebookArticleGenerator
     @input_file_path = "./locale/ja/text/news.txt"
     @output_file_path = "./tmp/facebook-ja-#{release_date}-groonga-#{groonga_version}.txt"
     @release_headline_regexp = ".*リリース.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*\\n=.+"
-    @start_headline = "#{groonga_version}"
-    @finish_headline = "#{groonga_previous_version}"
+
   end
 
   def generate_article
