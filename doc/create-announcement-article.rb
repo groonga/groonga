@@ -13,7 +13,7 @@ class ArticleGenerator
 
   def generate_article
     template = generate_template
-    latest_release_note = generate_latest_release_note
+    latest_release_note = extract_latest_release_note
     template % {
         groonga_version:@groonga_version, 
         groonga_version_in_link:@groonga_version_in_link, 
@@ -22,7 +22,7 @@ class ArticleGenerator
       }
   end
 
-  def generate_latest_release_note
+  def extract_latest_release_note
     latest_release_note = File.read(@input_file_path).split(/#{@release_headline_regexp}/)[1]
     latest_release_note.gsub(/^\R\R/, "\n").strip
   end
@@ -36,7 +36,7 @@ class ArticleGenerator
 end
 
 class MarkdownArticleGenerator < ArticleGenerator
-  def generate_latest_release_note
+  def extract_latest_release_note
     super
   end
 end
@@ -214,7 +214,7 @@ class FacebookArticleGenerator < ArticleGenerator
 
   def generate_article
     template = generate_template
-    latest_release_note = generate_latest_release_note
+    latest_release_note = extract_latest_release_note
     template % {
         groonga_version:@groonga_version, 
         groonga_version_in_link:@groonga_version_in_link, 
@@ -223,7 +223,7 @@ class FacebookArticleGenerator < ArticleGenerator
       }
   end
 
-  def generate_latest_release_note
+  def extract_latest_release_note
     super
   end
 end
