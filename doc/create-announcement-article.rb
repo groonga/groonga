@@ -11,18 +11,18 @@ class ArticleGenerator
     @release_date_in_link = release_date.gsub("-", "/")
   end
 
-  def get_article
+  def generate_article
     template = get_template
-    changes = get_changes
+    latest_release_note = generate_latest_release_note
     template % {
         groonga_version:@groonga_version, 
         groonga_version_in_link:@groonga_version_in_link, 
-        changes: changes,
+        latest_release_note: latest_release_note,
         link_prefix: @link_prefix
       }
   end
 
-  def enumerate_changes
+  def each_latest_release_note
     latest_release = false
     File.open(@input_file_path, "r") do |file|
       file.each_line do |line|
@@ -36,26 +36,26 @@ class ArticleGenerator
     end
   end
 
-  def get_changes
-    changes = ""
-    enumerate_changes do |line|
-      changes << line
+  def generate_latest_release_note
+    latest_release_note = ""
+    each_latest_release_note do |line|
+      latest_release_note << line
     end
-    changes.gsub(/^\R\R/, "\n").strip
+    latest_release_note.gsub(/^\R\R/, "\n").strip
   end
 
   def output_file
     File.open(@output_file_path, "w") do |file|
-      article = get_article
+      article = generate_article
       file.puts(article)
     end
   end
 end
 
 class MarkdownArticleGenerator < ArticleGenerator
-  def get_changes
-    changes = super
-    changes.gsub(/(\[.+?\])\((.+?).md(.*?\))/, "\\1(#{@link_prefix}/\\2.html\\3")
+  def generate_latest_release_note
+    latest_release_note = super
+    latest_release_note.gsub(/(\[.+?\])\((.+?).md(.*?\))/, "\\1(#{@link_prefix}/\\2.html\\3")
   end
 end
 
@@ -79,7 +79,7 @@ How to install: [Install](%<link_prefix>s/install.html)
 
 Here are important changes in this release:
 
-%<changes>s
+%<latest_release_note>s
 
 ### Known Issues
 
@@ -124,7 +124,7 @@ class MarkdownJaArticleGenerator < MarkdownArticleGenerator
     
 主な変更点は以下の通りです。
 
-%<changes>s
+%<latest_release_note>s
 
 ### 既知の問題
 
@@ -232,29 +232,29 @@ class FacebookArticleGenerator < ArticleGenerator
     super
   end
 
-  def get_article
+  def generate_article
     template = get_template
-    changes = get_changes
+    latest_release_note = generate_latest_release_note
     template % {
         groonga_version:@groonga_version, 
         groonga_version_in_link:@groonga_version_in_link, 
-        changes: changes,
+        latest_release_note: latest_release_note,
         release_date_in_link: @release_date_in_link
       }
   end
 
-  def get_changes
-    changes = ""
+  def generate_latest_release_note
+    latest_release_note = ""
     # The first line is "======", which is meaningless and should be skip.
     first = true
-    enumerate_changes do |line|
+    each_latest_release_note do |line|
       if first
         first = false
         next
       end
-      changes << line
+      latest_release_note << line
     end
-    changes.gsub(/^\R\R/, "\n").strip
+    latest_release_note.gsub(/^\R\R/, "\n").strip
   end
 end
 
@@ -281,7 +281,7 @@ Characteristics: https://groonga.org/docs/characteristic.html
     
 The topics in this release:
 
-%<changes>s
+%<latest_release_note>s
 
 Known Issues
 ============
@@ -322,7 +322,7 @@ Groonga %<groonga_version>s をリリースしました！
 
 主な変更点は以下の通りです。
 
-%<changes>s
+%<latest_release_note>s
 
 既知の問題
 ==========
@@ -339,7 +339,7 @@ Groonga %<groonga_version>s をリリースしました！
 end
 
 class TwitterArticleBaseGenerator < ArticleGenerator
-  def get_article
+  def generate_article
     template = get_template
     template % {
         groonga_version:@groonga_version, 
