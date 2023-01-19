@@ -44,7 +44,7 @@ class ArticleGenerator
     latest_release_note.gsub(/^\R\R/, "\n").strip
   end
 
-  def output_file
+  def generate
     File.open(@output_file_path, "w") do |file|
       article = generate_article
       file.puts(article)
@@ -207,7 +207,7 @@ class DiscussionsEnArticleGenerator < MarkdownEnArticleGenerator
     @link_prefix = "https://groonga.org/docs"
   end
 
-  def output_file
+  def generate
     Dir.mkdir("./tmp") unless Dir.exist?("./tmp")
     super
   end
@@ -220,14 +220,14 @@ class DiscussionsJaArticleGenerator < MarkdownJaArticleGenerator
     @link_prefix = "https://groonga.org/ja/docs"
   end
 
-  def output_file
+  def generate
     Dir.mkdir("./tmp") unless Dir.exist?("./tmp")
     super
   end
 end
 
 class FacebookArticleGenerator < ArticleGenerator
-  def output_file
+  def generate
     Dir.mkdir("./tmp") unless Dir.exist?("./tmp")
     super
   end
@@ -398,7 +398,7 @@ generator_class_list.each do |generator_class|
                                   option[:groonga_version], 
                                   option[:groonga_previous_version],
                                   option[:groonga_org_repository])
-  generator.output_file
+  generator.generate
   puts generator.output_file_path
 end
 
