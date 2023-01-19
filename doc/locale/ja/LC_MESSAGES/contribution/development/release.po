@@ -69,15 +69,15 @@ msgstr ""
 
 msgid ""
 "なお、ビルド環境としては Debian GNU/Linux (sid)を前提として説明しているため、"
-"その他の環境では適宜読み替えて下さい。::"
+"その他の環境では適宜読み替えて下さい。"
 msgstr ""
 
 msgid ""
 "また、Sphinxは常に最新のバージョンを使う事を推奨します。 ``pip3`` を使用して"
-"最新のSphinxをインストールするようにして下さい。::"
+"最新のSphinxをインストールするようにして下さい。"
 msgstr ""
 
-msgid "また、rubyのrakeパッケージを以下のコマンドによりインストールします。::"
+msgid "また、rubyのrakeパッケージを以下のコマンドによりインストールします。"
 msgstr ""
 
 msgid "パッケージ署名用秘密鍵のインポート"
@@ -97,12 +97,12 @@ msgstr ""
 
 msgid ""
 "リリース担当者はリポジトリに登録された秘密鍵を復号した後に鍵のインポートを以"
-"下のコマンドにて行います。::"
+"下のコマンドにて行います。"
 msgstr ""
 
 msgid ""
 "鍵のインポートが正常終了すると gpg --list-keys でGroongaの署名用の鍵を確認す"
-"ることができます。::"
+"ることができます。"
 msgstr ""
 
 msgid ""
@@ -110,7 +110,7 @@ msgid ""
 "てtrust,signを行う必要があります。"
 msgstr ""
 
-msgid "以下のコマンドを実行して署名を行います。(途中の選択肢は省略)::"
+msgid "以下のコマンドを実行して署名を行います。(途中の選択肢は省略)"
 msgstr ""
 
 msgid ""
@@ -156,7 +156,7 @@ msgstr ""
 
 msgid ""
 "リリース用のクリーンな状態でソースコードを取得するために$GROONGA_DIRにて以下"
-"のコマンドを実行します。::"
+"のコマンドを実行します。"
 msgstr ""
 
 msgid "この作業はリリース作業ごとに行います。"
@@ -177,7 +177,7 @@ msgstr ""
 
 msgid ""
 "Groongaのウェブサイトのソースコードを$GROONGA_ORG_PATHとして取得するために"
-"は、$GROONGA_DIRにて以下のコマンドを実行します。::"
+"は、$GROONGA_DIRにて以下のコマンドを実行します。"
 msgstr ""
 
 msgid "これで、$GROONGA_ORG_PATHにgroonga.orgのソースを取得できます。"
@@ -191,7 +191,7 @@ msgstr ""
 
 msgid ""
 "そこであらかじめ用意しておいた$HOME/work/cutterディレクトリにてcutterのソース"
-"コードを以下のコマンドにて取得します。::"
+"コードを以下のコマンドにて取得します。"
 msgstr ""
 
 msgid "これで、$CUTTER_SOURCE_PATHディレクトリにcutterのソースを取得できます。"
@@ -205,7 +205,7 @@ msgid ""
 "そのままmakeコマンドにてビルドすることができません。"
 msgstr ""
 
-msgid "$GROONGA_CLONE_DIRにてautogen.shを以下のように実行します。::"
+msgid "$GROONGA_CLONE_DIRにてautogen.shを以下のように実行します。"
 msgstr ""
 
 msgid "このコマンドの実行により、configureスクリプトが生成されます。"
@@ -219,7 +219,7 @@ msgstr ""
 
 msgid ""
 "リリース用にビルドするためには以下のオプションを指定してconfigureを実行しま"
-"す。::"
+"す。"
 msgstr ""
 
 msgid ""
@@ -234,7 +234,7 @@ msgstr ""
 
 msgid ""
 "以下のようにGroongaのソースコードをcloneした先からの相対パスを指定することも"
-"できます。::"
+"できます。"
 msgstr ""
 
 msgid ""
@@ -242,7 +242,7 @@ msgid ""
 "ておいてください。"
 msgstr ""
 
-msgid "ログイン可能であるかの確認は以下のようにコマンドを実行して行います。::"
+msgid "ログイン可能であるかの確認は以下のようにコマンドを実行して行います。"
 msgstr ""
 
 msgid ""
@@ -269,7 +269,7 @@ msgid ""
 "まとめます。 ここでまとめた内容についてはリリースアナウンスにも使用します。"
 msgstr ""
 
-msgid "前回リリースからの変更履歴を参照するには以下のコマンドを実行します。::"
+msgid "前回リリースからの変更履歴を参照するには以下のコマンドを実行します。"
 msgstr ""
 
 msgid ""
@@ -299,7 +299,7 @@ msgid ""
 "付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。"
 msgstr ""
 
-msgid "2.0.2のリリースを行った際は以下のコマンドを実行しました。::"
+msgid "2.0.2のリリースを行った際は以下のコマンドを実行しました。"
 msgstr ""
 
 msgid ""
@@ -313,7 +313,7 @@ msgstr ""
 
 msgid ""
 "Ubuntu向けのパッケージは、LaunchPadでビルドしています。 リリース前にUbuntu向"
-"けパッケージが正常にビルドできるか以下の手順で確認します。::"
+"けパッケージが正常にビルドできるか以下の手順で確認します。"
 msgstr ""
 
 msgid "各種テストの確認"
@@ -341,7 +341,7 @@ msgstr ""
 msgid "リリースタグの設定"
 msgstr ""
 
-msgid "リリース用のタグを打つには以下のコマンドを実行します。::"
+msgid "リリース用のタグを打つには以下のコマンドを実行します。"
 msgstr ""
 
 msgid ""
@@ -360,7 +360,7 @@ msgstr ""
 
 msgid ""
 "タグを設定すると、GitHub Actionsで自動生成されます。 GitHub Actionsでソース"
-"アーカイブが自動生成されたのを確認したら以下の手順でアップロードします。::"
+"アーカイブが自動生成されたのを確認したら以下の手順でアップロードします。"
 msgstr ""
 
 msgid ""
@@ -394,12 +394,12 @@ msgstr ""
 
 msgid ""
 "GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、"
-"packages.groonga.orgへアップロードします。::"
+"packages.groonga.orgへアップロードします。"
 msgstr ""
 
 msgid ""
 "この段階では、ビルドしたパッケージは未署名なの"
-"で、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::"
+"で、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。"
 msgstr ""
 
 msgid ""
@@ -413,10 +413,10 @@ msgstr ""
 msgid ""
 "Ubuntu向けパッケージの作成には、作業マシン上にGroongaのビルドに必要な依存ソフ"
 "トウェア一式がインストールされている必要があります。以下のようにしてインス"
-"トールしておいて下さい。::"
+"トールしておいて下さい。"
 msgstr ""
 
-msgid "Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::"
+msgid "Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。"
 msgstr ""
 
 msgid ""
@@ -444,12 +444,8 @@ msgid "Red Hat系パッケージのビルドとアップロード"
 msgstr ""
 
 msgid ""
-"タグを設定すると、GitHub Actionsで自動生成されます。 "
-msgstr ""
-
-msgid ""
 "この段階では、ビルドしたパッケージはまだ未署名なの"
-"で、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::"
+"で、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。"
 msgstr ""
 
 msgid "Windows用パッケージのビルドとアップロード"
@@ -458,7 +454,7 @@ msgstr ""
 msgid ""
 "タグを設定すると、GitHub Actionsで自動生成されます。 GitHub Actionsでパッケー"
 "ジが自動生成されたのを確認したら以下の手順で、packages.groonga.orgからGitHub "
-"Actionsへのリンクを作成します。::"
+"Actionsへのリンクを作成します。"
 msgstr ""
 
 msgid ""
@@ -527,12 +523,12 @@ msgstr ""
 
 msgid ""
 "以下は、Groongaのバージョンが ``12.0.9`` の場合の例です。作業時には最新のバー"
-"ジョンを指定してください。::"
+"ジョンを指定してください。"
 msgstr ""
 
 msgid ""
 "`GroongaのDockerリポジトリーのGithub Actions <https://github.com/groonga/"
-"docker/actions>`_ が成功しているのを確認してから、タグをpushします。::"
+"docker/actions>`_ が成功しているのを確認してから、タグをpushします。"
 msgstr ""
 
 msgid ""
@@ -618,12 +614,12 @@ msgstr ""
 msgid ""
 "編集した内容をpushする前に確認したい場合にはJekyllおよびRedCloth（Textileパー"
 "サー）、RDiscount（Markdownパーサー）、JavaScript interpreter（therubyracer、"
-"Node.jsなど）が必要です。 インストールするには以下のコマンドを実行します。::"
+"Node.jsなど）が必要です。 インストールするには以下のコマンドを実行します。"
 msgstr ""
 
 msgid ""
 "jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを起動しま"
-"す。::"
+"す。"
 msgstr ""
 
 msgid ""
@@ -633,7 +629,7 @@ msgstr ""
 
 msgid ""
 "記事を非公開の状態でアップロードするには.mdファイルのpublished:をfalseに設定"
-"します。::"
+"します。"
 msgstr ""
 
 msgid "ドキュメントのアップロード"
@@ -646,7 +642,7 @@ msgstr ""
 
 msgid ""
 "そのためにはまず ``groonga`` のリポジトリをカレントディレクトリにして以下のコ"
-"マンドを実行します。::"
+"マンドを実行します。"
 msgstr ""
 
 msgid ""
@@ -662,7 +658,7 @@ msgstr ""
 
 msgid ""
 "また、 ``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョ"
-"ン番号と日付を表す情報の指定があるので、これらも更新します。::"
+"ン番号と日付を表す情報の指定があるので、これらも更新します。"
 msgstr ""
 
 msgid "Homebrewの更新"
@@ -759,7 +755,7 @@ msgstr ""
 msgid "Groonga バージョン更新"
 msgstr ""
 
-msgid "$GROONGA_CLONE_DIRにて以下のコマンドを実行します。::"
+msgid "$GROONGA_CLONE_DIRにて以下のコマンドを実行します。"
 msgstr ""
 
 msgid ""

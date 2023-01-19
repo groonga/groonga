@@ -31,17 +31,23 @@
 以下にGroongaのリリース作業を行うために事前にインストール
 しておくべきパッケージを示します。
 
-なお、ビルド環境としては Debian GNU/Linux (sid)を前提として説明しているため、その他の環境では適宜読み替えて下さい。::
+なお、ビルド環境としては Debian GNU/Linux (sid)を前提として説明しているため、その他の環境では適宜読み替えて下さい。
 
-    % sudo apt-get install -V debootstrap createrepo rpm mercurial python-docutils python-jinja2 ruby-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2 dh-autoreconf bison
+.. code-block:: console
 
-また、Sphinxは常に最新のバージョンを使う事を推奨します。 ``pip3`` を使用して最新のSphinxをインストールするようにして下さい。::
+   $ sudo apt-get install -V debootstrap createrepo rpm mercurial python-docutils python-jinja2 ruby-full mingw-w64 g++-mingw-w64 mecab libmecab-dev nsis gnupg2 dh-autoreconf bison
 
-    % pip3 install --upgrade sphinx
+また、Sphinxは常に最新のバージョンを使う事を推奨します。 ``pip3`` を使用して最新のSphinxをインストールするようにして下さい。
 
-また、rubyのrakeパッケージを以下のコマンドによりインストールします。::
+.. code-block:: console
 
-    % sudo gem install rake
+   $ pip3 install --upgrade sphinx
+
+また、rubyのrakeパッケージを以下のコマンドによりインストールします。
+
+.. code-block:: console
+
+   $ sudo gem install rake
 
 パッケージ署名用秘密鍵のインポート
 ----------------------------------
@@ -51,29 +57,35 @@
 
 Groongaプロジェクトでは署名用の鍵をリリース担当者の公開鍵で暗号化してリポジトリのpackages/ディレクトリ以下へと登録しています。新しいリリース担当者に任命されたばかりで、まだ自分用に暗号化された鍵が無い場合には、他のリリース担当者に依頼して署名用の鍵を暗号化してもらって下さい。
 
-リリース担当者はリポジトリに登録された秘密鍵を復号した後に鍵のインポートを以下のコマンドにて行います。::
+リリース担当者はリポジトリに登録された秘密鍵を復号した後に鍵のインポートを以下のコマンドにて行います。
 
-    % cd packages
-    % gpg --decrypt release-key-secret.asc.gpg.(担当者) > (復号した鍵
-    ファイル)
-    % gpg --import  (復号した鍵ファイル)
+.. code-block:: console
 
-鍵のインポートが正常終了すると gpg --list-keys でGroongaの署名用の鍵を確認することができます。::
+   $ cd packages
+   $ gpg --decrypt release-key-secret.asc.gpg.(担当者) > (復号した鍵ファイル)
+   $ gpg --import  (復号した鍵ファイル)
 
-    pub   1024R/F10399C0 2012-04-24
-    uid                  groonga Key (groonga Official Signing Key)
-    <packages@groonga.org>
-    sub   1024R/BC009774 2012-04-24
+鍵のインポートが正常終了すると gpg --list-keys でGroongaの署名用の鍵を確認することができます。
+
+.. code-block:: console
+
+   $ gpg --list-keys
+   pub   1024R/F10399C0 2012-04-24
+   uid                  groonga Key (groonga Official Signing Key)
+   <packages@groonga.org>
+   sub   1024R/BC009774 2012-04-24
 
 鍵をインポートしただけでは使用することができないため、インポートした鍵に対してtrust,signを行う必要があります。
 
-以下のコマンドを実行して署名を行います。(途中の選択肢は省略)::
+以下のコマンドを実行して署名を行います。(途中の選択肢は省略)
 
-    % gpg --edit-key packages@groonga.org
-    gpg> trust
-    gpg> sign
-    gpg> save
-    gpg> quit
+.. code-block:: console
+
+   $ gpg --edit-key packages@groonga.org
+   gpg> trust
+   gpg> sign
+   gpg> save
+   gpg> quit
 
 この作業は、新規にリリースを行うことになった担当者やパッケージに署名する鍵に変更があった場合などに行います。
 
@@ -101,9 +113,11 @@ Groongaのリリース作業ではリリース専用の環境下(コンパイル
 Groongaのソースコード取得
 -------------------------
 
-リリース用のクリーンな状態でソースコードを取得するために$GROONGA_DIRにて以下のコマンドを実行します。::
+リリース用のクリーンな状態でソースコードを取得するために$GROONGA_DIRにて以下のコマンドを実行します。
 
-    % git clone --recursive git@github.com:groonga/groonga.git groonga.clean
+.. code-block:: console
+
+   $ git clone --recursive git@github.com:groonga/groonga.git groonga.clean
 
 この作業はリリース作業ごとに行います。
 
@@ -114,9 +128,11 @@ GroongaのウェブサイトのソースはGroonga同様にGitHubにリポジト
 
 リリース作業では後述するコマンド(make update-latest-release)にてトップページのバージョンを置き換えることができるようになっています。
 
-Groongaのウェブサイトのソースコードを$GROONGA_ORG_PATHとして取得するためには、$GROONGA_DIRにて以下のコマンドを実行します。::
+Groongaのウェブサイトのソースコードを$GROONGA_ORG_PATHとして取得するためには、$GROONGA_DIRにて以下のコマンドを実行します。
 
-    % git clone git@github.com:groonga/groonga.org.git
+.. code-block:: console
+
+   $ git clone git@github.com:groonga/groonga.org.git
 
 これで、$GROONGA_ORG_PATHにgroonga.orgのソースを取得できます。
 
@@ -125,9 +141,11 @@ cutterのソースコード取得
 
 Groongaのリリース作業では、cutterに含まれるスクリプトを使用しています。
 
-そこであらかじめ用意しておいた$HOME/work/cutterディレクトリにてcutterのソースコードを以下のコマンドにて取得します。::
+そこであらかじめ用意しておいた$HOME/work/cutterディレクトリにてcutterのソースコードを以下のコマンドにて取得します。
 
-    % git clone git@github.com:clear-code/cutter.git
+.. code-block:: console
+
+   $ git clone git@github.com:clear-code/cutter.git
 
 これで、$CUTTER_SOURCE_PATHディレクトリにcutterのソースを取得できます。
 
@@ -136,9 +154,11 @@ configureスクリプトの生成
 
 Groongaのソースコードをcloneした時点ではconfigureスクリプトが含まれておらず、そのままmakeコマンドにてビルドすることができません。
 
-$GROONGA_CLONE_DIRにてautogen.shを以下のように実行します。::
+$GROONGA_CLONE_DIRにてautogen.shを以下のように実行します。
 
-    % sh autogen.sh
+.. code-block:: console
+
+   $ sh autogen.sh
 
 このコマンドの実行により、configureスクリプトが生成されます。
 
@@ -147,37 +167,43 @@ configureスクリプトの実行
 
 Makefileを生成するためにconfigureスクリプトを実行します。
 
-リリース用にビルドするためには以下のオプションを指定してconfigureを実行します。::
+リリース用にビルドするためには以下のオプションを指定してconfigureを実行します。
 
-    % ./configure \
-          --prefix=/tmp/local \
-          --with-launchpad-uploader-pgp-key=(Launchpadに登録したkeyID) \
-          --with-groonga-org-path=$HOME/work/groonga/groonga.org \
-          --enable-document \
-          --with-ruby \
-          --enable-mruby \
-          --with-cutter-source-path=$HOME/work/cutter/cutter
+.. code-block:: console
+
+   $ ./configure \
+         --prefix=/tmp/local \
+         --with-launchpad-uploader-pgp-key=(Launchpadに登録したkeyID) \
+         --with-groonga-org-path=$HOME/work/groonga/groonga.org \
+         --enable-document \
+         --with-ruby \
+         --enable-mruby \
+         --with-cutter-source-path=$HOME/work/cutter/cutter
 
 configureオプションである--with-groonga-org-pathにはGroongaのウェブサイトのリポジトリをcloneした場所を指定します。
 
 configureオプションである--with-cutter-source-pathにはcutterのソースをcloneした場所を指定します。
 
-以下のようにGroongaのソースコードをcloneした先からの相対パスを指定することもできます。::
+以下のようにGroongaのソースコードをcloneした先からの相対パスを指定することもできます。
 
-    % ./configure \
-          --prefix=/tmp/local \
-          --with-launchpad-uploader-pgp-key=(Launchpadに登録したkeyID) \
-          --with-groonga-org-path=../groonga.org \
-          --enable-document \
-          --with-ruby \
-          --enable-mruby \
-          --with-cutter-source-path=../../cutter/cutter
+.. code-block:: console
+
+   $ ./configure \
+         --prefix=/tmp/local \
+         --with-launchpad-uploader-pgp-key=(Launchpadに登録したkeyID) \
+         --with-groonga-org-path=../groonga.org \
+         --enable-document \
+         --with-ruby \
+         --enable-mruby \
+         --with-cutter-source-path=../../cutter/cutter
 
 あらかじめpackagesユーザでpackages.groonga.orgにsshログインできることを確認しておいてください。
 
-ログイン可能であるかの確認は以下のようにコマンドを実行して行います。::
+ログイン可能であるかの確認は以下のようにコマンドを実行して行います。
 
-    % ssh packages@packages.groonga.org
+.. code-block:: console
+
+   $ ssh packages@packages.groonga.org
 
 Ubuntu向けパッケージをテスト用に公開する時は、 :ref:`build-for-ubuntu-nightly` の手順で不安定版のリポジトリにアップロードするように指定します。
 
@@ -191,9 +217,11 @@ PPAのリポジトリは、同名のパッケージを上書いてアップロ�
 前回リリース時からの変更点を$GROONGA_CLONE_DIR/doc/source/news.rst（英語）にまとめます。
 ここでまとめた内容についてはリリースアナウンスにも使用します。
 
-前回リリースからの変更履歴を参照するには以下のコマンドを実行します。::
+前回リリースからの変更履歴を参照するには以下のコマンドを実行します。
 
-   % git log -p --reverse $(git tag --sort=taggerdate | tail -1)..
+.. code-block:: console
+
+   $ git log -p --reverse $(git tag --sort=taggerdate | tail -1)..
 
 ログを^commitで検索しながら、以下の基準を目安として変更点を追記していきます。
 
@@ -211,9 +239,11 @@ make update-latest-releaseの実行
 
 make update-latest-releaseコマンドでは、OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。
 
-2.0.2のリリースを行った際は以下のコマンドを実行しました。::
+2.0.2のリリースを行った際は以下のコマンドを実行しました。
 
-   % make update-latest-release OLD_RELEASE=2.0.1 OLD_RELEASE_DATE=2012-03-29 NEW_RELEASE_DATE=2012-04-29
+.. code-block:: console
+
+   $ make update-latest-release OLD_RELEASE=2.0.1 OLD_RELEASE_DATE=2012-03-29 NEW_RELEASE_DATE=2012-04-29
 
 これにより、clone済みのGroongaのWebサイトのトップページのソース(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。
 
@@ -223,11 +253,13 @@ Ubuntu向けパッケージのビルド確認
 --------------------------------
 
 Ubuntu向けのパッケージは、LaunchPadでビルドしています。
-リリース前にUbuntu向けパッケージが正常にビルドできるか以下の手順で確認します。::
+リリース前にUbuntu向けパッケージが正常にビルドできるか以下の手順で確認します。
 
-   % make dist
-   % cd packages
-   % rake ubuntu DPUT_CONFIGURATION_NAME=groonga-ppa-nightly DPUT_INCOMING="~groonga/ubuntu/nightly" LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
+.. code-block:: console
+
+   $ make dist
+   $ cd packages
+   $ rake ubuntu DPUT_CONFIGURATION_NAME=groonga-ppa-nightly DPUT_INCOMING="~groonga/ubuntu/nightly" LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
 
 各種テストの確認
 ----------------
@@ -243,10 +275,12 @@ Ubuntu向けのパッケージは、LaunchPadでビルドしています。
 リリースタグの設定
 ------------------
 
-リリース用のタグを打つには以下のコマンドを実行します。::
+リリース用のタグを打つには以下のコマンドを実行します。
 
-    % make tag
-    % git push --tags origin
+.. code-block:: console
+
+   $ make tag
+   $ git push --tags origin
 
 .. note::
    タグを打った後にconfigureを実行することで、ドキュメント生成時のバージョン番号に反映されます。
@@ -258,10 +292,12 @@ Groongaのリリース用アーカイブファイルは、MroongaやPGroonga、R
 生成でき次第アップロードしておくと、関連プロダクトのリリース作業がしやすくなります。
 
 タグを設定すると、GitHub Actionsで自動生成されます。
-GitHub Actionsでソースアーカイブが自動生成されたのを確認したら以下の手順でアップロードします。::
+GitHub Actionsでソースアーカイブが自動生成されたのを確認したら以下の手順でアップロードします。
 
-    % cd packages
-    % rake source
+.. code-block:: console
+
+   $ cd packages
+   $ rake source
 
 これにより、GitHub Actionsで生成したソースアーカイブを $GROONGA_CLONE_DIR/groonga-(バージョン).tar.gz
 にダウンロードし packages.groonga.org へアップロードします。
@@ -281,28 +317,36 @@ Debian系パッケージのビルドとアップロード
 
 タグを設定すると、GitHub Actionsで自動生成されます。
 
-GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。::
+GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。
 
-    % cd packages
-    % rake apt
+.. code-block:: console
 
-この段階では、ビルドしたパッケージは未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
+   $ cd packages
+   $ rake apt
 
-    % rake apt
+この段階では、ビルドしたパッケージは未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。
+
+.. code-block:: console
+
+   $ rake apt
 
 上記のコマンドを実行することで、リポジトリーの同期、パッケージの署名、リポジトリーの更新、アップロードまで実行できます。
 
 Ubuntu用パッケージのアップロード
 --------------------------------
 
-Ubuntu向けパッケージの作成には、作業マシン上にGroongaのビルドに必要な依存ソフトウェア一式がインストールされている必要があります。以下のようにしてインストールしておいて下さい。::
+Ubuntu向けパッケージの作成には、作業マシン上にGroongaのビルドに必要な依存ソフトウェア一式がインストールされている必要があります。以下のようにしてインストールしておいて下さい。
 
-    % sudo apt build-dep groonga
+.. code-block:: console
 
-Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。::
+   $ sudo apt build-dep groonga
 
-    % cd packages
-    % rake ubuntu LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
+Ubuntu向けのパッケージのアップロードには以下のコマンドを実行します。
+
+.. code-block:: console
+
+   $ cd packages
+   $ rake ubuntu LAUNCHPAD_UPLOADER_PGP_KEY=xxxxxxx
 
 アップロードが正常終了すると、launchpad.net上でビルドが実行され、ビルド結果がメールで通知されます。ビルドに成功すると、リリース対象のパッケージがlaunchpad.netのGroongaチームのPPAへと反映されます。公開されているパッケージは以下のURLで確認できます。
 
@@ -320,14 +364,18 @@ Red Hat系パッケージのビルドとアップロード
 
 タグを設定すると、GitHub Actionsで自動生成されます。
 
-GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。::
+GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgへアップロードします。
 
-    % cd packages
-    % rake yum
+.. code-block:: console
 
-この段階では、ビルドしたパッケージはまだ未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。::
+   $ cd packages
+   $ rake yum
 
-    % rake yum
+この段階では、ビルドしたパッケージはまだ未署名なので、$PACKAGES_GROONGA_ORG_REPOSITORYに移動し、以下のコマンドを実行します。
+
+.. code-block:: console
+
+   $ rake yum
 
 上記のコマンドを実行することで、リポジトリーの同期、パッケージの署名、リポジトリーの更新、アップロードまで実行できます。
 
@@ -335,10 +383,12 @@ Windows用パッケージのビルドとアップロード
 -----------------------------------------
 
 タグを設定すると、GitHub Actionsで自動生成されます。
-GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgからGitHub Actionsへのリンクを作成します。::
+GitHub Actionsでパッケージが自動生成されたのを確認したら以下の手順で、packages.groonga.orgからGitHub Actionsへのリンクを作成します。
 
-    % cd packages
-    % rake windows
+.. code-block:: console
+
+   $ cd packages
+   $ rake windows
 
 packages.groonga.org上にWindows版の最新パッケージへリダイレクトする ``.htaccess`` が作成されます。
 
@@ -374,18 +424,22 @@ Dockerイメージの更新
 
 `GroongaのDockerリポジトリー <https://github.com/groonga/docker>`_ をクローンし、リポジトリーの中のDockerfileを更新します。
 
-以下は、Groongaのバージョンが ``12.0.9`` の場合の例です。作業時には最新のバージョンを指定してください。::
+以下は、Groongaのバージョンが ``12.0.9`` の場合の例です。作業時には最新のバージョンを指定してください。
 
-    % mkdir -p ~/work/groonga
-    % rm -rf ~/work/groonga/docker.clean
-    % git clone --recursive git@github.com:groonga/docker.git ~/work/groonga/docker.clean
-    % cd ~/work/groonga/docker.clean
-    % ./update.sh 12.0.9 #Automatically update Dockerfiles and commit changes and create a tag.
-    % git push
+.. code-block:: console
 
-`GroongaのDockerリポジトリーのGithub Actions <https://github.com/groonga/docker/actions>`_ が成功しているのを確認してから、タグをpushします。::
+   $ mkdir -p ~/work/groonga
+   $ rm -rf ~/work/groonga/docker.clean
+   $ git clone --recursive git@github.com:groonga/docker.git ~/work/groonga/docker.clean
+   $ cd ~/work/groonga/docker.clean
+   $ ./update.sh 12.0.9 #Automatically update Dockerfiles and commit changes and create a tag.
+   $ git push
 
-    % git push --tags
+`GroongaのDockerリポジトリーのGithub Actions <https://github.com/groonga/docker/actions>`_ が成功しているのを確認してから、タグをpushします。
+
+.. code-block:: console
+
+   $ git push --tags
 
 pushすると、 GroongaのDockerリポジトリーのGithub Actions が Docker HubのGroonga のDockerイメージを自動で更新します。
 
@@ -433,24 +487,30 @@ cloneしたWebサイトのソースに対して以下のファイルを新規追
 
 
 編集した内容をpushする前に確認したい場合にはJekyllおよびRedCloth（Textileパーサー）、RDiscount（Markdownパーサー）、JavaScript interpreter（therubyracer、Node.jsなど）が必要です。
-インストールするには以下のコマンドを実行します。::
+インストールするには以下のコマンドを実行します。
 
-    % sudo gem install jekyll jekyll-paginate RedCloth rdiscount therubyracer
+.. code-block:: console
 
-jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを起動します。::
+   $ sudo gem install jekyll jekyll-paginate RedCloth rdiscount therubyracer
 
-    % jekyll serve --watch
+jekyllのインストールを行ったら、以下のコマンドでローカルにwebサーバを起動します。
+
+.. code-block:: console
+
+   $ jekyll serve --watch
 
 あとはブラウザにてhttp://localhost:4000にアクセスして内容に問題がないかを確認します。
 
 .. note::
-   記事を非公開の状態でアップロードするには.mdファイルのpublished:をfalseに設定します。::
+   記事を非公開の状態でアップロードするには.mdファイルのpublished:をfalseに設定します。
 
-    ---
-    layout: post.en
-    title: Groonga 2.0.5 has been released
-    published: false
-    ---
+   .. code-block:: markdown
+    
+      ---
+      layout: post.en
+      title: Groonga 2.0.5 has been released
+      published: false
+      ---
 
 
 ドキュメントのアップロード
@@ -458,17 +518,21 @@ jekyllのインストールを行ったら、以下のコマンドでローカ�
 
 doc/source以下のドキュメントを更新、翻訳まで完了している状態で、ドキュメントのアップロード作業を行います。
 
-そのためにはまず ``groonga`` のリポジトリをカレントディレクトリにして以下のコマンドを実行します。::
+そのためにはまず ``groonga`` のリポジトリをカレントディレクトリにして以下のコマンドを実行します。
 
-    % GROONGA_VERSION=$(git tag --sort=taggerdate | tail -n 1 | tr -d v)
-    % make update-document DOCUMENT_VERSION=$GROONGA_VERSION DOCUMENT_VERSION_FULL=$GROONGA_VERSION
+.. code-block:: console
+
+   $ GROONGA_VERSION=$(git tag --sort=taggerdate | tail -n 1 | tr -d v)
+   $ make update-document DOCUMENT_VERSION=$GROONGA_VERSION DOCUMENT_VERSION_FULL=$GROONGA_VERSION
 
 ここでは最新のtagに基づいてリリースバージョンを調べ、明示的にそのバージョンを指定してドキュメントを更新するようにしています。
 これによりcloneしておいたgroonga.orgのdoc/locale以下に更新したドキュメントがコピーされます。
 
 生成されているドキュメントに問題のないことを確認できたら、コミット、pushしてgroonga.orgへと反映します。
 
-また、 ``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョン番号と日付を表す情報の指定があるので、これらも更新します。::
+また、 ``groonga.org`` リポジトリの ``_config.yml`` に最新リリースのバージョン番号と日付を表す情報の指定があるので、これらも更新します。
+
+.. code-block:: console
 
     groonga_version: x.x.x
     groonga_release_date: xxxx-xx-xx
@@ -532,9 +596,11 @@ Groongaグループのメンバーになると、個人のアカウントでは�
 Groonga バージョン更新
 ~~~~~~~~~~~~~~~~~~~~~~
 
-$GROONGA_CLONE_DIRにて以下のコマンドを実行します。::
+$GROONGA_CLONE_DIRにて以下のコマンドを実行します。
 
-    % make update-version NEW_VERSION=2.0.6
+.. code-block:: console
+
+   $ make update-version NEW_VERSION=2.0.6
 
 これにより$GROONGA_CLONE_DIR/base_versionが更新されるのでコミットしておきます。
 
