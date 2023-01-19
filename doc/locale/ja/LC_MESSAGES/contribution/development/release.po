@@ -476,11 +476,36 @@ msgid ""
 msgstr ""
 
 msgid ""
-"forkしたリポジトリにて ``mingw-w64-groonga/PKGBUILD`` を以下の通り更新しま"
-"す。"
+"forkしたリポジトリをローカルにcloneし、upstreamに本家のMINGW-packagesを登録し"
+"ておきます。この作業は一度だけ行います。"
 msgstr ""
 
-msgid "``pkgver`` : 最新のGroongaバージョン"
+msgid ""
+"以下の手順で必要なファイルの更新と、プルリクエスト用のブランチの作成をしま"
+"す。 ``12.0.9`` は最新のGroongaのバージョンを指定します。"
+msgstr ""
+
+msgid "``post-msys2.sh`` スクリプトは以下の処理を実行します。"
+msgstr ""
+
+msgid ""
+"forkしたリポジトリの更新（ ``master`` ブランチを本家のリポジトリの "
+"``master`` にrebase）"
+msgstr ""
+
+msgid "``master`` ブランチから ``groonga-12.0.9`` ブランチの作成"
+msgstr ""
+
+msgid "``mingw-w64-groonga/PKGBUILD`` の更新"
+msgstr ""
+
+msgid "forkしたリポジトリに ``groonga-12.0.9`` ブランチをpush"
+msgstr ""
+
+msgid "このとき、 ``mingw-w64-groonga/PKGBUILD`` は以下の通り更新されます。"
+msgstr ""
+
+msgid "``pkgver`` : 指定した最新のGroongaバージョン"
 msgstr ""
 
 msgid "``pkgrel`` : ``1``"
@@ -492,8 +517,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"上記の修正をforkした自分のリポジトリにpushして、GitHub Actionsが成功している"
-"ことを確認します。 これで正しくビルドできているかどうかが確認できます。"
+"forkしたリポジトリにて、pushされたブランチのGitHub Actionsが成功していること"
+"を確認します。 これで正しくビルドできているかどうかが確認できます。"
 msgstr ""
 
 msgid "確認後、本家のMINGW-packagesにプルリクエストを作成します。"
