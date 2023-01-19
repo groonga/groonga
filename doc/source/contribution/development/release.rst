@@ -350,23 +350,27 @@ WindowsのMSYS2用パッケージのアップロード
 MINGW-packagesはforkして自分のリポジトリを作成しておきます。
 また、forkしたリポジトリのGitHub Actionsを有効にしておきます。
 
-forkしたリポジトリをローカルにcloneし、upstreamに本家のMINGW-packagesを登録しておきます。この作業は一度だけ行います。::
+forkしたリポジトリをローカルにcloneし、upstreamに本家のMINGW-packagesを登録しておきます。この作業は一度だけ行います。
 
-    % mkdir -p ~/work
-    % git clone --recursive git@github.com:<your-forked-MINGW-packages>.git ~/work/MINGW-packages
-    % git remote add upstream https://github.com/msys2/MINGW-packages.git
+.. code-block:: shell
+
+   $ mkdir -p ~/work
+   $ git clone --recursive git@github.com:<your-forked-MINGW-packages>.git ~/work/MINGW-packages
+   $ git remote add upstream https://github.com/msys2/MINGW-packages.git
 
 以下の手順で必要なファイルの更新と、プルリクエスト用のブランチの作成をします。
- ``12.0.9`` は最新のGroongaのバージョンを指定します。::
+``12.0.9`` は最新のGroongaのバージョンを指定します。
 
-    % cd ~/work/groonga/groonga.clean/packages
-    % ./post-msys2.sh 12.0.9 $HOME/work/MINGW-packages
+.. code-block:: shell
+
+   $ cd ~/work/groonga/groonga.clean/packages
+   $ ./post-msys2.sh 12.0.9 $HOME/work/MINGW-packages
 
 ``post-msys2.sh`` スクリプトは以下の処理を実行します。
 
-* forkしたリポジトリの更新
+* forkしたリポジトリの更新（ ``master`` ブランチを本家のリポジトリの ``master`` にrebase）
+* ``master`` ブランチから ``groonga-12.0.9`` ブランチの作成
 * ``mingw-w64-groonga/PKGBUILD`` の更新
-* ``groonga-12.0.9`` ブランチの作成（12.0.9は最新のGroongaバージョンに対応）
 * forkしたリポジトリに ``groonga-12.0.9`` ブランチをpush
 
 このとき、 ``mingw-w64-groonga/PKGBUILD`` は以下の通り更新されます。

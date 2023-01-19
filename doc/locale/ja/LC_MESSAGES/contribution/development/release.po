@@ -481,28 +481,26 @@ msgstr ""
 
 msgid ""
 "forkしたリポジトリをローカルにcloneし、upstreamに本家のMINGW-packagesを登録し"
-"ておきます。この作業は一度だけ行います。::"
-msgstr ""
-
-msgid "``12.0.9`` は最新のGroongaのバージョンを指定します。::"
+"ておきます。この作業は一度だけ行います。"
 msgstr ""
 
 msgid ""
 "以下の手順で必要なファイルの更新と、プルリクエスト用のブランチの作成をしま"
-"す。"
+"す。 ``12.0.9`` は最新のGroongaのバージョンを指定します。"
 msgstr ""
 
 msgid "``post-msys2.sh`` スクリプトは以下の処理を実行します。"
 msgstr ""
 
-msgid "forkしたリポジトリの更新"
+msgid ""
+"forkしたリポジトリの更新（ ``master`` ブランチを本家のリポジトリの "
+"``master`` にrebase）"
+msgstr ""
+
+msgid "``master`` ブランチから ``groonga-12.0.9`` ブランチの作成"
 msgstr ""
 
 msgid "``mingw-w64-groonga/PKGBUILD`` の更新"
-msgstr ""
-
-msgid ""
-"``groonga-12.0.9`` ブランチの作成（12.0.9は最新のGroongaバージョンに対応）"
 msgstr ""
 
 msgid "forkしたリポジトリに ``groonga-12.0.9`` ブランチをpush"
