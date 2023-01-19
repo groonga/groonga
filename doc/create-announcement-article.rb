@@ -41,7 +41,7 @@ class MarkdownEnArticleGenerator < MarkdownArticleGenerator
   end
 
   def generate_article
-    <<-"TEMPLATE"
+    <<-"ARTICLE"
 ## Groonga #{@groonga_version} has been released
 
 [Groonga #{@groonga_version}](#{@link_prefix}/news.html#release-#{@groonga_version_in_link}) has been released!
@@ -73,7 +73,7 @@ Please refert to the following news for more details.
 [News Release #{@groonga_version}](#{@link_prefix}/news.html#release-#{@groonga_version_in_link})
 
 Let's search by Groonga!
-    TEMPLATE
+    ARTICLE
   end
 end
 
@@ -85,7 +85,7 @@ class MarkdownJaArticleGenerator < MarkdownArticleGenerator
   end
 
   def generate_article
-    <<-"TEMPLATE"
+    <<-"ARTICLE"
 ## Groonga #{@groonga_version}リリース
 
 [Groonga #{@groonga_version}](#{@link_prefix}/news.html#release-#{@groonga_version_in_link})をリリースしました！
@@ -124,7 +124,7 @@ class MarkdownJaArticleGenerator < MarkdownArticleGenerator
 Liveチャットでコメントも受け付けていますので、気になっていることを質問したり、気になっていたあの機能について聞いたりすることも可能です。
 
 それでは、Groongaでガンガン検索してください！
-    TEMPLATE
+    ARTICLE
   end
 end
 
@@ -214,7 +214,7 @@ class FacebookEnArticleGenerator < FacebookArticleGenerator
   end
 
   def generate_article
-    <<-"TEMPLATE"
+    <<-"ARTICLE"
 Hi,
 Groonga #{@groonga_version} has been released!
     
@@ -240,7 +240,7 @@ Known Issues
     'content @ "Groonga" *< content @ "Mroonga"'
 
 * Groonga may not return records that should match caused by "GRN_II_CURSOR_SET_MIN_ENABLE".
-    TEMPLATE
+    ARTICLE
   end
 end
 
@@ -255,7 +255,7 @@ class FacebookJaArticleGenerator < FacebookArticleGenerator
   end
 
   def generate_article
-    <<-"TEMPLATE"
+    <<-"ARTICLE"
 Groonga #{@groonga_version} をリリースしました！
 
     https://groonga.org/ja/docs/news.html#release-#{@groonga_version_in_link}
@@ -281,7 +281,7 @@ Groonga #{@groonga_version} をリリースしました！
   'content @ "Groonga" *< content @ "Mroonga"'
 
 * "GRN_II_CURSOR_SET_MIN_ENABLE" が原因でマッチするはずのレコードを返さないことがあります。
-    TEMPLATE
+    ARTICLE
   end
 end
 
