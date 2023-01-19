@@ -253,7 +253,7 @@ The topics in this release:
 %<latest_release_note>s
 
 Known Issues
-============
+------------
 
 * Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
 
@@ -295,7 +295,7 @@ Groonga %<groonga_version>s をリリースしました！
 %<latest_release_note>s
 
 既知の問題
-==========
+----------
 
 * 現在Groongaには、ベクターカラムに対してデータを大量に追加、削除、更新した際にデータが破損することがある問題があります。
 
