@@ -14,7 +14,6 @@ RUN \
   yum install -y ${quiet} \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
-    gcc-c++ \
     intltool \
     libcurl-devel \
     libedit-devel \
@@ -36,5 +35,6 @@ RUN \
     xxhash-devel \
     zeromq3-devel \
     zlib-devel && \
-  yum install -y ${quiet} devtoolset-8 && \
-  yum clean ${quiet} all
+  yum install -y ${quiet} devtoolset-11 && \
+  yum clean ${quiet} all && \
+  source /opt/rh/devtoolset-11/enable
