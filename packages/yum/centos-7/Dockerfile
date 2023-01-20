@@ -11,11 +11,10 @@ RUN \
   yum install -y ${quiet} epel-release && \
   yum install -y ${quiet} centos-release-scl && \
   yum groupinstall -y ${quiet} "Development Tools" && \
-  yum remove -y ${quiet} gcc gcc-c++ && \
   yum install -y ${quiet} \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
-    devtoolset-8 \
+    gcc-c++ \
     intltool \
     libcurl-devel \
     libedit-devel \
@@ -37,5 +36,5 @@ RUN \
     xxhash-devel \
     zeromq3-devel \
     zlib-devel && \
-  yum clean ${quiet} all && \
-  source /opt/rh/devtoolset-8/enable
+  yum install -y ${quiet} devtoolset-8 && \
+  yum clean ${quiet} all
