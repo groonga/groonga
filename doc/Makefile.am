@@ -4,6 +4,10 @@ SUBDIRS =					\
 BUILT_SOURCES =
 CLEANFILES =
 
+am__extra_recursive_targets = 	\
+	text-recursive		\
+	markdown-recursive
+
 all:
 
 include $(top_srcdir)/doc/files.am
@@ -49,6 +53,9 @@ update-images:
 if DOCUMENT_BUILDABLE
 dist-hook: html
 	@touch $(distdir)/build-stamp
+
+text: text-recursive
+markdown: markdown-recursive
 
 CLEANFILES += build-stamp
 else

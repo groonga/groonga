@@ -23,6 +23,10 @@ required_build_stamps =				\
 	html-build-stamp			\
 	mo-build-stamp
 
+am__extra_recursive_targets = 	\
+	text-recursive		\
+	markdown-recursive
+
 if DOCUMENT_BUILDABLE
 EXTRA_DIST += $(required_build_stamps)
 endif
@@ -65,8 +69,8 @@ help:
 	@echo "  text      to make text files""
 
 html: html-recursive html-build-stamp
-text: text-build-stamp
-markdown: markdown-build-stamp
+text: text-recursive text-build-stamp
+markdown: markdown-recursive markdown-build-stamp
 
 clean_targets =					\
 	clean-html				\
