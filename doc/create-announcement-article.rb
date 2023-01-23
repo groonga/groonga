@@ -11,11 +11,8 @@ class ArticleGenerator
     @release_date_in_link = release_date.gsub("-", "/")
   end
 
-  def generate_article
-  end
-
   def extract_latest_release_note
-    latest_release_note = File.read(@input_file_path).split(/#{@release_headline_regexp}/)[1]
+    latest_release_note = File.read(@input_file_path).split(/#{@release_headline_regexp_pattern}/)[1]
     latest_release_note.gsub(/^\R\R/, "\n").strip
   end
 
@@ -37,7 +34,7 @@ class MarkdownEnArticleGenerator < MarkdownArticleGenerator
   def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     @input_file_path = "./locale/en/markdown/news.md"
-    @release_headline_regexp = "## Release.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*"
+    @release_headline_regexp_pattern = "## Release.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*"
   end
 
   def generate_article
@@ -81,7 +78,7 @@ class MarkdownJaArticleGenerator < MarkdownArticleGenerator
   def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     @input_file_path = "./locale/ja/markdown/news.md"
-    @release_headline_regexp = "## .*リリース.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*"
+    @release_headline_regexp_pattern = "## .*リリース.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*"
   end
 
   def generate_article
@@ -210,7 +207,7 @@ class FacebookEnArticleGenerator < FacebookArticleGenerator
     super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     @input_file_path = "./locale/en/text/news.txt"
     @output_file_path = "./tmp/facebook-en-#{release_date}-groonga-#{groonga_version}.txt"
-    @release_headline_regexp = ".*Release.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*\\n=.+"
+    @release_headline_regexp_pattern = ".*Release.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*\\n=.+"
   end
 
   def generate_article
@@ -249,7 +246,7 @@ class FacebookJaArticleGenerator < FacebookArticleGenerator
     super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     @input_file_path = "./locale/ja/text/news.txt"
     @output_file_path = "./tmp/facebook-ja-#{release_date}-groonga-#{groonga_version}.txt"
-    @release_headline_regexp = ".*リリース.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*\\n=.+"
+    @release_headline_regexp_pattern = ".*リリース.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*\\n=.+"
 
   end
 
