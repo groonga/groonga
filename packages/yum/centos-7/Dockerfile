@@ -1,6 +1,9 @@
 ARG FROM=centos:7
 FROM ${FROM}
 
+ENV \
+  SCL=devtoolset-11
+
 ARG DEBUG
 ARG APACHE_ARROW_VERSION
 
@@ -12,6 +15,8 @@ RUN \
   yum install -y ${quiet} centos-release-scl && \
   yum groupinstall -y ${quiet} "Development Tools" && \
   yum install -y ${quiet} \
+    ${SCL}-gcc-c++ \
+    ${SCL}-make \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
     intltool \
@@ -35,6 +40,4 @@ RUN \
     xxhash-devel \
     zeromq3-devel \
     zlib-devel && \
-  yum install -y ${quiet} devtoolset-11 && \
-  yum clean ${quiet} all && \
-  source /opt/rh/devtoolset-11/enable
+  yum clean ${quiet} all
