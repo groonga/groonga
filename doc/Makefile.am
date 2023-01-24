@@ -55,7 +55,9 @@ dist-hook: html
 	@touch $(distdir)/build-stamp
 
 text: text-recursive
+text-am:
 markdown: markdown-recursive
+markdown-am:
 
 CLEANFILES += build-stamp
 else

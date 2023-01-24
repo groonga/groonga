@@ -34,3 +34,6 @@ clean-html init update-po:
 	done
 
 text: text-recursive
+text-am:
+markdown: markdown-recursive
+markdown-am:
