@@ -1,0 +1,11 @@
+--- arrow/cpp/cmake_modules/ThirdpartyToolchain.cmake	2023-01-25 15:05:45.806224091 +0900
++++ arrow.org/cpp/cmake_modules/ThirdpartyToolchain.cmake	2023-01-25 15:06:00.641741716 +0900
+@@ -3900,7 +3900,7 @@
+        gRPC::grpc
+        gRPC::grpcpp_for_bundling
+        gRPC::upb)
+-  if(ABSL_VENDORED)
++  if(ABS_VENDORED)
+     list(APPEND ARROW_BUNDLED_STATIC_LIBS ${GRPC_GPR_ABSL_LIBRARIES})
+   endif()
+ endmacro()
