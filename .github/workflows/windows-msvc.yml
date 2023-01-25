@@ -136,11 +136,8 @@ jobs:
           matrix.architecture == 'x64'
         run: |
           cd vendor\apache-arrow-source
-          ls .
-          ls ..\
-          ls ..\..\
           ridk exec patch -p1 -i `
-            ..\..\pacakges\windows\patches\arrow-fix-static-bundle-link.diff
+            ..\..\packages\windows\patches\arrow-fix-static-bundle-link.diff
           cd ..\..\
           New-Item ..\apache-arrow-build -ItemType Directory
           $CMAKE_ARGS = (
