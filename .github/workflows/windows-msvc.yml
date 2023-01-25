@@ -135,9 +135,10 @@ jobs:
         if: |
           matrix.architecture == 'x64'
         run: |
-          ridk exec patch -u `
-            vendor\apache-arrow-source\cpp\cmake_modules/ThirdpartyToolchain.cmake `
-            < pacakges\windows\patch\arrow-fix-static-bundle-link.diff
+          cd vendor\apache-arrow-source
+          ridk exec patch -p1 -i `
+            ..\..\pacakges\windows\patches\arrow-fix-static-bundle-link.diff
+          cd ..\..\
           New-Item ..\apache-arrow-build -ItemType Directory
           $CMAKE_ARGS = (
             "-S", "vendor\apache-arrow-source\cpp",
