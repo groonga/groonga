@@ -136,6 +136,9 @@ jobs:
           matrix.architecture == 'x64'
         run: |
           cd vendor\apache-arrow-source
+          ls .
+          ls ..\
+          ls ..\..\
           ridk exec patch -p1 -i `
             ..\..\pacakges\windows\patches\arrow-fix-static-bundle-link.diff
           cd ..\..\
