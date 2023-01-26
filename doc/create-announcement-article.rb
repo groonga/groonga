@@ -1,4 +1,5 @@
 require 'optparse'
+require 'fileutils'
 
 class ArticleGenerator
   attr_reader :output_file_path
@@ -16,6 +17,10 @@ class ArticleGenerator
     latest_release_note.gsub(/^\R\R/, "\n").strip
   end
 
+  def generate_article
+    extract_latest_release_note
+  end
+
   def generate
     File.open(@output_file_path, "w") do |file|
       article = generate_article
@@ -24,13 +29,7 @@ class ArticleGenerator
   end
 end
 
-class MarkdownArticleGenerator < ArticleGenerator
-  def extract_latest_release_note
-    super
-  end
-end
-
-class MarkdownEnArticleGenerator < MarkdownArticleGenerator
+class MarkdownEnArticleGenerator < ArticleGenerator
   def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     @input_file_path = "./locale/en/markdown/news.md"
@@ -74,7 +73,7 @@ Let's search by Groonga!
   end
 end
 
-class MarkdownJaArticleGenerator < MarkdownArticleGenerator
+class MarkdownJaArticleGenerator < ArticleGenerator
   def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
     @input_file_path = "./locale/ja/markdown/news.md"
@@ -177,7 +176,7 @@ class DiscussionsEnArticleGenerator < MarkdownEnArticleGenerator
   end
 
   def generate
-    Dir.mkdir("./tmp") unless Dir.exist?("./tmp")
+    FileUtils.mkdir_p("tmp")
     super
   end
 end
@@ -190,14 +189,14 @@ class DiscussionsJaArticleGenerator < MarkdownJaArticleGenerator
   end
 
   def generate
-    Dir.mkdir("./tmp") unless Dir.exist?("./tmp")
+    FileUtils.mkdir_p("tmp")
     super
   end
 end
 
 class FacebookArticleGenerator < ArticleGenerator
   def generate
-    Dir.mkdir("./tmp") unless Dir.exist?("./tmp")
+    FileUtils.mkdir_p("tmp")
     super
   end
 end
