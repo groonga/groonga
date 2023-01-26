@@ -4,10 +4,10 @@ require 'fileutils'
 class ArticleGenerator
   attr_reader :output_file_path
 
-  def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    @groonga_version = groonga_version
-    @groonga_previous_version = groonga_previous_version
-    @groonga_version_in_link = groonga_version.gsub(".", "-")
+  def initialize(release_date, version, previous_version, groonga_org_repository)
+    @version = version
+    @previous_version = previous_version
+    @version_in_link = version.gsub(".", "-")
     @release_date = release_date
     @release_date_in_link = release_date.gsub("-", "/")
   end
@@ -30,17 +30,17 @@ class ArticleGenerator
 end
 
 class MarkdownEnArticleGenerator < ArticleGenerator
-  def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
+  def initialize(release_date, version, previous_version, groonga_org_repository)
+    super(release_date, version, previous_version, groonga_org_repository)
     @input_file_path = "./locale/en/markdown/news.md"
     @release_headline_regexp_pattern = "## Release.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*"
   end
 
   def generate_article
     <<-"ARTICLE"
-## Groonga #{@groonga_version} has been released
+## Groonga #{@version} has been released
 
-[Groonga #{@groonga_version}](#{@link_prefix}/news.html#release-#{@groonga_version_in_link}) has been released!
+[Groonga #{@version}](#{@link_prefix}/news.html#release-#{@version_in_link}) has been released!
 
 How to install: [Install](#{@link_prefix}/install.html)
 
@@ -66,7 +66,7 @@ Here are important changes in this release:
 
 Please refert to the following news for more details.
 
-[News Release #{@groonga_version}](#{@link_prefix}/news.html#release-#{@groonga_version_in_link})
+[News Release #{@version}](#{@link_prefix}/news.html#release-#{@version_in_link})
 
 Let's search by Groonga!
     ARTICLE
@@ -74,17 +74,17 @@ Let's search by Groonga!
 end
 
 class MarkdownJaArticleGenerator < ArticleGenerator
-  def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
+  def initialize(release_date, version, previous_version, groonga_org_repository)
+    super(release_date, version, previous_version, groonga_org_repository)
     @input_file_path = "./locale/ja/markdown/news.md"
     @release_headline_regexp_pattern = "## .*リリース.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*"
   end
 
   def generate_article
     <<-"ARTICLE"
-## Groonga #{@groonga_version}リリース
+## Groonga #{@version}リリース
 
-[Groonga #{@groonga_version}](#{@link_prefix}/news.html#release-#{@groonga_version_in_link})をリリースしました！
+[Groonga #{@version}](#{@link_prefix}/news.html#release-#{@version_in_link})をリリースしました！
 
 それぞれの環境毎のインストール方法: [インストール](#{@link_prefix}/install.html)
 
@@ -110,7 +110,7 @@ class MarkdownJaArticleGenerator < ArticleGenerator
 
 詳細については、以下のお知らせ、リリース自慢会も参照してください。
 
-[お知らせ #{@groonga_version}リリース](#{@link_prefix}/news.html#release-#{@groonga_version_in_link})
+[お知らせ #{@version}リリース](#{@link_prefix}/news.html#release-#{@version_in_link})
 
 [リリース自慢会](https://www.youtube.com/playlist?list=PLKb0MEIU7gvRxTDecELqAOzOsa21dSwtU)
 
@@ -125,9 +125,9 @@ Liveチャットでコメントも受け付けていますので、気になっ�
 end
 
 class BlogEnArticleGenerator < MarkdownEnArticleGenerator
-  def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    @output_file_path = "#{groonga_org_repository}/en/_posts/#{release_date}-groonga-#{groonga_version}.md"
+  def initialize(release_date, version, previous_version, groonga_org_repository)
+    super(release_date, version, previous_version, groonga_org_repository)
+    @output_file_path = "#{groonga_org_repository}/en/_posts/#{release_date}-groonga-#{version}.md"
     @link_prefix = "/docs"
   end
 
@@ -136,8 +136,8 @@ class BlogEnArticleGenerator < MarkdownEnArticleGenerator
     prefix = <<"PREFIX"
 ---
 layout: post.en
-title: Groonga #{@groonga_version} has been released
-description: Groonga #{@groonga_version} has been released!
+title: Groonga #{@version} has been released
+description: Groonga #{@version} has been released!
 ---
 
 PREFIX
@@ -147,9 +147,9 @@ PREFIX
 end
 
 class BlogJaArticleGenerator < MarkdownJaArticleGenerator
-  def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    @output_file_path = "#{groonga_org_repository}/ja/_posts/#{release_date}-groonga-#{groonga_version}.md"
+  def initialize(release_date, version, previous_version, groonga_org_repository)
+    super(release_date, version, previous_version, groonga_org_repository)
+    @output_file_path = "#{groonga_org_repository}/ja/_posts/#{release_date}-groonga-#{version}.md"
     @link_prefix = "/ja/docs"
   end
 
@@ -158,8 +158,8 @@ class BlogJaArticleGenerator < MarkdownJaArticleGenerator
     prefix = <<"PREFIX"
 ---
 layout: post.ja
-title: Groonga #{@groonga_version}リリース
-description: Groonga #{@groonga_version}をリリースしました！
+title: Groonga #{@version}リリース
+description: Groonga #{@version}をリリースしました！
 ---
 
 PREFIX
@@ -169,9 +169,9 @@ PREFIX
 end
 
 class DiscussionsEnArticleGenerator < MarkdownEnArticleGenerator
-  def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    @output_file_path = "./tmp/discussions-en-#{release_date}-groonga-#{groonga_version}.md"
+  def initialize(release_date, version, previous_version, groonga_org_repository)
+    super(release_date, version, previous_version, groonga_org_repository)
+    @output_file_path = "./tmp/discussions-en-#{release_date}-groonga-#{version}.md"
     @link_prefix = "https://groonga.org/docs"
   end
 
@@ -182,9 +182,9 @@ class DiscussionsEnArticleGenerator < MarkdownEnArticleGenerator
 end
 
 class DiscussionsJaArticleGenerator < MarkdownJaArticleGenerator
-  def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    @output_file_path = "./tmp/discussions-ja-#{release_date}-groonga-#{groonga_version}.md"
+  def initialize(release_date, version, previous_version, groonga_org_repository)
+    super(release_date, version, previous_version, groonga_org_repository)
+    @output_file_path = "./tmp/discussions-ja-#{release_date}-groonga-#{version}.md"
     @link_prefix = "https://groonga.org/ja/docs"
   end
 
@@ -202,20 +202,20 @@ class FacebookArticleGenerator < ArticleGenerator
 end
 
 class FacebookEnArticleGenerator < FacebookArticleGenerator
-  def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
+  def initialize(release_date, version, previous_version, groonga_org_repository)
+    super(release_date, version, previous_version, groonga_org_repository)
     @input_file_path = "./locale/en/text/news.txt"
-    @output_file_path = "./tmp/facebook-en-#{release_date}-groonga-#{groonga_version}.txt"
+    @output_file_path = "./tmp/facebook-en-#{release_date}-groonga-#{version}.txt"
     @release_headline_regexp_pattern = ".*Release.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*\\n=.+"
   end
 
   def generate_article
     <<-"ARTICLE"
 Hi,
-Groonga #{@groonga_version} has been released!
+Groonga #{@version} has been released!
     
-https://groonga.org/docs/news.html#release-#{@groonga_version_in_link}
-https://groonga.org/en/blog/#{@release_date_in_link}/groonga-#{@groonga_version_in_link}.html
+https://groonga.org/docs/news.html#release-#{@version_in_link}
+https://groonga.org/en/blog/#{@release_date_in_link}/groonga-#{@version_in_link}.html
     
 Install: https://groonga.org/docs/install.html
     
@@ -241,23 +241,23 @@ Known Issues
 end
 
 class FacebookJaArticleGenerator < FacebookArticleGenerator
-  def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
+  def initialize(release_date, version, previous_version, groonga_org_repository)
+    super(release_date, version, previous_version, groonga_org_repository)
     @input_file_path = "./locale/ja/text/news.txt"
-    @output_file_path = "./tmp/facebook-ja-#{release_date}-groonga-#{groonga_version}.txt"
+    @output_file_path = "./tmp/facebook-ja-#{release_date}-groonga-#{version}.txt"
     @release_headline_regexp_pattern = ".*リリース.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*\\n=.+"
 
   end
 
   def generate_article
     <<-"ARTICLE"
-Groonga #{@groonga_version} をリリースしました！
+Groonga #{@version} をリリースしました！
 
-    https://groonga.org/ja/docs/news.html#release-#{@groonga_version_in_link}
+    https://groonga.org/ja/docs/news.html#release-#{@version_in_link}
 
 変更点一覧:
 
-    https://groonga.org/ja/blog/#{@release_date_in_link}/groonga-#{@groonga_version_in_link}.html
+    https://groonga.org/ja/blog/#{@release_date_in_link}/groonga-#{@version_in_link}.html
 
 変更内容
 ========
@@ -281,34 +281,34 @@ Groonga #{@groonga_version} をリリースしました！
 end
 
 class TwitterEnArticleBaseGenerator < ArticleGenerator
-  def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    @output_file_path = "./tmp/twitter-en-#{release_date}-groonga-#{groonga_version}-base.txt"
+  def initialize(release_date, version, previous_version, groonga_org_repository)
+    super(release_date, version, previous_version, groonga_org_repository)
+    @output_file_path = "./tmp/twitter-en-#{release_date}-groonga-#{version}-base.txt"
   end
 
   def generate_article
-    "Groonga #{@groonga_version} has been released!(#{@release_date}) " + 
-    "https://groonga.org/en/blog/#{@release_date_in_link}/groonga-#{@groonga_version}.html"
+    "Groonga #{@version} has been released!(#{@release_date}) " + 
+    "https://groonga.org/en/blog/#{@release_date_in_link}/groonga-#{@version}.html"
   end
 end
 
 class TwitterJaArticleBaseGenerator < ArticleGenerator
-  def initialize(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    super(release_date, groonga_version, groonga_previous_version, groonga_org_repository)
-    @output_file_path = "./tmp/twitter-ja-#{release_date}-groonga-#{groonga_version}-base.txt"
+  def initialize(release_date, version, previous_version, groonga_org_repository)
+    super(release_date, version, previous_version, groonga_org_repository)
+    @output_file_path = "./tmp/twitter-ja-#{release_date}-groonga-#{version}-base.txt"
   end
 
   def generate_article
-    "Groonga #{@groonga_version}をリリースしました！(#{@release_date}) " +
-    "https://groonga.org/ja/blog/#{@release_date_in_link}/groonga-#{@groonga_version}.html"
+    "Groonga #{@version}をリリースしました！(#{@release_date}) " +
+    "https://groonga.org/ja/blog/#{@release_date_in_link}/groonga-#{@version}.html"
   end
 end
 
 option = {}
 OptionParser.new do |opt|
   opt.on('--release-date VALUE', "YYYY-MM-DD") { |v| option[:release_date] = v }
-  opt.on('--groonga_version VALUE', "e.g. 12.1.1") { |v| option[:groonga_version] = v }
-  opt.on('--groonga_previous_version VALUE', "e.g. 12.1.0") { |v| option[:groonga_previous_version] = v }
+  opt.on('--version VALUE', "e.g. 12.1.1") { |v| option[:version] = v }
+  opt.on('--previous_version VALUE', "e.g. 12.1.0") { |v| option[:previous_version] = v }
   opt.on('--groonga_org_repository VALUE', "e.g. $HOME/work/groonga.org") { |v| option[:groonga_org_repository] = v }
   opt.parse!(ARGV)
 end
@@ -326,8 +326,8 @@ generator_class_list = [
 
 generator_class_list.each do |generator_class|
   generator = generator_class.new(option[:release_date],
-                                  option[:groonga_version], 
-                                  option[:groonga_previous_version],
+                                  option[:version], 
+                                  option[:previous_version],
                                   option[:groonga_org_repository])
   generator.generate
   puts generator.output_file_path
