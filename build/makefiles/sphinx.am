@@ -23,10 +23,6 @@ required_build_stamps =				\
 	html-build-stamp			\
 	mo-build-stamp
 
-am__extra_recursive_targets = 	\
-	text-recursive		\
-	markdown-recursive
-
 if DOCUMENT_BUILDABLE
 EXTRA_DIST += $(required_build_stamps)
 endif
@@ -58,8 +54,8 @@ endif
 
 .PHONY: help
 .PHONY: html clean-html
-.PHONY: text text-am
-.PHONY: markdown markdown-am
+.PHONY: text
+.PHONY: markdown
 
 if DOCUMENT_BUILDABLE
 help:
@@ -70,9 +66,7 @@ help:
 
 html: html-recursive html-build-stamp
 text: text-recursive text-build-stamp
-text-am:
 markdown: markdown-recursive markdown-build-stamp
-markdown-am:
 
 clean_targets =					\
 	clean-html				\

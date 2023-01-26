@@ -2,10 +2,6 @@ SUBDIRS = \
 	en \
 	ja
 
-am__extra_recursive_targets = 	\
-	text-recursive		\
-	markdown-recursive
-
 add:
 	test -n "$(LOCALE)" ||				\
 	  (echo "run with LOCALE=\$${NEW_LOCALE}.";	\
@@ -32,8 +28,3 @@ clean-html init update-po:
 	for dir in $(SUBDIRS); do		\
 	  (cd $${dir} && $(MAKE) $@);		\
 	done
-
-text: text-recursive
-text-am:
-markdown: markdown-recursive
-markdown-am:
