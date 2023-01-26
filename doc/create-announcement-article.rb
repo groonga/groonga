@@ -285,14 +285,14 @@ end
 
 option = {}
 OptionParser.new do |opt|
-  opt.on('--release-date VALUE', "YYYY-MM-DD") { |v| option[:release_date] = v }
-  opt.on('--version VALUE', "e.g. 12.1.1") { |v| option[:version] = v }
-  opt.on('--previous_version VALUE', "e.g. 12.1.0") { |v| option[:previous_version] = v }
-  opt.on('--groonga_org_repository VALUE', "e.g. $HOME/work/groonga.org") { |v| option[:groonga_org_repository] = v }
+  opt.on('--release-date=DATE', "YYYY-MM-DD") { |v| option[:release_date] = v }
+  opt.on('--version=VERSION', "e.g. 12.1.1") { |v| option[:version] = v }
+  opt.on('--previous-version=VERSION', "e.g. 12.1.0") { |v| option[:previous_version] = v }
+  opt.on('--groonga-org-repository=PATH', "e.g. $HOME/work/groonga.org") { |v| option[:groonga_org_repository] = v }
   opt.parse!(ARGV)
 end
 
-generator_class_list = [
+generator_classes = [
   BlogEnArticleGenerator,
   BlogJaArticleGenerator,
   DiscussionsEnArticleGenerator,
@@ -303,7 +303,7 @@ generator_class_list = [
   TwitterJaArticleBaseGenerator
 ]
 
-generator_class_list.each do |generator_class|
+generator_classes.each do |generator_class|
   generator = generator_class.new(option[:release_date],
                                   option[:version], 
                                   option[:previous_version],
