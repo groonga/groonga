@@ -1,35 +1,14 @@
 require 'optparse'
 require 'fileutils'
+require './announcement-article-generator'
 
-class ArticleGenerator
-  attr_reader :output_file_path
-
+class GroongaArticleGenerator < ArticleGenerator
   def initialize(release_date, version, previous_version, groonga_org_repository)
-    @version = version
-    @previous_version = previous_version
-    @version_in_link = version.gsub(".", "-")
-    @release_date = release_date
-    @release_date_in_link = release_date.gsub("-", "/")
-  end
-
-  def extract_latest_release_note
-    latest_release_note = File.read(@input_file_path).split(/#{@release_headline_regexp_pattern}/)[1]
-    latest_release_note.gsub(/^\R\R/, "\n").strip
-  end
-
-  def generate_article
-    extract_latest_release_note
-  end
-
-  def generate
-    File.open(@output_file_path, "w") do |file|
-      article = generate_article
-      file.puts(article)
-    end
+    super(release_date, version, previous_version)
   end
 end
 
-class MarkdownEnArticleGenerator < ArticleGenerator
+class MarkdownEnArticleGenerator < GroongaArticleGenerator
   def initialize(release_date, version, previous_version, groonga_org_repository)
     super(release_date, version, previous_version, groonga_org_repository)
     @input_file_path = "./locale/en/markdown/news.md"
@@ -73,7 +52,7 @@ Let's search by Groonga!
   end
 end
 
-class MarkdownJaArticleGenerator < ArticleGenerator
+class MarkdownJaArticleGenerator < GroongaArticleGenerator
   def initialize(release_date, version, previous_version, groonga_org_repository)
     super(release_date, version, previous_version, groonga_org_repository)
     @input_file_path = "./locale/ja/markdown/news.md"
@@ -194,7 +173,7 @@ class DiscussionsJaArticleGenerator < MarkdownJaArticleGenerator
   end
 end
 
-class FacebookArticleGenerator < ArticleGenerator
+class FacebookArticleGenerator < GroongaArticleGenerator
   def generate
     FileUtils.mkdir_p("tmp")
     super
@@ -280,7 +259,7 @@ Groonga #{@version} をリリースしました！
   end
 end
 
-class TwitterEnArticleBaseGenerator < ArticleGenerator
+class TwitterEnArticleBaseGenerator < GroongaArticleGenerator
   def initialize(release_date, version, previous_version, groonga_org_repository)
     super(release_date, version, previous_version, groonga_org_repository)
     @output_file_path = "./tmp/twitter-en-#{release_date}-groonga-#{version}-base.txt"
@@ -292,7 +271,7 @@ class TwitterEnArticleBaseGenerator < ArticleGenerator
   end
 end
 
-class TwitterJaArticleBaseGenerator < ArticleGenerator
+class TwitterJaArticleBaseGenerator < GroongaArticleGenerator
   def initialize(release_date, version, previous_version, groonga_org_repository)
     super(release_date, version, previous_version, groonga_org_repository)
     @output_file_path = "./tmp/twitter-ja-#{release_date}-groonga-#{version}-base.txt"
