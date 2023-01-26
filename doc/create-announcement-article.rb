@@ -12,7 +12,7 @@ class MarkdownEnArticleGenerator < GroongaArticleGenerator
   def initialize(release_date, version, previous_version, groonga_org_repository)
     super(release_date, version, previous_version, groonga_org_repository)
     @input_file_path = "./locale/en/markdown/news.md"
-    @release_headline_regexp_pattern = "## Release.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*"
+    @release_headline_regexp_pattern = /^## Release.+$/
   end
 
   def generate_article
@@ -56,7 +56,7 @@ class MarkdownJaArticleGenerator < GroongaArticleGenerator
   def initialize(release_date, version, previous_version, groonga_org_repository)
     super(release_date, version, previous_version, groonga_org_repository)
     @input_file_path = "./locale/ja/markdown/news.md"
-    @release_headline_regexp_pattern = "## .*リリース.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*"
+    @release_headline_regexp_pattern = /^## .*リリース.+$/
   end
 
   def generate_article
@@ -183,7 +183,7 @@ class FacebookEnArticleGenerator < FacebookArticleGenerator
     super(release_date, version, previous_version, groonga_org_repository)
     @input_file_path = "./locale/en/text/news.txt"
     @output_file_path = "./tmp/facebook-en-#{release_date}-groonga-#{version}.txt"
-    @release_headline_regexp_pattern = ".*Release.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*\\n=.+"
+    @release_headline_regexp_pattern = /^Release.*\n=.+$/
   end
 
   def generate_article
@@ -222,7 +222,7 @@ class FacebookJaArticleGenerator < FacebookArticleGenerator
     super(release_date, version, previous_version, groonga_org_repository)
     @input_file_path = "./locale/ja/text/news.txt"
     @output_file_path = "./tmp/facebook-ja-#{release_date}-groonga-#{version}.txt"
-    @release_headline_regexp_pattern = ".*リリース.+\\d\\d\\d\\d-\\d\\d-\\d\\d.*\\n=.+"
+    @release_headline_regexp_pattern = /^.*リリース.+\n=.+/
 
   end
 
@@ -291,14 +291,14 @@ OptionParser.new do |opt|
 end
 
 generator_classes = [
-  BlogEnArticleGenerator,
-  BlogJaArticleGenerator,
-  DiscussionsEnArticleGenerator,
-  DiscussionsJaArticleGenerator,
+  # BlogEnArticleGenerator,
+  # BlogJaArticleGenerator,
+  # DiscussionsEnArticleGenerator,
+  # DiscussionsJaArticleGenerator,
   FacebookEnArticleGenerator,
   FacebookJaArticleGenerator,
-  TwitterEnArticleBaseGenerator,
-  TwitterJaArticleBaseGenerator
+  # TwitterEnArticleBaseGenerator,
+  # TwitterJaArticleBaseGenerator
 ]
 
 generator_classes.each do |generator_class|

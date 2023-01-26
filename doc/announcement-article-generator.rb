@@ -10,7 +10,7 @@ class ArticleGenerator
   end
 
   def extract_latest_release_note
-    latest_release_note = File.read(@input_file_path).split(/#{@release_headline_regexp_pattern}/)[1]
+    latest_release_note = File.read(@input_file_path).split(@release_headline_regexp_pattern)[1]
     latest_release_note.gsub(/^\R\R/, "\n").strip
   end
 
