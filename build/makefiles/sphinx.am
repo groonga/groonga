@@ -54,8 +54,8 @@ endif
 
 .PHONY: help
 .PHONY: html clean-html
-.PHONY: text
-.PHONY: markdown
+.PHONY: text clean-text
+.PHONY: markdown clean-markdown
 
 if DOCUMENT_BUILDABLE
 help:
