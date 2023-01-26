@@ -112,16 +112,15 @@ class BlogEnArticleGenerator < MarkdownEnArticleGenerator
 
   def generate_article
     article_base = super
-    prefix = <<"PREFIX"
+    prefix = <<-ARTICLE
 ---
 layout: post.en
 title: Groonga #{@version} has been released
 description: Groonga #{@version} has been released!
 ---
 
-PREFIX
-
-    prefix + article_base
+#{super}
+    ARTICLE
   end
 end
 
@@ -134,16 +133,15 @@ class BlogJaArticleGenerator < MarkdownJaArticleGenerator
 
   def generate_article
     article_base = super
-    prefix = <<PREFIX
+    prefix = <<-ARTICLE
 ---
 layout: post.ja
 title: Groonga #{@version}リリース
 description: Groonga #{@version}をリリースしました！
 ---
 
-PREFIX
-
-    prefix + article_base
+#{super}
+    ARTICLE
   end
 end
 
