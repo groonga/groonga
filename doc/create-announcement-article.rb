@@ -16,7 +16,7 @@ class MarkdownEnArticleGenerator < GroongaArticleGenerator
   end
 
   def generate_article
-    <<-"ARTICLE"
+    <<-ARTICLE
 ## Groonga #{@version} has been released
 
 [Groonga #{@version}](#{@link_prefix}/news.html#release-#{@version_in_link}) has been released!
@@ -60,7 +60,7 @@ class MarkdownJaArticleGenerator < GroongaArticleGenerator
   end
 
   def generate_article
-    <<-"ARTICLE"
+    <<-ARTICLE
 ## Groonga #{@version}リリース
 
 [Groonga #{@version}](#{@link_prefix}/news.html#release-#{@version_in_link})をリリースしました！
@@ -134,7 +134,7 @@ class BlogJaArticleGenerator < MarkdownJaArticleGenerator
 
   def generate_article
     article_base = super
-    prefix = <<"PREFIX"
+    prefix = <<PREFIX
 ---
 layout: post.ja
 title: Groonga #{@version}リリース
@@ -189,7 +189,7 @@ class FacebookEnArticleGenerator < FacebookArticleGenerator
   end
 
   def generate_article
-    <<-"ARTICLE"
+    <<-ARTICLE
 Hi,
 Groonga #{@version} has been released!
     
@@ -229,7 +229,7 @@ class FacebookJaArticleGenerator < FacebookArticleGenerator
   end
 
   def generate_article
-    <<-"ARTICLE"
+    <<-ARTICLE
 Groonga #{@version} をリリースしました！
 
     https://groonga.org/ja/docs/news.html#release-#{@version_in_link}
