@@ -6,7 +6,6 @@ RUN \
     debconf-set-selections
 
 ARG DEBUG
-ARG APACHE_ARROW_VERSION
 
 RUN \
   quiet=$([ "${DEBUG}" = "yes" ] || echo "-qq") && \
@@ -39,6 +38,6 @@ RUN \
     rapidjson-dev \
     zlib1g-dev && \
   if apt list | grep '^libarrow-dev/'; then \
-    apt install -y -V ${quiet} libarrow-dev_${APACHE_ARROW_VERSION}; \
+    apt install -y -V ${quiet} libarrow-dev; \
   fi && \
   apt clean
