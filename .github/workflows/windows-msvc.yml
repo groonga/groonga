@@ -140,6 +140,7 @@ jobs:
             "-S", "vendor\apache-arrow-source\cpp",
             "-B", "..\apache-arrow-build",
             "-G", "${{ matrix.cmake-generator }}",
+            "-DARROW_BUILD_STATIC=OFF",
             "-DARROW_COMPUTE=ON",
             "-DBOOST_SOURCE=BUNDLED",
             "-DCMAKE_BUILD_TYPE=Release",
