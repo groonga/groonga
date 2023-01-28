@@ -69,11 +69,17 @@ msgstr "タグ"
 msgid "News"
 msgstr "お知らせ"
 
-msgid "Release 12.1.1 - 2023-01-06"
-msgstr "12.1.1リリース - 2023-01-06"
+msgid "Release 12.1.2 - 2023-01-29"
+msgstr "12.1.2リリース - 2023-01-29"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "[httpd] Updated bundled nginx to 1.23.3."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.23.3に更新しました。"
+
+msgid "Release 12.1.1 - 2023-01-06"
+msgstr "12.1.1リリース - 2023-01-06"
 
 msgid ""
 "[:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-"
