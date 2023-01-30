@@ -1,6 +1,6 @@
 require 'optparse'
 require 'fileutils'
-require './announcement-article-generator'
+require_relative 'announcement-article-generator'
 
 class GroongaArticleGenerator < ArticleGenerator
   def initialize(release_date, version, previous_version, groonga_org_repository)
@@ -291,14 +291,14 @@ OptionParser.new do |opt|
 end
 
 generator_classes = [
-  # BlogEnArticleGenerator,
-  # BlogJaArticleGenerator,
-  # DiscussionsEnArticleGenerator,
-  # DiscussionsJaArticleGenerator,
+  BlogEnArticleGenerator,
+  BlogJaArticleGenerator,
+  DiscussionsEnArticleGenerator,
+  DiscussionsJaArticleGenerator,
   FacebookEnArticleGenerator,
   FacebookJaArticleGenerator,
-  # TwitterEnArticleBaseGenerator,
-  # TwitterJaArticleBaseGenerator
+  TwitterEnArticleBaseGenerator,
+  TwitterJaArticleBaseGenerator
 ]
 
 generator_classes.each do |generator_class|
