@@ -1379,6 +1379,7 @@ if test x"$enable_document" != x"no"; then
     if test -n "$SPHINX_BUILD"; then
       document_available=yes
       document_buildable=yes
+      AM_EXTRA_RECURSIVE_TARGETS([markdown text])
     else
       AC_MSG_ERROR([
 No sphinx-build found.

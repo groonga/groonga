@@ -24,7 +24,7 @@ add:
               a \ \ doc\/locale\/$(LOCALE)\/LC_MESSAGES\/Makefile"	\
 	  $(top_srcdir)/configure.ac
 
-clean-html init update-po:
+clean-html clean-text clean-markdown init update-po:
 	for dir in $(SUBDIRS); do		\
 	  (cd $${dir} && $(MAKE) $@);		\
 	done

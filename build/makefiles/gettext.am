@@ -62,6 +62,8 @@ build:
 endif
 
 html: build
+text: build
+markdown: build
 
 gettext:
 	rm *.pot || true
