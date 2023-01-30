@@ -11,7 +11,7 @@ Release 12.1.2 - 2023-01-29
 ---------------------------
 
 Improvements
-------------
+^^^^^^^^^^^^
 
 * [httpd] Updated bundled nginx to 1.23.3.
 
