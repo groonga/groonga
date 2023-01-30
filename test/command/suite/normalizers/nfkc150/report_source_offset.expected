@@ -1,0 +1,26 @@
+normalize   'NormalizerNFKC150("report_source_offset", true)'   "( あ  いうえお )"   REMOVE_BLANK
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "(あいうえお)",
+    "types": [
+
+    ],
+    "checks": [
+
+    ],
+    "offsets": [
+      0,
+      2,
+      7,
+      10,
+      13,
+      16,
+      20
+    ]
+  }
+]

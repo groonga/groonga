@@ -1,0 +1,16 @@
+tokenize   'TokenBigram'   "㋿"   --token_filters 'TokenFilterNFKC150'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    {
+      "value": "令和",
+      "position": 0,
+      "force_prefix": true,
+      "force_prefix_search": true
+    }
+  ]
+]

@@ -22,6 +22,9 @@ normalizer_list
       "name": "NormalizerNFKC130"
     },
     {
+      "name": "NormalizerNFKC150"
+    },
+    {
       "name": "NormalizerTable"
     },
     {
