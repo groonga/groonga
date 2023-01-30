@@ -1,5 +1,5 @@
 # Copyright(C) 2014-2021  Sutou Kouhei <kou@clear-code.com>
-# Copyright(C) 2020-2021  Horimoto Yasuhiro <horimoto@clear-code.com>
+# Copyright(C) 2020-2023  Horimoto Yasuhiro <horimoto@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,11 +15,13 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+require_relative "../vendor/apache-arrow-source/dev/tasks/linux-packages/helper"
 require_relative "../vendor/apache-arrow-source/dev/tasks/linux-packages/package-task"
 require_relative "launchpad-helper"
 require_relative "repository-helper"
 
 class PackagesGroongaOrgPackageTask < PackageTask
+  include Helper::ApacheArrow
   include LaunchpadHelper
   include RepositoryHelper
 
