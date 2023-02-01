@@ -1431,22 +1431,17 @@ grn_nfkc_normalize_unify_katakana_g_sounds(grn_ctx *ctx,
                                            void *user_data)
 {
   size_t char_length;
-  bool start_char;
 
   char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
 
   *n_used_bytes = char_length;
   *n_used_characters = 1;
 
-  if (char_length == 3) {
-    start_char = 
-      /* U+30C5 KATAKANA LETTER DU */
-      (current[0] == 0xe3 && current[1] == 0x83 && current[2] == 0x85) ||
-      /* U+30BA KATAKANA LETTER ZU */
-      (current[0] == 0xe3 && current[1] == 0x82 && current[2] == 0xba);
-  }
-
-  if (start_char) {
+  /* U+30B0 KATAKANA LETTER GU */
+  if (char_length == 3 &&
+      current[0] == 0xe3 &&
+      current[1] == 0x82 &&
+      current[2] == 0xB0) {
     const unsigned char *next = current + char_length;
     size_t next_char_length;
 
@@ -1455,37 +1450,37 @@ grn_nfkc_normalize_unify_katakana_g_sounds(grn_ctx *ctx,
         next[0] == 0xe3 &&
         next[1] == 0x82) {
       if (next[2] == 0xa1) { /* U+30A1 KATAKANA LETTER SMALL A */
-        /* U+30B6 KATAKANA LETTER ZA */
+        /* U+30AC KATAKANA LETTER GA */
         unified_buffer[(*n_unified_bytes)++] = current[0];
-        unified_buffer[(*n_unified_bytes)++] = 0x82;
-        unified_buffer[(*n_unified_bytes)++] = 0xB6;
+        unified_buffer[(*n_unified_bytes)++] = current[1];
+        unified_buffer[(*n_unified_bytes)++] = 0xAC;
         (*n_unified_characters)++;
         (*n_used_bytes) += next_char_length;
         (*n_used_characters)++;
         return unified_buffer;
       } else if (next[2] == 0xa3) { /* U+30A3 KATAKANA LETTER SMALL I */
-        /* U+30B8 KATAKANA LETTER ZI */
+        /* U+30AE KATAKANA LETTER GI */
         unified_buffer[(*n_unified_bytes)++] = current[0];
-        unified_buffer[(*n_unified_bytes)++] = 0x82;
-        unified_buffer[(*n_unified_bytes)++] = 0xB8;
+        unified_buffer[(*n_unified_bytes)++] = current[1];
+        unified_buffer[(*n_unified_bytes)++] = 0xAE;
         (*n_unified_characters)++;
         (*n_used_bytes) += next_char_length;
         (*n_used_characters)++;
         return unified_buffer;
       } else if (next[2] == 0xa7) { /* U+30A7 KATAKANA LETTER SMALL E */
-        /* U+30BC KATAKANA LETTER ZE */
+        /* U+30B2 KATAKANA LETTER GE */
         unified_buffer[(*n_unified_bytes)++] = current[0];
-        unified_buffer[(*n_unified_bytes)++] = 0x82;
-        unified_buffer[(*n_unified_bytes)++] = 0xBC;
+        unified_buffer[(*n_unified_bytes)++] = current[1];
+        unified_buffer[(*n_unified_bytes)++] = 0xB2;
         (*n_unified_characters)++;
         (*n_used_bytes) += next_char_length;
         (*n_used_characters)++;
         return unified_buffer;
       } else if (next[2] == 0xa9) { /* U+30A8 KATAKANA LETTER SMALL O */
-        /* U+30BE KATAKANA LETTER ZO */
+        /* U+30B4 KATAKANA LETTER GO */
         unified_buffer[(*n_unified_bytes)++] = current[0];
-        unified_buffer[(*n_unified_bytes)++] = 0x82;
-        unified_buffer[(*n_unified_bytes)++] = 0xBE;
+        unified_buffer[(*n_unified_bytes)++] = current[1];
+        unified_buffer[(*n_unified_bytes)++] = 0xB4;
         (*n_unified_characters)++;
         (*n_used_bytes) += next_char_length;
         (*n_used_characters)++;
