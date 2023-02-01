@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC130("unify_katakana_g_sounds", true,                      "report_source_offset", true)'   "ズァズィズェズォヅァヅィヅェヅォ"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC130("unify_katakana_g_sounds", true,                      "report_source_offset", true)'   "グァグィグェグォ"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
@@ -6,12 +6,8 @@ normalize   'NormalizerNFKC130("unify_katakana_g_sounds", true,                 
     0.0
   ],
   {
-    "normalized": "ザジゼゾザジゼゾ",
+    "normalized": "ガギゲゴ",
     "types": [
-      "katakana",
-      "katakana",
-      "katakana",
-      "katakana",
       "katakana",
       "katakana",
       "katakana",
@@ -29,29 +25,13 @@ normalize   'NormalizerNFKC130("unify_katakana_g_sounds", true,                 
       0,
       6,
       0,
-      0,
-      6,
-      0,
-      0,
-      6,
-      0,
-      0,
-      6,
-      0,
-      0,
-      6,
-      0,
       0
     ],
     "offsets": [
       0,
       6,
       12,
-      18,
-      24,
-      30,
-      36,
-      42
+      18
     ]
   }
 ]
