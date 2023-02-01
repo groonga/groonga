@@ -1419,6 +1419,44 @@ grn_nfkc_normalize_unify_katakana_v_sounds(grn_ctx *ctx,
 }
 
 static const unsigned char *
+grn_nfkc_normalize_unify_katakana_wo_sounds(grn_ctx *ctx,
+                                           const unsigned char *start,
+                                           const unsigned char *current,
+                                           const unsigned char *end,
+                                           size_t *n_used_bytes,
+                                           size_t *n_used_characters,
+                                           unsigned char *unified_buffer,
+                                           size_t *n_unified_bytes,
+                                           size_t *n_unified_characters,
+                                           void *user_data)
+{
+  size_t char_length;
+
+  char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+
+  *n_used_bytes = char_length;
+  *n_used_characters = 1;
+
+  /* U+30F2 KATAKANA LETTER WO */
+  if (char_length == 3 &&
+      current[0] == 0xe3 &&
+      current[1] == 0x83 &&
+      current[2] == 0xB2) {
+    (*n_unified_characters)++;
+    /* U+30AA KATAKANA LETTER O */
+    unified_buffer[(*n_unified_bytes)++] = current[0];
+    unified_buffer[(*n_unified_bytes)++] = 0x82;
+    unified_buffer[(*n_unified_bytes)++] = 0xaa;
+    return unified_buffer;
+  }
+
+  *n_unified_bytes = *n_used_bytes;
+  *n_unified_characters = *n_used_characters;
+
+  return current;
+}
+
+static const unsigned char *
 grn_nfkc_normalize_unify_katakana_bu_sound(grn_ctx *ctx,
                                            const unsigned char *start,
                                            const unsigned char *current,
@@ -1782,6 +1820,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
         data->options->unify_hyphen_and_prolonged_sound_mark ||
         data->options->unify_middle_dot ||
         data->options->unify_katakana_v_sounds ||
+        data->options->unify_katakana_wo_sounds ||
         data->options->unify_katakana_bu_sound ||
         data->options->unify_katakana_di_sound ||
         data->options->unify_katakana_g_sounds ||
@@ -1829,6 +1868,23 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
                                       grn_nfkc_normalize_unify_katakana_v_sounds,
                                       NULL,
                                       "[unify][katakana-v-sounds]");
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    need_swap = GRN_TRUE;
+  }
+
+  if (data->options->unify_katakana_wo_sounds) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    grn_nfkc_normalize_unify_stateful(ctx,
+                                      data,
+                                      &unify,
+                                      grn_nfkc_normalize_unify_katakana_wo_sounds,
+                                      NULL,
+                                      "[unify][katakana-g-sounds]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
