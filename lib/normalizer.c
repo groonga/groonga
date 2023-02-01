@@ -1884,7 +1884,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
                                       &unify,
                                       grn_nfkc_normalize_unify_katakana_wo_sounds,
                                       NULL,
-                                      "[unify][katakana-g-sounds]");
+                                      "[unify][katakana-wo-sounds]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
