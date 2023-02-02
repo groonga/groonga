@@ -1782,9 +1782,9 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
         data->options->unify_hyphen_and_prolonged_sound_mark ||
         data->options->unify_middle_dot ||
         data->options->unify_katakana_v_sounds ||
+        data->options->unify_katakana_bu_sound ||
         data->options->unify_katakana_di_sound ||
         data->options->unify_katakana_g_sounds ||
-        data->options->unify_katakana_bu_sound ||
         data->options->unify_to_romaji ||
         data->options->unify_to_katakana ||
         data->options->strip)) {
