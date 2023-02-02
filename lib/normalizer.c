@@ -1511,7 +1511,7 @@ grn_nfkc_normalize_unify_katakana_g_sounds(grn_ctx *ctx,
         /* U+30AC KATAKANA LETTER GA */
         unified_buffer[(*n_unified_bytes)++] = current[0];
         unified_buffer[(*n_unified_bytes)++] = current[1];
-        unified_buffer[(*n_unified_bytes)++] = 0xAC;
+        unified_buffer[(*n_unified_bytes)++] = 0xac;
         (*n_unified_characters)++;
         (*n_used_bytes) += next_char_length;
         (*n_used_characters)++;
@@ -1520,7 +1520,7 @@ grn_nfkc_normalize_unify_katakana_g_sounds(grn_ctx *ctx,
         /* U+30AE KATAKANA LETTER GI */
         unified_buffer[(*n_unified_bytes)++] = current[0];
         unified_buffer[(*n_unified_bytes)++] = current[1];
-        unified_buffer[(*n_unified_bytes)++] = 0xAE;
+        unified_buffer[(*n_unified_bytes)++] = 0xae;
         (*n_unified_characters)++;
         (*n_used_bytes) += next_char_length;
         (*n_used_characters)++;
@@ -1529,7 +1529,7 @@ grn_nfkc_normalize_unify_katakana_g_sounds(grn_ctx *ctx,
         /* U+30B2 KATAKANA LETTER GE */
         unified_buffer[(*n_unified_bytes)++] = current[0];
         unified_buffer[(*n_unified_bytes)++] = current[1];
-        unified_buffer[(*n_unified_bytes)++] = 0xB2;
+        unified_buffer[(*n_unified_bytes)++] = 0xb2;
         (*n_unified_characters)++;
         (*n_used_bytes) += next_char_length;
         (*n_used_characters)++;
@@ -1538,7 +1538,7 @@ grn_nfkc_normalize_unify_katakana_g_sounds(grn_ctx *ctx,
         /* U+30B4 KATAKANA LETTER GO */
         unified_buffer[(*n_unified_bytes)++] = current[0];
         unified_buffer[(*n_unified_bytes)++] = current[1];
-        unified_buffer[(*n_unified_bytes)++] = 0xB4;
+        unified_buffer[(*n_unified_bytes)++] = 0xb4;
         (*n_unified_characters)++;
         (*n_used_bytes) += next_char_length;
         (*n_used_characters)++;
