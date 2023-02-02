@@ -1796,23 +1796,6 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     need_swap = GRN_TRUE;
   }
 
-  if (data->options->unify_katakana_g_sounds) {
-    if (need_swap) {
-      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
-      grn_nfkc_normalize_context_rewind(ctx, &unify);
-    }
-    grn_nfkc_normalize_unify_stateful(ctx,
-                                      data,
-                                      &unify,
-                                      grn_nfkc_normalize_unify_katakana_g_sounds,
-                                      NULL,
-                                      "[unify][katakana-g-sounds]");
-    if (ctx->rc != GRN_SUCCESS) {
-      goto exit;
-    }
-    need_swap = GRN_TRUE;
-  }
-
   if (data->options->unify_katakana_bu_sound) {
     if (need_swap) {
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
@@ -1824,6 +1807,23 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
                                       grn_nfkc_normalize_unify_katakana_bu_sound,
                                       NULL,
                                       "[unify][katakana-bu-sound]");
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    need_swap = GRN_TRUE;
+  }
+
+  if (data->options->unify_katakana_g_sounds) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    grn_nfkc_normalize_unify_stateful(ctx,
+                                      data,
+                                      &unify,
+                                      grn_nfkc_normalize_unify_katakana_g_sounds,
+                                      NULL,
+                                      "[unify][katakana-g-sounds]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
