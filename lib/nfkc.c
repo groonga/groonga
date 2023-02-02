@@ -61,7 +61,7 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->unify_hyphen_and_prolonged_sound_mark = GRN_FALSE;
   options->unify_middle_dot = GRN_FALSE;
   options->unify_katakana_v_sounds = GRN_FALSE;
-  options->unify_katakana_wo_sounds = GRN_FALSE;
+  options->unify_katakana_wo_sound = GRN_FALSE;
   options->unify_katakana_bu_sound = GRN_FALSE;
   options->unify_katakana_di_sound = GRN_FALSE;
   options->unify_katakana_g_sounds = GRN_FALSE;
@@ -189,12 +189,12 @@ grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->unify_katakana_v_sounds);
-    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_wo_sounds")) {
-      options->unify_katakana_wo_sounds =
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_wo_sound")) {
+      options->unify_katakana_wo_sound =
         grn_vector_get_element_bool(ctx,
                                     raw_options,
                                     i,
-                                    options->unify_katakana_wo_sounds);
+                                    options->unify_katakana_wo_sound);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unify_katakana_bu_sound")) {
       options->unify_katakana_bu_sound =
         grn_vector_get_element_bool(ctx,
