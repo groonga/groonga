@@ -1441,7 +1441,7 @@ grn_nfkc_normalize_unify_katakana_g_sounds(grn_ctx *ctx,
   if (char_length == 3 &&
       current[0] == 0xe3 &&
       current[1] == 0x82 &&
-      current[2] == 0xB0) {
+      current[2] == 0xb0) {
     const unsigned char *next = current + char_length;
     size_t next_char_length;
 
