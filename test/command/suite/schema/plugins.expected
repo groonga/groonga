@@ -225,7 +225,7 @@ schema
         "name": "NormalizerAuto"
       },
       "NormalizerHTML": {
-        "id": 89,
+        "id": 90,
         "name": "NormalizerHTML"
       },
       "NormalizerNFKC100": {
@@ -240,12 +240,16 @@ schema
         "id": 87,
         "name": "NormalizerNFKC130"
       },
+      "NormalizerNFKC150": {
+        "id": 88,
+        "name": "NormalizerNFKC150"
+      },
       "NormalizerNFKC51": {
         "id": 84,
         "name": "NormalizerNFKC51"
       },
       "NormalizerTable": {
-        "id": 88,
+        "id": 89,
         "name": "NormalizerTable"
       }
     },
@@ -261,6 +265,10 @@ schema
       "TokenFilterNFKC130": {
         "id": 228,
         "name": "TokenFilterNFKC130"
+      },
+      "TokenFilterNFKC150": {
+        "id": 229,
+        "name": "TokenFilterNFKC150"
       }
     },
     "tables": {

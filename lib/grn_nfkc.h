@@ -67,17 +67,22 @@ const char *grn_nfkc50_compose(const unsigned char *prefix_utf8,
 GRN_API grn_char_type grn_nfkc100_char_type(const unsigned char *utf8);
 const char *grn_nfkc100_decompose(const unsigned char *utf8);
 const char *grn_nfkc100_compose(const unsigned char *prefix_utf8,
-                               const unsigned char *suffix_utf8);
+                                const unsigned char *suffix_utf8);
 
 GRN_API grn_char_type grn_nfkc121_char_type(const unsigned char *utf8);
 const char *grn_nfkc121_decompose(const unsigned char *utf8);
 const char *grn_nfkc121_compose(const unsigned char *prefix_utf8,
-                               const unsigned char *suffix_utf8);
+                                const unsigned char *suffix_utf8);
 
 GRN_API grn_char_type grn_nfkc130_char_type(const unsigned char *utf8);
 const char *grn_nfkc130_decompose(const unsigned char *utf8);
 const char *grn_nfkc130_compose(const unsigned char *prefix_utf8,
-                               const unsigned char *suffix_utf8);
+                                const unsigned char *suffix_utf8);
+
+GRN_API grn_char_type grn_nfkc150_char_type(const unsigned char *utf8);
+const char *grn_nfkc150_decompose(const unsigned char *utf8);
+const char *grn_nfkc150_compose(const unsigned char *prefix_utf8,
+                                const unsigned char *suffix_utf8);
 
 void grn_nfkc_normalize_options_init(grn_ctx *ctx,
                                      grn_nfkc_normalize_options *options,
@@ -89,6 +94,8 @@ void grn_nfkc100_normalize_options_init(grn_ctx *ctx,
 void grn_nfkc121_normalize_options_init(grn_ctx *ctx,
                                         grn_nfkc_normalize_options *options);
 void grn_nfkc130_normalize_options_init(grn_ctx *ctx,
+                                        grn_nfkc_normalize_options *options);
+void grn_nfkc150_normalize_options_init(grn_ctx *ctx,
                                         grn_nfkc_normalize_options *options);
 grn_rc grn_nfkc_normalize_options_apply(grn_ctx *ctx,
                                         grn_nfkc_normalize_options *options,

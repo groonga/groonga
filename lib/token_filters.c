@@ -231,6 +231,30 @@ nfkc130_init(grn_ctx *ctx, grn_tokenizer_query *query)
                    "[nfkc130]");
 }
 
+static void *
+nfkc150_open_options(grn_ctx *ctx,
+                     grn_obj *token_filter,
+                     grn_obj *raw_options,
+                     void *user_data)
+{
+  return nfkc_open_options(ctx,
+                           token_filter,
+                           raw_options,
+                           user_data,
+                           grn_nfkc150_normalize_options_init,
+                           "[nfkc150]");
+}
+
+static void *
+nfkc150_init(grn_ctx *ctx, grn_tokenizer_query *query)
+{
+  return nfkc_init(ctx,
+                   query,
+                   nfkc150_open_options,
+                   "NormalierNFKC150",
+                   "[nfkc150]");
+}
+
 grn_rc
 grn_db_init_builtin_token_filters(grn_ctx *ctx)
 {
@@ -254,6 +278,14 @@ grn_db_init_builtin_token_filters(grn_ctx *ctx)
     grn_obj *token_filter;
     token_filter = grn_token_filter_create(ctx, "TokenFilterNFKC130", -1);
     grn_token_filter_set_init_func(ctx, token_filter, nfkc130_init);
+    grn_token_filter_set_filter_func(ctx, token_filter, nfkc_filter);
+    grn_token_filter_set_fin_func(ctx, token_filter, nfkc_fin);
+  }
+
+  {
+    grn_obj *token_filter;
+    token_filter = grn_token_filter_create(ctx, "TokenFilterNFKC150", -1);
+    grn_token_filter_set_init_func(ctx, token_filter, nfkc150_init);
     grn_token_filter_set_filter_func(ctx, token_filter, nfkc_filter);
     grn_token_filter_set_fin_func(ctx, token_filter, nfkc_fin);
   }

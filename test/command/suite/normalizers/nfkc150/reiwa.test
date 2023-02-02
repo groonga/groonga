@@ -1,0 +1,4 @@
+normalize \
+  'NormalizerNFKC150' \
+  "㋿" \
+  WITH_CHECKS|WITH_TYPES

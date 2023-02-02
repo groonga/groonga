@@ -1,0 +1,65 @@
+normalize   'NormalizerNFKC150("unify_to_romaji", true,                      "report_source_offset", true)'   "ざじずぜぞじゃじゅじょ"   WITH_CHECKS|WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "zajizuzezojajujo",
+    "types": [
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha",
+      "alpha"
+    ],
+    "checks": [
+      3,
+      -1,
+      3,
+      -1,
+      3,
+      -1,
+      3,
+      -1,
+      3,
+      -1,
+      6,
+      -1,
+      6,
+      -1,
+      6,
+      -1
+    ],
+    "offsets": [
+      0,
+      0,
+      3,
+      3,
+      6,
+      6,
+      9,
+      9,
+      12,
+      12,
+      15,
+      15,
+      21,
+      21,
+      27,
+      27
+    ]
+  }
+]

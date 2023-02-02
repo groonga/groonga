@@ -1,0 +1,4 @@
+tokenize \
+  'TokenBigram' \
+  "㋿" \
+  --token_filters 'TokenFilterNFKC150'
