@@ -5,6 +5,39 @@
 News
 ====
 
+.. _release-13-0-0:
+
+Release 13.0.0 - 2023-02-09
+---------------------------
+
+This is a major version up!
+But It keeps backward compatibility. We can upgrade to 13.0.0 without rebuilding database.
+
+First of all, we introduce the hilight and summary of changes from Groonga 12.0.0 to 12.1.2.
+Then, we introduce the main changes in 13.0.0.
+
+Higlight
+^^^^^^^^
+
+Newly supported OSes
+^^^^^^^^^^^^^^^^^^^^
+
+New Features and Improvements in 13.0.0
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/normalizers`] Added a new Normalizer ``NormalizerNFKC150`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 15.0.
+
+* [:doc:`/reference/token_filters`] Added a new TokenFilter ``TokenFilterNFKC150`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 15.0.
+
+* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_g_sounds``.
+
+* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_di_sound``.
+
+* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_wo_sound``.
+
 .. _release-12-1-2:
 
 Release 12.1.2 - 2023-01-29
