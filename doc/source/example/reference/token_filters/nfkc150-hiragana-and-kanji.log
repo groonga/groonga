@@ -1,0 +1,24 @@
+Execution example::
+
+  tokenize TokenDelimit "りんご 林檎"   --token_filters 'TokenFilterNFKC150("unify_kana", true)'
+  # [
+  #   [
+  #     0,
+  #     1545901725.412921,
+  #     0.0003237724304199219
+  #   ],
+  #   [
+  #     {
+  #       "value": "りんご",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "林檎",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]

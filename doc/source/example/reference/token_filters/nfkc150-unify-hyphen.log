@@ -1,0 +1,18 @@
+Execution example::
+
+  tokenize TokenDelimit "-˗֊‐‑‒–⁃⁻₋−" --token_filters 'TokenFilterNFKC150("unify_hyphen", true)'
+  # [
+  #   [
+  #     0,
+  #     1546907023.849045,
+  #     0.0003139972686767578
+  #   ],
+  #   [
+  #     {
+  #       "value": "-----------",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]

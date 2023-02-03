@@ -720,6 +720,21 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-unify-voiced-sound-mark-katakana.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100-with-token-mecab.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc100.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-hiragana-and-kanji.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-unify-hyphen-and-prolonged-sound-mark.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-unify-hyphen.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-unify-kana-case-hiragana.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-unify-kana-case-katakana.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-unify-kana.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-unify-katakana-bu-sounds.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-unify-katakana-v-sounds.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-unify-middle-dot.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-unify-prolonged-sound-mark.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-unify-to-romaji.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-unify-voiced-sound-mark-hiragana.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-unify-voiced-sound-mark-katakana.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150-with-token-mecab.log \
+	$(top_srcdir)/doc/source/example/reference/token_filters/nfkc150.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/stem-algorithm-option.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/stem.log \
 	$(top_srcdir)/doc/source/example/reference/token_filters/stop-word-columns-option.log \
@@ -1168,6 +1183,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/token_filter/summary.rst \
 	$(top_srcdir)/doc/source/reference/token_filters.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc100.rst \
+	$(top_srcdir)/doc/source/reference/token_filters/token_filter_nfkc150.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_stem.rst \
 	$(top_srcdir)/doc/source/reference/token_filters/token_filter_stop_word.rst \
 	$(top_srcdir)/doc/source/reference/tokenizer/summary.rst \
@@ -1949,6 +1965,21 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/token_filters/nfkc100-unify-voiced-sound-mark-katakana.log \
 	source/example/reference/token_filters/nfkc100-with-token-mecab.log \
 	source/example/reference/token_filters/nfkc100.log \
+	source/example/reference/token_filters/nfkc150-hiragana-and-kanji.log \
+	source/example/reference/token_filters/nfkc150-unify-hyphen-and-prolonged-sound-mark.log \
+	source/example/reference/token_filters/nfkc150-unify-hyphen.log \
+	source/example/reference/token_filters/nfkc150-unify-kana-case-hiragana.log \
+	source/example/reference/token_filters/nfkc150-unify-kana-case-katakana.log \
+	source/example/reference/token_filters/nfkc150-unify-kana.log \
+	source/example/reference/token_filters/nfkc150-unify-katakana-bu-sounds.log \
+	source/example/reference/token_filters/nfkc150-unify-katakana-v-sounds.log \
+	source/example/reference/token_filters/nfkc150-unify-middle-dot.log \
+	source/example/reference/token_filters/nfkc150-unify-prolonged-sound-mark.log \
+	source/example/reference/token_filters/nfkc150-unify-to-romaji.log \
+	source/example/reference/token_filters/nfkc150-unify-voiced-sound-mark-hiragana.log \
+	source/example/reference/token_filters/nfkc150-unify-voiced-sound-mark-katakana.log \
+	source/example/reference/token_filters/nfkc150-with-token-mecab.log \
+	source/example/reference/token_filters/nfkc150.log \
 	source/example/reference/token_filters/stem-algorithm-option.log \
 	source/example/reference/token_filters/stem.log \
 	source/example/reference/token_filters/stop-word-columns-option.log \
@@ -2397,6 +2428,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/token_filter/summary.rst \
 	source/reference/token_filters.rst \
 	source/reference/token_filters/token_filter_nfkc100.rst \
+	source/reference/token_filters/token_filter_nfkc150.rst \
 	source/reference/token_filters/token_filter_stem.rst \
 	source/reference/token_filters/token_filter_stop_word.rst \
 	source/reference/tokenizer/summary.rst \
@@ -2679,6 +2711,7 @@ po_files = \
 	reference/normalizers/normalizer_nfkc100.po \
 	reference/normalizers/normalizer_nfkc121.po \
 	reference/normalizers/normalizer_nfkc130.po \
+	reference/normalizers/normalizer_nfkc150.po \
 	reference/normalizers/normalizer_nfkc51.po \
 	reference/normalizers/normalizer_table.po \
 	reference/operations.po \
@@ -2701,6 +2734,7 @@ po_files = \
 	reference/token_filter/summary.po \
 	reference/token_filters.po \
 	reference/token_filters/token_filter_nfkc100.po \
+	reference/token_filters/token_filter_nfkc150.po \
 	reference/token_filters/token_filter_stem.po \
 	reference/token_filters/token_filter_stop_word.po \
 	reference/tokenizer/summary.po \
@@ -2982,6 +3016,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc100.po \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc121.po \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc130.po \
+	LC_MESSAGES/reference/normalizers/normalizer_nfkc150.po \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc51.po \
 	LC_MESSAGES/reference/normalizers/normalizer_table.po \
 	LC_MESSAGES/reference/operations.po \
@@ -3004,6 +3039,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/token_filter/summary.po \
 	LC_MESSAGES/reference/token_filters.po \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc100.po \
+	LC_MESSAGES/reference/token_filters/token_filter_nfkc150.po \
 	LC_MESSAGES/reference/token_filters/token_filter_stem.po \
 	LC_MESSAGES/reference/token_filters/token_filter_stop_word.po \
 	LC_MESSAGES/reference/tokenizer/summary.po \
@@ -3285,6 +3321,7 @@ edit_po_files = \
 	reference/normalizers/normalizer_nfkc100.edit \
 	reference/normalizers/normalizer_nfkc121.edit \
 	reference/normalizers/normalizer_nfkc130.edit \
+	reference/normalizers/normalizer_nfkc150.edit \
 	reference/normalizers/normalizer_nfkc51.edit \
 	reference/normalizers/normalizer_table.edit \
 	reference/operations.edit \
@@ -3307,6 +3344,7 @@ edit_po_files = \
 	reference/token_filter/summary.edit \
 	reference/token_filters.edit \
 	reference/token_filters/token_filter_nfkc100.edit \
+	reference/token_filters/token_filter_nfkc150.edit \
 	reference/token_filters/token_filter_stem.edit \
 	reference/token_filters/token_filter_stop_word.edit \
 	reference/tokenizer/summary.edit \
@@ -3588,6 +3626,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc100.edit \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc121.edit \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc130.edit \
+	LC_MESSAGES/reference/normalizers/normalizer_nfkc150.edit \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc51.edit \
 	LC_MESSAGES/reference/normalizers/normalizer_table.edit \
 	LC_MESSAGES/reference/operations.edit \
@@ -3610,6 +3649,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/token_filter/summary.edit \
 	LC_MESSAGES/reference/token_filters.edit \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc100.edit \
+	LC_MESSAGES/reference/token_filters/token_filter_nfkc150.edit \
 	LC_MESSAGES/reference/token_filters/token_filter_stem.edit \
 	LC_MESSAGES/reference/token_filters/token_filter_stop_word.edit \
 	LC_MESSAGES/reference/tokenizer/summary.edit \
@@ -3891,6 +3931,7 @@ mo_files = \
 	reference/normalizers/normalizer_nfkc100.mo \
 	reference/normalizers/normalizer_nfkc121.mo \
 	reference/normalizers/normalizer_nfkc130.mo \
+	reference/normalizers/normalizer_nfkc150.mo \
 	reference/normalizers/normalizer_nfkc51.mo \
 	reference/normalizers/normalizer_table.mo \
 	reference/operations.mo \
@@ -3913,6 +3954,7 @@ mo_files = \
 	reference/token_filter/summary.mo \
 	reference/token_filters.mo \
 	reference/token_filters/token_filter_nfkc100.mo \
+	reference/token_filters/token_filter_nfkc150.mo \
 	reference/token_filters/token_filter_stem.mo \
 	reference/token_filters/token_filter_stop_word.mo \
 	reference/tokenizer/summary.mo \
@@ -4194,6 +4236,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc100.mo \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc121.mo \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc130.mo \
+	LC_MESSAGES/reference/normalizers/normalizer_nfkc150.mo \
 	LC_MESSAGES/reference/normalizers/normalizer_nfkc51.mo \
 	LC_MESSAGES/reference/normalizers/normalizer_table.mo \
 	LC_MESSAGES/reference/operations.mo \
@@ -4216,6 +4259,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/token_filter/summary.mo \
 	LC_MESSAGES/reference/token_filters.mo \
 	LC_MESSAGES/reference/token_filters/token_filter_nfkc100.mo \
+	LC_MESSAGES/reference/token_filters/token_filter_nfkc150.mo \
 	LC_MESSAGES/reference/token_filters/token_filter_stem.mo \
 	LC_MESSAGES/reference/token_filters/token_filter_stop_word.mo \
 	LC_MESSAGES/reference/tokenizer/summary.mo \
@@ -4557,6 +4601,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/token_filter/summary.html \
 	html/reference/token_filters.html \
 	html/reference/token_filters/token_filter_nfkc100.html \
+	html/reference/token_filters/token_filter_nfkc150.html \
 	html/reference/token_filters/token_filter_stem.html \
 	html/reference/token_filters/token_filter_stop_word.html \
 	html/reference/tokenizer/summary.html \
