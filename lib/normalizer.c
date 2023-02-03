@@ -1499,7 +1499,7 @@ grn_nfkc_normalize_unify_katakana_wo_sound(grn_ctx *ctx,
   if (char_length == 3 &&
       current[0] == 0xe3 &&
       current[1] == 0x83 &&
-      current[2] == 0xB2) {
+      current[2] == 0xb2) {
     (*n_unified_characters)++;
     /* U+30AA KATAKANA LETTER O */
     unified_buffer[(*n_unified_bytes)++] = current[0];
