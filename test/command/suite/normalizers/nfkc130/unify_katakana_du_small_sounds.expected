@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC150("unify_katakana_d_sounds", true,                      "report_source_offset", true)'   "ヅァヅィヅヅェヅォ"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC130("unify_katakana_du_small_sounds", true,                      "report_source_offset", true)'   "ヅァヅィヅヅェヅォ"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
