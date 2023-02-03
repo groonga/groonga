@@ -1,5 +1,5 @@
 normalize \
-  'NormalizerNFKC100("unify_katakana_zu_sounds", true, \
+  'NormalizerNFKC150("unify_katakana_zu_small_sounds", true, \
                      "report_source_offset", true)' \
   "ズァズィズズェズォ" \
   WITH_CHECKS|WITH_TYPES
