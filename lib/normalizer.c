@@ -1495,11 +1495,11 @@ grn_nfkc_normalize_unify_katakana_z_sounds(grn_ctx *ctx,
   *n_used_bytes = char_length;
   *n_used_characters = 1;
 
-  if ((char_length == 3) &&
-      /* U+30C5 KATAKANA LETTER DU */
-      ((current[0] == 0xe3 && current[1] == 0x83 && current[2] == 0x85) ||
+  if (char_length == 3 &&
       /* U+30BA KATAKANA LETTER ZU */
-       (current[0] == 0xe3 && current[1] == 0x82 && current[2] == 0xba))) {
+      current[0] == 0xe3 && 
+      current[1] == 0x82 && 
+      current[2] == 0xba) {
     const unsigned char *next = current + char_length;
     size_t next_char_length;
 
