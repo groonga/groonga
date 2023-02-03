@@ -13,7 +13,7 @@ RUN \
     https://packages.groonga.org/oracle-linux/9/groonga-release-latest.noarch.rpm \
     https://apache.jfrog.io/artifactory/arrow/almalinux/$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)/apache-arrow-release-latest.rpm && \
   dnf groupinstall -y ${quiet} "Development Tools" && \
-  dnf install -y ${quiet} \
+  dnf install --enablerepo=ol9_codeready_builder -y ${quiet} \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
     gcc-c++ \
