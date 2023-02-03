@@ -1477,6 +1477,83 @@ grn_nfkc_normalize_unify_katakana_bu_sound(grn_ctx *ctx,
 }
 
 static const unsigned char *
+grn_nfkc_normalize_unify_katakana_z_sounds(grn_ctx *ctx,
+                                           const unsigned char *start,
+                                           const unsigned char *current,
+                                           const unsigned char *end,
+                                           size_t *n_used_bytes,
+                                           size_t *n_used_characters,
+                                           unsigned char *unified_buffer,
+                                           size_t *n_unified_bytes,
+                                           size_t *n_unified_characters,
+                                           void *user_data)
+{
+  size_t char_length;
+
+  char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+
+  *n_used_bytes = char_length;
+  *n_used_characters = 1;
+
+  if ((char_length == 3) &&
+      /* U+30C5 KATAKANA LETTER DU */
+      ((current[0] == 0xe3 && current[1] == 0x83 && current[2] == 0x85) ||
+      /* U+30BA KATAKANA LETTER ZU */
+       (current[0] == 0xe3 && current[1] == 0x82 && current[2] == 0xba))) {
+    const unsigned char *next = current + char_length;
+    size_t next_char_length;
+
+    next_char_length = (size_t)grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
+    if (next_char_length == 3 &&
+        next[0] == 0xe3 &&
+        next[1] == 0x82) {
+      if (next[2] == 0xa1) { /* U+30A1 KATAKANA LETTER SMALL A */
+        /* U+30B6 KATAKANA LETTER ZA */
+        unified_buffer[(*n_unified_bytes)++] = current[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x82;
+        unified_buffer[(*n_unified_bytes)++] = 0xb6;
+        (*n_unified_characters)++;
+        (*n_used_bytes) += next_char_length;
+        (*n_used_characters)++;
+        return unified_buffer;
+      } else if (next[2] == 0xa3) { /* U+30A3 KATAKANA LETTER SMALL I */
+        /* U+30B8 KATAKANA LETTER ZI */
+        unified_buffer[(*n_unified_bytes)++] = current[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x82;
+        unified_buffer[(*n_unified_bytes)++] = 0xb8;
+        (*n_unified_characters)++;
+        (*n_used_bytes) += next_char_length;
+        (*n_used_characters)++;
+        return unified_buffer;
+      } else if (next[2] == 0xa7) { /* U+30A7 KATAKANA LETTER SMALL E */
+        /* U+30BC KATAKANA LETTER ZE */
+        unified_buffer[(*n_unified_bytes)++] = current[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x82;
+        unified_buffer[(*n_unified_bytes)++] = 0xbC;
+        (*n_unified_characters)++;
+        (*n_used_bytes) += next_char_length;
+        (*n_used_characters)++;
+        return unified_buffer;
+      } else if (next[2] == 0xa9) { /* U+30A8 KATAKANA LETTER SMALL O */
+        /* U+30BE KATAKANA LETTER ZO */
+        unified_buffer[(*n_unified_bytes)++] = current[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x82;
+        unified_buffer[(*n_unified_bytes)++] = 0xbe;
+        (*n_unified_characters)++;
+        (*n_used_bytes) += next_char_length;
+        (*n_used_characters)++;
+        return unified_buffer;
+      }
+    }
+  }
+
+  *n_unified_bytes = *n_used_bytes;
+  *n_unified_characters = *n_used_characters;
+
+  return current;
+}
+
+static const unsigned char *
 grn_nfkc_normalize_unify_katakana_wo_sound(grn_ctx *ctx,
                                            const unsigned char *start,
                                            const unsigned char *current,
@@ -1821,6 +1898,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
         data->options->unify_middle_dot ||
         data->options->unify_katakana_v_sounds ||
         data->options->unify_katakana_bu_sound ||
+        data->options->unify_katakana_z_sounds ||
         data->options->unify_katakana_wo_sound ||
         data->options->unify_katakana_di_sound ||
         data->options->unify_katakana_g_sounds ||
@@ -1885,6 +1963,40 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
                                       grn_nfkc_normalize_unify_katakana_bu_sound,
                                       NULL,
                                       "[unify][katakana-bu-sound]");
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    need_swap = GRN_TRUE;
+  }
+
+  if (data->options->unify_katakana_z_sounds) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    grn_nfkc_normalize_unify_stateful(ctx,
+                                      data,
+                                      &unify,
+                                      grn_nfkc_normalize_unify_katakana_z_sounds,
+                                      NULL,
+                                      "[unify][katakana-z-sounds]");
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    need_swap = GRN_TRUE;
+  }
+
+  if (data->options->unify_katakana_wo_sound) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    grn_nfkc_normalize_unify_stateful(ctx,
+                                      data,
+                                      &unify,
+                                      grn_nfkc_normalize_unify_katakana_wo_sound,
+                                      NULL,
+                                      "[unify][katakana-wo-sound]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
