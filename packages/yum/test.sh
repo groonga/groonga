@@ -13,26 +13,38 @@ case ${os} in
   centos)
     version=$(cut -d: -f5 /etc/system-release-cpe)
     ;;
+  linux)
+    os=oracle-linux
+    version=$(cut -d: -f5 /etc/system-release-cpe | sed -e 's/\.[0-9]$//')
+    ;;
   *) # For AlmaLinux
     version=$(cut -d: -f5 /etc/system-release-cpe | sed -e 's/\.[0-9]$//')
     ;;
 esac
 
-case ${version} in
-  2)
-    DNF=yum
-    ;;
-  7)
-    DNF=yum
-    ;;
-  8)
-    DNF="dnf --enablerepo=powertools"
-    ;;
-  *)
-    DNF="dnf --enablerepo=crb"
+case ${os} in
+  oracle-linux)
+    DNF="dnf --enablerepo=ol${version}_codeready_builder"
     ${DNF} install -y \
       https://apache.jfrog.io/artifactory/arrow/${os}/${version}/apache-arrow-release-latest.rpm
     ;;
+  *)
+    case ${version} in
+      2)
+        DNF=yum
+        ;;
+      7)
+        DNF=yum
+        ;;
+      8)
+        DNF="dnf --enablerepo=powertools"
+        ;;
+      *)
+        DNF="dnf --enablerepo=crb"
+        ${DNF} install -y \
+          https://apache.jfrog.io/artifactory/arrow/${os}/${version}/apache-arrow-release-latest.rpm
+        ;;
+    esac
 esac
 
 ${DNF} install -y \
