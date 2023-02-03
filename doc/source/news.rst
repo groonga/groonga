@@ -13,14 +13,8 @@ Release 13.0.0 - 2023-02-09
 This is a major version up!
 But It keeps backward compatibility. We can upgrade to 13.0.0 without rebuilding database.
 
-First of all, we introduce the hilight and summary of changes from Groonga 12.0.0 to 12.1.2.
-Then, we introduce the main changes in 13.0.0.
-
-Higlight
-^^^^^^^^
-
-Newly supported OSes
-^^^^^^^^^^^^^^^^^^^^
+First of all, we introduce the main changes in 13.0.0.
+Then, we introduce the hilight and summary of changes from Groonga 12.0.0 to 12.1.2.
 
 New Features and Improvements in 13.0.0
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -37,6 +31,166 @@ Improvements
 * [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_di_sound``.
 
 * [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_wo_sound``.
+
+* [:doc:`install/oracle-linux`] Added newly support for Oracle Linux 8 and 9.
+
+Higlight and Summary of changes from 12.0.0 to 12.1.2
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Higlight
+^^^^^^^^
+
+
+
+Summary
+^^^^^^^
+
+Improvements
+^^^^^^^^^^^^
+
+[:ref:`release-12-1-2`]
+
+  * [httpd] Updated bundled nginx to 1.23.3.
+
+[:ref:`release-12-1-1`]
+
+  * [:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-expansions-power-set`] Vector's power set is now able to aggregate with the drilldowns.
+  * [:doc:`reference/commands/select`] Specific element of vector column is now able to be search target.
+  * [:doc:`/reference/commands/load`] Added support for ``YYYY-MM-DD`` time format.
+
+[:ref:`release-12-1-0`]
+
+  * [:doc:`reference/commands/load`] Added support for slow log output of ``load``. 
+  * [:doc:`reference/api`] Added new API ``grn_is_reference_count_enable()``.
+  * [:doc:`reference/commands/status`] Added new items: ``back_trace`` and ``reference_count``.
+
+[:ref:`release-12-0-9`]
+
+  * [:doc:`install/almalinux`] Added support for AlmaLinux 9.
+  * [:doc:`reference/functions/escalate`] Added a document for the ``escalate()`` function.
+  * [:doc:`reference/normalizers`] Added ``NormalizerHTML``. (Experimental)
+  * [httpd] Updated bundled nginx to 1.23.2.
+  * Suppressed logging a lot of same messages when no memory is available.
+
+[:ref:`release-12-0-8`]
+
+  * Changed specification of the ``escalate()`` function (Experimental) to make it easier to use.
+  * [:doc:`install/cmake`] Added a document about how to build Groonga with CMake.
+  * [:doc:`install/others`] Added descriptions about how to enable/disable Apache Arrow support when building with GNU Autotools.
+  * [:doc:`reference/commands/select`] Added a document about :ref:`select-drilldowns-label-table`.
+  * [:doc:`contribution/documentation/i18n`] Updated the translation procedure.
+
+[:ref:`release-12-0-7`]
+
+  * Added a new function ``escalate()``. (experimental)
+  * [httpd] Updated bundled nginx to 1.23.1.
+  * [:doc:`reference/commands/select`] Add a document for the ``--n_workers`` option.
+
+[:ref:`release-12-0-6`]
+
+  * Added new Munin plugins for groonga-delta.
+  * [:doc:`reference/commands/column_copy`] Added support for weight vector.
+  * [:doc:`/install/ubuntu`] Dropped support for Ubuntu 21.10 (Impish Indri).
+  * [:doc:`/install/debian`] Dropped Debian 10 (buster) support.
+
+[:ref:`release-12-0-5`]
+
+  * [:doc:`reference/commands/select`] Improved a little bit of performance for prefix search by search escalation.
+  * [:doc:`reference/commands/select`] Added support for specifying a reference vector column with weight in ``drilldowns[LABEL]._key``.
+  * [:doc:`reference/commands/select`] Added support for doing drilldown with a reference vector with weight even if we use ``query`` or ``filter``, or ``post_filter``.
+
+[:ref:`release-12-0-4`]
+
+  * [:doc:`/install/ubuntu`] Added support for Ubuntu 22.04 (Jammy Jellyfish).
+  * We don't provide `groonga-benchmark`.
+  * [:doc:`reference/commands/status`] Added a new item ``memory_map_size``.
+
+[:ref:`release-12-0-3`]
+
+  * [:doc:`reference/commands/logical_count`] Improved memory usage while ``logical_count`` executed.
+  * [:doc:`/reference/commands/dump`] Added support for ``MISSING_IGNORE/MISSING_NIL``.
+  * [:doc:`reference/functions/snippet`],[:doc:`reference/functions/snippet_html`] Added support for text vector as input. [groonga-dev,04956][Reported by shinonon]
+  * [``vector_join``] Added a new function ``vector_join()``.[groonga-dev,04956]
+  * [:doc:`/reference/indexing`] Ignore too large a token like online index construction.
+
+[:ref:`release-12-0-2`]
+
+  * [:doc:`reference/commands/logical_range_filter`] Added support for reducing reference immediately after processing a shard.
+  * We increased the stability of the feature of recovering on crashes.
+  * Improved performance for mmap if anonymous mmap available.
+  * [:doc:`/reference/indexing`] Added support for the static index construction against the following types of columns.
+  * [:doc:`reference/commands/column_create`] Added new flags ``MISSING_*`` and ``INVALID_*``.
+  * [:doc:`/reference/commands/dump`][:doc:`/reference/commands/column_list`] Added support for ``MISSING_*`` and ``INVALID_*`` flags.
+  * [:doc:`/reference/commands/schema`] Added support for ``MISSING_*`` and ``INVALID_*`` flags.
+  * We provided the package of Amazon Linux 2.
+  * [Windows] Dropped support for building with Visual Studio 2017.
+
+[:ref:`release-12-0-1`]
+
+  * [:doc:`/reference/commands/query_expand`] Added a support for synonym group.
+  * [:doc:`/reference/commands/query_expand`] Added a support for text vector and index.
+  * Added support for disabling a backtrace by the environment variable.
+  * [:doc:`reference/commands/select`] Improved performance for ``--slices``.
+  * [Windows] Added support for Visual Studio 2022.
+  * [:doc:`reference/commands/select`] Added support for specifing max intervals for each elements in near search.
+  * [:doc:`reference/executables/groonga-server-http`] We could use ``groonga-server-http`` even if Groonga of RPM packages.
+
+[:ref:`release-12-0-0`]
+
+  * [:doc:`reference/functions/sub_filter`] Added a new option ``pre_filter_threshold``.
+  * [index_column_have_source_record] Added a new function ``index_column_have_source_record()``.
+  * [:doc:`reference/normalizers/normalizer_nfkc130`] Added a new option ``strip``
+  * [:doc:`reference/commands/select`] Added new arguments ``drilldown_max_n_target_records`` and ``drilldown[${LABEL}].max_n_target_records``.
+  * [httpd] Updated bundled nginx to 1.21.6.
+
+Fixes
+^^^^^
+
+[:ref:`release-12-1-1`]
+
+  * [:doc:`reference/commands/select`] Fix a bug displaying a wrong label in ``drilldown`` results when ``command_version`` is ``3``.
+  * [:doc:`reference/normalizers/normalizer_table`] Fix a bug for Groonga to crush with specific definition setting in ``NormalizerTable``.
+
+[:ref:`release-12-1-0`]
+
+  * [:doc:`reference/commands/select`][:doc:`reference/columns/vector`] Fixed a bug displaying integer in the results when a weight vector column specifies `WEIGHT FLOAT32`.
+
+[:ref:`release-12-0-9`]
+
+  * [:doc:`reference/commands/select`] Fixed a bug that Groonga could crash or return incorrect results when specifying :ref:`select-n-workers`.
+
+[:ref:`release-12-0-8`]
+
+  * Fixed a bug that Groonga could return incorrect results when we use :doc:`reference/normalizers/normalizer_table` and it contains a non-idempotent (results can be changed when executed repeatedly) definition.
+
+[:ref:`release-12-0-7`]
+
+  * Fixed a bug Groonga's response may be slow when we execute the ``request_cancel`` while executing a OR search.
+
+[:ref:`release-12-0-6`]
+
+  * Fixed a bug that Groonga may crash when we execute drilldown in a parallel by ``n_workers`` option.
+  * [:doc:`reference/commands/select`] Fixed a bug that the syntax error occurred when we specify a very long expression in ``--filter``.
+
+[:ref:`release-12-0-4`]
+
+  * Fixed a bug Groonga's response may be slow when we execute ``request_cancel`` while executing a search.
+  * Fixed a bug that string list can't be casted to int32 vector.
+  * Fixed a bug that Groonga Munin Plugins do not work on AlmaLinux 8 and CentOS 7.
+
+[:ref:`release-12-0-3`]
+
+  * Fixed a bug that we may be not able to add a key to a table of patricia trie.
+
+Thanks
+^^^^^^
+
+* Atsushi Shinoda
+* i10a
+* naoa
+* shinonon
+* Zhanzhao (Deo) Liang
+* David CARLIER
 
 .. _release-12-1-2:
 
