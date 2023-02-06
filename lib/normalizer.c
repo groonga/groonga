@@ -1807,7 +1807,7 @@ grn_nfkc_normalize_unify_katakana_trailing_o(grn_ctx *ctx,
       /* U+30AA KATAKANA LETTER O */
       char_length == 3 &&
       current[0] == 0xe3 &&
-      current[1] == 0x82 && 
+      current[1] == 0x82 &&
       current[2] == 0xaa) {
     /* U+30A6 KATAKANA LETTER U */
     unified_buffer[(*n_unified_bytes)++] = current[0];
