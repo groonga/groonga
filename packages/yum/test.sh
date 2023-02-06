@@ -26,7 +26,7 @@ case ${os} in
   oracle-linux)
     DNF="dnf --enablerepo=ol${version}_codeready_builder"
     ${DNF} install -y \
-      https://apache.jfrog.io/artifactory/arrow/${os}/${version}/apache-arrow-release-latest.rpm
+      https://apache.jfrog.io/artifactory/arrow/almalinux/$(cut -d: -f5 /etc/system-release-cpe | cut -d. -f1)/apache-arrow-release-latest.rpm
     ;;
   *)
     case ${version} in
