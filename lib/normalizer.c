@@ -1707,7 +1707,7 @@ grn_nfkc_normalize_unify_katakana_di_sound(grn_ctx *ctx,
 }
 
 static const unsigned char *
-grn_nfkc_normalize_unify_katakana_gu_sounds(grn_ctx *ctx,
+grn_nfkc_normalize_unify_katakana_gu_small_sounds(grn_ctx *ctx,
                                            const unsigned char *start,
                                            const unsigned char *current,
                                            const unsigned char *end,
@@ -2050,7 +2050,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
         data->options->unify_katakana_du_small_sounds ||
         data->options->unify_katakana_wo_sound ||
         data->options->unify_katakana_di_sound ||
-        data->options->unify_katakana_gu_sounds ||
+        data->options->unify_katakana_gu_small_sounds ||
         data->options->unify_katakana_trailing_o ||
         data->options->unify_to_romaji ||
         data->options->unify_to_katakana ||
@@ -2187,7 +2187,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     need_swap = GRN_TRUE;
   }
 
-  if (data->options->unify_katakana_gu_sounds) {
+  if (data->options->unify_katakana_gu_small_sounds) {
     if (need_swap) {
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
@@ -2195,9 +2195,9 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     grn_nfkc_normalize_unify_stateful(ctx,
                                       data,
                                       &unify,
-                                      grn_nfkc_normalize_unify_katakana_gu_sounds,
+                                      grn_nfkc_normalize_unify_katakana_gu_small_sounds,
                                       NULL,
-                                      "[unify][katakana-gu-sounds]");
+                                      "[unify][katakana-gu-small-sounds]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
