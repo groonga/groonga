@@ -44,7 +44,7 @@ typedef struct {
   grn_bool unify_middle_dot;
   grn_bool unify_katakana_v_sounds;
   grn_bool unify_katakana_bu_sound;
-  grn_bool unify_katakana_z_sounds;
+  grn_bool unify_katakana_zu_small_sounds;
   grn_bool unify_katakana_du_small_sounds;
   grn_bool unify_katakana_wo_sound;
   grn_bool unify_katakana_di_sound;
