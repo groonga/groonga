@@ -15,7 +15,7 @@ case ${os} in
     ;;
   linux)
     os=oracle-linux
-    version=$(cut -d: -f5 /etc/system-release-cpe | sed -e 's/\.[0-9]$//')
+    version=$(cut -d: -f5 /etc/system-release-cpe)
     ;;
   *) # For AlmaLinux
     version=$(cut -d: -f5 /etc/system-release-cpe | sed -e 's/\.[0-9]$//')
