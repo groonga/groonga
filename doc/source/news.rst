@@ -28,9 +28,129 @@ Improvements
 
 * [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_g_sounds``.
 
+  We can normalize "グァ -> ガ", "グィ -> ギ", "グェ -> ゲ", and "グォ -> ゴ" with this option.
+
+  .. code-block::
+
+     normalize \
+       'NormalizerNFKC130("unify_katakana_g_sounds", true, \
+                          "report_source_offset", true)' \
+       "グァグィグェグォ" \
+       WITH_CHECKS|WITH_TYPES
+
+     [
+       [
+         0,
+         0,
+         0
+       ],
+       {
+         "normalized":"ガギゲゴ",
+         "types":["katakana","katakana","katakana","katakana"],
+         "checks":[6,0,0,6,0,0,6,0,0,6,0,0],
+         "offsets":[0,6,12,18]
+       }
+     ]
+
 * [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_di_sound``.
 
+  We can normalize "ヂ -> ジ" with this option.
+
+  .. code-block::
+
+     normalize \
+       'NormalizerNFKC130("unify_katakana_di_sound", true, \
+                          "report_source_offset", true)' \
+       "ヂ" \
+       WITH_CHECKS|WITH_TYPES
+     [
+       [
+         0,
+         0,
+         0
+       ],
+       {
+         "normalized":"ジ",
+         "types":["katakana"],
+         "checks":[3,0,0],
+         "offsets":[0]
+       }
+     ]
+
 * [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_wo_sound``.
+
+  We can normalize "ヲ -> オ" with this option.
+
+  .. code-block::
+
+     normalize \
+       'NormalizerNFKC130("unify_katakana_wo_sound", true, \
+                          "report_source_offset", true)' \
+       "ヲ" \
+       WITH_CHECKS|WITH_TYPES
+     [
+       [
+         0,
+         0,
+         0
+       ],
+       {
+         "normalized":"オ",
+         "types":["katakana"],
+         "checks":[3,0,0],
+         "offsets":[0]
+       }
+     ]
+
+* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_z_sound``.
+
+  We can normalize "ズァ -> ザ", "ズィ -> ジ", "ズェ -> ゼ", and "ズォ -> ゾ" with this option.
+
+  .. code-block::
+
+     normalize \
+       'NormalizerNFKC130("unify_katakana_z_sounds", true, \
+                          "report_source_offset", true)' \
+       "ズァズィズェズォ" \
+       WITH_CHECKS|WITH_TYPES
+     [
+       [
+         0,
+         0,
+         0
+       ],
+       {
+         "normalized":"ズァズィズェズォ",
+         "types":["katakana","katakana","katakana","katakana","katakana","katakana","katakana","katakana"],
+         "checks":[3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0],
+         "offsets":[0,3,6,9,12,15,18,21]
+       }
+     ]
+
+* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_du_small_sound``.
+
+  We can "ヅァ -> ザ", "ヅィ -> ジ", "ヅェ -> ゼ", and "ヅォ -> ゾ" qith this option.
+
+  .. code-block::
+
+     normalize \
+       'NormalizerNFKC130("unify_katakana_du_small_sounds", true, \
+                          "report_source_offset", true)' \
+       "ヅァヅィヅェヅォ" \
+       WITH_CHECKS|WITH_TYPES
+     [
+       [
+         0,
+         0,
+         0
+       ],
+       {
+         "normalized":"ヅァヅィヅェヅォ",
+         "types":["katakana","katakana","katakana","katakana","katakana","katakana","katakana","katakana"],
+         "checks":[3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0],
+         "offsets":[0,3,6,9,12,15,18,21]
+       }
+     ]
 
 * [:doc:`install/oracle-linux`] Added newly support for Oracle Linux 8 and 9.
 
@@ -40,6 +160,346 @@ Higlight and Summary of changes from 12.0.0 to 12.1.2
 Higlight
 ^^^^^^^^
 
+[:ref:`release-12-0-9`]
+
+  * [:doc:`reference/normalizers`] Added ``NormalizerHTML``. (Experimental)
+
+    ``NormalizerHTML`` is a normalizer for HTML.
+
+    Currently ``NormalizerHTML`` supports removing tags like ``<span>`` or ``</span>`` and expanding character references like ``&amp;`` or ``&#38;``.
+
+    Here are sample queries for ``NormalizerHTML``.
+
+    .. code-block::
+
+      normalize NormalizerHTML "<span> Groonga &amp; Mroonga &#38; Rroonga </span>"
+      [[0,1666923364.883798,0.0005481243133544922],{"normalized":" Groonga & Mroonga & Rroonga ","types":[],"checks":[]}]
+
+    In this sample ``<span>`` and ``</span>`` are removed, and ``&amp;`` and ``&#38;`` are expanded to ``&``.
+
+    We can specify whether removing the tags with the ``remove_tag`` option.
+    (The default value of the ``remove_tag`` option is ``true``.)
+
+    .. code-block::
+
+       normalize 'NormalizerHTML("remove_tag", false)' "<span> Groonga &amp; Mroonga &#38; Rroonga </span>"
+       [[0,1666924069.278549,0.0001978874206542969],{"normalized":"<span> Groonga & Mroonga & Rroonga </span>","types":[],"checks":[]}]
+
+    In this sample, ``<span>`` and ``</span>`` are not removed.
+
+    We can specify whether expanding the character references with the ``expand_character_reference`` option.
+    (The default value of the ``expand_character_reference`` option is ``true``.)
+
+    .. code-block::
+
+       normalize 'NormalizerHTML("expand_character_reference", false)' "<span> Groonga &amp; Mroonga &#38; Rroonga </span>"
+       [[0,1666924357.099782,0.0002346038818359375],{"normalized":" Groonga &amp; Mroonga &#38; Rroonga ","types":[],"checks":[]}]
+
+    In this sample, ``&amp;`` and ``&#38;`` are not expanded.
+
+[:ref:`release-12-0-3`]
+
+  * [:doc:`reference/functions/snippet`],[:doc:`reference/functions/snippet_html`] Added support for text vector as input. [groonga-dev,04956][Reported by shinonon]
+
+    For example, we can extract snippets of target text around search keywords against vector in JSON data as below.
+
+    .. code-block::
+
+       table_create Entries TABLE_NO_KEY
+       column_create Entries title COLUMN_SCALAR ShortText
+       column_create Entries contents COLUMN_VECTOR ShortText
+
+       table_create Tokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC130
+       column_create Tokens entries_title COLUMN_INDEX|WITH_POSITION Entries title
+       column_create Tokens entries_contents COLUMN_INDEX|WITH_SECTION|WITH_POSITION   Entries contents
+
+       load --table Entries
+       [
+       {
+         "title": "Groonga and MySQL",
+         "contents": [
+           "Groonga is a full text search engine",
+           "MySQL is a RDBMS",
+           "Mroonga is a MySQL storage engine based on Groonga"
+         ]
+       }
+       ]
+
+       select Entries\
+         --output_columns 'snippet_html(contents), contents'\
+         --match_columns 'title'\
+         --query Groonga
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "snippet_html",
+                 null
+               ],
+               [
+                 "contents",
+                 "ShortText"
+               ]
+             ],
+             [
+               [
+                 "<span class=\"keyword\">Groonga</span> is a full text search engine",
+                 "Mroonga is a MySQL storage engine based on <span class=\"keyword\">Groonga</span>"
+               ],
+               [
+                 "Groonga is a full text search engine",
+                 "MySQL is a RDBMS",
+                 "Mroonga is a MySQL storage engine based on Groonga"
+               ]
+             ]
+           ]
+         ]
+       ]
+
+    Until now, if we specified ``snippet*`` like ``--output_columns 'snippet_html(contents[1])``,
+    we could extract snippets of target text around search keywords against the vector as below.
+    However, we didn't know which we should output elements. Because we didn't know which element was hit on search.
+
+    .. code-block::
+
+       select Entries\
+         --output_columns 'snippet_html(contents[0]), contents'\
+         --match_columns 'title'\
+         --query Groonga
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "snippet_html",
+                 null
+               ],
+               [
+                 "contents",
+                 "ShortText"
+               ]
+             ],
+             [
+               [
+                 "<span class=\"keyword\">Groonga</span> is a full text search engine"
+               ],
+               [
+                 "Groonga is a full text search engine",
+                 "MySQL is a RDBMS",
+                 "Mroonga is a MySQL storage engine based on Groonga"
+               ]
+             ]
+           ]
+         ]
+       ]
+
+[:ref:`release-12-0-1`]
+
+  * [:doc:`/reference/commands/query_expand`] Added a support for synonym group.
+
+    Until now, We had to each defined a keyword and synonyms of the keyword as below when we use the synonym search.
+
+    .. code-block::
+
+       table_create Thesaurus TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+       # [[0, 1337566253.89858, 0.000355720520019531], true]
+       column_create Thesaurus synonym COLUMN_VECTOR ShortText
+       # [[0, 1337566253.89858, 0.000355720520019531], true]
+       load --table Thesaurus
+       [
+       {"_key": "mroonga", "synonym": ["mroonga", "tritonn", "groonga mysql"]},
+       {"_key": "groonga", "synonym": ["groonga", "senna"]}
+       ]
+
+    In the above case, if we search ``mroonga``, Groonga search ``mroonga OR tritonn OR "groonga mysql"`` as we intended.
+    However, if we search ``tritonn``, Groonga search only ``tritonn``.
+    If we want to search ``tritonn OR mroonga OR "groonga mysql"`` even if we search ``tritonn``, we need had added a definition as below.
+
+    .. code-block::
+
+       load --table Thesaurus
+       [
+       {"_key": "tritonn", "synonym": ["tritonn", "mroonga", "groonga mysql"]},
+       ]
+
+    In many cases, if we expand ``mroonga`` to ``mroonga OR tritonn OR "groonga mysql"``, we feel we want to expand ``tritonn`` and ``"groonga mysql"`` to ``mroonga OR tritonn OR "groonga mysql"``.
+    However, until now, we had needed additional definitions in such a case.
+    Therefore, if target keywords for synonyms are many, we are troublesome to define synonyms.
+    Because we need to define many similar definitions.
+
+    In addition, when we remove synonyms, we are troublesome because we need to execute remove against many records.
+
+    We can make a group by deciding on a representative synonym record since this release.
+    For example, the all following keywords are the "mroonga" group.
+
+    .. code-block::
+
+       load --table Synonyms
+       [
+         {"_key": "mroonga": "representative": "mroonga"}
+       ]
+
+       load --table Synonyms
+       [
+         {"_key": "tritonn": "representative": "mroonga"},
+         {"_key": "groonga mysql": "representative": "mroonga"}
+       ]
+
+    In this case, ``mroonga`` is expanded to ``mroonga OR tritonn OR "groonga mysql"``.
+    In addition, ``tritonn`` and ``"groonga mysql"`` are also expanded to ``mroonga OR tritonn OR "groonga mysql"``.
+
+    When we want to remove synonyms, we execute just remove against a target record.
+    For example, if we want to remove ``"groonga mysql"`` from synonyms, we just remove ``{"_key": "groonga mysql": "representative": "mroonga"}``.
+
+[:ref:`release-12-0-0`]
+
+  * [index_column_have_source_record] Added a new function ``index_column_have_source_record()``.
+
+    We can confirm whether a token that is existing in the index is included in any of the records that are registered in Groonga or not.
+
+    Groonga does not remove a token even if the token become never used from records in Groonga by updating records.
+    Therefore, for example, when we use the feature of autocomplete, Groonga may return a token that is not included in any of the records as candidates for search words.
+    However, we can become that we don't return the needless token by using this function.
+
+    Because this function can detect a token that is not included in any of the records.
+
+  * [:doc:`reference/commands/select`] Added new arguments ``drilldown_max_n_target_records`` and ``drilldown[${LABEL}].max_n_target_records``.
+
+    We can specify the max number of records of the drilldown target table (filtered result) to use drilldown.
+    If the number of filtered result is larger than the specified value, some records in filtered result aren't used for drilldown.
+    The default value of this arguments are ``-1``.
+    If these arguments are set ``-1``, Groonga uses all records for drilldown.
+
+    This argument is useful when filtered result may be very large.
+    Because a drilldown against large filtered result may be slow.
+    We can limit the max number of records to be used for drilldown by this feature.
+
+    Here is an example to limit the max number of records to be used for drilldown.
+    The last 2 records, ``{\"_id\": 4, \"tag\": \"Senna\"}`` and ``{\"_id\": 5, \"tag\": \"Senna\"}``, aren't used.
+
+    .. code-block::
+
+        table_create Entries TABLE_HASH_KEY ShortText
+        column_create Entries content COLUMN_SCALAR Text
+        column_create Entries n_likes COLUMN_SCALAR UInt32
+        column_create Entries tag COLUMN_SCALAR ShortText
+
+        table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+        column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
+        column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
+        load --table Entries
+        [
+        {"_key":    "The first post!",
+         "content": "Welcome! This is my first post!",
+         "n_likes": 5,
+         "tag": "Hello"},
+        {"_key":    "Groonga",
+         "content": "I started to use Groonga. It's very fast!",
+         "n_likes": 10,
+         "tag": "Groonga"},
+        {"_key":    "Mroonga",
+         "content": "I also started to use Mroonga. It's also very fast! Really fast!",
+         "n_likes": 15,
+         "tag": "Groonga"},
+        {"_key":    "Good-bye Senna",
+         "content": "I migrated all Senna system!",
+         "n_likes": 3,
+         "tag": "Senna"},
+        {"_key":    "Good-bye Tritonn",
+         "content": "I also migrated all Tritonn system!",
+         "n_likes": 3,
+         "tag": "Senna"}
+        ]
+
+        select Entries \
+          --limit -1 \
+          --output_columns _id,tag \
+          --drilldown tag \
+          --drilldown_max_n_target_records 3
+        [
+          [
+            0, 
+            1337566253.89858, 
+            0.000355720520019531
+          ], 
+          [
+            [
+              [
+                5
+              ], 
+              [
+                [
+                  "_id", 
+                  "UInt32"
+                ], 
+                [
+                  "tag", 
+                  "ShortText"
+                ]
+              ], 
+              [
+                1, 
+                "Hello"
+              ], 
+              [
+                2, 
+                "Groonga"
+              ], 
+              [
+                3, 
+                "Groonga"
+              ], 
+              [
+                4, 
+                "Senna"
+              ], 
+              [
+                5, 
+                "Senna"
+              ]
+            ], 
+            [
+              [
+                2
+              ], 
+              [
+                [
+                  "_key", 
+                  "ShortText"
+                ], 
+                [
+                  "_nsubrecs", 
+                  "Int32"
+                ]
+              ], 
+              [
+                "Hello", 
+                1
+              ], 
+              [
+                "Groonga", 
+                2
+              ]
+            ]
+          ]
+        ]
 
 
 Summary
