@@ -1784,6 +1784,77 @@ grn_nfkc_normalize_unify_katakana_g_sounds(grn_ctx *ctx,
 }
 
 static const unsigned char *
+grn_nfkc_normalize_unify_katakana_trailing_o(grn_ctx *ctx,
+                                             const unsigned char *start,
+                                             const unsigned char *current,
+                                             const unsigned char *end,
+                                             size_t *n_used_bytes,
+                                             size_t *n_used_characters,
+                                             unsigned char *unified_buffer,
+                                             size_t *n_unified_bytes,
+                                             size_t *n_unified_characters,
+                                             void *user_data)
+{
+  size_t char_length;
+  bool *need_trailing_check = (bool *)user_data;
+
+  char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+
+  *n_used_bytes = char_length;
+  *n_used_characters = 1;
+
+  if (*need_trailing_check &&
+      /* U+30AA KATAKANA LETTER O */
+      char_length == 3 &&
+      current[0] == 0xe3 &&
+      current[1] == 0x82 &&
+      current[2] == 0xaa) {
+    /* U+30A6 KATAKANA LETTER U */
+    unified_buffer[(*n_unified_bytes)++] = current[0];
+    unified_buffer[(*n_unified_bytes)++] = current[1];
+    unified_buffer[(*n_unified_bytes)++] = 0xa6;
+    (*n_unified_characters)++;
+    *need_trailing_check = false;
+    return unified_buffer;
+  }
+
+  *need_trailing_check = char_length == 3 &&
+                         current[0] == 0xe3 &&
+                         /* U+30AA KATAKANA LETTER O */
+                         ((current[1] == 0x82 && current[2] == 0xaa) ||
+                          /* U+30B3 KATAKANA LETTER KO */
+                          (current[1] == 0x82 && current[2] == 0xb3) ||
+                          /* U+30BD KATAKANA LETTER SO */
+                          (current[1] == 0x82 && current[2] == 0xbd) ||
+                          /* U+30C8 KATAKANA LETTER TO */
+                          (current[1] == 0x83 && current[2] == 0x88) ||
+                          /* U+30CE KATAKANA LETTER NO */
+                          (current[1] == 0x83 && current[2] == 0x8e) ||
+                          /* U+30DB KATAKANA LETTER HO */
+                          (current[1] == 0x83 && current[2] == 0x9b) ||
+                          /* U+30E2 KATAKANA LETTER MO */
+                          (current[1] == 0x83 && current[2] == 0xa2) ||
+                          /* U+30E8 KATAKANA LETTER YO */
+                          (current[1] == 0x83 && current[2] == 0xa8) ||
+                          /* U+30ED KATAKANA LETTER RO */
+                          (current[1] == 0x83 && current[2] == 0xad) ||
+                          /* U+30B4 KATAKANA LETTER GO */
+                          (current[1] == 0x82 && current[2] == 0xb4) ||
+                          /* U+30BE KATAKANA LETTER ZO */
+                          (current[1] == 0x82 && current[2] == 0xbe) ||
+                          /* U+30C9 KATAKANA LETTER DO */
+                          (current[1] == 0x83 && current[2] == 0x89) ||
+                          /* U+30DC KATAKANA LETTER BO */
+                          (current[1] == 0x83 && current[2] == 0x9c) ||
+                          /* U+30DD KATAKANA LETTER PO */
+                          (current[1] == 0x83 && current[2] == 0x9d));
+  *n_unified_bytes = *n_used_bytes;
+  *n_unified_characters = *n_used_characters;
+
+  return current;
+}
+
+static const unsigned char *
 grn_nfkc_normalize_unify_romaji(grn_ctx *ctx,
                                 const unsigned char *start,
                                 const unsigned char *current,
@@ -1980,6 +2051,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
         data->options->unify_katakana_wo_sound ||
         data->options->unify_katakana_di_sound ||
         data->options->unify_katakana_g_sounds ||
+        data->options->unify_katakana_trailing_o ||
         data->options->unify_to_romaji ||
         data->options->unify_to_katakana ||
         data->options->strip)) {
@@ -2126,6 +2198,24 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
                                       grn_nfkc_normalize_unify_katakana_g_sounds,
                                       NULL,
                                       "[unify][katakana-g-sounds]");
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    need_swap = GRN_TRUE;
+  }
+
+  if (data->options->unify_katakana_trailing_o) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    bool need_trailing_check = false;
+    grn_nfkc_normalize_unify_stateful(ctx,
+                                      data,
+                                      &unify,
+                                      grn_nfkc_normalize_unify_katakana_trailing_o,
+                                      &need_trailing_check,
+                                      "[unify][katakana-trailing-o]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
