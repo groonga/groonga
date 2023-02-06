@@ -1845,8 +1845,6 @@ grn_nfkc_normalize_unify_katakana_trailing_o(grn_ctx *ctx,
       unified_buffer[(*n_unified_bytes)++] = current[1];
       unified_buffer[(*n_unified_bytes)++] = current[2];
       (*n_unified_characters)++;
-      (*n_used_bytes) += char_length;
-      (*n_used_characters)++;
       /* U+30A6 KATAKANA LETTER U */
       unified_buffer[(*n_unified_bytes)++] = next[0];
       unified_buffer[(*n_unified_bytes)++] = next[1];
