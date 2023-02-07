@@ -1,0 +1,22 @@
+normalize   'NormalizerNFKC130("unify_katakana_du_sound", true,                      "report_source_offset", true)'   "ヅ"   WITH_CHECKS|WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "ズ",
+    "types": [
+      "katakana"
+    ],
+    "checks": [
+      3,
+      0,
+      0
+    ],
+    "offsets": [
+      0
+    ]
+  }
+]
