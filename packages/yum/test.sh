@@ -45,6 +45,7 @@ case ${os} in
           https://apache.jfrog.io/artifactory/arrow/${os}/${version}/apache-arrow-release-latest.rpm
         ;;
     esac
+    ;;
 esac
 
 ${DNF} install -y \
