@@ -36,9 +36,9 @@ Improvements
 
     .. code-block::
 
-       table_create --name Contry --flags TABLE_HASH_KEY --key_type ShortText
-       column_create --table Contry --name name --type ShortText
-       load --table Contry
+       table_create --name Countries --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Countries --name name --type ShortText
+       load --table Countries
        [
        {"_key":"JP","name":"日本"},
        {"_key":"GT","name":"グァテマラ共和国"},
@@ -50,9 +50,9 @@ Improvements
          --key_type ShortText \
          --default_tokenizer TokenBigram \
          --normalizer 'NormalizerNFKC150("unify_katakana_gu_small_sounds", true)'
-       column_create --table idx_contry_name --name contry_name --flags COLUMN_INDEX|WITH_POSITION --type Contry --source name
+       column_create --table idx_contry_name --name contry_name --flags COLUMN_INDEX|WITH_POSITION --type Countries --source name
 
-       select --table Contry --query name:@ガテマラ共和国
+       select --table Countries --query name:@ガテマラ共和国
        [
          [0,
           0,
@@ -94,9 +94,9 @@ Improvements
 
     .. code-block::
 
-       table_create --name Food --flags TABLE_HASH_KEY --key_type ShortText
-       column_create --table Food --name name --type ShortText
-       load --table Food
+       table_create --name Foods --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Foods --name name --type ShortText
+       load --table Foods
        [
        {"_key":"1","name":"チジミ"},
        {"_key":"2","name":"パジョン"},
@@ -108,9 +108,9 @@ Improvements
          --key_type ShortText \
          --default_tokenizer TokenBigram \
          --normalizer 'NormalizerNFKC150("unify_katakana_di_sound", true)'
-       column_create --table idx_food_name --name food_name --flags COLUMN_INDEX|WITH_POSITION --type Food --source name
+       column_create --table idx_food_name --name food_name --flags COLUMN_INDEX|WITH_POSITION --type Foods --source name
 
-       select --table Food --query name:@チヂミ
+       select --table Foods --query name:@チヂミ
        [
          [
            0,
@@ -153,9 +153,9 @@ Improvements
 
     .. code-block::
 
-       table_create --name Food --flags TABLE_HASH_KEY --key_type ShortText
-       column_create --table Food --name name --type ShortText
-       load --table Food
+       table_create --name Foods --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Foods --name name --type ShortText
+       load --table Foods
        [
        {"_key":"1","name":"アヲハタ"},
        {"_key":"2","name":"ヴェルデ"},
@@ -168,9 +168,9 @@ Improvements
          --key_type ShortText \
          --default_tokenizer TokenBigram \
          --normalizer 'NormalizerNFKC150("unify_katakana_wo_sound", true)'
-       column_create --table idx_food_name --name food_name --flags COLUMN_INDEX|WITH_POSITION --type Food --source name
+       column_create --table idx_food_name --name food_name --flags COLUMN_INDEX|WITH_POSITION --type Foods --source name
 
-       select --table Food --query name:@アオハタ
+       select --table Foods --query name:@アオハタ
        [
          [
            0,
@@ -213,9 +213,9 @@ Improvements
 
     .. code-block::
 
-       table_create --name City --flags TABLE_HASH_KEY --key_type ShortText
-       column_create --table City --name name --type ShortText
-       load --table City
+       table_create --name Cities --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Cities --name name --type ShortText
+       load --table Cities
        [
        {"_key":"1","name":"ガージヤーバード"},
        {"_key":"2","name":"デリー"},
@@ -227,9 +227,9 @@ Improvements
          --key_type ShortText \
          --default_tokenizer TokenBigram \
          --normalizer 'NormalizerNFKC150("unify_katakana_zu_small_sounds", true)'
-       column_create --table idx_city_name --name city_name --flags COLUMN_INDEX|WITH_POSITION --type City --source name
+       column_create --table idx_city_name --name city_name --flags COLUMN_INDEX|WITH_POSITION --type Cities --source name
 
-       select --table City --query name:@ガーズィヤーバード
+       select --table Cities --query name:@ガーズィヤーバード
        [
          [
            0,
@@ -272,9 +272,9 @@ Improvements
 
     .. code-block::
 
-       table_create --name Plant --flags TABLE_HASH_KEY --key_type ShortText
-       column_create --table Plant --name name --type ShortText
-       load --table Plant
+       table_create --name Plants --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Plants --name name --type ShortText
+       load --table Plants
        [
        {"_key":"1","name":"ハスノカヅラ"},
        {"_key":"2","name":"オオツヅラフジ"},
@@ -287,9 +287,9 @@ Improvements
          --key_type ShortText \
          --default_tokenizer TokenBigram \
          --normalizer 'NormalizerNFKC150("unify_katakana_du_sound", true)'
-       column_create --table idx_plant_name --name plant_name --flags COLUMN_INDEX|WITH_POSITION --type Plant --source name
+       column_create --table idx_plant_name --name plant_name --flags COLUMN_INDEX|WITH_POSITION --type Plants --source name
 
-       select --table Plant --query name:@ツズラ
+       select --table Plants --query name:@ツズラ
        [
          [
            0,
@@ -352,9 +352,9 @@ Improvements
 
     .. code-block::
 
-       table_create --name Shark --flags TABLE_HASH_KEY --key_type ShortText
-       column_create --table Shark --name name --type ShortText
-       load --table Shark
+       table_create --name Sharks --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Sharks --name name --type ShortText
+       load --table Sharks
        [
        {"_key":"1","name":"ホオジロザメ"},
        {"_key":"2","name":"ジンベイザメ"},
@@ -366,9 +366,9 @@ Improvements
          --key_type ShortText \
          --default_tokenizer TokenBigram \
          --normalizer 'NormalizerNFKC150("unify_katakana_trailing_o", true)'
-       column_create --table idx_shark_name --name shark_name --flags COLUMN_INDEX|WITH_POSITION --type Shark --source name
+       column_create --table idx_shark_name --name shark_name --flags COLUMN_INDEX|WITH_POSITION --type Sharks --source name
 
-       select --table Shark --query name:@ホウジロザメ
+       select --table Sharks --query name:@ホウジロザメ
        [
          [
            0,
@@ -411,9 +411,9 @@ Improvements
 
     .. code-block::
 
-       table_create --name Airport --flags TABLE_HASH_KEY --key_type ShortText
-       column_create --table Airport --name name --type ShortText
-       load --table Airport
+       table_create --name Airports --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Airports --name name --type ShortText
+       load --table Airports
        [
        {"_key":"HER","name":"イラクリオ・ニコスカザンヅァキス国際空港"},
        {"_key":"ATH","name":"アテネ国際空港"},
@@ -425,9 +425,9 @@ Improvements
          --key_type ShortText \
          --default_tokenizer TokenBigram \
          --normalizer 'NormalizerNFKC150("unify_katakana_du_small_sounds", true)'
-       column_create --table idx_airport_name --name airport_name --flags COLUMN_INDEX|WITH_POSITION --type Airport --source name
+       column_create --table idx_airport_name --name airport_name --flags COLUMN_INDEX|WITH_POSITION --type Airports --source name
 
-       select --table Airport --query name:@ニコスカザンザキス
+       select --table Airports --query name:@ニコスカザンザキス
        [
          [
            [
