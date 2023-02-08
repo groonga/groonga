@@ -26,7 +26,7 @@ Improvements
 
 * [:doc:`/reference/token_filters`] Added a new TokenFilter ``TokenFilterNFKC150`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 15.0.
 
-* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_g_sounds``.
+* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_gu_small_sounds``.
 
   We can normalize "グァ -> ガ", "グィ -> ギ", "グェ -> ゲ", and "グォ -> ゴ" with this option.
 
