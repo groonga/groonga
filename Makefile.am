@@ -90,7 +90,6 @@ update-latest-release: misc
 	  git add 				\
 	    doc/source/install.rst 		\
 	    doc/source/install/*.rst		\
-	    doc/locale/*/LC_MESSAGES/install.po	\
 	    packages/debian/changelog		\
 	    packages/yum/groonga.spec.in &&	\
 	  git commit -m "doc package: update version info to ${VERSION} - ${NEW_RELEASE_DATE}"
