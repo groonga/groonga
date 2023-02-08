@@ -127,7 +127,7 @@ Improvements
        }
      ]
 
-* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_du_small_sound``.
+* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_du_small_sounds``.
 
   We can "ヅァ -> ザ", "ヅィ -> ジ", "ヅェ -> ゼ", and "ヅォ -> ゾ" qith this option.
 
