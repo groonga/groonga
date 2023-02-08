@@ -26,131 +26,434 @@ Improvements
 
 * [:doc:`/reference/token_filters`] Added a new TokenFilter ``TokenFilterNFKC150`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 15.0.
 
-* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_gu_small_sounds``.
+* [:doc:`reference/normalizers/normalizer_nfkc150`] Added new options for NormalizerNFKC* as below.
 
-  We can normalize "グァ -> ガ", "グィ -> ギ", "グェ -> ゲ", and "グォ -> ゴ" with this option.
+  * ``unify_katakana_gu_small_sounds``
 
-  .. code-block::
+    We can normalize "グァ -> ガ", "グィ -> ギ", "グェ -> ゲ", and "グォ -> ゴ" with this option.
 
-     normalize \
-       'NormalizerNFKC130("unify_katakana_gu_small_sounds", true, \
-                          "report_source_offset", true)' \
-       "グァグィグェグォ" \
-       WITH_CHECKS|WITH_TYPES
+    Here is an example of ``unify_katakana_gu_small_sounds`` option.
 
-     [
+    .. code-block::
+
+       table_create --name Contry --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Contry --name name --type ShortText
+       load --table Contry
        [
-         0,
-         0,
-         0
-       ],
-       {
-         "normalized":"ガギゲゴ",
-         "types":["katakana","katakana","katakana","katakana"],
-         "checks":[6,0,0,6,0,0,6,0,0,6,0,0],
-         "offsets":[0,6,12,18]
-       }
-     ]
+       {"_key":"JP","name":"日本"},
+       {"_key":"GT","name":"グァテマラ共和国"},
+       ]
 
-* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_di_sound``.
+       table_create \
+         --name idx_contry_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_gu_small_sounds", true)'
+       column_create --table idx_contry_name --name contry_name --flags COLUMN_INDEX|WITH_POSITION --type Contry --source name
 
-  We can normalize "ヂ -> ジ" with this option.
-
-  .. code-block::
-
-     normalize \
-       'NormalizerNFKC130("unify_katakana_di_sound", true, \
-                          "report_source_offset", true)' \
-       "ヂ" \
-       WITH_CHECKS|WITH_TYPES
-     [
+       select --table Contry --query name:@ガテマラ共和国
        [
-         0,
-         0,
-         0
-       ],
-       {
-         "normalized":"ジ",
-         "types":["katakana"],
-         "checks":[3,0,0],
-         "offsets":[0]
-       }
-     ]
+         [0,
+          0,
+          0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "name",
+                 "ShortText"
+               ]
+             ],
+             [
+               2,
+               "GT",
+               "グァテマラ共和国"
+             ]
+           ]
+         ]
+       ]
 
-* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_wo_sound``.
+  * ``unify_katakana_di_sound``
 
-  We can normalize "ヲ -> オ" with this option.
+    We can normalize "ヂ -> ジ" with this option.
 
-  .. code-block::
+    Here is an example of ``unify_katakana_di_sound`` option.
 
-     normalize \
-       'NormalizerNFKC130("unify_katakana_wo_sound", true, \
-                          "report_source_offset", true)' \
-       "ヲ" \
-       WITH_CHECKS|WITH_TYPES
-     [
+    .. code-block::
+
+       table_create --name Food --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Food --name name --type ShortText
+       load --table Food
        [
-         0,
-         0,
-         0
-       ],
-       {
-         "normalized":"オ",
-         "types":["katakana"],
-         "checks":[3,0,0],
-         "offsets":[0]
-       }
-     ]
+       {"_key":"1","name":"チジミ"},
+       {"_key":"2","name":"パジョン"},
+       ]
 
-* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_zu_small_sound``.
+       table_create \
+         --name idx_food_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_di_sound", true)'
+       column_create --table idx_food_name --name food_name --flags COLUMN_INDEX|WITH_POSITION --type Food --source name
 
-  We can normalize "ズァ -> ザ", "ズィ -> ジ", "ズェ -> ゼ", and "ズォ -> ゾ" with this option.
-
-  .. code-block::
-
-     normalize \
-       'NormalizerNFKC130("unify_katakana_zu_small_sound", true, \
-                          "report_source_offset", true)' \
-       "ズァズィズェズォ" \
-       WITH_CHECKS|WITH_TYPES
-     [
+       select --table Food --query name:@チヂミ
        [
-         0,
-         0,
-         0
-       ],
-       {
-         "normalized":"ズァズィズェズォ",
-         "types":["katakana","katakana","katakana","katakana","katakana","katakana","katakana","katakana"],
-         "checks":[3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0],
-         "offsets":[0,3,6,9,12,15,18,21]
-       }
-     ]
+         [
+           0,
+           0,
+           0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "name",
+                 "ShortText"
+               ]
+             ],
+             [
+               1,
+               "1",
+               "チジミ"
+             ]
+           ]
+         ]
+       ]
 
-* [:doc:`reference/normalizers/normalizer_nfkc150`] Added a new option ``unify_katakana_du_small_sounds``.
+  * ``unify_katakana_wo_sound``
 
-  We can "ヅァ -> ザ", "ヅィ -> ジ", "ヅェ -> ゼ", and "ヅォ -> ゾ" qith this option.
+    We can normalize "ヲ -> オ" with this option.
 
-  .. code-block::
+    Here is an example of ``unify_katakana_wo_sound`` option.
 
-     normalize \
-       'NormalizerNFKC130("unify_katakana_du_small_sounds", true, \
-                          "report_source_offset", true)' \
-       "ヅァヅィヅェヅォ" \
-       WITH_CHECKS|WITH_TYPES
-     [
+    .. code-block::
+
+       table_create --name Food --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Food --name name --type ShortText
+       load --table Food
        [
-         0,
-         0,
-         0
-       ],
-       {
-         "normalized":"ヅァヅィヅェヅォ",
-         "types":["katakana","katakana","katakana","katakana","katakana","katakana","katakana","katakana"],
-         "checks":[3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0,3,0,0],
-         "offsets":[0,3,6,9,12,15,18,21]
-       }
-     ]
+       {"_key":"1","name":"アヲハタ"},
+       {"_key":"2","name":"ヴェルデ"},
+       {"_key":"3","name":"ランプ"},
+       ]
+
+       table_create \
+         --name idx_food_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_wo_sound", true)'
+       column_create --table idx_food_name --name food_name --flags COLUMN_INDEX|WITH_POSITION --type Food --source name
+
+       select --table Food --query name:@アオハタ
+       [
+         [
+           0,
+           0,
+           0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "name",
+                 "ShortText"
+               ]
+             ],
+             [
+               1,
+               "1",
+               "アヲハタ"
+             ]
+           ]
+         ]
+       ]
+
+  * ``unify_katakana_zu_small_sounds``
+
+    We can normalize "ズァ -> ザ", "ズィ -> ジ", "ズェ -> ゼ", and "ズォ -> ゾ" with this option.
+
+    Here is an example of ``unify_katakana_zu_small_sounds`` option.
+
+    .. code-block::
+
+       table_create --name City --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table City --name name --type ShortText
+       load --table City
+       [
+       {"_key":"1","name":"ガージヤーバード"},
+       {"_key":"2","name":"デリー"},
+       ]
+
+       table_create \
+         --name idx_city_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_zu_small_sounds", true)'
+       column_create --table idx_city_name --name city_name --flags COLUMN_INDEX|WITH_POSITION --type City --source name
+
+       select --table City --query name:@ガーズィヤーバード
+       [
+         [
+           0,
+           0,
+           0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "name",
+                 "ShortText"
+               ]
+             ],
+             [
+               1,
+               "1",
+               "ガージヤーバード"
+             ]
+           ]
+         ]
+       ]
+
+  * ``unify_katakana_du_sound``
+
+    We can normalize "ヅ -> ズ" with this option.
+
+    Here is an example of ``unify_katakana_du_sound`` option.
+
+    .. code-block::
+
+       table_create --name Plant --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Plant --name name --type ShortText
+       load --table Plant
+       [
+       {"_key":"1","name":"ハスノカヅラ"},
+       {"_key":"2","name":"オオツヅラフジ"},
+       {"_key":"3","name":"アオツヅラフジ"},
+       ]
+
+       table_create \
+         --name idx_plant_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_du_sound", true)'
+       column_create --table idx_plant_name --name plant_name --flags COLUMN_INDEX|WITH_POSITION --type Plant --source name
+
+       select --table Plant --query name:@ツズラ
+       [
+         [
+           0,
+           0,
+           0
+         ],
+         [
+           [
+             [
+               2
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "name",
+                 "ShortText"
+               ]
+             ],
+             [
+               2,
+               "2",
+               "オオツヅラフジ"
+             ],
+             [
+               3,
+               "3",
+               "アオツヅラフジ"
+             ]
+           ]
+         ]
+       ]
+
+  * ``unify_katakana_trailing_o``
+
+    We can normalize following characters with this option.
+
+      * "オオ -> オウ"
+      * "コオ -> コウ"
+      * "ソオ -> ソウ"
+      * "トオ -> トウ"
+      * "ノオ -> ノウ"
+      * "ホオ -> ホウ"
+      * "モオ -> モウ"
+      * "ヨオ -> ヨウ"
+      * "ロオ -> ロウ"
+      * "ゴオ -> ゴウ"
+      * "ゾオ -> ゾウ"
+      * "ドオ -> ドウ"
+      * "ボオ -> ボウ"
+      * "ポオ -> ポウ"
+
+    Here is an example of ``unify_katakana_trailing_o`` option.
+
+    .. code-block::
+
+       table_create --name Shark --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Shark --name name --type ShortText
+       load --table Shark
+       [
+       {"_key":"1","name":"ホオジロザメ"},
+       {"_key":"2","name":"ジンベイザメ"},
+       ]
+
+       table_create \
+         --name idx_shark_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_trailing_o", true)'
+       column_create --table idx_shark_name --name shark_name --flags COLUMN_INDEX|WITH_POSITION --type Shark --source name
+
+       select --table Shark --query name:@ホウジロザメ
+       [
+         [
+           0,
+           0,
+           0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "name",
+                 "ShortText"
+               ]
+             ],
+             [
+               1,
+               "1",
+               "ホオジロザメ"
+             ]
+           ]
+         ]
+       ]
+
+  * ``unify_katakana_du_small_sounds``
+
+    We can normalize "ヅァ -> ザ", "ヅィ -> ジ", "ヅェ -> ゼ", and "ヅォ -> ゾ" with this option.
+
+    Here is an example of ``unify_katakana_du_small_sounds`` option.
+
+    .. code-block::
+
+       table_create --name Airport --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Airport --name name --type ShortText
+       load --table Airport
+       [
+       {"_key":"HER","name":"イラクリオ・ニコスカザンヅァキス国際空港"},
+       {"_key":"ATH","name":"アテネ国際空港"},
+       ]
+
+       table_create \
+         --name idx_airport_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_du_small_sounds", true)'
+       column_create --table idx_airport_name --name airport_name --flags COLUMN_INDEX|WITH_POSITION --type Airport --source name
+
+       select --table Airport --query name:@ニコスカザンザキス
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "_id",
+               "UInt32"
+             ],
+             [
+               "_key",
+               "ShortText"
+             ],
+             [
+               "name",
+               "ShortText"
+             ]
+           ],
+           [
+             1,
+             "HER",
+             "イラクリオ・ニコスカザンヅァキス国際空港"
+           ]
+         ]
+       ]
 
 * [:doc:`install/oracle-linux`] Added newly support for Oracle Linux 8 and 9.
 
