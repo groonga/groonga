@@ -109,7 +109,7 @@ Improvements
   .. code-block::
 
      normalize \
-       'NormalizerNFKC130("unify_katakana_z_sounds", true, \
+       'NormalizerNFKC130("unify_katakana_zu_small_sound", true, \
                           "report_source_offset", true)' \
        "ズァズィズェズォ" \
        WITH_CHECKS|WITH_TYPES
