@@ -33,7 +33,7 @@ Improvements
   .. code-block::
 
      normalize \
-       'NormalizerNFKC130("unify_katakana_g_sounds", true, \
+       'NormalizerNFKC130("unify_katakana_gu_small_sounds", true, \
                           "report_source_offset", true)' \
        "グァグィグェグォ" \
        WITH_CHECKS|WITH_TYPES
