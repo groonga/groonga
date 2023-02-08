@@ -5,6 +5,956 @@
 News
 ====
 
+.. _release-13-0-0:
+
+Release 13.0.0 - 2023-02-09
+---------------------------
+
+This is a major version up!
+But It keeps backward compatibility. We can upgrade to 13.0.0 without rebuilding database.
+
+First of all, we introduce the main changes in 13.0.0.
+Then, we introduce the hilight and summary of changes from Groonga 12.0.0 to 12.1.2.
+
+New Features and Improvements in 13.0.0
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/normalizers`] Added a new Normalizer ``NormalizerNFKC150`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 15.0.
+
+* [:doc:`/reference/token_filters`] Added a new TokenFilter ``TokenFilterNFKC150`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 15.0.
+
+* [:doc:`reference/normalizers/normalizer_nfkc150`] Added new options for NormalizerNFKC* as below.
+
+  * ``unify_katakana_gu_small_sounds``
+
+    We can normalize "グァ -> ガ", "グィ -> ギ", "グェ -> ゲ", and "グォ -> ゴ" with this option.
+
+    Here is an example of ``unify_katakana_gu_small_sounds`` option.
+
+    .. code-block::
+
+       table_create --name Countries --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Countries --name name --type ShortText
+       load --table Countries
+       [
+       {"_key":"JP","name":"日本"},
+       {"_key":"GT","name":"グァテマラ共和国"},
+       ]
+
+       table_create \
+         --name idx_contry_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_gu_small_sounds", true)'
+       column_create --table idx_contry_name --name contry_name --flags COLUMN_INDEX|WITH_POSITION --type Countries --source name
+
+       select --table Countries --query name:@ガテマラ共和国
+       [
+         [0,
+          0,
+          0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "name",
+                 "ShortText"
+               ]
+             ],
+             [
+               2,
+               "GT",
+               "グァテマラ共和国"
+             ]
+           ]
+         ]
+       ]
+
+  * ``unify_katakana_di_sound``
+
+    We can normalize "ヂ -> ジ" with this option.
+
+    Here is an example of ``unify_katakana_di_sound`` option.
+
+    .. code-block::
+
+       table_create --name Foods --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Foods --name name --type ShortText
+       load --table Foods
+       [
+       {"_key":"1","name":"チジミ"},
+       {"_key":"2","name":"パジョン"},
+       ]
+
+       table_create \
+         --name idx_food_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_di_sound", true)'
+       column_create --table idx_food_name --name food_name --flags COLUMN_INDEX|WITH_POSITION --type Foods --source name
+
+       select --table Foods --query name:@チヂミ
+       [
+         [
+           0,
+           0,
+           0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "name",
+                 "ShortText"
+               ]
+             ],
+             [
+               1,
+               "1",
+               "チジミ"
+             ]
+           ]
+         ]
+       ]
+
+  * ``unify_katakana_wo_sound``
+
+    We can normalize "ヲ -> オ" with this option.
+
+    Here is an example of ``unify_katakana_wo_sound`` option.
+
+    .. code-block::
+
+       table_create --name Foods --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Foods --name name --type ShortText
+       load --table Foods
+       [
+       {"_key":"1","name":"アヲハタ"},
+       {"_key":"2","name":"ヴェルデ"},
+       {"_key":"3","name":"ランプ"},
+       ]
+
+       table_create \
+         --name idx_food_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_wo_sound", true)'
+       column_create --table idx_food_name --name food_name --flags COLUMN_INDEX|WITH_POSITION --type Foods --source name
+
+       select --table Foods --query name:@アオハタ
+       [
+         [
+           0,
+           0,
+           0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "name",
+                 "ShortText"
+               ]
+             ],
+             [
+               1,
+               "1",
+               "アヲハタ"
+             ]
+           ]
+         ]
+       ]
+
+  * ``unify_katakana_zu_small_sounds``
+
+    We can normalize "ズァ -> ザ", "ズィ -> ジ", "ズェ -> ゼ", and "ズォ -> ゾ" with this option.
+
+    Here is an example of ``unify_katakana_zu_small_sounds`` option.
+
+    .. code-block::
+
+       table_create --name Cities --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Cities --name name --type ShortText
+       load --table Cities
+       [
+       {"_key":"1","name":"ガージヤーバード"},
+       {"_key":"2","name":"デリー"},
+       ]
+
+       table_create \
+         --name idx_city_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_zu_small_sounds", true)'
+       column_create --table idx_city_name --name city_name --flags COLUMN_INDEX|WITH_POSITION --type Cities --source name
+
+       select --table Cities --query name:@ガーズィヤーバード
+       [
+         [
+           0,
+           0,
+           0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "name",
+                 "ShortText"
+               ]
+             ],
+             [
+               1,
+               "1",
+               "ガージヤーバード"
+             ]
+           ]
+         ]
+       ]
+
+  * ``unify_katakana_du_sound``
+
+    We can normalize "ヅ -> ズ" with this option.
+
+    Here is an example of ``unify_katakana_du_sound`` option.
+
+    .. code-block::
+
+       table_create --name Plants --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Plants --name name --type ShortText
+       load --table Plants
+       [
+       {"_key":"1","name":"ハスノカヅラ"},
+       {"_key":"2","name":"オオツヅラフジ"},
+       {"_key":"3","name":"アオツヅラフジ"},
+       ]
+
+       table_create \
+         --name idx_plant_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_du_sound", true)'
+       column_create --table idx_plant_name --name plant_name --flags COLUMN_INDEX|WITH_POSITION --type Plants --source name
+
+       select --table Plants --query name:@ツズラ
+       [
+         [
+           0,
+           0,
+           0
+         ],
+         [
+           [
+             [
+               2
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "name",
+                 "ShortText"
+               ]
+             ],
+             [
+               2,
+               "2",
+               "オオツヅラフジ"
+             ],
+             [
+               3,
+               "3",
+               "アオツヅラフジ"
+             ]
+           ]
+         ]
+       ]
+
+  * ``unify_katakana_trailing_o``
+
+    We can normalize following characters with this option.
+
+      * "オオ -> オウ"
+      * "コオ -> コウ"
+      * "ソオ -> ソウ"
+      * "トオ -> トウ"
+      * "ノオ -> ノウ"
+      * "ホオ -> ホウ"
+      * "モオ -> モウ"
+      * "ヨオ -> ヨウ"
+      * "ロオ -> ロウ"
+      * "ゴオ -> ゴウ"
+      * "ゾオ -> ゾウ"
+      * "ドオ -> ドウ"
+      * "ボオ -> ボウ"
+      * "ポオ -> ポウ"
+
+    Here is an example of ``unify_katakana_trailing_o`` option.
+
+    .. code-block::
+
+       table_create --name Sharks --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Sharks --name name --type ShortText
+       load --table Sharks
+       [
+       {"_key":"1","name":"ホオジロザメ"},
+       {"_key":"2","name":"ジンベイザメ"},
+       ]
+
+       table_create \
+         --name idx_shark_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_trailing_o", true)'
+       column_create --table idx_shark_name --name shark_name --flags COLUMN_INDEX|WITH_POSITION --type Sharks --source name
+
+       select --table Sharks --query name:@ホウジロザメ
+       [
+         [
+           0,
+           0,
+           0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "name",
+                 "ShortText"
+               ]
+             ],
+             [
+               1,
+               "1",
+               "ホオジロザメ"
+             ]
+           ]
+         ]
+       ]
+
+  * ``unify_katakana_du_small_sounds``
+
+    We can normalize "ヅァ -> ザ", "ヅィ -> ジ", "ヅェ -> ゼ", and "ヅォ -> ゾ" with this option.
+
+    Here is an example of ``unify_katakana_du_small_sounds`` option.
+
+    .. code-block::
+
+       table_create --name Airports --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Airports --name name --type ShortText
+       load --table Airports
+       [
+       {"_key":"HER","name":"イラクリオ・ニコスカザンヅァキス国際空港"},
+       {"_key":"ATH","name":"アテネ国際空港"},
+       ]
+
+       table_create \
+         --name idx_airport_name \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_katakana_du_small_sounds", true)'
+       column_create --table idx_airport_name --name airport_name --flags COLUMN_INDEX|WITH_POSITION --type Airports --source name
+
+       select --table Airports --query name:@ニコスカザンザキス
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "_id",
+               "UInt32"
+             ],
+             [
+               "_key",
+               "ShortText"
+             ],
+             [
+               "name",
+               "ShortText"
+             ]
+           ],
+           [
+             1,
+             "HER",
+             "イラクリオ・ニコスカザンヅァキス国際空港"
+           ]
+         ]
+       ]
+
+* [:doc:`install/oracle-linux`] Added newly support for Oracle Linux 8 and 9.
+
+Higlight and Summary of changes from 12.0.0 to 12.1.2
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Higlight
+^^^^^^^^
+
+[:ref:`release-12-0-9`]
+
+  * [:doc:`reference/normalizers`] Added ``NormalizerHTML``. (Experimental)
+
+    ``NormalizerHTML`` is a normalizer for HTML.
+
+    Currently ``NormalizerHTML`` supports removing tags like ``<span>`` or ``</span>`` and expanding character references like ``&amp;`` or ``&#38;``.
+
+    Here are sample queries for ``NormalizerHTML``.
+
+    .. code-block::
+
+      normalize NormalizerHTML "<span> Groonga &amp; Mroonga &#38; Rroonga </span>"
+      [[0,1666923364.883798,0.0005481243133544922],{"normalized":" Groonga & Mroonga & Rroonga ","types":[],"checks":[]}]
+
+    In this sample ``<span>`` and ``</span>`` are removed, and ``&amp;`` and ``&#38;`` are expanded to ``&``.
+
+    We can specify whether removing the tags with the ``remove_tag`` option.
+    (The default value of the ``remove_tag`` option is ``true``.)
+
+    .. code-block::
+
+       normalize 'NormalizerHTML("remove_tag", false)' "<span> Groonga &amp; Mroonga &#38; Rroonga </span>"
+       [[0,1666924069.278549,0.0001978874206542969],{"normalized":"<span> Groonga & Mroonga & Rroonga </span>","types":[],"checks":[]}]
+
+    In this sample, ``<span>`` and ``</span>`` are not removed.
+
+    We can specify whether expanding the character references with the ``expand_character_reference`` option.
+    (The default value of the ``expand_character_reference`` option is ``true``.)
+
+    .. code-block::
+
+       normalize 'NormalizerHTML("expand_character_reference", false)' "<span> Groonga &amp; Mroonga &#38; Rroonga </span>"
+       [[0,1666924357.099782,0.0002346038818359375],{"normalized":" Groonga &amp; Mroonga &#38; Rroonga ","types":[],"checks":[]}]
+
+    In this sample, ``&amp;`` and ``&#38;`` are not expanded.
+
+[:ref:`release-12-0-3`]
+
+  * [:doc:`reference/functions/snippet`],[:doc:`reference/functions/snippet_html`] Added support for text vector as input. [groonga-dev,04956][Reported by shinonon]
+
+    For example, we can extract snippets of target text around search keywords against vector in JSON data as below.
+
+    .. code-block::
+
+       table_create Entries TABLE_NO_KEY
+       column_create Entries title COLUMN_SCALAR ShortText
+       column_create Entries contents COLUMN_VECTOR ShortText
+
+       table_create Tokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC130
+       column_create Tokens entries_title COLUMN_INDEX|WITH_POSITION Entries title
+       column_create Tokens entries_contents COLUMN_INDEX|WITH_SECTION|WITH_POSITION   Entries contents
+
+       load --table Entries
+       [
+       {
+         "title": "Groonga and MySQL",
+         "contents": [
+           "Groonga is a full text search engine",
+           "MySQL is a RDBMS",
+           "Mroonga is a MySQL storage engine based on Groonga"
+         ]
+       }
+       ]
+
+       select Entries\
+         --output_columns 'snippet_html(contents), contents'\
+         --match_columns 'title'\
+         --query Groonga
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "snippet_html",
+                 null
+               ],
+               [
+                 "contents",
+                 "ShortText"
+               ]
+             ],
+             [
+               [
+                 "<span class=\"keyword\">Groonga</span> is a full text search engine",
+                 "Mroonga is a MySQL storage engine based on <span class=\"keyword\">Groonga</span>"
+               ],
+               [
+                 "Groonga is a full text search engine",
+                 "MySQL is a RDBMS",
+                 "Mroonga is a MySQL storage engine based on Groonga"
+               ]
+             ]
+           ]
+         ]
+       ]
+
+    Until now, if we specified ``snippet*`` like ``--output_columns 'snippet_html(contents[1])``,
+    we could extract snippets of target text around search keywords against the vector as below.
+    However, we didn't know which we should output elements. Because we didn't know which element was hit on search.
+
+    .. code-block::
+
+       select Entries\
+         --output_columns 'snippet_html(contents[0]), contents'\
+         --match_columns 'title'\
+         --query Groonga
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "snippet_html",
+                 null
+               ],
+               [
+                 "contents",
+                 "ShortText"
+               ]
+             ],
+             [
+               [
+                 "<span class=\"keyword\">Groonga</span> is a full text search engine"
+               ],
+               [
+                 "Groonga is a full text search engine",
+                 "MySQL is a RDBMS",
+                 "Mroonga is a MySQL storage engine based on Groonga"
+               ]
+             ]
+           ]
+         ]
+       ]
+
+[:ref:`release-12-0-1`]
+
+  * [:doc:`/reference/commands/query_expand`] Added a support for synonym group.
+
+    Until now, We had to each defined a keyword and synonyms of the keyword as below when we use the synonym search.
+
+    .. code-block::
+
+       table_create Thesaurus TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+       # [[0, 1337566253.89858, 0.000355720520019531], true]
+       column_create Thesaurus synonym COLUMN_VECTOR ShortText
+       # [[0, 1337566253.89858, 0.000355720520019531], true]
+       load --table Thesaurus
+       [
+       {"_key": "mroonga", "synonym": ["mroonga", "tritonn", "groonga mysql"]},
+       {"_key": "groonga", "synonym": ["groonga", "senna"]}
+       ]
+
+    In the above case, if we search ``mroonga``, Groonga search ``mroonga OR tritonn OR "groonga mysql"`` as we intended.
+    However, if we search ``tritonn``, Groonga search only ``tritonn``.
+    If we want to search ``tritonn OR mroonga OR "groonga mysql"`` even if we search ``tritonn``, we need had added a definition as below.
+
+    .. code-block::
+
+       load --table Thesaurus
+       [
+       {"_key": "tritonn", "synonym": ["tritonn", "mroonga", "groonga mysql"]},
+       ]
+
+    In many cases, if we expand ``mroonga`` to ``mroonga OR tritonn OR "groonga mysql"``, we feel we want to expand ``tritonn`` and ``"groonga mysql"`` to ``mroonga OR tritonn OR "groonga mysql"``.
+    However, until now, we had needed additional definitions in such a case.
+    Therefore, if target keywords for synonyms are many, we are troublesome to define synonyms.
+    Because we need to define many similar definitions.
+
+    In addition, when we remove synonyms, we are troublesome because we need to execute remove against many records.
+
+    We can make a group by deciding on a representative synonym record since this release.
+    For example, the all following keywords are the "mroonga" group.
+
+    .. code-block::
+
+       load --table Synonyms
+       [
+         {"_key": "mroonga": "representative": "mroonga"}
+       ]
+
+       load --table Synonyms
+       [
+         {"_key": "tritonn": "representative": "mroonga"},
+         {"_key": "groonga mysql": "representative": "mroonga"}
+       ]
+
+    In this case, ``mroonga`` is expanded to ``mroonga OR tritonn OR "groonga mysql"``.
+    In addition, ``tritonn`` and ``"groonga mysql"`` are also expanded to ``mroonga OR tritonn OR "groonga mysql"``.
+
+    When we want to remove synonyms, we execute just remove against a target record.
+    For example, if we want to remove ``"groonga mysql"`` from synonyms, we just remove ``{"_key": "groonga mysql": "representative": "mroonga"}``.
+
+[:ref:`release-12-0-0`]
+
+  * [index_column_have_source_record] Added a new function ``index_column_have_source_record()``.
+
+    We can confirm whether a token that is existing in the index is included in any of the records that are registered in Groonga or not.
+
+    Groonga does not remove a token even if the token become never used from records in Groonga by updating records.
+    Therefore, for example, when we use the feature of autocomplete, Groonga may return a token that is not included in any of the records as candidates for search words.
+    However, we can become that we don't return the needless token by using this function.
+
+    Because this function can detect a token that is not included in any of the records.
+
+  * [:doc:`reference/commands/select`] Added new arguments ``drilldown_max_n_target_records`` and ``drilldown[${LABEL}].max_n_target_records``.
+
+    We can specify the max number of records of the drilldown target table (filtered result) to use drilldown.
+    If the number of filtered result is larger than the specified value, some records in filtered result aren't used for drilldown.
+    The default value of this arguments are ``-1``.
+    If these arguments are set ``-1``, Groonga uses all records for drilldown.
+
+    This argument is useful when filtered result may be very large.
+    Because a drilldown against large filtered result may be slow.
+    We can limit the max number of records to be used for drilldown by this feature.
+
+    Here is an example to limit the max number of records to be used for drilldown.
+    The last 2 records, ``{\"_id\": 4, \"tag\": \"Senna\"}`` and ``{\"_id\": 5, \"tag\": \"Senna\"}``, aren't used.
+
+    .. code-block::
+
+        table_create Entries TABLE_HASH_KEY ShortText
+        column_create Entries content COLUMN_SCALAR Text
+        column_create Entries n_likes COLUMN_SCALAR UInt32
+        column_create Entries tag COLUMN_SCALAR ShortText
+
+        table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+        column_create Terms entries_key_index COLUMN_INDEX|WITH_POSITION Entries _key
+        column_create Terms entries_content_index COLUMN_INDEX|WITH_POSITION Entries content
+        load --table Entries
+        [
+        {"_key":    "The first post!",
+         "content": "Welcome! This is my first post!",
+         "n_likes": 5,
+         "tag": "Hello"},
+        {"_key":    "Groonga",
+         "content": "I started to use Groonga. It's very fast!",
+         "n_likes": 10,
+         "tag": "Groonga"},
+        {"_key":    "Mroonga",
+         "content": "I also started to use Mroonga. It's also very fast! Really fast!",
+         "n_likes": 15,
+         "tag": "Groonga"},
+        {"_key":    "Good-bye Senna",
+         "content": "I migrated all Senna system!",
+         "n_likes": 3,
+         "tag": "Senna"},
+        {"_key":    "Good-bye Tritonn",
+         "content": "I also migrated all Tritonn system!",
+         "n_likes": 3,
+         "tag": "Senna"}
+        ]
+
+        select Entries \
+          --limit -1 \
+          --output_columns _id,tag \
+          --drilldown tag \
+          --drilldown_max_n_target_records 3
+        [
+          [
+            0, 
+            1337566253.89858, 
+            0.000355720520019531
+          ], 
+          [
+            [
+              [
+                5
+              ], 
+              [
+                [
+                  "_id", 
+                  "UInt32"
+                ], 
+                [
+                  "tag", 
+                  "ShortText"
+                ]
+              ], 
+              [
+                1, 
+                "Hello"
+              ], 
+              [
+                2, 
+                "Groonga"
+              ], 
+              [
+                3, 
+                "Groonga"
+              ], 
+              [
+                4, 
+                "Senna"
+              ], 
+              [
+                5, 
+                "Senna"
+              ]
+            ], 
+            [
+              [
+                2
+              ], 
+              [
+                [
+                  "_key", 
+                  "ShortText"
+                ], 
+                [
+                  "_nsubrecs", 
+                  "Int32"
+                ]
+              ], 
+              [
+                "Hello", 
+                1
+              ], 
+              [
+                "Groonga", 
+                2
+              ]
+            ]
+          ]
+        ]
+
+
+Summary
+^^^^^^^
+
+Improvements
+^^^^^^^^^^^^
+
+[:ref:`release-12-1-2`]
+
+  * [httpd] Updated bundled nginx to 1.23.3.
+
+[:ref:`release-12-1-1`]
+
+  * [:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-expansions-power-set`] Vector's power set is now able to aggregate with the drilldowns.
+  * [:doc:`reference/commands/select`] Specific element of vector column is now able to be search target.
+  * [:doc:`/reference/commands/load`] Added support for ``YYYY-MM-DD`` time format.
+
+[:ref:`release-12-1-0`]
+
+  * [:doc:`reference/commands/load`] Added support for slow log output of ``load``. 
+  * [:doc:`reference/api`] Added new API ``grn_is_reference_count_enable()``.
+  * [:doc:`reference/commands/status`] Added new items: ``back_trace`` and ``reference_count``.
+
+[:ref:`release-12-0-9`]
+
+  * [:doc:`install/almalinux`] Added support for AlmaLinux 9.
+  * [:doc:`reference/functions/escalate`] Added a document for the ``escalate()`` function.
+  * [:doc:`reference/normalizers`] Added ``NormalizerHTML``. (Experimental)
+  * [httpd] Updated bundled nginx to 1.23.2.
+  * Suppressed logging a lot of same messages when no memory is available.
+
+[:ref:`release-12-0-8`]
+
+  * Changed specification of the ``escalate()`` function (Experimental) to make it easier to use.
+  * [:doc:`install/cmake`] Added a document about how to build Groonga with CMake.
+  * [:doc:`install/others`] Added descriptions about how to enable/disable Apache Arrow support when building with GNU Autotools.
+  * [:doc:`reference/commands/select`] Added a document about :ref:`select-drilldowns-label-table`.
+  * [:doc:`contribution/documentation/i18n`] Updated the translation procedure.
+
+[:ref:`release-12-0-7`]
+
+  * Added a new function ``escalate()``. (experimental)
+  * [httpd] Updated bundled nginx to 1.23.1.
+  * [:doc:`reference/commands/select`] Add a document for the ``--n_workers`` option.
+
+[:ref:`release-12-0-6`]
+
+  * Added new Munin plugins for groonga-delta.
+  * [:doc:`reference/commands/column_copy`] Added support for weight vector.
+  * [:doc:`/install/ubuntu`] Dropped support for Ubuntu 21.10 (Impish Indri).
+  * [:doc:`/install/debian`] Dropped Debian 10 (buster) support.
+
+[:ref:`release-12-0-5`]
+
+  * [:doc:`reference/commands/select`] Improved a little bit of performance for prefix search by search escalation.
+  * [:doc:`reference/commands/select`] Added support for specifying a reference vector column with weight in ``drilldowns[LABEL]._key``.
+  * [:doc:`reference/commands/select`] Added support for doing drilldown with a reference vector with weight even if we use ``query`` or ``filter``, or ``post_filter``.
+
+[:ref:`release-12-0-4`]
+
+  * [:doc:`/install/ubuntu`] Added support for Ubuntu 22.04 (Jammy Jellyfish).
+  * We don't provide `groonga-benchmark`.
+  * [:doc:`reference/commands/status`] Added a new item ``memory_map_size``.
+
+[:ref:`release-12-0-3`]
+
+  * [:doc:`reference/commands/logical_count`] Improved memory usage while ``logical_count`` executed.
+  * [:doc:`/reference/commands/dump`] Added support for ``MISSING_IGNORE/MISSING_NIL``.
+  * [:doc:`reference/functions/snippet`],[:doc:`reference/functions/snippet_html`] Added support for text vector as input. [groonga-dev,04956][Reported by shinonon]
+  * [``vector_join``] Added a new function ``vector_join()``.[groonga-dev,04956]
+  * [:doc:`/reference/indexing`] Ignore too large a token like online index construction.
+
+[:ref:`release-12-0-2`]
+
+  * [:doc:`reference/commands/logical_range_filter`] Added support for reducing reference immediately after processing a shard.
+  * We increased the stability of the feature of recovering on crashes.
+  * Improved performance for mmap if anonymous mmap available.
+  * [:doc:`/reference/indexing`] Added support for the static index construction against the following types of columns.
+  * [:doc:`reference/commands/column_create`] Added new flags ``MISSING_*`` and ``INVALID_*``.
+  * [:doc:`/reference/commands/dump`][:doc:`/reference/commands/column_list`] Added support for ``MISSING_*`` and ``INVALID_*`` flags.
+  * [:doc:`/reference/commands/schema`] Added support for ``MISSING_*`` and ``INVALID_*`` flags.
+  * We provided the package of Amazon Linux 2.
+  * [Windows] Dropped support for building with Visual Studio 2017.
+
+[:ref:`release-12-0-1`]
+
+  * [:doc:`/reference/commands/query_expand`] Added a support for synonym group.
+  * [:doc:`/reference/commands/query_expand`] Added a support for text vector and index.
+  * Added support for disabling a backtrace by the environment variable.
+  * [:doc:`reference/commands/select`] Improved performance for ``--slices``.
+  * [Windows] Added support for Visual Studio 2022.
+  * [:doc:`reference/commands/select`] Added support for specifing max intervals for each elements in near search.
+  * [:doc:`reference/executables/groonga-server-http`] We could use ``groonga-server-http`` even if Groonga of RPM packages.
+
+[:ref:`release-12-0-0`]
+
+  * [:doc:`reference/functions/sub_filter`] Added a new option ``pre_filter_threshold``.
+  * [index_column_have_source_record] Added a new function ``index_column_have_source_record()``.
+  * [:doc:`reference/normalizers/normalizer_nfkc130`] Added a new option ``strip``
+  * [:doc:`reference/commands/select`] Added new arguments ``drilldown_max_n_target_records`` and ``drilldown[${LABEL}].max_n_target_records``.
+  * [httpd] Updated bundled nginx to 1.21.6.
+
+Fixes
+^^^^^
+
+[:ref:`release-12-1-1`]
+
+  * [:doc:`reference/commands/select`] Fix a bug displaying a wrong label in ``drilldown`` results when ``command_version`` is ``3``.
+  * [:doc:`reference/normalizers/normalizer_table`] Fix a bug for Groonga to crush with specific definition setting in ``NormalizerTable``.
+
+[:ref:`release-12-1-0`]
+
+  * [:doc:`reference/commands/select`][:doc:`reference/columns/vector`] Fixed a bug displaying integer in the results when a weight vector column specifies `WEIGHT FLOAT32`.
+
+[:ref:`release-12-0-9`]
+
+  * [:doc:`reference/commands/select`] Fixed a bug that Groonga could crash or return incorrect results when specifying :ref:`select-n-workers`.
+
+[:ref:`release-12-0-8`]
+
+  * Fixed a bug that Groonga could return incorrect results when we use :doc:`reference/normalizers/normalizer_table` and it contains a non-idempotent (results can be changed when executed repeatedly) definition.
+
+[:ref:`release-12-0-7`]
+
+  * Fixed a bug Groonga's response may be slow when we execute the ``request_cancel`` while executing a OR search.
+
+[:ref:`release-12-0-6`]
+
+  * Fixed a bug that Groonga may crash when we execute drilldown in a parallel by ``n_workers`` option.
+  * [:doc:`reference/commands/select`] Fixed a bug that the syntax error occurred when we specify a very long expression in ``--filter``.
+
+[:ref:`release-12-0-4`]
+
+  * Fixed a bug Groonga's response may be slow when we execute ``request_cancel`` while executing a search.
+  * Fixed a bug that string list can't be casted to int32 vector.
+  * Fixed a bug that Groonga Munin Plugins do not work on AlmaLinux 8 and CentOS 7.
+
+[:ref:`release-12-0-3`]
+
+  * Fixed a bug that we may be not able to add a key to a table of patricia trie.
+
+Thanks
+^^^^^^
+
+* Atsushi Shinoda
+* i10a
+* naoa
+* shinonon
+* Zhanzhao (Deo) Liang
+* David CARLIER
+
 .. _release-12-1-2:
 
 Release 12.1.2 - 2023-01-29
