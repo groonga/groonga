@@ -985,6 +985,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/docker.rst \
 	$(top_srcdir)/doc/source/install/fedora.rst \
 	$(top_srcdir)/doc/source/install/mac_os_x.rst \
+	$(top_srcdir)/doc/source/install/oracle-linux.rst \
 	$(top_srcdir)/doc/source/install/others.rst \
 	$(top_srcdir)/doc/source/install/server-use.inc \
 	$(top_srcdir)/doc/source/install/solaris.rst \
@@ -2246,6 +2247,7 @@ source_files_relative_from_doc_dir = \
 	source/install/docker.rst \
 	source/install/fedora.rst \
 	source/install/mac_os_x.rst \
+	source/install/oracle-linux.rst \
 	source/install/others.rst \
 	source/install/server-use.inc \
 	source/install/solaris.rst \
@@ -2554,6 +2556,7 @@ po_files = \
 	install/docker.po \
 	install/fedora.po \
 	install/mac_os_x.po \
+	install/oracle-linux.po \
 	install/others.po \
 	install/solaris.po \
 	install/ubuntu.po \
@@ -2859,6 +2862,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/docker.po \
 	LC_MESSAGES/install/fedora.po \
 	LC_MESSAGES/install/mac_os_x.po \
+	LC_MESSAGES/install/oracle-linux.po \
 	LC_MESSAGES/install/others.po \
 	LC_MESSAGES/install/solaris.po \
 	LC_MESSAGES/install/ubuntu.po \
@@ -3164,6 +3168,7 @@ edit_po_files = \
 	install/docker.edit \
 	install/fedora.edit \
 	install/mac_os_x.edit \
+	install/oracle-linux.edit \
 	install/others.edit \
 	install/solaris.edit \
 	install/ubuntu.edit \
@@ -3469,6 +3474,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/docker.edit \
 	LC_MESSAGES/install/fedora.edit \
 	LC_MESSAGES/install/mac_os_x.edit \
+	LC_MESSAGES/install/oracle-linux.edit \
 	LC_MESSAGES/install/others.edit \
 	LC_MESSAGES/install/solaris.edit \
 	LC_MESSAGES/install/ubuntu.edit \
@@ -3774,6 +3780,7 @@ mo_files = \
 	install/docker.mo \
 	install/fedora.mo \
 	install/mac_os_x.mo \
+	install/oracle-linux.mo \
 	install/others.mo \
 	install/solaris.mo \
 	install/ubuntu.mo \
@@ -4079,6 +4086,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/docker.mo \
 	LC_MESSAGES/install/fedora.mo \
 	LC_MESSAGES/install/mac_os_x.mo \
+	LC_MESSAGES/install/oracle-linux.mo \
 	LC_MESSAGES/install/others.mo \
 	LC_MESSAGES/install/solaris.mo \
 	LC_MESSAGES/install/ubuntu.mo \
@@ -4421,6 +4429,7 @@ html_files_relative_from_locale_dir = \
 	html/install/docker.html \
 	html/install/fedora.html \
 	html/install/mac_os_x.html \
+	html/install/oracle-linux.html \
 	html/install/others.html \
 	html/install/solaris.html \
 	html/install/ubuntu.html \
