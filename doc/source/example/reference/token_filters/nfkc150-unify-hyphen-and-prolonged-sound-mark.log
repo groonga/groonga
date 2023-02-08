@@ -1,0 +1,30 @@
+Execution example::
+
+  tokenize TokenDelimit "-˗֊‐‑‒–⁃⁻₋− ﹣－ ー—―─━ｰ" --token_filters 'TokenFilterNFKC150("unify_hyphen_and_prolonged_sound_mark", true)'
+  # [
+  #   [
+  #     0,
+  #     1546907138.989727,
+  #     0.0003240108489990234
+  #   ],
+  #   [
+  #     {
+  #       "value": "-----------",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "--",
+  #       "position": 1,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     },
+  #     {
+  #       "value": "------",
+  #       "position": 2,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]

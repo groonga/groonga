@@ -1,0 +1,18 @@
+Execution example::
+
+  tokenize TokenDelimit "アァイィウゥエェオォ" --token_filters  'TokenFilterNFKC150("unify_to_romaji", true)'
+  # [
+  #   [
+  #     0,
+  #     1546907415.47742,
+  #     0.0003619194030761719
+  #   ],
+  #   [
+  #     {
+  #       "value": "axaixiuxuexeoxo",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]

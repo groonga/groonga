@@ -1,0 +1,18 @@
+Execution example::
+
+  tokenize TokenDelimit "ヴァヴィヴヴェヴォヴ" --token_filters 'TokenFilterNFKC150("unify_katakana_v_sounds", true)'
+  # [
+  #   [
+  #     0,
+  #     1546907295.776949,
+  #     0.0003447532653808594
+  #   ],
+  #   [
+  #     {
+  #       "value": "バビブベボブ",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]

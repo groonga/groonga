@@ -1,0 +1,18 @@
+Execution example::
+
+  tokenize TokenDelimit "かがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどはばぱひびぴふぶぷへべぺほぼぽ" --token_filters 'TokenFilterNFKC150("unify_kana_voiced_sound_mark", true)'
+  # [
+  #   [
+  #     0,
+  #     1546906812.423493,
+  #     0.0003724098205566406
+  #   ],
+  #   [
+  #     {
+  #       "value": "かかききくくけけここささししすすせせそそたたちちつつててととはははひひひふふふへへへほほほ",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]

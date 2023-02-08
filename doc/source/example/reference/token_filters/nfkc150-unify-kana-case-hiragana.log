@@ -1,0 +1,18 @@
+Execution example::
+
+  tokenize TokenDelimit "ぁあぃいぅうぇえぉおゃやゅゆょよゎわゕかゖけ" --token_filters 'TokenFilterNFKC150("unify_kana_case", true)'
+  # [
+  #   [
+  #     0,
+  #     1546906658.116119,
+  #     0.0003299713134765625
+  #   ],
+  #   [
+  #     {
+  #       "value": "ああいいううええおおややゆゆよよわわかかけけ",
+  #       "position": 0,
+  #       "force_prefix": false,
+  #       "force_prefix_search": false
+  #     }
+  #   ]
+  # ]
