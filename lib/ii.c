@@ -17,6 +17,7 @@
 */
 
 #include "grn.h"
+#include "groonga/token.h"
 
 #include <fcntl.h>
 #include <float.h>
@@ -82,6 +83,9 @@
 #define CHUNK_SPLIT_THRESHOLD    0x60000
 
 #define MAX_N_ELEMENTS           5
+#define my_printf(...) //printf(__VA_ARGS__)
+#define my_grn_p(...) //grn_p(__VA_ARGS__)
+
 
 #ifndef S_IRUSR
 # define S_IRUSR 0400
@@ -9781,7 +9785,8 @@ grn_inline static grn_rc
 token_info_build_phrase(grn_ctx *ctx,
                         grn_ii_select_data *data,
                         const char *phrase,
-                        unsigned int phrase_len)
+                        unsigned int phrase_len,
+                        int tokenizer_mode)
 {
   token_info *ti;
   grn_rc rc = GRN_END_OF_DATA;
@@ -9790,7 +9795,7 @@ token_info_build_phrase(grn_ctx *ctx,
                                          data,
                                          phrase,
                                          phrase_len,
-                                         GRN_TOKENIZE_ADD);
+                                         tokenizer_mode);
   if (!token_cursor) { return ctx->rc; }
   if (data->mode == GRN_OP_UNSPLIT) {
     if ((ti = token_info_open(ctx,
@@ -9814,6 +9819,10 @@ token_info_build_phrase(grn_ctx *ctx,
     case GRN_OP_SUFFIX :
       default_ef = EX_SUFFIX;
       break;
+    case GRN_OP_NEAR_PHRASE :
+    case GRN_OP_ORDERED_NEAR_PHRASE :
+    case GRN_OP_NEAR_PHRASE_PRODUCT :
+    case GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT :
     case GRN_OP_PARTIAL :
       default_ef = EX_BOTH;
       break;
@@ -9878,6 +9887,7 @@ token_info_build_phrase(grn_ctx *ctx,
       grn_token *token;
       tid = grn_token_cursor_next(ctx, token_cursor);
       token = grn_token_cursor_get_token(ctx, token_cursor);
+      my_grn_p(ctx, &(token->data));
       const char *key = NULL;
       uint32_t size = 0;
       if (tid == GRN_ID_NIL) {
@@ -9901,7 +9911,7 @@ token_info_build_phrase(grn_ctx *ctx,
                              key,
                              size,
                              token_cursor->pos,
-                             EX_NONE);
+                             ef);
         break;
       default :
         ti = token_info_open(ctx,
@@ -9935,7 +9945,8 @@ token_info_build(grn_ctx *ctx, grn_ii_select_data *data)
   return token_info_build_phrase(ctx,
                                  data,
                                  data->query,
-                                 data->query_len);
+                                 data->query_len,
+                                 GRN_TOKENIZE_GET);
 }
 
 grn_inline static grn_rc
@@ -10220,7 +10231,7 @@ token_info_build_near_phrase(grn_ctx *ctx,
     }
 
     uint32_t n_before = data->n_token_infos;
-    rc = token_info_build_phrase(ctx, data, phrase, phrase_len);
+    rc = token_info_build_phrase(ctx, data, phrase, phrase_len, GRN_TOKENIZE_ADD);
     if (rc == GRN_END_OF_DATA && is_product_mode) {
       rc = GRN_SUCCESS;
       uint32_t i;
@@ -10237,7 +10248,10 @@ token_info_build_near_phrase(grn_ctx *ctx,
     }
     must_last = false;
     uint32_t i;
+    my_printf("n_before : %d\n", n_before);
+    my_printf("data->n_token_infos : %d\n", data->n_token_infos);
     for (i = n_before; i < data->n_token_infos; i++) {
+      my_printf("data->token_infos[i]->n_tokens_in_phrase: %d\n", data->token_infos[i]->n_tokens_in_phrase);
       data->token_infos[i]->n_tokens_in_phrase = data->n_token_infos - n_before;
       data->token_infos[i]->phrase_group_id = phrase_group_id;
       data->token_infos[i]->phrase_id = phrase_id;
@@ -12010,7 +12024,10 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
         data->mode == GRN_OP_ORDERED_NEAR_PHRASE ||
         data->mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
         data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
+      my_printf("interval: %d\n", interval);
+      my_printf("n_tokens_in_phrase: %d\n", data->token_info->n_tokens_in_phrase);
       interval -= (data->token_info->n_tokens_in_phrase - 1);
+      my_printf("new interval: %d\n\n", interval);
     }
     bool matched = false;
     if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
