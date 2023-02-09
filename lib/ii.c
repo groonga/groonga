@@ -9790,7 +9790,7 @@ token_info_build_phrase(grn_ctx *ctx,
                                          data,
                                          phrase,
                                          phrase_len,
-                                         GRN_TOKENIZE_GET);
+                                         GRN_TOKENIZE_ADD);
   if (!token_cursor) { return ctx->rc; }
   if (data->mode == GRN_OP_UNSPLIT) {
     if ((ti = token_info_open(ctx,
@@ -9914,6 +9914,9 @@ token_info_build_phrase(grn_ctx *ctx,
         break;
       }
       if (!ti) {
+        if (token_cursor->status == GRN_TOKEN_CURSOR_DONE) {
+          rc = GRN_SUCCESS;
+        }
         goto exit;
       }
       data->token_infos[data->n_token_infos++] = ti;
