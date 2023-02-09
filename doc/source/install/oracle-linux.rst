@@ -19,7 +19,7 @@ Install
 
    % sudo dnf install -y https://apache.jfrog.io/artifactory/arrow/almalinux/9/apache-arrow-release-latest.rpm
    % sudo dnf install -y https://packages.groonga.org/oracle-linux/9/groonga-release-latest.noarch.rpm
-   % sudo dnf install -y --enablerepo=epel --enablerepo=ol9_codeready_builder groonga
+   % sudo dnf install -y --enablerepo=ol9_codeready_builder groonga
 
 If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
@@ -35,7 +35,7 @@ Install::
 
   % sudo dnf install -y https://apache.jfrog.io/artifactory/arrow/almalinux/8/apache-arrow-release-latest.rpm
   % sudo dnf install -y https://packages.groonga.org/oracle-linux/8/groonga-release-latest.noarch.rpm
-  % sudo dnf install -y --enablerepo=epel --enablerepo=ol8_codeready_builder groonga
+  % sudo dnf install -y --enablerepo=ol8_codeready_builder groonga
 
 If you want to use `MeCab <https://taku910.github.io/mecab/>`_ as a
 tokenizer, install groonga-tokenizer-mecab package.
