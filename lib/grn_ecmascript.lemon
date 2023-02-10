@@ -404,12 +404,13 @@ relational_expression ::= relational_expression NEAR shift_expression. {
                           GRN_OP_PUSH, 1);
       grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
       n_args++;
+      int min_interval;
+      GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
+      printf("min_interval: %d\n", min_interval);
+      grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
+                                GRN_OP_PUSH, 1);
+      n_args++;
     }
-    int min_interval;
-    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
-    grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
-                              GRN_OP_PUSH, 1);
-    n_args++;
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR, n_args);
 }
@@ -438,12 +439,12 @@ relational_expression ::= relational_expression NEAR_PHRASE shift_expression. {
                           GRN_OP_PUSH, 1);
       grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
       n_args++;
+      int min_interval;
+      GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
+      grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
+                                GRN_OP_PUSH, 1);
+      n_args++;
     }
-    int min_interval;
-    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
-    grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
-                              GRN_OP_PUSH, 1);
-    n_args++;
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR_PHRASE, n_args);
 }
@@ -469,12 +470,13 @@ relational_expression ::= relational_expression ORDERED_NEAR_PHRASE shift_expres
                           GRN_OP_PUSH, 1);
       grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
       n_args++;
+      int min_interval;
+      GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
+      grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
+                                GRN_OP_PUSH, 1);
+      n_args++;
     }
-    int min_interval;
-    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
-    grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
-                              GRN_OP_PUSH, 1);
-    n_args++;
+
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ORDERED_NEAR_PHRASE, n_args);
 }
@@ -500,12 +502,12 @@ relational_expression ::= relational_expression NEAR_PHRASE_PRODUCT shift_expres
                           GRN_OP_PUSH, 1);
       grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
       n_args++;
+      int min_interval;
+      GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
+      grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
+                                GRN_OP_PUSH, 1);
+      n_args++;
     }
-    int min_interval;
-    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
-    grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
-                              GRN_OP_PUSH, 1);
-    n_args++;
   }
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR_PHRASE_PRODUCT, n_args);
 }
@@ -531,12 +533,12 @@ relational_expression ::= relational_expression ORDERED_NEAR_PHRASE_PRODUCT shif
                           GRN_OP_PUSH, 1);
       grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
       n_args++;
+      int min_interval;
+      GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
+      grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
+                                GRN_OP_PUSH, 1);
+      n_args++;
     }
-    int min_interval;
-    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
-    grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
-                              GRN_OP_PUSH, 1);
-    n_args++;
   }
   grn_expr_append_op(efsi->ctx,
                      efsi->e,

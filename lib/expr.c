@@ -1801,7 +1801,7 @@ grn_scan_info_free(grn_ctx *ctx,
     (si)->max_interval = DEFAULT_MAX_INTERVAL;\
     (si)->additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;\
     GRN_INT32_INIT(&(si)->max_element_intervals, GRN_OBJ_VECTOR);\
-    (si)->min_interval = DEFAULT_MAX_INTERVAL;\
+    (si)->min_interval = -1 * DEFAULT_MAX_INTERVAL;\
     (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
     (si)->quorum_threshold = DEFAULT_QUORUM_THRESHOLD;\
     (si)->start = (st);\
@@ -2751,7 +2751,7 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, float weight)
             *p == si->args[2] &&
             (*p)->header.domain == GRN_DB_INT32) {
           si->max_interval = GRN_INT32_VALUE(*p);
-        } else if (si->nargs == 4 &&
+        } else if (si->nargs >= 4 &&
                    *p == si->args[3] &&
                    (*p)->header.domain == GRN_DB_INT32 &&
                    grn_obj_is_uvector(ctx, *p)) {
@@ -2777,12 +2777,12 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, float weight)
                    *p == si->args[3] &&
                    (*p)->header.domain == GRN_DB_INT32) {
           si->additional_last_interval = GRN_INT32_VALUE(*p);
-        } else if (si->nargs == 5 &&
+        } else if (si->nargs >= 5 &&
                    *p == si->args[4] &&
                    (*p)->header.domain == GRN_DB_INT32 &&
                    grn_obj_is_uvector(ctx, *p)) {
           grn_uvector_copy(ctx, *p, &(si->max_element_intervals));
-        } else if (si->nargs >= 6 &&
+        } else if (si->nargs == 6 &&
                    *p == si->args[5] &&
                    (*p)->header.domain == GRN_DB_INT32) {
           si->min_interval = GRN_INT32_VALUE(*p);
