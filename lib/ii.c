@@ -13380,6 +13380,7 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
     select_optarg->mode = search_optarg->mode;
     select_optarg->max_interval = search_optarg->max_interval;
     select_optarg->max_element_intervals = search_optarg->max_element_intervals;
+    select_optarg->min_interval = search_optarg->min_interval;
     break;
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
@@ -13390,6 +13391,7 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
     select_optarg->additional_last_interval =
       search_optarg->additional_last_interval;
     select_optarg->max_element_intervals = search_optarg->max_element_intervals;
+    select_optarg->min_interval = search_optarg->min_interval;
     break;
   case GRN_OP_SIMILAR :
     select_optarg->mode = search_optarg->mode;
