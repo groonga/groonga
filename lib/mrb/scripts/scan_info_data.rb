@@ -31,6 +31,7 @@ module Groonga
       @max_interval = nil
       @additional_last_interval = nil
       @max_element_intervals = nil
+      @min_interval = nil
       @similarity_threshold = nil
       @quorum_threshold = nil
       @start_position = nil
