@@ -9022,6 +9022,7 @@ typedef struct {
   int max_interval;
   int additional_last_interval;
   grn_obj *max_element_intervals;
+  int min_interval;
   btr *check_element_intervals_btree;
   int32_t pos;
   grn_id rid;
@@ -11057,6 +11058,7 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
       data->max_interval = data->optarg->max_interval;
       data->additional_last_interval = data->optarg->additional_last_interval;
       data->max_element_intervals = data->optarg->max_element_intervals;
+      data->min_interval = data->optarg->min_interval;
       if ((data->mode == GRN_OP_NEAR ||
            data->mode == GRN_OP_NEAR_PHRASE ||
            data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) &&
