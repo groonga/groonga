@@ -2545,7 +2545,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
                                       &unify,
                                       grn_nfkc_normalize_unify_katakana_prolonged_sound_mark,
                                       &previous_length,
-                                      "[unify][katakana-prolonged_sound_mark]");
+                                      "[unify][katakana-prolonged-sound-mark]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
