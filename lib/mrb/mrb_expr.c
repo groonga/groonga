@@ -354,7 +354,7 @@ mrb_grn_scan_info_set_min_interval(mrb_state *mrb, mrb_value self)
 
   mrb_get_args(mrb, "i", &min_interval);
   si = DATA_PTR(self);
-  grn_scan_info_set_max_interval(si, (int)min_interval);
+  grn_scan_info_set_min_interval(si, (int)min_interval);
   return self;
 }
 
