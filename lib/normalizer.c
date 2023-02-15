@@ -1906,7 +1906,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
 {
   size_t char_length;
   const unsigned char *previous;
-  size_t *previous_length = (size_t *)user_data;
+  size_t *previous_length = user_data;
 
   char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
 
