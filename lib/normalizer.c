@@ -1914,7 +1914,6 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
   *n_used_characters = 1;
 
   if (*previous_length == 3 &&
-      current - *previous_length >= start &&
       /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
       char_length == 3 &&
       current[0] == 0xe3 &&
