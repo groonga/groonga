@@ -1914,12 +1914,9 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
   *n_used_characters = 1;
 
   if (*previous_length == 3 &&
-      /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
-      char_length == 3 &&
-      current[0] == 0xe3 &&
-      current[1] == 0x83 &&
-      current[2] == 0xbc) {
+      grn_nfkc_normalize_is_prolonged_sound_mark_famity(current, char_length)) {
     previous = current - *previous_length;
+    *previous_length = char_length;
     if (previous[0] == 0xe3) {
       if (/* U+3041 HIRAGANA LETTER SMALL A */
           (previous[1] == 0x81 && previous[2] == 0x81) ||
