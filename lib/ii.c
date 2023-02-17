@@ -11763,8 +11763,10 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
       int32_t pos = data->check_element_intervals_btree->min->pos;
       int32_t max_element_interval =
         GRN_INT32_VALUE_AT(data->max_element_intervals, i - 1);
-      if (max_element_interval >= 0 &&
-          (pos - previous_pos) > max_element_interval) {
+      int32_t interval = pos - previous_pos;
+      if ((max_element_interval >= 0 &&
+           interval > max_element_interval) ||
+          interval < data->min_interval) {
         return false;
       }
       previous_pos = pos;
@@ -11790,8 +11792,10 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
       int32_t pos = data->token_infos[i_token_info]->pos;
       int32_t max_element_interval =
         GRN_INT32_VALUE_AT(data->max_element_intervals, i_interval);
-      if (max_element_interval >= 0 &&
-          (pos - previous_pos) > max_element_interval) {
+      int32_t interval = pos - previous_pos;
+      if ((max_element_interval >= 0 &&
+           interval > max_element_interval) ||
+          interval < data->min_interval) {
         return false;
       }
       previous_pos = pos;
@@ -11809,8 +11813,10 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
       int32_t pos = data->phrase_groups[i].btree->min->pos;
       int32_t max_element_interval =
         GRN_INT32_VALUE_AT(data->max_element_intervals, i - 1);
-      if (max_element_interval >= 0 &&
-          (pos - previous_pos) > max_element_interval) {
+      int32_t interval = pos - previous_pos;
+      if ((max_element_interval >= 0 &&
+           interval > max_element_interval) ||
+          interval < data->min_interval) {
         return false;
       }
       previous_pos = pos;
@@ -12068,9 +12074,8 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
                                                            data,
                                                            interval));
     } else {
-      matched = ((data->max_interval < 0) ||
-                 (interval <= data->max_interval &&
-                  interval >= data->min_interval));
+      matched = ((data->max_interval < 0 && interval >= data->min_interval) ||
+                 (interval <= data->max_interval && interval >= data->min_interval));
     }
     if (matched) {
       matched = grn_ii_select_data_check_near_element_intervals(ctx, data);
