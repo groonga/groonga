@@ -69,7 +69,7 @@ Here are schema and data for this example:
 .. {"_key": "ac", "normalized": "<AC>"}
 .. ]
 
-You can normalize ``a`` with ``<A>`` and ``oo`` with ``<OO>`` with this user defined normalization table. For example:
+You can normalize ``a`` with ``<A>`` and ``ac`` with ``<AC>`` with this user defined normalization table. For example:
 
   * ``Groonga`` -> ``Groong<A>``
 
