@@ -1,5 +1,5 @@
 normalize \
   'NormalizerNFKC130("unify_kana_prolonged_sound_mark", true, \
                      "report_source_offset", true)' \
-  "ヷーヸーヴーヹエヺー" \
+  "ヷーヸーヴーヹーヺー" \
   WITH_CHECKS|WITH_TYPES
