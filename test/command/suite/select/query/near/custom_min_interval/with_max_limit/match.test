@@ -1,0 +1,14 @@
+table_create Memos TABLE_PAT_KEY ShortText
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"_key":"alphabets", "content": "a b c d e f g i"}
+]
+
+select --table Memos --match_columns content --query '*N3,,3 "a e"'
