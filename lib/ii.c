@@ -12074,8 +12074,9 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
                                                            data,
                                                            interval));
     } else {
-      matched = ((data->max_interval < 0 && interval >= data->min_interval) ||
-                 (interval <= data->max_interval && interval >= data->min_interval));
+      matched = ((data->max_interval < 0 ||
+                  interval <= data->max_interval) &&
+                 interval >= data->min_interval );
     }
     if (matched) {
       matched = grn_ii_select_data_check_near_element_intervals(ctx, data);
