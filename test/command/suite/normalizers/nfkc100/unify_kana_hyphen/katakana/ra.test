@@ -1,0 +1,5 @@
+normalize \
+  'NormalizerNFKC100("unify_kana_hyphen", true, \
+                     "report_source_offset", true)' \
+  "ラ-リ-ル-レ-ロ-" \
+  WITH_CHECKS|WITH_TYPES

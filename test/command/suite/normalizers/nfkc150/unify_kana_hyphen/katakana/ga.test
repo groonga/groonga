@@ -1,0 +1,5 @@
+normalize \
+  'NormalizerNFKC150("unify_kana_hyphen", true, \
+                     "report_source_offset", true)' \
+  "ガ-ギ-グ-ゲ-ゴ-" \
+  WITH_CHECKS|WITH_TYPES
