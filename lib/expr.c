@@ -1759,6 +1759,7 @@ grn_expr_get_value(grn_ctx *ctx, grn_obj *expr, int offset)
 #define DEFAULT_QUORUM_THRESHOLD 1
 #define DEFAULT_TERM_EXTRACT_POLICY 0
 #define DEFAULT_WEIGHT_VECTOR_SIZE 4096
+#define DEFAULT_MIN_INTERVAL INT32_MIN
 
 static grn_inline void
 grn_scan_info_free(grn_ctx *ctx,
@@ -1801,7 +1802,7 @@ grn_scan_info_free(grn_ctx *ctx,
     (si)->max_interval = DEFAULT_MAX_INTERVAL;\
     (si)->additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;\
     GRN_INT32_INIT(&(si)->max_element_intervals, GRN_OBJ_VECTOR);\
-    (si)->min_interval = -1 * DEFAULT_MAX_INTERVAL;\
+    (si)->min_interval = DEFAULT_MIN_INTERVAL;\
     (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
     (si)->quorum_threshold = DEFAULT_QUORUM_THRESHOLD;\
     (si)->start = (st);\
