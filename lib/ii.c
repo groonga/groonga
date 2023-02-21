@@ -11768,14 +11768,18 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
   } else if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
     uint32_t i;
     uint32_t n = data->n_token_infos;
-    if (n > n_max_element_intervals + 1) {
-      n = n_max_element_intervals + 1;
-    }
     int32_t previous_pos = data->token_infos[0]->pos;
-    for (i = 1; i < n; i++) {
+    uint32_t n_checked_elements = 0;
+
+    for (i = 1; i < n && n_checked_elements < n_max_element_intervals; i++) {
       int32_t pos = data->token_infos[i]->pos;
       int32_t max_element_interval =
-        GRN_INT32_VALUE_AT(data->max_element_intervals, i - 1);
+        GRN_INT32_VALUE_AT(data->max_element_intervals, n_checked_elements);
+      int32_t interval = pos - previous_pos;
+      if (interval == 0 && data->token_infos[i]->offset > 0) {
+        continue;
+      }
+      n_checked_elements += 1;
       if (max_element_interval >= 0 &&
           (pos - previous_pos) > max_element_interval) {
         return false;
