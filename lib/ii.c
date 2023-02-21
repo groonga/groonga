@@ -11648,7 +11648,7 @@ grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
                                           grn_ii_select_data *data,
                                           int interval)
 {
-  if (data->max_interval < 0) {
+  if (data->max_interval < 0 && interval >= data->min_interval) {
     return true;
   }
   if (data->additional_last_interval == 0) {
