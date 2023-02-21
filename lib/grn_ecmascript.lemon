@@ -406,7 +406,6 @@ relational_expression ::= relational_expression NEAR shift_expression. {
       n_args++;
       int min_interval;
       GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
-      printf("min_interval: %d\n", min_interval);
       grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
                                 GRN_OP_PUSH, 1);
       n_args++;
