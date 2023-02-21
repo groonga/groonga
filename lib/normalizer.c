@@ -989,7 +989,7 @@ grn_nfkc_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_ch
 }
 
 grn_inline static grn_bool
-grn_nfkc_normalize_is_hyphen_famity(const unsigned char *utf8_char,
+grn_nfkc_normalize_is_hyphen_family(const unsigned char *utf8_char,
                                     size_t length)
 {
   if (length == 1) {
@@ -1041,7 +1041,7 @@ grn_nfkc_normalize_is_hyphen_famity(const unsigned char *utf8_char,
 }
 
 grn_inline static grn_bool
-grn_nfkc_normalize_is_prolonged_sound_mark_famity(const unsigned char *utf8_char,
+grn_nfkc_normalize_is_prolonged_sound_mark_family(const unsigned char *utf8_char,
                                                   size_t length)
 {
   if (length == 3) {
@@ -1245,7 +1245,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
     }
 
     if (data->options->unify_hyphen) {
-      if (grn_nfkc_normalize_is_hyphen_famity(unifying, unified_char_length)) {
+      if (grn_nfkc_normalize_is_hyphen_family(unifying, unified_char_length)) {
         unifying = unified_hyphen;
         unified_char_length = sizeof(unified_hyphen);
         char_type = GRN_CHAR_SYMBOL | (char_type & GRN_CHAR_BLANK);
@@ -1253,7 +1253,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
     }
 
     if (data->options->unify_prolonged_sound_mark) {
-      if (grn_nfkc_normalize_is_prolonged_sound_mark_famity(unifying,
+      if (grn_nfkc_normalize_is_prolonged_sound_mark_family(unifying,
                                                             unified_char_length)) {
         unifying = unified_prolonged_sound_mark;
         unified_char_length = sizeof(unified_prolonged_sound_mark);
@@ -1262,8 +1262,8 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
     }
 
     if (data->options->unify_hyphen_and_prolonged_sound_mark) {
-      if (grn_nfkc_normalize_is_hyphen_famity(unifying, unified_char_length) ||
-          grn_nfkc_normalize_is_prolonged_sound_mark_famity(unifying,
+      if (grn_nfkc_normalize_is_hyphen_family(unifying, unified_char_length) ||
+          grn_nfkc_normalize_is_prolonged_sound_mark_family(unifying,
                                                             unified_char_length)) {
         unifying = unified_hyphen;
         unified_char_length = sizeof(unified_hyphen);
