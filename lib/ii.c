@@ -11781,7 +11781,7 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
       }
       n_checked_elements += 1;
       if (max_element_interval >= 0 &&
-          (pos - previous_pos) > max_element_interval) {
+          interval > max_element_interval) {
         return false;
       }
       previous_pos = pos;
