@@ -872,8 +872,8 @@ Improvements
 
   * [:doc:`reference/commands/logical_count`] Improved memory usage while ``logical_count`` executed.
   * [:doc:`/reference/commands/dump`] Added support for ``MISSING_IGNORE/MISSING_NIL``.
-  * [:doc:`reference/functions/snippet`],[:doc:`reference/functions/snippet_html`] Added support for text vector as input. [groonga-dev,04956][Reported by shinonon]
-  * [``vector_join``] Added a new function ``vector_join()``.[groonga-dev,04956]
+  * [:doc:`reference/functions/snippet`],[:doc:`reference/functions/snippet_html`] Added support for text vector as input.
+  * [``vector_join``] Added a new function ``vector_join()``.
   * [:doc:`/reference/indexing`] Ignore too large a token like online index construction.
 
 [:ref:`release-12-0-2`]

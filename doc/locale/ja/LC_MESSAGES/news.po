@@ -630,6 +630,22 @@ msgstr ""
 "[:doc:`reference/commands/select`] 検索エスカレーションによる前方一致検索のパ"
 "フォーマンスを少し改善しました。"
 
+msgid ""
+"[:doc:`reference/commands/select`] Added support for specifying a reference "
+"vector column with weight in ``drilldowns[LABEL]._key``."
+msgstr ""
+"[:doc:`/reference/commands/select`] ``drilldowns[LABEL]._key`` に重み付き参照"
+"ベクターカラムを指定できるようになりました。"
+
+msgid ""
+"[:doc:`reference/commands/select`] Added support for doing drilldown with a "
+"reference vector with weight even if we use ``query`` or ``filter``, or "
+"``post_filter``."
+msgstr ""
+"[:doc:`/reference/commands/select`] ``query`` や ``filter`` や "
+"``post_filter`` を使っていても、ドリルダウンのキーに重み付き参照ベクターカラ"
+"ムを指定できるようになりました。"
+
 msgid "[:ref:`release-12-0-4`]"
 msgstr ""
 
@@ -661,6 +677,23 @@ msgstr ""
 "[:doc:`/reference/commands/dump`] ``MISSING_IGNORE/MISSING_NIL`` をサポートし"
 "ました。"
 
+msgid ""
+"[:doc:`reference/functions/snippet`],[:doc:`reference/functions/"
+"snippet_html`] Added support for text vector as input."
+msgstr ""
+"[:doc:`reference/functions/snippet`],[:doc:`reference/functions/"
+"snippet_html`] 入力としてベクターをサポートしました。"
+
+msgid "[``vector_join``] Added a new function ``vector_join()``."
+msgstr "[``vector_join``] 新しい関数 ``vector_join()`` を追加しました。"
+
+msgid ""
+"[:doc:`/reference/indexing`] Ignore too large a token like online index "
+"construction."
+msgstr ""
+"[:doc:`/reference/indexing`] 動的インデックス構築のようにとても大きなトークン"
+"を無視するようにしました。"
+
 msgid "[:ref:`release-12-0-2`]"
 msgstr ""
 
@@ -673,6 +706,9 @@ msgstr ""
 
 msgid "We increased the stability of the feature of recovering on crashes."
 msgstr "クラッシュリカバリー機能の安定性が向上しました。"
+
+msgid "Improved performance for mmap if anonymous mmap available."
+msgstr "無名マッピングが利用可能な時のmmapのパフォーマンスを向上しました。"
 
 msgid ""
 "[:doc:`/reference/indexing`] Added support for the static index construction "
@@ -760,6 +796,21 @@ msgstr "[httpd] バンドルしているnginxのバージョンを1.21.6に更�
 
 msgid "Fixes"
 msgstr "修正"
+
+msgid ""
+"[:doc:`reference/commands/select`] Fix a bug displaying a wrong label in "
+"``drilldown`` results when ``command_version`` is ``3``."
+msgstr ""
+"[:doc:`reference/commands/select`] ``command_version`` が ``3`` のとき、 "
+"``drilldown`` の結果のラベルが不正になる問題を修正しました。"
+
+msgid ""
+"[:doc:`reference/normalizers/normalizer_table`] Fix a bug for Groonga to "
+"crush with specific definition setting in ``NormalizerTable``."
+msgstr ""
+"[:doc:`reference/normalizers/normalizer_table`] 特定の定義が "
+"``NormalizerTable`` に存在する場合、Groongaがクラッシュすることがある問題を修"
+"正しました。"
 
 msgid ""
 "[:doc:`reference/commands/select`][:doc:`reference/columns/vector`] Fixed a "
