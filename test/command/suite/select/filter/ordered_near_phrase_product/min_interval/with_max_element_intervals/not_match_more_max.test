@@ -1,0 +1,17 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer 'TokenNgram("unify_alphabet", false, \
+                                  "unify_digit", false)' \
+  --normalizer NormalizerNFKC121
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+load --table Entries
+[
+{"content": "abc123456789def"}
+]
+
+select Entries \
+  --filter 'content *ONPP-1,0,12,11"(abc bcd) (ef)"' \
+  --output_columns '_score, content'
