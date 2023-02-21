@@ -11793,8 +11793,7 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
       int32_t max_element_interval =
         GRN_INT32_VALUE_AT(data->max_element_intervals, i_interval);
       int32_t interval = pos - previous_pos;
-      if (interval != 0 &&
-          ((max_element_interval >= 0 &&
+      if (((max_element_interval >= 0 &&
            interval > max_element_interval) ||
           interval < data->min_interval)) {
         return false;
