@@ -69,7 +69,7 @@ module Groonga
     def near_search?
       return true if ((@op == Operator::NEAR or
                        @op == Operator::NEAR_NO_OFFSET) and
-                      (@args.size >= 3 or @args.size <= 5))
+                      (@args.size >= 3 and @args.size <= 5))
       return true if ((@op == Operator::NEAR_PHRASE or
                        @op == Operator::ORDERED_NEAR_PHRASE or
                        @op == Operator::NEAR_PHRASE_PRODUCT or
