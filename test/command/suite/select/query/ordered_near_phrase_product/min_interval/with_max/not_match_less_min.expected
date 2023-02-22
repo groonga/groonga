@@ -11,5 +11,5 @@ load --table Entries
 {"content": "abc123456789def"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --match_columns content   --query '*ONPP11,0,,11"(abc bcd) (9de)"'   --output_columns '_score, content'
+select Entries   --match_columns content   --query '*ONPP12,0,,11"(abc bcd) (9de)"'   --output_columns '_score, content'
 [[0,0.0,0.0],[[[0],[["_score","Int32"],["content","Text"]]]]]

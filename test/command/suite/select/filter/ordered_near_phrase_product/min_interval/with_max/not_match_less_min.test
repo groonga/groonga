@@ -13,5 +13,5 @@ load --table Entries
 ]
 
 select Entries \
-  --filter 'content *ONPP11,0,,11"(abc bcd) (9de)"' \
+  --filter 'content *ONPP12,0,,11"(abc bcd) (9de)"' \
   --output_columns '_score, content'
