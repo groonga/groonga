@@ -11771,9 +11771,6 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
     uint32_t i_phrase;
     uint32_t n_phrases = data->n_phrases;
     if (n_phrases > n_max_element_intervals + 1) {
-      printf("%d\n", n_phrases);
-      printf("%d\n", n_max_element_intervals);
-      printf("passed\n");
       n_phrases = n_max_element_intervals;
     }
     uint32_t previous_phrase_id = data->token_infos[0]->phrase_id;
