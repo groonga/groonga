@@ -74,7 +74,7 @@ module Groonga
                        @op == Operator::ORDERED_NEAR_PHRASE or
                        @op == Operator::NEAR_PHRASE_PRODUCT or
                        @op == Operator::ORDERED_NEAR_PHRASE_PRODUCT) and
-                       (@args.size >= 4 and @args.size <= 6))
+                      (@args.size >= 4 and @args.size <= 6))
       false
     end
 
