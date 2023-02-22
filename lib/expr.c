@@ -4266,8 +4266,11 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
         grn_expr_take_obj(ctx, efsi->e, max_element_intervals);
         n_args++;
         min_interval = grn_int32_value_at(&efsi->min_interval_stack, -1);
-        grn_expr_append_const_int32(efsi->ctx, efsi->e, min_interval,
-                                  GRN_OP_PUSH, 1);
+        grn_expr_append_const_int32(efsi->ctx,
+                                    efsi->e,
+                                    min_interval,
+                                    GRN_OP_PUSH,
+                                    1);
         n_args++;
       }
       if (fpclassify(weight) == FP_ZERO) {
@@ -4307,8 +4310,11 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
         grn_expr_take_obj(ctx, efsi->e, max_element_intervals);
         n_args++;
         min_interval = grn_int32_value_at(&efsi->min_interval_stack, -1);
-        grn_expr_append_const_int32(efsi->ctx, efsi->e, min_interval,
-                                  GRN_OP_PUSH, 1);
+        grn_expr_append_const_int32(efsi->ctx,
+                                    efsi->e,
+                                    min_interval,
+                                    GRN_OP_PUSH,
+                                    1);
         n_args++;
       }
       if (fpclassify(weight) == FP_ZERO) {
