@@ -3919,8 +3919,8 @@ parse_near_options(efs_info *q,
                    parse_query_op_data *data)
 {
   const char *end;
-  data->options.near.max_interval = grn_atoi(start, q->str_end, &end);
   data->options.near.min_interval = DEFAULT_MIN_INTERVAL;
+  data->options.near.max_interval = grn_atoi(start, q->str_end, &end);
   if (start == end) {
     data->options.near.max_interval = DEFAULT_MAX_INTERVAL;
     data->options.near.additional_last_interval =
