@@ -9,14 +9,9 @@ column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 
 load --table Entries
 [
-{"content": "abcXYZdef"},
-{"content": "abebcdXYZdef"},
-{"content": "abcdef"},
-{"content": "defXYZabc"},
-{"content": "XYZabc"},
-{"content": "abc123456789def"},
-{"content": "abc12345678def"},
-{"content": "abc1de2def"}
+{"content": "abc1def"},
+{"content": "abc12def"},
+{"content": "abc123def"}
 ]
 
-select Entries --filter 'content *ONP-1,0,3 "abc def"' --output_columns '_score, content'
+select Entries --filter 'content *ONP-1,0,5 "abc def"' --output_columns '_score, content'
