@@ -11766,21 +11766,31 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
     }
     return true;
   } else if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
-    uint32_t i;
-    uint32_t n = data->n_token_infos;
-    if (n > n_max_element_intervals + 1) {
-      n = n_max_element_intervals + 1;
+    uint32_t i_token_info;
+    uint32_t n_token_infos = data->n_token_infos;
+    uint32_t i_interval;
+    uint32_t n_intervals = data->n_phrases - 1;
+    if (n_intervals > n_max_element_intervals) {
+      n_intervals = n_max_element_intervals;
     }
+    uint32_t previous_phrase_id = data->token_infos[0]->phrase_id;
     int32_t previous_pos = data->token_infos[0]->pos;
-    for (i = 1; i < n; i++) {
-      int32_t pos = data->token_infos[i]->pos;
+    for (i_token_info = 1, i_interval = 0;
+         i_token_info < n_token_infos && i_interval < n_intervals;
+         i_token_info++) {
+      if (data->token_infos[i_token_info]->phrase_id == previous_phrase_id) {
+        continue;
+      }
+      previous_phrase_id = data->token_infos[i_token_info]->phrase_id;
+      int32_t pos = data->token_infos[i_token_info]->pos;
       int32_t max_element_interval =
-        GRN_INT32_VALUE_AT(data->max_element_intervals, i - 1);
+        GRN_INT32_VALUE_AT(data->max_element_intervals, i_interval);
       if (max_element_interval >= 0 &&
           (pos - previous_pos) > max_element_interval) {
         return false;
       }
       previous_pos = pos;
+      i_interval++;
     }
     return true;
   } else if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {

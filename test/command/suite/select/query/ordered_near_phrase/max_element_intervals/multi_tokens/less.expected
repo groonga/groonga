@@ -1,0 +1,70 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("unify_alphabet", false,                                   "unify_digit", false)'   --normalizer NormalizerNFKC121
+[[0,0.0,0.0],true]
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "abc1def12ghi"},
+{"content": "abc1def123ghi"},
+{"content": "abc1def1234ghi"},
+{"content": "abc12def12ghi"},
+{"content": "abc12def123ghi"},
+{"content": "abc12def1234ghi"},
+{"content": "abc123def12ghi"},
+{"content": "abc123def123ghi"},
+{"content": "abc123def1234ghi"}
+]
+[[0,0.0,0.0],9]
+select Entries   --match_columns content   --query '*ONP-1,0,5"abc def ghi"'   --output_columns '_score, content'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        6
+      ],
+      [
+        [
+          "_score",
+          "Int32"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "abc1def12ghi"
+      ],
+      [
+        1,
+        "abc1def123ghi"
+      ],
+      [
+        1,
+        "abc1def1234ghi"
+      ],
+      [
+        1,
+        "abc12def12ghi"
+      ],
+      [
+        1,
+        "abc12def123ghi"
+      ],
+      [
+        1,
+        "abc12def1234ghi"
+      ]
+    ]
+  ]
+]
