@@ -3979,6 +3979,10 @@ parse_near_options(efs_info *q,
       grn_atoi(min_interval_start,
                q->str_end,
                &end);
+    if (min_interval_start == end) {
+      data->options.near.min_interval = DEFAULT_MIN_INTERVAL;
+      return end;
+    }
   }
 
   return end;
