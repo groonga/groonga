@@ -1914,9 +1914,12 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
   *n_used_characters = 1;
 
   if (*previous_length == 3 &&
-      grn_nfkc_normalize_is_prolonged_sound_mark_famity(current, char_length)) {
+      /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
+      char_length == 3 &&
+      current[0] == 0xe3 &&
+      current[1] == 0x83 &&
+      current[2] == 0xbc) {
     previous = current - *previous_length;
-    *previous_length = char_length;
     if (previous[0] == 0xe3) {
       if (/* U+3041 HIRAGANA LETTER SMALL A */
           (previous[1] == 0x81 && previous[2] == 0x81) ||
@@ -1956,7 +1959,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
           (previous[1] == 0x82 && previous[2] == 0x8f) ||
           /* U+3095 HIRAGANA LETTER SMALL KA */
           (previous[1] == 0x82 && previous[2] == 0x95)) {
-        /* U+3041 HIRAGANA LETTER SMALL A */
+        /* U+3042 HIRAGANA LETTER A */
         unified_buffer[(*n_unified_bytes)++] = previous[0];
         unified_buffer[(*n_unified_bytes)++] = 0x81;
         unified_buffer[(*n_unified_bytes)++] = 0x82;
@@ -1993,7 +1996,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
                (previous[1] == 0x82 && previous[2] == 0x8a) ||
                /* U+3090 HIRAGANA LETTER WI */
                (previous[1] == 0x82 && previous[2] == 0x90)) {
-        /* U+3043 HIRAGANA LETTER SMALL I */
+        /* U+3044 HIRAGANA LETTER I */
         unified_buffer[(*n_unified_bytes)++] = previous[0];
         unified_buffer[(*n_unified_bytes)++] = 0x81;
         unified_buffer[(*n_unified_bytes)++] = 0x84;
@@ -2036,7 +2039,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
                (previous[1] == 0x82 && previous[2] == 0x8b) ||
                /* U+3094 HIRAGANA LETTER VU */
                (previous[1] == 0x82 && previous[2] == 0x94)) {
-        /* U+3045 HIRAGANA LETTER SMALL U */
+        /* U+3046 HIRAGANA LETTER U */
         unified_buffer[(*n_unified_bytes)++] = previous[0];
         unified_buffer[(*n_unified_bytes)++] = 0x81;
         unified_buffer[(*n_unified_bytes)++] = 0x86;
@@ -2075,7 +2078,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
                (previous[1] == 0x82 && previous[2] == 0x96) ||
                /* U+3091 HIRAGANA LETTER WE */
                (previous[1] == 0x82 && previous[2] == 0x91)) {
-        /* U+3047 HIRAGANA LETTER SMALL E */
+        /* U+3048 HIRAGANA LETTER E */
         unified_buffer[(*n_unified_bytes)++] = previous[0];
         unified_buffer[(*n_unified_bytes)++] = 0x81;
         unified_buffer[(*n_unified_bytes)++] = 0x88;
@@ -2116,7 +2119,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
                (previous[1] == 0x82 && previous[2] == 0x8d) ||
                /* U+3092 HIRAGANA LETTER WO */
                (previous[1] == 0x82 && previous[2] == 0x92)) {
-        /* U+3049 HIRAGANA LETTER SMALL O */
+        /* U+304A HIRAGANA LETTER O */
         unified_buffer[(*n_unified_bytes)++] = previous[0];
         unified_buffer[(*n_unified_bytes)++] = 0x81;
         unified_buffer[(*n_unified_bytes)++] = 0x8a;
@@ -2172,7 +2175,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
                (previous[1] == 0x83 && previous[2] == 0xb5) ||
                /* U+30F7 KATAKANA LETTER VA */
                (previous[1] == 0x83 && previous[2] == 0xb7)) {
-        /* U+30A1 KATAKANA LETTER SMALL A */
+        /* U+30A2 KATAKANA LETTER A */
         unified_buffer[(*n_unified_bytes)++] = previous[0];
         unified_buffer[(*n_unified_bytes)++] = 0x82;
         unified_buffer[(*n_unified_bytes)++] = 0xa2;
@@ -2211,7 +2214,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
                (previous[1] == 0x83 && previous[2] == 0xb0) ||
                /* U+30F8 KATAKANA LETTER VI */
                (previous[1] == 0x83 && previous[2] == 0xb8)) {
-        /* U+30A3 KATAKANA LETTER SMALL I */
+        /* U+30A4 KATAKANA LETTER I */
         unified_buffer[(*n_unified_bytes)++] = previous[0];
         unified_buffer[(*n_unified_bytes)++] = 0x82;
         unified_buffer[(*n_unified_bytes)++] = 0xa4;
@@ -2293,7 +2296,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
                (previous[1] == 0x83 && previous[2] == 0xb6) ||
                /* U+30F9 KATAKANA LETTER VE */
                (previous[1] == 0x83 && previous[2] == 0xb9)) {
-        /* U+30A7 KATAKANA LETTER SMALL E */
+        /* U+30A8 KATAKANA LETTER E */
         unified_buffer[(*n_unified_bytes)++] = previous[0];
         unified_buffer[(*n_unified_bytes)++] = 0x82;
         unified_buffer[(*n_unified_bytes)++] = 0xa8;
@@ -2336,7 +2339,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
                (previous[1] == 0x83 && previous[2] == 0xb2) ||
                /* U+30FA KATAKANA LETTER VO */
                (previous[1] == 0x83 && previous[2] == 0xba)) {
-        /* U+30A9 KATAKANA LETTER SMALL O */
+        /* U+30AA KATAKANA LETTER O */
         unified_buffer[(*n_unified_bytes)++] = previous[0];
         unified_buffer[(*n_unified_bytes)++] = 0x82;
         unified_buffer[(*n_unified_bytes)++] = 0xaa;
