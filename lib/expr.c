@@ -2288,19 +2288,6 @@ grn_scan_info_set_additional_last_interval(scan_info *si,
   si->additional_last_interval = additional_last_interval;
 }
 
-int
-grn_scan_info_get_min_interval(scan_info *si)
-{
-  return si->min_interval;
-}
-
-void
-grn_scan_info_set_min_interval(scan_info *si, int min_interval)
-{
-  si->min_interval = min_interval;
-}
-
-
 grn_obj *
 grn_scan_info_get_max_element_intervals(scan_info *si)
 {
@@ -2317,6 +2304,18 @@ grn_scan_info_set_max_element_intervals(grn_ctx *ctx,
     return;
   }
   grn_uvector_copy(ctx, max_element_intervals, &(si->max_element_intervals));
+}
+
+int
+grn_scan_info_get_min_interval(scan_info *si)
+{
+  return si->min_interval;
+}
+
+void
+grn_scan_info_set_min_interval(scan_info *si, int min_interval)
+{
+  si->min_interval = min_interval;
 }
 
 int
