@@ -50,8 +50,8 @@ typedef struct {
   grn_bool unify_katakana_wo_sound;
   grn_bool unify_katakana_di_sound;
   grn_bool unify_katakana_gu_small_sounds;
-  grn_bool unify_katakana_trailing_o;
   grn_bool unify_kana_prolonged_sound_mark;
+  grn_bool unify_katakana_trailing_o;
   grn_bool unify_to_romaji;
   grn_bool unify_to_katakana;
   grn_bool remove_blank;

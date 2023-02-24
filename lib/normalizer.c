@@ -2552,8 +2552,8 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
         data->options->unify_katakana_wo_sound ||
         data->options->unify_katakana_di_sound ||
         data->options->unify_katakana_gu_small_sounds ||
-        data->options->unify_katakana_trailing_o ||
         data->options->unify_kana_prolonged_sound_mark ||
+        data->options->unify_katakana_trailing_o ||
         data->options->unify_to_romaji ||
         data->options->unify_to_katakana ||
         data->options->strip)) {
@@ -2723,24 +2723,6 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     need_swap = GRN_TRUE;
   }
 
-  if (data->options->unify_katakana_trailing_o) {
-    if (need_swap) {
-      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
-      grn_nfkc_normalize_context_rewind(ctx, &unify);
-    }
-    bool need_trailing_check = false;
-    grn_nfkc_normalize_unify_stateful(ctx,
-                                      data,
-                                      &unify,
-                                      grn_nfkc_normalize_unify_katakana_trailing_o,
-                                      &need_trailing_check,
-                                      "[unify][katakana-trailing-o]");
-    if (ctx->rc != GRN_SUCCESS) {
-      goto exit;
-    }
-    need_swap = GRN_TRUE;
-  }
-
   if (data->options->unify_kana_prolonged_sound_mark) {
     if (need_swap) {
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
@@ -2753,6 +2735,24 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
                                       grn_nfkc_normalize_unify_kana_prolonged_sound_mark,
                                       &previous_length,
                                       "[unify][kana-prolonged-sound-mark]");
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    need_swap = GRN_TRUE;
+  }
+
+  if (data->options->unify_katakana_trailing_o) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    bool need_trailing_check = false;
+    grn_nfkc_normalize_unify_stateful(ctx,
+                                      data,
+                                      &unify,
+                                      grn_nfkc_normalize_unify_katakana_trailing_o,
+                                      &need_trailing_check,
+                                      "[unify][katakana-trailing-o]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
