@@ -11648,12 +11648,14 @@ grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
                                           grn_ii_select_data *data,
                                           int interval)
 {
-  if (data->max_interval < 0 && interval >= data->min_interval) {
+  if (interval < data->min_interval) {
+    return false;
+  }
+  if (data->max_interval < 0) {
     return true;
   }
   if (data->additional_last_interval == 0) {
-    return interval <= data->max_interval &&
-           interval >= data->min_interval;
+    return interval <= data->max_interval;
   }
 
   token_info *max_token_info = NULL;
@@ -11720,13 +11722,11 @@ grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
     min_without_last_token -
     (max_token_info->n_tokens_in_phrase - 1);
   if (data->additional_last_interval < 0) {
-    return (interval_without_last_token <= data->max_interval &&
-            interval_without_last_token >= data->min_interval);
+    return (interval_without_last_token <= data->max_interval);
   } else {
-    return ((interval <=
-             (data->max_interval + data->additional_last_interval)) &&
-            (interval_without_last_token <= data->max_interval) &&
-            (interval_without_last_token >= data->min_interval));
+    return (interval <=
+             (data->max_interval + data->additional_last_interval) &&
+            interval_without_last_token <= data->max_interval);
   }
 }
 
