@@ -11,7 +11,7 @@ load --table Memos
 {"_key":"alphabets", "content": "a b c d e f g i"}
 ]
 [[0,0.0,0.0],1]
-select --table Memos --match_columns content --query '*N-1,,2 "a c"'
+select --table Memos --filter 'content *N-1,,2 "a c"'
 [
   [
     0,

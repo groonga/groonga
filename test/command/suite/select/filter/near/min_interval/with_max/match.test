@@ -11,4 +11,4 @@ load --table Memos
 {"_key":"alphabets", "content": "a b c d e f g i"}
 ]
 
-select --table Memos --match_columns content --query '*N4,,3 "a e"'
+select --table Memos --filter 'content *N4,,3 "a e"'
