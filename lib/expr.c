@@ -4253,7 +4253,6 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
     {
       int n_args = 2;
       int max_interval;
-      int min_interval;
       max_interval = grn_int32_value_at(&efsi->max_interval_stack, -1);
       grn_expr_append_const_int32(efsi->ctx, efsi->e, max_interval,
                                   GRN_OP_PUSH, 1);
@@ -4269,7 +4268,7 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
                             1);
         grn_expr_take_obj(ctx, efsi->e, max_element_intervals);
         n_args++;
-        min_interval = grn_int32_value_at(&efsi->min_interval_stack, -1);
+        int min_interval = grn_int32_value_at(&efsi->min_interval_stack, -1);
         grn_expr_append_const_int32(efsi->ctx,
                                     efsi->e,
                                     min_interval,
@@ -4291,7 +4290,6 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
     {
       int n_args = 2;
       int max_interval;
-      int min_interval;
       max_interval = grn_int32_value_at(&efsi->max_interval_stack, -1);
       grn_expr_append_const_int32(efsi->ctx, efsi->e, max_interval,
                                   GRN_OP_PUSH, 1);
@@ -4313,7 +4311,7 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
                             1);
         grn_expr_take_obj(ctx, efsi->e, max_element_intervals);
         n_args++;
-        min_interval = grn_int32_value_at(&efsi->min_interval_stack, -1);
+        int min_interval = grn_int32_value_at(&efsi->min_interval_stack, -1);
         grn_expr_append_const_int32(efsi->ctx,
                                     efsi->e,
                                     min_interval,
