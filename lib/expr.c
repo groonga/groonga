@@ -1801,7 +1801,7 @@ grn_scan_info_free(grn_ctx *ctx,
     (si)->max_interval = DEFAULT_MAX_INTERVAL;\
     (si)->additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;\
     GRN_INT32_INIT(&(si)->max_element_intervals, GRN_OBJ_VECTOR);\
-    (si)->min_interval = GRN_SELECT_DEFAULT_NEAR_MIN_INTERVAL;\
+    (si)->min_interval = GRN_II_DEFAULT_NEAR_MIN_INTERVAL;\
     (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
     (si)->quorum_threshold = DEFAULT_QUORUM_THRESHOLD;\
     (si)->start = (st);\
@@ -3917,7 +3917,7 @@ parse_near_options(efs_info *q,
                    parse_query_op_data *data)
 {
   const char *end;
-  data->options.near.min_interval = GRN_SELECT_DEFAULT_NEAR_MIN_INTERVAL;
+  data->options.near.min_interval = GRN_II_DEFAULT_NEAR_MIN_INTERVAL;
   data->options.near.max_interval = grn_atoi(start, q->str_end, &end);
   if (start == end) {
     data->options.near.max_interval = DEFAULT_MAX_INTERVAL;
@@ -3978,7 +3978,7 @@ parse_near_options(efs_info *q,
                q->str_end,
                &end);
     if (min_interval_start == end) {
-      data->options.near.min_interval = GRN_SELECT_DEFAULT_NEAR_MIN_INTERVAL;
+      data->options.near.min_interval = GRN_II_DEFAULT_NEAR_MIN_INTERVAL;
       return end;
     }
   }

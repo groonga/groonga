@@ -178,7 +178,7 @@ grn_rc grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram,
                       grn_values *oldvalues, grn_values *newvalues);
 */
 
-#define GRN_SELECT_DEFAULT_NEAR_MIN_INTERVAL (INT32_MIN)
+#define GRN_II_DEFAULT_NEAR_MIN_INTERVAL (INT32_MIN)
 
 typedef struct _grn_select_optarg grn_select_optarg;
 

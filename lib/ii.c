@@ -11060,7 +11060,7 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
       data->max_element_intervals = data->optarg->max_element_intervals;
       data->min_interval = data->optarg->min_interval
                            ? *data->optarg->min_interval
-                           : GRN_SELECT_DEFAULT_NEAR_MIN_INTERVAL;
+                           : GRN_II_DEFAULT_NEAR_MIN_INTERVAL;
       if ((data->mode == GRN_OP_NEAR ||
            data->mode == GRN_OP_NEAR_PHRASE ||
            data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) &&
