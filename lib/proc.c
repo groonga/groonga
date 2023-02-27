@@ -4350,13 +4350,13 @@ selector_in_values(grn_ctx *ctx, grn_obj *table, grn_obj *index,
     search_options.similarity_threshold = 0;
     search_options.max_interval = 0;
     search_options.additional_last_interval = 0;
-    search_options.min_interval = NULL;
     search_options.weight_vector = NULL;
     search_options.vector_size = 0;
     search_options.proc = NULL;
     search_options.max_size = 0;
     search_options.scorer = NULL;
     search_options.query_options = NULL;
+    search_options.min_interval = NULL;
     if (i == n_values - 1) {
       ctx->flags = original_flags;
     }
