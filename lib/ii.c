@@ -11655,7 +11655,7 @@ grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
     return true;
   }
   if (data->additional_last_interval == 0) {
-    return interval <= data->max_interval;
+    return (interval <= data->max_interval);
   }
 
   token_info *max_token_info = NULL;
