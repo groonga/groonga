@@ -3745,13 +3745,13 @@ grn_select_apply_adjuster_execute_adjust(grn_ctx *ctx,
     options.similarity_threshold = 0;
     options.max_interval = 0;
     options.additional_last_interval = 0;
-    options.min_interval = NULL;
     options.weight_vector = NULL;
     options.vector_size = factor_value;
     options.proc = NULL;
     options.max_size = 0;
     options.scorer = NULL;
     options.query_options = NULL;
+    options.min_interval = NULL;
 
     grn_obj_search(ctx, index, value, table, GRN_OP_ADJUST, &options);
   }
