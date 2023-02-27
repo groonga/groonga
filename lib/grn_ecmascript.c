@@ -2357,7 +2357,7 @@ static YYACTIONTYPE yy_reduce(
     grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
                               GRN_OP_PUSH, 1);
     n_args++;
-  } while(0);
+  } while(false);
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR, n_args);
 }
 #line 2363 "grn_ecmascript.c"
@@ -2400,7 +2400,7 @@ static YYACTIONTYPE yy_reduce(
     grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
                               GRN_OP_PUSH, 1);
     n_args++;
-  } while(0);
+  } while(false);
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR_PHRASE, n_args);
 }
 #line 2406 "grn_ecmascript.c"
@@ -2436,7 +2436,7 @@ static YYACTIONTYPE yy_reduce(
     grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
                               GRN_OP_PUSH, 1);
     n_args++;
-  } while(0);
+  } while(false);
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ORDERED_NEAR_PHRASE, n_args);
 }
 #line 2442 "grn_ecmascript.c"
@@ -2472,7 +2472,7 @@ static YYACTIONTYPE yy_reduce(
     grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
                               GRN_OP_PUSH, 1);
     n_args++;
-  } while(0);
+  } while(false);
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR_PHRASE_PRODUCT, n_args);
 }
 #line 2478 "grn_ecmascript.c"
@@ -2508,7 +2508,7 @@ static YYACTIONTYPE yy_reduce(
     grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
                               GRN_OP_PUSH, 1);
     n_args++;
-  } while(0);
+  } while(false);
   grn_expr_append_op(efsi->ctx,
                      efsi->e,
                      GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT,
