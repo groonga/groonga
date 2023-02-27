@@ -11726,9 +11726,9 @@ grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
   if (data->additional_last_interval < 0) {
     return (interval_without_last_token <= data->max_interval);
   } else {
-    return (interval <=
+    return ((interval <=
              (data->max_interval + data->additional_last_interval) &&
-            interval_without_last_token <= data->max_interval);
+            interval_without_last_token <= data->max_interval));
   }
 }
 
