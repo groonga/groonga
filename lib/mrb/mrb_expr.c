@@ -347,6 +347,29 @@ mrb_grn_scan_info_get_max_element_intervals(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+mrb_grn_scan_info_set_min_interval(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  mrb_int min_interval;
+
+  mrb_get_args(mrb, "i", &min_interval);
+  si = DATA_PTR(self);
+  grn_scan_info_set_min_interval(si, (int)min_interval);
+  return self;
+}
+
+static mrb_value
+mrb_grn_scan_info_get_min_interval(mrb_state *mrb, mrb_value self)
+{
+  scan_info *si;
+  int min_interval;
+
+  si = DATA_PTR(self);
+  min_interval = grn_scan_info_get_min_interval(si);
+  return mrb_int_value(mrb, min_interval);
+}
+
+static mrb_value
 mrb_grn_scan_info_set_similarity_threshold(mrb_state *mrb, mrb_value self)
 {
   scan_info *si;
@@ -1034,6 +1057,10 @@ grn_mrb_expr_init(grn_ctx *ctx)
   mrb_define_method(mrb, klass, "max_element_intervals=",
                     mrb_grn_scan_info_set_max_element_intervals,
                     MRB_ARGS_REQ(1));
+  mrb_define_method(mrb, klass, "min_interval",
+                    mrb_grn_scan_info_get_min_interval, MRB_ARGS_NONE());
+  mrb_define_method(mrb, klass, "min_interval=",
+                    mrb_grn_scan_info_set_min_interval, MRB_ARGS_REQ(1));
   mrb_define_method(mrb, klass, "similarity_threshold",
                     mrb_grn_scan_info_get_similarity_threshold, MRB_ARGS_NONE());
   mrb_define_method(mrb, klass, "similarity_threshold=",

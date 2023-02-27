@@ -1579,6 +1579,7 @@ select_index(grn_ctx *ctx,
       if (GRN_INT32_VECTOR_SIZE(&(si->max_element_intervals)) > 0) {
         options->max_element_intervals = &(si->max_element_intervals);
       }
+      options->min_interval = &(si->min_interval);
       options->similarity_threshold = si->similarity_threshold;
       options->quorum_threshold = si->quorum_threshold;
       options->query_options = table_selector->query_options;

@@ -23,6 +23,9 @@ module Groonga
       if data.max_element_intervals
         self.max_element_intervals = data.max_element_intervals
       end
+      if data.min_interval
+        self.min_interval = data.min_interval
+      end
       if data.similarity_threshold
         self.similarity_threshold = data.similarity_threshold
       end

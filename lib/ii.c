@@ -9022,6 +9022,7 @@ typedef struct {
   int max_interval;
   int additional_last_interval;
   grn_obj *max_element_intervals;
+  int min_interval;
   btr *check_element_intervals_btree;
   int32_t pos;
   grn_id rid;
@@ -11057,6 +11058,7 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
       data->max_interval = data->optarg->max_interval;
       data->additional_last_interval = data->optarg->additional_last_interval;
       data->max_element_intervals = data->optarg->max_element_intervals;
+      data->min_interval = data->optarg->min_interval;
       if ((data->mode == GRN_OP_NEAR ||
            data->mode == GRN_OP_NEAR_PHRASE ||
            data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) &&
@@ -11646,6 +11648,9 @@ grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
                                           grn_ii_select_data *data,
                                           int interval)
 {
+  if (interval < data->min_interval) {
+    return false;
+  }
   if (data->max_interval < 0) {
     return true;
   }
@@ -11758,8 +11763,11 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
       int32_t pos = data->check_element_intervals_btree->min->pos;
       int32_t max_element_interval =
         GRN_INT32_VALUE_AT(data->max_element_intervals, i - 1);
-      if (max_element_interval >= 0 &&
-          (pos - previous_pos) > max_element_interval) {
+      int32_t interval = pos - previous_pos;
+      if (max_element_interval >= 0 && interval > max_element_interval) {
+        return false;
+      }
+      if (interval < data->min_interval) {
         return false;
       }
       previous_pos = pos;
@@ -11785,8 +11793,11 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
       int32_t pos = data->token_infos[i_token_info]->pos;
       int32_t max_element_interval =
         GRN_INT32_VALUE_AT(data->max_element_intervals, i_interval);
-      if (max_element_interval >= 0 &&
-          (pos - previous_pos) > max_element_interval) {
+      int32_t interval = pos - previous_pos;
+      if (max_element_interval >= 0 && interval > max_element_interval) {
+        return false;
+      }
+      if (interval < data->min_interval) {
         return false;
       }
       previous_pos = pos;
@@ -11804,8 +11815,11 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
       int32_t pos = data->phrase_groups[i].btree->min->pos;
       int32_t max_element_interval =
         GRN_INT32_VALUE_AT(data->max_element_intervals, i - 1);
-      if (max_element_interval >= 0 &&
-          (pos - previous_pos) > max_element_interval) {
+      int32_t interval = pos - previous_pos;
+      if (max_element_interval >= 0 && interval > max_element_interval) {
+        return false;
+      }
+      if (interval < data->min_interval) {
         return false;
       }
       previous_pos = pos;
@@ -12063,8 +12077,9 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
                                                            data,
                                                            interval));
     } else {
-      matched = ((data->max_interval < 0) ||
-                 (interval <= data->max_interval));
+      matched = ((data->max_interval < 0 ||
+                  interval <= data->max_interval) &&
+                 interval >= data->min_interval);
     }
     if (matched) {
       matched = grn_ii_select_data_check_near_element_intervals(ctx, data);
@@ -13380,6 +13395,9 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
     select_optarg->mode = search_optarg->mode;
     select_optarg->max_interval = search_optarg->max_interval;
     select_optarg->max_element_intervals = search_optarg->max_element_intervals;
+    select_optarg->min_interval = search_optarg->min_interval
+                                  ? *search_optarg->min_interval
+                                  : GRN_II_DEFAULT_NEAR_MIN_INTERVAL;
     break;
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
@@ -13390,6 +13408,9 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
     select_optarg->additional_last_interval =
       search_optarg->additional_last_interval;
     select_optarg->max_element_intervals = search_optarg->max_element_intervals;
+    select_optarg->min_interval = search_optarg->min_interval
+                                  ? *search_optarg->min_interval
+                                  : GRN_II_DEFAULT_NEAR_MIN_INTERVAL;
     break;
   case GRN_OP_SIMILAR :
     select_optarg->mode = search_optarg->mode;

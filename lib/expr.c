@@ -1801,6 +1801,7 @@ grn_scan_info_free(grn_ctx *ctx,
     (si)->max_interval = DEFAULT_MAX_INTERVAL;\
     (si)->additional_last_interval = DEFAULT_ADDITIONAL_LAST_INTERVAL;\
     GRN_INT32_INIT(&(si)->max_element_intervals, GRN_OBJ_VECTOR);\
+    (si)->min_interval = GRN_II_DEFAULT_NEAR_MIN_INTERVAL;\
     (si)->similarity_threshold = DEFAULT_SIMILARITY_THRESHOLD;\
     (si)->quorum_threshold = DEFAULT_QUORUM_THRESHOLD;\
     (si)->start = (st);\
@@ -2306,6 +2307,18 @@ grn_scan_info_set_max_element_intervals(grn_ctx *ctx,
 }
 
 int
+grn_scan_info_get_min_interval(scan_info *si)
+{
+  return si->min_interval;
+}
+
+void
+grn_scan_info_set_min_interval(scan_info *si, int min_interval)
+{
+  si->min_interval = min_interval;
+}
+
+int
 grn_scan_info_get_similarity_threshold(scan_info *si)
 {
   return si->similarity_threshold;
@@ -2737,11 +2750,15 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, float weight)
             *p == si->args[2] &&
             (*p)->header.domain == GRN_DB_INT32) {
           si->max_interval = GRN_INT32_VALUE(*p);
-        } else if (si->nargs == 4 &&
+        } else if (si->nargs >= 4 &&
                    *p == si->args[3] &&
                    (*p)->header.domain == GRN_DB_INT32 &&
                    grn_obj_is_uvector(ctx, *p)) {
           grn_uvector_copy(ctx, *p, &(si->max_element_intervals));
+        } else if (si->nargs == 5 &&
+                   *p == si->args[4] &&
+                   (*p)->header.domain == GRN_DB_INT32) {
+          si->min_interval = GRN_INT32_VALUE(*p);
         } else {
           si->query = *p;
         }
@@ -2759,11 +2776,15 @@ scan_info_build_match(grn_ctx *ctx, scan_info *si, float weight)
                    *p == si->args[3] &&
                    (*p)->header.domain == GRN_DB_INT32) {
           si->additional_last_interval = GRN_INT32_VALUE(*p);
-        } else if (si->nargs == 5 &&
+        } else if (si->nargs >= 5 &&
                    *p == si->args[4] &&
                    (*p)->header.domain == GRN_DB_INT32 &&
                    grn_obj_is_uvector(ctx, *p)) {
           grn_uvector_copy(ctx, *p, &(si->max_element_intervals));
+        } else if (si->nargs == 6 &&
+                   *p == si->args[5] &&
+                   (*p)->header.domain == GRN_DB_INT32) {
+          si->min_interval = GRN_INT32_VALUE(*p);
         } else {
           si->query = *p;
         }
@@ -3823,6 +3844,7 @@ typedef struct {
   grn_obj max_interval_stack;
   grn_obj additional_last_interval_stack;
   grn_obj max_element_intervals_stack;
+  grn_obj min_interval_stack;
   grn_obj similarity_threshold_stack;
   grn_obj quorum_threshold_stack;
   grn_obj weight_stack;
@@ -3874,6 +3896,7 @@ typedef struct {
       int32_t max_interval;
       int32_t additional_last_interval;
       grn_obj *max_element_intervals;
+      int32_t min_interval;
 /* near is defined by Visual C++. */
 #ifdef near
 # undef near
@@ -3894,6 +3917,7 @@ parse_near_options(efs_info *q,
                    parse_query_op_data *data)
 {
   const char *end;
+  data->options.near.min_interval = GRN_II_DEFAULT_NEAR_MIN_INTERVAL;
   data->options.near.max_interval = grn_atoi(start, q->str_end, &end);
   if (start == end) {
     data->options.near.max_interval = DEFAULT_MAX_INTERVAL;
@@ -3944,6 +3968,18 @@ parse_near_options(efs_info *q,
       if (end[0] != '|') {
         break;
       }
+    }
+  }
+
+  if (end < q->str_end && end[0] == ',') {
+    const char *min_interval_start = end + 1;
+    data->options.near.min_interval =
+      grn_atoi(min_interval_start,
+               q->str_end,
+               &end);
+    if (min_interval_start == end) {
+      data->options.near.min_interval = GRN_II_DEFAULT_NEAR_MIN_INTERVAL;
+      return end;
     }
   }
 
@@ -4230,6 +4266,13 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
                             1);
         grn_expr_take_obj(ctx, efsi->e, max_element_intervals);
         n_args++;
+        int min_interval = grn_int32_value_at(&efsi->min_interval_stack, -1);
+        grn_expr_append_const_int32(efsi->ctx,
+                                    efsi->e,
+                                    min_interval,
+                                    GRN_OP_PUSH,
+                                    1);
+        n_args++;
       }
       if (fpclassify(weight) == FP_ZERO) {
         grn_expr_append_op(efsi->ctx, efsi->e, mode, n_args);
@@ -4265,6 +4308,13 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
                             GRN_OP_PUSH,
                             1);
         grn_expr_take_obj(ctx, efsi->e, max_element_intervals);
+        n_args++;
+        int min_interval = grn_int32_value_at(&efsi->min_interval_stack, -1);
+        grn_expr_append_const_int32(efsi->ctx,
+                                    efsi->e,
+                                    min_interval,
+                                    GRN_OP_PUSH,
+                                    1);
         n_args++;
       }
       if (fpclassify(weight) == FP_ZERO) {
@@ -4628,6 +4678,9 @@ parse_query(grn_ctx *ctx, efs_info *q)
             GRN_PTR_PUT(ctx,
                         &q->max_element_intervals_stack,
                         data.options.near.max_element_intervals);
+            GRN_INT32_PUT(ctx,
+                          &q->min_interval_stack,
+                          data.options.near.min_interval);
             break;
           case GRN_OP_NEAR_PHRASE :
           case GRN_OP_ORDERED_NEAR_PHRASE :
@@ -4642,6 +4695,9 @@ parse_query(grn_ctx *ctx, efs_info *q)
             GRN_PTR_PUT(ctx,
                         &q->max_element_intervals_stack,
                         data.options.near.max_element_intervals);
+            GRN_INT32_PUT(ctx,
+                          &q->min_interval_stack,
+                          data.options.near.min_interval);
             break;
           case GRN_OP_SIMILAR :
             GRN_INT32_PUT(ctx,
@@ -5238,6 +5294,9 @@ parse_script(grn_ctx *ctx, efs_info *q)
             GRN_PTR_PUT(ctx,
                         &q->max_element_intervals_stack,
                         data.options.near.max_element_intervals);
+            GRN_INT32_PUT(ctx,
+                          &q->min_interval_stack,
+                          data.options.near.min_interval);
             PARSE(token);
             q->cur = next_start;
           }
@@ -5681,6 +5740,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_INT32_INIT(&efsi.max_interval_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.additional_last_interval_stack, GRN_OBJ_VECTOR);
     GRN_PTR_INIT(&efsi.max_element_intervals_stack, GRN_OBJ_VECTOR, GRN_ID_NIL);
+    GRN_INT32_INIT(&efsi.min_interval_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.similarity_threshold_stack, GRN_OBJ_VECTOR);
     GRN_INT32_INIT(&efsi.quorum_threshold_stack, GRN_OBJ_VECTOR);
     GRN_FLOAT32_INIT(&efsi.weight_stack, GRN_OBJ_VECTOR);
@@ -5747,6 +5807,7 @@ grn_expr_parse(grn_ctx *ctx, grn_obj *expr,
     GRN_OBJ_FIN(ctx, &efsi.max_interval_stack);
     GRN_OBJ_FIN(ctx, &efsi.additional_last_interval_stack);
     GRN_OBJ_FIN(ctx, &efsi.max_element_intervals_stack);
+    GRN_OBJ_FIN(ctx, &efsi.min_interval_stack);
     GRN_OBJ_FIN(ctx, &efsi.similarity_threshold_stack);
     GRN_OBJ_FIN(ctx, &efsi.quorum_threshold_stack);
     GRN_OBJ_FIN(ctx, &efsi.weight_stack);

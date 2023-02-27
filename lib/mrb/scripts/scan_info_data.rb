@@ -13,6 +13,7 @@ module Groonga
     attr_accessor :max_interval
     attr_accessor :additional_last_interval
     attr_accessor :max_element_intervals
+    attr_accessor :min_interval
     attr_accessor :similarity_threshold
     attr_accessor :quorum_threshold
     attr_accessor :start_position
@@ -30,6 +31,7 @@ module Groonga
       @max_interval = nil
       @additional_last_interval = nil
       @max_element_intervals = nil
+      @min_interval = nil
       @similarity_threshold = nil
       @quorum_threshold = nil
       @start_position = nil
@@ -67,12 +69,12 @@ module Groonga
     def near_search?
       return true if ((@op == Operator::NEAR or
                        @op == Operator::NEAR_NO_OFFSET) and
-                      (@args.size == 3 or @args.size == 4))
+                      (@args.size >= 3 and @args.size <= 5))
       return true if ((@op == Operator::NEAR_PHRASE or
                        @op == Operator::ORDERED_NEAR_PHRASE or
                        @op == Operator::NEAR_PHRASE_PRODUCT or
                        @op == Operator::ORDERED_NEAR_PHRASE_PRODUCT) and
-                      (@args.size == 4 or @args.size == 5))
+                      (@args.size >= 4 and @args.size <= 6))
       false
     end
 
@@ -100,12 +102,14 @@ module Groonga
       when Operator::NEAR,
            Operator::NEAR_NO_OFFSET
         self.max_element_intervals = @args[3]&.value
+        self.min_interval = @args[4]&.value
       when Operator::NEAR_PHRASE,
            Operator::ORDERED_NEAR_PHRASE,
            Operator::NEAR_PHRASE_PRODUCT,
            Operator::ORDERED_NEAR_PHRASE_PRODUCT
         self.additional_last_interval = @args[3].value
         self.max_element_intervals = @args[4]&.value
+        self.min_interval = @args[5]&.value
       end
     end
 

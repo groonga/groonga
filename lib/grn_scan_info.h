@@ -45,6 +45,7 @@ struct _grn_scan_info {
   int max_interval;
   int additional_last_interval;
   grn_obj max_element_intervals;
+  int min_interval;
   int similarity_threshold;
   int quorum_threshold;
   grn_obj scorers;

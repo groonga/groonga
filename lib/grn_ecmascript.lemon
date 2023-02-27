@@ -229,6 +229,8 @@ query_element ::= IDENTIFIER RELATIVE_OP query_element. {
       grn_obj *max_element_intervals;
       GRN_PTR_POP(&efsi->max_element_intervals_stack,
                   max_element_intervals);
+      int min_interval;
+      GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
     }
     break;
   case GRN_OP_NEAR_PHRASE :
@@ -244,6 +246,8 @@ query_element ::= IDENTIFIER RELATIVE_OP query_element. {
       grn_obj *max_element_intervals;
       GRN_PTR_POP(&efsi->max_element_intervals_stack,
                   max_element_intervals);
+      int min_interval;
+      GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
     }
     break;
   case GRN_OP_SIMILAR :
@@ -386,7 +390,7 @@ relational_expression ::= relational_expression MATCH shift_expression. {
 }
 relational_expression ::= relational_expression NEAR shift_expression. {
   int n_args = 2;
-  {
+  do {
     int max_interval;
     GRN_INT32_POP(&efsi->max_interval_stack, max_interval);
     grn_expr_append_const_int(efsi->ctx, efsi->e, max_interval,
@@ -395,13 +399,19 @@ relational_expression ::= relational_expression NEAR shift_expression. {
     grn_obj *max_element_intervals;
     GRN_PTR_POP(&efsi->max_element_intervals_stack,
                 max_element_intervals);
-    if (max_element_intervals) {
-      grn_expr_append_obj(efsi->ctx, efsi->e, max_element_intervals,
-                          GRN_OP_PUSH, 1);
-      grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
-      n_args++;
+    int min_interval;
+    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
+    if (!max_element_intervals) {
+      break;
     }
-  }
+    grn_expr_append_obj(efsi->ctx, efsi->e, max_element_intervals,
+                        GRN_OP_PUSH, 1);
+    grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
+    n_args++;
+    grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
+                              GRN_OP_PUSH, 1);
+    n_args++;
+  } while (false);
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR, n_args);
 }
 relational_expression ::= relational_expression NEAR_NO_OFFSET shift_expression. {
@@ -409,7 +419,7 @@ relational_expression ::= relational_expression NEAR_NO_OFFSET shift_expression.
 }
 relational_expression ::= relational_expression NEAR_PHRASE shift_expression. {
   int n_args = 2;
-  {
+  do {
     int max_interval;
     GRN_INT32_POP(&efsi->max_interval_stack, max_interval);
     grn_expr_append_const_int(efsi->ctx, efsi->e, max_interval,
@@ -424,18 +434,24 @@ relational_expression ::= relational_expression NEAR_PHRASE shift_expression. {
     grn_obj *max_element_intervals;
     GRN_PTR_POP(&efsi->max_element_intervals_stack,
                 max_element_intervals);
-    if (max_element_intervals) {
-      grn_expr_append_obj(efsi->ctx, efsi->e, max_element_intervals,
-                          GRN_OP_PUSH, 1);
-      grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
-      n_args++;
+    int min_interval;
+    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
+    if (!max_element_intervals) {
+      break;
     }
-  }
+    grn_expr_append_obj(efsi->ctx, efsi->e, max_element_intervals,
+                        GRN_OP_PUSH, 1);
+    grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
+    n_args++;
+    grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
+                              GRN_OP_PUSH, 1);
+    n_args++;
+  } while (false);
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR_PHRASE, n_args);
 }
 relational_expression ::= relational_expression ORDERED_NEAR_PHRASE shift_expression. {
   int n_args = 2;
-  {
+  do {
     int max_interval;
     GRN_INT32_POP(&efsi->max_interval_stack, max_interval);
     grn_expr_append_const_int(efsi->ctx, efsi->e, max_interval,
@@ -450,18 +466,24 @@ relational_expression ::= relational_expression ORDERED_NEAR_PHRASE shift_expres
     grn_obj *max_element_intervals;
     GRN_PTR_POP(&efsi->max_element_intervals_stack,
                 max_element_intervals);
-    if (max_element_intervals) {
-      grn_expr_append_obj(efsi->ctx, efsi->e, max_element_intervals,
-                          GRN_OP_PUSH, 1);
-      grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
-      n_args++;
+    int min_interval;
+    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
+    if (!max_element_intervals) {
+      break;
     }
-  }
+    grn_expr_append_obj(efsi->ctx, efsi->e, max_element_intervals,
+                        GRN_OP_PUSH, 1);
+    grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
+    n_args++;
+    grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
+                              GRN_OP_PUSH, 1);
+    n_args++;
+  } while (false);
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_ORDERED_NEAR_PHRASE, n_args);
 }
 relational_expression ::= relational_expression NEAR_PHRASE_PRODUCT shift_expression. {
   int n_args = 2;
-  {
+  do {
     int max_interval;
     GRN_INT32_POP(&efsi->max_interval_stack, max_interval);
     grn_expr_append_const_int(efsi->ctx, efsi->e, max_interval,
@@ -476,18 +498,24 @@ relational_expression ::= relational_expression NEAR_PHRASE_PRODUCT shift_expres
     grn_obj *max_element_intervals;
     GRN_PTR_POP(&efsi->max_element_intervals_stack,
                 max_element_intervals);
-    if (max_element_intervals) {
-      grn_expr_append_obj(efsi->ctx, efsi->e, max_element_intervals,
-                          GRN_OP_PUSH, 1);
-      grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
-      n_args++;
+    int min_interval;
+    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
+    if (!max_element_intervals) {
+      break;
     }
-  }
+    grn_expr_append_obj(efsi->ctx, efsi->e, max_element_intervals,
+                        GRN_OP_PUSH, 1);
+    grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
+    n_args++;
+    grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
+                              GRN_OP_PUSH, 1);
+    n_args++;
+  } while (false);
   grn_expr_append_op(efsi->ctx, efsi->e, GRN_OP_NEAR_PHRASE_PRODUCT, n_args);
 }
 relational_expression ::= relational_expression ORDERED_NEAR_PHRASE_PRODUCT shift_expression. {
   int n_args = 2;
-  {
+  do {
     int max_interval;
     GRN_INT32_POP(&efsi->max_interval_stack, max_interval);
     grn_expr_append_const_int(efsi->ctx, efsi->e, max_interval,
@@ -502,13 +530,19 @@ relational_expression ::= relational_expression ORDERED_NEAR_PHRASE_PRODUCT shif
     grn_obj *max_element_intervals;
     GRN_PTR_POP(&efsi->max_element_intervals_stack,
                 max_element_intervals);
-    if (max_element_intervals) {
-      grn_expr_append_obj(efsi->ctx, efsi->e, max_element_intervals,
-                          GRN_OP_PUSH, 1);
-      grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
-      n_args++;
+    int min_interval;
+    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
+    if (!max_element_intervals) {
+      break;
     }
-  }
+    grn_expr_append_obj(efsi->ctx, efsi->e, max_element_intervals,
+                        GRN_OP_PUSH, 1);
+    grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
+    n_args++;
+    grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
+                              GRN_OP_PUSH, 1);
+    n_args++;
+  } while (false);
   grn_expr_append_op(efsi->ctx,
                      efsi->e,
                      GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT,

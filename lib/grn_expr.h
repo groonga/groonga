@@ -126,6 +126,8 @@ grn_obj *grn_scan_info_get_max_element_intervals(scan_info *si);
 void grn_scan_info_set_max_element_intervals(grn_ctx *ctx,
                                              scan_info *si,
                                              grn_obj *max_element_intervals);
+int grn_scan_info_get_min_interval(scan_info *si);
+void grn_scan_info_set_min_interval(scan_info *si, int min_interval);
 int grn_scan_info_get_similarity_threshold(scan_info *si);
 void grn_scan_info_set_similarity_threshold(scan_info *si, int similarity_threshold);
 int grn_scan_info_get_quorum_threshold(scan_info *si);

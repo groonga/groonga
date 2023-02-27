@@ -178,6 +178,8 @@ grn_rc grn_ii_update(grn_ctx *ctx, grn_ii *ii, grn_id rid, grn_vgram *vgram,
                       grn_values *oldvalues, grn_values *newvalues);
 */
 
+#define GRN_II_DEFAULT_NEAR_MIN_INTERVAL (INT32_MIN)
+
 typedef struct _grn_select_optarg grn_select_optarg;
 
 struct _grn_select_optarg {
@@ -200,6 +202,7 @@ struct _grn_select_optarg {
   int additional_last_interval;
   grn_obj *query_options;
   grn_obj *max_element_intervals;
+  int min_interval;
 };
 
 GRN_API grn_rc grn_ii_column_update(grn_ctx *ctx, grn_ii *ii, grn_id id,
