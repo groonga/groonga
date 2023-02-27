@@ -1,0 +1,6 @@
+normalize \
+  'NormalizerNFKC150("unify_kana_prolonged_sound_mark", true, \
+                     "unify_katakana_trailing_o", true, \
+                     "report_source_offset", true)' \
+  "オー" \
+  WITH_CHECKS|WITH_TYPES

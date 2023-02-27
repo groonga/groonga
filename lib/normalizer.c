@@ -1893,6 +1893,468 @@ grn_nfkc_normalize_unify_katakana_trailing_o(grn_ctx *ctx,
 }
 
 static const unsigned char *
+grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
+                                                   const unsigned char *start,
+                                                   const unsigned char *current,
+                                                   const unsigned char *end,
+                                                   size_t *n_used_bytes,
+                                                   size_t *n_used_characters,
+                                                   unsigned char *unified_buffer,
+                                                   size_t *n_unified_bytes,
+                                                   size_t *n_unified_characters,
+                                                   void *user_data)
+{
+  size_t char_length;
+  const unsigned char *previous;
+  size_t *previous_length = user_data;
+
+  char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+
+  *n_used_bytes = char_length;
+  *n_used_characters = 1;
+
+  if (*previous_length == 3 &&
+      /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
+      char_length == 3 &&
+      current[0] == 0xe3 &&
+      current[1] == 0x83 &&
+      current[2] == 0xbc) {
+    previous = current - *previous_length;
+    if (previous[0] == 0xe3) {
+      if (/* U+3041 HIRAGANA LETTER SMALL A */
+          (previous[1] == 0x81 && previous[2] == 0x81) ||
+          /* U+3042 HIRAGANA LETTER A */
+          (previous[1] == 0x81 && previous[2] == 0x82) ||
+          /* U+304B HIRAGANA LETTER KA */
+          (previous[1] == 0x81 && previous[2] == 0x8b) ||
+          /* U+304C HIRAGANA LETTER GA */
+          (previous[1] == 0x81 && previous[2] == 0x8c) ||
+          /* U+3055 HIRAGANA LETTER SA */
+          (previous[1] == 0x81 && previous[2] == 0x95) ||
+          /* U+3056 HIRAGANA LETTER ZA */
+          (previous[1] == 0x81 && previous[2] == 0x96) ||
+          /* U+305F HIRAGANA LETTER TA */
+          (previous[1] == 0x81 && previous[2] == 0x9f) ||
+          /* U+3060 HIRAGANA LETTER DA */
+          (previous[1] == 0x81 && previous[2] == 0xa0) ||
+          /* U+306A HIRAGANA LETTER NA */
+          (previous[1] == 0x81 && previous[2] == 0xaa) ||
+          /* U+306F HIRAGANA LETTER HA */
+          (previous[1] == 0x81 && previous[2] == 0xaf) ||
+          /* U+3070 HIRAGANA LETTER BA */
+          (previous[1] == 0x81 && previous[2] == 0xb0) ||
+          /* U+3071 HIRAGANA LETTER PA */
+          (previous[1] == 0x81 && previous[2] == 0xb1) ||
+          /* U+307E HIRAGANA LETTER MA */
+          (previous[1] == 0x81 && previous[2] == 0xbe) ||
+          /* U+3083 HIRAGANA LETTER SMALL YA */
+          (previous[1] == 0x82 && previous[2] == 0x83) ||
+          /* U+3084 HIRAGANA LETTER YA */
+          (previous[1] == 0x82 && previous[2] == 0x84) ||
+          /* U+3089 HIRAGANA LETTER RA */
+          (previous[1] == 0x82 && previous[2] == 0x89) ||
+          /* U+308E HIRAGANA LETTER SMALL WA */
+          (previous[1] == 0x82 && previous[2] == 0x8e) ||
+          /* U+308F HIRAGANA LETTER WA */
+          (previous[1] == 0x82 && previous[2] == 0x8f) ||
+          /* U+3095 HIRAGANA LETTER SMALL KA */
+          (previous[1] == 0x82 && previous[2] == 0x95)) {
+        /* U+3042 HIRAGANA LETTER A */
+        unified_buffer[(*n_unified_bytes)++] = previous[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x81;
+        unified_buffer[(*n_unified_bytes)++] = 0x82;
+        (*n_unified_characters)++;
+        return unified_buffer;
+      } else if (/* U+3043 HIRAGANA LETTER SMALL I */
+                 (previous[1] == 0x81 && previous[2] == 0x83) ||
+                 /* U+3044 HIRAGANA LETTER I */
+                 (previous[1] == 0x81 && previous[2] == 0x84) ||
+                 /* U+304D HIRAGANA LETTER KI */
+                 (previous[1] == 0x81 && previous[2] == 0x8d) ||
+                 /* U+304E HIRAGANA LETTER GI */
+                 (previous[1] == 0x81 && previous[2] == 0x8e) ||
+                 /* U+3057 HIRAGANA LETTER SI */
+                 (previous[1] == 0x81 && previous[2] == 0x97) ||
+                 /* U+3058 HIRAGANA LETTER ZI */
+                 (previous[1] == 0x81 && previous[2] == 0x98) ||
+                 /* U+3061 HIRAGANA LETTER TI */
+                 (previous[1] == 0x81 && previous[2] == 0xa1) ||
+                 /* U+3062 HIRAGANA LETTER DI */
+                 (previous[1] == 0x81 && previous[2] == 0xa2) ||
+                 /* U+306B HIRAGANA LETTER NI */
+                 (previous[1] == 0x81 && previous[2] == 0xab) ||
+                 /* U+3072 HIRAGANA LETTER HI */
+                 (previous[1] == 0x81 && previous[2] == 0xb2) ||
+                 /* U+3073 HIRAGANA LETTER BI */
+                 (previous[1] == 0x81 && previous[2] == 0xb3) ||
+                 /* U+3074 HIRAGANA LETTER PI */
+                 (previous[1] == 0x81 && previous[2] == 0xb4) ||
+                 /* U+307F HIRAGANA LETTER MI */
+                 (previous[1] == 0x81 && previous[2] == 0xbf) ||
+                 /* U+308A HIRAGANA LETTER RI */
+                 (previous[1] == 0x82 && previous[2] == 0x8a) ||
+                 /* U+3090 HIRAGANA LETTER WI */
+                 (previous[1] == 0x82 && previous[2] == 0x90)) {
+        /* U+3044 HIRAGANA LETTER I */
+        unified_buffer[(*n_unified_bytes)++] = previous[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x81;
+        unified_buffer[(*n_unified_bytes)++] = 0x84;
+        (*n_unified_characters)++;
+        return unified_buffer;
+      } else if (/* U+3045 HIRAGANA LETTER SMALL U */
+                 (previous[1] == 0x81 && previous[2] == 0x85) ||
+                 /* U+3046 HIRAGANA LETTER U */
+                 (previous[1] == 0x81 && previous[2] == 0x86) ||
+                 /* U+304F HIRAGANA LETTER KU */
+                 (previous[1] == 0x81 && previous[2] == 0x8f) ||
+                 /* U+3050 HIRAGANA LETTER GU */
+                 (previous[1] == 0x81 && previous[2] == 0x90) ||
+                 /* U+3059 HIRAGANA LETTER SU */
+                 (previous[1] == 0x81 && previous[2] == 0x99) ||
+                 /* U+305A HIRAGANA LETTER ZU */
+                 (previous[1] == 0x81 && previous[2] == 0x9a) ||
+                 /* U+3063 HIRAGANA LETTER SMALL TU */
+                 (previous[1] == 0x81 && previous[2] == 0xa3) ||
+                 /* U+3064 HIRAGANA LETTER TU */
+                 (previous[1] == 0x81 && previous[2] == 0xa4) ||
+                 /* U+3065 HIRAGANA LETTER DU */
+                 (previous[1] == 0x81 && previous[2] == 0xa5) ||
+                 /* U+306C HIRAGANA LETTER NU */
+                 (previous[1] == 0x81 && previous[2] == 0xac) ||
+                 /* U+3075 HIRAGANA LETTER HU */
+                 (previous[1] == 0x81 && previous[2] == 0xb5) ||
+                 /* U+3076 HIRAGANA LETTER BU */
+                 (previous[1] == 0x81 && previous[2] == 0xb6) ||
+                 /* U+3077 HIRAGANA LETTER PU */
+                 (previous[1] == 0x81 && previous[2] == 0xb7) ||
+                 /* U+3080 HIRAGANA LETTER MU */
+                 (previous[1] == 0x82 && previous[2] == 0x80) ||
+                 /* U+3085 HIRAGANA LETTER SMALL YU */
+                 (previous[1] == 0x82 && previous[2] == 0x85) ||
+                 /* U+3086 HIRAGANA LETTER YU */
+                 (previous[1] == 0x82 && previous[2] == 0x86) ||
+                 /* U+308B HIRAGANA LETTER RU */
+                 (previous[1] == 0x82 && previous[2] == 0x8b) ||
+                 /* U+3094 HIRAGANA LETTER VU */
+                 (previous[1] == 0x82 && previous[2] == 0x94)) {
+        /* U+3046 HIRAGANA LETTER U */
+        unified_buffer[(*n_unified_bytes)++] = previous[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x81;
+        unified_buffer[(*n_unified_bytes)++] = 0x86;
+        (*n_unified_characters)++;
+        return unified_buffer;
+      } else if (/* U+3047 HIRAGANA LETTER SMALL E */
+                 (previous[1] == 0x81 && previous[2] == 0x87) ||
+                 /* U+3048 HIRAGANA LETTER E */
+                 (previous[1] == 0x81 && previous[2] == 0x88) ||
+                 /* U+3051 HIRAGANA LETTER KE */
+                 (previous[1] == 0x81 && previous[2] == 0x91) ||
+                 /* U+3052 HIRAGANA LETTER GE */
+                 (previous[1] == 0x81 && previous[2] == 0x92) ||
+                 /* U+305B HIRAGANA LETTER SE */
+                 (previous[1] == 0x81 && previous[2] == 0x9b) ||
+                 /* U+305C HIRAGANA LETTER ZE */
+                 (previous[1] == 0x81 && previous[2] == 0x9c) ||
+                 /* U+3066 HIRAGANA LETTER TE */
+                 (previous[1] == 0x81 && previous[2] == 0xa6) ||
+                 /* U+3067 HIRAGANA LETTER DE */
+                 (previous[1] == 0x81 && previous[2] == 0xa7) ||
+                 /* U+306D HIRAGANA LETTER NE */
+                 (previous[1] == 0x81 && previous[2] == 0xad) ||
+                 /* U+3078 HIRAGANA LETTER HE */
+                 (previous[1] == 0x81 && previous[2] == 0xb8) ||
+                 /* U+3079 HIRAGANA LETTER BE */
+                 (previous[1] == 0x81 && previous[2] == 0xb9) ||
+                 /* U+307A HIRAGANA LETTER PE */
+                 (previous[1] == 0x81 && previous[2] == 0xba) ||
+                 /* U+3081 HIRAGANA LETTER ME */
+                 (previous[1] == 0x82 && previous[2] == 0x81) ||
+                 /* U+308C HIRAGANA LETTER RE */
+                 (previous[1] == 0x82 && previous[2] == 0x8c) ||
+                 /* U+3096 HIRAGANA LETTER SMALL KE */
+                 (previous[1] == 0x82 && previous[2] == 0x96) ||
+                 /* U+3091 HIRAGANA LETTER WE */
+                 (previous[1] == 0x82 && previous[2] == 0x91)) {
+        /* U+3048 HIRAGANA LETTER E */
+        unified_buffer[(*n_unified_bytes)++] = previous[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x81;
+        unified_buffer[(*n_unified_bytes)++] = 0x88;
+        (*n_unified_characters)++;
+        return unified_buffer;
+      } else if (/* U+3049 HIRAGANA LETTER SMALL O */
+                 (previous[1] == 0x81 && previous[2] == 0x89) ||
+                 /* U+304A HIRAGANA LETTER O */
+                 (previous[1] == 0x81 && previous[2] == 0x8a) ||
+                 /* U+3053 HIRAGANA LETTER KO */
+                 (previous[1] == 0x81 && previous[2] == 0x93) ||
+                 /* U+3054 HIRAGANA LETTER GO */
+                 (previous[1] == 0x81 && previous[2] == 0x94) ||
+                 /* U+305D HIRAGANA LETTER SO */
+                 (previous[1] == 0x81 && previous[2] == 0x9d) ||
+                 /* U+305E HIRAGANA LETTER ZO */
+                 (previous[1] == 0x81 && previous[2] == 0x9e) ||
+                 /* U+3068 HIRAGANA LETTER TO */
+                 (previous[1] == 0x81 && previous[2] == 0xa8) ||
+                 /* U+3069 HIRAGANA LETTER DO */
+                 (previous[1] == 0x81 && previous[2] == 0xa9) ||
+                 /* U+306E HIRAGANA LETTER NO */
+                 (previous[1] == 0x81 && previous[2] == 0xae) ||
+                 /* U+307B HIRAGANA LETTER HO */
+                 (previous[1] == 0x81 && previous[2] == 0xbb) ||
+                 /* U+307C HIRAGANA LETTER BO */
+                 (previous[1] == 0x81 && previous[2] == 0xbc) ||
+                 /* U+307D HIRAGANA LETTER PO */
+                 (previous[1] == 0x81 && previous[2] == 0xbd) ||
+                 /* U+3082 HIRAGANA LETTER MO */
+                 (previous[1] == 0x82 && previous[2] == 0x82) ||
+                 /* U+3087 HIRAGANA LETTER SMALL YO */
+                 (previous[1] == 0x82 && previous[2] == 0x87) ||
+                 /* U+3088 HIRAGANA LETTER YO */
+                 (previous[1] == 0x82 && previous[2] == 0x88) ||
+                 /* U+308D HIRAGANA LETTER RO */
+                 (previous[1] == 0x82 && previous[2] == 0x8d) ||
+                 /* U+3092 HIRAGANA LETTER WO */
+                 (previous[1] == 0x82 && previous[2] == 0x92)) {
+        /* U+304A HIRAGANA LETTER O */
+        unified_buffer[(*n_unified_bytes)++] = previous[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x81;
+        unified_buffer[(*n_unified_bytes)++] = 0x8a;
+        (*n_unified_characters)++;
+        return unified_buffer;
+      } else if (/* U+3093 HIRAGANA LETTER N */
+                 previous[1] == 0x82 && previous[2] == 0x93) {
+        /* U+3093 HIRAGANA LETTER N */
+        unified_buffer[(*n_unified_bytes)++] = previous[0];
+        unified_buffer[(*n_unified_bytes)++] = previous[1];
+        unified_buffer[(*n_unified_bytes)++] = previous[2];
+        (*n_unified_characters)++;
+        return unified_buffer;
+      } else if (/* U+30A1 KATAKANA LETTER SMALL A */
+                 (previous[1] == 0x82 && previous[2] == 0xa1) ||
+                 /* U+30A2 KATAKANA LETTER A */
+                 (previous[1] == 0x82 && previous[2] == 0xa2) ||
+                 /* U+30AB KATAKANA LETTER KA */
+                 (previous[1] == 0x82 && previous[2] == 0xab) ||
+                 /* U+30AC KATAKANA LETTER GA */
+                 (previous[1] == 0x82 && previous[2] == 0xac) ||
+                 /* U+30B5 KATAKANA LETTER SA */
+                 (previous[1] == 0x82 && previous[2] == 0xb5) ||
+                 /* U+30B6 KATAKANA LETTER ZA */
+                 (previous[1] == 0x82 && previous[2] == 0xb6) ||
+                 /* U+30BF KATAKANA LETTER TA */
+                 (previous[1] == 0x82 && previous[2] == 0xbf) ||
+                 /* U+30C0 KATAKANA LETTER DA */
+                 (previous[1] == 0x83 && previous[2] == 0x80) ||
+                 /* U+30CA KATAKANA LETTER NA */
+                 (previous[1] == 0x83 && previous[2] == 0x8a) ||
+                 /* U+30CF KATAKANA LETTER HA */
+                 (previous[1] == 0x83 && previous[2] == 0x8f) ||
+                 /* U+30D0 KATAKANA LETTER BA */
+                 (previous[1] == 0x83 && previous[2] == 0x90) ||
+                 /* U+30D1 KATAKANA LETTER PA */
+                 (previous[1] == 0x83 && previous[2] == 0x91) ||
+                 /* U+30DE KATAKANA LETTER MA */
+                 (previous[1] == 0x83 && previous[2] == 0x9e) ||
+                 /* U+30E9 KATAKANA LETTER RA */
+                 (previous[1] == 0x83 && previous[2] == 0xa9) ||
+                 /* U+30E3 KATAKANA LETTER SMALL YA */
+                 (previous[1] == 0x83 && previous[2] == 0xa3) ||
+                 /* U+30E4 KATAKANA LETTER YA */
+                 (previous[1] == 0x83 && previous[2] == 0xa4) ||
+                 /* U+30EE KATAKANA LETTER SMALL WA */
+                 (previous[1] == 0x83 && previous[2] == 0xae) ||
+                 /* U+30EF KATAKANA LETTER WA */
+                 (previous[1] == 0x83 && previous[2] == 0xaf) ||
+                 /* U+30F5 KATAKANA LETTER SMALL KA */
+                 (previous[1] == 0x83 && previous[2] == 0xb5) ||
+                 /* U+30F7 KATAKANA LETTER VA */
+                 (previous[1] == 0x83 && previous[2] == 0xb7)) {
+        /* U+30A2 KATAKANA LETTER A */
+        unified_buffer[(*n_unified_bytes)++] = previous[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x82;
+        unified_buffer[(*n_unified_bytes)++] = 0xa2;
+        (*n_unified_characters)++;
+        return unified_buffer;
+      } else if (/* U+30A3 KATAKANA LETTER SMALL I */
+                 (previous[1] == 0x82 && previous[2] == 0xa3) ||
+                 /* U+30A4 KATAKANA LETTER I */
+                 (previous[1] == 0x82 && previous[2] == 0xa4) ||
+                 /* U+30AD KATAKANA LETTER KI */
+                 (previous[1] == 0x82 && previous[2] == 0xad) ||
+                 /* U+30AE KATAKANA LETTER GI */
+                 (previous[1] == 0x82 && previous[2] == 0xae) ||
+                 /* U+30B7 KATAKANA LETTER SI */
+                 (previous[1] == 0x82 && previous[2] == 0xb7) ||
+                 /* U+30B8 KATAKANA LETTER ZI */
+                 (previous[1] == 0x82 && previous[2] == 0xb8) ||
+                 /* U+30C1 KATAKANA LETTER TI */
+                 (previous[1] == 0x83 && previous[2] == 0x81) ||
+                 /* U+30C2 KATAKANA LETTER DI */
+                 (previous[1] == 0x83 && previous[2] == 0x82) ||
+                 /* U+30CB KATAKANA LETTER NI */
+                 (previous[1] == 0x83 && previous[2] == 0x8b) ||
+                 /* U+30D2 KATAKANA LETTER HI */
+                 (previous[1] == 0x83 && previous[2] == 0x92) ||
+                 /* U+30D3 KATAKANA LETTER BI */
+                 (previous[1] == 0x83 && previous[2] == 0x93) ||
+                 /* U+30D4 KATAKANA LETTER PI */
+                 (previous[1] == 0x83 && previous[2] == 0x94) ||
+                 /* U+30DF KATAKANA LETTER MI */
+                 (previous[1] == 0x83 && previous[2] == 0x9f) ||
+                 /* U+30EA KATAKANA LETTER RI */
+                 (previous[1] == 0x83 && previous[2] == 0xaa) ||
+                 /* U+30F0 KATAKANA LETTER WI */
+                 (previous[1] == 0x83 && previous[2] == 0xb0) ||
+                 /* U+30F8 KATAKANA LETTER VI */
+                 (previous[1] == 0x83 && previous[2] == 0xb8)) {
+        /* U+30A4 KATAKANA LETTER I */
+        unified_buffer[(*n_unified_bytes)++] = previous[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x82;
+        unified_buffer[(*n_unified_bytes)++] = 0xa4;
+        (*n_unified_characters)++;
+        return unified_buffer;
+      } else if (/* U+30A5 KATAKANA LETTER SMALL U */
+                 (previous[1] == 0x82 && previous[2] == 0xa5) ||
+                 /* U+30A6 KATAKANA LETTER U */
+                 (previous[1] == 0x82 && previous[2] == 0xa6) ||
+                 /* U+30AF KATAKANA LETTER KU */
+                 (previous[1] == 0x82 && previous[2] == 0xaf) ||
+                 /* U+30B0 KATAKANA LETTER GU */
+                 (previous[1] == 0x82 && previous[2] == 0xb0) ||
+                 /* U+30B9 KATAKANA LETTER SU */
+                 (previous[1] == 0x82 && previous[2] == 0xb9) ||
+                 /* U+30BA KATAKANA LETTER ZU */
+                 (previous[1] == 0x82 && previous[2] == 0xba) ||
+                 /* U+30C4 KATAKANA LETTER TU */
+                 (previous[1] == 0x83 && previous[2] == 0x84) ||
+                 /* U+30C5 KATAKANA LETTER DU */
+                 (previous[1] == 0x83 && previous[2] == 0x85) ||
+                 /* U+30CC KATAKANA LETTER NU */
+                 (previous[1] == 0x83 && previous[2] == 0x8c) ||
+                 /* U+30D5 KATAKANA LETTER HU */
+                 (previous[1] == 0x83 && previous[2] == 0x95) ||
+                 /* U+30D6 KATAKANA LETTER BU */
+                 (previous[1] == 0x83 && previous[2] == 0x96) ||
+                 /* U+30D7 KATAKANA LETTER PU */
+                 (previous[1] == 0x83 && previous[2] == 0x97) ||
+                 /* U+30E0 KATAKANA LETTER MU */
+                 (previous[1] == 0x83 && previous[2] == 0xa0) ||
+                 /* U+30E5 KATAKANA LETTER SMALL YU */
+                 (previous[1] == 0x83 && previous[2] == 0xa5) ||
+                 /* U+30E6 KATAKANA LETTER YU */
+                 (previous[1] == 0x83 && previous[2] == 0xa6) ||
+                 /* U+30EB KATAKANA LETTER RU */
+                 (previous[1] == 0x83 && previous[2] == 0xab) ||
+                 /* U+30F4 KATAKANA LETTER VU */
+                 (previous[1] == 0x83 && previous[2] == 0xb4)) {
+        /* U+30A6 KATAKANA LETTER U */
+        unified_buffer[(*n_unified_bytes)++] = previous[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x82;
+        unified_buffer[(*n_unified_bytes)++] = 0xa6;
+        (*n_unified_characters)++;
+        return unified_buffer;
+      } else if (/* U+30A7 KATAKANA LETTER SMALL E */
+                 (previous[1] == 0x82 && previous[2] == 0xa7) ||
+                 /* U+30A8 KATAKANA LETTER E */
+                 (previous[1] == 0x82 && previous[2] == 0xa8) ||
+                 /* U+30B1 KATAKANA LETTER KE */
+                 (previous[1] == 0x82 && previous[2] == 0xb1) ||
+                 /* U+30B2 KATAKANA LETTER GE */
+                 (previous[1] == 0x82 && previous[2] == 0xb2) ||
+                 /* U+30BB KATAKANA LETTER SE */
+                 (previous[1] == 0x82 && previous[2] == 0xbb) ||
+                 /* U+30BC KATAKANA LETTER ZE */
+                 (previous[1] == 0x82 && previous[2] == 0xbc) ||
+                 /* U+30C6 KATAKANA LETTER TE */
+                 (previous[1] == 0x83 && previous[2] == 0x86) ||
+                 /* U+30C7 KATAKANA LETTER DE */
+                 (previous[1] == 0x83 && previous[2] == 0x87) ||
+                 /* U+30CD KATAKANA LETTER NE */
+                 (previous[1] == 0x83 && previous[2] == 0x8d) ||
+                 /* U+30D8 KATAKANA LETTER HE */
+                 (previous[1] == 0x83 && previous[2] == 0x98) ||
+                 /* U+30D9 KATAKANA LETTER BE */
+                 (previous[1] == 0x83 && previous[2] == 0x99) ||
+                 /* U+30DA KATAKANA LETTER PE */
+                 (previous[1] == 0x83 && previous[2] == 0x9a) ||
+                 /* U+30E1 KATAKANA LETTER ME */
+                 (previous[1] == 0x83 && previous[2] == 0xa1) ||
+                 /* U+30EC KATAKANA LETTER RE */
+                 (previous[1] == 0x83 && previous[2] == 0xac) ||
+                 /* U+30F1 KATAKANA LETTER WE */
+                 (previous[1] == 0x83 && previous[2] == 0xb1) ||
+                 /* U+30F6 KATAKANA LETTER SMALL KE */
+                 (previous[1] == 0x83 && previous[2] == 0xb6) ||
+                 /* U+30F9 KATAKANA LETTER VE */
+                 (previous[1] == 0x83 && previous[2] == 0xb9)) {
+        /* U+30A8 KATAKANA LETTER E */
+        unified_buffer[(*n_unified_bytes)++] = previous[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x82;
+        unified_buffer[(*n_unified_bytes)++] = 0xa8;
+        (*n_unified_characters)++;
+        return unified_buffer;
+      } else if (/* U+30A9 KATAKANA LETTER SMALL O */
+                 (previous[1] == 0x82 && previous[2] == 0xa9) ||
+                 /* U+30AA KATAKANA LETTER O */
+                 (previous[1] == 0x82 && previous[2] == 0xaa) ||
+                 /* U+30B3 KATAKANA LETTER KO */
+                 (previous[1] == 0x82 && previous[2] == 0xb3) ||
+                 /* U+30B4 KATAKANA LETTER GO */
+                 (previous[1] == 0x82 && previous[2] == 0xb4) ||
+                 /* U+30BD KATAKANA LETTER SO */
+                 (previous[1] == 0x82 && previous[2] == 0xbd) ||
+                 /* U+30BE KATAKANA LETTER ZO */
+                 (previous[1] == 0x82 && previous[2] == 0xbe) ||
+                 /* U+30C8 KATAKANA LETTER TO */
+                 (previous[1] == 0x83 && previous[2] == 0x88) ||
+                 /* U+30C9 KATAKANA LETTER DO */
+                 (previous[1] == 0x83 && previous[2] == 0x89) ||
+                 /* U+30CE KATAKANA LETTER NO */
+                 (previous[1] == 0x83 && previous[2] == 0x8e) ||
+                 /* U+30DB KATAKANA LETTER HO */
+                 (previous[1] == 0x83 && previous[2] == 0x9b) ||
+                 /* U+30DC KATAKANA LETTER BO */
+                 (previous[1] == 0x83 && previous[2] == 0x9c) ||
+                 /* U+30DD KATAKANA LETTER PO */
+                 (previous[1] == 0x83 && previous[2] == 0x9d) ||
+                 /* U+30E2 KATAKANA LETTER MO */
+                 (previous[1] == 0x83 && previous[2] == 0xa2) ||
+                 /* U+30E7 KATAKANA LETTER SMALL YO */
+                 (previous[1] == 0x83 && previous[2] == 0xa7) ||
+                 /* U+30E8 KATAKANA LETTER YO */
+                 (previous[1] == 0x83 && previous[2] == 0xa8) ||
+                 /* U+30ED KATAKANA LETTER RO */
+                 (previous[1] == 0x83 && previous[2] == 0xad) ||
+                 /* U+30F2 KATAKANA LETTER WO */
+                 (previous[1] == 0x83 && previous[2] == 0xb2) ||
+                 /* U+30FA KATAKANA LETTER VO */
+                 (previous[1] == 0x83 && previous[2] == 0xba)) {
+        /* U+30AA KATAKANA LETTER O */
+        unified_buffer[(*n_unified_bytes)++] = previous[0];
+        unified_buffer[(*n_unified_bytes)++] = 0x82;
+        unified_buffer[(*n_unified_bytes)++] = 0xaa;
+        (*n_unified_characters)++;
+        return unified_buffer;
+      } else if (/* U+30F3 KATAKANA LETTER N */
+                 previous[1] == 0x83 && previous[2] == 0xb3) {
+        /* U+30F3 KATAKANA LETTER N */
+        unified_buffer[(*n_unified_bytes)++] = previous[0];
+        unified_buffer[(*n_unified_bytes)++] = previous[1];
+        unified_buffer[(*n_unified_bytes)++] = previous[2];
+        (*n_unified_characters)++;
+        return unified_buffer;
+      }
+    }
+  }
+
+  *previous_length = char_length;
+  *n_unified_bytes = *n_used_bytes;
+  *n_unified_characters = *n_used_characters;
+
+  return current;
+}
+
+static const unsigned char *
 grn_nfkc_normalize_unify_romaji(grn_ctx *ctx,
                                 const unsigned char *start,
                                 const unsigned char *current,
@@ -2090,6 +2552,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
         data->options->unify_katakana_wo_sound ||
         data->options->unify_katakana_di_sound ||
         data->options->unify_katakana_gu_small_sounds ||
+        data->options->unify_kana_prolonged_sound_mark ||
         data->options->unify_katakana_trailing_o ||
         data->options->unify_to_romaji ||
         data->options->unify_to_katakana ||
@@ -2254,6 +2717,24 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
                                       grn_nfkc_normalize_unify_katakana_gu_small_sounds,
                                       NULL,
                                       "[unify][katakana-gu-small-sounds]");
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    need_swap = GRN_TRUE;
+  }
+
+  if (data->options->unify_kana_prolonged_sound_mark) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    size_t previous_length = 0;
+    grn_nfkc_normalize_unify_stateful(ctx,
+                                      data,
+                                      &unify,
+                                      grn_nfkc_normalize_unify_kana_prolonged_sound_mark,
+                                      &previous_length,
+                                      "[unify][kana-prolonged-sound-mark]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }

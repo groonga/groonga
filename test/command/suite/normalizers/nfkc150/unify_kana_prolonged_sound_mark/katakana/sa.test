@@ -1,0 +1,5 @@
+normalize \
+  'NormalizerNFKC150("unify_kana_prolonged_sound_mark", true, \
+                     "report_source_offset", true)' \
+  "サーシースーセーソー" \
+  WITH_CHECKS|WITH_TYPES
