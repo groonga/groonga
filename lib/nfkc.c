@@ -68,8 +68,8 @@ grn_nfkc_normalize_options_init(grn_ctx *ctx,
   options->unify_katakana_wo_sound = GRN_FALSE;
   options->unify_katakana_di_sound = GRN_FALSE;
   options->unify_katakana_gu_small_sounds = GRN_FALSE;
-  options->unify_katakana_trailing_o = GRN_FALSE;
   options->unify_kana_prolonged_sound_mark = GRN_FALSE;
+  options->unify_katakana_trailing_o = GRN_FALSE;
   options->unify_to_romaji = GRN_FALSE;
   options->unify_to_katakana = GRN_FALSE;
   options->remove_blank = GRN_FALSE;
