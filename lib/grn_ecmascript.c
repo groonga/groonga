@@ -2345,6 +2345,8 @@ static YYACTIONTYPE yy_reduce(
     grn_obj *max_element_intervals;
     GRN_PTR_POP(&efsi->max_element_intervals_stack,
                 max_element_intervals);
+    int min_interval;
+    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
     if (!max_element_intervals) {
       break;
     }
@@ -2352,8 +2354,6 @@ static YYACTIONTYPE yy_reduce(
                         GRN_OP_PUSH, 1);
     grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
     n_args++;
-    int min_interval;
-    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
     grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
                               GRN_OP_PUSH, 1);
     n_args++;
@@ -2388,6 +2388,8 @@ static YYACTIONTYPE yy_reduce(
     grn_obj *max_element_intervals;
     GRN_PTR_POP(&efsi->max_element_intervals_stack,
                 max_element_intervals);
+    int min_interval;
+    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
     if (!max_element_intervals) {
       break;
     }
@@ -2395,8 +2397,6 @@ static YYACTIONTYPE yy_reduce(
                         GRN_OP_PUSH, 1);
     grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
     n_args++;
-    int min_interval;
-    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
     grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
                               GRN_OP_PUSH, 1);
     n_args++;
@@ -2424,6 +2424,8 @@ static YYACTIONTYPE yy_reduce(
     grn_obj *max_element_intervals;
     GRN_PTR_POP(&efsi->max_element_intervals_stack,
                 max_element_intervals);
+    int min_interval;
+    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
     if (!max_element_intervals) {
       break;
     }
@@ -2431,8 +2433,6 @@ static YYACTIONTYPE yy_reduce(
                         GRN_OP_PUSH, 1);
     grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
     n_args++;
-    int min_interval;
-    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
     grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
                               GRN_OP_PUSH, 1);
     n_args++;
@@ -2460,6 +2460,8 @@ static YYACTIONTYPE yy_reduce(
     grn_obj *max_element_intervals;
     GRN_PTR_POP(&efsi->max_element_intervals_stack,
                 max_element_intervals);
+    int min_interval;
+    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
     if (!max_element_intervals) {
       break;
     }
@@ -2467,8 +2469,6 @@ static YYACTIONTYPE yy_reduce(
                         GRN_OP_PUSH, 1);
     grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
     n_args++;
-    int min_interval;
-    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
     grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
                               GRN_OP_PUSH, 1);
     n_args++;
@@ -2496,6 +2496,8 @@ static YYACTIONTYPE yy_reduce(
     grn_obj *max_element_intervals;
     GRN_PTR_POP(&efsi->max_element_intervals_stack,
                 max_element_intervals);
+    int min_interval;
+    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
     if (!max_element_intervals) {
       break;
     }
@@ -2503,8 +2505,6 @@ static YYACTIONTYPE yy_reduce(
                         GRN_OP_PUSH, 1);
     grn_expr_take_obj(efsi->ctx, efsi->e, max_element_intervals);
     n_args++;
-    int min_interval;
-    GRN_INT32_POP(&efsi->min_interval_stack, min_interval);
     grn_expr_append_const_int(efsi->ctx, efsi->e, min_interval,
                               GRN_OP_PUSH, 1);
     n_args++;
