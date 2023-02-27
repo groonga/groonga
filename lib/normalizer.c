@@ -2122,7 +2122,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
         (*n_unified_characters)++;
         return unified_buffer;
       } else if (/* U+3093 HIRAGANA LETTER N */
-               previous[1] == 0x82 && previous[2] == 0x93) {
+                 previous[1] == 0x82 && previous[2] == 0x93) {
         /* U+3093 HIRAGANA LETTER N */
         unified_buffer[(*n_unified_bytes)++] = previous[0];
         unified_buffer[(*n_unified_bytes)++] = previous[1];
