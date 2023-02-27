@@ -2264,6 +2264,7 @@ exit:
         grn_dat_close(ctx, (grn_dat *)s->keys);
       }
     }
+    grn_array_close(ctx, s->deferred_unrefs);
     grn_tiny_array_fin(&s->values);
     CRITICAL_SECTION_FIN(s->lock);
     GRN_FREE(s);
