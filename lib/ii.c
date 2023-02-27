@@ -11058,9 +11058,7 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
       data->max_interval = data->optarg->max_interval;
       data->additional_last_interval = data->optarg->additional_last_interval;
       data->max_element_intervals = data->optarg->max_element_intervals;
-      data->min_interval = data->optarg->min_interval
-                           ? *data->optarg->min_interval
-                           : GRN_II_DEFAULT_NEAR_MIN_INTERVAL;
+      data->min_interval = data->optarg->min_interval;
       if ((data->mode == GRN_OP_NEAR ||
            data->mode == GRN_OP_NEAR_PHRASE ||
            data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) &&
@@ -13397,7 +13395,9 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
     select_optarg->mode = search_optarg->mode;
     select_optarg->max_interval = search_optarg->max_interval;
     select_optarg->max_element_intervals = search_optarg->max_element_intervals;
-    select_optarg->min_interval = search_optarg->min_interval;
+    select_optarg->min_interval = search_optarg->min_interval
+                                  ? *search_optarg->min_interval
+                                  : GRN_II_DEFAULT_NEAR_MIN_INTERVAL;
     break;
   case GRN_OP_NEAR_PHRASE :
   case GRN_OP_ORDERED_NEAR_PHRASE :
@@ -13408,7 +13408,9 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
     select_optarg->additional_last_interval =
       search_optarg->additional_last_interval;
     select_optarg->max_element_intervals = search_optarg->max_element_intervals;
-    select_optarg->min_interval = search_optarg->min_interval;
+    select_optarg->min_interval = search_optarg->min_interval
+                                  ? *search_optarg->min_interval
+                                  : GRN_II_DEFAULT_NEAR_MIN_INTERVAL;
     break;
   case GRN_OP_SIMILAR :
     select_optarg->mode = search_optarg->mode;
