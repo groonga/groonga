@@ -2384,15 +2384,15 @@ grn_nfkc_normalize_unify_to_previous_kana_vowel_or_n(grn_ctx *ctx,
 
 static const unsigned char *
 grn_nfkc_normalize_unify_kana_hyphen(grn_ctx *ctx,
-                                                   const unsigned char *start,
-                                                   const unsigned char *current,
-                                                   const unsigned char *end,
-                                                   size_t *n_used_bytes,
-                                                   size_t *n_used_characters,
-                                                   unsigned char *unified_buffer,
-                                                   size_t *n_unified_bytes,
-                                                   size_t *n_unified_characters,
-                                                   void *user_data)
+                                     const unsigned char *start,
+                                     const unsigned char *current,
+                                     const unsigned char *end,
+                                     size_t *n_used_bytes,
+                                     size_t *n_used_characters,
+                                     unsigned char *unified_buffer,
+                                     size_t *n_unified_bytes,
+                                     size_t *n_unified_characters,
+                                     void *user_data)
 {
   return grn_nfkc_normalize_unify_to_previous_kana_vowel_or_n(ctx,
                                                               start,
