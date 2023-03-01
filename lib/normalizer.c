@@ -992,26 +992,19 @@ grn_inline static grn_bool
 grn_nfkc_normalize_is_hyphen(const unsigned char *utf8_char,
                              size_t length)
 {
-  if (length == 1 &&
-      utf8_char[0] == '-') {
-    /* U+002D HYPHEN-MINUS */
-    return GRN_TRUE;
-  }
-  return GRN_FALSE;
+  /* U+002D HYPHEN-MINUS */
+  return length == 1 && utf8_char[0] == '-';
 }
 
 grn_inline static grn_bool
 grn_nfkc_normalize_is_prolonged_sound_mark(const unsigned char *utf8_char,
                                            size_t length)
 {
-  if (length == 3 &&
-      utf8_char[0] == 0xe3 &&
-      utf8_char[1] == 0x83 &&
-      utf8_char[2] == 0xbc) {
-    /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
-    return GRN_TRUE;
-  }
-  return GRN_FALSE;
+  /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
+  return length == 3 &&
+         utf8_char[0] == 0xe3 &&
+         utf8_char[1] == 0x83 &&
+         utf8_char[2] == 0xbc;
 }
 
 grn_inline static grn_bool
