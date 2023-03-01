@@ -988,23 +988,23 @@ grn_nfkc_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_ch
   return utf8_char;
 }
 
-grn_inline static grn_bool
+grn_inline static bool
 grn_nfkc_normalize_is_hyphen(const unsigned char *utf8_char,
                              size_t length)
 {
   /* U+002D HYPHEN-MINUS */
-  return length == 1 && utf8_char[0] == '-';
+  return (length == 1 && utf8_char[0] == '-');
 }
 
-grn_inline static grn_bool
+grn_inline static bool
 grn_nfkc_normalize_is_prolonged_sound_mark(const unsigned char *utf8_char,
                                            size_t length)
 {
   /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
-  return length == 3 &&
-         utf8_char[0] == 0xe3 &&
-         utf8_char[1] == 0x83 &&
-         utf8_char[2] == 0xbc;
+  return (length == 3 &&
+          utf8_char[0] == 0xe3 &&
+          utf8_char[1] == 0x83 &&
+          utf8_char[2] == 0xbc);
 }
 
 grn_inline static grn_bool
@@ -1930,16 +1930,17 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(grn_ctx *ctx,
 {
   size_t char_length;
   size_t *previous_length = user_data;
+  size_t saved_previous_length = *previous_length;
 
   char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+  *previous_length = char_length;
 
   *n_used_bytes = char_length;
   *n_used_characters = 1;
 
-  if (*previous_length == 3 &&
+  if (saved_previous_length == 3 &&
       func(current, char_length)) {
-    const unsigned char *previous = current - *previous_length;
-    *previous_length = char_length;
+    const unsigned char *previous = current - saved_previous_length;
     if (previous[0] == 0xe3) {
       if (/* U+3041 HIRAGANA LETTER SMALL A */
           (previous[1] == 0x81 && previous[2] == 0x81) ||
@@ -2367,7 +2368,6 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(grn_ctx *ctx,
     }
   }
 
-  *previous_length = char_length;
   *n_unified_bytes = *n_used_bytes;
   *n_unified_characters = *n_used_characters;
 
