@@ -9392,7 +9392,9 @@ token_compare(const void *a, const void *b)
   const token_info *t1 = *((token_info **)a), *t2 = *((token_info **)b);
   if (t1->phrase_group_id == t2->phrase_group_id) {
     if (t1->phrase_id == t2->phrase_id) {
-      return t1->size - t2->size;
+      return t1->size == t2->size
+             ? t1->offset - t2->offset
+             : t1->size - t2->size;
     } else {
       return t1->phrase_id - t2->phrase_id;
     }
