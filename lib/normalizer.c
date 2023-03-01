@@ -1915,6 +1915,11 @@ typedef grn_bool
 (*grn_nfkc_normalize_is_target_char_func)(const unsigned char *utf8_char,
                                           size_t length);
 
+typedef struct {
+  grn_nfkc_normalize_is_target_char_func is_prolonged_sound_mark_like_char;
+  size_t previous_length;
+} grn_nfkc_normalize_prolonged_sound_mark_like_data;
+
 static const unsigned char *
 grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(grn_ctx *ctx,
                                                         const unsigned char *start,
@@ -1925,21 +1930,20 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(grn_ctx *ctx,
                                                         unsigned char *unified_buffer,
                                                         size_t *n_unified_bytes,
                                                         size_t *n_unified_characters,
-                                                        grn_nfkc_normalize_is_target_char_func func,
                                                         void *user_data)
 {
   size_t char_length;
-  size_t *previous_length = user_data;
-  size_t saved_previous_length = *previous_length;
+  grn_nfkc_normalize_prolonged_sound_mark_like_data *data = user_data;
+  size_t saved_previous_length = data->previous_length;
 
   char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
-  *previous_length = char_length;
+  data->previous_length = char_length;
 
   *n_used_bytes = char_length;
   *n_used_characters = 1;
 
   if (saved_previous_length == 3 &&
-      func(current, char_length)) {
+      data->is_prolonged_sound_mark_like_char(current, char_length)) {
     const unsigned char *previous = current - saved_previous_length;
     if (previous[0] == 0xe3) {
       if (/* U+3041 HIRAGANA LETTER SMALL A */
@@ -2375,56 +2379,6 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(grn_ctx *ctx,
 }
 
 static const unsigned char *
-grn_nfkc_normalize_unify_kana_hyphen(grn_ctx *ctx,
-                                     const unsigned char *start,
-                                     const unsigned char *current,
-                                     const unsigned char *end,
-                                     size_t *n_used_bytes,
-                                     size_t *n_used_characters,
-                                     unsigned char *unified_buffer,
-                                     size_t *n_unified_bytes,
-                                     size_t *n_unified_characters,
-                                     void *user_data)
-{
-  return grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(ctx,
-                                                                 start,
-                                                                 current,
-                                                                 end,
-                                                                 n_used_bytes,
-                                                                 n_used_characters,
-                                                                 unified_buffer,
-                                                                 n_unified_bytes,
-                                                                 n_unified_characters,
-                                                                 grn_nfkc_normalize_is_hyphen,
-                                                                 user_data);
-}
-
-static const unsigned char *
-grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
-                                                   const unsigned char *start,
-                                                   const unsigned char *current,
-                                                   const unsigned char *end,
-                                                   size_t *n_used_bytes,
-                                                   size_t *n_used_characters,
-                                                   unsigned char *unified_buffer,
-                                                   size_t *n_unified_bytes,
-                                                   size_t *n_unified_characters,
-                                                   void *user_data)
-{
-  return grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(ctx,
-                                                                 start,
-                                                                 current,
-                                                                 end,
-                                                                 n_used_bytes,
-                                                                 n_used_characters,
-                                                                 unified_buffer,
-                                                                 n_unified_bytes,
-                                                                 n_unified_characters,
-                                                                 grn_nfkc_normalize_is_prolonged_sound_mark,
-                                                                 user_data);
-}
-
-static const unsigned char *
 grn_nfkc_normalize_unify_romaji(grn_ctx *ctx,
                                 const unsigned char *start,
                                 const unsigned char *current,
@@ -2799,12 +2753,14 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
-    size_t previous_length = 0;
+    grn_nfkc_normalize_prolonged_sound_mark_like_data prolonged_sound_mark_like_data;
+    prolonged_sound_mark_like_data.is_prolonged_sound_mark_like_char = grn_nfkc_normalize_is_hyphen;
+    prolonged_sound_mark_like_data.previous_length = 0;
     grn_nfkc_normalize_unify_stateful(ctx,
                                       data,
                                       &unify,
-                                      grn_nfkc_normalize_unify_kana_hyphen,
-                                      &previous_length,
+                                      grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like,
+                                      &prolonged_sound_mark_like_data,
                                       "[unify][kana-hyphen]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
@@ -2817,12 +2773,14 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
-    size_t previous_length = 0;
+    grn_nfkc_normalize_prolonged_sound_mark_like_data prolonged_sound_mark_like_data;
+    prolonged_sound_mark_like_data.is_prolonged_sound_mark_like_char = grn_nfkc_normalize_is_prolonged_sound_mark;
+    prolonged_sound_mark_like_data.previous_length = 0;
     grn_nfkc_normalize_unify_stateful(ctx,
                                       data,
                                       &unify,
-                                      grn_nfkc_normalize_unify_kana_prolonged_sound_mark,
-                                      &previous_length,
+                                      grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like,
+                                      &prolonged_sound_mark_like_data,
                                       "[unify][kana-prolonged-sound-mark]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
