@@ -1916,7 +1916,7 @@ typedef bool
                                           size_t length);
 
 typedef struct {
-  grn_nfkc_normalize_is_target_char_func is_prolonged_sound_mark_like_char;
+  grn_nfkc_normalize_is_target_char_func is_target_char;
   size_t previous_length;
 } grn_nfkc_normalize_prolonged_sound_mark_like_data;
 
@@ -1943,7 +1943,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(grn_ctx *ctx,
   *n_used_characters = 1;
 
   if (previous_length == 3 &&
-      data->is_prolonged_sound_mark_like_char(current, char_length)) {
+      data->is_target_char(current, char_length)) {
     const unsigned char *previous = current - previous_length;
     if (previous[0] == 0xe3) {
       if (/* U+3041 HIRAGANA LETTER SMALL A */
@@ -2754,7 +2754,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
     grn_nfkc_normalize_prolonged_sound_mark_like_data prolonged_sound_mark_like_data;
-    prolonged_sound_mark_like_data.is_prolonged_sound_mark_like_char = grn_nfkc_normalize_is_hyphen;
+    prolonged_sound_mark_like_data.is_target_char = grn_nfkc_normalize_is_hyphen;
     prolonged_sound_mark_like_data.previous_length = 0;
     grn_nfkc_normalize_unify_stateful(ctx,
                                       data,
@@ -2774,7 +2774,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
     grn_nfkc_normalize_prolonged_sound_mark_like_data prolonged_sound_mark_like_data;
-    prolonged_sound_mark_like_data.is_prolonged_sound_mark_like_char = grn_nfkc_normalize_is_prolonged_sound_mark;
+    prolonged_sound_mark_like_data.is_target_char = grn_nfkc_normalize_is_prolonged_sound_mark;
     prolonged_sound_mark_like_data.previous_length = 0;
     grn_nfkc_normalize_unify_stateful(ctx,
                                       data,
