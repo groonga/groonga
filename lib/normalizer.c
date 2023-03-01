@@ -1923,17 +1923,17 @@ typedef grn_bool
                                           size_t length);
 
 static const unsigned char *
-grn_nfkc_normalize_unify_to_previous_kana_vowel_or_n(grn_ctx *ctx,
-                                                     const unsigned char *start,
-                                                     const unsigned char *current,
-                                                     const unsigned char *end,
-                                                     size_t *n_used_bytes,
-                                                     size_t *n_used_characters,
-                                                     unsigned char *unified_buffer,
-                                                     size_t *n_unified_bytes,
-                                                     size_t *n_unified_characters,
-                                                     grn_nfkc_normalize_is_target_char_func func,
-                                                     void *user_data)
+grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(grn_ctx *ctx,
+                                                        const unsigned char *start,
+                                                        const unsigned char *current,
+                                                        const unsigned char *end,
+                                                        size_t *n_used_bytes,
+                                                        size_t *n_used_characters,
+                                                        unsigned char *unified_buffer,
+                                                        size_t *n_unified_bytes,
+                                                        size_t *n_unified_characters,
+                                                        grn_nfkc_normalize_is_target_char_func func,
+                                                        void *user_data)
 {
   size_t char_length;
   size_t *previous_length = user_data;
@@ -2393,17 +2393,17 @@ grn_nfkc_normalize_unify_kana_hyphen(grn_ctx *ctx,
                                      size_t *n_unified_characters,
                                      void *user_data)
 {
-  return grn_nfkc_normalize_unify_to_previous_kana_vowel_or_n(ctx,
-                                                              start,
-                                                              current,
-                                                              end,
-                                                              n_used_bytes,
-                                                              n_used_characters,
-                                                              unified_buffer,
-                                                              n_unified_bytes,
-                                                              n_unified_characters,
-                                                              grn_nfkc_normalize_is_hyphen,
-                                                              user_data);
+  return grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(ctx,
+                                                                 start,
+                                                                 current,
+                                                                 end,
+                                                                 n_used_bytes,
+                                                                 n_used_characters,
+                                                                 unified_buffer,
+                                                                 n_unified_bytes,
+                                                                 n_unified_characters,
+                                                                 grn_nfkc_normalize_is_hyphen,
+                                                                 user_data);
 }
 
 static const unsigned char *
@@ -2418,17 +2418,17 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
                                                    size_t *n_unified_characters,
                                                    void *user_data)
 {
-  return grn_nfkc_normalize_unify_to_previous_kana_vowel_or_n(ctx,
-                                                              start,
-                                                              current,
-                                                              end,
-                                                              n_used_bytes,
-                                                              n_used_characters,
-                                                              unified_buffer,
-                                                              n_unified_bytes,
-                                                              n_unified_characters,
-                                                              grn_nfkc_normalize_is_prolonged_sound_mark,
-                                                              user_data);
+  return grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(ctx,
+                                                                 start,
+                                                                 current,
+                                                                 end,
+                                                                 n_used_bytes,
+                                                                 n_used_characters,
+                                                                 unified_buffer,
+                                                                 n_unified_bytes,
+                                                                 n_unified_characters,
+                                                                 grn_nfkc_normalize_is_prolonged_sound_mark,
+                                                                 user_data);
 }
 
 static const unsigned char *
