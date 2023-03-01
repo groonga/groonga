@@ -1911,7 +1911,7 @@ grn_nfkc_normalize_unify_katakana_trailing_o(grn_ctx *ctx,
   return current;
 }
 
-typedef grn_bool
+typedef bool
 (*grn_nfkc_normalize_is_target_char_func)(const unsigned char *utf8_char,
                                           size_t length);
 
