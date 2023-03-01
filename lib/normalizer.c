@@ -1934,7 +1934,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(grn_ctx *ctx,
 {
   size_t char_length;
   grn_nfkc_normalize_prolonged_sound_mark_like_data *data = user_data;
-  size_t saved_previous_length = data->previous_length;
+  size_t previous_length = data->previous_length;
 
   char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
   data->previous_length = char_length;
@@ -1942,9 +1942,9 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(grn_ctx *ctx,
   *n_used_bytes = char_length;
   *n_used_characters = 1;
 
-  if (saved_previous_length == 3 &&
+  if (previous_length == 3 &&
       data->is_prolonged_sound_mark_like_char(current, char_length)) {
-    const unsigned char *previous = current - saved_previous_length;
+    const unsigned char *previous = current - previous_length;
     if (previous[0] == 0xe3) {
       if (/* U+3041 HIRAGANA LETTER SMALL A */
           (previous[1] == 0x81 && previous[2] == 0x81) ||
