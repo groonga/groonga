@@ -2753,14 +2753,14 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
-    grn_nfkc_normalize_prolonged_sound_mark_like_data prolonged_sound_mark_like_data;
-    prolonged_sound_mark_like_data.is_target_char = grn_nfkc_normalize_is_hyphen;
-    prolonged_sound_mark_like_data.previous_length = 0;
+    grn_nfkc_normalize_prolonged_sound_mark_like_data subdata;
+    subdata.is_target_char = grn_nfkc_normalize_is_hyphen;
+    subdata.previous_length = 0;
     grn_nfkc_normalize_unify_stateful(ctx,
                                       data,
                                       &unify,
                                       grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like,
-                                      &prolonged_sound_mark_like_data,
+                                      &subdata,
                                       "[unify][kana-hyphen]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
@@ -2773,14 +2773,14 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
-    grn_nfkc_normalize_prolonged_sound_mark_like_data prolonged_sound_mark_like_data;
-    prolonged_sound_mark_like_data.is_target_char = grn_nfkc_normalize_is_prolonged_sound_mark;
-    prolonged_sound_mark_like_data.previous_length = 0;
+    grn_nfkc_normalize_prolonged_sound_mark_like_data subdata;
+    subdata.is_target_char = grn_nfkc_normalize_is_prolonged_sound_mark;
+    subdata.previous_length = 0;
     grn_nfkc_normalize_unify_stateful(ctx,
                                       data,
                                       &unify,
                                       grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like,
-                                      &prolonged_sound_mark_like_data,
+                                      &subdata,
                                       "[unify][kana-prolonged-sound-mark]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
