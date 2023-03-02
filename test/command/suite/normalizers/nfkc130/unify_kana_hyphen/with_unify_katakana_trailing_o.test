@@ -1,0 +1,6 @@
+normalize \
+  'NormalizerNFKC130("unify_kana_hyphen", true, \
+                     "unify_katakana_trailing_o", true, \
+                     "report_source_offset", true)' \
+  "オ-" \
+  WITH_CHECKS|WITH_TYPES

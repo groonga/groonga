@@ -988,6 +988,25 @@ grn_nfkc_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_ch
   return utf8_char;
 }
 
+grn_inline static bool
+grn_nfkc_normalize_is_hyphen(const unsigned char *utf8_char,
+                             size_t length)
+{
+  /* U+002D HYPHEN-MINUS */
+  return (length == 1 && utf8_char[0] == '-');
+}
+
+grn_inline static bool
+grn_nfkc_normalize_is_prolonged_sound_mark(const unsigned char *utf8_char,
+                                           size_t length)
+{
+  /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
+  return (length == 3 &&
+          utf8_char[0] == 0xe3 &&
+          utf8_char[1] == 0x83 &&
+          utf8_char[2] == 0xbc);
+}
+
 grn_inline static grn_bool
 grn_nfkc_normalize_is_hyphen_family(const unsigned char *utf8_char,
                                     size_t length)
@@ -1892,34 +1911,40 @@ grn_nfkc_normalize_unify_katakana_trailing_o(grn_ctx *ctx,
   return current;
 }
 
+typedef bool
+(*grn_nfkc_normalize_is_target_char_func)(const unsigned char *utf8_char,
+                                          size_t length);
+
+typedef struct {
+  grn_nfkc_normalize_is_target_char_func is_target_char;
+  size_t previous_length;
+} grn_nfkc_normalize_prolonged_sound_mark_like_data;
+
 static const unsigned char *
-grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
-                                                   const unsigned char *start,
-                                                   const unsigned char *current,
-                                                   const unsigned char *end,
-                                                   size_t *n_used_bytes,
-                                                   size_t *n_used_characters,
-                                                   unsigned char *unified_buffer,
-                                                   size_t *n_unified_bytes,
-                                                   size_t *n_unified_characters,
-                                                   void *user_data)
+grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(grn_ctx *ctx,
+                                                        const unsigned char *start,
+                                                        const unsigned char *current,
+                                                        const unsigned char *end,
+                                                        size_t *n_used_bytes,
+                                                        size_t *n_used_characters,
+                                                        unsigned char *unified_buffer,
+                                                        size_t *n_unified_bytes,
+                                                        size_t *n_unified_characters,
+                                                        void *user_data)
 {
   size_t char_length;
-  const unsigned char *previous;
-  size_t *previous_length = user_data;
+  grn_nfkc_normalize_prolonged_sound_mark_like_data *data = user_data;
+  size_t previous_length = data->previous_length;
 
   char_length = (size_t)grn_charlen_(ctx, current, end, GRN_ENC_UTF8);
+  data->previous_length = char_length;
 
   *n_used_bytes = char_length;
   *n_used_characters = 1;
 
-  if (*previous_length == 3 &&
-      /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
-      char_length == 3 &&
-      current[0] == 0xe3 &&
-      current[1] == 0x83 &&
-      current[2] == 0xbc) {
-    previous = current - *previous_length;
+  if (previous_length == 3 &&
+      data->is_target_char(current, char_length)) {
+    const unsigned char *previous = current - previous_length;
     if (previous[0] == 0xe3) {
       if (/* U+3041 HIRAGANA LETTER SMALL A */
           (previous[1] == 0x81 && previous[2] == 0x81) ||
@@ -2347,7 +2372,6 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark(grn_ctx *ctx,
     }
   }
 
-  *previous_length = char_length;
   *n_unified_bytes = *n_used_bytes;
   *n_unified_characters = *n_used_characters;
 
@@ -2552,6 +2576,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
         data->options->unify_katakana_wo_sound ||
         data->options->unify_katakana_di_sound ||
         data->options->unify_katakana_gu_small_sounds ||
+        data->options->unify_kana_hyphen ||
         data->options->unify_kana_prolonged_sound_mark ||
         data->options->unify_katakana_trailing_o ||
         data->options->unify_to_romaji ||
@@ -2723,17 +2748,39 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     need_swap = GRN_TRUE;
   }
 
+  if (data->options->unify_kana_hyphen) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    grn_nfkc_normalize_prolonged_sound_mark_like_data subdata;
+    subdata.is_target_char = grn_nfkc_normalize_is_hyphen;
+    subdata.previous_length = 0;
+    grn_nfkc_normalize_unify_stateful(ctx,
+                                      data,
+                                      &unify,
+                                      grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like,
+                                      &subdata,
+                                      "[unify][kana-hyphen]");
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    need_swap = GRN_TRUE;
+  }
+
   if (data->options->unify_kana_prolonged_sound_mark) {
     if (need_swap) {
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
-    size_t previous_length = 0;
+    grn_nfkc_normalize_prolonged_sound_mark_like_data subdata;
+    subdata.is_target_char = grn_nfkc_normalize_is_prolonged_sound_mark;
+    subdata.previous_length = 0;
     grn_nfkc_normalize_unify_stateful(ctx,
                                       data,
                                       &unify,
-                                      grn_nfkc_normalize_unify_kana_prolonged_sound_mark,
-                                      &previous_length,
+                                      grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like,
+                                      &subdata,
                                       "[unify][kana-prolonged-sound-mark]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
