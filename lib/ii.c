@@ -11573,6 +11573,12 @@ grn_ii_select_skip_pos(grn_ctx *ctx,
   return true;
 }
 
+/* This function must return a "must_last" token info if it exists.
+ * btr::n_must_lasts is the number of "must_last" token infos and
+ * we use btr::n_must_lasts as the number of phrases that must be
+ * last. So if this function doesn't return a "must_last" token info,
+ * we misjudge the number of phrases that must be last.
+ */
 grn_inline static bool
 grn_ii_select_data_find_phrase(grn_ctx *ctx,
                                grn_ii_select_data *data,
@@ -11582,12 +11588,16 @@ grn_ii_select_data_find_phrase(grn_ctx *ctx,
   token_info **tip;
   token_info **tis = data->token_infos;
   token_info **tie = tis + data->n_token_infos;
+  token_info *must_last_ti = NULL;
   uint32_t n_tokens_in_same_pos = 0;
   for (tip = tis; ; tip++) {
     if (tip == tie) { tip = tis; }
     data->token_info = *tip;
     if (data->token_info->phrase_id != phrase_id) {
       continue;
+    }
+    if (data->token_info->must_last) {
+      must_last_ti = data->token_info;
     }
     if (!grn_ii_select_skip_pos(ctx, data, start_pos)) {
       return false;
@@ -11599,6 +11609,9 @@ grn_ii_select_data_find_phrase(grn_ctx *ctx,
       start_pos = data->token_info->pos;
     }
     if (n_tokens_in_same_pos == data->token_info->n_tokens_in_phrase) {
+      if (must_last_ti) {
+        data->token_info = must_last_ti;
+      }
       return true;
     }
   }
