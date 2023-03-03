@@ -11574,10 +11574,10 @@ grn_ii_select_skip_pos(grn_ctx *ctx,
 }
 
 // This function must return a "must_last" token info if it exists.
-// btr::n_must_lasts counts the number of "must_last" token infos
-// and we use btr::n_must_lasts as the number of phrases that must
-// be last. So if this function doesn't return a "must_last" token
-// info, we misjudge the number of phrase that must be last.
+// btr::n_must_lasts is the number of "must_last" token infos and
+// we use btr::n_must_lasts as the number of phrases that must be
+// last. So if this function doesn't return a "must_last" token info,
+// we misjudge the number of phrases that must be last.
 grn_inline static bool
 grn_ii_select_data_find_phrase(grn_ctx *ctx,
                                grn_ii_select_data *data,
