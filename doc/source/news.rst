@@ -65,6 +65,8 @@ Improvements
 
        んー -> んん
 
+    Here is an example of ``unify_kana_hyphen``.
+
     .. code-block::
 
        table_create --name Animals --flags TABLE_HASH_KEY --key_type ShortText
@@ -136,6 +138,8 @@ Improvements
 
        ん- -> んん
 
+    Here is an example of ``unify_kana_hyphen``.
+
     .. code-block::
 
        table_create --name Animals --flags TABLE_HASH_KEY --key_type ShortText
@@ -157,11 +161,11 @@ Improvements
        select --table Animals --query sound:@メエメエ
        #[[0,1677829950.652696,0.01971983909606934],[[[1],[["_id","UInt32"],["_key","ShortText"],["name","ShortText"],["sound","ShortText"]],[1,"1","羊","メ-メ-"]]]]
 
-* [:ref:`query-syntax-near-search-condition`][:ref:`script-syntax-near-search-operator`] Added new option ``${MIN_INTERVAL}`` for near-search family.
+* [:ref:`query-syntax-near-search-condition`][:ref:`script-syntax-near-search-operator`] Added a new option ``${MIN_INTERVAL}`` for near-search family.
   
-  The interval between phrases (words) must be at least this ``${MIN_INTERVAL}`` value.
+  An interval between phrases (words) must be at least this ``${MIN_INTERVAL}`` value.
 
-  New syntax are as below:
+  Here are new syntax:
 
   .. code-block::
 
@@ -171,7 +175,8 @@ Improvements
      *ONP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL},${MAX_PHRASE_INTERVAL_1}|${MAX_PHRASE_INTERVAL_2}|...,${MIN_INTERVAL} "phrase1 phrase2 ..."
      *ONPP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL},${MAX_PHRASE_INTERVAL_1}|${MAX_PHRASE_INTERVAL_2}|...,${MIN_INTERVAL} "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
 
-  The default value of ``${MIN_INTERVAL}`` is ``INT32_MIN`` (``-2147483648``). We use the default value when ``${MIN_INTERVAL}`` is omitted.
+  The default value of ``${MIN_INTERVAL}`` is ``INT32_MIN`` (``-2147483648``).
+  We use the default value when ``${MIN_INTERVAL}`` is omitted.
 
   .. code-block::
 
@@ -247,10 +252,10 @@ Improvements
      #  ]
      #]
 
-   In the example above, the interval from ``a`` is start with ``0`` from ``b``,
-   so the interval ``a`` to ``c`` is ``1``, and the interval ``a`` to ``d`` is ``2``.
+  In the example above, the interval from ``a`` starts with ``0`` from ``b``,
+  so the interval ``a`` to ``c`` is ``1``, and the interval ``a`` to ``d`` is ``2``.
    
-   So, ``'*N-1,,2 "a d"'`` matches and ``'*N-1,,2 "a c"'`` doesn't match.
+  So, ``'*N-1,,2 "a d"'`` matches and ``'*N-1,,2 "a c"'`` doesn't match.
 
 Fixes
 ^^^^^
@@ -258,10 +263,14 @@ Fixes
 * [:ref:`query-syntax-ordered-near-phrase-search-condition`][:ref:`script-syntax-ordered-near-phrase-search-operator`]
   Fixed a bug that ``max_element_intervals`` doesn't work correctly.
 
+  When this bug occured, intervals are regarded as ``0``.
+
   This bug occured when:
 
   1. Use ``*ONP`` with ``max_element_invervals``
   2. The number of tokens in the matched left phrase is greater than or equal to the number of ``max_element_invervals`` elements.
+
+  Here is an example of this bug.
 
   .. code-block::
 
@@ -324,7 +333,7 @@ Fixes
      #]
 
   In the example above, the first element interval is specified as ``1`` with ``*ONP-1,0,1 "abc def"`` 
-  , but bll content is hit, including those farther than ``1``.
+  , but all ``content`` is hit, including those farther than ``1``.
 
   The example satisfies the condition for the bug.
 
@@ -337,8 +346,8 @@ Fixes
      * The matched left phrase: ``abc``
     
        * Included tokens: ``ab``, ``bc``  ( tokenized with ``TokenNgram("unify_alphabet", false, "unify_digit", false)``)
-    * The number of elements specified with ``max_element_intervals``: ``1`` (``1`` of ``*ONP-1,0,1 "abc def"``)
-    * The number of tokens in the left phrase (``2``) > the number of elements specified with ``max_element_intervals`` (``1``)
+     * The number of elements specified with ``max_element_intervals``: ``1`` (``1`` of ``*ONP-1,0,1 "abc def"``)
+     * The number of tokens in the left phrase (``2``) > the number of elements specified with ``max_element_intervals`` (``1``)
 
 * [:ref:`query-syntax-near-phrase-search-condition`][:ref:`script-syntax-near-phrase-search-operator`]
   Fixed a bug that phrases specified as last didn't used as last in near-phrase family.
@@ -350,7 +359,9 @@ Fixes
   1. A phrase specified as last contains multiple tokens.
   2. The size of the last token of the phrase is smaller than or equals to the sizes of other tokens in the phrase.
 
-    * The token size is the number of tokens appeared in the all records.
+     * The token size is the number of tokens appeared in the all records.
+
+  Here is an example of this bug.
 
   .. code-block::
 
@@ -388,9 +399,9 @@ Fixes
 
   2. The size of the last token of the phrase is smaller than or equals to the sizes of other tokens in the phrase.
 
-    ``fg`` is the last token of ``defg$``. ``abc123456789defg`` contains one ``fg`` and ``de``, and ``dededede`` contains 4 ``de``.
+     ``fg`` is the last token of ``defg$``. ``abc123456789defg`` contains one ``fg`` and ``de``, and ``dededede`` contains 4 ``de``.
 
-    So, the size of ``fg`` is 1 and ``de`` is 5.
+     So, the size of ``fg`` is 1 and ``de`` is 5.
 
 .. _release-13-0-0:
 
