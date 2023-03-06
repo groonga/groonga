@@ -86,7 +86,44 @@ Improvements
        column_create --table idx_animals_sound --name animals_sound --flags COLUMN_INDEX|WITH_POSITION --type Animals --source sound
 
        select --table Animals --query sound:@メエメエ
-       #[[0,1677829950.652696,0.01971983909606934],[[[1],[["_id","UInt32"],["_key","ShortText"],["name","ShortText"],["sound","ShortText"]],[1,"1","羊","メーメー"]]]]
+       #[
+           [
+             0,
+             1677829950.652696,
+             0.01971983909606934
+           ],
+           [
+             [
+               [
+                 1
+               ],
+               [
+                 [
+                   "_id",
+                   "UInt32"
+                 ],
+                 [
+                   "_key",
+                   "ShortText"
+                 ],
+                 [
+                   "name",
+                   "ShortText"
+                 ],
+                 [
+                   "sound",
+                   "ShortText"
+                 ]
+               ],
+               [
+                 1,
+                 "1",
+                 "羊",
+                 "メーメー"
+               ]
+             ]
+           ]
+         ]
 
   * ``unify_kana_hyphen``
 
