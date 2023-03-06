@@ -1298,10 +1298,10 @@ AC_ARG_ENABLE(message-pack,
   [enable_message_pack="auto"])
 if test "x$enable_message_pack" != "xno"; then
   m4_ifdef([PKG_CHECK_MODULES], [
-    PKG_CHECK_MODULES([MESSAGE_PACK], [msgpack],
+    PKG_CHECK_MODULES([MESSAGE_PACK], [msgpack-c],
       [message_pack_available=yes],
       [
-        PKG_CHECK_MODULES([MESSAGE_PACK], [msgpack-c],
+        PKG_CHECK_MODULES([MESSAGE_PACK], [msgpack],
         [message_pack_available=yes],
         [message_pack_available=no])
       ])
