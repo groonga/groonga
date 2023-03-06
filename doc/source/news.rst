@@ -412,7 +412,7 @@ Fixes
      table_create Terms TABLE_PAT_KEY ShortText \
        --default_tokenizer 'TokenNgram("unify_alphabet", false, \
                                        "unify_digit", false)' \
-       --normalizer NormalizerNFKC121
+       --normalizer NormalizerNFKC150
      column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 
      load --table Entries
