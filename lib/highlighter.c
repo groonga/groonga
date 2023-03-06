@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2018  Brazil
-  Copyright(C) 2018-2022  Kouhei Sutou <kou@clear-code.com>
+  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -400,10 +400,23 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
 
   GRN_BULK_REWIND(keyword_ids);
 
-  grn_obj_set_info(ctx,
-                   highlighter->pat.keywords,
-                   GRN_INFO_NORMALIZER,
-                   grn_ctx_get(ctx, "NormalizerAuto", -1));
+  if (highlighter->lexicon.object) {
+    grn_obj normalizers;
+    GRN_TEXT_INIT(&normalizers, 0);
+    grn_table_get_normalizers_string(ctx,
+                                    highlighter->lexicon.object,
+                                    &normalizers);
+    grn_obj_set_info(ctx,
+                     highlighter->pat.keywords,
+                     GRN_INFO_NORMALIZERS,
+                     &normalizers);
+    GRN_OBJ_FIN(ctx, &normalizers);
+  } else {
+    grn_obj_set_info(ctx,
+                     highlighter->pat.keywords,
+                     GRN_INFO_NORMALIZER,
+                     grn_ctx_get(ctx, "NormalizerAuto", -1));
+  }
 
   {
     unsigned int i, n;
@@ -447,8 +460,24 @@ static void
 grn_highlighter_prepare(grn_ctx *ctx,
                         grn_highlighter *highlighter)
 {
+  bool use_lexicon = false;
   if (highlighter->lexicon.object) {
+    grn_obj *tokenizer;
+    grn_table_get_info(ctx,
+                       highlighter->lexicon.object,
+                       NULL,
+                       NULL,
+                       &tokenizer,
+                       NULL,
+                       NULL);
+    use_lexicon = (tokenizer != NULL);
+  }
+  if (use_lexicon) {
     grn_highlighter_prepare_lexicon(ctx, highlighter);
+    if (highlighter->pat.keywords) {
+      grn_obj_close(ctx, highlighter->pat.keywords);
+      highlighter->pat.keywords = NULL;
+    }
   } else {
     grn_highlighter_prepare_patricia_trie(ctx, highlighter);
   }
@@ -947,18 +976,18 @@ grn_highlighter_highlight(grn_ctx *ctx,
     }
   }
 
-  if (highlighter->lexicon.object) {
-    grn_highlighter_highlight_lexicon(ctx,
-                                      highlighter,
-                                      text,
-                                      (size_t)text_length,
-                                      output);
-  } else {
+  if (highlighter->pat.keywords) {
     grn_highlighter_highlight_patricia_trie(ctx,
                                             highlighter,
                                             text,
                                             (size_t)text_length,
                                             output);
+  } else {
+    grn_highlighter_highlight_lexicon(ctx,
+                                      highlighter,
+                                      text,
+                                      (size_t)text_length,
+                                      output);
   }
 
 exit :
