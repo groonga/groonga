@@ -314,7 +314,10 @@ Fixes
 
      table_create Entries TABLE_NO_KEY
      column_create Entries content COLUMN_SCALAR Text
-     table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("unify_alphabet", false,                                   "unify_digit", false)'   --normalizer NormalizerNFKC121
+     table_create Terms TABLE_PAT_KEY ShortText \
+       --default_tokenizer 'TokenNgram("unify_alphabet", false, \
+                                       "unify_digit", false)' \
+       --normalizer NormalizerNFKC150
      column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
      load --table Entries
      [
