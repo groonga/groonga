@@ -424,7 +424,30 @@ Fixes
      select Entries \
        --filter 'content *NP10,1"abc defg$"' \
        --output_columns '_score, content'
-     #[[0,0.0,0.0],[[[0],[["_score","Int32"],["content","Text"]]]]]
+     #[
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               0
+             ],
+             [
+               [
+                 "_score",
+                 "Int32"
+               ],
+               [
+                 "content",
+                 "Text"
+               ]
+             ]
+           ]
+         ]
+       ]
 
   In the example above, for ``abc123456789defg``, the interval ``abc`` to ``defg`` is ``11``.
   ``${MAX_INTERVAL}`` is ``10`` and ``${ADDITIONAL_LAST_INTERVAL}`` is ``1``, so a threshold for matching last phrase is ``11``.
