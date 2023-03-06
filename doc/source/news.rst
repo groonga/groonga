@@ -327,6 +327,39 @@ Improvements
 Fixes
 ^^^^^
 
+* [:doc:`reference/normalizers`] Fixed a bug that NormalizerNFKC* did incorrect normalization.
+
+  This bug occured when ``unify_kana_case`` and ``unify_katakana_v_sounds`` used at the same time.
+
+  For example, ``ヴァ`` was normalized to ``バア`` with ``unify_kana_case`` and ``unify_katakana_v_sounds``, 
+  but ``ヴァ`` should be normalized to ``バ``.
+
+  This was because ``ヴァ`` was normalized to ``ヴア`` with ``unify_kana_case``, and after that, ``ヴア`` was normalized
+  to ``バア`` with ``unify_katakana_v_sounds``. We fixed to normalize characters with ``unify_katakana_v_sounds`` before 
+  ``unify_kana_case``.
+
+  Here is an example of the bug in the previous version.
+
+  .. code-block::
+
+     normalize \
+     'NormalizerNFKC150("unify_katakana_v_sounds", true, \
+                       "unify_kana_case", true)' \
+     "ヴァーチャル"
+     #[
+     #  [
+     #    0,
+     #    1678097412.913053,
+     #    0.00019073486328125
+     #  ],
+     #  {
+     #    "normalized":"ブアーチヤル",
+     #    "types":[],
+     #    "checks":[]
+     #  }
+
+  From this version, ``ヴァーチャル`` is normalized to ``バーチャル``.
+
 * [:ref:`query-syntax-ordered-near-phrase-search-condition`][:ref:`script-syntax-ordered-near-phrase-search-operator`]
   Fixed a bug that ``${MAX_PHRASE_INTERVALS}`` doesn't work correctly.
 
