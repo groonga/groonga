@@ -87,43 +87,43 @@ Improvements
 
        select --table Animals --query sound:@メエメエ
        #[
-           [
-             0,
-             1677829950.652696,
-             0.01971983909606934
-           ],
-           [
-             [
-               [
-                 1
-               ],
-               [
-                 [
-                   "_id",
-                   "UInt32"
-                 ],
-                 [
-                   "_key",
-                   "ShortText"
-                 ],
-                 [
-                   "name",
-                   "ShortText"
-                 ],
-                 [
-                   "sound",
-                   "ShortText"
-                 ]
-               ],
-               [
-                 1,
-                 "1",
-                 "羊",
-                 "メーメー"
-               ]
-             ]
-           ]
-         ]
+       #  [
+       #    0,
+       #    1677829950.652696,
+       #    0.01971983909606934
+       #  ],
+       #  [
+       #    [
+       #      [
+       #        1
+       #      ],
+       #      [
+       #        [
+       #          "_id",
+       #          "UInt32"
+       #        ],
+       #        [
+       #          "_key",
+       #          "ShortText"
+       #        ],
+       #        [
+       #          "name",
+       #          "ShortText"
+       #        ],
+       #        [
+       #          "sound",
+       #          "ShortText"
+       #        ]
+       #      ],
+       #      [
+       #        1,
+       #        "1",
+       #        "羊",
+       #        "メーメー"
+       #      ]
+       #    ]
+       #  ]
+       #]
 
   * ``unify_kana_hyphen``
 
@@ -196,7 +196,43 @@ Improvements
        column_create --table idx_animals_sound --name animals_sound --flags COLUMN_INDEX|WITH_POSITION --type Animals --source sound
 
        select --table Animals --query sound:@メエメエ
-       #[[0,1677829950.652696,0.01971983909606934],[[[1],[["_id","UInt32"],["_key","ShortText"],["name","ShortText"],["sound","ShortText"]],[1,"1","羊","メ-メ-"]]]]
+       #[
+       #  [
+       #    0,1677829950.652696,
+       #    0.01971983909606934
+       #  ],
+       #  [
+       #    [
+       #      [
+       #        1
+       #      ],
+       #      [
+       #        [
+       #          "_id",
+       #          "UInt32"
+       #        ],
+       #        [
+       #          "_key",
+       #          "ShortText"
+       #        ],
+       #        [
+       #          "name",
+       #          "ShortText"
+       #        ],
+       #        [
+       #          "sound",
+       #          "ShortText"
+       #        ]
+       #      ],
+       #      [
+       #        1,
+       #        "1",
+       #        "羊",
+       #        "メ-メ-"
+       #      ]
+       #    ]
+       #  ]
+       #]
 
 * [:ref:`query-syntax-near-search-condition`][:ref:`script-syntax-near-search-operator`] Added a new option ``${MIN_INTERVAL}`` for near-search family.
   
@@ -428,29 +464,29 @@ Fixes
        --filter 'content *NP10,1"abc defg$"' \
        --output_columns '_score, content'
      #[
-         [
-           0,
-           0.0,
-           0.0
-         ],
-         [
-           [
-             [
-               0
-             ],
-             [
-               [
-                 "_score",
-                 "Int32"
-               ],
-               [
-                 "content",
-                 "Text"
-               ]
-             ]
-           ]
-         ]
-       ]
+     #  [
+     #    0,
+     #    0.0,
+     #    0.0
+     #  ],
+     #  [
+     #    [
+     #      [
+     #        0
+     #      ],
+     #      [
+     #        [
+     #          "_score",
+     #          "Int32"
+     #        ],
+     #        [
+     #          "content",
+     #          "Text"
+     #        ]
+     #      ]
+     #    ]
+     #  ]
+     #]
 
   In the example above, for ``abc123456789defg``, the interval ``abc`` to ``defg`` is ``11``.
   ``${MAX_INTERVAL}`` is ``10`` and ``${ADDITIONAL_LAST_INTERVAL}`` is ``1``, so a threshold for matching last phrase is ``11``.
