@@ -6626,6 +6626,7 @@ grn_expr_get_keywords(grn_ctx *ctx, grn_obj *expr, grn_obj *keywords)
             grn_obj_is_text_family_bulk(ctx, si->query)) {
           switch (si->op) {
           case GRN_OP_MATCH :
+          case GRN_OP_PREFIX :
             if (keywords->header.type == GRN_PVECTOR) {
               GRN_PTR_PUT(ctx, keywords, si->query);
             } else {

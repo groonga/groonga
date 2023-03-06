@@ -1,0 +1,37 @@
+table_create Tags TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Tags name COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --normalizer 'NormalizerNFKC150'
+[[0,0.0,0.0],true]
+column_create Terms tags_name COLUMN_INDEX Tags name
+[[0,0.0,0.0],true]
+load --table Tags
+[
+{"name": "Groonga"}
+]
+[[0,0.0,0.0],1]
+select Tags   --query "name:^g"   --output_columns "highlight_html(name)"
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "highlight_html",
+          null
+        ]
+      ],
+      [
+        "<span class=\"keyword\">G</span>roon<span class=\"keyword\">g</span>a"
+      ]
+    ]
+  ]
+]

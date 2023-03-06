@@ -1,0 +1,15 @@
+table_create Tags TABLE_NO_KEY
+column_create Tags name COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --normalizer 'NormalizerNFKC150'
+column_create Terms tags_name COLUMN_INDEX Tags name
+
+load --table Tags
+[
+{"name": "Groonga"}
+]
+
+select Tags \
+  --query "name:^g" \
+  --output_columns "highlight_html(name)"
