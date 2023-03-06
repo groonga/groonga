@@ -7,7 +7,7 @@ News
 
 .. _release-13-0-1:
 
-Release 13.0.1 - 2023-03-04
+Release 13.0.1 - 2023-03-06
 ---------------------------
 
 Improvements
@@ -234,7 +234,8 @@ Improvements
        #  ]
        #]
 
-* [:ref:`query-syntax-near-search-condition`][:ref:`script-syntax-near-search-operator`] Added a new option ``${MIN_INTERVAL}`` for near-search family.
+* [:ref:`query-syntax-near-search-condition`][:ref:`script-syntax-near-search-operator`]
+  Added a new option ``${MIN_INTERVAL}`` for near-search family.
   
   We can now specifiy the minimum interval between phrases (words) with ``${MIN_INTERVAL}``.
   The interval between phrases (words) must be at least this value.
@@ -252,17 +253,44 @@ Improvements
   The default value of ``${MIN_INTERVAL}`` is ``INT32_MIN`` (``-2147483648``).
   We use the default value when ``${MIN_INTERVAL}`` is omitted.
 
+  This option is useful when we want to ignore overlapped phrases.
+
+  The interval for ``*NP`` is culculated as ``interval between the top tokens of phrases - tokens in the left phrase + 1``.
+  
+  When a tokenizer is Bigram, for exmaple, ``東京`` has one token ``東京``, also ``京都`` has one token ``京都``.
+
+  Considering ``東京都`` as a target value of ``*NP "東京 京都"``:
+
+  * ``interval between the top tokens of phrases``: ``1`` (interval between ``東京`` and ``京都``)
+  * ``tokens in the left phrase``: ``1`` ( ``東京`` )
+
+  The interval for ``*NP`` of ``東京都`` is ``1 - 1 + 1`` = ``1``.
+
+  As a result, the interval for ``*NP`` is greater than ``1`` when ``東京`` and ``京都`` are not overlapped.
+
+  Here is an example for ignoring overlapped phrases.
+
   .. code-block::
 
-     table_create Memos TABLE_PAT_KEY ShortText
-     column_create Memos content COLUMN_SCALAR ShortText
-     table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
-     column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
-     load --table Memos
+     table_create Entries TABLE_NO_KEY
+     column_create Entries content COLUMN_SCALAR Text
+
+     table_create Terms TABLE_PAT_KEY ShortText \
+       --default_tokenizer 'TokenNgram("unify_alphabet", false, \
+                                       "unify_digit", false)' \
+       --normalizer NormalizerNFKC150
+     column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+     load --table Entries
      [
-     {"_key":"alphabets", "content": "a b c d e f g i"}
+     {"content": "東京都"},
+     {"content": "東京京都"}
      ]
-     select --table Memos --match_columns content --query '*N-1,,2 "a d"'
+
+     select Entries \
+       --match_columns content \
+       --query '*NP-1,0,,2"東京 京都"' \
+       --output_columns '_score, content'
      #[
      #  [
      #    0,
@@ -276,73 +304,38 @@ Improvements
      #      ],
      #      [
      #        [
-     #          "_id",
-     #          "UInt32"
-     #        ],
-     #        [
-     #          "_key",
-     #          "ShortText"
+     #          "_score",
+     #          "Int32"
      #        ],
      #        [
      #          "content",
-     #          "ShortText"
+     #          "Text"
      #        ]
      #      ],
      #      [
      #        1,
-     #        "alphabets",
-     #        "a b c d e f g i"
-     #      ]
-     #    ]
-     #  ]
-     #]
-     select --table Memos --match_columns content --query '*N-1,,2 "a c"'
-     #[
-     #  [
-     #    0,
-     #    0.0,
-     #    0.0
-     #  ],
-     #  [
-     #    [
-     #      [
-     #        0
-     #      ],
-     #      [
-     #        [
-     #          "_id",
-     #          "UInt32"
-     #        ],
-     #        [
-     #          "_key",
-     #          "ShortText"
-     #        ],
-     #        [
-     #          "content",
-     #          "ShortText"
-     #        ]
+     #        "東京京都"
      #      ]
      #    ]
      #  ]
      #]
 
-  In the example above, the interval from ``a`` starts with ``0``,
-  so the interval ``a`` to ``c`` is ``1``, and the interval ``a`` to ``d`` is ``2``.
-   
-  So, ``'*N-1,,2 "a d"'`` is matched and ``'*N-1,,2 "a c"'`` is not matched.
+
+  In the example above, ``東京都`` is not matched as the interval is ``1``
+  but ``東京京都`` is matched as the interval is ``2``.
 
 Fixes
 ^^^^^
 
 * [:ref:`query-syntax-ordered-near-phrase-search-condition`][:ref:`script-syntax-ordered-near-phrase-search-operator`]
-  Fixed a bug that ``max_element_intervals`` doesn't work correctly.
+  Fixed a bug that ``${MAX_PHRASE_INTERVALS}`` doesn't work correctly.
 
   When this bug occured, intervals are regarded as ``0``.
 
   This bug occured when:
 
-  1. Use ``*ONP`` with ``max_element_invervals``
-  2. The number of tokens in the matched left phrase is greater than or equal to the number of ``max_element_invervals`` elements.
+  1. Use ``*ONP`` with ``${MAX_PHRASE_INTERVALS}``
+  2. The number of tokens in the matched left phrase is greater than or equal to the number of ``${MAX_PHRASE_INTERVALS}`` elements.
 
   Here is an example of this bug.
 
@@ -414,11 +407,11 @@ Fixes
 
   This is because the example satisfies the condition for the bug and the interval is regarded as ``0``.
 
-  1. Use ``*ONP`` with ``max_element_invervals``
+  1. Use ``*ONP`` with ``${MAX_PHRASE_INTERVALS}``
 
-     ``*ONP-1,0,1 "abc def"`` specifies ``max_element_invervals``.
+     ``*ONP-1,0,1 "abc def"`` specifies ``${MAX_PHRASE_INTERVALS}``.
 
-  2. The number of tokens in the matched left phrase is greater than or equal to the number of ``max_element_invervals`` elements.
+  2. The number of tokens in the matched left phrase is greater than or equal to the number of ``${MAX_PHRASE_INTERVALS}`` elements.
 
      * The matched left phrase: ``abc``
     
