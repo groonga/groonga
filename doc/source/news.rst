@@ -13,6 +13,53 @@ Release 13.0.1 - 2023-03-06
 Improvements
 ^^^^^^^^^^^^
 
+* [:doc:`/reference/functions/highlight_html`] Added support for prefix search.
+
+  We can now use prefix search in ``highlight_html``.
+
+  Note that highlight keyword is also highlighted not only at the first but also in the middle or at the end.
+
+  .. code-block::
+
+     table_create Tags TABLE_NO_KEY
+     column_create Tags name COLUMN_SCALAR ShortText
+
+     table_create Terms TABLE_PAT_KEY ShortText \
+       --normalizer 'NormalizerNFKC150'
+     column_create Terms tags_name COLUMN_INDEX Tags name
+
+     load --table Tags
+     [
+     {"name": "Groonga"}
+     ]
+
+     select Tags \
+       --query "name:^g" \
+       --output_columns "highlight_html(name)"
+     #[
+     #  [
+     #    0,
+     #    0.0,
+     #    0.0
+     #  ],
+     #  [
+     #    [
+     #      [
+     #        1
+     #      ],
+     #      [
+     #        [
+     #          "highlight_html",
+     #          null
+     #        ]
+     #      ],
+     #      [
+     #        "<span class=\"keyword\">G</span>roon<span class=\"keyword\">g</span>a"
+     #      ]
+     #    ]
+     #  ]
+     #]
+
 * [:doc:`reference/normalizers`] Added new options for NormalizerNFKC*.
 
   * ``unify_kana_prolonged_sound_mark``
