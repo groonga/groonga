@@ -50,6 +50,24 @@ Specify option::
 
   NormalizerNFKC100("unify_to_romaji", true)
 
+  NormalizerNFKC100("unify_katakana_gu_small_sounds", true)
+
+  NormalizerNFKC100("unify_katakana_di_sound", true)
+
+  NormalizerNFKC100("unify_katakana_wo_sound", true)
+
+  NormalizerNFKC100("unify_katakana_zu_small_sounds", true)
+
+  NormalizerNFKC100("unify_katakana_du_sound", true)
+
+  NormalizerNFKC100("unify_katakana_trailing_o", true)
+
+  NormalizerNFKC100("unify_katakana_du_small_sounds", true)
+
+  NormalizerNFKC100("unify_kana_prolonged_sound_mark", true)
+
+  NormalizerNFKC100("unify_kana_hyphen", true)
+
 .. versionadded:: 8.0.3
 
    :ref:`normalizer-nfkc100-unify-middle-dot` is added.
@@ -61,6 +79,28 @@ Specify option::
 .. versionadded:: 8.0.9
 
    :ref:`normalizer-nfkc100-unify-to-romaji` is added.
+
+.. versionadded:: 13.0.0
+
+  :ref:`normalizer-nfkc100-unify-katakana-gu-small-sounds` is added.
+
+  :ref:`normalizer-nfkc100-unify-katakana-di-sound` is added.
+
+  :ref:`normalizer-nfkc100-unify-katakana-wo-sound` is added.
+
+  :ref:`normalizer-nfkc100-unify-katakana-zu-small_sounds` is added.
+
+  :ref:`normalizer-nfkc100-unify-katakana-du-sound` is added.
+
+  :ref:`normalizer-nfkc100-unify-katakana-trailing_o` is added.
+
+  :ref:`normalizer-nfkc100-unify-katakana-du_small_sounds` is added.
+
+.. versionadded:: 13.0.1
+
+  :ref:`normalizer-nfkc100-unify-kana-prolonged-sound-mark` is added.
+
+  :ref:`normalizer-nfkc100-unify-kana-hyphen` is added.
 
 Specify multiple options::
 
@@ -315,6 +355,74 @@ This option enables normalize "ヴァヴィヴゥヴェヴォ" to "ブ".
 .. versionadded:: 8.0.9
 
 This option enables normalize hiragana and katakana to romaji.
+
+.. _normalizer-nfkc100-unify-katakana-gu-small-sounds:
+
+.. versionadded:: 13.0.0
+
+This option enables normalize "グァグィグェグォ" to "ガギゲゴ".
+
+.. _normalizer-nfkc100-unify-katakana-di-sound:
+
+.. versionadded:: 13.0.0
+
+This option enables normalize "ヂ" to "ジ".
+
+.. _normalizer-nfkc100-unify-katakana-wo-sound:
+
+.. versionadded:: 13.0.0
+
+This option enables normalize "ヲ" to "オ".
+
+.. _normalizer-nfkc100-unify-katakana-zu-small_sounds:
+
+.. versionadded:: 13.0.0
+
+This option enables normalize "ズァズィズェズォ" to "サジゼゾ".
+
+.. _normalizer-nfkc100-unify-katakana-du-sound:
+
+.. versionadded:: 13.0.0
+
+This option enables normalize "ヅ" to "ズ".
+
+.. _normalizer-nfkc100-unify-katakana-trailing_o:
+
+.. versionadded:: 13.0.0
+
+This option enables normalize "オ" to "ウ"
+when the vowel in the previous letter is "オ".
+
+* "ォオ" -> "ォウ"
+* "オオ" -> "オウ"
+* "コオ" -> "コウ"
+* "ソオ" -> "ソウ"
+* "トオ" -> "トウ"
+* "ノオ" -> "ノウ"
+* "ホオ" -> "ホウ"
+* "モオ" -> "モウ"
+* "ョオ" -> "ョオ"
+* "ヨオ" -> "ヨウ"
+* "ロオ" -> "ロウ"
+* "ゴオ" -> "ゴウ"
+* "ゾオ" -> "ゾウ"
+* "ドオ" -> "ドウ"
+* "ボオ" -> "ボウ"
+* "ポオ" -> "ポウ"
+* "ヺオ" -> "ヺウ"
+
+.. _normalizer-nfkc100-unify-katakana-du_small_sounds:
+
+.. versionadded:: 13.0.0
+
+.. _normalizer-nfkc100-unify-kana-prolonged-sound-mark:
+
+.. versionadded:: 13.0.1
+
+.. _normalizer-nfkc100-unify-kana-hyphen:
+
+.. versionadded:: 13.0.1
+
 
 See also
 ----------
