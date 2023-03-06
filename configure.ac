@@ -1300,7 +1300,11 @@ if test "x$enable_message_pack" != "xno"; then
   m4_ifdef([PKG_CHECK_MODULES], [
     PKG_CHECK_MODULES([MESSAGE_PACK], [msgpack],
       [message_pack_available=yes],
-      [message_pack_available=no])
+      [
+        PKG_CHECK_MODULES([MESSAGE_PACK], [msgpack-c],
+        [message_pack_available=yes],
+        [message_pack_available=no])
+      ])
     ],
     [message_pack_vailable=no])
 
