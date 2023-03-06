@@ -13,11 +13,11 @@ Release 13.0.1 - 2023-03-04
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`reference/normalizers`] Added new options for NormalizerNFKC* as below.
+* [:doc:`reference/normalizers`] Added new options for NormalizerNFKC*.
 
   * ``unify_kana_prolonged_sound_mark``
 
-    We can normalize the prolonged_sound_mark with this option as below.
+    We can now normalize prolonged_sound_mark with this option as below.
 
     .. code-block::
 
@@ -65,7 +65,7 @@ Improvements
 
        んー -> んん
 
-    Here is an example of ``unify_kana_hyphen``.
+    Here is an example of ``unify_kana_prolonged_sound_mark``.
 
     .. code-block::
 
@@ -90,7 +90,7 @@ Improvements
 
   * ``unify_kana_hyphen``
 
-    We can normalize the hyphen with this option as below.
+    We can now normalize hyphen with this option as below.
 
     .. code-block::
 
@@ -163,7 +163,8 @@ Improvements
 
 * [:ref:`query-syntax-near-search-condition`][:ref:`script-syntax-near-search-operator`] Added a new option ``${MIN_INTERVAL}`` for near-search family.
   
-  An interval between phrases (words) must be at least this ``${MIN_INTERVAL}`` value.
+  We can now specifiy the minimum interval between phrases (words) with ``${MIN_INTERVAL}``.
+  The interval between phrases (words) must be at least this value.
 
   Here are new syntax:
 
@@ -252,10 +253,10 @@ Improvements
      #  ]
      #]
 
-  In the example above, the interval from ``a`` starts with ``0`` from ``b``,
+  In the example above, the interval from ``a`` starts with ``0``,
   so the interval ``a`` to ``c`` is ``1``, and the interval ``a`` to ``d`` is ``2``.
    
-  So, ``'*N-1,,2 "a d"'`` matches and ``'*N-1,,2 "a c"'`` doesn't match.
+  So, ``'*N-1,,2 "a d"'`` is matched and ``'*N-1,,2 "a c"'`` is not matched.
 
 Fixes
 ^^^^^
@@ -333,9 +334,9 @@ Fixes
      #]
 
   In the example above, the first element interval is specified as ``1`` with ``*ONP-1,0,1 "abc def"`` 
-  , but all ``content`` is hit, including those farther than ``1``.
+  , but all ``content`` is matched, including those farther than ``1``.
 
-  The example satisfies the condition for the bug.
+  This is because the example satisfies the condition for the bug and the interval is regarded as ``0``.
 
   1. Use ``*ONP`` with ``max_element_invervals``
 
@@ -345,8 +346,11 @@ Fixes
 
      * The matched left phrase: ``abc``
     
-       * Included tokens: ``ab``, ``bc``  ( tokenized with ``TokenNgram("unify_alphabet", false, "unify_digit", false)``)
-     * The number of elements specified with ``max_element_intervals``: ``1`` (``1`` of ``*ONP-1,0,1 "abc def"``)
+       * Included tokens: ``ab``, ``bc``  
+       * Tokenized with ``TokenNgram("unify_alphabet", false, "unify_digit", false)``
+     * The number of elements specified with ``max_element_intervals``: ``1`` 
+     
+       * ``1`` of ``*ONP-1,0,1 "abc def"``
      * The number of tokens in the left phrase (``2``) > the number of elements specified with ``max_element_intervals`` (``1``)
 
 * [:ref:`query-syntax-near-phrase-search-condition`][:ref:`script-syntax-near-phrase-search-operator`]
