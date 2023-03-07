@@ -6,7 +6,7 @@ normalize   'NormalizerNFKC100("unify_katakana_v_sounds", true,                 
     0.0
   ],
   {
-    "normalized": "ヷアヸイブウヹエヺオ",
+    "normalized": "ヷアヸイブウヹエヺウ",
     "types": [
       "katakana",
       "katakana",
