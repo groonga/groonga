@@ -1914,7 +1914,9 @@ grn_nfkc_normalize_unify_katakana_trailing_o(grn_ctx *ctx,
                           /* U+30DC KATAKANA LETTER BO */
                           (current[1] == 0x83 && current[2] == 0x9c) ||
                           /* U+30DD KATAKANA LETTER PO */
-                          (current[1] == 0x83 && current[2] == 0x9d));
+                          (current[1] == 0x83 && current[2] == 0x9d) ||
+                          /* U+30FA KATAKANA LETTER VO */
+                          (current[1] == 0x83 && current[2] == 0xba));
   *n_unified_bytes = *n_used_bytes;
   *n_unified_characters = *n_used_characters;
 
@@ -2797,6 +2799,18 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     need_swap = GRN_TRUE;
   }
 
+  if (data->options->unify_kana_case) {
+    if (need_swap) {
+      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
+      grn_nfkc_normalize_context_rewind(ctx, &unify);
+    }
+    grn_nfkc_normalize_unify_stateless(ctx, data, &unify, false);
+    if (ctx->rc != GRN_SUCCESS) {
+      goto exit;
+    }
+    need_swap = GRN_TRUE;
+  }
+
   if (data->options->unify_katakana_trailing_o) {
     if (need_swap) {
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
@@ -2809,18 +2823,6 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
                                       grn_nfkc_normalize_unify_katakana_trailing_o,
                                       &need_trailing_check,
                                       "[unify][katakana-trailing-o]");
-    if (ctx->rc != GRN_SUCCESS) {
-      goto exit;
-    }
-    need_swap = GRN_TRUE;
-  }
-
-  if (data->options->unify_kana_case) {
-    if (need_swap) {
-      grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
-      grn_nfkc_normalize_context_rewind(ctx, &unify);
-    }
-    grn_nfkc_normalize_unify_stateless(ctx, data, &unify, false);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
