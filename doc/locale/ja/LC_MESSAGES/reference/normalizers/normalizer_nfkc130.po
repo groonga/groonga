@@ -49,6 +49,33 @@ msgstr "オプションなし::"
 msgid "Specify option::"
 msgstr "オプション指定::"
 
+msgid ":ref:`normalizer-nfkc130-unify-katakana-gu-small-sounds` is added."
+msgstr ":ref:`normalizer-nfkc130-unify-katakana-gu-small-sounds` 追加。"
+
+msgid ":ref:`normalizer-nfkc130-unify-katakana-di-sound` is added."
+msgstr ":ref:`normalizer-nfkc130-unify-katakana-di-sound` 追加。"
+
+msgid ":ref:`normalizer-nfkc130-unify-katakana-wo-sound` is added."
+msgstr ":ref:`normalizer-nfkc130-unify-katakana-wo-sound` 追加。"
+
+msgid ":ref:`normalizer-nfkc130-unify-katakana-zu-small-sounds` is added."
+msgstr ":ref:`normalizer-nfkc130-unify-katakana-zu-small-sounds` 追加。"
+
+msgid ":ref:`normalizer-nfkc130-unify-katakana-du-sound` is added."
+msgstr ":ref:`normalizer-nfkc130-unify-katakana-du-sound` 追加。"
+
+msgid ":ref:`normalizer-nfkc130-unify-katakana-trailing-o` is added."
+msgstr ":ref:`normalizer-nfkc130-unify-katakana-trailing-o` 追加。"
+
+msgid ":ref:`normalizer-nfkc130-unify-katakana-du-small-sounds` is added."
+msgstr ":ref:`normalizer-nfkc130-unify-katakana-du-small-sounds` 追加。"
+
+msgid ":ref:`normalizer-nfkc130-unify-kana-prolonged-sound-mark` is added."
+msgstr ":ref:`normalizer-nfkc130-unify-kana-prolonged-sound-mark` 追加。"
+
+msgid ":ref:`normalizer-nfkc130-unify-kana-hyphen` is added."
+msgstr ":ref:`normalizer-nfkc130-unify-kana-hyphen` 追加。"
+
 msgid "Specify multiple options::"
 msgstr "複数のオプション指定::"
 
@@ -177,6 +204,96 @@ msgid ""
 msgstr ""
 "以下は、:ref:`normalizer-nfkc130-remove-symbol` オプションの使用例です。この"
 "オプションは、以下のように記号(例えば #, !, \", &, % 等)を削除します 。"
+
+msgid ""
+"Here is an example of :ref:`normalizer-nfkc130-unify-katakana-gu-small-"
+"sounds` option. This option enables to normalize \"グァグィグェグォ\" to \"ガ"
+"ギゲゴ\" as below."
+msgstr ""
+"以下は、 :ref:`normalizer-nfkc130-unify-katakana-gu-small-sounds` オプション"
+"の使用例です。このオプションは、以下のように、\"グァグィグェグォ\"を\"ガギゲ"
+"ゴ\"に正規化します。"
+
+msgid ""
+"Here is an example of :ref:`normalizer-nfkc130-unify-katakana-di-sound` "
+"option. This option enables to normalize \"ヂ\" to \"ジ\" as below."
+msgstr ""
+"以下は、 :ref:`normalizer-nfkc130-unify-katakana-di-sound` オプションの使用例"
+"です。このオプションは、以下のように、\"ヂ\"を\"ジ\"に正規化します。"
+
+msgid ""
+"Here is an example of :ref:`normalizer-nfkc130-unify-katakana-wo-sound` "
+"option. This option enables to normalize \"ヲ\" to \"オ\" as below."
+msgstr ""
+"以下は、 :ref:`normalizer-nfkc130-unify-katakana-wo-sound` オプションの使用例"
+"です。このオプションは、以下のように、\"ヲ\"を\"オ\"に正規化します。"
+
+msgid ""
+"Here is an example of :ref:`normalizer-nfkc130-unify-katakana-zu-small-"
+"sounds` option. This option enables to normalize \"ズァズィズェズォ\" to \"ザ"
+"ジゼゾ\" as below."
+msgstr ""
+"以下は、 :ref:`normalizer-nfkc130-unify-katakana-zu-small-sounds` オプション"
+"の使用例です。このオプションは、以下のように、\"ズァズィズェズォ\"を\"ザジゼ"
+"ゾ\"に正規化します。"
+
+msgid ""
+"Here is an example of :ref:`normalizer-nfkc130-unify-katakana-du-sound` "
+"option. This option enables to normalize \"ヅ\" to \"ズ\" as below."
+msgstr ""
+"以下は、 :ref:`normalizer-nfkc130-unify-katakana-du-sound` オプションの使用例"
+"です。このオプションは、以下のように、\"ヅ\"を\"ズ\"に正規化します。"
+
+msgid ""
+"Here is an example of :ref:`normalizer-nfkc130-unify-katakana-trailing-o` "
+"option. This option enables to normalize \"オ\" to \"ウ\" when the vowel in "
+"the previous letter is \"オ\" as below."
+msgstr ""
+"以下は、 :ref:`normalizer-nfkc130-unify-katakana-trailing-o` オプションの使用"
+"例です。このオプションは、以下のように、前の文字の母音が\"オ\"のとき、\"オ"
+"\"を\"ウ\"に正規化します。"
+
+msgid ""
+"Here is an example of :ref:`normalizer-nfkc130-unify-katakana-du-small-"
+"sounds` option. This option enables to normalize \"ヅァヅィヅェヅォ\" to \"サ"
+"ジゼゾ\"."
+msgstr ""
+"以下は、 :ref:`normalizer-nfkc130-unify-katakana-du-small-sounds` オプション"
+"の使用例です。このオプションは、以下のように、\"ヅァヅィヅェヅォ\"を\"ザジゼ"
+"ゾ\"に正規化します。"
+
+msgid ""
+"Here is an example of :ref:`normalizer-nfkc130-unify-kana-prolonged-sound-"
+"mark` option. This option enables to normalize \"ー\" (U+30FC KATAKANA-"
+"HIRAGANA PROLONGED SOUND MARK) to a vowel of a previous kana letter."
+msgstr ""
+"以下は、 :ref:`normalizer-nfkc130-unify-kana-prolonged-sound-mark` オプション"
+"の使用例です。このオプションは、以下のように、\"ー\" (U+30FC KATAKANA-"
+"HIRAGANA PROLONGED SOUND MARK) を一文字前のひらがな・カタカナの母音に正規化し"
+"ます。"
+
+msgid ""
+"If a previous kana letter is \"ん\" , \"ー\" is normalized to \"ん\", And a "
+"previous kana letter is \"ン\" , \"ー\" is normalized to \"ン\"."
+msgstr ""
+"もし、一文字前の文字が\"ん\"であれば、\"ー\"は\"ん\"に正規化されます。また、"
+"一文字前の文字が\"ン\"であれば、\"ー\"は\"ン\"に正規化されます。"
+
+msgid ""
+"Here is an example of :ref:`normalizer-nfkc130-unify-kana-hyphen` option. "
+"This option enables to normalize \"-\" (U+2010 HYPHEN) to a vowel of a "
+"previous kana letter."
+msgstr ""
+"以下は、 :ref:`normalizer-nfkc130-unify-kana-hyphen` オプションの使用例です。"
+"このオプションは、以下のように、\"ー\" (U+2010 HYPHEN) を一文字前のひらがな・"
+"カタカナの母音に正規化します。"
+
+msgid ""
+"If a previous kana letter is \"ん\" , \"-\" is normalized to \"ん\", And a "
+"previous kana letter is \"ン\" , \"-\" is normalized to \"ン\"."
+msgstr ""
+"もし、一文字前の文字が\"ん\"であれば、\"-\"は\"ん\"に正規化されます。また、一"
+"文字前の文字が\"ン\"であれば、\"-\"は\"ン\"に正規化されます。"
 
 msgid "Advanced usage"
 msgstr "高度な使い方"
@@ -385,6 +502,123 @@ msgid ""
 msgstr ""
 "このオプションは、正規化対象の文字列から記号(例えば #, !, \", &, % 等)を削除"
 "します。"
+
+msgid "``unify_katakana_gu_small_sounds``"
+msgstr ""
+
+msgid "This option enables to normalize \"グァグィグェグォ\" to \"ガギゲゴ\"."
+msgstr "このオプションは、\"グァグィグェグォ\"を\"ガギゲゴ\"に正規化します。"
+
+msgid "``unify_katakana_di_sound``"
+msgstr ""
+
+msgid "This option enables to normalize \"ヂ\" to \"ジ\"."
+msgstr "このオプションは、\"ヂ\"を\"ジ\"に正規化します。"
+
+msgid "``unify_katakana_wo_sound``"
+msgstr ""
+
+msgid "This option enables to normalize \"ヲ\" to \"オ\"."
+msgstr "このオプションは、\"ヲ\"を\"オ\"に正規化します。"
+
+msgid "``unify_katakana_zu_small_sounds``"
+msgstr ""
+
+msgid "This option enables to normalize \"ズァズィズェズォ\" to \"ザジゼゾ\"."
+msgstr "このオプションは、\"ズァズィズェズォ\"を\"ザジゼゾ\"に正規化します。"
+
+msgid "``unify_katakana_du_sound``"
+msgstr ""
+
+msgid "This option enables to normalize \"ヅ\" to \"ズ\"."
+msgstr "このオプションは、\"ヅ\"を\"ズ\"に正規化します。"
+
+msgid "``unify_katakana_trailing_o``"
+msgstr ""
+
+msgid ""
+"This option enables to normalize \"オ\" to \"ウ\" when the vowel in the "
+"previous letter is \"オ\"."
+msgstr ""
+"このオプションは、前の文字の母音が\"オ\"のとき、\"オ\"を\"ウ\"に正規化しま"
+"す。"
+
+msgid "\"ォオ\" -> \"ォウ\""
+msgstr ""
+
+msgid "\"オオ\" -> \"オウ\""
+msgstr ""
+
+msgid "\"コオ\" -> \"コウ\""
+msgstr ""
+
+msgid "\"ソオ\" -> \"ソウ\""
+msgstr ""
+
+msgid "\"トオ\" -> \"トウ\""
+msgstr ""
+
+msgid "\"ノオ\" -> \"ノウ\""
+msgstr ""
+
+msgid "\"ホオ\" -> \"ホウ\""
+msgstr ""
+
+msgid "\"モオ\" -> \"モウ\""
+msgstr ""
+
+msgid "\"ョオ\" -> \"ョオ\""
+msgstr ""
+
+msgid "\"ヨオ\" -> \"ヨウ\""
+msgstr ""
+
+msgid "\"ロオ\" -> \"ロウ\""
+msgstr ""
+
+msgid "\"ゴオ\" -> \"ゴウ\""
+msgstr ""
+
+msgid "\"ゾオ\" -> \"ゾウ\""
+msgstr ""
+
+msgid "\"ドオ\" -> \"ドウ\""
+msgstr ""
+
+msgid "\"ボオ\" -> \"ボウ\""
+msgstr ""
+
+msgid "\"ポオ\" -> \"ポウ\""
+msgstr ""
+
+msgid "\"ヺオ\" -> \"ヺウ\""
+msgstr ""
+
+msgid "``unify_katakana_du_small_sounds``"
+msgstr ""
+
+msgid "This option enables to normalize \"ヅァヅィヅェヅォ\" to \"ザジゼゾ\"."
+msgstr "このオプションは、\"ヅァヅィヅェヅォ\"を\"ザジゼゾ\"に正規化します。"
+
+msgid "``unify_kana_prolonged_sound_mark``"
+msgstr ""
+
+msgid ""
+"This option enables to normalize \"ー\" (U+30FC KATAKANA-HIRAGANA PROLONGED "
+"SOUND MARK) to a vowel of a previous kana letter."
+msgstr ""
+"このオプションは、\"ー\" (U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK) を一"
+"文字前のひらがな・カタカナの母音に正規化します。"
+
+msgid "``unify_kana_hyphen``"
+msgstr ""
+
+msgid ""
+"This option enables to normalize \"-\" (U+2010 HYPHEN) to a vowel of a "
+"previous kana letter."
+msgstr ""
+"このオプションは、\"ー\" (U+2010 HYPHEN) を一文字前のひらがな・カタカナの母音"
+"に正規化します。"
 
 msgid "See also"
 msgstr "参考"
