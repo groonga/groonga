@@ -414,7 +414,7 @@ Fixes
      #    "checks":[]
      #  }
 
-  From this version, ``ヴァーチャル`` is normalized to ``バーチャル``.
+  From this version, ``ヴァーチャル`` is normalized to ``バーチヤル``.
 
 * [:ref:`query-syntax-ordered-near-phrase-search-condition`][:ref:`script-syntax-ordered-near-phrase-search-operator`]
   Fixed a bug that ``${MAX_PHRASE_INTERVALS}`` doesn't work correctly.

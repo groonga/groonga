@@ -253,9 +253,9 @@ msgstr ""
 msgid "Here is an example of the bug in the previous version."
 msgstr "以下は以前のバージョンでの問題の発生例です。"
 
-msgid "From this version, ``ヴァーチャル`` is normalized to ``バーチャル``."
+msgid "From this version, ``ヴァーチャル`` is normalized to ``バーチヤル``."
 msgstr ""
-"このバージョンから、 ``ヴァーチャル`` は ``バーチャル`` にノーマライズされま"
+"このバージョンから、 ``ヴァーチャル`` は ``バーチヤル`` にノーマライズされま"
 "す。"
 
 msgid ""
