@@ -1,6 +1,6 @@
 Execution example::
 
-  tokenize TokenDelimit "アァイィウゥエェオォ" --token_filters  'TokenFilterNFKC100("unify_to_romaji", true)'
+  tokenize TokenDelimit "ヂ" --token_filters 'TokenFilterNFKC100("unify_katakana_di_sound", true)'
   # [
   #   [
   #     0, 
@@ -12,7 +12,7 @@ Execution example::
   #       "force_prefix_search": false, 
   #       "position": 0, 
   #       "force_prefix": false, 
-  #       "value": "axaixiuxuexeoxo"
+  #       "value": "ジ"
   #     }
   #   ]
   # ]
