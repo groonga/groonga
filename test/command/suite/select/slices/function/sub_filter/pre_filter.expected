@@ -1,0 +1,25 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users age COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos user COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Users
+[
+{"_key": "alice", "age": 9},
+{"_key": "bob",   "age": 29}
+]
+[[0,0.0,0.0],2]
+load --table Memos
+[
+{"user": "alice", "content": "hello"},
+{"user": "bob",   "content": "world"},
+{"user": "alice", "content": "bye"},
+{"user": "bob",   "content": "yay"}
+]
+[[0,0.0,0.0],4]
+select Memos   --slices[adult].filter '_id > 1 && sub_filter(user, "age >= 18")'

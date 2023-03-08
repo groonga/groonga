@@ -1887,8 +1887,10 @@ grn_nfkc_normalize_unify_katakana_trailing_o(grn_ctx *ctx,
 
   *need_trailing_check = char_length == 3 &&
                          current[0] == 0xe3 &&
-                         /* U+30AA KATAKANA LETTER O */
-                         ((current[1] == 0x82 && current[2] == 0xaa) ||
+                         /* U+30A9 KATAKANA LETTER SMALL O */
+                         ((current[1] == 0x82 && current[2] == 0xa9) ||
+                          /* U+30AA KATAKANA LETTER O */
+                          (current[1] == 0x82 && current[2] == 0xaa) ||
                           /* U+30B3 KATAKANA LETTER KO */
                           (current[1] == 0x82 && current[2] == 0xb3) ||
                           /* U+30BD KATAKANA LETTER SO */
@@ -1901,6 +1903,8 @@ grn_nfkc_normalize_unify_katakana_trailing_o(grn_ctx *ctx,
                           (current[1] == 0x83 && current[2] == 0x9b) ||
                           /* U+30E2 KATAKANA LETTER MO */
                           (current[1] == 0x83 && current[2] == 0xa2) ||
+                          /* U+30E7 KATAKANA LETTER SMALL YO */
+                          (current[1] == 0x83 && current[2] == 0xa7) ||
                           /* U+30E8 KATAKANA LETTER YO */
                           (current[1] == 0x83 && current[2] == 0xa8) ||
                           /* U+30ED KATAKANA LETTER RO */

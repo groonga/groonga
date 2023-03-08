@@ -1,4 +1,4 @@
-normalize   'NormalizerNFKC150("unify_katakana_trailing_o", true,                      "report_source_offset", true)'   "オオコオソオトオノオホオモオヨオロオゴオゾオドオボオポオ"   WITH_CHECKS|WITH_TYPES
+normalize   'NormalizerNFKC150("unify_katakana_trailing_o", true,                      "report_source_offset", true)'   "ォオオオコオソオトオノオホオモオョオヨオロオゴオゾオドオボオポオ"   WITH_CHECKS|WITH_TYPES
 [
   [
     0,
@@ -6,8 +6,12 @@ normalize   'NormalizerNFKC150("unify_katakana_trailing_o", true,               
     0.0
   ],
   {
-    "normalized": "オウコウソウトウノウホウモウヨウロウゴウゾウドウボウポウ",
+    "normalized": "ォウオウコウソウトウノウホウモウョウヨウロウゴウゾウドウボウポウ",
     "types": [
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
       "katakana",
       "katakana",
       "katakana",
@@ -121,6 +125,18 @@ normalize   'NormalizerNFKC150("unify_katakana_trailing_o", true,               
       0,
       3,
       0,
+      0,
+      3,
+      0,
+      0,
+      3,
+      0,
+      0,
+      3,
+      0,
+      0,
+      3,
+      0,
       0
     ],
     "offsets": [
@@ -151,7 +167,11 @@ normalize   'NormalizerNFKC150("unify_katakana_trailing_o", true,               
       72,
       75,
       78,
-      81
+      81,
+      84,
+      87,
+      90,
+      93
     ]
   }
 ]

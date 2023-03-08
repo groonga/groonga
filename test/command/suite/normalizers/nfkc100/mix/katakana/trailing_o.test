@@ -10,5 +10,5 @@ normalize \
                     "unify_kana_hyphen", true, \
                     "unify_katakana_trailing_o", true, \
                     "unify_middle_dot", true)' \
-  "オオコオソオトオノオホオモオヨオロオゴオゾオドオボオポオ" \
+  "ォオオオコオソオトオノオホオモオョオヨオロオゴオゾオドオボオポオ" \
   WITH_CHECKS|WITH_TYPES
