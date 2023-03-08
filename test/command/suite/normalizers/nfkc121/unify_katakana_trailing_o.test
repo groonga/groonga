@@ -1,5 +1,5 @@
 normalize \
   'NormalizerNFKC121("unify_katakana_trailing_o", true, \
                      "report_source_offset", true)' \
-  "オオコオソオトオノオホオモオヨオロオゴオゾオドオボオポオ" \
+  "ォオオオコオソオトオノオホオモオョオヨオロオゴオゾオドオボオポオ" \
   WITH_CHECKS|WITH_TYPES

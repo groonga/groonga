@@ -1,0 +1,44 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Terms memo_content COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+["content"],
+["NTT docomo"]
+]
+[[0,0.0,0.0],1]
+table_create SudachiDictionary TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC130
+[[0,0.0,0.0],true]
+column_create SudachiDictionary synonyms COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+/home/t-hashida/gitdir/groonga/test/command/suite/select/query_expander/column/sudachi/vector/expanded-phrase.test:22:#@synonym-generate SudachiDictionary: failed to run groonga-synonym-generate: <groonga-synonym-generate>: No such file or directory - groonga-synonym-generate
+/home/t-hashida/gitdir/groonga/test/command/suite/select/query_expander/column/sudachi/vector/expanded-phrase.test:22:#@synonym-generate SudachiDictionary: failed to run groonga-synonym-generate: <groonga-synonym-generate>: No such file or directory - groonga-synonym-generate
+select   --table Memos   --query_expander SudachiDictionary.synonyms   --match_columns content   --query ドコモ   --output_columns content,_score   --command_version 3
+{
+  "header": {
+    "return_code": 0,
+    "start_time": 0.0,
+    "elapsed_time": 0.0
+  },
+  "body": {
+    "n_hits": 0,
+    "columns": [
+      {
+        "name": "content",
+        "type": "ShortText"
+      },
+      {
+        "name": "_score",
+        "type": "Float"
+      }
+    ],
+    "records": [
+
+    ]
+  }
+}
