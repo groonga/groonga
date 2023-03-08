@@ -667,14 +667,23 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc121-unify-voiced-sound-mark-hiragana.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc121-unify-voiced-sound-mark-katakana.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc121.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-katakana-gu-small-sounds.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-remove-symbol.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-hyphen-and-prolonged-sound-mark.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-hyphen.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-kana-case-hiragana.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-kana-case-katakana.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-kana-hyphen.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-kana-prolonged-sound-mark.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-kana.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-bu-sounds.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-di-sound.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-du-small-sounds.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-du-sound.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-trailing-o.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-v-sounds.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-wo-sound.log \
+	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-zu-small-sounds.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-middle-dot.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-prolonged-sound-mark.log \
 	$(top_srcdir)/doc/source/example/reference/normalizers/normalizer-nfkc130-unify-to-romaji-complex.log \
@@ -1948,14 +1957,23 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/normalizers/normalizer-nfkc121-unify-voiced-sound-mark-hiragana.log \
 	source/example/reference/normalizers/normalizer-nfkc121-unify-voiced-sound-mark-katakana.log \
 	source/example/reference/normalizers/normalizer-nfkc121.log \
+	source/example/reference/normalizers/normalizer-nfkc130-katakana-gu-small-sounds.log \
 	source/example/reference/normalizers/normalizer-nfkc130-remove-symbol.log \
 	source/example/reference/normalizers/normalizer-nfkc130-unify-hyphen-and-prolonged-sound-mark.log \
 	source/example/reference/normalizers/normalizer-nfkc130-unify-hyphen.log \
 	source/example/reference/normalizers/normalizer-nfkc130-unify-kana-case-hiragana.log \
 	source/example/reference/normalizers/normalizer-nfkc130-unify-kana-case-katakana.log \
+	source/example/reference/normalizers/normalizer-nfkc130-unify-kana-hyphen.log \
+	source/example/reference/normalizers/normalizer-nfkc130-unify-kana-prolonged-sound-mark.log \
 	source/example/reference/normalizers/normalizer-nfkc130-unify-kana.log \
 	source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-bu-sounds.log \
+	source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-di-sound.log \
+	source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-du-small-sounds.log \
+	source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-du-sound.log \
+	source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-trailing-o.log \
 	source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-v-sounds.log \
+	source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-wo-sound.log \
+	source/example/reference/normalizers/normalizer-nfkc130-unify-katakana-zu-small-sounds.log \
 	source/example/reference/normalizers/normalizer-nfkc130-unify-middle-dot.log \
 	source/example/reference/normalizers/normalizer-nfkc130-unify-prolonged-sound-mark.log \
 	source/example/reference/normalizers/normalizer-nfkc130-unify-to-romaji-complex.log \
