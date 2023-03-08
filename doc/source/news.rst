@@ -371,6 +371,15 @@ Improvements
   In the example above, ``東京都`` is not matched as the interval is ``1``
   but ``東京京都`` is matched as the interval is ``2``.
 
+* [:doc:`reference/normalizers`] Added support for new values in the ``unify_katakana_trailing_o`` option.
+
+  We added support for normalizing the following new values in the ``unify_katakana_trailing_o`` option
+  because a vowel of those left letters is ``O``.
+
+  * ``ォオ`` -> ``ォウ``
+  * ``ョオ`` -> ``ョウ``
+  * ``ヺオ`` -> ``ヺウ``
+
 Fixes
 ^^^^^
 

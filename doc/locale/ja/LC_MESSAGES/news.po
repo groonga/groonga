@@ -190,6 +190,30 @@ msgstr ""
 "上記の例では、 ``東京都`` は距離が ``1`` なのでマッチしませんが、 ``東京京都"
 "`` は距離が ``2`` なのでマッチします。"
 
+msgid ""
+"[:doc:`reference/normalizers`] Added support for new values in the "
+"``unify_katakana_trailing_o`` option."
+msgstr ""
+"[:doc:`/reference/normalizers`] ``unify_katakana_trailing_o`` オプションで新"
+"しい値をサポートしました。"
+
+msgid ""
+"We added support for normalizing the following new values in the "
+"``unify_katakana_trailing_o`` option because a vowel of those left letters "
+"is ``O``."
+msgstr ""
+"``unify_katakana_trailing_o`` で以下の新しい値のノーマライズをサポートしまし"
+"た。これらの左側の文字の母音が ``オ`` なので、ノーマライズすべきなためです。"
+
+msgid "``ォオ`` -> ``ォウ``"
+msgstr ""
+
+msgid "``ョオ`` -> ``ョウ``"
+msgstr ""
+
+msgid "``ヺオ`` -> ``ヺウ``"
+msgstr ""
+
 msgid "Fixes"
 msgstr "修正"
 
