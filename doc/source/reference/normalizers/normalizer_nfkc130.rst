@@ -258,7 +258,7 @@ And a previous kana letter is "ン" , "ー" is normalized to "ン".
 .. normalize   'NormalizerNFKC130("unify_kana_prolonged_sound_mark", true)'   "カーキークーケーコー"   WITH_TYPES
 
 Here is an example of :ref:`normalizer-nfkc130-unify-kana-hyphen` option.
-This option enables to normalize "-" (U+2010 HYPHEN) to a vowel of a previous kana letter.
+This option enables to normalize "-" (U+002D HYPHEN-MINUS) to a vowel of a previous kana letter.
 
 If a previous kana letter is "ん" , "-" is normalized to "ん",
 And a previous kana letter is "ン" , "-" is normalized to "ン".
@@ -567,7 +567,7 @@ And a previous kana letter is "ン" , "ー" is normalized to "ン".
 
 .. versionadded:: 13.0.1
 
-This option enables to normalize "-" (U+2010 HYPHEN) to a vowel of a previous kana letter.
+This option enables to normalize "-" (U+002D HYPHEN-MINUS) to a vowel of a previous kana letter.
 
 If a previous kana letter is "ん" , "-" is normalized to "ん",
 And a previous kana letter is "ン" , "-" is normalized to "ン".
