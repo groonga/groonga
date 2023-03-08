@@ -1,6 +1,0 @@
-normalize \
-  'NormalizerNFKC100("unify_kana_hyphen", true, \
-                     "unify_hyphen", true, \
-                     "report_source_offset", true)' \
-  "あ-あ˗あ֊あ‐あ‑あ‒あ–あ⁃あ⁻あ₋あ−" \
-  WITH_CHECKS|WITH_TYPES

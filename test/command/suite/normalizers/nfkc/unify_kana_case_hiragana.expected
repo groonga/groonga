@@ -1,0 +1,40 @@
+normalize   'NormalizerNFKC("unify_kana_case", true)'   "ぁあぃいぅうぇえぉおっつゃやゅゆょよゎわゕかゖけ"   WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "ああいいううええおおつつややゆゆよよわわかかけけ",
+    "types": [
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana",
+      "hiragana"
+    ],
+    "checks": [
+
+    ]
+  }
+]

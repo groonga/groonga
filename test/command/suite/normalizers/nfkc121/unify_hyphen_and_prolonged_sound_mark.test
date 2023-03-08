@@ -1,4 +1,0 @@
-normalize \
-  'NormalizerNFKC121("unify_hyphen_and_prolonged_sound_mark", true)' \
-  "-˗֊‐‑‒–⁃⁻₋− ﹣－ ー—―─━ｰ" \
-  WITH_TYPES

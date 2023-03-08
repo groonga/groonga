@@ -1,6 +1,0 @@
-normalize \
-  'NormalizerNFKC130("unify_katakana_v_sounds", true, \
-                     "unify_kana_case", true, \
-                     "report_source_offset", true)' \
-  "ヴァヴィヴヴェヴォヴ" \
-  WITH_CHECKS|WITH_TYPES

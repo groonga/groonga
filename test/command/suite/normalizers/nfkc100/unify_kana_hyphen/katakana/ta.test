@@ -1,5 +1,0 @@
-normalize \
-  'NormalizerNFKC100("unify_kana_hyphen", true, \
-                     "report_source_offset", true)' \
-  "タ-チ-ツ-テ-ト-" \
-  WITH_CHECKS|WITH_TYPES

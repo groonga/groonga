@@ -1,4 +1,0 @@
-normalize \
-  'NormalizerNFKC121("include_removed_source_location", false)' \
-  "( あ  いうえお )" \
-  REMOVE_BLANK|WITH_CHECKS

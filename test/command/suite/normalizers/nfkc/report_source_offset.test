@@ -1,0 +1,6 @@
+#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
+normalize \
+  'NormalizerNFKC("report_source_offset", true)' \
+  "( あ  いうえお )" \
+  REMOVE_BLANK
+#@remove-substitution /NormalizerNFKC(\d*)/

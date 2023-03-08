@@ -1,0 +1,7 @@
+#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
+normalize \
+  'NormalizerNFKC("remove_blank", true, \
+                  "report_source_offset", true)' \
+  "This is a pen." \
+  WITH_CHECKS|WITH_TYPES
+#@remove-substitution /NormalizerNFKC(\d*)/

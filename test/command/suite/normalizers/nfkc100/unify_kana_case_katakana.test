@@ -1,4 +1,0 @@
-normalize \
-  'NormalizerNFKC100("unify_kana_case", true)' \
-  "ァアィイゥウェエォオッツャヤュユョヨヮワヵカヶケ" \
-  WITH_TYPES

@@ -1,4 +1,0 @@
-normalize \
-  'NormalizerNFKC121("unify_middle_dot", true)' \
-  "·ᐧ•∙⋅⸱・･" \
-  WITH_TYPES

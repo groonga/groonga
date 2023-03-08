@@ -339,6 +339,33 @@ jobs:
           if type grndb; then
             test/command_line/run-test.rb --groonga-install-prefix=$PWD/install
           fi
+      - name: "Test: command line: NFKC121"
+        run: |
+          if type grndb; then
+            test/command_line/run-test.rb \
+              --groonga-install-prefix=$PWD/install \
+              test/command/suite/normalizers/nfkc/
+          fi
+        env:
+          NFKC: "121"
+      - name: "Test: command line: NFKC130"
+        run: |
+          if type grndb; then
+            test/command_line/run-test.rb \
+              --groonga-install-prefix=$PWD/install \
+              test/command/suite/normalizers/nfkc/
+          fi
+        env:
+          NFKC: "130"
+      - name: "Test: command line: NFKC150"
+        run: |
+          if type grndb; then
+            test/command_line/run-test.rb \
+              --groonga-install-prefix=$PWD/install \
+              test/command/suite/normalizers/nfkc/
+          fi
+        env:
+          NFKC: "150"
       - name: "Test: stdio"
         run: |
           grntest \

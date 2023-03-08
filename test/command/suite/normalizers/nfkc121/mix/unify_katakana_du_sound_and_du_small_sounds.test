@@ -1,6 +1,0 @@
-normalize \
-  'NormalizerNFKC121("unify_katakana_du_sound", true, \
-                     "unify_katakana_du_small_sounds", true, \
-                     "report_source_offset", true)' \
-  "ヅァヅィヅヅェヅォ" \
-  WITH_CHECKS|WITH_TYPES

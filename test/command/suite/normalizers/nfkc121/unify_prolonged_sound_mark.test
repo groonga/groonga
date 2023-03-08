@@ -1,4 +1,0 @@
-normalize \
-  'NormalizerNFKC121("unify_prolonged_sound_mark", true)' \
-  "ー—―─━ｰ" \
-  WITH_TYPES

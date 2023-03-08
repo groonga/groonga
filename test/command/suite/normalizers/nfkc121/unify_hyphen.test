@@ -1,4 +1,0 @@
-normalize \
-  'NormalizerNFKC121("unify_hyphen", true)' \
-  "-˗֊‐‑‒–⁃⁻₋−" \
-  WITH_TYPES

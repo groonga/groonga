@@ -1,5 +1,0 @@
-normalize \
-  'NormalizerNFKC100("unify_to_romaji", true, \
-                     "report_source_offset", true)' \
-  "ぱぴぷぺぽぴゃぴゅぴょ" \
-  WITH_CHECKS|WITH_TYPES

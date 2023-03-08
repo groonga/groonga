@@ -1,0 +1,6 @@
+#@add-substitution /NormalizerNFKC(\d*)/ "NormalizerNFKC#{ENV['NFKC'] || '100'}" "NormalizerNFKC"
+normalize \
+  'NormalizerNFKC("unify_middle_dot", true)' \
+  "·ᐧ•∙⋅⸱・･" \
+  WITH_TYPES
+#@remove-substitution /NormalizerNFKC(\d*)/

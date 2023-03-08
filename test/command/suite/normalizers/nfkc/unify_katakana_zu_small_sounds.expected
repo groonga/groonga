@@ -1,0 +1,42 @@
+normalize   'NormalizerNFKC("unify_katakana_zu_small_sounds", true,                   "report_source_offset", true)'   "ズァズィズズェズォ"   WITH_CHECKS|WITH_TYPES
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  {
+    "normalized": "ザジズゼゾ",
+    "types": [
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana",
+      "katakana"
+    ],
+    "checks": [
+      6,
+      0,
+      0,
+      6,
+      0,
+      0,
+      3,
+      0,
+      0,
+      6,
+      0,
+      0,
+      6,
+      0,
+      0
+    ],
+    "offsets": [
+      0,
+      6,
+      12,
+      15,
+      21
+    ]
+  }
+]
