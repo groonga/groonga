@@ -120,7 +120,7 @@ tokenize   'TokenNgram("loose_symbol", true,               "report_source_locati
       "force_prefix": false,
       "force_prefix_search": false,
       "source_offset": 6,
-      "source_length": 6,
+      "source_length": 3,
       "source_first_character_length": 3
     },
     {
@@ -137,8 +137,8 @@ tokenize   'TokenNgram("loose_symbol", true,               "report_source_locati
       "position": 14,
       "force_prefix": false,
       "force_prefix_search": false,
-      "source_offset": 12,
-      "source_length": 6,
+      "source_offset": 9,
+      "source_length": 9,
       "source_first_character_length": 3
     },
     {

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -616,7 +616,11 @@ ngram_switch_to_loose_mode(grn_ctx *ctx,
           loose_checks += length;
         }
         if (loose_offsets) {
-          *loose_offsets = *offsets;
+          if (last_offset == 0) {
+            *loose_offsets = *offsets;
+          } else {
+            *loose_offsets = last_offset;
+          }
           loose_offsets++;
           last_offset = 0;
         }

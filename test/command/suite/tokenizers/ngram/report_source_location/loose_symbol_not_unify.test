@@ -1,0 +1,7 @@
+tokenize \
+  'TokenNgram("report_source_location", true, \
+              "loose_symbol", true, \
+              "unify_symbol", false, \
+              "unify_digit", false)' \
+  "090-1234-5678" \
+  'NormalizerNFKC100("report_source_offset", true)'
