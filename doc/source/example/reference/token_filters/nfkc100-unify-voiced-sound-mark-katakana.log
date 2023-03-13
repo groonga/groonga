@@ -1,6 +1,6 @@
 Execution example::
 
-  tokenize TokenDelimit "カガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドハバパヒビピフブプヘベペホボポ" --token_fitlers 'TokenFilterNFKC100("unify_kana_voiced_sound_mark", true)'
+  tokenize TokenDelimit "カガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドハバパヒビピフブプヘベペホボポ" --token_filters 'TokenFilterNFKC100("unify_kana_voiced_sound_mark", true)'
   # [
   #   [
   #     0, 
