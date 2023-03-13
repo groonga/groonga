@@ -1,55 +1,54 @@
 Execution example::
 
-
   tokenize   'TokenMecab("use_reading", true)'   "私は林檎を食べます。"   --token_filters 'TokenFilterNFKC100("unify_kana", true)'
   # [
   #   [
-  #     0,
-  #     1545901819.377275,
-  #     0.0003833770751953125
-  #   ],
+  #     0, 
+  #     1337566253.89858, 
+  #     0.000355720520019531
+  #   ], 
   #   [
   #     {
-  #       "value": "わたし",
-  #       "position": 0,
-  #       "force_prefix": false,
-  #       "force_prefix_search": false
-  #     },
+  #       "force_prefix_search": false, 
+  #       "position": 0, 
+  #       "force_prefix": false, 
+  #       "value": "わたし"
+  #     }, 
   #     {
-  #       "value": "は",
-  #       "position": 1,
-  #       "force_prefix": false,
-  #       "force_prefix_search": false
-  #     },
+  #       "force_prefix_search": false, 
+  #       "position": 1, 
+  #       "force_prefix": false, 
+  #       "value": "は"
+  #     }, 
   #     {
-  #       "value": "りんご",
-  #       "position": 2,
-  #       "force_prefix": false,
-  #       "force_prefix_search": false
-  #     },
+  #       "force_prefix_search": false, 
+  #       "position": 2, 
+  #       "force_prefix": false, 
+  #       "value": "りんご"
+  #     }, 
   #     {
-  #       "value": "を",
-  #       "position": 3,
-  #       "force_prefix": false,
-  #       "force_prefix_search": false
-  #     },
+  #       "force_prefix_search": false, 
+  #       "position": 3, 
+  #       "force_prefix": false, 
+  #       "value": "を"
+  #     }, 
   #     {
-  #       "value": "たべ",
-  #       "position": 4,
-  #       "force_prefix": false,
-  #       "force_prefix_search": false
-  #     },
+  #       "force_prefix_search": false, 
+  #       "position": 4, 
+  #       "force_prefix": false, 
+  #       "value": "たべ"
+  #     }, 
   #     {
-  #       "value": "ます",
-  #       "position": 5,
-  #       "force_prefix": false,
-  #       "force_prefix_search": false
-  #     },
+  #       "force_prefix_search": false, 
+  #       "position": 5, 
+  #       "force_prefix": false, 
+  #       "value": "ます"
+  #     }, 
   #     {
-  #       "value": "。",
-  #       "position": 6,
-  #       "force_prefix": false,
-  #       "force_prefix_search": false
+  #       "force_prefix_search": false, 
+  #       "position": 6, 
+  #       "force_prefix": false, 
+  #       "value": "。"
   #     }
   #   ]
   # ]
