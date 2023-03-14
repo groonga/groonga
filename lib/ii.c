@@ -8952,15 +8952,40 @@ grn_ii_column_update(grn_ctx *ctx,
 /* token_info */
 
 typedef struct {
+  /* All token cursors of the token info. If the target token is
+   * expanded (EX_* except EX_NONE), token cursors of multiple tokens
+   * may be included. */
   cursor_heap *cursors;
+  /* The number of tokens from the first token in the given query or a
+   * phrase in the given query. */
   uint32_t offset;
+  /* The number of tokens from the first token in the input. */
   int32_t pos;
+  /* The estimated size (see grn_ii_estimate_size() for estimated
+   * size) of all tokens including this token_info. */
   uint32_t size;
+  /* The number of the token info. If the target token is expanded
+   * (EX_* except EX_NONE), there may be multiple tokens in a token
+   * info. */
   int ntoken;
+  /* The current posting of the token info. */
   grn_posting *p;
+  /* The ID of phrase group that the token info belongs.
+   *
+   * This is used only for GRN_OP_*NEAR_PHRASE_PRODUCT. */
   uint32_t phrase_group_id;
+  /* The ID of phrase that the token info belongs.
+   *
+   * This is used only for GRN_OP_*NEAR_PHRASE*. */
   uint32_t phrase_id;
+  /* The number of tokens in the phrase that the token info belongs.
+   *
+   * This is used only for GRN_OP_*NEAR_PHRASE*. */
   uint32_t n_tokens_in_phrase;
+  /* Whether the token info must be the last token or not. If the
+   * token info is appeared not at the last, the query isn't matched.
+   *
+   * This is used only for GRN_OP_*NEAR_PHRASE*. */
   bool must_last;
 } token_info;
 
