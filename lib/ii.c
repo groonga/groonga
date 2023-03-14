@@ -7742,6 +7742,11 @@ grn_ii_get_chunksize(grn_ctx *ctx, grn_ii *ii, grn_id tid)
   return res;
 }
 
+/* This doesn't return the number of records that have the token. But
+ * this returns a similar number based of size in buffer. Buffer may
+ * have deleted tokens. One record may use multiple buffers. (To be
+ * confirmed.) So the estimated size may not match the number of
+ * records. */
 uint32_t
 grn_ii_estimate_size(grn_ctx *ctx, grn_ii *ii, grn_id tid)
 {
