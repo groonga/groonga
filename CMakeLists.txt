@@ -841,7 +841,7 @@ set(GRN_WITH_MESSAGE_PACK "auto"
 if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
   if(NOT DEFINED MESSAGE_PACK_FOUND)
     pkg_check_modules(MESSAGE_PACK msgpack-c)
-    if(NOT DEFINED MESSAGE_PACK_FOUND)
+    if(NOT MESSAGE_PACK_FOUND)
       pkg_check_modules(MESSAGE_PACK msgpack)
     endif()
     unset(MESSAGE_PACK_LIBS)
