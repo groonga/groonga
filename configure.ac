@@ -1302,8 +1302,8 @@ if test "x$enable_message_pack" != "xno"; then
       [message_pack_available=yes],
       [
         PKG_CHECK_MODULES([MESSAGE_PACK], [msgpack],
-        [message_pack_available=yes],
-        [message_pack_available=no])
+          [message_pack_available=yes],
+          [message_pack_available=no])
       ])
     ],
     [message_pack_vailable=no])
