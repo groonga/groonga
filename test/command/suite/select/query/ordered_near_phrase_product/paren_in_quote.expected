@@ -16,7 +16,7 @@ load --table Entries
 {"content": "a(xx]b"}
 ]
 [[0,0.0,0.0],6]
-select Entries   --match_columns content   --query '*ONPP2"([ \\\"(\\\") (] \\\")\\\")"'   --output_columns '_score, content'
+select Entries   --match_columns content   --query '*ONPP1"([ \\\"(\\\") (] \\\")\\\")"'   --output_columns '_score, content'
 [
   [
     0,

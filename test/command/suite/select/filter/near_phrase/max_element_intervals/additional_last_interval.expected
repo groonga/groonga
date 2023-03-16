@@ -32,7 +32,7 @@ select   --table Memos   --filter 'content *NP2,1,2|1 "a$ 2 c"'   --output_colum
   [
     [
       [
-        2
+        4
       ],
       [
         [
@@ -50,7 +50,15 @@ select   --table Memos   --filter 'content *NP2,1,2|1 "a$ 2 c"'   --output_colum
       ],
       [
         1,
+        "2 c x a"
+      ],
+      [
+        1,
         "2 x c a"
+      ],
+      [
+        1,
+        "2 x c x a"
       ]
     ]
   ]

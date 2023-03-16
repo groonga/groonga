@@ -16,5 +16,5 @@ load --table Entries
 ]
 
 select Entries \
-  --filter 'content *ONPP2 "([ \\\"(\\\") (] \\\")\\\")"' \
+  --filter 'content *ONPP1 "([ \\\"(\\\") (] \\\")\\\")"' \
   --output_columns '_score, content'

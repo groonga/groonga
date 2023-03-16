@@ -14,12 +14,14 @@ load --table Memos
 {"content": "2 3 x x x b"},
 {"content": "2 x x 3 x b"},
 {"content": "2 x x c x b"},
+{"content": "2 x x x c x b"},
 {"content": "2 x 3 x a"},
 {"content": "2 x c x a"},
+{"content": "2 x c x x a"},
 {"content": "2 x 3 a"},
 {"content": "2 x c a"}
 ]
-[[0,0.0,0.0],10]
+[[0,0.0,0.0],12]
 select   --table Memos   --filter 'content *NPP-1,0,2|1 "(a b) (1 2) (c 3)"'   --output_columns _score,content
 [
   [
@@ -30,7 +32,7 @@ select   --table Memos   --filter 'content *NPP-1,0,2|1 "(a b) (1 2) (c 3)"'   -
   [
     [
       [
-        2
+        6
       ],
       [
         [
@@ -41,6 +43,22 @@ select   --table Memos   --filter 'content *NPP-1,0,2|1 "(a b) (1 2) (c 3)"'   -
           "content",
           "ShortText"
         ]
+      ],
+      [
+        1,
+        "2 x x 3 x b"
+      ],
+      [
+        1,
+        "2 x x c x b"
+      ],
+      [
+        1,
+        "2 x 3 x a"
+      ],
+      [
+        1,
+        "2 x c x a"
       ],
       [
         1,

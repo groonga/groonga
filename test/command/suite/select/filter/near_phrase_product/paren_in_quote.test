@@ -14,5 +14,5 @@ load --table Entries
 ]
 
 select Entries \
-  --filter 'content *NPP2 "([ \\\"(\\\") (] \\\")\\\")"' \
+  --filter 'content *NPP1 "([ \\\"(\\\") (] \\\")\\\")"' \
   --output_columns '_score, content'

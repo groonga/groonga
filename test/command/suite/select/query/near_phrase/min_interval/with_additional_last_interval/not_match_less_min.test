@@ -9,10 +9,10 @@ column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 
 load --table Entries
 [
-{"content": "abc123456789def"}
+{"content": "abc12345678901def"}
 ]
 
 select Entries \
   --match_columns content \
-  --query '*NP12,1,,11"abc 9de$"' \
+  --query '*NP12,1,,11"abc 1de$"' \
   --output_columns '_score, content'

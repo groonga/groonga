@@ -10264,9 +10264,25 @@ token_info_build_near_phrase(grn_ctx *ctx,
       data->token_infos[data->n_token_infos - 1]->must_last = must_last;
     }
     must_last = false;
+    uint32_t n_tokens_in_phrase = 0;
+    {
+      grn_token_cursor *token_cursor =
+        grn_ii_select_data_open_token_cursor(ctx,
+                                             data,
+                                             phrase,
+                                             phrase_len,
+                                             GRN_TOKENIZE_ONLY);
+      if (token_cursor) {
+        while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
+          grn_token_cursor_next(ctx, token_cursor);
+          n_tokens_in_phrase++;
+        }
+        grn_token_cursor_close(ctx, token_cursor);
+      }
+    }
     uint32_t i;
     for (i = n_before; i < data->n_token_infos; i++) {
-      data->token_infos[i]->n_tokens_in_phrase = data->n_token_infos - n_before;
+      data->token_infos[i]->n_tokens_in_phrase = n_tokens_in_phrase;
       data->token_infos[i]->phrase_group_id = phrase_group_id;
       data->token_infos[i]->phrase_id = phrase_id;
     }
@@ -11041,14 +11057,19 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
       return false;
     }
     uint32_t i;
-    uint32_t i_token_info = 0;
     for (i = 0; i < data->n_phrase_groups; i++) {
+      uint32_t i_token_info;
+      uint32_t current_phrase_id = (uint32_t)-1;
       uint32_t n_phrases = 0;
-      for (;
-           i_token_info < data->n_token_infos &&
-             data->token_infos[i_token_info]->phrase_group_id == i;
-           i_token_info += data->token_infos[i_token_info]->n_tokens_in_phrase) {
-        n_phrases++;
+      for (i_token_info = 0;
+           i_token_info < data->n_token_infos;
+           i_token_info++) {
+        const token_info *token_info = data->token_infos[i_token_info];
+        if (token_info->phrase_id != current_phrase_id &&
+            data->token_infos[i_token_info]->phrase_group_id == i) {
+          n_phrases++;
+        }
+        current_phrase_id = token_info->phrase_id;
       }
       data->phrase_groups[i].n_phrases = n_phrases;
       data->phrase_groups[i].btree = bt_open(ctx, n_phrases);
@@ -11803,10 +11824,11 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
     int32_t previous_pos = data->check_element_intervals_btree->min->pos;
     for (i = 1; i < n; i++) {
       bt_pop(data->check_element_intervals_btree);
-      int32_t pos = data->check_element_intervals_btree->min->pos;
+      token_info *min = data->check_element_intervals_btree->min;
+      int32_t pos = min->pos;
       int32_t max_element_interval =
         GRN_INT32_VALUE_AT(data->max_element_intervals, i - 1);
-      int32_t interval = pos - previous_pos;
+      int32_t interval = pos - previous_pos - min->n_tokens_in_phrase;
       if (max_element_interval >= 0 && interval > max_element_interval) {
         return false;
       }
@@ -11829,14 +11851,15 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
     for (i_token_info = 1, i_interval = 0;
          i_token_info < n_token_infos && i_interval < n_intervals;
          i_token_info++) {
-      if (data->token_infos[i_token_info]->phrase_id == previous_phrase_id) {
+      token_info *token_info = data->token_infos[i_token_info];
+      if (token_info->phrase_id == previous_phrase_id) {
         continue;
       }
-      previous_phrase_id = data->token_infos[i_token_info]->phrase_id;
-      int32_t pos = data->token_infos[i_token_info]->pos;
+      previous_phrase_id = token_info->phrase_id;
+      int32_t pos = token_info->pos;
       int32_t max_element_interval =
         GRN_INT32_VALUE_AT(data->max_element_intervals, i_interval);
-      int32_t interval = pos - previous_pos;
+      int32_t interval = pos - previous_pos - token_info->n_tokens_in_phrase;
       if (max_element_interval >= 0 && interval > max_element_interval) {
         return false;
       }
@@ -11855,10 +11878,11 @@ grn_ii_select_data_check_near_element_intervals(grn_ctx *ctx,
     }
     int32_t previous_pos = data->phrase_groups[0].btree->min->pos;
     for (i = 1; i < n; i++) {
-      int32_t pos = data->phrase_groups[i].btree->min->pos;
+      token_info *min = data->phrase_groups[i].btree->min;
+      int32_t pos = min->pos;
       int32_t max_element_interval =
         GRN_INT32_VALUE_AT(data->max_element_intervals, i - 1);
-      int32_t interval = pos - previous_pos;
+      int32_t interval = pos - previous_pos - min->n_tokens_in_phrase;
       if (max_element_interval >= 0 && interval > max_element_interval) {
         return false;
       }
@@ -12074,7 +12098,7 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
         data->mode == GRN_OP_ORDERED_NEAR_PHRASE ||
         data->mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
         data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
-      interval -= (data->token_info->n_tokens_in_phrase - 1);
+      interval -= data->token_info->n_tokens_in_phrase;
     }
     bool matched = false;
     if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {

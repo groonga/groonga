@@ -13,5 +13,5 @@ load --table Entries
 ]
 
 select Entries \
-  --filter 'content *NP12,1,,11"abc def$"' \
+  --filter 'content *NP10,1,,9"abc def$"' \
   --output_columns '_score, content'

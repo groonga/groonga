@@ -17,5 +17,5 @@ load --table Entries
 
 select Entries \
   --match_columns content \
-  --query '*ONPP2"([ \\\\() (] \\\\))"' \
+  --query '*ONPP1"([ \\\\() (] \\\\))"' \
   --output_columns '_score, content'

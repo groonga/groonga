@@ -14,7 +14,7 @@ load --table Entries
 {"content": "x y z"}
 ]
 [[0,0.0,0.0],4]
-select Entries   --match_columns content   --query '*NPP2"(a b c) (1 2 3)" *NPP2"(7 8 9) (x y z)"'   --output_columns '_score, content'
+select Entries   --match_columns content   --query '*NPP1"(a b c) (1 2 3)" *NPP1"(7 8 9) (x y z)"'   --output_columns '_score, content'
 [
   [
     0,

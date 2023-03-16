@@ -8,7 +8,7 @@ column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 [[0,0.0,0.0],true]
 load --table Entries
 [
-{"content": "abc123456789def"}
+{"content": "abc12345678901def"}
 ]
 [[0,0.0,0.0],1]
 select Entries   --match_columns content   --query '*ONP11,0,,10"abc ef"'   --output_columns '_score, content'

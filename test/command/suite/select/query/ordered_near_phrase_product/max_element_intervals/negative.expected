@@ -30,7 +30,7 @@ select   --table Memos   --match_columns content   --query '*ONPP-1,0,-1|2"(a b)
   [
     [
       [
-        6
+        8
       ],
       [
         [
@@ -41,6 +41,14 @@ select   --table Memos   --match_columns content   --query '*ONPP-1,0,-1|2"(a b)
           "content",
           "ShortText"
         ]
+      ],
+      [
+        1,
+        "a 1 x x c"
+      ],
+      [
+        1,
+        "a 1 x x 3"
       ],
       [
         1,

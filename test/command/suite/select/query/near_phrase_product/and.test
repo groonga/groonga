@@ -16,5 +16,5 @@ load --table Entries
 
 select Entries \
   --match_columns content \
-  --query '*NPP2"(a b c) (1 2 3)" *NPP2"(7 8 9) (x y z)"' \
+  --query '*NPP1"(a b c) (1 2 3)" *NPP1"(7 8 9) (x y z)"' \
   --output_columns '_score, content'

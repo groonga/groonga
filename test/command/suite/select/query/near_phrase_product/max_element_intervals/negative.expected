@@ -14,12 +14,14 @@ load --table Memos
 {"content": "2 3 x x x b"},
 {"content": "2 x x 3 x b"},
 {"content": "2 x x c x b"},
+{"content": "2 x x c x x b"},
+{"content": "2 x x c x x x b"},
 {"content": "2 x 3 x a"},
 {"content": "2 x c x a"},
 {"content": "2 x 3 a"},
 {"content": "2 x c a"}
 ]
-[[0,0.0,0.0],10]
+[[0,0.0,0.0],12]
 select   --table Memos   --match_columns content   --query '*NPP-1,0,-1|2"(a b) (1 2) (c 3)"'   --output_columns _score,content
 [
   [
@@ -30,7 +32,7 @@ select   --table Memos   --match_columns content   --query '*NPP-1,0,-1|2"(a b) 
   [
     [
       [
-        6
+        9
       ],
       [
         [
@@ -44,11 +46,23 @@ select   --table Memos   --match_columns content   --query '*NPP-1,0,-1|2"(a b) 
       ],
       [
         1,
+        "1 c x x a"
+      ],
+      [
+        1,
+        "1 3 x x a"
+      ],
+      [
+        1,
         "2 x x 3 x b"
       ],
       [
         1,
         "2 x x c x b"
+      ],
+      [
+        1,
+        "2 x x c x x b"
       ],
       [
         1,

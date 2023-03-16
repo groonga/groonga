@@ -16,7 +16,7 @@ load --table Entries
 {"content": "3xabx"}
 ]
 [[0,0.0,0.0],6]
-select Entries   --match_columns content   --query '*ONPP2"(a b ab) (1 2)"'   --output_columns '_score, content'
+select Entries   --match_columns content   --query '*ONPP1"(a b ab) (1 2)"'   --output_columns '_score, content'
 [
   [
     0,

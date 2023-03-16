@@ -13,8 +13,8 @@ load --table Entries
 {"content": "abcdef"},
 {"content": "defXYZabc"},
 {"content": "XYZabc"},
-{"content": "abc123456789def"},
-{"content": "abc12345678def"},
+{"content": "abc12345678901def"},
+{"content": "abc1234567890def"},
 {"content": "abc1de2def"}
 ]
 [[0,0.0,0.0],8]
@@ -54,7 +54,7 @@ select Entries --filter 'content *NP "abc def"' --output_columns '_score, conten
       ],
       [
         1,
-        "abc12345678def"
+        "abc1234567890def"
       ],
       [
         1,

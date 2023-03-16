@@ -8,8 +8,8 @@ column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 [[0,0.0,0.0],true]
 load --table Entries
 [
-{"content": "abc123456789def"}
+{"content": "abc12345678901def"}
 ]
 [[0,0.0,0.0],1]
-select Entries   --match_columns content   --query '*ONP12,0,,11"abc 9de"'   --output_columns '_score, content'
+select Entries   --match_columns content   --query '*ONP12,0,,11"abc 1de"'   --output_columns '_score, content'
 [[0,0.0,0.0],[[[0],[["_score","Int32"],["content","Text"]]]]]

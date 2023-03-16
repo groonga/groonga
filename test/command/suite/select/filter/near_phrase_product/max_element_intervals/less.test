@@ -14,6 +14,8 @@ load --table Memos
 {"content": "2 3 x x x b"},
 {"content": "2 x x 3 x b"},
 {"content": "2 x x c x b"},
+{"content": "2 x x x 3 x b"},
+{"content": "2 x x x c x b"},
 {"content": "2 x 3 x a"},
 {"content": "2 x c x a"},
 {"content": "2 x 3 a"},

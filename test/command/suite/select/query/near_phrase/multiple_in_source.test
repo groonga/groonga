@@ -8,8 +8,8 @@ column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 
 load --table Entries
 [
-{"content": "a x a x b x x"},
-{"content": "a x x b x"}
+{"content": "a x a x x b x x"},
+{"content": "a x x x b x"}
 ]
 
 select Entries \

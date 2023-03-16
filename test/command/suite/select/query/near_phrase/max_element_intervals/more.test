@@ -19,7 +19,8 @@ load --table Memos
 {"content": "2 x x 3 a"},
 {"content": "2 x x c a"},
 {"content": "2 x x c x a"},
-{"content": "2 x x c x x a"}
+{"content": "2 x x c x x a"},
+{"content": "2 x x x c a"}
 ]
 
 select \

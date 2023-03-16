@@ -14,12 +14,14 @@ load --table Memos
 {"content": "b 2 x x x 3"},
 {"content": "b x x 2 x 3"},
 {"content": "b x x 2 x c"},
+{"content": "b x x 2 x x c"},
+{"content": "b x x x 2 x c"},
 {"content": "a x 2 x 3"},
 {"content": "a x 2 x c"},
 {"content": "a x 2 3"},
 {"content": "a x 2 c"}
 ]
-[[0,0.0,0.0],10]
+[[0,0.0,0.0],12]
 select   --table Memos   --match_columns content   --query '*ONPP-1,0,2|1|0"(a b) (1 2) (c 3)"'   --output_columns _score,content
 [
   [
@@ -30,7 +32,7 @@ select   --table Memos   --match_columns content   --query '*ONPP-1,0,2|1|0"(a b
   [
     [
       [
-        2
+        6
       ],
       [
         [
@@ -41,6 +43,22 @@ select   --table Memos   --match_columns content   --query '*ONPP-1,0,2|1|0"(a b
           "content",
           "ShortText"
         ]
+      ],
+      [
+        1,
+        "b x x 2 x 3"
+      ],
+      [
+        1,
+        "b x x 2 x c"
+      ],
+      [
+        1,
+        "a x 2 x 3"
+      ],
+      [
+        1,
+        "a x 2 x c"
       ],
       [
         1,

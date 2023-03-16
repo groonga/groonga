@@ -9,8 +9,8 @@ column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
 load --table Memos
 [
 {"_key":"alphabets1", "content": "a b c d e . g"},
-{"_key":"alphabets2", "content": "a b c d e f g . h"},
-{"_key":"alphabets3", "content": "a b c d e f x g . h"}
+{"_key":"alphabets2", "content": "a b c d e f x g . h"},
+{"_key":"alphabets3", "content": "a b c d e f x x g . h"}
 ]
 [[0,0.0,0.0],3]
 select   --table Memos   --match_columns content   --query '*ONP3"e g ."'   --output_columns _score,_key,content
@@ -42,7 +42,7 @@ select   --table Memos   --match_columns content   --query '*ONP3"e g ."'   --ou
       [
         1,
         "alphabets2",
-        "a b c d e f g . h"
+        "a b c d e f x g . h"
       ]
     ]
   ]

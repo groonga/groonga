@@ -16,5 +16,5 @@ load --table Entries
 ]
 
 select Entries \
-  --filter 'content *ONPP2 "(a b ab) (1 2)"' \
+  --filter 'content *ONPP1 "(a b ab) (1 2)"' \
   --output_columns '_score, content'

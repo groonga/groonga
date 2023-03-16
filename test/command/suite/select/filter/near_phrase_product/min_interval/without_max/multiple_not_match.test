@@ -13,5 +13,5 @@ load --table Entries
 ]
 
 select Entries \
-  --filter 'content *NPP-1"(abc bcd) (def)" && content *NPP-1,0,,12"(abc bcd) (def)"' \
+  --filter 'content *NPP-1"(abc bcd) (def)" && content *NPP-1,0,,10"(abc bcd) (def)"' \
   --output_columns '_score, content'

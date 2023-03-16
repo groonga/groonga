@@ -9,15 +9,8 @@ column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 
 load --table Entries
 [
-{"content": "abc1def12ghi"},
-{"content": "abc1def123ghi"},
-{"content": "abc1def1234ghi"},
-{"content": "abc12def12ghi"},
-{"content": "abc12def123ghi"},
-{"content": "abc12def1234ghi"},
-{"content": "abc123def12ghi"},
-{"content": "abc123def123ghi"},
-{"content": "abc123def1234ghi"}
+{"content": "abc12345def12ghi"},
+{"content": "abc123456def12ghi"}
 ]
 
 select Entries \

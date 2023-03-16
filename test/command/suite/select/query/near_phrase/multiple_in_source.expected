@@ -8,8 +8,8 @@ column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 [[0,0.0,0.0],true]
 load --table Entries
 [
-{"content": "a x a x b x x"},
-{"content": "a x x b x"}
+{"content": "a x a x x b x x"},
+{"content": "a x x x b x"}
 ]
 [[0,0.0,0.0],2]
 select Entries   --match_columns content   --query '*NP2"a b"'   --output_columns '_score, content'
@@ -36,7 +36,7 @@ select Entries   --match_columns content   --query '*NP2"a b"'   --output_column
       ],
       [
         1,
-        "a x a x b x x"
+        "a x a x x b x x"
       ]
     ]
   ]

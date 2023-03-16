@@ -14,5 +14,5 @@ load --table Entries
 
 select Entries \
   --match_columns content \
-  --query '*ONPP-1,0,,12"(abc bcd) (def)"' \
+  --query '*ONPP-1,0,,10"(abc bcd) (def)"' \
   --output_columns '_score, content'

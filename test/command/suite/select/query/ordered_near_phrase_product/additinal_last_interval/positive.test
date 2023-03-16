@@ -23,5 +23,5 @@ load --table Memos
 select \
   --table Memos \
   --match_columns content \
-  --query '*ONPP3,1"(a b) (1 2) (c 3)"' \
+  --query '*ONPP2,1"(a b) (1 2) (c 3)"' \
   --output_columns _score,content

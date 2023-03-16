@@ -14,10 +14,16 @@ load --table Memos
 {"content": "b 2 x x x 3"},
 {"content": "b x x 2 x 3"},
 {"content": "b x x 2 x c"},
+{"content": "b x x 2 x x c"},
+{"content": "b x x x 2 x c"},
 {"content": "a x 2 x 3"},
 {"content": "a x 2 x c"},
 {"content": "a x 2 3"},
-{"content": "a x 2 c"}
+{"content": "a x 2 c"},
+{"content": "a x x 2 c"},
+{"content": "a x x 2 x c"},
+{"content": "a x x 2 x x c"},
+{"content": "a x x x 2 c"}
 ]
 
 select \

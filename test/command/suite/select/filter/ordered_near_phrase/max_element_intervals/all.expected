@@ -19,9 +19,10 @@ load --table Memos
 {"content": "a x 2 x x c"},
 {"content": "a x x 2 x 3"},
 {"content": "a x x 2 x c"},
-{"content": "a x x 2 x x c"}
+{"content": "a x x 2 x x c"},
+{"content": "a x x x 2 x 3"}
 ]
-[[0,0.0,0.0],12]
+[[0,0.0,0.0],13]
 select   --table Memos   --filter 'content *ONP-1,0,2|1 "a 2 c"'   --output_columns _score,content
 [
   [
@@ -32,7 +33,7 @@ select   --table Memos   --filter 'content *ONP-1,0,2|1 "a 2 c"'   --output_colu
   [
     [
       [
-        2
+        6
       ],
       [
         [
@@ -50,7 +51,23 @@ select   --table Memos   --filter 'content *ONP-1,0,2|1 "a 2 c"'   --output_colu
       ],
       [
         1,
+        "a 2 x c"
+      ],
+      [
+        1,
         "a x 2 c"
+      ],
+      [
+        1,
+        "a x 2 x c"
+      ],
+      [
+        1,
+        "a x 2 x c"
+      ],
+      [
+        1,
+        "a x x 2 x c"
       ]
     ]
   ]

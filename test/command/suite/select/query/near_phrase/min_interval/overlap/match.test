@@ -14,5 +14,5 @@ load --table Entries
 
 select Entries \
   --match_columns content \
-  --query '*NP-1,0,,-6"abc123456 bc1234567"' \
+  --query '*NP-1,0,,-8"abc123456 bc1234567"' \
   --output_columns '_score, content'

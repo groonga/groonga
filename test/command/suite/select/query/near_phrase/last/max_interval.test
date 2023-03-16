@@ -9,8 +9,8 @@ column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
 load --table Memos
 [
 {"_key":"alphabets1", "content": "a b c d e . g"},
-{"_key":"alphabets2", "content": "a b c d e f g . h"},
-{"_key":"alphabets3", "content": "a b c d e f x g . h"}
+{"_key":"alphabets2", "content": "a b c d e f g h . i"},
+{"_key":"alphabets3", "content": "a b c d e f x g h . i"}
 ]
 
 select \

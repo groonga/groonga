@@ -8,7 +8,7 @@ column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 [[0,0.0,0.0],true]
 load --table Entries
 [
-{"content": "abc123456789defg"},
+{"content": "abc1234567890defg"},
 {"content": "dededede"}
 ]
 [[0,0.0,0.0],2]
@@ -36,7 +36,7 @@ select Entries   --match_columns content   --query '*ONP10,1"abc defg"'   --outp
       ],
       [
         1,
-        "abc123456789defg"
+        "abc1234567890defg"
       ]
     ]
   ]
