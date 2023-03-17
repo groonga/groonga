@@ -283,7 +283,7 @@ Improvements
 
 * [:ref:`query-syntax-near-search-condition`][:ref:`script-syntax-near-search-operator`]
   Added a new option ``${MIN_INTERVAL}`` for near-search family.
-  
+
   We can now specifiy the minimum interval between phrases (words) with ``${MIN_INTERVAL}``.
   The interval between phrases (words) must be at least this value.
 
@@ -303,7 +303,7 @@ Improvements
   This option is useful when we want to ignore overlapped phrases.
 
   The interval for ``*NP`` is culculated as ``interval between the top tokens of phrases - tokens in the left phrase + 1``.
-  
+
   When a tokenizer is Bigram, for exmaple, ``東京`` has one token ``東京``, also ``京都`` has one token ``京都``.
 
   Considering ``東京都`` as a target value of ``*NP "東京 京都"``:
@@ -379,6 +379,11 @@ Improvements
   * ``ォオ`` -> ``ォウ``
   * ``ョオ`` -> ``ョウ``
   * ``ヺオ`` -> ``ヺウ``
+
+* Add support for MessagePack v6.0.0. [GitHub#1536][Reported by Carlo Cabrera]
+
+  Groonga can not found MessagePack v6.0.0 or later when we execute configure or cmake until now.
+  Groonga can found MessagePack since this release even if the version of MessagePack is v6.0.0 or later.
 
 Fixes
 ^^^^^
@@ -587,6 +592,10 @@ Fixes
      ``fg`` is the last token of ``defg$``. ``abc123456789defg`` contains one ``fg`` and ``de``, and ``dededede`` contains 4 ``de``.
 
      So, the size of ``fg`` is 1 and ``de`` is 5.
+
+* [:ref:`query-syntax-near-phrase-search-condition`] Fixed interval calculation.
+
+* [:doc:`/reference/functions/highlight_html`] Fixed a bug that highlight position may move over when we use `loose_symbol=true`.
 
 .. _release-13-0-0:
 
