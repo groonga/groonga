@@ -5,6 +5,606 @@
 News
 ====
 
+.. _release-13-0-1:
+
+Release 13.0.1 - 2023-03-24
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/functions/highlight_html`] Added support for prefix search.
+
+  We can now use prefix search in ``highlight_html``.
+
+  Note that highlight keyword is also highlighted not only at the first but also in the middle or at the end.
+
+  .. code-block::
+
+     table_create Tags TABLE_NO_KEY
+     column_create Tags name COLUMN_SCALAR ShortText
+
+     table_create Terms TABLE_PAT_KEY ShortText \
+       --normalizer 'NormalizerNFKC150'
+     column_create Terms tags_name COLUMN_INDEX Tags name
+
+     load --table Tags
+     [
+     {"name": "Groonga"}
+     ]
+
+     select Tags \
+       --query "name:^g" \
+       --output_columns "highlight_html(name)"
+     #[
+     #  [
+     #    0,
+     #    0.0,
+     #    0.0
+     #  ],
+     #  [
+     #    [
+     #      [
+     #        1
+     #      ],
+     #      [
+     #        [
+     #          "highlight_html",
+     #          null
+     #        ]
+     #      ],
+     #      [
+     #        "<span class=\"keyword\">G</span>roon<span class=\"keyword\">g</span>a"
+     #      ]
+     #    ]
+     #  ]
+     #]
+
+* [:doc:`reference/normalizers`] Added new options for NormalizerNFKC*.
+
+  * ``unify_kana_prolonged_sound_mark``
+
+    We can now normalize prolonged_sound_mark with this option as below.
+
+    .. code-block::
+
+       ァー -> ァア, アー -> アア, ヵー -> ヵア, カー -> カア, ガー -> ガア, サー -> サア, ザー -> ザア,
+       ター -> タア, ダー -> ダア, ナー -> ナア, ハー -> ハア, バー -> バア, パー -> パア, マー -> マア,
+       ャー -> ャア, ヤー -> ヤア, ラー -> ラア, ヮー -> ヮア, ワー -> ワア, ヷー -> ヷア,
+
+       ィー -> ィイ, イー -> イイ, キー -> キイ, ギー -> ギイ, シー -> シイ, ジー -> ジイ, チー -> チイ,
+       ヂー -> ヂイ, ニー -> ニイ, ヒー -> ヒイ, ビー -> ビイ, ピー -> ピイ, ミー -> ミイ, リー -> リイ,
+       ヰー -> ヰイ, ヸー -> ヸイ,
+
+       ゥー -> ゥウ, ウー -> ウウ, クー -> クウ, グー -> グウ, スー -> スウ, ズー -> ズウ, ツー -> ツウ,
+       ヅー -> ヅウ, ヌー -> ヌウ, フー -> フウ, ブー -> ブウ, プー -> プウ, ムー -> ムウ, ュー -> ュウ,
+       ユー -> ユウ, ルー -> ルウ, ヱー -> ヱウ, ヴー -> ヴウ,
+
+       ェー -> ェエ, エー -> エエ, ヶー -> ヶエ, ケー -> ケエ, ゲー -> ゲエ, セー -> セエ, ゼー -> ゼエ,
+       テー -> テエ, デー -> デエ, ネー -> ネエ, ヘー -> ヘエ, ベー -> ベエ, ペー -> ペエ, メー -> メエ,
+       レー -> レエ, ヹー -> ヹエ,
+
+       ォー -> ォオ, オー -> オオ, コー -> コオ, ゴー -> ゴオ, ソー -> ソオ, ゾー -> ゾオ, トー -> トオ,
+       ドー -> ドオ, ノー -> ノオ, ホー -> ホオ, ボー -> ボオ, ポー -> ポオ, モー -> モオ, ョー -> ョオ,
+       ヨー -> ヨオ, ロー -> ロオ, ヲー -> ヲオ, ヺー -> ヺオ,
+
+       ンー -> ンン
+
+       ぁー -> ぁあ, あー -> ああ, ゕー -> ゕあ, かー -> かあ, がー -> があ, さー -> さあ, ざー -> ざあ,
+       たー -> たあ, だー -> だあ, なー -> なあ, はー -> はあ, ばー -> ばあ, ぱー -> ぱあ, まー -> まあ,
+       ゃー -> ゃあ, やー -> やあ, らー -> らあ, ゎー -> ゎあ, わー -> わあ
+
+       ぃー -> ぃい, いー -> いい, きー -> きい, ぎー -> ぎい, しー -> しい, じー -> じい, ちー -> ちい,
+       ぢー -> ぢい, にー -> にい, ひー -> ひい, びー -> びい, ぴー -> ぴい, みー -> みい, りー -> りい,
+       ゐー -> ゐい
+
+       ぅー -> ぅう, うー -> うう, くー -> くう, ぐー -> ぐう, すー -> すう, ずー -> ずう, つー -> つう,
+       づー -> づう, ぬー -> ぬう, ふー -> ふう, ぶー -> ぶう, ぷー -> ぷう, むー -> むう, ゅー -> ゅう,
+       ゆー -> ゆう, るー -> るう, ゑー -> ゑう, ゔー -> ゔう
+
+       ぇー -> ぇえ, えー -> ええ, ゖー -> ゖえ, けー -> けえ, げー -> げえ, せー -> せえ, ぜー -> ぜえ,
+       てー -> てえ, でー -> でえ, ねー -> ねえ, へー -> へえ, べー -> べえ, ぺー -> ぺえ, めー -> めえ,
+       れー -> れえ
+
+       ぉー -> ぉお, おー -> おお, こー -> こお, ごー -> ごお, そー -> そお, ぞー -> ぞお, とー -> とお,
+       どー -> どお, のー -> のお, ほー -> ほお, ぼー -> ぼお, ぽー -> ぽお, もー -> もお, ょー -> ょお,
+       よー -> よお, ろー -> ろお, をー -> をお
+
+       んー -> んん
+
+    Here is an example of ``unify_kana_prolonged_sound_mark``.
+
+    .. code-block::
+
+       table_create --name Animals --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Animals --name name --type ShortText
+       column_create --table Animals --name sound --type ShortText
+       load --table Animals
+       [
+       {"_key":"1","name":"羊", "sound":"メーメー"},
+       ]
+
+       table_create \
+         --name idx_animals_sound \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_kana_prolonged_sound_mark", true)'
+       column_create --table idx_animals_sound --name animals_sound --flags COLUMN_INDEX|WITH_POSITION --type Animals --source sound
+
+       select --table Animals --query sound:@メエメエ
+       #[
+       #  [
+       #    0,
+       #    1677829950.652696,
+       #    0.01971983909606934
+       #  ],
+       #  [
+       #    [
+       #      [
+       #        1
+       #      ],
+       #      [
+       #        [
+       #          "_id",
+       #          "UInt32"
+       #        ],
+       #        [
+       #          "_key",
+       #          "ShortText"
+       #        ],
+       #        [
+       #          "name",
+       #          "ShortText"
+       #        ],
+       #        [
+       #          "sound",
+       #          "ShortText"
+       #        ]
+       #      ],
+       #      [
+       #        1,
+       #        "1",
+       #        "羊",
+       #        "メーメー"
+       #      ]
+       #    ]
+       #  ]
+       #]
+
+  * ``unify_kana_hyphen``
+
+    We can now normalize hyphen with this option as below.
+
+    .. code-block::
+
+       ァ- -> ァア, ア- -> アア, ヵ- -> ヵア, カ- -> カア, ガ- -> ガア, サ- -> サア, ザ- -> ザア,
+       タ- -> タア, ダ- -> ダア, ナ- -> ナア, ハ- -> ハア, バ- -> バア, パ- -> パア, マ- -> マア,
+       ャ- -> ャア, ヤ- -> ヤア, ラ- -> ラア, ヮ- -> ヮア, ワ- -> ワア, ヷ- -> ヷア,
+
+       ィ- -> ィイ, イ- -> イイ, キ- -> キイ, ギ- -> ギイ, シ- -> シイ, ジ- -> ジイ, チ- -> チイ,
+       ヂ- -> ヂイ, ニ- -> ニイ, ヒ- -> ヒイ, ビ- -> ビイ, ピ- -> ピイ, ミ- -> ミイ, リ- -> リイ,
+       ヰ- -> ヰイ, ヸ- -> ヸイ,
+
+       ゥ- -> ゥウ, ウ- -> ウウ, ク- -> クウ, グ- -> グウ, ス- -> スウ, ズ- -> ズウ, ツ- -> ツウ,
+       ヅ- -> ヅウ, ヌ- -> ヌウ, フ- -> フウ, ブ- -> ブウ, プ- -> プウ, ム- -> ムウ, ュ- -> ュウ,
+       ユ- -> ユウ, ル- -> ルウ, ヱ- -> ヱウ, ヴ- -> ヴウ,
+
+       ェ- -> ェエ, エ- -> エエ, ヶ- -> ヶエ, ケ- -> ケエ, ゲ- -> ゲエ, セ- -> セエ, ゼ- -> ゼエ,
+       テ- -> テエ, デ- -> デエ, ネ- -> ネエ, ヘ- -> ヘエ, ベ- -> ベエ, ペ- -> ペエ, メ- -> メエ,
+       レ- -> レエ, ヹ- -> ヹエ,
+
+       ォ- -> ォオ, オ- -> オオ, コ- -> コオ, ゴ- -> ゴオ, ソ- -> ソオ, ゾ- -> ゾオ, ト- -> トオ,
+       ド- -> ドオ, ノ- -> ノオ, ホ- -> ホオ, ボ- -> ボオ, ポ- -> ポオ, モ- -> モオ, ョ- -> ョオ,
+       ヨ- -> ヨオ, ロ- -> ロオ, ヲ- -> ヲオ, ヺ- -> ヺオ,
+
+       ン- -> ンン
+
+       ぁ- -> ぁあ, あ- -> ああ, ゕ- -> ゕあ, か- -> かあ, が- -> があ, さ- -> さあ, ざ- -> ざあ,
+       た- -> たあ, だ- -> だあ, な- -> なあ, は- -> はあ, ば- -> ばあ, ぱ- -> ぱあ, ま- -> まあ,
+       ゃ- -> ゃあ, や- -> やあ, ら- -> らあ, ゎ- -> ゎあ, わ- -> わあ
+
+       ぃ- -> ぃい, い- -> いい, き- -> きい, ぎ- -> ぎい, し- -> しい, じ- -> じい, ち- -> ちい,
+       ぢ- -> ぢい, に- -> にい, ひ- -> ひい, び- -> びい, ぴ- -> ぴい, み- -> みい, り- -> りい,
+       ゐ- -> ゐい
+
+       ぅ- -> ぅう, う- -> うう, く- -> くう, ぐ- -> ぐう, す- -> すう, ず- -> ずう, つ- -> つう,
+       づ- -> づう, ぬ- -> ぬう, ふ- -> ふう, ぶ- -> ぶう, ぷ- -> ぷう, む- -> むう, ゅ- -> ゅう,
+       ゆ- -> ゆう, る- -> るう, ゑ- -> ゑう, ゔ- -> ゔう
+
+       ぇ- -> ぇえ, え- -> ええ, ゖ- -> ゖえ, け- -> けえ, げ- -> げえ, せ- -> せえ, ぜ- -> ぜえ,
+       て- -> てえ, で- -> でえ, ね- -> ねえ, へ- -> へえ, べ- -> べえ, ぺ- -> ぺえ, め- -> めえ,
+       れ- -> れえ
+
+       ぉ- -> ぉお, お- -> おお, こ- -> こお, ご- -> ごお, そ- -> そお, ぞ- -> ぞお, と- -> とお,
+       ど- -> どお, の- -> のお, ほ- -> ほお, ぼ- -> ぼお, ぽ- -> ぽお, も- -> もお, ょ- -> ょお,
+       よ- -> よお, ろ- -> ろお, を- -> をお
+
+       ん- -> んん
+
+    Here is an example of ``unify_kana_hyphen``.
+
+    .. code-block::
+
+       table_create --name Animals --flags TABLE_HASH_KEY --key_type ShortText
+       column_create --table Animals --name name --type ShortText
+       column_create --table Animals --name sound --type ShortText
+       load --table Animals
+       [
+       {"_key":"1","name":"羊", "sound":"メ-メ-"},
+       ]
+
+       table_create \
+         --name idx_animals_sound \
+         --flags TABLE_PAT_KEY \
+         --key_type ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer 'NormalizerNFKC150("unify_kana_hyphen", true)'
+       column_create --table idx_animals_sound --name animals_sound --flags COLUMN_INDEX|WITH_POSITION --type Animals --source sound
+
+       select --table Animals --query sound:@メエメエ
+       #[
+       #  [
+       #    0,1677829950.652696,
+       #    0.01971983909606934
+       #  ],
+       #  [
+       #    [
+       #      [
+       #        1
+       #      ],
+       #      [
+       #        [
+       #          "_id",
+       #          "UInt32"
+       #        ],
+       #        [
+       #          "_key",
+       #          "ShortText"
+       #        ],
+       #        [
+       #          "name",
+       #          "ShortText"
+       #        ],
+       #        [
+       #          "sound",
+       #          "ShortText"
+       #        ]
+       #      ],
+       #      [
+       #        1,
+       #        "1",
+       #        "羊",
+       #        "メ-メ-"
+       #      ]
+       #    ]
+       #  ]
+       #]
+
+* [:ref:`query-syntax-near-search-condition`][:ref:`script-syntax-near-search-operator`]
+  Added a new option ``${MIN_INTERVAL}`` for near-search family.
+
+  We can now specifiy the minimum interval between phrases (words) with ``${MIN_INTERVAL}``.
+  The interval between phrases (words) must be at least this value.
+
+  Here are new syntax:
+
+  .. code-block::
+
+     *N${MAX_INTERVAL},${MAX_TOKEN_INTERVAL_1}|${MAX_TOKEN_INTERVAL_2}|...,${MIN_INTERVAL} "word1 word2 ..."
+     *NP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL},${MAX_PHRASE_INTERVAL_1}|${MAX_PHRASE_INTERVAL_2}|...,${MIN_INTERVAL} "phrase1 phrase2 ..."
+     *NPP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL},${MAX_PHRASE_INTERVAL_1}|${MAX_PHRASE_INTERVAL_2}|...,${MIN_INTERVAL} "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+     *ONP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL},${MAX_PHRASE_INTERVAL_1}|${MAX_PHRASE_INTERVAL_2}|...,${MIN_INTERVAL} "phrase1 phrase2 ..."
+     *ONPP${MAX_INTERVAL},${ADDITIONAL_LAST_INTERVAL},${MAX_PHRASE_INTERVAL_1}|${MAX_PHRASE_INTERVAL_2}|...,${MIN_INTERVAL} "(phrase1-1 phrase1-2 ...) (phrase2-1 phrase2-2 ...) ..."
+
+  The default value of ``${MIN_INTERVAL}`` is ``INT32_MIN`` (``-2147483648``).
+  We use the default value when ``${MIN_INTERVAL}`` is omitted.
+
+  This option is useful when we want to ignore overlapped phrases.
+
+  The interval for ``*NP`` is culculated as ``interval between the top tokens of phrases - tokens in the left phrase + 1``.
+
+  When a tokenizer is Bigram, for exmaple, ``東京`` has one token ``東京``, also ``京都`` has one token ``京都``.
+
+  Considering ``東京都`` as a target value of ``*NP "東京 京都"``:
+
+  * ``interval between the top tokens of phrases``: ``1`` (interval between ``東京`` and ``京都``)
+  * ``tokens in the left phrase``: ``1`` ( ``東京`` )
+
+  The interval for ``*NP`` of ``東京都`` is ``1 - 1 + 1`` = ``1``.
+
+  As a result, the interval for ``*NP`` is greater than ``1`` when ``東京`` and ``京都`` are not overlapped.
+
+  Here is an example for ignoring overlapped phrases.
+
+  .. code-block::
+
+     table_create Entries TABLE_NO_KEY
+     column_create Entries content COLUMN_SCALAR Text
+
+     table_create Terms TABLE_PAT_KEY ShortText \
+       --default_tokenizer 'TokenNgram("unify_alphabet", false, \
+                                       "unify_digit", false)' \
+       --normalizer NormalizerNFKC150
+     column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+     load --table Entries
+     [
+     {"content": "東京都"},
+     {"content": "東京京都"}
+     ]
+
+     select Entries \
+       --match_columns content \
+       --query '*NP-1,0,,2"東京 京都"' \
+       --output_columns '_score, content'
+     #[
+     #  [
+     #    0,
+     #    0.0,
+     #    0.0
+     #  ],
+     #  [
+     #    [
+     #      [
+     #        1
+     #      ],
+     #      [
+     #        [
+     #          "_score",
+     #          "Int32"
+     #        ],
+     #        [
+     #          "content",
+     #          "Text"
+     #        ]
+     #      ],
+     #      [
+     #        1,
+     #        "東京京都"
+     #      ]
+     #    ]
+     #  ]
+     #]
+
+
+  In the example above, ``東京都`` is not matched as the interval is ``1``
+  but ``東京京都`` is matched as the interval is ``2``.
+
+* [:doc:`reference/normalizers`] Added support for new values in the ``unify_katakana_trailing_o`` option.
+
+  We added support for normalizing the following new values in the ``unify_katakana_trailing_o`` option
+  because a vowel of those left letters is ``O``.
+
+  * ``ォオ`` -> ``ォウ``
+  * ``ョオ`` -> ``ョウ``
+  * ``ヺオ`` -> ``ヺウ``
+
+* Add support for MessagePack v6.0.0. [GitHub#1536][Reported by Carlo Cabrera]
+
+  Groonga can not found MessagePack v6.0.0 or later when we execute configure or cmake until now.
+  Groonga can found MessagePack since this release even if the version of MessagePack is v6.0.0 or later.
+
+Fixes
+^^^^^
+
+* [:doc:`reference/normalizers`] Fixed a bug that NormalizerNFKC* did incorrect normalization.
+
+  This bug occured when ``unify_kana_case`` and ``unify_katakana_v_sounds`` used at the same time.
+
+  For example, ``ヴァ`` was normalized to ``バア`` with ``unify_kana_case`` and ``unify_katakana_v_sounds``, 
+  but ``ヴァ`` should be normalized to ``バ``.
+
+  This was because ``ヴァ`` was normalized to ``ヴア`` with ``unify_kana_case``, and after that, ``ヴア`` was normalized
+  to ``バア`` with ``unify_katakana_v_sounds``. We fixed to normalize characters with ``unify_katakana_v_sounds`` before 
+  ``unify_kana_case``.
+
+  Here is an example of the bug in the previous version.
+
+  .. code-block::
+
+     normalize \
+     'NormalizerNFKC150("unify_katakana_v_sounds", true, \
+                       "unify_kana_case", true)' \
+     "ヴァーチャル"
+     #[
+     #  [
+     #    0,
+     #    1678097412.913053,
+     #    0.00019073486328125
+     #  ],
+     #  {
+     #    "normalized":"ブアーチヤル",
+     #    "types":[],
+     #    "checks":[]
+     #  }
+
+  From this version, ``ヴァーチャル`` is normalized to ``バーチヤル``.
+
+* [:ref:`query-syntax-ordered-near-phrase-search-condition`][:ref:`script-syntax-ordered-near-phrase-search-operator`]
+  Fixed a bug that ``${MAX_PHRASE_INTERVALS}`` doesn't work correctly.
+
+  When this bug occured, intervals are regarded as ``0``.
+  Therefore, if this bug occurs, records may hit too many.
+
+  This bug occured when:
+
+  1. Use ``*ONP`` with ``${MAX_PHRASE_INTERVALS}``
+  2. The number of tokens in the matched left phrase is greater than or equal to the number of ``${MAX_PHRASE_INTERVALS}`` elements.
+
+  Here is an example of this bug.
+
+  .. code-block::
+
+     table_create Entries TABLE_NO_KEY
+     column_create Entries content COLUMN_SCALAR Text
+     table_create Terms TABLE_PAT_KEY ShortText \
+       --default_tokenizer 'TokenNgram("unify_alphabet", false, \
+                                       "unify_digit", false)' \
+       --normalizer NormalizerNFKC150
+     column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+     load --table Entries
+     [
+     {"content": "abcXYZdef"},
+     {"content": "abcdef"},
+     {"content": "abc123456789def"},
+     {"content": "abc12345678def"},
+     {"content": "abc1de2def"}
+     ]
+     select Entries --filter 'content *ONP-1,0,1 "abc def"' --output_columns '_score, content'
+     #[
+     #  [
+     #    0,
+     #    0.0,
+     #    0.0
+     #  ],
+     #  [
+     #    [
+     #      [
+     #        5
+     #      ],
+     #      [
+     #        [
+     #          "_score",
+     #          "Int32"
+     #        ],
+     #        [
+     #          "content",
+     #          "Text"
+     #        ]
+     #      ],
+     #      [
+     #        1,
+     #        "abcXYZdef"
+     #      ],
+     #      [
+     #        1,
+     #        "abcdef"
+     #      ],
+     #      [
+     #        1,
+     #        "abc123456789def"
+     #      ],
+     #      [
+     #        1,
+     #        "abc12345678def"
+     #      ],
+     #      [
+     #        1,
+     #        "abc1de2def"
+     #      ]
+     #    ]
+     #  ]
+     #]
+
+  In the example above, the first element interval is specified as ``1`` with ``*ONP-1,0,1 "abc def"`` 
+  , but all ``content`` is matched, including those farther than ``1``.
+
+  This is because the example satisfies the condition for the bug and the interval is regarded as ``0``.
+
+  1. Use ``*ONP`` with ``${MAX_PHRASE_INTERVALS}``
+
+     ``*ONP-1,0,1 "abc def"`` specifies ``${MAX_PHRASE_INTERVALS}``.
+
+  2. The number of tokens in the matched left phrase is greater than or equal to the number of ``${MAX_PHRASE_INTERVALS}`` elements.
+
+     * The matched left phrase: ``abc``
+
+       * Included tokens: ``ab``, ``bc``
+       * Tokenized with ``TokenNgram("unify_alphabet", false, "unify_digit", false)``
+     * The number of elements specified with ``max_element_intervals``: ``1``
+
+       * ``1`` of ``*ONP-1,0,1 "abc def"``
+     * The number of tokens in the left phrase (``2``) > the number of elements specified with ``max_element_intervals`` (``1``)
+
+* [:ref:`query-syntax-near-phrase-search-condition`][:ref:`script-syntax-near-phrase-search-operator`]
+  Fixed a bug that phrases specified as last didn't used as last in near-phrase family.
+
+  When this bug occured, ``${ADDITIONAL_LAST_INTERVAL}`` was ignored and only ``${MAX_INTERVAL}`` was used.
+
+  This bug occured when:
+
+  1. A phrase specified as last contains multiple tokens.
+  2. The size of the last token of the phrase is smaller than or equals to the sizes of other tokens in the phrase.
+
+     * The token size is the number of tokens appeared in the all records.
+
+  Here is an example of this bug.
+
+  .. code-block::
+
+     table_create Entries TABLE_NO_KEY
+     column_create Entries content COLUMN_SCALAR Text
+
+     table_create Terms TABLE_PAT_KEY ShortText \
+       --default_tokenizer 'TokenNgram("unify_alphabet", false, \
+                                       "unify_digit", false)' \
+       --normalizer NormalizerNFKC150
+     column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+     load --table Entries
+     [
+     {"content": "abc123456789defg"},
+     {"content": "dededede"}
+     ]
+
+     select Entries \
+       --filter 'content *NP10,1"abc defg$"' \
+       --output_columns '_score, content'
+     #[
+     #  [
+     #    0,
+     #    0.0,
+     #    0.0
+     #  ],
+     #  [
+     #    [
+     #      [
+     #        0
+     #      ],
+     #      [
+     #        [
+     #          "_score",
+     #          "Int32"
+     #        ],
+     #        [
+     #          "content",
+     #          "Text"
+     #        ]
+     #      ]
+     #    ]
+     #  ]
+     #]
+
+  In the example above, for ``abc123456789defg``, the interval ``abc`` to ``defg`` is ``11``.
+  ``${MAX_INTERVAL}`` is ``10`` and ``${ADDITIONAL_LAST_INTERVAL}`` is ``1``, so a threshold for matching last phrase is ``11``.
+  So it should be matched, but isn't.
+
+  This is because the example satisfies the condition for the bug as below, and only ```${MAX_INTERVAL}`` is used.
+
+  1. A phrase specified as last contains multiple tokens.
+
+     ``defg$`` is specified as last because the suffix is ``$``.
+
+     ``defg$`` is tokenized to ``de``, ``ef``, ``fg`` with ``TokenNgram("unify_alphabet", false, "unify_digit", false)``
+
+  2. The size of the last token of the phrase is smaller than or equals to the sizes of other tokens in the phrase.
+
+     ``fg`` is the last token of ``defg$``. ``abc123456789defg`` contains one ``fg`` and ``de``, and ``dededede`` contains 4 ``de``.
+
+     So, the size of ``fg`` is 1 and ``de`` is 5.
+
+* [:ref:`query-syntax-near-phrase-search-condition`] Fixed interval calculation.
+
+  If we use near phrase search, records may hit too many by this bug.
+
+* [:doc:`/reference/functions/highlight_html`] Fixed a bug that highlight position may move over when we use `loose_symbol=true`.
+
+Thanks
+^^^^^^
+
+* Carlo Cabrera
+
 .. _release-13-0-0:
 
 Release 13.0.0 - 2023-02-09
