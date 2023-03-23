@@ -37,15 +37,15 @@ GNU/Linux or UNIX
 
 .. code-block:: console
 
-   $ wget https://packages.groonga.org/source/groonga/groonga-13.0.0.tar.gz
-   $ tar xvzf groonga-13.0.0.tar.gz
+   $ wget https://packages.groonga.org/source/groonga/groonga-13.0.1.tar.gz
+   $ tar xvzf groonga-13.0.1.tar.gz
 
 Windows
 +++++++
 
 Download the latest zipped source from packages.groonga.org.
 
-  * https://packages.groonga.org/source/groonga/groonga-13.0.0.zip
+  * https://packages.groonga.org/source/groonga/groonga-13.0.1.zip
 
 Then extract it.
 
