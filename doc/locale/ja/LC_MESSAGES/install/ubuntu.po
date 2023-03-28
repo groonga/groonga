@@ -72,13 +72,13 @@ msgstr ""
 msgid "Here are supported Ubuntu versions:"
 msgstr "サポートしているUbuntuのバージョンは次の通りです。"
 
-msgid "18.04 LTS Bionic Beaver"
-msgstr ""
-
 msgid "20.04 LTS Focal Fossa"
 msgstr ""
 
 msgid "22.04 LTS Jammy Jellyfish"
+msgstr ""
+
+msgid "22.10 Kinetic Kudu"
 msgstr ""
 
 msgid "Enable the universe repository to install Groonga::"

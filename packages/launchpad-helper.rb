@@ -33,7 +33,6 @@ module LaunchpadHelper
 
   def ubuntu_targets_default
     [
-      ["bionic", "18.04"],
       ["focal", "20.04"],
       ["jammy", "22.04"],
       ["kinetic", "22.10"],
