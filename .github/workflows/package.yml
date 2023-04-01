@@ -72,7 +72,7 @@ jobs:
           rm -rf groonga-${version}
 
       # Artifact
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: source
           path: |
@@ -208,7 +208,7 @@ jobs:
           YUM_TARGETS: ${{ matrix.target }}
 
       # Artifact
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: packages-${{ matrix.id }}
           path: packages/${{ matrix.task-namespace }}/repositories/
