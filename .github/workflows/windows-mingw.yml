@@ -26,10 +26,10 @@ jobs:
           - msystem: UCRT64
             package-prefix: mingw-w64-ucrt-x86_64
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           repository: msys2/MINGW-packages
           path: ci/msys2/MINGW-packages
@@ -91,7 +91,7 @@ jobs:
       - name: Use JST
         run: |
           Set-TimeZone -Id "Tokyo Standard Time"
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           repository: groonga/grntest
           path: grntest
