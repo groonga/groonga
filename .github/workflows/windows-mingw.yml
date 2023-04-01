@@ -82,7 +82,7 @@ jobs:
           cp -a *.pkg.tar.* ../../
 
       # Artifact
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.msystem }}
           path: "*.pkg.tar.*"
