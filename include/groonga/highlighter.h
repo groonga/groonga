@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2018 Brazil
+  Copyright(C) 2018  Brazil
+  Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -18,7 +19,7 @@
 
 #pragma once
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -27,8 +28,7 @@ typedef struct _grn_highlighter grn_highlighter;
 GRN_API grn_highlighter *
 grn_highlighter_open(grn_ctx *ctx);
 GRN_API grn_rc
-grn_highlighter_close(grn_ctx *ctx,
-                      grn_highlighter *highlighter);
+grn_highlighter_close(grn_ctx *ctx, grn_highlighter *highlighter);
 GRN_API grn_rc
 grn_highlighter_highlight(grn_ctx *ctx,
                           grn_highlighter *highlighter,
@@ -40,17 +40,14 @@ grn_highlighter_set_lexicon(grn_ctx *ctx,
                             grn_highlighter *highlighter,
                             grn_obj *lexicon);
 GRN_API grn_obj *
-grn_highlighter_get_lexicon(grn_ctx *ctx,
-                            grn_highlighter *highlighter);
+grn_highlighter_get_lexicon(grn_ctx *ctx, grn_highlighter *highlighter);
 GRN_API grn_rc
 grn_highlighter_add_keyword(grn_ctx *ctx,
                             grn_highlighter *highlighter,
                             const char *keyword,
                             int64_t keyword_length);
 GRN_API grn_rc
-grn_highlighter_clear_keywords(grn_ctx *ctx,
-                               grn_highlighter *highlighter);
-
+grn_highlighter_clear_keywords(grn_ctx *ctx, grn_highlighter *highlighter);
 
 #ifdef __cplusplus
 }
