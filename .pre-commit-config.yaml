@@ -18,6 +18,12 @@ repos:
     rev: "v15.0.7"
     hooks:
       - id: clang-format
-        files: "(lib/ctx.c|lib/highlighter.c|include/groonga/highlighter.h)"
+        files: >-
+          (
+          ?lib/ctx\.c|
+          ?lib/highlighter\.c|
+          ?lib/proc/proc_highlight\.c|
+          ?include/groonga/highlighter\.h|
+          )
 
 exclude: "^vendor/.*"
