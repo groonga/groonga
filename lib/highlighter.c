@@ -93,9 +93,7 @@ grn_highlighter_open(grn_ctx *ctx)
   if (!highlighter) {
     char errbuf[GRN_CTX_MSGSIZE];
     grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
-    ERR(ctx->rc,
-        "[highlighter][open] failed to allocate memory: %s",
-        errbuf);
+    ERR(ctx->rc, "[highlighter][open] failed to allocate memory: %s", errbuf);
     GRN_API_RETURN(NULL);
   }
 
@@ -124,7 +122,9 @@ grn_highlighter_open(grn_ctx *ctx)
                   GRN_OBJ_VECTOR,
                   GRN_ID_NIL);
   GRN_TEXT_INIT(&(highlighter->lexicon.token_id_chunk), 0);
-  GRN_RECORD_INIT(&(highlighter->lexicon.token_ids), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_RECORD_INIT(&(highlighter->lexicon.token_ids),
+                  GRN_OBJ_VECTOR,
+                  GRN_ID_NIL);
   GRN_TEXT_INIT(&(highlighter->lexicon.token_locations), 0);
   GRN_TEXT_INIT(&(highlighter->lexicon.candidates), 0);
 
@@ -135,8 +135,7 @@ grn_highlighter_open(grn_ctx *ctx)
 }
 
 grn_rc
-grn_highlighter_close(grn_ctx *ctx,
-                      grn_highlighter *highlighter)
+grn_highlighter_close(grn_ctx *ctx, grn_highlighter *highlighter)
 {
   GRN_API_ENTER;
 
@@ -176,11 +175,7 @@ grn_highlighter_remove_unused_ids(grn_ctx *ctx,
   size_t n;
   grn_id id;
 
-  cursor = grn_table_cursor_open(ctx,
-                                 table,
-                                 NULL, 0,
-                                 NULL, 0,
-                                 0, -1, 0);
+  cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0);
   if (!cursor) {
     grn_rc rc = ctx->rc;
     char errbuf[GRN_CTX_MSGSIZE];
@@ -218,8 +213,7 @@ grn_highlighter_remove_unused_ids(grn_ctx *ctx,
 }
 
 static void
-grn_highlighter_prepare_lexicon(grn_ctx *ctx,
-                                grn_highlighter *highlighter)
+grn_highlighter_prepare_lexicon(grn_ctx *ctx, grn_highlighter *highlighter)
 {
   grn_bool have_token_id_chunks = GRN_FALSE;
   grn_obj *lazy_keywords = &(highlighter->lexicon.lazy_keywords);
@@ -250,7 +244,8 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx,
   } else {
     highlighter->lexicon.token_id_chunks =
       grn_table_create(ctx,
-                       NULL, 0,
+                       NULL,
+                       0,
                        NULL,
                        GRN_OBJ_TABLE_PAT_KEY,
                        grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
@@ -377,7 +372,8 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
   } else {
     highlighter->pat.keywords =
       grn_table_create(ctx,
-                       NULL, 0,
+                       NULL,
+                       0,
                        NULL,
                        GRN_OBJ_TABLE_PAT_KEY,
                        grn_ctx_at(ctx, GRN_DB_SHORT_TEXT),
@@ -404,8 +400,8 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
     grn_obj normalizers;
     GRN_TEXT_INIT(&normalizers, 0);
     grn_table_get_normalizers_string(ctx,
-                                    highlighter->lexicon.object,
-                                    &normalizers);
+                                     highlighter->lexicon.object,
+                                     &normalizers);
     grn_obj_set_info(ctx,
                      highlighter->pat.keywords,
                      GRN_INFO_NORMALIZERS,
@@ -457,8 +453,7 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
 }
 
 static void
-grn_highlighter_prepare(grn_ctx *ctx,
-                        grn_highlighter *highlighter)
+grn_highlighter_prepare(grn_ctx *ctx, grn_highlighter *highlighter)
 {
   bool use_lexicon = false;
   if (highlighter->lexicon.object) {
@@ -534,7 +529,12 @@ grn_highlighter_highlight_lexicon_flush(grn_ctx *ctx,
                                         grn_highlighter_location *location,
                                         uint64_t offset)
 {
-  grn_highlighter_log_location(ctx, log_level, tag, location, text, text_length);
+  grn_highlighter_log_location(ctx,
+                               log_level,
+                               tag,
+                               location,
+                               text,
+                               text_length);
   if (location->offset > offset) {
     grn_text_escape_xml(ctx,
                         output,
@@ -545,10 +545,7 @@ grn_highlighter_highlight_lexicon_flush(grn_ctx *ctx,
                output,
                highlighter->tag.open,
                highlighter->tag.open_length);
-  grn_text_escape_xml(ctx,
-                      output,
-                      text + location->offset,
-                      location->length);
+  grn_text_escape_xml(ctx, output, text + location->offset, location->length);
   GRN_TEXT_PUT(ctx,
                output,
                highlighter->tag.close,
@@ -583,10 +580,7 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
   if (!cursor) {
     char errbuf[GRN_CTX_MSGSIZE];
     grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
-    ERR(ctx->rc,
-        "%s failed to start tokenizing: %s",
-        tag,
-        errbuf);
+    ERR(ctx->rc, "%s failed to start tokenizing: %s", tag, errbuf);
     return;
   }
 
@@ -646,8 +640,10 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
                                lexicon,
                                cursor,
                                id,
-                               keyword, keyword_length,
-                               GRN_CURSOR_PREFIX) {
+                               keyword,
+                               keyword_length,
+                               GRN_CURSOR_PREFIX)
+      {
         int added = 0;
 
         {
@@ -674,7 +670,8 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
         if (added) {
           GRN_RECORD_PUT(ctx, lazy_keyword_ids, id);
         }
-      } GRN_TABLE_EACH_END(ctx, cursor);
+      }
+      GRN_TABLE_EACH_END(ctx, cursor);
       GRN_LOG(ctx,
               log_level,
               "%s[prefix-search][end] %" GRN_FMT_SIZE ":<%.*s>",
@@ -703,11 +700,7 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
     for (i = 0; i < n_token_ids; i++) {
       grn_id chunk_id;
 
-      GRN_LOG(ctx,
-              log_level,
-              "%s[lcp-search][start] %" GRN_FMT_SIZE,
-              tag,
-              i);
+      GRN_LOG(ctx, log_level, "%s[lcp-search][start] %" GRN_FMT_SIZE, tag, i);
       {
         grn_encoding encoding = ctx->encoding;
         /* token_id_chunk is a binary data */
@@ -747,10 +740,9 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
         }
         n_ids = key_size / sizeof(grn_id);
         candidate.offset = first->offset;
-        if (n_ids == 1 &&
-            grn_ids_is_included(raw_lazy_keyword_ids,
-                                n_lazy_keyword_ids,
-                                ids[0])) {
+        if (n_ids == 1 && grn_ids_is_included(raw_lazy_keyword_ids,
+                                              n_lazy_keyword_ids,
+                                              ids[0])) {
           candidate.length = first->first_character_length;
         } else if (first->have_overlap && n_ids > 1) {
           candidate.length = first->first_character_length;
@@ -787,11 +779,7 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
                                      &candidate,
                                      text,
                                      text_length);
-        GRN_LOG(ctx,
-                log_level,
-                "%s[lcp-search][end] %" GRN_FMT_SIZE,
-                tag,
-                i);
+        GRN_LOG(ctx, log_level, "%s[lcp-search][end] %" GRN_FMT_SIZE, tag, i);
         i += n_ids - 1;
       }
     }
@@ -959,10 +947,7 @@ grn_highlighter_highlight(grn_ctx *ctx,
 
   if (grn_vector_size(ctx, &(highlighter->raw_keywords)) == 0) {
     if (highlighter->is_html_mode) {
-      grn_text_escape_xml(ctx,
-                          output,
-                          text,
-                          (size_t)text_length);
+      grn_text_escape_xml(ctx, output, text, (size_t)text_length);
     } else {
       GRN_TEXT_PUT(ctx, output, text, text_length);
     }
@@ -990,7 +975,7 @@ grn_highlighter_highlight(grn_ctx *ctx,
                                       output);
   }
 
-exit :
+exit:
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -1010,8 +995,7 @@ grn_highlighter_set_lexicon(grn_ctx *ctx,
 }
 
 grn_obj *
-grn_highlighter_get_lexicon(grn_ctx *ctx,
-                            grn_highlighter *highlighter)
+grn_highlighter_get_lexicon(grn_ctx *ctx, grn_highlighter *highlighter)
 {
   GRN_API_ENTER;
 
@@ -1062,13 +1046,12 @@ grn_highlighter_add_keyword(grn_ctx *ctx,
                          GRN_DB_TEXT);
   highlighter->need_prepared = GRN_TRUE;
 
-exit :
+exit:
   GRN_API_RETURN(ctx->rc);
 }
 
 grn_rc
-grn_highlighter_clear_keywords(grn_ctx *ctx,
-                               grn_highlighter *highlighter)
+grn_highlighter_clear_keywords(grn_ctx *ctx, grn_highlighter *highlighter)
 {
   grn_obj *raw_keywords = &(highlighter->raw_keywords);
 

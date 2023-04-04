@@ -18,6 +18,6 @@ repos:
     rev: "v15.0.7"
     hooks:
       - id: clang-format
-        files: "lib/ctx.c"
+        files: "lib/(ctx|highlighter).c"
 
 exclude: "^vendor/.*"
