@@ -42,6 +42,20 @@ grn_highlighter_set_lexicon(grn_ctx *ctx,
 GRN_API grn_obj *
 grn_highlighter_get_lexicon(grn_ctx *ctx, grn_highlighter *highlighter);
 GRN_API grn_rc
+grn_highlighter_set_open_tag(grn_ctx *ctx,
+                             grn_highlighter *highlighter,
+                             const char *tag,
+                             size_t tag_length);
+GRN_API const char *
+grn_highlighter_get_open_tag(grn_ctx *ctx, grn_highlighter *highlighter);
+GRN_API grn_rc
+grn_highlighter_set_close_tag(grn_ctx *ctx,
+                              grn_highlighter *highlighter,
+                              const char *tag,
+                              size_t tag_length);
+GRN_API const char *
+grn_highlighter_get_close_tag(grn_ctx *ctx, grn_highlighter *highlighter);
+GRN_API grn_rc
 grn_highlighter_add_keyword(grn_ctx *ctx,
                             grn_highlighter *highlighter,
                             const char *keyword,

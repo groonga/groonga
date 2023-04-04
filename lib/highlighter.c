@@ -22,6 +22,9 @@
 #include "grn_pat.h"
 #include "grn_str.h"
 
+#define GRN_HIGHLIGHTER_DEFAULT_OPEN_TAG  "<span class=\"keyword\">"
+#define GRN_HIGHLIGHTER_DEFAULT_CLOSE_TAG "</span>"
+
 typedef struct {
   uint64_t offset;
   uint32_t length;
@@ -45,7 +48,6 @@ grn_highlighter_location_compare(const void *data1, const void *data2)
 /*
  * TODO:
  *   * Support non HTML mode.
- *   * Support custom tag.
  */
 struct _grn_highlighter {
   grn_obj_header header;
@@ -55,10 +57,8 @@ struct _grn_highlighter {
   grn_obj raw_keywords;
 
   struct {
-    const char *open;
-    size_t open_length;
-    const char *close;
-    size_t close_length;
+    grn_obj open;
+    grn_obj close;
   } tag;
 
   /* For lexicon mode */
@@ -106,10 +106,16 @@ grn_highlighter_open(grn_ctx *ctx)
   highlighter->need_prepared = GRN_TRUE;
   GRN_TEXT_INIT(&(highlighter->raw_keywords), GRN_OBJ_VECTOR);
 
-  highlighter->tag.open = "<span class=\"keyword\">";
-  highlighter->tag.open_length = strlen(highlighter->tag.open);
-  highlighter->tag.close = "</span>";
-  highlighter->tag.close_length = strlen(highlighter->tag.close);
+  GRN_TEXT_INIT(&(highlighter->tag.open), 0);
+  grn_highlighter_set_open_tag(ctx,
+                               highlighter,
+                               GRN_HIGHLIGHTER_DEFAULT_OPEN_TAG,
+                               strlen(GRN_HIGHLIGHTER_DEFAULT_OPEN_TAG));
+  GRN_TEXT_INIT(&(highlighter->tag.close), 0);
+  grn_highlighter_set_close_tag(ctx,
+                                highlighter,
+                                GRN_HIGHLIGHTER_DEFAULT_CLOSE_TAG,
+                                strlen(GRN_HIGHLIGHTER_DEFAULT_CLOSE_TAG));
 
   highlighter->lexicon.object = NULL;
   highlighter->lexicon.encoding = GRN_ENC_NONE;
@@ -158,6 +164,9 @@ grn_highlighter_close(grn_ctx *ctx, grn_highlighter *highlighter)
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.candidates));
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_locations));
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_ids));
+
+  GRN_OBJ_FIN(ctx, &(highlighter->tag.open));
+  GRN_OBJ_FIN(ctx, &(highlighter->tag.close));
 
   GRN_OBJ_FIN(ctx, &(highlighter->raw_keywords));
   GRN_FREE(highlighter);
@@ -543,13 +552,13 @@ grn_highlighter_highlight_lexicon_flush(grn_ctx *ctx,
   }
   GRN_TEXT_PUT(ctx,
                output,
-               highlighter->tag.open,
-               highlighter->tag.open_length);
+               GRN_TEXT_VALUE(&(highlighter->tag.open)),
+               GRN_TEXT_LEN(&(highlighter->tag.open)) - 1);
   grn_text_escape_xml(ctx, output, text + location->offset, location->length);
   GRN_TEXT_PUT(ctx,
                output,
-               highlighter->tag.close,
-               highlighter->tag.close_length);
+               GRN_TEXT_VALUE(&(highlighter->tag.close)),
+               GRN_TEXT_LEN(&(highlighter->tag.close)) - 1);
   return location->offset + location->length;
 }
 
@@ -906,16 +915,16 @@ grn_highlighter_highlight_patricia_trie(grn_ctx *ctx,
       }
       GRN_TEXT_PUT(ctx,
                    output,
-                   highlighter->tag.open,
-                   highlighter->tag.open_length);
+                   GRN_TEXT_VALUE(&(highlighter->tag.open)),
+                   GRN_TEXT_LEN(&(highlighter->tag.open)) - 1);
       grn_text_escape_xml(ctx,
                           output,
                           current + hits[i].offset,
                           hits[i].length);
       GRN_TEXT_PUT(ctx,
                    output,
-                   highlighter->tag.close,
-                   highlighter->tag.close_length);
+                   GRN_TEXT_VALUE(&(highlighter->tag.close)),
+                   GRN_TEXT_LEN(&(highlighter->tag.close)) - 1);
       previous_length = hits[i].offset + hits[i].length;
     }
 
@@ -1000,6 +1009,42 @@ grn_highlighter_get_lexicon(grn_ctx *ctx, grn_highlighter *highlighter)
   GRN_API_ENTER;
 
   GRN_API_RETURN(highlighter->lexicon.object);
+}
+
+grn_rc
+grn_highlighter_set_open_tag(grn_ctx *ctx,
+                             grn_highlighter *highlighter,
+                             const char *tag,
+                             size_t tag_length)
+{
+  GRN_API_ENTER;
+  GRN_TEXT_SET(ctx, &(highlighter->tag.open), tag, tag_length);
+  GRN_TEXT_PUTC(ctx, &(highlighter->tag.open), '\0');
+  GRN_API_RETURN(ctx->rc);
+}
+
+const char *
+grn_highlighter_get_open_tag(grn_ctx *ctx, grn_highlighter *highlighter)
+{
+  return GRN_TEXT_VALUE(&(highlighter->tag.open));
+}
+
+grn_rc
+grn_highlighter_set_close_tag(grn_ctx *ctx,
+                              grn_highlighter *highlighter,
+                              const char *tag,
+                              size_t tag_length)
+{
+  GRN_API_ENTER;
+  GRN_TEXT_SET(ctx, &(highlighter->tag.close), tag, tag_length);
+  GRN_TEXT_PUTC(ctx, &(highlighter->tag.close), '\0');
+  GRN_API_RETURN(ctx->rc);
+}
+
+const char *
+grn_highlighter_get_close_tag(grn_ctx *ctx, grn_highlighter *highlighter)
+{
+  return GRN_TEXT_VALUE(&(highlighter->tag.close));
 }
 
 grn_rc
