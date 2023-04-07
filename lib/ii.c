@@ -11751,15 +11751,23 @@ grn_inline static bool
 grn_ii_select_data_find_phrase(grn_ctx *ctx,
                                grn_ii_select_data *data,
                                uint32_t phrase_id,
-                               int32_t start_pos)
+                               int32_t start_pos,
+                               uint32_t start_n_tokens_in_phrase)
 {
   token_info **tip;
   token_info **tis = data->token_infos;
   token_info **tie = tis + data->n_token_infos;
+  token_info **ti_last = NULL;
   token_info *must_last_ti = NULL;
   uint32_t n_tokens_in_same_pos = 0;
   for (tip = tis; ; tip++) {
     if (tip == tie) { tip = tis; }
+    if (!ti_last) {
+      ti_last = tip;
+    } else if (ti_last == tip) {
+      n_tokens_in_same_pos = 0;
+      start_pos++;
+    }
     data->token_info = *tip;
     if (data->token_info->phrase_id != phrase_id) {
       continue;
@@ -11770,13 +11778,19 @@ grn_ii_select_data_find_phrase(grn_ctx *ctx,
     if (!grn_ii_select_skip_pos(ctx, data, start_pos)) {
       return false;
     }
-    if (data->token_info->pos == start_pos) {
+    if (data->token_info->pos == start_pos &&
+        data->token_info->n_tokens_in_phrase >= start_n_tokens_in_phrase) {
       n_tokens_in_same_pos++;
     } else {
       n_tokens_in_same_pos = 1;
+      if (data->token_info->pos > start_pos) {
+        start_n_tokens_in_phrase = 0;
+        ti_last = tip;
+      }
       start_pos = data->token_info->pos;
     }
-    if (n_tokens_in_same_pos == data->token_info->n_used_tokens_in_phrase) {
+    if (n_tokens_in_same_pos == data->token_info->n_used_tokens_in_phrase &&
+        data->token_info->n_tokens_in_phrase >= start_n_tokens_in_phrase) {
       if (must_last_ti) {
         data->token_info = must_last_ti;
       }
@@ -11795,7 +11809,8 @@ grn_ii_select_data_find_phrase(grn_ctx *ctx,
 grn_inline static bool
 grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
                                        grn_ii_select_data *data,
-                                       int32_t start_pos)
+                                       int32_t start_pos,
+                                       uint32_t start_n_tokens_in_phrase)
 {
   uint32_t phrase_group_id = data->token_info->phrase_group_id;
   phrase_group *group = &(data->phrase_groups[phrase_group_id]);
@@ -11806,16 +11821,19 @@ grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
     if (grn_ii_select_data_find_phrase(ctx,
                                        data,
                                        data->token_info->phrase_id,
-                                       start_pos)) {
+                                       start_pos,
+                                       start_n_tokens_in_phrase)) {
       skipped = true;
       bt_reorder_min(group->btree);
-      if (group->btree->min == min_before) {
+      token_info *min = group->btree->min;
+      if (min == min_before) {
         break;
       }
-      if (group->btree->min->pos == min_before->pos) {
+      if (min->pos == min_before->pos &&
+          min->n_tokens_in_phrase > min_before->n_tokens_in_phrase) {
         break;
       }
-      min_before = group->btree->min;
+      min_before = min;
     } else {
       bt_pop(group->btree);
       if (!group->btree->min) {
@@ -12169,7 +12187,8 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
       if (!grn_ii_select_data_find_phrase(ctx,
                                           data,
                                           phrase_id,
-                                          data->pos)) {
+                                          data->pos,
+                                          0)) {
         need_check = false;
         break;
       }
@@ -12189,7 +12208,8 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
         if (grn_ii_select_data_find_phrase(ctx,
                                            data,
                                            phrase_id,
-                                           data->pos)) {
+                                           data->pos,
+                                           0)) {
           have_phrase = true;
           bt_push(group->btree, data->token_info);
           /* TODO: Can we update data->pos to reduce needless search? */
@@ -12216,8 +12236,9 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
   for (;;) {
     data->token_info = data->bt->min;
     token_info *min_token_info = data->bt->min;
-    int32_t min = min_token_info->pos;
     token_info *max_token_info = data->bt->max;
+    int32_t min = min_token_info->pos;
+    uint32_t min_n_tokens_in_phrase = min_token_info->n_tokens_in_phrase;
     int32_t max = max_token_info->pos;
     if (min > max) {
       char ii_name[GRN_TABLE_MAX_KEY_SIZE];
@@ -12312,12 +12333,13 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
         if (!grn_ii_select_data_find_phrase(ctx,
                                             data,
                                             data->token_info->phrase_id,
-                                            next_pos)) {
+                                            next_pos,
+                                            0)) {
           break;
         }
       } else if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
                  data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
-        if (!grn_ii_select_data_find_phrase_product(ctx, data, next_pos)) {
+        if (!grn_ii_select_data_find_phrase_product(ctx, data, next_pos, 0)) {
           break;
         }
       } else {
@@ -12332,13 +12354,17 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
         if (!grn_ii_select_data_find_phrase(ctx,
                                             data,
                                             data->token_info->phrase_id,
-                                            next_pos)) {
+                                            next_pos,
+                                            0)) {
           break;
         }
       } else if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
                  data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
-        int32_t next_pos = min + 1;
-        if (!grn_ii_select_data_find_phrase_product(ctx, data, next_pos)) {
+        uint32_t next_tokens_in_phrase = min_token_info->n_tokens_in_phrase + 1;
+        if (!grn_ii_select_data_find_phrase_product(ctx,
+                                                    data,
+                                                    min,
+                                                    next_tokens_in_phrase)) {
           break;
         }
       } else {
@@ -12356,7 +12382,8 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
          data->mode == GRN_OP_ORDERED_NEAR_PHRASE ||
          data->mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
          data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) &&
-        data->bt->min->pos == min) {
+        data->bt->min->pos == min &&
+        data->bt->min->n_tokens_in_phrase == min_n_tokens_in_phrase) {
       break;
     }
   }
