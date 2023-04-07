@@ -9005,10 +9005,20 @@ typedef struct {
    *
    * This is used only for GRN_OP_*NEAR_PHRASE*. */
   uint32_t phrase_id;
-  /* The number of tokens in the phrase that the token info belongs.
+  /* The number of tokens in the phrase that the token info
+   * belongs. This counts not used tokens. For example, "abc" with
+   * TokenNgram is tokenized to "ab", "bc" and "c" but "c" isn't
+   * used. Because we can find "abc" only with "ab" and
+   * "bc". n_tokens_in_phrase is 3 because it counts
+   * "c". n_used_tokens_in_phrase is 2 because it doesn't count "c".
    *
    * This is used only for GRN_OP_*NEAR_PHRASE*. */
   uint32_t n_tokens_in_phrase;
+  /* The number of used tokens in the phrase that the token info
+   * belongs. See also the above n_tokens_in_phrase document.
+   *
+   * This is used only for GRN_OP_*NEAR_PHRASE*. */
+  uint32_t n_used_tokens_in_phrase;
   /* Whether the token info must be the last token or not. If the
    * token info is appeared not at the last, the query isn't matched.
    *
@@ -9042,6 +9052,9 @@ grn_inspect_token_info(grn_ctx *ctx, grn_obj *buffer, token_info *info)
   grn_text_printf(ctx, buffer, "  phrase_id:%u\n", info->phrase_id);
   grn_text_printf(ctx, buffer,
                   "  n_tokens_in_phrase:%u\n", info->n_tokens_in_phrase);
+  grn_text_printf(ctx, buffer,
+                  "  n_used_tokens_in_phrase:%u\n",
+                  info->n_used_tokens_in_phrase);
   grn_text_printf(ctx, buffer,
                   "  must_last:%s\n", info->must_last ? "true" : "false");
   grn_text_printf(ctx, buffer, ">");
@@ -10379,8 +10392,10 @@ token_info_build_near_phrase(grn_ctx *ctx,
       }
     }
     uint32_t i;
+    uint32_t n_used_tokens_in_phrase = data->n_token_infos - n_before;
     for (i = n_before; i < data->n_token_infos; i++) {
       data->token_infos[i]->n_tokens_in_phrase = n_tokens_in_phrase;
+      data->token_infos[i]->n_used_tokens_in_phrase = n_used_tokens_in_phrase;
       data->token_infos[i]->phrase_group_id = phrase_group_id;
       data->token_infos[i]->phrase_id = phrase_id;
     }
@@ -11761,11 +11776,15 @@ grn_ii_select_data_find_phrase(grn_ctx *ctx,
       n_tokens_in_same_pos = 1;
       start_pos = data->token_info->pos;
     }
-    if (n_tokens_in_same_pos == data->token_info->n_tokens_in_phrase) {
+    if (n_tokens_in_same_pos == data->token_info->n_used_tokens_in_phrase) {
       if (must_last_ti) {
         data->token_info = must_last_ti;
       }
-      P_NOTE("%s: found: record:%u phrase:%u/%u\n", __func__, data->rid, data->token_info->phrase_id, data->token_info->phrase_group_id);
+      P_NOTE("%s: found: record:%u phrase:%u/%u\n",
+             __func__,
+             data->rid,
+             data->token_info->phrase_id,
+             data->token_info->phrase_group_id);
       P_TI(ctx, data->token_info);
       return true;
     }
