@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -55,6 +55,17 @@
 #ifdef GRN_II_SELECT_ENABLE_SEQUENTIAL_SEARCH_TEXT
 # include "grn_string.h"
 # include "grn_onigmo.h"
+#endif
+
+/* #define GRN_II_TOKEN_INFO_DEBUG */
+#ifdef GRN_II_TOKEN_INFO_DEBUG
+#  define P_NOTE(...) printf(__VA_ARGS__)
+#  define P_TI(ctx, token_info) grn_p_token_info((ctx), (token_info))
+#  define P_TIS(ctx, token_info, n) grn_p_token_infos((ctx), (token_info), (n))
+#else
+#  define P_NOTE(...)
+#  define P_TI(ctx, token_info)
+#  define P_TIS(ctx, token_info, n)
 #endif
 
 /* P is for physical? */
@@ -7855,6 +7866,22 @@ typedef struct {
   grn_ii_cursor **bins;
 } cursor_heap;
 
+void
+grn_inspect_cursor_heap(grn_ctx *ctx, grn_obj *buffer, cursor_heap *heap)
+{
+  grn_text_printf(ctx, buffer, "#<cursor_heap: n_entries=%d n_bins=%d\n",
+                  heap->n_entries,
+                  heap->n_bins);
+  grn_text_printf(ctx, buffer, "  bins:\n");
+  int i;
+  for (i = 0; i < heap->n_bins; i++) {
+    grn_text_printf(ctx, buffer, "    [%d] ", i);
+    grn_ii_get_term(ctx, heap->bins[i]->ii, heap->bins[i]->id, buffer);
+    grn_text_printf(ctx, buffer, "\n");
+  }
+  grn_text_printf(ctx, buffer, ">");
+}
+
 static grn_inline cursor_heap *
 cursor_heap_open(grn_ctx *ctx, int max)
 {
@@ -8988,6 +9015,74 @@ typedef struct {
    * This is used only for GRN_OP_*NEAR_PHRASE*. */
   bool must_last;
 } token_info;
+
+void
+grn_inspect_token_info(grn_ctx *ctx, grn_obj *buffer, token_info *info)
+{
+  grn_text_printf(ctx, buffer, "#<token_info:\n");
+  grn_text_printf(ctx, buffer, "  cursors: ");
+  grn_obj cursor_heap_inspected;
+  GRN_TEXT_INIT(&cursor_heap_inspected, 0);
+  grn_inspect_cursor_heap(ctx, &cursor_heap_inspected, info->cursors);
+  grn_inspect_indent(ctx, buffer, &cursor_heap_inspected, "  ");
+  GRN_OBJ_FIN(ctx, &cursor_heap_inspected);
+  grn_text_printf(ctx, buffer, "\n");
+  grn_text_printf(ctx, buffer, "  offset:%u\n", info->offset);
+  grn_text_printf(ctx, buffer, "  pos:%d\n", info->pos);
+  grn_text_printf(ctx, buffer, "  size:%u\n", info->size);
+  grn_text_printf(ctx, buffer, "  n_tokens:%d\n", info->ntoken);
+  grn_text_printf(ctx, buffer,
+                  "  posting:#<posting: rid:%u sid:%u pos:%u tf:%u weight:%u>\n",
+                  info->p->rid,
+                  info->p->sid,
+                  info->p->pos,
+                  info->p->tf,
+                  info->p->weight);
+  grn_text_printf(ctx, buffer, "  phrase_group_id:%u\n", info->phrase_group_id);
+  grn_text_printf(ctx, buffer, "  phrase_id:%u\n", info->phrase_id);
+  grn_text_printf(ctx, buffer,
+                  "  n_tokens_in_phrase:%u\n", info->n_tokens_in_phrase);
+  grn_text_printf(ctx, buffer,
+                  "  must_last:%s\n", info->must_last ? "true" : "false");
+  grn_text_printf(ctx, buffer, ">");
+}
+
+void
+grn_p_token_info(grn_ctx *ctx, token_info *info)
+{
+  grn_obj inspected;
+  GRN_TEXT_INIT(&inspected, 0);
+  grn_inspect_token_info(ctx, &inspected, info);
+  printf("%.*s\n",
+         (int)GRN_TEXT_LEN(&inspected),
+         GRN_TEXT_VALUE(&inspected));
+  GRN_OBJ_FIN(ctx, &inspected);
+}
+
+void
+grn_inspect_token_infos(grn_ctx *ctx,
+                        grn_obj *buffer,
+                        token_info **infos,
+                        uint32_t n)
+{
+  uint32_t i;
+  for (i = 0; i < n; i++) {
+    grn_text_printf(ctx, buffer, "[%u]\n", i);
+    grn_inspect_token_info(ctx, buffer, infos[i]);
+  }
+}
+
+void
+grn_p_token_infos(grn_ctx *ctx, token_info **infos, uint32_t n)
+{
+  grn_obj inspected;
+  GRN_TEXT_INIT(&inspected, 0);
+  grn_inspect_token_infos(ctx, &inspected, infos, n);
+  printf("%.*s\n",
+         (int)GRN_TEXT_LEN(&inspected),
+         GRN_TEXT_VALUE(&inspected));
+  GRN_OBJ_FIN(ctx, &inspected);
+}
 
 #define EX_NONE   0
 #define EX_PREFIX 1
@@ -11048,6 +11143,8 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
   if (data->n_token_infos == 0) {
     return false;
   }
+  P_NOTE("original token infos\n");
+  P_TIS(ctx, data->token_infos, data->n_token_infos);
 
   if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT ||
       data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
@@ -11135,6 +11232,8 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
         data->n_token_infos,
         sizeof(token_info *),
         token_compare);
+  P_NOTE("sorted token infos\n");
+  P_TIS(ctx, data->token_infos, data->n_token_infos);
   if (data->mode == GRN_OP_NEAR_PHRASE) {
     bool have_must_last = false;
     uint32_t i;
@@ -11663,6 +11762,8 @@ grn_ii_select_data_find_phrase(grn_ctx *ctx,
       if (must_last_ti) {
         data->token_info = must_last_ti;
       }
+      P_NOTE("%s: found: record:%u phrase:%u/%u\n", __func__, data->rid, data->token_info->phrase_id, data->token_info->phrase_group_id);
+      P_TI(ctx, data->token_info);
       return true;
     }
   }
@@ -11703,14 +11804,16 @@ grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
   if (!skipped) {
     return false;
   }
+  P_NOTE("%s: found: record:%u\n", __func__, data->rid);
+  P_TI(ctx, group->btree->min);
   bt_replace_min(data->bt, group->btree->min);
   return true;
 }
 
 grn_inline static bool
-grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
-                                          grn_ii_select_data *data,
-                                          int interval)
+grn_ii_select_data_is_matched_near_phrase_real(grn_ctx *ctx,
+                                               grn_ii_select_data *data,
+                                               int interval)
 {
   if (interval < data->min_interval) {
     return false;
@@ -11792,6 +11895,24 @@ grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
              (data->max_interval + data->additional_last_interval)) &&
             (interval_without_last_token <= data->max_interval));
   }
+}
+
+grn_inline static bool
+grn_ii_select_data_is_matched_near_phrase(grn_ctx *ctx,
+                                          grn_ii_select_data *data,
+                                          int interval)
+{
+  bool matched =
+    grn_ii_select_data_is_matched_near_phrase_real(ctx, data, interval);
+  P_NOTE("%s: %s: record:%u interval:%d min:%d max:%d/%d\n",
+         __func__,
+         matched ? "matched" : "not matched",
+         data->rid,
+         interval,
+         data->min_interval,
+         data->max_interval,
+         data->additional_last_interval);
+  return matched;
 }
 
 grn_inline static bool
