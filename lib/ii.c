@@ -9067,6 +9067,9 @@ grn_inspect_token_infos(grn_ctx *ctx,
 {
   uint32_t i;
   for (i = 0; i < n; i++) {
+    if (i > 0) {
+      GRN_TEXT_PUTC(ctx, buffer, '\n');
+    }
     grn_text_printf(ctx, buffer, "[%u]\n", i);
     grn_inspect_token_info(ctx, buffer, infos[i]);
   }
