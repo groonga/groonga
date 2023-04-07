@@ -56,6 +56,12 @@ grn_highlighter_set_close_tag(grn_ctx *ctx,
 GRN_API const char *
 grn_highlighter_get_close_tag(grn_ctx *ctx, grn_highlighter *highlighter);
 GRN_API grn_rc
+grn_highlighter_set_normalizers(grn_ctx *ctx,
+                                grn_highlighter *highlighter,
+                                const char *normalizers,
+                                size_t normalizers_length);
+GRN_API grn_obj *
+grn_highlighter_get_normalizers(grn_ctx *ctx, grn_highlighter *highlighter);
 grn_highlighter_add_keyword(grn_ctx *ctx,
                             grn_highlighter *highlighter,
                             const char *keyword,

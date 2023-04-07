@@ -53,7 +53,7 @@ struct _grn_highlighter {
   grn_obj_header header;
 
   grn_bool is_html_mode;
-  grn_bool need_prepared;
+  bool need_prepared;
   grn_obj raw_keywords;
 
   struct {
@@ -79,6 +79,7 @@ struct _grn_highlighter {
   struct {
     grn_obj *keywords;
     grn_obj keyword_ids;
+    grn_obj normalizers;
   } pat;
 };
 
@@ -103,7 +104,7 @@ grn_highlighter_open(grn_ctx *ctx)
   highlighter->header.domain = GRN_ID_NIL;
 
   highlighter->is_html_mode = GRN_TRUE;
-  highlighter->need_prepared = GRN_TRUE;
+  highlighter->need_prepared = true;
   GRN_TEXT_INIT(&(highlighter->raw_keywords), GRN_OBJ_VECTOR);
 
   GRN_TEXT_INIT(&(highlighter->tag.open), 0);
@@ -136,6 +137,7 @@ grn_highlighter_open(grn_ctx *ctx)
 
   highlighter->pat.keywords = NULL;
   GRN_RECORD_INIT(&(highlighter->pat.keyword_ids), GRN_OBJ_VECTOR, GRN_ID_NIL);
+  GRN_TEXT_INIT(&(highlighter->pat.normalizers), 0);
 
   GRN_API_RETURN(highlighter);
 }
@@ -149,6 +151,7 @@ grn_highlighter_close(grn_ctx *ctx, grn_highlighter *highlighter)
     GRN_API_RETURN(ctx->rc);
   }
 
+  GRN_OBJ_FIN(ctx, &(highlighter->pat.normalizers));
   GRN_OBJ_FIN(ctx, &(highlighter->pat.keyword_ids));
   if (highlighter->pat.keywords) {
     grn_obj_close(ctx, highlighter->pat.keywords);
@@ -405,7 +408,12 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
 
   GRN_BULK_REWIND(keyword_ids);
 
-  if (highlighter->lexicon.object) {
+  if (GRN_TEXT_LEN(&(highlighter->pat.normalizers)) > 0) {
+    grn_obj_set_info(ctx,
+                     highlighter->pat.keywords,
+                     GRN_INFO_NORMALIZERS,
+                     &(highlighter->pat.normalizers));
+  } else if (highlighter->lexicon.object) {
     grn_obj normalizers;
     GRN_TEXT_INIT(&normalizers, 0);
     grn_table_get_normalizers_string(ctx,
@@ -485,7 +493,7 @@ grn_highlighter_prepare(grn_ctx *ctx, grn_highlighter *highlighter)
   } else {
     grn_highlighter_prepare_patricia_trie(ctx, highlighter);
   }
-  highlighter->need_prepared = GRN_FALSE;
+  highlighter->need_prepared = false;
 }
 
 static grn_bool
@@ -996,7 +1004,7 @@ grn_highlighter_set_lexicon(grn_ctx *ctx,
   GRN_API_ENTER;
 
   if (highlighter->lexicon.object != lexicon) {
-    highlighter->need_prepared = GRN_TRUE;
+    highlighter->need_prepared = true;
     highlighter->lexicon.object = lexicon;
   }
 
@@ -1045,6 +1053,27 @@ const char *
 grn_highlighter_get_close_tag(grn_ctx *ctx, grn_highlighter *highlighter)
 {
   return GRN_TEXT_VALUE(&(highlighter->tag.close));
+}
+
+grn_rc
+grn_highlighter_set_normalizers(grn_ctx *ctx,
+                                grn_highlighter *highlighter,
+                                const char *normalizers,
+                                size_t normalizers_length)
+{
+  GRN_API_ENTER;
+  highlighter->need_prepared = true;
+  GRN_TEXT_SET(ctx,
+               &(highlighter->pat.normalizers),
+               normalizers,
+               normalizers_length);
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_obj *
+grn_highlighter_get_normalizers(grn_ctx *ctx, grn_highlighter *highlighter)
+{
+  return &(highlighter->pat.normalizers);
 }
 
 grn_rc
