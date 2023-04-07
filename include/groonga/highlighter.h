@@ -62,6 +62,13 @@ grn_highlighter_set_normalizers(grn_ctx *ctx,
                                 size_t normalizers_length);
 GRN_API grn_obj *
 grn_highlighter_get_normalizers(grn_ctx *ctx, grn_highlighter *highlighter);
+GRN_API grn_rc
+grn_highlighter_set_html_mode(grn_ctx *ctx,
+                              grn_highlighter *highlighter,
+                              bool html_mode);
+GRN_API bool
+grn_highlighter_get_html_mode(grn_ctx *ctx, grn_highlighter *highlighter);
+GRN_API grn_rc
 grn_highlighter_add_keyword(grn_ctx *ctx,
                             grn_highlighter *highlighter,
                             const char *keyword,

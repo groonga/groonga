@@ -45,14 +45,10 @@ grn_highlighter_location_compare(const void *data1, const void *data2)
   }
 }
 
-/*
- * TODO:
- *   * Support non HTML mode.
- */
 struct _grn_highlighter {
   grn_obj_header header;
 
-  grn_bool is_html_mode;
+  bool is_html_mode;
   bool need_prepared;
   grn_obj raw_keywords;
 
@@ -103,7 +99,7 @@ grn_highlighter_open(grn_ctx *ctx)
   highlighter->header.flags = 0;
   highlighter->header.domain = GRN_ID_NIL;
 
-  highlighter->is_html_mode = GRN_TRUE;
+  highlighter->is_html_mode = true;
   highlighter->need_prepared = true;
   GRN_TEXT_INIT(&(highlighter->raw_keywords), GRN_OBJ_VECTOR);
 
@@ -535,6 +531,20 @@ grn_highlighter_log_location(grn_ctx *ctx,
           text + location->offset);
 }
 
+static void
+grn_highlighter_highlight_add_normal_text(grn_ctx *ctx,
+                                          grn_highlighter *highlighter,
+                                          grn_obj *output,
+                                          const char *text,
+                                          size_t text_length)
+{
+  if (highlighter->is_html_mode) {
+    grn_text_escape_xml(ctx, output, text, text_length);
+  } else {
+    GRN_TEXT_PUT(ctx, output, text, text_length);
+  }
+}
+
 static uint64_t
 grn_highlighter_highlight_lexicon_flush(grn_ctx *ctx,
                                         grn_log_level log_level,
@@ -553,16 +563,22 @@ grn_highlighter_highlight_lexicon_flush(grn_ctx *ctx,
                                text,
                                text_length);
   if (location->offset > offset) {
-    grn_text_escape_xml(ctx,
-                        output,
-                        text + offset,
-                        (size_t)(location->offset - offset));
+    grn_highlighter_highlight_add_normal_text(
+      ctx,
+      highlighter,
+      output,
+      text + offset,
+      (size_t)(location->offset - offset));
   }
   GRN_TEXT_PUT(ctx,
                output,
                GRN_TEXT_VALUE(&(highlighter->tag.open)),
                GRN_TEXT_LEN(&(highlighter->tag.open)) - 1);
-  grn_text_escape_xml(ctx, output, text + location->offset, location->length);
+  grn_highlighter_highlight_add_normal_text(ctx,
+                                            highlighter,
+                                            output,
+                                            text + location->offset,
+                                            location->length);
   GRN_TEXT_PUT(ctx,
                output,
                GRN_TEXT_VALUE(&(highlighter->tag.close)),
@@ -875,10 +891,12 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
                                                        previous,
                                                        offset);
       if (offset < text_length) {
-        grn_text_escape_xml(ctx,
-                            output,
-                            text + offset,
-                            (size_t)(text_length - offset));
+        grn_highlighter_highlight_add_normal_text(
+          ctx,
+          highlighter,
+          output,
+          text + offset,
+          (size_t)(text_length - offset));
       }
     }
     GRN_LOG(ctx,
@@ -916,19 +934,22 @@ grn_highlighter_highlight_patricia_trie(grn_ctx *ctx,
                           &rest);
     for (i = 0; i < n_hits; i++) {
       if ((hits[i].offset - previous_length) > 0) {
-        grn_text_escape_xml(ctx,
-                            output,
-                            current + previous_length,
-                            hits[i].offset - previous_length);
+        grn_highlighter_highlight_add_normal_text(ctx,
+                                                  highlighter,
+                                                  output,
+                                                  current + previous_length,
+                                                  hits[i].offset -
+                                                    previous_length);
       }
       GRN_TEXT_PUT(ctx,
                    output,
                    GRN_TEXT_VALUE(&(highlighter->tag.open)),
                    GRN_TEXT_LEN(&(highlighter->tag.open)) - 1);
-      grn_text_escape_xml(ctx,
-                          output,
-                          current + hits[i].offset,
-                          hits[i].length);
+      grn_highlighter_highlight_add_normal_text(ctx,
+                                                highlighter,
+                                                output,
+                                                current + hits[i].offset,
+                                                hits[i].length);
       GRN_TEXT_PUT(ctx,
                    output,
                    GRN_TEXT_VALUE(&(highlighter->tag.close)),
@@ -938,10 +959,12 @@ grn_highlighter_highlight_patricia_trie(grn_ctx *ctx,
 
     chunk_length = (size_t)(rest - current);
     if ((chunk_length - previous_length) > 0) {
-      grn_text_escape_xml(ctx,
-                          output,
-                          current + previous_length,
-                          current_length - previous_length);
+      grn_highlighter_highlight_add_normal_text(ctx,
+                                                highlighter,
+                                                output,
+                                                current + previous_length,
+                                                current_length -
+                                                  previous_length);
     }
     current_length -= chunk_length;
     current = rest;
@@ -963,11 +986,11 @@ grn_highlighter_highlight(grn_ctx *ctx,
   }
 
   if (grn_vector_size(ctx, &(highlighter->raw_keywords)) == 0) {
-    if (highlighter->is_html_mode) {
-      grn_text_escape_xml(ctx, output, text, (size_t)text_length);
-    } else {
-      GRN_TEXT_PUT(ctx, output, text, text_length);
-    }
+    grn_highlighter_highlight_add_normal_text(ctx,
+                                              highlighter,
+                                              output,
+                                              text,
+                                              (size_t)text_length);
     goto exit;
   }
 
@@ -1074,6 +1097,22 @@ grn_obj *
 grn_highlighter_get_normalizers(grn_ctx *ctx, grn_highlighter *highlighter)
 {
   return &(highlighter->pat.normalizers);
+}
+
+grn_rc
+grn_highlighter_set_html_mode(grn_ctx *ctx,
+                              grn_highlighter *highlighter,
+                              bool html_mode)
+{
+  GRN_API_ENTER;
+  highlighter->is_html_mode = html_mode;
+  GRN_API_RETURN(ctx->rc);
+}
+
+bool
+grn_highlighter_get_html_mode(grn_ctx *ctx, grn_highlighter *highlighter)
+{
+  return highlighter->is_html_mode;
 }
 
 grn_rc
