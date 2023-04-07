@@ -24,6 +24,7 @@ repos:
           ?include/groonga/util\.h|
           ?lib/ctx\.c|
           ?lib/highlighter\.c|
+          ?lib/ii\.c|
           ?lib/proc/proc_highlight\.c|
           ?lib/util\.c|
           )

@@ -22,6 +22,7 @@ BinPackArguments: false
 BinPackParameters: false
 BraceWrapping:
   AfterFunction: true
+BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Custom
 ContinuationIndentWidth: 2
 IndentCaseBlocks: true
