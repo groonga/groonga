@@ -24,8 +24,9 @@ BraceWrapping:
   AfterFunction: true
 BreakBeforeBraces: Custom
 ContinuationIndentWidth: 2
+IndentCaseBlocks: true
 IndentPPDirectives: AfterHash
 IndentWidth: 2
-PPIndentWidth: 1
+PPIndentWidth: 2
 PackConstructorInitializers: CurrentLine
 SortIncludes: Never

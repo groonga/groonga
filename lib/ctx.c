@@ -49,20 +49,20 @@
 #include <time.h>
 
 #ifdef GRN_SUPPORT_REGEXP
-# include <onigmo.h>
+#  include <onigmo.h>
 #endif /* GRN_SUPPORT_REGEXP */
 
 #ifdef WIN32
-# include <share.h>
-# ifndef MAXUSHORT
-#  define MAXUSHORT 0xffff
-# endif
+#  include <share.h>
+#  ifndef MAXUSHORT
+#    define MAXUSHORT 0xffff
+#  endif
 #else /* WIN32 */
-# include <netinet/in.h>
-# ifdef HAVE_EXECINFO_H
-#  include <execinfo.h>
-# endif /* HAVE_EXECINFO_H */
-#endif  /* WIN32 */
+#  include <netinet/in.h>
+#  ifdef HAVE_EXECINFO_H
+#    include <execinfo.h>
+#  endif /* HAVE_EXECINFO_H */
+#endif   /* WIN32 */
 
 /* TODO: Is there configuration for this style? */
 /* clang-format off */
@@ -283,8 +283,8 @@ grn_ctx_loader_clear(grn_ctx *ctx)
 }
 
 #define IMPL_SIZE                                                              \
- (size_t)((((int)sizeof(struct _grn_ctx_impl)) + (grn_pagesize - 1)) &         \
-          ~(grn_pagesize - 1))
+  (size_t)((((int)sizeof(struct _grn_ctx_impl)) + (grn_pagesize - 1)) &        \
+           ~(grn_pagesize - 1))
 
 #ifdef GRN_WITH_MESSAGE_PACK
 static int
@@ -2177,16 +2177,16 @@ grn_ctx_logv(grn_ctx *ctx, const char *fmt, va_list ap)
 #ifdef WIN32
 /* This is for clang-format.
  * clang-format can't work with "static __declspec(noinline) void". */
-# define grn_noinline __declspec(noinline)
+#  define grn_noinline __declspec(noinline)
 static grn_noinline void
 grn_ctx_log_back_trace_windows(grn_ctx *ctx, grn_log_level level)
 {
-# ifdef GRN_WITH_WINDOWS_BACK_TRACE
-#  define MAX_N_FRAMES 62
+#  ifdef GRN_WITH_WINDOWS_BACK_TRACE
+#    define MAX_N_FRAMES 62
   ULONG frames_to_skip = 0;
   ULONG frames_to_capture = MAX_N_FRAMES;
   void *back_trace[MAX_N_FRAMES];
-#  undef MAX_N_FRAMES
+#    undef MAX_N_FRAMES
   USHORT n_frames =
     CaptureStackBackTrace(frames_to_skip, frames_to_capture, back_trace, NULL);
   if (n_frames == 0) {
@@ -2208,17 +2208,17 @@ grn_ctx_log_back_trace_windows(grn_ctx *ctx, grn_log_level level)
   }
 
   grn_windows_symbol_cleanup(ctx, process);
-# endif
+#  endif
 }
 #else
-# ifdef HAVE_BACKTRACE
+#  ifdef HAVE_BACKTRACE
 static void
 grn_ctx_log_back_trace_backtrace(grn_ctx *ctx, grn_log_level level)
 {
-#  define MAX_N_TRACES 16
+#    define MAX_N_TRACES 16
   void *traces[MAX_N_TRACES];
   int n_traces = backtrace(traces, MAX_N_TRACES);
-#  undef MAX_N_TRACES
+#    undef MAX_N_TRACES
   char **symbols;
   symbols = backtrace_symbols(traces, n_traces);
   if (symbols) {
@@ -2231,7 +2231,7 @@ grn_ctx_log_back_trace_backtrace(grn_ctx *ctx, grn_log_level level)
     GRN_LOG(ctx, level, "[log][back-trace] backtrace_symbols() is failed");
   }
 }
-# endif
+#  endif
 #endif
 
 bool
@@ -2256,9 +2256,9 @@ grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level)
 #ifdef WIN32
   grn_ctx_log_back_trace_windows(ctx, level);
 #else
-# ifdef HAVE_BACKTRACE
+#  ifdef HAVE_BACKTRACE
   grn_ctx_log_back_trace_backtrace(ctx, level);
-# endif
+#  endif
 #endif
 }
 
@@ -2334,8 +2334,8 @@ grn_segv_handler(int signal_number, siginfo_t *info, void *context)
   segv_received = true;
 
   GRN_LOG(ctx, GRN_LOG_CRIT, "-- CRASHED!!! --");
-# ifdef HAVE_BACKTRACE
-#  define N_TRACE_LEVEL 1024
+#  ifdef HAVE_BACKTRACE
+#    define N_TRACE_LEVEL 1024
   {
     static void *trace[N_TRACE_LEVEL];
     int n = backtrace(trace, N_TRACE_LEVEL);
@@ -2349,13 +2349,13 @@ grn_segv_handler(int signal_number, siginfo_t *info, void *context)
       free(symbols);
     }
   }
-# else  /* HAVE_BACKTRACE */
+#  else  /* HAVE_BACKTRACE */
   GRN_LOG(ctx, GRN_LOG_CRIT, "backtrace() isn't available.");
-# endif /* HAVE_BACKTRACE */
+#  endif /* HAVE_BACKTRACE */
   GRN_LOG(ctx, GRN_LOG_CRIT, "----------------");
   abort();
 }
-#endif  /* WIN32 */
+#endif   /* WIN32 */
 
 grn_rc
 grn_set_segv_handler(void)

@@ -19,33 +19,45 @@
 
 #pragma once
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
-GRN_API grn_obj *grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
-GRN_API grn_obj *grn_inspect_indent(grn_ctx *ctx, grn_obj *buffer,
-                                    grn_obj *content, const char *indent);
-GRN_API grn_obj *grn_inspect_indented(grn_ctx *ctx, grn_obj *buffer,
-                                      grn_obj *obj, const char *indent);
-GRN_API grn_obj *grn_inspect_limited(grn_ctx *ctx,
-                                     grn_obj *buffer,
-                                     grn_obj *obj);
-GRN_API grn_obj *grn_inspect_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
-GRN_API grn_obj *grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding);
-GRN_API grn_obj *grn_inspect_type(grn_ctx *ctx, grn_obj *buffer, unsigned char type);
-GRN_API grn_obj *grn_inspect_query_log_flags(grn_ctx *ctx,
-                                             grn_obj *buffer,
-                                             unsigned int flags);
-GRN_API grn_obj *grn_inspect_key(grn_ctx *ctx,
-                                 grn_obj *buffer,
-                                 grn_obj *table,
-                                 const void *key,
-                                 uint32_t key_size);
+GRN_API grn_obj *
+grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
+GRN_API grn_obj *
+grn_inspect_indent(grn_ctx *ctx,
+                   grn_obj *buffer,
+                   grn_obj *content,
+                   const char *indent);
+GRN_API grn_obj *
+grn_inspect_indented(grn_ctx *ctx,
+                     grn_obj *buffer,
+                     grn_obj *obj,
+                     const char *indent);
+GRN_API grn_obj *
+grn_inspect_limited(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
+GRN_API grn_obj *
+grn_inspect_name(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
+GRN_API grn_obj *
+grn_inspect_encoding(grn_ctx *ctx, grn_obj *buffer, grn_encoding encoding);
+GRN_API grn_obj *
+grn_inspect_type(grn_ctx *ctx, grn_obj *buffer, unsigned char type);
+GRN_API grn_obj *
+grn_inspect_query_log_flags(grn_ctx *ctx, grn_obj *buffer, unsigned int flags);
+GRN_API grn_obj *
+grn_inspect_key(grn_ctx *ctx,
+                grn_obj *buffer,
+                grn_obj *table,
+                const void *key,
+                uint32_t key_size);
 
-GRN_API void grn_p(grn_ctx *ctx, grn_obj *obj);
-GRN_API void grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point);
-GRN_API void grn_p_ii_values(grn_ctx *ctx, grn_obj *obj);
+GRN_API void
+grn_p(grn_ctx *ctx, grn_obj *obj);
+GRN_API void
+grn_p_geo_point(grn_ctx *ctx, grn_geo_point *point);
+GRN_API void
+grn_p_ii_values(grn_ctx *ctx, grn_obj *obj);
 
 #ifdef __cplusplus
 }

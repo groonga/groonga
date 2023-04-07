@@ -20,10 +20,12 @@ repos:
       - id: clang-format
         files: >-
           (
+          ?include/groonga/highlighter\.h|
+          ?include/groonga/util\.h|
           ?lib/ctx\.c|
           ?lib/highlighter\.c|
           ?lib/proc/proc_highlight\.c|
-          ?include/groonga/highlighter\.h|
+          ?lib/util\.c|
           )
 
 exclude: "^vendor/.*"
