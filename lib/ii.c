@@ -12196,8 +12196,10 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
 
   for (;;) {
     data->token_info = data->bt->min;
-    int32_t min = data->token_info->pos;
-    int32_t max = data->bt->max->pos;
+    token_info *min_token_info = data->bt->min;
+    int32_t min = min_token_info->pos;
+    token_info *max_token_info = data->bt->max;
+    int32_t max = max_token_info->pos;
     if (min > max) {
       char ii_name[GRN_TABLE_MAX_KEY_SIZE];
       int ii_name_size;
@@ -12224,6 +12226,14 @@ grn_ii_select_cursor_next_find_near(grn_ctx *ctx,
         data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
       interval -= data->token_info->n_tokens_in_phrase;
     }
+    P_NOTE("%s record:%u interval:%d min:%d max:%d\n",
+           __func__,
+           data->rid,
+           interval,
+           min,
+           max);
+    P_TI(ctx, min_token_info);
+    P_TI(ctx, max_token_info);
     bool matched = false;
     if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE) {
       matched = true;
