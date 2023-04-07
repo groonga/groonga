@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2010-2018  Brazil
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1459,39 +1459,45 @@ grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj)
 }
 
 grn_obj *
+grn_inspect_indent(grn_ctx *ctx, grn_obj *buffer, grn_obj *content,
+                   const char *indent)
+{
+  const char *content_raw = GRN_TEXT_VALUE(content);
+  size_t content_size = GRN_TEXT_LEN(content);
+
+  if (!buffer) {
+    buffer = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
+  }
+
+  size_t line_start = 0;
+  size_t i;
+  for (i = 0; i < content_size; i++) {
+    if (content_raw[i] == '\n') {
+      if (line_start != 0) {
+        GRN_TEXT_PUTS(ctx, buffer, indent);
+      }
+      GRN_TEXT_PUT(ctx, buffer, content_raw + line_start, i + 1 - line_start);
+      line_start = i + 1;
+    }
+  }
+  if (line_start != 0) {
+    GRN_TEXT_PUTS(ctx, buffer, indent);
+  }
+  GRN_TEXT_PUT(ctx, buffer,
+               content_raw + line_start,
+               content_size - line_start);
+
+  return buffer;
+}
+
+grn_obj *
 grn_inspect_indented(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj,
                      const char *indent)
 {
   grn_obj sub_buffer;
-
   GRN_TEXT_INIT(&sub_buffer, 0);
   grn_inspect(ctx, &sub_buffer, obj);
-  {
-    const char *inspected = GRN_TEXT_VALUE(&sub_buffer);
-    size_t inspected_size = GRN_TEXT_LEN(&sub_buffer);
-    size_t i, line_start;
-
-    if (!buffer) {
-      buffer = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
-    }
-
-    line_start = 0;
-    for (i = 0; i < inspected_size; i++) {
-      if (inspected[i] == '\n') {
-        if (line_start != 0) {
-          GRN_TEXT_PUTS(ctx, buffer, indent);
-        }
-        GRN_TEXT_PUT(ctx, buffer, inspected + line_start, i + 1 - line_start);
-        line_start = i + 1;
-      }
-    }
-    if (line_start != 0) {
-      GRN_TEXT_PUTS(ctx, buffer, indent);
-    }
-    GRN_TEXT_PUT(ctx, buffer,
-                 inspected + line_start,
-                 inspected_size - line_start);
-  }
+  grn_inspect_indent(ctx, buffer, &sub_buffer, indent);
   GRN_OBJ_FIN(ctx, &sub_buffer);
 
   return buffer;

@@ -1,5 +1,6 @@
 /*
-  Copyright(C) 2010-2017 Brazil
+  Copyright (C) 2010-2017  Brazil
+  Copyright (C) 2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,6 +24,8 @@ extern "C" {
 #endif
 
 GRN_API grn_obj *grn_inspect(grn_ctx *ctx, grn_obj *buffer, grn_obj *obj);
+GRN_API grn_obj *grn_inspect_indent(grn_ctx *ctx, grn_obj *buffer,
+                                    grn_obj *content, const char *indent);
 GRN_API grn_obj *grn_inspect_indented(grn_ctx *ctx, grn_obj *buffer,
                                       grn_obj *obj, const char *indent);
 GRN_API grn_obj *grn_inspect_limited(grn_ctx *ctx,
