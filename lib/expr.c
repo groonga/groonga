@@ -4241,7 +4241,7 @@ parse_query_accept_string(grn_ctx *ctx, efs_info *efsi,
   grn_expr_append_obj(efsi->ctx, efsi->e, token, GRN_OP_PUSH, 1);
 
   mode = grn_int32_value_at(&efsi->mode_stack, -1);
-  GRN_FLOAT32_POP(&efsi->weight_stack, weight);
+  weight = grn_float32_value_at(&efsi->weight_stack, -1);
   switch (mode) {
   case GRN_OP_ASSIGN :
     grn_expr_append_op(efsi->ctx, efsi->e, mode, 2);
@@ -4431,8 +4431,8 @@ parse_query_accept_adjust(grn_ctx *ctx,
                           float weight)
 {
   if (!(q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR)) {
-    parse_query_push_weight(ctx, q, weight);
     PARSE(token);
+    parse_query_push_weight(ctx, q, weight);
     return;
   }
 

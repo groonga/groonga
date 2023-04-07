@@ -2110,7 +2110,7 @@ static YYACTIONTYPE yy_reduce(
 #line 210 "grn_ecmascript.lemon"
 {
   float weight;
-  weight = grn_float32_value_at(&efsi->weight_stack, -1);
+  GRN_FLOAT32_POP(&efsi->weight_stack, weight);
 }
 #line 2115 "grn_ecmascript.c"
         break;
