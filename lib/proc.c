@@ -406,6 +406,18 @@ grn_proc_prefixed_options_parsev(grn_ctx *ctx,
         }
       }
       break;
+    case GRN_PROC_OPTION_VALUE_RAW_STRING :
+      {
+        grn_raw_string *string = va_arg(args, grn_raw_string *);
+        if (id != GRN_ID_NIL) {
+          GRN_RECORD_PUT(ctx, &used_ids, id);
+          *string = grn_proc_get_value_raw_string(ctx, value, string, func_tag);
+          if (ctx->rc != GRN_SUCCESS) {
+            goto exit;
+          }
+        }
+      }
+      break;
     default :
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
@@ -2029,6 +2041,23 @@ grn_proc_get_value_column(grn_ctx *ctx,
   }
 
   return column;
+}
+
+grn_raw_string
+grn_proc_get_value_raw_string(grn_ctx *ctx,
+                              grn_obj *value,
+                              grn_raw_string *default_value,
+                              const char *tag)
+{
+  if (!value) {
+    return (grn_raw_string){NULL, 0};
+  }
+
+  if (!grn_obj_is_text_family_bulk(ctx, value)) {
+    return *default_value;
+  }
+
+  return (grn_raw_string){GRN_TEXT_VALUE(value), GRN_TEXT_LEN(value)};
 }
 
 static grn_obj *

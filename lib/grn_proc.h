@@ -157,6 +157,11 @@ grn_proc_get_value_column(grn_ctx *ctx,
                           grn_obj *value,
                           grn_obj *table,
                           const char *tag);
+grn_raw_string
+grn_proc_get_value_raw_string(grn_ctx *ctx,
+                              grn_obj *value,
+                              grn_raw_string *default_value,
+                              const char *tag);
 
 void grn_proc_output_object_name(grn_ctx *ctx, grn_obj *obj);
 void grn_proc_output_object_id_name(grn_ctx *ctx, grn_id id);
