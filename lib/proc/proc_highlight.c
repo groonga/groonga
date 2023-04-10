@@ -22,8 +22,6 @@
 #include <groonga/plugin.h>
 #include <string.h>
 
-#define GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME "$highlight_html"
-
 static bool
 highlight_validate_text_arg(grn_ctx *ctx,
                             grn_obj *arg,
@@ -109,16 +107,17 @@ func_highlight(grn_ctx *ctx,
 
       grn_highlighter_set_html_mode(ctx, highlighter, false);
 
-      bool have_default_tag = false;
+      bool need_tag_in_variable_args = true;
 
-      if (end_arg->header.type == GRN_TABLE_HASH_KEY) {
+      if (grn_obj_is_tiny_hash_table(ctx, end_arg)) {
         n_args_without_option--;
 
         grn_raw_string normalizers;
         GRN_RAW_STRING_SET_CSTRING(normalizers, "NormalizerAuto");
-        bool html_escape = false;
+        bool html_mode = false;
         grn_raw_string default_open_tag = {NULL, 0};
         grn_raw_string default_close_tag = {NULL, 0};
+        bool cycled_class_tag_mode = false;
         grn_proc_options_parse(ctx,
                                end_arg,
                                tag,
@@ -130,13 +129,19 @@ func_highlight(grn_ctx *ctx,
                                &normalizers,
                                "html_escape",
                                GRN_PROC_OPTION_VALUE_BOOL,
-                               &html_escape,
+                               &html_mode,
+                               "html_mode",
+                               GRN_PROC_OPTION_VALUE_BOOL,
+                               &html_mode,
                                "default_open_tag",
                                GRN_PROC_OPTION_VALUE_RAW_STRING,
                                &default_open_tag,
                                "default_close_tag",
                                GRN_PROC_OPTION_VALUE_RAW_STRING,
                                &default_close_tag,
+                               "cycled_class_tag_mode",
+                               GRN_PROC_OPTION_VALUE_BOOL,
+                               &cycled_class_tag_mode,
                                NULL);
         if (ctx->rc != GRN_SUCCESS) {
           goto exit;
@@ -146,10 +151,10 @@ func_highlight(grn_ctx *ctx,
                                         highlighter,
                                         normalizers.value,
                                         normalizers.length);
-        grn_highlighter_set_html_mode(ctx, highlighter, html_escape);
+        grn_highlighter_set_html_mode(ctx, highlighter, html_mode);
 
         if (default_open_tag.length > 0) {
-          have_default_tag = true;
+          need_tag_in_variable_args = false;
           grn_highlighter_set_default_open_tag(ctx,
                                                highlighter,
                                                default_open_tag.value,
@@ -157,33 +162,25 @@ func_highlight(grn_ctx *ctx,
         }
 
         if (default_close_tag.length > 0) {
-          have_default_tag = true;
+          need_tag_in_variable_args = false;
           grn_highlighter_set_default_close_tag(ctx,
                                                 highlighter,
                                                 default_close_tag.value,
                                                 default_close_tag.length);
         }
+
+        if (cycled_class_tag_mode) {
+          need_tag_in_variable_args = false;
+        }
+        grn_highlighter_set_cycled_class_tag_mode(ctx,
+                                                  highlighter,
+                                                  cycled_class_tag_mode);
       }
 
       grn_obj **keyword_args = args + N_REQUIRED_ARGS;
       uint32_t n_keyword_args =
         (uint32_t)(n_args_without_option - N_REQUIRED_ARGS);
-      if (have_default_tag) {
-        uint32_t i;
-        for (i = 0; i < n_keyword_args; i++) {
-          grn_obj *keyword = keyword_args[i];
-          if (!highlight_validate_text_arg(ctx,
-                                           keyword,
-                                           function_name,
-                                           "keyword")) {
-            goto exit;
-          }
-          grn_highlighter_add_keyword(ctx,
-                                      highlighter,
-                                      GRN_TEXT_VALUE(keyword),
-                                      GRN_TEXT_LEN(keyword));
-        }
-      } else {
+      if (need_tag_in_variable_args) {
         uint32_t i;
         for (i = 0; i < n_keyword_args; i += 3) {
           grn_obj *keyword = keyword_args[i];
@@ -215,6 +212,21 @@ func_highlight(grn_ctx *ctx,
                                         highlighter,
                                         GRN_TEXT_VALUE(close_tag),
                                         GRN_TEXT_LEN(close_tag));
+          grn_highlighter_add_keyword(ctx,
+                                      highlighter,
+                                      GRN_TEXT_VALUE(keyword),
+                                      GRN_TEXT_LEN(keyword));
+        }
+      } else {
+        uint32_t i;
+        for (i = 0; i < n_keyword_args; i++) {
+          grn_obj *keyword = keyword_args[i];
+          if (!highlight_validate_text_arg(ctx,
+                                           keyword,
+                                           function_name,
+                                           "keyword")) {
+            goto exit;
+          }
           grn_highlighter_add_keyword(ctx,
                                       highlighter,
                                       GRN_TEXT_VALUE(keyword),
@@ -396,86 +408,117 @@ grn_proc_init_highlight_full(grn_ctx *ctx)
                   NULL);
 }
 
-static grn_highlighter *
-func_highlight_html_create_highlighter(grn_ctx *ctx, grn_obj *expression)
-{
-  grn_highlighter *highlighter;
-  grn_obj *condition = NULL;
-
-  highlighter = grn_highlighter_open(ctx);
-
-  condition = grn_expr_get_condition(ctx, expression);
-
-  for (; condition; condition = grn_expr_get_parent(ctx, condition)) {
-    uint32_t i, n_keywords;
-    grn_obj current_keywords;
-    GRN_TEXT_INIT(&current_keywords, GRN_OBJ_VECTOR);
-    grn_expr_get_keywords(ctx, condition, &current_keywords);
-
-    n_keywords = grn_vector_size(ctx, &current_keywords);
-    for (i = 0; i < n_keywords; i++) {
-      const char *keyword;
-      unsigned int keyword_size;
-      keyword_size =
-        grn_vector_get_element(ctx, &current_keywords, i, &keyword, NULL, NULL);
-      grn_highlighter_add_keyword(ctx, highlighter, keyword, keyword_size);
-    }
-    GRN_OBJ_FIN(ctx, &current_keywords);
-  }
-
-  return highlighter;
-}
-
 static grn_obj *
 func_highlight_html(grn_ctx *ctx,
                     int nargs,
                     grn_obj **args,
                     grn_user_data *user_data)
 {
+  const char *tag = "[highlight-html]";
+  const char *function_name = "highlight_html";
+
   grn_obj *highlighted = NULL;
-  grn_obj *string;
-  grn_obj *lexicon = NULL;
-  grn_obj *expression = NULL;
-  grn_highlighter *highlighter;
-  grn_obj *highlighter_ptr;
+  grn_highlighter *highlighter = NULL;
+  grn_obj *highlighter_ptr = NULL;
 
   if (!(1 <= nargs && nargs <= 2)) {
     GRN_PLUGIN_ERROR(
       ctx,
       GRN_INVALID_ARGUMENT,
-      "highlight_html(): wrong number of arguments (%d for 1..2)",
+      "highlight_html(): wrong number of arguments (%d for 1..3)",
       nargs);
     highlighted = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
     return highlighted;
   }
 
-  string = args[0];
-  if (nargs == 2) {
-    lexicon = args[1];
-  }
+  grn_obj *string = args[0];
 
+  grn_obj cache_key;
+  GRN_TEXT_INIT(&cache_key, 0);
+  grn_proc_func_generate_cache_key(ctx,
+                                   function_name,
+                                   args + 1,
+                                   nargs - 1,
+                                   &cache_key);
+
+  grn_obj *expression;
   grn_proc_get_info(ctx, user_data, NULL, NULL, &expression);
 
-  highlighter_ptr =
-    grn_expr_get_var(ctx,
-                     expression,
-                     GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME,
-                     strlen(GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME));
-  if (highlighter_ptr) {
-    highlighter = (grn_highlighter *)GRN_PTR_VALUE(highlighter_ptr);
-  } else {
-    highlighter_ptr =
-      grn_expr_get_or_add_var(ctx,
-                              expression,
-                              GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME,
-                              strlen(GRN_FUNC_HIGHLIGHT_HTML_CACHE_NAME));
-    GRN_OBJ_FIN(ctx, highlighter_ptr);
-    GRN_PTR_INIT(highlighter_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
+  if (GRN_TEXT_LEN(&cache_key) <= GRN_TABLE_MAX_KEY_SIZE) {
+    highlighter_ptr = grn_expr_get_var(ctx,
+                                       expression,
+                                       GRN_TEXT_VALUE(&cache_key),
+                                       (unsigned int)GRN_TEXT_LEN(&cache_key));
+    if (highlighter_ptr) {
+      highlighter = (grn_highlighter *)GRN_PTR_VALUE(highlighter_ptr);
+    } else {
+      highlighter_ptr =
+        grn_expr_get_or_add_var(ctx,
+                                expression,
+                                GRN_TEXT_VALUE(&cache_key),
+                                (unsigned int)GRN_TEXT_LEN(&cache_key));
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+      GRN_OBJ_FIN(ctx, highlighter_ptr);
+      GRN_PTR_INIT(highlighter_ptr, GRN_OBJ_OWN, GRN_DB_OBJECT);
+    }
+  }
+  GRN_OBJ_FIN(ctx, &cache_key);
 
-    highlighter = func_highlight_html_create_highlighter(ctx, expression);
-    GRN_PTR_SET(ctx, highlighter_ptr, highlighter);
+  if (!highlighter) {
+    highlighter = grn_highlighter_open(ctx);
+    if (highlighter_ptr) {
+      GRN_PTR_SET(ctx, highlighter_ptr, highlighter);
+    }
 
-    grn_highlighter_set_lexicon(ctx, highlighter, lexicon);
+    grn_obj *condition = grn_expr_get_condition(ctx, expression);
+    for (; condition; condition = grn_expr_get_parent(ctx, condition)) {
+      uint32_t i, n_keywords;
+      grn_obj current_keywords;
+      GRN_TEXT_INIT(&current_keywords, GRN_OBJ_VECTOR);
+      grn_expr_get_keywords(ctx, condition, &current_keywords);
+
+      n_keywords = grn_vector_size(ctx, &current_keywords);
+      for (i = 0; i < n_keywords; i++) {
+        const char *keyword;
+        unsigned int keyword_size;
+        keyword_size = grn_vector_get_element(ctx,
+                                              &current_keywords,
+                                              i,
+                                              &keyword,
+                                              NULL,
+                                              NULL);
+        grn_highlighter_add_keyword(ctx, highlighter, keyword, keyword_size);
+      }
+      GRN_OBJ_FIN(ctx, &current_keywords);
+    }
+
+    grn_obj *end_arg = args[nargs - 1];
+    int n_args_without_option = nargs;
+    if (grn_obj_is_tiny_hash_table(ctx, end_arg)) {
+      n_args_without_option--;
+
+      bool cycled_class_tag_mode = false;
+      grn_proc_options_parse(ctx,
+                             end_arg,
+                             tag,
+                             "cycled_class_tag_mode",
+                             GRN_PROC_OPTION_VALUE_BOOL,
+                             &cycled_class_tag_mode,
+                             NULL);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+      grn_highlighter_set_cycled_class_tag_mode(ctx,
+                                                highlighter,
+                                                cycled_class_tag_mode);
+    }
+
+    if (n_args_without_option == 2) {
+      grn_obj *lexicon = args[1];
+      grn_highlighter_set_lexicon(ctx, highlighter, lexicon);
+    }
   }
 
   highlighted = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_TEXT, 0);
@@ -484,6 +527,11 @@ func_highlight_html(grn_ctx *ctx,
                             GRN_TEXT_VALUE(string),
                             (int64_t)GRN_TEXT_LEN(string),
                             highlighted);
+
+exit:
+  if (!highlighted) {
+    highlighted = grn_plugin_proc_alloc(ctx, user_data, GRN_DB_VOID, 0);
+  }
 
   return highlighted;
 }
