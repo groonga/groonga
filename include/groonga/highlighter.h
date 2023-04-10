@@ -42,24 +42,26 @@ grn_highlighter_set_lexicon(grn_ctx *ctx,
 GRN_API grn_obj *
 grn_highlighter_get_lexicon(grn_ctx *ctx, grn_highlighter *highlighter);
 GRN_API grn_rc
-grn_highlighter_set_open_tag(grn_ctx *ctx,
-                             grn_highlighter *highlighter,
-                             const char *tag,
-                             size_t tag_length);
+grn_highlighter_set_default_open_tag(grn_ctx *ctx,
+                                     grn_highlighter *highlighter,
+                                     const char *tag,
+                                     int64_t tag_length);
 GRN_API const char *
-grn_highlighter_get_open_tag(grn_ctx *ctx, grn_highlighter *highlighter);
+grn_highlighter_get_default_open_tag(grn_ctx *ctx,
+                                     grn_highlighter *highlighter);
 GRN_API grn_rc
-grn_highlighter_set_close_tag(grn_ctx *ctx,
-                              grn_highlighter *highlighter,
-                              const char *tag,
-                              size_t tag_length);
+grn_highlighter_set_default_close_tag(grn_ctx *ctx,
+                                      grn_highlighter *highlighter,
+                                      const char *tag,
+                                      int64_t tag_length);
 GRN_API const char *
-grn_highlighter_get_close_tag(grn_ctx *ctx, grn_highlighter *highlighter);
+grn_highlighter_get_default_close_tag(grn_ctx *ctx,
+                                      grn_highlighter *highlighter);
 GRN_API grn_rc
 grn_highlighter_set_normalizers(grn_ctx *ctx,
                                 grn_highlighter *highlighter,
                                 const char *normalizers,
-                                size_t normalizers_length);
+                                int64_t normalizers_length);
 GRN_API grn_obj *
 grn_highlighter_get_normalizers(grn_ctx *ctx, grn_highlighter *highlighter);
 GRN_API grn_rc
@@ -75,6 +77,18 @@ grn_highlighter_add_keyword(grn_ctx *ctx,
                             int64_t keyword_length);
 GRN_API grn_rc
 grn_highlighter_clear_keywords(grn_ctx *ctx, grn_highlighter *highlighter);
+GRN_API grn_rc
+grn_highlighter_add_open_tag(grn_ctx *ctx,
+                             grn_highlighter *highlighter,
+                             const char *tag,
+                             int64_t tag_length);
+GRN_API grn_rc
+grn_highlighter_add_close_tag(grn_ctx *ctx,
+                              grn_highlighter *highlighter,
+                              const char *tag,
+                              int64_t tag_length);
+GRN_API grn_rc
+grn_highlighter_clear_tags(grn_ctx *ctx, grn_highlighter *highlighter);
 
 #ifdef __cplusplus
 }

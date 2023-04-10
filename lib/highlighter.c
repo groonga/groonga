@@ -26,9 +26,10 @@
 #define GRN_HIGHLIGHTER_DEFAULT_CLOSE_TAG "</span>"
 
 typedef struct {
+  grn_id chunk_id;
   uint64_t offset;
   uint32_t length;
-  grn_bool have_overlap;
+  bool have_overlap;
   uint32_t first_character_length;
 } grn_highlighter_location;
 
@@ -55,7 +56,11 @@ struct _grn_highlighter {
   struct {
     grn_obj open;
     grn_obj close;
-  } tag;
+  } default_tag;
+
+  grn_obj open_tags;
+  grn_obj close_tags;
+  size_t n_tags;
 
   /* For lexicon mode */
   struct {
@@ -64,7 +69,6 @@ struct _grn_highlighter {
     grn_obj lazy_keywords;
     grn_obj lazy_keyword_ids;
     grn_obj *token_id_chunks;
-    grn_obj token_id_chunk_ids;
     grn_obj token_id_chunk;
     grn_obj token_ids;
     grn_obj token_locations;
@@ -74,7 +78,6 @@ struct _grn_highlighter {
   /* For patricia trie mode */
   struct {
     grn_obj *keywords;
-    grn_obj keyword_ids;
     grn_obj normalizers;
   } pat;
 };
@@ -103,16 +106,20 @@ grn_highlighter_open(grn_ctx *ctx)
   highlighter->need_prepared = true;
   GRN_TEXT_INIT(&(highlighter->raw_keywords), GRN_OBJ_VECTOR);
 
-  GRN_TEXT_INIT(&(highlighter->tag.open), 0);
-  grn_highlighter_set_open_tag(ctx,
-                               highlighter,
-                               GRN_HIGHLIGHTER_DEFAULT_OPEN_TAG,
-                               strlen(GRN_HIGHLIGHTER_DEFAULT_OPEN_TAG));
-  GRN_TEXT_INIT(&(highlighter->tag.close), 0);
-  grn_highlighter_set_close_tag(ctx,
-                                highlighter,
-                                GRN_HIGHLIGHTER_DEFAULT_CLOSE_TAG,
-                                strlen(GRN_HIGHLIGHTER_DEFAULT_CLOSE_TAG));
+  GRN_TEXT_INIT(&(highlighter->default_tag.open), 0);
+  grn_highlighter_set_default_open_tag(ctx,
+                                       highlighter,
+                                       GRN_HIGHLIGHTER_DEFAULT_OPEN_TAG,
+                                       -1);
+  GRN_TEXT_INIT(&(highlighter->default_tag.close), 0);
+  grn_highlighter_set_default_close_tag(ctx,
+                                        highlighter,
+                                        GRN_HIGHLIGHTER_DEFAULT_CLOSE_TAG,
+                                        -1);
+
+  GRN_TEXT_INIT(&(highlighter->open_tags), GRN_OBJ_VECTOR);
+  GRN_TEXT_INIT(&(highlighter->close_tags), GRN_OBJ_VECTOR);
+  highlighter->n_tags = 0;
 
   highlighter->lexicon.object = NULL;
   highlighter->lexicon.encoding = GRN_ENC_NONE;
@@ -121,9 +128,6 @@ grn_highlighter_open(grn_ctx *ctx)
                   GRN_OBJ_VECTOR,
                   GRN_ID_NIL);
   highlighter->lexicon.token_id_chunks = NULL;
-  GRN_RECORD_INIT(&(highlighter->lexicon.token_id_chunk_ids),
-                  GRN_OBJ_VECTOR,
-                  GRN_ID_NIL);
   GRN_TEXT_INIT(&(highlighter->lexicon.token_id_chunk), 0);
   GRN_RECORD_INIT(&(highlighter->lexicon.token_ids),
                   GRN_OBJ_VECTOR,
@@ -132,8 +136,8 @@ grn_highlighter_open(grn_ctx *ctx)
   GRN_TEXT_INIT(&(highlighter->lexicon.candidates), 0);
 
   highlighter->pat.keywords = NULL;
-  GRN_RECORD_INIT(&(highlighter->pat.keyword_ids), GRN_OBJ_VECTOR, GRN_ID_NIL);
   GRN_TEXT_INIT(&(highlighter->pat.normalizers), 0);
+  grn_highlighter_set_normalizers(ctx, highlighter, "NormalizerAuto", -1);
 
   GRN_API_RETURN(highlighter);
 }
@@ -148,7 +152,6 @@ grn_highlighter_close(grn_ctx *ctx, grn_highlighter *highlighter)
   }
 
   GRN_OBJ_FIN(ctx, &(highlighter->pat.normalizers));
-  GRN_OBJ_FIN(ctx, &(highlighter->pat.keyword_ids));
   if (highlighter->pat.keywords) {
     grn_obj_close(ctx, highlighter->pat.keywords);
   }
@@ -158,14 +161,16 @@ grn_highlighter_close(grn_ctx *ctx, grn_highlighter *highlighter)
   if (highlighter->lexicon.token_id_chunks) {
     grn_obj_close(ctx, highlighter->lexicon.token_id_chunks);
   }
-  GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_id_chunk_ids));
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_id_chunk));
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.candidates));
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_locations));
   GRN_OBJ_FIN(ctx, &(highlighter->lexicon.token_ids));
 
-  GRN_OBJ_FIN(ctx, &(highlighter->tag.open));
-  GRN_OBJ_FIN(ctx, &(highlighter->tag.close));
+  GRN_OBJ_FIN(ctx, &(highlighter->open_tags));
+  GRN_OBJ_FIN(ctx, &(highlighter->close_tags));
+
+  GRN_OBJ_FIN(ctx, &(highlighter->default_tag.open));
+  GRN_OBJ_FIN(ctx, &(highlighter->default_tag.close));
 
   GRN_OBJ_FIN(ctx, &(highlighter->raw_keywords));
   GRN_FREE(highlighter);
@@ -174,59 +179,10 @@ grn_highlighter_close(grn_ctx *ctx, grn_highlighter *highlighter)
 }
 
 static void
-grn_highlighter_remove_unused_ids(grn_ctx *ctx,
-                                  grn_obj *table,
-                                  grn_obj *added_ids,
-                                  const char *tag)
-{
-  grn_table_cursor *cursor;
-  size_t n;
-  grn_id id;
-
-  cursor = grn_table_cursor_open(ctx, table, NULL, 0, NULL, 0, 0, -1, 0);
-  if (!cursor) {
-    grn_rc rc = ctx->rc;
-    char errbuf[GRN_CTX_MSGSIZE];
-    if (rc == GRN_SUCCESS) {
-      rc = GRN_UNKNOWN_ERROR;
-    }
-    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
-    ERR(rc,
-        "[highlighter][prepare]%s "
-        "failed to create a cursor for internal patricia trie: %s",
-        tag,
-        errbuf);
-    return;
-  }
-
-  n = GRN_BULK_VSIZE(added_ids) / sizeof(grn_id);
-  while ((id = grn_table_cursor_next(ctx, cursor)) != GRN_ID_NIL) {
-    size_t i;
-    grn_bool using = GRN_FALSE;
-
-    for (i = 0; i < n; i++) {
-      if (id == GRN_RECORD_VALUE_AT(added_ids, i)) {
-        using = GRN_TRUE;
-        break;
-      }
-    }
-
-    if (using) {
-      continue;
-    }
-
-    grn_table_cursor_delete(ctx, cursor);
-  }
-  grn_table_cursor_close(ctx, cursor);
-}
-
-static void
 grn_highlighter_prepare_lexicon(grn_ctx *ctx, grn_highlighter *highlighter)
 {
-  grn_bool have_token_id_chunks = GRN_FALSE;
   grn_obj *lazy_keywords = &(highlighter->lexicon.lazy_keywords);
   grn_id lexicon_id;
-  grn_obj *token_id_chunk_ids = &(highlighter->lexicon.token_id_chunk_ids);
   size_t i, n_keywords;
   grn_obj *token_id_chunk = &(highlighter->lexicon.token_id_chunk);
 
@@ -245,10 +201,7 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx, grn_highlighter *highlighter)
                      NULL);
 
   if (highlighter->lexicon.token_id_chunks) {
-    /* TODO: It may be better that we remove all existing records here
-     * for many keywords case. */
-    have_token_id_chunks =
-      grn_table_size(ctx, highlighter->lexicon.token_id_chunks) > 0;
+    grn_table_truncate(ctx, highlighter->lexicon.token_id_chunks);
   } else {
     highlighter->lexicon.token_id_chunks =
       grn_table_create(ctx,
@@ -271,11 +224,7 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx, grn_highlighter *highlighter)
           errbuf);
       return;
     }
-    token_id_chunk_ids->header.domain =
-      grn_obj_id(ctx, highlighter->lexicon.token_id_chunks);
   }
-
-  GRN_BULK_REWIND(token_id_chunk_ids);
 
   n_keywords = grn_vector_size(ctx, &(highlighter->raw_keywords));
   for (i = 0; i < n_keywords; i++) {
@@ -334,35 +283,16 @@ grn_highlighter_prepare_lexicon(grn_ctx *ctx, grn_highlighter *highlighter)
     grn_token_cursor_close(ctx, cursor);
 
     {
-      grn_id token_id_chunk_id;
-
-      {
-        grn_encoding encoding = ctx->encoding;
-        /* token_id_chunk is a binary data */
-        ctx->encoding = GRN_ENC_NONE;
-        token_id_chunk_id =
-          grn_table_add(ctx,
-                        highlighter->lexicon.token_id_chunks,
-                        GRN_TEXT_VALUE(token_id_chunk),
-                        (unsigned int)GRN_TEXT_LEN(token_id_chunk),
-                        NULL);
-        ctx->encoding = encoding;
-      }
-      if (!have_token_id_chunks) {
-        continue;
-      }
-      if (token_id_chunk_id == GRN_ID_NIL) {
-        continue;
-      }
-      GRN_RECORD_PUT(ctx, token_id_chunk_ids, token_id_chunk_id);
+      grn_encoding encoding = ctx->encoding;
+      /* token_id_chunk is a binary data */
+      ctx->encoding = GRN_ENC_NONE;
+      grn_table_add(ctx,
+                    highlighter->lexicon.token_id_chunks,
+                    GRN_TEXT_VALUE(token_id_chunk),
+                    (unsigned int)GRN_TEXT_LEN(token_id_chunk),
+                    NULL);
+      ctx->encoding = encoding;
     }
-  }
-
-  if (have_token_id_chunks) {
-    grn_highlighter_remove_unused_ids(ctx,
-                                      highlighter->lexicon.token_id_chunks,
-                                      token_id_chunk_ids,
-                                      "[prepare][lexicon]");
   }
 }
 
@@ -370,13 +300,8 @@ static void
 grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
                                       grn_highlighter *highlighter)
 {
-  grn_bool have_keywords = GRN_FALSE;
-  grn_obj *keyword_ids = &(highlighter->pat.keyword_ids);
-
   if (highlighter->pat.keywords) {
-    /* TODO: It may be better that we remove all existing records here
-     * for many keywords case. */
-    have_keywords = grn_table_size(ctx, highlighter->pat.keywords) > 0;
+    grn_table_truncate(ctx, highlighter->pat.keywords);
   } else {
     highlighter->pat.keywords =
       grn_table_create(ctx,
@@ -399,17 +324,9 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
           errbuf);
       return;
     }
-    keyword_ids->header.domain = grn_obj_id(ctx, highlighter->pat.keywords);
   }
 
-  GRN_BULK_REWIND(keyword_ids);
-
-  if (GRN_TEXT_LEN(&(highlighter->pat.normalizers)) > 0) {
-    grn_obj_set_info(ctx,
-                     highlighter->pat.keywords,
-                     GRN_INFO_NORMALIZERS,
-                     &(highlighter->pat.normalizers));
-  } else if (highlighter->lexicon.object) {
+  if (highlighter->lexicon.object) {
     grn_obj normalizers;
     GRN_TEXT_INIT(&normalizers, 0);
     grn_table_get_normalizers_string(ctx,
@@ -423,8 +340,8 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
   } else {
     grn_obj_set_info(ctx,
                      highlighter->pat.keywords,
-                     GRN_INFO_NORMALIZER,
-                     grn_ctx_get(ctx, "NormalizerAuto", -1));
+                     GRN_INFO_NORMALIZERS,
+                     &(highlighter->pat.normalizers));
   }
 
   {
@@ -434,7 +351,6 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
     for (i = 0; i < n; i++) {
       const char *keyword;
       unsigned int keyword_size;
-      grn_id id;
 
       keyword_size = grn_vector_get_element(ctx,
                                             &(highlighter->raw_keywords),
@@ -442,26 +358,12 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
                                             &keyword,
                                             NULL,
                                             NULL);
-      id = grn_table_add(ctx,
-                         highlighter->pat.keywords,
-                         keyword,
-                         keyword_size,
-                         NULL);
-      if (!have_keywords) {
-        continue;
-      }
-      if (id == GRN_ID_NIL) {
-        continue;
-      }
-      GRN_RECORD_PUT(ctx, keyword_ids, id);
+      grn_table_add(ctx,
+                    highlighter->pat.keywords,
+                    keyword,
+                    keyword_size,
+                    NULL);
     }
-  }
-
-  if (have_keywords) {
-    grn_highlighter_remove_unused_ids(ctx,
-                                      highlighter->pat.keywords,
-                                      keyword_ids,
-                                      "[prepare][no-lexicon]");
   }
 }
 
@@ -489,6 +391,11 @@ grn_highlighter_prepare(grn_ctx *ctx, grn_highlighter *highlighter)
   } else {
     grn_highlighter_prepare_patricia_trie(ctx, highlighter);
   }
+  grn_obj *open_tags = &(highlighter->open_tags);
+  grn_obj *close_tags = &(highlighter->close_tags);
+  size_t n_open_tags = grn_vector_size(ctx, open_tags);
+  size_t n_close_tags = grn_vector_size(ctx, close_tags);
+  highlighter->n_tags = (n_open_tags == n_close_tags ? n_open_tags : 0);
   highlighter->need_prepared = false;
 }
 
@@ -532,6 +439,37 @@ grn_highlighter_log_location(grn_ctx *ctx,
 }
 
 static void
+grn_highlighter_highlight_get_ith_tag(grn_ctx *ctx,
+                                      grn_highlighter *highlighter,
+                                      size_t i,
+                                      const char **open_tag,
+                                      size_t *open_tag_length,
+                                      const char **close_tag,
+                                      size_t *close_tag_length)
+{
+  if (highlighter->n_tags == 0) {
+    *open_tag = GRN_TEXT_VALUE(&(highlighter->default_tag.open));
+    *open_tag_length = GRN_TEXT_LEN(&(highlighter->default_tag.open)) - 1;
+    *close_tag = GRN_TEXT_VALUE(&(highlighter->default_tag.close));
+    *close_tag_length = GRN_TEXT_LEN(&(highlighter->default_tag.close)) - 1;
+  } else {
+    i = i % highlighter->n_tags;
+    *open_tag_length = grn_vector_get_element(ctx,
+                                              &(highlighter->open_tags),
+                                              i,
+                                              open_tag,
+                                              NULL,
+                                              NULL);
+    *close_tag_length = grn_vector_get_element(ctx,
+                                               &(highlighter->close_tags),
+                                               i,
+                                               close_tag,
+                                               NULL,
+                                               NULL);
+  }
+}
+
+static void
 grn_highlighter_highlight_add_normal_text(grn_ctx *ctx,
                                           grn_highlighter *highlighter,
                                           grn_obj *output,
@@ -570,19 +508,28 @@ grn_highlighter_highlight_lexicon_flush(grn_ctx *ctx,
       text + offset,
       (size_t)(location->offset - offset));
   }
-  GRN_TEXT_PUT(ctx,
-               output,
-               GRN_TEXT_VALUE(&(highlighter->tag.open)),
-               GRN_TEXT_LEN(&(highlighter->tag.open)) - 1);
+
+  const char *open_tag;
+  size_t open_tag_length;
+  const char *close_tag;
+  size_t close_tag_length;
+  grn_highlighter_highlight_get_ith_tag(ctx,
+                                        highlighter,
+                                        /* We need "- 1" here
+                                         * because grn_id doesn't
+                                         * use 0 (GRN_ID_NIL). */
+                                        location->chunk_id - 1,
+                                        &open_tag,
+                                        &open_tag_length,
+                                        &close_tag,
+                                        &close_tag_length);
+  GRN_TEXT_PUT(ctx, output, open_tag, open_tag_length);
   grn_highlighter_highlight_add_normal_text(ctx,
                                             highlighter,
                                             output,
                                             text + location->offset,
                                             location->length);
-  GRN_TEXT_PUT(ctx,
-               output,
-               GRN_TEXT_VALUE(&(highlighter->tag.close)),
-               GRN_TEXT_LEN(&(highlighter->tag.close)) - 1);
+  GRN_TEXT_PUT(ctx, output, close_tag, close_tag_length);
   return location->offset + location->length;
 }
 
@@ -762,7 +709,8 @@ grn_highlighter_highlight_lexicon(grn_ctx *ctx,
         grn_highlighter_location candidate;
         grn_highlighter_location *first = raw_token_locations + i;
 
-        candidate.have_overlap = GRN_FALSE;
+        candidate.chunk_id = chunk_id;
+        candidate.have_overlap = false;
         candidate.first_character_length = 0;
 
         {
@@ -933,6 +881,21 @@ grn_highlighter_highlight_patricia_trie(grn_ctx *ctx,
                           MAX_N_HITS,
                           &rest);
     for (i = 0; i < n_hits; i++) {
+      const char *open_tag;
+      size_t open_tag_length;
+      const char *close_tag;
+      size_t close_tag_length;
+      grn_highlighter_highlight_get_ith_tag(ctx,
+                                            highlighter,
+                                            /* We need "- 1" here
+                                             * because grn_id doesn't
+                                             * use 0 (GRN_ID_NIL). */
+                                            hits[i].id - 1,
+                                            &open_tag,
+                                            &open_tag_length,
+                                            &close_tag,
+                                            &close_tag_length);
+
       if ((hits[i].offset - previous_length) > 0) {
         grn_highlighter_highlight_add_normal_text(ctx,
                                                   highlighter,
@@ -941,19 +904,13 @@ grn_highlighter_highlight_patricia_trie(grn_ctx *ctx,
                                                   hits[i].offset -
                                                     previous_length);
       }
-      GRN_TEXT_PUT(ctx,
-                   output,
-                   GRN_TEXT_VALUE(&(highlighter->tag.open)),
-                   GRN_TEXT_LEN(&(highlighter->tag.open)) - 1);
+      GRN_TEXT_PUT(ctx, output, open_tag, open_tag_length);
       grn_highlighter_highlight_add_normal_text(ctx,
                                                 highlighter,
                                                 output,
                                                 current + hits[i].offset,
                                                 hits[i].length);
-      GRN_TEXT_PUT(ctx,
-                   output,
-                   GRN_TEXT_VALUE(&(highlighter->tag.close)),
-                   GRN_TEXT_LEN(&(highlighter->tag.close)) - 1);
+      GRN_TEXT_PUT(ctx, output, close_tag, close_tag_length);
       previous_length = hits[i].offset + hits[i].length;
     }
 
@@ -1043,53 +1000,63 @@ grn_highlighter_get_lexicon(grn_ctx *ctx, grn_highlighter *highlighter)
 }
 
 grn_rc
-grn_highlighter_set_open_tag(grn_ctx *ctx,
-                             grn_highlighter *highlighter,
-                             const char *tag,
-                             size_t tag_length)
+grn_highlighter_set_default_open_tag(grn_ctx *ctx,
+                                     grn_highlighter *highlighter,
+                                     const char *tag,
+                                     int64_t tag_length)
 {
   GRN_API_ENTER;
-  GRN_TEXT_SET(ctx, &(highlighter->tag.open), tag, tag_length);
-  GRN_TEXT_PUTC(ctx, &(highlighter->tag.open), '\0');
+  if (tag_length < 0) {
+    tag_length = strlen(tag);
+  }
+  GRN_TEXT_SET(ctx, &(highlighter->default_tag.open), tag, tag_length);
+  GRN_TEXT_PUTC(ctx, &(highlighter->default_tag.open), '\0');
   GRN_API_RETURN(ctx->rc);
 }
 
 const char *
-grn_highlighter_get_open_tag(grn_ctx *ctx, grn_highlighter *highlighter)
+grn_highlighter_get_default_open_tag(grn_ctx *ctx, grn_highlighter *highlighter)
 {
-  return GRN_TEXT_VALUE(&(highlighter->tag.open));
+  return GRN_TEXT_VALUE(&(highlighter->default_tag.open));
 }
 
 grn_rc
-grn_highlighter_set_close_tag(grn_ctx *ctx,
-                              grn_highlighter *highlighter,
-                              const char *tag,
-                              size_t tag_length)
+grn_highlighter_set_default_close_tag(grn_ctx *ctx,
+                                      grn_highlighter *highlighter,
+                                      const char *tag,
+                                      int64_t tag_length)
 {
   GRN_API_ENTER;
-  GRN_TEXT_SET(ctx, &(highlighter->tag.close), tag, tag_length);
-  GRN_TEXT_PUTC(ctx, &(highlighter->tag.close), '\0');
+  if (tag_length < 0) {
+    tag_length = strlen(tag);
+  }
+  GRN_TEXT_SET(ctx, &(highlighter->default_tag.close), tag, tag_length);
+  GRN_TEXT_PUTC(ctx, &(highlighter->default_tag.close), '\0');
   GRN_API_RETURN(ctx->rc);
 }
 
 const char *
-grn_highlighter_get_close_tag(grn_ctx *ctx, grn_highlighter *highlighter)
+grn_highlighter_get_default_close_tag(grn_ctx *ctx,
+                                      grn_highlighter *highlighter)
 {
-  return GRN_TEXT_VALUE(&(highlighter->tag.close));
+  return GRN_TEXT_VALUE(&(highlighter->default_tag.close));
 }
 
 grn_rc
 grn_highlighter_set_normalizers(grn_ctx *ctx,
                                 grn_highlighter *highlighter,
                                 const char *normalizers,
-                                size_t normalizers_length)
+                                int64_t normalizers_length)
 {
   GRN_API_ENTER;
-  highlighter->need_prepared = true;
+  if (normalizers_length < 0) {
+    normalizers_length = strlen(normalizers);
+  }
   GRN_TEXT_SET(ctx,
                &(highlighter->pat.normalizers),
                normalizers,
                normalizers_length);
+  highlighter->need_prepared = true;
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -1157,7 +1124,7 @@ grn_highlighter_add_keyword(grn_ctx *ctx,
                          (uint32_t)keyword_length,
                          0,
                          GRN_DB_TEXT);
-  highlighter->need_prepared = GRN_TRUE;
+  highlighter->need_prepared = true;
 
 exit:
   GRN_API_RETURN(ctx->rc);
@@ -1171,7 +1138,57 @@ grn_highlighter_clear_keywords(grn_ctx *ctx, grn_highlighter *highlighter)
   GRN_API_ENTER;
 
   GRN_BULK_REWIND(raw_keywords);
-  highlighter->need_prepared = GRN_TRUE;
+  highlighter->need_prepared = true;
 
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_highlighter_add_open_tag(grn_ctx *ctx,
+                             grn_highlighter *highlighter,
+                             const char *tag,
+                             int64_t tag_length)
+{
+  GRN_API_ENTER;
+  if (tag_length < 0) {
+    tag_length = strlen(tag);
+  }
+  grn_vector_add_element(ctx,
+                         &(highlighter->open_tags),
+                         tag,
+                         tag_length,
+                         0,
+                         GRN_DB_TEXT);
+  highlighter->need_prepared = true;
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_highlighter_add_close_tag(grn_ctx *ctx,
+                              grn_highlighter *highlighter,
+                              const char *tag,
+                              int64_t tag_length)
+{
+  GRN_API_ENTER;
+  if (tag_length < 0) {
+    tag_length = strlen(tag);
+  }
+  grn_vector_add_element(ctx,
+                         &(highlighter->close_tags),
+                         tag,
+                         tag_length,
+                         0,
+                         GRN_DB_TEXT);
+  highlighter->need_prepared = true;
+  GRN_API_RETURN(ctx->rc);
+}
+
+grn_rc
+grn_highlighter_clear_tags(grn_ctx *ctx, grn_highlighter *highlighter)
+{
+  GRN_API_ENTER;
+  GRN_BULK_REWIND(&(highlighter->open_tags));
+  GRN_BULK_REWIND(&(highlighter->close_tags));
+  highlighter->need_prepared = true;
   GRN_API_RETURN(ctx->rc);
 }
