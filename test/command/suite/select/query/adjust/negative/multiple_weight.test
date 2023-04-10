@@ -15,7 +15,7 @@ load --table Memos
 ]
 
 select Memos \
-  --query '~0.2title:@Groonga ~0.1content:@full' \
+  --query 'title:@Groonga ~0.1content:@full ~0.3content:@text' \
   --columns[score].stage filtered \
   --columns[score].flags COLUMN_SCALAR \
   --columns[score].type Float32 \

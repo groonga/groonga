@@ -15,7 +15,7 @@ load --table Memos
 {"title": "Mroonga", "content": "Mroonga is a MySQL storage engine based of Groonga."}
 ]
 [[0,0.0,0.0],3]
-select Memos   --query '~0.2title:@Groonga ~0.1content:@full'   --columns[score].stage filtered   --columns[score].flags COLUMN_SCALAR   --columns[score].type Float32   --columns[score].value _score   --output_columns 'title,content,score'
+select Memos   --query 'title:@Groonga ~0.1content:@full ~0.3content:@text'   --columns[score].stage filtered   --columns[score].flags COLUMN_SCALAR   --columns[score].type Float32   --columns[score].value _score   --output_columns 'title,content,score'
 [
   [
     0,
@@ -44,7 +44,7 @@ select Memos   --query '~0.2title:@Groonga ~0.1content:@full'   --columns[score]
       [
         "Groonga",
         "Groonga is a full text search engine.",
-        1.7
+        0.6
       ]
     ]
   ]
