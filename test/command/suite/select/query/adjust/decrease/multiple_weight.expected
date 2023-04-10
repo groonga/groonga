@@ -4,7 +4,7 @@ column_create Memos content COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
 [[0,0.0,0.0],true]
-column_create Terms index COLUMN_INDEX|WITH_POSITION Memos title,content
+column_create Terms index COLUMN_INDEX|WITH_POSITION|WITH_SECTION Memos title,content
 [[0,0.0,0.0],true]
 load --table Memos
 [
