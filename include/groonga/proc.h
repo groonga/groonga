@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -37,13 +37,24 @@ typedef enum {
   GRN_PROC_AGGREGATOR,
 } grn_proc_type;
 
-GRN_API grn_obj *grn_proc_create(grn_ctx *ctx,
-                                 const char *name, int name_size, grn_proc_type type,
-                                 grn_proc_func *init, grn_proc_func *next, grn_proc_func *fin,
-                                 unsigned int nvars, grn_expr_var *vars);
-GRN_API grn_obj *grn_proc_get_info(grn_ctx *ctx, grn_user_data *user_data,
-                                   grn_expr_var **vars, unsigned int *nvars, grn_obj **caller);
-GRN_API grn_proc_type grn_proc_get_type(grn_ctx *ctx, grn_obj *proc);
+GRN_API grn_obj *
+grn_proc_create(grn_ctx *ctx,
+                const char *name,
+                int name_size,
+                grn_proc_type type,
+                grn_proc_func *init,
+                grn_proc_func *next,
+                grn_proc_func *fin,
+                unsigned int nvars,
+                grn_expr_var *vars);
+GRN_API grn_obj *
+grn_proc_get_info(grn_ctx *ctx,
+                  grn_user_data *user_data,
+                  grn_expr_var **vars,
+                  unsigned int *nvars,
+                  grn_obj **caller);
+GRN_API grn_proc_type
+grn_proc_get_type(grn_ctx *ctx, grn_obj *proc);
 
 typedef grn_rc (*grn_proc_option_value_parse_func)(grn_ctx *ctx,
                                                    const char *name,
@@ -84,11 +95,8 @@ grn_proc_prefixed_options_parsev(grn_ctx *ctx,
                                  va_list args);
 
 GRN_API grn_rc
-grn_proc_options_parse(grn_ctx *ctx,
-                       grn_obj *options,
-                       const char *tag,
-                       const char *name,
-                       ...);
+grn_proc_options_parse(
+  grn_ctx *ctx, grn_obj *options, const char *tag, const char *name, ...);
 
 GRN_API grn_rc
 grn_proc_options_parsev(grn_ctx *ctx,

@@ -21,11 +21,14 @@ repos:
         files: >-
           (
           ?include/groonga/highlighter\.h|
+          ?include/groonga/proc\.h|
           ?include/groonga/util\.h|
           ?lib/ctx\.c|
+          ?lib/grn_proc\.h|
           ?lib/highlighter\.c|
           ?lib/ii\.c|
           ?lib/proc/proc_highlight\.c|
+          ?lib/proc\.c|
           ?lib/util\.c|
           )
 
