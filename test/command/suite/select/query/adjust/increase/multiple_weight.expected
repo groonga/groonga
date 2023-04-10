@@ -15,7 +15,7 @@ load --table Memos
 {"title": "Mroonga", "content": "Mroonga is a MySQL storage engine based of Groonga."}
 ]
 [[0,0.0,0.0],3]
-select Memos   --query '>5title:@Groonga >3content:@full'   --output_columns 'title,content,score'
+select Memos   --query '>5title:@Groonga >3content:@full'   --output_columns 'title,content,_score'
 [
   [
     0,
@@ -37,8 +37,8 @@ select Memos   --query '>5title:@Groonga >3content:@full'   --output_columns 'ti
           "ShortText"
         ],
         [
-          "score",
-          "Float32"
+          "_score",
+          "Int32"
         ]
       ],
       [
