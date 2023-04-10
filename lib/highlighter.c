@@ -343,6 +343,9 @@ grn_highlighter_prepare_patricia_trie(grn_ctx *ctx,
                      GRN_INFO_NORMALIZERS,
                      &(highlighter->pat.normalizers));
   }
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
 
   {
     unsigned int i, n;
