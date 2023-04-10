@@ -40,8 +40,8 @@ select Memos   --query '<0.1title:@Groonga <0.3content:@full'   --columns[score]
         ]
       ],
       [
-        "Rroonga",
-        "Rroonga is the Ruby bindings of Groonga.",
+        "Groonga",
+        "Groonga is a full text search engine.",
         1.6
       ]
     ]
