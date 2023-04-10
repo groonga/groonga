@@ -1,5 +1,7 @@
 table_create Memos TABLE_NO_KEY
 [[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
 column_create Memos content COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
