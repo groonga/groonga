@@ -1,0 +1,33 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"body": "<b>Rroonga</b> is a Ruby binding of Groonga."}
+]
+[[0,0.0,0.0],1]
+select Entries --output_columns   'highlight(body,   "groonga", "<span class=\\"keyword1\\">", "</span>",   {"html_mode": true} )'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "highlight",
+          null
+        ]
+      ],
+      [
+        "&lt;b&gt;Rroonga&lt;/b&gt; is a Ruby binding of <span class=\"keyword1\">Groonga</span>."
+      ]
+    ]
+  ]
+]

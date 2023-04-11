@@ -1,0 +1,13 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries body COLUMN_SCALAR ShortText
+
+load --table Entries
+[
+{"body": "<b>Rroonga</b> is a Ruby binding of Groonga."}
+]
+
+select Entries --output_columns \
+  'highlight(body, \
+  "groonga", "rroonga", \
+  {"cycled_class_tag_mode": true} \
+)'

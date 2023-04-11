@@ -1,0 +1,33 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"body": "PGroonga is a PostgreSQL plugin to use groonga (グルンガ) as index."}
+]
+[[0,0.0,0.0],1]
+select Entries --output_columns   'highlight(body,   "ぐるんが", "<span class=\\"keyword1\\">", "</span>",   {"normalizers": "NormalizerNFKC121(\\"unify_kana\\", true)"} )'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "highlight",
+          null
+        ]
+      ],
+      [
+        "PGroonga is a PostgreSQL plugin to use groonga (<span class=\"keyword1\">グルンガ</span>) as index."
+      ]
+    ]
+  ]
+]
