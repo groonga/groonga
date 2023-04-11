@@ -49,7 +49,6 @@ jobs:
         run: |
           set -ex
           cd ci/msys2
-          source MINGW-packages/.ci/ci-library.sh
           sed -i'' -e 's/^CheckSpace/#CheckSpace/g' /etc/pacman.conf
           MINGW-packages/.ci/fetch-validpgpkeys.sh
       - name: Build
