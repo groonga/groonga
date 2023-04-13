@@ -183,22 +183,6 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
   def download_packages(target_namespace)
     super unless target_namespace == :windows
   end
-
-  def prepare(target_namespace)
-    return super unless target_namespace == :windows
-
-    repositories_dir = download_repositories_dir(target_namespace)
-    mkdir_p(repositories_dir)
-
-    File.open("#{repositories_dir}/.htaccess", "w") do |htaccess|
-      __send__("#{target_namespace}_targets").each do |target|
-        redirect_url = built_package_url(target_namespace, target)
-        redirect_target_file = target.gsub(@version, "latest")
-        redirect_target = "/#{target_namespace}/#{@package}/#{redirect_target_file}"
-        htaccess.puts("Redirect #{redirect_target} #{redirect_url}")
-      end
-    end
-  end
 end
 
 task = GroongaPackageTask.new

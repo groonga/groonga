@@ -208,6 +208,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
     mkdir_p(repositories_dir)
     download_dir = "#{base_dir}/tmp/downloads/#{@version}"
     mkdir_p(download_dir)
+
     __send__("#{target_namespace}_targets").each do |target|
       branch = ENV["BRANCH"]
       if branch
@@ -255,9 +256,53 @@ class PackagesGroongaOrgPackageTask < PackageTask
         end
       end
     end
+
+    case target_namespace
+    when :source
+      rsync_dir =
+        "#{repository_rsync_base_path}/#{target_namespace}/#{@package}/"
+      sh("rsync",
+         "-av",
+         "--dry-run",
+         "--include=.htaccess",
+         "--exclude=*",
+         rsync_dir,
+         "#{repositories_dir}/")
+    end
   end
 
   def prepare(target_namespace)
+    case target_namespace
+    when :windows, :source
+      repositories_dir = download_repositories_dir(target_namespace)
+      mkdir_p(repositories_dir)
+
+      htaccess_path = "#{repositories_dir}/.htaccess"
+      if File.exist?(htaccess_path)
+        htaccess_content = File.read(htaccess_path)
+      else
+        htaccess_content = ""
+      end
+      File.open(htaccess_path, "w") do |htaccess|
+        htaccess_content.each_line do |line|
+          htaccess.puts(line) unless line.include?("-latest-")
+        end
+        __send__("#{target_namespace}_targets").each do |target|
+          redirect_url = built_package_url(target_namespace, target)
+          [
+            target,
+            target.gsub(@version, "latest")
+          ].each do |redirect_target_file|
+            redirect_target =
+              "/#{target_namespace}/#{@package}/#{redirect_target_file}"
+            htaccess.puts("Redirect #{redirect_target} #{redirect_url}")
+            if target_namespace == :source
+              htaccess.puts("Redirect #{redirect_target}.asc #{redirect_url}.asc")
+            end
+          end
+        end
+      end
+    end
   end
 
   def release(target_namespace)
@@ -266,7 +311,19 @@ class PackagesGroongaOrgPackageTask < PackageTask
     destination = "#{repository_rsync_base_path}/"
     rsync_options = ["-av"]
     case target_namespace
-    when :source, :windows
+    when :source
+      sh({"GH_TOKEN" => github_access_token},
+         "gh",
+         "release",
+         "upload",
+         @version,
+         "--clobber",
+         "--repo", github_repository,
+         *Dir.glob("#{repositories_dir}/#{target_namespace}/#{@package}/*.asc"))
+      rsync_options << "--exclude=*.asc"
+      rsync_options << "--exclude=*.tar.gz"
+      rsync_options << "--exclude=*.zip"
+    when :windows
     else
       rsync_options << "--exclude=*.buildinfo"
       rsync_options << "--exclude=*.changes"
