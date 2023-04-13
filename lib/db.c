@@ -11937,8 +11937,17 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
     if (s) {
       db_value *vp;
       uint32_t lock = 0;
+      bool local_grn_enable_reference_count;
+
       if (!(vp = grn_tiny_array_at(&s->values, id))) { goto exit; }
-      if (grn_enable_reference_count) {
+      if(vp->ptr && vp->ptr->header.type == GRN_TYPE) {
+        local_grn_enable_reference_count = false;
+      }
+      else {
+        local_grn_enable_reference_count = grn_enable_reference_count;
+      }
+
+      if (local_grn_enable_reference_count) {
         if (!grn_db_value_lock(ctx, id, vp, &lock)) {
           const char *name;
           uint32_t name_size = 0;
@@ -11951,7 +11960,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
         }
       }
       if (s->specs && !vp->ptr /* && !vp->done */) {
-        if (!grn_enable_reference_count) {
+        if (!local_grn_enable_reference_count) {
           if (!grn_db_value_lock(ctx, id, vp, &lock)) {
             const char *name;
             uint32_t name_size = 0;
@@ -12094,7 +12103,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
               case GRN_PROC :
                 grn_obj_spec_get_path(ctx, spec, id, buffer, s, &decoded_spec);
                 grn_plugin_register(ctx, buffer);
-                if (grn_enable_reference_count && vp->ptr) {
+                if (local_grn_enable_reference_count && vp->ptr) {
                   /* Registered proc by plugin must not be freed by
                    * grn_obj_unlink() for now. In the future, we may
                    * support reference count for proc registered by
@@ -12183,7 +12192,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
             GRN_OBJ_FIN(ctx, &decoded_spec);
             grn_ja_unref(ctx, &iw);
           }
-          if (grn_enable_reference_count) {
+          if (local_grn_enable_reference_count) {
             if (!vp->ptr) {
               grn_db_value_unlock(ctx, id, vp);
             }
@@ -12207,7 +12216,7 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
             grn_db_value_unlock(ctx, id, vp);
             goto exit;
           }
-          if (!grn_enable_reference_count) {
+          if (!local_grn_enable_reference_count) {
             grn_db_value_unlock(ctx, id, vp);
           }
         }
@@ -13176,6 +13185,10 @@ void
 grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
 {
   if (!obj) {
+    return;
+  }
+
+  if (obj->header.type == GRN_TYPE) {
     return;
   }
 
