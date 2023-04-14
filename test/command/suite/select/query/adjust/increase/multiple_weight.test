@@ -1,0 +1,20 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos title COLUMN_SCALAR ShortText
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create Terms index COLUMN_INDEX|WITH_POSITION|WITH_SECTION Memos title,content
+
+load --table Memos
+[
+{"title": "Groonga", "content": "Groonga is a full text search engine."},
+{"title": "Rroonga", "content": "Rroonga is the Ruby bindings of Groonga."},
+{"title": "Mroonga", "content": "Mroonga is a MySQL storage engine based of Groonga."}
+]
+
+select Memos \
+  --query '>5title:@Groonga >3content:@full' \
+  --output_columns 'title,content,_score'
+

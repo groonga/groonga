@@ -1,0 +1,51 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_POSITION|WITH_SECTION Memos title,content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"title": "Groonga", "content": "Groonga is a full text search engine."},
+{"title": "Rroonga", "content": "Rroonga is the Ruby bindings of Groonga."},
+{"title": "Mroonga", "content": "Mroonga is a MySQL storage engine based of Groonga."}
+]
+[[0,0.0,0.0],3]
+select Memos   --query '<0.1title:@Groonga <0.3content:@full'   --columns[score].stage filtered   --columns[score].flags COLUMN_SCALAR   --columns[score].type Float32   --columns[score].value _score   --output_columns 'title,content,score'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "title",
+          "ShortText"
+        ],
+        [
+          "content",
+          "ShortText"
+        ],
+        [
+          "score",
+          "Float32"
+        ]
+      ],
+      [
+        "Groonga",
+        "Groonga is a full text search engine.",
+        1.6
+      ]
+    ]
+  ]
+]

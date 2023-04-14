@@ -4431,8 +4431,8 @@ parse_query_accept_adjust(grn_ctx *ctx,
                           float weight)
 {
   if (!(q->flags & GRN_EXPR_QUERY_NO_SYNTAX_ERROR)) {
-    parse_query_push_weight(ctx, q, weight);
     PARSE(token);
+    parse_query_push_weight(ctx, q, weight);
     return;
   }
 
