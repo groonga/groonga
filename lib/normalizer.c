@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2012-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
   Copyright(C) 2022  Horimoto Yasuhiro <horimoto@clear-code.com>
 
   This library is free software; you can redistribute it and/or
@@ -3845,10 +3845,11 @@ substitutor_add_checks_and_offsets(grn_ctx *ctx,
     int source_char_length = grn_charlen(ctx, source_current, source_end);
     if (source_char_length == 0) {
       ERR(GRN_INVALID_ARGUMENT,
-          "%s invalid character in source text: <%.*s>",
+          "%s invalid character in source text: <%.*s>(%d)",
           data->tag,
           (int)(source_end - source_current),
-          source_current);
+          source_current,
+          (int)(source_end - source_current));
       return;
     }
     int normalized_char_length;
@@ -3860,10 +3861,11 @@ substitutor_add_checks_and_offsets(grn_ctx *ctx,
                                            normalized_end);
       if (normalized_char_length == 0) {
         ERR(GRN_INVALID_ARGUMENT,
-            "%s invalid character in normalized text: <%.*s>",
+            "%s invalid character in normalized text: <%.*s>(%d)",
             data->tag,
             (int)(normalized_end - normalized_current),
-            normalized_current);
+            normalized_current,
+            (int)(normalized_end - normalized_current));
         return;
       }
     }
@@ -3902,10 +3904,11 @@ substitutor_add_checks_and_offsets(grn_ctx *ctx,
                                              source_end);
       if (source_char_length == 0) {
         ERR(GRN_INVALID_ARGUMENT,
-            "%s invalid character in source text: <%.*s>",
+            "%s invalid character in source text: <%.*s>(%d)",
             data->tag,
             (int)(source_end - source_current),
-            source_current);
+            source_current,
+            (int)(source_end - source_current));
         return;
       }
       GRN_INT16_VALUE_AT(checks, last_check_index) +=
@@ -3919,10 +3922,11 @@ substitutor_add_checks_and_offsets(grn_ctx *ctx,
                                                normalized_end);
       if (normalized_char_length == 0) {
         ERR(GRN_INVALID_ARGUMENT,
-            "%s invalid character in normalized text: <%.*s>",
+            "%s invalid character in normalized text: <%.*s>(%d)",
             data->tag,
             (int)(normalized_end - normalized_current),
-            normalized_current);
+            normalized_current,
+            (int)(normalized_end - normalized_current));
         return;
       }
       if (data->need_checks) {
@@ -3958,10 +3962,11 @@ substitutor_add_types(grn_ctx *ctx,
     int normalized_char_length = grn_charlen(ctx, normalized, normalized_end);
     if (normalized_char_length == 0) {
       ERR(GRN_INVALID_ARGUMENT,
-          "%s invalid character in normalized text: <%.*s>",
+          "%s invalid character in normalized text: <%.*s>(%d)",
           data->tag,
           (int)(normalized_end - normalized),
-          normalized);
+          normalized,
+          (int)(normalized_end - normalized));
       return;
     }
     grn_char_type char_type = data->get_char_type(normalized);
@@ -4016,10 +4021,11 @@ substitutor_finished(grn_ctx *ctx,
       int char_length = grn_charlen(ctx, current, end);
       if (char_length == 0) {
         ERR(GRN_INVALID_ARGUMENT,
-            "%s invalid character in normalized text: <%.*s>",
+            "%s invalid character in normalized text: <%.*s>(%d)",
             data->tag,
             (int)(end - current),
-            current);
+            current,
+            (int)(end - current));
         return;
       }
       data->n_normalized_characters++;
