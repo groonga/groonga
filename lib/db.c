@@ -74,9 +74,9 @@ static const uint32_t GRN_TABLE_PAT_KEY_CACHE_SIZE = 1 << 15;
       int name_size;\
       name_size = grn_obj_name(ctx, (grn_obj *)(table), name, GRN_TABLE_MAX_KEY_SIZE);\
       ERR(GRN_INVALID_ARGUMENT,\
-          "[key][normalize] failed to normalize: <%.*s>: <%.*s>",\
+          "[key][normalize] failed to normalize: <%.*s>: <%.*s>(%d)",\
           name_size, name,\
-          (int)key_size, (const char *)key);\
+          (int)key_size, (const char *)key, (int)key_size);\
     }\
   } else {\
     block\
