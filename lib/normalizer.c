@@ -42,16 +42,21 @@ grn_normalizer_register(grn_ctx *ctx,
   }
 
   {
-    grn_obj * const normalizer = grn_proc_create(ctx,
-                                                 name_ptr, name_length,
-                                                 GRN_PROC_NORMALIZER,
-                                                 init, next, fin,
-                                                 sizeof(*vars) / sizeof(vars),
-                                                 vars);
+    grn_obj *const normalizer = grn_proc_create(ctx,
+                                                name_ptr,
+                                                name_length,
+                                                GRN_PROC_NORMALIZER,
+                                                init,
+                                                next,
+                                                fin,
+                                                sizeof(*vars) / sizeof(vars),
+                                                vars);
     if (!normalizer) {
-      GRN_PLUGIN_ERROR(ctx, GRN_NORMALIZER_ERROR,
+      GRN_PLUGIN_ERROR(ctx,
+                       GRN_NORMALIZER_ERROR,
                        "[normalizer] failed to register normalizer: <%.*s>",
-                       name_length, name_ptr);
+                       name_length,
+                       name_ptr);
       return ctx->rc;
     }
   }
@@ -71,35 +76,34 @@ grn_normalizer_fin(void)
 }
 
 static unsigned char symbol[] = {
-  ',', '.', 0, ':', ';', '?', '!', 0, 0, 0, '`', 0, '^', '~', '_', 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, '-', '-', '/', '\\', 0, 0, '|', 0, 0, 0, '\'', 0,
-  '"', '(', ')', 0, 0, '[', ']', '{', '}', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  '+', '-', 0, 0, 0, '=', 0, '<', '>', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  '$', 0, 0, '%', '#', '&', '*', '@', 0, 0, 0, 0, 0, 0, 0, 0
-};
+  ',',  '.', 0,   ':', ';', '?', '!', 0,    0,   0,   '`', 0,   '^', '~',
+  '_',  0,   0,   0,   0,   0,   0,   0,    0,   0,   0,   '-', '-', '/',
+  '\\', 0,   0,   '|', 0,   0,   0,   '\'', 0,   '"', '(', ')', 0,   0,
+  '[',  ']', '{', '}', 0,   0,   0,   0,    0,   0,   0,   0,   0,   0,
+  '+',  '-', 0,   0,   0,   '=', 0,   '<',  '>', 0,   0,   0,   0,   0,
+  0,    0,   0,   0,   0,   0,   '$', 0,    0,   '%', '#', '&', '*', '@',
+  0,    0,   0,   0,   0,   0,   0,   0};
 
 grn_inline static grn_obj *
 eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   static uint16_t hankana[] = {
-    0xa1a1, 0xa1a3, 0xa1d6, 0xa1d7, 0xa1a2, 0xa1a6, 0xa5f2, 0xa5a1, 0xa5a3,
-    0xa5a5, 0xa5a7, 0xa5a9, 0xa5e3, 0xa5e5, 0xa5e7, 0xa5c3, 0xa1bc, 0xa5a2,
-    0xa5a4, 0xa5a6, 0xa5a8, 0xa5aa, 0xa5ab, 0xa5ad, 0xa5af, 0xa5b1, 0xa5b3,
-    0xa5b5, 0xa5b7, 0xa5b9, 0xa5bb, 0xa5bd, 0xa5bf, 0xa5c1, 0xa5c4, 0xa5c6,
-    0xa5c8, 0xa5ca, 0xa5cb, 0xa5cc, 0xa5cd, 0xa5ce, 0xa5cf, 0xa5d2, 0xa5d5,
-    0xa5d8, 0xa5db, 0xa5de, 0xa5df, 0xa5e0, 0xa5e1, 0xa5e2, 0xa5e4, 0xa5e6,
-    0xa5e8, 0xa5e9, 0xa5ea, 0xa5eb, 0xa5ec, 0xa5ed, 0xa5ef, 0xa5f3, 0xa1ab,
-    0xa1eb
-  };
+    0xa1a1, 0xa1a3, 0xa1d6, 0xa1d7, 0xa1a2, 0xa1a6, 0xa5f2, 0xa5a1,
+    0xa5a3, 0xa5a5, 0xa5a7, 0xa5a9, 0xa5e3, 0xa5e5, 0xa5e7, 0xa5c3,
+    0xa1bc, 0xa5a2, 0xa5a4, 0xa5a6, 0xa5a8, 0xa5aa, 0xa5ab, 0xa5ad,
+    0xa5af, 0xa5b1, 0xa5b3, 0xa5b5, 0xa5b7, 0xa5b9, 0xa5bb, 0xa5bd,
+    0xa5bf, 0xa5c1, 0xa5c4, 0xa5c6, 0xa5c8, 0xa5ca, 0xa5cb, 0xa5cc,
+    0xa5cd, 0xa5ce, 0xa5cf, 0xa5d2, 0xa5d5, 0xa5d8, 0xa5db, 0xa5de,
+    0xa5df, 0xa5e0, 0xa5e1, 0xa5e2, 0xa5e4, 0xa5e6, 0xa5e8, 0xa5e9,
+    0xa5ea, 0xa5eb, 0xa5ec, 0xa5ed, 0xa5ef, 0xa5f3, 0xa1ab, 0xa1eb};
   static unsigned char dakuten[] = {
-    0xf4, 0, 0, 0, 0, 0xac, 0, 0xae, 0, 0xb0, 0, 0xb2, 0, 0xb4, 0, 0xb6, 0,
-    0xb8, 0, 0xba, 0, 0xbc, 0, 0xbe, 0, 0xc0, 0, 0xc2, 0, 0, 0xc5, 0, 0xc7,
-    0, 0xc9, 0, 0, 0, 0, 0, 0, 0xd0, 0, 0, 0xd3, 0, 0, 0xd6, 0, 0, 0xd9, 0,
-    0, 0xdc
-  };
-  static unsigned char handaku[] = {
-    0xd1, 0, 0, 0xd4, 0, 0, 0xd7, 0, 0, 0xda, 0, 0, 0xdd
-  };
+    0xf4, 0,    0,    0,    0,    0xac, 0,    0xae, 0,    0xb0, 0,
+    0xb2, 0,    0xb4, 0,    0xb6, 0,    0xb8, 0,    0xba, 0,    0xbc,
+    0,    0xbe, 0,    0xc0, 0,    0xc2, 0,    0,    0xc5, 0,    0xc7,
+    0,    0xc9, 0,    0,    0,    0,    0,    0,    0xd0, 0,    0,
+    0xd3, 0,    0,    0xd6, 0,    0,    0xd9, 0,    0,    0xdc};
+  static unsigned char handaku[] =
+    {0xd1, 0, 0, 0xd4, 0, 0, 0xd7, 0, 0, 0xda, 0, 0, 0xdd};
   int16_t *ch;
   const unsigned char *s, *s_, *e;
   unsigned char *d, *d0, *d_, b;
@@ -111,7 +115,7 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
         "[string][eucjp] failed to allocate normalized text space");
     return NULL;
   }
-  d0 = (unsigned char *) nstr->normalized;
+  d0 = (unsigned char *)nstr->normalized;
   if (nstr->flags & GRN_STRING_WITH_CHECKS) {
     if (!(nstr->checks = GRN_MALLOC((size * 2 + 1) * sizeof(int16_t)))) {
       GRN_FREE(nstr->normalized);
@@ -135,89 +139,103 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   cp = ctypes = nstr->ctypes;
   e = (unsigned char *)nstr->original + size;
-  for (s = s_ = (unsigned char *) nstr->original, d = d_ = d0; s < e; s++) {
+  for (s = s_ = (unsigned char *)nstr->original, d = d_ = d0; s < e; s++) {
     if ((*s & 0x80)) {
       if (((s + 1) < e) && (*(s + 1) & 0x80)) {
         unsigned char c1 = *s++, c2 = *s, c3 = 0;
         switch (c1 >> 4) {
-        case 0x08 :
+        case 0x08:
           if (c1 == 0x8e && 0xa0 <= c2 && c2 <= 0xdf) {
             uint16_t c = hankana[c2 - 0xa0];
             switch (c) {
-            case 0xa1ab :
-              if (d > d0 + 1 && d[-2] == 0xa5
-                  && 0xa6 <= d[-1] && d[-1] <= 0xdb && (b = dakuten[d[-1] - 0xa6])) {
+            case 0xa1ab:
+              if (d > d0 + 1 && d[-2] == 0xa5 && 0xa6 <= d[-1] &&
+                  d[-1] <= 0xdb && (b = dakuten[d[-1] - 0xa6])) {
                 *(d - 1) = b;
-                if (ch) { ch[-1] += 2; s_ += 2; }
+                if (ch) {
+                  ch[-1] += 2;
+                  s_ += 2;
+                }
                 continue;
               } else {
                 *d++ = (unsigned char)(c >> 8);
                 *d = (unsigned char)(c & 0xff);
               }
               break;
-            case 0xa1eb :
-              if (d > d0 + 1 && d[-2] == 0xa5
-                  && 0xcf <= d[-1] && d[-1] <= 0xdb && (b = handaku[d[-1] - 0xcf])) {
+            case 0xa1eb:
+              if (d > d0 + 1 && d[-2] == 0xa5 && 0xcf <= d[-1] &&
+                  d[-1] <= 0xdb && (b = handaku[d[-1] - 0xcf])) {
                 *(d - 1) = b;
-                if (ch) { ch[-1] += 2; s_ += 2; }
+                if (ch) {
+                  ch[-1] += 2;
+                  s_ += 2;
+                }
                 continue;
               } else {
                 *d++ = (unsigned char)(c >> 8);
                 *d = (unsigned char)(c & 0xff);
               }
               break;
-            default :
+            default:
               *d++ = (unsigned char)(c >> 8);
               *d = (unsigned char)(c & 0xff);
               break;
             }
             ctype = GRN_CHAR_KATAKANA;
           } else {
-            *d++ = c1; *d = c2;
+            *d++ = c1;
+            *d = c2;
             ctype = GRN_CHAR_OTHERS;
           }
           break;
-        case 0x09 :
-          *d++ = c1; *d = c2;
+        case 0x09:
+          *d++ = c1;
+          *d = c2;
           ctype = GRN_CHAR_OTHERS;
           break;
-        case 0x0a :
+        case 0x0a:
           switch (c1 & 0x0f) {
-          case 1 :
+          case 1:
             switch (c2) {
-            case 0xbc :
-              *d++ = c1; *d = c2;
+            case 0xbc:
+              *d++ = c1;
+              *d = c2;
               ctype = GRN_CHAR_KATAKANA;
               break;
-            case 0xb9 :
-              *d++ = c1; *d = c2;
+            case 0xb9:
+              *d++ = c1;
+              *d = c2;
               ctype = GRN_CHAR_KANJI;
               break;
-            case 0xa1 :
+            case 0xa1:
               if (removeblankp) {
-                if (cp > ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+                if (cp > ctypes) {
+                  *(cp - 1) |= GRN_CHAR_BLANK;
+                }
                 continue;
               } else {
                 *d = ' ';
-                ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
+                ctype = GRN_CHAR_BLANK | GRN_CHAR_SYMBOL;
               }
               break;
-            default :
+            default:
               if (c2 >= 0xa4 && (c3 = symbol[c2 - 0xa4])) {
                 *d = c3;
                 ctype = GRN_CHAR_SYMBOL;
               } else {
-                *d++ = c1; *d = c2;
+                *d++ = c1;
+                *d = c2;
                 ctype = GRN_CHAR_OTHERS;
               }
               break;
             }
             break;
-          case 2 :
-            *d++ = c1; *d = c2;
+          case 2:
+            *d++ = c1;
+            *d = c2;
             ctype = GRN_CHAR_SYMBOL;
             break;
-          case 3 :
+          case 3:
             c3 = c2 - 0x80;
             if ('a' <= c3 && c3 <= 'z') {
               ctype = GRN_CHAR_ALPHA;
@@ -230,31 +248,37 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
               *d = c3;
             } else {
               ctype = GRN_CHAR_OTHERS;
-              *d++ = c1; *d = c2;
+              *d++ = c1;
+              *d = c2;
             }
             break;
-          case 4 :
-            *d++ = c1; *d = c2;
+          case 4:
+            *d++ = c1;
+            *d = c2;
             ctype = GRN_CHAR_HIRAGANA;
             break;
-          case 5 :
-            *d++ = c1; *d = c2;
+          case 5:
+            *d++ = c1;
+            *d = c2;
             ctype = GRN_CHAR_KATAKANA;
             break;
-          case 6 :
-          case 7 :
-          case 8 :
-            *d++ = c1; *d = c2;
+          case 6:
+          case 7:
+          case 8:
+            *d++ = c1;
+            *d = c2;
             ctype = GRN_CHAR_SYMBOL;
             break;
-          default :
-            *d++ = c1; *d = c2;
+          default:
+            *d++ = c1;
+            *d = c2;
             ctype = GRN_CHAR_OTHERS;
             break;
           }
           break;
-        default :
-          *d++ = c1; *d = c2;
+        default:
+          *d++ = c1;
+          *d = c2;
           ctype = GRN_CHAR_KANJI;
           break;
         }
@@ -265,46 +289,51 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
     } else {
       unsigned char c = *s;
       switch (c >> 4) {
-      case 0 :
-      case 1 :
+      case 0:
+      case 1:
         /* skip unprintable ascii */
-        if (cp > ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+        if (cp > ctypes) {
+          *(cp - 1) |= GRN_CHAR_BLANK;
+        }
         continue;
-      case 2 :
+      case 2:
         if (c == 0x20) {
           if (removeblankp) {
-            if (cp > ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+            if (cp > ctypes) {
+              *(cp - 1) |= GRN_CHAR_BLANK;
+            }
             continue;
           } else {
             *d = ' ';
-            ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
+            ctype = GRN_CHAR_BLANK | GRN_CHAR_SYMBOL;
           }
         } else {
           *d = c;
           ctype = GRN_CHAR_SYMBOL;
         }
         break;
-      case 3 :
+      case 3:
         *d = c;
         ctype = (c <= 0x39) ? GRN_CHAR_DIGIT : GRN_CHAR_SYMBOL;
         break;
-      case 4 :
+      case 4:
         *d = ('A' <= c) ? c + 0x20 : c;
         ctype = (c == 0x40) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
         break;
-      case 5 :
+      case 5:
         *d = (c <= 'Z') ? c + 0x20 : c;
         ctype = (c <= 0x5a) ? GRN_CHAR_ALPHA : GRN_CHAR_SYMBOL;
         break;
-      case 6 :
+      case 6:
         *d = c;
         ctype = (c == 0x60) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
         break;
-      case 7 :
+      case 7:
         *d = c;
-        ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
+        ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA
+                            : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
         break;
-      default :
+      default:
         *d = c;
         ctype = GRN_CHAR_OTHERS;
         break;
@@ -312,14 +341,20 @@ eucjp_normalize(grn_ctx *ctx, grn_string *nstr)
     }
     d++;
     length++;
-    if (cp) { *cp++ = ctype; }
+    if (cp) {
+      *cp++ = ctype;
+    }
     if (ch) {
       *ch++ = (int16_t)(s + 1 - s_);
       s_ = s + 1;
-      while (++d_ < d) { *ch++ = 0; }
+      while (++d_ < d) {
+        *ch++ = 0;
+      }
     }
   }
-  if (cp) { *cp = GRN_CHAR_NULL; }
+  if (cp) {
+    *cp = GRN_CHAR_NULL;
+  }
   *d = '\0';
   nstr->n_characters = (unsigned int)length;
   nstr->normalized_length_in_bytes =
@@ -331,24 +366,22 @@ grn_inline static grn_obj *
 sjis_normalize(grn_ctx *ctx, grn_string *nstr)
 {
   static uint16_t hankana[] = {
-    0x8140, 0x8142, 0x8175, 0x8176, 0x8141, 0x8145, 0x8392, 0x8340, 0x8342,
-    0x8344, 0x8346, 0x8348, 0x8383, 0x8385, 0x8387, 0x8362, 0x815b, 0x8341,
-    0x8343, 0x8345, 0x8347, 0x8349, 0x834a, 0x834c, 0x834e, 0x8350, 0x8352,
-    0x8354, 0x8356, 0x8358, 0x835a, 0x835c, 0x835e, 0x8360, 0x8363, 0x8365,
-    0x8367, 0x8369, 0x836a, 0x836b, 0x836c, 0x836d, 0x836e, 0x8371, 0x8374,
-    0x8377, 0x837a, 0x837d, 0x837e, 0x8380, 0x8381, 0x8382, 0x8384, 0x8386,
-    0x8388, 0x8389, 0x838a, 0x838b, 0x838c, 0x838d, 0x838f, 0x8393, 0x814a,
-    0x814b
-  };
+    0x8140, 0x8142, 0x8175, 0x8176, 0x8141, 0x8145, 0x8392, 0x8340,
+    0x8342, 0x8344, 0x8346, 0x8348, 0x8383, 0x8385, 0x8387, 0x8362,
+    0x815b, 0x8341, 0x8343, 0x8345, 0x8347, 0x8349, 0x834a, 0x834c,
+    0x834e, 0x8350, 0x8352, 0x8354, 0x8356, 0x8358, 0x835a, 0x835c,
+    0x835e, 0x8360, 0x8363, 0x8365, 0x8367, 0x8369, 0x836a, 0x836b,
+    0x836c, 0x836d, 0x836e, 0x8371, 0x8374, 0x8377, 0x837a, 0x837d,
+    0x837e, 0x8380, 0x8381, 0x8382, 0x8384, 0x8386, 0x8388, 0x8389,
+    0x838a, 0x838b, 0x838c, 0x838d, 0x838f, 0x8393, 0x814a, 0x814b};
   static unsigned char dakuten[] = {
-    0x94, 0, 0, 0, 0, 0x4b, 0, 0x4d, 0, 0x4f, 0, 0x51, 0, 0x53, 0, 0x55, 0,
-    0x57, 0, 0x59, 0, 0x5b, 0, 0x5d, 0, 0x5f, 0, 0x61, 0, 0, 0x64, 0, 0x66,
-    0, 0x68, 0, 0, 0, 0, 0, 0, 0x6f, 0, 0, 0x72, 0, 0, 0x75, 0, 0, 0x78, 0,
-    0, 0x7b
-  };
-  static unsigned char handaku[] = {
-    0x70, 0, 0, 0x73, 0, 0, 0x76, 0, 0, 0x79, 0, 0, 0x7c
-  };
+    0x94, 0,    0,    0,    0,    0x4b, 0,    0x4d, 0,    0x4f, 0,
+    0x51, 0,    0x53, 0,    0x55, 0,    0x57, 0,    0x59, 0,    0x5b,
+    0,    0x5d, 0,    0x5f, 0,    0x61, 0,    0,    0x64, 0,    0x66,
+    0,    0x68, 0,    0,    0,    0,    0,    0,    0x6f, 0,    0,
+    0x72, 0,    0,    0x75, 0,    0,    0x78, 0,    0,    0x7b};
+  static unsigned char handaku[] =
+    {0x70, 0, 0, 0x73, 0, 0, 0x76, 0, 0, 0x79, 0, 0, 0x7c};
   int16_t *ch;
   const unsigned char *s, *s_;
   unsigned char *d, *d0, *d_, b, *e;
@@ -360,7 +393,7 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
         "[string][sjis] failed to allocate normalized text space");
     return NULL;
   }
-  d0 = (unsigned char *) nstr->normalized;
+  d0 = (unsigned char *)nstr->normalized;
   if (nstr->flags & GRN_STRING_WITH_CHECKS) {
     if (!(nstr->checks = GRN_MALLOC((size * 2 + 1) * sizeof(int16_t)))) {
       GRN_FREE(nstr->normalized);
@@ -384,34 +417,40 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   cp = ctypes = nstr->ctypes;
   e = (unsigned char *)nstr->original + size;
-  for (s = s_ = (unsigned char *) nstr->original, d = d_ = d0; s < e; s++) {
+  for (s = s_ = (unsigned char *)nstr->original, d = d_ = d0; s < e; s++) {
     if ((*s & 0x80)) {
       if (0xa0 <= *s && *s <= 0xdf) {
         uint16_t c = hankana[*s - 0xa0];
         switch (c) {
-        case 0x814a :
-          if (d > d0 + 1 && d[-2] == 0x83
-              && 0x45 <= d[-1] && d[-1] <= 0x7a && (b = dakuten[d[-1] - 0x45])) {
+        case 0x814a:
+          if (d > d0 + 1 && d[-2] == 0x83 && 0x45 <= d[-1] && d[-1] <= 0x7a &&
+              (b = dakuten[d[-1] - 0x45])) {
             *(d - 1) = b;
-            if (ch) { ch[-1]++; s_++; }
+            if (ch) {
+              ch[-1]++;
+              s_++;
+            }
             continue;
           } else {
             *d++ = (unsigned char)(c >> 8);
             *d = (unsigned char)(c & 0xff);
           }
           break;
-        case 0x814b :
-          if (d > d0 + 1 && d[-2] == 0x83
-              && 0x6e <= d[-1] && d[-1] <= 0x7a && (b = handaku[d[-1] - 0x6e])) {
+        case 0x814b:
+          if (d > d0 + 1 && d[-2] == 0x83 && 0x6e <= d[-1] && d[-1] <= 0x7a &&
+              (b = handaku[d[-1] - 0x6e])) {
             *(d - 1) = b;
-            if (ch) { ch[-1]++; s_++; }
+            if (ch) {
+              ch[-1]++;
+              s_++;
+            }
             continue;
           } else {
             *d++ = (unsigned char)(c >> 8);
             *d = (unsigned char)(c & 0xff);
           }
           break;
-        default :
+        default:
           *d++ = (unsigned char)(c >> 8);
           *d = (unsigned char)(c & 0xff);
           break;
@@ -422,40 +461,46 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
           unsigned char c1 = *s++, c2 = *s, c3 = 0;
           if (0x81 <= c1 && c1 <= 0x87) {
             switch (c1 & 0x0f) {
-            case 1 :
+            case 1:
               switch (c2) {
-              case 0x5b :
-                *d++ = c1; *d = c2;
+              case 0x5b:
+                *d++ = c1;
+                *d = c2;
                 ctype = GRN_CHAR_KATAKANA;
                 break;
-              case 0x58 :
-                *d++ = c1; *d = c2;
+              case 0x58:
+                *d++ = c1;
+                *d = c2;
                 ctype = GRN_CHAR_KANJI;
                 break;
-              case 0x40 :
+              case 0x40:
                 if (removeblankp) {
-                  if (cp > ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+                  if (cp > ctypes) {
+                    *(cp - 1) |= GRN_CHAR_BLANK;
+                  }
                   continue;
                 } else {
                   *d = ' ';
-                  ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
+                  ctype = GRN_CHAR_BLANK | GRN_CHAR_SYMBOL;
                 }
                 break;
-              default :
+              default:
                 if (0x43 <= c2 && c2 <= 0x7e && (c3 = symbol[c2 - 0x43])) {
                   *d = c3;
                   ctype = GRN_CHAR_SYMBOL;
-                } else if (0x7f <= c2 && c2 <= 0x97 && (c3 = symbol[c2 - 0x44])) {
+                } else if (0x7f <= c2 && c2 <= 0x97 &&
+                           (c3 = symbol[c2 - 0x44])) {
                   *d = c3;
                   ctype = GRN_CHAR_SYMBOL;
                 } else {
-                  *d++ = c1; *d = c2;
+                  *d++ = c1;
+                  *d = c2;
                   ctype = GRN_CHAR_OTHERS;
                 }
                 break;
               }
               break;
-            case 2 :
+            case 2:
               c3 = c2 - 0x1f;
               if (0x4f <= c2 && c2 <= 0x58) {
                 ctype = GRN_CHAR_DIGIT;
@@ -467,34 +512,41 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
                 ctype = GRN_CHAR_ALPHA;
                 *d = c2 - 0x20;
               } else if (0x9f <= c2 && c2 <= 0xf1) {
-                *d++ = c1; *d = c2;
+                *d++ = c1;
+                *d = c2;
                 ctype = GRN_CHAR_HIRAGANA;
               } else {
-                *d++ = c1; *d = c2;
+                *d++ = c1;
+                *d = c2;
                 ctype = GRN_CHAR_OTHERS;
               }
               break;
-            case 3 :
+            case 3:
               if (0x40 <= c2 && c2 <= 0x96) {
-                *d++ = c1; *d = c2;
+                *d++ = c1;
+                *d = c2;
                 ctype = GRN_CHAR_KATAKANA;
               } else {
-                *d++ = c1; *d = c2;
+                *d++ = c1;
+                *d = c2;
                 ctype = GRN_CHAR_SYMBOL;
               }
               break;
-            case 4 :
-            case 7 :
-              *d++ = c1; *d = c2;
+            case 4:
+            case 7:
+              *d++ = c1;
+              *d = c2;
               ctype = GRN_CHAR_SYMBOL;
               break;
-            default :
-              *d++ = c1; *d = c2;
+            default:
+              *d++ = c1;
+              *d = c2;
               ctype = GRN_CHAR_OTHERS;
               break;
             }
           } else {
-            *d++ = c1; *d = c2;
+            *d++ = c1;
+            *d = c2;
             ctype = GRN_CHAR_KANJI;
           }
         } else {
@@ -505,46 +557,51 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
     } else {
       unsigned char c = *s;
       switch (c >> 4) {
-      case 0 :
-      case 1 :
+      case 0:
+      case 1:
         /* skip unprintable ascii */
-        if (cp > ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+        if (cp > ctypes) {
+          *(cp - 1) |= GRN_CHAR_BLANK;
+        }
         continue;
-      case 2 :
+      case 2:
         if (c == 0x20) {
           if (removeblankp) {
-            if (cp > ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+            if (cp > ctypes) {
+              *(cp - 1) |= GRN_CHAR_BLANK;
+            }
             continue;
           } else {
             *d = ' ';
-            ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
+            ctype = GRN_CHAR_BLANK | GRN_CHAR_SYMBOL;
           }
         } else {
           *d = c;
           ctype = GRN_CHAR_SYMBOL;
         }
         break;
-      case 3 :
+      case 3:
         *d = c;
         ctype = (c <= 0x39) ? GRN_CHAR_DIGIT : GRN_CHAR_SYMBOL;
         break;
-      case 4 :
+      case 4:
         *d = ('A' <= c) ? c + 0x20 : c;
         ctype = (c == 0x40) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
         break;
-      case 5 :
+      case 5:
         *d = (c <= 'Z') ? c + 0x20 : c;
         ctype = (c <= 0x5a) ? GRN_CHAR_ALPHA : GRN_CHAR_SYMBOL;
         break;
-      case 6 :
+      case 6:
         *d = c;
         ctype = (c == 0x60) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
         break;
-      case 7 :
+      case 7:
         *d = c;
-        ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
+        ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA
+                            : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
         break;
-      default :
+      default:
         *d = c;
         ctype = GRN_CHAR_OTHERS;
         break;
@@ -552,14 +609,20 @@ sjis_normalize(grn_ctx *ctx, grn_string *nstr)
     }
     d++;
     length++;
-    if (cp) { *cp++ = ctype; }
+    if (cp) {
+      *cp++ = ctype;
+    }
     if (ch) {
       *ch++ = (int16_t)(s + 1 - s_);
       s_ = s + 1;
-      while (++d_ < d) { *ch++ = 0; }
+      while (++d_ < d) {
+        *ch++ = 0;
+      }
     }
   }
-  if (cp) { *cp = GRN_CHAR_NULL; }
+  if (cp) {
+    *cp = GRN_CHAR_NULL;
+  }
   *d = '\0';
   nstr->n_characters = (unsigned int)length;
   nstr->normalized_length_in_bytes =
@@ -613,7 +676,8 @@ grn_nfkc_normalize_context_init(grn_ctx *ctx,
   context->d_ = NULL;
 
   if (need_checks) {
-    if (!(context->checks = GRN_MALLOC(sizeof(int16_t) * (context->size + 1)))) {
+    if (!(context->checks =
+            GRN_MALLOC(sizeof(int16_t) * (context->size + 1)))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[normalize][nfkc] failed to allocate checks space");
       return;
@@ -632,7 +696,8 @@ grn_nfkc_normalize_context_init(grn_ctx *ctx,
   context->t = context->types;
 
   if (need_offsets) {
-    if (!(context->offsets = GRN_MALLOC(sizeof(uint64_t) * (context->size + 1)))) {
+    if (!(context->offsets =
+            GRN_MALLOC(sizeof(uint64_t) * (context->size + 1)))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[normalize][nfkc] failed to allocate offsets space");
       return;
@@ -693,9 +758,8 @@ grn_nfkc_normalize_data_init(grn_ctx *ctx,
   memset(data, 0, sizeof(grn_nfkc_normalize_data));
   data->string = (grn_string *)string;
   data->options = options;
-  data->remove_blank_p =
-    (data->string->flags & GRN_STRING_REMOVE_BLANK) ||
-    data->options->remove_blank;
+  data->remove_blank_p = (data->string->flags & GRN_STRING_REMOVE_BLANK) ||
+                         data->options->remove_blank;
   data->remove_tokenized_delimiter_p =
     (data->string->flags & GRN_STRING_REMOVE_TOKENIZED_DELIMITER);
 
@@ -746,7 +810,7 @@ grn_nfkc_normalize_context_expand(grn_ctx *ctx,
                               sizeof(uint8_t) * (context->size + 1)))) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
           "[normalize][nfkc]%s failed to expand character types space",
-        context_tag);
+          context_tag);
       return;
     }
     context->t = types + (context->t - context->types);
@@ -789,8 +853,8 @@ grn_nfkc_normalize_unify_kana(const unsigned char *utf8_char,
        * U+30F6 KATAKANA LETTER SMALL KE */
       ((utf8_char[1] == 0x82 && 0xa1 <= utf8_char[2]) ||
        (utf8_char[1] == 0x83 && utf8_char[2] <= 0xb6) ||
-       (utf8_char[1] == 0x83 && (0xbd <= utf8_char[2] &&
-                                 utf8_char[2] <= 0xbe)))) {
+       (utf8_char[1] == 0x83 &&
+        (0xbd <= utf8_char[2] && utf8_char[2] <= 0xbe)))) {
     unified[0] = utf8_char[0];
     if (utf8_char[2] & 0x20) {
       unified[1] = utf8_char[1] - 1;
@@ -809,11 +873,11 @@ grn_nfkc_normalize_unify_hiragana_case(const unsigned char *utf8_char,
                                        unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3) {
-    if ((utf8_char[1] == 0x81 && (0x81 <= utf8_char[2] &&
-                                  utf8_char[2] <= 0x89)) ||
+    if ((utf8_char[1] == 0x81 &&
+         (0x81 <= utf8_char[2] && utf8_char[2] <= 0x89)) ||
         (utf8_char[1] == 0x81 && utf8_char[2] == 0xa3) ||
-        (utf8_char[1] == 0x82 && (0x83 <= utf8_char[2] &&
-                                  utf8_char[2] <= 0x87))) {
+        (utf8_char[1] == 0x82 &&
+         (0x83 <= utf8_char[2] && utf8_char[2] <= 0x87))) {
       /* U+3041 HIRAGANA LETTER SMALL A ..
        * U+3049 HIRAGANA LETTER SMALL O
        *
@@ -856,11 +920,11 @@ grn_nfkc_normalize_unify_katakana_case(const unsigned char *utf8_char,
                                        unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3) {
-    if ((utf8_char[1] == 0x82 && (0xa1 <= utf8_char[2] &&
-                                  utf8_char[2] <= 0xa9)) ||
+    if ((utf8_char[1] == 0x82 &&
+         (0xa1 <= utf8_char[2] && utf8_char[2] <= 0xa9)) ||
         (utf8_char[1] == 0x83 && utf8_char[2] == 0x83) ||
-        (utf8_char[1] == 0x83 && (0xa3 <= utf8_char[2] &&
-                                  utf8_char[2] <= 0xa7))) {
+        (utf8_char[1] == 0x83 &&
+         (0xa3 <= utf8_char[2] && utf8_char[2] <= 0xa7))) {
       /* U+30A1 KATAKANA LETTER SMALL A ..
        * U+30A9 KATAKANA LETTER SMALL O
        *
@@ -899,12 +963,12 @@ grn_nfkc_normalize_unify_katakana_case(const unsigned char *utf8_char,
 }
 
 grn_inline static const unsigned char *
-grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(const unsigned char *utf8_char,
-                                                    unsigned char *unified)
+grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
+  const unsigned char *utf8_char, unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3) {
-    if ((utf8_char[1] == 0x81 && (0x8c <= utf8_char[2] &&
-                                  utf8_char[2] <= 0xa2))) {
+    if ((utf8_char[1] == 0x81 &&
+         (0x8c <= utf8_char[2] && utf8_char[2] <= 0xa2))) {
       /* U+304C HIRAGANA LETTER GA ..
        * U+3062 HIRAGANA LETTER DI */
       if (!(utf8_char[2] & 0x1)) {
@@ -913,8 +977,8 @@ grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(const unsigned char *utf8_ch
         unified[2] = utf8_char[2] - 1;
         return unified;
       }
-    } else if ((utf8_char[1] == 0x81 && (0xa5 <= utf8_char[2] &&
-                                         utf8_char[2] <= 0xa9))) {
+    } else if ((utf8_char[1] == 0x81 &&
+                (0xa5 <= utf8_char[2] && utf8_char[2] <= 0xa9))) {
       /* U+3065 HIRAGANA LETTER DU ..
        * U+3069 HIRAGANA LETTER DO */
       if (utf8_char[2] & 0x1) {
@@ -923,8 +987,8 @@ grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(const unsigned char *utf8_ch
         unified[2] = utf8_char[2] - 1;
         return unified;
       }
-    } else if ((utf8_char[1] == 0x81 && (0xb0 <= utf8_char[2] &&
-                                         utf8_char[2] <= 0xbd))) {
+    } else if ((utf8_char[1] == 0x81 &&
+                (0xb0 <= utf8_char[2] && utf8_char[2] <= 0xbd))) {
       /* U+3070 HIRAGANA LETTER BA ..
        * U+307D HIRAGANA LETTER PO */
       unsigned char mod3 = (unsigned char)((utf8_char[2] - 1) % 3);
@@ -941,8 +1005,8 @@ grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(const unsigned char *utf8_ch
 }
 
 grn_inline static const unsigned char *
-grn_nfkc_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_char,
-                                                    unsigned char *unified)
+grn_nfkc_normalize_unify_katakana_voiced_sound_mark(
+  const unsigned char *utf8_char, unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3) {
     if (utf8_char[1] == 0x83 && utf8_char[2] == 0x80) {
@@ -961,8 +1025,8 @@ grn_nfkc_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_ch
         unified[2] = utf8_char[2] - 1;
         return unified;
       }
-    } else if ((utf8_char[1] == 0x83 && (0x85 <= utf8_char[2] &&
-                                         utf8_char[2] <= 0x89))) {
+    } else if ((utf8_char[1] == 0x83 &&
+                (0x85 <= utf8_char[2] && utf8_char[2] <= 0x89))) {
       /* U+30C5 KATAKANA LETTER DU ..
        * U+30C9 KATAKANA LETTER DO */
       if (utf8_char[2] & 0x1) {
@@ -971,8 +1035,8 @@ grn_nfkc_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_ch
         unified[2] = utf8_char[2] - 1;
         return unified;
       }
-    } else if ((utf8_char[1] == 0x83 && (0x90 <= utf8_char[2] &&
-                                         utf8_char[2] <= 0x9d))) {
+    } else if ((utf8_char[1] == 0x83 &&
+                (0x90 <= utf8_char[2] && utf8_char[2] <= 0x9d))) {
       /* U+30D0 KATAKANA LETTER BA ..
        * U+30DD KATAKANA LETTER PO */
       unsigned char mod3 = (unsigned char)((utf8_char[2] - 2) % 3);
@@ -989,8 +1053,7 @@ grn_nfkc_normalize_unify_katakana_voiced_sound_mark(const unsigned char *utf8_ch
 }
 
 grn_inline static bool
-grn_nfkc_normalize_is_hyphen(const unsigned char *utf8_char,
-                             size_t length)
+grn_nfkc_normalize_is_hyphen(const unsigned char *utf8_char, size_t length)
 {
   /* U+002D HYPHEN-MINUS */
   return (length == 1 && utf8_char[0] == '-');
@@ -1001,9 +1064,7 @@ grn_nfkc_normalize_is_prolonged_sound_mark(const unsigned char *utf8_char,
                                            size_t length)
 {
   /* U+30FC KATAKANA-HIRAGANA PROLONGED SOUND MARK */
-  return (length == 3 &&
-          utf8_char[0] == 0xe3 &&
-          utf8_char[1] == 0x83 &&
+  return (length == 3 && utf8_char[0] == 0xe3 && utf8_char[1] == 0x83 &&
           utf8_char[2] == 0xbc);
 }
 
@@ -1018,19 +1079,19 @@ grn_nfkc_normalize_is_hyphen_family(const unsigned char *utf8_char,
     }
   } else if (length == 2) {
     switch (utf8_char[0]) {
-    case 0xcb :
+    case 0xcb:
       if (utf8_char[1] == 0x97) {
         /* U+02D7 MODIFIER LETTER MINUS SIGN */
         return GRN_TRUE;
       }
       break;
-    case 0xd6 :
+    case 0xd6:
       if (utf8_char[1] == 0x8a) {
         /* U+058A ARMENIAN HYPHEN */
         return GRN_TRUE;
       }
       break;
-    default :
+    default:
       break;
     }
   } else if (length == 3) {
@@ -1041,8 +1102,7 @@ grn_nfkc_normalize_is_hyphen_family(const unsigned char *utf8_char,
          * U+2013 EN DASH */
         return GRN_TRUE;
       } else if (utf8_char[1] == 0x81 &&
-                 (utf8_char[2] == 0x83 ||
-                  utf8_char[2] == 0xbb)) {
+                 (utf8_char[2] == 0x83 || utf8_char[2] == 0xbb)) {
         /* U+2043 HYPHEN BULLET */
         /* U+207B SUPERSCRIPT MINUS */
         return GRN_TRUE;
@@ -1060,8 +1120,8 @@ grn_nfkc_normalize_is_hyphen_family(const unsigned char *utf8_char,
 }
 
 grn_inline static grn_bool
-grn_nfkc_normalize_is_prolonged_sound_mark_family(const unsigned char *utf8_char,
-                                                  size_t length)
+grn_nfkc_normalize_is_prolonged_sound_mark_family(
+  const unsigned char *utf8_char, size_t length)
 {
   if (length == 3) {
     if (utf8_char[0] == 0xe2) {
@@ -1071,7 +1131,7 @@ grn_nfkc_normalize_is_prolonged_sound_mark_family(const unsigned char *utf8_char
          * U+2015 HORIZONTAL BAR */
         return GRN_TRUE;
       } else if (utf8_char[1] == 0x94 &&
-          (0x80 <= utf8_char[2] && utf8_char[2] <= 0x81)) {
+                 (0x80 <= utf8_char[2] && utf8_char[2] <= 0x81)) {
         /* U+2500 BOX DRAWINGS LIGHT HORIZONTAL ..
          * U+2501 BOX DRAWINGS HEAVY HORIZONTAL */
         return GRN_TRUE;
@@ -1137,16 +1197,15 @@ grn_nfkc_normalize_unify_to_katakana(const unsigned char *utf8_char,
                                      unsigned char *unified)
 {
   if (utf8_char[0] == 0xe3) {
-    if (utf8_char[1] == 0x81 &&
-        utf8_char[2] >= 0x81 && utf8_char[2] <= 0x9f) {
+    if (utf8_char[1] == 0x81 && utf8_char[2] >= 0x81 && utf8_char[2] <= 0x9f) {
       /* U+3041 HIRAGANA LETTER SMALL A ..
        * U+305F HIRAGANA LETTER TA */
       unified[0] = utf8_char[0];
       unified[1] = utf8_char[1] + 0x01;
       unified[2] = utf8_char[2] + 0x20;
       return unified;
-    } else if (utf8_char[1] == 0x81 &&
-               utf8_char[2] >= 0xa0 && utf8_char[2] <= 0xbf) {
+    } else if (utf8_char[1] == 0x81 && utf8_char[2] >= 0xa0 &&
+               utf8_char[2] <= 0xbf) {
       /* U+3060 HIRAGANA LETTER DA ..
        * U+305F HIRAGANA LETTER MI */
       unified[0] = utf8_char[0];
@@ -1154,8 +1213,8 @@ grn_nfkc_normalize_unify_to_katakana(const unsigned char *utf8_char,
       unified[2] = utf8_char[2] - 0x20;
       return unified;
     } else if (utf8_char[1] == 0x82) {
-      if ((utf8_char[2] >= 0x80 && utf8_char[2] <= 0x96)
-          || (utf8_char[2] >= 0x9d && utf8_char[2] <= 0x9e)) {
+      if ((utf8_char[2] >= 0x80 && utf8_char[2] <= 0x96) ||
+          (utf8_char[2] >= 0x9d && utf8_char[2] <= 0x9e)) {
         /* U+3041 HIRAGANA LETTER MU ..
          * U+3096 HIRAGANA LETTER KE
          * U+309D HIRAGANA ITERATION MARK
@@ -1207,8 +1266,7 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
       char_type = data->options->char_type_func(current);
     }
 
-    if (before &&
-        data->options->unify_kana &&
+    if (before && data->options->unify_kana &&
         GRN_CHAR_TYPE(char_type) == GRN_CHAR_KATAKANA &&
         unified_char_length == 3) {
       unifying = grn_nfkc_normalize_unify_kana(unifying, unified_kana);
@@ -1217,12 +1275,11 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
       }
     }
 
-    if (before &&
-        data->options->unify_to_katakana &&
+    if (before && data->options->unify_to_katakana &&
         GRN_CHAR_TYPE(char_type) == GRN_CHAR_HIRAGANA &&
         unified_char_length == 3) {
-      unifying = grn_nfkc_normalize_unify_to_katakana(unifying,
-                                                      unified_katakana);
+      unifying =
+        grn_nfkc_normalize_unify_to_katakana(unifying, unified_katakana);
       if (unifying == unified_katakana) {
         char_type = GRN_CHAR_KATAKANA | (char_type & GRN_CHAR_BLANK);
       }
@@ -1230,38 +1287,40 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
 
     if (!before && data->options->unify_kana_case) {
       switch (GRN_CHAR_TYPE(char_type)) {
-      case GRN_CHAR_HIRAGANA :
+      case GRN_CHAR_HIRAGANA:
         if (unified_char_length == 3) {
-          unifying = grn_nfkc_normalize_unify_hiragana_case(unifying,
-                                                            unified_kana_case);
+          unifying =
+            grn_nfkc_normalize_unify_hiragana_case(unifying, unified_kana_case);
         }
         break;
-      case GRN_CHAR_KATAKANA :
+      case GRN_CHAR_KATAKANA:
         if (unified_char_length == 3) {
-          unifying = grn_nfkc_normalize_unify_katakana_case(unifying,
-                                                            unified_kana_case);
+          unifying =
+            grn_nfkc_normalize_unify_katakana_case(unifying, unified_kana_case);
         }
         break;
-      default :
+      default:
         break;
       }
     }
 
     if (before && data->options->unify_kana_voiced_sound_mark) {
       switch (GRN_CHAR_TYPE(char_type)) {
-      case GRN_CHAR_HIRAGANA :
+      case GRN_CHAR_HIRAGANA:
         if (unified_char_length == 3) {
           unifying = grn_nfkc_normalize_unify_hiragana_voiced_sound_mark(
-            unifying, unified_kana_voiced_sound_mark);
+            unifying,
+            unified_kana_voiced_sound_mark);
         }
         break;
-      case GRN_CHAR_KATAKANA :
+      case GRN_CHAR_KATAKANA:
         if (unified_char_length == 3) {
           unifying = grn_nfkc_normalize_unify_katakana_voiced_sound_mark(
-            unifying, unified_kana_voiced_sound_mark);
+            unifying,
+            unified_kana_voiced_sound_mark);
         }
         break;
-      default :
+      default:
         break;
       }
     }
@@ -1275,8 +1334,9 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
     }
 
     if (before && data->options->unify_prolonged_sound_mark) {
-      if (grn_nfkc_normalize_is_prolonged_sound_mark_family(unifying,
-                                                            unified_char_length)) {
+      if (grn_nfkc_normalize_is_prolonged_sound_mark_family(
+            unifying,
+            unified_char_length)) {
         unifying = unified_prolonged_sound_mark;
         unified_char_length = sizeof(unified_prolonged_sound_mark);
         char_type = GRN_CHAR_KATAKANA | (char_type & GRN_CHAR_BLANK);
@@ -1285,8 +1345,9 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
 
     if (before && data->options->unify_hyphen_and_prolonged_sound_mark) {
       if (grn_nfkc_normalize_is_hyphen_family(unifying, unified_char_length) ||
-          grn_nfkc_normalize_is_prolonged_sound_mark_family(unifying,
-                                                            unified_char_length)) {
+          grn_nfkc_normalize_is_prolonged_sound_mark_family(
+            unifying,
+            unified_char_length)) {
         unifying = unified_hyphen;
         unified_char_length = sizeof(unified_hyphen);
         char_type = GRN_CHAR_SYMBOL | (char_type & GRN_CHAR_BLANK);
@@ -1343,17 +1404,17 @@ grn_nfkc_normalize_unify_stateless(grn_ctx *ctx,
   }
 }
 
-typedef const unsigned char *
-(*grn_nfkc_normalize_unify_stateful_func)(grn_ctx *ctx,
-                                          const unsigned char *start,
-                                          const unsigned char *current,
-                                          const unsigned char *end,
-                                          size_t *n_used_bytes,
-                                          size_t *n_used_characters,
-                                          unsigned char *unified_buffer,
-                                          size_t *n_unified_bytes,
-                                          size_t *n_unified_characters,
-                                          void *user_data);
+typedef const unsigned char *(*grn_nfkc_normalize_unify_stateful_func)(
+  grn_ctx *ctx,
+  const unsigned char *start,
+  const unsigned char *current,
+  const unsigned char *end,
+  size_t *n_used_bytes,
+  size_t *n_used_characters,
+  unsigned char *unified_buffer,
+  size_t *n_unified_bytes,
+  size_t *n_unified_characters,
+  void *user_data);
 
 static const unsigned char *
 grn_nfkc_normalize_unify_katakana_v_sounds(grn_ctx *ctx,
@@ -1375,17 +1436,13 @@ grn_nfkc_normalize_unify_katakana_v_sounds(grn_ctx *ctx,
   *n_used_characters = 1;
 
   /* U+30F4 KATAKANA LETTER VU */
-  if (char_length == 3 &&
-      current[0] == 0xe3 &&
-      current[1] == 0x83 &&
+  if (char_length == 3 && current[0] == 0xe3 && current[1] == 0x83 &&
       current[2] == 0xb4) {
     const unsigned char *next = current + char_length;
     size_t next_char_length;
 
     next_char_length = (size_t)grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
-    if (next_char_length == 3 &&
-        next[0] == 0xe3 &&
-        next[1] == 0x82) {
+    if (next_char_length == 3 && next[0] == 0xe3 && next[1] == 0x82) {
       if (next[2] == 0xa1) { /* U+30A1 KATAKANA LETTER SMALL A */
         /* U+30D0 KATAKANA LETTER BA */
         unified_buffer[(*n_unified_bytes)++] = current[0];
@@ -1466,9 +1523,7 @@ grn_nfkc_normalize_unify_katakana_bu_sound(grn_ctx *ctx,
   *n_used_characters = 1;
 
   /* U+30F4 KATAKANA LETTER VU */
-  if (char_length == 3 &&
-      current[0] == 0xe3 &&
-      current[1] == 0x83 &&
+  if (char_length == 3 && current[0] == 0xe3 && current[1] == 0x83 &&
       current[2] == 0xb4) {
     const unsigned char *next = current + char_length;
     size_t next_char_length;
@@ -1480,19 +1535,14 @@ grn_nfkc_normalize_unify_katakana_bu_sound(grn_ctx *ctx,
     (*n_unified_characters)++;
 
     next_char_length = (size_t)grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
-    if (next_char_length == 3 &&
-        next[0] == 0xe3 &&
-        next[1] == 0x82 &&
+    if (next_char_length == 3 && next[0] == 0xe3 && next[1] == 0x82 &&
         /* U+30A1 KATAKANA LETTER SMALL A */
         /* U+30A3 KATAKANA LETTER SMALL I */
         /* U+30A5 KATAKANA LETTER SMALL U */
         /* U+30A7 KATAKANA LETTER SMALL E */
         /* U+30A9 KATAKANA LETTER SMALL O */
-        (next[2] == 0xa1 ||
-         next[2] == 0xa3 ||
-         next[2] == 0xa5 ||
-         next[2] == 0xa7 ||
-         next[2] == 0xa9)) {
+        (next[2] == 0xa1 || next[2] == 0xa3 || next[2] == 0xa5 ||
+         next[2] == 0xa7 || next[2] == 0xa9)) {
       (*n_used_bytes) += next_char_length;
       (*n_used_characters)++;
     }
@@ -1526,16 +1576,12 @@ grn_nfkc_normalize_unify_katakana_du_small_sounds(grn_ctx *ctx,
 
   if (char_length == 3 &&
       /* U+30C5 KATAKANA LETTER DU */
-      current[0] == 0xe3 &&
-      current[1] == 0x83 &&
-      current[2] == 0x85) {
+      current[0] == 0xe3 && current[1] == 0x83 && current[2] == 0x85) {
     const unsigned char *next = current + char_length;
     size_t next_char_length;
 
     next_char_length = (size_t)grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
-    if (next_char_length == 3 &&
-        next[0] == 0xe3 &&
-        next[1] == 0x82) {
+    if (next_char_length == 3 && next[0] == 0xe3 && next[1] == 0x82) {
       if (next[2] == 0xa1) { /* U+30A1 KATAKANA LETTER SMALL A */
         /* U+30B6 KATAKANA LETTER ZA */
         unified_buffer[(*n_unified_bytes)++] = current[0];
@@ -1603,9 +1649,7 @@ grn_nfkc_normalize_unify_katakana_du_sound(grn_ctx *ctx,
 
   if (char_length == 3 &&
       /* U+30C5 KATAKANA LETTER DU */
-      current[0] == 0xe3 &&
-      current[1] == 0x83 &&
-      current[2] == 0x85) {
+      current[0] == 0xe3 && current[1] == 0x83 && current[2] == 0x85) {
     /* U+30BA KATAKANA LETTER ZU */
     unified_buffer[(*n_unified_bytes)++] = current[0];
     unified_buffer[(*n_unified_bytes)++] = 0x82;
@@ -1641,16 +1685,12 @@ grn_nfkc_normalize_unify_katakana_zu_small_sounds(grn_ctx *ctx,
 
   if (char_length == 3 &&
       /* U+30BA KATAKANA LETTER ZU */
-      current[0] == 0xe3 &&
-      current[1] == 0x82 &&
-      current[2] == 0xba) {
+      current[0] == 0xe3 && current[1] == 0x82 && current[2] == 0xba) {
     const unsigned char *next = current + char_length;
     size_t next_char_length;
 
     next_char_length = (size_t)grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
-    if (next_char_length == 3 &&
-        next[0] == 0xe3 &&
-        next[1] == 0x82) {
+    if (next_char_length == 3 && next[0] == 0xe3 && next[1] == 0x82) {
       if (next[2] == 0xa1) { /* U+30A1 KATAKANA LETTER SMALL A */
         /* U+30B6 KATAKANA LETTER ZA */
         unified_buffer[(*n_unified_bytes)++] = current[0];
@@ -1717,9 +1757,7 @@ grn_nfkc_normalize_unify_katakana_wo_sound(grn_ctx *ctx,
   *n_used_characters = 1;
 
   /* U+30F2 KATAKANA LETTER WO */
-  if (char_length == 3 &&
-      current[0] == 0xe3 &&
-      current[1] == 0x83 &&
+  if (char_length == 3 && current[0] == 0xe3 && current[1] == 0x83 &&
       current[2] == 0xb2) {
     (*n_unified_characters)++;
     /* U+30AA KATAKANA LETTER O */
@@ -1755,9 +1793,7 @@ grn_nfkc_normalize_unify_katakana_di_sound(grn_ctx *ctx,
   *n_used_characters = 1;
 
   /* U+30C2 KATAKANA LETTER DI */
-  if (char_length == 3 &&
-      current[0] == 0xe3 &&
-      current[1] == 0x83 &&
+  if (char_length == 3 && current[0] == 0xe3 && current[1] == 0x83 &&
       current[2] == 0x82) {
     (*n_unified_characters)++;
     /* U+30B8 KATAKANA LETTER ZI */
@@ -1793,17 +1829,13 @@ grn_nfkc_normalize_unify_katakana_gu_small_sounds(grn_ctx *ctx,
   *n_used_characters = 1;
 
   /* U+30B0 KATAKANA LETTER GU */
-  if (char_length == 3 &&
-      current[0] == 0xe3 &&
-      current[1] == 0x82 &&
+  if (char_length == 3 && current[0] == 0xe3 && current[1] == 0x82 &&
       current[2] == 0xb0) {
     const unsigned char *next = current + char_length;
     size_t next_char_length;
 
     next_char_length = (size_t)grn_charlen_(ctx, next, end, GRN_ENC_UTF8);
-    if (next_char_length == 3 &&
-        next[0] == 0xe3 &&
-        next[1] == 0x82) {
+    if (next_char_length == 3 && next[0] == 0xe3 && next[1] == 0x82) {
       if (next[2] == 0xa1) { /* U+30A1 KATAKANA LETTER SMALL A */
         /* U+30AC KATAKANA LETTER GA */
         unified_buffer[(*n_unified_bytes)++] = current[0];
@@ -1872,9 +1904,7 @@ grn_nfkc_normalize_unify_katakana_trailing_o(grn_ctx *ctx,
 
   if (*need_trailing_check &&
       /* U+30AA KATAKANA LETTER O */
-      char_length == 3 &&
-      current[0] == 0xe3 &&
-      current[1] == 0x82 &&
+      char_length == 3 && current[0] == 0xe3 && current[1] == 0x82 &&
       current[2] == 0xaa) {
     /* U+30A6 KATAKANA LETTER U */
     unified_buffer[(*n_unified_bytes)++] = current[0];
@@ -1885,8 +1915,7 @@ grn_nfkc_normalize_unify_katakana_trailing_o(grn_ctx *ctx,
     return unified_buffer;
   }
 
-  *need_trailing_check = char_length == 3 &&
-                         current[0] == 0xe3 &&
+  *need_trailing_check = char_length == 3 && current[0] == 0xe3 &&
                          /* U+30A9 KATAKANA LETTER SMALL O */
                          ((current[1] == 0x82 && current[2] == 0xa9) ||
                           /* U+30AA KATAKANA LETTER O */
@@ -1927,9 +1956,8 @@ grn_nfkc_normalize_unify_katakana_trailing_o(grn_ctx *ctx,
   return current;
 }
 
-typedef bool
-(*grn_nfkc_normalize_is_target_char_func)(const unsigned char *utf8_char,
-                                          size_t length);
+typedef bool (*grn_nfkc_normalize_is_target_char_func)(
+  const unsigned char *utf8_char, size_t length);
 
 typedef struct {
   grn_nfkc_normalize_is_target_char_func is_target_char;
@@ -1937,16 +1965,17 @@ typedef struct {
 } grn_nfkc_normalize_prolonged_sound_mark_like_data;
 
 static const unsigned char *
-grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(grn_ctx *ctx,
-                                                        const unsigned char *start,
-                                                        const unsigned char *current,
-                                                        const unsigned char *end,
-                                                        size_t *n_used_bytes,
-                                                        size_t *n_used_characters,
-                                                        unsigned char *unified_buffer,
-                                                        size_t *n_unified_bytes,
-                                                        size_t *n_unified_characters,
-                                                        void *user_data)
+grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(
+  grn_ctx *ctx,
+  const unsigned char *start,
+  const unsigned char *current,
+  const unsigned char *end,
+  size_t *n_used_bytes,
+  size_t *n_used_characters,
+  unsigned char *unified_buffer,
+  size_t *n_unified_bytes,
+  size_t *n_unified_characters,
+  void *user_data)
 {
   size_t char_length;
   grn_nfkc_normalize_prolonged_sound_mark_like_data *data = user_data;
@@ -1958,8 +1987,7 @@ grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like(grn_ctx *ctx,
   *n_used_bytes = char_length;
   *n_used_characters = 1;
 
-  if (previous_length == 3 &&
-      data->is_target_char(current, char_length)) {
+  if (previous_length == 3 && data->is_target_char(current, char_length)) {
     const unsigned char *previous = current - previous_length;
     if (previous[0] == 0xe3) {
       if (/* U+3041 HIRAGANA LETTER SMALL A */
@@ -2478,8 +2506,14 @@ grn_nfkc_normalize_unify_stateful(grn_ctx *ctx,
     size_t n_unified_characters = 0;
 
     unified = func(ctx,
-                   start, current, end, &n_used_bytes, &n_used_characters,
-                   unified_buffer, &n_unified_bytes, &n_unified_characters,
+                   start,
+                   current,
+                   end,
+                   &n_used_bytes,
+                   &n_used_characters,
+                   unified_buffer,
+                   &n_unified_bytes,
+                   &n_unified_characters,
                    func_data);
 
     if (unify->d + n_unified_bytes >= unify->dest_end) {
@@ -2528,10 +2562,8 @@ grn_nfkc_normalize_unify_stateful(grn_ctx *ctx,
           while (unified_current < unified_end) {
             size_t unified_char_length;
 
-            unified_char_length = (size_t)grn_charlen_(ctx,
-                                                       unified_current,
-                                                       unified_end,
-                                                       GRN_ENC_UTF8);
+            unified_char_length = (size_t)
+              grn_charlen_(ctx, unified_current, unified_end, GRN_ENC_UTF8);
             if (unify->t) {
               grn_char_type unified_char_type =
                 data->options->char_type_func(unified_current);
@@ -2571,14 +2603,12 @@ grn_nfkc_normalize_unify_stateful(grn_ctx *ctx,
 }
 
 static void
-grn_nfkc_normalize_unify(grn_ctx *ctx,
-                         grn_nfkc_normalize_data *data)
+grn_nfkc_normalize_unify(grn_ctx *ctx, grn_nfkc_normalize_data *data)
 {
   grn_nfkc_normalize_context unify;
   grn_bool need_swap = GRN_FALSE;
 
-  if (!(data->options->unify_kana ||
-        data->options->unify_kana_case ||
+  if (!(data->options->unify_kana || data->options->unify_kana_case ||
         data->options->unify_kana_voiced_sound_mark ||
         data->options->unify_hyphen ||
         data->options->unify_prolonged_sound_mark ||
@@ -2595,8 +2625,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
         data->options->unify_kana_hyphen ||
         data->options->unify_kana_prolonged_sound_mark ||
         data->options->unify_katakana_trailing_o ||
-        data->options->unify_to_romaji ||
-        data->options->unify_to_katakana ||
+        data->options->unify_to_romaji || data->options->unify_to_katakana ||
         data->options->strip)) {
     return;
   }
@@ -2618,8 +2647,7 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       data->options->unify_hyphen ||
       data->options->unify_prolonged_sound_mark ||
       data->options->unify_hyphen_and_prolonged_sound_mark ||
-      data->options->unify_middle_dot ||
-      data->options->unify_to_katakana) {
+      data->options->unify_middle_dot || data->options->unify_to_katakana) {
     grn_nfkc_normalize_unify_stateless(ctx, data, &unify, true);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
@@ -2632,12 +2660,13 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
-    grn_nfkc_normalize_unify_stateful(ctx,
-                                      data,
-                                      &unify,
-                                      grn_nfkc_normalize_unify_katakana_v_sounds,
-                                      NULL,
-                                      "[unify][katakana-v-sounds]");
+    grn_nfkc_normalize_unify_stateful(
+      ctx,
+      data,
+      &unify,
+      grn_nfkc_normalize_unify_katakana_v_sounds,
+      NULL,
+      "[unify][katakana-v-sounds]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -2649,12 +2678,13 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
-    grn_nfkc_normalize_unify_stateful(ctx,
-                                      data,
-                                      &unify,
-                                      grn_nfkc_normalize_unify_katakana_bu_sound,
-                                      NULL,
-                                      "[unify][katakana-bu-sound]");
+    grn_nfkc_normalize_unify_stateful(
+      ctx,
+      data,
+      &unify,
+      grn_nfkc_normalize_unify_katakana_bu_sound,
+      NULL,
+      "[unify][katakana-bu-sound]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -2666,12 +2696,13 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
-    grn_nfkc_normalize_unify_stateful(ctx,
-                                      data,
-                                      &unify,
-                                      grn_nfkc_normalize_unify_katakana_du_small_sounds,
-                                      NULL,
-                                      "[unify][katakana-du-small-sounds]");
+    grn_nfkc_normalize_unify_stateful(
+      ctx,
+      data,
+      &unify,
+      grn_nfkc_normalize_unify_katakana_du_small_sounds,
+      NULL,
+      "[unify][katakana-du-small-sounds]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -2683,12 +2714,13 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
-    grn_nfkc_normalize_unify_stateful(ctx,
-                                      data,
-                                      &unify,
-                                      grn_nfkc_normalize_unify_katakana_du_sound,
-                                      NULL,
-                                      "[unify][katakana-du-sound]");
+    grn_nfkc_normalize_unify_stateful(
+      ctx,
+      data,
+      &unify,
+      grn_nfkc_normalize_unify_katakana_du_sound,
+      NULL,
+      "[unify][katakana-du-sound]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -2700,12 +2732,13 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
-    grn_nfkc_normalize_unify_stateful(ctx,
-                                      data,
-                                      &unify,
-                                      grn_nfkc_normalize_unify_katakana_zu_small_sounds,
-                                      NULL,
-                                      "[unify][katakana-zu-small-sounds]");
+    grn_nfkc_normalize_unify_stateful(
+      ctx,
+      data,
+      &unify,
+      grn_nfkc_normalize_unify_katakana_zu_small_sounds,
+      NULL,
+      "[unify][katakana-zu-small-sounds]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -2717,12 +2750,13 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
-    grn_nfkc_normalize_unify_stateful(ctx,
-                                      data,
-                                      &unify,
-                                      grn_nfkc_normalize_unify_katakana_wo_sound,
-                                      NULL,
-                                      "[unify][katakana-wo-sound]");
+    grn_nfkc_normalize_unify_stateful(
+      ctx,
+      data,
+      &unify,
+      grn_nfkc_normalize_unify_katakana_wo_sound,
+      NULL,
+      "[unify][katakana-wo-sound]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -2734,12 +2768,13 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
-    grn_nfkc_normalize_unify_stateful(ctx,
-                                      data,
-                                      &unify,
-                                      grn_nfkc_normalize_unify_katakana_di_sound,
-                                      NULL,
-                                      "[unify][katakana-di-sound]");
+    grn_nfkc_normalize_unify_stateful(
+      ctx,
+      data,
+      &unify,
+      grn_nfkc_normalize_unify_katakana_di_sound,
+      NULL,
+      "[unify][katakana-di-sound]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -2751,12 +2786,13 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_swap(ctx, &(data->context), &unify);
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
-    grn_nfkc_normalize_unify_stateful(ctx,
-                                      data,
-                                      &unify,
-                                      grn_nfkc_normalize_unify_katakana_gu_small_sounds,
-                                      NULL,
-                                      "[unify][katakana-gu-small-sounds]");
+    grn_nfkc_normalize_unify_stateful(
+      ctx,
+      data,
+      &unify,
+      grn_nfkc_normalize_unify_katakana_gu_small_sounds,
+      NULL,
+      "[unify][katakana-gu-small-sounds]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -2771,12 +2807,13 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     grn_nfkc_normalize_prolonged_sound_mark_like_data subdata;
     subdata.is_target_char = grn_nfkc_normalize_is_hyphen;
     subdata.previous_length = 0;
-    grn_nfkc_normalize_unify_stateful(ctx,
-                                      data,
-                                      &unify,
-                                      grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like,
-                                      &subdata,
-                                      "[unify][kana-hyphen]");
+    grn_nfkc_normalize_unify_stateful(
+      ctx,
+      data,
+      &unify,
+      grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like,
+      &subdata,
+      "[unify][kana-hyphen]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -2791,12 +2828,13 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
     grn_nfkc_normalize_prolonged_sound_mark_like_data subdata;
     subdata.is_target_char = grn_nfkc_normalize_is_prolonged_sound_mark;
     subdata.previous_length = 0;
-    grn_nfkc_normalize_unify_stateful(ctx,
-                                      data,
-                                      &unify,
-                                      grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like,
-                                      &subdata,
-                                      "[unify][kana-prolonged-sound-mark]");
+    grn_nfkc_normalize_unify_stateful(
+      ctx,
+      data,
+      &unify,
+      grn_nfkc_normalize_unify_kana_prolonged_sound_mark_like,
+      &subdata,
+      "[unify][kana-prolonged-sound-mark]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -2809,12 +2847,13 @@ grn_nfkc_normalize_unify(grn_ctx *ctx,
       grn_nfkc_normalize_context_rewind(ctx, &unify);
     }
     bool need_trailing_check = false;
-    grn_nfkc_normalize_unify_stateful(ctx,
-                                      data,
-                                      &unify,
-                                      grn_nfkc_normalize_unify_katakana_trailing_o,
-                                      &need_trailing_check,
-                                      "[unify][katakana-trailing-o]");
+    grn_nfkc_normalize_unify_stateful(
+      ctx,
+      data,
+      &unify,
+      grn_nfkc_normalize_unify_katakana_trailing_o,
+      &need_trailing_check,
+      "[unify][katakana-trailing-o]");
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -2915,12 +2954,12 @@ grn_nfkc_normalize_remove_target_blank_character_p(
   }
 
   switch (current[0]) {
-  case ' ' :
+  case ' ':
     return data->remove_blank_p;
-  case '\r' :
-  case '\n' :
+  case '\r':
+  case '\n':
     return data->options->remove_new_line;
-  default :
+  default:
     /* skip unprintable ascii */
     return true;
   }
@@ -2946,7 +2985,7 @@ grn_nfkc_normalize(grn_ctx *ctx,
 {
   grn_nfkc_normalize_data data;
   const unsigned char *source;
-  const unsigned char *source_ = NULL; /* -1 */
+  const unsigned char *source_ = NULL;  /* -1 */
   const unsigned char *source__ = NULL; /* -2 */
   const unsigned char *source_end;
   size_t source_char_length;
@@ -2993,7 +3032,9 @@ grn_nfkc_normalize(grn_ctx *ctx,
         if (composed) {
           current = composed;
           current_end = current + strlen(composed);
-          if (context->t) { context->t--; }
+          if (context->t) {
+            context->t--;
+          }
           if (context->c) {
             context->c -= (context->d - context->d_);
             if (context->c[0] >= 0) {
@@ -3013,10 +3054,11 @@ grn_nfkc_normalize(grn_ctx *ctx,
         if (current_length == 0) {
           break;
         }
-        if (grn_nfkc_normalize_remove_target_blank_character_p(ctx,
-                                                               &data,
-                                                               current,
-                                                               current_length)) {
+        if (grn_nfkc_normalize_remove_target_blank_character_p(
+              ctx,
+              &data,
+              current,
+              current_length)) {
           if (context->t > context->types) {
             context->t[-1] |= GRN_CHAR_BLANK;
           }
@@ -3053,23 +3095,31 @@ grn_nfkc_normalize(grn_ctx *ctx,
             if (source_ == source + source_char_length) {
               *(context->c++) = -1;
             } else {
-              *(context->c++) = (int16_t)(source + source_char_length - source_);
+              *(context->c++) =
+                (int16_t)(source + source_char_length - source_);
               source__ = source_;
               source_ = source + source_char_length;
             }
-            for (i = current_length; i > 1; i--) { *(context->c++) = 0; }
+            for (i = current_length; i > 1; i--) {
+              *(context->c++) = 0;
+            }
           }
           if (context->o) {
             *(context->o++) =
-              (uint64_t)(source - (const unsigned char *)(data.string->original));
+              (uint64_t)(source -
+                         (const unsigned char *)(data.string->original));
           }
         }
       }
     }
   }
   grn_nfkc_normalize_unify(ctx, &data);
-  if (context->t) { *(context->t) = GRN_CHAR_NULL; }
-  if (context->o) { *(context->o) = data.string->original_length_in_bytes; }
+  if (context->t) {
+    *(context->t) = GRN_CHAR_NULL;
+  }
+  if (context->o) {
+    *(context->o) = data.string->original_length_in_bytes;
+  }
   *(context->d) = '\0';
   data.string->n_characters = (unsigned int)(context->n_characters);
   data.string->normalized = context->dest;
@@ -3104,7 +3154,7 @@ ascii_normalize(grn_ctx *ctx, grn_string *nstr)
         "[string][ascii] failed to allocate normalized text space");
     return NULL;
   }
-  d0 = (unsigned char *) nstr->normalized;
+  d0 = (unsigned char *)nstr->normalized;
   if (nstr->flags & GRN_STRING_WITH_CHECKS) {
     if (!(nstr->checks = GRN_MALLOC((size + 1) * sizeof(int16_t)))) {
       GRN_FREE(nstr->normalized);
@@ -3128,63 +3178,74 @@ ascii_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   cp = ctypes = nstr->ctypes;
   e = (unsigned char *)nstr->original + size;
-  for (s = s_ = (unsigned char *) nstr->original, d = d_ = d0; s < e; s++) {
+  for (s = s_ = (unsigned char *)nstr->original, d = d_ = d0; s < e; s++) {
     unsigned char c = *s;
     switch (c >> 4) {
-    case 0 :
-    case 1 :
+    case 0:
+    case 1:
       /* skip unprintable ascii */
-      if (cp > ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+      if (cp > ctypes) {
+        *(cp - 1) |= GRN_CHAR_BLANK;
+      }
       continue;
-    case 2 :
+    case 2:
       if (c == 0x20) {
         if (removeblankp) {
-          if (cp > ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+          if (cp > ctypes) {
+            *(cp - 1) |= GRN_CHAR_BLANK;
+          }
           continue;
         } else {
           *d = ' ';
-          ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
+          ctype = GRN_CHAR_BLANK | GRN_CHAR_SYMBOL;
         }
       } else {
         *d = c;
         ctype = GRN_CHAR_SYMBOL;
       }
       break;
-    case 3 :
+    case 3:
       *d = c;
       ctype = (c <= 0x39) ? GRN_CHAR_DIGIT : GRN_CHAR_SYMBOL;
       break;
-    case 4 :
+    case 4:
       *d = ('A' <= c) ? c + 0x20 : c;
       ctype = (c == 0x40) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
-    case 5 :
+    case 5:
       *d = (c <= 'Z') ? c + 0x20 : c;
       ctype = (c <= 0x5a) ? GRN_CHAR_ALPHA : GRN_CHAR_SYMBOL;
       break;
-    case 6 :
+    case 6:
       *d = c;
       ctype = (c == 0x60) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
-    case 7 :
+    case 7:
       *d = c;
-      ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
+      ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA
+                          : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
       break;
-    default :
+    default:
       *d = c;
       ctype = GRN_CHAR_OTHERS;
       break;
     }
     d++;
     length++;
-    if (cp) { *cp++ = ctype; }
+    if (cp) {
+      *cp++ = ctype;
+    }
     if (ch) {
       *ch++ = (int16_t)(s + 1 - s_);
       s_ = s + 1;
-      while (++d_ < d) { *ch++ = 0; }
+      while (++d_ < d) {
+        *ch++ = 0;
+      }
     }
   }
-  if (cp) { *cp = GRN_CHAR_NULL; }
+  if (cp) {
+    *cp = GRN_CHAR_NULL;
+  }
   *d = '\0';
   nstr->n_characters = (unsigned int)length;
   nstr->normalized_length_in_bytes =
@@ -3207,7 +3268,7 @@ latin1_normalize(grn_ctx *ctx, grn_string *nstr)
         "[string][latin1] failed to allocate normalized text space");
     return NULL;
   }
-  d0 = (unsigned char *) nstr->normalized;
+  d0 = (unsigned char *)nstr->normalized;
   if (nstr->flags & GRN_STRING_WITH_CHECKS) {
     if (!(nstr->checks = GRN_MALLOC((size + 1) * sizeof(int16_t)))) {
       GRN_FREE(nstr->normalized);
@@ -3231,49 +3292,54 @@ latin1_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   cp = ctypes = nstr->ctypes;
   e = (unsigned char *)nstr->original + size;
-  for (s = s_ = (unsigned char *) nstr->original, d = d_ = d0; s < e; s++) {
+  for (s = s_ = (unsigned char *)nstr->original, d = d_ = d0; s < e; s++) {
     unsigned char c = *s;
     switch (c >> 4) {
-    case 0 :
-    case 1 :
+    case 0:
+    case 1:
       /* skip unprintable ascii */
-      if (cp > ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+      if (cp > ctypes) {
+        *(cp - 1) |= GRN_CHAR_BLANK;
+      }
       continue;
-    case 2 :
+    case 2:
       if (c == 0x20) {
         if (removeblankp) {
-          if (cp > ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+          if (cp > ctypes) {
+            *(cp - 1) |= GRN_CHAR_BLANK;
+          }
           continue;
         } else {
           *d = ' ';
-          ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
+          ctype = GRN_CHAR_BLANK | GRN_CHAR_SYMBOL;
         }
       } else {
         *d = c;
         ctype = GRN_CHAR_SYMBOL;
       }
       break;
-    case 3 :
+    case 3:
       *d = c;
       ctype = (c <= 0x39) ? GRN_CHAR_DIGIT : GRN_CHAR_SYMBOL;
       break;
-    case 4 :
+    case 4:
       *d = ('A' <= c) ? c + 0x20 : c;
       ctype = (c == 0x40) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
-    case 5 :
+    case 5:
       *d = (c <= 'Z') ? c + 0x20 : c;
       ctype = (c <= 0x5a) ? GRN_CHAR_ALPHA : GRN_CHAR_SYMBOL;
       break;
-    case 6 :
+    case 6:
       *d = c;
       ctype = (c == 0x60) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
-    case 7 :
+    case 7:
       *d = c;
-      ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
+      ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA
+                          : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
       break;
-    case 8 :
+    case 8:
       if (c == 0x8a || c == 0x8c || c == 0x8e) {
         *d = c + 0x10;
         ctype = GRN_CHAR_ALPHA;
@@ -3282,7 +3348,7 @@ latin1_normalize(grn_ctx *ctx, grn_string *nstr)
         ctype = GRN_CHAR_SYMBOL;
       }
       break;
-    case 9 :
+    case 9:
       if (c == 0x9a || c == 0x9c || c == 0x9e || c == 0x9f) {
         *d = (c == 0x9f) ? c + 0x60 : c;
         ctype = GRN_CHAR_ALPHA;
@@ -3291,37 +3357,43 @@ latin1_normalize(grn_ctx *ctx, grn_string *nstr)
         ctype = GRN_CHAR_SYMBOL;
       }
       break;
-    case 0x0c :
+    case 0x0c:
       *d = c + 0x20;
       ctype = GRN_CHAR_ALPHA;
       break;
-    case 0x0d :
+    case 0x0d:
       *d = (c == 0xd7 || c == 0xdf) ? c : c + 0x20;
       ctype = (c == 0xd7) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
-    case 0x0e :
+    case 0x0e:
       *d = c;
       ctype = GRN_CHAR_ALPHA;
       break;
-    case 0x0f :
+    case 0x0f:
       *d = c;
       ctype = (c == 0xf7) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
-    default :
+    default:
       *d = c;
       ctype = GRN_CHAR_OTHERS;
       break;
     }
     d++;
     length++;
-    if (cp) { *cp++ = ctype; }
+    if (cp) {
+      *cp++ = ctype;
+    }
     if (ch) {
       *ch++ = (int16_t)(s + 1 - s_);
       s_ = s + 1;
-      while (++d_ < d) { *ch++ = 0; }
+      while (++d_ < d) {
+        *ch++ = 0;
+      }
     }
   }
-  if (cp) { *cp = GRN_CHAR_NULL; }
+  if (cp) {
+    *cp = GRN_CHAR_NULL;
+  }
   *d = '\0';
   nstr->n_characters = (unsigned int)length;
   nstr->normalized_length_in_bytes =
@@ -3343,7 +3415,7 @@ koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
         "[string][koi8r] failed to allocate normalized text space");
     return NULL;
   }
-  d0 = (unsigned char *) nstr->normalized;
+  d0 = (unsigned char *)nstr->normalized;
   if (nstr->flags & GRN_STRING_WITH_CHECKS) {
     if (!(nstr->checks = GRN_MALLOC((size + 1) * sizeof(int16_t)))) {
       GRN_FREE(nstr->normalized);
@@ -3367,53 +3439,58 @@ koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
   }
   cp = ctypes = nstr->ctypes;
   e = (unsigned char *)nstr->original + size;
-  for (s = s_ = (unsigned char *) nstr->original, d = d_ = d0; s < e; s++) {
+  for (s = s_ = (unsigned char *)nstr->original, d = d_ = d0; s < e; s++) {
     unsigned char c = *s;
     switch (c >> 4) {
-    case 0 :
-    case 1 :
+    case 0:
+    case 1:
       /* skip unprintable ascii */
-      if (cp > ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+      if (cp > ctypes) {
+        *(cp - 1) |= GRN_CHAR_BLANK;
+      }
       continue;
-    case 2 :
+    case 2:
       if (c == 0x20) {
         if (removeblankp) {
-          if (cp > ctypes) { *(cp - 1) |= GRN_CHAR_BLANK; }
+          if (cp > ctypes) {
+            *(cp - 1) |= GRN_CHAR_BLANK;
+          }
           continue;
         } else {
           *d = ' ';
-          ctype = GRN_CHAR_BLANK|GRN_CHAR_SYMBOL;
+          ctype = GRN_CHAR_BLANK | GRN_CHAR_SYMBOL;
         }
       } else {
         *d = c;
         ctype = GRN_CHAR_SYMBOL;
       }
       break;
-    case 3 :
+    case 3:
       *d = c;
       ctype = (c <= 0x39) ? GRN_CHAR_DIGIT : GRN_CHAR_SYMBOL;
       break;
-    case 4 :
+    case 4:
       *d = ('A' <= c) ? c + 0x20 : c;
       ctype = (c == 0x40) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
-    case 5 :
+    case 5:
       *d = (c <= 'Z') ? c + 0x20 : c;
       ctype = (c <= 0x5a) ? GRN_CHAR_ALPHA : GRN_CHAR_SYMBOL;
       break;
-    case 6 :
+    case 6:
       *d = c;
       ctype = (c == 0x60) ? GRN_CHAR_SYMBOL : GRN_CHAR_ALPHA;
       break;
-    case 7 :
+    case 7:
       *d = c;
-      ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
+      ctype = (c <= 0x7a) ? GRN_CHAR_ALPHA
+                          : (c == 0x7f ? GRN_CHAR_OTHERS : GRN_CHAR_SYMBOL);
       break;
-    case 0x0a :
+    case 0x0a:
       *d = c;
       ctype = (c == 0xa3) ? GRN_CHAR_ALPHA : GRN_CHAR_OTHERS;
       break;
-    case 0x0b :
+    case 0x0b:
       if (c == 0xb3) {
         *d = c - 0x10;
         ctype = GRN_CHAR_ALPHA;
@@ -3422,31 +3499,37 @@ koi8r_normalize(grn_ctx *ctx, grn_string *nstr)
         ctype = GRN_CHAR_OTHERS;
       }
       break;
-    case 0x0c :
-    case 0x0d :
+    case 0x0c:
+    case 0x0d:
       *d = c;
       ctype = GRN_CHAR_ALPHA;
       break;
-    case 0x0e :
-    case 0x0f :
+    case 0x0e:
+    case 0x0f:
       *d = c - 0x20;
       ctype = GRN_CHAR_ALPHA;
       break;
-    default :
+    default:
       *d = c;
       ctype = GRN_CHAR_OTHERS;
       break;
     }
     d++;
     length++;
-    if (cp) { *cp++ = ctype; }
+    if (cp) {
+      *cp++ = ctype;
+    }
     if (ch) {
       *ch++ = (int16_t)(s + 1 - s_);
       s_ = s + 1;
-      while (++d_ < d) { *ch++ = 0; }
+      while (++d_ < d) {
+        *ch++ = 0;
+      }
     }
   }
-  if (cp) { *cp = GRN_CHAR_NULL; }
+  if (cp) {
+    *cp = GRN_CHAR_NULL;
+  }
   *d = '\0';
   nstr->n_characters = (unsigned int)length;
   nstr->normalized_length_in_bytes =
@@ -3460,10 +3543,10 @@ auto_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_obj *string = args[0];
   grn_string *string_ = (grn_string *)(string);
   switch (string_->encoding) {
-  case GRN_ENC_EUC_JP :
+  case GRN_ENC_EUC_JP:
     eucjp_normalize(ctx, string_);
     break;
-  case GRN_ENC_UTF8 :
+  case GRN_ENC_UTF8:
 #ifdef GRN_WITH_NFKC
     {
       grn_nfkc_normalize_options options;
@@ -3475,20 +3558,20 @@ auto_next(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
       grn_nfkc_normalize(ctx, string, &options);
       grn_nfkc_normalize_options_fin(ctx, &options);
     }
-#else /* GRN_WITH_NFKC */
+#else  /* GRN_WITH_NFKC */
     ascii_normalize(ctx, string_);
 #endif /* GRN_WITH_NFKC */
     break;
-  case GRN_ENC_SJIS :
+  case GRN_ENC_SJIS:
     sjis_normalize(ctx, string_);
     break;
-  case GRN_ENC_LATIN1 :
+  case GRN_ENC_LATIN1:
     latin1_normalize(ctx, string_);
     break;
-  case GRN_ENC_KOI8R :
+  case GRN_ENC_KOI8R:
     koi8r_normalize(ctx, string_);
     break;
-  default :
+  default:
     ascii_normalize(ctx, string_);
     break;
   }
@@ -3799,8 +3882,7 @@ substitutor_data_init(grn_ctx *ctx,
   data->need_checks = (string->flags & GRN_STRING_WITH_CHECKS);
   GRN_UINT8_INIT(&(data->types), GRN_OBJ_VECTOR);
   data->need_types =
-    (string->flags & GRN_STRING_WITH_TYPES) &&
-    (ctx->encoding == GRN_ENC_UTF8);
+    (string->flags & GRN_STRING_WITH_TYPES) && (ctx->encoding == GRN_ENC_UTF8);
   data->current_source_offset = 0;
   GRN_UINT64_INIT(&(data->offsets), GRN_OBJ_VECTOR);
   data->need_offsets = report_source_offset;
@@ -3840,8 +3922,7 @@ substitutor_add_checks_and_offsets(grn_ctx *ctx,
   const char *source_end = source_current + source_length;
   const char *normalized_current = normalized;
   const char *normalized_end = normalized_current + normalized_length;
-  while (source_current < source_end &&
-         normalized_current < normalized_end) {
+  while (source_current < source_end && normalized_current < normalized_end) {
     int source_char_length = grn_charlen(ctx, source_current, source_end);
     if (source_char_length == 0) {
       ERR(GRN_INVALID_ARGUMENT,
@@ -3856,9 +3937,8 @@ substitutor_add_checks_and_offsets(grn_ctx *ctx,
     if (source_current == normalized_current) {
       normalized_char_length = source_char_length;
     } else {
-      normalized_char_length = grn_charlen(ctx,
-                                           normalized_current,
-                                           normalized_end);
+      normalized_char_length =
+        grn_charlen(ctx, normalized_current, normalized_end);
       if (normalized_char_length == 0) {
         ERR(GRN_INVALID_ARGUMENT,
             "%s invalid character in normalized text: <%.*s>(%d)",
@@ -3879,7 +3959,8 @@ substitutor_add_checks_and_offsets(grn_ctx *ctx,
     if (data->need_offsets) {
       GRN_UINT64_PUT(ctx,
                      offsets,
-                     (uint64_t)(source_current - source) + current_source_offset);
+                     (uint64_t)(source_current - source) +
+                       current_source_offset);
     }
     previous_source_current = source_current;
     source_current += source_char_length;
@@ -3899,9 +3980,7 @@ substitutor_add_checks_and_offsets(grn_ctx *ctx,
       }
     }
     while (source_current < source_end) {
-      int source_char_length = grn_charlen(ctx,
-                                             source_current,
-                                             source_end);
+      int source_char_length = grn_charlen(ctx, source_current, source_end);
       if (source_char_length == 0) {
         ERR(GRN_INVALID_ARGUMENT,
             "%s invalid character in source text: <%.*s>(%d)",
@@ -3917,9 +3996,8 @@ substitutor_add_checks_and_offsets(grn_ctx *ctx,
     }
   } else if (normalized_current < normalized_end) {
     while (normalized_current < normalized_end) {
-      int normalized_char_length = grn_charlen(ctx,
-                                               normalized_current,
-                                               normalized_end);
+      int normalized_char_length =
+        grn_charlen(ctx, normalized_current, normalized_end);
       if (normalized_char_length == 0) {
         ERR(GRN_INVALID_ARGUMENT,
             "%s invalid character in normalized text: <%.*s>(%d)",
@@ -3940,7 +4018,7 @@ substitutor_add_checks_and_offsets(grn_ctx *ctx,
         GRN_UINT64_PUT(ctx,
                        offsets,
                        (uint64_t)(previous_source_current - source) +
-                       current_source_offset);
+                         current_source_offset);
       }
       normalized_current += normalized_char_length;
       if (data->count_n_normalized_characters_in_checks) {
@@ -3988,11 +4066,11 @@ substitutor_normalized(grn_ctx *ctx,
 {
   if (data->need_checks || data->need_offsets) {
     substitutor_add_checks_and_offsets(ctx,
-                                    data,
-                                    source,
-                                    source_length,
-                                    normalized,
-                                    normalized_length);
+                                       data,
+                                       source,
+                                       source_length,
+                                       normalized,
+                                       normalized_length);
     if (ctx->rc != GRN_SUCCESS) {
       return;
     }
@@ -4009,9 +4087,7 @@ substitutor_normalized(grn_ctx *ctx,
 }
 
 static void
-substitutor_finished(grn_ctx *ctx,
-                     substitutor_data *data,
-                     grn_string *string)
+substitutor_finished(grn_ctx *ctx, substitutor_data *data, grn_string *string)
 {
   if (!data->count_n_normalized_characters_in_checks &&
       !data->count_n_normalized_characters_in_types) {
@@ -4115,12 +4191,8 @@ unicode_version_option_process(grn_ctx *ctx,
 {
   const char *version;
   grn_id domain;
-  unsigned int version_length = grn_vector_get_element(ctx,
-                                                       raw_options,
-                                                       i,
-                                                       &version,
-                                                       NULL,
-                                                       &domain);
+  unsigned int version_length =
+    grn_vector_get_element(ctx, raw_options, i, &version, NULL, &domain);
   if (!grn_type_id_is_text_family(ctx, domain)) {
     grn_obj value;
     GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
@@ -4130,8 +4202,10 @@ unicode_version_option_process(grn_ctx *ctx,
     ERR(GRN_INVALID_ARGUMENT,
         "%s[%.*s] must be a text: <%.*s>",
         tag,
-        (int)(name_raw->length), name_raw->value,
-        (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+        (int)(name_raw->length),
+        name_raw->value,
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
     GRN_OBJ_FIN(ctx, &value);
     return NULL;
@@ -4140,7 +4214,8 @@ unicode_version_option_process(grn_ctx *ctx,
     ERR(GRN_INVALID_ARGUMENT,
         "%s[%.*s] must not be empty",
         tag,
-        (int)(name_raw->length), name_raw->value);
+        (int)(name_raw->length),
+        name_raw->value);
     return NULL;
   }
   grn_raw_string version_raw;
@@ -4161,8 +4236,10 @@ unicode_version_option_process(grn_ctx *ctx,
         "%s[%.*s] must be one of \"5.0.0\", \"10.0.0\", \"12.1.0\", "
         "\"13.0.0\" or \"15.0.0\": <%.*s>",
         tag,
-        (int)(name_raw->length), name_raw->value,
-        (int)(version_raw.length), version_raw.value);
+        (int)(name_raw->length),
+        name_raw->value,
+        (int)(version_raw.length),
+        version_raw.value);
     return NULL;
   }
 }
@@ -4187,7 +4264,8 @@ table_options_open(grn_ctx *ctx,
   grn_obj target_name_buffer;
   GRN_TEXT_INIT(&target_name_buffer, 0);
   grn_obj *target_name = &target_name_buffer;
-  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length)
+  {
     grn_raw_string name_raw;
     name_raw.value = name;
     name_raw.length = name_length;
@@ -4199,17 +4277,14 @@ table_options_open(grn_ctx *ctx,
             "%s[%.*s] must not specify "
             "both of <column> (deprecated) and <normalized>",
             tag,
-            (int)(name_raw.length), name_raw.value);
+            (int)(name_raw.length),
+            name_raw.value);
         break;
       }
       const char *name;
       grn_id domain;
-      unsigned int name_length = grn_vector_get_element(ctx,
-                                                        raw_options,
-                                                        i,
-                                                        &name,
-                                                        NULL,
-                                                        &domain);
+      unsigned int name_length =
+        grn_vector_get_element(ctx, raw_options, i, &name, NULL, &domain);
       if (!grn_type_id_is_text_family(ctx, domain)) {
         grn_obj value;
         GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
@@ -4219,8 +4294,10 @@ table_options_open(grn_ctx *ctx,
         ERR(GRN_INVALID_ARGUMENT,
             "%s[%.*s] must be a text: <%.*s>",
             tag,
-            (int)(name_raw.length), name_raw.value,
-            (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+            (int)(name_raw.length),
+            name_raw.value,
+            (int)GRN_TEXT_LEN(&inspected),
+            GRN_TEXT_VALUE(&inspected));
         GRN_OBJ_FIN(ctx, &inspected);
         GRN_OBJ_FIN(ctx, &value);
         break;
@@ -4229,7 +4306,8 @@ table_options_open(grn_ctx *ctx,
         ERR(GRN_INVALID_ARGUMENT,
             "%s[%.*s] must not be empty",
             tag,
-            (int)(name_raw.length), name_raw.value);
+            (int)(name_raw.length),
+            name_raw.value);
         break;
       }
       options->normalized_column = grn_ctx_get(ctx, name, (int)name_length);
@@ -4237,8 +4315,10 @@ table_options_open(grn_ctx *ctx,
         ERR(GRN_INVALID_ARGUMENT,
             "%s[%.*s] nonexistent column: <%.*s>",
             tag,
-            (int)(name_raw.length), name_raw.value,
-            (int)name_length, name);
+            (int)(name_raw.length),
+            name_raw.value,
+            (int)name_length,
+            name);
         break;
       }
       if (!grn_obj_is_text_family_scalar_column(ctx,
@@ -4249,21 +4329,20 @@ table_options_open(grn_ctx *ctx,
         ERR(GRN_INVALID_ARGUMENT,
             "%s[%.*s] must be a text family scalar column: <%.*s>: <%.*s>",
             tag,
-            (int)(name_raw.length), name_raw.value,
-            (int)name_length, name,
-            (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+            (int)(name_raw.length),
+            name_raw.value,
+            (int)name_length,
+            name,
+            (int)GRN_TEXT_LEN(&inspected),
+            GRN_TEXT_VALUE(&inspected));
         GRN_OBJ_FIN(ctx, &inspected);
         break;
       }
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "target")) {
       const char *name;
       grn_id domain;
-      unsigned int name_length = grn_vector_get_element(ctx,
-                                                        raw_options,
-                                                        i,
-                                                        &name,
-                                                        NULL,
-                                                        &domain);
+      unsigned int name_length =
+        grn_vector_get_element(ctx, raw_options, i, &name, NULL, &domain);
       if (!grn_type_id_is_text_family(ctx, domain)) {
         grn_obj value;
         GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
@@ -4273,8 +4352,10 @@ table_options_open(grn_ctx *ctx,
         ERR(GRN_INVALID_ARGUMENT,
             "%s[%.*s] must be a text: <%.*s>",
             tag,
-            (int)(name_raw.length), name_raw.value,
-            (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+            (int)(name_raw.length),
+            name_raw.value,
+            (int)GRN_TEXT_LEN(&inspected),
+            GRN_TEXT_VALUE(&inspected));
         GRN_OBJ_FIN(ctx, &inspected);
         GRN_OBJ_FIN(ctx, &value);
         break;
@@ -4283,17 +4364,14 @@ table_options_open(grn_ctx *ctx,
         ERR(GRN_INVALID_ARGUMENT,
             "%s[%.*s] must not be empty",
             tag,
-            (int)(name_raw.length), name_raw.value);
+            (int)(name_raw.length),
+            name_raw.value);
         break;
       }
       GRN_TEXT_SET(ctx, target_name, name, name_length);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unicode_version")) {
       options->get_char_type =
-        unicode_version_option_process(ctx,
-                                       raw_options,
-                                       i,
-                                       &name_raw,
-                                       tag);
+        unicode_version_option_process(ctx, raw_options, i, &name_raw, tag);
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
@@ -4304,15 +4382,14 @@ table_options_open(grn_ctx *ctx,
                                     i,
                                     options->report_source_offset);
     }
-  } GRN_OPTION_VALUES_EACH_END();
+  }
+  GRN_OPTION_VALUES_EACH_END();
   if (ctx->rc != GRN_SUCCESS) {
     goto exit;
   }
 
   if (!options->normalized_column) {
-    ERR(GRN_INVALID_ARGUMENT,
-        "%s[normalized] not specified",
-        tag);
+    ERR(GRN_INVALID_ARGUMENT, "%s[normalized] not specified", tag);
     goto exit;
   }
 
@@ -4324,6 +4401,7 @@ table_options_open(grn_ctx *ctx,
     target_table_option_name = "normalized";
     options->target_table =
       grn_ctx_at(ctx, options->normalized_column->header.domain);
+    /* clang-format off */
   /* TODO: Enable this when we add support for
      "Lexicon.index_column['source_name']" syntax. */
   /*
@@ -4374,14 +4452,16 @@ table_options_open(grn_ctx *ctx,
     options->target_table =
       grn_ctx_at(ctx, options->target_index_column->header.domain);
   */
+    /* clang-format on */
   } else {
     target_table_option_name = "target";
     grn_obj *normalized_table =
       grn_ctx_at(ctx, options->normalized_column->header.domain);
-    grn_obj *target_column = grn_table_column(ctx,
-                                              normalized_table,
-                                              raw_target_name.value,
-                                              (ssize_t)(raw_target_name.length));
+    grn_obj *target_column =
+      grn_table_column(ctx,
+                       normalized_table,
+                       raw_target_name.value,
+                       (ssize_t)(raw_target_name.length));
     grn_obj_unref(ctx, normalized_table);
     if (!target_column) {
       ERR(GRN_INVALID_ARGUMENT,
@@ -4421,7 +4501,8 @@ table_options_open(grn_ctx *ctx,
         "%s[%s] table must be a TABLE_PAT_KEY: <%.*s>",
         tag,
         target_table_option_name,
-        (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
     goto exit;
   }
@@ -4433,12 +4514,13 @@ table_options_open(grn_ctx *ctx,
         "%s[%s] table's key must be ShortText: <%.*s>",
         tag,
         target_table_option_name,
-        (int)GRN_TEXT_LEN(&inspected), GRN_TEXT_VALUE(&inspected));
+        (int)GRN_TEXT_LEN(&inspected),
+        GRN_TEXT_VALUE(&inspected));
     GRN_OBJ_FIN(ctx, &inspected);
     goto exit;
   }
 
-exit :
+exit:
   GRN_OBJ_FIN(ctx, &target_name_buffer);
   if (ctx->rc != GRN_SUCCESS) {
     table_options_fin(ctx, options);
@@ -4462,11 +4544,11 @@ table_normalize(grn_ctx *ctx, grn_string *string, table_options *options)
   data.tag = "[normalizer][table]";
   data.options = options;
   substitutor_data_init(ctx,
-                     &(data.substitutor_data),
-                     data.tag,
-                     options->get_char_type,
-                     string,
-                     options->report_source_offset);
+                        &(data.substitutor_data),
+                        data.tag,
+                        options->get_char_type,
+                        string,
+                        options->report_source_offset);
 
   string->n_characters = 0;
   string->normalized = NULL;
@@ -4666,17 +4748,15 @@ html_options_open(grn_ctx *ctx,
   }
 
   html_options_init(ctx, options);
-  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length) {
+  GRN_OPTION_VALUES_EACH_BEGIN(ctx, raw_options, i, name, name_length)
+  {
     grn_raw_string name_raw;
     name_raw.value = name;
     name_raw.length = name_length;
 
     if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "remove_tag")) {
       options->remove_tag =
-        grn_vector_get_element_bool(ctx,
-                                    raw_options,
-                                    i,
-                                    options->remove_tag);
+        grn_vector_get_element_bool(ctx, raw_options, i, options->remove_tag);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw,
                                             "expand_character_reference")) {
       options->expand_character_reference =
@@ -4686,11 +4766,7 @@ html_options_open(grn_ctx *ctx,
                                     options->expand_character_reference);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unicode_version")) {
       options->get_char_type =
-        unicode_version_option_process(ctx,
-                                       raw_options,
-                                       i,
-                                       &name_raw,
-                                       tag);
+        unicode_version_option_process(ctx, raw_options, i, &name_raw, tag);
       if (ctx->rc != GRN_SUCCESS) {
         break;
       }
@@ -4701,7 +4777,8 @@ html_options_open(grn_ctx *ctx,
                                     i,
                                     options->report_source_offset);
     }
-  } GRN_OPTION_VALUES_EACH_END();
+  }
+  GRN_OPTION_VALUES_EACH_END();
 
   if (ctx->rc != GRN_SUCCESS) {
     html_options_fin(ctx, options);
@@ -4713,96 +4790,95 @@ html_options_open(grn_ctx *ctx,
 }
 
 static bool
-html_expand_numeric_char_ref(grn_ctx *ctx,
-                             grn_obj *buffer,
-                             uint32_t code_point)
+html_expand_numeric_char_ref(grn_ctx *ctx, grn_obj *buffer, uint32_t code_point)
 {
   /* Special code points.
    * See also:
-   * https://html.spec.whatwg.org/multipage/parsing.html#numeric-character-reference-end-state */
+   * https://html.spec.whatwg.org/multipage/parsing.html#numeric-character-reference-end-state
+   */
   switch (code_point) {
-  case 0x80 :
+  case 0x80:
     code_point = 0x20AC;
     break;
-  case 0x82 :
+  case 0x82:
     code_point = 0x201A;
     break;
-  case 0x83 :
+  case 0x83:
     code_point = 0x0192;
     break;
-  case 0x84 :
+  case 0x84:
     code_point = 0x201E;
     break;
-  case 0x85 :
+  case 0x85:
     code_point = 0x2026;
     break;
-  case 0x86 :
+  case 0x86:
     code_point = 0x2020;
     break;
-  case 0x87 :
+  case 0x87:
     code_point = 0x2021;
     break;
-  case 0x88 :
+  case 0x88:
     code_point = 0x02C6;
     break;
-  case 0x89 :
+  case 0x89:
     code_point = 0x2030;
     break;
-  case 0x8A :
+  case 0x8A:
     code_point = 0x0160;
     break;
-  case 0x8B :
+  case 0x8B:
     code_point = 0x2039;
     break;
-  case 0x8C :
+  case 0x8C:
     code_point = 0x0152;
     break;
-  case 0x8E :
+  case 0x8E:
     code_point = 0x017D;
     break;
-  case 0x91 :
+  case 0x91:
     code_point = 0x2018;
     break;
-  case 0x92 :
+  case 0x92:
     code_point = 0x2019;
     break;
-  case 0x93 :
+  case 0x93:
     code_point = 0x201C;
     break;
-  case 0x94 :
+  case 0x94:
     code_point = 0x201D;
     break;
-  case 0x95 :
+  case 0x95:
     code_point = 0x2022;
     break;
-  case 0x96 :
+  case 0x96:
     code_point = 0x2013;
     break;
-  case 0x97 :
+  case 0x97:
     code_point = 0x2014;
     break;
-  case 0x98 :
+  case 0x98:
     code_point = 0x02DC;
     break;
-  case 0x99 :
+  case 0x99:
     code_point = 0x2122;
     break;
-  case 0x9A :
+  case 0x9A:
     code_point = 0x0161;
     break;
-  case 0x9B :
+  case 0x9B:
     code_point = 0x203A;
     break;
-  case 0x9C :
+  case 0x9C:
     code_point = 0x0153;
     break;
-  case 0x9E :
+  case 0x9E:
     code_point = 0x017E;
     break;
-  case 0x9F :
+  case 0x9F:
     code_point = 0x0178;
     break;
-  default :
+  default:
     break;
   }
   grn_text_code_point(ctx, buffer, code_point);
@@ -4868,7 +4944,7 @@ html_normalize(grn_ctx *ctx, grn_string *string, html_options *options)
           processed = true;
         }
         break;
-      case HTML_STATE_IN_CHAR_REF :
+      case HTML_STATE_IN_CHAR_REF:
         if (*current == ';') {
           bool valid = false;
           size_t normalized_length_before = GRN_TEXT_LEN(normalized);
@@ -4877,18 +4953,16 @@ html_normalize(grn_ctx *ctx, grn_string *string, html_options *options)
             if (start_char_ref[2] == 'x' || start_char_ref[2] == 'X') {
               /* "&#xH...;" */
               const char *code_point_end = NULL;
-              code_point = grn_htoui(start_char_ref + 3,
-                                     current,
-                                     &code_point_end);
+              code_point =
+                grn_htoui(start_char_ref + 3, current, &code_point_end);
               if (code_point_end != current) {
                 code_point = -1;
               }
             } else {
               /* "&#D...;" */
               const char *code_point_end = NULL;
-              code_point = grn_atoll(start_char_ref + 2,
-                                     current,
-                                     &code_point_end);
+              code_point =
+                grn_atoll(start_char_ref + 2, current, &code_point_end);
               if (code_point_end != current) {
                 code_point = -1;
               }
@@ -4900,11 +4974,11 @@ html_normalize(grn_ctx *ctx, grn_string *string, html_options *options)
             }
           } else {
             /* "&NAME;" */
-            valid =
-              html_expand_named_char_ref(ctx,
-                                         normalized,
-                                         start_char_ref + 1,
-                                         (size_t)(current - start_char_ref - 1));
+            valid = html_expand_named_char_ref(
+              ctx,
+              normalized,
+              start_char_ref + 1,
+              (size_t)(current - start_char_ref - 1));
           }
           if (valid) {
             const char *current_normalized =
@@ -4955,10 +5029,7 @@ html_normalize(grn_ctx *ctx, grn_string *string, html_options *options)
         /* "&...(any multibyte character)...;" case: Write it as-is. */
         size_t normalized_length =
           (size_t)(current - start_char_ref) + (size_t)char_length;
-        grn_bulk_write(ctx,
-                       normalized,
-                       start_char_ref,
-                       normalized_length);
+        grn_bulk_write(ctx, normalized, start_char_ref, normalized_length);
         substitutor_normalized(ctx,
                                &data,
                                start_char_ref,
@@ -4968,7 +5039,7 @@ html_normalize(grn_ctx *ctx, grn_string *string, html_options *options)
         state = HTML_STATE_TEXT;
         start_char_ref = NULL;
       }
-    default :
+    default:
       grn_bulk_write(ctx, normalized, current, (size_t)char_length);
       substitutor_normalized(ctx,
                              &data,
@@ -4990,7 +5061,7 @@ html_normalize(grn_ctx *ctx, grn_string *string, html_options *options)
 
   substitutor_finished(ctx, &data, string);
 
-exit :
+exit:
   substitutor_data_fin(ctx, &data);
 }
 
@@ -5054,43 +5125,60 @@ grn_db_init_builtin_normalizers(grn_ctx *ctx)
   const char *normalizer_nfkc130_name = "NormalizerNFKC130";
   const char *normalizer_nfkc150_name = "NormalizerNFKC150";
 
-  grn_normalizer_register(ctx, GRN_NORMALIZER_AUTO_NAME, -1,
-                          NULL, auto_next, NULL);
+  grn_normalizer_register(ctx,
+                          GRN_NORMALIZER_AUTO_NAME,
+                          -1,
+                          NULL,
+                          auto_next,
+                          NULL);
 
 #ifdef GRN_WITH_NFKC
-  grn_normalizer_register(ctx, normalizer_nfkc51_name, -1,
-                          NULL, nfkc51_next, NULL);
-  grn_normalizer_register(ctx, normalizer_nfkc100_name, -1,
-                          NULL, nfkc100_next, NULL);
-  grn_normalizer_register(ctx, normalizer_nfkc121_name, -1,
-                          NULL, nfkc121_next, NULL);
-  grn_normalizer_register(ctx, normalizer_nfkc130_name, -1,
-                          NULL, nfkc130_next, NULL);
-  grn_normalizer_register(ctx, normalizer_nfkc150_name, -1,
-                          NULL, nfkc150_next, NULL);
-#else /* GRN_WITH_NFKC */
-  grn_normalizer_register(ctx, normalizer_nfkc51_name, -1,
-                          NULL, NULL, NULL);
-  grn_normalizer_register(ctx, normalizer_nfkc100_name, -1,
-                          NULL, NULL, NULL);
-  grn_normalizer_register(ctx, normalizer_nfkc121_name, -1,
-                          NULL, NULL, NULL);
-  grn_normalizer_register(ctx, normalizer_nfkc130_name, -1,
-                          NULL, NULL, NULL);
-  grn_normalizer_register(ctx, normalizer_nfkc150_name, -1,
-                          NULL, NULL, NULL);
+  grn_normalizer_register(ctx,
+                          normalizer_nfkc51_name,
+                          -1,
+                          NULL,
+                          nfkc51_next,
+                          NULL);
+  grn_normalizer_register(ctx,
+                          normalizer_nfkc100_name,
+                          -1,
+                          NULL,
+                          nfkc100_next,
+                          NULL);
+  grn_normalizer_register(ctx,
+                          normalizer_nfkc121_name,
+                          -1,
+                          NULL,
+                          nfkc121_next,
+                          NULL);
+  grn_normalizer_register(ctx,
+                          normalizer_nfkc130_name,
+                          -1,
+                          NULL,
+                          nfkc130_next,
+                          NULL);
+  grn_normalizer_register(ctx,
+                          normalizer_nfkc150_name,
+                          -1,
+                          NULL,
+                          nfkc150_next,
+                          NULL);
+#else  /* GRN_WITH_NFKC */
+  grn_normalizer_register(ctx, normalizer_nfkc51_name, -1, NULL, NULL, NULL);
+  grn_normalizer_register(ctx, normalizer_nfkc100_name, -1, NULL, NULL, NULL);
+  grn_normalizer_register(ctx, normalizer_nfkc121_name, -1, NULL, NULL, NULL);
+  grn_normalizer_register(ctx, normalizer_nfkc130_name, -1, NULL, NULL, NULL);
+  grn_normalizer_register(ctx, normalizer_nfkc150_name, -1, NULL, NULL, NULL);
 #endif /* GRN_WITH_NFKC */
 
-  grn_normalizer_register(ctx, "NormalizerTable", -1,
-                          NULL, table_next, NULL);
+  grn_normalizer_register(ctx, "NormalizerTable", -1, NULL, table_next, NULL);
 
-  grn_normalizer_register(ctx, "NormalizerHTML", -1,
-                          NULL, html_next, NULL);
+  grn_normalizer_register(ctx, "NormalizerHTML", -1, NULL, html_next, NULL);
 
-/*
-  grn_normalizer_register(ctx, "NormalizerUCA", -1,
-                          NULL, uca_next, NULL);
-*/
+  /*
+    grn_normalizer_register(ctx, "NormalizerUCA", -1,
+                            NULL, uca_next, NULL);
+  */
 
   return GRN_SUCCESS;
 }
