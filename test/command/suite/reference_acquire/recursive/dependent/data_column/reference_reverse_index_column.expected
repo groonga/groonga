@@ -1,0 +1,38 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Users age COLUMN_SCALAR UInt8
+[[0,0.0,0.0],true]
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos user COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+table_create Posts TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Posts user COLUMN_SCALAR Users
+[[0,0.0,0.0],true]
+column_create Users memos_user COLUMN_INDEX Memos user
+[[0,0.0,0.0],true]
+column_create Users posts_user COLUMN_INDEX Posts user
+[[0,0.0,0.0],true]
+log_level --level dump
+[[0,0.0,0.0],true]
+reference_acquire --target_name Memos.user --recursive dependent
+[[0,0.0,0.0],true]
+#|-| [obj][open] <259>(<Memos.user>):<64>(<column:fix_size>)
+#|-| [obj][open] <258>(<Memos>):<48>(<table:hash_key>)
+#|-| [obj][open] <256>(<Users>):<48>(<table:hash_key>)
+#|-| [obj][open] <257>(<Users.age>):<64>(<column:fix_size>)
+#|-| [obj][open] <262>(<Users.memos_user>):<72>(<column:index>)
+#|-| [obj][open] <263>(<Users.posts_user>):<72>(<column:index>)
+#|-| [obj][close] <263>(<Users.posts_user>):<72>(<column:index>)
+select Memos
+[[0,0.0,0.0],[[[0],[["_id","UInt32"],["_key","ShortText"],["user","Users"]]]]]
+reference_release --target_name Memos.user --recursive dependent
+[[0,0.0,0.0],true]
+#|-| [obj][close] <258>(<Memos>):<48>(<table:hash_key>)
+#|-| [obj][close] <257>(<Users.age>):<64>(<column:fix_size>)
+#|-| [obj][close] <262>(<Users.memos_user>):<72>(<column:index>)
+#|-| [obj][open] <263>(<Users.posts_user>):<72>(<column:index>)
+#|-| [obj][close] <263>(<Users.posts_user>):<72>(<column:index>)
+#|-| [obj][close] <256>(<Users>):<48>(<table:hash_key>)
+#|-| [obj][close] <259>(<Memos.user>):<64>(<column:fix_size>)

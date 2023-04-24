@@ -13352,7 +13352,7 @@ grn_obj_traverse_recursive(grn_ctx *ctx,
 typedef struct {
   grn_hash *traversed;
   bool is_close_opened_object_mode;
-  bool is_top_level;
+  grn_obj *top_level_object;
   bool for_reference;
   grn_traverse_func *traverse;
   void *user_data;
@@ -13408,7 +13408,7 @@ grn_obj_traverse_recursive_dependent_db(
 
     grn_obj *object = grn_ctx_at(ctx, id);
     if (grn_obj_is_table(ctx, object)) {
-      data->is_top_level = true;
+      data->top_level_object = object;
       grn_obj_traverse_recursive_dependent_dispatch(ctx, data, object);
     } else {
       if (ctx->rc != GRN_SUCCESS) {
@@ -13435,13 +13435,53 @@ grn_obj_traverse_recursive_dependent_db(
   data->traverse(ctx, db, data->user_data);
 }
 
+static bool
+grn_obj_traverse_recursive_dependent_table_is_target_column(
+  grn_ctx *ctx,
+  grn_obj_traverse_recursive_dependent_data *data,
+  grn_obj *table,
+  grn_obj *column)
+{
+  if (!data->for_reference) {
+    return true;
+  }
+
+  if (table == data->top_level_object) {
+    return true;
+  }
+
+  if (!grn_obj_is_index_column(ctx, column)) {
+    return true;
+  }
+
+  if (grn_obj_is_table(ctx, data->top_level_object)) {
+    return DB_OBJ(column)->range == DB_OBJ(data->top_level_object)->id;
+  } else {
+    if (DB_OBJ(column)->range != data->top_level_object->header.domain) {
+      return false;
+    }
+
+    bool is_target = false;
+    grn_obj source_ids;
+    GRN_UINT32_INIT(&source_ids, GRN_OBJ_VECTOR);
+    grn_obj_get_info(ctx, column, GRN_INFO_SOURCE, &source_ids);
+    const size_t n = GRN_UINT32_VECTOR_SIZE(&source_ids);
+    for (size_t i = 0; i < n; i++) {
+      grn_id source_id = GRN_UINT32_VALUE_AT(&source_ids, i);
+      if (source_id == DB_OBJ(data->top_level_object)->id) {
+        is_target = true;
+        break;
+      }
+    }
+    GRN_OBJ_FIN(ctx, &source_ids);
+    return is_target;
+  }
+}
+
 static void
 grn_obj_traverse_recursive_dependent_table(
   grn_ctx *ctx, grn_obj_traverse_recursive_dependent_data *data, grn_obj *table)
 {
-  const bool is_top_level = data->is_top_level;
-  data->is_top_level = false;
-
   if (grn_obj_is_table_with_key(ctx, table)) {
     grn_id domain_id = table->header.domain;
     if (grn_obj_traverse_recursive_dependent_need_traverse(ctx,
@@ -13491,7 +13531,7 @@ grn_obj_traverse_recursive_dependent_table(
     }
   }
 
-  if (data->for_reference || is_top_level) {
+  if (data->for_reference || table == data->top_level_object) {
     grn_hash *columns = grn_hash_create(ctx,
                                         NULL,
                                         sizeof(grn_id),
@@ -13543,8 +13583,11 @@ grn_obj_traverse_recursive_dependent_table(
         }
         grn_obj *column = grn_ctx_at(ctx, *column_id);
         if (column) {
-          if (!(data->for_reference && !is_top_level &&
-                grn_obj_is_index_column(ctx, column))) {
+          if (grn_obj_traverse_recursive_dependent_table_is_target_column(
+                ctx,
+                data,
+                table,
+                column)) {
             grn_obj_traverse_recursive_dependent_dispatch(ctx, data, column);
           }
           grn_obj_unref(ctx, column);
@@ -13574,10 +13617,7 @@ grn_obj_traverse_recursive_dependent_column_data(
   grn_obj_traverse_recursive_dependent_data *data,
   grn_obj *column)
 {
-  const bool is_top_level = data->is_top_level;
-  data->is_top_level = false;
-
-  if (is_top_level) {
+  if (column == data->top_level_object) {
     const grn_id table_id = column->header.domain;
     if (grn_obj_traverse_recursive_dependent_need_traverse(ctx,
                                                            data,
@@ -13652,8 +13692,6 @@ grn_obj_traverse_recursive_dependent_column_index(
   grn_obj_traverse_recursive_dependent_data *data,
   grn_obj *column)
 {
-  data->is_top_level = false;
-
   grn_id lexicon_id = column->header.domain;
   if (grn_obj_traverse_recursive_dependent_need_traverse(ctx,
                                                          data,
@@ -13802,7 +13840,7 @@ grn_obj_traverse_recursive_dependent(
 
   grn_id id = grn_obj_id(ctx, obj);
   if (grn_obj_traverse_recursive_dependent_need_traverse(ctx, data, id)) {
-    data->is_top_level = true;
+    data->top_level_object = obj;
     grn_obj_traverse_recursive_dependent_dispatch(ctx, data, obj);
   }
 

@@ -1,0 +1,20 @@
+#$GRN_ENABLE_REFERENCE_COUNT=yes
+
+table_create Users TABLE_HASH_KEY ShortText
+column_create Users age COLUMN_SCALAR UInt8
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos user COLUMN_SCALAR Users
+
+table_create Posts TABLE_HASH_KEY ShortText
+column_create Posts user COLUMN_SCALAR Users
+
+column_create Users memos_user COLUMN_INDEX Memos user
+column_create Users posts_user COLUMN_INDEX Posts user
+
+log_level --level dump
+#@add-important-log-levels dump
+#@add-ignore-log-pattern /\A\[io\]/
+reference_acquire --target_name Memos.user --recursive dependent
+select Memos
+reference_release --target_name Memos.user --recursive dependent
