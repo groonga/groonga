@@ -13,7 +13,7 @@ build_top_dir="$BUILD_DIR/../.."
 build_top_dir=$(cd -P "$build_top_dir" 2>/dev/null || cd "$build_top_dir"; pwd)
 
 n_processors=1
-case `uname` in
+case $(uname) in
   Linux)
     n_processors="$(nproc)"
     ;;
@@ -25,12 +25,19 @@ case `uname` in
     ;;
 esac
 
-if test x"$NO_MAKE" != x"yes"; then
-  MAKE_ARGS=
-  if test $n_processors -gt 1; then
-    MAKE_ARGS="${MAKE_ARGS} -j${n_processors}"
+# For backward compatibility
+: ${NO_BUILD:=$NO_MAKE}
+if [ "${NO_BUILD}" != "yes" ]; then
+  echo "${build_top_dir}/build.ninja"
+  if [ -f "${build_top_dir}/build.ninja" ]; then
+    ninja -C "${build_top_dir}" > /dev/null || exit 1
+  else
+    MAKE_ARGS=
+    if [ ${n_processors} -gt 1 ]; then
+      MAKE_ARGS="${MAKE_ARGS} -j${n_processors}"
+    fi
+    make -C $build_top_dir ${MAKE_ARGS} > /dev/null || exit 1
   fi
-  make -C $build_top_dir ${MAKE_ARGS} > /dev/null || exit 1
 fi
 
 . "${build_top_dir}/config.sh"
