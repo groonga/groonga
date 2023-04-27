@@ -54,7 +54,7 @@ def download(url, base)
   FileUtils.rm_rf(tar_gz)
 end
 
-download("https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE",
+download("https://packages.groonga.org/source/mecab/#{mecab_base}.tar.gz",
          mecab_base)
 
 download("https://ja.osdn.net/projects/naist-jdic/downloads/53500/#{mecab_naist_jdic_base}.tar.gz",
