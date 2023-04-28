@@ -491,11 +491,15 @@ set(GRN_ZSTD_EP_VERSION "1.4.8")
 set(GRN_ZSTD_TARGET)
 set(GRN_WITH_ZSTD "auto"
   CACHE STRING "Support data compression by Zstandard.")
-if(NOT ${GRN_WITH_ZSTD} STREQUAL "no")
-  if(${GRN_WITH_ZSTD} STREQUAL "bundled")
+if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
+  if("${GRN_WITH_ZSTD}" STREQUAL "bundled")
     set(zstd_FOUND FALSE)
   else()
-    find_package(zstd)
+    if("${GRN_WITH_ZSTD}" STREQUAL "yes")
+      find_package(zstd REQUIRED)
+    else()
+      find_package(zstd)
+    endif()
   endif()
   if(zstd_FOUND)
     set(GRN_WITH_ZSTD TRUE)
@@ -503,66 +507,58 @@ if(NOT ${GRN_WITH_ZSTD} STREQUAL "no")
     set(GRN_ZSTD_TARGET zstd::libzstd_shared)
     message(STATUS "Zstandard: ${ZSTD_LIBRARY}")
   else()
-    if(CMAKE_VERSION VERSION_GREATER 3.6)
-      set(ZSTD_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-install")
-      if(MSVC)
-	set(ZSTD_LIBRARY_BASE_NAME zstd_static)
-      else()
-	set(ZSTD_LIBRARY_BASE_NAME zstd)
-      endif()
-      set(ZSTD_STATIC_LIBRARY "${ZSTD_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-      string(APPEND ZSTD_STATIC_LIBRARY "/${CMAKE_STATIC_LIBRARY_PREFIX}")
-      string(APPEND ZSTD_STATIC_LIBRARY "${ZSTD_LIBRARY_BASE_NAME}")
-      string(APPEND ZSTD_STATIC_LIBRARY "${CMAKE_STATIC_LIBRARY_SUFFIX}")
-      set(ZSTD_CMAKE_ARGS
-	-DCMAKE_INSTALL_PREFIX=${ZSTD_PREFIX}
-	-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-	-DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}
-	-DZSTD_BUILD_PROGRAMS=OFF
-	-DZSTD_BUILD_SHARED=OFF
-	-DZSTD_BUILD_STATIC=ON
-	-DZSTD_USE_STATIC_RUNTIME=ON)
-      set(ZSTD_SOURCE_BASE_NAME "zstd-${GRN_ZSTD_EP_VERSION}.tar.gz")
-      set(ZSTD_SOURCE_LOCAL_PATH
-	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/${ZSTD_SOURCE_BASE_NAME}")
-      if(EXISTS ${ZSTD_SOURCE_LOCAL_PATH})
-	set(ZSTD_SOURCE_URL ${ZSTD_SOURCE_LOCAL_PATH})
-      else()
-	set(ZSTD_SOURCE_URL
-	  "https://github.com/facebook/zstd/releases/download")
-	string(APPEND ZSTD_SOURCE_URL "/v${GRN_ZSTD_EP_VERSION}")
-	string(APPEND ZSTD_SOURCE_URL "/${ZSTD_SOURCE_BASE_NAME}")
-      endif()
-      externalproject_add(zstd-ep
-	${GRN_EP_COMMON_OPTIONS}
-	CMAKE_ARGS ${ZSTD_CMAKE_ARGS}
-	SOURCE_SUBDIR "build/cmake"
-	URL ${ZSTD_SOURCE_URL}
-	BUILD_BYPRODUCTS ${ZSTD_STATIC_LIBRARY})
-      file(MAKE_DIRECTORY "${ZSTD_PREFIX}/include")
-      add_library(zstd::libzstd_static STATIC IMPORTED)
-      set_target_properties(zstd::libzstd_static PROPERTIES
-	IMPORTED_LOCATION ${ZSTD_STATIC_LIBRARY}
-	INTERFACE_INCLUDE_DIRECTORIES "${ZSTD_PREFIX}/include")
-      add_dependencies(zstd::libzstd_static zstd-ep)
-      set(ZSTD_SOURCE_DIR
-	"${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-prefix/src/zstd-ep")
-      install(FILES
-	"${ZSTD_SOURCE_DIR}/CHANGELOG"
-	"${ZSTD_SOURCE_DIR}/COPYING"
-	"${ZSTD_SOURCE_DIR}/LICENSE"
-	"${ZSTD_SOURCE_DIR}/README.md"
-	DESTINATION "${GRN_DATA_DIR}/zstd")
-      set(GRN_ZSTD_TARGET zstd::libzstd_static)
-      set(GRN_WITH_ZSTD TRUE)
-      message(STATUS "Zstandard: ${ZSTD_STATIC_LIBRARY} (bundled)")
+    set(ZSTD_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-install")
+    if(MSVC)
+      set(ZSTD_LIBRARY_BASE_NAME zstd_static)
     else()
-      if(${GRN_WITH_ZSTD} STREQUAL "yes")
-	message(FATAL_ERROR "No Zstandard found")
-      endif()
-      set(GRN_WITH_ZSTD FALSE)
-      message(STATUS "No Zstandard")
+      set(ZSTD_LIBRARY_BASE_NAME zstd)
     endif()
+    set(ZSTD_STATIC_LIBRARY "${ZSTD_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+    string(APPEND ZSTD_STATIC_LIBRARY "/${CMAKE_STATIC_LIBRARY_PREFIX}")
+    string(APPEND ZSTD_STATIC_LIBRARY "${ZSTD_LIBRARY_BASE_NAME}")
+    string(APPEND ZSTD_STATIC_LIBRARY "${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    set(ZSTD_CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX=${ZSTD_PREFIX}
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+      -DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}
+      -DZSTD_BUILD_PROGRAMS=OFF
+      -DZSTD_BUILD_SHARED=OFF
+      -DZSTD_BUILD_STATIC=ON
+      -DZSTD_USE_STATIC_RUNTIME=ON)
+    set(ZSTD_SOURCE_BASE_NAME "zstd-${GRN_ZSTD_EP_VERSION}.tar.gz")
+    set(ZSTD_SOURCE_LOCAL_PATH
+        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${ZSTD_SOURCE_BASE_NAME}")
+    if(EXISTS ${ZSTD_SOURCE_LOCAL_PATH})
+      set(ZSTD_SOURCE_URL ${ZSTD_SOURCE_LOCAL_PATH})
+    else()
+      set(ZSTD_SOURCE_URL
+        "https://github.com/facebook/zstd/releases/download")
+      string(APPEND ZSTD_SOURCE_URL "/v${GRN_ZSTD_EP_VERSION}")
+      string(APPEND ZSTD_SOURCE_URL "/${ZSTD_SOURCE_BASE_NAME}")
+    endif()
+    externalproject_add(zstd-ep
+      ${GRN_EP_COMMON_OPTIONS}
+      CMAKE_ARGS ${ZSTD_CMAKE_ARGS}
+      SOURCE_SUBDIR "build/cmake"
+      URL ${ZSTD_SOURCE_URL}
+      BUILD_BYPRODUCTS ${ZSTD_STATIC_LIBRARY})
+    file(MAKE_DIRECTORY "${ZSTD_PREFIX}/include")
+    add_library(zstd::libzstd_static STATIC IMPORTED)
+    set_target_properties(zstd::libzstd_static PROPERTIES
+      IMPORTED_LOCATION ${ZSTD_STATIC_LIBRARY}
+      INTERFACE_INCLUDE_DIRECTORIES "${ZSTD_PREFIX}/include")
+    add_dependencies(zstd::libzstd_static zstd-ep)
+    set(ZSTD_SOURCE_DIR
+      "${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-prefix/src/zstd-ep")
+    install(FILES
+      "${ZSTD_SOURCE_DIR}/CHANGELOG"
+      "${ZSTD_SOURCE_DIR}/COPYING"
+      "${ZSTD_SOURCE_DIR}/LICENSE"
+      "${ZSTD_SOURCE_DIR}/README.md"
+      DESTINATION "${GRN_DATA_DIR}/zstd")
+    set(GRN_ZSTD_TARGET zstd::libzstd_static)
+    set(GRN_WITH_ZSTD TRUE)
+    message(STATUS "Zstandard: ${ZSTD_STATIC_LIBRARY} (bundled)")
   endif()
 else()
   set(GRN_WITH_ZSTD FALSE)
