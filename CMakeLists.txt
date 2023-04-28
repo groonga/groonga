@@ -1,5 +1,5 @@
 # Copyright(C) 2012-2018 Brazil
-# Copyright(C) 2018-2022 Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2018-2023 Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,9 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-cmake_minimum_required(VERSION 2.8.12) # CentOS 7
+# Ubuntu 20.04: 3.16
+# CentOS 7's EPEL: 3.17
+cmake_minimum_required(VERSION 3.16)
 set(GRN_PROJECT_NAME "groonga")
 set(GRN_PROJECT_LABEL "Groonga")
 project("${GRN_PROJECT_NAME}")
