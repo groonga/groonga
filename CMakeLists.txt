@@ -177,12 +177,8 @@ if(GRN_C_COMPILER_GNU_LIKE)
     "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-g3>")
   set(GRN_CXX_COMPILE_FLAGS
     "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-g3>")
-  if(CMAKE_VERSION VERSION_LESS 3.1)
-    set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} -std=gnu99")
-  else()
-    set(CMAKE_C_STANDARD 99)
-    set(CMAKE_C_STANDARD_REQUIRED TRUE)
-  endif()
+  set(CMAKE_C_STANDARD 99)
+  set(CMAKE_C_STANDARD_REQUIRED TRUE)
 endif()
 
 # /Ob1 is used with RelWithDebInfo by default but it's slower than
