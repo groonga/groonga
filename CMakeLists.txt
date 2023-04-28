@@ -17,9 +17,36 @@
 # Ubuntu 20.04: 3.16
 # CentOS 7's EPEL: 3.17
 cmake_minimum_required(VERSION 3.16)
-set(GRN_PROJECT_NAME "groonga")
+
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/base_version" VERSION)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/version.sh")
+  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/version.sh" GRN_VERSION)
+else()
+  if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/version.sh")
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND EXISTS "/bin/sh")
+      execute_process(COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/version-gen.sh"
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+      file(READ "${CMAKE_CURRENT_BINARY_DIR}/version.sh" GRN_VERSION)
+    else()
+      set(GRN_VERSION "${VERSION}")
+    endif()
+  endif()
+endif()
+string(REGEX REPLACE "(^.*=|\n)" "" GRN_VERSION "${GRN_VERSION}")
+string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\1"
+  GRN_VERSION_MAJOR "${VERSION}")
+string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\2"
+  GRN_VERSION_MINOR "${VERSION}")
+string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\3"
+  GRN_VERSION_MICRO "${VERSION}")
+string(REGEX REPLACE "\\." "," GRN_VERSION_RC "${GRN_VERSION}")
+string(REGEX REPLACE "-.*$" "" GRN_VERSION_RC "${GRN_VERSION_RC}")
+
+project(groonga
+  VERSION "${GROONGA_VERSION}"
+  DESCRIPTION "An Embeddable Fulltext Search Engine"
+  LANGUAGES  C CXX)
 set(GRN_PROJECT_LABEL "Groonga")
-project("${GRN_PROJECT_NAME}")
 
 # https://cmake.org/cmake/help/latest/policy/CMP0054.html
 # Only interpret if() arguments as variables or keywords when unquoted.
@@ -53,30 +80,6 @@ if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR
 else()
   set(GRN_C_COMPILER_GNU_LIKE FALSE)
 endif()
-
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/base_version" VERSION)
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/version.sh")
-  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/version.sh" GRN_VERSION)
-else()
-  if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/version.sh")
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND EXISTS "/bin/sh")
-      execute_process(COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/version-gen.sh"
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-      file(READ "${CMAKE_CURRENT_BINARY_DIR}/version.sh" GRN_VERSION)
-    else()
-      set(GRN_VERSION "${VERSION}")
-    endif()
-  endif()
-endif()
-string(REGEX REPLACE "(^.*=|\n)" "" GRN_VERSION "${GRN_VERSION}")
-string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\1"
-  GRN_VERSION_MAJOR "${VERSION}")
-string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\2"
-  GRN_VERSION_MINOR "${VERSION}")
-string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\3"
-  GRN_VERSION_MICRO "${VERSION}")
-string(REGEX REPLACE "\\." "," GRN_VERSION_RC "${GRN_VERSION}")
-string(REGEX REPLACE "-.*$" "" GRN_VERSION_RC "${GRN_VERSION_RC}")
 
 configure_file(
   include/groonga/version.h.in
