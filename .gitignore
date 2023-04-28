@@ -32,6 +32,7 @@
 /benchmark/fixtures/geo-select/load.grn
 /benchmark/tmp
 /compile
+/compile_commands.json
 /config.guess
 /config.h
 /config.h.in
