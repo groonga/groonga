@@ -324,13 +324,6 @@ if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64" OR
 else()
   ac_check_lib(atomic __atomic_store_8)
 endif()
-if(GRN_EMBED)
-  check_library_exists(stdc++ __cxa_begin_catch "${ARG2}"
-    STDCPP)
-  if(STDCPP)
-    set(STDCPP_LIBS "stdc++")
-  endif()
-endif()
 
 check_struct_has_member(
   "struct tm"
