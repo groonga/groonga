@@ -30,7 +30,7 @@ target_link_libraries(groonga libgroonga)
 install(TARGETS groonga DESTINATION ${BINDIR})
 if(MSVC)
   install(FILES $<TARGET_PDB_FILE:groonga>
-    DESTINATION "${BINDIR}"
+    DESTINATION "${CMAKE_INSTALL_BINDIR}"
     OPTIONAL)
 endif()
 
@@ -47,7 +47,7 @@ if(GRN_WITH_MRUBY)
   install(TARGETS grndb DESTINATION ${BINDIR})
   if(MSVC)
     install(FILES $<TARGET_PDB_FILE:grndb>
-      DESTINATION "${BINDIR}"
+      DESTINATION "${CMAKE_INSTALL_BINDIR}"
       OPTIONAL)
   endif()
 endif()
@@ -59,5 +59,5 @@ if(NOT WIN32)
     PROPERTIES
     COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   target_link_libraries(grnslap libgroonga)
-  install(TARGETS grnslap DESTINATION ${BINDIR})
+  install(TARGETS grnslap DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()

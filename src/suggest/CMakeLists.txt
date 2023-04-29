@@ -28,10 +28,10 @@ set_source_files_properties(${GROONGA_SUGGEST_CREATE_DATASET_SOURCES}
 target_link_libraries(groonga-suggest-create-dataset libgroonga)
 install(
   TARGETS groonga-suggest-create-dataset
-  DESTINATION ${BIN_DIR})
-if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+  DESTINATION "${CMAKE_INSTALL_BINDIR}")
+if(MSVC)
   install(FILES $<TARGET_PDB_FILE:groonga-suggest-create-dataset>
-    DESTINATION "${BIN_DIR}"
+    DESTINATION "${CMAKE_INSTALL_BINDIR}"
     OPTIONAL)
 endif()
 
@@ -88,13 +88,13 @@ if(GRN_WITH_SUGGEST_LEARNER)
 
   install(
     TARGETS groonga-suggest-learner groonga-suggest-httpd
-    DESTINATION ${BIN_DIR})
-  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+    DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  if(MSVC)
     install(
       FILES
       $<TARGET_PDB_FILE:groonga-suggest-learner>
       $<TARGET_PDB_FILE:groonga-suggest-httpd>
-      DESTINATION "${PDB_DIR}"
+      DESTINATION "${CMAKE_INSTALL_BINDIR}"
       OPTIONAL)
   endif()
 endif()

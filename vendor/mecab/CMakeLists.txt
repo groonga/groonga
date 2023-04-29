@@ -187,24 +187,24 @@ if(GRN_WITH_BUNDLED_MECAB)
   add_executable(mecab-dict-index ${MECAB_DICT_INDEX_SOURCES})
   target_link_libraries(mecab-dict-index libmecab)
   install(TARGETS libmecab
-    ARCHIVE DESTINATION "${LIB_DIR}"
-    LIBRARY DESTINATION "${LIB_DIR}"
-    RUNTIME DESTINATION "${BIN_DIR}")
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
   install(TARGETS mecab
-    DESTINATION "${BIN_DIR}")
+    DESTINATION "${CMAKE_INSTALL_BINDIR}")
   install(TARGETS mecab-dict-index
-    DESTINATION "${BIN_DIR}")
+    DESTINATION "${CMAKE_INSTALL_BINDIR}")
   if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
     install(
       FILES
       $<TARGET_PDB_FILE:libmecab>
       $<TARGET_PDB_FILE:mecab>
       $<TARGET_PDB_FILE:mecab-dict-index>
-      DESTINATION "${BIN_DIR}"
+      DESTINATION "${CMAKE_INSTALL_BINDIR}"
       OPTIONAL)
   endif()
   install(FILES "${MECAB_SOURCE_DIR}/src/mecab.h"
-    DESTINATION "${INCLUDE_DIR}")
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
   set(MECAB_NAIST_JDIC_BUILD_DATA
     "${CMAKE_CURRENT_BINARY_DIR}/matrix.bin"
@@ -229,7 +229,7 @@ if(GRN_WITH_BUNDLED_MECAB)
 
   configure_file("mecabrc.cmake" "mecabrc")
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/mecabrc"
-    DESTINATION "${CONFIG_DIR}")
+    DESTINATION "${CMAKE_INSTALL_DATADIR}")
 
   install(FILES
     "${MECAB_NAIST_JDIC_SOURCE_DIR}/AUTHORS"

@@ -107,15 +107,15 @@ endif()
 set(GRN_EMBED ${GRN_EMBED_DEFAULT} CACHE BOOL
   "Build as a static library to embed into an application")
 
-set(GRN_INCLUDE_DIR "${INCLUDEDIR}/groonga")
+set(GRN_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}/groonga")
 if(NOT DEFINED GRN_DATA_DIR)
-  set(GRN_DATA_DIR "${DATADIR}/${GRN_PROJECT_NAME}")
+  set(GRN_DATA_DIR "${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}")
 endif()
-set(GRN_CONFIG_DIR "${SYSCONFDIR}/${GRN_PROJECT_NAME}")
-set(GRN_CONFIG_PATH "${CMAKE_INSTALL_PREFIX}/${GRN_CONFIG_DIR}/groonga.conf")
+set(GRN_CONFIG_DIR "${CMAKE_INSTALL_SYSCONFDIR}/${GRN_PROJECT_NAME}")
+set(GRN_CONFIG_PATH "${CMAKE_INSTALL_FULL_SYSCONFDIR}/${GRN_PROJECT_NAME}/${GRN_PROJECT_NAME}.conf")
 
 set(GRN_LOG_PATH
-  "${CMAKE_INSTALL_PREFIX}/${LOCALSTATEDIR}/log/${GRN_PROJECT_NAME}/${GRN_PROJECT_NAME}.log"
+  "${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/log/${GRN_PROJECT_NAME}/${GRN_PROJECT_NAME}.log"
   CACHE FILEPATH "log file path")
 set(GRN_DEFAULT_ENCODING
   "utf8"
@@ -127,7 +127,7 @@ set(GRN_DEFAULT_DOCUMENT_ROOT_BASE
   "html/admin"
   CACHE PATH "Groonga's default document root base path")
 set(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT
-  "share/${GRN_PROJECT_NAME}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
+  "${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
   CACHE PATH "Groonga's default relative document root")
 set(GRN_DEFAULT_DOCUMENT_ROOT
   "${CMAKE_INSTALL_PREFIX}/${GRN_DATA_DIR}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
@@ -1024,13 +1024,13 @@ set(GROONGA_BENCHMARK "${CMAKE_CURRENT_BINARY_DIR}/src/groonga-benchmark")
 configure_file(config.sh.in "${CMAKE_CURRENT_BINARY_DIR}/config.sh" @ONLY)
 
 set(prefix "${CMAKE_INSTALL_PREFIX}")
-set(exec_prefix "${prefix}")
-set(bindir "${CMAKE_INSTALL_PREFIX}/${BIN_DIR}")
-set(sbindir "${CMAKE_INSTALL_PREFIX}/${SBIN_DIR}")
-set(libdir "${CMAKE_INSTALL_PREFIX}/${LIB_DIR}")
-set(includedir "${CMAKE_INSTALL_PREFIX}/${INCLUDE_DIR}")
-set(datarootdir "${CMAKE_INSTALL_PREFIX}/${DATA_DIR}")
-set(datadir "${datarootdir}")
+set(exec_prefix "\${prefix}")
+set(bindir "\${exec_prefix}/${CMAKE_INSTALL_BINDIR}")
+set(sbindir "\${exec_prefix}/${CMAKE_INSTALL_SBINDIR}")
+set(libdir "\${prefix}/${CMAKE_ISNTALL_LIBDIR}")
+set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+set(datarootdir "\${prefix}/${CMAKE_INSTALL_DATAROOTDIR}")
+set(datadir "\${datarootdir}")
 set(expanded_pluginsdir "${GRN_PLUGINS_DIR}")
 set(GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT "${GRN_DEFAULT_DOCUMENT_ROOT}")
 set(EXEEXT "${CMAKE_EXECUTABLE_SUFFIX}")
@@ -1039,7 +1039,7 @@ configure_file(groonga.pc.in "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc" @ONLY)
 if(NOT GRN_EMBED)
   install(
     FILES "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc"
-    DESTINATION "${LIB_DIR}/pkgconfig/")
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
 endif()
 
 install(FILES
