@@ -138,12 +138,14 @@ else()
   target_link_libraries(libgroonga
     ${GRN_ALL_LIBRARIES})
   install(TARGETS libgroonga
-    ARCHIVE DESTINATION "${LIB_DIR}"
-    LIBRARY DESTINATION "${LIB_DIR}"
-    RUNTIME DESTINATION "${BIN_DIR}")
-  install(FILES $<TARGET_PDB_FILE:libgroonga>
-    DESTINATION "${BIN_DIR}"
-    OPTIONAL)
+    ARCHIVE DESTINATION "${LIBDIR}"
+    LIBRARY DESTINATION "${LIBDIR}"
+    RUNTIME DESTINATION "${BINDIR}")
+  if(MSVC)
+    install(FILES $<TARGET_PDB_FILE:libgroonga>
+      DESTINATION "${BINDIR}"
+      OPTIONAL)
+  endif()
 endif()
 
 if(GRN_WITH_MRUBY)
