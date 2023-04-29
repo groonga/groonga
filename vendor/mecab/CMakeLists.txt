@@ -1,5 +1,5 @@
 # Copyright(C) 2015-2018  Brazil
-# Copyright(C) 2022  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2022-2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -155,7 +155,7 @@ if(GRN_WITH_BUNDLED_MECAB)
     add_definitions(-D_UNICODE)
   else()
     add_definitions(
-      "-DMECAB_DEFAULT_RC=\"${CMAKE_INSTALL_PREFIX}/${CONFIG_DIR}/mecabrc\"")
+      "-DMECAB_DEFAULT_RC=\"${CMAKE_INSTALL_FULL_SYSCONFDIR}/mecabrc\"")
     add_definitions(
       "-DICONV_CONST=")
     add_definitions(-DHAVE_DIRENT_H)
