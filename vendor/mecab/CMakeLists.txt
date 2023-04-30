@@ -229,7 +229,7 @@ if(GRN_WITH_BUNDLED_MECAB)
 
   configure_file("mecabrc.cmake" "mecabrc")
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/mecabrc"
-    DESTINATION "${CMAKE_INSTALL_DATADIR}")
+    DESTINATION "${CMAKE_INSTALL_SYSCONFDIR}")
 
   install(FILES
     "${MECAB_NAIST_JDIC_SOURCE_DIR}/AUTHORS"
