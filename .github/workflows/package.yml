@@ -103,8 +103,6 @@ jobs:
           - AlmaLinux 8 aarch64
           - AlmaLinux 9 x86_64
           - AlmaLinux 9 aarch64
-          - Oracle Linux 8 x86_64
-          - Oracle Linux 9 x86_64
         include:
           - label: Debian GNU/Linux bullseye amd64
             id: debian-bullseye-amd64
@@ -146,16 +144,6 @@ jobs:
             task-namespace: yum
             target: almalinux-9-aarch64
             test-docker-image: arm64v8/almalinux:9
-          - label: Oracle Linux 8 x86_64
-            id: oracle-linux-8-x86_64
-            task-namespace: yum
-            target: oracle-linux-8
-            test-docker-image: oraclelinux:8
-          - label: Oracle Linux 9 x86_64
-            id: oracle-linux-9-x86_64
-            task-namespace: yum
-            target: oracle-linux-9
-            test-docker-image: oraclelinux:9
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
