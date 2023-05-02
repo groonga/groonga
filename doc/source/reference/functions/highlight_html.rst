@@ -79,6 +79,13 @@ You can use different style(e.g. background color) for each keywords by ``cycled
 .. include:: ../../example/reference/functions/highlight_html/usage_cycled_class_tag_mode.log
 .. select Entries --match_columns body --query 'groonga OR mroonga' --output_columns 'highlight_html(body, {"cycled_class_tag_mode": true})'
 
+You can highlight keywords with some spelling inconsistencies ignoring by ``{"normalizers": "Normalizers(\\"Normalizer's option\\", the value of Normalizer's optin)"}``.
+
+.. groonga-coomand
+.. include:: ../../example/reference/functions/highlight_html/usage_normalizers.log
+.. select Entries --output_columns 'highlight(body, "ぐるんが", "<span class=\\"keyword1\\">", "</span>", {"normalizers": "NormalizerNFKC150(\\"unify_kana\\", true)"} )'
+
+
 Parameters
 ----------
 
@@ -106,6 +113,16 @@ The default value of ``cycled_class_tag_mode`` is ``false``.
 If ``cycled_class_tag_mode`` is ``true``, you can use different style(e.g. background color) for each keywords.
 
 If ``cycled_class_tag_mode`` is ``true``, class tags are ``<mark class="keyword-%d">/<mark>`` for now.
+
+``{"normalizers": "Normalizers(\\"Normalizer's option\\", the value of Normalizer's optin)"}``
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+.. versionadded:: 13.0.2
+
+You can use the customizing normalizers by this option.
+
+NormalizerNFKCxxx has many options. You can customize a behavior of normalize by useing options of NormalizerNFKCxxx.
+You can highlight keywords with some spelling inconsistencies ignoring by these options.
 
 Return value
 ------------
