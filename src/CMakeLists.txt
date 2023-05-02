@@ -38,7 +38,7 @@ if(GRN_WITH_MRUBY)
   set_source_files_properties(${GRNDB_SOURCES}
     PROPERTIES
     COMPILE_DEFINITIONS "${MRUBY_DEFINITIONS}")
-  target_link_libraries(grndb libgroonga mruby)
+  target_link_libraries(grndb libgroonga)
   install(TARGETS grndb DESTINATION ${BINDIR})
   if(MSVC)
     install(FILES $<TARGET_PDB_FILE:grndb>
