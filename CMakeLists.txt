@@ -97,6 +97,8 @@ include(CheckStructHasMember)
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(${CMAKE_CURRENT_SOURCE_DIR}/build/cmake_modules/ReadFileList.cmake)
+
+include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
 find_package(PkgConfig)
@@ -110,6 +112,7 @@ set(GRN_EMBED ${GRN_EMBED_DEFAULT} CACHE BOOL
   "Build as a static library to embed into an application")
 
 set(GRN_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}/groonga")
+set(GRN_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/Groonga")
 if(NOT DEFINED GRN_DATA_DIR)
   set(GRN_DATA_DIR "${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}")
 endif()
@@ -694,6 +697,10 @@ if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
   if(Groongamsgpackc_FOUND)
     set(GRN_WITH_MESSAGE_PACK TRUE)
     target_link_libraries(grn_dependencies INTERFACE Groonga::msgpackc)
+    if(NOT GRN_EMBED)
+      install(FILES "cmake/FindGroongamsgpackc.cmake"
+	DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
+    endif()
   else()
     set(GRN_BUNDLED_MESSAGE_PACK_DIR
       "${CMAKE_CURRENT_SOURCE_DIR}/vendor/msgpack-${GRN_BUNDLED_MESSAGE_PACK_VERSION}")

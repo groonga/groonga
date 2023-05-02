@@ -107,10 +107,27 @@ if(GRN_EMBED)
     ${GRN_EMBEDDED_PLUGIN_LIBRARIES})
 else()
   target_link_libraries(libgroonga PRIVATE grn_dependencies)
+  target_include_directories(libgroonga INTERFACE
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_FULL_INCLUDEDIR}/groonga>")
   install(TARGETS libgroonga
+    EXPORT libgroonga_export
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  set(CONFIG_CMAKE "GroongaConfig.cmake")
+  set(BUILT_CONFIG_CMAKE "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_CMAKE}")
+  configure_package_config_file("${CONFIG_CMAKE}.in" "${BUILT_CONFIG_CMAKE}"
+    INSTALL_DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
+  set(CONFIG_VERSION_CMAKE "GroongaConfigVersion.cmake")
+  set(BUILT_CONFIG_VERSION_CMAKE "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_VERSION_CMAKE}")
+  write_basic_package_version_file("${BUILT_CONFIG_VERSION_CMAKE}"
+    COMPATIBILITY AnyNewerVersion)
+  install(FILES "${BUILT_CONFIG_CMAKE}" "${BUILT_CONFIG_VERSION_CMAKE}"
+    DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
+  install(EXPORT libgroonga_export
+          DESTINATION "${GRN_INSTALL_CMAKE_DIR}"
+          NAMESPACE "Groonga::"
+          FILE "GroongaTargets.cmake")
   if(MSVC)
     install(FILES $<TARGET_PDB_FILE:libgroonga>
       DESTINATION "${CMAKE_INSTALL_BINDIR}"
