@@ -76,6 +76,9 @@ if(GRN_WITH_MRUBY)
     ${MRUBY_BUILT_SOURCES}
     "${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src/config.h"
     )
+  add_library(mruby_headers INTERFACE)
+  target_include_directories(mruby_headers INTERFACE
+    "${MRUBY_SOURCE_DIR}/include")
   add_library(mruby STATIC ${MRUBY_ALL_SOURCES})
   target_include_directories(mruby
     PUBLIC

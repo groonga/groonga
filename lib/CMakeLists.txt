@@ -143,7 +143,7 @@ if(GRN_WITH_MESSAGE_PACK)
 endif()
 
 if(GRN_WITH_MRUBY)
-  target_link_libraries(libgroonga INTERFACE "$<BUILD_INTERFACE:mruby>")
+  target_link_libraries(libgroonga INTERFACE "$<BUILD_INTERFACE:mruby_headers>")
 
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/mrb/scripts/sources.am
     RUBY_SCRIPTS)
