@@ -1,4 +1,5 @@
-# Copyright(C) 2014-2018 Brazil
+# Copyright(C) 2014-2018  Brazil
+# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -12,10 +13,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
-  )
 
 set(TOKEN_FILTERS_DIR "${GRN_RELATIVE_PLUGINS_DIR}/token_filters")
 
@@ -36,7 +33,7 @@ else()
     PREFIX ""
     OUTPUT_NAME "stop_word")
   install(TARGETS stop_word_token_filter DESTINATION "${TOKEN_FILTERS_DIR}")
-  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+  if(MSVC)
     install(FILES $<TARGET_PDB_FILE:stop_word_token_filter>
       DESTINATION "${TOKEN_FILTERS_DIR}"
       OPTIONAL)
@@ -46,8 +43,6 @@ target_link_libraries(stop_word_token_filter libgroonga)
 
 if(GRN_WITH_LIBSTEMMER)
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/stem_sources.am STEM_SOURCES)
-  include_directories(${LIBSTEMMER_INCLUDE_DIRS})
-  link_directories(${LIBSTEMMER_LIBRARY_DIRS})
   set_source_files_properties(${STEM_SOURCES}
     PROPERTIES
     COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
@@ -63,11 +58,11 @@ if(GRN_WITH_LIBSTEMMER)
       PREFIX ""
       OUTPUT_NAME "stem")
     install(TARGETS stem_token_filter DESTINATION "${TOKEN_FILTERS_DIR}")
-    if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+    if(MSVC)
       install(FILES $<TARGET_PDB_FILE:stem_token_filter>
 	DESTINATION "${TOKEN_FILTERS_DIR}"
 	OPTIONAL)
     endif()
   endif()
-  target_link_libraries(stem_token_filter libgroonga ${LIBSTEMMER_LIBRARIES})
+  target_link_libraries(stem_token_filter libgroonga Groonga::libstemmer)
 endif()

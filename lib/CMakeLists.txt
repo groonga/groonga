@@ -1,5 +1,5 @@
 # Copyright(C) 2012-2018  Brazil
-# Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -13,21 +13,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-add_definitions(
-  -DGRN_DAT_EXPORT
-  ${LIBXXHASH_DEFINITIONS}
-  )
-
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/dat
-  ${ONIGMO_INCLUDE_DIRS}
-  ${MRUBY_INCLUDE_DIRS}
-  # We need to put LIBXXHASH_INCLUDE_DIRS before LIBLZ4_INCLUDE_DIRS
-  # because bundled LZ4 includes its xxhash.h.
-  ${LIBXXHASH_INCLUDE_DIRS}
-  ${LIBLZ4_INCLUDE_DIRS}
-  ${MESSAGE_PACK_INCLUDE_DIRS})
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/c_sources.am LIBGROONGA_C_SOURCES)
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/cpp_sources.am LIBGROONGA_CPP_SOURCES)
@@ -66,9 +51,7 @@ set_source_files_properties(
 set_source_files_properties(
   ${LIBGROONGA_C_SOURCES}
   ${LIBGROONGA_CPP_SOURCES}
-  ${LIBGRNMRB_SOURCES}
-  PROPERTIES
-  COMPILE_DEFINITIONS "${MRUBY_DEFINITIONS}")
+  ${LIBGRNMRB_SOURCES})
 set_source_files_properties(
   ${LIBGROONGA_CPP_SOURCES}
   ${LIBGRNDAT_SOURCES}
@@ -93,6 +76,18 @@ if(GRN_EMBED)
 else()
   add_library(libgroonga SHARED ${GRN_ALL_SOURCES})
 endif()
+target_compile_definitions(libgroonga PRIVATE
+  GRN_DAT_EXPORT
+  HAVE_CONFIG_H)
+target_compile_definitions(libgroonga INTERFACE
+  "$<BUILD_INTERFACE:HAVE_CONFIG_H>")
+target_include_directories(libgroonga BEFORE PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/dat)
+target_include_directories(libgroonga BEFORE INTERFACE
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/..>"
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../include>"
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>")
 if(NOT MSVC)
   set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
 endif()
@@ -102,41 +97,16 @@ elseif(GRN_WITH_RAPIDJSON OR GRN_WITH_APACHE_ARROW)
   set_target_properties(libgroonga PROPERTIES CXX_STANDARD 11)
 endif()
 
-set(GRN_ALL_LIBRARIES
-    ${ATOMIC_LIBS}
-    ${EXECINFO_LIBS}
-    ${RT_LIBS}
-    ${PTHREAD_LIBS}
-    ${Z_LIBS}
-    ${LIBLZ4_LIBS}
-    ${GRN_ZSTD_TARGET}
-    ${MESSAGE_PACK_LIBS}
-    ${CMAKE_DL_LIBS}
-    ${M_LIBS}
-    ${MRUBY_LIBS}
-    ${WS2_32_LIBS}
-    ${DBGHELP_LIBS}
-    ${PSAPI_LIBS}
-    ${ONIGMO_LIBS}
-    ${LIBXXHASH_LIBS})
-if(GRN_WITH_RAPIDJSON)
-  list(APPEND GRN_ALL_LIBRARIES rapidjson)
-endif()
-if(GRN_WITH_APACHE_ARROW)
-  list(APPEND GRN_ALL_LIBRARIES arrow_shared)
-endif()
 if(GRN_EMBED)
   set(GRN_EMBEDDED_PLUGIN_LIBRARIES "")
   if(GRN_WITH_MECAB)
     list(APPEND GRN_EMBEDDED_PLUGIN_LIBRARIES mecab_tokenizer)
   endif()
-  target_link_libraries(libgroonga
-    ${GRN_ALL_LIBRARIES}
-    ${STDCPP_LIBS}
+  target_link_libraries(libgroonga PRIVATE
+    grn_dependencies
     ${GRN_EMBEDDED_PLUGIN_LIBRARIES})
 else()
-  target_link_libraries(libgroonga
-    ${GRN_ALL_LIBRARIES})
+  target_link_libraries(libgroonga PRIVATE grn_dependencies)
   install(TARGETS libgroonga
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
@@ -145,6 +115,13 @@ else()
     install(FILES $<TARGET_PDB_FILE:libgroonga>
       DESTINATION "${CMAKE_INSTALL_BINDIR}"
       OPTIONAL)
+  endif()
+endif()
+if(GRN_WITH_MESSAGE_PACK)
+  if(GRN_WITH_BUNDLED_MESSAGE_PACK)
+    target_link_libraries(libgroonga INTERFACE Groonga::msgpackc)
+  else()
+    target_link_libraries(libgroonga INTERFACE "$<BUILD_INTERFACE:Groonga::msgpackc>")
   endif()
 endif()
 

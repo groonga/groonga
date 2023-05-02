@@ -1,4 +1,5 @@
-# Copyright(C) 2015-2018 Brazil
+# Copyright(C) 2015-2018  Brazil
+# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -12,10 +13,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
-  )
 
 set(GRN_FUNCTIONS_PLUGIN_DIR "${GRN_RELATIVE_PLUGINS_DIR}/functions")
 
@@ -61,13 +58,13 @@ else()
     PREFIX ""
     OUTPUT_NAME "string")
   install(TARGETS string_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
-  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+  if(MSVC)
     install(FILES $<TARGET_PDB_FILE:string_functions>
       DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
       OPTIONAL)
   endif()
 endif()
-target_link_libraries(string_functions libgroonga)
+target_link_libraries(string_functions libgroonga onigmo)
 target_include_directories(string_functions PRIVATE ${ONIGMO_INCLUDE_DIRS})
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/number_sources.am
@@ -87,7 +84,7 @@ else()
     PREFIX ""
     OUTPUT_NAME "number")
   install(TARGETS number_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
-  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+  if(MSVC)
     install(FILES $<TARGET_PDB_FILE:number_functions>
       DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
       OPTIONAL)
@@ -112,7 +109,7 @@ else()
     PREFIX ""
     OUTPUT_NAME "time")
   install(TARGETS time_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
-  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+  if(MSVC)
     install(FILES $<TARGET_PDB_FILE:time_functions>
       DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
       OPTIONAL)
@@ -138,7 +135,7 @@ else()
     OUTPUT_NAME "index_column")
   install(TARGETS index_column_functions
     DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
-  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+  if(MSVC)
     install(FILES $<TARGET_PDB_FILE:index_column_functions>
       DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
       OPTIONAL)
@@ -163,7 +160,7 @@ else()
     PREFIX ""
     OUTPUT_NAME "math")
   install(TARGETS math_functions DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}")
-  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+  if(MSVC)
     install(FILES $<TARGET_PDB_FILE:math_functions>
       DESTINATION "${GRN_FUNCTIONS_PLUGIN_DIR}"
       OPTIONAL)

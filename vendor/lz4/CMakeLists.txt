@@ -1,4 +1,5 @@
-# Copyright(C) 2016-2018 Brazil
+# Copyright(C) 2016-2018  Brazil
+# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -45,26 +46,26 @@ if(GRN_WITH_BUNDLED_LZ4)
   else()
     add_library(liblz4 SHARED ${LIBLZ4_SOURCES})
     if(MSVC)
-      target_compile_definitions(liblz4 PRIVATE "-DLZ4_DLL_EXPORT=1")
-      target_compile_definitions(liblz4 INTERFACE "-DLZ4_DLL_IMPORT=1")
+      target_compile_definitions(liblz4 PRIVATE "LZ4_DLL_EXPORT=1")
+      target_compile_definitions(liblz4 INTERFACE "LZ4_DLL_IMPORT=1")
     endif()
   endif()
   target_include_directories(liblz4 BEFORE PUBLIC "${LZ4_SOURCE_DIR}/lib")
-  target_compile_definitions(liblz4 PRIVATE "-DXXH_NAMESPACE=LZ4_")
+  target_compile_definitions(liblz4 PRIVATE "XXH_NAMESPACE=LZ4_")
 
   if(NOT MSVC)
     set_target_properties(liblz4 PROPERTIES OUTPUT_NAME "lz4")
   endif()
 
   if(NOT GRN_BUNDLED)
-    install(TARGETS liblz4
+    install(TARGETS Groonga::liblz4
       ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-    if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+    if(MSVC)
       install(
 	FILES
-	$<TARGET_PDB_FILE:liblz4>
+	$<TARGET_PDB_FILE:Groonga::liblz4>
 	DESTINATION "${CMAKE_INSTALL_BINDIR}"
 	OPTIONAL)
     endif()

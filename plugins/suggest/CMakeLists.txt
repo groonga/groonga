@@ -1,4 +1,5 @@
-# Copyright(C) 2012-2018 Brazil
+# Copyright(C) 2012-2018  Brazil
+# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -12,11 +13,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
-  ${MRUBY_INCLUDE_DIRS}
-  ${MESSAGE_PACK_INCLUDE_DIRS})
 
 set(GRN_SUGGEST_PLUGIN_DIR "${GRN_RELATIVE_PLUGINS_DIR}/suggest")
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am SUGGEST_SOURCES)
@@ -33,7 +29,7 @@ else()
   add_library(suggest MODULE ${SUGGEST_SOURCES})
   set_target_properties(suggest PROPERTIES PREFIX "")
   install(TARGETS suggest DESTINATION "${GRN_SUGGEST_PLUGIN_DIR}")
-  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+  if(MSVC)
     install(FILES $<TARGET_PDB_FILE:suggest>
       DESTINATION "${GRN_SUGGEST_PLUGIN_DIR}"
       OPTIONAL)

@@ -1,4 +1,5 @@
-# Copyright(C) 2012-2018 Brazil
+# Copyright(C) 2012-2018  Brazil
+# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -12,11 +13,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
-  ${MRUBY_INCLUDE_DIRS}
-  ${MESSAGE_PACK_INCLUDE_DIRS})
 
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/create_dataset_sources.am
   GROONGA_SUGGEST_CREATE_DATASET_SOURCES)
@@ -42,23 +38,13 @@ else()
 endif()
 
 if(GRN_WITH_SUGGEST_LEARNER)
-  include_directories(
-    ${LIBEVENT_INCLUDE_DIRS}
-    ${ZEROMQ_INCLUDE_DIRS}
-    ${MESSAGE_PACK_INCLUDE_DIRS}
-    )
-  link_directories(
-    ${LIBEVENT_LIBRARY_DIRS}
-    ${ZEROMQ_LIBRARY_DIRS}
-    ${MESSAGE_PACK_LIBRARY_DIRS}
-    )
-
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/util_sources.am
     GROONGA_SUGGEST_UTIL_SOURCES)
   add_library(groonga-suggest-util STATIC ${GROONGA_SUGGEST_UTIL_SOURCES})
   set_source_files_properties(${GROONGA_SUGGEST_UTIL_SOURCES}
     PROPERTIES
     COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+  target_link_libraries(groonga-suggest-util libgroonga)
 
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/learner_sources.am
     GROONGA_SUGGEST_LEARNER_SOURCES)
@@ -69,9 +55,9 @@ if(GRN_WITH_SUGGEST_LEARNER)
   target_link_libraries(groonga-suggest-learner
     groonga-suggest-util
     libgroonga
-    ${LIBEVENT_LIBRARIES}
-    ${ZEROMQ_LIBRARIES}
-    ${MESSAGE_PACK_LIBRARIES})
+    Groonga::libevent
+    Groonga::zeromq
+    Groonga::msgpackc)
 
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/httpd_sources.am
     GROONGA_SUGGEST_HTTPD_SOURCES)
@@ -82,9 +68,9 @@ if(GRN_WITH_SUGGEST_LEARNER)
   target_link_libraries(groonga-suggest-httpd
     groonga-suggest-util
     libgroonga
-    ${LIBEVENT_LIBRARIES}
-    ${ZEROMQ_LIBRARIES}
-    ${MESSAGE_PACK_LIBRARIES})
+    Groonga::libevent
+    Groonga::zeromq
+    Groonga::msgpackc)
 
   install(
     TARGETS groonga-suggest-learner groonga-suggest-httpd

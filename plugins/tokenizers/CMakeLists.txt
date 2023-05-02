@@ -1,4 +1,5 @@
-# Copyright(C) 2012-2018 Brazil
+# Copyright(C) 2012-2018  Brazil
+# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -12,10 +13,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
-  )
 
 set(TOKENIZERS_DIR "${GRN_RELATIVE_PLUGINS_DIR}/tokenizers")
 if(GRN_WITH_MECAB)
@@ -48,13 +45,13 @@ if(GRN_WITH_MECAB)
       PREFIX ""
       OUTPUT_NAME "mecab")
     install(TARGETS mecab_tokenizer DESTINATION "${TOKENIZERS_DIR}")
-    if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+    if(MSVC)
       install(FILES $<TARGET_PDB_FILE:mecab_tokenizer>
 	DESTINATION "${TOKENIZERS_DIR}"
 	OPTIONAL)
     endif()
   endif()
-  target_link_libraries(mecab_tokenizer libgroonga ${MECAB_LIBRARIES})
+  target_link_libraries(mecab_tokenizer libgroonga libmecab)
 endif()
 
 if(GRN_WITH_KYTEA)
@@ -76,11 +73,11 @@ if(GRN_WITH_KYTEA)
       PREFIX ""
       OUTPUT_NAME "kytea")
     install(TARGETS kytea_tokenizer DESTINATION "${TOKENIZERS_DIR}")
-    if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+    if(MSVC)
       install(FILES $<TARGET_PDB_FILE:kytea_tokenizer>
 	DESTINATION "${TOKENIZERS_DIR}"
 	OPTIONAL)
     endif()
   endif()
-  target_link_libraries(kytea_tokenizer libgroonga ${KYTEA_LIBRARIES})
+  target_link_libraries(kytea_tokenizer libgroonga kytea)
 endif()

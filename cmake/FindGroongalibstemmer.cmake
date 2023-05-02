@@ -1,4 +1,4 @@
-# Copyright(C) 2021 Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -13,25 +13,20 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-find_package(zstd CONFIG)
-if(zstd_FOUND)
-  return()
+find_path(libstemmer_header libstemmer.h)
+if(libstemmer_header)
+  get_filename_component(libstemmer_include_dir "${libstemmer_header}" DIRECTORY)
 endif()
-
-find_package(PkgConfig)
-if(PkgConfig_FOUND)
-  pkg_check_modules(LIBZSTD libzstd)
-endif()
+find_library(libstemmer_library stemmer)
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(zstd
-  REQUIRED_VARS LIBZSTD_LINK_LIBRARIES
-  VERSION_VAR LIBZSTD_VERSION)
+find_package_handle_standard_args(Groongalibstemmer
+  REQUIRED_VARS libstemmer_include_dir libstemmer_library)
 
-if(zstd_FOUND AND NOT TARGET zstd::libzstd_shared)
-  add_library(zstd::libzstd_shared SHARED IMPORTED)
-  set_target_properties(zstd::libzstd_shared PROPERTIES
-    IMPORTED_LOCATION "${LIBZSTD_LINK_LIBRARIES}"
-    INTERFACE_COMPILE_OPTIONS "${LIBZSTD_CFLAGS_OTHER}"
-    INTERFACE_INCLUDE_DIRECTORIES "${LIBZSTD_INCLUDE_DIRS}")
+if(Groongalibstemmer_FOUND AND NOT TARGET Groonga::libstemmer)
+  add_library(Groonga::libstemmer UNKNOWN IMPORTED)
+  target_include_directories(Groonga::libstemmer INTERFACE
+    ${libstemmer_include_dir})
+  set_target_properties(Groonga::libstemmer PROPERTIES
+    IMPORTED_LOCATION ${libstemmer_library})
 endif()

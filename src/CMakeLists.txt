@@ -1,5 +1,5 @@
 # Copyright (C) 2012-2018  Brazil
-# Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2022-2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -13,11 +13,6 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-include_directories(
-  ${MRUBY_INCLUDE_DIRS}
-  ${MESSAGE_PACK_INCLUDE_DIRS}
-  )
 
 add_subdirectory(suggest)
 
@@ -43,7 +38,7 @@ if(GRN_WITH_MRUBY)
   set_source_files_properties(${GRNDB_SOURCES}
     PROPERTIES
     COMPILE_DEFINITIONS "${MRUBY_DEFINITIONS}")
-  target_link_libraries(grndb libgroonga)
+  target_link_libraries(grndb libgroonga mruby)
   install(TARGETS grndb DESTINATION ${BINDIR})
   if(MSVC)
     install(FILES $<TARGET_PDB_FILE:grndb>

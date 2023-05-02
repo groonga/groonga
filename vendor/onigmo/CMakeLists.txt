@@ -138,6 +138,8 @@ if(GRN_WITH_ONIGMO)
     onigmo
     PROPERTIES
     POSITION_INDEPENDENT_CODE ON)
+  target_include_directories(onigmo INTERFACE "${ONIGMO_SOURCE_DIR}")
+  target_compile_definitions(onigmo INTERFACE "ONIG_EXTERN=extern")
 
   configure_file(config.h.cmake "${ONIGMO_BINARY_DIR}/config.h")
 

@@ -1,4 +1,5 @@
-# Copyright(C) 2016-2018 Brazil
+# Copyright(C) 2016-2018  Brazil
+# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -36,12 +37,12 @@ if(GRN_WITH_BUNDLED_MESSAGE_PACK)
     PROPERTIES
     COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 
-  add_library(msgpackc SHARED ${MESSAGE_PACK_SOURCES})
-  install(TARGETS msgpackc
+  add_library(Groonga::msgpackc SHARED ${MESSAGE_PACK_SOURCES})
+  install(TARGETS Groonga::msgpackc
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-  if(MSVC AND CMAKE_VERSION VERSION_GREATER "3.1")
+  if(MSVC)
     install(FILES $<TARGET_PDB_FILE:msgpackc>
       DESTINATION "${CMAKE_INSTALL_BINDIR}"
       OPTIONAL)

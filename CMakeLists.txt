@@ -1,5 +1,5 @@
-# Copyright(C) 2012-2018 Brazil
-# Copyright(C) 2018-2023 Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2012-2018  Brazil
+# Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,7 @@ else()
   if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/version.sh")
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND EXISTS "/bin/sh")
       execute_process(COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/version-gen.sh"
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
       file(READ "${CMAKE_CURRENT_BINARY_DIR}/version.sh" GRN_VERSION)
     else()
       set(GRN_VERSION "${VERSION}")
@@ -248,24 +248,21 @@ endif()
 
 option(GRN_WITH_WINDOWS_BACK_TRACE "enable back trace on Windows." ON)
 
-add_definitions(
-  -DHAVE_CONFIG_H
-  )
+add_library(grn_dependencies INTERFACE)
 if(GRN_EMBED)
-  add_definitions(-DGRN_EMBEDDED)
+  target_compile_definitions(grn_dependencies INTERFACE GRN_EMBEDDED)
 endif()
 
 if(GRN_C_COMPILER_GNU_LIKE)
   set(_GNU_SOURCE TRUE)
 endif()
 
-include_directories(
-  BEFORE
+target_include_directories(grn_dependencies BEFORE INTERFACE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/lib
-  )
+)
 
 macro(ac_check_headers header)
   string(REGEX REPLACE "[/.]" "_" output_variable_name ${header})
@@ -294,7 +291,7 @@ macro(ac_check_lib library function)
   check_library_exists(${library} ${function} "${location}"
     ${output_variable_name})
   if(${output_variable_name})
-    set(${output_variable_base_name}_LIBS "${library}")
+    target_link_libraries(grn_dependencies INTERFACE "${library}")
   endif()
 endmacro()
 
@@ -314,10 +311,8 @@ ac_check_lib(rt clock_gettime)
 if(HAVE_LIBRT)
   set(HAVE_CLOCK_GETTIME TRUE)
 endif()
-if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64" OR
-    CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "^i[0-9]86$")
-  set(ATOMIC_LIBS)
-else()
+if(NOT (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64" OR
+      CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "^i[0-9]86$"))
   ac_check_lib(atomic __atomic_store_8)
 endif()
 
@@ -327,34 +322,16 @@ check_struct_has_member(
   "time.h"
   HAVE_STRUCT_TM_TM_GMTOFF)
 
-if(UNIX)
-  ac_check_headers(pthread.h)
-  ac_check_lib(pthread pthread_mutex_init)
-  if(NOT ${HAVE_LIBPTHREAD})
-    message(FATAL_ERROR "No libpthread found")
-  endif()
-endif()
+find_package(Threads REQUIRED)
+target_link_libraries(grn_dependencies INTERFACE Threads::Threads)
+set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
 
 option(GRN_WITH_NFKC "use NFKC based UTF8 normalization." ON)
 
 if(WIN32)
-  ac_check_headers(winsock2.h)
-  if(NOT ${HAVE_WINSOCK2_H})
-    message(FATAL_ERROR "No winsock2.h found")
-  endif()
-
-  # FIXME: CMake couldn't detect ws2_32.lib on Windows 8 64bit.
-  # It may be caused by missing library search path for ws2_32.lib.
-  # It seems that Visual Studio (devenv.exe) can find it but link.exe
-  # can't. "cmake --build" can find it because it uses Visual Studio
-  # internally. So we assume that we always have ws2_32.lib on Windows.
-  # ac_check_lib(ws2_32 select)
-  set(HAVE_LIBWS2_32 TRUE)
-  set(WS2_32_LIBS "ws2_32.lib")
-
-  SET(DBGHELP_LIBS "dbghelp.lib")
-
-  SET(PSAPI_LIBS "psapi.lib")
+  target_link_libraries(grn_dependencies INTERFACE ws2_32.lib)
+  target_link_libraries(grn_dependencies INTERFACE dbghelp.lib)
+  target_link_libraries(grn_dependencies INTERFACE psapi.lib)
 
   set(USE_EXACT_ALLOC_COUNT TRUE)
   set(USE_SELECT TRUE)
@@ -403,70 +380,21 @@ endif()
 option(GRN_WITH_APACHE_ARROW "use Apache Arrow" OFF)
 if(GRN_WITH_APACHE_ARROW)
   find_package(Arrow REQUIRED)
+  target_link_libraries(grn_dependencies INTERFACE Arrow::arrow_shared)
 endif()
 
 set(GRN_WITH_ZLIB "auto"
   CACHE STRING "Support data compression by zlib.")
 if(NOT ${GRN_WITH_ZLIB} STREQUAL "no")
-  ac_check_lib(z compress)
-  if(NOT HAVE_LIBZ)
-    if(${GRN_WITH_ZLIB} STREQUAL "yes")
-      message(FATAL_ERROR "No libz found")
-    endif()
-    set(GRN_WITH_ZLIB "no")
-  endif()
-endif()
-
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_lz4_version"
-  GRN_BUNDLED_LZ4_VERSION)
-string(STRIP
-  "${GRN_BUNDLED_LZ4_VERSION}"
-  GRN_BUNDLED_LZ4_VERSION)
-
-set(GRN_WITH_BUNDLED_LZ4 FALSE)
-set(GRN_WITH_LZ4 "auto"
-  CACHE STRING "Support data compression by LZ4.")
-if(NOT ${GRN_WITH_LZ4} STREQUAL "no")
-  if(MSVC)
-    set(LIBLZ4_FOUND FALSE)
+  if(${GRN_WITH_ZLIB} STREQUAL "yes")
+    find_package(ZLIB REQUIRED)
   else()
-    if(NOT DEFINED LIBLZ4_FOUND)
-      pkg_check_modules(LIBLZ4 liblz4)
-      unset(LIBLZ4_LIBS)
-      unset(LIBLZ4_LIBS CACHE)
-    endif()
+    find_package(ZLIB)
   endif()
-  if(LIBLZ4_FOUND)
-    if(${LIBLZ4_LIBRARY_DIRS})
-      find_library(LIBLZ4_LIBS
-	NAMES ${LIBLZ4_LIBRARIES}
-	PATHS ${LIBLZ4_LIBRARY_DIRS}
-	NO_DEFAULT_PATH)
-    else()
-      find_library(LIBLZ4_LIBS
-	NAMES ${LIBLZ4_LIBRARIES})
-    endif()
-    set(GRN_WITH_LZ4 TRUE)
-    message(STATUS "LZ4: ${LIBLZ4_LIBS}")
-  else()
-    set(GRN_BUNDLED_LZ4_DIR
-      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/lz4-${GRN_BUNDLED_LZ4_VERSION}")
-    if(EXISTS ${GRN_BUNDLED_LZ4_DIR})
-      set(LIBLZ4_INCLUDE_DIRS "${GRN_BUNDLED_LZ4_DIR}/lib")
-      set(LIBLZ4_LIBS liblz4)
-      set(GRN_WITH_BUNDLED_LZ4 TRUE)
-      set(GRN_WITH_LZ4 TRUE)
-      message(STATUS "LZ4: ${LIBLZ4_LIBS} (bundled)")
-    else()
-      if(${GRN_WITH_LZ4} STREQUAL "yes")
-	message(FATAL_ERROR "No LZ4 found")
-      endif()
-      set(GRN_WITH_LZ4 FALSE)
-      message(STATUS "No LZ4")
-    endif()
+  if(ZLIB_FOUND)
+    target_link_libraries(grn_dependencies INTERFACE ZLIB::ZLIB)
   endif()
-else()
-  set(GRN_WITH_LZ4 FALSE)
+  set(GRN_WITH_ZLIB ${ZLIB_FOUND})
 endif()
 
 
@@ -483,24 +411,21 @@ set(GRN_EP_COMMON_OPTIONS
   LOG_OUTPUT_ON_FAILURE TRUE)
 
 set(GRN_ZSTD_EP_VERSION "1.4.8")
-set(GRN_ZSTD_TARGET)
 set(GRN_WITH_ZSTD "auto"
   CACHE STRING "Support data compression by Zstandard.")
 if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
   if("${GRN_WITH_ZSTD}" STREQUAL "bundled")
-    set(zstd_FOUND FALSE)
+    set(Groongazstd_FOUND FALSE)
   else()
-    if("${GRN_WITH_ZSTD}" STREQUAL "yes")
-      find_package(zstd REQUIRED)
+    if("${GRN_WITH_ZSTD}" STREQUAL "system")
+      find_package(Groongazstd REQUIRED)
     else()
-      find_package(zstd)
+      find_package(Groongazstd)
     endif()
   endif()
-  if(zstd_FOUND)
+  if(Groongazstd_FOUND)
     set(GRN_WITH_ZSTD TRUE)
-    get_target_property(ZSTD_LIBRARY zstd::libzstd_shared IMPORTED_LOCATION)
-    set(GRN_ZSTD_TARGET zstd::libzstd_shared)
-    message(STATUS "Zstandard: ${ZSTD_LIBRARY}")
+    message(STATUS "Zstandard: system")
   else()
     set(ZSTD_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-install")
     if(MSVC)
@@ -538,11 +463,11 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
       URL ${ZSTD_SOURCE_URL}
       BUILD_BYPRODUCTS ${ZSTD_STATIC_LIBRARY})
     file(MAKE_DIRECTORY "${ZSTD_PREFIX}/include")
-    add_library(zstd::libzstd_static STATIC IMPORTED)
-    set_target_properties(zstd::libzstd_static PROPERTIES
+    add_library(Groonga::libzstd STATIC IMPORTED)
+    set_target_properties(Groonga::libzstd PROPERTIES
       IMPORTED_LOCATION ${ZSTD_STATIC_LIBRARY}
       INTERFACE_INCLUDE_DIRECTORIES "${ZSTD_PREFIX}/include")
-    add_dependencies(zstd::libzstd_static zstd-ep)
+    add_dependencies(Groonga::libzstd zstd-ep)
     set(ZSTD_SOURCE_DIR
       "${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-prefix/src/zstd-ep")
     install(FILES
@@ -551,10 +476,10 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
       "${ZSTD_SOURCE_DIR}/LICENSE"
       "${ZSTD_SOURCE_DIR}/README.md"
       DESTINATION "${GRN_DATA_DIR}/zstd")
-    set(GRN_ZSTD_TARGET zstd::libzstd_static)
     set(GRN_WITH_ZSTD TRUE)
     message(STATUS "Zstandard: ${ZSTD_STATIC_LIBRARY} (bundled)")
   endif()
+  target_link_libraries(grn_dependencies INTERFACE Groonga::libzstd)
 else()
   set(GRN_WITH_ZSTD FALSE)
 endif()
@@ -569,44 +494,12 @@ set(GRN_RAPIDJSON_EP_VERSION ${GRN_BUNDLED_RAPIDJSON_VERSION})
 
 set(GRN_WITH_RAPIDJSON "auto"
   CACHE STRING "Support JSON processing by RapidJSON.")
-if(NOT ${GRN_WITH_RAPIDJSON} STREQUAL "no")
-  pkg_check_modules(RAPIDJSON rapidjson)
-  if(RAPIDJSON_FOUND)
-    add_library(rapidjson INTERFACE IMPORTED)
-    set_property(TARGET rapidjson PROPERTY
-      INTERFACE_INCLUDE_DIRECTORIES ${RAPIDJSON_INCLUDE_DIRS})
-  endif()
-  if(NOT TARGET rapidjson)
-    find_package(RapidJSON)
-  endif()
-  if(NOT TARGET rapidjson)
-    if(RAPIDJSON_INCLUDE_DIRS)
-      add_library(rapidjson INTERFACE IMPORTED)
-      set_property(TARGET rapidjson PROPERTY
-	INTERFACE_INCLUDE_DIRECTORIES ${RAPIDJSON_INCLUDE_DIRS})
-    elseif(RapidJSON_INCLUDE_DIRS)
-      add_library(rapidjson INTERFACE IMPORTED)
-      set_property(TARGET rapidjson PROPERTY
-	INTERFACE_INCLUDE_DIRECTORIES ${RAPIDJSON_INCLUDE_DIRS})
-    else()
-      unset(RapidJSON_FOUND)
-      check_include_file_cxx(rapidjson/rapidjson.h RapidJSON_FOUND)
-      if(RapidJSON_FOUND)
-	add_library(rapidjson INTERFACE IMPORTED)
-      endif()
-    endif()
-  endif()
-  if(TARGET rapidjson)
+if(NOT "${GRN_WITH_RAPIDJSON}" STREQUAL "no")
+  find_package(GroongaRapidJSON)
+  if(GroongaRapidJSON_FOUND)
     set(GRN_WITH_RAPIDJSON TRUE)
-    get_target_property(GRN_RAPIDJSON_INCLUDE_DIRS
-      rapidjson
-      INTERFACE_INCLUDE_DIRECTORIES)
-    if(GRN_RAPIDJSON_INCLUDE_DIRS)
-      message(STATUS "RapidJSON: ${GRN_RAPIDJSON_INCLUDE_DIRS} (system)")
-    else()
-      message(STATUS "RapidJSON: (system)")
-    endif()
-  elseif(CMAKE_VERSION VERSION_GREATER 3.0) # This is rough check
+    target_link_libraries(grn_dependencies INTERFACE Groonga::RapidJSON)
+  else()
     set(RAPIDJSON_SOURCE_URL
       "https://github.com/Tencent/rapidjson/archive/v${GRN_RAPIDJSON_EP_VERSION}.tar.gz")
     set(RAPIDJSON_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/rapidjson-ep-install")
@@ -621,11 +514,11 @@ if(NOT ${GRN_WITH_RAPIDJSON} STREQUAL "no")
       ${GRN_EP_COMMON_OPTIONS}
       CMAKE_ARGS ${RAPIDJSON_CMAKE_ARGS}
       URL ${RAPIDJSON_SOURCE_URL})
-    add_library(rapidjson INTERFACE IMPORTED)
+    add_library(Groonga::RapidJSON INTERFACE IMPORTED)
     file(MAKE_DIRECTORY "${RAPIDJSON_PREFIX}/include")
-    set_property(TARGET rapidjson PROPERTY
-      INTERFACE_INCLUDE_DIRECTORIES "${RAPIDJSON_PREFIX}/include")
-    add_dependencies(rapidjson rapidjson-ep)
+    target_include_directories(Groonga::RapidJSON INTERFACE
+      "${RAPIDJSON_PREFIX}/include")
+    add_dependencies(Groonga::RapidJSON rapidjson-ep)
     set(RAPIDJSON_SOURCE_DIR
       "${CMAKE_CURRENT_BINARY_DIR}/rapidjson-ep-prefix/src/rapidjson-ep")
     install(FILES
@@ -634,12 +527,7 @@ if(NOT ${GRN_WITH_RAPIDJSON} STREQUAL "no")
       "${RAPIDJSON_SOURCE_DIR}/readme.md"
       DESTINATION "${GRN_DATA_DIR}/rapidjson")
     set(GRN_WITH_RAPIDJSON TRUE)
-    get_target_property(GRN_RAPIDJSON_INCLUDE_DIRS
-      rapidjson
-      INTERFACE_INCLUDE_DIRECTORIES)
-    message(STATUS "RapidJSON: ${GRN_RAPIDJSON_INCLUDE_DIRS} (bundled)")
-  else()
-    set(GRN_WITH_RAPIDJSON FALSE)
+    target_link_libraries(grn_dependencies INTERFACE Groonga::RapidJSON)
   endif()
 else()
   set(GRN_WITH_RAPIDJSON FALSE)
@@ -660,7 +548,7 @@ string(STRIP
 set(GRN_WITH_BUNDLED_MECAB FALSE)
 set(GRN_WITH_MECAB "auto"
   CACHE STRING "use MeCab for morphological analysis")
-if(NOT ${GRN_WITH_MECAB} STREQUAL "no")
+if(NOT "${GRN_WITH_MECAB}" STREQUAL "no")
   if(WIN32)
     find_path(MECAB_INCLUDE_DIR NAMES mecab.h)
     find_library(MECAB_LIBRARIES NAMES mecab)
@@ -669,46 +557,45 @@ if(NOT ${GRN_WITH_MECAB} STREQUAL "no")
     find_program(GRN_MECAB_CONFIG_ABSOLUTE_PATH "${GRN_MECAB_CONFIG}")
     if(EXISTS "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}")
       execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --inc-dir
-	OUTPUT_VARIABLE MECAB_INCLUDE_DIRS
-	OUTPUT_STRIP_TRAILING_WHITESPACE)
+        OUTPUT_VARIABLE MECAB_INCLUDE_DIRS
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
       execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --libs-only-L
-	OUTPUT_VARIABLE MECAB_LIBRARY_DIRS
-	OUTPUT_STRIP_TRAILING_WHITESPACE)
+        OUTPUT_VARIABLE MECAB_LIBRARY_DIRS
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
       find_library(MECAB_LIBRARIES
-	NAMES mecab
-	PATHS ${MECAB_LIBRARY_DIRS}
-	NO_DEFAULT_PATH)
+        NAMES mecab
+        PATHS ${MECAB_LIBRARY_DIRS}
+        NO_DEFAULT_PATH)
     endif()
   endif()
   if(MECAB_LIBRARIES)
     set(GRN_WITH_MECAB TRUE)
+    add_library(libmecab INTERFACE IMPORTED)
+    target_include_directories(libmecab INTERFACE ${MECAB_INCLUDE_DIR})
+    target_link_libraries(libmecab INTERFACE ${MECAB_LIBRARIES})
     message(STATUS "MeCab: ${MECAB_LIBRARIES}")
   else()
     set(GRN_BUNDLED_MECAB_DIR
       "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mecab-${GRN_BUNDLED_MECAB_VERSION}")
     if(EXISTS ${GRN_BUNDLED_MECAB_DIR})
-      set(MECAB_INCLUDE_DIRS "${GRN_BUNDLED_MECAB_DIR}/src")
-      set(MECAB_LIBRARY_DIRS "${CMAKE_CURRENT_BUILD_DIR}/vendor/mecab")
-      set(MECAB_LIBRARIES libmecab)
       set(GRN_WITH_MECAB TRUE)
       set(GRN_WITH_BUNDLED_MECAB TRUE)
-      message(STATUS "MeCab: ${MECAB_LIBRARIES} (bundled)")
+      message(STATUS "MeCab: (bundled)")
     else()
-      if(${GRN_WITH_MECAB} STREQUAL "yes")
-	if(WIN32)
-	  message(FATAL_ERROR
-	    "No MeCab found: "
-	    "include directories: <${MECAB_INCLUDE_DIRS}>, "
-	    "library directories: <${MECAB_LIBRARY_DIRS}>")
-	else()
-	  message(FATAL_ERROR
-	    "No MeCab found: "
-	    "include directories: <${MECAB_INCLUDE_DIRS}>, "
-	    "library directories: <${MECAB_LIBRARY_DIRS}>, "
-	    "mecab-config: <${GRN_MECAB_CONFIG_ABSOLUTE_PATH}>")
-	endif()
+      if("${GRN_WITH_MECAB}" STREQUAL "yes")
+        if(WIN32)
+          message(FATAL_ERROR
+            "No MeCab found: "
+            "include directories: <${MECAB_INCLUDE_DIRS}>, "
+            "library directories: <${MECAB_LIBRARY_DIRS}>")
+        else()
+          message(FATAL_ERROR
+            "No MeCab found: "
+            "include directories: <${MECAB_INCLUDE_DIRS}>, "
+            "library directories: <${MECAB_LIBRARY_DIRS}>, "
+            "mecab-config: <${GRN_MECAB_CONFIG_ABSOLUTE_PATH}>")
+        endif()
       endif()
-      set(MECAB_LIBRARIES "")
       set(GRN_WITH_MECAB FALSE)
       message(STATUS "No MeCab")
     endif()
@@ -720,11 +607,12 @@ endif()
 set(GRN_WITH_KYTEA "auto"
   CACHE STRING "use KyTea for morphological analysis")
 if(NOT ${GRN_WITH_KYTEA} STREQUAL "no")
-  if(NOT DEFINED KYTEA_FOUND)
-    pkg_check_modules(KYTEA kytea)
-  endif()
-  if(KYTEA_FOUND)
+  if(PkgConfig_FOUND)
+    pkg_check_modules(pkg_kytea kytea IMPORTED_TARGET)
+    endif()
+  if(pkg_kytea_FOUND)
     set(GRN_WITH_KYTEA TRUE)
+    add_library(kytea ALIAS PkgConfig::pkg_kytea)
   else()
     if(${GRN_WITH_KYTEA} STREQUAL "yes")
       message(FATAL_ERROR "No KyTea found")
@@ -738,29 +626,14 @@ endif()
 set(GRN_WITH_LIBSTEMMER "auto"
   CACHE STRING "use libstemmer for stemming token filter")
 if(NOT ${GRN_WITH_LIBSTEMMER} STREQUAL "no")
-  if(NOT ("${GRN_WITH_LIBSTEMMER}" STREQUAL "yes" OR
-	"${GRN_WITH_LIBSTEMMER}" STREQUAL "auto"))
-    if("${LIBSTEMMER_INCLUDE_DIRS}" STREQUAL "")
-      set(LIBSTEMMER_INCLUDE_DIRS "${GRN_WITH_LIBSTEMMER}/include")
-    endif()
-    if("${LIBSTEMMER_LIBRARY_DIRS}" STREQUAL "")
-      set(LIBSTEMMER_LIBRARY_DIRS "${GRN_WITH_LIBSTEMMER}/lib")
-    endif()
+  if("${GRN_WITH_LIBSTEMMER}" STREQUAL "yes")
+    find_package(Groongalibstemmer REQUIRED)
+  else()
+    find_package(Groongalibstemmer)
   endif()
-  set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
-  set(CMAKE_REQUIRED_INCLUDES
-    ${CMAKE_REQUIRED_INCLUDES}
-    ${LIBSTEMMER_INCLUDE_DIRS})
-  ac_check_headers(libstemmer.h)
-  ac_check_lib(stemmer sb_stemmer_list "${LIBSTEMMER_LIBRARY_DIRS}")
-  set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES_SAVE})
-  if(HAVE_LIBSTEMMER_H AND HAVE_LIBSTEMMER)
-    set(LIBSTEMMER_LIBRARIES "stemmer")
+  if(Groongalibstemmer_FOUND)
     set(GRN_WITH_LIBSTEMMER TRUE)
   else()
-    if(${GRN_WITH_LIBSTEMMER} STREQUAL "yes")
-      message(FATAL_ERROR "No libstemmer found")
-    endif()
     set(GRN_WITH_LIBSTEMMER FALSE)
   endif()
 else()
@@ -770,11 +643,12 @@ endif()
 set(GRN_WITH_ZEROMQ "auto"
   CACHE STRING "use ZeroMQ for suggestion")
 if(NOT ${GRN_WITH_ZEROMQ} STREQUAL "no")
-  if(NOT DEFINED ZEROMQ_FOUND)
-    pkg_check_modules(ZEROMQ libzmq)
+  if(PkgConfig_FOUND)
+    pkg_check_modules(pkg_libzmq libzmq IMPORTED_TARGET)
   endif()
-  if(ZEROMQ_FOUND)
+  if(pkg_libzmq_FOUND)
     set(GRN_WITH_ZEROMQ TRUE)
+    add_library(Groonga::zeromq ALIAS PkgConfig::pkg_libzmq)
   else()
     if(${GRN_WITH_ZEROMQ} STREQUAL "yes")
       message(FATAL_ERROR "No ZeroMQ found")
@@ -788,20 +662,12 @@ endif()
 set(GRN_WITH_LIBEVENT "auto"
   CACHE STRING "use libevent for suggestion")
 if(NOT ${GRN_WITH_LIBEVENT} STREQUAL "no")
-  if("${GRN_WITH_LIBEVENT}" STREQUAL "yes" OR
-      "${GRN_WITH_LIBEVENT}" STREQUAL "auto")
-    set(LIBEVENT_INCLUDE_DIRS "")
-    set(LIBEVENT_LIBRARY_DIRS "")
-  else()
-    set(LIBEVENT_INCLUDE_DIRS "${GRN_WITH_LIBEVENT}/include")
-    set(LIBEVENT_LIBRARY_DIRS "${GRN_WITH_LIBEVENT}/lib")
+  if(PkgConfig_FOUND)
+    pkg_check_modules(pkg_libevent libevent IMPORTED_TARGET)
   endif()
-  set(CMAKE_REQUIRED_INCLUDES_SAVE ${CMAKE_REQUIRED_INCLUDES})
-  ac_check_lib(event event_init "${LIBEVENT_LIBRARY_DIRS}")
-  set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES_SAVE})
-  if(HAVE_LIBEVENT)
-    set(LIBEVENT_LIBRARIES "event")
+  if(pkg_libevent_FOUND)
     set(GRN_WITH_LIBEVENT TRUE)
+    add_library(Groonga::libevent ALIAS PkgConfig::pkg_libevent)
   else()
     if(${GRN_WITH_LIBEVENT} STREQUAL "yes")
       message(FATAL_ERROR "No libevent found")
@@ -822,60 +688,24 @@ set(GRN_WITH_BUNDLED_MESSAGE_PACK FALSE)
 set(GRN_WITH_MESSAGE_PACK "auto"
   CACHE STRING "use MessagePack for suggestion")
 if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
-  if(NOT DEFINED MESSAGE_PACK_FOUND)
-    pkg_check_modules(MESSAGE_PACK msgpack-c)
-    if(NOT MESSAGE_PACK_FOUND)
-      pkg_check_modules(MESSAGE_PACK msgpack)
-    endif()
-    unset(MESSAGE_PACK_LIBS)
-    unset(MESSAGE_PACK_LIBS CACHE)
-  endif()
-  if(MESSAGE_PACK_FOUND)
-    if(${MESSAGE_PACK_LIBRARY_DIRS})
-      find_library(MESSAGE_PACK_LIBS
-	NAMES ${MESSAGE_PACK_LIBRARIES}
-	PATHS ${MESSAGE_PACK_LIBRARY_DIRS}
-	NO_DEFAULT_PATH)
-    else()
-      find_library(MESSAGE_PACK_LIBS
-	NAMES ${MESSAGE_PACK_LIBRARIES})
-    endif()
+  find_package(Groongamsgpackc)
+  if(Groongamsgpackc_FOUND)
     set(GRN_WITH_MESSAGE_PACK TRUE)
-    message(STATUS "MessagePack: ${MESSAGE_PACK_LIBS}")
+    target_link_libraries(grn_dependencies INTERFACE Groonga::msgpackc)
   else()
-    if("${GRN_WITH_MESSAGE_PACK}" STREQUAL "yes" OR
-	"${GRN_WITH_MESSAGE_PACK}" STREQUAL "auto")
-      set(MESSAGE_PACK_INCLUDE_DIRS "")
-      set(MESSAGE_PACK_LIBRARY_DIRS "")
-      find_library(MESSAGE_PACK_LIBS NAMES msgpackc)
-    else()
-      set(MESSAGE_PACK_INCLUDE_DIRS "${GRN_WITH_MESSAGE_PACK}/include")
-      set(MESSAGE_PACK_LIBRARY_DIRS "${GRN_WITH_MESSAGE_PACK}/lib")
-      find_library(MESSAGE_PACK_LIBS
-	NAMES msgpackc
-	PATHS ${MESSAGE_PACK_LIBRARY_DIRS}
-	NO_DEFAULT_PATH)
-    endif()
-    if(MESSAGE_PACK_LIBS)
+    set(GRN_BUNDLED_MESSAGE_PACK_DIR
+      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/msgpack-${GRN_BUNDLED_MESSAGE_PACK_VERSION}")
+    if(EXISTS "${GRN_BUNDLED_MESSAGE_PACK_DIR}")
+      set(GRN_WITH_BUNDLED_MESSAGE_PACK TRUE)
       set(GRN_WITH_MESSAGE_PACK TRUE)
-      message(STATUS "MessagePack: ${MESSAGE_PACK_LIBS}")
+      target_link_libraries(grn_dependencies INTERFACE Groonga::msgpackc)
+      message(STATUS "MessagePack: ${MESSAGE_PACK_LIBS} (bundled)")
     else()
-      set(GRN_BUNDLED_MESSAGE_PACK_DIR
-	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/msgpack-${GRN_BUNDLED_MESSAGE_PACK_VERSION}")
-      if(EXISTS "${GRN_BUNDLED_MESSAGE_PACK_DIR}")
-	set(MESSAGE_PACK_INCLUDE_DIRS "${GRN_BUNDLED_MESSAGE_PACK_DIR}/include")
-	set(MESSAGE_PACK_LIBS msgpackc)
-	set(GRN_WITH_BUNDLED_MESSAGE_PACK TRUE)
-	set(GRN_WITH_MESSAGE_PACK TRUE)
-	message(STATUS "MessagePack: ${MESSAGE_PACK_LIBS} (bundled)")
-      else()
-	if(${GRN_WITH_MESSAGE_PACK} STREQUAL "yes")
-	  message(FATAL_ERROR "No MessagePack found")
-	endif()
-	set(MESSAGE_PACK_LIBS "")
-	set(GRN_WITH_MESSAGE_PACK FALSE)
-	message(STATUS "No MessagePack")
+      if(${GRN_WITH_MESSAGE_PACK} STREQUAL "yes")
+        message(FATAL_ERROR "No MessagePack found")
       endif()
+      set(GRN_WITH_MESSAGE_PACK FALSE)
+      message(STATUS "No MessagePack")
     endif()
   endif()
 else()
@@ -892,78 +722,94 @@ string(STRIP
 set(GRN_WITH_BUNDLED_XXHASH FALSE)
 set(GRN_WITH_XXHASH "auto"
   CACHE STRING "Support drilldown by hashed key with xxHash.")
-if(NOT ${GRN_WITH_XXHASH} STREQUAL "no")
-  set(LIBXXHASH_DEFINITIONS)
-  if(${GRN_WITH_XXHASH} STREQUAL "bundled")
-    set(xxHash_FOUND FALSE)
+if(NOT "${GRN_WITH_XXHASH}" STREQUAL "no")
+  if("${GRN_WITH_XXHASH}" STREQUAL "bundled")
+    set(GroongaxxHash_FOUND FALSE)
   else()
-    find_package(xxHash)
+    if("${GRN_WITH_XXHASH}" STREQUAL "system")
+      find_package(GroongaxxHash REQUIRED)
+    else()
+      find_package(GroongaxxHash)
+    endif()
   endif()
-  if(xxHash_FOUND)
-    get_target_property(LIBXXHASH_INCLUDE_DIRS xxHash::xxhash
-      INTERFACE_INCLUDE_DIRECTORIES)
-    get_target_property(LIBXXHASH_LIBS xxHash::xxhash IMPORTED_LOCATION_RELEASE)
-    if(NOT LIBXXHASH_LIBS)
-      get_target_property(LIBXXHASH_LIBS xxHash::xxhash IMPORTED_LOCATION)
-    endif()
-    message(STATUS "xxHash: ${LIBXXHASH_LIBS}")
+  if(GroongaxxHash_FOUND)
+    set(GRN_WITH_XXHASH TRUE)
   else()
-    if(${GRN_WITH_XXHASH} STREQUAL "bundled")
-      set(LIBXXHASH_FOUND FALSE)
-    else()
-      if(NOT DEFINED LIBXXHASH_FOUND)
-	pkg_check_modules(LIBXXHASH libxxhash)
-	unset(LIBXXHASH_LIBS)
-	unset(LIBXXHASH_LIBS CACHE)
-      endif()
-    endif()
-    if(LIBXXHASH_FOUND)
-      if(${LIBXXHASH_LIBRARY_DIRS})
-	find_library(LIBXXHASH_LIBS
-          NAMES ${LIBXXHASH_LIBRARIES}
-          PATHS ${LIBXXHASH_LIBRARY_DIRS}
-          NO_DEFAULT_PATH)
-      else()
-	find_library(LIBXXHASH_LIBS
-          NAMES ${LIBXXHASH_LIBRARIES})
-      endif()
-      if(LIBXXHASH_VERSION VERSION_LESS "0.8.0")
-	set(LIBXXHASH_DEFINITIONS -DXXH_INLINE_ALL)
-      endif()
+    set(GRN_BUNDLED_XXHASH_DIR
+      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/xxHash-${GRN_BUNDLED_XXHASH_VERSION}")
+    if(EXISTS ${GRN_BUNDLED_XXHASH_DIR})
+      set(GRN_WITH_BUNDLED_XXHASH TRUE)
       set(GRN_WITH_XXHASH TRUE)
-      add_library(xxHash::xxhash INTERFACE IMPORTED)
-      set_property(TARGET xxHash::xxhash PROPERTY
-	INTERFACE_INCLUDE_DIRECTORIES "${RAPIDJSON_PREFIX}/include")
-      message(STATUS "xxHash: ${LIBXXHASH_LIBS}")
+      add_library(Groonga::xxhash INTERFACE IMPORTED)
+      target_include_directories(Groonga::xxhash INTERFACE ${GRN_BUNDLED_XXHASH_DIR})
+      target_compile_definitions(Groonga::xxhash INTERFACE XXH_INLINE_ALL)
+      message(STATUS "xxHash: (bundled)")
+      install(FILES
+        "${GRN_BUNDLED_XXHASH_DIR}/LICENSE"
+        "${GRN_BUNDLED_XXHASH_DIR}/README.md"
+        DESTINATION "${GRN_DATA_DIR}/xxhash")
     else()
-      set(GRN_BUNDLED_XXHASH_DIR
-	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/xxHash-${GRN_BUNDLED_XXHASH_VERSION}")
-      if(EXISTS ${GRN_BUNDLED_XXHASH_DIR})
-	set(LIBXXHASH_INCLUDE_DIRS ${GRN_BUNDLED_XXHASH_DIR})
-	set(LIBXXHASH_LIBS)
-	set(LIBXXHASH_DEFINITIONS -DXXH_INLINE_ALL)
-	set(GRN_WITH_BUNDLED_XXHASH TRUE)
-	set(GRN_WITH_XXHASH TRUE)
-	message(STATUS "xxHash: ${LIBXXHASH_INCLUDE_DIRS} (bundled)")
-	install(FILES
-	  "${GRN_BUNDLED_XXHASH_DIR}/LICENSE"
-	  "${GRN_BUNDLED_XXHASH_DIR}/README.md"
-	  DESTINATION "${GRN_DATA_DIR}/xxhash")
-      else()
-	if(${GRN_WITH_XXHASH} STREQUAL "yes")
-          message(FATAL_ERROR "No xxHash found")
-	endif()
-	set(GRN_WITH_XXHASH FALSE)
-	message(STATUS "No xxHash")
+      if(${GRN_WITH_XXHASH} STREQUAL "yes")
+        message(FATAL_ERROR "No xxHash found")
       endif()
+      set(GRN_WITH_XXHASH FALSE)
+      message(STATUS "No xxHash")
     endif()
+  endif()
+  if(GRN_WITH_XXHASH)
+    target_link_libraries(grn_dependencies INTERFACE Groonga::xxhash)
   endif()
 else()
   set(GRN_WITH_XXHASH FALSE)
 endif()
 
+# We need to find LZ4 after xxHash because bundled LZ4 includes its
+# xxhash.h.
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_lz4_version"
+  GRN_BUNDLED_LZ4_VERSION)
+string(STRIP
+  "${GRN_BUNDLED_LZ4_VERSION}"
+  GRN_BUNDLED_LZ4_VERSION)
+
+set(GRN_WITH_BUNDLED_LZ4 FALSE)
+set(GRN_WITH_LZ4 "auto"
+  CACHE STRING "Support data compression by LZ4.")
+if(NOT "${GRN_WITH_LZ4}" STREQUAL "no")
+  if("${GRN_WITH_LZ4}" STREQUAL "bundled")
+    set(Groongalz4_FOUND FALSE)
+  else()
+    if("${GRN_WITH_XXHASH}" STREQUAL "system")
+      find_package(Groongalz4 REQUIRED)
+    else()
+      find_package(Groongalz4)
+    endif()
+  endif()
+  if(Groongalz4_FOUND)
+    set(GRN_WITH_LZ4 TRUE)
+    target_link_libraries(grn_dependencies INTERFACE Groonga::liblz4)
+  else()
+    set(GRN_BUNDLED_LZ4_DIR
+      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/lz4-${GRN_BUNDLED_LZ4_VERSION}")
+    if(EXISTS ${GRN_BUNDLED_LZ4_DIR})
+      set(GRN_WITH_BUNDLED_LZ4 TRUE)
+      set(GRN_WITH_LZ4 TRUE)
+      target_link_libraries(grn_dependencies INTERFACE liblz4)
+      message(STATUS "LZ4: (bundled)")
+    else()
+      if("${GRN_WITH_LZ4}" STREQUAL "yes")
+        message(FATAL_ERROR "No LZ4 found")
+      endif()
+      set(GRN_WITH_LZ4 FALSE)
+      message(STATUS "No LZ4")
+    endif()
+  endif()
+else()
+  set(GRN_WITH_LZ4 FALSE)
+endif()
+
 
 find_program(RUBY NAMES
+  "ruby"
   "ruby3.0" "ruby30"
   "ruby2.7" "ruby27"
   "ruby2.6" "ruby26"
@@ -971,19 +817,9 @@ find_program(RUBY NAMES
   "ruby2.4" "ruby24"
   "ruby2.3" "ruby23"
   "ruby2.2" "ruby22"
-  "ruby2.1" "ruby21"
-  "ruby")
+  "ruby2.1" "ruby21")
 
 option(GRN_WITH_MRUBY "use mruby" OFF)
-if(GRN_WITH_MRUBY)
-  set(MRUBY_INCLUDE_DIRS
-    "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mruby-source/include")
-  set(MRUBY_LIBS mruby)
-else()
-  set(MRUBY_INCLUDE_DIRS "")
-  set(MRUBY_LIBS "")
-endif()
-set(MRUBY_DEFINITIONS "MRB_INT64" "HAVE_ONIGMO_H")
 
 # For mruby-file-stat
 if(NOT WIN32)
@@ -992,18 +828,16 @@ endif()
 
 set(GRN_WITH_ONIGMO ON)
 option(GRN_WITH_BUNDLED_ONIGMO "use bundled Onigmo" ON)
-if(GRN_WITH_BUNDLED_ONIGMO)
-  set(ONIGMO_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/vendor/onigmo-source")
-  set(ONIGMO_LIBS onigmo)
-
-  # TODO: It's for Onigmo static link case. If we support system Onigmo,
-  # we need to remove it and add -DEXPORT to Onigmo build.
-  add_definitions(-DONIG_EXTERN=extern)
-else()
-  pkg_check_modules(ONIGMO REQUIRED onigmo)
+if(NOT GRN_WITH_BUNDLED_ONIGMO)
+  pkg_check_modules(pkg_onigmo onigmo REQUIRED IMPORTED_TARGET)
+  add_library(onigmo ALIAS PkgConfig::pkg_onigmo)
 endif()
 
 add_subdirectory(vendor)
+if(GRN_WITH_MRUBY)
+  target_link_libraries(grn_dependencies INTERFACE mruby)
+endif()
+target_link_libraries(grn_dependencies INTERFACE onigmo)
 if(GRN_EMBED)
   add_subdirectory(plugins)
 endif()

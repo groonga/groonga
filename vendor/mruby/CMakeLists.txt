@@ -1,5 +1,5 @@
 # Copyright(C) 2013-2018  Brazil
-# Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,15 +16,6 @@
 
 if(GRN_WITH_MRUBY)
   set(MRUBY_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-source")
-
-  include_directories(
-    "${MRUBY_SOURCE_DIR}/include"
-    "${MRUBY_SOURCE_DIR}/src"
-    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-compiler/core"
-    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-io/include"
-    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-time/include"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../onigmo-source"
-  )
 
   read_file_list("${CMAKE_CURRENT_SOURCE_DIR}/sources.am" MRUBY_SOURCES)
   string(REGEX REPLACE "\\.\\./" "${CMAKE_CURRENT_SOURCE_DIR}/../"
@@ -86,6 +77,20 @@ if(GRN_WITH_MRUBY)
     "${CMAKE_CURRENT_BINARY_DIR}/mruby-file-stat/src/config.h"
     )
   add_library(mruby STATIC ${MRUBY_ALL_SOURCES})
+  target_include_directories(mruby
+    PUBLIC
+    "${MRUBY_SOURCE_DIR}/include"
+    PRIVATE
+    "${MRUBY_SOURCE_DIR}/src"
+    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-compiler/core"
+    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-io/include"
+    "${MRUBY_SOURCE_DIR}/mrbgems/mruby-time/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../onigmo-source"
+  )
+  target_compile_definitions(mruby PUBLIC "MRB_INT64" "HAVE_ONIGMO_H")
+  if(WIN32)
+    target_compile_definitions(mruby PRIVATE "MRB_BUILD_AS_DLL" "MRB_CORE")
+  endif()
   set_target_properties(
     mruby
     PROPERTIES
@@ -116,14 +121,9 @@ if(GRN_WITH_MRUBY)
     # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
     set(MRUBY_C_COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS} /wd4996")
   endif()
-  if(WIN32)
-    list(APPEND MRUBY_DEFINITIONS "MRB_BUILD_AS_DLL" "MRB_CORE")
-  endif()
   set_source_files_properties(${MRUBY_ALL_SOURCES}
     PROPERTIES
     COMPILE_FLAGS "${MRUBY_C_COMPILE_FLAGS}")
-  set_property(SOURCE ${MRUBY_ALL_SOURCES}
-    PROPERTY COMPILE_DEFINITIONS ${MRUBY_DEFINITIONS})
 
   install(FILES
     "${MRUBY_LEGAL_FILE}"
