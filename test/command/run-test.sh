@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export SOURCE_DIR="`dirname $0`"
+export SOURCE_DIR="$(dirname "$0")"
 if test -z "$BUILD_DIR"; then
   BUILD_DIR="$SOURCE_DIR"
 fi
