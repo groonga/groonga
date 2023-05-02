@@ -93,6 +93,7 @@ if(GRN_WITH_MRUBY)
   target_compile_definitions(mruby PUBLIC "MRB_INT64" "HAVE_ONIGMO_H")
   if(WIN32)
     target_compile_definitions(mruby PRIVATE "MRB_BUILD_AS_DLL" "MRB_CORE")
+    target_link_libraries(mruby PUBLIC ws2_32.lib)
   endif()
   set_target_properties(
     mruby
