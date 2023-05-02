@@ -26,10 +26,12 @@ else()
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND EXISTS "/bin/sh")
       execute_process(COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/version-gen.sh"
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-      file(READ "${CMAKE_CURRENT_BINARY_DIR}/version.sh" GRN_VERSION)
-    else()
-      set(GRN_VERSION "${VERSION}")
     endif()
+  endif()
+  if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/version.sh")
+    file(READ "${CMAKE_CURRENT_BINARY_DIR}/version.sh" GRN_VERSION)
+  else()
+    set(GRN_VERSION "${VERSION}")
   endif()
 endif()
 string(REGEX REPLACE "(^.*=|\n)" "" GRN_VERSION "${GRN_VERSION}")
@@ -43,7 +45,7 @@ string(REGEX REPLACE "\\." "," GRN_VERSION_RC "${GRN_VERSION}")
 string(REGEX REPLACE "-.*$" "" GRN_VERSION_RC "${GRN_VERSION_RC}")
 
 project(groonga
-  VERSION "${GROONGA_VERSION}"
+  VERSION "${VERSION}"
   DESCRIPTION "An Embeddable Fulltext Search Engine"
   LANGUAGES  C CXX)
 set(GRN_PROJECT_NAME "${PROJECT_NAME}")
