@@ -5,6 +5,64 @@
 News
 ====
 
+.. _release-13-0-2:
+
+Release 13.0.2 - 2023-05-02
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/install/ubuntu`] Dropped support for Ubuntu 18.04 (Bionic Beaver).
+
+* [:doc:`/reference/functions/highlight_html`] Added a newly option ``cycled_class_tag_mode``.
+
+  We can use different style(e.g. background color) for each keywords by cycled_class_tag_mode.
+
+  .. code-block::
+
+     table_create Entries TABLE_NO_KEY
+     column_create Entries body COLUMN_SCALAR ShortText
+
+     table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+     column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+
+     load --table Entries
+     [
+     {"body": "Mroonga is a ＭｙＳＱＬ storage engine based on Groonga. <b>Rroonga</b> is a Ruby binding of Groonga."}
+     ]
+
+     select Entries \
+       --match_columns body \
+       --query 'groonga OR mroonga' \
+       --output_columns 'highlight_html(body, {"cycled_class_tag_mode": true})'
+     # [
+     #   [
+     #     0,
+     #     0.0,
+     #     0.0
+     #   ],
+     #   [
+     #     [
+     #       [
+     #         1
+     #       ],
+     #       [
+     #         [
+     #           "highlight_html",
+     #           null
+     #         ]
+     #       ],
+     #       [
+     #         "<mark class=\"keyword-0\">Mroonga</mark> is a ＭｙＳＱＬ storage engine based on <mark class=\"keyword-1\">Groonga</mark>. &lt;b&gt;Rroonga&lt;/b&gt; is a Ruby binding of <mark class=\"keyword-1\">Groonga</mark>."
+     #       ]
+     #     ]
+     #   ]
+     # ]
+
+  The default value of ``cycled_class_tag_mode`` is ``false``.
+  If ``cycled_class_tag_mode`` is ``true``, class tags are ``<mark class="keyword-%d">/<mark>`` for now.
+
 .. _release-13-0-1:
 
 Release 13.0.1 - 2023-03-24
