@@ -9,7 +9,7 @@ export BUILD_DIR
 source_top_dir="$SOURCE_DIR/../.."
 source_top_dir=$(cd -P "$source_top_dir" 2>/dev/null || cd "$source_top_dir"; pwd)
 
-build_top_dir="$BUILD_DIR/../.."
+build_top_dir="$(dirname "$(dirname "$BUILD_DIR")")"
 build_top_dir=$(cd -P "$build_top_dir" 2>/dev/null || cd "$build_top_dir"; pwd)
 
 n_processors=1
