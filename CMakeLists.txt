@@ -328,13 +328,11 @@ check_struct_has_member(
   HAVE_STRUCT_TM_TM_GMTOFF)
 
 find_package(Threads REQUIRED)
-target_link_libraries(grn_dependencies INTERFACE Threads::Threads)
 set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
 
 option(GRN_WITH_NFKC "use NFKC based UTF8 normalization." ON)
 
 if(WIN32)
-  target_link_libraries(grn_dependencies INTERFACE ws2_32.lib)
   target_link_libraries(grn_dependencies INTERFACE dbghelp.lib)
   target_link_libraries(grn_dependencies INTERFACE psapi.lib)
 

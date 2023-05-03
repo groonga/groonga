@@ -21,6 +21,7 @@ set(GRN_PLUGINS_DIR "@GRN_PLUGINS_DIR@")
 
 include(CMakeFindDependencyMacro)
 
+find_dependency(Threads)
 if(DEFINED CMAKE_MODULE_PATH)
   set(GRN_CMAKE_MODULE_PATH_OLD ${CMAKE_MODULE_PATH})
 else()
