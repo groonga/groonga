@@ -20,11 +20,6 @@ set(MESSAGE_PACK_SOURCE_DIR
   "${CMAKE_CURRENT_SOURCE_DIR}/../msgpack-${MESSAGE_PACK_VERSION}")
 
 if(GRN_WITH_BUNDLED_MESSAGE_PACK)
-  include_directories(
-    BEFORE
-    ${MESSAGE_PACK_SOURCE_DIR}/include
-    )
-
   set(MESSAGE_PACK_SOURCES
     "${MESSAGE_PACK_SOURCE_DIR}/src/objectc.c"
     "${MESSAGE_PACK_SOURCE_DIR}/src/unpack.c"
@@ -38,6 +33,11 @@ if(GRN_WITH_BUNDLED_MESSAGE_PACK)
     COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 
   add_library(msgpackc SHARED ${MESSAGE_PACK_SOURCES})
+  target_include_directories(msgpackc
+    BEFORE
+    PUBLIC
+    ${MESSAGE_PACK_SOURCE_DIR}/include
+  )
   install(TARGETS msgpackc
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
