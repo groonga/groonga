@@ -748,7 +748,7 @@ if(NOT "${GRN_WITH_XXHASH}" STREQUAL "no")
       set(GRN_WITH_BUNDLED_XXHASH TRUE)
       set(GRN_WITH_XXHASH TRUE)
       add_library(Groonga::xxhash INTERFACE IMPORTED)
-      target_include_directories(Groonga::xxhash INTERFACE ${GRN_BUNDLED_XXHASH_DIR})
+      target_include_directories(Groonga::xxhash BEFORE INTERFACE ${GRN_BUNDLED_XXHASH_DIR})
       target_compile_definitions(Groonga::xxhash INTERFACE XXH_INLINE_ALL)
       message(STATUS "xxHash: (bundled)")
       install(FILES
