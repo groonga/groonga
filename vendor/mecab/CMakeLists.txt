@@ -24,12 +24,6 @@ set(MECAB_NAIST_JDIC_SOURCE_DIR
   "${CMAKE_CURRENT_SOURCE_DIR}/../mecab-naist-jdic-${MECAB_NAIST_JDIC_VERSION}")
 
 if(GRN_WITH_BUNDLED_MECAB)
-  include_directories(
-    BEFORE
-    ${MECAB_BINARY_DIR}
-    ${MECAB_SOURCE_DIR}
-    )
-
   set(MECAB_RELATIVE_DICT_DIR "${CMAKE_INSTALL_SYSCONFDIR}/mecab/dic")
   set(MECAB_RELATIVE_NAIST_JDIC_DICT_DIR
     "${MECAB_RELATIVE_DICT_DIR}/naist-jdic")
@@ -182,6 +176,8 @@ if(GRN_WITH_BUNDLED_MECAB)
   if(NOT MSVC)
     set_target_properties(libmecab PROPERTIES OUTPUT_NAME "mecab")
   endif()
+  target_include_directories(libmecab PRIVATE ${MECAB_BINARY_DIR})
+  target_include_directories(libmecab PUBLIC ${MECAB_SOURCE_DIR})
   add_executable(mecab ${MECAB_SOURCES})
   target_link_libraries(mecab libmecab)
   add_executable(mecab-dict-index ${MECAB_DICT_INDEX_SOURCES})
