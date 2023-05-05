@@ -76,14 +76,11 @@ if(GRN_EMBED)
 else()
   add_library(libgroonga SHARED ${GRN_ALL_SOURCES})
 endif()
-target_compile_definitions(libgroonga PRIVATE
-  GRN_DAT_EXPORT
-  HAVE_CONFIG_H)
-target_compile_definitions(libgroonga INTERFACE
-  "$<BUILD_INTERFACE:HAVE_CONFIG_H>")
+target_compile_definitions(libgroonga PRIVATE GRN_DAT_EXPORT)
+target_compile_definitions(libgroonga PUBLIC "$<BUILD_INTERFACE:HAVE_CONFIG_H>")
 target_include_directories(libgroonga BEFORE PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/dat)
-target_include_directories(libgroonga BEFORE INTERFACE
+target_include_directories(libgroonga BEFORE PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/..>"
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../include>"
