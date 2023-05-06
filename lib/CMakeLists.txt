@@ -81,10 +81,10 @@ target_compile_definitions(libgroonga PUBLIC "$<BUILD_INTERFACE:HAVE_CONFIG_H>")
 target_include_directories(libgroonga BEFORE PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/dat)
 target_include_directories(libgroonga BEFORE PUBLIC
-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/..>"
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../include>"
-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>")
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>"
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>")
 if(NOT MSVC)
   set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
 endif()

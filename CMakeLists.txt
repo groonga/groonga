@@ -262,13 +262,6 @@ if(GRN_C_COMPILER_GNU_LIKE)
   set(_GNU_SOURCE TRUE)
 endif()
 
-target_include_directories(grn_dependencies BEFORE INTERFACE
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/lib
-)
-
 macro(ac_check_headers header)
   string(REGEX REPLACE "[/.]" "_" output_variable_name ${header})
   string(TOUPPER "${output_variable_name}" output_variable_name)
