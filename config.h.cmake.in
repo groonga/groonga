@@ -1,4 +1,4 @@
-/* config.h.cmake.  Generated from CMakeLists.txt by cmake.  */
+/* config.h.cmake.in.  Generated from CMakeLists.txt by cmake.  */
 
 /* general constants */
 #define CONFIGURE_OPTIONS    "${CONFIGURE_OPTIONS}"

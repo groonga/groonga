@@ -935,7 +935,7 @@ if(NOT GRN_EMBED)
   add_subdirectory(data)
 endif()
 
-configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+configure_file(config.h.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 set(GROONGA "${CMAKE_CURRENT_BINARY_DIR}/src/groonga")
 set(GROONGA_SUGGEST_CREATE_DATASET
