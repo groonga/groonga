@@ -70,6 +70,7 @@ set(GRN_ALL_SOURCES
 if(GRN_EMBED)
   add_library(libgroonga STATIC ${GRN_ALL_SOURCES})
   target_compile_definitions(libgroonga PUBLIC GRN_STATIC)
+  target_compile_definitions(libgroonga PUBLIC GRN_EMBEDDED)
   set_target_properties(
     libgroonga
     PROPERTIES

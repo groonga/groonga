@@ -254,9 +254,6 @@ endif()
 option(GRN_WITH_WINDOWS_BACK_TRACE "enable back trace on Windows." ON)
 
 add_library(grn_dependencies INTERFACE)
-if(GRN_EMBED)
-  target_compile_definitions(grn_dependencies INTERFACE GRN_EMBEDDED)
-endif()
 
 if(GRN_C_COMPILER_GNU_LIKE)
   set(_GNU_SOURCE TRUE)
