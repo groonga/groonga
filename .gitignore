@@ -161,6 +161,7 @@
 /test/unit/tmp
 /tmp
 /tmp-doc/
+/vendor/CRoaring-*
 /vendor/lz4-*
 /vendor/mecab-*
 /vendor/mecab/*.bin

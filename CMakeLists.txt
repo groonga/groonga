@@ -816,6 +816,73 @@ else()
   set(GRN_WITH_LZ4 FALSE)
 endif()
 
+set(GRN_CROARING_EP_VERSION "1.1.2")
+set(GRN_WITH_ROARING_BITMAPS
+    "auto"
+    CACHE STRING "Support posting compression by roaring bitmaps.")
+if(NOT "${GRN_WITH_ROARING_BITMAPS}" STREQUAL "no")
+  if("${GRN_WITH_ROARING_BITMAPS}" STREQUAL "bundled")
+    set(roaring_FOUND FALSE)
+  else()
+    if("${GRN_WITH_ROARING_BITMAPS}" STREQUAL "system")
+      find_package(roaring REQUIRED)
+    else()
+      find_package(roaring)
+    endif()
+  endif()
+  if(roaring_FOUND)
+    set(GRN_WITH_ROARING_BITMAPS TRUE)
+    target_link_libraries(grn_dependencies INTERFACE roaring::roaring)
+    message(STATUS "Roaring bitmaps: system")
+  else()
+    set(CROARING_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/croaring-ep-install")
+    set(CROARING_STATIC_LIBRARY "${CROARING_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+    string(APPEND CROARING_STATIC_LIBRARY "/${CMAKE_STATIC_LIBRARY_PREFIX}")
+    string(APPEND CROARING_STATIC_LIBRARY "roaring")
+    string(APPEND CROARING_STATIC_LIBRARY "${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    set(CROARING_CMAKE_ARGS
+        -DBUILD_SHARED_LIBS=OFF
+        -DBUILD_TESTING=OFF
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}
+        -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
+        -DENABLE_ROARING_TESTS=OFF)
+    set(CROARING_SOURCE_BASE_NAME "CRoaring-${GRN_CROARING_EP_VERSION}.tar.gz")
+    set(CROARING_SOURCE_LOCAL_PATH
+        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${CROARING_SOURCE_BASE_NAME}")
+    if(EXISTS ${CROARING_SOURCE_LOCAL_PATH})
+      set(CROARING_SOURCE_URL ${CROARING_SOURCE_LOCAL_PATH})
+    else()
+      set(CROARING_SOURCE_URL
+	"https://github.com/RoaringBitmap/CRoaring/archive/refs/tags/")
+      string(APPEND CROARING_SOURCE_URL "/v${GRN_CROARING_EP_VERSION}.tar.gz")
+    endif()
+    externalproject_add(
+      croaring-ep
+      ${GRN_EP_COMMON_OPTIONS}
+      BUILD_BYPRODUCTS ${CROARING_STATIC_LIBRARY}
+      CMAKE_ARGS ${CROARING_CMAKE_ARGS}
+      INSTALL_DIR ${CROARING_PREFIX}
+      URL ${CROARING_SOURCE_URL})
+    file(MAKE_DIRECTORY "${CROARING_PREFIX}/include")
+    add_library(roaring STATIC IMPORTED)
+    set_target_properties(
+      roaring
+      PROPERTIES IMPORTED_LOCATION ${CROARING_STATIC_LIBRARY}
+                 INTERFACE_INCLUDE_DIRECTORIES "${CROARING_PREFIX}/include")
+    add_dependencies(roaring croaring-ep)
+    set(CROARING_SOURCE_DIR
+        "${CMAKE_CURRENT_BINARY_DIR}/croaring-ep-prefix/src/croaring-ep")
+    install(FILES "${CROARING_SOURCE_DIR}/AUTHORS" "${CROARING_SOURCE_DIR}/LICENSE" "${CROARING_SOURCE_DIR}/README.md"
+            DESTINATION "${GRN_DATA_DIR}/croaring")
+    set(GRN_WITH_CROARING TRUE)
+    target_link_libraries(grn_dependencies INTERFACE roaring)
+    message(STATUS "Roaring bitmaps: ${CROARING_STATIC_LIBRARY} (bundled)")
+  endif()
+else()
+  set(GRN_WITH_ROARING_BITMAPS FALSE)
+endif()
+
 find_program(
   RUBY
   NAMES "ruby"
