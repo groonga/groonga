@@ -14,8 +14,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# Ubuntu 20.04: 3.16
-# CentOS 7's EPEL: 3.17
+# * Ubuntu 20.04: 3.16
+# * CentOS 7's EPEL: 3.17
 cmake_minimum_required(VERSION 3.16)
 
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/base_version" VERSION)
@@ -25,7 +25,7 @@ else()
   if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/version.sh")
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND EXISTS "/bin/sh")
       execute_process(COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/version-gen.sh"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+                      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     endif()
   endif()
   if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/version.sh")
@@ -35,23 +35,25 @@ else()
   endif()
 endif()
 string(REGEX REPLACE "(^.*=|\n)" "" GRN_VERSION "${GRN_VERSION}")
-string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\1"
-  GRN_VERSION_MAJOR "${VERSION}")
-string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\2"
-  GRN_VERSION_MINOR "${VERSION}")
-string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\3"
-  GRN_VERSION_MICRO "${VERSION}")
+string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\1" GRN_VERSION_MAJOR
+                     "${VERSION}")
+string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\2" GRN_VERSION_MINOR
+                     "${VERSION}")
+string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\3" GRN_VERSION_MICRO
+                     "${VERSION}")
 string(REGEX REPLACE "\\." "," GRN_VERSION_RC "${GRN_VERSION}")
 string(REGEX REPLACE "-.*$" "" GRN_VERSION_RC "${GRN_VERSION_RC}")
 
-project(groonga
+project(
+  groonga
   VERSION "${VERSION}"
   DESCRIPTION "An Embeddable Fulltext Search Engine"
-  LANGUAGES  C CXX)
+  LANGUAGES C CXX)
 set(GRN_PROJECT_NAME "${PROJECT_NAME}")
 set(GRN_PROJECT_LABEL "Groonga")
 
 # https://cmake.org/cmake/help/latest/policy/CMP0054.html
+#
 # Only interpret if() arguments as variables or keywords when unquoted.
 if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
@@ -77,16 +79,14 @@ if(MSVC)
   endif()
 endif()
 
-if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR
-    CMAKE_C_COMPILER_ID STREQUAL "Clang")
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
   set(GRN_C_COMPILER_GNU_LIKE TRUE)
 else()
   set(GRN_C_COMPILER_GNU_LIKE FALSE)
 endif()
 
-configure_file(
-  include/groonga/version.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/include/groonga/version.h)
+configure_file(include/groonga/version.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/include/groonga/version.h)
 
 include(CheckIncludeFile)
 include(CheckIncludeFileCXX)
@@ -108,8 +108,9 @@ if(DEFINED GRN_EMBED)
 else()
   set(GRN_EMBED_DEFAULT OFF)
 endif()
-set(GRN_EMBED ${GRN_EMBED_DEFAULT} CACHE BOOL
-  "Build as a static library to embed into an application")
+set(GRN_EMBED
+    ${GRN_EMBED_DEFAULT}
+    CACHE BOOL "Build as a static library to embed into an application")
 
 set(GRN_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}/groonga")
 set(GRN_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/Groonga")
@@ -117,81 +118,77 @@ if(NOT DEFINED GRN_DATA_DIR)
   set(GRN_DATA_DIR "${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}")
 endif()
 set(GRN_CONFIG_DIR "${CMAKE_INSTALL_SYSCONFDIR}/${GRN_PROJECT_NAME}")
-set(GRN_CONFIG_PATH "${CMAKE_INSTALL_FULL_SYSCONFDIR}/${GRN_PROJECT_NAME}/${GRN_PROJECT_NAME}.conf")
+set(GRN_CONFIG_PATH
+    "${CMAKE_INSTALL_FULL_SYSCONFDIR}/${GRN_PROJECT_NAME}/${GRN_PROJECT_NAME}.conf"
+)
 
 set(GRN_LOG_PATH
-  "${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/log/${GRN_PROJECT_NAME}/${GRN_PROJECT_NAME}.log"
-  CACHE FILEPATH "log file path")
+    "${CMAKE_INSTALL_FULL_LOCALSTATEDIR}/log/${GRN_PROJECT_NAME}/${GRN_PROJECT_NAME}.log"
+    CACHE FILEPATH "log file path")
 set(GRN_DEFAULT_ENCODING
-  "utf8"
-  CACHE STRING "Groonga's default encoding")
+    "utf8"
+    CACHE STRING "Groonga's default encoding")
 set(GRN_DEFAULT_MATCH_ESCALATION_THRESHOLD
-  0
-  CACHE STRING "Groonga's default match escalation threshold")
+    0
+    CACHE STRING "Groonga's default match escalation threshold")
 set(GRN_DEFAULT_DOCUMENT_ROOT_BASE
-  "html/admin"
-  CACHE PATH "Groonga's default document root base path")
+    "html/admin"
+    CACHE PATH "Groonga's default document root base path")
 set(GRN_DEFAULT_RELATIVE_DOCUMENT_ROOT
-  "${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
-  CACHE PATH "Groonga's default relative document root")
+    "${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
+    CACHE PATH "Groonga's default relative document root")
 set(GRN_DEFAULT_DOCUMENT_ROOT
-  "${CMAKE_INSTALL_PREFIX}/${GRN_DATA_DIR}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
-  CACHE PATH "Groonga's default document root")
+    "${CMAKE_INSTALL_PREFIX}/${GRN_DATA_DIR}/${GRN_DEFAULT_DOCUMENT_ROOT_BASE}"
+    CACHE PATH "Groonga's default document root")
 set(GRN_DEFAULT_DB_KEY
-  "auto"
-  CACHE STRING "Groonga's default DB key management algorithm")
+    "auto"
+    CACHE STRING "Groonga's default DB key management algorithm")
 set(GRN_STACK_SIZE
-  1024
-  CACHE STRING
-  "DANGER!!! Groonga's stack size. Normarlly, you should not change this variable.")
+    1024
+    CACHE
+      STRING
+      "DANGER!!! Groonga's stack size. Normarlly, you should not change this variable."
+)
 set(GRN_LOCK_TIMEOUT
-  900000
-  CACHE STRING
-  "timeout to acquire a lock.")
+    900000
+    CACHE STRING "timeout to acquire a lock.")
 set(GRN_LOCK_WAIT_TIME_NANOSECOND
-  1000000
-  CACHE STRING
-  "wait time in nanosecond to acquire a lock.")
+    1000000
+    CACHE STRING "wait time in nanosecond to acquire a lock.")
 set(GRN_RELATIVE_PLUGINS_DIR
-  "${CMAKE_INSTALL_LIBDIR}/${GRN_PROJECT_NAME}/plugins")
-set(GRN_PLUGINS_DIR
-  "${CMAKE_INSTALL_PREFIX}/${GRN_RELATIVE_PLUGINS_DIR}")
+    "${CMAKE_INSTALL_LIBDIR}/${GRN_PROJECT_NAME}/plugins")
+set(GRN_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/${GRN_RELATIVE_PLUGINS_DIR}")
 set(GRN_PLUGIN_SUFFIX "${CMAKE_SHARED_MODULE_SUFFIX}")
-set(GRN_DLL_FILENAME
-  "libgroonga${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set(GRN_DLL_FILENAME "libgroonga${CMAKE_SHARED_LIBRARY_SUFFIX}")
 set(GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE
-  "${GRN_CONFIG_DIR}/synonyms.tsv")
+    "${GRN_CONFIG_DIR}/synonyms.tsv")
 set(GRN_QUERY_EXPANDER_TSV_SYNONYMS_FILE
-  "${CMAKE_INSTALL_PREFIX}/${GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE}")
+    "${CMAKE_INSTALL_PREFIX}/${GRN_QUERY_EXPANDER_TSV_RELATIVE_SYNONYMS_FILE}")
 set(GRN_RELATIVE_RUBY_SCRIPTS_DIR
-  "${CMAKE_INSTALL_LIBDIR}/${GRN_PROJECT_NAME}/scripts/ruby")
+    "${CMAKE_INSTALL_LIBDIR}/${GRN_PROJECT_NAME}/scripts/ruby")
 set(GRN_RUBY_SCRIPTS_DIR
-  "${CMAKE_INSTALL_PREFIX}/${GRN_RELATIVE_RUBY_SCRIPTS_DIR}")
-
+    "${CMAKE_INSTALL_PREFIX}/${GRN_RELATIVE_RUBY_SCRIPTS_DIR}")
 
 if(GRN_C_COMPILER_GNU_LIKE)
-  set(GRN_C_COMPILE_FLAGS
-    "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:Debug>:-g3 -O0>")
+  set(GRN_C_COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:Debug>:-g3 -O0>")
   set(GRN_CXX_COMPILE_FLAGS
-    "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:Debug>:-g3 -O0>")
+      "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:Debug>:-g3 -O0>")
   set(GRN_C_COMPILE_FLAGS
-    "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-g3>")
+      "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-g3>")
   set(GRN_CXX_COMPILE_FLAGS
-    "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-g3>")
+      "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:-g3>")
   set(CMAKE_C_STANDARD 99)
   set(CMAKE_C_STANDARD_REQUIRED TRUE)
 endif()
 
-# /Ob1 is used with RelWithDebInfo by default but it's slower than
-# /Ob2 which is the default with Release. We need performance with
-# debug information.
+# /Ob1 is used with RelWithDebInfo by default but it's slower than /Ob2 which is
+# the default with Release. We need performance with debug information.
 if(MSVC)
   set(GRN_C_COMPILE_FLAGS
-    "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:/Ob2>")
+      "${GRN_C_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:/Ob2>")
   set(GRN_CXX_COMPILE_FLAGS
-    "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:/Ob2>")
+      "${GRN_CXX_COMPILE_FLAGS} $<$<CONFIG:RelWithDebInfo>:/Ob2>")
 endif()
-
 
 macro(check_cflag flag)
   string(REGEX REPLACE "[-=]" "_" temporary_variable_name ${flag})
@@ -250,7 +247,6 @@ if(NOT GRN_ALLOW_WARNING)
   endif()
 endif()
 
-
 option(GRN_WITH_WINDOWS_BACK_TRACE "enable back trace on Windows." ON)
 
 add_library(grn_dependencies INTERFACE)
@@ -284,7 +280,7 @@ macro(ac_check_lib library function)
   set(output_variable_name "HAVE_LIB${output_variable_base_name}")
   set(location "${ARG2}")
   check_library_exists(${library} ${function} "${location}"
-    ${output_variable_name})
+                       ${output_variable_name})
   if(${output_variable_name})
     target_link_libraries(grn_dependencies INTERFACE "${library}")
   endif()
@@ -306,16 +302,13 @@ ac_check_lib(rt clock_gettime)
 if(HAVE_LIBRT)
   set(HAVE_CLOCK_GETTIME TRUE)
 endif()
-if(NOT (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64" OR
-      CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "^i[0-9]86$"))
+if(NOT (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64"
+        OR CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "^i[0-9]86$"))
   ac_check_lib(atomic __atomic_store_8)
 endif()
 
-check_struct_has_member(
-  "struct tm"
-  "tm_gmtoff"
-  "time.h"
-  HAVE_STRUCT_TM_TM_GMTOFF)
+check_struct_has_member("struct tm" "tm_gmtoff" "time.h"
+                        HAVE_STRUCT_TM_TM_GMTOFF)
 
 find_package(Threads REQUIRED)
 set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
@@ -376,8 +369,9 @@ if(GRN_WITH_APACHE_ARROW)
   target_link_libraries(grn_dependencies INTERFACE Arrow::arrow_shared)
 endif()
 
-set(GRN_WITH_ZLIB "auto"
-  CACHE STRING "Support data compression by zlib.")
+set(GRN_WITH_ZLIB
+    "auto"
+    CACHE STRING "Support data compression by zlib.")
 if(NOT ${GRN_WITH_ZLIB} STREQUAL "no")
   # This is for building in MariaDB.
   if(TARGET zlib)
@@ -396,22 +390,31 @@ if(NOT ${GRN_WITH_ZLIB} STREQUAL "no")
   endif()
 endif()
 
-
 include(ExternalProject)
 set(GRN_EP_COMMON_OPTIONS
-  LOG_DOWNLOAD TRUE
-  LOG_UPDATE TRUE
-  LOG_PATCH TRUE
-  LOG_CONFIGURE TRUE
-  LOG_BUILD TRUE
-  LOG_INSTALL TRUE
-  LOG_TEST TRUE
-  LOG_MERGED_STDOUTERR TRUE
-  LOG_OUTPUT_ON_FAILURE TRUE)
+    LOG_DOWNLOAD
+    TRUE
+    LOG_UPDATE
+    TRUE
+    LOG_PATCH
+    TRUE
+    LOG_CONFIGURE
+    TRUE
+    LOG_BUILD
+    TRUE
+    LOG_INSTALL
+    TRUE
+    LOG_TEST
+    TRUE
+    LOG_MERGED_STDOUTERR
+    TRUE
+    LOG_OUTPUT_ON_FAILURE
+    TRUE)
 
 set(GRN_ZSTD_EP_VERSION "1.4.8")
-set(GRN_WITH_ZSTD "auto"
-  CACHE STRING "Support data compression by Zstandard.")
+set(GRN_WITH_ZSTD
+    "auto"
+    CACHE STRING "Support data compression by Zstandard.")
 if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
   if("${GRN_WITH_ZSTD}" STREQUAL "bundled")
     set(Groongazstd_FOUND FALSE)
@@ -437,25 +440,25 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
     string(APPEND ZSTD_STATIC_LIBRARY "${ZSTD_LIBRARY_BASE_NAME}")
     string(APPEND ZSTD_STATIC_LIBRARY "${CMAKE_STATIC_LIBRARY_SUFFIX}")
     set(ZSTD_CMAKE_ARGS
-      -DCMAKE_INSTALL_PREFIX=${ZSTD_PREFIX}
-      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-      -DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}
-      -DZSTD_BUILD_PROGRAMS=OFF
-      -DZSTD_BUILD_SHARED=OFF
-      -DZSTD_BUILD_STATIC=ON
-      -DZSTD_USE_STATIC_RUNTIME=ON)
+        -DCMAKE_INSTALL_PREFIX=${ZSTD_PREFIX}
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}
+        -DZSTD_BUILD_PROGRAMS=OFF
+        -DZSTD_BUILD_SHARED=OFF
+        -DZSTD_BUILD_STATIC=ON
+        -DZSTD_USE_STATIC_RUNTIME=ON)
     set(ZSTD_SOURCE_BASE_NAME "zstd-${GRN_ZSTD_EP_VERSION}.tar.gz")
     set(ZSTD_SOURCE_LOCAL_PATH
         "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${ZSTD_SOURCE_BASE_NAME}")
     if(EXISTS ${ZSTD_SOURCE_LOCAL_PATH})
       set(ZSTD_SOURCE_URL ${ZSTD_SOURCE_LOCAL_PATH})
     else()
-      set(ZSTD_SOURCE_URL
-        "https://github.com/facebook/zstd/releases/download")
+      set(ZSTD_SOURCE_URL "https://github.com/facebook/zstd/releases/download")
       string(APPEND ZSTD_SOURCE_URL "/v${GRN_ZSTD_EP_VERSION}")
       string(APPEND ZSTD_SOURCE_URL "/${ZSTD_SOURCE_BASE_NAME}")
     endif()
-    externalproject_add(zstd-ep
+    externalproject_add(
+      zstd-ep
       ${GRN_EP_COMMON_OPTIONS}
       CMAKE_ARGS ${ZSTD_CMAKE_ARGS}
       SOURCE_SUBDIR "build/cmake"
@@ -463,18 +466,16 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
       BUILD_BYPRODUCTS ${ZSTD_STATIC_LIBRARY})
     file(MAKE_DIRECTORY "${ZSTD_PREFIX}/include")
     add_library(Groonga::libzstd STATIC IMPORTED)
-    set_target_properties(Groonga::libzstd PROPERTIES
-      IMPORTED_LOCATION ${ZSTD_STATIC_LIBRARY}
-      INTERFACE_INCLUDE_DIRECTORIES "${ZSTD_PREFIX}/include")
+    set_target_properties(
+      Groonga::libzstd
+      PROPERTIES IMPORTED_LOCATION ${ZSTD_STATIC_LIBRARY}
+                 INTERFACE_INCLUDE_DIRECTORIES "${ZSTD_PREFIX}/include")
     add_dependencies(Groonga::libzstd zstd-ep)
     set(ZSTD_SOURCE_DIR
-      "${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-prefix/src/zstd-ep")
-    install(FILES
-      "${ZSTD_SOURCE_DIR}/CHANGELOG"
-      "${ZSTD_SOURCE_DIR}/COPYING"
-      "${ZSTD_SOURCE_DIR}/LICENSE"
-      "${ZSTD_SOURCE_DIR}/README.md"
-      DESTINATION "${GRN_DATA_DIR}/zstd")
+        "${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-prefix/src/zstd-ep")
+    install(FILES "${ZSTD_SOURCE_DIR}/CHANGELOG" "${ZSTD_SOURCE_DIR}/COPYING"
+                  "${ZSTD_SOURCE_DIR}/LICENSE" "${ZSTD_SOURCE_DIR}/README.md"
+            DESTINATION "${GRN_DATA_DIR}/zstd")
     set(GRN_WITH_ZSTD TRUE)
     message(STATUS "Zstandard: ${ZSTD_STATIC_LIBRARY} (bundled)")
   endif()
@@ -483,16 +484,14 @@ else()
   set(GRN_WITH_ZSTD FALSE)
 endif()
 
-
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_rapidjson_version"
-  GRN_BUNDLED_RAPIDJSON_VERSION)
-string(STRIP
-  "${GRN_BUNDLED_RAPIDJSON_VERSION}"
-  GRN_BUNDLED_RAPIDJSON_VERSION)
+     GRN_BUNDLED_RAPIDJSON_VERSION)
+string(STRIP "${GRN_BUNDLED_RAPIDJSON_VERSION}" GRN_BUNDLED_RAPIDJSON_VERSION)
 set(GRN_RAPIDJSON_EP_VERSION ${GRN_BUNDLED_RAPIDJSON_VERSION})
 
-set(GRN_WITH_RAPIDJSON "auto"
-  CACHE STRING "Support JSON processing by RapidJSON.")
+set(GRN_WITH_RAPIDJSON
+    "auto"
+    CACHE STRING "Support JSON processing by RapidJSON.")
 if(NOT "${GRN_WITH_RAPIDJSON}" STREQUAL "no")
   find_package(GroongaRapidJSON)
   if(GroongaRapidJSON_FOUND)
@@ -500,30 +499,32 @@ if(NOT "${GRN_WITH_RAPIDJSON}" STREQUAL "no")
     target_link_libraries(grn_dependencies INTERFACE Groonga::RapidJSON)
   else()
     set(RAPIDJSON_SOURCE_URL
-      "https://github.com/Tencent/rapidjson/archive/v${GRN_RAPIDJSON_EP_VERSION}.tar.gz")
+        "https://github.com/Tencent/rapidjson/archive/v${GRN_RAPIDJSON_EP_VERSION}.tar.gz"
+    )
     set(RAPIDJSON_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/rapidjson-ep-install")
     set(RAPIDJSON_CMAKE_ARGS
-      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-      -DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}
-      -DCMAKE_INSTALL_PREFIX=${RAPIDJSON_PREFIX}
-      -DRAPIDJSON_BUILD_DOC=OFF
-      -DRAPIDJSON_BUILD_EXAMPLES=OFF
-      -DRAPIDJSON_BUILD_TESTS=OFF)
-    externalproject_add(rapidjson-ep
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}
+        -DCMAKE_INSTALL_PREFIX=${RAPIDJSON_PREFIX}
+        -DRAPIDJSON_BUILD_DOC=OFF
+        -DRAPIDJSON_BUILD_EXAMPLES=OFF
+        -DRAPIDJSON_BUILD_TESTS=OFF)
+    externalproject_add(
+      rapidjson-ep
       ${GRN_EP_COMMON_OPTIONS}
       CMAKE_ARGS ${RAPIDJSON_CMAKE_ARGS}
       URL ${RAPIDJSON_SOURCE_URL})
     add_library(Groonga::RapidJSON INTERFACE IMPORTED)
     file(MAKE_DIRECTORY "${RAPIDJSON_PREFIX}/include")
-    target_include_directories(Groonga::RapidJSON INTERFACE
-      "${RAPIDJSON_PREFIX}/include")
+    target_include_directories(Groonga::RapidJSON
+                               INTERFACE "${RAPIDJSON_PREFIX}/include")
     add_dependencies(Groonga::RapidJSON rapidjson-ep)
     set(RAPIDJSON_SOURCE_DIR
-      "${CMAKE_CURRENT_BINARY_DIR}/rapidjson-ep-prefix/src/rapidjson-ep")
-    install(FILES
-      "${RAPIDJSON_SOURCE_DIR}/CHANGELOG.md"
-      "${RAPIDJSON_SOURCE_DIR}/license.txt"
-      "${RAPIDJSON_SOURCE_DIR}/readme.md"
+        "${CMAKE_CURRENT_BINARY_DIR}/rapidjson-ep-prefix/src/rapidjson-ep")
+    install(
+      FILES "${RAPIDJSON_SOURCE_DIR}/CHANGELOG.md"
+            "${RAPIDJSON_SOURCE_DIR}/license.txt"
+            "${RAPIDJSON_SOURCE_DIR}/readme.md"
       DESTINATION "${GRN_DATA_DIR}/rapidjson")
     set(GRN_WITH_RAPIDJSON TRUE)
     target_link_libraries(grn_dependencies INTERFACE Groonga::RapidJSON)
@@ -532,36 +533,38 @@ else()
   set(GRN_WITH_RAPIDJSON FALSE)
 endif()
 
-
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_mecab_version"
-  GRN_BUNDLED_MECAB_VERSION)
-string(STRIP
-  "${GRN_BUNDLED_MECAB_VERSION}"
-  GRN_BUNDLED_MECAB_VERSION)
+     GRN_BUNDLED_MECAB_VERSION)
+string(STRIP "${GRN_BUNDLED_MECAB_VERSION}" GRN_BUNDLED_MECAB_VERSION)
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_mecab_naist_jdic_version"
-  GRN_BUNDLED_MECAB_NAIST_JDIC_VERSION)
-string(STRIP
-  "${GRN_BUNDLED_MECAB_NAIST_JDIC_VERSION}"
-  GRN_BUNDLED_MECAB_NAIST_JDIC_VERSION)
+     GRN_BUNDLED_MECAB_NAIST_JDIC_VERSION)
+string(STRIP "${GRN_BUNDLED_MECAB_NAIST_JDIC_VERSION}"
+             GRN_BUNDLED_MECAB_NAIST_JDIC_VERSION)
 
 set(GRN_WITH_BUNDLED_MECAB FALSE)
-set(GRN_WITH_MECAB "auto"
-  CACHE STRING "use MeCab for morphological analysis")
+set(GRN_WITH_MECAB
+    "auto"
+    CACHE STRING "use MeCab for morphological analysis")
 if(NOT "${GRN_WITH_MECAB}" STREQUAL "no")
   if(WIN32)
     find_path(MECAB_INCLUDE_DIR NAMES mecab.h)
     find_library(MECAB_LIBRARIES NAMES mecab)
   else()
-    set(GRN_MECAB_CONFIG "mecab-config" CACHE FILEPATH "mecab-config path")
+    set(GRN_MECAB_CONFIG
+        "mecab-config"
+        CACHE FILEPATH "mecab-config path")
     find_program(GRN_MECAB_CONFIG_ABSOLUTE_PATH "${GRN_MECAB_CONFIG}")
     if(EXISTS "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}")
-      execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --inc-dir
+      execute_process(
+        COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --inc-dir
         OUTPUT_VARIABLE MECAB_INCLUDE_DIRS
         OUTPUT_STRIP_TRAILING_WHITESPACE)
-      execute_process(COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --libs-only-L
+      execute_process(
+        COMMAND "${GRN_MECAB_CONFIG_ABSOLUTE_PATH}" --libs-only-L
         OUTPUT_VARIABLE MECAB_LIBRARY_DIRS
         OUTPUT_STRIP_TRAILING_WHITESPACE)
-      find_library(MECAB_LIBRARIES
+      find_library(
+        MECAB_LIBRARIES
         NAMES mecab
         PATHS ${MECAB_LIBRARY_DIRS}
         NO_DEFAULT_PATH)
@@ -575,7 +578,7 @@ if(NOT "${GRN_WITH_MECAB}" STREQUAL "no")
     message(STATUS "MeCab: ${MECAB_LIBRARIES}")
   else()
     set(GRN_BUNDLED_MECAB_DIR
-      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mecab-${GRN_BUNDLED_MECAB_VERSION}")
+        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/mecab-${GRN_BUNDLED_MECAB_VERSION}")
     if(EXISTS ${GRN_BUNDLED_MECAB_DIR})
       set(GRN_WITH_MECAB TRUE)
       set(GRN_WITH_BUNDLED_MECAB TRUE)
@@ -583,16 +586,18 @@ if(NOT "${GRN_WITH_MECAB}" STREQUAL "no")
     else()
       if("${GRN_WITH_MECAB}" STREQUAL "yes")
         if(WIN32)
-          message(FATAL_ERROR
-            "No MeCab found: "
-            "include directories: <${MECAB_INCLUDE_DIRS}>, "
-            "library directories: <${MECAB_LIBRARY_DIRS}>")
+          message(
+            FATAL_ERROR
+              "No MeCab found: "
+              "include directories: <${MECAB_INCLUDE_DIRS}>, "
+              "library directories: <${MECAB_LIBRARY_DIRS}>")
         else()
-          message(FATAL_ERROR
-            "No MeCab found: "
-            "include directories: <${MECAB_INCLUDE_DIRS}>, "
-            "library directories: <${MECAB_LIBRARY_DIRS}>, "
-            "mecab-config: <${GRN_MECAB_CONFIG_ABSOLUTE_PATH}>")
+          message(
+            FATAL_ERROR
+              "No MeCab found: "
+              "include directories: <${MECAB_INCLUDE_DIRS}>, "
+              "library directories: <${MECAB_LIBRARY_DIRS}>, "
+              "mecab-config: <${GRN_MECAB_CONFIG_ABSOLUTE_PATH}>")
         endif()
       endif()
       set(GRN_WITH_MECAB FALSE)
@@ -603,12 +608,13 @@ else()
   set(GRN_WITH_MECAB FALSE)
 endif()
 
-set(GRN_WITH_KYTEA "auto"
-  CACHE STRING "use KyTea for morphological analysis")
+set(GRN_WITH_KYTEA
+    "auto"
+    CACHE STRING "use KyTea for morphological analysis")
 if(NOT ${GRN_WITH_KYTEA} STREQUAL "no")
   if(PkgConfig_FOUND)
     pkg_check_modules(pkg_kytea kytea IMPORTED_TARGET)
-    endif()
+  endif()
   if(pkg_kytea_FOUND)
     set(GRN_WITH_KYTEA TRUE)
     add_library(kytea ALIAS PkgConfig::pkg_kytea)
@@ -622,8 +628,9 @@ else()
   set(GRN_WITH_KYTEA FALSE)
 endif()
 
-set(GRN_WITH_LIBSTEMMER "auto"
-  CACHE STRING "use libstemmer for stemming token filter")
+set(GRN_WITH_LIBSTEMMER
+    "auto"
+    CACHE STRING "use libstemmer for stemming token filter")
 if(NOT ${GRN_WITH_LIBSTEMMER} STREQUAL "no")
   if("${GRN_WITH_LIBSTEMMER}" STREQUAL "yes")
     find_package(Groongalibstemmer REQUIRED)
@@ -639,8 +646,9 @@ else()
   set(GRN_WITH_LIBSTEMMER FALSE)
 endif()
 
-set(GRN_WITH_ZEROMQ "auto"
-  CACHE STRING "use ZeroMQ for suggestion")
+set(GRN_WITH_ZEROMQ
+    "auto"
+    CACHE STRING "use ZeroMQ for suggestion")
 if(NOT ${GRN_WITH_ZEROMQ} STREQUAL "no")
   if(PkgConfig_FOUND)
     pkg_check_modules(pkg_libzmq libzmq IMPORTED_TARGET)
@@ -658,8 +666,9 @@ else()
   set(GRN_WITH_ZEROMQ FALSE)
 endif()
 
-set(GRN_WITH_LIBEVENT "auto"
-  CACHE STRING "use libevent for suggestion")
+set(GRN_WITH_LIBEVENT
+    "auto"
+    CACHE STRING "use libevent for suggestion")
 if(NOT ${GRN_WITH_LIBEVENT} STREQUAL "no")
   if(PkgConfig_FOUND)
     pkg_check_modules(pkg_libevent libevent IMPORTED_TARGET)
@@ -678,14 +687,14 @@ else()
 endif()
 
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_message_pack_version"
-  GRN_BUNDLED_MESSAGE_PACK_VERSION)
-string(STRIP
-  "${GRN_BUNDLED_MESSAGE_PACK_VERSION}"
-  GRN_BUNDLED_MESSAGE_PACK_VERSION)
+     GRN_BUNDLED_MESSAGE_PACK_VERSION)
+string(STRIP "${GRN_BUNDLED_MESSAGE_PACK_VERSION}"
+             GRN_BUNDLED_MESSAGE_PACK_VERSION)
 
 set(GRN_WITH_BUNDLED_MESSAGE_PACK FALSE)
-set(GRN_WITH_MESSAGE_PACK "auto"
-  CACHE STRING "use MessagePack for suggestion")
+set(GRN_WITH_MESSAGE_PACK
+    "auto"
+    CACHE STRING "use MessagePack for suggestion")
 if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
   find_package(Groongamsgpackc)
   if(Groongamsgpackc_FOUND)
@@ -693,11 +702,12 @@ if(NOT ${GRN_WITH_MESSAGE_PACK} STREQUAL "no")
     target_link_libraries(grn_dependencies INTERFACE Groonga::msgpackc)
     if(NOT GRN_EMBED)
       install(FILES "cmake/FindGroongamsgpackc.cmake"
-	DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
+              DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
     endif()
   else()
     set(GRN_BUNDLED_MESSAGE_PACK_DIR
-      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/msgpack-${GRN_BUNDLED_MESSAGE_PACK_VERSION}")
+        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/msgpack-${GRN_BUNDLED_MESSAGE_PACK_VERSION}"
+    )
     if(EXISTS "${GRN_BUNDLED_MESSAGE_PACK_DIR}")
       set(GRN_WITH_BUNDLED_MESSAGE_PACK TRUE)
       set(GRN_WITH_MESSAGE_PACK TRUE)
@@ -715,16 +725,14 @@ else()
   set(GRN_WITH_MESSAGE_PACK FALSE)
 endif()
 
-
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_xxhash_version"
-  GRN_BUNDLED_XXHASH_VERSION)
-string(STRIP
-  "${GRN_BUNDLED_XXHASH_VERSION}"
-  GRN_BUNDLED_XXHASH_VERSION)
+     GRN_BUNDLED_XXHASH_VERSION)
+string(STRIP "${GRN_BUNDLED_XXHASH_VERSION}" GRN_BUNDLED_XXHASH_VERSION)
 
 set(GRN_WITH_BUNDLED_XXHASH FALSE)
-set(GRN_WITH_XXHASH "auto"
-  CACHE STRING "Support drilldown by hashed key with xxHash.")
+set(GRN_WITH_XXHASH
+    "auto"
+    CACHE STRING "Support drilldown by hashed key with xxHash.")
 if(NOT "${GRN_WITH_XXHASH}" STREQUAL "no")
   if("${GRN_WITH_XXHASH}" STREQUAL "bundled")
     set(GroongaxxHash_FOUND FALSE)
@@ -740,19 +748,20 @@ if(NOT "${GRN_WITH_XXHASH}" STREQUAL "no")
     target_link_libraries(grn_dependencies INTERFACE Groonga::xxhash)
   else()
     set(GRN_BUNDLED_XXHASH_DIR
-      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/xxHash-${GRN_BUNDLED_XXHASH_VERSION}")
+        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/xxHash-${GRN_BUNDLED_XXHASH_VERSION}"
+    )
     if(EXISTS ${GRN_BUNDLED_XXHASH_DIR})
       set(GRN_WITH_BUNDLED_XXHASH TRUE)
       set(GRN_WITH_XXHASH TRUE)
       add_library(xxhash INTERFACE)
-      target_include_directories(xxhash BEFORE INTERFACE ${GRN_BUNDLED_XXHASH_DIR})
+      target_include_directories(xxhash BEFORE
+                                 INTERFACE ${GRN_BUNDLED_XXHASH_DIR})
       target_compile_definitions(xxhash INTERFACE XXH_INLINE_ALL)
       target_link_libraries(grn_dependencies INTERFACE xxhash)
       message(STATUS "xxHash: (bundled)")
-      install(FILES
-        "${GRN_BUNDLED_XXHASH_DIR}/LICENSE"
-        "${GRN_BUNDLED_XXHASH_DIR}/README.md"
-        DESTINATION "${GRN_DATA_DIR}/xxhash")
+      install(FILES "${GRN_BUNDLED_XXHASH_DIR}/LICENSE"
+                    "${GRN_BUNDLED_XXHASH_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/xxhash")
     else()
       if(${GRN_WITH_XXHASH} STREQUAL "yes")
         message(FATAL_ERROR "No xxHash found")
@@ -765,17 +774,15 @@ else()
   set(GRN_WITH_XXHASH FALSE)
 endif()
 
-# We need to find LZ4 after xxHash because bundled LZ4 includes its
-# xxhash.h.
+# We need to find LZ4 after xxHash because bundled LZ4 includes its xxhash.h.
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/bundled_lz4_version"
-  GRN_BUNDLED_LZ4_VERSION)
-string(STRIP
-  "${GRN_BUNDLED_LZ4_VERSION}"
-  GRN_BUNDLED_LZ4_VERSION)
+     GRN_BUNDLED_LZ4_VERSION)
+string(STRIP "${GRN_BUNDLED_LZ4_VERSION}" GRN_BUNDLED_LZ4_VERSION)
 
 set(GRN_WITH_BUNDLED_LZ4 FALSE)
-set(GRN_WITH_LZ4 "auto"
-  CACHE STRING "Support data compression by LZ4.")
+set(GRN_WITH_LZ4
+    "auto"
+    CACHE STRING "Support data compression by LZ4.")
 if(NOT "${GRN_WITH_LZ4}" STREQUAL "no")
   if("${GRN_WITH_LZ4}" STREQUAL "bundled")
     set(Groongalz4_FOUND FALSE)
@@ -791,7 +798,7 @@ if(NOT "${GRN_WITH_LZ4}" STREQUAL "no")
     target_link_libraries(grn_dependencies INTERFACE Groonga::liblz4)
   else()
     set(GRN_BUNDLED_LZ4_DIR
-      "${CMAKE_CURRENT_SOURCE_DIR}/vendor/lz4-${GRN_BUNDLED_LZ4_VERSION}")
+        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/lz4-${GRN_BUNDLED_LZ4_VERSION}")
     if(EXISTS ${GRN_BUNDLED_LZ4_DIR})
       set(GRN_WITH_BUNDLED_LZ4 TRUE)
       set(GRN_WITH_LZ4 TRUE)
@@ -809,17 +816,25 @@ else()
   set(GRN_WITH_LZ4 FALSE)
 endif()
 
-
-find_program(RUBY NAMES
-  "ruby"
-  "ruby3.0" "ruby30"
-  "ruby2.7" "ruby27"
-  "ruby2.6" "ruby26"
-  "ruby2.5" "ruby25"
-  "ruby2.4" "ruby24"
-  "ruby2.3" "ruby23"
-  "ruby2.2" "ruby22"
-  "ruby2.1" "ruby21")
+find_program(
+  RUBY
+  NAMES "ruby"
+        "ruby3.0"
+        "ruby30"
+        "ruby2.7"
+        "ruby27"
+        "ruby2.6"
+        "ruby26"
+        "ruby2.5"
+        "ruby25"
+        "ruby2.4"
+        "ruby24"
+        "ruby2.3"
+        "ruby23"
+        "ruby2.2"
+        "ruby22"
+        "ruby2.1"
+        "ruby21")
 
 option(GRN_WITH_MRUBY "use mruby" OFF)
 
@@ -855,7 +870,7 @@ configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 set(GROONGA "${CMAKE_CURRENT_BINARY_DIR}/src/groonga")
 set(GROONGA_SUGGEST_CREATE_DATASET
-  "${CMAKE_CURRENT_BINARY_DIR}/src/suggest/groonga-suggest-create-dataset")
+    "${CMAKE_CURRENT_BINARY_DIR}/src/suggest/groonga-suggest-create-dataset")
 set(GROONGA_BENCHMARK "${CMAKE_CURRENT_BINARY_DIR}/src/groonga-benchmark")
 configure_file(config.sh.in "${CMAKE_CURRENT_BINARY_DIR}/config.sh" @ONLY)
 
@@ -873,14 +888,10 @@ set(EXEEXT "${CMAKE_EXECUTABLE_SUFFIX}")
 configure_file(groonga.pc.in "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc" @ONLY)
 
 if(NOT GRN_EMBED)
-  install(
-    FILES "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc"
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
 endif()
 
-install(FILES
-  "COPYING"
-  "README.md"
-  DESTINATION "${GRN_DATA_DIR}")
+install(FILES "COPYING" "README.md" DESTINATION "${GRN_DATA_DIR}")
 
 add_subdirectory(vendor/plugins)
