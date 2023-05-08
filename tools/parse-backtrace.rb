@@ -7,14 +7,28 @@ require "tempfile"
 
 options = OpenStruct.new
 options.version = nil
+options.pgroonga_version = nil
+options.postgresql_version = nil
 
 parser = OptionParser.new
-parser.banner += "\n  Parse Groonga's backtrace in log"
+parser.banner += "\n  Parse Groonga and its families' backtrace in log"
 parser.on("--version=VERSION",
           "Groonga version",
           "e.g.: 10.0.9",
           "(#{options.version})") do |version|
   options.version = version
+end
+parser.on("--pgroonga-version=VERSION",
+          "PGroonga version",
+          "e.g.: 3.0.0",
+          "(#{options.pgroogna_version})") do |version|
+  options.pgroonga_version = version
+end
+parser.on("--postgresql-version=VERSION",
+          "PostgreSQL version",
+          "e.g.: 15.2",
+          "(#{options.postgresql_version})") do |version|
+  options.postgresql_version = version
 end
 parser.parse!
 
@@ -75,6 +89,18 @@ def prepare_system_almalinux_8(options)
   end
   packages << "groonga-libs#{groonga_package_version}"
   packages << "groonga-libs-debuginfo#{groonga_package_version}"
+  if options.pgroonga_version and options.postgresql_version
+    run_command("dnf", "module", "-y", "disable", "postgresql")
+    run_command("dnf", "install", "-y",
+                "https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm")
+    postgresql_major_version = options.postgresql_version.split(".")[0]
+    packages << ("postgresql#{postgresql_major_version}-server" +
+                 "-#{options.postgresql_version}-1PGDG.rhel8.x86_64")
+    packages << ("postgresql#{postgresql_major_version}-pgdg-pgroonga" +
+                 "-#{options.pgroonga_version}-1.el8.x86_64")
+    packages << ("postgresql#{postgresql_major_version}-pgdg-pgroonga-debuginfo" +
+                 "-#{options.pgroonga_version}-1.el8.x86_64")
+  end
   run_command("dnf", "install", "--enablerepo=powertools", "-y", *packages)
 end
 
@@ -144,7 +170,8 @@ ARGF.each_line do |line|
     debug_path = resolve_debug_path(path, system_version)
     puts(line)
     case path
-    when /libgroonga/
+    when /libgroonga/, /pgroonga\.so/
+      next unless File.exist?(path)
       relative_address = resolve_relative_address(relative_address, debug_path)
       addr2line(debug_path, relative_address)
     end
