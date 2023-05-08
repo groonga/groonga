@@ -155,12 +155,18 @@ def resolve_relative_address(relative_address, path)
 end
 
 def addr2line(path, address)
-  run_command("addr2line", "--exe=#{path}", "%#x" % address)
+  capture_command("addr2line", "--exe=#{path}", "%#x" % address)
+end
+
+def resolve_line(relative_address, path)
+  relative_address = resolve_relative_address(relative_address, path)
+  addr2line(path, relative_address)
 end
 
 system_version = detect_system_version
 prepare_system(system_version, options)
 
+cache = {}
 ARGF.each_line do |line|
   case line
   when /\A\d{4}-\d{2}-\d{2} [^ ]+: (\/[^ (\[]+)\((.+?)\)\s*\[(.+?)\]/
@@ -172,8 +178,9 @@ ARGF.each_line do |line|
     case path
     when /libgroonga/, /pgroonga\.so/
       next unless File.exist?(path)
-      relative_address = resolve_relative_address(relative_address, debug_path)
-      addr2line(debug_path, relative_address)
+      cache_key = [relative_address, debug_path]
+      cache[cache_key] ||= resolve_line(relative_address, debug_path)
+      puts(cache[cache_key])
     end
   end
 end
