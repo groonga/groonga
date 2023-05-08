@@ -69,14 +69,16 @@ set(GRN_ALL_SOURCES
   ${LIBGROONGA_METADATA_SOURCES})
 if(GRN_EMBED)
   add_library(libgroonga STATIC ${GRN_ALL_SOURCES})
+  target_compile_definitions(libgroonga PRIVATE GRN_API)
+  target_compile_definitions(libgroonga PRIVATE GRN_DAT_API)
   set_target_properties(
     libgroonga
     PROPERTIES
     POSITION_INDEPENDENT_CODE ON)
 else()
   add_library(libgroonga SHARED ${GRN_ALL_SOURCES})
+  target_compile_definitions(libgroonga PRIVATE GRN_DAT_EXPORT)
 endif()
-target_compile_definitions(libgroonga PRIVATE GRN_DAT_EXPORT)
 target_compile_definitions(libgroonga PUBLIC "$<BUILD_INTERFACE:HAVE_CONFIG_H>")
 target_include_directories(libgroonga BEFORE PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/dat)
