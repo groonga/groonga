@@ -15,12 +15,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 install(FILES groonga.h groonga.hpp DESTINATION "${GRN_INCLUDE_DIR}")
-install(DIRECTORY groonga DESTINATION "${GRN_INCLUDE_DIR}"
-  FILES_MATCHING
-    PATTERN "*.h"
-    PATTERN "*.hpp")
-install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/groonga"
+install(
+  DIRECTORY groonga
   DESTINATION "${GRN_INCLUDE_DIR}"
   FILES_MATCHING
-    PATTERN "*.h"
-    PATTERN "*.hpp")
+  PATTERN "*.h"
+  PATTERN "*.hpp")
+install(
+  DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/groonga"
+  DESTINATION "${GRN_INCLUDE_DIR}"
+  FILES_MATCHING
+  PATTERN "*.h"
+  PATTERN "*.hpp")

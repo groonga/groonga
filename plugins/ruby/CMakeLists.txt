@@ -19,6 +19,6 @@ if(NOT GRN_EMBED)
 
     read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am RUBY_SCRIPTS)
     install(FILES ${RUBY_SCRIPTS}
-      DESTINATION "${GRN_RELATIVE_RUBY_PLUGINS_DIR}")
+            DESTINATION "${GRN_RELATIVE_RUBY_PLUGINS_DIR}")
   endif()
 endif()

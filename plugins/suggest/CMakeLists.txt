@@ -17,20 +17,17 @@
 set(GRN_SUGGEST_PLUGIN_DIR "${GRN_RELATIVE_PLUGINS_DIR}/suggest")
 read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/sources.am SUGGEST_SOURCES)
 set_source_files_properties(${SUGGEST_SOURCES}
-  PROPERTIES
-  COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
+                            PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 if(GRN_EMBED)
   add_library(suggest STATIC ${SUGGEST_SOURCES})
-  set_target_properties(
-    suggest
-    PROPERTIES
-    POSITION_INDEPENDENT_CODE ON)
+  set_target_properties(suggest PROPERTIES POSITION_INDEPENDENT_CODE ON)
 else()
   add_library(suggest MODULE ${SUGGEST_SOURCES})
   set_target_properties(suggest PROPERTIES PREFIX "")
   install(TARGETS suggest DESTINATION "${GRN_SUGGEST_PLUGIN_DIR}")
   if(MSVC)
-    install(FILES $<TARGET_PDB_FILE:suggest>
+    install(
+      FILES $<TARGET_PDB_FILE:suggest>
       DESTINATION "${GRN_SUGGEST_PLUGIN_DIR}"
       OPTIONAL)
   endif()

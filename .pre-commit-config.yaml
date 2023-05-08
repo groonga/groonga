@@ -37,9 +37,5 @@ repos:
     rev: v0.6.13
     hooks:
       - id: cmake-format
-        files: >-
-          (
-          ?CMakeLists\.txt|
-          )
 
 exclude: "^vendor/.*"

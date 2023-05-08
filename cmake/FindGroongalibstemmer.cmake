@@ -15,18 +15,19 @@
 
 find_path(libstemmer_header libstemmer.h)
 if(libstemmer_header)
-  get_filename_component(libstemmer_include_dir "${libstemmer_header}" DIRECTORY)
+  get_filename_component(libstemmer_include_dir "${libstemmer_header}"
+                         DIRECTORY)
 endif()
 find_library(libstemmer_library stemmer)
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Groongalibstemmer
-  REQUIRED_VARS libstemmer_include_dir libstemmer_library)
+find_package_handle_standard_args(
+  Groongalibstemmer REQUIRED_VARS libstemmer_include_dir libstemmer_library)
 
 if(Groongalibstemmer_FOUND AND NOT TARGET Groonga::libstemmer)
   add_library(Groonga::libstemmer UNKNOWN IMPORTED)
-  target_include_directories(Groonga::libstemmer INTERFACE
-    ${libstemmer_include_dir})
-  set_target_properties(Groonga::libstemmer PROPERTIES
-    IMPORTED_LOCATION ${libstemmer_library})
+  target_include_directories(Groonga::libstemmer
+                             INTERFACE ${libstemmer_include_dir})
+  set_target_properties(Groonga::libstemmer PROPERTIES IMPORTED_LOCATION
+                                                       ${libstemmer_library})
 endif()

@@ -37,14 +37,13 @@ if(NOT Groongazstd_FOUND)
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
     pkg_check_modules(Groongazstd_pkg_libzstd IMPORTED_TARGET
-      "libzstd${pkg_check_modules_version}")
+                      "libzstd${pkg_check_modules_version}")
     set(Groongazstd_FOUND ${Groongazstd_pkg_libzstd_FOUND})
     if(Groongazstd_pkg_libzstd_FOUND)
-	    add_library(Groonga::libzstd ALIAS PkgConfig::Groongazstd_pkg_libzstd)
+      add_library(Groonga::libzstd ALIAS PkgConfig::Groongazstd_pkg_libzstd)
     endif()
   endif()
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Groongazstd
-  REQUIRED_VARS Groongazstd_FOUND)
+find_package_handle_standard_args(Groongazstd REQUIRED_VARS Groongazstd_FOUND)

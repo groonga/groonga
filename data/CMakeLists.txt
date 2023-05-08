@@ -15,7 +15,4 @@
 
 add_subdirectory(html)
 
-install(FILES
-  groonga.conf
-  synonyms.tsv
-  DESTINATION "${GRN_CONFIG_DIR}/")
+install(FILES groonga.conf synonyms.tsv DESTINATION "${GRN_CONFIG_DIR}/")

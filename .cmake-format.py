@@ -14,7 +14,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 with section("format"):
-  command_case = 'lower'
+    command_case = "lower"
 
 with section("markup"):
-  first_comment_is_literal = True
+    enable_markup = False

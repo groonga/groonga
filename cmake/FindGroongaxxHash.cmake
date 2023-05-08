@@ -37,18 +37,18 @@ if(NOT GroongaxxHash_FOUND)
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
     pkg_check_modules(GroongaxxHash_pkg_libxxhash IMPORTED_TARGET
-      "libxxhash${pkg_check_modules_version}")
+                      "libxxhash${pkg_check_modules_version}")
     set(GroongaxxHash_FOUND ${GroongaxxHash_pkg_libxxhash_FOUND})
     if(GroongaxxHash_pkg_libxxhash_FOUND)
       if(GroongaxxHash_pkg_libxxhash_VERSION VERSION_LESS "0.8.0")
         target_compile_definitions(PkgConfig::GroongaxxHash_pkg_libxxhash
-          INTERFACE XXH_INLINE_ALL)
+                                   INTERFACE XXH_INLINE_ALL)
       endif()
-	    add_library(Groonga::xxhash ALIAS PkgConfig::GroongaxxHash_pkg_libxxhash)
+      add_library(Groonga::xxhash ALIAS PkgConfig::GroongaxxHash_pkg_libxxhash)
     endif()
   endif()
 endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GroongaxxHash
-  REQUIRED_VARS GroongaxxHash_FOUND)
+                                  REQUIRED_VARS GroongaxxHash_FOUND)

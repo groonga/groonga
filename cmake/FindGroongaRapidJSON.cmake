@@ -30,18 +30,19 @@ find_package(RapidJSON ${find_package_args})
 set(GroongaRapidJSON_FOUND ${RapidJSON_FOUND})
 if(GroongaRapidJSON_FOUND)
   add_library(Groonga::RapidJSON INTERFACE IMPORTED)
-  target_include_directories(Groonga::RapidJSON INTERFACE
-    "${RAPIDJSON_INCLUDE_DIRS}")
+  target_include_directories(Groonga::RapidJSON
+                             INTERFACE "${RAPIDJSON_INCLUDE_DIRS}")
 endif()
 
 if(NOT GroongaRapidJSON_FOUND)
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
-    pkg_check_modules(GroongaRapidJSON_pkg_RapidJSON
-      IMPORTED_TARGET "RapidJSON${pkg_check_modules_version}")
+    pkg_check_modules(GroongaRapidJSON_pkg_RapidJSON IMPORTED_TARGET
+                      "RapidJSON${pkg_check_modules_version}")
     set(GroongaRapidJSON_FOUND ${GroongaRapidJSON_pkg_RapidJSON_FOUND})
     if(GroongaRapidJSON_FOUND)
-	    add_library(Groonga::RapidJSON ALIAS PkgConfig::GroongaRapidJSON_pkg_RapidJSON)
+      add_library(Groonga::RapidJSON ALIAS
+                  PkgConfig::GroongaRapidJSON_pkg_RapidJSON)
     endif()
   endif()
 endif()
@@ -51,17 +52,15 @@ if(NOT GroongaRapidJSON_FOUND)
   if(GroongaRapidJSON_rapidjson_h)
     add_library(Groonga::RapidJSON INTERFACE IMPORTED)
     get_filename_component(GroongaRapidJSON_INCLUDE_DIR
-      "${GroongaRapidJSON_rapidjson_h}"
-      DIRECTORY)
+                           "${GroongaRapidJSON_rapidjson_h}" DIRECTORY)
     get_filename_component(GroongaRapidJSON_INCLUDE_DIR
-      "${GroongaRapidJSON_INCLUDE_DIR}"
-      DIRECTORY)
-    target_include_directories(Groonga::RapidJSON INTERFACE
-      "${GroongaRapidJSON_INCLUDE_DIR}")
+                           "${GroongaRapidJSON_INCLUDE_DIR}" DIRECTORY)
+    target_include_directories(Groonga::RapidJSON
+                               INTERFACE "${GroongaRapidJSON_INCLUDE_DIR}")
     set(GroongaRapidJSON_FOUND TRUE)
   endif()
 endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GroongaRapidJSON
-  REQUIRED_VARS GroongaRapidJSON_FOUND)
+                                  REQUIRED_VARS GroongaRapidJSON_FOUND)

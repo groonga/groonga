@@ -41,14 +41,13 @@ if(NOT Groongalz4_FOUND)
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
     pkg_check_modules(Groongalz4_pkg_liblz4 IMPORTED_TARGET
-      "liblz4${pkg_check_modules_version}")
+                      "liblz4${pkg_check_modules_version}")
     set(Groongalz4_FOUND ${Groongalz4_pkg_liblz4_FOUND})
     if(Groongalz4_pkg_liblz4_FOUND)
-	    add_library(Groonga::liblz4 ALIAS PkgConfig::Groongalz4_pkg_liblz4)
+      add_library(Groonga::liblz4 ALIAS PkgConfig::Groongalz4_pkg_liblz4)
     endif()
   endif()
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Groongalz4
-  REQUIRED_VARS Groongalz4_FOUND)
+find_package_handle_standard_args(Groongalz4 REQUIRED_VARS Groongalz4_FOUND)

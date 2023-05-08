@@ -24,7 +24,6 @@ add_subdirectory(functions)
 if(NOT GRN_EMBED)
   if(GRN_WITH_MRUBY)
     read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/ruby_scripts.am RUBY_SCRIPTS)
-    install(FILES ${RUBY_SCRIPTS}
-      DESTINATION "${GRN_RELATIVE_PLUGINS_DIR}")
+    install(FILES ${RUBY_SCRIPTS} DESTINATION "${GRN_RELATIVE_PLUGINS_DIR}")
   endif()
 endif()

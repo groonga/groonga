@@ -51,17 +51,19 @@ endif()
 if(NOT Groongamsgpackc_FOUND)
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
-    pkg_check_modules(Groongamsgpack_pkg_msgpack-c
-      IMPORTED_TARGET "msgpack-c${pkg_check_modules_version}")
+    pkg_check_modules(Groongamsgpack_pkg_msgpack-c IMPORTED_TARGET
+                      "msgpack-c${pkg_check_modules_version}")
     set(Groongamsgpackc_FOUND ${Groongamsgpack_pkg_msgpack-c_FOUND})
     if(Groongamsgpackc_FOUND)
-	    add_library(Groonga::msgpackc ALIAS PkgConfig::Groongamsgpack_pkg_msgpack-c)
+      add_library(Groonga::msgpackc ALIAS
+                  PkgConfig::Groongamsgpack_pkg_msgpack-c)
     else()
-      pkg_check_modules(Groongamsgpack_pkg_msgpack
-        IMPORTED_TARGET "msgpack${pkg_check_modules_version}")
+      pkg_check_modules(Groongamsgpack_pkg_msgpack IMPORTED_TARGET
+                        "msgpack${pkg_check_modules_version}")
       set(Groongamsgpackc_FOUND ${Groongamsgpack_pkg_msgpack_FOUND})
       if(Groongamsgpackc_FOUND)
-	      add_library(Groonga::msgpackc ALIAS PkgConfig::Groongamsgpack_pkg_msgpack)
+        add_library(Groonga::msgpackc ALIAS
+                    PkgConfig::Groongamsgpack_pkg_msgpack)
       endif()
     endif()
   endif()
@@ -69,4 +71,4 @@ endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Groongamsgpackc
-  REQUIRED_VARS Groongamsgpackc_FOUND)
+                                  REQUIRED_VARS Groongamsgpackc_FOUND)
