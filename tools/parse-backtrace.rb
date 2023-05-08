@@ -90,16 +90,22 @@ def prepare_system_almalinux_8(options)
   packages << "groonga-libs#{groonga_package_version}"
   packages << "groonga-libs-debuginfo#{groonga_package_version}"
   if options.pgroonga_version and options.postgresql_version
+    postgresql_major_version = options.postgresql_version.split(".")[0]
+    package_prefix = "postgresql#{postgresql_major_version}-"
+    postgresql_package_version =
+      "-#{options.postgresql_version}-1PGDG.rhel8.x86_64"
+    pgroonga_package_version = "-#{options.pgroonga_version}-1.el8.x86_64"
+
     run_command("dnf", "module", "-y", "disable", "postgresql")
     run_command("dnf", "install", "-y",
                 "https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm")
-    postgresql_major_version = options.postgresql_version.split(".")[0]
-    packages << ("postgresql#{postgresql_major_version}-server" +
-                 "-#{options.postgresql_version}-1PGDG.rhel8.x86_64")
-    packages << ("postgresql#{postgresql_major_version}-pgdg-pgroonga" +
-                 "-#{options.pgroonga_version}-1.el8.x86_64")
-    packages << ("postgresql#{postgresql_major_version}-pgdg-pgroonga-debuginfo" +
-                 "-#{options.pgroonga_version}-1.el8.x86_64")
+    run_command("dnf", "config-manager", "--set-enabled",
+                "pgdg#{postgresql_major_version}-debuginfo")
+    packages << "#{package_prefix}server#{postgresql_package_version}"
+    packages << "#{package_prefix}server-debuginfo#{postgresql_package_version}"
+    packages << "#{package_prefix}debugsource#{postgresql_package_version}"
+    packages << "#{package_prefix}pgdg-pgroonga#{pgroonga_package_version}"
+    packages << "#{package_prefix}pgdg-pgroonga-debuginfo#{pgroonga_package_version}"
   end
   run_command("dnf", "install", "--enablerepo=powertools", "-y", *packages)
 end
@@ -120,6 +126,14 @@ def prepare_system(system_version, options)
   else
     raise "unsupported system: #{system_version}"
   end
+end
+
+def postgresql_path(system_version, options)
+  return nil unless options.postgresql_version
+  postgresql_major_version = options.postgresql_version.split(".")[0]
+  postgres = "/usr/pgsql-#{postgresql_major_version}/bin/postgres"
+  return nil unless File.exist?(postgres)
+  postgres
 end
 
 def resolve_debug_path(path, system_version)
@@ -174,18 +188,27 @@ ARGF.each_line do |line|
     next
   end
   case line
-  when /\A\d{4}-\d{2}-\d{2} [^ ]+: (\/[^ (\[]+)\((.+?)\)\s*\[(.+?)\]/
+  when /\A\d{4}-\d{2}-\d{2} [^ ]+: (\/[^ \(\[]+)\((.+?)\)\s*\[(.+?)\]\Z/
     path = $1
     relative_address = $2
     absolute_address = $3
     debug_path = resolve_debug_path(path, system_version)
     puts(line)
     case path
-    when /libgroonga/, /pgroonga\.so/
+    when /libgroonga/, /pgroonga/
       next unless File.exist?(path)
       cache_key = [relative_address, debug_path]
       cache[cache_key] ||= resolve_line(relative_address, debug_path)
       puts(cache[cache_key])
     end
+  when /\A\d{4}-\d{2}-\d{2} [^ ]+: (?:postgres: .+)\s*\[(.+?)\]\Z/
+    absolute_address = $1
+    path = postgresql_path(system_version, options)
+    next if path.nil?
+    debug_path = resolve_debug_path(path, system_version)
+    puts(line)
+    cache_key = [relative_address, debug_path]
+    cache[cache_key] ||= addr2line(debug_path, absolute_address)
+    puts(cache[cache_key])
   end
 end
