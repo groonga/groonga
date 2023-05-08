@@ -383,7 +383,7 @@ set(GRN_WITH_ZLIB "auto"
   CACHE STRING "Support data compression by zlib.")
 if(NOT ${GRN_WITH_ZLIB} STREQUAL "no")
   # This is for building in MariaDB.
-  if(GRN_EMBED AND TARGET zlib)
+  if(TARGET zlib)
     target_link_libraries(grn_dependencies INTERFACE zlib)
     set(GRN_WITH_ZLIB TRUE)
   else()
