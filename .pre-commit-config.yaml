@@ -37,10 +37,6 @@ repos:
     rev: v0.6.13
     hooks:
       - id: cmake-format
-        args:
-          - "--command-case=lower"
-          - "--first-comment-is-literal"
-          - "--in-place"
         files: >-
           (
           ?CMakeLists\.txt|

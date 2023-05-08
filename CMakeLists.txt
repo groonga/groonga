@@ -854,7 +854,7 @@ if(NOT "${GRN_WITH_ROARING_BITMAPS}" STREQUAL "no")
       set(CROARING_SOURCE_URL ${CROARING_SOURCE_LOCAL_PATH})
     else()
       set(CROARING_SOURCE_URL
-	"https://github.com/RoaringBitmap/CRoaring/archive/refs/tags/")
+          "https://github.com/RoaringBitmap/CRoaring/archive/refs/tags/")
       string(APPEND CROARING_SOURCE_URL "/v${GRN_CROARING_EP_VERSION}.tar.gz")
     endif()
     externalproject_add(
@@ -873,8 +873,10 @@ if(NOT "${GRN_WITH_ROARING_BITMAPS}" STREQUAL "no")
     add_dependencies(roaring croaring-ep)
     set(CROARING_SOURCE_DIR
         "${CMAKE_CURRENT_BINARY_DIR}/croaring-ep-prefix/src/croaring-ep")
-    install(FILES "${CROARING_SOURCE_DIR}/AUTHORS" "${CROARING_SOURCE_DIR}/LICENSE" "${CROARING_SOURCE_DIR}/README.md"
-            DESTINATION "${GRN_DATA_DIR}/croaring")
+    install(
+      FILES "${CROARING_SOURCE_DIR}/AUTHORS" "${CROARING_SOURCE_DIR}/LICENSE"
+            "${CROARING_SOURCE_DIR}/README.md"
+      DESTINATION "${GRN_DATA_DIR}/croaring")
     set(GRN_WITH_CROARING TRUE)
     target_link_libraries(grn_dependencies INTERFACE roaring)
     message(STATUS "Roaring bitmaps: ${CROARING_STATIC_LIBRARY} (bundled)")
