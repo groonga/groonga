@@ -168,6 +168,11 @@ prepare_system(system_version, options)
 
 cache = {}
 ARGF.each_line do |line|
+  unless line.valid_encoding?
+    puts("invalid encoding line:")
+    p(line)
+    next
+  end
   case line
   when /\A\d{4}-\d{2}-\d{2} [^ ]+: (\/[^ (\[]+)\((.+?)\)\s*\[(.+?)\]/
     path = $1
