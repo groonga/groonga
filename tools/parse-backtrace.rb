@@ -207,7 +207,7 @@ ARGF.each_line do |line|
     next if path.nil?
     debug_path = resolve_debug_path(path, system_version)
     puts(line)
-    cache_key = [relative_address, debug_path]
+    cache_key = [debug_path, absolute_address]
     cache[cache_key] ||= addr2line(debug_path, absolute_address)
     puts(cache[cache_key])
   end
