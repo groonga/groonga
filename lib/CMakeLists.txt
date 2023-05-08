@@ -69,8 +69,7 @@ set(GRN_ALL_SOURCES
   ${LIBGROONGA_METADATA_SOURCES})
 if(GRN_EMBED)
   add_library(libgroonga STATIC ${GRN_ALL_SOURCES})
-  target_compile_definitions(libgroonga PRIVATE GRN_API)
-  target_compile_definitions(libgroonga PRIVATE GRN_DAT_API)
+  target_compile_definitions(libgroonga PUBLIC GRN_STATIC)
   set_target_properties(
     libgroonga
     PROPERTIES

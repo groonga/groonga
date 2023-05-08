@@ -68,16 +68,21 @@
 # include <sys/resource.h>
 #endif /* HAVE_SYS_RESOURCE_H */
 
-#ifdef WIN32
-# define GRN_API __declspec(dllexport)
-# ifdef GROONGA_MAIN
-#  define GRN_VAR __declspec(dllimport)
-# else
-#  define GRN_VAR __declspec(dllexport) extern
-# endif /* GROONGA_MAIN */
-#else
+#ifdef GRN_STATIC
 # define GRN_API
 # define GRN_VAR extern
+#else
+# ifdef WIN32
+#  define GRN_API __declspec(dllexport)
+#  ifdef GROONGA_MAIN
+#   define GRN_VAR __declspec(dllimport)
+#  else
+#   define GRN_VAR __declspec(dllexport) extern
+#  endif /* GROONGA_MAIN */
+# else
+#  define GRN_API
+#  define GRN_VAR extern
+# endif
 #endif
 
 #ifdef WIN32

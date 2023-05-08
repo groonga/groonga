@@ -29,17 +29,21 @@
 # include <iostream>
 #endif  // _DEBUG
 
-#ifndef GRN_DAT_API
-# ifdef WIN32
-#  ifdef GRN_DAT_EXPORT
-#   define GRN_DAT_API __declspec(dllexport)
-#  else  // GRN_DAT_EXPORT
-#   define GRN_DAT_API __declspec(dllimport)
-#  endif  // GRN_DAT_EXPORT
-# else  // WIN32
-#  define GRN_DAT_API
-# endif  // WIN32
-#endif  // GRN_DAT_API
+#ifdef GRN_STATIC
+# define GRN_DAT_API
+#else
+# ifndef GRN_DAT_API
+#  ifdef WIN32
+#   ifdef GRN_DAT_EXPORT
+#    define GRN_DAT_API __declspec(dllexport)
+#   else  // GRN_DAT_EXPORT
+#    define GRN_DAT_API __declspec(dllimport)
+#   endif  // GRN_DAT_EXPORT
+#  else  // WIN32
+#   define GRN_DAT_API
+#  endif  // WIN32
+# endif  // GRN_DAT_API
+#endif
 
 namespace grn {
 namespace dat {

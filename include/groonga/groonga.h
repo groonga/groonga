@@ -30,11 +30,15 @@ extern "C" {
 #endif
 
 #ifndef GRN_API
-# if defined(_WIN32) || defined(_WIN64)
-#  define GRN_API __declspec(dllimport)
-# else
+# ifdef GRN_STATIC
 #  define GRN_API
-# endif /* defined(_WIN32) || defined(_WIN64) */
+# else
+#  if defined(_WIN32) || defined(_WIN64)
+#   define GRN_API __declspec(dllimport)
+#  else
+#   define GRN_API
+#  endif /* defined(_WIN32) || defined(_WIN64) */
+# endif
 #endif /* GRN_API */
 
 typedef uint32_t grn_id;
