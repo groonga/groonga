@@ -28,7 +28,7 @@ EXTRA_DIST =					\
 	bundled_mecab_version			\
 	bundled_rapidjson_version		\
 	bundled_xxhash_version			\
-	config.h.cmake				\
+	config.h.cmake.in			\
 	gpg_uid					\
 	nginx_version				\
 	version-gen.sh
