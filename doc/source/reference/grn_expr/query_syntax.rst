@@ -13,7 +13,7 @@ contain both ``word1`` and ``word2``. ``word1 OR word2`` means that
 groonga searches records that contain either ``word1`` or ``word2``.
 
 Query syntax consists of ``conditional expression``, ``combind
-expression`` and ``assignment expression``. Nomrally ``assignment
+expression`` and ``assignment expression``. Normally ``assignment
 expression`` can be ignored. Because ``assignment expression`` is
 disabled in ``--query`` option of :doc:`/reference/commands/select`. You can use
 it if you use groonga as library and customize query syntax parser
