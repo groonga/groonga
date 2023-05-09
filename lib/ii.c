@@ -2437,7 +2437,7 @@ grn_p_decv(grn_ctx *ctx,
             "<%.*s>: "
             "<%.*s>(%u): "
             "%" GRN_FMT_SIZE " -> %" GRN_FMT_SIZE ": "
-            "PForDelta(%s)",
+            "PForDelta(%#x)", /* Binary number is better but %b doesn't exist... */
             name_size,
             name,
             (int)GRN_TEXT_LEN(&term),
@@ -2445,7 +2445,7 @@ grn_p_decv(grn_ctx *ctx,
             id,
             dv[dvlen].data - dv[0].data,
             size,
-            usep ? "true" : "false");
+            usep);
         GRN_OBJ_FIN(ctx, &term);
         return 0;
       }
