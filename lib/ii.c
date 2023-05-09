@@ -2437,7 +2437,7 @@ grn_p_decv(grn_ctx *ctx,
             "<%.*s>: "
             "<%.*s>(%u): "
             "%" GRN_FMT_SIZE " -> %" GRN_FMT_SIZE ": "
-            "PForDelta(%#x)", /* Binary number is better but %b doesn't exist... */
+            "PForDelta(%#x)", /* Binary number is better but %b doesn't exist. */
             name_size,
             name,
             (int)GRN_TEXT_LEN(&term),
