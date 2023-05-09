@@ -2432,20 +2432,21 @@ grn_p_decv(grn_ctx *ctx,
         if (id != GRN_ID_NIL) {
           grn_ii_get_term(ctx, ii, id, &term);
         }
-        ERR(GRN_NO_MEMORY_AVAILABLE,
-            "[ii][p-decv] failed to extend buffer for data vector: "
-            "<%.*s>: "
-            "<%.*s>(%u): "
-            "%" GRN_FMT_SIZE " -> %" GRN_FMT_SIZE ": "
-            "PForDelta(%#x)", /* Binary number is better but %b doesn't exist. */
-            name_size,
-            name,
-            (int)GRN_TEXT_LEN(&term),
-            GRN_TEXT_VALUE(&term),
-            id,
-            dv[dvlen].data - dv[0].data,
-            size,
-            usep);
+        ERR(
+          GRN_NO_MEMORY_AVAILABLE,
+          "[ii][p-decv] failed to extend buffer for data vector: "
+          "<%.*s>: "
+          "<%.*s>(%u): "
+          "%" GRN_FMT_SIZE " -> %" GRN_FMT_SIZE ": "
+          "PForDelta(%#x)", /* Binary number is better but %b doesn't exist. */
+          name_size,
+          name,
+          (int)GRN_TEXT_LEN(&term),
+          GRN_TEXT_VALUE(&term),
+          id,
+          dv[dvlen].data - dv[0].data,
+          size,
+          usep);
         GRN_OBJ_FIN(ctx, &term);
         return 0;
       }
