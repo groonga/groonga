@@ -433,7 +433,49 @@ grn_rc grn_io_warm(grn_ctx *ctx, grn_io *io);
 
 #define GRN_B_ENC_MAX_SIZE 5
 
-/* B is for ??? */
+/* B is for ???
+ *
+ * v: The uint32_t value to be encoded.
+ *
+ * v < 0x8f:
+ *  +--------+
+ *  |1000AAAA|
+ *  +--------+
+ *  A = v
+ *
+ * 0x8f <= v < 0x408f:
+ *  +--------+--------+
+ *  |11AAAAAA|BBBBBBBB|
+ *  +--------+--------+
+ *  A = ((v - 0x8f) >> 8)
+ *  B = ((v - 0x8f) & 0xff)
+ *
+ * 0x408f <= v < 0x20408f:
+ *  +--------+--------+--------+
+ *  |101AAAAA|BBBBBBBB|CCCCCCCC|
+ *  +--------+--------+--------+
+ *  A = ((v - 0x408f) >> 16)
+ *  B = ((v - 0x408f) >> 8) & 0xff
+ *  C = ((v - 0x408f) & 0xff)
+ *
+ * 0x20408f <= v < 0x1020408f:
+ *  +--------+--------+--------+--------+
+ *  |1001AAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD|
+ *  +--------+--------+--------+--------+
+ *  A = ((v - 0x20408f) >> 24)
+ *  B = ((v - 0x20408f) >> 16) & 0xff
+ *  C = ((v - 0x20408f) >>  8) & 0xff
+ *  D = ((v - 0x20408f) & 0xff)
+ *
+ * 0x1020408f <= v:
+ *  +--------+--------+--------+--------+--------+
+ *  |10001111|AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD|
+ *  +--------+--------+--------+--------+--------+
+ *  A = (v >> 24) & 0xff
+ *  B = (v >> 16) & 0xff
+ *  C = (v >>  8) & 0xff
+ *  D = (v & 0xff)
+ * */
 #define GRN_B_ENC(v,p) do {\
   uint8_t *_p = (uint8_t *)p; \
   uint32_t _v = v; \
