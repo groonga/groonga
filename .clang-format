@@ -16,6 +16,7 @@
 AlignAfterOpenBracket: true
 AlignConsecutiveMacros: AcrossEmptyLines
 AllowAllArgumentsOnNextLine: false
+AllowShortEnumsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: WithoutElse
 AlwaysBreakAfterReturnType: All
 BinPackArguments: false

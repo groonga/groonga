@@ -26,6 +26,7 @@ repos:
           ?lib/ctx\.c|
           ?lib/db\.c|
           ?lib/grn_ii\.h|
+          ?lib/grn_io\.h|
           ?lib/grn_proc\.h|
           ?lib/highlighter\.c|
           ?lib/ii\.c|
