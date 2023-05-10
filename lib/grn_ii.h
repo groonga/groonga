@@ -89,7 +89,7 @@ struct _grn_ii {
   uint32_t flags;                                                              \
   uint32_t amax;                                                               \
   uint32_t smax;                                                               \
-  uint32_t param1; /* unused */                                                \
+  uint32_t internal_flags;                                                     \
   uint32_t param2; /* unused */                                                \
   uint32_t pnext;  /* unused */                                                \
   uint32_t bgqhead;                                                            \

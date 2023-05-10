@@ -57,6 +57,10 @@
 #  include "grn_onigmo.h"
 #endif
 
+#ifdef GRN_WITH_ROARING_BITMAPS
+#  include <roaring/roaring.h>
+#endif
+
 /* #define GRN_II_TOKEN_INFO_DEBUG */
 #ifdef GRN_II_TOKEN_INFO_DEBUG
 #  define P_NOTE(...)               printf(__VA_ARGS__)
@@ -94,6 +98,9 @@
 
 #define MAX_N_ELEMENTS          5
 
+/* internal_flags */
+#define GRN_II_INTERNAL_ROARING_BITMAPS (0x01 << 0)
+
 #ifndef S_IRUSR
 #  define S_IRUSR 0400
 #endif /* S_IRUSR */
@@ -111,6 +118,7 @@ static uint32_t grn_ii_max_n_segments_small = MAX_PSEG_SMALL;
 static uint32_t grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK_SMALL;
 static int64_t grn_ii_reduce_expire_threshold = 32;
 static bool grn_ii_dump_index_source_on_merge = false;
+static bool grn_ii_create_use_roaring_bitmaps = false;
 
 void
 grn_ii_init_from_env(void)
@@ -255,6 +263,18 @@ grn_ii_init_from_env(void)
       grn_ii_dump_index_source_on_merge = true;
     } else {
       grn_ii_dump_index_source_on_merge = false;
+    }
+  }
+
+  {
+    char grn_ii_create_use_roaring_bitmaps_env[GRN_ENV_BUFFER_SIZE];
+    grn_getenv("GRN_II_CREATE_USE_ROARING_BITMAPS",
+               grn_ii_create_use_roaring_bitmaps_env,
+               GRN_ENV_BUFFER_SIZE);
+    if (strcmp(grn_ii_create_use_roaring_bitmaps_env, "yes") == 0) {
+      grn_ii_create_use_roaring_bitmaps = true;
+    } else {
+      grn_ii_create_use_roaring_bitmaps = false;
     }
   }
 }
@@ -2028,8 +2048,12 @@ pack(uint32_t *p, uint32_t i, uint8_t *freq, uint8_t *rp)
   return rp + (ep - ebuf);
 }
 
-#define DATA_USE_P_FOR_ENC (1 << 0) /* Use PFor */
+/* Use block unit encoding, PFor, PForDelta or roaring bitmaps */
+#define DATA_USE_BLOCK_ENC (1 << 0)
 #define DATA_ODD           (1 << 2) /* Variable size data */
+#define DATA_RECORD_IDS    (1 << 3) /* Record IDs data */
+#define DATA_SECTION_IDS   (1 << 4) /* Section IDs data */
+#define DATA_POSITIONS     (1 << 5) /* Positions data */
 
 typedef struct {
   uint32_t *data;
@@ -2061,6 +2085,9 @@ datavec_reset(
   for (i = 1; i < ii->n_elements; i++) {
     dv[i].data = dv[i - 1].data + unitsize;
   }
+  for (i = 0; i < ii->n_elements; i++) {
+    dv[i].flags &= ~DATA_USE_BLOCK_ENC;
+  }
   return GRN_SUCCESS;
 }
 
@@ -2087,8 +2114,24 @@ datavec_init(
       dv[i].data = dv[i - 1].data + unitsize;
     }
   }
-  if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
-    dv[ii->n_elements - 1].flags = DATA_ODD;
+  {
+    uint32_t i = 0;
+    /* record IDs */
+    dv[i++].flags = DATA_RECORD_IDS;
+    if (ii->header.common->flags & GRN_OBJ_WITH_SECTION) {
+      /* sections */
+      dv[i++].flags = DATA_SECTION_IDS;
+    }
+    /* term frequencies */
+    dv[i++].flags = 0;
+    if (ii->header.common->flags & GRN_OBJ_WITH_WEIGHT) {
+      /* weights */
+      dv[i++].flags = 0;
+    }
+    if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
+      /* positions */
+      dv[i++].flags = DATA_ODD | DATA_POSITIONS;
+    }
   }
   return GRN_SUCCESS;
 }
@@ -2102,21 +2145,128 @@ datavec_fin(grn_ctx *ctx, datavec *dv)
 }
 
 static grn_inline bool
-data_records_use_p_for_enc(uint32_t n_records, uint32_t max_record_id)
+data_records_use_block_enc(uint32_t n_records, uint32_t max_record_id)
 {
   return n_records >= 16 && (n_records > (max_record_id >> 8));
 }
 
 static grn_inline bool
-data_sections_use_p_for_enc(uint32_t n_records)
+data_sections_use_block_enc(uint32_t n_records)
 {
   return n_records >= 3;
 }
 
 static grn_inline bool
-data_positions_use_p_for_enc(uint32_t n_positions, uint32_t max_position)
+data_positions_use_block_enc(uint32_t n_positions, uint32_t max_position)
 {
   return n_positions >= 32 && n_positions > (max_position >> 13);
+}
+
+static grn_inline void
+data_record_ids_delta_encode(grn_ctx *ctx,
+                             uint32_t *values,
+                             uint32_t n_values)
+{
+  uint32_t previous_value = 0;
+  uint32_t i;
+  for (i = 0; i < n_values; i++) {
+    uint32_t value = values[i];
+    values[i] -= previous_value;
+    previous_value = value;
+  }
+}
+
+static grn_inline void
+data_record_ids_delta_decode(grn_ctx *ctx,
+                             uint32_t *values,
+                             uint32_t n_values)
+{
+  uint32_t previous_value = 0;
+  uint32_t i;
+  for (i = 0; i < n_values; i++) {
+    values[i] += previous_value;
+    previous_value = values[i];
+  }
+}
+
+static grn_inline void
+data_section_ids_delta_encode(grn_ctx *ctx,
+                              uint32_t *values,
+                              uint32_t n_values,
+                              uint32_t *record_ids)
+{
+  uint32_t previous_value = 0;
+  uint32_t previous_record_id = 0;
+  uint32_t i;
+  for (i = 0; i < n_values; i++) {
+    uint32_t value = values[i];
+    grn_id record_id = record_ids[i];
+    if (record_id == previous_record_id) {
+      values[i] = value - previous_value;
+    }
+    previous_record_id = record_id;
+    previous_value = value;
+  }
+}
+
+static grn_inline void
+data_section_ids_delta_decode(grn_ctx *ctx,
+                              uint32_t *values,
+                              uint32_t n_values,
+                              uint32_t *record_ids)
+{
+  uint32_t value_delta = 0;
+  grn_id previous_record_id = 0;
+  uint32_t i;
+  for (i = 0; i < n_values; i++) {
+    grn_id record_id = record_ids[i];
+    if (record_id == previous_record_id) {
+      values[i] += value_delta;
+      value_delta = values[i];
+    } else {
+      value_delta = 0;
+    }
+    previous_record_id = record_id;
+  }
+}
+
+static grn_inline void
+data_positions_delta_encode(grn_ctx *ctx,
+                            uint32_t *values,
+                            const uint32_t *term_frequencies,
+                            uint32_t n_term_frequencies)
+{
+  uint32_t i;
+  for (i = 0; i < n_term_frequencies; i++) {
+    const uint32_t tf = term_frequencies[i] + 1;
+    uint32_t previous_value = 0;
+    uint32_t j;
+    for (j = 0; j < tf; j++) {
+      uint32_t value = *values;
+      *values -= previous_value;
+      values++;
+      previous_value = value;
+    }
+  }
+}
+
+static grn_inline void
+data_positions_delta_decode(grn_ctx *ctx,
+                            uint32_t *values,
+                            const uint32_t *term_frequencies,
+                            uint32_t n_term_frequencies)
+{
+  uint32_t i;
+  for (i = 0; i < n_term_frequencies; i++) {
+    const uint32_t tf = term_frequencies[i] + 1;
+    uint32_t previous_value = 0;
+    uint32_t j;
+    for (j = 0; j < tf; j++) {
+      *values += previous_value;
+      previous_value = *values;
+      values++;
+    }
+  }
 }
 
 static grn_inline void
@@ -2129,48 +2279,48 @@ datavec_set_data_size(grn_ctx *ctx,
                       uint32_t max_position)
 {
   int i = 0;
-  bool records_use_p_for_enc =
-    data_records_use_p_for_enc(n_records, max_record_id);
-  bool sections_use_p_for_enc = data_sections_use_p_for_enc(n_records);
+  bool records_use_block_enc =
+    data_records_use_block_enc(n_records, max_record_id);
+  bool sections_use_block_enc = data_sections_use_block_enc(n_records);
   /* record IDs */
   dv[i].data_size = n_records;
-  if (records_use_p_for_enc) {
-    dv[i++].flags |= DATA_USE_P_FOR_ENC;
+  if (records_use_block_enc) {
+    dv[i++].flags |= DATA_USE_BLOCK_ENC;
   } else {
-    dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
+    dv[i++].flags &= ~DATA_USE_BLOCK_ENC;
   }
   if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
     /* section IDs */
     dv[i].data_size = n_records;
-    if (sections_use_p_for_enc) {
-      dv[i++].flags |= DATA_USE_P_FOR_ENC;
+    if (sections_use_block_enc) {
+      dv[i++].flags |= DATA_USE_BLOCK_ENC;
     } else {
-      dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
+      dv[i++].flags &= ~DATA_USE_BLOCK_ENC;
     }
   }
   /* term frequencies */
   dv[i].data_size = n_records;
-  if (sections_use_p_for_enc) {
-    dv[i++].flags |= DATA_USE_P_FOR_ENC;
+  if (sections_use_block_enc) {
+    dv[i++].flags |= DATA_USE_BLOCK_ENC;
   } else {
-    dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
+    dv[i++].flags &= ~DATA_USE_BLOCK_ENC;
   }
   if ((ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
     /* weights */
     dv[i].data_size = n_records;
-    if (sections_use_p_for_enc) {
-      dv[i++].flags |= DATA_USE_P_FOR_ENC;
+    if (sections_use_block_enc) {
+      dv[i++].flags |= DATA_USE_BLOCK_ENC;
     } else {
-      dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
+      dv[i++].flags &= ~DATA_USE_BLOCK_ENC;
     }
   }
   if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
     /* positions */
     dv[i].data_size = n_positions;
-    if (data_positions_use_p_for_enc(n_positions, max_position)) {
-      dv[i++].flags |= DATA_USE_P_FOR_ENC;
+    if (data_positions_use_block_enc(n_positions, max_position)) {
+      dv[i++].flags |= DATA_USE_BLOCK_ENC;
     } else {
-      dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
+      dv[i++].flags &= ~DATA_USE_BLOCK_ENC;
     }
   }
 }
@@ -2184,6 +2334,18 @@ typedef struct {
   uint32_t *values;
   uint32_t n_values;
   uint32_t flags;
+  /*
+   * flags & DATA_RECORD_IDS:
+   *   context_values = section_ids
+   * flags & DATA_SECTION_IDS:
+   *   context_values = record_ids
+   * flags & DATA_POSITIONS:
+   *   context_values = term_frequencies
+   *   n_context_values = n_term_frequencies
+   */
+  uint32_t *context_values;
+  uint32_t n_context_values;
+  uint32_t context_flags;
   /* Only for encoder */
   uint8_t *output;
   /* Only for decoder */
@@ -2201,9 +2363,41 @@ static grn_inline uint8_t *
 grn_enc_byte(grn_ctx *ctx, grn_codec_data *data)
 {
   uint8_t *output = data->output;
-  uint32_t i;
-  for (i = 0; i < data->n_values; i++) {
-    GRN_B_ENC(data->values[i], output);
+  const bool use_delta_encode = (data->flags & DATA_RECORD_IDS);
+  if (use_delta_encode) {
+    uint32_t previous_value = 0;
+    uint32_t i;
+    for (i = 0; i < data->n_values; i++) {
+      uint32_t delta = data->values[i] - previous_value;
+      GRN_B_ENC(delta, output);
+      previous_value = data->values[i];
+    }
+  } else {
+    if (data->flags & DATA_SECTION_IDS) {
+      data_section_ids_delta_encode(ctx, data->values, data->n_values,
+                                    data->context_values);
+    } else if (data->flags & DATA_POSITIONS) {
+      data_positions_delta_encode(ctx,
+                                  data->values,
+                                  data->context_values,
+                                  data->n_context_values);
+    }
+    uint32_t i;
+    for (i = 0; i < data->n_values; i++) {
+      GRN_B_ENC(data->values[i], output);
+    }
+    /* To restore the in-place changed input. This is not needed if
+     * we don't touch the input after we encode the input. But we do
+     * this for safety. */
+    if (data->flags & DATA_SECTION_IDS) {
+      data_section_ids_delta_decode(ctx, data->values, data->n_values,
+                                    data->context_values);
+    } else if (data->flags & DATA_POSITIONS) {
+      data_positions_delta_decode(ctx,
+                                  data->values,
+                                  data->context_values,
+                                  data->n_context_values);
+    }
   }
   return output;
 }
@@ -2262,9 +2456,30 @@ grn_dec_byte(grn_ctx *ctx, grn_codec_data *data)
 {
   const uint8_t *input = data->input;
   const uint8_t *input_end = input + data->input_size;
-  uint32_t i;
-  for (i = 0; i < data->n_values; i++) {
-    GRN_B_DEC_CHECK(data->values[i], input, input_end);
+  const bool use_delta_decode = (data->flags & DATA_RECORD_IDS);
+  if (use_delta_decode) {
+    uint32_t previous_value = 0;
+    uint32_t i;
+    for (i = 0; i < data->n_values; i++) {
+      uint32_t delta;
+      GRN_B_DEC_CHECK(delta, input, input_end);
+      data->values[i] = previous_value + delta;
+      previous_value = data->values[i];
+    }
+  } else {
+    uint32_t i;
+    for (i = 0; i < data->n_values; i++) {
+      GRN_B_DEC_CHECK(data->values[i], input, input_end);
+    }
+    if (data->flags & DATA_SECTION_IDS) {
+      data_section_ids_delta_decode(ctx, data->values, data->n_values,
+                                    data->context_values);
+    } else if (data->flags & DATA_POSITIONS) {
+      data_positions_delta_decode(ctx,
+                                  data->values,
+                                  data->context_values,
+                                  data->n_context_values);
+    }
   }
   return input;
 }
@@ -2275,6 +2490,8 @@ grn_enc_estimate_p_for(grn_ctx *ctx, grn_codec_data *data)
   return PACK_MAX_SIZE * ((data->n_values / UNIT_SIZE) + 1);
 }
 
+/* If the target data is known as a sorted list, PForDelta is used.
+ * PFor is used otherwise. */
 static grn_inline uint8_t *
 grn_enc_p_for(grn_ctx *ctx, grn_codec_data *data)
 {
@@ -2283,11 +2500,17 @@ grn_enc_p_for(grn_ctx *ctx, grn_codec_data *data)
   uint32_t n_values = data->n_values;
   uint32_t unit[UNIT_SIZE];
   uint8_t freq[33];
+  const bool use_delta_encode = (data->flags & DATA_RECORD_IDS);
+  uint32_t previous_value = 0;
   while (n_values >= UNIT_SIZE) {
     memset(freq, 0, 33);
     uint32_t i;
     for (i = 0; i < UNIT_SIZE; i++) {
       unit[i] = values[i];
+      if (use_delta_encode) {
+        unit[i] -= previous_value;
+        previous_value = values[i];
+      }
       if (unit[i]) {
         uint32_t w;
         GRN_BIT_SCAN_REV(unit[i], w);
@@ -2305,6 +2528,10 @@ grn_enc_p_for(grn_ctx *ctx, grn_codec_data *data)
     uint32_t i;
     for (i = 0; i < n_values; i++) {
       unit[i] = values[i];
+      if (use_delta_encode) {
+        unit[i] -= previous_value;
+        previous_value = values[i];
+      }
       if (unit[i]) {
         uint32_t w;
         GRN_BIT_SCAN_REV(unit[i], w);
@@ -2440,6 +2667,8 @@ grn_dec_p_for(grn_ctx *ctx, grn_codec_data *data)
   const uint8_t *input_end = input + data->input_size;
   uint32_t *values = data->values;
   uint32_t n_values = data->n_values;
+  const bool use_delta_decode = (data->flags & DATA_RECORD_IDS);
+  uint32_t previous_value = 0;
   for (; n_values >= UNIT_SIZE; n_values -= UNIT_SIZE) {
     const uint8_t *next_input = unpack(input, input_end, UNIT_SIZE, values);
     if (!next_input) {
@@ -2473,6 +2702,13 @@ grn_dec_p_for(grn_ctx *ctx, grn_codec_data *data)
       return NULL;
     }
     input = next_input;
+    if (use_delta_decode) {
+      uint32_t i;
+      for (i = 0; i < UNIT_SIZE; i++) {
+        values[i] += previous_value;
+        previous_value = values[i];
+      }
+    }
     values += UNIT_SIZE;
   }
   if (n_values > 0) {
@@ -2508,9 +2744,363 @@ grn_dec_p_for(grn_ctx *ctx, grn_codec_data *data)
       return NULL;
     }
     input = next_input;
+    if (use_delta_decode) {
+      uint32_t i;
+      for (i = 0; i < n_values; i++) {
+        values[i] += previous_value;
+        previous_value = values[i];
+      }
+    }
     values += n_values;
   }
   return input;
+}
+
+#ifdef GRN_WITH_ROARING_BITMAPS
+static grn_inline size_t
+grn_enc_estimate_roaring_bitmaps(grn_ctx *ctx, grn_codec_data *data)
+{
+  return (sizeof(uint32_t) /* serialization type */) +
+    (sizeof(uint32_t) * data->n_values /* data */);
+}
+
+static grn_inline uint32_t
+max_uint32_values(uint32_t *values, uint32_t n)
+{
+  uint32_t max = 0;
+  uint32_t i;
+  for (i = 0; i < n; i++) {
+    if (values[i] > max) {
+      max = values[i];
+    }
+  }
+  return max;
+}
+
+static grn_inline uint32_t
+n_bits(uint32_t value)
+{
+  if (value < 2) {
+    return 1;
+  } else {
+    return n_bits(value / 2) + 1;
+  }
+}
+
+static grn_inline uint8_t *
+grn_enc_roaring_bitmaps(grn_ctx *ctx, grn_codec_data *data)
+{
+  if (data->flags & DATA_RECORD_IDS) {
+    uint8_t *output = data->output;
+    uint32_t *values = data->values;
+    uint32_t n_values = data->n_values;
+    uint32_t *section_ids = NULL;
+    if (data->context_flags & DATA_USE_BLOCK_ENC) {
+      section_ids = data->context_values;
+    }
+    if (section_ids) {
+      const uint32_t max_section_id = max_uint32_values(section_ids, n_values);
+      const uint32_t max_section_id_n_bits = n_bits(max_section_id);
+      const uint32_t max_packable_record_id =
+        (UINT32_MAX >> max_section_id_n_bits);
+      GRN_B_ENC(max_section_id_n_bits, output);
+      uint32_t start = 0;
+      while (start < data->n_values) {
+        uint32_t record_id_offset = values[start];
+        GRN_B_ENC(record_id_offset, output);
+        roaring_bitmap_t bitmap;
+        roaring_bitmap_init_cleared(&bitmap);
+        roaring_bulk_context_t context = {0};
+        uint32_t i;
+        for (i = start; i < data->n_values; i++) {
+          const uint32_t record_id = values[i];
+          const uint32_t record_id_delta = (record_id - record_id_offset);
+          if (record_id_delta >= max_packable_record_id) {
+            break;
+          }
+          const uint32_t packed_id =
+            (record_id_delta << max_section_id_n_bits) |
+            section_ids[i];
+          roaring_bitmap_add_bulk(&bitmap, &context, packed_id);
+        }
+        roaring_bitmap_run_optimize(&bitmap);
+        size_t size = roaring_bitmap_serialize(&bitmap, output);
+        output += size;
+        roaring_bitmap_clear(&bitmap);
+        start = i;
+      }
+      return output;
+    } else {
+      roaring_bitmap_t *bitmap = roaring_bitmap_of_ptr(n_values, values);
+      roaring_bitmap_run_optimize(bitmap);
+      size_t size = roaring_bitmap_serialize(bitmap, output);
+      roaring_bitmap_free(bitmap);
+      return output + size;
+    }
+  } else if (data->flags & DATA_SECTION_IDS) {
+    /* Encoded with DATA_RECORD_IDS or encoded by grn_enc_byte() or
+     * grn_enc_p_for() separately. */
+    return data->output;
+  } else if (data->flags & DATA_POSITIONS) {
+    uint8_t *output = data->output;
+    uint32_t *values = data->values;
+    uint32_t *term_frequencies = data->context_values;
+    uint32_t n_term_frequencies = data->n_context_values;
+    uint32_t i;
+    for (i = 0; i < n_term_frequencies; i++) {
+      uint32_t tf = term_frequencies[i] + 1;
+      roaring_bitmap_t *bitmap = roaring_bitmap_of_ptr(tf, values);
+      values += tf;
+      roaring_bitmap_run_optimize(bitmap);
+      size_t size = roaring_bitmap_serialize(bitmap, output);
+      roaring_bitmap_free(bitmap);
+      output += size;
+    }
+    return output;
+  } else {
+    /*TODO: error */
+    return NULL;
+  }
+}
+
+static grn_inline const uint8_t *
+grn_dec_roaring_bitmaps(grn_ctx *ctx, grn_codec_data *data)
+{
+  const uint8_t *input = data->input;
+  const uint8_t *input_end = input + data->input_size;
+  uint32_t *values = data->values;
+  uint32_t n_read_values = 0;
+  if (data->flags & DATA_RECORD_IDS) {
+    uint32_t *section_ids = NULL;
+    if (data->context_flags & DATA_USE_BLOCK_ENC) {
+      section_ids = data->context_values;
+    }
+    if (section_ids) {
+      uint32_t max_section_id_n_bits;
+      GRN_B_DEC_CHECK(max_section_id_n_bits, input, input_end);
+      const uint32_t section_id_mask = (1 << max_section_id_n_bits) - 1;
+      while (n_read_values < data->n_values) {
+        uint32_t record_id_offset;
+        GRN_B_DEC_CHECK(record_id_offset, input, input_end);
+        roaring_bitmap_t *bitmap = roaring_bitmap_deserialize(input);
+        if (!bitmap) {
+          grn_obj term;
+          GRN_DEFINE_NAME(data->ii);
+          GRN_TEXT_INIT(&term, 0);
+          if (data->term_id != GRN_ID_NIL) {
+            grn_ii_get_term(ctx, data->ii, data->term_id, &term);
+          }
+          ERR(GRN_FILE_CORRUPT,
+              "[ii][dec][roaring-bitmaps][record-section-ids] "
+              "failed to deserialize roaring bitmaps encoded data: "
+              "<%.*s>: "
+              "<%.*s>(%u): "
+              "n-values(%u): "
+              "n-odd-values(%u): "
+              "dv[%u/%u]: "
+              "data(%" GRN_FMT_SIZE ")",
+              name_size,
+              name,
+              (int)GRN_TEXT_LEN(&term),
+              GRN_TEXT_VALUE(&term),
+              data->term_id,
+              data->n_values,
+              data->n_odd_values,
+              data->nth_element,
+              data->n_elements,
+              data->input_size);
+          GRN_OBJ_FIN(ctx, &term);
+          return NULL;
+        }
+        roaring_bitmap_to_uint32_array(bitmap, values);
+        const uint64_t n_values = roaring_bitmap_get_cardinality(bitmap);
+        size_t i;
+        for (i = 0; i < n_values; i++) {
+          const uint32_t packed_id = values[i];
+          const uint32_t record_id = (packed_id >> max_section_id_n_bits) + record_id_offset;
+          const uint32_t section_id = (packed_id & section_id_mask);
+          values[i] = record_id;
+          section_ids[i] = section_id;
+        }
+        values += n_values;
+        section_ids += n_values;
+        n_read_values += n_values;
+        const size_t size = roaring_bitmap_size_in_bytes(bitmap);
+        input += size;
+        roaring_bitmap_free(bitmap);
+      }
+      return input;
+    } else {
+      roaring_bitmap_t *bitmap = roaring_bitmap_deserialize(input);
+      if (!bitmap) {
+        grn_obj term;
+        GRN_DEFINE_NAME(data->ii);
+        GRN_TEXT_INIT(&term, 0);
+        if (data->term_id != GRN_ID_NIL) {
+          grn_ii_get_term(ctx, data->ii, data->term_id, &term);
+        }
+        ERR(GRN_FILE_CORRUPT,
+            "[ii][dec][roaring-bitmaps] "
+            "failed to deserialize roaring bitmaps encoded data: "
+            "<%.*s>: "
+            "<%.*s>(%u): "
+            "n-values(%u): "
+            "n-odd-values(%u): "
+            "dv[%u/%u]: "
+            "data(%" GRN_FMT_SIZE ")",
+            name_size,
+            name,
+            (int)GRN_TEXT_LEN(&term),
+            GRN_TEXT_VALUE(&term),
+            data->term_id,
+            data->n_values,
+            data->n_odd_values,
+            data->nth_element,
+            data->n_elements,
+            data->input_size);
+        GRN_OBJ_FIN(ctx, &term);
+        return NULL;
+      }
+      roaring_bitmap_to_uint32_array(bitmap, values);
+      const size_t size = roaring_bitmap_size_in_bytes(bitmap);
+      roaring_bitmap_free(bitmap);
+      return input + size;
+    }
+  } else if (data->flags & DATA_SECTION_IDS) {
+    /* Decoded with DATA_RECORD_IDS or decoded by grn_dec_byte() or
+     * grn_dec_p_for() separately. */
+    return input;
+  } else {
+    while (n_read_values < data->n_values) {
+      roaring_bitmap_t *bitmap = roaring_bitmap_deserialize(input);
+      if (!bitmap) {
+        grn_obj term;
+        GRN_DEFINE_NAME(data->ii);
+        GRN_TEXT_INIT(&term, 0);
+        if (data->term_id != GRN_ID_NIL) {
+          grn_ii_get_term(ctx, data->ii, data->term_id, &term);
+        }
+        ERR(GRN_FILE_CORRUPT,
+            "[ii][dec][roaring-bitmaps] "
+            "failed to deserialize roaring bitmaps encoded data: "
+            "<%.*s>: "
+            "<%.*s>(%u): "
+            "n-values(%u): "
+            "n-odd-values(%u): "
+            "dv[%u/%u]: "
+            "data(%" GRN_FMT_SIZE ")",
+            name_size,
+            name,
+            (int)GRN_TEXT_LEN(&term),
+            GRN_TEXT_VALUE(&term),
+            data->term_id,
+            data->n_values,
+            data->n_odd_values,
+            data->nth_element,
+            data->n_elements,
+            data->input_size);
+        GRN_OBJ_FIN(ctx, &term);
+        return NULL;
+      }
+      roaring_bitmap_to_uint32_array(bitmap, values);
+      const uint64_t n_values = roaring_bitmap_get_cardinality(bitmap);
+      values += n_values;
+      n_read_values += n_values;
+      const size_t size = roaring_bitmap_size_in_bytes(bitmap);
+      input += size;
+      roaring_bitmap_free(bitmap);
+    }
+    return input;
+  }
+}
+#endif
+
+static grn_inline bool
+grn_ii_use_roaring_bitmaps(grn_ctx *ctx, grn_ii *ii)
+{
+  return ii->header.common->internal_flags & GRN_II_INTERNAL_ROARING_BITMAPS;
+}
+
+static grn_inline size_t
+grn_enc_estimate_block(grn_ctx *ctx, grn_codec_data *data)
+{
+#ifdef GRN_WITH_ROARING_BITMAPS
+  if (grn_ii_use_roaring_bitmaps(ctx, data->ii)) {
+    return grn_enc_estimate_roaring_bitmaps(ctx, data);
+  }
+#endif
+
+  return grn_enc_estimate_p_for(ctx, data);
+}
+
+static grn_inline uint8_t *
+grn_enc_block(grn_ctx *ctx, grn_codec_data *data)
+{
+#ifdef GRN_WITH_ROARING_BITMAPS
+  if (grn_ii_use_roaring_bitmaps(ctx, data->ii) &&
+      /* record_ids or positions */
+      ((data->flags & (DATA_RECORD_IDS | DATA_POSITIONS)) ||
+       /* section_ids can use roaring bitmaps only when record_ids
+        * uses roaring bitmaps too. */
+       ((data->flags & DATA_SECTION_IDS) &&
+        (data->context_flags & DATA_RECORD_IDS) &&
+        (data->context_flags & DATA_USE_BLOCK_ENC)))) {
+    return grn_enc_roaring_bitmaps(ctx, data);
+  }
+#endif
+
+  if (data->flags & DATA_SECTION_IDS) {
+    data_section_ids_delta_encode(ctx, data->values, data->n_values,
+                                  data->context_values);
+  } else if (data->flags & DATA_POSITIONS) {
+    data_positions_delta_encode(ctx,
+                                data->values,
+                                data->context_values,
+                                data->n_context_values);
+  }
+  uint8_t *next_output = grn_enc_p_for(ctx, data);
+  /* To restore the in-place changed input. This is not needed if
+   * we never touch the input after we encode the input. But we do
+   * this for safety. */
+  if (data->flags & DATA_SECTION_IDS) {
+    data_section_ids_delta_decode(ctx, data->values, data->n_values,
+                                  data->context_values);
+  } else if (data->flags & DATA_POSITIONS) {
+    data_positions_delta_decode(ctx,
+                                data->values,
+                                data->context_values,
+                                data->n_context_values);
+  }
+  return next_output;
+}
+
+static grn_inline const uint8_t *
+grn_dec_block(grn_ctx *ctx, grn_codec_data *data)
+{
+#ifdef GRN_WITH_ROARING_BITMAPS
+  if (grn_ii_use_roaring_bitmaps(ctx, data->ii) &&
+      /* record_ids or positions */
+      ((data->flags & (DATA_RECORD_IDS | DATA_POSITIONS)) ||
+       /* section_ids can use roaring bitmaps only when record_ids
+        * uses roaring bitmaps too. */
+       ((data->flags & DATA_SECTION_IDS) &&
+        (data->context_flags & DATA_RECORD_IDS) &&
+        (data->context_flags & DATA_USE_BLOCK_ENC)))) {
+    return grn_dec_roaring_bitmaps(ctx, data);
+  }
+#endif
+
+  const uint8_t *next_input = grn_dec_p_for(ctx, data);
+  if (data->flags & DATA_SECTION_IDS) {
+    data_section_ids_delta_decode(ctx, data->values, data->n_values,
+                                  data->context_values);
+  } else if (data->flags & DATA_POSITIONS) {
+    data_positions_delta_decode(ctx,
+                                data->values,
+                                data->context_values,
+                                data->n_context_values);
+  }
+  return next_input;
 }
 
 /* Binary format used in grn_encv()/grn_decv().
@@ -2523,6 +3113,8 @@ grn_dec_p_for(grn_ctx *ctx, grn_codec_data *data)
  *   +========+========+========+========+
  *
  * Case 1: If all data don't use PFor:
+ *
+ *   All data are encoded by byte unit encoding.
  *
  *   +========+========+========+========+
  *   |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDD1| The last bit is important!
@@ -2544,6 +3136,9 @@ grn_dec_p_for(grn_ctx *ctx, grn_codec_data *data)
  *   }
  *
  * Case 2: If any data use PFor:
+ *
+ *   Some data are encoded by PForDelta (block unit encoding) and
+ *   others are encoded by byte unit encoding like case 1.
  *
  *   use_p_for_flags: It's 32bit flags that show that the i-th data
  *                    uses PFor. For example, 0x02 means that the
@@ -2574,7 +3169,7 @@ grn_dec_p_for(grn_ctx *ctx, grn_codec_data *data)
  *     D = (pgap >> 0)  & 0xff
  *   }
  *   for (i = 0; i < ii->n_elements; i++) {
- *     if (dv[i].flags & DATA_USE_P_FOR_ENC) {
+ *     if (dv[i].flags & DATA_USE_BLOCK_ENC) {
  *       Encode dv[i].data by PFor (unit size is 128)
  *     } else {
  *       Same as case 1
@@ -2589,6 +3184,9 @@ grn_dec_p_for(grn_ctx *ctx, grn_codec_data *data)
  *       }
  *     }
  *   }
+ *
+ * Case 3: If any data use roaring bitmaps: TODO
+ *
  * */
 
 static ssize_t
@@ -2605,20 +3203,20 @@ grn_encv(grn_ctx *ctx, grn_ii *ii, grn_id term_id, datavec *dv, uint8_t *res)
   codec_data.ii = ii;
   codec_data.term_id = term_id;
   codec_data.n_elements = ii->n_elements;
-  uint32_t use_p_for_enc_flags = 0;
+  uint32_t use_block_enc_flags = 0;
   for (data_size = 0, l = 0; l < ii->n_elements; l++) {
     uint32_t dl = dv[l].data_size;
     if (dl < df || ((dl > df) && (l != ii->n_elements - 1))) {
       /* invalid argument */
       return -1;
     }
-    if (dv[l].flags & DATA_USE_P_FOR_ENC) {
-      use_p_for_enc_flags += 1 << l;
+    if (dv[l].flags & DATA_USE_BLOCK_ENC) {
+      use_block_enc_flags += 1 << l;
     }
     data_size += dl;
   }
   positions_gap = data_size - df * ii->n_elements;
-  if (use_p_for_enc_flags == 0) {
+  if (use_block_enc_flags == 0) {
     if (rp) {
       GRN_B_ENC((df << 1) + 1, rp);
       for (l = 0; l < ii->n_elements; l++) {
@@ -2645,7 +3243,7 @@ grn_encv(grn_ctx *ctx, grn_ii *ii, grn_id term_id, datavec *dv, uint8_t *res)
     codec_data.flags = 0;
     if (rp) {
       uint32_t values[2];
-      values[0] = (use_p_for_enc_flags << 1);
+      values[0] = (use_block_enc_flags << 1);
       values[1] = df;
       codec_data.values = values;
       codec_data.output = rp;
@@ -2665,17 +3263,43 @@ grn_encv(grn_ctx *ctx, grn_ii *ii, grn_id term_id, datavec *dv, uint8_t *res)
     } else {
       GRN_ASSERT(positions_gap == 0);
     }
+    datavec *record_ids_data = NULL;
+    datavec *section_ids_data = NULL;
+    datavec *term_frequencies_data = NULL;
+    {
+      uint32_t i = 0;
+      record_ids_data = &(dv[i++]);
+      if (ii->header.common->flags & GRN_OBJ_WITH_SECTION) {
+        section_ids_data = &(dv[i++]);
+      }
+      term_frequencies_data = &(dv[i++]);
+    }
     for (l = 0; l < ii->n_elements; l++) {
       codec_data.nth_element = l;
       codec_data.values = dv[l].data;
       codec_data.n_values = dv[l].data_size;
       codec_data.flags = dv[l].flags;
+      codec_data.context_values = NULL;
+      codec_data.n_context_values = 0;
+      codec_data.context_flags = 0;
+      if (dv[l].flags & DATA_RECORD_IDS) {
+        if (section_ids_data) {
+          codec_data.context_values = section_ids_data->data;
+          codec_data.context_flags = section_ids_data->flags;
+        }
+      } else if (dv[l].flags & DATA_SECTION_IDS) {
+        codec_data.context_values = record_ids_data->data;
+        codec_data.context_flags = record_ids_data->flags;
+      } else if (dv[l].flags & DATA_POSITIONS) {
+        codec_data.context_values = term_frequencies_data->data;
+        codec_data.n_context_values = term_frequencies_data->data_size;
+      }
       codec_data.output = rp;
-      if (dv[l].flags & DATA_USE_P_FOR_ENC) {
+      if (dv[l].flags & DATA_USE_BLOCK_ENC) {
         if (rp) {
-          rp = grn_enc_p_for(ctx, &codec_data);
+          rp = grn_enc_block(ctx, &codec_data);
         } else {
-          estimated += grn_enc_estimate_p_for(ctx, &codec_data);
+          estimated += grn_enc_estimate_block(ctx, &codec_data);
         }
       } else {
         if (rp) {
@@ -2702,12 +3326,23 @@ grn_decv(grn_ctx *ctx,
          datavec *dv)
 {
   size_t size;
-  uint32_t df, l, i, *rp;
+  uint32_t df, l, *rp;
   const uint8_t *dp = data;
   const uint8_t *dpe = data + data_size;
   if (!data_size) {
     dv[0].data_size = 0;
     return 0;
+  }
+  datavec *record_ids_data = NULL;
+  datavec *section_ids_data = NULL;
+  datavec *term_frequencies_data = NULL;
+  {
+    uint32_t i = 0;
+    record_ids_data = &(dv[i++]);
+    if (ii->header.common->flags & GRN_OBJ_WITH_SECTION) {
+      section_ids_data = &(dv[i++]);
+    }
+    term_frequencies_data = &(dv[i++]);
   }
   grn_codec_data codec_data = {0};
   codec_data.ii = ii;
@@ -2749,22 +3384,49 @@ grn_decv(grn_ctx *ctx,
     } else {
       rp = dv[0].data;
     }
-    for (l = 0; l < ii->n_elements; l++) {
+    for (l = 0; l < ii->n_elements - 1; l++) {
       dv[l].data = rp;
-      if (l < ii->n_elements - 1) {
-        for (i = 0; i < df; i++, rp++) {
-          GRN_B_DEC_CHECK(*rp, dp, dpe);
+      dv[l].data_size = df;
+      rp += dv[l].data_size;
+    }
+    for (l = 0; l < ii->n_elements; l++) {
+      if (l == ii->n_elements - 1) {
+        dv[l].data = rp;
+        uint32_t i;
+        uint32_t n = 0;
+        for (i = 0; i < df; i++) {
+          n += term_frequencies_data->data[i] + 1;
         }
-      } else {
-        for (i = 0; dp < dpe; i++, rp++) {
-          GRN_B_DEC_CHECK(*rp, dp, dpe);
-        }
+        dv[l].data_size = n;
+        rp += dv[l].data_size;
       }
-      dv[l].data_size = i;
+      codec_data.nth_element = l;
+      codec_data.values = dv[l].data;
+      codec_data.n_values = dv[l].data_size;
+      codec_data.flags = dv[l].flags;
+      codec_data.context_values = NULL;
+      codec_data.n_context_values = 0;
+      codec_data.context_flags = 0;
+      if (codec_data.flags & DATA_RECORD_IDS) {
+        if (section_ids_data) {
+          codec_data.context_values = section_ids_data->data;
+          codec_data.context_flags = section_ids_data->flags;
+        }
+      } else if (codec_data.flags & DATA_SECTION_IDS) {
+        codec_data.context_values = record_ids_data->data;
+        codec_data.context_flags = record_ids_data->flags;
+      } else if (codec_data.flags & DATA_POSITIONS) {
+        codec_data.context_values = term_frequencies_data->data;
+        codec_data.n_context_values = term_frequencies_data->data_size;
+      }
+      codec_data.input = dp;
+      codec_data.input_size = dpe - dp;
+      dp = grn_dec_byte(ctx, &codec_data);
+      // TODO: Check dp != NULL
     }
   } else {
     uint32_t n, rest;
-    uint32_t use_p_for_enc_flags = df >> 1;
+    uint32_t use_block_enc_flags = df >> 1;
     GRN_B_DEC_CHECK(df, dp, dpe);
     if (dv[ii->n_elements - 1].flags & DATA_ODD) {
       GRN_B_DEC_CHECK(rest, dp, dpe);
@@ -2798,7 +3460,7 @@ grn_decv(grn_ctx *ctx,
             term_id,
             dv[ii->n_elements].data - dv[0].data,
             size,
-            use_p_for_enc_flags);
+            use_block_enc_flags);
         GRN_OBJ_FIN(ctx, &term);
         return 0;
       }
@@ -2809,19 +3471,37 @@ grn_decv(grn_ctx *ctx,
     for (l = 0; l < ii->n_elements; l++) {
       dv[l].data = rp;
       dv[l].data_size = n = (l < ii->n_elements - 1) ? df : df + rest;
-      if (use_p_for_enc_flags & (1 << l)) {
-        dv[l].flags |= DATA_USE_P_FOR_ENC;
+      if (use_block_enc_flags & (DATA_USE_BLOCK_ENC << l)) {
+        dv[l].flags |= DATA_USE_BLOCK_ENC;
       } else {
-        dv[l].flags &= ~DATA_USE_P_FOR_ENC;
+        dv[l].flags &= ~DATA_USE_BLOCK_ENC;
       }
+      rp += dv[l].data_size;
+    }
+    for (l = 0; l < ii->n_elements; l++) {
       codec_data.nth_element = l;
       codec_data.values = dv[l].data;
       codec_data.n_values = dv[l].data_size;
       codec_data.flags = dv[l].flags;
+      codec_data.context_values = NULL;
+      codec_data.n_context_values = 0;
+      codec_data.context_flags = 0;
+      if (codec_data.flags & DATA_RECORD_IDS) {
+        if (section_ids_data) {
+          codec_data.context_values = section_ids_data->data;
+          codec_data.context_flags = section_ids_data->flags;
+        }
+      } else if (codec_data.flags & DATA_SECTION_IDS) {
+        codec_data.context_values = record_ids_data->data;
+        codec_data.context_flags = record_ids_data->flags;
+      } else if (codec_data.flags & DATA_POSITIONS) {
+        codec_data.context_values = term_frequencies_data->data;
+        codec_data.n_context_values = term_frequencies_data->data_size;
+      }
       codec_data.input = dp;
       codec_data.input_size = dpe - dp;
-      if (codec_data.flags & DATA_USE_P_FOR_ENC) {
-        dp = grn_dec_p_for(ctx, &codec_data);
+      if (codec_data.flags & DATA_USE_BLOCK_ENC) {
+        dp = grn_dec_block(ctx, &codec_data);
       } else {
         dp = grn_dec_byte(ctx, &codec_data);
       }
@@ -2829,7 +3509,6 @@ grn_decv(grn_ctx *ctx,
         /* TODO: Set error in grn_dec_byte() */
         return 0;
       }
-      rp += dv[l].data_size;
     }
     GRN_ASSERT(dp == dpe);
     if (dp != dpe) {
@@ -3635,7 +4314,7 @@ merge_dump_source_add_entry(grn_ctx *ctx,
                             merge_dump_source_data *data,
                             merge_dump_source_entry_type type,
                             docinfo *info,
-                            uint8_t *position_gaps)
+                            uint8_t *positions)
 {
   if (GRN_TEXT_LEN(&(data->inspected_entries)) > 0) {
     GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ' ');
@@ -3653,17 +4332,16 @@ merge_dump_source_add_entry(grn_ctx *ctx,
 
     GRN_TEXT_PUTC(ctx, &(data->inspected_entries), '[');
     for (i = 0; i < info->tf; i++) {
-      uint32_t position_gap;
-
       if (i > 0) {
         GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ',');
       }
       if (type == MERGE_DUMP_SOURCE_ENTRY_BUFFER) {
-        GRN_B_DEC(position_gap, position_gaps);
+        uint32_t position_delta;
+        GRN_B_DEC(position_delta, positions);
+        position += position_delta;
       } else {
-        position_gap = ((uint32_t *)position_gaps)[i];
+        position = ((uint32_t *)positions)[i];
       }
-      position += position_gap;
       grn_text_printf(ctx, &(data->inspected_entries), "%u", position);
     }
     GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ']');
@@ -3725,44 +4403,39 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
 
   {
     uint32_t n_documents;
-    const uint32_t *record_id_gaps;
-    const uint32_t *section_id_gaps = NULL;
+    const uint32_t *record_ids;
+    const uint32_t *section_ids = NULL;
     const uint32_t *n_terms_list;
     const uint32_t *weights = NULL;
-    const uint32_t *position_gaps = NULL;
+    const uint32_t *positions = NULL;
 
     {
       int i = 0;
       n_documents = data->data_vector[i].data_size;
-      record_id_gaps = data->data_vector[i++].data;
+      record_ids = data->data_vector[i++].data;
       if (data->ii->header.common->flags & GRN_OBJ_WITH_SECTION) {
-        section_id_gaps = data->data_vector[i++].data;
+        section_ids = data->data_vector[i++].data;
       }
       n_terms_list = data->data_vector[i++].data;
       if (data->ii->header.common->flags & GRN_OBJ_WITH_WEIGHT) {
         weights = data->data_vector[i++].data;
       }
       if (data->ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
-        position_gaps = data->data_vector[i++].data;
+        positions = data->data_vector[i++].data;
       }
     }
 
     {
       uint32_t i;
-      grn_id record_id = GRN_ID_NIL;
       uint32_t section_id = 0;
 
       for (i = 0; i < n_documents; i++) {
-        uint32_t record_id_gap = record_id_gaps[i];
+        grn_id record_id = record_ids[i];
         docinfo info;
 
-        record_id += record_id_gap;
         info.rid = record_id;
         if (data->ii->header.common->flags & GRN_OBJ_WITH_SECTION) {
-          if (record_id_gap > 0) {
-            section_id = 0;
-          }
-          section_id += 1 + section_id_gaps[i];
+          section_id = 1 + section_ids[i];
         } else {
           section_id = 1;
         }
@@ -3778,7 +4451,7 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
                                     data,
                                     MERGE_DUMP_SOURCE_ENTRY_CHUNK,
                                     &info,
-                                    (uint8_t *)position_gaps);
+                                    (uint8_t *)positions);
       }
       merge_dump_source_flush_entries(ctx, data);
     }
@@ -4119,19 +4792,18 @@ typedef struct {
   const uint8_t *data;
   docinfo id;
   uint32_t n_documents;
-  const uint32_t *record_id_gaps;
-  const uint32_t *section_id_gaps;
+  const uint32_t *record_ids;
+  const uint32_t *section_ids;
   const uint32_t *tfs;
   const uint32_t *weights;
-  const uint32_t *position_gaps;
-  const uint32_t *position_gaps_end;
+  const uint32_t *positions;
+  const uint32_t *positions_end;
 } merger_chunk_data;
 
 typedef struct {
   grn_ii *ii;
   grn_id term_id;
   docinfo last_id;
-  uint64_t position;
   uint64_t max_position;
   grn_merging_data *merging_data;
   struct {
@@ -4139,12 +4811,12 @@ typedef struct {
     merger_chunk_data chunk;
   } source;
   struct {
-    uint32_t *record_id_gaps;
-    uint32_t *section_id_gaps;
+    uint32_t *record_ids;
+    uint32_t *section_ids;
     uint32_t *tfs;
     uint32_t *weights;
-    uint32_t *position_gaps;
-    uint32_t *position_gaps_end;
+    uint32_t *positions;
+    uint32_t *positions_end;
   } dest;
 } merger_data;
 
@@ -4156,16 +4828,16 @@ merger_init_chunk_data(grn_ctx *ctx, merger_data *data, datavec *rdv)
   int j = 0;
   memset(&(chunk_data->id), 0, sizeof(docinfo));
   chunk_data->n_documents = rdv[j].data_size;
-  chunk_data->record_id_gaps = rdv[j++].data;
+  chunk_data->record_ids = rdv[j++].data;
   if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-    chunk_data->section_id_gaps = rdv[j++].data;
+    chunk_data->section_ids = rdv[j++].data;
   }
   chunk_data->tfs = rdv[j++].data;
   if ((ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
     chunk_data->weights = rdv[j++].data;
   }
-  chunk_data->position_gaps = rdv[j].data;
-  chunk_data->position_gaps_end = chunk_data->position_gaps + rdv[j].data_size;
+  chunk_data->positions = rdv[j].data;
+  chunk_data->positions_end = chunk_data->positions + rdv[j].data_size;
 }
 
 grn_inline static void
@@ -4221,22 +4893,22 @@ merger_get_next_chunk(grn_ctx *ctx, merger_data *data)
   if (chunk_data->n_documents == 0) {
     chunk_data->id.rid = 0;
   } else {
-    uint32_t record_id_gap = *chunk_data->record_id_gaps;
-    chunk_data->record_id_gaps++;
-    chunk_data->id.rid += record_id_gap;
-    if (record_id_gap > 0) {
+    uint32_t record_id = *(chunk_data->record_ids);
+    chunk_data->record_ids++;
+    if (record_id > chunk_data->id.rid) {
       chunk_data->id.sid = 0;
     }
-    chunk_data->position_gaps += chunk_data->id.tf;
-    chunk_data->id.tf = 1 + *chunk_data->tfs;
+    chunk_data->id.rid = record_id;
+    chunk_data->positions += chunk_data->id.tf;
+    chunk_data->id.tf = 1 + *(chunk_data->tfs);
     chunk_data->tfs++;
     if ((data->ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
-      chunk_data->id.weight = *chunk_data->weights;
+      chunk_data->id.weight = *(chunk_data->weights);
       chunk_data->weights++;
     }
     if ((data->ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-      chunk_data->id.sid += 1 + *chunk_data->section_id_gaps;
-      chunk_data->section_id_gaps++;
+      chunk_data->id.sid = 1 + *(chunk_data->section_ids);
+      chunk_data->section_ids++;
     } else {
       chunk_data->id.sid = 1;
     }
@@ -4247,18 +4919,18 @@ merger_get_next_chunk(grn_ctx *ctx, merger_data *data)
 grn_inline static void
 merger_put_next_id(grn_ctx *ctx, merger_data *data, docinfo *id)
 {
-  uint32_t record_id_gap = id->rid - data->last_id.rid;
-  *(data->dest.record_id_gaps) = record_id_gap;
-  data->dest.record_id_gaps++;
+  uint32_t record_id_delta = id->rid - data->last_id.rid;
+  *(data->dest.record_ids) = id->rid;
+  data->dest.record_ids++;
   if ((data->ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-    uint32_t section_id_gap;
-    if (record_id_gap > 0) {
-      section_id_gap = id->sid - 1;
+    uint32_t section_id_delta;
+    if (record_id_delta > 0) {
+      section_id_delta = id->sid - 1;
     } else {
-      section_id_gap = id->sid - data->last_id.sid - 1;
+      section_id_delta = id->sid - data->last_id.sid - 1;
     }
-    *(data->dest.section_id_gaps) = section_id_gap;
-    data->dest.section_id_gaps++;
+    *(data->dest.section_ids) = id->sid - 1;
+    data->dest.section_ids++;
   }
   *(data->dest.tfs) = id->tf - 1;
   data->dest.tfs++;
@@ -4291,9 +4963,9 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
       if ((data->ii->header.common->flags & GRN_OBJ_WITH_POSITION)) {
         uint32_t i;
         uint32_t rest_n_positions =
-          (uint32_t)(chunk_data->position_gaps_end - chunk_data->position_gaps);
+          (uint32_t)(chunk_data->positions_end - chunk_data->positions);
         uint32_t rest_n_dest_positions =
-          (uint32_t)(data->dest.position_gaps_end - data->dest.position_gaps);
+          (uint32_t)(data->dest.positions_end - data->dest.positions);
         if (chunk_data->id.tf > rest_n_positions) {
           grn_obj term;
           GRN_DEFINE_NAME(data->ii);
@@ -4340,12 +5012,11 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
           GRN_OBJ_FIN(ctx, &term);
         }
         for (i = 0; i < chunk_data->id.tf; i++) {
-          *(data->dest.position_gaps) = chunk_data->position_gaps[i];
-          data->dest.position_gaps++;
-          data->position += chunk_data->position_gaps[i];
+          *(data->dest.positions) = chunk_data->positions[i];
+          data->dest.positions++;
         }
-        if (data->position > data->max_position) {
-          data->max_position = data->position;
+        if (data->dest.positions[i - 1] > data->max_position) {
+          data->max_position = data->dest.positions[i - 1];
         }
       }
     } else {
@@ -4415,7 +5086,7 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
       merger_put_next_id(ctx, data, &(buffer_data->id));
       if ((data->ii->header.common->flags & GRN_OBJ_WITH_POSITION)) {
         uint32_t rest_n_dest_positiongs =
-          (uint32_t)(data->dest.position_gaps_end - data->dest.position_gaps);
+          (uint32_t)(data->dest.positions_end - data->dest.positions);
         if (buffer_data->id.tf > rest_n_dest_positiongs) {
           /* TODO: Make this case error. */
           merger_buffer_data *buffer_data = &(data->source.buffer);
@@ -4440,13 +5111,16 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
                   rest_n_dest_positiongs);
           GRN_OBJ_FIN(ctx, &term);
         }
+        uint32_t position = 0;
         while (buffer_data->id.tf--) {
-          GRN_B_DEC(*(data->dest.position_gaps), buffer_data->data);
-          data->position += *(data->dest.position_gaps);
-          data->dest.position_gaps++;
+          uint32_t position_delta;
+          GRN_B_DEC(position_delta, buffer_data->data);
+          position += position_delta;
+          *(data->dest.positions) = position;
+          data->dest.positions++;
         }
-        if (data->position > data->max_position) {
-          data->max_position = data->position;
+        if (position > data->max_position) {
+          data->max_position = position;
         }
       }
     }
@@ -4597,7 +5271,7 @@ chunk_merge(grn_ctx *ctx,
   }
 
   data->last_id = null_docinfo;
-  chunk_data->section_id_gaps = NULL;
+  chunk_data->section_ids = NULL;
   chunk_data->weights = NULL;
 
   datavec_init(ctx, ii, rdv, 0, 0);
@@ -4665,16 +5339,16 @@ chunk_merge(grn_ctx *ctx,
   }
   {
     int j = 0;
-    data->dest.record_id_gaps = dv[j++].data;
+    data->dest.record_ids = dv[j++].data;
     if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-      data->dest.section_id_gaps = dv[j++].data;
+      data->dest.section_ids = dv[j++].data;
     }
     data->dest.tfs = dv[j++].data;
     if ((ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
       data->dest.weights = dv[j++].data;
     }
-    data->dest.position_gaps = dv[j++].data;
-    data->dest.position_gaps_end = dv[j].data;
+    data->dest.positions = dv[j++].data;
+    data->dest.positions_end = dv[j].data;
   }
   merger_get_next_chunk(ctx, data);
   if (ctx->rc != GRN_SUCCESS) {
@@ -4694,7 +5368,7 @@ chunk_merge(grn_ctx *ctx,
     GRN_OBJ_FIN(ctx, &term);
     goto exit;
   }
-  data->position = 0;
+  data->max_position = 0;
   do {
     if (!merger_merge(ctx, data)) {
       break;
@@ -4717,10 +5391,10 @@ chunk_merge(grn_ctx *ctx,
     GRN_OBJ_FIN(ctx, &term);
     goto exit;
   }
-  ndf = data->dest.record_id_gaps - dv[0].data;
+  ndf = data->dest.record_ids - dv[0].data;
   {
     const uint32_t n_positions =
-      data->dest.position_gaps - dv[ii->n_elements - 1].data;
+      data->dest.positions - dv[ii->n_elements - 1].data;
     datavec_set_data_size(ctx,
                           ii,
                           dv,
@@ -5217,16 +5891,16 @@ buffer_merge_internal(grn_ctx *ctx,
     }
     {
       int j = 0;
-      data.dest.record_id_gaps = dv[j++].data;
+      data.dest.record_ids = dv[j++].data;
       if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-        data.dest.section_id_gaps = dv[j++].data;
+        data.dest.section_ids = dv[j++].data;
       }
       data.dest.tfs = dv[j++].data;
       if ((ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
         data.dest.weights = dv[j++].data;
       }
-      data.dest.position_gaps = dv[j++].data;
-      data.dest.position_gaps_end = dv[j].data;
+      data.dest.positions = dv[j++].data;
+      data.dest.positions_end = dv[j].data;
     }
     data.last_id = null_docinfo;
     merger_get_next_chunk(ctx, &data);
@@ -5236,7 +5910,7 @@ buffer_merge_internal(grn_ctx *ctx,
       }
       goto exit;
     }
-    data.position = 0;
+    data.max_position = 0;
     while (merger_merge(ctx, &data)) {
     }
     if (ctx->rc != GRN_SUCCESS) {
@@ -5263,7 +5937,7 @@ buffer_merge_internal(grn_ctx *ctx,
     }
     {
       /* TODO: Is n_documents better? */
-      uint32_t ndf = data.dest.record_id_gaps - dv[0].data;
+      uint32_t ndf = data.dest.record_ids - dv[0].data;
       grn_id tid = bt->tid & GRN_ID_MAX;
       uint32_t *a = array_at(ctx, ii, tid);
       if (!a) {
@@ -5284,7 +5958,7 @@ buffer_merge_internal(grn_ctx *ctx,
                    data.last_id.weight == 0) {
           a[0] = POS_EMBED_RID_SID(data.last_id.rid, data.last_id.sid);
           if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
-            a[1] = data.dest.position_gaps[-1];
+            a[1] = data.dest.positions[-1];
           } else {
             a[1] = 0;
           }
@@ -5295,7 +5969,7 @@ buffer_merge_internal(grn_ctx *ctx,
                    data.last_id.weight == 0) {
           a[0] = POS_EMBED_RID(data.last_id.rid);
           if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
-            a[1] = data.dest.position_gaps[-1];
+            a[1] = data.dest.positions[-1];
           } else {
             a[1] = 0;
           }
@@ -5303,7 +5977,7 @@ buffer_merge_internal(grn_ctx *ctx,
           nterms_void++;
         } else {
           const uint32_t n_positions =
-            data.dest.position_gaps - dv[ii->n_elements - 1].data;
+            data.dest.positions - dv[ii->n_elements - 1].data;
           datavec_set_data_size(ctx,
                                 ii,
                                 dv,
@@ -5799,8 +6473,8 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
                          rdv);
         merger_init_chunk_data(ctx, &data, rdv);
         GRN_OUTPUT_INT64(chunk_data->n_documents);
-        GRN_OUTPUT_INT64(chunk_data->position_gaps_end -
-                         chunk_data->position_gaps);
+        GRN_OUTPUT_INT64(chunk_data->positions_end -
+                         chunk_data->positions);
         {
           int j = 0;
           j++;
@@ -6634,6 +7308,11 @@ _grn_ii_create(
     header->garbages[i] = GRN_II_PSEG_NOT_ASSIGNED;
   }
   header->flags = flags;
+#ifdef GRN_WITH_ROARING_BITMAPS
+  if (grn_ii_create_use_roaring_bitmaps) {
+    header->internal_flags |= GRN_II_INTERNAL_ROARING_BITMAPS;
+  }
+#endif
   ii->seg = seg;
   ii->chunk = chunk;
   ii->lexicon = grn_ctx_at(ctx, DB_OBJ(lexicon)->id);
@@ -8065,13 +8744,9 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
       if (c->stat & CHUNK_USED) {
         for (;;) {
           if (c->crp < c->cdp + c->cdf) {
-            uint32_t dgap = *c->crp++;
-            c->pc.rid += dgap;
-            if (dgap) {
-              c->pc.sid = 0;
-            }
+            c->pc.rid = *c->crp++;
             if ((c->ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-              c->pc.sid += 1 + *c->csp++;
+              c->pc.sid = 1 + *c->csp++;
             } else {
               c->pc.sid = 1;
             }
@@ -8500,7 +9175,7 @@ grn_ii_cursor_next_pos(grn_ctx *ctx, grn_ii_cursor *c)
         if (c->post == (grn_posting *)(&c->pc)) {
           if (c->pc.rest) {
             c->pc.rest--;
-            c->pc.pos += *c->cpp++;
+            c->pc.pos = *c->cpp++;
           } else {
             return NULL;
           }
@@ -16033,11 +16708,12 @@ merge_hit_blocks(grn_ctx *ctx,
       uint32_t n = block->nrecs;
       if (n) {
         GRN_B_DEC(*ridp, p);
-        *ridp -= lr;
-        lr += *ridp++;
+        lr = *ridp++;
         while (--n) {
-          GRN_B_DEC(*ridp, p);
-          lr += *ridp++;
+          uint32_t rid_delta;
+          GRN_B_DEC(rid_delta, p);
+          lr += rid_delta;
+          *ridp++ = lr;
         }
       }
       if ((flags & GRN_OBJ_WITH_SECTION)) {
@@ -16055,8 +16731,10 @@ merge_hit_blocks(grn_ctx *ctx,
       }
       if ((flags & GRN_OBJ_WITH_POSITION)) {
         for (n = block->nposts; n; n--) {
-          GRN_B_DEC(*posp, p);
-          spos += *posp++;
+          uint32_t pos_delta;
+          GRN_B_DEC(pos_delta, p);
+          spos += pos_delta;
+          *posp++ = spos;
         }
       }
       block->rest -= (p - block->bufcur);
@@ -17455,8 +18133,8 @@ grn_ii_builder_chunk_encode_buf(grn_ctx *ctx,
                                 grn_ii_builder_chunk *chunk,
                                 grn_codec_data *data)
 {
-  if (data->flags & DATA_USE_P_FOR_ENC) {
-    data->output = grn_enc_p_for(ctx, data);
+  if (data->flags & DATA_USE_BLOCK_ENC) {
+    data->output = grn_enc_block(ctx, data);
   } else {
     data->output = grn_enc_byte(ctx, data);
   }
@@ -17472,48 +18150,48 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
 {
   grn_rc rc;
   uint8_t *p;
-  uint8_t shift = 0, use_p_for_enc_flags = 0;
+  uint8_t shift = 0, use_block_enc_flags = 0;
+  uint32_t rid_flags = DATA_RECORD_IDS;
+  uint32_t rest_flags = 0;
+  uint32_t pos_flags = DATA_POSITIONS;
 
   /* Choose an encoding. */
-  uint32_t rid_flags = 0;
-  if (data_records_use_p_for_enc(chunk->offset, chunk->rid)) {
-    rid_flags |= DATA_USE_P_FOR_ENC;
+  if (data_records_use_block_enc(chunk->offset, chunk->rid)) {
+    rid_flags |= DATA_USE_BLOCK_ENC;
   }
-  uint32_t rest_flags = 0;
-  if (data_sections_use_p_for_enc(chunk->offset)) {
-    rest_flags |= DATA_USE_P_FOR_ENC;
+  if (data_sections_use_block_enc(chunk->offset)) {
+    rest_flags |= DATA_USE_BLOCK_ENC;
   }
-  uint32_t pos_flags = DATA_ODD;
 
   /* record IDs */
-  if (rid_flags & DATA_USE_P_FOR_ENC) {
-    use_p_for_enc_flags |= 1 << shift;
+  if (rid_flags & DATA_USE_BLOCK_ENC) {
+    use_block_enc_flags |= 1 << shift;
   }
   shift++;
   /* section IDs */
   if (chunk->sid_buf) {
-    if (rest_flags & DATA_USE_P_FOR_ENC) {
-      use_p_for_enc_flags |= 1 << shift;
+    if (rest_flags & DATA_USE_BLOCK_ENC) {
+      use_block_enc_flags |= 1 << shift;
     }
     shift++;
   }
   /* term frequencies */
-  if (rest_flags & DATA_USE_P_FOR_ENC) {
-    use_p_for_enc_flags |= 1 << shift;
+  if (rest_flags & DATA_USE_BLOCK_ENC) {
+    use_block_enc_flags |= 1 << shift;
   }
   shift++;
   /* weights */
   if (chunk->weight_buf) {
-    if (rest_flags & DATA_USE_P_FOR_ENC) {
-      use_p_for_enc_flags |= 1 << shift;
+    if (rest_flags & DATA_USE_BLOCK_ENC) {
+      use_block_enc_flags |= 1 << shift;
     }
     shift++;
   }
   /* positions */
   if (chunk->pos_buf) {
-    if (data_positions_use_p_for_enc(chunk->pos_offset, chunk->pos_sum)) {
-      pos_flags |= DATA_USE_P_FOR_ENC;
-      use_p_for_enc_flags |= 1 << shift;
+    if (data_positions_use_block_enc(chunk->pos_offset, chunk->pos_sum)) {
+      pos_flags |= DATA_USE_BLOCK_ENC;
+      use_block_enc_flags |= 1 << shift;
     }
     shift++;
   }
@@ -17534,8 +18212,8 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
       GRN_B_ENC(cinfos[i].dgap, p);
     }
   }
-  if (use_p_for_enc_flags) {
-    GRN_B_ENC(use_p_for_enc_flags << 1, p);
+  if (use_block_enc_flags) {
+    GRN_B_ENC(use_block_enc_flags << 1, p);
     GRN_B_ENC(chunk->offset, p);
     if (chunk->pos_buf) {
       GRN_B_ENC(chunk->pos_offset - chunk->offset, p);
@@ -17552,14 +18230,23 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
   data.values = chunk->rid_buf;
   data.n_values = chunk->offset;
   data.flags = rid_flags;
+  data.context_values = chunk->sid_buf;
+  data.context_flags = rest_flags | DATA_SECTION_IDS;
   data.output = chunk->enc_buf + chunk->enc_offset;
   grn_ii_builder_chunk_encode_buf(ctx, chunk, &data);
-  data.flags = rest_flags;
+  data.context_values = NULL;
+  data.context_flags = 0;
   if (chunk->sid_buf) {
     data.values = chunk->sid_buf;
+    data.flags = rest_flags | DATA_SECTION_IDS;
+    data.context_values = chunk->rid_buf;
+    data.context_flags = rid_flags;
     grn_ii_builder_chunk_encode_buf(ctx, chunk, &data);
+    data.context_values = NULL;
+    data.context_flags = 0;
   }
   data.values = chunk->freq_buf;
+  data.flags = rest_flags;
   grn_ii_builder_chunk_encode_buf(ctx, chunk, &data);
   if (chunk->weight_buf) {
     data.values = chunk->weight_buf;
@@ -17569,6 +18256,8 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
     data.values = chunk->pos_buf;
     data.n_values = chunk->pos_offset;
     data.flags = pos_flags;
+    data.context_values = chunk->freq_buf;
+    data.n_context_values = chunk->offset;
     grn_ii_builder_chunk_encode_buf(ctx, chunk, &data);
   }
 
@@ -19285,7 +19974,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
 {
   grn_rc rc;
   uint64_t value;
-  uint32_t rid = GRN_ID_NIL, last_sid = 0;
+  uint32_t rid = GRN_ID_NIL;
   uint32_t ii_flags = builder->ii->header.common->flags;
   grn_ii_builder_chunk *chunk = &builder->chunk;
 
@@ -19343,11 +20032,10 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
           }
         }
       }
-      last_sid = 0;
     }
     rid += gap;
     gap = rid - chunk->rid; /* Global gap */
-    chunk->rid_buf[chunk->offset] = chunk->offset ? gap : rid;
+    chunk->rid_buf[chunk->offset] = rid;
     chunk->n++;
     chunk->rid = rid;
     chunk->rid_gap += gap;
@@ -19356,9 +20044,8 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
     /* Read section ID. */
     if (ii_flags & GRN_OBJ_WITH_SECTION) {
       uint32_t sid = (uint32_t)((value & builder->sid_mask) + 1);
-      chunk->sid_buf[chunk->offset] = sid - last_sid - 1;
+      chunk->sid_buf[chunk->offset] = sid - 1;
       chunk->n++;
-      last_sid = sid;
     }
 
     /* Read weight. */
@@ -19395,7 +20082,7 @@ grn_ii_builder_read_to_chunk(grn_ctx *ctx,
           chunk->pos_buf[chunk->pos_offset] = (uint32_t)(value - 1);
           chunk->pos_sum += value - 1;
         } else {
-          chunk->pos_buf[chunk->pos_offset] = (uint32_t)value;
+          chunk->pos_buf[chunk->pos_offset] = pos + (uint32_t)value;
           chunk->pos_sum += value;
         }
         chunk->n++;
