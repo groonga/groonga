@@ -2080,6 +2080,83 @@ datavec_fin(grn_ctx *ctx, datavec *dv)
   }
 }
 
+/* Binary format used in grn_p_encv()/grn_p_decv().
+ *
+ * df: Data Frequency: The number of postings
+ *
+ * The uint32_t value encoded by GRN_B_ENC:
+ *   +========+========+========+========+
+ *   |12345678|12345678|12345678|12345678|
+ *   +========+========+========+========+
+ *
+ * Case 1: If all data don't use PForDelta:
+ *
+ *   +========+========+========+========+
+ *   |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDD1| The last bit is important!
+ *   +========+========+========+========+
+ *   A = ((df << 1) >> 24) & 0xff
+ *   B = ((df << 1) >> 16) & 0xff
+ *   C = ((df << 1) >> 8)  & 0xff
+ *   D = ((df << 1) >> 0)  & 0xff
+ *   for (i = 0; i < dvlen; i++) {
+ *     for (j = 0; j < dv[i].data_size; j++) {
+ *       +========+========+========+========+
+ *       |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD| dv[i].data[j]
+ *       +========+========+========+========+
+ *       A = (dv[i].data[j] >> 24) & 0xff
+ *       B = (dv[i].data[j] >> 16) & 0xff
+ *       C = (dv[i].data[j] >> 8)  & 0xff
+ *       D = (dv[i].data[j] >> 0)  & 0xff
+ *     }
+ *   }
+ *
+ * Case 2: If any data use PForDelta:
+ *
+ *   usep: It's a 32bit bitmap that shows that the i-th data uses PForDelta.
+ *         0x02 means that the second data only uses PForDelta.
+ *   pgap: the_number_positions - df.
+ *
+ *   +========+========+========+========+
+ *   |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDD0| The last bit is important!
+ *   +========+========+========+========+
+ *   A = ((usep << 1) >> 24) & 0xff
+ *   B = ((usep << 1) >> 16) & 0xff
+ *   C = ((usep << 1) >> 8)  & 0xff
+ *   D = ((usep << 1) >> 0)  & 0xff
+ *   +========+========+========+========+
+ *   |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD| df
+ *   +========+========+========+========+
+ *   A = (df >> 24) & 0xff
+ *   B = (df >> 16) & 0xff
+ *   C = (df >> 8)  & 0xff
+ *   D = (df >> 0)  & 0xff
+ *   if (ii has positions) {
+ *     +========+========+========+========+
+ *     |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD| pgap
+ *     +========+========+========+========+
+ *     A = (pgap >> 24) & 0xff
+ *     B = (pgap >> 16) & 0xff
+ *     C = (pgap >> 8)  & 0xff
+ *     D = (pgap >> 0)  & 0xff
+ *   }
+ *   for (i = 0; i < dvlen; i++) {
+ *     if (dv[i].flags & USE_P_ENC) {
+ *       Encode dv[i].data by PForDelta (unit size is 128)
+ *     } else {
+ *       Same as case 1
+ *       for (j = 0; j < dv[i].data_size; j++) {
+ *         +========+========+========+========+
+ *         |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD| dv[i].data[j]
+ *         +========+========+========+========+
+ *         A = (dv[i].data[j] >> 24) & 0xff
+ *         B = (dv[i].data[j] >> 16) & 0xff
+ *         C = (dv[i].data[j] >> 8)  & 0xff
+ *         D = (dv[i].data[j] >> 0)  & 0xff
+ *       }
+ *     }
+ *   }
+ * */
+
 /* p is for PForDelta */
 static ssize_t
 grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
