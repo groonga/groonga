@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2017  Brazil
-  Copyright(C) 2019-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ typedef struct _grn_ii_buffer grn_ii_buffer;
 GRN_API grn_column_flags grn_ii_get_flags(grn_ctx *ctx, grn_ii *ii);
 GRN_API uint32_t grn_ii_get_n_elements(grn_ctx *ctx, grn_ii *ii);
 
-GRN_API void grn_ii_cursor_set_min_enable_set(grn_bool enable);
+GRN_API void grn_ii_cursor_set_min_enable_set(bool enable);
 GRN_API grn_bool grn_ii_cursor_set_min_enable_get(void);
 
 GRN_API uint32_t grn_ii_estimate_size(grn_ctx *ctx, grn_ii *ii, grn_id tid);

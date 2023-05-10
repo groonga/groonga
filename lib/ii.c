@@ -101,16 +101,16 @@
 #  define S_IWUSR 0200
 #endif /* S_IWUSR */
 
-static grn_bool grn_ii_cursor_set_min_enable = GRN_TRUE;
+static bool grn_ii_cursor_set_min_enable = true;
 static double grn_ii_select_too_many_index_match_ratio_text = -1;
 static double grn_ii_select_too_many_index_match_ratio_reference = -1;
 static double grn_ii_estimate_size_for_query_reduce_ratio = 0.9;
-static grn_bool grn_ii_overlap_token_skip_enable = GRN_FALSE;
+static bool grn_ii_overlap_token_skip_enable = false;
 static uint32_t grn_ii_builder_block_threshold_force = 0;
 static uint32_t grn_ii_max_n_segments_small = MAX_PSEG_SMALL;
 static uint32_t grn_ii_max_n_chunks_small = GRN_II_MAX_CHUNK_SMALL;
 static int64_t grn_ii_reduce_expire_threshold = 32;
-static grn_bool grn_ii_dump_index_source_on_merge = GRN_FALSE;
+static bool grn_ii_dump_index_source_on_merge = false;
 
 void
 grn_ii_init_from_env(void)
@@ -121,9 +121,9 @@ grn_ii_init_from_env(void)
                grn_ii_cursor_set_min_enable_env,
                GRN_ENV_BUFFER_SIZE);
     if (strcmp(grn_ii_cursor_set_min_enable_env, "no") == 0) {
-      grn_ii_cursor_set_min_enable = GRN_FALSE;
+      grn_ii_cursor_set_min_enable = false;
     } else {
-      grn_ii_cursor_set_min_enable = GRN_TRUE;
+      grn_ii_cursor_set_min_enable = true;
     }
   }
 
@@ -177,9 +177,9 @@ grn_ii_init_from_env(void)
                grn_ii_overlap_token_skip_enable_env,
                GRN_ENV_BUFFER_SIZE);
     if (strcmp(grn_ii_overlap_token_skip_enable_env, "yes") == 0) {
-      grn_ii_overlap_token_skip_enable = GRN_TRUE;
+      grn_ii_overlap_token_skip_enable = true;
     } else {
-      grn_ii_overlap_token_skip_enable = GRN_FALSE;
+      grn_ii_overlap_token_skip_enable = false;
     }
   }
 
@@ -252,15 +252,15 @@ grn_ii_init_from_env(void)
                grn_ii_dump_index_source_on_merge_env,
                GRN_ENV_BUFFER_SIZE);
     if (strcmp(grn_ii_dump_index_source_on_merge_env, "yes") == 0) {
-      grn_ii_dump_index_source_on_merge = GRN_TRUE;
+      grn_ii_dump_index_source_on_merge = true;
     } else {
-      grn_ii_dump_index_source_on_merge = GRN_FALSE;
+      grn_ii_dump_index_source_on_merge = false;
     }
   }
 }
 
 void
-grn_ii_cursor_set_min_enable_set(grn_bool enable)
+grn_ii_cursor_set_min_enable_set(bool enable)
 {
   grn_ii_cursor_set_min_enable = enable;
 }
