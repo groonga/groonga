@@ -63,6 +63,84 @@ Improvements
   The default value of ``cycled_class_tag_mode`` is ``false``.
   If ``cycled_class_tag_mode`` is ``true``, class tags are ``<mark class="keyword-%d">/<mark>`` for now.
 
+* [highlight] Added a newly option ``cycled_class_tag_mode``.
+
+* [highlight] Added a newly option ``html_mode``.
+
+* [highlight] Added a newly option ``normalizers``.
+
+Fixes
+^^^^^
+
+* [:ref:`query-syntax-ordered-near-phrase-search-condition`] Fixed a bug that if we specify phrases which have same prefix, Groonga returns different result of a search by ordering phrases.
+
+  It's occurred when multiple 3+ tokens are overlapped in query. For example, "abc" and "abcd" were an invalid combination.
+
+  It's occurred when shorter query is appeared before longer query.
+
+  For example, `ONPP1 "(abcd abc) (1 2)"` worked but `ONPP1 "(abc abcd) (1 2)"` didn't work against "abcdx1" as below.
+
+  .. code-block::
+
+     table_create Entries TABLE_NO_KEY
+     column_create Entries content COLUMN_SCALAR Text
+
+     table_create Terms TABLE_PAT_KEY ShortText \
+       --default_tokenizer TokenNgram
+     column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+     load --table Entries
+     [
+     {"content": "abcdx1x"}
+     ]
+
+     select Entries \
+       --filter 'content *ONPP1 "(abc abcd) (1 2)"' \
+       --output_columns '_score, content'
+     [[[0],[["_score","Int32"],["content","Text"]]]]]
+
+   In this release, Groonga can return a correct result as below.
+
+  .. code-block::
+     select Entries \
+       --filter 'content *ONPP1 "(abc abcd) (1 2)"' \
+       --output_columns '_score, content'
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "_score",
+               "Int32"
+             ],
+             [
+               "content",
+               "Text"
+             ]
+           ],
+           [
+             1,
+             "abcdx1x"
+           ]
+         ]
+       ]
+     ]
+
+* [:doc:`reference/commands/select`] Fixed a bug that multiple adjusts use wrong weight. [GitHub#1548][Reported by yodhcn]
+
+Thanks
+^^^^^^
+
+* yodhcn
+
 .. _release-13-0-1:
 
 Release 13.0.1 - 2023-03-24
