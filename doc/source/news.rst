@@ -69,6 +69,16 @@ Improvements
 
 * [highlight] Added a newly option ``normalizers``.
 
+* [:doc:`/install/ubuntu`] Added support for Ubuntu 23.04 (Lunar Lobster).
+
+* [:doc:`reference/commands/reference_acquire`] ``reference_acquire`` with ``--recursive dependent`` also refered a index column that are for the target object.
+
+* [:doc:`install/cmake`] Groonga became requiring CMake 3.16 or later for building from source.
+
+* [:doc:`install/oracle-linux`] Dropped support for Oracle Linux 8 and 9.
+
+  Because we don't need them. We can use the packages for Alma Linux on Oracle Linux.
+
 Fixes
 ^^^^^
 
