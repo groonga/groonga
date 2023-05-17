@@ -98,6 +98,12 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
     ]
   end
 
+  def version_of_begin_redirection_default
+    [
+      "13.0.2",
+    ]
+  end
+
   def windows_targets_default
     [
       "#{@package}-#{@version}-x64-vs2022.zip",
