@@ -263,7 +263,6 @@ class PackagesGroongaOrgPackageTask < PackageTask
         "#{repository_rsync_base_path}/#{target_namespace}/#{@package}/"
       sh("rsync",
          "-av",
-         "--dry-run",
          "--include=.htaccess",
          "--exclude=*",
          rsync_dir,
@@ -285,7 +284,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
       end
       File.open(htaccess_path, "w") do |htaccess|
         htaccess_content.each_line do |line|
-          htaccess.puts(line) unless line.include?("-latest-")
+          htaccess.puts(line) unless line.include?("-latest")
         end
         __send__("#{target_namespace}_targets").each do |target|
           redirect_url = built_package_url(target_namespace, target)
