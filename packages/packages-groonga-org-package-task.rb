@@ -82,12 +82,6 @@ class PackagesGroongaOrgPackageTask < PackageTask
     source_targets_default
   end
 
-  def version_of_begin_redirection
-    return [] unless enable_source?
-
-    version_of_begin_redirection_default
-  end
-
   def define_source_task
     namespace :source do
       desc "Clean files for source"
@@ -276,34 +270,6 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
   end
 
-  def redirect_target_versions
-    first_redirect_target_version = __send__("version_of_begin_redirection")
-    redirect_target_versions = [first_redirect_target_version]
-
-    micro_version = first_redirect_target_version.split('.').last.to_i
-    minor_version = first_redirect_target_version.split('.')[1].to_i
-    major_version = first_redirect_target_version.split('.').first.to_i
-
-    loop do
-      if micro_version == 9
-        if minor_version == 9
-          major_version = major_version.next
-          minor_version = 0
-        else
-          minor_version = minor_version.next
-          micro_version = 0
-        end
-      else
-        micro_version = micro_version.next
-      end
-      next_redirect_target_version = "#{major_version}.#{minor_version}.#{micro_version}"
-      redirect_target_versions << next_redirect_target_version
-      break if next_redirect_target_version == @version
-    end
-
-    redirect_target_versions
-  end
-
   def prepare(target_namespace)
     case target_namespace
     when :windows, :source
@@ -320,44 +286,17 @@ class PackagesGroongaOrgPackageTask < PackageTask
         htaccess_content.each_line do |line|
           htaccess.puts(line) unless line.include?("-latest")
         end
-
-        if target_namespace == :windows
-          __send__("#{target_namespace}_targets").each do |target|
-            redirect_url = built_package_url(target_namespace, target)
-            [
-              target,
-              target.gsub(@version, "latest")
-            ].each do |redirect_target_file|
-              redirect_target =
-                "/#{target_namespace}/#{@package}/#{redirect_target_file}"
-              htaccess.puts("Redirect #{redirect_target} #{redirect_url}")
-              if target_namespace == :source
-                htaccess.puts("Redirect #{redirect_target}.asc #{redirect_url}.asc")
-              end
-            end
-          end
-        else
-          redirect_target_versions.each do |redirect_target_version|
-            __send__("#{target_namespace}_targets").each do |target|
-              redirect_url = built_package_url(target_namespace, target)
-              if @version == redirect_target_version
-                [
-                  target,
-                  target.gsub(@version, "latest")
-                ].each do |redirect_target_file|
-                  redirect_target =
-                    "/#{target_namespace}/#{@package}/#{redirect_target_file}"
-                  htaccess.puts("Redirect #{redirect_target} #{redirect_url}")
-                  htaccess.puts("Redirect #{redirect_target}.asc #{redirect_url}.asc")
-                end
-              else
-                redirect_target_file = target.gsub(@version, redirect_target_version)
-                redirect_url.gsub!(@version, redirect_target_version)
-                redirect_target =
-                  "/#{target_namespace}/#{@package}/#{redirect_target_file}"
-                htaccess.puts("Redirect #{redirect_target} #{redirect_url}")
-                htaccess.puts("Redirect #{redirect_target}.asc #{redirect_url}.asc")
-              end
+        __send__("#{target_namespace}_targets").each do |target|
+          redirect_url = built_package_url(target_namespace, target)
+          [
+            target,
+            target.gsub(@version, "latest")
+          ].each do |redirect_target_file|
+            redirect_target =
+              "/#{target_namespace}/#{@package}/#{redirect_target_file}"
+            htaccess.puts("Redirect #{redirect_target} #{redirect_url}")
+            if target_namespace == :source
+              htaccess.puts("Redirect #{redirect_target}.asc #{redirect_url}.asc")
             end
           end
         end
