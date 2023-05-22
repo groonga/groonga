@@ -47,10 +47,10 @@ jobs:
         run: |
           upstream_version=`curl -s "https://nginx.org/en/CHANGES" | awk 'NR==2{print $4}'`
           bundled_version=`cat nginx_version`
-          branch_name=update-bundled-nginx
+          pr_branch_name=update-bundled-nginx
           if [ "${upstream_version}" != "${bundled_version}" ]; then
-            git switch -c ${branch_name}
-            git push -u origin ${branch_name}
+            git switch -c ${pr_branch_name}
+            git push -u origin ${pr_branch_name}
             pushd vendor
             ./update_nginx.sh ${upstream_version}
             gh pr create --fill --draft --title "nginx: update bundles version ${upstream_version}" --base master
