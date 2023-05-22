@@ -52,8 +52,12 @@ jobs:
       - name: Create nginx version up request
         if: steps.detect-nginx-update.conclusion == 'failure'
         run: |
+          upstream_version=`curl -s "https://nginx.org/en/CHANGES" | awk 'NR==2{print $4}'`
           gh pr checkout -b update-bundled-nginx
-          gh pr create --fill --draft --title "nginx: update bundles version" --base master
+          pushd vendor
+          ./update_nginx.sh ${upstream_version}
+          gh pr create --fill --draft --title "nginx: update bundles version ${upstream_version}" --base master
+          popd
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate configure
