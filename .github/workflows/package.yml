@@ -4,6 +4,7 @@ on:
     branches:
       - master
       - 'maintenance/**'
+      - 'detect-nginx-update'
     tags:
       - '*'
   pull_request:
