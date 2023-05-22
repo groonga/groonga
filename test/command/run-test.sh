@@ -30,7 +30,7 @@ esac
 if [ "${NO_BUILD}" != "yes" ]; then
   echo "${build_top_dir}/build.ninja"
   if [ -f "${build_top_dir}/build.ninja" ]; then
-    ninja -C "${build_top_dir}" > /dev/null || exit 1
+    ninja -C "${build_top_dir}" || exit 1
   else
     MAKE_ARGS=
     if [ ${n_processors} -gt 1 ]; then
