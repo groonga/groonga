@@ -43,21 +43,17 @@ jobs:
           cd ..
           git clone --depth 1 https://github.com/groonga/groonga.org.git
           git clone --depth 1 https://github.com/clear-code/cutter.git
-      - name: Detect nginx update
-        id: detect-nginx-update
+      - name: Create nginx update request
         run: |
           upstream_version=`curl -s "https://nginx.org/en/CHANGES" | awk 'NR==2{print $4}'`
           bundled_version=`cat nginx_version`
-          test "${upstream_version}" = "${bundled_version}"
-      - name: Create nginx version up request
-        if: steps.detect-nginx-update.conclusion == 'failure'
-        run: |
-          upstream_version=`curl -s "https://nginx.org/en/CHANGES" | awk 'NR==2{print $4}'`
-          gh pr checkout -b update-bundled-nginx
-          pushd vendor
-          ./update_nginx.sh ${upstream_version}
-          gh pr create --fill --draft --title "nginx: update bundles version ${upstream_version}" --base master
-          popd
+          if [ "${upstream_version}" != "${bundled_version}" ]; then
+            gh pr checkout -b update-bundled-nginx
+            pushd vendor
+            ./update_nginx.sh ${upstream_version}
+            gh pr create --fill --draft --title "nginx: update bundles version ${upstream_version}" --base master
+            popd
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate configure
