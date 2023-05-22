@@ -54,7 +54,7 @@ jobs:
             git push -u origin ${pr_branch_name}
             pushd vendor
             ./update_nginx.sh ${upstream_version}
-            gh pr create --fill --draft --title "nginx: update bundles version ${upstream_version}" --base master
+            gh pr create --fill --draft --title "nginx: update bundles version ${upstream_version}"
             git switch master
             popd
           fi
