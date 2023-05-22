@@ -48,10 +48,11 @@ jobs:
           upstream_version=`curl -s "https://nginx.org/en/CHANGES" | awk 'NR==2{print $4}'`
           bundled_version=`cat nginx_version`
           if [ "${upstream_version}" != "${bundled_version}" ]; then
-            gh pr checkout -b update-bundled-nginx
+            git switch -c update-bundled-nginx
             pushd vendor
             ./update_nginx.sh ${upstream_version}
             gh pr create --fill --draft --title "nginx: update bundles version ${upstream_version}" --base master
+            git switch master
             popd
           fi
         env:
