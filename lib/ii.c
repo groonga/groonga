@@ -2553,11 +2553,11 @@ grn_decv(grn_ctx *ctx,
           grn_ii_get_term(ctx, ii, id, &term);
         }
         ERR(GRN_NO_MEMORY_AVAILABLE,
-            "[ii][p-decv] failed to extend buffer for data vector: "
+            "[ii][decv] failed to extend buffer for data vector: "
             "<%.*s>: "
             "<%.*s>(%u): "
             "%" GRN_FMT_SIZE " -> %" GRN_FMT_SIZE ": "
-            "PForDelta(nothing)",
+            "PFor(nothing)",
             name_size,
             name,
             (int)GRN_TEXT_LEN(&term),
@@ -2608,7 +2608,7 @@ grn_decv(grn_ctx *ctx,
           grn_ii_get_term(ctx, ii, id, &term);
         }
         ERR(GRN_NO_MEMORY_AVAILABLE,
-            "[ii][p-decv] failed to extend buffer for data vector: "
+            "[ii][decv] failed to extend buffer for data vector: "
             "<%.*s>: "
             "<%.*s>(%u): "
             "%" GRN_FMT_SIZE " -> %" GRN_FMT_SIZE ": "
@@ -2642,8 +2642,8 @@ grn_decv(grn_ctx *ctx,
               grn_ii_get_term(ctx, ii, id, &term);
             }
             ERR(GRN_FILE_CORRUPT,
-                "[ii][p-decv] "
-                "failed to unpack PForDelta encoded fixed size data: "
+                "[ii][decv] "
+                "failed to unpack PFor encoded fixed size data: "
                 "<%.*s>: "
                 "<%.*s>(%u): "
                 "df(%u): "
@@ -2679,7 +2679,7 @@ grn_decv(grn_ctx *ctx,
               grn_ii_get_term(ctx, ii, id, &term);
             }
             ERR(GRN_FILE_CORRUPT,
-                "[ii][p-decv] failed to unpack PForDelta encoded rest data: "
+                "[ii][decv] failed to unpack PFor encoded rest data: "
                 "<%.*s>: "
                 "<%.*s>(%u): "
                 "df(%u): "
@@ -2721,7 +2721,7 @@ grn_decv(grn_ctx *ctx,
       if (df == 0) {
         GRN_LOG(ctx,
                 GRN_LOG_WARNING,
-                "[ii][p-decv][%.*s][%*.s][%u] "
+                "[ii][decv][%.*s][%*.s][%u] "
                 "encoded data frequency is unexpected: <0>: data(%u/%u)",
                 name_size,
                 name,
@@ -2733,7 +2733,7 @@ grn_decv(grn_ctx *ctx,
       } else {
         GRN_LOG(ctx,
                 GRN_LOG_DEBUG,
-                "[ii][p-decv][%.*s][%*.s][%u] "
+                "[ii][decv][%.*s][%*.s][%u] "
                 "failed to decode: <%u>: data(%u/%u)",
                 name_size,
                 name,
