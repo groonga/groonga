@@ -2029,7 +2029,7 @@ pack(uint32_t *p, uint32_t i, uint8_t *freq, uint8_t *rp)
 }
 
 #define USE_P_ENC (1 << 0) /* Use PForDelta */
-#define ODD       (1 << 2) /* Variable size data */
+#define DATA_ODD  (1 << 2) /* Variable size data */
 
 typedef struct {
   uint32_t *data;
@@ -2088,7 +2088,7 @@ datavec_init(
     }
   }
   if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
-    dv[ii->n_elements - 1].flags = ODD;
+    dv[ii->n_elements - 1].flags = DATA_ODD;
   }
   return GRN_SUCCESS;
 }
@@ -2294,7 +2294,7 @@ grn_encv(grn_ctx *ctx, grn_ii *ii, datavec *dv, uint8_t *res)
     } else {
       estimated += GRN_B_ENC_MAX_SIZE * 2;
     }
-    if (dv[ii->n_elements - 1].flags & ODD) {
+    if (dv[ii->n_elements - 1].flags & DATA_ODD) {
       if (rp) {
         GRN_B_ENC(pgap, rp);
       } else {
@@ -2585,7 +2585,7 @@ grn_decv(grn_ctx *ctx,
   } else {
     uint32_t n, rest, usep = df >> 1;
     GRN_B_DEC_CHECK(df, dp, dpe);
-    if (dv[ii->n_elements - 1].flags & ODD) {
+    if (dv[ii->n_elements - 1].flags & DATA_ODD) {
       GRN_B_DEC_CHECK(rest, dp, dpe);
     } else {
       rest = 0;
