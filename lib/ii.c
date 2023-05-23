@@ -2028,8 +2028,8 @@ pack(uint32_t *p, uint32_t i, uint8_t *freq, uint8_t *rp)
   return rp + (ep - ebuf);
 }
 
-#define USE_P_ENC (1 << 0) /* Use PForDelta */
-#define DATA_ODD  (1 << 2) /* Variable size data */
+#define DATA_USE_P_FOR_ENC (1 << 0) /* Use PFor */
+#define DATA_ODD           (1 << 2) /* Variable size data */
 
 typedef struct {
   uint32_t *data;
@@ -2135,42 +2135,42 @@ datavec_set_data_size(grn_ctx *ctx,
   /* record IDs */
   dv[i].data_size = n_records;
   if (records_use_p_for_enc) {
-    dv[i++].flags |= USE_P_ENC;
+    dv[i++].flags |= DATA_USE_P_FOR_ENC;
   } else {
-    dv[i++].flags &= ~USE_P_ENC;
+    dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
   }
   if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
     /* section IDs */
     dv[i].data_size = n_records;
     if (sections_use_p_for_enc) {
-      dv[i++].flags |= USE_P_ENC;
+      dv[i++].flags |= DATA_USE_P_FOR_ENC;
     } else {
-      dv[i++].flags &= ~USE_P_ENC;
+      dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
     }
   }
   /* term frequencies */
   dv[i].data_size = n_records;
   if (sections_use_p_for_enc) {
-    dv[i++].flags |= USE_P_ENC;
+    dv[i++].flags |= DATA_USE_P_FOR_ENC;
   } else {
-    dv[i++].flags &= ~USE_P_ENC;
+    dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
   }
   if ((ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
     /* weights */
     dv[i].data_size = n_records;
     if (sections_use_p_for_enc) {
-      dv[i++].flags |= USE_P_ENC;
+      dv[i++].flags |= DATA_USE_P_FOR_ENC;
     } else {
-      dv[i++].flags &= ~USE_P_ENC;
+      dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
     }
   }
   if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
     /* positions */
     dv[i].data_size = n_positions;
     if (data_positions_use_p_for_enc(n_positions, max_position)) {
-      dv[i++].flags |= USE_P_ENC;
+      dv[i++].flags |= DATA_USE_P_FOR_ENC;
     } else {
-      dv[i++].flags &= ~USE_P_ENC;
+      dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
     }
   }
 }
@@ -2235,7 +2235,7 @@ datavec_set_data_size(grn_ctx *ctx,
  *     D = (pgap >> 0)  & 0xff
  *   }
  *   for (i = 0; i < ii->n_elements; i++) {
- *     if (dv[i].flags & USE_P_ENC) {
+ *     if (dv[i].flags & DATA_USE_P_FOR_ENC) {
  *       Encode dv[i].data by PForDelta (unit size is 128)
  *     } else {
  *       Same as case 1
@@ -2258,21 +2258,24 @@ grn_encv(grn_ctx *ctx, grn_ii *ii, datavec *dv, uint8_t *res)
   uint8_t *rp = res;
   ssize_t estimated = 0;
   /* f in df is for frequency */
-  uint32_t pgap, usep, l, df, data_size, *dp, *dpe;
+  uint32_t pgap, l, df, data_size, *dp, *dpe;
   if (!(df = dv[0].data_size)) {
     return 0;
   }
-  for (usep = 0, data_size = 0, l = 0; l < ii->n_elements; l++) {
+  uint32_t use_p_for_enc_flags = 0;
+  for (data_size = 0, l = 0; l < ii->n_elements; l++) {
     uint32_t dl = dv[l].data_size;
     if (dl < df || ((dl > df) && (l != ii->n_elements - 1))) {
       /* invalid argument */
       return -1;
     }
-    usep += (dv[l].flags & USE_P_ENC) << l;
+    if (dv[l].flags & DATA_USE_P_FOR_ENC) {
+      use_p_for_enc_flags += 1 << l;
+    }
     data_size += dl;
   }
   pgap = data_size - df * ii->n_elements;
-  if (!usep) {
+  if (use_p_for_enc_flags == 0) {
     if (rp) {
       GRN_B_ENC((df << 1) + 1, rp);
     } else {
@@ -2289,7 +2292,7 @@ grn_encv(grn_ctx *ctx, grn_ii *ii, datavec *dv, uint8_t *res)
     }
   } else {
     if (rp) {
-      GRN_B_ENC((usep << 1), rp);
+      GRN_B_ENC((use_p_for_enc_flags << 1), rp);
       GRN_B_ENC(df, rp);
     } else {
       estimated += GRN_B_ENC_MAX_SIZE * 2;
@@ -2306,7 +2309,7 @@ grn_encv(grn_ctx *ctx, grn_ii *ii, datavec *dv, uint8_t *res)
     for (l = 0; l < ii->n_elements; l++) {
       dp = dv[l].data;
       dpe = dp + dv[l].data_size;
-      if ((dv[l].flags & USE_P_ENC)) {
+      if ((dv[l].flags & DATA_USE_P_FOR_ENC)) {
         uint32_t buf[UNIT_SIZE];
         uint8_t freq[33];
         uint32_t j = 0, d;
@@ -2583,7 +2586,8 @@ grn_decv(grn_ctx *ctx,
       dv[l].data_size = i;
     }
   } else {
-    uint32_t n, rest, usep = df >> 1;
+    uint32_t n, rest;
+    uint32_t use_p_for_enc_flags = df >> 1;
     GRN_B_DEC_CHECK(df, dp, dpe);
     if (dv[ii->n_elements - 1].flags & DATA_ODD) {
       GRN_B_DEC_CHECK(rest, dp, dpe);
@@ -2603,21 +2607,20 @@ grn_decv(grn_ctx *ctx,
         if (id != GRN_ID_NIL) {
           grn_ii_get_term(ctx, ii, id, &term);
         }
-        ERR(
-          GRN_NO_MEMORY_AVAILABLE,
-          "[ii][p-decv] failed to extend buffer for data vector: "
-          "<%.*s>: "
-          "<%.*s>(%u): "
-          "%" GRN_FMT_SIZE " -> %" GRN_FMT_SIZE ": "
-          "PForDelta(%#x)", /* Binary number is better but %b doesn't exist. */
-          name_size,
-          name,
-          (int)GRN_TEXT_LEN(&term),
-          GRN_TEXT_VALUE(&term),
-          id,
-          dv[ii->n_elements].data - dv[0].data,
-          size,
-          usep);
+        ERR(GRN_NO_MEMORY_AVAILABLE,
+            "[ii][p-decv] failed to extend buffer for data vector: "
+            "<%.*s>: "
+            "<%.*s>(%u): "
+            "%" GRN_FMT_SIZE " -> %" GRN_FMT_SIZE ": "
+            "PFor(%#x)", /* Binary number is better but %b doesn't exist. */
+            name_size,
+            name,
+            (int)GRN_TEXT_LEN(&term),
+            GRN_TEXT_VALUE(&term),
+            id,
+            dv[ii->n_elements].data - dv[0].data,
+            size,
+            use_p_for_enc_flags);
         GRN_OBJ_FIN(ctx, &term);
         return 0;
       }
@@ -2628,7 +2631,7 @@ grn_decv(grn_ctx *ctx,
     for (l = 0; l < ii->n_elements; l++) {
       dv[l].data = rp;
       dv[l].data_size = n = (l < ii->n_elements - 1) ? df : df + rest;
-      if (usep & (USE_P_ENC << l)) {
+      if (use_p_for_enc_flags & (1 << l)) {
         for (; n >= UNIT_SIZE; n -= UNIT_SIZE) {
           const uint8_t *next_dp = unpack(dp, dpe, UNIT_SIZE, rp);
           if (!next_dp) {
@@ -2702,7 +2705,7 @@ grn_decv(grn_ctx *ctx,
           dp = next_dp;
           rp += n;
         }
-        dv[l].flags |= USE_P_ENC;
+        dv[l].flags |= DATA_USE_P_FOR_ENC;
       } else {
         for (; n; n--, rp++) {
           GRN_B_DEC_CHECK(*rp, dp, dpe);
