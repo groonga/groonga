@@ -89,9 +89,9 @@ struct _grn_ii {
   uint32_t flags;                                                              \
   uint32_t amax;                                                               \
   uint32_t smax;                                                               \
-  uint32_t param1;                                                             \
-  uint32_t param2;                                                             \
-  uint32_t pnext;                                                              \
+  uint32_t param1; /* unused */                                                \
+  uint32_t param2; /* unused */                                                \
+  uint32_t pnext;  /* unused */                                                \
   uint32_t bgqhead;                                                            \
   uint32_t bgqtail;                                                            \
   uint32_t bgqbody[GRN_II_BGQSIZE];                                            \
