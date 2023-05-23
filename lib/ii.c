@@ -2175,188 +2175,40 @@ datavec_set_data_size(grn_ctx *ctx,
   }
 }
 
-/* Binary format used in grn_encv()/grn_decv().
- *
- * df: Data Frequency: The number of postings
- *
- * The uint32_t value encoded by GRN_B_ENC:
- *   +========+========+========+========+
- *   |12345678|12345678|12345678|12345678|
- *   +========+========+========+========+
- *
- * Case 1: If all data don't use PForDelta:
- *
- *   +========+========+========+========+
- *   |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDD1| The last bit is important!
- *   +========+========+========+========+
- *   A = ((df << 1) >> 24) & 0xff
- *   B = ((df << 1) >> 16) & 0xff
- *   C = ((df << 1) >> 8)  & 0xff
- *   D = ((df << 1) >> 0)  & 0xff
- *   for (i = 0; i < ii->n_elements; i++) {
- *     for (j = 0; j < dv[i].data_size; j++) {
- *       +========+========+========+========+
- *       |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD| dv[i].data[j]
- *       +========+========+========+========+
- *       A = (dv[i].data[j] >> 24) & 0xff
- *       B = (dv[i].data[j] >> 16) & 0xff
- *       C = (dv[i].data[j] >> 8)  & 0xff
- *       D = (dv[i].data[j] >> 0)  & 0xff
- *     }
- *   }
- *
- * Case 2: If any data use PForDelta:
- *
- *   usep: It's a 32bit bitmap that shows that the i-th data uses PForDelta.
- *         0x02 means that the second data only uses PForDelta.
- *   pgap: the_number_positions - df.
- *
- *   +========+========+========+========+
- *   |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDD0| The last bit is important!
- *   +========+========+========+========+
- *   A = ((usep << 1) >> 24) & 0xff
- *   B = ((usep << 1) >> 16) & 0xff
- *   C = ((usep << 1) >> 8)  & 0xff
- *   D = ((usep << 1) >> 0)  & 0xff
- *   +========+========+========+========+
- *   |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD| df
- *   +========+========+========+========+
- *   A = (df >> 24) & 0xff
- *   B = (df >> 16) & 0xff
- *   C = (df >> 8)  & 0xff
- *   D = (df >> 0)  & 0xff
- *   if (ii has positions) {
- *     +========+========+========+========+
- *     |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD| pgap
- *     +========+========+========+========+
- *     A = (pgap >> 24) & 0xff
- *     B = (pgap >> 16) & 0xff
- *     C = (pgap >> 8)  & 0xff
- *     D = (pgap >> 0)  & 0xff
- *   }
- *   for (i = 0; i < ii->n_elements; i++) {
- *     if (dv[i].flags & DATA_USE_P_FOR_ENC) {
- *       Encode dv[i].data by PForDelta (unit size is 128)
- *     } else {
- *       Same as case 1
- *       for (j = 0; j < dv[i].data_size; j++) {
- *         +========+========+========+========+
- *         |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD| dv[i].data[j]
- *         +========+========+========+========+
- *         A = (dv[i].data[j] >> 24) & 0xff
- *         B = (dv[i].data[j] >> 16) & 0xff
- *         C = (dv[i].data[j] >> 8)  & 0xff
- *         D = (dv[i].data[j] >> 0)  & 0xff
- *       }
- *     }
- *   }
- * */
+typedef struct {
+  grn_ii *ii;
+  grn_id term_id;
+  uint32_t nth_element;
+  uint32_t n_elements;
+  uint32_t n_odd_values;
+  uint32_t *values;
+  uint32_t n_values;
+  uint32_t flags;
+  /* Only for encoder */
+  uint8_t *output;
+  /* Only for decoder */
+  const uint8_t *input;
+  size_t input_size;
+} grn_codec_data;
 
-static ssize_t
-grn_encv(grn_ctx *ctx, grn_ii *ii, datavec *dv, uint8_t *res)
+static grn_inline size_t
+grn_enc_estimate_byte(grn_ctx *ctx, grn_codec_data *data)
 {
-  uint8_t *rp = res;
-  ssize_t estimated = 0;
-  /* f in df is for frequency */
-  uint32_t pgap, l, df, data_size, *dp, *dpe;
-  if (!(df = dv[0].data_size)) {
-    return 0;
-  }
-  uint32_t use_p_for_enc_flags = 0;
-  for (data_size = 0, l = 0; l < ii->n_elements; l++) {
-    uint32_t dl = dv[l].data_size;
-    if (dl < df || ((dl > df) && (l != ii->n_elements - 1))) {
-      /* invalid argument */
-      return -1;
-    }
-    if (dv[l].flags & DATA_USE_P_FOR_ENC) {
-      use_p_for_enc_flags += 1 << l;
-    }
-    data_size += dl;
-  }
-  pgap = data_size - df * ii->n_elements;
-  if (use_p_for_enc_flags == 0) {
-    if (rp) {
-      GRN_B_ENC((df << 1) + 1, rp);
-    } else {
-      estimated += GRN_B_ENC_MAX_SIZE;
-    }
-    for (l = 0; l < ii->n_elements; l++) {
-      for (dp = dv[l].data, dpe = dp + dv[l].data_size; dp < dpe; dp++) {
-        if (rp) {
-          GRN_B_ENC(*dp, rp);
-        } else {
-          estimated += GRN_B_ENC_MAX_SIZE;
-        }
-      }
-    }
-  } else {
-    if (rp) {
-      GRN_B_ENC((use_p_for_enc_flags << 1), rp);
-      GRN_B_ENC(df, rp);
-    } else {
-      estimated += GRN_B_ENC_MAX_SIZE * 2;
-    }
-    if (dv[ii->n_elements - 1].flags & DATA_ODD) {
-      if (rp) {
-        GRN_B_ENC(pgap, rp);
-      } else {
-        estimated += GRN_B_ENC_MAX_SIZE;
-      }
-    } else {
-      GRN_ASSERT(!pgap);
-    }
-    for (l = 0; l < ii->n_elements; l++) {
-      dp = dv[l].data;
-      dpe = dp + dv[l].data_size;
-      if ((dv[l].flags & DATA_USE_P_FOR_ENC)) {
-        uint32_t buf[UNIT_SIZE];
-        uint8_t freq[33];
-        uint32_t j = 0, d;
-        memset(freq, 0, 33);
-        while (dp < dpe) {
-          if (j == UNIT_SIZE) {
-            if (rp) {
-              rp = pack(buf, j, freq, rp);
-            } else {
-              estimated += PACK_MAX_SIZE;
-            }
-            memset(freq, 0, 33);
-            j = 0;
-          }
-          if ((d = buf[j++] = *dp++)) {
-            uint32_t w;
-            GRN_BIT_SCAN_REV(d, w);
-            freq[w + 1]++;
-          } else {
-            freq[0]++;
-          }
-        }
-        if (j > 0) {
-          if (rp) {
-            rp = pack(buf, j, freq, rp);
-          } else {
-            estimated += PACK_MAX_SIZE;
-          }
-        }
-      } else {
-        for (; dp < dpe; dp++) {
-          if (rp) {
-            GRN_B_ENC(*dp, rp);
-          } else {
-            estimated += GRN_B_ENC_MAX_SIZE;
-          }
-        }
-      }
-    }
-  }
-  if (rp) {
-    return rp - res;
-  } else {
-    return estimated;
-  }
+  return GRN_B_ENC_MAX_SIZE * data->n_values;
 }
 
+static grn_inline uint8_t *
+grn_enc_byte(grn_ctx *ctx, grn_codec_data *data)
+{
+  uint8_t *output = data->output;
+  uint32_t i;
+  for (i = 0; i < data->n_values; i++) {
+    GRN_B_ENC(data->values[i], output);
+  }
+  return output;
+}
+
+/* TODO: Set error on "return 0" */
 #define GRN_B_DEC_CHECK(v, p, pe)                                              \
   do {                                                                         \
     uint8_t *_p = (uint8_t *)p;                                                \
@@ -2404,6 +2256,67 @@ grn_encv(grn_ctx *ctx, grn_ii *ii, datavec *dv, uint8_t *res)
     v = _v;                                                                    \
     p = _p;                                                                    \
   } while (0)
+
+static grn_inline const uint8_t *
+grn_dec_byte(grn_ctx *ctx, grn_codec_data *data)
+{
+  const uint8_t *input = data->input;
+  const uint8_t *input_end = input + data->input_size;
+  uint32_t i;
+  for (i = 0; i < data->n_values; i++) {
+    GRN_B_DEC_CHECK(data->values[i], input, input_end);
+  }
+  return input;
+}
+
+static grn_inline size_t
+grn_enc_estimate_p_for(grn_ctx *ctx, grn_codec_data *data)
+{
+  return PACK_MAX_SIZE * ((data->n_values / UNIT_SIZE) + 1);
+}
+
+static grn_inline uint8_t *
+grn_enc_p_for(grn_ctx *ctx, grn_codec_data *data)
+{
+  uint8_t *output = data->output;
+  uint32_t *values = data->values;
+  uint32_t n_values = data->n_values;
+  uint32_t unit[UNIT_SIZE];
+  uint8_t freq[33];
+  while (n_values >= UNIT_SIZE) {
+    memset(freq, 0, 33);
+    uint32_t i;
+    for (i = 0; i < UNIT_SIZE; i++) {
+      unit[i] = values[i];
+      if (unit[i]) {
+        uint32_t w;
+        GRN_BIT_SCAN_REV(unit[i], w);
+        freq[w + 1]++;
+      } else {
+        freq[0]++;
+      }
+    }
+    output = pack(unit, UNIT_SIZE, freq, output);
+    values += UNIT_SIZE;
+    n_values -= UNIT_SIZE;
+  }
+  if (n_values > 0) {
+    memset(freq, 0, 33);
+    uint32_t i;
+    for (i = 0; i < n_values; i++) {
+      unit[i] = values[i];
+      if (unit[i]) {
+        uint32_t w;
+        GRN_BIT_SCAN_REV(unit[i], w);
+        freq[w + 1]++;
+      } else {
+        freq[0]++;
+      }
+    }
+    output = pack(unit, n_values, freq, output);
+  }
+  return output;
+}
 
 /*
  * PFor (Patched Frame of Reference) encode: M. Zukowski , S. Heman,
@@ -2520,10 +2433,270 @@ unpack(const uint8_t *dp, const uint8_t *dpe, int i, uint32_t *rp)
   return dp;
 }
 
+static grn_inline const uint8_t *
+grn_dec_p_for(grn_ctx *ctx, grn_codec_data *data)
+{
+  const uint8_t *input = data->input;
+  const uint8_t *input_end = input + data->input_size;
+  uint32_t *values = data->values;
+  uint32_t n_values = data->n_values;
+  for (; n_values >= UNIT_SIZE; n_values -= UNIT_SIZE) {
+    const uint8_t *next_input = unpack(input, input_end, UNIT_SIZE, values);
+    if (!next_input) {
+      grn_obj term;
+      GRN_DEFINE_NAME(data->ii);
+      GRN_TEXT_INIT(&term, 0);
+      if (data->term_id != GRN_ID_NIL) {
+        grn_ii_get_term(ctx, data->ii, data->term_id, &term);
+      }
+      ERR(GRN_FILE_CORRUPT,
+          "[ii][dec][p-for] "
+          "failed to unpack PFor encoded fixed size data: "
+          "<%.*s>: "
+          "<%.*s>(%u): "
+          "n-values(%u): "
+          "n-odd-values(%u): "
+          "dv[%u/%u]: "
+          "data(%u/%" GRN_FMT_SIZE ")",
+          name_size,
+          name,
+          (int)GRN_TEXT_LEN(&term),
+          GRN_TEXT_VALUE(&term),
+          data->term_id,
+          data->n_values,
+          data->n_odd_values,
+          data->nth_element,
+          data->n_elements,
+          (uint32_t)(input - data->input),
+          data->input_size);
+      GRN_OBJ_FIN(ctx, &term);
+      return NULL;
+    }
+    input = next_input;
+    values += UNIT_SIZE;
+  }
+  if (n_values > 0) {
+    const uint8_t *next_input = unpack(input, input_end, n_values, values);
+    if (!next_input) {
+      grn_obj term;
+      GRN_DEFINE_NAME(data->ii);
+      GRN_TEXT_INIT(&term, 0);
+      if (data->term_id != GRN_ID_NIL) {
+        grn_ii_get_term(ctx, data->ii, data->term_id, &term);
+      }
+      ERR(GRN_FILE_CORRUPT,
+          "[ii][dec][p-for] "
+          "failed to unpack PFor encoded rest data: "
+          "<%.*s>: "
+          "<%.*s>(%u): "
+          "n-values(%u): "
+          "n-odd-values(%u): "
+          "dv[%u/%u]: "
+          "data(%u/%" GRN_FMT_SIZE ")",
+          name_size,
+          name,
+          (int)GRN_TEXT_LEN(&term),
+          GRN_TEXT_VALUE(&term),
+          data->term_id,
+          data->n_values,
+          data->n_odd_values,
+          data->nth_element,
+          data->n_elements,
+          (uint32_t)(input - data->input),
+          data->input_size);
+      GRN_OBJ_FIN(ctx, &term);
+      return NULL;
+    }
+    input = next_input;
+    values += n_values;
+  }
+  return input;
+}
+
+/* Binary format used in grn_encv()/grn_decv().
+ *
+ * df: Data Frequency: The number of postings
+ *
+ * The uint32_t value encoded by GRN_B_ENC:
+ *   +========+========+========+========+
+ *   |12345678|12345678|12345678|12345678|
+ *   +========+========+========+========+
+ *
+ * Case 1: If all data don't use PFor:
+ *
+ *   +========+========+========+========+
+ *   |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDD1| The last bit is important!
+ *   +========+========+========+========+
+ *   A = ((df << 1) >> 24) & 0xff
+ *   B = ((df << 1) >> 16) & 0xff
+ *   C = ((df << 1) >> 8)  & 0xff
+ *   D = ((df << 1) >> 0)  & 0xff
+ *   for (i = 0; i < ii->n_elements; i++) {
+ *     for (j = 0; j < dv[i].data_size; j++) {
+ *       +========+========+========+========+
+ *       |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD| dv[i].data[j]
+ *       +========+========+========+========+
+ *       A = (dv[i].data[j] >> 24) & 0xff
+ *       B = (dv[i].data[j] >> 16) & 0xff
+ *       C = (dv[i].data[j] >> 8)  & 0xff
+ *       D = (dv[i].data[j] >> 0)  & 0xff
+ *     }
+ *   }
+ *
+ * Case 2: If any data use PFor:
+ *
+ *   use_p_for_flags: It's 32bit flags that show that the i-th data
+ *                    uses PFor. For example, 0x02 means that the
+ *                    second data only uses PFor.
+ *   positions_gap: the_number_positions - df.
+ *
+ *   +========+========+========+========+
+ *   |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDD0| The last bit is important!
+ *   +========+========+========+========+
+ *   A = ((use_p_for_flags << 1) >> 24) & 0xff
+ *   B = ((use_p_for_flags << 1) >> 16) & 0xff
+ *   C = ((use_p_for_flags << 1) >> 8)  & 0xff
+ *   D = ((use_p_for_flags << 1) >> 0)  & 0xff
+ *   +========+========+========+========+
+ *   |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD| df
+ *   +========+========+========+========+
+ *   A = (df >> 24) & 0xff
+ *   B = (df >> 16) & 0xff
+ *   C = (df >> 8)  & 0xff
+ *   D = (df >> 0)  & 0xff
+ *   if (ii has positions) {
+ *     +========+========+========+========+
+ *     |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD| positions_gap
+ *     +========+========+========+========+
+ *     A = (pgap >> 24) & 0xff
+ *     B = (pgap >> 16) & 0xff
+ *     C = (pgap >> 8)  & 0xff
+ *     D = (pgap >> 0)  & 0xff
+ *   }
+ *   for (i = 0; i < ii->n_elements; i++) {
+ *     if (dv[i].flags & DATA_USE_P_FOR_ENC) {
+ *       Encode dv[i].data by PFor (unit size is 128)
+ *     } else {
+ *       Same as case 1
+ *       for (j = 0; j < dv[i].data_size; j++) {
+ *         +========+========+========+========+
+ *         |AAAAAAAA|BBBBBBBB|CCCCCCCC|DDDDDDDD| dv[i].data[j]
+ *         +========+========+========+========+
+ *         A = (dv[i].data[j] >> 24) & 0xff
+ *         B = (dv[i].data[j] >> 16) & 0xff
+ *         C = (dv[i].data[j] >> 8)  & 0xff
+ *         D = (dv[i].data[j] >> 0)  & 0xff
+ *       }
+ *     }
+ *   }
+ * */
+
+static ssize_t
+grn_encv(grn_ctx *ctx, grn_ii *ii, datavec *dv, uint8_t *res)
+{
+  uint8_t *rp = res;
+  ssize_t estimated = 0;
+  /* f in df is for frequency */
+  uint32_t positions_gap, l, df, data_size;
+  if (!(df = dv[0].data_size)) {
+    return 0;
+  }
+  grn_codec_data codec_data = {0};
+  codec_data.ii = ii;
+  /* TODO: codec_data.term_id = term_id; */
+  codec_data.n_elements = ii->n_elements;
+  uint32_t use_p_for_enc_flags = 0;
+  for (data_size = 0, l = 0; l < ii->n_elements; l++) {
+    uint32_t dl = dv[l].data_size;
+    if (dl < df || ((dl > df) && (l != ii->n_elements - 1))) {
+      /* invalid argument */
+      return -1;
+    }
+    if (dv[l].flags & DATA_USE_P_FOR_ENC) {
+      use_p_for_enc_flags += 1 << l;
+    }
+    data_size += dl;
+  }
+  positions_gap = data_size - df * ii->n_elements;
+  if (use_p_for_enc_flags == 0) {
+    if (rp) {
+      GRN_B_ENC((df << 1) + 1, rp);
+      for (l = 0; l < ii->n_elements; l++) {
+        codec_data.nth_element = l;
+        codec_data.values = dv[l].data;
+        codec_data.n_values = dv[l].data_size;
+        codec_data.flags = dv[l].flags;
+        codec_data.output = rp;
+        rp = grn_enc_byte(ctx, &codec_data);
+      }
+    } else {
+      codec_data.n_values = 1;
+      estimated += grn_enc_estimate_byte(ctx, &codec_data);
+      for (l = 0; l < ii->n_elements; l++) {
+        codec_data.nth_element = l;
+        codec_data.values = dv[l].data;
+        codec_data.n_values = dv[l].data_size;
+        codec_data.flags = dv[l].flags;
+        estimated += grn_enc_estimate_byte(ctx, &codec_data);
+      }
+    }
+  } else {
+    codec_data.n_values = 2;
+    codec_data.flags = 0;
+    if (rp) {
+      uint32_t values[2];
+      values[0] = (use_p_for_enc_flags << 1);
+      values[1] = df;
+      codec_data.values = values;
+      codec_data.output = rp;
+      rp = grn_enc_byte(ctx, &codec_data);
+    } else {
+      estimated += grn_enc_estimate_byte(ctx, &codec_data);
+    }
+    if (dv[ii->n_elements - 1].flags & DATA_ODD) {
+      codec_data.n_values = 1;
+      if (rp) {
+        codec_data.values = &positions_gap;
+        codec_data.output = rp;
+        rp = grn_enc_byte(ctx, &codec_data);
+      } else {
+        estimated += grn_enc_estimate_byte(ctx, &codec_data);
+      }
+    } else {
+      GRN_ASSERT(positions_gap == 0);
+    }
+    for (l = 0; l < ii->n_elements; l++) {
+      codec_data.nth_element = l;
+      codec_data.values = dv[l].data;
+      codec_data.n_values = dv[l].data_size;
+      codec_data.flags = dv[l].flags;
+      codec_data.output = rp;
+      if (dv[l].flags & DATA_USE_P_FOR_ENC) {
+        if (rp) {
+          rp = grn_enc_p_for(ctx, &codec_data);
+        } else {
+          estimated += grn_enc_estimate_p_for(ctx, &codec_data);
+        }
+      } else {
+        if (rp) {
+          rp = grn_enc_byte(ctx, &codec_data);
+        } else {
+          estimated += grn_enc_estimate_byte(ctx, &codec_data);
+        }
+      }
+    }
+  }
+  if (rp) {
+    return rp - res;
+  } else {
+    return estimated;
+  }
+}
+
 static int
 grn_decv(grn_ctx *ctx,
          grn_ii *ii,
-         grn_id id,
+         grn_id term_id,
          const uint8_t *data,
          uint32_t data_size,
          datavec *dv)
@@ -2536,6 +2709,10 @@ grn_decv(grn_ctx *ctx,
     dv[0].data_size = 0;
     return 0;
   }
+  grn_codec_data codec_data = {0};
+  codec_data.ii = ii;
+  codec_data.term_id = term_id;
+  codec_data.n_elements = ii->n_elements;
   GRN_B_DEC_CHECK(df, dp, dpe);
   if ((df & 1)) {
     df >>= 1;
@@ -2549,8 +2726,8 @@ grn_decv(grn_ctx *ctx,
         grn_obj term;
         GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
-        if (id != GRN_ID_NIL) {
-          grn_ii_get_term(ctx, ii, id, &term);
+        if (term_id != GRN_ID_NIL) {
+          grn_ii_get_term(ctx, ii, term_id, &term);
         }
         ERR(GRN_NO_MEMORY_AVAILABLE,
             "[ii][decv] failed to extend buffer for data vector: "
@@ -2562,7 +2739,7 @@ grn_decv(grn_ctx *ctx,
             name,
             (int)GRN_TEXT_LEN(&term),
             GRN_TEXT_VALUE(&term),
-            id,
+            term_id,
             dv[ii->n_elements].data - dv[0].data,
             size);
         GRN_OBJ_FIN(ctx, &term);
@@ -2594,6 +2771,7 @@ grn_decv(grn_ctx *ctx,
     } else {
       rest = 0;
     }
+    codec_data.n_odd_values = rest;
     size = df * ii->n_elements + rest;
     if (dv[ii->n_elements].data < dv[0].data + size) {
       if (dv[0].data) {
@@ -2604,8 +2782,8 @@ grn_decv(grn_ctx *ctx,
         grn_obj term;
         GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
-        if (id != GRN_ID_NIL) {
-          grn_ii_get_term(ctx, ii, id, &term);
+        if (term_id != GRN_ID_NIL) {
+          grn_ii_get_term(ctx, ii, term_id, &term);
         }
         ERR(GRN_NO_MEMORY_AVAILABLE,
             "[ii][decv] failed to extend buffer for data vector: "
@@ -2617,7 +2795,7 @@ grn_decv(grn_ctx *ctx,
             name,
             (int)GRN_TEXT_LEN(&term),
             GRN_TEXT_VALUE(&term),
-            id,
+            term_id,
             dv[ii->n_elements].data - dv[0].data,
             size,
             use_p_for_enc_flags);
@@ -2632,92 +2810,33 @@ grn_decv(grn_ctx *ctx,
       dv[l].data = rp;
       dv[l].data_size = n = (l < ii->n_elements - 1) ? df : df + rest;
       if (use_p_for_enc_flags & (1 << l)) {
-        for (; n >= UNIT_SIZE; n -= UNIT_SIZE) {
-          const uint8_t *next_dp = unpack(dp, dpe, UNIT_SIZE, rp);
-          if (!next_dp) {
-            grn_obj term;
-            GRN_DEFINE_NAME(ii);
-            GRN_TEXT_INIT(&term, 0);
-            if (id != GRN_ID_NIL) {
-              grn_ii_get_term(ctx, ii, id, &term);
-            }
-            ERR(GRN_FILE_CORRUPT,
-                "[ii][decv] "
-                "failed to unpack PFor encoded fixed size data: "
-                "<%.*s>: "
-                "<%.*s>(%u): "
-                "df(%u): "
-                "rest(%u): "
-                "dv[%u/%u](%u/%u): "
-                "data(%u/%u)",
-                name_size,
-                name,
-                (int)GRN_TEXT_LEN(&term),
-                GRN_TEXT_VALUE(&term),
-                id,
-                df,
-                rest,
-                l,
-                ii->n_elements,
-                dv[l].data_size - n,
-                dv[l].data_size,
-                (uint32_t)(dp - data),
-                data_size);
-            GRN_OBJ_FIN(ctx, &term);
-            return 0;
-          }
-          dp = next_dp;
-          rp += UNIT_SIZE;
-        }
-        if (n) {
-          const uint8_t *next_dp = unpack(dp, dpe, n, rp);
-          if (!next_dp) {
-            grn_obj term;
-            GRN_DEFINE_NAME(ii);
-            GRN_TEXT_INIT(&term, 0);
-            if (id != GRN_ID_NIL) {
-              grn_ii_get_term(ctx, ii, id, &term);
-            }
-            ERR(GRN_FILE_CORRUPT,
-                "[ii][decv] failed to unpack PFor encoded rest data: "
-                "<%.*s>: "
-                "<%.*s>(%u): "
-                "df(%u): "
-                "rest(%u): "
-                "dv[%u/%u](%u/%u): "
-                "data(%u/%u)",
-                name_size,
-                name,
-                (int)GRN_TEXT_LEN(&term),
-                GRN_TEXT_VALUE(&term),
-                id,
-                df,
-                rest,
-                l,
-                ii->n_elements,
-                dv[l].data_size - n,
-                dv[l].data_size,
-                (uint32_t)(dp - data),
-                data_size);
-            GRN_OBJ_FIN(ctx, &term);
-            return 0;
-          }
-          dp = next_dp;
-          rp += n;
-        }
         dv[l].flags |= DATA_USE_P_FOR_ENC;
       } else {
-        for (; n; n--, rp++) {
-          GRN_B_DEC_CHECK(*rp, dp, dpe);
-        }
+        dv[l].flags &= ~DATA_USE_P_FOR_ENC;
       }
+      codec_data.nth_element = l;
+      codec_data.values = dv[l].data;
+      codec_data.n_values = dv[l].data_size;
+      codec_data.flags = dv[l].flags;
+      codec_data.input = dp;
+      codec_data.input_size = dpe - dp;
+      if (codec_data.flags & DATA_USE_P_FOR_ENC) {
+        dp = grn_dec_p_for(ctx, &codec_data);
+      } else {
+        dp = grn_dec_byte(ctx, &codec_data);
+      }
+      if (!dp) {
+         /* TODO: Set error in grn_dec_byte() */
+        return 0;
+      }
+      rp += dv[l].data_size;
     }
     GRN_ASSERT(dp == dpe);
     if (dp != dpe) {
       grn_obj term;
       GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
-      grn_ii_get_term(ctx, ii, id, &term);
+      grn_ii_get_term(ctx, ii, term_id, &term);
       if (df == 0) {
         GRN_LOG(ctx,
                 GRN_LOG_WARNING,
@@ -2727,7 +2846,7 @@ grn_decv(grn_ctx *ctx,
                 name,
                 (int)GRN_TEXT_LEN(&term),
                 GRN_TEXT_VALUE(&term),
-                id,
+                term_id,
                 (uint32_t)(dp - data),
                 data_size);
       } else {
@@ -2739,7 +2858,7 @@ grn_decv(grn_ctx *ctx,
                 name,
                 (int)GRN_TEXT_LEN(&term),
                 GRN_TEXT_VALUE(&term),
-                id,
+                term_id,
                 df,
                 (uint32_t)(dp - data),
                 data_size);
@@ -17123,6 +17242,7 @@ grn_ii_builder_buffer_flush(grn_ctx *ctx, grn_ii_builder_buffer *buf)
 }
 
 typedef struct {
+  grn_ii *ii;       /* Building inverted index */
   grn_id tid;       /* Term ID */
   uint32_t n;       /* Number of integers in buffers */
   grn_id rid;       /* Record ID */
@@ -17150,8 +17270,10 @@ typedef struct {
  * chunk must be finalized by grn_ii_builder_chunk_fin.
  */
 static void
-grn_ii_builder_chunk_init(grn_ctx *ctx, grn_ii_builder_chunk *chunk)
+grn_ii_builder_chunk_init(grn_ctx *ctx, grn_ii_builder_chunk *chunk, grn_ii *ii)
 {
+  chunk->ii = ii;
+
   chunk->tid = GRN_ID_NIL;
   chunk->n = 0;
   chunk->rid = GRN_ID_NIL;
@@ -17323,51 +17445,14 @@ grn_ii_builder_chunk_reserve_enc_buf(grn_ctx *ctx,
 static void
 grn_ii_builder_chunk_encode_buf(grn_ctx *ctx,
                                 grn_ii_builder_chunk *chunk,
-                                uint32_t *values,
-                                uint32_t n_values,
-                                grn_bool use_p_for_enc)
+                                grn_codec_data *data)
 {
-  uint8_t *p = chunk->enc_buf + chunk->enc_offset;
-  uint32_t i;
-  if (use_p_for_enc) {
-    uint8_t freq[33];
-    uint32_t buf[UNIT_SIZE];
-    while (n_values >= UNIT_SIZE) {
-      memset(freq, 0, 33);
-      for (i = 0; i < UNIT_SIZE; i++) {
-        buf[i] = values[i];
-        if (buf[i]) {
-          uint32_t w;
-          GRN_BIT_SCAN_REV(buf[i], w);
-          freq[w + 1]++;
-        } else {
-          freq[0]++;
-        }
-      }
-      p = pack(buf, UNIT_SIZE, freq, p);
-      values += UNIT_SIZE;
-      n_values -= UNIT_SIZE;
-    }
-    if (n_values) {
-      memset(freq, 0, 33);
-      for (i = 0; i < n_values; i++) {
-        buf[i] = values[i];
-        if (buf[i]) {
-          uint32_t w;
-          GRN_BIT_SCAN_REV(buf[i], w);
-          freq[w + 1]++;
-        } else {
-          freq[0]++;
-        }
-      }
-      p = pack(buf, n_values, freq, p);
-    }
+  if (data->flags & DATA_USE_P_FOR_ENC) {
+    data->output = grn_enc_p_for(ctx, data);
   } else {
-    for (i = 0; i < n_values; i++) {
-      GRN_B_ENC(values[i], p);
-    }
+    data->output = grn_enc_byte(ctx, data);
   }
-  chunk->enc_offset = p - chunk->enc_buf;
+  chunk->enc_offset = data->output - chunk->enc_buf;
 }
 
 /* grn_ii_builder_chunk_encode encodes a chunk. */
@@ -17380,36 +17465,46 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
   grn_rc rc;
   uint8_t *p;
   uint8_t shift = 0, use_p_for_enc_flags = 0;
-  const bool rid_use_p_for_enc =
-    data_records_use_p_for_enc(chunk->offset, chunk->rid);
-  const bool rest_use_p_for_enc = data_sections_use_p_for_enc(chunk->offset);
-  bool pos_use_p_for_enc = false;
 
   /* Choose an encoding. */
-  if (rid_use_p_for_enc) {
+  uint32_t rid_flags = 0;
+  if (data_records_use_p_for_enc(chunk->offset, chunk->rid)) {
+    rid_flags |= DATA_USE_P_FOR_ENC;
+  }
+  uint32_t rest_flags = 0;
+  if (data_sections_use_p_for_enc(chunk->offset)) {
+    rest_flags |= DATA_USE_P_FOR_ENC;
+  }
+  uint32_t pos_flags = DATA_ODD;
+
+  /* record IDs */
+  if (rid_flags & DATA_USE_P_FOR_ENC) {
     use_p_for_enc_flags |= 1 << shift;
   }
   shift++;
+  /* section IDs */
   if (chunk->sid_buf) {
-    if (rest_use_p_for_enc) {
+    if (rest_flags & DATA_USE_P_FOR_ENC) {
       use_p_for_enc_flags |= 1 << shift;
     }
     shift++;
   }
-  if (rest_use_p_for_enc) {
+  /* term frequencies */
+  if (rest_flags & DATA_USE_P_FOR_ENC) {
     use_p_for_enc_flags |= 1 << shift;
   }
   shift++;
+  /* weights */
   if (chunk->weight_buf) {
-    if (rest_use_p_for_enc) {
+    if (rest_flags & DATA_USE_P_FOR_ENC) {
       use_p_for_enc_flags |= 1 << shift;
     }
     shift++;
   }
+  /* positions */
   if (chunk->pos_buf) {
-    pos_use_p_for_enc =
-      data_positions_use_p_for_enc(chunk->pos_offset, chunk->pos_sum);
-    if (pos_use_p_for_enc) {
+    if (data_positions_use_p_for_enc(chunk->pos_offset, chunk->pos_sum)) {
+      pos_flags |= DATA_USE_P_FOR_ENC;
       use_p_for_enc_flags |= 1 << shift;
     }
     shift++;
@@ -17443,36 +17538,30 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
   chunk->enc_offset = p - chunk->enc_buf;
 
   /* Encode a body. */
-  grn_ii_builder_chunk_encode_buf(ctx,
-                                  chunk,
-                                  chunk->rid_buf,
-                                  chunk->offset,
-                                  rid_use_p_for_enc);
+  grn_codec_data data = {0};
+  data.ii = chunk->ii;
+  data.term_id = chunk->tid;
+  data.values = chunk->rid_buf;
+  data.n_values = chunk->offset;
+  data.flags = rid_flags;
+  data.output = chunk->enc_buf + chunk->enc_offset;
+  grn_ii_builder_chunk_encode_buf(ctx, chunk, &data);
+  data.flags = rest_flags;
   if (chunk->sid_buf) {
-    grn_ii_builder_chunk_encode_buf(ctx,
-                                    chunk,
-                                    chunk->sid_buf,
-                                    chunk->offset,
-                                    rest_use_p_for_enc);
+    data.values = chunk->sid_buf;
+    grn_ii_builder_chunk_encode_buf(ctx, chunk, &data);
   }
-  grn_ii_builder_chunk_encode_buf(ctx,
-                                  chunk,
-                                  chunk->freq_buf,
-                                  chunk->offset,
-                                  rest_use_p_for_enc);
+  data.values = chunk->freq_buf;
+  grn_ii_builder_chunk_encode_buf(ctx, chunk, &data);
   if (chunk->weight_buf) {
-    grn_ii_builder_chunk_encode_buf(ctx,
-                                    chunk,
-                                    chunk->weight_buf,
-                                    chunk->offset,
-                                    rest_use_p_for_enc);
+    data.values = chunk->weight_buf;
+    grn_ii_builder_chunk_encode_buf(ctx, chunk, &data);
   }
   if (chunk->pos_buf) {
-    grn_ii_builder_chunk_encode_buf(ctx,
-                                    chunk,
-                                    chunk->pos_buf,
-                                    chunk->pos_offset,
-                                    pos_use_p_for_enc);
+    data.values = chunk->pos_buf;
+    data.n_values = chunk->pos_offset;
+    data.flags = pos_flags;
+    grn_ii_builder_chunk_encode_buf(ctx, chunk, &data);
   }
 
   return GRN_SUCCESS;
@@ -17587,7 +17676,7 @@ grn_ii_builder_init(grn_ctx *ctx,
   builder->blocks_size = 0;
 
   grn_ii_builder_buffer_init(ctx, &builder->buf, ii);
-  grn_ii_builder_chunk_init(ctx, &builder->chunk);
+  grn_ii_builder_chunk_init(ctx, &builder->chunk, ii);
 
   builder->df = 0;
   builder->cinfos = NULL;
