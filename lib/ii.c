@@ -2102,19 +2102,19 @@ datavec_fin(grn_ctx *ctx, datavec *dv)
 }
 
 static grn_inline bool
-data_records_use_block_enc(uint32_t n_records, uint32_t max_record_id)
+data_records_use_p_for_enc(uint32_t n_records, uint32_t max_record_id)
 {
   return n_records >= 16 && (n_records > (max_record_id >> 8));
 }
 
 static grn_inline bool
-data_sections_use_block_enc(uint32_t n_records)
+data_sections_use_p_for_enc(uint32_t n_records)
 {
   return n_records >= 3;
 }
 
 static grn_inline bool
-data_positions_use_block_enc(uint32_t n_positions, uint32_t max_position)
+data_positions_use_p_for_enc(uint32_t n_positions, uint32_t max_position)
 {
   return n_positions >= 32 && n_positions > (max_position >> 13);
 }
@@ -2129,12 +2129,12 @@ datavec_set_data_size(grn_ctx *ctx,
                       uint32_t max_position)
 {
   int i = 0;
-  bool records_use_block_enc =
-    data_records_use_block_enc(n_records, max_record_id);
-  bool sections_use_block_enc = data_sections_use_block_enc(n_records);
+  bool records_use_p_for_enc =
+    data_records_use_p_for_enc(n_records, max_record_id);
+  bool sections_use_p_for_enc = data_sections_use_p_for_enc(n_records);
   /* record IDs */
   dv[i].data_size = n_records;
-  if (records_use_block_enc) {
+  if (records_use_p_for_enc) {
     dv[i++].flags |= USE_P_ENC;
   } else {
     dv[i++].flags &= ~USE_P_ENC;
@@ -2142,7 +2142,7 @@ datavec_set_data_size(grn_ctx *ctx,
   if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
     /* section IDs */
     dv[i].data_size = n_records;
-    if (sections_use_block_enc) {
+    if (sections_use_p_for_enc) {
       dv[i++].flags |= USE_P_ENC;
     } else {
       dv[i++].flags &= ~USE_P_ENC;
@@ -2150,7 +2150,7 @@ datavec_set_data_size(grn_ctx *ctx,
   }
   /* term frequencies */
   dv[i].data_size = n_records;
-  if (sections_use_block_enc) {
+  if (sections_use_p_for_enc) {
     dv[i++].flags |= USE_P_ENC;
   } else {
     dv[i++].flags &= ~USE_P_ENC;
@@ -2158,7 +2158,7 @@ datavec_set_data_size(grn_ctx *ctx,
   if ((ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
     /* weights */
     dv[i].data_size = n_records;
-    if (sections_use_block_enc) {
+    if (sections_use_p_for_enc) {
       dv[i++].flags |= USE_P_ENC;
     } else {
       dv[i++].flags &= ~USE_P_ENC;
@@ -2167,7 +2167,7 @@ datavec_set_data_size(grn_ctx *ctx,
   if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
     /* positions */
     dv[i].data_size = n_positions;
-    if (data_positions_use_block_enc(n_positions, max_position)) {
+    if (data_positions_use_p_for_enc(n_positions, max_position)) {
       dv[i++].flags |= USE_P_ENC;
     } else {
       dv[i++].flags &= ~USE_P_ENC;
