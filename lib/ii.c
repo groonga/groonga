@@ -2069,23 +2069,26 @@ datavec_init(
   grn_ctx *ctx, grn_ii *ii, datavec *dv, size_t unitsize, size_t totalsize)
 {
   uint32_t i;
-  if (!totalsize) {
+  if (totalsize == 0) {
     memset(dv, 0, sizeof(datavec) * (ii->n_elements + 1));
-    return GRN_SUCCESS;
+  } else {
+    if (!(dv[0].data = GRN_MALLOC(totalsize * sizeof(uint32_t)))) {
+      MERR("[ii][data-vector][init] failed to allocate data: "
+           "length:<%u>, "
+           "unit-size:<%" GRN_FMT_SIZE ">, "
+           "total-size:<%" GRN_FMT_SIZE ">",
+           ii->n_elements,
+           unitsize,
+           totalsize);
+      return ctx->rc;
+    }
+    dv[ii->n_elements].data = dv[0].data + totalsize;
+    for (i = 1; i < ii->n_elements; i++) {
+      dv[i].data = dv[i - 1].data + unitsize;
+    }
   }
-  if (!(dv[0].data = GRN_MALLOC(totalsize * sizeof(uint32_t)))) {
-    MERR("[ii][data-vector][init] failed to allocate data: "
-         "length:<%u>, "
-         "unit-size:<%" GRN_FMT_SIZE ">, "
-         "total-size:<%" GRN_FMT_SIZE ">",
-         ii->n_elements,
-         unitsize,
-         totalsize);
-    return ctx->rc;
-  }
-  dv[ii->n_elements].data = dv[0].data + totalsize;
-  for (i = 1; i < ii->n_elements; i++) {
-    dv[i].data = dv[i - 1].data + unitsize;
+  if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
+    dv[ii->n_elements - 1].flags = ODD;
   }
   return GRN_SUCCESS;
 }
@@ -2164,7 +2167,6 @@ datavec_set_data_size(grn_ctx *ctx,
   if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
     /* positions */
     dv[i].data_size = n_positions;
-    dv[i].flags = ODD;
     if (data_positions_use_block_enc(n_positions, max_position)) {
       dv[i++].flags |= USE_P_ENC;
     } else {
@@ -3821,9 +3823,6 @@ merge_dump_source(grn_ctx *ctx,
   data.nth_chunk = 0;
   data.n_chunks = 0;
   datavec_init(ctx, ii, data.data_vector, 0, 0);
-  if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
-    data.data_vector[ii->n_elements - 1].flags = ODD;
-  }
   {
     GRN_DEFINE_NAME(ii);
     grn_memcpy(data.name, name, name_size);
@@ -4484,9 +4483,6 @@ chunk_merge(grn_ctx *ctx,
     return ctx->rc;
   }
 
-  if ((ii->header.common->flags & GRN_OBJ_WITH_POSITION)) {
-    rdv[ii->n_elements - 1].flags = ODD;
-  }
   {
     int decoded_size;
     decoded_size =
@@ -4861,9 +4857,6 @@ buffer_merge_internal(grn_ctx *ctx,
         name_size,
         name);
     return ctx->rc;
-  }
-  if ((ii->header.common->flags & GRN_OBJ_WITH_POSITION)) {
-    rdv[ii->n_elements - 1].flags = ODD;
   }
 
   size_t dc_size = (sb->header.chunk_size + S_SEGMENT) * 2;
@@ -5587,9 +5580,6 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
     (sb->header.buffer_free + sizeof(buffer_term) * sb->header.nterms) /
     sizeof(buffer_rec);
   datavec_init(ctx, ii, rdv, 0, 0);
-  if ((ii->header.common->flags & GRN_OBJ_WITH_POSITION)) {
-    rdv[ii->n_elements - 1].flags = ODD;
-  }
   GRN_OUTPUT_MAP_OPEN("BUFFER", -1);
   GRN_OUTPUT_CSTR("buffer id");
   GRN_OUTPUT_INT64(lseg);
@@ -7715,6 +7705,7 @@ grn_ii_cursor_open(grn_ctx *ctx,
     c->scale = 1.0;
     c->scales = NULL;
     c->n_scales = 0;
+    datavec_init(ctx, ii, c->rdv, 0, 0);
     if (POS_IS_EMBED(pos)) {
       c->stat = 0;
       if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
@@ -7788,9 +7779,6 @@ grn_ii_cursor_open(grn_ctx *ctx,
             grn_ii_cursor_close(ctx, c);
             continue;
           }
-        }
-        if ((ii->header.common->flags & GRN_OBJ_WITH_POSITION)) {
-          c->rdv[ii->n_elements - 1].flags = ODD;
         }
       }
       c->nextb = bt->pos_in_buffer;
