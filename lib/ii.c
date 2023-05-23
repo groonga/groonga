@@ -2098,7 +2098,7 @@ datavec_fin(grn_ctx *ctx, datavec *dv)
   }
 }
 
-/* Binary format used in grn_p_encv()/grn_p_decv().
+/* Binary format used in grn_encv()/grn_decv().
  *
  * df: Data Frequency: The number of postings
  *
@@ -2175,9 +2175,8 @@ datavec_fin(grn_ctx *ctx, datavec *dv)
  *   }
  * */
 
-/* p is for PForDelta */
 static ssize_t
-grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
+grn_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
 {
   uint8_t *rp = res;
   ssize_t estimated = 0;
@@ -2442,13 +2441,13 @@ unpack(const uint8_t *dp, const uint8_t *dpe, int i, uint32_t *rp)
 }
 
 static int
-grn_p_decv(grn_ctx *ctx,
-           grn_ii *ii,
-           grn_id id,
-           const uint8_t *data,
-           uint32_t data_size,
-           datavec *dv,
-           uint32_t dvlen)
+grn_decv(grn_ctx *ctx,
+         grn_ii *ii,
+         grn_id id,
+         const uint8_t *data,
+         uint32_t data_size,
+         datavec *dv,
+         uint32_t dvlen)
 {
   size_t size;
   uint32_t df, l, i, *rp;
@@ -3506,13 +3505,13 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
     return;
   }
 
-  decoded_size = grn_p_decv(ctx,
-                            data->ii,
-                            data->term->tid & GRN_ID_MAX,
-                            chunk_current,
-                            chunk_end - chunk_current,
-                            data->data_vector,
-                            data->ii->n_elements);
+  decoded_size = grn_decv(ctx,
+                          data->ii,
+                          data->term->tid & GRN_ID_MAX,
+                          chunk_current,
+                          chunk_end - chunk_current,
+                          data->data_vector,
+                          data->ii->n_elements);
   if (decoded_size == 0) {
     GRN_LOG(ctx,
             data->log_level,
@@ -4420,13 +4419,13 @@ chunk_merge(grn_ctx *ctx,
   }
   {
     int decoded_size;
-    decoded_size = grn_p_decv(ctx,
-                              ii,
-                              data->term_id & GRN_ID_MAX,
-                              scp,
-                              cinfo->size,
-                              rdv,
-                              ii->n_elements);
+    decoded_size = grn_decv(ctx,
+                            ii,
+                            data->term_id & GRN_ID_MAX,
+                            scp,
+                            cinfo->size,
+                            rdv,
+                            ii->n_elements);
     if (decoded_size == 0) {
       grn_obj term;
       grn_rc rc = ctx->rc;
@@ -4562,7 +4561,7 @@ chunk_merge(grn_ctx *ctx,
       dv[j].data_size = n_positions;
       dv[j].flags = f_p | ODD;
     }
-    const ssize_t encsize_estimated = grn_p_encv(ctx, dv, ii->n_elements, NULL);
+    const ssize_t encsize_estimated = grn_encv(ctx, dv, ii->n_elements, NULL);
     if (encsize_estimated == -1) {
       grn_obj term;
       GRN_DEFINE_NAME(ii);
@@ -4615,7 +4614,7 @@ chunk_merge(grn_ctx *ctx,
         GRN_OBJ_FIN(ctx, &term);
         goto exit;
       }
-      const ssize_t encsize = grn_p_encv(ctx, dv, ii->n_elements, enc);
+      const ssize_t encsize = grn_encv(ctx, dv, ii->n_elements, enc);
       if (encsize == -1) {
         grn_obj term;
         GRN_DEFINE_NAME(ii);
@@ -4987,13 +4986,13 @@ buffer_merge_internal(grn_ctx *ctx,
       }
       if (chunk_data->data_end > chunk_data->data) {
         int decoded_size;
-        decoded_size = grn_p_decv(ctx,
-                                  ii,
-                                  bt->tid & GRN_ID_MAX,
-                                  chunk_data->data,
-                                  chunk_data->data_end - chunk_data->data,
-                                  rdv,
-                                  ii->n_elements);
+        decoded_size = grn_decv(ctx,
+                                ii,
+                                bt->tid & GRN_ID_MAX,
+                                chunk_data->data,
+                                chunk_data->data_end - chunk_data->data,
+                                rdv,
+                                ii->n_elements);
         if (decoded_size == 0) {
           if (cinfo) {
             GRN_FREE(cinfo);
@@ -5200,7 +5199,7 @@ buffer_merge_internal(grn_ctx *ctx,
             }
           }
           const ssize_t estimated_encsize =
-            grn_p_encv(ctx, dv, ii->n_elements, NULL);
+            grn_encv(ctx, dv, ii->n_elements, NULL);
           if (estimated_encsize == -1) {
             grn_obj term;
             GRN_DEFINE_NAME(ii);
@@ -5239,7 +5238,7 @@ buffer_merge_internal(grn_ctx *ctx,
             goto exit;
           }
 
-          const ssize_t encsize = grn_p_encv(ctx, dv, ii->n_elements, dcp);
+          const ssize_t encsize = grn_encv(ctx, dv, ii->n_elements, dcp);
           if (encsize == -1) {
             grn_obj term;
             GRN_DEFINE_NAME(ii);
@@ -5656,13 +5655,13 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
         }
       }
       if (chunk_data->data_end > chunk_data->data) {
-        size += grn_p_decv(ctx,
-                           ii,
-                           crid,
-                           chunk_data->data,
-                           chunk_data->data_end - chunk_data->data,
-                           rdv,
-                           ii->n_elements);
+        size += grn_decv(ctx,
+                         ii,
+                         crid,
+                         chunk_data->data,
+                         chunk_data->data_end - chunk_data->data,
+                         rdv,
+                         ii->n_elements);
         merger_init_chunk_data(ctx, &data, rdv);
         GRN_OUTPUT_INT64(chunk_data->n_documents);
         GRN_OUTPUT_INT64(chunk_data->position_gaps_end -
@@ -7985,13 +7984,13 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
               if (c->curr_chunk == c->nchunks) {
                 if (c->cp < c->cpe) {
                   int decoded_size;
-                  decoded_size = grn_p_decv(ctx,
-                                            c->ii,
-                                            c->id,
-                                            c->cp,
-                                            c->cpe - c->cp,
-                                            c->rdv,
-                                            c->ii->n_elements);
+                  decoded_size = grn_decv(ctx,
+                                          c->ii,
+                                          c->id,
+                                          c->cp,
+                                          c->cpe - c->cp,
+                                          c->rdv,
+                                          c->ii->n_elements);
                   if (decoded_size == 0) {
                     GRN_DEFINE_NAME(c->ii);
                     grn_obj term;
@@ -8077,13 +8076,13 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
                                           size,
                                           GRN_IO_RDONLY))) {
                   int decoded_size;
-                  decoded_size = grn_p_decv(ctx,
-                                            c->ii,
-                                            c->id,
-                                            cp,
-                                            size,
-                                            c->rdv,
-                                            c->ii->n_elements);
+                  decoded_size = grn_decv(ctx,
+                                          c->ii,
+                                          c->id,
+                                          cp,
+                                          size,
+                                          c->rdv,
+                                          c->ii->n_elements);
                   grn_io_win_unmap(ctx, &iw);
                   if (decoded_size == 0) {
                     GRN_DEFINE_NAME(c->ii);
@@ -16132,10 +16131,10 @@ grn_ii_buffer_merge(grn_ctx *ctx,
       a[0] = grn_ii_pos_pack(ii_buffer->ii,
                              ii_buffer->lseg,
                              POS_LOFFSET_HEADER + POS_LOFFSET_TERM * nterm);
-      packed_len = grn_p_encv(ctx,
-                              ii_buffer->data_vectors,
-                              ii_buffer->ii->n_elements,
-                              ii_buffer->packed_buf + ii_buffer->packed_len);
+      packed_len = grn_encv(ctx,
+                            ii_buffer->data_vectors,
+                            ii_buffer->ii->n_elements,
+                            ii_buffer->packed_buf + ii_buffer->packed_len);
       a[1] = ii_buffer->data_vectors[0].data_size;
       bt->tid = tid;
       bt->size_in_buffer = 0;
