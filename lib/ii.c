@@ -1960,6 +1960,19 @@ pack_(uint32_t *p, uint32_t i, int w, uint8_t *rp)
 #define PACK_MAX_SIZE ((UNIT_SIZE / 8) * 32 + (UNIT_SIZE * GRN_B_ENC_MAX_SIZE))
 
 /*
+ * We use PForDelta not NewPForDelta nor OptPForDelta because "An
+ * Experimental Study of Bitmap Compression vs. Inverted List
+ * Compression"
+ * https://www.cs.purdue.edu/homes/csjgwang/pubs/SIGMOD17-Bitmap.pdf
+ * shows that PForDelta is faster than others. (They are smaller than
+ * PForDelta.)
+ *
+ * We use PForDelta not Roaring bitmaps because PForDelta is faster
+ * and smaller for posting list. And we need a cursor interface for
+ * searching. Roaring bitmaps' intersection and union may be faster
+ * but it's not a cursor interface. See also the above paper.
+ */
+
 /*
  * PFor (Patched Frame of Reference) encode: M. Zukowski , S. Heman ,
  * N. Nes , P. Boncz, Super-Scalar RAM-CPU Cache Compression,
