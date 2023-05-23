@@ -2592,7 +2592,7 @@ grn_dec_p_for(grn_ctx *ctx, grn_codec_data *data)
  * */
 
 static ssize_t
-grn_encv(grn_ctx *ctx, grn_ii *ii, datavec *dv, uint8_t *res)
+grn_encv(grn_ctx *ctx, grn_ii *ii, grn_id term_id, datavec *dv, uint8_t *res)
 {
   uint8_t *rp = res;
   ssize_t estimated = 0;
@@ -2603,7 +2603,7 @@ grn_encv(grn_ctx *ctx, grn_ii *ii, datavec *dv, uint8_t *res)
   }
   grn_codec_data codec_data = {0};
   codec_data.ii = ii;
-  /* TODO: codec_data.term_id = term_id; */
+  codec_data.term_id = term_id;
   codec_data.n_elements = ii->n_elements;
   uint32_t use_p_for_enc_flags = 0;
   for (data_size = 0, l = 0; l < ii->n_elements; l++) {
@@ -2826,7 +2826,7 @@ grn_decv(grn_ctx *ctx,
         dp = grn_dec_byte(ctx, &codec_data);
       }
       if (!dp) {
-         /* TODO: Set error in grn_dec_byte() */
+        /* TODO: Set error in grn_dec_byte() */
         return 0;
       }
       rp += dv[l].data_size;
@@ -4558,6 +4558,7 @@ chunk_merge(grn_ctx *ctx,
   merger_buffer_data *buffer_data = &(data->source.buffer);
   merger_chunk_data *chunk_data = &(data->source.chunk);
   grn_ii *ii = data->ii;
+  grn_id term_id = data->term_id & GRN_ID_MAX;
   grn_io_win sw;
   uint32_t segno = cinfo->segno;
   uint32_t size = cinfo->size;
@@ -4571,7 +4572,7 @@ chunk_merge(grn_ctx *ctx,
     grn_obj term;
     GRN_DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
-    grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
+    grn_ii_get_term(ctx, ii, term_id, &term);
     MERR("[ii][chunk][merge] failed to allocate a source chunk: "
          "<%.*s>: "
          "<%.*s>(%u): "
@@ -4607,14 +4608,13 @@ chunk_merge(grn_ctx *ctx,
 
   {
     int decoded_size;
-    decoded_size =
-      grn_decv(ctx, ii, data->term_id & GRN_ID_MAX, scp, cinfo->size, rdv);
+    decoded_size = grn_decv(ctx, ii, term_id, scp, cinfo->size, rdv);
     if (decoded_size == 0) {
       grn_obj term;
       grn_rc rc = ctx->rc;
       GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
-      grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
+      grn_ii_get_term(ctx, ii, term_id, &term);
       if (rc == GRN_SUCCESS) {
         rc = GRN_UNKNOWN_ERROR;
       }
@@ -4643,7 +4643,7 @@ chunk_merge(grn_ctx *ctx,
     grn_obj term;
     GRN_DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
-    grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
+    grn_ii_get_term(ctx, ii, term_id, &term);
     ERR(ctx->rc,
         "[ii][chunk][merge] failed to reset data vector: "
         "<%.*s>: "
@@ -4674,7 +4674,7 @@ chunk_merge(grn_ctx *ctx,
     grn_obj term;
     GRN_DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
-    grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
+    grn_ii_get_term(ctx, ii, term_id, &term);
     ERR(ctx->rc,
         "[ii][chunk][merge] failed to get the next chunk posting: "
         "<%.*s>: "
@@ -4697,7 +4697,7 @@ chunk_merge(grn_ctx *ctx,
     grn_obj term;
     GRN_DEFINE_NAME(ii);
     GRN_TEXT_INIT(&term, 0);
-    grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
+    grn_ii_get_term(ctx, ii, term_id, &term);
     ERR(ctx->rc,
         "[ii][chunk][merge] failed to merge: "
         "<%.*s>: "
@@ -4721,12 +4721,12 @@ chunk_merge(grn_ctx *ctx,
                           data->last_id.rid,
                           n_positions,
                           data->position);
-    const ssize_t encsize_estimated = grn_encv(ctx, ii, dv, NULL);
+    const ssize_t encsize_estimated = grn_encv(ctx, ii, term_id, dv, NULL);
     if (encsize_estimated == -1) {
       grn_obj term;
       GRN_DEFINE_NAME(ii);
       GRN_TEXT_INIT(&term, 0);
-      grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
+      grn_ii_get_term(ctx, ii, term_id, &term);
       MERR("[ii][chunk][merge] failed to estimate encode buffer size: "
            "<%.*s>: "
            "<%.*s>(%u): "
@@ -4754,7 +4754,7 @@ chunk_merge(grn_ctx *ctx,
         grn_obj term;
         GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
-        grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
+        grn_ii_get_term(ctx, ii, term_id, &term);
         MERR("[ii][chunk][merge] failed to allocate a encode buffer: "
              "<%.*s>: "
              "<%.*s>(%u): "
@@ -4774,12 +4774,12 @@ chunk_merge(grn_ctx *ctx,
         GRN_OBJ_FIN(ctx, &term);
         goto exit;
       }
-      const ssize_t encsize = grn_encv(ctx, ii, dv, enc);
+      const ssize_t encsize = grn_encv(ctx, ii, term_id, dv, enc);
       if (encsize == -1) {
         grn_obj term;
         GRN_DEFINE_NAME(ii);
         GRN_TEXT_INIT(&term, 0);
-        grn_ii_get_term(ctx, ii, data->term_id & GRN_ID_MAX, &term);
+        grn_ii_get_term(ctx, ii, term_id, &term);
         MERR("[ii][chunk][merge] failed to encode: "
              "<%.*s>: "
              "<%.*s>(%u): "
@@ -5331,7 +5331,7 @@ buffer_merge_internal(grn_ctx *ctx,
               }
             }
           }
-          const ssize_t estimated_encsize = grn_encv(ctx, ii, dv, NULL);
+          const ssize_t estimated_encsize = grn_encv(ctx, ii, tid, dv, NULL);
           if (estimated_encsize == -1) {
             grn_obj term;
             GRN_DEFINE_NAME(ii);
@@ -5370,7 +5370,7 @@ buffer_merge_internal(grn_ctx *ctx,
             goto exit;
           }
 
-          const ssize_t encsize = grn_encv(ctx, ii, dv, dcp);
+          const ssize_t encsize = grn_encv(ctx, ii, tid, dv, dcp);
           if (encsize == -1) {
             grn_obj term;
             GRN_DEFINE_NAME(ii);
@@ -16231,6 +16231,7 @@ grn_ii_buffer_merge(grn_ctx *ctx,
                              POS_LOFFSET_HEADER + POS_LOFFSET_TERM * nterm);
       packed_len = grn_encv(ctx,
                             ii_buffer->ii,
+                            tid,
                             ii_buffer->data_vectors,
                             ii_buffer->packed_buf + ii_buffer->packed_len);
       a[1] = ii_buffer->data_vectors[0].data_size;
