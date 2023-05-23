@@ -17322,11 +17322,11 @@ grn_ii_builder_chunk_encode_buf(grn_ctx *ctx,
                                 grn_ii_builder_chunk *chunk,
                                 uint32_t *values,
                                 uint32_t n_values,
-                                grn_bool use_p_enc)
+                                grn_bool use_p_for_enc)
 {
   uint8_t *p = chunk->enc_buf + chunk->enc_offset;
   uint32_t i;
-  if (use_p_enc) {
+  if (use_p_for_enc) {
     uint8_t freq[33];
     uint32_t buf[UNIT_SIZE];
     while (n_values >= UNIT_SIZE) {
@@ -17376,24 +17376,40 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
 {
   grn_rc rc;
   uint8_t *p;
-  uint8_t shift = 0, use_p_enc_flags = 0;
-  uint8_t rid_use_p_enc, rest_use_p_enc, pos_use_p_enc = 0;
+  uint8_t shift = 0, use_p_for_enc_flags = 0;
+  const bool rid_use_p_for_enc =
+    data_records_use_p_for_enc(chunk->offset, chunk->rid);
+  const bool rest_use_p_for_enc = data_sections_use_p_for_enc(chunk->offset);
+  bool pos_use_p_for_enc = false;
 
   /* Choose an encoding. */
-  rid_use_p_enc = chunk->offset >= 16 && chunk->offset > (chunk->rid >> 8);
-  use_p_enc_flags |= rid_use_p_enc << shift++;
-  rest_use_p_enc = chunk->offset >= 3;
-  if (chunk->sid_buf) {
-    use_p_enc_flags |= rest_use_p_enc << shift++;
+  if (rid_use_p_for_enc) {
+    use_p_for_enc_flags |= 1 << shift;
   }
-  use_p_enc_flags |= rest_use_p_enc << shift++;
+  shift++;
+  if (chunk->sid_buf) {
+    if (rest_use_p_for_enc) {
+      use_p_for_enc_flags |= 1 << shift;
+    }
+    shift++;
+  }
+  if (rest_use_p_for_enc) {
+    use_p_for_enc_flags |= 1 << shift;
+  }
+  shift++;
   if (chunk->weight_buf) {
-    use_p_enc_flags |= rest_use_p_enc << shift++;
+    if (rest_use_p_for_enc) {
+      use_p_for_enc_flags |= 1 << shift;
+    }
+    shift++;
   }
   if (chunk->pos_buf) {
-    pos_use_p_enc =
-      chunk->pos_offset >= 32 && chunk->pos_offset > (chunk->pos_sum >> 13);
-    use_p_enc_flags |= pos_use_p_enc << shift++;
+    pos_use_p_for_enc =
+      data_positions_use_p_for_enc(chunk->pos_offset, chunk->pos_sum);
+    if (pos_use_p_for_enc) {
+      use_p_for_enc_flags |= 1 << shift;
+    }
+    shift++;
   }
 
   rc = grn_ii_builder_chunk_reserve_enc_buf(ctx, chunk, n_cinfos);
@@ -17412,8 +17428,8 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
       GRN_B_ENC(cinfos[i].dgap, p);
     }
   }
-  if (use_p_enc_flags) {
-    GRN_B_ENC(use_p_enc_flags << 1, p);
+  if (use_p_for_enc_flags) {
+    GRN_B_ENC(use_p_for_enc_flags << 1, p);
     GRN_B_ENC(chunk->offset, p);
     if (chunk->pos_buf) {
       GRN_B_ENC(chunk->pos_offset - chunk->offset, p);
@@ -17428,32 +17444,32 @@ grn_ii_builder_chunk_encode(grn_ctx *ctx,
                                   chunk,
                                   chunk->rid_buf,
                                   chunk->offset,
-                                  rid_use_p_enc);
+                                  rid_use_p_for_enc);
   if (chunk->sid_buf) {
     grn_ii_builder_chunk_encode_buf(ctx,
                                     chunk,
                                     chunk->sid_buf,
                                     chunk->offset,
-                                    rest_use_p_enc);
+                                    rest_use_p_for_enc);
   }
   grn_ii_builder_chunk_encode_buf(ctx,
                                   chunk,
                                   chunk->freq_buf,
                                   chunk->offset,
-                                  rest_use_p_enc);
+                                  rest_use_p_for_enc);
   if (chunk->weight_buf) {
     grn_ii_builder_chunk_encode_buf(ctx,
                                     chunk,
                                     chunk->weight_buf,
                                     chunk->offset,
-                                    rest_use_p_enc);
+                                    rest_use_p_for_enc);
   }
   if (chunk->pos_buf) {
     grn_ii_builder_chunk_encode_buf(ctx,
                                     chunk,
                                     chunk->pos_buf,
                                     chunk->pos_offset,
-                                    pos_use_p_enc);
+                                    pos_use_p_for_enc);
   }
 
   return GRN_SUCCESS;
