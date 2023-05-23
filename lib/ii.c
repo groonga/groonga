@@ -2098,6 +2098,81 @@ datavec_fin(grn_ctx *ctx, datavec *dv)
   }
 }
 
+static grn_inline bool
+data_records_use_block_enc(uint32_t n_records, uint32_t max_record_id)
+{
+  return n_records >= 16 && (n_records > (max_record_id >> 8));
+}
+
+static grn_inline bool
+data_sections_use_block_enc(uint32_t n_records)
+{
+  return n_records >= 3;
+}
+
+static grn_inline bool
+data_positions_use_block_enc(uint32_t n_positions, uint32_t max_position)
+{
+  return n_positions >= 32 && n_positions > (max_position >> 13);
+}
+
+static grn_inline void
+datavec_set_data_size(grn_ctx *ctx,
+                      grn_ii *ii,
+                      datavec *dv,
+                      uint32_t n_records,
+                      grn_id max_record_id,
+                      uint32_t n_positions,
+                      uint32_t max_position)
+{
+  int i = 0;
+  bool records_use_block_enc =
+    data_records_use_block_enc(n_records, max_record_id);
+  bool sections_use_block_enc = data_sections_use_block_enc(n_records);
+  /* record IDs */
+  dv[i].data_size = n_records;
+  if (records_use_block_enc) {
+    dv[i++].flags |= USE_P_ENC;
+  } else {
+    dv[i++].flags &= ~USE_P_ENC;
+  }
+  if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
+    /* section IDs */
+    dv[i].data_size = n_records;
+    if (sections_use_block_enc) {
+      dv[i++].flags |= USE_P_ENC;
+    } else {
+      dv[i++].flags &= ~USE_P_ENC;
+    }
+  }
+  /* term frequencies */
+  dv[i].data_size = n_records;
+  if (sections_use_block_enc) {
+    dv[i++].flags |= USE_P_ENC;
+  } else {
+    dv[i++].flags &= ~USE_P_ENC;
+  }
+  if ((ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
+    /* weights */
+    dv[i].data_size = n_records;
+    if (sections_use_block_enc) {
+      dv[i++].flags |= USE_P_ENC;
+    } else {
+      dv[i++].flags &= ~USE_P_ENC;
+    }
+  }
+  if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
+    /* positions */
+    dv[i].data_size = n_positions;
+    dv[i].flags = ODD;
+    if (data_positions_use_block_enc(n_positions, max_position)) {
+      dv[i++].flags |= USE_P_ENC;
+    } else {
+      dv[i++].flags &= ~USE_P_ENC;
+    }
+  }
+}
+
 /* Binary format used in grn_encv()/grn_decv().
  *
  * df: Data Frequency: The number of postings
@@ -4533,34 +4608,15 @@ chunk_merge(grn_ctx *ctx,
   }
   ndf = data->dest.record_id_gaps - dv[0].data;
   {
-    int j = 0;
-    uint8_t *enc;
-    uint32_t f_s = (ndf < 3) ? 0 : USE_P_ENC;
-    uint32_t f_d =
-      ((ndf < 16) || (ndf <= (data->last_id.rid >> 8))) ? 0 : USE_P_ENC;
-    dv[j].data_size = ndf;
-    dv[j++].flags = f_d;
-    if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-      dv[j].data_size = ndf;
-      dv[j++].flags = f_s;
-    }
-    dv[j].data_size = ndf;
-    dv[j++].flags = f_s;
-    if ((ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
-      dv[j].data_size = ndf;
-      dv[j++].flags = f_s;
-    }
-    if ((ii->header.common->flags & GRN_OBJ_WITH_POSITION)) {
-      const uint32_t n_positions = data->dest.position_gaps - dv[j].data;
-      uint32_t f_p;
-      if ((n_positions < 32) || (n_positions <= (data->position >> 13))) {
-        f_p = 0;
-      } else {
-        f_p = USE_P_ENC;
-      }
-      dv[j].data_size = n_positions;
-      dv[j].flags = f_p | ODD;
-    }
+    const uint32_t n_positions =
+      data->dest.position_gaps - dv[ii->n_elements - 1].data;
+    datavec_set_data_size(ctx,
+                          ii,
+                          dv,
+                          ndf,
+                          data->last_id.rid,
+                          n_positions,
+                          data->position);
     const ssize_t encsize_estimated = grn_encv(ctx, dv, ii->n_elements, NULL);
     if (encsize_estimated == -1) {
       grn_obj term;
@@ -4589,7 +4645,7 @@ chunk_merge(grn_ctx *ctx,
     if (encsize_estimated == 0) {
       chunk_flush(ctx, ii, cinfo, NULL, 0);
     } else {
-      enc = GRN_MALLOC(encsize_estimated);
+      uint8_t *enc = GRN_MALLOC(encsize_estimated);
       if (!enc) {
         grn_obj term;
         GRN_DEFINE_NAME(ii);
@@ -5143,34 +5199,15 @@ buffer_merge_internal(grn_ctx *ctx,
           memset(bt, 0, sizeof(buffer_term));
           nterms_void++;
         } else {
-          int j = 0;
-          uint32_t f_s = (ndf < 3) ? 0 : USE_P_ENC;
-          uint32_t f_d =
-            ((ndf < 16) || (ndf <= (data.last_id.rid >> 8))) ? 0 : USE_P_ENC;
-          dv[j].data_size = ndf;
-          dv[j++].flags = f_d;
-          if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-            dv[j].data_size = ndf;
-            dv[j++].flags = f_s;
-          }
-          dv[j].data_size = ndf;
-          dv[j++].flags = f_s;
-          if ((ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
-            dv[j].data_size = ndf;
-            dv[j++].flags = f_s;
-          }
-          if ((ii->header.common->flags & GRN_OBJ_WITH_POSITION)) {
-            const uint32_t n_positions = data.dest.position_gaps - dv[j].data;
-            uint32_t f_p;
-            if ((n_positions < 32) || (n_positions <= (data.position >> 13))) {
-              f_p = 0;
-            } else {
-              f_p = USE_P_ENC;
-            }
-            dv[j].data_size = n_positions;
-            dv[j].flags = f_p | ODD;
-          }
-
+          const uint32_t n_positions =
+            data.dest.position_gaps - dv[ii->n_elements - 1].data;
+          datavec_set_data_size(ctx,
+                                ii,
+                                dv,
+                                ndf,
+                                data.last_id.rid,
+                                n_positions,
+                                data.position);
           const size_t dc_offset = dcp - dc;
           a[1] = (bt->size_in_chunk ? a[1] : 0) +
                  (ndf - chunk_data->n_documents) + balance;
@@ -15941,30 +15978,13 @@ merge_hit_blocks(grn_ctx *ctx,
       block->bufcur = p;
       grn_ii_buffer_fetch(ctx, ii_buffer, block);
     }
-    {
-      /* Set size and flags of datavec. */
-      int j = 0;
-      uint32_t f_s = (nrecs < 3) ? 0 : USE_P_ENC;
-      uint32_t f_d = ((nrecs < 16) || (nrecs <= (lr >> 8))) ? 0 : USE_P_ENC;
-      ii_buffer->data_vectors[j].data_size = (uint32_t)nrecs;
-      ii_buffer->data_vectors[j++].flags = f_d;
-      if ((flags & GRN_OBJ_WITH_SECTION)) {
-        ii_buffer->data_vectors[j].data_size = (uint32_t)nrecs;
-        ii_buffer->data_vectors[j++].flags = f_s;
-      }
-      ii_buffer->data_vectors[j].data_size = (uint32_t)nrecs;
-      ii_buffer->data_vectors[j++].flags = f_s;
-      if ((flags & GRN_OBJ_WITH_WEIGHT)) {
-        ii_buffer->data_vectors[j].data_size = (uint32_t)nrecs;
-        ii_buffer->data_vectors[j++].flags = f_s;
-      }
-      if ((flags & GRN_OBJ_WITH_POSITION)) {
-        uint32_t f_p =
-          (((nposts < 32) || (nposts <= (spos >> 13))) ? 0 : USE_P_ENC);
-        ii_buffer->data_vectors[j].data_size = (uint32_t)nposts;
-        ii_buffer->data_vectors[j++].flags = f_p | ODD;
-      }
-    }
+    datavec_set_data_size(ctx,
+                          ii_buffer->ii,
+                          ii_buffer->data_vectors,
+                          nrecs,
+                          lr,
+                          nposts,
+                          spos);
   }
   return (max_size + ii_buffer->ii->n_elements) * 4;
 }
