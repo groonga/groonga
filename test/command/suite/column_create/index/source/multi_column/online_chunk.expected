@@ -1,0 +1,20 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data value1 COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+column_create Data value2 COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
+[[0,0.0,0.0],true]
+column_create Lexicon data_values COLUMN_INDEX|WITH_SECTION|WITH_POSITION   Data value1,value2
+[[0,0.0,0.0],true]
+select Data --match_columns value2 --query abc --limit 0
+[[0,0.0,0.0],[[[2000],[["_id","UInt32"],["value1","Text"],["value2","Text"]]]]]
+index_column_diff Lexicon data_values
+[[0,0.0,0.0],[]]
+delete Data --filter '_id <= 1000'
+[[0,0.0,0.0],true]
+select Data --match_columns value2 --query abc --limit 0
+[[0,0.0,0.0],[[[3000],[["_id","UInt32"],["value1","Text"],["value2","Text"]]]]]
+index_column_diff Lexicon data_values
+[[0,0.0,0.0],[]]
