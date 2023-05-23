@@ -4489,12 +4489,8 @@ chunk_merge(grn_ctx *ctx,
   }
   {
     int decoded_size;
-    decoded_size = grn_decv(ctx,
-                            ii,
-                            data->term_id & GRN_ID_MAX,
-                            scp,
-                            cinfo->size,
-                            rdv);
+    decoded_size =
+      grn_decv(ctx, ii, data->term_id & GRN_ID_MAX, scp, cinfo->size, rdv);
     if (decoded_size == 0) {
       grn_obj term;
       grn_rc rc = ctx->rc;
@@ -4524,11 +4520,7 @@ chunk_merge(grn_ctx *ctx,
   }
   merger_init_chunk_data(ctx, data, rdv);
   /* (df in chunk list) = a[1] - chunk_data->n_documents; */
-  datavec_reset(ctx,
-                ii,
-                dv,
-                chunk_data->n_documents + S_SEGMENT,
-                bufsize);
+  datavec_reset(ctx, ii, dv, chunk_data->n_documents + S_SEGMENT, bufsize);
   if (ctx->rc != GRN_SUCCESS) {
     grn_obj term;
     GRN_DEFINE_NAME(ii);
@@ -5072,11 +5064,7 @@ buffer_merge_internal(grn_ctx *ctx,
         }
         size += decoded_size;
         merger_init_chunk_data(ctx, &data, rdv);
-        datavec_reset(ctx,
-                      ii,
-                      dv,
-                      chunk_data->n_documents + S_SEGMENT,
-                      size);
+        datavec_reset(ctx, ii, dv, chunk_data->n_documents + S_SEGMENT, size);
         if (ctx->rc != GRN_SUCCESS) {
           if (cinfo) {
             GRN_FREE(cinfo);
@@ -8012,12 +8000,8 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
               if (c->curr_chunk == c->nchunks) {
                 if (c->cp < c->cpe) {
                   int decoded_size;
-                  decoded_size = grn_decv(ctx,
-                                          c->ii,
-                                          c->id,
-                                          c->cp,
-                                          c->cpe - c->cp,
-                                          c->rdv);
+                  decoded_size =
+                    grn_decv(ctx, c->ii, c->id, c->cp, c->cpe - c->cp, c->rdv);
                   if (decoded_size == 0) {
                     GRN_DEFINE_NAME(c->ii);
                     grn_obj term;
@@ -8103,12 +8087,7 @@ grn_ii_cursor_next_internal(grn_ctx *ctx,
                                           size,
                                           GRN_IO_RDONLY))) {
                   int decoded_size;
-                  decoded_size = grn_decv(ctx,
-                                          c->ii,
-                                          c->id,
-                                          cp,
-                                          size,
-                                          c->rdv);
+                  decoded_size = grn_decv(ctx, c->ii, c->id, cp, size, c->rdv);
                   grn_io_win_unmap(ctx, &iw);
                   if (decoded_size == 0) {
                     GRN_DEFINE_NAME(c->ii);
