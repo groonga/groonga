@@ -1960,9 +1960,14 @@ pack_(uint32_t *p, uint32_t i, int w, uint8_t *rp)
 #define PACK_MAX_SIZE ((UNIT_SIZE / 8) * 32 + (UNIT_SIZE * GRN_B_ENC_MAX_SIZE))
 
 /*
- * PForDelta encode: M. Zukowski , S. Heman , N. Nes , P. Boncz,
- * Super-Scalar RAM-CPU Cache Compression, Proceedings of the 22nd
- * International Conference on Data Engineering, 2006
+/*
+ * PFor (Patched Frame of Reference) encode: M. Zukowski , S. Heman ,
+ * N. Nes , P. Boncz, Super-Scalar RAM-CPU Cache Compression,
+ * Proceedings of the 22nd International Conference on Data
+ * Engineering, 2006
+ *
+ * Delta encoding must be done by caller. So this only does PFor (not
+ * PForDelta).
  *
  * w: b on the paper.
  * ebuf, ep: exception values on the paper.
@@ -2309,9 +2314,13 @@ grn_p_encv(grn_ctx *ctx, datavec *dv, uint32_t dvlen, uint8_t *res)
   } while (0)
 
 /*
- * PForDelta decode: M. Zukowski , S. Heman , N. Nes , P. Boncz,
- * Super-Scalar RAM-CPU Cache Compression, Proceedings of the 22nd
- * International Conference on Data Engineering, 2006
+ * PFor (Patched Frame of Reference) encode: M. Zukowski , S. Heman ,
+ * N. Nes , P. Boncz, Super-Scalar RAM-CPU Cache Compression,
+ * Proceedings of the 22nd International Conference on Data
+ * Engineering, 2006
+ *
+ * Delta decoding must be done by caller. So this only does PFor (not
+ * PForDelta).
  *
  * w: b on the paper.
  * ne: the number of exception values on the paper.
