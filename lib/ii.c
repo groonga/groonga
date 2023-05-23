@@ -4132,6 +4132,7 @@ typedef struct {
   grn_id term_id;
   docinfo last_id;
   uint64_t position;
+  uint64_t max_position;
   grn_merging_data *merging_data;
   struct {
     merger_buffer_data buffer;
@@ -4343,6 +4344,9 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
           data->dest.position_gaps++;
           data->position += chunk_data->position_gaps[i];
         }
+        if (data->position > data->max_position) {
+          data->max_position = data->position;
+        }
       }
     } else {
       merger_report_error(ctx,
@@ -4440,6 +4444,9 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
           GRN_B_DEC(*(data->dest.position_gaps), buffer_data->data);
           data->position += *(data->dest.position_gaps);
           data->dest.position_gaps++;
+        }
+        if (data->position > data->max_position) {
+          data->max_position = data->position;
         }
       }
     }
@@ -4720,7 +4727,7 @@ chunk_merge(grn_ctx *ctx,
                           ndf,
                           data->last_id.rid,
                           n_positions,
-                          data->position);
+                          data->max_position);
     const ssize_t encsize_estimated = grn_encv(ctx, ii, term_id, dv, NULL);
     if (encsize_estimated == -1) {
       grn_obj term;
@@ -5303,7 +5310,7 @@ buffer_merge_internal(grn_ctx *ctx,
                                 ndf,
                                 data.last_id.rid,
                                 n_positions,
-                                data.position);
+                                data.max_position);
           const size_t dc_offset = dcp - dc;
           a[1] = (bt->size_in_chunk ? a[1] : 0) +
                  (ndf - chunk_data->n_documents) + balance;
