@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2013-2016  Brazil
-  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,8 @@
 #pragma once
 
 #include "grn.h"
+
+#include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,25 +68,52 @@ grn_ctx_logv(grn_ctx *ctx, const char *fmt, va_list ap);
 GRN_API void
 grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
 
-#define ERRSET(ctx, lvl, r, ...)                                               \
-  do {                                                                         \
-    grn_ctx *ctx_ = (grn_ctx *)ctx;                                            \
-    ctx_->errlvl = (lvl);                                                      \
-    if (ctx_->rc != GRN_CANCEL) {                                              \
-      ctx_->rc = (r);                                                          \
-    }                                                                          \
-    ctx_->errfile = __FILE__;                                                  \
-    ctx_->errline = __LINE__;                                                  \
-    ctx_->errfunc = __FUNCTION__;                                              \
-    grn_ctx_log(ctx, __VA_ARGS__);                                             \
-    if (grn_ctx_impl_should_log(ctx)) {                                        \
-      grn_ctx_impl_set_current_error_message(ctx);                             \
-      GRN_LOG(ctx, lvl, __VA_ARGS__);                                          \
-      if (lvl <= GRN_LOG_ERROR) {                                              \
-        grn_ctx_log_back_trace(ctx, lvl);                                      \
-      }                                                                        \
-    }                                                                          \
-  } while (0)
+static grn_inline void
+grn_error_set(grn_ctx *ctx,
+              grn_log_level level,
+              grn_rc rc,
+              const char *file,
+              uint32_t line,
+              const char *function,
+              const char *format,
+              ...) GRN_ATTRIBUTE_PRINTF(7);
+static grn_inline void
+grn_error_set(grn_ctx *ctx,
+              grn_log_level level,
+              grn_rc rc,
+              const char *file,
+              uint32_t line,
+              const char *function,
+              const char *format,
+              ...)
+{
+  ctx->errlvl = level;
+  if (ctx->rc != GRN_CANCEL) {
+    ctx->rc = rc;
+  }
+  ctx->errfile = file;
+  ctx->errline = line;
+  ctx->errfunc = function;
+  va_list args;
+  va_list logger_putv_args;
+  va_start(args, format);
+  va_copy(logger_putv_args, args);
+  grn_ctx_logv(ctx, format, args);
+  va_end(args);
+  if (grn_ctx_impl_should_log(ctx)) {
+    grn_ctx_impl_set_current_error_message(ctx);
+    if (grn_logger_pass(ctx, level)) {
+      grn_logger_putv(ctx, level, file, line, function, format, logger_putv_args);
+    }
+    if (level <= GRN_LOG_ERROR) {
+      grn_ctx_log_back_trace(ctx, level);
+    }
+  }
+  va_end(logger_putv_args);
+}
+
+#define ERRSET(ctx,lvl,r,...) \
+  grn_error_set((ctx), (lvl), (r), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
 
 #define ERRP(ctx, lvl)                                                         \
   (((ctx) && ((grn_ctx *)(ctx))->errlvl <= (lvl)) || (grn_gctx.errlvl <= (lvl)))
