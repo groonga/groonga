@@ -91,7 +91,13 @@ grn_error_setv(grn_ctx *ctx,
   if (grn_ctx_impl_should_log(ctx)) {
     grn_ctx_impl_set_current_error_message(ctx);
     if (grn_logger_pass(ctx, level)) {
-      grn_logger_putv(ctx, level, file, line, function, format, logger_putv_args);
+      grn_logger_putv(ctx,
+                      level,
+                      file,
+                      line,
+                      function,
+                      format,
+                      logger_putv_args);
     }
     if (level <= GRN_LOG_ERROR) {
       grn_ctx_log_back_trace(ctx, level);
@@ -125,8 +131,14 @@ grn_error_set(grn_ctx *ctx,
   va_end(args);
 }
 
-#define ERRSET(ctx,lvl,r,...) \
-  grn_error_set((ctx), (lvl), (r), __FILE__, __LINE__, __FUNCTION__, __VA_ARGS__)
+#define ERRSET(ctx, lvl, r, ...)                                               \
+  grn_error_set((ctx),                                                         \
+                (lvl),                                                         \
+                (r),                                                           \
+                __FILE__,                                                      \
+                __LINE__,                                                      \
+                __FUNCTION__,                                                  \
+                __VA_ARGS__)
 
 #define ERRP(ctx, lvl)                                                         \
   (((ctx) && ((grn_ctx *)(ctx))->errlvl <= (lvl)) || (grn_gctx.errlvl <= (lvl)))
