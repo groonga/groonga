@@ -2901,7 +2901,7 @@ grn_decv(grn_ctx *ctx,
     } else {
       rp = dv[0].data;
     }
-    for (l = 0; l < ii->n_elements && dp; l++) {
+    for (l = 0; l < ii->n_elements; l++) {
       dv[l].data = rp;
       dv[l].data_size = n = (l < ii->n_elements - 1) ? df : df + rest;
       if (use_p_for_enc_flags & (1 << l)) {
@@ -2920,6 +2920,9 @@ grn_decv(grn_ctx *ctx,
         dp = grn_dec_p_for(ctx, &codec_data);
       } else {
         dp = grn_dec_byte(ctx, &codec_data);
+      }
+      if (!dp) {
+        return 0;
       }
       rp += dv[l].data_size;
     }
