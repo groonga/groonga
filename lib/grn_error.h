@@ -69,6 +69,38 @@ GRN_API void
 grn_ctx_log_back_trace(grn_ctx *ctx, grn_log_level level);
 
 static grn_inline void
+grn_error_setv(grn_ctx *ctx,
+               grn_log_level level,
+               grn_rc rc,
+               const char *file,
+               uint32_t line,
+               const char *function,
+               const char *format,
+               va_list args)
+{
+  ctx->errlvl = level;
+  if (ctx->rc != GRN_CANCEL) {
+    ctx->rc = rc;
+  }
+  ctx->errfile = file;
+  ctx->errline = line;
+  ctx->errfunc = function;
+  va_list logger_putv_args;
+  va_copy(logger_putv_args, args);
+  grn_ctx_logv(ctx, format, args);
+  if (grn_ctx_impl_should_log(ctx)) {
+    grn_ctx_impl_set_current_error_message(ctx);
+    if (grn_logger_pass(ctx, level)) {
+      grn_logger_putv(ctx, level, file, line, function, format, logger_putv_args);
+    }
+    if (level <= GRN_LOG_ERROR) {
+      grn_ctx_log_back_trace(ctx, level);
+    }
+  }
+  va_end(logger_putv_args);
+}
+
+static grn_inline void
 grn_error_set(grn_ctx *ctx,
               grn_log_level level,
               grn_rc rc,
@@ -87,29 +119,10 @@ grn_error_set(grn_ctx *ctx,
               const char *format,
               ...)
 {
-  ctx->errlvl = level;
-  if (ctx->rc != GRN_CANCEL) {
-    ctx->rc = rc;
-  }
-  ctx->errfile = file;
-  ctx->errline = line;
-  ctx->errfunc = function;
   va_list args;
-  va_list logger_putv_args;
   va_start(args, format);
-  va_copy(logger_putv_args, args);
-  grn_ctx_logv(ctx, format, args);
+  grn_error_setv(ctx, level, rc, file, line, function, format, args);
   va_end(args);
-  if (grn_ctx_impl_should_log(ctx)) {
-    grn_ctx_impl_set_current_error_message(ctx);
-    if (grn_logger_pass(ctx, level)) {
-      grn_logger_putv(ctx, level, file, line, function, format, logger_putv_args);
-    }
-    if (level <= GRN_LOG_ERROR) {
-      grn_ctx_log_back_trace(ctx, level);
-    }
-  }
-  va_end(logger_putv_args);
 }
 
 #define ERRSET(ctx,lvl,r,...) \
