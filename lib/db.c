@@ -2472,7 +2472,6 @@ grn_db_command_processed(grn_ctx *ctx, grn_obj *db)
           grn_obj *object = grn_ctx_at(ctx, deferred_id);
           if (object) {
             grn_obj_unref(ctx, object);
-            grn_obj_unref(ctx, object);
           }
         }
         GRN_OBJ_FIN(ctx, &(deferred_unref->ids));
