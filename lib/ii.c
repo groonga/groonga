@@ -913,6 +913,273 @@ chunk_free(grn_ctx *ctx, grn_ii *ii, uint32_t offset, uint32_t size)
   return GRN_SUCCESS;
 }
 
+#define DATA_USE_P_FOR_ENC (1 << 0) /* Use PFor */
+#define DATA_ODD           (1 << 2) /* Variable size data */
+
+typedef struct {
+  uint32_t *data;
+  uint32_t data_size;
+  uint32_t flags;
+} datavec;
+
+static grn_rc
+datavec_reset(
+  grn_ctx *ctx, grn_ii *ii, datavec *dv, size_t unitsize, size_t totalsize)
+{
+  uint32_t i;
+  if (!dv[0].data || dv[ii->n_elements].data < dv[0].data + totalsize) {
+    if (dv[0].data) {
+      GRN_FREE(dv[0].data);
+    }
+    if (!(dv[0].data = GRN_MALLOC(totalsize * sizeof(uint32_t)))) {
+      MERR("[ii][data-vector][reset] failed to allocate data: "
+           "length:<%u>, "
+           "unit-size:<%" GRN_FMT_SIZE ">, "
+           "total-size:<%" GRN_FMT_SIZE ">",
+           ii->n_elements,
+           unitsize,
+           totalsize);
+      return ctx->rc;
+    }
+    dv[ii->n_elements].data = dv[0].data + totalsize;
+  }
+  for (i = 1; i < ii->n_elements; i++) {
+    dv[i].data = dv[i - 1].data + unitsize;
+  }
+  return GRN_SUCCESS;
+}
+
+static grn_rc
+datavec_init(
+  grn_ctx *ctx, grn_ii *ii, datavec *dv, size_t unitsize, size_t totalsize)
+{
+  uint32_t i;
+  if (totalsize == 0) {
+    memset(dv, 0, sizeof(datavec) * (ii->n_elements + 1));
+  } else {
+    if (!(dv[0].data = GRN_MALLOC(totalsize * sizeof(uint32_t)))) {
+      MERR("[ii][data-vector][init] failed to allocate data: "
+           "length:<%u>, "
+           "unit-size:<%" GRN_FMT_SIZE ">, "
+           "total-size:<%" GRN_FMT_SIZE ">",
+           ii->n_elements,
+           unitsize,
+           totalsize);
+      return ctx->rc;
+    }
+    dv[ii->n_elements].data = dv[0].data + totalsize;
+    for (i = 1; i < ii->n_elements; i++) {
+      dv[i].data = dv[i - 1].data + unitsize;
+    }
+  }
+  if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
+    dv[ii->n_elements - 1].flags = DATA_ODD;
+  }
+  return GRN_SUCCESS;
+}
+
+static void
+datavec_fin(grn_ctx *ctx, datavec *dv)
+{
+  if (dv[0].data) {
+    GRN_FREE(dv[0].data);
+  }
+}
+
+static grn_inline bool
+data_records_use_p_for_enc(uint32_t n_records, uint32_t max_record_id)
+{
+  return n_records >= 16 && (n_records > (max_record_id >> 8));
+}
+
+static grn_inline bool
+data_sections_use_p_for_enc(uint32_t n_records)
+{
+  return n_records >= 3;
+}
+
+static grn_inline bool
+data_positions_use_p_for_enc(uint32_t n_positions, uint32_t max_position)
+{
+  return n_positions >= 32 && n_positions > (max_position >> 13);
+}
+
+static grn_inline void
+datavec_set_data_size(grn_ctx *ctx,
+                      grn_ii *ii,
+                      datavec *dv,
+                      uint32_t n_records,
+                      grn_id max_record_id,
+                      uint32_t n_positions,
+                      uint32_t max_position)
+{
+  int i = 0;
+  bool records_use_p_for_enc =
+    data_records_use_p_for_enc(n_records, max_record_id);
+  bool sections_use_p_for_enc = data_sections_use_p_for_enc(n_records);
+  /* record IDs */
+  dv[i].data_size = n_records;
+  if (records_use_p_for_enc) {
+    dv[i++].flags |= DATA_USE_P_FOR_ENC;
+  } else {
+    dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
+  }
+  if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
+    /* section IDs */
+    dv[i].data_size = n_records;
+    if (sections_use_p_for_enc) {
+      dv[i++].flags |= DATA_USE_P_FOR_ENC;
+    } else {
+      dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
+    }
+  }
+  /* term frequencies */
+  dv[i].data_size = n_records;
+  if (sections_use_p_for_enc) {
+    dv[i++].flags |= DATA_USE_P_FOR_ENC;
+  } else {
+    dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
+  }
+  if ((ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
+    /* weights */
+    dv[i].data_size = n_records;
+    if (sections_use_p_for_enc) {
+      dv[i++].flags |= DATA_USE_P_FOR_ENC;
+    } else {
+      dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
+    }
+  }
+  if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
+    /* positions */
+    dv[i].data_size = n_positions;
+    if (data_positions_use_p_for_enc(n_positions, max_position)) {
+      dv[i++].flags |= DATA_USE_P_FOR_ENC;
+    } else {
+      dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
+    }
+  }
+}
+
+typedef struct {
+  grn_ii *ii;
+  grn_id term_id;
+  uint32_t nth_element;
+  uint32_t n_elements;
+  uint32_t n_odd_values;
+  uint32_t *values;
+  uint32_t n_values;
+  uint32_t flags;
+  /* Only for encoder */
+  uint8_t *output;
+  /* Only for decoder */
+  const uint8_t *input;
+  size_t input_size;
+} grn_codec_data;
+
+static grn_inline size_t
+grn_enc_estimate_byte(grn_ctx *ctx, grn_codec_data *data)
+{
+  return GRN_B_ENC_MAX_SIZE * data->n_values;
+}
+
+static grn_inline uint8_t *
+grn_enc_byte(grn_ctx *ctx, grn_codec_data *data)
+{
+  uint8_t *output = data->output;
+  uint32_t i;
+  for (i = 0; i < data->n_values; i++) {
+    GRN_B_ENC(data->values[i], output);
+  }
+  return output;
+}
+
+/* TODO: Set error on "return 0" */
+#define GRN_B_DEC_CHECK(v, p, pe)                                              \
+  do {                                                                         \
+    uint8_t *_p = (uint8_t *)p;                                                \
+    uint32_t _v;                                                               \
+    if (_p >= pe) {                                                            \
+      return 0;                                                                \
+    }                                                                          \
+    _v = *_p++;                                                                \
+    switch (_v >> 4) {                                                         \
+    case 0x08:                                                                 \
+      if (_v == 0x8f) {                                                        \
+        if (_p + sizeof(uint32_t) > pe) {                                      \
+          return 0;                                                            \
+        }                                                                      \
+        grn_memcpy(&_v, _p, sizeof(uint32_t));                                 \
+        _p += sizeof(uint32_t);                                                \
+      }                                                                        \
+      break;                                                                   \
+    case 0x09:                                                                 \
+      if (_p + 3 > pe) {                                                       \
+        return 0;                                                              \
+      }                                                                        \
+      _v = (_v - 0x90) * 0x100 + *_p++;                                        \
+      _v = _v * 0x100 + *_p++;                                                 \
+      _v = _v * 0x100 + *_p++ + 0x20408f;                                      \
+      break;                                                                   \
+    case 0x0a:                                                                 \
+    case 0x0b:                                                                 \
+      if (_p + 2 > pe) {                                                       \
+        return 0;                                                              \
+      }                                                                        \
+      _v = (_v - 0xa0) * 0x100 + *_p++;                                        \
+      _v = _v * 0x100 + *_p++ + 0x408f;                                        \
+      break;                                                                   \
+    case 0x0c:                                                                 \
+    case 0x0d:                                                                 \
+    case 0x0e:                                                                 \
+    case 0x0f:                                                                 \
+      if (_p + 1 > pe) {                                                       \
+        return 0;                                                              \
+      }                                                                        \
+      _v = (_v - 0xc0) * 0x100 + *_p++ + 0x8f;                                 \
+      break;                                                                   \
+    }                                                                          \
+    v = _v;                                                                    \
+    p = _p;                                                                    \
+  } while (0)
+
+static grn_inline const uint8_t *
+grn_dec_byte(grn_ctx *ctx, grn_codec_data *data)
+{
+  const uint8_t *input = data->input;
+  const uint8_t *input_end = input + data->input_size;
+  uint32_t i;
+  for (i = 0; i < data->n_values; i++) {
+    GRN_B_DEC_CHECK(data->values[i], input, input_end);
+  }
+  return input;
+}
+
+/* PFor implementation: start */
+
+/*
+ * PFor (Patched Frame of Reference) encode: M. Zukowski , S. Heman,
+ * N. Nes, P. Boncz, Super-Scalar RAM-CPU Cache Compression,
+ * Proceedings of the 22nd International Conference on Data
+ * Engineering, 2006
+ *
+ * Delta decoding must be done by caller. So pack()/unpack() only do
+ * PFor (not PForDelta).
+ */
+
+/*
+ * We use PForDelta not NewPForDelta nor OptPForDelta because "An
+ * Experimental Study of Bitmap Compression vs. Inverted List
+ * Compression"
+ * https://www.cs.purdue.edu/homes/csjgwang/pubs/SIGMOD17-Bitmap.pdf
+ * shows that PForDelta is faster than others. (They are smaller than
+ * PForDelta.)
+ *
+ * We use PForDelta not Roaring bitmaps because PForDelta is faster
+ * and smaller for posting list. And we need a cursor interface for
+ * searching. Roaring bitmaps' intersection and union may be faster
+ * but it's not a cursor interface. See also the above paper.
+ */
+
 #define UNIT_SIZE 0x80
 #define UNIT_MASK (UNIT_SIZE - 1)
 
@@ -1960,28 +2227,6 @@ pack_(uint32_t *p, uint32_t i, int w, uint8_t *rp)
 #define PACK_MAX_SIZE ((UNIT_SIZE / 8) * 32 + (UNIT_SIZE * GRN_B_ENC_MAX_SIZE))
 
 /*
- * We use PForDelta not NewPForDelta nor OptPForDelta because "An
- * Experimental Study of Bitmap Compression vs. Inverted List
- * Compression"
- * https://www.cs.purdue.edu/homes/csjgwang/pubs/SIGMOD17-Bitmap.pdf
- * shows that PForDelta is faster than others. (They are smaller than
- * PForDelta.)
- *
- * We use PForDelta not Roaring bitmaps because PForDelta is faster
- * and smaller for posting list. And we need a cursor interface for
- * searching. Roaring bitmaps' intersection and union may be faster
- * but it's not a cursor interface. See also the above paper.
- */
-
-/*
- * PFor (Patched Frame of Reference) encode: M. Zukowski, S. Heman,
- * N. Nes, P. Boncz, Super-Scalar RAM-CPU Cache Compression,
- * Proceedings of the 22nd International Conference on Data
- * Engineering, 2006
- *
- * Delta encoding must be done by caller. So this only does PFor (not
- * PForDelta).
- *
  * w: b on the paper.
  * ebuf, ep: exception values on the paper.
  */
@@ -2028,305 +2273,7 @@ pack(uint32_t *p, uint32_t i, uint8_t *freq, uint8_t *rp)
   return rp + (ep - ebuf);
 }
 
-#define DATA_USE_P_FOR_ENC (1 << 0) /* Use PFor */
-#define DATA_ODD           (1 << 2) /* Variable size data */
-
-typedef struct {
-  uint32_t *data;
-  uint32_t data_size;
-  uint32_t flags;
-} datavec;
-
-static grn_rc
-datavec_reset(
-  grn_ctx *ctx, grn_ii *ii, datavec *dv, size_t unitsize, size_t totalsize)
-{
-  uint32_t i;
-  if (!dv[0].data || dv[ii->n_elements].data < dv[0].data + totalsize) {
-    if (dv[0].data) {
-      GRN_FREE(dv[0].data);
-    }
-    if (!(dv[0].data = GRN_MALLOC(totalsize * sizeof(uint32_t)))) {
-      MERR("[ii][data-vector][reset] failed to allocate data: "
-           "length:<%u>, "
-           "unit-size:<%" GRN_FMT_SIZE ">, "
-           "total-size:<%" GRN_FMT_SIZE ">",
-           ii->n_elements,
-           unitsize,
-           totalsize);
-      return ctx->rc;
-    }
-    dv[ii->n_elements].data = dv[0].data + totalsize;
-  }
-  for (i = 1; i < ii->n_elements; i++) {
-    dv[i].data = dv[i - 1].data + unitsize;
-  }
-  return GRN_SUCCESS;
-}
-
-static grn_rc
-datavec_init(
-  grn_ctx *ctx, grn_ii *ii, datavec *dv, size_t unitsize, size_t totalsize)
-{
-  uint32_t i;
-  if (totalsize == 0) {
-    memset(dv, 0, sizeof(datavec) * (ii->n_elements + 1));
-  } else {
-    if (!(dv[0].data = GRN_MALLOC(totalsize * sizeof(uint32_t)))) {
-      MERR("[ii][data-vector][init] failed to allocate data: "
-           "length:<%u>, "
-           "unit-size:<%" GRN_FMT_SIZE ">, "
-           "total-size:<%" GRN_FMT_SIZE ">",
-           ii->n_elements,
-           unitsize,
-           totalsize);
-      return ctx->rc;
-    }
-    dv[ii->n_elements].data = dv[0].data + totalsize;
-    for (i = 1; i < ii->n_elements; i++) {
-      dv[i].data = dv[i - 1].data + unitsize;
-    }
-  }
-  if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
-    dv[ii->n_elements - 1].flags = DATA_ODD;
-  }
-  return GRN_SUCCESS;
-}
-
-static void
-datavec_fin(grn_ctx *ctx, datavec *dv)
-{
-  if (dv[0].data) {
-    GRN_FREE(dv[0].data);
-  }
-}
-
-static grn_inline bool
-data_records_use_p_for_enc(uint32_t n_records, uint32_t max_record_id)
-{
-  return n_records >= 16 && (n_records > (max_record_id >> 8));
-}
-
-static grn_inline bool
-data_sections_use_p_for_enc(uint32_t n_records)
-{
-  return n_records >= 3;
-}
-
-static grn_inline bool
-data_positions_use_p_for_enc(uint32_t n_positions, uint32_t max_position)
-{
-  return n_positions >= 32 && n_positions > (max_position >> 13);
-}
-
-static grn_inline void
-datavec_set_data_size(grn_ctx *ctx,
-                      grn_ii *ii,
-                      datavec *dv,
-                      uint32_t n_records,
-                      grn_id max_record_id,
-                      uint32_t n_positions,
-                      uint32_t max_position)
-{
-  int i = 0;
-  bool records_use_p_for_enc =
-    data_records_use_p_for_enc(n_records, max_record_id);
-  bool sections_use_p_for_enc = data_sections_use_p_for_enc(n_records);
-  /* record IDs */
-  dv[i].data_size = n_records;
-  if (records_use_p_for_enc) {
-    dv[i++].flags |= DATA_USE_P_FOR_ENC;
-  } else {
-    dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
-  }
-  if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-    /* section IDs */
-    dv[i].data_size = n_records;
-    if (sections_use_p_for_enc) {
-      dv[i++].flags |= DATA_USE_P_FOR_ENC;
-    } else {
-      dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
-    }
-  }
-  /* term frequencies */
-  dv[i].data_size = n_records;
-  if (sections_use_p_for_enc) {
-    dv[i++].flags |= DATA_USE_P_FOR_ENC;
-  } else {
-    dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
-  }
-  if ((ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
-    /* weights */
-    dv[i].data_size = n_records;
-    if (sections_use_p_for_enc) {
-      dv[i++].flags |= DATA_USE_P_FOR_ENC;
-    } else {
-      dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
-    }
-  }
-  if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
-    /* positions */
-    dv[i].data_size = n_positions;
-    if (data_positions_use_p_for_enc(n_positions, max_position)) {
-      dv[i++].flags |= DATA_USE_P_FOR_ENC;
-    } else {
-      dv[i++].flags &= ~DATA_USE_P_FOR_ENC;
-    }
-  }
-}
-
-typedef struct {
-  grn_ii *ii;
-  grn_id term_id;
-  uint32_t nth_element;
-  uint32_t n_elements;
-  uint32_t n_odd_values;
-  uint32_t *values;
-  uint32_t n_values;
-  uint32_t flags;
-  /* Only for encoder */
-  uint8_t *output;
-  /* Only for decoder */
-  const uint8_t *input;
-  size_t input_size;
-} grn_codec_data;
-
-static grn_inline size_t
-grn_enc_estimate_byte(grn_ctx *ctx, grn_codec_data *data)
-{
-  return GRN_B_ENC_MAX_SIZE * data->n_values;
-}
-
-static grn_inline uint8_t *
-grn_enc_byte(grn_ctx *ctx, grn_codec_data *data)
-{
-  uint8_t *output = data->output;
-  uint32_t i;
-  for (i = 0; i < data->n_values; i++) {
-    GRN_B_ENC(data->values[i], output);
-  }
-  return output;
-}
-
-/* TODO: Set error on "return 0" */
-#define GRN_B_DEC_CHECK(v, p, pe)                                              \
-  do {                                                                         \
-    uint8_t *_p = (uint8_t *)p;                                                \
-    uint32_t _v;                                                               \
-    if (_p >= pe) {                                                            \
-      return 0;                                                                \
-    }                                                                          \
-    _v = *_p++;                                                                \
-    switch (_v >> 4) {                                                         \
-    case 0x08:                                                                 \
-      if (_v == 0x8f) {                                                        \
-        if (_p + sizeof(uint32_t) > pe) {                                      \
-          return 0;                                                            \
-        }                                                                      \
-        grn_memcpy(&_v, _p, sizeof(uint32_t));                                 \
-        _p += sizeof(uint32_t);                                                \
-      }                                                                        \
-      break;                                                                   \
-    case 0x09:                                                                 \
-      if (_p + 3 > pe) {                                                       \
-        return 0;                                                              \
-      }                                                                        \
-      _v = (_v - 0x90) * 0x100 + *_p++;                                        \
-      _v = _v * 0x100 + *_p++;                                                 \
-      _v = _v * 0x100 + *_p++ + 0x20408f;                                      \
-      break;                                                                   \
-    case 0x0a:                                                                 \
-    case 0x0b:                                                                 \
-      if (_p + 2 > pe) {                                                       \
-        return 0;                                                              \
-      }                                                                        \
-      _v = (_v - 0xa0) * 0x100 + *_p++;                                        \
-      _v = _v * 0x100 + *_p++ + 0x408f;                                        \
-      break;                                                                   \
-    case 0x0c:                                                                 \
-    case 0x0d:                                                                 \
-    case 0x0e:                                                                 \
-    case 0x0f:                                                                 \
-      if (_p + 1 > pe) {                                                       \
-        return 0;                                                              \
-      }                                                                        \
-      _v = (_v - 0xc0) * 0x100 + *_p++ + 0x8f;                                 \
-      break;                                                                   \
-    }                                                                          \
-    v = _v;                                                                    \
-    p = _p;                                                                    \
-  } while (0)
-
-static grn_inline const uint8_t *
-grn_dec_byte(grn_ctx *ctx, grn_codec_data *data)
-{
-  const uint8_t *input = data->input;
-  const uint8_t *input_end = input + data->input_size;
-  uint32_t i;
-  for (i = 0; i < data->n_values; i++) {
-    GRN_B_DEC_CHECK(data->values[i], input, input_end);
-  }
-  return input;
-}
-
-static grn_inline size_t
-grn_enc_estimate_p_for(grn_ctx *ctx, grn_codec_data *data)
-{
-  return PACK_MAX_SIZE * ((data->n_values / UNIT_SIZE) + 1);
-}
-
-static grn_inline uint8_t *
-grn_enc_p_for(grn_ctx *ctx, grn_codec_data *data)
-{
-  uint8_t *output = data->output;
-  uint32_t *values = data->values;
-  uint32_t n_values = data->n_values;
-  uint32_t unit[UNIT_SIZE];
-  uint8_t freq[33];
-  while (n_values >= UNIT_SIZE) {
-    memset(freq, 0, 33);
-    uint32_t i;
-    for (i = 0; i < UNIT_SIZE; i++) {
-      unit[i] = values[i];
-      if (unit[i]) {
-        uint32_t w;
-        GRN_BIT_SCAN_REV(unit[i], w);
-        freq[w + 1]++;
-      } else {
-        freq[0]++;
-      }
-    }
-    output = pack(unit, UNIT_SIZE, freq, output);
-    values += UNIT_SIZE;
-    n_values -= UNIT_SIZE;
-  }
-  if (n_values > 0) {
-    memset(freq, 0, 33);
-    uint32_t i;
-    for (i = 0; i < n_values; i++) {
-      unit[i] = values[i];
-      if (unit[i]) {
-        uint32_t w;
-        GRN_BIT_SCAN_REV(unit[i], w);
-        freq[w + 1]++;
-      } else {
-        freq[0]++;
-      }
-    }
-    output = pack(unit, n_values, freq, output);
-  }
-  return output;
-}
-
 /*
- * PFor (Patched Frame of Reference) encode: M. Zukowski , S. Heman,
- * N. Nes, P. Boncz, Super-Scalar RAM-CPU Cache Compression,
- * Proceedings of the 22nd International Conference on Data
- * Engineering, 2006
- *
- * Delta decoding must be done by caller. So this only does PFor (not
- * PForDelta).
- *
  * w: b on the paper.
  * ne: the number of exception values on the paper.
  */
@@ -2433,6 +2380,55 @@ unpack(const uint8_t *dp, const uint8_t *dpe, int i, uint32_t *rp)
   return dp;
 }
 
+static grn_inline size_t
+grn_enc_estimate_p_for(grn_ctx *ctx, grn_codec_data *data)
+{
+  return PACK_MAX_SIZE * ((data->n_values / UNIT_SIZE) + 1);
+}
+
+static grn_inline uint8_t *
+grn_enc_p_for(grn_ctx *ctx, grn_codec_data *data)
+{
+  uint8_t *output = data->output;
+  uint32_t *values = data->values;
+  uint32_t n_values = data->n_values;
+  uint32_t unit[UNIT_SIZE];
+  uint8_t freq[33];
+  while (n_values >= UNIT_SIZE) {
+    memset(freq, 0, 33);
+    uint32_t i;
+    for (i = 0; i < UNIT_SIZE; i++) {
+      unit[i] = values[i];
+      if (unit[i]) {
+        uint32_t w;
+        GRN_BIT_SCAN_REV(unit[i], w);
+        freq[w + 1]++;
+      } else {
+        freq[0]++;
+      }
+    }
+    output = pack(unit, UNIT_SIZE, freq, output);
+    values += UNIT_SIZE;
+    n_values -= UNIT_SIZE;
+  }
+  if (n_values > 0) {
+    memset(freq, 0, 33);
+    uint32_t i;
+    for (i = 0; i < n_values; i++) {
+      unit[i] = values[i];
+      if (unit[i]) {
+        uint32_t w;
+        GRN_BIT_SCAN_REV(unit[i], w);
+        freq[w + 1]++;
+      } else {
+        freq[0]++;
+      }
+    }
+    output = pack(unit, n_values, freq, output);
+  }
+  return output;
+}
+
 static grn_inline const uint8_t *
 grn_dec_p_for(grn_ctx *ctx, grn_codec_data *data)
 {
@@ -2512,6 +2508,7 @@ grn_dec_p_for(grn_ctx *ctx, grn_codec_data *data)
   }
   return input;
 }
+/* PFor implementation: end */
 
 /* Binary format used in grn_encv()/grn_decv().
  *
