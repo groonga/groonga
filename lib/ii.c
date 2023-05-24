@@ -17533,7 +17533,7 @@ grn_ii_builder_chunk_encode_buf(grn_ctx *ctx,
                                 grn_ii_builder_chunk *chunk,
                                 grn_codec_data *data)
 {
-  chunk->size = chunk->enc_size - (data->output - chunk->enc_buf);
+  data->offset = chunk->enc_size - (data->output - chunk->enc_buf);
   if (data->flags & DATA_USE_P_FOR_ENC) {
     data->output = grn_enc_p_for(ctx, data);
   } else {
