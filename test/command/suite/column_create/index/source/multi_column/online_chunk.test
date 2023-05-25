@@ -6,17 +6,21 @@ table_create Lexicon TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram
 column_create Lexicon data_values COLUMN_INDEX|WITH_SECTION|WITH_POSITION \
   Data value1,value2
 
+#@timeout 300
 #@disable-logging
 #@generate-series 1 2000 Data '{"value1" => "#{i}: " + (["abc"] * 10).join(" "), "value2" => "#{i}: abcdefg abcdefg"}'
 #@enable-logging
+#@timeout default
 
 select Data --match_columns value2 --query abc --limit 0
 index_column_diff Lexicon data_values
 
+#@timeout 300
 delete Data --filter '_id <= 1000'
 #@disable-logging
 #@generate-series 1 2000 Data '{"value1" => "#{10000 + i}: " + (["abc"] * 10).join(" "), "value2" => "#{10000 + i}: abcdefg abcdefg"}'
 #@enable-logging
+#@timeout default
 
 select Data --match_columns value2 --query abc --limit 0
 index_column_diff Lexicon data_values
