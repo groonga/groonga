@@ -131,7 +131,7 @@ jobs:
         shell: msys2 {0}
         run: |
           rm test/command/suite/ruby/eval/convert/string_to_time/over_int32.test
-          rm test/command/suite/select/select/filter/geo_in_circle/no_index/north_east.test
+          rm test/command/suite/select/filter/geo_in_circle/no_index/north_east.test
           rm test/command/suite/tokenizers/document_vector_tf_idf/alphabet.test
           rm test/command/suite/tokenizers/document_vector_tf_idf/reindex.test
           rm test/command/suite/tokenizers/document_vector_tf_idf/token_column.test
