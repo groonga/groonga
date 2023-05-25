@@ -818,7 +818,7 @@ endif()
 
 set(GRN_CROARING_EP_VERSION "1.1.2")
 set(GRN_WITH_ROARING_BITMAPS
-    "auto"
+    "no"
     CACHE STRING "Support posting compression by roaring bitmaps.")
 if(NOT "${GRN_WITH_ROARING_BITMAPS}" STREQUAL "no")
   if("${GRN_WITH_ROARING_BITMAPS}" STREQUAL "bundled")
