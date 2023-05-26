@@ -79,6 +79,8 @@ Improvements
 
   Because we don't need them. We can use the packages for Alma Linux on Oracle Linux.
 
+* Updated bundled Apache Arrow to 12.0.0.
+
 Fixes
 ^^^^^
 
