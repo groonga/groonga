@@ -117,7 +117,7 @@ func_highlight(grn_ctx *ctx,
         bool html_mode = false;
         grn_raw_string default_open_tag = {NULL, 0};
         grn_raw_string default_close_tag = {NULL, 0};
-        bool cycled_class_tag_mode = false;
+        bool sequential_class_tag_mode = false;
         grn_proc_options_parse(ctx,
                                end_arg,
                                tag,
@@ -139,9 +139,9 @@ func_highlight(grn_ctx *ctx,
                                "default_close_tag",
                                GRN_PROC_OPTION_VALUE_RAW_STRING,
                                &default_close_tag,
-                               "cycled_class_tag_mode",
+                               "sequential_class_tag_mode",
                                GRN_PROC_OPTION_VALUE_BOOL,
-                               &cycled_class_tag_mode,
+                               &sequential_class_tag_mode,
                                NULL);
         if (ctx->rc != GRN_SUCCESS) {
           goto exit;
@@ -169,12 +169,12 @@ func_highlight(grn_ctx *ctx,
                                                 default_close_tag.length);
         }
 
-        if (cycled_class_tag_mode) {
+        if (sequential_class_tag_mode) {
           need_tag_in_variable_args = false;
         }
-        grn_highlighter_set_cycled_class_tag_mode(ctx,
+        grn_highlighter_set_sequential_class_tag_mode(ctx,
                                                   highlighter,
-                                                  cycled_class_tag_mode);
+                                                  sequential_class_tag_mode);
       }
 
       grn_obj **keyword_args = args + N_REQUIRED_ARGS;
@@ -499,20 +499,20 @@ func_highlight_html(grn_ctx *ctx,
     if (grn_obj_is_tiny_hash_table(ctx, end_arg)) {
       n_args_without_option--;
 
-      bool cycled_class_tag_mode = false;
+      bool sequential_class_tag_mode = false;
       grn_proc_options_parse(ctx,
                              end_arg,
                              tag,
-                             "cycled_class_tag_mode",
+                             "sequential_class_tag_mode",
                              GRN_PROC_OPTION_VALUE_BOOL,
-                             &cycled_class_tag_mode,
+                             &sequential_class_tag_mode,
                              NULL);
       if (ctx->rc != GRN_SUCCESS) {
         goto exit;
       }
-      grn_highlighter_set_cycled_class_tag_mode(ctx,
+      grn_highlighter_set_sequential_class_tag_mode(ctx,
                                                 highlighter,
-                                                cycled_class_tag_mode);
+                                                sequential_class_tag_mode);
     }
 
     if (n_args_without_option == 2) {

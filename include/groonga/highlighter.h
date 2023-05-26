@@ -42,12 +42,12 @@ grn_highlighter_set_lexicon(grn_ctx *ctx,
 GRN_API grn_obj *
 grn_highlighter_get_lexicon(grn_ctx *ctx, grn_highlighter *highlighter);
 GRN_API grn_rc
-grn_highlighter_set_cycled_class_tag_mode(grn_ctx *ctx,
-                                          grn_highlighter *highlighter,
-                                          bool mode);
+grn_highlighter_set_sequential_class_tag_mode(grn_ctx *ctx,
+                                              grn_highlighter *highlighter,
+                                              bool mode);
 GRN_API bool
-grn_highlighter_get_cycled_class_tag_mode(grn_ctx *ctx,
-                                          grn_highlighter *highlighter);
+grn_highlighter_get_sequential_class_tag_mode(grn_ctx *ctx,
+                                              grn_highlighter *highlighter);
 GRN_API grn_rc
 grn_highlighter_set_default_open_tag(grn_ctx *ctx,
                                      grn_highlighter *highlighter,
