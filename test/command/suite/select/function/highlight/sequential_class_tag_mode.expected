@@ -7,7 +7,7 @@ load --table Entries
 {"body": "<b>Rroonga</b> is a Ruby binding of Groonga."}
 ]
 [[0,0.0,0.0],1]
-select Entries --output_columns   'highlight(body,   "groonga", "rroonga",   {"cycled_class_tag_mode": true} )'
+select Entries --output_columns   'highlight(body,   "groonga", "rroonga",   {"sequential_class_tag_mode": true} )'
 [
   [
     0,

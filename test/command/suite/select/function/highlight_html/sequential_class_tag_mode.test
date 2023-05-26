@@ -11,4 +11,4 @@ load --table Entries
 
 select Entries \
   --match_columns body --query 'groonga OR mroonga' \
-  --output_columns 'highlight_html(body, {"cycled_class_tag_mode": true})'
+  --output_columns 'highlight_html(body, {"sequential_class_tag_mode": true})'
