@@ -473,7 +473,8 @@ grn_highlighter_highlight_get_ith_tag(grn_ctx *ctx,
     *open_tag = GRN_TEXT_VALUE(&(highlighter->sequential_class_tag.open));
     *open_tag_length = GRN_TEXT_LEN(&(highlighter->sequential_class_tag.open));
     *close_tag = GRN_TEXT_VALUE(&(highlighter->sequential_class_tag.close));
-    *close_tag_length = GRN_TEXT_LEN(&(highlighter->sequential_class_tag.close));
+    *close_tag_length =
+      GRN_TEXT_LEN(&(highlighter->sequential_class_tag.close));
   } else if (highlighter->n_tags == 0) {
     *open_tag = GRN_TEXT_VALUE(&(highlighter->default_tag.open));
     *open_tag_length = GRN_TEXT_LEN(&(highlighter->default_tag.open)) - 1;
@@ -1071,8 +1072,8 @@ grn_highlighter_get_default_close_tag(grn_ctx *ctx,
 
 grn_rc
 grn_highlighter_set_sequential_class_tag_mode(grn_ctx *ctx,
-                                          grn_highlighter *highlighter,
-                                          bool mode)
+                                              grn_highlighter *highlighter,
+                                              bool mode)
 {
   GRN_API_ENTER;
   highlighter->is_sequential_class_tag_mode = mode;
@@ -1081,7 +1082,7 @@ grn_highlighter_set_sequential_class_tag_mode(grn_ctx *ctx,
 
 bool
 grn_highlighter_get_sequential_class_tag_mode(grn_ctx *ctx,
-                                          grn_highlighter *highlighter)
+                                              grn_highlighter *highlighter)
 {
   return highlighter->is_sequential_class_tag_mode;
 }

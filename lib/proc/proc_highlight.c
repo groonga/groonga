@@ -172,9 +172,10 @@ func_highlight(grn_ctx *ctx,
         if (sequential_class_tag_mode) {
           need_tag_in_variable_args = false;
         }
-        grn_highlighter_set_sequential_class_tag_mode(ctx,
-                                                  highlighter,
-                                                  sequential_class_tag_mode);
+        grn_highlighter_set_sequential_class_tag_mode(
+          ctx,
+          highlighter,
+          sequential_class_tag_mode);
       }
 
       grn_obj **keyword_args = args + N_REQUIRED_ARGS;
@@ -511,8 +512,8 @@ func_highlight_html(grn_ctx *ctx,
         goto exit;
       }
       grn_highlighter_set_sequential_class_tag_mode(ctx,
-                                                highlighter,
-                                                sequential_class_tag_mode);
+                                                    highlighter,
+                                                    sequential_class_tag_mode);
     }
 
     if (n_args_without_option == 2) {
