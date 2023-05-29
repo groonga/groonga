@@ -86,6 +86,7 @@ if [ "${run_test}" = "yes" ]; then
       set -u
       ;;
     *)
+      ${DNF} module -y enable ruby:3.1
       ${DNF} install -y ruby-devel
       ;;
   esac
