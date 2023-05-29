@@ -9,6 +9,7 @@ options = OpenStruct.new
 options.version = nil
 options.pgroonga_version = nil
 options.postgresql_version = nil
+options.use_mecab = false
 
 parser = OptionParser.new
 parser.banner += "\n  Parse Groonga and its families' backtrace in log"
@@ -29,6 +30,11 @@ parser.on("--postgresql-version=VERSION",
           "e.g.: 15.2",
           "(#{options.postgresql_version})") do |version|
   options.postgresql_version = version
+end
+parser.on("--[no-]use-mecab",
+          "Use MeCab",
+          "(#{options.use_mecab})") do |boolean|
+  options.use_mecab = boolean
 end
 parser.parse!
 
@@ -73,6 +79,10 @@ def prepare_system_centos_7(options)
   end
   packages << "groonga-libs#{groonga_package_version}"
   packages << "groonga-debuginfo#{groonga_package_version}"
+  if options.use_mecab
+    packages << "groonga-tokenizer-mecab#{groonga_package_version}"
+    packages << "groonga-tokenizer-mecab-debuginfo#{groonga_package_version}"
+  end
   run_command("yum", "install", "-y", *packages)
 end
 
@@ -89,6 +99,10 @@ def prepare_system_almalinux_8(options)
   end
   packages << "groonga-libs#{groonga_package_version}"
   packages << "groonga-libs-debuginfo#{groonga_package_version}"
+  if options.use_mecab
+    packages << "groonga-tokenizer-mecab#{groonga_package_version}"
+    packages << "groonga-tokenizer-mecab-debuginfo#{groonga_package_version}"
+  end
   if options.pgroonga_version and options.postgresql_version
     postgresql_major_version = options.postgresql_version.split(".")[0]
     package_prefix = "postgresql#{postgresql_major_version}-"
