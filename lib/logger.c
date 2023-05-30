@@ -574,6 +574,10 @@ grn_logger_putv(grn_ctx *ctx,
                 const char *fmt,
                 va_list ap)
 {
+  if (!ctx) {
+    ctx = &grn_gctx;
+  }
+
   if (level <= current_logger.max_level && current_logger.log) {
     char tbuf[TBUFSIZE];
     char mbuf[MBUFSIZE];
