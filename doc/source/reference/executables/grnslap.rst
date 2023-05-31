@@ -62,5 +62,5 @@ http://localhost:10041/d/status に、多重度100でリクエストを行う。
 ::
 
   > yes /d/status | head -n 100 | grnslap -P http -m 100 localhost:10041
-  2009-11-12 19:34:09.998696|begin: max_concurrency=100 max_tp=10000
-  2009-11-12 19:34:10.011208|end  : n=100 min=46 max=382 avg=0 qps=7992.966190 etime=0.012511
+  2023-05-30 16:21:18.204835|begin: protocol=h max_concurrency=100 max_tp=10000
+  2023-05-30 16:21:19.018364|end  : n=100 min=97 max=485 avg=0 qps=122.921248 etime=0.813529
