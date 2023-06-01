@@ -11,7 +11,7 @@ load --table Entries
 {"body": "Mroonga is a ＭｙＳＱＬ storage engine based on Groonga. <b>Rroonga</b> is a Ruby binding of Groonga."}
 ]
 [[0,0.0,0.0],1]
-select Entries   --match_columns body --query 'groonga OR mroonga'   --output_columns 'highlight_html(body, {"cycled_class_tag_mode": true})'
+select Entries   --match_columns body --query 'groonga OR mroonga'   --output_columns 'highlight_html(body, {"sequential_class_tag_mode": true})'
 [
   [
     0,

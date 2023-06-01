@@ -9,5 +9,5 @@ load --table Entries
 select Entries --output_columns \
   'highlight(body, \
   "groonga", "rroonga", \
-  {"cycled_class_tag_mode": true} \
+  {"sequential_class_tag_mode": true} \
 )'

@@ -53,11 +53,11 @@ struct _grn_highlighter {
   bool need_prepared;
   grn_obj raw_keywords;
 
-  bool is_cycled_class_tag_mode;
+  bool is_sequential_class_tag_mode;
   struct {
     grn_obj open;
     grn_obj close;
-  } cycled_class_tag;
+  } sequential_class_tag;
 
   struct {
     grn_obj open;
@@ -112,9 +112,9 @@ grn_highlighter_open(grn_ctx *ctx)
   highlighter->need_prepared = true;
   GRN_TEXT_INIT(&(highlighter->raw_keywords), GRN_OBJ_VECTOR);
 
-  highlighter->is_cycled_class_tag_mode = false;
-  GRN_TEXT_INIT(&(highlighter->cycled_class_tag.open), 0);
-  GRN_TEXT_INIT(&(highlighter->cycled_class_tag.close), 0);
+  highlighter->is_sequential_class_tag_mode = false;
+  GRN_TEXT_INIT(&(highlighter->sequential_class_tag.open), 0);
+  GRN_TEXT_INIT(&(highlighter->sequential_class_tag.close), 0);
 
   GRN_TEXT_INIT(&(highlighter->default_tag.open), 0);
   grn_highlighter_set_default_open_tag(ctx,
@@ -182,8 +182,8 @@ grn_highlighter_close(grn_ctx *ctx, grn_highlighter *highlighter)
   GRN_OBJ_FIN(ctx, &(highlighter->default_tag.open));
   GRN_OBJ_FIN(ctx, &(highlighter->default_tag.close));
 
-  GRN_OBJ_FIN(ctx, &(highlighter->cycled_class_tag.open));
-  GRN_OBJ_FIN(ctx, &(highlighter->cycled_class_tag.close));
+  GRN_OBJ_FIN(ctx, &(highlighter->sequential_class_tag.open));
+  GRN_OBJ_FIN(ctx, &(highlighter->sequential_class_tag.close));
 
   GRN_OBJ_FIN(ctx, &(highlighter->raw_keywords));
   GRN_FREE(highlighter);
@@ -461,19 +461,20 @@ grn_highlighter_highlight_get_ith_tag(grn_ctx *ctx,
                                       const char **close_tag,
                                       size_t *close_tag_length)
 {
-  if (highlighter->is_cycled_class_tag_mode) {
+  if (highlighter->is_sequential_class_tag_mode) {
     size_t n_keywords = grn_vector_size(ctx, &(highlighter->raw_keywords));
     i = i % n_keywords;
-    GRN_BULK_REWIND(&(highlighter->cycled_class_tag.open));
+    GRN_BULK_REWIND(&(highlighter->sequential_class_tag.open));
     grn_text_printf(ctx,
-                    &(highlighter->cycled_class_tag.open),
+                    &(highlighter->sequential_class_tag.open),
                     "<mark class=\"keyword-%" GRN_FMT_SIZE "\">",
                     i);
-    GRN_TEXT_SETS(ctx, &(highlighter->cycled_class_tag.close), "</mark>");
-    *open_tag = GRN_TEXT_VALUE(&(highlighter->cycled_class_tag.open));
-    *open_tag_length = GRN_TEXT_LEN(&(highlighter->cycled_class_tag.open));
-    *close_tag = GRN_TEXT_VALUE(&(highlighter->cycled_class_tag.close));
-    *close_tag_length = GRN_TEXT_LEN(&(highlighter->cycled_class_tag.close));
+    GRN_TEXT_SETS(ctx, &(highlighter->sequential_class_tag.close), "</mark>");
+    *open_tag = GRN_TEXT_VALUE(&(highlighter->sequential_class_tag.open));
+    *open_tag_length = GRN_TEXT_LEN(&(highlighter->sequential_class_tag.open));
+    *close_tag = GRN_TEXT_VALUE(&(highlighter->sequential_class_tag.close));
+    *close_tag_length =
+      GRN_TEXT_LEN(&(highlighter->sequential_class_tag.close));
   } else if (highlighter->n_tags == 0) {
     *open_tag = GRN_TEXT_VALUE(&(highlighter->default_tag.open));
     *open_tag_length = GRN_TEXT_LEN(&(highlighter->default_tag.open)) - 1;
@@ -1070,20 +1071,20 @@ grn_highlighter_get_default_close_tag(grn_ctx *ctx,
 }
 
 grn_rc
-grn_highlighter_set_cycled_class_tag_mode(grn_ctx *ctx,
-                                          grn_highlighter *highlighter,
-                                          bool mode)
+grn_highlighter_set_sequential_class_tag_mode(grn_ctx *ctx,
+                                              grn_highlighter *highlighter,
+                                              bool mode)
 {
   GRN_API_ENTER;
-  highlighter->is_cycled_class_tag_mode = mode;
+  highlighter->is_sequential_class_tag_mode = mode;
   GRN_API_RETURN(ctx->rc);
 }
 
 bool
-grn_highlighter_get_cycled_class_tag_mode(grn_ctx *ctx,
-                                          grn_highlighter *highlighter)
+grn_highlighter_get_sequential_class_tag_mode(grn_ctx *ctx,
+                                              grn_highlighter *highlighter)
 {
-  return highlighter->is_cycled_class_tag_mode;
+  return highlighter->is_sequential_class_tag_mode;
 }
 
 grn_rc
