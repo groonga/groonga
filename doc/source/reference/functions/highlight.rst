@@ -126,11 +126,27 @@ If it is ``false`` , not use HTML escape.
 ``{"normalizer": "Normalizerxxx"}``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Specifies a normalizer name.
+
 ``{"normalizers": "Normalizerxxx"}``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``{"cycled_class_tag_mode": true}``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. versionadded:: 13.0.2
+
+Specifies a normalizer name.
+You can specify multiple normalizers.
+
+This option is useful when combining :doc:`/reference/normalizers/normalizer_table`.
+
+``{"sequential_class_tag_mode": true}``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 13.0.2
+
+The default value of ``sequential_class_tag_mode`` is ``false``.
+If ``sequential_class_tag_mode`` is ``true``, you can use different style(e.g. background color) for each keywords.
+
+If ``sequential_class_tag_mode`` is ``true``, class tags are ``<mark class="keyword-%d">/<mark>`` for now.
 
 Return value
 ------------
