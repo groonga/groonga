@@ -455,6 +455,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/highlight_full/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/functions/highlight_full/usage_string_literal.log \
 	$(top_srcdir)/doc/source/example/reference/functions/highlight_html/usage_basic.log \
+	$(top_srcdir)/doc/source/example/reference/functions/highlight_html/usage_sequential_class_tag_mode.log \
 	$(top_srcdir)/doc/source/example/reference/functions/highlight_html/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/functions/highlight_html/usage_string_literal.log \
 	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_html_untag.log \
@@ -1758,6 +1759,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/highlight_full/usage_setup.log \
 	source/example/reference/functions/highlight_full/usage_string_literal.log \
 	source/example/reference/functions/highlight_html/usage_basic.log \
+	source/example/reference/functions/highlight_html/usage_sequential_class_tag_mode.log \
 	source/example/reference/functions/highlight_html/usage_setup.log \
 	source/example/reference/functions/highlight_html/usage_string_literal.log \
 	source/example/reference/functions/html_untag/usage_html_untag.log \

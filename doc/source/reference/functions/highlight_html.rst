@@ -73,11 +73,11 @@ You can specify string literal instead of column.
 .. include:: ../../example/reference/functions/highlight_html/usage_string_literal.log
 .. select Entries --output_columns 'highlight_html("Groonga is very fast fulltext search engine.")' --command_version 2 --match_columns body --query "groonga"
 
-You can use different style(e.g. background color) for each keywords by ``cycled_class_tag_mode``.
+You can use different style(e.g. background color) for each keywords by ``sequential_class_tag_mode``.
 
 .. groonga-coomand
-.. include:: ../../example/reference/functions/highlight_html/usage_cycled_class_tag_mode.log
-.. select Entries --match_columns body --query 'groonga OR mroonga' --output_columns 'highlight_html(body, {"cycled_class_tag_mode": true})'
+.. include:: ../../example/reference/functions/highlight_html/usage_sequential_class_tag_mode.log
+.. select Entries --match_columns body --query 'groonga OR mroonga' --output_columns 'highlight_html(body, {"sequential_class_tag_mode": true})'
 
 Parameters
 ----------
@@ -97,15 +97,15 @@ The text to be highlighted in HTML.
 Optional parameters
 ^^^^^^^^^^^^^^^^^^^
 
-``{"cycled_class_tag_mode": true}``
-"""""""""""""""""""""""""""""""""""
+``{"sequential_class_tag_mode": true}``
+"""""""""""""""""""""""""""""""""""""""
 
 .. versionadded:: 13.0.2
 
-The default value of ``cycled_class_tag_mode`` is ``false``.
-If ``cycled_class_tag_mode`` is ``true``, you can use different style(e.g. background color) for each keywords.
+The default value of ``sequential_class_tag_mode`` is ``false``.
+If ``sequential_class_tag_mode`` is ``true``, you can use different style(e.g. background color) for each keywords.
 
-If ``cycled_class_tag_mode`` is ``true``, class tags are ``<mark class="keyword-%d">/<mark>`` for now.
+If ``sequential_class_tag_mode`` is ``true``, class tags are ``<mark class="keyword-%d">/<mark>`` for now.
 
 Return value
 ------------

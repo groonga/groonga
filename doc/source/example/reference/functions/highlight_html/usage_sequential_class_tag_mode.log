@@ -1,0 +1,26 @@
+Execution example::
+
+  select Entries --match_columns body --query 'groonga OR mroonga' --output_columns 'highlight_html(body, {"sequential_class_tag_mode": true})'
+  # [
+  #   [
+  #     0,
+  #     1686038572.355064,
+  #     0.002784013748168945
+  #   ],
+  #   [
+  #     [
+  #       [
+  #         1
+  #       ],
+  #       [
+  #         [
+  #           "highlight_html",
+  #           null
+  #         ]
+  #       ],
+  #       [
+  #         "<mark class=\"keyword-0\">Mroonga</mark> is a ＭｙＳＱＬ storage engine based on <mark class=\"keyword-1\">Groonga</mark>. &lt;b&gt;Rroonga&lt;/b&gt; is a Ruby binding of <mark class=\"keyword-1\">Groonga</mark>."
+  #       ]
+  #     ]
+  #   ]
+  # ]
