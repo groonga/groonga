@@ -24,7 +24,7 @@ Syntax
             keyword1, open_tag1, close_tag1,
             ...
             [keywordN, open_tagN, close_tagN],
-            {"option": "value of option"})
+            [{"option": "value of option"}])
 
 Usage
 -----
@@ -78,43 +78,47 @@ You can specify string literal instead of column.
 
 Parameters
 ----------
-There are three required parameters, ``column``, ``normalizer_name`` and ``use_html_escape``.
-There are three or over optional parameters, ``keywordN``, ``open_tagN`` and ``end_tagN``.
+There are multiple required parameters and multiple optional parameters.
 
 ``column``
 ^^^^^^^^^^
 
-Specifies a column of the table.
+Specifies a highlight target column.
 
 ``keywordN``
 ^^^^^^^^^^^^
 
 Specifies a keyword for tagging.
-You can specify multiple keywords for each three arguments.
+You can specify multiple keywords.
 
 ``open_tagN``
 ^^^^^^^^^^^^^
 
 Specifies a open tag.
-You can specify multiple open tags for each three arguments.
+You can specify multiple open tags for each keywords.
 
 ``close_tagN``
 ^^^^^^^^^^^^^^
 
 Specifies a close tag.
-You can specify multiple close tags for each three arguments.
+You can specify multiple close tags for each keywords.
 
-``{"default_open_tag": "<span>", "default_close_tag": "</span>"}``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``{"default_open_tag": "open_tag"}``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``{"html_escape": true}``
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Specifies a open tag.
+You can not specify multiple open tags unlike ``open_tagN`` parameter.
 
-Specifies use or not use HTML escape. If it is ``true`` , use HTML escape.
-If it is ``false`` , not use HTML escape.
+``{"default_close_tag": "close_tag"}``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``{"html_mode": true}``
-^^^^^^^^^^^^^^^^^^^^^^^
+Specifies a close tag.
+You can not specify multiple close tags unlike ``close_tagN`` parameter.
+
+``{"html_escape": true}`` or ``{"html_mode": true}``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 13.0.2
 
 Specifies use or not use HTML escape. If it is ``true`` , use HTML escape.
 If it is ``false`` , not use HTML escape.
