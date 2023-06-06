@@ -65,7 +65,7 @@ by ``NormalizerAuto`` normalizer.
 ``--query "groonga mysql"`` matches to the first record's body.
 ``highight`` surrounds the keywords ``groonga`` contained in the text
 with ``<span class="keyword1">`` and ``</span>``, and the keywords ``mysql``
-contained in the text with with ``<span class="keyword2">`` and ``</span>``.
+contained in the text with ``<span class="keyword2">`` and ``</span>``.
 
 Special characters such as ``<`` and ``>`` are escapsed as ``&lt;`` and
 ``&gt;``.
