@@ -448,6 +448,9 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_location_sphere.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_setup_distance.log \
 	$(top_srcdir)/doc/source/example/reference/functions/geo_distance_setup_location.log \
+	$(top_srcdir)/doc/source/example/reference/functions/highlight/usage_basic.log \
+	$(top_srcdir)/doc/source/example/reference/functions/highlight/usage_setup.log \
+	$(top_srcdir)/doc/source/example/reference/functions/highlight/usage_string_literal.log \
 	$(top_srcdir)/doc/source/example/reference/functions/highlight_full/usage_basic.log \
 	$(top_srcdir)/doc/source/example/reference/functions/highlight_full/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/functions/highlight_full/usage_string_literal.log \
@@ -1173,6 +1176,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/geo_distance.rst \
 	$(top_srcdir)/doc/source/reference/functions/geo_in_circle.rst \
 	$(top_srcdir)/doc/source/reference/functions/geo_in_rectangle.rst \
+	$(top_srcdir)/doc/source/reference/functions/highlight.rst \
 	$(top_srcdir)/doc/source/reference/functions/highlight_full.rst \
 	$(top_srcdir)/doc/source/reference/functions/highlight_html.rst \
 	$(top_srcdir)/doc/source/reference/functions/html_untag.rst \
@@ -1747,6 +1751,9 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/geo_distance_location_sphere.log \
 	source/example/reference/functions/geo_distance_setup_distance.log \
 	source/example/reference/functions/geo_distance_setup_location.log \
+	source/example/reference/functions/highlight/usage_basic.log \
+	source/example/reference/functions/highlight/usage_setup.log \
+	source/example/reference/functions/highlight/usage_string_literal.log \
 	source/example/reference/functions/highlight_full/usage_basic.log \
 	source/example/reference/functions/highlight_full/usage_setup.log \
 	source/example/reference/functions/highlight_full/usage_string_literal.log \
@@ -2472,6 +2479,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/geo_distance.rst \
 	source/reference/functions/geo_in_circle.rst \
 	source/reference/functions/geo_in_rectangle.rst \
+	source/reference/functions/highlight.rst \
 	source/reference/functions/highlight_full.rst \
 	source/reference/functions/highlight_html.rst \
 	source/reference/functions/html_untag.rst \
@@ -2780,6 +2788,7 @@ po_files = \
 	reference/functions/geo_distance.po \
 	reference/functions/geo_in_circle.po \
 	reference/functions/geo_in_rectangle.po \
+	reference/functions/highlight.po \
 	reference/functions/highlight_full.po \
 	reference/functions/highlight_html.po \
 	reference/functions/html_untag.po \
@@ -3086,6 +3095,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/geo_distance.po \
 	LC_MESSAGES/reference/functions/geo_in_circle.po \
 	LC_MESSAGES/reference/functions/geo_in_rectangle.po \
+	LC_MESSAGES/reference/functions/highlight.po \
 	LC_MESSAGES/reference/functions/highlight_full.po \
 	LC_MESSAGES/reference/functions/highlight_html.po \
 	LC_MESSAGES/reference/functions/html_untag.po \
@@ -3392,6 +3402,7 @@ edit_po_files = \
 	reference/functions/geo_distance.edit \
 	reference/functions/geo_in_circle.edit \
 	reference/functions/geo_in_rectangle.edit \
+	reference/functions/highlight.edit \
 	reference/functions/highlight_full.edit \
 	reference/functions/highlight_html.edit \
 	reference/functions/html_untag.edit \
@@ -3698,6 +3709,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/geo_distance.edit \
 	LC_MESSAGES/reference/functions/geo_in_circle.edit \
 	LC_MESSAGES/reference/functions/geo_in_rectangle.edit \
+	LC_MESSAGES/reference/functions/highlight.edit \
 	LC_MESSAGES/reference/functions/highlight_full.edit \
 	LC_MESSAGES/reference/functions/highlight_html.edit \
 	LC_MESSAGES/reference/functions/html_untag.edit \
@@ -4004,6 +4016,7 @@ mo_files = \
 	reference/functions/geo_distance.mo \
 	reference/functions/geo_in_circle.mo \
 	reference/functions/geo_in_rectangle.mo \
+	reference/functions/highlight.mo \
 	reference/functions/highlight_full.mo \
 	reference/functions/highlight_html.mo \
 	reference/functions/html_untag.mo \
@@ -4310,6 +4323,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/geo_distance.mo \
 	LC_MESSAGES/reference/functions/geo_in_circle.mo \
 	LC_MESSAGES/reference/functions/geo_in_rectangle.mo \
+	LC_MESSAGES/reference/functions/highlight.mo \
 	LC_MESSAGES/reference/functions/highlight_full.mo \
 	LC_MESSAGES/reference/functions/highlight_html.mo \
 	LC_MESSAGES/reference/functions/html_untag.mo \
@@ -4654,6 +4668,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/geo_distance.html \
 	html/reference/functions/geo_in_circle.html \
 	html/reference/functions/geo_in_rectangle.html \
+	html/reference/functions/highlight.html \
 	html/reference/functions/highlight_full.html \
 	html/reference/functions/highlight_html.html \
 	html/reference/functions/html_untag.html \
