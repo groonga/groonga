@@ -12,9 +12,9 @@ load --table Memos
 {"_key":"alphabets2", "content": "a b c d e f ."},
 {"_key":"alphabets3", "content": "a b x c d e f ."},
 {"_key":"alphabets4", "content": "a b x x c d e f ."},
-{"_key":"alphabets4", "content": "a b x x x c d e f ."}
+{"_key":"alphabets5", "content": "a b x x x c d e f ."}
 ]
-[[0,0.0,0.0],4]
+[[0,0.0,0.0],5]
 select   --table Memos   --filter 'content *NP3,-1 "a c .$"'   --output_columns _score,_key,content
 [
   [

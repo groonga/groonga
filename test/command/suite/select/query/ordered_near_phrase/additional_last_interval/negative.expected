@@ -11,9 +11,10 @@ load --table Memos
 {"_key":"alphabets1", "content": "a c d ."},
 {"_key":"alphabets2", "content": "a b c d e f ."},
 {"_key":"alphabets3", "content": "a b x c d e f ."},
-{"_key":"alphabets4", "content": "a b x x c d e f ."}
+{"_key":"alphabets4", "content": "a b x x c d e f ."},
+{"_key":"alphabets5", "content": "a b x x x c d e f ."}
 ]
-[[0,0.0,0.0],4]
+[[0,0.0,0.0],5]
 select   --table Memos   --match_columns content   --query '*ONP3,-1"a c ."'   --output_columns _score,_key,content
 [
   [
@@ -24,7 +25,7 @@ select   --table Memos   --match_columns content   --query '*ONP3,-1"a c ."'   -
   [
     [
       [
-        3
+        4
       ],
       [
         [
@@ -54,6 +55,11 @@ select   --table Memos   --match_columns content   --query '*ONP3,-1"a c ."'   -
         1,
         "alphabets3",
         "a b x c d e f ."
+      ],
+      [
+        1,
+        "alphabets4",
+        "a b x x c d e f ."
       ]
     ]
   ]
