@@ -15,7 +15,9 @@ load --table Memos
 {"content": "a b x c d e f ."},
 {"content": "1 2 x 3 4 5 6 ,"},
 {"content": "a b x x c d e f ."},
-{"content": "1 2 x x 3 4 5 6 ,"}
+{"content": "1 2 x x 3 4 5 6 ,"},
+{"content": "a b x x x c d e f ."},
+{"content": "1 2 x x x 3 4 5 6 ,"}
 ]
 [[0,0.0,0.0],8]
 select   --table Memos   --match_columns content   --query '*NPP3,-1"(a 1) (c 3) (,$ .$)"'   --output_columns _score,content
@@ -28,7 +30,7 @@ select   --table Memos   --match_columns content   --query '*NPP3,-1"(a 1) (c 3)
   [
     [
       [
-        6
+        8
       ],
       [
         [
@@ -63,6 +65,14 @@ select   --table Memos   --match_columns content   --query '*NPP3,-1"(a 1) (c 3)
       [
         1,
         "1 2 x 3 4 5 6 ,"
+      ],
+      [
+        1,
+        "a b x x c d e f ."
+      ],
+      [
+        1,
+        "1 2 x x 3 4 5 6 ,"
       ]
     ]
   ]

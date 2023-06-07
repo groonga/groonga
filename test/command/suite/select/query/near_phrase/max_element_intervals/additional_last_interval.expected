@@ -32,7 +32,7 @@ select   --table Memos   --match_columns content   --query '*NP2,1,2|1"a$ 2 c"' 
   [
     [
       [
-        4
+        5
       ],
       [
         [
@@ -59,6 +59,10 @@ select   --table Memos   --match_columns content   --query '*NP2,1,2|1"a$ 2 c"' 
       [
         1,
         "2 x c x a"
+      ],
+      [
+        1,
+        "2 x x c a"
       ]
     ]
   ]
