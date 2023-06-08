@@ -13122,8 +13122,8 @@ grn_ii_select_data_is_matched_near_phrase_real(grn_ctx *ctx,
     return (interval <= data->max_interval);
   }
 
-  token_info *max_token_info = NULL;
   token_info *min_token_info = NULL;
+  token_info *max_token_info = NULL;
   int min_without_last_token = -1;
   int max_without_last_token = -1;
   if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
@@ -13179,10 +13179,9 @@ grn_ii_select_data_is_matched_near_phrase_real(grn_ctx *ctx,
     return true;
   }
 
-  int interval_without_last_token =
-    max_without_last_token - min_without_last_token;
-  interval_without_last_token -= min_token_info->n_tokens_in_phrase;
-
+  int interval_without_last_token = max_without_last_token -
+                                    min_without_last_token -
+                                    min_token_info->n_tokens_in_phrase;
   if (data->additional_last_interval < 0) {
     return (interval_without_last_token <= data->max_interval);
   } else {
