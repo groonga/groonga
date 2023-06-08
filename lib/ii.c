@@ -13123,7 +13123,6 @@ grn_ii_select_data_is_matched_near_phrase_real(grn_ctx *ctx,
   }
 
   token_info *min_token_info = NULL;
-  token_info *max_token_info = NULL;
   int min_without_last_token = -1;
   int max_without_last_token = -1;
   if (data->mode == GRN_OP_ORDERED_NEAR_PHRASE_PRODUCT) {
@@ -13137,7 +13136,6 @@ grn_ii_select_data_is_matched_near_phrase_real(grn_ctx *ctx,
       }
       if (max_without_last_token == -1 || ti->pos > max_without_last_token) {
         max_without_last_token = ti->pos;
-        max_token_info = ti;
       }
     }
   } else if (data->mode == GRN_OP_NEAR_PHRASE_PRODUCT) {
@@ -13154,7 +13152,6 @@ grn_ii_select_data_is_matched_near_phrase_real(grn_ctx *ctx,
       }
       if (max_without_last_token == -1 || ti->pos > max_without_last_token) {
         max_without_last_token = ti->pos;
-        max_token_info = ti;
       }
     }
   } else {
@@ -13171,11 +13168,10 @@ grn_ii_select_data_is_matched_near_phrase_real(grn_ctx *ctx,
       }
       if (max_without_last_token == -1 || ti->pos > max_without_last_token) {
         max_without_last_token = ti->pos;
-        max_token_info = ti;
       }
     }
   }
-  if (!max_token_info) {
+  if (!min_token_info) {
     return true;
   }
 
