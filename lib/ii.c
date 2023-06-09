@@ -13069,16 +13069,16 @@ grn_ii_select_data_find_phrase(grn_ctx *ctx,
  *
  *  'query("index_name", "*NPP\"(PhraseA PhraseA)\"")'
  *
- * We can not decision whether same token or not alone a comparison of token_info struct.
+ * We can not decision whether same token or not alone a comparison of
+ * token_info struct.
  */
 static bool
 is_same_token(token_info *min, token_info *min_before){
-  return ( min->p->rid       == min_before->p->rid
-           && min->p->sid    == min_before->p->sid
-           && min->p->pos    == min_before->p->pos
-           && min->p->tf     == min_before->p->tf
-           && min->p->weight == min_before->p->weight
-           && min->p->rest   == min_before->p->rest );
+  return (
+    min->p->rid == min_before->p->rid && min->p->sid == min_before->p->sid &&
+    min->p->pos == min_before->p->pos && min->p->tf == min_before->p->tf &&
+    min->p->weight == min_before->p->weight &&
+    min->p->rest == min_before->p->rest);
 }
 
 grn_inline static bool
