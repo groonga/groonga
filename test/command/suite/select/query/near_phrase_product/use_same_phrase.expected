@@ -1,0 +1,64 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer TokenNgram   --normalizer NormalizerNFKC150
+[[0,0.0,0.0],true]
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "c x b x a x 1 x x"},
+{"content": "b x a x 1 x x"},
+{"content": "a x x 1 x"},
+{"content": "b x 3 x"},
+{"content": "3 x b x"},
+{"content": "a x a x"},
+{"content": "a x x a"}
+]
+[[0,0.0,0.0],7]
+select Entries   --match_columns content   --query '*NPP1"(a a)"'   --output_columns '_id, content'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        5
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "c x b x a x 1 x x"
+      ],
+      [
+        2,
+        "b x a x 1 x x"
+      ],
+      [
+        3,
+        "a x x 1 x"
+      ],
+      [
+        6,
+        "a x a x"
+      ],
+      [
+        7,
+        "a x x a"
+      ]
+    ]
+  ]
+]
