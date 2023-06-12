@@ -13063,24 +13063,6 @@ grn_ii_select_data_find_phrase(grn_ctx *ctx,
   return false;
 }
 
-/* This function decision whether same token or not by using a posting.
- * The reason to use the posting is because we can decision even if
- * same phrase is specified in the near phrase search as below.
- *
- *  'query("index_name", "*NPP\"(PhraseA PhraseA)\"")'
- *
- * We can not decision whether same token or not alone a comparison of
- * token_info struct.
- */
-static bool
-is_same_token(token_info *min, token_info *min_before){
-  return (
-    min->p->rid == min_before->p->rid && min->p->sid == min_before->p->sid &&
-    min->p->pos == min_before->p->pos && min->p->tf == min_before->p->tf &&
-    min->p->weight == min_before->p->weight &&
-    min->p->rest == min_before->p->rest);
-}
-
 grn_inline static bool
 grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
                                        grn_ii_select_data *data,
@@ -13090,9 +13072,9 @@ grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
   uint32_t phrase_group_id = data->token_info->phrase_group_id;
   phrase_group *group = &(data->phrase_groups[phrase_group_id]);
   bool skipped = false;
-  token_info *min_before = group->btree->min;
   while (true) {
     data->token_info = group->btree->min;
+    grn_posting min_posting_before = *(data->token_info->p);
     if (grn_ii_select_data_find_phrase(ctx,
                                        data,
                                        data->token_info->phrase_id,
@@ -13100,15 +13082,27 @@ grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
                                        start_n_tokens_in_phrase)) {
       skipped = true;
       bt_reorder_min(group->btree);
-      token_info *min = group->btree->min;
-      if (is_same_token(min, min_before)) {
+      /* This condition decision whether same phrase or not by using a posting.
+       * The reason to use the posting is because we can decision even if
+       * same phrase is specified in the near phrase search as below.
+       *
+       *  'query("index_name", "*NPP\"(PhraseA PhraseA)\"")'
+       *
+       * We can not decision whether same token or not alone a comparison of
+       * token_info struct.
+       *
+       * If difference phrases each other, a position of token in posting list
+       * always difference in near search.
+       *
+       * The position of the second phrase is after the position of
+       * the first phrase in the near search.
+       *
+       * Therefore, if we specify phrase include same token,
+       * this condition can decision whether same phrase or not
+       */
+      if (grn_posting_equal(ctx, &min_posting_before, group->btree->min->p)) {
         break;
       }
-      if (min->pos == min_before->pos &&
-          min->n_tokens_in_phrase > min_before->n_tokens_in_phrase) {
-        break;
-      }
-      min_before = min;
     } else {
       bt_pop(group->btree);
       if (!group->btree->min) {

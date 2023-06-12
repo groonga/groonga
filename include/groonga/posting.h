@@ -32,6 +32,9 @@ typedef struct {
   uint32_t rest;
 } grn_posting;
 
+bool grn_posting_equal(grn_ctx *ctx,
+                       grn_posting *posting1, grn_posting *posting2);
+
 GRN_API grn_posting *grn_posting_open(grn_ctx *ctx);
 GRN_API void grn_posting_close(grn_ctx *ctx, grn_posting *posting);
 

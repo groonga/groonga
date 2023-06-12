@@ -92,3 +92,13 @@ grn_posting_set_weight_float(grn_ctx *ctx, grn_posting *posting, float weight)
   posting->weight = (uint32_t)weight;
   ((grn_posting_internal *)posting)->weight_float = weight;
 }
+
+bool
+grn_posting_equal(grn_ctx *ctx, grn_posting *posting1, grn_posting *posting2)
+{
+  return posting1->rid == posting2->rid &&
+    posting1->sid == posting2->sid &&
+    posting1->pos == posting2->pos &&
+    posting1->tf == posting2->tf &&
+    posting1->weight == posting2->weight;
+}
