@@ -13092,7 +13092,7 @@ grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
        * token_info struct.
        *
        * If two phrases have difference, a position of token in posting list
-       * always difference in near search.
+       * always is differed in near search.
        *
        * The position of the second phrase is after the position of
        * the first phrase in the near search.
