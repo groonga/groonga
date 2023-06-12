@@ -13088,7 +13088,7 @@ grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
        *
        *  'query("index_name", "*NPP\"(PhraseA PhraseA)\"")'
        *
-       * We can not decision whether same token or not alone a comparison of
+       * We can not decides whether the same token or not alone a comparison of
        * token_info struct.
        *
        * If difference phrases each other, a position of token in posting list
