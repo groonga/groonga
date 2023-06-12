@@ -13091,7 +13091,7 @@ grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
        * We can not decides whether the same token or not alone a comparison of
        * token_info struct.
        *
-       * If difference phrases each other, a position of token in posting list
+       * If two phrases have difference, a position of token in posting list
        * always difference in near search.
        *
        * The position of the second phrase is after the position of
