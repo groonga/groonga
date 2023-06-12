@@ -8,16 +8,13 @@ column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 [[0,0.0,0.0],true]
 load --table Entries
 [
-{"content": "c x b x a x 1 x x"},
-{"content": "b x a x 1 x x"},
-{"content": "a x x 1 x"},
-{"content": "b x 3 x"},
-{"content": "3 x b x"},
-{"content": "a x a x"},
-{"content": "a x x a"}
+{"content": "a x a"},
+{"content": "ab x ab"},
+{"content": "abc x abc"},
+{"content": "abc x x abc"}
 ]
-[[0,0.0,0.0],7]
-select Entries   --filter 'content *NPP1 "(a a)"'   --output_columns '_id, content'
+[[0,0.0,0.0],4]
+select Entries   --filter 'content *NPP1 "(abc abc)"'   --output_columns '_id, content'
 [
   [
     0,
@@ -27,7 +24,7 @@ select Entries   --filter 'content *NPP1 "(a a)"'   --output_columns '_id, conte
   [
     [
       [
-        5
+        2
       ],
       [
         [
@@ -40,24 +37,12 @@ select Entries   --filter 'content *NPP1 "(a a)"'   --output_columns '_id, conte
         ]
       ],
       [
-        1,
-        "c x b x a x 1 x x"
-      ],
-      [
-        2,
-        "b x a x 1 x x"
-      ],
-      [
         3,
-        "a x x 1 x"
+        "abc x abc"
       ],
       [
-        6,
-        "a x a x"
-      ],
-      [
-        7,
-        "a x x a"
+        4,
+        "abc x x abc"
       ]
     ]
   ]

@@ -8,16 +8,13 @@ column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 
 load --table Entries
 [
-{"content": "c x b x a x 1 x x"},
-{"content": "b x a x 1 x x"},
-{"content": "a x x 1 x"},
-{"content": "b x 3 x"},
-{"content": "3 x b x"},
-{"content": "a x a x"},
-{"content": "a x x a"}
+{"content": "a x a"},
+{"content": "ab x ab"},
+{"content": "abc x abc"},
+{"content": "abc x x abc"}
 ]
 
 select Entries \
   --match_columns content \
-  --query '*NPP1"(a a)"' \
+  --query '*NPP1"(abc abc)"' \
   --output_columns '_id, content'
