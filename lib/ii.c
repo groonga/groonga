@@ -13083,7 +13083,7 @@ grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
       skipped = true;
       bt_reorder_min(group->btree);
       /* This condition decides whether the same phrase or not by using a posting.
-       * The reason to use the posting is because we can decision even if
+       * It's the reason to use the posting that we can decide even if
        * same phrase is specified in the near phrase search as below.
        *
        *  'query("index_name", "*NPP\"(PhraseA PhraseA)\"")'
