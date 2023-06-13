@@ -1,0 +1,22 @@
+table_create Entries TABLE_NO_KEY
+column_create Entries content COLUMN_SCALAR Text
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer 'TokenNgram("unify_alphabet", false)' \
+  --normalizer NormalizerNFKC150
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+load --table Entries
+[
+{"content": "abcd efghi"},
+{"content": "abcd x efghi"},
+{"content": "abcd xx efghi"},
+{"content": "abc x efghi"},
+{"content": "abc xx efghi"},
+{"content": "bcde x efgh"},
+{"content": "bcde x x efgh"}
+]
+
+select Entries \
+  --filter 'content *NPP1 "(abcd abc abcd bcde) (efghi)"' \
+  --output_columns '_id, content'

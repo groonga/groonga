@@ -11420,6 +11420,64 @@ exit:
   return rc;
 }
 
+grn_inline static bool
+token_info_build_near_phrase_is_same_phrase(grn_ctx *ctx,
+                                            grn_ii_select_data *data,
+                                            uint32_t start1,
+                                            uint32_t start2,
+                                            uint32_t n)
+{
+  uint32_t i;
+  for (i = 0; i < n; i++) {
+    token_info *token_info1 = data->token_infos[start1 + i];
+    token_info *token_info2 = data->token_infos[start2 + i];
+    if (token_info1->must_last != token_info2->must_last) {
+      return false;
+    }
+    cursor_heap *cursors1 = token_info1->cursors;
+    cursor_heap *cursors2 = token_info2->cursors;
+    if (cursors1->n_entries != cursors2->n_entries) {
+      return false;
+    }
+    int j;
+    for (j = 0; j < cursors1->n_entries; j++) {
+      if (cursors1->bins[j]->id != cursors2->bins[j]->id) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+grn_inline static bool
+token_info_build_near_phrase_have_same_phrase(grn_ctx *ctx,
+                                              grn_ii_select_data *data,
+                                              uint32_t n_token_infos_before,
+                                              uint32_t phrase_group_id)
+{
+  uint32_t n_target_tokens = data->n_token_infos - n_token_infos_before;
+  uint32_t i = 0;
+  token_info *token_info;
+  for (i = 0; i < n_token_infos_before; i += token_info->n_used_tokens_in_phrase) {
+    token_info = data->token_infos[i];
+    if (token_info->phrase_group_id != phrase_group_id) {
+      continue;
+    }
+    if (token_info->n_used_tokens_in_phrase != n_target_tokens) {
+      continue;
+    }
+
+    if (token_info_build_near_phrase_is_same_phrase(ctx,
+                                                    data,
+                                                    i,
+                                                    n_token_infos_before,
+                                                    n_target_tokens)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 grn_inline static grn_rc
 token_info_build_near_phrase(grn_ctx *ctx, grn_ii_select_data *data)
 {
@@ -11624,16 +11682,27 @@ token_info_build_near_phrase(grn_ctx *ctx, grn_ii_select_data *data)
 
     uint32_t n_before = data->n_token_infos;
     rc = token_info_build_phrase(ctx, data, phrase, phrase_len);
-    if (rc == GRN_END_OF_DATA && is_product_mode) {
-      rc = GRN_SUCCESS;
-      uint32_t i;
-      for (i = n_before; i < data->n_token_infos; i++) {
-        token_info_close(ctx, data->token_infos[i]);
+    if (is_product_mode) {
+      if (!(rc == GRN_SUCCESS || rc == GRN_END_OF_DATA)) {
+        goto exit;
       }
-      data->n_token_infos = n_before;
-      continue;
-    } else if (rc != GRN_SUCCESS) {
-      goto exit;
+      if (rc == GRN_END_OF_DATA ||
+          token_info_build_near_phrase_have_same_phrase(ctx,
+                                                        data,
+                                                        n_before,
+                                                        phrase_group_id)) {
+        rc = GRN_SUCCESS;
+        uint32_t i;
+        for (i = n_before; i < data->n_token_infos; i++) {
+          token_info_close(ctx, data->token_infos[i]);
+        }
+        data->n_token_infos = n_before;
+        continue;
+      }
+    } else {
+      if (rc != GRN_SUCCESS) {
+        goto exit;
+      }
     }
     if (data->n_token_infos > n_before) {
       data->token_infos[data->n_token_infos - 1]->must_last = must_last;
@@ -13072,9 +13141,9 @@ grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
   uint32_t phrase_group_id = data->token_info->phrase_group_id;
   phrase_group *group = &(data->phrase_groups[phrase_group_id]);
   bool skipped = false;
+  token_info *min_before = group->btree->min;
   while (true) {
     data->token_info = group->btree->min;
-    grn_posting min_posting_before = *(data->token_info->p);
     if (grn_ii_select_data_find_phrase(ctx,
                                        data,
                                        data->token_info->phrase_id,
@@ -13082,27 +13151,15 @@ grn_ii_select_data_find_phrase_product(grn_ctx *ctx,
                                        start_n_tokens_in_phrase)) {
       skipped = true;
       bt_reorder_min(group->btree);
-      /* This condition decides whether the same phrase or not by using a posting.
-       * It's the reason to use the posting that we can decide even if
-       * the same phrase is specified in the near phrase search as below.
-       *
-       *  'query("index_name", "*NPP\"(PhraseA PhraseA)\"")'
-       *
-       * We can not decides whether the same token or not alone a comparison of
-       * token_info struct.
-       *
-       * If two phrases have difference, a position of token in posting list
-       * always is differed in near search.
-       *
-       * The position of the second phrase is after the position of
-       * the first phrase in the near search.
-       *
-       * Therefore, if we specify phrase include same token,
-       * this condition can decision whether same phrase or not
-       */
-      if (grn_posting_equal(ctx, &min_posting_before, group->btree->min->p)) {
+      token_info *min = group->btree->min;
+      if (min == min_before) {
         break;
       }
+      if (min->pos == min_before->pos &&
+          min->n_tokens_in_phrase > min_before->n_tokens_in_phrase) {
+        break;
+      }
+      min_before = min;
     } else {
       bt_pop(group->btree);
       if (!group->btree->min) {
