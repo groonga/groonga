@@ -1,0 +1,56 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("unify_alphabet", false)'   --normalizer NormalizerNFKC150
+[[0,0.0,0.0],true]
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "abcd efghi"},
+{"content": "abcd x efghi"},
+{"content": "abcd xx efghi"},
+{"content": "abc x efghi"},
+{"content": "abc xx efghi"},
+{"content": "bcde x efgh"},
+{"content": "bcde x x efgh"}
+]
+[[0,0.0,0.0],7]
+select Entries   --match_columns content   --query '*NPP1"(abcd abc abcd bcde) (efghi)"'   --output_columns '_id, content'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "abcd efghi"
+      ],
+      [
+        2,
+        "abcd x efghi"
+      ],
+      [
+        4,
+        "abc x efghi"
+      ]
+    ]
+  ]
+]
