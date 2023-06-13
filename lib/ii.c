@@ -11458,7 +11458,8 @@ token_info_build_near_phrase_have_same_phrase(grn_ctx *ctx,
   uint32_t n_target_tokens = data->n_token_infos - n_token_infos_before;
   uint32_t i = 0;
   token_info *token_info;
-  for (i = 0; i < n_token_infos_before; i += token_info->n_used_tokens_in_phrase) {
+  for (i = 0; i < n_token_infos_before;
+       i += token_info->n_used_tokens_in_phrase) {
     token_info = data->token_infos[i];
     if (token_info->phrase_group_id != phrase_group_id) {
       continue;
