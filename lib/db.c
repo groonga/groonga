@@ -12631,7 +12631,7 @@ grn_db_value_lock(grn_ctx *ctx,
     if (current_lock < GRN_IO_MAX_REF) {
       break;
     }
-    if (n_trials >= 1000) {
+    if (n_trials >= 3000) {
       GRN_LOG(ctx,
               GRN_LOG_NOTICE,
               "[db][value][lock] failed to lock: "
