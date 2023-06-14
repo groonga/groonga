@@ -12644,6 +12644,7 @@ grn_db_value_lock(grn_ctx *ctx,
               vp->lock,
               vp->ptr);
       is_locked = false;
+      GRN_ATOMIC_ADD_EX(lock_pointer, -1, current_lock);
       break;
     }
     GRN_ATOMIC_ADD_EX(lock_pointer, -1, current_lock);
