@@ -12631,6 +12631,7 @@ grn_db_value_lock(grn_ctx *ctx,
     if (current_lock < GRN_IO_MAX_REF) {
       break;
     }
+    GRN_ATOMIC_ADD_EX(lock_pointer, -1, current_lock);
     if (n_trials >= 1000) {
       GRN_LOG(ctx,
               GRN_LOG_NOTICE,
@@ -12644,10 +12645,8 @@ grn_db_value_lock(grn_ctx *ctx,
               vp->lock,
               vp->ptr);
       is_locked = false;
-      GRN_ATOMIC_ADD_EX(lock_pointer, -1, current_lock);
       break;
     }
-    GRN_ATOMIC_ADD_EX(lock_pointer, -1, current_lock);
     GRN_FUTEX_WAIT(lock_pointer);
   }
   grn_log_reference_count("%p: lock: %u: %u\n", ctx, id, current_lock);
