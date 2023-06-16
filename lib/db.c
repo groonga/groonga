@@ -13028,8 +13028,13 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
             grn_ja_unref(ctx, &iw);
           }
           if (grn_enable_reference_count) {
-            if (!vp->ptr) {
+            if (vp->ptr->header.type == GRN_TYPE
+                || vp->ptr->header.type == GRN_EXPR) {
               grn_db_value_unlock(ctx, id, vp);
+            } else {
+              if (!vp->ptr) {
+                grn_db_value_unlock(ctx, id, vp);
+              }
             }
           } else {
             grn_db_value_unlock(ctx, id, vp);
