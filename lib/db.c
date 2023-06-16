@@ -12774,6 +12774,17 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
       if (!(vp = grn_tiny_array_at(&s->values, id))) {
         goto exit;
       }
+      /* If reference count mode enable, Groonga maintain lock of
+       * a object until the object is gone refrence.
+       * However, if we many object open,
+       * the number of lock count may be over flow.
+       *
+       * Therefore, we unload unreserved objects.
+       */
+      if (id <= GRN_N_RESERVED_TYPES && vp->ptr) {
+        res = vp->ptr;
+        goto exit;
+      }
       if (grn_enable_reference_count) {
         if (!grn_db_value_lock(ctx, id, vp, &lock)) {
           const char *name;
@@ -13028,13 +13039,8 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
             grn_ja_unref(ctx, &iw);
           }
           if (grn_enable_reference_count) {
-            if (vp->ptr->header.type == GRN_TYPE
-                || vp->ptr->header.type == GRN_EXPR) {
+            if (!vp->ptr) {
               grn_db_value_unlock(ctx, id, vp);
-            } else {
-              if (!vp->ptr) {
-                grn_db_value_unlock(ctx, id, vp);
-              }
             }
           } else {
             grn_db_value_unlock(ctx, id, vp);
