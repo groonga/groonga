@@ -1,4 +1,4 @@
-ARG FROM=debian:bullseye
+ARG FROM=debian:bookworm
 FROM ${FROM}
 
 RUN \
