@@ -25,6 +25,7 @@ repos:
           ?include/groonga/util\.h|
           ?lib/ctx\.c|
           ?lib/db\.c|
+          ?lib/expr\.c|
           ?lib/grn_error\.h|
           ?lib/grn_ii\.h|
           ?lib/grn_io\.h|
