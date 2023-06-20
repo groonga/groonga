@@ -21,7 +21,7 @@
 #include "grn_ctx_impl.h"
 
 #ifdef HAVE_EXECINFO_H
-# include <execinfo.h>
+#  include <execinfo.h>
 #endif
 
 static int alloc_count = 0;
@@ -35,14 +35,16 @@ static int grn_fail_malloc_line = 0;
 static int grn_fail_malloc_max_count = -1;
 
 #ifdef USE_EXACT_ALLOC_COUNT
-# define GRN_ADD_ALLOC_COUNT(count) do { \
-  uint32_t alloced; \
-  GRN_ATOMIC_ADD_EX(&alloc_count, count, alloced); \
-} while (0)
+#  define GRN_ADD_ALLOC_COUNT(count)                                           \
+    do {                                                                       \
+      uint32_t alloced;                                                        \
+      GRN_ATOMIC_ADD_EX(&alloc_count, count, alloced);                         \
+    } while (0)
 #else /* USE_EXACT_ALLOC_COUNT */
-# define GRN_ADD_ALLOC_COUNT(count) do { \
-  alloc_count += count; \
-} while (0)
+#  define GRN_ADD_ALLOC_COUNT(count)                                           \
+    do {                                                                       \
+      alloc_count += count;                                                    \
+    } while (0)
 #endif
 
 int
@@ -142,8 +144,8 @@ grn_alloc_info_fin(void)
 grn_inline static void
 grn_alloc_info_set_backtrace(char *buffer, size_t size)
 {
-# ifdef HAVE_BACKTRACE
-#  define N_TRACE_LEVEL 100
+#  ifdef HAVE_BACKTRACE
+#    define N_TRACE_LEVEL 100
   static void *trace[N_TRACE_LEVEL];
   char **symbols;
   int i, n, rest;
@@ -172,21 +174,23 @@ grn_alloc_info_set_backtrace(char *buffer, size_t size)
   } else {
     buffer[0] = '\0';
   }
-#  undef N_TRACE_LEVEL
-# else /* HAVE_BACKTRACE */
+#    undef N_TRACE_LEVEL
+#  else  /* HAVE_BACKTRACE */
   buffer[0] = '\0';
-# endif /* HAVE_BACKTRACE */
+#  endif /* HAVE_BACKTRACE */
 }
 
 grn_inline static void
-grn_alloc_info_add(void *address, size_t size,
-                   const char *file, int line, const char *func)
+grn_alloc_info_add(
+  void *address, size_t size, const char *file, int line, const char *func)
 {
   grn_ctx *ctx;
   grn_alloc_info *new_alloc_info;
 
   ctx = &grn_gctx;
-  if (!ctx->impl) { return; }
+  if (!ctx->impl) {
+    return;
+  }
 
   CRITICAL_SECTION_ENTER(grn_alloc_info_lock);
   new_alloc_info = malloc(sizeof(grn_alloc_info));
@@ -220,7 +224,9 @@ grn_alloc_info_change(void *old_address, void *new_address, size_t size)
   grn_alloc_info *alloc_info;
 
   ctx = &grn_gctx;
-  if (!ctx->impl) { return; }
+  if (!ctx->impl) {
+    return;
+  }
 
   CRITICAL_SECTION_ENTER(grn_alloc_info_lock);
   alloc_info = ctx->impl->alloc_info;
@@ -238,8 +244,12 @@ grn_alloc_info_change(void *old_address, void *new_address, size_t size)
 void
 grn_alloc_info_dump(grn_ctx *ctx)
 {
-  if (!ctx) { return; }
-  if (!ctx->impl) { return; }
+  if (!ctx) {
+    return;
+  }
+  if (!ctx->impl) {
+    return;
+  }
 
   int i = 0;
   size_t total = 0;
@@ -247,7 +257,9 @@ grn_alloc_info_dump(grn_ctx *ctx)
   for (; alloc_info; alloc_info = alloc_info->next) {
     if (alloc_info->freed) {
       printf("address[%d][freed]: %p(%" GRN_FMT_SIZE ")\n",
-             i, alloc_info->address, alloc_info->size);
+             i,
+             alloc_info->address,
+             alloc_info->size);
     } else {
       printf("address[%d][not-freed]: %p(%" GRN_FMT_SIZE "): %s:%d: %s()\n%s",
              i,
@@ -269,7 +281,9 @@ grn_alloc_info_check(grn_ctx *ctx, void *address)
 {
   grn_alloc_info *alloc_info;
 
-  if (!grn_gctx.impl) { return; }
+  if (!grn_gctx.impl) {
+    return;
+  }
   /* grn_alloc_info_dump(ctx); */
 
   CRITICAL_SECTION_ENTER(grn_alloc_info_lock);
@@ -277,7 +291,8 @@ grn_alloc_info_check(grn_ctx *ctx, void *address)
   for (; alloc_info; alloc_info = alloc_info->next) {
     if (alloc_info->address == address) {
       if (alloc_info->freed) {
-        GRN_LOG(ctx, GRN_LOG_WARNING,
+        GRN_LOG(ctx,
+                GRN_LOG_WARNING,
                 "double free: %p(%" GRN_FMT_SIZE "):\n"
                 "alloc backtrace:\n"
                 "%sfree backtrace:\n"
@@ -302,8 +317,12 @@ grn_alloc_info_free(grn_ctx *ctx)
 {
   grn_alloc_info *alloc_info;
 
-  if (!ctx) { return; }
-  if (!ctx->impl) { return; }
+  if (!ctx) {
+    return;
+  }
+  if (!ctx->impl) {
+    return;
+  }
 
   alloc_info = ctx->impl->alloc_info;
   while (alloc_info) {
@@ -343,13 +362,13 @@ grn_alloc_info_free(grn_ctx *ctx)
 }
 #endif /* USE_MEMORY_DEBUG */
 
-#define GRN_CTX_SEGMENT_SIZE    (1U<<22)
-#define GRN_CTX_SEGMENT_MASK    (GRN_CTX_SEGMENT_SIZE - 1)
+#define GRN_CTX_SEGMENT_SIZE  (1U << 22)
+#define GRN_CTX_SEGMENT_MASK  (GRN_CTX_SEGMENT_SIZE - 1)
 
-#define GRN_CTX_SEGMENT_WORD    (1U<<31)
-#define GRN_CTX_SEGMENT_VLEN    (1U<<30)
-#define GRN_CTX_SEGMENT_LIFO    (1U<<29)
-#define GRN_CTX_SEGMENT_DIRTY   (1U<<28)
+#define GRN_CTX_SEGMENT_WORD  (1U << 31)
+#define GRN_CTX_SEGMENT_VLEN  (1U << 30)
+#define GRN_CTX_SEGMENT_LIFO  (1U << 29)
+#define GRN_CTX_SEGMENT_DIRTY (1U << 28)
 
 void
 grn_alloc_init_ctx_impl(grn_ctx *ctx)
@@ -366,9 +385,12 @@ grn_alloc_fin_ctx_impl(grn_ctx *ctx)
   grn_io_mapinfo *mi;
   for (i = 0, mi = ctx->impl->segs; i < GRN_CTX_N_SEGMENTS; i++, mi++) {
     if (mi->map) {
-      //GRN_LOG(ctx, GRN_LOG_NOTICE, "unmap in ctx_fin(%d,%d,%d)", i, (mi->count & GRN_CTX_SEGMENT_MASK), mi->nref);
+      // GRN_LOG(ctx, GRN_LOG_NOTICE, "unmap in ctx_fin(%d,%d,%d)", i,
+      // (mi->count & GRN_CTX_SEGMENT_MASK), mi->nref);
       if (mi->count & GRN_CTX_SEGMENT_VLEN) {
-        grn_io_anon_unmap(ctx, mi, (size_t)((int64_t)(mi->nref) * grn_pagesize));
+        grn_io_anon_unmap(ctx,
+                          mi,
+                          (size_t)((int64_t)(mi->nref) * grn_pagesize));
       } else {
         grn_io_anon_unmap(ctx, mi, GRN_CTX_SEGMENT_SIZE);
       }
@@ -376,18 +398,26 @@ grn_alloc_fin_ctx_impl(grn_ctx *ctx)
   }
 }
 
-#define ALIGN_SIZE (1<<3)
-#define ALIGN_MASK ((size_t)(ALIGN_SIZE-1))
+#define ALIGN_SIZE          (1 << 3)
+#define ALIGN_MASK          ((size_t)(ALIGN_SIZE - 1))
 #define GRN_CTX_ALLOC_CLEAR 1
 
 static void *
-grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
-              const char* file, int line, const char *func)
+grn_ctx_alloc(grn_ctx *ctx,
+              size_t size,
+              int flags,
+              const char *file,
+              int line,
+              const char *func)
 {
   void *res = NULL;
-  if (!ctx) { return res; }
+  if (!ctx) {
+    return res;
+  }
   if (!ctx->impl) {
-    if (ERRP(ctx, GRN_ERROR)) { return res; }
+    if (ERRP(ctx, GRN_ERROR)) {
+      return res;
+    }
   }
   CRITICAL_SECTION_ENTER(ctx->impl->lock);
   {
@@ -399,7 +429,7 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
       uint64_t npages =
         (uint64_t)(((int64_t)size + (grn_pagesize - 1)) / grn_pagesize);
       size_t aligned_size;
-      if (npages >= (1LL<<32)) {
+      if (npages >= (1LL << 32)) {
         MERR("too long request size=%" GRN_FMT_SIZE, size);
         goto exit;
       }
@@ -408,17 +438,22 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
           MERR("all segments are full");
           goto exit;
         }
-        if (!mi->map) { break; }
+        if (!mi->map) {
+          break;
+        }
       }
       aligned_size = (size_t)(grn_pagesize * ((int64_t)npages));
-      if (!grn_io_anon_map(ctx, mi, aligned_size)) { goto exit; }
-      /* GRN_LOG(ctx, GRN_LOG_NOTICE, "map i=%d (%d)", i, npages * grn_pagesize); */
-      mi->nref = (uint32_t) npages;
+      if (!grn_io_anon_map(ctx, mi, aligned_size)) {
+        goto exit;
+      }
+      /* GRN_LOG(ctx, GRN_LOG_NOTICE, "map i=%d (%d)", i, npages *
+       * grn_pagesize); */
+      mi->nref = (uint32_t)npages;
       mi->count = GRN_CTX_SEGMENT_VLEN;
       ctx->impl->currseg = -1;
       header = mi->map;
       header[0] = i;
-      header[1] = (int32_t) size;
+      header[1] = (int32_t)size;
     } else {
       i = ctx->impl->currseg;
       if (i >= 0) {
@@ -430,9 +465,13 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
             MERR("all segments are full");
             goto exit;
           }
-          if (!mi->map) { break; }
+          if (!mi->map) {
+            break;
+          }
         }
-        if (!grn_io_anon_map(ctx, mi, GRN_CTX_SEGMENT_SIZE)) { goto exit; }
+        if (!grn_io_anon_map(ctx, mi, GRN_CTX_SEGMENT_SIZE)) {
+          goto exit;
+        }
         /* GRN_LOG(ctx, GRN_LOG_NOTICE, "map i=%d", i); */
         mi->nref = 0;
         mi->count = GRN_CTX_SEGMENT_WORD;
@@ -442,7 +481,7 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
       mi->nref += (uint32_t)size;
       mi->count++;
       header[0] = i;
-      header[1] = (int32_t) size;
+      header[1] = (int32_t)size;
       if ((flags & GRN_CTX_ALLOC_CLEAR) &&
           (mi->count & GRN_CTX_SEGMENT_DIRTY) && (size > ALIGN_SIZE)) {
         memset(&header[2], 0, size - ALIGN_SIZE);
@@ -451,33 +490,39 @@ grn_ctx_alloc(grn_ctx *ctx, size_t size, int flags,
     /*
     {
       char g = (ctx == &grn_gctx) ? 'g' : ' ';
-      GRN_LOG(ctx, GRN_LOG_NOTICE, "+%c(%p) %s:%d(%s) (%d:%d)%p mi(%d:%d)", g, ctx, file, line, func, header[0], header[1], &header[2], mi->nref, (mi->count & GRN_CTX_SEGMENT_MASK));
+      GRN_LOG(ctx, GRN_LOG_NOTICE, "+%c(%p) %s:%d(%s) (%d:%d)%p mi(%d:%d)", g,
+    ctx, file, line, func, header[0], header[1], &header[2], mi->nref,
+    (mi->count & GRN_CTX_SEGMENT_MASK));
     }
     */
     res = &header[2];
   }
-exit :
+exit:
   CRITICAL_SECTION_LEAVE(ctx->impl->lock);
   return res;
 }
 
 void *
-grn_ctx_malloc(grn_ctx *ctx, size_t size,
-              const char* file, int line, const char *func)
+grn_ctx_malloc(
+  grn_ctx *ctx, size_t size, const char *file, int line, const char *func)
 {
   return grn_ctx_alloc(ctx, size, 0, file, line, func);
 }
 
 void *
-grn_ctx_calloc(grn_ctx *ctx, size_t size,
-              const char* file, int line, const char *func)
+grn_ctx_calloc(
+  grn_ctx *ctx, size_t size, const char *file, int line, const char *func)
 {
   return grn_ctx_alloc(ctx, size, GRN_CTX_ALLOC_CLEAR, file, line, func);
 }
 
 void *
-grn_ctx_realloc(grn_ctx *ctx, void *ptr, size_t size,
-                const char* file, int line, const char *func)
+grn_ctx_realloc(grn_ctx *ctx,
+                void *ptr,
+                size_t size,
+                const char *file,
+                int line,
+                const char *func)
 {
   void *res = NULL;
   if (size) {
@@ -496,8 +541,8 @@ grn_ctx_realloc(grn_ctx *ctx, void *ptr, size_t size,
 }
 
 char *
-grn_ctx_strdup(grn_ctx *ctx, const char *s,
-               const char* file, int line, const char *func)
+grn_ctx_strdup(
+  grn_ctx *ctx, const char *s, const char *file, int line, const char *func)
 {
   void *res = NULL;
   if (s) {
@@ -510,12 +555,14 @@ grn_ctx_strdup(grn_ctx *ctx, const char *s,
 }
 
 void
-grn_ctx_free(grn_ctx *ctx, void *ptr,
-             const char* file, int line, const char *func)
+grn_ctx_free(
+  grn_ctx *ctx, void *ptr, const char *file, int line, const char *func)
 {
-  if (!ctx) { return; }
+  if (!ctx) {
+    return;
+  }
   if (!ctx->impl) {
-    ERR(GRN_INVALID_ARGUMENT,"ctx without impl passed.");
+    ERR(GRN_INVALID_ARGUMENT, "ctx without impl passed.");
     return;
   }
   CRITICAL_SECTION_ENTER(ctx->impl->lock);
@@ -523,7 +570,10 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
     int32_t *header = &((int32_t *)ptr)[-2];
 
     if (header[0] >= GRN_CTX_N_SEGMENTS) {
-      ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed. ptr=%p seg=%d", ptr, *header);
+      ERR(GRN_INVALID_ARGUMENT,
+          "invalid ptr passed. ptr=%p seg=%d",
+          ptr,
+          *header);
       goto exit;
     }
     /*
@@ -532,8 +582,10 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
       char c = 'X', g = (ctx == &grn_gctx) ? 'g' : ' ';
       grn_io_mapinfo *mi = &ctx->impl->segs[i];
       if (!(mi->count & GRN_CTX_SEGMENT_VLEN) &&
-          mi->map <= (void *)header && (char *)header < ((char *)mi->map + GRN_CTX_SEGMENT_SIZE)) { c = '-'; }
-      GRN_LOG(ctx, GRN_LOG_NOTICE, "%c%c(%p) %s:%d(%s) (%d:%d)%p mi(%d:%d)", c, g, ctx, file, line, func, header[0], header[1], &header[2], mi->nref, (mi->count & GRN_CTX_SEGMENT_MASK));
+          mi->map <= (void *)header && (char *)header < ((char *)mi->map +
+    GRN_CTX_SEGMENT_SIZE)) { c = '-'; } GRN_LOG(ctx, GRN_LOG_NOTICE, "%c%c(%p)
+    %s:%d(%s) (%d:%d)%p mi(%d:%d)", c, g, ctx, file, line, func, header[0],
+    header[1], &header[2], mi->nref, (mi->count & GRN_CTX_SEGMENT_MASK));
     }
     */
     {
@@ -541,20 +593,29 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
       grn_io_mapinfo *mi = &ctx->impl->segs[i];
       if (mi->count & GRN_CTX_SEGMENT_VLEN) {
         if (mi->map != header) {
-          ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed.. ptr=%p seg=%d", ptr, i);
+          ERR(GRN_INVALID_ARGUMENT,
+              "invalid ptr passed.. ptr=%p seg=%d",
+              ptr,
+              i);
           goto exit;
         }
-        //GRN_LOG(ctx, GRN_LOG_NOTICE, "umap i=%d (%d)", i, mi->nref * grn_pagesize);
-        grn_io_anon_unmap(ctx, mi, (size_t)((int64_t)(mi->nref) * grn_pagesize));
+        // GRN_LOG(ctx, GRN_LOG_NOTICE, "umap i=%d (%d)", i, mi->nref *
+        // grn_pagesize);
+        grn_io_anon_unmap(ctx,
+                          mi,
+                          (size_t)((int64_t)(mi->nref) * grn_pagesize));
         mi->map = NULL;
       } else {
         if (!mi->map) {
-          ERR(GRN_INVALID_ARGUMENT,"invalid ptr passed... ptr=%p seg=%d", ptr, i);
+          ERR(GRN_INVALID_ARGUMENT,
+              "invalid ptr passed... ptr=%p seg=%d",
+              ptr,
+              i);
           goto exit;
         }
         mi->count--;
         if (!(mi->count & GRN_CTX_SEGMENT_MASK)) {
-          //GRN_LOG(ctx, GRN_LOG_NOTICE, "umap i=%d", i);
+          // GRN_LOG(ctx, GRN_LOG_NOTICE, "umap i=%d", i);
           if (i == ctx->impl->currseg) {
             mi->count |= GRN_CTX_SEGMENT_DIRTY;
             mi->nref = 0;
@@ -566,17 +627,21 @@ grn_ctx_free(grn_ctx *ctx, void *ptr,
       }
     }
   }
-exit :
+exit:
   CRITICAL_SECTION_LEAVE(ctx->impl->lock);
 }
 
 void *
-grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,
-                   const char* file, int line, const char *func)
+grn_ctx_alloc_lifo(
+  grn_ctx *ctx, size_t size, const char *file, int line, const char *func)
 {
-  if (!ctx) { return NULL; }
+  if (!ctx) {
+    return NULL;
+  }
   if (!ctx->impl) {
-    if (ERRP(ctx, GRN_ERROR)) { return NULL; }
+    if (ERRP(ctx, GRN_ERROR)) {
+      return NULL;
+    }
   }
   {
     int32_t i = ctx->impl->lifoseg;
@@ -585,7 +650,7 @@ grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,
       uint64_t npages =
         (uint64_t)(((int64_t)size + (grn_pagesize - 1)) / grn_pagesize);
       size_t aligned_size;
-      if (npages >= (1LL<<32)) {
+      if (npages >= (1LL << 32)) {
         MERR("too long request size=%" GRN_FMT_SIZE, size);
         return NULL;
       }
@@ -595,27 +660,36 @@ grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,
           return NULL;
         }
         mi++;
-        if (!mi->map) { break; }
+        if (!mi->map) {
+          break;
+        }
       }
       aligned_size = (size_t)(grn_pagesize * (int64_t)npages);
-      if (!grn_io_anon_map(ctx, mi, aligned_size)) { return NULL; }
-      mi->nref = (uint32_t) npages;
-      mi->count = GRN_CTX_SEGMENT_VLEN|GRN_CTX_SEGMENT_LIFO;
+      if (!grn_io_anon_map(ctx, mi, aligned_size)) {
+        return NULL;
+      }
+      mi->nref = (uint32_t)npages;
+      mi->count = GRN_CTX_SEGMENT_VLEN | GRN_CTX_SEGMENT_LIFO;
       ctx->impl->lifoseg = i;
       return mi->map;
     } else {
       size = (size + ALIGN_MASK) & ~ALIGN_MASK;
-      if (i < 0 || (mi->count & GRN_CTX_SEGMENT_VLEN) || size + mi->nref > GRN_CTX_SEGMENT_SIZE) {
+      if (i < 0 || (mi->count & GRN_CTX_SEGMENT_VLEN) ||
+          size + mi->nref > GRN_CTX_SEGMENT_SIZE) {
         for (;;) {
           if (++i >= GRN_CTX_N_SEGMENTS) {
             MERR("all segments are full");
             return NULL;
           }
-          if (!(++mi)->map) { break; }
+          if (!(++mi)->map) {
+            break;
+          }
         }
-        if (!grn_io_anon_map(ctx, mi, GRN_CTX_SEGMENT_SIZE)) { return NULL; }
+        if (!grn_io_anon_map(ctx, mi, GRN_CTX_SEGMENT_SIZE)) {
+          return NULL;
+        }
         mi->nref = 0;
-        mi->count = GRN_CTX_SEGMENT_WORD|GRN_CTX_SEGMENT_LIFO;
+        mi->count = GRN_CTX_SEGMENT_WORD | GRN_CTX_SEGMENT_LIFO;
         ctx->impl->lifoseg = i;
       }
       {
@@ -628,12 +702,14 @@ grn_ctx_alloc_lifo(grn_ctx *ctx, size_t size,
 }
 
 void
-grn_ctx_free_lifo(grn_ctx *ctx, void *ptr,
-                  const char* file, int line, const char *func)
+grn_ctx_free_lifo(
+  grn_ctx *ctx, void *ptr, const char *file, int line, const char *func)
 {
-  if (!ctx) { return; }
+  if (!ctx) {
+    return;
+  }
   if (!ctx->impl) {
-    ERR(GRN_INVALID_ARGUMENT,"ctx without impl passed.");
+    ERR(GRN_INVALID_ARGUMENT, "ctx without impl passed.");
     return;
   }
   {
@@ -644,18 +720,26 @@ grn_ctx_free_lifo(grn_ctx *ctx, void *ptr,
       return;
     }
     for (; i >= 0; i--, mi--) {
-      if (!(mi->count & GRN_CTX_SEGMENT_LIFO)) { continue; }
-      if (done) { break; }
+      if (!(mi->count & GRN_CTX_SEGMENT_LIFO)) {
+        continue;
+      }
+      if (done) {
+        break;
+      }
       if (mi->count & GRN_CTX_SEGMENT_VLEN) {
-        if (mi->map == ptr) { done = 1; }
-        grn_io_anon_unmap(ctx, mi, (size_t)((int64_t)(mi->nref) * grn_pagesize));
+        if (mi->map == ptr) {
+          done = 1;
+        }
+        grn_io_anon_unmap(ctx,
+                          mi,
+                          (size_t)((int64_t)(mi->nref) * grn_pagesize));
         mi->map = NULL;
       } else {
         if (mi->map == ptr) {
           done = 1;
         } else {
-          if (mi->map < ptr && ptr < (void *)((byte*)mi->map + mi->nref)) {
-            mi->nref = (uint32_t) ((uintptr_t)ptr - (uintptr_t)mi->map);
+          if (mi->map < ptr && ptr < (void *)((byte *)mi->map + mi->nref)) {
+            mi->nref = (uint32_t)((uintptr_t)ptr - (uintptr_t)mi->map);
             break;
           }
         }
@@ -668,8 +752,8 @@ grn_ctx_free_lifo(grn_ctx *ctx, void *ptr,
 }
 
 void *
-grn_malloc(grn_ctx *ctx, size_t size,
-           const char* file, int line, const char *func)
+grn_malloc(
+  grn_ctx *ctx, size_t size, const char *file, int line, const char *func)
 {
   if (grn_fail_malloc_should_fail(size, file, line, func)) {
     return grn_malloc_fail(ctx, size, file, line, func);
@@ -679,8 +763,8 @@ grn_malloc(grn_ctx *ctx, size_t size,
 }
 
 void *
-grn_calloc(grn_ctx *ctx, size_t size,
-           const char* file, int line, const char *func)
+grn_calloc(
+  grn_ctx *ctx, size_t size, const char *file, int line, const char *func)
 {
   if (grn_fail_malloc_should_fail(size, file, line, func)) {
     return grn_calloc_fail(ctx, size, file, line, func);
@@ -690,8 +774,12 @@ grn_calloc(grn_ctx *ctx, size_t size,
 }
 
 void *
-grn_realloc(grn_ctx *ctx, void *ptr, size_t size,
-            const char* file, int line, const char *func)
+grn_realloc(grn_ctx *ctx,
+            void *ptr,
+            size_t size,
+            const char *file,
+            int line,
+            const char *func)
 {
   if (grn_fail_malloc_should_fail(size, file, line, func)) {
     return grn_realloc_fail(ctx, ptr, size, file, line, func);
@@ -701,8 +789,11 @@ grn_realloc(grn_ctx *ctx, void *ptr, size_t size,
 }
 
 char *
-grn_strdup(grn_ctx *ctx, const char *string,
-           const char* file, int line, const char *func)
+grn_strdup(grn_ctx *ctx,
+           const char *string,
+           const char *file,
+           int line,
+           const char *func)
 {
   /* TODO: strlen(string) when we use size in grn_fail_malloc_should_fail(). */
   size_t size = 0;
@@ -714,17 +805,18 @@ grn_strdup(grn_ctx *ctx, const char *string,
 }
 
 void
-grn_free(grn_ctx *ctx, void *ptr,
-         const char* file, int line, const char *func)
+grn_free(grn_ctx *ctx, void *ptr, const char *file, int line, const char *func)
 {
   grn_free_default(ctx, ptr, file, line, func);
 }
 
 void *
-grn_malloc_default(grn_ctx *ctx, size_t size,
-                   const char* file, int line, const char *func)
+grn_malloc_default(
+  grn_ctx *ctx, size_t size, const char *file, int line, const char *func)
 {
-  if (!ctx) { return NULL; }
+  if (!ctx) {
+    return NULL;
+  }
   {
     void *res = malloc(size);
     if (res) {
@@ -753,10 +845,12 @@ grn_malloc_default(grn_ctx *ctx, size_t size,
 }
 
 void *
-grn_calloc_default(grn_ctx *ctx, size_t size,
-                   const char* file, int line, const char *func)
+grn_calloc_default(
+  grn_ctx *ctx, size_t size, const char *file, int line, const char *func)
 {
-  if (!ctx) { return NULL; }
+  if (!ctx) {
+    return NULL;
+  }
   {
     void *res = calloc(size, 1);
     if (res) {
@@ -785,28 +879,41 @@ grn_calloc_default(grn_ctx *ctx, size_t size,
 }
 
 void
-grn_free_default(grn_ctx *ctx, void *ptr,
-                 const char* file, int line, const char *func)
+grn_free_default(
+  grn_ctx *ctx, void *ptr, const char *file, int line, const char *func)
 {
-  if (!ctx) { return; }
+  if (!ctx) {
+    return;
+  }
   grn_alloc_info_check(ctx, ptr);
   {
     if (ptr) {
       GRN_ADD_ALLOC_COUNT(-1);
     } else {
-      GRN_LOG(ctx, GRN_LOG_ALERT, "free fail (%p) (%s:%d) <%d>",
-              ptr, file, line, alloc_count);
+      GRN_LOG(ctx,
+              GRN_LOG_ALERT,
+              "free fail (%p) (%s:%d) <%d>",
+              ptr,
+              file,
+              line,
+              alloc_count);
     }
     free(ptr);
   }
 }
 
 void *
-grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size,
-                    const char* file, int line, const char *func)
+grn_realloc_default(grn_ctx *ctx,
+                    void *ptr,
+                    size_t size,
+                    const char *file,
+                    int line,
+                    const char *func)
 {
   void *res;
-  if (!ctx) { return NULL; }
+  if (!ctx) {
+    return NULL;
+  }
   if (size) {
     if (!(res = realloc(ptr, size))) {
       if (!(res = realloc(ptr, size))) {
@@ -833,7 +940,9 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size,
       grn_alloc_info_add(res, size, file, line, func);
     }
   } else {
-    if (!ptr) { return NULL; }
+    if (!ptr) {
+      return NULL;
+    }
     grn_alloc_info_check(ctx, ptr);
     GRN_ADD_ALLOC_COUNT(-1);
     free(ptr);
@@ -843,10 +952,12 @@ grn_realloc_default(grn_ctx *ctx, void *ptr, size_t size,
 }
 
 char *
-grn_strdup_default(grn_ctx *ctx, const char *s,
-                   const char* file, int line, const char *func)
+grn_strdup_default(
+  grn_ctx *ctx, const char *s, const char *file, int line, const char *func)
 {
-  if (!ctx) { return NULL; }
+  if (!ctx) {
+    return NULL;
+  }
   {
     char *res = grn_strdup_raw(s);
     if (res) {
@@ -876,7 +987,9 @@ grn_strdup_default(grn_ctx *ctx, const char *s,
 
 grn_bool
 grn_fail_malloc_should_fail(size_t size,
-                            const char *file, int line, const char *func)
+                            const char *file,
+                            int line,
+                            const char *func)
 {
   if (!grn_fail_malloc_enable) {
     return GRN_FALSE;
@@ -914,40 +1027,59 @@ grn_fail_malloc_should_fail(size_t size,
 }
 
 void *
-grn_malloc_fail(grn_ctx *ctx, size_t size,
-                const char* file, int line, const char *func)
+grn_malloc_fail(
+  grn_ctx *ctx, size_t size, const char *file, int line, const char *func)
 {
   MERR("[alloc][fail][malloc] <%d>: <%" GRN_FMT_SIZE ">: %s:%d: %s",
-       alloc_count, size, file, line, func);
+       alloc_count,
+       size,
+       file,
+       line,
+       func);
   return NULL;
 }
 
 void *
-grn_calloc_fail(grn_ctx *ctx, size_t size,
-                const char* file, int line, const char *func)
+grn_calloc_fail(
+  grn_ctx *ctx, size_t size, const char *file, int line, const char *func)
 {
   MERR("[alloc][fail][calloc] <%d>: <%" GRN_FMT_SIZE ">: %s:%d: %s",
-       alloc_count, size, file, line, func);
+       alloc_count,
+       size,
+       file,
+       line,
+       func);
   return NULL;
 }
 
 void *
-grn_realloc_fail(grn_ctx *ctx, void *ptr, size_t size,
-                 const char* file, int line, const char *func)
+grn_realloc_fail(grn_ctx *ctx,
+                 void *ptr,
+                 size_t size,
+                 const char *file,
+                 int line,
+                 const char *func)
 {
   MERR("[alloc][fail][realloc] <%d>: <%p:%" GRN_FMT_SIZE ">: %s:%d: %s",
-       alloc_count, ptr, size, file, line, func);
+       alloc_count,
+       ptr,
+       size,
+       file,
+       line,
+       func);
   return NULL;
 }
 
 char *
-grn_strdup_fail(grn_ctx *ctx, const char *s,
-                const char* file, int line, const char *func)
+grn_strdup_fail(
+  grn_ctx *ctx, const char *s, const char *file, int line, const char *func)
 {
   MERR("[alloc][fail][strdup] <%d>: <%" GRN_FMT_SIZE ">: %s:%d: %s: <%s>",
        alloc_count,
        s ? strlen(s) : 0,
-       file, line, func,
+       file,
+       line,
+       func,
        s ? s : "(null)");
   return NULL;
 }
