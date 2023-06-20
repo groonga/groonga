@@ -857,7 +857,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   GRN_OUTPUT_UINT64(grn_get_memory_map_size());
   GRN_OUTPUT_MAP_CLOSE();
 
-#ifdef GRN_USE_MEMORY_DEBUG
+#ifdef GRN_WITH_MEMORY_DEBUG
   if (grn_plugin_proc_get_var_bool(ctx,
                                    user_data,
                                    "dump_alloc_info",

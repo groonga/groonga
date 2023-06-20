@@ -315,6 +315,8 @@ set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
 
 option(GRN_WITH_NFKC "use NFKC based UTF8 normalization." ON)
 
+option(GRN_WITH_MEMORY_DEBUG "use debug memory management" OFF)
+
 if(WIN32)
   target_link_libraries(grn_dependencies INTERFACE dbghelp.lib)
   target_link_libraries(grn_dependencies INTERFACE psapi.lib)

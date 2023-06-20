@@ -242,7 +242,7 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "init", 0);
 }
 
-#  ifndef GRN_USE_MEMORY_DEBUG
+#  ifndef GRN_WITH_MEMORY_DEBUG
 static void *
 grn_ctx_impl_mrb_allocf(mrb_state *mrb, void *ptr, size_t size, void *ud)
 {
@@ -277,7 +277,7 @@ grn_ctx_impl_mrb_init_lazy(grn_ctx *ctx)
     ctx->impl->mrb.groonga.operator_class = NULL;
   } else {
     mrb_state *mrb;
-#  ifdef GRN_USE_MEMORY_DEBUG
+#  ifdef GRN_WITH_MEMORY_DEBUG
     mrb = mrb_open();
 #  else
     mrb = mrb_open_allocf(grn_ctx_impl_mrb_allocf, ctx);

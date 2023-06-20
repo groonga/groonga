@@ -126,7 +126,7 @@ grn_alloc_init_from_env(void)
   }
 }
 
-#ifdef GRN_USE_MEMORY_DEBUG
+#ifdef GRN_WITH_MEMORY_DEBUG
 static grn_critical_section grn_alloc_info_lock;
 
 void
@@ -373,7 +373,7 @@ grn_alloc_info_free(grn_ctx *ctx)
 void
 grn_alloc_init_ctx_impl(grn_ctx *ctx)
 {
-#ifdef GRN_USE_MEMORY_DEBUG
+#ifdef GRN_WITH_MEMORY_DEBUG
   ctx->impl->alloc_info = NULL;
 #endif
 }

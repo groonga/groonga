@@ -710,7 +710,7 @@ grn_ctx_impl_fin(grn_ctx *ctx)
   }
   GRN_OBJ_FIN(ctx, &ctx->impl->current_request_id);
   if (ctx->impl->values) {
-#ifndef GRN_USE_MEMORY_DEBUG
+#ifndef GRN_WITH_MEMORY_DEBUG
     grn_db_obj *o;
     GRN_ARRAY_EACH(ctx, ctx->impl->values, 0, 0, id, &o, {
       grn_obj_close(ctx, *((grn_obj **)o));
@@ -719,7 +719,7 @@ grn_ctx_impl_fin(grn_ctx *ctx)
     grn_array_close(ctx, ctx->impl->values);
   }
   if (ctx->impl->temporary_columns) {
-#ifndef GRN_USE_MEMORY_DEBUG
+#ifndef GRN_WITH_MEMORY_DEBUG
     grn_obj *value;
     GRN_PAT_EACH(ctx, ctx->impl->temporary_columns, id, NULL, NULL, &value, {
       grn_obj_close(ctx, *((grn_obj **)value));

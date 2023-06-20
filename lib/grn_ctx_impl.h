@@ -49,7 +49,7 @@ extern "C" {
 
 #define GRN_CTX_N_SEGMENTS 512
 
-#ifdef GRN_USE_MEMORY_DEBUG
+#ifdef GRN_WITH_MEMORY_DEBUG
 typedef struct _grn_alloc_info grn_alloc_info;
 struct _grn_alloc_info {
   void *address;
@@ -104,7 +104,7 @@ struct _grn_ctx_impl {
   grn_critical_section lock;
   grn_io_mapinfo segs[GRN_CTX_N_SEGMENTS];
 
-#ifdef GRN_USE_MEMORY_DEBUG
+#ifdef GRN_WITH_MEMORY_DEBUG
   /* memory debug portion */
   grn_alloc_info *alloc_info;
 #endif
