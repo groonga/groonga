@@ -26,12 +26,12 @@
 #include "grn_arrow.h"
 
 #ifdef GRN_WITH_MRUBY
-# include <mruby.h>
+#  include <mruby.h>
 #endif
 
 #ifdef GRN_WITH_LUAJIT
-# include <lauxlib.h>
-# include <lualib.h>
+#  include <lauxlib.h>
+#  include <lualib.h>
 #endif
 
 #ifdef __cplusplus
@@ -40,19 +40,18 @@ extern "C" {
 
 /**** grn_expr ****/
 
-#define GRN_EXPR_MISSING_NAME          "expr_missing"
+#define GRN_EXPR_MISSING_NAME "expr_missing"
 
 /**** grn_ctx_impl ****/
 
-#define GRN_CTX_INITED    0x00
-#define GRN_CTX_QUITTING  0x0f
+#define GRN_CTX_INITED     0x00
+#define GRN_CTX_QUITTING   0x0f
 
 #define GRN_CTX_N_SEGMENTS 512
 
 #ifdef USE_MEMORY_DEBUG
 typedef struct _grn_alloc_info grn_alloc_info;
-struct _grn_alloc_info
-{
+struct _grn_alloc_info {
   void *address;
   int freed;
   size_t size;
@@ -168,12 +167,12 @@ struct _grn_ctx_impl {
   grn_proc_func *finalizer;
 
   grn_obj *db;
-  grn_array *values;        /* temporary objects */
+  grn_array *values; /* temporary objects */
   grn_pat *temporary_columns;
   grn_options *temporary_options;
   grn_critical_section columns_cache_lock;
   grn_hash *columns_cache;
-  grn_hash *ios;        /* IOs */
+  grn_hash *ios; /* IOs */
   grn_com *com;
   unsigned int com_status;
 
@@ -215,8 +214,10 @@ struct _grn_ctx_impl {
 
 #define GRN_CTX_GET_WAL_ROLE(ctx) ((ctx)->impl->wal.role)
 
-void grn_ctx_impl_columns_cache_delete(grn_ctx *ctx, grn_id table_id);
-void grn_ctx_impl_columns_cache_clear(grn_ctx *ctx);
+void
+grn_ctx_impl_columns_cache_delete(grn_ctx *ctx, grn_id table_id);
+void
+grn_ctx_impl_columns_cache_clear(grn_ctx *ctx);
 
 #ifdef __cplusplus
 }
