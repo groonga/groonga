@@ -51,7 +51,6 @@
 #cmakedefine GRN_WITH_WINDOWS_BACK_TRACE
 
 /* build switches */
-#cmakedefine USE_MEMORY_DEBUG
 #cmakedefine USE_MAP_HUGETLB
 #cmakedefine USE_AIO
 #cmakedefine USE_EPOLL
@@ -62,6 +61,8 @@
 #cmakedefine USE_MSG_NOSIGNAL
 #cmakedefine USE_POLL
 #cmakedefine USE_SELECT
+
+#cmakedefine GRN_USE_MEMORY_DEBUG
 
 /* compiler specific build options */
 #cmakedefine _FILE_OFFSET_BITS @_FILE_OFFSET_BITS@

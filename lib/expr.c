@@ -796,7 +796,7 @@ grn_expr_close(grn_ctx *ctx, grn_obj *expr)
 
     grn_log_reference_count("%p: expr_close: obj: %p\n", ctx, obj);
 
-#ifdef USE_MEMORY_DEBUG
+#ifdef GRN_USE_MEMORY_DEBUG
     grn_obj_unlink(ctx, obj);
 #else
     if (obj->header.type == GRN_VOID) {

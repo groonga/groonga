@@ -126,7 +126,7 @@ grn_alloc_init_from_env(void)
   }
 }
 
-#ifdef USE_MEMORY_DEBUG
+#ifdef GRN_USE_MEMORY_DEBUG
 static grn_critical_section grn_alloc_info_lock;
 
 void
@@ -336,7 +336,7 @@ grn_alloc_info_free(grn_ctx *ctx)
   ctx->impl->alloc_info = NULL;
 }
 
-#else /* USE_MEMORY_DEBUG */
+#else
 void
 grn_alloc_info_init(void)
 {
@@ -360,7 +360,7 @@ void
 grn_alloc_info_free(grn_ctx *ctx)
 {
 }
-#endif /* USE_MEMORY_DEBUG */
+#endif
 
 #define GRN_CTX_SEGMENT_SIZE  (1U << 22)
 #define GRN_CTX_SEGMENT_MASK  (GRN_CTX_SEGMENT_SIZE - 1)
@@ -373,7 +373,7 @@ grn_alloc_info_free(grn_ctx *ctx)
 void
 grn_alloc_init_ctx_impl(grn_ctx *ctx)
 {
-#ifdef USE_MEMORY_DEBUG
+#ifdef GRN_USE_MEMORY_DEBUG
   ctx->impl->alloc_info = NULL;
 #endif
 }
