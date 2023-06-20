@@ -301,8 +301,7 @@ jobs:
           sudo apt update -o="APT::Acquire::Retries=3"
       - name: Install test dependencies
         run: |
-          which conda || :
-          sudo env MAKEFLAGS=-j$(nproc) gem install --verbose \
+          sudo env MAKEFLAGS=-j$(nproc) gem install \
             grntest \
             pkg-config \
             red-arrow
