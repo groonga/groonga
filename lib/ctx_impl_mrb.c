@@ -21,65 +21,65 @@
 #include <string.h>
 
 #ifdef GRN_WITH_MRUBY
-# include "grn_ctx_impl_mrb.h"
+#  include "grn_ctx_impl_mrb.h"
 
-# include "grn_encoding.h"
-# include "grn_mrb.h"
-# include "mrb/mrb_converter.h"
-# include "mrb/mrb_error.h"
-# include "mrb/mrb_id.h"
-# include "mrb/mrb_operator.h"
-# include "mrb/mrb_command_version.h"
-# include "mrb/mrb_ctx.h"
-# include "mrb/mrb_logger.h"
-# include "mrb/mrb_query_logger.h"
-# include "mrb/mrb_void.h"
-# include "mrb/mrb_bulk.h"
-# include "mrb/mrb_pointer.h"
-# include "mrb/mrb_cache.h"
-# include "mrb/mrb_object.h"
-# include "mrb/mrb_object_flags.h"
-# include "mrb/mrb_database.h"
-# include "mrb/mrb_indexable.h"
-# include "mrb/mrb_table.h"
-# include "mrb/mrb_table_with_key.h"
-# include "mrb/mrb_array.h"
-# include "mrb/mrb_hash_table.h"
-# include "mrb/mrb_patricia_trie.h"
-# include "mrb/mrb_double_array_trie.h"
-# include "mrb/mrb_table_group_flags.h"
-# include "mrb/mrb_table_group_result.h"
-# include "mrb/mrb_table_sort_flags.h"
-# include "mrb/mrb_table_sort_key.h"
-# include "mrb/mrb_record.h"
-# include "mrb/mrb_column.h"
-# include "mrb/mrb_fixed_size_column.h"
-# include "mrb/mrb_variable_size_column.h"
-# include "mrb/mrb_index_column.h"
-# include "mrb/mrb_index_cursor.h"
-# include "mrb/mrb_type.h"
-# include "mrb/mrb_expr.h"
-# include "mrb/mrb_accessor.h"
-# include "mrb/mrb_procedure.h"
-# include "mrb/mrb_command.h"
-# include "mrb/mrb_command_input.h"
-# include "mrb/mrb_table_cursor.h"
-# include "mrb/mrb_table_cursor_flags.h"
-# include "mrb/mrb_content_type.h"
-# include "mrb/mrb_writer.h"
-# include "mrb/mrb_config.h"
-# include "mrb/mrb_eval_context.h"
-# include "mrb/mrb_thread.h"
-# include "mrb/mrb_window_definition.h"
-# include "mrb/mrb_window_function_executor.h"
-# include "mrb/mrb_locale_output.h"
-# include "mrb/mrb_output_columns.h"
-# include "mrb/mrb_vector.h"
-# include "mrb/mrb_uvector.h"
+#  include "grn_encoding.h"
+#  include "grn_mrb.h"
+#  include "mrb/mrb_converter.h"
+#  include "mrb/mrb_error.h"
+#  include "mrb/mrb_id.h"
+#  include "mrb/mrb_operator.h"
+#  include "mrb/mrb_command_version.h"
+#  include "mrb/mrb_ctx.h"
+#  include "mrb/mrb_logger.h"
+#  include "mrb/mrb_query_logger.h"
+#  include "mrb/mrb_void.h"
+#  include "mrb/mrb_bulk.h"
+#  include "mrb/mrb_pointer.h"
+#  include "mrb/mrb_cache.h"
+#  include "mrb/mrb_object.h"
+#  include "mrb/mrb_object_flags.h"
+#  include "mrb/mrb_database.h"
+#  include "mrb/mrb_indexable.h"
+#  include "mrb/mrb_table.h"
+#  include "mrb/mrb_table_with_key.h"
+#  include "mrb/mrb_array.h"
+#  include "mrb/mrb_hash_table.h"
+#  include "mrb/mrb_patricia_trie.h"
+#  include "mrb/mrb_double_array_trie.h"
+#  include "mrb/mrb_table_group_flags.h"
+#  include "mrb/mrb_table_group_result.h"
+#  include "mrb/mrb_table_sort_flags.h"
+#  include "mrb/mrb_table_sort_key.h"
+#  include "mrb/mrb_record.h"
+#  include "mrb/mrb_column.h"
+#  include "mrb/mrb_fixed_size_column.h"
+#  include "mrb/mrb_variable_size_column.h"
+#  include "mrb/mrb_index_column.h"
+#  include "mrb/mrb_index_cursor.h"
+#  include "mrb/mrb_type.h"
+#  include "mrb/mrb_expr.h"
+#  include "mrb/mrb_accessor.h"
+#  include "mrb/mrb_procedure.h"
+#  include "mrb/mrb_command.h"
+#  include "mrb/mrb_command_input.h"
+#  include "mrb/mrb_table_cursor.h"
+#  include "mrb/mrb_table_cursor_flags.h"
+#  include "mrb/mrb_content_type.h"
+#  include "mrb/mrb_writer.h"
+#  include "mrb/mrb_config.h"
+#  include "mrb/mrb_eval_context.h"
+#  include "mrb/mrb_thread.h"
+#  include "mrb/mrb_window_definition.h"
+#  include "mrb/mrb_window_function_executor.h"
+#  include "mrb/mrb_locale_output.h"
+#  include "mrb/mrb_output_columns.h"
+#  include "mrb/mrb_vector.h"
+#  include "mrb/mrb_uvector.h"
 
-# include <mruby/array.h>
-# include <mruby/string.h>
-# include <mruby/variable.h>
+#  include <mruby/array.h>
+#  include <mruby/string.h>
+#  include <mruby/variable.h>
 #endif /* GRN_WITH_MRUBY */
 
 static grn_bool grn_ctx_impl_mrb_mruby_enabled = GRN_TRUE;
@@ -89,11 +89,8 @@ grn_ctx_impl_mrb_init_from_env(void)
 {
   {
     char grn_mruby_enabled_env[GRN_ENV_BUFFER_SIZE];
-    grn_getenv("GRN_MRUBY_ENABLED",
-               grn_mruby_enabled_env,
-               GRN_ENV_BUFFER_SIZE);
-    if (grn_mruby_enabled_env[0] &&
-        strcmp(grn_mruby_enabled_env, "no") == 0) {
+    grn_getenv("GRN_MRUBY_ENABLED", grn_mruby_enabled_env, GRN_ENV_BUFFER_SIZE);
+    if (grn_mruby_enabled_env[0] && strcmp(grn_mruby_enabled_env, "no") == 0) {
       grn_ctx_impl_mrb_mruby_enabled = GRN_FALSE;
     }
   }
@@ -129,8 +126,11 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
   mrb_undef_class_method(mrb, ctx->impl->mrb.module, "init");
 
   mrb_define_class(mrb, "LoadError", mrb_class_get(mrb, "ScriptError"));
-  mrb_define_method(mrb, mrb->kernel_module,
-                    "load", mrb_kernel_load, MRB_ARGS_REQ(1));
+  mrb_define_method(mrb,
+                    mrb->kernel_module,
+                    "load",
+                    mrb_kernel_load,
+                    MRB_ARGS_REQ(1));
 
   {
     mrb_value load_path;
@@ -144,8 +144,7 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
     plugins_dir = grn_plugin_get_system_plugins_dir();
     utf8_plugins_dir =
       grn_encoding_convert_to_utf8_from_locale(ctx, plugins_dir, -1, NULL);
-    mrb_ary_push(mrb, load_path,
-                 mrb_str_new_cstr(mrb, utf8_plugins_dir));
+    mrb_ary_push(mrb, load_path, mrb_str_new_cstr(mrb, utf8_plugins_dir));
     grn_encoding_converted_free(ctx, utf8_plugins_dir);
 
     system_ruby_scripts_dir = grn_mrb_get_system_ruby_scripts_dir(ctx);
@@ -154,7 +153,8 @@ mrb_groonga_init(mrb_state *mrb, mrb_value self)
                                                system_ruby_scripts_dir,
                                                -1,
                                                NULL);
-    mrb_ary_push(mrb, load_path,
+    mrb_ary_push(mrb,
+                 load_path,
                  mrb_str_new_cstr(mrb, utf8_system_ruby_scripts_dir));
     grn_encoding_converted_free(ctx, utf8_system_ruby_scripts_dir);
 
@@ -231,15 +231,18 @@ grn_ctx_impl_mrb_init_bindings(grn_ctx *ctx)
   mrb_define_const(mrb,
                    ctx->impl->mrb.module,
                    "ORDER_BY_ESTIMATED_SIZE",
-                   grn_mrb_is_order_by_estimated_size_enabled() ?
-                   mrb_true_value() :
-                   mrb_false_value());
-  mrb_define_class_method(mrb, ctx->impl->mrb.module,
-                          "init", mrb_groonga_init, MRB_ARGS_NONE());
+                   grn_mrb_is_order_by_estimated_size_enabled()
+                     ? mrb_true_value()
+                     : mrb_false_value());
+  mrb_define_class_method(mrb,
+                          ctx->impl->mrb.module,
+                          "init",
+                          mrb_groonga_init,
+                          MRB_ARGS_NONE());
   mrb_funcall(mrb, mrb_obj_value(ctx->impl->mrb.module), "init", 0);
 }
 
-#ifndef USE_MEMORY_DEBUG
+#  ifndef USE_MEMORY_DEBUG
 static void *
 grn_ctx_impl_mrb_allocf(mrb_state *mrb, void *ptr, size_t size, void *ud)
 {
@@ -258,7 +261,7 @@ grn_ctx_impl_mrb_allocf(mrb_state *mrb, void *ptr, size_t size, void *ud)
     }
   }
 }
-#endif /* USE_MEMORY_DEBUG */
+#  endif /* USE_MEMORY_DEBUG */
 
 static void
 grn_ctx_impl_mrb_init_lazy(grn_ctx *ctx)
@@ -274,11 +277,11 @@ grn_ctx_impl_mrb_init_lazy(grn_ctx *ctx)
     ctx->impl->mrb.groonga.operator_class = NULL;
   } else {
     mrb_state *mrb;
-#ifdef USE_MEMORY_DEBUG
+#  ifdef USE_MEMORY_DEBUG
     mrb = mrb_open();
-#else /* USE_MEMORY_DEBUG */
+#  else  /* USE_MEMORY_DEBUG */
     mrb = mrb_open_allocf(grn_ctx_impl_mrb_allocf, ctx);
-#endif /* USE_MEMORY_DEBUG */
+#  endif /* USE_MEMORY_DEBUG */
     ctx->impl->mrb.state = mrb;
     ctx->impl->mrb.base_directory[0] = '\0';
     grn_ctx_impl_mrb_init_bindings(ctx);
@@ -315,7 +318,7 @@ grn_ctx_impl_mrb_fin_real(grn_ctx *ctx)
     GRN_OBJ_FIN(ctx, &(ctx->impl->mrb.buffer.to));
   }
 }
-#else /* GRN_WITH_MRUBY */
+#else  /* GRN_WITH_MRUBY */
 static void
 grn_ctx_impl_mrb_init_lazy(grn_ctx *ctx)
 {
