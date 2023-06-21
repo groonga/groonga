@@ -12766,7 +12766,6 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
                               DB_OBJ(res)->reference_count);
     }
   } else {
-    grn_log_reference_count("%p: at: start: %u\n", ctx, id);
     grn_db *s = (grn_db *)ctx->impl->db;
     if (s) {
       db_value *vp;
@@ -12774,6 +12773,17 @@ grn_ctx_at(grn_ctx *ctx, grn_id id)
       if (!(vp = grn_tiny_array_at(&s->values, id))) {
         goto exit;
       }
+      /* We can skip opened check with lock for built-in objects
+       * because built-in objects are opened on DB open and never
+       * closed until DB is closed at least with the current
+       * design. So the object is opened (vp->ptr != NULL, vp->ptr is
+       * NULL only when no associated object), we can safely return
+       * the opened object directly without lock. */
+      if (id < GRN_N_RESERVED_TYPES && vp->ptr) {
+        res = vp->ptr;
+        goto exit;
+      }
+      grn_log_reference_count("%p: at: start: %u\n", ctx, id);
       if (grn_enable_reference_count) {
         if (!grn_db_value_lock(ctx, id, vp, &lock)) {
           const char *name;
@@ -14135,6 +14145,12 @@ grn_obj_unlink(grn_ctx *ctx, grn_obj *obj)
       grn_obj_close(ctx, obj);
       return;
     }
+  }
+
+  /* Don't unlink built-in objects. We must update the same condition
+   * in grn_ctx_at() when we need to unlink built-in objects. */
+  if (id < GRN_N_RESERVED_TYPES) {
+    return;
   }
 
   if (!grn_enable_reference_count) {
