@@ -42,7 +42,7 @@ jobs:
             configure-options: >-
               CC=clang
               CXX=clang++
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
         with:
@@ -175,7 +175,7 @@ jobs:
             id: cmake-clang
             cc: clang
             cxx: clang++
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
         with:
@@ -269,7 +269,7 @@ jobs:
             id: cmake-gcc
           - label: "CMake: Clang"
             id: cmake-clang
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
         with:
