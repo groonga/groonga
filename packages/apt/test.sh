@@ -5,11 +5,19 @@ set -exu
 apt update
 apt install -V -y lsb-release wget
 
+distribution=$(lsb_release --id --short | tr 'A-Z' 'a-z')
 code_name=$(lsb_release --codename --short)
 architecture=$(dpkg --print-architecture)
 
+case "${code_name}" in
+  bookworm)
+    wget https://apache.jfrog.io/artifactory/arrow/${distribution}/apache-arrow-apt-source-latest-${code_name}.deb
+    apt install -V -y ./apache-arrow-apt-source-latest-${code_name}.deb
+    ;;
+esac
+
 wget \
-  https://packages.groonga.org/debian/groonga-apt-source-latest-${code_name}.deb
+  https://packages.groonga.org/${distribution}/groonga-apt-source-latest-${code_name}.deb
 apt install -V -y ./groonga-apt-source-latest-${code_name}.deb
 apt update
 
