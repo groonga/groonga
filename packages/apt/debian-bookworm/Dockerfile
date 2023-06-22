@@ -14,7 +14,7 @@ RUN \
     wget && \
   wget https://packages.groonga.org/debian/groonga-apt-source-latest-bookworm.deb && \
   apt install -y -V ${quiet} ./groonga-apt-source-latest-bookworm.deb && \
-  rm ./groonga-apt-source-latest-bullseye.deb && \
+  rm ./groonga-apt-source-latest-bookworm.deb && \
   apt update ${quiet} && \
   apt install -y -V ${quiet} \
     autotools-dev \
