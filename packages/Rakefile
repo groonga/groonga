@@ -62,6 +62,8 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
 
   def apt_targets_default
     [
+      "debian-bookworm",
+      "debian-bookworm-arm64",
       "debian-bullseye",
       "debian-bullseye-arm64",
     ]
