@@ -1,0 +1,49 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("unify_alphabet", false)'   --normalizer NormalizerNFKC150
+[[0,0.0,0.0],true]
+column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"content": "x abcde y abcde z"},
+{"content": "x abcde x abcde x"},
+{"content": "x abcde x y x abcde x z"},
+{"content": "x abcde xx y xx abcde xx z"}
+]
+[[0,0.0,0.0],4]
+select Entries   --match_columns content   --query '*NPP1"(abcde \\\"abc de\\\") (y z)"'   --output_columns '_id, content'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "content",
+          "Text"
+        ]
+      ],
+      [
+        1,
+        "x abcde y abcde z"
+      ],
+      [
+        3,
+        "x abcde x y x abcde x z"
+      ]
+    ]
+  ]
+]

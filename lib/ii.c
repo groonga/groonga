@@ -11424,13 +11424,23 @@ grn_inline static bool
 token_info_build_near_phrase_is_same_phrase(grn_ctx *ctx,
                                             grn_ii_select_data *data,
                                             uint32_t start1,
+                                            uint32_t n1,
                                             uint32_t start2,
-                                            uint32_t n)
+                                            uint32_t n2)
 {
-  uint32_t i;
-  for (i = 0; i < n; i++) {
-    token_info *token_info1 = data->token_infos[start1 + i];
-    token_info *token_info2 = data->token_infos[start2 + i];
+  uint32_t i1 = 0;
+  uint32_t i2 = 0;
+  while (i1 < n1 && i2 < n2) {
+    token_info *token_info1 = data->token_infos[start1 + i1];
+    token_info *token_info2 = data->token_infos[start2 + i2];
+    if (token_info1->offset != token_info2->offset) {
+      if (token_info1->offset > token_info2->offset) {
+        i2++;
+      } else {
+        i1++;
+      }
+      continue;
+    }
     if (token_info1->must_last != token_info2->must_last) {
       return false;
     }
@@ -11445,8 +11455,10 @@ token_info_build_near_phrase_is_same_phrase(grn_ctx *ctx,
         return false;
       }
     }
+    i1++;
+    i2++;
   }
-  return true;
+  return i1 == n1 && i2 == n2;
 }
 
 grn_inline static bool
@@ -11464,13 +11476,11 @@ token_info_build_near_phrase_have_same_phrase(grn_ctx *ctx,
     if (token_info->phrase_group_id != phrase_group_id) {
       continue;
     }
-    if (token_info->n_used_tokens_in_phrase != n_target_tokens) {
-      continue;
-    }
 
     if (token_info_build_near_phrase_is_same_phrase(ctx,
                                                     data,
                                                     i,
+                                                    token_info->n_used_tokens_in_phrase,
                                                     n_token_infos_before,
                                                     n_target_tokens)) {
       return true;
