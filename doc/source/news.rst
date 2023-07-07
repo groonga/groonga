@@ -5,6 +5,135 @@
 News
 ====
 
+.. _release-13-0-2:
+
+Release 13.0.2 - 2023-07-10
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/install/ubuntu`] Dropped support for Ubuntu 18.04 (Bionic Beaver).
+
+* [:doc:`/install/ubuntu`] Added support for Ubuntu 23.04 (Lunar Lobster).
+
+* [:doc:`/install/debian`] Added support for Debian GNU/Linux 12
+  (bookworm).
+
+* [:doc:`/install/oracle-linux`] Dropped support for Oracle Linux. Use
+  :doc:`/install/almalinux` packages instead.
+
+* [``grn_highlighter``] Added support for changing tag.
+
+  [`GH-1453 <https://github.com/groonga/groonga/issues/1453>`_]
+  [Reported by askdkc]
+
+* [``grn_highlighter``] Added support for customizing normalizers.
+
+* [``grn_highlighter``] Added support for customizing HTML mode.
+
+* [``grn_highlighter``] Added support for multiple tags.
+
+* [:doc:`/reference/functions/highlight`] Added
+  the ``sequential_class_tag_mode`` option.
+
+* [:doc:`/reference/functions/highlight_html`] Added
+  the ``sequential_class_tag_mode`` option.
+
+* [:doc:`/reference/commands/reference_acquire`] Changed to refer
+  index columns that are for the target object when ``--recursive
+  dependent`` is used.
+
+  If the target object is a column, index columns for the column is
+  also referred.
+
+  If the target object is a table, index columns for the table is also
+  referred.
+
+  If the target object is a DB, all tables are processed as target
+  objects.
+
+* [CMake] Changed to require CMake 3.16 or later. We'll use CMake
+  instead of GNU Autotools as our recommended build tool in near
+  feature and drop support for GNU Autotools eventually.
+
+* [CMake] Added support for CMake package. You can use it by
+  ``find_package(Groonga)``.
+
+* [Packaging] Changed to use newer GNU Autotools to generate
+  ``configure`` in the source archive.
+
+  [`ranguba/rroonga#220 <https://github.com/ranguba/rroonga/issues/220>`_]
+  [Reported by ZangRuochen]
+
+* [:doc:`reference/commands/reference_acquire`] Optimized reference
+  count implementation for built-in objects.
+
+* Added support for logging backtrace on ``SIGABRT``.
+
+Fixes
+^^^^^
+
+* [:ref:`query-syntax-ordered-near-phrase-product-search-condition`]
+  [:ref:`script-syntax-ordered-near-phrase-product-search-operator`]
+  Fixed a search bug that records that should be matched may not be
+  matched.
+
+  It's happen when multiple 3+ tokens are overlapped in query. For
+  example, ``abc`` and ``abcd`` are an invalid combination. If shorter
+  one (``abc``) exists before longer one (``abcd``), this bug is
+  happen. For example, ``ONPP1 "(abcd abc) (1 2)"`` works bug ``ONPP1
+  "(abc abcd) (1 2)"`` doesn't work.
+
+* Fixed a bug that invalid weight may be used with multiple adjusts.
+
+* [:doc:`/reference/grn_expr/query_syntax`] Fixed a typo.
+
+  [`GH-1560 <https://github.com/groonga/groonga/issues/1560>`_]
+  [Patch by Dylan Golow]
+
+* [:ref:`query-syntax-near-phrase-search-condition`]
+  [:ref:`script-syntax-near-phrase-search-operator`]
+  [:ref:`query-syntax-near-phrase-product-search-condition`]
+  [:ref:`script-syntax-near-phrase-product-search-operator`]
+  [:ref:`query-syntax-ordered-near-phrase-search-condition`]
+  [:ref:`script-syntax-ordered-near-phrase-search-operator`]
+  [:ref:`query-syntax-ordered-near-phrase-product-search-condition`]
+  [:ref:`script-syntax-ordered-near-phrase-product-search-operator`]
+  Fixed an invalid interval calculation when
+  ``additional_last_interval`` is used.
+
+  For example, let's think about ``*NP3,-1"aaa bbb .$"`` against
+  ``aaaxxxbbbcdefghi.`` In this case, the number of tokens between
+  ``aaa`` and ``bbb`` must be 3 but it was 7.
+
+* [:ref:`query-syntax-near-phrase-product-search-condition`]
+  [:ref:`script-syntax-near-phrase-product-search-operator`]
+  [:ref:`query-syntax-ordered-near-phrase-product-search-condition`]
+  [:ref:`script-syntax-ordered-near-phrase-product-search-operator`]
+  Fixed infinite loop bugs when the same phrase exists in the same
+  phrase group.
+
+  For example, ``*NPP1 "(abcd abc abcd bcde) (efghi)"`` is a bad query
+  because the first phrase group has two ``abcd`` phrases.
+
+  For example, ``*NPP1 "(abcde \"abc de\") (efghi)"`` is a bad query
+  because the first phrase group has ``abcde`` and ``"abc de"``. They
+  are "logically" the same phrases.
+
+* Fixed a bug that internal lock count may not be decreased when lock
+  acquisition is failed. In normal use-case, this will not be a real
+  problem.
+
+Thanks
+^^^^^^
+
+* askdkc
+
+* Dylan Golow
+
+* ZangRuochen
+
 .. _release-13-0-1:
 
 Release 13.0.1 - 2023-03-24

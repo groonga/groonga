@@ -22,7 +22,7 @@ Here are supported Ubuntu versions:
 
   * 20.04 LTS Focal Fossa
   * 22.04 LTS Jammy Jellyfish
-  * 22.10 Kinetic Kudu
+  * 23.04 Lunar Lobster
 
 Enable the universe repository to install Groonga::
 
