@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1670,6 +1670,7 @@ struct _grn_ctx_info {
 GRN_API grn_rc grn_ctx_info_get(grn_ctx *ctx, grn_ctx_info *info);
 
 GRN_API grn_rc grn_set_segv_handler(void);
+GRN_API grn_rc grn_set_abrt_handler(void);
 GRN_API grn_rc grn_set_int_handler(void);
 GRN_API grn_rc grn_set_term_handler(void);
 

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2321,17 +2321,26 @@ grn_exception_filter(EXCEPTION_POINTERS *info)
   return EXCEPTION_CONTINUE_SEARCH;
 }
 #elif defined(HAVE_SIGNAL_H) /* WIN32 */
-static bool segv_received = false;
+static bool crashed = false;
 static void
-grn_segv_handler(int signal_number, siginfo_t *info, void *context)
+grn_crash_handler(int signal_number, siginfo_t *info, void *context)
 {
   grn_ctx *ctx = &grn_gctx;
 
-  if (segv_received) {
-    GRN_LOG(ctx, GRN_LOG_CRIT, "SEGV received in SEGV handler.");
+  if (crashed) {
+    if (signal_number == SIGSEGV) {
+      GRN_LOG(ctx, GRN_LOG_CRIT, "crashed in SEGV handler.");
+    } else if (signal_number == SIGABRT) {
+      GRN_LOG(ctx, GRN_LOG_CRIT, "crashed in ABRT handler.");
+    } else {
+      GRN_LOG(ctx,
+              GRN_LOG_CRIT,
+              "crashed in signal(%d) handler.",
+              signal_number);
+    }
     return;
   }
-  segv_received = true;
+  crashed = true;
 
   GRN_LOG(ctx, GRN_LOG_CRIT, "-- CRASHED!!! --");
 #  ifdef HAVE_BACKTRACE
@@ -2353,7 +2362,19 @@ grn_segv_handler(int signal_number, siginfo_t *info, void *context)
   GRN_LOG(ctx, GRN_LOG_CRIT, "backtrace() isn't available.");
 #  endif /* HAVE_BACKTRACE */
   GRN_LOG(ctx, GRN_LOG_CRIT, "----------------");
-  abort();
+
+  struct sigaction default_action = {0};
+  sigemptyset(&default_action.sa_mask);
+  default_action.sa_handler = SIG_DFL;
+  default_action.sa_flags = SA_SIGINFO | SA_ONSTACK;
+  if (sigaction(SIGABRT, &default_action, NULL) == 0) {
+    abort();
+  } else {
+    GRN_LOG(ctx,
+            GRN_LOG_CRIT,
+            "exiting because resetting SIGABRT handler failed");
+    _exit(EXIT_FAILURE);
+  }
 }
 #endif   /* WIN32 */
 
@@ -2365,17 +2386,33 @@ grn_set_segv_handler(void)
   SetUnhandledExceptionFilter(grn_exception_filter);
 #elif defined(HAVE_SIGNAL_H) /* WIN32 */
   grn_ctx *ctx = &grn_gctx;
-  struct sigaction action;
-
+  struct sigaction action = {0};
   sigemptyset(&action.sa_mask);
-  action.sa_sigaction = grn_segv_handler;
+  action.sa_sigaction = grn_crash_handler;
   action.sa_flags = SA_SIGINFO | SA_ONSTACK;
-
   if (sigaction(SIGSEGV, &action, NULL)) {
     SERR("failed to set SIGSEGV action");
     rc = ctx->rc;
-  };
+  }
 #endif                       /* WIN32 */
+  return rc;
+}
+
+grn_rc
+grn_set_abrt_handler(void)
+{
+  grn_rc rc = GRN_SUCCESS;
+#if !defined(WIN32) && defined(HAVE_SIGNAL_H)
+  grn_ctx *ctx = &grn_gctx;
+  struct sigaction action = {0};
+  sigemptyset(&action.sa_mask);
+  action.sa_sigaction = grn_crash_handler;
+  action.sa_flags = SA_SIGINFO | SA_ONSTACK;
+  if (sigaction(SIGABRT, &action, NULL)) {
+    SERR("failed to set SIGABRT action");
+    rc = ctx->rc;
+  }
+#endif
   return rc;
 }
 

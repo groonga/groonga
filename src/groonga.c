@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -4609,6 +4609,7 @@ main(int argc, char **argv)
   }
 
   grn_set_segv_handler();
+  grn_set_abrt_handler();
   grn_set_int_handler();
   grn_set_term_handler();
 #ifdef ENABLE_LOG_REOPEN_BY_SIGNAL
