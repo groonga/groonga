@@ -20,6 +20,7 @@ repos:
       - id: clang-format
         files: >-
           (
+          ?include/groonga/groonga\.h|
           ?include/groonga/highlighter\.h|
           ?include/groonga/proc\.h|
           ?include/groonga/util\.h|
