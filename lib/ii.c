@@ -11477,12 +11477,13 @@ token_info_build_near_phrase_have_same_phrase(grn_ctx *ctx,
       continue;
     }
 
-    if (token_info_build_near_phrase_is_same_phrase(ctx,
-                                                    data,
-                                                    i,
-                                                    token_info->n_used_tokens_in_phrase,
-                                                    n_token_infos_before,
-                                                    n_target_tokens)) {
+    if (token_info_build_near_phrase_is_same_phrase(
+          ctx,
+          data,
+          i,
+          token_info->n_used_tokens_in_phrase,
+          n_token_infos_before,
+          n_target_tokens)) {
       return true;
     }
   }
