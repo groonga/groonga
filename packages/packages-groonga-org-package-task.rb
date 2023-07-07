@@ -15,13 +15,11 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-require_relative "../vendor/apache-arrow-source/dev/tasks/linux-packages/helper"
 require_relative "../vendor/apache-arrow-source/dev/tasks/linux-packages/package-task"
 require_relative "launchpad-helper"
 require_relative "repository-helper"
 
 class PackagesGroongaOrgPackageTask < PackageTask
-  include Helper::ApacheArrow
   include LaunchpadHelper
   include RepositoryHelper
 
@@ -119,6 +117,10 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
     desc "Release files for Windows"
     task windows: ["windows:clean"]
+  end
+
+  def docker_image(os, architecture)
+    "ghcr.io/#{github_repository}-package:#{super}"
   end
 
   def use_built_package?
