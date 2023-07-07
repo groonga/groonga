@@ -40,6 +40,7 @@ repos:
           ?lib/proc/proc_highlight\.c|
           ?lib/proc\.c|
           ?lib/util\.c|
+          ?src/groonga\.c|
           )
   - repo: https://github.com/cheshirekow/cmake-format-precommit
     rev: v0.6.13
