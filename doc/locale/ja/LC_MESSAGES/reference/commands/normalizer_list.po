@@ -28,9 +28,7 @@ msgid "Summary"
 msgstr "概要"
 
 msgid "``normalizer_list`` command lists normalizers in a database."
-msgstr ""
-"``normalizer_list`` コマンドはデータベースに登録されているノーマライザーの一"
-"覧を返します。"
+msgstr "``normalizer_list`` コマンドはデータベースに登録されているノーマライザーの一覧を返します。"
 
 msgid "Syntax"
 msgstr "構文"
@@ -50,32 +48,20 @@ msgstr "データベースに登録されているノーマライザーの一覧
 msgid "Return value"
 msgstr "戻り値"
 
-msgid ""
-"``normalizer_list`` command returns normalizers. Each normalizers has an "
-"attribute that contains the name. The attribute will be increased in the "
-"feature::"
-msgstr ""
-"``normalizer_list`` コマンドはノーマライザーの一覧を返します。各ノーマライ"
-"ザーは属性を持っています。例えば名前です。将来、属性は増えるかもしれませ"
-"ん。::"
+msgid "``normalizer_list`` command returns normalizers. Each normalizers has an attribute that contains the name. The attribute will be increased in the feature::"
+msgstr "``normalizer_list`` コマンドはノーマライザーの一覧を返します。各ノーマライザーは属性を持っています。例えば名前です。将来、属性は増えるかもしれません。::"
 
 msgid "``HEADER``"
 msgstr ""
 
 msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
-msgstr ""
-"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
-"さい。"
+msgstr "``HEADER`` については :doc:`/reference/command/output_format` を参照してください。"
 
 msgid "``normalizers``"
 msgstr ""
 
-msgid ""
-"``normalizers`` is an array of normalizer. Normalizer is an object that has "
-"the following attributes."
-msgstr ""
-"``normalizers`` はノーマライザーの配列です。ノーマライザーは次の属性を持つオ"
-"ブジェクトです。"
+msgid "``normalizers`` is an array of normalizer. Normalizer is an object that has the following attributes."
+msgstr "``normalizers`` はノーマライザーの配列です。ノーマライザーは次の属性を持つオブジェクトです。"
 
 msgid "Name"
 msgstr "名前"

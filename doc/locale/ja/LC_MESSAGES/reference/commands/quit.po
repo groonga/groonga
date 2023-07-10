@@ -27,15 +27,10 @@ msgstr "概要"
 msgid "quit - セッション終了"
 msgstr ""
 
-msgid ""
-"Groonga組込コマンドの一つであるquitについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
+msgid "Groonga組込コマンドの一つであるquitについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。"
 msgstr ""
 
-msgid ""
-"quitは、groongaプロセスとのセッションを終了します。クライアントプロセスならば"
-"groongaプロセスとの接続を切ります。"
+msgid "quitは、groongaプロセスとのセッションを終了します。クライアントプロセスならばgroongaプロセスとの接続を切ります。"
 msgstr ""
 
 msgid "Syntax"

@@ -24,14 +24,10 @@ msgstr ""
 msgid "Summary"
 msgstr "概要"
 
-msgid ""
-":c:type:`grn_content_type` shows input type and output type. Currently, it "
-"is used only for output type."
+msgid ":c:type:`grn_content_type` shows input type and output type. Currently, it is used only for output type."
 msgstr ""
 
-msgid ""
-"Normally, you don't need to use this type. It is used internally in :c:func:"
-"`grn_ctx_send()`."
+msgid "Normally, you don't need to use this type. It is used internally in :c:func:`grn_ctx_send()`."
 msgstr ""
 
 msgid "Reference"
@@ -40,36 +36,32 @@ msgstr "リファレンス"
 msgid "Here are available values:"
 msgstr "指定可能な値は以下の通りです。"
 
-msgid ""
-"It means that outputting nothing or using the original format. :doc:`/"
-"reference/commands/dump` uses the type."
+msgid "It means that outputting nothing or using the original format. :doc:`/reference/commands/dump` uses the type."
 msgstr ""
 
 msgid "`GRN_CONTENT_NONE`"
 msgstr ""
 
+msgid "`GRN_CONTENT_TSV`"
+msgstr ""
+
 msgid "It means tab separated values format."
 msgstr ""
 
-msgid "`GRN_CONTENT_TSV`"
+msgid "`GRN_CONTENT_JSON`"
 msgstr ""
 
 msgid "It means JSON format."
 msgstr "JSON形式::"
 
-msgid "`GRN_CONTENT_JSON`"
+msgid "`GRN_CONTENT_XML`"
 msgstr ""
 
 msgid "It means XML format."
 msgstr ""
 
-msgid "`GRN_CONTENT_XML`"
-msgstr ""
-
-msgid ""
-"It means MessagePack format. You need MessagePack library on building "
-"Groonga. If you don't have MessagePack library, you can't use this type."
-msgstr ""
-
 msgid "`GRN_CONTENT_MSGPACK`"
+msgstr ""
+
+msgid "It means MessagePack format. You need MessagePack library on building Groonga. If you don't have MessagePack library, you can't use this type."
 msgstr ""

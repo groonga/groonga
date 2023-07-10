@@ -30,6 +30,7 @@ SUFFIXES += .pot .po .mo .edit
 	    --quiet				\
 	    --sort-by-file			\
 	    --output-file=$@.tmp		\
+	    --no-wrap				\
 	    $(srcdir)/$*.po			\
 	    $<;					\
 	else					\
@@ -37,7 +38,8 @@ SUFFIXES += .pot .po .mo .edit
 	    --input=$<				\
 	    --output-file=$@.tmp		\
 	    --locale=$(LOCALE)			\
-	    --no-translator;			\
+	    --no-translator			\
+	    --no-wrap;				\
 	fi
 	(echo "# -*- po -*-";					\
 	 GREP_OPTIONS= grep -v '^# -\*- po -\*-' $@.tmp |	\
@@ -47,7 +49,7 @@ SUFFIXES += .pot .po .mo .edit
 .edit.po:
 	grep -v '^#~' $< > $<.no-comment
 	mkdir -p $$(dirname $(srcdir)/$@)
-	msgattrib --no-fuzzy --no-location --output $(srcdir)/$@ $<.no-comment
+	msgattrib --no-fuzzy --no-location --no-wrap --output $(srcdir)/$@ $<.no-comment
 	rm $<.no-comment
 
 .po.mo:

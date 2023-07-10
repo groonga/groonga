@@ -89,10 +89,6 @@ jobs:
             ruby-dev \
             zlib1g-dev \
             ${{ matrix.packages }}
-          if [ "${{ matrix.use-sphinx }}" = "true" ]; then
-            sudo apt install -y -V -o="APT::Acquire::Retries=3" \
-              python3-pip
-          fi
           echo "/usr/lib/ccache" >> $GITHUB_PATH
       - name: Cache ccache
         uses: actions/cache@v3
@@ -106,14 +102,6 @@ jobs:
             --silent \
             --location \
             https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
-      - name: Install Sphinx
-        if: |
-          matrix.use-sphinx
-        run: |
-          sudo pip3 install -U \
-            Jinja2 \
-            "Sphinx==5.3.0" \
-            pydata_sphinx_theme
       - name: Install Bundler
         run: |
           sudo gem install bundler

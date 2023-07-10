@@ -17,18 +17,3 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 2.4.3\n"
 "X-POOTLE-MTIME: 1411061943.000000\n"
-
-msgid "``fuzzy_search``"
-msgstr ""
-
-msgid "Summary"
-msgstr "概要"
-
-msgid "Syntax"
-msgstr "構文"
-
-msgid "Usage"
-msgstr "使い方"
-
-msgid "Return value"
-msgstr "戻り値"

@@ -35,34 +35,25 @@ msgstr ""
 msgid "Groongaは、テストのフレームワークとして Cutter_ を用いています。"
 msgstr ""
 
-msgid ""
-"Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご"
-"覧下さい。"
+msgid "Cutterのインストール方法は プラットフォーム毎のCutterのインストール方法_ をご覧下さい。"
 msgstr ""
 
 msgid "lcovのインストール"
 msgstr ""
 
-msgid ""
-"カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは"
-"以下のようにしてインストールできます。::"
+msgid "カバレッジ情報を計測するためには、lcov 1.6以上が必要です。DebianやUbuntuでは以下のようにしてインストールできます。::"
 msgstr ""
 
 msgid "clangのインストール"
 msgstr ""
 
-msgid ""
-"ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要"
-"があります。DebianやUbuntuでは以下のようにしてインストールできます。::"
+msgid "ソースコードの静的解析を行うためには、clang(scan-build)をインストールする必要があります。DebianやUbuntuでは以下のようにしてインストールできます。::"
 msgstr ""
 
 msgid "libmemcachedのインストール"
 msgstr ""
 
-msgid ""
-"memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入"
-"が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインス"
-"トールできます。::"
+msgid "memcachedのバイナリプロトコルのテストを動作させるためには、libmemcachedの導入が必要です。squeeze以降のDebianやKarmic以降のUubntuでは以下の用にしてインストールできます。::"
 msgstr ""
 
 msgid "テストの動作"
@@ -74,36 +65,25 @@ msgstr ""
 msgid "カバレッジ情報"
 msgstr ""
 
-msgid ""
-"すると、coverageディレクトリ以下に、カバレッジ情報が入ったhtmlが出力されま"
-"す。"
+msgid "すると、coverageディレクトリ以下に、カバレッジ情報が入ったhtmlが出力されます。"
 msgstr ""
 
-msgid ""
-"カバレッジには、Lines/Functions/Branchesの3つの対象があります。それぞれ、行／"
-"関数／分岐に対応します。Functionsがもっとも重要な対象です。すべての関数がテス"
-"トされるようになっていることを心がけてください。"
+msgid "カバレッジには、Lines/Functions/Branchesの3つの対象があります。それぞれ、行／関数／分岐に対応します。Functionsがもっとも重要な対象です。すべての関数がテストされるようになっていることを心がけてください。"
 msgstr ""
 
-msgid ""
-"テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカ"
-"バーしている部分を増やすことも重要です。"
+msgid "テストがカバーしていない部分の編集は慎重に行ってください。また、テストがカバーしている部分を増やすことも重要です。"
 msgstr ""
 
 msgid "様々なテスト"
 msgstr ""
 
-msgid ""
-"テストは、test/unitディレクトリにおいて、./run-test.shを実行することによって"
-"も行えます。run-test.shはいくつかのオプションをとります。詳細は、./run-test."
-"sh --helpを実行しヘルプをご覧ください。"
+msgid "テストは、test/unitディレクトリにおいて、./run-test.shを実行することによっても行えます。run-test.shはいくつかのオプションをとります。詳細は、./run-test.sh --helpを実行しヘルプをご覧ください。"
 msgstr ""
 
 msgid "特定のテスト関数のみテストする"
 msgstr ""
 
-msgid ""
-"特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
+msgid "特定のテスト関数(Cutterではテストと呼ぶ)のみをテストすることができます。"
 msgstr ""
 
 msgid "実行例::"
@@ -112,17 +92,13 @@ msgstr ""
 msgid "特定のテストファイルのみテストする"
 msgstr ""
 
-msgid ""
-"特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができま"
-"す。"
+msgid "特定のテストファイル(Cutterではテストケースと呼ぶ)のみテストすることができます。"
 msgstr ""
 
 msgid "不正メモリアクセス・メモリリーク検出"
 msgstr ""
 
-msgid ""
-"環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセ"
-"スやメモリリークを検出しつつ、テストを動作させることができます。"
+msgid "環境変数CUTTER_CHECK_LEAKをyesと設定すると、valgrindを用いて不正メモリアクセスやメモリリークを検出しつつ、テストを動作させることができます。"
 msgstr ""
 
 msgid "run-test.shのみならず、make checkでも利用可能です。"
@@ -131,17 +107,13 @@ msgstr ""
 msgid "デバッガ上でのテスト実行"
 msgstr ""
 
-msgid ""
-"環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実"
-"行されます。gdb上でrunを行うと、テストの実行が開始されます。"
+msgid "環境変数CUTTER_DEBUGをyesと設定すると、テストが実行できる環境が整ったgdbが実行されます。gdb上でrunを行うと、テストの実行が開始されます。"
 msgstr ""
 
 msgid "静的解析"
 msgstr ""
 
-msgid ""
-"scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildと"
-"いうディレクトリに解析結果のhtmlが出力されます。::"
+msgid "scan-buildを用いて、ソースコードの静的解析を行うことができます。scan_buildというディレクトリに解析結果のhtmlが出力されます。::"
 msgstr ""
 
 msgid "configureは１度のみ実行する必要があります。"

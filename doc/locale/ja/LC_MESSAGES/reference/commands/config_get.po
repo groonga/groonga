@@ -27,8 +27,7 @@ msgstr ""
 msgid "Summary"
 msgstr "概要"
 
-msgid ""
-"``config_get`` command returns the value of the specified configuration item."
+msgid "``config_get`` command returns the value of the specified configuration item."
 msgstr "``config_get`` コマンドは指定した設定項目の値を返します。"
 
 msgid "Syntax"
@@ -40,18 +39,13 @@ msgstr "このコマンドの引数は1つで必須です::"
 msgid "Usage"
 msgstr "使い方"
 
-msgid ""
-"Here is an example to set a value to ``alias.column`` configuration item and "
-"get the value:"
-msgstr ""
-"以下は ``alias.column`` 設定項目に値を設定して、設定した値を取得する例です。"
+msgid "Here is an example to set a value to ``alias.column`` configuration item and get the value:"
+msgstr "以下は ``alias.column`` 設定項目に値を設定して、設定した値を取得する例です。"
 
 msgid "Here is an example to get nonexistent configuration item value:"
 msgstr "以下は存在しない設定項目の値を取得する例です。"
 
-msgid ""
-"``config_get`` returns an empty string for nonexistent configuration item "
-"key."
+msgid "``config_get`` returns an empty string for nonexistent configuration item key."
 msgstr "``config_get`` は存在しない設定項目の場合は空文字列を返します。"
 
 msgid "Parameters"
@@ -87,25 +81,19 @@ msgstr "省略可能な引数はありません。"
 msgid "Return value"
 msgstr "戻り値"
 
-msgid ""
-"``config_get`` command returns the value of the specified configuration "
-"item::"
+msgid "``config_get`` command returns the value of the specified configuration item::"
 msgstr "``config_get`` コマンドは指定した設定項目の値を返します。::"
 
 msgid "``HEADER``"
 msgstr ""
 
 msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
-msgstr ""
-"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
-"さい。"
+msgstr "``HEADER`` については :doc:`/reference/command/output_format` を参照してください。"
 
 msgid "``VALUE``"
 msgstr ""
 
-msgid ""
-"``VALUE`` is the value of the configuration item specified by ``key``. It's "
-"a string."
+msgid "``VALUE`` is the value of the configuration item specified by ``key``. It's a string."
 msgstr "``VALUE`` は ``key`` で指定した設定項目の値です。文字列です。"
 
 msgid "See also"

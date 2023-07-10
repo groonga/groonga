@@ -33,14 +33,10 @@ msgstr ""
 msgid "説明"
 msgstr ""
 
-msgid ""
-"Groonga組込関数の一つであるedit_distanceについて説明します。組込関数は、"
-"script形式のgrn_expr中で呼び出すことができます。"
+msgid "Groonga組込関数の一つであるedit_distanceについて説明します。組込関数は、script形式のgrn_expr中で呼び出すことができます。"
 msgstr ""
 
-msgid ""
-"edit_distance() 関数は、string1に指定した文字列とstring2に指定した文字列の間"
-"の編集距離を求めます。"
+msgid "edit_distance() 関数は、string1に指定した文字列とstring2に指定した文字列の間の編集距離を求めます。"
 msgstr ""
 
 msgid "引数"

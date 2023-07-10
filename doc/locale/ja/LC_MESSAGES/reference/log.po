@@ -21,29 +21,14 @@ msgstr ""
 msgid "Log"
 msgstr "ログ"
 
-msgid ""
-"Groonga has two log files. They are process log and query log. Process log "
-"is for all of :doc:`executables/groonga` works. Query log is just for query "
-"processing."
-msgstr ""
-"Groongaには2つのログファイルがあります。プロセスログとクエリーログです。プロ"
-"セスログは :doc:`executables/groonga` の動作すべてに関することのログです。ク"
-"エリーログはクエリー処理に関することだけのログです。"
+msgid "Groonga has two log files. They are process log and query log. Process log is for all of :doc:`executables/groonga` works. Query log is just for query processing."
+msgstr "Groongaには2つのログファイルがあります。プロセスログとクエリーログです。プロセスログは :doc:`executables/groonga` の動作すべてに関することのログです。クエリーログはクエリー処理に関することだけのログです。"
 
 msgid "Process log"
 msgstr "プロセスログ"
 
-msgid ""
-"Process log is enabled by default. Log path can be customized by :option:"
-"`groonga --log-path` option. Each log has its log level. If a log is smaller "
-"than Groonga process' log level, it's not logged. Log level can be "
-"customized by :option:`groonga -l` or :doc:`commands/log_level`."
-msgstr ""
-"プロセスログはデフォルトで有効になっています。プロセスログは :option:"
-"`groonga --log-path` オプションでカスタマイズできます。各ログにはログレベルが"
-"あります。ログのレベルがGroongaプロセスのログレベルより小さいときはそのログは"
-"記録されません。ログレベルは :option:`groonga -l` または :doc:`commands/"
-"log_level` でカスタマイズできます。"
+msgid "Process log is enabled by default. Log path can be customized by :option:`groonga --log-path` option. Each log has its log level. If a log is smaller than Groonga process' log level, it's not logged. Log level can be customized by :option:`groonga -l` or :doc:`commands/log_level`."
+msgstr "プロセスログはデフォルトで有効になっています。プロセスログは :option:`groonga --log-path` オプションでカスタマイズできます。各ログにはログレベルがあります。ログのレベルがGroongaプロセスのログレベルより小さいときはそのログは記録されません。ログレベルは :option:`groonga -l` または :doc:`commands/log_level` でカスタマイズできます。"
 
 msgid "Format"
 msgstr "フォーマット"
@@ -51,14 +36,8 @@ msgstr "フォーマット"
 msgid "Process log uses the following format::"
 msgstr "プロセスログのフォーマットは以下の通りです。::"
 
-msgid ""
-"Some multi-process based applications such as :doc:`/reference/executables/"
-"groonga-httpd` and `PGroonga <https://pgroonga.github.io/>`_ use the "
-"following format::"
-msgstr ""
-":doc:`/reference/executables/groonga-httpd` や `PGroonga <https://pgroonga."
-"github.io/ja/>`_ といったマルチプロセスベースのアプリケーションでのフォーマッ"
-"トは以下の通りです。::"
+msgid "Some multi-process based applications such as :doc:`/reference/executables/groonga-httpd` and `PGroonga <https://pgroonga.github.io/>`_ use the following format::"
+msgstr ":doc:`/reference/executables/groonga-httpd` や `PGroonga <https://pgroonga.github.io/ja/>`_ といったマルチプロセスベースのアプリケーションでのフォーマットは以下の通りです。::"
 
 msgid "It's time stamp uses the following format::"
 msgstr "タイムスタンプのフォーマットは次の通りです。::"
@@ -81,29 +60,29 @@ msgstr ""
 msgid "Day with two digits."
 msgstr "日（2桁）"
 
+msgid "hh"
+msgstr ""
+
 msgid "Hour with two digits."
 msgstr "時（2桁）"
 
-msgid "hh"
+msgid "mm"
 msgstr ""
 
 msgid "Minute with two digits."
 msgstr "分（2桁）"
 
-msgid "mm"
+msgid "ss"
 msgstr ""
 
 msgid "Second with two digits."
 msgstr "秒（2桁）"
 
-msgid "ss"
+msgid "SSSSSS"
 msgstr ""
 
 msgid "Microsecond with six digits."
 msgstr "マイクロ秒（6桁）"
-
-msgid "SSSSSS"
-msgstr ""
 
 msgid "Example::"
 msgstr "実行例::"
@@ -132,41 +111,41 @@ msgstr ""
 msgid "Critical"
 msgstr "危機的"
 
+msgid "e"
+msgstr ""
+
 msgid "Error"
 msgstr "エラー"
 
-msgid "e"
+msgid "w"
 msgstr ""
 
 msgid "Warning"
 msgstr "警告"
 
-msgid "w"
+msgid "n"
 msgstr ""
 
 msgid "Notification"
 msgstr "通知"
 
-msgid "n"
+msgid "i"
 msgstr ""
 
 msgid "Information"
 msgstr "情報"
 
-msgid "i"
+msgid "d"
 msgstr ""
 
 msgid "Debug"
 msgstr "デバッグ"
 
-msgid "d"
+msgid "\\-"
 msgstr ""
 
 msgid "Dump"
 msgstr "ダンプ"
-
-msgid "\\-"
-msgstr ""
 
 msgid "L"
 msgstr ""
@@ -189,24 +168,14 @@ msgstr "実行例（PIDを含む場合）::"
 msgid "Query log"
 msgstr "クエリーログ"
 
-msgid ""
-"Query log is disabled by default. It can be enabled by :option:`groonga --"
-"query-log-path` option."
-msgstr ""
-"クエリーログはデフォルトでは無効になっています。 :option:`groonga --query-"
-"log-path` オプションで有効にできます。"
+msgid "Query log is disabled by default. It can be enabled by :option:`groonga --query-log-path` option."
+msgstr "クエリーログはデフォルトでは無効になっています。 :option:`groonga --query-log-path` オプションで有効にできます。"
 
 msgid "Query log uses the following formats::"
 msgstr "クエリーログのフォーマットは次の通りです。::"
 
-msgid ""
-"ID of a thread. Groonga process creates threads to process requests "
-"concurrently. Each thread outputs some logs for a request. This ID can be "
-"used to extract a log sequence by a thread."
-msgstr ""
-"スレッドのID。Groongaプロセスは並列に複数のリクエストを処理するためにスレッド"
-"を作ります。各スレッドは1つのリクエストにつき複数のログを出力します。このIDを"
-"使うとスレッド毎の一連のログを抽出できます。"
+msgid "ID of a thread. Groonga process creates threads to process requests concurrently. Each thread outputs some logs for a request. This ID can be used to extract a log sequence by a thread."
+msgstr "スレッドのID。Groongaプロセスは並列に複数のリクエストを処理するためにスレッドを作ります。各スレッドは1つのリクエストにつき複数のログを出力します。このIDを使うとスレッド毎の一連のログを抽出できます。"
 
 msgid "ID"
 msgstr ""

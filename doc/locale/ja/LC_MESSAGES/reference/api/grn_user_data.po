@@ -36,9 +36,7 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid ""
-"objectに登録できるユーザデータへのポインタを返します。table, column, proc, "
-"exprのみ使用可能です。"
+msgid "objectに登録できるユーザデータへのポインタを返します。table, column, proc, exprのみ使用可能です。"
 msgstr ""
 
 msgid "対象objectを指定します。"

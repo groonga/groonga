@@ -32,6 +32,5 @@ msgstr "主な対策"
 msgid "We confirm the storage capacity is enough."
 msgstr "ストレージの容量が十分かを確認します。"
 
-msgid ""
-"We confirm that the other process can write files correctly to the storage."
+msgid "We confirm that the other process can write files correctly to the storage."
 msgstr "他のプロセスが正常にストレージにファイルを書き込めるかを確認します。"

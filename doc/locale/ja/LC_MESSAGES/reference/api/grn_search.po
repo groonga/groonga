@@ -36,9 +36,7 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid ""
-"objを対象としてqueryにマッチするレコードを検索し、opの指定に従ってresにレコー"
-"ドを追加あるいは削除します。"
+msgid "objを対象としてqueryにマッチするレコードを検索し、opの指定に従ってresにレコードを追加あるいは削除します。"
 msgstr ""
 
 msgid "検索対象のobjectを指定します。"
@@ -50,9 +48,7 @@ msgstr ""
 msgid "検索結果を格納するテーブルを指定します。"
 msgstr ""
 
-msgid ""
-"``GRN_OP_OR``, ``GRN_OP_AND``, ``GRN_OP_AND_NOT``, ``GRN_OP_ADJUST`` のいずれ"
-"かを指定します。"
+msgid "``GRN_OP_OR``, ``GRN_OP_AND``, ``GRN_OP_AND_NOT``, ``GRN_OP_ADJUST`` のいずれかを指定します。"
 msgstr ""
 
 msgid "詳細検索条件を指定します。"

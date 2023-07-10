@@ -30,19 +30,13 @@ msgstr ""
 msgid "TokenDelimitNullトークナイザーを追加。"
 msgstr ""
 
-msgid ""
-"プラグイン登録APIの名前を改良。 grn_db_register_by_name() -> "
-"grn_plugin_register() #834"
+msgid "プラグイン登録APIの名前を改良。 grn_db_register_by_name() -> grn_plugin_register() #834"
 msgstr ""
 
-msgid ""
-":doc:`/reference/commands/select` の--query内で前方一致検索構文\"キーワード"
-"*\"対応。 #837"
+msgid ":doc:`/reference/commands/select` の--query内で前方一致検索構文\"キーワード*\"対応。 #837"
 msgstr ""
 
-msgid ""
-"groonga.pcにgroonga-suggest-create-datasetのパスが設定されている "
-"groonga_suggest_create_dataset変数を追加。"
+msgid "groonga.pcにgroonga-suggest-create-datasetのパスが設定されている groonga_suggest_create_dataset変数を追加。"
 msgstr ""
 
 msgid "修正"
@@ -51,9 +45,7 @@ msgstr ""
 msgid "ログにタイムスタンプの秒より小さい値が常に0になる問題を修正。"
 msgstr ""
 
-msgid ""
-"サンプル内のスクリプトに実行属性がつかない問題を修正。 （Daiki Uenoさんが報"
-"告）"
+msgid "サンプル内のスクリプトに実行属性がつかない問題を修正。 （Daiki Uenoさんが報告）"
 msgstr ""
 
 msgid "感謝"

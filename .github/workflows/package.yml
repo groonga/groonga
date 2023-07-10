@@ -16,7 +16,7 @@ concurrency:
 jobs:
   source:
     name: Source
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -27,17 +27,14 @@ jobs:
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             autoconf-archive \
             devscripts \
-            python3-pip \
             ruby \
             zip
-          sudo pip3 install -U pip
+      - uses: github/setup-python@v4
+        with:
+          python-version: 3
       - name: Install Sphinx
         run: |
-          sudo pip3 install -U \
-            Jinja2 \
-            Pygments \
-            "Sphinx==5.3.0" \
-            pydata_sphinx_theme
+          pip3 install -r doc/requirements.txt
       - name: Clone dependencies
         run: |
           cd ..

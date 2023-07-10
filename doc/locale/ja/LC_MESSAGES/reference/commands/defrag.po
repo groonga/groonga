@@ -25,19 +25,12 @@ msgid "Summary"
 msgstr "概要"
 
 msgid "``defrag`` command resolves fragmentation of specified objects."
-msgstr ""
-"``defrag`` コマンドは指定されたオブジェクトのフラグメンテーションを解消しま"
-"す。"
+msgstr "``defrag`` コマンドは指定されたオブジェクトのフラグメンテーションを解消します。"
 
-msgid ""
-"Groonga組込コマンドの一つであるdefragについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力 、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
+msgid "Groonga組込コマンドの一つであるdefragについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力 、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。"
 msgstr ""
 
-msgid ""
-"defragは、対象となるオブジェクト(データベースか可変長サイズカラム)を指定し、"
-"オブジェクトのフラグメンテーショ ンを解消します。"
+msgid "defragは、対象となるオブジェクト(データベースか可変長サイズカラム)を指定し、オブジェクトのフラグメンテーショ ンを解消します。"
 msgstr ""
 
 msgid "Syntax"
@@ -58,9 +51,7 @@ msgstr "引数"
 msgid "``objname``"
 msgstr ""
 
-msgid ""
-"対象となるオブジェクト名を指定します。空の場合、開いているdbオブジェクトが対"
-"象となります。"
+msgid "対象となるオブジェクト名を指定します。空の場合、開いているdbオブジェクトが対象となります。"
 msgstr ""
 
 msgid "Return value"

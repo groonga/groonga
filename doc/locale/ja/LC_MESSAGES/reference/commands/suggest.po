@@ -24,12 +24,8 @@ msgstr "実行例::"
 msgid "``suggest``"
 msgstr ""
 
-msgid ""
-"The suggest feature specification isn't stable. The specification may be "
-"changed."
-msgstr ""
-"サジェスト機能の仕様はまだ確定していません。仕様は変更される可能性がありま"
-"す。"
+msgid "The suggest feature specification isn't stable. The specification may be changed."
+msgstr "サジェスト機能の仕様はまだ確定していません。仕様は変更される可能性があります。"
 
 msgid "Summary"
 msgstr "概要"
@@ -37,18 +33,11 @@ msgstr "概要"
 msgid "suggest - returns completion, correction and/or suggestion for a query."
 msgstr "suggest - 指定されたクエリーに対する補完・補正・提案候補を返す。"
 
-msgid ""
-"The suggest command returns completion, correction and/or suggestion for a "
-"specified query."
-msgstr ""
-"suggestコマンドは指定されたクエリーに対する補完・補正・提案候補を返します。"
+msgid "The suggest command returns completion, correction and/or suggestion for a specified query."
+msgstr "suggestコマンドは指定されたクエリーに対する補完・補正・提案候補を返します。"
 
-msgid ""
-"See :doc:`/reference/suggest/introduction` about completion, correction and "
-"suggestion."
-msgstr ""
-"補完・補正・提案については :doc:`/reference/suggest/introduction` を参照して"
-"ください。"
+msgid "See :doc:`/reference/suggest/introduction` about completion, correction and suggestion."
+msgstr "補完・補正・提案については :doc:`/reference/suggest/introduction` を参照してください。"
 
 msgid "Syntax"
 msgstr "構文"
@@ -86,26 +75,23 @@ msgstr "suggestコマンドでどの種類の候補を返すかを指定しま�
 msgid "Here are available types:"
 msgstr "指定できる種類は以下の通りです。"
 
+msgid "``complete``"
+msgstr ""
+
 msgid "The suggest command does completion."
 msgstr "補完を実行します。"
 
-msgid "``complete``"
+msgid "``correct``"
 msgstr ""
 
 msgid "The suggest command does correction."
 msgstr "補正を実行します。"
 
-msgid "``correct``"
-msgstr ""
-
 msgid "The suggest command does suggestion."
 msgstr "提案を実行します。"
 
-msgid ""
-"You can specify one or more types separated by ``|``. Here are examples:"
-msgstr ""
-"1つ以上の種類を指定できます。複数の種類を指定する場合は ``|`` で区切ります。"
-"以下が例です。:"
+msgid "You can specify one or more types separated by ``|``. Here are examples:"
+msgstr "1つ以上の種類を指定できます。複数の種類を指定する場合は ``|`` で区切ります。以下が例です。:"
 
 msgid "It returns correction::"
 msgstr "補正候補を返します::"
@@ -119,23 +105,14 @@ msgstr "補完候補と補正候補と提案候補を返します::"
 msgid "``types``"
 msgstr ""
 
-msgid ""
-"Specifies table name that has ``item_${DATA_SET_NAME}`` format. For example, "
-"``item_query`` is a table name if you created dataset by the following "
-"command::"
-msgstr ""
-"``item_${データセット名}`` というフォーマットのテーブル名を指定します。例え"
-"ば、以下のコマンドでデータセットを作成した場合はテーブル名として "
-"``item_query`` を指定します::"
+msgid "Specifies table name that has ``item_${DATA_SET_NAME}`` format. For example, ``item_query`` is a table name if you created dataset by the following command::"
+msgstr "``item_${データセット名}`` というフォーマットのテーブル名を指定します。例えば、以下のコマンドでデータセットを作成した場合はテーブル名として ``item_query`` を指定します::"
 
 msgid "``table``"
 msgstr ""
 
-msgid ""
-"Specifies a column name that has furigana in Katakana in ``table`` table."
-msgstr ""
-"``table`` で指定したテーブルにあるふりがな情報を含むカラムを指定します。ふり"
-"がなはカタカナで指定します。"
+msgid "Specifies a column name that has furigana in Katakana in ``table`` table."
+msgstr "``table`` で指定したテーブルにあるふりがな情報を含むカラムを指定します。ふりがなはカタカナで指定します。"
 
 msgid "``column``"
 msgstr ""
@@ -149,68 +126,56 @@ msgstr ""
 msgid "Specifies sort key."
 msgstr "ソートキーを指定します。"
 
+msgid "``sortby``"
+msgstr ""
+
 msgid "Default:"
 msgstr ""
 
 msgid "``-_score``"
 msgstr ""
 
-msgid "``sortby``"
-msgstr ""
-
 msgid "Specifies output columns."
 msgstr "出力するカラムを指定します。"
 
-msgid "``_key,_score``"
+msgid "``output_columns``"
 msgstr ""
 
-msgid "``output_columns``"
+msgid "``_key,_score``"
 msgstr ""
 
 msgid "Specifies returned records offset."
 msgstr "返されるレコードのオフセットを指定します。"
 
-msgid "``0``"
+msgid "``offset``"
 msgstr ""
 
-msgid "``offset``"
+msgid "``0``"
 msgstr ""
 
 msgid "Specifies number of returned records."
 msgstr "返されるレコード数を指定します。"
 
-msgid "``10``"
-msgstr ""
-
 msgid "``limit``"
 msgstr ""
 
-msgid ""
-"Specifies threshold for item frequency. Returned records must have "
-"``_score`` that is greater than or equal to ``frequency_threshold``."
+msgid "``10``"
 msgstr ""
-"出現頻度に対する閾値を指定します。返されるレコードの ``_score`` 値は "
-"``frequency_threshold`` 以上になります。"
 
-msgid "``100``"
-msgstr ""
+msgid "Specifies threshold for item frequency. Returned records must have ``_score`` that is greater than or equal to ``frequency_threshold``."
+msgstr "出現頻度に対する閾値を指定します。返されるレコードの ``_score`` 値は ``frequency_threshold`` 以上になります。"
 
 msgid "``frequency_threshold``"
+msgstr ""
+
+msgid "``100``"
 msgstr ""
 
 msgid "``conditional_probability_threshold``"
 msgstr ""
 
-msgid ""
-"Specifies threshold for conditional probability. Conditional probability is "
-"used for learned data. It is probability of query submission when ``query`` "
-"is occurred. Returned records must have conditional probability that is "
-"greater than or equal to ``conditional_probability_threshold``."
-msgstr ""
-"条件付き確率に対する閾値を指定します。学習データに対して条件付き確率を使いま"
-"す。ここで使う条件付き確率は、入力した ``query`` と同じ入力があったときにクエ"
-"リが検索された確率です。返されるレコードの条件付き確率は "
-"``conditional_probability_threshold`` 以上になります。"
+msgid "Specifies threshold for conditional probability. Conditional probability is used for learned data. It is probability of query submission when ``query`` is occurred. Returned records must have conditional probability that is greater than or equal to ``conditional_probability_threshold``."
+msgstr "条件付き確率に対する閾値を指定します。学習データに対して条件付き確率を使います。ここで使う条件付き確率は、入力した ``query`` と同じ入力があったときにクエリが検索された確率です。返されるレコードの条件付き確率は ``conditional_probability_threshold`` 以上になります。"
 
 msgid "``0.2``"
 msgstr ""
@@ -221,17 +186,17 @@ msgstr "補完時に前方一致検索を実行するかどうかを指定しま
 msgid "Here are available values:"
 msgstr "指定可能な値は以下の通りです。"
 
+msgid "``yes``"
+msgstr ""
+
 msgid "Prefix search is always used."
 msgstr "常に前方一致検索を実行します。"
 
-msgid "``yes``"
+msgid "``no``"
 msgstr ""
 
 msgid "Prefix search is never used."
 msgstr "前方一致検索を実行しません。"
-
-msgid "``no``"
-msgstr ""
 
 msgid "Prefix search is used only when other search can't find any records."
 msgstr "他の検索でレコードが見つからない場合のみ前方一致検索を実行します。"
@@ -278,14 +243,8 @@ msgstr "補完・補正・提案候補。"
 msgid "``score of candidate``"
 msgstr "``score of candidate``"
 
-msgid ""
-"A score of corresponding ``candidate``. It means that higher score candidate "
-"is more likely candidate for completion, correction or suggestion. Returned "
-"candidates are sorted by ``score of candidate`` descending by default."
-msgstr ""
-"対応する ``candidate`` のスコアです。スコアが高いほど補完・補正・提案候補とし"
-"て有力という意味になります。デフォルトでは候補は ``score of candidate`` の降"
-"順でソートされています。"
+msgid "A score of corresponding ``candidate``. It means that higher score candidate is more likely candidate for completion, correction or suggestion. Returned candidates are sorted by ``score of candidate`` descending by default."
+msgstr "対応する ``candidate`` のスコアです。スコアが高いほど補完・補正・提案候補として有力という意味になります。デフォルトでは候補は ``score of candidate`` の降順でソートされています。"
 
 msgid "See also"
 msgstr "参考"

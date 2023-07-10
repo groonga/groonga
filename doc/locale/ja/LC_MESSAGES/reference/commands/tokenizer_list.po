@@ -28,9 +28,7 @@ msgid "Summary"
 msgstr "概要"
 
 msgid "``tokenizer_list`` command lists tokenizers in a database."
-msgstr ""
-"``tokenizer_list`` コマンドはデータベースに登録されているトークナイザーの一覧"
-"を返します。"
+msgstr "``tokenizer_list`` コマンドはデータベースに登録されているトークナイザーの一覧を返します。"
 
 msgid "Syntax"
 msgstr "構文"
@@ -50,31 +48,20 @@ msgstr "データベースに登録されているトークナイザーの一覧
 msgid "Return value"
 msgstr "戻り値"
 
-msgid ""
-"``tokenizer_list`` command returns tokenizers. Each tokenizers has an "
-"attribute that contains the name. The attribute will be increased in the "
-"feature::"
-msgstr ""
-"``tokenizer_list`` コマンドはトークナイザーの一覧を返します。各トークナイザー"
-"は属性を持っています。例えば名前です。将来、属性は増えるかもしれません。::"
+msgid "``tokenizer_list`` command returns tokenizers. Each tokenizers has an attribute that contains the name. The attribute will be increased in the feature::"
+msgstr "``tokenizer_list`` コマンドはトークナイザーの一覧を返します。各トークナイザーは属性を持っています。例えば名前です。将来、属性は増えるかもしれません。::"
 
 msgid "``HEADER``"
 msgstr ""
 
 msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
-msgstr ""
-"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
-"さい。"
+msgstr "``HEADER`` については :doc:`/reference/command/output_format` を参照してください。"
 
 msgid "``tokenizers``"
 msgstr ""
 
-msgid ""
-"``tokenizers`` is an array of tokenizer. Tokenizer is an object that has the "
-"following attributes."
-msgstr ""
-"``tokenizers`` はトークナイザーの配列です。トークナイザーは次の属性を持つオブ"
-"ジェクトです。"
+msgid "``tokenizers`` is an array of tokenizer. Tokenizer is an object that has the following attributes."
+msgstr "``tokenizers`` はトークナイザーの配列です。トークナイザーは次の属性を持つオブジェクトです。"
 
 msgid "Name"
 msgstr "名前"

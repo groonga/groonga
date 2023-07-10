@@ -936,6 +936,10 @@ if(NOT GRN_EMBED)
   add_subdirectory(include)
   add_subdirectory(data)
 endif()
+option(GRN_WITH_DOC "build document" OFF)
+if(GRN_WITH_DOC)
+  add_subdirectory(doc)
+endif()
 
 configure_file(config.h.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 

@@ -36,18 +36,13 @@ msgstr "例"
 msgid "Reference"
 msgstr "リファレンス"
 
-msgid ""
-":c:type:`grn_table_cursor` から取得できるそれぞれのレコードについて、 "
-"``GRN_OBJ_COLUMN_INDEX`` 型のカラムの値を順番に取り出すためのカーソルを生成し"
-"て返します。"
+msgid ":c:type:`grn_table_cursor` から取得できるそれぞれのレコードについて、 ``GRN_OBJ_COLUMN_INDEX`` 型のカラムの値を順番に取り出すためのカーソルを生成して返します。"
 msgstr ""
 
-msgid ""
-"rid_min, rid_maxを指定して取得するレコードidの値を制限することができます。"
+msgid "rid_min, rid_maxを指定して取得するレコードidの値を制限することができます。"
 msgstr ""
 
-msgid ""
-"戻り値であるgrn_index_cursorは :c:func:`grn_obj_close()` を使って解放します。"
+msgid "戻り値であるgrn_index_cursorは :c:func:`grn_obj_close()` を使って解放します。"
 msgstr ""
 
 msgid "対象cursorを指定します。"
@@ -65,9 +60,7 @@ msgstr ""
 msgid "cursorの範囲内のインデックスの値を順番に取り出します。"
 msgstr ""
 
-msgid ""
-"tidにNULL以外を指定した場合は、index_cursorを作成するときに指定した"
-"table_cursorの現在の対象レコードのidを返します。"
+msgid "tidにNULL以外を指定した場合は、index_cursorを作成するときに指定したtable_cursorの現在の対象レコードのidを返します。"
 msgstr ""
 
 msgid "戻り値である :c:type:`grn_posting` 構造体は解放する必要はありません。"

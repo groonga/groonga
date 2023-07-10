@@ -108,28 +108,20 @@ msgstr "実行例::"
 msgid "Return value"
 msgstr "戻り値"
 
-msgid ""
-"``log_level`` command returns whether log level configuration is succeeded "
-"or not::"
-msgstr ""
-"``log_level`` コマンドはログレベルの設定に成功したかどうかを返します。::"
+msgid "``log_level`` command returns whether log level configuration is succeeded or not::"
+msgstr "``log_level`` コマンドはログレベルの設定に成功したかどうかを返します。::"
 
 msgid "``HEADER``"
 msgstr ""
 
 msgid "See :doc:`/reference/command/output_format` about ``HEADER``."
-msgstr ""
-"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
-"さい。"
+msgstr "``HEADER`` については :doc:`/reference/command/output_format` を参照してください。"
 
 msgid "``SUCCEEDED_OR_NOT``"
 msgstr ""
 
-msgid ""
-"If command succeeded, it returns true, otherwise it returns false on error."
-msgstr ""
-"コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返しま"
-"す。"
+msgid "If command succeeded, it returns true, otherwise it returns false on error."
+msgstr "コマンドの実行が成功するとtrueを返します。失敗するとエラーとしてfalseを返します。"
 
 msgid "See also"
 msgstr "参考"

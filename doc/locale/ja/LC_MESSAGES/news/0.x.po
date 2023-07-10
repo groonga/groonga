@@ -27,17 +27,13 @@ msgstr ""
 msgid "改良"
 msgstr ""
 
-msgid ""
-"編集距離（レーベンシュタイン距離）を計算する :doc:`/reference/functions/"
-"edit_distance` ()関数の追加。"
+msgid "編集距離（レーベンシュタイン距離）を計算する :doc:`/reference/functions/edit_distance` ()関数の追加。"
 msgstr ""
 
 msgid "manを追加。"
 msgstr ""
 
-msgid ""
-":doc:`/reference/commands/delete` コマンドでデータの整合性が壊れる場合はエ"
-"ラー を返すようにした。"
+msgid ":doc:`/reference/commands/delete` コマンドでデータの整合性が壊れる場合はエラー を返すようにした。"
 msgstr ""
 
 msgid "MeCabの辞書のエンコーディング検出処理を改善。"
@@ -49,9 +45,7 @@ msgstr ""
 msgid "修正"
 msgstr ""
 
-msgid ""
-":doc:`/reference/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」"
-"で はなく、「左下」と「右上」と扱っていた問題を修正。"
+msgid ":doc:`/reference/functions/geo_in_rectangle` ()関数が引数を「左上」と「右下」で はなく、「左下」と「右上」と扱っていた問題を修正。"
 msgstr ""
 
 msgid "前方一致検索がマッチしない問題を修正。"
@@ -78,8 +72,7 @@ msgstr ""
 msgid "指定したファイルからコマンドを読み込む ``--file`` オプションを追加。"
 msgstr ""
 
-msgid ""
-"groongaとMeCabの辞書のエンコーディングが同じかどうかを確 認するようにした。"
+msgid "groongaとMeCabの辞書のエンコーディングが同じかどうかを確 認するようにした。"
 msgstr ""
 
 msgid "Web管理画面:"
@@ -118,9 +111,7 @@ msgstr ""
 msgid "true/false/nullリテラルをサポート。"
 msgstr ""
 
-msgid ""
-"GeoPointの度での指定をサポート。 （例: "
-"\"35.6954581363924,139.564207350021\"）"
+msgid "GeoPointの度での指定をサポート。 （例: \"35.6954581363924,139.564207350021\"）"
 msgstr ""
 
 msgid "NO_KEYテーブルを参照しているカラム値をサポート。"
@@ -135,9 +126,7 @@ msgstr ""
 msgid "索引を用いた高速なGeoPointの検索機能を追加。"
 msgstr ""
 
-msgid ""
-"索引を用いた高速なGeoPointのソート機能を追加。 （ただし複数のソートキーと一緒"
-"に使うことはできない。）"
+msgid "索引を用いた高速なGeoPointのソート機能を追加。 （ただし複数のソートキーと一緒に使うことはできない。）"
 msgstr ""
 
 msgid "ベクタのGeoPointの出力に対応。"

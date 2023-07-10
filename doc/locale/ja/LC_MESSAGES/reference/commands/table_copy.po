@@ -79,6 +79,4 @@ msgid "If the command fails, error details are in ``HEADER``."
 msgstr "このコマンドが失敗すると、 ``HEADER`` にエラーの詳細が含まれます。"
 
 msgid "See :doc:`/reference/command/output_format` for ``HEADER``."
-msgstr ""
-"``HEADER`` については :doc:`/reference/command/output_format` を参照してくだ"
-"さい。"
+msgstr "``HEADER`` については :doc:`/reference/command/output_format` を参照してください。"

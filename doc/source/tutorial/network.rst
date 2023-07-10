@@ -54,7 +54,7 @@ The following example shows how to send commands to an HTTP server.
 Administration tool (HTTP)
 --------------------------
 
-An HTTP server of Groonga provides a browser based administration tool that makes database management easy. After starting an HTTP server, you can use the administration tool by accessing http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/. Note that Javascript must be enabled for the tool to work properly.
+An HTTP server of Groonga provides a browser based administration tool that makes database management easy. After starting an HTTP server, you can use the administration tool by accessing ``http://HOST_NAME_OR_IP_ADDRESS[:PORT_NUMBER]/``. Note that JavaScript must be enabled for the tool to work properly.
 
 Security issues
 ---------------

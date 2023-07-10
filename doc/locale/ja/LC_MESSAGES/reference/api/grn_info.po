@@ -54,16 +54,13 @@ msgstr ""
 msgid "設定する情報の種類を指定します。"
 msgstr ""
 
-msgid ""
-"objのidに対応するレコードの、typeに対応する情報をvaluebufに格納します。呼出側"
-"ではtypeに応じて十分なサイズのバッファを確保しなければいけません。"
+msgid "objのidに対応するレコードの、typeに対応する情報をvaluebufに格納します。呼出側ではtypeに応じて十分なサイズのバッファを確保しなければいけません。"
 msgstr ""
 
 msgid "対象IDを指定します。"
 msgstr ""
 
-msgid ""
-"objのidに対応するレコードのtypeに対応する情報をvalueの内容に更新します。"
+msgid "objのidに対応するレコードのtypeに対応する情報をvalueの内容に更新します。"
 msgstr ""
 
 msgid "対象objectを指定します。"

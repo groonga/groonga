@@ -20,12 +20,8 @@ msgstr ""
 msgid "Community"
 msgstr "コミュニティ"
 
-msgid ""
-"There are some places for sharing Groonga information. We welcome you to "
-"join our community."
-msgstr ""
-"Groongaに関する情報を共有するための場所がいくつかあります。あなたの参加をお待"
-"ちしています！"
+msgid "There are some places for sharing Groonga information. We welcome you to join our community."
+msgstr "Groongaに関する情報を共有するための場所がいくつかあります。あなたの参加をお待ちしています！"
 
 msgid "Mailing List"
 msgstr "メーリングリスト"
@@ -36,17 +32,13 @@ msgstr "Groongaに関する話題を扱うメーリングリストがありま�
 msgid "For English speakers"
 msgstr "英語"
 
-msgid ""
-"`groonga-talk@lists.sourceforge.net <http://lists.sourceforge.net/mailman/"
-"listinfo/groonga-talk>`_"
+msgid "`groonga-talk@lists.sourceforge.net <http://lists.sourceforge.net/mailman/listinfo/groonga-talk>`_"
 msgstr ""
 
 msgid "For Japanese speakers"
 msgstr "日本語"
 
-msgid ""
-"`groonga-dev@lists.osdn.me <http://lists.osdn.me/mailman/listinfo/groonga-"
-"dev>`_"
+msgid "`groonga-dev@lists.osdn.me <http://lists.osdn.me/mailman/listinfo/groonga-dev>`_"
 msgstr ""
 
 msgid "Chat room"
@@ -64,27 +56,17 @@ msgstr "`Gitterにあるgroonga/jaチャットルーム <https://gitter.im/groon
 msgid "Twitter"
 msgstr ""
 
-msgid ""
-"`@groonga <https://twitter.com/groonga/>`_ tweets Groonga related "
-"information."
-msgstr ""
-"`@groonga <https://twitter.com/groonga/>`_ がGroonga関連情報をツイートしてい"
-"ます。"
+msgid "`@groonga <https://twitter.com/groonga/>`_ tweets Groonga related information."
+msgstr "`@groonga <https://twitter.com/groonga/>`_ がGroonga関連情報をツイートしています。"
 
-msgid ""
-"Please follow the account to get the latest Groonga related information!"
-msgstr ""
-"このアカウントをフォローして最新のGroonga関連情報をゲットしてください！"
+msgid "Please follow the account to get the latest Groonga related information!"
+msgstr "このアカウントをフォローして最新のGroonga関連情報をゲットしてください！"
 
 msgid "Facebook"
 msgstr ""
 
-msgid ""
-"`Groonga page on Facebook <http://www.facebook.com/groonga>`_ shares Groonga "
-"related information."
-msgstr ""
-"`FacebookのGroongaページ <http://www.facebook.com/groonga>`_ ではGroonga関連"
-"情報をシェアしています。"
+msgid "`Groonga page on Facebook <http://www.facebook.com/groonga>`_ shares Groonga related information."
+msgstr "`FacebookのGroongaページ <http://www.facebook.com/groonga>`_ ではGroonga関連情報をシェアしています。"
 
 msgid "Please like the page to get the latest Groonga related information!"
 msgstr "このページをいいね！して最新のGroonga関連情報をゲットしてください！"

@@ -20,14 +20,8 @@ msgstr ""
 msgid "Server packages"
 msgstr "サーバーパッケージ"
 
-msgid ""
-"The package ``groonga`` is the minimum set of fulltext search engine. If you "
-"want to use groonga for server use, you can install additional preconfigured "
-"packages."
-msgstr ""
-"``groonga`` パッケージは全文検索を行うための最小構成のパッケージです。サー"
-"バー用途で使うために、設定済みのパッケージを追加でインストールすることができ"
-"ます。"
+msgid "The package ``groonga`` is the minimum set of fulltext search engine. If you want to use groonga for server use, you can install additional preconfigured packages."
+msgstr "``groonga`` パッケージは全文検索を行うための最小構成のパッケージです。サーバー用途で使うために、設定済みのパッケージを追加でインストールすることができます。"
 
 msgid "There are two packages for server use."
 msgstr "サーバー用途の2つのパッケージがあります。"
@@ -35,43 +29,16 @@ msgstr "サーバー用途の2つのパッケージがあります。"
 msgid "``groonga-httpd`` (nginx and HTTP protocol based server package)"
 msgstr "``groonga-httpd`` (nginxをベースにしたHTTPサーバー)"
 
-msgid ""
-"``groonga-server-gqtp`` (:doc:`/spec/gqtp` protocol based server package)"
+msgid "``groonga-server-gqtp`` (:doc:`/spec/gqtp` protocol based server package)"
 msgstr "``groonga-server-gqtp`` (:doc:`/spec/gqtp` サーバー)"
 
-msgid ""
-"There is the reason why groonga supports not only GQTP but also two HTTP "
-"server packages. :doc:`/spec/gqtp` - Groonga Query Transfer Protocol is "
-"desined to reduce overheads and improve performance. But, GQTP is less "
-"support of client library than HTTP protocol does. As HTTP is matured "
-"protocol, you can take advantage of existing tool and there are many client "
-"library (See `related projects <https://groonga.org/related-projects.html>`_ "
-"for details). If you use ``groonga-httpd`` package, you can also take "
-"benefits of nginx functionality."
-msgstr ""
-"groongaがGQTPだけでなく、2つのHTTPサーバーパッケージをサポートしているのには"
-"理由があります。 :doc:`/spec/gqtp` - Groonga Query Transfer Protocol はオー"
-"バーヘッドを低減し、パフォーマンスを向上させるように設計されていますが、HTTP"
-"プロトコルほどクライアントライブラリのサポートがありません。HTTPは枯れたプロ"
-"トコルなので既存のツールを活用できたり、多くのクライアントライブラリが存在し"
-"ます。(詳細は `関連プロジェクト <https://groonga.org/ja/related-projects."
-"html>`_ を参照) ``groonga-httpd`` パッケージを使うと nginxの機能の恩恵を受け"
-"ることができます。"
+msgid "There is the reason why groonga supports not only GQTP but also two HTTP server packages. :doc:`/spec/gqtp` - Groonga Query Transfer Protocol is desined to reduce overheads and improve performance. But, GQTP is less support of client library than HTTP protocol does. As HTTP is matured protocol, you can take advantage of existing tool and there are many client library (See `related projects <https://groonga.org/related-projects.html>`_ for details). If you use ``groonga-httpd`` package, you can also take benefits of nginx functionality."
+msgstr "groongaがGQTPだけでなく、2つのHTTPサーバーパッケージをサポートしているのには理由があります。 :doc:`/spec/gqtp` - Groonga Query Transfer Protocol はオーバーヘッドを低減し、パフォーマンスを向上させるように設計されていますが、HTTPプロトコルほどクライアントライブラリのサポートがありません。HTTPは枯れたプロトコルなので既存のツールを活用できたり、多くのクライアントライブラリが存在します。(詳細は `関連プロジェクト <https://groonga.org/ja/related-projects.html>`_ を参照) ``groonga-httpd`` パッケージを使うと nginxの機能の恩恵を受けることができます。"
 
-msgid ""
-"We recommend to use ``groonga-httpd`` at first, because it provides "
-"fullfilling server functionality. If you have performance issues which is "
-"derived from protocol overheads, consider to use ``groonga-server-gqtp``."
-msgstr ""
-"最初は ``groonga-httpd`` パッケージを使うことをおすすめします。プロトコルの"
-"オーバーヘッドがパフォーマンス上問題となったら ``groonga-server-gqtp`` を検討"
-"してください。"
+msgid "We recommend to use ``groonga-httpd`` at first, because it provides fullfilling server functionality. If you have performance issues which is derived from protocol overheads, consider to use ``groonga-server-gqtp``."
+msgstr "最初は ``groonga-httpd`` パッケージを使うことをおすすめします。プロトコルのオーバーヘッドがパフォーマンス上問題となったら ``groonga-server-gqtp`` を検討してください。"
 
-msgid ""
-"In the previous versions, there is a ``groonga-server-http`` package (simple "
-"HTTP protocol based server package). It is now marked as obsolete, please "
-"use ``groonga-httpd`` packages instead. ``groonga-server-http`` package "
-"became a transitional package for ``groonga-httpd``."
+msgid "In the previous versions, there is a ``groonga-server-http`` package (simple HTTP protocol based server package). It is now marked as obsolete, please use ``groonga-httpd`` packages instead. ``groonga-server-http`` package became a transitional package for ``groonga-httpd``."
 msgstr ""
 
 msgid "groonga-httpd"
@@ -83,41 +50,41 @@ msgstr "``groonga-httpd`` はnginxをベースにしたHTTPサーバーパッケ
 msgid "Preconfigured setting:"
 msgstr "設定済みの内容:"
 
-msgid "Default value"
-msgstr "既定値"
-
 msgid "Item"
 msgstr "項目"
 
-msgid "10041"
-msgstr ""
+msgid "Default value"
+msgstr "既定値"
 
 msgid "Port number"
 msgstr "ポート番号"
 
-msgid "/var/log/groonga/httpd/acccess.log"
+msgid "10041"
 msgstr ""
 
 msgid "Access log path"
 msgstr "アクセスログ"
 
-msgid "/var/log/groonga/http-query.log"
+msgid "/var/log/groonga/httpd/acccess.log"
 msgstr ""
 
 msgid "Error log path"
 msgstr "エラーログ"
 
-msgid "/var/lib/groonga/db/*"
+msgid "/var/log/groonga/http-query.log"
 msgstr ""
 
 msgid "Database"
 msgstr "データベース"
 
-msgid "/etc/groonga/httpd/groonga-httpd.conf"
+msgid "/var/lib/groonga/db/*"
 msgstr ""
 
 msgid "Configuration file"
 msgstr "設定ファイル"
+
+msgid "/etc/groonga/httpd/groonga-httpd.conf"
+msgstr ""
 
 msgid "Start HTTP server"
 msgstr "HTTPサーバーを起動"
@@ -146,23 +113,22 @@ msgstr "groonga HTTPサーバーを再起動(Fedora)::"
 msgid "groonga-server-gqtp"
 msgstr ""
 
-msgid ""
-"``groonga-server-gqtp`` is a :doc:`/spec/gqtp` protocol based server package."
+msgid "``groonga-server-gqtp`` is a :doc:`/spec/gqtp` protocol based server package."
 msgstr "``groonga-server-gqtp`` は :doc:`/spec/gqtp` サーバーパッケージです。"
 
 msgid "10043"
 msgstr ""
 
-msgid "/var/log/groonga/groonga-gqtp.log"
-msgstr ""
-
 msgid ":ref:`process-log`"
 msgstr ""
 
-msgid "/var/log/groonga/gqtp-query.log"
+msgid "/var/log/groonga/groonga-gqtp.log"
 msgstr ""
 
 msgid ":ref:`query-log`"
+msgstr ""
+
+msgid "/var/log/groonga/gqtp-query.log"
 msgstr ""
 
 msgid "Configuration file for server setting (Debian/Ubuntu)::"
@@ -198,9 +164,7 @@ msgstr ""
 msgid "``groonga-server-http`` is a simple HTTP protocol based server package."
 msgstr "``groonga-server-http`` は簡易HTTPサーバーパッケージです。"
 
-msgid ""
-"``groonga-server-http`` package is the transitional package since Groonga "
-"4.0.8. Please use ``groonga-httpd`` instead."
+msgid "``groonga-server-http`` package is the transitional package since Groonga 4.0.8. Please use ``groonga-httpd`` instead."
 msgstr ""
 
 msgid "/var/log/groonga/groonga-http.log"

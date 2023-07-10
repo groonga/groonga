@@ -42,9 +42,7 @@ msgstr ""
 msgid "作成するprocの名前を指定します。"
 msgstr ""
 
-msgid ""
-"The number of bytes of name parameter. If negative value is specified, name "
-"parameter is assumed that NULL-terminated string."
+msgid "The number of bytes of name parameter. If negative value is specified, name parameter is assumed that NULL-terminated string."
 msgstr ""
 
 msgid "procの種類を指定します。"
@@ -62,13 +60,10 @@ msgstr ""
 msgid "procで使用する変数の数を指定します。"
 msgstr ""
 
-msgid ""
-"procで使用する変数の定義を指定します。( :c:type:`grn_expr_var` 構造体の配列)"
+msgid "procで使用する変数の定義を指定します。( :c:type:`grn_expr_var` 構造体の配列)"
 msgstr ""
 
-msgid ""
-"user_dataをキーとして、現在実行中の :c:type:`grn_proc_func` 関数および定義さ"
-"れている変数( :c:type:`grn_expr_var` )の配列とその数を取得します。"
+msgid "user_dataをキーとして、現在実行中の :c:type:`grn_proc_func` 関数および定義されている変数( :c:type:`grn_expr_var` )の配列とその数を取得します。"
 msgstr ""
 
 msgid ":c:type:`grn_proc_func` に渡されたuser_dataを指定します。"

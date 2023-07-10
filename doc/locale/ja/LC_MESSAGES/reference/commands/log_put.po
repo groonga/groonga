@@ -27,10 +27,7 @@ msgstr "概要"
 msgid "log_put - ログ出力"
 msgstr ""
 
-msgid ""
-"groonga組込コマンドの一つであるlog_putについて説明します。組込コマンドは、"
-"groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリク"
-"エストを送信することによって実行します。"
+msgid "groonga組込コマンドの一つであるlog_putについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。"
 msgstr ""
 
 msgid "log_putは、ログにmessageを出力します。"

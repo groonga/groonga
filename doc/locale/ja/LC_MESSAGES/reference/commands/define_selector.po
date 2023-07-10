@@ -27,14 +27,10 @@ msgstr "概要"
 msgid "define_selector - 検索コマンドを定義"
 msgstr ""
 
-msgid ""
-"Groonga組込コマンドの一つであるdefine_selectorについて説明します。組込コマン"
-"ドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバ"
-"にリクエストを送信することによって実行します。"
+msgid "Groonga組込コマンドの一つであるdefine_selectorについて説明します。組込コマンドは、groonga実行ファイルの引数、標準入力、またはソケット経由でgroongaサーバにリクエストを送信することによって実行します。"
 msgstr ""
 
-msgid ""
-"define_selectorは、検索条件をカスタマイズした新たな検索コマンドを定義します。"
+msgid "define_selectorは、検索条件をカスタマイズした新たな検索コマンドを定義します。"
 msgstr ""
 
 msgid "Syntax"
@@ -43,9 +39,7 @@ msgstr "構文"
 msgid "Usage"
 msgstr "使い方"
 
-msgid ""
-"テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義しま"
-"す。::"
+msgid "テーブルEntryの全レコード・全カラムの値を出力するselectorコマンドを定義します。::"
 msgstr ""
 
 msgid "Parameters"
@@ -96,8 +90,7 @@ msgstr ""
 msgid "``output_columns``"
 msgstr ""
 
-msgid ""
-"追加するselectorコマンドのoutput_columns引数のデフォルト値を指定します。"
+msgid "追加するselectorコマンドのoutput_columns引数のデフォルト値を指定します。"
 msgstr ""
 
 msgid "``offset``"
@@ -121,30 +114,25 @@ msgstr ""
 msgid "``drilldown_sortby``"
 msgstr ""
 
-msgid ""
-"追加するselectorコマンドのdrilldown_sortby引数のデフォルト値を指定します。"
+msgid "追加するselectorコマンドのdrilldown_sortby引数のデフォルト値を指定します。"
 msgstr ""
 
 msgid "``drilldown_output_columns``"
 msgstr ""
 
-msgid ""
-"追加するselectorコマンドのdrilldown_output_columns引数のデフォルト値を指定し"
-"ます。"
+msgid "追加するselectorコマンドのdrilldown_output_columns引数のデフォルト値を指定します。"
 msgstr ""
 
 msgid "``drilldown_offset``"
 msgstr ""
 
-msgid ""
-"追加するselectorコマンドのdrilldown_offset引数のデフォルト値を指定します。"
+msgid "追加するselectorコマンドのdrilldown_offset引数のデフォルト値を指定します。"
 msgstr ""
 
 msgid "``drilldown_limit``"
 msgstr ""
 
-msgid ""
-"追加するselectorコマンドのdrilldown_limit引数のデフォルト値を指定します。"
+msgid "追加するselectorコマンドのdrilldown_limit引数のデフォルト値を指定します。"
 msgstr ""
 
 msgid "Return value"
