@@ -216,8 +216,9 @@ if(GRN_WITH_BUNDLED_MECAB)
     "--charset" "utf-8"
     DEPENDS mecab-dict-index
     COMMENT "Build NAIST Japanese Dictionary for MeCab")
+  list(GET MECAB_NAIST_JDIC_BUILD_DATA 0 MECAB_NAIST_JDIC_BUILD_DATA_FIRST)
   add_custom_target(mecab-naist-jdic ALL
-    DEPENDS ${MECAB_NAIST_JDIC_BUILD_DATA})
+    DEPENDS ${MECAB_NAIST_JDIC_BUILD_DATA_FIRST})
   install(FILES
     ${MECAB_NAIST_JDIC_BUILD_DATA}
     "${MECAB_NAIST_JDIC_SOURCE_DIR}/dicrc"
