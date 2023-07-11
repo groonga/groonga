@@ -73,6 +73,10 @@ function(grn_sphinx SOURCE_DIR LOCALE SOURCES HTML_FILES)
         ${LOCALE}/doctrees/${BUILDER} ${SOURCE_DIR} ${LOCALE}/${BUILDER}
       COMMAND ${CMAKE_COMMAND} -E touch ${LOCALE}-${BUILDER}.time_stamp
       DEPENDS ${TARGET_SOURCES})
-    add_custom_target(doc_${LOCALE}_${BUILDER} DEPENDS ${OUTPUTS})
+    if("${BUILDER}" STREQUAL "html")
+      add_custom_target(doc_${LOCALE}_${BUILDER} ALL DEPENDS ${OUTPUTS})
+    else()
+      add_custom_target(doc_${LOCALE}_${BUILDER} DEPENDS ${OUTPUTS})
+    endif()
   endforeach()
 endfunction()
