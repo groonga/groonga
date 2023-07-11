@@ -28,8 +28,11 @@ GetText::Tools::MsgCat.run("--no-fuzzy",
                            "--no-report-warning",
                            "--no-wrap",
                            "--output=#{po}",
+                           "--remove-header-field=Last-Translator",
                            "--remove-header-field=PO-Revision-Date",
                            "--remove-header-field=POT-Creation-Date",
+                           "--remove-header-field=X-Generator",
+                           "--remove-header-field=X-POOTLE-MTIME",
                            "--sort-by-location",
                            edit_po)
 FileUtils.touch(po_time_stamp)

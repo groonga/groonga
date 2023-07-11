@@ -1,22 +1,18 @@
-# -*- po -*-
 # Japanese translations for 1.2.1 package.
 # Copyright (C) 2009-2011, Brazil, Inc
 # This file is distributed under the same license as the groonga package.
 # Kouhei Sutou <kou@clear-code.com>, 2011.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-09 09:45+0900\n"
-"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.3\n"
-"X-POOTLE-MTIME: 1411061943.000000\n"
 
 msgid "Output format"
 msgstr "出力形式"
@@ -96,9 +92,11 @@ msgstr ""
 msgid "``FUNCTION_NAME`` is the name of function that error is occurred."
 msgstr ""
 
-#, fuzzy
+msgid "``SOURCE_FILE_NAME`` is the name of groonga's source file that error is occurred."
+msgstr ""
+
 msgid "``LINE_NUMBER`` is the line number of ``SOURCE_FILE_NAME`` that error is occurred."
-msgstr "``LINE_NUMBER`` はエラーが発生した箇所の ``SOURCE_FILE_NAME`` での行番号です。"
+msgstr ""
 
 msgid "``LOCATION_IN_INPUT`` is optional. ``LOCATION_IN_INPUT`` is included when the location that error is occurred in input file is collected. Input file can be specified by ``--file`` command line option for ``groonga`` command. ``LOCATION_IN_INPUT`` is an array. ``LOCATION_IN_INPUT`` has three elements::"
 msgstr ""
@@ -106,19 +104,23 @@ msgstr ""
 msgid "``INPUT_FILE_NAME`` is the input file name that error is occurred."
 msgstr ""
 
-#, fuzzy
-#, fuzzy
+msgid "``LINE_NUMBER`` is the line number of ``INPUT_FILE_NAME`` that error is occurred."
+msgstr ""
+
+msgid "``LINE_CONTENT`` is the content at ``LINE_NUMBER`` in ``INPUT_FILE_NAME``."
+msgstr ""
+
 msgid "``BODY``"
 msgstr ""
 
 msgid "``BODY`` content depends on the executed command. It may be omitted."
-msgstr "``BODY`` の内容は実行したコマンドに依存します。 ``BODY`` がないこともあります。"
+msgstr ""
 
 msgid "``BODY`` may be an error message on error case."
-msgstr "エラーが発生した時に、 ``BODY`` にエラーメッセージが入っていることもあります。"
+msgstr ""
 
 msgid "XML"
-msgstr "XML"
+msgstr ""
 
 msgid "TODO"
 msgstr ""
