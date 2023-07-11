@@ -61,7 +61,7 @@ function(grn_sphinx SOURCE_DIR LOCALE SOURCES)
       set(TARGET_SOURCES ${ALL_ABSOLUTE_SOURCES})
     endif()
     add_custom_command(
-      OUTPUT ${LOCALE}/${BUILDER} ${LOCALE}/doctres/${BUILDER}
+      OUTPUT ${LOCALE}/${BUILDER} ${LOCALE}/doctrees/${BUILDER}
              ${LOCALE}-${BUILDER}.time_stamp
       COMMAND
         ${CMAKE_COMMAND} -E env DOCUMENT_VERSION=${DOCUMENT_VERSION}
