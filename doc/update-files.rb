@@ -92,16 +92,17 @@ File.open(File.join(source_dir, "files.cmake"), "w") do |output|
       files << path
     end
     files.sort!
-    output.puts("set(GRN_DOC_SOURCES")
+    output.print("set(GRN_DOC_SOURCES")
     files.each do |file|
-      output.puts("  #{file}")
+      output.puts
+      output.print("    #{file}")
     end
     output.puts(")")
     output.puts
   end
 
   # output files
-  Dir.chdir("en") do
+  Dir.chdir("en/html") do
     ## HTML file path list relative from locale/$LANG/ dir.
     html_files = []
     Find.find(".") do |path|
@@ -111,11 +112,11 @@ File.open(File.join(source_dir, "files.cmake"), "w") do |output|
       html_files << path
     end
     html_files.sort!
-    output.puts("set(GRN_DOC_HTML_FILES")
+    output.print("set(GRN_DOC_HTML_FILES")
     html_files.each do |html_file|
-      output.puts("  #{html_file}")
+      output.puts
+      output.print("    #{html_file}")
     end
     output.puts(")")
-    output.puts
   end
 end

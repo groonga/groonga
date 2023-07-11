@@ -33,4 +33,4 @@ endforeach()
 add_custom_target(
   doc_update_files
   COMMAND ${RUBY} ${CMAKE_CURRENT_SOURCE_DIR}/update-files.rb
-  DEPENDS doc_en_po doc_en_html)
+  DEPENDS doc_en_html)
