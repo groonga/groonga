@@ -14,24 +14,23 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 include(GroongaSphinx)
-
-file(READ ${CMAKE_CURRENT_SOURCE_DIR}/files.am GRN_SPHINX_FILES_AM)
-string(REGEX MATCH "absolute_source_files = [^=]*" GRN_SPHINX_SOURCES
-             ${GRN_SPHINX_FILES_AM})
-string(REGEX REPLACE "[^\n=]+=[ \t]*\\\\" "" GRN_SPHINX_SOURCES
-                     ${GRN_SPHINX_SOURCES})
-string(REGEX REPLACE "[ \t\n]" "" GRN_SPHINX_SOURCES ${GRN_SPHINX_SOURCES})
-string(REGEX REPLACE "\\\$\\(top_srcdir\\)/doc/source/" "" GRN_SPHINX_SOURCES
-                     ${GRN_SPHINX_SOURCES})
-string(REGEX REPLACE "\\\\\\\$\\(NULL\\).*" "" GRN_SPHINX_SOURCES
-                     ${GRN_SPHINX_SOURCES})
-string(REGEX REPLACE "\\\\" ";" GRN_SPHINX_SOURCES ${GRN_SPHINX_SOURCES})
+include(${CMAKE_CURRENT_SOURCE_DIR}/files.cmake)
 
 foreach(LOCALE en ja)
-  grn_sphinx(${CMAKE_CURRENT_SOURCE_DIR}/source ${LOCALE}
-             "${GRN_SPHINX_SOURCES}")
-  # TODO: We want to run doc_html_ja/doc_html_en before "install" but
-  # how to do it...?
-  # install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${LOCALE}/html
-  #         DESTINATION ${CMAKE_INSTALL_DOCDIR}/${LOCALE})
+  set(GRN_DOC_HTML_FILES_LOCALE)
+  foreach(file ${GRN_DOC_HTML_FILES})
+    list(APPEND GRN_DOC_HTML_FILES_LOCALE
+         ${CMAKE_CURRENT_BINARY_DIR}/${LOCALE}/html/${file})
+  endforeach()
+  grn_sphinx(${CMAKE_CURRENT_SOURCE_DIR}/source ${LOCALE} "${GRN_DOC_SOURCES}"
+             "${GRN_DOC_HTML_FILES_LOCALE}")
+  install(
+    FILES ${GRN_DOC_HTML_FILES_LOCALE}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/${LOCALE}
+    OPTIONAL)
 endforeach()
+
+add_custom_target(
+  doc_update_files
+  COMMAND ${RUBY} ${CMAKE_CURRENT_SOURCE_DIR}/update-files.rb
+  DEPENDS doc_en_po doc_en_html)

@@ -13,7 +13,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-function(grn_sphinx SOURCE_DIR LOCALE SOURCES)
+function(grn_sphinx SOURCE_DIR LOCALE SOURCES HTML_FILES)
   set(ABSOLUT_SOURCES)
   set(ALL_SOURCES)
   foreach(SOURCE ${SOURCES} conf.py)
@@ -60,9 +60,12 @@ function(grn_sphinx SOURCE_DIR LOCALE SOURCES)
     else()
       set(TARGET_SOURCES ${ALL_ABSOLUTE_SOURCES})
     endif()
+    set(OUTPUTS ${LOCALE}/doctrees/${BUILDER} ${LOCALE}-${BUILDER}.time_stamp)
+    if("${BUILDER}" STREQUAL "html")
+      list(APPEND OUTPUTS ${HTML_FILES})
+    endif()
     add_custom_command(
-      OUTPUT ${LOCALE}/${BUILDER} ${LOCALE}/doctrees/${BUILDER}
-             ${LOCALE}-${BUILDER}.time_stamp
+      OUTPUT ${OUTPUTS}
       COMMAND
         ${CMAKE_COMMAND} -E env DOCUMENT_VERSION=${DOCUMENT_VERSION}
         DOCUMENT_VERSION_FULL=${DOCUMENT_VERSION_FULL} LOCALE=${LOCALE}
@@ -70,7 +73,6 @@ function(grn_sphinx SOURCE_DIR LOCALE SOURCES)
         ${LOCALE}/doctrees/${BUILDER} ${SOURCE_DIR} ${LOCALE}/${BUILDER}
       COMMAND ${CMAKE_COMMAND} -E touch ${LOCALE}-${BUILDER}.time_stamp
       DEPENDS ${TARGET_SOURCES})
-    add_custom_target(doc_${BUILDER}_${LOCALE}
-                      DEPENDS ${LOCALE}-${BUILDER}.time_stamp)
+    add_custom_target(doc_${LOCALE}_${BUILDER} DEPENDS ${OUTPUTS})
   endforeach()
 endfunction()

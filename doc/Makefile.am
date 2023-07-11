@@ -36,6 +36,8 @@ init-locale:
 	done
 
 EXTRA_DIST =					\
+	CMakeLists.txt				\
+	files.cmake				\
 	images.mk				\
 	update_execution_example.py		\
 	$(source_files_relative_from_doc_dir)
