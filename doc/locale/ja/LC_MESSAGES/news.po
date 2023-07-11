@@ -8,7 +8,6 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-06-28 09:13+0900\n"
 "Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -69,92 +68,122 @@ msgstr "``Groonga`` かつ ``Mroonga`` かつ ``PGroonga``"
 msgid "News"
 msgstr "お知らせ"
 
-#, fuzzy
-#, fuzzy
-#, fuzzy
-#, fuzzy
-#, fuzzy
-#, fuzzy
-#, fuzzy
-#, fuzzy
-#, fuzzy
-#, fuzzy
-#, fuzzy
-#, fuzzy
-#, fuzzy
-#, fuzzy
+msgid "Release 13.0.2 - 2023-07-12"
+msgstr "13.0.2リリース - 2023-07-12"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[:doc:`/install/ubuntu`] Dropped support for Ubuntu 18.04 (Bionic Beaver)."
+msgstr "[:doc:`/install/ubuntu`] Ubuntu 18.04（Bionic Beaver）のサポートをやめました。"
+
+msgid "[:doc:`/install/ubuntu`] Added support for Ubuntu 23.04 (Lunar Lobster)."
+msgstr "[:doc:`/install/ubuntu`] Ubuntu 23.04（Lunar Lobster）をサポートしました。"
+
+msgid "[:doc:`/install/debian`] Added support for Debian GNU/Linux 12 (bookworm)."
+msgstr "[:doc:`/install/debian`] Debian 12 (bookworm) をサポートしました。"
+
+msgid "[:doc:`/install/oracle-linux`] Dropped support for Oracle Linux. Use :doc:`/install/almalinux` packages instead."
+msgstr "[:doc:`/install/oracle-linux`] Oracle Linuxサポートをやめました。代わりに :doc:`/install/almalinux` 用パッケージを使ってください。"
+
+msgid "[``grn_highlighter``] Added support for changing tag."
+msgstr "[``grn_highlighter``] タグの変更をサポートしました。"
+
+msgid "[`GH-1453 <https://github.com/groonga/groonga/issues/1453>`_] [Reported by askdkc]"
+msgstr "[`GH-1453 <https://github.com/groonga/groonga/issues/1453>`_] [askdkcさんが報告]"
+
+msgid "[``grn_highlighter``] Added support for customizing normalizers."
+msgstr "[``grn_highlighter``] ノーマライザーの変更をサポートしました。"
+
+msgid "[``grn_highlighter``] Added support for customizing HTML mode."
+msgstr "[``grn_highlighter``] HTMLモードの変更をサポートしました。"
+
+msgid "[``grn_highlighter``] Added support for multiple tags."
+msgstr "[``grn_highlighter``] 複数タグをサポートしました。"
+
+msgid "[:doc:`/reference/functions/highlight`] Added the ``sequential_class_tag_mode`` option."
+msgstr "[:doc:`/reference/functions/highlight`] ``sequential_class_tag_mode`` オプションを追加しました。"
+
+msgid "[:doc:`/reference/functions/highlight_html`] Added the ``sequential_class_tag_mode`` option."
+msgstr "[:doc:`/reference/functions/highlight_html`] ``sequential_class_tag_mode`` オプションを追加しました。"
+
+msgid "[:doc:`/reference/commands/reference_acquire`] Changed to refer index columns that are for the target object when ``--recursive dependent`` is used."
+msgstr "[:doc:`/reference/commands/reference_acquire`] ``--recursive dependent`` が使われたときに対象オブジェクト用のインデックスカラムも参照するように変更しました。"
+
 msgid "If the target object is a column, index columns for the column is also referred."
-msgstr ""
+msgstr "対象オブジェクトがカラムの場合、そのカラム用のインデックスカラムも参照されます。"
 
-#, fuzzy
+msgid "If the target object is a table, index columns for the table is also referred."
+msgstr "対象オブジェクトがテーブルの場合、そのテーブル用のインデックスカラムも参照されます。"
+
 msgid "If the target object is a DB, all tables are processed as target objects."
-msgstr ""
+msgstr "対象オブジェクトがDBの場合、すべてのテーブルが対象オブジェクトになります。"
 
-msgid "[CMake] Changed to require CMake 3.16 or later. We'll use CMake instead of GNU Autotools as our recommended build tool in near feature and drop support for GNU Autotools eventually."
-msgstr ""
+msgid "[CMake] Changed to require CMake 3.16 or later. We'll use CMake instead of GNU Autotools as our recommended build tool in near future and drop support for GNU Autotools eventually."
+msgstr "[CMake] CMake 3.16以降を必須としました。近い将来、GNU AutotoolsではなくCMakeを推奨ビルドツールとし、いずれGNU Autotoolsサポートをやめる予定です。"
 
 msgid "[CMake] Added support for CMake package. You can use it by ``find_package(Groonga)``."
-msgstr ""
+msgstr "[CMake] CMakeパッケージに対応しました。 ``find_package(Groonga)`` というように使えます。"
 
 msgid "[Packaging] Changed to use newer GNU Autotools to generate ``configure`` in the source archive."
-msgstr ""
+msgstr "[Packaging] ソースアーカイブ中の ``configure`` を生成しているGNU Autotoolsを更新しました。"
 
 msgid "[`ranguba/rroonga#220 <https://github.com/ranguba/rroonga/issues/220>`_] [Reported by ZangRuochen]"
-msgstr ""
+msgstr "[`ranguba/rroonga#220 <https://github.com/ranguba/rroonga/issues/220>`_] [ZangRuochenさんが報告]"
 
 msgid "[:doc:`reference/commands/reference_acquire`] Optimized reference count implementation for built-in objects."
-msgstr ""
+msgstr "[:doc:`reference/commands/reference_acquire`] 組み込みオブジェクト用のリファレンスカウント実装を最適化しました。"
 
 msgid "Added support for logging backtrace on ``SIGABRT``."
-msgstr ""
+msgstr "``SIGABRT`` 発生時もバックトレースのログ出力するようにしました。"
 
 msgid "Fixes"
 msgstr "修正"
 
 msgid "[:ref:`query-syntax-ordered-near-phrase-product-search-condition`] [:ref:`script-syntax-ordered-near-phrase-product-search-operator`] Fixed a search bug that records that should be matched may not be matched."
-msgstr ""
+msgstr "[:ref:`query-syntax-ordered-near-phrase-product-search-condition`] [:ref:`script-syntax-ordered-near-phrase-product-search-operator`] マッチするべきレコードがマッチしないことがある問題を修正しました。"
 
-msgid "It's happen when multiple 3+ tokens are overlapped in query. For example, ``abc`` and ``abcd`` are an invalid combination. If shorter one (``abc``) exists before longer one (``abcd``), this bug is happen. For example, ``ONPP1 \"(abcd abc) (1 2)\"`` works bug ``ONPP1 \"(abc abcd) (1 2)\"`` doesn't work."
-msgstr ""
+msgid "It's happen when multiple 3+ tokens are overlapped in query. For example, ``abc`` and ``abcd`` are an invalid combination. If shorter one (``abc``) exists before longer one (``abcd``), this bug is happen. For example, ``ONPP1 \"(abcd abc) (1 2)\"`` works but ``ONPP1 \"(abc abcd) (1 2)\"`` doesn't work."
+msgstr "この問題は、クエリー内に3つ以上トークンがあり、かつ、それらがオーバーラップしているときに発生します。たとえば、 ``abc`` と ``abcd`` はうまく動かない組み合わせです。もし、短い方（ ``abc`` ）が長い方（ ``abcd`` ）より前にある場合はこの問題は発生しません。たとえば、 ``ONPP1 \"(abcd abc) (1 2)\"`` は動きますが、 ``ONPP1 \"(abc abcd) (1 2)\"`` は動きません。"
 
 msgid "Fixed a bug that invalid weight may be used with multiple adjusts."
-msgstr ""
+msgstr "複数の重み調整演算子を使った場合、不正な重みが使われることがある問題を修正しました。"
 
 msgid "[:doc:`/reference/grn_expr/query_syntax`] Fixed a typo."
-msgstr ""
+msgstr "[:doc:`/reference/grn_expr/query_syntax`] 誤字を修正しました。"
 
 msgid "[`GH-1560 <https://github.com/groonga/groonga/issues/1560>`_] [Patch by Dylan Golow]"
-msgstr ""
+msgstr "[`GH-1560 <https://github.com/groonga/groonga/issues/1560>`_] [Dylan Golowさんがパッチ提供]"
 
 msgid "[:ref:`query-syntax-near-phrase-search-condition`] [:ref:`script-syntax-near-phrase-search-operator`] [:ref:`query-syntax-near-phrase-product-search-condition`] [:ref:`script-syntax-near-phrase-product-search-operator`] [:ref:`query-syntax-ordered-near-phrase-search-condition`] [:ref:`script-syntax-ordered-near-phrase-search-operator`] [:ref:`query-syntax-ordered-near-phrase-product-search-condition`] [:ref:`script-syntax-ordered-near-phrase-product-search-operator`] Fixed an invalid interval calculation when ``additional_last_interval`` is used."
-msgstr ""
+msgstr "[:ref:`query-syntax-near-phrase-search-condition`] [:ref:`script-syntax-near-phrase-search-operator`] [:ref:`query-syntax-near-phrase-product-search-condition`] [:ref:`script-syntax-near-phrase-product-search-operator`] [:ref:`query-syntax-ordered-near-phrase-search-condition`] [:ref:`script-syntax-ordered-near-phrase-search-operator`] [:ref:`query-syntax-ordered-near-phrase-product-search-condition`] [:ref:`script-syntax-ordered-near-phrase-product-search-operator`] ``additional_last_interval`` を使っている場合、距離の計算が間違っている問題を修正しました。"
 
 msgid "For example, let's think about ``*NP3,-1\"aaa bbb .$\"`` against ``aaaxxxbbbcdefghi.`` In this case, the number of tokens between ``aaa`` and ``bbb`` must be 3 but it was 7."
-msgstr ""
+msgstr "たとえば、 ``aaaxxxbbbcdefghi.`` に対して ``*NP3,-1\"aaa bbb .$\"`` で検索するケースを考えます。このケースでは ``aaa`` と ``bbb`` の間のトークン数は3であるべきですが7になっていました。"
 
 msgid "[:ref:`query-syntax-near-phrase-product-search-condition`] [:ref:`script-syntax-near-phrase-product-search-operator`] [:ref:`query-syntax-ordered-near-phrase-product-search-condition`] [:ref:`script-syntax-ordered-near-phrase-product-search-operator`] Fixed infinite loop bugs when the same phrase exists in the same phrase group."
-msgstr ""
+msgstr "[:ref:`query-syntax-near-phrase-product-search-condition`] [:ref:`script-syntax-near-phrase-product-search-operator`] [:ref:`query-syntax-ordered-near-phrase-product-search-condition`] [:ref:`script-syntax-ordered-near-phrase-product-search-operator`] 同じフレーズグループ内に同じフレーズが存在するときに無限ループする問題を修正しました。"
 
 msgid "For example, ``*NPP1 \"(abcd abc abcd bcde) (efghi)\"`` is a bad query because the first phrase group has two ``abcd`` phrases."
-msgstr ""
+msgstr "たとえば、 ``*NPP1 \"(abcd abc abcd bcde) (efghi)\"`` は問題が発生するクエリーです。なぜなら最初のフレーズグループ内に2つ ``abcd`` が存在するからです。"
 
 msgid "For example, ``*NPP1 \"(abcde \\\"abc de\\\") (efghi)\"`` is a bad query because the first phrase group has ``abcde`` and ``\"abc de\"``. They are \"logically\" the same phrases."
-msgstr ""
+msgstr "たとえば、 ``*NPP1 \"(abcde \\\"abc de\\\") (efghi)\"`` は問題が発生するクエリーです。なぜなら最初のフレーズグループ内に ``abcde`` と ``\"abc de\"`` が存在するからです。これらは「論理的に」同じフレーズです。"
 
 msgid "Fixed a bug that internal lock count may not be decreased when lock acquisition is failed. In normal use-case, this will not be a real problem."
-msgstr ""
+msgstr "ロック獲得に失敗した場合に内部のロックカウントを減らしていない問題を修正しました。通常はこれが問題になることはありません。"
 
 msgid "Thanks"
 msgstr "感謝"
 
 msgid "askdkc"
-msgstr ""
+msgstr "askdkcさん"
 
 msgid "Dylan Golow"
-msgstr ""
+msgstr "Dylan Golowさん"
 
 msgid "ZangRuochen"
-msgstr ""
+msgstr "ZangRuochenさん"
 
 msgid "Release 13.0.1 - 2023-03-24"
 msgstr "13.0.1リリース - 2023-03-24"

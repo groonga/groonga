@@ -7,7 +7,7 @@ News
 
 .. _release-13-0-2:
 
-Release 13.0.2 - 2023-07-10
+Release 13.0.2 - 2023-07-12
 ---------------------------
 
 Improvements
@@ -55,7 +55,7 @@ Improvements
 
 * [CMake] Changed to require CMake 3.16 or later. We'll use CMake
   instead of GNU Autotools as our recommended build tool in near
-  feature and drop support for GNU Autotools eventually.
+  future and drop support for GNU Autotools eventually.
 
 * [CMake] Added support for CMake package. You can use it by
   ``find_package(Groonga)``.
@@ -82,7 +82,7 @@ Fixes
   It's happen when multiple 3+ tokens are overlapped in query. For
   example, ``abc`` and ``abcd`` are an invalid combination. If shorter
   one (``abc``) exists before longer one (``abcd``), this bug is
-  happen. For example, ``ONPP1 "(abcd abc) (1 2)"`` works bug ``ONPP1
+  happen. For example, ``ONPP1 "(abcd abc) (1 2)"`` works but ``ONPP1
   "(abc abcd) (1 2)"`` doesn't work.
 
 * Fixed a bug that invalid weight may be used with multiple adjusts.

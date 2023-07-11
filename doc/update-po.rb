@@ -28,6 +28,7 @@ GetText::Tools::MsgCat.run("--no-fuzzy",
                            "--no-report-warning",
                            "--no-wrap",
                            "--output=#{po}",
+                           "--remove-header-field=PO-Revision-Date",
                            "--remove-header-field=POT-Creation-Date",
                            "--sort-by-location",
                            edit_po)
