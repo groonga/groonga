@@ -15,17 +15,21 @@ DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- --with-munin-plugins --enable-mruby
+	dh_auto_configure			\
+	  --buildsystem=cmake+ninja		\
+	  --					\
+	  -DGRN_WITH_MUNIN_PLUGINS=ON		\
+	  -DGRN_WITH_MRUBY=ON
 
 # disable 'make check'.
 override_dh_auto_test:
 
 override_dh_install:
+	dh_auto_install				\
+	  --buildsystem=cmake+ninja
 	find $(CURDIR)/debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/ -name *.la -delete
-	find $(CURDIR)/debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/ -name underscore.js -delete
 	install -d debian/tmp/etc/munin/plugin-conf.d/
 	install -m 0644 debian/groonga-munin-plugins.conf \
 	  debian/tmp/etc/munin/plugin-conf.d/groonga
 	mv debian/tmp/usr/share/doc/groonga/ \
 	  debian/tmp/usr/share/doc/groonga-doc/
-	dh_install

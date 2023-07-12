@@ -4,23 +4,24 @@ Priority: optional
 Maintainer: Groonga Project <packages@groonga.org>
 Uploaders: HAYASHI Kentaro <hayashi@clear-code.com>
 Build-Depends:
+  cmake,
   debhelper (>= 9),
-  autotools-dev,
-  pkg-config,
-  liblz4-dev,
-  zlib1g-dev,
-  libmsgpack-dev,
-  libzmq3-dev | libzmq-dev,
   libevent-dev,
-  libmecab-dev,
-  libpcre3-dev,
-  libstemmer-dev,
   libjemalloc-dev,
-  libzstd-dev,
+  liblz4-dev,
+  libmecab-dev,
+  libmsgpack-dev,
+  libpcre3-dev,
   libssl-dev,
-  rapidjson-dev
+  libstemmer-dev,
+  libzmq3-dev | libzmq-dev,
+  libzstd-dev,
+  ninja-build,
+  pkg-config,
+  rapidjson-dev,
+  zlib1g-dev
 Standards-Version: 3.9.8
-Homepage: http://groonga.org/
+Homepage: https://groonga.org/
 
 Package: groonga
 Architecture: any

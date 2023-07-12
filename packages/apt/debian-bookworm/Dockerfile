@@ -21,9 +21,9 @@ RUN \
   rm ./groonga-apt-source-latest-$(lsb_release --codename --short).deb && \
   apt update ${quiet} && \
   apt install -y -V ${quiet} \
-    autotools-dev \
     build-essential \
     ccache \
+    cmake \
     debhelper \
     devscripts \
     lsb-release \
@@ -39,6 +39,7 @@ RUN \
     libthrift-dev \
     libzmq3-dev \
     libzstd-dev \
+    ninja-build \
     pkg-config \
     rapidjson-dev \
     zlib1g-dev && \
