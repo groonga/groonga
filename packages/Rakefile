@@ -164,8 +164,6 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       else
         url << "#{target}-x86_64.tar.gz"
       end
-    when :source
-      url << "#{target}"
     when :windows
       url << "#{target}"
     else
