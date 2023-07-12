@@ -1,3 +1,9 @@
+groonga (13.0.2-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Sutou Kouhei <kou@clear-code.com>  Wed, 12 Jul 2023 02:30:15 -0000
+
 groonga (13.0.1-1) unstable; urgency=low
 
   * New upstream release.
