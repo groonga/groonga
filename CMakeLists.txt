@@ -970,3 +970,18 @@ endif()
 install(FILES "COPYING" "README.md" DESTINATION "${GRN_DATA_DIR}")
 
 add_subdirectory(vendor/plugins)
+
+option(GRN_WITH_MUNIN_PLUGINS "install Munin plugins" OFF)
+if(GRN_WITH_MUNIN_PLUGINS)
+  install(
+    PROGRAMS data/munin/groonga_cpu_load_
+             data/munin/groonga_cpu_time_
+             data/munin/groonga_delta_
+             data/munin/groonga_status_
+             data/munin/groonga_memory_
+             data/munin/groonga_n_records_
+             data/munin/groonga_query_performance_
+             data/munin/groonga_disk_
+             data/munin/groonga_throughput_
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/${PACKAGE}/munin/plugins)
+endif()
