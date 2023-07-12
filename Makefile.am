@@ -62,37 +62,9 @@ tag:
 echo-version:
 	@echo $(VERSION)
 
-update-latest-release: misc
-	@if test -z "$(OLD_RELEASE)"; then	\
-	  echo "\$$(OLD_RELEASE) is missing";	\
-	  exit 1;				\
-	fi
-	@if test -z "$(OLD_RELEASE_DATE)"; then		\
-	  echo "\$$(OLD_RELEASE_DATE) is missing";	\
-	  exit 1;					\
-	fi
-	@if test -z "$(NEW_RELEASE_DATE)"; then		\
-	  echo "\$$(NEW_RELEASE_DATE) is missing";	\
-	  exit 1;					\
-	fi
+update-latest-release:
 	cd $(top_srcdir) &&					\
-	  misc/update-latest-release.rb				\
-	  $(PACKAGE) $(OLD_RELEASE) $(OLD_RELEASE_DATE)		\
-	  $(VERSION) $(NEW_RELEASE_DATE)			\
-	  doc/source/install.rst				\
-	  doc/source/install/*.rst				\
-	  doc/locale/*/LC_MESSAGES/install.po			\
-	  $(GROONGA_ORG_PATH)/_config.yml
-	cd $(top_srcdir)/packages &&		\
-	  $(RUBY) -S rake version:update	\
-	    RELEASE_DATE=$(NEW_RELEASE_DATE)
-	cd $(top_srcdir) &&			\
-	  git add 				\
-	    doc/source/install.rst 		\
-	    doc/source/install/*.rst		\
-	    packages/debian/changelog		\
-	    packages/yum/groonga.spec.in &&	\
-	  git commit -m "doc package: update version info to ${VERSION} - ${NEW_RELEASE_DATE}"
+	  $(RUBY) -S rake release:version:update
 
 update-po:
 	@for lang in $(LOCALES); do						\
@@ -141,11 +113,3 @@ update-nginx:
 	  exit 1;					\
 	fi
 	cd $(top_srcdir)/vendor && ./update_nginx.sh $(NEW_NGINX_VERSION)
-
-misc:
-	@if test -z "$(CUTTER_SOURCE_PATH)"; then \
-	  echo "\$$(CUTTER_SOURCE_PATH) is missing"; \
-	  exit 1; \
-	fi
-	ln -s "$(CUTTER_SOURCE_PATH)/misc" misc
-
