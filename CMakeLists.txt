@@ -18,9 +18,9 @@
 # * CentOS 7's EPEL: 3.17
 cmake_minimum_required(VERSION 3.16)
 
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/base_version" VERSION)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/base_version" GRN_VERSION)
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/version.sh")
-  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/version.sh" GRN_VERSION)
+  file(READ "${CMAKE_CURRENT_SOURCE_DIR}/version.sh" GRN_VERSION_FULL)
 else()
   if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/version.sh")
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git" AND EXISTS "/bin/sh")
@@ -29,24 +29,24 @@ else()
     endif()
   endif()
   if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/version.sh")
-    file(READ "${CMAKE_CURRENT_BINARY_DIR}/version.sh" GRN_VERSION)
+    file(READ "${CMAKE_CURRENT_BINARY_DIR}/version.sh" GRN_VERSION_FULL)
   else()
-    set(GRN_VERSION "${VERSION}")
+    set(GRN_VERSION_FULL "${GRN_VERSION}")
   endif()
 endif()
-string(REGEX REPLACE "(^.*=|\n)" "" GRN_VERSION "${GRN_VERSION}")
+string(REGEX REPLACE "(^.*=|\n)" "" GRN_VERSION_FULL "${GRN_VERSION_FULL}")
 string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\1" GRN_VERSION_MAJOR
-                     "${VERSION}")
+                     "${GRN_VERSION}")
 string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\2" GRN_VERSION_MINOR
-                     "${VERSION}")
+                     "${GRN_VERSION}")
 string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\3" GRN_VERSION_MICRO
-                     "${VERSION}")
+                     "${GRN_VERSION}")
 string(REGEX REPLACE "\\." "," GRN_VERSION_RC "${GRN_VERSION}")
 string(REGEX REPLACE "-.*$" "" GRN_VERSION_RC "${GRN_VERSION_RC}")
 
 project(
   groonga
-  VERSION "${VERSION}"
+  VERSION "${GRN_VERSION}"
   DESCRIPTION "An Embeddable Fulltext Search Engine"
   LANGUAGES C CXX)
 set(GRN_PROJECT_NAME "${PROJECT_NAME}")
