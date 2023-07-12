@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-07-12 09:11+0900\n"
+"PO-Revision-Date: 2023-07-12 15:49+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -111,19 +111,11 @@ msgstr "``[。！？]+(?![）」])`` は、``。`` または ``！``、 ``？`` 
 msgid "In other words, ``[。！？]+(?![）」])`` matches ``。`` of ``これはペンですか。``. But ``[。！？]+(?![）」])`` doesn't match ``。`` of ``「リンゴです。」``. Because there is ``」`` after ``。``."
 msgstr "つまり、 ``[。！？]+(?![）」])`` は、 ``これはペンですか。`` の ``。`` にマッチしますが、 ``「リンゴです。」`` の ``。`` にはマッチしません。 ``。`` の後ろに ``」`` があるためです。"
 
-msgid ""
-"``[\\\\\n"
-"]+`` match 1 or more newline character."
-msgstr ""
-"``[\\\\\n"
-"]+`` は、1個以上の改行文字にマッチします。"
+msgid "``[\\\\r\\\\n]+`` match 1 or more newline character."
+msgstr "``[\\\\r\\\\n]+`` は、1個以上の改行文字にマッチします。"
 
-msgid ""
-"In conclusion, ``([。！？]+(?![）」])|[\\\\\n"
-"]+)\\\\s*`` uses ``。`` and ``！`` and ``？``, newline character as delimiter. However, ``。`` and ``!``, ``？`` are not delimiters if there is ``）`` or ``」`` after ``。`` or ``！``, ``？``."
-msgstr ""
-"まとめると、 ``([。！？]+(?![）」])|[\\\\\n"
-"]+)\\\\s*`` は、 ``。`` と ``！`` と ``？``、 改行文字を区切り文字としています。ただし、 ``。`` または ``!``、 ``？`` の後ろに ``）`` または ``」`` がある場合は、 ``。`` や ``！``、 ``？`` は区切り文字としません。"
+msgid "In conclusion, ``([。！？]+(?![）」])|[\\\\r\\\\n]+)\\\\s*`` uses ``。`` and ``！`` and ``？``, newline character as delimiter. However, ``。`` and ``!``, ``？`` are not delimiters if there is ``）`` or ``」`` after ``。`` or ``！``, ``？``."
+msgstr "まとめると、 ``([。！？]+(?![）」])|[\\\\r\\\\n]+)\\\\s*`` は、 ``。`` と ``！`` と ``？``、 改行文字を区切り文字としています。ただし、 ``。`` または ``!``、 ``？`` の後ろに ``）`` または ``」`` がある場合は、 ``。`` や ``！``、 ``？`` は区切り文字としません。"
 
 msgid "Parameters"
 msgstr "引数"
