@@ -15,6 +15,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+require "tmpdir"
+
 def env_var(name)
   value = ENV[name]
   raise "${#{name}} is missing" if value.nil?
@@ -94,7 +96,7 @@ namespace :release do
       old_release = env_var("OLD_RELEASE")
       old_release_date = env_var("OLD_RELEASE_DATE")
       new_release_date = env_var("NEW_RELEASE_DATE")
-      groonga_org_path = env_var("GROONGA_ORG_PATH")
+      groonga_org_path = env_var("GROONGA_ORG_DIR")
       release_version_update("groonga",
                              old_release,
                              old_release_date,
@@ -121,6 +123,31 @@ namespace :release do
          "commit",
          "-m",
          "doc package: update version info to #{version} - #{new_release_date}")
+    end
+  end
+
+  namespace :document do
+    desc "Update document"
+    task :update do
+      build_dir = env_var("BUILD_DIR")
+      groonga_org_path = File.expand_path(env_var("GROONGA_ORG_DIR"))
+      Dir.mktmpdir do |dir|
+        sh({"DESTDIR" => dir},
+           "cmake",
+           "--build", build_dir,
+           "--target", "install")
+        Dir.glob("#{dir}/**/share/doc/groonga/*/") do |doc|
+          locale = File.basename(doc)
+          if locale == "en"
+            groonga_org_docs = File.join(groonga_org_path, "docs")
+          else
+            groonga_org_docs = File.join(groonga_org_path, locale, "docs")
+          end
+          rm_rf(groonga_org_docs)
+          mv(doc, groonga_org_docs)
+          rm_f(File.join(groonga_org_docs, ".buildinfo"))
+        end
+      end
     end
   end
 
