@@ -7,16 +7,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-28 18:31+0900\n"
-"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"PO-Revision-Date: 2023-07-12 09:26+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.3\n"
-"X-POOTLE-MTIME: 1411061943.000000\n"
 
 msgid "Execution example::"
 msgstr "実行例::"
@@ -822,12 +819,20 @@ msgstr "この演算子は ``phrase1 phrase2 ...`` というフレーズで近�
 msgid "TODO: Use index that has ``TokenNgram(\"unify_alphabet\", false)`` tokenizer to show difference with near search with English text."
 msgstr ""
 
-#, fuzzy
-#, fuzzy
-#, fuzzy
-#, fuzzy
+msgid "The first expression matches records that contain ``I`` and ``fast`` and the max interval of those words are in 10 words. So the record that its content is ``I also started to use mroonga. It's also very fast! ...`` is matched. The number of words between ``I`` and ``fast`` is just 10."
+msgstr "最初の式は ``I`` と ``fast`` が含まれていて、かつ、これらの単語が10単語以内近くにあるレコードにマッチします。そのため ``I also started to use mroonga. It's also very fast! ...`` にマッチします。 ``I`` と ``fast`` の間の単語数は10です。"
+
+msgid "The second expression matches records that contain ``I`` and ``Really`` and the max interval of those words are in 10 words. So the record that its content is ``I also started to use mroonga. It's also very fast! Really fast!`` is not matched. The number of words between ``I`` and ``Really`` is 14."
+msgstr "2番目の式は ``I`` と ``Really`` が含まれていて、かつ、これらの単語が10単語以内近くにあるレコードにマッチします。そのため、 ``I also started to use mroonga. It's also very fast! Really fast!`` はマッチしません。 ``I`` と ``Really`` の間の単語数は14です。"
+
+msgid "Here is an example to use the custom max interval:"
+msgstr "以下は1つの最大距離をカスタマイズする例です。"
+
+msgid "The first expression matches ``I also started to use mroonga. It's also very fast! Really fast!`` because the number of words between ``I`` and ``Really`` is 14."
+msgstr "2番目の式は ``I also started to use mroonga. It's also very fast! Really fast!`` にマッチします。なぜなら ``I`` と ``Really`` の間の単語は14だからです。"
+
 msgid "The second expression also matches ``I also started to use mroonga. It's also very fast! Really fast!`` because ``-1`` means that there is no limitation the number of words between ``I`` and ``Really``."
-msgstr "2番目の式も ``I also st arted to use mroonga. It's also very fast! Really fast!`` にマッチします。なぜなら ``-1`` は ``I`` と ``Really`` の間にうくつ単語があってもよいという意味だからです。"
+msgstr "2番目の式も ``I also started to use mroonga. It's also very fast! Really fast!`` にマッチします。なぜなら ``-1`` は ``I`` と ``Really`` の間にいくつ単語があってもよいという意味だからです。"
 
 msgid "You can use additional interval only for the last phrase. It means that you can accept more distance only between the second to last phrase and the last phrase. This is useful for implementing a near phrase search in the same sentence. If you specify ``.`` (sentence end phrase) as the last phrase and specify ``-1`` as the additional last interval, the other specified phrases must be appeared before ``.``. You must append ``$`` to the last phrase like ``.$``."
 msgstr "最後のフレーズにだけ距離を追加することができます。つまり、最後から2番目のフレーズと最後のフレーズの間だけより多くの距離を許容できるということです。これは同一文内での近傍フレーズ検索を実装するときに便利です。最後のフレーズとして ``。`` （文末のフレーズ）を指定し、最後の追加距離として ``-1`` を指定すると、 ``。`` の前に他のすべてのフレーズが出現しなければいけません。最後のフレーズには ``。$`` というように最後に ``$`` をつけなければいけません。"

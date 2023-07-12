@@ -7,16 +7,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-28 18:30+0900\n"
-"Last-Translator: Masafumi Yokoyama <yokoyama@clear-code.com>\n"
+"PO-Revision-Date: 2023-07-12 09:19+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.3\n"
-"X-POOTLE-MTIME: 1411061943.000000\n"
 
 msgid "Execution example::"
 msgstr "実行例::"
@@ -27,12 +24,18 @@ msgstr "クエリー構文"
 msgid "Query syntax is a syntax to specify search condition for common Web search form. It is similar to the syntax of Google's search form. For example, ``word1 word2`` means that groonga searches records that contain both ``word1`` and ``word2``. ``word1 OR word2`` means that groonga searches records that contain either ``word1`` or ``word2``."
 msgstr "クエリー構文は一般的なWebの検索フォームで検索条件を指定するための構文です。Googleの検索フォームで使われている構文に似ています。例えば、 ``word1 word2`` は ``word1`` と ``word2`` の両方の単語を含んだレコードを検索するという意味です。 ``word1 OR word2`` は ``word1`` または ``word2`` のどちらかの単語を含んだレコードを検索します。"
 
-#, fuzzy
-#, fuzzy
-msgid "Sample data"
+msgid "Query syntax consists of ``conditional expression``, ``combind expression`` and ``assignment expression``. Normally ``assignment expression`` can be ignored. Because ``assignment expression`` is disabled in ``--query`` option of :doc:`/reference/commands/select`. You can use it if you use groonga as library and customize query syntax parser options."
 msgstr ""
 
-#, fuzzy
+msgid "``Conditional expression`` specifies an condition. ``Combinded expression`` consists of one or more ``conditional expression``, ``combined expression`` or ``assignment expression``. ``Assignment expression`` can assigns a column to a value."
+msgstr ""
+
+msgid "Sample data"
+msgstr "サンプルデータ"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr ""
+
 msgid "There is a table, ``Entries``, for blog entries. An entry has title, content and the number of likes for the entry. Title is key of ``Entries``. Content is value of ``Entries.content`` column. The number of likes is value of ``Entries.n_likes`` column."
 msgstr "ブログエントリ用の ``Entries`` テーブルがあります。各エントリはタイトルと内容と「いいね！」数を持っています。タイトルは ``Entries`` のキーとします。内容は ``Entries.content`` カラムの値とします。「いいね！」数は ``Entries.n_likes`` カラムの値とします。"
 
