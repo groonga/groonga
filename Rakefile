@@ -121,4 +121,15 @@ namespace :release do
          "doc package: update version info to #{version} - #{new_release_date}")
     end
   end
+
+  desc "Tag"
+  task :tag do
+    sh("git",
+       "tag",
+       "v#{version}",
+       "-a",
+       "-m",
+       "Groonga #{version}!!!")
+    sh("git", "push", "origin", "v#{version}")
+  end
 end
