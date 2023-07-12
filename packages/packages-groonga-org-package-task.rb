@@ -317,7 +317,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
          "gh",
          "release",
          "upload",
-         @version,
+         "v#{@version}",
          "--clobber",
          "--repo", github_repository,
          *Dir.glob("#{repositories_dir}/#{target_namespace}/#{@package}/*.asc"))
