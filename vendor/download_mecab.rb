@@ -42,9 +42,7 @@ def download(url, base)
 
   tar = "#{base}.tar"
   tar_gz = "#{tar}.gz"
-  URI(url).open(:ssl_verify_mode => ssl_verify_mode,
-                # osdn.jp doesn't work with "User-Agent: Ruby"...
-                "User-Agent" => "curl/7.67.0") do |remote_tar_gz|
+  URI(url).open(:ssl_verify_mode => ssl_verify_mode) do |remote_tar_gz|
     File.open(tar_gz, "wb") do |local_tar_gz|
       local_tar_gz.print(remote_tar_gz.read)
     end
@@ -57,5 +55,5 @@ end
 download("https://packages.groonga.org/source/mecab/#{mecab_base}.tar.gz",
          mecab_base)
 
-download("https://ja.osdn.net/projects/naist-jdic/downloads/53500/#{mecab_naist_jdic_base}.tar.gz",
+download("https://packages.groonga.org/source/mecab-naist-jdic/#{mecab_naist_jdic_base}.tar.gz",
          mecab_naist_jdic_base)
