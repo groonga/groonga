@@ -12,17 +12,21 @@ example, ``word1 word2`` means that groonga searches records that
 contain both ``word1`` and ``word2``. ``word1 OR word2`` means that
 groonga searches records that contain either ``word1`` or ``word2``.
 
-Query syntax consists of ``conditional expression``, ``combind
-expression`` and ``assignment expression``. Normally ``assignment
-expression`` can be ignored. Because ``assignment expression`` is
-disabled in ``--query`` option of :doc:`/reference/commands/select`. You can use
-it if you use groonga as library and customize query syntax parser
-options.
+Query syntax consists of :ref:`query-syntax-conditional-expression` ,
+:ref:`query-syntax-combined-expression` and
+:ref:`query-syntax-assignment-expression`. Normally
+:ref:`query-syntax-assignment-expression` can be ignored. Because
+:ref:`query-syntax-assignment-expression` is disabled in the
+:ref:`select-query` option of :doc:`/reference/commands/select`. You
+can use it by specifying ``ALLOW_UPDATE`` to the
+:ref:`select-query-flags` option.
 
-``Conditional expression`` specifies an condition. ``Combinded
-expression`` consists of one or more ``conditional expression``,
-``combined expression`` or ``assignment expression``. ``Assignment
-expression`` can assigns a column to a value.
+:ref:`query-syntax-conditional-expression` specifies an
+condition. :ref:`query-syntax-combined-expression` consists of one or
+more :ref:`query-syntax-conditional-expression`,
+:ref:`query-syntax-combined-expression` or
+:ref:`query-syntax-assignment-expression`. :ref:`query-syntax-assignment-expression`
+can assigns a value to a column.
 
 Sample data
 -----------
@@ -972,6 +976,8 @@ The first expression doesn't use grouping. It matches records that
 The second expression uses grouping. It matches records that
 ``n_likes:<5`` and one of ``content:@senna`` or ``content:@fast``
 are matched.
+
+.. _query-syntax-assignment-expression:
 
 Assignment expression
 ---------------------
