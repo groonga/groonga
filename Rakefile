@@ -89,6 +89,15 @@ end
 
 version = File.read(File.join(__dir__, "base_version"))
 
+namespace :dev do
+  namespace :version do
+    desc "Bump version for new development"
+    task :bump do
+      File.write("base_version", env_var("NEW_VERSION"))
+    end
+  end
+end
+
 namespace :release do
   namespace :version do
     desc "Update versions for a new release"
