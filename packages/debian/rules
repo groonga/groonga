@@ -18,8 +18,8 @@ override_dh_auto_configure:
 	dh_auto_configure			\
 	  --buildsystem=cmake+ninja		\
 	  --					\
-	  -DGRN_WITH_MUNIN_PLUGINS=ON		\
-	  -DGRN_WITH_MRUBY=ON
+	  -DGRN_WITH_MRUBY=ON			\
+	  -DGRN_WITH_MUNIN_PLUGINS=ON
 
 # disable 'make check'.
 override_dh_auto_test:
