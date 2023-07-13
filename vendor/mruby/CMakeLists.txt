@@ -29,6 +29,9 @@ if(GRN_WITH_MRUBY)
     set(MRUBY_LEGAL_FILE "${CMAKE_CURRENT_SOURCE_DIR}/LEGAL")
     string(REGEX REPLACE "([^;]+)" "${CMAKE_CURRENT_SOURCE_DIR}/\\1"
       MRUBY_BUILT_SOURCES "${MRUBY_BUILT_SOURCES}")
+    set_source_files_properties(
+      ${CMAKE_CURRENT_SOURCE_DIR}/mruby/mruby-file-stat/src/file-stat.c
+      PROPERTIES INCLUDE_DIRECTORIES ${CMAKE_CURRENT_BINARY_DIR}/mruby/mruby-file-stat/src)
   else()
     set(mruby_build_timestamp
       "${CMAKE_CURRENT_BINARY_DIR}/mruby_build.timestamp")
