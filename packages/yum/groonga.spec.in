@@ -2,8 +2,6 @@
 
 %define _centos_ver   %{?centos_ver:%{centos_ver}}%{!?centos_ver:7}
 
-%define _use_jemalloc %{?use_jemalloc:%{use_jemalloc}}%{!?use_jemalloc:0}
-
 %define _additional_configure_options %{?additional_configure_options:%{additional_configure_options}}
 
 Name:		groonga
@@ -22,9 +20,6 @@ BuildRequires:	mecab-devel
 BuildRequires:	zlib-devel
 BuildRequires:	lz4-devel
 BuildRequires:	libzstd-devel
-%if %{_use_jemalloc}
-BuildRequires:	jemalloc-devel
-%endif
 BuildRequires:	msgpack-devel
 BuildRequires:	libstemmer-devel
 BuildRequires:	pcre-devel
@@ -51,9 +46,6 @@ Requires:	arrow@APACHE_ARROW_MAJOR_VERSION@-libs
 Requires:	zlib
 Requires:	lz4
 Requires:	libzstd
-%if %{_use_jemalloc}
-Requires:	jemalloc
-%endif
 Requires:	msgpack
 Requires(post):	/sbin/ldconfig
 Requires(postun):	/sbin/ldconfig
