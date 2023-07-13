@@ -18,6 +18,7 @@ override_dh_auto_configure:
 	dh_auto_configure			\
 	  --buildsystem=cmake+ninja		\
 	  --					\
+	  -DGRN_WITH_DOC=ON			\
 	  -DGRN_WITH_MRUBY=ON			\
 	  -DGRN_WITH_MUNIN_PLUGINS=ON
 

@@ -16,14 +16,17 @@
 include(GroongaSphinx)
 include(${CMAKE_CURRENT_SOURCE_DIR}/files.cmake)
 
+set(GRN_DOC_PRE_BUILD_STAMP "${CMAKE_CURRENT_SOURCE_DIR}/build-stamp")
 foreach(LOCALE en ja)
   set(GRN_DOC_HTML_FILES_LOCALE)
   foreach(file ${GRN_DOC_HTML_FILES})
     list(APPEND GRN_DOC_HTML_FILES_LOCALE
          ${CMAKE_CURRENT_BINARY_DIR}/${LOCALE}/html/${file})
   endforeach()
-  grn_sphinx(${CMAKE_CURRENT_SOURCE_DIR}/source ${LOCALE} "${GRN_DOC_SOURCES}"
-             "${GRN_DOC_HTML_FILES_LOCALE}")
+  if(NOT EXISTS "${GRN_DOC_PRE_BUILD_STAMP}")
+    grn_sphinx(${CMAKE_CURRENT_SOURCE_DIR}/source ${LOCALE}
+               "${GRN_DOC_SOURCES}" "${GRN_DOC_HTML_FILES_LOCALE}")
+  endif()
   install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${LOCALE}/html/
           DESTINATION ${CMAKE_INSTALL_DOCDIR}/${LOCALE})
 endforeach()
