@@ -87,6 +87,8 @@
 /packages/*.zip
 /packages/*/*.log
 /packages/apt/.vagrant/
+/packages/apt/build.sh
+/packages/apt/env.sh
 /packages/apt/repositories/
 /packages/apt/tmp/
 /packages/source/repositories/
@@ -97,6 +99,8 @@
 /packages/windows/setup-x86.nsi
 /packages/windows/tmp/
 /packages/yum/.vagrant/
+/packages/yum/build.sh
+/packages/yum/env.sh
 /packages/yum/repositories/
 /packages/yum/tmp/
 /src/grndb
