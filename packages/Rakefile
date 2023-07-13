@@ -179,6 +179,10 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
   def download_packages(target_namespace)
     super unless target_namespace == :windows
   end
+
+  def tag_name
+    "v#{@version}"
+  end
 end
 
 task = GroongaPackageTask.new

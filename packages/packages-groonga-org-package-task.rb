@@ -306,6 +306,10 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
   end
 
+  def tag_name
+    @version
+  end
+
   def release(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
     repositories_dir = "#{base_dir}/repositories"
@@ -317,7 +321,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
          "gh",
          "release",
          "upload",
-         "v#{@version}",
+         tag_name,
          "--clobber",
          "--repo", github_repository,
          *Dir.glob("#{repositories_dir}/#{target_namespace}/#{@package}/*.asc"))
