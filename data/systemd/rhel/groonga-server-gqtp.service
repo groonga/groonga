@@ -1,6 +1,6 @@
 [Unit]
 Description=Groonga full text search GQTP server
-Documentation=http://groonga.org/docs/server/package.html#groonga-server-gqtp
+Documentation=https://groonga.org/docs/server/package.html#groonga-server-gqtp
 After=network.target
 
 [Service]

@@ -1,6 +1,6 @@
 [Unit]
 Description=Groonga full text search HTTP server based on nginx
-Documentation=http://groonga.org/docs/server/package.html#groonga-httpd
+Documentation=https://groonga.org/docs/server/package.html#groonga-httpd
 After=network.target
 Conflicts=groonga-server-http.service
 

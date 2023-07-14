@@ -1459,35 +1459,21 @@ AC_MSG_CHECKING([whether package platform])
 AC_ARG_WITH(package-platform,
   [AS_HELP_STRING([--with-package-platform=PLATFORM],
     [install package platform related files. [default=no]
-     (supported package platforms: centos, centos6, centos7, fedora)])],
+     (supported package platforms: rhel)])],
   [package_platform="$withval"],
   [package_platform="no"])
-if test "$package_platform" = "centos"; then
-  distribution=$(cut -d " " -f 1 /etc/redhat-release | tr "A-Z" "a-z")
-  if grep -q Linux /etc/redhat-release; then
-    distribution_version=$(cut -d " " -f 4 /etc/redhat-release)
-  else
-    distribution_version=$(cut -d " " -f 3 /etc/redhat-release)
-  fi
-  distribution_version=$(echo ${distribution_version} | sed -e 's/\..*$//g')
-  package_platform="${package_platform}${distribution_version}"
-fi
 AC_MSG_RESULT($package_platform)
 
-centos_platform=no
-centos_systemd_platform=no
+rhel_platform=no
 case "${package_platform}" in
   no)
     ;;
-  *)
-    centos_platform=yes
-    centos_systemd_platform=yes
+  rhel)
+    rhel_platform=yes
     ;;
 esac
-AM_CONDITIONAL([CENTOS_PLATFORM],
-               [test "${centos_platform}" = "yes"])
-AM_CONDITIONAL([CENTOS_SYSTEMD_PLATFORM],
-               [test "${centos_systemd_platform}" = "yes"])
+AM_CONDITIONAL([RHEL_PLATFORM],
+               [test "${rhel_platform}" = "yes"])
 
 # plugins check
 relative_pluginsdir_base="\$(PACKAGE)/plugins"
@@ -1819,15 +1805,15 @@ AC_CONFIG_FILES([
   data/groonga-httpd.conf
   data/html/Makefile
   data/logrotate.d/Makefile
-  data/logrotate.d/centos/Makefile
-  data/logrotate.d/centos/groonga-httpd
+  data/logrotate.d/rhel/Makefile
+  data/logrotate.d/rhel/groonga-httpd
   data/munin/Makefile
   data/scripts/Makefile
   data/scripts/groonga-httpd-restart
   data/systemd/Makefile
-  data/systemd/centos/Makefile
-  data/systemd/centos/groonga-httpd.service
-  data/systemd/centos/sysconfig/Makefile
+  data/systemd/rhel/Makefile
+  data/systemd/rhel/groonga-httpd.service
+  data/systemd/rhel/sysconfig/Makefile
   data/tmpfiles.d/Makefile
   doc/Makefile
   doc/locale/Makefile

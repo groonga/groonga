@@ -1,1 +1,1 @@
-SUBDIRS = centos
+SUBDIRS = rhel
