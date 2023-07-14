@@ -92,6 +92,7 @@
 /packages/apt/repositories/
 /packages/apt/tmp/
 /packages/source/repositories/
+/packages/source/tmp/
 /packages/ubuntu/
 /packages/windows/.vagrant/
 /packages/windows/repositories/
