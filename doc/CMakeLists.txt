@@ -24,7 +24,7 @@ foreach(LOCALE en ja)
          ${CMAKE_CURRENT_BINARY_DIR}/${LOCALE}/html/${file})
   endforeach()
   if(EXISTS "${GRN_DOC_PRE_BUILD_STAMP}")
-    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${LOCALE}/html/
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/locale/${LOCALE}/html/
             DESTINATION ${CMAKE_INSTALL_DOCDIR}/${LOCALE})
   else()
     grn_sphinx(${CMAKE_CURRENT_SOURCE_DIR}/source ${LOCALE}
