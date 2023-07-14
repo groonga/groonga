@@ -6,6 +6,7 @@ ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = 1.9.6
 SUBDIRS =					\
 	build					\
+	cmake					\
 	include					\
 	vendor					\
 	lib					\

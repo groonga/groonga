@@ -1814,6 +1814,7 @@ AC_CONFIG_FILES([
   build/Makefile
   build/cmake_modules/Makefile
   config.sh
+  cmake/Makefile
   data/Makefile
   data/groonga-httpd.conf
   data/html/Makefile
