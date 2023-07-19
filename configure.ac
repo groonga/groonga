@@ -4,6 +4,9 @@ AC_INIT([groonga], groonga_version, [groonga@razil.jp])
 AC_CONFIG_MACRO_DIR([m4])
 AM_CONFIG_HEADER(config.h)
 
+GRN_VERSION=groonga_version
+AC_SUBST(GRN_VERSION)
+
 GRN_VERSION_MAJOR=`echo groonga_version | cut -d. -f1`
 AC_SUBST(GRN_VERSION_MAJOR)
 GRN_VERSION_MINOR=`echo groonga_version | cut -d. -f2`
@@ -231,7 +234,7 @@ AC_SUBST(GRN_DLL_FILENAME)
 
 if test "$srcdir/version.sh"; then
   . "$srcdir/version.sh"
-  AC_SUBST(GRN_VERSION)
+  AC_SUBST(GRN_VERSION_FULL)
 fi
 
 if test "$GCC" = "yes"; then

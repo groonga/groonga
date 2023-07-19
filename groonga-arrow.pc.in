@@ -1,4 +1,4 @@
 Name: Groonga Arrow
 Description: Apache Arrow support for Groonga
-Version: @VERSION@
+Version: @GRN_VERSION@
 Requires: groonga arrow

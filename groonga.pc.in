@@ -11,10 +11,10 @@ pluginsdir=@expanded_pluginsdir@
 groonga=${bindir}/groonga@EXEEXT@
 groonga_httpd=${sbindir}/groonga-httpd@EXEEXT@
 groonga_suggest_create_dataset=${bindir}/groonga-suggest-create-dataset@EXEEXT@
-groonga_version=@GRN_VERSION@
+groonga_version=@GRN_VERSION_FULL@
 
 Name: Groonga
 Description: An Embeddable Fulltext Search Engine
-Version: @VERSION@
+Version: @GRN_VERSION@
 Libs: -L${libdir} -lgroonga
 Cflags: -I${includedir}/groonga
