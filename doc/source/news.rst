@@ -5,6 +5,16 @@
 News
 ====
 
+.. _release-13-0-3:
+
+Release 13.0.3 - 2023-07-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [Packaging] Use CMake when we build packages for Debian.
+
 .. _release-13-0-2:
 
 Release 13.0.2 - 2023-07-12
