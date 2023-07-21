@@ -985,3 +985,13 @@ if(GRN_WITH_MUNIN_PLUGINS)
              data/munin/groonga_throughput_
     DESTINATION ${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}/munin/plugins)
 endif()
+
+option(GRN_WITH_EXAMPLES "install examples" OFF)
+if(GRN_WITH_EXAMPLES)
+  install(
+    DIRECTORY examples/dictionary
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}/examples
+    USE_SOURCE_PERMISSIONS FILES_MATCHING
+    PATTERN "*"
+    PATTERN "Makefile.*" EXCLUDE)
+endif()
