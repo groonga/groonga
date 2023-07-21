@@ -14,16 +14,17 @@ Source0:	http://packages.groonga.org/source/groonga/groonga-%{version}.tar.gz
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-%(%{__id_u} -n)
 BuildRequires:	arrow-devel >= @APACHE_ARROW_VERSION@
-BuildRequires:	mecab-devel
-BuildRequires:	zlib-devel
-BuildRequires:	lz4-devel
-BuildRequires:	libzstd-devel
-BuildRequires:	msgpack-devel
 BuildRequires:	libstemmer-devel
+BuildRequires:	libzstd-devel
+BuildRequires:	lz4-devel
+BuildRequires:	mecab-devel
+BuildRequires:	msgpack-devel
+BuildRequires:	openssl-devel
 BuildRequires:	pcre-devel
 BuildRequires:	pkgconfig
-BuildRequires:	openssl-devel
 BuildRequires:	ruby
+BuildRequires:	xxhash-devel
+BuildRequires:	zlib-devel
 #BuildRequires:	zeromq-devel
 #BuildRequires:	libevent-devel
 Requires:	%{name}-libs = %{version}-%{release}
@@ -41,10 +42,11 @@ Summary:	Runtime libraries for Groonga
 Group:		System Environment/Libraries
 License:	LGPLv2 and (MIT or GPLv2)
 Requires:	arrow@APACHE_ARROW_MAJOR_VERSION@-libs
-Requires:	zlib
-Requires:	lz4
 Requires:	libzstd
+Requires:	lz4
 Requires:	msgpack
+Requires:	xxhash-libs
+Requires:	zlib
 Requires(post):	/sbin/ldconfig
 Requires(postun):	/sbin/ldconfig
 
