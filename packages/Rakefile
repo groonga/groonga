@@ -150,26 +150,25 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
   end
 
   def built_package_url(target_namespace, target)
-    url = "https://github.com/groonga/groonga/releases/download/v#{@version}/"
     case target_namespace
     when :apt
       if target.end_with?("-i386") or target.end_with?("-arm64")
-        url << "#{target}.tar.gz"
+        base_name = "#{target}.tar.gz"
       else
-        url << "#{target}-amd64.tar.gz"
+        base_name = "#{target}-amd64.tar.gz"
       end
     when :yum
       if target.end_with?("-aarch64")
-        url << "#{target}.tar.gz"
+        base_name = "#{target}.tar.gz"
       else
-        url << "#{target}-x86_64.tar.gz"
+        base_name = "#{target}-x86_64.tar.gz"
       end
     when :windows
-      url << "#{target}"
+      base_name = "#{target}"
     else
-      url << "#{target}.tar.gz"
+      base_name = "#{target}.tar.gz"
     end
-    url
+    github_download_url(base_name)
   end
 
   def built_package_n_split_components

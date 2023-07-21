@@ -139,6 +139,10 @@ class PackagesGroongaOrgPackageTask < PackageTask
     raise NotImplementedError
   end
 
+  def github_download_url(base_name)
+    "https://github.com/#{github_repository}/releases/download/#{tag_name}/#{base_name}"
+  end
+
   def github_access_token
     ENV["GITHUB_ACCESS_TOKEN"]
   end
