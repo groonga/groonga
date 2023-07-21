@@ -196,6 +196,10 @@ class PackagesGroongaOrgPackageTask < PackageTask
     end
   end
 
+  def use_packages_groonga_org?(target_namespace)
+    true
+  end
+
   def download_repositories_dir(target_namespace)
     base_dir = __send__("#{target_namespace}_dir")
     case target_namespace
@@ -265,6 +269,7 @@ class PackagesGroongaOrgPackageTask < PackageTask
 
     case target_namespace
     when :source
+      return unless use_packages_groonga_org?(target_namespace)
       rsync_dir =
         "#{repository_rsync_base_path}/#{target_namespace}/#{@package}/"
       sh("rsync",
@@ -279,6 +284,8 @@ class PackagesGroongaOrgPackageTask < PackageTask
   def prepare(target_namespace)
     case target_namespace
     when :windows, :source
+      return unless use_packages_groonga_org?(target_namespace)
+
       repositories_dir = download_repositories_dir(target_namespace)
       mkdir_p(repositories_dir)
 
@@ -338,6 +345,8 @@ class PackagesGroongaOrgPackageTask < PackageTask
       rsync_options << "--exclude=*.changes"
       destination << "incoming/"
     end
+
+    return unless use_packages_groonga_org?(target_namespace)
     sh("rsync",
        *rsync_options,
        "#{repositories_dir}/",
