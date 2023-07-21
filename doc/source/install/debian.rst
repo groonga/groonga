@@ -64,21 +64,6 @@ Install groonga-normalizer-mysql package::
 
   % sudo apt install -y -V groonga-normalizer-mysql
 
-.. note::
-
-   If you use systemd as init, current version of Groonga does not support
-   to register start-up service automatically during installation.
-   If you want to register groonga-httpd/groonga-server-gqtp as
-   a automatic start-up service, please execute the following commands:
-
-   For groonga-httpd:
-
-     % sudo systemctl enable groonga-httpd
-
-   For groonga-server-gqtp:
-
-     % sudo systemctl enable groonga-server-gqtp
-
 bullseye
 --------
 
@@ -127,21 +112,6 @@ If you want to use that one, install groonga-normalizer-mysql package.
 Install groonga-normalizer-mysql package::
 
   % sudo apt install -y -V groonga-normalizer-mysql
-
-.. note::
-
-   If you use systemd as init, current version of Groonga does not support
-   to register start-up service automatically during installation.
-   If you want to register groonga-httpd/groonga-server-gqtp as
-   a automatic start-up service, please execute the following commands:
-
-   For groonga-httpd:
-
-     % sudo systemctl enable groonga-httpd
-
-   For groonga-server-gqtp:
-
-     % sudo systemctl enable groonga-server-gqtp
 
 Build from source
 -----------------

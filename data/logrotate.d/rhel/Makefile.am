@@ -1,4 +1,4 @@
-logrotate_conf = groonga-server-gqtp groonga-server-http groonga-httpd
+logrotate_conf = groonga-server-gqtp groonga-server-http
 
 if RHEL_PLATFORM
 logrotatedir = $(sysconfdir)/logrotate.d

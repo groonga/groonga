@@ -173,22 +173,6 @@ Description: Commands for Groonga
  .
  This package provides 'groonga' command.
 
-Package: groonga-httpd
-Architecture: any
-Replaces: groonga (<< 1.2.0-1), groonga-server-http (<< 4.0.8-1)
-Breaks: groonga (<< 1.2.0-1), groonga-server-http (<< 4.0.8-1)
-Depends:
-  ${misc:Depends},
-  ${shlibs:Depends},
-  curl,
-  lsb-base,
-  groonga-server-common (= ${source:Version})
-Description: Groonga HTTP server
- Groonga is an open-source fulltext search engine and column store.
- It lets you write high-performance applications that requires fulltext search.
- .
- This package provides 'groonga-httpd' command.
-
 Package: groonga-doc
 Section: doc
 Architecture: all

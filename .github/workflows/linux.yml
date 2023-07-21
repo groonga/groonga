@@ -407,18 +407,6 @@ jobs:
             --interface=http \
             --use-http-chunked \
             test/command/suite
-      - name: "Test: HTTP: groonga-httpd"
-        run: |
-          if type groonga-httpd; then
-            mkdir -p $PWD/install/var/log/groonga/httpd/
-            grntest \
-              --base-dir test/command \
-              --n-retries=3 \
-              --read-timeout=30 \
-              --reporter=mark \
-              --testee groonga-httpd \
-              test/command/suite
-          fi
       - name: "Test: HTTP: reference count"
         run: |
           export GRN_ENABLE_REFERENCE_COUNT=yes

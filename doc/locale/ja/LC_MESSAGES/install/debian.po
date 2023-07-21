@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2019-09-26 09:22+0900\n"
+"PO-Revision-Date: 2023-07-21 17:25+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -58,21 +58,6 @@ msgstr "MySQL互換のノーマライザーをGroongaのプラグインとして
 msgid "Install groonga-normalizer-mysql package::"
 msgstr "groonga-normalizer-mysqlパッケージのインストール::"
 
-msgid "If you use systemd as init, current version of Groonga does not support to register start-up service automatically during installation. If you want to register groonga-httpd/groonga-server-gqtp as a automatic start-up service, please execute the following commands:"
-msgstr "Systemdをinitとして使っている場合、現在のバージョンのGroongaは自動起動サービスとしてインストール時に登録できません。groonga-httpdやgroonga-server-gqtpを自動起動サービスとして登録するには以下のコマンドを実行してください:"
-
-msgid "For groonga-httpd:"
-msgstr "groonga-httpd向け:"
-
-msgid "% sudo systemctl enable groonga-httpd"
-msgstr ""
-
-msgid "For groonga-server-gqtp:"
-msgstr "groonga-server-gtqp向け:"
-
-msgid "% sudo systemctl enable groonga-server-gqtp"
-msgstr ""
-
 msgid "bullseye"
 msgstr ""
 
@@ -97,11 +82,12 @@ msgstr "``groonga`` パッケージは全文検索のための最小構成パッ
 msgid "There are two packages for server use."
 msgstr "サーバー用途のための2つのパッケージがあります。"
 
-msgid "groonga-httpd (nginx and HTTP protocol based server package)"
-msgstr "groonga-httpd (nginxを元にしたHTTPサーバー)"
+msgid ":doc:`/reference/executables/groonga-server-http` (HTTP based server package)"
+msgstr ""
+":doc:`/reference/executables/groonga-server-http` （HTTPベースのサーバーパッケージ）\n"
 
-msgid "groonga-server-gqtp (GQTP protocol based server package)"
-msgstr "groonga-server-gqtp (GQTPサーバー)"
+msgid "groonga-server-gqtp (GQTP based server package)"
+msgstr "groonga-server-gqtp （GQTPベースのサーバーパッケージ）"
 
 msgid "See :doc:`/server` section about details."
 msgstr "詳細は :doc:`/server` を参照してください。"

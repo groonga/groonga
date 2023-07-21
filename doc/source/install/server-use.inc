@@ -8,7 +8,7 @@
 
    There are two packages for server use.
 
-   * groonga-httpd (nginx and HTTP protocol based server package)
-   * groonga-server-gqtp (GQTP protocol based server package)
+   * :doc:`/reference/executables/groonga-server-http` (HTTP based server package)
+   * groonga-server-gqtp (GQTP based server package)
 
    See :doc:`/server` section about details.

@@ -13,9 +13,10 @@ are specified by ``--log-path`` or ``--query-log-path`` options.
 
 .. note::
 
-    This command only works when the number of worker processes is equal to 1.
-    Thus, it means that if you use ``groonga-httpd`` with 2 or more workers, you must use
-    ``groonga-httpd -s reopen`` instead.
+    This command only works when the number of worker processes is
+    equal to 1.  Thus, it means that if you use
+    :doc:`/reference/executables/groonga-httpd` with 2 or more
+    workers, you must use ``groonga-httpd -s reopen`` instead.
 
 Syntax
 ------

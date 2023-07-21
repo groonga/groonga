@@ -1588,33 +1588,6 @@ AC_ARG_WITH(groonga-org-path,
             [GROONGA_ORG_PATH=""])
 AC_SUBST(GROONGA_ORG_PATH)
 
-# groonga-httpd
-NGINX_VERSION=m4_include([nginx_version])
-AC_SUBST(NGINX_VERSION)
-
-# groonga-httpd binary path
-GROONGA_HTTPD="${ac_pwd}/vendor/nginx-${NGINX_VERSION}/objs/nginx"
-AC_SUBST(GROONGA_HTTPD)
-
-AC_ARG_ENABLE(groonga_httpd,
-  [AS_HELP_STRING([--enable-groonga-httpd],
-    [enable nginx used for groonga-httpd. [default=yes]])],
-  [enable_groonga_httpd="$enableval"],
-  [enable_groonga_httpd="yes"])
-if test "x$enable_groonga_httpd" != "xno"; then
-  enable_groonga_httpd="yes"
-  AC_CONFIG_SUBDIRS([src/httpd])
-else
-  enable_groonga_httpd="no"
-fi
-AM_CONDITIONAL(WITH_GROONGA_HTTPD, test "$enable_groonga_httpd" = "yes")
-
-GROONGA_HTTPD_PID_PATH="`
-  test \"$prefix\" = NONE && prefix=/usr/local
-  eval echo ${localstatedir}/run/groonga/groonga-httpd.pid
-`"
-AC_SUBST(GROONGA_HTTPD_PID_PATH)
-
 # mruby
 AC_ARG_ENABLE(mruby,
   [AS_HELP_STRING([--enable-mruby],
@@ -1696,54 +1669,6 @@ AC_SUBST(ONIGMO_CFLAGS)
 AC_SUBST(ONIGMO_LIBS)
 AM_CONDITIONAL(WITH_BUNDLED_ONIGMO, test "$with_onigmo" != "no" -a "x$have_onigmo" != "xyes")
 
-# PCRE
-GRN_WITH_PCRE=no
-AC_ARG_WITH(pcre,
-  [AS_HELP_STRING([--without-pcre],
-    [Don't use PCRE for groonga-httpd. [default=auto-detect]])],
-  [with_pcre="$withval"],
-  [with_pcre="auto"])
-if test "x$with_pcre" != "xno"; then
-  m4_ifdef([PKG_CHECK_MODULES], [
-    PKG_CHECK_MODULES([PCRE], [libpcre],
-      [_PKG_CONFIG(PCRE_LIBS_ONLY_L, [libs-only-L], [libpcre])
-       PCRE_LIBS_ONLY_L="$pkg_cv_PCRE_LIBS_ONLY_L"
-       GRN_WITH_PCRE=yes],
-      [GRN_WITH_PCRE=no])
-    ],
-    [GRN_WITH_PCRE=no])
-  if test "x$with_pcre" = "xyes" -a "$GRN_WITH_PCRE" != "yes"; then
-    AC_MSG_ERROR("No PCRE found")
-  fi
-fi
-AC_SUBST(GRN_WITH_PCRE)
-AC_SUBST(PCRE_CFLAGS)
-AC_SUBST(PCRE_LIBS_ONLY_L)
-
-# SSL
-GRN_WITH_SSL=no
-AC_ARG_WITH(ssl,
-  [AS_HELP_STRING([--without-ssl],
-    [Don't use SSL module for groonga-httpd. [default=auto-detect]])],
-  [with_ssl="$withval"],
-  [with_ssl="auto"])
-if test "x$with_ssl" != "xno"; then
-  m4_ifdef([PKG_CHECK_MODULES], [
-    PKG_CHECK_MODULES([SSL], [libssl],
-      [_PKG_CONFIG(SSL_LIBS_ONLY_L, [libs-only-L], [libssl])
-       SSL_LIBS_ONLY_L="$pkg_cv_SSL_LIBS_ONLY_L"
-       GRN_WITH_SSL=yes],
-      [GRN_WITH_SSL=no])
-    ],
-    [GRN_WITH_SSL=no])
-  if test "x$with_ssl" = "xyes" -a "$GRN_WITH_SSL" != "yes"; then
-    AC_MSG_ERROR("No SSL found")
-  fi
-fi
-AC_SUBST(GRN_WITH_SSL)
-AC_SUBST(SSL_CFLAGS)
-AC_SUBST(SSL_LIBS_ONLY_L)
-
 # For package
 AC_ARG_WITH(rsync-path,
             [AS_HELP_STRING([--with-rsync-path=PATH],
@@ -1782,18 +1707,6 @@ GRN_CONFIG_PATH="`
 AC_DEFINE_UNQUOTED(GRN_CONFIG_PATH, ["$GRN_CONFIG_PATH"],
   [Default command line option configuration file.])
 
-GROONGA_HTTPD_DOCUMENT_ROOT="`
-  test \"$prefix\" = NONE && prefix=/usr/local
-  eval eval eval echo ${GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT}
-`"
-AC_SUBST(GROONGA_HTTPD_DOCUMENT_ROOT)
-
-GROONGA_HTTPD_DEFAULT_DATABASE_PATH="`
-  test \"$prefix\" = NONE && prefix=/usr/local
-  eval eval eval echo ${localstatedir}/lib/${PACKAGE}/db/db
-`"
-AC_SUBST(GROONGA_HTTPD_DEFAULT_DATABASE_PATH)
-
 AC_CONFIG_FILES([
   Makefile
   benchmark/Makefile
@@ -1805,17 +1718,12 @@ AC_CONFIG_FILES([
   config.sh
   cmake/Makefile
   data/Makefile
-  data/groonga-httpd.conf
   data/html/Makefile
   data/logrotate.d/Makefile
   data/logrotate.d/rhel/Makefile
-  data/logrotate.d/rhel/groonga-httpd
   data/munin/Makefile
-  data/scripts/Makefile
-  data/scripts/groonga-httpd-restart
   data/systemd/Makefile
   data/systemd/rhel/Makefile
-  data/systemd/rhel/groonga-httpd.service
   data/systemd/rhel/sysconfig/Makefile
   data/tmpfiles.d/Makefile
   doc/Makefile
@@ -1831,7 +1739,6 @@ AC_CONFIG_FILES([
   examples/dictionary/gene95/Makefile
   examples/dictionary/jmdict/Makefile
   groonga-arrow.pc
-  groonga-httpd-conf.sh
   groonga.pc
   include/Makefile
   include/groonga/Makefile
@@ -1861,7 +1768,6 @@ AC_CONFIG_FILES([
   plugins/token_filters/Makefile
   plugins/tokenizers/Makefile
   src/Makefile
-  src/httpd/Makefile
   src/suggest/Makefile
   test/Makefile
   test/command/Makefile
@@ -1988,23 +1894,6 @@ if test "x$GRN_WITH_XXHASH" = "xyes"; then
 fi
 echo "  mruby:                 $enable_mruby"
 echo "  jemalloc:              $jemalloc_available"
-echo
-
-echo "groonga-httpd:"
-echo "  enable:                $enable_groonga_httpd"
-if test "$enable_groonga_httpd" = "yes"; then
-  echo "  default database path: $GROONGA_HTTPD_DEFAULT_DATABASE_PATH"
-  echo "  PCRE:                  $GRN_WITH_PCRE"
-  if test "$GRN_WITH_PCRE" = "yes"; then
-    echo "    CFLAGS:              $PCRE_CFLAGS"
-    echo "    LIBS only -L:        $PCRE_LIBS_ONLY_L"
-  fi
-  echo "   SSL:                  $GRN_WITH_SSL"
-  if test "$GRN_WITH_SSL" = "yes"; then
-    echo "    CFLAGS:              $SSL_CFLAGS"
-    echo "    LIBS only -L:        $SSL_LIBS_ONLY_L"
-  fi
-fi
 echo
 
 echo "Tools:"

@@ -4,6 +4,12 @@
 groonga-httpd
 =============
 
+.. warning::
+
+   groonga-httpd has been extracted as `groonga-nginx
+   <https://github.com/groonga/groonga-nginx>`_ since Groonga
+   13.0.3.
+
 Summary
 -------
 

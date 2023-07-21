@@ -107,7 +107,6 @@ if [ "${run_test}" = "yes" ]; then
 
   grntest "${grntest_options[@]}"
   grntest "${grntest_options[@]}" --interface http
-  grntest "${grntest_options[@]}" --interface http --testee groonga-httpd
 fi
 
 # Should not block system update

@@ -1,5 +1,4 @@
 data =						\
-	groonga-httpd				\
 	groonga-server-http			\
 	groonga-server-gqtp
 

@@ -102,17 +102,6 @@ Requires(pre):	shadow-utils
 %description server-http
 This package contains the Groonga HTTP server
 
-%package httpd
-Summary:	Groonga HTTP server based on nginx
-Group:		Applications/Text
-License:	LGPLv2 and BSD
-Requires:	%{name}-server-common = %{version}-%{release}
-%systemd_requires
-
-%description httpd
-This package contains the Groonga HTTP server. It has
-many features because it is based on nginx HTTP server.
-
 %package doc
 Summary:	Documentation for Groonga
 Group:		Documentation
@@ -214,12 +203,6 @@ cat <<EOC > $RPM_BUILD_ROOT%{_sysconfdir}/munin/plugin-conf.d/groonga
   env.http_pid_path %{_rundir}/groonga/groonga-http.pid
   env.http_query_log_path %{_localstatedir}/log/groonga/query-http.log
 
-  env.httpd_host 127.0.0.1
-  env.httpd_port 10041
-  env.httpd_database_path %{_localstatedir}/lib/groonga/db/db
-  env.httpd_pid_path %{_rundir}/groonga/groonga-httpd.pid
-  env.httpd_query_log_path %{_localstatedir}/log/groonga/httpd/groonga-query.log
-
   env.gqtp_host 127.0.0.1
   env.gqtp_port 10043
   env.gqtp_database_path %{_localstatedir}/lib/groonga/db/db
@@ -252,15 +235,6 @@ exit 0
 %post server-http
 %systemd_post groonga-server-http.service
 
-%post httpd
-if [ $1 = 1 ] ; then
-	mkdir -p %{_localstatedir}/log/groonga/httpd
-	chown -R groonga:groonga %{_localstatedir}/log/groonga/httpd
-%systemd_post groonga-httpd.service
-elif [ $1 = 2 ] ; then
-	/usr/sbin/groonga-httpd-restart > /dev/null 2>&1 || :
-fi
-
 %post libs -p /sbin/ldconfig
 
 %post munin-plugins
@@ -278,12 +252,6 @@ fi
 
 %postun server-http
 %systemd_postun groonga-server-http.service
-
-%preun httpd
-%systemd_preun groonga-httpd.service
-
-%postun httpd
-%systemd_postun groonga-httpd.service
 
 %postun libs -p /sbin/ldconfig
 
@@ -372,18 +340,6 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/groonga-server-http
 %config(noreplace) %{_sysconfdir}/logrotate.d/groonga-server-http
 %{_unitdir}/groonga-server-http.service
-%ghost %dir %{_localstatedir}/run/%{name}
-%attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
-%attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db
-
-%files httpd
-%defattr(-,root,root,-)
-%config(noreplace) %{_sysconfdir}/groonga/httpd/*
-%config(noreplace) %{_sysconfdir}/sysconfig/groonga-httpd
-%config(noreplace) %{_sysconfdir}/logrotate.d/groonga-httpd
-%{_unitdir}/groonga-httpd.service
-%{_sbindir}/groonga-httpd
-%{_sbindir}/groonga-httpd-restart
 %ghost %dir %{_localstatedir}/run/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}
 %attr(0750,groonga,groonga) %dir %{_localstatedir}/lib/%{name}/db

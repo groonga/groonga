@@ -3,4 +3,5 @@
 groonga-httpd
 =============
 
-TODO
+See :doc:`/reference/executables/groonga-httpd`.
+

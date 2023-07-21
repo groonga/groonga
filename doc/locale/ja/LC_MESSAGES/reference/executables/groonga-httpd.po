@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2022-02-09 09:45+0900\n"
+"PO-Revision-Date: 2023-07-21 17:28+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -20,6 +20,9 @@ msgstr "実行例::"
 
 msgid "groonga-httpd"
 msgstr ""
+
+msgid "groonga-httpd has been extracted as `groonga-nginx <https://github.com/groonga/groonga-nginx>`_ since Groonga 13.0.3."
+msgstr "Groonga 13.0.3からgroonga-httpdは `groonga-nginx <https://github.com/groonga/groonga-nginx>`_ に切り出されました。"
 
 msgid "Summary"
 msgstr "概要"

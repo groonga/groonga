@@ -31,7 +31,6 @@ EXTRA_DIST =					\
 	bundled_xxhash_version			\
 	config.h.cmake.in			\
 	gpg_uid					\
-	nginx_version				\
 	version-gen.sh
 pkgdata_DATA = COPYING
 
@@ -107,10 +106,3 @@ update-files:
 
 update-mruby:
 	cd vendor/mruby && make update
-
-update-nginx:
-	@if test -z "$(NEW_NGINX_VERSION)"; then	\
-	  echo "\$$(NEW_NGINX_VERSION) is missing";	\
-	  exit 1;					\
-	fi
-	cd $(top_srcdir)/vendor && ./update_nginx.sh $(NEW_NGINX_VERSION)

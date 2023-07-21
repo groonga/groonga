@@ -1,5 +1,5 @@
-# Copyright(C) 2017 Brazil
-# Copyright(C) 2019 Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2017  Brazil
+# Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,8 +14,6 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-NGINX_DIR = nginx-$(NGINX_VERSION)
-
 SUBDIRS =					\
 	lz4					\
 	onigmo					\
@@ -25,7 +23,6 @@ SUBDIRS =					\
 	groonga-log
 
 EXTRA_DIST =					\
-	$(NGINX_DIR)				\
 	CMakeLists.txt				\
 	plugins/CMakeLists.txt			\
 	download_groonga_normalizer_mysql.rb	\
@@ -36,7 +33,6 @@ EXTRA_DIST =					\
 	download.rb
 
 dist-hook:
-	rm -rf $(distdir)/$(NGINX_DIR)/objs/
 	GIT_DIR=$(srcdir)/mruby-source/.git git archive --format=tar HEAD | \
 	  tar xf - -C $(distdir)/mruby-source
 	$(MKDIR_P) $(distdir)/mruby-source/build

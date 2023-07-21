@@ -19,5 +19,5 @@ msgstr ""
 msgid "groonga"
 msgstr ""
 
-msgid "TODO"
+msgid "See :doc:`/reference/executables/groonga-server-http`."
 msgstr ""
