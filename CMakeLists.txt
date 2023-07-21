@@ -983,5 +983,5 @@ if(GRN_WITH_MUNIN_PLUGINS)
              data/munin/groonga_query_performance_
              data/munin/groonga_disk_
              data/munin/groonga_throughput_
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/${PACKAGE}/munin/plugins)
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}/munin/plugins)
 endif()
