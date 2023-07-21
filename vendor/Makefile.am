@@ -42,9 +42,6 @@ dist-hook:
 	  tar xf - -C $(distdir)/onigmo-source
 	cd $(distdir)/onigmo-source && autoreconf --install --force
 	cd $(distdir)/onigmo-source && sleep 1 && touch config.h.in
-	$(MKDIR_P) $(distdir)/ngx_mruby-source
-	GIT_DIR=$(srcdir)/ngx_mruby-source/.git git archive --format=tar HEAD | \
-	  tar xf - -C $(distdir)/ngx_mruby-source
 	$(MKDIR_P) $(distdir)/groonga-log-source
 	GIT_DIR=$(srcdir)/groonga-log-source/.git git archive --format=tar HEAD | \
 	  tar xf - -C $(distdir)/groonga-log-source
