@@ -15,12 +15,18 @@ DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure			\
-	  --buildsystem=cmake+ninja		\
-	  --					\
-	  -DGRN_WITH_DOC=ON			\
-	  -DGRN_WITH_EXAMPLES=ON		\
-	  -DGRN_WITH_MRUBY=ON			\
+	if dpkg -l libarrow-dev > /dev/null 2>&1; then		\
+	  GRN_WITH_APACHE_ARROW=ON;				\
+	else							\
+	  GRN_WITH_APACHE_ARROW=OFF;				\
+	fi;							\
+	dh_auto_configure					\
+	  --buildsystem=cmake+ninja				\
+	  --							\
+	  -DGRN_WITH_APACHE_ARROW=$${GRN_WITH_APACHE_ARROW}	\
+	  -DGRN_WITH_DOC=ON					\
+	  -DGRN_WITH_EXAMPLES=ON				\
+	  -DGRN_WITH_MRUBY=ON					\
 	  -DGRN_WITH_MUNIN_PLUGINS=ON
 
 # disable 'make check'.
