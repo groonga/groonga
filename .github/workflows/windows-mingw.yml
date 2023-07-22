@@ -39,6 +39,7 @@ jobs:
           update: true
           install: >-
             ${{ matrix.package-prefix }}-toolchain
+            ${{ matrix.package-prefix }}-ruby
             base-devel
             binutils
             git
@@ -56,7 +57,7 @@ jobs:
         run: |
           set -ex
           version=$(cat base_version)
-          ./build-archive.sh
+          rake dist
           mv groonga-${version}.tar.gz ci/msys2/
           cd ci/msys2
           sed -i'' -e "s/^pkgver=/pkgver=${version}/" PKGBUILD
@@ -97,7 +98,6 @@ jobs:
       - name: Install grntest
         shell: msys2 {0}
         run: |
-          pacman --sync --needed --noconfirm ${{ matrix.package-prefix }}-ruby
           # Ensure using the installed system libffi
           gem install fiddle
           gem install bundler

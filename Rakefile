@@ -17,6 +17,26 @@
 
 require "tmpdir"
 
+def package
+  "groonga"
+end
+
+def version
+  ENV["VERSION"] || File.read("base_version")
+end
+
+def base_name
+  "#{package}-#{version}"
+end
+
+def archive_format
+  "tar.gz"
+end
+
+def archive_name
+  "#{base_name}.#{archive_format}"
+end
+
 def env_var(name)
   value = ENV[name]
   raise "${#{name}} is missing" if value.nil?
@@ -97,6 +117,39 @@ namespace :dev do
     end
   end
 end
+
+dist_files = `git ls-files`.split("\n").reject do |file|
+  file.start_with?("packages/")
+end
+
+file archive_name => dist_files do
+  sh("git",
+     "archive",
+     "--format=tar",
+     "--output=#{base_name}.tar",
+     "--prefix=#{base_name}/",
+     "HEAD")
+  sh("git",
+     "submodule",
+     "foreach",
+     "--recursive",
+     "git " +
+     "archive " +
+     "--prefix=#{base_name}/${sm_path}/ " +
+     "--output=$(basename ${sm_path}).tar " +
+     "HEAD " +
+     "&& " +
+     "tar " +
+     "--concatenate " +
+     "--file=#{Dir.pwd}/#{base_name}.tar " +
+     "$(basename ${sm_path}).tar " +
+     "&& " +
+     "rm $(basename ${sm_path}).tar")
+  sh("gzip", "--force", "#{base_name}.tar")
+end
+
+desc "Create archive"
+task dist: archive_name
 
 namespace :release do
   namespace :version do
