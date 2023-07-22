@@ -141,7 +141,7 @@ file archive_name => dist_files do
      "&& " +
      "tar " +
      "--concatenate " +
-     "--file=#{Dir.pwd}/#{base_name}.tar " +
+     "--file=${toplevel}/#{base_name}.tar " +
      "$(basename ${sm_path}).tar " +
      "&& " +
      "rm $(basename ${sm_path}).tar")
