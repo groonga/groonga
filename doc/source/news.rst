@@ -7,13 +7,40 @@ News
 
 .. _release-13-0-3:
 
-Release 13.0.3 - 2023-07-29
+Release 13.0.3 - 2023-07-24
 ---------------------------
 
 Improvements
 ^^^^^^^^^^^^
 
-* [Packaging] Use CMake when we build packages for Debian.
+* [:doc:`/reference/executable/groonga-httpd`] Extracted to
+  `groonga-nginx <https://github.com/groonga/groonga-nginx>`_ . We
+  stopped providing the ``groonga-httpd`` package.
+
+  If you're an user of Debian GNU/Linux 12+ or Ubuntu 23.10+, you can
+  use the ``libnginx-mod-http-groonga`` package with the default
+  ``nginx`` package. See `groonga-nginx's README
+  <https://github.com/groonga/groonga-nginx#readme>` for details.
+
+  If you're an user of old Debian/Ubuntu or RHEL related
+  distributions, you can't use any ``groonga-httpd`` equivalent
+  package. You can use
+  :doc:`/reference/executable/groonga-server-http` instead. If
+  :doc:`/reference/executable/groonga-server-http` isn't suitable for
+  your use case, please report it to `Discussions
+  <https://github.com/groonga/groonga/discussions>`_ with your use
+  case.
+
+* [:doc:`/install/ubuntu`] Added support for Ubuntu 23.10 (Mantic Minotaur).
+
+* [:doc:`/install/debian`] Enabled xxHash support.
+
+* [:doc:`/install/ubuntu`] Enabled xxHash support.
+
+Fixes
+^^^^^
+
+* Fixed a bug that the source archive can't be built with CMake.
 
 .. _release-13-0-2:
 
