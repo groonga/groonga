@@ -1024,7 +1024,6 @@ set(GRN_DOC_SOURCES
     install/cmake.rst
     install/debian.rst
     install/docker.rst
-    install/fedora.rst
     install/mac_os_x.rst
     install/oracle-linux.rst
     install/others.rst

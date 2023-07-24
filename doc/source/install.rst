@@ -24,7 +24,6 @@ size data.
    install/almalinux
    install/oracle-linux
    install/amazon_linux
-   install/fedora
    install/solaris
    install/docker
    install/others
