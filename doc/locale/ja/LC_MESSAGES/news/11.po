@@ -25,14 +25,14 @@ msgstr "11.1.3リリース - 2022-01-29"
 msgid "Improvements"
 msgstr "改良"
 
-msgid "[:doc:`reference/functions/snippet`] Added support for using the keyword of 32 or more. [GitHub#1313][Pathched by Takashi Hashida]"
-msgstr "[:doc:`reference/functions/snippet`] 32個以上のキーワードを使えるようにしました。 [GitHub#1313][Takashi Hashidaさんがパッチ提供]"
+msgid "[:doc:`/reference/functions/snippet`] Added support for using the keyword of 32 or more. [GitHub#1313][Pathched by Takashi Hashida]"
+msgstr "[:doc:`/reference/functions/snippet`] 32個以上のキーワードを使えるようにしました。 [GitHub#1313][Takashi Hashidaさんがパッチ提供]"
 
 msgid "We could not specify the keyword of 32 or more with ``snippet`` until now. However, we can specify the keyword of 32 or more by this improvement as below."
 msgstr "いままで、 ``snippet`` は32個以上のキーワードを指定できませんでしたが、この改良によって、以下のように32個以上のキーワードを指定できます。"
 
-msgid "[:doc:`reference/normalizers/normalizer_nfkc130`] Added a new option ``remove_symbol``."
-msgstr "[:doc:`reference/normalizers/normalizer_nfkc130`] 新しいオプション ``remove_symbol`` を追加しました。"
+msgid "[:doc:`/reference/normalizers/normalizer_nfkc130`] Added a new option ``remove_symbol``."
+msgstr "[:doc:`/reference/normalizers/normalizer_nfkc130`] 新しいオプション ``remove_symbol`` を追加しました。"
 
 msgid "This option removes symbols (e.g. #, !, \", &, %, ...) from the string that the target of normalizing as below."
 msgstr "このオプションは、以下のように正規化対象の文字列から記号(例えば #, !, \", &, % 等)を削除します。"
@@ -43,8 +43,8 @@ msgstr "[:doc:`/install/almalinux`] ARM64版 AlmaLinux 8 向けのパッケー�
 msgid "[httpd] Updated bundled nginx to 1.21.5."
 msgstr "[httpd] バンドルしているnginxのバージョンを1.21.5に更新しました。"
 
-msgid "[Documentation] Fixed a typo in :doc:`reference/commands/ruby_eval`. [GitHub#1317][Pathched by wi24rd]"
-msgstr "[Documentation] :doc:`reference/commands/ruby_eval` の誤記を修正しました。[GitHub#1317][wi24rdさんがパッチ提供]"
+msgid "[Documentation] Fixed a typo in :doc:`/reference/commands/ruby_eval`. [GitHub#1317][Pathched by wi24rd]"
+msgstr "[Documentation] :doc:`/reference/commands/ruby_eval` の誤記を修正しました。[GitHub#1317][wi24rdさんがパッチ提供]"
 
 msgid "[:doc:`/install/ubuntu`] Dropped Ubuntu 21.04 (Hirsute Hippo) support."
 msgstr "[:doc:`/install/ubuntu`] Ubuntu 21.04 (Hirsute Hippo)サポートをやめました。"
@@ -103,7 +103,7 @@ msgstr "shibanao4870さん"
 msgid "Release 11.1.1 - 2021-12-29"
 msgstr "11.1.1リリース - 2021-12-29"
 
-msgid "[:doc:`reference/commands/select`] Added support for near phrase product search."
+msgid "[:doc:`/reference/commands/select`] Added support for near phrase product search."
 msgstr "[:doc:`/reference/commands/select`] 組み合わせフレーズ近傍検索をサポートしました。"
 
 msgid "This feature is a shortcut of ``'*NP\"...\" OR *NP\"...\" OR ...'``. For example, we can use ``*NPP`` instead of the expression that execute mulitiple ``*NP`` with ``query`` as below."
@@ -115,7 +115,7 @@ msgstr "この機能によって、上記の式を ``*NPP\"(a b) (1 2 3) (x y z)
 msgid "We implements this feature for improving performance near phrase search like ``'*NP\"...\" OR *NP\"...\" OR ...'``."
 msgstr "この機能は、 ``'*NP\"...\" OR *NP\"...\" OR ...'`` のような近傍フレーズ検索のパフォーマンスを改善するために実装されました。"
 
-msgid "[:doc:`reference/commands/select`] Added support for order near phrase product search."
+msgid "[:doc:`/reference/commands/select`] Added support for order near phrase product search."
 msgstr "[:doc:`/reference/commands/select`] 順序付き組み合わせフレーズ近傍検索をサポートしました。"
 
 msgid "This feature is a shortcut of ``'*ONP\"...\" OR *ONP\"...\" OR ...'``. For example, we can use ``*ONPP`` instead of the expression that execute multiple ``*ONP`` with ``query`` as below."
@@ -134,7 +134,7 @@ msgid "Because we added more checks of return code to detect ``request_cancel``.
 msgstr "``request_cancel`` を検知するために、リターンコードのチェックを増やしたためです。"
 
 msgid "[:doc:`/reference/commands/thread_dump`] Added a new command ``thread_dump``"
-msgstr "[:doc:`reference/commands/thread_dump`] 新しいコマンド ``thread_dump`` を追加しました。"
+msgstr "[:doc:`/reference/commands/thread_dump`] 新しいコマンド ``thread_dump`` を追加しました。"
 
 msgid "Currently, this command works only on Windows."
 msgstr "現状、このコマンドはWindowsでしか動作しません。"
@@ -178,8 +178,8 @@ msgstr ""
 msgid "We can also use ``t`` and ``z`` characters instead of ``T`` and ``Z`` in this syntax. We can also use ``/`` character instead of ``-`` in this syntax. However, note that this is not an ISO 8601 format. This format is present for compatibility."
 msgstr "この構文の ``T`` と ``Z`` の代わりに ``t`` と ``z`` を使うこともできます。``-`` の代わりに ``/`` を使うこともできます。ただし、 ``/`` は、ISO 8601 形式ではないことに注意してください。``/`` は互換性のためにサポートしています。"
 
-msgid "[:doc:`reference/commands/select`] Added a new ``query_flags`` ``DISABLE_PREFIX_SEARCH``."
-msgstr "[:doc:`reference/commands/select`] 新しい ``query_flags`` ``DISABLE_PREFIX_SEARCH`` を追加しました。"
+msgid "[:doc:`/reference/commands/select`] Added a new ``query_flags`` ``DISABLE_PREFIX_SEARCH``."
+msgstr "[:doc:`/reference/commands/select`] 新しい ``query_flags`` ``DISABLE_PREFIX_SEARCH`` を追加しました。"
 
 msgid "We can use the prefix search operators ``^`` and ``*`` as search keywords by ``DISABLE_PREFIX_SEARCH`` as below."
 msgstr "以下のように、``DISABLE_PREFIX_SEARCH`` によって、前方一致検索の演算子の ``^`` と ``*`` を検索キーワードとして使えます。"
@@ -187,8 +187,8 @@ msgstr "以下のように、``DISABLE_PREFIX_SEARCH`` によって、前方一�
 msgid "This feature is useful if we want to search documents including ``^`` and ``*``."
 msgstr "この機能は、 ``^`` や ``*`` を含むドキュメントを検索したい時に便利です。"
 
-msgid "[:doc:`reference/commands/select`] Added a new ``query_flags`` ``DISABLE_AND_NOT``."
-msgstr "[:doc:`reference/commands/select`] 新しい ``query_flags`` ``DISABLE_AND_NOT`` を追加しました。"
+msgid "[:doc:`/reference/commands/select`] Added a new ``query_flags`` ``DISABLE_AND_NOT``."
+msgstr "[:doc:`/reference/commands/select`] 新しい ``query_flags`` ``DISABLE_AND_NOT`` を追加しました。"
 
 msgid "We can use ``AND NOT`` operators ``-`` as search keywords by ``DISABLE_AND_NOT`` as below."
 msgstr "以下のように、 ``DISABLE_AND_NOT`` によって、 ``AND NOT`` の演算子の ``-`` を検索キーワードとして使えます。"
@@ -202,25 +202,25 @@ msgstr "[ブラウザーベースの管理ツール] レコード一覧の管理
 msgid "Release 11.0.9 - 2021-11-04"
 msgstr "11.0.9リリース - 2021-11-04"
 
-msgid "[:doc:`reference/functions/snippet`] Added a new option ``delimiter_regexp`` for detecting snippet delimiter with regular expression."
-msgstr "[:doc:`reference/functions/snippet`] 正規表現を使ってスニペットの区切り文字を見つける新しいオプション ``delimiter_regexp`` を追加しました。"
+msgid "[:doc:`/reference/functions/snippet`] Added a new option ``delimiter_regexp`` for detecting snippet delimiter with regular expression."
+msgstr "[:doc:`/reference/functions/snippet`] 正規表現を使ってスニペットの区切り文字を見つける新しいオプション ``delimiter_regexp`` を追加しました。"
 
-msgid ":doc:`reference/functions/snippet` extracts text around search keywords. We call the text that is extracted by :doc:`reference/functions/snippet` snippet."
-msgstr ":doc:`reference/functions/snippet` は、検索キーワードの周辺のテキストを抽出します。 :doc:`reference/functions/snippet` で抽出したテキストをスニペットと呼びます。"
+msgid ":doc:`/reference/functions/snippet` extracts text around search keywords. We call the text that is extracted by :doc:`/reference/functions/snippet` snippet."
+msgstr ":doc:`/reference/functions/snippet` は、検索キーワードの周辺のテキストを抽出します。 :doc:`/reference/functions/snippet` で抽出したテキストをスニペットと呼びます。"
 
-msgid "Normally, :doc:`reference/functions/snippet` () returns the text of 200 bytes around search keywords. However, :doc:`reference/functions/snippet` () gives no thought to a delimiter of sentences. The snippet may be composed of multi sentences."
-msgstr "通常、 :doc:`reference/functions/snippet` は、検索キーワードの周辺の200byteのテキストを返しますが、 :doc:`reference/functions/snippet` は、センテンスの区切りを考慮しません。スニペットは、複数のセンテンスで構成されることがあります。"
+msgid "Normally, :doc:`/reference/functions/snippet` () returns the text of 200 bytes around search keywords. However, :doc:`/reference/functions/snippet` () gives no thought to a delimiter of sentences. The snippet may be composed of multi sentences."
+msgstr "通常、 :doc:`/reference/functions/snippet` は、検索キーワードの周辺の200byteのテキストを返しますが、 :doc:`/reference/functions/snippet` は、センテンスの区切りを考慮しません。スニペットは、複数のセンテンスで構成されることがあります。"
 
 msgid "``delimiter_regexp`` option is useful if we want to only extract the text of the same sentence as search keywords. For example, we can use ``\\.\\s*`` to extract only text in the target sentence as below. Note that you need to escape ``\\`` in string."
 msgstr "``delimiter_regexp`` オプションは、検索キーワードと同じセンテンスのテキストのみを抽出したいときに便利です。例えば、以下のように、 ``\\.\\s*`` を使って対象のセンテンス内のテキストのみを抽出できます。文字列は、 ``\\`` でエスケープする必要があることに注意してください。"
 
-msgid "[:doc:`reference/window_functions/window_rank`] Added a new function ``window_rank()``."
-msgstr "[:doc:`reference/window_functions/window_rank`] 新しい関数 ``window_rank()`` を追加しました。"
+msgid "[:doc:`/reference/window_functions/window_rank`] Added a new function ``window_rank()``."
+msgstr "[:doc:`/reference/window_functions/window_rank`] 新しい関数 ``window_rank()`` を追加しました。"
 
 msgid "We can calculate a rank that includes a gap of each record. Normally, the rank isn’t incremented when multiple records that are the same order. For example, if values of sort keys are 100, 100, 200 then the ranks of them are 1, 1, 3. The rank of the last record is 3 not 2 because there are two 1 rank records."
 msgstr "ギャップを含む各レコードの順位を計算できます。通常、順位は、複数のレコードが同じ順位の時は増加しません。例えば、ソートキーの値が 100、 100、 200の場合、これらの順位は 1、 1、 3です。1位のレコードが2つあるので、最後のレコードの順位は2ではなく3です。"
 
-msgid "This is similar to :doc:`reference/window_functions/window_record_number`. However, :doc:`reference/window_functions/window_record_number` gives no thought to gap."
+msgid "This is similar to :doc:`/reference/window_functions/window_record_number`. However, :doc:`/reference/window_functions/window_record_number` gives no thought to gap."
 msgstr "これは、 :doc:`/reference/window_functions/window_record_number` と似ていますが、 :doc:`/reference/window_functions/window_record_number` はギャップを考慮しません。"
 
 msgid "[:doc:`/reference/functions/in_values`] Added support for auto cast when we search tables."
@@ -295,17 +295,17 @@ msgstr "以前のバージョンでは、 \"[\\\"hello\\\", \\\"world\\\"]\" の
 msgid "[Documentation] Added a documentation about the following items."
 msgstr "[Documentation] 以下の項目についてのドキュメントを追加しました。"
 
-msgid "[:doc:`reference/commands/column_create`] Added a documentation about ``WEIGHT_FLOAT32`` flag."
+msgid "[:doc:`/reference/commands/column_create`] Added a documentation about ``WEIGHT_FLOAT32`` flag."
 msgstr "[:doc:`/reference/commands/column_create`] ``WEIGHT_FLOAT32`` フラグについてのドキュメントを追加しました。"
 
-msgid "[:doc:`reference/normalizers/normalizer_nfkc121`] Added a documentation about ``NormalizerNFKC121``."
-msgstr "[:doc:`reference/normalizers/normalizer_nfkc121`] ``NormalizerNFKC121`` についてのドキュメントを追加しました。"
+msgid "[:doc:`/reference/normalizers/normalizer_nfkc121`] Added a documentation about ``NormalizerNFKC121``."
+msgstr "[:doc:`/reference/normalizers/normalizer_nfkc121`] ``NormalizerNFKC121`` についてのドキュメントを追加しました。"
 
-msgid "[:doc:`reference/normalizers/normalizer_nfkc130`] Added a documentation about ``NormalizerNFKC130``."
-msgstr "[:doc:`reference/normalizers/normalizer_nfkc130`] ``NormalizerNFKC130`` についてのドキュメントを追加しました。"
+msgid "[:doc:`/reference/normalizers/normalizer_nfkc130`] Added a documentation about ``NormalizerNFKC130``."
+msgstr "[:doc:`/reference/normalizers/normalizer_nfkc130`] ``NormalizerNFKC130`` についてのドキュメントを追加しました。"
 
-msgid "[:doc:`reference/normalizers/normalizer_table`] Added a documentation about ``NormalizerTable``."
-msgstr "[:doc:`reference/normalizers/normalizer_table`] ``NormalizerTable`` についてのドキュメントを追加しました。"
+msgid "[:doc:`/reference/normalizers/normalizer_table`] Added a documentation about ``NormalizerTable``."
+msgstr "[:doc:`/reference/normalizers/normalizer_table`] ``NormalizerTable`` についてのドキュメントを追加しました。"
 
 msgid "Updated to 3.0.0 that the version of Apache Arrow that Groonga requires. [GitHub#1265][Patched by Takashi Hashida]"
 msgstr "Groongaが要求する Apache Arrow のバージョンを 3.0.0 に更新しました。[GitHub#1265][Takashi Hashidaさんがパッチ提供]"
@@ -352,13 +352,13 @@ msgstr "この機能によって、Groongaがクラッシュした時、Groonga�
 msgid "Groonga execute WAL (write ahead log) when this feature is enable. We can dump WAL by the following tools, but currently, users doesn't need to use them."
 msgstr "この機能が有効な時、GroongaはWAL(ログ先行書き込み)を実行します。以下のツールを使うことでWALをダンプできますが、現状これらをユーザーが使う必要はありません。"
 
-msgid "[:doc:`reference/executables/grndb`] ``dump-wal`` command."
+msgid "[:doc:`/reference/executables/grndb`] ``dump-wal`` command."
 msgstr "[:doc:`/reference/executables/grndb`] ``dump-wal`` コマンド"
 
 msgid "``dump-wal.rb`` scritp."
 msgstr "``dump-wal.rb`` スクリプト"
 
-msgid "[:doc:`reference/commands/cache_limit`] Groonga remove cache when we execute ``cache_limit 0``. [GitHub#1224][Reported by higchi]"
+msgid "[:doc:`/reference/commands/cache_limit`] Groonga remove cache when we execute ``cache_limit 0``. [GitHub#1224][Reported by higchi]"
 msgstr "[:doc:`/reference/commands/cache_limit`] ``cache_limit 0`` を実行したときにキャッシュを削除するようにしました。[GitHub#1224][higchiさんからの報告]"
 
 msgid "Groonga stores query cache to internally table. The maximum total size of keys of this table is 4GiB. Because this table is hash table. Therefore, If we execute many huge queries, Groonga may be unable to store query cache, because the maximum total size of keys may be over 4GiB. In such cases, We can clear the table for query cache by using ``cache_limit 0``, and Groonga can store query cache"
@@ -373,7 +373,7 @@ msgstr "同時期に複数のスレッドが同じオブジェクトをオープ
 msgid "However, this bug rarely happens. Because a time of a thread open the object is a very short time."
 msgstr "ただ、スレッドがオブジェクトを開く時間は非常に短いため、このバグは滅多に起こりません。"
 
-msgid "[:doc:`reference/functions/query_parallel_or`] Fixed a bug that result may be different from the ``query()``."
+msgid "[:doc:`/reference/functions/query_parallel_or`] Fixed a bug that result may be different from the ``query()``."
 msgstr "[:doc:`/reference/functions/query_parallel_or`] ``query()`` と結果が異なることがある問題を修正しました。"
 
 msgid "For example, If we used ``query(\"tags || tags2\", \"beginner man\")``, the following record was a match, but if we used ``query_parallel_or(\"tags || tags2\", \"beginner man\")``, the following record wasn't a match until now."
@@ -412,8 +412,8 @@ msgstr "具体的には以下の通りです。"
 msgid "Existing normalizers can't meet in such case, but we can meet it by combining ``NormalizerTable`` with existing normalizer since this release."
 msgstr "既存のノーマライザーでは、このようなケースには対応できませんでしたが、このリリースから既存のノーマライザーと ``NormalizerTable`` を組み合わせることで、このようなケースにも対応できます。"
 
-msgid "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for customizing thresholds for sequential search."
-msgstr "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] シーケンシャルサーチのしきい値をカスタマイズできるようにしました。"
+msgid "[:doc:`/reference/functions/query_parallel_or`][:doc:`/reference/functions/query`] Added support for customizing thresholds for sequential search."
+msgstr "[:doc:`/reference/functions/query_parallel_or`][:doc:`/reference/functions/query`] シーケンシャルサーチのしきい値をカスタマイズできるようにしました。"
 
 msgid "We can customize thresholds in each queries whether to use sequential search by the following options."
 msgstr "以下のオプションを使うことで、シーケンシャルサーチを使うかどうかのしきい値をクエリーごとにカスタマイズできます。"
@@ -460,13 +460,13 @@ msgstr "[:doc:`/reference/functions/between`] ``GRN_EXPR_OPTIMIZE=yes`` をサ�
 msgid "``between()`` supported for optimizing the order of evaluation of a conditional expression."
 msgstr "``between()`` で、条件式の評価順序の最適化をサポートしました。"
 
-msgid "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for specifying group of match_columns as vector. [GitHub#1238][Patched by naoa]"
-msgstr "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] match_columns を vector で指定できるようにしました。[GitHub#1238][naoaさんがパッチ提供]"
+msgid "[:doc:`/reference/functions/query_parallel_or`][:doc:`/reference/functions/query`] Added support for specifying group of match_columns as vector. [GitHub#1238][Patched by naoa]"
+msgstr "[:doc:`/reference/functions/query_parallel_or`][:doc:`/reference/functions/query`] match_columns を vector で指定できるようにしました。[GitHub#1238][naoaさんがパッチ提供]"
 
 msgid "We can use vector in ``match_columns`` of ``query`` and ``query_parallel_or`` as below."
 msgstr "以下のように、 ``query`` と ``query_parallel_or`` の ``match_columns`` に vector を使えます。"
 
-msgid "[:doc:`reference/commands/select`] Added support for section and weight in prefix search. [GitHub#1240][Patched by naoa]"
+msgid "[:doc:`/reference/commands/select`] Added support for section and weight in prefix search. [GitHub#1240][Patched by naoa]"
 msgstr "[:doc:`/reference/commands/select`] 前方一致検索でセクションと重みをサポートしました。[GitHub#1240][naoaさんがパッチ提供]"
 
 msgid "We can use multi column index and adjusting score in prefix search."
@@ -481,8 +481,8 @@ msgstr "これにより、メモリ消費を抑制できます。おそらくパ
 msgid "Note that ``grndb check`` doesn't close used objects immediately yet."
 msgstr "``grndb check`` はまだ、使用したオブジェクトを即時閉じないので注意してください。"
 
-msgid "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for specifying ``scorer_tf_idf`` in ``match_columns`` as below."
-msgstr "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] 以下のように、 ``match_columns`` に ``scorer_tf_idf`` を指定できるようにしました。"
+msgid "[:doc:`/reference/functions/query_parallel_or`][:doc:`/reference/functions/query`] Added support for specifying ``scorer_tf_idf`` in ``match_columns`` as below."
+msgstr "[:doc:`/reference/functions/query_parallel_or`][:doc:`/reference/functions/query`] 以下のように、 ``match_columns`` に ``scorer_tf_idf`` を指定できるようにしました。"
 
 msgid "[:doc:`/reference/commands/query_expand`] Added support for weighted increment, decrement, and negative."
 msgstr "[:doc:`/reference/commands/query_expand`] 展開後の語の重みを操作できるようにしました。"
@@ -508,8 +508,8 @@ msgstr "[:doc:`/install/ubuntu`] Ubuntu 20.10 (Groovy Gorilla)サポートをや
 msgid "Because Ubuntu 20.10 reached EOL July 22, 2021."
 msgstr "Ubuntu 20.10 は、2021年7月22日でEOLとなったためです。"
 
-msgid "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Fixed a bug that if we specify ``query_options`` and the other options, the other options are ignored."
-msgstr "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] ``query_options`` とその他のオプションを指定すると、その他のオプションが無視される問題を修正しました。"
+msgid "[:doc:`/reference/functions/query_parallel_or`][:doc:`/reference/functions/query`] Fixed a bug that if we specify ``query_options`` and the other options, the other options are ignored."
+msgstr "[:doc:`/reference/functions/query_parallel_or`][:doc:`/reference/functions/query`] ``query_options`` とその他のオプションを指定すると、その他のオプションが無視される問題を修正しました。"
 
 msgid "For example, ``\"default_operator\": \"OR\"`` option had been ignored in the following case."
 msgstr "例えば、以下のケースでは、 ``\"default_operator\": \"OR\"`` オプションは無視されていました。"
@@ -571,7 +571,7 @@ msgstr "``object_warm`` と指定した場合は、GroongaのDB全体がOSのペ
 msgid "However, note that if OS has not empty space on memory, this command has no effect."
 msgstr "ただ、メモリーに空きスペースが無い場合は、このコマンドは効果がないことに注意してください。"
 
-msgid "[:doc:`reference/commands/select`] Added support for adjusting the score of a specific record in ``--filter``."
+msgid "[:doc:`/reference/commands/select`] Added support for adjusting the score of a specific record in ``--filter``."
 msgstr "[:doc:`/reference/commands/select`] ``--filter`` 内で特定のレコードのスコアーを調整できるようにしました。"
 
 msgid "We can adjust the score of a specific record by using a oprtator named ``*~``. ``*~`` is logical operator same as ``&&`` and ``||``. Therefore, we can use ``*~`` like as ``&&`` ans ``||``. Default weight of ``*~`` is -1."
@@ -613,8 +613,8 @@ msgstr "以下のように、 ``query()`` を使って、filter条件を記述�
 msgid "``--filter 'content @ \"Groonga\" *~2.5 content @ \"Mroonga\"'``"
 msgstr ""
 
-msgid "[:doc:`reference/commands/select`] Added support for ``&&`` with weight."
-msgstr "[:doc:`reference/commands/select`] 重み付き ``&&`` をサポートしました。"
+msgid "[:doc:`/reference/commands/select`] Added support for ``&&`` with weight."
+msgstr "[:doc:`/reference/commands/select`] 重み付き ``&&`` をサポートしました。"
 
 msgid "We can use ``&&`` with weight by using ``*<`` or ``*>``. Default weight of ``*<`` is 0.5. Default weight of ``*>`` is 2.0."
 msgstr "``*<`` と ``*>`` を使うことで、重み付きの ``&&`` を使えます。``*<`` のデフォルトの重みは 0.5です。 ``*>`` のデフォルトの重みは 2.0 です。"
@@ -637,7 +637,7 @@ msgstr "このレコードのスコアーは a + b です。したがって、 a
 msgid "In particular, the following query adjust the score of match records by the following condition( ``'content @ \"Groonga\" *<2.5 query(\"content\", \"Mroonga\")'`` )."
 msgstr "具体的には、 以下の条件( ``'content @ \"Groonga\" *~2.5 query(\"content\", \"MySQL\")'`` にマッチしたレコードのスコアーを調整します。"
 
-msgid "[:doc:`reference/log`] Added support for outputting to stdout and stderr."
+msgid "[:doc:`/reference/log`] Added support for outputting to stdout and stderr."
 msgstr "[:doc:`/reference/log`] 標準出力、標準エラー出力への出力をサポートしました。"
 
 msgid "[:ref:`process-log`] and [:ref:`query-log`] supported　output to stdout and stderr."
@@ -676,8 +676,8 @@ msgstr "[ドキュメント] ``string_substring`` に不足している内容を
 msgid "Release 11.0.3 - 2021-05-29"
 msgstr "11.0.3リリース - 2021-05-29"
 
-msgid "[:doc:`reference/functions/query`] Added support for ignoring ``TokenFilterStem`` by the query."
-msgstr "[:doc:`reference/functions/query`] クエリー毎に ``TokenFilterStem`` を無効にできるようになりました。"
+msgid "[:doc:`/reference/functions/query`] Added support for ignoring ``TokenFilterStem`` by the query."
+msgstr "[:doc:`/reference/functions/query`] クエリー毎に ``TokenFilterStem`` を無効にできるようになりました。"
 
 msgid "``TokenFilterStem`` can search by using a stem. For example, all of ``develop``, ``developing``, ``developed`` and ``develops`` tokens are stemmed as ``develop``. So we can find ``develop``, ``developing`` and ``developed`` by ``develops`` query."
 msgstr "``TokenFilterStem`` は語幹を使った検索ができます。例えば ``develop`` も ``developing`` も ``developed`` も ``develops`` も、すべてステミングすると ``develop`` になります。そのため、 ``develops`` というクエリーで ``develop`` も ``developing`` も ``developed`` も検索できます。"
@@ -697,8 +697,8 @@ msgstr "``TokenFilerStem`` が間違ったステミング結果を返す場合�
 msgid "If we want to find only records that have an exact (not stemmed) word."
 msgstr "(ステミングされていない)正確な語を含むレコードのみを検索したい場合。"
 
-msgid "[:doc:`reference/functions/query`] Added support for ignoring ``TokenFilterStopWord`` by the query."
-msgstr "[:doc:`reference/functions/query`] クエリー毎に ``TokenFilterStopWord`` を無効にできるようになりました。"
+msgid "[:doc:`/reference/functions/query`] Added support for ignoring ``TokenFilterStopWord`` by the query."
+msgstr "[:doc:`/reference/functions/query`] クエリー毎に ``TokenFilterStopWord`` を無効にできるようになりました。"
 
 msgid "``TokenFilterStopWord`` searched without stop word that we registered beforehand. It uses for reducing noise of search by ignoring frequently word (e.g., ``and``, ``is``, and so on.)."
 msgstr "``TokenFilterStopWord`` は、予め登録したストップワードを検索から除外します。これは、 ``and`` や ``is`` などの頻出語を無視することで検索ノイズを減らすために使います。"
@@ -772,20 +772,20 @@ msgstr "このコマンドはすでに削除されているためです。"
 msgid "[:doc:`/install/debian`] Added support for Debian 11(Bullseye)."
 msgstr "[:doc:`/install/debian`] Debian 11(Bullseye) をサポートしました。"
 
-msgid "[:doc:`reference/commands/select`] Added support for ``--post_filter``."
+msgid "[:doc:`/reference/commands/select`] Added support for ``--post_filter``."
 msgstr "[:doc:`/reference/commands/select`] ``--post_filter`` をサポートしました。"
 
 msgid "We can use ``post_filter`` to filter by ``filtered`` stage dynamic columns as below."
 msgstr "以下のように、 ``filtered`` ステージの動的カラムに対して ``post_filter`` を使ってフィルターできます。"
 
-msgid "[:doc:`reference/commands/select`] Added support for ``--slices[].post_filter``."
+msgid "[:doc:`/reference/commands/select`] Added support for ``--slices[].post_filter``."
 msgstr "[:doc:`/reference/commands/select`] ``--slices[].post_filter`` をサポートしました。"
 
 msgid "We can use ``post_filter`` to filter by ``--slices[].filter`` as below."
 msgstr "以下のように、 ``--slices[].filter`` の条件でフィルターされた結果に対して ``post_filter`` を使えます。"
 
-msgid "[:doc:`reference/commands/select`] Added support for describing expression into ``--sort_keys``."
-msgstr "[:doc:`reference/commands/select`] ``--sort_keys`` 内に式を記述できるようになりました。"
+msgid "[:doc:`/reference/commands/select`] Added support for describing expression into ``--sort_keys``."
+msgstr "[:doc:`/reference/commands/select`] ``--sort_keys`` 内に式を記述できるようになりました。"
 
 msgid "We can describe the expression into ``--sort_keys``."
 msgstr "``--sort_keys`` に式を記述できます。"
@@ -805,8 +805,8 @@ msgstr "[:doc:`/reference/token_filters`] オプションをつけた複数の�
 msgid "We can specify multiple token filters with options like ``--token_filters 'TokenFilterStopWord(\"column\", \"ignore\"), TokenFilterNFKC130(\"unify_kana\", true)'``. [Github#mroonga/mroonga#399][Reported by MASUDA Kazuhiro]"
 msgstr "``--token_filters 'TokenFilterStopWord(\"column\", \"ignore\"), TokenFilterNFKC130(\"unify_kana\", true)'`` のように複数のトークンフィルターを指定できます。 [Github#mroonga/mroonga#399][MASUDA Kazuhiroさんが報告]"
 
-msgid "[:doc:`reference/functions/query`] Added support a dynamic column of ``result_set`` stage with complex expression."
-msgstr "[:doc:`reference/functions/query`] 複雑な式で ``result_set`` ステージの動的カラムを扱えるようにしました。"
+msgid "[:doc:`/reference/functions/query`] Added support a dynamic column of ``result_set`` stage with complex expression."
+msgstr "[:doc:`/reference/functions/query`] 複雑な式で ``result_set`` ステージの動的カラムを扱えるようにしました。"
 
 msgid "Complex expression is that it needs temporary result sets internally like a following expression."
 msgstr "複雑な式とは、以下のように一時的な内部結果セットが必要な式です。"
@@ -850,7 +850,7 @@ msgstr "11.0.1リリース - 2021-03-31"
 msgid "[:doc:`/install/debian`] Added support for a ARM64 package."
 msgstr "[:doc:`/install/debian`] ARM64向けのパッケージをサポートしました。"
 
-msgid "[:doc:`reference/commands/select`] Added support for customizing adjust weight every key word."
+msgid "[:doc:`/reference/commands/select`] Added support for customizing adjust weight every key word."
 msgstr "[:doc:`/reference/commands/select`] キーワードごとに重みをカスタマイズできるようにしました。"
 
 msgid "We need to specify ``<`` or ``>`` to all keywords to adjust scores until now. Because the default adjustment of weight (6 or 4) is larger than the default score (1)."
@@ -865,19 +865,19 @@ msgstr "今回のリリースから、対象のキーワードに ``<${WEIGHT}``
 msgid "However, note that these forms ( ``>${WEIGHT}...``, ``<${WEIGHT}...``, and ``~${WEIGHT}...`` ) are incompatible."
 msgstr "ただし、これらの形式(``>${WEIGHT}...``, ``<${WEIGHT}...``, and ``~${WEIGHT}...``)は互換性が無いことに注意してください。"
 
-msgid "[:doc:`reference/commands/select`] Added support for outputting ``Float`` and ``Float32`` value in Apache Arrow format."
+msgid "[:doc:`/reference/commands/select`] Added support for outputting ``Float`` and ``Float32`` value in Apache Arrow format."
 msgstr "[:doc:`/reference/commands/select`] Apache Arrow形式で ``Float`` と ``Float32`` の値を出力できるようにしました。"
 
 msgid "For example, Groonga output as below."
 msgstr "例えば、以下のように出力します。"
 
-msgid "[:doc:`reference/commands/select`] Added support for getting a reference destination data via index column when we output a result."
+msgid "[:doc:`/reference/commands/select`] Added support for getting a reference destination data via index column when we output a result."
 msgstr "[:doc:`/reference/commands/select`] 結果出力時に、インデックスカラム経由で参照先のデータを取得できるようになりました。"
 
 msgid "Until now, Groonga had returned involuntary value when we specified output value like ``index_column.xxx``. For example, A value of ``--columns[tags].value purchases.tag`` was ``[\"apple\",[\"many\"]],[\"banana\",[\"man\"]],[\"cacao\",[\"man\"]]`` in the following example. In this case, the expected values was ``[\"apple\",[\"man\",\"many\"]],[\"banana\",[\"man\"]],[\"cacao\",[\"woman\"]]``. In this release, we can get a correct reference destination data via index column as below."
 msgstr "今までは、 出力値に ``index_column.xxx`` のように指定すると、Groongaは意図しない値を返していました。例えば以下の例では、 ``--columns[tags].value purchases.tag`` の値は、 ``[\"apple\",[\"many\"]],[\"banana\",[\"man\"]],[\"cacao\",[\"man\"]]`` になりました。このケースでは、期待される値は、 ``[\"apple\",[\"man\",\"many\"]],[\"banana\",[\"man\"]],[\"cacao\",[\"woman\"]]`` でした。今回のリリースから、以下のように、インデックスカラム経由で参照先の正しい値を取得できます。"
 
-msgid "[:doc:`reference/commands/select`] Added support for specifying index column directly as a part of nested index."
+msgid "[:doc:`/reference/commands/select`] Added support for specifying index column directly as a part of nested index."
 msgstr "[:doc:`/reference/commands/select`] ネストされたインデックスの一部として直接インデックスカラムを指定できるようになりました。"
 
 msgid "We can search source table after filtering by using ``index_column.except_source_column``. For example, we specify ``comments.content`` when searching in the following example. In this case, at first, this query execute full text search from ``content`` column of ``Commentts`` table, then fetch the records of Articles table which refers to already searched records of Comments table."
@@ -916,8 +916,8 @@ msgstr "WindowsのAPIはUNIXエポックより前の時間が入力されると�
 msgid "We can use the UNIX epoch in ``time_classify_*`` functions as below in this release."
 msgstr "今回のリリースから、以下のようにUNIXエポックを ``time_classify_*`` 内で使えるように"
 
-msgid "[:doc:`reference/functions/query_parallel_or`] Added a new function for processing queries in parallel."
-msgstr "[:doc:`reference/functions/query_parallel_or`] クエリーを並行して実行できる新しい関数を追加しました。"
+msgid "[:doc:`/reference/functions/query_parallel_or`] Added a new function for processing queries in parallel."
+msgstr "[:doc:`/reference/functions/query_parallel_or`] クエリーを並行して実行できる新しい関数を追加しました。"
 
 msgid "``query_parallel_or`` requires Apache Arrow for processing queries in parallel. If it does not enable, ``query_parallel_or`` processes queries in sequence."
 msgstr "``query_parallel_or`` でクエリーを並行で処理するためにはApache Arrowが必要です。Apache Arrowが無い場合は、 ``query_parallel_or`` はクエリーをシーケンシャルに実行します。"
@@ -928,8 +928,8 @@ msgstr "``query_parallel_or`` は、 ``match_columns`` と ``query_string`` の�
 msgid "Syntax of ``query_parallel_or`` is as follow::"
 msgstr "``query_parallel_or`` の構文は以下の通りです。::"
 
-msgid "[:doc:`reference/commands/select`] Added support for ignoring nonexistent sort keys."
-msgstr "[:doc:`reference/commands/select`] 存在しないソートキーを無視するようにしました。"
+msgid "[:doc:`/reference/commands/select`] Added support for ignoring nonexistent sort keys."
+msgstr "[:doc:`/reference/commands/select`] 存在しないソートキーを無視するようにしました。"
 
 msgid "Groonga had been outputted error when we specified nonexistent sort keys until now. However, Groonga ignore nonexistent sort keys since this release. (Groonga doesn't output error.)"
 msgstr "今まで、存在しないソートキーを指定したとき、Groongaはエラーを出力していましたが、今回のリリースから存在しないソートキーを無視します。(エラーを出力しなくなります。)"
@@ -937,7 +937,7 @@ msgstr "今まで、存在しないソートキーを指定したとき、Groong
 msgid "This feature implements for consistency. Because we just ignore invalid values in ``output_columns`` and most of invalid values in ``sort_keys``."
 msgstr "この機能は、一貫性のために実装しています。``output_columns`` も無効な値を無視します。また、 ``sort_keys`` も無効な値のほとんどを無視します。"
 
-msgid "[:doc:`reference/commands/select`] Added support for ignoring nonexistent tables in ``drilldowns[].table``. [GitHub#1169][Reported by naoa]"
+msgid "[:doc:`/reference/commands/select`] Added support for ignoring nonexistent tables in ``drilldowns[].table``. [GitHub#1169][Reported by naoa]"
 msgstr "[:doc:`/reference/commands/select`] drilldowns[].table で存在しないテーブルを無視します。 [GitHub#1169][naoaさんが報告]"
 
 msgid "Groonga had been outputted error when we specified nonexistent tables in ``drilldowns[].table`` until now. However, Groonga ignore nonexistent tables in ``drilldowns[].table`` since this release. (Groonga doesn't output error.)"
@@ -946,8 +946,8 @@ msgstr "今まで、  ``drilldowns[].table`` で存在しないテーブルを�
 msgid "[httpd] Updated bundled nginx to 1.19.8."
 msgstr "[httpd] バンドルしているnginxのバージョンを1.19.8に更新しました。"
 
-msgid "[:doc:`reference/commands/reference_acquire`] Fixed a bug that Groonga crash when a table's reference is acquired and a column is added to the table before auto release is happened."
-msgstr "[:doc:`reference/commands/reference_acquire`] 参照の自動リリースが発生する前に、テーブルにカラムが追加されテーブルの参照が獲得されたときにGroongaがクラッシュする問題を修正しました。"
+msgid "[:doc:`/reference/commands/reference_acquire`] Fixed a bug that Groonga crash when a table's reference is acquired and a column is added to the table before auto release is happened."
+msgstr "[:doc:`/reference/commands/reference_acquire`] 参照の自動リリースが発生する前に、テーブルにカラムが追加されテーブルの参照が獲得されたときにGroongaがクラッシュする問題を修正しました。"
 
 msgid "Because the added column's reference isn't acquired but it's released on auto release."
 msgstr "追加されたカラムの参照は獲得されませんが、自動リリースの対象になるためです。"
@@ -961,7 +961,7 @@ msgstr "11.0.0リリース - 2021-02-09"
 msgid "This is a major version up! But It keeps backward compatibility. We can upgrade to 11.0.0 without rebuilding database."
 msgstr "メジャーバージョンアップです! メジャーバージョンアップですが、互換性は壊れていないので、データベースを再構築することなく11.0.0へアップグレードできます。"
 
-msgid "[:doc:`reference/commands/select`] Added support for outputting values of scalar column and vector column via nested index."
+msgid "[:doc:`/reference/commands/select`] Added support for outputting values of scalar column and vector column via nested index."
 msgstr "[:doc:`/reference/commands/select`] ネストされたインデックス経由でスカラーカラムとベクターカラムの値を出力できるようになりました。"
 
 msgid "The nested index is that has structure as below."
@@ -1027,5 +1027,5 @@ msgstr "この問題によって破損したインデックスは、インデッ
 msgid "This bug doesn't detect unless we reference the broken index. Therefore, the index in our indexes may has already broken."
 msgstr "この問題は、壊れたインデックスを参照しない限り発覚しません。したがって、既にインデックスが破損しているかもしれません。"
 
-msgid "We can use [:doc:`reference/commands/index_column_diff`] command to confirm whether the index has already been broken or not."
-msgstr "[:doc:`reference/commands/index_column_diff`] コマンドを使うことで、インデックスが破損しているかどうかを確認できます。"
+msgid "We can use [:doc:`/reference/commands/index_column_diff`] command to confirm whether the index has already been broken or not."
+msgstr "[:doc:`/reference/commands/index_column_diff`] コマンドを使うことで、インデックスが破損しているかどうかを確認できます。"

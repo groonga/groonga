@@ -453,7 +453,7 @@ Improvements
 
 * Added a new API: ``grn_plugin_proc_get_value_mode()``.
 
-* [:doc:`reference/functions/vector_find`] Added a new function ``vector_find()``.
+* [:doc:`/reference/functions/vector_find`] Added a new function ``vector_find()``.
 
 * Suppress memcpy warnings in msgpack.
 
@@ -501,7 +501,7 @@ Improvements
 Fixes
 ^^^^^
 
-* [:doc:`reference/functions/sub_filter`] Fixed too much score with a too filtered case.
+* [:doc:`/reference/functions/sub_filter`] Fixed too much score with a too filtered case.
 
 * Fixed build error if KyTea is installed.
 
@@ -552,7 +552,7 @@ Improvements
   For example, you can search ``セーブル`` (katakana) and ``セーヴル`` in
   ``セーヴェル`` (katakana).
 
-* [:doc:`reference/functions/sub_filter`] Supported ``sub_filter`` optimization
+* [:doc:`/reference/functions/sub_filter`] Supported ``sub_filter`` optimization
   for the too filter case.
   this optimize is valid when records are enough narrowed down before
   ``sub_filter`` execution as below.

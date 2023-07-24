@@ -9,7 +9,7 @@ Release 11.1.3 - 2022-01-29
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`reference/functions/snippet`] Added support for using the keyword of 32 or more. [GitHub#1313][Pathched by Takashi Hashida]
+* [:doc:`/reference/functions/snippet`] Added support for using the keyword of 32 or more. [GitHub#1313][Pathched by Takashi Hashida]
 
   We could not specify the keyword of 32 or more with ``snippet`` until now.
   However, we can specify the keyword of 32 or more by this improvement as below.
@@ -68,7 +68,7 @@ Improvements
         ]
       ]
 
-* [:doc:`reference/normalizers/normalizer_nfkc130`] Added a new option ``remove_symbol``.
+* [:doc:`/reference/normalizers/normalizer_nfkc130`] Added a new option ``remove_symbol``.
 
   This option removes symbols (e.g. #, !, ", &, %, ...) from the string that the target of normalizing as below.
 
@@ -109,7 +109,7 @@ Improvements
 
 * [httpd] Updated bundled nginx to 1.21.5.
 
-* [Documentation] Fixed a typo in :doc:`reference/commands/ruby_eval`. [GitHub#1317][Pathched by wi24rd]
+* [Documentation] Fixed a typo in :doc:`/reference/commands/ruby_eval`. [GitHub#1317][Pathched by wi24rd]
 
 * [:doc:`/install/ubuntu`] Dropped Ubuntu 21.04 (Hirsute Hippo) support.
 
@@ -156,7 +156,7 @@ Release 11.1.1 - 2021-12-29
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`reference/commands/select`] Added support for near phrase product search.
+* [:doc:`/reference/commands/select`] Added support for near phrase product search.
 
   This feature is a shortcut of ``'*NP"..." OR *NP"..." OR ...'``.
   For example, we can use ``*NPP`` instead of the expression that execute mulitiple
@@ -195,7 +195,7 @@ Improvements
   We implements this feature for improving performance near phrase search
   like ``'*NP"..." OR *NP"..." OR ...'``.
 
-* [:doc:`reference/commands/select`] Added support for order near phrase product search.
+* [:doc:`/reference/commands/select`] Added support for order near phrase product search.
 
   This feature is a shortcut of ``'*ONP"..." OR *ONP"..." OR ...'``.
   For example, we can use ``*ONPP`` instead of the expression that execute multiple
@@ -476,7 +476,7 @@ Improvements
        ]
      ]
 
-* [:doc:`reference/commands/select`] Added a new ``query_flags`` ``DISABLE_PREFIX_SEARCH``.
+* [:doc:`/reference/commands/select`] Added a new ``query_flags`` ``DISABLE_PREFIX_SEARCH``.
 
   We can use the prefix search operators ``^`` and ``*`` as search keywords
   by ``DISABLE_PREFIX_SEARCH`` as below.
@@ -517,7 +517,7 @@ Improvements
        --query_flags "ALLOW_COLUMN|DISABLE_PREFIX_SEARCH"
      [[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[3,"^a"]]]]
 
-* [:doc:`reference/commands/select`] Added a new ``query_flags`` ``DISABLE_AND_NOT``.
+* [:doc:`/reference/commands/select`] Added a new ``query_flags`` ``DISABLE_AND_NOT``.
 
   We can use ``AND NOT`` operators ``-`` as search keywords
   by ``DISABLE_AND_NOT`` as below.
@@ -568,13 +568,13 @@ Release 11.0.9 - 2021-11-04
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`reference/functions/snippet`] Added a new option ``delimiter_regexp`` for detecting snippet delimiter with regular expression.
+* [:doc:`/reference/functions/snippet`] Added a new option ``delimiter_regexp`` for detecting snippet delimiter with regular expression.
 
-  :doc:`reference/functions/snippet` extracts text around search keywords.
-  We call the text that is extracted by :doc:`reference/functions/snippet` snippet.
+  :doc:`/reference/functions/snippet` extracts text around search keywords.
+  We call the text that is extracted by :doc:`/reference/functions/snippet` snippet.
 
-  Normally, :doc:`reference/functions/snippet` () returns the text of 200 bytes around search keywords.
-  However, :doc:`reference/functions/snippet` () gives no thought to a delimiter of sentences.
+  Normally, :doc:`/reference/functions/snippet` () returns the text of 200 bytes around search keywords.
+  However, :doc:`/reference/functions/snippet` () gives no thought to a delimiter of sentences.
   The snippet may be composed of multi sentences.
 
   ``delimiter_regexp`` option is useful if we want to only extract the text of the same sentence as search keywords.
@@ -632,7 +632,7 @@ Improvements
          ]
        ]
 
-* [:doc:`reference/window_functions/window_rank`] Added a new function ``window_rank()``.
+* [:doc:`/reference/window_functions/window_rank`] Added a new function ``window_rank()``.
 
   * We can calculate a rank that includes a gap of each record.
     Normally, the rank isn’t incremented when multiple records that are the same order.
@@ -640,8 +640,8 @@ Improvements
     are 1, 1, 3.
     The rank of the last record is 3 not 2 because there are two 1 rank records.
 
-    This is similar to :doc:`reference/window_functions/window_record_number`.
-    However, :doc:`reference/window_functions/window_record_number` gives no thought to gap.
+    This is similar to :doc:`/reference/window_functions/window_record_number`.
+    However, :doc:`/reference/window_functions/window_record_number` gives no thought to gap.
 
     .. code-block::
 
@@ -897,13 +897,13 @@ Improvements
 
 * [Documentation] Added a documentation about the following items.
 
-  * [:doc:`reference/commands/column_create`] Added a documentation about ``WEIGHT_FLOAT32`` flag.
+  * [:doc:`/reference/commands/column_create`] Added a documentation about ``WEIGHT_FLOAT32`` flag.
 
-  * [:doc:`reference/normalizers/normalizer_nfkc121`] Added a documentation about ``NormalizerNFKC121``.
+  * [:doc:`/reference/normalizers/normalizer_nfkc121`] Added a documentation about ``NormalizerNFKC121``.
 
-  * [:doc:`reference/normalizers/normalizer_nfkc130`] Added a documentation about ``NormalizerNFKC130``.
+  * [:doc:`/reference/normalizers/normalizer_nfkc130`] Added a documentation about ``NormalizerNFKC130``.
 
-  * [:doc:`reference/normalizers/normalizer_table`] Added a documentation about ``NormalizerTable``.
+  * [:doc:`/reference/normalizers/normalizer_table`] Added a documentation about ``NormalizerTable``.
 
 * Updated to 3.0.0 that the version of Apache Arrow that Groonga requires. [GitHub#1265][Patched by Takashi Hashida]
 
@@ -968,10 +968,10 @@ Improvements
   Groonga execute WAL (write ahead log) when this feature is enable.
   We can dump WAL by the following tools, but currently, users doesn't need to use them.
 
-    * [:doc:`reference/executables/grndb`] ``dump-wal`` command.
+    * [:doc:`/reference/executables/grndb`] ``dump-wal`` command.
     * ``dump-wal.rb`` scritp.
 
-* [:doc:`reference/commands/cache_limit`] Groonga remove cache when we execute ``cache_limit 0``. [GitHub#1224][Reported by higchi]
+* [:doc:`/reference/commands/cache_limit`] Groonga remove cache when we execute ``cache_limit 0``. [GitHub#1224][Reported by higchi]
 
   Groonga stores query cache to internally table.
   The maximum total size of keys of this table is 4GiB. Because this table is hash table.
@@ -989,7 +989,7 @@ Fixes
 
   However, this bug rarely happens. Because a time of a thread open the object is a very short time. 
 
-* [:doc:`reference/functions/query_parallel_or`] Fixed a bug that result may be different from the ``query()``.
+* [:doc:`/reference/functions/query_parallel_or`] Fixed a bug that result may be different from the ``query()``.
 
   For example, If we used ``query("tags || tags2", "beginner man")``, the following record was a match, but if we used ``query_parallel_or("tags || tags2", "beginner man")``, the following record wasn't a match until now.
 
@@ -1097,7 +1097,7 @@ Improvements
 
   Existing normalizers can't meet in such case, but we can meet it by combining ``NormalizerTable`` with existing normalizer since this release.
 
-* [:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for customizing thresholds for sequential search.
+* [:doc:`/reference/functions/query_parallel_or`][:doc:`/reference/functions/query`] Added support for customizing thresholds for sequential search.
 
   We can customize thresholds in each queries whether to use sequential search by the following options.
 
@@ -1288,7 +1288,7 @@ Improvements
 
   ``between()`` supported for optimizing the order of evaluation of a conditional expression.
 
-* [:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for specifying group of match_columns as vector. [GitHub#1238][Patched by naoa]
+* [:doc:`/reference/functions/query_parallel_or`][:doc:`/reference/functions/query`] Added support for specifying group of match_columns as vector. [GitHub#1238][Patched by naoa]
 
   We can use vector in ``match_columns`` of ``query`` and ``query_parallel_or`` as below.
 
@@ -1317,7 +1317,7 @@ Improvements
        --filter 'query(["name * 100", "memo", "tag * 10"], \
                        "Alice OR Groonga")'
 
-* [:doc:`reference/commands/select`] Added support for section and weight in prefix search. [GitHub#1240][Patched by naoa]
+* [:doc:`/reference/commands/select`] Added support for section and weight in prefix search. [GitHub#1240][Patched by naoa]
 
   We can use multi column index and adjusting score in prefix search.
 
@@ -1384,7 +1384,7 @@ Improvements
 
   Note that ``grndb check`` doesn't close used objects immediately yet.
 
-* [:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for specifying ``scorer_tf_idf`` in ``match_columns`` as below.
+* [:doc:`/reference/functions/query_parallel_or`][:doc:`/reference/functions/query`] Added support for specifying ``scorer_tf_idf`` in ``match_columns`` as below.
 
   .. code-block::
 
@@ -1474,7 +1474,7 @@ Improvements
 Fixes
 ^^^^^
 
-* [:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Fixed a bug that if we specify ``query_options`` and the other options, the other options are ignored.
+* [:doc:`/reference/functions/query_parallel_or`][:doc:`/reference/functions/query`] Fixed a bug that if we specify ``query_options`` and the other options, the other options are ignored.
 
   For example, ``"default_operator": "OR"`` option had been ignored in the following case.
 
@@ -1661,7 +1661,7 @@ Improvements
 
   However, note that if OS has not empty space on memory, this command has no effect.
 
-* [:doc:`reference/commands/select`] Added support for adjusting the score of a specific record in ``--filter``.
+* [:doc:`/reference/commands/select`] Added support for adjusting the score of a specific record in ``--filter``.
 
   We can adjust the score of a specific record by using a oprtator named ``*~``.
   ``*~`` is logical operator same as ``&&`` and ``||``. Therefore, we can use ``*~`` like as ``&&`` ans ``||``.
@@ -1746,7 +1746,7 @@ Improvements
 
     * ``--filter 'content @ "Groonga" *~2.5 content @ "Mroonga"'``
 
-* [:doc:`reference/commands/select`] Added support for ``&&`` with weight.
+* [:doc:`/reference/commands/select`] Added support for ``&&`` with weight.
 
   We can use ``&&`` with weight by using ``*<`` or ``*>``.
   Default weight of ``*<`` is 0.5. Default weight of ``*>`` is 2.0.
@@ -1824,7 +1824,7 @@ Improvements
          }
        }
 
-* [:doc:`reference/log`] Added support for outputting to stdout and stderr.
+* [:doc:`/reference/log`] Added support for outputting to stdout and stderr.
 
   [:ref:`process-log`] and [:ref:`query-log`] supported　output to stdout and stderr.
 
@@ -1875,7 +1875,7 @@ Release 11.0.3 - 2021-05-29
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`reference/functions/query`] Added support for ignoring ``TokenFilterStem`` by the query.
+* [:doc:`/reference/functions/query`] Added support for ignoring ``TokenFilterStem`` by the query.
 
   * ``TokenFilterStem`` can search by using a stem.
     For example, all of ``develop``, ``developing``, ``developed`` and ``develops`` tokens are stemmed as ``develop``.
@@ -1942,7 +1942,7 @@ Improvements
     * If ``TokenFilterStem`` returns the wrong result of stemming.
     * If we want to find only records that have an exact (not stemmed) word.
 
-* [:doc:`reference/functions/query`] Added support for ignoring ``TokenFilterStopWord`` by the query.
+* [:doc:`/reference/functions/query`] Added support for ignoring ``TokenFilterStopWord`` by the query.
 
   * ``TokenFilterStopWord`` searched without stop word that we registered beforehand.
     It uses for reducing noise of search by ignoring frequently word (e.g., ``and``, ``is``, and so on.).
@@ -2206,7 +2206,7 @@ Improvements
 
 * [:doc:`/install/debian`] Added support for Debian 11(Bullseye).
 
-* [:doc:`reference/commands/select`] Added support for ``--post_filter``.
+* [:doc:`/reference/commands/select`] Added support for ``--post_filter``.
 
   * We can use ``post_filter`` to filter by ``filtered`` stage dynamic columns as below.
 
@@ -2270,7 +2270,7 @@ Improvements
          ]
        ]
 
-* [:doc:`reference/commands/select`] Added support for ``--slices[].post_filter``.
+* [:doc:`/reference/commands/select`] Added support for ``--slices[].post_filter``.
 
   * We can use ``post_filter`` to filter by ``--slices[].filter`` as below.
 
@@ -2367,7 +2367,7 @@ Improvements
         ]
 
 
-* [:doc:`reference/commands/select`] Added support for describing expression into ``--sort_keys``.
+* [:doc:`/reference/commands/select`] Added support for describing expression into ``--sort_keys``.
 
   * We can describe the expression into ``--sort_keys``.
 
@@ -2432,7 +2432,7 @@ Improvements
 
   * We can specify multiple token filters with options like ``--token_filters 'TokenFilterStopWord("column", "ignore"), TokenFilterNFKC130("unify_kana", true)'``. [Github#mroonga/mroonga#399][Reported by MASUDA Kazuhiro]
 
-* [:doc:`reference/functions/query`] Added support a dynamic column of ``result_set`` stage with complex expression.
+* [:doc:`/reference/functions/query`] Added support a dynamic column of ``result_set`` stage with complex expression.
 
   * Complex expression is that it needs temporary result sets internally like a following expression.
 
@@ -2619,7 +2619,7 @@ Improvements
 
 * [:doc:`/install/debian`] Added support for a ARM64 package.
 
-* [:doc:`reference/commands/select`] Added support for customizing adjust weight every key word.
+* [:doc:`/reference/commands/select`] Added support for customizing adjust weight every key word.
 
   * We need to specify ``<`` or ``>`` to all keywords to adjust scores until now.
     Because the default adjustment of weight (6 or 4) is larger than the default score (1).
@@ -2635,7 +2635,7 @@ Improvements
 
   * However, note that these forms ( ``>${WEIGHT}...``, ``<${WEIGHT}...``, and ``~${WEIGHT}...`` ) are incompatible.
 
-* [:doc:`reference/commands/select`] Added support for outputting ``Float`` and ``Float32`` value in Apache Arrow format.
+* [:doc:`/reference/commands/select`] Added support for outputting ``Float`` and ``Float32`` value in Apache Arrow format.
 
   * For example, Groonga output as below.
 
@@ -2668,7 +2668,7 @@ Improvements
        	_id	     float
        0	  1	  1.100000
 
-* [:doc:`reference/commands/select`] Added support for getting a reference destination data via index column when we output a result.
+* [:doc:`/reference/commands/select`] Added support for getting a reference destination data via index column when we output a result.
 
   * Until now, Groonga had returned involuntary value when we specified output value like ``index_column.xxx``.
     For example, A value of ``--columns[tags].value purchases.tag`` was ``["apple",["many"]],["banana",["man"]],["cacao",["man"]]`` in the following example. In this case, the expected values was ``["apple",["man","many"]],["banana",["man"]],["cacao",["woman"]]``.
@@ -2749,7 +2749,7 @@ Improvements
         ]
       ]
 
-* [:doc:`reference/commands/select`] Added support for specifying index column directly as a part of nested index.
+* [:doc:`/reference/commands/select`] Added support for specifying index column directly as a part of nested index.
 
   * We can search source table after filtering by using ``index_column.except_source_column``.
     For example, we specify ``comments.content`` when searching in the following example.
@@ -2991,7 +2991,7 @@ Improvements
          ]
        ]
 
-* [:doc:`reference/functions/query_parallel_or`] Added a new function for processing queries in parallel.
+* [:doc:`/reference/functions/query_parallel_or`] Added a new function for processing queries in parallel.
 
   * ``query_parallel_or`` requires Apache Arrow for processing queries in parallel.
     If it does not enable, ``query_parallel_or`` processes queries in sequence.
@@ -3008,14 +3008,14 @@ Improvements
                                        query_stringN,
                                        {"option": "value", ...})
 
-* [:doc:`reference/commands/select`] Added support for ignoring nonexistent sort keys.
+* [:doc:`/reference/commands/select`] Added support for ignoring nonexistent sort keys.
 
   * Groonga had been outputted error when we specified nonexistent sort keys until now.
     However, Groonga ignore nonexistent sort keys since this release. (Groonga doesn't output error.)
   * This feature implements for consistency.
     Because we just ignore invalid values in ``output_columns`` and most of invalid values in ``sort_keys``.
 
-* [:doc:`reference/commands/select`] Added support for ignoring nonexistent tables in ``drilldowns[].table``. [GitHub#1169][Reported by naoa]
+* [:doc:`/reference/commands/select`] Added support for ignoring nonexistent tables in ``drilldowns[].table``. [GitHub#1169][Reported by naoa]
 
   * Groonga had been outputted error when we specified nonexistent tables in ``drilldowns[].table`` until now.
     However, Groonga ignore nonexistent tables in ``drilldowns[].table`` since this release. (Groonga doesn't output error.)
@@ -3027,7 +3027,7 @@ Improvements
 Fixes
 ^^^^^
 
-* [:doc:`reference/commands/reference_acquire`] Fixed a bug that Groonga crash when a table's reference is acquired and a column is added to the table before auto release is happened.
+* [:doc:`/reference/commands/reference_acquire`] Fixed a bug that Groonga crash when a table's reference is acquired and a column is added to the table before auto release is happened.
 
   * Because the added column's reference isn't acquired but it's released on auto release.
 
@@ -3054,7 +3054,7 @@ This is a major version up! But It keeps backward compatibility. We can upgrade 
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`reference/commands/select`] Added support for outputting values of scalar column and vector column via nested index.
+* [:doc:`/reference/commands/select`] Added support for outputting values of scalar column and vector column via nested index.
 
   * The nested index is that has structure as below.
 
@@ -3232,4 +3232,4 @@ Fixes
   * This bug doesn't detect unless we reference the broken index.
     Therefore, the index in our indexes may has already broken.
 
-  * We can use [:doc:`reference/commands/index_column_diff`] command to confirm whether the index has already been broken or not.
+  * We can use [:doc:`/reference/commands/index_column_diff`] command to confirm whether the index has already been broken or not.

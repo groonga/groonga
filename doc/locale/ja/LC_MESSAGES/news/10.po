@@ -25,14 +25,14 @@ msgstr "10.1.1リリース - 2021-01-25"
 msgid "Improvements"
 msgstr "改良"
 
-msgid "[:doc:`reference/commands/select`] Added support for outputting UInt64 value in Apache Arrow format."
+msgid "[:doc:`/reference/commands/select`] Added support for outputting UInt64 value in Apache Arrow format."
 msgstr "[:doc:`/reference/commands/select`] Apache Arrow形式でUInt64の値の出力をサポートしました。"
 
-msgid "[:doc:`reference/commands/select`] Added support for outputting a number of hits in Apache Arrow format as below."
+msgid "[:doc:`/reference/commands/select`] Added support for outputting a number of hits in Apache Arrow format as below."
 msgstr "[:doc:`/reference/commands/select`] Apache Arrow形式で以下のようにヒット数の出力をサポートしました。"
 
-msgid "[:doc:`reference/functions/query`] Added support for optimization of \"order by estimated size\"."
-msgstr "[:doc:`reference/functions/query`] \"order by estimated size\" の最適化をサポートしました。"
+msgid "[:doc:`/reference/functions/query`] Added support for optimization of \"order by estimated size\"."
+msgstr "[:doc:`/reference/functions/query`] \"order by estimated size\" の最適化をサポートしました。"
 
 msgid "Normally, we can search at high speed when we first execute a condition which number of hits is a little."
 msgstr "通常、ヒット数の少ない条件から最初に実行すると、高速に検索できます。"
@@ -58,8 +58,8 @@ msgstr "``between()`` でシーケンシャルサーチを使うかどうかの�
 msgid "Improved that we set a result of ``between()`` into a result set in bulk."
 msgstr "``between()`` の結果を結果セットに一度にセットするよう改善しました。"
 
-msgid "[:doc:`reference/commands/select`] Improved performance for a prefix search."
-msgstr "[:doc:`reference/commands/select`] 前方一致検索のパフォーマンスを改善しました。"
+msgid "[:doc:`/reference/commands/select`] Improved performance for a prefix search."
+msgstr "[:doc:`/reference/commands/select`] 前方一致検索のパフォーマンスを改善しました。"
 
 msgid "For example, the performance of the following prefix search by using \"*\" improved."
 msgstr "例えば、以下のような \"*\" を使った前方一致検索のパフォーマンスが向上します。"
@@ -70,7 +70,7 @@ msgstr "[:doc:`/reference/tokenizers`][TokenMecab] トークンカラムを並�
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[:doc:`reference/functions/sub_filter`] Fixed a bug that ``sub_filter`` doesn't work in ``slices[].filter``."
+msgid "[:doc:`/reference/functions/sub_filter`] Fixed a bug that ``sub_filter`` doesn't work in ``slices[].filter``."
 msgstr "[:doc:`/reference/functions/sub_filter`] ``slices[].filter`` 内で ``sub_filter`` が動作しない問題を修正しました。"
 
 msgid "For example, the result of ``sub_filter`` was 0 records by the following query by this bug."
@@ -97,14 +97,14 @@ msgstr "今までは、以下のように先頭の全角スペースも含めて
 msgid "However, this is needless as the target of highlight. Therefore, in this release, ``highlight_html()`` removes leading full width spaces."
 msgstr "しかし、この全角スペースはハイライト対象としては不要です。そのため、このリリースから ``highlight_html()`` は先頭の全角スペースを削除します。"
 
-msgid "[:doc:`reference/commands/status`] Added a new item ``features``."
-msgstr "[:doc:`reference/commands/status`] 新しい項目 ``features`` を追加しました。"
+msgid "[:doc:`/reference/commands/status`] Added a new item ``features``."
+msgstr "[:doc:`/reference/commands/status`] 新しい項目 ``features`` を追加しました。"
 
 msgid "We can display which Groonga's features are enabled as below."
 msgstr "以下のように、Groongaのどの機能が有効なのかを表示できます。"
 
-msgid "[:doc:`reference/commands/status`] Added a new item ``apache_arrow``."
-msgstr "[:doc:`reference/commands/status`] 新しい項目 ``apache_arrow`` を追加しました。"
+msgid "[:doc:`/reference/commands/status`] Added a new item ``apache_arrow``."
+msgstr "[:doc:`/reference/commands/status`] 新しい項目 ``apache_arrow`` を追加しました。"
 
 msgid "We can display Apache Arrow version that Groonga use as below."
 msgstr "以下のようにGroongaが使うApache Arrowのバージョンを表示できます。"
@@ -217,8 +217,8 @@ msgstr "10.0.9リリース - 2020-12-01"
 msgid "Improved performance when we specified ``-1`` to ``limit``."
 msgstr "``limit`` に ``-1`` を指定した時のパフォーマンスを改善しました。"
 
-msgid "[:doc:`reference/commands/reference_acquire`] Added a new option ``--auto_release_count``."
-msgstr "[:doc:`reference/commands/reference_acquire`] 新しいオプション ``--auto_release_count`` を追加しました。"
+msgid "[:doc:`/reference/commands/reference_acquire`] Added a new option ``--auto_release_count``."
+msgstr "[:doc:`/reference/commands/reference_acquire`] 新しいオプション ``--auto_release_count`` を追加しました。"
 
 msgid "Groonga reduces a reference count automatically when a request reaching the number of value that is specified in ``--auto_release_count``."
 msgstr "Groongaは、リクエストが ``--auto_release_count`` で指定された値に到達した時に自動的に参照カウントを減らします。"
@@ -247,16 +247,16 @@ msgstr "[:doc:`/reference/normalizers`] Unicode 13.0 の NFKC（Normalization Fo
 msgid "[:doc:`/reference/token_filters`] Added a new TokenFilter ``TokenFilterNFKC130`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 13.0."
 msgstr "[:doc:`/reference/token_filters`] Unicode 13.0 の NFKC（Normalization Form Compatibility Composition）をベースにしたトークンフィルター ``TokenFilterNFKC130`` を追加しました。"
 
-msgid "[:doc:`reference/commands/select`] Improved performance for ``\"_score = column - X\"``."
-msgstr "[:doc:`reference/commands/select`] ``\"_score = column - X\"`` のパフォーマンスを改善しました。"
+msgid "[:doc:`/reference/commands/select`] Improved performance for ``\"_score = column - X\"``."
+msgstr "[:doc:`/reference/commands/select`] ``\"_score = column - X\"`` のパフォーマンスを改善しました。"
 
-msgid "[:doc:`reference/commands/reference_acquire`] Improved that ``--reference_acquire`` doesn't get unnecessary reference of index column when we specify the ``--recursive dependent`` option."
-msgstr "[:doc:`reference/commands/reference_acquire`] ``--recursive dependent`` オプションを指定した時に必要のないインデックスカラムへの参照を取得しないように改善しました。"
+msgid "[:doc:`/reference/commands/reference_acquire`] Improved that ``--reference_acquire`` doesn't get unnecessary reference of index column when we specify the ``--recursive dependent`` option."
+msgstr "[:doc:`/reference/commands/reference_acquire`] ``--recursive dependent`` オプションを指定した時に必要のないインデックスカラムへの参照を取得しないように改善しました。"
 
 msgid "From this release, the targets of ``--recursive dependent`` are only the target table's key  and the index column that is set to data column."
 msgstr "今回のリリースから、 ``--recursive dependent`` の対象は、対象のテーブルのキーあるいはデータカラムに設定してあるインデックスカラムです。"
 
-msgid "[:doc:`reference/commands/select`] Add support for ordered near phrase search."
+msgid "[:doc:`/reference/commands/select`] Add support for ordered near phrase search."
 msgstr "[:doc:`/reference/commands/select`] 順序限定の近傍フレーズ検索をサポートしました。"
 
 msgid "Until now, the near phrase search have only looked for records that the distance of between specified phrases near."
@@ -286,8 +286,8 @@ msgstr "クエリー構文の場合、この機能は以下のように使用し
 msgid "[httpd] Updated bundled nginx to 1.19.5."
 msgstr "[httpd] バンドルしているnginxのバージョンを1.19.5に更新しました。"
 
-msgid "[:doc:`reference/executables/groonga-server-http`] Fixed that Groonga HTTP server finished without waiting all woker threads finished completely."
-msgstr "[:doc:`reference/executables/groonga-server-http`] Groonga HTTP server が全てのワーカースレッドの完全な終了を待たずに終了していた問題を修正しました。"
+msgid "[:doc:`/reference/executables/groonga-server-http`] Fixed that Groonga HTTP server finished without waiting all woker threads finished completely."
+msgstr "[:doc:`/reference/executables/groonga-server-http`] Groonga HTTP server が全てのワーカースレッドの完全な終了を待たずに終了していた問題を修正しました。"
 
 msgid "Until now, Groonga HTTP server had started the process of finish after worker threads finished itself process. However, worker threads may not finish completely at this timing. Therefore, Groonga HTTP server may crashed according to timing. Because Groonga HTTP server may free area of memory that worker threads are using them yet."
 msgstr "今まで、Groonga HTTP server は、ワーカースレッドの処理が終了した後から、自身の終了処理を開始していました。しかし、このタイミングでは、ワーカースレッドは完全に終了していないことがあります。そのため、タイミングによってはGroonga HTTP serverがクラッシュすることがあります。Groonga HTTP server がワーカースレッドがまだ使用している領域を解放することがあるためです。"
@@ -295,7 +295,7 @@ msgstr "今まで、Groonga HTTP server は、ワーカースレッドの処理�
 msgid "Release 10.0.8 - 2020-10-29"
 msgstr "10.0.8リリース - 2020-10-29"
 
-msgid "[:doc:`reference/commands/select`] Added support for large drilldown keys."
+msgid "[:doc:`/reference/commands/select`] Added support for large drilldown keys."
 msgstr "[:doc:`/reference/commands/select`] 大きいサイズのドリルダウンのキーを使えるようになりました。"
 
 msgid "The maximum on the key size of Groonga's tables are 4KiB. However, if we specify multiple keys in drilldown, the size of drilldown keys may be larger than 4KiB."
@@ -313,7 +313,7 @@ msgstr "この機能には、 `xxHash <https://github.com/Cyan4973/xxHash>`_ が
 msgid "However, if we install Groonga from package, we can use this feature without doing anything special. Because Groonga's package already include `xxHash <https://github.com/Cyan4973/xxHash>`_ ."
 msgstr "ただ、Groongaをパッケージからインストールしている場合は、特に何もしなくてもこの機能を使えます。Groongaのパッケージには、すでに `xxHash <https://github.com/Cyan4973/xxHash>`_ が含まれているためです。"
 
-msgid "[:doc:`reference/commands/select`] Added support for handling as the same dynamic column even if columns refer to different tables."
+msgid "[:doc:`/reference/commands/select`] Added support for handling as the same dynamic column even if columns refer to different tables."
 msgstr "[:doc:`/reference/commands/select`] 異なるテーブルを参照しているカラムを同じ動的カラムで扱えるようにしました。"
 
 msgid "We can't have handled the same dynamic column if columns refer to different tables until now. Because the type of columns is different."
@@ -331,8 +331,8 @@ msgstr "上記の例では、 ``customers_A`` カラムの型は、 ``ShortText`
 msgid "By this, we can also set the value of ``customers_B`` in the value of ``customers`` column. Because both the key of ``customers_A`` and ``customers_B`` are ``ShortText`` type."
 msgstr "``customers_A`` のキーも ``customers_B`` のキーも ``ShortText`` 型であるため、これで ``customers`` カラムの値に ``customers_B`` の値も設定できます。"
 
-msgid "[:doc:`reference/commands/select`] Improved performance when the number of records for search result are huge."
-msgstr "[:doc:`reference/commands/select`] 検索結果のレコード数が非常に多い場合のパフォーマンスを改善しました。"
+msgid "[:doc:`/reference/commands/select`] Improved performance when the number of records for search result are huge."
+msgstr "[:doc:`/reference/commands/select`] 検索結果のレコード数が非常に多い場合のパフォーマンスを改善しました。"
 
 msgid "This optimization works when below cases."
 msgstr "この最適化は、以下のケースで効果があります。"
@@ -439,8 +439,8 @@ msgstr "これは、ディレクトリ構成や ``groonga`` プロセスの場�
 msgid "If we don't want include ``--path`` informations to a dump, we need specify ``--dump_paths no`` in ``dump`` command."
 msgstr "``--path`` の情報を ``dump`` に含みたくない場合は、 ``dump`` コマンド実行時に ``--dump_paths no`` を指定する必要があります。"
 
-msgid "[:doc:`reference/commands/dump`] Added a new option ``--dump_paths``."
-msgstr "[:doc:`reference/commands/dump`] 新しいオプション ``--dump_paths`` を追加しました。"
+msgid "[:doc:`/reference/commands/dump`] Added a new option ``--dump_paths``."
+msgstr "[:doc:`/reference/commands/dump`] 新しいオプション ``--dump_paths`` を追加しました。"
 
 msgid "``--dump_paths`` option control whether ``--path`` is dumped or not."
 msgstr "``--dump_paths`` オプションは、 ``--path`` をダンプするかどうかを制御します。"
@@ -469,7 +469,7 @@ msgstr "[tokenizers] 新しいトークナイザー ``TokenDocumentVectorBM25`` 
 msgid "It generates automatically document vector by BM25."
 msgstr "このトークナイザーは、BM25で文書ベクトルを自動で生成します。"
 
-msgid "[:doc:`reference/commands/select`] Added support for near search in same sentence."
+msgid "[:doc:`/reference/commands/select`] Added support for near search in same sentence."
 msgstr "[:doc:`/reference/commands/select`] 同一センテンス内での、フレーズ近傍検索をサポートしました。"
 
 msgid "[:doc:`/reference/commands/load`] Fixed a bug that ``load`` didn't a return response when we executed it against 257 columns."
@@ -505,7 +505,7 @@ msgstr "https://groonga.org/ja/blog/2020/09/29/groonga-10.0.7.html#multi-column-
 msgid "Release 10.0.6 - 2020-08-29"
 msgstr "10.0.6リリース - 2020-08-29"
 
-msgid "[:doc:`reference/commands/logical_range_filter`] Improved search plan for large data."
+msgid "[:doc:`/reference/commands/logical_range_filter`] Improved search plan for large data."
 msgstr "[:doc:`/reference/commands/logical_range_filter`] 大きなデータの検索プランを改善しました。"
 
 msgid "Normally, ``logical_range_filter`` is faster than ``logical_select``. However, it had been slower than ``logical_select`` in the below case."
@@ -541,8 +541,8 @@ msgstr "インストール方法についての詳細は、以下のURLも参照
 msgid "https://groonga.org/docs/install/debian.html"
 msgstr "https://groonga.org/ja/docs/install/debian.html"
 
-msgid "[:doc:`reference/commands/logical_select`] Added a support for ``highlight_html`` and ``highlight_full`` ."
-msgstr "[:doc:`reference/commands/logical_select`] ``highlight_html`` と ``highlight_full`` をサポートしました。"
+msgid "[:doc:`/reference/commands/logical_select`] Added a support for ``highlight_html`` and ``highlight_full`` ."
+msgstr "[:doc:`/reference/commands/logical_select`] ``highlight_html`` と ``highlight_full`` をサポートしました。"
 
 #
 msgid "Added support for recycling the IDs of records that are deleted when an array without value space delete.[GitHub#mroonga/mroonga#327][Reported by gaeeyo]"
@@ -557,13 +557,13 @@ msgstr "Groongaは大きなIDがあることによって、多くのストレー
 msgid "For example, large ID is caused after many adds and deletes like Mroonga's ``mroonga_operations``"
 msgstr "大きなIDは、例えば、Mroongaの ``mroonga_operations`` のように多くの追加と削除によって発生します。"
 
-msgid "[:doc:`reference/commands/select`] Improved performance of full-text-search without index."
-msgstr "[:doc:`reference/commands/select`] インデックスを設定していない全文検索のパフォーマンスを改善しました。"
+msgid "[:doc:`/reference/commands/select`] Improved performance of full-text-search without index."
+msgstr "[:doc:`/reference/commands/select`] インデックスを設定していない全文検索のパフォーマンスを改善しました。"
 
-msgid "[:doc:`reference/function`] Improved performance for calling of function that all arguments a variable reference or literal."
-msgstr "[:doc:`reference/function`] 全ての引数が他のテーブルへの参照か、リテラルである関数のパフォーマンスを改善しました。"
+msgid "[:doc:`/reference/function`] Improved performance for calling of function that all arguments a variable reference or literal."
+msgstr "[:doc:`/reference/function`] 全ての引数が他のテーブルへの参照か、リテラルである関数のパフォーマンスを改善しました。"
 
-msgid "[:doc:`reference/indexing`] Improved performance of offline index construction by using token column. [GitHub#1126][Patched by naoa]"
+msgid "[:doc:`/reference/indexing`] Improved performance of offline index construction by using token column. [GitHub#1126][Patched by naoa]"
 msgstr "[:doc:`/reference/indexing`] トークンカラムを使った静的インデックス構築のパフォーマンスを改善しました。 [GitHub#1126][naoaさんがパッチ提供]"
 
 msgid "Improved performance for ``\"_score = func(...)\"``."
@@ -584,7 +584,7 @@ msgstr "gaeeyoさん"
 msgid "Release 10.0.5 - 2020-07-30"
 msgstr "10.0.5リリース - 2020-07-30"
 
-msgid "[:doc:`reference/commands/select`] Added support for storing reference in table that we specify with ``--load_table``."
+msgid "[:doc:`/reference/commands/select`] Added support for storing reference in table that we specify with ``--load_table``."
 msgstr "[:doc:`/reference/commands/select`] ``-load_table`` で指定したテーブルに参照を格納できるようにしました。"
 
 msgid "``--load_table`` is a feature that stores search results to the table in a prepared."
@@ -605,8 +605,8 @@ msgstr "カラムの値を格納せず、参照のみを格納するため、こ
 msgid "If we search against this table, we can search by using indexes for reference destination."
 msgstr "このテーブルに対して検索する場合、参照先のテーブルのインデックスを使って検索できます。"
 
-msgid "[:doc:`reference/commands/select`] Improved sort performance on below cases."
-msgstr "[:doc:`reference/commands/select`] 以下のケースのソートのパフォーマンスを改善しました。"
+msgid "[:doc:`/reference/commands/select`] Improved sort performance on below cases."
+msgstr "[:doc:`/reference/commands/select`] 以下のケースのソートのパフォーマンスを改善しました。"
 
 msgid "When many sort keys need ID resolution."
 msgstr "多くのソートキーがID解決をする場合。"
@@ -629,8 +629,8 @@ msgstr "ソート対象のテーブルがキーを持っている場合。"
 msgid "Therefore, ``TABLE_NO_KEY`` isn't supported this improvement."
 msgstr "したがって、 ``TABLE_NO_KEY`` はこの改善をサポートしていません。"
 
-msgid "[:doc:`reference/commands/select`] Improved performance a bit on below cases."
-msgstr "[:doc:`reference/commands/select`] 以下のケースのパフォーマンスを少し改善しました。"
+msgid "[:doc:`/reference/commands/select`] Improved performance a bit on below cases."
+msgstr "[:doc:`/reference/commands/select`] 以下のケースのパフォーマンスを少し改善しました。"
 
 msgid "A case of searching for many records matches."
 msgstr "沢山のレコードがマッチする検索をしているケース。"
@@ -644,16 +644,16 @@ msgstr "[aggregator] score アクセサーをサポートしました。[GitHub#
 msgid "For example, we can ``_score`` subject to ``aggregator_*`` as below."
 msgstr "例えば、 以下のように ``_score`` を ``aggregator_*`` の対象にできます。"
 
-msgid "[:doc:`reference/indexing`] Improved performance of offline index construction on VC++ version."
+msgid "[:doc:`/reference/indexing`] Improved performance of offline index construction on VC++ version."
 msgstr "[:doc:`/reference/indexing`] VC++版の静的インデックス構築のパフォーマンスを改善しました。"
 
-msgid "[:doc:`reference/commands/select`] Use ``null`` instead ``NaN``, ``Infinity``, and ``-Infinity`` when Groonga outputs result for JSON format."
-msgstr "[:doc:`reference/commands/select`] JSON形式で出力する際に ``NaN`` や ``Infinity`` 、 ``-Infinity`` の代わりに ``null`` を出力するようにしました。"
+msgid "[:doc:`/reference/commands/select`] Use ``null`` instead ``NaN``, ``Infinity``, and ``-Infinity`` when Groonga outputs result for JSON format."
+msgstr "[:doc:`/reference/commands/select`] JSON形式で出力する際に ``NaN`` や ``Infinity`` 、 ``-Infinity`` の代わりに ``null`` を出力するようにしました。"
 
 msgid "Because JSON doesn't support them."
 msgstr "これらの値はJSONではサポートされていないためです。"
 
-msgid "[:doc:`reference/commands/select`] Add support fot aggregating standard deviation value."
+msgid "[:doc:`/reference/commands/select`] Add support fot aggregating standard deviation value."
 msgstr "[:doc:`/reference/commands/select`] 標準偏差の集計をサポートしました。"
 
 msgid "For example, we can calculate a standard deviation for every group as below."
@@ -665,8 +665,8 @@ msgstr "``aggregate_sd(target, {\"unbiased\": true})`` と指定することで�
 msgid "[Windows] Dropped Visual Studio 2013 support."
 msgstr "[Windows] Visual Studio 2013のサポートをやめました。"
 
-msgid "[:doc:`reference/executables/groonga-server-http`] Fixed a bug that a request can't halt even if we execute ``shutdown?mode=immediate`` when the response was halted by error occurrence."
-msgstr "[:doc:`reference/executables/groonga-server-http`] 応答がエラーで中断された時に、 ``shutdown?immediate`` を実行しても、リクエストが中断しない問題を修正しました。"
+msgid "[:doc:`/reference/executables/groonga-server-http`] Fixed a bug that a request can't halt even if we execute ``shutdown?mode=immediate`` when the response was halted by error occurrence."
+msgstr "[:doc:`/reference/executables/groonga-server-http`] 応答がエラーで中断された時に、 ``shutdown?immediate`` を実行しても、リクエストが中断しない問題を修正しました。"
 
 msgid "Fixed a crash bug when an error occurs while a request."
 msgstr "リクエスト中にエラーが発生した時にクラッシュする問題を修正しました。"
@@ -704,11 +704,11 @@ msgstr "``token_column`` を使った静的インデックス構築中に正規�
 msgid "Release 10.0.4 - 2020-06-29"
 msgstr "10.0.4リリース - 2020-06-29"
 
-msgid "[:doc:`reference/tables`] Added support for registering 400M records into a hash table."
-msgstr "[:doc:`reference/tables`] ハッシュテーブルで4億件のレコードの登録をサポートしました。"
+msgid "[:doc:`/reference/tables`] Added support for registering 400M records into a hash table."
+msgstr "[:doc:`/reference/tables`] ハッシュテーブルで4億件のレコードの登録をサポートしました。"
 
-msgid "[:doc:`reference/commands/select`] Improve scorer performance when the ``_score`` doesn't get recursively values."
-msgstr "[:doc:`reference/commands/select`] ``_score`` が再帰的に値を取得しない時のパフォーマンスを改善しました。"
+msgid "[:doc:`/reference/commands/select`] Improve scorer performance when the ``_score`` doesn't get recursively values."
+msgstr "[:doc:`/reference/commands/select`] ``_score`` が再帰的に値を取得しない時のパフォーマンスを改善しました。"
 
 msgid "Groonga get recursively value of ``_score`` when search result is search target."
 msgstr "Groongaは、検索結果が検索対象の時に、 ``_score`` の値を再帰的に取得します。"
@@ -716,34 +716,34 @@ msgstr "Groongaは、検索結果が検索対象の時に、 ``_score`` の値�
 msgid "For example, the search targets of ``slices`` are search result. Therefore, if we use ``slice`` in a query, this improvement doesn't ineffective."
 msgstr "例えば、 ``slices`` は検索結果が検索対象です。したがって、 ``slices`` を使っているクエリーでは、この改善は効果がありません。"
 
-msgid "[:doc:`reference/log`] Improved that we output drilldown keys in query-log."
+msgid "[:doc:`/reference/log`] Improved that we output drilldown keys in query-log."
 msgstr "[:doc:`/reference/log`] ドリルダウンのキーをクエリーログに出力するようにしました。"
 
-msgid "[:doc:`reference/commands/reference_acquire`], [:doc:`reference/commands/reference_release`] Added new commands for reference count mode."
-msgstr "[:doc:`reference/commands/reference_acquire`], [:doc:`reference/commands/reference_release`] 参照カウントモード用に新しいコマンドを追加しました。"
+msgid "[:doc:`/reference/commands/reference_acquire`], [:doc:`/reference/commands/reference_release`] Added new commands for reference count mode."
+msgstr "[:doc:`/reference/commands/reference_acquire`], [:doc:`/reference/commands/reference_release`] 参照カウントモード用に新しいコマンドを追加しました。"
 
 msgid "If we need to call multiple ``load`` in a short time, auto close by the reference count mode will degrade performance."
 msgstr "短い間隔で複数の ``load`` を呼び出す必要がある場合、参照カウントモードによる自動クローズによってパフォーマンスが低下します。"
 
-msgid "We can avoid the performance degrading by calling ``reference_acquire`` before multiple ``load`` and calling ``reference_release`` after multiple ``load``. Between ``reference_acquire`` and ``reference_release``, auto close is disabled."
-msgstr "複数の ``load`` の前に ``reference_acquire`` を呼び、 複数の ``load`` の後に ``reference_release`` を呼ぶことで、このパフォーマンスの低下を避けることができます。``reference_acquire`` と ``reference_release`` の間は自動クローズは無効になります。"
+msgid "We can avoid the performance degrading by calling ``/reference_acquire`` before multiple ``load`` and calling ``/reference_release`` after multiple ``load``. Between ``/reference_acquire`` and ``/reference_release``, auto close is disabled."
+msgstr "複数の ``load`` の前に ``/reference_acquire`` を呼び、 複数の ``load`` の後に ``/reference_release`` を呼ぶことで、このパフォーマンスの低下を避けることができます。``/reference_acquire`` と ``/reference_release`` の間は自動クローズは無効になります。"
 
-msgid "Because ``reference_acquire`` acquires a reference of target objects."
-msgstr "``reference_acquire`` が、対象のオブジェクトの参照を取得するためです。"
+msgid "Because ``/reference_acquire`` acquires a reference of target objects."
+msgstr "``/reference_acquire`` が、対象のオブジェクトの参照を取得するためです。"
 
-msgid "We can must call ``reference_release`` after you finish performance impact operations."
-msgstr "パフォーマンスに影響のある操作が完了したら、 ``reference_release`` を呼ぶ必要があります。"
+msgid "We can must call ``/reference_release`` after you finish performance impact operations."
+msgstr "パフォーマンスに影響のある操作が完了したら、 ``/reference_release`` を呼ぶ必要があります。"
 
-msgid "If we don't call ``reference_release``, the reference count mode doesn't work."
-msgstr "``reference_release`` を呼ばない場合、参照カウントモードは機能しません。"
+msgid "If we don't call ``/reference_release``, the reference count mode doesn't work."
+msgstr "``/reference_release`` を呼ばない場合、参照カウントモードは機能しません。"
 
-msgid "[:doc:`reference/commands/select`] Added support for aggregating multiple groups on one time ``drilldown``."
+msgid "[:doc:`/reference/commands/select`] Added support for aggregating multiple groups on one time ``drilldown``."
 msgstr "[:doc:`/reference/commands/select`] 一度の ``drilldown`` で複数グループの集計をサポートしました。"
 
 msgid "We came to be able to calculate sum or arithmetic mean every different multiple groups on one time ``drilldown`` as below."
 msgstr "以下のように、一回の ``drilldown`` で異なるグループ毎に和と算術平均を計算できるようになりました。"
 
-msgid "[:doc:`reference/executables/groonga`] Added support for ``--pid-path`` in standalone mode."
+msgid "[:doc:`/reference/executables/groonga`] Added support for ``--pid-path`` in standalone mode."
 msgstr "[:doc:`/reference/executables/groonga-httpd`] スタンドアローンモードで、 ``--pid-path`` をサポートしました。"
 
 msgid "Because ``--pid-path`` had been ignored in standalone mode in before version."
@@ -752,10 +752,10 @@ msgstr "以前のバージョンのスタンドアローンモードでは、 ``
 msgid "[:doc:`/reference/commands/io_flush`] Added support for reference count mode."
 msgstr "[:doc:`/reference/commands/io_flush`] 参照カウントモードに対応しました。"
 
-msgid "[:doc:`reference/commands/logical_range_filter`], [:doc:`/reference/commands/logical_count`] Added support for reference count mode."
-msgstr "[:doc:`/reference/commands/logical_range_filter`],[:doc:`reference/commands/logical_count`] 参照カウントモードに対応しました。"
+msgid "[:doc:`/reference/commands/logical_range_filter`], [:doc:`/reference/commands/logical_count`] Added support for reference count mode."
+msgstr "[:doc:`/reference/commands/logical_range_filter`],[:doc:`/reference/commands/logical_count`] 参照カウントモードに対応しました。"
 
-msgid "[:doc:`reference/executables/groonga-server-http`] We didn't add header after the last chunk."
+msgid "[:doc:`/reference/executables/groonga-server-http`] We didn't add header after the last chunk."
 msgstr "[:doc:`/reference/executables/groonga-server-http`] 最後のチャンクの後にヘッダーをつけないようにしました。"
 
 msgid "Because there is a possibility to exist that the HTTP client ignores header after the last chunk."
@@ -785,8 +785,8 @@ msgstr "``GRN_TOKEN_COLUMN_PARALLEL_TABLE_SIZE_THRESHOLD`` : どのくらいの�
 msgid "The default value is ``102400`` records."
 msgstr "デフォルト値は ``102400`` レコードです。"
 
-msgid "[:doc:`reference/commands/select`] Improved performance for ``load_table`` on the reference count mode."
-msgstr "[:doc:`reference/commands/select`] 参照カウントモード時の ``load_table`` のパフォーマンスを改善しました。"
+msgid "[:doc:`/reference/commands/select`] Improved performance for ``load_table`` on the reference count mode."
+msgstr "[:doc:`/reference/commands/select`] 参照カウントモード時の ``load_table`` のパフォーマンスを改善しました。"
 
 msgid "Fixed a bug that the database of Groonga was broken when we search by using the dynamic columns that don't specify a ``--filter`` and stridden over shard."
 msgstr "シャードをまたいでいて、かつ ``--filter`` を指定していない動的カラムを使って検索すると、Gronngaのデータベースが破損する問題を修正しました。"
@@ -818,13 +818,13 @@ msgstr "トークンカラムの値はソースカラムの値をトークナイ
 msgid "We can create a token column by setting the source column as below."
 msgstr "トークンカラムは以下のようにソースカラムを設定することで作成できます。"
 
-msgid "[:doc:`reference/commands/select`] We came to be able to specify a ``vector`` for the argument of a function."
+msgid "[:doc:`/reference/commands/select`] We came to be able to specify a ``vector`` for the argument of a function."
 msgstr "[:doc:`/reference/commands/select`] 関数の引数に ``vector`` を指定できるようになりました。"
 
 msgid "For example, ``flags`` options of ``query`` can describe by a ``vector`` as below."
 msgstr "例えば、 ``query`` の ``flags`` オプションを ``vector`` を使って以下のように記述できます。"
 
-msgid "[:doc:`reference/commands/select`] Added a new stage ``result_set`` for dynamic columns."
+msgid "[:doc:`/reference/commands/select`] Added a new stage ``result_set`` for dynamic columns."
 msgstr "[:doc:`/reference/commands/select`] 動的カラムに新しいステージ ``result_set`` を追加しました。"
 
 msgid "This stage generates a column into a result set table. Therefore, it is not generated if ``query`` or ``filter`` doesn't exist"
@@ -839,20 +839,20 @@ msgstr "このステージでは ``_value`` は使用できません。 ``result
 msgid "[vector_slice] Added support for weight vector that has weight of ``Float32`` type. [GitHub#1106 patched by naoa]"
 msgstr "[vector_slice] 重み付きベクターの重みに ``Float32`` 型が使えるようになりました。  [GitHub#1106 naoaさんがパッチ提供]"
 
-msgid "[:doc:`reference/commands/select`] Added support for ``filtered`` stage and ``output`` stage of dynamic columns on drilldowns. [GitHub#1101 patched by naoa][GitHub#1100 patched by naoa]"
-msgstr "[:doc:`reference/commands/select`] drilldownsの動的カラムのステージに ``filtered`` と ``output`` を追加しました。 [GitHub#1101 naoaさんがパッチ提供][GitHub#1100 naoaさんがパッチ提供]"
+msgid "[:doc:`/reference/commands/select`] Added support for ``filtered`` stage and ``output`` stage of dynamic columns on drilldowns. [GitHub#1101 patched by naoa][GitHub#1100 patched by naoa]"
+msgstr "[:doc:`/reference/commands/select`] drilldownsの動的カラムのステージに ``filtered`` と ``output`` を追加しました。 [GitHub#1101 naoaさんがパッチ提供][GitHub#1100 naoaさんがパッチ提供]"
 
 msgid "We can use ``filtered`` and ``output`` stage of dynamic columns on drilldowns as with ``drilldowns[Label].stage filtered`` and ``drilldowns[Label].stage output``."
 msgstr "``drilldowns[Label].stage filtered`` や ``drilldowns[Label].stage output`` のように drilldowns の動的カラムのステージに ``filtered`` と ``output`` を使えます。"
 
-msgid "[:doc:`reference/commands/select`] Added support for ``Float`` type value in aggregating on drilldown."
+msgid "[:doc:`/reference/commands/select`] Added support for ``Float`` type value in aggregating on drilldown."
 msgstr "[:doc:`/reference/commands/select`] ドリルダウンでの集計に ``Float`` 型の値をサポートしました。"
 
 msgid "We can aggregate max value, min value, and sum value for ``Float`` type value using ``MAX``, ``MIN``, and ``SUM``."
 msgstr "``MAX``、``MIN``、``SUM`` を使って ``Float`` 型の値の最大値、最小値、合計値を集計できます。"
 
-msgid "[:doc:`reference/functions/query`] [:doc:`reference/functions/geo_in_rectangle`] [:doc:`reference/functions/geo_in_circle`] Added a new option ``score_column`` for ``query()``, ``geo_in_rectangle()``, and ``geo_in_circle()``."
-msgstr "[:doc:`reference/functions/query`] [:doc:`reference/functions/geo_in_rectangle`] [:doc:`reference/functions/geo_in_circle`] ``query()`` と ``geo_in_rectangle()`` と ``geo_in_circle()`` に新しいオプション ``score_column`` を追加しました。"
+msgid "[:doc:`/reference/functions/query`] [:doc:`/reference/functions/geo_in_rectangle`] [:doc:`/reference/functions/geo_in_circle`] Added a new option ``score_column`` for ``query()``, ``geo_in_rectangle()``, and ``geo_in_circle()``."
+msgstr "[:doc:`/reference/functions/query`] [:doc:`/reference/functions/geo_in_rectangle`] [:doc:`/reference/functions/geo_in_circle`] ``query()`` と ``geo_in_rectangle()`` と ``geo_in_circle()`` に新しいオプション ``score_column`` を追加しました。"
 
 msgid "We can store a score value by condition using ``score_column``."
 msgstr "``score_column`` を使うことで条件毎にスコアの値を格納できます。"
@@ -875,8 +875,8 @@ msgstr "[Windows] 古いWindowsのサポートをやめました。"
 msgid "Groonga for Windows come to require Windows 8 (Windows Server 2012) or later from 10.0.3."
 msgstr "10.0.3から、Windows 8 (Windows Server 2012) 以降を要求します。"
 
-msgid "[:doc:`reference/commands/select`] Improved sort performance when sort keys were mixed referable sort keys and the other sort keys."
-msgstr "[:doc:`reference/commands/select`] 参照可能なソートキーとそうでないソートキーが混在しているときのソートパフォーマンスを改善しました。"
+msgid "[:doc:`/reference/commands/select`] Improved sort performance when sort keys were mixed referable sort keys and the other sort keys."
+msgstr "[:doc:`/reference/commands/select`] 参照可能なソートキーとそうでないソートキーが混在しているときのソートパフォーマンスを改善しました。"
 
 msgid "We improved sort performance if mixed referable sort keys and the other and there are referable keys two or more."
 msgstr "参照可能なソートキーとそうでないソートキーが混在していて、参照可能なキーが2つ以上あるときのソートパフォーマンスを改善しました。"
@@ -899,11 +899,11 @@ msgstr ""
 msgid "The more sort keys that except string, a decrease in the usage of memory for sort."
 msgstr "文字列以外のソートキーが多いほど、ソートに使用するメモリ使用量が少なくなります。"
 
-msgid "[:doc:`reference/commands/select`] Improved sort performance when sort keys are all referable keys case."
-msgstr "[:doc:`reference/commands/select`] 全てのソートキーが参照可能なキーの時のソートのパフォーマンスを改善しました。"
+msgid "[:doc:`/reference/commands/select`] Improved sort performance when sort keys are all referable keys case."
+msgstr "[:doc:`/reference/commands/select`] 全てのソートキーが参照可能なキーの時のソートのパフォーマンスを改善しました。"
 
-msgid "[:doc:`reference/commands/select`] Improve scorer performance as a ``_socre = column1*X + column2*Y + ...`` case."
-msgstr "[:doc:`reference/commands/select`] ``_socre = column1*X + column2*Y + ...`` の場合のスコアラーのパフォーマンスを改善しました。"
+msgid "[:doc:`/reference/commands/select`] Improve scorer performance as a ``_socre = column1*X + column2*Y + ...`` case."
+msgstr "[:doc:`/reference/commands/select`] ``_socre = column1*X + column2*Y + ...`` の場合のスコアラーのパフォーマンスを改善しました。"
 
 msgid "This optimization effective when there are many ``+`` or ``*`` in ``_score``."
 msgstr "この最適化は、 ``_score`` 内に多くの ``+`` または ``*`` がある場合に効きます。"
@@ -911,7 +911,7 @@ msgstr "この最適化は、 ``_score`` 内に多くの ``+`` または ``*`` �
 msgid "At the moment, it has only effective against ``+`` and ``*``."
 msgstr "現状、 ``+`` と ``*`` に対してのみ効果があります。"
 
-msgid "[:doc:`reference/commands/select`] Added support for phrase near search."
+msgid "[:doc:`/reference/commands/select`] Added support for phrase near search."
 msgstr "[:doc:`/reference/commands/select`] フレーズ近傍検索をサポートしました。"
 
 msgid "We can search phrase by phrase by a near search."
@@ -926,8 +926,8 @@ msgstr "フレーズ近傍検索のスクリプト構文は、 ``column *NP \"ph
 msgid "If the search target phrase includes space, we can search for it by surrounding it with ``\"`` as below."
 msgstr "検索対象のフレーズにスペースを含む場合、 以下のようにフレーズを ``\"`` で囲うことで検索できます。"
 
-msgid "[:doc:`reference/columns/vector`] Added support for ``float32`` weight vector."
-msgstr "[:doc:`reference/columns/vector`] 重み付きベクターの重みに ``float32`` 型を追加しました。"
+msgid "[:doc:`/reference/columns/vector`] Added support for ``float32`` weight vector."
+msgstr "[:doc:`/reference/columns/vector`] 重み付きベクターの重みに ``float32`` 型を追加しました。"
 
 msgid "We can store weight as ``float32`` instead of ``uint32``."
 msgstr "``uint32`` の代わりに ``float32`` として重みを格納できます。"
@@ -1346,11 +1346,11 @@ msgstr "[httpd] 出力形式を拡張子として指定できるようにしま�
 msgid "For example, we can write ``load.json`` instead of ``load?output_type=json``."
 msgstr "例えば、 ``load?output_type=json`` の代わりに ``load.json`` と書けます。"
 
-msgid "[:doc:`reference/log`] Outputted a path of opened or closed file into a log of dump level on Linux."
-msgstr "[:doc:`reference/log`] Linuxのdumpレベルのログにオープンしたファイルとクローズしたファイルのパスを出力するようにしました。"
+msgid "[:doc:`/reference/log`] Outputted a path of opened or closed file into a log of dump level on Linux."
+msgstr "[:doc:`/reference/log`] Linuxのdumpレベルのログにオープンしたファイルとクローズしたファイルのパスを出力するようにしました。"
 
-msgid "[:doc:`reference/log`] Outputted a path of closed file into a log of debug level on Windows."
-msgstr "[:doc:`reference/log`] Windowsのdebugレベルのログにオープンしたファイルとクローズしたファイルのパスを出力するようにしました。"
+msgid "[:doc:`/reference/log`] Outputted a path of closed file into a log of debug level on Windows."
+msgstr "[:doc:`/reference/log`] Windowsのdebugレベルのログにオープンしたファイルとクローズしたファイルのパスを出力するようにしました。"
 
 msgid "Added following API and macros"
 msgstr "以下のAPIとマクロを追加しました。"
@@ -1385,8 +1385,8 @@ msgstr ""
 msgid "We ``grn_obj_format_fin(grn_ctx, grn_obj_format)`` use instead since 10.0.0."
 msgstr "10.0.0から代わりに ``grn_obj_format_fin(grn_ctx, grn_obj_format)`` を使ってください。"
 
-msgid "[:doc:`reference/commands/logical_range_filter`],[:doc:`reference/commands/dump`] Added support for stream output."
-msgstr "[:doc:`/reference/commands/logical_range_filter`],[:doc:`reference/commands/dump`]  ストリーム出力に対応しました。"
+msgid "[:doc:`/reference/commands/logical_range_filter`],[:doc:`/reference/commands/dump`] Added support for stream output."
+msgstr "[:doc:`/reference/commands/logical_range_filter`],[:doc:`/reference/commands/dump`]  ストリーム出力に対応しました。"
 
 msgid "This feature requires ``command_version 3`` or later. The header content is outputted after the body content."
 msgstr "この機能は ``command_version 3`` 以降で使えます。headerがbodyの後に出力されます。"
@@ -1424,7 +1424,7 @@ msgstr "``dump`` と ``logical_range_filter`` を ``command_version 3`` で実�
 msgid "Because of ``dump`` and ``logical_range_filter`` on ``command_version 3`` returns stream since 10.0.0, Groonga can not cache the whole response."
 msgstr "10.0.0から ``dump`` と ``logical_range_filter`` は ``command_version 3`` の時にストリームで応答を返すので、応答全体をキャッシュできないためです。"
 
-msgid "[:doc:`reference/commands/logical_range_filter`] Added support for outputting response as Apache Arrow format."
+msgid "[:doc:`/reference/commands/logical_range_filter`] Added support for outputting response as Apache Arrow format."
 msgstr "[:doc:`/reference/commands/logical_range_filter`] Apache Arrow形式での応答をサポートしました。"
 
 msgid "Supported data type as below."

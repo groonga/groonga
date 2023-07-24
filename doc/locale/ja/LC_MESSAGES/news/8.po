@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
-"PO-Revision-Date: 2023-07-24 12:40+0900\n"
+"PO-Revision-Date: 2023-07-24 13:25+0900\n"
 "Report-Msgid-Bugs-To: \n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -368,7 +368,7 @@ msgid "Because Groonga had a problem taht is a crash when deleteing a table of a
 msgstr "``io_flush`` 実行中に ``io_flush`` 対象のテーブルを削除するとGroongaがクラッシュする問題があったためです。"
 
 msgid "[:doc:`/reference/functions/cast_loose`] Added a new function ``cast_loose``."
-msgstr "[:doc:`reference/functions/cast_loose`] 新しい関数 ``cast_loose()`` を追加しました。"
+msgstr "[:doc:`/reference/functions/cast_loose`] 新しい関数 ``cast_loose()`` を追加しました。"
 
 msgid "This function cast to a type to specify. If a value to specify can't cast, it become to a default value to specify."
 msgstr "この関数は、指定した型へキャストします。もし、指定した値がキャストできない場合、値は、指定したデフォルト値になります。"
@@ -539,7 +539,7 @@ msgid "[:doc:`/reference/grn_expr/script_syntax`] Added complementary explain ab
 msgstr "[:doc:`/reference/grn_expr/script_syntax`] 類似文書検索の補足説明とその日本語訳を追加しました。 [GitHub groonga/GitHub#858] [堀本さんがパッチ提供]"
 
 msgid "[:doc:`/reference/functions/time_classify_day_of_week`] Added a new API: ``time_classify_day_of_week()``."
-msgstr "[:doc:`reference/functions/time_classify_day_of_week`] 新しい関数 ``time_classify_day_of_week()`` を追加しました。"
+msgstr "[:doc:`/reference/functions/time_classify_day_of_week`] 新しい関数 ``time_classify_day_of_week()`` を追加しました。"
 
 msgid "Suppressed a warning with ``-fstack-protector``. Suggested by OBATA Akio."
 msgstr "``-fstack-protector`` で警告を抑制するようにしました。（OBATA Akioさんが提案）"
@@ -595,8 +595,8 @@ msgstr "新しいpredicate ``grn_obj_is_number_family_bulk()`` を追加しま�
 msgid "Added a new API: ``grn_plugin_proc_get_value_mode()``."
 msgstr "新しいAPI ``grn_plugin_proc_get_value_mode()`` を追加しました。"
 
-msgid "[:doc:`reference/functions/vector_find`] Added a new function ``vector_find()``."
-msgstr "[:doc:`reference/functions/vector_find`] 新しい関数 ``vector_find()`` を追加しました。"
+msgid "[:doc:`/reference/functions/vector_find`] Added a new function ``vector_find()``."
+msgstr "[:doc:`/reference/functions/vector_find`] 新しい関数 ``vector_find()`` を追加しました。"
 
 msgid "Suppress memcpy warnings in msgpack."
 msgstr "msgpackでのmemcpyの警告を抑制しました。"
@@ -655,7 +655,7 @@ msgstr "2: ベクターカラムの全文検索インデックスはマルチカ
 msgid "[:doc:`/reference/executables/grndb`] Disabled log check temporarily. Because it's not completed yet."
 msgstr "[:doc:`/reference/executables/grndb`] 実装が不十分だったため、ログのチェックを一時的に無効にしました"
 
-msgid "[:doc:`reference/functions/sub_filter`] Fixed too much score with a too filtered case."
+msgid "[:doc:`/reference/functions/sub_filter`] Fixed too much score with a too filtered case."
 msgstr "[:doc:`/reference/functions/sub_filter`] 十分にフィルターされたケースで、スコアが多すぎる問題を修正"
 
 msgid "Fixed build error if KyTea is installed."
@@ -694,7 +694,7 @@ msgstr "[:doc:`/reference/normalizers`] ``NormalizerNFKC100`` に新しいオプ
 msgid "[:doc:`/reference/normalizers`] Added new option for ``NormalizerNFKC100`` that ``unify_katakana_bu_sound option``. This option normalizes ``ヴァヴィヴゥヴェヴォ`` (katakana) to ``ブ`` (katakana). For example, you can search ``セーブル`` (katakana) and ``セーヴル`` in ``セーヴェル`` (katakana)."
 msgstr "[:doc:`/reference/normalizers`] ``NormalizerNFKC100`` に新しいオプション ``unify_katakana_bu_sound option`` を追加しました。このオプションは、``ヴァヴィヴゥヴェヴォ`` を ``ブ`` に正規化します。例えば、``セーブル`` や ``セーヴル`` を ``セーヴェル`` で検索できます。"
 
-msgid "[:doc:`reference/functions/sub_filter`] Supported ``sub_filter`` optimization for the too filter case. this optimize is valid when records are enough narrowed down before ``sub_filter`` execution as below."
+msgid "[:doc:`/reference/functions/sub_filter`] Supported ``sub_filter`` optimization for the too filter case. this optimize is valid when records are enough narrowed down before ``sub_filter`` execution as below."
 msgstr "[:doc:`/reference/functions/sub_filter`] 十分にフィルターされたケースでの ``sub_filter`` の動作を最適化しました。この最適化は、 ``sub_filter`` 実行前に十分にレコードが絞り込まれているケースで有効になります。"
 
 msgid "[:doc:`/reference/executables/groonga-httpd`] Made all workers context address to unique. context address is ``#{ID}`` of below query log."

@@ -9,16 +9,16 @@ Release 10.1.1 - 2021-01-25
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`reference/commands/select`] Added support for outputting UInt64 value in Apache Arrow format.
+* [:doc:`/reference/commands/select`] Added support for outputting UInt64 value in Apache Arrow format.
 
-* [:doc:`reference/commands/select`] Added support for outputting a number of hits in Apache Arrow format as below.
+* [:doc:`/reference/commands/select`] Added support for outputting a number of hits in Apache Arrow format as below.
 
   .. code-block::
 
      -- metadata --
      GROONGA:n-hits: 10
 
-* [:doc:`reference/functions/query`] Added support for optimization of "order by estimated size".
+* [:doc:`/reference/functions/query`] Added support for optimization of "order by estimated size".
 
   * Normally, we can search at high speed when we first execute a condition which number of hits is a little.
 
@@ -33,7 +33,7 @@ Improvements
   * Improved the accuracy of a decision whether the ``between()`` use sequential search or not.
   * Improved that we set a result of ``between()`` into a result set in bulk.
 
-* [:doc:`reference/commands/select`] Improved performance for a prefix search.
+* [:doc:`/reference/commands/select`] Improved performance for a prefix search.
 
   * For example, the performance of the following prefix search by using "*" improved.
 
@@ -60,7 +60,7 @@ Improvements
 Fixes
 ^^^^^
 
-* [:doc:`reference/functions/sub_filter`] Fixed a bug that ``sub_filter`` doesn't work in ``slices[].filter``.
+* [:doc:`/reference/functions/sub_filter`] Fixed a bug that ``sub_filter`` doesn't work in ``slices[].filter``.
 
   * For example, the result of ``sub_filter`` was 0 records by the following query by this bug.
 
@@ -153,7 +153,7 @@ Improvements
   * However, this is needless as the target of highlight.
     Therefore, in this release, ``highlight_html()`` removes leading full width spaces.
 
-* [:doc:`reference/commands/status`] Added a new item ``features``.
+* [:doc:`/reference/commands/status`] Added a new item ``features``.
 
   * We can display which Groonga's features are enabled as below.
 
@@ -197,7 +197,7 @@ Improvements
         }
       ]
 
-* [:doc:`reference/commands/status`] Added a new item ``apache_arrow``.
+* [:doc:`/reference/commands/status`] Added a new item ``apache_arrow``.
 
   * We can display Apache Arrow version that Groonga use as below.
 
@@ -735,7 +735,7 @@ Improvements
 
 * Improved performance when we specified ``-1`` to ``limit``.
 
-* [:doc:`reference/commands/reference_acquire`] Added a new option ``--auto_release_count``.
+* [:doc:`/reference/commands/reference_acquire`] Added a new option ``--auto_release_count``.
 
   * Groonga reduces a reference count automatically when a request reaching the number of value that is specified in ``--auto_release_count``.
 
@@ -760,13 +760,13 @@ Improvements
 
 * [:doc:`/reference/token_filters`] Added a new TokenFilter ``TokenFilterNFKC130`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 13.0.
 
-* [:doc:`reference/commands/select`] Improved performance for ``"_score = column - X"``.
+* [:doc:`/reference/commands/select`] Improved performance for ``"_score = column - X"``.
 
-* [:doc:`reference/commands/reference_acquire`] Improved that ``--reference_acquire`` doesn't get unnecessary reference of index column when we specify the ``--recursive dependent`` option.
+* [:doc:`/reference/commands/reference_acquire`] Improved that ``--reference_acquire`` doesn't get unnecessary reference of index column when we specify the ``--recursive dependent`` option.
 
   * From this release, the targets of ``--recursive dependent`` are only the target table's key  and the index column that is set to data column.
 
-* [:doc:`reference/commands/select`] Add support for ordered near phrase search.
+* [:doc:`/reference/commands/select`] Add support for ordered near phrase search.
 
   * Until now, the near phrase search have only looked for records that the distance of between specified phrases near.
   * This feature look for satisfy the following conditions records.
@@ -896,7 +896,7 @@ Improvements
 Fixes
 ^^^^^
 
-* [:doc:`reference/executables/groonga-server-http`] Fixed that Groonga HTTP server finished without waiting all woker threads finished completely.
+* [:doc:`/reference/executables/groonga-server-http`] Fixed that Groonga HTTP server finished without waiting all woker threads finished completely.
 
   * Until now, Groonga HTTP server had started the process of finish after worker threads finished itself process.
     However, worker threads may not finish completely at this timing. Therefore, Groonga HTTP server may crashed according to timing. Because Groonga HTTP server may free area of memory that worker threads are using them yet.
@@ -909,7 +909,7 @@ Release 10.0.8 - 2020-10-29
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`reference/commands/select`] Added support for large drilldown keys.
+* [:doc:`/reference/commands/select`] Added support for large drilldown keys.
 
   * The maximum on the key size of Groonga's tables are 4KiB.
     However, if we specify multiple keys in drilldown, the size of drilldown keys may be larger than 4KiB.
@@ -933,7 +933,7 @@ Improvements
     * However, if we install Groonga from package, we can use this feature without doing anything special.
       Because Groonga's package already include `xxHash <https://github.com/Cyan4973/xxHash>`_ .
 
-* [:doc:`reference/commands/select`] Added support for handling as the same dynamic column even if columns refer to different tables.
+* [:doc:`/reference/commands/select`] Added support for handling as the same dynamic column even if columns refer to different tables.
 
   * We can't have handled the same dynamic column if columns refer to different tables until now.
     Because the type of columns is different.
@@ -968,7 +968,7 @@ Improvements
   * By this, we can also set the value of ``customers_B`` in the value of ``customers`` column.
     Because both the key of ``customers_A`` and ``customers_B`` are ``ShortText`` type.
 
-* [:doc:`reference/commands/select`] Improved performance when the number of records for search result are huge.
+* [:doc:`/reference/commands/select`] Improved performance when the number of records for search result are huge.
 
   * This optimization works when below cases.
 
@@ -1044,7 +1044,7 @@ Improvements
 
     * If we don't want include ``--path`` informations to a dump, we need specify ``--dump_paths no`` in ``dump`` command.
 
-* [:doc:`reference/commands/dump`] Added a new option ``--dump_paths``.
+* [:doc:`/reference/commands/dump`] Added a new option ``--dump_paths``.
 
   * ``--dump_paths`` option control whether ``--path`` is dumped or not.
   * The default value of it is ``yes``.
@@ -1062,7 +1062,7 @@ Improvements
 
   * It generates automatically document vector by BM25.
 
-* [:doc:`reference/commands/select`] Added support for near search in same sentence.
+* [:doc:`/reference/commands/select`] Added support for near search in same sentence.
 
 Fixes
 ^^^^^
@@ -1092,7 +1092,7 @@ Release 10.0.6 - 2020-08-29
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`reference/commands/logical_range_filter`] Improved search plan for large data.
+* [:doc:`/reference/commands/logical_range_filter`] Improved search plan for large data.
 
   * Normally, ``logical_range_filter`` is faster than ``logical_select``.
     However, it had been slower than ``logical_select`` in the below case.
@@ -1116,7 +1116,7 @@ Improvements
 
       * https://groonga.org/docs/install/debian.html
 
-* [:doc:`reference/commands/logical_select`] Added a support for ``highlight_html`` and ``highlight_full`` .
+* [:doc:`/reference/commands/logical_select`] Added a support for ``highlight_html`` and ``highlight_full`` .
 
 * Added support for recycling the IDs of records that are deleted when an array without value space delete.[GitHub#mroonga/mroonga#327][Reported by gaeeyo]
 
@@ -1125,11 +1125,11 @@ Improvements
 
     * For example, large ID is caused after many adds and deletes like Mroonga's ``mroonga_operations``
 
-* [:doc:`reference/commands/select`] Improved performance of full-text-search without index.
+* [:doc:`/reference/commands/select`] Improved performance of full-text-search without index.
 
-* [:doc:`reference/function`] Improved performance for calling of function that all arguments a variable reference or literal.
+* [:doc:`/reference/function`] Improved performance for calling of function that all arguments a variable reference or literal.
 
-* [:doc:`reference/indexing`] Improved performance of offline index construction by using token column. [GitHub#1126][Patched by naoa]
+* [:doc:`/reference/indexing`] Improved performance of offline index construction by using token column. [GitHub#1126][Patched by naoa]
 
 * Improved performance for ``"_score = func(...)"``.
 
@@ -1158,7 +1158,7 @@ Release 10.0.5 - 2020-07-30
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`reference/commands/select`] Added support for storing reference in table that we specify with ``--load_table``.
+* [:doc:`/reference/commands/select`] Added support for storing reference in table that we specify with ``--load_table``.
 
   * ``--load_table`` is a feature that stores search results to the table in a prepared.
 
@@ -1245,7 +1245,7 @@ Improvements
         ]
       ]
 
-* [:doc:`reference/commands/select`] Improved sort performance on below cases.
+* [:doc:`/reference/commands/select`] Improved sort performance on below cases.
 
   * When many sort keys need ID resolution.
 
@@ -1262,7 +1262,7 @@ Improvements
 
     * Therefore, ``TABLE_NO_KEY`` isn't supported this improvement.
 
-* [:doc:`reference/commands/select`] Improved performance a bit on below cases.
+* [:doc:`/reference/commands/select`] Improved performance a bit on below cases.
 
   * A case of searching for many records matches.
   * A case of drilldown for many records.
@@ -1400,13 +1400,13 @@ Improvements
          ]
        ]
 
-* [:doc:`reference/indexing`] Improved performance of offline index construction on VC++ version.
+* [:doc:`/reference/indexing`] Improved performance of offline index construction on VC++ version.
 
-* [:doc:`reference/commands/select`] Use ``null`` instead ``NaN``, ``Infinity``, and ``-Infinity`` when Groonga outputs result for JSON format.
+* [:doc:`/reference/commands/select`] Use ``null`` instead ``NaN``, ``Infinity``, and ``-Infinity`` when Groonga outputs result for JSON format.
 
   * Because JSON doesn't support them.
 
-* [:doc:`reference/commands/select`] Add support fot aggregating standard deviation value.
+* [:doc:`/reference/commands/select`] Add support fot aggregating standard deviation value.
 
   * For example, we can calculate a standard deviation for every group as below.
 
@@ -1546,7 +1546,7 @@ Improvements
 Fixes
 ^^^^^
 
-* [:doc:`reference/executables/groonga-server-http`] Fixed a bug that a request can't halt even if we execute ``shutdown?mode=immediate`` when the response was halted by error occurrence.
+* [:doc:`/reference/executables/groonga-server-http`] Fixed a bug that a request can't halt even if we execute ``shutdown?mode=immediate`` when the response was halted by error occurrence.
 
 * Fixed a crash bug when an error occurs while a request.
 
@@ -1579,27 +1579,27 @@ Release 10.0.4 - 2020-06-29
 Improvements
 ^^^^^^^^^^^^
 
-* [:doc:`reference/tables`] Added support for registering 400M records into a hash table.
+* [:doc:`/reference/tables`] Added support for registering 400M records into a hash table.
 
-* [:doc:`reference/commands/select`] Improve scorer performance when the ``_score`` doesn't get recursively values.
+* [:doc:`/reference/commands/select`] Improve scorer performance when the ``_score`` doesn't get recursively values.
 
   * Groonga get recursively value of ``_score`` when search result is search target.
   * For example, the search targets of ``slices`` are search result. Therefore, if we use ``slice`` in a query, this improvement doesn't ineffective.
 
-* [:doc:`reference/log`] Improved that we output drilldown keys in query-log.
+* [:doc:`/reference/log`] Improved that we output drilldown keys in query-log.
 
-* [:doc:`reference/commands/reference_acquire`], [:doc:`reference/commands/reference_release`] Added new commands for reference count mode.
+* [:doc:`/reference/commands/reference_acquire`], [:doc:`/reference/commands/reference_release`] Added new commands for reference count mode.
 
   * If we need to call multiple ``load`` in a short time, auto close by the reference count mode will degrade performance.
-  * We can avoid the performance degrading by calling ``reference_acquire`` before multiple ``load`` and calling ``reference_release`` after multiple ``load``.
-    Between ``reference_acquire`` and ``reference_release``, auto close is disabled.
+  * We can avoid the performance degrading by calling ``/reference_acquire`` before multiple ``load`` and calling ``/reference_release`` after multiple ``load``.
+    Between ``/reference_acquire`` and ``/reference_release``, auto close is disabled.
 
-    * Because ``reference_acquire`` acquires a reference of target objects.
+    * Because ``/reference_acquire`` acquires a reference of target objects.
 
-  * We can must call ``reference_release`` after you finish performance impact operations.
-  * If we don't call ``reference_release``, the reference count mode doesn't work.
+  * We can must call ``/reference_release`` after you finish performance impact operations.
+  * If we don't call ``/reference_release``, the reference count mode doesn't work.
 
-* [:doc:`reference/commands/select`] Added support for aggregating multiple groups on one time ``drilldown``.
+* [:doc:`/reference/commands/select`] Added support for aggregating multiple groups on one time ``drilldown``.
 
   * We came to be able to calculate sum or arithmetic mean every different multiple groups on one time ``drilldown`` as below.
 
@@ -1753,15 +1753,15 @@ Improvements
         ]
       ]
 
-* [:doc:`reference/executables/groonga`] Added support for ``--pid-path`` in standalone mode.
+* [:doc:`/reference/executables/groonga`] Added support for ``--pid-path`` in standalone mode.
 
   * Because ``--pid-path`` had been ignored in standalone mode in before version.
 
 * [:doc:`/reference/commands/io_flush`] Added support for reference count mode.
 
-* [:doc:`reference/commands/logical_range_filter`], [:doc:`/reference/commands/logical_count`] Added support for reference count mode.
+* [:doc:`/reference/commands/logical_range_filter`], [:doc:`/reference/commands/logical_count`] Added support for reference count mode.
 
-* [:doc:`reference/executables/groonga-server-http`] We didn't add header after the last chunk.
+* [:doc:`/reference/executables/groonga-server-http`] We didn't add header after the last chunk.
 
   * Because there is a possibility to exist that the HTTP client ignores header after the last chunk.
 
@@ -1781,7 +1781,7 @@ Improvements
 
       * The default value is ``102400`` records.
 
-* [:doc:`reference/commands/select`] Improved performance for ``load_table`` on the reference count mode.
+* [:doc:`/reference/commands/select`] Improved performance for ``load_table`` on the reference count mode.
 
 Fixes
 ^^^^^
@@ -1826,7 +1826,7 @@ Improvements
       # The last "title" is the source column.
       column_create Notes title_terms COLUMN_VECTOR Terms title
 
-* [:doc:`reference/commands/select`] We came to be able to specify a ``vector`` for the argument of a function.
+* [:doc:`/reference/commands/select`] We came to be able to specify a ``vector`` for the argument of a function.
 
   * For example, ``flags`` options of ``query`` can describe by a ``vector`` as below.
 
@@ -1840,7 +1840,7 @@ Improvements
                           "flags": ["ALLOW_LEADING_NOT", "ALLOW_COLUMN"] \
                         })'
 
-* [:doc:`reference/commands/select`] Added a new stage ``result_set`` for dynamic columns.
+* [:doc:`/reference/commands/select`] Added a new stage ``result_set`` for dynamic columns.
 
   * This stage generates a column into a result set table. Therefore, it is not generated if ``query`` or ``filter`` doesn't exist
 
@@ -1850,15 +1850,15 @@ Improvements
 
 * [vector_slice] Added support for weight vector that has weight of ``Float32`` type. [GitHub#1106 patched by naoa]
 
-* [:doc:`reference/commands/select`] Added support for ``filtered`` stage and ``output`` stage of dynamic columns on drilldowns. [GitHub#1101 patched by naoa][GitHub#1100 patched by naoa]
+* [:doc:`/reference/commands/select`] Added support for ``filtered`` stage and ``output`` stage of dynamic columns on drilldowns. [GitHub#1101 patched by naoa][GitHub#1100 patched by naoa]
 
   * We can use ``filtered`` and ``output`` stage of dynamic columns on drilldowns as with ``drilldowns[Label].stage filtered`` and ``drilldowns[Label].stage output``.
 
-* [:doc:`reference/commands/select`] Added support for ``Float`` type value in aggregating on drilldown.
+* [:doc:`/reference/commands/select`] Added support for ``Float`` type value in aggregating on drilldown.
 
   * We can aggregate max value, min value, and sum value for ``Float`` type value using ``MAX``, ``MIN``, and ``SUM``.
 
-* [:doc:`reference/functions/query`] [:doc:`reference/functions/geo_in_rectangle`] [:doc:`reference/functions/geo_in_circle`] Added a new option ``score_column`` for ``query()``, ``geo_in_rectangle()``, and ``geo_in_circle()``.
+* [:doc:`/reference/functions/query`] [:doc:`/reference/functions/geo_in_rectangle`] [:doc:`/reference/functions/geo_in_circle`] Added a new option ``score_column`` for ``query()``, ``geo_in_rectangle()``, and ``geo_in_circle()``.
 
   * We can store a score value by condition using ``score_column``.
   * Normally, Groonga calculate a score by adding scores of all conditions. However, we sometimes want to get a score value by condition.
@@ -1980,7 +1980,7 @@ Improvements
 
   * Groonga for Windows come to require Windows 8 (Windows Server 2012) or later from 10.0.3.
 
-* [:doc:`reference/commands/select`] Improved sort performance when sort keys were mixed referable sort keys and the other sort keys.
+* [:doc:`/reference/commands/select`] Improved sort performance when sort keys were mixed referable sort keys and the other sort keys.
 
   * We improved sort performance if mixed referable sort keys and the other and there are referable keys two or more.
 
@@ -1993,14 +1993,14 @@ Improvements
 
   * The more sort keys that except string, a decrease in the usage of memory for sort.
 
-* [:doc:`reference/commands/select`] Improved sort performance when sort keys are all referable keys case.
+* [:doc:`/reference/commands/select`] Improved sort performance when sort keys are all referable keys case.
 
-* [:doc:`reference/commands/select`] Improve scorer performance as a ``_socre = column1*X + column2*Y + ...`` case.
+* [:doc:`/reference/commands/select`] Improve scorer performance as a ``_socre = column1*X + column2*Y + ...`` case.
 
   * This optimization effective when there are many ``+`` or ``*`` in ``_score``.
   * At the moment, it has only effective against ``+`` and ``*``.
 
-* [:doc:`reference/commands/select`] Added support for phrase near search.
+* [:doc:`/reference/commands/select`] Added support for phrase near search.
 
   * We can search phrase by phrase by a near search.
 
@@ -2051,7 +2051,7 @@ Improvements
            ]
          ]
 
-* [:doc:`reference/columns/vector`] Added support for ``float32`` weight vector.
+* [:doc:`/reference/columns/vector`] Added support for ``float32`` weight vector.
 
   * We can store weight as ``float32`` instead of ``uint32``.
   * We need to add ``WEIGHT_FLOAT32`` flag when execute ``column_create`` to use this feature.
@@ -2380,9 +2380,9 @@ Improvements
 
   * For example, we can write ``load.json`` instead of ``load?output_type=json``.
 
-* [:doc:`reference/log`] Outputted a path of opened or closed file into a log of dump level on Linux.
+* [:doc:`/reference/log`] Outputted a path of opened or closed file into a log of dump level on Linux.
 
-* [:doc:`reference/log`] Outputted a path of closed file into a log of debug level on Windows.  
+* [:doc:`/reference/log`] Outputted a path of closed file into a log of debug level on Windows.  
 
 * Added following API and macros
 
@@ -2405,7 +2405,7 @@ Improvements
 
     * We ``grn_obj_format_fin(grn_ctx, grn_obj_format)`` use instead since 10.0.0.
 
-* [:doc:`reference/commands/logical_range_filter`],[:doc:`reference/commands/dump`] Added support for stream output.
+* [:doc:`/reference/commands/logical_range_filter`],[:doc:`/reference/commands/dump`] Added support for stream output.
 
   * This feature requires ``command_version 3`` or later. The header content is outputted after the body content.
   * Currently, this feature support only ``dump`` and ``logical_range_filter``.
@@ -2441,7 +2441,7 @@ Improvements
 
     * Because of ``dump`` and ``logical_range_filter`` on ``command_version 3`` returns stream since 10.0.0, Groonga can not cache the whole response.
 
-* [:doc:`reference/commands/logical_range_filter`] Added support for outputting response as Apache Arrow format.
+* [:doc:`/reference/commands/logical_range_filter`] Added support for outputting response as Apache Arrow format.
 
   * Supported data type as below.
 
