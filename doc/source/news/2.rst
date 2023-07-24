@@ -427,7 +427,6 @@ Improvements
 * [windows] Supported build with Visual Studio 2010 Express and
   CMake. See :doc:`/install/windows` about details.
 * [doc][solaris] Added a document about building on Solaris.
-  See :doc:`/install/solaris` about details.
 * [doc][yum] Updated epel-release package version.
   [Reported by IWAI, Masaharu]
 * [doc][cenos6] Disabled Repoforge for Munin for CentOS 6.

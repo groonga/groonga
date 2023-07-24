@@ -1027,7 +1027,6 @@ set(GRN_DOC_SOURCES
     install/mac_os_x.rst
     install/others.rst
     install/server-use.inc
-    install/solaris.rst
     install/ubuntu.rst
     install/windows.rst
     limitations.rst
@@ -1376,7 +1375,6 @@ set(GRN_DOC_HTML_FILES
     install/fedora.html
     install/mac_os_x.html
     install/others.html
-    install/solaris.html
     install/ubuntu.html
     install/windows.html
     limitations.html

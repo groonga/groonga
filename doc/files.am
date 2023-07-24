@@ -1027,7 +1027,6 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/mac_os_x.rst \
 	$(top_srcdir)/doc/source/install/others.rst \
 	$(top_srcdir)/doc/source/install/server-use.inc \
-	$(top_srcdir)/doc/source/install/solaris.rst \
 	$(top_srcdir)/doc/source/install/ubuntu.rst \
 	$(top_srcdir)/doc/source/install/windows.rst \
 	$(top_srcdir)/doc/source/limitations.rst \
@@ -2336,7 +2335,6 @@ source_files_relative_from_doc_dir = \
 	source/install/mac_os_x.rst \
 	source/install/others.rst \
 	source/install/server-use.inc \
-	source/install/solaris.rst \
 	source/install/ubuntu.rst \
 	source/install/windows.rst \
 	source/limitations.rst \
@@ -2650,7 +2648,6 @@ po_files = \
 	install/docker.po \
 	install/mac_os_x.po \
 	install/others.po \
-	install/solaris.po \
 	install/ubuntu.po \
 	install/windows.po \
 	limitations.po \
@@ -2962,7 +2959,6 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/docker.po \
 	LC_MESSAGES/install/mac_os_x.po \
 	LC_MESSAGES/install/others.po \
-	LC_MESSAGES/install/solaris.po \
 	LC_MESSAGES/install/ubuntu.po \
 	LC_MESSAGES/install/windows.po \
 	LC_MESSAGES/limitations.po \
@@ -3274,7 +3270,6 @@ edit_po_files = \
 	install/docker.edit \
 	install/mac_os_x.edit \
 	install/others.edit \
-	install/solaris.edit \
 	install/ubuntu.edit \
 	install/windows.edit \
 	limitations.edit \
@@ -3586,7 +3581,6 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/docker.edit \
 	LC_MESSAGES/install/mac_os_x.edit \
 	LC_MESSAGES/install/others.edit \
-	LC_MESSAGES/install/solaris.edit \
 	LC_MESSAGES/install/ubuntu.edit \
 	LC_MESSAGES/install/windows.edit \
 	LC_MESSAGES/limitations.edit \
@@ -3898,7 +3892,6 @@ mo_files = \
 	install/docker.mo \
 	install/mac_os_x.mo \
 	install/others.mo \
-	install/solaris.mo \
 	install/ubuntu.mo \
 	install/windows.mo \
 	limitations.mo \
@@ -4210,7 +4203,6 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/docker.mo \
 	LC_MESSAGES/install/mac_os_x.mo \
 	LC_MESSAGES/install/others.mo \
-	LC_MESSAGES/install/solaris.mo \
 	LC_MESSAGES/install/ubuntu.mo \
 	LC_MESSAGES/install/windows.mo \
 	LC_MESSAGES/limitations.mo \
@@ -4557,7 +4549,6 @@ html_files_relative_from_locale_dir = \
 	html/install/docker.html \
 	html/install/mac_os_x.html \
 	html/install/others.html \
-	html/install/solaris.html \
 	html/install/ubuntu.html \
 	html/install/windows.html \
 	html/limitations.html \
