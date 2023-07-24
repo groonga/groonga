@@ -215,6 +215,26 @@ namespace :release do
 
   desc "Tag"
   task :tag do
+    latest_news = Dir.glob("doc/source/news/*.*").max do |a, b|
+      File.basename(a).to_f - File.basename(b).to_f
+    end
+    latest_release_note = File.read(latest_news).split(/^## /)[1]
+    latest_release_note_version = latest_release_note.lines.first[/[\d.]+/]
+    if latest_release_note_version != version
+      raise "release note isn't written"
+    end
+
+    changelog = "packages/debian/changelog"
+    case File.readlines(changelog)[0]
+    when /\((.+)-1\)/
+      package_version = $1
+      unless package_version == version
+        raise "package version isn't updated: #{package_version}"
+      end
+    else
+      raise "failed to detect deb package version: #{changelog}"
+    end
+
     sh("git",
        "tag",
        "v#{version}",
