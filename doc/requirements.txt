@@ -15,5 +15,6 @@
 
 Jinja2
 Sphinx
+myst-parser[linkify]
 pydata_sphinx_theme
 sphinx-markdown-builder

@@ -1042,7 +1042,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/news/10.rst \
 	$(top_srcdir)/doc/source/news/11.rst \
 	$(top_srcdir)/doc/source/news/12.rst \
-	$(top_srcdir)/doc/source/news/13.rst \
+	$(top_srcdir)/doc/source/news/13.md \
 	$(top_srcdir)/doc/source/news/2.rst \
 	$(top_srcdir)/doc/source/news/3.rst \
 	$(top_srcdir)/doc/source/news/4.rst \
@@ -2353,7 +2353,7 @@ source_files_relative_from_doc_dir = \
 	source/news/10.rst \
 	source/news/11.rst \
 	source/news/12.rst \
-	source/news/13.rst \
+	source/news/13.md \
 	source/news/2.rst \
 	source/news/3.rst \
 	source/news/4.rst \

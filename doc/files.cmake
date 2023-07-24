@@ -1042,7 +1042,7 @@ set(GRN_DOC_SOURCES
     news/10.rst
     news/11.rst
     news/12.rst
-    news/13.rst
+    news/13.md
     news/2.rst
     news/3.rst
     news/4.rst

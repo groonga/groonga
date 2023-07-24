@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
-"PO-Revision-Date: 2023-07-24 12:43+0900\n"
+"PO-Revision-Date: 2023-07-24 13:54+0900\n"
 "Report-Msgid-Bugs-To: \n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -25,68 +25,68 @@ msgstr "13.0.3リリース - 2023-07-24"
 msgid "Improvements"
 msgstr "改良"
 
-msgid "[:doc:`/reference/executables/groonga-httpd`] Extracted to `groonga-nginx <https://github.com/groonga/groonga-nginx>`_ . We stopped providing the ``groonga-httpd`` package."
-msgstr ""
+msgid "[{doc}`/reference/executables/groonga-httpd`] Extracted to [groonga-nginx](https://github.com/groonga/groonga-nginx). We stopped providing the `groonga-httpd` package."
+msgstr "[{doc}`/reference/executables/groonga-httpd`] [groonga-nginx](https://github.com/groonga/groonga-nginx)に切り出されました。`groonga-httpd`パッケージの提供をやめました。"
 
-msgid "If you're an user of Debian GNU/Linux 12+ or Ubuntu 23.10+, you can use the ``libnginx-mod-http-groonga`` package with the default ``nginx`` package. See `groonga-nginx's README <https://github.com/groonga/groonga-nginx#readme>` for details."
-msgstr ""
+msgid "If you're an user of Debian GNU/Linux 12+ or Ubuntu 23.10+, you can use the `libnginx-mod-http-groonga` package with the default `nginx` package. See [groonga-nginx's README](https://github.com/groonga/groonga-nginx#readme) for details."
+msgstr "Debian GNU/Linux 12以降あるいはUbuntu 23.10以降のユーザーはデフォルトの`nginx`パッケージと一緒に使える`libnginx-mod-http-groonga`パッケージを使ってください。詳細は[groonga-nginxのREADME](https://github.com/groonga/groonga-nginx#readme)を参照してください。"
 
-msgid "If you're an user of old Debian/Ubuntu or RHEL related distributions, you can't use any ``groonga-httpd`` equivalent package. You can use :doc:`/reference/executable/groonga-server-http` instead. If :doc:`/reference/executable/groonga-server-http` isn't suitable for your use case, please report it to `Discussions <https://github.com/groonga/groonga/discussions>`_ with your use case."
-msgstr ""
+msgid "If you're an user of old Debian/Ubuntu or RHEL related distributions, you can't use any `groonga-httpd` equivalent package. You can use {doc}`/reference/executables/groonga-server-http` instead. If {doc}`/reference/executables/groonga-server-http` isn't suitable for your use case, please report it to [Discussions](https://github.com/groonga/groonga/discussions) with your use case."
+msgstr "古いDebian/UbuntuまたはRHEL関連ディストリビューションのユーザーは`groonga-httpd`相当のパッケージを使うことはできません。代わりに{doc}`/reference/executables/groonga-server-http`を使うことができます。もし、{doc}`/reference/executables/groonga-server-http`があなたのユースケースでは適切ではない場合、あなたのユースケース付きで[Discussions](https://github.com/groonga/groonga/discussions)に報告してください。"
 
-msgid "[:doc:`/install/ubuntu`] Added support for Ubuntu 23.10 (Mantic Minotaur)."
-msgstr "[:doc:`/install/ubuntu`] Ubuntu 23.10（Mantic Minotaur）をサポートしました。"
+msgid "[{doc}`/install/ubuntu`] Added support for Ubuntu 23.10 (Mantic Minotaur)."
+msgstr "[{doc}`/install/ubuntu`] Ubuntu 23.10（Mantic Minotaur）をサポートしました。"
 
-msgid "[:doc:`/install/debian`] Enabled xxHash support."
-msgstr ""
+msgid "[{doc}`/install/debian`] Enabled xxHash support."
+msgstr "[{doc}`/install/debian`] xxHashサポートを有効にしました。"
 
-msgid "[:doc:`/install/ubuntu`] Enabled xxHash support."
-msgstr ""
+msgid "[{doc}`/install/ubuntu`] Enabled xxHash support."
+msgstr "[{doc}`/install/ubuntu`] xxHashサポートを有効にしました。"
 
 msgid "Fixes"
 msgstr "修正"
 
 msgid "Fixed a bug that the source archive can't be built with CMake."
-msgstr ""
+msgstr "ソースアーカイブがCMakeでビルドできない問題を修正しました。"
 
 msgid "Release 13.0.2 - 2023-07-12"
 msgstr "13.0.2リリース - 2023-07-12"
 
-msgid "[:doc:`/install/ubuntu`] Dropped support for Ubuntu 18.04 (Bionic Beaver)."
-msgstr "[:doc:`/install/ubuntu`] Ubuntu 18.04（Bionic Beaver）のサポートをやめました。"
+msgid "[{doc}`/install/ubuntu`] Dropped support for Ubuntu 18.04 (Bionic Beaver)."
+msgstr "[{doc}`/install/ubuntu`] Ubuntu 18.04（Bionic Beaver）のサポートをやめました。"
 
-msgid "[:doc:`/install/ubuntu`] Added support for Ubuntu 23.04 (Lunar Lobster)."
-msgstr "[:doc:`/install/ubuntu`] Ubuntu 23.04（Lunar Lobster）をサポートしました。"
+msgid "[{doc}`/install/ubuntu`] Added support for Ubuntu 23.04 (Lunar Lobster)."
+msgstr "[{doc}`/install/ubuntu`] Ubuntu 23.04（Lunar Lobster）をサポートしました。"
 
-msgid "[:doc:`/install/debian`] Added support for Debian GNU/Linux 12 (bookworm)."
-msgstr "[:doc:`/install/debian`] Debian 12 (bookworm) をサポートしました。"
+msgid "[{doc}`/install/debian`] Added support for Debian GNU/Linux 12 (bookworm)."
+msgstr "[{doc}`/install/debian`] Debian 12 (bookworm) をサポートしました。"
 
-msgid "[:doc:`/install/oracle-linux`] Dropped support for Oracle Linux. Use :doc:`/install/almalinux` packages instead."
-msgstr "[:doc:`/install/oracle-linux`] Oracle Linuxサポートをやめました。代わりに :doc:`/install/almalinux` 用パッケージを使ってください。"
+msgid "[{doc}`/install/oracle-linux`] Dropped support for Oracle Linux. Use {doc}`/install/almalinux` packages instead."
+msgstr "[{doc}`/install/oracle-linux`] Oracle Linuxサポートをやめました。代わりに {doc}`/install/almalinux` 用パッケージを使ってください。"
 
-msgid "[``grn_highlighter``] Added support for changing tag."
-msgstr "[``grn_highlighter``] タグの変更をサポートしました。"
+msgid "[`grn_highlighter`] Added support for changing tag."
+msgstr "[`grn_highlighter`] タグの変更をサポートしました。"
 
-msgid "[`GH-1453 <https://github.com/groonga/groonga/issues/1453>`_] [Reported by askdkc]"
-msgstr "[`GH-1453 <https://github.com/groonga/groonga/issues/1453>`_] [askdkcさんが報告]"
+msgid "[GH-1453](https://github.com/groonga/groonga/issues/1453) [Reported by askdkc]"
+msgstr "[GH-1453](https://github.com/groonga/groonga/issues/1453>) [askdkcさんが報告]"
 
-msgid "[``grn_highlighter``] Added support for customizing normalizers."
-msgstr "[``grn_highlighter``] ノーマライザーの変更をサポートしました。"
+msgid "[`grn_highlighter`] Added support for customizing normalizers."
+msgstr "[`grn_highlighter`] ノーマライザーの変更をサポートしました。"
 
-msgid "[``grn_highlighter``] Added support for customizing HTML mode."
-msgstr "[``grn_highlighter``] HTMLモードの変更をサポートしました。"
+msgid "[`grn_highlighter`] Added support for customizing HTML mode."
+msgstr "[`grn_highlighter`] HTMLモードの変更をサポートしました。"
 
-msgid "[``grn_highlighter``] Added support for multiple tags."
-msgstr "[``grn_highlighter``] 複数タグをサポートしました。"
+msgid "[`grn_highlighter`] Added support for multiple tags."
+msgstr "[`grn_highlighter`] 複数タグをサポートしました。"
 
-msgid "[:doc:`/reference/functions/highlight`] Added the ``sequential_class_tag_mode`` option."
-msgstr "[:doc:`/reference/functions/highlight`] ``sequential_class_tag_mode`` オプションを追加しました。"
+msgid "[{doc}`/reference/functions/highlight`] Added the `sequential_class_tag_mode` option."
+msgstr "[{doc}`/reference/functions/highlight`] `sequential_class_tag_mode` オプションを追加しました。"
 
-msgid "[:doc:`/reference/functions/highlight_html`] Added the ``sequential_class_tag_mode`` option."
-msgstr "[:doc:`/reference/functions/highlight_html`] ``sequential_class_tag_mode`` オプションを追加しました。"
+msgid "[{doc}`/reference/functions/highlight_html`] Added the `sequential_class_tag_mode` option."
+msgstr "[{doc}`/reference/functions/highlight_html`] `sequential_class_tag_mode` オプションを追加しました。"
 
-msgid "[:doc:`/reference/commands/reference_acquire`] Changed to refer index columns that are for the target object when ``--recursive dependent`` is used."
-msgstr "[:doc:`/reference/commands/reference_acquire`] ``--recursive dependent`` が使われたときに対象オブジェクト用のインデックスカラムも参照するように変更しました。"
+msgid "[{doc}`/reference/commands/reference_acquire`] Changed to refer index columns that are for the target object when `--recursive dependent` is used."
+msgstr "[{doc}`/reference/commands/reference_acquire`] `--recursive dependent` が使われたときに対象オブジェクト用のインデックスカラムも参照するように変更しました。"
 
 msgid "If the target object is a column, index columns for the column is also referred."
 msgstr "対象オブジェクトがカラムの場合、そのカラム用のインデックスカラムも参照されます。"
@@ -100,50 +100,50 @@ msgstr "対象オブジェクトがDBの場合、すべてのテーブルが対�
 msgid "[CMake] Changed to require CMake 3.16 or later. We'll use CMake instead of GNU Autotools as our recommended build tool in near future and drop support for GNU Autotools eventually."
 msgstr "[CMake] CMake 3.16以降を必須としました。近い将来、GNU AutotoolsではなくCMakeを推奨ビルドツールとし、いずれGNU Autotoolsサポートをやめる予定です。"
 
-msgid "[CMake] Added support for CMake package. You can use it by ``find_package(Groonga)``."
-msgstr "[CMake] CMakeパッケージに対応しました。 ``find_package(Groonga)`` というように使えます。"
+msgid "[CMake] Added support for CMake package. You can use it by `find_package(Groonga)`."
+msgstr "[CMake] CMakeパッケージに対応しました。 `find_package(Groonga)` というように使えます。"
 
-msgid "[Packaging] Changed to use newer GNU Autotools to generate ``configure`` in the source archive."
-msgstr "[Packaging] ソースアーカイブ中の ``configure`` を生成しているGNU Autotoolsを更新しました。"
+msgid "[Packaging] Changed to use newer GNU Autotools to generate `configure` in the source archive."
+msgstr "[Packaging] ソースアーカイブ中の `configure` を生成しているGNU Autotoolsを更新しました。"
 
 msgid "[`ranguba/rroonga#220 <https://github.com/ranguba/rroonga/issues/220>`_] [Reported by ZangRuochen]"
 msgstr "[`ranguba/rroonga#220 <https://github.com/ranguba/rroonga/issues/220>`_] [ZangRuochenさんが報告]"
 
-msgid "[:doc:`reference/commands/reference_acquire`] Optimized reference count implementation for built-in objects."
-msgstr "[:doc:`reference/commands/reference_acquire`] 組み込みオブジェクト用のリファレンスカウント実装を最適化しました。"
+msgid "[{doc}`/reference/commands/reference_acquire`] Optimized reference count implementation for built-in objects."
+msgstr "[{doc}`/reference/commands/reference_acquire`] 組み込みオブジェクト用のリファレンスカウント実装を最適化しました。"
 
-msgid "Added support for logging backtrace on ``SIGABRT``."
-msgstr "``SIGABRT`` 発生時もバックトレースのログ出力するようにしました。"
+msgid "Added support for logging backtrace on `SIGABRT`."
+msgstr "`SIGABRT` 発生時もバックトレースのログ出力するようにしました。"
 
-msgid "[:ref:`query-syntax-ordered-near-phrase-product-search-condition`] [:ref:`script-syntax-ordered-near-phrase-product-search-operator`] Fixed a search bug that records that should be matched may not be matched."
-msgstr "[:ref:`query-syntax-ordered-near-phrase-product-search-condition`] [:ref:`script-syntax-ordered-near-phrase-product-search-operator`] マッチするべきレコードがマッチしないことがある問題を修正しました。"
+msgid "[{ref}`query-syntax-ordered-near-phrase-product-search-condition`] [{ref}`script-syntax-ordered-near-phrase-product-search-operator`] Fixed a search bug that records that should be matched may not be matched."
+msgstr "[{ref}`query-syntax-ordered-near-phrase-product-search-condition`] [{ref}`script-syntax-ordered-near-phrase-product-search-operator`] マッチするべきレコードがマッチしないことがある問題を修正しました。"
 
-msgid "It's happen when multiple 3+ tokens are overlapped in query. For example, ``abc`` and ``abcd`` are an invalid combination. If shorter one (``abc``) exists before longer one (``abcd``), this bug is happen. For example, ``ONPP1 \"(abcd abc) (1 2)\"`` works but ``ONPP1 \"(abc abcd) (1 2)\"`` doesn't work."
-msgstr "この問題は、クエリー内に3つ以上トークンがあり、かつ、それらがオーバーラップしているときに発生します。たとえば、 ``abc`` と ``abcd`` はうまく動かない組み合わせです。もし、短い方（ ``abc`` ）が長い方（ ``abcd`` ）より前にある場合はこの問題は発生しません。たとえば、 ``ONPP1 \"(abcd abc) (1 2)\"`` は動きますが、 ``ONPP1 \"(abc abcd) (1 2)\"`` は動きません。"
+msgid "It's happen when multiple 3+ tokens are overlapped in query. For example, `abc` and `abcd` are an invalid combination. If shorter one (`abc`) exists before longer one (`abcd`), this bug is happen. For example, `ONPP1 \"(abcd abc) (1 2)\"` works but `ONPP1 \"(abc abcd) (1 2)\"` doesn't work."
+msgstr "この問題は、クエリー内に3つ以上トークンがあり、かつ、それらがオーバーラップしているときに発生します。たとえば、 `abc` と `abcd` はうまく動かない組み合わせです。もし、短い方（ `abc` ）が長い方（ `abcd` ）より前にある場合はこの問題は発生しません。たとえば、 `ONPP1 \"(abcd abc) (1 2)\"` は動きますが、 `ONPP1 \"(abc abcd) (1 2)\"` は動きません。"
 
 msgid "Fixed a bug that invalid weight may be used with multiple adjusts."
 msgstr "複数の重み調整演算子を使った場合、不正な重みが使われることがある問題を修正しました。"
 
-msgid "[:doc:`/reference/grn_expr/query_syntax`] Fixed a typo."
-msgstr "[:doc:`/reference/grn_expr/query_syntax`] 誤字を修正しました。"
+msgid "[{doc}`/reference/grn_expr/query_syntax`] Fixed a typo."
+msgstr "[{doc}`/reference/grn_expr/query_syntax`] 誤字を修正しました。"
 
 msgid "[`GH-1560 <https://github.com/groonga/groonga/issues/1560>`_] [Patch by Dylan Golow]"
 msgstr "[`GH-1560 <https://github.com/groonga/groonga/issues/1560>`_] [Dylan Golowさんがパッチ提供]"
 
-msgid "[:ref:`query-syntax-near-phrase-search-condition`] [:ref:`script-syntax-near-phrase-search-operator`] [:ref:`query-syntax-near-phrase-product-search-condition`] [:ref:`script-syntax-near-phrase-product-search-operator`] [:ref:`query-syntax-ordered-near-phrase-search-condition`] [:ref:`script-syntax-ordered-near-phrase-search-operator`] [:ref:`query-syntax-ordered-near-phrase-product-search-condition`] [:ref:`script-syntax-ordered-near-phrase-product-search-operator`] Fixed an invalid interval calculation when ``additional_last_interval`` is used."
-msgstr "[:ref:`query-syntax-near-phrase-search-condition`] [:ref:`script-syntax-near-phrase-search-operator`] [:ref:`query-syntax-near-phrase-product-search-condition`] [:ref:`script-syntax-near-phrase-product-search-operator`] [:ref:`query-syntax-ordered-near-phrase-search-condition`] [:ref:`script-syntax-ordered-near-phrase-search-operator`] [:ref:`query-syntax-ordered-near-phrase-product-search-condition`] [:ref:`script-syntax-ordered-near-phrase-product-search-operator`] ``additional_last_interval`` を使っている場合、距離の計算が間違っている問題を修正しました。"
+msgid "[{ref}`query-syntax-near-phrase-search-condition`] [{ref}`script-syntax-near-phrase-search-operator`] [{ref}`query-syntax-near-phrase-product-search-condition`] [{ref}`script-syntax-near-phrase-product-search-operator`] [{ref}`query-syntax-ordered-near-phrase-search-condition`] [{ref}`script-syntax-ordered-near-phrase-search-operator`] [{ref}`query-syntax-ordered-near-phrase-product-search-condition`] [{ref}`script-syntax-ordered-near-phrase-product-search-operator`] Fixed an invalid interval calculation when `additional_last_interval` is used."
+msgstr "[{ref}`query-syntax-near-phrase-search-condition`] [{ref}`script-syntax-near-phrase-search-operator`] [{ref}`query-syntax-near-phrase-product-search-condition`] [{ref}`script-syntax-near-phrase-product-search-operator`] [{ref}`query-syntax-ordered-near-phrase-search-condition`] [{ref}`script-syntax-ordered-near-phrase-search-operator`] [{ref}`query-syntax-ordered-near-phrase-product-search-condition`] [{ref}`script-syntax-ordered-near-phrase-product-search-operator`] `additional_last_interval` を使っている場合、距離の計算が間違っている問題を修正しました。"
 
-msgid "For example, let's think about ``*NP3,-1\"aaa bbb .$\"`` against ``aaaxxxbbbcdefghi.`` In this case, the number of tokens between ``aaa`` and ``bbb`` must be 3 but it was 7."
-msgstr "たとえば、 ``aaaxxxbbbcdefghi.`` に対して ``*NP3,-1\"aaa bbb .$\"`` で検索するケースを考えます。このケースでは ``aaa`` と ``bbb`` の間のトークン数は3であるべきですが7になっていました。"
+msgid "For example, let's think about `*NP3,-1\"aaa bbb .$\"` against `aaaxxxbbbcdefghi.` In this case, the number of tokens between `aaa` and `bbb` must be 3 but it was 7."
+msgstr "たとえば、 `aaaxxxbbbcdefghi.` に対して `*NP3,-1\"aaa bbb .$\"` で検索するケースを考えます。このケースでは `aaa` と `bbb` の間のトークン数は3であるべきですが7になっていました。"
 
-msgid "[:ref:`query-syntax-near-phrase-product-search-condition`] [:ref:`script-syntax-near-phrase-product-search-operator`] [:ref:`query-syntax-ordered-near-phrase-product-search-condition`] [:ref:`script-syntax-ordered-near-phrase-product-search-operator`] Fixed infinite loop bugs when the same phrase exists in the same phrase group."
-msgstr "[:ref:`query-syntax-near-phrase-product-search-condition`] [:ref:`script-syntax-near-phrase-product-search-operator`] [:ref:`query-syntax-ordered-near-phrase-product-search-condition`] [:ref:`script-syntax-ordered-near-phrase-product-search-operator`] 同じフレーズグループ内に同じフレーズが存在するときに無限ループする問題を修正しました。"
+msgid "[{ref}`query-syntax-near-phrase-product-search-condition`] [{ref}`script-syntax-near-phrase-product-search-operator`] [{ref}`query-syntax-ordered-near-phrase-product-search-condition`] [{ref}`script-syntax-ordered-near-phrase-product-search-operator`] Fixed infinite loop bugs when the same phrase exists in the same phrase group."
+msgstr "[{ref}`query-syntax-near-phrase-product-search-condition`] [{ref}`script-syntax-near-phrase-product-search-operator`] [{ref}`query-syntax-ordered-near-phrase-product-search-condition`] [{ref}`script-syntax-ordered-near-phrase-product-search-operator`] 同じフレーズグループ内に同じフレーズが存在するときに無限ループする問題を修正しました。"
 
-msgid "For example, ``*NPP1 \"(abcd abc abcd bcde) (efghi)\"`` is a bad query because the first phrase group has two ``abcd`` phrases."
-msgstr "たとえば、 ``*NPP1 \"(abcd abc abcd bcde) (efghi)\"`` は問題が発生するクエリーです。なぜなら最初のフレーズグループ内に2つ ``abcd`` が存在するからです。"
+msgid "For example, `*NPP1 \"(abcd abc abcd bcde) (efghi)\"` is a bad query because the first phrase group has two `abcd` phrases."
+msgstr "たとえば、 `*NPP1 \"(abcd abc abcd bcde) (efghi)\"` は問題が発生するクエリーです。なぜなら最初のフレーズグループ内に2つ `abcd` が存在するからです。"
 
-msgid "For example, ``*NPP1 \"(abcde \\\"abc de\\\") (efghi)\"`` is a bad query because the first phrase group has ``abcde`` and ``\"abc de\"``. They are \"logically\" the same phrases."
-msgstr "たとえば、 ``*NPP1 \"(abcde \\\"abc de\\\") (efghi)\"`` は問題が発生するクエリーです。なぜなら最初のフレーズグループ内に ``abcde`` と ``\"abc de\"`` が存在するからです。これらは「論理的に」同じフレーズです。"
+msgid "For example, `*NPP1 \"(abcde \\\"abc de\\\") (efghi)\"` is a bad query because the first phrase group has `abcde` and `\"abc de\"`. They are \"logically\" the same phrases."
+msgstr "たとえば、 `*NPP1 \"(abcde \\\"abc de\\\") (efghi)\"` は問題が発生するクエリーです。なぜなら最初のフレーズグループ内に `abcde` と `\"abc de\"` が存在するからです。これらは「論理的に」同じフレーズです。"
 
 msgid "Fixed a bug that internal lock count may not be decreased when lock acquisition is failed. In normal use-case, this will not be a real problem."
 msgstr "ロック獲得に失敗した場合に内部のロックカウントを減らしていない問題を修正しました。通常はこれが問題になることはありません。"
@@ -163,167 +163,167 @@ msgstr "ZangRuochenさん"
 msgid "Release 13.0.1 - 2023-03-24"
 msgstr "13.0.1リリース - 2023-03-24"
 
-msgid "[:doc:`/reference/functions/highlight_html`] Added support for prefix search."
-msgstr "[:doc:`/reference/functions/highlight_html`] 前方一致検索をサポートしました。"
+msgid "[{doc}`/reference/functions/highlight_html`] Added support for prefix search."
+msgstr "[{doc}`/reference/functions/highlight_html`] 前方一致検索をサポートしました。"
 
-msgid "We can now use prefix search in ``highlight_html``."
-msgstr "``highlight_html`` で前方一致検索ができるようになりました。"
+msgid "We can now use prefix search in `highlight_html`."
+msgstr "`highlight_html` で前方一致検索ができるようになりました。"
 
 msgid "Note that highlight keyword is also highlighted not only at the first but also in the middle or at the end."
 msgstr "ただし、ハイライトするキーワードは、最初の出現箇所だけでなく、途中および最後の出現箇所もハイライトされます。"
 
-msgid "[:doc:`reference/normalizers`] Added new options for NormalizerNFKC*."
-msgstr "[:doc:`/reference/normalizers`] ``NormalizerNFKC*`` に新しいオプションを追加しました。"
+msgid "[{doc}`/reference/normalizers`] Added new options for NormalizerNFKC*."
+msgstr "[{doc}`/reference/normalizers`] `NormalizerNFKC*` に新しいオプションを追加しました。"
 
-msgid "``unify_kana_prolonged_sound_mark``"
+msgid "`unify_kana_prolonged_sound_mark`"
 msgstr ""
 
 msgid "We can now normalize prolonged_sound_mark with this option as below."
 msgstr "このオプションによって、長音記号を以下のように正規化できます。"
 
-msgid "Here is an example of ``unify_kana_prolonged_sound_mark``."
-msgstr "以下は、 ``unify_kana_prolonged_sound_mark`` オプションの使用例です。"
+msgid "Here is an example of `unify_kana_prolonged_sound_mark`."
+msgstr "以下は、 `unify_kana_prolonged_sound_mark` オプションの使用例です。"
 
-msgid "``unify_kana_hyphen``"
+msgid "`unify_kana_hyphen`"
 msgstr ""
 
 msgid "We can now normalize hyphen with this option as below."
 msgstr "このオプションを使うことで、ハイフンを以下のように正規化できます。"
 
-msgid "Here is an example of ``unify_kana_hyphen``."
-msgstr "以下は、 ``unify_kana_hyphen`` オプションの使用例です。"
+msgid "Here is an example of `unify_kana_hyphen`."
+msgstr "以下は、 `unify_kana_hyphen` オプションの使用例です。"
 
-msgid "[:ref:`query-syntax-near-search-condition`][:ref:`script-syntax-near-search-operator`] Added a new option ``${MIN_INTERVAL}`` for near-search family."
-msgstr "[:ref:`query-syntax-near-search-condition`][:ref:`script-syntax-near-search-operator`] 各近傍検索に ``${MIN_INTERVAL}`` オプションを追加しました。"
+msgid "[{ref}`query-syntax-near-search-condition`][{ref}`script-syntax-near-search-operator`] Added a new option `${MIN_INTERVAL}` for near-search family."
+msgstr "[{ref}`query-syntax-near-search-condition`][{ref}`script-syntax-near-search-operator`] 各近傍検索に `${MIN_INTERVAL}` オプションを追加しました。"
 
-msgid "We can now specifiy the minimum interval between phrases (words) with ``${MIN_INTERVAL}``. The interval between phrases (words) must be at least this value."
-msgstr "``${MIN_INTERVAL}`` でフレーズ間（単語間）の最低距離を指定できるようになりました。フレーズ間（単語間）の距離は、最低でもこの値以上である必要があります。"
+msgid "We can now specifiy the minimum interval between phrases (words) with `${MIN_INTERVAL}`. The interval between phrases (words) must be at least this value."
+msgstr "`${MIN_INTERVAL}` でフレーズ間（単語間）の最低距離を指定できるようになりました。フレーズ間（単語間）の距離は、最低でもこの値以上である必要があります。"
 
 msgid "Here are new syntax:"
 msgstr "新しい構文は以下のとおりです。"
 
-msgid "The default value of ``${MIN_INTERVAL}`` is ``INT32_MIN`` (``-2147483648``). We use the default value when ``${MIN_INTERVAL}`` is omitted."
-msgstr "``${MIN_INTERVAL}`` のデフォルト値は ``INT32_MIN`` (``-2147483648``) です。``${MIN_INTERVAL}`` を省略した場合デフォルト値が使用されます。"
+msgid "The default value of `${MIN_INTERVAL}` is `INT32_MIN` (`-2147483648`). We use the default value when `${MIN_INTERVAL}` is omitted."
+msgstr "`${MIN_INTERVAL}` のデフォルト値は `INT32_MIN` (`-2147483648`) です。`${MIN_INTERVAL}` を省略した場合デフォルト値が使用されます。"
 
 msgid "This option is useful when we want to ignore overlapped phrases."
 msgstr "このオプションは重複したフレーズを無視するのに便利です。"
 
-msgid "The interval for ``*NP`` is culculated as ``interval between the top tokens of phrases - tokens in the left phrase + 1``."
-msgstr "``*NP`` の距離は ``各フレーズの先頭のトークンの距離 - 左のフレーズのトークン数 + 1`` で計算されます。"
+msgid "The interval for `*NP` is culculated as `interval between the top tokens of phrases - tokens in the left phrase + 1`."
+msgstr "`*NP` の距離は `各フレーズの先頭のトークンの距離 - 左のフレーズのトークン数 + 1` で計算されます。"
 
-msgid "When a tokenizer is Bigram, for exmaple, ``東京`` has one token ``東京``, also ``京都`` has one token ``京都``."
-msgstr "トークナイザーがバイグラムの場合を考えると、例えば、 ``東京`` は ``東京`` という一つのトークンを持ち、 ``京都`` は ``京都`` という一つのトークンを持ちます。"
+msgid "When a tokenizer is Bigram, for exmaple, `東京` has one token `東京`, also `京都` has one token `京都`."
+msgstr "トークナイザーがバイグラムの場合を考えると、例えば、 `東京` は `東京` という一つのトークンを持ち、 `京都` は `京都` という一つのトークンを持ちます。"
 
-msgid "Considering ``東京都`` as a target value of ``*NP \"東京 京都\"``:"
-msgstr "``*NP \"東京 京都\"`` の対象の値として ``東京都`` を考えてみます。"
+msgid "Considering `東京都` as a target value of `*NP \"東京 京都\"`:"
+msgstr "`*NP \"東京 京都\"` の対象の値として `東京都` を考えてみます。"
 
-msgid "``interval between the top tokens of phrases``: ``1`` (interval between ``東京`` and ``京都``)"
-msgstr "``各フレーズの先頭のトークンの距離``: ``1`` (``東京`` と ``京都`` の距離)"
+msgid "`interval between the top tokens of phrases`: `1` (interval between `東京` and `京都`)"
+msgstr "`各フレーズの先頭のトークンの距離`: `1` (`東京` と `京都` の距離)"
 
-msgid "``tokens in the left phrase``: ``1`` ( ``東京`` )"
-msgstr "``左のフレーズのトークン数``: ``1`` ( ``東京`` )"
+msgid "`tokens in the left phrase`: `1` ( `東京` )"
+msgstr "`左のフレーズのトークン数`: `1` ( `東京` )"
 
-msgid "The interval for ``*NP`` of ``東京都`` is ``1 - 1 + 1`` = ``1``."
-msgstr "``東京都`` に対して ``*NP`` で使われる距離は、 ``1 - 1 + 1`` = ``1`` となります。"
+msgid "The interval for `*NP` of `東京都` is `1 - 1 + 1` = `1`."
+msgstr "`東京都` に対して `*NP` で使われる距離は、 `1 - 1 + 1` = `1` となります。"
 
-msgid "As a result, the interval for ``*NP`` is greater than ``1`` when ``東京`` and ``京都`` are not overlapped."
-msgstr "結果として、 ``東京`` と ``京都`` が重複していないとき、 ``*NP`` で使われる距離は ``1`` より大きくなります。"
+msgid "As a result, the interval for `*NP` is greater than `1` when `東京` and `京都` are not overlapped."
+msgstr "結果として、 `東京` と `京都` が重複していないとき、 `*NP` で使われる距離は `1` より大きくなります。"
 
 msgid "Here is an example for ignoring overlapped phrases."
 msgstr "このオプションは重複したフレーズを無視するのに便利です。"
 
-msgid "In the example above, ``東京都`` is not matched as the interval is ``1`` but ``東京京都`` is matched as the interval is ``2``."
-msgstr "上記の例では、 ``東京都`` は距離が ``1`` なのでマッチしませんが、 ``東京京都`` は距離が ``2`` なのでマッチします。"
+msgid "In the example above, `東京都` is not matched as the interval is `1` but `東京京都` is matched as the interval is `2`."
+msgstr "上記の例では、 `東京都` は距離が `1` なのでマッチしませんが、 `東京京都` は距離が `2` なのでマッチします。"
 
-msgid "[:doc:`reference/normalizers`] Added support for new values in the ``unify_katakana_trailing_o`` option."
-msgstr "[:doc:`/reference/normalizers`] ``unify_katakana_trailing_o`` オプションで新しい値をサポートしました。"
+msgid "[{doc}`/reference/normalizers`] Added support for new values in the `unify_katakana_trailing_o` option."
+msgstr "[{doc}`/reference/normalizers`] `unify_katakana_trailing_o` オプションで新しい値をサポートしました。"
 
-msgid "We added support for normalizing the following new values in the ``unify_katakana_trailing_o`` option because a vowel of those left letters is ``O``."
-msgstr "``unify_katakana_trailing_o`` で以下の新しい値のノーマライズをサポートしました。これらの左側の文字の母音が ``オ`` なので、ノーマライズすべきなためです。"
+msgid "We added support for normalizing the following new values in the `unify_katakana_trailing_o` option because a vowel of those left letters is `O`."
+msgstr "`unify_katakana_trailing_o` で以下の新しい値のノーマライズをサポートしました。これらの左側の文字の母音が `オ` なので、ノーマライズすべきなためです。"
 
-msgid "``ォオ`` -> ``ォウ``"
+msgid "`ォオ` -> `ォウ`"
 msgstr ""
 
-msgid "``ョオ`` -> ``ョウ``"
+msgid "`ョオ` -> `ョウ`"
 msgstr ""
 
-msgid "``ヺオ`` -> ``ヺウ``"
+msgid "`ヺオ` -> `ヺウ`"
 msgstr ""
 
 msgid "Add support for MessagePack v6.0.0. [GitHub#1536][Reported by Carlo Cabrera]"
 msgstr "MessagePack v6.0.0 をサポートしました。 [GitHub#1536][Reported by Carlo Cabrera]"
 
 msgid "Groonga can not found MessagePack v6.0.0 or later when we execute configure or cmake until now. Groonga can found MessagePack since this release even if the version of MessagePack is v6.0.0 or later."
-msgstr "今まで、Groongaは ``configure`` または ``cmake`` 実行時にMessagePack v6.0.0以降のMessagePackを検出できませんでした。このリリースから、MessagePackがv6.0.0以降であっても検出できるようになります。"
+msgstr "今まで、Groongaは `configure` または `cmake` 実行時にMessagePack v6.0.0以降のMessagePackを検出できませんでした。このリリースから、MessagePackがv6.0.0以降であっても検出できるようになります。"
 
-msgid "[:doc:`reference/normalizers`] Fixed a bug that NormalizerNFKC* did incorrect normalization."
-msgstr "[:doc:`/reference/normalizers`] NormalizerNFKCが不正な正規化をする問題を修正しました。"
+msgid "[{doc}`/reference/normalizers`] Fixed a bug that NormalizerNFKC* did incorrect normalization."
+msgstr "[{doc}`/reference/normalizers`] NormalizerNFKCが不正な正規化をする問題を修正しました。"
 
-msgid "This bug occured when ``unify_kana_case`` and ``unify_katakana_v_sounds`` used at the same time."
-msgstr "この問題は、 ``unify_kana_case`` と ``unify_katakana_v_sounds`` を同時に使う場合に発生します。"
+msgid "This bug occured when `unify_kana_case` and `unify_katakana_v_sounds` used at the same time."
+msgstr "この問題は、 `unify_kana_case` と `unify_katakana_v_sounds` を同時に使う場合に発生します。"
 
-msgid "For example, ``ヴァ`` was normalized to ``バア`` with ``unify_kana_case`` and ``unify_katakana_v_sounds``, but ``ヴァ`` should be normalized to ``バ``."
-msgstr "例えば、 ``unify_kana_case`` と ``unify_katakana_v_sounds`` を同時に使うとき、  ``ヴァ`` が ``バア`` にノーマライズされていました。しかし ``ヴァ`` は ``バ`` と正規化されるべきです。"
+msgid "For example, `ヴァ` was normalized to `バア` with `unify_kana_case` and `unify_katakana_v_sounds`,  but `ヴァ` should be normalized to `バ`."
+msgstr "例えば、 `unify_kana_case` と `unify_katakana_v_sounds` を同時に使うとき、  `ヴァ` が `バア` にノーマライズされていました。しかし `ヴァ` は `バ` と正規化されるべきです。"
 
-msgid "This was because ``ヴァ`` was normalized to ``ヴア`` with ``unify_kana_case``, and after that, ``ヴア`` was normalized to ``バア`` with ``unify_katakana_v_sounds``. We fixed to normalize characters with ``unify_katakana_v_sounds`` before ``unify_kana_case``."
-msgstr "これは、 ``unify_kana_case`` で ``ヴァ`` が ``ヴア`` と正規化され、その後、 ``unify_katakana_v_sounds`` によって ``ヴア`` が ``バア`` と正規化されていたことが原因です。``unify_katakana_v_sounds`` が ``unify_kana_case`` より前に適用されるように修正しました。"
+msgid "This was because `ヴァ` was normalized to `ヴア` with `unify_kana_case`, and after that, `ヴア` was normalized to `バア` with `unify_katakana_v_sounds`. We fixed to normalize characters with `unify_katakana_v_sounds` before  `unify_kana_case`."
+msgstr "これは、 `unify_kana_case` で `ヴァ` が `ヴア` と正規化され、その後、 `unify_katakana_v_sounds` によって `ヴア` が `バア` と正規化されていたことが原因です。`unify_katakana_v_sounds` が `unify_kana_case` より前に適用されるように修正しました。"
 
 msgid "Here is an example of the bug in the previous version."
 msgstr "以下は以前のバージョンでの問題の発生例です。"
 
-msgid "From this version, ``ヴァーチャル`` is normalized to ``バーチヤル``."
-msgstr "このバージョンから、 ``ヴァーチャル`` は ``バーチヤル`` にノーマライズされます。"
+msgid "From this version, `ヴァーチャル` is normalized to `バーチヤル`."
+msgstr "このバージョンから、 `ヴァーチャル` は `バーチヤル` にノーマライズされます。"
 
-msgid "[:ref:`query-syntax-ordered-near-phrase-search-condition`][:ref:`script-syntax-ordered-near-phrase-search-operator`] Fixed a bug that ``${MAX_PHRASE_INTERVALS}`` doesn't work correctly."
-msgstr "[:ref:`query-syntax-ordered-near-phrase-search-condition`][:ref:`script-syntax-ordered-near-phrase-search-operator`] ``${MAX_PHRASE_INTERVALS}`` が正しく動かない問題を修正しました。"
+msgid "[{ref}`query-syntax-ordered-near-phrase-search-condition`][{ref}`script-syntax-ordered-near-phrase-search-operator`] Fixed a bug that `${MAX_PHRASE_INTERVALS}` doesn't work correctly."
+msgstr "[{ref}`query-syntax-ordered-near-phrase-search-condition`][{ref}`script-syntax-ordered-near-phrase-search-operator`] `${MAX_PHRASE_INTERVALS}` が正しく動かない問題を修正しました。"
 
-msgid "When this bug occured, intervals are regarded as ``0``. Therefore, if this bug occurs, records may hit too many."
-msgstr "この問題が発生したとき、距離は ``0`` とみなされます。したがって、この問題が発生した場合、余分にレコードがヒットすることがあります。"
+msgid "When this bug occured, intervals are regarded as `0`. Therefore, if this bug occurs, records may hit too many."
+msgstr "この問題が発生したとき、距離は `0` とみなされます。したがって、この問題が発生した場合、余分にレコードがヒットすることがあります。"
 
 msgid "This bug occured when:"
 msgstr "この問題は以下の場合に発生します。"
 
-msgid "Use ``*ONP`` with ``${MAX_PHRASE_INTERVALS}``"
-msgstr "``*ONP`` で ``${MAX_PHRASE_INTERVALS}`` を使用している"
+msgid "Use `*ONP` with `${MAX_PHRASE_INTERVALS}`"
+msgstr "`*ONP` で `${MAX_PHRASE_INTERVALS}` を使用している"
 
-msgid "The number of tokens in the matched left phrase is greater than or equal to the number of ``${MAX_PHRASE_INTERVALS}`` elements."
-msgstr "マッチした左側のフレーズに含まれるトークンの数が、 ``${MAX_PHRASE_INTERVALS}`` で指定した要素数より多い"
+msgid "The number of tokens in the matched left phrase is greater than or equal to the number of `${MAX_PHRASE_INTERVALS}` elements."
+msgstr "マッチした左側のフレーズに含まれるトークンの数が、 `${MAX_PHRASE_INTERVALS}` で指定した要素数より多い"
 
 msgid "Here is an example of this bug."
 msgstr "以下はこの問題の例です。"
 
-msgid "In the example above, the first element interval is specified as ``1`` with ``*ONP-1,0,1 \"abc def\"`` , but all ``content`` is matched, including those farther than ``1``."
-msgstr "上記の例では、 ``*ONP-1,0,1 \"abc def\"`` で、最初の要素の距離に ``1`` を指定しています。しかし、距離が ``1`` より離れているものも含めた、すべての ``content`` がマッチしています。 "
+msgid "In the example above, the first element interval is specified as `1` with `*ONP-1,0,1 \"abc def\"`  , but all `content` is matched, including those farther than `1`."
+msgstr "上記の例では、 `*ONP-1,0,1 \"abc def\"` で、最初の要素の距離に `1` を指定しています。しかし、距離が `1` より離れているものも含めた、すべての `content` がマッチしています。 "
 
-msgid "This is because the example satisfies the condition for the bug and the interval is regarded as ``0``."
-msgstr "これは、この例がこの問題の発生条件を満たしていて、距離が ``0`` とみなされているためです。"
+msgid "This is because the example satisfies the condition for the bug and the interval is regarded as `0`."
+msgstr "これは、この例がこの問題の発生条件を満たしていて、距離が `0` とみなされているためです。"
 
-msgid "``*ONP-1,0,1 \"abc def\"`` specifies ``${MAX_PHRASE_INTERVALS}``."
-msgstr "``*ONP-1,0,1 \"abc def\"`` は ``${MAX_PHRASE_INTERVALS}`` を使用している。"
+msgid "`*ONP-1,0,1 \"abc def\"` specifies `${MAX_PHRASE_INTERVALS}`."
+msgstr "`*ONP-1,0,1 \"abc def\"` は `${MAX_PHRASE_INTERVALS}` を使用している。"
 
-msgid "The matched left phrase: ``abc``"
-msgstr "マッチした左側のフレーズ: ``abc``"
+msgid "The matched left phrase: `abc`"
+msgstr "マッチした左側のフレーズ: `abc`"
 
-msgid "Included tokens: ``ab``, ``bc``"
-msgstr "含まれるトークン: ``ab`` 、 ``bc``"
+msgid "Included tokens: `ab`, `bc`"
+msgstr "含まれるトークン: `ab` 、 `bc`"
 
-msgid "Tokenized with ``TokenNgram(\"unify_alphabet\", false, \"unify_digit\", false)``"
-msgstr "``TokenNgram(\"unify_alphabet\", false, \"unify_digit\", false)`` によるトークナイズ"
+msgid "Tokenized with `TokenNgram(\"unify_alphabet\", false, \"unify_digit\", false)`"
+msgstr "`TokenNgram(\"unify_alphabet\", false, \"unify_digit\", false)` によるトークナイズ"
 
-msgid "The number of elements specified with ``max_element_intervals``: ``1``"
-msgstr "左側のフレーズに含まれるトークン数 (``2``) > ``max_element_intervals`` にに含まれる要素数 (``1``)"
+msgid "The number of elements specified with `max_element_intervals`: `1`"
+msgstr "左側のフレーズに含まれるトークン数 (`2`) > `max_element_intervals` にに含まれる要素数 (`1`)"
 
-msgid "``1`` of ``*ONP-1,0,1 \"abc def\"``"
-msgstr "``*ONP-1,0,1 \"abc def\"`` の ``1``"
+msgid "`1` of `*ONP-1,0,1 \"abc def\"`"
+msgstr "`*ONP-1,0,1 \"abc def\"` の `1`"
 
-msgid "The number of tokens in the left phrase (``2``) > the number of elements specified with ``max_element_intervals`` (``1``)"
-msgstr "左側のフレーズに含まれるトークン数 (``2``) > ``max_element_intervals`` にに含まれる要素数 (``1``)"
+msgid "The number of tokens in the left phrase (`2`) > the number of elements specified with `max_element_intervals` (`1`)"
+msgstr "左側のフレーズに含まれるトークン数 (`2`) > `max_element_intervals` にに含まれる要素数 (`1`)"
 
-msgid "[:ref:`query-syntax-near-phrase-search-condition`][:ref:`script-syntax-near-phrase-search-operator`] Fixed a bug that phrases specified as last didn't used as last in near-phrase family."
-msgstr "[:ref:`query-syntax-near-phrase-search-condition`][:ref:`script-syntax-near-phrase-search-operator`] 各近傍フレーズ検索で、最後として指定したフレーズが最後として使用されない問題を修正しました。"
+msgid "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`] Fixed a bug that phrases specified as last didn't used as last in near-phrase family."
+msgstr "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`] 各近傍フレーズ検索で、最後として指定したフレーズが最後として使用されない問題を修正しました。"
 
-msgid "When this bug occured, ``${ADDITIONAL_LAST_INTERVAL}`` was ignored and only ``${MAX_INTERVAL}`` was used."
-msgstr "この問題が発生すると ``${ADDITIONAL_LAST_INTERVAL}`` は無視され、 ``${MAX_INTERVAL}`` が使用されます。"
+msgid "When this bug occured, `${ADDITIONAL_LAST_INTERVAL}` was ignored and only `${MAX_INTERVAL}` was used."
+msgstr "この問題が発生すると `${ADDITIONAL_LAST_INTERVAL}` は無視され、 `${MAX_INTERVAL}` が使用されます。"
 
 msgid "A phrase specified as last contains multiple tokens."
 msgstr "最後として指定されたフレーズが複数のトークンを含む"
@@ -334,32 +334,32 @@ msgstr "そのフレーズの最後のトークンのサイズが、他のトー
 msgid "The token size is the number of tokens appeared in the all records."
 msgstr "トークンサイズとは、全レコード中に出現するそのトークンの数です。"
 
-msgid "In the example above, for ``abc123456789defg``, the interval ``abc`` to ``defg`` is ``11``. ``${MAX_INTERVAL}`` is ``10`` and ``${ADDITIONAL_LAST_INTERVAL}`` is ``1``, so a threshold for matching last phrase is ``11``. So it should be matched, but isn't."
-msgstr "上記の例の ``abc123456789defg`` について考えると、 ``abc`` から ``defg`` までの距離は ``11`` です。 ``${MAX_INTERVAL}`` は ``10`` で ``${ADDITIONAL_LAST_INTERVAL}`` は ``1`` が指定されています。したがって、最後のフレーズがマッチするしきい値は11になります。以上から、 ``abc123456789defg`` はマッチするはずですが、していません。"
+msgid "In the example above, for `abc123456789defg`, the interval `abc` to `defg` is `11`. `${MAX_INTERVAL}` is `10` and `${ADDITIONAL_LAST_INTERVAL}` is `1`, so a threshold for matching last phrase is `11`. So it should be matched, but isn't."
+msgstr "上記の例の `abc123456789defg` について考えると、 `abc` から `defg` までの距離は `11` です。 `${MAX_INTERVAL}` は `10` で `${ADDITIONAL_LAST_INTERVAL}` は `1` が指定されています。したがって、最後のフレーズがマッチするしきい値は11になります。以上から、 `abc123456789defg` はマッチするはずですが、していません。"
 
-msgid "This is because the example satisfies the condition for the bug as below, and only ```${MAX_INTERVAL}`` is used."
-msgstr "これは、この例が、以下のようにこの問題の発生条件を満たしていて、``${MAX_INTERVAL}`` のみが使われているためです。"
+msgid "This is because the example satisfies the condition for the bug as below, and only ``${MAX_INTERVAL}` is used."
+msgstr "これは、この例が、以下のようにこの問題の発生条件を満たしていて、`${MAX_INTERVAL}` のみが使われているためです。"
 
-msgid "``defg$`` is specified as last because the suffix is ``$``."
-msgstr "最後に ``$`` がついているので、 ``defg$`` は最後と指定されています。"
+msgid "`defg$` is specified as last because the suffix is `$`."
+msgstr "最後に `$` がついているので、 `defg$` は最後と指定されています。"
 
-msgid "``defg$`` is tokenized to ``de``, ``ef``, ``fg`` with ``TokenNgram(\"unify_alphabet\", false, \"unify_digit\", false)``"
-msgstr "``defg$`` は ``TokenNgram(\"unify_alphabet\", false, \"unify_digit\", false)`` によって ``de``, ``ef``, ``fg`` にトークナイズされます。"
+msgid "`defg$` is tokenized to `de`, `ef`, `fg` with `TokenNgram(\"unify_alphabet\", false, \"unify_digit\", false)`"
+msgstr "`defg$` は `TokenNgram(\"unify_alphabet\", false, \"unify_digit\", false)` によって `de`, `ef`, `fg` にトークナイズされます。"
 
-msgid "``fg`` is the last token of ``defg$``. ``abc123456789defg`` contains one ``fg`` and ``de``, and ``dededede`` contains 4 ``de``."
-msgstr "``fg`` は ``defg$`` の最後のトークンです。 ``abc123456789defg`` は1つの ``fg``  と ``de`` を含みます。そして、 ``dededede`` は4つの ``de`` を含みます。"
+msgid "`fg` is the last token of `defg$`. `abc123456789defg` contains one `fg` and `de`, and `dededede` contains 4 `de`."
+msgstr "`fg` は `defg$` の最後のトークンです。 `abc123456789defg` は1つの `fg`  と `de` を含みます。そして、 `dededede` は4つの `de` を含みます。"
 
-msgid "So, the size of ``fg`` is 1 and ``de`` is 5."
-msgstr "したがって、 ``fg`` のサイズは ``1`` で、 ``de`` のサイズは ``5`` です。"
+msgid "So, the size of `fg` is 1 and `de` is 5."
+msgstr "したがって、 `fg` のサイズは `1` で、 `de` のサイズは `5` です。"
 
-msgid "[:ref:`query-syntax-near-phrase-search-condition`] Fixed interval calculation."
-msgstr "[:ref:`query-syntax-near-phrase-search-condition`] 距離の計算方法を修正しました。"
+msgid "[{ref}`query-syntax-near-phrase-search-condition`] Fixed interval calculation."
+msgstr "[{ref}`query-syntax-near-phrase-search-condition`] 距離の計算方法を修正しました。"
 
 msgid "If we use near phrase search, records may hit too many by this bug."
 msgstr "この問題によって、近傍フレーズ検索を使った場合に、ヒットしないはずのレコードがヒットすることがあります。"
 
-msgid "[:doc:`/reference/functions/highlight_html`] Fixed a bug that highlight position may move over when we use `loose_symbol=true`."
-msgstr "[:doc:`/reference/functions/highlight_html`] ``loose_symbol=true`` の時にハイライト位置がずれることがある問題を修正しました。"
+msgid "[{doc}`/reference/functions/highlight_html`] Fixed a bug that highlight position may move over when we use `loose_symbol=true`."
+msgstr "[{doc}`/reference/functions/highlight_html`] `loose_symbol=true` の時にハイライト位置がずれることがある問題を修正しました。"
 
 msgid "Carlo Cabrera"
 msgstr "Carlo Cabreraさん"
@@ -373,64 +373,61 @@ msgstr "メジャーバージョンアップです! メジャーバージョン�
 msgid "First of all, we introduce the main changes in 13.0.0. Then, we introduce the hilight and summary of changes from Groonga 12.0.0 to 12.1.2."
 msgstr "まずはじめに 13.0.0の主な変更点を紹介します。次に、Groonga 12.0.0 から 12.1.2 までの変更点を紹介します。"
 
-msgid "New Features and Improvements in 13.0.0"
-msgstr "13.0.0の新規機能と改良"
+msgid "[{doc}`/reference/normalizers`] Added a new Normalizer `NormalizerNFKC150` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 15.0."
+msgstr "[{doc}`/reference/normalizers`] Unicode 15.0 の NFKC（Normalization Form Compatibility Composition）をベースにしたノーマライザー `NormalizerNFKC150` を新しく追加しました。"
 
-msgid "[:doc:`/reference/normalizers`] Added a new Normalizer ``NormalizerNFKC150`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 15.0."
-msgstr "[:doc:`/reference/normalizers`] Unicode 15.0 の NFKC（Normalization Form Compatibility Composition）をベースにしたノーマライザー ``NormalizerNFKC150`` を新しく追加しました。"
+msgid "[{doc}`/reference/token_filters`] Added a new TokenFilter `TokenFilterNFKC150` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 15.0."
+msgstr "[{doc}`/reference/token_filters`] Unicode 15.0 の NFKC（Normalization Form Compatibility Composition）をベースにしたトークンフィルター `TokenFilterNFKC150` を新しく追加しました。"
 
-msgid "[:doc:`/reference/token_filters`] Added a new TokenFilter ``TokenFilterNFKC150`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 15.0."
-msgstr "[:doc:`/reference/token_filters`] Unicode 15.0 の NFKC（Normalization Form Compatibility Composition）をベースにしたトークンフィルター ``TokenFilterNFKC150`` を新しく追加しました。"
+msgid "[{doc}`/reference/normalizers/normalizer_nfkc150`] Added new options for NormalizerNFKC* as below."
+msgstr "[{doc}`/reference/normalizers/normalizer_nfkc150`] `NormalizerNFKC` に以下の新しいオプションを追加しました。"
 
-msgid "[:doc:`reference/normalizers/normalizer_nfkc150`] Added new options for NormalizerNFKC* as below."
-msgstr "[:doc:`reference/normalizers/normalizer_nfkc150`] ``NormalizerNFKC`` に以下の新しいオプションを追加しました。"
-
-msgid "``unify_katakana_gu_small_sounds``"
+msgid "`unify_katakana_gu_small_sounds`"
 msgstr ""
 
 msgid "We can normalize \"グァ -> ガ\", \"グィ -> ギ\", \"グェ -> ゲ\", and \"グォ -> ゴ\" with this option."
 msgstr "このオプションを使うことで、\"グァ -> ガ\", \"グィ -> ギ\", \"グェ -> ゲ\", \"グォ -> ゴ\"と正規化できます。"
 
-msgid "Here is an example of ``unify_katakana_gu_small_sounds`` option."
-msgstr "以下は ``unify_katakana_gu_small_sounds`` オプションの使用例です。"
+msgid "Here is an example of `unify_katakana_gu_small_sounds` option."
+msgstr "以下は `unify_katakana_gu_small_sounds` オプションの使用例です。"
 
-msgid "``unify_katakana_di_sound``"
+msgid "`unify_katakana_di_sound`"
 msgstr ""
 
 msgid "We can normalize \"ヂ -> ジ\" with this option."
 msgstr "このオプションを使うことで、\"ヂ -> ジ\"と正規化できます。"
 
-msgid "Here is an example of ``unify_katakana_di_sound`` option."
-msgstr "以下は、 ``unify_katakana_di_sound`` オプションの使用例です。"
+msgid "Here is an example of `unify_katakana_di_sound` option."
+msgstr "以下は、 `unify_katakana_di_sound` オプションの使用例です。"
 
-msgid "``unify_katakana_wo_sound``"
+msgid "`unify_katakana_wo_sound`"
 msgstr ""
 
 msgid "We can normalize \"ヲ -> オ\" with this option."
 msgstr "このオプションを使うことで、\"ヲ -> オ\"と正規化できます。"
 
-msgid "Here is an example of ``unify_katakana_wo_sound`` option."
-msgstr "以下は、 ``unify_katakana_wo_sound`` オプションの使用例です。"
+msgid "Here is an example of `unify_katakana_wo_sound` option."
+msgstr "以下は、 `unify_katakana_wo_sound` オプションの使用例です。"
 
-msgid "``unify_katakana_zu_small_sounds``"
+msgid "`unify_katakana_zu_small_sounds`"
 msgstr ""
 
 msgid "We can normalize \"ズァ -> ザ\", \"ズィ -> ジ\", \"ズェ -> ゼ\", and \"ズォ -> ゾ\" with this option."
 msgstr "このオプションを使うことで、\"ズァ -> ザ\", \"ズィ -> ジ\", \"ズェ -> ゼ\", \"ズォ -> ゾ\"と正規化できます。"
 
-msgid "Here is an example of ``unify_katakana_zu_small_sounds`` option."
-msgstr "以下は、 ``unify_katakana_zu_small_sounds`` オプションの使用例です。"
+msgid "Here is an example of `unify_katakana_zu_small_sounds` option."
+msgstr "以下は、 `unify_katakana_zu_small_sounds` オプションの使用例です。"
 
-msgid "``unify_katakana_du_sound``"
+msgid "`unify_katakana_du_sound`"
 msgstr ""
 
 msgid "We can normalize \"ヅ -> ズ\" with this option."
 msgstr "このオプションを使うことで、\"ヅ -> ズ\"と正規化できます。"
 
-msgid "Here is an example of ``unify_katakana_du_sound`` option."
-msgstr "以下は、 ``unify_katakana_du_sound`` オプションの使用例です。"
+msgid "Here is an example of `unify_katakana_du_sound` option."
+msgstr "以下は、 `unify_katakana_du_sound` オプションの使用例です。"
 
-msgid "``unify_katakana_trailing_o``"
+msgid "`unify_katakana_trailing_o`"
 msgstr ""
 
 msgid "We can normalize following characters with this option."
@@ -478,344 +475,20 @@ msgstr ""
 msgid "\"ポオ -> ポウ\""
 msgstr ""
 
-msgid "Here is an example of ``unify_katakana_trailing_o`` option."
-msgstr "以下は、 ``unify_katakana_trailing_o`` オプションの使用例です。"
+msgid "Here is an example of `unify_katakana_trailing_o` option."
+msgstr "以下は、 `unify_katakana_trailing_o` オプションの使用例です。"
 
-msgid "``unify_katakana_du_small_sounds``"
+msgid "`unify_katakana_du_small_sounds`"
 msgstr ""
 
 msgid "We can normalize \"ヅァ -> ザ\", \"ヅィ -> ジ\", \"ヅェ -> ゼ\", and \"ヅォ -> ゾ\" with this option."
 msgstr "このオプションを使うことで、 \"ヅァ -> ザ\", \"ヅィ -> ジ\", \"ヅェ -> ゼ\", \"ヅォ -> ゾ\"と正規化できます。"
 
-msgid "Here is an example of ``unify_katakana_du_small_sounds`` option."
-msgstr "以下は、 ``unify_katakana_du_small_sounds`` オプションの使用例です。"
-
-msgid "[:doc:`install/oracle-linux`] Added newly support for Oracle Linux 8 and 9."
-msgstr "[:doc:`/install/oracle-linux`] Oracle Linux 8と9 向けのパッケージを新しくサポートしました。"
-
-msgid "Higlight and Summary of changes from 12.0.0 to 12.1.2"
-msgstr "Groonga 12.0.0 から 12.1.2 までの主な変更点"
-
-msgid "Higlight"
-msgstr "ハイライト"
-
-msgid "[:ref:`release-12-0-9`]"
-msgstr ""
-
-msgid "[:doc:`reference/normalizers`] Added ``NormalizerHTML``. (Experimental)"
-msgstr "[:doc:`reference/normalizers`] ``NormalizerHTML`` を追加しました。（実験的）"
-
-msgid "``NormalizerHTML`` is a normalizer for HTML."
-msgstr "``NormalizerHTML`` はHTML用のノーマライザーです。"
-
-msgid "Currently ``NormalizerHTML`` supports removing tags like ``<span>`` or ``</span>`` and expanding character references like ``&amp;`` or ``&#38;``."
-msgstr "現在 ``NormalizerHTML`` は ``<span>`` や ``</span>`` といったタグの削除と、``&amp;`` や ``&#38;`` といった文字参照の展開を行います。"
-
-msgid "Here are sample queries for ``NormalizerHTML``."
-msgstr "以下は ``NormalizerHTML`` の例です。"
-
-msgid "In this sample ``<span>`` and ``</span>`` are removed, and ``&amp;`` and ``&#38;`` are expanded to ``&``."
-msgstr "この例では、 ``<span>`` と ``</span>`` は削除され、 ``&amp;`` と ``&#38;`` は ``&`` に展開されています。"
-
-msgid "We can specify whether removing the tags with the ``remove_tag`` option. (The default value of the ``remove_tag`` option is ``true``.)"
-msgstr "タグを削除するかどうかは ``remove_tag`` オプションで指定できます。(``remove_tag`` オプションのデフォルト値は ``true`` です。)"
-
-msgid "In this sample, ``<span>`` and ``</span>`` are not removed."
-msgstr "この例では、 ``<span>`` と ``</span>`` は削除されていません。"
-
-msgid "We can specify whether expanding the character references with the ``expand_character_reference`` option. (The default value of the ``expand_character_reference`` option is ``true``.)"
-msgstr "文字参照を展開するかどうかは ``expand_character_reference`` オプションで指定できます。(``expand_character_reference`` オプションのデフォルト値は ``true`` です。)"
-
-msgid "In this sample, ``&amp;`` and ``&#38;`` are not expanded."
-msgstr "この例では、 ``&amp;`` と ``&#38;`` は展開されていません。"
-
-msgid "[:ref:`release-12-0-3`]"
-msgstr ""
-
-msgid "[:doc:`reference/functions/snippet`],[:doc:`reference/functions/snippet_html`] Added support for text vector as input. [groonga-dev,04956][Reported by shinonon]"
-msgstr "[:doc:`reference/functions/snippet`],[:doc:`reference/functions/snippet_html`] 入力としてベクターをサポートしました。[groonga-dev,04956][Reported by shinonon]"
-
-msgid "For example, we can extract snippets of target text around search keywords against vector in JSON data as below."
-msgstr "例えば、以下のようにJSONデータ内のベクターに対して検索キーワードの周辺テキストを抽出できます。"
-
-msgid "Until now, if we specified ``snippet*`` like ``--output_columns 'snippet_html(contents[1])``, we could extract snippets of target text around search keywords against the vector as below. However, we didn't know which we should output elements. Because we didn't know which element was hit on search."
-msgstr "今までも、 ``--output_columns 'snippet_html(contents[1])'`` のように ``snippet*`` を指定することで以下のようにベクターに対して検索キーワードの周辺テキストを抽出できますが、この方法ではどの要素を出力すればよいかわかりません。どの要素が検索にヒットしたかわからないためです。"
-
-msgid "[:ref:`release-12-0-1`]"
-msgstr ""
-
-msgid "[:doc:`/reference/commands/query_expand`] Added a support for synonym group."
-msgstr "[:doc:`/reference/commands/query_expand`] 同義語グループをサポートしました。"
-
-msgid "Until now, We had to each defined a keyword and synonyms of the keyword as below when we use the synonym search."
-msgstr "同義語検索をする場合、今までは、以下のようにキーワードとその同義語をそれぞれ定義していました。"
-
-msgid "In the above case, if we search ``mroonga``, Groonga search ``mroonga OR tritonn OR \"groonga mysql\"`` as we intended. However, if we search ``tritonn``, Groonga search only ``tritonn``. If we want to search ``tritonn OR mroonga OR \"groonga mysql\"`` even if we search ``tritonn``, we need had added a definition as below."
-msgstr "上記のケースでは、``mroonga`` を検索した場合、 Groongaは、意図通り、 ``mroonga OR tritonn OR \"groonga mysql\" を検索しますが、``tritonn`` を検索した場合は、 Groongaは、 ``tritonn`` のみを検索します。``tritonn`` を検索した場合でも、``tritonn OR mroonga OR \"groonga mysql\"`` と検索した場合、以下のように定義を追加する必要がありました。"
-
-msgid "In many cases, if we expand ``mroonga`` to ``mroonga OR tritonn OR \"groonga mysql\"``, we feel we want to expand ``tritonn`` and ``\"groonga mysql\"`` to ``mroonga OR tritonn OR \"groonga mysql\"``. However, until now, we had needed additional definitions in such a case. Therefore, if target keywords for synonyms are many, we are troublesome to define synonyms. Because we need to define many similar definitions."
-msgstr "多くのケースでは、 ``mroonga`` を ``mroonga OR tritonn OR \"groonga mysql\"`` と展開した場合、 ``tritonn`` や ``\"groonga mysql\"`` も ``mroonga OR tritonn OR \"groonga mysql\"`` と展開して欲しくなりますが、今までは、そのようなケースでは定義を追加する必要がありました。したがって、対象のキーワードに同義語がたくさんあると、同じような定義をたくさん定義する必要があるため、同義語の定義が煩雑でした。"
-
-msgid "In addition, when we remove synonyms, we are troublesome because we need to execute remove against many records."
-msgstr "加えて、同義語を削除する際も、多くのレコードを削除する必要があるので面倒でした。"
-
-msgid "We can make a group by deciding on a representative synonym record since this release. For example, the all following keywords are the \"mroonga\" group."
-msgstr "今回のリリースから同義語の代表値を決めることで一つのグループを作れるようになりました。例えば、以下のすべてのキーワードは、 \"mroonga\" グループです。"
-
-msgid "In this case, ``mroonga`` is expanded to ``mroonga OR tritonn OR \"groonga mysql\"``. In addition, ``tritonn`` and ``\"groonga mysql\"`` are also expanded to ``mroonga OR tritonn OR \"groonga mysql\"``."
-msgstr "このケースでは、 ``mroonga`` は ``mroonga OR tritonn OR \"groonga mysql\"`` と展開されます。また、 ``tritonn`` や ``\"groonga mysql\"`` も ``mroonga OR tritonn OR \"groonga mysql\"`` と展開されます。"
-
-msgid "When we want to remove synonyms, we execute just remove against a target record. For example, if we want to remove ``\"groonga mysql\"`` from synonyms, we just remove ``{\"_key\": \"groonga mysql\": \"representative\": \"mroonga\"}``."
-msgstr "同義語を削除する際も、対象のレコードを削除するだけです。例えば、同義語から ``\"groonga mysql\"`` を削除する場合は、 ``{\"_key\": \"groonga mysql\": \"representative\": \"mroonga\"}`` を削除するだけです。"
-
-msgid "[:ref:`release-12-0-0`]"
-msgstr ""
-
-msgid "[index_column_have_source_record] Added a new function ``index_column_have_source_record()``."
-msgstr "[index_column_have_source_record] 新しい関数 ``index_column_have_source_record()`` を追加しました。"
-
-msgid "We can confirm whether a token that is existing in the index is included in any of the records that are registered in Groonga or not."
-msgstr "インデックスに存在するトークンがGroongaに登録されているいずれかのレコードに含まれているかどうかを確認できます。"
-
-msgid "Groonga does not remove a token even if the token become never used from records in Groonga by updating records. Therefore, for example, when we use the feature of autocomplete, Groonga may return a token that is not included in any of the records as candidates for search words. However, we can become that we don't return the needless token by using this function."
-msgstr "Groongaは、レコードの更新によってどのレコードからも使われていないトークンがあっても、それを削除しません。したがって、例えば、オートコンプリート機能を使っていると、検索候補としてどのレコードにも含まれていないトークンを返す可能性がありますが、この関数をつかうことで、不要なトークンを返さないようにできます。"
-
-msgid "Because this function can detect a token that is not included in any of the records."
-msgstr "この関数は、トークンがどのレコードにも含まれていないことを検出できるからです。"
-
-msgid "[:doc:`reference/commands/select`] Added new arguments ``drilldown_max_n_target_records`` and ``drilldown[${LABEL}].max_n_target_records``."
-msgstr "[:doc:`/reference/commands/select`] 新しい引数 ``drilldown_max_n_target_records`` と ``drilldown[${LABEL}].max_n_target_records`` を追加しました。"
-
-msgid "We can specify the max number of records of the drilldown target table (filtered result) to use drilldown. If the number of filtered result is larger than the specified value, some records in filtered result aren't used for drilldown. The default value of this arguments are ``-1``. If these arguments are set ``-1``, Groonga uses all records for drilldown."
-msgstr "ドリルダウン対象のテーブル（フィルター結果）の中のうち最大で何レコードをドリルダウンに使うかを指定します。もし、フィルター結果のレコード数が指定した値より大きかったらフィルターした結果内のいくつかのレコードはドリルダウンには使われません。これらの引数のデフォルト値は、 ``-1`` です。これらの引数に ``-1`` がセットされた場合、Groongaは全てのレコードをドリルダウンに使います。"
-
-msgid "This argument is useful when filtered result may be very large. Because a drilldown against large filtered result may be slow. We can limit the max number of records to be used for drilldown by this feature."
-msgstr "この機能はフィルター結果が非常に大きくなるかもしれない場合に有用です。大きなフィルター結果に対するドリルダウンは遅くなることがあるためです。この機能を使うことでドリルダウンに使うレコード数を制限できます。"
-
-msgid "Here is an example to limit the max number of records to be used for drilldown. The last 2 records, ``{\\\"_id\\\": 4, \\\"tag\\\": \\\"Senna\\\"}`` and ``{\\\"_id\\\": 5, \\\"tag\\\": \\\"Senna\\\"}``, aren't used."
-msgstr "以下はドリルダウンに使う最大レコード数を制限する例です。最後の2レコード（ ``{\"_id\": 4, \"tag\": \"Senna\"}`` と ``{\"_id\": 5, \"tag\": \"Senna\"}`` ）は使われていません。"
-
-msgid "Summary"
-msgstr "概要"
-
-msgid "[:ref:`release-12-1-2`]"
-msgstr ""
-
-msgid "[httpd] Updated bundled nginx to 1.23.3."
-msgstr "[httpd] バンドルしているnginxのバージョンを1.23.3に更新しました。"
-
-msgid "[:ref:`release-12-1-1`]"
-msgstr ""
-
-msgid "[:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-expansions-power-set`] Vector's power set is now able to aggregate with the drilldowns."
-msgstr "[:doc:`reference/commands/select`][:ref:`select-drilldowns-label-key-vector-expansions-power-set`] ドリルダウンでベクターのべき集合を集計できるようになりました。"
-
-msgid "[:doc:`reference/commands/select`] Specific element of vector column is now able to be search target."
-msgstr "[:doc:`reference/commands/select`] ベクターカラムの特定の要素のみを対象に検索できるようになりました。"
-
-msgid "[:doc:`/reference/commands/load`] Added support for ``YYYY-MM-DD`` time format."
-msgstr "[:doc:`/reference/commands/load`] ``YYYY-MM-DD`` 形式をサポートしました。"
-
-msgid "[:ref:`release-12-1-0`]"
-msgstr ""
-
-msgid "[:doc:`reference/commands/load`] Added support for slow log output of ``load``."
-msgstr "[:doc:`reference/commands/load`] ``load`` のスローログの出力に対応しました。"
-
-msgid "[:doc:`reference/api`] Added new API ``grn_is_reference_count_enable()``."
-msgstr "[:doc:`reference/api`] 新しいAPI ``grn_is_reference_count_enable()`` を追加しました。"
-
-msgid "[:doc:`reference/commands/status`] Added new items: ``back_trace`` and ``reference_count``."
-msgstr "[:doc:`reference/commands/status`] 新しい項目 ``back_trace`` と ``reference_count`` を追加しました。"
-
-msgid "[:doc:`install/almalinux`] Added support for AlmaLinux 9."
-msgstr "[:doc:`/install/almalinux`] AlmaLinux 9 向けのパッケージをサポートしました。"
-
-msgid "[:doc:`reference/functions/escalate`] Added a document for the ``escalate()`` function."
-msgstr "[:doc:`reference/functions/escalate`] ``escalate()`` 関数のドキュメントを追加しました。"
-
-msgid "[httpd] Updated bundled nginx to 1.23.2."
-msgstr "[httpd] バンドルしているnginxのバージョンを1.23.2に更新しました。"
-
-msgid "Suppressed logging a lot of same messages when no memory is available."
-msgstr "メモリーが不足した際に、同じログが大量に出力されないように変更しました。"
-
-msgid "[:ref:`release-12-0-8`]"
-msgstr ""
-
-msgid "Changed specification of the ``escalate()`` function (Experimental) to make it easier to use."
-msgstr "``escalate()`` 関数（実験的）の仕様を使いやすいように変更しました。"
-
-msgid "[:doc:`install/cmake`] Added a document about how to build Groonga with CMake."
-msgstr "[:doc:`install/cmake`] CMakeを使ってビルドする方法を追加しました。"
-
-msgid "[:doc:`install/others`] Added descriptions about how to enable/disable Apache Arrow support when building with GNU Autotools."
-msgstr "[:doc:`install/others`] GNU Autotoolsを使ってビルドする場合に、Apache Arrowの機能を有効化/無効化する方法について追加しました。"
-
-msgid "[:doc:`reference/commands/select`] Added a document about :ref:`select-drilldowns-label-table`."
-msgstr "[:doc:`/reference/commands/select`] :ref:`select-drilldowns-label-table` のドキュメントを追加しました。"
-
-msgid "[:doc:`contribution/documentation/i18n`] Updated the translation procedure."
-msgstr "[:doc:`contribution/documentation/i18n`] 翻訳方法を更新しました。"
-
-msgid "[:ref:`release-12-0-7`]"
-msgstr ""
-
-msgid "Added a new function ``escalate()``. (experimental)"
-msgstr "新しい関数 ``escalate()`` を追加しました。(実験的)"
-
-msgid "[httpd] Updated bundled nginx to 1.23.1."
-msgstr "[httpd] バンドルしているnginxのバージョンを1.23.1に更新しました。"
-
-msgid "[:doc:`reference/commands/select`] Add a document for the ``--n_workers`` option."
-msgstr "[:doc:`/reference/commands/select`] ``--n_workers`` オプションのドキュメントを追加しました。"
-
-msgid "[:ref:`release-12-0-6`]"
-msgstr ""
-
-msgid "Added new Munin plugins for groonga-delta."
-msgstr "groonga-delta用の新しいMuninプラグインを追加しました。"
-
-msgid "[:doc:`reference/commands/column_copy`] Added support for weight vector."
-msgstr "[:doc:`reference/commands/column_copy`] 重み付きベクターをサポートしました。"
-
-msgid "[:doc:`/install/ubuntu`] Dropped support for Ubuntu 21.10 (Impish Indri)."
-msgstr "[:doc:`/install/ubuntu`] Ubuntu 21.10 (Impish Indri) のサポートをやめました。"
-
-msgid "[:doc:`/install/debian`] Dropped Debian 10 (buster) support."
-msgstr "[:doc:`/install/debian`] Debian 10 (buster) のサポートをやめました。"
-
-msgid "[:ref:`release-12-0-5`]"
-msgstr ""
-
-msgid "[:doc:`reference/commands/select`] Improved a little bit of performance for prefix search by search escalation."
-msgstr "[:doc:`reference/commands/select`] 検索エスカレーションによる前方一致検索のパフォーマンスを少し改善しました。"
-
-msgid "[:doc:`reference/commands/select`] Added support for specifying a reference vector column with weight in ``drilldowns[LABEL]._key``."
-msgstr "[:doc:`/reference/commands/select`] ``drilldowns[LABEL]._key`` に重み付き参照ベクターカラムを指定できるようになりました。"
-
-msgid "[:doc:`reference/commands/select`] Added support for doing drilldown with a reference vector with weight even if we use ``query`` or ``filter``, or ``post_filter``."
-msgstr "[:doc:`/reference/commands/select`] ``query`` や ``filter`` や ``post_filter`` を使っていても、ドリルダウンのキーに重み付き参照ベクターカラムを指定できるようになりました。"
-
-msgid "[:ref:`release-12-0-4`]"
-msgstr ""
-
-msgid "[:doc:`/install/ubuntu`] Added support for Ubuntu 22.04 (Jammy Jellyfish)."
-msgstr "[:doc:`/install/ubuntu`] Ubuntu 22.04 (Jammy Jellyfish)をサポートしました。"
-
-msgid "We don't provide `groonga-benchmark`."
-msgstr "`groonga-benchmark` の提供をやめました。"
-
-msgid "[:doc:`reference/commands/status`] Added a new item ``memory_map_size``."
-msgstr "[:doc:`reference/commands/status`] 新しい項目 ``memory_map_size`` を追加しました。"
-
-msgid "[:doc:`reference/commands/logical_count`] Improved memory usage while ``logical_count`` executed."
-msgstr "[:doc:`/reference/commands/logical_count`] ``logical_count`` 実行中のメモリー使用量を改善しました。"
-
-msgid "[:doc:`/reference/commands/dump`] Added support for ``MISSING_IGNORE/MISSING_NIL``."
-msgstr "[:doc:`/reference/commands/dump`] ``MISSING_IGNORE/MISSING_NIL`` をサポートしました。"
-
-msgid "[:doc:`reference/functions/snippet`],[:doc:`reference/functions/snippet_html`] Added support for text vector as input."
-msgstr "[:doc:`reference/functions/snippet`],[:doc:`reference/functions/snippet_html`] 入力としてベクターをサポートしました。"
-
-msgid "[``vector_join``] Added a new function ``vector_join()``."
-msgstr "[``vector_join``] 新しい関数 ``vector_join()`` を追加しました。"
-
-msgid "[:doc:`/reference/indexing`] Ignore too large a token like online index construction."
-msgstr "[:doc:`/reference/indexing`] 動的インデックス構築のようにとても大きなトークンを無視するようにしました。"
-
-msgid "[:ref:`release-12-0-2`]"
-msgstr ""
-
-msgid "[:doc:`reference/commands/logical_range_filter`] Added support for reducing reference immediately after processing a shard."
-msgstr "[:doc:`/reference/commands/logical_range_filter`] シャードを処理した直後に参照を減らすようにしました。"
-
-msgid "We increased the stability of the feature of recovering on crashes."
-msgstr "クラッシュリカバリー機能の安定性が向上しました。"
-
-msgid "Improved performance for mmap if anonymous mmap available."
-msgstr "無名マッピングが利用可能な時のmmapのパフォーマンスを向上しました。"
-
-msgid "[:doc:`/reference/indexing`] Added support for the static index construction against the following types of columns."
-msgstr "[:doc:`/reference/indexing`] 以下のタイプのカラムで静的インデックス構築をサポートしました。"
-
-msgid "[:doc:`reference/commands/column_create`] Added new flags ``MISSING_*`` and ``INVALID_*``."
-msgstr "[:doc:`/reference/commands/column_create`] 新しいフラグ ``MISSING_*`` と ``INVALID_*`` を追加しました。"
-
-msgid "[:doc:`/reference/commands/dump`][:doc:`/reference/commands/column_list`] Added support for ``MISSING_*`` and ``INVALID_*`` flags."
-msgstr "[:doc:`/reference/commands/dump`][:doc:`/reference/commands/column_list`] ``MISSING_*`` と ``INVALID_*`` フラグをサポートしました。"
-
-msgid "[:doc:`/reference/commands/schema`] Added support for ``MISSING_*`` and ``INVALID_*`` flags."
-msgstr "[:doc:`/reference/commands/schema`] ``MISSING_*`` と ``INVALID_*`` フラグをサポートしました。"
-
-msgid "We provided the package of Amazon Linux 2."
-msgstr "Amazon Linux 2向けのパッケージを提供するようにしました。"
-
-msgid "[Windows] Dropped support for building with Visual Studio 2017."
-msgstr "[Windows] Visual Studio 2017 でのビルドをやめました。"
-
-msgid "[:doc:`/reference/commands/query_expand`] Added a support for text vector and index."
-msgstr "[:doc:`/reference/commands/query_expand`] 同義語グループにベクターを使えるようにしました。"
-
-msgid "Added support for disabling a backtrace by the environment variable."
-msgstr "環境変数によって、バックトレースを無効にできるようにしました。"
-
-msgid "[:doc:`reference/commands/select`] Improved performance for ``--slices``."
-msgstr "[:doc:`reference/commands/select`] ``--slices`` のパフォーマンスを改善しました。"
-
-msgid "[Windows] Added support for Visual Studio 2022."
-msgstr "[Windows] VisualStudio 2022 をサポートしました。"
-
-msgid "[:doc:`reference/commands/select`] Added support for specifing max intervals for each elements in near search."
-msgstr "[:doc:`/reference/commands/select`] 近傍検索でそれぞれの要素ごとの距離を指定できるようになりました。"
-
-msgid "[:doc:`reference/executables/groonga-server-http`] We could use ``groonga-server-http`` even if Groonga of RPM packages."
-msgstr "[:doc:`/reference/executables/groonga-server-http`] RPMパッケージのGroongaであっても、 ``groonga-server-http`` を使えるようにしました。"
-
-msgid "[:doc:`reference/functions/sub_filter`] Added a new option ``pre_filter_threshold``."
-msgstr "[:doc:`reference/functions/sub_filter`] 新しいオプション ``pre_filter_threshold`` を追加しました。"
-
-msgid "[:doc:`reference/normalizers/normalizer_nfkc130`] Added a new option ``strip``"
-msgstr "[:doc:`reference/normalizers/normalizer_nfkc130`] 新しいオプション ``strip`` を追加しました。"
-
-msgid "[httpd] Updated bundled nginx to 1.21.6."
-msgstr "[httpd] バンドルしているnginxのバージョンを1.21.6に更新しました。"
-
-msgid "[:doc:`reference/commands/select`] Fix a bug displaying a wrong label in ``drilldown`` results when ``command_version`` is ``3``."
-msgstr "[:doc:`reference/commands/select`] ``command_version`` が ``3`` のとき、 ``drilldown`` の結果のラベルが不正になる問題を修正しました。"
-
-msgid "[:doc:`reference/normalizers/normalizer_table`] Fix a bug for Groonga to crush with specific definition setting in ``NormalizerTable``."
-msgstr "[:doc:`reference/normalizers/normalizer_table`] 特定の定義が ``NormalizerTable`` に存在する場合、Groongaがクラッシュすることがある問題を修正しました。"
-
-msgid "[:doc:`reference/commands/select`][:doc:`reference/columns/vector`] Fixed a bug displaying integer in the results when a weight vector column specifies `WEIGHT FLOAT32`."
-msgstr "[:doc:`reference/commands/select`][:doc:`reference/columns/vector`] 重み付きベクターカラムで ``WEIGHT_FLOAT32`` を指定したとき、結果が整数で表示されていた問題を修正しました。"
-
-msgid "[:doc:`reference/commands/select`] Fixed a bug that Groonga could crash or return incorrect results when specifying :ref:`select-n-workers`."
-msgstr "[:doc:`/reference/commands/select`] :ref:`select-n-workers` を指定したとき、Groongaがクラッシュしたり、誤った結果を返すことがある問題を修正しました。"
-
-msgid "Fixed a bug that Groonga could return incorrect results when we use :doc:`reference/normalizers/normalizer_table` and it contains a non-idempotent (results can be changed when executed repeatedly) definition."
-msgstr ":doc:`reference/normalizers/normalizer_table` で冪等でない（繰り返し実行すると結果が変わることがある）定義をした時に、Groongaが誤った結果を返すことがある問題を修正しました。"
-
-msgid "Fixed a bug Groonga's response may be slow when we execute the ``request_cancel`` while executing a OR search."
-msgstr "OR検索実行中に ``request_cancel`` を実行した場合、Groongaの応答が遅くなることがある問題を修正しました。"
-
-msgid "Fixed a bug that Groonga may crash when we execute drilldown in a parallel by ``n_workers`` option."
-msgstr "``n_workers`` オプションを使ってドリルダウンを並行して実行したときにGroongaがクラッシュすることがある問題を修正しました。"
-
-msgid "[:doc:`reference/commands/select`] Fixed a bug that the syntax error occurred when we specify a very long expression in ``--filter``."
-msgstr "[:doc:`/reference/commands/select`] ``--filter`` に非常に長い式を指定するとシンタックスエラーになる問題を修正しました。"
-
-msgid "Fixed a bug Groonga's response may be slow when we execute ``request_cancel`` while executing a search."
-msgstr "検索実行中に ``request_cancel`` を実行した時Groongaの応答が遅くなることがある問題を修正しました。"
-
-msgid "Fixed a bug that string list can't be casted to int32 vector."
-msgstr "文字列リストをint32のベクターにキャストできない問題を修正しました。"
-
-msgid "Fixed a bug that Groonga Munin Plugins do not work on AlmaLinux 8 and CentOS 7."
-msgstr "GroongaのMuninプラグインがAlmaLinux 8 とCentOS 7上で動作しない問題を修正しました。"
-
-msgid "Fixed a bug that we may be not able to add a key to a table of patricia trie."
-msgstr "パトリシアトライのテーブルにキーを追加できなくなることがある問題を修正しました。"
+msgid "Here is an example of `unify_katakana_du_small_sounds` option."
+msgstr "以下は、 `unify_katakana_du_small_sounds` オプションの使用例です。"
+
+msgid "[{doc}`/install/oracle-linux`] Added newly support for Oracle Linux 8 and 9."
+msgstr "[{doc}`/install/oracle-linux`] Oracle Linux 8と9 向けのパッケージを新しくサポートしました。"
 
 msgid "Atsushi Shinoda"
 msgstr "篠田さん"
@@ -834,3 +507,327 @@ msgstr "Zhanzhao (Deo) Liangさん"
 
 msgid "David CARLIER"
 msgstr "David CARLIERさん"
+
+msgid "Higlight and Summary of changes from 12.0.0 to 12.1.2"
+msgstr "Groonga 12.0.0 から 12.1.2 までの主な変更点"
+
+msgid "Higlight"
+msgstr "ハイライト"
+
+msgid "[{ref}`release-12-0-9`]"
+msgstr ""
+
+msgid "[{doc}`/reference/normalizers`] Added `NormalizerHTML`. (Experimental)"
+msgstr "[{doc}`/reference/normalizers`] `NormalizerHTML` を追加しました。（実験的）"
+
+msgid "`NormalizerHTML` is a normalizer for HTML."
+msgstr "`NormalizerHTML` はHTML用のノーマライザーです。"
+
+msgid "Currently `NormalizerHTML` supports removing tags like `<span>` or `</span>` and expanding character references like `&amp;` or `&#38;`."
+msgstr "現在 `NormalizerHTML` は `<span>` や `</span>` といったタグの削除と、`&amp;` や `&#38;` といった文字参照の展開を行います。"
+
+msgid "Here are sample queries for `NormalizerHTML`."
+msgstr "以下は `NormalizerHTML` の例です。"
+
+msgid "In this sample `<span>` and `</span>` are removed, and `&amp;` and `&#38;` are expanded to `&`."
+msgstr "この例では、 `<span>` と `</span>` は削除され、 `&amp;` と `&#38;` は `&` に展開されています。"
+
+msgid "We can specify whether removing the tags with the `remove_tag` option. (The default value of the `remove_tag` option is `true`.)"
+msgstr "タグを削除するかどうかは `remove_tag` オプションで指定できます。(`remove_tag` オプションのデフォルト値は `true` です。)"
+
+msgid "In this sample, `<span>` and `</span>` are not removed."
+msgstr "この例では、 `<span>` と `</span>` は削除されていません。"
+
+msgid "We can specify whether expanding the character references with the `expand_character_reference` option. (The default value of the `expand_character_reference` option is `true`.)"
+msgstr "文字参照を展開するかどうかは `expand_character_reference` オプションで指定できます。(`expand_character_reference` オプションのデフォルト値は `true` です。)"
+
+msgid "In this sample, `&amp;` and `&#38;` are not expanded."
+msgstr "この例では、 `&amp;` と `&#38;` は展開されていません。"
+
+msgid "[{ref}`release-12-0-3`]"
+msgstr ""
+
+msgid "[{doc}`/reference/functions/snippet`],[{doc}`/reference/functions/snippet_html`] Added support for text vector as input. [groonga-dev,04956][Reported by shinonon]"
+msgstr "[{doc}`/reference/functions/snippet`],[{doc}`/reference/functions/snippet_html`] 入力としてベクターをサポートしました。[groonga-dev,04956][Reported by shinonon]"
+
+msgid "For example, we can extract snippets of target text around search keywords against vector in JSON data as below."
+msgstr "例えば、以下のようにJSONデータ内のベクターに対して検索キーワードの周辺テキストを抽出できます。"
+
+msgid "Until now, if we specified `snippet*` like `--output_columns 'snippet_html(contents[1])`, we could extract snippets of target text around search keywords against the vector as below. However, we didn't know which we should output elements. Because we didn't know which element was hit on search."
+msgstr "今までも、 `--output_columns 'snippet_html(contents[1])'` のように `snippet*` を指定することで以下のようにベクターに対して検索キーワードの周辺テキストを抽出できますが、この方法ではどの要素を出力すればよいかわかりません。どの要素が検索にヒットしたかわからないためです。"
+
+msgid "[{ref}`release-12-0-1`]"
+msgstr ""
+
+msgid "[{doc}`/reference/commands/query_expand`] Added a support for synonym group."
+msgstr "[{doc}`/reference/commands/query_expand`] 同義語グループをサポートしました。"
+
+msgid "Until now, We had to each defined a keyword and synonyms of the keyword as below when we use the synonym search."
+msgstr "同義語検索をする場合、今までは、以下のようにキーワードとその同義語をそれぞれ定義していました。"
+
+msgid "In the above case, if we search `mroonga`, Groonga search `mroonga OR tritonn OR \"groonga mysql\"` as we intended. However, if we search `tritonn`, Groonga search only `tritonn`. If we want to search `tritonn OR mroonga OR \"groonga mysql\"` even if we search `tritonn`, we need had added a definition as below."
+msgstr "上記のケースでは、`mroonga` を検索した場合、 Groongaは、意図通り、 `mroonga OR tritonn OR \"groonga mysql\" を検索しますが、`tritonn` を検索した場合は、 Groongaは、 `tritonn` のみを検索します。`tritonn` を検索した場合でも、`tritonn OR mroonga OR \"groonga mysql\"` と検索した場合、以下のように定義を追加する必要がありました。"
+
+msgid "In many cases, if we expand `mroonga` to `mroonga OR tritonn OR \"groonga mysql\"`, we feel we want to expand `tritonn` and `\"groonga mysql\"` to `mroonga OR tritonn OR \"groonga mysql\"`. However, until now, we had needed additional definitions in such a case. Therefore, if target keywords for synonyms are many, we are troublesome to define synonyms. Because we need to define many similar definitions."
+msgstr "多くのケースでは、 `mroonga` を `mroonga OR tritonn OR \"groonga mysql\"` と展開した場合、 `tritonn` や `\"groonga mysql\"` も `mroonga OR tritonn OR \"groonga mysql\"` と展開して欲しくなりますが、今までは、そのようなケースでは定義を追加する必要がありました。したがって、対象のキーワードに同義語がたくさんあると、同じような定義をたくさん定義する必要があるため、同義語の定義が煩雑でした。"
+
+msgid "In addition, when we remove synonyms, we are troublesome because we need to execute remove against many records."
+msgstr "加えて、同義語を削除する際も、多くのレコードを削除する必要があるので面倒でした。"
+
+msgid "We can make a group by deciding on a representative synonym record since this release. For example, the all following keywords are the \"mroonga\" group."
+msgstr "今回のリリースから同義語の代表値を決めることで一つのグループを作れるようになりました。例えば、以下のすべてのキーワードは、 \"mroonga\" グループです。"
+
+msgid "In this case, `mroonga` is expanded to `mroonga OR tritonn OR \"groonga mysql\"`. In addition, `tritonn` and `\"groonga mysql\"` are also expanded to `mroonga OR tritonn OR \"groonga mysql\"`."
+msgstr "このケースでは、 `mroonga` は `mroonga OR tritonn OR \"groonga mysql\"` と展開されます。また、 `tritonn` や `\"groonga mysql\"` も `mroonga OR tritonn OR \"groonga mysql\"` と展開されます。"
+
+msgid "When we want to remove synonyms, we execute just remove against a target record. For example, if we want to remove `\"groonga mysql\"` from synonyms, we just remove `{\"_key\": \"groonga mysql\": \"representative\": \"mroonga\"}`."
+msgstr "同義語を削除する際も、対象のレコードを削除するだけです。例えば、同義語から `\"groonga mysql\"` を削除する場合は、 `{\"_key\": \"groonga mysql\": \"representative\": \"mroonga\"}` を削除するだけです。"
+
+msgid "[{ref}`release-12-0-0`]"
+msgstr ""
+
+msgid "[index_column_have_source_record] Added a new function `index_column_have_source_record()`."
+msgstr "[index_column_have_source_record] 新しい関数 `index_column_have_source_record()` を追加しました。"
+
+msgid "We can confirm whether a token that is existing in the index is included in any of the records that are registered in Groonga or not."
+msgstr "インデックスに存在するトークンがGroongaに登録されているいずれかのレコードに含まれているかどうかを確認できます。"
+
+msgid "Groonga does not remove a token even if the token become never used from records in Groonga by updating records. Therefore, for example, when we use the feature of autocomplete, Groonga may return a token that is not included in any of the records as candidates for search words. However, we can become that we don't return the needless token by using this function."
+msgstr "Groongaは、レコードの更新によってどのレコードからも使われていないトークンがあっても、それを削除しません。したがって、例えば、オートコンプリート機能を使っていると、検索候補としてどのレコードにも含まれていないトークンを返す可能性がありますが、この関数をつかうことで、不要なトークンを返さないようにできます。"
+
+msgid "Because this function can detect a token that is not included in any of the records."
+msgstr "この関数は、トークンがどのレコードにも含まれていないことを検出できるからです。"
+
+msgid "[{doc}`/reference/commands/select`] Added new arguments `drilldown_max_n_target_records` and `drilldown[${LABEL}].max_n_target_records`."
+msgstr "[{doc}`/reference/commands/select`] 新しい引数 `drilldown_max_n_target_records` と `drilldown[${LABEL}].max_n_target_records` を追加しました。"
+
+msgid "We can specify the max number of records of the drilldown target table (filtered result) to use drilldown. If the number of filtered result is larger than the specified value, some records in filtered result aren't used for drilldown. The default value of this arguments are `-1`. If these arguments are set `-1`, Groonga uses all records for drilldown."
+msgstr "ドリルダウン対象のテーブル（フィルター結果）の中のうち最大で何レコードをドリルダウンに使うかを指定します。もし、フィルター結果のレコード数が指定した値より大きかったらフィルターした結果内のいくつかのレコードはドリルダウンには使われません。これらの引数のデフォルト値は、 `-1` です。これらの引数に `-1` がセットされた場合、Groongaは全てのレコードをドリルダウンに使います。"
+
+msgid "This argument is useful when filtered result may be very large. Because a drilldown against large filtered result may be slow. We can limit the max number of records to be used for drilldown by this feature."
+msgstr "この機能はフィルター結果が非常に大きくなるかもしれない場合に有用です。大きなフィルター結果に対するドリルダウンは遅くなることがあるためです。この機能を使うことでドリルダウンに使うレコード数を制限できます。"
+
+msgid "Here is an example to limit the max number of records to be used for drilldown. The last 2 records, `{\\\"_id\\\": 4, \\\"tag\\\": \\\"Senna\\\"}` and `{\\\"_id\\\": 5, \\\"tag\\\": \\\"Senna\\\"}`, aren't used."
+msgstr "以下はドリルダウンに使う最大レコード数を制限する例です。最後の2レコード（ `{\"_id\": 4, \"tag\": \"Senna\"}` と `{\"_id\": 5, \"tag\": \"Senna\"}` ）は使われていません。"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "[{ref}`release-12-1-2`]"
+msgstr ""
+
+msgid "[httpd] Updated bundled nginx to 1.23.3."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.23.3に更新しました。"
+
+msgid "[{ref}`release-12-1-1`]"
+msgstr ""
+
+msgid "[{doc}`/reference/commands/select`][{ref}`select-drilldowns-label-key-vector-expansions-power-set`] Vector's power set is now able to aggregate with the drilldowns."
+msgstr "[{doc}`/reference/commands/select`][{ref}`select-drilldowns-label-key-vector-expansions-power-set`] ドリルダウンでベクターのべき集合を集計できるようになりました。"
+
+msgid "[{doc}`/reference/commands/select`] Specific element of vector column is now able to be search target."
+msgstr "[{doc}`/reference/commands/select`] ベクターカラムの特定の要素のみを対象に検索できるようになりました。"
+
+msgid "[{doc}`/reference/commands/load`] Added support for `YYYY-MM-DD` time format."
+msgstr "[{doc}`/reference/commands/load`] `YYYY-MM-DD` 形式をサポートしました。"
+
+msgid "[{ref}`release-12-1-0`]"
+msgstr ""
+
+msgid "[{doc}`/reference/commands/load`] Added support for slow log output of `load`."
+msgstr "[{doc}`/reference/commands/load`] `load` のスローログの出力に対応しました。"
+
+msgid "[{doc}`/reference/api`] Added new API `grn_is_reference_count_enable()`."
+msgstr "[{doc}`/reference/api`] 新しいAPI `grn_is_reference_count_enable()` を追加しました。"
+
+msgid "[{doc}`/reference/commands/status`] Added new items: `back_trace` and `/reference_count`."
+msgstr "[{doc}`/reference/commands/status`] 新しい項目 `back_trace` と `reference_count` を追加しました。"
+
+msgid "[{doc}`/install/almalinux`] Added support for AlmaLinux 9."
+msgstr "[{doc}`/install/almalinux`] AlmaLinux 9 向けのパッケージをサポートしました。"
+
+msgid "[{doc}`/reference/functions/escalate`] Added a document for the `escalate()` function."
+msgstr "[{doc}`/reference/functions/escalate`] `escalate()` 関数のドキュメントを追加しました。"
+
+msgid "[httpd] Updated bundled nginx to 1.23.2."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.23.2に更新しました。"
+
+msgid "Suppressed logging a lot of same messages when no memory is available."
+msgstr "メモリーが不足した際に、同じログが大量に出力されないように変更しました。"
+
+msgid "[{ref}`release-12-0-8`]"
+msgstr ""
+
+msgid "Changed specification of the `escalate()` function (Experimental) to make it easier to use."
+msgstr "`escalate()` 関数（実験的）の仕様を使いやすいように変更しました。"
+
+msgid "[{doc}`/install/cmake`] Added a document about how to build Groonga with CMake."
+msgstr "[{doc}`/install/cmake`] CMakeを使ってビルドする方法を追加しました。"
+
+msgid "[{doc}`/install/others`] Added descriptions about how to enable/disable Apache Arrow support when building with GNU Autotools."
+msgstr "[{doc}`/install/others`] GNU Autotoolsを使ってビルドする場合に、Apache Arrowの機能を有効化/無効化する方法について追加しました。"
+
+msgid "[{doc}`/reference/commands/select`] Added a document about {ref}`select-drilldowns-label-table`."
+msgstr "[{doc}`/reference/commands/select`] {ref}`select-drilldowns-label-table` のドキュメントを追加しました。"
+
+msgid "[{doc}`/contribution/documentation/i18n`] Updated the translation procedure."
+msgstr "[{doc}`/contribution/documentation/i18n`] 翻訳方法を更新しました。"
+
+msgid "[{ref}`release-12-0-7`]"
+msgstr ""
+
+msgid "Added a new function `escalate()`. (experimental)"
+msgstr "新しい関数 `escalate()` を追加しました。(実験的)"
+
+msgid "[httpd] Updated bundled nginx to 1.23.1."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.23.1に更新しました。"
+
+msgid "[{doc}`/reference/commands/select`] Add a document for the `--n_workers` option."
+msgstr "[{doc}`/reference/commands/select`] `--n_workers` オプションのドキュメントを追加しました。"
+
+msgid "[{ref}`release-12-0-6`]"
+msgstr ""
+
+msgid "Added new Munin plugins for groonga-delta."
+msgstr "groonga-delta用の新しいMuninプラグインを追加しました。"
+
+msgid "[{doc}`/reference/commands/column_copy`] Added support for weight vector."
+msgstr "[{doc}`/reference/commands/column_copy`] 重み付きベクターをサポートしました。"
+
+msgid "[{doc}`/install/ubuntu`] Dropped support for Ubuntu 21.10 (Impish Indri)."
+msgstr "[{doc}`/install/ubuntu`] Ubuntu 21.10 (Impish Indri) のサポートをやめました。"
+
+msgid "[{doc}`/install/debian`] Dropped Debian 10 (buster) support."
+msgstr "[{doc}`/install/debian`] Debian 10 (buster) のサポートをやめました。"
+
+msgid "[{ref}`release-12-0-5`]"
+msgstr ""
+
+msgid "[{doc}`/reference/commands/select`] Improved a little bit of performance for prefix search by search escalation."
+msgstr "[{doc}`/reference/commands/select`] 検索エスカレーションによる前方一致検索のパフォーマンスを少し改善しました。"
+
+msgid "[{doc}`/reference/commands/select`] Added support for specifying a reference vector column with weight in `drilldowns[LABEL]._key`."
+msgstr "[{doc}`/reference/commands/select`] `drilldowns[LABEL]._key` に重み付き参照ベクターカラムを指定できるようになりました。"
+
+msgid "[{doc}`/reference/commands/select`] Added support for doing drilldown with a reference vector with weight even if we use `query` or `filter`, or `post_filter`."
+msgstr "[{doc}`/reference/commands/select`] `query` や `filter` や `post_filter` を使っていても、ドリルダウンのキーに重み付き参照ベクターカラムを指定できるようになりました。"
+
+msgid "[{ref}`release-12-0-4`]"
+msgstr ""
+
+msgid "[{doc}`/install/ubuntu`] Added support for Ubuntu 22.04 (Jammy Jellyfish)."
+msgstr "[{doc}`/install/ubuntu`] Ubuntu 22.04 (Jammy Jellyfish)をサポートしました。"
+
+msgid "We don't provide `groonga-benchmark`."
+msgstr "`groonga-benchmark` の提供をやめました。"
+
+msgid "[{doc}`/reference/commands/status`] Added a new item `memory_map_size`."
+msgstr "[{doc}`/reference/commands/status`] 新しい項目 `memory_map_size` を追加しました。"
+
+msgid "[{doc}`/reference/commands/logical_count`] Improved memory usage while `logical_count` executed."
+msgstr "[{doc}`/reference/commands/logical_count`] `logical_count` 実行中のメモリー使用量を改善しました。"
+
+msgid "[{doc}`/reference/commands/dump`] Added support for `MISSING_IGNORE/MISSING_NIL`."
+msgstr "[{doc}`/reference/commands/dump`] `MISSING_IGNORE/MISSING_NIL` をサポートしました。"
+
+msgid "[{doc}`/reference/functions/snippet`],[{doc}`/reference/functions/snippet_html`] Added support for text vector as input."
+msgstr "[{doc}`/reference/functions/snippet`],[{doc}`/reference/functions/snippet_html`] 入力としてベクターをサポートしました。"
+
+msgid "[`vector_join`] Added a new function `vector_join()`."
+msgstr "[`vector_join`] 新しい関数 `vector_join()` を追加しました。"
+
+msgid "[{doc}`/reference/indexing`] Ignore too large a token like online index construction."
+msgstr "[{doc}`/reference/indexing`] 動的インデックス構築のようにとても大きなトークンを無視するようにしました。"
+
+msgid "[{ref}`release-12-0-2`]"
+msgstr ""
+
+msgid "[{doc}`/reference/commands/logical_range_filter`] Added support for reducing reference immediately after processing a shard."
+msgstr "[{doc}`/reference/commands/logical_range_filter`] シャードを処理した直後に参照を減らすようにしました。"
+
+msgid "We increased the stability of the feature of recovering on crashes."
+msgstr "クラッシュリカバリー機能の安定性が向上しました。"
+
+msgid "Improved performance for mmap if anonymous mmap available."
+msgstr "無名マッピングが利用可能な時のmmapのパフォーマンスを向上しました。"
+
+msgid "[{doc}`/reference/indexing`] Added support for the static index construction against the following types of columns."
+msgstr "[{doc}`/reference/indexing`] 以下のタイプのカラムで静的インデックス構築をサポートしました。"
+
+msgid "[{doc}`/reference/commands/column_create`] Added new flags `MISSING_*` and `INVALID_*`."
+msgstr "[{doc}`/reference/commands/column_create`] 新しいフラグ `MISSING_*` と `INVALID_*` を追加しました。"
+
+msgid "[{doc}`/reference/commands/dump`][{doc}`/reference/commands/column_list`] Added support for `MISSING_*` and `INVALID_*` flags."
+msgstr "[{doc}`/reference/commands/dump`][{doc}`/reference/commands/column_list`] `MISSING_*` と `INVALID_*` フラグをサポートしました。"
+
+msgid "[{doc}`/reference/commands/schema`] Added support for `MISSING_*` and `INVALID_*` flags."
+msgstr "[{doc}`/reference/commands/schema`] `MISSING_*` と `INVALID_*` フラグをサポートしました。"
+
+msgid "We provided the package of Amazon Linux 2."
+msgstr "Amazon Linux 2向けのパッケージを提供するようにしました。"
+
+msgid "[Windows] Dropped support for building with Visual Studio 2017."
+msgstr "[Windows] Visual Studio 2017 でのビルドをやめました。"
+
+msgid "[{doc}`/reference/commands/query_expand`] Added a support for text vector and index."
+msgstr "[{doc}`/reference/commands/query_expand`] 同義語グループにベクターを使えるようにしました。"
+
+msgid "Added support for disabling a backtrace by the environment variable."
+msgstr "環境変数によって、バックトレースを無効にできるようにしました。"
+
+msgid "[{doc}`/reference/commands/select`] Improved performance for `--slices`."
+msgstr "[{doc}`/reference/commands/select`] `--slices` のパフォーマンスを改善しました。"
+
+msgid "[Windows] Added support for Visual Studio 2022."
+msgstr "[Windows] VisualStudio 2022 をサポートしました。"
+
+msgid "[{doc}`/reference/commands/select`] Added support for specifing max intervals for each elements in near search."
+msgstr "[{doc}`/reference/commands/select`] 近傍検索でそれぞれの要素ごとの距離を指定できるようになりました。"
+
+msgid "[{doc}`/reference/executables/groonga-server-http`] We could use `groonga-server-http` even if Groonga of RPM packages."
+msgstr "[{doc}`/reference/executables/groonga-server-http`] RPMパッケージのGroongaであっても、 `groonga-server-http` を使えるようにしました。"
+
+msgid "[{doc}`/reference/functions/sub_filter`] Added a new option `pre_filter_threshold`."
+msgstr "[{doc}`/reference/functions/sub_filter`] 新しいオプション `pre_filter_threshold` を追加しました。"
+
+msgid "[{doc}`/reference/normalizers/normalizer_nfkc130`] Added a new option `strip`"
+msgstr "[{doc}`/reference/normalizers/normalizer_nfkc130`] 新しいオプション `strip` を追加しました。"
+
+msgid "[httpd] Updated bundled nginx to 1.21.6."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.21.6に更新しました。"
+
+msgid "[{doc}`/reference/commands/select`] Fix a bug displaying a wrong label in `drilldown` results when `command_version` is `3`."
+msgstr "[{doc}`/reference/commands/select`] `command_version` が `3` のとき、 `drilldown` の結果のラベルが不正になる問題を修正しました。"
+
+msgid "[{doc}`/reference/normalizers/normalizer_table`] Fix a bug for Groonga to crush with specific definition setting in `NormalizerTable`."
+msgstr "[{doc}`/reference/normalizers/normalizer_table`] 特定の定義が `NormalizerTable` に存在する場合、Groongaがクラッシュすることがある問題を修正しました。"
+
+msgid "[{doc}`/reference/commands/select`][{doc}`/reference/columns/vector`] Fixed a bug displaying integer in the results when a weight vector column specifies `WEIGHT FLOAT32`."
+msgstr "[{doc}`/reference/commands/select`][{doc}`/reference/columns/vector`] 重み付きベクターカラムで `WEIGHT_FLOAT32` を指定したとき、結果が整数で表示されていた問題を修正しました。"
+
+msgid "[{doc}`/reference/commands/select`] Fixed a bug that Groonga could crash or return incorrect results when specifying {ref}`select-n-workers`."
+msgstr "[{doc}`/reference/commands/select`] {ref}`select-n-workers` を指定したとき、Groongaがクラッシュしたり、誤った結果を返すことがある問題を修正しました。"
+
+msgid "Fixed a bug that Groonga could return incorrect results when we use {doc}`/reference/normalizers/normalizer_table` and it contains a non-idempotent (results can be changed when executed repeatedly) definition."
+msgstr "{doc}`/reference/normalizers/normalizer_table` で冪等でない（繰り返し実行すると結果が変わることがある）定義をした時に、Groongaが誤った結果を返すことがある問題を修正しました。"
+
+msgid "Fixed a bug Groonga's response may be slow when we execute the `request_cancel` while executing a OR search."
+msgstr "OR検索実行中に `request_cancel` を実行した場合、Groongaの応答が遅くなることがある問題を修正しました。"
+
+msgid "Fixed a bug that Groonga may crash when we execute drilldown in a parallel by `n_workers` option."
+msgstr "`n_workers` オプションを使ってドリルダウンを並行して実行したときにGroongaがクラッシュすることがある問題を修正しました。"
+
+msgid "[{doc}`/reference/commands/select`] Fixed a bug that the syntax error occurred when we specify a very long expression in `--filter`."
+msgstr "[{doc}`/reference/commands/select`] `--filter` に非常に長い式を指定するとシンタックスエラーになる問題を修正しました。"
+
+msgid "Fixed a bug Groonga's response may be slow when we execute `request_cancel` while executing a search."
+msgstr "検索実行中に `request_cancel` を実行した時Groongaの応答が遅くなることがある問題を修正しました。"
+
+msgid "Fixed a bug that string list can't be casted to int32 vector."
+msgstr "文字列リストをint32のベクターにキャストできない問題を修正しました。"
+
+msgid "Fixed a bug that Groonga Munin Plugins do not work on AlmaLinux 8 and CentOS 7."
+msgstr "GroongaのMuninプラグインがAlmaLinux 8 とCentOS 7上で動作しない問題を修正しました。"
+
+msgid "Fixed a bug that we may be not able to add a key to a table of patricia trie."
+msgstr "パトリシアトライのテーブルにキーを追加できなくなることがある問題を修正しました。"

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# groonga documentation build configuration file, created by
+# Groonga documentation build configuration file, created by
 # sphinx-quickstart on Thu Oct 22 15:42:37 2009.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -26,7 +26,9 @@ from datetime import datetime
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = []
+extensions = [
+  'myst_parser'
+]
 # extensions.append("source.rdoc")
 # extensions.append("source.textile")
 
@@ -34,7 +36,27 @@ extensions = []
 #templates_path = ['templates']
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = {
+  '.rst': 'restructuredtext',
+  '.md': 'markdown',
+}
+
+myst_enable_extensions = [
+  "amsmath",
+  "attrs_inline",
+  # "colon_fence",
+  "deflist",
+  "dollarmath",
+  "fieldlist",
+  "html_admonition",
+  "html_image",
+  "linkify",
+  # "replacements",
+  # "smartquotes",
+  "strikethrough",
+  "substitution",
+  "tasklist",
+]
 
 # The encoding of source files.
 #source_encoding = 'utf-8'
