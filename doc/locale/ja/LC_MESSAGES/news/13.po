@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
-"PO-Revision-Date: 2023-07-24 13:54+0900\n"
+"PO-Revision-Date: 2023-07-24 16:00+0900\n"
 "Report-Msgid-Bugs-To: \n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -61,8 +61,8 @@ msgstr "[{doc}`/install/ubuntu`] Ubuntu 23.04（Lunar Lobster）をサポート�
 msgid "[{doc}`/install/debian`] Added support for Debian GNU/Linux 12 (bookworm)."
 msgstr "[{doc}`/install/debian`] Debian 12 (bookworm) をサポートしました。"
 
-msgid "[{doc}`/install/oracle-linux`] Dropped support for Oracle Linux. Use {doc}`/install/almalinux` packages instead."
-msgstr "[{doc}`/install/oracle-linux`] Oracle Linuxサポートをやめました。代わりに {doc}`/install/almalinux` 用パッケージを使ってください。"
+msgid "[Oracle Linux] Dropped support for Oracle Linux. Use {doc}`/install/almalinux` packages instead."
+msgstr "[Oracle Linux] Oracle Linuxサポートをやめました。代わりに {doc}`/install/almalinux` 用パッケージを使ってください。"
 
 msgid "[`grn_highlighter`] Added support for changing tag."
 msgstr "[`grn_highlighter`] タグの変更をサポートしました。"
@@ -487,8 +487,8 @@ msgstr "このオプションを使うことで、 \"ヅァ -> ザ\", \"ヅィ -
 msgid "Here is an example of `unify_katakana_du_small_sounds` option."
 msgstr "以下は、 `unify_katakana_du_small_sounds` オプションの使用例です。"
 
-msgid "[{doc}`/install/oracle-linux`] Added newly support for Oracle Linux 8 and 9."
-msgstr "[{doc}`/install/oracle-linux`] Oracle Linux 8と9 向けのパッケージを新しくサポートしました。"
+msgid "[Oracle Linux] Added newly support for Oracle Linux 8 and 9."
+msgstr "[Oracle Linux] Oracle Linux 8と9 向けのパッケージを新しくサポートしました。"
 
 msgid "Atsushi Shinoda"
 msgstr "篠田さん"

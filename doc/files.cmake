@@ -1025,7 +1025,6 @@ set(GRN_DOC_SOURCES
     install/debian.rst
     install/docker.rst
     install/mac_os_x.rst
-    install/oracle-linux.rst
     install/others.rst
     install/server-use.inc
     install/solaris.rst
@@ -1376,7 +1375,6 @@ set(GRN_DOC_HTML_FILES
     install/docker.html
     install/fedora.html
     install/mac_os_x.html
-    install/oracle-linux.html
     install/others.html
     install/solaris.html
     install/ubuntu.html
