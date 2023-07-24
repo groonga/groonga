@@ -55,7 +55,7 @@ msgstr "`packages.groonga.org <https://packages.groonga.org/source/groonga>`_ �
 msgid "Download the latest zipped source from packages.groonga.org."
 msgstr "最新のzipアーカイブをpackages.groonga.orgからダウンロードしてください。"
 
-msgid "https://packages.groonga.org/source/groonga/groonga-13.0.2.zip"
+msgid "https://packages.groonga.org/source/groonga/groonga-13.0.3.zip"
 msgstr ""
 
 msgid "Then extract it."

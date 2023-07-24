@@ -377,6 +377,10 @@ exit 0
 %config(noreplace) %{_sysconfdir}/munin/plugin-conf.d/*
 
 %changelog
+* Mon Jul 24 2023 Sutou Kouhei <kou@clear-code.com> - 13.0.3-1
+- New upstream release.
+- groonga-httpd is removed.
+
 * Wed Jul 12 2023 Sutou Kouhei <kou@clear-code.com> - 13.0.2-1
 - New upstream release.
 

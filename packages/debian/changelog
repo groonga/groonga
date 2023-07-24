@@ -1,3 +1,11 @@
+groonga (13.0.3-1) unstable; urgency=low
+
+  * New upstream release.
+
+  * groonga-httpd is removed.
+
+ -- Sutou Kouhei <kou@clear-code.com>  Mon, 24 Jul 2023 06:11:38 -0000
+
 groonga (13.0.2-1) unstable; urgency=low
 
   * New upstream release.
