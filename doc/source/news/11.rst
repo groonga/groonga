@@ -1,0 +1,3235 @@
+News - 11 series
+================
+
+.. _release-11-1-3:
+
+Release 11.1.3 - 2022-01-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/functions/snippet`] Added support for using the keyword of 32 or more. [GitHub#1313][Pathched by Takashi Hashida]
+
+  We could not specify the keyword of 32 or more with ``snippet`` until now.
+  However, we can specify the keyword of 32 or more by this improvement as below.
+
+  .. code-block::
+
+      table_create Entries TABLE_NO_KEY
+      column_create Entries content COLUMN_SCALAR ShortText
+
+      load --table Entries
+      [
+      {"content": "Groonga is a fast and accurate full text search engine based on inverted index. One of the characteristics of Groonga is that a newly registered document instantly appears in search results. Also, Groonga allows updates without read locks. These characteristics result in superior performance on real-time applications.\nGroonga is also a column-oriented database management system (DBMS). Compared with well-known row-oriented systems, such as MySQL and PostgreSQL, column-oriented systems are more suited for aggregate queries. Due to this advantage, Groonga can cover weakness of row-oriented systems.\nThe basic functions of Groonga are provided in a C library. Also, libraries for using Groonga in other languages, such as Ruby, are provided by related projects. In addition, groonga-based storage engines are provided for MySQL and PostgreSQL. These libraries and storage engines allow any application to use Groonga. See usage examples."},
+      {"content": "In widely used DBMSs, updates are immediately processed, for example, a newly registered record appears in the result of the next query. In contrast, some full text search engines do not support instant updates, because it is difficult to dynamically update inverted indexes, the underlying data structure.\nGroonga also uses inverted indexes but supports instant updates. In addition, Groonga allows you to search documents even when updating the document collection. Due to these superior characteristics, Groonga is very flexible as a full text search engine. Also, Groonga always shows good performance because it divides a large task, inverted index merging, into smaller tasks."}
+      ]
+
+      select Entries \
+        --output_columns ' \
+        snippet(content, \
+        "groonga", "inverted", "index", "fast", "full", "text", "search", "engine", "registered", "document", \
+        "results", "appears", "also", "system", "libraries", "for", "mysql", "postgresql", "column-oriented", "dbms", \
+        "basic", "ruby", "projects", "storage", "allow", "application", "usage", "sql", "well-known", "real-time", \
+        "weakness", "merging", "performance", "superior", "large", "dynamically", "difficult", "query", "examples", "divides", \
+        { \
+          "default_open_tag": "[", \
+          "default_close_tag": "]", \
+          "width" : 2048 \
+        })'
+      [
+        [
+          0,
+          1643165838.691991,
+          0.0003311634063720703
+        ],
+        [
+          [
+            [
+              2
+            ],
+            [
+              [
+                "snippet",
+                null
+              ]
+            ],
+            [
+              [
+                "[Groonga] is a [fast] and accurate [full] [text] [search] [engine] based on [inverted] [index]. One of the characteristics of [Groonga] is that a newly [registered] [document] instantly [appears] in [search] [results]. [Also], [Groonga] [allow]s updates without read locks. These characteristics result in [superior] [performance] on [real-time] [application]s.\n[Groonga] is [also] a [column-oriented] database management [system] ([DBMS]). Compared with [well-known] row-oriented [system]s, such as [MySQL] and [PostgreSQL], [column-oriented] [system]s are more suited [for] aggregate queries. Due to this advantage, [Groonga] can cover [weakness] of row-oriented [system]s.\nThe [basic] functions of [Groonga] are provided in a C library. [Also], [libraries] [for] using [Groonga] in other languages, such as [Ruby], are provided by related [projects]. In addition, [groonga]-based [storage] [engine]s are provided [for] [MySQL] and [PostgreSQL]. These [libraries] and [storage] [engine]s [allow] any [application] to use [Groonga]. See [usage] [examples]."
+              ]
+            ],
+            [
+              [
+                "In widely used [DBMS]s, updates are immediately processed, [for] example, a newly [registered] record [appears] in the result of the next [query]. In contrast, some [full] [text] [search] [engine]s do not support instant updates, because it is [difficult] to [dynamically] update [inverted] [index]es, the underlying data structure.\n[Groonga] [also] uses [inverted] [index]es but supports instant updates. In addition, [Groonga] [allow]s you to [search] [document]s even when updating the [document] collection. Due to these [superior] characteristics, [Groonga] is very flexible as a [full] [text] [search] [engine]. [Also], [Groonga] always shows good [performance] because it [divides] a [large] task, [inverted] [index] [merging], into smaller tasks."
+              ]
+            ]
+          ]
+        ]
+      ]
+
+* [:doc:`reference/normalizers/normalizer_nfkc130`] Added a new option ``remove_symbol``.
+
+  This option removes symbols (e.g. #, !, ", &, %, ...) from the string that the target of normalizing as below.
+
+  .. code-block::
+
+       normalize   'NormalizerNFKC130("remove_symbol", true)'   "#This & is %% a pen."   WITH_TYPES
+       [
+         [
+           0,
+           1643595008.729597,
+           0.0005540847778320312
+         ],
+         {
+           "normalized": "this  is  a pen",
+           "types": [
+             "alpha",
+             "alpha",
+             "alpha",
+             "alpha",
+             "others",
+             "others",
+             "alpha",
+             "alpha",
+             "others",
+             "others",
+             "alpha",
+             "others",
+             "alpha",
+             "alpha",
+             "alpha"
+           ],
+           "checks": [
+           ]
+         }
+       ]
+
+* [:doc:`/install/almalinux`] Added support for AlmaLinux 8 on ARM64.
+
+* [httpd] Updated bundled nginx to 1.21.5.
+
+* [Documentation] Fixed a typo in :doc:`reference/commands/ruby_eval`. [GitHub#1317][Pathched by wi24rd]
+
+* [:doc:`/install/ubuntu`] Dropped Ubuntu 21.04 (Hirsute Hippo) support.
+
+  * Because Ubuntu 21.04 reached EOL January 20, 2022.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/commands/load`] Fixed a crash bug when we load data with specifying a nonexistent column.
+
+  This bug only occurs when we specify ``apache-arrow`` into ``input_type`` as the argument of ``load``.
+
+* Fixed a bug that the version up of Groonga failed Because the version up of arrow-libs on which Groonga depends. [groonga-talk,540][Reported by Josep Sanz][Gitter,61eaaa306d9ba23328d23ce1][Reported by shibanao4870][GitHub#1316][Reported by Keitaro YOSHIMURA]
+
+  However, if arrow-libs update a major version, this problem reproduces.
+  In this case, we will handle that by rebuilding the Groonga package.
+
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
+
+Thanks
+^^^^^^
+
+* Takashi Hashida
+* wi24rd
+* Josep Sanz
+* Keitaro YOSHIMURA
+* shibanao4870
+
+.. _release-11-1-1:
+
+Release 11.1.1 - 2021-12-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/select`] Added support for near phrase product search.
+
+  This feature is a shortcut of ``'*NP"..." OR *NP"..." OR ...'``.
+  For example, we can use ``*NPP`` instead of the expression that execute mulitiple
+  ``*NP`` with ``query`` as below.
+
+  .. code-block::
+
+     query ("title * 10 || content",
+            "*NP"a 1 x" OR
+             *NP"a 1 y" OR
+             *NP"a 1 z" OR
+             *NP"a 2 x" OR
+             *NP"a 2 y" OR
+             *NP"a 2 z" OR
+             *NP"a 3 x" OR
+             *NP"a 3 y" OR
+             *NP"a 3 z" OR
+             *NP"b 1 x" OR
+             *NP"b 1 y" OR
+             *NP"b 1 z" OR
+             *NP"b 2 x" OR
+             *NP"b 2 y" OR
+             *NP"b 2 z" OR
+             *NP"b 3 x" OR
+             *NP"b 3 y" OR
+             *NP"b 3 z"")
+
+  We can be written as ``*NPP"(a b) (1 2 3) (x y z)"`` the above expression by this feature.
+  In addition, ``*NPP"(a b) (1 2 3) (x y z)"`` is faster than ``'*NP"..." OR *NP"..." OR ...'``.
+
+  .. code-block::
+
+     query ("title * 10 || content",
+            "*NPP"(a b) (1 2 3) (x y z)"")
+
+  We implements this feature for improving performance near phrase search
+  like ``'*NP"..." OR *NP"..." OR ...'``.
+
+* [:doc:`reference/commands/select`] Added support for order near phrase product search.
+
+  This feature is a shortcut of ``'*ONP"..." OR *ONP"..." OR ...'``.
+  For example, we can use ``*ONPP`` instead of the expression that execute multiple
+  ``*ONP`` with ``query`` as below.
+
+  .. code-block::
+
+     query ("title * 10 || content",
+            "*ONP"a 1 x" OR
+             *ONP"a 1 y" OR
+             *ONP"a 1 z" OR
+             *ONP"a 2 x" OR
+             *ONP"a 2 y" OR
+             *ONP"a 2 z" OR
+             *ONP"a 3 x" OR
+             *ONP"a 3 y" OR
+             *ONP"a 3 z" OR
+             *ONP"b 1 x" OR
+             *ONP"b 1 y" OR
+             *ONP"b 1 z" OR
+             *ONP"b 2 x" OR
+             *ONP"b 2 y" OR
+             *ONP"b 2 z" OR
+             *ONP"b 3 x" OR
+             *ONP"b 3 y" OR
+             *ONP"b 3 z"")
+
+  We can be written as ``*ONPP"(a b) (1 2 3) (x y z)"`` the above expression by this feature.
+  In addition, ``*ONPP"(a b) (1 2 3) (x y z)"`` is faster than ``'*ONP"..." OR *ONP"..." OR ...'``.
+
+  .. code-block::
+
+     query ("title * 10 || content",
+            "*ONPP"(a b) (1 2 3) (x y z)"")
+
+  We implements this feature for improving performance near phrase search
+  like ``'*ONP"..." OR *ONP"..." OR ...'``.
+
+* [:doc:`/reference/commands/request_cancel`] Groonga became easily detects ``request_cancel`` while executing a search.
+
+  Because we added more checks of return code to detect ``request_cancel``.
+
+* [:doc:`/reference/commands/thread_dump`] Added a new command ``thread_dump``
+
+  Currently, this command works only on Windows.
+
+  We can put a backtrace of all threads into a log as logs of NOTICE level
+  at the time of running this command.
+
+  This feature is useful when we solve a problem such as Groonga doesn't return a response.
+
+* [:doc:`/install/centos`] Dropped support for CentOS 8.
+
+  Because CentOS 8 will reach EOL at 2021-12-31.
+
+Fixes
+^^^^^
+
+* Fixed a bug that we can't remove a index column with invalid parameter. [GitHub#1301][Patched by Takashi Hashida]
+
+  * For example, we can't remove a table when we create an invalid index column with ``column_create`` as below.
+
+    .. code-block::
+
+       table_create Statuses TABLE_NO_KEY
+       column_create Statuses start_time COLUMN_SCALAR UInt16
+       column_create Statuses end_time COLUMN_SCALAR UInt16
+
+       table_create Times TABLE_PAT_KEY UInt16
+       column_create Times statuses COLUMN_INDEX Statuses start_time,end_time
+       [
+         [
+           -22,
+           1639037503.16114,
+           0.003981828689575195,
+           "grn_obj_set_info(): GRN_INFO_SOURCE: multi column index must be created with WITH_SECTION flag: <Times.statuses>",
+           [
+             [
+               "grn_obj_set_info_source_validate",
+               "../../groonga/lib/db.c",
+               9605
+             ],
+             [
+               "/tmp/d.grn",
+               6,
+               "column_create Times statuses COLUMN_INDEX Statuses start_time,end_time"
+             ]
+           ]
+         ],
+         false
+       ]
+       table_remove Times
+       [
+         [
+           -22,
+           1639037503.16515,
+           0.0005414485931396484,
+           "[object][remove] column is broken: <Times.statuses>",
+           [
+             [
+               "remove_columns",
+               "../../groonga/lib/db.c",
+               10649
+             ],
+             [
+               "/tmp/d.grn",
+               8,
+               "table_remove Times"
+             ]
+           ]
+         ],
+         false
+       ]
+
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
+
+Thanks
+^^^^^^
+
+* Takashi Hashida
+
+.. _release-11-1-0:
+
+Release 11.1.0 - 2021-11-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/load`] Added support for ISO 8601 time format.[GitHub#1228][Patched by Takashi Hashida]
+
+  ``load`` support the following format by this modification.
+
+    * YYYY-MM-ddThh:mm:ss.sZ
+    * YYYY-MM-ddThh:mm:ss.s+10:00
+    * YYYY-MM-ddThh:mm:ss.s-10:00
+
+  We can also use ``t`` and ``z`` characters instead of ``T`` and ``Z`` in this syntax.
+  We can also use ``/`` character instead of ``-`` in this syntax. However, note that this is not an ISO 8601 format.
+  This format is present for compatibility.
+
+  .. code-block::
+
+     plugin_register functions/time
+
+     table_create Logs TABLE_NO_KEY
+     column_create Logs case COLUMN_SCALAR ShortText
+     column_create Logs created_at COLUMN_SCALAR Time
+     column_create Logs created_at_text COLUMN_SCALAR ShortText
+
+     load --table Logs
+     [
+     {"case": "timezone: Z", "created_at": "2000-01-01T10:00:00Z", "created_at_text": "2000-01-01T10:00:00Z"},
+     {"case": "timezone: z", "created_at": "2000-01-01t10:00:00z", "created_at_text": "2000-01-01T10:00:00z"},
+     {"case": "timezone: 00:00", "created_at": "2000-01-01T10:00:00+00:00", "created_at_text": "2000-01-01T10:00:00+00:00"},
+     {"case": "timezone: +01:01", "created_at": "2000-01-01T11:01:00+01:01", "created_at_text": "2000-01-01T11:01:00+01:01"},
+     {"case": "timezone: +11:11", "created_at": "2000-01-01T21:11:00+11:11", "created_at_text": "2000-01-01T21:11:00+11:11"},
+     {"case": "timezone: -01:01", "created_at": "2000-01-01T08:59:00-01:01", "created_at_text": "2000-01-01T08:59:00-01:01"},
+     {"case": "timezone: -11:11", "created_at": "1999-12-31T22:49:00-11:11", "created_at_text": "1999-12-31T22:49:00-11:11"},
+     {"case": "timezone hour threshold: +23:00", "created_at": "2000-01-02T09:00:00+23:00", "created_at_text": "2000-01-02T09:00:00+23:00"},
+     {"case": "timezone minute threshold: +00:59", "created_at": "2000-01-01T10:59:00+00:59", "created_at_text": "2000-01-01T10:59:00+00:59"},
+     {"case": "timezone omitting minute: +01", "created_at": "2000-01-01T11:00:00+01", "created_at_text": "2000-01-01T11:00:00+01"},
+     {"case": "timezone omitting minute: -01", "created_at": "2000-01-01T09:00:00-01", "created_at_text": "2000-01-01T09:00:00-01"},
+     {"case": "timezone: localtime", "created_at": "2000-01-01T19:00:00", "created_at_text": "2000-01-01T19:00:00"},
+     {"case": "compatible: date delimiter: /", "created_at": "2000/01/01T10:00:00Z", "created_at_text": "2000/01/01T10:00:00Z"},
+     {"case": "decimal", "created_at": "2000-01-01T11:01:00.123+01:01", "created_at_text": "2000-01-01T11:01:00.123+01:01"}
+     ]
+
+     select Logs \
+       --limit -1 \
+       --output_columns "case, time_format_iso8601(created_at), created_at_text"
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             14
+           ],
+           [
+             [
+               "case",
+               "ShortText"
+             ],
+             [
+               "time_format_iso8601",
+               null
+             ],
+             [
+               "created_at_text",
+               "ShortText"
+             ]
+           ],
+           [
+             "timezone: Z",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T10:00:00Z"
+           ],
+           [
+             "timezone: z",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T10:00:00z"
+           ],
+           [
+             "timezone: 00:00",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T10:00:00+00:00"
+           ],
+           [
+             "timezone: +01:01",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T11:01:00+01:01"
+           ],
+           [
+             "timezone: +11:11",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T21:11:00+11:11"
+           ],
+           [
+             "timezone: -01:01",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T08:59:00-01:01"
+           ],
+           [
+             "timezone: -11:11",
+             "2000-01-01T19:00:00.000000+09:00",
+             "1999-12-31T22:49:00-11:11"
+           ],
+           [
+             "timezone hour threshold: +23:00",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-02T09:00:00+23:00"
+           ],
+           [
+             "timezone minute threshold: +00:59",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T10:59:00+00:59"
+           ],
+           [
+             "timezone omitting minute: +01",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T11:00:00+01"
+           ],
+           [
+             "timezone omitting minute: -01",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T09:00:00-01"
+           ],
+           [
+             "timezone: localtime",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000-01-01T19:00:00"
+           ],
+           [
+             "compatible: date delimiter: /",
+             "2000-01-01T19:00:00.000000+09:00",
+             "2000/01/01T10:00:00Z"
+           ],
+           [
+             "decimal",
+             "2000-01-01T19:00:00.123000+09:00",
+             "2000-01-01T11:01:00.123+01:01"
+           ]
+         ]
+       ]
+     ]
+
+* [:doc:`reference/commands/select`] Added a new ``query_flags`` ``DISABLE_PREFIX_SEARCH``.
+
+  We can use the prefix search operators ``^`` and ``*`` as search keywords
+  by ``DISABLE_PREFIX_SEARCH`` as below.
+
+  This feature is useful if we want to search documents including ``^`` and ``*``.
+
+  .. code-block::
+
+     table_create Users TABLE_PAT_KEY ShortText
+
+     load --table Users
+     [
+     {"_key": "alice"},
+     {"_key": "alan"},
+     {"_key": "ba*"}
+     ]
+
+     select Users \
+       --match_columns "_key" \
+       --query "a*" \
+       --query_flags "DISABLE_PREFIX_SEARCH"
+     [[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[3,"ba*"]]]]
+
+
+  .. code-block::
+
+     table_create Users TABLE_PAT_KEY ShortText
+
+     load --table Users
+     [
+     {"_key": "alice"},
+     {"_key": "alan"},
+     {"_key": "^a"}
+     ]
+
+     select Users \
+       --query "_key:^a" \
+       --query_flags "ALLOW_COLUMN|DISABLE_PREFIX_SEARCH"
+     [[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[3,"^a"]]]]
+
+* [:doc:`reference/commands/select`] Added a new ``query_flags`` ``DISABLE_AND_NOT``.
+
+  We can use ``AND NOT`` operators ``-`` as search keywords
+  by ``DISABLE_AND_NOT`` as below.
+
+  This feature is useful if we want to search documents including ``-``.
+
+  .. code-block::
+
+    table_create Users TABLE_PAT_KEY ShortText
+
+    load --table Users
+    [
+    {"_key": "alice"},
+    {"_key": "bob"},
+    {"_key": "cab-"}
+    ]
+
+    select Users   --match_columns "_key"   --query "b - a"   --query_flags "DISABLE_AND_NOT"
+    [[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[3,"cab-"]]]]
+
+Fixes
+^^^^^
+
+* [The browser based administration tool] Fixed a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list. [GitHub#1186][Patched by Takashi Hashida]
+
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
+
+Thanks
+^^^^^^
+
+* Takashi Hashida
+
+.. _release-11-0-9:
+
+Release 11.0.9 - 2021-11-04
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/functions/snippet`] Added a new option ``delimiter_regexp`` for detecting snippet delimiter with regular expression.
+
+  :doc:`reference/functions/snippet` extracts text around search keywords.
+  We call the text that is extracted by :doc:`reference/functions/snippet` snippet.
+
+  Normally, :doc:`reference/functions/snippet` () returns the text of 200 bytes around search keywords.
+  However, :doc:`reference/functions/snippet` () gives no thought to a delimiter of sentences.
+  The snippet may be composed of multi sentences.
+
+  ``delimiter_regexp`` option is useful if we want to only extract the text of the same sentence as search keywords.
+  For example, we can use ``\.\s*`` to extract only text in the target sentence as below.
+  Note that you need to escape ``\`` in string.
+
+    .. code-block::
+
+       table_create Documents TABLE_NO_KEY
+       column_create Documents content COLUMN_SCALAR Text
+
+       table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram  --normalizer NormalizerAuto
+       column_create Terms documents_content_index COLUMN_INDEX|WITH_POSITION Documents content
+
+       load --table Documents
+       [
+       ["content"],
+       ["Groonga is a fast and accurate full text search engine based on inverted index. One of the characteristics of groonga is that a newly registered document instantly appears in search results. Also, groonga allows updates without read locks. These characteristics result in superior performance on real-time applications."],
+       ["Groonga is also a column-oriented database management system (DBMS). Compared with well-known row-oriented systems, such as MySQL and PostgreSQL, column-oriented systems are more suited for aggregate queries. Due to this advantage, groonga can cover weakness of row-oriented systems."]
+       ]
+
+       select Documents \
+         --output_columns 'snippet(content, \
+                                   { \
+                                      "default_open_tag": "[", \
+                                      "default_close_tag": "]", \
+                                      "delimiter_regexp": "\\\\.\\\\s*" \
+                                   })' \
+         --match_columns content \
+         --query "fast performance"
+       [
+         [
+           0,
+           1337566253.89858,
+           0.000355720520019531
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "snippet",
+                 null
+               ]
+             ],
+             [
+               [
+                 "Groonga is a [fast] and accurate full text search engine based on inverted index",
+                 "These characteristics result in superior [performance] on real-time applications"
+               ]
+             ]
+           ]
+         ]
+       ]
+
+* [:doc:`reference/window_functions/window_rank`] Added a new function ``window_rank()``.
+
+  * We can calculate a rank that includes a gap of each record.
+    Normally, the rank isn’t incremented when multiple records that are the same order.
+    For example, if values of sort keys are 100, 100, 200 then the ranks of them
+    are 1, 1, 3.
+    The rank of the last record is 3 not 2 because there are two 1 rank records.
+
+    This is similar to :doc:`reference/window_functions/window_record_number`.
+    However, :doc:`reference/window_functions/window_record_number` gives no thought to gap.
+
+    .. code-block::
+
+       table_create Points TABLE_NO_KEY
+       column_create Points game COLUMN_SCALAR ShortText
+       column_create Points score COLUMN_SCALAR UInt32
+
+       load --table Points
+       [
+       ["game",  "score"],
+       ["game1", 100],
+       ["game1", 200],
+       ["game1", 100],
+       ["game1", 400],
+       ["game2", 150],
+       ["game2", 200],
+       ["game2", 200],
+       ["game2", 200]
+       ]
+
+       select Points \
+         --columns[rank].stage filtered \
+         --columns[rank].value 'window_rank()' \
+         --columns[rank].type UInt32 \
+         --columns[rank].window.sort_keys score \
+         --output_columns 'game, score, rank' \
+         --sort_keys score
+       [
+         [
+           0,
+           1337566253.89858,
+           0.000355720520019531
+         ],
+         [
+           [
+             [
+               8
+             ],
+             [
+               [
+                 "game",
+                 "ShortText"
+               ],
+               [
+                 "score",
+                 "UInt32"
+               ],
+               [
+                 "rank",
+                 "UInt32"
+               ]
+             ],
+             [
+               "game1",
+               100,
+               1
+             ],
+             [
+               "game1",
+               100,
+               1
+             ],
+             [
+               "game2",
+               150,
+               3
+             ],
+             [
+               "game2",
+               200,
+               4
+             ],
+             [
+               "game2",
+               200,
+               4
+             ],
+             [
+               "game1",
+               200,
+               4
+             ],
+             [
+               "game2",
+               200,
+               4
+             ],
+             [
+               "game1",
+               400,
+               8
+             ]
+           ]
+         ]
+       ]
+
+* [:doc:`/reference/functions/in_values`] Added support for auto cast when we search tables.
+
+  For example, if we load values of ``UInt32`` into a table that a key type is ``UInt64``, Groonga cast the values to ``UInt64`` automatically when we search the table with ``in_values()``. However, ``in_values(_key, 10)`` doesn't work with ``UInt64`` key table. Because 10 is parsed as ``Int32``.
+
+  .. code-block::
+
+     table_create Numbers TABLE_HASH_KEY UInt64
+     load --table Numbers
+     [
+     {"_key": 100},
+     {"_key": 200},
+     {"_key": 300}
+     ]
+
+     select Numbers   --output_columns _key   --filter 'in_values(_key, 200, 100)'   --sortby _id
+     [[0,0.0,0.0],[[[2],[["_key","UInt64"]],[100],[200]]]]
+
+* [httpd] Updated bundled nginx to 1.21.3.
+
+* [:doc:`/install/almalinux`] Added support for AlmaLinux 8.
+
+* [:doc:`/install/ubuntu`] Added support for Ubuntu 21.10 (Impish Indri).
+
+Fixes
+^^^^^
+
+* Fixed a bug that Groonga doesn't return a response when an error occurred
+  in command (e.g. sytax error in filter).
+
+  * This bug only occurs when we use ``--output_type apache-arrow``.
+
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
+
+.. _release-11-0-7:
+
+Release 11.0.7 - 2021-09-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/load`] Added support for casting a string like as "[int, int,...]" to a vector of integer like as [int, int,...].
+
+  For example, Groonga handle as a vector of integer like as [1, -2] even if we load vector of string like as "[1, -2]" as below.
+
+    .. code-block::
+
+       table_create Data TABLE_NO_KEY
+       column_create Data numbers COLUMN_VECTOR Int16
+       table_create Numbers TABLE_PAT_KEY Int16
+       column_create Numbers data_numbers COLUMN_INDEX Data numbers
+
+       load --table Data
+       [
+       {"numbers": "[1, -2]"},
+       {"numbers": "[-3, 4]"}
+       ]
+
+       dump   --dump_plugins no   --dump_schema no
+       load --table Data
+       [
+       ["_id","numbers"],
+       [1,[1,-2]],
+       [2,[-3,4]]
+       ]
+
+       column_create Numbers data_numbers COLUMN_INDEX Data numbers
+       select Data --filter 'numbers @ -2'
+       [[0,0.0,0.0],[[[1],[["_id","UInt32"],["numbers","Int16"]],[1,[1,-2]]]]]
+
+  This feature supports for the floowings types.
+
+    * Int8
+    * UInt8
+    * Int16
+    * UInt16
+    * Int32
+    * UInt32
+    * Int64
+    * UInt64
+
+* [:doc:`/reference/commands/load`] Added support for loading a JSON array expressed as a text string as a vector of string.
+
+  For example, Groonga handle as a vector that has two elements like as ["hello", "world"] if we load JSON array expressed as a text string like as "[\"hello\", \"world\"]" as below.
+
+  .. code-block::
+
+     table_create Data TABLE_NO_KEY
+     [[0,0.0,0.0],true]
+     column_create Data strings COLUMN_VECTOR ShortText
+     [[0,0.0,0.0],true]
+     table_create Terms TABLE_PAT_KEY ShortText   --normalizer NormalizerNFKC130   --default_tokenizer TokenNgram
+     [[0,0.0,0.0],true]
+     column_create Terms data_strings COLUMN_INDEX Data strings
+     [[0,0.0,0.0],true]
+     load --table Data
+     [
+     {"strings": "[\"Hello\", \"World\"]"},
+     {"strings": "[\"Good-bye\", \"World\"]"}
+     ]
+     [[0,0.0,0.0],2]
+     dump   --dump_plugins no   --dump_schema no
+     load --table Data
+     [
+     ["_id","strings"],
+     [1,["Hello","World"]],
+     [2,["Good-bye","World"]]
+     ]
+
+     column_create Terms data_strings COLUMN_INDEX Data strings
+     select Data --filter 'strings @ "bye"'
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "_id",
+               "UInt32"
+             ],
+             [
+               "strings",
+               "ShortText"
+             ]
+           ],
+           [
+             2,
+             [
+               "Good-bye",
+               "World"
+             ]
+           ]
+         ]
+       ]
+     ]
+
+  In before version, Groonga handled as a vector that had one element like as ["[\"hello\", \"world\"]"] if we loaded JSON array expressed as a text string like as "[\"hello\", \"world\"]".
+
+* [Documentation] Added a documentation about the following items.
+
+  * [:doc:`reference/commands/column_create`] Added a documentation about ``WEIGHT_FLOAT32`` flag.
+
+  * [:doc:`reference/normalizers/normalizer_nfkc121`] Added a documentation about ``NormalizerNFKC121``.
+
+  * [:doc:`reference/normalizers/normalizer_nfkc130`] Added a documentation about ``NormalizerNFKC130``.
+
+  * [:doc:`reference/normalizers/normalizer_table`] Added a documentation about ``NormalizerTable``.
+
+* Updated to 3.0.0 that the version of Apache Arrow that Groonga requires. [GitHub#1265][Patched by Takashi Hashida]
+
+Fixes
+^^^^^
+
+* Fixed a memory leak when we created a table with a tokenizer with invalid option.
+
+* Fixed a bug that may not add a new entry in Hash table.
+
+  This bug only occurs in Groonga 11.0.6, and it may occur if we quite a lot of add and delete data.
+  If this bug occurs in your environment, you can resolve this problem by executing the following steps.
+
+  1. We upgrade Groonga to 11.0.7 or later from 11.0.6.
+  2. We make a new table that has the same schema as the original table.
+  3. We copy data to the new table from the original table.
+
+* [Windows] Fixed a resource leak when Groonga fail open a new file caused by out of memory.
+
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
+
+Thanks
+^^^^^^
+
+* Takashi Hashida
+
+.. _release-11-0-6:
+
+Release 11.0.6 - 2021-08-29
+---------------------------
+
+  .. warning::
+
+     Groonga 11.0.6 has had a bug that may not add a new entry in Hash table.
+
+     We fixed this bug on Groonga 11.0.7. This bug only occurs in Groonga 11.0.6.
+     Therefore, if you were using Groonga 11.0.6, we highly recommended that
+     you use Groonga 11.0.7 or later.
+
+Improvements
+^^^^^^^^^^^^
+
+* Added support for recovering on crash. (experimental)
+
+  This is a experimental feature. Currently, this feature is still not stable.
+
+  If Groonga crashes, it recovers the database automatically when it opens a database for the first time since the crash. However, This feature can't recover the database automatically in all crash cases.
+  We need to recover the database manually depending on timing even if this feature enables.
+
+  Groonga execute WAL (write ahead log) when this feature is enable.
+  We can dump WAL by the following tools, but currently, users doesn't need to use them.
+
+    * [:doc:`reference/executables/grndb`] ``dump-wal`` command.
+    * ``dump-wal.rb`` scritp.
+
+* [:doc:`reference/commands/cache_limit`] Groonga remove cache when we execute ``cache_limit 0``. [GitHub#1224][Reported by higchi]
+
+  Groonga stores query cache to internally table.
+  The maximum total size of keys of this table is 4GiB. Because this table is hash table.
+  Therefore, If we execute many huge queries, Groonga may be unable to store query cache, because the maximum total size of keys may be over 4GiB.
+  In such cases, We can clear the table for query cache by using ``cache_limit 0``, and Groonga can store query cache 
+
+Fixes
+^^^^^
+
+* Fixed a bug that Groonga doesn't clear lock when some threads open the same object around the same time.
+
+  If some threads open the same object around the same time, threads except for a thread that executes the opening object at first are waiting for opening the target object.
+  At this time, threads that wait for an opening object take locks, but these locks are not released.
+  Therefore, these locks remain until Groonga's process is restarted in the above case, and a new thread can't also open the object all the time until Groonga's process is restarted.
+
+  However, this bug rarely happens. Because a time of a thread open the object is a very short time. 
+
+* [:doc:`reference/functions/query_parallel_or`] Fixed a bug that result may be different from the ``query()``.
+
+  For example, If we used ``query("tags || tags2", "beginner man")``, the following record was a match, but if we used ``query_parallel_or("tags || tags2", "beginner man")``, the following record wasn't a match until now.
+
+  * ``{"_key": "Bob",   "comment": "Hey!",       "tags": ["expert", "man"], "tags2": ["beginner"]}``
+
+  Even if we use ``query_parallel_or("tags || tags2", "beginner man")``, the above record is match by this modification.
+
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``.
+
+Thanks
+^^^^^^
+
+* higchi
+
+.. _release-11-0-5:
+
+Release 11.0.5 - 2021-07-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/normalizers`] Added support for multiple normalizers.
+
+  We can specify multiple normalizers by ``--notmalizers`` option when we create a table since this release.
+  If we can also specify them by  ``--normalizer`` existing option because of compatibility.
+
+  We added ``NormalizerTable`` for customizing a normalizer in Groonga 11.0.4.
+  We can more flexibly behavior of the normalizer by combining ``NormalizerTable`` with existing normalizer.
+
+  For example, this feature is useful in the following case.
+
+    * Search for a telephone number. However, we import data handwritten by OCR.
+      If data is handwritten, OCR may misunderstand a number and string(e.g. 5 and S).
+
+  The details are as follows.
+
+  .. code-block::
+
+     table_create Normalizations TABLE_PAT_KEY ShortText
+     column_create Normalizations normalized COLUMN_SCALAR ShortText
+     load --table Normalizations
+     [
+     {"_key": "s", "normalized": "5"}
+     ]
+
+
+     table_create Tels TABLE_NO_KEY
+     column_create Tels tel COLUMN_SCALAR ShortText
+
+     table_create TelsIndex TABLE_PAT_KEY ShortText \
+       --normalizers 'NormalizerNFKC130("unify_hyphen_and_prolonged_sound_mark", true), \
+                      NormalizerTable("column", "Normalizations.normalized")' \
+       --default_tokenizer 'TokenNgram("loose_symbol", true, "loose_blank", true)'
+     column_create TelsIndex tel_index COLUMN_INDEX|WITH_SECTION Tels tel
+
+     load --table Tels
+     [
+     {"tel": "03-4S-1234"}
+     {"tel": "03-45-9876"}
+     ]
+
+     select --table Tels \
+       --filter 'tel @ "03-45-1234"'
+     [
+       [
+         0,
+         1625227424.560146,
+         0.0001730918884277344
+       ],
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "_id",
+               "UInt32"
+             ],
+             [
+               "tel",
+               "ShortText"
+             ]
+           ],
+           [
+             1,
+             "03-4S-1234"
+           ]
+         ]
+       ]
+     ]
+
+  Existing normalizers can't meet in such case, but we can meet it by combining ``NormalizerTable`` with existing normalizer since this release.
+
+* [:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for customizing thresholds for sequential search.
+
+  We can customize thresholds in each queries whether to use sequential search by the following options.
+
+    * ``{"max_n_enough_filtered_records": xx}``
+
+      ``max_n_enough_filtered_records`` specify the number of records.
+      ``query`` or ``query_parallel_or`` use sequential search when they seems to narrow down until under this number.
+
+    * ``{"enough_filtered_ratio": x.x}``
+
+      ``enough_filtered_ratio`` specify percentage of total.
+      ``query`` or ``query_parallel_or`` use sequential search when they seems to narrow down until under this percentage.
+      For example, if we specify ``{"enough_filtered_ratio": 0.5}``, ``query`` or ``query_parallel_or`` use sequential search when they seems to narrow down until half of the whole.
+
+  The details are as follows.
+
+    .. code-block::
+
+       table_create Products TABLE_NO_KEY
+       column_create Products name COLUMN_SCALAR ShortText
+
+       table_create Terms TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+       column_create Terms products_name COLUMN_INDEX Products name
+
+       load --table Products
+       [
+       ["name"],
+       ["Groonga"],
+       ["Mroonga"],
+       ["Rroonga"],
+       ["PGroonga"],
+       ["Ruby"],
+       ["PostgreSQL"]
+       ]
+
+       select \
+         --table Products \
+         --filter 'query("name", "r name:Ruby", {"enough_filtered_ratio": 0.5})'
+
+    .. code-block::
+
+       table_create Products TABLE_NO_KEY
+       column_create Products name COLUMN_SCALAR ShortText
+
+       table_create Terms TABLE_PAT_KEY ShortText --normalizer NormalizerAuto
+       column_create Terms products_name COLUMN_INDEX Products name
+
+       load --table Products
+       [
+       ["name"],
+       ["Groonga"],
+       ["Mroonga"],
+       ["Rroonga"],
+       ["PGroonga"],
+       ["Ruby"],
+       ["PostgreSQL"]
+       ]
+
+       select \
+         --table Products \
+         --filter 'query("name", "r name:Ruby", {"max_n_enough_filtered_records": 10})'
+
+* [:doc:`/reference/functions/between`][:doc:`/reference/functions/in_values`] Added support for customizing thresholds for sequential search.
+
+  [:doc:`/reference/functions/between`] and [:doc:`/reference/functions/in_values`] have a feature that they switch to sequential search when the target of search records is narrowed down enough.
+
+  The value of ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` / ``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` is used as threshold whether Groonga execute sequential search or search with indexes in such a case.
+
+  This behavior is customized by only the following environment variable until now.
+
+  ``in_values()``::
+
+    # Don't use auto sequential search
+    GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO=-1
+    # Set threshold to 0.02
+    GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO=0.02
+
+  ``between()``::
+
+    # Don't use auto sequential search
+    GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO=-1
+    # Set threshold to 0.02
+    GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO=0.02
+
+  if customize by the environment variable, this threshold applies to all queries, but we can specify it in each query by using this feature.
+
+  The details are as follows. We can specify the threshold by using ``{"too_many_index_match_ratio": x.xx}`` option.
+  The value type of this option is ``double``.
+
+  .. code-block::
+
+     table_create Memos TABLE_HASH_KEY ShortText
+     column_create Memos timestamp COLUMN_SCALAR Time
+
+     table_create Times TABLE_PAT_KEY Time
+     column_create Times memos_timestamp COLUMN_INDEX Memos timestamp
+
+     load --table Memos
+     [
+     {"_key": "001", "timestamp": "2014-11-10 07:25:23"},
+     {"_key": "002", "timestamp": "2014-11-10 07:25:24"},
+     {"_key": "003", "timestamp": "2014-11-10 07:25:25"},
+     {"_key": "004", "timestamp": "2014-11-10 07:25:26"},
+     {"_key": "005", "timestamp": "2014-11-10 07:25:27"},
+     {"_key": "006", "timestamp": "2014-11-10 07:25:28"},
+     {"_key": "007", "timestamp": "2014-11-10 07:25:29"},
+     {"_key": "008", "timestamp": "2014-11-10 07:25:30"},
+     {"_key": "009", "timestamp": "2014-11-10 07:25:31"},
+     {"_key": "010", "timestamp": "2014-11-10 07:25:32"},
+     {"_key": "011", "timestamp": "2014-11-10 07:25:33"},
+     {"_key": "012", "timestamp": "2014-11-10 07:25:34"},
+     {"_key": "013", "timestamp": "2014-11-10 07:25:35"},
+     {"_key": "014", "timestamp": "2014-11-10 07:25:36"},
+     {"_key": "015", "timestamp": "2014-11-10 07:25:37"},
+     {"_key": "016", "timestamp": "2014-11-10 07:25:38"},
+     {"_key": "017", "timestamp": "2014-11-10 07:25:39"},
+     {"_key": "018", "timestamp": "2014-11-10 07:25:40"},
+     {"_key": "019", "timestamp": "2014-11-10 07:25:41"},
+     {"_key": "020", "timestamp": "2014-11-10 07:25:42"},
+     {"_key": "021", "timestamp": "2014-11-10 07:25:43"},
+     {"_key": "022", "timestamp": "2014-11-10 07:25:44"},
+     {"_key": "023", "timestamp": "2014-11-10 07:25:45"},
+     {"_key": "024", "timestamp": "2014-11-10 07:25:46"},
+     {"_key": "025", "timestamp": "2014-11-10 07:25:47"},
+     {"_key": "026", "timestamp": "2014-11-10 07:25:48"},
+     {"_key": "027", "timestamp": "2014-11-10 07:25:49"},
+     {"_key": "028", "timestamp": "2014-11-10 07:25:50"},
+     {"_key": "029", "timestamp": "2014-11-10 07:25:51"},
+     {"_key": "030", "timestamp": "2014-11-10 07:25:52"},
+     {"_key": "031", "timestamp": "2014-11-10 07:25:53"},
+     {"_key": "032", "timestamp": "2014-11-10 07:25:54"},
+     {"_key": "033", "timestamp": "2014-11-10 07:25:55"},
+     {"_key": "034", "timestamp": "2014-11-10 07:25:56"},
+     {"_key": "035", "timestamp": "2014-11-10 07:25:57"},
+     {"_key": "036", "timestamp": "2014-11-10 07:25:58"},
+     {"_key": "037", "timestamp": "2014-11-10 07:25:59"},
+     {"_key": "038", "timestamp": "2014-11-10 07:26:00"},
+     {"_key": "039", "timestamp": "2014-11-10 07:26:01"},
+     {"_key": "040", "timestamp": "2014-11-10 07:26:02"},
+     {"_key": "041", "timestamp": "2014-11-10 07:26:03"},
+     {"_key": "042", "timestamp": "2014-11-10 07:26:04"},
+     {"_key": "043", "timestamp": "2014-11-10 07:26:05"},
+     {"_key": "044", "timestamp": "2014-11-10 07:26:06"},
+     {"_key": "045", "timestamp": "2014-11-10 07:26:07"},
+     {"_key": "046", "timestamp": "2014-11-10 07:26:08"},
+     {"_key": "047", "timestamp": "2014-11-10 07:26:09"},
+     {"_key": "048", "timestamp": "2014-11-10 07:26:10"},
+     {"_key": "049", "timestamp": "2014-11-10 07:26:11"},
+     {"_key": "050", "timestamp": "2014-11-10 07:26:12"}
+     ]
+
+     select Memos \
+       --filter '_key == "003" && \
+                 between(timestamp, \
+                         "2014-11-10 07:25:24", \
+                         "include", \
+                         "2014-11-10 07:27:26", \
+                         "exclude", \
+                         {"too_many_index_match_ratio": 0.03})'
+
+  .. code-block::
+
+     table_create Tags TABLE_HASH_KEY ShortText
+
+     table_create Memos TABLE_HASH_KEY ShortText
+     column_create Memos tag COLUMN_SCALAR Tags
+
+     load --table Memos
+     [
+     {"_key": "Rroonga is fast!", "tag": "Rroonga"},
+     {"_key": "Groonga is fast!", "tag": "Groonga"},
+     {"_key": "Mroonga is fast!", "tag": "Mroonga"},
+     {"_key": "Groonga sticker!", "tag": "Groonga"},
+     {"_key": "Groonga is good!", "tag": "Groonga"}
+     ]
+
+     column_create Tags memos_tag COLUMN_INDEX Memos tag
+
+     select \
+       Memos \
+       --filter '_id >= 3 && \
+                 in_values(tag, \
+                          "Groonga", \
+                          {"too_many_index_match_ratio": 0.7})' \
+       --output_columns _id,_score,_key,tag
+
+* [:doc:`/reference/functions/between`] Added support for ``GRN_EXPR_OPTIMIZE=yes``.
+
+  ``between()`` supported for optimizing the order of evaluation of a conditional expression.
+
+* [:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for specifying group of match_columns as vector. [GitHub#1238][Patched by naoa]
+
+  We can use vector in ``match_columns`` of ``query`` and ``query_parallel_or`` as below.
+
+  .. code-block::
+
+     table_create Users TABLE_NO_KEY
+     column_create Users name COLUMN_SCALAR ShortText
+     column_create Users memo COLUMN_SCALAR ShortText
+     column_create Users tag COLUMN_SCALAR ShortText
+
+     table_create Terms TABLE_PAT_KEY ShortText \
+       --default_tokenizer TokenNgram \
+       --normalizer NormalizerNFKC130
+     column_create Terms name COLUMN_INDEX|WITH_POSITION Users name
+     column_create Terms memo COLUMN_INDEX|WITH_POSITION Users memo
+     column_create Terms tag COLUMN_INDEX|WITH_POSITION Users tag
+
+     load --table Users
+     [
+     {"name": "Alice", "memo": "Groonga user", "tag": "Groonga"},
+     {"name": "Bob",   "memo": "Rroonga user", "tag": "Rroonga"}
+     ]
+
+     select Users \
+       --output_columns _score,name \
+       --filter 'query(["name * 100", "memo", "tag * 10"], \
+                       "Alice OR Groonga")'
+
+* [:doc:`reference/commands/select`] Added support for section and weight in prefix search. [GitHub#1240][Patched by naoa]
+
+  We can use multi column index and adjusting score in prefix search.
+
+  .. code-block::
+
+     table_create Memos TABLE_NO_KEY
+     column_create Memos title COLUMN_SCALAR ShortText
+     column_create Memos tags COLUMN_VECTOR ShortText
+
+     table_create Terms TABLE_PAT_KEY ShortText
+     column_create Terms index COLUMN_INDEX|WITH_SECTION Memos title,tags
+
+     load --table Memos
+     [
+     {"title": "Groonga", "tags": ["Groonga"]},
+     {"title": "Rroonga", "tags": ["Groonga", "Rroonga", "Ruby"]},
+     {"title": "Mroonga", "tags": ["Groonga", "Mroonga", "MySQL"]}
+     ]
+
+     select Memos \
+       --match_columns "Terms.index.title * 2" \
+       --query 'G*' \
+       --output_columns title,tags,_score
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "title",
+               "ShortText"
+             ],
+             [
+               "tags",
+               "ShortText"
+             ],
+             [
+               "_score",
+               "Int32"
+             ]
+           ],
+           [
+             "Groonga",
+             [
+               "Groonga"
+             ],
+             2
+           ]
+         ]
+       ]
+     ]
+
+* [:doc:`/reference/executables/grndb`] Added support for closing used object immediately in ``grndb recover``.
+
+  We can reduce memory usage by this.
+  This may decrease performance but it will be acceptable.
+
+  Note that ``grndb check`` doesn't close used objects immediately yet.
+
+* [:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for specifying ``scorer_tf_idf`` in ``match_columns`` as below.
+
+  .. code-block::
+
+     table_create Tags TABLE_HASH_KEY ShortText
+
+     table_create Users TABLE_HASH_KEY ShortText
+     column_create Users tags COLUMN_VECTOR Tags
+
+     load --table Users
+     [
+     {"_key": "Alice",
+      "tags": ["beginner", "active"]},
+     {"_key": "Bob",
+      "tags": ["expert", "passive"]},
+     {"_key": "Chris",
+      "tags": ["beginner", "passive"]}
+     ]
+
+     column_create Tags users COLUMN_INDEX Users tags
+
+     select Users \
+       --output_columns _key,_score \
+       --sort_keys _id \
+       --command_version 3 \
+       --filter 'query_parallel_or("scorer_tf_idf(tags)", \
+                                   "beginner active")'
+     {
+       "header": {
+         "return_code": 0,
+         "start_time": 0.0,
+         "elapsed_time": 0.0
+       },
+       "body": {
+         "n_hits": 1,
+         "columns": [
+           {
+             "name": "_key",
+             "type": "ShortText"
+           },
+           {
+             "name": "_score",
+             "type": "Float"
+           }
+         ],
+         "records": [
+           [
+             "Alice",
+             2.098612308502197
+           ]
+         ]
+       }
+     }
+
+* [:doc:`/reference/commands/query_expand`] Added support for weighted increment, decrement, and negative.
+
+  We can specify weight against expanded words.
+
+  If we want to increment score, we use ``>``.
+  If we want to decrement score, we use ``<``.
+
+  We can specify the quantity of scores as a number. We can also use a negative numbers in it.
+
+  .. code-block::
+
+     table_create TermExpansions TABLE_NO_KEY
+     column_create TermExpansions term COLUMN_SCALAR ShortText
+     column_create TermExpansions expansions COLUMN_VECTOR ShortText
+
+     load --table TermExpansions
+     [
+     {"term": "Rroonga", "expansions": ["Rroonga", "Ruby Groonga"]}
+     ]
+
+     query_expand TermExpansions "Groonga <-0.2Rroonga Mroonga" \
+       --term_column term \
+       --expanded_term_column expansions
+     [[0,0.0,0.0],"Groonga <-0.2((Rroonga) OR (Ruby Groonga)) Mroonga"]
+
+* [httpd] Updated bundled nginx to 1.21.1.
+
+* Updated bundled Apache Arrow to 5.0.0.
+
+* [:doc:`/install/ubuntu`] Dropped Ubuntu 20.10 (Groovy Gorilla) support.
+
+  * Because Ubuntu 20.10 reached EOL July 22, 2021.
+
+Fixes
+^^^^^
+
+* [:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Fixed a bug that if we specify ``query_options`` and the other options, the other options are ignored.
+
+  For example, ``"default_operator": "OR"`` option had been ignored in the following case.
+
+  .. code-block::
+
+     plugin_register token_filters/stop_word
+
+     table_create Memos TABLE_NO_KEY
+     column_create Memos content COLUMN_SCALAR ShortText
+
+     table_create Terms TABLE_PAT_KEY ShortText \
+       --default_tokenizer TokenBigram \
+       --normalizer NormalizerAuto \
+       --token_filters TokenFilterStopWord
+     column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+     column_create Terms is_stop_word COLUMN_SCALAR Bool
+
+     load --table Terms
+     [
+     {"_key": "and", "is_stop_word": true}
+     ]
+
+     load --table Memos
+     [
+     {"content": "Hello"},
+     {"content": "Hello and Good-bye"},
+     {"content": "and"},
+     {"content": "Good-bye"}
+     ]
+
+     select Memos \
+       --filter 'query_parallel_or( \
+                   "content", \
+                   "Hello and", \
+                   {"default_operator": "OR", \
+                    "options": {"TokenFilterStopWord.enable": false}})' \
+       --match_escalation_threshold -1 \
+       --sort_keys -_score
+     [
+       [
+         0,
+         0.0,
+         0.0
+       ],
+       [
+         [
+           [
+             1
+           ],
+           [
+             [
+               "_id",
+               "UInt32"
+             ],
+             [
+               "content",
+               "ShortText"
+             ]
+           ],
+           [
+             2,
+             "Hello and Good-bye"
+           ]
+         ]
+       ]
+     ]
+
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+* If we repeat that we remove any data and load them again, Groonga may not return records that should match.
+
+Thanks
+^^^^^^
+
+* naoa
+
+.. _release-11-0-4:
+
+Release 11.0.4 - 2021-06-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [Normalizer] Added support for customized normalizer.
+
+  We define a table for normalize to use this feature.
+  We can normalize with use that table.
+  In other words, we can use customized normalizer.
+
+  For example, we define that "S" normalize to "5" in the following example.
+  The ``Substitutions`` table is for nromalize.
+
+    .. code-block::
+
+       table_create Substitutions TABLE_PAT_KEY ShortText
+       column_create Substitutions substituted COLUMN_SCALAR ShortText
+       load --table Substitutions
+       [
+       {"_key": "S", "substituted": "5"}
+       ]
+
+       table_create TelLists TABLE_NO_KEY
+       column_create TelLists tel COLUMN_SCALAR ShortText
+
+       table_create Terms TABLE_HASH_KEY ShortText \
+         --default_tokenizer TokenNgram \
+         --normalizer 'NormalizerTable("column", "Substitutions.substituted", \
+                                       "report_source_offset", true)'
+       column_create Terms tel_index COLUMN_INDEX|WITH_POSITION TelLists tel
+
+       load --table TelLists
+       [
+       {"tel": "03-4S-1234"}
+       ]
+
+       select TelLists --filter 'tel @ "03-45-1234"'
+       [
+         [
+           0,
+           1624686303.538532,
+           0.001319169998168945
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "tel",
+                 "ShortText"
+               ]
+             ],
+             [
+               1,
+               "03-4S-1234"
+             ]
+           ]
+         ]
+       ]
+
+  For example, we can define to the table easy to false recognize words when we input a handwritten data.
+  By this, we can normalize incorrect data to correct data.
+
+  Note that we need to reconstruct the index if we updated the table for normalize.
+
+* Added a new command ``object_warm``.
+
+  This commnad ship Groonga's DB to OS's page cache.
+
+  If we never startup Groonga after OS startup, Groonga's DB doesn't exist on OS's page cache
+  When Groonga on the first run.
+  Therefore, the first operation to Groonga is slow.
+
+  If we execute this command in advance, the first operation to Groonga is fast.
+  In Linux, we can do the same by also executing ``cat *.db > dev/null``.
+  However, we could not do the same thing in Windows until now.
+
+  By using this command, we can ship Groonga's DB to OS's page cache in both Linux and Windows.
+  Then, we can also do that in units of table, column, and index.
+  Therefore, we can ship only table, column, and index that we often use to OS's page cache.
+
+  We can execute this command against various targets as below.
+
+    * If we specify ``object_warm --name index_name``, the index is shipped to OS's page cache.
+    * If we specify ``object_warm --name column_name``, the column is shipped to OS's page cache.
+    * If we specify ``object_warm --name table_name`` is shipped to OS's page cache.
+    * If we specify ``object_warm``, whole Groonga's database is shipped to OS's page cache.
+
+  However, note that if OS has not empty space on memory, this command has no effect.
+
+* [:doc:`reference/commands/select`] Added support for adjusting the score of a specific record in ``--filter``.
+
+  We can adjust the score of a specific record by using a oprtator named ``*~``.
+  ``*~`` is logical operator same as ``&&`` and ``||``. Therefore, we can use ``*~`` like as ``&&`` ans ``||``.
+  Default weight of ``*~`` is -1.
+
+  Therefore, for example, ``'content @ "Groonga" *~ content @ "Mroonga"'`` mean the following operations.
+
+    1. Extract records that match ``'content @ "Groonga"`` and ``content @ "Mroonga"'``.
+    2. Add a score as below.
+
+       a. Calculate the score of ``'content @ "Groonga"``.
+       b. Calculate the score of ``'content @ "Mroonga"'``.
+       c. b's score multiplied by -1 by ``*~``.
+       d. The socre of this record is a + b
+          Therefore, if a's socre is 1 and b's score is 1, the score of this record  is 1 + (1 * -1) = 0.
+
+  Then, we can specify score quantity by ``*~${score_quantity}``.
+
+  In particular, the following query adjust the score of match records by the following condition(``'content @ "Groonga" *~2.5 content @ "Mroonga")'`` ).
+
+    .. code-block::
+
+       table_create Memos TABLE_NO_KEY
+       column_create Memos content COLUMN_SCALAR ShortText
+
+       table_create Terms TABLE_PAT_KEY ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer NormalizerAuto
+       column_create Terms index COLUMN_INDEX|WITH_POSITION Memos content
+
+       load --table Memos
+       [
+       {"content": "Groonga is a full text search engine."},
+       {"content": "Rroonga is the Ruby bindings of Groonga."},
+       {"content": "Mroonga is a MySQL storage engine based of Groonga."}
+       ]
+
+       select Memos \
+         --command_version 3 \
+         --filter 'content @ "Groonga" *~2.5 content @ "Mroonga"' \
+         --output_columns 'content, _score' \
+         --sort_keys -_score,_id
+       {
+         "header": {
+           "return_code": 0,
+           "start_time": 1624605205.641078,
+           "elapsed_time": 0.002965450286865234
+         },
+         "body": {
+           "n_hits": 3,
+           "columns": [
+             {
+               "name": "content",
+               "type": "ShortText"
+             },
+             {
+               "name": "_score",
+               "type": "Float"
+             }
+           ],
+           "records": [
+             [
+               "Groonga is a full text search engine.",
+               1.0
+             ],
+             [
+               "Rroonga is the Ruby bindings of Groonga.",
+               1.0
+             ],
+             [
+               "Mroonga is a MySQL storage engine based of Groonga.",
+               -1.5
+             ]
+           ]
+         }
+       }
+
+  We can do the same by also useing :ref:`select-adjuster` .
+  If we use :ref:`select-adjuster` , we need to make ``--filter`` condition and ``--adjuster`` conditon on our application, but we make only ``--filter`` condition on it by this improvement.
+
+  We can also describe filter condition as below by using ``query()``.
+
+    * ``--filter 'content @ "Groonga" *~2.5 content @ "Mroonga"'``
+
+* [:doc:`reference/commands/select`] Added support for ``&&`` with weight.
+
+  We can use ``&&`` with weight by using ``*<`` or ``*>``.
+  Default weight of ``*<`` is 0.5. Default weight of ``*>`` is 2.0.
+
+  We can specify score quantity by ``*<${score_quantity}`` and ``*>${score_quantity}``.
+  Then, if we specify ``*<${score_quantity}``, a plus or minus sign of ``${score_quantity}`` is reverse.
+
+  For example, ``'content @ "Groonga" *<2.5 query("content", "MySQL")'`` is as below.
+
+    1. Extract records that match ``'content @ "Groonga"`` and ``content @ "Mroonga"'``.
+    2. Add a score as below.
+
+       a. Calculate the score of ``'content @ "Groonga"``.
+       b. Calculate the score of ``query("content", "MySQL")``.
+       c. b's score multiplied by -2.5 by ``*<``.
+       d. The socre of this record is a + b
+          Therefore, if a's socre is 1 and b's score is 1, the score of this record is 1 + (1 * -2.5) = -1.5.
+
+  In particular, the following query adjust the score of match records by the following condition( ``'content @ "Groonga" *<2.5 query("content", "Mroonga")'`` ).
+
+    .. code-block::
+
+       table_create Memos TABLE_NO_KEY
+       column_create Memos content COLUMN_SCALAR ShortText
+
+       table_create Terms TABLE_PAT_KEY ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer NormalizerAuto
+       column_create Terms index COLUMN_INDEX|WITH_POSITION Memos content
+
+       load --table Memos
+       [
+       {"content": "Groonga is a full text search engine."},
+       {"content": "Rroonga is the Ruby bindings of Groonga."},
+       {"content": "Mroonga is a MySQL storage engine based of Groonga."}
+       ]
+
+       select Memos \
+         --command_version 3 \
+         --filter 'content @ "Groonga" *<2.5 query("content", "Mroonga")' \
+         --output_columns 'content, _score' \
+         --sort_keys -_score,_id
+       {
+         "header": {
+           "return_code": 0,
+           "start_time": 1624605205.641078,
+           "elapsed_time": 0.002965450286865234
+         },
+         "body": {
+           "n_hits": 3,
+           "columns": [
+             {
+               "name": "content",
+               "type": "ShortText"
+             },
+             {
+               "name": "_score",
+               "type": "Float"
+             }
+           ],
+           "records": [
+             [
+               "Groonga is a full text search engine.",
+               1.0
+             ],
+             [
+               "Rroonga is the Ruby bindings of Groonga.",
+               1.0
+             ],
+             [
+               "Mroonga is a MySQL storage engine based of Groonga.",
+               -1.5
+             ]
+           ]
+         }
+       }
+
+* [:doc:`reference/log`] Added support for outputting to stdout and stderr.
+
+  [:ref:`process-log`] and [:ref:`query-log`] supported　output to stdout and stderr.
+
+    * If we specify as ``--log-path -``, ``--query-log-path -``, Groonga output log to stdout.
+    * If we specify as ``--log-path +``, ``--query-log-path +``, Groonga output log to stderr.
+
+  [:ref:`process-log`] is for all of Groonga works.
+  [:ref:`query-log`] is just for query processing.
+
+  This feature is useful when we execute Groonga on Docker.
+  Docker has the feature that records stdout and stderr in standard.
+  Therefore, we don't need to login into the environment of Docker to get Groonga's log.
+
+  For example, this feature is useful as he following case.
+
+    * If we want to analyze slow queries of Groonga on Docker.
+
+      If we specify ``--query-log-path -`` when startup Groonga, we can analyze slow queries by only execution the following commands.
+
+        * ``docker logs ${container_name} | groonga-query-log-analyze``
+
+  By this, we can analyze slow query with the query log that output from Groonga on Docker simply.
+
+* [Documentation] Filled missing documentation of ``string_substring``. [GitHub#1209][Patched by Takashi Hashida]
+
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list.
+
+* ``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition.
+  If we specify as below, ``*<`` and ``*>`` work as ``&&``.
+
+    * ``'content @ "Groonga" *< content @ "Mroonga"'``
+
+Thanks
+^^^^^^
+
+* Takashi Hashida
+
+.. _release-11-0-3:
+
+Release 11.0.3 - 2021-05-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/functions/query`] Added support for ignoring ``TokenFilterStem`` by the query.
+
+  * ``TokenFilterStem`` can search by using a stem.
+    For example, all of ``develop``, ``developing``, ``developed`` and ``develops`` tokens are stemmed as ``develop``.
+    So we can find ``develop``, ``developing`` and ``developed`` by ``develops`` query.
+
+  * In this release, we are able to search without ``TokenFilterStem`` in only a specific query as below.
+
+    .. code-block::
+
+       plugin_register token_filters/stem
+
+       table_create Memos TABLE_NO_KEY
+       column_create Memos content COLUMN_SCALAR ShortText
+
+       table_create Terms TABLE_PAT_KEY ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer NormalizerAuto \
+         --token_filters 'TokenFilterStem("keep_original", true)'
+       column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+       load --table Memos
+       [
+       {"content": "I develop Groonga"},
+       {"content": "I'm developing Groonga"},
+       {"content": "I developed Groonga"}
+       ]
+
+       select Memos \
+         --match_columns content \
+         --query '"developed groonga"' \
+         --query_options '{"TokenFilterStem.enable": false}'
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "content",
+                 "ShortText"
+               ]
+             ],
+             [
+               3,
+               "I developed Groonga"
+             ]
+           ]
+         ]
+       ]
+
+  * This feature is useful when users want to search by a stemmed word generally but users sometimes want to search by a exact (not stemmed) word as below.
+
+    * If Groonga returns many results when searching by a stemmed word.
+    * If ``TokenFilterStem`` returns the wrong result of stemming.
+    * If we want to find only records that have an exact (not stemmed) word.
+
+* [:doc:`reference/functions/query`] Added support for ignoring ``TokenFilterStopWord`` by the query.
+
+  * ``TokenFilterStopWord`` searched without stop word that we registered beforehand.
+    It uses for reducing noise of search by ignoring frequently word (e.g., ``and``, ``is``, and so on.).
+  * However, we sometimes want to search include these words only a specific query. In this release, we are able to search without ``TokenFilterStopWord`` in only a specific query as below.
+
+    .. code-block::
+
+       plugin_register token_filters/stop_word
+
+       table_create Memos TABLE_NO_KEY
+       column_create Memos content COLUMN_SCALAR ShortText
+
+       table_create Terms TABLE_PAT_KEY ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer NormalizerAuto \
+         --token_filters TokenFilterStopWord
+       column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+       column_create Terms is_stop_word COLUMN_SCALAR Bool
+
+       load --table Terms
+       [
+       {"_key": "and", "is_stop_word": true}
+       ]
+
+       load --table Memos
+       [
+       {"content": "Hello"},
+       {"content": "Hello and Good-bye"},
+       {"content": "Good-bye"}
+       ]
+
+       select Memos \
+         --match_columns content \
+         --query "Hello and" \
+         --query_options '{"TokenFilterStopWord.enable": false}' \
+         --match_escalation_threshold -1 \
+         --sort_keys -_score
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "content",
+                 "ShortText"
+               ]
+             ],
+             [
+               2,
+               "Hello and Good-bye"
+             ]
+           ]
+         ]
+       ]
+
+  * In the above example, we specify ``TokenFilterStopWord.enable`` by using ``--query-options``, but we also specify it by using ``{"options": {"TokenFilterStopWord.enable": false}}`` as below.
+
+    .. code-block::
+
+       plugin_register token_filters/stop_word
+
+       table_create Memos TABLE_NO_KEY
+       column_create Memos content COLUMN_SCALAR ShortText
+
+       table_create Terms TABLE_PAT_KEY ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer NormalizerAuto \
+         --token_filters TokenFilterStopWord
+       column_create Terms memos_content COLUMN_INDEX|WITH_POSITION Memos content
+       column_create Terms is_stop_word COLUMN_SCALAR Bool
+
+       load --table Terms
+       [
+       {"_key": "and", "is_stop_word": true}
+       ]
+
+       load --table Memos
+       [
+       {"content": "Hello"},
+       {"content": "Hello and Good-bye"},
+       {"content": "Good-bye"}
+       ]
+
+       select Memos \
+         --filter 'query("content", \
+                         "Hello and", \
+                         {"options": {"TokenFilterStopWord.enable": false}})' \
+         --match_escalation_threshold -1 \
+         --sort_keys -_score
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "content",
+                 "ShortText"
+               ]
+             ],
+             [
+               2,
+               "Hello and Good-bye"
+             ]
+           ]
+         ]
+       ]
+
+  * This feature is useful if that Groonga can't return results correctly if we don't search by keywords include commonly used words (e.g., if a search for a song title, a shop name, and so on.).
+
+* [:doc:`/reference/normalizers`][NormalizerNFKC] Added a new option ``remove_new_line``.
+
+  * If we want to normalize the key of a table that stores data, we set a normalizer to it.
+    However, normally, normalizers remove a new line.
+  * Groonga can't handle a key that is only a new line.
+  * We can register data that is only a new line as key by this option.
+
+* [:doc:`/reference/functions/string_slice`] Added a new function ``string_slice()``. [Github#1177][Patched by Takashi Hashida]
+
+  * ``string_slice()`` extracts a substring of a string.
+  * To enable this function, we need to register ``functions/string`` plugin.
+  * We can use two different extraction methods depending on the arguments as below.
+
+    * Extraction by position::
+
+         plugin_register functions/string
+         table_create Memos TABLE_HASH_KEY ShortText
+
+         load --table Memos
+         [
+           {"_key": "Groonga"}
+         ]
+         select Memos --output_columns '_key, string_slice(_key, 2, 3)'
+         [
+           [
+             0,
+             1337566253.89858,
+             0.000355720520019531
+           ],
+           [
+             [
+               [
+                 1
+               ],
+               [
+                 [
+                   "_key",
+                   "ShortText"
+                 ],
+                 [
+                   "string_slice",
+                   null
+                 ]
+               ],
+               [
+                 "Groonga",
+                 "oon"
+               ]
+             ]
+           ]
+         ]
+
+    * Extraction by regular expression::
+
+         plugin_register functions/string
+         table_create Memos TABLE_HASH_KEY ShortText
+
+         load --table Memos
+         [
+           {"_key": "Groonga"}
+         ]
+         select Memos --output_columns '_key, string_slice(_key, "(Gro+)(.*)", 2)'
+         [
+           [p
+             0,
+             1337566253.89858,
+             0.000355720520019531
+           ],
+           [
+             [
+               [
+                 1
+               ],
+               [
+                 [
+                   "_key",
+                   "ShortText"
+                 ],
+                 [
+                   "string_slice",
+                   null
+                 ]
+               ],
+               [
+                 "Groonga",
+                 "nga"
+               ]
+             ]
+           ]
+         ]
+
+* [:doc:`/install/ubuntu`] Dropped support for Ubuntu 16.04 LTS (Xenial Xerus).
+
+* Added EditorConfig for Visual Studio. [GitHub#1191][Patched by Takashi Hashida]
+
+  * Most settings are for Visual Studio only.
+
+* [httpd] Updated bundled nginx to 1.20.1.
+
+  * Contains security fix of CVE-2021-23017.
+
+Fixes
+^^^^^
+
+* Fixed a bug that Groonga may not have returned a result of a search query if we sent many search queries when tokenizer, normalizer, or token_filters that support options were used.
+
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list.
+
+Thanks
+^^^^^^
+
+* Takashi Hashida
+
+.. _release-11-0-2:
+
+Release 11.0.2 - 2021-05-10
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [Documentation] Removed a reference about ``ruby_load`` command. [GitHub#1172][Patched by Anthony M. Cook]
+
+  * Because this command has already deleted.
+
+* [:doc:`/install/debian`] Added support for Debian 11(Bullseye).
+
+* [:doc:`reference/commands/select`] Added support for ``--post_filter``.
+
+  * We can use ``post_filter`` to filter by ``filtered`` stage dynamic columns as below.
+
+    .. code-block::
+
+       table_create Items TABLE_NO_KEY
+       column_create Items price COLUMN_SCALAR UInt32
+
+       load --table Items
+       [
+       {"price": 100},
+       {"price": 150},
+       {"price": 200},
+       {"price": 250},
+       {"price": 300}
+       ]
+
+       select Items \
+         --filter "price >= 150" \
+         --columns[price_with_tax].stage filtered \
+         --columns[price_with_tax].type UInt32 \
+         --columns[price_with_tax].flags COLUMN_SCALAR \
+         --columns[price_with_tax].value "price * 1.1" \
+         --post_filter "price_with_tax <= 250"
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               2
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "price_with_tax",
+                 "UInt32"
+               ],
+               [
+                 "price",
+                 "UInt32"
+               ]
+             ],
+             [
+               2,
+               165,
+               150
+             ],
+             [
+               3,
+               220,
+               200
+             ]
+           ]
+         ]
+       ]
+
+* [:doc:`reference/commands/select`] Added support for ``--slices[].post_filter``.
+
+  * We can use ``post_filter`` to filter by ``--slices[].filter`` as below.
+
+    .. code-block::
+
+        table_create Items TABLE_NO_KEY
+        column_create Items price COLUMN_SCALAR UInt32
+
+        load --table Items
+        [
+        {"price": 100},
+        {"price": 200},
+        {"price": 300},
+        {"price": 1000},
+        {"price": 2000},
+        {"price": 3000}
+        ]
+
+        select Items \
+          --slices[expensive].filter 'price >= 1000' \
+          --slices[expensive].post_filter 'price < 3000'
+        [
+          [
+            0,
+            0.0,
+            0.0
+          ],
+          [
+            [
+              [
+                6
+              ],
+              [
+                [
+                  "_id",
+                  "UInt32"
+                ],
+                [
+                  "price",
+                  "UInt32"
+                ]
+              ],
+              [
+                1,
+                100
+              ],
+              [
+                2,
+                200
+              ],
+              [
+                3,
+                300
+              ],
+              [
+                4,
+                1000
+              ],
+              [
+                5,
+                2000
+              ],
+              [
+                6,
+                3000
+              ]
+            ],
+            {
+              "expensive": [
+                [
+                  2
+                ],
+                [
+                  [
+                    "_id",
+                    "UInt32"
+                  ],
+                  [
+                    "price",
+                    "UInt32"
+                  ]
+                ],
+                [
+                  4,
+                  1000
+                ],
+                [
+                  5,
+                  2000
+                ]
+              ]
+            }
+          ]
+        ]
+
+
+* [:doc:`reference/commands/select`] Added support for describing expression into ``--sort_keys``.
+
+  * We can describe the expression into ``--sort_keys``.
+
+    * If nonexistent keys into expression as a ``--sort_keys``, they are ignored and outputted warns into a log.
+
+  * By this, for example, we can specify a value of an element of ``VECTOR COLUMN`` to ``--sort_keys``. And we can sort a result with it.
+  * We can sort a result with an element of ``VECTOR COLUMN`` even if the before version by using dynamic column.
+    However, we can sort a result with an element of ``VECTOR COLUMN`` without using dynamic column by this feature.
+
+    .. code-block::
+
+       table_create Values TABLE_NO_KEY
+       column_create Values numbers COLUMN_VECTOR Int32
+       load --table Values
+       [
+       {"numbers": [127, 128, 129]},
+       {"numbers": [126, 255]},
+       {"numbers": [128, -254]}
+       ]
+       select Values --sort_keys 'numbers[1]' --output_columns numbers
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               3
+             ],
+             [
+               [
+                 "numbers",
+                 "Int32"
+               ]
+             ],
+             [
+               [
+                 128,
+                 -254
+               ]
+             ],
+             [
+               [
+                 127,
+                 128,
+                 129
+               ]
+             ],
+             [
+               [
+                 126,
+                 255
+               ]
+             ]
+           ]
+         ]
+       ]
+
+* [:doc:`/reference/token_filters`] Added support for multiple token filters with options.
+
+  * We can specify multiple token filters with options like ``--token_filters 'TokenFilterStopWord("column", "ignore"), TokenFilterNFKC130("unify_kana", true)'``. [Github#mroonga/mroonga#399][Reported by MASUDA Kazuhiro]
+
+* [:doc:`reference/functions/query`] Added support a dynamic column of ``result_set`` stage with complex expression.
+
+  * Complex expression is that it needs temporary result sets internally like a following expression.
+
+    .. code-block::
+
+       '(true && query("name * 10", "ali", {"score_column": "ali_score"})) || \
+        (true && query("name * 2", "li", {"score_column": "li_score"}))'
+
+    * In the above expressions, the temporary result sets are used to store the result of evaluating the ``true``.
+    * Therefore, for example, in the following expression, we can use a value of dynamic column of ``result_set`` stage in expression. Because temporary result sets internally are needless as below expression.
+
+      .. code-block::
+
+         '(query("name * 10", "ali", {"score_column": "ali_score"})) || \
+          (query("name * 2", "li", {"score_column": "li_score"}))'
+
+  * In this release, for example, we can set a value to ``li_score`` as below. (The value of ``li_score`` had been ``0`` in before version. Because the second expression could not get dynamic column.)
+
+    .. code-block::
+
+       table_create Users TABLE_NO_KEY
+       column_create Users name COLUMN_SCALAR ShortText
+
+       table_create Lexicon TABLE_HASH_KEY ShortText \
+         --default_tokenizer TokenBigramSplitSymbolAlphaDigit \
+         --normalizer NormalizerAuto
+       column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+
+       load --table Users
+       [
+       {"name": "Alice"},
+       {"name": "Alisa"},
+       {"name": "Bob"}
+       ]
+
+       select Users \
+         --columns[ali_score].stage result_set \
+         --columns[ali_score].type Float \
+         --columns[ali_score].flags COLUMN_SCALAR \
+         --columns[li_score].stage result_set \
+         --columns[li_score].type Float \
+         --columns[li_score].flags COLUMN_SCALAR \
+         --output_columns name,_score,ali_score,li_score \
+         --filter '(true && query("name * 10", "ali", {"score_column": "ali_score"})) || \
+                   (true && query("name * 2", "li", {"score_column": "li_score"}))'
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               2
+             ],
+             [
+               [
+                 "name",
+                 "ShortText"
+               ],
+               [
+                 "_score",
+                 "Int32"
+               ],
+               [
+                 "ali_score",
+                 "Float"
+               ],
+               [
+                 "li_score",
+                 "Float"
+               ]
+             ],
+             [
+               "Alice",
+               14,
+               10.0,
+               2.0
+             ],
+             [
+               "Alisa",
+               14,
+               10.0,
+               2.0
+             ]
+           ]
+         ]
+       ]
+
+  * We also supported a dynamic vector column of ``result_set`` stage as below.
+
+    .. code-block::
+
+       table_create Users TABLE_NO_KEY
+       column_create Users name COLUMN_SCALAR ShortText
+
+       table_create Lexicon TABLE_HASH_KEY ShortText \
+         --default_tokenizer TokenBigramSplitSymbolAlphaDigit \
+         --normalizer NormalizerAuto
+       column_create Lexicon users_name COLUMN_INDEX|WITH_POSITION Users name
+
+       load --table Users
+       [
+       {"name": "Alice"},
+       {"name": "Alisa"},
+       {"name": "Bob"}
+       ]
+
+       select Users \
+         --columns[tags].stage result_set \
+         --columns[tags].type ShortText \
+         --columns[tags].flags COLUMN_VECTOR \
+         --output_columns name,tags \
+         --filter '(true && query("name", "al", {"tags": ["al"], "tags_column": "tags"})) || \
+                   (true && query("name", "sa", {"tags": ["sa"], "tags_column": "tags"}))'
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               2
+             ],
+             [
+               [
+                 "name",
+                 "ShortText"
+               ],
+               [
+                 "tags",
+                 "ShortText"
+               ]
+             ],
+             [
+               "Alice",
+               [
+                 "al"
+               ]
+             ],
+             [
+               "Alisa",
+               [
+                 "al",
+                 "sa"
+               ]
+             ]
+           ]
+         ]
+       ]
+
+    * If we use a dynamic vector column, the storing values are appended values of each element.
+
+* [:doc:`/install/ubuntu`] Added support for Ubuntu 21.04 (Hirsute Hippo).
+
+* [httpd] Updated bundled nginx to 1.19.10.
+
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+* [The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list. [Github#1186][Reported by poti]
+
+Thanks
+^^^^^^
+
+* Anthony M. Cook
+
+* MASUDA Kazuhiro
+
+* poti
+
+.. _release-11-0-1:
+
+Release 11.0.1 - 2021-03-31
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/install/debian`] Added support for a ARM64 package.
+
+* [:doc:`reference/commands/select`] Added support for customizing adjust weight every key word.
+
+  * We need to specify ``<`` or ``>`` to all keywords to adjust scores until now.
+    Because the default adjustment of weight (6 or 4) is larger than the default score (1).
+
+    * Therefore, for example, "A"'s weight is 1 and "B"'s weight is 4 in ``A <B``.
+      Decremented "B"'s weight (4) is larger than not decremented "A"'s weight (1).
+      This is not works as expected.
+      we need to specify ``>A <B`` to use smaller weight than "A" for "B".
+      "A"'s weight is 6 and "B"'s weight is 4 in ``>A <B``.
+
+  * We can customize adjustment of weight every key word by only specifying ``<${WEIGHT}`` or ``>${WEIGHT}`` to target keywords since this release.
+    For example, "A"'s weight is 1 and "B"'s weight is 0.9 in ``A <0.1B`` ("B"'s weight decrement 0.1).
+
+  * However, note that these forms ( ``>${WEIGHT}...``, ``<${WEIGHT}...``, and ``~${WEIGHT}...`` ) are incompatible.
+
+* [:doc:`reference/commands/select`] Added support for outputting ``Float`` and ``Float32`` value in Apache Arrow format.
+
+  * For example, Groonga output as below.
+
+  .. code-block::
+
+     table_create Data TABLE_NO_KEY
+     column_create Data float COLUMN_SCALAR Float
+
+     load --table Data
+     [
+     {"float": 1.1}
+     ]
+
+     select Data \
+       --command_version 3 \
+       --output_type apache-arrow
+
+       return_code: int32
+       start_time: timestamp[ns]
+       elapsed_time: double
+       -- metadata --
+       GROONGA:data_type: metadata
+       	return_code	               start_time	elapsed_time
+       0	          0	1970-01-01T09:00:00+09:00	    0.000000
+       ========================================
+       _id: uint32
+       float: double
+       -- metadata --
+       GROONGA:n_hits: 1
+       	_id	     float
+       0	  1	  1.100000
+
+* [:doc:`reference/commands/select`] Added support for getting a reference destination data via index column when we output a result.
+
+  * Until now, Groonga had returned involuntary value when we specified output value like ``index_column.xxx``.
+    For example, A value of ``--columns[tags].value purchases.tag`` was ``["apple",["many"]],["banana",["man"]],["cacao",["man"]]`` in the following example. In this case, the expected values was ``["apple",["man","many"]],["banana",["man"]],["cacao",["woman"]]``.
+    In this release, we can get a correct reference destination data via index column as below.
+
+    .. code-block::
+
+      table_create Products TABLE_PAT_KEY ShortText
+
+      table_create Purchases TABLE_NO_KEY
+      column_create Purchases product COLUMN_SCALAR Products
+      column_create Purchases tag COLUMN_SCALAR ShortText
+
+      column_create Products purchases COLUMN_INDEX Purchases product
+
+      load --table Products
+      [
+      {"_key": "apple"},
+      {"_key": "banana"},
+      {"_key": "cacao"}
+      ]
+
+      load --table Purchases
+      [
+      {"product": "apple",  "tag": "man"},
+      {"product": "banana", "tag": "man"},
+      {"product": "cacao",  "tag": "woman"},
+      {"product": "apple",  "tag": "many"}
+      ]
+
+      select Products \
+        --columns[tags].stage output \
+        --columns[tags].flags COLUMN_VECTOR \
+        --columns[tags].type ShortText \
+        --columns[tags].value purchases.tag \
+        --output_columns _key,tags
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              3
+            ],
+            [
+              [
+                "_key",
+                "ShortText"
+              ],
+              [
+                "tags",
+                "ShortText"
+              ]
+            ],
+            [
+              "apple",
+              [
+                "man",
+                "many"
+              ]
+            ],
+            [
+              "banana",
+              [
+                "man"
+              ]
+            ],
+            [
+              "cacao",
+              [
+                "woman"
+              ]
+            ]
+          ]
+        ]
+      ]
+
+* [:doc:`reference/commands/select`] Added support for specifying index column directly as a part of nested index.
+
+  * We can search source table after filtering by using ``index_column.except_source_column``.
+    For example, we specify ``comments.content`` when searching in the following example.
+    In this case, at first, this query execute full text search from ``content`` column of ``Commentts`` table, then fetch the records of Articles table which refers to already searched records of Comments table.
+
+    .. code-block::
+
+       table_create Articles TABLE_HASH_KEY ShortText
+
+       table_create Comments TABLE_NO_KEY
+       column_create Comments article COLUMN_SCALAR Articles
+       column_create Comments content COLUMN_SCALAR ShortText
+
+       column_create Articles content COLUMN_SCALAR Text
+       column_create Articles comments COLUMN_INDEX Comments article
+
+       table_create Terms TABLE_PAT_KEY ShortText \
+         --default_tokenizer TokenBigram \
+         --normalizer NormalizerNFKC130
+       column_create Terms articles_content COLUMN_INDEX|WITH_POSITION \
+         Articles content
+       column_create Terms comments_content COLUMN_INDEX|WITH_POSITION \
+         Comments content
+
+       load --table Articles
+       [
+       {"_key": "article-1", "content": "Groonga is fast!"},
+       {"_key": "article-2", "content": "Groonga is useful!"},
+       {"_key": "article-3", "content": "Mroonga is fast!"}
+       ]
+
+       load --table Comments
+       [
+       {"article": "article-1", "content": "I'm using Groonga too!"},
+       {"article": "article-3", "content": "I'm using Mroonga!"},
+       {"article": "article-1", "content": "I'm using PGroonga!"}
+       ]
+
+       select Articles --match_columns comments.content --query groonga \
+         --output_columns "_key, _score, comments.content
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               1
+             ],
+             [
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "_score",
+                 "Int32"
+               ],
+               [
+                 "comments.content",
+                 "ShortText"
+               ]
+             ],
+             [
+               "article-1",
+               1,
+               [
+                 "I'm using Groonga too!",
+                 "I'm using PGroonga!"
+               ]
+             ]
+           ]
+         ]
+       ]
+
+* [:doc:`/reference/commands/load`] Added support for loading reference vector with inline object literal.
+
+  * For example, we can load data like ``"key" : "[ { "key" : "value", ..., "key" : "value" } ]"`` as below.
+
+    .. code-block::
+
+      table_create Purchases TABLE_NO_KEY
+      column_create Purchases item COLUMN_SCALAR ShortText
+      column_create Purchases price COLUMN_SCALAR UInt32
+
+      table_create Settlements TABLE_HASH_KEY ShortText
+      column_create Settlements purchases COLUMN_VECTOR Purchases
+      column_create Purchases settlements_purchases COLUMN_INDEX Settlements purchases
+
+      load --table Settlements
+      [
+      {
+        "_key": "super market",
+        "purchases": [
+           {"item": "apple", "price": 100},
+           {"item": "milk",  "price": 200}
+        ]
+      },
+      {
+        "_key": "shoes shop",
+        "purchases": [
+           {"item": "sneakers", "price": 3000}
+        ]
+      }
+      ]
+
+  * It makes easier to add JSON data into reference columns by this feature.
+  * Currently, this feature only support with JSON input.
+
+* [:doc:`/reference/commands/load`] Added support for loading reference vector from JSON text.
+
+  * We can load data to reference vector from source table with JSON text as below.
+
+    .. code-block::
+
+      table_create Purchases TABLE_HASH_KEY ShortText
+      column_create Purchases item COLUMN_SCALAR ShortText
+      column_create Purchases price COLUMN_SCALAR UInt32
+
+      table_create Settlements TABLE_HASH_KEY ShortText
+      column_create Settlements purchases COLUMN_VECTOR Purchases
+
+      column_create Purchases settlements_purchases COLUMN_INDEX Settlements purchases
+
+      load --table Settlements
+      [
+      {
+        "_key": "super market",
+        "purchases": "[{\"_key\": \"super market-1\", \"item\": \"apple\", \"price\": 100}, {\"_key\": \"super market-2\", \"item\": \"milk\",  \"price\": 200}]"
+      },
+      {
+        "_key": "shoes shop",
+        "purchases": "[{\"_key\": \"shoes shop-1\", \"item\": \"sneakers\", \"price\": 3000}]"
+      }
+      ]
+
+      dump \
+        --dump_plugins no \
+        --dump_schema no
+      load --table Purchases
+      [
+      ["_key","item","price"],
+      ["super market-1","apple",100],
+      ["super market-2","milk",200],
+      ["shoes shop-1","sneakers",3000]
+      ]
+
+      load --table Settlements
+      [
+      ["_key","purchases"],
+      ["super market",["super market-1","super market-2"]],
+      ["shoes shop",["shoes shop-1"]]
+      ]
+
+      column_create Purchases settlements_purchases COLUMN_INDEX Settlements purchases
+
+  * Currently, this feature doesn't support nested reference record.
+
+* [Windows] Added support for UNIX epoch for ``time_classify_*`` functions.
+
+  * Groonga handles timestamps on local time. Therefore, for example, if we input the UNIX epoch in Japan, inputting time is 9 hours behind the UNIX epoch.
+
+  * The Windows API outputs an error when we input the time before the UNIX epoch.
+
+  * We can use the UNIX epoch in ``time_classify_*`` functions as below in this release.
+
+    .. code-block::
+
+       plugin_register functions/time
+
+       table_create Timestamps TABLE_PAT_KEY Time
+       load --table Timestamps
+       [
+       {"_key": 0},
+       {"_key": "2016-05-06 00:00:00.000001"},
+       {"_key": "2016-05-06 23:59:59.999999"},
+       {"_key": "2016-05-07 00:00:00.000000"},
+       {"_key": "2016-05-07 00:00:00.000001"},
+       {"_key": "2016-05-08 23:59:59.999999"},
+       {"_key": "2016-05-08 00:00:00.000000"}
+       ]
+
+       select Timestamps \
+         --sortby _id \
+         --limit -1 \
+         --output_columns '_key, time_classify_day_of_week(_key)'
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               7
+             ],
+             [
+               [
+                 "_key",
+                 "Time"
+               ],
+               [
+                 "time_classify_day_of_week",
+                 null
+               ]
+             ],
+             [
+               0.0,
+               4
+             ],
+             [
+               1462460400.000001,
+               5
+             ],
+             [
+               1462546799.999999,
+               5
+             ],
+             [
+               1462546800.0,
+               6
+             ],
+             [
+               1462546800.000001,
+               6
+             ],
+             [
+               1462719599.999999,
+               0
+             ],
+             [
+               1462633200.0,
+               0
+             ]
+           ]
+         ]
+       ]
+
+* [:doc:`reference/functions/query_parallel_or`] Added a new function for processing queries in parallel.
+
+  * ``query_parallel_or`` requires Apache Arrow for processing queries in parallel.
+    If it does not enable, ``query_parallel_or`` processes queries in sequence.
+
+  * ``query_parallel_or`` processes combination of ``match_columns`` and ``query_string`` in parallel.
+
+  * Syntax of ``query_parallel_or`` is as follow::
+
+      query_parallel_or(match_columns, query_string1,
+                                       query_string2,
+                                       .
+                                       .
+                                       .
+                                       query_stringN,
+                                       {"option": "value", ...})
+
+* [:doc:`reference/commands/select`] Added support for ignoring nonexistent sort keys.
+
+  * Groonga had been outputted error when we specified nonexistent sort keys until now.
+    However, Groonga ignore nonexistent sort keys since this release. (Groonga doesn't output error.)
+  * This feature implements for consistency.
+    Because we just ignore invalid values in ``output_columns`` and most of invalid values in ``sort_keys``.
+
+* [:doc:`reference/commands/select`] Added support for ignoring nonexistent tables in ``drilldowns[].table``. [GitHub#1169][Reported by naoa]
+
+  * Groonga had been outputted error when we specified nonexistent tables in ``drilldowns[].table`` until now.
+    However, Groonga ignore nonexistent tables in ``drilldowns[].table`` since this release. (Groonga doesn't output error.)
+  * This feature implements for consistency.
+    Because we just ignore invalid values in ``output_columns`` and most of invalid values in ``sort_keys``.
+
+* [httpd] Updated bundled nginx to 1.19.8.
+
+Fixes
+^^^^^
+
+* [:doc:`reference/commands/reference_acquire`] Fixed a bug that Groonga crash when a table's reference is acquired and a column is added to the table before auto release is happened.
+
+  * Because the added column's reference isn't acquired but it's released on auto release.
+
+* [Windows] Fixed a bug that one or more processes fail an output backtrace on SEGV when a new backtrace logging process starts when another backtrace logging process is running in another thread.
+
+
+Known Issues
+^^^^^^^^^^^^
+
+* Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column.
+
+Thanks
+^^^^^^
+
+* naoa
+
+.. _release-11-0-0:
+
+Release 11.0.0 - 2021-02-09
+---------------------------
+
+This is a major version up! But It keeps backward compatibility. We can upgrade to 11.0.0 without rebuilding database.
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/select`] Added support for outputting values of scalar column and vector column via nested index.
+
+  * The nested index is that has structure as below.
+
+    .. code-block::
+
+      table_create Products TABLE_PAT_KEY ShortText
+
+      table_create Purchases TABLE_NO_KEY
+      column_create Purchases product COLUMN_SCALAR Products
+      column_create Purchases tag COLUMN_SCALAR ShortText
+
+      column_create Products purchases COLUMN_INDEX Purchases product
+
+  * The ``Products.purchases`` column is a index of ``Purchases.product`` column in the above example.
+    Also, ``Purchases.product`` is a reference to ``Products`` table.
+
+  * We had not got the correct search result when we search via nested index until now.
+  * The result had been as follows until now. We can see that ``{"product": "apple",  "tag": "man"}`` is not output.
+
+    .. code-block::
+
+      table_create Products TABLE_PAT_KEY ShortText
+
+      table_create Purchases TABLE_NO_KEY
+      column_create Purchases product COLUMN_SCALAR Products
+      column_create Purchases tag COLUMN_SCALAR ShortText
+
+      column_create Products purchases COLUMN_INDEX Purchases product
+
+      load --table Products
+      [
+      {"_key": "apple"},
+      {"_key": "banana"},
+      {"_key": "cacao"}
+      ]
+
+      load --table Purchases
+      [
+      {"product": "apple",  "tag": "man"},
+      {"product": "banana", "tag": "man"},
+      {"product": "cacao",  "tag": "woman"},
+      {"product": "apple",  "tag": "many"}
+      ]
+
+      select Products \
+        --output_columns _key,purchases.tag
+      [
+        [
+          0,
+          1612504193.380738,
+          0.0002026557922363281
+        ],
+        [
+          [
+            [
+              3
+            ],
+            [
+              [
+                "_key",
+                "ShortText"
+              ],
+              [
+                "purchases.tag",
+                "ShortText"
+              ]
+            ],
+            [
+              "apple",
+              "many"
+            ],
+            [
+              "banana",
+              "man"
+            ],
+            [
+              "cacao",
+              "man"
+            ]
+          ]
+        ]
+      ]
+
+  * The result will be as follows from this release. We can see that ``{"product": "apple",  "tag": "man"}`` is output.
+
+    .. code-block::
+
+      select Products \
+        --output_columns _key,purchases.tag
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              3
+            ],
+            [
+              [
+                "_key",
+                "ShortText"
+              ],
+              [
+                "purchases.tags",
+                "Tags"
+              ]
+            ],
+            [
+              "apple",
+              [
+                [
+                  "man",
+                  "one"
+                ],
+                [
+                  "child",
+                  "many"
+                ]
+              ]
+            ],
+            [
+              "banana",
+              [
+                [
+                  "man",
+                  "many"
+                ]
+              ]
+            ],
+            [
+              "cacao",
+              [
+                [
+                  "woman"
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+
+* [Windows] Dropped support for packages of Windows version that we had cross compiled by using MinGW on Linux.
+
+  * Because there aren't probably many people who use that.
+  * These above packages are that We had provided as below name until now.
+
+    * ``groonga-x.x.x-x86.exe``
+    * ``groonga-x.x.x-x86.zip``
+    * ``groonga-x.x.x-x64.exe``
+    * ``groonga-x.x.x-x86.zip``
+
+  * From now on, we use the following packages for Windows.
+
+    * ``groonga-latest-x86-vs2019-with-vcruntime.zip``
+    * ``groonga-latest-x64-vs2019-with-vcruntime.zip``
+
+  * If a system already has installed Microsoft Visual C++ Runtime Library, we suggest that we use the following packages.
+
+    * ``groonga-latest-x86-vs2019.zip``
+    * ``groonga-latest-x64-vs2019.zip``
+
+Fixes
+^^^^^
+
+* Fixed a bug that there is possible that index is corrupt when Groonga executes many additions, delete, and update information in it.
+
+  * This bug occurs when we only execute many delete information from index.
+    However, it doesn't occur when we only execute many additions information into index.
+
+  * We can repair the index that is corrupt by this bug using reconstruction of it.
+
+  * This bug doesn't detect unless we reference the broken index.
+    Therefore, the index in our indexes may has already broken.
+
+  * We can use [:doc:`reference/commands/index_column_diff`] command to confirm whether the index has already been broken or not.

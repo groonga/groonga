@@ -1,0 +1,791 @@
+# -*- po -*-
+# Japanese translations for 1.2.4 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.4\n"
+"PO-Revision-Date: 2023-07-24 12:40+0900\n"
+"Report-Msgid-Bugs-To: \n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "News - 7 series"
+msgstr "お知らせ - 7系"
+
+msgid "Release 7.1.1 - 2018-01-29"
+msgstr "7.1.1リリース - 2018-01-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[:doc:`/install/ubuntu`] Dropped Ubuntu 17.04 (Zesty Zapus) support. It has reached EOL at Jan 13, 2018."
+msgstr "[:doc:`/install/ubuntu`] Ubuntu 17.04（Zesty Zapus）のサポートをやめました。2018年1月13日でサポートが切れた（EOLになった）ためです。"
+
+msgid "Added quorum match support. You can use quorum match in both script syntax and query syntax. [groonga-talk,385][Suggested by 付超群]"
+msgstr "Quorum matchをサポートしました。スクリプト構文でもクエリー構文でもquorum matchを使うことができます。"
+
+msgid "TODO: Add documents for quorum match syntax and link to them."
+msgstr "TODO: quorum matchの構文をドキュメントへ追加、それらのドキュメントへのリンク生成"
+
+msgid "Added custom similarity threshold support in script syntax. You can use custom similarity threshold in script syntax."
+msgstr "スクリプト構文で類似度のカスタマイズをサポートしました。スクリプト構文内で類似度のカスタマイズができます。"
+
+msgid "TODO: Add document for the syntax and link to it."
+msgstr "TODO: 類似度のカスタマイズの構文をドキュメントへ追加、それらのドキュメントへのリンク生成"
+
+msgid "[:doc:`/reference/executables/grndb`][:ref:`grndb-force-lock-clear`] Added ``--force-lock-clear`` option. With this option, ``grndb`` forces to clear locks of database, tables and data columns. You can use your database again even if locks are remained in database, tables and data columns."
+msgstr "[:doc:`/reference/executables/grndb`][:ref:`grndb-force-lock-clear`] ``--force-lock-clear`` を追加しました。このオプションは、データベースやテーブル、データカラムのロックを強制的に解除します。データベースやテーブル、データカラムにロックが残っていても再度データベースを使えるようになります。"
+
+msgid "But this option very risky. Normally, you should not use it. If your database is broken, your database is still broken. This option just ignores locks."
+msgstr "しかし、このオプションはとても危険です。通常は使うべきではありません。データベースが壊れている場合は、データベースは依然として破損しています。このオプションはロックを無視するだけです。"
+
+msgid "[:doc:`/reference/commands/load`] Added surrogate pairs support in escape syntax. For example, ``\\uD83C\\uDF7A`` is processed as ``🍺``."
+msgstr "[:doc:`/reference/commands/load`] サロゲートペアをエスケープ可能にしました。例えば、 ``\\uD83C\\uDF7A`` は ``🍺`` として処理されます。"
+
+msgid "[Windows] Changed to use sparse file on Windows. It reduces disk space and there are no performance demerit."
+msgstr "[Windows] Windows上でスパースファイルを使用するように変更しました。ディスク容量を節約できます。パフォーマンス上のデメリットはありません。"
+
+msgid "[:ref:`online-index-construction`] Added ``GRN_II_REDUCE_EXPIRE_THRESHOLD`` environment variable to control when memory maps are expired in index column. It's ``-1`` by default. It means that expire timing is depends on index column size. If index column is smaller, expire timing is more. If index column is larger, expire timing is less."
+msgstr "[:ref:`online-index-construction`] インデックスカラム内のメモリーマップをいつ開放するかをコントロールする環境変数 ``GRN_II_REDUCE_EXPIRE_THRESHOLD`` を追加しました。デフォルトは ``-1`` です。 ``-1`` のときはインデックスカラムのサイズによって動的に開放するタイミングを決めます。インデックスカラムが小さければ頻繁に解放し、大きければ頻度を下げます。"
+
+msgid "You can use the previous behavior by ``0``. It means that Groonga always tries to expire."
+msgstr "``0`` を設定すると従来と同じ挙動になります。従来の挙動とは、Groongaは開放できそうなときはいつも開放しようとするという挙動です。"
+
+msgid "[:doc:`/reference/commands/logical_range_filter`] [:ref:`logical-range-filter-post-filter`] Added a new filter timing. It's executed after ``filtered`` stage generated columns are generated."
+msgstr "[:doc:`/reference/commands/logical_range_filter`] [:ref:`logical-range-filter-post-filter`]フィルタータイミングを新規追加しました。 ``filtered`` ステージで生成されるカラムが生成された後に実行されます。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Reduced resource usage for creating index for reference vector. [GitHub#806][Reported by Naoya Murakami]"
+msgstr "参照ベクタのインデックスを作成する際に使用するリソースを削減しました。[GitHub#806][村上さんが報告]"
+
+msgid "[:doc:`/reference/commands/table_create`] Fixed a bug that a table is created even when ``token_filters`` is invalid. [GitHub#266]"
+msgstr "[:doc:`/reference/commands/table_create`] ``token_filters`` が無効であってもテーブルが作成される不具合を修正しました。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "付超群"
+msgstr "付超群さん"
+
+msgid "Naoya Murakami"
+msgstr "村上さん"
+
+msgid "Release 7.1.0 - 2017-12-29"
+msgstr "7.1.0リリース - 2017-12-29"
+
+msgid "[:doc:`/reference/commands/load`] Improved the ``load``'s query-log format. Added detail below items in the ``load``'s query-log."
+msgstr "[:doc:`/reference/commands/load`] ``load`` コマンドのクエリーログのフォーマットを改良しました。``load`` コマンドのクエリーログに以下の項目が追加されます。"
+
+msgid "outputs number of loaded records."
+msgstr "ロードしたレコード数を表示します。"
+
+msgid "outputs number of error records and columns."
+msgstr "ロードがエラーになったレコードとカラムの数を表示します。"
+
+msgid "outputs number of total records."
+msgstr "ロード後の総レコード数を表示します。"
+
+msgid "[:doc:`/reference/commands/logical_count`] Improved the ``logical_count``'s query-log format. Added detail below items in the ``logical_count``'s query-log."
+msgstr "[:doc:`/reference/commands/logical_count`] ``logical_count`` コマンドのクエリーログのフォーマットを改良しました。``logical_count`` コマンドのクエリーログに以下の項目が追加されます。"
+
+msgid "outputs number of count."
+msgstr "マッチしたレコード数を表示します。"
+
+msgid "[:doc:`/reference/commands/logical_select`] Improve the ``logical_select``'s query-log format. Added detail below items in the ``logical_select``'s query-log."
+msgstr "[:doc:`/reference/commands/logical_select`] ``logical_select`` コマンドのクエリーログのフォーマットを改良しました。 ``logical_select`` コマンドのクエリーログに以下の項目が追加されます。"
+
+msgid "log N outputs."
+msgstr "マッチしたレコード数を表示します。"
+
+msgid "outputs plain drilldown."
+msgstr "ドリルダウンした数を表示します。"
+
+msgid "outputs labeled drilldown."
+msgstr "ラベルつきのドリルダウンをした数を表示します。"
+
+msgid "outputs selected in each shard."
+msgstr "それぞれのシャードで検索にマッチした数を表示します。"
+
+msgid "use \"[...]\" for target information."
+msgstr "検索対象のシャードの情報を\"[...]\"を使って表示します。"
+
+msgid "[:doc:`/reference/commands/delete`] Improved the ``delete``'s query-log format. Added detail below items in the ``delete``'s query-log."
+msgstr "[:doc:`/reference/commands/delete`] ``delete`` コマンドのクエリーログのフォーマットを改良しました。 ``delete`` コマンドのクエリーログに以下の項目が追加されます。"
+
+msgid "outputs number of deleted and error records."
+msgstr "削除したレコード数と削除に失敗したレコード数を表示します。"
+
+msgid "outputs number of rest number of records."
+msgstr "削除後に残ったレコード数を表示します。"
+
+msgid "[:doc:`/reference/executables/groonga-server-http`] The server executed by ``groonga -s`` ensure stopping by C-c."
+msgstr "[:doc:`/reference/executables/groonga-server-http`] ``groonga -s`` で実行したサーバーをC-c で確実に停止出来るようにしました。"
+
+msgid "Used ``NaN`` and ``Infinity``, ``-Infinity`` instead of Lisp representations(``#<nan>`` and  ``#i1/0``, ``#-i1/0``)."
+msgstr "Lisp表現( ``#<nan>`` 、 ``#i1/0`` 、 ``#-i1/0`` )の代わりに ``Nan`` と ``Infinity`` 、 ``-Infinity`` を使用するように改良しました。"
+
+msgid "Supported vector for drilldown calc target."
+msgstr "ドリルダウンでベクター型のカラムをサポートしました。"
+
+msgid "Partially supported keyword extraction from regexp search. It enables ``highlight_html`` and ``snippet_html`` for regexp search. [GitHub#787][Reported by takagi01]"
+msgstr "部分的に正規表現を用いた検索から、キーワードを抽出出来るように改良しました。これにより、正規表現を用いた検索に ``highlight_html`` と ``snippet_html`` を使えるようになります。[takagi01さんに報告いただきました]"
+
+msgid "[bulk] Reduced the number of ``realloc()``. ``grn_bulk_*()`` API supports it."
+msgstr "``grn_bulk_*()`` APIにおいて、 ``realloc()`` が呼ばれる回数を削減しました。"
+
+msgid "It improves performance for large output case on Windows. For example, it causes 100x faster for 100MB over output."
+msgstr "Windowsにおいて出力が大きいケースでパフォーマンスが向上します。例えば、出力が100MBを超える場合には、約100倍速くなります。"
+
+msgid "Because ``realloc()`` is heavy on Windows."
+msgstr "``realloc()`` はWindowsでは重い処理であるためです。"
+
+msgid "Enabled ``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` only when its value is \"yes\"."
+msgstr "``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` の値にyesが設定された時のみ ``GRN_II_OVERLAP_TOKEN_SKIP_ENABLE`` を有効にするようにしました。"
+
+msgid "Deprecated ``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE``. Use ``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_ENABLE=no`` instead."
+msgstr "``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_DISABLE`` は非推奨になりました。代わりに ``GRN_NGRAM_TOKENIZER_REMOVE_BLANK_ENABL=no`` を使って下さい。"
+
+msgid "Added new function ``index_column_source_records``. It gets source records of index column.[Patch by Naoya Murakami]"
+msgstr "関数 ``index_column_source_records`` を新規に追加しました。インデックスカラムのソースを取得することができます。[村上さんがパッチを提供]"
+
+msgid "[:doc:`/reference/commands/select`] Supported negative \"offset\" for \"offset + size - limit\" >= 0"
+msgstr "[:doc:`/reference/commands/select`] offsetに負の値を設定出来るようにしました。"
+
+msgid "Added ``grn_column_cache``. It'll improve performance for getter of fixed size column value."
+msgstr "固定サイズのカラムの値を取得する際のパフォーマンスを向上しました。"
+
+msgid "[:doc:`/reference/executables/groonga`] Added ``--listen-backlog option``. You can customize ``listen(2)``'s backlog by this option."
+msgstr "[:doc:`/reference/executables/groonga`] groongaコマンドの引数に ``--listen-backlog`` オプションを追加しました。listenシステムコールのbacklogをカスタマイズできます。"
+
+msgid "[httpd] Updated bundled nginx to 1.13.8."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.13.8に更新しました。"
+
+msgid "Fixed a memory leak in ``highlight_full``"
+msgstr "``highlight_full`` 関数を使用するとメモリリークする問題を修正しました。"
+
+msgid "Fixed a crash bug by early unlink It's not caused by instruction in ``grn_expr_parse()`` but it's caused when libgroonga user such as Mroonga uses the following instructions:"
+msgstr "Mroongaで以下ような呼び出しを行った際にクラッシュする問題を修正しました。"
+
+msgid "``grn_expr_append_const(\"_id\")``"
+msgstr " ``grn_expr_append_const(\"_id\")`` "
+
+msgid "``grn_expr_append_op(GRN_OP_GET_VALUE)``"
+msgstr " ``grn_expr_append_op(GRN_OP_GET_VALUE)`` "
+
+msgid "takagi01"
+msgstr "takagi01"
+
+msgid "Release 7.0.9 - 2017-11-29"
+msgstr "7.0.9リリース - 2017-11-29"
+
+msgid "Supported newer version of Apache Arrow. In this release, 0.8.0 or later is required for Apache Arrow support."
+msgstr "Apache Arrowの新しいバージョンをサポートしました。このリリースでは、Apache Arrowサポートを有効にするには0.8.0以降が必要です。"
+
+msgid "[sharding] Added new API for dynamic columns."
+msgstr "[sharding] 動的カラムの新しいAPIを追加しました。"
+
+msgid "Groonga::LabeledArguments"
+msgstr ""
+
+msgid "[sharding] Added convenient ``Table#select_all`` method."
+msgstr "[sharding] 便利メソッドである ``Table#select_all`` を追加しました。"
+
+msgid "[:doc:`/reference/commands/logical_range_filter`] Supported dynamic columns. Note that ``initial`` and ``filtered`` stage are only supported."
+msgstr "[:doc:`/reference/commands/logical_range_filter`] 動的カラムをサポートしました。 ``initial`` と ``filtered`` ステージのみをサポートしています。"
+
+msgid "[:doc:`/reference/commands/logical_range_filter`] Added documentation about ``cache`` parameter and dynamic columns."
+msgstr "[:doc:`/reference/commands/logical_range_filter`] ``cache`` 引数と動的カラムに関するドキュメントを追加しました。"
+
+msgid "[:doc:`/reference/commands/logical_count`] Supported dynamic columns. Note that ``initial`` stage is only supported."
+msgstr "[:doc:`/reference/commands/logical_count`] 動的カラムをサポートしました。``initial`` ステージのみサポートしています。"
+
+msgid "[:doc:`/reference/commands/logical_count`] Added documentation about named parameters."
+msgstr "[:doc:`/reference/commands/logical_count`] 名前付き引数のドキュメントを追加しました。"
+
+msgid "[:doc:`/reference/commands/select`] Supported ``--match_columns _key`` without index."
+msgstr "[:doc:`/reference/commands/select`] ``--match_columns _key`` をインデックスを使わない場合でもサポートしました。"
+
+msgid "[:doc:`/reference/functions/in_values`] Supported to specify more than 126 values. [GitHub#760] [GitHub#781] [groonga-dev,04449] [Reported by Murata Satoshi]"
+msgstr "[:doc:`/reference/functions/in_values`] 126を超える引数を指定できるようにしました。 [GitHub#760] [GitHub#781] [groonga-dev,04449] [むらたさんが報告]"
+
+msgid "[httpd] Updated bundled nginx to 1.13.7."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.13.7に更新しました。"
+
+msgid "[httpd] Fixed build error when old Groonga is already installed. [GitHub#775] [Reported by myamanishi3]"
+msgstr "[httpd] 古いバージョンのGroongaがすでにインストールされている場合にそちらを参照してしまい、ビルドエラーになる問題を修正しました。　[GitHub#775] [myamanishi3さんが報告]"
+
+msgid "[:doc:`/reference/functions/in_values`] Fixed a bug that ``in_values`` with too many arguments can cause a crash. This bug is found during supporting more than 126 values. [GitHub#780]"
+msgstr "[:doc:`/reference/functions/in_values`] ``in_values`` に多すぎる引数を指定するとクラッシュする不具合を修正しました。この不具合は126を超える引数をサポートする過程で見つかりました。 [GitHub#780]"
+
+msgid "[cmake] Fixed LZ4 and MessagePack detection. [Reported by Sergei Golubchik]"
+msgstr "[cmake] LZ4 と MessagePack をビルド時に正しく検出できるようにしました。 [Sergei Golubchikさんが報告]"
+
+msgid "[:ref:`offline-index-construction`] Fixed a bug that offline index construction for vector column consumes unnecessary resources. If you have a log of elements in one vector column and many records, Groonga will crash. [groonga-dev,04533][Reported by Toshio Uchiyama]"
+msgstr "[:ref:`offline-index-construction`] ベクターカラムの静的索引構築時に必要以上のリソースを使用する問題を修正しました。1つのベクターカラムの要素数が多く、大量のレコードがある場合はGroongaがクラッシュしていました。 [groonga-dev,04533][内山敏郎さんが報告]"
+
+msgid "Murata Satoshi"
+msgstr "むらたさん"
+
+msgid "myamanishi3"
+msgstr "myamanishi3さん"
+
+msgid "Sergei Golubchik"
+msgstr "Sergei Golubchikさん"
+
+msgid "Toshio Uchiyama"
+msgstr "内山敏郎さん"
+
+msgid "Release 7.0.8 - 2017-10-29"
+msgstr "7.0.8リリース - 2017-10-29"
+
+msgid "[windows] Supported backtrace on crash. This feature not only function call history but also source filename and number of lines can be displayed as much as possible. This feature makes problem solving easier."
+msgstr "[windows] クラッシュした際にバックトレースを出せるようにしました。関数呼び出しだけでなく、ソースコードの該当行も可能な限り表示します。バックトレースのサポートにより、問題の素早い解決につながります。"
+
+msgid "Supported ``( )`` (empty block) only query (``--query \"( )\"``) for ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an error. [GitHub#767]"
+msgstr "``QUERY_NO_SYNTAX_ERROR`` を指定してあれば \"( )\" を ``--query`` に指定して実行できるようにしました。 以前のバージョンでは、エラーになっていました。 [GitHub#767]"
+
+msgid "Supported ``(+)`` (only and block) only query (``--query \"(+)\"``) for ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an error. [GitHub#767]"
+msgstr "``QUERY_NO_SYNTAX_ERROR`` を指定してあれば \"(+)\" を ``--query`` に指定して実行できるようにしました。 以前のバージョンでは、エラーになっていました。 [GitHub#767]"
+
+msgid "Supported ``~foo`` (starting with \"~\") query (``--query \"~y\"``) for ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an error. [GitHub#767]"
+msgstr "``QUERY_NO_SYNTAX_ERROR`` を指定してあれば ``--query \"~y\"`` (~ではじまる)クエリーを実行できるようにしました。 以前のバージョンでは、エラーになっていました。 [GitHub#767]"
+
+msgid "Modified log level of ``expired`` from ``info`` to ``debug``. ``2017-10-29 14:05:34.123456|i| <0000000012345678:0> expired i=000000000B123456 max=10 (2/2)`` This message is logged when memory mapped area for index is unmapped.  Thus, this log message is useful information for debugging, in other words, as it is unnecessary information in normal operation, we changed log level from ``info`` to ``debug``."
+msgstr "``expired`` のログレベルを ``info`` から ``debug`` に変更しました。 ``2017-10-29 14:05:34.123456|i| <0000000012345678:0> expired i=000000000B123456 max=10 (2/2)`` このメッセージはインデックスをメモリーにマップした後で開放されたときに記録されます。つまり、メモリーの使用状況に関するデバッグには有用ですが、通常の運用においては有用ではありません。そのためログレベルを ``debug`` に変更しました。"
+
+msgid "Supported Ubuntu 17.10 (Artful Aardvark)"
+msgstr "Ubuntu 17.10 Artful Aardvarkをサポート。"
+
+msgid "[dat] Fixed a bug that large file is created unexpectedly in the worst case during database expansion process. This bug may occurs when you create/delete index columns so frequently. In 7.0.7 release, a related bug was fixed - \"``table_create`` command fails when there are many deleted keys\", but it turns out that it is not enough in the worst case."
+msgstr "[dat] データベースを拡張する際、意図せず大きなファイルが(ワーストケースで)作成されてしまうことのある不具合を修正しました。この不具合はインデックスカラムを頻繁に作成/削除を繰り返したときに発生する可能性があります。7.0.7ではこの不具合に関連して\"大量にキーを削除したケースで ``table_create`` に失敗する\"問題を修正しましたが、その修正が不十分なケースに対応しました。"
+
+msgid "[:doc:`/reference/commands/logical_select`] Fixed a bug that when ``offset`` and ``limit`` were applied to multiple shards at the same time, there is a case that it returns a fewer number of records unexpectedly."
+msgstr "[:doc:`/reference/commands/logical_select`] ``offset`` と ``limit`` が複数のシャードに対して適用されたとき、実際よりも少ないレコードが返される不具合を修正しました。"
+
+msgid "Release 7.0.7 - 2017-09-29"
+msgstr "7.0.7リリース - 2017-09-29"
+
+msgid "Supported ``+`` only query (``--query \"+\"``) for ``QUERY_NO_SYNTAX_ERROR``. In the previous version, it caused an error."
+msgstr "``QUERY_NO_SYNTAX_ERROR`` を ``+`` のみのクエリーに指定したときにも動作するようにしました。以前のバージョンではそのようなクエリーはエラーになっていました。"
+
+msgid "[httpd] Updated bundled nginx to 1.13.5."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.13.5に更新しました。"
+
+msgid "[:doc:`/reference/commands/dump`] Added the default argument values to the syntax section."
+msgstr "[:doc:`/reference/commands/dump`] 引数のデフォルト値を構文のセクションに追加しました。"
+
+msgid "[:doc:`/reference/command/command_version`] Supported ``--default-command-version 3``."
+msgstr "[:doc:`/reference/command/command_version`] ``--default-command-version 3`` に対応しました。"
+
+msgid "Supported caching select result with function call. Now, most of existing functions supports this feature. There are two exception, when ``now()`` and ``rand()`` are used in query, select result will not cached. Because of this default behavior change, new APIs are introduced."
+msgstr "関数呼び出し時に検索結果をキャッシュできるようにしました。ほとんどの関数の呼び出し結果はキャッシュされます。例外は ``now()`` と ``rand()`` を使った場合です。標準でキャッシュするように振る舞いを変更したので、新たにAPIを追加しました。"
+
+msgid "``grn_proc_set_is_stable()``"
+msgstr "``grn_proc_set_is_stable()`` を追加。"
+
+msgid "``grn_proc_is_stable()``"
+msgstr "``grn_proc_is_stable()`` を追加。"
+
+msgid "Note that if you add a new function that may return different result with the same argument, you must call ``grn_proc_is_stable(ctx, proc, GRN_FALSE)``.  If you don't call it, select result with the function call is cached and is wrong result for multiple requests."
+msgstr "呼び出しごとに結果が異なる関数を新規に追加する場合、``grn_proc_is_stable(ctx, proc, GRN_FALSE)`` を呼ばなければなりません。もし呼ばなかった場合には、検索結果がキャッシュされるので、期待と異なり誤った結果を返します。"
+
+msgid "[windows] Fixed to clean up file handle correctly on failure when ``database_unmap`` is executed. There is a case that critical section is not initialized when request is canceled before executing ``database_unmap``. In such a case, it caused a crach bug."
+msgstr "[windows] ``database_unmap`` が実行される前のファイルハンドルのエラー処理を適切に行うようにしました。``database_unmap`` 実行前にリクエストがキャンセルされた場合、排他制御部分が未初期化となる場合がありました。その場合、クラッシュしていました。"
+
+msgid "[:doc:`/reference/tokenizers`] Fixed document for wrong tokenizer names. It should be ``TokenBigramIgnoreBlankSplitSymbolAlpha`` and ``TokenBigramIgnoreBlankSplitSymbolAlphaDigit``."
+msgstr "[:doc:`/reference/tokenizers`] トークナイザー名のドキュメントを修正しました。``TokenBigramIgnoreBlankSplitSymbolAlpha`` や ``TokenBigramIgnoreBlankSplitSymbolAlphaDigit`` であるべきでした。"
+
+msgid "Changed not to keep created empty file on error."
+msgstr "エラー時に空のファイルが残らないようにしました。"
+
+msgid "In the previous versions, there is a case that empty file keeps remain on error."
+msgstr "以前のバージョンでは、空のファイルがエラー時に残っていました。"
+
+msgid "Here is the senario to reproduce:"
+msgstr "再現するためのシナリオは以下です。:"
+
+msgid "creating new file by grn_fileinfo_open succeeds"
+msgstr "``grn_fileinfo_open`` によりファイルの作成に成功する"
+
+msgid "mapping file by DO_MAP() is failed"
+msgstr "``DO_MAP`` によりファイルマッピングに失敗する"
+
+msgid "In such a case, it causes an another error such as \"already file exists\" because of the file which isn't under control. so these file should be removed during cleanup process."
+msgstr "そのような場合、Groongaの管理下にないファイルのせいで「すでにファイルが存在します。」という別のエラーが発生します。そういったファイルは後始末の段階で削除すべきでした。"
+
+msgid "Fixed a bug that Groonga may be crashed when search process is executed during executing many updates in a short time."
+msgstr "短時間に多数の更新を行っている状況で検索した場合にクラッシュすることがある不具合を修正しました。"
+
+msgid "[:doc:`/reference/commands/table_create`] Fixed a bug that ``table_create`` failed when there are many deleted keys."
+msgstr "[:doc:`/reference/commands/table_create`] 大量に削除されたキーがDATテーブルに存在する場合、``table_create`` の実行に失敗する不具合を修正しました。"
+
+msgid "Release 7.0.6 - 2017-08-29"
+msgstr "7.0.6リリース - 2017-08-29"
+
+msgid "Supported prefix match search using multiple indexes. (e.g. ``--query \"Foo*\" --match_columns \"TITLE_INDEX_COLUMN||BODY_INDEX_COLUMN\"``)."
+msgstr "前方一致検索を複数インデックスを指定してできるようになりました。 (例 ``--query \"Foo*\" --match_columns \"TITLE_INDEX_COLUMN||BODY_INDEX_COLUMN\"``)"
+
+msgid "[:doc:`/reference/window_functions/window_count`] Supported ``window_count`` function to add count data to result set. It is useful to analyze or filter additionally."
+msgstr "[:doc:`/reference/window_functions/window_count`] ``window_count`` 関数を追加しました。検索した結果にカウントした値を追加するのに使います。検索結果をもとに分析したり、カウント結果をもとにフィルタしたりすると便利です。"
+
+msgid "Added the following API"
+msgstr "以下のAPIを公開しました。"
+
+msgid "``grn_obj_get_disk_usage():``"
+msgstr "``grn_obj_get_disk_usage()`` を追加。"
+
+msgid "``GRN_EXPR_QUERY_NO_SYNTAX_ERROR``"
+msgstr "``GRN_EXPR_QUERY_NO_SYNTAX_ERROR`` を追加。"
+
+msgid "``grn_expr_syntax_expand_query_by_table()``"
+msgstr "``grn_expr_syntax_expand_query_by_table()`` を追加。"
+
+msgid "``grn_table_find_reference_object()``"
+msgstr "``grn_table_find_reference_object()`` を追加。"
+
+msgid "[:doc:`/reference/commands/object_inspect`] Supported to show disk usage about specified object."
+msgstr "[:doc:`/reference/commands/object_inspect`] 指定したオブジェクトのディスク使用量を表示できるようになりました。"
+
+msgid "Supported falling back query parse feature. It is enabled when ``QUERY_NO_SYNTAX_ERROR`` flag is set to ``query_flags``. (this feature is disabled by default). If this flag is set, query never causes syntax error. For example, \"A +\" is parsed and escaped automatically into \"A \\+\". This behavior is useful when application uses user input directly and doesn't want to show syntax error to user and in log."
+msgstr "クエリーをパースする際にフォールバックする機能をサポートしました。 ``QUERY_NO_SYNTAX_ERROR`` フラグが ``query_flags`` に指定されていると有効になります。(標準では無効です) このフラグが設定されていると、シンタックスエラーが発生しなくなります。例えば、\"A +\" というクエリーは自動的にエスケープされて \"A \\+\" という扱いになります。この振る舞いはアプリケーションがユーザーの入力をそのまま検索語句として使い、シンタックスエラーやログに記録されないようにしたい場合に便利です。"
+
+msgid "Supported to adjust score for term in query. \">\", \"<\", and \"~\" operators are supported. For example, \">Groonga\" increments score of \"Groonga\", \"<Groonga\" decrements score of \"Groonga\". \"~Groonga\" decreases score of matched document in the current search result. \"~\" operator doesn't change search result itself."
+msgstr "クエリー内の語のスコアを調整できるようになりました。\">\", \"<\" と \"~\"がサポートされています。例えば \">Groonga\" は \"Groonga\" のスコアをインクリメントします。\"<Groonga\" は \"Groonga\" のスコアをデクリメントします。\"~Groonga\" は検索結果についてマッチしたドキュメントのスコアをデクリメントします。\"~\" は検索結果そのものには影響しません。"
+
+msgid "Improved performance to remove table. ``thread_limit=1`` is not needed for it. The process about checking referenced table existence is done without opening objects. As a result, performance is improved."
+msgstr "テーブルを削除するときのパフォーマンスを改善しました。 ``thread_limit=1`` する必要はありません。参照されているテーブルが存在するかチェックする処理をオブジェクトを開かなくてもできるようにしました。その結果としてパフォーマンスが改善しました。"
+
+msgid "[httpd] Updated bundled nginx to 1.13.4."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.13.4に更新しました。"
+
+msgid "[:doc:`/reference/commands/dump`] Fixed a bug that the 7-th unnamed parameter for `--sort_hash_table` option is ignored."
+msgstr "[:doc:`/reference/commands/dump`] 7番目の引数 ( ``--sort_hash_table`` )が名前無しだと無視される不具合を修正しました。"
+
+msgid "[:doc:`/reference/commands/schema`] Fixed a typo in command line parameter name. It should be `source` instead of `sources`. [groonga-dev,04449] [Reported by murata satoshi]"
+msgstr "[:doc:`/reference/commands/schema`] コマンドラインパラメータの誤りを修正しました。`source` であるべきところが `sources` になっていました。[groonga-dev,04449] [むらたさんが報告]"
+
+msgid "[:doc:`/reference/commands/ruby_eval`] Fixed crash when ruby_eval returned syntax error. [GitHub#751] [Patch by ryo-pinus]"
+msgstr "[:doc:`/reference/commands/ruby_eval`] ruby_evalコマンドがシンタックスエラーのときにクラッシュする問題を修正しました。 [GitHub#751] [ryo-pinusさんがパッチ提供]"
+
+msgid "murata satoshi"
+msgstr ""
+
+msgid "ryo-pinus"
+msgstr ""
+
+msgid "Release 7.0.5 - 2017-07-29"
+msgstr "7.0.5リリース - 2017-07-29"
+
+msgid "[httpd] Updated bundled nginx to 1.13.3. Note that this version contains security fix for CVE-2017-7529."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.13.3に更新しました。セキュリティーに関する修正(CVE-2017-7529)を含んでいます。"
+
+msgid "[:doc:`/reference/commands/load`] Supported to load the value of max UInt64. In the previous versions, max UInt64 value is converted into 0 unexpectedlly."
+msgstr "[:doc:`/reference/commands/load`] UInt64の最大値をロードできるようにしました。以前のバージョンでは意図せず0に変換されてしまっていました。"
+
+msgid "``grn_window_get_size()`` [GitHub#725] [Patch by Naoya Murakami]"
+msgstr "``grn_window_get_size()`` [GitHub#725] [村上さんがパッチ提供]"
+
+msgid "[:doc:`/reference/functions/math_abs`] Supported ``math_abs()`` function to calculate absolute value. [GitHub#721]"
+msgstr "[:doc:`/reference/functions/math_abs`] 絶対値を計算するための ``math_abs()`` 関数を追加しました。 [GitHub#721]"
+
+msgid "Supported to make ``grn_default_logger_set_path()`` and ``grn_default_query_logger_set_path()`` thread safe."
+msgstr "``grn_default_logger_set_path()`` と ``grn_default_query_logger_set_path()`` をスレッドセーフにしました。"
+
+msgid "[windows] Updated bundled pcre library to 8.41."
+msgstr "[Windows] バンドルしているpcreを8.41に更新しました。"
+
+msgid "[:doc:`/reference/commands/normalize`] Improved not to output redundant empty string ``\"\"`` on error. [GitHub#730]"
+msgstr "[:doc:`/reference/commands/normalize`] エラー時に冗長な空文字列が出力されないようにしました。"
+
+msgid "[functions/time] Supported to show error message when division by zero was happened. [GitHub#733] [Patch by Naoya Murakami]"
+msgstr "[functions/time] 0除算が発生したときにエラーメッセージを出力するようにしました。 [GitHub#733] [村上さんがパッチ提供]"
+
+msgid "[windows] Changed to map ``ERROR_NO_SYSTEM_RESOURCES`` to ``GRN_RESOURCE_TEMPORARILY_UNAVAILABLE``. In the previous versions, it returns ``rc=-1`` as a result code. It is not helpful to investigate what actually happened. With this fix, it returns ``rc=-12``."
+msgstr "[windows] ``ERROR_NO_SYSTEM_RESOURCES`` エラーを ``GRN_RESOURCE_TEMPORARILY_UNAVAILABLE`` にマッピングするようにしました。以前は ``rc=-1`` をエラーコードとして返していました。ただし実際にどんな問題がおきたのかこれではわかりにくいので、 今回の修正では ``rc=-12`` を返すようにしています。"
+
+msgid "[functions/min][functions/max] Supported vector column. Now you need not to care scalar column or vector column to use. [GitHub#735] [Patch by Naoya Murakami]"
+msgstr "[functions/min][functions/max] ベクターカラムをサポートしました。これでカラムがスカラーなのかベクターなのか気にせず使えるようになりました。 [GitHub#735] [村上さんがパッチ提供]"
+
+msgid "[:doc:`/reference/commands/dump`] Supported ``--sort_hash_table`` option to sort by ``_key`` for hash table. Specify ``--sort_hash_table yes`` to use it."
+msgstr "[:doc:`/reference/commands/dump`] ``--sort_hash_table`` オプションをサポートしました。ハッシュテーブルの ``_key`` でのソートには ``--sort_hash_table yes`` を指定します。"
+
+msgid "[:doc:`/reference/functions/between`] Supported to specify index column. [GitHub#740] [Patch by Naoya Murakami]"
+msgstr "[:doc:`/reference/functions/between`] インデックスカラムを指定できるようになりました。 [GitHub#740] [村上さんがパッチ提供]"
+
+msgid "[load] Supported Apache Arrow 0.5.0 or later."
+msgstr "[load] Apache Arrow 0.5.0 以降をサポート。"
+
+msgid "[:doc:`/troubleshooting/how_to_analyze_error_message`] Added howto article to analyze error message in Groonga."
+msgstr "[:doc:`/troubleshooting/how_to_analyze_error_message`] エラーメッセージの解析方法のドキュメントを追加しました。"
+
+msgid "[:doc:`/install/debian`] Updated required package list to build from source."
+msgstr "[:doc:`/install/debian`] ソースからビルドするときに必要なパッケージのリストを更新しました。"
+
+msgid "[:doc:`/install/ubuntu`] Dropped Ubuntu 16.10 (Yakkety Yak) support. It has reached EOL at July 20, 2017."
+msgstr "[:doc:`/install/ubuntu`] Ubuntu 16.10（Yakkety Yak）のサポートをやめました。2017年7月20日でサポートが切れた（EOLになった）ためです。"
+
+msgid "Fixed to construct correct fulltext indexes against vector column which type belongs to text family (```ShortText`` and so on). This fix resolves that fulltext search doesn't work well against text vector column after updating indexes. [GitHub#494]"
+msgstr "テキスト型( ``ShortText`` など)のベクターカラムに対するインデックスを正しく構築できるようにしました。この修正でインデックス更新後に全文検索でマッチしない問題が解決します。 [GitHub#494]"
+
+msgid "[:doc:`/reference/commands/thread_limit`] Fixed a bug that deadlock occurs when thread_limit?max=1 is requested at once."
+msgstr "[:doc:`/reference/commands/thread_limit`] ``thread_limit?max=1`` というリクエストが同時にきたときにデッドロックが発生する問題を修正しました。"
+
+msgid "[:doc:`/reference/executables/groonga-httpd`] Fixed a mismatch path of pid file between default one and restart command assumed. This mismatch blocked restarting groonga-httpd. [GitHub#743] [Reported by sozaki]"
+msgstr "[:doc:`/reference/executables/groonga-httpd`] デフォルトのPIDのパスと再起動時に想定しているPIDのパスがあっていない問題を修正しました。そのせいで groonga-httpd の再起動に失敗していました。 [GitHub#743] [sozakiさんが報告]"
+
+msgid "Release 7.0.4 - 2017-06-29"
+msgstr "7.0.4リリース - 2017-06-29"
+
+msgid "Added physical create/delete operation logs to identify problem for troubleshooting. [GitHub#700,#701]"
+msgstr "物理的なファイルの作成/削除のログを障害の切り分けのために記録するようにしました。 [GitHub#700,#701]"
+
+msgid "[:doc:`/reference/functions/in_records`] Improved performance for fixed sized column. It may reduce 50% execution time."
+msgstr "[:doc:`/reference/functions/in_records`] 固定長カラムの検索パフォーマンスを改善しました。速度が50%程度改善する可能性があります。"
+
+msgid "[:doc:`/reference/executables/grndb`] Added ``--log-path`` option. [GitHub#702,#703]"
+msgstr "[:doc:`/reference/executables/grndb`] ``--log-path`` オプションを追加しました。"
+
+msgid "[:doc:`/reference/executables/grndb`] Added ``--log-level`` option. [GitHub#706,#708]"
+msgstr "[:doc:`/reference/executables/grndb`] ``--log-level`` オプションを追加しました。"
+
+msgid "``grn_operator_to_exec_func()``"
+msgstr ""
+
+msgid "``grn_obj_is_corrupt()``"
+msgstr ""
+
+msgid "Improved performance for \"FIXED_SIZE_COLUMN OP CONSTANT\". Supported operators are: ``==``, ``!=``, ``<``, ``>``, ``<=`` and ``>=``."
+msgstr "\"固定長カラム 演算子 定数\" というようなクエリのパフォーマンスを改善しました。対応している演算子は ``==``, ``!=``, ``<``, ``>``, ``<=`` と ``>=`` です。"
+
+msgid "Improved performance for \"COLUMN OP VALUE && COLUMN OP VALUE && ...\"."
+msgstr "\"カラム 演算子 値 && カラム 演算子 値 && ...\" というようなクエリのパフォーマンスを改善しました。"
+
+msgid "[:doc:`/reference/executables/grndb`] Supported corrupted object detection with ``grndb check``."
+msgstr "[:doc:`/reference/executables/grndb`] ``grndb check`` で壊れたオブジェクトの検出をサポートしました。"
+
+msgid "[:doc:`/reference/commands/io_flush`] Supported ``--only_opened`` option which enables to flush only opened database objects."
+msgstr "[:doc:`/reference/commands/io_flush`] ``--only_opened`` オプションをサポートしました。開いているデータベースオブジェクトのみをフラッシュすることができます。"
+
+msgid "[:doc:`/reference/executables/grndb`] Supported to detect/delete orphan \"inspect\" object. The orphaned \"inspect\" object is created by renamed command name from ``inspect`` to ``object_inspect``."
+msgstr "[:doc:`/reference/executables/grndb`] 参照先のない \"inspect\" オブジェクトの検出と削除をサポートしました。この状態はコマンド名が ``inspect`` から ``object_inspect`` に変更されたことによって発生していました。"
+
+msgid "[rpm][centos] Fixed unexpected macro expansion problem with customized build. This bug only affects when rebuilding Groonga SRPM with customized ``additional_configure_options`` parameter in spec file."
+msgstr "[rpm][centos] カスタマイズ版のビルドで意図しないマクロ展開が発生する問題を修正しました。この不具合はGroongaをSRPMからビルドする際にspecファイルの ``additional_configure_options`` パラメータを使ってリビルドするときのみ発生していました。"
+
+msgid "Fixed missing null check for ``grn_table_setoperation()``. There is a possibility of crash bug when indexes are broken. [GitHub#699]"
+msgstr "``grn_table_setoperation()`` のNULLチェックを追加しました。インデックスが壊れている際に、クラッシュする可能性がありました。 [GitHub#699]"
+
+msgid "Release 7.0.3 - 2017-05-29"
+msgstr "7.0.3リリース - 2017-05-29"
+
+msgid "[:doc:`/reference/commands/select`] Add document about :ref:`full-text-search-with-specific-index-name`."
+msgstr "[:doc:`/reference/commands/select`] :ref:`full-text-search-with-specific-index-name` のドキュメントを追加しました。"
+
+msgid "[index] Supported to log warning message which record causes posting list overflows."
+msgstr "[インデックス] どのレコードに対するポスティングリストが長すぎるのかわかるように、警告メッセージをログに出すようにしました。"
+
+msgid "[:doc:`/reference/commands/load`][:doc:`/reference/commands/dump`] Supported Apache Arrow. [GitHub#691]"
+msgstr "[:doc:`/reference/commands/load`][:doc:`/reference/commands/dump`] Apache Arrowをサポートするようにしました。 [GitHub#691]"
+
+msgid "[cmake] Supported linking lz4 in embedded static library build. [Original patch by Sergei Golubchik]"
+msgstr "[cmake] 静的ライブラリとしてビルドする際に、LZ4をリンクできるようにしました。 [Sergei Golubchikさんがパッチを提供]"
+
+msgid "[:doc:`/reference/commands/delete`] Supported to cancel."
+msgstr "[:doc:`/reference/commands/delete`] キャンセルできるようにしました。"
+
+msgid "[httpd] Updated bundled nginx to 1.13.0"
+msgstr "[httpd] バンドルしているnginxのバージョンを1.13.0に更新しました。"
+
+msgid "Exported the following API"
+msgstr "以下のAPIを公開しました。"
+
+msgid "grn_plugin_proc_get_caller()"
+msgstr "``grn_plugin_proc_get_caller()`` を追加。"
+
+msgid "Added index column related function and selector."
+msgstr "インデックスカラムに関連した関数とセレクタを追加しました。"
+
+msgid "Added new selector: index_column_df_ratio_between()"
+msgstr "追加されたセレクタ: ``index_column_df_ratio_between()``"
+
+msgid "Added new function: index_column_df_ratio()"
+msgstr "追加された関数: ``index_column_df_ratio()``"
+
+msgid "[:doc:`/reference/commands/delete`] Fixed a bug that error isn't cleared correctly. It affects to following deletions so that it causes unexpected behavior."
+msgstr "[:doc:`/reference/commands/delete`] エラーが適切にクリアされていない不具合を修正しました。そのせいで、後続の削除処理に影響し意図しない振る舞いをしていました。"
+
+msgid "[windows] Fixed a bug that IO version is not detected correctly when the file is opened with ``O_CREAT`` flag."
+msgstr "[windows] ファイルを ``O_CREAT`` フラグ付きで開くときに、IOのバージョンが正しく検出されない不具合を修正しました。"
+
+msgid "[:doc:`/reference/functions/vector_slice`] Fixed a bug that non 4 bytes vector columns can't slice. [GitHub#695] [Patch by Naoya Murakami]"
+msgstr "[:doc:`/reference/functions/vector_slice`] (型のサイズが)4バイトでないベクターカラムをsliceできない不具合を修正しました。 [GitHub#695] [村上さんがパッチ提供]"
+
+msgid "Fixed a bug that non 4 bytes fixed vector column can't sequential match by specifying index of vector. [GitHub#696] [Patch by Naoya Murakami]"
+msgstr "(型のサイズが)4バイトでないベクターカラムでベクターの要素をインデックスで指定するとシーケンシャルサーチでマッチしない不具合を修正しました。 [GitHub#696] [村上さんがパッチ提供]"
+
+msgid "[:doc:`/reference/commands/logical_select`] Fixed a bug that \"argument out of range\" occurs when setting last day of month to the min. [GitHub#698]"
+msgstr "[:doc:`/reference/commands/logical_select`] ``min`` に月の最終日を指定すると \"argument out of range\" が発生する不具合を修正しました。"
+
+msgid "Release 7.0.2 - 2017-04-29"
+msgstr "7.0.2リリース - 2017-04-29"
+
+msgid "[:doc:`/reference/commands/logical_select`] Supported multiple :ref:`logical-select-drilldowns-label-columns-name-window-sort-keys` and :ref:`logical-select-drilldowns-label-columns-name-window-group-keys`."
+msgstr "[:doc:`/reference/commands/logical_select`] :ref:`logical-select-drilldowns-label-columns-name-window-sort-keys` と :ref:`logical-select-drilldowns-label-columns-name-window-group-keys` で複数のキーを指定できるようになりました。"
+
+msgid "[windows] Updated bundled LZ4 to 1.7.5."
+msgstr "[Windows] バンドルしているLZ4を1.7.5に更新しました。"
+
+msgid "[cache] Supported persistent cache feature."
+msgstr "[cache] 永続化キャッシュをサポートしました。"
+
+msgid "[:doc:`/reference/commands/log_level`] Update English documentation."
+msgstr "[:doc:`/reference/commands/log_level`] 英語のドキュメントを更新しました。"
+
+msgid "Added the following APIs:"
+msgstr "以下のAPIを公開しました。"
+
+msgid "``grn_set_default_cache_base_path()``"
+msgstr ""
+
+msgid "``grn_get_default_cache_base_path()``"
+msgstr ""
+
+msgid "``grn_persistent_cache_open()``"
+msgstr ""
+
+msgid "``grn_cache_default_open()``"
+msgstr ""
+
+msgid "[:option:`groonga --cache-base-path`] Added a new option to use persistent cache."
+msgstr "[:option:`groonga --cache-base-path`] 永続キャッシュを使うための新しいオプションを追加しました。"
+
+msgid "[:doc:`/reference/executables/groonga-httpd`] [:ref:`groonga-httpd-groonga-cache-base-path`] Added new configuration to use persistent cache."
+msgstr "[:doc:`/reference/executables/groonga-httpd`] [:ref:`groonga-httpd-groonga-cache-base-path`] 永続キャッシュを使うための新しい設定を追加しました。"
+
+msgid "[windows] Updated bundled msgpack to 2.1.1."
+msgstr "[Windows] バンドルしているmsgpackを2.1.1に更新しました。"
+
+msgid "[:doc:`/reference/commands/object_inspect`] Supported not only column inspection, but also index column statistics."
+msgstr "[:doc:`/reference/commands/object_inspect`] カラム情報を表示するだけでなく、インデックスカラムの統計情報も表示できるようにしました。"
+
+msgid "Supported index search for \"``.*``\" regexp pattern.  This feature is enabled by default. Set ``GRN_SCAN_INFO_REGEXP_DOT_ASTERISK_ENABLE=no`` environment variable to disable this feature."
+msgstr "正規表現の「 ``.*`` 」というパターンでインデックスを使って検索できるようになりました。 この機能はデフォルトで有効です。環境変数に ``GRN_SCAN_INFO_REGEXP_DOT_ASTERISK_ENABLE=no`` を設定すると無効化できます。"
+
+msgid "[:doc:`/reference/functions/in_records`] Added function to use an existing table as condition patterns."
+msgstr "[:doc:`/reference/functions/in_records`] 既存のテーブルを条件のパターンを指定するのに使うことのできる関数を追加しました。"
+
+msgid "[:doc:`/install/ubuntu`] Dropped Ubuntu 12.04 (Precise Pangolin) support because of EOL."
+msgstr "[:doc:`/install/ubuntu`] EOLのため、Ubuntu 12.04のサポートをやめました。"
+
+msgid "[:doc:`/reference/commands/logical_select`] Fixed a bug that wrong cache is used. This bug was occurred when dynamic column parameter is used."
+msgstr "[:doc:`/reference/commands/logical_select`] 異なるキャッシュが使われてしまう不具合を修正しました。この問題は動的カラムを使っているときに発生していました。"
+
+msgid "[:doc:`/reference/commands/logical_select`] Fixed a bug that dynamic columns aren't created. It's occurred when no match case."
+msgstr "[:doc:`/reference/commands/logical_select`] 動的カラムが作成されない不具合を修正しました。レコードにマッチしない場合に発生していました。"
+
+msgid "[:doc:`/reference/commands/reindex`] Fixed a bug that data is lost by reindex. [GitHub#646]"
+msgstr "[:doc:`/reference/commands/reindex`] reindexコマンドの実行によりデータが失われてしまう不具合を修正しました。"
+
+msgid "[httpd] Fixed a bug that response of :doc:`/reference/commands/quit` and :doc:`/reference/commands/shutdown` is broken JSON when worker is running as another user. [GitHub ranguba/groonga-client#12]"
+msgstr "[httpd] 別のユーザーでワーカーを動かしている時、 :doc:`/reference/commands/quit` と :doc:`/reference/commands/shutdown` のレスポンスが壊れている問題を修正しました。 [GitHub ranguba/groonga-client#12]"
+
+msgid "Release 7.0.1 - 2017-03-29"
+msgstr "7.0.1リリース - 2017-03-29"
+
+msgid "grn_ii_cursor_next_pos()"
+msgstr ""
+
+msgid "grn_table_apply_expr()"
+msgstr ""
+
+msgid "grn_obj_is_data_column()"
+msgstr ""
+
+msgid "grn_obj_is_expr()"
+msgstr ""
+
+msgid "grn_obj_is_scalar_column()"
+msgstr ""
+
+msgid "[:doc:`/reference/commands/dump`] Supported to dump weight reference vector."
+msgstr "[:doc:`/reference/commands/column_copy`] 参照型のベクタのダンプをサポートしました。"
+
+msgid "[:doc:`/reference/commands/load`] Supported to load ``array<object>`` style weight vector column. The example of ``array<object>`` style is: ``[{\"key1\": weight1}, {\"key2\": weight2}]``."
+msgstr "[:doc:`/reference/commands/load`] ``array<object>`` スタイルの重み付きベクターカラムのloadをサポートしました。 ``array<object>`` の例: ``[{\"key1\": weight1}, {\"key2\": weight2}]``"
+
+msgid "Supported to search ``!(XXX OPERATOR VALUE)`` by index. Supported operator is not only ``>`` but also ``>=``, ``<``, ``<=``, ``==`` and ``!=``."
+msgstr "インデックスを使った ``!(XXX OPERATOR VALUE)`` の検索をサポートしました。演算子として ``>`` だけでなく、 ``>=``、 ``<``、 ``<=``、 ``==`` や ``!=`` も使えます。"
+
+msgid "Supported index search for \"!(column == CONSTANT)\". The example in this case is: ``!(column == 29)`` and so on."
+msgstr "インデックスを使って ``!(column == CONSTANT)`` を検索できるようになりました。例えば ``!(column == 29)`` などです。"
+
+msgid "Supported more \"!\" optimization in the following patterns."
+msgstr "``!`` の最適化を以下のパターンでサポートしました。"
+
+msgid "``!(column @ \"X\") && (column @ \"Y\")``"
+msgstr ""
+
+msgid "``(column @ \"Y\") && !(column @ \"X\")``"
+msgstr ""
+
+msgid "``(column @ \"Y\") &! !(column @ \"X\")``"
+msgstr ""
+
+msgid "Supported to search ``XXX || !(column @ \"xxx\")`` by index."
+msgstr "``XXX || !(column @ \"xxx\")`` をインデックスを使って検索できるようになりました。"
+
+msgid "[:doc:`/reference/commands/dump`] Changed to use ``'{\"x\": 1, \"y\": 2}'`` style for not referenced weight vector. This change doesn't affect to old Groonga because it already supports one."
+msgstr "[:doc:`/reference/commands/dump`]  ``'{\"x\": 1, \"y\": 2}'`` というスタイルを参照されていない重み付きベクターカラムで使うようにしました。この変更は古いGroongaには影響しません。もともとサポートされているからです。"
+
+msgid "[experimental] Supported ``GRN_ORDER_BY_ESTIMATED_SIZE_ENABLE`` environment variable. This variable controls whether query optimization which is based on estimated size is applied or not. This feature is disabled by default. Set ``GRN_ORDER_BY_ESTIMATED_SIZE_ENABLE=yes`` if you want to try it."
+msgstr "[実験的] ``GRN_ORDER_BY_ESTIMATED_SIZE_ENABLE`` 環境変数をサポートしました。この変数はクエリの最適化を予想されるヒット件数に応じて行うかどうかを切り替えるのに使用します。この機能はデフォルトでは無効です。有効にするには ``GRN_ORDER_BY_ESTIMATED_SIZE_ENABLE=yes`` を指定します。"
+
+msgid "[:doc:`/reference/commands/select`] Added query log for ``columns``, ``drilldown`` evaluation."
+msgstr "[:doc:`/reference/commands/select`] ``columns`` や ``drilldown`` の評価結果をクエリログに追加するようにしました。"
+
+msgid "[:doc:`/reference/commands/select`] Changed query log format for ``drilldown``. This is backward incompatible change, but it only affects users who convert query log by own programs."
+msgstr "[:doc:`/reference/commands/select`] ``drilldown`` のクエリログのフォーマットを変更しました。これは非互換な変更ですが、クエリログを変換するようなプログラムを独自に開発しているユーザー以外には影響ありません。"
+
+msgid "[:doc:`/reference/commands/table_remove`] Reduced temporary memory usage. It's enabled when the number of max threads is 0."
+msgstr "[:doc:`/reference/commands/table_remove`] 一時的なメモリ使用量を削減しました。スレッドの最大数が0のときに有効になります。"
+
+msgid "[:doc:`/reference/commands/select`] ``columns[LABEL](N)`` is used for query log format instead of ``columns(N)[LABEL]``.."
+msgstr "[:doc:`/reference/commands/select`] ``columns[LABEL](N)`` がクエリログのフォーマットとして使われます。以前は ``columns(N)[LABEL]`` でした。"
+
+msgid "[:doc:`/tutorial/query_expansion`] Updated example to use vector column because it is recommended way. [Reported by Gurunavi, Inc]"
+msgstr "[:doc:`/tutorial/query_expansion`] ベクターカラムを使った推奨例に更新しました。[ぐるなびさんが報告]"
+
+msgid "Supported to detect canceled request while locking. It fixes the problem that ``request_cancel`` is ignored unexpectedly while locking."
+msgstr "ロック中にリクエストがキャンセルされたことを検出できるようにしました。これは ``request_cancel`` がロック中に意図せず無視されないようにします。"
+
+msgid "[:doc:`/reference/commands/logical_select`] Supported ``initial`` and ``filtered`` stage dynamic columns. The examples are: ``--columns[LABEL].stage initial`` or ``--columns[LABEL].stage filtered``."
+msgstr "[:doc:`/reference/commands/logical_select`]  ``initial`` および ``filtered`` 動的カラムをサポートしました。使用例は ``--columns[LABEL].stage initial`` や ``--columns[LABEL].stage filtered`` です。"
+
+msgid "[:doc:`/reference/commands/logical_select`] Supported ``match_columns``, ``query`` and ``drilldown_filter`` option."
+msgstr "[:doc:`/reference/commands/logical_select`] ``match_columns`` や ``query`` 、 ``drilldown_filter`` オプションをサポートしました。"
+
+msgid "[:doc:`/reference/functions/highlight_html`] Supported similar search."
+msgstr "[:doc:`/reference/functions/highlight_html`] 類似文書検索をサポートしました。"
+
+msgid "[:doc:`/reference/commands/logical_select`] Supported ``initial`` and stage dynamic columns in labeled drilldown. The example is: ``--drilldowns[LABEL].stage initial``."
+msgstr "[:doc:`/reference/commands/logical_select`]  ``initial`` および ``filtered`` 動的カラムをサポートしました。使用例は ``--columns[LABEL].stage initial`` や ``--columns[LABEL].stage filtered`` です。"
+
+msgid "[:doc:`/reference/commands/logical_select`] Supported window function in dynamic column."
+msgstr "[:doc:`/reference/commands/logical_select`] 動的カラムでウィンドウ関数をサポートしました。"
+
+msgid "[:doc:`/reference/commands/select`] Added documentation about dynamic columns."
+msgstr "[:doc:`/reference/commands/select`] 動的カラムに関するドキュメントを追加しました。"
+
+msgid "[:doc:`/reference/window_function`] Added section about window functions."
+msgstr "[:doc:`/reference/window_function`] ウィンドウ関数のセクションをドキュメントに追加しました。"
+
+msgid "[:doc:`/install/centos`] Dropped CentOS 5 support because of EOL."
+msgstr "[:doc:`/install/centos`] EOLのため、CentOS 5のサポートをやめました。"
+
+msgid "[httpd] Updated bundled nginx to 1.11.12"
+msgstr "[httpd] バンドルしているnginxのバージョンを1.11.12に更新しました。"
+
+msgid "Supported to disable AND match optimization by environment variable. You can disable this feature by ``GRN_TABLE_SELECT_AND_MIN_SKIP_ENABLE=no``. This feature is enable by default."
+msgstr "ANDでのマッチ最適化を環境変数で無効化できるようにしました。この機能は ``GRN_TABLE_SELECT_AND_MIN_SKIP_ENABLE=no`` を設定することで無効化できます。デフォルトでは有効になっています。"
+
+msgid "[:doc:`/reference/functions/vector_new`] Added a new function to create a new vector."
+msgstr "[:doc:`/reference/functions/vector_new`] 新規ベクターを作成するための関数を追加しました。"
+
+msgid "[:doc:`/reference/commands/select`] Added documentation about ``drilldown_filter``."
+msgstr "[:doc:`/reference/commands/select`] ``drilldown_filter`` のドキュメントを追加しました。"
+
+msgid "[:doc:`/reference/commands/lock_clear`] Fixed a crash bug against temporary database."
+msgstr "[:doc:`/reference/commands/lock_clear`] テンポラリデータベースに対して実行するとクラッシュする不具合を修正しました。"
+
+msgid "Fixed a problem that dynamically updated index size was increased for natural language since Grooonga 6.1.4."
+msgstr "自然言語に対する動的インデックス更新でインデックスサイズが肥大化する問題を修正しました。Groonga 6.1.4から発生していました。"
+
+msgid "[:doc:`/reference/commands/select`] Fixed a bug that \"A && B.C @ X\" may not return records that should be matched."
+msgstr "[:doc:`/reference/commands/select`] \"A && B.C @ X\" というクエリでマッチすべきレコードを返さないことがある不具合を修正しました。"
+
+msgid "Fixed a conflict with ``grn_io_flush()`` and ``grn_io_expire()``. Without this change, if ``io_flush`` and ``load`` command are executed simultaneously in specific timing, it causes a crash bug by access violation."
+msgstr "``grn_io_flush()`` と ``grn_io_expire()`` がコンフリクトする問題を修正しました。この修正がないと、 ``io_flush`` と ``load`` が同時に特定のタイミングで実行されるとクラッシュする不具合がありました。"
+
+msgid "[:doc:`/reference/commands/logical_table_remove`] Fixed a crash bug when the max number of threads is 1."
+msgstr "[:doc:`/reference/commands/logical_table_remove`] 最大スレッド数が1のときにクラッシュする不具合を修正しました。"
+
+msgid "Gurunavi, Inc."
+msgstr "株式会社ぐるなびさん"
+
+msgid "Release 7.0.0 - 2017-02-09"
+msgstr "7.0.0リリース - 2017-02-09"
+
+msgid "[:doc:`/reference/functions/in_values`] Supported sequential search for reference vector column. [Patch by Naoya Murakami] [GitHub#629]"
+msgstr "[:doc:`/reference/functions/in_values`] 参照型ベクターカラムのシーケンシャルサーチに対応しました。 [GitHub#629] [村上さんがパッチ提供]"
+
+msgid "[:doc:`/reference/commands/select`] Changed to report error instead of ignoring on invalid ``drilldown[LABEL].sort_keys``."
+msgstr "[:doc:`/reference/commands/select`] 誤った ``drilldown[LABEL].sort_keys`` が指定されたとき、無視するのではなく、エラーを報告するようにしました。"
+
+msgid "[:doc:`/reference/commands/select`] Removed needless metadata updates on DB. It reduces the case that database lock remains even though ``select`` command is executed. [Reported by aomi-n]"
+msgstr "[:doc:`/reference/commands/select`] DBのメタデータを不必要に更新しないようにしました。 ``select`` コマンドを使っているだけなのにDBにロックがかかったままになってしまうのを防ぎます。"
+
+msgid "[:doc:`/reference/commands/lock_clear`] Changed to clear metadata lock by lock_clear against DB."
+msgstr "[:doc:`/reference/commands/lock_clear`] ``lock_clear`` でDBのメタデータに対するロックも削除できるようにしました。"
+
+msgid "[:doc:`/install/centos`] Enabled EPEL by default to install Groonga on Amazon Linux."
+msgstr "[:doc:`/install/centos`] GroongaをAmazon LinuxでもインストールできるようにEPELをデフォルトで有効にするようにしました。"
+
+msgid "[:doc:`/reference/functions/query`] Supported \"@X\" style in script syntax for prefix(\"@^\"), suffix(\"@$\"), regexp(\"@^\") search."
+msgstr "[:doc:`/reference/functions/query`] ``default_mode`` オプションで \"@X\" スタイルのエイリアスが使えるようになりました。"
+
+msgid "[:doc:`/reference/functions/query`] Added documentation about available list of mode. The default mode is ``MATCH`` (\"@\") mode which executes full text search."
+msgstr "[:doc:`/reference/functions/query`] 動作モードのリストに関するドキュメントを更新しました。動作モードの既定値は ``MATCH`` (\"@\") で全文検索を実行します。"
+
+msgid "[rpm][centos] Supported groonga-token-filter-stem package which provides stemming feature by ``TokenFilterStem`` token filter on CentOS 7. [GitHub#633] [Reported by Tim Bellefleur]"
+msgstr "[rpm][centos] CentOS 7で groonga-token-filter-stem パッケージを提供するようにしました。 ステミングに対応するための ``TokenFilterStem`` トークンフィルターを提供します。　[GitHub#633] [Tim Bellefleurさんが報告]"
+
+msgid "[:doc:`/reference/window_functions/window_record_number`] Marked ``record_number`` as deprecated. Use ``window_record_number`` instead. ``record_number`` is still available for backward compatibility."
+msgstr "[:doc:`/reference/window_functions/window_record_number`] ``record_number`` が非推奨になりました。代わりに ``window_record_number`` を使ってください。 ``record_number`` は互換性のためだけに残っています。"
+
+msgid "[:doc:`/reference/window_functions/window_sum`] Added ``window_sum`` window function. It's similar behavior to window function sum() on PostgreSQL."
+msgstr "[:doc:`/reference/window_functions/window_sum`] ``window_sum`` ウィンドウ関数を追加しました。PostgreSQLのsum()と同様のウィンドウ関数を提供します。"
+
+msgid "Supported to construct offline indexing with in-memory (temporary) ``TABLE_DAT_KEY`` table. [GitHub#623] [Reported by Naoya Murakami]"
+msgstr "``TABLE_DAT_KEY`` テーブルをインメモリで使ったときに静的インデックス構築をできるようにしました。 [GitHub#623] [村上さんが報告]"
+
+msgid "[onigmo] Updated bundled Onigmo to 6.1.1."
+msgstr "バンドルしている鬼雲を6.1.1へと更新しました。"
+
+msgid "Supported ``columns[LABEL].window.group_keys``. It's used to apply window function for every group."
+msgstr "``columns[LABEL].window.group_keys`` をサポートしました。ウィンドウ関数をグループごとに提供することができます。"
+
+msgid "[:doc:`/reference/commands/load`] Supported to report error on invalid key. It enables you to detect mismatch type of key."
+msgstr "[:doc:`/reference/commands/load`] 誤ったキーが指定されていたときにエラーを報告するようにしました。キーの型が異なっている場合でも気付けるようになります。"
+
+msgid "[:doc:`/reference/commands/load`] Supported ``--output_errors yes`` option. If you specify \"yes\", you can get errors for each load failed record. Note that this feature requires command version 3."
+msgstr "[:doc:`/reference/commands/load`] ``--output_errors yes`` オプションをサポートしました。\"yes\"を指定すると、どのレコードのloadに失敗したのかエラーを取得できるようになります。この機能を使う場合には、コマンドバージョン3を指定します。"
+
+msgid "[:doc:`/reference/commands/load`] Improve error message on table key cast failure. Instead of \"cast failed\", type of table key and target type of table key are also contained in error message."
+msgstr "[:doc:`/reference/commands/load`] キーのキャストに失敗したときのエラーメッセージをわかりやすくしました。以前は単に \"cast failed\" と表示していましたが、テーブルのキーの型とキャスト対象となるキーの型もメッセージに含まれるようになりました。"
+
+msgid "[httpd] Updated bundled nginx to 1.11.9."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.11.9に更新しました。"
+
+msgid "Fixed a bug that nonexistent sort keys for ``drilldowns[LABEL]`` or ``slices[LABEL]`` causes invalid JSON parse error. [Patch by Naoya Murakami] [GitHub#627]"
+msgstr "存在しないソートキーを ``drilldowns[LABEL]`` や ``slices[LABEL]`` に指定するとJSONパースエラーとなる不具合を修正しました。 [GitHub#627] [村上さんがパッチ提供]"
+
+msgid "Fixed a bug that access to nonexistent sub records for group causes a crash.  For example, This bug affects the case when you use ``drilldowns[LABEL].sort_keys _sum`` without specifying ``calc_types``.  [Patch by Naoya Murakami] [GitHub#625]"
+msgstr "存在しないグループのサブレコードにアクセスしようとするとクラッシュする不具合を修正しました。例えば、 ``drilldowns[LABEL].sort_keys _sum`` を ``calc_types`` の指定なしに使っていた場合に問題が発生していました。 [GitHub#625] [村上さんがパッチ提供]"
+
+msgid "Fixed a crash bug when tokenizer has an error. It's caused when tokenizer and token filter are registered and tokenizer has an error."
+msgstr "tokenizerでエラーが発生するとクラッシュする不具合を修正しました。tokenizer と token filterを登録していて、tokenizer にエラーがあると発生していました。"
+
+msgid "[:doc:`/reference/window_functions/window_record_number`] Fixed a bug that arguments for window function is not correctly passed. [GitHub#634][Patch by Naoya Murakami]"
+msgstr "[:doc:`/reference/window_functions/window_record_number`] ウィンドウ関数の引数が正しく渡されていない不具合を修正しました。 [GitHub#634] [村上さんがパッチ提供]"
+
+msgid "aomi-n"
+msgstr "aomi-nさん"

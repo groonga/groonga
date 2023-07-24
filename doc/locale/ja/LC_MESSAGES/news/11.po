@@ -1,0 +1,1031 @@
+# -*- po -*-
+# Japanese translations for 1.2.4 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.4\n"
+"PO-Revision-Date: 2023-07-24 12:43+0900\n"
+"Report-Msgid-Bugs-To: \n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "News - 11 series"
+msgstr "お知らせ - 11系"
+
+msgid "Release 11.1.3 - 2022-01-29"
+msgstr "11.1.3リリース - 2022-01-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[:doc:`reference/functions/snippet`] Added support for using the keyword of 32 or more. [GitHub#1313][Pathched by Takashi Hashida]"
+msgstr "[:doc:`reference/functions/snippet`] 32個以上のキーワードを使えるようにしました。 [GitHub#1313][Takashi Hashidaさんがパッチ提供]"
+
+msgid "We could not specify the keyword of 32 or more with ``snippet`` until now. However, we can specify the keyword of 32 or more by this improvement as below."
+msgstr "いままで、 ``snippet`` は32個以上のキーワードを指定できませんでしたが、この改良によって、以下のように32個以上のキーワードを指定できます。"
+
+msgid "[:doc:`reference/normalizers/normalizer_nfkc130`] Added a new option ``remove_symbol``."
+msgstr "[:doc:`reference/normalizers/normalizer_nfkc130`] 新しいオプション ``remove_symbol`` を追加しました。"
+
+msgid "This option removes symbols (e.g. #, !, \", &, %, ...) from the string that the target of normalizing as below."
+msgstr "このオプションは、以下のように正規化対象の文字列から記号(例えば #, !, \", &, % 等)を削除します。"
+
+msgid "[:doc:`/install/almalinux`] Added support for AlmaLinux 8 on ARM64."
+msgstr "[:doc:`/install/almalinux`] ARM64版 AlmaLinux 8 向けのパッケージをサポートしました。"
+
+msgid "[httpd] Updated bundled nginx to 1.21.5."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.21.5に更新しました。"
+
+msgid "[Documentation] Fixed a typo in :doc:`reference/commands/ruby_eval`. [GitHub#1317][Pathched by wi24rd]"
+msgstr "[Documentation] :doc:`reference/commands/ruby_eval` の誤記を修正しました。[GitHub#1317][wi24rdさんがパッチ提供]"
+
+msgid "[:doc:`/install/ubuntu`] Dropped Ubuntu 21.04 (Hirsute Hippo) support."
+msgstr "[:doc:`/install/ubuntu`] Ubuntu 21.04 (Hirsute Hippo)サポートをやめました。"
+
+msgid "Because Ubuntu 21.04 reached EOL January 20, 2022."
+msgstr "Ubuntu 21.04 は、2022年1月20日でEOLとなったためです。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[:doc:`/reference/commands/load`] Fixed a crash bug when we load data with specifying a nonexistent column."
+msgstr "[:doc:`/reference/commands/load`] 存在しないカラムを指定してロードした時にクラッシュする問題を修正しました。"
+
+msgid "This bug only occurs when we specify ``apache-arrow`` into ``input_type`` as the argument of ``load``."
+msgstr "この問題は、 ``load`` の引数として、 ``input_type`` に ``apache-arrow`` を指定したときのみ発生します。"
+
+msgid "Fixed a bug that the version up of Groonga failed Because the version up of arrow-libs on which Groonga depends. [groonga-talk,540][Reported by Josep Sanz][Gitter,61eaaa306d9ba23328d23ce1][Reported by shibanao4870][GitHub#1316][Reported by Keitaro YOSHIMURA]"
+msgstr "Groongaが依存している arrow-libs がバージョンアップしたことによって、Groongaのバージョンアップが失敗する問題を修正しました。[groonga-talk,540][Josep Sanzさんの報告][Gitter,61eaaa306d9ba23328d23ce1][shibanao4870さんの報告][GitHub#1316][Keitaro YOSHIMURAさんの報告]"
+
+msgid "However, if arrow-libs update a major version, this problem reproduces. In this case, we will handle that by rebuilding the Groonga package."
+msgstr "ただし、 arrow-libs がメジャーバージョンアップした場合は、この問題は再発します。その場合は、Groongaパッケージを再構築して対応する予定です。"
+
+msgid "Known Issues"
+msgstr "既知の問題"
+
+msgid "Currently, Groonga has a bug that there is possible that data is corrupt when we execute many additions, delete, and update data to vector column."
+msgstr "現在Groongaには、ベクターカラムに対してデータを大量に追加、削除、更新した際にデータが破損することがある問題があります。"
+
+msgid "``*<`` and ``*>`` only valid when we use ``query()`` the right side of filter condition. If we specify as below, ``*<`` and ``*>`` work as ``&&``."
+msgstr "``*<`` と ``*>`` は、filter条件の右辺に ``query()`` を使う時のみ有効です。もし、以下のように指定した場合、 ``*<`` と ``*>`` は ``&&`` として機能します。"
+
+msgid "``'content @ \"Groonga\" *< content @ \"Mroonga\"'``"
+msgstr ""
+
+msgid "Groonga may not return records that should match caused by ``GRN_II_CURSOR_SET_MIN_ENABLE``."
+msgstr "``GRN_II_CURSOR_SET_MIN_ENABLE`` が原因でマッチするはずのレコードを返さないことがあります。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Takashi Hashida"
+msgstr "Takashi Hashidaさん"
+
+msgid "wi24rd"
+msgstr "wi24rdさん"
+
+msgid "Josep Sanz"
+msgstr "Josep Sanzさん"
+
+msgid "Keitaro YOSHIMURA"
+msgstr "Keitaro YOSHIMURAさん"
+
+msgid "shibanao4870"
+msgstr "shibanao4870さん"
+
+msgid "Release 11.1.1 - 2021-12-29"
+msgstr "11.1.1リリース - 2021-12-29"
+
+msgid "[:doc:`reference/commands/select`] Added support for near phrase product search."
+msgstr "[:doc:`/reference/commands/select`] 組み合わせフレーズ近傍検索をサポートしました。"
+
+msgid "This feature is a shortcut of ``'*NP\"...\" OR *NP\"...\" OR ...'``. For example, we can use ``*NPP`` instead of the expression that execute mulitiple ``*NP`` with ``query`` as below."
+msgstr "この機能は、 ``'*NP\"...\" OR *NP\"...\" OR ...'`` の短縮形です。例えば、以下のように、 ``query`` を使って ``*NP`` を複数実行する式のかわりに ``*NPP`` を使えます。"
+
+msgid "We can be written as ``*NPP\"(a b) (1 2 3) (x y z)\"`` the above expression by this feature. In addition, ``*NPP\"(a b) (1 2 3) (x y z)\"`` is faster than ``'*NP\"...\" OR *NP\"...\" OR ...'``."
+msgstr "この機能によって、上記の式を ``*NPP\"(a b) (1 2 3) (x y z)\"`` と書くことができます。加えて、 ``*NPP\"(a b) (1 2 3) (x y z)\"`` は、 ``'*NP\"...\" OR *NP\"...\" OR ...'`` より高速です。"
+
+msgid "We implements this feature for improving performance near phrase search like ``'*NP\"...\" OR *NP\"...\" OR ...'``."
+msgstr "この機能は、 ``'*NP\"...\" OR *NP\"...\" OR ...'`` のような近傍フレーズ検索のパフォーマンスを改善するために実装されました。"
+
+msgid "[:doc:`reference/commands/select`] Added support for order near phrase product search."
+msgstr "[:doc:`/reference/commands/select`] 順序付き組み合わせフレーズ近傍検索をサポートしました。"
+
+msgid "This feature is a shortcut of ``'*ONP\"...\" OR *ONP\"...\" OR ...'``. For example, we can use ``*ONPP`` instead of the expression that execute multiple ``*ONP`` with ``query`` as below."
+msgstr "この機能は、 ``'*ONP\"...\" OR *ONP\"...\" OR ...'`` の短縮形です。例えば、以下のように、 ``query`` を使って ``*ONP`` を複数実行する式のかわりに ``*ONPP`` を使えます。"
+
+msgid "We can be written as ``*ONPP\"(a b) (1 2 3) (x y z)\"`` the above expression by this feature. In addition, ``*ONPP\"(a b) (1 2 3) (x y z)\"`` is faster than ``'*ONP\"...\" OR *ONP\"...\" OR ...'``."
+msgstr "この機能によって、上記の式を ``*ONPP\"(a b) (1 2 3) (x y z)\"`` と書くことができます。加えて、 ``*ONPP\"(a b) (1 2 3) (x y z)\"`` は、 ``'*ONP\"...\" OR *ONP\"...\" OR ...'`` より高速です。"
+
+msgid "We implements this feature for improving performance near phrase search like ``'*ONP\"...\" OR *ONP\"...\" OR ...'``."
+msgstr "この機能は ``'*ONP\"...\" OR *ONP\"...\" OR ...'`` のような順序付き近傍フレーズ検索のパフォーマンスを改善するために実装されました。"
+
+msgid "[:doc:`/reference/commands/request_cancel`] Groonga became easily detects ``request_cancel`` while executing a search."
+msgstr "[:doc:`/reference/commands/request_cancel`] 検索実行中に ``request_cancel`` を検知しやすくしました。"
+
+msgid "Because we added more checks of return code to detect ``request_cancel``."
+msgstr "``request_cancel`` を検知するために、リターンコードのチェックを増やしたためです。"
+
+msgid "[:doc:`/reference/commands/thread_dump`] Added a new command ``thread_dump``"
+msgstr "[:doc:`reference/commands/thread_dump`] 新しいコマンド ``thread_dump`` を追加しました。"
+
+msgid "Currently, this command works only on Windows."
+msgstr "現状、このコマンドはWindowsでしか動作しません。"
+
+msgid "We can put a backtrace of all threads into a log as logs of NOTICE level at the time of running this command."
+msgstr "このコマンド実行時の全てのスレッドのバックトレースをNOTICEレベルのログとして出力できます。"
+
+msgid "This feature is useful when we solve a problem such as Groonga doesn't return a response."
+msgstr "この機能は、Groongaが応答を返さない等の問題を解決するのに役立ちます。"
+
+msgid "[:doc:`/install/centos`] Dropped support for CentOS 8."
+msgstr "[:doc:`/install/centos`] CentOS 8のサポートをやめました。"
+
+msgid "Because CentOS 8 will reach EOL at 2021-12-31."
+msgstr "CentOS 8は、2021年12月31日でEOLとなるためです。"
+
+msgid "Fixed a bug that we can't remove a index column with invalid parameter. [GitHub#1301][Patched by Takashi Hashida]"
+msgstr "無効なパラメータを持つインデックスカラムを削除できない問題を修正しました。 [GitHub#1301][Takashi Hashidaさんがパッチ提供]"
+
+msgid "For example, we can't remove a table when we create an invalid index column with ``column_create`` as below."
+msgstr "例えば、以下のように ``column_create`` を使って無効なインデックスカラムを作成した時、テーブルが削除できなくなります。"
+
+msgid "Release 11.1.0 - 2021-11-29"
+msgstr "11.1.0リリース - 2021-11-29"
+
+msgid "[:doc:`/reference/commands/load`] Added support for ISO 8601 time format.[GitHub#1228][Patched by Takashi Hashida]"
+msgstr "[:doc:`/reference/commands/load`] ISO 8601 形式をサポートしました。[GitHub#1228][Takashi Hashidaさんがパッチ提供]"
+
+msgid "``load`` support the following format by this modification."
+msgstr "この変更によって、``load`` は、以下のフォーマットをサポートします。"
+
+msgid "YYYY-MM-ddThh:mm:ss.sZ"
+msgstr ""
+
+msgid "YYYY-MM-ddThh:mm:ss.s+10:00"
+msgstr ""
+
+msgid "YYYY-MM-ddThh:mm:ss.s-10:00"
+msgstr ""
+
+msgid "We can also use ``t`` and ``z`` characters instead of ``T`` and ``Z`` in this syntax. We can also use ``/`` character instead of ``-`` in this syntax. However, note that this is not an ISO 8601 format. This format is present for compatibility."
+msgstr "この構文の ``T`` と ``Z`` の代わりに ``t`` と ``z`` を使うこともできます。``-`` の代わりに ``/`` を使うこともできます。ただし、 ``/`` は、ISO 8601 形式ではないことに注意してください。``/`` は互換性のためにサポートしています。"
+
+msgid "[:doc:`reference/commands/select`] Added a new ``query_flags`` ``DISABLE_PREFIX_SEARCH``."
+msgstr "[:doc:`reference/commands/select`] 新しい ``query_flags`` ``DISABLE_PREFIX_SEARCH`` を追加しました。"
+
+msgid "We can use the prefix search operators ``^`` and ``*`` as search keywords by ``DISABLE_PREFIX_SEARCH`` as below."
+msgstr "以下のように、``DISABLE_PREFIX_SEARCH`` によって、前方一致検索の演算子の ``^`` と ``*`` を検索キーワードとして使えます。"
+
+msgid "This feature is useful if we want to search documents including ``^`` and ``*``."
+msgstr "この機能は、 ``^`` や ``*`` を含むドキュメントを検索したい時に便利です。"
+
+msgid "[:doc:`reference/commands/select`] Added a new ``query_flags`` ``DISABLE_AND_NOT``."
+msgstr "[:doc:`reference/commands/select`] 新しい ``query_flags`` ``DISABLE_AND_NOT`` を追加しました。"
+
+msgid "We can use ``AND NOT`` operators ``-`` as search keywords by ``DISABLE_AND_NOT`` as below."
+msgstr "以下のように、 ``DISABLE_AND_NOT`` によって、 ``AND NOT`` の演算子の ``-`` を検索キーワードとして使えます。"
+
+msgid "This feature is useful if we want to search documents including ``-``."
+msgstr "この機能は、 ``-`` を含むドキュメントを検索したい時に便利です。"
+
+msgid "[The browser based administration tool] Fixed a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list. [GitHub#1186][Patched by Takashi Hashida]"
+msgstr "[ブラウザーベースの管理ツール] レコード一覧の管理モードのチェックボックスにチェックを入れても、非管理モードに入力された検索クエリーが送信される問題を修正しました。 [Github#1186][Takashi Hashidaさんがパッチ提供]"
+
+msgid "Release 11.0.9 - 2021-11-04"
+msgstr "11.0.9リリース - 2021-11-04"
+
+msgid "[:doc:`reference/functions/snippet`] Added a new option ``delimiter_regexp`` for detecting snippet delimiter with regular expression."
+msgstr "[:doc:`reference/functions/snippet`] 正規表現を使ってスニペットの区切り文字を見つける新しいオプション ``delimiter_regexp`` を追加しました。"
+
+msgid ":doc:`reference/functions/snippet` extracts text around search keywords. We call the text that is extracted by :doc:`reference/functions/snippet` snippet."
+msgstr ":doc:`reference/functions/snippet` は、検索キーワードの周辺のテキストを抽出します。 :doc:`reference/functions/snippet` で抽出したテキストをスニペットと呼びます。"
+
+msgid "Normally, :doc:`reference/functions/snippet` () returns the text of 200 bytes around search keywords. However, :doc:`reference/functions/snippet` () gives no thought to a delimiter of sentences. The snippet may be composed of multi sentences."
+msgstr "通常、 :doc:`reference/functions/snippet` は、検索キーワードの周辺の200byteのテキストを返しますが、 :doc:`reference/functions/snippet` は、センテンスの区切りを考慮しません。スニペットは、複数のセンテンスで構成されることがあります。"
+
+msgid "``delimiter_regexp`` option is useful if we want to only extract the text of the same sentence as search keywords. For example, we can use ``\\.\\s*`` to extract only text in the target sentence as below. Note that you need to escape ``\\`` in string."
+msgstr "``delimiter_regexp`` オプションは、検索キーワードと同じセンテンスのテキストのみを抽出したいときに便利です。例えば、以下のように、 ``\\.\\s*`` を使って対象のセンテンス内のテキストのみを抽出できます。文字列は、 ``\\`` でエスケープする必要があることに注意してください。"
+
+msgid "[:doc:`reference/window_functions/window_rank`] Added a new function ``window_rank()``."
+msgstr "[:doc:`reference/window_functions/window_rank`] 新しい関数 ``window_rank()`` を追加しました。"
+
+msgid "We can calculate a rank that includes a gap of each record. Normally, the rank isn’t incremented when multiple records that are the same order. For example, if values of sort keys are 100, 100, 200 then the ranks of them are 1, 1, 3. The rank of the last record is 3 not 2 because there are two 1 rank records."
+msgstr "ギャップを含む各レコードの順位を計算できます。通常、順位は、複数のレコードが同じ順位の時は増加しません。例えば、ソートキーの値が 100、 100、 200の場合、これらの順位は 1、 1、 3です。1位のレコードが2つあるので、最後のレコードの順位は2ではなく3です。"
+
+msgid "This is similar to :doc:`reference/window_functions/window_record_number`. However, :doc:`reference/window_functions/window_record_number` gives no thought to gap."
+msgstr "これは、 :doc:`/reference/window_functions/window_record_number` と似ていますが、 :doc:`/reference/window_functions/window_record_number` はギャップを考慮しません。"
+
+msgid "[:doc:`/reference/functions/in_values`] Added support for auto cast when we search tables."
+msgstr "[:doc:`/reference/functions/in_values`] テーブル検索時に自動的にキャストするようにしました。"
+
+msgid "For example, if we load values of ``UInt32`` into a table that a key type is ``UInt64``, Groonga cast the values to ``UInt64`` automatically when we search the table with ``in_values()``. However, ``in_values(_key, 10)`` doesn't work with ``UInt64`` key table. Because 10 is parsed as ``Int32``."
+msgstr "例えば、 キーの型が ``UInt64`` のテーブルに ``UInt32`` の値をロードした場合、Groongaは、 ``in_values()`` でテーブルを検索するときに自動的に値を ``UInt64`` にキャストします。ただ、 ``in_values(_key, 10)`` はこの機能の対象外です。10は、 ``Int32`` として解釈されるためです。"
+
+msgid "[httpd] Updated bundled nginx to 1.21.3."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.21.3に更新しました。"
+
+msgid "[:doc:`/install/almalinux`] Added support for AlmaLinux 8."
+msgstr "[:doc:`/install/almalinux`] AlmaLinux 8 向けのパッケージをサポートしました。"
+
+msgid "[:doc:`/install/ubuntu`] Added support for Ubuntu 21.10 (Impish Indri)."
+msgstr "[:doc:`/install/ubuntu`] Ubuntu 21.10 (Impish Indri)をサポートしました。"
+
+msgid "Fixed a bug that Groonga doesn't return a response when an error occurred in command (e.g. sytax error in filter)."
+msgstr "Groongaがコマンドエラー(例えば、filterのシンタックスエラー)発生時に応答を返さない問題を修正しました。"
+
+msgid "This bug only occurs when we use ``--output_type apache-arrow``."
+msgstr "これは、 ``--output_type apache-arrow`` を使っているときのみ発生します。"
+
+msgid "[The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list."
+msgstr "[ブラウザーベースの管理ツール] 現在Groongaには、レコード一覧の管理モードのチェックボックスにチェックを入れても、非管理モードに入力された検索クエリーが送信されるという問題があります。"
+
+msgid "Release 11.0.7 - 2021-09-29"
+msgstr "11.0.7リリース - 2021-09-29"
+
+msgid "[:doc:`/reference/commands/load`] Added support for casting a string like as \"[int, int,...]\" to a vector of integer like as [int, int,...]."
+msgstr "[:doc:`/reference/commands/load`] \"[int, int,...]\" のような文字列を [int, int,...] のような整数のベクターにキャストするようにしました。"
+
+msgid "For example, Groonga handle as a vector of integer like as [1, -2] even if we load vector of string like as \"[1, -2]\" as below."
+msgstr "例えば、以下のように、\"[1, -2]\" のようなベクターを文字列としてロードしたとしても、 [1, -2] のように整数のベクターとして扱います。"
+
+msgid "This feature supports for the floowings types."
+msgstr "この機能は以下の型をサポートします。"
+
+msgid "Int8"
+msgstr ""
+
+msgid "UInt8"
+msgstr ""
+
+msgid "Int16"
+msgstr ""
+
+msgid "UInt16"
+msgstr ""
+
+msgid "Int32"
+msgstr ""
+
+msgid "UInt32"
+msgstr ""
+
+msgid "Int64"
+msgstr ""
+
+msgid "UInt64"
+msgstr ""
+
+msgid "[:doc:`/reference/commands/load`] Added support for loading a JSON array expressed as a text string as a vector of string."
+msgstr "[:doc:`/reference/commands/load`] 文字列として表現されたJSON配列を文字列のベクターとしてロードできるようにしました。"
+
+msgid "For example, Groonga handle as a vector that has two elements like as [\"hello\", \"world\"] if we load JSON array expressed as a text string like as \"[\\\"hello\\\", \\\"world\\\"]\" as below."
+msgstr "例えば、以下のように \"[\\\"hello\\\", \\\"world\\\"]\" のような文字列として表現されたJSON配列をロードした場合、 [\"hello\", \"world\"] のように2つの要素を持つベクターとして扱います。"
+
+msgid "In before version, Groonga handled as a vector that had one element like as [\"[\\\"hello\\\", \\\"world\\\"]\"] if we loaded JSON array expressed as a text string like as \"[\\\"hello\\\", \\\"world\\\"]\"."
+msgstr "以前のバージョンでは、 \"[\\\"hello\\\", \\\"world\\\"]\" のような文字列として表現されたJSON配列をロードした場合は、 [\"[\\\"hello\\\", \\\"world\\\"]\"] のような一つの要素を持つベクターとして扱っていました。"
+
+msgid "[Documentation] Added a documentation about the following items."
+msgstr "[Documentation] 以下の項目についてのドキュメントを追加しました。"
+
+msgid "[:doc:`reference/commands/column_create`] Added a documentation about ``WEIGHT_FLOAT32`` flag."
+msgstr "[:doc:`/reference/commands/column_create`] ``WEIGHT_FLOAT32`` フラグについてのドキュメントを追加しました。"
+
+msgid "[:doc:`reference/normalizers/normalizer_nfkc121`] Added a documentation about ``NormalizerNFKC121``."
+msgstr "[:doc:`reference/normalizers/normalizer_nfkc121`] ``NormalizerNFKC121`` についてのドキュメントを追加しました。"
+
+msgid "[:doc:`reference/normalizers/normalizer_nfkc130`] Added a documentation about ``NormalizerNFKC130``."
+msgstr "[:doc:`reference/normalizers/normalizer_nfkc130`] ``NormalizerNFKC130`` についてのドキュメントを追加しました。"
+
+msgid "[:doc:`reference/normalizers/normalizer_table`] Added a documentation about ``NormalizerTable``."
+msgstr "[:doc:`reference/normalizers/normalizer_table`] ``NormalizerTable`` についてのドキュメントを追加しました。"
+
+msgid "Updated to 3.0.0 that the version of Apache Arrow that Groonga requires. [GitHub#1265][Patched by Takashi Hashida]"
+msgstr "Groongaが要求する Apache Arrow のバージョンを 3.0.0 に更新しました。[GitHub#1265][Takashi Hashidaさんがパッチ提供]"
+
+msgid "Fixed a memory leak when we created a table with a tokenizer with invalid option."
+msgstr "テーブル作成時に無効なオプションを持つトークナイザーを指定するとメモリーリークする問題を修正しました。"
+
+msgid "Fixed a bug that may not add a new entry in Hash table."
+msgstr "Hashテーブルに新しいエントリーを追加できなくなることがある問題を修正しました。"
+
+msgid "This bug only occurs in Groonga 11.0.6, and it may occur if we quite a lot of add and delete data. If this bug occurs in your environment, you can resolve this problem by executing the following steps."
+msgstr "このバグは、Groonga 11.0.6 でのみ発生し、頻繁にデータを追加、削除すると発生することがあります。もし、このバグが発生した場合は、以下の手順を実行することで、この問題を解決できます。"
+
+msgid "We upgrade Groonga to 11.0.7 or later from 11.0.6."
+msgstr "Groongaを11.0.6から11.0.7以降にアップグレードします。"
+
+msgid "We make a new table that has the same schema as the original table."
+msgstr "元のテーブルと同じスキーマを持つ新しいテーブルを作ります。"
+
+msgid "We copy data to the new table from the original table."
+msgstr "元のテーブルから新しいテーブルにデータをコピーします。"
+
+msgid "[Windows] Fixed a resource leak when Groonga fail open a new file caused by out of memory."
+msgstr "[Windows] メモリー不足によって、新しくファイルのオープンに失敗した時にリソースリークする問題を修正しました。"
+
+msgid "Release 11.0.6 - 2021-08-29"
+msgstr "11.0.6リリース - 2021-08-29"
+
+msgid "Groonga 11.0.6 has had a bug that may not add a new entry in Hash table."
+msgstr "Groonga 11.0.6 には、Hashテーブルに新しいエントリーを追加できなくなることがある問題があります。"
+
+msgid "We fixed this bug on Groonga 11.0.7. This bug only occurs in Groonga 11.0.6. Therefore, if you were using Groonga 11.0.6, we highly recommended that you use Groonga 11.0.7 or later."
+msgstr "この問題は、Groonga 11.0.7で修正しました。この問題は、Groonga 11.0.6でのみ発生します。したがって、Groonga 11.0.6をお使いの方は、Groonga 11.0.7以降を使うことを強くおすすめします。"
+
+msgid "Added support for recovering on crash. (experimental)"
+msgstr "クラッシュ時に自動でリカバリーする機能を追加しました。(実験的な機能です。)"
+
+msgid "This is a experimental feature. Currently, this feature is still not stable."
+msgstr "この機能は実験的な機能です。現状、この機能はまだ安定していません。"
+
+msgid "If Groonga crashes, it recovers the database automatically when it opens a database for the first time since the crash. However, This feature can't recover the database automatically in all crash cases. We need to recover the database manually depending on timing even if this feature enables."
+msgstr "この機能によって、Groongaがクラッシュした時、Groongaはクラッシュした後、最初のデータベースオープン時に自動的にデータベースをリカバリーします。ただ、全てのクラッシュケースで自動的にデータベースをリカバリーできるわけではありません。クラッシュのタイミングによっては、手動でデータベースのリカバリーが必要になります。"
+
+msgid "Groonga execute WAL (write ahead log) when this feature is enable. We can dump WAL by the following tools, but currently, users doesn't need to use them."
+msgstr "この機能が有効な時、GroongaはWAL(ログ先行書き込み)を実行します。以下のツールを使うことでWALをダンプできますが、現状これらをユーザーが使う必要はありません。"
+
+msgid "[:doc:`reference/executables/grndb`] ``dump-wal`` command."
+msgstr "[:doc:`/reference/executables/grndb`] ``dump-wal`` コマンド"
+
+msgid "``dump-wal.rb`` scritp."
+msgstr "``dump-wal.rb`` スクリプト"
+
+msgid "[:doc:`reference/commands/cache_limit`] Groonga remove cache when we execute ``cache_limit 0``. [GitHub#1224][Reported by higchi]"
+msgstr "[:doc:`/reference/commands/cache_limit`] ``cache_limit 0`` を実行したときにキャッシュを削除するようにしました。[GitHub#1224][higchiさんからの報告]"
+
+msgid "Groonga stores query cache to internally table. The maximum total size of keys of this table is 4GiB. Because this table is hash table. Therefore, If we execute many huge queries, Groonga may be unable to store query cache, because the maximum total size of keys may be over 4GiB. In such cases, We can clear the table for query cache by using ``cache_limit 0``, and Groonga can store query cache"
+msgstr "Groongaは内部的なテーブルにクエリーキャッシュを保存しています。このテーブルは、ハッシュテーブルなので、トータルのキーサイズは最大で4GiBです。そのため、もし多くの巨大なクエリーを実行した場合、トータルのキーサイズの最大値4GiBを超え、Groongaがクエリーをキャッシュできない可能性があります。このようなケースで、 ``cache_limit 0`` を実行することで、クエリーキャッシュ用のテーブルをクリアーし、Groongaがクエリーキャッシュを保存できるようにします。"
+
+msgid "Fixed a bug that Groonga doesn't clear lock when some threads open the same object around the same time."
+msgstr "同時期に複数のスレッドで同じオブジェクトをオープンした時に、Groongaがロックを解除しない問題を修正しました。"
+
+msgid "If some threads open the same object around the same time, threads except for a thread that executes the opening object at first are waiting for opening the target object. At this time, threads that wait for an opening object take locks, but these locks are not released. Therefore, these locks remain until Groonga's process is restarted in the above case, and a new thread can't also open the object all the time until Groonga's process is restarted."
+msgstr "同時期に複数のスレッドが同じオブジェクトをオープンすると、最初にオブジェクトを開いたスレッド以外のスレッドは対象のオブジェクトが開かれるまで待ちます。この時、対象のオブジェクトが開かれるのを待っているスレッドもロックを取得しますが、これらのロックは解放されません。したがって、Groongaのプロセスを再起動するまでこれらのロックが残り、その新しいスレッドは、Groongaが再起動するまで、そのオブジェクトを開けません。"
+
+msgid "However, this bug rarely happens. Because a time of a thread open the object is a very short time."
+msgstr "ただ、スレッドがオブジェクトを開く時間は非常に短いため、このバグは滅多に起こりません。"
+
+msgid "[:doc:`reference/functions/query_parallel_or`] Fixed a bug that result may be different from the ``query()``."
+msgstr "[:doc:`/reference/functions/query_parallel_or`] ``query()`` と結果が異なることがある問題を修正しました。"
+
+msgid "For example, If we used ``query(\"tags || tags2\", \"beginner man\")``, the following record was a match, but if we used ``query_parallel_or(\"tags || tags2\", \"beginner man\")``, the following record wasn't a match until now."
+msgstr "例えば、 ``query(\"tags || tags2\", \"beginner man\")`` とした場合は、以下のレコードはマッチしますが、``query_parallel_or(\"tags || tags2\", \"beginner man\")`` とした場合は、今までは、以下のレコードはマッチしませんでした。"
+
+msgid "``{\"_key\": \"Bob\",   \"comment\": \"Hey!\",       \"tags\": [\"expert\", \"man\"], \"tags2\": [\"beginner\"]}``"
+msgstr ""
+
+msgid "Even if we use ``query_parallel_or(\"tags || tags2\", \"beginner man\")``, the above record is match by this modification."
+msgstr "今回の変更によって、 ``query_parallel_or(\"tags || tags2\", \"beginner man\")`` を使った場合であっても、上記のレコードがマッチするようになりました。"
+
+msgid "higchi"
+msgstr "higchiさん"
+
+msgid "Release 11.0.5 - 2021-07-29"
+msgstr "11.0.5リリース - 2021-07-29"
+
+msgid "[:doc:`/reference/normalizers`] Added support for multiple normalizers."
+msgstr "[:doc:`/reference/normalizers`] ノーマライザーを複数指定できるようになりました。"
+
+msgid "We can specify multiple normalizers by ``--notmalizers`` option when we create a table since this release. If we can also specify them by  ``--normalizer`` existing option because of compatibility."
+msgstr "テーブル作成時に ``--normalizers`` オプションを使うことで、複数のノーマライザーを指定できます。互換性のため、既存の ``--normalizer`` を使っても複数のノーマライザーを指定できます。"
+
+msgid "We added ``NormalizerTable`` for customizing a normalizer in Groonga 11.0.4. We can more flexibly behavior of the normalizer by combining ``NormalizerTable`` with existing normalizer."
+msgstr "Groonga 11.0.4 でノーマライザーをカスタマイズするための ``NormalizerTable`` を追加しました。この ``NormalizerTable`` と既存のノーマライザーを組み合わせることでより柔軟な制御ができます。"
+
+msgid "For example, this feature is useful in the following case."
+msgstr "例えば、この機能は、以下のようなケースで有用です。"
+
+msgid "Search for a telephone number. However, we import data handwritten by OCR. If data is handwritten, OCR may misunderstand a number and string(e.g. 5 and S)."
+msgstr "電話番号を検索します。ただし、データはOCRで手書きのデータを取り込みます。OCRは数字と文字列をご認識することがあります。(例えば、 5とS など)"
+
+msgid "The details are as follows."
+msgstr "具体的には以下の通りです。"
+
+msgid "Existing normalizers can't meet in such case, but we can meet it by combining ``NormalizerTable`` with existing normalizer since this release."
+msgstr "既存のノーマライザーでは、このようなケースには対応できませんでしたが、このリリースから既存のノーマライザーと ``NormalizerTable`` を組み合わせることで、このようなケースにも対応できます。"
+
+msgid "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for customizing thresholds for sequential search."
+msgstr "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] シーケンシャルサーチのしきい値をカスタマイズできるようにしました。"
+
+msgid "We can customize thresholds in each queries whether to use sequential search by the following options."
+msgstr "以下のオプションを使うことで、シーケンシャルサーチを使うかどうかのしきい値をクエリーごとにカスタマイズできます。"
+
+msgid "``{\"max_n_enough_filtered_records\": xx}``"
+msgstr ""
+
+msgid "``max_n_enough_filtered_records`` specify the number of records. ``query`` or ``query_parallel_or`` use sequential search when they seems to narrow down until under this number."
+msgstr "``max_n_enough_filtered_records`` は、レコード数を指定します。 ``query`` または、 ``query_parallel_or`` で、この値以下までレコードが絞り込めそうな場合、シーケンシャルサーチを使います。"
+
+msgid "``{\"enough_filtered_ratio\": x.x}``"
+msgstr ""
+
+msgid "``enough_filtered_ratio`` specify percentage of total. ``query`` or ``query_parallel_or`` use sequential search when they seems to narrow down until under this percentage. For example, if we specify ``{\"enough_filtered_ratio\": 0.5}``, ``query`` or ``query_parallel_or`` use sequential search when they seems to narrow down until half of the whole."
+msgstr "``enough_filtered_ratio`` は、全体に占める割合を指定します。 ``query`` または、 ``query_parallel_or`` で、この割合以下までレコードが絞り込めそうな場合、シーケンシャルサーチを使います。例えば、　``{\"enough_filtered_ratio\": 0.5}`` とした場合、 ``query`` または ``query_parallel_or`` で全体の半分まで絞り込めそうな場合はシーケンシャルサーチを使います。"
+
+msgid "[:doc:`/reference/functions/between`][:doc:`/reference/functions/in_values`] Added support for customizing thresholds for sequential search."
+msgstr "[:doc:`/reference/functions/between`][:doc:`/reference/functions/in_values`] シーケンシャルサーチのしきい値をカスタマイズできるようにしました。"
+
+msgid "[:doc:`/reference/functions/between`] and [:doc:`/reference/functions/in_values`] have a feature that they switch to sequential search when the target of search records is narrowed down enough."
+msgstr "[:doc:`/reference/functions/between`] と [:doc:`/reference/functions/in_values`] は、検索対象のレコードが十分に絞り込まれている時に、シーケンシャルサーチに切り替える機能があります。"
+
+msgid "The value of ``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` / ``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` is used as threshold whether Groonga execute sequential search or search with indexes in such a case."
+msgstr "``GRN_IN_VALUES_TOO_MANY_INDEX_MATCH_RATIO`` / ``GRN_BETWEEN_TOO_MANY_INDEX_MATCH_RATIO`` の値は、Groongaがシーケンシャルサーチを実行するかインデックスを使った検索をするかのしきい値として使われます。"
+
+msgid "This behavior is customized by only the following environment variable until now."
+msgstr "今までは、以下の環境変数でのみカスタマイズ可能でした。"
+
+msgid "``in_values()``::"
+msgstr ""
+
+msgid "``between()``::"
+msgstr ""
+
+msgid "if customize by the environment variable, this threshold applies to all queries, but we can specify it in each query by using this feature."
+msgstr "環境変数によるカスタマイズは、すべてのクエリーに対して適用されますが、この機能を使うことで、クエリーごとにしきい値を指定できます。"
+
+msgid "The details are as follows. We can specify the threshold by using ``{\"too_many_index_match_ratio\": x.xx}`` option. The value type of this option is ``double``."
+msgstr "具体的には以下の通りです。 ``{\"too_many_index_match_ratio\": x.xx}`` オプションでしきい値を指定できます。このオプションの値の型は ``double`` 型です。"
+
+msgid "[:doc:`/reference/functions/between`] Added support for ``GRN_EXPR_OPTIMIZE=yes``."
+msgstr "[:doc:`/reference/functions/between`] ``GRN_EXPR_OPTIMIZE=yes`` をサポートしました。"
+
+msgid "``between()`` supported for optimizing the order of evaluation of a conditional expression."
+msgstr "``between()`` で、条件式の評価順序の最適化をサポートしました。"
+
+msgid "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for specifying group of match_columns as vector. [GitHub#1238][Patched by naoa]"
+msgstr "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] match_columns を vector で指定できるようにしました。[GitHub#1238][naoaさんがパッチ提供]"
+
+msgid "We can use vector in ``match_columns`` of ``query`` and ``query_parallel_or`` as below."
+msgstr "以下のように、 ``query`` と ``query_parallel_or`` の ``match_columns`` に vector を使えます。"
+
+msgid "[:doc:`reference/commands/select`] Added support for section and weight in prefix search. [GitHub#1240][Patched by naoa]"
+msgstr "[:doc:`/reference/commands/select`] 前方一致検索でセクションと重みをサポートしました。[GitHub#1240][naoaさんがパッチ提供]"
+
+msgid "We can use multi column index and adjusting score in prefix search."
+msgstr "前方一致検索でマルチカラムインデックスと、スコアーの調整ができます。"
+
+msgid "[:doc:`/reference/executables/grndb`] Added support for closing used object immediately in ``grndb recover``."
+msgstr "[:doc:`/reference/executables/grndb`] ``grndb recover`` で使用したオブジェクトを即時閉じるようにしました。"
+
+msgid "We can reduce memory usage by this. This may decrease performance but it will be acceptable."
+msgstr "これにより、メモリ消費を抑制できます。おそらくパフォーマンスは低下していますが、許容可能な低下です。"
+
+msgid "Note that ``grndb check`` doesn't close used objects immediately yet."
+msgstr "``grndb check`` はまだ、使用したオブジェクトを即時閉じないので注意してください。"
+
+msgid "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Added support for specifying ``scorer_tf_idf`` in ``match_columns`` as below."
+msgstr "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] 以下のように、 ``match_columns`` に ``scorer_tf_idf`` を指定できるようにしました。"
+
+msgid "[:doc:`/reference/commands/query_expand`] Added support for weighted increment, decrement, and negative."
+msgstr "[:doc:`/reference/commands/query_expand`] 展開後の語の重みを操作できるようにしました。"
+
+msgid "We can specify weight against expanded words."
+msgstr "展開後の語に対して、重みを指定できます。"
+
+msgid "If we want to increment score, we use ``>``. If we want to decrement score, we use ``<``."
+msgstr "スコアーを増やしたい場合は、 ``>`` を使います。スコアーを減らしたい場合は、 ``<`` を指定します。"
+
+msgid "We can specify the quantity of scores as a number. We can also use a negative numbers in it."
+msgstr "数字でスコアーの量を指定できます。負の数も指定できます。"
+
+msgid "[httpd] Updated bundled nginx to 1.21.1."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.21.1に更新しました。"
+
+msgid "Updated bundled Apache Arrow to 5.0.0."
+msgstr "バンドルしているApache Arrowを5.0.0に更新しました。"
+
+msgid "[:doc:`/install/ubuntu`] Dropped Ubuntu 20.10 (Groovy Gorilla) support."
+msgstr "[:doc:`/install/ubuntu`] Ubuntu 20.10 (Groovy Gorilla)サポートをやめました。"
+
+msgid "Because Ubuntu 20.10 reached EOL July 22, 2021."
+msgstr "Ubuntu 20.10 は、2021年7月22日でEOLとなったためです。"
+
+msgid "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] Fixed a bug that if we specify ``query_options`` and the other options, the other options are ignored."
+msgstr "[:doc:`reference/functions/query_parallel_or`][:doc:`reference/functions/query`] ``query_options`` とその他のオプションを指定すると、その他のオプションが無視される問題を修正しました。"
+
+msgid "For example, ``\"default_operator\": \"OR\"`` option had been ignored in the following case."
+msgstr "例えば、以下のケースでは、 ``\"default_operator\": \"OR\"`` オプションは無視されていました。"
+
+msgid "If we repeat that we remove any data and load them again, Groonga may not return records that should match."
+msgstr "多くのデータを削除し、同じデータを再度loadすることを繰り返すと、Groongaがヒットすべきレコードを返さないことがあります。"
+
+msgid "naoa"
+msgstr "naoaさん"
+
+msgid "Release 11.0.4 - 2021-06-29"
+msgstr "11.0.4リリース - 2021-06-29"
+
+msgid "[Normalizer] Added support for customized normalizer."
+msgstr "[Normalizer] カスタマイズされたノーマライザーを使えるようになりました。"
+
+msgid "We define a table for normalize to use this feature. We can normalize with use that table. In other words, we can use customized normalizer."
+msgstr "この機能を使うためにノーマライズ用のテーブルを定義し、このテーブルを使ってノーマライズします。つまり、カスタマイズされたノーマライザーを使うことができます。"
+
+msgid "For example, we define that \"S\" normalize to \"5\" in the following example. The ``Substitutions`` table is for nromalize."
+msgstr "例えば、以下の例では、 \"S\" を \"5\" に正規化するよう定義しています。``Substitutions`` テーブルが正規化用のテーブルです。"
+
+msgid "For example, we can define to the table easy to false recognize words when we input a handwritten data. By this, we can normalize incorrect data to correct data."
+msgstr "例えば、手書きの文字を取り込む際に誤認識されやすい語を定義できます。そうすることで、誤ったデータを正規化して正しいデータにできます。"
+
+msgid "Note that we need to reconstruct the index if we updated the table for normalize."
+msgstr "この正規化用のテーブルを更新した場合は、インデックスの再構築が必要なことに注意してください。"
+
+msgid "Added a new command ``object_warm``."
+msgstr "新しいコマンド ``object_warm`` を追加しました。"
+
+msgid "This commnad ship Groonga's DB to OS's page cache."
+msgstr "このコマンドは、GroongaのDBをOSのページキャッシュに乗せます。"
+
+msgid "If we never startup Groonga after OS startup, Groonga's DB doesn't exist on OS's page cache When Groonga on the first run. Therefore, the first operation to Groonga is slow."
+msgstr "OS起動後、Groongaを一度も起動していない場合、GroongaのDBはOSのページキャッシュ上に存在しません。そのため、Groongaに対する最初の操作は遅くなります。"
+
+msgid "If we execute this command in advance, the first operation to Groonga is fast. In Linux, we can do the same by also executing ``cat *.db > dev/null``. However, we could not do the same thing in Windows until now."
+msgstr "予めこのコマンドを実行した場合、Groongaへの最初の操作は速くなります。Linuxでは、 ``cat *.db > dev/null`` で同等のことができますが、Windowsでは、いままで、同様のことはできませんでした。"
+
+msgid "By using this command, we can ship Groonga's DB to OS's page cache in both Linux and Windows. Then, we can also do that in units of table, column, and index. Therefore, we can ship only table, column, and index that we often use to OS's page cache."
+msgstr "このコマンドを使うことで、LinuxでもWindowsでもGroongaのDBをOSのページキャッシュへ乗せることができます。また、テーブル、カラム、インデックス単位でも同様のことができます。したがって、よく使うテーブルやカラム、インデックスのみをOSのページキャッシュに乗せることができます。"
+
+msgid "We can execute this command against various targets as below."
+msgstr "このコマンドは、以下のように様々な対象に対して実行できます。"
+
+msgid "If we specify ``object_warm --name index_name``, the index is shipped to OS's page cache."
+msgstr "``object_warm --name index_name`` と指定した場合は、指定したインデックスがOSのページキャッシュへ転送されます。"
+
+msgid "If we specify ``object_warm --name column_name``, the column is shipped to OS's page cache."
+msgstr "``object_warm --name column_name`` と指定した場合は、指定したカラムがOSののページキャッシュへ転送されます。"
+
+msgid "If we specify ``object_warm --name table_name`` is shipped to OS's page cache."
+msgstr "``object_warm --name table_name`` と指定した場合は、指定したテーブルをOSのページキャッシュへ転送します。"
+
+msgid "If we specify ``object_warm``, whole Groonga's database is shipped to OS's page cache."
+msgstr "``object_warm`` と指定した場合は、GroongaのDB全体がOSのページキャッシュへ転送されます。"
+
+msgid "However, note that if OS has not empty space on memory, this command has no effect."
+msgstr "ただ、メモリーに空きスペースが無い場合は、このコマンドは効果がないことに注意してください。"
+
+msgid "[:doc:`reference/commands/select`] Added support for adjusting the score of a specific record in ``--filter``."
+msgstr "[:doc:`/reference/commands/select`] ``--filter`` 内で特定のレコードのスコアーを調整できるようにしました。"
+
+msgid "We can adjust the score of a specific record by using a oprtator named ``*~``. ``*~`` is logical operator same as ``&&`` and ``||``. Therefore, we can use ``*~`` like as ``&&`` ans ``||``. Default weight of ``*~`` is -1."
+msgstr "``*~`` という演算子を使うことで、特定のレコードのスコアーを調整できます。``*~`` は ``&&`` や ``||`` と同じ論理演算子です。したがって、 ``&&`` や ``||`` と同じように使えます。``*~`` のデフォルトの重みは -1 です。"
+
+msgid "Therefore, for example, ``'content @ \"Groonga\" *~ content @ \"Mroonga\"'`` mean the following operations."
+msgstr "したがって、例えば、 ``'content @ \"Groonga\" *~ content @ \"Mroonga\"'`` は以下の操作を意味します。"
+
+msgid "Extract records that match ``'content @ \"Groonga\"`` and ``content @ \"Mroonga\"'``."
+msgstr "``'content @ \"Groonga\"`` と ``content @ \"MySQL\"`` にマッチしたレコードを抽出します。"
+
+msgid "Add a score as below."
+msgstr "以下のようにスコアーを追加します。"
+
+msgid "Calculate the score of ``'content @ \"Groonga\"``."
+msgstr "``'content @ \"Groonga\"`` のスコアーを計算します。"
+
+msgid "Calculate the score of ``'content @ \"Mroonga\"'``."
+msgstr "``content @ \"Mroonga\"'`` のスコアーを計算します。"
+
+msgid "b's score multiplied by -1 by ``*~``."
+msgstr "bのスコアーを -1 倍します。"
+
+msgid "The socre of this record is a + b Therefore, if a's socre is 1 and b's score is 1, the score of this record  is 1 + (1 * -1) = 0."
+msgstr "このレコードのスコアーは a + b です。したがって、 aのスコアー 1 で bのスコアーが1 の場合、このレコードのスコアーは 1 + (1 * -1) = 0 です。"
+
+msgid "Then, we can specify score quantity by ``*~${score_quantity}``."
+msgstr "また、 ``*~${score_quantity}`` とすることで、スコアーの量を指定できます。"
+
+msgid "In particular, the following query adjust the score of match records by the following condition(``'content @ \"Groonga\" *~2.5 content @ \"Mroonga\")'`` )."
+msgstr "具体的には、 以下の条件( ``'content @ \"Groonga\" *~2.5 content @ \"MySQL\"'`` ) にマッチしたレコードのスコアーを調整します。"
+
+msgid "We can do the same by also useing :ref:`select-adjuster` . If we use :ref:`select-adjuster` , we need to make ``--filter`` condition and ``--adjuster`` conditon on our application, but we make only ``--filter`` condition on it by this improvement."
+msgstr ":ref:`select-adjuster` を使っても同様のことができます。:ref:`select-adjuster` を使う場合、アプリケーション上で、 ``--filter`` 条件と ``--adjuster`` 条件を作る必要がありますが、この改良で、 ``--filter`` 条件のみを作成すればよくなりました。"
+
+msgid "We can also describe filter condition as below by using ``query()``."
+msgstr "以下のように、 ``query()`` を使って、filter条件を記述することもできます。"
+
+msgid "``--filter 'content @ \"Groonga\" *~2.5 content @ \"Mroonga\"'``"
+msgstr ""
+
+msgid "[:doc:`reference/commands/select`] Added support for ``&&`` with weight."
+msgstr "[:doc:`reference/commands/select`] 重み付き ``&&`` をサポートしました。"
+
+msgid "We can use ``&&`` with weight by using ``*<`` or ``*>``. Default weight of ``*<`` is 0.5. Default weight of ``*>`` is 2.0."
+msgstr "``*<`` と ``*>`` を使うことで、重み付きの ``&&`` を使えます。``*<`` のデフォルトの重みは 0.5です。 ``*>`` のデフォルトの重みは 2.0 です。"
+
+msgid "We can specify score quantity by ``*<${score_quantity}`` and ``*>${score_quantity}``. Then, if we specify ``*<${score_quantity}``, a plus or minus sign of ``${score_quantity}`` is reverse."
+msgstr "``*<${score_quantity}`` や ``*>${score_quantity}`` とすることで、スコアーの量を指定できます。また、 ``*<${score_quantity}`` と指定した場合は、 ${score_quantity} の正負の符号が反転します。"
+
+msgid "For example, ``'content @ \"Groonga\" *<2.5 query(\"content\", \"MySQL\")'`` is as below."
+msgstr "例えば、 ``'content @ \"Groonga\" *<2.5 query(\"content\", \"MySQL\")'`` は以下の操作を意味します。"
+
+msgid "Calculate the score of ``query(\"content\", \"MySQL\")``."
+msgstr "``query(\"content\", \"MySQL\")`` のスコアーを計算します。"
+
+msgid "b's score multiplied by -2.5 by ``*<``."
+msgstr "bのスコアーは、 ``*<`` によって -2.5倍されます。"
+
+msgid "The socre of this record is a + b Therefore, if a's socre is 1 and b's score is 1, the score of this record is 1 + (1 * -2.5) = -1.5."
+msgstr "このレコードのスコアーは a + b です。したがって、 aのスコアー 1 で bのスコアーが1 の場合、このレコードのスコアーは 1 + (1 * -2.5) = −1.5 です。"
+
+msgid "In particular, the following query adjust the score of match records by the following condition( ``'content @ \"Groonga\" *<2.5 query(\"content\", \"Mroonga\")'`` )."
+msgstr "具体的には、 以下の条件( ``'content @ \"Groonga\" *~2.5 query(\"content\", \"MySQL\")'`` にマッチしたレコードのスコアーを調整します。"
+
+msgid "[:doc:`reference/log`] Added support for outputting to stdout and stderr."
+msgstr "[:doc:`/reference/log`] 標準出力、標準エラー出力への出力をサポートしました。"
+
+msgid "[:ref:`process-log`] and [:ref:`query-log`] supported　output to stdout and stderr."
+msgstr "[:ref:`process-log`] と [:ref:`query-log`] が標準出力と標準エラー出力への出力をサポートしました。"
+
+msgid "If we specify as ``--log-path -``, ``--query-log-path -``, Groonga output log to stdout."
+msgstr "``--log-path -`` や ``--query-log-path -`` と指定した場合、Groongaはログを標準出力に出力します。"
+
+msgid "If we specify as ``--log-path +``, ``--query-log-path +``, Groonga output log to stderr."
+msgstr "``--log-path +`` や ``--query-log-path +`` と指定した場合、Groongaはログを標準エラー出力に出力します。"
+
+msgid "[:ref:`process-log`] is for all of Groonga works. [:ref:`query-log`] is just for query processing."
+msgstr "[:ref:`process-log`] はGroongaの動作全てに関することのログです。 [:ref:`query-log`] は、クエリー処理に関することだけのログです。"
+
+msgid "This feature is useful when we execute Groonga on Docker. Docker has the feature that records stdout and stderr in standard. Therefore, we don't need to login into the environment of Docker to get Groonga's log."
+msgstr "この機能はDocker上でGroongaを実行する際に有用です。Dockerは標準で標準出力と標準エラー出力を記録する機能を持っています。したがって、Groongaのログを取得するために、Dockerの環境にログインする必要がなくなります。"
+
+msgid "For example, this feature is useful as he following case."
+msgstr "例えば、この機能は、以下のようなケースで有用です。"
+
+msgid "If we want to analyze slow queries of Groonga on Docker."
+msgstr "Docker上のGroongaのスロークエリーを解析したい場合。"
+
+msgid "If we specify ``--query-log-path -`` when startup Groonga, we can analyze slow queries by only execution the following commands."
+msgstr "Groonga起動時に ``--query-log-path -`` と指定している場合、以下のコマンドを実行するだけでスロークエリーを解析できます。"
+
+msgid "``docker logs ${container_name} | groonga-query-log-analyze``"
+msgstr ""
+
+msgid "By this, we can analyze slow query with the query log that output from Groonga on Docker simply."
+msgstr "このように、 Groonga上のDockerから出力したクエリーログを使って、簡単にスロークエリの解析ができます。"
+
+msgid "[Documentation] Filled missing documentation of ``string_substring``. [GitHub#1209][Patched by Takashi Hashida]"
+msgstr "[ドキュメント] ``string_substring`` に不足している内容を追加しました。[Github#1209][Takashi Hashidaさんがパッチ提供]"
+
+msgid "Release 11.0.3 - 2021-05-29"
+msgstr "11.0.3リリース - 2021-05-29"
+
+msgid "[:doc:`reference/functions/query`] Added support for ignoring ``TokenFilterStem`` by the query."
+msgstr "[:doc:`reference/functions/query`] クエリー毎に ``TokenFilterStem`` を無効にできるようになりました。"
+
+msgid "``TokenFilterStem`` can search by using a stem. For example, all of ``develop``, ``developing``, ``developed`` and ``develops`` tokens are stemmed as ``develop``. So we can find ``develop``, ``developing`` and ``developed`` by ``develops`` query."
+msgstr "``TokenFilterStem`` は語幹を使った検索ができます。例えば ``develop`` も ``developing`` も ``developed`` も ``develops`` も、すべてステミングすると ``develop`` になります。そのため、 ``develops`` というクエリーで ``develop`` も ``developing`` も ``developed`` も検索できます。"
+
+msgid "In this release, we are able to search without ``TokenFilterStem`` in only a specific query as below."
+msgstr "今回のリリースでは、以下のように特定のクエリーでのみ ``TokenFilterStem`` を無効にして検索できるようになりました。"
+
+msgid "This feature is useful when users want to search by a stemmed word generally but users sometimes want to search by a exact (not stemmed) word as below."
+msgstr "この機能は、通常は語幹を使った検索がしたいが、時々、以下のように(ステミングされていない)正確な語で検索したいときに有用です。"
+
+msgid "If Groonga returns many results when searching by a stemmed word."
+msgstr "ステミングされた語を使った検索だとGroongaが大量の検索結果を返す場合。"
+
+msgid "If ``TokenFilterStem`` returns the wrong result of stemming."
+msgstr "``TokenFilerStem`` が間違ったステミング結果を返す場合。"
+
+msgid "If we want to find only records that have an exact (not stemmed) word."
+msgstr "(ステミングされていない)正確な語を含むレコードのみを検索したい場合。"
+
+msgid "[:doc:`reference/functions/query`] Added support for ignoring ``TokenFilterStopWord`` by the query."
+msgstr "[:doc:`reference/functions/query`] クエリー毎に ``TokenFilterStopWord`` を無効にできるようになりました。"
+
+msgid "``TokenFilterStopWord`` searched without stop word that we registered beforehand. It uses for reducing noise of search by ignoring frequently word (e.g., ``and``, ``is``, and so on.)."
+msgstr "``TokenFilterStopWord`` は、予め登録したストップワードを検索から除外します。これは、 ``and`` や ``is`` などの頻出語を無視することで検索ノイズを減らすために使います。"
+
+msgid "However, we sometimes want to search include these words only a specific query. In this release, we are able to search without ``TokenFilterStopWord`` in only a specific query as below."
+msgstr "ただ、ときどき、特定のクエリーでのみこれらの語を含めて検索したいときがあります。今回のリリースでは、以下のように特定のクエリーでのみ ``TokenFilterStopWord`` を無効にして検索できるようになりました。"
+
+msgid "In the above example, we specify ``TokenFilterStopWord.enable`` by using ``--query-options``, but we also specify it by using ``{\"options\": {\"TokenFilterStopWord.enable\": false}}`` as below."
+msgstr "上記の例では、 ``--query-options`` を使って、 ``TokenFilterStopWord.enable`` を指定していますが、以下のように ``{\"options\": {\"TokenFilterStopWord.enable\": false}}`` を使っても指定できます。"
+
+msgid "This feature is useful if that Groonga can't return results correctly if we don't search by keywords include commonly used words (e.g., if a search for a song title, a shop name, and so on.)."
+msgstr "この機能は、よく使われる語を含めて検索しないとGroongaが正しい結果を返さない時に便利です。(例えば、曲名や店名等を検索する場合です。)"
+
+msgid "[:doc:`/reference/normalizers`][NormalizerNFKC] Added a new option ``remove_new_line``."
+msgstr "[:doc:`/reference/normalizers`][NormalizerNFKC] 新しいオプション ``remove_new_line`` を追加しました。"
+
+msgid "If we want to normalize the key of a table that stores data, we set a normalizer to it. However, normally, normalizers remove a new line."
+msgstr "データを格納するテーブルのキーを正規化したい場合、そのテーブルにノーマライザーを設定しますが、通常ノーマライザーは改行を削除します。"
+
+msgid "Groonga can't handle a key that is only a new line."
+msgstr "ノーマライザーが改行を削除してしまうと、Groongaは改行のみのキーを扱えません。"
+
+msgid "We can register data that is only a new line as key by this option."
+msgstr "このオプションを使うことで、改行のみのデータをキーとして登録できます。"
+
+msgid "[:doc:`/reference/functions/string_slice`] Added a new function ``string_slice()``. [Github#1177][Patched by Takashi Hashida]"
+msgstr "[:doc:`/reference/functions/string_slice`] 新しい関数 ``string_slice()`` を追加しました。 [Github#1177][Takashi Hashidaさんがパッチ提供]"
+
+msgid "``string_slice()`` extracts a substring of a string."
+msgstr "``string_slice()`` は、文字列の部分文字列を抽出します。"
+
+msgid "To enable this function, we need to register ``functions/string`` plugin."
+msgstr "この関数を使うには、 ``functions/string`` プラグインの登録が必要です。"
+
+msgid "We can use two different extraction methods depending on the arguments as below."
+msgstr "以下のように、引数によって２つの異なる抽出方法を使えます。"
+
+msgid "Extraction by position::"
+msgstr "位置を使った抽出::"
+
+msgid "Extraction by regular expression::"
+msgstr "正規表現を使った抽出::"
+
+msgid "[:doc:`/install/ubuntu`] Dropped support for Ubuntu 16.04 LTS (Xenial Xerus)."
+msgstr "[:doc:`/install/ubuntu`] Ubuntu 16.04 LTS (Xenial Xerus)のサポートをやめました。"
+
+msgid "Added EditorConfig for Visual Studio. [GitHub#1191][Patched by Takashi Hashida]"
+msgstr "Visual Studio 用の EditorConfig を追加しました。[GitHub#1191][Takashi Hashidaさんがパッチ提供]"
+
+msgid "Most settings are for Visual Studio only."
+msgstr "多くの設定は、Visual Studio 専用です。"
+
+msgid "[httpd] Updated bundled nginx to 1.20.1."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.20.1に更新しました。"
+
+msgid "Contains security fix of CVE-2021-23017."
+msgstr "CVE-2021-23017のセキュリティの修正が含まれています。"
+
+msgid "Fixed a bug that Groonga may not have returned a result of a search query if we sent many search queries when tokenizer, normalizer, or token_filters that support options were used."
+msgstr "オプションをサポートしているトークナイザーやノーマライザー、トークンフィルターが使われている際、多くの検索クエリーを送信するとGroongaが応答を返さなくなることがある問題を修正しました。"
+
+msgid "Release 11.0.2 - 2021-05-10"
+msgstr "11.0.2リリース - 2021-05-10"
+
+msgid "[Documentation] Removed a reference about ``ruby_load`` command. [GitHub#1172][Patched by Anthony M. Cook]"
+msgstr "[Documentation] ``ruby_load`` コマンドのリファレンスを削除しました。　[GitHub#1172][Anthony M. Cookさんがパッチ提供]"
+
+msgid "Because this command has already deleted."
+msgstr "このコマンドはすでに削除されているためです。"
+
+msgid "[:doc:`/install/debian`] Added support for Debian 11(Bullseye)."
+msgstr "[:doc:`/install/debian`] Debian 11(Bullseye) をサポートしました。"
+
+msgid "[:doc:`reference/commands/select`] Added support for ``--post_filter``."
+msgstr "[:doc:`/reference/commands/select`] ``--post_filter`` をサポートしました。"
+
+msgid "We can use ``post_filter`` to filter by ``filtered`` stage dynamic columns as below."
+msgstr "以下のように、 ``filtered`` ステージの動的カラムに対して ``post_filter`` を使ってフィルターできます。"
+
+msgid "[:doc:`reference/commands/select`] Added support for ``--slices[].post_filter``."
+msgstr "[:doc:`/reference/commands/select`] ``--slices[].post_filter`` をサポートしました。"
+
+msgid "We can use ``post_filter`` to filter by ``--slices[].filter`` as below."
+msgstr "以下のように、 ``--slices[].filter`` の条件でフィルターされた結果に対して ``post_filter`` を使えます。"
+
+msgid "[:doc:`reference/commands/select`] Added support for describing expression into ``--sort_keys``."
+msgstr "[:doc:`reference/commands/select`] ``--sort_keys`` 内に式を記述できるようになりました。"
+
+msgid "We can describe the expression into ``--sort_keys``."
+msgstr "``--sort_keys`` に式を記述できます。"
+
+msgid "If nonexistent keys into expression as a ``--sort_keys``, they are ignored and outputted warns into a log."
+msgstr "存在しないキーが sort_keys の式に含まれていた場合、それらは、無視され警告がログに出力されます。"
+
+msgid "By this, for example, we can specify a value of an element of ``VECTOR COLUMN`` to ``--sort_keys``. And we can sort a result with it."
+msgstr "これによって、例えば、 ``--sort_keys`` に ``VECTOR_COLUMN`` の要素を指定し、 ``VECTOR_COLUMN`` の要素で結果をソートできます。"
+
+msgid "We can sort a result with an element of ``VECTOR COLUMN`` even if the before version by using dynamic column. However, we can sort a result with an element of ``VECTOR COLUMN`` without using dynamic column by this feature."
+msgstr "以前のバージョンでも動的カラムを使えば、 ``VECTOR COLUMN`` の要素で結果をソートできましたが、この機能によって、動的カラムを使わずに ``VECTOR_COLUMN`` の要素で結果をソートできます。"
+
+msgid "[:doc:`/reference/token_filters`] Added support for multiple token filters with options."
+msgstr "[:doc:`/reference/token_filters`] オプションをつけた複数のトークンフィルターを使えるようにしました。 "
+
+msgid "We can specify multiple token filters with options like ``--token_filters 'TokenFilterStopWord(\"column\", \"ignore\"), TokenFilterNFKC130(\"unify_kana\", true)'``. [Github#mroonga/mroonga#399][Reported by MASUDA Kazuhiro]"
+msgstr "``--token_filters 'TokenFilterStopWord(\"column\", \"ignore\"), TokenFilterNFKC130(\"unify_kana\", true)'`` のように複数のトークンフィルターを指定できます。 [Github#mroonga/mroonga#399][MASUDA Kazuhiroさんが報告]"
+
+msgid "[:doc:`reference/functions/query`] Added support a dynamic column of ``result_set`` stage with complex expression."
+msgstr "[:doc:`reference/functions/query`] 複雑な式で ``result_set`` ステージの動的カラムを扱えるようにしました。"
+
+msgid "Complex expression is that it needs temporary result sets internally like a following expression."
+msgstr "複雑な式とは、以下のように一時的な内部結果セットが必要な式です。"
+
+msgid "In the above expressions, the temporary result sets are used to store the result of evaluating the ``true``."
+msgstr "上記の式では、 ``true`` の評価結果を格納するために一時的な結果セットを使用します。"
+
+msgid "Therefore, for example, in the following expression, we can use a value of dynamic column of ``result_set`` stage in expression. Because temporary result sets internally are needless as below expression."
+msgstr "したがって、例えば、以下の式では、式の中で ``result_set`` ステージの動的カラムの値を使えます。以下の式では、一時的な内部結果セットが必要ないためです。"
+
+msgid "In this release, for example, we can set a value to ``li_score`` as below. (The value of ``li_score`` had been ``0`` in before version. Because the second expression could not get dynamic column.)"
+msgstr "今回のリリースでは、以下のように ``li_score`` に値を設定できます。(以前のバージョンでは、2番めの式が動的カラムの値を取得出来なかったため、 ``li_score`` の値は ``0`` になっていました。)"
+
+msgid "We also supported a dynamic vector column of ``result_set`` stage as below."
+msgstr "以下のように、 ``result_set`` ステージの動的ベクターカラムも扱えるようにしました。"
+
+msgid "If we use a dynamic vector column, the storing values are appended values of each element."
+msgstr "動的ベクターカラムを使う場合、格納する値は各要素が追加された値になります。"
+
+msgid "[:doc:`/install/ubuntu`] Added support for Ubuntu 21.04 (Hirsute Hippo)."
+msgstr "[:doc:`/install/ubuntu`] Ubuntu 21.04 (Hirsute Hippo)をサポートしました。"
+
+msgid "[httpd] Updated bundled nginx to 1.19.10."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.19.10に更新しました。"
+
+msgid "[The browser based administration tool] Currently, Groonga has a bug that a search query that is inputted to non-administration mode is sent even if we input checks to the checkbox for the administration mode of a record list. [Github#1186][Reported by poti]"
+msgstr "[ブラウザーベースの管理ツール] 現在Groongaには、レコード一覧の管理モードのチェックボックスにチェックを入れても、非管理モードに入力された検索クエリーが送信されるという問題があります。 [Github#1186][potiさんが報告]"
+
+msgid "Anthony M. Cook"
+msgstr "Anthony M. Cookさん"
+
+msgid "MASUDA Kazuhiro"
+msgstr "MASUDA Kazuhiroさん"
+
+msgid "poti"
+msgstr "potiさん"
+
+msgid "Release 11.0.1 - 2021-03-31"
+msgstr "11.0.1リリース - 2021-03-31"
+
+msgid "[:doc:`/install/debian`] Added support for a ARM64 package."
+msgstr "[:doc:`/install/debian`] ARM64向けのパッケージをサポートしました。"
+
+msgid "[:doc:`reference/commands/select`] Added support for customizing adjust weight every key word."
+msgstr "[:doc:`/reference/commands/select`] キーワードごとに重みをカスタマイズできるようにしました。"
+
+msgid "We need to specify ``<`` or ``>`` to all keywords to adjust scores until now. Because the default adjustment of weight (6 or 4) is larger than the default score (1)."
+msgstr "今まで、スコアーを調整するには、すべてのキーワードに対して ``<`` や ``>`` を指定する必要がありました。デフォルトのスコアの重み(1)より、デフォルトの重みの調整量(6 または 4)のほうが大きいためです。"
+
+msgid "Therefore, for example, \"A\"'s weight is 1 and \"B\"'s weight is 4 in ``A <B``. Decremented \"B\"'s weight (4) is larger than not decremented \"A\"'s weight (1). This is not works as expected. we need to specify ``>A <B`` to use smaller weight than \"A\" for \"B\". \"A\"'s weight is 6 and \"B\"'s weight is 4 in ``>A <B``."
+msgstr "例えば、``A <B`` では、 \"A\" の重みは1、 \"B\" の重みは4になります。デクリメントされていない \"A\" の重み(1)より、デクリメントされた \"B\" の重み(4)のほうが大きくなります。これは、期待した動作ではありません。\"B\" に \"A\" より小さい重みを使うためには、 ``>A <B`` と指定する必要があります。``>A <B`` では、 \"A\" の重みは6、 \"B\" の重みは4になります。"
+
+msgid "We can customize adjustment of weight every key word by only specifying ``<${WEIGHT}`` or ``>${WEIGHT}`` to target keywords since this release. For example, \"A\"'s weight is 1 and \"B\"'s weight is 0.9 in ``A <0.1B`` (\"B\"'s weight decrement 0.1)."
+msgstr "今回のリリースから、対象のキーワードに ``<${WEIGHT}`` または ``>${WEIGHT}`` と指定するだけで、キーワードごとに重みの調整量をカスタマイズできます。例えば、 ``A <0.1B`` では、 \"A\" の重みは1、 \"B\" の重みは0.9になります。(\"B\" の重みを0.1デクリメントしています。)"
+
+msgid "However, note that these forms ( ``>${WEIGHT}...``, ``<${WEIGHT}...``, and ``~${WEIGHT}...`` ) are incompatible."
+msgstr "ただし、これらの形式(``>${WEIGHT}...``, ``<${WEIGHT}...``, and ``~${WEIGHT}...``)は互換性が無いことに注意してください。"
+
+msgid "[:doc:`reference/commands/select`] Added support for outputting ``Float`` and ``Float32`` value in Apache Arrow format."
+msgstr "[:doc:`/reference/commands/select`] Apache Arrow形式で ``Float`` と ``Float32`` の値を出力できるようにしました。"
+
+msgid "For example, Groonga output as below."
+msgstr "例えば、以下のように出力します。"
+
+msgid "[:doc:`reference/commands/select`] Added support for getting a reference destination data via index column when we output a result."
+msgstr "[:doc:`/reference/commands/select`] 結果出力時に、インデックスカラム経由で参照先のデータを取得できるようになりました。"
+
+msgid "Until now, Groonga had returned involuntary value when we specified output value like ``index_column.xxx``. For example, A value of ``--columns[tags].value purchases.tag`` was ``[\"apple\",[\"many\"]],[\"banana\",[\"man\"]],[\"cacao\",[\"man\"]]`` in the following example. In this case, the expected values was ``[\"apple\",[\"man\",\"many\"]],[\"banana\",[\"man\"]],[\"cacao\",[\"woman\"]]``. In this release, we can get a correct reference destination data via index column as below."
+msgstr "今までは、 出力値に ``index_column.xxx`` のように指定すると、Groongaは意図しない値を返していました。例えば以下の例では、 ``--columns[tags].value purchases.tag`` の値は、 ``[\"apple\",[\"many\"]],[\"banana\",[\"man\"]],[\"cacao\",[\"man\"]]`` になりました。このケースでは、期待される値は、 ``[\"apple\",[\"man\",\"many\"]],[\"banana\",[\"man\"]],[\"cacao\",[\"woman\"]]`` でした。今回のリリースから、以下のように、インデックスカラム経由で参照先の正しい値を取得できます。"
+
+msgid "[:doc:`reference/commands/select`] Added support for specifying index column directly as a part of nested index."
+msgstr "[:doc:`/reference/commands/select`] ネストされたインデックスの一部として直接インデックスカラムを指定できるようになりました。"
+
+msgid "We can search source table after filtering by using ``index_column.except_source_column``. For example, we specify ``comments.content`` when searching in the following example. In this case, at first, this query execute full text search from ``content`` column of ``Commentts`` table, then fetch the records of Articles table which refers to already searched records of Comments table."
+msgstr "``index_column.except_source_column`` を使ってフィルター後にソーステーブルを検索できます。例えば、以下の例では、検索時に ``comments.content`` を指定しています。この場合、最初に、このクエリは ``Comments`` テーブルの ``content`` カラムを全文検索し、次に ``Comments`` テーブルを検索した結果のレコードを参照する ``Articles`` テーブルのレコードを取得します。"
+
+msgid "[:doc:`/reference/commands/load`] Added support for loading reference vector with inline object literal."
+msgstr "[:doc:`/reference/commands/load`] オブジェクトリテラルを使って、参照先のレコードをロードできるようにしました。"
+
+msgid "For example, we can load data like ``\"key\" : \"[ { \"key\" : \"value\", ..., \"key\" : \"value\" } ]\"`` as below."
+msgstr "例えば、以下のように、 ``\"key\" : \"[ { \"key\" : \"value\", ..., \"key\" : \"value\" } ]\"`` のようなデータをロードできます。"
+
+msgid "It makes easier to add JSON data into reference columns by this feature."
+msgstr "この機能によって、参照カラムにJSONデータを追加しやすくなります。"
+
+msgid "Currently, this feature only support with JSON input."
+msgstr "現状、この機能は、JSONの入力のみをサポートしています。"
+
+msgid "[:doc:`/reference/commands/load`] Added support for loading reference vector from JSON text."
+msgstr "[:doc:`/reference/commands/load`] JSON文字列で、参照先のレコードをロードできるようにしました。"
+
+msgid "We can load data to reference vector from source table with JSON text as below."
+msgstr "以下のように、JSONテキストを使ってソーステーブルから参照ベクターへデータをロードできます。"
+
+msgid "Currently, this feature doesn't support nested reference record."
+msgstr "現状、この機能は、ネストされた参照レコードをサポートしていません。"
+
+msgid "[Windows] Added support for UNIX epoch for ``time_classify_*`` functions."
+msgstr "[Windows] ``time_classify_*`` 関数で UNIXエポック を扱えるようになりました。"
+
+msgid "Groonga handles timestamps on local time. Therefore, for example, if we input the UNIX epoch in Japan, inputting time is 9 hours behind the UNIX epoch."
+msgstr "Groongaは、現地時刻でタイムスタンプを扱っています。したがって、例えば日本でUNIXエポックを入力した場合、入力した時刻はUNIXエポックの9時間前になります。"
+
+msgid "The Windows API outputs an error when we input the time before the UNIX epoch."
+msgstr "WindowsのAPIはUNIXエポックより前の時間が入力されるとエラーになります。"
+
+msgid "We can use the UNIX epoch in ``time_classify_*`` functions as below in this release."
+msgstr "今回のリリースから、以下のようにUNIXエポックを ``time_classify_*`` 内で使えるように"
+
+msgid "[:doc:`reference/functions/query_parallel_or`] Added a new function for processing queries in parallel."
+msgstr "[:doc:`reference/functions/query_parallel_or`] クエリーを並行して実行できる新しい関数を追加しました。"
+
+msgid "``query_parallel_or`` requires Apache Arrow for processing queries in parallel. If it does not enable, ``query_parallel_or`` processes queries in sequence."
+msgstr "``query_parallel_or`` でクエリーを並行で処理するためにはApache Arrowが必要です。Apache Arrowが無い場合は、 ``query_parallel_or`` はクエリーをシーケンシャルに実行します。"
+
+msgid "``query_parallel_or`` processes combination of ``match_columns`` and ``query_string`` in parallel."
+msgstr "``query_parallel_or`` は、 ``match_columns`` と ``query_string`` の組み合わせを平行に処理します。"
+
+msgid "Syntax of ``query_parallel_or`` is as follow::"
+msgstr "``query_parallel_or`` の構文は以下の通りです。::"
+
+msgid "[:doc:`reference/commands/select`] Added support for ignoring nonexistent sort keys."
+msgstr "[:doc:`reference/commands/select`] 存在しないソートキーを無視するようにしました。"
+
+msgid "Groonga had been outputted error when we specified nonexistent sort keys until now. However, Groonga ignore nonexistent sort keys since this release. (Groonga doesn't output error.)"
+msgstr "今まで、存在しないソートキーを指定したとき、Groongaはエラーを出力していましたが、今回のリリースから存在しないソートキーを無視します。(エラーを出力しなくなります。)"
+
+msgid "This feature implements for consistency. Because we just ignore invalid values in ``output_columns`` and most of invalid values in ``sort_keys``."
+msgstr "この機能は、一貫性のために実装しています。``output_columns`` も無効な値を無視します。また、 ``sort_keys`` も無効な値のほとんどを無視します。"
+
+msgid "[:doc:`reference/commands/select`] Added support for ignoring nonexistent tables in ``drilldowns[].table``. [GitHub#1169][Reported by naoa]"
+msgstr "[:doc:`/reference/commands/select`] drilldowns[].table で存在しないテーブルを無視します。 [GitHub#1169][naoaさんが報告]"
+
+msgid "Groonga had been outputted error when we specified nonexistent tables in ``drilldowns[].table`` until now. However, Groonga ignore nonexistent tables in ``drilldowns[].table`` since this release. (Groonga doesn't output error.)"
+msgstr "今まで、  ``drilldowns[].table`` で存在しないテーブルを指定したとき、Groongaはエラーを出力していましたが、今回のリリースから存在しないテーブルを無視します。(エラーを出力しなくなります。)"
+
+msgid "[httpd] Updated bundled nginx to 1.19.8."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.19.8に更新しました。"
+
+msgid "[:doc:`reference/commands/reference_acquire`] Fixed a bug that Groonga crash when a table's reference is acquired and a column is added to the table before auto release is happened."
+msgstr "[:doc:`reference/commands/reference_acquire`] 参照の自動リリースが発生する前に、テーブルにカラムが追加されテーブルの参照が獲得されたときにGroongaがクラッシュする問題を修正しました。"
+
+msgid "Because the added column's reference isn't acquired but it's released on auto release."
+msgstr "追加されたカラムの参照は獲得されませんが、自動リリースの対象になるためです。"
+
+msgid "[Windows] Fixed a bug that one or more processes fail an output backtrace on SEGV when a new backtrace logging process starts when another backtrace logging process is running in another thread."
+msgstr "[Windows] 別のスレッドで、他のバックトレースロギングプロセスが動作しているときに、新しくバックトレースロギングプロセスが開始されると、1つ以上のプロセスがSEGVのバックトレースの出力に失敗する問題を修正しました。"
+
+msgid "Release 11.0.0 - 2021-02-09"
+msgstr "11.0.0リリース - 2021-02-09"
+
+msgid "This is a major version up! But It keeps backward compatibility. We can upgrade to 11.0.0 without rebuilding database."
+msgstr "メジャーバージョンアップです! メジャーバージョンアップですが、互換性は壊れていないので、データベースを再構築することなく11.0.0へアップグレードできます。"
+
+msgid "[:doc:`reference/commands/select`] Added support for outputting values of scalar column and vector column via nested index."
+msgstr "[:doc:`/reference/commands/select`] ネストされたインデックス経由でスカラーカラムとベクターカラムの値を出力できるようになりました。"
+
+msgid "The nested index is that has structure as below."
+msgstr "ネストされたインデックスとは、以下のような構造です。"
+
+msgid "The ``Products.purchases`` column is a index of ``Purchases.product`` column in the above example. Also, ``Purchases.product`` is a reference to ``Products`` table."
+msgstr "上記の例では、 ``Products.purchases`` カラムは ``Purchases.product`` カラムのインデックスです。また、 ``Purchases.product`` カラムは、 ``Products`` テーブルへの参照です。"
+
+msgid "We had not got the correct search result when we search via nested index until now."
+msgstr "今までは、ネストされたインデックス経由の検索は、期待した結果を返しませんでした。"
+
+msgid "The result had been as follows until now. We can see that ``{\"product\": \"apple\",  \"tag\": \"man\"}`` is not output."
+msgstr "今までの結果は以下のようになっていました。 ``{\"product\": \"apple\",  \"tag\": \"man\"}`` が出力されていないことがわかります。"
+
+msgid "The result will be as follows from this release. We can see that ``{\"product\": \"apple\",  \"tag\": \"man\"}`` is output."
+msgstr "このリリースから、結果は以下のようになります。 ``{\"product\": \"apple\",  \"tag\": \"man\"}`` が出力されているのがわかります。"
+
+msgid "[Windows] Dropped support for packages of Windows version that we had cross compiled by using MinGW on Linux."
+msgstr "[Windows] Linux上のMinGWを使ってクロスコンパイルしていたWindows向けパッケージの提供をやめました。"
+
+msgid "Because there aren't probably many people who use that."
+msgstr "おそらく、ほとんどの人がこのパッケージを使っていないためです。"
+
+msgid "These above packages are that We had provided as below name until now."
+msgstr "上記のパッケージはこれまで、以下のような名前で提供されていたものです。"
+
+msgid "``groonga-x.x.x-x86.exe``"
+msgstr ""
+
+msgid "``groonga-x.x.x-x86.zip``"
+msgstr ""
+
+msgid "``groonga-x.x.x-x64.exe``"
+msgstr ""
+
+msgid "From now on, we use the following packages for Windows."
+msgstr "これからは、以下のパッケージを使用してください。"
+
+msgid "``groonga-latest-x86-vs2019-with-vcruntime.zip``"
+msgstr ""
+
+msgid "``groonga-latest-x64-vs2019-with-vcruntime.zip``"
+msgstr ""
+
+msgid "If a system already has installed Microsoft Visual C++ Runtime Library, we suggest that we use the following packages."
+msgstr "既に Microsoft Visual C++ Runtime Library がインストール済みのシステムの場合は、以下のパッケージを使用してください。"
+
+msgid "``groonga-latest-x86-vs2019.zip``"
+msgstr ""
+
+msgid "``groonga-latest-x64-vs2019.zip``"
+msgstr ""
+
+msgid "Fixed a bug that there is possible that index is corrupt when Groonga executes many additions, delete, and update information in it."
+msgstr "インデックス内のデータを大量に追加、削除、更新した際にインデックスが破損することがある問題を修正しました。"
+
+msgid "This bug occurs when we only execute many delete information from index. However, it doesn't occur when we only execute many additions information into index."
+msgstr "この問題は、インデックス内のデータを大量に削除しただけでも発生します。ただ、インデックスにデータを追加しただけでは発生しません。"
+
+msgid "We can repair the index that is corrupt by this bug using reconstruction of it."
+msgstr "この問題によって破損したインデックスは、インデックスを再構築することで修復できます。"
+
+msgid "This bug doesn't detect unless we reference the broken index. Therefore, the index in our indexes may has already broken."
+msgstr "この問題は、壊れたインデックスを参照しない限り発覚しません。したがって、既にインデックスが破損しているかもしれません。"
+
+msgid "We can use [:doc:`reference/commands/index_column_diff`] command to confirm whether the index has already been broken or not."
+msgstr "[:doc:`reference/commands/index_column_diff`] コマンドを使うことで、インデックスが破損しているかどうかを確認できます。"

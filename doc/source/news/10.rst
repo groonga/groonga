@@ -1,0 +1,2467 @@
+News - 10 series
+================
+
+.. _release-10-1-1:
+
+Release 10.1.1 - 2021-01-25
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/select`] Added support for outputting UInt64 value in Apache Arrow format.
+
+* [:doc:`reference/commands/select`] Added support for outputting a number of hits in Apache Arrow format as below.
+
+  .. code-block::
+
+     -- metadata --
+     GROONGA:n-hits: 10
+
+* [:doc:`reference/functions/query`] Added support for optimization of "order by estimated size".
+
+  * Normally, we can search at high speed when we first execute a condition which number of hits is a little.
+
+    * The "B (There are few) && A (There are many)" faster than "A (There are many) && B (There are few)".
+
+  * This is a known optimization. However we need reorder conditions by ourselves.
+  * Groonga executes this reorder automatically by using optimization of "order by estimated size".
+  * This optimization is valid by ``GRN_ORDER_BY_ESTIMATED_SIZE_ENABLE=yes``.
+
+* [:doc:`/reference/functions/between`] Improved performance by the following improvements.
+
+  * Improved the accuracy of a decision whether the ``between()`` use sequential search or not.
+  * Improved that we set a result of ``between()`` into a result set in bulk.
+
+* [:doc:`reference/commands/select`] Improved performance for a prefix search.
+
+  * For example, the performance of the following prefix search by using "*" improved.
+
+    .. code-block::
+
+       table_create Memos TABLE_PAT_KEY ShortText
+       table_create Contents TABLE_PAT_KEY ShortText   --normalizer NormalizerAuto
+       column_create Contents entries_key_index COLUMN_INDEX Memos _key
+
+       load --table Memos
+       [
+       {"_key": "(groonga) Start to try!"},
+       {"_key": "(mroonga) Installed"},
+       {"_key": "(groonga) Upgraded!"}
+       ]
+
+       select \
+         --table Memos \
+         --match_columns _key \
+         --query '\\(groonga\\)*'
+
+* [:doc:`/reference/tokenizers`][TokenMecab] Improved performance for parallel construction fo token column. [GitHub#1158][Patched by naoa]
+
+Fixes
+^^^^^
+
+* [:doc:`reference/functions/sub_filter`] Fixed a bug that ``sub_filter`` doesn't work in ``slices[].filter``.
+
+  * For example, the result of ``sub_filter`` was 0 records by the following query by this bug.
+
+    .. code-block::
+
+       table_create Users TABLE_HASH_KEY ShortText
+       column_create Users age COLUMN_SCALAR UInt8
+
+       table_create Memos TABLE_NO_KEY
+       column_create Memos user COLUMN_SCALAR Users
+       column_create Memos content COLUMN_SCALAR Text
+
+       load --table Users
+       [
+       {"_key": "alice", "age": 9},
+       {"_key": "bob",   "age": 29}
+       ]
+
+       load --table Memos
+       [
+       {"user": "alice", "content": "hello"},
+       {"user": "bob",   "content": "world"},
+       {"user": "alice", "content": "bye"},
+       {"user": "bob",   "content": "yay"}
+       ]
+
+       select \
+         --table Memos \
+         --slices[adult].filter '_id > 1 && sub_filter(user, "age >= 18")'
+
+* Fixed a bug that it is possible that we can't add data and Groonga crash when we repeat much addition of data and deletion of data against a hash table.
+
+Thanks
+^^^^^^
+
+* naoa
+
+.. _release-10-1-0:
+
+Release 10.1.0 - 2020-12-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/functions/highlight_html`] Added support for removing leading full width spaces from highlight target. [PGroonga#GitHub#155][Reported by Hung Nguyen V]
+
+  * Until now, leading full width spaces had also included in the target of highlight as below.
+
+    .. code-block::
+
+      table_create Entries TABLE_NO_KEY
+      column_create Entries body COLUMN_SCALAR ShortText
+
+      table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+      column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+
+      load --table Entries
+      [
+      {"body": "Groonga　高速！"}
+      ]
+
+      select Entries --output_columns \
+        --match_columns body --query '高速' \
+        --output_columns 'highlight_html(body)'
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              1
+            ],
+            [
+              [
+                "highlight_html",
+                null
+              ]
+            ],
+            [
+              "Groonga<span class=\"keyword\">　高速</span>！"
+            ]
+          ]
+        ]
+      ]
+
+  * However, this is needless as the target of highlight.
+    Therefore, in this release, ``highlight_html()`` removes leading full width spaces.
+
+* [:doc:`reference/commands/status`] Added a new item ``features``.
+
+  * We can display which Groonga's features are enabled as below.
+
+    .. code-block::
+
+      status --output_pretty yes
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        {
+          "alloc_count": 361,
+          "starttime": 1608087311,
+          "start_time": 1608087311,
+          "uptime": 35,
+          "version": "10.1.0",
+          "n_queries": 0,
+          "cache_hit_rate": 0.0,
+          "command_version": 1,
+          "default_command_version": 1,
+          "max_command_version": 3,
+          "n_jobs": 0,
+          "features": {
+            "nfkc": true,
+            "mecab": true,
+            "message_pack": true,
+            "mruby": true,
+            "onigmo": true,
+            "zlib": true,
+            "lz4": false,
+            "zstandard": false,
+            "kqueue": false,
+            "epoll": true,
+            "poll": false,
+            "rapidjson": false,
+            "apache_arrow": false,
+            "xxhash": false
+          }
+        }
+      ]
+
+* [:doc:`reference/commands/status`] Added a new item ``apache_arrow``.
+
+  * We can display Apache Arrow version that Groonga use as below.
+
+  .. code-block::
+
+    [
+      [
+        0,
+        1608088628.440753,
+        0.0006628036499023438
+      ],
+      {
+        "alloc_count": 360,
+        "starttime": 1608088617,
+        "start_time": 1608088617,
+        "uptime": 11,
+        "version": "10.0.9-39-g5a4c6f3",
+        "n_queries": 0,
+        "cache_hit_rate": 0.0,
+        "command_version": 1,
+        "default_command_version": 1,
+        "max_command_version": 3,
+        "n_jobs": 0,
+        "features": {
+          "nfkc": true,
+          "mecab": true,
+          "message_pack": true,
+          "mruby": true,
+          "onigmo": true,
+          "zlib": true,
+          "lz4": true,
+          "zstandard": false,
+          "kqueue": false,
+          "epoll": true,
+          "poll": false,
+          "rapidjson": false,
+          "apache_arrow": true,
+          "xxhash": false
+        },
+        "apache_arrow": {
+          "version_major": 2,
+          "version_minor": 0,
+          "version_patch": 0,
+          "version": "2.0.0"
+        }
+      }
+    ]
+
+  * This item only display when Apache Arrow is valid in Groonga.
+
+* [:doc:`/reference/window_function`] Added support for processing all tables at once even if target tables straddle a shard. (experimental)
+
+  * If the target tables straddle a shard, the window function had processed each shard until now.
+
+    * Therefore, if we used multiple group keys in windows functions, the value of the group keys from the second had to be one kind of value.
+    * However, we can use multiple kind of values for it as below by this improvement.
+
+      .. code-block::
+
+        plugin_register sharding
+        plugin_register functions/time
+
+        table_create Logs_20170315 TABLE_NO_KEY
+        column_create Logs_20170315 timestamp COLUMN_SCALAR Time
+        column_create Logs_20170315 price COLUMN_SCALAR UInt32
+        column_create Logs_20170315 item COLUMN_SCALAR ShortText
+
+        table_create Logs_20170316 TABLE_NO_KEY
+        column_create Logs_20170316 timestamp COLUMN_SCALAR Time
+        column_create Logs_20170316 price COLUMN_SCALAR UInt32
+        column_create Logs_20170316 item COLUMN_SCALAR ShortText
+
+        table_create Logs_20170317 TABLE_NO_KEY
+        column_create Logs_20170317 timestamp COLUMN_SCALAR Time
+        column_create Logs_20170317 price COLUMN_SCALAR UInt32
+        column_create Logs_20170317 item COLUMN_SCALAR ShortText
+
+        load --table Logs_20170315
+        [
+        {"timestamp": "2017/03/15 10:00:00", "price": 1000, "item": "A"},
+        {"timestamp": "2017/03/15 11:00:00", "price":  900, "item": "A"},
+        {"timestamp": "2017/03/15 12:00:00", "price":  300, "item": "B"},
+        {"timestamp": "2017/03/15 13:00:00", "price":  200, "item": "B"}
+        ]
+
+        load --table Logs_20170316
+        [
+        {"timestamp": "2017/03/16 10:00:00", "price":  530, "item": "A"},
+        {"timestamp": "2017/03/16 11:00:00", "price":  520, "item": "B"},
+        {"timestamp": "2017/03/16 12:00:00", "price":  110, "item": "A"},
+        {"timestamp": "2017/03/16 13:00:00", "price":  410, "item": "A"},
+        {"timestamp": "2017/03/16 14:00:00", "price":  710, "item": "B"}
+        ]
+
+        load --table Logs_20170317
+        [
+        {"timestamp": "2017/03/17 10:00:00", "price":  800, "item": "A"},
+        {"timestamp": "2017/03/17 11:00:00", "price":  400, "item": "B"},
+        {"timestamp": "2017/03/17 12:00:00", "price":  500, "item": "B"},
+        {"timestamp": "2017/03/17 13:00:00", "price":  300, "item": "A"}
+        ]
+
+        table_create Times TABLE_PAT_KEY Time
+        column_create Times logs_20170315 COLUMN_INDEX Logs_20170315 timestamp
+        column_create Times logs_20170316 COLUMN_INDEX Logs_20170316 timestamp
+        column_create Times logs_20170317 COLUMN_INDEX Logs_20170317 timestamp
+
+        logical_range_filter Logs \
+          --shard_key timestamp \
+          --filter 'price >= 300' \
+          --limit -1 \
+          --columns[offsetted_timestamp].stage filtered \
+          --columns[offsetted_timestamp].type Time \
+          --columns[offsetted_timestamp].flags COLUMN_SCALAR \
+          --columns[offsetted_timestamp].value 'timestamp - 39600000000' \
+          --columns[offsetted_day].stage filtered \
+          --columns[offsetted_day].type Time \
+          --columns[offsetted_day].flags COLUMN_SCALAR \
+          --columns[offsetted_day].value 'time_classify_day(offsetted_timestamp)' \
+          --columns[n_records_per_day_and_item].stage filtered \
+          --columns[n_records_per_day_and_item].type UInt32 \
+          --columns[n_records_per_day_and_item].flags COLUMN_SCALAR \
+          --columns[n_records_per_day_and_item].value 'window_count()' \
+          --columns[n_records_per_day_and_item].window.group_keys 'offsetted_day,item' \
+          --output_columns "_id,time_format_iso8601(offsetted_day),item,n_records_per_day_and_item"
+        [
+          [
+            0,
+            0.0,
+            0.0
+          ],
+          [
+            [
+              [
+                "_id",
+                "UInt32"
+              ],
+              [
+                "time_format_iso8601",
+                null
+              ],
+              [
+                "item",
+                "ShortText"
+              ],
+              [
+                "n_records_per_day_and_item",
+                "UInt32"
+              ]
+            ],
+            [
+              1,
+              "2017-03-14T00:00:00.000000+09:00",
+              "A",
+              1
+            ],
+            [
+              2,
+              "2017-03-15T00:00:00.000000+09:00",
+              "A",
+              2
+            ],
+            [
+              3,
+              "2017-03-15T00:00:00.000000+09:00",
+              "B",
+              1
+            ],
+            [
+              1,
+              "2017-03-15T00:00:00.000000+09:00",
+              "A",
+              2
+            ],
+            [
+              2,
+              "2017-03-16T00:00:00.000000+09:00",
+              "B",
+              2
+            ],
+            [
+              4,
+              "2017-03-16T00:00:00.000000+09:00",
+              "A",
+              2
+            ],
+            [
+              5,
+              "2017-03-16T00:00:00.000000+09:00",
+              "B",
+              2
+            ],
+            [
+              1,
+              "2017-03-16T00:00:00.000000+09:00",
+              "A",
+              2
+            ],
+            [
+              2,
+              "2017-03-17T00:00:00.000000+09:00",
+              "B",
+              2
+            ],
+            [
+              3,
+              "2017-03-17T00:00:00.000000+09:00",
+              "B",
+              2
+            ],
+            [
+              4,
+              "2017-03-17T00:00:00.000000+09:00",
+              "A",
+              1
+            ]
+          ]
+        ]
+
+  * This feature requires Apache Arrow 3.0.0 that is not released yet.
+
+* Added support for sequential search against reference column.
+
+  * This feature is only used if an index search will match many records and the current result set is enough small.
+
+    * Because the sequential search is faster than the index search in the above case.
+
+  * It is invalid by default.
+  * It is valid if we set ``GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO_REFERENCE`` environment variable.
+
+  * ``GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO_REFERENCE`` environment variable is a threshold to switch the sequential search from the index search.
+
+    * For example, if we set ``GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO_REFERENCE=0.7`` as below, if the number of records for the result set less than 70 % of total records, a search is executed by a sequential search.
+
+      .. code-block ::
+
+        $ export GRN_II_SELECT_TOO_MANY_INDEX_MATCH_RATIO_REFERENCE=0.7
+
+        table_create Tags TABLE_HASH_KEY ShortText
+        table_create Memos TABLE_HASH_KEY ShortText
+        column_create Memos tag COLUMN_SCALAR Tags
+
+        load --table Memos
+        [
+        {"_key": "Rroonga is fast!", "tag": "Rroonga"},
+        {"_key": "Groonga is fast!", "tag": "Groonga"},
+        {"_key": "Mroonga is fast!", "tag": "Mroonga"},
+        {"_key": "Groonga sticker!", "tag": "Groonga"},
+        {"_key": "Groonga is good!", "tag": "Groonga"}
+        ]
+
+        column_create Tags memos_tag COLUMN_INDEX Memos tag
+
+        select Memos --query '_id:>=3 tag:@Groonga' --output_columns _id,_score,_key,tag
+        [
+          [
+            0,
+            0.0,
+            0.0
+          ],
+          [
+            [
+              [
+                2
+              ],
+              [
+                [
+                  "_id",
+                  "UInt32"
+                ],
+                [
+                  "_score",
+                  "Int32"
+                ],
+                [
+                  "_key",
+                  "ShortText"
+                ],
+                [
+                  "tag",
+                  "Tags"
+                ]
+              ],
+              [
+                4,
+                2,
+                "Groonga sticker!",
+                "Groonga"
+              ],
+              [
+                5,
+                2,
+                "Groonga is good!",
+                "Groonga"
+              ]
+            ]
+          ]
+        ]
+
+* [tokenizers] Added support for the token column into ``TokenDocumentVectorTFIDF`` and ``TokenDocumentVectorBM25``.
+
+  * If there is the token column that has the same source as the index column, these tokenizer use the token id of the token column.
+
+    * The token column has already had data that has already finished tokenize.
+    * Therefore, these tokenizer are improved performance by using a token column.
+
+  * For example, we can use this feature by making a token column named ``content_tokens`` as below.
+
+    .. code-block::
+
+      table_create Memos TABLE_NO_KEY
+      column_create Memos content COLUMN_SCALAR Text
+
+      load --table Memos
+      [
+      {"content": "a b c a"},
+      {"content": "c b c"},
+      {"content": "b b a"},
+      {"content": "a c c"},
+      {"content": "a"}
+      ]
+
+      table_create Tokens TABLE_PAT_KEY ShortText \
+        --normalizer NormalizerNFKC121 \
+        --default_tokenizer TokenNgram
+      column_create Tokens memos_content COLUMN_INDEX|WITH_POSITION Memos content
+
+      column_create Memos content_tokens COLUMN_VECTOR Tokens content
+
+      table_create DocumentVectorBM25 TABLE_HASH_KEY Tokens \
+        --default_tokenizer \
+          'TokenDocumentVectorBM25("index_column", "memos_content", \
+                                   "df_column", "df")'
+      column_create DocumentVectorBM25 df COLUMN_SCALAR UInt32
+
+      column_create Memos content_feature COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 \
+        DocumentVectorBM25 content
+
+      select Memos
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              5
+            ],
+            [
+              [
+                "_id",
+                "UInt32"
+              ],
+              [
+                "content",
+                "Text"
+              ],
+              [
+                "content_feature",
+                "DocumentVectorBM25"
+              ],
+              [
+                "content_tokens",
+                "Tokens"
+              ]
+            ],
+            [
+              1,
+              "a b c a",
+              {
+                "a": 0.5095787,
+                "b": 0.6084117,
+                "c": 0.6084117
+              },
+              [
+                "a",
+                "b",
+                "c",
+                "a"
+              ]
+            ],
+            [
+              2,
+              "c b c",
+              {
+                "c": 0.8342565,
+                "b": 0.5513765
+              },
+              [
+                "c",
+                "b",
+                "c"
+              ]
+            ],
+            [
+              3,
+              "b b a",
+              {
+                "b": 0.9430448,
+                "a": 0.3326656
+              },
+              [
+                "b",
+                "b",
+                "a"
+              ]
+            ],
+            [
+              4,
+              "a c c",
+              {
+                "a": 0.3326656,
+                "c": 0.9430448
+              },
+              [
+                "a",
+                "c",
+                "c"
+              ]
+            ],
+            [
+              5,
+              "a",
+              {
+                "a": 1.0
+              },
+              [
+                "a"
+              ]
+            ]
+          ]
+        ]
+      ]
+
+  * ``TokenDocumentVectorTFIDF`` and ``TokenDocumentVectorBM25`` give a weight against each tokens.
+
+    * ``TokenDocumentVectorTFIDF`` calculate a weight for token by using TF-IDF.
+
+	* Please refer to https://radimrehurek.com/gensim/models/tfidfmodel.html about TF-IDF.
+
+    * ``TokenDocumentVectorBM25`` calculate a weight for token by using Okapi BM25.
+
+	* Please refer to https://en.wikipedia.org/wiki/Okapi_BM25 about Okapi BM25.
+
+* Improved performance when below case.
+
+  * ``(column @ "value") && (column @ "value")``
+
+* [:doc:`/install/ubuntu`] Added support for Ubuntu 20.10 (Groovy Gorilla).
+
+* [:doc:`/install/debian`] Dropped stretch support.
+
+  * It reached EOL.
+
+* [:doc:`/install/centos`] Dropped CentOS 6.
+
+  * It reached EOL.
+
+* [httpd] Updated bundled nginx to 1.19.6.
+
+Fixes
+^^^^^
+
+* Fixed a bug that Groonga crash when we use multiple keys drilldown and use multiple accessor as below. [GitHub#1153][Patched by naoa]
+
+  .. code-block::
+
+    table_create Tags TABLE_PAT_KEY ShortText
+
+    table_create Memos TABLE_HASH_KEY ShortText
+    column_create Memos tags COLUMN_VECTOR Tags
+    column_create Memos year COLUMN_SCALAR Int32
+
+    load --table Memos
+    [
+    {"_key": "Groonga is fast!", "tags": ["full-text-search"], "year": 2019},
+    {"_key": "Mroonga is fast!", "tags": ["mysql", "full-text-search"], "year": 2019},
+    {"_key": "Groonga sticker!", "tags": ["full-text-search", "sticker"], "year": 2020},
+    {"_key": "Rroonga is fast!", "tags": ["full-text-search", "ruby"], "year": 2020},
+    {"_key": "Groonga is good!", "tags": ["full-text-search"], "year": 2020}
+    ]
+
+    select Memos \
+      --filter '_id > 0' \
+      --drilldowns[tags].keys 'tags,year >= 2020' \
+      --drilldowns[tags].output_columns _key[0],_key[1],_nsubrecs
+
+    select Memos \
+      --filter '_id > 0' \
+      --drilldowns[tags].keys 'tags,year >= 2020' \
+      --drilldowns[tags].output_columns _key[1],_nsubrecs
+
+* Fixed a bug that the near phrase search did not match when the same phrase occurs multiple times as below.
+
+  .. code-block::
+
+    table_create Entries TABLE_NO_KEY
+    column_create Entries content COLUMN_SCALAR Text
+
+    table_create Terms TABLE_PAT_KEY ShortText \
+      --default_tokenizer TokenNgram \
+      --normalizer NormalizerNFKC121
+    column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+    load --table Entries
+    [
+    {"content": "a x a x b x x"},
+    {"content": "a x x b x"}
+    ]
+
+    select Entries \
+      --match_columns content \
+      --query '*NP2"a b"' \
+      --output_columns '_score, content'
+
+
+Thanks
+^^^^^^
+
+* Hung Nguyen V
+
+* naoa
+
+* timgates42 [Provided the patch at GitHub#1155]
+
+.. _release-10-0-9:
+
+Release 10.0.9 - 2020-12-01
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Improved performance when we specified ``-1`` to ``limit``.
+
+* [:doc:`reference/commands/reference_acquire`] Added a new option ``--auto_release_count``.
+
+  * Groonga reduces a reference count automatically when a request reaching the number of value that is specified in ``--auto_release_count``.
+
+  * For example, the acquired reference of ``Users`` is released automatically after the second ``status`` is processed as below.
+
+    .. code-block::
+
+      reference_acquire --target_name Users --auto_release_count 2
+      status # Users is still referred.
+      status # Users' reference is released after this command is processed.
+
+  * We can prevent a leak of the release of acquired reference by this option.
+
+* Modify behavior when Groonga evaluated empty ``vector`` and ``uvector``.
+
+  * Empty ``vector`` and ``uvector`` are evaluated to ``false`` in command version 3.
+
+    * This behavior is valid for only command version 3.
+    * Note that the different behavior until now.
+
+* [:doc:`/reference/normalizers`] Added a new Normalizer ``NormalizerNFKC130`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 13.0.
+
+* [:doc:`/reference/token_filters`] Added a new TokenFilter ``TokenFilterNFKC130`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 13.0.
+
+* [:doc:`reference/commands/select`] Improved performance for ``"_score = column - X"``.
+
+* [:doc:`reference/commands/reference_acquire`] Improved that ``--reference_acquire`` doesn't get unnecessary reference of index column when we specify the ``--recursive dependent`` option.
+
+  * From this release, the targets of ``--recursive dependent`` are only the target table's key  and the index column that is set to data column.
+
+* [:doc:`reference/commands/select`] Add support for ordered near phrase search.
+
+  * Until now, the near phrase search have only looked for records that the distance of between specified phrases near.
+  * This feature look for satisfy the following conditions records.
+
+    * If the distance of between specified phrases is near.
+    * If the specified phrases are in line with specified order.
+
+  * This feature use ``*ONP`` as an operator. (Note that the operator isn't ``*NP``.)
+
+  * ``$`` is handled as itself in the query syntax. Note that it isn't a special character in the query syntax.
+
+  * If we use script syntax, this feature use as below.
+
+    .. code-block::
+
+      table_create Entries TABLE_NO_KEY
+      column_create Entries content COLUMN_SCALAR Text
+
+      table_create Terms TABLE_PAT_KEY ShortText \
+        --default_tokenizer 'TokenNgram("unify_alphabet", false, \
+                                        "unify_digit", false)' \
+        --normalizer NormalizerNFKC121
+      column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+      load --table Entries
+      [
+      {"content": "abcXYZdef"},
+      {"content": "abebcdXYZdef"},
+      {"content": "abcdef"},
+      {"content": "defXYZabc"},
+      {"content": "XYZabc"},
+      {"content": "abc123456789def"},
+      {"content": "abc12345678def"},
+      {"content": "abc1de2def"}
+      ]
+
+      select Entries --filter 'content *ONP "abc def"' --output_columns '_score, content'
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              4
+            ],
+            [
+              [
+                "_score",
+                "Int32"
+              ],
+              [
+                "content",
+                "Text"
+              ]
+            ],
+            [
+              1,
+              "abcXYZdef"
+            ],
+            [
+              1,
+              "abcdef"
+            ],
+            [
+              1,
+              "abc12345678def"
+            ],
+            [
+              1,
+              "abc1de2def"
+            ]
+          ]
+        ]
+      ]
+
+  * If we use query syntax, this feature use as below.
+
+    .. code-block::
+
+       select Entries --query 'content:*ONP "abc def"' --output_columns '_score, content'
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               4
+             ],
+             [
+               [
+                 "_score",
+                 "Int32"
+               ],
+               [
+                 "content",
+                 "Text"
+               ]
+             ],
+             [
+               1,
+               "abcXYZdef"
+             ],
+             [
+               1,
+               "abcdef"
+             ],
+             [
+               1,
+               "abc12345678def"
+             ],
+             [
+               1,
+               "abc1de2def"
+             ]
+           ]
+         ]
+       ]
+
+* [httpd] Updated bundled nginx to 1.19.5.
+
+Fixes
+^^^^^
+
+* [:doc:`reference/executables/groonga-server-http`] Fixed that Groonga HTTP server finished without waiting all woker threads finished completely.
+
+  * Until now, Groonga HTTP server had started the process of finish after worker threads finished itself process.
+    However, worker threads may not finish completely at this timing. Therefore, Groonga HTTP server may crashed according to timing. Because Groonga HTTP server may free area of memory that worker threads are using them yet.
+
+.. _release-10-0-8:
+
+Release 10.0.8 - 2020-10-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/select`] Added support for large drilldown keys.
+
+  * The maximum on the key size of Groonga's tables are 4KiB.
+    However, if we specify multiple keys in drilldown, the size of drilldown keys may be larger than 4KiB.
+
+    * For example, if the total size for ``tag`` key and ``n_like`` key is lager than 4KiB in the following case,
+      the drilldown had failed.
+
+    .. code-block::
+
+      select Entries \
+        --limit -1 \
+        --output_columns tag,n_likes \
+        --drilldowns[tag.n_likes].keys tag,n_likes \
+        --drilldowns[tag.n_likes].output_columns _value.tag,_value.n_likes,_nsubrecs
+
+    * Because the drilldown packes specifying all keys for drilldown. So, if each the size of drilldown key is large,
+      the size of the packed drilldown keys is larger than 4KiB.
+
+  * This feature requires `xxHash <https://github.com/Cyan4973/xxHash>`_ .
+
+    * However, if we install Groonga from package, we can use this feature without doing anything special.
+      Because Groonga's package already include `xxHash <https://github.com/Cyan4973/xxHash>`_ .
+
+* [:doc:`reference/commands/select`] Added support for handling as the same dynamic column even if columns refer to different tables.
+
+  * We can't have handled the same dynamic column if columns refer to different tables until now.
+    Because the type of columns is different.
+
+  * However, from this version, we can handle the same dynamic column even if columns refer to different tables by casting to built-in types as below.
+
+    .. code-block::
+
+      table_create Store_A TABLE_HASH_KEY ShortText
+      table_create Store_B TABLE_HASH_KEY ShortText
+
+      table_create Customers TABLE_HASH_KEY Int32
+      column_create Customers customers_A COLUMN_VECTOR Store_A
+      column_create Customers customers_B COLUMN_VECTOR Store_B
+
+      load --table Customers
+      [
+        {"_key": 1604020694, "customers_A": ["A", "B", "C"]},
+        {"_key": 1602724694, "customers_B": ["Z", "V", "Y", "T"]},
+      ]
+
+      select Customers \
+        --filter '_key == 1604020694' \
+        --columns[customers].stage output \
+        --columns[customers].flags COLUMN_VECTOR \
+        --columns[customers].type ShortText \
+        --columns[customers].value 'customers_A' \
+        --output_columns '_key, customers'
+
+  * We have needed to set ``Store_A`` or ``Store_B`` in the ``type`` of ``customers`` column until now.
+  * The type of ``customers_A`` column cast to ``ShortText`` in the above example.
+  * By this, we can also set the value of ``customers_B`` in the value of ``customers`` column.
+    Because both the key of ``customers_A`` and ``customers_B`` are ``ShortText`` type.
+
+* [:doc:`reference/commands/select`] Improved performance when the number of records for search result are huge.
+
+  * This optimization works when below cases.
+
+    * ``--filter 'column <= "value"'`` or ``--filter 'column >= "value"'``
+    * ``--filter 'column == "value"'``
+    * ``--filter 'between(...)'`` or ``--filter 'between(_key, ...)'``
+    * ``--filter 'sub_filter(reference_column, ...)'``
+    * Comparing against ``_key`` such as ``--filter '_key > "value"'``.
+    * ``--filter 'geo_in_circle(...)'``
+
+* Updated bundled LZ4 to 1.9.2 from 1.8.2.
+
+* Added support xxHash 0.8
+
+* [httpd] Updated bundled nginx to 1.19.4.
+
+Fixes
+^^^^^
+
+* Fixed the following bugs related the browser based administration tool. [GitHub#1139][Reported by sutamin]
+
+  * The problem that Groonga's logo had not been displayed.
+  * The problem that the throughput chart had not been displayed on the index page for Japanese.
+
+* [:doc:`/reference/functions/between`] Fixed a bug that ``between(_key, ...)`` is always evaluated by sequential search.
+
+Thanks
+^^^^^^
+
+* sutamin
+
+.. _release-10-0-7:
+
+Release 10.0.7 - 2020-09-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [highlight], [:doc:`/reference/functions/highlight_full`] Added support for normalizer options.
+
+* [:doc:`/reference/command/return_code`] Added a new return code ``GRN_CONNECTION_RESET`` for resetting connection.
+
+  * it is returned when an existing connection was forcibly close by the remote host.
+
+* Dropped Ubuntu 19.10 (Eoan Ermine).
+
+  * Because this version has been EOL.
+
+* [httpd] Updated bundled nginx to 1.19.2.
+
+* [:doc:`/reference/executables/grndb`] Added support for detecting duplicate keys.
+
+  * ``grndb check`` is also able to detect duplicate keys since this release.
+  * This check valid except a table of ``TABLE_NO_KEY``.
+  * If the table that was detected duplicate keys by ``grndb check`` has only index columns, we can recover by ``grndb recover``.
+
+* [:doc:`/reference/commands/table_create`], [:doc:`/reference/commands/column_create`] Added a new option ``--path``
+
+  * We can store specified a table or a column to any path using this option.
+  * This option is useful if we want to store a table or a column that
+    we often use to fast storage (e.g. SSD) and store them that we don't often
+    use to slow storage (e.g. HDD).
+  * We can specify both relative path and absolute path in this option.
+
+    * If we specify relative path in this option, the path is resolved the path of ``groonga`` process as the origin.
+
+  * However, if we specify ``--path``, the result of ``dump`` command includes ``--path`` informations.
+
+    * Therefore, if we specify ``--path``, we can't restore to host in different enviroment.
+
+      * Because the directory configuration and the location of ``groonga`` process in different by each enviroment.
+
+    * If we don't want include ``--path`` informations to a dump, we need specify ``--dump_paths no`` in ``dump`` command.
+
+* [:doc:`reference/commands/dump`] Added a new option ``--dump_paths``.
+
+  * ``--dump_paths`` option control whether ``--path`` is dumped or not.
+  * The default value of it is ``yes``.
+  * If we specify ``--path`` when we create tables or columns and we don't want include ``--path`` informations to a dump, we specify ``no`` into ``--dump_paths`` when we execute ``dump`` command.
+
+* [functions] Added a new function ``string_toknize()``.
+
+  * It tokenizes the column value that is specified in the second argument with the tokenizer that is specified in the first argument.
+
+* [tokenizers] Added a new tokenizer ``TokenDocumentVectorTFIDF`` (experimental).
+
+  * It generates automatically document vector by TF-IDF.
+
+* [tokenizers] Added a new tokenizer ``TokenDocumentVectorBM25`` (experimental).
+
+  * It generates automatically document vector by BM25.
+
+* [:doc:`reference/commands/select`] Added support for near search in same sentence.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/commands/load`] Fixed a bug that ``load`` didn't a return response when we executed it against 257 columns.
+
+  * This bug may occur from 10.0.4 or later.
+  * This bug only occur when we load data by using ``[a, b, c, ...]`` format.
+
+    * If we load data by using ``[{...}]``, this bug doesn't occur.
+
+* [MessagePack] Fixed a bug that float32 value wasn't unpacked correctly.
+
+* Fixed the following bugs related multi column index.
+
+  * ``_score`` may be broken with full text search.
+  * The records that couldn't hit might hit.
+  * Please refer to the following URL for the details about occurrence conditionin of this bug.
+
+    * https://groonga.org/en/blog/2020/09/29/groonga-10.0.7.html#multi-column-index
+
+.. _release-10-0-6:
+
+Release 10.0.6 - 2020-08-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/logical_range_filter`] Improved search plan for large data.
+
+  * Normally, ``logical_range_filter`` is faster than ``logical_select``.
+    However, it had been slower than ``logical_select`` in the below case.
+
+    * If Groonga can't get the number of required records easily, it has the feature that switches index search from sequential search. (Normally, ``logical_range_filter`` uses a sequential search when records of search target are many.)
+    * The search process for it is almost the same as ``logical_select`` if the above switching occurred.
+      So, ``logical_range_filter`` is severalfold slower than ``logical_select`` in the above case if the search target is large data.
+      Because ``logical_range_filter`` executes sort after the search.
+
+  * If we search for large data, Groonga easily use sequential search than until now since this release.
+  * Therefore, ``logical_range_filter`` will improve performance. Because the case of the search process almost the same as ``logical_select`` decreases.
+
+* [httpd] Updated bundled nginx to 1.19.1.
+
+* Modify how to install into Debian GNU/Linux.
+
+  * We modify to use ``groonga-apt-source`` instead of ``groonga-archive-keyring``. Because the ``lintian`` command recommends using ``apt-source`` if a package that it puts files under the ``/etc/apt/sources.lists.d/``.
+
+    * The ``lintian`` command is the command which checks for many common packaging errors.
+    * Please also refer to the following URL for the details about installation procedures.
+
+      * https://groonga.org/docs/install/debian.html
+
+* [:doc:`reference/commands/logical_select`] Added a support for ``highlight_html`` and ``highlight_full`` .
+
+* Added support for recycling the IDs of records that are deleted when an array without value space delete.[GitHub#mroonga/mroonga#327][Reported by gaeeyo]
+
+  * If an array that doesn't have value space is deleted, deleted IDs are never recycled.
+  * Groonga had used large storage space by large ID. Because it uses large storage space by itself.
+
+    * For example, large ID is caused after many adds and deletes like Mroonga's ``mroonga_operations``
+
+* [:doc:`reference/commands/select`] Improved performance of full-text-search without index.
+
+* [:doc:`reference/function`] Improved performance for calling of function that all arguments a variable reference or literal.
+
+* [:doc:`reference/indexing`] Improved performance of offline index construction by using token column. [GitHub#1126][Patched by naoa]
+
+* Improved performance for ``"_score = func(...)"``.
+
+  * The performance when the ``_score`` value calculate by using only function like ``"_score = func(...)"`` improved.
+
+Fixes
+^^^^^
+
+* Fixed a bug that garbage may be included in response after response send error.
+
+  * It may occur if a client didn't read all responses and closed the connection.
+
+
+Thanks
+^^^^^^
+
+* gaeeyo
+
+* naoa
+
+.. _release-10-0-5:
+
+Release 10.0.5 - 2020-07-30
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/select`] Added support for storing reference in table that we specify with ``--load_table``.
+
+  * ``--load_table`` is a feature that stores search results to the table in a prepared.
+
+    * If the searches are executed multiple times, we can cache the search results by storing them to this table.
+    * We can shorten the search times that the search after the first time by using this table.
+
+  * We can store a reference to other tables into the key of this table as below since this release.
+
+    * We can make a smaller size of this table. Because we only store references without store column values.
+    * If we search against this table, we can search by using indexes for reference destination.
+
+    .. code-block::
+
+      table_create Logs TABLE_HASH_KEY ShortText
+      column_create Logs timestamp COLUMN_SCALAR Time
+
+      table_create Times TABLE_PAT_KEY Time
+      column_create Times logs_timestamp COLUMN_INDEX Logs timestamp
+
+      table_create LoadedLogs TABLE_HASH_KEY Logs
+
+      load --table Logs
+      [
+      {
+        "_key": "2015-02-03:1",
+        "timestamp": "2015-02-03 10:49:00"
+      },
+      {
+        "_key": "2015-02-03:2",
+        "timestamp": "2015-02-03 12:49:00"
+      },
+      {
+        "_key": "2015-02-04:1",
+        "timestamp": "2015-02-04 00:00:00"
+      }
+      ]
+
+      select \
+        Logs \
+        --load_table LoadedLogs \
+        --load_columns "_key" \
+        --load_values "_key" \
+        --limit 0
+
+      select \
+        --table LoadedLogs \
+        --filter 'timestamp >= "2015-02-03 12:49:00"'
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              2
+            ],
+            [
+              [
+                "_id",
+                "UInt32"
+              ],
+              [
+                "_key",
+                "ShortText"
+              ],
+              [
+                "timestamp",
+                "Time"
+              ]
+            ],
+            [
+              2,
+              "2015-02-03:2",
+              1422935340.0
+            ],
+            [
+              3,
+              "2015-02-04:1",
+              1422975600.0
+            ]
+          ]
+        ]
+      ]
+
+* [:doc:`reference/commands/select`] Improved sort performance on below cases.
+
+  * When many sort keys need ID resolution.
+
+    * For example, the following expression needs ID resolution.
+
+      * ``--filter true --sort_keys column``
+
+    * For example, the following expression doesn't need ID resolution.
+      Because the ``_score`` pseudo column exists in the result table not the source table.
+
+      * ``--filter true --sort_keys _score``
+
+  * When a sort target table has a key.
+
+    * Therefore, ``TABLE_NO_KEY`` isn't supported this improvement.
+
+* [:doc:`reference/commands/select`] Improved performance a bit on below cases.
+
+  * A case of searching for many records matches.
+  * A case of drilldown for many records.
+
+* [aggregator] Added support for score accessor for target. [GitHub#1120][Patched by naoa]
+
+  * For example, we can ``_score`` subject to ``aggregator_*`` as below.
+
+    .. code-block::
+
+       table_create Items TABLE_HASH_KEY ShortText
+       column_create Items price COLUMN_SCALAR UInt32
+       column_create Items tag COLUMN_SCALAR ShortText
+
+       load --table Items
+       [
+       {"_key": "Book",  "price": 1000, "tag": "A"},
+       {"_key": "Note",  "price": 1000, "tag": "B"},
+       {"_key": "Box",   "price": 500,  "tag": "B"},
+       {"_key": "Pen",   "price": 500,  "tag": "A"},
+       {"_key": "Food",  "price": 500,  "tag": "C"},
+       {"_key": "Drink", "price": 300,  "tag": "B"}
+       ]
+
+       select Items \
+         --filter true \
+         --drilldowns[tag].keys tag \
+         --drilldowns[tag].output_columns _key,_nsubrecs,score_mean \
+         --drilldowns[tag].columns[score_mean].stage group \
+         --drilldowns[tag].columns[score_mean].type Float \
+         --drilldowns[tag].columns[score_mean].flags COLUMN_SCALAR \
+         --drilldowns[tag].columns[score_mean].value 'aggregator_mean(_score)'
+       [
+         [
+           0,
+           0.0,
+           0.0
+         ],
+         [
+           [
+             [
+               6
+             ],
+             [
+               [
+                 "_id",
+                 "UInt32"
+               ],
+               [
+                 "_key",
+                 "ShortText"
+               ],
+               [
+                 "price",
+                 "UInt32"
+               ],
+               [
+                 "tag",
+                 "ShortText"
+               ]
+             ],
+             [
+               1,
+               "Book",
+               1000,
+               "A"
+             ],
+             [
+               2,
+               "Note",
+               1000,
+               "B"
+             ],
+             [
+               3,
+               "Box",
+               500,
+               "B"
+             ],
+             [
+               4,
+               "Pen",
+               500,
+               "A"
+             ],
+             [
+               5,
+               "Food",
+               500,
+               "C"
+             ],
+             [
+               6,
+               "Drink",
+               300,
+               "B"
+             ]
+           ],
+           {
+             "tag": [
+               [
+                 3
+               ],
+               [
+                 [
+                   "_key",
+                   "ShortText"
+                 ],
+                 [
+                   "_nsubrecs",
+                   "Int32"
+                 ],
+                 [
+                   "score_mean",
+                   "Float"
+                 ]
+               ],
+               [
+                 "A",
+                 2,
+                 1.0
+               ],
+               [
+                 "B",
+                 3,
+                 1.0
+               ],
+               [
+                 "C",
+                 1,
+                 1.0
+               ]
+             ]
+           }
+         ]
+       ]
+
+* [:doc:`reference/indexing`] Improved performance of offline index construction on VC++ version.
+
+* [:doc:`reference/commands/select`] Use ``null`` instead ``NaN``, ``Infinity``, and ``-Infinity`` when Groonga outputs result for JSON format.
+
+  * Because JSON doesn't support them.
+
+* [:doc:`reference/commands/select`] Add support fot aggregating standard deviation value.
+
+  * For example, we can calculate a standard deviation for every group as below.
+
+    .. code-block::
+
+        table_create Items TABLE_HASH_KEY ShortText
+        column_create Items price COLUMN_SCALAR UInt32
+        column_create Items tag COLUMN_SCALAR ShortText
+
+        load --table Items
+        [
+        {"_key": "Book",  "price": 1000, "tag": "A"},
+        {"_key": "Note",  "price": 1000, "tag": "B"},
+        {"_key": "Box",   "price": 500,  "tag": "B"},
+        {"_key": "Pen",   "price": 500,  "tag": "A"},
+        {"_key": "Food",  "price": 500,  "tag": "C"},
+        {"_key": "Drink", "price": 300,  "tag": "B"}
+        ]
+
+        select Items \
+          --drilldowns[tag].keys tag \
+          --drilldowns[tag].output_columns _key,_nsubrecs,price_sd \
+          --drilldowns[tag].columns[price_sd].stage group \
+          --drilldowns[tag].columns[price_sd].type Float \
+          --drilldowns[tag].columns[price_sd].flags COLUMN_SCALAR \
+          --drilldowns[tag].columns[price_sd].value 'aggregator_sd(price)' \
+          --output_pretty yes
+        [
+          [
+            0,
+            1594339851.924836,
+            0.002813816070556641
+          ],
+          [
+            [
+              [
+                6
+              ],
+              [
+                [
+                  "_id",
+                  "UInt32"
+                ],
+                [
+                  "_key",
+                  "ShortText"
+                ],
+                [
+                  "price",
+                  "UInt32"
+                ],
+                [
+                  "tag",
+                  "ShortText"
+                ]
+              ],
+              [
+                1,
+                "Book",
+                1000,
+                "A"
+              ],
+              [
+                2,
+                "Note",
+                1000,
+                "B"
+              ],
+              [
+                3,
+                "Box",
+                500,
+                "B"
+              ],
+              [
+                4,
+                "Pen",
+                500,
+                "A"
+              ],
+              [
+                5,
+                "Food",
+                500,
+                "C"
+              ],
+              [
+                6,
+                "Drink",
+                300,
+                "B"
+              ]
+            ],
+            {
+              "tag": [
+                [
+                  3
+                ],
+                [
+                  [
+                    "_key",
+                    "ShortText"
+                  ],
+                  [
+                    "_nsubrecs",
+                    "Int32"
+                  ],
+                  [
+                    "price_sd",
+                    "Float"
+                  ]
+                ],
+                [
+                  "A",
+                  2,
+                  250.0
+                ],
+                [
+                  "B",
+                  3,
+                  294.3920288775949
+                ],
+                [
+                  "C",
+                  1,
+                  0.0
+                ]
+              ]
+            }
+          ]
+        ]
+
+    * We can also calculate sample standard deviation to specifing ``aggregate_sd(target, {"unbiased": true})``.
+
+* [Windows] Dropped Visual Studio 2013 support.
+
+Fixes
+^^^^^
+
+* [:doc:`reference/executables/groonga-server-http`] Fixed a bug that a request can't halt even if we execute ``shutdown?mode=immediate`` when the response was halted by error occurrence.
+
+* Fixed a crash bug when an error occurs while a request.
+
+  * It only occurs when we use Apache Arrow Format.
+  * Groonga crashes when we send request to Groonga again after the previous request was halted by error occurrence.
+
+* [:doc:`/reference/functions/between`] Fixed a crash bug when temporary table is used.
+
+  * For example, if we specify a dynamic column in the first argument for ``between``, Groonga had crashed.
+
+* Fixed a bug that procedure created by plugin is freed unexpectedly.
+
+  * It's only occurred in reference count mode.
+  * It's not occurred if we don't use ``plugin_register``.
+  * It's not occurred in the process that executes ``plugin_register``.
+  * It's occurred in the process that doesn't execute ``plugin_register``.
+
+* Fixed a bug that normalization error occurred while static index construction by ``token_column``. [GitHub#1122][Reported by naoa]
+
+Thanks
+^^^^^^
+
+* naoa
+
+.. _release-10-0-4:
+
+Release 10.0.4 - 2020-06-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/tables`] Added support for registering 400M records into a hash table.
+
+* [:doc:`reference/commands/select`] Improve scorer performance when the ``_score`` doesn't get recursively values.
+
+  * Groonga get recursively value of ``_score`` when search result is search target.
+  * For example, the search targets of ``slices`` are search result. Therefore, if we use ``slice`` in a query, this improvement doesn't ineffective.
+
+* [:doc:`reference/log`] Improved that we output drilldown keys in query-log.
+
+* [:doc:`reference/commands/reference_acquire`], [:doc:`reference/commands/reference_release`] Added new commands for reference count mode.
+
+  * If we need to call multiple ``load`` in a short time, auto close by the reference count mode will degrade performance.
+  * We can avoid the performance degrading by calling ``reference_acquire`` before multiple ``load`` and calling ``reference_release`` after multiple ``load``.
+    Between ``reference_acquire`` and ``reference_release``, auto close is disabled.
+
+    * Because ``reference_acquire`` acquires a reference of target objects.
+
+  * We can must call ``reference_release`` after you finish performance impact operations.
+  * If we don't call ``reference_release``, the reference count mode doesn't work.
+
+* [:doc:`reference/commands/select`] Added support for aggregating multiple groups on one time ``drilldown``.
+
+  * We came to be able to calculate sum or arithmetic mean every different multiple groups on one time ``drilldown`` as below.
+
+    .. code-block::
+
+      table_create Items TABLE_HASH_KEY ShortText
+      column_create Items price COLUMN_SCALAR UInt32
+      column_create Items quantity COLUMN_SCALAR UInt32
+      column_create Items tag COLUMN_SCALAR ShortText
+
+      load --table Items
+      [
+      {"_key": "Book",  "price": 1000, "quantity": 100, "tag": "A"},
+      {"_key": "Note",  "price": 1000, "quantity": 10,  "tag": "B"},
+      {"_key": "Box",   "price": 500,  "quantity": 15,  "tag": "B"},
+      {"_key": "Pen",   "price": 500,  "quantity": 12,  "tag": "A"},
+      {"_key": "Food",  "price": 500,  "quantity": 111, "tag": "C"},
+      {"_key": "Drink", "price": 300,  "quantity": 22,  "tag": "B"}
+      ]
+
+      select Items \
+        --drilldowns[tag].keys tag \
+        --drilldowns[tag].output_columns _key,_nsubrecs,price_sum,quantity_sum \
+        --drilldowns[tag].columns[price_sum].stage group \
+        --drilldowns[tag].columns[price_sum].type UInt32 \
+        --drilldowns[tag].columns[price_sum].flags COLUMN_SCALAR \
+        --drilldowns[tag].columns[price_sum].value 'aggregator_sum(price)' \
+        --drilldowns[tag].columns[quantity_sum].stage group \
+        --drilldowns[tag].columns[quantity_sum].type UInt32 \
+        --drilldowns[tag].columns[quantity_sum].flags COLUMN_SCALAR \
+        --drilldowns[tag].columns[quantity_sum].value 'aggregator_sum(quantity)'
+      [
+        [
+          0,
+          0.0,
+          0.0
+        ],
+        [
+          [
+            [
+              6
+            ],
+            [
+              [
+                "_id",
+                "UInt32"
+              ],
+              [
+                "_key",
+                "ShortText"
+              ],
+              [
+                "price",
+                "UInt32"
+              ],
+              [
+                "quantity",
+                "UInt32"
+              ],
+              [
+                "tag",
+                "ShortText"
+              ]
+            ],
+            [
+              1,
+              "Book",
+              1000,
+              100,
+              "A"
+            ],
+            [
+              2,
+              "Note",
+              1000,
+              10,
+              "B"
+            ],
+            [
+              3,
+              "Box",
+              500,
+              15,
+              "B"
+            ],
+            [
+              4,
+              "Pen",
+              500,
+              12,
+              "A"
+            ],
+            [
+              5,
+              "Food",
+              500,
+              111,
+              "C"
+            ],
+            [
+              6,
+              "Drink",
+              300,
+              22,
+              "B"
+            ]
+          ],
+          {
+            "tag": [
+              [
+                3
+              ],
+              [
+                [
+                  "_key",
+                  "ShortText"
+                ],
+                [
+                  "_nsubrecs",
+                  "Int32"
+                ],
+                [
+                  "price_sum",
+                  "UInt32"
+                ],
+                [
+                  "quantity_sum",
+                  "UInt32"
+                ]
+              ],
+              [
+                "A",
+                2,
+                1500,
+                112
+              ],
+              [
+                "B",
+                3,
+                1800,
+                47
+              ],
+              [
+                "C",
+                1,
+                500,
+                111
+              ]
+            ]
+          }
+        ]
+      ]
+
+* [:doc:`reference/executables/groonga`] Added support for ``--pid-path`` in standalone mode.
+
+  * Because ``--pid-path`` had been ignored in standalone mode in before version.
+
+* [:doc:`/reference/commands/io_flush`] Added support for reference count mode.
+
+* [:doc:`reference/commands/logical_range_filter`], [:doc:`/reference/commands/logical_count`] Added support for reference count mode.
+
+* [:doc:`reference/executables/groonga-server-http`] We didn't add header after the last chunk.
+
+  * Because there is a possibility to exist that the HTTP client ignores header after the last chunk.
+
+* [vector_slice] Added support for a vector that has the value of the ``Float32`` type. [GitHub#1112 patched by naoa]
+
+* Added support for parallel offline index construction using token column.
+
+  * We came to be able to construct an offline index on parallel threads from data that are tokenized in advance.
+
+  * We can tune parameters of parallel offline construction by the following environment variables
+
+    * ``GRN_TOKEN_COLUMN_PARALLEL_CHUNK_SIZE`` : We specify how many records are processed per thread.
+
+      * The default value is ``1024`` records.
+
+    * ``GRN_TOKEN_COLUMN_PARALLEL_TABLE_SIZE_THRESHOLD`` : We specify how many source records are required for parallel offline construction.
+
+      * The default value is ``102400`` records.
+
+* [:doc:`reference/commands/select`] Improved performance for ``load_table`` on the reference count mode.
+
+Fixes
+^^^^^
+
+* Fixed a bug that the database of Groonga was broken when we search by using the dynamic columns that don't specify a ``--filter`` and stridden over shard.
+
+* Fixed a bug that ``Float32`` type had not displayed on a result of ``schema`` command.
+
+* Fixed a bug that we count in surplus to ``_nsubrecs`` when the reference ``uvector`` hasn't element.
+
+Thanks
+^^^^^^
+
+* naoa
+
+.. _release-10-0-3:
+
+Release 10.0.3 - 2020-05-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* We came to be able to construct an inverted index from data that are tokenized in advance.
+
+  * The construct of an index is speeded up from this.
+  * We need to prepare token column to use this improvement.
+  * token column is an auto generated value column like an index column.
+  * token column value is generated from source column value by tokenizing the source column value.
+
+  * We can create a token column by setting the source column as below.
+
+    .. code-block::
+
+      table_create Terms TABLE_PAT_KEY ShortText \
+        --normalizer NormalizerNFKC121 \
+        --default_tokenizer TokenNgram
+
+      table_create Notes TABLE_NO_KEY
+      column_create Notes title COLUMN_SCALAR Text
+
+      # The last "title" is the source column.
+      column_create Notes title_terms COLUMN_VECTOR Terms title
+
+* [:doc:`reference/commands/select`] We came to be able to specify a ``vector`` for the argument of a function.
+
+  * For example, ``flags`` options of ``query`` can describe by a ``vector`` as below.
+
+    .. code-block::
+
+      select \
+        --table Memos \
+        --filter 'query("content", "-content:@mroonga", \
+                        { \
+                          "expander": "QueryExpanderTSV", \
+                          "flags": ["ALLOW_LEADING_NOT", "ALLOW_COLUMN"] \
+                        })'
+
+* [:doc:`reference/commands/select`] Added a new stage ``result_set`` for dynamic columns.
+
+  * This stage generates a column into a result set table. Therefore, it is not generated if ``query`` or ``filter`` doesn't exist
+
+    * Because if ``query`` or ``filter`` doesn't exist, Groonga doesn't make a result set table.
+
+  * We can't use ``_value`` for the stage. The ``result_set`` stage is for storing value by ``score_column``.
+
+* [vector_slice] Added support for weight vector that has weight of ``Float32`` type. [GitHub#1106 patched by naoa]
+
+* [:doc:`reference/commands/select`] Added support for ``filtered`` stage and ``output`` stage of dynamic columns on drilldowns. [GitHub#1101 patched by naoa][GitHub#1100 patched by naoa]
+
+  * We can use ``filtered`` and ``output`` stage of dynamic columns on drilldowns as with ``drilldowns[Label].stage filtered`` and ``drilldowns[Label].stage output``.
+
+* [:doc:`reference/commands/select`] Added support for ``Float`` type value in aggregating on drilldown.
+
+  * We can aggregate max value, min value, and sum value for ``Float`` type value using ``MAX``, ``MIN``, and ``SUM``.
+
+* [:doc:`reference/functions/query`] [:doc:`reference/functions/geo_in_rectangle`] [:doc:`reference/functions/geo_in_circle`] Added a new option ``score_column`` for ``query()``, ``geo_in_rectangle()``, and ``geo_in_circle()``.
+
+  * We can store a score value by condition using ``score_column``.
+  * Normally, Groonga calculate a score by adding scores of all conditions. However, we sometimes want to get a score value by condition.
+  * For example, if we want to only use how near central coordinate as score as below, we use ``score_column``.
+
+  .. code-block::
+
+     table_create LandMarks TABLE_NO_KEY
+     column_create LandMarks name COLUMN_SCALAR ShortText
+     column_create LandMarks category COLUMN_SCALAR ShortText
+     column_create LandMarks point COLUMN_SCALAR WGS84GeoPoint
+
+     table_create Points TABLE_PAT_KEY WGS84GeoPoint
+     column_create Points land_mark_index COLUMN_INDEX LandMarks point
+
+     load --table LandMarks
+     [
+       {"name": "Aries"      , "category": "Tower"     , "point": "11x11"},
+       {"name": "Taurus"     , "category": "Lighthouse", "point": "9x10" },
+       {"name": "Gemini"     , "category": "Lighthouse", "point": "8x8"  },
+       {"name": "Cancer"     , "category": "Tower"     , "point": "12x12"},
+       {"name": "Leo"        , "category": "Tower"     , "point": "11x13"},
+       {"name": "Virgo"      , "category": "Temple"    , "point": "22x10"},
+       {"name": "Libra"      , "category": "Tower"     , "point": "14x14"},
+       {"name": "Scorpio"    , "category": "Temple"    , "point": "21x9" },
+       {"name": "Sagittarius", "category": "Temple"    , "point": "43x12"},
+       {"name": "Capricorn"  , "category": "Tower"     , "point": "33x12"},
+       {"name": "Aquarius"   , "category": "mountain"  , "point": "55x11"},
+       {"name": "Pisces"     , "category": "Tower"     , "point": "9x9"  },
+       {"name": "Ophiuchus"  , "category": "mountain"  , "point": "21x21"}
+     ]
+
+     select LandMarks \
+       --sort_keys 'distance' \
+       --columns[distance].stage initial \
+       --columns[distance].type Float \
+       --columns[distance].flags COLUMN_SCALAR \
+       --columns[distance].value 0.0 \
+       --output_columns 'name, category, point, distance, _score' \
+       --limit -1 \
+       --filter 'geo_in_circle(point, "11x11", "11x1", {"score_column": distance}) && category == "Tower"'
+     [
+       [
+         0,
+         1590647445.406149,
+         0.0002503395080566406
+       ],
+       [
+         [
+           [
+             5
+           ],
+           [
+             [
+               "name",
+               "ShortText"
+             ],
+             [
+               "category","ShortText"
+             ],
+             [
+               "point",
+               "WGS84GeoPoint"
+             ],
+             [
+               "distance",
+               "Float"
+             ],
+             [
+               "_score",
+               "Int32"
+             ]
+           ],
+           [
+             "Aries",
+             "Tower",
+             "11x11",
+             0.0,
+             1
+           ],
+           [
+             "Cancer",
+             "Tower",
+             "12x12",
+             0.0435875803232193,
+             1
+           ],
+           [
+             "Leo",
+             "Tower",
+             "11x13",
+             0.06164214760065079,
+             1
+           ],
+           [
+             "Pisces",
+             "Tower",
+             "9x9",
+             0.0871751606464386,
+             1
+           ],
+           [
+             "Libra",
+             "Tower",
+             "14x14",
+             0.1307627409696579,
+             1
+           ]
+         ]
+       ]
+     ]
+
+  * The sort by ``_score`` is meaningless in the above example. Because the value of ``_score`` is all ``1`` by ``category == "Tower"``.
+    However, we can sort distance from central coordinate using ``score_column``.
+
+* [Windows] Groonga came to be able to output backtrace when it occurs error even if it doesn't crash.
+
+* [Windows] Dropped support for old Windows.
+
+  * Groonga for Windows come to require Windows 8 (Windows Server 2012) or later from 10.0.3.
+
+* [:doc:`reference/commands/select`] Improved sort performance when sort keys were mixed referable sort keys and the other sort keys.
+
+  * We improved sort performance if mixed referable sort keys and the other and there are referable keys two or more.
+
+    * Referable sort keys are sort keys that except below them.
+
+      * Compressed columns
+      * ``_value`` against the result of drilldown that is specified multiple values to the key of drilldown.
+      * ``_key`` against patricia trie table that has not the key of ``ShortText`` type.
+      * ``_score``
+
+  * The more sort keys that except string, a decrease in the usage of memory for sort.
+
+* [:doc:`reference/commands/select`] Improved sort performance when sort keys are all referable keys case.
+
+* [:doc:`reference/commands/select`] Improve scorer performance as a ``_socre = column1*X + column2*Y + ...`` case.
+
+  * This optimization effective when there are many ``+`` or ``*`` in ``_score``.
+  * At the moment, it has only effective against ``+`` and ``*``.
+
+* [:doc:`reference/commands/select`] Added support for phrase near search.
+
+  * We can search phrase by phrase by a near search.
+
+    * Query syntax for near phrase search is ``*NP"Phrase1 phrase2 ..."``.
+    * Script syntax for near phrase search is ``column *NP "phrase1 phrase2 ..."``.
+
+    * If the search target phrase includes space, we can search for it by surrounding it with ``"`` as below.
+
+      .. code-block::
+
+         table_create Entries TABLE_NO_KEY
+         column_create Entries content COLUMN_SCALAR Text
+
+         table_create Terms TABLE_PAT_KEY ShortText \
+           --default_tokenizer 'TokenNgram("unify_alphabet", false, \
+                                           "unify_digit", false)' \
+           --normalizer NormalizerNFKC121
+         column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
+
+         load --table Entries
+         [
+         {"content": "I started to use Groonga. It's very fast!"},
+         {"content": "I also started to use Groonga. It's also very fast! Really fast!"}
+         ]
+
+         select Entries --filter 'content *NP "\\"I started\\" \\"use Groonga\\""' --output_columns 'content'
+         [
+           [
+             0,
+             1590469700.715882,
+             0.03997230529785156
+           ],
+           [
+             [
+               [
+                 1
+               ],
+               [
+                 [
+                   "content",
+                   "Text"
+                 ]
+               ],
+               [
+                 "I started to use Groonga. It's very fast!"
+               ]
+             ]
+           ]
+         ]
+
+* [:doc:`reference/columns/vector`] Added support for ``float32`` weight vector.
+
+  * We can store weight as ``float32`` instead of ``uint32``.
+  * We need to add ``WEIGHT_FLOAT32`` flag when execute ``column_create`` to use this feature.
+
+    .. code-block::
+
+       column_create Records tags COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32 Tags
+
+  * However, ``WEIGHT_FLOAT32`` flag isn't available with ``COLUMN_INDEX`` flag for now.
+
+* Added following APIs
+
+  * Added ``grn_obj_is_xxx`` functions. For more information as below.
+
+    * ``grn_obj_is_weight_vector(grn_ctx *ctx, grn_obj *obj)``
+
+      * It returns as a ``bool`` whether the object is a weight vector.
+
+    * ``grn_obj_is_uvector(grn_ctx *ctx, grn_obj *obj)``
+
+      * It returns as a ``bool`` whether the object is a ``uvector``.
+
+        * ``uvector`` is a ``vector`` that size of elements for ``vector`` are fixed.
+
+    * ``grn_obj_is_weight_uvector(grn_ctx *ctx, grn_obj *obj)``
+
+      * It returns as a ``bool`` whether the object is a weight uvector.
+
+  * Added ``grn_type_id_size(grn_ctx *ctx, grn_id id)``.
+
+    * It returns the size of Groonga data type as a ``size_t``.
+
+  * Added ``grn_selector_data_get_xxx`` functions. For more information as below.
+
+    * These functions return selector related data.
+
+      * These functions are supposed to call in selector. If they are called except in selector, they return ``NULL``.
+
+        * ``grn_selector_data_get(grn_ctx *ctx)``
+
+          * It returns all information that relating calling selector as ``grn_selector_data *`` structure.
+
+        * ``grn_selector_data_get_selector(grn_ctx *ctx, grn_selector_data *data)``
+
+          * It returns selector itself as ``grn_obj *``.
+
+        * ``grn_selector_data_get_expr(grn_ctx *ctx, grn_selector_data *data)``
+
+          * It returns selector is used ``--filter`` condition and ``--query`` condition as ``grn_obj *``.
+
+        * ``grn_selector_data_get_table(grn_ctx *ctx, grn_selector_data *data)``
+
+          * It returns target table as ``grn_obj *``
+
+        * ``grn_selector_data_get_index(grn_ctx *ctx, grn_selector_data *data)``
+
+          * It returns index is used by selector as ``grn_obj *``.
+
+        * ``grn_selector_data_get_args(grn_ctx *ctx, grn_selector_data *data, size_t *n_args)``
+
+          * It returns arguments of function that called selector as ``grn_obj **``.
+
+        * ``grn_selector_data_get_result_set(grn_ctx *ctx, grn_selector_data *data)``
+
+          * It returns result table as ``grn_obj *``.
+
+        * ``grn_selector_data_get_op(grn_ctx *ctx, grn_selector_data *data)``
+
+          * It returns how to perform the set operation on existing result set as ``grn_operator``.
+
+  * Added ``grn_plugin_proc_xxx`` functions. For more information as below.
+
+    * ``grn_plugin_proc_get_value_operator(grn_ctx *ctx, grn_obj *value, grn_operator default_operator, const char *context)``
+
+      * It returns the operator of a query as a ``grn_operator``.
+
+        * For example, ``&&`` is returned as a ``GRN_OP_AND``.
+
+
+    * ``grn_plugin_proc_get_value_bool(grn_ctx *ctx, grn_obj *value, bool default_value, const char *tag)``
+
+      * It returns the value that is specified ``true`` or ``false`` like ``with_transposition`` argument of the below function as a ``bool`` (``bool`` is the data type of C language).
+
+        .. code-block::
+
+           fuzzy_search(column, query, {"max_distance": 1, "prefix_length": 0, "max_expansion": 0, "with_transposition": true})
+
+  * Added ``grn_proc_options_xxx`` functions. For more information as below.
+
+    * ``query()`` only uses them for now.
+
+      * ``grn_proc_options_parsev(grn_ctx *ctx, grn_obj *options, const char *tag, const char *name, va_list args)``
+
+        * This function execute parse options.
+        * We had to implement parsing to options ourselves until now, however, we can parse them by just call this function from this version.
+
+      * ``grn_proc_options_parse(grn_ctx *ctx, grn_obj *options, const char *tag, const char *name, ...)``
+
+        * It calls ``grn_proc_options_parsev()``. Therefore, features of this function same ``grn_proc_options_parsev()``.
+        * It only differs in the interface compare with ``grn_proc_options_parsev()``.
+
+  * Added ``grn_text_printfv(grn_ctx *ctx, grn_obj *bulk, const char *format, va_list args)``
+
+    * ``grn_text_vprintf`` is deprecated from 10.0.3. We use ``grn_text_printfv`` instead.
+
+  * Added ``grn_type_id_is_float_family(grn_ctx *ctx, grn_id id)``.
+
+    * It returns whether ``grn_type_id`` is ``GRN_DB_FLOAT32`` or ``GRN_DB_FLOAT`` or not as a ``bool``.
+
+  * Added ``grn_dat_cursor_get_max_n_records(grn_ctx *ctx, grn_dat_cursor *c)``.
+
+    * It returns the number of max records the cursor can have as a ``size_t``. (This API is for the DAT table)
+
+  * Added ``grn_table_cursor_get_max_n_records(grn_ctx *ctx, grn_table_cursor *cursor)``.
+
+    * It returns the number of max records the cursor can have as a ``size_t``.
+    * It can use against all table type (``TABLE_NO_KEY``, ``TABLE_HASH_KEY``, ``TABLE_DAT_KEY``, and ``TABLE_PAT_KEY``).
+
+  * Added ``grn_result_set_add_xxx`` functions. For more information as below.
+
+    * ``grn_result_set_add_record(grn_ctx *ctx, grn_hash *result_set, grn_posting *posting, grn_operator op)``
+
+      * It adds a record into the table of result sets.
+      * ``grn_ii_posting_add_float`` is deprecated from 10.0.3. We use ``grn_rset_add_records()`` instead.
+
+    * ``grn_result_set_add_table(grn_ctx *ctx, grn_hash *result_set, grn_obj *table, double score, grn_operator op)``
+
+      * It adds a table into the result sets.
+
+    * ``grn_result_set_add_table_cursor(grn_ctx *ctx, grn_hash *result_set, grn_table_cursor *cursor, double score, grn_operator op)``
+
+      * It adds records that a table cursor has into the result sets.
+
+  * Added ``grn_vector_copy(grn_ctx *ctx, grn_obj *src, grn_obj *dest)``.
+
+    * It copies a ``vector`` object. It returns whether success copy a ``vector`` object.
+
+  * Added ``grn_obj_have_source(grn_ctx *ctx, grn_obj *obj)``.
+
+    * It returns whether the column has a source column as a ``bool``.
+
+  * Added ``grn_obj_is_token_column(grn_ctx *ctx, grn_obj *obj)``.
+
+    * It returns whether the column is a token column as a ``bool``.
+
+  * Added ``grn_hash_add_table_cursor(grn_ctx *ctx, grn_hash *hash, grn_table_cursor *cursor, double score)``.
+
+    * It's for bulk result set insert. It's faster than inserting records by ``grn_ii_posting_add()``.
+
+Fixes
+^^^^^
+
+* Fixed a crash bug if the modules (tokenizers, normalizers, and token filters) are used at the same time from multiple threads.
+
+* Fixed precision of ``Float32`` value when it outputted.
+
+  * The precision of it changes to  8-digit to 7-digit from 10.0.3.
+
+* Fixed a bug that Groonga used the wrong cache when the query that just the parameters of dynamic column different was executed. [GitHub#1102 patched by naoa]
+
+Thanks
+^^^^^^
+
+* naoa
+
+.. _release-10-0-2:
+
+Release 10.0.2 - 2020-04-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added support for ``uvector`` for ``time_classify_*`` functions. [GitHub#1089][Patched by naoa]
+
+  * ``uvector`` is a vector that size of elements for vector are fixed.
+  * For example, a vector that has values of Time type as elements is a ``uvector``.
+
+* Improve sort performance if sort key that can't refer value with zero-copy is mixed.
+
+  * Some sort key (e.g. ``_score``) values can't be referred with zero-copy.
+  * If there is at least one sort key that can't be referable is included, all sort keys are copied before.
+  * With this change, we just copy sort keys that can't be referred. Referable sort keys are just referred without a copy.
+  * However, this change may have performance regression when all sort keys are referable.
+
+* Added support for loading weight vector as a JSON string.
+
+  * We can load weight vector as a JSON string as below example.
+
+    .. code-block::
+
+       table_create Tags TABLE_PAT_KEY ShortText
+       table_create Data TABLE_NO_KEY
+       column_create Data tags COLUMN_VECTOR|WITH_WEIGHT Tags
+       column_create Tags data_tags COLUMN_INDEX|WITH_WEIGHT Data tags
+       load --table Data
+       [
+         {"tags": "{\"fruit\": 10, \"apple\": 100}"},
+         {"tags": "{\"fruit\": 200}"}
+       ]
+
+* Added support for ``Float32`` type.
+
+  * Groonga already has a ``Float`` type. However, it is double precision floating point number. Therefore if we only use single precision floating point number, it is not efficient.
+  * We can select more suitable type by adding a ``Float32`` type.
+
+* Added following APIs
+
+  * ``grn_obj_unref(grn_ctx *ctx, grn_obj *obj)``
+
+    * This API is only used on the reference count mode (The reference count mode is a state of ``GRN_ENABLE_REFERENCE_COUNT=yes``.).
+
+      * It calls ``grn_obj_unlink()`` only on the reference count mode. It doesn't do anything except when the reference count mode.
+      * We useful it when we need only call ``grn_obj_unlink()`` on the referece count mode.
+      * Because as the following example, we don't write condition that whether the reference count mode or not.
+
+        * The example if we don't use ``grn_obj_unref()``.
+
+          .. code-block::
+
+             if (grn_enable_reference_count) {
+              grn_obj_unlink(ctx, obj);
+             }
+
+        * The example if we use ``grn_obj_unref()``.
+
+          .. code-block::
+
+             grn_obj_ubref(ctx, obj);
+
+  * ``grn_get_version_major(void)``
+  * ``grn_get_version_minor(void)``
+  * ``grn_get_version_micro(void)``
+
+    * They return Groonga's major, minor, and micor version numbers as a ``uint32_t``.
+
+  * ``grn_posting_get_record_id(grn_ctx *ctx, grn_posting *posting)``
+  * ``grn_posting_get_section_id(grn_ctx *ctx, grn_posting *posting)``
+  * ``grn_posting_get_position(grn_ctx *ctx, grn_posting *posting)``
+  * ``grn_posting_get_tf(grn_ctx *ctx, grn_posting *posting)``
+  * ``grn_posting_get_weight(grn_ctx *ctx, grn_posting *posting)``
+  * ``grn_posting_get_weight_float(grn_ctx *ctx, grn_posting *posting)``
+  * ``grn_posting_get_rest(grn_ctx *ctx, grn_posting *posting)``
+
+    * They return information on the posting list.
+    * These APIs return value as a ``uint32_t`` except ``grn_posting_get_weight_float``.
+    * ``grn_posting_get_weight_float`` returns value as a ``float``.
+
+    * ``grn_posting_get_section_id(grn_ctx *ctx, grn_posting *posting)``
+
+      * Section id is the internal representation of the column name.
+      * If column name store in posting list as a string, it is a large amount of information and it use waste capacity.
+      * Therefore, Groonga compresses the amount of information and use storage capacity is small by storing column name in the posting list as a number called section id.
+
+    * ``grn_posting_get_tf(grn_ctx *ctx, grn_posting *posting)``
+
+      * ``tf`` of ``grn_posting_get_tf`` is Term Frequency score.
+
+    * ``grn_posting_get_weight_float(grn_ctx *ctx, grn_posting *posting)``
+
+      * It returns weight of token as a ``float``.
+      * We suggest using this API when we get a weight of token after this.
+
+        * Because we modify the internal representation of the weight from ``uint32_t`` to ``float`` in the near future.
+
+Fixes
+^^^^^
+
+* Fixed a bug that Groonga for 32bit on GNU/Linux may crash.
+
+* Fixed a bug that unrelated column value may be cleared. [GtiHub#1087][Reported by sutamin]
+
+* Fixed a memory leak when we dumped records with ``dump`` command.
+
+* Fixed a memory leak when we specified invalid value into ``output_columns``.
+
+* Fixed a memory leak when we executed ``snippet`` function.
+
+* Fixed a memory leak when we filled the below conditions.
+
+  * If we used dynamic columns on the ``initial`` stage.
+  * If we used ``slices`` argument with ``select`` command.
+
+* Fixed a memory leak when we deleted tables with ``logical_table_remove``.
+
+* Fixed a memory leak when we use the reference count mode.
+
+  * The reference count mode is a ``GRN_ENABLE_REFERENCE_COUNT=yes`` state.
+  * This mode is experimental. Performance may degrade by this mode.
+
+* Fixed a bug that Groonga too much unlink ``_key`` accessor when we load data for apache arrow format.
+
+Thanks
+^^^^^^
+
+* sutamin
+
+* naoa
+
+.. _release-10-0-1:
+
+Release 10.0.1 - 2020-03-30
+---------------------------
+
+We have been released Groonga 10.0.1.
+Because Ubuntu and Windows(VC++ version) package in Groonga 10.0.0 were mistaken.
+
+If we have already used Groonga 10.0.0 for CentOS, Debian, Windows(MinGW version), no problem with continued use it.
+
+Fixes
+^^^^^
+
+* Added a missing runtime(vcruntime140_1.dll) in package for Windows VC++ version.
+
+.. _release-10-0-0:
+
+Release 10.0.0 - 2020-03-29
+---------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [httpd] Updated bundled nginx to 1.17.9.
+
+* [httpd] Added support for specifying output type as an extension.
+
+  * For example, we can write ``load.json`` instead of ``load?output_type=json``.
+
+* [:doc:`reference/log`] Outputted a path of opened or closed file into a log of dump level on Linux.
+
+* [:doc:`reference/log`] Outputted a path of closed file into a log of debug level on Windows.  
+
+* Added following API and macros
+
+  * ``grn_timeval_from_double(grn_ctx, double)``
+
+    * This API converts ``double`` type to ``grn_timeval`` type.
+    * It returns value of ``grn_timeval`` type.
+
+  * ``GRN_TIMEVAL_TO_NSEC(timeval)``
+
+    * This macro converts value of ``grn_timeval`` type to nanosecond as the value of ``uint64_t`` type.
+
+  * ``GRN_TIME_USEC_TO_SEC(usec)``
+
+    * This macro converts microsecond to second.
+
+* Deprecated the following macro.
+
+  * ``GRN_OBJ_FORMAT_FIN(grn_ctx, grn_obj_format)``
+
+    * We ``grn_obj_format_fin(grn_ctx, grn_obj_format)`` use instead since 10.0.0.
+
+* [:doc:`reference/commands/logical_range_filter`],[:doc:`reference/commands/dump`] Added support for stream output.
+
+  * This feature requires ``command_version 3`` or later. The header content is outputted after the body content.
+  * Currently, this feature support only ``dump`` and ``logical_range_filter``.
+  * ``logical_range_filter`` always returns the output as a stream on ``command_version 3`` or later.
+  * This feature has the following limitations.
+
+    * -1 is only allowed for negative ``limit``
+    * MessagePack output isn't supported
+
+  * We a little changed the response contents of JSON by this modify.
+
+    * The key order differs from before versions as below.
+
+      * The key order in before versions.
+
+        .. code-block::
+
+          {
+            "header": {...},
+            "body": {...}
+          }
+
+      * The key order in this version(10.0.0).
+
+        .. code-block::
+
+          {
+            "body": {...},
+            "header": {...}
+          }
+
+  * Disabled caches of ``dump`` and ``logical_range_filter`` when they execute on ``command_version 3``.
+
+    * Because of ``dump`` and ``logical_range_filter`` on ``command_version 3`` returns stream since 10.0.0, Groonga can not cache the whole response.
+
+* [:doc:`reference/commands/logical_range_filter`] Added support for outputting response as Apache Arrow format.
+
+  * Supported data type as below.
+
+    * ``UInt8``
+    * ``Int8``
+    * ``UInt16``
+    * ``Int16``
+    * ``UInt32``
+    * ``Int32``
+    * ``UInt64``
+    * ``Int64``
+    * ``Time``
+    * ``ShortText``
+    * ``Text``
+    * ``LongText``
+    * ``Vector`` of ``Int32``
+    * ``Reference vector``
+
+* Supported Ubuntu 20.04 (Focal Fossa).
+
+* Dropped Ubuntu 19.04 (Disco Dingo).
+
+  * Because this version has been EOL.

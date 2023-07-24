@@ -1,0 +1,866 @@
+# -*- po -*-
+# Japanese translations for 1.2.4 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.4\n"
+"PO-Revision-Date: 2023-07-24 12:39+0900\n"
+"Report-Msgid-Bugs-To: \n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "News - 9 series"
+msgstr "お知らせ - 9系"
+
+msgid "Release 9.1.2 - 2020-01-29"
+msgstr "9.1.2リリース - 2020-01-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[tools] Added a script for copying only files of specify tables or columns."
+msgstr "[tools] 指定したテーブルまたはカラムのファイルのみをコピーするスクリプトを追加しました。"
+
+msgid "This script name is copy-related-files.rb."
+msgstr "このスクリプトの名前は、copy-related-files.rbです。"
+
+msgid "This script is useful if we want to extract specifying tables or columns from a huge database."
+msgstr "このスクリプトは非常に大きいデータベースから指定したテーブルまたはカラムを抽出したい場合に便利です。"
+
+msgid "Related files of specific tables or columns may need for reproducing fault."
+msgstr "特定のテーブルまたはカラムに関連するファイルは、障害の再現に必要なことがあります。"
+
+msgid "If we difficult to offer a database whole, we can extract related files of target tables or columns by this tool."
+msgstr "データベースをまるごと提供するのが難しい場合は、このツールを使って対象のテーブルまたはカラムに関連するファイルを抽出できます。"
+
+msgid "[:doc:`reference/commands/shutdown`] Accept ``/d/shutdown?mode=immediate`` immediately even when all threads are used."
+msgstr "[:doc:`reference/commands/shutdown`] 全てのスレッドが使われている場合でも、 ``/d/shutdown?mode=immediate`` を即時受け付けるようにしました。"
+
+msgid "This feature can only use on the Groonga HTTP server."
+msgstr "この機能はGroonga HTTPサーバでのみ使えます。"
+
+msgid "Unused objects free immediately by using ``GRN_ENABLE_REFERENCE_COUNT=yes``."
+msgstr "``GRN_ENABLE_REFERENCE_COUNT=yes`` を使うと、使用していないオブジェクトをすぐに開放します。"
+
+msgid "This feature is experimental. Performance degrade by this feature."
+msgstr "この機能は実験的です。パフォーマンスが低下します。"
+
+msgid "If we load to span many tables, we can expect to keep in the usage of memory by this feature."
+msgstr "多くのテーブルにまたがるデータをロードする際等にメモリーの使用量を一定量に保つ効果が期待できます。"
+
+msgid "[:doc:`/install/centos`] We prepare ``groonga-release`` by version."
+msgstr "[:doc:`/install/centos`] ``groonga-release`` パッケージをバージョンごとに用意しました。"
+
+msgid "Note that the little modification how to install."
+msgstr "インストール方法に少し変更があるので注意してください。"
+
+msgid "[:doc:`/install/debian`] We use ``groonga-archive-keyring`` for adding the Groonga apt repository."
+msgstr "[:doc:`/install/debian`] Groongaのaptリポジトリーの追加に ``groonga-archive-keyring`` を使うようにしました。"
+
+msgid "We can easy to add the Groonga apt repository to our system by this improvement."
+msgstr "この改善によって、Groongaのaptリポジトリーを簡単に追加できます。"
+
+msgid "``groonga-archive-keyring`` includes all information for using the Groonga apt repository. Thus, we need not be conscious of changing of repository information or PGP key by installing this package."
+msgstr "``groonga-archive-keyring`` はGroongaのaptリポジトリーを使うための全ての情報が入っています。そのため、リポジトリー情報やPGPキーの変更を意識する必要がありません。"
+
+msgid "``groonga-archive-keyring`` is deb package. Thus, we can easy to update by ``apt update``."
+msgstr "``groonga-archive-keyring`` はdebパッケージなので、 ``apt update`` で簡単に更新できます。"
+
+msgid "Release 9.1.1 - 2020-01-07"
+msgstr "9.1.1リリース - 2020-01-07"
+
+msgid "[:doc:`/reference/commands/load`] Added support for Apache Arrow format data."
+msgstr "[:doc:`/reference/commands/load`] Apache Arrow 形式のデータをサポートしました。"
+
+msgid "If we use Apache Arrow format data, we may reduce parse cost. Therefore, data might be loading faster than other formats."
+msgstr "Apache Arrow形式のデータを使うことで、パースのコストを削減でき、他のフォーマットより高速にデータをロードできる可能性があります。"
+
+msgid "Groonga can also directly input data for Apache Arrow format from other data analysis systems by this improvement."
+msgstr "この変更によって、他のデータ分析システムからApache Arrow形式のデータを直接Groongaへ入力することもできます。"
+
+msgid "However, Apache Arrow format can use in the HTTP interface only. We can't use it in the command line interface."
+msgstr "Apache Arrow形式のフォーマットはHTTPインターフェイスでのみ使えます。コマンドラインインターフェイスでは使えません。"
+
+msgid "[:doc:`/reference/commands/load`] Added how to load Apache Arrow format data in the document."
+msgstr "[:doc:`/reference/commands/load`] Apache Arrow 形式のロード方法をドキュメントに追加しました。"
+
+msgid "[:doc:`/reference/commands/load`] Improve error message."
+msgstr "[:doc:`/reference/commands/load`] エラーメッセージを改善しました。"
+
+msgid "Response of ``load`` command includes error message also."
+msgstr "``load`` コマンドのレスポンスにエラーメッセージも含むようにしました。"
+
+msgid "If we faile data load, Groonga output error detail of ``load`` command by this Improvement."
+msgstr "この変更によって、データのロードに失敗した場合、 ``load`` コマンドのエラーの詳細を出力します。"
+
+msgid "[httpd] Updated bundled nginx to 1.17.7."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.17.7に更新しました。"
+
+msgid "[:doc:`reference/executables/groonga-server-http`] Added support for sending command parameters by body of HTTP request."
+msgstr "[:doc:`/reference/executables/groonga-server-http`] HTTPリクエストのbodyにコマンドのパラメータを指定できるようにしました。"
+
+msgid "We must set ``application/x-www-form-urlencoded`` to ``Content-Type`` for this case."
+msgstr "この場合、 ``Content-Type`` に ``application/x-www-form-urlencoded`` を指定しなければいけません。"
+
+msgid "[:doc:`reference/executables/groonga-server-http`] Added how to use HTTP POST in the document."
+msgstr "[:doc:`/reference/executables/groonga-server-http`] HTTP POST の使用方法をドキュメントに追加しました。"
+
+msgid "Release 9.1.0 - 2019-11-29"
+msgstr "9.1.0リリース - 2019-11-29"
+
+msgid "Improved the performance of the \"&&\" operation."
+msgstr "\"&&\"演算のパフォーマンスを改善しました。"
+
+msgid "For example, the performance of condition expression such as the following is increased."
+msgstr "例えば、以下のような条件式のパフォーマンスが向上します。"
+
+msgid "( A || B ) && ( C || D ) && ( E || F) ..."
+msgstr ""
+
+msgid "[:doc:`/reference/tokenizers/token_mecab`] Added a new option ``use_base_form``"
+msgstr "[:doc:`/reference/tokenizers/token_mecab`] ``TokenMecab`` に ``use_base_form`` オプションを追加しました。"
+
+msgid "We can search using the base form of a token by this option."
+msgstr "このオプションによってトークンの原型を使って検索できます。"
+
+msgid "For example, if we search \"支えた\" using this option, \"支える\" is hit also."
+msgstr "例えば、このオプションを使って\"支えた\"を検索した場合、\"支える\"もヒットします。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fix a bug that when the accessor is index, performance decreases."
+msgstr "インデックスがアクセサーの際にパフォーマンスが低下する問題を修正しました。"
+
+msgid "For example, it occurs with the query include the following conditions."
+msgstr "例えば、以下のような条件を含むクエリーで起こります。"
+
+msgid "``accessor @ query``"
+msgstr ""
+
+msgid "``accessor == query``"
+msgstr ""
+
+msgid "Fixed a bug the estimated size of a search result was overflow when the buffer is big enough. [PGroonga#GitHub#115][Reported by Albert Song]"
+msgstr "バッファーが十分に大きい時に、検索結果の推定サイズがオーバーフローする問題を修正しました。 [PGroonga#GitHub#115][Albert Songさんの報告]"
+
+msgid "Improved a test(1) portability. [GitHub#1065][Patched by OBATA Akio]"
+msgstr "test(1)のポータビリティを改善しました。（おばたさんがパッチ提供）"
+
+msgid "Added missing tools."
+msgstr "不足しているツールを追加"
+
+msgid "Because ``index-column-diff-all.sh`` and ``object-inspect-all.sh`` had not bundled in before version."
+msgstr "前のバージョンに ``index-column-diff-all.sh`` と ``object-inspect-all.sh`` がバンドルされていなかったためです。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Albert Song"
+msgstr "Albert Songさん"
+
+msgid "OBATA Akio"
+msgstr "おばたさん"
+
+msgid "Release 9.0.9 - 2019-10-30"
+msgstr "9.0.9リリース - 2019-10-30"
+
+msgid "Maybe performance decreases from this version. Therefore, If performance decreases than before, please report us with reproducible steps."
+msgstr "今回のバージョンからパフォーマンスが低下しているかもしれません。もし、以前よりパフォーマンスが低下していたら、是非、再現手順を報告してほしいです。"
+
+msgid "[:doc:`reference/log`] Improved that output the sending time of response into query-log."
+msgstr "[:doc:`/reference/log`] 応答の送信時間をクエリーログに出力するように改良しました。"
+
+msgid "[:doc:`reference/commands/status`] Added that the number of current jobs in the ``status`` command response."
+msgstr "[:doc:`/reference/commands/status`] ``status`` コマンドの応答に現在のジョブ数を追加しました。"
+
+msgid "[:doc:`reference/executables/groonga-httpd`] Added support for ``$request_time`` in log."
+msgstr "[:doc:`/reference/executables/groonga-httpd`] ``$request_time`` をサポートしました。"
+
+msgid "In the previous version, even if we specified the ``$request_time`` in the ``log_format`` directive, it was always 0.00."
+msgstr "以前のバージョンでは、 ``log_format`` ディレクティブに ``$request_time`` を指定しても、``$request_time`` の値は常に0でした。"
+
+msgid "If we specify the ``$request_time``, groonga-httpd output the correct time form this version."
+msgstr "今回のバージョンから、 ``$request_time`` を指定した場合、 groonga-httpd は正しい時間を出力します。"
+
+msgid "[:doc:`reference/executables/groonga-httpd`] Added how to set the ``$request_time`` in the document."
+msgstr "[:doc:`/reference/executables/groonga-httpd`] ``$request_time`` の設定方法をドキュメントに追加しました。"
+
+msgid "Supported Ubuntu 19.10 (Eoan Ermine)"
+msgstr "Ubuntu 19.10(Eoan Ermine)をサポートしました。"
+
+msgid "Supported CentOS 8 (experimental)"
+msgstr "CentOS 8をサポートしました。(実験的)"
+
+msgid "The package for CentOS 8 can't use a part of features(e.g. we can't use ``TokenMecab`` and can't cast to int32 vector from JSON string) for lacking some packages for development."
+msgstr "CentOS 8向けのパッケージは開発用のパッケージが不足しているため、一部の機能が使えません。(例えば、 ``TokenMecab`` が使えなかったり、JSON文字列からint32のベクターへのキャストが出来なかったりします。)"
+
+msgid "[tools] Added a script for executing the ``index_column_diff`` command simply."
+msgstr "[tools] ``index_column_diff`` コマンドを簡単に実行するスクリプトを追加しました。"
+
+msgid "This script name is index-column-diff-all.sh."
+msgstr "このスクリプトの名前は、index-column-diff-all.shです。"
+
+msgid "This script extracts index columns form Groonga's database and execute the ``index_column_diff`` command to them."
+msgstr "このスクリプトは、Groongaのデータベースからインデックスカラムを抽出し、抽出したインデックスカラムに対して ``index_column_diff`` を実行します。"
+
+msgid "[tools] Added a script for executing ``object_inspect`` against all objects."
+msgstr "[tools] ``object_inspect`` コマンドを全てのオブジェクトに対して実行するスクリプトを追加しました。"
+
+msgid "This script name is object-inspect-all.sh."
+msgstr "このスクリプトの名前は、object-inspect-all.shです。"
+
+msgid "Fixed a bug that Groonga crash when we specify the value as the first argument of between.[GitHub#1045][Reported by yagisumi]"
+msgstr "between の最初の引数として値を指定すると、Groongaがクラッシュする問題を修正しました。[GitHub#1045][yagisumiさんの報告]"
+
+msgid "yagisumi"
+msgstr "yagisumiさん"
+
+msgid "Release 9.0.8 - 2019-09-27"
+msgstr "9.0.8リリース - 2019-09-27"
+
+msgid "[:doc:`reference/commands/log_reopen`] Added a supplementary explanation when we use ``groonga-httpd`` with 2 or more workers."
+msgstr "[:doc:`reference/commands/log_reopen`] 2つ以上のワーカーで ``groonga-httpd`` を使用する場合の補足説明を追記しました。"
+
+msgid "Improved that Groonga ignores the index being built."
+msgstr "作成中のインデックスを無視するように改良しました。"
+
+msgid "We can get correct search results even if the index is under construction."
+msgstr "インデックス構築中であっても、正しい検索結果を取得できます。"
+
+msgid "However, the search is slow because of Groonga out of use the index to search in this case."
+msgstr "ただし、この場合、Groongaは検索にインデックスを使用しないため、検索は遅くなります。"
+
+msgid "[:doc:`reference/functions/sub_filter`] Added a feature that ``sub_filter`` executes a sequential search when Groonga is building indexes for the target column or the target column hasn't indexed."
+msgstr "[:doc:`reference/functions/sub_filter`] 対象のカラムのインデックスが作成中か、または、インデックスが無い時に ``sub_filter`` がシーケンシャルサーチを実行する機能を追加しました。"
+
+msgid "``sub_filter`` was an error if the above situation in before version."
+msgstr "以前のバージョンでは、上記の状態の場合、 ``sub_filter`` はエラーになりました。"
+
+msgid "From this version, ``sub_filter`` returns search results if the above situation."
+msgstr "今回のバージョンから、 上記の状態でも ``sub_filter`` は検索結果を返します。"
+
+msgid "However if the above situation, ``sub_filter`` is slow. Because it is executed as a sequential search."
+msgstr "ただし、上記の状態の場合、 ``sub_filter`` は、シーケンシャルサーチで実行されるため遅いです。"
+
+msgid "[:doc:`/install/centos`] Dropped 32-bit package support on CentOS 6."
+msgstr "[:doc:`/install/centos`] CentOS 6の32-bitパッケージのサポートをやめました。"
+
+msgid "[:doc:`reference/commands/logical_range_filter`] Fixed a bug that exception about closing the same object twice occurs when we have enough records and the number of records that unmatch filter search criteria is more than the estimated value of it."
+msgstr "[:doc:`reference/commands/logical_range_filter`] レコードが十分にあるとき、かつフィルター条件にマッチしないレコードが推定値を超えた時に、同じオブジェクトを2回閉じるという例外が発生する問題を修正しました。"
+
+msgid "Release 9.0.7 - 2019-08-29"
+msgstr "9.0.7リリース - 2019-08-29"
+
+msgid "[httpd] Updated bundled nginx to 1.17.3."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.17.3に更新しました。"
+
+msgid "Contains security fix for CVE-2019-9511, CVE-2019-9513, and CVE-2019-9516."
+msgstr "CVE-2019-9511、CVE-2019-9513、CVE-2019-9516のセキュリティの修正が含まれています。"
+
+msgid "Fixed a bug that Groonga crash when posting lists were huge."
+msgstr "ポスティングリストが巨大になった時にGroongaがクラッシュする問題を修正しました。"
+
+msgid "However, this bug almost doesn't occur by general data. Because posting lists don't grow bigger so much by them."
+msgstr "ただし、このバグは、一般的なデータでは殆ど発生しません。ポスティングリストは、一般的なデータでは、そこまで大きくならないためです。"
+
+msgid "Fixed a bug that returns an empty result when we specify ``initial`` into a stage of a dynamic column and search for using index. [GitHub#683]"
+msgstr "動的カラムのステージに ``initial`` を指定し、インデックスを使用した検索をすると空の結果を返す問題を修正しました。 [GitHub#683]"
+
+msgid "Fixed a bug that the configure phase didn't detect libedit despite installing it. [GitHub#1030][Patched by yu]"
+msgstr "configure時にlibeditがインストールされているにもかかわらず、検知しない問題を修正しました。 [GitHub#1030][yuさんがパッチ提供]"
+
+msgid "Fixed a bug that ``--offset`` and ``--limit`` options didn't work with ``--sort_keys`` and ``--slices`` options. [clear-code/redmine_full_text_search#70][Reported by a9zawa]"
+msgstr "``--slices`` と ``--sort_keys`` オプション使用時に ``--offset`` と ``--limit`` オプションが動作しない問題を修正しました。 [clear-code/redmine_full_text_search#70][a9zawaさんの報告]"
+
+msgid "Fixed a bug that search result is empty when the result of ``select`` command is huge. [groonga-dev,04770][Reported by Yutaro Shimamura]"
+msgstr "``select`` コマンドの結果が巨大な時、検索結果が空になる問題を修正しました。[groonga-dev,04770][Yutaro Shimamuraさんの報告]"
+
+msgid "Fixed a bug that doesn't use a suitable index when prefix search and suffix search. [GitHub#1007, PGroonga#GitHub#96][Reported by oknj]"
+msgstr "前方一致検索や後方一致検索時に適切なインデックスを使わない問題を修正しました。[GitHub#1007, PGroonga#GitHub#96][oknjさんの報告]"
+
+msgid "oknj"
+msgstr "oknjさん"
+
+msgid "Yutaro Shimamura"
+msgstr "Yutaro Shimamuraさん"
+
+msgid "yu"
+msgstr "yuさん"
+
+msgid "a9zawa"
+msgstr "a9zawaさん"
+
+msgid "Release 9.0.6 - 2019-08-05"
+msgstr "9.0.6リリース - 2019-08-05"
+
+msgid "Added support for Debian 10 (buster)."
+msgstr "Debian 10 (buster)をサポートしました。"
+
+msgid "[:doc:`reference/commands/select`] Fixed a bug that search is an error when occurring search escalation."
+msgstr "[:doc:`/reference/commands/select`] 検索エスカレーションが起こった際に検索がエラーになるバグを修正しました。"
+
+msgid "[:doc:`reference/commands/select`] Fixed a bug that may return wrong search results when we use nested equal condition."
+msgstr "[:doc:`/reference/commands/select`] ネストされた等価演算を使った際に、誤った検索結果を返すことがあるバグを修正しました。"
+
+msgid "[geo_distance_location_rectangle] Fixed an example that has wrong ``load`` format. [GitHub#1023][Patched by yagisumi]"
+msgstr "[geo_distance_location_rectangle] ``load`` のフォーマットが誤っている例を修正しました。 [GitHub#1023] [yagisumiさんがパッチ提供]"
+
+msgid "[:doc:`tutorial/micro_blog`] Fixed an example that has wrong search results. [GutHub#1024][Patched by yagisumi]"
+msgstr "[:doc:`tutorial/micro_blog`] 検索結果が誤っている例を修正しました。[GitHub#1024][yagisumiさんがパッチ提供] "
+
+msgid "Release 9.0.5 - 2019-07-30"
+msgstr "9.0.5リリース - 2019-07-30"
+
+msgid "There are some critical bugs are found in this release. ``select`` command returns wrong search results. We will release the new version (9.0.6) which fixes the issues. Please do not use Groonga 9.0.5, and recommends to upgrade to 9.0.6 in the future. The detail of this issues are explained at https://groonga.org/en/blog/2019/07/30/groonga-9.0.5.html."
+msgstr "このリリースには影響の大きい不具合があることがわかりました。``select`` コマンドが誤った結果を返します。この問題を修正し、9.0.6をリリースする予定です。Groonga 9.0.5は使わず、後日リリースされる9.0.6を使ってください。問題の詳細については https://groonga.org/ja/blog/2019/07/30/groonga-9.0.5.html で解説しています。"
+
+msgid "[:doc:`reference/commands/logical_range_filter`] Improved that only apply an optimization when the search target shard is large enough."
+msgstr "[:doc:`/reference/commands/logical_range_filter`] 検索対象のシャードが十分に大きい時にのみ最適化を適用するように改良しました。"
+
+msgid "This feature reduces that duplicate search result between offset when we use same sort key."
+msgstr "この機能は、ソートキーが同じ時にオフセット間で検索結果が重複するのを減らします。"
+
+msgid "Large enough threshold is 10000 records by default."
+msgstr "十分に大きいのしきい値はデフォルトで10000レコードです。"
+
+msgid "[:doc:`/reference/normalizers`] Added new option ``unify_to_katakana`` for ``NormalizerNFKC100``."
+msgstr "[:doc:`/reference/normalizers`] ``NormalizerNFKC100`` に新しいオプション ``unify_to_katakana`` を追加しました。"
+
+msgid "This option normalize hiragana to katakana."
+msgstr "このオプションは、平仮名を片仮名にノーマライズします。"
+
+msgid "For example, ``ゔぁゔぃゔゔぇゔぉ`` is normalized to ``ヴァヴィヴヴェヴォ``."
+msgstr "例えば、 ``ゔぁゔぃゔゔぇゔぉ`` を ``ヴァヴィヴヴェヴォ`` にノーマライズします。"
+
+msgid "[:doc:`reference/commands/select`] Added drilldowns support as a slices parameter."
+msgstr "[:doc:`/reference/commands/select`] slicesパラメーターでdrilldownsをサポートしました。"
+
+msgid "[:doc:`reference/commands/select`] Added columns support as a slices parameter."
+msgstr "[:doc:`/reference/commands/select`] slicesパラメーターでcolumnsをサポートしました。"
+
+msgid "[:doc:`reference/commands/select`] Improved that we can refer ``_score`` in the initial stage for slices parameter."
+msgstr "[:doc:`/reference/commands/select`] initialステージ内でslicesパラメーターが ``_score`` を参照できるよう改良しました。"
+
+msgid "[:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/snippet_html`] Improved that extract a keyword also from an expression of before executing a slices when we specify the slices parameter."
+msgstr "[:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/snippet_html`] slicesパラメータ指定時に、slices実行前の式からもキーワードを抽出するように改良しました。"
+
+msgid "Improved that collect scores also from an expression of before executing a slices when we specify the slices parameter."
+msgstr "slicesパラメータ指定時に、slices実行前の式からもスコアーを収集するように改良しました。"
+
+msgid "Stopped add 1 in score automatically when add posting to posting list."
+msgstr "ポスティングリストにポスティングを追加する際に自動的にスコアーを1増やすのをやめました。"
+
+msgid "``grn_ii_posting_add`` is backward incompatible changed by this change. * Caller must increase the score to maintain compatibility."
+msgstr "``grn_ii_posting_add`` は、この変更によって後方互換性がなくなりました。互換性を保つには、呼び出し側でスコアーを増やす必要があります。"
+
+msgid "Added support for index search for nested equal like ``XXX.YYY.ZZZ == AAA``."
+msgstr "``XXX.YYY.ZZZ == AAA`` のようなネストされた等価演算のインデックス検索をサポートしました。"
+
+msgid "Reduce rehash interval when we use hash table."
+msgstr "ハッシュテーブル使用時にハッシュの再構築の間隔を少なくしました。"
+
+msgid "This feature improve performance for output result."
+msgstr "この昨日によって、結果出力のパフォーマンスが改善します。"
+
+msgid "Improved to we can add tag prefix in the query log."
+msgstr "クエリーログにプレフィックスを追加できるようになりました。"
+
+msgid "We become easy to understand that it is filtered which the condition."
+msgstr "どの条件のフィルターなのかわかりやすくなります。"
+
+msgid "Added support for Apache Arrow 1.0.0."
+msgstr "Apache Arrow 1.0.0 をサポートしました。"
+
+msgid "However, It's not released this version yet."
+msgstr "ただし、このバージョンはまだ、リリースされていません。"
+
+msgid "Added support for Amazon Linux 2."
+msgstr "Amazon Linux 2 をサポートしました。"
+
+msgid "Fixed a bug that vector values of JSON like ``\"[1, 2, 3]\"`` are not indexed."
+msgstr "``\"[1, 2, 3]\"`` のようなJSONのベクター値がインデックスされないバグを修正しました。"
+
+msgid "Fixed wrong parameter name in ``table_create`` tests. [GitHub#1000][Patch by yagisumi]"
+msgstr "``table_create`` のテストのパラメーター名が誤っていたバグを修正しました。[GitHub#1000][yagisumiさんがパッチ提供]"
+
+msgid "Fixed a bug that drilldown label is empty when a drilldown command is executed by ``command_version=3``. [GitHub#1001][Reported by yagisumi]"
+msgstr "``command_version=3`` でdrilldownコマンドが実行された際に、ドリルダウンのラベルが空になるバグを修正しました。[GitHub#1001][yagisumiさんの報告]"
+
+msgid "Fixed build error for Windows package on MinGW."
+msgstr "MinGWでWindows版のパッケージのビルドが失敗するバグを修正しました。"
+
+msgid "Fixed install missing COPYING for Windows package on MinGW."
+msgstr "MinGWのWindows版パッケージにCOPYINGがインストールされないバグを修正しました。"
+
+msgid "Fixed a bug that don't highlight when specifing non-text query as highlight target keyword."
+msgstr "ハイライト対象として、クエリーにテキスト以外を指定した際に、キーワードがハイライトされないバグを修正しました。"
+
+msgid "Fixed a bug that broken output of MessagePack format of [:doc:`/reference/commands/object_inspect`]. [GitHub#1009][Reported by yagisumi]"
+msgstr "[:doc:`/reference/commands/object_inspect`] のMessagePack形式の出力が壊れるバグを修正しました。[GitHub#1009][yagisumiさんの報告]"
+
+msgid "Fixed a bug that broken output of MessagePack format of ``index_column_diff``. [GitHub#1010][Reported by yagisumi]"
+msgstr "``index_column_diff`` のMessagePack形式の出力が壊れるバグを修正しました。[GitHub#1009][yagisumiさんの報告]"
+
+msgid "Fixed a bug that broken output of MessagePack format of [:doc:`reference/commands/suggest`]. [GitHub#1011][Reported by yagisumi]"
+msgstr "[:doc:`reference/commands/suggest`] のMessagePack形式の出力が壊れるバグを修正しました。[GitHub#1011][yagisumiさんの報告]"
+
+msgid "Fixed a bug that allocate size by realloc isn't enough when a search for a table of patricia trie and so on. [Reported by Shimadzu Corporation]"
+msgstr "パトリシアトライのテーブルの検索時などにreallocのサイズが十分に確保されないバグを修正しました。[島津製作所さんの報告]"
+
+msgid "Groonga may be crashed by this bug."
+msgstr "Groongaはこのバグでクラッシュする可能性があります。"
+
+msgid "Fix a bug that ``groonga.repo`` is removed when updating 1.5.0 from ``groonga-release`` version before 1.5.0-1. [groonga-talk:429][Reported by Josep Sanz]"
+msgstr "``groonga-release`` version 1.5.0より前から1.5.0-1へアップデートした際に ``groonga.repo`` が削除されるバグを修正しました。[groonga-talk:429][Josep Sanzさんの報告]"
+
+msgid "Shimadzu Corporation"
+msgstr "島津製作所さん"
+
+msgid "Josep Sanz"
+msgstr "Josep Sanzさん"
+
+msgid "Release 9.0.4 - 2019-06-29"
+msgstr "9.0.4リリース - 2019-06-29"
+
+msgid "Added support for array literal with multiple elements."
+msgstr "配列リテラルの複数要素をサポートしました。"
+
+msgid "Added support equivalence operation of a vector."
+msgstr "ベクターの等価演算をサポートしました。"
+
+msgid "[:doc:`reference/commands/logical_range_filter`] Increase outputting logs into query log."
+msgstr "[:doc:`reference/commands/logical_range_filter`] 出力するクエリーログを追加しました。"
+
+msgid "``logical_range_filter`` command comes to output a log for below timing."
+msgstr "``logical_range_filter`` コマンドが、以下のタイミングでログを出力するようになります。"
+
+msgid "After filtering by ``logical_range_filter``."
+msgstr "``logical_range_filter`` によるフィルター後"
+
+msgid "After sorting by ``logical_range_filter``."
+msgstr "``logical_range_filter`` によるソート後"
+
+msgid "After applying dynamic column."
+msgstr "動的カラム適用後"
+
+msgid "After output results."
+msgstr "結果出力後"
+
+msgid "We can see how much has been finished this command by this feature."
+msgstr "この機能によって、このコマンドがどこまで完了したかを見ることができます。"
+
+msgid "[:doc:`/reference/tokenizers`] Added document for ``TokenPattern`` description."
+msgstr "[:doc:`/reference/tokenizers`] ``TokenPattern`` の説明をドキュメントに追加しました。"
+
+msgid "[:doc:`/reference/tokenizers`] Added document for ``TokenTable`` description."
+msgstr "[:doc:`/reference/tokenizers`] ``TokenTable`` の説明をドキュメントに追加しました。"
+
+msgid "[:doc:`/reference/tokenizers`] Added document for ``TokenNgram`` description."
+msgstr "[:doc:`/reference/tokenizers`] ``TokenNgram`` の説明をドキュメントに追加しました。 "
+
+msgid "[:doc:`reference/executables/grndb`] Added output operation log into groonga.log"
+msgstr "[:doc:`reference/executables/grndb`] groonga.logへの操作ログの出力を追加しました。"
+
+msgid "``grndb`` command comes to output execution result and execution process."
+msgstr "``grndb`` コマンドが実行結果と実行過程を出力するようになります。"
+
+msgid "[:doc:`reference/executables/grndb`] Added support for checking empty files."
+msgstr "[:doc:`/reference/executables/grndb`] 空のファイルのチェックをサポートしました。"
+
+msgid "We can check if the empty files exist by this feature."
+msgstr "この機能によって、空のファイルが存在するかどうかをチェックできます。"
+
+msgid "[:doc:`reference/executables/grndb`] Added support new option ``--since``"
+msgstr "[:doc:`reference/executables/grndb`] 新しいオプション ``--since`` を追加しました。"
+
+msgid "We can specify a scope of an inspection."
+msgstr "検査の範囲を指定できます。"
+
+msgid "[:doc:`reference/executables/grndb`] Added document about new option ``--since``"
+msgstr "[:doc:`reference/executables/grndb`] 新しいオプション ``--since`` についてのドキュメントを追加しました。"
+
+msgid "Bundle RapidJSON"
+msgstr "RapidJSONをバンドルしました。"
+
+msgid "We can use RapidJson as Groonga's JSON parser partly. (This feature is partly yet)"
+msgstr "部分的にGroongaのJSONパーサーとしてRapidJSONを使うことができます。(この機能はまだ部分的です。)"
+
+msgid "We can more exactly parse JSON by using this."
+msgstr "これを使うことでより厳格なJSONのパースができます。"
+
+msgid "Added support for casting to int32 vector from JSON string."
+msgstr "JSON文字列からint32のベクターへのキャストをサポートしました。"
+
+msgid "This feature requires RapidJSON."
+msgstr "この機能は、RapidJSONが必要です。"
+
+msgid "[:doc:`reference/functions/query`] Added ``default_operator``."
+msgstr "[:doc:`/reference/functions/query`] ``default_operator`` を追加しました。"
+
+msgid "We can customize operator when \"keyword1 keyword2\"."
+msgstr "\"keyword1 keyword2\"時の演算子をカスタマイズできます。"
+
+msgid "\"keyword1 Keyword2\" is AND operation in default."
+msgstr "デフォルトでは、\"keyword1 keyword2\"はAND演算です。"
+
+msgid "We can change \"keyword1 keyword2\"'s operator except AND."
+msgstr "\"keyword1 keyword2\"の演算子をAND以外に変更できます。"
+
+msgid "[optimizer] Fix a bug that execution error when specified multiple filter conditions and like ``xxx.yyy==\"keyword\"``."
+msgstr "[optimizer] 複数のfilter条件と ``xxx.yyy==\"keyword\"`` のような条件を指定した際にエラーが発生するバグを修正しました。"
+
+msgid "Added missing LICENSE files in Groonga package for Windows(VC++ version)."
+msgstr "GroongaのWindows用のパッケージ(VC++版)に不足していたライセンスファイルを追加しました。"
+
+msgid "Added UCRT runtime into Groonga package for Windows(VC++ version)."
+msgstr "GroongaのWindows用のパッケージ(VC++版)UCRTランタイムを追加しました。"
+
+msgid "[:doc:`/reference/window_function`] Fix a memory leak."
+msgstr "[:doc:`/reference/window_function`] メモリリークを修正しました。"
+
+msgid "This occurs when multiple windows with sort keys are used. [Patched by Takashi Hashida]"
+msgstr "これは、複数のウインドウに対してソートキーを適用した際に発生します。 [Takashi Hashidaさんがパッチ提供]"
+
+msgid "Takashi Hashida"
+msgstr "Takashi Hashidaさん"
+
+msgid "Release 9.0.3 - 2019-05-29"
+msgstr "9.0.3リリース - 2019-05-29"
+
+msgid "[:doc:`reference/commands/select`] Added more query logs."
+msgstr "[:doc:`reference/commands/select`] より多くのクエリーログを追加しました。"
+
+msgid "``select`` command comes to output a log for below timing."
+msgstr "``select`` コマンドが、以下のタイミングでログを出力するようになります。"
+
+msgid "After sorting by drilldown."
+msgstr "ドリルダウンによるソート後"
+
+msgid "After filter by drilldown."
+msgstr "ドリルダウンによるフィルター後"
+
+msgid "[:doc:`reference/commands/logical_select`] Added more query logs."
+msgstr "[:doc:`reference/commands/logical_select`] より多くのクエリーログを追加しました。"
+
+msgid "``logical_select`` command comes to output a log for below timing."
+msgstr "``logical_select`` コマンドが、以下のタイミングでログを出力するようになります。"
+
+msgid "After making dynamic columns."
+msgstr "動的カラム作成後"
+
+msgid "After grouping by drilldown."
+msgstr "ドリルダウンによるグループ化後"
+
+msgid "After sorting by ``logical_select``."
+msgstr "``logical_select`` によるソート後"
+
+msgid "[:doc:`reference/commands/logical_select`] Improved performance of sort a little when we use ``limit`` option."
+msgstr "[:doc:`reference/commands/logical_select`] ``limit`` オプションを使用したときのソートのパフォーマンスを少し改善しました。"
+
+msgid "[index_column_diff] Improved performance."
+msgstr "[index_column_diff] パフォーマンスを改善しました。"
+
+msgid "We have greatly shortened the execution speed of this command."
+msgstr "このコマンドの実行速度を大幅に短くしました。"
+
+msgid "[index_column_diff] Improved ignore invalid reference."
+msgstr "[index_column_diff] 無効な参照を無視するように改良しました。"
+
+msgid "[index_column_diff] Added support for duplicated vector element case."
+msgstr "[index_column_diff] ベクター要素の重複に対応しました。"
+
+msgid "[Normalizers] Added a new Normalizer ``NormalizerNFKC121`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 12.1."
+msgstr "[Normalizers] Unicode 12.1 の NFKC（Normalization Form Compatibility Composition）をベースにしたノーマライザー ``NormalizerNFKC121`` を追加しました。"
+
+msgid "[TokenFilters] Added a new TokenFilter ``TokenFilterNFKC121`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 12.1."
+msgstr "[TokenFilters] Unicode 12.1 の NFKC（Normalization Form Compatibility Composition）をベースにしたトークンフィルター ``NormalizerNFKC121`` を追加しました。"
+
+msgid "[:doc:`reference/executables/grndb`] Added a new option ``--log-flags``"
+msgstr "[:doc:`reference/executables/grndb`] 新しいオプション ``--log-flags`` を追加しました。"
+
+msgid "We can specify output items of a log as with groonga executable file."
+msgstr "groonga実行ファイルと同様、ログに出力する項目を指定できます。"
+
+msgid "See [:doc:`reference/executables/groonga`] to know about supported log flags."
+msgstr "サポートされているログフラグについては、[:doc:`reference/executables/groonga`] を参照してください。"
+
+msgid "[:doc:`reference/functions/snippet_html`] Added a new option for changing a return value when no match by search."
+msgstr "[:doc:`reference/functions/snippet_html`] 検索にマッチしない時の戻り値を変更する新しいオプションを追加しました。"
+
+msgid "[:doc:`reference/commands/plugin_unregister`] Added support full path of Windows."
+msgstr "[:doc:`reference/commands/plugin_unregister`] Windowsのフルパスをサポートしました。"
+
+msgid "Added support for multiline log message."
+msgstr "複数行のログメッセージをサポートしました。"
+
+msgid "The multiline log message is easy to read by this feature."
+msgstr "この機能によって、複数行に渡るログメッセージが見やすくなります。"
+
+msgid "Output key in Groonga's log when we search by index."
+msgstr "インデックスを使って検索した際、キーをGroongaのログに出力するようにしました。"
+
+msgid "[:doc:`tutorial/match_columns`] Added a document for indexes with weight."
+msgstr "[:doc:`tutorial/match_columns`] インデックスの重みのドキュメントを追加しました。"
+
+msgid "[:doc:`reference/commands/logical_range_filter`] Added a explanation for ``order`` parameter."
+msgstr "[:doc:`reference/commands/logical_range_filter`] ``order`` パラメータの説明を追加しました。"
+
+msgid "[:doc:`reference/commands/object_inspect`] Added an explanation for new statistics ``INDEX_COLUMN_VALUE_STATISTICS_NEXT_PHYSICAL_SEGMENT_ID`` and ``INDEX_COLUMN_VALUE_STATISTICS_N_PHYSICAL_SEGMENTS``."
+msgstr "[:doc:`reference/commands/object_inspect`] 新しい統計 ``INDEX_COLUMN_VALUE_STATISTICS_NEXT_PHYSICAL_SEGMENT_ID`` と ``INDEX_COLUMN_VALUE_STATISTICS_N_PHYSICAL_SEGMENTS`` の説明を追加しました。"
+
+msgid "Dropped Ubuntu 14.04 support."
+msgstr "Ubuntu 14.04 のサポートをやめました。"
+
+msgid "[index_column_diff] Fixed a bug that too much ``remains`` are reported."
+msgstr "[index_column_diff] ``remains`` を多く報告するバグを修正しました。"
+
+msgid "Fixed a build error when we use ``--without-onigmo`` option. [GitHub#951] [Reported by Tomohiro KATO]"
+msgstr "``--without-onigmo`` オプションを使った際にビルドエラーになるバグを修正しました。[GitHub#951] [Tomohiro KATOさんが報告]"
+
+msgid "Fixed a vulnerability of \"CVE: 2019-11675\". [Reported by Wolfgang Hotwagner]"
+msgstr "\"CVE: 2019-11675\"の脆弱性を修正しました。[Wolfgang Hotwagnerさんが報告]"
+
+msgid "Removed extended path prefix ``\\\\?\\`` at Windows version of Groonga. [GitHub#958] [Reported by yagisumi]"
+msgstr "Windows版のGroongaにて、拡張パスプレフィックス ``\\\\?\\`` を削除しました。[GitHub#958] [yagisumiさんが報告]"
+
+msgid "This extended prefix causes a bug that plugin can't be found correctly."
+msgstr "この拡張プレフィックスは、プラグインを正確に見つけられないというバグを引き起こします。"
+
+msgid "Tomohiro KATO"
+msgstr "Tomohiro KATOさん"
+
+msgid "Wolfgang Hotwagner"
+msgstr "Wolfgang Hotwagnerさん"
+
+msgid "Release 9.0.2 - 2019-04-29"
+msgstr "9.0.2リリース - 2019-04-29"
+
+msgid "We provide a package for Windows made from VC++ from this release."
+msgstr "このリリースからVC++で作成したWindows版パッケージを提供します。"
+
+msgid "We also provide a package for Windows made form MinGW as in the past. However, we will provide it made from VC++ instead of making from MinGW sooner or later."
+msgstr "今までどおり、MinGWで作成したWindows版パッケージも提供しますが、近いうちにMinGWで作ったパッケージの代わりにVC++で作ったパッケージを提供する予定です。"
+
+msgid "[:doc:`/reference/commands/column_create`] Added a new flag ``INDEX_LARGE`` for index column."
+msgstr "[:doc:`/reference/commands/column_create`] 新しいフラグ ``INDEX_LARGE`` を追加しました。"
+
+msgid "We can make an index column has space that two times of default by this flag."
+msgstr "このフラグによって、デフォルトの2倍の領域を持つインデックスカラムを作成できます。"
+
+msgid "However, note that it also uses two times of memory usage."
+msgstr "ただ、メモリ使用量も2倍となることに注意して下さい。"
+
+msgid "This flag useful when index target data are large."
+msgstr "このフラグは、インデックス対象のデータが大きい時に有用です。"
+
+msgid "Large data must have many records (normally at least 10 millions records) and at least one of the following features."
+msgstr "大きいデータとは、大量のレコード（通常は少なくとも1000万レコード以上）があり、少なくとも次のうちの1つ以上の特徴があります。"
+
+msgid "Index targets are multiple columns"
+msgstr "インデックス対象が複数のカラム"
+
+msgid "Index table has tokenizer"
+msgstr "インデックステーブルにトークナイザーが付いている"
+
+msgid "[:doc:`/reference/commands/object_inspect`] Added a new statistics ``next_physical_segment_id`` and ``max_n_physical_segments`` for physical segment information."
+msgstr "[:doc:`/reference/commands/object_inspect`] セグメントの新しい統計値 ``next_physical_segment_id`` と ``max_n_physical_segments`` を追加しました。"
+
+msgid "We can confirm usage of index column space and max value of index column space by this information."
+msgstr "この情報で、インデックスカラムの領域の使用量とインデックスカラムの領域の最大値を確認できます。"
+
+msgid "[:doc:`/reference/commands/logical_select`] Added support for window function over shard."
+msgstr "[:doc:`/reference/commands/logical_select`] シャードをまたがったウィンドウ関数をサポートしました。"
+
+msgid "[:doc:`/reference/commands/logical_range_filter`] Added support for window function over shard."
+msgstr "[:doc:`/reference/commands/logical_range_filter`] シャードをまたがったウインドウ関数をサポートしました。"
+
+msgid "[:doc:`/reference/commands/logical_count`] Added support for window function over shard."
+msgstr "[:doc:`/reference/commands/logical_count`] シャードをまたがったウインドウ関数をサポートしました。"
+
+msgid "We provided a package for Windows made from VC++."
+msgstr "このリリースからVC++で作成したWindows版パッケージを提供するようにしました。"
+
+msgid "[:doc:`/reference/commands/io_flush`] Added a new option ``--recursive dependent``"
+msgstr "[:doc:`reference/commands/io_flush`] 新しいオプション ``--recursive dependent`` を追加しました。"
+
+msgid "We can all of the specified flush target object, child objects, corresponding table of an index column and corresponding index column are flush target objects."
+msgstr "指定した書き出し対象オブジェクトとその子オブジェクトすべて、参照先のテーブル、インデックスが張られているカラムがある場合、対応するインデックスカラムとそのインデックスカラムのテーブルを書き出し対象オブジェクトにできます。"
+
+msgid "Fixed \"unknown type name 'bool'\" compilation error in some environments."
+msgstr "一部の環境でコンパイルエラー \"unknown type name 'bool'\" が発生する問題を修正しました。"
+
+msgid "Fixed a bug that incorrect output number over Int32 by command of execute via mruby (e.g. ``logical_select``, ``logical_range_filter``, ``logical_count``, etc.). [GitHub#936] [Patch by HashidaTKS]"
+msgstr "mrubyを経由して実行するコマンド(例えば、 ``logical_select``、 ``logical_range_filter``、 ``logical_count`` 等)で、Int32を超える数を正しく出力できない問題を修正しました。[GitHub#936] [HashidaTKSさんがパッチ提供]"
+
+msgid "HashidaTKS"
+msgstr "HashidaTKSさん"
+
+msgid "Release 9.0.1 - 2019-03-29"
+msgstr "9.0.1リリース - 2019-03-29"
+
+msgid "Added support to acccept null for vector value."
+msgstr "ベクターの値にnullが使えるようになりました。"
+
+msgid "You can use `select ... --columns[vector].flags COLUMN_VECTOR --columns[vector].value \"null\"`"
+msgstr "`select ... --columns[vector].flags COLUMN_VECTOR --columns[vector].value \"null\"` のように使用できます。"
+
+msgid "[:doc:`/reference/commands/dump`] Translated document into English."
+msgstr "[:doc:`/reference/commands/dump`] ドキュメントを英語に翻訳しました。"
+
+msgid "Added more checks and logging for invalid indexes. It helps to clarify the index related bugs."
+msgstr "無効なインデックスのチェックとログへの記録を強化しました。インデックス関連のバグを発見するのに役立ちます。"
+
+msgid "Improved an explanation about ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO`` behavior in news at :ref:`release-8-0-6`."
+msgstr ":ref:`release-8-0-6` の ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO`` の説明を改善しました。"
+
+msgid "[:doc:`/reference/commands/select`] Added new argument ``--load_table``, ``--load_columns`` and ``--load_values``."
+msgstr "[:doc:`/reference/commands/select`] 新しい引数 ``--load_table`` 、``--load_columns`` 、 ``--load_values`` を追加しました。 "
+
+msgid "You can store a result of ``select`` in a table that specifying ``--load_table``."
+msgstr "``select`` の結果を ``--load_table`` で指定したテーブルへ格納できます。"
+
+msgid "``--load_values`` option specifies columns of result of ``select``."
+msgstr "``--load_values`` オプションは、``select`` の結果のカラムを指定します。"
+
+msgid "``--load_columns`` options specifies columns of table that specifying ``--load_table``."
+msgstr "``--load_columns`` オプションは、``--load_table`` で指定したテーブルのカラムを指定します。"
+
+msgid "In this way, you can store values of columns that specifying with ``--load_values`` into columns that specifying with ``--load_columns``."
+msgstr "このようにして、``--load_values`` で指定したカラムの値を、 ``--load_columns`` で指定したカラムへ格納できます。"
+
+msgid "[:doc:`/reference/commands/select`] Added documentation about ``load_table``, ``load_columns`` and ``load_values``."
+msgstr "[:doc:`/reference/commands/select`] 新しい引数 ``--load_table`` 、``--load_columns`` 、 ``--load_values`` を追加しました。 "
+
+msgid "[:doc:`/reference/commands/load`] Added supoort to display a table of load destination in a query log."
+msgstr "[:doc:`/reference/commands/load`] ロード先のテーブルをクエリーログに表示するようにしました。"
+
+msgid "A name of table of load destination display as string in ``[]`` as below."
+msgstr "以下のように、ロード先のテーブル名は ``[]`` 内の文字列として表示します　。"
+
+msgid "``:000000000000000 load(3): [LoadedLogs][3]``"
+msgstr ""
+
+msgid "Added a new API:"
+msgstr "以下のAPIを追加しました。"
+
+msgid "``grn_ii_get_flags()``"
+msgstr ""
+
+msgid "``grn_index_column_diff()``"
+msgstr ""
+
+msgid "``grn_memory_get_usage()``"
+msgstr ""
+
+msgid "Added ``index_column_diff`` command to check broken index column. If you want to log progress of command execution, set log level to debug."
+msgstr "壊れたインデックスをチェックするためのコマンド ``index_column_diff`` を追加しました。コマンド実行の進捗を記録したい場合は、ログレベルをdebugに設定してください。"
+
+msgid "[:doc:`/reference/functions/snippet_html`] Changed to return an empty vector for no match."
+msgstr "[:doc:`/reference/functions/snippet_html`] 一致しない場合、空のベクターを返すよう変更しました。"
+
+msgid "In such a case, an empty vector ``[]`` is returned instead of ``null``."
+msgstr "そのような場合、 ``null`` の代わりに空のベクター ``[]`` が返されます。"
+
+msgid "Fixed a warning about possibility of counting threads overflow. In real world, it doesn't affect user because enourmous number of threads is not used. [GitHub#904]"
+msgstr "スレッドカウントがオーバフローする可能性についての警告を修正しました。実運用では、膨大な数のスレッドが使用されていないため、ユーザーに影響はありません。[GitHub#904]"
+
+msgid "Fixed build error on macOS [GitHub#909] [Reported by shiro615]"
+msgstr "maxOSでのビルドエラーを修正しました。 [GitHub#909] [shiro615さんが報告]"
+
+msgid "Fixed a stop word handling bug."
+msgstr "ストップワードの処理のバグを修正しました。"
+
+msgid "This bug occurs when we set the first token as a stop word in our query."
+msgstr "このバグは、クエリーの最初のトークンをストップワードとして設定すると発生します。"
+
+msgid "If this bug occurs, our search query isn't hit."
+msgstr "このバグが発生した場合、検索クエリーはヒットしません。"
+
+msgid "[:doc:`/reference/api/global_configurations`] Fixed a typo about parameter name of ``grn_lock_set_timeout``."
+msgstr "[:doc:`/reference/api/global_configurations`] ``grn_lock_set_timeout`` のパラメーター名の誤字を修正しました。"
+
+msgid "Fixed a bug that deleted records may be matched because of updating indexes incorrectly."
+msgstr "インデックスの破損によって、削除されたレコードがマッチするバグを修正しました。"
+
+msgid "It may occure when large number of records is added or deleted."
+msgstr "大量のレコードを追加または、削除した時に発生することがあります。"
+
+msgid "Fixed a memory leak when ``logical_range_filter`` returns no records. [GitHub#911] [Patch by HashidaTKS]"
+msgstr "``logical_range_filter`` がレコードを返さない場合のメモリリークを修正しました。[GitHub#911] [HashidaTKSさんがパッチ提供]"
+
+msgid "Fixed a bug that query will not match because of loading data is not normalized correctly. [PGroonga#GitHub#93, GitHub#912,GitHub#913] [Reported by kamicup and dodaisuke]"
+msgstr "ロードしているデータが正しくノーマライズされないことによってクエリーにマッチしないバグを修正しました。[PGroonga#GitHub#93, GitHub#912,GitHub#913] [kamicupさんとdodaisukeさんが報告]"
+
+msgid "This bug occurs when load data contains whitespace after KATAKANA and ``unify_kana`` option is used for normalizer."
+msgstr "このバグは、カタカナの後ろに空白のあるデータをロードし、ノーマライザーに ``unify_kana`` オプションが使用された時に発生します。"
+
+msgid "Fixed a bug that an indexes is broken during updating indexes."
+msgstr "インデックスの更新中にインデックスが破損するバグを修正しました。"
+
+msgid "It may occurs when repeating to add large number of records or delete them for a long term."
+msgstr "長期間、大量のレコードの追加、削除を繰り返した時に発生することがあります。"
+
+msgid "Fixed a crash bug that allocated working area is not enough size when updating indexes."
+msgstr "インデックス更新時に十分な作業領域を確保できずにクラッシュするバクを修正しました。"
+
+msgid "shiro615"
+msgstr "shiro615さん"
+
+msgid "kamicup"
+msgstr "kamicupさん"
+
+msgid "dodaisuke"
+msgstr "dodaisukeさん"
+
+msgid "Release 9.0.0 - 2019-02-09"
+msgstr "9.0.0リリース - 2019-02-09"
+
+msgid "This is a major version up! But It keeps backward compatibility. You can upgrade to 9.0.0 without rebuilding database."
+msgstr "メジャーバージョンアップです! メジャーバージョンアップですが、互換性は壊れていないので、データベースを再構築することなく9.0.0へアップグレードできます。"
+
+msgid "[:doc:`/reference/tokenizers`] Added a new tokenizer ``TokenPattern``."
+msgstr "[:doc:`/reference/tokenizers`] 新しいトークナイザー ``TokenPattern`` を追加しました。 "
+
+msgid "You can extract tokens by regular expression."
+msgstr "正規表現を使ってトークンを抽出できます。"
+
+msgid "This tokenizer extracts only token that matches the regular expression."
+msgstr "このトークナイザーは正規表現にマッチしたトークンのみを抽出します。"
+
+msgid "You can also specify multiple patterns of regular expression."
+msgstr "正規表現のパターンは複数指定できます。"
+
+msgid "[:doc:`/reference/tokenizers`] Added a new tokenizer ``TokenTable``."
+msgstr "[:doc:`/reference/tokenizers`] 新しいトークナイザー ``TokenTable`` を追加しました。"
+
+msgid "You can extract tokens by a value of columns of existing a table."
+msgstr "既存のテーブルのカラムの値を使ってトークンを抽出できます。"
+
+msgid "[:doc:`/reference/commands/dump`] Added support for dumping binary data."
+msgstr "[:doc:`/reference/commands/dump`] バイナリデータのダンプに対応しました。"
+
+msgid "[:doc:`/reference/commands/select`] Added support for similer search against index column."
+msgstr "[:doc:`/reference/commands/select`] インデックスカラムに対する類似文書検索をサポートしました。"
+
+msgid "If you have used multi column index, you can similar search against all source columns by this feature."
+msgstr "マルチカラムインデックスを使用している場合、この機能を使って、全てのソースカラムに対して類似文書検索ができます。"
+
+msgid "[:doc:`/reference/normalizers`] Added new option ``remove_blank`` for ``NormalizerNFKC100``."
+msgstr "[:doc:`/reference/normalizers`] ``NormalizerNFKC100`` に新しいオプション ``remove_blank`` を追加しました。"
+
+msgid "This option remove white spaces."
+msgstr "このオプションは空白を取り除きます。"
+
+msgid "[:doc:`/reference/executables/groonga`] Improve display of thread id in log."
+msgstr "[:doc:`/reference/executables/groonga`] ログ内のThreadIDの表示を改善しました。"
+
+msgid "Because It was easy to confuse thread id and process id on Windows version, it made clear which is a thread id or a process id."
+msgstr "Windows版では、ProcessIDとThreadIDを混同しやすかったので、どちらがThreadIDでどちらがProcessIDかを明確にしました。"

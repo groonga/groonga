@@ -1034,16 +1034,23 @@ set(GRN_DOC_SOURCES
     install/windows.rst
     limitations.rst
     news.rst
-    news/0.x.rst
-    news/1.0.x.rst
-    news/1.1.x.rst
-    news/1.2.x.rst
-    news/1.3.x.rst
-    news/2.x.rst
-    news/3.x.rst
-    news/4.x.rst
-    news/5.x.rst
-    news/6.x.rst
+    news/0.rst
+    news/1.0.rst
+    news/1.1.rst
+    news/1.2.rst
+    news/1.3.rst
+    news/10.rst
+    news/11.rst
+    news/12.rst
+    news/13.rst
+    news/2.rst
+    news/3.rst
+    news/4.rst
+    news/5.rst
+    news/6.rst
+    news/7.rst
+    news/8.rst
+    news/9.rst
     news/senna.rst
     reference.rst
     reference/alias.rst
@@ -1377,16 +1384,23 @@ set(GRN_DOC_HTML_FILES
     install/windows.html
     limitations.html
     news.html
-    news/0.x.html
-    news/1.0.x.html
-    news/1.1.x.html
-    news/1.2.x.html
-    news/1.3.x.html
-    news/2.x.html
-    news/3.x.html
-    news/4.x.html
-    news/5.x.html
-    news/6.x.html
+    news/0.html
+    news/1.0.html
+    news/1.1.html
+    news/1.2.html
+    news/1.3.html
+    news/10.html
+    news/11.html
+    news/12.html
+    news/13.html
+    news/2.html
+    news/3.html
+    news/4.html
+    news/5.html
+    news/6.html
+    news/7.html
+    news/8.html
+    news/9.html
     news/senna.html
     objects.inv
     reference.html

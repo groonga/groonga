@@ -1034,16 +1034,23 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/install/windows.rst \
 	$(top_srcdir)/doc/source/limitations.rst \
 	$(top_srcdir)/doc/source/news.rst \
-	$(top_srcdir)/doc/source/news/0.x.rst \
-	$(top_srcdir)/doc/source/news/1.0.x.rst \
-	$(top_srcdir)/doc/source/news/1.1.x.rst \
-	$(top_srcdir)/doc/source/news/1.2.x.rst \
-	$(top_srcdir)/doc/source/news/1.3.x.rst \
-	$(top_srcdir)/doc/source/news/2.x.rst \
-	$(top_srcdir)/doc/source/news/3.x.rst \
-	$(top_srcdir)/doc/source/news/4.x.rst \
-	$(top_srcdir)/doc/source/news/5.x.rst \
-	$(top_srcdir)/doc/source/news/6.x.rst \
+	$(top_srcdir)/doc/source/news/0.rst \
+	$(top_srcdir)/doc/source/news/1.0.rst \
+	$(top_srcdir)/doc/source/news/1.1.rst \
+	$(top_srcdir)/doc/source/news/1.2.rst \
+	$(top_srcdir)/doc/source/news/1.3.rst \
+	$(top_srcdir)/doc/source/news/10.rst \
+	$(top_srcdir)/doc/source/news/11.rst \
+	$(top_srcdir)/doc/source/news/12.rst \
+	$(top_srcdir)/doc/source/news/13.rst \
+	$(top_srcdir)/doc/source/news/2.rst \
+	$(top_srcdir)/doc/source/news/3.rst \
+	$(top_srcdir)/doc/source/news/4.rst \
+	$(top_srcdir)/doc/source/news/5.rst \
+	$(top_srcdir)/doc/source/news/6.rst \
+	$(top_srcdir)/doc/source/news/7.rst \
+	$(top_srcdir)/doc/source/news/8.rst \
+	$(top_srcdir)/doc/source/news/9.rst \
 	$(top_srcdir)/doc/source/news/senna.rst \
 	$(top_srcdir)/doc/source/reference.rst \
 	$(top_srcdir)/doc/source/reference/alias.rst \
@@ -2338,16 +2345,23 @@ source_files_relative_from_doc_dir = \
 	source/install/windows.rst \
 	source/limitations.rst \
 	source/news.rst \
-	source/news/0.x.rst \
-	source/news/1.0.x.rst \
-	source/news/1.1.x.rst \
-	source/news/1.2.x.rst \
-	source/news/1.3.x.rst \
-	source/news/2.x.rst \
-	source/news/3.x.rst \
-	source/news/4.x.rst \
-	source/news/5.x.rst \
-	source/news/6.x.rst \
+	source/news/0.rst \
+	source/news/1.0.rst \
+	source/news/1.1.rst \
+	source/news/1.2.rst \
+	source/news/1.3.rst \
+	source/news/10.rst \
+	source/news/11.rst \
+	source/news/12.rst \
+	source/news/13.rst \
+	source/news/2.rst \
+	source/news/3.rst \
+	source/news/4.rst \
+	source/news/5.rst \
+	source/news/6.rst \
+	source/news/7.rst \
+	source/news/8.rst \
+	source/news/9.rst \
 	source/news/senna.rst \
 	source/reference.rst \
 	source/reference/alias.rst \
@@ -2647,16 +2661,23 @@ po_files = \
 	install/windows.po \
 	limitations.po \
 	news.po \
-	news/0.x.po \
-	news/1.0.x.po \
-	news/1.1.x.po \
-	news/1.2.x.po \
-	news/1.3.x.po \
-	news/2.x.po \
-	news/3.x.po \
-	news/4.x.po \
-	news/5.x.po \
-	news/6.x.po \
+	news/0.po \
+	news/1.0.po \
+	news/1.1.po \
+	news/1.2.po \
+	news/1.3.po \
+	news/10.po \
+	news/11.po \
+	news/12.po \
+	news/13.po \
+	news/2.po \
+	news/3.po \
+	news/4.po \
+	news/5.po \
+	news/6.po \
+	news/7.po \
+	news/8.po \
+	news/9.po \
 	news/senna.po \
 	reference.po \
 	reference/alias.po \
@@ -2954,16 +2975,23 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/windows.po \
 	LC_MESSAGES/limitations.po \
 	LC_MESSAGES/news.po \
-	LC_MESSAGES/news/0.x.po \
-	LC_MESSAGES/news/1.0.x.po \
-	LC_MESSAGES/news/1.1.x.po \
-	LC_MESSAGES/news/1.2.x.po \
-	LC_MESSAGES/news/1.3.x.po \
-	LC_MESSAGES/news/2.x.po \
-	LC_MESSAGES/news/3.x.po \
-	LC_MESSAGES/news/4.x.po \
-	LC_MESSAGES/news/5.x.po \
-	LC_MESSAGES/news/6.x.po \
+	LC_MESSAGES/news/0.po \
+	LC_MESSAGES/news/1.0.po \
+	LC_MESSAGES/news/1.1.po \
+	LC_MESSAGES/news/1.2.po \
+	LC_MESSAGES/news/1.3.po \
+	LC_MESSAGES/news/10.po \
+	LC_MESSAGES/news/11.po \
+	LC_MESSAGES/news/12.po \
+	LC_MESSAGES/news/13.po \
+	LC_MESSAGES/news/2.po \
+	LC_MESSAGES/news/3.po \
+	LC_MESSAGES/news/4.po \
+	LC_MESSAGES/news/5.po \
+	LC_MESSAGES/news/6.po \
+	LC_MESSAGES/news/7.po \
+	LC_MESSAGES/news/8.po \
+	LC_MESSAGES/news/9.po \
 	LC_MESSAGES/news/senna.po \
 	LC_MESSAGES/reference.po \
 	LC_MESSAGES/reference/alias.po \
@@ -3261,16 +3289,23 @@ edit_po_files = \
 	install/windows.edit \
 	limitations.edit \
 	news.edit \
-	news/0.x.edit \
-	news/1.0.x.edit \
-	news/1.1.x.edit \
-	news/1.2.x.edit \
-	news/1.3.x.edit \
-	news/2.x.edit \
-	news/3.x.edit \
-	news/4.x.edit \
-	news/5.x.edit \
-	news/6.x.edit \
+	news/0.edit \
+	news/1.0.edit \
+	news/1.1.edit \
+	news/1.2.edit \
+	news/1.3.edit \
+	news/10.edit \
+	news/11.edit \
+	news/12.edit \
+	news/13.edit \
+	news/2.edit \
+	news/3.edit \
+	news/4.edit \
+	news/5.edit \
+	news/6.edit \
+	news/7.edit \
+	news/8.edit \
+	news/9.edit \
 	news/senna.edit \
 	reference.edit \
 	reference/alias.edit \
@@ -3568,16 +3603,23 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/windows.edit \
 	LC_MESSAGES/limitations.edit \
 	LC_MESSAGES/news.edit \
-	LC_MESSAGES/news/0.x.edit \
-	LC_MESSAGES/news/1.0.x.edit \
-	LC_MESSAGES/news/1.1.x.edit \
-	LC_MESSAGES/news/1.2.x.edit \
-	LC_MESSAGES/news/1.3.x.edit \
-	LC_MESSAGES/news/2.x.edit \
-	LC_MESSAGES/news/3.x.edit \
-	LC_MESSAGES/news/4.x.edit \
-	LC_MESSAGES/news/5.x.edit \
-	LC_MESSAGES/news/6.x.edit \
+	LC_MESSAGES/news/0.edit \
+	LC_MESSAGES/news/1.0.edit \
+	LC_MESSAGES/news/1.1.edit \
+	LC_MESSAGES/news/1.2.edit \
+	LC_MESSAGES/news/1.3.edit \
+	LC_MESSAGES/news/10.edit \
+	LC_MESSAGES/news/11.edit \
+	LC_MESSAGES/news/12.edit \
+	LC_MESSAGES/news/13.edit \
+	LC_MESSAGES/news/2.edit \
+	LC_MESSAGES/news/3.edit \
+	LC_MESSAGES/news/4.edit \
+	LC_MESSAGES/news/5.edit \
+	LC_MESSAGES/news/6.edit \
+	LC_MESSAGES/news/7.edit \
+	LC_MESSAGES/news/8.edit \
+	LC_MESSAGES/news/9.edit \
 	LC_MESSAGES/news/senna.edit \
 	LC_MESSAGES/reference.edit \
 	LC_MESSAGES/reference/alias.edit \
@@ -3875,16 +3917,23 @@ mo_files = \
 	install/windows.mo \
 	limitations.mo \
 	news.mo \
-	news/0.x.mo \
-	news/1.0.x.mo \
-	news/1.1.x.mo \
-	news/1.2.x.mo \
-	news/1.3.x.mo \
-	news/2.x.mo \
-	news/3.x.mo \
-	news/4.x.mo \
-	news/5.x.mo \
-	news/6.x.mo \
+	news/0.mo \
+	news/1.0.mo \
+	news/1.1.mo \
+	news/1.2.mo \
+	news/1.3.mo \
+	news/10.mo \
+	news/11.mo \
+	news/12.mo \
+	news/13.mo \
+	news/2.mo \
+	news/3.mo \
+	news/4.mo \
+	news/5.mo \
+	news/6.mo \
+	news/7.mo \
+	news/8.mo \
+	news/9.mo \
 	news/senna.mo \
 	reference.mo \
 	reference/alias.mo \
@@ -4182,16 +4231,23 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/install/windows.mo \
 	LC_MESSAGES/limitations.mo \
 	LC_MESSAGES/news.mo \
-	LC_MESSAGES/news/0.x.mo \
-	LC_MESSAGES/news/1.0.x.mo \
-	LC_MESSAGES/news/1.1.x.mo \
-	LC_MESSAGES/news/1.2.x.mo \
-	LC_MESSAGES/news/1.3.x.mo \
-	LC_MESSAGES/news/2.x.mo \
-	LC_MESSAGES/news/3.x.mo \
-	LC_MESSAGES/news/4.x.mo \
-	LC_MESSAGES/news/5.x.mo \
-	LC_MESSAGES/news/6.x.mo \
+	LC_MESSAGES/news/0.mo \
+	LC_MESSAGES/news/1.0.mo \
+	LC_MESSAGES/news/1.1.mo \
+	LC_MESSAGES/news/1.2.mo \
+	LC_MESSAGES/news/1.3.mo \
+	LC_MESSAGES/news/10.mo \
+	LC_MESSAGES/news/11.mo \
+	LC_MESSAGES/news/12.mo \
+	LC_MESSAGES/news/13.mo \
+	LC_MESSAGES/news/2.mo \
+	LC_MESSAGES/news/3.mo \
+	LC_MESSAGES/news/4.mo \
+	LC_MESSAGES/news/5.mo \
+	LC_MESSAGES/news/6.mo \
+	LC_MESSAGES/news/7.mo \
+	LC_MESSAGES/news/8.mo \
+	LC_MESSAGES/news/9.mo \
 	LC_MESSAGES/news/senna.mo \
 	LC_MESSAGES/reference.mo \
 	LC_MESSAGES/reference/alias.mo \
@@ -4524,16 +4580,23 @@ html_files_relative_from_locale_dir = \
 	html/install/windows.html \
 	html/limitations.html \
 	html/news.html \
-	html/news/0.x.html \
-	html/news/1.0.x.html \
-	html/news/1.1.x.html \
-	html/news/1.2.x.html \
-	html/news/1.3.x.html \
-	html/news/2.x.html \
-	html/news/3.x.html \
-	html/news/4.x.html \
-	html/news/5.x.html \
-	html/news/6.x.html \
+	html/news/0.html \
+	html/news/1.0.html \
+	html/news/1.1.html \
+	html/news/1.2.html \
+	html/news/1.3.html \
+	html/news/10.html \
+	html/news/11.html \
+	html/news/12.html \
+	html/news/13.html \
+	html/news/2.html \
+	html/news/3.html \
+	html/news/4.html \
+	html/news/5.html \
+	html/news/6.html \
+	html/news/7.html \
+	html/news/8.html \
+	html/news/9.html \
 	html/news/senna.html \
 	html/objects.inv \
 	html/reference.html \

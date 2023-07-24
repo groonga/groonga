@@ -1,0 +1,884 @@
+# -*- po -*-
+# Japanese translations for 1.2.4 package.
+# Copyright (C) 2009-2011, Brazil, Inc
+# This file is distributed under the same license as the groonga package.
+# Kouhei Sutou <kou@clear-code.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2.4\n"
+"PO-Revision-Date: 2023-07-24 12:40+0900\n"
+"Report-Msgid-Bugs-To: \n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "#{TIME_STAMP}|#{MESSAGE}"
+msgstr ""
+
+msgid "#{TIME_STAMP}|#{ID}|>#{QUERY}"
+msgstr ""
+
+msgid "#{TIME_STAMP}|#{ID}|:#{ELAPSED_TIME} #{PROGRESS}"
+msgstr ""
+
+msgid "#{TIME_STAMP}|#{ID}|<#{ELAPSED_TIME} #{RETURN_CODE}"
+msgstr ""
+
+msgid "News - 8 series"
+msgstr "お知らせ - 8系"
+
+msgid "Release 8.1.1 - 2019-01-29"
+msgstr "8.1.1リリース - 2019-01-29"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[:doc:`/reference/commands/logical_select`] Added new argument ``--load_table``, ``--load_columns`` and ``--load_values``."
+msgstr "[:doc:`/reference/commands/logical_select`] 新しい引数 ``--load_table`` 、``--load_columns`` 、 ``--load_values`` を追加しました。 "
+
+msgid "You can store a result of ``logical_select`` in a table that specifying ``--load_table``."
+msgstr "``logical_select`` の結果を ``--load_table`` で指定したテーブルへ格納できます。"
+
+msgid "``--load_values`` option specifies columns of result of ``logical_select``."
+msgstr "``--load_values`` オプションは、``logical_select`` の結果のカラムを指定します。"
+
+msgid "``--load_columns`` options specifies columns of table that specifying ``--load_table``."
+msgstr "``--load_columns`` オプションは、``--load_table`` で指定したテーブルのカラムを指定します。"
+
+msgid "In this way, you can store values of columns that specifying with ``--load_values`` into columns that specifying with ``--load_columns``."
+msgstr "このようにして、``--load_values`` で指定したカラムの値を、 ``--load_columns`` で指定したカラムへ格納できます。"
+
+msgid "Improve error log when update error of index."
+msgstr "インデックスの更新エラー時のログを改善しました。"
+
+msgid "Added more information in the log."
+msgstr "ログに、より詳細な情報を追加しました。"
+
+msgid "For example, output source buffer and chunk when occur merge of posting lists error."
+msgstr "例えば、ポスティングリストのマージに失敗した時にマージ元のバッファーとチャンクを出力します。"
+
+msgid "Also, outputting the log a free space size of a buffer and request size of a buffer when occurs error of allocating a buffer."
+msgstr "また、バッファー確保のエラーが発生した時は、バッファーの空き領域と要求サイズをログに出力します。"
+
+msgid "[:doc:`/reference/executables/groonga`] Added a new option ``--log-flags``."
+msgstr "[:doc:`/reference/executables/groonga`] 新しいオプション ``--log-flags`` を追加しました。"
+
+msgid "We can specify output items of a log of the Groonga."
+msgstr "Groongaのログに出力する項目を指定できます。"
+
+msgid "We can output as below items."
+msgstr "以下のような項目を出力できます。"
+
+msgid "Timestamp"
+msgstr "タイムスタンプ"
+
+msgid "Log message"
+msgstr "ログメッセージ"
+
+msgid "Location(the location where the log was output)"
+msgstr "ロケーション(ログが出力された場所)"
+
+msgid "Process id"
+msgstr "プロセスID"
+
+msgid "Thread id"
+msgstr "スレッドID"
+
+msgid "We can specify prefix as below."
+msgstr "以下のように接頭辞を指定できます。"
+
+msgid "``+``"
+msgstr ""
+
+msgid "This prefix means that \"add the flag\"."
+msgstr "この接頭辞は、 \"フラグを追加する\"という意味です。"
+
+msgid "``-``"
+msgstr ""
+
+msgid "This prefix means that \"remove the flag\"."
+msgstr "この接頭辞は、\"フラグを削除する\"という意味です。"
+
+msgid "No prefix means that \"replace existing flags\"."
+msgstr "接頭辞無しは、\"存在しているフラグを置き換える\"という意味です。"
+
+msgid "Specifically, we can specify flags as below."
+msgstr "具体的には、以下のようにフラグ指定できます。"
+
+msgid "``none``"
+msgstr ""
+
+msgid "Output nothing into the log."
+msgstr "ログに何も出力しません。"
+
+msgid "``time``"
+msgstr ""
+
+msgid "Output a timestamp into the log."
+msgstr "ログにタイムスタンプを出力します。"
+
+msgid "``message``"
+msgstr ""
+
+msgid "Output log messages into the log."
+msgstr "ログにメッセージを出力します。"
+
+msgid "``location``"
+msgstr ""
+
+msgid "Output the location where the log was output( a file name, a line and a function name) and process id."
+msgstr "ログの出力場所(ファイル名、行数、関数名)とプロセスIDを出力します。"
+
+msgid "``process_id``"
+msgstr ""
+
+msgid "Output a process id into the log."
+msgstr "ログにプロセスIDを出力します。"
+
+msgid "``pid``"
+msgstr ""
+
+msgid "This flag is an alias of ``process_id``."
+msgstr "このフラグは、 ``process_id`` のエイリアスです。"
+
+msgid "``thread_id``"
+msgstr ""
+
+msgid "Output thread id into the log."
+msgstr "ログにスレッドIDを出力します。"
+
+msgid "``all``"
+msgstr ""
+
+msgid "This flag specifies all flags except ``none`` and ``default`` flags."
+msgstr "このフラグは、 ``none`` と ``default`` 以外の全てのフラグを指定します。"
+
+msgid "``default``"
+msgstr ""
+
+msgid "Output a timestamp and log messages into the log."
+msgstr "ログに、タイムスタンプとログメッセージを出力します。"
+
+msgid "We can also specify multiple log flags by separating flags with ``|``."
+msgstr "``|`` を使って、複数のフラグを指定することもできます。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a memory leak when occurs index update error."
+msgstr "インデックスの更新エラー発生時にメモリリークする問題を修正しました。"
+
+msgid "[:doc:`/reference/normalizers`] Fixed a bug that stateless normalizers and stateful normalizers return wrong results when we use them at the same time."
+msgstr "[:doc:`/reference/normalizers`] ステートレスなノーマライザーとステートフルなノーマライザーを同時に使用した時に、それらが誤った結果を返すバグを修正しました。"
+
+msgid "Stateless normalizers are below."
+msgstr "ステートレスなノーマライザーとは以下です。"
+
+msgid "``unify_kana``"
+msgstr ""
+
+msgid "``unify_kana_case``"
+msgstr ""
+
+msgid "``unify_kana_voiced_sound_mark``"
+msgstr ""
+
+msgid "``unify_hyphen``"
+msgstr ""
+
+msgid "``unify_prolonged_sound_mark``"
+msgstr ""
+
+msgid "``unify_hyphen_and_prolonged_sound_mark``"
+msgstr ""
+
+msgid "``unify_middle_dot``"
+msgstr ""
+
+msgid "Stateful normalizers are below."
+msgstr "ステートフルなノーマライザーとは以下です。"
+
+msgid "``unify_katakana_v_sounds``"
+msgstr ""
+
+msgid "``unify_katakana_bu_sound``"
+msgstr ""
+
+msgid "``unify_to_romaji``"
+msgstr ""
+
+msgid "Release 8.1.0 - 2018-12-29"
+msgstr "8.1.0リリース - 2018-12-29"
+
+msgid "[httpd] Updated bundled nginx to 1.15.8."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.15.8に更新しました。"
+
+msgid "Fixed a bug that unlock against DB is always executed after flush when after execute a ``io_flush`` command."
+msgstr "``io_flush`` コマンド実行後に、DBに対するアンロックが常にフラッシュの実行後になってしまうバグを修正しました。"
+
+msgid "Fixed a bug that ``reindex`` command doesn't finish when execute a ``reindex`` command against table that has record that has not references."
+msgstr "参照先を持たないレコードを持つテーブルに対して ``reindex`` コマンドを実行した際に、 ``reindex`` コマンドが終了しないバグを修正しました。"
+
+msgid "Release 8.0.9 - 2018-11-29"
+msgstr "8.0.9リリース - 2018-11-29"
+
+msgid "[:doc:`/reference/tokenizers`] Improved that output a tokenizer name in error message when create tokenizer fail."
+msgstr "[:doc:`/reference/tokenizers`] トークナイザーの作成に失敗した際のエラーメッセージにトークナイザーの名前を出力するよう改良。"
+
+msgid "[:doc:`/reference/tokenizers`][TokenDelimit] Supported that customizing delimiter of a token."
+msgstr "[:doc:`/reference/tokenizers`][TokenDelimit] トークンの区切り文字のカスタマイズをサポートしました。"
+
+msgid "You can use token other than whitespace as a token of delimiter."
+msgstr "空白以外のトークンを区切り文字に使えます。"
+
+msgid "[:doc:`/reference/tokenizers`][TokenDelimit] Added new option ``pattern``."
+msgstr "[:doc:`/reference/tokenizers`][TokenDelimit] 新しいオプション ``pattern`` を追加しました。 "
+
+msgid "You can specify delimiter with regular expression by this option."
+msgstr "このオプションにより、区切り文字にに正規表現を指定できます。"
+
+msgid "[:doc:`/reference/tokenizers`] Added force_prefix_search value to each token information."
+msgstr "[:doc:`/reference/tokenizers`] 各トークンの情報に ``force_prefix_search`` の値を追加しました。"
+
+msgid "\"force_prefix\" is kept for backward compatibility."
+msgstr "\"force_prefix\" は後方互換のため残しています。"
+
+msgid "[:doc:`/reference/token_filters`] Added built-in token filter ``TokenFilterNFKC100``."
+msgstr "[:doc:`/reference/token_filters`] ビルトインのトークンフィルタ ``TokenFilterNFKC100`` を追加しました。"
+
+msgid "You can convert katakana to hiragana like NormalizerNFKC100 with a ``unify_kana`` option."
+msgstr "NormalizerNFKC100のように ``unify_kana`` オプションで、カタカナをひらがなへ変換できます。"
+
+msgid "[:doc:`/reference/token_filters`][TokenFilterStem] Added new option ``algorithm``."
+msgstr "[:doc:`/reference/token_filters`][TokenFilterStem] 新しオプション ``algorithm`` を追加しました。"
+
+msgid "You can also stem language other than English(French, Spanish, Portuguese, Italian, Romanian, German, Dutch, Swedish, Norwegian, Danish, Russian, Finnish) by this option."
+msgstr "このオプションによって、英語以外の言語(フランス語、スペイン語、ポルトガル語、イタリア語、ルーマニア語、ドイツ語、オランダ語、スウェーデン語、ノルウェー語、デンマーク語、ロシア語、フィンランド語)をステミングできます。"
+
+msgid "[:doc:`/reference/token_filters`][TokenFilterStopWord] Added new option ``column``."
+msgstr "[:doc:`/reference/token_filters`][TokenFilterStopWord] 新しいオプション ``column`` を追加しました"
+
+msgid "You can specify stop word in a column other than is_stop_word column by this option."
+msgstr "このオプションによって、is_stop_word以外のカラムをスットプワードに指定できます。"
+
+msgid "[:doc:`/reference/commands/dump`] Supported output options of token filter options."
+msgstr "[:doc:`/reference/commands/dump`] トークンフィルターのオプションの出力をサポートしました。"
+
+msgid "If you specify a tokenizer like ``TokenNgram`` or ``TokenMecab`` etc that has options, you can output these options with ``table_list`` command."
+msgstr "``TokenNgram`` や ``TokenMecab`` 等のようなオプションを持つトークナイザーを指定した場合、それらのオプションも ``table_list`` コマンドで出力できます。"
+
+msgid "[:doc:`/reference/commands/truncate`] Supported a table that it has token filter option."
+msgstr "[:doc:`/reference/commands/truncate`] トークンフィルターのオプションを持ったテーブルをサポートしました。"
+
+msgid "You can ``truncate`` even a tabel that it has token filter like ``TokenFilterStem`` or ``TokenStopWord`` that has options."
+msgstr "``TokenFilterStem`` や ``TokenStopWord`` 等のようなオプションを持つトークナイザーを持つテーブルでも ``truncate`` できます。"
+
+msgid "[:doc:`/reference/commands/schema`] Support output of options of token filter."
+msgstr "[:doc:`/reference/commands/schema`] トークンフィルターのオプションの出力をサポートしました。"
+
+msgid "[:doc:`/reference/normalizers`] Added new option for ``NormalizerNFKC100`` that ``unify_to_romaji`` option."
+msgstr "[:doc:`/reference/normalizers`] ``NormalizerNFKC100`` に新しいオプション ``unify_to_romaji`` を追加しました。"
+
+msgid "You can normalize hiragana and katakana to romaji by this option."
+msgstr "このオプションによって、ひらがなとカタカナをローマ字に正規化できます。"
+
+msgid "[query-log][show-condition] Supported \"func() > 0\" case."
+msgstr "[query-log][show-condition] \"func() > 0\"をサポートしました。"
+
+msgid "[Windows] Improved that ensure flushing on unmap."
+msgstr "[Windows] アンマップ前のフラッシュを確実にするよう改善しました。"
+
+msgid "Improved error message on opening input file error."
+msgstr "ファイル入力のエラーメッセージを改善しました。"
+
+msgid "[httpd] Updated bundled nginx to 1.15.7."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.15.7に更新しました。"
+
+msgid "contains security fix for CVE-2018-16843 and CVE-2018-16844."
+msgstr "CVE-2018-16843とCVE-2018-16844のセキュリティの修正が含まれています。"
+
+msgid "Fixed a memory leak when evaluating window function."
+msgstr "ウインドウ関数を評価する際にメモリリークする問題を修正しました。"
+
+msgid "[:doc:`/reference/executables/groonga-httpd`] Fixed bug that log content may be mixed."
+msgstr "[:doc:`/reference/executables/groonga-httpd`] ログの内容が混在することがあるバグを修正しました。"
+
+msgid "Fixed a bug that generates invalid JSON when occurs error of slice on output_columns."
+msgstr "output_columnsのスライスのエラーが発生した際に、無効なJSONが生成されるバグを修正しました。"
+
+msgid "Fixed a memory leak when getting nested reference vector column value."
+msgstr "ネストして参照されているベクターカラムの値を取得する際にメモリリークする問題を修正しました。"
+
+msgid "Fixed a crash bug when outputting warning logs of index corruption."
+msgstr "インデックス破損を警告するログを出力する際にクラッシュするバグを修正しました。"
+
+msgid "Fix a crash bug when temporary vector is reused in expression evaluation."
+msgstr "式の評価で一時的なベクターが再利用された時にクラッシュするバグを修正しました。"
+
+msgid "For example, crash when evaluating an expression that uses a vector as below."
+msgstr "例えば、以下のようにベクターを使った式を評価する時にクラッシュします。"
+
+msgid "``_score = _score + (vector_size(categories) > 0)``"
+msgstr ""
+
+msgid "Fix a bug that hits a value of vector columns deleted by a delete command.[GitHub PGroonga#85][Reported by dodaisuke]"
+msgstr "deleteコマンドで削除したベクターカラムの値がヒットするバグを修正しました。[dodaisukeさんの報告]"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "dodaisuke"
+msgstr "dodaisukeさん"
+
+msgid "Release 8.0.8 - 2018-10-29"
+msgstr "8.0.8リリース - 2018-10-29"
+
+msgid "[:doc:`/reference/commands/table_list`] Supported output options of default tokenizer."
+msgstr "[:doc:`/reference/commands/table_list`] デフォルトトークナイザーのオプションをサポートしました。"
+
+msgid "[:doc:`/reference/commands/select`] Supported normalizer options in sequential match with ``record @ 'query'``."
+msgstr "[:doc:`/reference/commands/select`] ``record @ 'query'`` を使ったシーケンシャルマッチでノーマライザーのオプションをサポートしました。"
+
+msgid "[:doc:`/reference/commands/truncate`] Supported a table that it has tokenizer option."
+msgstr "[:doc:`/reference/commands/truncate`] トークナイザーのオプションを持ったテーブルをサポートしました。"
+
+msgid "You can ``truncate`` even a tabel that it has tokenizer like ``TokenNgram`` or ``TokenMecab`` etc that has options."
+msgstr "``TokenNgram`` や ``TokenMecab`` 等のようなオプションを持つトークナイザーを持つテーブルでも ``truncate`` できます。"
+
+msgid "[:doc:`/reference/tokenizers`][TokenMecab] Added new option ``target_class``"
+msgstr "[:doc:`/reference/tokenizers`][TokenMecab] ``TokenMecab`` に ``target_class`` オプションを追加しました。"
+
+msgid "This option searches a token of specifying a part-of-speech. For example, you can search only a noun."
+msgstr "このオプションは、指定した品詞のトークンを検索します。例えば、名詞のみを検索することができます。　"
+
+msgid "This option can also specify subclasses and exclude or add specific part-of-speech of specific using ``+`` or ``-``. So, you can also search except a pronoun as below."
+msgstr "このオプションは、以下のようにサブクラスを指定することや、 ``+`` や ``-`` を使って、特定の品詞を追加または除外することもできます。したがって、以下のように代名詞を除外して検索することもできます。"
+
+msgid "``'TokenMecab(\"target_class\", \"-名詞/代名詞\", \"target_class\", \"+\")'``"
+msgstr ""
+
+msgid "[:doc:`/reference/commands/io_flush`] Supported locking of a database during a ``io_flush``."
+msgstr "[:doc:`/reference/commands/io_flush`] ``io_flush`` 中のデータベースのロックをサポートしました。"
+
+msgid "Because Groonga had a problem taht is a crash when deleteing a table of a target of a ``io_flush`` during execution of a ``io_flush``."
+msgstr "``io_flush`` 実行中に ``io_flush`` 対象のテーブルを削除するとGroongaがクラッシュする問題があったためです。"
+
+msgid "[:doc:`/reference/functions/cast_loose`] Added a new function ``cast_loose``."
+msgstr "[:doc:`reference/functions/cast_loose`] 新しい関数 ``cast_loose()`` を追加しました。"
+
+msgid "This function cast to a type to specify. If a value to specify can't cast, it become to a default value to specify."
+msgstr "この関数は、指定した型へキャストします。もし、指定した値がキャストできない場合、値は、指定したデフォルト値になります。"
+
+msgid "Added optimize the order of evaluation of a conditional expression.(experimental)"
+msgstr "条件式の評価順序の最適化を追加しました。(実験的)"
+
+msgid "You can active this feature by setting environment value as below."
+msgstr "以下のように環境変数を設定することでこの機能を有効にできます。"
+
+msgid "``GRN_EXPR_OPTIMIZE=yes``"
+msgstr ""
+
+msgid "Supported ``(?-mix:XXX)`` form for index searchable regular expression. [groonga-dev,04683][Reported by Masatoshi SEKI]"
+msgstr "インデックス検索可能な正規表現に ``(?-mix:XXX)`` 記法をサポートしました。 [groonga-dev,04683][ Masatoshi SEKIさんの報告]"
+
+msgid "``(?-mix:XXX)`` form treats the same as XXX."
+msgstr "``(?-mix:XXX)`` は XXX と同じ扱いです。"
+
+msgid "[httpd] Updated bundled nginx to 1.15.5."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.15.5に更新しました。"
+
+msgid "Supported Ubuntu 18.10 (Cosmic Cuttlefish)"
+msgstr "Ubuntu 18.10 (Cosmic Cuttlefish)をサポートしました。"
+
+msgid "Fixed a bug that the Groonga GQTP server may fail to accept a new connection. [groonga-dev,04688][Reported by Yutaro Shimamura]"
+msgstr "Groonga GQTP サーバーが新しい接続を受け付けなくなることがあるバグを修正しました。[groonga-dev,04688][Yutaro Shimamuraさんの報告]"
+
+msgid "It's caused when interruption client process without using quit."
+msgstr "quitを使わずにクライアントプロセスを中断した時に発生します。"
+
+msgid "Masatoshi SEKI"
+msgstr "Masatoshi SEKIさん"
+
+msgid "Yutaro Shimamura"
+msgstr "Yutaro Shimamuraさん"
+
+msgid "Release 8.0.7 - 2018-09-29"
+msgstr "8.0.7リリース - 2018-09-29"
+
+msgid "[:doc:`/reference/tokenizers`][TokenMecab] support outputting metadata of Mecab."
+msgstr "[:doc:`/reference/tokenizers`][TokenMecab] Mecabのメタデータの出力をサポートしました。"
+
+msgid "Added new option ``include_class`` for ``TokenMecab``."
+msgstr "``TokenMecab`` に ``include_class`` オプションを追加しました。"
+
+msgid "This option outputs ``class`` and ``subclass`` in Mecab's metadata."
+msgstr "このオプションは、Mecabのメタデータの ``class`` と ``subclass`` を出力します。"
+
+msgid "Added new option ``include_reading`` for ``TokenMecab``."
+msgstr "``TokenMecab`` に ``include_reading`` オプションを追加しました。"
+
+msgid "This option outputs ``reading`` in Mecab's metadata."
+msgstr "このオプションは、Mecabのメタデータの ``reading`` を出力します。"
+
+msgid "Added new option ``include_form`` for ``TokenMecab``."
+msgstr "``TokenMecab`` に ``include_form`` オプションを追加しました。"
+
+msgid "This option outputs ``inflected_type``, ``inflected_form`` and ``base_form`` in Mecab's metadata."
+msgstr "このオプションは、Mecabのメタデータの ``inflected_type`` と ``inflected_form`` 、 ``base_form`` を出力します。"
+
+msgid "Added new option ``use_reading`` for ``TokenMecab``."
+msgstr "``TokenMecab`` に ``use_reading`` オプションを追加しました。"
+
+msgid "This option supports a search by kana."
+msgstr "このオプションは、読みがなによる検索をサポートします。"
+
+msgid "This option is useful for countermeasure of orthographical variants because it searches with kana."
+msgstr "このオプションは、読みがなを使った検索をするため、表記ゆれの対策として有用です。"
+
+msgid "[plugin] Groonga now can grab plugins from multiple directories."
+msgstr "[plugin] 複数のディレクトリからプラグインを取得できるようになりました。"
+
+msgid "You can specify multiple directories to ``GRN_PLUGINS_PATH`` separated with \":\" on non Windows, \";\" on Windows."
+msgstr "``GRN_PLUGINS_PATH`` に複数のディレクトリを指定できます。Windowsの場合は、\":\"でWindows以外では、\";\"で区切ります。"
+
+msgid "``GRN_PLUGINS_PATH`` has high priority than the existing ``GRN_PLUGINS_DIR``. Currently, this option is not supported Windows."
+msgstr "``GRN_PLUGINS_PATH`` は、 ``GRN_PLUGINS_DIR`` より優先度が高いです。現状、このオプションはWindowsではサポートされていません。"
+
+msgid "[:doc:`/reference/tokenizers`][TokenNgram] Added new option ``unify_alphabet`` for ``TokenNgram``."
+msgstr "[:doc:`/reference/tokenizers`][TokenNgram] ``TokenNgram`` に ``unify_alphabet`` オプションを追加しました。"
+
+msgid "If we use ``unify_alphabet`` as ``false``, ``TokenNgram`` uses bigram tokenize method for ASCII character."
+msgstr "``unify_alphabet`` を ``false`` として使うと、 ``TokenNgram`` はASCII文字のトークナイズ方法にバイグラムを使います。"
+
+msgid "[:doc:`/reference/tokenizers`][TokenNgram] Added new option ``unify_symbol`` for ``TokenNgram``."
+msgstr "[:doc:`/reference/tokenizers`][TokenNgram] ``TokenNgram`` に ``unify_symbol`` オプションを追加しました。"
+
+msgid "``TokenNgram(\"unify_symbol\", false)`` is same behavior of ``TokenBigramSplitSymbol``."
+msgstr "``TokenNgram(\"unify_symbol\", false)`` は、 ``TokenBigramSplitSymbol`` と同じ動作です。"
+
+msgid "[:doc:`/reference/tokenizers`][TokenNgram] Added new option ``unify_digit`` for ``TokenNgram``."
+msgstr "[:doc:`/reference/tokenizers`][TokenNgram] ``TokenNgram`` に ``unify_digit`` オプションを追加しました。"
+
+msgid "If we use ``unify_digit`` as ``false``, If we set false, ``TokenNgram`` uses bigram tokenize method for digits."
+msgstr "``unify_digit`` を ``false`` として使うと、 ``TokenNgram`` は数字のトークナイズ方法にバイグラムを使います。"
+
+msgid "[httpd] Updated bundled nginx to 1.15.4."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.15.4に更新しました。"
+
+msgid "Fixed wrong score calculations on some cases."
+msgstr "いくつかのケースでの誤ったスコア計算を修正しました。"
+
+msgid "It's caused when adding, multiplication or division numeric to a bool value."
+msgstr "ブール値に数値を加算、乗算または除算するときに発生します。"
+
+msgid "It's caused when comparing a scalar and vector columns using ``!=`` or ``==``."
+msgstr "``！=`` や ``==`` を使ってスカラーとベクトルの列を比較するときに発生します。"
+
+msgid "Release 8.0.6 - 2018-08-29"
+msgstr "8.0.6リリース - 2018-08-29"
+
+msgid "[:doc:`/reference/tokenizers`][TokenMecab] add ``chunked_tokenize`` and ``chunk_size_threshold`` options."
+msgstr "[:doc:`/reference/tokenizers`][TokenMecab] ``chunked_tokenize`` と ``chunk_size_threshold`` の両オプションに対応しました。"
+
+msgid "[optimizer] support estimation for query family expressions. It will generate more effective execution plan with query family expressions such as ``column @ query``, ``column @~ pattern`` and so on."
+msgstr "[optimizer] query family expressionの推定に対応しました。``column @ query`` や ``column @~ pattern`` のようなquery family expressionについて、より効果的な実行計画を立てられます。"
+
+msgid "[optimizer] plug-in -> built-in It's disabled by default for now. We can enable it by defining ``GRN_EXPR_OPTIMIZE=yes`` environment variable or using ``expression_rewriters`` table as before."
+msgstr "[optimizer] オプティマイザをプラグインから組み込みの機能に変更し、初期状態で無効としました。環境変数を ``GRN_EXPR_OPTIMIZE=yes`` と定義するか、従来通りに ``expression_rewriters`` テーブルを使う事で機能を有効化できます。"
+
+msgid "Enable sequential search for enough filtered case by default. If the current result is enough filtered, sequential search is faster than index search. If the current result has only 1% records of all records in a table and less than 1000 records, sequential search is used even when index search is available."
+msgstr "充分に絞り込み済みの場合において、初期状態でシーケンシャルサーチを行うようにしました。現在の結果が充分に少数である場合、シーケンシャルサーチはインデックス検索よりも高速です。現在の結果がテーブル内の全レコードの1%で1000件未満の場合、インデックス検索可能な場合であってもシーケンシャルサーチが使われます。"
+
+msgid "Cullently, this optimization is applied when search by ``==``, ``>``, ``<``, ``>=``, or ``<=``."
+msgstr "現在、この最適化は、 ``==`` と ``>`` と ``<`` と ``>=`` と ``<=`` を使った検索時に適用されます。"
+
+msgid "When a key of a table that has columns specified by the filter is ``ShortText``, you must set ``NormalizerAuto`` to normalizer of the table to apply this optimization."
+msgstr "絞り込みに指定したカラムを持つテーブルのキーが ``ShortText`` の場合、この最適化を適用するためには、そのテーブルのノーマライザーを ``NormalizerAuto`` にする必要があります。"
+
+msgid "You can disable this feature by ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO=0.0`` environment variable."
+msgstr "この機能は環境変数で ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO=0.0`` と設定する事で無効化できます。"
+
+msgid "[load] improve error message. Table name is included."
+msgstr "[load] エラーメッセージにテーブル名を含めるようにしました。"
+
+msgid "[load] add ``lock_table`` option. If ``--lock_table yes`` is specified, ``load`` locks the target table while updating columns and applying ``--each``. This option avoids ``load`` and ``delete`` conflicts but it'll reduce load performance."
+msgstr "[load] ``lock_table`` オプションを追加しました。``--lock_table yes`` が指定された場合、カラムの更新と ``--each`` の適用を行っている間、``load`` は対象のテーブルをロックします。このオプションは ``load`` と ``delete`` の衝突を防ぎますが、読み込みの性能を低下させるでしょう。"
+
+msgid "[vector_find] avoid to crash with unsupported modes"
+msgstr "[vector_find] サポートされていないモードでクラッシュしないようにしました。"
+
+msgid "[index] fix a bug that offline index construction for text vector with ``HASH_KEY``. It creates index with invalid section ID."
+msgstr "[index] ``HASH_KEY`` を伴ったテキストのベクターに対するオフラインでのインデックス構築に関して、誤ったセクションIDを持つインデックスが構築されてしまうバグを修正しました。"
+
+msgid "Fix a bug that ``--match_columns 'index[0] || index[9]'`` uses wrong section."
+msgstr "``--match_columns 'index[0] || index[9]'`` が誤ったセクションを使用してしまう問題を修正しました。"
+
+msgid "[highlighter] fix a wrong highlight bug It's caused when lexicon is hash table and keyword is less than N of N-gram."
+msgstr "[highlighter] 語彙表がハッシュテーブルで、且つキーワードがN-gramのNよりも少ない文字数の場合に、誤ったハイライトが行われていた問題を修正しました。"
+
+msgid "[mruby] fix a bug that real error is hidden. mruby doesn't support error propagation by no argument raise. https://github.com/mruby/mruby/issues/290"
+msgstr "[mruby] 本当のエラーが隠されていた問題を修正しました。mrubyは引数無しで投げられたエラーの伝搬に対応していません。https://github.com/mruby/mruby/issues/290"
+
+msgid "[:doc:`/reference/tokenizers`][TokenNgram loose]: fix a not found bug when query has only loose types. ``highlight_html()`` with lexicon was also broken."
+msgstr "[:doc:`/reference/tokenizers`][TokenNgram loose]: クエリが曖昧な種類のみであった場合に検索結果が見つからない問題を修正しました。語彙表を伴っての ``highlight_html()`` も同様に壊れていました。"
+
+msgid "Fix a bug that text->number cast ignores trailing garbage. \"0garbage\" should be cast error."
+msgstr "テキストから数値への変換において、後続するゴミ部分が無視されていた問題を修正しました。 \"0garbage\" は変換エラーになります。"
+
+msgid "Fix an optimization bug for ``reference_column >= 'key_value'`` case"
+msgstr "``reference_column >= 'key_value'`` に当てはまる場合の最適化の問題を修正しました。"
+
+msgid "Release 8.0.5 - 2018-07-29"
+msgstr "8.0.5リリース - 2018-07-29"
+
+msgid "[:doc:`/reference/grn_expr/script_syntax`] Added complementary explain about similar search against Japanese documents. [GitHub#858][Patch by Yasuhiro Horimoto]"
+msgstr "[:doc:`/reference/grn_expr/script_syntax`] 類似文書検索の補足説明とその日本語訳を追加しました。 [GitHub groonga/GitHub#858] [堀本さんがパッチ提供]"
+
+msgid "[:doc:`/reference/functions/time_classify_day_of_week`] Added a new API: ``time_classify_day_of_week()``."
+msgstr "[:doc:`reference/functions/time_classify_day_of_week`] 新しい関数 ``time_classify_day_of_week()`` を追加しました。"
+
+msgid "Suppressed a warning with ``-fstack-protector``. Suggested by OBATA Akio."
+msgstr "``-fstack-protector`` で警告を抑制するようにしました。（OBATA Akioさんが提案）"
+
+msgid "Added a new API: ``time_format_iso8601()``."
+msgstr "新しいAPI ``time_format_iso8601()`` を追加しました。"
+
+msgid "Exported a struct ``grn_raw_string``."
+msgstr "``grn_raw_string`` 構造体を公開。"
+
+msgid "Added a new API: ``grn_obj_clear_option_values()``. It allows you to clear option values on remove (for persistent) / close (for temporary.)"
+msgstr "新しいAPI: ``grn_obj_clear_option_values()`` を追加しました。永続的なデータベースのremoveと一時的なデータベースのcloseの際にオプションの値を消去できます。"
+
+msgid "[log] Reported index column name for error message ``[ii][update][one]``."
+msgstr "[log] ``[ii][update][one]`` のエラーメッセージにインデックスカラム名を出力するようにしました。"
+
+msgid "[httpd] Updated bundled nginx to 1.15.2."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.15.2に更新しました。"
+
+msgid "[:doc:`/install/ubuntu`] Dropped Ubuntu 17.10 (Artful Aardvark) support. It has reached EOL at July 19, 2018."
+msgstr "[:doc:`/install/ubuntu`] Ubuntu 17.10 (Artful Aardvark）のサポートをやめました。2018年7月19日でサポートが切れた（EOLになった）ためです。"
+
+msgid "[:doc:`/install/debian`] Dropped jessie support. Debian's security and release team will no longer produce updates for jessie."
+msgstr "[:doc:`/install/debian`] jessieのサポートをやめました。Debianのセキュリティ＆リリースチームはもはやjessieの更新を提供しません。"
+
+msgid "Fixed returning wrong result after unfinished ``/d/load`` data by POST."
+msgstr "POSTでの ``/d/load`` へのデータ送信が中断された後に誤った結果が返されていたのを修正しました。"
+
+msgid "Fixed wrong function call around KyTea."
+msgstr "KyTeaに関する間違った関数呼び出しを修正しました。"
+
+msgid "[:doc:`/reference/executables/grndb`] Added a missing label for the ``--force-truncate`` option."
+msgstr "[:doc:`/reference/executables/grndb`] ``--force-truncate`` オプションのラベルを追加しました。"
+
+msgid "Fixed crash on closing of a database, when a normalizer provided by a plugin (ex. ``groonga-normalizer-mysql``) is used with any option."
+msgstr "``groonga-normalizer-mysql`` のようにプラグインとして提供されているノーマライザーでオプションを使った場合に、データベースを終了するときにクラッシュする問題を修正しました。"
+
+msgid "Fixed a bug that normalizer/tokenizer options may be ignored. It's occurred when the same object ID is reused."
+msgstr "ノーマライザーとトークナイザーのオプションが無視される場合があった問題を修正しました。この問題は同じオブジェクトIDが再利用された場合に発生していました。"
+
+msgid "Release 8.0.4 - 2018-06-29"
+msgstr "8.0.4リリース - 2018-06-29"
+
+msgid "[log] Add sub error for error message ``[ii][update][one]``."
+msgstr "[log] ``[ii][update][one]`` のエラーメッセージにサブエラーを追加しました。"
+
+msgid "Added a new API: ``grn_highlighter_clear_keywords()``."
+msgstr "新しいAPI ``grn_highlighter_clear_keywords()`` を追加しました。"
+
+msgid "Added a new predicate: ``grn_obj_is_number_family_bulk()``."
+msgstr "新しいpredicate ``grn_obj_is_number_family_bulk()`` を追加しました。"
+
+msgid "Added a new API: ``grn_plugin_proc_get_value_mode()``."
+msgstr "新しいAPI ``grn_plugin_proc_get_value_mode()`` を追加しました。"
+
+msgid "[:doc:`reference/functions/vector_find`] Added a new function ``vector_find()``."
+msgstr "[:doc:`reference/functions/vector_find`] 新しい関数 ``vector_find()`` を追加しました。"
+
+msgid "Suppress memcpy warnings in msgpack."
+msgstr "msgpackでのmemcpyの警告を抑制しました。"
+
+msgid "Updated mruby from 1.0.0 to 1.4.1."
+msgstr "mrubyを1.0.0から1.4.1に更新しました。"
+
+msgid "[doc][:doc:`/reference/api/grn_obj`] Added API reference for ``grn_obj_is_index_column()``."
+msgstr "[doc][:doc:`/reference/api/grn_obj`] ``grn_obj_is_index_column()`` のAPIリファレンスを追加しました。"
+
+msgid "[windows] Suppress printf format warnings."
+msgstr "[windows] printfフォーマットの警告を抑制しました。"
+
+msgid "[windows] Suppress warning by msgpack."
+msgstr "[windows] msgpackによる警告を抑制しました。"
+
+msgid "[:doc:`/reference/api/grn_obj`][:doc:`/reference/api/plugin`] Added encoding converter. rules:"
+msgstr "[:doc:`/reference/api/grn_obj`][:doc:`/reference/api/plugin`] エンコーディングコンバーターを追加しました。ルール:"
+
+msgid "grn_ctx::errbuf: grn_encoding"
+msgstr ""
+
+msgid "grn_logger_put: grn_encoding"
+msgstr ""
+
+msgid "mruby: UTF-8"
+msgstr ""
+
+msgid "path: locale"
+msgstr ""
+
+msgid "[mrb] Added ``LocaleOutput``."
+msgstr "[mrb] ``LocaleOutput`` を追加しました。"
+
+msgid "[windows] Supported converting image path to grn_encoding."
+msgstr "[windows] イメージのパスのgrn_encodingへの変換をサポートしました。"
+
+msgid "[:doc:`/reference/tokenizers`][TokenMecab] Convert error message encoding."
+msgstr "[:doc:`/reference/tokenizers`][TokenMecab] エラーメッセージのエンコーディングを変換するようにしました。"
+
+msgid "[:doc:`/reference/window_functions/window_sum`] Supported dynamic column as a target column."
+msgstr "[:doc:`/reference/window_functions/window_sum`] 対象カラムとしての動的カラムをサポートしました。"
+
+msgid "[doc][:doc:`/reference/api/grn_obj`] Added API reference for ``grn_obj_is_vector_column()``."
+msgstr "[doc][:doc:`/reference/api/grn_obj`] ``grn_obj_is_vector_column()`` のAPIリファレンスを追加しました。"
+
+msgid "[:doc:`/reference/commands/column_create`] Added more validations."
+msgstr "[:doc:`/reference/commands/column_create`] より多くのバリデーションを追加しました。"
+
+msgid "1: Full text search index for vector column must have ``WITH_SECTION`` flag. (Note that TokenDelmit with ``WITH_POSITION`` without ``WITH_SECTION`` is permitted. It's useful pattern for tag search.)"
+msgstr "1: ベクターカラムの全文検索インデックスは ``WITH_SECTION`` フラグが必要です。（ただし、 ``WITH_POSITION`` あり、 ``WITH_SECTION`` なしのTokenDelmitは許容されます。これはタグ検索に便利なパターンです。)"
+
+msgid "2: Full text search index for vector column must not be multi column index. detail: https://github.com/groonga/groonga/commit/08e2456ba35407e3d5172f71a0200fac2a770142"
+msgstr "2: ベクターカラムの全文検索インデックスはマルチカラムインデックスであってはいけません。詳細: https://github.com/groonga/groonga/commit/08e2456ba35407e3d5172f71a0200fac2a770142"
+
+msgid "[:doc:`/reference/executables/grndb`] Disabled log check temporarily. Because it's not completed yet."
+msgstr "[:doc:`/reference/executables/grndb`] 実装が不十分だったため、ログのチェックを一時的に無効にしました"
+
+msgid "[:doc:`reference/functions/sub_filter`] Fixed too much score with a too filtered case."
+msgstr "[:doc:`/reference/functions/sub_filter`] 十分にフィルターされたケースで、スコアが多すぎる問題を修正"
+
+msgid "Fixed build error if KyTea is installed."
+msgstr "KyTeaがインストールされているとビルドに失敗する問題を修正しました。"
+
+msgid "[:doc:`/reference/executables/grndb`] Fixed output channel."
+msgstr "[:doc:`/reference/executables/grndb`] 出力チャネルを修正しました。"
+
+msgid "[query-log][show-condition] Maybe fixed a crash bug."
+msgstr "[query-log][show-condition] クラッシュするバグを修正しました（まだ残っている可能性があります）。"
+
+msgid "[highlighter][lexicon] Fixed a not highlighted bug. The keyword wasn't highlighted if keyword length is less than N (\"N\"-gram. In many cases, it's Bigram so \"less than 2\")."
+msgstr "[highlighter][lexicon] ハイライトされないバグを修正しました。キーワードの長さがN未満（N-gramのN。多くの場合はBigramなので2未満）の場合、キーワードがハイライトされていませんでした。"
+
+msgid "[windows] Fixed a base path detection bug. If system locale DLL path includes 0x5c (``\\`` in ASCII) such as \"U+8868 CJK UNIFIED IDEOGRAPH-8868\" in CP932, the base path detection is buggy."
+msgstr "[windows] base path検出時の問題を修正しました。システムロケールのDLLパスが、CP932での「U+8868 CJK UNIFIED IDEOGRAPH-8868」のように0x5c （ASCIIでの ``\\`` )を含む場合に問題がありました。"
+
+msgid "[:doc:`/reference/tokenizers`][TokenNgram] Fixed wrong first character length. It's caused for \"PARENTHESIZED IDEOGRAPH\" characters such as \"U+3231 PARENTHESIZED IDEOGRAPH STOCK\"."
+msgstr "[:doc:`/reference/tokenizers`][TokenNgram] 最初の文字の長さの誤りを修正しました。この問題は、「U+3231 PARENTHESIZED IDEOGRAPH STOCK」のような「PARENTHESIZED IDEOGRAPH」文字で起きていました。"
+
+msgid "Release 8.0.3 - 2018-05-29"
+msgstr "8.0.3リリース - 2018-05-29"
+
+msgid "[:doc:`/reference/functions/highlight_html`] Support highlight of results of the search by ``NormalizerNFKC100`` or ``TokenNgram``."
+msgstr "[:doc:`/reference/functions/highlight_html`] ``NormalizerNFKC100`` または ``TokenNgram`` を使って検索した結果のハイライトをサポートしました。"
+
+msgid "[:doc:`/reference/tokenizers`] Added new option for ``TokenNgram`` that ``report_source_location option`` . This option used when highlighting with ``highlight_html`` use a lexicon."
+msgstr "[:doc:`/reference/tokenizers`] ``TokenNgram`` に新しいオプション ``report_source_location option`` を追加しました。このオプションは、``highlight_html`` で語彙表を使ったハイライトをする時に使用します。"
+
+msgid "[:doc:`/reference/normalizers`] Added new option for ``NormalizerNFKC100`` that ``unify_middle_dot option``. This option normalizes middle dot. You can search with or without ``・`` (middle dot) and regardless of ``・`` position."
+msgstr "[:doc:`/reference/normalizers`] ``NormalizerNFKC100`` に新しいオプション ``unify_middle_dot option`` を追加しました。このオプションは、中点を正規化します。``・`` の有無や ``・`` 位置にかかわらず検索できます。"
+
+msgid "[:doc:`/reference/normalizers`] Added new option for ``NormalizerNFKC100`` that ``unify_katakana_v_sounds option``. This option normalizes ``ヴァヴィヴヴェヴォ`` (katakana) to ``バビブベボ`` (katakana). For example, you can search ``バイオリン`` (violin) in ``ヴァイオリン`` (violin)."
+msgstr "[:doc:`/reference/normalizers`] ``NormalizerNFKC100`` に新しいオプション ``unify_katakana_v_sounds option`` を追加しました。このオプションは、``ヴァヴィヴヴェヴォ`` を ``バビブベボ``  へ正規化します。例えば ``バイオリン`` を ``ヴァイオリン`` で検索できます。"
+
+msgid "[:doc:`/reference/normalizers`] Added new option for ``NormalizerNFKC100`` that ``unify_katakana_bu_sound option``. This option normalizes ``ヴァヴィヴゥヴェヴォ`` (katakana) to ``ブ`` (katakana). For example, you can search ``セーブル`` (katakana) and ``セーヴル`` in ``セーヴェル`` (katakana)."
+msgstr "[:doc:`/reference/normalizers`] ``NormalizerNFKC100`` に新しいオプション ``unify_katakana_bu_sound option`` を追加しました。このオプションは、``ヴァヴィヴゥヴェヴォ`` を ``ブ`` に正規化します。例えば、``セーブル`` や ``セーヴル`` を ``セーヴェル`` で検索できます。"
+
+msgid "[:doc:`reference/functions/sub_filter`] Supported ``sub_filter`` optimization for the too filter case. this optimize is valid when records are enough narrowed down before ``sub_filter`` execution as below."
+msgstr "[:doc:`/reference/functions/sub_filter`] 十分にフィルターされたケースでの ``sub_filter`` の動作を最適化しました。この最適化は、 ``sub_filter`` 実行前に十分にレコードが絞り込まれているケースで有効になります。"
+
+msgid "[:doc:`/reference/executables/groonga-httpd`] Made all workers context address to unique. context address is ``#{ID}`` of below query log."
+msgstr "[:doc:`/reference/executables/groonga-httpd`] 全てのワーカのコンテキストアドレスをユニークにしました。コンテキストアドレスは、以下のクエリーログの ``#{ID}`` です。"
+
+msgid "[:doc:`/reference/commands/delete`] Added new options that ``limit``. You can limit the number of delete records as below example. ``delete --table Users --filter '_key @^ \"b\"' --limit 4``"
+msgstr "[:doc:`/reference/commands/delete`] 新しいオプション ``limit`` を追加しました。以下の例のように、削除するレコードの件数を制限できます。``delete --table Users --filter '_key @^ \"b\"' --limit 4``"
+
+msgid "[httpd] Updated bundled nginx to 1.14.0."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.14.0に更新しました。"
+
+msgid "[:doc:`/reference/commands/logical_select`] Fixed memory leak when an error occurs in filtered dynamic columns."
+msgstr "[:doc:`/reference/commands/logical_select`] 動的カラムをフィルターした時にエラーが発生するとメモリリークする不具合を修正しました。"
+
+msgid "[:doc:`/reference/commands/logical_count`] Fixed memory leak on initial dynamic column error."
+msgstr "[:doc:`/reference/commands/logical_count`] 動的カラムの初期化に失敗した際にメモリリークする不具合を修正しました。"
+
+msgid "[:doc:`/reference/commands/logical_range_filter`] Fixed memory leak when an error occurs in dynamic column evaluation."
+msgstr "[:doc:`/reference/commands/logical_range_filter`] 動的カラムの評価に失敗した際にメモリリークする不具合を修正しました。"
+
+msgid "[:doc:`/reference/tokenizers`] Fixed a bug that the wrong ``source_offset`` when a loose tokenizing such as ``loose_symbol`` option."
+msgstr "[:doc:`/reference/tokenizers`] ``loose_symbol`` のように緩いトークナイズをした時に ``source_offset`` が誤った値になる不具合を修正しました。"
+
+msgid "[:doc:`/reference/normalizers`] Fixed a bug that FULLWIDTH LATIN CAPITAL LETTERs such as ``U+FF21 FULLWIDTH LATIN CAPITAL LETTER A`` aren't normalized to LATIN SMALL LETTERs such as ``U+0061 LATIN SMALL LETTER A``. If you have been used ``NormalizerNFKC100`` , you must recreate your indexes."
+msgstr "[:doc:`/reference/normalizers`] ``U+FF21 FULLWIDTH LATIN CAPITAL LETTER A`` のような全角ラテン大文字が、``U+0061 LATIN SMALL LETTER A`` のようなラテン小文字に正規化されない不具合を修正しました。すでに、 ``NormalizerNFKC100`` を使用している場合は、インデックスを再生成する必要があります。"
+
+msgid "Release 8.0.2 - 2018-04-29"
+msgstr "8.0.2リリース - 2018-04-29"
+
+msgid "[:doc:`/reference/executables/grndb`][:ref:`grndb-force-truncate`] Improved ``grndb recover --force-truncate`` option that it can be truncated even if locks are left on the table."
+msgstr "[:doc:`/reference/executables/grndb`][:ref:`grndb-force-truncate`]  ``grndb recover --force-truncate`` オプションを指定することで、テーブルにロックが残ったままの状態でも truncate できるようにしました。"
+
+msgid "[:doc:`/reference/commands/logical_range_filter`] Added ``sort_keys`` option."
+msgstr "[:doc:`/reference/commands/logical_range_filter`] ``sort_keys`` オプションに対応しました。"
+
+msgid "Added a new function ``time_format()``. You can specify time format against a column of ``Time`` type. You can specify with use format of ``strftime`` ."
+msgstr "新しい関数 ``time_format()`` を追加しました。``Time`` 型のカラムの値を時刻表記で出力できます。書式は ``strftime`` 用の形式を指定できます。"
+
+msgid "[:doc:`/reference/tokenizers`] Support new tokenizer ``TokenNgram``. You can change its behavior dynamically via options. Here is a list of available options:"
+msgstr "[:doc:`/reference/tokenizers`] 新しいトークナイザー ``TokenNgram`` を追加しました。このトークナイザーは、オプションを通じて挙動を動的に変えることができます。対応しているオプションは以下の通りです。"
+
+msgid "``n`` : \"N\" of Ngram. For example, \"3\" for trigram."
+msgstr "``n`` : Ngram の「N」を指定します。例えば trigram の場合は「3」です。"
+
+msgid "``loose_symbol`` : Tokenize keywords including symbols, to be searched by both queries with/without symbols. For example, a keyword \"090-1111-2222\" will be found by any of \"09011112222\", \"090\", \"1111\", \"2222\" and \"090-1111-2222\"."
+msgstr "``loose_symbol`` : 記号を含む語句について、記号の有無の違いを無視して検索できるようにトークナイズします。例えば「090-1111-2222」という語句は、「09011112222」「090」「1111」「2222」「090-1111-2222」のいずれで検索した場合にも検索結果としてヒットするようになります。"
+
+msgid "``loose_blank`` : Tokenize keywords including blanks, to be searched by both queries with/without blanks. For example, a keyword \"090 1111 2222\" will be found by any of \"09011112222\", \"090\", \"1111\", \"2222\" and \"090 1111 2222\"."
+msgstr "``loose_blank`` : 空白を含む語句について、空白の有無の違いを無視して検索できるようにトークナイズします。例えば「090 1111 2222」という語句は、「09011112222」「090」「1111」「2222」「090 1111 2222」のいずれで検索した場合にも検索結果としてヒットするようになります。"
+
+msgid "``remove_blank`` : Tokenize keywords including blanks, to be searched by queries without blanks. For example, a keyword \"090 1111 2222\" will be found by any of \"09011112222\", \"090\", \"1111\" or \"2222\". Note that the keyword won't be found by a query including blanks like \"090 1111 2222\"."
+msgstr "``remove_blank`` : 空白を含む語句について、空白無しの語句で検索できるようにトークナイズします。例えば「090 1111 2222」という語句は、「09011112222」「090」「1111」「2222」のいずれで検索した場合にも検索結果としてヒットするようになります。空白を含む語句「090 1111 2222」での検索にはヒットしない点にご注意下さい。"
+
+msgid "[:doc:`/reference/normalizers`] Support new normalizer \"NormalizerNFKC100\" based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 10.0."
+msgstr "[:doc:`/reference/normalizers`] Unicode 10.0 の NFKC（Normalization Form Compatibility Composition）に基づくノーマライザーである \"NormalizerNFKC100\" を追加しました。"
+
+msgid "[:doc:`/reference/normalizers`] Support options for \"NormalizerNFKC51\" and \"NormalizerNFKC100\" normalizers. You can change their behavior dynamically. Here is a list of available options:"
+msgstr "[:doc:`/reference/normalizers`] ノーマライザーの \"NormalizerNFKC51\" と \"NormalizerNFKC100\" でのオプション指定に対応しました。ノーマライザーの挙動を動的に変えることができます。対応しているオプションは以下の通りです。"
+
+msgid "``unify_kana`` : Same pronounced characters in all of full-width Hiragana, full-width Katakana and half-width Katakana are regarded as the same character."
+msgstr "``unify_kana`` : 同じ音となる全角ひらがな、全角カタカナ、半角カタカナの文字を同一視します。"
+
+msgid "``unify_kana_case`` : Large and small versions of same letters in all of full-width Hiragana, full-width Katakana and half-width Katakana are regarded as the same character."
+msgstr "``unify_kana_case`` : 全角ひらがな、全角カタカナ、半角カタカナで拗音、促音などを表す小さな文字（例：「ぁ」「ゃ」「っ」）を大きな文字と同一視します。"
+
+msgid "``unify_kana_voiced_sound_mark`` : Letters with/without voiced sound mark and semi voiced sound mark in all of full-width Hiragana, full-width Katakana and half-width Katakana are regarded as the same character."
+msgstr "``unify_kana_voiced_sound_mark`` : 全角ひらがな、全角カタカナ、半角カタカナで濁点や半濁点の有無を同一視します。"
+
+msgid "``unify_hyphen`` : The characters like hyphen are regarded as the hyphen."
+msgstr "``unify_hyphen`` : ハイフンに類する文字すべてをハイフンと同一視します。"
+
+msgid "``unify_prolonged_sound_mark`` : The characters like prolonged sound mark are regarded as the prolonged sound mark."
+msgstr "``unify_prolonged_sound_mark`` : 長音記号に類する文字すべてを長音記号と同一視します。"
+
+msgid "``unify_hyphen_and_prolonged_sound_mark`` : The characters like hyphen and prolonged sound mark are regarded as the hyphen."
+msgstr "``unify_hyphen_and_prolonged_sound_mark`` : ハイフンに類する文字と長音記号に類する文字のすべてをハイフンと同一視します。"
+
+msgid "[:doc:`/reference/commands/dump`] Support output of tokenizer's options and normalizer's options. Groonga 8.0.1 and earlier versions cannot import dump including options for tokenizers or normalizers generated by Groonga 8.0.2 or later, and it will occurs error due to unsupported information."
+msgstr "[:doc:`/reference/commands/dump`] トークナイザーとノーマライザーのオプションの出力に対応しました。トークナイザーまたはノーマライザーのオプションを含んだ状態でGroonga 8.0.2およびそれ以降で出力した dump は、Grooga 8.0.1以前のバージョンでは読み込めず、未対応の情報によりエラーとなります。"
+
+msgid "[:doc:`/reference/commands/schema`] Support output of tokenizer's options and normalizer's options. Groonga 8.0.1 and earlier versions cannot import schema including options for tokenizers or normalizers generated by Groonga 8.0.2 or later, and it will occurs error due to unsupported information."
+msgstr "[:doc:`/reference/commands/dump`] トークナイザーとノーマライザーのオプションの出力に対応しました。トークナイザーまたはノーマライザーのオプションを含んだ状態でGroonga 8.0.2およびそれ以降で出力した schema は、Grooga 8.0.1以前のバージョンでは読み込めず、未対応の情報によりエラーとなります。"
+
+msgid "Supported Ubuntu 18.04 (Bionic Beaver)"
+msgstr "Ubuntu 18.04 (Bionic Beaver)をサポートしました。"
+
+msgid "Fixed a bug that unexpected record is matched with space only query. [groonga-dev,04609][Reported by satouyuzh]"
+msgstr "スペースのみの検索クエリが意図しないレコードにマッチする不具合を修正しました。[groonga-dev,04609][satouyuzhさんの報告]"
+
+msgid "Fixed a bug that wrong scorer may be used. It's caused when multiple scorers are used as below. ``--match_columns 'title || scorer_tf_at_most(content, 2.0)'``."
+msgstr "誤ったスコアラーが使われる場合があった不具合を修正しました。この問題は以下のように複数のスコアラーが使われた時に発生していました： ``--match_columns 'title || scorer_tf_at_most(content, 2.0)'``"
+
+msgid "Fixed a bug that it may also take so much time to change \"thread_limit\"."
+msgstr "「thread_limit」の変更に時間がかかりすぎる問題を修正しました。"
+
+msgid "satouyuzh"
+msgstr "satouyuzhさん"
+
+msgid "Release 8.0.1 - 2018-03-29"
+msgstr "8.0.1リリース - 2018-03-29"
+
+msgid "[:doc:`/reference/log`] Show ``filter`` conditions in query log. It's disabled by default. To enable it, you need to set an environment variable ``GRN_QUERY_LOG_SHOW_CONDITION=yes``."
+msgstr "[:doc:`/reference/log`] クエリーログ内で ``filter`` 条件を表示するようにしました。この機能はデフォルトでは、無効になっています。有効にするためには、環境変数 ``GRN_QUERY_LOG_SHOW_CONDITION=yes`` を設定します。"
+
+msgid "Install ``*.pdb`` into the directory where ``*.dll`` and ``*.exe`` are installed."
+msgstr "``*.pdb`` を ``*.dll`` と ``*.exe`` と同じディレクトリにインストールされるようにしました。"
+
+msgid "[:doc:`/reference/commands/logical_count`] Support ``filtered`` stage dynamic columns."
+msgstr "[:doc:`/reference/commands/logical_count`] ``filtered`` ステージの動的カラムをサポートしました。"
+
+msgid "[:doc:`/reference/commands/logical_count`] [:ref:`logical-count-post-filter`] Added a new filter timing. It's executed after ``filtered`` stage columns are generated."
+msgstr "[:doc:`/reference/commands/logical_count`] [:ref:`logical-count-post-filter`] フィルタータイミングを新規追加しました。 ``filtered`` ステージのカラムが生成された後に実行されます。"
+
+msgid "[:doc:`/reference/commands/logical_select`] [:ref:`logical-select-post-filter`] Added a new filter timing. It's executed after ``filtered`` stage columns are generated."
+msgstr "[:doc:`/reference/commands/logical_select`] [:ref:`logical-select-post-filter`] フィルタータイミングを新規追加しました。 ``filtered`` ステージのカラムが生成された後に実行されます。"
+
+msgid "Support LZ4/Zstd/zlib compression for vector data."
+msgstr "ベクターデータに対してLZ4/Zstd/zlibの圧縮をサポートしました。"
+
+msgid "Support alias to accessor such as ``_key``."
+msgstr "``_key`` のようなアクセサへのエイリアスをサポートしました。"
+
+msgid "[:doc:`/reference/commands/logical_range_filter`] Optimize window function for large result set. If we find enough matched records, we don't apply window function to the remaining windows."
+msgstr "[:doc:`/reference/commands/logical_range_filter`] 大きい結果セットに対するウィンドウ関数の動作を最適化しました。一致するレコードが十分見つかった場合は、残りのウィンドウに対してウィンドウ関数を適用しません。"
+
+msgid "TODO: Disable this optimization for small result set if its overhead is not negligible. The overhead is not evaluated yet."
+msgstr "TODO: この最適化は、最適化によるオーバーヘッドが無視出来ない場合、小さな結果セットに対しては、無効になります。 オーバーヘッドがどのくらいになるのかは、まだ評価出来ていません。"
+
+msgid "[:doc:`/reference/commands/select`] Added ``match_escalation`` parameter. You can force to enable match escalation by ``--match_escalation yes``. It's stronger than ``--match_escalation_threshold 99999....999`` because ``--match_escalation yes`` also works with ``SOME_CONDITIONS && column @ 'query'``. ``--match_escalation_threshold`` isn't used in this case."
+msgstr "[:doc:`/reference/commands/select`] ``match_escalation`` パラメーターを追加しました。``--match_escalation yes`` とすることによって、マッチ演算のエスカレーションを強制的に有効にします。このパラメータは、 ``--match_escalation_threshold 99999....999`` よりも強力です。``match_escalation yes`` は、 ``SOME_CONDITIONS && column @ 'query'`` もエスカレーションしますが、 ``--match_escalation_threshold`` ではしないためです。"
+
+msgid "The default is ``--match_escalation auto``. It doesn't change the current behavior."
+msgstr "デフォルトは、 ``--match_escalation auto`` です。これは、既存の動作と同じです。"
+
+msgid "You can disable match escalation by ``--match_escalation no``. It's the same as ``--match_escalation_threshold -1``."
+msgstr "``--match_escalation no`` とすることで、マッチ演算のエスカレーションを無効にできます。これは、 ``--match_escalation_threshold -1`` と同様の動きになります。"
+
+msgid "[httpd] Updated bundled nginx to 1.13.10."
+msgstr "[httpd] バンドルしているnginxのバージョンを1.13.10に更新しました。"
+
+msgid "Fixed memory leak that occurs when a prefix query doesn't match any token. [GitHub#820][Patch by Naoya Murakami]"
+msgstr "共通接頭辞がどのトークンにもマッチしない時にメモリリークする問題を修正しました。[GitHub#820] [村上さんがパッチ提供]"
+
+msgid "Fixed a bug that a cache for different databases is used when multiple databases are opened in the same process."
+msgstr "同一プロセスで複数のデータベースを開いている時に、異なるデータベースのキャッシュを使用してしまう問題を修正しました。"
+
+msgid "Fixed a bug that a wrong index is constructed. This occurs only when the source of a column is a vector column and ``WITH_SECTION`` isn't specified."
+msgstr "誤ったインデックスが構築される問題を修正しました。この問題は、インデックスカラムのソースがベクターカラムでかつ、 ``WITH_SECTION`` を指定していない時だけ発生します。"
+
+msgid "Fixed a bug that a constant value can overflow or underflow in comparison (>,>=,<,<=,==,!=)."
+msgstr "比較時(>,>=,<,<=,==,!=)に定数がオーバーフローまたは、アンダーフローし得る問題を修正しました。"
+
+msgid "Naoya Murakami"
+msgstr "村上さん"
+
+msgid "Release 8.0.0 - 2018-02-09"
+msgstr "8.0.0リリース - 2018-02-09"
+
+msgid "This is a major version up! But It keeps backward compatibility. You can upgrade to 8.0.0 without rebuilding database."
+msgstr "メジャーバージョンアップです! メジャーバージョンアップですが、互換性は壊れていないので、データベースを再構築することなくアップグレードできます。"
+
+msgid "[:doc:`/reference/commands/select`] Added ``--drilldown_adjuster`` and ``--drilldowns[LABEL].adjuster``. You can adjust score against result of drilldown."
+msgstr "[:doc:`/reference/commands/select`] ``--drilldown_adjuster`` と ``drilldowns[LABEL].adjuster`` を追加しました。drilldown結果に対して、スコア調整できるようになります。"
+
+msgid "[:ref:`online-index-construction`] Changed environment variable name ``GRN_II_REDUCE_EXPIRE_ENABLE`` to ``GRN_II_REDUCE_EXPIRE_THRESHOLD``."
+msgstr "[:ref:`online-index-construction`] 環境変数の名前を ``GRN_II_REDUCE_EXPIRE_ENABLE`` から ``GRN_II_REDUCE_EXPIRE_THRESHOLD`` へ変更しました。"
+
+msgid "``GRN_II_REDUCE_EXPIRE_THRESHOLD=0 == GRN_II_REDUCE_EXPIRE_ENABLE=no``. ``GRN_II_REDUCE_EXPIRE_THRESHOLD=-1`` uses ``ii->chunk->max_map_seg / 2`` as threshold. ``GRN_II_REDUCE_EXPIRE_THRESHOLD > 0`` uses ``MIN(ii->chunk->max_map_seg / 2, GRN_II_REDUCE_EXPIRE_THRESHOLD)`` as threshold. ``GRN_II_REDUCE_EXPIRE_THRESHOLD=32`` is the default."
+msgstr "``GRN_II_REDUCE_EXPIRE_THRESHOLD=0 == GRN_II_REDUCE_EXPIRE_ENABLE=no`` 。 ``GRN_II_REDUCE_EXPIRE_THRESHOLD=-1`` とすると、しきい値は ``ii->chunk->max_map_seg / 2`` となります。``GRN_II_REDUCE_EXPIRE_THRESHOLD > 0`` とすると、しきい値は ``MIN(ii->chunk->max_map_seg / 2, GRN_II_REDUCE_EXPIRE_THRESHOLD)`` となります。デフォルト値は、 ``GRN_II_REDUCE_EXPIRE_THRESHOLD=32`` です。"
+
+msgid "[:doc:`/reference/functions/between`] Accept ``between()`` without borders. If the number of arguments passed to ``between()`` is 3, the 2nd and 3rd arguments are handled as the inclusive edges. [GitHub#685]"
+msgstr "[:doc:`/reference/functions/between`] 境界値なしの ``between()`` を受け付けるようにしました。``between()`` の引数の数が3つでも実行できます。2番目と3番目の引数が境界を含むものとして処理されます。"
+
+msgid "Fixed a memory leak for normal hash table. [GitHub:mroonga/mroonga#190][Reported by fuku1]"
+msgstr "ハッシュテーブルのメモリリークを修正しました。 [GitHub:mroonga/mroonga#190][fuku1さんの報告]"
+
+msgid "Fix a memory leak for normal array."
+msgstr "配列のメモリリークを修正しました。"
+
+msgid "[:doc:`/reference/commands/select`] Stopped to cache when ``output_columns`` uses not stable function."
+msgstr "[:doc:`/reference/commands/select`] ``output_columns`` で結果の変化する関数を使っている時にキャッシュしないようにしました。"
+
+msgid "[Windows] Fixed wrong value report on ``WSASend`` error."
+msgstr "[Windows] ``WSASend`` が適切なエラーコードを返すようにしました。"
+
+msgid "fuku1"
+msgstr "fuku1さん"

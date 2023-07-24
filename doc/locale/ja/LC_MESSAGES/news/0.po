@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "バージョン0.xのお知らせ"
+msgid "バージョン0系のお知らせ"
 msgstr ""
 
 msgid "0.7.7リリース - 2010-08-25"

@@ -1,0 +1,803 @@
+News - 8 series
+===============
+
+.. _release-8-1-1:
+
+Release 8.1.1 - 2019-01-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/logical_select`] Added new argument ``--load_table``, ``--load_columns`` and ``--load_values``.
+
+  * You can store a result of ``logical_select`` in a table that specifying ``--load_table``.
+
+  * ``--load_values`` option specifies columns of result of ``logical_select``.
+
+  * ``--load_columns`` options specifies columns of table that specifying ``--load_table``.
+
+  * In this way, you can store values of columns that specifying with ``--load_values`` into columns that specifying with ``--load_columns``.
+
+* Improve error log when update error of index.
+
+  * Added more information in the log.
+
+    * For example, output source buffer and chunk when occur merge of posting lists error.
+    * Also, outputting the log a free space size of a buffer and request size of a buffer when occurs error of allocating a buffer.
+
+* [:doc:`/reference/executables/groonga`] Added a new option ``--log-flags``.
+
+  * We can specify output items of a log of the Groonga.
+
+  * We can output as below items.
+
+    * Timestamp
+    * Log message
+    * Location(the location where the log was output)
+    * Process id
+    * Thread id
+
+  * We can specify prefix as below.
+
+    * ``+``
+
+      * This prefix means that "add the flag".
+
+    * ``-``
+
+      * This prefix means that "remove the flag".
+
+    * No prefix means that "replace existing flags".
+
+  * Specifically, we can specify flags as below.
+
+    * ``none``
+
+      * Output nothing into the log.
+
+    * ``time``
+
+      * Output a timestamp into the log.
+
+    * ``message``
+
+      * Output log messages into the log.
+
+    * ``location``
+
+      * Output the location where the log was output( a file name, a line and a function name) and process id.
+
+    * ``process_id``
+
+      * Output a process id into the log.
+
+    * ``pid``
+
+      * This flag is an alias of ``process_id``.
+
+    * ``thread_id``
+
+      * Output thread id into the log.
+
+    * ``all``
+
+      * This flag specifies all flags except ``none`` and ``default`` flags.
+
+    * ``default``
+
+      * Output a timestamp and log messages into the log.
+
+  * We can also specify multiple log flags by separating flags with ``|``.
+
+Fixes
+^^^^^
+
+* Fixed a memory leak when occurs index update error.
+
+* [:doc:`/reference/normalizers`] Fixed a bug that stateless normalizers and stateful normalizers return wrong results when we use them at the same time.
+
+    * Stateless normalizers are below.
+
+      * ``unify_kana``
+      * ``unify_kana_case``
+      * ``unify_kana_voiced_sound_mark``
+      * ``unify_hyphen``
+      * ``unify_prolonged_sound_mark``
+      * ``unify_hyphen_and_prolonged_sound_mark``
+      * ``unify_middle_dot``
+
+    * Stateful normalizers are below.
+
+      * ``unify_katakana_v_sounds``
+      * ``unify_katakana_bu_sound``
+      * ``unify_to_romaji``
+
+.. _release-8-1-0:
+
+Release 8.1.0 - 2018-12-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [httpd] Updated bundled nginx to 1.15.8.
+
+Fixes
+^^^^^
+
+* Fixed a bug that unlock against DB is always executed after flush when after execute a ``io_flush`` command.
+
+* Fixed a bug that ``reindex`` command doesn't finish when execute a ``reindex`` command against table that has record that has not references.
+
+.. _release-8-0-9:
+
+Release 8.0.9 - 2018-11-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/tokenizers`] Improved that output a tokenizer name in error message when create tokenizer fail.
+
+* [:doc:`/reference/tokenizers`][TokenDelimit] Supported that customizing delimiter of a token.
+
+  * You can use token other than whitespace as a token of delimiter.
+
+* [:doc:`/reference/tokenizers`][TokenDelimit] Added new option ``pattern``.
+
+  * You can specify delimiter with regular expression by this option.
+
+* [:doc:`/reference/tokenizers`] Added force_prefix_search value to each token information.
+
+  * "force_prefix" is kept for backward compatibility.
+
+* [:doc:`/reference/token_filters`] Added built-in token filter ``TokenFilterNFKC100``.
+
+  * You can convert katakana to hiragana like NormalizerNFKC100 with a ``unify_kana`` option.
+
+* [:doc:`/reference/token_filters`][TokenFilterStem] Added new option ``algorithm``.
+
+  * You can also stem language other than English(French, Spanish, Portuguese, Italian, Romanian, German, Dutch, Swedish, Norwegian, Danish, Russian, Finnish) by this option.
+
+* [:doc:`/reference/token_filters`][TokenFilterStopWord] Added new option ``column``.
+
+  * You can specify stop word in a column other than is_stop_word column by this option.
+
+* [:doc:`/reference/commands/dump`] Supported output options of token filter options.
+
+  * If you specify a tokenizer like ``TokenNgram`` or ``TokenMecab`` etc that has options, you can output these options with ``table_list`` command.
+
+* [:doc:`/reference/commands/truncate`] Supported a table that it has token filter option.
+
+  * You can ``truncate`` even a tabel that it has token filter like ``TokenFilterStem`` or ``TokenStopWord`` that has options.
+
+* [:doc:`/reference/commands/schema`] Support output of options of token filter.
+
+* [:doc:`/reference/normalizers`] Added new option for ``NormalizerNFKC100`` that ``unify_to_romaji`` option.
+
+  * You can normalize hiragana and katakana to romaji by this option.
+
+* [query-log][show-condition] Supported "func() > 0" case.
+
+* [Windows] Improved that ensure flushing on unmap.
+
+* Improved error message on opening input file error.
+
+* [httpd] Updated bundled nginx to 1.15.7.
+
+  * contains security fix for CVE-2018-16843 and CVE-2018-16844.
+
+Fixes
+^^^^^
+
+* Fixed a memory leak when evaluating window function.
+
+* [:doc:`/reference/executables/groonga-httpd`] Fixed bug that log content may be mixed.
+
+* Fixed a bug that generates invalid JSON when occurs error of slice on output_columns.
+
+* Fixed a memory leak when getting nested reference vector column value.
+
+* Fixed a crash bug when outputting warning logs of index corruption.
+
+* Fix a crash bug when temporary vector is reused in expression evaluation.
+
+  * For example, crash when evaluating an expression that uses a vector as below.
+
+  ``_score = _score + (vector_size(categories) > 0)``
+
+* Fix a bug that hits a value of vector columns deleted by a delete command.[GitHub PGroonga#85][Reported by dodaisuke]
+
+Thanks
+^^^^^^
+
+* dodaisuke
+
+.. _release-8-0-8:
+
+Release 8.0.8 - 2018-10-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/table_list`] Supported output options of default tokenizer.
+
+  * If you specify a tokenizer like ``TokenNgram`` or ``TokenMecab`` etc that has options, you can output these options with ``table_list`` command.
+
+* [:doc:`/reference/commands/select`] Supported normalizer options in sequential match with ``record @ 'query'``.
+
+* [:doc:`/reference/commands/truncate`] Supported a table that it has tokenizer option.
+
+  * You can ``truncate`` even a tabel that it has tokenizer like ``TokenNgram`` or ``TokenMecab`` etc that has options.
+
+* [:doc:`/reference/tokenizers`][TokenMecab] Added new option ``target_class``
+
+  * This option searches a token of specifying a part-of-speech. For example, you can search only a noun.
+  * This option can also specify subclasses and exclude or add specific part-of-speech of specific using ``+`` or ``-``. So, you can also search except a pronoun as below.
+
+    ``'TokenMecab("target_class", "-名詞/代名詞", "target_class", "+")'``
+
+* [:doc:`/reference/commands/io_flush`] Supported locking of a database during a ``io_flush``.
+
+  * Because Groonga had a problem taht is a crash when deleteing a table of a target of a ``io_flush`` during execution of a ``io_flush``.
+
+* [:doc:`/reference/functions/cast_loose`] Added a new function ``cast_loose``.
+
+  * This function cast to a type to specify. If a value to specify can't cast, it become to a default value to specify.
+
+* Added optimize the order of evaluation of a conditional expression.(experimental)
+
+  * You can active this feature by setting environment value as below.
+
+    ``GRN_EXPR_OPTIMIZE=yes``
+
+* Supported ``(?-mix:XXX)`` form for index searchable regular expression. [groonga-dev,04683][Reported by Masatoshi SEKI]
+
+  * ``(?-mix:XXX)`` form treats the same as XXX.
+
+* [httpd] Updated bundled nginx to 1.15.5.
+
+* Supported Ubuntu 18.10 (Cosmic Cuttlefish)
+
+Fixes
+^^^^^
+
+* Fixed a bug that the Groonga GQTP server may fail to accept a new connection. [groonga-dev,04688][Reported by Yutaro Shimamura]
+
+  * It's caused when interruption client process without using quit.
+
+Thanks
+^^^^^^
+
+* Masatoshi SEKI
+* Yutaro Shimamura
+
+.. _release-8-0-7:
+
+Release 8.0.7 - 2018-09-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/tokenizers`][TokenMecab] support outputting metadata of Mecab.
+
+  * Added new option ``include_class`` for ``TokenMecab``.
+
+    This option outputs ``class`` and ``subclass`` in Mecab's metadata.
+
+  * Added new option ``include_reading`` for ``TokenMecab``.
+
+    This option outputs ``reading`` in Mecab's metadata.
+
+  * Added new option ``include_form`` for ``TokenMecab``.
+
+    This option outputs ``inflected_type``, ``inflected_form`` and ``base_form`` in Mecab's metadata.
+
+  * Added new option ``use_reading`` for ``TokenMecab``.
+
+    This option supports a search by kana.
+
+    This option is useful for countermeasure of orthographical variants because it searches with kana.
+
+* [plugin] Groonga now can grab plugins from multiple directories.
+
+  You can specify multiple directories to ``GRN_PLUGINS_PATH`` separated with ":" on non Windows, ";" on Windows.
+
+  ``GRN_PLUGINS_PATH`` has high priority than the existing ``GRN_PLUGINS_DIR``.
+  Currently, this option is not supported Windows.
+
+* [:doc:`/reference/tokenizers`][TokenNgram] Added new option ``unify_alphabet`` for ``TokenNgram``.
+
+  If we use ``unify_alphabet`` as ``false``, ``TokenNgram`` uses bigram tokenize method for ASCII character.
+
+* [:doc:`/reference/tokenizers`][TokenNgram] Added new option ``unify_symbol`` for ``TokenNgram``.
+
+  ``TokenNgram("unify_symbol", false)`` is same behavior of ``TokenBigramSplitSymbol``.
+
+* [:doc:`/reference/tokenizers`][TokenNgram] Added new option ``unify_digit`` for ``TokenNgram``.
+
+  If we use ``unify_digit`` as ``false``, If we set false, ``TokenNgram`` uses bigram tokenize method for digits.
+
+* [httpd] Updated bundled nginx to 1.15.4.
+
+Fixes
+^^^^^
+
+* Fixed wrong score calculations on some cases.
+
+  * It's caused when adding, multiplication or division numeric to a bool value.
+  * It's caused when comparing a scalar and vector columns using ``!=`` or ``==``.
+
+.. _release-8-0-6:
+
+Release 8.0.6 - 2018-08-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/tokenizers`][TokenMecab] add ``chunked_tokenize`` and ``chunk_size_threshold`` options.
+
+* [optimizer] support estimation for query family expressions.
+  It will generate more effective execution plan with query family expressions such as ``column @ query``, ``column @~ pattern`` and so on.
+
+* [optimizer] plug-in -> built-in
+  It's disabled by default for now.
+  We can enable it by defining ``GRN_EXPR_OPTIMIZE=yes`` environment variable or using ``expression_rewriters`` table as before.
+
+* Enable sequential search for enough filtered case by default.
+  If the current result is enough filtered, sequential search is faster than index search.
+  If the current result has only 1% records of all records in a table and less than 1000 records, sequential search is used even when index search is available.
+
+  Cullently, this optimization is applied when search by ``==``, ``>``, ``<``, ``>=``, or ``<=``.
+
+  When a key of a table that has columns specified by the filter is ``ShortText``, you must set ``NormalizerAuto`` to normalizer of the table to apply this optimization.
+
+  You can disable this feature by ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO=0.0`` environment variable.
+
+* [load] improve error message.
+  Table name is included.
+
+* [load] add ``lock_table`` option.
+  If ``--lock_table yes`` is specified, ``load`` locks the target table while updating columns and applying ``--each``.
+  This option avoids ``load`` and ``delete`` conflicts but it'll reduce load performance.
+
+* [vector_find] avoid to crash with unsupported modes
+
+Fixes
+^^^^^
+
+* [index] fix a bug that offline index construction for text vector with ``HASH_KEY``.
+  It creates index with invalid section ID.
+
+* Fix a bug that ``--match_columns 'index[0] || index[9]'`` uses wrong section.
+
+* [highlighter] fix a wrong highlight bug
+  It's caused when lexicon is hash table and keyword is less than N of N-gram.
+
+* [mruby] fix a bug that real error is hidden.
+  mruby doesn't support error propagation by no argument raise.
+  https://github.com/mruby/mruby/issues/290
+
+* [:doc:`/reference/tokenizers`][TokenNgram loose]: fix a not found bug when query has only loose types.
+  ``highlight_html()`` with lexicon was also broken.
+
+* Fix a bug that text->number cast ignores trailing garbage.
+  "0garbage" should be cast error.
+
+* Fix an optimization bug for ``reference_column >= 'key_value'`` case
+
+.. _release-8-0-5:
+
+Release 8.0.5 - 2018-07-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/grn_expr/script_syntax`] Added complementary explain about similar search against Japanese documents.
+  [GitHub#858][Patch by Yasuhiro Horimoto]
+
+* [:doc:`/reference/functions/time_classify_day_of_week`] Added a new API: ``time_classify_day_of_week()``.
+
+* Suppressed a warning with ``-fstack-protector``.
+  Suggested by OBATA Akio.
+
+* Added a new API: ``time_format_iso8601()``.
+
+* Exported a struct ``grn_raw_string``.
+
+* Added a new API: ``grn_obj_clear_option_values()``.
+  It allows you to clear option values on remove (for persistent) / close (for temporary.)
+
+* [log] Reported index column name for error message ``[ii][update][one]``.
+
+* [httpd] Updated bundled nginx to 1.15.2.
+
+* [:doc:`/install/ubuntu`] Dropped Ubuntu 17.10 (Artful Aardvark) support.
+  It has reached EOL at July 19, 2018.
+
+* [:doc:`/install/debian`] Dropped jessie support.
+  Debian's security and release team will no longer produce updates for jessie.
+
+Fixes
+^^^^^
+
+* Fixed returning wrong result after unfinished ``/d/load`` data by POST.
+
+* Fixed wrong function call around KyTea.
+
+* [:doc:`/reference/executables/grndb`] Added a missing label for the ``--force-truncate`` option.
+
+* Fixed crash on closing of a database, when a normalizer provided by a plugin (ex. ``groonga-normalizer-mysql``) is used with any option.
+
+* Fixed a bug that normalizer/tokenizer options may be ignored.
+  It's occurred when the same object ID is reused.
+
+.. _release-8-0-4:
+
+Release 8.0.4 - 2018-06-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [log] Add sub error for error message ``[ii][update][one]``.
+
+* Added a new API: ``grn_highlighter_clear_keywords()``.
+
+* Added a new predicate: ``grn_obj_is_number_family_bulk()``.
+
+* Added a new API: ``grn_plugin_proc_get_value_mode()``.
+
+* [:doc:`reference/functions/vector_find`] Added a new function ``vector_find()``.
+
+* Suppress memcpy warnings in msgpack.
+
+* Updated mruby from 1.0.0 to 1.4.1.
+
+* [doc][:doc:`/reference/api/grn_obj`] Added API reference for ``grn_obj_is_index_column()``.
+
+* [windows] Suppress printf format warnings.
+
+* [windows] Suppress warning by msgpack.
+
+* [:doc:`/reference/api/grn_obj`][:doc:`/reference/api/plugin`] Added encoding converter.
+  rules:
+
+  * grn_ctx::errbuf: grn_encoding
+
+  * grn_logger_put: grn_encoding
+
+  * mruby: UTF-8
+
+  * path: locale
+
+* [mrb] Added ``LocaleOutput``.
+
+* [windows] Supported converting image path to grn_encoding.
+
+* [:doc:`/reference/tokenizers`][TokenMecab] Convert error message encoding.
+
+* [:doc:`/reference/window_functions/window_sum`] Supported dynamic column as a target column.
+
+* [doc][:doc:`/reference/api/grn_obj`] Added API reference for ``grn_obj_is_vector_column()``.
+
+* [:doc:`/reference/commands/column_create`] Added more validations.
+
+  * 1: Full text search index for vector column must have ``WITH_SECTION`` flag.
+    (Note that TokenDelmit with ``WITH_POSITION`` without ``WITH_SECTION`` is permitted.
+    It's useful pattern for tag search.)
+
+  * 2: Full text search index for vector column must not be multi column index.
+    detail: https://github.com/groonga/groonga/commit/08e2456ba35407e3d5172f71a0200fac2a770142
+
+* [:doc:`/reference/executables/grndb`] Disabled log check temporarily.
+  Because it's not completed yet.
+
+Fixes
+^^^^^
+
+* [:doc:`reference/functions/sub_filter`] Fixed too much score with a too filtered case.
+
+* Fixed build error if KyTea is installed.
+
+* [:doc:`/reference/executables/grndb`] Fixed output channel.
+
+* [query-log][show-condition] Maybe fixed a crash bug.
+
+* [highlighter][lexicon] Fixed a not highlighted bug.
+  The keyword wasn't highlighted if keyword length is less than N ("N"-gram.
+  In many cases, it's Bigram so "less than 2").
+
+* [windows] Fixed a base path detection bug.
+  If system locale DLL path includes 0x5c (``\`` in ASCII) such as "U+8868
+  CJK UNIFIED IDEOGRAPH-8868" in CP932, the base path detection is buggy.
+
+* [:doc:`/reference/tokenizers`][TokenNgram] Fixed wrong first character length.
+  It's caused for "PARENTHESIZED IDEOGRAPH" characters such as
+  "U+3231 PARENTHESIZED IDEOGRAPH STOCK".
+
+.. _release-8-0-3:
+
+Release 8.0.3 - 2018-05-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/functions/highlight_html`] Support highlight of results of
+  the search by ``NormalizerNFKC100`` or ``TokenNgram``.
+
+* [:doc:`/reference/tokenizers`] Added new option for ``TokenNgram`` that
+  ``report_source_location option`` .
+  This option used when highlighting with ``highlight_html`` use a lexicon.
+
+* [:doc:`/reference/normalizers`] Added new option for ``NormalizerNFKC100`` that
+  ``unify_middle_dot option``.
+  This option normalizes middle dot. You can search with or without ``・``
+  (middle dot) and regardless of ``・`` position.
+
+* [:doc:`/reference/normalizers`] Added new option for ``NormalizerNFKC100`` that
+  ``unify_katakana_v_sounds option``.
+  This option normalizes ``ヴァヴィヴヴェヴォ`` (katakana) to ``バビブベボ`` (katakana).
+  For example, you can search ``バイオリン`` (violin) in ``ヴァイオリン`` (violin).
+
+* [:doc:`/reference/normalizers`] Added new option for ``NormalizerNFKC100`` that
+  ``unify_katakana_bu_sound option``.
+  This option normalizes ``ヴァヴィヴゥヴェヴォ`` (katakana) to ``ブ`` (katakana).
+  For example, you can search ``セーブル`` (katakana) and ``セーヴル`` in
+  ``セーヴェル`` (katakana).
+
+* [:doc:`reference/functions/sub_filter`] Supported ``sub_filter`` optimization
+  for the too filter case.
+  this optimize is valid when records are enough narrowed down before
+  ``sub_filter`` execution as below.
+
+* [:doc:`/reference/executables/groonga-httpd`] Made all workers context address
+  to unique.
+  context address is ``#{ID}`` of below query log.
+
+  | #{TIME_STAMP}|#{MESSAGE}
+  | #{TIME_STAMP}|#{ID}|>#{QUERY}
+  | #{TIME_STAMP}|#{ID}|:#{ELAPSED_TIME} #{PROGRESS}
+  | #{TIME_STAMP}|#{ID}|<#{ELAPSED_TIME} #{RETURN_CODE}
+
+* [:doc:`/reference/commands/delete`] Added new options that ``limit``.
+  You can limit the number of delete records as below example.
+  ``delete --table Users --filter '_key @^ "b"' --limit 4``
+
+* [httpd] Updated bundled nginx to 1.14.0.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/commands/logical_select`] Fixed memory leak when an error occurs
+  in filtered dynamic columns.
+
+* [:doc:`/reference/commands/logical_count`] Fixed memory leak on initial dynamic
+  column error.
+
+* [:doc:`/reference/commands/logical_range_filter`] Fixed memory leak when an error
+  occurs in dynamic column evaluation.
+
+* [:doc:`/reference/tokenizers`] Fixed a bug that the wrong ``source_offset`` when a
+  loose tokenizing such as ``loose_symbol`` option.
+
+* [:doc:`/reference/normalizers`] Fixed a bug that FULLWIDTH LATIN CAPITAL LETTERs
+  such as ``U+FF21 FULLWIDTH LATIN CAPITAL LETTER A`` aren't normalized to LATIN SMALL
+  LETTERs such as ``U+0061 LATIN SMALL LETTER A``.
+  If you have been used ``NormalizerNFKC100`` , you must recreate your indexes.
+
+.. _release-8-0-2:
+
+Release 8.0.2 - 2018-04-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/executables/grndb`][:ref:`grndb-force-truncate`] Improved
+  ``grndb recover --force-truncate`` option that it can be truncated even if
+  locks are left on the table.
+
+* [:doc:`/reference/commands/logical_range_filter`] Added ``sort_keys`` option.
+
+* Added a new function ``time_format()``.
+  You can specify time format against a column of ``Time`` type.
+  You can specify with use format of ``strftime`` .
+
+* [:doc:`/reference/tokenizers`] Support new tokenizer ``TokenNgram``.
+  You can change its behavior dynamically via options.
+  Here is a list of available options:
+
+    * ``n`` : "N" of Ngram. For example, "3" for trigram.
+    * ``loose_symbol`` : Tokenize keywords including symbols, to be searched
+      by both queries with/without symbols. For example, a keyword
+      "090-1111-2222" will be found by any of "09011112222", "090", "1111",
+      "2222" and "090-1111-2222".
+    * ``loose_blank`` : Tokenize keywords including blanks, to be searched
+      by both queries with/without blanks. For example, a keyword
+      "090 1111 2222" will be found by any of "09011112222", "090", "1111",
+      "2222" and "090 1111 2222".
+    * ``remove_blank`` : Tokenize keywords including blanks, to be searched
+      by queries without blanks. For example, a keyword "090 1111 2222" will
+      be found by any of "09011112222", "090", "1111" or "2222". Note that
+      the keyword won't be found by a query including blanks like
+      "090 1111 2222".
+
+* [:doc:`/reference/normalizers`] Support new normalizer "NormalizerNFKC100" based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 10.0.
+
+* [:doc:`/reference/normalizers`] Support options for "NormalizerNFKC51" and "NormalizerNFKC100" normalizers.
+  You can change their behavior dynamically.
+  Here is a list of available options:
+
+    * ``unify_kana`` : Same pronounced characters in all of full-width
+      Hiragana, full-width Katakana and half-width Katakana are regarded as
+      the same character.
+    * ``unify_kana_case`` : Large and small versions of same letters in all of
+      full-width Hiragana, full-width Katakana and half-width Katakana are
+      regarded as the same character.
+    * ``unify_kana_voiced_sound_mark`` : Letters with/without voiced sound
+      mark and semi voiced sound mark in all of full-width Hiragana,
+      full-width Katakana and half-width Katakana are regarded as the same
+      character.
+    * ``unify_hyphen`` : The characters like hyphen are regarded as the hyphen.
+    * ``unify_prolonged_sound_mark`` : The characters like prolonged sound mark
+      are regarded as the prolonged sound mark.
+    * ``unify_hyphen_and_prolonged_sound_mark`` : The characters like hyphen
+      and prolonged sound mark are regarded as the hyphen.
+
+* [:doc:`/reference/commands/dump`] Support output of tokenizer's options and
+  normalizer's options. Groonga 8.0.1 and earlier versions cannot import dump
+  including options for tokenizers or normalizers generated by Groonga 8.0.2
+  or later, and it will occurs error due to unsupported information.
+
+* [:doc:`/reference/commands/schema`] Support output of tokenizer's options and
+  normalizer's options. Groonga 8.0.1 and earlier versions cannot import schema
+  including options for tokenizers or normalizers generated by Groonga 8.0.2
+  or later, and it will occurs error due to unsupported information.
+
+* Supported Ubuntu 18.04 (Bionic Beaver)
+
+Fixes
+^^^^^
+
+* Fixed a bug that unexpected record is matched with space only query.
+  [groonga-dev,04609][Reported by satouyuzh]
+
+* Fixed a bug that wrong scorer may be used.
+  It's caused when multiple scorers are used as below.
+  ``--match_columns 'title || scorer_tf_at_most(content, 2.0)'``.
+
+* Fixed a bug that it may also take so much time to change "thread_limit".
+
+Thanks
+^^^^^^
+
+* satouyuzh
+
+.. _release-8-0-1:
+
+Release 8.0.1 - 2018-03-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/log`] Show ``filter`` conditions in query log.
+  It's disabled by default. To enable it, you need to set an environment
+  variable ``GRN_QUERY_LOG_SHOW_CONDITION=yes``.
+
+* Install ``*.pdb`` into the directory where ``*.dll`` and ``*.exe``
+  are installed.
+
+* [:doc:`/reference/commands/logical_count`] Support ``filtered``
+  stage dynamic columns.
+
+* [:doc:`/reference/commands/logical_count`]
+  [:ref:`logical-count-post-filter`] Added a new filter timing.
+  It's executed after ``filtered`` stage columns are generated.
+
+* [:doc:`/reference/commands/logical_select`]
+  [:ref:`logical-select-post-filter`] Added a new filter timing.
+  It's executed after ``filtered`` stage columns are generated.
+
+* Support LZ4/Zstd/zlib compression for vector data.
+
+* Support alias to accessor such as ``_key``.
+
+* [:doc:`/reference/commands/logical_range_filter`] Optimize
+  window function for large result set.
+  If we find enough matched records, we don't apply window function
+  to the remaining windows.
+
+  TODO: Disable this optimization for small result set if its overhead
+  is not negligible. The overhead is not evaluated yet.
+
+* [:doc:`/reference/commands/select`] Added ``match_escalation`` parameter.
+  You can force to enable match escalation by ``--match_escalation yes``.
+  It's stronger than ``--match_escalation_threshold 99999....999``
+  because ``--match_escalation yes`` also works with
+  ``SOME_CONDITIONS && column @ 'query'``.
+  ``--match_escalation_threshold`` isn't used in this case.
+
+  The default is ``--match_escalation auto``. It doesn't change the
+  current behavior.
+
+  You can disable match escalation by ``--match_escalation no``.
+  It's the same as ``--match_escalation_threshold -1``.
+
+* [httpd] Updated bundled nginx to 1.13.10.
+
+Fixes
+^^^^^
+
+* Fixed memory leak that occurs when a prefix query doesn't match any token.
+  [GitHub#820][Patch by Naoya Murakami]
+
+* Fixed a bug that a cache for different databases is used when
+  multiple databases are opened in the same process.
+
+* Fixed a bug that a wrong index is constructed.
+  This occurs only when the source of a column is a vector column and
+  ``WITH_SECTION`` isn't specified.
+
+* Fixed a bug that a constant value can overflow or underflow in
+  comparison (>,>=,<,<=,==,!=).
+
+Thanks
+^^^^^^
+
+* Naoya Murakami
+
+.. _release-8-0-0:
+
+Release 8.0.0 - 2018-02-09
+--------------------------
+
+This is a major version up! But It keeps backward compatibility.
+You can upgrade to 8.0.0 without rebuilding database.
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/select`] Added ``--drilldown_adjuster`` and
+  ``--drilldowns[LABEL].adjuster``.
+  You can adjust score against result of drilldown.
+
+* [:ref:`online-index-construction`] Changed environment variable name
+  ``GRN_II_REDUCE_EXPIRE_ENABLE`` to ``GRN_II_REDUCE_EXPIRE_THRESHOLD``.
+
+  ``GRN_II_REDUCE_EXPIRE_THRESHOLD=0 == GRN_II_REDUCE_EXPIRE_ENABLE=no``.
+  ``GRN_II_REDUCE_EXPIRE_THRESHOLD=-1`` uses
+  ``ii->chunk->max_map_seg / 2`` as threshold.
+  ``GRN_II_REDUCE_EXPIRE_THRESHOLD > 0`` uses
+  ``MIN(ii->chunk->max_map_seg / 2, GRN_II_REDUCE_EXPIRE_THRESHOLD)``
+  as threshold.
+  ``GRN_II_REDUCE_EXPIRE_THRESHOLD=32`` is the default.
+
+* [:doc:`/reference/functions/between`] Accept ``between()`` without borders.
+  If the number of arguments passed to ``between()`` is 3, the 2nd and 3rd
+  arguments are handled as the inclusive edges. [GitHub#685]
+
+Fixes
+^^^^^
+
+* Fixed a memory leak for normal hash table.
+  [GitHub:mroonga/mroonga#190][Reported by fuku1]
+
+* Fix a memory leak for normal array.
+
+* [:doc:`/reference/commands/select`] Stopped to cache when ``output_columns``
+  uses not stable function.
+
+* [Windows] Fixed wrong value report on ``WSASend`` error.
+
+Thanks
+^^^^^^
+
+* fuku1

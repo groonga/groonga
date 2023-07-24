@@ -1,0 +1,693 @@
+News - 9 series
+===============
+
+.. _release-9-1-2:
+
+Release 9.1.2 - 2020-01-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [tools] Added a script for copying only files of specify tables or columns.
+
+  * This script name is copy-related-files.rb.
+  * This script is useful if we want to extract specifying tables or columns from a huge database.
+  * Related files of specific tables or columns may need for reproducing fault.
+  * If we difficult to offer a database whole, we can extract related files of target tables or columns by this tool. 
+
+* [:doc:`reference/commands/shutdown`] Accept ``/d/shutdown?mode=immediate`` immediately even when all threads are used.
+
+  * This feature can only use on the Groonga HTTP server.
+
+* Unused objects free immediately by using ``GRN_ENABLE_REFERENCE_COUNT=yes``.
+
+  * This feature is experimental. Performance degrade by this feature.
+  * If we load to span many tables, we can expect to keep in the usage of memory by this feature.
+
+* [:doc:`/install/centos`] We prepare ``groonga-release`` by version.
+
+  * Note that the little modification how to install.
+
+* [:doc:`/install/debian`] We use ``groonga-archive-keyring`` for adding the Groonga apt repository.
+
+  * We can easy to add the Groonga apt repository to our system by this improvement.
+  * ``groonga-archive-keyring`` includes all information for using the Groonga apt repository. Thus, we need not be conscious of changing of repository information or PGP key by installing this package.
+  * ``groonga-archive-keyring`` is deb package. Thus, we can easy to update by ``apt update``.
+
+.. _release-9-1-1:
+
+Release 9.1.1 - 2020-01-07
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/load`] Added support for Apache Arrow format data.
+
+  * If we use Apache Arrow format data, we may reduce parse cost. Therefore, data might be loading faster than other formats.
+  * Groonga can also directly input data for Apache Arrow format from other data analysis systems by this improvement.
+  * However, Apache Arrow format can use in the HTTP interface only. We can't use it in the command line interface.
+
+* [:doc:`/reference/commands/load`] Added how to load Apache Arrow format data in the document.
+
+* [:doc:`/reference/commands/load`] Improve error message.
+
+  * Response of ``load`` command includes error message also.
+  * If we faile data load, Groonga output error detail of ``load`` command by this Improvement.
+
+* [httpd] Updated bundled nginx to 1.17.7.
+
+* [:doc:`reference/executables/groonga-server-http`] Added support for sending command parameters by body of HTTP request.
+
+  * We must set ``application/x-www-form-urlencoded`` to ``Content-Type`` for this case.
+
+* [:doc:`reference/executables/groonga-server-http`] Added how to use HTTP POST in the document.
+
+.. _release-9-1-0:
+
+Release 9.1.0 - 2019-11-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Improved the performance of the "&&" operation.
+
+  * For example, the performance of condition expression such as the following is increased.
+
+  * ( A || B ) && ( C || D ) && ( E || F) ...
+
+* [:doc:`/reference/tokenizers/token_mecab`] Added a new option ``use_base_form``
+
+  * We can search using the base form of a token by this option.
+
+  * For example, if we search "支えた" using this option, "支える" is hit also.
+
+Fixes
+^^^^^
+
+* Fix a bug that when the accessor is index, performance decreases.
+
+  * For example, it occurs with the query include the following conditions.
+
+    * ``accessor @ query``
+
+    * ``accessor == query``
+
+* Fixed a bug the estimated size of a search result was overflow when the buffer is big enough. [PGroonga#GitHub#115][Reported by Albert Song]
+
+* Improved a test(1) portability. [GitHub#1065][Patched by OBATA Akio]
+
+* Added missing tools.
+
+  * Because ``index-column-diff-all.sh`` and ``object-inspect-all.sh`` had not bundled in before version.
+
+Thanks
+^^^^^^
+
+* Albert Song
+
+* OBATA Akio
+
+.. _release-9-0-9:
+
+Release 9.0.9 - 2019-10-30
+--------------------------
+
+.. note::
+
+    Maybe performance decreases from this version.
+    Therefore, If performance decreases than before, please report us with reproducible steps.
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/log`] Improved that output the sending time of response into query-log.
+
+* [:doc:`reference/commands/status`] Added that the number of current jobs in the ``status`` command response.
+
+* [:doc:`reference/executables/groonga-httpd`] Added support for ``$request_time`` in log.
+
+  * In the previous version, even if we specified the ``$request_time`` in the ``log_format`` directive, it was always 0.00.
+  * If we specify the ``$request_time``, groonga-httpd output the correct time form this version.
+
+* [:doc:`reference/executables/groonga-httpd`] Added how to set the ``$request_time`` in the document.
+
+* Supported Ubuntu 19.10 (Eoan Ermine)
+
+* Supported CentOS 8 (experimental)
+
+  * The package for CentOS 8 can't use a part of features(e.g. we can't use ``TokenMecab`` and can't cast to int32 vector from JSON string) for lacking some packages for development.
+
+* [tools] Added a script for executing the ``index_column_diff`` command simply.
+
+  * This script name is index-column-diff-all.sh.
+  * This script extracts index columns form Groonga's database and execute the ``index_column_diff`` command to them.
+
+* [tools] Added a script for executing ``object_inspect`` against
+  all objects.
+
+  * This script name is object-inspect-all.sh.
+
+Fixes
+^^^^^
+
+* Fixed a bug that Groonga crash when we specify the value as the first argument of between.[GitHub#1045][Reported by yagisumi]
+
+Thanks
+^^^^^^
+
+* yagisumi
+
+.. _release-9-0-8:
+
+Release 9.0.8 - 2019-09-27
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/log_reopen`] Added a supplementary explanation when we use ``groonga-httpd`` with 2 or more workers.
+
+* Improved that Groonga ignores the index being built.
+
+  * We can get correct search results even if the index is under construction.
+
+  * However, the search is slow because of Groonga out of use the index to search in this case.
+
+* [:doc:`reference/functions/sub_filter`] Added a feature that ``sub_filter`` executes a sequential search when Groonga is building indexes for the target column or the target column hasn't indexed.
+
+  * ``sub_filter`` was an error if the above situation in before
+    version.
+  * From this version, ``sub_filter`` returns search results if the above situation.
+  * However if the above situation, ``sub_filter`` is slow. Because it is executed as a sequential search.
+
+* [:doc:`/install/centos`] Dropped 32-bit package support on CentOS 6.
+
+Fixes
+^^^^^
+
+* [:doc:`reference/commands/logical_range_filter`] Fixed a bug that exception about closing the same object twice occurs when we have enough records and the number of records that unmatch filter search criteria is more than the estimated value of it.
+
+.. _release-9-0-7:
+
+Release 9.0.7 - 2019-08-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [httpd] Updated bundled nginx to 1.17.3.
+
+  * Contains security fix for CVE-2019-9511, CVE-2019-9513, and CVE-2019-9516.
+
+Fixes
+^^^^^
+
+* Fixed a bug that Groonga crash when posting lists were huge.
+
+  * However, this bug almost doesn't occur by general data. Because posting lists don't grow bigger so much by them.
+
+* Fixed a bug that returns an empty result when we specify ``initial`` into a stage of a dynamic column and search for using index. [GitHub#683]
+
+* Fixed a bug that the configure phase didn't detect libedit despite installing it. [GitHub#1030][Patched by yu]
+
+* Fixed a bug that ``--offset`` and ``--limit`` options didn't work
+  with ``--sort_keys`` and ``--slices`` options. [clear-code/redmine_full_text_search#70][Reported by a9zawa]
+
+* Fixed a bug that search result is empty when the result of ``select`` command is huge. [groonga-dev,04770][Reported by Yutaro Shimamura]
+
+* Fixed a bug that doesn't use a suitable index when prefix search and suffix search. [GitHub#1007, PGroonga#GitHub#96][Reported by oknj]
+
+Thanks
+^^^^^^
+
+* oknj
+
+* Yutaro Shimamura
+
+* yu
+
+* a9zawa
+
+.. _release-9-0-6:
+
+Release 9.0.6 - 2019-08-05
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added support for Debian 10 (buster).
+
+Fixes
+^^^^^
+
+* [:doc:`reference/commands/select`] Fixed a bug that search is an error when occurring search escalation.
+
+* [:doc:`reference/commands/select`] Fixed a bug that may return wrong search results when we use nested equal condition.
+
+* [geo_distance_location_rectangle] Fixed an example that has wrong ``load`` format. [GitHub#1023][Patched by yagisumi]
+
+* [:doc:`tutorial/micro_blog`] Fixed an example that has wrong search results. [GutHub#1024][Patched by yagisumi]
+
+Thanks
+^^^^^^
+
+* yagisumi
+
+.. _release-9-0-5:
+
+Release 9.0.5 - 2019-07-30
+--------------------------
+
+.. warning::
+   There are some critical bugs are found in this release. ``select`` command returns wrong search results.
+   We will release the new version (9.0.6) which fixes the issues.
+   Please do not use Groonga 9.0.5, and recommends to upgrade to 9.0.6 in the future.
+   The detail of this issues are explained at https://groonga.org/en/blog/2019/07/30/groonga-9.0.5.html.
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/logical_range_filter`] Improved that only apply an optimization when the search target shard is large enough.
+
+  * This feature reduces that duplicate search result between offset when we use same sort key.
+  * Large enough threshold is 10000 records by default.
+
+* [:doc:`/reference/normalizers`] Added new option ``unify_to_katakana`` for ``NormalizerNFKC100``.
+
+  * This option normalize hiragana to katakana.
+  * For example, ``ゔぁゔぃゔゔぇゔぉ`` is normalized to ``ヴァヴィヴヴェヴォ``.
+
+* [:doc:`reference/commands/select`] Added drilldowns support as a slices parameter.
+
+* [:doc:`reference/commands/select`] Added columns support as a slices parameter.
+
+* [:doc:`reference/commands/select`] Improved that we can refer ``_score`` in the initial stage for slices parameter.
+
+* [:doc:`/reference/functions/highlight_html`], [:doc:`reference/functions/snippet_html`] Improved that extract a keyword also from an expression of before executing a slices when we specify the slices parameter.
+
+* Improved that collect scores also from an expression of before executing a slices when we specify the slices parameter.
+
+* Stopped add 1 in score automatically when add posting to posting list.
+
+  * ``grn_ii_posting_add`` is backward incompatible changed by this change.
+    * Caller must increase the score to maintain compatibility.
+
+* Added support for index search for nested equal like ``XXX.YYY.ZZZ == AAA``.
+
+* Reduce rehash interval when we use hash table.
+
+  * This feature improve performance for output result.
+
+* Improved to we can add tag prefix in the query log.
+
+  * We become easy to understand that it is filtered which the condition.
+
+* Added support for Apache Arrow 1.0.0.
+
+  * However, It's not released this version yet.
+
+* Added support for Amazon Linux 2.
+
+Fixes
+^^^^^
+
+* Fixed a bug that vector values of JSON like ``"[1, 2, 3]"`` are not indexed.
+
+* Fixed wrong parameter name in ``table_create`` tests. [GitHub#1000][Patch by yagisumi]
+
+* Fixed a bug that drilldown label is empty when a drilldown command is executed by ``command_version=3``. [GitHub#1001][Reported by yagisumi]
+
+* Fixed build error for Windows package on MinGW.
+
+* Fixed install missing COPYING for Windows package on MinGW.
+
+* Fixed a bug that don't highlight when specifing non-text query as highlight target keyword.
+
+* Fixed a bug that broken output of MessagePack format of [:doc:`/reference/commands/object_inspect`]. [GitHub#1009][Reported by yagisumi]
+
+* Fixed a bug that broken output of MessagePack format of ``index_column_diff``. [GitHub#1010][Reported by yagisumi]
+
+* Fixed a bug that broken output of MessagePack format of [:doc:`reference/commands/suggest`]. [GitHub#1011][Reported by yagisumi]
+
+* Fixed a bug that allocate size by realloc isn't enough when a search for a table of patricia trie and so on. [Reported by Shimadzu Corporation]
+
+  * Groonga may be crashed by this bug.
+
+* Fix a bug that ``groonga.repo`` is removed when updating 1.5.0 from ``groonga-release`` version before 1.5.0-1. [groonga-talk:429][Reported by Josep Sanz]
+
+Thanks
+^^^^^^
+
+* yagisumi
+
+* Shimadzu Corporation
+
+* Josep Sanz
+
+.. _release-9-0-4:
+
+Release 9.0.4 - 2019-06-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added support for array literal with multiple elements.
+
+* Added support equivalence operation of a vector.
+
+* [:doc:`reference/commands/logical_range_filter`] Increase outputting logs into query log.
+
+  * ``logical_range_filter`` command comes to output a log for below timing.
+
+    * After filtering by ``logical_range_filter``.
+    * After sorting by ``logical_range_filter``.
+    * After applying dynamic column.
+    * After output results.
+
+  * We can see how much has been finished this command by this feature.
+
+* [:doc:`/reference/tokenizers`] Added document for ``TokenPattern`` description.
+
+* [:doc:`/reference/tokenizers`] Added document for ``TokenTable`` description.
+
+* [:doc:`/reference/tokenizers`] Added document for ``TokenNgram`` description.
+
+* [:doc:`reference/executables/grndb`] Added output operation log into groonga.log
+
+  * ``grndb`` command comes to output execution result and execution process.
+
+* [:doc:`reference/executables/grndb`] Added support for checking empty files.
+
+  * We can check if the empty files exist by this feature.
+
+* [:doc:`reference/executables/grndb`] Added support new option ``--since``
+
+  * We can specify a scope of an inspection.
+
+* [:doc:`reference/executables/grndb`] Added document about new option ``--since``    
+
+* Bundle RapidJSON
+
+  * We can use RapidJson as Groonga's JSON parser partly. (This feature is partly yet)
+  * We can more exactly parse JSON by using this.
+
+* Added support for casting to int32 vector from JSON string.
+
+  * This feature requires RapidJSON.
+
+* [:doc:`reference/functions/query`] Added ``default_operator``.
+
+  * We can customize operator when "keyword1 keyword2".
+  * "keyword1 Keyword2" is AND operation in default.
+  * We can change "keyword1 keyword2"'s operator except AND.
+
+Fixes
+^^^^^
+
+* [optimizer] Fix a bug that execution error when specified multiple filter conditions and like ``xxx.yyy=="keyword"``.
+
+* Added missing LICENSE files in Groonga package for Windows(VC++ version).
+
+* Added UCRT runtime into Groonga package for Windows(VC++ version).
+
+* [:doc:`/reference/window_function`] Fix a memory leak.
+
+  * This occurs when multiple windows with sort keys are used. [Patched by Takashi Hashida]
+
+Thanks
+^^^^^^
+
+* Takashi Hashida
+
+.. _release-9-0-3:
+
+Release 9.0.3 - 2019-05-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`reference/commands/select`] Added more query logs.
+
+  * ``select`` command comes to output a log for below timing.
+
+    * After sorting by drilldown.
+    * After filter by drilldown.
+
+  * We can see how much has been finished this command by this feature.
+
+* [:doc:`reference/commands/logical_select`] Added more query logs.
+
+  * ``logical_select`` command comes to output a log for below timing.
+
+    * After making dynamic columns.
+    * After grouping by drilldown.
+    * After sorting by drilldown.
+    * After filter by drilldown.
+    * After sorting by ``logical_select``.
+
+  * We can see how much has been finished this command by this feature.
+
+* [:doc:`reference/commands/logical_select`] Improved performance of sort a little when we use ``limit`` option.
+
+* [index_column_diff] Improved performance.
+
+  * We have greatly shortened the execution speed of this command.
+
+* [index_column_diff] Improved ignore invalid reference.
+
+* [index_column_diff] Added support for duplicated vector element case.
+
+* [Normalizers] Added a new Normalizer ``NormalizerNFKC121`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 12.1.
+
+* [TokenFilters] Added a new TokenFilter ``TokenFilterNFKC121`` based on Unicode NFKC (Normalization Form Compatibility Composition) for Unicode 12.1.
+
+* [:doc:`reference/executables/grndb`] Added a new option ``--log-flags``
+
+  * We can specify output items of a log as with groonga executable file.
+  * See [:doc:`reference/executables/groonga`] to know about supported log flags.
+
+* [:doc:`reference/functions/snippet_html`] Added a new option for changing a return value when no match by search.
+
+* [:doc:`reference/commands/plugin_unregister`] Added support full path of Windows.
+
+* Added support for multiline log message.
+
+  * The multiline log message is easy to read by this feature.
+
+* Output key in Groonga's log when we search by index.
+
+* [:doc:`tutorial/match_columns`] Added a document for indexes with weight.
+
+* [:doc:`reference/commands/logical_range_filter`] Added a explanation for ``order`` parameter.
+
+* [:doc:`reference/commands/object_inspect`] Added an explanation for new statistics ``INDEX_COLUMN_VALUE_STATISTICS_NEXT_PHYSICAL_SEGMENT_ID`` and ``INDEX_COLUMN_VALUE_STATISTICS_N_PHYSICAL_SEGMENTS``.
+
+* Dropped Ubuntu 14.04 support.
+
+Fixes
+^^^^^
+
+* [index_column_diff] Fixed a bug that too much ``remains`` are reported.
+
+* Fixed a build error when we use ``--without-onigmo`` option. [GitHub#951] [Reported by Tomohiro KATO]
+
+* Fixed a vulnerability of "CVE: 2019-11675". [Reported by Wolfgang Hotwagner]
+
+* Removed extended path prefix ``\\?\`` at Windows version of Groonga. [GitHub#958] [Reported by yagisumi]
+
+  * This extended prefix causes a bug that plugin can't be found correctly.
+
+Thanks
+^^^^^^
+
+* Tomohiro KATO
+* Wolfgang Hotwagner
+* yagisumi
+
+.. _release-9-0-2:
+
+Release 9.0.2 - 2019-04-29
+--------------------------
+
+We provide a package for Windows made from VC++ from this release.
+
+We also provide a package for Windows made form MinGW as in the past.
+However, we will provide it made from VC++ instead of making from MinGW sooner or later.
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/commands/column_create`] Added a new flag ``INDEX_LARGE`` for index column.
+
+  * We can make an index column has space that two times of default by this flag.
+  * However, note that it also uses two times of memory usage.
+  * This flag useful when index target data are large.
+  * Large data must have many records (normally at least 10 millions records) and at least one of the following features.
+
+    * Index targets are multiple columns
+    * Index table has tokenizer
+
+* [:doc:`/reference/commands/object_inspect`] Added a new statistics ``next_physical_segment_id`` and ``max_n_physical_segments`` for physical segment information.
+
+  * We can confirm usage of index column space and max value of index column space by this information.
+
+* [:doc:`/reference/commands/logical_select`] Added support for window function over shard.
+
+* [:doc:`/reference/commands/logical_range_filter`] Added support for window function over shard.
+
+* [:doc:`/reference/commands/logical_count`] Added support for window function over shard.
+
+* We provided a package for Windows made from VC++.
+
+* [:doc:`/reference/commands/io_flush`] Added a new option ``--recursive dependent``
+
+  * We can all of the specified flush target object, child objects, corresponding table of an index column and corresponding index column are flush target objects.
+
+Fixes
+^^^^^
+
+* Fixed "unknown type name 'bool'" compilation error in some environments.
+
+* Fixed a bug that incorrect output number over Int32 by command of execute via mruby (e.g. ``logical_select``, ``logical_range_filter``, ``logical_count``, etc.). [GitHub#936] [Patch by HashidaTKS]
+
+Thanks
+^^^^^^
+
+* HashidaTKS
+
+.. _release-9-0-1:
+
+Release 9.0.1 - 2019-03-29
+--------------------------
+
+Improvements
+^^^^^^^^^^^^
+
+* Added support to acccept null for vector value.
+
+  * You can use `select ... --columns[vector].flags COLUMN_VECTOR --columns[vector].value "null"`
+
+* [:doc:`/reference/commands/dump`] Translated document into English.
+
+* Added more checks and logging for invalid indexes. It helps to clarify the index related bugs.
+
+* Improved an explanation about ``GRN_TABLE_SELECT_ENOUGH_FILTERED_RATIO`` behavior in news at :ref:`release-8-0-6`.
+
+* [:doc:`/reference/commands/select`] Added new argument ``--load_table``, ``--load_columns`` and ``--load_values``.
+
+  * You can store a result of ``select`` in a table that specifying ``--load_table``.
+
+  * ``--load_values`` option specifies columns of result of ``select``.
+
+  * ``--load_columns`` options specifies columns of table that specifying ``--load_table``.
+
+  * In this way, you can store values of columns that specifying with ``--load_values`` into columns that specifying with ``--load_columns``.
+
+* [:doc:`/reference/commands/select`] Added documentation about ``load_table``, ``load_columns`` and ``load_values``.
+
+* [:doc:`/reference/commands/load`] Added supoort to display a table of load destination in a query log.
+
+  * A name of table of load destination display as string in ``[]`` as below.
+
+  * ``:000000000000000 load(3): [LoadedLogs][3]``
+
+* Added a new API:
+
+  * ``grn_ii_get_flags()``
+
+  * ``grn_index_column_diff()``
+
+  * ``grn_memory_get_usage()``
+
+* Added ``index_column_diff`` command to check broken index column. If you want to log progress of command execution, set log level to debug.
+
+Fixes
+^^^^^
+
+* [:doc:`/reference/functions/snippet_html`] Changed to return an empty vector for no match.
+
+  * In such a case, an empty vector ``[]`` is returned instead of ``null``.
+
+* Fixed a warning about possibility of counting threads overflow.
+  In real world, it doesn't affect user because enourmous number of threads is not used. [GitHub#904]
+
+* Fixed build error on macOS [GitHub#909] [Reported by shiro615]
+
+* Fixed a stop word handling bug.
+
+  * This bug occurs when we set the first token as a stop word in our query.
+
+  * If this bug occurs, our search query isn't hit.
+
+* [:doc:`/reference/api/global_configurations`] Fixed a typo about parameter name of ``grn_lock_set_timeout``.
+
+* Fixed a bug that deleted records may be matched because of updating indexes incorrectly.
+
+  * It may occure when large number of records is added or deleted.
+
+* Fixed a memory leak when ``logical_range_filter`` returns no records. [GitHub#911] [Patch by HashidaTKS]
+
+* Fixed a bug that query will not match because of loading data is not normalized correctly.
+  [PGroonga#GitHub#93, GitHub#912,GitHub#913] [Reported by kamicup and dodaisuke]
+
+  * This bug occurs when load data contains whitespace after KATAKANA and ``unify_kana`` option is used for normalizer.
+
+* Fixed a bug that an indexes is broken during updating indexes.
+
+  * It may occurs when repeating to add large number of records or delete them for a long term.
+
+* Fixed a crash bug that allocated working area is not enough size when updating indexes.
+
+Thanks
+^^^^^^
+
+* shiro615
+
+* HashidaTKS
+
+* kamicup
+
+* dodaisuke
+
+.. _release-9-0-0:
+
+Release 9.0.0 - 2019-02-09
+--------------------------
+
+This is a major version up! But It keeps backward compatibility.
+You can upgrade to 9.0.0 without rebuilding database.
+
+Improvements
+^^^^^^^^^^^^
+
+* [:doc:`/reference/tokenizers`] Added a new tokenizer ``TokenPattern``.
+
+  * You can extract tokens by regular expression.
+
+    * This tokenizer extracts only token that matches the regular expression.
+
+  * You can also specify multiple patterns of regular expression.
+
+* [:doc:`/reference/tokenizers`] Added a new tokenizer ``TokenTable``.
+
+  * You can extract tokens by a value of columns of existing a table.
+
+* [:doc:`/reference/commands/dump`] Added support for dumping binary data.
+
+* [:doc:`/reference/commands/select`] Added support for similer search against index column.
+
+  * If you have used multi column index, you can similar search against all source columns by this feature.
+
+* [:doc:`/reference/normalizers`] Added new option ``remove_blank`` for ``NormalizerNFKC100``.
+
+  * This option remove white spaces.
+
+* [:doc:`/reference/executables/groonga`] Improve display of thread id in log.
+
+  * Because It was easy to confuse thread id and process id on Windows version, it made clear which is a thread id or a process id.
