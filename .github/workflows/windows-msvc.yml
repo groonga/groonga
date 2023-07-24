@@ -269,13 +269,14 @@ jobs:
 
       # Release
       - name: Upload the artifacts to release
-        uses: softprops/action-gh-release@v1
         if: |
           startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            ${{ env.INSTALL_FOLDER }}.zip
-            ${{ env.INSTALL_FOLDER_WITH_VCRUNTIME }}.zip
+        run: |
+          gh release upload ${Env:GITHUB_REF_NAME} `
+            ${Env:INSTALL_FOLDER}.zip `
+            ${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       # Test
       - name: Update MSYS2

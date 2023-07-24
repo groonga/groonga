@@ -78,13 +78,35 @@ jobs:
 
       # Release
       - name: Upload to release
-        uses: softprops/action-gh-release@v1
         if: |
           startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            groonga-*.tar.gz
+        run: |
+          (cd doc/source/news && \
+           ruby \
+             -e 'print("## Groonga "); \
+                 puts(ARGF.read.split(/^## Release /)[1]. \
+                        gsub(/{doc}`(.+?)`/) { \
+                          id = $1; \
+                          title = id.split("\/").last; \
+                          path = id.delete_prefix("/"); \
+                          url = "https://groonga.org/docs/#{path}.html"; \
+                          "[#{title}](#{url})"; \
+                        }. \
+                        gsub(/\[(.+?)\]\[.+?\]/) {$1}.
+                        strip)' \
+             $(ls *.md | sort --human-numeric-sort | tail -n1)) > \
+            release-note.md
+          title="$(head -n1 release-note.md | sed -e 's/^## //')"
+          tail -n +2 release-note.md > release-note-without-version.md
+          gh release create ${GITHUB_REF_NAME} \
+            --discussion-category Releases \
+            --notes-file release-note-without-version.md \
+            --title "${title}" \
+            groonga-*.tar.gz \
             groonga-*.zip
+        env:
+          GH_TOKEN: ${{ github.token }}
+
   build:
     name: Build
     needs: source
@@ -217,12 +239,13 @@ jobs:
         run: |
           tar czf ${{ matrix.id }}.tar.gz packages/${{ matrix.task-namespace }}/repositories/
       - name: Upload to release
-        uses: softprops/action-gh-release@v1
         if: |
           startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
+        run: |
+          gh release upload ${GITHUB_REF_NAME} \
             ${{ matrix.id }}.tar.gz
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       # Test
       - name: Test
