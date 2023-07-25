@@ -273,8 +273,8 @@ jobs:
           startsWith(github.ref, 'refs/tags/')
         run: |
           gh release upload ${Env:GITHUB_REF_NAME} `
-            ${Env:INSTALL_FOLDER}.zip `
-            ${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip
+            "${Env:INSTALL_FOLDER}.zip" `
+            "${Env:INSTALL_FOLDER_WITH_VCRUNTIME}.zip"
         env:
           GH_TOKEN: ${{ github.token }}
 
