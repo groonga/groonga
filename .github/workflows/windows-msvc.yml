@@ -118,7 +118,7 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: |
-            ccache
+            AppData/Local/ccache
           key: source-${{ matrix.vs-version }}-${{ matrix.vc-architecture }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
           restore-keys: source-${{ matrix.vs-version }}-${{ matrix.vc-architecture }}-ccache-
       - name: Prepare ccache
