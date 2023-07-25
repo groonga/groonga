@@ -106,7 +106,10 @@ if [ "${run_test}" = "yes" ]; then
   grntest_options+=(command/suite)
 
   grntest "${grntest_options[@]}"
-  grntest "${grntest_options[@]}" --interface http
+  # Run only one job to reduce CI time
+  if [ "${os}-${version}" == "almalinux-9" ]; then
+    grntest "${grntest_options[@]}" --interface http
+  fi
 fi
 
 # Should not block system update

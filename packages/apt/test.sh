@@ -56,9 +56,6 @@ elif [ "${architecture}" = "arm64" ]; then
   rm command/suite/tokenizers/document_vector_bm25/token_column_different_lexicon.test
 fi
 
-# libxxhash-dev 0.8.0 or later is required.
-rm command/suite/select/drilldowns/keys/multiple_large.test
-
 apt install -V -y \
   gcc \
   make \
@@ -84,5 +81,8 @@ grntest_options+=(command/suite)
 #   * Unknown crash with bullseye
 if [ "${architecture}" != "arm64" ]; then
   grntest "${grntest_options[@]}"
-  grntest "${grntest_options[@]}" --interface http
+  # Run only one job to reduce CI time
+  if [ "${code_name}" == "bookworm" ]; then
+    grntest "${grntest_options[@]}" --interface http
+  fi
 fi
