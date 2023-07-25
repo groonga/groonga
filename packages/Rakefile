@@ -106,8 +106,6 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       "#{@package}-#{@version}-x64-vs2022-with-vcruntime.zip",
       "#{@package}-#{@version}-x64-vs2019.zip",
       "#{@package}-#{@version}-x64-vs2019-with-vcruntime.zip",
-      "#{@package}-#{@version}-x86-vs2019.zip",
-      "#{@package}-#{@version}-x86-vs2019-with-vcruntime.zip",
     ]
   end
 
