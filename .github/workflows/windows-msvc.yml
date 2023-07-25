@@ -23,21 +23,18 @@ jobs:
         include:
           - label: Visual Studio 2022 x64
             architecture: x64
-            cmake-architecture: x64
             runs-on: windows-2022
             vc-architecture: x64
             vc-toolset-version: 143
             vs-version: 2022
           - label: Visual Studio 2019 x64
             architecture: x64
-            cmake-architecture: x64
             runs-on: windows-2019
             vc-architecture: x64
             vc-toolset-version: 142
             vs-version: 2019
           - label: Visual Studio 2019 x86
             architecture: x86
-            cmake-architecture: Win32
             runs-on: windows-2019
             vc-architecture: x64_x86
             vc-toolset-version: 142
@@ -144,9 +141,6 @@ jobs:
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_BUILD_TYPE=Release
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_UNITY_BUILD=ON
-          if not "${{ matrix.cmake-architecture }}" == "" (
-            set CMAKE_ARGS=%CMAKE_ARGS% -A ${{ matrix.cmake-architecture }}
-          )
           cmake %CMAKE_ARGS%
           type ..\apache-arrow-build\CMakeFiles\CMakeError.log
           cmake --build ..\apache-arrow-build --config Release --verbose
@@ -158,9 +152,6 @@ jobs:
           call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" ${{ matrix.vc-architecture }}
           set CMAKE_ARGS=-S .
           set CMAKE_ARGS=%CMAKE_ARGS% -B ..\groonga-build
-          if not "${{ matrix.cmake-architecture }}" == "" (
-            set CMAKE_ARGS=%CMAKE_ARGS% -A ${{ matrix.cmake-architecture }}
-          )
           set CMAKE_ARGS=%CMAKE_ARGS% -G "Ninja"
           set CMAKE_ARGS=%CMAKE_ARGS% "-DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%"
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_BUILD_TYPE=RelWithDebInfo
