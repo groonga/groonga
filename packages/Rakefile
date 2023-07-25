@@ -163,10 +163,8 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
       else
         base_name = "#{target}-x86_64.tar.gz"
       end
-    when :windows
-      base_name = "#{target}"
     else
-      base_name = "#{target}.tar.gz"
+      base_name = target
     end
     github_download_url(base_name)
   end
