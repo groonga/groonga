@@ -93,6 +93,8 @@ jobs:
               --read-timeout=30 \
               --reporter=mark
       - name: "Test: HTTP: load: Apache Arrow"
+        if: |
+          matrix.use-cmake
         run: |
           cd ../groonga.build
           BUILD_DIR=$PWD/test/command \
@@ -103,6 +105,8 @@ jobs:
               --input-type=apache-arrow \
               --interface=http
       - name: "Test: HTTP: command: POST"
+        if: |
+          matrix.use-cmake
         run: |
           cd ../groonga.build
           BUILD_DIR=$PWD/test/command \
@@ -113,6 +117,8 @@ jobs:
               --interface=http \
               --use-http-post
       - name: "Test: HTTP: command: chunked"
+        if: |
+          matrix.use-cmake
         run: |
           cd ../groonga.build
           BUILD_DIR=$PWD/test/command \
@@ -124,6 +130,8 @@ jobs:
               --interface=http \
               --use-http-chunked
       - name: "Test: HTTP: reference count"
+        if: |
+          matrix.use-cmake
         run: |
           cd ../groonga.build
           export GRN_ENABLE_REFERENCE_COUNT=yes

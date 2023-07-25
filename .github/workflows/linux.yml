@@ -331,64 +331,70 @@ jobs:
         run: |
           grntest \
             --base-dir test/command \
-            --n-retries=3 \
+            --n-retries=2 \
             --read-timeout=30 \
             --reporter=mark \
             test/command/suite
       - name: "Test: stdio: NFKC121"
+        if: matrix.id == 'cmake-gcc'
         run: |
           grntest \
             --base-dir test/command \
-            --n-retries=3 \
+            --n-retries=2 \
             --read-timeout=30 \
             --reporter=mark \
             test/command/suite/normalizers/nfkc/
         env:
           NFKC: "121"
       - name: "Test: stdio: NFKC130"
+        if: matrix.id == 'cmake-gcc'
         run: |
           grntest \
             --base-dir test/command \
-            --n-retries=3 \
+            --n-retries=2 \
             --read-timeout=30 \
             --reporter=mark \
             test/command/suite/normalizers/nfkc/
         env:
           NFKC: "130"
       - name: "Test: stdio: NFKC150"
+        if: matrix.id == 'cmake-gcc'
         run: |
           grntest \
             --base-dir test/command \
-            --n-retries=3 \
+            --n-retries=2 \
             --read-timeout=30 \
             --reporter=mark \
             test/command/suite/normalizers/nfkc/
         env:
           NFKC: "150"
       - name: "Test: stdio: n_workers"
+        if: matrix.id == 'cmake-gcc'
         run: |
           export GRN_SELECT_N_WORKERS_DEFAULT=-1
           grntest \
             --base-dir test/command \
-            --n-retries=3 \
+            --n-retries=2 \
             --read-timeout=30 \
             --reporter=mark \
             test/command/suite
       - name: "Test: HTTP: load: Apache Arrow"
+        if: matrix.id == 'cmake-gcc'
         run: |
           grntest \
             --base-dir test/command \
-            --n-retries=3 \
+            --n-retries=2 \
             --read-timeout=30 \
             --reporter=mark \
             --input-type=apache-arrow \
             --interface=http \
             test/command/suite
       - name: "Test: HTTP: command: POST"
+        if: matrix.id == 'cmake-gcc'
         run: |
           grntest \
             --base-dir test/command \
-            --n-retries=3 \
+            --n-retries=2 \
             --read-timeout=30 \
             --reporter=mark \
             --input-type=apache-arrow \
@@ -396,10 +402,11 @@ jobs:
             --use-http-post \
             test/command/suite
       - name: "Test: HTTP: command: chunked"
+        if: matrix.id == 'cmake-gcc'
         run: |
           grntest \
             --base-dir test/command \
-            --n-retries=3 \
+            --n-retries=2 \
             --timeout=10 \
             --read-timeout=30 \
             --reporter=mark \
@@ -408,11 +415,12 @@ jobs:
             --use-http-chunked \
             test/command/suite
       - name: "Test: HTTP: reference count"
+        if: matrix.id == 'cmake-gcc'
         run: |
           export GRN_ENABLE_REFERENCE_COUNT=yes
           grntest \
             --base-dir test/command \
-            --n-retries=3 \
+            --n-retries=2 \
             --read-timeout=30 \
             --reporter=mark \
             --interface=http \

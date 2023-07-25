@@ -139,36 +139,17 @@ jobs:
           rm test/command/suite/tokenizers/document_vector_bm25/alphabet.test
           rm test/command/suite/tokenizers/document_vector_bm25/normalize_false.test
           rm test/command/suite/tokenizers/document_vector_bm25/reindex.test
-      - name: "Test: HTTP: reference count"
+      - name: "Test: stdio"
         shell: msys2 {0}
         run: |
-          export GRN_ENABLE_REFERENCE_COUNT=yes
           ruby \
             -r./setup-extpp \
             -S \
               grntest \
                 --base-directory=test/command \
-                --interface=http \
                 --n-retries=2 \
                 --n-workers=${NUMBER_OF_PROCESSORS} \
                 --read-timeout=30 \
                 --reporter=mark \
                 --timeout=60 \
-                test/command/suite
-      - name: "Test: HTTP: Apache Arrow: chunked"
-        shell: msys2 {0}
-        run: |
-          ruby \
-            -r./setup-extpp \
-            -S \
-              grntest \
-                --base-directory=test/command \
-                --input-type=apache-arrow \
-                --interface=http \
-                --n-retries=2 \
-                --n-workers=${NUMBER_OF_PROCESSORS} \
-                --read-timeout=30 \
-                --reporter=mark \
-                --timeout=360 \
-                --use-http-chunked \
                 test/command/suite
