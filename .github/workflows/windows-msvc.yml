@@ -24,7 +24,6 @@ jobs:
           - label: Visual Studio 2022 x64
             architecture: x64
             cmake-architecture: x64
-            cmake-generator: Visual Studio 17 2022
             runs-on: windows-2022
             vc-architecture: x64
             vc-toolset-version: 143
@@ -32,7 +31,6 @@ jobs:
           - label: Visual Studio 2019 x64
             architecture: x64
             cmake-architecture: x64
-            cmake-generator: Visual Studio 16 2019
             runs-on: windows-2019
             vc-architecture: x64
             vc-toolset-version: 142
@@ -40,7 +38,6 @@ jobs:
           - label: Visual Studio 2019 x86
             architecture: x86
             cmake-architecture: Win32
-            cmake-generator: Visual Studio 16 2019
             runs-on: windows-2019
             vc-architecture: x64_x86
             vc-toolset-version: 142
@@ -135,23 +132,23 @@ jobs:
       - name: Install Apache Arrow
         if: |
           matrix.architecture == 'x64'
+        shell: cmd
         run: |
-          New-Item ..\apache-arrow-build -ItemType Directory
-          $CMAKE_ARGS = (
-            "-S", "vendor\apache-arrow-source\cpp",
-            "-B", "..\apache-arrow-build",
-            "-G", "${{ matrix.cmake-generator }}",
-            "-DARROW_BUILD_STATIC=OFF",
-            "-DARROW_COMPUTE=ON",
-            "-DBOOST_SOURCE=BUNDLED",
-            "-DCMAKE_BUILD_TYPE=Release",
-            "-DCMAKE_INSTALL_PREFIX=${Env:FULL_INSTALL_FOLDER}",
-            "-DCMAKE_UNITY_BUILD=ON"
+          call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" ${{ matrix.vc-architecture }}
+          set CMAKE_ARGS=-S vendor\apache-arrow-source\cpp
+          set CMAKE_ARGS=%CMAKE_ARGS% -B ..\apache-arrow-build
+          set CMAKE_ARGS=%CMAKE_ARGS% -G Ninja
+          set CMAKE_ARGS=%CMAKE_ARGS% -DARROW_BUILD_STATIC=OFF
+          set CMAKE_ARGS=%CMAKE_ARGS% -DARROW_COMPUTE=ON
+          set CMAKE_ARGS=%CMAKE_ARGS% -DBoost_SOURCE=BUNDLED
+          set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_BUILD_TYPE=Release
+          set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%
+          set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_UNITY_BUILD=ON
+          if not "${{ matrix.cmake-architecture }}" == "" (
+            set CMAKE_ARGS=%CMAKE_ARGS% -A ${{ matrix.cmake-architecture }}
           )
-          if ("${{ matrix.cmake-architecture }}" -ne "") {
-            $CMAKE_ARGS += ("-A", "${{ matrix.cmake-architecture }}")
-          }
-          cmake ${CMAKE_ARGS}
+          cmake %CMAKE_ARGS%
+          type ..\apache-arrow-build\CMakeFiles\CMakeError.log
           cmake --build ..\apache-arrow-build --config Release --verbose
           cmake --build ..\apache-arrow-build --config Release --target Install
           ccache --show-stats --verbose
@@ -159,13 +156,12 @@ jobs:
         shell: cmd
         run: |
           call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" ${{ matrix.vc-architecture }}
-          mkdir ..\groonga-build
           set CMAKE_ARGS=-S .
           set CMAKE_ARGS=%CMAKE_ARGS% -B ..\groonga-build
           if not "${{ matrix.cmake-architecture }}" == "" (
             set CMAKE_ARGS=%CMAKE_ARGS% -A ${{ matrix.cmake-architecture }}
           )
-          set CMAKE_ARGS=%CMAKE_ARGS% -G "${{ matrix.cmake-generator }}"
+          set CMAKE_ARGS=%CMAKE_ARGS% -G "Ninja"
           set CMAKE_ARGS=%CMAKE_ARGS% "-DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%"
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_BUILD_TYPE=RelWithDebInfo
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_ALLOW_WARNING=ON
