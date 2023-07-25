@@ -85,6 +85,8 @@ jobs:
            ruby \
              -e 'print("## Groonga "); \
                  puts(ARGF.read.split(/^## Release /)[1]. \
+                        gsub(/^\(.+\)=$/, ""). \
+                        gsub(/ {.+?}/, ""). \
                         gsub(/{doc}`(.+?)`/) { \
                           id = $1; \
                           title = id.split("\/").last; \
@@ -96,6 +98,13 @@ jobs:
                         strip)' \
              $(ls *.md | sort --human-numeric-sort | tail -n1)) > \
             release-note.md
+          echo "" >> release-note.md
+          echo "### Translations" >> release-note.md
+          echo "" >> release-note.md
+          version=${GITHUB_REF_NAME#v}
+          major_version=${version%%.*}
+          version_hyphen=$(echo ${version} | tr . -)
+          echo "  * [Japanese](https://groonga.org/ja/docs/news/${major_version}.html#release-${version_hyphen})" >> release-note.md
           title="$(head -n1 release-note.md | sed -e 's/^## //')"
           tail -n +2 release-note.md > release-note-without-version.md
           gh release create ${GITHUB_REF_NAME} \
