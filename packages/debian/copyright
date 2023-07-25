@@ -105,117 +105,6 @@ Copyright: 2004-2005, 2007-2009, 2011-2015 Free Software Foundation, Inc.
            Gary V. Vaughan, 2004
 License: Permissive
 
-Files: vendor/nginx-*/*
-Copyright: 2002-2016 Igor Sysoev
-           2011-2016 Nginx, Inc.
-License: BSD-2-clause
-
-Files: vendor/nginx-*/src/core/ngx_sha1.c
- vendor/nginx-*/src/event/ngx_event_openssl_stapling.c
- vendor/nginx-*/src/http/modules/ngx_http_auth_request_module.c
- vendor/nginx-*/src/http/modules/ngx_http_upstream_keepalive_module.c
- vendor/nginx-*/src/http/modules/ngx_http_upstream_least_conn_module.c
- vendor/nginx-*/src/os/unix/ngx_dlopen.c
- vendor/nginx-*/src/os/unix/ngx_dlopen.h
- vendor/nginx-*/src/os/win32/ngx_dlopen.c
- vendor/nginx-*/src/os/win32/ngx_dlopen.h
- vendor/nginx-*/src/stream/ngx_stream_upstream_least_conn_module.c
- vendor/ngx_mruby-source/src/http/ngx_http_mruby_upstream.h
-Copyright: Nginx, Inc.
-           Maxim Dounin
-License: BSD-2-clause
-
-Files: vendor/nginx-*/src/core/ngx_proxy_protocol.c
- vendor/nginx-*/src/core/ngx_proxy_protocol.h
- vendor/nginx-*/src/http/modules/ngx_http_slice_filter_module.c
- vendor/nginx-*/src/http/modules/ngx_http_upstream_hash_module.c
- vendor/nginx-*/src/stream/ngx_stream.c
- vendor/nginx-*/src/stream/ngx_stream.h
- vendor/nginx-*/src/stream/ngx_stream_core_module.c
- vendor/nginx-*/src/stream/ngx_stream_handler.c
- vendor/nginx-*/src/stream/ngx_stream_proxy_module.c
- vendor/nginx-*/src/stream/ngx_stream_return_module.c
- vendor/nginx-*/src/stream/ngx_stream_upstream_hash_module.c
-Copyright: Nginx, Inc.
-           Roman Arutyunyan
-License: BSD-2-clause
-
-Files: vendor/nginx-*/src/core/ngx_thread_pool.h
- vendor/nginx-*/src/http/v2/ngx_http_v2.c
- vendor/nginx-*/src/http/v2/ngx_http_v2.h
- vendor/nginx-*/src/http/v2/ngx_http_v2_filter_module.c
- vendor/nginx-*/src/http/v2/ngx_http_v2_huff_decode.c
- vendor/nginx-*/src/http/v2/ngx_http_v2_module.c
- vendor/nginx-*/src/http/v2/ngx_http_v2_module.h
- vendor/nginx-*/src/http/v2/ngx_http_v2_table.c
-Copyright: Nginx, Inc.
-           Valentin V. Bartenev
-License: BSD-2-clause
-
-Files: vendor/nginx-*/auto/module
- vendor/nginx-*/src/core/ngx_rwlock.c
- vendor/nginx-*/src/core/ngx_rwlock.h
- vendor/nginx-*/src/http/modules/ngx_http_upstream_zone_module.c
- vendor/nginx-*/src/stream/ngx_stream_upstream_zone_module.c
-Copyright: Nginx, Inc.
-           Ruslan Ermilov
-License: BSD-2-clause
-
-Files: vendor/nginx-*/src/core/ngx_module.c
- vendor/nginx-*/src/core/ngx_module.h
- vendor/nginx-*/src/http/modules/ngx_http_gunzip_filter_module.c
-Copyright: Igor Sysoev
-           Maxim Dounin
-           Nginx, Inc.
-License: BSD-2-clause
-
-Files: vendor/nginx-*/src/http/modules/ngx_http_uwsgi_module.c
-Copyright: 2008, Manlio Perillo (manlio.perillo@gmail.com)
-           Igor Sysoev
-           Nginx, Inc.
-           Unbit S.a.s. 2009-2010
-License: BSD-2-clause
-
-Files: vendor/nginx-*/src/http/v2/ngx_http_v2_huff_encode.c
-Copyright: 2015, Vlad Krasnov
-           Nginx, Inc.
-           Valentin V. Bartenev
-License: BSD-2-clause
-
-Files: vendor/nginx-*/contrib/geo2nginx.pl
-Copyright: Andrei Nigmatulin, 2005
-License: BSD-2-clause
-
-Files: vendor/nginx-*/src/http/modules/ngx_http_scgi_module.c
-Copyright: Igor Sysoev
-           Manlio Perillo (manlio.perillo@gmail.com)
-           Nginx, Inc.
-License: BSD-2-clause
-
-Files: vendor/nginx-*/src/core/ngx_murmurhash.c
-Copyright: Austin Appleby
-License: BSD-2-clause
-
-Files: vendor/ngx_mruby-source/dependence/ngx_devel_kit/docs/patches/more_logging_info
-Copyright: Brian Moran - bmoran@onehub.com (posted to nginx-devel mailing list on 15/01/10)
-License: BSD-2-clause
-
-Files: vendor/nginx-*/src/http/modules/ngx_http_scgi_module.c
-Copyright: Igor Sysoev
-           Manlio Perillo (manlio.perillo@gmail.com)
-           Nginx, Inc.
-License: BSD-2-clause
-
-Files: vendor/nginx-*/src/core/ngx_crypt.c
-Copyright: Maxim Dounin
-License: BSD-2-clause
-
-Files: vendor/nginx-*/src/core/ngx_thread_pool.c
-Copyright: Nginx, Inc.
-           Ruslan Ermilov
-           Valentin V. Bartenev
-License: BSD-2-clause
-
 Files: vendor/mruby-source/*
 Copyright: 2016 mruby devevlopers
 License: MIT
@@ -235,17 +124,6 @@ License: MIT
 Files: vendor/mruby/mruby-io/*
 Copyright: 2013 Internet Initiative Japan Inc.
 License: MIT
-
-Files: vendor/ngx_mruby-source/*
-Copyright: 2012-2016 MATSUMOTO Ryosuke
-	   2014-2015 Tatsuhiko Kubo
-           2016 SHIBATA Hiroshi
-           2016 SAWANOBORI Yukihiko
-License: MIT
-
-Files: vendor/ngx_mruby-source/dependence/ngx_devel_kit/*
-Copyright: 2010-2015 Marcus Clyne
-License: BSD-3-clause
 
 License: BSD-2-clause
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
