@@ -46,14 +46,6 @@ string(REGEX REPLACE "^([^.]+)\\.([^.]+)\\.([^.-]+)$" "\\3" GRN_VERSION_MICRO
 string(REGEX REPLACE "\\." "," GRN_VERSION_RC "${GRN_VERSION}")
 string(REGEX REPLACE "-.*$" "" GRN_VERSION_RC "${GRN_VERSION_RC}")
 
-project(
-  groonga
-  VERSION "${GRN_VERSION}"
-  DESCRIPTION "An Embeddable Fulltext Search Engine"
-  LANGUAGES C CXX)
-set(GRN_PROJECT_NAME "${PROJECT_NAME}")
-set(GRN_PROJECT_LABEL "Groonga")
-
 # https://cmake.org/cmake/help/latest/policy/CMP0054.html
 #
 # Only interpret if() arguments as variables or keywords when unquoted.
@@ -61,24 +53,25 @@ if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
 
-# For ccache
-if(MSVC)
-  # https://cmake.org/cmake/help/latest/policy/CMP0141.html
-  #
-  # MSVC debug information format flags are selected by an abstraction.
-  if(POLICY CMP0141)
-    cmake_policy(SET CMP0141 NEW)
-    set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
-        "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded")
-  else()
-    string(REPLACE "/Zi" "/Z7" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
-    string(REPLACE "/Zi" "/Z7" CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
-    string(REPLACE "/Zi" "/Z7" CMAKE_CXX_FLAGS_RELWITHDEBINFO
-                   "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
-    string(REPLACE "/Zi" "/Z7" CMAKE_C_FLAGS_RELWITHDEBINFO
-                   "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
-  endif()
+# https://cmake.org/cmake/help/latest/policy/CMP0141.html
+#
+# MSVC debug information format flags are selected by an abstraction.
+#
+# This must be done BEFORE project().
+if(POLICY CMP0141)
+  cmake_policy(SET CMP0141 NEW)
+  # For ccache
+  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
+      "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded")
 endif()
+
+project(
+  groonga
+  VERSION "${GRN_VERSION}"
+  DESCRIPTION "An Embeddable Fulltext Search Engine"
+  LANGUAGES C CXX)
+set(GRN_PROJECT_NAME "${PROJECT_NAME}")
+set(GRN_PROJECT_LABEL "Groonga")
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
