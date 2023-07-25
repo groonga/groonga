@@ -17,28 +17,19 @@ jobs:
       fail-fast: false
       matrix:
         label:
-          - Visual Studio 2022 x64
-          - Visual Studio 2019 x64
-          - Visual Studio 2019 x86
+          - Visual Studio 2022
+          - Visual Studio 2019
         include:
-          - label: Visual Studio 2022 x64
-            architecture: x64
+          - label: Visual Studio 2022
             runs-on: windows-2022
-            vc-architecture: x64
             vc-toolset-version: 143
             vs-version: 2022
-          - label: Visual Studio 2019 x64
-            architecture: x64
+          - label: Visual Studio 2019
             runs-on: windows-2019
-            vc-architecture: x64
             vc-toolset-version: 142
             vs-version: 2019
-          - label: Visual Studio 2019 x86
-            architecture: x86
-            runs-on: windows-2019
-            vc-architecture: x64_x86
-            vc-toolset-version: 142
-            vs-version: 2019
+    env:
+      VC_ARCHITECTURE: x64
     runs-on: ${{ matrix.runs-on }}
     steps:
       - name: Disable crash dialog
@@ -80,7 +71,7 @@ jobs:
           Write-Output "GROONGA_VERSION=${GROONGA_VERSION}" | `
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-          $INSTALL_FOLDER = "groonga-${GROONGA_VERSION}-${{ matrix.architecture }}-vs${{ matrix.vs-version }}"
+          $INSTALL_FOLDER = "groonga-${GROONGA_VERSION}-${Env:VC_ARCHITECTURE}-vs${{ matrix.vs-version }}"
           $INSTALL_FOLDER_WITH_VCRUNTIME = "${INSTALL_FOLDER}-with-vcruntime"
           $INSTALL_PARENT_FOLDER = "install"
           $INSTALL_PARENT_FOLDER_WITH_VCRUNTIME = `
@@ -113,8 +104,8 @@ jobs:
         with:
           path: |
             ~/AppData/Local/ccache
-          key: source-${{ matrix.vs-version }}-${{ matrix.vc-architecture }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
-          restore-keys: source-${{ matrix.vs-version }}-${{ matrix.vc-architecture }}-ccache-
+          key: source-${{ matrix.vs-version }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: source-${{ matrix.vs-version }}-ccache-
       - name: Prepare ccache
         run: |
           choco install ccache
@@ -127,11 +118,9 @@ jobs:
         run: |
           "GRN_VERSION=${Env:GROONGA_VERSION}" | Set-Content version.sh
       - name: Install Apache Arrow
-        if: |
-          matrix.architecture == 'x64'
         shell: cmd
         run: |
-          call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" ${{ matrix.vc-architecture }}
+          call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" %VC_ARCHITECTURE%
           set CMAKE_ARGS=-S vendor\apache-arrow-source\cpp
           set CMAKE_ARGS=%CMAKE_ARGS% -B ..\apache-arrow-build
           set CMAKE_ARGS=%CMAKE_ARGS% -G Ninja
@@ -149,16 +138,14 @@ jobs:
       - name: Install Groonga
         shell: cmd
         run: |
-          call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" ${{ matrix.vc-architecture }}
+          call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" %VC_ARCHITECTURE%
           set CMAKE_ARGS=-S .
           set CMAKE_ARGS=%CMAKE_ARGS% -B ..\groonga-build
           set CMAKE_ARGS=%CMAKE_ARGS% -G "Ninja"
           set CMAKE_ARGS=%CMAKE_ARGS% "-DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%"
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_BUILD_TYPE=RelWithDebInfo
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_ALLOW_WARNING=ON
-          if "${{ matrix.architecture }}" == "x64" (
-            set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_APACHE_ARROW=yes
-          )
+          set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_APACHE_ARROW=yes
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_MRUBY=yes
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_XXHASH=bundled
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_ZLIB=no
@@ -213,7 +200,7 @@ jobs:
             -ItemType Directory
 
           $VC_REDIST_VERSION = (Get-Content "${Env:VC_PREFIX}\Auxiliary\Build\Microsoft.VCRedistVersion.default.txt")
-          $VC_REDIST_DIR = "${Env:VC_PREFIX}\Redist\MSVC\${VC_REDIST_VERSION}\${{ matrix.architecture }}\Microsoft.VC${{ matrix.vc-toolset-version }}.CRT"
+          $VC_REDIST_DIR = "${Env:VC_PREFIX}\Redist\MSVC\${VC_REDIST_VERSION}\${Env:VC_ARCHITECTURE}\Microsoft.VC${{ matrix.vc-toolset-version }}.CRT"
           $VC_REDIST_VCRUNTIME = "${VC_REDIST_DIR}\vcruntime140.dll"
           $VC_REDIST_VCRUNTIME_1 = "${VC_REDIST_DIR}\vcruntime140_1.dll"
           $VC_REDIST_MSVCP = "${VC_REDIST_DIR}\msvcp140.dll"
@@ -232,7 +219,7 @@ jobs:
             "${Env:GITHUB_WORKSPACE}\packages\windows\vcruntime\vs${{ matrix.vs-version }}\readme.txt" `
             ${GROONGA_VC_REDIST_LICENSE_DIR}
 
-          $UCRT_REDIST_DIR = "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\${{ matrix.architecture }}"
+          $UCRT_REDIST_DIR = "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\${Env:VC_ARCHITECTURE}"
           Copy-Item `
             "${UCRT_REDIST_DIR}\*.dll" `
             "${Env:FULL_INSTALL_FOLDER_WITH_VCRUNTIME}\bin"
@@ -283,8 +270,6 @@ jobs:
           bundle install
           bundle exec ruby -rdevkit -S rake install
       - name: Install Red Arrow
-        if: |
-          matrix.architecture == 'x64'
         run: |
           ridk exec pacman --sync --noconfirm mingw-w64-ucrt-x86_64-arrow
           $Env:MAKEFLAGS = "-j${Env:NUMBER_OF_PROCESSORS}"
@@ -293,23 +278,9 @@ jobs:
         run: |
           ruby test\command_line\run-test.rb `
             --groonga-install-prefix="${Env:FULL_INSTALL_FOLDER}"
-      - name: "Test: HTTP: reference count"
+      - name: "Test: HTTP: reference count: Apache Arrow: chunked"
         run: |
           $Env:GRN_ENABLE_REFERENCE_COUNT = "yes"
-          grntest `
-            --base-directory test\command `
-            --groonga "${Env:FULL_INSTALL_FOLDER}\bin\groonga.exe" `
-            --interface http `
-            --n-retries 2 `
-            --n-workers ${Env:NUMBER_OF_PROCESSORS} `
-            --read-timeout=30 `
-            --reporter mark `
-            --timeout 60 `
-            test\command\suite
-      - name: "Test: HTTP: Apache Arrow: chunked"
-        if: |
-          matrix.architecture == 'x64'
-        run: |
           grntest `
             --base-directory test\command `
             --groonga "${Env:FULL_INSTALL_FOLDER}\bin\groonga.exe" `
