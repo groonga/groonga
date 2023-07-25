@@ -144,7 +144,7 @@ jobs:
           cmake %CMAKE_ARGS%
           type ..\apache-arrow-build\CMakeFiles\CMakeError.log
           cmake --build ..\apache-arrow-build --config Release --verbose
-          cmake --build ..\apache-arrow-build --config Release --target Install
+          cmake --install ..\apache-arrow-build --config Release
           ccache --show-stats --verbose
       - name: Install Groonga
         shell: cmd
@@ -166,7 +166,7 @@ jobs:
           cmake %CMAKE_ARGS%
           type ..\groonga-build\CMakeFiles\CMakeError.log
           cmake --build ..\groonga-build --config RelWithDebInfo --verbose
-          cmake --build ..\groonga-build --config RelWithDebInfo --target Install
+          cmake --install ..\groonga-build --config RelWithDebInfo
           ccache --show-stats --verbose
       - name: Install Groonga Admin
         run: |
