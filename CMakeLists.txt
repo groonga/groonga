@@ -62,7 +62,7 @@ if(POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
   # For ccache
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
-      "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded")
+      "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>")
 endif()
 
 project(
