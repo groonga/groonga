@@ -103,17 +103,20 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: |
-            ~/AppData/Local/ccache
+            ccache
           key: source-${{ matrix.vs-version }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
           restore-keys: source-${{ matrix.vs-version }}-ccache-
       - name: Prepare ccache
         run: |
           choco install ccache
-          ccache --show-stats --verbose
+          $Env:CCACHE_BASEDIR = "${{ github.workspace }}\ccache"
+          Write-Output "CCACHE_BASEDIR=${Env:CCACHE_BASEDIR}" | `
+            Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           Write-Output "CMAKE_C_COMPILER_LAUNCHER=ccache" | `
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           Write-Output "CMAKE_CXX_COMPILER_LAUNCHER=ccache" | `
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          ccache --show-stats --verbose
       - name: Set version
         run: |
           "GRN_VERSION=${Env:GROONGA_VERSION}" | Set-Content version.sh
