@@ -185,6 +185,13 @@ namespace :release do
          "commit",
          "-m",
          "doc package: update version info to #{version} (#{new_release_date})")
+      cd(groonga_org_path) do
+        sh("git", "add", "_config.yml")
+        sh("git",
+           "commit",
+           "-m",
+           "#{version} (#{new_release_date}) has been released!!!")
+      end
     end
   end
 
