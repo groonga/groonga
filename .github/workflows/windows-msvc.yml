@@ -109,8 +109,8 @@ jobs:
       - name: Prepare ccache
         run: |
           choco install ccache
-          $Env:CCACHE_BASEDIR = "${{ github.workspace }}\ccache"
-          Write-Output "CCACHE_BASEDIR=${Env:CCACHE_BASEDIR}" | `
+          $Env:CCACHE_DIR = "${{ github.workspace }}\ccache"
+          Write-Output "CCACHE_DIR=${Env:CCACHE_DIR}" | `
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           Write-Output "CMAKE_C_COMPILER_LAUNCHER=ccache" | `
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
