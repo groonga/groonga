@@ -1,0 +1,28 @@
+name: Setup
+on:
+  push:
+    branches:
+      - master
+      - 'maintenance/**'
+    tags:
+      - '*'
+  pull_request:
+concurrency:
+  group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
+  cancel-in-progress: true
+jobs:
+  test:
+    name: Test
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - ubuntu-focal
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Setup
+        run: |
+          vagrant up ${{ matrix.image }}
