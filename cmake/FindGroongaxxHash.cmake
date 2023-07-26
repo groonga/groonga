@@ -36,8 +36,13 @@ endif()
 if(NOT GroongaxxHash_FOUND)
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
-    pkg_check_modules(GroongaxxHash_pkg_libxxhash IMPORTED_TARGET
-                      "libxxhash${pkg_check_modules_version}")
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.18")
+      pkg_check_modules(GroongaxxHash_pkg_libxxhash IMPORTED_TARGET
+                        "libxxhash${pkg_check_modules_version}")
+    else()
+      pkg_check_modules(GroongaxxHash_pkg_libxxhash IMPORTED_TARGET GLOBAL
+                        "libxxhash${pkg_check_modules_version}")
+    endif()
     set(GroongaxxHash_FOUND ${GroongaxxHash_pkg_libxxhash_FOUND})
     if(GroongaxxHash_pkg_libxxhash_FOUND)
       if(GroongaxxHash_pkg_libxxhash_VERSION VERSION_LESS "0.8.0")

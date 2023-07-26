@@ -36,8 +36,13 @@ endif()
 if(NOT Groongazstd_FOUND)
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
-    pkg_check_modules(Groongazstd_pkg_libzstd IMPORTED_TARGET
-                      "libzstd${pkg_check_modules_version}")
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.18")
+      pkg_check_modules(Groongazstd_pkg_libzstd IMPORTED_TARGET
+                        "libzstd${pkg_check_modules_version}")
+    else()
+      pkg_check_modules(Groongazstd_pkg_libzstd IMPORTED_TARGET GLOBAL
+                        "libzstd${pkg_check_modules_version}")
+    endif()
     set(Groongazstd_FOUND ${Groongazstd_pkg_libzstd_FOUND})
     if(Groongazstd_pkg_libzstd_FOUND)
       add_library(Groonga::libzstd ALIAS PkgConfig::Groongazstd_pkg_libzstd)

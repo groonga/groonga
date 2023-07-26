@@ -37,8 +37,13 @@ endif()
 if(NOT GroongaRapidJSON_FOUND)
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
-    pkg_check_modules(GroongaRapidJSON_pkg_RapidJSON IMPORTED_TARGET
-                      "RapidJSON${pkg_check_modules_version}")
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.18")
+      pkg_check_modules(GroongaRapidJSON_pkg_RapidJSON IMPORTED_TARGET
+                        "RapidJSON${pkg_check_modules_version}")
+    else()
+      pkg_check_modules(GroongaRapidJSON_pkg_RapidJSON IMPORTED_TARGET GLOBAL
+                        "RapidJSON${pkg_check_modules_version}")
+    endif()
     set(GroongaRapidJSON_FOUND ${GroongaRapidJSON_pkg_RapidJSON_FOUND})
     if(GroongaRapidJSON_FOUND)
       add_library(Groonga::RapidJSON ALIAS

@@ -40,8 +40,13 @@ endif()
 if(NOT Groongalz4_FOUND)
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
-    pkg_check_modules(Groongalz4_pkg_liblz4 IMPORTED_TARGET
-                      "liblz4${pkg_check_modules_version}")
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.18")
+      pkg_check_modules(Groongalz4_pkg_liblz4 IMPORTED_TARGET
+                        "liblz4${pkg_check_modules_version}")
+    else()
+      pkg_check_modules(Groongalz4_pkg_liblz4 IMPORTED_TARGET GLOBAL
+                        "liblz4${pkg_check_modules_version}")
+    endif()
     set(Groongalz4_FOUND ${Groongalz4_pkg_liblz4_FOUND})
     if(Groongalz4_pkg_liblz4_FOUND)
       add_library(Groonga::liblz4 ALIAS PkgConfig::Groongalz4_pkg_liblz4)
