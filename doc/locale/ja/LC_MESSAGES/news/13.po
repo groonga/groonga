@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
-"PO-Revision-Date: 2023-07-26 09:33+0900\n"
+"PO-Revision-Date: 2023-07-26 14:47+0900\n"
 "Report-Msgid-Bugs-To: \n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -31,8 +31,8 @@ msgstr "[{doc}`/install/windows`] 32-bit版パッケージの提供をやめま�
 msgid "Fixes"
 msgstr "修正"
 
-msgid "[{doc}`/install/debian`][{doc}`/install/ubuntu`] Fixed the default configuration file path for {doc}`/reference/query_expanders/tsv`."
-msgstr "[{doc}`/install/debian`][{doc}`/install/ubuntu`] {doc}`/reference/query_expanders/tsv`のデフォルトの設定ファイルのパスを修正しました。"
+msgid "[{doc}`/install/debian`] [{doc}`/install/ubuntu`] Fixed the default configuration file path for {doc}`/reference/query_expanders/tsv`."
+msgstr "[{doc}`/install/debian`] [{doc}`/install/ubuntu`] {doc}`/reference/query_expanders/tsv`のデフォルトの設定ファイルのパスを修正しました。"
 
 msgid "[CMake] Fixed a bug that some errors may be reported when CMake 3.16 or 3.17 are used."
 msgstr "[CMake] CMake 3.16または3.17を使っている場合にエラーになることがある問題を修正しました。"
