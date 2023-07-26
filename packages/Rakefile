@@ -43,7 +43,7 @@ class GroongaPackageTask < PackagesGroongaOrgPackageTask
 
   def define_archive_task
     file "../#{@original_archive_name}" do
-      source_archive_url = built_package_url(:source, @archive_base_name)
+      source_archive_url = built_package_url(:source, @archive_name)
       download(source_archive_url, "..")
     end
 
