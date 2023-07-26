@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2023-07-24 16:04+0900\n"
+"PO-Revision-Date: 2023-07-26 14:46+0900\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -580,7 +580,7 @@ msgstr "[doc][solaris] Solarisでビルドするためのドキュメントを�
 msgid "[doc][yum] Updated epel-release package version. [Reported by IWAI, Masaharu]"
 msgstr "[doc][yum] epel-releaseパッケージのバージョンを更新。[岩井さんが報告]"
 
-msgid "[doc][cenos6] Disabled Repoforge for Munin for CentOS 6. [Reported by IWAI, Masaharu]"
+msgid "[doc][centos6] Disabled Repoforge for Munin for CentOS 6. [Reported by IWAI, Masaharu]"
 msgstr "[doc][centos6] RepoforgeにあるCentOS 6用のMuninを使うという設定を削除。[岩井さんが報告]"
 
 msgid "Started distributing source archive in zip format."

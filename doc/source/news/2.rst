@@ -429,7 +429,7 @@ Improvements
 * [doc][solaris] Added a document about building on Solaris.
 * [doc][yum] Updated epel-release package version.
   [Reported by IWAI, Masaharu]
-* [doc][cenos6] Disabled Repoforge for Munin for CentOS 6.
+* [doc][centos6] Disabled Repoforge for Munin for CentOS 6.
   [Reported by IWAI, Masaharu]
 * Started distributing source archive in zip format.
 * [munin] groonga_dist Munin plugin supported an object that has
