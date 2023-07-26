@@ -63,13 +63,13 @@ if(NOT Groongamsgpackc_FOUND)
       add_library(Groonga::msgpackc ALIAS
                   PkgConfig::Groongamsgpack_pkg_msgpack-c)
     else()
-    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.18")
+      if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.18")
         pkg_check_modules(Groongamsgpack_pkg_msgpack IMPORTED_TARGET
                           "msgpack${pkg_check_modules_version}")
-                        else()
+      else()
         pkg_check_modules(Groongamsgpack_pkg_msgpack IMPORTED_TARGET GLOBAL
                           "msgpack${pkg_check_modules_version}")
-                          endif()
+      endif()
       set(Groongamsgpackc_FOUND ${Groongamsgpack_pkg_msgpack_FOUND})
       if(Groongamsgpackc_FOUND)
         add_library(Groonga::msgpackc ALIAS
