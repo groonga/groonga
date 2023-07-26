@@ -166,7 +166,7 @@ namespace :release do
                              new_release_date,
                              "doc/source/install.rst",
                              *Dir.glob("doc/source/install/*.rst"),
-                             *Dir.glob("doc/locale/*/LC_MESSAGES/install/*.po"),
+                             *Dir.glob("doc/locale/ja/LC_MESSAGES/install/*.po"),
                              File.join(groonga_org_path, "_config.yml"))
       cd("packages") do
         ruby("-S",
@@ -178,13 +178,13 @@ namespace :release do
          "add",
          "doc/source/install.rst",
          *Dir.glob("doc/source/install/*.rst"),
-         *Dir.glob("doc/locale/*/LC_MESSAGES/install/*.po"),
+         *Dir.glob("doc/locale/ja/LC_MESSAGES/install/*.po"),
          "packages/debian/changelog",
          "packages/yum/groonga.spec.in")
       sh("git",
          "commit",
          "-m",
-         "doc package: update version info to #{version} - #{new_release_date}")
+         "doc package: update version info to #{version} (#{new_release_date})")
     end
   end
 
