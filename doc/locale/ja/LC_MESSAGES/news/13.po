@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.2.4\n"
-"PO-Revision-Date: 2023-07-24 16:00+0900\n"
+"PO-Revision-Date: 2023-07-26 09:33+0900\n"
 "Report-Msgid-Bugs-To: \n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -19,11 +19,26 @@ msgstr ""
 msgid "News - 13 series"
 msgstr "お知らせ - 13系"
 
-msgid "Release 13.0.3 - 2023-07-24"
-msgstr "13.0.3リリース - 2023-07-24"
+msgid "Release 13.0.4 - 2023-07-26"
+msgstr "13.0.4リリース - 2023-07-26"
 
 msgid "Improvements"
 msgstr "改良"
+
+msgid "[{doc}`/install/windows`] Stopped providing 32-bit packages."
+msgstr "[{doc}`/install/windows`] 32-bit版パッケージの提供をやめました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/install/debian`][{doc}`/install/ubuntu`] Fixed the default configuration file path for {doc}`/reference/query_expanders/tsv`."
+msgstr "[{doc}`/install/debian`][{doc}`/install/ubuntu`] {doc}`/reference/query_expanders/tsv`のデフォルトの設定ファイルのパスを修正しました。"
+
+msgid "[CMake] Fixed a bug that some errors may be reported when CMake 3.16 or 3.17 are used."
+msgstr "[CMake] CMake 3.16または3.17を使っている場合にエラーになることがある問題を修正しました。"
+
+msgid "Release 13.0.3 - 2023-07-24"
+msgstr "13.0.3リリース - 2023-07-24"
 
 msgid "[{doc}`/reference/executables/groonga-httpd`] Extracted to [groonga-nginx](https://github.com/groonga/groonga-nginx). We stopped providing the `groonga-httpd` package."
 msgstr "[{doc}`/reference/executables/groonga-httpd`] [groonga-nginx](https://github.com/groonga/groonga-nginx)に切り出されました。`groonga-httpd`パッケージの提供をやめました。"
@@ -42,9 +57,6 @@ msgstr "[{doc}`/install/debian`] xxHashサポートを有効にしました。"
 
 msgid "[{doc}`/install/ubuntu`] Enabled xxHash support."
 msgstr "[{doc}`/install/ubuntu`] xxHashサポートを有効にしました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "Fixed a bug that the source archive can't be built with CMake."
 msgstr "ソースアーカイブがCMakeでビルドできない問題を修正しました。"
