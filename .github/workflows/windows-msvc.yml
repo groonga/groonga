@@ -116,7 +116,7 @@ jobs:
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           Write-Output "CMAKE_CXX_COMPILER_LAUNCHER=ccache" | `
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          ccache --show-stats --verbose
+          ccache --show-stats --verbose --version
       - name: Set version
         run: |
           "GRN_VERSION=${Env:GROONGA_VERSION}" | Set-Content version.sh
@@ -137,7 +137,7 @@ jobs:
           type ..\apache-arrow-build\CMakeFiles\CMakeError.log
           cmake --build ..\apache-arrow-build --config Release --verbose
           cmake --install ..\apache-arrow-build --config Release
-          ccache --show-stats --verbose
+          ccache --show-stats --verbose --version
       - name: Install Groonga
         shell: cmd
         run: |
@@ -157,7 +157,7 @@ jobs:
           type ..\groonga-build\CMakeFiles\CMakeError.log
           cmake --build ..\groonga-build --config RelWithDebInfo --verbose
           cmake --install ..\groonga-build --config RelWithDebInfo
-          ccache --show-stats --verbose
+          ccache --show-stats --verbose --version
       - name: Install Groonga Admin
         run: |
           cd "${Env:FULL_INSTALL_FOLDER}\share\groonga\html"
