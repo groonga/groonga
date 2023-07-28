@@ -104,12 +104,13 @@ jobs:
         with:
           path: |
             ccache
-          key: source-${{ matrix.vs-version }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
-          restore-keys: source-${{ matrix.vs-version }}-ccache-
+          key: windows-msvc-${{ matrix.vs-version }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: windows-msvc-${{ matrix.vs-version }}-ccache-
       - name: Prepare ccache
         run: |
           choco install ccache
           Get-Command ccache
+          (Get-Command ccache).Source
           $Env:CCACHE_DIR = "${{ github.workspace }}\ccache"
           Write-Output "CCACHE_DIR=${Env:CCACHE_DIR}" | `
             Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
@@ -132,8 +133,8 @@ jobs:
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_UNITY_BUILD=ON
           cmake %CMAKE_ARGS%
           type ..\apache-arrow-build\CMakeFiles\CMakeError.log
-          cmake --build ..\apache-arrow-build --config Release --verbose
-          cmake --install ..\apache-arrow-build --config Release
+          cmake --build ..\apache-arrow-build
+          cmake --install ..\apache-arrow-build
           ccache --show-stats --verbose --version
       - name: Install Groonga
         shell: cmd
@@ -152,8 +153,8 @@ jobs:
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_ZSTD=bundled
           cmake %CMAKE_ARGS%
           type ..\groonga-build\CMakeFiles\CMakeError.log
-          cmake --build ..\groonga-build --config RelWithDebInfo --verbose
-          cmake --install ..\groonga-build --config RelWithDebInfo
+          cmake --build ..\groonga-build
+          cmake --install ..\groonga-build
           ccache --show-stats --verbose --version
       - name: Install Groonga Admin
         run: |
