@@ -15,6 +15,10 @@ concurrency:
   cancel-in-progress: true
 jobs:
   source:
+    if: >-
+      github.event_name != 'schedule' ||
+      (github.event_name == 'schedule' &&
+       github.repository_owner == 'groonga')
     name: Source
     runs-on: ubuntu-latest
     steps:
