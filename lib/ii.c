@@ -968,8 +968,10 @@ datavec_init(
       return ctx->rc;
     }
     dv[ii->n_elements].data = dv[0].data + totalsize;
+    dv[0].flags = 0;
     for (i = 1; i < ii->n_elements; i++) {
       dv[i].data = dv[i - 1].data + unitsize;
+      dv[i].flags = 0;
     }
   }
   if (ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
