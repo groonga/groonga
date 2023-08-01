@@ -1,8 +1,6 @@
 /* config.h.cmake.in.  Generated from CMakeLists.txt by cmake.  */
 
 /* general constants */
-#define CONFIGURE_OPTIONS    "${CONFIGURE_OPTIONS}"
-
 #define HOST_CPU             "${CMAKE_SYSTEM_PROCESSOR}"
 #define HOST_OS              "${CMAKE_SYSTEM_NAME}"
 
