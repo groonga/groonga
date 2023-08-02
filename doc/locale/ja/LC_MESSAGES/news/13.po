@@ -19,6 +19,24 @@ msgstr ""
 msgid "News - 13 series"
 msgstr "お知らせ - 13系"
 
+msgid "Release 13.0.5 - 2023-08-02"
+msgstr "13.0.3リリース - 2023-08-02"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "Fixed a bug that index creation may be failed."
+msgstr "インデックス構築に失敗することがある問題を修正しました。"
+
+msgid "Groonga v13.0.2, v13.0.3, and v13.0.4 have this bug. Therefore, If you already have used the above version, we highly recommend that you use Groonga v13.0.5 or later."
+msgstr "この問題は、Groonga v13.0.2, v13.0.3, v13.0.4 に存在します。したがって、これらのバージョンを使用している場合は、 Groonga v13.0.5 移行を使用することを強くおすすめします。"
+
+msgid "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`] Fixed a bug that Groonga may crash when we specify invalid syntax query."
+msgstr "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`] 各近傍フレーズ検索で、無効なシンタックスのクエリーを指定した時にGroongaがクラッシュすることがある問題を修正しました。"
+
+msgid "For example, Groonga occures not error but crash in the following case. (We want to notice that the value of \"--query\" lack an open parenthesis in the following case.)"
+msgstr "例えば、以下のケースでは、エラーではなく、クラッシュします。(\"--query\"の値に開きカッコが足りない点に着目してください。)"
+
 msgid "Release 13.0.4 - 2023-07-26"
 msgstr "13.0.4リリース - 2023-07-26"
 
@@ -27,9 +45,6 @@ msgstr "改良"
 
 msgid "[{doc}`/install/windows`] Stopped providing 32-bit packages."
 msgstr "[{doc}`/install/windows`] 32-bit版パッケージの提供をやめました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/install/debian`] [{doc}`/install/ubuntu`] Fixed the default configuration file path for {doc}`/reference/query_expanders/tsv`."
 msgstr "[{doc}`/install/debian`] [{doc}`/install/ubuntu`] {doc}`/reference/query_expanders/tsv`のデフォルトの設定ファイルのパスを修正しました。"
