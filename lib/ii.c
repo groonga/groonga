@@ -11764,6 +11764,9 @@ token_info_build_near_phrase(grn_ctx *ctx, grn_ii_select_data *data)
   }
 
 exit:
+  if (rc == GRN_SUCCESS && ctx->rc != GRN_SUCCESS) {
+    rc = ctx->rc;
+  }
   GRN_OBJ_FIN(ctx, &buffer);
   return rc;
 }
