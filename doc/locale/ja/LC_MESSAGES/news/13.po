@@ -34,8 +34,8 @@ msgstr "この問題は、Groonga v13.0.2, v13.0.3, v13.0.4 に存在します�
 msgid "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`] Fixed a bug that Groonga may crash when we specify invalid syntax query."
 msgstr "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`] 各近傍フレーズ検索で、無効なシンタックスのクエリーを指定した時にGroongaがクラッシュすることがある問題を修正しました。"
 
-msgid "For example, Groonga occures not error but crash in the following case. (We want to notice that the value of \"--query\" lack an open parenthesis in the following case.)"
-msgstr "例えば、以下のケースでは、エラーではなく、クラッシュします。(\"--query\"の値に開きカッコが足りない点に着目してください。)"
+msgid "For example, Groonga is supported to occures error in the following case. However if Groonga has this bug, Groonga is crashed in the following case.   (We want to notice that the value of \"--query\" lack an open parenthesis in the following case.)"
+msgstr "例えば、以下のケースでは本来エラーになるべきですが、この問題があるとクラッシュします。(\"--query\"の値に開きカッコが足りない点に着目してください。)"
 
 msgid "Release 13.0.4 - 2023-07-26"
 msgstr "13.0.4リリース - 2023-07-26"
