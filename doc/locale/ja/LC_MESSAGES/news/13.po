@@ -29,7 +29,7 @@ msgid "Fixed a bug that index creation may be failed."
 msgstr "インデックス構築に失敗することがある問題を修正しました。"
 
 msgid "Groonga v13.0.2, v13.0.3, and v13.0.4 have this bug. Therefore, If you already have used the above version, we highly recommend that you use Groonga v13.0.5 or later."
-msgstr "この問題は、Groonga v13.0.2, v13.0.3, v13.0.4 に存在します。したがって、これらのバージョンを使用している場合は、 Groonga v13.0.5 移行を使用することを強くおすすめします。"
+msgstr "この問題は、Groonga v13.0.2, v13.0.3, v13.0.4 に存在します。したがって、これらのバージョンを使用している場合は、 Groonga v13.0.5 以降を使用することを強くおすすめします。"
 
 msgid "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`] Fixed a bug that Groonga may crash when we specify invalid syntax query."
 msgstr "[{ref}`query-syntax-near-phrase-search-condition`][{ref}`script-syntax-near-phrase-search-operator`] 各近傍フレーズ検索で、無効なシンタックスのクエリーを指定した時にGroongaがクラッシュすることがある問題を修正しました。"
