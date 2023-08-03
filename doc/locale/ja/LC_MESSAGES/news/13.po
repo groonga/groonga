@@ -20,7 +20,7 @@ msgid "News - 13 series"
 msgstr "お知らせ - 13系"
 
 msgid "Release 13.0.5 - 2023-08-02"
-msgstr "13.0.3リリース - 2023-08-02"
+msgstr "13.0.5リリース - 2023-08-02"
 
 msgid "Fixes"
 msgstr "修正"
