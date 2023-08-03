@@ -23,6 +23,7 @@ override_dh_auto_configure:
 	dh_auto_configure					\
 	  --buildsystem=cmake+ninja				\
 	  --							\
+	  -DCMAKE_BUILD_TYPE=RelWithDebInfo			\
 	  -DGRN_WITH_APACHE_ARROW=$${GRN_WITH_APACHE_ARROW}	\
 	  -DGRN_WITH_DOC=ON					\
 	  -DGRN_WITH_EXAMPLES=ON				\
