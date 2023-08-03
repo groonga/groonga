@@ -337,7 +337,11 @@ check_struct_has_member("struct tm" "tm_gmtoff" "time.h"
                         HAVE_STRUCT_TM_TM_GMTOFF)
 
 find_package(Threads REQUIRED)
-set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
+if(WIN32)
+  set(HAVE_PTHREAD_H FALSE)
+else()
+  set(HAVE_PTHREAD_H ${CMAKE_USE_PTHREADS_INIT})
+endif()
 
 option(GRN_WITH_NFKC "use NFKC based UTF8 normalization." ON)
 
