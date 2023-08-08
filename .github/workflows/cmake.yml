@@ -151,13 +151,13 @@ jobs:
           echo "LD_LIBRARY_PATH=$PWD/install/lib" >> ${GITHUB_ENV}
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
           if [ "${{ matrix.cc }}" == "gcc" -a \
-               "${{ matrix.mruby }}" == "" -a ]; then
+               "${{ matrix.mruby }}" == "" ]; then
             echo "GRN_TEST_RUN_APACHE_ARROW=yes" >> ${GITHUB_ENV}
             if [ "${{ matrix.apache-arrow-rc }}" == "" ]; then
               echo "GRN_TEST_RUN_ALL=yes" >> ${GITHUB_ENV}
             fi
           fi
-          if type grndb; then
+          if [ -e "install/bin/grndb" ] ; then
             echo "GRN_TEST_RUN_COMMAND_LINE=yes" >> ${GITHUB_ENV}
           fi
 
