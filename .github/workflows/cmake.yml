@@ -1,0 +1,279 @@
+name: CMake
+on:
+  push:
+    branches:
+      - master
+      - 'maintenance/**'
+    tags:
+      - '*'
+    paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - 'include/**/*.h'
+      - 'include/**/*.h.in'
+      - 'include/**/*.hpp'
+      - 'lib/**/*.c'
+      - 'lib/**/*.cpp'
+      - 'lib/**/*.h'
+      - 'lib/**/*.rb'
+      - 'lib/**/*.rb'
+      - 'plugins/**/*.c'
+      - 'plugins/**/*.cpp'
+      - 'plugins/**/*.h'
+      - 'plugins/**/*.rb'
+      - 'src/**/*.c'
+      - 'src/**/*.h'
+  pull_request:
+    paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - 'include/**/*.h'
+      - 'include/**/*.h.in'
+      - 'include/**/*.hpp'
+      - 'lib/**/*.c'
+      - 'lib/**/*.cpp'
+      - 'lib/**/*.h'
+      - 'lib/**/*.rb'
+      - 'lib/**/*.rb'
+      - 'plugins/**/*.c'
+      - 'plugins/**/*.cpp'
+      - 'plugins/**/*.h'
+      - 'plugins/**/*.rb'
+      - 'src/**/*.c'
+      - 'src/**/*.h'
+concurrency:
+  group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
+  cancel-in-progress: true
+jobs:
+  linux:
+    name: Linux
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cc: gcc
+            cxx: g++
+          - cc: gcc
+            cxx: g++
+            apache-arrow-rc: true
+          - cc: gcc
+            cxx: g++
+            mruby: "OFF"
+          - cc: clang
+            cxx: clang++
+    runs-on: ubuntu-latest
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+      GRN_WITH_MRUBY: ${{ matrix.mruby }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Cache ccache
+        uses: actions/cache@v3
+        with:
+          path: ~/.ccache
+          key: cmake-linux-${{ matrix.cc }}-${{ matrix.mruby || 'ON' }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: cmake-linux-${{ matrix.cc }}-${{ matrix.mruby || 'ON' }}-ccache-
+      - name: Enable Apache Arrow repository
+        run: |
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
+            lsb-release \
+            wget
+          if [ "${{ matrix.apache-arrow-rc }}" = "true" ]; then
+            wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')-rc/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+            sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+            sudo sed \
+              -i"" \
+              -e "s,^URIs: \\(.*\\)/,URIs: \\1-rc/,g" \
+              /etc/apt/sources.list.d/apache-arrow.sources
+          else
+            wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+            sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          fi
+      - name: Install packages
+        run: |
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
+            ccache \
+            cmake \
+            gdb \
+            gettext \
+            libarrow-dev \
+            libevent-dev \
+            libluajit-5.1-dev \
+            liblz4-dev \
+            libmecab-dev \
+            libmsgpack-dev \
+            libstemmer-dev \
+            libxxhash-dev \
+            libzstd-dev \
+            mecab-naist-jdic \
+            ninja-build \
+            rapidjson-dev \
+            ruby-dev \
+            zlib1g-dev
+      - name: Install Bundler
+        run: |
+          sudo gem install bundler
+      - name: CMake
+        run: |
+          cmake \
+            -B ../groonga.build \
+            -S . \
+            -GNinja \
+            -DCMAKE_INSTALL_PREFIX=$PWD/install \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DGRN_ALLOW_WARNING=OFF \
+            -DGRN_WITH_APACHE_ARROW=ON \
+            -DGRN_WITH_MRUBY=${GRN_WITH_MRUBY:-ON}
+      - name: Build
+        run: |
+          ninja -C ../groonga.build
+      - name: Install
+        run: |
+          ninja -C ../groonga.build install
+      - name: Install test dependencies
+        run: |
+          sudo env MAKEFLAGS=-j$(nproc) gem install \
+            grntest \
+            pkg-config \
+            red-arrow
+      - name: Set environment variables
+        run: |
+          echo "COLUMNS=79" >> ${GITHUB_ENV}
+          echo "LD_LIBRARY_PATH=$PWD/install/lib" >> ${GITHUB_ENV}
+          echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
+          if [ "${{ matrix.cc }}" == "gcc" -a \
+               "${{ matrix.mruby }}" == "" -a ]; then
+            echo "GRN_TEST_RUN_APACHE_ARROW=yes" >> ${GITHUB_ENV}
+            if "${{ matrix.apache-arrow-rc }}" == "" ];
+              echo "GRN_TEST_RUN_ALL=yes" >> ${GITHUB_ENV}
+            fi
+          fi
+          if type grndb; then
+            echo "GRN_TEST_RUN_COMMAND_LINE=yes" >> ${GITHUB_ENV}
+          fi
+
+          echo "$PWD/install/bin" >> ${GITHUB_PATH}
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/red-datasets
+          key: red-datasets-ubuntu
+      - name: "Test: command line"
+        if: env.GRN_TEST_RUN_COMMAND_LINE == 'yes'
+        run: |
+          test/command_line/run-test.rb --groonga-install-prefix=$PWD/install
+      - name: "Test: stdio"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            test/command/suite
+      - name: "Test: stdio: optimize"
+        if: env.GRN_TEST_RUN_ALL == 'yes'
+        run: |
+          export GRN_EXPR_OPTIMIZE=yes
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            test/command/suite
+      - name: "Test: stdio: NFKC121"
+        if: env.GRN_TEST_RUN_ALL == 'yes'
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            test/command/suite/normalizers/nfkc/
+        env:
+          NFKC: "121"
+      - name: "Test: stdio: NFKC130"
+        if: env.GRN_TEST_RUN_ALL == 'yes'
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            test/command/suite/normalizers/nfkc/
+        env:
+          NFKC: "130"
+      - name: "Test: stdio: NFKC150"
+        if: env.GRN_TEST_RUN_ALL == 'yes'
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            test/command/suite/normalizers/nfkc/
+        env:
+          NFKC: "150"
+      - name: "Test: stdio: n_workers"
+        if: env.GRN_TEST_RUN_ALL == 'yes'
+        run: |
+          export GRN_SELECT_N_WORKERS_DEFAULT=-1
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            test/command/suite
+      - name: "Test: HTTP: load: Apache Arrow"
+        if: env.GRN_TEST_RUN_APACHE_ARROW == 'yes'
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            --input-type=apache-arrow \
+            --interface=http \
+            test/command/suite
+      - name: "Test: HTTP: command: POST"
+        if: env.GRN_TEST_RUN_ALL == 'yes'
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            --input-type=apache-arrow \
+            --interface=http \
+            --use-http-post \
+            test/command/suite
+      - name: "Test: HTTP: command: chunked"
+        if: env.GRN_TEST_RUN_ALL == 'yes'
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --timeout=10 \
+            --read-timeout=30 \
+            --reporter=mark \
+            --input-type=apache-arrow \
+            --interface=http \
+            --use-http-chunked \
+            test/command/suite
+      - name: "Test: HTTP: reference count"
+        if: env.GRN_TEST_RUN_ALL == 'yes'
+        run: |
+          export GRN_ENABLE_REFERENCE_COUNT=yes
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            --interface=http \
+            test/command/suite
