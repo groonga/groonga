@@ -11,19 +11,8 @@ concurrency:
   group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
   cancel-in-progress: true
 jobs:
-  test:
-    name: Test
-    strategy:
-      fail-fast: false
-      matrix:
-        label:
-          - "Autotools"
-          - "CMake"
-        include:
-          - label: "Autotools"
-            use-autotools: true
-          - label: "CMake"
-            use-cmake: true
+  autotools:
+    name: Autotools
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
@@ -39,13 +28,9 @@ jobs:
           brew update || :
           brew bundle
       - name: Generate configure
-        if: |
-          matrix.use-autotools
         run: |
           ./autogen.sh
       - name: Configure
-        if: |
-          matrix.use-autotools
         run: |
           mkdir -p ../groonga.build
           cd ../groonga.build
@@ -55,22 +40,6 @@ jobs:
             --prefix=/tmp/local \
             --with-ruby \
             PKG_CONFIG_PATH=$(brew --prefix openssl)/lib/pkgconfig
-      - name: Run CMake
-        if: |
-          matrix.use-cmake
-        run: |
-          export SDKROOT="$(xcrun --show-sdk-path)"
-          mkdir -p ../groonga.build
-          PKG_CONFIG_PATH=$(brew --prefix openssl)/lib/pkgconfig \
-            cmake \
-              -B ../groonga.build \
-              -S . \
-              -DCMAKE_INSTALL_PREFIX=/tmp/local \
-              -DCMAKE_BUILD_TYPE=Debug \
-              -DGRN_ALLOW_WARNING=OFF \
-              -DGRN_WITH_APACHE_ARROW=yes \
-              -DGRN_WITH_MRUBY=yes \
-              -DRUBY=$(which ruby)
       - name: Build
         run: |
           make -C ../groonga.build -j$(/usr/sbin/sysctl -n hw.ncpu)
@@ -92,55 +61,6 @@ jobs:
               --n-retries=3 \
               --read-timeout=30 \
               --reporter=mark
-      - name: "Test: HTTP: load: Apache Arrow"
-        if: |
-          matrix.use-cmake
-        run: |
-          cd ../groonga.build
-          BUILD_DIR=$PWD/test/command \
-            bash -x ../groonga/test/command/run-test.sh \
-              --n-retries=3 \
-              --read-timeout=30 \
-              --reporter=mark \
-              --input-type=apache-arrow \
-              --interface=http
-      - name: "Test: HTTP: command: POST"
-        if: |
-          matrix.use-cmake
-        run: |
-          cd ../groonga.build
-          BUILD_DIR=$PWD/test/command \
-            bash -x ../groonga/test/command/run-test.sh \
-              --n-retries=3 \
-              --read-timeout=30 \
-              --reporter=mark \
-              --interface=http \
-              --use-http-post
-      - name: "Test: HTTP: command: chunked"
-        if: |
-          matrix.use-cmake
-        run: |
-          cd ../groonga.build
-          BUILD_DIR=$PWD/test/command \
-            bash -x ../groonga/test/command/run-test.sh \
-              --n-retries=3 \
-              --timeout=10 \
-              --read-timeout=30 \
-              --reporter=mark \
-              --interface=http \
-              --use-http-chunked
-      - name: "Test: HTTP: reference count"
-        if: |
-          matrix.use-cmake
-        run: |
-          cd ../groonga.build
-          export GRN_ENABLE_REFERENCE_COUNT=yes
-          BUILD_DIR=$PWD/test/command \
-            bash -x ../groonga/test/command/run-test.sh \
-              --n-retries=3 \
-              --read-timeout=30 \
-              --reporter=mark \
-              --interface=http
       - name: Install
         run: |
           make -C ../groonga.build install

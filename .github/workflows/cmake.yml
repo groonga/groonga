@@ -74,10 +74,13 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
+      - name: Prepare ccache
+        run: |
+          echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
       - name: Cache ccache
         uses: actions/cache@v3
         with:
-          path: ~/.ccache
+          path: ccache
           key: cmake-linux-${{ matrix.cc }}-${{ matrix.mruby || 'ON' }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
           restore-keys: cmake-linux-${{ matrix.cc }}-${{ matrix.mruby || 'ON' }}-ccache-
       - name: Enable Apache Arrow repository
@@ -119,11 +122,9 @@ jobs:
             rapidjson-dev \
             ruby-dev \
             zlib1g-dev
-      - name: Install Bundler
-        run: |
-          sudo gem install bundler
       - name: CMake
         run: |
+          ccache --show-stats --verbose --version || :
           cmake \
             -B ../groonga.build \
             -S . \
@@ -136,6 +137,7 @@ jobs:
       - name: Build
         run: |
           ninja -C ../groonga.build
+          ccache --show-stats --verbose --version || :
       - name: Install
         run: |
           ninja -C ../groonga.build install
@@ -270,6 +272,118 @@ jobs:
             test/command/suite
       - name: "Test: HTTP: reference count"
         if: env.GRN_TEST_RUN_ALL == 'yes'
+        run: |
+          export GRN_ENABLE_REFERENCE_COUNT=yes
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            --interface=http \
+            test/command/suite
+
+  macos:
+    name: macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Install packages
+        run: |
+          rm -f /usr/local/bin/2to3* || :
+          rm -f /usr/local/bin/idle3* || :
+          rm -f /usr/local/bin/pydoc3* || :
+          rm -f /usr/local/bin/python3* || :
+          rm -f /usr/local/bin/python3-config* || :
+          brew update || :
+          brew bundle
+      - name: Prepare ccache
+        run: |
+          echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
+      - name: Cache ccache
+        uses: actions/cache@v3
+        with:
+          path: ccache
+          key: cmake-macos-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: cmake-macos-ccache-
+      - name: Run CMake
+        run: |
+          ccache --show-stats --verbose --version || :
+          export SDKROOT="$(xcrun --show-sdk-path)"
+          cmake \
+            -B ../groonga.build \
+            -S . \
+            -GNinja \
+            -DCMAKE_INSTALL_PREFIX=$PWD/install \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DGRN_ALLOW_WARNING=OFF \
+            -DGRN_WITH_APACHE_ARROW=ON \
+            -DGRN_WITH_MRUBY=ON \
+            -DRUBY=$(which ruby)
+      - name: Build
+        run: |
+          ninja -C ../groonga.build
+          ccache --show-stats --verbose --version || :
+      - name: Install
+        run: |
+          ninja -C ../groonga.build install
+      - name: Install test dependencies
+        run: |
+          MAKEFLAGS=-j$(nproc) gem install \
+            grntest \
+            pkg-config \
+            red-arrow
+      - name: Set environment variables
+        run: |
+          echo "COLUMNS=79" >> ${GITHUB_ENV}
+
+          echo "$PWD/install/bin" >> ${GITHUB_PATH}
+      - name: "Test: command line"
+        run: |
+          test/command_line/run-test.rb --groonga-install-prefix=$PWD/install
+      - name: "Test: stdio"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            test/command/suite
+      - name: "Test: HTTP: load: Apache Arrow"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            --input-type=apache-arrow \
+            --interface=http \
+            test/command/suite
+      - name: "Test: HTTP: command: POST"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            --input-type=apache-arrow \
+            --interface=http \
+            --use-http-post \
+            test/command/suite
+      - name: "Test: HTTP: command: chunked"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --timeout=10 \
+            --read-timeout=30 \
+            --reporter=mark \
+            --input-type=apache-arrow \
+            --interface=http \
+            --use-http-chunked \
+            test/command/suite
+      - name: "Test: HTTP: reference count"
         run: |
           export GRN_ENABLE_REFERENCE_COUNT=yes
           grntest \
