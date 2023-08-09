@@ -498,7 +498,7 @@ jobs:
           # "fiddle" is for ensuring using the installed system libffi
           MAKEFLAGS=-j$(nproc) gem install \
             fiddle \
-            red-arrow \
+            grntest \
             pkg-config \
             red-arrow
           ruby -e "require 'arrow'"
