@@ -500,23 +500,15 @@ jobs:
       - name: Use JST
         run: |
           Set-TimeZone -Id "Tokyo Standard Time"
-      - uses: actions/checkout@v3
-        with:
-          repository: groonga/grntest
-          path: grntest
-      - name: Install grntest
+      - name: Install test dependencies
         shell: msys2 {0}
         run: |
-          # Ensure using the installed system libffi
-          gem install fiddle
-          gem install bundler
-          cd grntest
-          bundle install
-          bundle exec rake install
-      - name: Install red-arrow
-        shell: msys2 {0}
-        run: |
-          MAKEFLAGS=-j$(nproc) gem install red-arrow
+          # "fiddle" is for ensuring using the installed system libffi
+          MAKEFLAGS=-j$(nproc) gem install \
+            fiddle \
+            red-arrow \
+            pkg-config \
+            red-arrow
           ruby -e "require 'arrow'"
       - name: Prepare setup-extpp.rb
         shell: msys2 {0}
