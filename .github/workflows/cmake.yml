@@ -470,6 +470,7 @@ jobs:
               --noprogressbar \
               --rmdeps \
               --syncdeps
+          ccache --show-stats --verbose --version || :
       - name: Install
         shell: msys2 {0}
         run: |
