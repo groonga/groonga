@@ -594,7 +594,12 @@ jobs:
           Set-TimeZone -Id "Tokyo Standard Time"
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "ruby"
+          # We can't use "ruby" here because json-stream still uses
+          # Fixnum that is removed in recent Ruby. :<
+          #
+          # We can use "ruby" here when we remove json-stream
+          # dependency from groonga-command-parser.
+          ruby-version: "3.1"
       - name: Download bundled packages
         run: |
           cd vendor
