@@ -247,7 +247,7 @@ module GroongaLog
       true
     when /\Agroonga\(\) \[0x[\da-f]+\]\z/
       true
-    when /\A\d+\s+(?:lib\S+\.dylib|\S+\.so|groonga|nginx|\?\?\?)\s+
+    when /\A\d+\s+(?:lib\S+\.dylib|\S+\.so|groonga|grndb|nginx|\?\?\?)\s+
              0x[\da-f]+\s
              \S+\s\+\s\d+\z/x
       true
