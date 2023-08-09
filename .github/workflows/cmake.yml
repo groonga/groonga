@@ -67,9 +67,6 @@ jobs:
             cxx: g++
           - cc: gcc
             cxx: g++
-            apache-arrow-rc: true
-          - cc: gcc
-            cxx: g++
             mruby: "OFF"
           - cc: clang
             cxx: clang++
@@ -97,17 +94,15 @@ jobs:
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             lsb-release \
             wget
-          if [ "${{ matrix.apache-arrow-rc }}" = "true" ]; then
-            wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')-rc/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-            sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-            sudo sed \
-              -i"" \
-              -e "s,^URIs: \\(.*\\)/,URIs: \\1-rc/,g" \
-              /etc/apt/sources.list.d/apache-arrow.sources
-          else
-            wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-            sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-          fi
+          # Always use RC version to detect Apache Arrow related
+          # problems as fast as possible. Released Apache Arrow is
+          # tested in package related jobs.
+          wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')-rc/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          sudo sed \
+            -i"" \
+            -e "s,^URIs: \\(.*\\)/,URIs: \\1-rc/,g" \
+            /etc/apt/sources.list.d/apache-arrow.sources
       - name: Install packages
         run: |
           sudo apt update -o="APT::Acquire::Retries=3"
@@ -157,10 +152,7 @@ jobs:
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
           if [ "${{ matrix.cc }}" == "gcc" -a \
                "${{ matrix.mruby }}" == "" ]; then
-            echo "GRN_TEST_RUN_APACHE_ARROW=yes" >> ${GITHUB_ENV}
-            if [ "${{ matrix.apache-arrow-rc }}" == "" ]; then
-              echo "GRN_TEST_RUN_ALL=yes" >> ${GITHUB_ENV}
-            fi
+            echo "GRN_TEST_RUN_ALL=yes" >> ${GITHUB_ENV}
           fi
           if [ -e "install/bin/grndb" ] ; then
             echo "GRN_TEST_RUN_COMMAND_LINE=yes" >> ${GITHUB_ENV}
@@ -249,7 +241,7 @@ jobs:
             --reporter=mark \
             test/command/suite
       - name: "Test: HTTP: load: Apache Arrow"
-        if: env.GRN_TEST_RUN_APACHE_ARROW == 'yes'
+        if: env.GRN_TEST_RUN_ALL == 'yes'
         run: |
           grntest \
             --base-dir test/command \
