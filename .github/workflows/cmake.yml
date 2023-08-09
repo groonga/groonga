@@ -315,7 +315,7 @@ jobs:
             -B ../groonga.build \
             -S . \
             -GNinja \
-            -DCMAKE_INSTALL_PREFIX=$PWD/install \
+            -DCMAKE_INSTALL_PREFIX=/usr/local \
             -DCMAKE_BUILD_TYPE=Debug \
             -DGRN_ALLOW_WARNING=OFF \
             -DGRN_WITH_APACHE_ARROW=ON \
@@ -327,7 +327,7 @@ jobs:
           ccache --show-stats --verbose --version || :
       - name: Install
         run: |
-          ninja -C ../groonga.build install
+          sudo ninja -C ../groonga.build install
       - name: Install test dependencies
         run: |
           MAKEFLAGS=-j$(nproc) gem install \
@@ -337,15 +337,11 @@ jobs:
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
-
-          echo "$PWD/install/bin" >> ${GITHUB_PATH}
       - name: "Test: command line"
         run: |
-          export DYLD_LIBRARY_PATH=${PWD}/install/lib
-          test/command_line/run-test.rb --groonga-install-prefix=${PWD}/install
+          test/command_line/run-test.rb --groonga-install-prefix=/usr/local
       - name: "Test: stdio"
         run: |
-          export DYLD_LIBRARY_PATH=${PWD}/install/lib
           grntest \
             --base-dir test/command \
             --n-retries=2 \
@@ -354,7 +350,6 @@ jobs:
             test/command/suite
       - name: "Test: HTTP: load: Apache Arrow"
         run: |
-          export DYLD_LIBRARY_PATH=${PWD}/install/lib
           grntest \
             --base-dir test/command \
             --n-retries=2 \
@@ -365,7 +360,6 @@ jobs:
             test/command/suite
       - name: "Test: HTTP: command: POST"
         run: |
-          export DYLD_LIBRARY_PATH=${PWD}/install/lib
           grntest \
             --base-dir test/command \
             --n-retries=2 \
@@ -377,7 +371,6 @@ jobs:
             test/command/suite
       - name: "Test: HTTP: command: chunked"
         run: |
-          export DYLD_LIBRARY_PATH=${PWD}/install/lib
           grntest \
             --base-dir test/command \
             --n-retries=2 \
@@ -390,7 +383,6 @@ jobs:
             test/command/suite
       - name: "Test: HTTP: reference count"
         run: |
-          export DYLD_LIBRARY_PATH=${PWD}/install/lib
           export GRN_ENABLE_REFERENCE_COUNT=yes
           grntest \
             --base-dir test/command \
