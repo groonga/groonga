@@ -98,7 +98,7 @@ jobs:
                           url = "https://groonga.org/docs/#{path}.html"; \
                           "[#{title}](#{url})"; \
                         }. \
-                        gsub(/{ref}`(.+?)`) {$1}.
+                        gsub(/{ref}`(.+?)`/) {$1}.
                         strip)' \
              $(ls *.md | sort --human-numeric-sort | tail -n1)) > \
             release-note.md
