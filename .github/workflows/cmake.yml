@@ -341,9 +341,11 @@ jobs:
           echo "$PWD/install/bin" >> ${GITHUB_PATH}
       - name: "Test: command line"
         run: |
-          test/command_line/run-test.rb --groonga-install-prefix=$PWD/install
+          export DYLD_LIBRARY_PATH=${PWD}/install/lib
+          test/command_line/run-test.rb --groonga-install-prefix=${PWD}/install
       - name: "Test: stdio"
         run: |
+          export DYLD_LIBRARY_PATH=${PWD}/install/lib
           grntest \
             --base-dir test/command \
             --n-retries=2 \
@@ -352,6 +354,7 @@ jobs:
             test/command/suite
       - name: "Test: HTTP: load: Apache Arrow"
         run: |
+          export DYLD_LIBRARY_PATH=${PWD}/install/lib
           grntest \
             --base-dir test/command \
             --n-retries=2 \
@@ -362,6 +365,7 @@ jobs:
             test/command/suite
       - name: "Test: HTTP: command: POST"
         run: |
+          export DYLD_LIBRARY_PATH=${PWD}/install/lib
           grntest \
             --base-dir test/command \
             --n-retries=2 \
@@ -373,6 +377,7 @@ jobs:
             test/command/suite
       - name: "Test: HTTP: command: chunked"
         run: |
+          export DYLD_LIBRARY_PATH=${PWD}/install/lib
           grntest \
             --base-dir test/command \
             --n-retries=2 \
@@ -385,6 +390,7 @@ jobs:
             test/command/suite
       - name: "Test: HTTP: reference count"
         run: |
+          export DYLD_LIBRARY_PATH=${PWD}/install/lib
           export GRN_ENABLE_REFERENCE_COUNT=yes
           grntest \
             --base-dir test/command \
