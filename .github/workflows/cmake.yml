@@ -25,6 +25,9 @@ on:
       - 'plugins/**/*.rb'
       - 'src/**/*.c'
       - 'src/**/*.h'
+      - 'test/command/**'
+      - 'test/command_line/**'
+      - 'test/mruby/**'
   pull_request:
     paths:
       - '**/*.cmake'
@@ -45,6 +48,9 @@ on:
       - 'plugins/**/*.rb'
       - 'src/**/*.c'
       - 'src/**/*.h'
+      - 'test/command/**'
+      - 'test/command_line/**'
+      - 'test/mruby/**'
 concurrency:
   group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
   cancel-in-progress: true
@@ -141,16 +147,11 @@ jobs:
       - name: Install
         run: |
           ninja -C ../groonga.build install
-      - name: Install test dependencies
-        run: |
-          sudo env MAKEFLAGS=-j$(nproc) gem install \
-            grntest \
-            pkg-config \
-            red-arrow
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
           echo "LD_LIBRARY_PATH=$PWD/install/lib" >> ${GITHUB_ENV}
+          echo "PKG_CONFIG_PATH=$PWD/lib/pkgconfig" >> ${GITHUB_ENV}
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
           if [ "${{ matrix.cc }}" == "gcc" -a \
                "${{ matrix.mruby }}" == "" ]; then
@@ -164,6 +165,13 @@ jobs:
           fi
 
           echo "$PWD/install/bin" >> ${GITHUB_PATH}
+      - name: Install test dependencies
+        run: |
+          sudo env MAKEFLAGS=-j$(nproc) gem install \
+            grntest \
+            pkg-config \
+            red-arrow \
+            rroonga
       - uses: actions/cache@v3
         with:
           path: |
@@ -173,6 +181,10 @@ jobs:
         if: env.GRN_TEST_RUN_COMMAND_LINE == 'yes'
         run: |
           test/command_line/run-test.rb --groonga-install-prefix=$PWD/install
+      - name: "Test: mruby"
+        if: env.GRN_TEST_RUN_ALL == 'yes'
+        run: |
+          USE_SYSTEM=yes test/mruby/run-test.rb
       - name: "Test: stdio"
         run: |
           grntest \
@@ -333,13 +345,17 @@ jobs:
           MAKEFLAGS=-j$(nproc) gem install \
             grntest \
             pkg-config \
-            red-arrow
+            red-arrow \
+            rroonga
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
       - name: "Test: command line"
         run: |
           test/command_line/run-test.rb --groonga-install-prefix=/usr/local
+      - name: "Test: mruby"
+        run: |
+          USE_SYSTEM=yes test/mruby/run-test.rb
       - name: "Test: stdio"
         run: |
           grntest \
