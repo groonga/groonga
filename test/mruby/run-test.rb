@@ -4,9 +4,10 @@ require "rbconfig"
 require "pathname"
 require "fileutils"
 
+source_base_dir_path = Pathname(__dir__).expand_path
+source_top_dir_path = source_base_dir_path.parent.parent
+
 unless ENV["USE_SYSTEM"]
-  source_base_dir_path = Pathname(__dir__).expand_path
-  source_top_dir_path = source_base_dir_path.parent.parent
   if ENV["BUILD_DIR"]
     build_base_dir_path = Pathname(ENV["BUILD_DIR"]).expand_path
   else
