@@ -16,7 +16,7 @@ client = Octokit::Client.new
 client.access_token = ENV["GITHUB_ACCESS_TOKEN"]
 artifacts_response = nil
 workflow_runs_response = client.workflow_runs("groonga/groonga",
-                                              "windows-msvc.yml",
+                                              "cmake.yml",
                                               branch: tag)
 downloaded = false
 workflow_runs_response.workflow_runs.each do |workflow_run|
