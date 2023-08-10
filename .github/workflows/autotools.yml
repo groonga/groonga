@@ -141,12 +141,6 @@ jobs:
           sudo env MAKEFLAGS=-j$(nproc) gem install \
             grntest \
             pkg-config
-      - name: "Test: API"
-        run: |
-          bash -x test/unit/run-test.sh
-      - name: "Test: mruby"
-        run: |
-          bash -x test/mruby/run-test.sh
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
@@ -154,6 +148,12 @@ jobs:
           echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
 
           echo "$PWD/install/bin" >> ${GITHUB_PATH}
+      - name: "Test: API"
+        run: |
+          bash -x test/unit/run-test.sh
+      - name: "Test: mruby"
+        run: |
+          USE_SYSTEM=yes test/mruby/run-test.rb
       - uses: actions/cache@v3
         with:
           path: |
