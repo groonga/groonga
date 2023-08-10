@@ -13,6 +13,7 @@ on:
       - '.github/workflows/setup.yml'
       - 'Vagrantfile'
       - 'build.sh'
+      - 'cmake/**'
       - 'include/**/*.h'
       - 'include/**/*.h.in'
       - 'include/**/*.hpp'
