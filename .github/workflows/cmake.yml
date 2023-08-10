@@ -344,6 +344,7 @@ jobs:
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
+          echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
       - name: "Test: command line"
         run: |
           test/command_line/run-test.rb --groonga-install-prefix=/usr/local
