@@ -6,7 +6,55 @@ on:
       - 'maintenance/**'
     tags:
       - '*'
+    paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - '**/Makefile.am'
+      - '.github/workflows/package.yml'
+      - 'configure.ac'
+      - 'doc/**'
+      - 'include/**/*.h'
+      - 'include/**/*.h.in'
+      - 'include/**/*.hpp'
+      - 'lib/**/*.c'
+      - 'lib/**/*.cpp'
+      - 'lib/**/*.h'
+      - 'lib/**/*.rb'
+      - 'lib/**/*.rb'
+      - 'packages/**'
+      - 'plugins/**/*.c'
+      - 'plugins/**/*.cpp'
+      - 'plugins/**/*.h'
+      - 'plugins/**/*.rb'
+      - 'src/**/*.c'
+      - 'src/**/*.h'
+      - 'test/command/**'
   pull_request:
+    paths:
+      - '**/*.cmake'
+      - '**/*.cmake.in'
+      - '**/CMakeLists.txt'
+      - '**/Makefile.am'
+      - '.github/workflows/package.yml'
+      - 'configure.ac'
+      - 'doc/**'
+      - 'include/**/*.h'
+      - 'include/**/*.h.in'
+      - 'include/**/*.hpp'
+      - 'lib/**/*.c'
+      - 'lib/**/*.cpp'
+      - 'lib/**/*.h'
+      - 'lib/**/*.rb'
+      - 'lib/**/*.rb'
+      - 'packages/**'
+      - 'plugins/**/*.c'
+      - 'plugins/**/*.cpp'
+      - 'plugins/**/*.h'
+      - 'plugins/**/*.rb'
+      - 'src/**/*.c'
+      - 'src/**/*.h'
+      - 'test/command/**'
   schedule:
     - cron: |
         0 0 * * *
@@ -188,7 +236,7 @@ jobs:
             task-namespace: yum
             target: almalinux-9-aarch64
             test-docker-image: arm64v8/almalinux:9
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
