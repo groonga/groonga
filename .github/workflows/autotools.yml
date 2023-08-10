@@ -140,7 +140,8 @@ jobs:
         run: |
           sudo env MAKEFLAGS=-j$(nproc) gem install \
             grntest \
-            pkg-config
+            pkg-config \
+            rroonga
       - name: Set environment variables
         run: |
           echo "COLUMNS=79" >> ${GITHUB_ENV}
