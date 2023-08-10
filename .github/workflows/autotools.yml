@@ -8,7 +8,7 @@ on:
       - '*'
     paths:
       - '**/Makefile.am'
-      - '.github/workflows/cmake.yml'
+      - '.github/workflows/autotools.yml'
       - 'ci/**'
       - 'configure.ac'
       - 'include/**/*.h'
@@ -31,7 +31,7 @@ on:
   pull_request:
     paths:
       - '**/Makefile.am'
-      - '.github/workflows/cmake.yml'
+      - '.github/workflows/autotools.yml'
       - 'ci/**'
       - 'configure.ac'
       - 'include/**/*.h'
