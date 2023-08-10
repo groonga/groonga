@@ -1,0 +1,237 @@
+name: Autotools
+on:
+  push:
+    branches:
+      - master
+      - 'maintenance/**'
+    tags:
+      - '*'
+    paths:
+      - '**/Makefile.am'
+      - '.github/workflows/cmake.yml'
+      - 'ci/**'
+      - 'configure.ac'
+      - 'include/**/*.h'
+      - 'include/**/*.h.in'
+      - 'include/**/*.hpp'
+      - 'lib/**/*.c'
+      - 'lib/**/*.cpp'
+      - 'lib/**/*.h'
+      - 'lib/**/*.rb'
+      - 'lib/**/*.rb'
+      - 'plugins/**/*.c'
+      - 'plugins/**/*.cpp'
+      - 'plugins/**/*.h'
+      - 'plugins/**/*.rb'
+      - 'src/**/*.c'
+      - 'src/**/*.h'
+      - 'test/command/**'
+      - 'test/command_line/**'
+      - 'test/mruby/**'
+  pull_request:
+    paths:
+      - '**/Makefile.am'
+      - '.github/workflows/cmake.yml'
+      - 'ci/**'
+      - 'configure.ac'
+      - 'include/**/*.h'
+      - 'include/**/*.h.in'
+      - 'include/**/*.hpp'
+      - 'lib/**/*.c'
+      - 'lib/**/*.cpp'
+      - 'lib/**/*.h'
+      - 'lib/**/*.rb'
+      - 'lib/**/*.rb'
+      - 'plugins/**/*.c'
+      - 'plugins/**/*.cpp'
+      - 'plugins/**/*.h'
+      - 'plugins/**/*.rb'
+      - 'src/**/*.c'
+      - 'src/**/*.h'
+      - 'test/command/**'
+      - 'test/command_line/**'
+      - 'test/mruby/**'
+concurrency:
+  group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
+  cancel-in-progress: true
+jobs:
+  linux:
+    name: Linux
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cc: gcc
+            cxx: g++
+          - cc: clang
+            cxx: clang++
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Prepare ccache
+        run: |
+          echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
+      - name: Cache ccache
+        uses: actions/cache@v3
+        with:
+          path: ccache
+          key: autotools-linux-${{ matrix.cc }}-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: autotools-linux-${{ matrix.cc }}-ccache-
+      - name: Enable Apache Arrow repository
+        run: |
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
+            lsb-release \
+            wget
+          wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+          sudo apt install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
+      - name: Install packages
+        run: |
+          sudo apt update -o="APT::Acquire::Retries=3"
+          sudo apt install -y -V -o="APT::Acquire::Retries=3" \
+            autoconf-archive \
+            automake1.11 \
+            autotools-dev \
+            ccache \
+            clang \
+            gdb \
+            gettext \
+            libarrow-dev \
+            libevent-dev \
+            libluajit-5.1-dev \
+            liblz4-dev \
+            libmecab-dev \
+            libmsgpack-dev \
+            libstemmer-dev \
+            libxxhash-dev \
+            libzstd-dev \
+            mecab-naist-jdic \
+            rapidjson-dev \
+            ruby-dev \
+            zlib1g-dev
+          echo "/usr/lib/ccache" >> $GITHUB_PATH
+      - name: Install Cutter
+        run: |
+          curl \
+            --silent \
+            --location \
+            https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
+      - name: Generate configure
+        run: |
+          ./autogen.sh
+      - name: Configure
+        run: |
+          ccache --show-stats --verbose --version || :
+          ./configure \
+            CC=${{ matrix.cc }} \
+            CXX=${{ matrix.cxx }} \
+            --enable-debug \
+            --enable-mruby \
+            --prefix=$PWD/install \
+            --with-ruby
+      - name: Build
+        run: |
+          make -j$(nproc)
+          ccache --show-stats --verbose --version || :
+      - name: Install
+        run: |
+          make install
+      - name: Install test dependencies
+        run: |
+          sudo env MAKEFLAGS=-j$(nproc) gem install \
+            grntest \
+            pkg-config
+      - name: "Test: API"
+        run: |
+          bash -x test/unit/run-test.sh
+      - name: "Test: mruby"
+        run: |
+          bash -x test/mruby/run-test.sh
+      - name: Set environment variables
+        run: |
+          echo "COLUMNS=79" >> ${GITHUB_ENV}
+          echo "LD_LIBRARY_PATH=$PWD/install/lib" >> ${GITHUB_ENV}
+          echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
+
+          echo "$PWD/install/bin" >> ${GITHUB_PATH}
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/red-datasets
+          key: red-datasets-ubuntu
+      - name: "Test: command line"
+        run: |
+          test/command_line/run-test.rb --groonga-install-prefix=$PWD/install
+      - name: "Test: stdio"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            test/command/suite
+
+  macos:
+    name: macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Install packages
+        run: |
+          rm -f /usr/local/bin/2to3* || :
+          rm -f /usr/local/bin/idle3* || :
+          rm -f /usr/local/bin/pydoc3* || :
+          rm -f /usr/local/bin/python3* || :
+          rm -f /usr/local/bin/python3-config* || :
+          brew update || :
+          brew bundle
+      - name: Prepare ccache
+        run: |
+          echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
+          echo "$(brew --prefix ccache)/libexec" >> ${GITHUB_PATH}
+      - name: Cache ccache
+        uses: actions/cache@v3
+        with:
+          path: ccache
+          key: autotools-macos-ccache-${{ hashFiles('lib/**', 'src/**', 'plugins/**', 'include/**') }}
+          restore-keys: autotools-macos-ccache-
+      - name: Generate configure
+        run: |
+          ./autogen.sh
+      - name: Configure
+        run: |
+          ccache --show-stats --verbose --version || :
+          mkdir -p ../groonga.build
+          cd ../groonga.build
+          ../groonga/configure \
+            --enable-debug \
+            --enable-mruby \
+            --prefix=/tmp/local \
+            --with-ruby
+      - name: Build
+        run: |
+          make -C ../groonga.build -j$(/usr/sbin/sysctl -n hw.physicalcpu)
+      - name: Install
+        run: |
+          make -C ../groonga.build install
+      - name: Install test dependencies
+        run: |
+          MAKEFLAGS=-j$(nproc) gem install \
+            grntest \
+            pkg-config
+      - name: Set environment variables
+        run: |
+          echo "COLUMNS=79" >> ${GITHUB_ENV}
+          echo "TZ=Asia/Tokyo" >> ${GITHUB_ENV}
+      - name: "Test: stdio"
+        run: |
+          grntest \
+            --base-dir test/command \
+            --n-retries=2 \
+            --read-timeout=30 \
+            --reporter=mark \
+            test/command/suite
