@@ -209,14 +209,14 @@ jobs:
           ../groonga/configure \
             --enable-debug \
             --enable-mruby \
-            --prefix=/tmp/local \
+            --prefix=/usr/local \
             --with-ruby
       - name: Build
         run: |
           make -C ../groonga.build -j$(/usr/sbin/sysctl -n hw.physicalcpu)
       - name: Install
         run: |
-          make -C ../groonga.build install
+          sudo make -C ../groonga.build install
       - name: Install test dependencies
         run: |
           MAKEFLAGS=-j$(nproc) gem install \
