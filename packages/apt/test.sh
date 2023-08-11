@@ -73,7 +73,6 @@ export TZ=Asia/Tokyo
 grntest_options=()
 grntest_options+=(--base-directory=command)
 grntest_options+=(--n-retries=2)
-grntest_options+=(--n-workers=$(nproc))
 grntest_options+=(--reporter=mark)
 grntest_options+=(command/suite)
 # There are some problems for running arm64 tests:

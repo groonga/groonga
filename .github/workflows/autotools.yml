@@ -64,6 +64,7 @@ jobs:
           - cc: clang
             cxx: clang++
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
         with:
@@ -175,6 +176,7 @@ jobs:
   macos:
     name: macOS
     runs-on: macos-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
         with:

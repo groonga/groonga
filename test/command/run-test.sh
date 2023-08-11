@@ -12,19 +12,6 @@ source_top_dir=$(cd -P "$source_top_dir" 2>/dev/null || cd "$source_top_dir"; pw
 build_top_dir="$(dirname "$(dirname "$BUILD_DIR")")"
 build_top_dir=$(cd -P "$build_top_dir" 2>/dev/null || cd "$build_top_dir"; pwd)
 
-n_processors=1
-case $(uname) in
-  Linux)
-    n_processors="$(nproc)"
-    ;;
-  Darwin)
-    n_processors="$(/usr/sbin/sysctl -n hw.ncpu)"
-    ;;
-  *)
-    :
-    ;;
-esac
-
 # For backward compatibility
 : ${NO_BUILD:=$NO_MAKE}
 if [ "${NO_BUILD}" != "yes" ]; then
@@ -33,6 +20,18 @@ if [ "${NO_BUILD}" != "yes" ]; then
     ninja -C "${build_top_dir}" || exit 1
   else
     MAKE_ARGS=
+    n_processors=1
+    case $(uname) in
+      Linux)
+        n_processors="$(nproc)"
+        ;;
+      Darwin)
+        n_processors="$(/usr/sbin/sysctl -n hw.ncpu)"
+        ;;
+      *)
+        :
+        ;;
+    esac
     if [ ${n_processors} -gt 1 ]; then
       MAKE_ARGS="${MAKE_ARGS} -j${n_processors}"
     fi
@@ -184,19 +183,19 @@ for argument in "$@"; do
   next_argument_is_long_option_value="false"
 done
 
-grntest_options=("$@")
+grntest_options=()
 if test "$use_gdb" = "true" -o \
         "$use_rr" = "true" -o \
         "$use_valgrind" = "true"; then
-  grntest_options=("--reporter" "stream" "${grntest_options[@]}")
-else
-  grntest_options=("--n-workers" "${n_processors}" "${grntest_options[@]}")
+  grntest_options+=("--n-workers" "1")
+  grntest_options+=("--reporter" "stream")
 fi
 if test "$CI" = "true"; then
-  grntest_options=("--reporter" "mark" "${grntest_options[@]}")
+  grntest_options+=("--reporter" "mark")
 fi
+grntest_options+=("$@")
 if test "$have_targets" != "true"; then
-  grntest_options=("${grntest_options[@]}" "${SOURCE_DIR}/suite")
+  grntest_options+=("${SOURCE_DIR}/suite")
 fi
 
 tmpfs_candidates=("/dev/shm" "/run/shm")

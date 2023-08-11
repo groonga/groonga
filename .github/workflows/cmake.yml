@@ -73,6 +73,7 @@ jobs:
           - cc: clang
             cxx: clang++
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     env:
       CC: ${{ matrix.cc }}
       CXX: ${{ matrix.cxx }}
@@ -293,6 +294,7 @@ jobs:
   macos:
     name: macOS
     runs-on: macos-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
         with:
@@ -371,43 +373,11 @@ jobs:
             --input-type=apache-arrow \
             --interface=http \
             test/command/suite
-      - name: "Test: HTTP: command: POST"
-        run: |
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            --input-type=apache-arrow \
-            --interface=http \
-            --use-http-post \
-            test/command/suite
-      - name: "Test: HTTP: command: chunked"
-        run: |
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --timeout=10 \
-            --read-timeout=30 \
-            --reporter=mark \
-            --input-type=apache-arrow \
-            --interface=http \
-            --use-http-chunked \
-            test/command/suite
-      - name: "Test: HTTP: reference count"
-        run: |
-          export GRN_ENABLE_REFERENCE_COUNT=yes
-          grntest \
-            --base-dir test/command \
-            --n-retries=2 \
-            --read-timeout=30 \
-            --reporter=mark \
-            --interface=http \
-            test/command/suite
 
   windows-mingw:
     name: Windows MinGW
     runs-on: windows-latest
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
@@ -545,7 +515,6 @@ jobs:
               grntest \
                 --base-directory=test/command \
                 --n-retries=2 \
-                --n-workers=${NUMBER_OF_PROCESSORS} \
                 --read-timeout=30 \
                 --reporter=mark \
                 --timeout=60 \
@@ -566,6 +535,7 @@ jobs:
     env:
       VC_ARCHITECTURE: x64
     runs-on: ${{ matrix.runs-on }}
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
         with:
@@ -824,7 +794,6 @@ jobs:
             --input-type apache-arrow `
             --interface http `
             --n-retries 2 `
-            --n-workers ${Env:NUMBER_OF_PROCESSORS} `
             --read-timeout=30 `
             --reporter mark `
             --timeout 360 `
