@@ -17,18 +17,26 @@ loop do
   break if raw_line.nil?
 
   line = raw_line.encode("UTF-8", "EUC-JP")
-  key, body = line.strip.split("/", 2)
-  key = key.strip
-  if /\s*\[(.+)\]\z/ =~ key
-    key = $PREMATCH
-    reading = $1
-    body = "[#{reading}] #{body}"
-    kana = NKF.nkf("-Ww --katakana", reading)
+  keys, body = line.strip.split("/", 2)
+  keys = keys.strip
+  if /\s*\[(.+)\]\z/ =~ keys
+    keys = $PREMATCH
+    readings = $1
+    body = "[#{readings}] #{body}"
+    kana = readings.split(";").collect do |reading|
+      NKF.nkf("-Ww --katakana", reading)
+    end
+    keys.split(";").each do |key|
+      puts(",")
+      print([key, body, [key, *kana].uniq].to_json)
+    end
   else
-    kana = NKF.nkf("-Ww --katakana", key)
+    keys.split(";").each do |key|
+      puts(",")
+      kana = NKF.nkf("-Ww --katakana", key)
+      print([key, body, [key, kana].uniq].to_json)
+    end
   end
-  puts(",")
-  puts([key, body, kana].to_json)
 end
 puts
 puts("]")

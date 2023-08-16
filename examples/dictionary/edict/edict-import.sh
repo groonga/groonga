@@ -1,27 +1,31 @@
 #!/bin/sh
 
+set -eu
+
 base_dir=$(dirname $0)
 
-if [ 1 != $# -a 2 != $# ]; then
-  echo "usage: $0 db_path [edict.gz_path]"
+if [ $# -ne 1 -a $# -ne 2 ]; then
+  echo "usage: $0 db_path [.../edict2.gz]"
   exit 1
 fi
 
-if [ -z $2 ]; then
-    edict_gz=edict.gz
-    if [ ! -f $edict_gz ]; then
-	wget -O $edict_gz http://ftp.monash.edu.au/pub/nihongo/edict.gz
-    fi
+db_path="$1"
+if [ $# -eq 1 ]; then
+  edict2_gz=edict2.gz
+  if [ ! -f "$edict2_gz" ]; then
+    wget -O "$edict2_gz" http://ftp.edrdg.org/pub/Nihongo/edict2.gz
+  fi
 else
-    edict_gz=$2
+  edict2_gz="$2"
 fi
 
 if type gzcat > /dev/null 2>&1; then
-    zcat="gzcat"
+  zcat="gzcat"
 else
-    zcat="zcat"
+  zcat="zcat"
 fi
 
-if $zcat $edict_gz | ${base_dir}/edict2grn.rb | groonga $1 > /dev/null; then
-  echo "edict data loaded."
-fi
+$zcat "${edict2_gz}" | \
+  "${base_dir}/edict2grn.rb" | \
+  groonga "${db_path}" > /dev/null
+echo "edict data loaded."

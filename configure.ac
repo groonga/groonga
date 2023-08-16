@@ -1735,7 +1735,6 @@ AC_CONFIG_FILES([
   examples/Makefile
   examples/dictionary/Makefile
   examples/dictionary/edict/Makefile
-  examples/dictionary/eijiro/Makefile
   examples/dictionary/gene95/Makefile
   examples/dictionary/jmdict/Makefile
   groonga-arrow.pc
