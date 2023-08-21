@@ -1,0 +1,20 @@
+table_create Names TABLE_PAT_KEY ShortText
+[[0,0.0,0.0],true]
+table_create Tokens TABLE_PAT_KEY ShortText   --default_tokenizer TokenBigram   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Tokens names_key COLUMN_INDEX|WITH_POSITION Names _key
+[[0,0.0,0.0],true]
+load --table Names
+[
+{"_key": "name y"}
+]
+[[0,0.0,0.0],1]
+select Names   --match_columns "_key"   --query "x OR <0.0y"   --query_flags ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"name y"]]]]
+#>select --match_columns "_key" --query "x OR <0.0y" --query_flags "ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR" --table "Names"
+#:000000000000000 filter(1): (match columns) match "x"
+#:000000000000000 filter(1): (match columns) match "y"
+#:000000000000000 select(1)
+#:000000000000000 output(1)
+#:000000000000000 send(0)
+#<000000000000000 rc=0

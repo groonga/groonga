@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2010-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -4679,12 +4679,7 @@ parse_query_accept_adjust(grn_ctx *ctx,
     return;
   }
 
-  if (q->pending_token.string_length > 0) {
-    parse_query_accept_string(ctx,
-                              q,
-                              q->pending_token.string,
-                              q->pending_token.string_length);
-  }
+  parse_query_flush_pending_token(ctx, q);
 
   q->pending_token.string = string;
   q->pending_token.string_length = string_length;
