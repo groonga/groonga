@@ -12,7 +12,7 @@ load --table Names
 select Names   --match_columns "_key"   --query "x OR <0.0y"   --query_flags ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR
 [[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"name y"]]]]
 #>select --match_columns "_key" --query "x OR <0.0y" --query_flags "ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR" --table "Names"
-#:000000000000000 filter(1): (match columns) match "x"
+#:000000000000000 filter(0): (match columns) match "x"
 #:000000000000000 filter(1): (match columns) match "y"
 #:000000000000000 select(1)
 #:000000000000000 output(1)
