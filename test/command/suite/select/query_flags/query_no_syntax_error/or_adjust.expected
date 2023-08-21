@@ -6,14 +6,14 @@ column_create Tokens names_key COLUMN_INDEX|WITH_POSITION Names _key
 [[0,0.0,0.0],true]
 load --table Names
 [
-{"_key": "name y"}
+{"_key": "name yyy"}
 ]
 [[0,0.0,0.0],1]
-select Names   --match_columns "_key"   --query "x OR <0.0y"   --query_flags ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR
-[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"name y"]]]]
-#>select --match_columns "_key" --query "x OR <0.0y" --query_flags "ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR" --table "Names"
-#:000000000000000 filter(0): (match columns) match "x"
-#:000000000000000 filter(1): (match columns) match "y"
+select Names   --match_columns "_key"   --query "xxx OR <0.0yyy"   --query_flags ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR
+[[0,0.0,0.0],[[[1],[["_id","UInt32"],["_key","ShortText"]],[1,"name yyy"]]]]
+#>select --match_columns "_key" --query "xxx OR <0.0yyy" --query_flags "ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR" --table "Names"
+#:000000000000000 filter(0): (match columns) match "xxx"
+#:000000000000000 filter(1): (match columns) match "yyy"
 #:000000000000000 select(1)
 #:000000000000000 output(1)
 #:000000000000000 send(0)

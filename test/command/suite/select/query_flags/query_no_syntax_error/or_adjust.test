@@ -7,12 +7,12 @@ column_create Tokens names_key COLUMN_INDEX|WITH_POSITION Names _key
 
 load --table Names
 [
-{"_key": "name y"}
+{"_key": "name yyy"}
 ]
 
 #@collect-query-log true
 select Names \
   --match_columns "_key" \
-  --query "x OR <0.0y" \
+  --query "xxx OR <0.0yyy" \
   --query_flags ALLOW_PRAGMA|ALLOW_COLUMN|QUERY_NO_SYNTAX_ERROR
 #@collect-query-log false
