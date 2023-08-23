@@ -24,6 +24,7 @@ repos:
           ?include/groonga/highlighter\.h|
           ?include/groonga/proc\.h|
           ?include/groonga/util\.h|
+          ?lib/aggregators\.c|
           ?lib/alloc\.c|
           ?lib/ctx\.c|
           ?lib/ctx_impl_mrb\.c|

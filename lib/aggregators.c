@@ -213,7 +213,8 @@ aggregator_mean_fin(grn_ctx *ctx, grn_aggregator_data *data)
   grn_obj *output_column = grn_aggregator_data_get_output_column(ctx, data);
   grn_obj mean_float;
   GRN_FLOAT_INIT(&mean_float, 0);
-  GRN_HASH_EACH_BEGIN(ctx, mean_data->values, cursor, id) {
+  GRN_HASH_EACH_BEGIN(ctx, mean_data->values, cursor, id)
+  {
     void *key;
     unsigned int key_size;
     void *value;
@@ -221,12 +222,9 @@ aggregator_mean_fin(grn_ctx *ctx, grn_aggregator_data *data)
     grn_id group_id = *((grn_id *)key);
     aggregator_mean_value *mean_value = value;
     GRN_FLOAT_SET(ctx, &mean_float, mean_value->mean);
-    grn_obj_set_value(ctx,
-                      output_column,
-                      group_id,
-                      &mean_float,
-                      GRN_OBJ_SET);
-  } GRN_HASH_EACH_END(ctx, cursor);
+    grn_obj_set_value(ctx, output_column, group_id, &mean_float, GRN_OBJ_SET);
+  }
+  GRN_HASH_EACH_END(ctx, cursor);
   GRN_OBJ_FIN(ctx, &mean_float);
 
   grn_hash_close(ctx, mean_data->values);
@@ -292,12 +290,11 @@ aggregator_sd_init(grn_ctx *ctx, grn_aggregator_data *data)
     return NULL;
   }
 
-  sd_data->values =
-    grn_hash_create(ctx,
-                    NULL,
-                    sizeof(grn_id),
-                    sizeof(aggregator_sd_value),
-                    GRN_OBJ_TABLE_HASH_KEY);
+  sd_data->values = grn_hash_create(ctx,
+                                    NULL,
+                                    sizeof(grn_id),
+                                    sizeof(aggregator_sd_value),
+                                    GRN_OBJ_TABLE_HASH_KEY);
   if (!sd_data->values) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_NO_MEMORY_AVAILABLE,
@@ -316,8 +313,7 @@ static grn_rc
 aggregator_sd_update(grn_ctx *ctx, grn_aggregator_data *data)
 {
   const char *tag = "[aggregator][sd]";
-  aggregator_sd_data *sd_data =
-    grn_aggregator_data_get_user_data(ctx, data);
+  aggregator_sd_data *sd_data = grn_aggregator_data_get_user_data(ctx, data);
   grn_id group_id = grn_aggregator_data_get_group_id(ctx, data);
   void *value;
   int added;
@@ -356,13 +352,10 @@ aggregator_sd_update(grn_ctx *ctx, grn_aggregator_data *data)
   const double mean_previous = sd_value->mean;
   const double m2_previous = sd_value->m2;
   sd_value->n_values++;
-  sd_value->mean +=
-    (current_value_float - mean_previous) / sd_value->n_values;
+  sd_value->mean += (current_value_float - mean_previous) / sd_value->n_values;
   /* Welfold's online algorithm */
-  sd_value->m2 =
-    m2_previous +
-    ((current_value_float - mean_previous) *
-     (current_value_float - sd_value->mean));
+  sd_value->m2 = m2_previous + ((current_value_float - mean_previous) *
+                                (current_value_float - sd_value->mean));
 
   return ctx->rc;
 }
@@ -370,13 +363,13 @@ aggregator_sd_update(grn_ctx *ctx, grn_aggregator_data *data)
 static grn_rc
 aggregator_sd_fin(grn_ctx *ctx, grn_aggregator_data *data)
 {
-  aggregator_sd_data *sd_data =
-    grn_aggregator_data_get_user_data(ctx, data);
+  aggregator_sd_data *sd_data = grn_aggregator_data_get_user_data(ctx, data);
 
   grn_obj *output_column = grn_aggregator_data_get_output_column(ctx, data);
   grn_obj sd_float;
   GRN_FLOAT_INIT(&sd_float, 0);
-  GRN_HASH_EACH_BEGIN(ctx, sd_data->values, cursor, id) {
+  GRN_HASH_EACH_BEGIN(ctx, sd_data->values, cursor, id)
+  {
     void *key;
     unsigned int key_size;
     void *value;
@@ -394,12 +387,9 @@ aggregator_sd_fin(grn_ctx *ctx, grn_aggregator_data *data)
       sd = sqrt(sd_value->m2 / sd_value->n_values);
     }
     GRN_FLOAT_SET(ctx, &sd_float, sd);
-    grn_obj_set_value(ctx,
-                      output_column,
-                      group_id,
-                      &sd_float,
-                      GRN_OBJ_SET);
-  } GRN_HASH_EACH_END(ctx, cursor);
+    grn_obj_set_value(ctx, output_column, group_id, &sd_float, GRN_OBJ_SET);
+  }
+  GRN_HASH_EACH_END(ctx, cursor);
   GRN_OBJ_FIN(ctx, &sd_float);
 
   grn_hash_close(ctx, sd_data->values);
@@ -412,19 +402,22 @@ grn_rc
 grn_db_init_builtin_aggregators(grn_ctx *ctx)
 {
   grn_aggregator_create(ctx,
-                        "aggregator_sum", -1,
+                        "aggregator_sum",
+                        -1,
                         aggregator_sum_init,
                         aggregator_sum_update,
                         NULL);
 
   grn_aggregator_create(ctx,
-                        "aggregator_mean", -1,
+                        "aggregator_mean",
+                        -1,
                         aggregator_mean_init,
                         aggregator_mean_update,
                         aggregator_mean_fin);
 
   grn_aggregator_create(ctx,
-                        "aggregator_sd", -1,
+                        "aggregator_sd",
+                        -1,
                         aggregator_sd_init,
                         aggregator_sd_update,
                         aggregator_sd_fin);
