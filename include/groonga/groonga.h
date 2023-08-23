@@ -1977,7 +1977,7 @@ grn_ctx_push(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_obj *
 grn_ctx_pop(grn_ctx *ctx);
 
-GRN_API int
+GRN_API grn_rc
 grn_obj_columns(grn_ctx *ctx,
                 grn_obj *table,
                 const char *str,
