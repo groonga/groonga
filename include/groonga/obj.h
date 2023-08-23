@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2015-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -121,6 +121,8 @@ GRN_API bool
 grn_obj_is_mean_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API bool
 grn_obj_is_column_value_accessor(grn_ctx *ctx, grn_obj *obj);
+GRN_API bool
+grn_obj_is_number_family_scalar_accessor(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool
 grn_obj_is_type(grn_ctx *ctx, grn_obj *obj);
 GRN_API grn_bool

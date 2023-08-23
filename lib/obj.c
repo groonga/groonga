@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2015-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -791,6 +791,40 @@ grn_obj_is_column_value_accessor(grn_ctx *ctx, grn_obj *obj)
   }
 
   return accessor->action == GRN_ACCESSOR_GET_COLUMN_VALUE;
+}
+
+bool
+grn_obj_is_number_family_scalar_accessor(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_accessor *accessor;
+
+  if (!grn_obj_is_accessor(ctx, obj)) {
+    return false;
+  }
+
+  accessor = (grn_accessor *)obj;
+  while (accessor->next) {
+    accessor = accessor->next;
+  }
+
+  switch (accessor->action) {
+  case GRN_ACCESSOR_GET_ID:
+  case GRN_ACCESSOR_GET_SCORE:
+  case GRN_ACCESSOR_GET_NSUBRECS:
+  case GRN_ACCESSOR_GET_MAX:
+  case GRN_ACCESSOR_GET_MIN:
+  case GRN_ACCESSOR_GET_SUM:
+  case GRN_ACCESSOR_GET_AVG:
+  case GRN_ACCESSOR_GET_MEAN:
+    return true;
+  case GRN_ACCESSOR_GET_VALUE:
+    return grn_type_id_is_number_family(ctx,
+                                        grn_obj_get_range(ctx, accessor->obj));
+  case GRN_ACCESSOR_GET_COLUMN_VALUE:
+    return grn_obj_is_number_family_scalar_column(ctx, accessor->obj);
+  default:
+    return false;
+  }
 }
 
 grn_bool

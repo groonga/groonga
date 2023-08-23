@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -30,18 +30,8 @@ numeric_aggregator_validate_target(grn_ctx *ctx,
     return true;
   }
 
-  if (grn_obj_is_accessor(ctx, target)) {
-    if (grn_obj_is_score_accessor(ctx, target)) {
-      return true;
-    }
-
-    grn_accessor *accessor = (grn_accessor *)target;
-    while (accessor->next) {
-      accessor = accessor->next;
-    }
-    if (grn_obj_is_number_family_scalar_column(ctx, accessor->obj)) {
-      return true;
-    }
+  if (grn_obj_is_number_family_scalar_accessor(ctx, target)) {
+    return true;
   }
 
   grn_obj inspected;
