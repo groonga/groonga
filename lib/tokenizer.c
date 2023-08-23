@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2012-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -122,7 +122,11 @@ grn_tokenizer_query_ensure_normalized(grn_ctx *ctx, grn_tokenizer_query *query)
     query->have_tokenized_delimiter = GRN_FALSE;
     GRN_PLUGIN_ERROR(ctx,
                      GRN_TOKENIZER_ERROR,
-                     "[tokenizer][normalize] failed to open normalized string");
+                     "[tokenizer][normalize] failed to open normalized string: "
+                     "<%.*s>(%s)",
+                     (int)(query->length),
+                     query->ptr,
+                     grn_encoding_to_string(query->encoding));
     return;
   }
 
