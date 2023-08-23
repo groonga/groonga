@@ -39,6 +39,7 @@ repos:
           ?lib/highlighter\.c|
           ?lib/ii\.c|
           ?lib/normalizer\.c|
+          ?lib/obj\.c|
           ?lib/proc/proc_highlight\.c|
           ?lib/proc\.c|
           ?lib/util\.c|
