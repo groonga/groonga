@@ -30,8 +30,18 @@ numeric_aggregator_validate_target(grn_ctx *ctx,
     return true;
   }
 
-  if (grn_obj_is_score_accessor(ctx, target)) {
-    return true;
+  if (grn_obj_is_accessor(ctx, target)) {
+    if (grn_obj_is_score_accessor(ctx, target)) {
+      return true;
+    }
+
+    grn_accessor *accessor = (grn_accessor *)target;
+    while (accessor->next) {
+      accessor = accessor->next;
+    }
+    if (grn_obj_is_number_family_scalar_column(ctx, accessor->obj)) {
+      return true;
+    }
   }
 
   grn_obj inspected;
