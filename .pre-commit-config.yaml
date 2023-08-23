@@ -22,6 +22,7 @@ repos:
           (
           ?include/groonga/groonga\.h|
           ?include/groonga/highlighter\.h|
+          ?include/groonga/obj\.h|
           ?include/groonga/proc\.h|
           ?include/groonga/util\.h|
           ?lib/aggregators\.c|
