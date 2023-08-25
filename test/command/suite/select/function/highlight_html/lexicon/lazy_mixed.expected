@@ -1,0 +1,41 @@
+table_create Entries TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Entries body COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("report_source_location", true)'   --normalizer 'NormalizerNFKC150'
+[[0,0.0,0.0],true]
+column_create Terms document_index COLUMN_INDEX|WITH_POSITION Entries body
+[[0,0.0,0.0],true]
+load --table Entries
+[
+{"body": "斉藤 一代さん"},
+{"body": "斉藤の一人"}
+]
+[[0,0.0,0.0],2]
+select Entries   --match_columns body   --query '斉藤 一'   --output_columns 'highlight_html(body, Terms)'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "highlight_html",
+          null
+        ]
+      ],
+      [
+        "<span class=\"keyword\">斉藤 一</span>代さん"
+      ],
+      [
+        "<span class=\"keyword\">斉藤</span>の<span class=\"keyword\">一</span>人"
+      ]
+    ]
+  ]
+]

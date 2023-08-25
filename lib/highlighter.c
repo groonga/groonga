@@ -419,7 +419,7 @@ grn_ids_is_included(grn_id *ids, size_t n_ids, grn_id id)
   size_t i;
 
   for (i = 0; i < n_ids; i++) {
-    if (ids[i] == ids[0]) {
+    if (ids[i] == id) {
       return GRN_TRUE;
     }
   }
