@@ -686,7 +686,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   grn_cache_get_statistics(ctx, cache, &statistics);
   GRN_OUTPUT_MAP_OPEN("RESULT", n_elements);
   GRN_OUTPUT_CSTR("alloc_count");
-  GRN_OUTPUT_INT32(grn_alloc_count());
+  GRN_OUTPUT_INT64(grn_alloc_count());
   GRN_OUTPUT_CSTR("starttime");
   GRN_OUTPUT_INT64(grn_starttime.tv_sec);
   GRN_OUTPUT_CSTR("start_time");

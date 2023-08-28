@@ -1146,7 +1146,7 @@ grn_fin(void)
   grn_plugins_fin();
   grn_ctx_fin(ctx);
   grn_com_fin();
-  GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_fin (%d)", grn_alloc_count());
+  GRN_LOG(ctx, GRN_LOG_NOTICE, "grn_fin (%u)", grn_alloc_count());
   grn_logger_fin(ctx);
   CRITICAL_SECTION_FIN(grn_glock);
   grn_alloc_info_fin();

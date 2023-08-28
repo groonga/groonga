@@ -24,7 +24,7 @@
 extern "C" {
 #endif
 
-int grn_alloc_count(void);
+uint32_t grn_alloc_count(void);
 
 void grn_alloc_init_from_env(void);
 

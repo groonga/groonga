@@ -472,17 +472,6 @@ AC_ARG_ENABLE(uyield,
   [enable_uyield="no"])
 AC_MSG_RESULT($enable_uyield)
 
-# exact-alloc-count
-AC_MSG_CHECKING([whether enable exact-alloc-count])
-AC_ARG_ENABLE(exact-alloc-count,
-  [AS_HELP_STRING([--enable-exact-alloc-count],
-    [atomic counting for memory alloc count. [default=yes]])],,
-  [enable_exact_alloc_count="yes"])
-if test "x$enable_exact_alloc_count" != "xno"; then
-  AC_DEFINE(USE_EXACT_ALLOC_COUNT, [1], [alloc_count with atomic])
-fi
-AC_MSG_RESULT($enable_exact_alloc_count)
-
 # memory debug
 AC_MSG_CHECKING([whether debug memory management])
 AC_ARG_ENABLE(memory-debug,

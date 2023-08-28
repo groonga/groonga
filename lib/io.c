@@ -2008,7 +2008,7 @@ grn_mmap(grn_ctx *ctx,
          const char *func)
 {
   if (grn_fail_malloc_should_fail(length, file, line, func)) {
-    MERR("[alloc][fail][mmap] <%d>: <%" GRN_FMT_SIZE ">: <%s>: "
+    MERR("[alloc][fail][mmap] <%u>: <%" GRN_FMT_SIZE ">: <%s>: "
          "<%p:%" GRN_FMT_INT64D ":%" GRN_FMT_SIZE ">: "
          "%s:%d: %s",
          grn_alloc_count(),
@@ -2255,7 +2255,7 @@ grn_mmap(grn_ctx *ctx,
          const char *func)
 {
   if (grn_fail_malloc_should_fail(length, file, line, func)) {
-    MERR("[alloc][fail][mmap] <%d>: <%" GRN_FMT_SIZE ">: <%s>: "
+    MERR("[alloc][fail][mmap] <%u>: <%" GRN_FMT_SIZE ">: <%s>: "
          "<%d:%" GRN_FMT_INT64D ":%" GRN_FMT_SIZE ">: "
          "%s:%d: %s",
          grn_alloc_count(),

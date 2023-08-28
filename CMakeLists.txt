@@ -351,7 +351,6 @@ if(WIN32)
   target_link_libraries(grn_dependencies INTERFACE dbghelp.lib)
   target_link_libraries(grn_dependencies INTERFACE psapi.lib)
 
-  set(USE_EXACT_ALLOC_COUNT TRUE)
   set(USE_SELECT TRUE)
 else()
   ac_check_headers(sys/epoll.h)

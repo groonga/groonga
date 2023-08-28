@@ -52,7 +52,6 @@
 #cmakedefine USE_MAP_HUGETLB
 #cmakedefine USE_AIO
 #cmakedefine USE_EPOLL
-#cmakedefine USE_EXACT_ALLOC_COUNT
 #cmakedefine USE_FUTEX
 #cmakedefine USE_KQUEUE
 #cmakedefine USE_MSG_MORE
