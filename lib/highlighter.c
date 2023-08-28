@@ -970,6 +970,10 @@ grn_highlighter_highlight(grn_ctx *ctx,
     text_length = (int64_t)strlen(text);
   }
 
+  if (text_length == 0) {
+    goto exit;
+  }
+
   if (grn_vector_size(ctx, &(highlighter->raw_keywords)) == 0) {
     grn_highlighter_highlight_add_normal_text(ctx,
                                               highlighter,
