@@ -34,10 +34,10 @@ static char *grn_fail_malloc_file = NULL;
 static int grn_fail_malloc_line = 0;
 static int grn_fail_malloc_max_count = -1;
 
-#define GRN_ADD_ALLOC_COUNT(count)                                      \
-  do {                                                                  \
-    uint32_t alloced;                                                   \
-    GRN_ATOMIC_ADD_EX(&alloc_count, count, alloced);                    \
+#define GRN_ADD_ALLOC_COUNT(count)                                             \
+  do {                                                                         \
+    uint32_t alloced;                                                          \
+    GRN_ATOMIC_ADD_EX(&alloc_count, count, alloced);                           \
   } while (0)
 
 uint32_t
