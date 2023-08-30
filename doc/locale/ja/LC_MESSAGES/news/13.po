@@ -19,11 +19,50 @@ msgstr ""
 msgid "News - 13 series"
 msgstr "お知らせ - 13系"
 
-msgid "Release 13.0.5 - 2023-08-02"
-msgstr "13.0.5リリース - 2023-08-02"
+msgid "Release 13.0.6 - 2023-08-31"
+msgstr "13.0.6リリース - 2023-08-31"
+
+msgid "Improvements"
+msgstr "改良"
+
+msgid "[{doc}`/reference/functions/highlight_html`] Don't report error when we specify empty string into `highlight_html()` as below."
+msgstr "[{doc}`/reference/functions/highlight_html`] 以下のように `highlight_html()` に空文字列を指定してもエラーを報告しなくなりました。"
+
+msgid "`highlight_html()` just returns an empty text."
+msgstr "`highlight_html()` は空のテキストを返します。"
+
+msgid "Added support `aggregator_*` for dynamic columns and pseudo columns."
+msgstr "動的カラムや疑似カラムを対象に `aggregator_*` を使えるようになりました。"
+
+msgid "Pseudo column is a column with `_` prefix.(e.g. `_id`, `_nsubrecs`, ...)."
+msgstr "疑似カラムとは、 `_` で始まるカラムのことです。(例： `_id`, `_nsubrecs`, ...)"
 
 msgid "Fixes"
 msgstr "修正"
+
+msgid "[CMake] Fixed a build error with CMake when both of msgpack and msgpackc-cxx are installed."
+msgstr "[CMake] msgpack と msgpackc-cxx の両方がインストールされている環境でCMakeによるビルドが失敗する問題を修正しました。"
+
+msgid "Please refer the comment of https://github.com/groonga/groonga/pull/1601 about details."
+msgstr "詳細については、 https://github.com/groonga/groonga/pull/1601 のコメントを参照してください。"
+
+msgid "Fixed a parse bug when we use `x OR <0.0y` with `QUERY_NO_SYNTAX_ERROR`."
+msgstr "`x OR <0.0y` と `QUERY_NO_SYNTAX_ERROR` を使った時に式を正しくパースできない問題を修正しました。"
+
+msgid "Records that should match may be not matched."
+msgstr "マッチするはずのレコードがマッチしなくなることがあります。"
+
+msgid "For example, if we execute the following query, `{\"_key\": \"name yyy\"}` should match but `{\"_key\": \"name yyy\"}` is not match."
+msgstr "例えば、以下のようなクエリーを実行した場合、`{\"_key\": \"name yyy\"}` はマッチするはずですが、マッチしません。"
+
+msgid "[{doc}`/reference/functions/highlight_html`] Fixed a bug that highlight position may be incorrect."
+msgstr "[{doc}`/reference/functions/highlight_html`] ハイライト位置が正しくないことがある問題を修正しました。"
+
+msgid "For example, this bug occures when we specify as highlight target both of keyword with the number of characters is one and keyword with the number of characters is two."
+msgstr "例えば、ハイライト対象に文字数が1のキーワードと文字数が2のキーワードを両方指定した時に発生します。"
+
+msgid "Release 13.0.5 - 2023-08-02"
+msgstr "13.0.5リリース - 2023-08-02"
 
 msgid "Fixed a bug that index creation may be failed."
 msgstr "インデックス構築に失敗することがある問題を修正しました。"
@@ -39,9 +78,6 @@ msgstr "例えば、以下のケースでは本来エラーになるべきです
 
 msgid "Release 13.0.4 - 2023-07-26"
 msgstr "13.0.4リリース - 2023-07-26"
-
-msgid "Improvements"
-msgstr "改良"
 
 msgid "[{doc}`/install/windows`] Stopped providing 32-bit packages."
 msgstr "[{doc}`/install/windows`] 32-bit版パッケージの提供をやめました。"
