@@ -232,10 +232,10 @@ msgstr ""
 msgid "make update-latest-releaseの実行"
 msgstr ""
 
-msgid "make update-latest-releaseコマンドでは、OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。"
+msgid "make update-latest-releaseコマンドでは、OLD_RELEASEに前回のバージョンを、OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。"
 msgstr ""
 
-msgid "2.0.2のリリースを行った際は以下のコマンドを実行しました。"
+msgid "13.0.6のリリースを行った際は以下のコマンドを実行しました。"
 msgstr ""
 
 msgid "これにより、clone済みのGroongaのWebサイトのトップページのソース(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。"
@@ -266,9 +266,6 @@ msgid "リリースタグの設定"
 msgstr ""
 
 msgid "リリース用のタグを打つには以下のコマンドを実行します。"
-msgstr ""
-
-msgid "タグを打った後にconfigureを実行することで、ドキュメント生成時のバージョン番号に反映されます。"
 msgstr ""
 
 msgid "リリース用アーカイブファイルの作成とアップロード"

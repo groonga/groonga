@@ -237,13 +237,14 @@ PPAのリポジトリは、同名のパッケージを上書いてアップロ�
 make update-latest-releaseの実行
 --------------------------------
 
-make update-latest-releaseコマンドでは、OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。
+make update-latest-releaseコマンドでは、OLD_RELEASEに前回のバージョンを、OLD_RELEASE_DATEに前回のリリースの日付を、NEW_RELEASE_DATEに次回リリースの日付（未来の日付）を指定します。
 
-2.0.2のリリースを行った際は以下のコマンドを実行しました。
+13.0.6のリリースを行った際は以下のコマンドを実行しました。
 
 .. code-block:: console
 
-   $ make update-latest-release OLD_RELEASE=2.0.1 OLD_RELEASE_DATE=2012-03-29 NEW_RELEASE_DATE=2012-04-29
+   $ cd $GROONGA_CLONE_DIR
+   $ rake release:version:update OLD_RELEASE=13.0.5 GROONGA_ORG_DIR=/home/yasuhiro/Work/free-software/groonga.org OLD_RELEASE_DATE=2023-08-02 NEW_RELEASE_DATE=2023-08-31
 
 これにより、clone済みのGroongaのWebサイトのトップページのソース(index.html,ja/index.html)やRPMパッケージのspecファイルのバージョン表記などが更新されます。
 
@@ -279,11 +280,7 @@ Ubuntu向けのパッケージは、LaunchPadでビルドしています。
 
 .. code-block:: console
 
-   $ make tag
-   $ git push --tags origin
-
-.. note::
-   タグを打った後にconfigureを実行することで、ドキュメント生成時のバージョン番号に反映されます。
+   $ rake release:tag
 
 リリース用アーカイブファイルの作成とアップロード
 ------------------------------------------------
@@ -297,7 +294,7 @@ GitHub Actionsでソースアーカイブが自動生成されたのを確認し
 .. code-block:: console
 
    $ cd packages
-   $ rake source
+   $ rake source GITHUB_ACCESS_TOKEN=...
 
 これにより、GitHub Actionsで生成したソースアーカイブを $GROONGA_CLONE_DIR/groonga-(バージョン).tar.gz
 にダウンロードし packages.groonga.org へアップロードします。
@@ -623,7 +620,7 @@ $GROONGA_CLONE_DIRにて以下のコマンドを実行します。
 
 .. code-block:: console
 
-   $ make update-version NEW_VERSION=2.0.6
+   $ rake dev:version:bump NEW_VERSION=x.x.x
 
 これにより$GROONGA_CLONE_DIR/base_versionが更新されるのでコミットしておきます。
 
