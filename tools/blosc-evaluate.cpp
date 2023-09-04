@@ -226,20 +226,28 @@ main(int argc, const char**argv)
                 array->value_slice(i));
               switch (target) {
               case Target::RecordSort:
-                values =
-                  std::static_pointer_cast<arrow::FloatArray>(sort(values));
+                total_compress_duration += Timer::measure([&]() {
+                  values =
+                    std::static_pointer_cast<arrow::FloatArray>(sort(values));
+                });
                 break;
               case Target::RecordMinShift:
-                values =
-                  std::static_pointer_cast<arrow::FloatArray>(min_shift(values));
+                total_compress_duration += Timer::measure([&]() {
+                  values = std::static_pointer_cast<arrow::FloatArray>(
+                    min_shift(values));
+                });
                 break;
               case Target::RecordNormalize:
-                values =
-                  std::static_pointer_cast<arrow::FloatArray>(normalize(values));
+                total_compress_duration += Timer::measure([&]() {
+                  values = std::static_pointer_cast<arrow::FloatArray>(
+                    normalize(values));
+                });
                 break;
               case Target::RecordStandardize:
-                values =
-                  std::static_pointer_cast<arrow::FloatArray>(standardize(values));
+                total_compress_duration += Timer::measure([&]() {
+                  values = std::static_pointer_cast<arrow::FloatArray>(
+                    standardize(values));
+                });
                 break;
               default:
                 break;
@@ -327,20 +335,28 @@ main(int argc, const char**argv)
               std::static_pointer_cast<arrow::FloatArray>(array->values());
             switch (target) {
             case Target::RecordBatchSort:
-              values =
-                std::static_pointer_cast<arrow::FloatArray>(sort(values));
+              total_compress_duration += Timer::measure([&]() {
+                values =
+                  std::static_pointer_cast<arrow::FloatArray>(sort(values));
+              });
               break;
             case Target::RecordBatchMinShift:
-              values =
-                std::static_pointer_cast<arrow::FloatArray>(min_shift(values));
+              total_compress_duration += Timer::measure([&]() {
+                values = std::static_pointer_cast<arrow::FloatArray>(
+                  min_shift(values));
+              });
               break;
             case Target::RecordBatchNormalize:
-              values =
-                std::static_pointer_cast<arrow::FloatArray>(normalize(values));
+              total_compress_duration += Timer::measure([&]() {
+                values = std::static_pointer_cast<arrow::FloatArray>(
+                  normalize(values));
+              });
               break;
             case Target::RecordBatchStandardize:
-              values =
-                std::static_pointer_cast<arrow::FloatArray>(standardize(values));
+              total_compress_duration += Timer::measure([&]() {
+                values = std::static_pointer_cast<arrow::FloatArray>(
+                  standardize(values));
+              });
               break;
             default:
               break;
