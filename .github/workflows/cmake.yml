@@ -79,7 +79,7 @@ jobs:
       CXX: ${{ matrix.cxx }}
       GRN_WITH_MRUBY: ${{ matrix.mruby }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Prepare ccache
@@ -296,7 +296,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Install packages
@@ -389,10 +389,10 @@ jobs:
           - msystem: UCRT64
             package-prefix: mingw-w64-ucrt-x86_64
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: msys2/MINGW-packages
           path: ci/msys2/MINGW-packages
@@ -537,7 +537,7 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Disable crash dialog
