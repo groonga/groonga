@@ -22,9 +22,12 @@
 
 #include <chrono>
 #include <iostream>
+#include <limits>
 #include <type_traits>
 
 #include <arrow/array.h>
+#include <arrow/compute/api_aggregate.h>
+#include <arrow/compute/api_scalar.h>
 #include <arrow/compute/api_vector.h>
 #include <arrow/io/api.h>
 #include <arrow/ipc/api.h>
@@ -36,8 +39,14 @@ namespace {
   enum class Target {
     Record,
     RecordSort,
+    RecordMinShift,
+    RecordNormalize,
+    RecordStandardize,
     RecordBatch,
     RecordBatchSort,
+    RecordBatchMinShift,
+    RecordBatchNormalize,
+    RecordBatchStandardize,
   };
 
   std::string
@@ -48,10 +57,22 @@ namespace {
       return "Record";
     case Target::RecordSort:
       return "RecordSort";
+    case Target::RecordMinShift:
+      return "RecordMinShift";
+    case Target::RecordNormalize:
+      return "RecordNormalize";
+    case Target::RecordStandardize:
+      return "RecordStandardize";
     case Target::RecordBatch:
       return "RecordBatch";
     case Target::RecordBatchSort:
       return "RecordBatchSort";
+    case Target::RecordBatchMinShift:
+      return "RecordBatchMinShift";
+    case Target::RecordBatchNormalize:
+      return "RecordBatchNormalize";
+    case Target::RecordBatchStandardize:
+      return "RecordBatchStandardize";
     default:
       return "Unknown";
     }
@@ -72,6 +93,57 @@ namespace {
       return end - start;
     }
   };
+
+  std::shared_ptr<arrow::Array>
+  sort(std::shared_ptr<arrow::Array> array)
+  {
+    auto sorted_values_indices = *arrow::compute::SortIndices(*array);
+    return *arrow::compute::Take(*array, *sorted_values_indices);
+  }
+
+  std::shared_ptr<arrow::Array>
+  min_shift(std::shared_ptr<arrow::Array> array)
+  {
+    auto min_max_datum = *arrow::compute::MinMax(*array);
+    auto min_max_struct = min_max_datum.scalar_as<arrow::StructScalar>();
+    auto min = min_max_struct.value[0];
+    return (*arrow::compute::Subtract(*array, min)).make_array();
+  }
+
+  std::shared_ptr<arrow::Array>
+  normalize(std::shared_ptr<arrow::Array> array)
+  {
+    auto min_max_datum = *arrow::compute::MinMax(*array);
+    auto min_max_struct = min_max_datum.scalar_as<arrow::StructScalar>();
+    auto min = min_max_struct.value[0];
+    auto min_raw = std::static_pointer_cast<arrow::FloatScalar>(min)->value;
+    auto max = min_max_struct.value[1];
+    auto max_raw = std::static_pointer_cast<arrow::FloatScalar>(max)->value;
+    auto max_diff_raw = max_raw - min_raw;
+    auto max_diff = std::make_shared<arrow::FloatScalar>(max_diff_raw);
+    if (max_diff_raw < std::numeric_limits<float>::epsilon()) {
+      return array;
+    } else {
+      return (*arrow::compute::Divide(*arrow::compute::Subtract(*array, min),
+                                      max_diff))
+        .make_array();
+    }
+  }
+
+  std::shared_ptr<arrow::Array>
+  standardize(std::shared_ptr<arrow::Array> array)
+  {
+    auto mean = *arrow::compute::Mean(*array);
+    auto standard = *arrow::compute::Stddev(*array);
+    if (standard.scalar_as<arrow::DoubleScalar>().value <
+        std::numeric_limits<double>::epsilon()) {
+      return array;
+    } else {
+      return (*arrow::compute::Divide(*arrow::compute::Subtract(*array, mean),
+                                      standard))
+        .make_array();
+    }
+  }
 }
 
 int
@@ -82,10 +154,18 @@ main(int argc, const char**argv)
   auto input_path = argv[1];
   auto nth_column = std::stoi(argv[2]);
   blosc2_init();
-  std::vector<Target> targets = {Target::Record,
-                                 Target::RecordSort,
-                                 Target::RecordBatch,
-                                 Target::RecordBatchSort};
+  std::vector<Target> targets = {
+    Target::Record,
+    Target::RecordSort,
+    Target::RecordMinShift,
+    Target::RecordNormalize,
+    Target::RecordStandardize,
+    Target::RecordBatch,
+    Target::RecordBatchSort,
+    Target::RecordBatchMinShift,
+    Target::RecordBatchNormalize,
+    Target::RecordBatchStandardize,
+  };
   std::vector<Pattern> patterns;
   patterns.push_back({"zstd", [](blosc2_cparams &cparams) {
                         cparams.compcode = BLOSC_ZSTD;
@@ -135,17 +215,34 @@ main(int argc, const char**argv)
         switch (target) {
         case Target::Record:
         case Target::RecordSort:
+        case Target::RecordMinShift:
+        case Target::RecordNormalize:
+        case Target::RecordStandardize:
           for (const auto &record_batch : record_batches) {
             const auto &array = std::static_pointer_cast<arrow::ListArray>(
               record_batch->column(nth_column));
             for (int64_t i = 0; i < array->length(); ++i) {
               auto values = std::static_pointer_cast<arrow::FloatArray>(
                 array->value_slice(i));
-              if (target == Target::RecordSort) {
-                auto sorted_values_indices =
-                  *arrow::compute::SortIndices(*values);
-                values = std::static_pointer_cast<arrow::FloatArray>(
-                  *arrow::compute::Take(*values, *sorted_values_indices));
+              switch (target) {
+              case Target::RecordSort:
+                values =
+                  std::static_pointer_cast<arrow::FloatArray>(sort(values));
+                break;
+              case Target::RecordMinShift:
+                values =
+                  std::static_pointer_cast<arrow::FloatArray>(min_shift(values));
+                break;
+              case Target::RecordNormalize:
+                values =
+                  std::static_pointer_cast<arrow::FloatArray>(normalize(values));
+                break;
+              case Target::RecordStandardize:
+                values =
+                  std::static_pointer_cast<arrow::FloatArray>(standardize(values));
+                break;
+              default:
+                break;
               }
               const auto source = values->raw_values();
               const auto source_size = sizeof(float) * values->length();
@@ -220,16 +317,33 @@ main(int argc, const char**argv)
           break;
         case Target::RecordBatch:
         case Target::RecordBatchSort:
+        case Target::RecordBatchMinShift:
+        case Target::RecordBatchNormalize:
+        case Target::RecordBatchStandardize:
           for (const auto &record_batch : record_batches) {
             const auto &array = std::static_pointer_cast<arrow::ListArray>(
               record_batch->column(nth_column));
             auto values =
               std::static_pointer_cast<arrow::FloatArray>(array->values());
-            if (target == Target::RecordBatchSort) {
-              auto sorted_values_indices =
-                *arrow::compute::SortIndices(*values);
-              values = std::static_pointer_cast<arrow::FloatArray>(
-                *arrow::compute::Take(*values, *sorted_values_indices));
+            switch (target) {
+            case Target::RecordBatchSort:
+              values =
+                std::static_pointer_cast<arrow::FloatArray>(sort(values));
+              break;
+            case Target::RecordBatchMinShift:
+              values =
+                std::static_pointer_cast<arrow::FloatArray>(min_shift(values));
+              break;
+            case Target::RecordBatchNormalize:
+              values =
+                std::static_pointer_cast<arrow::FloatArray>(normalize(values));
+              break;
+            case Target::RecordBatchStandardize:
+              values =
+                std::static_pointer_cast<arrow::FloatArray>(standardize(values));
+              break;
+            default:
+              break;
             }
             const auto source = values->raw_values();
             const auto source_size = sizeof(float) * values->length();
