@@ -133,6 +133,7 @@
 /test/unit/run-test.sh.trs
 /test/unit/test-suite.log
 /test/unit/tmp
+/tools/blosc-evaluate
 /tmp
 /tmp-doc/
 /vendor/CRoaring-*
