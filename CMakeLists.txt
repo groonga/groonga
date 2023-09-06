@@ -262,6 +262,11 @@ if(GRN_C_COMPILER_GNU_LIKE)
   check_build_flag("-Wno-implicit-fallthrough")
 endif()
 
+option(GRN_WARN_CONVERSION "Enable -Wconversion" OFF)
+if(GRN_WARN_CONVERSION)
+  check_build_flag("-Wconversion")
+endif()
+
 option(GRN_ALLOW_WARNING "allow warning." ON)
 if(NOT GRN_ALLOW_WARNING)
   if(GRN_C_COMPILER_GNU_LIKE)
