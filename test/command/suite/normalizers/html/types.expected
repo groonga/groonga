@@ -14,7 +14,8 @@ normalize   'NormalizerHTML'   "a&lt;b&#x80;<b>c</b>&#x3042;d"   WITH_TYPES
       "symbol",
       "alpha",
       "hiragana",
-      "alpha"
+      "alpha",
+      "null"
     ],
     "checks": [
 

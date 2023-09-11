@@ -18,7 +18,8 @@ normalize   'NormalizerNFKC150("unify_katakana_v_sounds", true,                 
       "symbol",
       "symbol",
       "symbol",
-      "symbol"
+      "symbol",
+      "null"
     ],
     "checks": [
       1,

@@ -13,7 +13,8 @@ normalize NormalizerAuto " aa bbb   c " REMOVE_BLANK|WITH_TYPES|WITH_CHECKS
       "alpha",
       "alpha",
       "alpha|blank",
-      "alpha|blank"
+      "alpha|blank",
+      "null"
     ],
     "checks": [
       2,

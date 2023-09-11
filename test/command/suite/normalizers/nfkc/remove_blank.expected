@@ -18,7 +18,8 @@ normalize   'NormalizerNFKC("remove_blank", true,                   "report_sour
       "alpha",
       "alpha",
       "alpha",
-      "symbol"
+      "symbol",
+      "null"
     ],
     "checks": [
       1,
@@ -44,7 +45,8 @@ normalize   'NormalizerNFKC("remove_blank", true,                   "report_sour
       10,
       11,
       12,
-      13
+      13,
+      14
     ]
   }
 ]

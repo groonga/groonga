@@ -13,7 +13,8 @@ normalize   'NormalizerNFKC("unify_katakana_bu_sound", true,                   "
       "katakana",
       "katakana",
       "katakana",
-      "katakana"
+      "katakana",
+      "null"
     ],
     "checks": [
       6,
@@ -41,7 +42,8 @@ normalize   'NormalizerNFKC("unify_katakana_bu_sound", true,                   "
       12,
       15,
       21,
-      27
+      27,
+      30
     ]
   }
 ]

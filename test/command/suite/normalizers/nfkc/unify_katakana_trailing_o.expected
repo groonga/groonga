@@ -39,7 +39,8 @@ normalize   'NormalizerNFKC("unify_katakana_trailing_o", true,                  
       "katakana",
       "katakana",
       "katakana",
-      "katakana"
+      "katakana",
+      "null"
     ],
     "checks": [
       3,
@@ -171,7 +172,8 @@ normalize   'NormalizerNFKC("unify_katakana_trailing_o", true,                  
       84,
       87,
       90,
-      93
+      93,
+      96
     ]
   }
 ]

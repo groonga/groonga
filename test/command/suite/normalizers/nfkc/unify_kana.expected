@@ -24,7 +24,8 @@ normalize   'NormalizerNFKC("unify_kana", true)'   "あイｳｪおざジたチ�
       "hiragana",
       "hiragana",
       "hiragana",
-      "hiragana"
+      "hiragana",
+      "null"
     ],
     "checks": [
 

@@ -20,7 +20,8 @@ normalize   'NormalizerNFKC("report_source_offset", true)'   "( あ  いうえ�
       10,
       13,
       16,
-      20
+      20,
+      21
     ]
   }
 ]

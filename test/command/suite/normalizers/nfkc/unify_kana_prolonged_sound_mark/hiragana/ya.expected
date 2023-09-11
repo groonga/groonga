@@ -19,7 +19,8 @@ normalize   'NormalizerNFKC150("unify_kana_prolonged_sound_mark", true,         
       "hiragana",
       "hiragana",
       "hiragana",
-      "hiragana"
+      "hiragana",
+      "null"
     ],
     "checks": [
       3,
@@ -71,7 +72,8 @@ normalize   'NormalizerNFKC150("unify_kana_prolonged_sound_mark", true,         
       24,
       27,
       30,
-      33
+      33,
+      36
     ]
   }
 ]

@@ -1,2 +1,2 @@
 normalize NormalizerNFKC130 "©" WITH_TYPES
-[[0,0.0,0.0],{"normalized":"©","types":["emoji"],"checks":[]}]
+[[0,0.0,0.0],{"normalized":"©","types":["emoji","null"],"checks":[]}]

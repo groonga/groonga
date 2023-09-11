@@ -28,7 +28,8 @@ normalize   'NormalizerNFKC("unify_hyphen_and_prolonged_sound_mark", true)'   "-
       "symbol",
       "symbol",
       "symbol",
-      "symbol"
+      "symbol",
+      "null"
     ],
     "checks": [
 

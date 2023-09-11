@@ -22,7 +22,8 @@ normalize   'NormalizerNFKC150("unify_to_romaji", true,                      "re
       "alpha",
       "alpha",
       "alpha",
-      "alpha"
+      "alpha",
+      "null"
     ],
     "checks": [
       3,
@@ -56,7 +57,8 @@ normalize   'NormalizerNFKC150("unify_to_romaji", true,                      "re
       12,
       15,
       15,
-      15
+      15,
+      18
     ]
   }
 ]

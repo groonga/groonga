@@ -24,7 +24,8 @@ normalize NormalizerNFKC150 "ЛИЦЕНЗИЯ лицензия" WITH_TYPES
       "alpha",
       "alpha",
       "alpha",
-      "alpha"
+      "alpha",
+      "null"
     ],
     "checks": [
 

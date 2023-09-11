@@ -19,7 +19,8 @@ normalize   'NormalizerNFKC150("unify_kana_hyphen", true,                      "
       "hiragana",
       "hiragana",
       "hiragana",
-      "hiragana"
+      "hiragana",
+      "null"
     ],
     "checks": [
       3,
@@ -71,7 +72,8 @@ normalize   'NormalizerNFKC150("unify_kana_hyphen", true,                      "
       16,
       19,
       20,
-      23
+      23,
+      24
     ]
   }
 ]

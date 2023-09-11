@@ -52,7 +52,8 @@ normalize   'NormalizerNFKC("unify_kana_voiced_sound_mark", true)'   "かがき�
       "hiragana",
       "hiragana",
       "hiragana",
-      "hiragana"
+      "hiragana",
+      "null"
     ],
     "checks": [
 

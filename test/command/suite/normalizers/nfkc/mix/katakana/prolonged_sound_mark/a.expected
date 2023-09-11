@@ -27,7 +27,8 @@ normalize   'NormalizerNFKC150("unify_katakana_v_sounds", true,                 
       "katakana",
       "katakana",
       "katakana",
-      "katakana"
+      "katakana",
+      "null"
     ],
     "checks": [
       3,

@@ -19,7 +19,8 @@ normalize   'NormalizerNFKC150("strip", true,                      "report_sourc
       "alpha",
       "alpha",
       "alpha|blank",
-      "symbol|blank"
+      "symbol|blank",
+      "null"
     ],
     "checks": [
       3,
@@ -47,7 +48,8 @@ normalize   'NormalizerNFKC150("strip", true,                      "report_sourc
       10,
       11,
       12,
-      14
+      14,
+      18
     ]
   }
 ]

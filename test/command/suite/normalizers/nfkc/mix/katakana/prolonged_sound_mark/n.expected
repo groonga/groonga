@@ -9,7 +9,8 @@ normalize   'NormalizerNFKC150("unify_katakana_v_sounds", true,                 
     "normalized": "ンン",
     "types": [
       "katakana",
-      "katakana"
+      "katakana",
+      "null"
     ],
     "checks": [
       3,

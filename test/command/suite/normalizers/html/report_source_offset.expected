@@ -22,7 +22,8 @@ normalize   'NormalizerHTML("report_source_offset", true)'   "a&lt;b&amp;<b>c</b
       19,
       24,
       25,
-      31
+      31,
+      32
     ]
   }
 ]

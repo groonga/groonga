@@ -3,4 +3,4 @@ table_create Normalizations TABLE_PAT_KEY ShortText
 column_create Normalizations normalized COLUMN_SCALAR ShortText
 [[0,0.0,0.0],true]
 normalize   'NormalizerTable("normalized", "Normalizations.normalized",                    "unicode_version", "13.0.0")'   "©"   WITH_TYPES
-[[0,0.0,0.0],{"normalized":"©","types":["emoji"],"checks":[]}]
+[[0,0.0,0.0],{"normalized":"©","types":["emoji","null"],"checks":[]}]

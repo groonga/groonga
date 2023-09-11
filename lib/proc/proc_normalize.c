@@ -150,7 +150,7 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
       if (types) {
         unsigned int i;
         grn_ctx_output_array_open(ctx, "types", (int)normalized_n_characters);
-        for (i = 0; i < normalized_n_characters; i++) {
+        for (i = 0; i <= normalized_n_characters; i++) {
           grn_ctx_output_cstr(ctx, grn_char_type_to_string(types[i]));
         }
         grn_ctx_output_array_close(ctx);
@@ -181,7 +181,7 @@ command_normalize(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_d
 
       grn_ctx_output_cstr(ctx, "offsets");
       grn_ctx_output_array_open(ctx, "offsets", (int)normalized_n_characters);
-      for (i = 0; i < normalized_n_characters; i++) {
+      for (i = 0; i <= normalized_n_characters; i++) {
         grn_ctx_output_uint64(ctx, offsets[i]);
       }
       grn_ctx_output_array_close(ctx);

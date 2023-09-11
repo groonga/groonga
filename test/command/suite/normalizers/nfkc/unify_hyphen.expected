@@ -18,7 +18,8 @@ normalize   'NormalizerNFKC("unify_hyphen", true)'   "-˗֊‐‑‒–⁃⁻₋
       "symbol",
       "symbol",
       "symbol",
-      "symbol"
+      "symbol",
+      "null"
     ],
     "checks": [
 

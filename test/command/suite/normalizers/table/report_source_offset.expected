@@ -30,7 +30,8 @@ normalize   'NormalizerTable("normalized", "Normalizations.normalized",         
       1,
       4,
       7,
-      13
+      13,
+      14
     ]
   }
 ]

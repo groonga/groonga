@@ -29,7 +29,8 @@ normalize   'NormalizerNFKC130("unify_kana", true, "report_source_offset", true)
       "symbol",
       "hiragana",
       "symbol",
-      "hiragana"
+      "hiragana",
+      "null"
     ],
     "checks": [
       3,
@@ -69,7 +70,8 @@ normalize   'NormalizerNFKC130("unify_kana", true, "report_source_offset", true)
       20,
       20,
       20,
-      24
+      24,
+      17
     ]
   }
 ]

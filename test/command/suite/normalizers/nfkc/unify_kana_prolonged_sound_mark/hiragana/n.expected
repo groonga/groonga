@@ -9,7 +9,8 @@ normalize   'NormalizerNFKC150("unify_kana_prolonged_sound_mark", true,         
     "normalized": "んん",
     "types": [
       "hiragana",
-      "hiragana"
+      "hiragana",
+      "null"
     ],
     "checks": [
       3,
@@ -21,7 +22,8 @@ normalize   'NormalizerNFKC150("unify_kana_prolonged_sound_mark", true,         
     ],
     "offsets": [
       0,
-      3
+      3,
+      6
     ]
   }
 ]

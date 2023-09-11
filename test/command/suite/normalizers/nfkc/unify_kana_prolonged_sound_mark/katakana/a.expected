@@ -27,7 +27,8 @@ normalize   'NormalizerNFKC150("unify_kana_prolonged_sound_mark", true,         
       "katakana",
       "katakana",
       "katakana",
-      "katakana"
+      "katakana",
+      "null"
     ],
     "checks": [
       3,
@@ -111,7 +112,8 @@ normalize   'NormalizerNFKC150("unify_kana_prolonged_sound_mark", true,         
       48,
       51,
       54,
-      57
+      57,
+      60
     ]
   }
 ]

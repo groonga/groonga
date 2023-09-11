@@ -24,7 +24,8 @@ normalize   'NormalizerTable("normalized", "Normalizations.normalized")'   ".あ
       "symbol",
       "symbol",
       "digit",
-      "symbol"
+      "symbol",
+      "null"
     ],
     "checks": [
 
