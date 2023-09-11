@@ -71,7 +71,7 @@ normalize   'NormalizerNFKC130("unify_kana", true, "report_source_offset", true)
       20,
       20,
       24,
-      17
+      27
     ]
   }
 ]

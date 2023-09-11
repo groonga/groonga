@@ -327,7 +327,7 @@ grn_string_open_(grn_ctx *ctx,
             unsigned int previous_i = 0;
             unsigned int current_i = 0;
             for (current_i = 0;
-                 current_i < string_->n_characters;
+                 current_i <= string_->n_characters;
                  current_i++) {
               while (string_->offsets[current_i] > previous_offset) {
                 int previous_character_length =
