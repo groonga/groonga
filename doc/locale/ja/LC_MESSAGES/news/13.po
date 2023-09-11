@@ -19,6 +19,24 @@ msgstr ""
 msgid "News - 13 series"
 msgstr "お知らせ - 13系"
 
+msgid "Release 13.0.7 - 2023-09-12"
+msgstr "13.0.7リリース - 2023-09-12"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/reference/commands/normalize`] Fixed a bug that `normalize` command doesn't output last offset and type."
+msgstr "[{doc}`/reference/commands/normalize`] `normalize` コマンドで最後の `offset` と `type` が表示されない問題を修正しました。"
+
+msgid "`normalize` command can output offset and type of string after normalize as below, but `normalize` command doesn't output the last offset and type by this bug."
+msgstr "`normalize` コマンドは以下のようにノーマライズ後の文字のオフセットとタイプを表示できますが、最後の`offset`と`type`が表示されていませんでした。"
+
+msgid "[{doc}`/reference/normalizers`] Fixed a bug that the last offset value may be invalid when we use multiple normalizers."
+msgstr "[{doc}`/reference/normalizers`] 複数のノーマライザーを使用した時に最後の文字のオフセットが不正になることがある問題を修正しました。"
+
+msgid "For the following example, the last offset value is 27 correctly, but it is 17 in the following example by this bug."
+msgstr "例えば以下の例では、最後のオフセットは27が正しいですが、以下の例ではこの問題が原因で17になっています。"
+
 msgid "Release 13.0.6 - 2023-08-31"
 msgstr "13.0.6リリース - 2023-08-31"
 
@@ -36,9 +54,6 @@ msgstr "動的カラムや疑似カラムを対象に `aggregator_*` を使え�
 
 msgid "Pseudo column is a column with `_` prefix.(e.g. `_id`, `_nsubrecs`, ...)."
 msgstr "疑似カラムとは、 `_` で始まるカラムのことです。(例： `_id`, `_nsubrecs`, ...)"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[CMake] Fixed a build error with CMake when both of msgpack and msgpackc-cxx are installed."
 msgstr "[CMake] msgpack と msgpackc-cxx の両方がインストールされている環境でCMakeによるビルドが失敗する問題を修正しました。"
