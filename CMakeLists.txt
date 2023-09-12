@@ -1021,6 +1021,21 @@ install(FILES "COPYING" "README.md" DESTINATION "${GRN_DATA_DIR}")
 
 add_subdirectory(vendor/plugins)
 
+option(GRN_FOR_RHEL "install RHEL related files" OFF)
+if(GRN_FOR_RHEL)
+  install(FILES data/tempfiles.d/groonga.conf
+          DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/tempfiles.d/)
+  install(FILES data/logrotated.d/rhel/groonga-server-gqtp
+                data/logrotated.d/rhel/groonga-server-http
+          DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/logrotate.d/)
+  install(FILES data/systemd/rhel/sysconfig/groonga-server-gqtp
+                data/systemd/rhel/sysconfig/groonga-server-http
+          DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/sysconfig/)
+  install(FILES data/systemd/rhel/groonga-server-gqtp.service
+                data/systemd/rhel/groonga-server-http.service
+          DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/system/)
+endif()
+
 option(GRN_WITH_MUNIN_PLUGINS "install Munin plugins" OFF)
 if(GRN_WITH_MUNIN_PLUGINS)
   install(
@@ -1044,4 +1059,14 @@ if(GRN_WITH_EXAMPLES)
     USE_SOURCE_PERMISSIONS FILES_MATCHING
     PATTERN "*"
     PATTERN "Makefile.*" EXCLUDE)
+endif()
+
+option(GRN_WITH_TOOLS "install tools" OFF)
+if(GRN_WITH_TOOLS)
+  install(
+    DIRECTORY tools
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/${GRN_PROJECT_NAME}/tools
+    USE_SOURCE_PERMISSIONS FILES_MATCHING
+    PATTERN "*.rb"
+    PATTERN "*.sh")
 endif()
