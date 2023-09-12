@@ -19,6 +19,7 @@ RUN \
     ${SCL}-make \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
+    cmake3 \
     intltool \
     libcurl-devel \
     libedit-devel \

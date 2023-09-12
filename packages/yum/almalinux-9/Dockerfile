@@ -17,6 +17,7 @@ RUN \
   dnf install -y ${quiet} \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
+    cmake \
     gcc-c++ \
     intltool \
     mecab-devel \

@@ -16,6 +16,7 @@ RUN \
   dnf install -y ${quiet} \
     arrow-devel-${APACHE_ARROW_VERSION} \
     ccache \
+    cmake \
     gcc-c++ \
     intltool \
     libedit-devel \
@@ -30,6 +31,7 @@ RUN \
     php-devel \
     pkgconfig \
     python2-devel \
+    rapidjson-devel \
     ruby \
     tar \
     xxhash-devel \
