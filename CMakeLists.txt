@@ -426,6 +426,8 @@ if(NOT ${GRN_WITH_ZLIB} STREQUAL "no")
   endif()
 endif()
 
+include(FetchContent)
+
 include(ExternalProject)
 set(GRN_EP_COMMON_OPTIONS
     LOG_DOWNLOAD
@@ -931,6 +933,62 @@ if(NOT "${GRN_WITH_ROARING_BITMAPS}" STREQUAL "no")
   endif()
 else()
   set(GRN_WITH_ROARING_BITMAPS FALSE)
+endif()
+
+set(GRN_BLOSC_REQUIRED_VERSION "2.8.0")
+set(GRN_BLOSC_BUNDLED_VERSION "2.10.2")
+set(GRN_BLOSC_BUNDLED_SHA256
+    "069785bc14c006c7dab40ea0c620bdf3eb8752663fd55c706d145bceabc2a31d")
+set(GRN_WITH_BLOSC
+    "no"
+    CACHE STRING "Support column compression by Blosc.")
+if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
+  if("${GRN_WITH_BLOSC}" STREQUAL "bundled")
+    set(Blosc2_FOUND FALSE)
+  else()
+    if("${GRN_WITH_BLOSC}" STREQUAL "system")
+      find_package(Blosc2 ${GRN_BLOSC_REQUIRED_VERSION} REQUIRED)
+    else()
+      find_package(Blosc2 ${GRN_BLOSC_REQUIRED_VERSION})
+    endif()
+  endif()
+  if(Blosc2_FOUND)
+    set(GRN_WITH_BLOSC TRUE)
+    target_link_libraries(grn_dependencies INTERFACE Blosc2::blosc2_shared)
+    message(STATUS "Blosc: system")
+  else()
+    # We need to use function to create a variable scope
+    function(grn_build_blosc)
+      fetchcontent_declare(
+        blosc
+        URL "https://github.com/Blosc/c-blosc2/archive/refs/tags/v${GRN_BLOSC_BUNDLED_VERSION}.tar.gz"
+        URL_HASH "SHA256=${GRN_BLOSC_BUNDLED_SHA256}")
+      set(BUILD_BENCHMARKS OFF)
+      set(BUILD_EXAMPLES OFF)
+      set(BUILD_FUZZERS OFF)
+      set(BUILD_SHARED OFF)
+      set(BUILD_STATIC ON)
+      set(BUILD_TESTS OFF)
+      # TODO: Use bundled LZ4 when we use bundled LZ4.
+      set(PREFER_EXTERNAL_LZ4 ON)
+      set(PREFER_EXTERNAL_ZLIB ON)
+      # TODO: Use bundled Zstandard when we use bundled Zstandard.
+      set(PREFER_EXTERNAL_ZSTD ON)
+      fetchcontent_makeavailable(blosc)
+      install(
+        FILES "${blosc_SOURCE_DIR}/LICENSE.txt"
+              "${blosc_SOURCE_DIR}/LICENSES/BITSHUFFLE.txt"
+              "${blosc_SOURCE_DIR}/LICENSES/FASTLZ.txt"
+              "${blosc_SOURCE_DIR}/README.rst"
+        DESTINATION "${GRN_DATA_DIR}/c-blosc2")
+    endfunction()
+    grn_build_blosc()
+    set(GRN_WITH_BLOSC TRUE)
+    target_link_libraries(grn_dependencies INTERFACE blosc2_static)
+    message(STATUS "Blosc: bundled")
+  endif()
+else()
+  set(GRN_WITH_BLOSC FALSE)
 endif()
 
 find_program(
