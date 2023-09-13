@@ -39,14 +39,14 @@ grn_proc_column_parse_flags(grn_ctx *ctx,
       continue;
     }
 
-#define CHECK_FLAG(name)                                                \
-    name_size = strlen(#name);                                          \
-    if ((size_t)(end - text) >= name_size &&                            \
-        memcmp(text, #name, name_size) == 0) {                          \
-      flags |= GRN_OBJ_ ## name;                                        \
-      text += name_size;                                                \
-      continue;                                                         \
-    }
+#define CHECK_FLAG(name)                                                       \
+  name_size = strlen(#name);                                                   \
+  if ((size_t)(end - text) >= name_size &&                                     \
+      memcmp(text, #name, name_size) == 0) {                                   \
+    flags |= GRN_OBJ_##name;                                                   \
+    text += name_size;                                                         \
+    continue;                                                                  \
+  }
 
     CHECK_FLAG(COLUMN_SCALAR);
     CHECK_FLAG(COLUMN_VECTOR);
@@ -74,7 +74,8 @@ grn_proc_column_parse_flags(grn_ctx *ctx,
     ERR(GRN_INVALID_ARGUMENT,
         "%s unknown flag: <%.*s>",
         error_message_tag,
-        (int)(end - text), text);
+        (int)(end - text),
+        text);
     return 0;
   }
   return flags;
@@ -93,7 +94,8 @@ command_column_create_resolve_source_name(grn_ctx *ctx,
   if (!column) {
     ERR(GRN_INVALID_ARGUMENT,
         "[column][create] nonexistent source: <%.*s>",
-        source_name_length, source_name);
+        source_name_length,
+        source_name);
     return ctx->rc;
   }
 
@@ -104,7 +106,8 @@ command_column_create_resolve_source_name(grn_ctx *ctx,
     } else {
       ERR(GRN_INVALID_ARGUMENT,
           "[column][create] pseudo column except <_key> is invalid: <%.*s>",
-          source_name_length, source_name);
+          source_name_length,
+          source_name);
     }
   } else {
     grn_id source_id = grn_obj_id(ctx, column);
@@ -131,20 +134,21 @@ command_column_create_resolve_source_names(grn_ctx *ctx,
   names_length = GRN_TEXT_LEN(source_names);
   for (i = 0; i < names_length; i++) {
     switch (names[i]) {
-    case ' ' :
+    case ' ':
       if (source_name_length == 0) {
         start++;
       }
       break;
-    case ',' :
+    case ',':
       {
         grn_rc rc;
         const char *source_name = names + start;
-        rc = command_column_create_resolve_source_name(ctx,
-                                                       table,
-                                                       source_name,
-                                                       (uint32_t)source_name_length,
-                                                       source_ids);
+        rc = command_column_create_resolve_source_name(
+          ctx,
+          table,
+          source_name,
+          (uint32_t)source_name_length,
+          source_ids);
         if (rc) {
           return rc;
         }
@@ -152,7 +156,7 @@ command_column_create_resolve_source_names(grn_ctx *ctx,
         source_name_length = 0;
       }
       break;
-    default :
+    default:
       source_name_length++;
       break;
     }
@@ -175,7 +179,9 @@ command_column_create_resolve_source_names(grn_ctx *ctx,
 }
 
 static grn_obj *
-command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
+command_column_create(grn_ctx *ctx,
+                      int nargs,
+                      grn_obj **args,
                       grn_user_data *user_data)
 {
   grn_bool succeeded = GRN_TRUE;
@@ -190,16 +196,15 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_column_flags flags;
   grn_obj *type = NULL;
 
-  table_raw  = grn_plugin_proc_get_var(ctx, user_data, "table", -1);
-  name       = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
-  flags_raw  = grn_plugin_proc_get_var(ctx, user_data, "flags", -1);
-  type_raw   = grn_plugin_proc_get_var(ctx, user_data, "type", -1);
+  table_raw = grn_plugin_proc_get_var(ctx, user_data, "table", -1);
+  name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
+  flags_raw = grn_plugin_proc_get_var(ctx, user_data, "flags", -1);
+  type_raw = grn_plugin_proc_get_var(ctx, user_data, "type", -1);
   source_raw = grn_plugin_proc_get_var(ctx, user_data, "source", -1);
-  path_raw   = grn_plugin_proc_get_var(ctx, user_data, "path", -1);
+  path_raw = grn_plugin_proc_get_var(ctx, user_data, "path", -1);
 
-  table = grn_ctx_get(ctx,
-                      GRN_TEXT_VALUE(table_raw),
-                      (int)GRN_TEXT_LEN(table_raw));
+  table =
+    grn_ctx_get(ctx, GRN_TEXT_VALUE(table_raw), (int)GRN_TEXT_LEN(table_raw));
   if (!table) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -227,9 +232,8 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
     }
   }
 
-  type = grn_ctx_get(ctx,
-                     GRN_TEXT_VALUE(type_raw),
-                     (int)GRN_TEXT_LEN(type_raw));
+  type =
+    grn_ctx_get(ctx, GRN_TEXT_VALUE(type_raw), (int)GRN_TEXT_LEN(type_raw));
   if (!type) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -296,10 +300,14 @@ command_column_create(grn_ctx *ctx, int nargs, grn_obj **args,
 
   grn_obj_unlink(ctx, column);
 
-exit :
+exit:
   grn_ctx_output_bool(ctx, succeeded);
-  if (table) { grn_obj_unlink(ctx, table); }
-  if (type) { grn_obj_unlink(ctx, type); }
+  if (table) {
+    grn_obj_unlink(ctx, table);
+  }
+  if (type) {
+    grn_obj_unlink(ctx, type);
+  }
 
   return NULL;
 }
@@ -316,14 +324,17 @@ grn_proc_init_column_create(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[4]), "source", -1);
   grn_plugin_expr_var_init(ctx, &(vars[5]), "path", -1);
   grn_plugin_command_create(ctx,
-                            "column_create", -1,
+                            "column_create",
+                            -1,
                             command_column_create,
                             6,
                             vars);
 }
 
 static grn_obj *
-command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
+command_column_remove(grn_ctx *ctx,
+                      int nargs,
+                      grn_obj **args,
                       grn_user_data *user_data)
 {
   grn_obj *table_raw;
@@ -334,11 +345,10 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
   int fullname_len;
 
   table_raw = grn_plugin_proc_get_var(ctx, user_data, "table", -1);
-  name      = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
+  name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
 
-  table = grn_ctx_get(ctx,
-                      GRN_TEXT_VALUE(table_raw),
-                      (int)GRN_TEXT_LEN(table_raw));
+  table =
+    grn_ctx_get(ctx, GRN_TEXT_VALUE(table_raw), (int)GRN_TEXT_LEN(table_raw));
   if (!table) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -376,9 +386,7 @@ command_column_remove(grn_ctx *ctx, int nargs, grn_obj **args,
     grn_obj_unref(ctx, table);
     return NULL;
   }
-  grn_memcpy(fullname + fullname_len,
-             GRN_TEXT_VALUE(name),
-             GRN_TEXT_LEN(name));
+  grn_memcpy(fullname + fullname_len, GRN_TEXT_VALUE(name), GRN_TEXT_LEN(name));
   fullname_len += (int)GRN_TEXT_LEN(name);
   column = grn_ctx_get(ctx, fullname, fullname_len);
   if (!column) {
@@ -409,14 +417,17 @@ grn_proc_init_column_remove(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[0]), "table", -1);
   grn_plugin_expr_var_init(ctx, &(vars[1]), "name", -1);
   grn_plugin_command_create(ctx,
-                            "column_remove", -1,
+                            "column_remove",
+                            -1,
                             command_column_remove,
                             2,
                             vars);
 }
 
 static grn_obj *
-command_column_rename(grn_ctx *ctx, int nargs, grn_obj **args,
+command_column_rename(grn_ctx *ctx,
+                      int nargs,
+                      grn_obj **args,
                       grn_user_data *user_data)
 {
   grn_rc rc = GRN_SUCCESS;
@@ -427,20 +438,17 @@ command_column_rename(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_obj *column = NULL;
 
   table_raw = grn_plugin_proc_get_var(ctx, user_data, "table", -1);
-  name      = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
-  new_name  = grn_plugin_proc_get_var(ctx, user_data, "new_name", -1);
+  name = grn_plugin_proc_get_var(ctx, user_data, "name", -1);
+  new_name = grn_plugin_proc_get_var(ctx, user_data, "new_name", -1);
 
   if (GRN_TEXT_LEN(table_raw) == 0) {
     rc = GRN_INVALID_ARGUMENT;
-    GRN_PLUGIN_ERROR(ctx,
-                     rc,
-                     "[column][rename] table name isn't specified");
+    GRN_PLUGIN_ERROR(ctx, rc, "[column][rename] table name isn't specified");
     goto exit;
   }
 
-  table = grn_ctx_get(ctx,
-                      GRN_TEXT_VALUE(table_raw),
-                      (int)GRN_TEXT_LEN(table_raw));
+  table =
+    grn_ctx_get(ctx, GRN_TEXT_VALUE(table_raw), (int)GRN_TEXT_LEN(table_raw));
   if (!table) {
     rc = GRN_INVALID_ARGUMENT;
     GRN_PLUGIN_ERROR(ctx,
@@ -461,7 +469,8 @@ command_column_rename(grn_ctx *ctx, int nargs, grn_obj **args,
     goto exit;
   }
 
-  column = grn_obj_column(ctx, table,
+  column = grn_obj_column(ctx,
+                          table,
                           GRN_TEXT_VALUE(name),
                           (uint32_t)GRN_TEXT_LEN(name));
   if (!column) {
@@ -491,7 +500,8 @@ command_column_rename(grn_ctx *ctx, int nargs, grn_obj **args,
     goto exit;
   }
 
-  rc = grn_column_rename(ctx, column,
+  rc = grn_column_rename(ctx,
+                         column,
                          GRN_TEXT_VALUE(new_name),
                          (unsigned int)GRN_TEXT_LEN(new_name));
   if (rc != GRN_SUCCESS && ctx->rc == GRN_SUCCESS) {
@@ -512,10 +522,14 @@ command_column_rename(grn_ctx *ctx, int nargs, grn_obj **args,
     goto exit;
   }
 
-exit :
+exit:
   grn_ctx_output_bool(ctx, rc == GRN_SUCCESS);
-  if (column) { grn_obj_unlink(ctx, column); }
-  if (table) { grn_obj_unlink(ctx, table); }
+  if (column) {
+    grn_obj_unlink(ctx, column);
+  }
+  if (table) {
+    grn_obj_unlink(ctx, table);
+  }
   return NULL;
 }
 
@@ -528,7 +542,8 @@ grn_proc_init_column_rename(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[1]), "name", -1);
   grn_plugin_expr_var_init(ctx, &(vars[2]), "new_name", -1);
   grn_plugin_command_create(ctx,
-                            "column_rename", -1,
+                            "column_rename",
+                            -1,
                             command_column_rename,
                             3,
                             vars);
@@ -568,7 +583,10 @@ output_column_info(grn_ctx *ctx, grn_obj *column)
     type = "index";
     break;
   default:
-    GRN_LOG(ctx, GRN_LOG_NOTICE, "invalid header type %d\n", column->header.type);
+    GRN_LOG(ctx,
+            GRN_LOG_NOTICE,
+            "invalid header type %d\n",
+            column->header.type);
     return 0;
   }
   id = grn_obj_id(ctx, column);
@@ -592,7 +610,6 @@ output_column_info(grn_ctx *ctx, grn_obj *column)
       grn_proc_output_object_id_name(ctx, *s);
     }
     grn_ctx_output_array_close(ctx);
-
   }
   /* output_obj_source(ctx, (grn_db_obj *)column); */
   grn_ctx_output_array_close(ctx);
@@ -601,7 +618,9 @@ output_column_info(grn_ctx *ctx, grn_obj *column)
 }
 
 static grn_obj *
-command_column_list(grn_ctx *ctx, int nargs, grn_obj **args,
+command_column_list(grn_ctx *ctx,
+                    int nargs,
+                    grn_obj **args,
                     grn_user_data *user_data)
 {
   grn_obj *table_raw;
@@ -612,9 +631,8 @@ command_column_list(grn_ctx *ctx, int nargs, grn_obj **args,
 
   table_raw = grn_plugin_proc_get_var(ctx, user_data, "table", -1);
 
-  table = grn_ctx_get(ctx,
-                      GRN_TEXT_VALUE(table_raw),
-                      (int)GRN_TEXT_LEN(table_raw));
+  table =
+    grn_ctx_get(ctx, GRN_TEXT_VALUE(table_raw), (int)GRN_TEXT_LEN(table_raw));
   if (!table) {
     GRN_PLUGIN_ERROR(ctx,
                      GRN_INVALID_ARGUMENT,
@@ -641,8 +659,11 @@ command_column_list(grn_ctx *ctx, int nargs, grn_obj **args,
   if (table->header.type != GRN_TABLE_NO_KEY) {
     column_list_size++;
   }
-  cols = grn_hash_create(ctx, NULL, sizeof(grn_id), 0,
-                         GRN_OBJ_TABLE_HASH_KEY|GRN_HASH_TINY);
+  cols = grn_hash_create(ctx,
+                         NULL,
+                         sizeof(grn_id),
+                         0,
+                         GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
   if (!cols) {
     grn_obj_unlink(ctx, table);
     GRN_PLUGIN_ERROR(ctx,
@@ -692,7 +713,8 @@ command_column_list(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_ctx_output_array_close(ctx);
   grn_ctx_output_array_close(ctx);
 
-  if ((col = grn_obj_column(ctx, table,
+  if ((col = grn_obj_column(ctx,
+                            table,
                             GRN_COLUMN_NAME_KEY,
                             GRN_COLUMN_NAME_KEY_LEN))) {
     int name_len;
@@ -740,14 +762,17 @@ grn_proc_init_column_list(grn_ctx *ctx)
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "table", -1);
   grn_plugin_command_create(ctx,
-                            "column_list", -1,
+                            "column_list",
+                            -1,
                             command_column_list,
                             1,
                             vars);
 }
 
 static grn_obj *
-command_column_copy(grn_ctx *ctx, int nargs, grn_obj **args,
+command_column_copy(grn_ctx *ctx,
+                    int nargs,
+                    grn_obj **args,
                     grn_user_data *user_data)
 {
   grn_obj *from_table = NULL;
@@ -759,10 +784,10 @@ command_column_copy(grn_ctx *ctx, int nargs, grn_obj **args,
   grn_obj *to_table_name;
   grn_obj *to_column_name;
 
-  from_table_name  = grn_plugin_proc_get_var(ctx, user_data, "from_table", -1);
+  from_table_name = grn_plugin_proc_get_var(ctx, user_data, "from_table", -1);
   from_column_name = grn_plugin_proc_get_var(ctx, user_data, "from_name", -1);
-  to_table_name    = grn_plugin_proc_get_var(ctx, user_data, "to_table", -1);
-  to_column_name   = grn_plugin_proc_get_var(ctx, user_data, "to_name", -1);
+  to_table_name = grn_plugin_proc_get_var(ctx, user_data, "to_table", -1);
+  to_column_name = grn_plugin_proc_get_var(ctx, user_data, "to_name", -1);
 
   from_table = grn_proc_get_value_object(ctx,
                                          from_table_name,
@@ -777,9 +802,8 @@ command_column_copy(grn_ctx *ctx, int nargs, grn_obj **args,
   if (!from_column) {
     goto exit;
   }
-  to_table = grn_proc_get_value_object(ctx,
-                                       to_table_name,
-                                       "[column][copy][to_table]");
+  to_table =
+    grn_proc_get_value_object(ctx, to_table_name, "[column][copy][to_table]");
   if (!to_table) {
     goto exit;
   }
@@ -793,7 +817,7 @@ command_column_copy(grn_ctx *ctx, int nargs, grn_obj **args,
 
   grn_column_copy(ctx, from_column, to_column);
 
-exit :
+exit:
   grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
 
   if (to_column) {
@@ -822,7 +846,8 @@ grn_proc_init_column_copy(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[2]), "to_table", -1);
   grn_plugin_expr_var_init(ctx, &(vars[3]), "to_name", -1);
   grn_plugin_command_create(ctx,
-                            "column_copy", -1,
+                            "column_copy",
+                            -1,
                             command_column_copy,
                             4,
                             vars);
@@ -866,7 +891,7 @@ command_column_create_similar(grn_ctx *ctx,
                                      NULL,
                                      base_column);
 
-exit :
+exit:
   grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
 
   if (table) {
@@ -891,7 +916,8 @@ grn_proc_init_column_create_similar(grn_ctx *ctx)
   grn_plugin_expr_var_init(ctx, &(vars[1]), "name", -1);
   grn_plugin_expr_var_init(ctx, &(vars[2]), "base_column", -1);
   grn_plugin_command_create(ctx,
-                            "column_create_similar", -1,
+                            "column_create_similar",
+                            -1,
                             command_column_create_similar,
                             3,
                             vars);
