@@ -178,26 +178,18 @@ jobs:
       fail-fast: false
       matrix:
         label:
-          - Debian GNU/Linux bookworm amd64
-          - Debian GNU/Linux bookworm arm64
           - Debian GNU/Linux bullseye amd64
           - Debian GNU/Linux bullseye arm64
+          - Debian GNU/Linux bookworm amd64
+          - Debian GNU/Linux bookworm arm64
+          - Debian GNU/Linux trixie amd64
+          - Debian GNU/Linux trixie arm64
           - CentOS 7 x86_64
           - AlmaLinux 8 x86_64
           - AlmaLinux 8 aarch64
           - AlmaLinux 9 x86_64
           - AlmaLinux 9 aarch64
         include:
-          - label: Debian GNU/Linux bookworm amd64
-            id: debian-bookworm-amd64
-            task-namespace: apt
-            target: debian-bookworm
-            test-docker-image: debian:bookworm
-          - label: Debian GNU/Linux bookworm arm64
-            id: debian-bookworm-arm64
-            task-namespace: apt
-            target: debian-bookworm-arm64
-            test-docker-image: arm64v8/debian:bookworm
           - label: Debian GNU/Linux bullseye amd64
             id: debian-bullseye-amd64
             task-namespace: apt
@@ -208,6 +200,26 @@ jobs:
             task-namespace: apt
             target: debian-bullseye-arm64
             test-docker-image: arm64v8/debian:bullseye
+          - label: Debian GNU/Linux bookworm amd64
+            id: debian-bookworm-amd64
+            task-namespace: apt
+            target: debian-bookworm
+            test-docker-image: debian:bookworm
+          - label: Debian GNU/Linux bookworm arm64
+            id: debian-bookworm-arm64
+            task-namespace: apt
+            target: debian-bookworm-arm64
+            test-docker-image: arm64v8/debian:bookworm
+          - label: Debian GNU/Linux trixie amd64
+            id: debian-trixie-amd64
+            task-namespace: apt
+            target: debian-trixie
+            test-docker-image: debian:trixie
+          - label: Debian GNU/Linux trixie arm64
+            id: debian-trixie-arm64
+            task-namespace: apt
+            target: debian-trixie-arm64
+            test-docker-image: arm64v8/debian:trixie
           - label: CentOS 7 x86_64
             id: centos-7-x86_64
             task-namespace: yum
