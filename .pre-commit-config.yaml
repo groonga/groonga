@@ -42,6 +42,7 @@ repos:
           ?lib/obj\.c|
           ?lib/proc/proc_highlight\.c|
           ?lib/proc\.c|
+          ?lib/store\.c|
           ?lib/tokenizer\.c|
           ?lib/util\.c|
           ?src/groonga\.c|
