@@ -30,6 +30,7 @@ repos:
           ?lib/ctx\.c|
           ?lib/ctx_impl_mrb\.c|
           ?lib/db\.c|
+          ?lib/error\.c|
           ?lib/expr\.c|
           ?lib/grn_ctx_impl\.h|
           ?lib/grn_error\.h|

@@ -20,7 +20,7 @@
 #include "grn_windows.h"
 
 #ifdef HAVE_ERRNO_H
-#include <errno.h>
+#  include <errno.h>
 #endif /* HAVE_ERRNO_H */
 
 #include <string.h>
@@ -33,88 +33,88 @@ grn_windows_error_code_to_rc(int error_code)
   grn_rc rc;
 
   switch (error_code) {
-  case ERROR_FILE_NOT_FOUND :
-  case ERROR_PATH_NOT_FOUND :
+  case ERROR_FILE_NOT_FOUND:
+  case ERROR_PATH_NOT_FOUND:
     rc = GRN_NO_SUCH_FILE_OR_DIRECTORY;
     break;
-  case ERROR_TOO_MANY_OPEN_FILES :
+  case ERROR_TOO_MANY_OPEN_FILES:
     rc = GRN_TOO_MANY_OPEN_FILES;
     break;
-  case ERROR_ACCESS_DENIED :
+  case ERROR_ACCESS_DENIED:
     rc = GRN_PERMISSION_DENIED;
     break;
-  case ERROR_INVALID_HANDLE :
+  case ERROR_INVALID_HANDLE:
     rc = GRN_INVALID_ARGUMENT;
     break;
-  case ERROR_ARENA_TRASHED :
+  case ERROR_ARENA_TRASHED:
     rc = GRN_ADDRESS_IS_NOT_AVAILABLE;
     break;
-  case ERROR_NOT_ENOUGH_MEMORY :
+  case ERROR_NOT_ENOUGH_MEMORY:
     rc = GRN_NO_MEMORY_AVAILABLE;
     break;
-  case ERROR_INVALID_BLOCK :
-  case ERROR_BAD_ENVIRONMENT :
+  case ERROR_INVALID_BLOCK:
+  case ERROR_BAD_ENVIRONMENT:
     rc = GRN_INVALID_ARGUMENT;
     break;
-  case ERROR_BAD_FORMAT :
+  case ERROR_BAD_FORMAT:
     rc = GRN_INVALID_FORMAT;
     break;
-  case ERROR_INVALID_DATA :
+  case ERROR_INVALID_DATA:
     rc = GRN_INVALID_ARGUMENT;
     break;
-  case ERROR_OUTOFMEMORY :
+  case ERROR_OUTOFMEMORY:
     rc = GRN_NO_MEMORY_AVAILABLE;
     break;
-  case ERROR_INVALID_DRIVE :
+  case ERROR_INVALID_DRIVE:
     rc = GRN_INVALID_ARGUMENT;
     break;
-  case ERROR_WRITE_PROTECT :
+  case ERROR_WRITE_PROTECT:
     rc = GRN_PERMISSION_DENIED;
     break;
-  case ERROR_BAD_LENGTH :
+  case ERROR_BAD_LENGTH:
     rc = GRN_INVALID_ARGUMENT;
     break;
-  case ERROR_SEEK :
+  case ERROR_SEEK:
     rc = GRN_INVALID_SEEK;
     break;
-  case ERROR_NOT_SUPPORTED :
+  case ERROR_NOT_SUPPORTED:
     rc = GRN_OPERATION_NOT_SUPPORTED;
     break;
-  case ERROR_NETWORK_ACCESS_DENIED :
+  case ERROR_NETWORK_ACCESS_DENIED:
     rc = GRN_OPERATION_NOT_PERMITTED;
     break;
-  case ERROR_FILE_EXISTS :
+  case ERROR_FILE_EXISTS:
     rc = GRN_FILE_EXISTS;
     break;
-  case ERROR_INVALID_PARAMETER :
+  case ERROR_INVALID_PARAMETER:
     rc = GRN_INVALID_ARGUMENT;
     break;
-  case ERROR_BROKEN_PIPE :
+  case ERROR_BROKEN_PIPE:
     rc = GRN_BROKEN_PIPE;
     break;
-  case ERROR_CALL_NOT_IMPLEMENTED :
+  case ERROR_CALL_NOT_IMPLEMENTED:
     rc = GRN_FUNCTION_NOT_IMPLEMENTED;
     break;
-  case ERROR_INVALID_NAME :
+  case ERROR_INVALID_NAME:
     rc = GRN_INVALID_ARGUMENT;
     break;
-  case ERROR_BUSY_DRIVE :
-  case ERROR_PATH_BUSY :
+  case ERROR_BUSY_DRIVE:
+  case ERROR_PATH_BUSY:
     rc = GRN_RESOURCE_BUSY;
     break;
-  case ERROR_BAD_ARGUMENTS :
+  case ERROR_BAD_ARGUMENTS:
     rc = GRN_INVALID_ARGUMENT;
     break;
-  case ERROR_BUSY :
+  case ERROR_BUSY:
     rc = GRN_RESOURCE_BUSY;
     break;
-  case ERROR_ALREADY_EXISTS :
+  case ERROR_ALREADY_EXISTS:
     rc = GRN_FILE_EXISTS;
     break;
-  case ERROR_BAD_EXE_FORMAT :
+  case ERROR_BAD_EXE_FORMAT:
     rc = GRN_EXEC_FORMAT_ERROR;
     break;
-  case ERROR_NO_SYSTEM_RESOURCES :
+  case ERROR_NO_SYSTEM_RESOURCES:
     rc = GRN_RESOURCE_TEMPORARILY_UNAVAILABLE;
     break;
   default:
@@ -125,27 +125,27 @@ grn_windows_error_code_to_rc(int error_code)
   return rc;
 }
 
-# define LANG_ID_NEUTRAL()        MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL)
-# define LANG_ID_USER_DEFAULT()   MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT)
-# define LANG_ID_SYSTEM_DEFAULT() MAKELANGID(LANG_NEUTRAL, SUBLANG_SYS_DEFAULT)
+#  define LANG_ID_NEUTRAL()        MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL)
+#  define LANG_ID_USER_DEFAULT()   MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT)
+#  define LANG_ID_SYSTEM_DEFAULT() MAKELANGID(LANG_NEUTRAL, SUBLANG_SYS_DEFAULT)
 
 const char *
 grn_error_get_current_system_message(void)
 {
-# define ERROR_MESSAGE_BUFFER_SIZE 4096
+#  define ERROR_MESSAGE_BUFFER_SIZE 4096
   int error_code = GetLastError();
   static WCHAR utf16_message[ERROR_MESSAGE_BUFFER_SIZE];
   DWORD written_utf16_chars;
   static char message[ERROR_MESSAGE_BUFFER_SIZE];
 
-  written_utf16_chars = FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM |
-                                       FORMAT_MESSAGE_IGNORE_INSERTS,
-                                       NULL,
-                                       error_code,
-                                       LANG_ID_USER_DEFAULT(),
-                                       utf16_message,
-                                       ERROR_MESSAGE_BUFFER_SIZE,
-                                       NULL);
+  written_utf16_chars =
+    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                   NULL,
+                   error_code,
+                   LANG_ID_USER_DEFAULT(),
+                   utf16_message,
+                   ERROR_MESSAGE_BUFFER_SIZE,
+                   NULL);
   if (written_utf16_chars >= 2) {
     if (utf16_message[written_utf16_chars - 1] == L'\n') {
       utf16_message[written_utf16_chars - 1] = L'\0';
@@ -175,7 +175,7 @@ grn_error_get_current_system_message(void)
 
   return message;
 
-# undef ERROR_MESSAGE_BUFFER_SIZE
+#  undef ERROR_MESSAGE_BUFFER_SIZE
 }
 #else
 grn_rc
@@ -195,12 +195,12 @@ const char *
 grn_strerror(int error_code)
 {
 #ifdef WIN32
-# define MESSAGE_BUFFER_SIZE 1024
+#  define MESSAGE_BUFFER_SIZE 1024
   static char message[MESSAGE_BUFFER_SIZE];
   strerror_s(message, MESSAGE_BUFFER_SIZE, error_code);
   return message;
-# undef MESSAGE_BUFFER_SIZE
-#else /* WIN32 */
+#  undef MESSAGE_BUFFER_SIZE
+#else  /* WIN32 */
   return strerror(error_code);
 #endif /* WIN32 */
 }
@@ -211,250 +211,250 @@ grn_rc_to_string(grn_rc rc)
   const char *message = "invalid grn_rc";
 
   switch (rc) {
-  case GRN_SUCCESS :
+  case GRN_SUCCESS:
     message = "success";
     break;
-  case GRN_END_OF_DATA :
+  case GRN_END_OF_DATA:
     message = "end of data";
     break;
-  case GRN_UNKNOWN_ERROR :
+  case GRN_UNKNOWN_ERROR:
     message = "unknown error";
     break;
-  case GRN_OPERATION_NOT_PERMITTED :
+  case GRN_OPERATION_NOT_PERMITTED:
     message = "operation not permitted";
     break;
-  case GRN_NO_SUCH_FILE_OR_DIRECTORY :
+  case GRN_NO_SUCH_FILE_OR_DIRECTORY:
     message = "no such file or directory";
     break;
-  case GRN_NO_SUCH_PROCESS :
+  case GRN_NO_SUCH_PROCESS:
     message = "no such process";
     break;
-  case GRN_INTERRUPTED_FUNCTION_CALL :
+  case GRN_INTERRUPTED_FUNCTION_CALL:
     message = "interrupted function call";
     break;
-  case GRN_INPUT_OUTPUT_ERROR :
+  case GRN_INPUT_OUTPUT_ERROR:
     message = "input output error";
     break;
-  case GRN_NO_SUCH_DEVICE_OR_ADDRESS :
+  case GRN_NO_SUCH_DEVICE_OR_ADDRESS:
     message = "no such device or address";
     break;
-  case GRN_ARG_LIST_TOO_LONG :
+  case GRN_ARG_LIST_TOO_LONG:
     message = "argument list is too long";
     break;
-  case GRN_EXEC_FORMAT_ERROR :
+  case GRN_EXEC_FORMAT_ERROR:
     message = "exec format error";
     break;
-  case GRN_BAD_FILE_DESCRIPTOR :
+  case GRN_BAD_FILE_DESCRIPTOR:
     message = "bad file descriptor";
     break;
-  case GRN_NO_CHILD_PROCESSES :
+  case GRN_NO_CHILD_PROCESSES:
     message = "no child processes";
     break;
-  case GRN_RESOURCE_TEMPORARILY_UNAVAILABLE :
+  case GRN_RESOURCE_TEMPORARILY_UNAVAILABLE:
     message = "resource temporarily unavailable";
     break;
-  case GRN_NOT_ENOUGH_SPACE :
+  case GRN_NOT_ENOUGH_SPACE:
     message = "not enough space";
     break;
-  case GRN_PERMISSION_DENIED :
+  case GRN_PERMISSION_DENIED:
     message = "permission denied";
     break;
-  case GRN_BAD_ADDRESS :
+  case GRN_BAD_ADDRESS:
     message = "bad address";
     break;
-  case GRN_RESOURCE_BUSY :
+  case GRN_RESOURCE_BUSY:
     message = "resource busy";
     break;
-  case GRN_FILE_EXISTS :
+  case GRN_FILE_EXISTS:
     message = "file exists";
     break;
-  case GRN_IMPROPER_LINK :
+  case GRN_IMPROPER_LINK:
     message = "improper link";
     break;
-  case GRN_NO_SUCH_DEVICE :
+  case GRN_NO_SUCH_DEVICE:
     message = "no such device";
     break;
-  case GRN_NOT_A_DIRECTORY :
+  case GRN_NOT_A_DIRECTORY:
     message = "not a directory";
     break;
-  case GRN_IS_A_DIRECTORY :
+  case GRN_IS_A_DIRECTORY:
     message = "is a directory";
     break;
-  case GRN_INVALID_ARGUMENT :
+  case GRN_INVALID_ARGUMENT:
     message = "invalid argument";
     break;
-  case GRN_TOO_MANY_OPEN_FILES_IN_SYSTEM :
+  case GRN_TOO_MANY_OPEN_FILES_IN_SYSTEM:
     message = "too many open files in system";
     break;
-  case GRN_TOO_MANY_OPEN_FILES :
+  case GRN_TOO_MANY_OPEN_FILES:
     message = "too many open files";
     break;
-  case GRN_INAPPROPRIATE_I_O_CONTROL_OPERATION :
+  case GRN_INAPPROPRIATE_I_O_CONTROL_OPERATION:
     message = "inappropriate I/O control operation";
     break;
-  case GRN_FILE_TOO_LARGE :
+  case GRN_FILE_TOO_LARGE:
     message = "file too large";
     break;
-  case GRN_NO_SPACE_LEFT_ON_DEVICE :
+  case GRN_NO_SPACE_LEFT_ON_DEVICE:
     message = "no space left on device";
     break;
-  case GRN_INVALID_SEEK :
+  case GRN_INVALID_SEEK:
     message = "invalid seek";
     break;
-  case GRN_READ_ONLY_FILE_SYSTEM :
+  case GRN_READ_ONLY_FILE_SYSTEM:
     message = "read only file system";
     break;
-  case GRN_TOO_MANY_LINKS :
+  case GRN_TOO_MANY_LINKS:
     message = "too many links";
     break;
-  case GRN_BROKEN_PIPE :
+  case GRN_BROKEN_PIPE:
     message = "broken pipe";
     break;
-  case GRN_DOMAIN_ERROR :
+  case GRN_DOMAIN_ERROR:
     message = "domain error";
     break;
-  case GRN_RESULT_TOO_LARGE :
+  case GRN_RESULT_TOO_LARGE:
     message = "result too large";
     break;
-  case GRN_RESOURCE_DEADLOCK_AVOIDED :
+  case GRN_RESOURCE_DEADLOCK_AVOIDED:
     message = "resource deadlock avoided";
     break;
-  case GRN_NO_MEMORY_AVAILABLE :
+  case GRN_NO_MEMORY_AVAILABLE:
     message = "no memory available";
     break;
-  case GRN_FILENAME_TOO_LONG :
+  case GRN_FILENAME_TOO_LONG:
     message = "filename too long";
     break;
-  case GRN_NO_LOCKS_AVAILABLE :
+  case GRN_NO_LOCKS_AVAILABLE:
     message = "no locks available";
     break;
-  case GRN_FUNCTION_NOT_IMPLEMENTED :
+  case GRN_FUNCTION_NOT_IMPLEMENTED:
     message = "function not implemented";
     break;
-  case GRN_DIRECTORY_NOT_EMPTY :
+  case GRN_DIRECTORY_NOT_EMPTY:
     message = "directory not empty";
     break;
-  case GRN_ILLEGAL_BYTE_SEQUENCE :
+  case GRN_ILLEGAL_BYTE_SEQUENCE:
     message = "illegal byte sequence";
     break;
-  case GRN_SOCKET_NOT_INITIALIZED :
+  case GRN_SOCKET_NOT_INITIALIZED:
     message = "socket not initialized";
     break;
-  case GRN_OPERATION_WOULD_BLOCK :
+  case GRN_OPERATION_WOULD_BLOCK:
     message = "operation would block";
     break;
-  case GRN_ADDRESS_IS_NOT_AVAILABLE :
+  case GRN_ADDRESS_IS_NOT_AVAILABLE:
     message = "address is not available";
     break;
-  case GRN_NETWORK_IS_DOWN :
+  case GRN_NETWORK_IS_DOWN:
     message = "network is down";
     break;
-  case GRN_NO_BUFFER :
+  case GRN_NO_BUFFER:
     message = "no buffer";
     break;
-  case GRN_SOCKET_IS_ALREADY_CONNECTED :
+  case GRN_SOCKET_IS_ALREADY_CONNECTED:
     message = "socket is already connected";
     break;
-  case GRN_SOCKET_IS_NOT_CONNECTED :
+  case GRN_SOCKET_IS_NOT_CONNECTED:
     message = "socket is not connected";
     break;
-  case GRN_SOCKET_IS_ALREADY_SHUTDOWNED :
+  case GRN_SOCKET_IS_ALREADY_SHUTDOWNED:
     message = "socket is already shutdowned";
     break;
-  case GRN_OPERATION_TIMEOUT :
+  case GRN_OPERATION_TIMEOUT:
     message = "operation timeout";
     break;
-  case GRN_CONNECTION_REFUSED :
+  case GRN_CONNECTION_REFUSED:
     message = "connection refused";
     break;
-  case GRN_RANGE_ERROR :
+  case GRN_RANGE_ERROR:
     message = "range error";
     break;
-  case GRN_TOKENIZER_ERROR :
+  case GRN_TOKENIZER_ERROR:
     message = "tokenizer error";
     break;
-  case GRN_FILE_CORRUPT :
+  case GRN_FILE_CORRUPT:
     message = "file corrupt";
     break;
-  case GRN_INVALID_FORMAT :
+  case GRN_INVALID_FORMAT:
     message = "invalid format";
     break;
-  case GRN_OBJECT_CORRUPT :
+  case GRN_OBJECT_CORRUPT:
     message = "object corrupt";
     break;
-  case GRN_TOO_MANY_SYMBOLIC_LINKS :
+  case GRN_TOO_MANY_SYMBOLIC_LINKS:
     message = "too many symbolic links";
     break;
-  case GRN_NOT_SOCKET :
+  case GRN_NOT_SOCKET:
     message = "not socket";
     break;
-  case GRN_OPERATION_NOT_SUPPORTED :
+  case GRN_OPERATION_NOT_SUPPORTED:
     message = "operation not supported";
     break;
-  case GRN_ADDRESS_IS_IN_USE :
+  case GRN_ADDRESS_IS_IN_USE:
     message = "address is in use";
     break;
-  case GRN_ZLIB_ERROR :
+  case GRN_ZLIB_ERROR:
     message = "zlib error";
     break;
-  case GRN_LZ4_ERROR :
+  case GRN_LZ4_ERROR:
     message = "LZ4 error";
     break;
-  case GRN_STACK_OVER_FLOW :
+  case GRN_STACK_OVER_FLOW:
     message = "stack over flow";
     break;
-  case GRN_SYNTAX_ERROR :
+  case GRN_SYNTAX_ERROR:
     message = "syntax error";
     break;
-  case GRN_RETRY_MAX :
+  case GRN_RETRY_MAX:
     message = "retry max";
     break;
-  case GRN_INCOMPATIBLE_FILE_FORMAT :
+  case GRN_INCOMPATIBLE_FILE_FORMAT:
     message = "incompatible file format";
     break;
-  case GRN_UPDATE_NOT_ALLOWED :
+  case GRN_UPDATE_NOT_ALLOWED:
     message = "update not allowed";
     break;
-  case GRN_TOO_SMALL_OFFSET :
+  case GRN_TOO_SMALL_OFFSET:
     message = "too small offset";
     break;
-  case GRN_TOO_LARGE_OFFSET :
+  case GRN_TOO_LARGE_OFFSET:
     message = "too large offset";
     break;
-  case GRN_TOO_SMALL_LIMIT :
+  case GRN_TOO_SMALL_LIMIT:
     message = "too small limit";
     break;
-  case GRN_CAS_ERROR :
+  case GRN_CAS_ERROR:
     message = "cas error";
     break;
-  case GRN_UNSUPPORTED_COMMAND_VERSION :
+  case GRN_UNSUPPORTED_COMMAND_VERSION:
     message = "unsupported command version";
     break;
-  case GRN_NORMALIZER_ERROR :
+  case GRN_NORMALIZER_ERROR:
     message = "normalizer error";
     break;
-  case GRN_TOKEN_FILTER_ERROR :
+  case GRN_TOKEN_FILTER_ERROR:
     message = "token filter error";
     break;
-  case GRN_COMMAND_ERROR :
+  case GRN_COMMAND_ERROR:
     message = "command error";
     break;
-  case GRN_PLUGIN_ERROR :
+  case GRN_PLUGIN_ERROR:
     message = "plugin error";
     break;
-  case GRN_SCORER_ERROR :
+  case GRN_SCORER_ERROR:
     message = "scorer error";
     break;
-  case GRN_CANCEL :
+  case GRN_CANCEL:
     message = "cancel";
     break;
-  case GRN_WINDOW_FUNCTION_ERROR :
+  case GRN_WINDOW_FUNCTION_ERROR:
     message = "window function error";
     break;
-  case GRN_ZSTD_ERROR :
+  case GRN_ZSTD_ERROR:
     message = "Zstandard error";
     break;
-  case GRN_CONNECTION_RESET :
+  case GRN_CONNECTION_RESET:
     message = "connection reset";
     break;
   }
