@@ -24,7 +24,8 @@
 
 #include <groonga/plugin.h>
 
-static void command_object_inspect_dispatch(grn_ctx *ctx, grn_obj *obj);
+static void
+command_object_inspect_dispatch(grn_ctx *ctx, grn_obj *obj);
 
 static void
 command_object_inspect_obj_name(grn_ctx *ctx, grn_obj *obj)
@@ -132,19 +133,19 @@ static void
 command_object_inspect_table_key(grn_ctx *ctx, grn_obj *table)
 {
   switch (table->header.type) {
-  case GRN_TABLE_HASH_KEY :
+  case GRN_TABLE_HASH_KEY:
     command_object_inspect_table_hash_key_key(ctx, (grn_hash *)table);
     break;
-  case GRN_TABLE_PAT_KEY :
+  case GRN_TABLE_PAT_KEY:
     command_object_inspect_table_pat_key_key(ctx, (grn_pat *)table);
     break;
-  case GRN_TABLE_DAT_KEY :
+  case GRN_TABLE_DAT_KEY:
     command_object_inspect_table_dat_key_key(ctx, (grn_dat *)table);
     break;
-  case GRN_TABLE_NO_KEY :
+  case GRN_TABLE_NO_KEY:
     grn_ctx_output_null(ctx);
     break;
-  default :
+  default:
     break;
   }
 }
@@ -205,18 +206,18 @@ static void
 command_object_inspect_column_type_name(grn_ctx *ctx, grn_obj *column)
 {
   switch (column->header.type) {
-  case GRN_COLUMN_FIX_SIZE :
-  case GRN_COLUMN_VAR_SIZE :
+  case GRN_COLUMN_FIX_SIZE:
+  case GRN_COLUMN_VAR_SIZE:
     switch (column->header.flags & GRN_OBJ_COLUMN_TYPE_MASK) {
-    case GRN_OBJ_COLUMN_SCALAR :
+    case GRN_OBJ_COLUMN_SCALAR:
       grn_ctx_output_cstr(ctx, "scalar");
       break;
-    case GRN_OBJ_COLUMN_VECTOR :
+    case GRN_OBJ_COLUMN_VECTOR:
       grn_ctx_output_cstr(ctx, "vector");
       break;
     }
     break;
-  case GRN_COLUMN_INDEX :
+  case GRN_COLUMN_INDEX:
     grn_ctx_output_cstr(ctx, "index");
     break;
   default:
@@ -246,8 +247,7 @@ command_object_inspect_column_type(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
-command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
-                                                     grn_ii *ii)
+command_object_inspect_column_index_value_statistics(grn_ctx *ctx, grn_ii *ii)
 {
   grn_ctx_output_map_open(ctx, "statistics", 13);
   {
@@ -266,12 +266,13 @@ command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
       {
         uint32_t i;
 
-        for (i = h->bgqtail;
-             i != h->bgqhead;
+        for (i = h->bgqtail; i != h->bgqhead;
              i = ((i + 1) & (GRN_II_BGQSIZE - 1))) {
           uint32_t id = h->bgqbody[i];
           n_garbage_segments++;
-          if (id > max_id) { max_id = id; }
+          if (id > max_id) {
+            max_id = id;
+          }
         }
         grn_ctx_output_uint64(ctx, n_garbage_segments);
       }
@@ -284,7 +285,9 @@ command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
         for (uint32_t lseg = 0; lseg < n_logical_segments; lseg++) {
           const uint32_t pseg = grn_ii_get_array_pseg(ii, lseg);
           if (pseg != GRN_II_PSEG_NOT_ASSIGNED) {
-            if (pseg > max_id) { max_id = pseg; }
+            if (pseg > max_id) {
+              max_id = pseg;
+            }
             n_array_segments++;
           }
         }
@@ -298,7 +301,9 @@ command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
         for (uint32_t lseg = 0; lseg < n_logical_segments; lseg++) {
           const uint32_t pseg = grn_ii_get_buffer_pseg(ii, lseg);
           if (pseg != GRN_II_PSEG_NOT_ASSIGNED) {
-            if (pseg > max_id) { max_id = pseg; }
+            if (pseg > max_id) {
+              max_id = pseg;
+            }
             n_buffer_segments++;
           }
         }
@@ -310,10 +315,8 @@ command_object_inspect_column_index_value_statistics(grn_ctx *ctx,
 
       grn_ctx_output_cstr(ctx, "n_unmanaged_segments");
       grn_ctx_output_uint64(ctx,
-                            h->pnext -
-                            n_array_segments -
-                            n_buffer_segments -
-                            n_garbage_segments);
+                            h->pnext - n_array_segments - n_buffer_segments -
+                              n_garbage_segments);
     }
 
     {
@@ -369,16 +372,16 @@ command_object_inspect_column_data_value_compress(grn_ctx *ctx, grn_obj *column)
 
   column_flags = grn_column_get_flags(ctx, column);
   switch (column_flags & GRN_OBJ_COMPRESS_MASK) {
-  case GRN_OBJ_COMPRESS_ZLIB :
+  case GRN_OBJ_COMPRESS_ZLIB:
     compress = "zlib";
     break;
-  case GRN_OBJ_COMPRESS_LZ4 :
+  case GRN_OBJ_COMPRESS_LZ4:
     compress = "lz4";
     break;
-  case GRN_OBJ_COMPRESS_ZSTD :
+  case GRN_OBJ_COMPRESS_ZSTD:
     compress = "zstd";
     break;
-  default :
+  default:
     break;
   }
 
@@ -397,13 +400,13 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
   bool is_index = false;
   bool is_vector = false;
   switch (column_flags & GRN_OBJ_COLUMN_TYPE_MASK) {
-  case GRN_OBJ_COLUMN_VECTOR :
+  case GRN_OBJ_COLUMN_VECTOR:
     is_vector = true;
     break;
-  case GRN_OBJ_COLUMN_INDEX :
+  case GRN_OBJ_COLUMN_INDEX:
     is_index = true;
     break;
-  default :
+  default:
     break;
   }
 
@@ -579,24 +582,24 @@ static void
 command_object_inspect_dispatch(grn_ctx *ctx, grn_obj *obj)
 {
   switch (obj->header.type) {
-  case GRN_TYPE :
+  case GRN_TYPE:
     command_object_inspect_type(ctx, obj);
     break;
-  case GRN_TABLE_HASH_KEY :
-  case GRN_TABLE_PAT_KEY :
-  case GRN_TABLE_DAT_KEY :
-  case GRN_TABLE_NO_KEY :
+  case GRN_TABLE_HASH_KEY:
+  case GRN_TABLE_PAT_KEY:
+  case GRN_TABLE_DAT_KEY:
+  case GRN_TABLE_NO_KEY:
     command_object_inspect_table(ctx, obj);
     break;
-  case GRN_COLUMN_FIX_SIZE :
-  case GRN_COLUMN_VAR_SIZE :
-  case GRN_COLUMN_INDEX :
+  case GRN_COLUMN_FIX_SIZE:
+  case GRN_COLUMN_VAR_SIZE:
+  case GRN_COLUMN_INDEX:
     command_object_inspect_column(ctx, obj);
     break;
-  case GRN_DB :
+  case GRN_DB:
     command_object_inspect_db(ctx, obj);
     break;
-  default :
+  default:
     {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_FUNCTION_NOT_IMPLEMENTED,
@@ -623,9 +626,7 @@ command_object_inspect(grn_ctx *ctx,
   if (GRN_TEXT_LEN(name) == 0) {
     target = grn_ctx_db(ctx);
   } else {
-    target = grn_ctx_get(ctx,
-                         GRN_TEXT_VALUE(name),
-                         (int)GRN_TEXT_LEN(name));
+    target = grn_ctx_get(ctx, GRN_TEXT_VALUE(name), (int)GRN_TEXT_LEN(name));
     if (!target) {
       GRN_PLUGIN_ERROR(ctx,
                        GRN_INVALID_ARGUMENT,
@@ -653,7 +654,8 @@ grn_proc_init_object_inspect(grn_ctx *ctx)
 
   grn_plugin_expr_var_init(ctx, &(vars[0]), "name", -1);
   grn_plugin_command_create(ctx,
-                            "object_inspect", -1,
+                            "object_inspect",
+                            -1,
                             command_object_inspect,
                             1,
                             vars);

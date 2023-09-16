@@ -45,6 +45,7 @@ repos:
           ?lib/obj\.c|
           ?lib/proc/proc_column\.c|
           ?lib/proc/proc_highlight\.c|
+          ?lib/proc/proc_object_inspect\.c|
           ?lib/proc\.c|
           ?lib/store\.c|
           ?lib/tokenizer\.c|
