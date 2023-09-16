@@ -40,6 +40,7 @@ repos:
           ?lib/highlighter\.c|
           ?lib/ii\.c|
           ?lib/normalizer\.c|
+          ?lib/mrb/mrb_ctx\.c|
           ?lib/mrb/mrb_error\.c|
           ?lib/obj\.c|
           ?lib/proc/proc_column\.c|
