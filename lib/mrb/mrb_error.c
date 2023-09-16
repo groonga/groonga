@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2014  Brazil
-  Copyright(C) 2020  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -188,5 +188,6 @@ grn_mrb_error_init(grn_ctx *ctx)
                          groonga_error_class);
   mrb_define_class_under(mrb, module, "ZstdError", groonga_error_class);
   mrb_define_class_under(mrb, module, "ConnectionReset", groonga_error_class);
+  mrb_define_class_under(mrb, module, "BloscError", groonga_error_class);
 }
 #endif

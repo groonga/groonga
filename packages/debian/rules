@@ -24,7 +24,9 @@ override_dh_auto_configure:
 	  --buildsystem=cmake+ninja				\
 	  --							\
 	  -DCMAKE_BUILD_TYPE=RelWithDebInfo			\
+	  -DFETCHCONTENT_FULLY_DISCONNECTED=OFF			\
 	  -DGRN_WITH_APACHE_ARROW=$${GRN_WITH_APACHE_ARROW}	\
+	  -DGRN_WITH_BLOSC=bundled				\
 	  -DGRN_WITH_DOC=ON					\
 	  -DGRN_WITH_EXAMPLES=ON				\
 	  -DGRN_WITH_MRUBY=ON					\

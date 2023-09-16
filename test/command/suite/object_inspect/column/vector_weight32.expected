@@ -48,7 +48,10 @@ object_inspect Memos.tags
       },
       "compress": null,
       "weight": true,
-      "weight_float32": true
+      "weight_float32": true,
+      "compress_filters": [
+
+      ]
     },
     "disk_usage": 0
   }

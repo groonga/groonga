@@ -56,7 +56,10 @@ object_inspect Users.age
         },
         "size": 1
       },
-      "compress": null
+      "compress": null,
+      "compress_filters": [
+
+      ]
     },
     "disk_usage": 0
   }

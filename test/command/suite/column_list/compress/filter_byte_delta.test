@@ -1,0 +1,4 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR|COMPRESS_ZSTD|COMPRESS_FILTER_BYTE_DELTA Text
+
+column_list Memos

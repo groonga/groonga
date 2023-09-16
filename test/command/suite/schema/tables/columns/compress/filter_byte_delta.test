@@ -1,0 +1,4 @@
+table_create Logs TABLE_NO_KEY
+column_create Logs messages COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_BYTE_DELTA ShortText
+
+schema

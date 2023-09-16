@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -3358,6 +3358,7 @@ static grn_rc
 grn_ja_putv_raw(grn_ctx *ctx,
                 grn_ja *ja,
                 grn_id id,
+                grn_obj *raw_value,
                 grn_obj *header,
                 grn_obj *body,
                 grn_obj *footer)
@@ -3914,10 +3915,195 @@ grn_ja_ref_zstd(
 }
 #endif /* GRN_WITH_ZSTD */
 
+#ifdef GRN_WITH_BLOSC
+#  include <blosc2.h>
+#  include <blosc2/filters-registry.h>
+
+#  define GRN_BLOSC_META_HEADER "header"
+#  define GRN_BLOSC_META_FOOTER "footer"
+
+static bool
+grn_ja_ref_blosc_copy_meta(grn_ctx *ctx,
+                           grn_ja *ja,
+                           grn_id id,
+                           blosc2_schunk *schunk,
+                           uint8_t **destination,
+                           int32_t *destination_size,
+                           const char *name)
+{
+  int i = 0;
+  for (i = 0; i < schunk->nmetalayers; i++) {
+    blosc2_metalayer *metalayer = schunk->metalayers[i];
+    if (strcmp(metalayer->name, name) == 0) {
+      if (metalayer->content_len > *destination_size) {
+        grn_obj message;
+        GRN_TEXT_INIT(&message, 0);
+        grn_text_printf(ctx, &message, "[blosc] %s is too large", name);
+        GRN_TEXT_PUTC(ctx, &message, '\0');
+        grn_ja_compress_error(ctx,
+                              ja,
+                              id,
+                              GRN_BLOSC_ERROR,
+                              GRN_TEXT_VALUE(&message),
+                              NULL);
+        GRN_OBJ_FIN(ctx, &message);
+        return false;
+      }
+      memcpy(*destination, metalayer->content, metalayer->content_len);
+      *destination += metalayer->content_len;
+      *destination_size -= metalayer->content_len;
+      break;
+    }
+  }
+  return true;
+}
+
+static void *
+grn_ja_ref_blosc(
+  grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
+{
+  void *raw_value;
+  uint32_t raw_value_len;
+  void *blosc_value;
+  uint32_t blosc_value_len;
+  void *unpacked_value;
+  uint32_t uncompressed_value_len;
+
+  if (!(raw_value = grn_ja_ref_raw(ctx, ja, id, iw, &raw_value_len))) {
+    iw->uncompressed_value = NULL;
+    *value_len = 0;
+    return NULL;
+  }
+
+  unpacked_value = grn_ja_ref_packed(ctx,
+                                     iw,
+                                     value_len,
+                                     raw_value,
+                                     raw_value_len,
+                                     &blosc_value,
+                                     &blosc_value_len,
+                                     &uncompressed_value_len);
+  if (unpacked_value) {
+    return unpacked_value;
+  }
+
+  if (!(iw->uncompressed_value = GRN_MALLOC(uncompressed_value_len))) {
+    iw->uncompressed_value = NULL;
+    *value_len = 0;
+    return NULL;
+  }
+
+  blosc2_schunk *schunk =
+    blosc2_schunk_from_buffer(blosc_value, blosc_value_len, false);
+  if (!schunk) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_BLOSC_ERROR,
+                          "[blosc] failed to load super chunk",
+                          NULL);
+    GRN_FREE(iw->uncompressed_value);
+    iw->uncompressed_value = NULL;
+    *value_len = 0;
+    return NULL;
+  }
+  uint8_t *destination = iw->uncompressed_value;
+  int32_t destination_size = uncompressed_value_len;
+  if (!grn_ja_ref_blosc_copy_meta(ctx,
+                                  ja,
+                                  id,
+                                  schunk,
+                                  &destination,
+                                  &destination_size,
+                                  GRN_BLOSC_META_HEADER)) {
+    blosc2_schunk_free(schunk);
+    GRN_FREE(iw->uncompressed_value);
+    iw->uncompressed_value = NULL;
+    *value_len = 0;
+    return NULL;
+  }
+  {
+    int64_t i;
+    for (i = 0; i < schunk->nchunks; i++) {
+      int decompressed_size = blosc2_schunk_decompress_chunk(schunk,
+                                                             i,
+                                                             destination,
+                                                             destination_size);
+      if (decompressed_size <= 0) {
+        grn_obj message;
+        GRN_TEXT_INIT(&message, 0);
+        grn_text_printf(ctx,
+                        &message,
+                        "[blosc] failed to decode a chunk: %" GRN_FMT_INT64D,
+                        i);
+        GRN_TEXT_PUTC(ctx, &message, '\0');
+        grn_ja_compress_error(ctx,
+                              ja,
+                              id,
+                              GRN_BLOSC_ERROR,
+                              GRN_TEXT_VALUE(&message),
+                              print_error(decompressed_size));
+        GRN_OBJ_FIN(ctx, &message);
+        blosc2_schunk_free(schunk);
+        GRN_FREE(iw->uncompressed_value);
+        iw->uncompressed_value = NULL;
+        *value_len = 0;
+        return NULL;
+      }
+      destination += decompressed_size;
+      destination_size -= decompressed_size;
+    }
+  }
+  if (!grn_ja_ref_blosc_copy_meta(ctx,
+                                  ja,
+                                  id,
+                                  schunk,
+                                  &destination,
+                                  &destination_size,
+                                  GRN_BLOSC_META_FOOTER)) {
+    blosc2_schunk_free(schunk);
+    GRN_FREE(iw->uncompressed_value);
+    iw->uncompressed_value = NULL;
+    *value_len = 0;
+    return NULL;
+  }
+  blosc2_schunk_free(schunk);
+  if (destination_size != 0) {
+    grn_obj detail;
+    GRN_TEXT_INIT(&detail, 0);
+    grn_text_printf(ctx,
+                    &detail,
+                    "expected:%u actual:%d",
+                    uncompressed_value_len,
+                    destination_size);
+    GRN_TEXT_PUTC(ctx, &detail, '\0');
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_BLOSC_ERROR,
+                          "[blosc] decompressed size isn't match",
+                          GRN_TEXT_VALUE(&detail));
+    GRN_OBJ_FIN(ctx, &detail);
+    GRN_FREE(iw->uncompressed_value);
+    iw->uncompressed_value = NULL;
+    *value_len = 0;
+    return NULL;
+  }
+  *value_len = uncompressed_value_len;
+  return iw->uncompressed_value;
+}
+#endif
+
 void *
 grn_ja_ref(
   grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len)
 {
+#ifdef GRN_WITH_BLOSC
+  if (ja->header->flags &
+      (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA)) {
+    return grn_ja_ref_blosc(ctx, ja, id, iw, value_len);
+  }
+#endif
   switch (ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
 #ifdef GRN_WITH_ZLIB
   case GRN_OBJ_COMPRESS_ZLIB:
@@ -4095,6 +4281,7 @@ grn_inline static grn_rc
 grn_ja_putv_zlib(grn_ctx *ctx,
                  grn_ja *ja,
                  grn_id id,
+                 grn_obj *raw_value,
                  grn_obj *header,
                  grn_obj *body,
                  grn_obj *footer)
@@ -4323,6 +4510,7 @@ grn_inline static grn_rc
 grn_ja_putv_lz4(grn_ctx *ctx,
                 grn_ja *ja,
                 grn_id id,
+                grn_obj *raw_value,
                 grn_obj *header,
                 grn_obj *body,
                 grn_obj *footer)
@@ -4458,6 +4646,7 @@ grn_inline static grn_rc
 grn_ja_putv_zstd(grn_ctx *ctx,
                  grn_ja *ja,
                  grn_id id,
+                 grn_obj *raw_value,
                  grn_obj *header,
                  grn_obj *body,
                  grn_obj *footer)
@@ -4671,6 +4860,272 @@ exit:
 }
 #endif /* GRN_WITH_ZSTD */
 
+#ifdef GRN_WITH_BLOSC
+grn_inline static blosc2_schunk *
+grn_ja_put_blosc_create_schunk(grn_ctx *ctx,
+                               grn_ja *ja,
+                               grn_id id,
+                               size_t n_elements,
+                               blosc2_cparams *cparams,
+                               blosc2_storage *storage)
+{
+  *cparams = BLOSC2_CPARAMS_DEFAULTS;
+  switch (ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
+#  ifdef GRN_WITH_ZLIB
+  case GRN_OBJ_COMPRESS_ZLIB:
+    cparams->compcode = BLOSC_ZLIB;
+    break;
+#  endif
+#  ifdef GRN_WITH_LZ4
+  case GRN_OBJ_COMPRESS_LZ4:
+    cparams->compcode = BLOSC_LZ4;
+    break;
+#  endif
+#  ifdef GRN_WITH_ZSTD
+  case GRN_OBJ_COMPRESS_ZSTD:
+    cparams->compcode = BLOSC_ZSTD;
+    break;
+#  endif
+  default:
+    break;
+  }
+  grn_id range_id = ja->obj.range;
+  if (grn_type_id_is_text_family(ctx, range_id)) {
+    cparams->typesize = sizeof(char);
+  } else {
+    cparams->typesize = grn_type_id_size(ctx, range_id);
+    if (ja->header->flags & GRN_OBJ_WITH_WEIGHT) {
+      if (ja->header->flags & GRN_OBJ_WEIGHT_FLOAT32) {
+        cparams->typesize += sizeof(float);
+      } else {
+        cparams->typesize += sizeof(double);
+      }
+    }
+  }
+  size_t current_filter_id = BLOSC2_MAX_FILTERS - 1;
+  cparams->filters[current_filter_id] = BLOSC_NOFILTER;
+  if (cparams->typesize > (int32_t)sizeof(char) && n_elements > 1) {
+    if (ja->header->flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
+      cparams->filters[current_filter_id] = BLOSC_FILTER_BYTEDELTA;
+      cparams->filters_meta[current_filter_id] = cparams->typesize;
+      current_filter_id--;
+    }
+    if (ja->header->flags & GRN_OBJ_COMPRESS_FILTER_SHUFFLE) {
+      cparams->filters[current_filter_id] = BLOSC_SHUFFLE;
+      current_filter_id--;
+    }
+  }
+
+  *storage = BLOSC2_STORAGE_DEFAULTS;
+  storage->contiguous = true;
+  storage->cparams = cparams;
+
+  return blosc2_schunk_new(storage);
+}
+
+grn_inline static grn_rc
+grn_ja_put_blosc(grn_ctx *ctx,
+                 grn_ja *ja,
+                 grn_id id,
+                 void *value,
+                 uint32_t value_len,
+                 int flags,
+                 uint64_t *cas)
+{
+  if (value_len == 0) {
+    return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
+  }
+
+  if (value_len < COMPRESS_THRESHOLD_BYTE) {
+    return grn_ja_put_packed(ctx, ja, id, value, value_len, flags, cas);
+  }
+
+  size_t n_elements;
+  if ((ja->header->flags & GRN_OBJ_COLUMN_TYPE_MASK) == GRN_OBJ_COLUMN_VECTOR) {
+    size_t element_size = grn_type_id_size(ctx, ja->obj.range);
+    if (ja->header->flags & GRN_OBJ_WITH_WEIGHT) {
+      if (ja->header->flags & GRN_OBJ_WEIGHT_FLOAT32) {
+        element_size += sizeof(float);
+      } else {
+        element_size += sizeof(double);
+      }
+    }
+    n_elements = value_len / element_size;
+  } else {
+    n_elements = 1;
+  }
+  blosc2_cparams cparams;
+  blosc2_storage storage;
+  blosc2_schunk *schunk =
+    grn_ja_put_blosc_create_schunk(ctx, ja, id, n_elements, &cparams, &storage);
+  int64_t n_chunks = blosc2_schunk_append_buffer(schunk, value, value_len);
+  if (n_chunks < 0) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_BLOSC_ERROR,
+                          "[blosc] failed to compress",
+                          print_error(n_chunks));
+    blosc2_schunk_free(schunk);
+    return ctx->rc;
+  }
+  uint8_t *compressed_data = NULL;
+  bool need_free = false;
+  int64_t compressed_data_size =
+    blosc2_schunk_to_buffer(schunk, &compressed_data, &need_free);
+  if (compressed_data_size < 0) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_BLOSC_ERROR,
+                          "[blosc] failed to serialize compressed value",
+                          print_error(compressed_data_size));
+    blosc2_schunk_free(schunk);
+    return ctx->rc;
+  }
+  uint32_t packed_value_size = sizeof(uint64_t) + compressed_data_size;
+  void *packed_value = GRN_MALLOC(packed_value_size);
+  if (!packed_value) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_BLOSC_ERROR,
+                          "[blosc] failed to allocate packed value buffer",
+                          NULL);
+    if (need_free) {
+      free(compressed_data);
+    }
+    blosc2_schunk_free(schunk);
+    return ctx->rc;
+  }
+  *(uint64_t *)packed_value = value_len;
+  memcpy(((uint64_t *)packed_value) + 1, compressed_data, compressed_data_size);
+  if (need_free) {
+    free(compressed_data);
+  }
+  blosc2_schunk_free(schunk);
+  grn_rc rc =
+    grn_ja_put_raw(ctx, ja, id, packed_value, packed_value_size, flags, cas);
+  GRN_FREE(packed_value);
+  return rc;
+}
+
+grn_inline static grn_rc
+grn_ja_putv_blosc(grn_ctx *ctx,
+                  grn_ja *ja,
+                  grn_id id,
+                  grn_obj *raw_value,
+                  grn_obj *header,
+                  grn_obj *body,
+                  grn_obj *footer)
+{
+  const size_t header_size = GRN_BULK_VSIZE(header);
+  const size_t body_size = body ? GRN_BULK_VSIZE(body) : 0;
+  const size_t footer_size = GRN_BULK_VSIZE(footer);
+  const size_t size = header_size + body_size + footer_size;
+
+  if (size == 0) {
+    return grn_ja_put_raw(ctx, ja, id, NULL, 0, GRN_OBJ_SET, NULL);
+  }
+
+  if (size < COMPRESS_THRESHOLD_BYTE) {
+    grn_obj value;
+    GRN_TEXT_INIT(&value, 0);
+    GRN_TEXT_PUT(ctx, &value, GRN_TEXT_VALUE(header), GRN_TEXT_LEN(header));
+    GRN_TEXT_PUT(ctx, &value, GRN_TEXT_VALUE(body), GRN_TEXT_LEN(body));
+    GRN_TEXT_PUT(ctx, &value, GRN_TEXT_VALUE(footer), GRN_TEXT_LEN(footer));
+    grn_rc rc = grn_ja_put_packed(ctx,
+                                  ja,
+                                  id,
+                                  GRN_TEXT_VALUE(&value),
+                                  GRN_TEXT_LEN(&value),
+                                  GRN_OBJ_SET,
+                                  NULL);
+    GRN_OBJ_FIN(ctx, &value);
+    return rc;
+  }
+
+  blosc2_cparams cparams;
+  blosc2_storage storage;
+  blosc2_schunk *schunk =
+    grn_ja_put_blosc_create_schunk(ctx,
+                                   ja,
+                                   id,
+                                   grn_vector_size(ctx, raw_value),
+                                   &cparams,
+                                   &storage);
+  int meta_index = blosc2_meta_add(schunk,
+                                   GRN_BLOSC_META_HEADER,
+                                   GRN_BULK_HEAD(header),
+                                   header_size);
+  if (meta_index < 0) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_BLOSC_ERROR,
+                          "[blosc] failed to set header",
+                          print_error(meta_index));
+    blosc2_schunk_free(schunk);
+    return ctx->rc;
+  }
+  if (footer_size > 0) {
+    meta_index = blosc2_meta_add(schunk,
+                                 GRN_BLOSC_META_FOOTER,
+                                 GRN_BULK_HEAD(footer),
+                                 footer_size);
+    if (meta_index < 0) {
+      grn_ja_compress_error(ctx,
+                            ja,
+                            id,
+                            GRN_BLOSC_ERROR,
+                            "[blosc] failed to set footer",
+                            print_error(meta_index));
+      blosc2_schunk_free(schunk);
+      return ctx->rc;
+    }
+  }
+  if (body_size > 0) {
+    int64_t n_chunks =
+      blosc2_schunk_append_buffer(schunk, GRN_BULK_HEAD(body), body_size);
+    if (n_chunks < 0) {
+      grn_ja_compress_error(ctx,
+                            ja,
+                            id,
+                            GRN_BLOSC_ERROR,
+                            "[blosc] failed to compress body",
+                            print_error(n_chunks));
+      blosc2_schunk_free(schunk);
+      return ctx->rc;
+    }
+  }
+  uint8_t *compressed_data = NULL;
+  bool need_free = false;
+  int64_t compressed_data_size =
+    blosc2_schunk_to_buffer(schunk, &compressed_data, &need_free);
+  if (compressed_data_size < 0) {
+    grn_ja_compress_error(ctx,
+                          ja,
+                          id,
+                          GRN_BLOSC_ERROR,
+                          "[blosc] failed to serialize compressed vector",
+                          print_error(compressed_data_size));
+    blosc2_schunk_free(schunk);
+    return ctx->rc;
+  }
+  grn_rc rc = grn_ja_putv_compressed(ctx,
+                                     ja,
+                                     id,
+                                     compressed_data,
+                                     compressed_data_size,
+                                     size);
+  if (need_free) {
+    free(compressed_data);
+  }
+  blosc2_schunk_free(schunk);
+  return rc;
+}
+#endif
+
 grn_rc
 grn_ja_put(grn_ctx *ctx,
            grn_ja *ja,
@@ -4680,6 +5135,12 @@ grn_ja_put(grn_ctx *ctx,
            int flags,
            uint64_t *cas)
 {
+#ifdef GRN_WITH_BLOSC
+  if (ja->header->flags &
+      (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA)) {
+    return grn_ja_put_blosc(ctx, ja, id, value, value_len, flags, cas);
+  }
+#endif
   switch (ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
 #ifdef GRN_WITH_ZLIB
   case GRN_OBJ_COMPRESS_ZLIB:
@@ -4695,6 +5156,39 @@ grn_ja_put(grn_ctx *ctx,
 #endif /* GRN_WITH_ZSTD */
   default:
     return grn_ja_put_raw(ctx, ja, id, value, value_len, flags, cas);
+  }
+}
+
+grn_inline static grn_rc
+grn_ja_putv_internal(grn_ctx *ctx,
+                     grn_ja *ja,
+                     grn_id id,
+                     grn_obj *raw_value,
+                     grn_obj *header,
+                     grn_obj *body,
+                     grn_obj *footer)
+{
+#ifdef GRN_WITH_BLOSC
+  if (ja->header->flags &
+      (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA)) {
+    return grn_ja_putv_blosc(ctx, ja, id, raw_value, header, body, footer);
+  }
+#endif
+  switch (ja->header->flags & GRN_OBJ_COMPRESS_MASK) {
+#ifdef GRN_WITH_ZLIB
+  case GRN_OBJ_COMPRESS_ZLIB:
+    return grn_ja_putv_zlib(ctx, ja, id, raw_value, header, body, footer);
+#endif /* GRN_WITH_ZLIB */
+#ifdef GRN_WITH_LZ4
+  case GRN_OBJ_COMPRESS_LZ4:
+    return grn_ja_putv_lz4(ctx, ja, id, raw_value, header, body, footer);
+#endif /* GRN_WITH_LZ4 */
+#ifdef GRN_WITH_ZSTD
+  case GRN_OBJ_COMPRESS_ZSTD:
+    return grn_ja_putv_zstd(ctx, ja, id, raw_value, header, body, footer);
+#endif /* GRN_WITH_ZSTD */
+  default:
+    return grn_ja_putv_raw(ctx, ja, id, raw_value, header, body, footer);
   }
 }
 
@@ -4767,26 +5261,7 @@ grn_ja_putv(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *vector, int flags)
                                   pack_flags,
                                   &header,
                                   &footer);
-  switch (column_flags & GRN_OBJ_COMPRESS_MASK) {
-#ifdef GRN_WITH_ZLIB
-  case GRN_OBJ_COMPRESS_ZLIB:
-    rc = grn_ja_putv_zlib(ctx, ja, id, &header, body, &footer);
-    break;
-#endif /* GRN_WITH_ZLIB */
-#ifdef GRN_WITH_LZ4
-  case GRN_OBJ_COMPRESS_LZ4:
-    rc = grn_ja_putv_lz4(ctx, ja, id, &header, body, &footer);
-    break;
-#endif /* GRN_WITH_LZ4 */
-#ifdef GRN_WITH_ZSTD
-  case GRN_OBJ_COMPRESS_ZSTD:
-    rc = grn_ja_putv_zstd(ctx, ja, id, &header, body, &footer);
-    break;
-#endif /* GRN_WITH_ZSTD */
-  default:
-    rc = grn_ja_putv_raw(ctx, ja, id, &header, body, &footer);
-    break;
-  }
+  rc = grn_ja_putv_internal(ctx, ja, id, target_vector, &header, body, &footer);
   GRN_OBJ_FIN(ctx, &footer);
   GRN_OBJ_FIN(ctx, &header);
   if (&target_vector_buffer == target_vector) {

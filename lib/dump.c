@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2016  Brazil
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -132,6 +132,12 @@ grn_dump_column_create_flags(grn_ctx *ctx,
   case GRN_OBJ_INVALID_IGNORE:
     GRN_TEXT_PUTS(ctx, buffer, "|INVALID_IGNORE");
     break;
+  }
+  if (flags & GRN_OBJ_COMPRESS_FILTER_SHUFFLE) {
+    GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_FILTER_SHUFFLE");
+  }
+  if (flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
+    GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_FILTER_BYTE_DELTA");
   }
   if (flags & GRN_OBJ_PERSISTENT) {
     GRN_TEXT_PUTS(ctx, buffer, "|PERSISTENT");

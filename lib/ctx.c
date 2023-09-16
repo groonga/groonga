@@ -52,6 +52,10 @@
 #  include <onigmo.h>
 #endif /* GRN_SUPPORT_REGEXP */
 
+#ifdef GRN_WITH_BLOSC
+#  include <blosc2.h>
+#endif
+
 #ifdef WIN32
 #  include <share.h>
 #  ifndef MAXUSHORT
@@ -154,6 +158,9 @@ grn_init_external_libraries(void)
 #ifdef GRN_SUPPORT_REGEXP
   onig_init();
 #endif /*  GRN_SUPPORT_REGEXP */
+#ifdef GRN_WITH_BLOSC
+  blosc2_init();
+#endif
 }
 
 static void
@@ -162,6 +169,9 @@ grn_fin_external_libraries(void)
 #ifdef GRN_SUPPORT_REGEXP
   onig_end();
 #endif /*  GRN_SUPPORT_REGEXP */
+#ifdef GRN_WITH_BLOSC
+  blosc2_destroy();
+#endif
 }
 
 void

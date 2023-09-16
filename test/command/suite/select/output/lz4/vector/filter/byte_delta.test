@@ -1,0 +1,11 @@
+# Need C-Blosc2
+
+table_create Entries TABLE_PAT_KEY ShortText
+column_create Entries values \
+  COLUMN_VECTOR|COMPRESS_LZ4|COMPRESS_FILTER_BYTE_DELTA \
+  ShortText
+
+#@generate-series 0 0 Entries '{"_key" => "packed", "values" => ["abc", "ABC", "123"]}'
+#@generate-series 0 0 Entries '{"_key" => "filtered", "values" => ["abc", "ABC", "123"] * 50}'
+
+select Entries

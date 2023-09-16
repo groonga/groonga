@@ -975,6 +975,8 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
       # TODO: Use bundled Zstandard when we use bundled Zstandard.
       set(PREFER_EXTERNAL_ZSTD ON)
       fetchcontent_makeavailable(blosc)
+      target_include_directories(blosc2_static
+                                 INTERFACE "${blosc_SOURCE_DIR}/include")
       install(
         FILES "${blosc_SOURCE_DIR}/LICENSE.txt"
               "${blosc_SOURCE_DIR}/LICENSES/BITSHUFFLE.txt"

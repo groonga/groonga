@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2016-2017  Brazil
-  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -393,6 +393,28 @@ command_object_inspect_column_data_value_compress(grn_ctx *ctx, grn_obj *column)
 }
 
 static void
+command_object_inspect_column_data_value_compress_filters(grn_ctx *ctx,
+                                                          grn_obj *column)
+{
+  grn_column_flags column_flags = grn_column_get_flags(ctx, column);
+  uint32_t n_filters = 0;
+  if (column_flags & GRN_OBJ_COMPRESS_FILTER_SHUFFLE) {
+    n_filters++;
+  }
+  if (column_flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
+    n_filters++;
+  }
+  grn_ctx_output_array_open(ctx, "compress_filters", n_filters);
+  if (column_flags & GRN_OBJ_COMPRESS_FILTER_SHUFFLE) {
+    grn_ctx_output_cstr(ctx, "shuffle");
+  }
+  if (column_flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
+    grn_ctx_output_cstr(ctx, "byte_delta");
+  }
+  grn_ctx_output_array_close(ctx);
+}
+
+static void
 command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
 {
   int n_elements = 1;
@@ -457,6 +479,8 @@ command_object_inspect_column_value(grn_ctx *ctx, grn_obj *column)
         grn_ctx_output_cstr(ctx, "weight_float32");
         grn_ctx_output_bool(ctx, (column_flags & GRN_OBJ_WEIGHT_FLOAT32) != 0);
       }
+      grn_ctx_output_cstr(ctx, "compress_filters");
+      command_object_inspect_column_data_value_compress_filters(ctx, column);
     }
   }
   grn_ctx_output_map_close(ctx);
