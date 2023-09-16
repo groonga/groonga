@@ -17,6 +17,19 @@
 
 require "tmpdir"
 
+def sh_capture_output(*command_line)
+  IO.pipe do |read, write|
+    output = nil
+    read_thread = Thread.new do
+      output = read.read
+    end
+    sh(*command_line, out: write)
+    write.close
+    read_thread.join
+    output
+  end
+end
+
 def package
   "groonga"
 end
@@ -37,18 +50,18 @@ def archive_name
   "#{base_name}.#{archive_format}"
 end
 
-def env_var(name)
-  value = ENV[name]
+def env_var(name, default=nil)
+  value = ENV[name] || default
   raise "${#{name}} is missing" if value.nil?
   value
 end
 
 def git_user_name
-  `git config --get user.name`.chomp
+  sh_capture_output("git", "config", "--get", "user.name").chomp
 end
 
 def git_user_email
-  `git config --get user.email`.chomp
+  sh_capture_output("git", "config", "--get", "user.email").chomp
 end
 
 def release_version_update(package,
@@ -116,9 +129,26 @@ namespace :dev do
       File.write("base_version", env_var("NEW_VERSION"))
     end
   end
+
+  namespace :mruby do
+    desc "Update vendored mruby"
+    task :update do
+      mruby_version = nil
+      cd("vendor/mruby-source") do
+        sh("git", "fetch", "--all", "--prune", "--force")
+        sh("git", "checkout", env_var("MRUBY_VERSION", "master"))
+        mruby_version = sh_capture_output("git", "describe", "--tags").chomp
+      end
+      cd("vendor/mruby") do
+        File.write("version", mruby_version)
+        ruby("update.rb", "build_config.rb", "../mruby-source",
+             out: "sources.am")
+      end
+    end
+  end
 end
 
-dist_files = `git ls-files`.split("\n").reject do |file|
+dist_files = sh_capture_output("git", "ls-files").split("\n").reject do |file|
   file.start_with?("packages/")
 end
 

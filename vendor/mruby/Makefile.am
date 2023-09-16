@@ -82,8 +82,4 @@ MAINTAINERCLEANFILES = mruby_build.timestamp
 endif
 
 update:
-	cd "$(srcdir)/../mruby-source" && \
-	  (git checkout master && git pull --rebase)
-	(cd "$(srcdir)/../mruby-source" && git describe --tags) > version
-	cd "$(srcdir)" && \
-	  ./update.rb build_config.rb ../mruby-source > sources.am
+	cd "$(top_srcdir)/../mruby-source" && $(RUBY) -S rake "dev:mruby:update"
