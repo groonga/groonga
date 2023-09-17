@@ -9,6 +9,7 @@ EXTRA_DIST =					\
 	version
 
 DEFAULT_INCLUDES =						\
+	-I$(builddir)/../mruby-build/host/include		\
 	-I$(builddir)/mruby-file-stat/src			\
 	-I$(srcdir)/../mruby-source/include			\
 	-I$(srcdir)/../mruby-source/src				\

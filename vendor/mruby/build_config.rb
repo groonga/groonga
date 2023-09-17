@@ -4,9 +4,9 @@ MRuby::Lockfile.disable if MRuby.const_defined?(:Lockfile)
 
 MRuby::Build.new do |conf|
   if ENV["MRUBY_VC"] || ENV["VisualStudioVersion"] || ENV["VSINSTALLDIR"]
-    toolchain :visualcpp
+    conf.toolchain :visualcpp
   else
-    toolchain :gcc
+    conf.toolchain :gcc
   end
 
   oniguruma_include_path = ENV["MRUBY_ONIGURUMA_INCLUDE_PATH"]
@@ -14,7 +14,7 @@ MRuby::Build.new do |conf|
     conf.cc.include_paths << oniguruma_include_path
   end
 
-  enable_debug
+  conf.enable_debug
 
   conf.gem :core => "mruby-array-ext"
   conf.gem :core => "mruby-compiler"
@@ -54,7 +54,7 @@ MRuby::Build.new do |conf|
   conf.gem :github => "kou/mruby-tsort",
            :checksum_hash => "6d7f5a56ac7a90847f84186ce1dbc780e41928dc"
   conf.gem :github => "ksss/mruby-file-stat",
-           :checksum_hash => "dbd175e3173931fa75601ca53ffd235b340f751d"
+           :checksum_hash => "f3e858f01361b9b4a8e77ada52470068630c9530"
   conf.gem :github => "mattn/mruby-onig-regexp",
            :checksum_hash => "0af2124b095474bd2897021df669e61eac4743ec"
 end
