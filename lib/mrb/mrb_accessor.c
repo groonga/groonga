@@ -21,8 +21,8 @@
 #ifdef GRN_WITH_MRUBY
 #include <mruby.h>
 #include <mruby/class.h>
-#include <mruby/variable.h>
 #include <mruby/data.h>
+#include <mruby/variable.h>
 
 #include "../grn_db.h"
 #include "mrb_accessor.h"
@@ -216,12 +216,14 @@ mrb_grn_accessor_estimate_size_for_query(mrb_state *mrb, mrb_value self)
   grn_obj *accessor;
   mrb_value mrb_query;
   grn_obj query;
-  mrb_value mrb_options = mrb_nil_value();
+  mrb_sym keyword_mode = mrb_intern_lit(mrb, "mode");
+  mrb_value mrb_mode = mrb_nil_value();
+  const mrb_kwargs kwargs = {1, 0, &keyword_mode, &mrb_mode, NULL};
   grn_search_optarg optarg;
   uint32_t size;
 
   accessor = DATA_PTR(self);
-  mrb_get_args(mrb, "o|H", &mrb_query, &mrb_options);
+  mrb_get_args(mrb, "o:", &mrb_query, &kwargs);
 
   GRN_VOID_INIT(&query);
   grn_mrb_value_to_bulk(mrb, mrb_query, &query);
@@ -229,13 +231,8 @@ mrb_grn_accessor_estimate_size_for_query(mrb_state *mrb, mrb_value self)
   memset(&optarg, 0, sizeof(grn_search_optarg));
   optarg.mode = GRN_OP_EXACT;
 
-  if (!mrb_nil_p(mrb_options)) {
-    mrb_value mrb_mode;
-
-    mrb_mode = grn_mrb_options_get_lit(mrb, mrb_options, "mode");
-    if (!mrb_nil_p(mrb_mode)) {
-      optarg.mode = grn_mrb_value_to_operator(mrb, mrb_mode);
-    }
+  if (!mrb_nil_p(mrb_mode)) {
+    optarg.mode = grn_mrb_value_to_operator(mrb, mrb_mode);
   }
 
   size = grn_accessor_estimate_size_for_query(ctx,
