@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2014-2015  Brazil
-  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2014-2015  Brazil
+  Copyright (C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -110,12 +110,14 @@ mrb_grn_index_column_estimate_size_for_query(mrb_state *mrb, mrb_value self)
   void *query;
   unsigned int query_size;
   grn_mrb_value_to_raw_data_buffer buffer;
-  mrb_value mrb_options = mrb_nil_value();
+  mrb_sym keyword_mode = mrb_intern_lit(mrb, "mode");
+  mrb_value mrb_mode = mrb_nil_value();
+  const mrb_kwargs kwargs = {1, 0, &keyword_mode, &mrb_mode, NULL};
   grn_search_optarg optarg;
   unsigned int size;
 
   index_column = DATA_PTR(self);
-  mrb_get_args(mrb, "o|H", &mrb_query, &mrb_options);
+  mrb_get_args(mrb, "o:", &mrb_query, &kwargs);
 
   lexicon = grn_ctx_at(ctx, index_column->header.domain);
   grn_mrb_value_to_raw_data_buffer_init(mrb, &buffer);
@@ -126,13 +128,8 @@ mrb_grn_index_column_estimate_size_for_query(mrb_state *mrb, mrb_value self)
   memset(&optarg, 0, sizeof(grn_search_optarg));
   optarg.mode = GRN_OP_EXACT;
 
-  if (!mrb_nil_p(mrb_options)) {
-    mrb_value mrb_mode;
-
-    mrb_mode = grn_mrb_options_get_lit(mrb, mrb_options, "mode");
-    if (!mrb_nil_p(mrb_mode)) {
-      optarg.mode = grn_mrb_value_to_operator(mrb, mrb_mode);
-    }
+  if (!mrb_nil_p(mrb_mode)) {
+    optarg.mode = grn_mrb_value_to_operator(mrb, mrb_mode);
   }
 
   size = grn_ii_estimate_size_for_query(ctx, (grn_ii *)index_column,
