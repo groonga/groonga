@@ -37,9 +37,14 @@ load --table Logs_20150205
   "timestamp": "2015-02-05 13:52:00",
        "memo": "2015-02-05 13:52:00",
      "action": "Shutdown"
+},
+{
+  "timestamp": "2015-02-05 13:53:00",
+       "memo": "2015-02-05 13:53:00",
+     "action": "Start"
 }
 ]
-[[0,0.0,0.0],4]
+[[0,0.0,0.0],5]
 log_level --level debug
 [[0,0.0,0.0],true]
 logical_range_filter Logs timestamp   --limit 2   --filter 'in_values(action, "Running", "Start")'
@@ -76,7 +81,7 @@ logical_range_filter Logs timestamp   --limit 2   --filter 'in_values(action, "R
     ]
   ]
 ]
-#|d| [logical_range_filter][range-index] <Logs_20150205>: the max number of unmatched records (4) <= the number of estimated records (4)
+#|d| [logical_range_filter][range-index] <Logs_20150205>: the max number of unmatched records (5) <= the number of estimated records (5)
 #>logical_range_filter --filter "in_values(action, \"Running\", \"Start\")" --limit "2" --logical_table "Logs" --shard_key "timestamp"
 #:000000000000000 filter(2)[Logs_20150205]: in_values(action, "Running", "Start")
 #:000000000000000 output(2)

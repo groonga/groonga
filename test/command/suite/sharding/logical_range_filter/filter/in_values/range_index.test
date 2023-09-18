@@ -36,6 +36,11 @@ load --table Logs_20150205
   "timestamp": "2015-02-05 13:52:00",
        "memo": "2015-02-05 13:52:00",
      "action": "Shutdown"
+},
+{
+  "timestamp": "2015-02-05 13:53:00",
+       "memo": "2015-02-05 13:53:00",
+     "action": "Start"
 }
 ]
 
