@@ -111,7 +111,7 @@ mrb_grn_index_column_estimate_size_for_query(mrb_state *mrb, mrb_value self)
   unsigned int query_size;
   grn_mrb_value_to_raw_data_buffer buffer;
   mrb_sym keyword_mode = mrb_intern_lit(mrb, "mode");
-  mrb_value mrb_mode = mrb_nil_value();
+  mrb_value mrb_mode;
   const mrb_kwargs kwargs = {1, 0, &keyword_mode, &mrb_mode, NULL};
   grn_search_optarg optarg;
   unsigned int size;
@@ -128,7 +128,7 @@ mrb_grn_index_column_estimate_size_for_query(mrb_state *mrb, mrb_value self)
   memset(&optarg, 0, sizeof(grn_search_optarg));
   optarg.mode = GRN_OP_EXACT;
 
-  if (!mrb_nil_p(mrb_mode)) {
+  if (!mrb_undef_p(mrb_mode) && !mrb_nil_p(mrb_mode)) {
     optarg.mode = grn_mrb_value_to_operator(mrb, mrb_mode);
   }
 
