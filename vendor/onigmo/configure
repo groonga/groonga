@@ -39,6 +39,7 @@ if [ "${abs_top_srcdir}/vendor/onigmo" != "$(pwd)" ]; then
   cp -rp \
       "${abs_top_srcdir}/${relative_onigmo_directory}" \
       "${onigmo_directory_in_build_directory}"
+  chmod -R u+w "${onigmo_directory_in_build_directory}"
 fi
 
 cd "${onigmo_directory_in_build_directory}"
