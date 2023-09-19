@@ -4,6 +4,9 @@ class Time
     if utc?
       format << "Z"
     end
-    format % [year, month, day, hour, min, sec, usec]
+    usec_workaround = usec
+    # https://github.com/mruby/mruby/issues/6059
+    usec_workaround = 0 if usec_workaround < 0
+    format % [year, month, day, hour, min, sec, usec_workaround]
   end
 end
