@@ -51,6 +51,7 @@ include $(srcdir)/version.sh
 
 dist-hook:
 	echo "$(GRN_VERSION)" > $(distdir)/version
+	echo "GRN_VERSION_FULL=$(GRN_VERSION)" > $(distdir)/version.sh
 	cd $(distdir) && autoreconf --install --force && find . -name autom4te.cache | xargs rm -fr
 
 benchmark:
