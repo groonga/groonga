@@ -87,7 +87,10 @@ if(GRN_WITH_MRUBY)
     PUBLIC
     "${MRUBY_SOURCE_DIR}/include"
     PRIVATE
-    "${CMAKE_CURRENT_BINARY_DIR}/../mruby-build/host/include"
+    # For build from repository
+    "${CMAKE_CURRENT_BINARY_DIR}/mruby-include"
+    # For build from archive
+    "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-include"
     "${MRUBY_SOURCE_DIR}/src"
     "${MRUBY_SOURCE_DIR}/mrbgems/mruby-compiler/core"
     "${MRUBY_SOURCE_DIR}/mrbgems/mruby-io/include"

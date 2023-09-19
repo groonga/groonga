@@ -35,8 +35,7 @@ EXTRA_DIST =					\
 dist-hook:
 	GIT_DIR=$(srcdir)/mruby-source/.git git archive --format=tar HEAD | \
 	  tar xf - -C $(distdir)/mruby-source
-	$(MKDIR_P) $(distdir)/mruby-source/build
-	cp $(srcdir)/mruby-source/build/presym.inc $(distdir)/mruby-source/build
+	cp -r mruby/mruby-include $(distdir)/
 	$(MKDIR_P) $(distdir)/onigmo-source
 	GIT_DIR=$(srcdir)/onigmo-source/.git git archive --format=tar HEAD | \
 	  tar xf - -C $(distdir)/onigmo-source

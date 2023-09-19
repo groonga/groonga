@@ -11,6 +11,8 @@ EXTRA_DIST =					\
 DEFAULT_INCLUDES =						\
 	-I$(builddir)/../mruby-build/host/include		\
 	-I$(builddir)/mruby-file-stat/src			\
+	-I$(builddir)/mruby-include				\
+	-I$(srcdir)/../mruby-include				\
 	-I$(srcdir)/../mruby-source/include			\
 	-I$(srcdir)/../mruby-source/src				\
 	-I$(srcdir)/../mruby-source/mrbgems/mruby-compiler/core	\

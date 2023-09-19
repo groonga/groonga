@@ -34,6 +34,9 @@ FileUtils.cp("#{mruby_build_dir}/host/LEGAL", "./")
 
 FileUtils.cp("#{mruby_build_dir}/host/mrblib/mrblib.c", "./")
 
+FileUtils.rm_rf("mruby-include")
+FileUtils.cp_r("#{mruby_build_dir}/host/include/", "mruby-include/")
+
 File.open("mrbgems_init.c", "w") do |mrbgems_init|
   Dir.glob("#{mruby_build_dir}/host/mrbgems/**/gem_init.c") do |gem_init|
     mrbgems_init.puts(File.read(gem_init))
