@@ -723,7 +723,7 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
   }
   GRN_OUTPUT_CSTR("features");
   {
-    const int n_features = 16;
+    const int n_features = 17;
     GRN_OUTPUT_MAP_OPEN("features", n_features);
 
     GRN_OUTPUT_CSTR("nfkc");
@@ -819,6 +819,13 @@ proc_status(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
 
     GRN_OUTPUT_CSTR("xxhash");
 #ifdef GRN_WITH_XXHASH
+    GRN_OUTPUT_BOOL(true);
+#else
+    GRN_OUTPUT_BOOL(false);
+#endif
+
+    GRN_OUTPUT_CSTR("blosc");
+#ifdef GRN_WITH_BLOSC
     GRN_OUTPUT_BOOL(true);
 #else
     GRN_OUTPUT_BOOL(false);
