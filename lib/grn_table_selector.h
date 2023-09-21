@@ -62,8 +62,7 @@ grn_table_selector_init(grn_ctx *ctx,
                         grn_obj *expr,
                         grn_operator op);
 void
-grn_table_selector_fin(grn_ctx *ctx,
-                       grn_table_selector *selector);
+grn_table_selector_fin(grn_ctx *ctx, grn_table_selector *selector);
 
 #ifdef __cplusplus
 }
