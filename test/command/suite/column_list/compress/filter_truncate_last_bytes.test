@@ -1,0 +1,6 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos scores \
+  COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_TRUNCATE_LAST_1BYTE|COMPRESS_FILTER_TRUNCATE_LAST_2BYTES \
+  Float
+
+column_list Memos

@@ -411,6 +411,11 @@ command_object_inspect_column_data_value_compress_filters(grn_ctx *ctx,
   if (column_flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
     grn_ctx_output_cstr(ctx, "byte_delta");
   }
+  if (column_flags & GRN_OBJ_COMPRESS_FILTER_TRUNCATE_LAST_2BYTES) {
+    grn_ctx_output_cstr(ctx, "truncate_last_2bytes");
+  } else if (column_flags & GRN_OBJ_COMPRESS_FILTER_TRUNCATE_LAST_1BYTE) {
+    grn_ctx_output_cstr(ctx, "truncate_last_1byte");
+  }
   grn_ctx_output_array_close(ctx);
 }
 
