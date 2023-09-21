@@ -24,6 +24,7 @@ repos:
           ?include/groonga/highlighter\.h|
           ?include/groonga/obj\.h|
           ?include/groonga/proc\.h|
+          ?include/groonga/table\.h|
           ?include/groonga/util\.h|
           ?lib/aggregators\.c|
           ?lib/alloc\.c|
