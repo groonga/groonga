@@ -931,9 +931,9 @@ grn_obj_id(grn_ctx *ctx, grn_obj *obj);
 typedef struct _grn_fuzzy_search_optarg grn_fuzzy_search_optarg;
 
 struct _grn_fuzzy_search_optarg {
-  unsigned int max_distance;
-  unsigned int max_expansion;
-  unsigned int prefix_match_size;
+  uint32_t max_distance;
+  uint32_t max_expansion;
+  uint32_t prefix_match_size;
   int flags;
 };
 
