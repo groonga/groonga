@@ -1,0 +1,4 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos embedding COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_SHUFFLE|COMPRESS_FILTER_BYTE_DELTA Float32
+
+object_inspect Memos.embedding

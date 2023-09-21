@@ -139,6 +139,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Debug \
             -DGRN_ALLOW_WARNING=OFF \
             -DGRN_WITH_APACHE_ARROW=ON \
+            -DGRN_WITH_BLOSC=ON \
             -DGRN_WITH_MRUBY=${GRN_WITH_MRUBY:-ON}
       - name: Build
         run: |

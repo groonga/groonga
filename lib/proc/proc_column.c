@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2009-2016  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -68,6 +68,8 @@ grn_proc_column_parse_flags(grn_ctx *ctx,
     CHECK_FLAG(INVALID_ERROR);
     CHECK_FLAG(INVALID_WARN);
     CHECK_FLAG(INVALID_IGNORE);
+    CHECK_FLAG(COMPRESS_FILTER_SHUFFLE);
+    CHECK_FLAG(COMPRESS_FILTER_BYTE_DELTA);
 
 #undef CHECK_FLAG
 

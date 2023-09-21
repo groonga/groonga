@@ -50,7 +50,10 @@ object_inspect Notes.title_terms
       },
       "compress": null,
       "weight": false,
-      "weight_float32": false
+      "weight_float32": false,
+      "compress_filters": [
+
+      ]
     },
     "sources": [
       {

@@ -1,0 +1,11 @@
+# Need C-Blosc2
+
+table_create Entries TABLE_PAT_KEY ShortText
+column_create Entries values \
+  COLUMN_VECTOR|WITH_WEIGHT|WEIGHT_FLOAT32|COMPRESS_LZ4|COMPRESS_FILTER_SHUFFLE \
+  ShortText
+
+#@generate-series 0 0 Entries '{"_key" => "packed", "values" => {"abc": 0.1, "ABC": 0.2, "123": -0.1}}'
+#@generate-series 0 0 Entries '{"_key" => "filtered", "values" => Hash[*(50.times.collect {|j| ["abc#{j}", 0.1, "ABC#{j}", 0.2, "123#{j}", -0.1]}.flatten)]}'
+
+select Entries

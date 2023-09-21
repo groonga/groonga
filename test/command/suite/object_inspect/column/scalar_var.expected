@@ -44,7 +44,10 @@ object_inspect Memos.title
         },
         "size": 4096
       },
-      "compress": "zstd"
+      "compress": "zstd",
+      "compress_filters": [
+
+      ]
     },
     "disk_usage": 0
   }

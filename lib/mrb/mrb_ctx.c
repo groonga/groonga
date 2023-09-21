@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -1075,6 +1075,15 @@ grn_mrb_ctx_to_exception(mrb_state *mrb)
                  MESSAGE_SIZE,
                  MESSAGE_SIZE,
                  "Connection reset: <%s>(%d)",
+                 utf8_error_message,
+                 ctx->rc);
+    break;
+  case GRN_BLOSC_ERROR:
+    error_class = mrb_class_get_under(mrb, module, "BloscError");
+    grn_snprintf(message,
+                 MESSAGE_SIZE,
+                 MESSAGE_SIZE,
+                 "Blosc error: <%s>(%d)",
                  utf8_error_message,
                  ctx->rc);
     break;

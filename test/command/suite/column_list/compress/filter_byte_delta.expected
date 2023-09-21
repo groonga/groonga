@@ -1,0 +1,60 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR|COMPRESS_ZSTD|COMPRESS_FILTER_BYTE_DELTA Text
+[[0,0.0,0.0],true]
+column_list Memos
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        "id",
+        "UInt32"
+      ],
+      [
+        "name",
+        "ShortText"
+      ],
+      [
+        "path",
+        "ShortText"
+      ],
+      [
+        "type",
+        "ShortText"
+      ],
+      [
+        "flags",
+        "ShortText"
+      ],
+      [
+        "domain",
+        "ShortText"
+      ],
+      [
+        "range",
+        "ShortText"
+      ],
+      [
+        "source",
+        "ShortText"
+      ]
+    ],
+    [
+      257,
+      "content",
+      "db/db.0000101",
+      "var",
+      "COLUMN_SCALAR|COMPRESS_ZSTD|COMPRESS_FILTER_BYTE_DELTA|PERSISTENT",
+      "Memos",
+      "Text",
+      [
+
+      ]
+    ]
+  ]
+]

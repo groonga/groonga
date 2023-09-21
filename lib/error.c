@@ -1,6 +1,6 @@
 /*
   Copyright(C) 2013-2017  Brazil
-  Copyright(C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright(C) 2020-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -456,6 +456,9 @@ grn_rc_to_string(grn_rc rc)
     break;
   case GRN_CONNECTION_RESET:
     message = "connection reset";
+    break;
+  case GRN_BLOSC_ERROR:
+    message = "Blosc error";
     break;
   }
 
