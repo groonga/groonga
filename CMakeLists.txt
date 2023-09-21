@@ -936,9 +936,9 @@ else()
 endif()
 
 set(GRN_BLOSC_REQUIRED_VERSION "2.10.0")
-set(GRN_BLOSC_BUNDLED_VERSION "2.10.2")
+set(GRN_BLOSC_BUNDLED_VERSION "2.10.3")
 set(GRN_BLOSC_BUNDLED_SHA256
-    "069785bc14c006c7dab40ea0c620bdf3eb8752663fd55c706d145bceabc2a31d")
+    "ddd28cb4cfaa9143a5461a8cf5b2b8f4c7fcb4c84018c823d2a507998b937869")
 set(GRN_WITH_BLOSC
     "no"
     CACHE STRING "Support column compression by Blosc.")
