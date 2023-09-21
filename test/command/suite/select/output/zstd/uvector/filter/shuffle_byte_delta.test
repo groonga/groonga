@@ -1,4 +1,4 @@
-# Need C-Blosc2
+#@require-feature blosc
 
 table_create Entries TABLE_PAT_KEY ShortText
 column_create Entries values \

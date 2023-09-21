@@ -1,3 +1,5 @@
+#@require-feature blosc
+
 table_create Bookmarks TABLE_HASH_KEY ShortText
 column_create Bookmarks tags COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_SHUFFLE ShortText
 
