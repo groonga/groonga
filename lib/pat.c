@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2009-2018  Brazil
-  Copyright(C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2009-2018  Brazil
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -2858,7 +2858,7 @@ calc_edit_distance_by_offset(grn_ctx *ctx,
                              uint32_t offset,
                              uint32_t max_distance,
                              grn_bool *can_transition,
-                             int flags)
+                             uint32_t flags)
 {
   uint32_t cx, cy, x, y;
   const char *px, *py;
@@ -2929,7 +2929,7 @@ _grn_pat_fuzzy_search(grn_ctx *ctx,
                       int last_check,
                       fuzzy_node *last_node,
                       uint32_t max_distance,
-                      int flags,
+                      uint32_t flags,
                       fuzzy_heap *heap)
 {
   pat_node *node = NULL;
@@ -3050,7 +3050,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   uint32_t max_distance = 1;
   uint32_t max_expansion = 0;
   uint32_t prefix_match_size = 0;
-  int flags = 0;
+  uint32_t flags = 0;
   grn_rc rc = grn_pat_error_if_truncated(ctx, pat);
   if (rc != GRN_SUCCESS) {
     return rc;

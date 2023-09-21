@@ -934,7 +934,7 @@ struct _grn_fuzzy_search_optarg {
   uint32_t max_distance;
   uint32_t max_expansion;
   uint32_t prefix_match_size;
-  int flags;
+  uint32_t flags;
 };
 
 #define GRN_MATCH_INFO_GET_MIN_RECORD_ID (0x01)
