@@ -15215,7 +15215,7 @@ grn_ii_sel(grn_ctx *ctx,
     grn_rset_init(ctx, s, GRN_REC_DOCUMENT, 0, GRN_REC_NONE, 0, 0);
     */
     if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
-      GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_select on grn_ii_sel(1) failed !");
+      GRN_LOG(ctx, GRN_LOG_ERROR, "grn_ii_select on grn_ii_sel() failed!");
       return ctx->rc;
     }
     GRN_LOG(ctx, GRN_LOG_INFO, "exact: %d", GRN_HASH_SIZE(s));
@@ -15233,7 +15233,7 @@ grn_ii_sel(grn_ctx *ctx,
         if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
           GRN_LOG(ctx,
                   GRN_LOG_ERROR,
-                  "grn_ii_select on grn_ii_sel(2) failed !");
+                  "grn_ii_select on grn_ii_sel(unsplit) failed!");
           return ctx->rc;
         }
         GRN_LOG(ctx, GRN_LOG_INFO, "unsplit: %d", GRN_HASH_SIZE(s));
@@ -15257,7 +15257,7 @@ grn_ii_sel(grn_ctx *ctx,
         if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
           GRN_LOG(ctx,
                   GRN_LOG_ERROR,
-                  "grn_ii_select on grn_ii_sel(3) failed !");
+                  "grn_ii_select on grn_ii_sel(partial) failed!");
           return ctx->rc;
         }
         GRN_LOG(ctx, GRN_LOG_INFO, "partial: %d", GRN_HASH_SIZE(s));

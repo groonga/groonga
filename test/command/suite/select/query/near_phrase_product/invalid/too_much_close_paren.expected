@@ -23,4 +23,4 @@ select Entries   --match_columns content   --query '*NPP2"(a b))"'   --output_co
   ]
 ]
 #|e| [ii][token-info][build] unbalanced close parenthesis is detected: <(a b)|)|>
-#|e| grn_ii_select on grn_ii_sel(1) failed !
+#|e| grn_ii_select on grn_ii_sel() failed!

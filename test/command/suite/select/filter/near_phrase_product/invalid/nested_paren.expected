@@ -18,4 +18,4 @@ select Entries   --filter 'content *NPP2 "(a (b))"'   --output_columns '_score, 
   ]
 ]
 #|e| [ii][token-info][build] parenthesis must not be nested: <(a |(|b))>
-#|e| grn_ii_select on grn_ii_sel(1) failed !
+#|e| grn_ii_select on grn_ii_sel() failed!

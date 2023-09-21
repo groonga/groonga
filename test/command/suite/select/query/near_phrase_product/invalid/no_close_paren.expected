@@ -9,4 +9,4 @@ column_create Terms entries_content COLUMN_INDEX|WITH_POSITION Entries content
 select Entries   --match_columns content   --query '*NPP2"(a b"'   --output_columns '_score, content'
 [[[-22,0.0,0.0],"[ii][token-info][build] close parenthesis is missing"]]
 #|e| [ii][token-info][build] close parenthesis is missing
-#|e| grn_ii_select on grn_ii_sel(1) failed !
+#|e| grn_ii_select on grn_ii_sel() failed!
