@@ -552,6 +552,9 @@ jobs:
       - name: Use JST
         run: |
           Set-TimeZone -Id "Tokyo Standard Time"
+      - name: Remove MSYS2
+        run: |
+          Remove-Item c:\msys64 -Force -Recurse
       - uses: ruby/setup-ruby@v1
         with:
           # We can't use "ruby" here because json-stream still uses
