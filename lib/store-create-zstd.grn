@@ -1,0 +1,23 @@
+column_remove data vector_zstd
+column_create data vector_zstd COLUMN_VECTOR|COMPRESS_ZSTD Float32
+column_copy data vector data vector_zstd
+
+column_remove data vector_zstd_shuffle
+column_create data vector_zstd_shuffle COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_SHUFFLE Float32
+column_copy data vector data vector_zstd_shuffle
+
+column_remove data vector_zstd_shuffle_byte_delta
+column_create data vector_zstd_shuffle_byte_delta COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_SHUFFLE|COMPRESS_FILTER_BYTE_DELTA Float32
+column_copy data vector data vector_zstd_shuffle_byte_delta
+
+column_remove data vector_zstd_sort_shuffle_byte_delta
+column_create data vector_zstd_sort_shuffle_byte_delta COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_SORT|COMPRESS_FILTER_SHUFFLE|COMPRESS_FILTER_BYTE_DELTA Float32
+column_copy data vector data vector_zstd_sort_shuffle_byte_delta
+
+column_remove data vector_zstd_sort_shuffle
+column_create data vector_zstd_sort_shuffle COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_SORT|COMPRESS_FILTER_SHUFFLE Float32
+column_copy data vector data vector_zstd_sort_shuffle
+
+column_remove data vector_zstd_byte_delta
+column_create data vector_zstd_byte_delta COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_BYTE_DELTA Float32
+column_copy data vector data vector_zstd_byte_delta

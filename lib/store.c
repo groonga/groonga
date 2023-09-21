@@ -3921,6 +3921,7 @@ grn_ja_ref_zstd(
 
 #  define GRN_BLOSC_META_HEADER "header"
 #  define GRN_BLOSC_META_FOOTER "footer"
+#  define GRN_BLOSC_META_SORT_INDICES "sort-indices"
 
 static bool
 grn_ja_ref_blosc_copy_meta(grn_ctx *ctx,
@@ -4023,6 +4024,8 @@ grn_ja_ref_blosc(
     return NULL;
   }
   {
+    uint8_t *body_start = destination;
+    int32_t body_size = 0;
     int64_t i;
     for (i = 0; i < schunk->nchunks; i++) {
       int decompressed_size = blosc2_schunk_decompress_chunk(schunk,
@@ -4052,6 +4055,52 @@ grn_ja_ref_blosc(
       }
       destination += decompressed_size;
       destination_size -= decompressed_size;
+      body_size += decompressed_size;
+    }
+    uint32_t *sort_indices = NULL;
+    {
+      int i = 0;
+      for (i = 0; i < schunk->nmetalayers; i++) {
+        blosc2_metalayer *metalayer = schunk->metalayers[i];
+        if (strcmp(metalayer->name, GRN_BLOSC_META_SORT_INDICES) == 0) {
+          size_t n_elements = body_size / schunk->typesize;
+          sort_indices = GRN_MALLOC(sizeof(uint32_t) * n_elements);
+          uint8_t *packed_sort_indices = metalayer->content;
+          size_t j;
+          for (j = 0; j < n_elements; j++) {
+            uint32_t sort_index;
+            GRN_B_DEC(sort_index, packed_sort_indices);
+            sort_indices[sort_index] = j;
+          }
+          break;
+        }
+      }
+    }
+    if (sort_indices) {
+      /* in-place sort by sort index (applying a permutation)
+       * https://devblogs.microsoft.com/oldnewthing/20170102-00/?p=95095 */
+      size_t n_elements = body_size / schunk->typesize;
+      size_t i;
+      for (i = 0; i < n_elements; i++) {
+        size_t current = i;
+        while (i != sort_indices[current]) {
+          uint32_t next = sort_indices[current];
+          uint64_t tmp;
+          memcpy(&tmp,
+                 body_start + (schunk->typesize * current),
+                 schunk->typesize);
+          memcpy(body_start + (schunk->typesize * current),
+                 body_start + (schunk->typesize * next),
+                 schunk->typesize);
+          memcpy(body_start + (schunk->typesize * next),
+                 &tmp,
+                 schunk->typesize);
+          sort_indices[current] = current;
+          current = next;
+        }
+        sort_indices[current] = current;
+      }
+      GRN_FREE(sort_indices);
     }
   }
   if (!grn_ja_ref_blosc_copy_meta(ctx,
@@ -4100,7 +4149,8 @@ grn_ja_ref(
 {
 #ifdef GRN_WITH_BLOSC
   if (ja->header->flags &
-      (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA)) {
+      (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA |
+       GRN_OBJ_COMPRESS_FILTER_SORT)) {
     return grn_ja_ref_blosc(ctx, ja, id, iw, value_len);
   }
 #endif
@@ -4914,6 +4964,10 @@ grn_ja_put_blosc_create_schunk(grn_ctx *ctx,
       cparams->filters[current_filter_id] = BLOSC_SHUFFLE;
       current_filter_id--;
     }
+    /* if (ja->header->flags & GRN_OBJ_COMPRESS_FILTER_SORT) { */
+    /*   cparams->filters[current_filter_id] = GRN_BLOSC_FILTER_SORT; */
+    /*   current_filter_id--; */
+    /* } */
   }
 
   *storage = BLOSC2_STORAGE_DEFAULTS;
@@ -4921,6 +4975,72 @@ grn_ja_put_blosc_create_schunk(grn_ctx *ctx,
   storage->cparams = cparams;
 
   return blosc2_schunk_new(storage);
+}
+
+typedef int (*vector_index_compare_func)(grn_ctx *ctx,
+                                         const void *elements,
+                                         uint32_t left_index,
+                                         uint32_t right_index);
+
+static int
+vector_index_compare_uint32(grn_ctx *ctx,
+                            const void *elements,
+                            uint32_t left_index,
+                            uint32_t right_index)
+{
+  return ((const uint32_t *)elements)[left_index] -
+         ((const uint32_t *)elements)[right_index];
+}
+
+static int
+vector_index_compare_float32(grn_ctx *ctx,
+                             const void *elements,
+                             uint32_t left_index,
+                             uint32_t right_index)
+{
+  float left = ((const float *)elements)[left_index];
+  float right = ((const float *)elements)[right_index];
+  float diff = left - right;
+  if (diff < FLT_EPSILON) {
+    return 0;
+  } else if (diff < 0) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
+
+static int
+vector_index_compare_float(grn_ctx *ctx,
+                           const void *elements,
+                           uint32_t left_index,
+                           uint32_t right_index)
+{
+  double left = ((const double *)elements)[left_index];
+  double right = ((const double *)elements)[right_index];
+  double diff = left - right;
+  if (diff < FLT_EPSILON) {
+    return 0;
+  } else if (diff < 0) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
+
+typedef struct {
+  grn_ctx *ctx;
+  const void *elements;
+  vector_index_compare_func compare;
+} vector_index_compare_data;
+
+static int
+vector_index_compare(const void *left, const void *right, void *data)
+{
+  vector_index_compare_data *d = data;
+  uint32_t left_index = *((const uint32_t *)left);
+  uint32_t right_index = *((const uint32_t *)right);
+  return d->compare(d->ctx, d->elements, left_index, right_index);
 }
 
 grn_inline static grn_rc
@@ -4954,10 +5074,71 @@ grn_ja_put_blosc(grn_ctx *ctx,
   } else {
     n_elements = 1;
   }
+  void *sort_indices = NULL;
+  void *sorted_values = NULL;
   blosc2_cparams cparams;
   blosc2_storage storage;
   blosc2_schunk *schunk =
     grn_ja_put_blosc_create_schunk(ctx, ja, id, n_elements, &cparams, &storage);
+  if (ja->header->flags & GRN_OBJ_COMPRESS_FILTER_SORT && n_elements > 1) {
+    size_t typed_sort_indices_size = sizeof(uint32_t) * n_elements;
+    uint32_t *typed_sort_indices = GRN_MALLOC(typed_sort_indices_size);
+    uint32_t i;
+    for (i = 0; i < n_elements; i++) {
+      typed_sort_indices[i] = i;
+    }
+    vector_index_compare_data data = {0};
+    data.ctx = ctx;
+    data.elements = value;
+    switch (DB_OBJ(ja)->range) {
+    case GRN_DB_UINT32:
+      data.compare = vector_index_compare_uint32;
+      break;
+    case GRN_DB_FLOAT32:
+      data.compare = vector_index_compare_float32;
+      break;
+    case GRN_DB_FLOAT:
+      data.compare = vector_index_compare_float;
+      break;
+    default:
+      break;
+    }
+    qsort_r(typed_sort_indices,
+            n_elements,
+            sizeof(uint32_t),
+            vector_index_compare,
+            &data);
+    uint8_t *packed_sort_indices = GRN_MALLOC(typed_sort_indices_size);
+    sort_indices = packed_sort_indices;
+    uint8_t *packed_sort_indices_start = packed_sort_indices;
+    for (i = 0; i < n_elements; i++) {
+      GRN_B_ENC(typed_sort_indices[i], packed_sort_indices);
+    }
+    int meta_index = blosc2_meta_add(schunk,
+                                     GRN_BLOSC_META_SORT_INDICES,
+                                     packed_sort_indices_start,
+                                     packed_sort_indices - packed_sort_indices_start);
+    if (meta_index < 0) {
+      grn_ja_compress_error(ctx,
+                            ja,
+                            id,
+                            GRN_BLOSC_ERROR,
+                            "[blosc] failed to set sort indices",
+                            print_error(meta_index));
+      blosc2_schunk_free(schunk);
+      GRN_FREE(typed_sort_indices);
+      GRN_FREE(packed_sort_indices);
+      return ctx->rc;
+    }
+    sorted_values = GRN_MALLOC(value_len);
+    for (i = 0; i < n_elements; i++) {
+      memcpy(((uint8_t *)sorted_values) + (schunk->typesize * i),
+             ((uint8_t *)value) + (schunk->typesize * typed_sort_indices[i]),
+             schunk->typesize);
+    }
+    value = sorted_values;
+    GRN_FREE(typed_sort_indices);
+  }
   int64_t n_chunks = blosc2_schunk_append_buffer(schunk, value, value_len);
   if (n_chunks < 0) {
     grn_ja_compress_error(ctx,
@@ -4967,6 +5148,12 @@ grn_ja_put_blosc(grn_ctx *ctx,
                           "[blosc] failed to compress",
                           print_error(n_chunks));
     blosc2_schunk_free(schunk);
+    if (sort_indices) {
+      GRN_FREE(sort_indices);
+    }
+    if (sorted_values) {
+      GRN_FREE(sorted_values);
+    }
     return ctx->rc;
   }
   uint8_t *compressed_data = NULL;
@@ -4981,6 +5168,12 @@ grn_ja_put_blosc(grn_ctx *ctx,
                           "[blosc] failed to serialize compressed value",
                           print_error(compressed_data_size));
     blosc2_schunk_free(schunk);
+    if (sort_indices) {
+      GRN_FREE(sort_indices);
+    }
+    if (sorted_values) {
+      GRN_FREE(sorted_values);
+    }
     return ctx->rc;
   }
   uint32_t packed_value_size = sizeof(uint64_t) + compressed_data_size;
@@ -4996,6 +5189,12 @@ grn_ja_put_blosc(grn_ctx *ctx,
       free(compressed_data);
     }
     blosc2_schunk_free(schunk);
+    if (sort_indices) {
+      GRN_FREE(sort_indices);
+    }
+    if (sorted_values) {
+      GRN_FREE(sorted_values);
+    }
     return ctx->rc;
   }
   *(uint64_t *)packed_value = value_len;
@@ -5004,6 +5203,12 @@ grn_ja_put_blosc(grn_ctx *ctx,
     free(compressed_data);
   }
   blosc2_schunk_free(schunk);
+  if (sort_indices) {
+    GRN_FREE(sort_indices);
+  }
+  if (sorted_values) {
+    GRN_FREE(sorted_values);
+  }
   grn_rc rc =
     grn_ja_put_raw(ctx, ja, id, packed_value, packed_value_size, flags, cas);
   GRN_FREE(packed_value);
@@ -5045,15 +5250,11 @@ grn_ja_putv_blosc(grn_ctx *ctx,
     return rc;
   }
 
+  uint32_t n_elements = grn_vector_size(ctx, raw_value);
   blosc2_cparams cparams;
   blosc2_storage storage;
   blosc2_schunk *schunk =
-    grn_ja_put_blosc_create_schunk(ctx,
-                                   ja,
-                                   id,
-                                   grn_vector_size(ctx, raw_value),
-                                   &cparams,
-                                   &storage);
+    grn_ja_put_blosc_create_schunk(ctx, ja, id, n_elements, &cparams, &storage);
   int meta_index = blosc2_meta_add(schunk,
                                    GRN_BLOSC_META_HEADER,
                                    GRN_BULK_HEAD(header),
@@ -5137,7 +5338,8 @@ grn_ja_put(grn_ctx *ctx,
 {
 #ifdef GRN_WITH_BLOSC
   if (ja->header->flags &
-      (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA)) {
+      (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA |
+       GRN_OBJ_COMPRESS_FILTER_SORT)) {
     return grn_ja_put_blosc(ctx, ja, id, value, value_len, flags, cas);
   }
 #endif
@@ -5170,7 +5372,8 @@ grn_ja_putv_internal(grn_ctx *ctx,
 {
 #ifdef GRN_WITH_BLOSC
   if (ja->header->flags &
-      (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA)) {
+      (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA |
+       GRN_OBJ_COMPRESS_FILTER_SORT)) {
     return grn_ja_putv_blosc(ctx, ja, id, raw_value, header, body, footer);
   }
 #endif

@@ -1,0 +1,15 @@
+# groonga --file store-size.grn db/db | jq '.[1] | .full_name,.disk_usage'
+
+object_inspect data.vector
+object_inspect data.vector_zstd
+object_inspect data.vector_zstd_shuffle
+object_inspect data.vector_zstd_shuffle_byte_delta
+object_inspect data.vector_zstd_sort_shuffle_byte_delta
+object_inspect data.vector_zstd_sort_shuffle
+object_inspect data.vector_zstd_byte_delta
+object_inspect data.vector_lz4
+object_inspect data.vector_lz4_shuffle
+object_inspect data.vector_lz4_shuffle_byte_delta
+object_inspect data.vector_lz4_sort_shuffle_byte_delta
+object_inspect data.vector_lz4_sort_shuffle
+object_inspect data.vector_lz4_byte_delta

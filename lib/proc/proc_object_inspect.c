@@ -404,12 +404,18 @@ command_object_inspect_column_data_value_compress_filters(grn_ctx *ctx,
   if (column_flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
     n_filters++;
   }
+  if (column_flags & GRN_OBJ_COMPRESS_FILTER_SORT) {
+    n_filters++;
+  }
   grn_ctx_output_array_open(ctx, "compress_filters", n_filters);
   if (column_flags & GRN_OBJ_COMPRESS_FILTER_SHUFFLE) {
     grn_ctx_output_cstr(ctx, "shuffle");
   }
   if (column_flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
     grn_ctx_output_cstr(ctx, "byte_delta");
+  }
+  if (column_flags & GRN_OBJ_COMPRESS_FILTER_SORT) {
+    grn_ctx_output_cstr(ctx, "sort");
   }
   grn_ctx_output_array_close(ctx);
 }

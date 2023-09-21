@@ -139,6 +139,9 @@ grn_dump_column_create_flags(grn_ctx *ctx,
   if (flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
     GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_FILTER_BYTE_DELTA");
   }
+  if (flags & GRN_OBJ_COMPRESS_FILTER_SORT) {
+    GRN_TEXT_PUTS(ctx, buffer, "|COMPRESS_FILTER_SORT");
+  }
   if (flags & GRN_OBJ_PERSISTENT) {
     GRN_TEXT_PUTS(ctx, buffer, "|PERSISTENT");
   }

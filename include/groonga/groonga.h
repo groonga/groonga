@@ -444,6 +444,7 @@ typedef uint32_t grn_column_flags;
 
 #define GRN_OBJ_COMPRESS_FILTER_SHUFFLE    (0x01 << 24)
 #define GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA (0x01 << 25)
+#define GRN_OBJ_COMPRESS_FILTER_SORT       (0x01 << 26)
 
 /* flags only for grn_table_flags and grn_column_flags */
 
