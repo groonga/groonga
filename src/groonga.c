@@ -4069,6 +4069,9 @@ show_version(void)
 #ifdef GRN_WITH_XXHASH
   printf(",xxhash");
 #endif
+#ifdef GRN_WITH_BLOSC
+  printf(",blosc");
+#endif
   printf("]\n");
 
 #ifdef CONFIGURE_OPTIONS
