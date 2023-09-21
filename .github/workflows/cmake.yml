@@ -139,7 +139,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Debug \
             -DGRN_ALLOW_WARNING=OFF \
             -DGRN_WITH_APACHE_ARROW=ON \
-            -DGRN_WITH_BLOSC=ON \
+            -DGRN_WITH_BLOSC=auto \
             -DGRN_WITH_MRUBY=${GRN_WITH_MRUBY:-ON}
       - name: Build
         run: |
@@ -330,6 +330,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Debug \
             -DGRN_ALLOW_WARNING=OFF \
             -DGRN_WITH_APACHE_ARROW=ON \
+            -DGRN_WITH_BLOSC=auto \
             -DGRN_WITH_MRUBY=ON \
             -DRUBY=$(which ruby)
       - name: Build
@@ -657,6 +658,7 @@ jobs:
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_BUILD_TYPE=RelWithDebInfo
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_ALLOW_WARNING=ON
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_APACHE_ARROW=ON
+          set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_BLOSC=auto
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_MRUBY=ON
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_XXHASH=bundled
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_ZLIB=no

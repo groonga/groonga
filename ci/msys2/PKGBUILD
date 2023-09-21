@@ -13,6 +13,7 @@ license=('LGPL2')
 options=('strip' 'staticlibs')
 source=(${_realname}-${pkgver}.tar.gz)
 depends=("${MINGW_PACKAGE_PREFIX}-arrow"
+         "${MINGW_PACKAGE_PREFIX}-blosc2"
          "${MINGW_PACKAGE_PREFIX}-lz4"
          "${MINGW_PACKAGE_PREFIX}-mecab"
          "${MINGW_PACKAGE_PREFIX}-mecab-naist-jdic"
@@ -41,6 +42,7 @@ build() {
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_PREFIX=${MINGW_PREFIX} \
       -DGRN_WITH_APACHE_ARROW=ON \
+      -DGRN_WITH_BLOSC=auto \
       -DGRN_WITH_MRUBY=ON \
       -G Ninja
 
