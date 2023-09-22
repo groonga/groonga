@@ -53,7 +53,7 @@ targets.each do |target|
       FileUtils.rm_rf("benchmarks/realdata/")
     end
   when "zstd"
-    version = cmakelists[/set\(GRN_ZSTD_EP_VERSION \"(.+)"\)/, 1]
+    version = cmakelists[/set\(GRN_ZSTD_BUNDLED_VERSION \"(.+)"\)/, 1]
     url = "https://github.com/facebook/zstd/releases/download/"
     url << "v#{version}/zstd-#{version}.tar.gz"
     download(url)

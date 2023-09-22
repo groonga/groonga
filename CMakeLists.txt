@@ -471,7 +471,9 @@ set(GRN_EP_COMMON_OPTIONS
     LOG_OUTPUT_ON_FAILURE
     TRUE)
 
-set(GRN_ZSTD_EP_VERSION "1.4.8")
+set(GRN_ZSTD_BUNDLED_VERSION "1.5.5")
+set(GRN_ZSTD_BUNDLED_SHA256
+    "9c4396cc829cfae319a6e2615202e82aad41372073482fce286fac78646d3ee4")
 set(GRN_WITH_ZSTD
     "auto"
     CACHE STRING "Support data compression by Zstandard.")
@@ -490,7 +492,7 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
     message(STATUS "Zstandard: system")
   else()
     function(grn_build_zstd)
-      set(ZSTD_SOURCE_BASE_NAME "zstd-${GRN_ZSTD_EP_VERSION}.tar.gz")
+      set(ZSTD_SOURCE_BASE_NAME "zstd-${GRN_ZSTD_BUNDLED_VERSION}.tar.gz")
       set(ZSTD_SOURCE_LOCAL_PATH
           "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${ZSTD_SOURCE_BASE_NAME}")
       if(EXISTS ${ZSTD_SOURCE_LOCAL_PATH})
@@ -498,13 +500,14 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
       else()
         set(ZSTD_SOURCE_URL
             "https://github.com/facebook/zstd/releases/download")
-        string(APPEND ZSTD_SOURCE_URL "/v${GRN_ZSTD_EP_VERSION}")
+        string(APPEND ZSTD_SOURCE_URL "/v${GRN_ZSTD_BUNDLED_VERSION}")
         string(APPEND ZSTD_SOURCE_URL "/${ZSTD_SOURCE_BASE_NAME}")
       endif()
       fetchcontent_declare(
         zstd
         SOURCE_SUBDIR "build/cmake"
-        URL ${ZSTD_SOURCE_URL})
+        URL ${ZSTD_SOURCE_URL}
+        URL_HASH "SHA256=${GRN_ZSTD_BUNDLED_SHA256}")
       set(BUILD_TESTING OFF)
       set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME zstd)
       set(ZSTD_BUILD_PROGRAMS OFF)
