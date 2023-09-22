@@ -1083,10 +1083,10 @@ add_subdirectory(vendor/plugins)
 
 option(GRN_FOR_RHEL "install RHEL related files" OFF)
 if(GRN_FOR_RHEL)
-  install(FILES data/tempfiles.d/groonga.conf
-          DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/tempfiles.d/)
-  install(FILES data/logrotated.d/rhel/groonga-server-gqtp
-                data/logrotated.d/rhel/groonga-server-http
+  install(FILES data/tmpfiles.d/groonga.conf
+          DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/tmpfiles.d/)
+  install(FILES data/logrotate.d/rhel/groonga-server-gqtp
+                data/logrotate.d/rhel/groonga-server-http
           DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/logrotate.d/)
   install(FILES data/systemd/rhel/sysconfig/groonga-server-gqtp
                 data/systemd/rhel/sysconfig/groonga-server-http
