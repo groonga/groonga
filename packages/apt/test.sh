@@ -10,7 +10,9 @@ code_name=$(lsb_release --codename --short)
 architecture=$(dpkg --print-architecture)
 
 case "${code_name}" in
-  bookworm)
+  bullseye)
+    ;;
+  *)
     wget https://apache.jfrog.io/artifactory/arrow/${distribution}/apache-arrow-apt-source-latest-${code_name}.deb
     apt install -V -y ./apache-arrow-apt-source-latest-${code_name}.deb
     ;;
