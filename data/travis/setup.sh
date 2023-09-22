@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2013-2020  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2013-2023  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 # set -x
 set -e
 
-if [ "$GROONGA_MASTER" = "yes" ]; then
+if [ "$GROONGA_MAIN" = "yes" ]; then
   sudo apt-get update -qq
   sudo apt install -qq -y -V \
        lsb-release \
