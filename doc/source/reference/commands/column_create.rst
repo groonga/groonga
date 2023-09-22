@@ -1208,6 +1208,8 @@ Here are available flags:
        単独でも効果がありますが、 ``COMPRESS_FILTER_TRUNCATE_LAST_1BYTE`` と ``COMPRESS_FILTER_TRUNCATE_LAST_2BYTE``
        と組み合わせると、より高い効果が期待できます。
 
+       このフラグは ``COLUMN_VECTOR`` でのみ使用できます。 ``COLUMN_SCALAR`` のときはこのフラグは無視されます。
+
        圧縮対象の値のバイト間の差分を計算するフィルターです。
        ``COMPRESS_FILTER_SHUFFLE`` と合わせて使うことを想定しています。
        この操作をすることで、zstdやLZ4で圧縮する際の圧縮率を高めることができます。
