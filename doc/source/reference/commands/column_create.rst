@@ -1158,10 +1158,6 @@ Here are available flags:
        This flag is available only for ``COLUMN_SCALAR`` and
        ``COLUMN_VECTOR``.
 
-   * - ``COMPRESS_FILTER_*``
-     - 以下の ``COMPRESS_FILTER_`` で始まるフラグを使うと、圧縮効率が高くなるような前処理を実行します。
-       単独で ``COMPRESS_ZSTD`` や ``COMPRESS_LZ4`` を使うよりカラムのサイズを小さくできます。
-       大量のベクトルデータを取り扱う際に有用な機能です。
 
        これらのフラグは、 ``COLUMN_VECTOR`` のみで有用です。
 
