@@ -5013,7 +5013,9 @@ grn_ja_put_blosc(grn_ctx *ctx,
     return ctx->rc;
   }
   *(uint64_t *)packed_value = value_len;
-  memcpy(((uint64_t *)packed_value) + 1, compressed_data, compressed_data_size);
+  grn_memcpy(((uint64_t *)packed_value) + 1,
+             compressed_data,
+             compressed_data_size);
   if (need_free) {
     free(compressed_data);
   }
@@ -7295,9 +7297,9 @@ grn_ja_wal_recover_set_value(grn_ctx *ctx,
                                   "failed to refer chunk segment");
         break;
       }
-      memcpy(address + entry->position,
-             entry->value.content.binary.data,
-             entry->value.content.binary.size);
+      grn_memcpy(address + entry->position,
+                 entry->value.content.binary.data,
+                 entry->value.content.binary.size);
       grn_io_seg_unref(ctx, ja->io, entry->segment);
     }
     break;
@@ -7327,7 +7329,7 @@ grn_ja_wal_recover_set_value(grn_ctx *ctx,
         }
         size_t copy_size =
           (rest_size > JA_SEGMENT_SIZE) ? JA_SEGMENT_SIZE : rest_size;
-        memcpy(address, data, copy_size);
+        grn_memcpy(address, data, copy_size);
         data += copy_size;
         rest_size -= copy_size;
         grn_io_seg_unref(ctx, ja->io, segment);
