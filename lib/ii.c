@@ -15034,6 +15034,7 @@ grn_select_optarg_init_by_search_optarg(grn_ctx *ctx,
   select_optarg->scorer_args_expr = search_optarg->scorer_args_expr;
   select_optarg->scorer_args_expr_offset =
     search_optarg->scorer_args_expr_offset;
+  select_optarg->fuzzy = search_optarg->fuzzy;
   select_optarg->match_info = &(search_optarg->match_info);
   select_optarg->query_options = search_optarg->query_options;
 }
@@ -15221,6 +15222,31 @@ grn_ii_sel(grn_ctx *ctx,
     GRN_LOG(ctx, GRN_LOG_INFO, "exact: %d", GRN_HASH_SIZE(s));
     if (op == GRN_OP_OR || ctx->impl->force_match_escalation) {
       grn_id min = GRN_ID_NIL;
+      if (((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->match_escalation_threshold ||
+           ctx->impl->force_match_escalation) &&
+          arg.fuzzy.max_distance > 0) {
+        arg.mode = GRN_OP_FUZZY;
+        if (arg.match_info) {
+          if (arg.match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
+            min = arg.match_info->min;
+            arg.match_info->min = GRN_ID_NIL;
+          }
+        }
+        if (grn_ii_select(ctx, ii, string, string_len, s, op, &arg)) {
+          GRN_LOG(ctx,
+                  GRN_LOG_ERROR,
+                  "grn_ii_select on grn_ii_sel(fuzzy) failed!");
+          return ctx->rc;
+        }
+        GRN_LOG(ctx, GRN_LOG_INFO, "fuzzy: %d", GRN_HASH_SIZE(s));
+        if (arg.match_info) {
+          if (arg.match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
+            if (min > GRN_ID_NIL && min < arg.match_info->min) {
+              arg.match_info->min = min;
+            }
+          }
+        }
+      }
       if ((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->match_escalation_threshold ||
           ctx->impl->force_match_escalation) {
         arg.mode = GRN_OP_UNSPLIT;

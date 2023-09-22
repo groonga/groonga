@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@
 #include "../grn_posting.h"
 #include "../grn_proc.h"
 #include "../grn_str.h"
+#include "../grn_table_selector.h"
 #include "../grn_util.h"
 #include "../grn_window_function_executor.h"
 
@@ -1132,6 +1133,7 @@ namespace {
         query_options(args->get_string(prefix, "query_options")),
         filter(args->get_string(prefix, "filter")),
         post_filter(args->get_string(prefix, "post_filter")),
+        fuzzy_max_distance(args->get_uint32(prefix, "fuzzy_max_distance", 0)),
         condition({nullptr, nullptr, nullptr}),
         post_condition({nullptr}),
         filtered(nullptr),
@@ -1170,6 +1172,12 @@ namespace {
       }
     }
 
+    void
+    set_fuzzy_options(grn_ctx *ctx, grn_table_selector *table_selector)
+    {
+      grn_table_selector_set_fuzzy_max_distance(ctx, table_selector, fuzzy_max_distance);
+    }
+
     grn_ctx *ctx_;
 
     grn_raw_string match_columns;
@@ -1179,6 +1187,7 @@ namespace {
     grn_raw_string query_options;
     grn_raw_string filter;
     grn_raw_string post_filter;
+    uint32_t fuzzy_max_distance;
     struct {
       grn_obj *match_columns;
       grn_obj *expression;
@@ -3153,11 +3162,13 @@ grn_filter_execute(grn_ctx *ctx,
                                query_options_expression->codes[0].value);
   }
 
-  grn_table_select(ctx,
-                   table,
-                   filter->condition.expression,
-                   filter->filtered,
-                   GRN_OP_OR);
+  {
+    grn_table_selector table_selector;
+    grn_table_selector_init(ctx, &table_selector, table, filter->condition.expression, GRN_OP_OR);
+    filter->set_fuzzy_options(ctx, &table_selector);
+    grn_table_selector_select(ctx, &table_selector, filter->filtered);
+    grn_table_selector_fin(ctx, &table_selector);
+  }
 
   return ctx->rc == GRN_SUCCESS;
 }

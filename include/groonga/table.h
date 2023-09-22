@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -561,12 +561,13 @@ grn_table_selector_get_max_n_enough_filtered_records(
 GRN_API grn_rc
 grn_table_selector_set_max_n_enough_filtered_records(
   grn_ctx *ctx, grn_table_selector *table_selector, int64_t n);
-GRN_API int64_t
-grn_table_selector_get_max_n_enough_filtered_records(
-  grn_ctx *ctx, grn_table_selector *table_selector);
+GRN_API uint32_t
+grn_table_selector_get_fuzzy_max_distance(grn_ctx *ctx,
+                                          grn_table_selector *table_selector);
 GRN_API grn_rc
-grn_table_selector_set_max_n_enough_filtered_records(
-  grn_ctx *ctx, grn_table_selector *table_selector, int64_t n);
+grn_table_selector_set_fuzzy_max_distance(grn_ctx *ctx,
+                                          grn_table_selector *table_selector,
+                                          uint32_t distance);
 GRN_API grn_obj *
 grn_table_selector_select(grn_ctx *ctx,
                           grn_table_selector *table_selector,

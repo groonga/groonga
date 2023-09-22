@@ -1,6 +1,6 @@
 /*
-  Copyright(C) 2013-2018  Brazil
-  Copyright(C) 2018-2021  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2013-2018  Brazil
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -52,6 +52,7 @@ struct _grn_table_selector {
   float weight_factor;
   double enough_filtered_ratio;
   int64_t max_n_enough_filtered_records;
+  grn_fuzzy_search_optarg fuzzy_options;
   grn_table_selector_data data;
 };
 

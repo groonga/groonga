@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2018  Brazil
-  Copyright (C) 2018-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2018-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -116,6 +116,8 @@ grn_table_selector_init(grn_ctx *ctx,
     grn_table_select_enough_filtered_ratio;
   table_selector->max_n_enough_filtered_records =
     grn_table_select_max_n_enough_filtered_records;
+  grn_fuzzy_search_optarg fuzzy_options = {0};
+  table_selector->fuzzy_options = fuzzy_options;
   grn_table_selector_data data = {0};
   table_selector->data = data;
 }
@@ -233,6 +235,23 @@ grn_table_selector_set_max_n_enough_filtered_records(
 {
   GRN_API_ENTER;
   table_selector->max_n_enough_filtered_records = n;
+  GRN_API_RETURN(ctx->rc);
+}
+
+uint32_t
+grn_table_selector_get_fuzzy_max_distance(grn_ctx *ctx,
+                                          grn_table_selector *table_selector)
+{
+  return table_selector->fuzzy_options.max_distance;
+}
+
+grn_rc
+grn_table_selector_set_fuzzy_max_distance(grn_ctx *ctx,
+                                          grn_table_selector *table_selector,
+                                          uint32_t distance)
+{
+  GRN_API_ENTER;
+  table_selector->fuzzy_options.max_distance = distance;
   GRN_API_RETURN(ctx->rc);
 }
 
@@ -1576,6 +1595,7 @@ select_index(grn_ctx *ctx, grn_table_selector *table_selector)
       options->similarity_threshold = si->similarity_threshold;
       options->quorum_threshold = si->quorum_threshold;
       options->query_options = table_selector->query_options;
+      options->fuzzy = table_selector->fuzzy_options;
       uint32_t section = GRN_UINT32_VALUE_AT(&(si->sections), i);
       float weight = GRN_FLOAT32_VALUE_AT(&(si->weights), i);
       weight *= table_selector->weight_factor * si->weight_factor;
