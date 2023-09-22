@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2018  Brazil
-  Copyright (C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -164,6 +164,10 @@ int32_t
 grn_proc_option_value_int32(grn_ctx *ctx,
                             grn_obj *option,
                             int32_t default_value);
+uint32_t
+grn_proc_option_value_uint32(grn_ctx *ctx,
+                             grn_obj *option,
+                             uint32_t default_value);
 double
 grn_proc_option_value_double(grn_ctx *ctx,
                              grn_obj *option,
