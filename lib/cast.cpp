@@ -399,6 +399,52 @@ namespace {
     }
   };
 
+  struct Float32Handler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
+    grn_ctx *ctx_;
+    grn_caster *caster_;
+
+    Float32Handler(grn_ctx *ctx, grn_caster *caster) : ctx_(ctx), caster_(caster)
+    {
+    }
+
+    bool
+    Default()
+    {
+      return false;
+    }
+
+    bool
+    Int(int value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Uint(unsigned int value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Int64(int64_t value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Uint64(uint64_t value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Double(double value)
+    {
+      GRN_FLOAT32_PUT(ctx_, caster_->dest, value);
+      return true;
+    }
+  };
+
   struct TableWeightHandler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
     TableWeightHandler(grn_ctx *ctx, grn_caster *caster)
       : ctx_(ctx),
@@ -1290,6 +1336,8 @@ namespace {
       return json_to_uvector<UInt64Handler>(ctx, &document, caster);
     case GRN_DB_FLOAT:
       return json_to_uvector<FloatHandler>(ctx, &document, caster);
+    case GRN_DB_FLOAT32:
+      return json_to_uvector<Float32Handler>(ctx, &document, caster);
     default:
       {
         grn_rc rc = GRN_INVALID_ARGUMENT;
