@@ -86,6 +86,13 @@ project(
 set(GRN_PROJECT_NAME "${PROJECT_NAME}")
 set(GRN_PROJECT_LABEL "Groonga")
 
+install(
+  CODE "
+if(NOT CMAKE_INSTALL_COMPONENT)
+  set(CMAKE_INSTALL_COMPONENT Unspecified)
+endif()
+")
+
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -480,57 +487,46 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
     set(GRN_WITH_ZSTD TRUE)
     message(STATUS "Zstandard: system")
   else()
-    set(ZSTD_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-install")
-    if(MSVC)
-      set(ZSTD_LIBRARY_BASE_NAME zstd_static)
-    else()
-      set(ZSTD_LIBRARY_BASE_NAME zstd)
-    endif()
-    set(ZSTD_STATIC_LIBRARY "${ZSTD_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
-    string(APPEND ZSTD_STATIC_LIBRARY "/${CMAKE_STATIC_LIBRARY_PREFIX}")
-    string(APPEND ZSTD_STATIC_LIBRARY "${ZSTD_LIBRARY_BASE_NAME}")
-    string(APPEND ZSTD_STATIC_LIBRARY "${CMAKE_STATIC_LIBRARY_SUFFIX}")
-    set(ZSTD_CMAKE_ARGS
-        -DCMAKE_INSTALL_PREFIX=${ZSTD_PREFIX}
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-        -DCMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR}
-        -DZSTD_BUILD_PROGRAMS=OFF
-        -DZSTD_BUILD_SHARED=OFF
-        -DZSTD_BUILD_STATIC=ON
-        -DZSTD_USE_STATIC_RUNTIME=ON)
-    set(ZSTD_SOURCE_BASE_NAME "zstd-${GRN_ZSTD_EP_VERSION}.tar.gz")
-    set(ZSTD_SOURCE_LOCAL_PATH
-        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${ZSTD_SOURCE_BASE_NAME}")
-    if(EXISTS ${ZSTD_SOURCE_LOCAL_PATH})
-      set(ZSTD_SOURCE_URL ${ZSTD_SOURCE_LOCAL_PATH})
-    else()
-      set(ZSTD_SOURCE_URL "https://github.com/facebook/zstd/releases/download")
-      string(APPEND ZSTD_SOURCE_URL "/v${GRN_ZSTD_EP_VERSION}")
-      string(APPEND ZSTD_SOURCE_URL "/${ZSTD_SOURCE_BASE_NAME}")
-    endif()
-    externalproject_add(
-      zstd-ep
-      ${GRN_EP_COMMON_OPTIONS}
-      CMAKE_ARGS ${ZSTD_CMAKE_ARGS}
-      SOURCE_SUBDIR "build/cmake"
-      URL ${ZSTD_SOURCE_URL}
-      BUILD_BYPRODUCTS ${ZSTD_STATIC_LIBRARY})
-    file(MAKE_DIRECTORY "${ZSTD_PREFIX}/include")
-    add_library(Groonga::libzstd STATIC IMPORTED)
-    set_target_properties(
-      Groonga::libzstd
-      PROPERTIES IMPORTED_LOCATION ${ZSTD_STATIC_LIBRARY}
-                 INTERFACE_INCLUDE_DIRECTORIES "${ZSTD_PREFIX}/include")
-    add_dependencies(Groonga::libzstd zstd-ep)
-    set(ZSTD_SOURCE_DIR
-        "${CMAKE_CURRENT_BINARY_DIR}/zstd-ep-prefix/src/zstd-ep")
-    install(FILES "${ZSTD_SOURCE_DIR}/CHANGELOG" "${ZSTD_SOURCE_DIR}/COPYING"
-                  "${ZSTD_SOURCE_DIR}/LICENSE" "${ZSTD_SOURCE_DIR}/README.md"
-            DESTINATION "${GRN_DATA_DIR}/zstd")
+    function(grn_build_zstd)
+      set(ZSTD_SOURCE_BASE_NAME "zstd-${GRN_ZSTD_EP_VERSION}.tar.gz")
+      set(ZSTD_SOURCE_LOCAL_PATH
+          "${CMAKE_CURRENT_SOURCE_DIR}/vendor/${ZSTD_SOURCE_BASE_NAME}")
+      if(EXISTS ${ZSTD_SOURCE_LOCAL_PATH})
+        set(ZSTD_SOURCE_URL ${ZSTD_SOURCE_LOCAL_PATH})
+      else()
+        set(ZSTD_SOURCE_URL
+            "https://github.com/facebook/zstd/releases/download")
+        string(APPEND ZSTD_SOURCE_URL "/v${GRN_ZSTD_EP_VERSION}")
+        string(APPEND ZSTD_SOURCE_URL "/${ZSTD_SOURCE_BASE_NAME}")
+      endif()
+      fetchcontent_declare(
+        zstd
+        SOURCE_SUBDIR "build/cmake"
+        URL ${ZSTD_SOURCE_URL})
+      set(BUILD_TESTING OFF)
+      set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME zstd)
+      set(ZSTD_BUILD_PROGRAMS OFF)
+      set(ZSTD_BUILD_SHARED OFF)
+      set(ZSTD_BUILD_STATIC ON)
+      set(ZSTD_USE_STATIC_RUNTIME ON)
+      fetchcontent_makeavailable(zstd)
+      set(ZSTD_INCLUDE_DIR
+          "${zstd_SOURCE_DIR}/lib"
+          PARENT_SCOPE)
+      # Can't use build directory path for INTERFACE target_include_directories() :<
+      #target_include_directories(libzstd_static INTERFACE "${zstd_SOURCE_DIR}/lib")
+      set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME Unspecified)
+      install(FILES "${zstd_SOURCE_DIR}/CHANGELOG" "${zstd_SOURCE_DIR}/COPYING"
+                    "${zstd_SOURCE_DIR}/LICENSE" "${zstd_SOURCE_DIR}/README.md"
+              DESTINATION "${GRN_DATA_DIR}/zstd")
+    endfunction()
+    grn_build_zstd()
+    set(GRN_ZSTD_TARGET libzstd_static)
+    set(GRN_WITH_BUNDLED_ZSTD TRUE)
     set(GRN_WITH_ZSTD TRUE)
-    message(STATUS "Zstandard: ${ZSTD_STATIC_LIBRARY} (bundled)")
+    message(STATUS "Zstandard: (bundled)")
   endif()
-  target_link_libraries(grn_dependencies INTERFACE Groonga::libzstd)
+  target_link_libraries(grn_dependencies INTERFACE ${GRN_ZSTD_TARGET})
 else()
   set(GRN_WITH_ZSTD FALSE)
 endif()
@@ -985,8 +981,18 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
       # TODO: Use bundled LZ4 when we use bundled LZ4.
       set(PREFER_EXTERNAL_LZ4 ON)
       set(PREFER_EXTERNAL_ZLIB ON)
-      # TODO: Use bundled Zstandard when we use bundled Zstandard.
       set(PREFER_EXTERNAL_ZSTD ON)
+      if(GRN_WITH_ZSTD)
+        if(GRN_WITH_BUNDLED_ZSTD)
+          set(ZSTD_LIBRARY "$<TARGET_FILE:${GRN_ZSTD_TARGET}>")
+        else()
+          set(ZSTD_INCLUDE_DIR
+              "$<TARGET_PROPERTY:${GRN_ZSTD_TARGET},INTERFACE_INCLUDE_DIRECTORIES>"
+          )
+          set(ZSTD_LIBRARY
+              "$<TARGET_PROPERTY:${GRN_ZSTD_TARGET},INTERFACE_LINK_LIBRARIES>")
+        endif()
+      endif()
       fetchcontent_makeavailable(blosc)
       target_include_directories(blosc2_static
                                  INTERFACE "${blosc_SOURCE_DIR}/include")
