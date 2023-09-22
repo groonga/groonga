@@ -1197,8 +1197,14 @@ Here are available flags:
        逆に例1のようにシャッフル後に同じ値が連続しないデータの場合は効果が薄いです。
        また、ベクターカラムの要素数が少ない場合も効果的ではありません。
 
-     * - ``COMPRESS_FILTER_BYTE_DELTA``
-       - .. versionadded:: 13.0.8
+       このフィルターを使うには、ビルド時に [`Blosc`](https://github.com/Blosc/c-blosc2) を有効にする必要があります。
+       `Blosc` を有効にするには、`CMake`のオプションに以下を追加してビルドしてください。
+       各OS向けに提供しているパッケージでは、 `Blosc` を有効にしてビルドしているため、パッケージを利用している場合は
+       デフォルトで使用できます。
+
+       .. code-block:
+          cmake ... -DGRN_WITH_BLOSC=bundled ...
+
        単独でも効果がありますが、 ``COMPRESS_FILTER_TRUNCATE_LAST_1BYTE`` と ``COMPRESS_FILTER_TRUNCATE_LAST_2BYTE``
        と組み合わせると、より高い効果が期待できます。
 
