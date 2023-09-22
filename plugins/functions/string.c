@@ -20,8 +20,9 @@
 #  define GRN_PLUGIN_FUNCTION_TAG functions_string
 #endif
 
-#include <groonga/plugin.h>
 #include <grn_onigmo.h>
+
+#include <groonga/plugin.h>
 
 /*
  * func_string_length() returns the number of characters in a string.
