@@ -993,7 +993,19 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
             "$<TARGET_PROPERTY:${GRN_LZ4_TARGET},INTERFACE_INCLUDE_DIRECTORIES>"
         )
         if(GRN_WITH_BUNDLED_LZ4)
-          set(LZ4_LIBRARY "$<TARGET_FILE:${GRN_LZ4_TARGET}>")
+          if(MSVC)
+            if(CMAKE_VERSION VERSION_LESS "3.27")
+              message(
+                FATAL_ERROR
+                  "CMake 3.27 or later is required for bundled LZ4 and bundled Blosc"
+              )
+            endif()
+            # Because we use shared library for now. We may want to use use
+            # static library for LZ4 like Zstandard.
+            set(LZ4_LIBRARY "$<TARGET_IMPORT_FILE:${GRN_LZ4_TARGET}>")
+          else()
+            set(LZ4_LIBRARY "$<TARGET_FILE:${GRN_LZ4_TARGET}>")
+          endif()
         else()
           set(LZ4_LIBRARY
               "$<TARGET_PROPERTY:${GRN_LZ4_TARGET},INTERFACE_LINK_LIBRARIES>")
