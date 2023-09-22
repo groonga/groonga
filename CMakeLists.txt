@@ -86,10 +86,12 @@ project(
 set(GRN_PROJECT_NAME "${PROJECT_NAME}")
 set(GRN_PROJECT_LABEL "Groonga")
 
+set(GRN_INSTALL_COMPONENT_NAME groonga)
+set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${GRN_INSTALL_COMPONENT_NAME})
 install(
   CODE "
 if(NOT CMAKE_INSTALL_COMPONENT)
-  set(CMAKE_INSTALL_COMPONENT Unspecified)
+  set(CMAKE_INSTALL_COMPONENT ${GRN_INSTALL_COMPONENT_NAME})
 endif()
 ")
 
@@ -515,7 +517,7 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
           PARENT_SCOPE)
       # Can't use build directory path for INTERFACE target_include_directories() :<
       #target_include_directories(libzstd_static INTERFACE "${zstd_SOURCE_DIR}/lib")
-      set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME Unspecified)
+      set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${GRN_INSTALL_COMPONENT_NAME})
       install(FILES "${zstd_SOURCE_DIR}/CHANGELOG" "${zstd_SOURCE_DIR}/COPYING"
                     "${zstd_SOURCE_DIR}/LICENSE" "${zstd_SOURCE_DIR}/README.md"
               DESTINATION "${GRN_DATA_DIR}/zstd")
@@ -980,6 +982,7 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
       set(BUILD_SHARED OFF)
       set(BUILD_STATIC ON)
       set(BUILD_TESTS OFF)
+      set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME blosc)
       set(PREFER_EXTERNAL_LZ4 ON)
       if(GRN_WITH_LZ4)
         set(LZ4_INCLUDE_DIRECTORY
@@ -1008,6 +1011,7 @@ if(NOT "${GRN_WITH_BLOSC}" STREQUAL "no")
       fetchcontent_makeavailable(blosc)
       target_include_directories(blosc2_static
                                  INTERFACE "${blosc_SOURCE_DIR}/include")
+      set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${GRN_INSTALL_COMPONENT_NAME})
       install(
         FILES "${blosc_SOURCE_DIR}/LICENSE.txt"
               "${blosc_SOURCE_DIR}/LICENSES/BITSHUFFLE.txt"
