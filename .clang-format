@@ -25,10 +25,12 @@ BraceWrapping:
   AfterFunction: true
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Custom
+ConstructorInitializerIndentWidth: 2
 ContinuationIndentWidth: 2
 IndentCaseBlocks: true
 IndentPPDirectives: AfterHash
 IndentWidth: 2
+NamespaceIndentation: All
 PPIndentWidth: 2
 PackConstructorInitializers: CurrentLine
 SortIncludes: Never
