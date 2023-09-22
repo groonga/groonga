@@ -4000,6 +4000,7 @@ grn_table_select(grn_ctx *ctx,
   grn_table_selector table_selector;
   grn_table_selector_init(ctx, &table_selector, table, expr, op);
   result_set = grn_table_selector_select(ctx, &table_selector, result_set);
+  grn_table_selector_fin(ctx, &table_selector);
   GRN_API_RETURN(result_set);
 }
 
