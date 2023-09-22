@@ -4906,15 +4906,17 @@ grn_ja_put_blosc_create_schunk(grn_ctx *ctx,
   }
   size_t current_filter_id = BLOSC2_MAX_FILTERS - 1;
   cparams->filters[current_filter_id] = BLOSC_NOFILTER;
-  if (cparams->typesize > (int32_t)sizeof(char) && n_elements > 1) {
+  if (n_elements > 1) {
     if (ja->header->flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
       cparams->filters[current_filter_id] = BLOSC_FILTER_BYTEDELTA;
       cparams->filters_meta[current_filter_id] = cparams->typesize;
       current_filter_id--;
     }
-    if (ja->header->flags & GRN_OBJ_COMPRESS_FILTER_SHUFFLE) {
-      cparams->filters[current_filter_id] = BLOSC_SHUFFLE;
-      current_filter_id--;
+    if (cparams->typesize > (int32_t)sizeof(char)) {
+      if (ja->header->flags & GRN_OBJ_COMPRESS_FILTER_SHUFFLE) {
+        cparams->filters[current_filter_id] = BLOSC_SHUFFLE;
+        current_filter_id--;
+      }
     }
     if (range_id == GRN_DB_FLOAT || range_id == GRN_DB_FLOAT32) {
       if (ja->header->flags & GRN_OBJ_COMPRESS_FILTER_TRUNCATE_LAST_2BYTES) {
