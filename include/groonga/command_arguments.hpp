@@ -250,6 +250,38 @@ namespace grn {
                           default_value);
     }
 
+    uint32_t
+    get_uint32(const char *name, uint32_t default_value)
+    {
+      return arg_to_uint32(get(name), default_value);
+    }
+
+    uint32_t
+    get_uint32(const char *prefix, const char *name, uint32_t default_value)
+    {
+      return arg_to_uint32(get(prefix, name), default_value);
+    }
+
+    uint32_t
+    get_uint32(const char *prefix,
+               const char *name,
+               const char *fallback_name,
+               uint32_t default_value)
+    {
+      return arg_to_uint32(get(prefix, name, fallback_name), default_value);
+    }
+
+    uint32_t
+    get_uint32(const char *prefix,
+               const char *fallback_prefix,
+               const char *name,
+               const char *fallback_name,
+               uint32_t default_value)
+    {
+      return arg_to_uint32(get(prefix, fallback_prefix, name, fallback_name),
+                           default_value);
+    }
+
   private:
     grn_ctx *ctx_;
     grn_user_data *user_data_;
@@ -272,5 +304,8 @@ namespace grn {
 
     int32_t
     arg_to_int32(grn_obj *arg, int32_t default_value);
+
+    uint32_t
+    arg_to_uint32(grn_obj *arg, uint32_t default_value);
   };
 } // namespace grn
