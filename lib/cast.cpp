@@ -1,5 +1,5 @@
 /*
-  Copyright(C) 2019-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2019-2023  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -349,6 +349,52 @@ namespace {
     Uint64(uint64_t value)
     {
       GRN_UINT64_PUT(ctx_, caster_->dest, value);
+      return true;
+    }
+  };
+
+  struct FloatHandler : public RAPIDJSON_NAMESPACE::BaseReaderHandler<> {
+    grn_ctx *ctx_;
+    grn_caster *caster_;
+
+    FloatHandler(grn_ctx *ctx, grn_caster *caster) : ctx_(ctx), caster_(caster)
+    {
+    }
+
+    bool
+    Default()
+    {
+      return false;
+    }
+
+    bool
+    Int(int value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Uint(unsigned int value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Int64(int64_t value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Uint64(uint64_t value)
+    {
+      return Double(value);
+    }
+
+    bool
+    Double(double value)
+    {
+      GRN_FLOAT_PUT(ctx_, caster_->dest, value);
       return true;
     }
   };
@@ -1242,6 +1288,8 @@ namespace {
       return json_to_uvector<Int64Handler>(ctx, &document, caster);
     case GRN_DB_UINT64:
       return json_to_uvector<UInt64Handler>(ctx, &document, caster);
+    case GRN_DB_FLOAT:
+      return json_to_uvector<FloatHandler>(ctx, &document, caster);
     default:
       {
         grn_rc rc = GRN_INVALID_ARGUMENT;

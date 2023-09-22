@@ -1,0 +1,19 @@
+plugin_register functions/vector
+
+table_create Data TABLE_NO_KEY
+column_create Data numbers COLUMN_VECTOR Float
+
+table_create Numbers TABLE_PAT_KEY Float
+column_create Numbers data_numbers COLUMN_INDEX Data numbers
+
+load --table Data
+[
+{"numbers": "[0.1, 0.0, -0.2]"},
+{"numbers": "[-3, 2, -4294967296, 4294967296]"}
+]
+
+dump \
+  --dump_plugins no \
+  --dump_schema no
+
+select Data --filter 'vector_size(numbers) == 3'
