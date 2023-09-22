@@ -182,7 +182,7 @@ html_context = {
   "language": language,
   "github_user": "groonga",
   "github_repo": "groonga",
-  "github_version": "master",
+  "github_version": "main",
   "doc_path": "doc/source",
 }
 

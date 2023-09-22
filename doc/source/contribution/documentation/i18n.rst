@@ -187,7 +187,7 @@ Here are command lines to create patch::
 
   % git add doc/locale/ja/LC_MESSAGES/*.po
   % git commit
-  % git format-patch origin/master
+  % git format-patch origin/main
 
 You can find 000X-YYY.patch files in the current
 directory. Please send those files to us!

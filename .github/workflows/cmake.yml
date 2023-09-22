@@ -2,7 +2,7 @@ name: CMake
 on:
   push:
     branches:
-      - master
+      - main
       - 'maintenance/**'
     tags:
       - '*'

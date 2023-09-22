@@ -11,7 +11,7 @@ if [ -n "${DOCKER}" ]; then
   curl \
     --silent \
     --location \
-    https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
+    https://raw.github.com/clear-code/cutter/HEAD/data/travis/setup.sh | sh
   exit $?
 fi
 
@@ -23,7 +23,7 @@ case "${TRAVIS_OS_NAME}" in
     curl \
       --silent \
       --location \
-      https://raw.github.com/clear-code/cutter/master/data/travis/setup.sh | sh
+      https://raw.github.com/clear-code/cutter/HEAD/data/travis/setup.sh | sh
     if [ "${ENABLE_DOCUMENT}" = "yes" ]; then
       sudo apt install -qq -y \
            python3-pip

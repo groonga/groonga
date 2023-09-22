@@ -2,7 +2,7 @@ name: Autotools
 on:
   push:
     branches:
-      - master
+      - main
       - 'maintenance/**'
     tags:
       - '*'

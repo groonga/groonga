@@ -36,7 +36,7 @@ if [ "$GROONGA_MASTER" = "yes" ]; then
        libstemmer-dev \
        mecab-naist-jdic \
        pkg-config
-  git clone --recursive --depth 1 --branch master https://github.com/groonga/groonga.git
+  git clone --recursive --depth 1 --branch main https://github.com/groonga/groonga.git
   cd groonga
   touch lib/grn_ecmascript.c
   ./autogen.sh

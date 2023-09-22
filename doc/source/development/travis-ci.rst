@@ -33,7 +33,7 @@ Add the following ``sudo`` and ``before_install`` configuration to
 
   sudo: required
   before_install:
-    - curl --silent --location https://raw.githubusercontent.com/groonga/groonga/master/data/travis/setup.sh | sh
+    - curl --silent --location https://raw.githubusercontent.com/groonga/groonga/HEAD/data/travis/setup.sh | sh
 
 ``sudo: required`` configuration is required because ``sudo`` command
 is used in the setup script.
