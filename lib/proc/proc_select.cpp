@@ -1176,8 +1176,12 @@ namespace {
     void
     set_fuzzy_options(grn_ctx *ctx, grn_table_selector *table_selector)
     {
-      grn_table_selector_set_fuzzy_max_distance(ctx, table_selector, fuzzy_max_distance);
-      grn_table_selector_set_fuzzy_max_expansion(ctx, table_selector, fuzzy_max_expansion);
+      grn_table_selector_set_fuzzy_max_distance(ctx,
+                                                table_selector,
+                                                fuzzy_max_distance);
+      grn_table_selector_set_fuzzy_max_expansion(ctx,
+                                                 table_selector,
+                                                 fuzzy_max_expansion);
     }
 
     grn_ctx *ctx_;
@@ -3167,7 +3171,11 @@ grn_filter_execute(grn_ctx *ctx,
 
   {
     grn_table_selector table_selector;
-    grn_table_selector_init(ctx, &table_selector, table, filter->condition.expression, GRN_OP_OR);
+    grn_table_selector_init(ctx,
+                            &table_selector,
+                            table,
+                            filter->condition.expression,
+                            GRN_OP_OR);
     filter->set_fuzzy_options(ctx, &table_selector);
     grn_table_selector_select(ctx, &table_selector, filter->filtered);
     grn_table_selector_fin(ctx, &table_selector);
