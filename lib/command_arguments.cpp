@@ -21,9 +21,9 @@
 #include <groonga.hpp>
 
 namespace grn {
-  int32_t CommandArguments::arg_to_int32(grn_obj *arg,
-                                         int32_t default_value)
+  int32_t
+  CommandArguments::arg_to_int32(grn_obj *arg, int32_t default_value)
   {
     return grn_proc_option_value_int32(ctx_, arg, default_value);
   }
-}
+} // namespace grn
