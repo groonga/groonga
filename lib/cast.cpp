@@ -403,7 +403,9 @@ namespace {
     grn_ctx *ctx_;
     grn_caster *caster_;
 
-    Float32Handler(grn_ctx *ctx, grn_caster *caster) : ctx_(ctx), caster_(caster)
+    Float32Handler(grn_ctx *ctx, grn_caster *caster)
+      : ctx_(ctx),
+        caster_(caster)
     {
     }
 
