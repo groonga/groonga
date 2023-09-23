@@ -10,6 +10,6 @@ log_level --level dump
 #@add-important-log-levels dump
 #@add-ignore-log-pattern /\A\[io\]/
 reference_acquire --target_name Users --auto_release_count 1
-column_create Users name COLUMN_SCALAR ShortText
 #@sleep-after-command 1
+column_create Users name COLUMN_SCALAR ShortText
 select Users
