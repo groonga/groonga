@@ -634,8 +634,7 @@ jobs:
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_BUILD_TYPE=Release
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_INSTALL_PREFIX=%FULL_INSTALL_FOLDER%
           set CMAKE_ARGS=%CMAKE_ARGS% -DCMAKE_UNITY_BUILD=ON
-          cmake %CMAKE_ARGS% || ^
-            (type ..\apache-arrow-build\CMakeFiles\CMakeError.log & exit /B)
+          cmake %CMAKE_ARGS% || (type ..\apache-arrow-build\CMakeFiles\CMakeError.log & exit /B)
           cmake --build ..\apache-arrow-build || exit /B
           cmake --install ..\apache-arrow-build || exit /B
           ccache --show-stats --verbose --version
@@ -655,8 +654,7 @@ jobs:
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_XXHASH=bundled
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_ZLIB=no
           set CMAKE_ARGS=%CMAKE_ARGS% -DGRN_WITH_ZSTD=bundled
-          cmake %CMAKE_ARGS% || ^
-            (type ..\groonga-build\CMakeFiles\CMakeError.log & exit /B)
+          cmake %CMAKE_ARGS% || (type ..\groonga-build\CMakeFiles\CMakeError.log & exit /B)
           cmake --build ..\groonga-build || exit /B
           cmake --install ..\groonga-build || exit /B
           ccache --show-stats --verbose --version
