@@ -1,0 +1,8 @@
+#@require-feature blosc
+
+table_create Logs TABLE_NO_KEY
+column_create Logs scores \
+  COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE|COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES \
+  Float
+
+schema

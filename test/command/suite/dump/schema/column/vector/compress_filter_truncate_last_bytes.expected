@@ -1,7 +1,0 @@
-table_create Bookmarks TABLE_HASH_KEY ShortText
-[[0,0.0,0.0],true]
-column_create Bookmarks scores   COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_TRUNCATE_LAST_1BYTE|COMPRESS_FILTER_TRUNCATE_LAST_2BYTES   Float
-[[0,0.0,0.0],true]
-dump
-table_create Bookmarks TABLE_HASH_KEY ShortText
-column_create Bookmarks scores COLUMN_VECTOR|COMPRESS_LZ4|COMPRESS_FILTER_TRUNCATE_LAST_2BYTES Float

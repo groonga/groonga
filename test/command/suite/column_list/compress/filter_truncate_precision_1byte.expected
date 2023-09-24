@@ -1,6 +1,6 @@
 table_create Memos TABLE_NO_KEY
 [[0,0.0,0.0],true]
-column_create Memos scores   COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_TRUNCATE_LAST_1BYTE|COMPRESS_FILTER_TRUNCATE_LAST_2BYTES   Float
+column_create Memos scores   COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE   Float
 [[0,0.0,0.0],true]
 column_list Memos
 [
@@ -49,7 +49,7 @@ column_list Memos
       "scores",
       "db/db.0000101",
       "var",
-      "COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_TRUNCATE_LAST_2BYTES|PERSISTENT",
+      "COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE|PERSISTENT",
       "Memos",
       "Float",
       [

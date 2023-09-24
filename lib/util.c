@@ -611,10 +611,10 @@ grn_store_inspect_body(grn_ctx *ctx, grn_obj *buf, grn_obj *obj)
   if (flags & GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA) {
     GRN_TEXT_PUTS(ctx, buf, " compress-filter:byte-delta");
   }
-  if (flags & GRN_OBJ_COMPRESS_FILTER_TRUNCATE_LAST_2BYTES) {
-    GRN_TEXT_PUTS(ctx, buf, " compress-filter:truncate-last-2bytes");
-  } else if (flags & GRN_OBJ_COMPRESS_FILTER_TRUNCATE_LAST_1BYTE) {
-    GRN_TEXT_PUTS(ctx, buf, " compress-filter:truncate-last-1byte");
+  if (flags & GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES) {
+    GRN_TEXT_PUTS(ctx, buf, " compress-filter:truncate-precision-2bytes");
+  } else if (flags & GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE) {
+    GRN_TEXT_PUTS(ctx, buf, " compress-filter:truncate-precision-1byte");
   }
 
   if (flags & GRN_OBJ_RING_BUFFER) {

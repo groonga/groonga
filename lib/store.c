@@ -4101,8 +4101,8 @@ grn_ja_ref(
 #ifdef GRN_WITH_BLOSC
   if (ja->header->flags &
       (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA |
-       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_LAST_1BYTE |
-       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_LAST_2BYTES)) {
+       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE |
+       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES)) {
     return grn_ja_ref_blosc(ctx, ja, id, iw, value_len);
   }
 #endif
@@ -4919,12 +4919,13 @@ grn_ja_put_blosc_create_schunk(grn_ctx *ctx,
       }
     }
     if (range_id == GRN_DB_FLOAT || range_id == GRN_DB_FLOAT32) {
-      if (ja->header->flags & GRN_OBJ_COMPRESS_FILTER_TRUNCATE_LAST_2BYTES) {
+      if (ja->header->flags &
+          GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES) {
         cparams->filters[current_filter_id] = BLOSC_TRUNC_PREC;
         cparams->filters_meta[current_filter_id] = -16;
         current_filter_id--;
       } else if (ja->header->flags &
-                 GRN_OBJ_COMPRESS_FILTER_TRUNCATE_LAST_1BYTE) {
+                 GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE) {
         cparams->filters[current_filter_id] = BLOSC_TRUNC_PREC;
         cparams->filters_meta[current_filter_id] = -8;
         current_filter_id--;
@@ -5156,8 +5157,8 @@ grn_ja_put(grn_ctx *ctx,
 #ifdef GRN_WITH_BLOSC
   if (ja->header->flags &
       (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA |
-       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_LAST_1BYTE |
-       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_LAST_2BYTES)) {
+       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE |
+       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES)) {
     return grn_ja_put_blosc(ctx, ja, id, value, value_len, flags, cas);
   }
 #endif
@@ -5191,8 +5192,8 @@ grn_ja_putv_internal(grn_ctx *ctx,
 #ifdef GRN_WITH_BLOSC
   if (ja->header->flags &
       (GRN_OBJ_COMPRESS_FILTER_SHUFFLE | GRN_OBJ_COMPRESS_FILTER_BYTE_DELTA |
-       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_LAST_1BYTE |
-       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_LAST_2BYTES)) {
+       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE |
+       GRN_OBJ_COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES)) {
     return grn_ja_putv_blosc(ctx, ja, id, raw_value, header, body, footer);
   }
 #endif

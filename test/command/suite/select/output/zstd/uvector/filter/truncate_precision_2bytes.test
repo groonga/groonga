@@ -2,7 +2,7 @@
 
 table_create Entries TABLE_PAT_KEY ShortText
 column_create Entries values \
-  COLUMN_VECTOR|COMPRESS_LZ4|COMPRESS_FILTER_TRUNCATE_LAST_1BYTE \
+  COLUMN_VECTOR|COMPRESS_ZSTD|COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES \
   Float
 
 #@generate-series 0 0 Entries '{"_key" => "packed", "values" => [0.1, -0.2, 0.0]}'
