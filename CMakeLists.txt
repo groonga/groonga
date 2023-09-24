@@ -545,14 +545,30 @@ set(GRN_WITH_RAPIDJSON
     "auto"
     CACHE STRING "Support JSON processing by RapidJSON.")
 if(NOT "${GRN_WITH_RAPIDJSON}" STREQUAL "no")
-  find_package(GroongaRapidJSON)
+  if("${GRN_WITH_RAPIDJSON}" STREQUAL "bundled")
+    set(GroongaRapidJSON_FOUND FALSE)
+  else()
+    if("${GRN_WITH_RAPIDJSON}" STREQUAL "system")
+      find_package(GroongaRapidJSON REQUIRED)
+    else()
+      find_package(GroongaRapidJSON)
+    endif()
+  endif()
   if(GroongaRapidJSON_FOUND)
     set(GRN_WITH_RAPIDJSON TRUE)
+    message(STATUS "RapidJSON: system")
     target_link_libraries(grn_dependencies INTERFACE Groonga::RapidJSON)
   else()
-    set(RAPIDJSON_SOURCE_URL
-        "https://github.com/Tencent/rapidjson/archive/v${GRN_RAPIDJSON_EP_VERSION}.tar.gz"
+    set(GRN_BUNDLED_RAPIDJSON_DIR
+        "${CMAKE_CURRENT_SOURCE_DIR}/vendor/rapidjson-${GRN_BUNDLED_RAPIDJSON_VERSION}"
     )
+    if(EXISTS ${GRN_BUNDLED_RAPIDJSON_DIR})
+      set(RAPIDJSON_SOURCE_URL ${GRN_BUNDLED_RAPIDJSON_DIR})
+    else()
+      set(RAPIDJSON_SOURCE_URL
+          "https://github.com/Tencent/rapidjson/archive/v${GRN_RAPIDJSON_EP_VERSION}.tar.gz"
+      )
+    endif()
     set(RAPIDJSON_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/rapidjson-ep-install")
     set(RAPIDJSON_CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -579,6 +595,7 @@ if(NOT "${GRN_WITH_RAPIDJSON}" STREQUAL "no")
             "${RAPIDJSON_SOURCE_DIR}/readme.md"
       DESTINATION "${GRN_DATA_DIR}/rapidjson")
     set(GRN_WITH_RAPIDJSON TRUE)
+    message(STATUS "RapidJSON: bundled")
     target_link_libraries(grn_dependencies INTERFACE Groonga::RapidJSON)
   endif()
 else()
