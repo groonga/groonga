@@ -1161,11 +1161,27 @@ Here are available flags:
    * - ``COMPRESS_FILTER_SHUFFLE``
      - .. versionadded:: 13.0.8
 
-       ``COMPRESS_ZLIB`` や ``COMPRESS_LZ4`` と合わせて使用します。
-       このフィルターを使うことで、 ``COMPRESS_LZ4`` や ``COMPRESS_ZSTD`` の圧縮率の向上が期待できます。
-       ただし、データによっては圧縮率が変わらなかったり、逆に下がったりすることがあります。
+       ``COMPRESS_FILTER_SHUFFLE`` は圧縮前にデータをフィルターすることで
+       ``COMPRESS_ZLIB``/``COMPRESS_LZ4``/``COMPRESS_ZSTD`` の圧縮率を高めることを狙ったフラグです。
 
-       このフィルターは、カラムの圧縮前にベクターカラム内の各要素の0バイト目だけのデータを集めて連続で配置します。
+       データによって効果があることもあれば効果がないこともあります。圧縮率が下がることもありえます。
+       フィルターを有効にすることで追加の処理が入るのでカラムの保存・参照処理は確実に遅くなります。
+       データに合わせて効果があるフィルターだけ有効にすることが重要です。
+
+       なお、 ``COMPRESS_ZLIB``/``COMPRESS_LZ4``/``COMPRESS_ZSTD`` を指定しない場合は
+       `BloscLZ <https://www.blosc.org/pages/blosc-in-depth/#blosc-as-a-meta-compressor>`_ という圧縮アルゴリズムが使われるので、
+       フィルターを有効にすることでほとんどの場合は未圧縮の場合よりもサイズが小さくなります。
+       しかし、データによってはフィルターを有効にせずに単に ``COMPRESS_ZLIB``/``COMPRESS_LZ4``/``COMPRESS_ZSTD`` を指定するだけで
+       十分であることもあるため、実際のデータにあわせて適切なフラグを設定するようにしてください。
+
+       ``COMPRESS_FILTER_SHUFFLE`` フラグはBloscサポートが有効になっていないと無視されることに注意してください。
+       各種パッケージでは有効になっていますが、自分でビルドするときは明示的に有効にする必要があります。
+       自分でビルドする場合は `:doc:/install/others` を参照してください。
+
+       このフィルターは ``COLUMN_VECTOR`` でのみ使用できます。 ``COLUMN_SCALAR`` のときはこのフラグは無視されます。
+
+       このフィルターはNバイト目の要素に着目してデータを並び替えます。
+       まず、ベクターカラム内の各要素の0バイト目だけのデータを集めて連続で配置します。
        その後、同様に1バイト目のデータだけを集めて連続で配置するということをすべてのバイトに対して繰り返します。
 
        具体的には、以下のように動作します。
@@ -1220,7 +1236,25 @@ Here are available flags:
    * - ``COMPRESS_FILTER_BYTE_DELTA``
      - .. versionadded:: 13.0.8
 
-       ``COMPRESS_ZLIB`` や ``COMPRESS_LZ4`` と合わせて使用します。
+       ``COMPRESS_FILTER_BYTE_DELTA`` は圧縮前にデータをフィルターすることで
+       ``COMPRESS_ZLIB``/``COMPRESS_LZ4``/``COMPRESS_ZSTD`` の圧縮率を高めることを狙ったフラグです。
+
+       データによって効果があることもあれば効果がないこともあります。圧縮率が下がることもありえます。
+       フィルターを有効にすることで追加の処理が入るのでカラムの保存・参照処理は確実に遅くなります。
+       データに合わせて効果があるフィルターだけ有効にすることが重要です。
+
+       なお、 ``COMPRESS_ZLIB``/``COMPRESS_LZ4``/``COMPRESS_ZSTD`` を指定しない場合は
+       `BloscLZ <https://www.blosc.org/pages/blosc-in-depth/#blosc-as-a-meta-compressor>`_ という圧縮アルゴリズムが使われるので、
+       フィルターを有効にすることでほとんどの場合は未圧縮の場合よりもサイズが小さくなります。
+       しかし、データによってはフィルターを有効にせずに単に ``COMPRESS_ZLIB``/``COMPRESS_LZ4``/``COMPRESS_ZSTD`` を指定するだけで
+       十分であることもあるため、実際のデータにあわせて適切なフラグを設定するようにしてください。
+
+       ``COMPRESS_FILTER_BYTE_DELTA`` フラグはBloscサポートが有効になっていないと無視されることに注意してください。
+       各種パッケージでは有効になっていますが、自分でビルドするときは明示的に有効にする必要があります。
+       自分でビルドする場合は `:doc:/install/others` を参照してください。
+
+       このフィルターは ``COLUMN_VECTOR`` でのみ使用できます。 ``COLUMN_SCALAR`` のときはこのフラグは無視されます。
+
        圧縮対象の値のバイト間の差分を計算するフィルターです。
 
        2バイト以上のデータの場合は、 ``COMPRESS_FILTER_SHUFFLE`` とも合わせて使うことを想定しています。
@@ -1277,6 +1311,25 @@ Here are available flags:
    * - ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE``
      - .. versionadded:: 13.0.8
 
+       ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` は圧縮前にデータをフィルターすることで
+       ``COMPRESS_ZLIB``/``COMPRESS_LZ4``/``COMPRESS_ZSTD`` の圧縮率を高めることを狙ったフラグです。
+
+       データによって効果があることもあれば効果がないこともあります。圧縮率が下がることもありえます。
+       フィルターを有効にすることで追加の処理が入るのでカラムの保存・参照処理は確実に遅くなります。
+       データに合わせて効果があるフィルターだけ有効にすることが重要です。
+
+       なお、 ``COMPRESS_ZLIB``/``COMPRESS_LZ4``/``COMPRESS_ZSTD`` を指定しない場合は
+       `BloscLZ <https://www.blosc.org/pages/blosc-in-depth/#blosc-as-a-meta-compressor>`_ という圧縮アルゴリズムが使われるので、
+       フィルターを有効にすることでほとんどの場合は未圧縮の場合よりもサイズが小さくなります。
+       しかし、データによってはフィルターを有効にせずに単に ``COMPRESS_ZLIB``/``COMPRESS_LZ4``/``COMPRESS_ZSTD`` を指定するだけで
+       十分であることもあるため、実際のデータにあわせて適切なフラグを設定するようにしてください。
+
+       ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` フラグはBloscサポートが有効になっていないと無視されることに注意してください。
+       各種パッケージでは有効になっていますが、自分でビルドするときは明示的に有効にする必要があります。
+       自分でビルドする場合は `:doc:/install/others` を参照してください。
+
+       このフィルターは ``COLUMN_VECTOR`` でのみ使用できます。 ``COLUMN_SCALAR`` のときはこのフラグは無視されます。
+
        このフィルターは、 ``Float/Float32`` でのみ使用できます。
        ベクターカラムの各要素（浮動小数点数）の精度を1バイト落とします。
        ``COMPRESS_FILTER_SHUFFLE`` と組み合わせて使うことを想定しています。
@@ -1314,6 +1367,23 @@ Here are available flags:
 
    * - ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES``
      - .. versionadded:: 13.0.8
+
+        ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` は圧縮前にデータをフィルターすることで
+       ``COMPRESS_ZLIB``/``COMPRESS_LZ4``/``COMPRESS_ZSTD`` の圧縮率を高めることを狙ったフラグです。
+
+       データによって効果があることもあれば効果がないこともあります。圧縮率が下がることもありえます。
+       フィルターを有効にすることで追加の処理が入るのでカラムの保存・参照処理は確実に遅くなります。
+       データに合わせて効果があるフィルターだけ有効にすることが重要です。
+
+       なお、 ``COMPRESS_ZLIB``/``COMPRESS_LZ4``/``COMPRESS_ZSTD`` を指定しない場合は
+       `BloscLZ <https://www.blosc.org/pages/blosc-in-depth/#blosc-as-a-meta-compressor>`_ という圧縮アルゴリズムが使われるので、
+       フィルターを有効にすることでほとんどの場合は未圧縮の場合よりもサイズが小さくなります。
+       しかし、データによってはフィルターを有効にせずに単に ``COMPRESS_ZLIB``/``COMPRESS_LZ4``/``COMPRESS_ZSTD`` を指定するだけで
+       十分であることもあるため、実際のデータにあわせて適切なフラグを設定するようにしてください。
+
+       ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES`` フラグはBloscサポートが有効になっていないと無視されることに注意してください。
+       各種パッケージでは有効になっていますが、自分でビルドするときは明示的に有効にする必要があります。
+       自分でビルドする場合は `:doc:/install/others` を参照してください。
 
        このフィルターは、 ``Float/Float32`` でのみ使用できます。
        ベクターカラムの各要素（浮動小数点数）の精度を2バイト落とします。
