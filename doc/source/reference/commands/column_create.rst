@@ -1312,36 +1312,43 @@ Here are available flags:
 
        ただし、浮動小数点数の精度は1バイト落ちるので、その分不正確なデータになることに注意してください。
 
+   * - ``COMPRESS_FILTER_TRUNCATE_PRECISION_2BYTES``
+     - .. versionadded:: 13.0.8
 
-     * - ``COMPRESS_FILTER_TRUNCATE_LAST_1BYTE``
-       - .. versionadded:: 13.0.8
+       このフィルターは、 ``Float/Float32`` でのみ使用できます。
+       ベクターカラムの各要素（浮動小数点数）の精度を2バイト落とします。
+       ``COMPRESS_FILTER_SHUFFLE`` と組み合わせて使うことを想定しています。
 
-       ベクターカラムの各要素の最下位バイトをすべて0にするフィルターです。
-       ``COMPRESS_FILTER_SHUFFLE`` と組み合わせることで、高い効果を期待できます。
+       例えば、[1.25, 3.67, 4.55]という浮動小数点のデータを内部表現で表すと以下のようになります。
 
-       最下位バイトをすべて0にすることで、 ``COMPRESS_FILTER_SHUFFLE`` を適用した際に
-       0が連続するデータが増えます。(前述の例だと、3byte目同士の値はすべて0になります。)
+       .. code-block::
 
-       前述の通り、ZstdやLz4は、同じ値が連続していると圧縮率が高くなる圧縮アルゴリズムなので
-       この操作を行うことで、圧縮率の向上が期待できます。
+          （リトルエンディアン）
+          [ "\x3F\xA0\x00\x00", "\x40\x6A\xE1\x48", "\x40\x91\x99\x9A"]
 
-       ただし、最下位バイトをすべて0にするため、値の精度が落ちることに注意してください。
+       このフィルターは、浮動小数点数の精度を2バイト落とすので、リトルエンディアンの場合は上位2バイト
+       ビックエンディアンの場合は最下2バイトをすべて0にします。
+       上記の例はリトルエンディアンなので、上位2バイトを0にして以下のようにします。
 
-     * - ``COMPRESS_FILTER_TRUNCATE_LAST_2BYTE``
-       - .. versionadded:: 13.0.8
+       .. code-block::
 
-       ベクターカラムの各要素の最下位2バイトをすべて0にするフィルターです。
-       ``COMPRESS_FILTER_SHUFFLE`` と組み合わせることで、高い効果を期待できます。
+          [ "\x3F\xA0\x00\x00", "\x40\x6A\x00\x00", "\x40\x91\x00\x00"]
 
-       ``COMPRESS_FILTER_TRUNCATE_LAST_1BYTE`` と同様、最下位2バイトをすべて0にすることで、
-       ``COMPRESS_FILTER_SHUFFLE`` を適用した際に0が連続するデータが増えます。
+       ここまでが、このフィルター単独で使用した時に実行される操作です。
+       ここから、 ``Zstandard`` や ``LZ4`` で圧縮したときの圧縮率を高めるために、 ``COMPRESS_FILTER_SHUFFLE`` を適用します。
+       ``COMPRESS_FILTER_SHUFFLE`` は同じバイトのデータを集めるフィルターです。
+       ``COMPRESS_FILTER_TRUNCATE_PRECISION_1BYTE`` のフィルター適用後に ``COMPRESS_FILTER_SHUFFLE`` を適用すると
+       以下のようなデータになります。
 
-       ``COMPRESS_FILTER_TRUNCATE_LAST_1BYTE`` は1byteを0にしていますが、このフラグは
-       2byteを0にするので、 ``COMPRESS_FILTER_TRUNCATE_LAST_1BYTE`` と比べてより圧縮率の
-       向上が期待できます。
+       .. code-block::
 
-       ただし、最下位2バイトをすべて0にするため ``COMPRESS_FILTER_TRUNCATE_LAST_1BYTE`` を
-       使ったときより値の精度が落ちることに注意してください。
+          "\x3F\x40\x40"（1バイト目をまとめたもの） + "\xA0\x6A\x91"（2バイト目をまとめたもの） + "\x00\x00\x00"（3バイト目をまとめたもの） + "\x00\x00\x00"（4バイト目をまとめたもの）
+
+       上記のように、浮動小数点の精度を2バイト落とすことで、 ``COMPRESS_FILTER_SHUFFLE`` した時に0が連続するデータを作ることができます。
+       上記の例では、「4バイト目をまとめたもの」と「3バイト目をまとめたもの」のことです。
+       このようにして、 ``Zstandard`` や ``LZ4`` で圧縮したときの圧縮率が高くなりやすいデータを作れます。
+
+       ただし、浮動小数点数の精度は2バイト落ちるので、その分不正確なデータになることに注意してください。
 
    * - ``WITH_SECTION``
      - It enables section support to index column.
