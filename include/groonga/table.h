@@ -575,19 +575,6 @@ GRN_API grn_rc
 grn_table_selector_set_fuzzy_max_expansion(grn_ctx *ctx,
                                            grn_table_selector *table_selector,
                                            uint32_t expansion);
-GRN_API uint32_t
-grn_table_selector_get_fuzzy_prefix_length(
-  grn_ctx *ctx, grn_table_selector *table_selector);
-GRN_API grn_rc
-grn_table_selector_set_fuzzy_prefix_length(
-  grn_ctx *ctx, grn_table_selector *table_selector, uint32_t length);
-GRN_API uint32_t
-grn_table_selector_get_fuzzy_flags(grn_ctx *ctx,
-                                   grn_table_selector *table_selector);
-GRN_API grn_rc
-grn_table_selector_set_fuzzy_flags(grn_ctx *ctx,
-                                   grn_table_selector *table_selector,
-                                   uint32_t flags);
 GRN_API grn_obj *
 grn_table_selector_select(grn_ctx *ctx,
                           grn_table_selector *table_selector,

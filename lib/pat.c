@@ -3058,25 +3058,8 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   if (args) {
     max_distance = args->max_distance;
     max_expansion = args->max_expansion;
+    prefix_match_size = args->prefix_match_size;
     flags = args->flags;
-    if (flags & GRN_TABLE_FUZZY_SEARCH_USE_PREFIX_LENGTH) {
-      const char *key_current = key;
-      const char *key_end = key_current + key_size;
-      uint32_t i;
-      for (i = 0; i < args->prefix_length; i++) {
-        if (key_current >= key_end) {
-          break;
-        }
-        int length = grn_charlen(ctx, key_current, key_end);
-        if (length == 0) {
-          break;
-        }
-        prefix_match_size += length;
-        key_current += length;
-      }
-    } else {
-      prefix_match_size = args->prefix_match_size;
-    }
   }
   if (key_size > GRN_TABLE_MAX_KEY_SIZE ||
       max_distance > GRN_TABLE_MAX_KEY_SIZE || prefix_match_size > key_size) {
@@ -3091,7 +3074,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   PAT_AT(pat, GRN_ID_NIL, node);
   id = node->lr[1];
 
-  if (prefix_match_size > 0) {
+  if (prefix_match_size) {
     grn_id tid;
     tid = common_prefix_pat_node_get(ctx, pat, key, prefix_match_size);
     if (tid != GRN_ID_NIL) {
