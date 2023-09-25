@@ -1263,6 +1263,17 @@ Here are available flags:
        したがって、 ``COMPRESS_FILTER_BYTE_DELTA`` と ``COMPRESS_FILTER_SHUFFLE`` を合わせて使う場合は、 ``Int8/UInt8 `` 以外
        のデータに対して使用してください。
 
+       このフィルターを使うには、ビルド時に [`Blosc`](https://github.com/Blosc/c-blosc2) を有効にする必要があります。
+       `Blosc` を有効にするには、`CMake`のオプションに以下を追加してビルドしてください。
+
+       .. code-block::
+          cmake ... -DGRN_WITH_BLOSC=bundled ...
+
+       各OS向けに提供しているパッケージでは、 `Blosc` を有効にしてビルドしているため、パッケージを利用している場合は
+       デフォルトで使用できます。
+
+       このフィルターは ``COLUMN_VECTOR`` でのみ使用できます。 ``COLUMN_SCALAR`` のときはこのフラグは無視されます。
+
 
        0バイト目同士: [f0[0], (f0[0] - f1[0]), (f1[0] - f2[0]), (f2[0] - f3[0])]
        1バイト目同士: [f0[1], (f0[1] - f1[1]), (f1[1] - f2[1]), (f2[1] - f3[1])]
