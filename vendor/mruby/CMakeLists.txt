@@ -98,6 +98,10 @@ if(GRN_WITH_MRUBY)
     "${CMAKE_CURRENT_SOURCE_DIR}/../onigmo-source"
   )
   target_compile_definitions(mruby PUBLIC "MRB_INT64" "HAVE_ONIGMO_H")
+  if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/mruby-include" AND
+      NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../mruby-include")
+    target_compile_definitions(mruby PUBLIC "MRB_NO_PRESYM")
+  endif()
   if(WIN32)
     target_compile_definitions(mruby PRIVATE "MRB_BUILD_AS_DLL" "MRB_CORE")
     target_link_libraries(mruby PUBLIC ws2_32.lib)
