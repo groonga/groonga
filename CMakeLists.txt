@@ -518,8 +518,10 @@ if(NOT "${GRN_WITH_ZSTD}" STREQUAL "no")
       set(ZSTD_INCLUDE_DIR
           "${zstd_SOURCE_DIR}/lib"
           PARENT_SCOPE)
-      # Can't use build directory path for INTERFACE target_include_directories() :<
-      #target_include_directories(libzstd_static INTERFACE "${zstd_SOURCE_DIR}/lib")
+      add_library(libzstd_headers INTERFACE)
+      target_include_directories(libzstd_headers
+                                 INTERFACE "${zstd_SOURCE_DIR}/lib")
+      target_link_libraries(grn_dependencies INTERFACE libzstd_headers)
       set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${GRN_INSTALL_COMPONENT_NAME})
       install(FILES "${zstd_SOURCE_DIR}/CHANGELOG" "${zstd_SOURCE_DIR}/COPYING"
                     "${zstd_SOURCE_DIR}/LICENSE" "${zstd_SOURCE_DIR}/README.md"
