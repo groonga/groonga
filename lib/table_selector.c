@@ -118,6 +118,8 @@ grn_table_selector_init(grn_ctx *ctx,
     grn_table_select_max_n_enough_filtered_records;
   grn_fuzzy_search_optarg fuzzy_options = {0};
   table_selector->fuzzy_options = fuzzy_options;
+  table_selector->fuzzy_options.flags |=
+    GRN_TABLE_FUZZY_SEARCH_USE_PREFIX_LENGTH;
   grn_table_selector_data data = {0};
   table_selector->data = data;
 }
@@ -269,6 +271,39 @@ grn_table_selector_set_fuzzy_max_expansion(grn_ctx *ctx,
 {
   GRN_API_ENTER;
   table_selector->fuzzy_options.max_expansion = expansion;
+  GRN_API_RETURN(ctx->rc);
+}
+
+uint32_t
+grn_table_selector_get_fuzzy_prefix_length(
+  grn_ctx *ctx, grn_table_selector *table_selector)
+{
+  return table_selector->fuzzy_options.prefix_length;
+}
+
+grn_rc
+grn_table_selector_set_fuzzy_prefix_length(
+  grn_ctx *ctx, grn_table_selector *table_selector, uint32_t length)
+{
+  GRN_API_ENTER;
+  table_selector->fuzzy_options.prefix_length = length;
+  GRN_API_RETURN(ctx->rc);
+}
+
+uint32_t
+grn_table_selector_get_fuzzy_flags(grn_ctx *ctx,
+                                   grn_table_selector *table_selector)
+{
+  return table_selector->fuzzy_options.flags;
+}
+
+grn_rc
+grn_table_selector_set_fuzzy_flags(grn_ctx *ctx,
+                                   grn_table_selector *table_selector,
+                                   uint32_t flags)
+{
+  GRN_API_ENTER;
+  table_selector->fuzzy_options.flags = flags;
   GRN_API_RETURN(ctx->rc);
 }
 
