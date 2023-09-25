@@ -33,6 +33,7 @@ on:
       - 'test/command_line/**'
       - 'test/mruby/**'
       - 'test/mruby/**'
+      - 'vendor/mruby/**'
   pull_request:
     paths:
       - '**/*.cmake'
@@ -60,6 +61,7 @@ on:
       - 'test/command_line/**'
       - 'test/mruby/**'
       - 'test/mruby/**'
+      - 'vendor/mruby/**'
 concurrency:
   group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
   cancel-in-progress: true

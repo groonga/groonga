@@ -27,6 +27,7 @@ on:
       - 'test/command/**'
       - 'test/command_line/**'
       - 'test/mruby/**'
+      - 'vendor/mruby/**'
   pull_request:
     paths:
       - '**/Makefile.am'
@@ -49,6 +50,7 @@ on:
       - 'test/command/**'
       - 'test/command_line/**'
       - 'test/mruby/**'
+      - 'vendor/mruby/**'
 concurrency:
   group: ${{ github.head_ref || github.sha }}-${{ github.workflow }}
   cancel-in-progress: true
