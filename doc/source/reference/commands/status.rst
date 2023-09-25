@@ -152,7 +152,7 @@ values:
 
    * - ``features``
      - .. versionadded:: 10.0.1
-     
+
        The list of Groonga's features and status (enabled or disabled).
      - .. code-block::
 
@@ -170,12 +170,15 @@ values:
              "poll": false,
              "rapidjson": false,
              "apache_arrow": false,
-             "xxhash": false
+             "xxhash": false,
+             "blosc": true,
+             "back_trace": true,
+             "reference_count": false
           }
-  
+
    * - ``apache_arrow``
      - .. versionadded:: 10.0.1
-     
+
        The information about Apache Arrow that Groonga currently uses. It's only displayed when Apache Arrow is enabled.
      - .. code-block::
 
