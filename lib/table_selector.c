@@ -291,6 +291,30 @@ grn_table_selector_set_fuzzy_prefix_length(grn_ctx *ctx,
   GRN_API_RETURN(ctx->rc);
 }
 
+float
+grn_table_selector_get_fuzzy_max_distance_ratio(
+  grn_ctx *ctx, grn_table_selector *table_selector)
+{
+  return table_selector->fuzzy_options.max_distance_ratio;
+}
+
+grn_rc
+grn_table_selector_set_fuzzy_max_distance_ratio(
+  grn_ctx *ctx, grn_table_selector *table_selector, float ratio)
+{
+  GRN_API_ENTER;
+  if (ratio <= FLT_EPSILON) {
+    table_selector->fuzzy_options.max_distance_ratio = 0.0f;
+    table_selector->fuzzy_options.flags &=
+      ~GRN_TABLE_FUZZY_SEARCH_USE_MAX_DISTANCE_RATIO;
+  } else {
+    table_selector->fuzzy_options.max_distance_ratio = ratio;
+    table_selector->fuzzy_options.flags |=
+      GRN_TABLE_FUZZY_SEARCH_USE_MAX_DISTANCE_RATIO;
+  }
+  GRN_API_RETURN(ctx->rc);
+}
+
 static grn_obj *
 selector_create_result_set(grn_ctx *ctx, grn_table_selector *table_selector)
 {

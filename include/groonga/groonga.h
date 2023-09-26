@@ -926,8 +926,9 @@ GRN_API grn_id
 grn_obj_id(grn_ctx *ctx, grn_obj *obj);
 
 /* Flags for grn_fuzzy_search_optarg::flags. */
-#define GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION (0x01 << 0)
-#define GRN_TABLE_FUZZY_SEARCH_USE_PREFIX_LENGTH  (0x01 << 1)
+#define GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION     (0x01 << 0)
+#define GRN_TABLE_FUZZY_SEARCH_USE_PREFIX_LENGTH      (0x01 << 1)
+#define GRN_TABLE_FUZZY_SEARCH_USE_MAX_DISTANCE_RATIO (0x01 << 2)
 
 typedef struct _grn_fuzzy_search_optarg grn_fuzzy_search_optarg;
 
@@ -942,6 +943,9 @@ struct _grn_fuzzy_search_optarg {
   /* Unit is character. This is used only when
    * GRN_TABLE_FUZZY_SEARCH_USE_PREFIX_LENGTH flag is set. */
   uint32_t prefix_length;
+  /* This is used only when
+   * GRN_TABLE_FUZZY_SEARCH_USE_MAX_DISTANCE_RATIO flag is set. */
+  float max_distance_ratio;
 };
 
 #define GRN_MATCH_INFO_GET_MIN_RECORD_ID (0x01)

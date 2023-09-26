@@ -3121,7 +3121,16 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   data.key_size = key_size;
   if (args) {
     data.flags = args->flags;
-    data.max_distance = args->max_distance;
+    if (data.flags & GRN_TABLE_FUZZY_SEARCH_USE_MAX_DISTANCE_RATIO) {
+      size_t key_length = grn_str_len(ctx,
+                                      data.key,
+                                      data.key + data.key_size,
+                                      ctx->encoding,
+                                      NULL);
+      data.max_distance = floorf(key_length * args->max_distance_ratio);
+    } else {
+      data.max_distance = args->max_distance;
+    }
     data.max_expansions = args->max_expansion;
     if (data.flags & GRN_TABLE_FUZZY_SEARCH_USE_PREFIX_LENGTH) {
       const char *key_current = key;
@@ -3147,6 +3156,9 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     data.max_distance = 1;
     data.max_expansions = 0;
     data.prefix_match_size = 0;
+  }
+  if (data.max_distance == 0) {
+    return GRN_END_OF_DATA;
   }
   if (data.key_size > GRN_TABLE_MAX_KEY_SIZE ||
       data.max_distance > GRN_TABLE_MAX_KEY_SIZE ||

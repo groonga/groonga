@@ -1,0 +1,68 @@
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR ShortText
+
+table_create Lexicon TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenNgram \
+  --normalizer NormalizerNFKC150
+column_create Lexicon memos_content \
+  COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"content": "012345678"},
+{"content": "002345678"},
+{"content": "000345678"},
+{"content": "000045678"},
+{"content": "000005678"},
+{"content": "000000678"},
+{"content": "000000078"},
+{"content": "000000008"},
+{"content": "000000000"},
+{"content": "000000000"},
+{"content": "000000000"},
+{"content": "00000000"},
+{"content": "0000000"},
+{"content": "000000"},
+{"content": "00000"},
+{"content": "0000"},
+{"content": "000"},
+{"content": "00"},
+{"content": "0"}
+]
+
+# floor(1 * 0.34 = 0.34) = 0
+select Memos \
+  --match_columns content \
+  --query "9" \
+  --fuzzy_max_distance_ratio 0.34 \
+  --output_columns *,_score
+# floor(2 * 0.34 = 0.68) = 0
+select Memos \
+  --match_columns content \
+  --query "09" \
+  --fuzzy_max_distance_ratio 0.34 \
+  --output_columns *,_score
+# floor(3 * 0.34 = 1.02) = 1
+select Memos \
+  --match_columns content \
+  --query "009" \
+  --fuzzy_max_distance_ratio 0.34 \
+  --output_columns *,_score
+# floor(4 * 0.34 = 1.36) = 1
+select Memos \
+  --match_columns content \
+  --query "0009" \
+  --fuzzy_max_distance_ratio 0.34 \
+  --output_columns *,_score
+# floor(5 * 0.34 = 1.7) = 1
+select Memos \
+  --match_columns content \
+  --query "00009" \
+  --fuzzy_max_distance_ratio 0.34 \
+  --output_columns *,_score
+# floor(6 * 0.34 = 2.04) = 2
+select Memos \
+  --match_columns content \
+  --query "000009" \
+  --fuzzy_max_distance_ratio 0.34 \
+  --output_columns *,_score

@@ -1137,6 +1137,8 @@ namespace {
         fuzzy_max_expansions(
           args->get_uint32(prefix, "fuzzy_max_expansions", 0)),
         fuzzy_prefix_length(args->get_uint32(prefix, "fuzzy_prefix_length", 0)),
+        fuzzy_max_distance_ratio(
+          args->get_float(prefix, "fuzzy_max_distance_ratio", 0)),
         condition({nullptr, nullptr, nullptr}),
         post_condition({nullptr}),
         filtered(nullptr),
@@ -1187,6 +1189,9 @@ namespace {
       grn_table_selector_set_fuzzy_prefix_length(ctx,
                                                  table_selector,
                                                  fuzzy_prefix_length);
+      grn_table_selector_set_fuzzy_max_distance_ratio(ctx,
+                                                      table_selector,
+                                                      fuzzy_max_distance_ratio);
     }
 
     grn_ctx *ctx_;
@@ -1201,6 +1206,7 @@ namespace {
     uint32_t fuzzy_max_distance;
     uint32_t fuzzy_max_expansions;
     uint32_t fuzzy_prefix_length;
+    float fuzzy_max_distance_ratio;
     struct {
       grn_obj *match_columns;
       grn_obj *expression;

@@ -15224,7 +15224,9 @@ grn_ii_sel(grn_ctx *ctx,
       grn_id min = GRN_ID_NIL;
       if (((int64_t)GRN_HASH_SIZE(s) <= ctx->impl->match_escalation_threshold ||
            ctx->impl->force_match_escalation) &&
-          arg.fuzzy.max_distance > 0) {
+          ((arg.fuzzy.flags & GRN_TABLE_FUZZY_SEARCH_USE_MAX_DISTANCE_RATIO)
+             ? (arg.fuzzy.max_distance_ratio > FLT_EPSILON)
+             : (arg.fuzzy.max_distance > 0))) {
         arg.mode = GRN_OP_FUZZY;
         if (arg.match_info) {
           if (arg.match_info->flags & GRN_MATCH_INFO_GET_MIN_RECORD_ID) {
