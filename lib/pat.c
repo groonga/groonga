@@ -2848,17 +2848,17 @@ fuzzy_heap_close(grn_ctx *ctx, fuzzy_heap *h)
 #define DIST(ox, oy) (dists[((lx + 1) * (oy)) + (ox)])
 
 grn_inline static uint16_t
-calc_edit_distance_by_offset(grn_ctx *ctx,
-                             const char *sx,
-                             const char *ex,
-                             const char *sy,
-                             const char *ey,
-                             uint16_t *dists,
-                             uint32_t lx,
-                             uint32_t offset,
-                             uint32_t max_distance,
-                             bool *can_transition,
-                             uint32_t flags)
+grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
+                                        const char *sx,
+                                        const char *ex,
+                                        const char *sy,
+                                        const char *ey,
+                                        uint16_t *dists,
+                                        uint32_t lx,
+                                        uint32_t offset,
+                                        uint32_t max_distance,
+                                        bool *can_transition,
+                                        uint32_t flags)
 {
   uint32_t cx, cy, x, y;
   const char *px, *py;
@@ -3021,17 +3021,18 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
     }
     if (len - offset) {
       uint16_t distance;
-      distance = calc_edit_distance_by_offset(ctx,
-                                              key,
-                                              key + key_size,
-                                              k,
-                                              k + len,
-                                              dists,
-                                              lx,
-                                              offset,
-                                              max_distance,
-                                              &(last_node->can_transition),
-                                              flags);
+      distance =
+        grn_pat_fuzzy_search_calc_edit_distance(ctx,
+                                                key,
+                                                key + key_size,
+                                                k,
+                                                k + len,
+                                                dists,
+                                                lx,
+                                                offset,
+                                                max_distance,
+                                                &(last_node->can_transition),
+                                                flags);
       if (distance <= max_distance) {
         fuzzy_heap_push(ctx, heap, id, distance);
       }
