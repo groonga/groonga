@@ -56,6 +56,7 @@ repos:
           ?lib/proc/proc_select\.cpp|
           ?lib/proc\.c|
           ?lib/store\.c|
+          ?lib/str\.c|
           ?lib/table_selector\.c|
           ?lib/tokenizer\.c|
           ?lib/util\.c|
