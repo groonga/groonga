@@ -2740,10 +2740,10 @@ grn_pat_lcp_search(grn_ctx *ctx,
 }
 
 static grn_id
-common_prefix_pat_node_get(grn_ctx *ctx,
-                           grn_pat *pat,
-                           const void *key,
-                           uint32_t key_size)
+grn_pat_fuzzy_search_find_prefixed_start_node_id(grn_ctx *ctx,
+                                                 grn_pat *pat,
+                                                 const void *key,
+                                                 uint32_t key_size)
 {
   int32_t c0 = -1, c;
   const uint8_t *k;
@@ -3086,11 +3086,11 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   id = node->lr[1];
 
   if (prefix_match_size) {
-    grn_id tid;
-    tid = common_prefix_pat_node_get(ctx, pat, key, prefix_match_size);
-    if (tid != GRN_ID_NIL) {
-      id = tid;
-    } else {
+    id = grn_pat_fuzzy_search_find_prefixed_start_node_id(ctx,
+                                                          pat,
+                                                          key,
+                                                          prefix_match_size);
+    if (id == GRN_ID_NIL) {
       fuzzy_heap_close(ctx, heap);
       return GRN_END_OF_DATA;
     }
