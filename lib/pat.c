@@ -3077,11 +3077,6 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     return GRN_INVALID_ARGUMENT;
   }
 
-  heap = fuzzy_heap_open(ctx, HEAP_SIZE);
-  if (!heap) {
-    return GRN_NO_MEMORY_AVAILABLE;
-  }
-
   PAT_AT(pat, GRN_ID_NIL, node);
   id = node->lr[1];
 
@@ -3091,10 +3086,15 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
                                                           key,
                                                           prefix_match_size);
     if (id == GRN_ID_NIL) {
-      fuzzy_heap_close(ctx, heap);
       return GRN_END_OF_DATA;
     }
   }
+
+  heap = fuzzy_heap_open(ctx, HEAP_SIZE);
+  if (!heap) {
+    return GRN_NO_MEMORY_AVAILABLE;
+  }
+
   for (lx = 0; s < e && (len = grn_charlen(ctx, s, e)); s += len) {
     lx++;
   }
