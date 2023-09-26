@@ -168,6 +168,8 @@ uint32_t
 grn_proc_option_value_uint32(grn_ctx *ctx,
                              grn_obj *option,
                              uint32_t default_value);
+float
+grn_proc_option_value_float(grn_ctx *ctx, grn_obj *option, float default_value);
 double
 grn_proc_option_value_double(grn_ctx *ctx,
                              grn_obj *option,
