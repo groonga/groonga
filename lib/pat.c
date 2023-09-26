@@ -2918,6 +2918,7 @@ typedef struct {
   bool can_transition;
 } fuzzy_node;
 
+/* id must not be GRN_ID_NIL. Caller must check it. */
 grn_inline static void
 grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
                                grn_pat *pat,
@@ -2953,89 +2954,90 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
         return;
       }
     }
-    grn_pat_fuzzy_search_recursive(ctx,
-                                   pat,
-                                   node->lr[0],
-                                   key,
-                                   key_size,
-                                   dists,
-                                   lx,
-                                   check,
-                                   last_node,
-                                   max_distance,
-                                   prefix_match_size,
-                                   flags,
-                                   heap);
-
-    grn_pat_fuzzy_search_recursive(ctx,
-                                   pat,
-                                   node->lr[1],
-                                   key,
-                                   key_size,
-                                   dists,
-                                   lx,
-                                   check,
-                                   last_node,
-                                   max_distance,
-                                   prefix_match_size,
-                                   flags,
-                                   heap);
-  } else {
-    if (id) {
-      if (prefix_match_size > 0) {
-        if (len < prefix_match_size) {
-          return;
-        }
-        if (memcmp(k, key, prefix_match_size) != 0) {
-          return;
-        }
-      }
-      /* Set already calculated common prefix length */
-      if (len >= last_node->key_length &&
-          !memcmp(k, last_node->key, last_node->key_length)) {
-        if (!last_node->can_transition) {
-          return;
-        }
-        offset = last_node->key_length;
-      } else {
-        if (!last_node->can_transition) {
-          last_node->can_transition = true;
-        }
-        if (last_node->key_length) {
-          const char *kp = k;
-          const char *ke = k + len;
-          const char *p = last_node->key;
-          const char *e = last_node->key + last_node->key_length;
-          int lp;
-          for (; p < e && kp < ke && (lp = grn_charlen(ctx, p, e));
-               p += lp, kp += lp) {
-            if (p + lp <= e && kp + lp <= ke && memcmp(p, kp, lp)) {
-              break;
-            }
-          }
-          offset = kp - k;
-        }
-      }
-      if (len - offset) {
-        uint16_t distance;
-        distance = calc_edit_distance_by_offset(ctx,
-                                                key,
-                                                key + key_size,
-                                                k,
-                                                k + len,
-                                                dists,
-                                                lx,
-                                                offset,
-                                                max_distance,
-                                                &(last_node->can_transition),
-                                                flags);
-        if (distance <= max_distance) {
-          fuzzy_heap_push(ctx, heap, id, distance);
-        }
-      }
-      last_node->key = k;
-      last_node->key_length = len;
+    if (node->lr[0] != GRN_ID_NIL) {
+      grn_pat_fuzzy_search_recursive(ctx,
+                                     pat,
+                                     node->lr[0],
+                                     key,
+                                     key_size,
+                                     dists,
+                                     lx,
+                                     check,
+                                     last_node,
+                                     max_distance,
+                                     prefix_match_size,
+                                     flags,
+                                     heap);
     }
+    if (node->lr[1] != GRN_ID_NIL) {
+      grn_pat_fuzzy_search_recursive(ctx,
+                                     pat,
+                                     node->lr[1],
+                                     key,
+                                     key_size,
+                                     dists,
+                                     lx,
+                                     check,
+                                     last_node,
+                                     max_distance,
+                                     prefix_match_size,
+                                     flags,
+                                     heap);
+    }
+  } else {
+    if (prefix_match_size > 0) {
+      if (len < prefix_match_size) {
+        return;
+      }
+      if (memcmp(k, key, prefix_match_size) != 0) {
+        return;
+      }
+    }
+    /* Set already calculated common prefix length */
+    if (len >= last_node->key_length &&
+        !memcmp(k, last_node->key, last_node->key_length)) {
+      if (!last_node->can_transition) {
+        return;
+      }
+      offset = last_node->key_length;
+    } else {
+      if (!last_node->can_transition) {
+        last_node->can_transition = true;
+      }
+      if (last_node->key_length) {
+        const char *kp = k;
+        const char *ke = k + len;
+        const char *p = last_node->key;
+        const char *e = last_node->key + last_node->key_length;
+        int lp;
+        for (; p < e && kp < ke && (lp = grn_charlen(ctx, p, e));
+             p += lp, kp += lp) {
+          if (p + lp <= e && kp + lp <= ke && memcmp(p, kp, lp)) {
+            break;
+          }
+        }
+        offset = kp - k;
+      }
+    }
+    if (len - offset) {
+      uint16_t distance;
+      distance = calc_edit_distance_by_offset(ctx,
+                                              key,
+                                              key + key_size,
+                                              k,
+                                              k + len,
+                                              dists,
+                                              lx,
+                                              offset,
+                                              max_distance,
+                                              &(last_node->can_transition),
+                                              flags);
+      if (distance <= max_distance) {
+        fuzzy_heap_push(ctx, heap, id, distance);
+      }
+    }
+    last_node->key = k;
+    last_node->key_length = len;
   }
   return;
 }
@@ -3082,12 +3084,12 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
                                                           pat,
                                                           key,
                                                           prefix_match_size);
-    if (id == GRN_ID_NIL) {
-      return GRN_END_OF_DATA;
-    }
   } else {
     PAT_AT(pat, GRN_ID_NIL, node);
     id = node->lr[1];
+  }
+  if (id == GRN_ID_NIL) {
+    return GRN_END_OF_DATA;
   }
 
   heap = fuzzy_heap_open(ctx, HEAP_SIZE);
