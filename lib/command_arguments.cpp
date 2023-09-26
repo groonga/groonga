@@ -32,4 +32,10 @@ namespace grn {
   {
     return grn_proc_option_value_uint32(ctx_, arg, default_value);
   }
+
+  float
+  CommandArguments::arg_to_float(grn_obj *arg, float default_value)
+  {
+    return grn_proc_option_value_float(ctx_, arg, default_value);
+  }
 } // namespace grn

@@ -282,6 +282,38 @@ namespace grn {
                            default_value);
     }
 
+    float
+    get_float(const char *name, float default_value)
+    {
+      return arg_to_float(get(name), default_value);
+    }
+
+    float
+    get_float(const char *prefix, const char *name, float default_value)
+    {
+      return arg_to_float(get(prefix, name), default_value);
+    }
+
+    float
+    get_float(const char *prefix,
+              const char *name,
+              const char *fallback_name,
+              float default_value)
+    {
+      return arg_to_float(get(prefix, name, fallback_name), default_value);
+    }
+
+    float
+    get_float(const char *prefix,
+              const char *fallback_prefix,
+              const char *name,
+              const char *fallback_name,
+              float default_value)
+    {
+      return arg_to_float(get(prefix, fallback_prefix, name, fallback_name),
+                          default_value);
+    }
+
   private:
     grn_ctx *ctx_;
     grn_user_data *user_data_;
@@ -307,5 +339,8 @@ namespace grn {
 
     uint32_t
     arg_to_uint32(grn_obj *arg, uint32_t default_value);
+
+    float
+    arg_to_float(grn_obj *arg, float default_value);
   };
 } // namespace grn
