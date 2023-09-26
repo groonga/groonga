@@ -321,7 +321,7 @@ typedef struct {
   uint32_t max_distance;
   uint32_t prefix_length;
   uint32_t prefix_match_size;
-  uint32_t max_expansion;
+  uint32_t max_expansions;
   int flags;
 } fuzzy_search_data;
 
@@ -385,7 +385,7 @@ selector_fuzzy_search_execute(grn_ctx *ctx,
                                  data->query,
                                  data->max_distance,
                                  data->prefix_match_size,
-                                 data->max_expansion,
+                                 data->max_expansions,
                                  data->flags,
                                  res,
                                  logical_op);
@@ -408,7 +408,7 @@ selector_fuzzy_search_execute(grn_ctx *ctx,
     options.mode = GRN_OP_FUZZY;
     options.fuzzy.prefix_match_size = data->prefix_match_size;
     options.fuzzy.max_distance = data->max_distance;
-    options.fuzzy.max_expansion = data->max_expansion;
+    options.fuzzy.max_expansion = data->max_expansions;
     options.fuzzy.flags = data->flags;
     grn_obj_search(ctx, target, data->query, res, logical_op, &options);
   }
@@ -440,7 +440,7 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
   data.max_distance = 1;
   data.prefix_length = 0;
   data.prefix_match_size = 0;
-  data.max_expansion = 0;
+  data.max_expansions = 0;
   data.flags = 0;
 
   if (nargs == 4) {
@@ -462,9 +462,14 @@ selector_fuzzy_search(grn_ctx *ctx, grn_obj *table, grn_obj *index,
                                     "prefix_length",
                                     GRN_PROC_OPTION_VALUE_UINT32,
                                     &(data.prefix_length),
+                                    /* Deprecated since 13.0.8.
+                                     * Keep this for backward compatibility. */
                                     "max_expansion",
                                     GRN_PROC_OPTION_VALUE_UINT32,
-                                    &(data.max_expansion),
+                                    &(data.max_expansions),
+                                    "max_expansions",
+                                    GRN_PROC_OPTION_VALUE_UINT32,
+                                    &(data.max_expansions),
                                     "with_transposition",
                                     GRN_PROC_OPTION_VALUE_BOOL,
                                     &with_transposition,
