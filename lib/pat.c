@@ -3077,10 +3077,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     return GRN_INVALID_ARGUMENT;
   }
 
-  PAT_AT(pat, GRN_ID_NIL, node);
-  id = node->lr[1];
-
-  if (prefix_match_size) {
+  if (prefix_match_size > 0) {
     id = grn_pat_fuzzy_search_find_prefixed_start_node_id(ctx,
                                                           pat,
                                                           key,
@@ -3088,6 +3085,9 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     if (id == GRN_ID_NIL) {
       return GRN_END_OF_DATA;
     }
+  } else {
+    PAT_AT(pat, GRN_ID_NIL, node);
+    id = node->lr[1];
   }
 
   heap = fuzzy_heap_open(ctx, HEAP_SIZE);
