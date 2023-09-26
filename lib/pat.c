@@ -2863,13 +2863,91 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
   uint32_t cx, cy, x, y;
   const char *px, *py;
 
-  /* Skip already calculated rows */
+  /*
+   * Continue from grn_pat_fuzzy_search().
+   *
+   * Skip already calculated rows.
+   *
+   * If the previous y is "data" and the new y is "day" and offset is
+   * 2, we can reuse the current "da" result.
+   *
+   * Current dists:
+   * |   |   | d | a | t | e |
+   * |   | 0 | 1 | 2 | 3 | 4 |
+   * | d | 1 | 0 | 1 | 2 | 3 |
+   * | a | 2 | 1 | 0 | 1 | 2 |
+   * | t | 3 | 2 | 1 | 0 | 1 |
+   * | a | 4 | 3 | 2 | 1 | 1 |
+   * | ? | 5 | ? | ? | ? | ? |
+   * | ? | 6 | ? | ? | ? | ? |
+   * | ? | 7 | ? | ? | ? | ? |
+   *
+   * Reused dists:
+   * |   |   | d | a | t | e |
+   * |   | 0 | 1 | 2 | 3 | 4 |
+   * | d | 1 | 0 | 1 | 2 | 3 |
+   * | a | 2 | 1 | 0 | 1 | 2 |
+   * | y | 3 | ? | ? | ? | ? |
+   * | ? | 4 | ? | ? | ? | ? |
+   * | ? | 5 | ? | ? | ? | ? |
+   * | ? | 6 | ? | ? | ? | ? |
+   * | ? | 7 | ? | ? | ? | ? |
+   */
   for (py = sy, y = 1; py < ey && (cy = grn_charlen(ctx, py, ey));
        py += cy, y++) {
     if ((uint32_t)(py - sy) >= offset) {
       break;
     }
   }
+  /*
+   * Continue from grn_pat_fuzzy_search().
+   *
+   * y: data
+   *
+   * 1: d
+   * |   |   | d | a | t | e |
+   * |   | 0 | 1 | 2 | 3 | 4 |
+   * | d | 1 | 0 | 1 | 2 | 3 |
+   * | ? | 2 | ? | ? | ? | ? |
+   * | ? | 3 | ? | ? | ? | ? |
+   * | ? | 4 | ? | ? | ? | ? |
+   * | ? | 5 | ? | ? | ? | ? |
+   * | ? | 6 | ? | ? | ? | ? |
+   * | ? | 7 | ? | ? | ? | ? |
+   *
+   * 2: a
+   * |   |   | d | a | t | e |
+   * |   | 0 | 1 | 2 | 3 | 4 |
+   * | d | 1 | 0 | 1 | 2 | 3 |
+   * | a | 2 | 1 | 0 | 1 | 3 |
+   * | t | 3 | ? | ? | ? | ? |
+   * | a | 4 | ? | ? | ? | ? |
+   * | ? | 5 | ? | ? | ? | ? |
+   * | ? | 6 | ? | ? | ? | ? |
+   * | ? | 7 | ? | ? | ? | ? |
+   *
+   * 3: t
+   * |   |   | d | a | t | e |
+   * |   | 0 | 1 | 2 | 3 | 4 |
+   * | d | 1 | 0 | 1 | 2 | 3 |
+   * | a | 2 | 1 | 0 | 1 | 3 |
+   * | t | 3 | 2 | 1 | 0 | 1 |
+   * | a | 4 | ? | ? | ? | ? |
+   * | ? | 5 | ? | ? | ? | ? |
+   * | ? | 6 | ? | ? | ? | ? |
+   * | ? | 7 | ? | ? | ? | ? |
+   *
+   * 4: a
+   * |   |   | d | a | t | e |
+   * |   | 0 | 1 | 2 | 3 | 4 |
+   * | d | 1 | 0 | 1 | 2 | 3 |
+   * | a | 2 | 1 | 0 | 1 | 2 |
+   * | t | 3 | 2 | 1 | 0 | 1 |
+   * | a | 4 | 3 | 2 | 1 | 1 |
+   * | ? | 5 | ? | ? | ? | ? |
+   * | ? | 6 | ? | ? | ? | ? |
+   * | ? | 7 | ? | ? | ? | ? |
+   */
   for (; py < ey && (cy = grn_charlen(ctx, py, ey)); py += cy, y++) {
     /* children nodes will be no longer smaller than max distance
      * with only insertion costs.
@@ -2882,18 +2960,24 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
     for (px = sx, x = 1; px < ex && (cx = grn_charlen(ctx, px, ex));
          px += cx, x++) {
       if (cx == cy && !memcmp(px, py, cx)) {
+        /* Use the upper left cell value as-is when the target
+         * characters equal. */
         DIST(x, y) = DIST(x - 1, y - 1);
       } else {
         uint32_t a, b, c;
         a = DIST(x - 1, y) + 1;
         b = DIST(x, y - 1) + 1;
         c = DIST(x - 1, y - 1) + 1;
+        /* Use the minimum value in a, b and c. */
         DIST(x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
         if (flags & GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION && x > 1 &&
             y > 1 && cx == cy && memcmp(px, py - cy, cx) == 0 &&
             memcmp(px - cx, py, cx) == 0) {
+          /* Use 1 distance for transposition. */
           uint32_t t = DIST(x - 2, y - 2) + 1;
-          DIST(x, y) = ((DIST(x, y) < t) ? DIST(x, y) : t);
+          if (t < (DIST(x, y))) {
+            DIST(x, y) = t;
+          }
         }
       }
     }
@@ -2946,6 +3030,7 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
   uint32_t len = PAT_LEN(node);
   k = pat_node_get_key(ctx, pat, node);
 
+  /* There are sub nodes. */
   if (check > last_check) {
     if (len >= last_node->key_length &&
         !memcmp(k, last_node->key, last_node->key_length)) {
@@ -2992,7 +3077,10 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
         return;
       }
     }
-    /* Set already calculated common prefix length */
+    /* This is an optimization to avoid re-calculated dists. See also
+     * a comment in grn_pat_fuzzy_search_calc_edit_distance().
+     *
+     * Set already calculated common prefix length. */
     uint32_t offset = 0;
     if (len >= last_node->key_length &&
         !memcmp(k, last_node->key, last_node->key_length)) {
@@ -3107,6 +3195,27 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     return GRN_NO_MEMORY_AVAILABLE;
   }
 
+  /*
+   * x: each character of the given key
+   * lx: the number of x in character
+   * y: each character of a key in this pat
+   *
+   * Example:
+   *
+   * x: date
+   * max_distance: 2
+   *
+   * Initial:
+   * |   |   | d | a | t | e |
+   * |   | 0 | 1 | 2 | 3 | 4 |
+   * | ? | 1 | ? | ? | ? | ? |
+   * | ? | 2 | ? | ? | ? | ? |
+   * | ? | 3 | ? | ? | ? | ? |
+   * | ? | 4 | ? | ? | ? | ? |
+   * | ? | 5 | ? | ? | ? | ? |
+   * | ? | 6 | ? | ? | ? | ? |
+   * | ? | 7 | ? | ? | ? | ? |
+   */
   for (x = 0; x <= lx; x++) {
     DIST(x, 0) = x;
   }
@@ -3117,6 +3226,10 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   last_node.key = NULL;
   last_node.key_length = 0;
   last_node.can_transition = true;
+  /*
+   * Fill dists and find matched IDs recursively. See
+   * grn_pat_fuzzy_search_calc_edit_distance() how to fill dists.
+   */
   grn_pat_fuzzy_search_recursive(ctx,
                                  pat,
                                  id,
