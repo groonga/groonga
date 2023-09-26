@@ -926,7 +926,8 @@ GRN_API grn_id
 grn_obj_id(grn_ctx *ctx, grn_obj *obj);
 
 /* Flags for grn_fuzzy_search_optarg::flags. */
-#define GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION (0x01)
+#define GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION (0x01 << 0)
+#define GRN_TABLE_FUZZY_SEARCH_USE_PREFIX_LENGTH  (0x01 << 1)
 
 typedef struct _grn_fuzzy_search_optarg grn_fuzzy_search_optarg;
 
@@ -935,8 +936,12 @@ struct _grn_fuzzy_search_optarg {
   /* We want to name this max_expansions but can't change it to keep
    * backward compatibility. */
   uint32_t max_expansion;
+  /* Unit is byte. */
   uint32_t prefix_match_size;
   uint32_t flags;
+  /* Unit is character. This is used only when
+   * GRN_TABLE_FUZZY_SEARCH_USE_PREFIX_LENGTH flag is set. */
+  uint32_t prefix_length;
 };
 
 #define GRN_MATCH_INFO_GET_MIN_RECORD_ID (0x01)

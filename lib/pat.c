@@ -2810,10 +2810,10 @@ typedef struct {
   uint32_t key_size;
   uint16_t *dists;
   uint32_t x_length;
+  uint32_t flags;
   uint32_t max_distance;
   uint32_t max_expansions;
   uint32_t prefix_match_size;
-  uint32_t flags;
   fuzzy_heap *heap;
   struct {
     const char *key;
@@ -3120,15 +3120,33 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   data.key = key;
   data.key_size = key_size;
   if (args) {
+    data.flags = args->flags;
     data.max_distance = args->max_distance;
     data.max_expansions = args->max_expansion;
-    data.prefix_match_size = args->prefix_match_size;
-    data.flags = args->flags;
+    if (data.flags & GRN_TABLE_FUZZY_SEARCH_USE_PREFIX_LENGTH) {
+      const char *key_current = key;
+      const char *key_end = key_current + key_size;
+      uint32_t i;
+      data.prefix_match_size = 0;
+      for (i = 0; i < args->prefix_length; i++) {
+        if (key_current >= key_end) {
+          break;
+        }
+        int length = grn_charlen(ctx, key_current, key_end);
+        if (length == 0) {
+          break;
+        }
+        data.prefix_match_size += length;
+        key_current += length;
+      }
+    } else {
+      data.prefix_match_size = args->prefix_match_size;
+    }
   } else {
+    data.flags = 0;
     data.max_distance = 1;
     data.max_expansions = 0;
     data.prefix_match_size = 0;
-    data.flags = 0;
   }
   if (data.key_size > GRN_TABLE_MAX_KEY_SIZE ||
       data.max_distance > GRN_TABLE_MAX_KEY_SIZE ||
