@@ -569,12 +569,12 @@ grn_table_selector_set_fuzzy_max_distance(grn_ctx *ctx,
                                           grn_table_selector *table_selector,
                                           uint32_t distance);
 GRN_API uint32_t
-grn_table_selector_get_fuzzy_max_expansion(grn_ctx *ctx,
-                                           grn_table_selector *table_selector);
+grn_table_selector_get_fuzzy_max_expansions(grn_ctx *ctx,
+                                            grn_table_selector *table_selector);
 GRN_API grn_rc
-grn_table_selector_set_fuzzy_max_expansion(grn_ctx *ctx,
-                                           grn_table_selector *table_selector,
-                                           uint32_t expansion);
+grn_table_selector_set_fuzzy_max_expansions(grn_ctx *ctx,
+                                            grn_table_selector *table_selector,
+                                            uint32_t expansions);
 GRN_API grn_obj *
 grn_table_selector_select(grn_ctx *ctx,
                           grn_table_selector *table_selector,

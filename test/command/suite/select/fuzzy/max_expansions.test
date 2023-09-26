@@ -17,5 +17,5 @@ select Memos \
   --match_columns content \
   --query "Thjs" \
   --fuzzy_max_distance 2 \
-  --fuzzy_max_expansion 1 \
+  --fuzzy_max_expansions 1 \
   --output_columns *,_score

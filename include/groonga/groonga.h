@@ -932,6 +932,8 @@ typedef struct _grn_fuzzy_search_optarg grn_fuzzy_search_optarg;
 
 struct _grn_fuzzy_search_optarg {
   uint32_t max_distance;
+  /* We want to name this max_expansions but can't change it to keep
+   * backward compatibility. */
   uint32_t max_expansion;
   uint32_t prefix_match_size;
   uint32_t flags;

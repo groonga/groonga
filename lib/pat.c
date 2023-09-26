@@ -2811,7 +2811,7 @@ typedef struct {
   uint16_t *dists;
   uint32_t x_length;
   uint32_t max_distance;
-  uint32_t max_expansion;
+  uint32_t max_expansions;
   uint32_t prefix_match_size;
   uint32_t flags;
   fuzzy_heap *heap;
@@ -3121,12 +3121,12 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   data.key_size = key_size;
   if (args) {
     data.max_distance = args->max_distance;
-    data.max_expansion = args->max_expansion;
+    data.max_expansions = args->max_expansion;
     data.prefix_match_size = args->prefix_match_size;
     data.flags = args->flags;
   } else {
     data.max_distance = 1;
-    data.max_expansion = 0;
+    data.max_expansions = 0;
     data.prefix_match_size = 0;
     data.flags = 0;
   }
@@ -3201,7 +3201,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   GRN_FREE(data.dists);
   uint32_t n_results = 0;
   for (i = 0; i < data.heap->n_entries; i++) {
-    if (data.max_expansion > 0 && i >= data.max_expansion) {
+    if (data.max_expansions > 0 && i >= data.max_expansions) {
       break;
     }
     if (DB_OBJ(h)->header.flags & GRN_OBJ_WITH_SUBREC) {

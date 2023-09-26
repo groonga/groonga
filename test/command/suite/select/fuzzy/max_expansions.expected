@@ -12,7 +12,7 @@ load --table Memos
 {"content": "That is a pen"}
 ]
 [[0,0.0,0.0],2]
-select Memos   --match_columns content   --query "Thjs"   --fuzzy_max_distance 2   --fuzzy_max_expansion 1   --output_columns *,_score
+select Memos   --match_columns content   --query "Thjs"   --fuzzy_max_distance 2   --fuzzy_max_expansions 1   --output_columns *,_score
 [
   [
     0,
