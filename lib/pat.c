@@ -2848,6 +2848,10 @@ fuzzy_heap_close(grn_ctx *ctx, fuzzy_heap *h)
 typedef struct {
   uint16_t *dists;
   uint32_t x_length;
+  uint32_t max_distance;
+  uint32_t max_expansion;
+  uint32_t prefix_match_size;
+  uint32_t flags;
   struct {
     const char *key;
     uint32_t key_length;
@@ -2865,9 +2869,7 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
                                         const char *ex,
                                         const char *sy,
                                         const char *ey,
-                                        uint32_t offset,
-                                        uint32_t max_distance,
-                                        uint32_t flags)
+                                        uint32_t offset)
 {
   uint32_t cx, cy, x, y;
   const char *px, *py;
@@ -2961,9 +2963,9 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
     /* children nodes will be no longer smaller than max distance
      * with only insertion costs.
      * This is end of row on allocated memory. */
-    if (y > data->x_length + max_distance) {
+    if (y > data->x_length + data->max_distance) {
       data->last_node.can_transition = false;
-      return max_distance + 1;
+      return data->max_distance + 1;
     }
 
     for (px = sx, x = 1; px < ex && (cx = grn_charlen(ctx, px, ex));
@@ -2979,7 +2981,7 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
         c = DIST(data, x - 1, y - 1) + 1;
         /* Use the minimum value in a, b and c. */
         DIST(data, x, y) = ((a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c));
-        if (flags & GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION && x > 1 &&
+        if (data->flags & GRN_TABLE_FUZZY_SEARCH_WITH_TRANSPOSITION && x > 1 &&
             y > 1 && cx == cy && memcmp(px, py - cy, cx) == 0 &&
             memcmp(px - cx, py, cx) == 0) {
           /* Use 1 distance for transposition. */
@@ -2996,7 +2998,7 @@ grn_pat_fuzzy_search_calc_edit_distance(grn_ctx *ctx,
      * row, children nodes will be no longer smaller than max distance */
     data->last_node.can_transition = false;
     for (x = 1; x <= data->x_length; x++) {
-      if (DIST(data, x, y - 1) <= max_distance) {
+      if (DIST(data, x, y - 1) <= data->max_distance) {
         data->last_node.can_transition = true;
         break;
       }
@@ -3015,9 +3017,6 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
                                const char *key,
                                uint32_t key_size,
                                int last_check,
-                               uint32_t max_distance,
-                               uint32_t prefix_match_size,
-                               uint32_t flags,
                                fuzzy_heap *heap)
 {
   pat_node *node = NULL;
@@ -3048,9 +3047,6 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
                                      key,
                                      key_size,
                                      check,
-                                     max_distance,
-                                     prefix_match_size,
-                                     flags,
                                      heap);
     }
     if (node->lr[1] != GRN_ID_NIL) {
@@ -3061,17 +3057,14 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
                                      key,
                                      key_size,
                                      check,
-                                     max_distance,
-                                     prefix_match_size,
-                                     flags,
                                      heap);
     }
   } else {
-    if (prefix_match_size > 0) {
-      if (len < prefix_match_size) {
+    if (data->prefix_match_size > 0) {
+      if (len < data->prefix_match_size) {
         return;
       }
-      if (memcmp(k, key, prefix_match_size) != 0) {
+      if (memcmp(k, key, data->prefix_match_size) != 0) {
         return;
       }
     }
@@ -3113,10 +3106,8 @@ grn_pat_fuzzy_search_recursive(grn_ctx *ctx,
                                                          key + key_size,
                                                          k,
                                                          k + len,
-                                                         offset,
-                                                         max_distance,
-                                                         flags);
-      if (distance <= max_distance) {
+                                                         offset);
+      if (distance <= data->max_distance) {
         fuzzy_heap_push(ctx, heap, id, distance);
       }
     }
@@ -3143,30 +3134,33 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   const char *s = key;
   const char *e = (const char *)key + key_size;
   fuzzy_heap *heap;
-  uint32_t max_distance = 1;
-  uint32_t max_expansion = 0;
-  uint32_t prefix_match_size = 0;
-  uint32_t flags = 0;
   grn_rc rc = grn_pat_error_if_truncated(ctx, pat);
   if (rc != GRN_SUCCESS) {
     return rc;
   }
   if (args) {
-    max_distance = args->max_distance;
-    max_expansion = args->max_expansion;
-    prefix_match_size = args->prefix_match_size;
-    flags = args->flags;
+    data.max_distance = args->max_distance;
+    data.max_expansion = args->max_expansion;
+    data.prefix_match_size = args->prefix_match_size;
+    data.flags = args->flags;
+  } else {
+    data.max_distance = 1;
+    data.max_expansion = 0;
+    data.prefix_match_size = 0;
+    data.flags = 0;
   }
   if (key_size > GRN_TABLE_MAX_KEY_SIZE ||
-      max_distance > GRN_TABLE_MAX_KEY_SIZE || prefix_match_size > key_size) {
+      data.max_distance > GRN_TABLE_MAX_KEY_SIZE ||
+      data.prefix_match_size > key_size) {
     return GRN_INVALID_ARGUMENT;
   }
 
-  if (prefix_match_size > 0) {
-    id = grn_pat_fuzzy_search_find_prefixed_start_node_id(ctx,
-                                                          pat,
-                                                          key,
-                                                          prefix_match_size);
+  if (data.prefix_match_size > 0) {
+    id =
+      grn_pat_fuzzy_search_find_prefixed_start_node_id(ctx,
+                                                       pat,
+                                                       key,
+                                                       data.prefix_match_size);
   } else {
     PAT_AT(pat, GRN_ID_NIL, node);
     id = node->lr[1];
@@ -3184,7 +3178,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
     data.x_length++;
   }
   data.dists =
-    GRN_MALLOC((data.x_length + 1) * (data.x_length + max_distance + 1) *
+    GRN_MALLOC((data.x_length + 1) * (data.x_length + data.max_distance + 1) *
                sizeof(uint16_t));
   if (!data.dists) {
     fuzzy_heap_close(ctx, heap);
@@ -3215,7 +3209,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
   for (x = 0; x <= data.x_length; x++) {
     DIST(&data, x, 0) = x;
   }
-  for (y = 0; y <= data.x_length + max_distance; y++) {
+  for (y = 0; y <= data.x_length + data.max_distance; y++) {
     DIST(&data, 0, y) = y;
   }
 
@@ -3226,20 +3220,10 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
    * Fill dists and find matched IDs recursively. See
    * grn_pat_fuzzy_search_calc_edit_distance() how to fill dists.
    */
-  grn_pat_fuzzy_search_recursive(ctx,
-                                 pat,
-                                 &data,
-                                 id,
-                                 key,
-                                 key_size,
-                                 -1,
-                                 max_distance,
-                                 prefix_match_size,
-                                 flags,
-                                 heap);
+  grn_pat_fuzzy_search_recursive(ctx, pat, &data, id, key, key_size, -1, heap);
   GRN_FREE(data.dists);
   for (i = 0; i < heap->n_entries; i++) {
-    if (max_expansion > 0 && i >= max_expansion) {
+    if (data.max_expansion > 0 && i >= data.max_expansion) {
       break;
     }
     if (DB_OBJ(h)->header.flags & GRN_OBJ_WITH_SUBREC) {
@@ -3250,7 +3234,7 @@ grn_pat_fuzzy_search(grn_ctx *ctx,
                        sizeof(grn_id),
                        (void **)&ri,
                        NULL)) {
-        ri->score = max_distance - heap->nodes[i].distance + 1;
+        ri->score = data.max_distance - heap->nodes[i].distance + 1;
       }
     } else {
       grn_hash_add(ctx, h, &(heap->nodes[i].id), sizeof(grn_id), NULL, NULL);
