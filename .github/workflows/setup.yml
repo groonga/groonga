@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - 'maintenance/**'
+      - enable-presym-in-windows
     tags:
       - '*'
     paths:
